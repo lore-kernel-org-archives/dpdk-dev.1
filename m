@@ -2,169 +2,163 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0B88CCFA1A
-	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Nov 2025 14:44:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01867CCFA18
+	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Nov 2025 15:09:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CF879402C6;
-	Tue, 11 Nov 2025 15:44:43 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
- by mails.dpdk.org (Postfix) with ESMTP id E5692402B0
- for <dev@dpdk.org>; Tue, 11 Nov 2025 15:44:41 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 07ADF402C6;
+	Tue, 11 Nov 2025 16:09:54 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+ by mails.dpdk.org (Postfix) with ESMTP id B7B11402B0
+ for <dev@dpdk.org>; Tue, 11 Nov 2025 16:09:51 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1762872282; x=1794408282;
- h=from:to:cc:subject:date:message-id:references:
- in-reply-to:mime-version;
- bh=faNn6P/+k9jUuLWsr5m9iOnVRJXRLTu7RgtL0wZL7iw=;
- b=gqxGa0ECpMgeiuVYXoWWPHRPL46D4/Tx2cwohrK18BlMPiATD4Nj+Rys
- AGap5GpwYcttrV//tXoCH+7DHLmoD1/+MuHltTVeOTJTWnjmam/mxCR/3
- 2NF1jGWZDeWhYmGloq4bImudTjmwzXMl5OVIoZJwUpY5reL8iyThKc9cW
- ssx2DiywlV1GQX4jIKAx1xV5IZ2CVcP38QWgrwsvI01ICeCQbXQw8EidN
- 8GT/2N/qABZQcf/VqtdmByGQy5V8bGHe5xfWUWV6dIfVT/dU8mP4SWOCd
- cstreAGWW2GhEzFNPJ5D3aMhfmCxr1jUmQhOFMgEXrXGmZEri8EwwYPPq w==;
-X-CSE-ConnectionGUID: xrDGdjtFRvOo+I0Fdbml2A==
-X-CSE-MsgGUID: IPri6iNhQoGa4/v2h5ISCw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11610"; a="65027361"
-X-IronPort-AV: E=Sophos;i="6.19,296,1754982000"; d="scan'208,217";a="65027361"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
- by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 11 Nov 2025 06:44:41 -0800
-X-CSE-ConnectionGUID: fcMcj9CJRR64CYU5vxRLhQ==
-X-CSE-MsgGUID: vMSLXwnnRzmShpK2IrnSQQ==
+ t=1762873792; x=1794409792;
+ h=from:to:cc:subject:date:message-id:mime-version;
+ bh=us+Q312JnamSQJ3h9krQStIPg0usFlx0QaNRTQQVIxQ=;
+ b=mTYLStWvXAT3rOS/LtzUaKepHhAj7hwVFn1G6nqfhoyqpfPYk/Jb/A7I
+ r5QXwcdvciI2kiJplJ/zOJBr8OpywjAr3e87+zOxrPUzXfBuMarBuftLk
+ PwpkL6Tn5mfhcHZcjXeH9zd1MateRrc36KrEKPNrkhT/ww9Lsd2iwxS05
+ 6ONRW+4FB6njPRyzp/F1vHkji6KgfTXzR07AdASBZUNZo7yeosOuncLnm
+ ssed6R7yV6P/nx3AMe/LcFEX6JjFh1F8XlD4L216X26E19i+zWZrd1aX8
+ 6o+g12sqwSLGQp3MtZ0ZUJ0oV4X7SpW0rXoB9Tf1ldr4G9l+ULkIj6VIH w==;
+X-CSE-ConnectionGUID: HJfAS6URT1WISyJQ5ftfeQ==
+X-CSE-MsgGUID: dN/DrsgkTpmuppfDNzAooQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11610"; a="52494054"
+X-IronPort-AV: E=Sophos;i="6.19,296,1754982000"; d="scan'208,217";a="52494054"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+ by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 11 Nov 2025 07:09:51 -0800
+X-CSE-ConnectionGUID: scDdTaRLStO/iX/aVHqn7w==
+X-CSE-MsgGUID: WvoixKQGQ7edu43kQrwRIg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.19,296,1754982000"; 
- d="scan'208,217";a="193359286"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
- by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 11 Nov 2025 06:44:41 -0800
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ d="scan'208,217";a="188950133"
+Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
+ by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 11 Nov 2025 07:09:50 -0800
+Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Tue, 11 Nov 2025 06:44:40 -0800
-Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ 15.2.2562.27; Tue, 11 Nov 2025 07:09:50 -0800
+Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
+ FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Tue, 11 Nov 2025 06:44:40 -0800
-Received: from SN4PR2101CU001.outbound.protection.outlook.com (40.93.195.49)
- by edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ 15.2.2562.27 via Frontend Transport; Tue, 11 Nov 2025 07:09:50 -0800
+Received: from MW6PR02CU001.outbound.protection.outlook.com (52.101.48.41) by
+ edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Tue, 11 Nov 2025 06:44:40 -0800
+ 15.2.2562.27; Tue, 11 Nov 2025 07:09:49 -0800
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=eVUVQCy1AWMPwKxAN5J5GqmhmOtPFcEV4XRCa7ZTC4BCYzjljcXj19I30ubk7Fdb8CfNyavvulkYDnuGWdf+7EXXxbOZEj8CUmfWBlkuCGsLvA5ixAz4lkLYND0ANm+ZPDRvKol17CWHkBXrXWfTR7QLcMRNLeA2BKcoKOZteGE0YtWB+4m0EeKK/xp+/SPaOGZ3Nf52gozqUzaGblaDjM5UfAvBo1qiLyoYFAJy+xg7U/cnViu+PkXYTviDeB04+T055wUI/zyyLZAKke7BcZpt3oAha+Kg+JXNtl2x8xQU1MY7UOZa4coyoXAiimN/ifeOq8i4iFTHJgHPFFCorQ==
+ b=CjpSmPsokP8R2j2uPsclku9+I1WA/HWSoG/tbnEIYvXb2G+FsTDq6//6OZ46qJPWBIzvb0l3MJerlnTCb+s2SL3C6wBwnzzwpaFBeJV35XwDxjKgEmFB1jii42+YFVZkn0PhZf1i/NSM0k4d/gOcW30vNK4SGSaKfipLiSjyb97nZDVL+MRRIxQH+RMrwlbFOUttJInoKQA2qYguEcKvbYWSMfWl7ZmD6hQJccx62lk9g2biJvSm/kg+DpU0GiySDZuqA4+HVVF6iYAgw96jJA7NNcNC8yDvhdPgeZwG39wzOO9nOkoXOPn+uoQcCgayqVHJRjtk1aGBUfH6HY7Dpg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/397HXJRURmDiDRmAFCEfpozVOordBdGtm785yTPHVU=;
- b=y7nnt/V45sq9n2SR13KqJg9xTF5MMNx8tFhqVfv7vFN5YTq8MugJAZxXyEAd4JXasJ/IXsbaS8X2XHu7M/KU9lY+0B5dvDvFs4Ff2XHX7mh8Zm36v2+HrNQmSkPpUzfHCXi0/apRrZrdXArA4kuJTID+7Q6u+y11gN5cWupodVuQ9FKOZ/Z0/NDHGR/bP6/1nbFRQyb3o/kH1XQWeTZ2nSDDXUfUxSTpbE9Vo2+yEpWcizEZNt0Xh4YMEukVDFHIH/XGOCQ+1GpEa6D4W4xLbBHLSeyJvpVyBJDOur9e+SAfDm3WpmOyDhw5VqO8DfHJNzSaTI8OJMA7erZnxo1q4Q==
+ bh=KsFPh+NoJFUcF8bBGFh0qoEn1wyeEIBGF4hWKbgKh34=;
+ b=macJcYvZzfP+uFh+KXPSdJ8zfiOzDr8fPKPoP1YNvfP8aDzezwsW+epu86nC6ubZMLCTJYWQEt1bJNSTEvRCX5HuJXOGSnRPaHsTUkwyEq2p5Om8slLctbpNiGi+KjOhnFXQ/5bJPAxGFa2YzHrcYhhaY+lUkj9v+Bi4t3d079oXp9tFQVABTrmO/QP8p3hpV2NROvihce9P7L5aNcFKe2ppAgRnqQ3Iczu3qt/vSGbk9cvDc2s1jZdYm9yYKjtvApZtHrfmYg53GZlDoz/zG9xOfHBAQVYP6a3dr1/o/vPr6ZBtAfIKt1mbqbcGH53j9XndDR+TGTKGyhQpL7yntw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
-Received: from DS0PR11MB7458.namprd11.prod.outlook.com (2603:10b6:8:145::13)
- by DM3PR11MB8758.namprd11.prod.outlook.com (2603:10b6:0:47::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.15; Tue, 11 Nov
- 2025 14:44:30 +0000
-Received: from DS0PR11MB7458.namprd11.prod.outlook.com
- ([fe80::6d78:37d8:c835:540]) by DS0PR11MB7458.namprd11.prod.outlook.com
- ([fe80::6d78:37d8:c835:540%5]) with mapi id 15.20.9298.015; Tue, 11 Nov 2025
- 14:44:29 +0000
-From: "Ji, Kai" <kai.ji@intel.com>
-To: "Finn, Emma" <emma.finn@intel.com>, Akhil Goyal <gakhil@marvell.com>, "Fan
- Zhang" <fanzhang.oss@gmail.com>, "Trahe, Fiona" <fiona.trahe@intel.com>,
- Arkadiusz Kusztal <arkadiuszx.kusztal@intel.com>
-CC: "dev@dpdk.org" <dev@dpdk.org>
-Subject: Re: [v2] crypto/qat: fix CCM request descriptor hash_state_sz field
-Thread-Topic: [v2] crypto/qat: fix CCM request descriptor hash_state_sz field
-Thread-Index: AQHcUmOzZsM9uiKJIEOCvtMb/Ov+lrTtjnVc
-Date: Tue, 11 Nov 2025 14:44:29 +0000
-Message-ID: <DS0PR11MB7458C0A1EE0B7FDDF2CD89CA81CFA@DS0PR11MB7458.namprd11.prod.outlook.com>
-References: <20251107164329.2154794-1-emma.finn@intel.com>
- <20251110170107.2296951-1-emma.finn@intel.com>
-In-Reply-To: <20251110170107.2296951-1-emma.finn@intel.com>
-Accept-Language: en-GB, en-US, en-IE
-Content-Language: en-GB
+Received: from PH3PPF37F43E35D.namprd11.prod.outlook.com
+ (2603:10b6:518:1::d16) by SJ5PPF8B3F23403.namprd11.prod.outlook.com
+ (2603:10b6:a0f:fc02::842) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Tue, 11 Nov
+ 2025 15:09:46 +0000
+Received: from PH3PPF37F43E35D.namprd11.prod.outlook.com
+ ([fe80::2be2:5d5c:1b79:969b]) by PH3PPF37F43E35D.namprd11.prod.outlook.com
+ ([fe80::2be2:5d5c:1b79:969b%7]) with mapi id 15.20.9298.015; Tue, 11 Nov 2025
+ 15:09:46 +0000
+From: "Mcnamara, John" <john.mcnamara@intel.com>
+To: "dev@dpdk.org" <dev@dpdk.org>
+CC: "thomas@monjalon.net" <thomas@monjalon.net>, "Marchand, David"
+ <david.marchand@redhat.com>
+Subject: DPDK Release Status Meeting 2025-11-11
+Thread-Topic: DPDK Release Status Meeting 2025-11-11
+Thread-Index: AdxTHSQy5VDUnbosQn2pvnfrVh5sJA==
+Date: Tue, 11 Nov 2025 15:09:46 +0000
+Message-ID: <PH3PPF37F43E35DA61D29A2FF10D2EB8F0BFCCFA@PH3PPF37F43E35D.namprd11.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-msip_labels: 
 authentication-results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=intel.com;
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DS0PR11MB7458:EE_|DM3PR11MB8758:EE_
-x-ms-office365-filtering-correlation-id: 772daefb-4186-4279-c3fb-08de2130d1f7
+x-ms-traffictypediagnostic: PH3PPF37F43E35D:EE_|SJ5PPF8B3F23403:EE_
+x-ms-office365-filtering-correlation-id: 75e560b5-d240-423c-2a77-08de213459d8
+x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: BCL:0;
- ARA:13230040|1800799024|376014|366016|42112799006|8096899003|38070700021|7053199007;
-x-microsoft-antispam-message-info: =?us-ascii?Q?M2PIW1X1hl7LKAJU9lC6eZunTNUo3iRj9WXc2+d6hYgL5ww8ksqOAxP5qqa4?=
- =?us-ascii?Q?AAI40zbPkAYNzWIyZbjcH6686rycZFUk8QY/Mi3YATSK+NZ+LbB9QtPOVe+l?=
- =?us-ascii?Q?J3obat5vBNVUSB5hHL4dAySTHVXyTLFaniRY40/QLJphVHpmjKuPYxd88sDw?=
- =?us-ascii?Q?HybS6XqC5EWZhnH7v9O4olBjjD6FfSRGWFDvBbhFoHwqVaH7Z4TvlSfE41me?=
- =?us-ascii?Q?SLQVisODhXu6gysShLVlt4mebIeoRhi0+E0owSHi1hcglCIkcBkfxzcaFidB?=
- =?us-ascii?Q?5CSJc13V1yimCAzg0KPb7BsXxTDSKDIOMKlQqYo7AUQnuHPSiKHbumxReWWn?=
- =?us-ascii?Q?KNMbKjLSISJMu8dFAlqFKx28Sh4WZfdNRf41VyOVlxNiybPmflWGw6aio8Ba?=
- =?us-ascii?Q?yEgBpXXJ8oTZOkttf+/Ta4rYrEzYQ51DDrXFtzpy/bsjN1QpiEkMteaXTMwN?=
- =?us-ascii?Q?+5nfV9j2Ye0qICM40Po/FwHnnyrXAhiW9L/ATCpdyfEGkb7RvPJEHPoJR8WS?=
- =?us-ascii?Q?SjoqeqNhpALorLokkA5iTFBWvYFzA2Vfa/Y3s1yF02rciV2JAGeHs49r8IMF?=
- =?us-ascii?Q?+14q44An3ihwP+/Ls136//zqzH/8ZxJzeeX2Qr0o/2/73sBX+v/rtpF5IF3o?=
- =?us-ascii?Q?2FM1wgbjE3/bEaLVLrLRKiwqLRuSnJqpBNT7QoFHxO+3xiObNUhtEPJrI6U+?=
- =?us-ascii?Q?/CghQI0Z9PQwqTWRg614UTGJo/pa5I2U3sXdcPoj6fUS4VdZWM/m+dKgIJOh?=
- =?us-ascii?Q?9qgureora4cuT+9KDEIQ3nZUgHNmRFWDCLiV/83zhU8c6I5CqTX71dh9MLje?=
- =?us-ascii?Q?oQaEfEgKmp90KKj0IyIdHzGWdDwrnuMXTc9kqSXxXGfWrB+GgHqX7apyDtR4?=
- =?us-ascii?Q?jqNq8ehBvQI6qrfC7MhyFfRyQLoGv+tNa8QJPIwH/xhJ5SqhNuLUSYEQX61/?=
- =?us-ascii?Q?cs4IXvp9lGiVzp5IKiBkiddvywm4fH9TlpnyZ15oA8BdpeJjzVR5UQQ6B6gj?=
- =?us-ascii?Q?1sMduHgw8dbrY9OfEDtcb3afkwLRPmbdpKYnZuUPm4DzRW4yqbHb6JqSZ2bZ?=
- =?us-ascii?Q?UM5sDpOzsoMhSR+My8vvr8DVEnFVV7dX+9ThmE7oHgRvkkFENoMKqXwew7bD?=
- =?us-ascii?Q?1Si898+aHCRHSFBeooORXSsa9eQ319ZI2GPszJdPFZGYdjuZlBIj1pznB+rp?=
- =?us-ascii?Q?xCX3iELFGOcjuhQ8+zBpYW3Xpr5NFelTCh+dmFrMPO7xNeHYPsWlsNAvfZgy?=
- =?us-ascii?Q?fSAekhhBpX5KjvvD6+xZ2EC/+3uuJaIv3LWTktNFTbdLH2m9BJ+XdFKtJMdw?=
- =?us-ascii?Q?yoD6eDNmCuSZr0MIbPit/F9MU7VxuB9DjYFqdq7zalgaPcNFtn+Zlnwx+MM2?=
- =?us-ascii?Q?J3+uCaT3oJKdnzP7ijAMdm6xNuUzIy/JmQNKi6WGp5qOGdUVEbGgrtAOB5uL?=
- =?us-ascii?Q?EnVtLKa5puqoKweTDJ3RlZk6tDzlP/7di3o6bHUpZ7vTgWM8mjt85gG+fAMe?=
- =?us-ascii?Q?VL9/ERYq5V2aph2Fiu/Tj23Y2E13i1AChTLm?=
+ ARA:13230040|1800799024|376014|366016|38070700021|8096899003; 
+x-microsoft-antispam-message-info: =?us-ascii?Q?brfJbKYT6iPiB85LeRQqRDH3CUQBDT0vPPUlw06REK4YXuC92TEVTJfAx8nd?=
+ =?us-ascii?Q?IPMAnhM1zKPEzi9HODglf24XD87t7lCqxTfsC4RJP+aBLlBxbBc8fat30N44?=
+ =?us-ascii?Q?QcW7Hh55+I2kZyBXVs9eNmzD8BTl7+sbk3eZ0l/r8Vc0sn2GhcPTGsthvIP5?=
+ =?us-ascii?Q?nmByZnvdnfnw1As91BR/fJPxwvTS5QqYAAjX8IzcjFz2XJMY6emUEqFEgXq2?=
+ =?us-ascii?Q?DrnrDfAtjH7QsXQPhpbBs2vXFBKBGxhgRupNjgNr83RFmmLeEBj8NdEIOQxz?=
+ =?us-ascii?Q?G5Sbd0/vQvWBlsnzNHqS4FXRV3EX7kJrIdgIiw1pbtcdMAyd5FCTBYVCGa30?=
+ =?us-ascii?Q?QPMh8MXd+zA1ZWofrJMpT5AZB7gsvEJZpxOgWZuUvOgYi1Bd981dmXrFCH6d?=
+ =?us-ascii?Q?/iUMuK0Aw5N3ZrB8TACMlq3LPq8TnTSJvHpa1/ZHDekl0Y99s7z8LjDqmE6a?=
+ =?us-ascii?Q?WhiOFw+es7+U6Oos0CDag6ItJERgabUWep2jfTnl5PzWGkackdbSWyDhiDXk?=
+ =?us-ascii?Q?3DnXZ83wJ8Ef1ODK82ct8KynHxpPNgKY8Zjx+f9UMZjae90LgLmzhTRwQqIM?=
+ =?us-ascii?Q?o38IFa5OJfGW6F4aJNx2y8SpkF6DNzALAmnXWjZjOXeq/zI7AcjqpGsnfULM?=
+ =?us-ascii?Q?XnnSQPpxrPZjSLSJ5jZgiJvg/TaJoI/IXJHgBnEymd2rfRPF/4au5CDV7sL6?=
+ =?us-ascii?Q?GYbadPx99jV93RPbswP0f+3spLe7KgEIZGHPq6i0ITlEMUko5pdSnbdOrwN9?=
+ =?us-ascii?Q?vsVTntENZF3sOifccw0yCDUU/i5WcOBvlZ9kllkUF5kzOtE8acvusYctmuni?=
+ =?us-ascii?Q?M/7FPMl57zWi3452HqNlLiV1UYPpl3uvjdXR6MClS3HjVXerRlgA1T8fbXnr?=
+ =?us-ascii?Q?WbrMJWQkCwcFTB+izvrCsmSt9xpV3Iz76H5o/Ji6VYvO6CrRXih87Zo9uB3F?=
+ =?us-ascii?Q?ECVpoGaaKDjmKbccyYps1uxcpIrrTeG9yYz/uGN2gVKMCTmdhVBAAl8OunR8?=
+ =?us-ascii?Q?V6GRHUwRbIel638DQL+Yw1jb0ZUwiWwmeZw91XtDMbw+184FAcReRBWpFMsG?=
+ =?us-ascii?Q?A/CugL86EBVUIuYSHygARXhakospJIbMALqNwpUX2OiDS3FbRmWmyMjexHhg?=
+ =?us-ascii?Q?QnWlrkAqT+26jk7kuSPzi4w83vVULWI0xROWU00xCYpK+zu6MM2jcni5txFi?=
+ =?us-ascii?Q?R+XdzhKoxHo1hQTFqKCotuIrb9VuuSWNkrDrC268Cs8CHFXNWqxdn3rpquzc?=
+ =?us-ascii?Q?1Irq37dUKZ9Ewpv7l85bvXNix98fRWyLyqLitKhbt8q4/5h0zlqlMRhCN2vE?=
+ =?us-ascii?Q?fdvGuhaRiiqfmV/FkRLvfXML4PaOPr1U5n1yqrXOZFhgEqUR3IiYm6xkH9bs?=
+ =?us-ascii?Q?sSYtyINWd8a6gu3vmYID0uosZYp9WevRhGKO+RpwRJtIx+ca9LfdLdQPMGWd?=
+ =?us-ascii?Q?hPDUYAKg3TyXTwMsI9iPrLwptImgM4gdoZZ1pTTX6weisr8U9rhQkQ=3D=3D?=
 x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DS0PR11MB7458.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(1800799024)(376014)(366016)(42112799006)(8096899003)(38070700021)(7053199007);
- DIR:OUT; SFP:1101; 
+ IPV:NLI; SFV:NSPM; H:PH3PPF37F43E35D.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(1800799024)(376014)(366016)(38070700021)(8096899003); DIR:OUT;
+ SFP:1101; 
 x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?QUsOfwiKoX6O5D5TeIOYMntvUBPEabGF9v2B+ZmWZ50X5lkWIgaf8QK9zdeU?=
- =?us-ascii?Q?SxHJraJdHQFXASMwao0bOH/Su+AnkTilvuJadn28VB8B6LTXcpGw7yh/btgK?=
- =?us-ascii?Q?AhXz04wjJN1qiCkX2yDczje0oLHLkMBot47AtuvMp30EKbRajwhyIjKr0Pin?=
- =?us-ascii?Q?EUPqRt8hCV7uizlM+7WyMMtzKJDQ3w7st+ZU8V5KtYoFIpyJRA7+rCfMX/0A?=
- =?us-ascii?Q?jerNHeo2Lct4DqGbW4/EzT331qOxsPBVi0ur9U2J4t+PDrldJqHEQqn1eY8d?=
- =?us-ascii?Q?+S79jjb5/0ahoxoGzW9rUNHPRbHcSZ3qrCtovEcsM6mcSmcHzR15j908DXWd?=
- =?us-ascii?Q?XcNZptXtguQ8azs6fCeNhGfJIE5RTrN2W/okP9ptt7ywmqTKVVL9XRSYhR5k?=
- =?us-ascii?Q?Pp1x+GsHqQSVoMzdaqbvw1Uy6bC4ABeQ/9SF4BoMagS+xj7Ut6hkVs48Pp36?=
- =?us-ascii?Q?Hn7/hNU7AF1uZ/w6BA5vcclFPRu6Prfa9lRuL04GmdwcBZXjypGWhBEtffTl?=
- =?us-ascii?Q?AZPl29MUYfe//O7SYE58sfkU1bkVSj9+M23OQ+1XEclegYjpWiZai7ijQo6z?=
- =?us-ascii?Q?gRdIGrUTzAAHbBDLoXcsC8tTa6tqon+ZtGqVu1dyoGFXRgklc3RIzJhOJkr9?=
- =?us-ascii?Q?N5k5oOzUj+DD5luHjesTuXAGOmSrvoNzKgzlkaCHFjiPYJKE8zM8M51HJtcW?=
- =?us-ascii?Q?dj4IWvR9u9WT+HrEci1HXooDDGzq00zdQeizLPmsRt8aOegPkJEGnEUUB820?=
- =?us-ascii?Q?Q4xEukYNSe8Ck2fAEy0FNF3aYnpYEblrb/Owo2b+ugRuaPkR6DrKjEPhAPQn?=
- =?us-ascii?Q?iCeVZ9vchjCFqKOUw6yeGMo+Y9+OF1/Zh8R//dZM7pCpLhYIy301d9H7/doF?=
- =?us-ascii?Q?ypO+ZIK16WU2vf3ogH6t5dmgbZN0oRnDa7JGnH5ZTfDOdZXK2xHO/jdaZFXt?=
- =?us-ascii?Q?oJ2w8eVjwZoQZTSXewnsUNPCVo43l1VEFwjgYv6DJVhme6d+oTw88DxAEKxK?=
- =?us-ascii?Q?5A/j4SrGeysiXjwyrQJ4uZ7Xd1ucbLPDDWhzkGAyLzMNRxXM9T8erxDzRpcH?=
- =?us-ascii?Q?a3c0RPQhuEWXHnNkJmwBu2ksIndaLVii9kKCaoJBZHjeCXoDtq9w6qeUOO9e?=
- =?us-ascii?Q?23/VemlCweaL+tSYXgB5XaNl+no2kEi+uT4M7TryvkzdvnbCIKebuUd4EUGW?=
- =?us-ascii?Q?9sSOZrP4ts+0fq/dkMXRo3TtrQVv49v7eWY5LCRssMkS52wpNzDiRNb1eg9F?=
- =?us-ascii?Q?/iPhw8oj2Vc/e3sX4oiLItUfuC3kA5+EXkMPueGFDsA43A0yZ4tiDhHY8s3d?=
- =?us-ascii?Q?VaS5gd6H9XvsbHeHI8JCCSKFbt/fUMeDzkpLRa2mzx1Oo6MZztDr6HkG/vnO?=
- =?us-ascii?Q?0Sk6vpVL7fgftuDkhCF74S/W/ERCMD5MAVO6h8J4B60YXtlSCYFTeczdH51C?=
- =?us-ascii?Q?NXWzsUl/HZdCbjS4Ab8ag6Wu8zPNey8LRpjp3UNh9ijI7GOUzRPrj+4/MYmS?=
- =?us-ascii?Q?YlwFWW0Gx0T4BbH4wCzUsbP3lrxWMueViz90HRKZieNvuJLQJRivkMDL/KEK?=
- =?us-ascii?Q?84ZZN8UxXp7uNqEvjxo=3D?=
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?TO3zP+7X6g+UhjuwrUW9wp/g3QqK8T/ZvYa+AWUHLvd6R7me5iAnTLYvSRzq?=
+ =?us-ascii?Q?uABQWGaRevSrqHJ/iCoM5P41xSDdl32L9UnZVfD6GJZ1ro4l7A4xMjZfujlZ?=
+ =?us-ascii?Q?p6zUxuTaF9aMLXE0hAjNpGm95AADHDvECSi9g5nPJB3zb4cFH7kJPYuCs1YF?=
+ =?us-ascii?Q?kfD0AiR8srIkYPkstXRG9/QzsDkcysU3vHfDcIXup4WEjkmVTq7vJgTbXni/?=
+ =?us-ascii?Q?+9uSVBB3NGcw+fSjnJK5aVYKaLKssQIfuCKpfoT5V1KqaFqDsRdcKITSjSwC?=
+ =?us-ascii?Q?3BtcXmsaaCQTglOkqKQsBXmt2p9r/YdQY5aJaJjXBfTG+5rp/2I+nJ9kB8NU?=
+ =?us-ascii?Q?9+KQKpa+JRIr///n4tQzLp3Advlh4MXUEWUd4Ir1+jQZ/pCl04l5N5hozHRt?=
+ =?us-ascii?Q?lXy/kP9KgrUaAWHCl7rxyRsHB7eVLcchAQh3/JvgX2gOO2sNmMkcIA/sQ145?=
+ =?us-ascii?Q?tkzdNctLwAFiygABmS0SFrm/Yz5AvQ52RZcns5r+aSpmAk1Wb0liDBbECUfW?=
+ =?us-ascii?Q?1I6KeGajK3kv2KWLGJqOCSEIoGjejX4fKVPHZiQGmrL8bvLIL0bfP/4PCjQW?=
+ =?us-ascii?Q?N04KyaP+lyfP8D2LU7fhOrkINfWJ4+/ZeC8aE7Nw70z0iBeyComJjKTW+RvC?=
+ =?us-ascii?Q?+PRCvHObHj1RvEo8S3vPB4RZydbl9oalp8ERiIn7TlZja9Zl4DSqVOIu39Lg?=
+ =?us-ascii?Q?mabkvuklDaXUzw7wGM1n64NS5bp0KfJHHycsqmPbzaWRdXv2WnfJBr209ans?=
+ =?us-ascii?Q?ZZFzzp63dWqUXUeOZeY2r5WiT1OF7/Kv/WPiDdENvXpEjjIsiVzIw5kEtGSX?=
+ =?us-ascii?Q?vtDeUT1cN+IOyCiNMt4hZrQvdSOGXY9yVxbYWheaJEGf8oRIgkmR+wKRIKEE?=
+ =?us-ascii?Q?J7oAUzpp7swjN8BuTFBY1E6ORZJH50+bw6x8knHW/9BKl8epkWo7TDaZaTra?=
+ =?us-ascii?Q?CwFBytrH97HbCjQ8U6ZQw8YZgMXcD3AlXhnfSWUNiua5TtQaLfU1bZSadkdO?=
+ =?us-ascii?Q?tNldoRwhyVKxQ6Hbx2JeXJeQJA80XgjsREQYEWeo4Q2Jy2NrcC6ylPa1DUw8?=
+ =?us-ascii?Q?+LmYAup0yoUWsCIz2PDiswppu/CUWsFVraabN7Dp+ERoeEiSwj6pzJnwUF+R?=
+ =?us-ascii?Q?A4Z1jRgFjjH+IK0JOd1ahEgKrAwdqer86WnZs4/GAhM7h3oO8gs7obK21lBe?=
+ =?us-ascii?Q?F0xhP+QxAoa0O341QTaAvTmHqffGZjFDjyKWZlKTaC8vvK3VkVQUHIs6AvsE?=
+ =?us-ascii?Q?x7sof79FsfYncJpW6/hlRNYeHUJGlw8FeoD+V3MFoLfvHM6wnonai+7BbCGm?=
+ =?us-ascii?Q?+9ECaAychfYVxxWBF9gpKlcv6S/8mcEx1KiIqUM+tCkdJsJ1Xf/Qr3bo4Sor?=
+ =?us-ascii?Q?1UqC9BjU0x4y+eUFel59IbUkg50uRoi9nhZzx1L9ndjHAquEbEGC9Q/dxvnd?=
+ =?us-ascii?Q?0hQzNxOg8YJlLyWHIUSCcxDNFL0K+OA4pmysLXXFUYMqfdXrprsO3V1URulZ?=
+ =?us-ascii?Q?yHZSuyKhHvsmnWR8YRLfrarT5+yBiMOZZLy0sVnI5dJHi36rxXVI4sY2ph/D?=
+ =?us-ascii?Q?xIT+yG7NwQrE7/PLi7XaSaLhy15zgTOUJdHiXgVV?=
 Content-Type: multipart/alternative;
- boundary="_000_DS0PR11MB7458C0A1EE0B7FDDF2CD89CA81CFADS0PR11MB7458namp_"
+ boundary="_000_PH3PPF37F43E35DA61D29A2FF10D2EB8F0BFCCFAPH3PPF37F43E35D_"
 MIME-Version: 1.0
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7458.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 772daefb-4186-4279-c3fb-08de2130d1f7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Nov 2025 14:44:29.7686 (UTC)
+X-MS-Exchange-CrossTenant-AuthSource: PH3PPF37F43E35D.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 75e560b5-d240-423c-2a77-08de213459d8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Nov 2025 15:09:46.1928 (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 6eI+33Amh8D7ZnKK4mXairiw8CGynAkMAP4ZXdTRXA0neWDIMH3hb3ZsEanz55HBKgHSWKJjnvPa86qjulf3cg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PR11MB8758
+X-MS-Exchange-CrossTenant-userprincipalname: BfO10cPClpGHX9TrrbB/IAfgjC3ABpadGen5qOsjFgGnaceHEKP0E0yfqLalb/ijRwB1OG24VrBp3QNVns4UdA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ5PPF8B3F23403
 X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -179,490 +173,438 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---_000_DS0PR11MB7458C0A1EE0B7FDDF2CD89CA81CFADS0PR11MB7458namp_
+--_000_PH3PPF37F43E35DA61D29A2FF10D2EB8F0BFCCFAPH3PPF37F43E35D_
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Kai Ji <kai.ji@intel.com>
-________________________________
-From: Finn, Emma <emma.finn@intel.com>
-Sent: 10 November 2025 17:01
-To: Akhil Goyal <gakhil@marvell.com>; Fan Zhang <fanzhang.oss@gmail.com>; J=
-i, Kai <kai.ji@intel.com>; Trahe, Fiona <fiona.trahe@intel.com>; Arkadiusz =
-Kusztal <arkadiuszx.kusztal@intel.com>
-Cc: dev@dpdk.org <dev@dpdk.org>; Finn, Emma <emma.finn@intel.com>
-Subject: [v2] crypto/qat: fix CCM request descriptor hash_state_sz field
+Release status meeting minutes 2025-11-11
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
 
-The hash_state_sz field in the QAT request descriptor for AES-CCM
-operations was incorrectly set to the digest length. According to
-the QAT firmware specification, this field should contain the
-length of AAD in quadwords for CCM operations.
+Agenda:
+- Release Dates
+- Subtrees
+- Roadmaps
+- LTS
+- Defects
+- Opens
 
-This incorrect field value caused QAT firmware to return
-INVALID_PARAMS errors for certain AAD buffer sizes. A new unit
-test is also added to cover this case.
+Participants:
+- ARM
+- Broadcom
+- Debian
+- Intel
+- Marvell
+- Nvidia
+- Red Hat
+- Stephen Hemminger
 
-Fixes: ab56c4d9ed9a ("crypto/qat: support AES-CCM")
+Release Dates
+-------------
 
-Signed-off-by: Emma Finn <emma.finn@intel.com>
+The following are the proposed working dates for 25.11:
+
+- Proposal deadline (RFC/v1 patches): 31 August 2025
+- API freeze (-rc1): 24 October 2025
+- PMD features freeze (-rc2): 7 November 2025
+- Builtin applications features freeze (-rc3): 17 November 2025
+- Release: 26 November 2025
+
+See https://core.dpdk.org/roadmap/
+
+
+Subtrees
+--------
+
+- next-net
+  - Ready for RC2.
+  - 9 to be reviewed.
+
+- next-net-intel
+  - Ready for RC2.
+  - 4-5 in backlog for RC3.
+
+- next-net-mlx
+  - Pulled for RC2.
+
+- next-broadcom
+  - Tree pulled for RC2.
+
+- next-net-mvl
+  - Tree pulled for RC2.
+
+- next-eventdev
+  - Tree pulled for RC2.
+
+- next-baseband
+  - Tree pulled for RC2.
+
+- next-virtio
+  - Tree pulled for RC2.
+
+- next-crypto
+  - Tree pulled for RC2.
+  - Some patches for RC3.
+
+- next-dts
+  - RSS test suite merged.
+
+- main
+  - RC2 should be out 2025/11/11.
+
+
+Other
+-----
+  - None.
+
+LTS
 ---
-v2:
-* Updated to use 16-byte alignment.
----
- app/test/test_cryptodev.c                   | 16 +++++++
- app/test/test_cryptodev_aead_test_vectors.h | 53 +++++++++++++++++++++
- drivers/crypto/qat/qat_sym_session.c        |  3 +-
- 3 files changed, 71 insertions(+), 1 deletion(-)
 
-diff --git a/app/test/test_cryptodev.c b/app/test/test_cryptodev.c
-index 6e5f308e55..9bdd357727 100644
---- a/app/test/test_cryptodev.c
-+++ b/app/test/test_cryptodev.c
-@@ -14271,6 +14271,12 @@ test_AES_CCM_authenticated_encryption_test_case_12=
-8_3(void)
-         return test_authenticated_encryption(&ccm_test_case_128_3);
- }
+Released LTS versions:
 
-+static int
-+test_AES_CCM_authenticated_encryption_test_case_128_4(void)
-+{
-+       return test_authenticated_encryption(&ccm_test_case_128_4);
-+}
-+
- static int
- test_AES_CCM_authenticated_decryption_test_case_128_1(void)
- {
-@@ -14289,6 +14295,12 @@ test_AES_CCM_authenticated_decryption_test_case_12=
-8_3(void)
-         return test_authenticated_decryption(&ccm_test_case_128_3);
- }
-
-+static int
-+test_AES_CCM_authenticated_decryption_test_case_128_4(void)
-+{
-+       return test_authenticated_decryption(&ccm_test_case_128_4);
-+}
-+
- static int
- test_AES_CCM_authenticated_encryption_test_case_192_1(void)
- {
-@@ -18975,6 +18987,8 @@ static struct unit_test_suite cryptodev_aes_ccm_aut=
-h_testsuite  =3D {
-                         test_AES_CCM_authenticated_encryption_test_case_12=
-8_2),
-                 TEST_CASE_ST(ut_setup, ut_teardown,
-                         test_AES_CCM_authenticated_encryption_test_case_12=
-8_3),
-+               TEST_CASE_ST(ut_setup, ut_teardown,
-+                       test_AES_CCM_authenticated_encryption_test_case_128=
-_4),
-
-                 /** AES CCM Authenticated Decryption 128 bits key*/
-                 TEST_CASE_ST(ut_setup, ut_teardown,
-@@ -18983,6 +18997,8 @@ static struct unit_test_suite cryptodev_aes_ccm_aut=
-h_testsuite  =3D {
-                         test_AES_CCM_authenticated_decryption_test_case_12=
-8_2),
-                 TEST_CASE_ST(ut_setup, ut_teardown,
-                         test_AES_CCM_authenticated_decryption_test_case_12=
-8_3),
-+               TEST_CASE_ST(ut_setup, ut_teardown,
-+                       test_AES_CCM_authenticated_decryption_test_case_128=
-_4),
-
-                 /** AES CCM Authenticated Encryption 192 bits key */
-                 TEST_CASE_ST(ut_setup, ut_teardown,
-diff --git a/app/test/test_cryptodev_aead_test_vectors.h b/app/test/test_cr=
-yptodev_aead_test_vectors.h
-index 73bedaf557..6b9642e339 100644
---- a/app/test/test_cryptodev_aead_test_vectors.h
-+++ b/app/test/test_cryptodev_aead_test_vectors.h
-@@ -50,6 +50,13 @@ static uint8_t ccm_aad_test_2[22] =3D {
-                 0xA5, 0xB8, 0xFC, 0xBA, 0x00, 0x00
- };
-
-+static uint8_t ccm_aad_test_4[32] =3D {
-+               0xD2, 0x3D, 0xBD, 0xF2, 0x13, 0xAA, 0xD5, 0x03,
-+               0xDB, 0xA5, 0x3E, 0x44, 0xBB, 0x1E, 0xD7, 0x19,
-+               0x65, 0x2F, 0x37, 0xA0, 0x97, 0xD6, 0x5F, 0x59,
-+               0x0B, 0xD1, 0xE6, 0xA4, 0xCC, 0x50, 0xEB, 0x62
-+};
-+
- static uint8_t sm4_gcm_aad_test_2[] =3D {
-                 0x3f, 0x89, 0x42, 0x20
- };
-@@ -3714,6 +3721,52 @@ static const struct aead_test_data ccm_test_case_128=
-_3 =3D {
-         }
- };
-
-+static const struct aead_test_data ccm_test_case_128_4 =3D {
-+       .algo =3D RTE_CRYPTO_AEAD_AES_CCM,
-+       .key =3D {
-+               .data =3D {
-+                       0x2F, 0x55, 0xF2, 0xF8, 0x4E, 0x66, 0x5E, 0x4B,
-+                       0x1D, 0x56, 0x91, 0x62, 0x6C, 0xE7, 0xD4, 0xB8
-+               },
-+               .len =3D 16
-+       },
-+       .iv =3D {
-+               .data =3D {
-+                       0x2C, 0x39, 0xBE, 0x24, 0xAF, 0xF4, 0xC1, 0x0E,
-+                       0x20, 0x26, 0x11, 0x49, 0x49
-+               },
-+               .len =3D 13
-+       },
-+       .aad =3D {
-+               .data =3D ccm_aad_test_4,
-+               .len =3D 32
-+       },
-+       .plaintext =3D {
-+               .data =3D {
-+                       0xF5, 0x2A, 0xEC, 0xEF, 0x88, 0x73, 0x10, 0x11,
-+                       0xD0, 0x68, 0xCB, 0x8E, 0x82, 0xBE, 0xED, 0x68,
-+                       0xC1, 0xC6, 0xF2, 0xA5, 0x9E, 0x99, 0xF6, 0x3D,
-+                       0xDA, 0xEA, 0xA0, 0x49, 0xD0, 0xF4, 0x18, 0xC0
-+               },
-+               .len =3D 32
-+       },
-+       .ciphertext =3D {
-+               .data =3D {
-+                       0x0F, 0x7B, 0x8A, 0x0D, 0x79, 0xB6, 0x1C, 0x93,
-+                       0x00, 0x26, 0x57, 0x52, 0xC8, 0x68, 0x30, 0xF6,
-+                       0x92, 0xA4, 0x9C, 0x86, 0x5E, 0x77, 0x51, 0x9C,
-+                       0x79, 0x15, 0x7C, 0xF3, 0x87, 0x27, 0x2A, 0x77
-+               },
-+               .len =3D 32
-+       },
-+       .auth_tag =3D {
-+               .data =3D {
-+                       0x64, 0x2F, 0x58, 0x61
-+               },
-+               .len =3D 4
-+       }
-+};
-+
- /** AES-CCM-192 Test Vectors */
- static const struct aead_test_data ccm_test_case_192_1 =3D {
-         .algo =3D RTE_CRYPTO_AEAD_AES_CCM,
-diff --git a/drivers/crypto/qat/qat_sym_session.c b/drivers/crypto/qat/qat_=
-sym_session.c
-index 98ab82ffb3..2ba4fc0a3a 100644
---- a/drivers/crypto/qat/qat_sym_session.c
-+++ b/drivers/crypto/qat/qat_sym_session.c
-@@ -2774,7 +2774,8 @@ static int qat_sym_cd_auth_set(struct qat_sym_session=
- *cdesc,
-                 hash->auth_counter.counter =3D 0;
-
-                 hash_cd_ctrl->outer_prefix_sz =3D digestsize;
--               auth_param->hash_state_sz =3D digestsize;
-+               auth_param->hash_state_sz =3D (RTE_ALIGN_CEIL(auth_param->u=
-2.aad_sz,
-+                                               ICP_QAT_HW_CCM_AAD_ALIGNMEN=
-T) >> 3);
-
-                 memcpy(cdesc->cd_cur_ptr + state1_size, authkey, authkeyle=
-n);
-                 break;
---
-2.34.1
+- 24.11.3 - Released 2025-08-19
+- 23.11.5 - Released 2025-08-25
+- 22.11.9 - Released 2025-08-19
+  - 22.11.10 released 2025-09-17 for CVE-2025-23259.
 
 
---_000_DS0PR11MB7458C0A1EE0B7FDDF2CD89CA81CFADS0PR11MB7458namp_
+See https://core.dpdk.org/roadmap/#dates
+
+- 20.11.10 - Will only be updated with CVE and critical fixes.
+- 19.11.14 - Will only be updated with CVE and critical fixes.
+
+
+- Distros
+  - Debian 13 contains DPDK v24.11
+  - Ubuntu 25.04 contains DPDK v24.11
+  - Ubuntu 24.04 LTS contains DPDK v23.11
+  - RHEL 9 contains DPDK 24.11
+
+Defects
+-------
+
+- Bugzilla links, 'Bugs',  added for hosted projects
+  - https://www.dpdk.org/hosted-projects/
+
+
+
+DPDK Release Status Meetings
+----------------------------
+
+The DPDK Release Status Meeting is intended for DPDK Committers to discuss =
+the
+status of the master tree and sub-trees, and for project managers to track
+progress or milestone dates.
+
+The meeting occurs on every Tuesday at 14:30 DST over Jitsi on https://meet=
+.jit.si/DPDK
+
+You don't need an invite to join the meeting but if you want a calendar rem=
+inder just
+send an email to "John McNamara <john.mcnamara@intel.com>" for the invite.
+
+
+--_000_PH3PPF37F43E35DA61D29A2FF10D2EB8F0BFCCFAPH3PPF37F43E35D_
 Content-Type: text/html; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 
-<html>
+<html xmlns:o=3D"urn:schemas-microsoft-com:office:office" xmlns:w=3D"urn:sc=
+hemas-microsoft-com:office:word" xmlns:m=3D"http://schemas.microsoft.com/of=
+fice/2004/12/omml" xmlns=3D"http://www.w3.org/TR/REC-html40">
 <head>
 <meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Dus-ascii"=
 >
-<style type=3D"text/css" style=3D"display:none;"> P {margin-top:0;margin-bo=
-ttom:0;} </style>
+<meta name=3D"Generator" content=3D"Microsoft Word 15 (filtered medium)">
+<style><!--
+/* Font Definitions */
+@font-face
+	{font-family:"Cambria Math";
+	panose-1:2 4 5 3 5 4 6 3 2 4;}
+@font-face
+	{font-family:Aptos;}
+@font-face
+	{font-family:Consolas;
+	panose-1:2 11 6 9 2 2 4 3 2 4;}
+/* Style Definitions */
+p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{margin:0cm;
+	font-size:11.0pt;
+	font-family:"Aptos",sans-serif;
+	mso-ligatures:standardcontextual;
+	mso-fareast-language:EN-US;}
+span.EmailStyle17
+	{mso-style-type:personal-compose;
+	font-family:Consolas;
+	color:windowtext;
+	font-weight:normal;
+	font-style:normal;
+	text-decoration:none none;}
+.MsoChpDefault
+	{mso-style-type:export-only;
+	font-size:11.0pt;
+	mso-fareast-language:EN-US;}
+@page WordSection1
+	{size:612.0pt 792.0pt;
+	margin:72.0pt 72.0pt 72.0pt 72.0pt;}
+div.WordSection1
+	{page:WordSection1;}
+--></style>
 </head>
-<body dir=3D"ltr">
-<div style=3D"font-family: &quot;IntelOne Text&quot;; font-size: 10pt; colo=
-r: rgb(0, 0, 0);" class=3D"elementToProof">
-Acked-by: Kai Ji &lt;kai.ji@intel.com&gt;</div>
-<div id=3D"appendonsend"></div>
-<hr style=3D"display:inline-block;width:98%" tabindex=3D"-1">
-<div id=3D"divRplyFwdMsg" dir=3D"ltr"><font face=3D"Calibri, sans-serif" st=
-yle=3D"font-size:11pt" color=3D"#000000"><b>From:</b> Finn, Emma &lt;emma.f=
-inn@intel.com&gt;<br>
-<b>Sent:</b> 10 November 2025 17:01<br>
-<b>To:</b> Akhil Goyal &lt;gakhil@marvell.com&gt;; Fan Zhang &lt;fanzhang.o=
-ss@gmail.com&gt;; Ji, Kai &lt;kai.ji@intel.com&gt;; Trahe, Fiona &lt;fiona.=
-trahe@intel.com&gt;; Arkadiusz Kusztal &lt;arkadiuszx.kusztal@intel.com&gt;=
-<br>
-<b>Cc:</b> dev@dpdk.org &lt;dev@dpdk.org&gt;; Finn, Emma &lt;emma.finn@inte=
-l.com&gt;<br>
-<b>Subject:</b> [v2] crypto/qat: fix CCM request descriptor hash_state_sz f=
-ield</font>
-<div>&nbsp;</div>
+<body lang=3D"EN-IE" link=3D"#467886" vlink=3D"#96607D" style=3D"word-wrap:=
+break-word">
+<div class=3D"WordSection1">
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">Release status =
+meeting minutes 2025-11-11<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">Agenda:<o:p></o=
+:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- Release Dates=
+<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- Subtrees<o:p>=
+</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- Roadmaps<o:p>=
+</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- LTS<o:p></o:p=
+></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- Defects<o:p><=
+/o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- Opens<o:p></o=
+:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">Participants:<o=
+:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- ARM<o:p></o:p=
+></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- Broadcom<o:p>=
+</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- Debian<o:p></=
+o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- Intel<o:p></o=
+:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- Marvell<o:p><=
+/o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- Nvidia<o:p></=
+o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- Red Hat<o:p><=
+/o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- Stephen Hemmi=
+nger<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">Release Dates<o=
+:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">-------------<o=
+:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">The following a=
+re the proposed working dates for 25.11:<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- Proposal dead=
+line (RFC/v1 patches): 31 August 2025<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- API freeze (-=
+rc1): 24 October 2025<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- PMD features =
+freeze (-rc2): 7 November 2025<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- Builtin appli=
+cations features freeze (-rc3): 17 November 2025<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- Release: 26 N=
+ovember 2025<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">See https://cor=
+e.dpdk.org/roadmap/<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">Subtrees<o:p></=
+o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">--------<o:p></=
+o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- next-net<o:p>=
+</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; - Ready =
+for RC2.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; - 9 to b=
+e reviewed.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- next-net-inte=
+l<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; - Ready =
+for RC2.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; - 4-5 in=
+ backlog for RC3.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- next-net-mlx<=
+o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; - Pulled=
+ for RC2.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- next-broadcom=
+<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; - Tree p=
+ulled for RC2.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- next-net-mvl<=
+o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; - Tree p=
+ulled for RC2.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- next-eventdev=
+<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; - Tree p=
+ulled for RC2.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- next-baseband=
+<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; - Tree p=
+ulled for RC2.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- next-virtio<o=
+:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; - Tree p=
+ulled for RC2.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- next-crypto<o=
+:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; - Tree p=
+ulled for RC2.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; - Some p=
+atches for RC3.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- next-dts<o:p>=
+</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; - RSS te=
+st suite merged.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- main<o:p></o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; - RC2 sh=
+ould be out 2025/11/11.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">Other<o:p></o:p=
+></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">-----<o:p></o:p=
+></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; - None.<=
+o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">LTS<o:p></o:p><=
+/span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">---<o:p></o:p><=
+/span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">Released LTS ve=
+rsions:<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- 24.11.3 - Rel=
+eased 2025-08-19<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- 23.11.5 - Rel=
+eased 2025-08-25<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- 22.11.9 - Rel=
+eased 2025-08-19<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; - 22.11.=
+10 released 2025-09-17 for CVE-2025-23259.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">See https://cor=
+e.dpdk.org/roadmap/#dates<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- 20.11.10 - Wi=
+ll only be updated with CVE and critical fixes.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- 19.11.14 - Wi=
+ll only be updated with CVE and critical fixes.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- Distros<o:p><=
+/o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; - Debian=
+ 13 contains DPDK v24.11<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; - Ubuntu=
+ 25.04 contains DPDK v24.11<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; - Ubuntu=
+ 24.04 LTS contains DPDK v23.11<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; - RHEL 9=
+ contains DPDK 24.11<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">Defects<o:p></o=
+:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">-------<o:p></o=
+:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- Bugzilla link=
+s, 'Bugs',&nbsp; added for hosted projects<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; - https:=
+//www.dpdk.org/hosted-projects/<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">DPDK Release St=
+atus Meetings<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">---------------=
+-------------<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">The DPDK Releas=
+e Status Meeting is intended for DPDK Committers to discuss the<o:p></o:p><=
+/span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">status of the m=
+aster tree and sub-trees, and for project managers to track<o:p></o:p></spa=
+n></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">progress or mil=
+estone dates.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">The meeting occ=
+urs on every Tuesday at 14:30 DST over Jitsi on https://meet.jit.si/DPDK<o:=
+p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">You don't need =
+an invite to join the meeting but if you want a calendar reminder just<o:p>=
+</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">send an email t=
+o &quot;John McNamara &lt;john.mcnamara@intel.com&gt;&quot; for the invite.=
+<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
+p></span></p>
 </div>
-<div class=3D"BodyFragment"><font size=3D"2"><span style=3D"font-size:11pt;=
-">
-<div class=3D"PlainText">The hash_state_sz field in the QAT request descrip=
-tor for AES-CCM<br>
-operations was incorrectly set to the digest length. According to<br>
-the QAT firmware specification, this field should contain the<br>
-length of AAD in quadwords for CCM operations.<br>
-<br>
-This incorrect field value caused QAT firmware to return<br>
-INVALID_PARAMS errors for certain AAD buffer sizes. A new unit<br>
-test is also added to cover this case.<br>
-<br>
-Fixes: ab56c4d9ed9a (&quot;crypto/qat: support AES-CCM&quot;)<br>
-<br>
-Signed-off-by: Emma Finn &lt;emma.finn@intel.com&gt;<br>
----<br>
-v2:<br>
-* Updated to use 16-byte alignment.<br>
----<br>
-&nbsp;app/test/test_cryptodev.c&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | 16 +++++=
-++<br>
-&nbsp;app/test/test_cryptodev_aead_test_vectors.h | 53 ++++++++++++++++++++=
-+<br>
-&nbsp;drivers/crypto/qat/qat_sym_session.c&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp; |&nbsp; 3 +-<br>
-&nbsp;3 files changed, 71 insertions(+), 1 deletion(-)<br>
-<br>
-diff --git a/app/test/test_cryptodev.c b/app/test/test_cryptodev.c<br>
-index 6e5f308e55..9bdd357727 100644<br>
---- a/app/test/test_cryptodev.c<br>
-+++ b/app/test/test_cryptodev.c<br>
-@@ -14271,6 +14271,12 @@ test_AES_CCM_authenticated_encryption_test_case_12=
-8_3(void)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return test_authenticated_=
-encryption(&amp;ccm_test_case_128_3);<br>
-&nbsp;}<br>
-&nbsp;<br>
-+static int<br>
-+test_AES_CCM_authenticated_encryption_test_case_128_4(void)<br>
-+{<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return test_authenticated_encryption(=
-&amp;ccm_test_case_128_4);<br>
-+}<br>
-+<br>
-&nbsp;static int<br>
-&nbsp;test_AES_CCM_authenticated_decryption_test_case_128_1(void)<br>
-&nbsp;{<br>
-@@ -14289,6 +14295,12 @@ test_AES_CCM_authenticated_decryption_test_case_12=
-8_3(void)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return test_authenticated_=
-decryption(&amp;ccm_test_case_128_3);<br>
-&nbsp;}<br>
-&nbsp;<br>
-+static int<br>
-+test_AES_CCM_authenticated_decryption_test_case_128_4(void)<br>
-+{<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return test_authenticated_decryption(=
-&amp;ccm_test_case_128_4);<br>
-+}<br>
-+<br>
-&nbsp;static int<br>
-&nbsp;test_AES_CCM_authenticated_encryption_test_case_192_1(void)<br>
-&nbsp;{<br>
-@@ -18975,6 +18987,8 @@ static struct unit_test_suite cryptodev_aes_ccm_aut=
-h_testsuite&nbsp; =3D {<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; test_=
-AES_CCM_authenticated_encryption_test_case_128_2),<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; TEST_CASE_ST(ut_setup, ut_teardown,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; test_=
-AES_CCM_authenticated_encryption_test_case_128_3),<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp; TEST_CASE_ST(ut_setup, ut_teardown,<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; test_AES_CCM_aut=
-henticated_encryption_test_case_128_4),<br>
-&nbsp;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; /** AES CCM Authenticated Decryption 128 bits key*/<b=
-r>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; TEST_CASE_ST(ut_setup, ut_teardown,<br>
-@@ -18983,6 +18997,8 @@ static struct unit_test_suite cryptodev_aes_ccm_aut=
-h_testsuite&nbsp; =3D {<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; test_=
-AES_CCM_authenticated_decryption_test_case_128_2),<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; TEST_CASE_ST(ut_setup, ut_teardown,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; test_=
-AES_CCM_authenticated_decryption_test_case_128_3),<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp; TEST_CASE_ST(ut_setup, ut_teardown,<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; test_AES_CCM_aut=
-henticated_decryption_test_case_128_4),<br>
-&nbsp;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; /** AES CCM Authenticated Encryption 192 bits key */<=
-br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; TEST_CASE_ST(ut_setup, ut_teardown,<br>
-diff --git a/app/test/test_cryptodev_aead_test_vectors.h b/app/test/test_cr=
-yptodev_aead_test_vectors.h<br>
-index 73bedaf557..6b9642e339 100644<br>
---- a/app/test/test_cryptodev_aead_test_vectors.h<br>
-+++ b/app/test/test_cryptodev_aead_test_vectors.h<br>
-@@ -50,6 +50,13 @@ static uint8_t ccm_aad_test_2[22] =3D {<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; 0xA5, 0xB8, 0xFC, 0xBA, 0x00, 0x00<br>
-&nbsp;};<br>
-&nbsp;<br>
-+static uint8_t ccm_aad_test_4[32] =3D {<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp; 0xD2, 0x3D, 0xBD, 0xF2, 0x13, 0xAA, 0xD5, 0x03,<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp; 0xDB, 0xA5, 0x3E, 0x44, 0xBB, 0x1E, 0xD7, 0x19,<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp; 0x65, 0x2F, 0x37, 0xA0, 0x97, 0xD6, 0x5F, 0x59,<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp; 0x0B, 0xD1, 0xE6, 0xA4, 0xCC, 0x50, 0xEB, 0x62<br>
-+};<br>
-+<br>
-&nbsp;static uint8_t sm4_gcm_aad_test_2[] =3D {<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; 0x3f, 0x89, 0x42, 0x20<br>
-&nbsp;};<br>
-@@ -3714,6 +3721,52 @@ static const struct aead_test_data ccm_test_case_128=
-_3 =3D {<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br>
-&nbsp;};<br>
-&nbsp;<br>
-+static const struct aead_test_data ccm_test_case_128_4 =3D {<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .algo =3D RTE_CRYPTO_AEAD_AES_CCM,<br=
->
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .key =3D {<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp; .data =3D {<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0x2F, 0x55, 0xF2=
-, 0xF8, 0x4E, 0x66, 0x5E, 0x4B,<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0x1D, 0x56, 0x91=
-, 0x62, 0x6C, 0xE7, 0xD4, 0xB8<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp; },<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp; .len =3D 16<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; },<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .iv =3D {<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp; .data =3D {<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0x2C, 0x39, 0xBE=
-, 0x24, 0xAF, 0xF4, 0xC1, 0x0E,<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0x20, 0x26, 0x11=
-, 0x49, 0x49<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp; },<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp; .len =3D 13<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; },<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .aad =3D {<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp; .data =3D ccm_aad_test_4,<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp; .len =3D 32<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; },<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .plaintext =3D {<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp; .data =3D {<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0xF5, 0x2A, 0xEC=
-, 0xEF, 0x88, 0x73, 0x10, 0x11,<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0xD0, 0x68, 0xCB=
-, 0x8E, 0x82, 0xBE, 0xED, 0x68,<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0xC1, 0xC6, 0xF2=
-, 0xA5, 0x9E, 0x99, 0xF6, 0x3D,<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0xDA, 0xEA, 0xA0=
-, 0x49, 0xD0, 0xF4, 0x18, 0xC0<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp; },<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp; .len =3D 32<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; },<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .ciphertext =3D {<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp; .data =3D {<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0x0F, 0x7B, 0x8A=
-, 0x0D, 0x79, 0xB6, 0x1C, 0x93,<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0x00, 0x26, 0x57=
-, 0x52, 0xC8, 0x68, 0x30, 0xF6,<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0x92, 0xA4, 0x9C=
-, 0x86, 0x5E, 0x77, 0x51, 0x9C,<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0x79, 0x15, 0x7C=
-, 0xF3, 0x87, 0x27, 0x2A, 0x77<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp; },<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp; .len =3D 32<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; },<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .auth_tag =3D {<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp; .data =3D {<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0x64, 0x2F, 0x58=
-, 0x61<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp; },<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp; .len =3D 4<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br>
-+};<br>
-+<br>
-&nbsp;/** AES-CCM-192 Test Vectors */<br>
-&nbsp;static const struct aead_test_data ccm_test_case_192_1 =3D {<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .algo =3D RTE_CRYPTO_AEAD_=
-AES_CCM,<br>
-diff --git a/drivers/crypto/qat/qat_sym_session.c b/drivers/crypto/qat/qat_=
-sym_session.c<br>
-index 98ab82ffb3..2ba4fc0a3a 100644<br>
---- a/drivers/crypto/qat/qat_sym_session.c<br>
-+++ b/drivers/crypto/qat/qat_sym_session.c<br>
-@@ -2774,7 +2774,8 @@ static int qat_sym_cd_auth_set(struct qat_sym_session=
- *cdesc,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; hash-&gt;auth_counter.counter =3D 0;<br>
-&nbsp;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; hash_cd_ctrl-&gt;outer_prefix_sz =3D digestsize;<br>
--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp; auth_param-&gt;hash_state_sz =3D digestsize;<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp; auth_param-&gt;hash_state_sz =3D (RTE_ALIGN_CEIL(auth_param-&gt;=
-u2.aad_sz,<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ICP_QAT_HW_CCM_AAD_ALI=
-GNMENT) &gt;&gt; 3);<br>
-&nbsp;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; memcpy(cdesc-&gt;cd_cur_ptr + state1_size, authkey, a=
-uthkeylen);<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; break;<br>
--- <br>
-2.34.1<br>
-<br>
-</div>
-</span></font></div>
 </body>
 </html>
 
---_000_DS0PR11MB7458C0A1EE0B7FDDF2CD89CA81CFADS0PR11MB7458namp_--
+--_000_PH3PPF37F43E35DA61D29A2FF10D2EB8F0BFCCFAPH3PPF37F43E35D_--
