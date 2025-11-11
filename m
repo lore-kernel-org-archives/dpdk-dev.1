@@ -2,50 +2,84 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78B5BCCFA1A
-	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Nov 2025 16:39:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E574CCFA18
+	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Nov 2025 17:02:36 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9197D402B0;
-	Tue, 11 Nov 2025 17:39:43 +0100 (CET)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 557C440280
- for <dev@dpdk.org>; Tue, 11 Nov 2025 17:39:42 +0100 (CET)
-Received: from mail.maildlp.com (unknown [172.18.186.231])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4d5XLM14CyzHnGj5;
- Wed, 12 Nov 2025 00:39:23 +0800 (CST)
-Received: from frapema500001.china.huawei.com (unknown [7.182.19.243])
- by mail.maildlp.com (Postfix) with ESMTPS id 93C2B1402FB;
- Wed, 12 Nov 2025 00:39:40 +0800 (CST)
-Received: from frapema500003.china.huawei.com (7.182.19.114) by
- frapema500001.china.huawei.com (7.182.19.243) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 11 Nov 2025 17:39:40 +0100
-Received: from frapema500003.china.huawei.com ([7.182.19.114]) by
- frapema500003.china.huawei.com ([7.182.19.114]) with mapi id 15.02.1544.011;
- Tue, 11 Nov 2025 17:39:40 +0100
-From: Marat Khalili <marat.khalili@huawei.com>
-To: Jerin Jacob <jerinjacobk@gmail.com>
-CC: Konstantin Ananyev <konstantin.ananyev@huawei.com>, Stephen Hemminger
- <stephen@networkplumber.org>, "dev@dpdk.org" <dev@dpdk.org>
-Subject: RE: [PATCH 1/3] bpf: fix signed shift overflows in ARM JIT
-Thread-Topic: [PATCH 1/3] bpf: fix signed shift overflows in ARM JIT
-Thread-Index: AQHcUlcr87G/2RlxX0m9Gw4mx1QmwbTs8noAgABNFRCAAFwvgIAAEVuw
-Date: Tue, 11 Nov 2025 16:39:40 +0000
-Message-ID: <c1b06e0bf9084c93a52096ca5000290b@huawei.com>
-References: <20251110153046.63518-1-marat.khalili@huawei.com>
- <20251110153046.63518-2-marat.khalili@huawei.com>
- <CALBAE1O2VtvLV06-4hPCb5qHsRzqDM1iWWOaRcPKu9L-NMu2qg@mail.gmail.com>
- <e99e848a439e46c4bf9092c2c83de2a8@huawei.com>
- <CALBAE1OW-zbiJKQOgTOeEyE6R6CtGAfF__okaEypWMkt7hBENA@mail.gmail.com>
-In-Reply-To: <CALBAE1OW-zbiJKQOgTOeEyE6R6CtGAfF__okaEypWMkt7hBENA@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.206.137.70]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by mails.dpdk.org (Postfix) with ESMTP id 8C11D40280;
+	Tue, 11 Nov 2025 18:02:35 +0100 (CET)
+Received: from fhigh-b4-smtp.messagingengine.com
+ (fhigh-b4-smtp.messagingengine.com [202.12.124.155])
+ by mails.dpdk.org (Postfix) with ESMTP id 5AB884026D
+ for <dev@dpdk.org>; Tue, 11 Nov 2025 18:02:34 +0100 (CET)
+Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
+ by mailfhigh.stl.internal (Postfix) with ESMTP id 61FC57A0044;
+ Tue, 11 Nov 2025 12:02:33 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+ by phl-compute-06.internal (MEProxy); Tue, 11 Nov 2025 12:02:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1762880553;
+ x=1762966953; bh=LCXduk9WQZRLUZhY9SMZTO0nBKfzc+J7yUG8fQrsYgM=; b=
+ QkZ4mCwPBd6szSzJ/oAaP5PkP73sHYJbOfWKT0Q7H38yzaHqEI1dty1Rer2sh5Lp
+ kWReEfhhLLmhBlAsZWhwwuVNSZpwD5g/MhvcdHN106nLUn+HorFM08ak/0ggwo38
+ 5CiLQFLTYSHqDexzLlLQ9Vqkbe5xc8lAXolCZVIBndf4irV1pXgnNyBS8BYNvfp4
+ NLi7j3Nvn0i+kZEl8IQH1EqyEvExJdSYKYJRfLP2Zgos6j00I0r0LwnaL/Fq0qvY
+ 5agI9CObRQbZRJ06sZmgMgfw5vHukyrIlOBRFWU4gJeSgnEl5yakfRoREaBHtDQX
+ jiIuX6edu8A1vEhu5cGMcQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762880553; x=
+ 1762966953; bh=LCXduk9WQZRLUZhY9SMZTO0nBKfzc+J7yUG8fQrsYgM=; b=f
+ sq/OYuMTQeP4XpoMiNECbYRDa34+y1012qAJoSr64e3Tc5c/elelL6XMnEVIqL2z
+ l7JIW5TdL4/8F1Ea+SprDRpgWSghSE4T+E7cye6TneuiSRrkh+6uXpB8P0zZBQMW
+ husgxnin8WzyMp/xr6Zn7cMmAx0tOe8aPtD0Qe9sFyIPluhcMDL1YOnwakxZ7Gj7
+ K4b0QMJgtgTPydfx6ptGHg6aHqWP23DKOWfpK/ag93hicyYMi9GDiwsdQztQfoii
+ ridTpE34OhqesiP8yEoVMC80KbHaJ9GXTDOVrMfr5uJ6MN5Ohxm9a2BJbGxN5x5l
+ ks/S0NxSRFjwYOzGguvig==
+X-ME-Sender: <xms:J2wTadKAv1G-k8QCXta8hpmTuWPWuSqFl63bpra5cDBHID61E6Gbbg>
+ <xme:J2wTaQBsC9UVYbu3xUFTaw-Dw4M4V69PF8X6ZXehV8U_6MwP6KNEvyC2v0U-izyGc
+ 0OnbK4gYinkxbL1SQdu1Ejm_zr8sBtAR8HT24Miyp5OFMdLbfCi>
+X-ME-Received: <xmr:J2wTaeCO9ytj74rF4IvuwZDq9kGR6KqvDF5ZlZZCMZgHRIE3KA6GG926Sh5IIHvGKNsNODmAxglMM1dSvXHEu_H4wA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvtddujeegucetufdoteggodetrf
+ dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+ rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+ gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
+ ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
+ frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
+ uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeehpdhm
+ ohguvgepshhmthhpohhuthdprhgtphhtthhopehsthgvphhhvghnsehnvghtfihorhhkph
+ hluhhmsggvrhdrohhrghdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtphht
+ thhopegsrhhutggvrdhrihgthhgrrhgushhonhesihhnthgvlhdrtghomhdprhgtphhtth
+ hopedugehpfigtshgvuddvvdegsehuvghtphgvshhhrgifrghrrdgvughurdhpkhdprhgt
+ phhtthhopehrvghshhhmrgdrphgrthhtrghnsehinhhtvghlrdgtohhm
+X-ME-Proxy: <xmx:J2wTaaA_5p5WVuquXXi-7CxAKTeEM6rvz5D7boY4sCnsQuSGBC_8EQ>
+ <xmx:J2wTaRqUyCEFvmaG3YogMiyeBZP1-cHlYJD4AO1WyjwyGyPDXKolEA>
+ <xmx:J2wTacnEaq8v2tYUEyXj6r4aZEgQojkGfNaYy7w492kzq9fSo5OZQQ>
+ <xmx:J2wTaZynx6pM5E4YtTEOgMVDdQtdHBHf6HQsd7QXCYH18FPXkOqekQ>
+ <xmx:KWwTabVhUuJjZRtSjivhgFbHDL2w0G_i0MdVGqPk1K5fnuiLcAkZ2wOx>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 11 Nov 2025 12:02:30 -0500 (EST)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: dev@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>,
+ Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>,
+ Reshma Pattan <reshma.pattan@intel.com>
+Subject: Re: [PATCH v6 8/8] doc: update documentation on pdump library
+Date: Tue, 11 Nov 2025 18:02:29 +0100
+Message-ID: <4135902.zog1K27m0d@thomas>
+In-Reply-To: <20251104180927.403355-9-stephen@networkplumber.org>
+References: <20250811213632.16023-1-stephen@networkplumber.org>
+ <20251104180927.403355-1-stephen@networkplumber.org>
+ <20251104180927.403355-9-stephen@networkplumber.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -59,38 +93,17 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBKZXJpbiBKYWNvYiA8amVyaW5q
-YWNvYmtAZ21haWwuY29tPg0KPiBTZW50OiBUdWVzZGF5IDExIE5vdmVtYmVyIDIwMjUgMTY6MzEN
-Cj4gVG86IE1hcmF0IEtoYWxpbGkgPG1hcmF0LmtoYWxpbGlAaHVhd2VpLmNvbT4NCj4gQ2M6IEtv
-bnN0YW50aW4gQW5hbnlldiA8a29uc3RhbnRpbi5hbmFueWV2QGh1YXdlaS5jb20+OyBTdGVwaGVu
-IEhlbW1pbmdlciA8c3RlcGhlbkBuZXR3b3JrcGx1bWJlci5vcmc+Ow0KPiBkZXZAZHBkay5vcmcN
-Cj4gU3ViamVjdDogUmU6IFtQQVRDSCAxLzNdIGJwZjogZml4IHNpZ25lZCBzaGlmdCBvdmVyZmxv
-d3MgaW4gQVJNIEpJVA0KPiANCj4gT24gVHVlLCBOb3YgMTEsIDIwMjUgYXQgMzo0MOKAr1BNIE1h
-cmF0IEtoYWxpbGkgPG1hcmF0LmtoYWxpbGlAaHVhd2VpLmNvbT4gd3JvdGU6DQo+ID4NCj4gPiA+
-IE9uIE1vbiwgTm92IDEwLCAyMDI1IGF0IDk6MDHigK9QTSBNYXJhdCBLaGFsaWxpIDxtYXJhdC5r
-aGFsaWxpQGh1YXdlaS5jb20+IHdyb3RlOg0KPiA+ID4gPg0KPiA+ID4gPiBMZWZ0IHNoaWZ0cyBv
-ZiBpbnRlZ2VyIGxpdGVyYWxzIGFuZCBib29sIHZhbHVlcyBvdmVyd3JpdGluZyB0aGUgc2lnbiBi
-aXQNCj4gPiA+ID4gd2VyZSB1c2VkIG11bHRpcGxlIHRpbWVzIGluIGJwZl9qaXRfYXJtNjQuYy4g
-RS5nLjoNCj4gPiA+ID4NCj4gPiA+ID4gICAgIGluc24gPSAoISFpczY0KSA8PCAzMTsNCj4gPiA+
-ID4NCj4gPiA+ID4gd2hlcmUgaXM2NCBoYXMgdHlwZSBib29sIChkb3VibGUgYmFuZyBpcyBhIG5v
-LW9wIGhlcmUpLiBUaGUgb3BlcmFuZCBvZg0KPiA+ID4gPiBsZWZ0IHNoaWZ0IHdhcyBwcm9tb3Rl
-ZCB0byB0eXBlIGludCwgd2hpY2ggd2hlbiAzMi1iaXQgd2lkZSBjYW5ub3QNCj4gPiA+ID4gcmVw
-cmVzZW50IHRoZSByZXN1bHQuIFNpbWlsYXJseSBsaXRlcmFsIGludGVnZXJzIGhhdmUgaW50IHR5
-cGUgYnkNCj4gPiA+ID4gZGVmYXVsdC4gIFNhbml0aXplciBwcm9kdWNlZCB0aGUgZm9sbG93aW5n
-IGRpYWdub3N0aWMgZHVyaW5nIHJ1bnRpbWUNCj4gPiA+ID4gKGZvciB2YXJpb3VzIGxpbmVzKToN
-Cj4gPiA+ID4NCj4gPiA+ID4gICAgIGxpYi9icGYvYnBmX2ppdF9hcm02NC5jOjI0MToxODogcnVu
-dGltZSBlcnJvcjogbGVmdCBzaGlmdCBvZiAxIGJ5IDMxDQo+ID4gPiA+ICAgICBwbGFjZXMgY2Fu
-bm90IGJlIHJlcHJlc2VudGVkIGluIHR5cGUgJ2ludCcNCj4gPiA+DQo+ID4gPiBXb25kZXIgd2h5
-IG5vbmUgb2YgdGhlIHRlc3RzIGluIGFwcC90ZXN0L3Rlc3RfYnBmLmMgYWJsZSB0byBjYXRjaA0K
-PiA+ID4gdGhpcz8gVGhlIGdlbmVyYXRlZCBBUk0gb3Bjb2RlIGxvb2tzIE9LIChvdGhlcndpc2Ug
-dGVzdHMgd29udCBwYXNzKS4NCj4gPiA+IENvdWxkIHlvdSBjaGVjayB3aGF0IGlzIG1pc3Npbmcg
-aW4gdGhlIGFwcC90ZXN0L3Rlc3RfYnBmLmM/DQo+ID4NCj4gPiBUaGF0IHRlc3RzIGRvIHRyaWdn
-ZXIgaXQuDQo+ID4NCj4gPiBSVEU+PmJwZl9hdXRvdGVzdA0KPiA+IC4uLy4uL3NyYy9saWIvYnBm
-L2JwZl9qaXRfYXJtNjQuYzozMjA6MTg6IHJ1bnRpbWUgZXJyb3I6IGxlZnQgc2hpZnQgb2YgMSBi
-eSAzMSBwbGFjZXMgY2Fubm90IGJlDQo+IHJlcHJlc2VudGVkIGluIHR5cGUgJ2ludCcNCj4gDQo+
-IFRoaXMgaXMgd2hlbiBBU0FOIGlzIGVuYWJsZWQuIFJpZ2h0Pw0KDQpNb3JlIGxpa2VseSBVQlNB
-TiwgYnV0IHllcy4NCg0KPiBJcyBpdCByZWFsbHkgZ2VuZXJhdGluZyBCQUQNCj4gb3Bjb2RlKGku
-ZSBlbWl0ZXIgZ2VuZXJhdGluZyBiYWQgT1Bjb2RlKSBhbmQgdGVzdCBmYWlscz8NCg0KSWYgYWxs
-b3dlZCB0byBmaW5pc2ggdGhlIHRlc3QgZG9lcyBub3QgZmFpbC4NCkhvd2V2ZXIsIEkgaGF2ZSBu
-b3QgY29tcGFyZWQgRFBESyBvciBKSVQgY29tcGlsZWQgY29kZSB3aXRoIGFuZCB3aXRob3V0IGNo
-YW5nZXMuDQo=
+04/11/2025 19:07, Stephen Hemminger:
+> +DPDK provides the following utilities that use this library:
+> +
+> +* ``app/dpdk-dumpcap``
+> +* ``app/pdump``
+
+Should be
+
+* ``dpdk-dumpcap``
+* ``dpdk-pdump``
+
+Will fix while merging.
+
+
