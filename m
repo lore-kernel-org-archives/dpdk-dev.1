@@ -2,29 +2,29 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 172D5CCFA18
-	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Nov 2025 18:37:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA449CD13CF
+	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Nov 2025 18:37:41 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2E59E40670;
-	Tue, 11 Nov 2025 19:37:31 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 22DC14067A;
+	Tue, 11 Nov 2025 19:37:32 +0100 (CET)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
- by mails.dpdk.org (Postfix) with ESMTP id 1B8CD40280;
+ by mails.dpdk.org (Postfix) with ESMTP id 9BBC54026D;
  Tue, 11 Nov 2025 19:37:28 +0100 (CET)
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
- by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D06FE1515;
- Tue, 11 Nov 2025 10:37:19 -0800 (PST)
+ by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3E2D21655;
+ Tue, 11 Nov 2025 10:37:20 -0800 (PST)
 Received: from ampere-altra-2-1.usa.arm.com (ampere-altra-2-1.usa.arm.com
  [10.118.91.158])
- by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 55ACD3F63F;
+ by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id BAC063F63F;
  Tue, 11 Nov 2025 10:37:27 -0800 (PST)
 From: Wathsala Vithanage <wathsala.vithanage@arm.com>
 To: Honnappa Nagarahalli <honnappa.nagarahalli@arm.com>,
  Konstantin Ananyev <konstantin.ananyev@huawei.com>
 Cc: dev@dpdk.org, Wathsala Vithanage <wathsala.vithanage@arm.com>,
  stable@dpdk.org, Ola Liljedahl <ola.liljedahl@arm.com>
-Subject: [PATCH v5 2/3] ring: establish a safe partial order in hts-ring
-Date: Tue, 11 Nov 2025 18:37:18 +0000
-Message-ID: <20251111183720.833295-2-wathsala.vithanage@arm.com>
+Subject: [PATCH v5 3/3] ring: establish a safe partial order in rts-ring
+Date: Tue, 11 Nov 2025 18:37:19 +0000
+Message-ID: <20251111183720.833295-3-wathsala.vithanage@arm.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251111183720.833295-1-wathsala.vithanage@arm.com>
 References: <20251111183720.833295-1-wathsala.vithanage@arm.com>
@@ -45,104 +45,117 @@ Errors-To: dev-bounces@dpdk.org
 
 Enforce a safe partial order by making the CAS and the preceding head
 load use release and acquire semantics. This creates a pairwise
-happens-before relationship between threads of the same role.
+happens-before relationship between threads of the same kind
+(i.e. between consumers or between producers).
 
-Combine the two load-acquire operations of ht.raw, which were previously
-split across the two paths of a conditional branch, into
-__rte_ring_hts_head_wait. This simplifies the branching logic and makes
+Combine the two load-acquire operations of ht->head.raw, which were
+previously split across the two paths of a conditional branch, into
+__rte_ring_rts_head_wait. This simplifies the branching logic and makes
 the synchronization behavior easier to understand.
 
 Add comments to explain synchronizes with edges in detail.
 
-Fixes: 1cc363b8ce06e ("ring: introduce HTS ring mode")
+Fixes: e6ba4731c0f3a ("ring: introduce RTS ring mode")
 Cc: stable@dpdk.org
 
 Signed-off-by: Wathsala Vithanage <wathsala.vithanage@arm.com>
 Signed-off-by: Ola Liljedahl <ola.liljedahl@arm.com>
 ---
- lib/ring/rte_ring_hts_elem_pvt.h | 66 ++++++++++++++++++++++++--------
- 1 file changed, 49 insertions(+), 17 deletions(-)
+ lib/ring/rte_ring_rts_elem_pvt.h | 67 +++++++++++++++++++++++---------
+ 1 file changed, 49 insertions(+), 18 deletions(-)
 
-diff --git a/lib/ring/rte_ring_hts_elem_pvt.h b/lib/ring/rte_ring_hts_elem_pvt.h
-index e2b82dd1e6..a01089d15d 100644
---- a/lib/ring/rte_ring_hts_elem_pvt.h
-+++ b/lib/ring/rte_ring_hts_elem_pvt.h
-@@ -32,22 +32,40 @@ __rte_ring_hts_update_tail(struct rte_ring_hts_headtail *ht, uint32_t old_tail,
- 	RTE_SET_USED(enqueue);
+diff --git a/lib/ring/rte_ring_rts_elem_pvt.h b/lib/ring/rte_ring_rts_elem_pvt.h
+index 96825931f8..0280369b21 100644
+--- a/lib/ring/rte_ring_rts_elem_pvt.h
++++ b/lib/ring/rte_ring_rts_elem_pvt.h
+@@ -31,6 +31,17 @@ __rte_ring_rts_update_tail(struct rte_ring_rts_headtail *ht)
+ 	 * might preceded us, then don't update tail with new value.
+ 	 */
  
- 	tail = old_tail + num;
-+
 +	/*
-+	 * R0: Release the tail update. Establishes a synchronization edge with
-+	 * the load-acquire at A1. This release ensures that all updates to *ht
-+	 * and the ring array made by this thread become visible to the opposing
-+	 * thread once the tail value written here is observed.
++	 * A0 = {A0.a, A0.b}: Synchronizes with the CAS at R0.
++	 * The CAS at R0 in same typed thread establishes a happens-before
++	 * relationship with this load acquire. Ensures that this thread
++	 * observes the same or later values for h.raw/h.val.cnt
++	 * observed by the other thread when it updated ht->tail.raw.
++	 * If not, ht->tail.raw may get updated out of sync (e.g. getting
++	 * updated to the same value twice). A0.a makes sure this condition
++	 * holds when CAS succeeds and A0.b when it fails.
 +	 */
- 	rte_atomic_store_explicit(&ht->ht.pos.tail, tail, rte_memory_order_release);
- }
++	/* A0.a */
+ 	ot.raw = rte_atomic_load_explicit(&ht->tail.raw, rte_memory_order_acquire);
  
- /**
-- * @internal waits till tail will become equal to head.
-- * Means no writer/reader is active for that ring.
-- * Suppose to work as serialization point.
-+ * @internal
-+ * Waits until the tail becomes equal to the head.
-+ * This indicates that another thread has finished its transaction, and there
-+ * is a chance that we could be the next writer or reader in line.
-+ *
-+ * Returns ht.raw at this point. The value may be imprecise, since another
-+ * thread might change the state before we observe ht.raw, but that does not
-+ * matter. The function __rte_ring_hts_move_head() can detect and recall this
-+ * function when it reaches the linearization point (CAS).
+ 	do {
+@@ -40,7 +51,11 @@ __rte_ring_rts_update_tail(struct rte_ring_rts_headtail *ht)
+ 		nt.raw = ot.raw;
+ 		if (++nt.val.cnt == h.val.cnt)
+ 			nt.val.pos = h.val.pos;
+-
++	/*
++	 * R0: Synchronizes with A2 of a different thread of the opposite type and A0.b
++	 * of a different thread of the same type.
++	 */
++	/* A0.b */
+ 	} while (rte_atomic_compare_exchange_strong_explicit(&ht->tail.raw,
+ 			(uint64_t *)(uintptr_t)&ot.raw, nt.raw,
+ 			rte_memory_order_release, rte_memory_order_acquire) == 0);
+@@ -50,18 +65,21 @@ __rte_ring_rts_update_tail(struct rte_ring_rts_headtail *ht)
+  * @internal This function waits till head/tail distance wouldn't
+  * exceed pre-defined max value.
   */
 -static __rte_always_inline void
-+static __rte_always_inline union __rte_ring_hts_pos
- __rte_ring_hts_head_wait(const struct rte_ring_hts_headtail *ht,
--		union __rte_ring_hts_pos *p)
++static __rte_always_inline union __rte_ring_rts_poscnt
+ __rte_ring_rts_head_wait(const struct rte_ring_rts_headtail *ht,
+-	union __rte_ring_rts_poscnt *h)
 +			 rte_memory_order memorder)
  {
--	while (p->pos.head != p->pos.tail) {
-+	union __rte_ring_hts_pos p;
-+	p.raw = rte_atomic_load_explicit(&ht->ht.raw, memorder);
-+
-+	while (p.pos.head != p.pos.tail) {
+-	uint32_t max;
++	union __rte_ring_rts_poscnt h;
++	uint32_t max = ht->htd_max;
+ 
+-	max = ht->htd_max;
++	h.raw = rte_atomic_load_explicit(&ht->head.raw, memorder);
+ 
+-	while (h->val.pos - ht->tail.val.pos > max) {
++	while (h.val.pos - ht->tail.val.pos > max) {
  		rte_pause();
--		p->raw = rte_atomic_load_explicit(&ht->ht.raw, rte_memory_order_acquire);
-+		p.raw = rte_atomic_load_explicit(&ht->ht.raw, memorder);
+-		h->raw = rte_atomic_load_explicit(&ht->head.raw, rte_memory_order_acquire);
++		h.raw = rte_atomic_load_explicit(&ht->head.raw, memorder);
  	}
 +
-+	return p;
++	return h;
  }
  
  /**
-@@ -80,11 +98,9 @@ __rte_ring_hts_move_head(struct rte_ring_hts_headtail *d,
+@@ -94,12 +112,9 @@ __rte_ring_rts_move_head(struct rte_ring_rts_headtail *d,
  	enum rte_ring_queue_behavior behavior, uint32_t *old_head,
  	uint32_t *entries)
  {
 -	uint32_t n;
 +	uint32_t n, stail;
- 	union __rte_ring_hts_pos np, op;
+ 	union __rte_ring_rts_poscnt nh, oh;
  
--	op.raw = rte_atomic_load_explicit(&d->ht.raw, rte_memory_order_acquire);
+-	oh.raw = rte_atomic_load_explicit(&d->head.raw,
+-			rte_memory_order_acquire);
 -
  	do {
  		/* Reset n to the initial burst count */
  		n = num;
-@@ -94,7 +110,20 @@ __rte_ring_hts_move_head(struct rte_ring_hts_headtail *d,
- 		 * make sure that we read prod head/tail *before*
+@@ -109,7 +124,20 @@ __rte_ring_rts_move_head(struct rte_ring_rts_headtail *d,
+ 		 * make sure that we read prod head *before*
  		 * reading cons tail.
  		 */
--		__rte_ring_hts_head_wait(d, &op);
+-		__rte_ring_rts_head_wait(d, &oh);
 +		/*
-+		 * A0: Synchronizes with the CAS at R1.
++		 * A1 Synchronizes with the CAS at R1.
 +		 * Establishes a happens-before relationship with a thread of the same
 +		 * type that released the ht.raw, ensuring this thread observes all of
 +		 * its memory effects needed to maintain a safe partial order.
 +		 */
-+		op = __rte_ring_hts_head_wait(d, rte_memory_order_acquire);
++		oh = __rte_ring_rts_head_wait(d, rte_memory_order_acquire);
 +
 +		/*
-+		 * A1: Establish a synchronizes-with edge using a store-release at R0.
++		 * A2: Establish a synchronizes-with edge using a store-release at R0.
 +		 * This ensures that all memory effects from the preceding opposing
 +		 * thread are observed.
 +		 */
@@ -150,37 +163,37 @@ index e2b82dd1e6..a01089d15d 100644
  
  		/*
  		 *  The subtraction is done between two unsigned 32bits value
-@@ -102,7 +131,7 @@ __rte_ring_hts_move_head(struct rte_ring_hts_headtail *d,
+@@ -117,7 +145,7 @@ __rte_ring_rts_move_head(struct rte_ring_rts_headtail *d,
  		 * *old_head > cons_tail). So 'entries' is always between 0
  		 * and capacity (which is < size).
  		 */
--		*entries = capacity + s->tail - op.pos.head;
-+		*entries = capacity + stail - op.pos.head;
+-		*entries = capacity + s->tail - oh.val.pos;
++		*entries = capacity + stail - oh.val.pos;
  
  		/* check that we have enough room in ring */
  		if (unlikely(n > *entries))
-@@ -116,14 +145,17 @@ __rte_ring_hts_move_head(struct rte_ring_hts_headtail *d,
- 		np.pos.head = op.pos.head + n;
+@@ -131,14 +159,17 @@ __rte_ring_rts_move_head(struct rte_ring_rts_headtail *d,
+ 		nh.val.cnt = oh.val.cnt + 1;
  
  	/*
 -	 * this CAS(ACQUIRE, ACQUIRE) serves as a hoist barrier to prevent:
 -	 *  - OOO reads of cons tail value
--	 *  - OOO copy of elems from the ring
+-	 *  - OOO copy of elems to the ring
 +	 * R1: Establishes a synchronizes-with edge with the load-acquire
-+	 * of ht.raw at A0. This makes sure that the store-release to the
-+	 * tail by this thread, if it was of the opposite type, becomes
++	 * of ht.raw at A1. Ensures that the store-release to the tail by
++	 * this thread, if it was of the opposite type, becomes
 +	 * visible to another thread of the current type. That thread will
 +	 * then observe the updates in the same order, keeping a safe
 +	 * partial order.
  	 */
- 	} while (rte_atomic_compare_exchange_strong_explicit(&d->ht.raw,
- 			(uint64_t *)(uintptr_t)&op.raw, np.raw,
+ 	} while (rte_atomic_compare_exchange_strong_explicit(&d->head.raw,
+ 			(uint64_t *)(uintptr_t)&oh.raw, nh.raw,
 -			rte_memory_order_acquire,
 -			rte_memory_order_acquire) == 0);
 +			rte_memory_order_release,
 +			rte_memory_order_relaxed) == 0);
  
- 	*old_head = op.pos.head;
+ 	*old_head = oh.val.pos;
  	return n;
 -- 
 2.43.0
