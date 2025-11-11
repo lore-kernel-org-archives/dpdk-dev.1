@@ -2,34 +2,86 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA449CD13CF
-	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Nov 2025 18:37:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50E6FCCFA18
+	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Nov 2025 18:43:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 22DC14067A;
-	Tue, 11 Nov 2025 19:37:32 +0100 (CET)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
- by mails.dpdk.org (Postfix) with ESMTP id 9BBC54026D;
- Tue, 11 Nov 2025 19:37:28 +0100 (CET)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
- by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3E2D21655;
- Tue, 11 Nov 2025 10:37:20 -0800 (PST)
-Received: from ampere-altra-2-1.usa.arm.com (ampere-altra-2-1.usa.arm.com
- [10.118.91.158])
- by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id BAC063F63F;
- Tue, 11 Nov 2025 10:37:27 -0800 (PST)
-From: Wathsala Vithanage <wathsala.vithanage@arm.com>
-To: Honnappa Nagarahalli <honnappa.nagarahalli@arm.com>,
- Konstantin Ananyev <konstantin.ananyev@huawei.com>
-Cc: dev@dpdk.org, Wathsala Vithanage <wathsala.vithanage@arm.com>,
- stable@dpdk.org, Ola Liljedahl <ola.liljedahl@arm.com>
-Subject: [PATCH v5 3/3] ring: establish a safe partial order in rts-ring
-Date: Tue, 11 Nov 2025 18:37:19 +0000
-Message-ID: <20251111183720.833295-3-wathsala.vithanage@arm.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251111183720.833295-1-wathsala.vithanage@arm.com>
-References: <20251111183720.833295-1-wathsala.vithanage@arm.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 5643F40280;
+	Tue, 11 Nov 2025 19:43:15 +0100 (CET)
+Received: from fhigh-b5-smtp.messagingengine.com
+ (fhigh-b5-smtp.messagingengine.com [202.12.124.156])
+ by mails.dpdk.org (Postfix) with ESMTP id D77EC4026D;
+ Tue, 11 Nov 2025 19:43:13 +0100 (CET)
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+ by mailfhigh.stl.internal (Postfix) with ESMTP id CEE677A0195;
+ Tue, 11 Nov 2025 13:43:12 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+ by phl-compute-03.internal (MEProxy); Tue, 11 Nov 2025 13:43:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1762886592;
+ x=1762972992; bh=dItH1feMFKfeVzk7k7YgQnJH0ahqBbqmrBVT4GwPD08=; b=
+ c9QrDVIazIo2IVjdCG1fTlLioKK2my3XOn1WGnY4Q8Sk8DRxNRBA6E9Cc8JhXfKa
+ vr2jFO9z0jwao1ikW23oI6yfsIm0hhAIyixhf13/GDTuhpKfIx3eaoZeAEw6S6JZ
+ u24JSHQu4VbwPt+odbEkpBMIaYFpXQNCDxE8crFq3BqWfYmEYNuMzl4tegZi4cwM
+ ks8E4oRm8cMMv4zYoBHT0eEqQaLYJSHrS0kW0GLiyTffEQYV6Qwh4053xCVL+aWo
+ QcLLpbZrfnOd0ie/9NkvzYzhbDHduBz4TAVHsYZF9kU+TvE/l4JROnVqU5Zq+arX
+ Pf1C/jMtbRwNtE1ZvZnI3w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762886592; x=
+ 1762972992; bh=dItH1feMFKfeVzk7k7YgQnJH0ahqBbqmrBVT4GwPD08=; b=y
+ sz5KAI1c//jgVrsBtYghes40Y0rYXoKALm7qL3oGWHDafyjXsBIbn+tS/qVKw6TM
+ nxISCCnwrDC6EOEvOGeFm6wx9H3ZDXOCrDVp3knvRq5nzv8lvkmMS17xPEMhUU2a
+ 2Vy+qCYMgjTsKtryo7Nzln6w9AwEgvffNP6imMbgknXj2ELyAe858zc5yBKLF7oB
+ CYLpy+9YNLw/xXfB0lWeHDiSRY+Xak4+SqE18tj2lK+p5rs47Q3y8LT38Eo/tGMf
+ Ht6zoutCshyZ3B14YYEWOZWSKFdA6Y36jceAxN9y6X7G5LbeWxQRt7xIwbx6G+RM
+ cvGbjD8pfdJmWQlj7LLHg==
+X-ME-Sender: <xms:wIMTaUCeGIg2Vwwims2m-I7Jjs5Trq86neE6Dhtv-dXhuwIbGEP3Ig>
+ <xme:wIMTaQlB9sVAq5WtOVIMzysFa86KAyxrbW8FAxqVg6j5tp--OrVPSErBbToZwy3fX
+ 1PkzPOnIPDgQwiqgBqLqI5uPntRyC-oALrev_Aas_aruE8OA8vg8Q>
+X-ME-Received: <xmr:wIMTaXcibr7ksdcjxPfb-q3sMmFDDiEolXxRPokFyuMEiOISxizdCnkPwZKbr33fmwsWEaqTZ22U8SA0u921jkrFNw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvtdduleegucetufdoteggodetrf
+ dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+ rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+ gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
+ ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
+ frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
+ uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeekpdhm
+ ohguvgepshhmthhpohhuthdprhgtphhtthhopehjvghrihhnjhesmhgrrhhvvghllhdrtg
+ homhdprhgtphhtthhopegvrhhikhdrghdrtggrrhhrihhllhhosehinhhtvghlrdgtohhm
+ pdhrtghpthhtohepshgrtghhihhnrdhsrgigvghnrgesnhigphdrtghomhdprhgtphhtth
+ hopehhvghmrghnthdrrghgrhgrfigrlhesnhigphdrtghomhdprhgtphhtthhopehpsghh
+ rghgrghvrghtuhhlrgesmhgrrhhvvghllhdrtghomhdprhgtphhtthhopehsthgrsghlvg
+ esughpughkrdhorhhgpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghpthht
+ ohepuggrvhhiugdrmhgrrhgthhgrnhgusehrvgguhhgrthdrtghomh
+X-ME-Proxy: <xmx:wIMTacSR-I0-cnxKtLcD2jtGkHtdcny0NAHUkiLS8d9haGK1Dq-Hyg>
+ <xmx:wIMTaWvmCLJYygdJRoPcQBg6ajZEFVgppNO3K2CckM-P1wGf8eyTFQ>
+ <xmx:wIMTaVdbW3Ze7w9E6n-Xjoak048JL_aBWTZfBU4UUD4iJLjN573mcA>
+ <xmx:wIMTaYacaEdhqxKh30zz-Yx_EAvEIuIUGPPuKejA50YTuQf-NhSakA>
+ <xmx:wIMTaSvlxp_-KVJIKUn2O0sFZygymErKWSgTyqwWhiiyLAl_TrufvUJX>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 11 Nov 2025 13:43:11 -0500 (EST)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Jerin Jacob <jerinj@marvell.com>
+Cc: Erik Gabriel Carrillo <erik.g.carrillo@intel.com>,
+ Sachin Saxena <sachin.saxena@nxp.com>,
+ Hemant Agrawal <hemant.agrawal@nxp.com>,
+ Pavan Nikhilesh <pbhagavatula@marvell.com>, stable@dpdk.org, dev@dpdk.org,
+ david.marchand@redhat.com
+Subject: Re: [dpdk-dev] [PATCH] doc: fix doxygen errors with v1.15.0
+Date: Tue, 11 Nov 2025 19:43:09 +0100
+Message-ID: <2386076.axiByQ7kbq@thomas>
+In-Reply-To: <20251028141159.177727-1-jerinj@marvell.com>
+References: <20251028141159.177727-1-jerinj@marvell.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -43,158 +95,19 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Enforce a safe partial order by making the CAS and the preceding head
-load use release and acquire semantics. This creates a pairwise
-happens-before relationship between threads of the same kind
-(i.e. between consumers or between producers).
+> Doxygen detects valid errors. Fixing the same.
+> 
+> Example:
+> lib/eventdev/rte_event_timer_adapter.h:720: error: Reached end of file
+> while still searching closing '`' of a verbatim block starting at line
+> 569 (warning treated as error, aborting now)
+> 
+> Fixes: a6562f6d6f8e ("eventdev: introduce event timer adapter")
+> Cc: stable@dpdk.org
+> 
+> Signed-off-by: Jerin Jacob <jerinj@marvell.com>
 
-Combine the two load-acquire operations of ht->head.raw, which were
-previously split across the two paths of a conditional branch, into
-__rte_ring_rts_head_wait. This simplifies the branching logic and makes
-the synchronization behavior easier to understand.
+Applied, thanks.
 
-Add comments to explain synchronizes with edges in detail.
 
-Fixes: e6ba4731c0f3a ("ring: introduce RTS ring mode")
-Cc: stable@dpdk.org
-
-Signed-off-by: Wathsala Vithanage <wathsala.vithanage@arm.com>
-Signed-off-by: Ola Liljedahl <ola.liljedahl@arm.com>
----
- lib/ring/rte_ring_rts_elem_pvt.h | 67 +++++++++++++++++++++++---------
- 1 file changed, 49 insertions(+), 18 deletions(-)
-
-diff --git a/lib/ring/rte_ring_rts_elem_pvt.h b/lib/ring/rte_ring_rts_elem_pvt.h
-index 96825931f8..0280369b21 100644
---- a/lib/ring/rte_ring_rts_elem_pvt.h
-+++ b/lib/ring/rte_ring_rts_elem_pvt.h
-@@ -31,6 +31,17 @@ __rte_ring_rts_update_tail(struct rte_ring_rts_headtail *ht)
- 	 * might preceded us, then don't update tail with new value.
- 	 */
- 
-+	/*
-+	 * A0 = {A0.a, A0.b}: Synchronizes with the CAS at R0.
-+	 * The CAS at R0 in same typed thread establishes a happens-before
-+	 * relationship with this load acquire. Ensures that this thread
-+	 * observes the same or later values for h.raw/h.val.cnt
-+	 * observed by the other thread when it updated ht->tail.raw.
-+	 * If not, ht->tail.raw may get updated out of sync (e.g. getting
-+	 * updated to the same value twice). A0.a makes sure this condition
-+	 * holds when CAS succeeds and A0.b when it fails.
-+	 */
-+	/* A0.a */
- 	ot.raw = rte_atomic_load_explicit(&ht->tail.raw, rte_memory_order_acquire);
- 
- 	do {
-@@ -40,7 +51,11 @@ __rte_ring_rts_update_tail(struct rte_ring_rts_headtail *ht)
- 		nt.raw = ot.raw;
- 		if (++nt.val.cnt == h.val.cnt)
- 			nt.val.pos = h.val.pos;
--
-+	/*
-+	 * R0: Synchronizes with A2 of a different thread of the opposite type and A0.b
-+	 * of a different thread of the same type.
-+	 */
-+	/* A0.b */
- 	} while (rte_atomic_compare_exchange_strong_explicit(&ht->tail.raw,
- 			(uint64_t *)(uintptr_t)&ot.raw, nt.raw,
- 			rte_memory_order_release, rte_memory_order_acquire) == 0);
-@@ -50,18 +65,21 @@ __rte_ring_rts_update_tail(struct rte_ring_rts_headtail *ht)
-  * @internal This function waits till head/tail distance wouldn't
-  * exceed pre-defined max value.
-  */
--static __rte_always_inline void
-+static __rte_always_inline union __rte_ring_rts_poscnt
- __rte_ring_rts_head_wait(const struct rte_ring_rts_headtail *ht,
--	union __rte_ring_rts_poscnt *h)
-+			 rte_memory_order memorder)
- {
--	uint32_t max;
-+	union __rte_ring_rts_poscnt h;
-+	uint32_t max = ht->htd_max;
- 
--	max = ht->htd_max;
-+	h.raw = rte_atomic_load_explicit(&ht->head.raw, memorder);
- 
--	while (h->val.pos - ht->tail.val.pos > max) {
-+	while (h.val.pos - ht->tail.val.pos > max) {
- 		rte_pause();
--		h->raw = rte_atomic_load_explicit(&ht->head.raw, rte_memory_order_acquire);
-+		h.raw = rte_atomic_load_explicit(&ht->head.raw, memorder);
- 	}
-+
-+	return h;
- }
- 
- /**
-@@ -94,12 +112,9 @@ __rte_ring_rts_move_head(struct rte_ring_rts_headtail *d,
- 	enum rte_ring_queue_behavior behavior, uint32_t *old_head,
- 	uint32_t *entries)
- {
--	uint32_t n;
-+	uint32_t n, stail;
- 	union __rte_ring_rts_poscnt nh, oh;
- 
--	oh.raw = rte_atomic_load_explicit(&d->head.raw,
--			rte_memory_order_acquire);
--
- 	do {
- 		/* Reset n to the initial burst count */
- 		n = num;
-@@ -109,7 +124,20 @@ __rte_ring_rts_move_head(struct rte_ring_rts_headtail *d,
- 		 * make sure that we read prod head *before*
- 		 * reading cons tail.
- 		 */
--		__rte_ring_rts_head_wait(d, &oh);
-+		/*
-+		 * A1 Synchronizes with the CAS at R1.
-+		 * Establishes a happens-before relationship with a thread of the same
-+		 * type that released the ht.raw, ensuring this thread observes all of
-+		 * its memory effects needed to maintain a safe partial order.
-+		 */
-+		oh = __rte_ring_rts_head_wait(d, rte_memory_order_acquire);
-+
-+		/*
-+		 * A2: Establish a synchronizes-with edge using a store-release at R0.
-+		 * This ensures that all memory effects from the preceding opposing
-+		 * thread are observed.
-+		 */
-+		stail = rte_atomic_load_explicit(&s->tail, rte_memory_order_acquire);
- 
- 		/*
- 		 *  The subtraction is done between two unsigned 32bits value
-@@ -117,7 +145,7 @@ __rte_ring_rts_move_head(struct rte_ring_rts_headtail *d,
- 		 * *old_head > cons_tail). So 'entries' is always between 0
- 		 * and capacity (which is < size).
- 		 */
--		*entries = capacity + s->tail - oh.val.pos;
-+		*entries = capacity + stail - oh.val.pos;
- 
- 		/* check that we have enough room in ring */
- 		if (unlikely(n > *entries))
-@@ -131,14 +159,17 @@ __rte_ring_rts_move_head(struct rte_ring_rts_headtail *d,
- 		nh.val.cnt = oh.val.cnt + 1;
- 
- 	/*
--	 * this CAS(ACQUIRE, ACQUIRE) serves as a hoist barrier to prevent:
--	 *  - OOO reads of cons tail value
--	 *  - OOO copy of elems to the ring
-+	 * R1: Establishes a synchronizes-with edge with the load-acquire
-+	 * of ht.raw at A1. Ensures that the store-release to the tail by
-+	 * this thread, if it was of the opposite type, becomes
-+	 * visible to another thread of the current type. That thread will
-+	 * then observe the updates in the same order, keeping a safe
-+	 * partial order.
- 	 */
- 	} while (rte_atomic_compare_exchange_strong_explicit(&d->head.raw,
- 			(uint64_t *)(uintptr_t)&oh.raw, nh.raw,
--			rte_memory_order_acquire,
--			rte_memory_order_acquire) == 0);
-+			rte_memory_order_release,
-+			rte_memory_order_relaxed) == 0);
- 
- 	*old_head = oh.val.pos;
- 	return n;
--- 
-2.43.0
 
