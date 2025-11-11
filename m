@@ -2,71 +2,76 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AA6ECCFA1A
-	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Nov 2025 22:19:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B93CCCFA1A
+	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Nov 2025 22:19:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5EB9D40281;
-	Tue, 11 Nov 2025 23:19:02 +0100 (CET)
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com
- [209.85.210.169])
- by mails.dpdk.org (Postfix) with ESMTP id 20A4840280
- for <dev@dpdk.org>; Tue, 11 Nov 2025 23:19:01 +0100 (CET)
-Received: by mail-pf1-f169.google.com with SMTP id
- d2e1a72fcca58-7ad1cd0db3bso163351b3a.1
- for <dev@dpdk.org>; Tue, 11 Nov 2025 14:19:01 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 5A152402DC;
+	Tue, 11 Nov 2025 23:19:05 +0100 (CET)
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com
+ [209.85.216.43]) by mails.dpdk.org (Postfix) with ESMTP id 8B3A9402D0
+ for <dev@dpdk.org>; Tue, 11 Nov 2025 23:19:02 +0100 (CET)
+Received: by mail-pj1-f43.google.com with SMTP id
+ 98e67ed59e1d1-343dd5aa6e7so233119a91.0
+ for <dev@dpdk.org>; Tue, 11 Nov 2025 14:19:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1762899540;
- x=1763504340; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1762899542;
+ x=1763504342; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=YMLGSCeL/4Vj/4SNS2ooDLsLggqe36Nzo64cXi8c6Ls=;
- b=MvkarMgbqADDm8Ng39ctFGg02+rV0sB78VSqREXhxvxLiFdruGZ+blTgLTyagD5gkz
- G8JExGl9K6VjLJ/LkngslLmpVK53bL0aK4g1z7HRSi/kZOoOIwZPOrG4O0KLgNpg265C
- 7iMxfNBUJNXbxUzgBvHomqECc8yvg0VHsar5ljOUy+iSU5zIPl8mb7Unsd0Nq5lY3YVH
- GfaQVjDH6VCD6IyCoO9F7bvR4Mf+ZOCdGJxH1xVziYH5saW1vLjB7Kw0P5YO21KeQ3cN
- Fhf1AeVxQorasxConB5uXjuD+Bei6qVhuvKEZGXDfkNzJ30mcxIKJarwCDp1U01OV50/
- 1n4Q==
+ bh=aAWLX0Q20WkWDTKYitZlfjmbgJj4Qvp4ftVfvvb4FgQ=;
+ b=lGSkStr6tsvAZrdbn95I/kGOvT3MSJARTvExbME2vpzJBViWHlf46H3icsB4CQ1PH0
+ BYMentQFBSq/G7fB+9MFpi+3KmplOIOYGyWKTtTEtxDxZZYWfjVqGDOUsdHdsIQX37yw
+ C5mqIciNJI0SfWITr4hVa72QYRJchGoyTlGuTu3TmN6DqjGkHxaVX4R4xvvOS7EvQLQe
+ U4OUI92tPhD00+aHuEwmCom8pWo/OpIttrgajVMMZcudGnY1xiyGr4iv27sn226bOrVv
+ Mnvv74iOqebE/mKw87qmXvsbwBqRFr2gWpb870H7FJs7btngZKYEqqtjO4ZPNRXDdxJC
+ KWiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1762899540; x=1763504340;
+ d=1e100.net; s=20230601; t=1762899542; x=1763504342;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=YMLGSCeL/4Vj/4SNS2ooDLsLggqe36Nzo64cXi8c6Ls=;
- b=GcDKVLZ8sAAEX3zhmB9bXuygE0SJKHDuaZ0Dmx9YLuaoCFqN+aAM0Cwzy+tg0NJ2Qo
- /eGPtpfzxsaoW2xUNFVi7lGsNPW4Ca0cVeTXy1ZScAgD3xJOVFaY7JkF9TZppgcNy//r
- 9luzwS//LJ6jZ+ztk5/V4hEuFA3lVzC5bnCbrh6+DI5EzgK84ekSnCbHAj3SHE2PhVfE
- 4L+G5v9saYslrc9oIYJUVdYudlgBMBMvFW020gAM10KA/DNO21EbTn36p2H1J+sWJ4Qz
- MALAQ6m6QCUFvnCzCCX6S3EVRdak2RhmeiwD18SW+sssAKHld3oz0Q8Vd8EwRFsIal92
- FQSQ==
-X-Gm-Message-State: AOJu0YyDjB0if7+M42W4dnbohQgl6wCOqe5SMajf1Z9ctiez3rMa28MO
- u1Rs63kkII1ZGqISQrSGxI37aiIac0PcvzqC0S1HAZL1zC3gRBXxFIHszDZFADGD6LSkj3aCjiW
- 5aNUx
-X-Gm-Gg: ASbGncsTkSx79XotBMj4/k966jVZy+O3ekUk3pXsfuihz6sKtHYHEKdxM0n3ClzZfMB
- gpvVTFN7BpjrdwcP+YOapfzy+bD7Kk5xOVAS6TwKuiCbR+WjxHwiK94eVvzgiN/YttT7Pm5i6BI
- C0L6dDjZEHYv/UXiWdle+SpIxs1rcdH5cUCkTMUSB7QCRbV1QUMJlpOCyVZ/cf5EL4KTDGLH+HG
- V7Dufkhe3h8CPjNOl9386oPdpHL8C+qidH5OhZubp8Bz/Zes7K03W/PV24TBXo7OCyqT0eWmcOq
- zmvCi8auIEZQhR5HkxO612pIlktxMWTgydI2bQePmUz4Kic+KKm1/yNexy5II5JUSIY8WAAjRks
- 9PQY9rt06fJlGZthybxzEVKIqi8/emh3NmNjLZLKP3mi3OaDYqMuxOuwHpTwe4zg18z/gKCpxOB
- ezdunu2Ux9jj9IACkJ3AKzr8S2Z3DUnxQcoVjU0ss=
-X-Google-Smtp-Source: AGHT+IGJ5ouyr2wHvZTcKm+Ak6aNQYTeeohHOArPc1UCk0tHdscA4EfVHTj4HGjYNqxtpTcxuGpaXQ==
-X-Received: by 2002:a17:90b:4c43:b0:343:d70e:bef0 with SMTP id
- 98e67ed59e1d1-343dde8c6b2mr861341a91.21.1762899540163; 
- Tue, 11 Nov 2025 14:19:00 -0800 (PST)
+ bh=aAWLX0Q20WkWDTKYitZlfjmbgJj4Qvp4ftVfvvb4FgQ=;
+ b=P8gEPdULbYvpeVQ1onju45i+97hgjk/g5YHj5vLR/lY+QVnJztq324Clwbsr+sXByC
+ HGTTPumVvZAGb5RZdw6nVdsdcMCZ4NALeiK2KFzzUkhBrMPPBLj5rJO2+TJ/poVSprDo
+ zKjomdQbQSH3hshDltjF70dkEPd8IX1STh5lH/Uu+2Wdh9fVX+408QWALAVBIUCWQwA9
+ JXSDGQHxjJSJACeQqaSZc0De6OsGinjE8W2/idZd8D/ThbMIYgABJR5PnsMf/oEM0R1V
+ oFptH0khXP7AzFJYnN4LpFhbiOYG/O+miEPwdOblvleoIXoJCZa39ESNTqoQeZt8JMX1
+ u7nw==
+X-Gm-Message-State: AOJu0YzVCCBcBEm/AZNxENqUBikkAqOaxZ+/JTtOvE1CyZlVkfFgi0Ew
+ 2vKd3SNGiYma5SgLSYp2UFhitd7peQ6e/xA9FXtXj2d+UHuzMeWIDrLZ3PErGYjy4cZRzEGTX14
+ 2qDeR
+X-Gm-Gg: ASbGncvXCxRt94Q3qmRZZcvEZMer/Dijvf3EdkQx/eb2aUDHhlSVLtTmOsa3qhTK+KI
+ OS9Pfx6cuOdtBCdOo1eLkUGSOGLpo1WUDLdAScj3PVwQEOe3pB6e6r2h2jyj9zwgUuziGMHAqs4
+ LlQxfhEMMTzwGrTlFw3D2t4ZlwJmgSuxeLt2cc07u0ylnRwYgZg8wBakifWdhiotG5/RrBv7K5J
+ TIcGMz0n5UJI0ia/XbKFddeuTC8NtO7JSb1Fe8Fff9Cg9i4IMd93Zj24QOo37Pz8u92HSsXU5G9
+ I8DjJ8D6l8bTNTyrpJpdbjDQyyh5igcAxE1QqpyVbRl+87ZjUQoty9NsCDLEdxKSdEVe+yYnvzz
+ MA6hR3NomDbrIV/wTnbgjuufc2vW0c/7DlPd8Gsvi1FHnyXsDmLkefUeoxb98p/wk09IlN47DUK
+ ngGLGo86knqupBebU7f7d4ptUZjRZoNRtiuqb5t2A6RKUgHfMKkQ==
+X-Google-Smtp-Source: AGHT+IG9k3f8FkzgkAsmW5nIw61tPOKmI76jhWVirWTaI/Ym4t6JYp3JwDbmEBONdJ1vWfEm7TfvUA==
+X-Received: by 2002:a17:90b:4a91:b0:341:761c:3330 with SMTP id
+ 98e67ed59e1d1-343dde8addfmr1040753a91.23.1762899541618; 
+ Tue, 11 Nov 2025 14:19:01 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-343e072e5a5sm157001a91.11.2025.11.11.14.18.59
+ 98e67ed59e1d1-343e072e5a5sm157001a91.11.2025.11.11.14.19.00
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 11 Nov 2025 14:18:59 -0800 (PST)
+ Tue, 11 Nov 2025 14:19:01 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v2 0/7] fix format-truncation warnings
-Date: Tue, 11 Nov 2025 14:17:17 -0800
-Message-ID: <20251111221857.443752-1-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
+ Byron Marohn <byron.marohn@intel.com>,
+ Yipeng Wang <yipeng1.wang@intel.com>,
+ Saikrishna Edupuganti <saikrishna.edupuganti@intel.com>,
+ Pablo de Lara <pablo.de.lara.guarch@intel.com>,
+ Christian Maciocco <christian.maciocco@intel.com>
+Subject: [PATCH v2 1/7] examples/server_node_efd: fix format overflow
+Date: Tue, 11 Nov 2025 14:17:18 -0800
+Message-ID: <20251111221857.443752-2-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251110182209.104087-1-stephen@networkplumber.org>
+In-Reply-To: <20251111221857.443752-1-stephen@networkplumber.org>
 References: <20251110182209.104087-1-stephen@networkplumber.org>
+ <20251111221857.443752-1-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -82,30 +87,52 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Enable and fix format-truncation warnings in examples and tests.
+If format-truncation is enabled, the compiler detects a string overflow
+since the snprintf() is putting ethernet address and new line
+in buffer only sized for the address.
 
-v2 - fix build warnings (more fixes needed)
-   - do test as well (could be separate series?)
+Since get_rx_queue_name() is used to create a ring name.
+The buffer should be sized to be a valid ring name.
+This fixes some format-overflow warnings and also corrects
+for future errors.
 
-Stephen Hemminger (7):
-  examples/server_node_efd: fix format overflow
-  examples/vdpa: fix format overflow warning
-  examples/ip_reassembly: add check before formatting name
-  examples: re-enable format truncation warning
-  test: refactor file prefix arg handling
-  test: increase size of memzone name
-  test: re-enable format-truncation warnings
+Fixes: 39aad0e88c58 ("examples/flow_distributor: new example to demonstrate EFD")
+Cc: stable@dpdk.org
 
- app/test/meson.build                       |   1 -
- app/test/test_eal_flags.c                  | 161 ++++++++-------------
- app/test/test_memzone.c                    |   2 +-
- examples/ip_reassembly/main.c              |   7 +
- examples/meson.build                       |   5 +-
- examples/server_node_efd/efd_server/main.c |   2 +-
- examples/server_node_efd/shared/common.h   |   3 +-
- examples/vdpa/main.c                       |   9 +-
- 8 files changed, 77 insertions(+), 113 deletions(-)
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+---
+ examples/server_node_efd/efd_server/main.c | 2 +-
+ examples/server_node_efd/shared/common.h   | 3 ++-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
+diff --git a/examples/server_node_efd/efd_server/main.c b/examples/server_node_efd/efd_server/main.c
+index 75ff0ea532..62c3f4a16d 100644
+--- a/examples/server_node_efd/efd_server/main.c
++++ b/examples/server_node_efd/efd_server/main.c
+@@ -68,7 +68,7 @@ static const char *
+ get_printable_mac_addr(uint16_t port)
+ {
+ 	static const char err_address[] = "00:00:00:00:00:00";
+-	static char addresses[RTE_MAX_ETHPORTS][sizeof(err_address)];
++	static char addresses[RTE_MAX_ETHPORTS][RTE_ETHER_ADDR_FMT_SIZE + 1];
+ 	struct rte_ether_addr mac;
+ 	int ret;
+ 
+diff --git a/examples/server_node_efd/shared/common.h b/examples/server_node_efd/shared/common.h
+index e1ab7e62b7..6726e2031e 100644
+--- a/examples/server_node_efd/shared/common.h
++++ b/examples/server_node_efd/shared/common.h
+@@ -58,8 +58,9 @@ get_rx_queue_name(unsigned int id)
+ 	/*
+ 	 * Buffer for return value. Size calculated by %u being replaced
+ 	 * by maximum 3 digits (plus an extra byte for safety)
++	 * Used as ring name, so upper limit is ring name size.
+ 	 */
+-	static char buffer[sizeof(MP_NODE_RXQ_NAME) + 2];
++	static char buffer[RTE_RING_NAMESIZE];
+ 
+ 	snprintf(buffer, sizeof(buffer), MP_NODE_RXQ_NAME, id);
+ 	return buffer;
 -- 
 2.51.0
 
