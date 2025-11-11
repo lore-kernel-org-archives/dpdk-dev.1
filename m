@@ -2,54 +2,83 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C7D2CCFA13
-	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Nov 2025 02:10:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75179CCF9E3
+	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Nov 2025 03:30:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 74E544026D;
-	Tue, 11 Nov 2025 03:10:44 +0100 (CET)
-Received: from smtpbgeu2.qq.com (smtpbgeu2.qq.com [18.194.254.142])
- by mails.dpdk.org (Postfix) with ESMTP id 8A2324026A
- for <dev@dpdk.org>; Tue, 11 Nov 2025 03:10:42 +0100 (CET)
-X-QQ-mid: zesmtpgz3t1762827036tb8ea124c
-X-QQ-Originating-IP: Ja7r3QTKD1jiBVGGh5fNcSUVpOIuRs5LvtittX8sqAs=
-Received: from w-MS-7E16.trustnetic.com ( [125.120.180.10])
- by bizesmtp.qq.com (ESMTP) with 
- id ; Tue, 11 Nov 2025 10:10:32 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 12659123216012917558
-EX-QQ-RecipientCnt: 3
-From: Jiawen Wu <jiawenwu@trustnetic.com>
-To: dev@dpdk.org
-Cc: zaiyuwang@trustnetic.com,
-	Jiawen Wu <jiawenwu@trustnetic.com>
-Subject: [PATCH] doc: update txgbe device arguments
-Date: Tue, 11 Nov 2025 10:10:30 +0800
-Message-ID: <2C5EFCCEEBEF9094+20251111021031.59350-1-jiawenwu@trustnetic.com>
-X-Mailer: git-send-email 2.48.1
+	by mails.dpdk.org (Postfix) with ESMTP id 416654026D;
+	Tue, 11 Nov 2025 04:30:42 +0100 (CET)
+Received: from fhigh-b4-smtp.messagingengine.com
+ (fhigh-b4-smtp.messagingengine.com [202.12.124.155])
+ by mails.dpdk.org (Postfix) with ESMTP id 750074026A;
+ Tue, 11 Nov 2025 04:30:40 +0100 (CET)
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+ by mailfhigh.stl.internal (Postfix) with ESMTP id 999407A01B8;
+ Mon, 10 Nov 2025 22:30:39 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+ by phl-compute-03.internal (MEProxy); Mon, 10 Nov 2025 22:30:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1762831839;
+ x=1762918239; bh=7a+NeO5kNYfa2sjSZHfZ67sDv5IEinHYWncW/LG1inI=; b=
+ ZEIqrQB83+IG47O+NYnSvfWRWQbjOhVrx58X94XBjtR2zGtNyWU16uUfI2wExoyo
+ rl/a+/pPqTF5jhodxhNelSd9aniu2WZfxj5uIDqtfh3/eltmOA6Hm6HAAX3Y55rU
+ 4jCeNtXfM/L974GNhUt2doUa/cc9sjng03Oqz36hSaQPHXbXMtWdN8t6m82pTUhV
+ +Au5tH0zhrgoA7tAEMLNIpeA8YKvTJloiGsTXgSlLdjFL+7dk/rGhVQjACqj6MNu
+ Ve96OiXO72puR+Hi9OXiUVa4yqbbA6Ty9qG5UwsmVI8e7Q3kAPhNCVgYgyCqflZJ
+ uESGoFri/G3QiMXhDxr0SA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762831839; x=
+ 1762918239; bh=7a+NeO5kNYfa2sjSZHfZ67sDv5IEinHYWncW/LG1inI=; b=b
+ 99OgKK6pOlhmqvMM+MetMYuEquw6Gffpfy8AVccslxNjQ+NUE+bPgNv3KKVB6MQ9
+ yxqBjvCLc6Pa86GnWw4mJ+PtzLZSD/BownuUiB3EHCaagTClL5YgY3/VyeBt/vNH
+ 1vVSoUcFnSd/6AKBNxbABnRpcO3Xlna96b1dgOh2eQE87ZB4FB5zCBJZcmwqoPTF
+ h9qnEl7pHhC3hNCt8qfyq/Tk/Xvx5TEclTRt7x0R4AXkNjeD5HS2KJf6ZfJDs/3D
+ w/hpy7AN9pla5FTsoUWxRy3LLpahzTYY+0ajI3oJMWJyHGJ3Ns4Zhd6WR9ez9xo1
+ 2z9jDPu7o3WHYRaCiCUfA==
+X-ME-Sender: <xms:3q0SaX4Mb0TxoDtpj8DdPrRH-CYG40ErAE_ta_Svn0sAQd5Jcv9PYw>
+ <xme:3q0SaYXTP_-V6HfOxfB8dIZypVVlgLDxQdVTaBUwu8Y68KMubIpIR1iA5yTt6CVBH
+ oBiELWOAb2UirgGao5AEZE_8t0zOJ1--Dfe0t7sG-eFzUdnmzx1BQ>
+X-ME-Received: <xmr:3q0SaR-hveJ1HNyopHim-ElSHuYoPz8DJO6Zk13qocIZLoc3UwoBiKhIDhL4-KIpbP081PXqQ8nXRsNWQQzKJ9gmZA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvtddtuddvucetufdoteggodetrf
+ dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+ rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+ gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
+ ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
+ frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
+ uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeehpdhm
+ ohguvgepshhmthhpohhuthdprhgtphhtthhopehjihgrfigvnhifuhesthhruhhsthhnvg
+ htihgtrdgtohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghpthhtohep
+ shhtrggslhgvseguphgukhdrohhrghdprhgtphhtthhopeiirghihihufigrnhhgsehtrh
+ hushhtnhgvthhitgdrtghomhdprhgtphhtthhopehsthgvphhhvghnsehnvghtfihorhhk
+ phhluhhmsggvrhdrohhrgh
+X-ME-Proxy: <xmx:3q0SaclaQG_bTydiPGEOaMqPuTT4opi0KlZCY_SssR2ow6MoXRdG1A>
+ <xmx:3q0SaXXQVdLU3ZJUUCU3LxvDqc7zftGx3JtS4qhU46G0NoY3irPyoA>
+ <xmx:3q0SaREKUM9eAtVf4TJzAR3Ywl7AMIGvqtWzTZX4Ye7mgtoQ-9NHuw>
+ <xmx:3q0SaTdM4Wghq_78TBFpUHNKkCxbUJRMWD3OKPYfOvdA87TszPgbzg>
+ <xmx:360SaaLO43aXVyWrt7xip3trDuoOnEacERLKUK0Y6vHCDz7aKwj-Vj9L>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 10 Nov 2025 22:30:37 -0500 (EST)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Jiawen Wu <jiawenwu@trustnetic.com>
+Cc: dev@dpdk.org, stable@dpdk.org, zaiyuwang@trustnetic.com,
+ 'Stephen Hemminger' <stephen@networkplumber.org>
+Subject: Re: [PATCH 08/19] net/txgbe: add device arguments for FDIR
+Date: Tue, 11 Nov 2025 04:30:36 +0100
+Message-ID: <2766798.62m94kTkzf@thomas>
+In-Reply-To: <006c01dc52ad$be5c92b0$3b15b810$@trustnetic.com>
+References: <20251027031542.10512-1-jiawenwu@trustnetic.com>
+ <006b01dc52ad$033b4cb0$09b1e610$@trustnetic.com>
+ <006c01dc52ad$be5c92b0$3b15b810$@trustnetic.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpgz:trustnetic.com:qybglogicsvrgz:qybglogicsvrgz6b-0
-X-QQ-XMAILINFO: NBplAH1p/X/dcQPeegZ5TER+G/TlLEQAlgBsWMdRy9i6PjWAqfhvGZAm
- 7fu1liWv2ZeVoZU7dg0SQeUXlOTU1mIGqqXUS720iVXALP+rIfOFpU9mKcbfgFDgBrwUbNJ
- Fbr0xLD9Ezz/7lc5BPg0aRh4AOpEt+3g5vV8eDWw8oEJS/TBLWJFpE3xMEXN4qBWp9/RNpM
- Ol5a9C/4Q1hB7fOdzxyRHH8mwcWcn8fDScVniNVRk4ZIZaJnls99ZB6Bp5SDdWDutXKD/SM
- xO6bxC+Sfwq+m0fGGtRrjVv4Fkx/avSdHkzy55VtK/4O5WDZePhgrX7RFqkHVMfyVYlNHFw
- W0uypSalB1w0+rwFXn/Ni76KJwtzPsiaX1zgSQrF+pWsYAdhxrjYmdbeyuY/ctQjVgxnQdI
- lXvi/i7OW7JHv3kZPmyAASARFqnWyLLToTg67Uc6ABer5mh36Ii7MxR8VhTkHMox06FX6do
- SQ3c547Igt77jIG9Y3TpKXrZw+89O3byNEISaVpXqo+XZfupF3PJcUgBDh8ozgFXxJM8od3
- pzCSU+2c4TugyM9sKNfCEXgI+StectTLf5ZbkPxHwEJ7tEtWD0k/3YurZuUZuJUUIRsG9ZS
- v0znITcUHWPDXJ7S/DEfQymuvANXHsdJDy0YuEU+nY90aiR94LOdPYjlCmAVj8UIipY5cJh
- HZyqWU/HHP5s1NZu9vBZ6JCBqpHDvIK+jrhh2ENDvQ1ftg1gHhGlRUDDr9fHPIbubdYAR3j
- 7UiKGb1SANjQdhVBRvSBcxUuABEHsOxeUqnL0eTg0cRx6sjqKr8HRk1MKc30xSrhg27M1u0
- O9URaT1KacUFCk83v/RBaNFXJoUzzvNjS7zI5F2dEVwXiAzTsMydpZWayi0c8TkakODYUTH
- rD5AKmnCEupCe9s42waVUqz7UIrQN4B5hBX/l6PwbRmYCJ/vGNNnxX/Rq1waqZQb5tvyvjK
- WrvHO+9trrWedJDNxVTw1yIOdkzYH3MwaYqtsi4nukLkijHAYIZJAIRUG1KP0uuwz4JKYbf
- AH/bdQi8xd3XkoaDRFYeevvnvAEy7InApcQjjHCyGWaG0KEEDS7m4KUbHnhhv/uR3WwmS1Y
- w==
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
-X-QQ-RECHKSPAM: 0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -63,35 +92,28 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add new device arguments "pkt-filter-size" and "pkt-filter-drop-queue"
-in txgbe driver.
+11/11/2025 02:51, Jiawen Wu:
+> > > > Since FDIR configuration is deprecated in generic ethdev device
+> > > > configuration and move it into the device private data, there is no way
+> > > > to configure the FDIR parameters.
+> > > >
+> > > > Two device arguments "pkt-filter-size" and "pkt-filter-drop-queue" are
+> > > > added, they just continue to use the previous naming convention.
+> > > >
+> > > > Fixes: 5007ac13189d ("ethdev: remove deprecated Flow Director configuration")
+> > > > Cc: stable@dpdk.org
+> > > > Signed-off-by: Jiawen Wu <jiawenwu@trustnetic.com>
+> > > > ---
+> > > >  drivers/net/txgbe/base/txgbe_type.h |  4 ++++
+> > > >  drivers/net/txgbe/txgbe_ethdev.c    | 20 ++++++++++++++++++--
+> > > >  2 files changed, 22 insertions(+), 2 deletions(-)
+> > >
+> > > You forgot to update the documentation.
+> > 
+> > I'll add it in v2 set, thanks.
+> 
+> Set v1 has been  merged, I'll separately provide a patch for it.
 
-Signed-off-by: Jiawen Wu <jiawenwu@trustnetic.com>
----
- doc/guides/nics/txgbe.rst | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+conclusion for future patches: don't wait for adding doc ;)
 
-diff --git a/doc/guides/nics/txgbe.rst b/doc/guides/nics/txgbe.rst
-index 953a43b139..ffd1e35085 100644
---- a/doc/guides/nics/txgbe.rst
-+++ b/doc/guides/nics/txgbe.rst
-@@ -147,6 +147,16 @@ Please note that following ``devargs`` are only set for backplane NICs.
-   PHY parameter used for user debugging. Setting other values to
-   take effect requires setting the ``ffe_set``.
- 
-+- ``pkt-filter-size`` (default **0**)
-+
-+  Memory allocation for the flow director filter.
-+  Default 0 for 64K mode, set 1 for 128K mode, set 2 for 256K mode.
-+
-+ ``pkt-filter-drop-queue`` (default **127**)
-+
-+  The drop queue number for packets that match the drop rule in flow
-+  director. Valid values are from 0 to 127.
-+
- Please note that following ``devargs`` are only set for Amber-Lite NICs.
- 
- - ``tx_headwb`` (default **1**)
--- 
-2.48.1
 
