@@ -2,48 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E574CCFA18
-	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Nov 2025 17:02:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95634CCFA18
+	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Nov 2025 17:04:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8C11D40280;
-	Tue, 11 Nov 2025 18:02:35 +0100 (CET)
-Received: from fhigh-b4-smtp.messagingengine.com
- (fhigh-b4-smtp.messagingengine.com [202.12.124.155])
- by mails.dpdk.org (Postfix) with ESMTP id 5AB884026D
- for <dev@dpdk.org>; Tue, 11 Nov 2025 18:02:34 +0100 (CET)
-Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
- by mailfhigh.stl.internal (Postfix) with ESMTP id 61FC57A0044;
- Tue, 11 Nov 2025 12:02:33 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
- by phl-compute-06.internal (MEProxy); Tue, 11 Nov 2025 12:02:33 -0500
+	by mails.dpdk.org (Postfix) with ESMTP id C3AA340280;
+	Tue, 11 Nov 2025 18:04:25 +0100 (CET)
+Received: from fout-b4-smtp.messagingengine.com
+ (fout-b4-smtp.messagingengine.com [202.12.124.147])
+ by mails.dpdk.org (Postfix) with ESMTP id 3AC6C4026D
+ for <dev@dpdk.org>; Tue, 11 Nov 2025 18:04:25 +0100 (CET)
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+ by mailfout.stl.internal (Postfix) with ESMTP id 8776F1D0016F;
+ Tue, 11 Nov 2025 12:04:24 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+ by phl-compute-03.internal (MEProxy); Tue, 11 Nov 2025 12:04:24 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm3; t=1762880553;
- x=1762966953; bh=LCXduk9WQZRLUZhY9SMZTO0nBKfzc+J7yUG8fQrsYgM=; b=
- QkZ4mCwPBd6szSzJ/oAaP5PkP73sHYJbOfWKT0Q7H38yzaHqEI1dty1Rer2sh5Lp
- kWReEfhhLLmhBlAsZWhwwuVNSZpwD5g/MhvcdHN106nLUn+HorFM08ak/0ggwo38
- 5CiLQFLTYSHqDexzLlLQ9Vqkbe5xc8lAXolCZVIBndf4irV1pXgnNyBS8BYNvfp4
- NLi7j3Nvn0i+kZEl8IQH1EqyEvExJdSYKYJRfLP2Zgos6j00I0r0LwnaL/Fq0qvY
- 5agI9CObRQbZRJ06sZmgMgfw5vHukyrIlOBRFWU4gJeSgnEl5yakfRoREaBHtDQX
- jiIuX6edu8A1vEhu5cGMcQ==
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1762880664;
+ x=1762967064; bh=s7WXM10gu0tu89QzYJPnC0eWLlHMaYIIl3bcgGq2ZOI=; b=
+ kWY8XNvQq9affrHXpwqHVRbXl473XxYwRRc2tCTB5updugvE3eIvMbHQwKc0tqVz
+ 4j+38ldaHEofnrpLz+9nQiQABM9LVLrrHLjriLRbeJCu/et56mxr2gPYGmN9jeaT
+ CYGmEW18Oz9hPTvGtra9c67D36lVc/Bf35BLPgp09+4wzeBkoM2nOfCfScxXvrVF
+ CFGXDJqCNtbdHMcIsgkWC1qIbm18ljNJkxlhpG/C65JSHSdL0K0fn4yW4FpDwx/k
+ 0kpgiL0Sg6mOwFFhugaMLHaOUwOV+1mzvH7bGIk5Ei9sO80wPL0N/gatB2kcN/CU
+ dfAKZxdALoy9hh6YS+gNYw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762880553; x=
- 1762966953; bh=LCXduk9WQZRLUZhY9SMZTO0nBKfzc+J7yUG8fQrsYgM=; b=f
- sq/OYuMTQeP4XpoMiNECbYRDa34+y1012qAJoSr64e3Tc5c/elelL6XMnEVIqL2z
- l7JIW5TdL4/8F1Ea+SprDRpgWSghSE4T+E7cye6TneuiSRrkh+6uXpB8P0zZBQMW
- husgxnin8WzyMp/xr6Zn7cMmAx0tOe8aPtD0Qe9sFyIPluhcMDL1YOnwakxZ7Gj7
- K4b0QMJgtgTPydfx6ptGHg6aHqWP23DKOWfpK/ag93hicyYMi9GDiwsdQztQfoii
- ridTpE34OhqesiP8yEoVMC80KbHaJ9GXTDOVrMfr5uJ6MN5Ohxm9a2BJbGxN5x5l
- ks/S0NxSRFjwYOzGguvig==
-X-ME-Sender: <xms:J2wTadKAv1G-k8QCXta8hpmTuWPWuSqFl63bpra5cDBHID61E6Gbbg>
- <xme:J2wTaQBsC9UVYbu3xUFTaw-Dw4M4V69PF8X6ZXehV8U_6MwP6KNEvyC2v0U-izyGc
- 0OnbK4gYinkxbL1SQdu1Ejm_zr8sBtAR8HT24Miyp5OFMdLbfCi>
-X-ME-Received: <xmr:J2wTaeCO9ytj74rF4IvuwZDq9kGR6KqvDF5ZlZZCMZgHRIE3KA6GG926Sh5IIHvGKNsNODmAxglMM1dSvXHEu_H4wA>
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762880664; x=
+ 1762967064; bh=s7WXM10gu0tu89QzYJPnC0eWLlHMaYIIl3bcgGq2ZOI=; b=F
+ ra9osJnII8eUsZsifrz424nxlh2w5iGWBjDbXL0looqy6mpIOlnvH5a/OIgQzO8C
+ Aiu6UB7qNOp4GT2JfHGXb0og37G4mt+3dYBaB4a4f2cQE0p4wXTqxnTxatZcNig1
+ BMeaG48NLK6JfdopUyzbFJNGZNc9tTcMrzjXPNO9e66wS28IszH5KmejfgJu/da7
+ JhF03gftnyppUqL1RmJFYoNMoSHmPEKwHquoHqf75peYNVQe1zKA90Wqr6Qpj5Q5
+ liZvDV+wcJn5mwPR4ClbdjlmGEkN5YIB45P63MXqfYiVOuCUK5/eSRTSlIYXqlUc
+ JxdTgkrkyeQTCAMKkRiaA==
+X-ME-Sender: <xms:l2wTaZdVOcjIzxqU1_9BigqAx-R8QVfCUSX0ZTCZx9JWTgxZeCgDTQ>
+ <xme:l2wTaTgILl4rFRe7eqrnt1fAMaaTPwxXE_paFJpl1BbXJf-xRuNsEgAdRVbN7TJAG
+ y36zVznB1236AlJcuwznkkSM9UonlTySGMVa7N9GQ1QflBH4WynUw>
+X-ME-Received: <xmr:l2wTaVTZmqfQ9zRxjQPuHaWyTP-LmUgSkFjKNUk4g3dGwELNtIZCk-R2RcJ_O0Cd03_VXvJoboTU3LEpPMkOY6CUmw>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvtddujeegucetufdoteggodetrf
  dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
  rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
@@ -51,32 +51,26 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvtddujeegucetufdote
  ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
  frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
  uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeehpdhm
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopedvpdhm
  ohguvgepshhmthhpohhuthdprhgtphhtthhopehsthgvphhhvghnsehnvghtfihorhhkph
- hluhhmsggvrhdrohhrghdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtphht
- thhopegsrhhutggvrdhrihgthhgrrhgushhonhesihhnthgvlhdrtghomhdprhgtphhtth
- hopedugehpfigtshgvuddvvdegsehuvghtphgvshhhrgifrghrrdgvughurdhpkhdprhgt
- phhtthhopehrvghshhhmrgdrphgrthhtrghnsehinhhtvghlrdgtohhm
-X-ME-Proxy: <xmx:J2wTaaA_5p5WVuquXXi-7CxAKTeEM6rvz5D7boY4sCnsQuSGBC_8EQ>
- <xmx:J2wTaRqUyCEFvmaG3YogMiyeBZP1-cHlYJD4AO1WyjwyGyPDXKolEA>
- <xmx:J2wTacnEaq8v2tYUEyXj6r4aZEgQojkGfNaYy7w492kzq9fSo5OZQQ>
- <xmx:J2wTaZynx6pM5E4YtTEOgMVDdQtdHBHf6HQsd7QXCYH18FPXkOqekQ>
- <xmx:KWwTabVhUuJjZRtSjivhgFbHDL2w0G_i0MdVGqPk1K5fnuiLcAkZ2wOx>
+ hluhhmsggvrhdrohhrghdprhgtphhtthhopeguvghvseguphgukhdrohhrgh
+X-ME-Proxy: <xmx:l2wTaUygM4Y5zcILkAiaUkUntIS5Y9-d8WrmbJ1HBl4k0NnISW4vkQ>
+ <xmx:l2wTaYd-WGhFD_r3jIA9fNBA9rYUN3DEPw0FzFYt09OgZaXKPOwqfQ>
+ <xmx:l2wTaYJyqc3g-xHCbJH0ring_pjmW3pKFdhpUXKlbTbmcpgxAZ1Yaw>
+ <xmx:l2wTaRELpQONy83D5Tqs-q8MGffU6v1d_UygW0DBlbnRokr5-tfo_g>
+ <xmx:mGwTac_PX78sTezM7fzRrUZcBYSfmCchVUZ82R_yrUwS4TETAHMvx_4e>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 11 Nov 2025 12:02:30 -0500 (EST)
+ 11 Nov 2025 12:04:23 -0500 (EST)
 From: Thomas Monjalon <thomas@monjalon.net>
 To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: dev@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>,
- Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>,
- Reshma Pattan <reshma.pattan@intel.com>
-Subject: Re: [PATCH v6 8/8] doc: update documentation on pdump library
-Date: Tue, 11 Nov 2025 18:02:29 +0100
-Message-ID: <4135902.zog1K27m0d@thomas>
-In-Reply-To: <20251104180927.403355-9-stephen@networkplumber.org>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH v6 0/8] packet capture bugfixes and secondary support
+Date: Tue, 11 Nov 2025 18:04:22 +0100
+Message-ID: <4071013.yMk1gmxOD6@thomas>
+In-Reply-To: <20251104180927.403355-1-stephen@networkplumber.org>
 References: <20250811213632.16023-1-stephen@networkplumber.org>
  <20251104180927.403355-1-stephen@networkplumber.org>
- <20251104180927.403355-9-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -93,17 +87,16 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-04/11/2025 19:07, Stephen Hemminger:
-> +DPDK provides the following utilities that use this library:
-> +
-> +* ``app/dpdk-dumpcap``
-> +* ``app/pdump``
+> Stephen Hemminger (8):
+>   dumpcap: handle primary process exit
+>   pdump: handle primary process exit
+>   pdump: fix races in callbacks
+>   dumpcap: handle pdump requests from primary
+>   pdump: handle pdump requests from primary
+>   pdump: forward callback enable to secondary
+>   pdump: remove use of VLA
+>   doc: update documentation on pdump library
 
-Should be
-
-* ``dpdk-dumpcap``
-* ``dpdk-pdump``
-
-Will fix while merging.
+Applied, thanks.
 
 
