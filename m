@@ -2,77 +2,78 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E6E7CCFA1A
-	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Nov 2025 17:44:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77236CCFA1A
+	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Nov 2025 18:14:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C689E40280;
-	Tue, 11 Nov 2025 18:44:14 +0100 (CET)
-Received: from fhigh-b4-smtp.messagingengine.com
- (fhigh-b4-smtp.messagingengine.com [202.12.124.155])
- by mails.dpdk.org (Postfix) with ESMTP id E9C964026D;
- Tue, 11 Nov 2025 18:44:12 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id CA12240651;
+	Tue, 11 Nov 2025 19:14:35 +0100 (CET)
+Received: from fout-b5-smtp.messagingengine.com
+ (fout-b5-smtp.messagingengine.com [202.12.124.148])
+ by mails.dpdk.org (Postfix) with ESMTP id 849954026D;
+ Tue, 11 Nov 2025 19:14:34 +0100 (CET)
 Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
- by mailfhigh.stl.internal (Postfix) with ESMTP id 230667A0182;
- Tue, 11 Nov 2025 12:44:12 -0500 (EST)
+ by mailfout.stl.internal (Postfix) with ESMTP id 894A61D000CD;
+ Tue, 11 Nov 2025 13:14:33 -0500 (EST)
 Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-02.internal (MEProxy); Tue, 11 Nov 2025 12:44:12 -0500
+ by phl-compute-02.internal (MEProxy); Tue, 11 Nov 2025 13:14:33 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm3; t=1762883051;
- x=1762969451; bh=FhkmhAPKwQ12w+L8KmsMZw3iwNp/Uf5njeons3k+/9o=; b=
- MCcrajwVFBwPbvSYZG1eEUIbo0NbLSlLpINJhRUXAx2KrXjxAy2DfE7/2tL4QObj
- v1pGZwa5EPsDBw7gMdKhuxkVFoQegaZOd2cmcjf63WvMCrNmf+OjCph5/ypNKG1Z
- Ve6eS6bLDHuQtaj92ELiEH/xEBEsBORFpvUWHYPJyT/hYC+VsRMpjndNST+lHspV
- lo1lX/m3xDAAzuAUHHqTQW5R5WyPkOx3Drd5V6qdbzqusXPtwUyBPOvNXymftp7Z
- U/9GD9p2oCQnv8tFgtL7RC6/E/Sbr4Rne0hDvMzE1Sl9eyziLPdgtASbWdU4SGdY
- yiPIOdfAL+jk36T25Rt4Fg==
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1762884873;
+ x=1762971273; bh=sd6eO4ONnUKoCipZnI1Fo9/aEGAHsVuy8wuwJgRqVUE=; b=
+ iTKM8qW6YmGkulfwe1Er3NjvIvmjaWLVW8ZHC4oVEjH6Ox11ej4Qkv1w5NqGdt4C
+ p5ePbQHMN882B+L3BastBru4JvArNp9DV+PNZN0XqqkYw7uqZdKq5FlTEaLLupI5
+ I4IMJvx3ZsCCd7f/pjy1El6mIl+FTOKVRcIWqdnwAQwOd2Pz/gU1Wh+HNqWcupsm
+ ew7i/iAugXOdgntd2xKAcOuMNTOW4CKoTTWKCIkbC1ttq+wUsYCB5MQi7LBi9Uqw
+ LYgk5ZYt17wPG6ZCdHt40YK5Qdbb6SDBcIot/klPaklILi7qo/YKFOcvlmI64/ae
+ +TK7SqZfgnuAYPUlQC8zsQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762883051; x=
- 1762969451; bh=FhkmhAPKwQ12w+L8KmsMZw3iwNp/Uf5njeons3k+/9o=; b=o
- Vxbz2hEZXUjeiqFtAX+TrrZWtx3bx/UXHf2Ugl+KZDSHzHPKA1UHdNW+RfL2BBM6
- eOL4r/H7uqJMETrDBqjhkBh3VhIhlIO1cujnHAg1hUF6ULjcOpcTmoJVHSy56Fsx
- bh7G85CAjV6VrUtoaJpwpTm12z/BBOdjb+04FL+Eqw46FfpHfW/UNn9egjT03wIs
- TA5KxPF784RMx29K9n0PLP2jkKNnkBJMJE+uXGAPzn9xw6AMWtA0mwRNTnEvoW4I
- D0v6hIWXNnoPjN46jkEVXKBOSMpT5F31AbvK4u2xMRjVYovZtS8M3kMDyds3vQr3
- kxSxptXZ3svtB+r1NBEhQ==
-X-ME-Sender: <xms:63UTadDsn9E4xXq1M09fop_34fpLoOPXrzKztakaLhRssRg2MyjyNw>
- <xme:63UTabo1LKo-PpFfXvTVziHOBiwAxpwXpEwrmB9oJwOj1YgjZBbI3fnjoFtrmT0Em
- WkyQ5tB7yZkoWO3TB6Xfib_J4Rx9qYQG2nchoN6dct_QytAMXafGA>
-X-ME-Received: <xmr:63UTaQgGY26E1cpYOD4Dq1QzxkmEllKeZXl-7ZCPLmkdJYvZDtSKIhuQ6jZkBCZZTtvb5NTJDskj_Gx5PUC5rInNww>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvtddukedvucetufdoteggodetrf
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762884873; x=
+ 1762971273; bh=sd6eO4ONnUKoCipZnI1Fo9/aEGAHsVuy8wuwJgRqVUE=; b=A
+ SkL8pghC3pFLOIuCAQALW/zoy3avSFh5nzAwkc7Q9/va55LuuOh84SdhScwRoTgj
+ mbBpWIvJXRaV+tu7SZ6RKrkSCTyXcr56aUYx4u/4zOfeShDqL7ZLFvWgt+uH3Wdb
+ YU7R1y16caNVOMc71mTTZS5Xf9UQkB6RIUZNx4nLfMr8E1ve4jiRZHRMJnFm6Nss
+ B1TeW1GP1J9pC3tjGgJon3YDDhS7Iv+2DdgjBM5JOF/6wWcjWeISu5/T8Nth8zxx
+ Qlq4LpzQsV3Nmd9gXS/m3HF8tmx4jGacD6pGClLFkZiEnCzfNfEWrG1AYHKe6JF6
+ yI5lXDGTaVV07pvAcMQiw==
+X-ME-Sender: <xms:CH0TaWQyjV2boE3T9Cd6BwxA7BZVC2mpnOgEbtrT_gQoYejy44OsEw>
+ <xme:CH0TaXOaKiu7WOuaeFrAvPKiCMBEFkqlpwvlIUXOrA8FfoBIMgH3e7Wu13l_qbEuE
+ bE_1LHOlbpcHgVn6d9jpMCSHFGr7lP3d8WUweODYsQFjlRyACdbMg>
+X-ME-Received: <xmr:CH0TaXUo1ks7Pmj_tfkVt3BcX5cX3UOiAfzdG2roBa6rxjhFlU0YcdZ_6KAEpzE3UUkdVNWvGcpxjXPM-ugL1p6cdQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvtddukeekucetufdoteggodetrf
  dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
  rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
  gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
  ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
  frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
  uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeegpdhm
- ohguvgepshhmthhpohhuthdprhgtphhtthhopehrjhgrrhhrhiesrhgvughhrghtrdgtoh
- hmpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghpthhtohepsghruhgtvgdr
- rhhitghhrghrughsohhnsehinhhtvghlrdgtohhmpdhrtghpthhtohepshhtrggslhgvse
- guphgukhdrohhrgh
-X-ME-Proxy: <xmx:63UTaQCCI9q59p42UKR4jJdts1BxZSTgvxdI_YoN82efeyjaFFeoJg>
- <xmx:63UTadFn1A1xsoFh81OSiHQD6XK0PMDiCq7BaUhOn4q1xSogfLevGA>
- <xmx:63UTaQIIgoTFRcO4EZUbutyYlFG4CHrUxap3_BcDPov3R4uEGVlLsw>
- <xmx:63UTaZlqqAnw0kOH06JeKDjMi8dFv4oc3kBZxNenXs6MD5khsUv47w>
- <xmx:63UTac_ooXyExYGEspItlYhCGsVZ6a421sf7-9B1MIJtXrOjHaMLZRz0>
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeehpdhm
+ ohguvgepshhmthhpohhuthdprhgtphhtthhopegsrhhutggvrdhrihgthhgrrhgushhonh
+ esihhnthgvlhdrtghomhdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtphht
+ thhopegurghvihgurdhmrghrtghhrghnugesrhgvughhrghtrdgtohhmpdhrtghpthhtoh
+ epshhtrggslhgvseguphgukhdrohhrghdprhgtphhtthhopehfvghnghgthhgvnhhgfigv
+ nheshhhurgifvghirdgtohhm
+X-ME-Proxy: <xmx:CH0TaWc-kY_XhvfgP_QqP4ZoxregY5CD_HmerXMvK8rBq_hggm4lVQ>
+ <xmx:CH0Tabuu7hqO8F2VZQoVJ1zjAz-3AOfB1wiXTipiajwXOTsmTPDnkA>
+ <xmx:CH0Tad-RoaxbktPw2haN-6pI4pdzdekCGdWr5BXicwcdLk_ndOl_uA>
+ <xmx:CH0Tae0yg7rDsn9ytmj752_GpkfHOKQ_kgJsp9AfEWzz5ormoaEsjA>
+ <xmx:CX0Tad6YndVGisc8rKEvScpPYdqpwmda8Zla8UDXxhokcG78oHLn-H4J>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 11 Nov 2025 12:44:10 -0500 (EST)
+ 11 Nov 2025 13:14:31 -0500 (EST)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: Robin Jarry <rjarry@redhat.com>
-Cc: dev@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>,
- stable@dpdk.org
-Subject: Re: [PATCH dpdk] telemetry-exporter: listen on loopback by default
-Date: Tue, 11 Nov 2025 18:44:09 +0100
-Message-ID: <7140745.6TB3vktIsb@thomas>
-In-Reply-To: <20250127115143.585207-2-rjarry@redhat.com>
-References: <20250127115143.585207-2-rjarry@redhat.com>
+To: Bruce Richardson <bruce.richardson@intel.com>
+Cc: dev@dpdk.org, david.marchand@redhat.com, stable@dpdk.org,
+ Chengwen Feng <fengchengwen@huawei.com>
+Subject: Re: [PATCH] telemetry: make socket handler typedef private
+Date: Tue, 11 Nov 2025 19:14:30 +0100
+Message-ID: <6375554.3sPnXxR9tc@thomas>
+In-Reply-To: <20251107093259.3305537-1-bruce.richardson@intel.com>
+References: <20251107093259.3305537-1-bruce.richardson@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -89,25 +90,23 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-27/01/2025 12:51, Robin Jarry:
-> Fix the following warning reported by Coverity:
+07/11/2025 10:32, Bruce Richardson:
+> The socket handler typedef, just called "handler" does not belong in the
+> public namespace, especially since it is unprefixed. Rename to
+> "telemetry_sock_handler" and move to internal header.
 > 
-> Defect type: SIGMA.insecure_network_bind:
-> > dpdk-stable-24.11.1/usertools/dpdk-telemetry-exporter.py:278:
-> > Sigma main event: The HTTP server binds to all network interfaces by
-> > setting the IP address to "", `0.0.0.0`, `::`, or `::0`.
-> > This may expose the server to unintended traffic.
+> Doing so also clears shadowing warnings in dmadev library, when it is
+> built with -Wshadow.
 > 
-> Avoid listening to all interfaces by default to avoid exposing private
-> information unwillingly.
-> 
-> Unrelated: The Python stdlib TCP server listens on IPv4 only by default.
-> Changing this requires creating a subclass that overrides address_family
-> to socket.AF_INET6.
-> 
-> Fixes: d94ebd627a86 ("usertools: add telemetry exporter")
+> Fixes: 6dd571fd07c3 ("telemetry: introduce new functionality")
 > Cc: stable@dpdk.org
-> Signed-off-by: Robin Jarry <rjarry@redhat.com>
+> 
+> Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+> Acked-by: Chengwen Feng <fengchengwen@huawei.com>
+> 
+> ---
+> NOTE: This patch was originally submitted as part of series[1], but I
+> think this is a serious enough fix to consider taking into 25.11.
 
 Applied, thanks.
 
