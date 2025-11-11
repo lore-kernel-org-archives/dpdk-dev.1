@@ -2,75 +2,83 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B460BCCFA1A
-	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Nov 2025 12:17:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BA8CCCF9E3
+	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Nov 2025 12:25:46 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 01D1C4026A;
-	Tue, 11 Nov 2025 13:17:38 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 2BF384026A;
+	Tue, 11 Nov 2025 13:25:46 +0100 (CET)
 Received: from fout-b1-smtp.messagingengine.com
  (fout-b1-smtp.messagingengine.com [202.12.124.144])
- by mails.dpdk.org (Postfix) with ESMTP id B3D6D40144
- for <dev@dpdk.org>; Tue, 11 Nov 2025 13:17:36 +0100 (CET)
-Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
- by mailfout.stl.internal (Postfix) with ESMTP id 25F1A1D0014A;
- Tue, 11 Nov 2025 07:17:36 -0500 (EST)
+ by mails.dpdk.org (Postfix) with ESMTP id D246F40144
+ for <dev@dpdk.org>; Tue, 11 Nov 2025 13:25:43 +0100 (CET)
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+ by mailfout.stl.internal (Postfix) with ESMTP id E86AE1D000CF;
+ Tue, 11 Nov 2025 07:25:42 -0500 (EST)
 Received: from phl-mailfrontend-02 ([10.202.2.163])
- by phl-compute-06.internal (MEProxy); Tue, 11 Nov 2025 07:17:36 -0500
+ by phl-compute-03.internal (MEProxy); Tue, 11 Nov 2025 07:25:43 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm3; t=1762863456;
- x=1762949856; bh=bez4D7t6ASp4SEBXgmfpbOo3PbpxR21jPTrePhAsPmU=; b=
- ga0Sg818wArS8lfICOxExwpoT5IEfbkcdlUgh4zjVepu46TNdPNI2yVZR/6bzm5C
- ZIsqTn5dvMtKQT3KnyM1jNtA8zv/YNC7zlIqGm6EzvB1DMD7POB27al35e4Jad4r
- Jmsj08mNG7VYAcDeiUF206I6TRHyN6HP544PdbRGPiZ1kYrNz3YyIfnTVqlKjstk
- 7fv1Z5l2kDr+LbMHFUi+Boe8w3zli1KibU7tv9/vs+k8/IqDMEq9gktTYLmWALqM
- FZmLw8UkiWS1tL2GR1zVeTLwQFHNpPH0tcp3ONAcCgdaz5Va7UlcrH0VESdFr1/v
- BBy3IOiIP9InRna+USSNnA==
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1762863942;
+ x=1762950342; bh=Fud4fiSxWnyUvXQr+rFGQriJOqWB1NT1KYTapQcbA+U=; b=
+ VWMN38SA1KVIWCPiNfjhd6+wATN5Hxno/vgoDjDV4NY0u4AwHBgPBhT6vTPokg5/
+ lNRKs7olbhTrpxvuNbdVGQnf4ynIYB3ZXWdIfLWBtC4nFMVWpmTBcoWqjzel2PLT
+ wRssaKuQAr6xEisgVdw1/bGNE5UfnOJ2YxHUdclqRWrDt6iNswQNv6kv/HNWMLHU
+ Zaa47N1z22p5phMqAV/c08mk/e20E++C54ZbbopKg2O89PVLx2F4c2fcVuaAdn8E
+ sdjIpkIRrHPuH0foSRYFEuy9FoL+WPssAbaO2iimwb644NpTudLWzinceMVXlvrI
+ OtEmYDHi47yCAEfmNqU0QA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762863456; x=
- 1762949856; bh=bez4D7t6ASp4SEBXgmfpbOo3PbpxR21jPTrePhAsPmU=; b=d
- Xjxo1SZpgFy2CcYJw09p4zhmgwkO7aar4uG0RfJ5F8mdFX0PBuwlw1JiM9UJFeIT
- Z0mk7FF1vCtwUYkmdAVYjBEaGbgxK2gh+t2GgV4LkjHCnJ7xw+mYMcQ4Yr07SxYb
- WSXC8Iq5SgK3oPj5ndM9Hj2sO12sIzzmPOI8Jhye2U71YAqVBOARvE1jaN3NKBGq
- lipcHz7RA9jfhd5dfPhQzbkaU28IRXphV74mQkyWin6T93HiIY3c9HWpwpyTnDi3
- tz0JfjrvpApwl9xnWu88L3qZC/QGrDuVA7mPYgc75W6l2Cp2EiOFTeajEDvAfQTK
- 7iiOhAbRI2UjTTJ8giZig==
-X-ME-Sender: <xms:XykTaanvQ5tdRUpB57tOx1W05JtlbtpoJERADUqzalR8KOOMiQ7NGQ>
- <xme:XykTaeLNtWQbIiVwBI_aE714UG5KEQ-VNNcASd779SQrXJ6ORbUwE2Ab32MT4MbCX
- 1BgtvSXpRXQkq0rRf28vxXDFB0YNZ99DH2OI7b02CkqPOeDvDIoLQ>
-X-ME-Received: <xmr:XykTaba-uA9NecG6zVmzWDb6_UY9oNpMmmfCnJYKA9CN_TWRfxPRbR3TfiaSfXGEVZBjKcScvjPQCYrLMtbIM9xXaw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvtdduudejucetufdoteggodetrf
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762863942; x=
+ 1762950342; bh=Fud4fiSxWnyUvXQr+rFGQriJOqWB1NT1KYTapQcbA+U=; b=H
+ SFFb5Ub6+8sFNeJgE99nDM12jCnlApbpKKWeMsEXD3gG9buu9J2RjqGruIOMIbh2
+ +QwYFsNIhD2J+W+m4S7toM+zgM5rD6wdmUoxD8UmX4RIb5Bzwc8KzoRc7gFlAtby
+ CYaOrNgF3WENF790Fo9uQdFwDd5wj8lI5onqAQmZBqgVGb8l32y8aof0JAMEgwPT
+ 4MThsE9taWeFRx4aoMOhl6v8iKqIy68hLw19jBSy/4HBSuA/aGgNd0tv8OkWoNys
+ DRpRIaTYkUtm+TiwWaUZvdI+N/L6RfZObcV4lLq8hmshU62Eo6vTRlMnFD6lk0FR
+ A3CYAxLmmS6qsvXx0msIQ==
+X-ME-Sender: <xms:RSsTaeqxyvnzVXigJhB4SK23AxlhFUSXWlBtKoFEPUYAG8rNP6VJQw>
+ <xme:RSsTaVlW2mr-FLAWiJPWkxfiwDDKTdkIbz3x7HgMbKpKwozFYxkdvlEtSWtH-ApZL
+ nuRFJIwbXlQoBCKHkzilfQQONEtIVdIrxPorc6XP_Yg8AeBnAct2Q>
+X-ME-Received: <xmr:RSsTaewB0Mbvc8fIAkI0wHORDLkRvnwlFQhwnmxk-OO3-aG2Z2zxppjtVydOVm_1dpZ0GrAntOuXq7BM0c39_oXCSg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvtdduudelucetufdoteggodetrf
  dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
  rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
  gurhephffvvefufffkjghfggfgtgesthhqredttddtjeenucfhrhhomhepvfhhohhmrghs
  ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
  frrghtthgvrhhnpeegtddtleejjeegffekkeektdejvedtheevtdekiedvueeuvdeiuddv
  leevjeeujeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopedvpdhm
- ohguvgepshhmthhpohhuthdprhgtphhtthhopehmsgesshhmrghrthhshhgrrhgvshihsh
- htvghmshdrtghomhdprhgtphhtthhopeguvghvseguphgukhdrohhrgh
-X-ME-Proxy: <xmx:XykTaQZXXClFgVfXkr-DK25rkfRqV01PB_ZWXG8rJh5_LHU3roAJEw>
- <xmx:XykTablnUTQK6qX9n397D3d8IP5Q9JDjA4Ckz8T0pPD6BB5XSmgoVA>
- <xmx:XykTacyoP55-tHwsPcNd1MJhQQruZYEHlYqS-3g2LOlHHerJ1PyBng>
- <xmx:XykTaZOkmAAjHVzVtf_SirHqXRxqQi00bSXo-4FFqkiSgNLGTfJUtg>
- <xmx:XykTaWHUyU0jY2few9KlKyUEUYTwBN-oFgTHgCayftbTjEmLNjQZh0lr>
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeeipdhm
+ ohguvgepshhmthhpohhuthdprhgtphhtthhopehisghouhhkrhhishesghhmrghilhdrtg
+ homhdprhgtphhtthhopehhohhnnhgrphhprgdrnhgrghgrrhgrhhgrlhhlihesrghrmhdr
+ tghomhdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtphhtthhopeifrghthh
+ hsrghlrgdrvhhithhhrghnrghgvgesrghrmhdrtghomhdprhgtphhtthhopehmsgesshhm
+ rghrthhshhgrrhgvshihshhtvghmshdrtghomhdprhgtphhtthhopehkohhnshhtrghnth
+ hinhdrrghnrghnhigvvheshhhurgifvghirdgtohhm
+X-ME-Proxy: <xmx:RSsTad8aTO28JOSrncOxrjzwJSdThMBEiwg1WFGYBXVOBxxJIhhU6g>
+ <xmx:RSsTaaIl49mj2zZxcwVbIQuKtPmWVXQKzz9SU0W8TO4a49rSuUiKZw>
+ <xmx:RSsTabcBzOoF27PJ7RVhKlbSDw-TUnb7Rp13NP6wMJ3MIweQL7_CFQ>
+ <xmx:RSsTaR_0kO9cCLLe7bspM3QNjnQq33I1leDeT_HycPnA3wGmAVLFAw>
+ <xmx:RisTaQG25VzcvcS864nSovb3yWF3KCuEqXvjC6L2TSCbtuZMjZun57-C>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 11 Nov 2025 07:17:35 -0500 (EST)
+ 11 Nov 2025 07:25:40 -0500 (EST)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH v2] mbuf: improve mbuf comments
-Date: Tue, 11 Nov 2025 13:17:33 +0100
-Message-ID: <11157846.ICPdZLu4VQ@thomas>
-In-Reply-To: <20251107143629.612723-1-mb@smartsharesystems.com>
-References: <20251105112810.20838-1-mb@smartsharesystems.com>
- <20251107143629.612723-1-mb@smartsharesystems.com>
+To: Isaac Boukris <iboukris@gmail.com>
+Cc: Honnappa Nagarahalli <honnappa.nagarahalli@arm.com>, dev@dpdk.org,
+ Wathsala Vithanage <wathsala.vithanage@arm.com>,
+ Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>,
+ Konstantin Ananyev <konstantin.ananyev@huawei.com>
+Subject: Re: [PATCH v3] lib/ring: do not allow zero size ring
+Date: Tue, 11 Nov 2025 13:25:39 +0100
+Message-ID: <4378849.kIdP2CnQM6@thomas>
+In-Reply-To: <e7fd8bbd16d94544aaae9507cece72ba@huawei.com>
+References: <20251110222827.575488-1-iboukris@gmail.com>
+ <20251111062253.578121-1-iboukris@gmail.com>
+ <e7fd8bbd16d94544aaae9507cece72ba@huawei.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="utf-8"
@@ -87,23 +95,18 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-07/11/2025 15:36, Morten Br=C3=B8rup:
-> Updated the comment preceding the 'rearm_data' fields to reflect that some
-> ethdev drivers don't really set the rearm_data fields on Rx descriptor
-> rearm, but rather when pulling the packet from the descriptor.
-> By doing this, they avoid a store operation into the mbuf when they rearm
-> the Rx descriptor, and instead postpone it to later, where it will be
-> combined with other store operations into the mbuf.
+11/11/2025 09:24, Konstantin Ananyev:
 >=20
-> Updated the comment describing what the second cache line is used for, to
-> reflect that there are exceptions, where some fields are set on Rx too.
+> > this might happen when for instance the ring size is read from
+> > config, and would cause runtime crash. Do so by using the
+> > RTE_IS_POWER_OF_2 macro.
+> >=20
+> > Signed-off-by: Isaac Boukris <iboukris@gmail.com>
+> > Acked-by: Wathsala Vithanage <wathsala.vithanage@arm.com>
+> > Acked-by: Morten Br=C3=B8rup <mb@smartsharesystems.com>
 >=20
-> Updated comments describing what needs to be updated when adding new Rx
-> and Tx offload flags.
->=20
-> Signed-off-by: Morten Br=C3=B8rup <mb@smartsharesystems.com>
+> Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
 
 Applied, thanks.
-
 
 
