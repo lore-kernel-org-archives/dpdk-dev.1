@@ -2,81 +2,35 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77236CCFA1A
-	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Nov 2025 18:14:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E28A8CCFA18
+	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Nov 2025 18:16:48 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CA12240651;
-	Tue, 11 Nov 2025 19:14:35 +0100 (CET)
-Received: from fout-b5-smtp.messagingengine.com
- (fout-b5-smtp.messagingengine.com [202.12.124.148])
- by mails.dpdk.org (Postfix) with ESMTP id 849954026D;
- Tue, 11 Nov 2025 19:14:34 +0100 (CET)
-Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
- by mailfout.stl.internal (Postfix) with ESMTP id 894A61D000CD;
- Tue, 11 Nov 2025 13:14:33 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-02.internal (MEProxy); Tue, 11 Nov 2025 13:14:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm3; t=1762884873;
- x=1762971273; bh=sd6eO4ONnUKoCipZnI1Fo9/aEGAHsVuy8wuwJgRqVUE=; b=
- iTKM8qW6YmGkulfwe1Er3NjvIvmjaWLVW8ZHC4oVEjH6Ox11ej4Qkv1w5NqGdt4C
- p5ePbQHMN882B+L3BastBru4JvArNp9DV+PNZN0XqqkYw7uqZdKq5FlTEaLLupI5
- I4IMJvx3ZsCCd7f/pjy1El6mIl+FTOKVRcIWqdnwAQwOd2Pz/gU1Wh+HNqWcupsm
- ew7i/iAugXOdgntd2xKAcOuMNTOW4CKoTTWKCIkbC1ttq+wUsYCB5MQi7LBi9Uqw
- LYgk5ZYt17wPG6ZCdHt40YK5Qdbb6SDBcIot/klPaklILi7qo/YKFOcvlmI64/ae
- +TK7SqZfgnuAYPUlQC8zsQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762884873; x=
- 1762971273; bh=sd6eO4ONnUKoCipZnI1Fo9/aEGAHsVuy8wuwJgRqVUE=; b=A
- SkL8pghC3pFLOIuCAQALW/zoy3avSFh5nzAwkc7Q9/va55LuuOh84SdhScwRoTgj
- mbBpWIvJXRaV+tu7SZ6RKrkSCTyXcr56aUYx4u/4zOfeShDqL7ZLFvWgt+uH3Wdb
- YU7R1y16caNVOMc71mTTZS5Xf9UQkB6RIUZNx4nLfMr8E1ve4jiRZHRMJnFm6Nss
- B1TeW1GP1J9pC3tjGgJon3YDDhS7Iv+2DdgjBM5JOF/6wWcjWeISu5/T8Nth8zxx
- Qlq4LpzQsV3Nmd9gXS/m3HF8tmx4jGacD6pGClLFkZiEnCzfNfEWrG1AYHKe6JF6
- yI5lXDGTaVV07pvAcMQiw==
-X-ME-Sender: <xms:CH0TaWQyjV2boE3T9Cd6BwxA7BZVC2mpnOgEbtrT_gQoYejy44OsEw>
- <xme:CH0TaXOaKiu7WOuaeFrAvPKiCMBEFkqlpwvlIUXOrA8FfoBIMgH3e7Wu13l_qbEuE
- bE_1LHOlbpcHgVn6d9jpMCSHFGr7lP3d8WUweODYsQFjlRyACdbMg>
-X-ME-Received: <xmr:CH0TaXUo1ks7Pmj_tfkVt3BcX5cX3UOiAfzdG2roBa6rxjhFlU0YcdZ_6KAEpzE3UUkdVNWvGcpxjXPM-ugL1p6cdQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvtddukeekucetufdoteggodetrf
- dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
- rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
- gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
- ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
- frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
- uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeehpdhm
- ohguvgepshhmthhpohhuthdprhgtphhtthhopegsrhhutggvrdhrihgthhgrrhgushhonh
- esihhnthgvlhdrtghomhdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtphht
- thhopegurghvihgurdhmrghrtghhrghnugesrhgvughhrghtrdgtohhmpdhrtghpthhtoh
- epshhtrggslhgvseguphgukhdrohhrghdprhgtphhtthhopehfvghnghgthhgvnhhgfigv
- nheshhhurgifvghirdgtohhm
-X-ME-Proxy: <xmx:CH0TaWc-kY_XhvfgP_QqP4ZoxregY5CD_HmerXMvK8rBq_hggm4lVQ>
- <xmx:CH0Tabuu7hqO8F2VZQoVJ1zjAz-3AOfB1wiXTipiajwXOTsmTPDnkA>
- <xmx:CH0Tad-RoaxbktPw2haN-6pI4pdzdekCGdWr5BXicwcdLk_ndOl_uA>
- <xmx:CH0Tae0yg7rDsn9ytmj752_GpkfHOKQ_kgJsp9AfEWzz5ormoaEsjA>
- <xmx:CX0Tad6YndVGisc8rKEvScpPYdqpwmda8Zla8UDXxhokcG78oHLn-H4J>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 11 Nov 2025 13:14:31 -0500 (EST)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: dev@dpdk.org, david.marchand@redhat.com, stable@dpdk.org,
- Chengwen Feng <fengchengwen@huawei.com>
-Subject: Re: [PATCH] telemetry: make socket handler typedef private
-Date: Tue, 11 Nov 2025 19:14:30 +0100
-Message-ID: <6375554.3sPnXxR9tc@thomas>
-In-Reply-To: <20251107093259.3305537-1-bruce.richardson@intel.com>
-References: <20251107093259.3305537-1-bruce.richardson@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 253E440280;
+	Tue, 11 Nov 2025 19:16:48 +0100 (CET)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+ by mails.dpdk.org (Postfix) with ESMTP id D9AA44026D;
+ Tue, 11 Nov 2025 19:16:46 +0100 (CET)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+ by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5BEC4497;
+ Tue, 11 Nov 2025 10:16:38 -0800 (PST)
+Received: from ampere-altra-2-1.usa.arm.com (ampere-altra-2-1.usa.arm.com
+ [10.118.91.158])
+ by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id C61C53F63F;
+ Tue, 11 Nov 2025 10:16:45 -0800 (PST)
+From: Wathsala Vithanage <wathsala.vithanage@arm.com>
+To: Honnappa Nagarahalli <honnappa.nagarahalli@arm.com>,
+ Konstantin Ananyev <konstantin.ananyev@huawei.com>,
+ Ola Liljedahl <ola.liljedahl@arm.com>, Steve Capper <steve.capper@arm.com>,
+ Gavin Hu <gahu@nvidia.com>
+Cc: dev@dpdk.org, Wathsala Vithanage <wathsala.vithanage@arm.com>,
+ stable@dpdk.org, Dhruv Tripathi <dhruv.tripathi@arm.com>
+Subject: [PATCH v4 1/3] ring: safe partial ordering for head/tail update
+Date: Tue, 11 Nov 2025 18:16:37 +0000
+Message-ID: <20251111181639.830527-1-wathsala.vithanage@arm.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -90,25 +44,134 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-07/11/2025 10:32, Bruce Richardson:
-> The socket handler typedef, just called "handler" does not belong in the
-> public namespace, especially since it is unprefixed. Rename to
-> "telemetry_sock_handler" and move to internal header.
-> 
-> Doing so also clears shadowing warnings in dmadev library, when it is
-> built with -Wshadow.
-> 
-> Fixes: 6dd571fd07c3 ("telemetry: introduce new functionality")
-> Cc: stable@dpdk.org
-> 
-> Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
-> Acked-by: Chengwen Feng <fengchengwen@huawei.com>
-> 
-> ---
-> NOTE: This patch was originally submitted as part of series[1], but I
-> think this is a serious enough fix to consider taking into 25.11.
+The function __rte_ring_headtail_move_head() assumes that the barrier
+(fence) between the load of the head and the load-acquire of the
+opposing tail guarantees the following: if a first thread reads tail
+and then writes head and a second thread reads the new value of head
+and then reads tail, then it should observe the same (or a later)
+value of tail.
 
-Applied, thanks.
+This assumption is incorrect under the C11 memory model. If the barrier
+(fence) is intended to establish a total ordering of ring operations,
+it fails to do so. Instead, the current implementation only enforces a
+partial ordering, which can lead to unsafe interleavings. In particular,
+some partial orders can cause underflows in free slot or available
+element computations, potentially resulting in data corruption.
 
+The issue manifests when a CPU first acts as a producer and later as a
+consumer. In this scenario, the barrier assumption may fail when another
+core takes the consumer role. A Herd7 litmus test in C11 can demonstrate
+this violation. The problem has not been widely observed so far because:
+  (a) on strong memory models (e.g., x86-64) the assumption holds, and
+  (b) on relaxed models with RCsc semantics the ordering is still strong
+      enough to prevent hazards.
+The problem becomes visible only on weaker models, when load-acquire is
+implemented with RCpc semantics (e.g. some AArch64 CPUs which support
+the LDAPR and LDAPUR instructions).
 
+Three possible solutions exist:
+  1. Strengthen ordering by upgrading release/acquire semantics to
+     sequential consistency. This requires using seq-cst for stores,
+     loads, and CAS operations. However, this approach introduces a
+     significant performance penalty on relaxed-memory architectures.
+
+  2. Establish a safe partial order by enforcing a pair-wise
+     happens-before relationship between thread of same role by changing
+     the CAS and the preceding load of the head by converting them to
+     release and acquire respectively. This approach makes the original
+     barrier assumption unnecessary and allows its removal.
+
+  3. Retain partial ordering but ensure only safe partial orders are
+     committed. This can be done by detecting underflow conditions
+     (producer < consumer) and quashing the update in such cases.
+     This approach makes the original barrier assumption unnecessary
+     and allows its removal.
+
+This patch implements solution (2) to preserve the “enqueue always
+succeeds” contract expected by dependent libraries (e.g., mempool).
+While solution (3) offers higher performance, adopting it now would
+break that assumption.
+
+Fixes: 49594a63147a9 ("ring/c11: relax ordering for load and store of the head")
+Cc: stable@dpdk.org
+
+Signed-off-by: Wathsala Vithanage <wathsala.vithanage@arm.com>
+Signed-off-by: Ola Liljedahl <ola.liljedahl@arm.com>
+Reviewed-by: Honnappa Nagarahalli <honnappa.nagarahalli@arm.com>
+Reviewed-by: Dhruv Tripathi <dhruv.tripathi@arm.com>
+---
+ lib/ring/rte_ring_c11_pvt.h | 37 +++++++++++++++++++++++++++++--------
+ 1 file changed, 29 insertions(+), 8 deletions(-)
+
+diff --git a/lib/ring/rte_ring_c11_pvt.h b/lib/ring/rte_ring_c11_pvt.h
+index b9388af0da..07b6efc416 100644
+--- a/lib/ring/rte_ring_c11_pvt.h
++++ b/lib/ring/rte_ring_c11_pvt.h
+@@ -36,6 +36,11 @@ __rte_ring_update_tail(struct rte_ring_headtail *ht, uint32_t old_val,
+ 		rte_wait_until_equal_32((uint32_t *)(uintptr_t)&ht->tail, old_val,
+ 			rte_memory_order_relaxed);
+ 
++	/*
++	 * R0: Establishes a synchronizing edge with load-acquire of tail at A1.
++	 * Ensures that memory effects by this thread on ring elements array
++	 * is observed by a different thread of the other type.
++	 */
+ 	rte_atomic_store_explicit(&ht->tail, new_val, rte_memory_order_release);
+ }
+ 
+@@ -77,17 +82,24 @@ __rte_ring_headtail_move_head(struct rte_ring_headtail *d,
+ 	int success;
+ 	unsigned int max = n;
+ 
++	/*
++	 * A0: Establishes a synchronizing edge with R1.
++	 * Ensure that this thread observes same values
++	 * to stail observed by the thread that updated
++	 * d->head.
++	 * If not, an unsafe partial order may ensue.
++	 */
+ 	*old_head = rte_atomic_load_explicit(&d->head,
+-			rte_memory_order_relaxed);
++			rte_memory_order_acquire);
+ 	do {
+ 		/* Reset n to the initial burst count */
+ 		n = max;
+ 
+-		/* Ensure the head is read before tail */
+-		rte_atomic_thread_fence(rte_memory_order_acquire);
+-
+-		/* load-acquire synchronize with store-release of ht->tail
+-		 * in update_tail.
++		/*
++		 * A1: Establishes a synchronizing edge with R0.
++		 * Ensures that other thread's memory effects on
++		 * ring elements array is observed by the time
++		 * this thread observes its tail update.
+ 		 */
+ 		stail = rte_atomic_load_explicit(&s->tail,
+ 					rte_memory_order_acquire);
+@@ -113,10 +125,19 @@ __rte_ring_headtail_move_head(struct rte_ring_headtail *d,
+ 			success = 1;
+ 		} else
+ 			/* on failure, *old_head is updated */
++			/*
++			 * R1/A2.
++			 * R1: Establishes a synchronizing edge with A0 of a
++			 * different thread.
++			 * A2: Establishes a synchronizing edge with R1 of a
++			 * different thread to observe same value for stail
++			 * observed by that thread on CAS failure (to retry
++			 * with an updated *old_head).
++			 */
+ 			success = rte_atomic_compare_exchange_strong_explicit(
+ 					&d->head, old_head, *new_head,
+-					rte_memory_order_relaxed,
+-					rte_memory_order_relaxed);
++					rte_memory_order_release,
++					rte_memory_order_acquire);
+ 	} while (unlikely(success == 0));
+ 	return n;
+ }
+-- 
+2.43.0
 
