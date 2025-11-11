@@ -2,34 +2,89 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91751CCFA1A
-	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Nov 2025 18:17:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06C78CCFA18
+	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Nov 2025 18:20:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D8E5D4067B;
-	Tue, 11 Nov 2025 19:16:50 +0100 (CET)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
- by mails.dpdk.org (Postfix) with ESMTP id 7CF1B4026D;
- Tue, 11 Nov 2025 19:16:47 +0100 (CET)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
- by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 20F2C1655;
- Tue, 11 Nov 2025 10:16:39 -0800 (PST)
-Received: from ampere-altra-2-1.usa.arm.com (ampere-altra-2-1.usa.arm.com
- [10.118.91.158])
- by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 9F20E3F63F;
- Tue, 11 Nov 2025 10:16:46 -0800 (PST)
-From: Wathsala Vithanage <wathsala.vithanage@arm.com>
-To: Honnappa Nagarahalli <honnappa.nagarahalli@arm.com>,
- Konstantin Ananyev <konstantin.ananyev@huawei.com>
-Cc: dev@dpdk.org, Wathsala Vithanage <wathsala.vithanage@arm.com>,
- stable@dpdk.org, Ola Liljedahl <ola.liljedahl@arm.com>
-Subject: [PATCH v4 3/3] ring: establish a safe partial order in rts-ring
-Date: Tue, 11 Nov 2025 18:16:39 +0000
-Message-ID: <20251111181639.830527-3-wathsala.vithanage@arm.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251111181639.830527-1-wathsala.vithanage@arm.com>
-References: <20251111181639.830527-1-wathsala.vithanage@arm.com>
+	by mails.dpdk.org (Postfix) with ESMTP id E55D9402C8;
+	Tue, 11 Nov 2025 19:20:50 +0100 (CET)
+Received: from fout-b5-smtp.messagingengine.com
+ (fout-b5-smtp.messagingengine.com [202.12.124.148])
+ by mails.dpdk.org (Postfix) with ESMTP id 2360140280
+ for <dev@dpdk.org>; Tue, 11 Nov 2025 19:20:49 +0100 (CET)
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+ by mailfout.stl.internal (Postfix) with ESMTP id 3C8B21D000CD;
+ Tue, 11 Nov 2025 13:20:48 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+ by phl-compute-03.internal (MEProxy); Tue, 11 Nov 2025 13:20:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1762885248;
+ x=1762971648; bh=YxQWyVkJnYNMXAwd7Wv7I4LJ0PnsNvtSsSwWw2W4xs8=; b=
+ E07OO0ESMW3lFLqTMVIFsvuFFoQJoGHybwLcKp9iwDkwfZGCoH0Wn1Fg9Tsoqi89
+ YyU0xwKl9McrumxI8wvVjCesRwqDHwGQ99a8olN8K7jwKqZDa1PryfA1P9SIfFXZ
+ wfI4YYopSEw2pDQL63pzQK4iWg6tD1n4I/Nct9oOrMqe3sjzjxquvn3fxsaUG9M5
+ dk1IAdKF8WEzcRyCOrcM/EAKuJiD7rb1A6ATESFTQtCP3gJG/AQu0fn6xD1/XNuD
+ 3qJBPjthGdHHptklJmnSHcsXhhFGkm6ISUAo3+jGTD/SK7js2faaR0pT16HMor1t
+ mlU4xjJGqJLu1dYAQ7vF9Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762885248; x=
+ 1762971648; bh=YxQWyVkJnYNMXAwd7Wv7I4LJ0PnsNvtSsSwWw2W4xs8=; b=l
+ T5LXA9Hp5Vhz4IOJP2YHdNJR8k7Sc7kPBapPYE1KkJrHKskBzVuPuE2seHEnrfzo
+ RPJEEiI8sEhxDeIRZ6Vl9iu19Tt1uMh1bffG36i9RO2LE11/2AcShw45V/4cZNef
+ jpMUZ4csKVh8Df5cGGX5pKNT8Q7R0rsUuDMztq/4mqIFtDpZVyTbio3pSqTuRhYe
+ xKbvdUu8+5/LPnGW5Ais2e3hmHbwrXF1H9YsHjjZKd+nN2DnrIxOw5xpI0p5AvAe
+ HWhOeFxg3rUnyKQvqG4yACYFKZh5eh5NM/yplFAgLF6FWVFRJXHvMtwdr6VrfizP
+ U12NNWyU1JFxhkp/QJ27Q==
+X-ME-Sender: <xms:f34TaSx3PuzacRpivHYeJ2HAQH0jszPZ1HQD9COrd-hssMJRg8p_HQ>
+ <xme:f34TaUS9PJMHZ7SB-s6hc2SE5oDkK4LEqAALonaQq0TBOe1DkCArqJ_QjUN0DBlkv
+ 4y1QeKr-o4gBzmyH2ly2T6-7hd07CUU0farM6v4mtnZBN4-au4d6VQ>
+X-ME-Received: <xmr:f34TafIWWEn_Tm1ddZiPBrtKT1Qr9aKW0kpnsME_cUV9tFema_s3rYLdX8RVPWpJr3eLg0GeswwDm9uNFKXhPykdIw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvtdduledtucetufdoteggodetrf
+ dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+ rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+ gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
+ ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
+ frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
+ uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeduuddp
+ mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepshhivhgrphhrrghsrggurdhtuhhmmh
+ grlhgrsegrmhgurdgtohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghp
+ thhtohepmhgssehsmhgrrhhtshhhrghrvghshihsthgvmhhsrdgtohhmpdhrtghpthhtoh
+ epuggrvhhiugdrmhgrrhgthhgrnhgusehrvgguhhgrthdrtghomhdprhgtphhtthhopehk
+ thhrrgihnhhorhesrhgvughhrghtrdgtohhmpdhrtghpthhtohepkhhonhhsthgrnhhtih
+ hnrdgrnhgrnhihvghvsehhuhgrfigvihdrtghomhdprhgtphhtthhopehkohhnshhtrghn
+ thhinhdrvhdrrghnrghnhigvvheshigrnhguvgigrdhruhdprhgtphhtthhopehmrgigih
+ hmvgdrtghoqhhuvghlihhnsehrvgguhhgrthdrtghomhdprhgtphhtthhopegrtghonhho
+ lhgvsehrvgguhhgrthdrtghomh
+X-ME-Proxy: <xmx:f34TabVBqSQe7nJ57DyZITIB2MEp-4p13av-2NCpX28KpInexBCKWQ>
+ <xmx:f34TaTRacL8e2lQnLLM05z4SBOCHrF3R-vjP-n9SEEr4n2VrD6LvaA>
+ <xmx:f34TaTCmSRZXAXaq-_wNlTz14l8poBdgQ-aTp7nvf-YaZTbf_P0Wqg>
+ <xmx:f34TaSImOXQETCLvQKU_6ET4n6kXVPW_3W3qgoG8SpNj-U3m8fkl4A>
+ <xmx:gH4TaQI4Rj46ttJYXi2VB6fKGiiG8YtMyE0gSG96Yb99S4ooVMpp7mRd>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 11 Nov 2025 13:20:45 -0500 (EST)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Sivaprasad Tummala <sivaprasad.tummala@amd.com>
+Cc: dev@dpdk.org, mb@smartsharesystems.com, david.marchand@redhat.com,
+ ktraynor@redhat.com, konstantin.ananyev@huawei.com,
+ konstantin.v.ananyev@yandex.ru, maxime.coquelin@redhat.com,
+ aconole@redhat.com, ferruh.yigit@amd.com,
+ Bruce Richardson <bruce.richardson@intel.com>
+Subject: Re: [PATCH] doc: document telemetry command name restrictions
+Date: Tue, 11 Nov 2025 19:20:44 +0100
+Message-ID: <4233963.o7rAqR3Ra6@thomas>
+In-Reply-To: <aQylhdIWMJRNNDHV@bricha3-mobl1.ger.corp.intel.com>
+References: <20251006094712.180432-1-sivaprasad.tummala@amd.com>
+ <aQylhdIWMJRNNDHV@bricha3-mobl1.ger.corp.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -43,158 +98,21 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Enforce a safe partial order by making the CAS and the preceding head
-load use release and acquire semantics. This creates a pairwise
-happens-before relationship between threads of the same kind
-(i.e. between consumers or between producers).
+06/11/2025 14:41, Bruce Richardson:
+> On Mon, Oct 06, 2025 at 09:47:12AM +0000, Sivaprasad Tummala wrote:
+> > Telemetry command names must contain only alphanumeric characters
+> > (`A-Z`, `a-z`, `0-9`), underscore (`_`), and forward slash (`/`).
+> > Other characters, including hyphens (`-`), are not allowed and
+> > cause registration to fail.
+> > 
+> > This patch updates the documentation to explicitly state these
+> > restrictions and highlights the existing invalid example
+> > "/l3fwd-power/stats" (in l3fwd-power app).
+> > 
+> > Signed-off-by: Sivaprasad Tummala <sivaprasad.tummala@amd.com>
+> Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 
-Combine the two load-acquire operations of ht->head.raw, which were
-previously split across the two paths of a conditional branch, into
-__rte_ring_rts_head_wait. This simplifies the branching logic and makes
-the synchronization behavior easier to understand.
+Applied, thanks.
 
-Add comments to explain synchronizes with edges in detail.
 
-Fixes: e6ba4731c0f3a ("ring: introduce RTS ring mode")
-Cc: stable@dpdk.org
-
-Signed-off-by: Wathsala Vithanage <wathsala.vithanage@arm.com>
-Signed-off-by: Ola Liljedahl <ola.liljedahl@arm.com>
----
- lib/ring/rte_ring_rts_elem_pvt.h | 67 +++++++++++++++++++++++---------
- 1 file changed, 49 insertions(+), 18 deletions(-)
-
-diff --git a/lib/ring/rte_ring_rts_elem_pvt.h b/lib/ring/rte_ring_rts_elem_pvt.h
-index 96825931f8..0280369b21 100644
---- a/lib/ring/rte_ring_rts_elem_pvt.h
-+++ b/lib/ring/rte_ring_rts_elem_pvt.h
-@@ -31,6 +31,17 @@ __rte_ring_rts_update_tail(struct rte_ring_rts_headtail *ht)
- 	 * might preceded us, then don't update tail with new value.
- 	 */
- 
-+	/*
-+	 * A0 = {A0.a, A0.b}: Synchronizes with the CAS at R0.
-+	 * The CAS at R0 in same typed thread establishes a happens-before
-+	 * relationship with this load acquire. Ensures that this thread
-+	 * observes the same or later values for h.raw/h.val.cnt
-+	 * observed by the other thread when it updated ht->tail.raw.
-+	 * If not, ht->tail.raw may get updated out of sync (e.g. getting
-+	 * updated to the same value twice). A0.a makes sure this condition
-+	 * holds when CAS succeeds and A0.b when it fails.
-+	 */
-+	/* A0.a */
- 	ot.raw = rte_atomic_load_explicit(&ht->tail.raw, rte_memory_order_acquire);
- 
- 	do {
-@@ -40,7 +51,11 @@ __rte_ring_rts_update_tail(struct rte_ring_rts_headtail *ht)
- 		nt.raw = ot.raw;
- 		if (++nt.val.cnt == h.val.cnt)
- 			nt.val.pos = h.val.pos;
--
-+	/*
-+	 * R0: Synchronizes with A2 of a different thread of the opposite type and A0.b
-+	 * of a different thread of the same type.
-+	 */
-+	/* A0.b */
- 	} while (rte_atomic_compare_exchange_strong_explicit(&ht->tail.raw,
- 			(uint64_t *)(uintptr_t)&ot.raw, nt.raw,
- 			rte_memory_order_release, rte_memory_order_acquire) == 0);
-@@ -50,18 +65,21 @@ __rte_ring_rts_update_tail(struct rte_ring_rts_headtail *ht)
-  * @internal This function waits till head/tail distance wouldn't
-  * exceed pre-defined max value.
-  */
--static __rte_always_inline void
-+static __rte_always_inline union __rte_ring_rts_poscnt
- __rte_ring_rts_head_wait(const struct rte_ring_rts_headtail *ht,
--	union __rte_ring_rts_poscnt *h)
-+			 rte_memory_order memorder)
- {
--	uint32_t max;
-+	union __rte_ring_rts_poscnt h;
-+	uint32_t max = ht->htd_max;
- 
--	max = ht->htd_max;
-+	h.raw = rte_atomic_load_explicit(&ht->head.raw, memorder);
- 
--	while (h->val.pos - ht->tail.val.pos > max) {
-+	while (h.val.pos - ht->tail.val.pos > max) {
- 		rte_pause();
--		h->raw = rte_atomic_load_explicit(&ht->head.raw, rte_memory_order_acquire);
-+		h.raw = rte_atomic_load_explicit(&ht->head.raw, memorder);
- 	}
-+
-+	return h;
- }
- 
- /**
-@@ -94,12 +112,9 @@ __rte_ring_rts_move_head(struct rte_ring_rts_headtail *d,
- 	enum rte_ring_queue_behavior behavior, uint32_t *old_head,
- 	uint32_t *entries)
- {
--	uint32_t n;
-+	uint32_t n, stail;
- 	union __rte_ring_rts_poscnt nh, oh;
- 
--	oh.raw = rte_atomic_load_explicit(&d->head.raw,
--			rte_memory_order_acquire);
--
- 	do {
- 		/* Reset n to the initial burst count */
- 		n = num;
-@@ -109,7 +124,20 @@ __rte_ring_rts_move_head(struct rte_ring_rts_headtail *d,
- 		 * make sure that we read prod head *before*
- 		 * reading cons tail.
- 		 */
--		__rte_ring_rts_head_wait(d, &oh);
-+		/*
-+		 * A1 Synchronizes with the CAS at R1.
-+		 * Establishes a happens-before relationship with a thread of the same
-+		 * type that released the ht.raw, ensuring this thread observes all of
-+		 * its memory effects needed to maintain a safe partial order.
-+		 */
-+		oh = __rte_ring_rts_head_wait(d, rte_memory_order_acquire);
-+
-+		/*
-+		 * A2: Establish a synchronizes-with edge using a store-release at R0.
-+		 * This ensures that all memory effects from the preceding opposing
-+		 * thread are observed.
-+		 */
-+		stail = rte_atomic_load_explicit(&s->tail, rte_memory_order_acquire);
- 
- 		/*
- 		 *  The subtraction is done between two unsigned 32bits value
-@@ -117,7 +145,7 @@ __rte_ring_rts_move_head(struct rte_ring_rts_headtail *d,
- 		 * *old_head > cons_tail). So 'entries' is always between 0
- 		 * and capacity (which is < size).
- 		 */
--		*entries = capacity + s->tail - oh.val.pos;
-+		*entries = capacity + stail - oh.val.pos;
- 
- 		/* check that we have enough room in ring */
- 		if (unlikely(n > *entries))
-@@ -131,14 +159,17 @@ __rte_ring_rts_move_head(struct rte_ring_rts_headtail *d,
- 		nh.val.cnt = oh.val.cnt + 1;
- 
- 	/*
--	 * this CAS(ACQUIRE, ACQUIRE) serves as a hoist barrier to prevent:
--	 *  - OOO reads of cons tail value
--	 *  - OOO copy of elems to the ring
-+	 * R1: Establishes a synchronizes-with edge with the load-acquire
-+	 * of ht.raw at A1. Ensures that the store-release to the tail by
-+	 * this thread, if it was of the opposite type, becomes
-+	 * visible to another thread of the current type. That thread will
-+	 * then observe the updates in the same order, keeping a safe
-+	 * partial order.
- 	 */
- 	} while (rte_atomic_compare_exchange_strong_explicit(&d->head.raw,
- 			(uint64_t *)(uintptr_t)&oh.raw, nh.raw,
--			rte_memory_order_acquire,
--			rte_memory_order_acquire) == 0);
-+			rte_memory_order_release,
-+			rte_memory_order_relaxed) == 0);
- 
- 	*old_head = oh.val.pos;
- 	return n;
--- 
-2.43.0
 
