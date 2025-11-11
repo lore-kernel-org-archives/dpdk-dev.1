@@ -2,55 +2,55 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3455BCCFA18
-	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Nov 2025 16:30:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBE25CCFA18
+	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Nov 2025 16:31:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CAC9C402B0;
-	Tue, 11 Nov 2025 17:30:07 +0100 (CET)
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com
- [209.85.160.173])
- by mails.dpdk.org (Postfix) with ESMTP id E262340280
- for <dev@dpdk.org>; Tue, 11 Nov 2025 17:30:06 +0100 (CET)
-Received: by mail-qt1-f173.google.com with SMTP id
- d75a77b69052e-4edaf8773c4so35371841cf.1
- for <dev@dpdk.org>; Tue, 11 Nov 2025 08:30:06 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id D8C5E402B0;
+	Tue, 11 Nov 2025 17:31:42 +0100 (CET)
+Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com
+ [209.85.222.43]) by mails.dpdk.org (Postfix) with ESMTP id E539040280
+ for <dev@dpdk.org>; Tue, 11 Nov 2025 17:31:40 +0100 (CET)
+Received: by mail-ua1-f43.google.com with SMTP id
+ a1e0cc1a2514c-93516cbe2bbso1093153241.2
+ for <dev@dpdk.org>; Tue, 11 Nov 2025 08:31:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1762878606; x=1763483406; darn=dpdk.org;
+ d=gmail.com; s=20230601; t=1762878700; x=1763483500; darn=dpdk.org;
  h=content-transfer-encoding:cc:to:subject:message-id:date:from
  :in-reply-to:references:mime-version:from:to:cc:subject:date
  :message-id:reply-to;
- bh=ln++Bb9eE3hkk0hd3G0cunK1dSTConYTa48gWLNhiEE=;
- b=a7Pp2EVPyXl/phyVQ8A09I9GXuKwBz2onVvH088EeERtRxrhdOZz+oWEDKfBthd4xZ
- lSCFoa0+1sz0wW9CVv6+BhZrqW82xcQxi3GmTyjMNdVP6gjafnFFYekflh5Q1NGPbkT8
- K3a5d/1AmyTpYLgS/zI4GRN+bEezUxcsPl3vaojMZDazipg+I6rx+sMjQebUrYuUO2oc
- 2uGJ7CLY1uUxKZnYmf4mo0bBLWpL0ltk2AXyLNxFnxZN1CT08Zfrs3FEtj362E7CY6Ou
- 6R8C+JD4SJmThI8Sf4rrKVZ6lJVtq7sR1AD10K2AeqCuDSxUbjgl6FAfWpi8alW5GdU7
- HrRQ==
+ bh=QHZH+lFhMcGMH5HZfVuw8C2lyEvVPAus3RTVYTpJlX4=;
+ b=WTn24CjOfiqoufLJ7k//Gp+t0O2z+OsDzNh5kBC3l6C56WmUeHVJAfUIMO6mEOBk5e
+ HOJdr7UKUaG/wFFZP9Qtlq2/XQ8VHOhTHeYySowy/NPa01Z84t6wHddJN3ClMPCw0NzY
+ H7k2eAv7+zSJppzm74iikmR3kWsZNiaG1T3TquYrfHqO6H8R0uHauvAbFsWBX8hoJB6h
+ r2LmdpyZkT5Yfprhwmy4KLqRk6Zsx+Ae+LkxRFIC/P/eMNi6jjvpZkuhwPW/qiUPkQeV
+ hnhvNcugj/LMWDvfrIbe0FsAzXdG0Qnl9C9D6z9R17wo/b/qbW0c5o7b7G7eeM2o1+rM
+ tDLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1762878606; x=1763483406;
+ d=1e100.net; s=20230601; t=1762878700; x=1763483500;
  h=content-transfer-encoding:cc:to:subject:message-id:date:from
  :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=ln++Bb9eE3hkk0hd3G0cunK1dSTConYTa48gWLNhiEE=;
- b=e60/ietWj7lJLvMqGxf0lOQQ2MPbcseJ35B7JUCQloV7U2wy+mvwiFh07etu/jPBFZ
- 0MLzhWb+WES4XZkxAOsZFuCorKpSMW+yUwO+LZy+PkfrOSiokbTkDMJsh8o2L0+g66Bp
- szlG2C2ogzBUaJHOD93Y2dkhTPZ2254f6liuQFB59DjhX2C1/W8qrj6IoxEnBnnjjBU4
- 6zgRU4dMwlKluitGWpYtQFaHoy/cEqPoBQyoucSPr62GnRGvJ/V/5yWQ1CiEqRemSIl9
- I0//z++/G4qtRiXJp+cL+TZ1d8WdaBXBthQzbMdB9+fbeh89XrM+EgEA0xt96hvdMES4
- uung==
+ bh=QHZH+lFhMcGMH5HZfVuw8C2lyEvVPAus3RTVYTpJlX4=;
+ b=l3K0m5xz/w31QjYcI4W9eAgMvjXdV7pLaRz7vf376ME+O5gPs5yoj6NS0BP7ahZxXs
+ IMf1g/NTTkPZhtDK+JbFhEhsYZUs5Utt1tFKAHFwqvmXiYZTAg9aygsuuibfJDJZ3PR/
+ NmN+KjcUm+wROtBR4ZjqYrmVLP+mxjKOFIgLw5Wnn8d7xT+Z0vAJcSgkosyjFKVi3LGb
+ FCBEUIikK1WlukSS/NnzLZHf7f6ZrD2BtmNIGBdujJkJy0mftpqndWHo/M3uAcz5Ya8+
+ fPjc97GUi5s0IdHmRx/XiaNM/UOZOLtaweuu3idn2SLBlfAvoSephhA8lISLKYSR5bo2
+ MUYw==
 X-Forwarded-Encrypted: i=1;
- AJvYcCU3giL3xZowF+zAuW22EcnIn/QVehtc+BWR0fWh3qcUJdKAGtR5AhHWLhUJKOGjxEwbQRo=@dpdk.org
-X-Gm-Message-State: AOJu0YzLUgIDWjrrs6wPBQ0USJUw+m22EyLgFBDnpmexHzpi0QbSJ1qm
- MzPxQDsS8lheY6PL8VLuze0NQo6t7ngE9+H18yhHG6t6TD/mrdfxoYmdGhLuCAPqpMxaBoEsztw
- 9rvNVeSL8tMniVPgMfqCIBvClqp3yuj0=
-X-Gm-Gg: ASbGncuxw3QZQV+RD3l4oTegv0Qi2imgKiHlh6BJURSmeIlNU+lm7cb/CWPGJQyagyz
- sbOA4cLTkdx7Hf9jTZx5LUsejDCoUIAAyw4/2sK0oEIO1CYW9KoKu8lN3kEpthaz6IwFWVWT1TM
- 9h6LJsPMp8uC0PhHRnC8I3TeZ11OfZomDzYI4Vu+nOiHx3//D9I7TtU/l2TxMpmsU3xXHGZMMaT
- 33rxTvJhA23m6027Ah3j6So0yO3hdlAtEwhyDvmLi0xWRIj16HAJUOsFd0=
-X-Google-Smtp-Source: AGHT+IH+mE91KZmjROwDRwecHbUd6SGz7SVp6x/Eedk2Y1SZAzC/DHSa0AkcNYReThdc4u+iWMWfzNk3h9mAz4ycjmI=
-X-Received: by 2002:a05:622a:10f:b0:4ec:f969:cabc with SMTP id
- d75a77b69052e-4eda4e7baacmr167763711cf.10.1762878606074; Tue, 11 Nov 2025
- 08:30:06 -0800 (PST)
+ AJvYcCWnbepBzPVTisFAzWHmuqhmL3zi0Lg3/oyIZpHZt7xdUm/J9VqQ8mzb+pCrmlWCa25lxIw=@dpdk.org
+X-Gm-Message-State: AOJu0YwVi4Y3cWR6BlNLEMtHfNnSatA7CKuxzzGpFnLkTzWo8GtAFzlA
+ JaByrVR2aEiVkU3oDNQA4oF66E2q3N2Mzobobn3zADODxl2TP92UQ/pez9pdeX9OhO661MC8UFD
+ 6rfFvHLItkmDOZJ/baCJz600qse8GkMk=
+X-Gm-Gg: ASbGncsZ7sYCHBV2VmGAj8jGmzXxHKyZuBhmzKRBc84GZDRSjHdjr1tj68rRUCPh7T5
+ JA3FFYumUtJLM4wgQ90Vt/UW3Jo17ugy/mxpNFRB2tnntkgQJmfSjorI5kVFDdP/SPVqTekEd3B
+ sR3U6zzJ8Jx6I/qcy10IcFmCC2SWoaUYPJpm4ESJvaZYsyQIj5rVhM0JlZIjU4F7qPYfmr4z9gt
+ YTcQzMX3PO0tcLYm/+CBC2AOTjEWPD+mz7f+ei9g8km+8GJIuiuUUc932xxdW/JyIjgVhIjQUCn
+ szX0
+X-Google-Smtp-Source: AGHT+IGihW8fgwX3tkfcLBQdXYj2EO+EFWXWRbllnJqulYDkAbhQRHanP/wp58cOwuRO26Y/IaquqztEMDQebV7KU4M=
+X-Received: by 2002:a05:6102:4428:b0:5dd:b2ed:a427 with SMTP id
+ ada2fe7eead31-5ddc47d5d5emr4898479137.28.1762878700039; Tue, 11 Nov 2025
+ 08:31:40 -0800 (PST)
 MIME-Version: 1.0
 References: <20251110153046.63518-1-marat.khalili@huawei.com>
  <20251110153046.63518-2-marat.khalili@huawei.com>
@@ -58,9 +58,9 @@ References: <20251110153046.63518-1-marat.khalili@huawei.com>
  <e99e848a439e46c4bf9092c2c83de2a8@huawei.com>
 In-Reply-To: <e99e848a439e46c4bf9092c2c83de2a8@huawei.com>
 From: Jerin Jacob <jerinjacobk@gmail.com>
-Date: Tue, 11 Nov 2025 21:59:39 +0530
-X-Gm-Features: AWmQ_bm1rsOfr5sof9_-p1SjWtzTE-J-SeHD_2ootnetdPdFli2yE9VHQ6eg9yk
-Message-ID: <CALBAE1OcHv5O7_22ZBJCVauzX-D_WZ_gSFF+hxtu61WveAMAMA@mail.gmail.com>
+Date: Tue, 11 Nov 2025 22:01:13 +0530
+X-Gm-Features: AWmQ_bnzJpqNEZBHr32ncSaxhYcik6Lt9uq7UbA5TKVIWHPk4B6BSZR-g3191tY
+Message-ID: <CALBAE1OW-zbiJKQOgTOeEyE6R6CtGAfF__okaEypWMkt7hBENA@mail.gmail.com>
 Subject: Re: [PATCH 1/3] bpf: fix signed shift overflows in ARM JIT
 To: Marat Khalili <marat.khalili@huawei.com>
 Cc: Konstantin Ananyev <konstantin.ananyev@huawei.com>, 
@@ -112,6 +112,11 @@ f
 > RTE>>bpf_autotest
 > ../../src/lib/bpf/bpf_jit_arm64.c:320:18: runtime error: left shift of 1 =
 by 31 places cannot be represented in type 'int'
+
+This is when ASAN is enabled. Right? Is it really generating BAD
+opcode(i.e emiter generating bad OPcode) and test fails?
+
+
 >     #0 0x22bf59c in mov_imm ../../src/lib/bpf/bpf_jit_arm64.c:320
 >     #1 0x22bfae0 in emit_mov_imm ../../src/lib/bpf/bpf_jit_arm64.c:378
 >     #2 0x22c3bfc in emit ../../src/lib/bpf/bpf_jit_arm64.c:1321
