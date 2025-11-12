@@ -2,49 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 569D9CCF9E3
-	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Nov 2025 14:50:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF43DCCFA1A
+	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Nov 2025 15:02:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2C79D4060F;
-	Wed, 12 Nov 2025 15:50:44 +0100 (CET)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id B83BF402B0
- for <dev@dpdk.org>; Wed, 12 Nov 2025 15:50:42 +0100 (CET)
-Received: from mail.maildlp.com (unknown [172.18.186.31])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4d65t55XfPzHnGdW;
- Wed, 12 Nov 2025 22:50:21 +0800 (CST)
-Received: from dubpeml100002.china.huawei.com (unknown [7.214.144.156])
- by mail.maildlp.com (Postfix) with ESMTPS id 023C91400D9;
- Wed, 12 Nov 2025 22:50:41 +0800 (CST)
-Received: from dubpeml500001.china.huawei.com (7.214.147.241) by
- dubpeml100002.china.huawei.com (7.214.144.156) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.36; Wed, 12 Nov 2025 14:50:40 +0000
-Received: from dubpeml500001.china.huawei.com ([7.214.147.241]) by
- dubpeml500001.china.huawei.com ([7.214.147.241]) with mapi id 15.02.1544.011; 
- Wed, 12 Nov 2025 14:50:40 +0000
-From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-To: Stephen Hemminger <stephen@networkplumber.org>, "dev@dpdk.org"
- <dev@dpdk.org>
-Subject: RE: [PATCH v2 3/7] examples/ip_reassembly: add check before
- formatting name
-Thread-Topic: [PATCH v2 3/7] examples/ip_reassembly: add check before
- formatting name
-Thread-Index: AQHcU1k6e6HbWXRX6EODqw/yikbrLLTvIKNQ
-Date: Wed, 12 Nov 2025 14:50:40 +0000
-Message-ID: <13bac5880e79482a98a2db5b7bb852bb@huawei.com>
-References: <20251110182209.104087-1-stephen@networkplumber.org>
- <20251111221857.443752-1-stephen@networkplumber.org>
- <20251111221857.443752-4-stephen@networkplumber.org>
-In-Reply-To: <20251111221857.443752-4-stephen@networkplumber.org>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.81.199.148]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by mails.dpdk.org (Postfix) with ESMTP id 4884D40651;
+	Wed, 12 Nov 2025 16:02:44 +0100 (CET)
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com
+ [209.85.210.175])
+ by mails.dpdk.org (Postfix) with ESMTP id DB9B8402B0
+ for <dev@dpdk.org>; Wed, 12 Nov 2025 16:02:42 +0100 (CET)
+Received: by mail-pf1-f175.google.com with SMTP id
+ d2e1a72fcca58-7ad1cd0db3bso806862b3a.1
+ for <dev@dpdk.org>; Wed, 12 Nov 2025 07:02:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1762959762;
+ x=1763564562; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=wKLTWgjFABfDAm8HxtZj6blyBJIqqQj8jq85GPFx0mw=;
+ b=IsR2vPEp82yD08KyCzOlwWXi4dlwNbXL+oHTj+tPbBJfpvvxUgI+Uu5iplP+uEWJH4
+ E9fFI1mMu840+Zu+bJlDGcWoazXq0CZlpDoVb6JlHZ/gFxM7Qn3symD9DgPvtE7SJpEp
+ IUUh1Yn6BItkD6vQGtpjkcgd1kn2A5/eNsBRMq20VoUvX/s/ponc4R0RaESUQ6JFyGEA
+ VVyR6OdkmqZrf/tSdo/uiZ2jbrdhZpTRLRuSLHDQcQTn7HhV6+xKlzmZ00IMQ/MmBXDT
+ NGTX4JZITTt3A1w84Z8tyTG26l+6fOl9mQsgtQoldlrLUeZaZgdr6fgu5VFffz5yJIHg
+ uq2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1762959762; x=1763564562;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=wKLTWgjFABfDAm8HxtZj6blyBJIqqQj8jq85GPFx0mw=;
+ b=iDaQ8z6mdQ6YYhrtJiIN1UdKdsGwhDdN1nBDG+DQbZY3/01KHz2vb1r1QPjTEpJTq1
+ iOnR2NYNkD3mexxLhcKRzq1DJY2deVcgJjL1i9mwPGGOzGauRBQ8Nw5CiX5DekH06BiX
+ P9wF/0GAxMd1ZMQJd8PxEu4eJ1a62hljabIz5a3TaqrSxe0Nqcfna2+8hDMq+5B+3Rex
+ BS3/vmQBcCEUKjrcPYJO+lLdkhnuiHjOMcYJlv13uYeYRFS26aSUim/kO4eQMxFPbqGA
+ NIJqoIYiT3+1aRnPQcM4kl8tjaaMrljTUtlodYkBjq6D2a6fQ94jq+QqZZ4m9/T1bIZR
+ O4hg==
+X-Gm-Message-State: AOJu0YyYON/ZrZtyvwS/g3wjlddRe5ApY2SCMHIIqtuzdtsoj/lpk5+D
+ n0n7ofgusQ4pVPa2UqioXrZYJ7gchp0dSFECppJSgs1Zpc6Gm59hLz+CvXO2qEVSElo=
+X-Gm-Gg: ASbGnctKuwXYEZ/5GZgaEpd2YC7Mhw3ZKd5+Y1QjfvsfP33yzQzWUW/7dD6pM9Fko+N
+ u0QdutFa87BOnmuyUZjqYR3o8uPWQlSsa2QrHAY/74lLx6k6ZbVMpkSn8aQOwPVkms1LL4yAMY3
+ mpQExf60IqGXC0Z1ZO588OeqLy2dcoIZ7PjYXqDDdf+aT3aqIB2dQf+/xOAzxARQQUKjvMDyeha
+ 7mOlSSl9M8X0Zf8DT8V2gorY9hRK8SFSid42g3pt0Xu99SxEP1AziUhRBjT+p+vd+YK9dXeUgF8
+ mVl05P6Z97rF/3pNnhzkrV0jZPCHvGSekm3Pq4j9bET67xqeOp78PXAGajmbqMsXzFssarN9ZtZ
+ TP5O5Oi/n9Vco0Ss3pu6cTU3VnV55mkCdmk30X3wP52yd3IeimjVFN8KFJviCjjxi8qmbuvJov/
+ /31TMHoIGpkIhhuSZ8Se0CJkra10+EbU9GUA==
+X-Google-Smtp-Source: AGHT+IH+y7aF4PeHz89idYvmEcVKdjJrblOSiolMWuhHOAVQLYGykyp6hg+GfNDVEPhPbGCuVyApRQ==
+X-Received: by 2002:a05:6a21:6da0:b0:355:1add:c28a with SMTP id
+ adf61e73a8af0-35909095ff3mr4371897637.2.1762959761620; 
+ Wed, 12 Nov 2025 07:02:41 -0800 (PST)
+Received: from phoenix (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 41be03b00d2f7-bbf1868ad0asm3033413a12.31.2025.11.12.07.02.40
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Wed, 12 Nov 2025 07:02:41 -0800 (PST)
+Date: Wed, 12 Nov 2025 07:02:37 -0800
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Gregory Etelson <getelson@nvidia.com>
+Cc: <dev@dpdk.org>, <mkashani@nvidia.com>, <rasland@nvidia.com>,
+ <thomas@monjalon.net>, Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
+Subject: Re: [PATCH v4 1/2] ethdev: make representor parameter more explicit
+Message-ID: <20251112070237.6799779e@phoenix>
+In-Reply-To: <20251106055246.360824-1-getelson@nvidia.com>
+References: <20251028095831.53669-1-getelson@nvidia.com>
+ <20251106055246.360824-1-getelson@nvidia.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -58,42 +83,24 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+On Thu, 6 Nov 2025 07:52:44 +0200
+Gregory Etelson <getelson@nvidia.com> wrote:
 
-
->=20
-> In theory, lcore and queue could be so large that mbuf pool name
-> could overflow. But that can never happen since lcore and queue
-> will be in range. Add a check so that static tools know that.
->=20
-> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+> The current format for a port representor parameter is
+> '-a DBDF,representor=pfXvfY'.
+> That parameter syntax describes port representor relative to
+> PCI device DBDF.
+> In that notation VF Y belongs to PF X and PF X is relative to DBDF.
+> 
+> The syntax 'pfXvfY' will probe 2 port representors: PF X and VF Y.
+> If we want to refer only to VF Y related to PF X, the parameter must
+> be '(pfX)vfY'.
+> In this case only VF Y representor will be probed.
+> 
+> Signed-off-by: Gregory Etelson <getelson@nvidia.com>
 > ---
->  examples/ip_reassembly/main.c | 7 +++++++
->  1 file changed, 7 insertions(+)
->=20
-> diff --git a/examples/ip_reassembly/main.c b/examples/ip_reassembly/main.=
-c
-> index 17ae76d4ba..25b904dbd4 100644
-> --- a/examples/ip_reassembly/main.c
-> +++ b/examples/ip_reassembly/main.c
-> @@ -884,6 +884,13 @@ setup_queue_tbl(struct rx_queue *rxq, uint32_t lcore=
-,
-> uint32_t queue)
->=20
->  	nb_mbuf =3D RTE_MAX(nb_mbuf, (uint32_t)NB_MBUF);
->=20
-> +	/* Should never happen but check so that pool name won't be too long. *=
-/
-> +	if (lcore > RTE_MAX_LCORE || queue > RTE_MAX_QUEUES_PER_PORT) {
-> +		RTE_LOG(ERR, IP_RSMBL, "invalid lcore %u or queue %u",
-> +			lcore, queue);
-> +		return -1;
-> +	}
-> +
->  	snprintf(buf, sizeof(buf), "mbuf_pool_%u_%u", lcore, queue);
->=20
->  	rxq->pool =3D rte_pktmbuf_pool_create(buf, nb_mbuf,
-> MEMPOOL_CACHE_SIZE, 0,
-> --
-Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-> 2.51.0
+> v2: Add comments.
+>     In rte_eth_devargs structure rename port_flags -> flags.
+> v4: Rename devargs flag macro.	
 
+Acked-by: Stephen Hemminger <stephen@networkplumber.org>
