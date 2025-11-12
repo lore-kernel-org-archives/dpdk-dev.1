@@ -2,78 +2,87 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6D17CCF9F8
-	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Nov 2025 09:05:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46FD2CCFA1A
+	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Nov 2025 09:10:06 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D5F1F40667;
-	Wed, 12 Nov 2025 10:05:01 +0100 (CET)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 3C43640659
- for <dev@dpdk.org>; Wed, 12 Nov 2025 10:05:00 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1762938299;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=rGpKF3rBue1fYN5X2hLrqrjFDgJV0+gEKQl0xuxO2bo=;
- b=bWq+PSCNyPZKtfz9i3tdojkUC0vW+AfiQEU/UjTUsR9fZIRC4LFRK7CFqd+6UQnS0tacm1
- s6WXO0AUrwclv4vbSVzgjBAfTG1KX3m7Ub6P1xt9mh58rYj8TglmJOjqZspFEIEDmLyHz2
- maZTjbQi54vNLlk9Al6pREVdTg4HD4Q=
-Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
- [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-471-y3_DMnPKPwa3gGbJUTl77g-1; Wed, 12 Nov 2025 04:04:58 -0500
-X-MC-Unique: y3_DMnPKPwa3gGbJUTl77g-1
-X-Mimecast-MFC-AGG-ID: y3_DMnPKPwa3gGbJUTl77g_1762938297
-Received: by mail-lf1-f71.google.com with SMTP id
- 2adb3069b0e04-5943ca95853so276522e87.2
- for <dev@dpdk.org>; Wed, 12 Nov 2025 01:04:58 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1762938297; x=1763543097;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=rGpKF3rBue1fYN5X2hLrqrjFDgJV0+gEKQl0xuxO2bo=;
- b=UPFEI39Ktfv8e64wxLnXUHJIzvcDfDY2wAavcIoDVra8/FfdvfBaKVC31IYU/saEfk
- /JnBIeInQiJrIEE1zRmQjEwdEmBrlMyke3zJfN2OucdSFDul0EIhDq6/QKwnxjWnQ38i
- aY1a+8FvFgnNjsDzkn8NrESLFgYrTjqTBrrsmutDIelZdyH6S5wMscPtZu5/nJ9JqohD
- A8OG62zy7okFVTiQFhEkfCdBw8yGUCFM2y7WkwB2mbwG+Gvsy8OYJMK4XnlLM7xQX0H8
- QMQ44edegSGzCKRl68u0BL+Qjyhq/UrVjp8t4JYZLPZwTh8YmLzZFy9yyTVrRj7VwLRP
- 4MbA==
-X-Gm-Message-State: AOJu0YzFJSkgt6FNCZw5Avqy9TK523QB2xSwvVs2Av2agodJkg7Rr/jf
- 8wu9zn8PKukBi2l/hQC6jd83g+n4ZNahmQgcEeE8K2q5MdlJ2RlZfervGXiwepQneTKic893hWV
- w0f+ou4/+O7GIa01YZUV2aPIQNF4DWh2ufLDcLDS6rv7d1QvII0OysDOyuGCfAfTiDhGavcaWUC
- 46pyRkvxpaYqqbGNOTA6U=
-X-Gm-Gg: ASbGncuskDVQgWxVQjbyVF7TwZ9D/up7EkpC6j04z6tOtL6G3a7p0F468LmtW87Oo2Y
- 3BLlRBfyghPszAGOj28gFf/RUgapxd+KReUx6T3+OO8yQYESR8G6OGf39wQi0uLujvPS4HenIVG
- ewJj8zKUEPl22DCGVYR3PUsDcz/qd4+67aazK/O0CBb0GDmKEAt3CfxNiXnQ==
-X-Received: by 2002:a05:6512:3501:b0:594:3020:f88a with SMTP id
- 2adb3069b0e04-59576df1a6amr777743e87.3.1762938296643; 
- Wed, 12 Nov 2025 01:04:56 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IF0O7MtaVfzH4x+MRJpguRZghqFCz7C0RLYKhEzXECdgeSN9AhUnlBM4vPltI62ntXOSO4tqdY95Sodcwmchgs=
-X-Received: by 2002:a05:6512:3501:b0:594:3020:f88a with SMTP id
- 2adb3069b0e04-59576df1a6amr777727e87.3.1762938296087; Wed, 12 Nov 2025
- 01:04:56 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 74FC440653;
+	Wed, 12 Nov 2025 10:10:05 +0100 (CET)
+Received: from fhigh-a1-smtp.messagingengine.com
+ (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
+ by mails.dpdk.org (Postfix) with ESMTP id D79A84014F;
+ Wed, 12 Nov 2025 10:10:03 +0100 (CET)
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id 40F311400231;
+ Wed, 12 Nov 2025 04:10:03 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+ by phl-compute-05.internal (MEProxy); Wed, 12 Nov 2025 04:10:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1762938603;
+ x=1763025003; bh=8C6JtYW0rZQheiLHCygcusI91oW494c/bMkpGzSEMb8=; b=
+ ZkxtnsU8fcU+/qAa0UIGwb+YAnVUyHBTBpwgl27rThzg8stV9k+P7voSkPl+ujyS
+ 22OQ8HT/pSdHHaH/Rb+qv+BPXUNjaAr6/6tEmru/iuvx0HTX8u1ivgdtWVldxh0j
+ vr75OCYkY5s7ETGNEAI+1JXIcNVLycabf2QLFkfnDzVp7v8JRr5HocTPvYi2VrJv
+ mQHZWz626zJaaX5jvnyFQ7hovh/CobxLHRNVfVJ8VOBOg7nJAY/cY8Sv3tpyPDw7
+ c2RNe/QgDRvddGkNgPMRM99YMejHwTZ0YjgmJQOQ+fXwjRLKQQRH57chuXgkrCGm
+ 8z4qzMC9aDd51/6BB6wTyA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762938603; x=
+ 1763025003; bh=8C6JtYW0rZQheiLHCygcusI91oW494c/bMkpGzSEMb8=; b=2
+ oA37HoSo8mfpKZxvb7h6ZeKUvyIakwxoJI+T1a73kL8NIXhtkA0LKVJP+Ua/Ed3F
+ mTtlunV+K8F4LSr2dhIO0b+aEVJfgin2NrAGm9d0PSxKdiM7xOibNRTb6pDfajim
+ jZUsTn8l5aiLzIxN8QSWugvE0veZmbYV3pM3uEcE8CzY4SiHb4tEkj7genVGThEM
+ p+GD1Qg7NgNo2Gf/oYMZgro9Rs/XpsSmSzgvk1qYgI62K2PkMdryM4i/7Szxk2pE
+ Vhc0Cn6nMFZ80a9z5dW5+GHq9hjl3z6gRnto6Pdl/yKaqAPsg1gacmfKyoNqC6a/
+ IbdH+jkTXvecknehZbwVw==
+X-ME-Sender: <xms:6k4UaUcC1Vn-SDAn3HsYhnUyi4thpVeDYmkhjjLN1Ch7qIpLrlEZDw>
+ <xme:6k4UacM5NCRyqNGco76v5ePcrCd7yoZi7ZjdB8JxjJBjTvW8LiA4FHtaFUoQDYYv_
+ DM-JwD63oy1lOqQkR3hFNRwkAvq5nYIABYDzrkkQzsM3dAUSAgTWw>
+X-ME-Received: <xmr:6k4UaQUzpkNsRDI3_yaI9rwRfyeD3zTzRZD40JYla-m1-wOD9Bcm64dk6yfZRXrmijJie1SVbhdisdY-vUFikP4rvQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvtdefieejucetufdoteggodetrf
+ dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+ rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+ gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
+ ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
+ frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
+ uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeduuddp
+ mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepghgrvhhinhhlsehnvhhiughirgdrtg
+ homhdprhgtphhtthhopegsihhnghiisehnvhhiughirgdrtghomhdprhgtphhtthhopehm
+ rghtrghnsehnvhhiughirgdrtghomhdprhgtphhtthhopehvihgrtghhvghslhgrvhhose
+ hnvhhiughirgdrtghomhdprhgtphhtthhopehorhhikhgrsehnvhhiughirgdrtghomhdp
+ rhgtphhtthhopegushhoshhnohifshhkihesnhhvihguihgrrdgtohhmpdhrtghpthhtoh
+ epshhurghnmhhinhhgmhesnhhvihguihgrrdgtohhmpdhrtghpthhtohepuggvvhesughp
+ ughkrdhorhhgpdhrtghpthhtoheprhgrshhlrghnugesnhhvihguihgrrdgtohhm
+X-ME-Proxy: <xmx:6k4UacxHqEB3F7Za-fTOAIozADLBF1tn6te31dC1I-cACHRxEE1exQ>
+ <xmx:6k4Uaf-bslnvJAMDA9DTC6yYkV0QZnG1V1f1HeQXhgRkI9OPctDKuA>
+ <xmx:6k4UaZ8LwPxgrW5Vdb02y8hS5KCl__aUynCIuJ7LuzUjzU8ikZ921A>
+ <xmx:6k4UaWUQGLhgEjijbVGtSazt7aRriZB4Kp6xY-wmoa-fMgs_-T_F6w>
+ <xmx:604UaUo2Nx-MsOy7ZzLb-co75FEsJlpWgxbsN8BtHm3JpUx3X3t7OvSG>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 12 Nov 2025 04:10:00 -0500 (EST)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: "Minggang(Gavin) Li" <gavinl@nvidia.com>, Bing Zhao <bingz@nvidia.com>
+Cc: Matan Azrad <matan@nvidia.com>, Slava Ovsiienko <viacheslavo@nvidia.com>, 
+ Ori Kam <orika@nvidia.com>, Dariusz Sosnowski <dsosnowski@nvidia.com>,
+ Suanming Mou <suanmingm@nvidia.com>, "dev@dpdk.org" <dev@dpdk.org>,
+ Raslan Darawsheh <rasland@nvidia.com>, "stable@dpdk.org" <stable@dpdk.org>,
+ Maayan Kashani <mkashani@nvidia.com>
+Subject: Re: [PATCH] net/mlx5: fix IPv6 DSCP offset in NT HWS API
+Date: Wed, 12 Nov 2025 10:09:58 +0100
+Message-ID: <4447141.2yuIWEeYC1@thomas>
+In-Reply-To: <IA4PR12MB97632C78D2EAF7F0987C75A2D0CCA@IA4PR12MB9763.namprd12.prod.outlook.com>
+References: <20250930072827.9630-1-gavinl@nvidia.com>
+ <IA4PR12MB97632C78D2EAF7F0987C75A2D0CCA@IA4PR12MB9763.namprd12.prod.outlook.com>
 MIME-Version: 1.0
-References: <20251108153207.1512863-1-david.marchand@redhat.com>
- <20251108153207.1512863-5-david.marchand@redhat.com>
- <CAHHRULVe39Hq3ebQJVMfSfBMppEgZX0gmdzSqGoXNJWK5QtGGg@mail.gmail.com>
- <CAJFAV8x4+2pwC=_NGM7J5ikyCY2tLAaQhS2uHLTG-_mShPAHEg@mail.gmail.com>
-In-Reply-To: <CAJFAV8x4+2pwC=_NGM7J5ikyCY2tLAaQhS2uHLTG-_mShPAHEg@mail.gmail.com>
-From: David Marchand <david.marchand@redhat.com>
-Date: Wed, 12 Nov 2025 10:04:44 +0100
-X-Gm-Features: AWmQ_bkGgrGJu5pBy7c7NkZGJ7oUg1nsh4HZQyFJCpxbSZEkCR9UHlzBF7LRTgU
-Message-ID: <CAJFAV8ymqLUS_g4jH+pWVuSrMoF5LfNt001KYreVd50rfjUK=g@mail.gmail.com>
-Subject: Re: [PATCH 4/5] net/dpaa2: remove ethdev device in bus device
-To: Maxime Leroy <maxime@leroys.fr>, hemant.agrawal@nxp.com
-Cc: dev@dpdk.org, Sachin Saxena <sachin.saxena@nxp.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: ufZ01nlHxvuUmyxGGBIiQlSEVSbF0qc1UFUnfQSkA9A_1762938297
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -87,31 +96,11 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 12 Nov 2025 at 09:56, David Marchand <david.marchand@redhat.com> wr=
-ote:
-> On Wed, 12 Nov 2025 at 09:44, Maxime Leroy <maxime@leroys.fr> wrote:
-> > I don=E2=80=99t think dpaa2_tx_sg_pool should be freed in rte_dpaa2_rem=
-ove; it
-> > should be freed in dpaa2_dev_close instead.
-> > For symmetry, dpaa2_tx_sg_pool should also be allocated directly in
-> > dpaa2_dev_init.
->
-> Indeed, moving the dpaa2_tx_sg_pool handling in dev_init/dev_close is
-> more self contained, and looks cleaner.
+12/11/2025 09:58, Bing Zhao:
+> Maybe the title can be changed to non-template API directly instead of NT HWS?
 
-On this topic, in rte_dpaa2_probe:
-
-    /* Invoke PMD device initialization function */
-    diag =3D dpaa2_dev_init(eth_dev);
-    if (!diag) {
-        diag =3D dpaa2_tx_sg_pool_init();
-        if (diag)
-            return diag;
-
-On dpaa2_tx_sg_pool_init() failure, a eth_dev is leaked.
-Worth fixing while moving around the code related to dpaa2_tx_sg_pool.
+No, the correct name is synchronous flow API with hardware steering.
+You can shorten it as "HWS sync API".
 
 
---=20
-David Marchand
 
