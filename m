@@ -2,77 +2,126 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBAE8CCFA1A
-	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Nov 2025 09:13:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEC66CCF9F8
+	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Nov 2025 09:19:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3A9344067A;
-	Wed, 12 Nov 2025 10:13:48 +0100 (CET)
-Received: from fhigh-a1-smtp.messagingengine.com
- (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
- by mails.dpdk.org (Postfix) with ESMTP id 6AECA40678
- for <dev@dpdk.org>; Wed, 12 Nov 2025 10:13:46 +0100 (CET)
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
- by mailfhigh.phl.internal (Postfix) with ESMTP id 0B91714001C8;
- Wed, 12 Nov 2025 04:13:46 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-01.internal (MEProxy); Wed, 12 Nov 2025 04:13:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:date:date:from:from
- :in-reply-to:message-id:mime-version:reply-to:subject:subject:to
- :to; s=fm3; t=1762938826; x=1763025226; bh=iuqa5BxSLndV8btOR7mxr
- 2rjqkJOMHIPzubCy7ISX4E=; b=C7v3bi/xmVz/EYg0574GjNJ/7IM/kt+xgZ43g
- p2rUB/P7hFVKidvB6ERjVuHnW6oMaPGiHUYEEL+If/UlPEWffu1GrhbOH1/5r5c7
- ani58z1E+jqyvJs77VViF0hBYj05ln6geTDtR15hZiy9I5z1Z8yYMs49FZ5oKVAr
- QZO2MRmQ5DsMnHTmYa4lb7DnWVqvQJych1SEgDWuUiyypNiOfexhSdr7zxMDNX/x
- 16SoskhwuNqPsRAxrM1NiUDCbBQ+pSNvEidrmR+bX977R3PIbkZBsnjSi3xx9y94
- UaAAAsbrmq9SkRCnUEOx3+ovhrr9jsha9Ts/yMmxXJiFW6dbg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:date:date:feedback-id:feedback-id:from:from
- :in-reply-to:message-id:mime-version:reply-to:subject:subject:to
- :to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
- 1762938826; x=1763025226; bh=iuqa5BxSLndV8btOR7mxr2rjqkJOMHIPzub
- Cy7ISX4E=; b=PLqWlCxlHkTa2x4ccpYxovNk6iVaKc2DByF3xwfzZ5kXvgqC/u6
- rxGALU0LDv2hNBqGaAQmvGv+MLGUsYhNAAcQJfWXrmg1/Qg9uTEDbJU12Y5Q2kYg
- wkK1cWhWeJJt+vGszqs4V16cEAa8pK6/C19cbvhDqcAcZg8wbIMUtFc0gS9ujI1U
- zl6HP2RgiEvG2zdD3HvmCJpPQmICr/jffiV0AsWyxxpPXxxiR5dSWQAexJDNQWWP
- fNWzxZpHH3zh8S6+f2gZILXM6nDPID/6rS2v7WhlmkkamjKyGcmf2q3m16XA54x/
- 01ypl4CfEigKHJQF0ibhTt4Aq4UkVfMJzig==
-X-ME-Sender: <xms:yU8UadSxjaAWch9DcCiOyNHqWqvHP2isln9u8OVZAryQisstrrSq8Q>
- <xme:yU8UaW6wGnw5SLvwXz-6zLMPh3_Pw-yPa5j3kyTR3suFrzido1Aac9IlLc8xUXX3b
- YBkcA4VbyEF7oGssa1enwMrZjN9kN5kHgIB2naKPWSe0sxtNWxe6RM>
-X-ME-Received: <xmr:yU8Uaaz8GkmhtbIH_qa4szjXN5XuCkmf9GndGdYE1-sFkqvRPEx7uvSQGBJ36lrXk9U8T-5Kf2eFjvtKlHR6ylIL5B6C7og>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvtdefieekucetufdoteggodetrf
- dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
- rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
- gurhephffvvefufffkofgggfestdekredtredttdenucfhrhhomhepvfhhohhmrghsucfo
- ohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtffrrg
- htthgvrhhnpeevveefveeiiefhtedukeegkeelieegffeukeevudetueffieduveetiedu
- keefleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
- hthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeegpdhmohgu
- vgepshhmthhpohhuthdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtphhtth
- hopehhvghmrghnthdrrghgrhgrfigrlhesnhigphdrtghomhdprhgtphhtthhopehsrggt
- hhhinhdrshgrgigvnhgrsehngihprdgtohhmpdhrtghpthhtohepshhtvghphhgvnhesnh
- gvthifohhrkhhplhhumhgsvghrrdhorhhg
-X-ME-Proxy: <xmx:yU8UadTdPtmPDTBFwNelr6g14moLTCdejTt2et8SGgYzV2z-Etq_yQ>
- <xmx:yU8UaRX5asAcsXMmnaO5U63xgyrU-GosYXQcrXWsjjHAAljevyLzaA>
- <xmx:yU8Uafb50Ld8n-aAp1EyQgPxyCK4UYwkxZS5lj20DrpfeHvCYWQdEA>
- <xmx:yU8UaX2nlnTyScAxa0aekIMnaGfYskszpil71Up050Van0dBMp-ljQ>
- <xmx:yk8UaWd1xj--Li5EFn9VeJ33I6nGadMFdbODlsuO_ZNJOgxXOkvBGPix>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 12 Nov 2025 04:13:44 -0500 (EST)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: dev@dpdk.org
-Cc: Hemant Agrawal <hemant.agrawal@nxp.com>,
- Sachin Saxena <sachin.saxena@nxp.com>,
- Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH] license: standardize SPDX tag for 3-Clause BSD
-Date: Wed, 12 Nov 2025 10:13:35 +0100
-Message-ID: <20251112091335.662991-1-thomas@monjalon.net>
-X-Mailer: git-send-email 2.51.0
+	by mails.dpdk.org (Postfix) with ESMTP id 0EF5540656;
+	Wed, 12 Nov 2025 10:19:50 +0100 (CET)
+Received: from SA9PR02CU001.outbound.protection.outlook.com
+ (mail-southcentralusazon11013053.outbound.protection.outlook.com
+ [40.93.196.53]) by mails.dpdk.org (Postfix) with ESMTP id CB7BB402E1
+ for <dev@dpdk.org>; Wed, 12 Nov 2025 10:19:48 +0100 (CET)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=gYfjLgcJ37o0KmNjohHhdcn8gPpZZ5MVxr2ik4P6MKxHn78RI56JlY8UUE6MoPqUmxOJW81gkb4O6JHqLGriA5BmfifQEEnUrPdjJtvaBglYpeuSlaFhH00koNloRNYL8gihElimdXXAuVc1VoypjEBT43d1f9IqNO9NdtfK2pnT79qPZNB3wI5zohzi/xePb90rjZnqeriprEOPL2YIv6BkIv0NgiDNX/GaxEdmedDYXYFJ7Tkfxwp6lD5DRSA/NYnfsmAtoa2PIt9Kyf+z4DbfVTJFbmOv/M+tPW1cOrcCa8gdWa4I4hkv5v8JgpS2Y4vPcPktMEe9hXl7JxyBpA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=nSfYEZECC9AcJqxdhhITa4/pkou3+iWleSm6CGzXDKg=;
+ b=mUZU746k6BaXcTQ3aGwaIQmbbeRV438AGrGO6rfXG4T668pOVIm48n4g6rsL7EdUXDd+zPhqS+6rwtryrKg7ozDtIJe/p5nTnt6mphnnmpaC2sLamiD+QLv4Ft2Q6xXWo3u+tjg4kvWVbFgbn7wLPEIRD+P/OK+MTBxAnqqK/+ondqJbgxDfLdAESuDCAYsS0ktnuszN9S2hKdm/B5/edsvDSmHKx0B4C9BDLtFU14kyK9W0B4tYQw+cH15MvMNtvq9ncBKIb/V8M4TR+ymG+QY3Y9jqxAY1YHCj3hlgNXiW1qWbLBNBTgrpgcDQBsPlrt1mj36Qk1NSpVxJxCbNQA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nSfYEZECC9AcJqxdhhITa4/pkou3+iWleSm6CGzXDKg=;
+ b=H9RnUeOJy9pUXt8MldlDnvKmTsu9LmSGcWpzYUif4dyCGZcxqZl4vZ7T8/DqA6mIwzVN44Rlw067mMsmbEcmbpiJUUXTuktgbaNOD7+y+aZ7K1pr9LEzS7met5O0A7SwcHawCJtn5SK67Mq0kJmKlfjpr2fwib4B+/h1ebN9ld5wlYoCWdf7DCgBCYgeTkRhAwtS99/QO1Lz9gchnhggCa5+6tbFEpdUWVr6XWPG+IXxbFpDXX/mosJpM4RvQ1KET0pp/dzo/bwPEVOIGVTxMjmNI/32WamDlqbmIh0mYTHu9ufaFRhR4PRJJGxwRAcccxsYSQD3W6IG/urnen4xqA==
+Received: from SJ0PR05CA0074.namprd05.prod.outlook.com (2603:10b6:a03:332::19)
+ by LV5PR12MB9828.namprd12.prod.outlook.com (2603:10b6:408:304::19)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.15; Wed, 12 Nov
+ 2025 09:19:46 +0000
+Received: from SJ1PEPF000023CF.namprd02.prod.outlook.com
+ (2603:10b6:a03:332:cafe::53) by SJ0PR05CA0074.outlook.office365.com
+ (2603:10b6:a03:332::19) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9343.5 via Frontend Transport; Wed,
+ 12 Nov 2025 09:19:45 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com;
+ dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ SJ1PEPF000023CF.mail.protection.outlook.com (10.167.244.11) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9320.13 via Frontend Transport; Wed, 12 Nov 2025 09:19:45 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 12 Nov
+ 2025 01:19:30 -0800
+Received: from nvidia.com (10.126.230.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 12 Nov
+ 2025 01:19:29 -0800
+Date: Wed, 12 Nov 2025 10:19:25 +0100
+From: Dariusz Sosnowski <dsosnowski@nvidia.com>
+To: Gregory Etelson <getelson@nvidia.com>
+CC: <dev@dpdk.org>, <mkashani@nvidia.com>, <rasland@nvidia.com>, "Viacheslav
+ Ovsiienko" <viacheslavo@nvidia.com>, Bing Zhao <bingz@nvidia.com>, Ori Kam
+ <orika@nvidia.com>, Suanming Mou <suanmingm@nvidia.com>, Matan Azrad
+ <matan@nvidia.com>
+Subject: Re: [PATCH] net/mlx5: fix non-template sample action validation
+Message-ID: <20251112091925.r6pvg3mphh3ls66u@ds-vm-debian.local>
+References: <20251106130228.491915-1-getelson@nvidia.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20251106130228.491915-1-getelson@nvidia.com>
+X-Originating-IP: [10.126.230.35]
+X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF000023CF:EE_|LV5PR12MB9828:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5f53b576-2c14-4dab-b076-08de21cc9eed
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|1800799024|376014|82310400026|36860700013; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?DgVUt00XwdR8/QTtQXDPmg04fRxMXYTnm/G0PLjE7TiRA6oEAPpNIaoZAi42?=
+ =?us-ascii?Q?Y1Lz3KiQpI8RLxZ6ST/joxD2WwlwP6wE+wQqgIFDOqf0RKe5SPUXSC5MhkN7?=
+ =?us-ascii?Q?PbIx0hAhhMpalivEE+Zm/4bNdhQap0qtmxM3QcbzSwnolwqqqLWdI1ItztuE?=
+ =?us-ascii?Q?PoebcsL+3Ob8P6AGb5wXUpukQKIulOGGDl6SeEPk3EQgYOyLOR2dL64sAXrY?=
+ =?us-ascii?Q?YId6EpObwR/ARuRBGTVOFHP5sbn59/b+vVfZR0HtGrRfSFF0pjSwRsPeF9NJ?=
+ =?us-ascii?Q?18hQnb7oN5dqrliOMisnpemI693Aa4R1GJUjP1qvkoWHA9rTW22IbMnVQrgi?=
+ =?us-ascii?Q?s/9sPM9JdLBe4WarboAl1B555Ou/oX4y2lZLYwuKrhrT5kfO56TAX6ph4LkX?=
+ =?us-ascii?Q?cVOtyz0K93kdm6vwfy1RxlwInyFd7jZXfJAswqBOrsG1DH08HfyajqVeUi2q?=
+ =?us-ascii?Q?8Y10fLDbuWKY1MVn516QpnApNm0Evk1KvQ5ySk8VW03fzyL4Z/mD4fN4ggpp?=
+ =?us-ascii?Q?A6E3xsqt4TodI6BgmDQV4ruinzxvKOKCAtDAmJrrYLmuxTzbs1OjQi/sC6he?=
+ =?us-ascii?Q?vhcYKbW5jWoV9Wp08WpWmY2vgGSn1G58BCJmGvfSU/LobLbCty8oZsBzEfJc?=
+ =?us-ascii?Q?xST8MwTtBOwLaVXqOZR/jgsKHV1lyPdBhFrF2t8rN5qDt+WlvI6CQWSkjSe4?=
+ =?us-ascii?Q?yu6XpI40R6MYy7xUkjb7UIPF4++/bPRb+5sNcGAYSkoJgEMHH7IxNkG3sGnF?=
+ =?us-ascii?Q?6oKAKuVzPez+1Qg18yRyNz9NuNEl7F5koIl5hVJ1JqFjEYj2WM1xFbaqMc21?=
+ =?us-ascii?Q?tfKOiD08Zo2xln70qqIqM6cLNB8cbkW53lQetlZJk1BYpja6TGxpxzmjsNpR?=
+ =?us-ascii?Q?l3y7YQfjM1qeEPZZHT1jSv/uowwBUDfzG3SH314SHvSRCMS/jO1+fPO5HiIg?=
+ =?us-ascii?Q?Tzp9s0viuQxkAEZUYdSpQSOJ7/SG23FO9ymIdYH9mi1JYlR7IdI5cw8hm+YC?=
+ =?us-ascii?Q?6qJq2vtGOncXz7QPC7OtTSDROqoLiLGYuCpe1nSWdqgOLZtjEzbydE6bZtBT?=
+ =?us-ascii?Q?s9Jq+dudrtvirZ/1ugvHotWiDXb1sFVjLdysHR5K2iK3PWINv+LuBrnAXzPV?=
+ =?us-ascii?Q?fwwejMa/hQrLFvojSRtYzKjFqMfacv5ycdu1YaGFWQ78MwYGluCRHkwQZ/ME?=
+ =?us-ascii?Q?zeCxpxMyBR9bV1oUFV1+fs4KyzLEAbQEMUa0tUTSBnb1jnloDA3+GHckToIt?=
+ =?us-ascii?Q?yxzDAcx0/pByVT9ldglM+TwBAaNpI6ZTuMrDc/G1laZJdMMrYleul7+9eQ8f?=
+ =?us-ascii?Q?d57UBKd40d+uRf/uzbEByYJ4yYCmRjbnLh986d3tu/P2fsC7lwXH2aFcsgi0?=
+ =?us-ascii?Q?xvyvJqFslK6aV2G5FKEzbaSibVR0GOqydOqmRIvo90DylHj+L3At8pnchCi4?=
+ =?us-ascii?Q?FzybazGApAuoAvWCSw3V9rpj0vVCdQ9HdcACCif8MYfW04y//Adca97sTyOL?=
+ =?us-ascii?Q?0wQpRM+zvIZJ52o+e+ya7V8KU6ORG/MXTjXdEdkH0NIT1JH1c5cx+qGQvfgU?=
+ =?us-ascii?Q?5TieUFIE5DgyvngRR8c=3D?=
+X-Forefront-Antispam-Report: CIP:216.228.117.161; CTRY:US; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge2.nvidia.com; CAT:NONE;
+ SFS:(13230040)(1800799024)(376014)(82310400026)(36860700013); DIR:OUT;
+ SFP:1101; 
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2025 09:19:45.5219 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5f53b576-2c14-4dab-b076-08de21cc9eed
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.161];
+ Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: SJ1PEPF000023CF.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV5PR12MB9828
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -86,69 +135,11 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Make sure the SPDX tag is used as defined in license/README.
-Reduce separator to single space.
-Use parenthesis and uppercased "OR" when a second license is applied.
+On Thu, Nov 06, 2025 at 03:02:28PM +0200, Gregory Etelson wrote:
+> The patch validates that sample actions include terminal action
+> 
+> Fixes: d986f04d6529 ("net/mlx5: add functions for non-template flow sample")
+> 
+> Signed-off-by: Gregory Etelson <getelson@nvidia.com>
 
-Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
----
- doc/guides/eventdevs/dpaa.rst             | 2 +-
- drivers/common/dpaax/caamflib/desc/pdcp.h | 2 +-
- drivers/event/dpaa/dpaa_eventdev.c        | 2 +-
- drivers/event/dpaa/dpaa_eventdev.h        | 2 +-
- drivers/net/tap/bpf/tap_rss.c             | 2 +-
- 5 files changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/doc/guides/eventdevs/dpaa.rst b/doc/guides/eventdevs/dpaa.rst
-index 33d41fc7c4..8fb1d469dd 100644
---- a/doc/guides/eventdevs/dpaa.rst
-+++ b/doc/guides/eventdevs/dpaa.rst
-@@ -1,4 +1,4 @@
--.. SPDX-License-Identifier:        BSD-3-Clause
-+.. SPDX-License-Identifier: BSD-3-Clause
-    Copyright 2017 NXP
- 
- NXP DPAA Eventdev Driver
-diff --git a/drivers/common/dpaax/caamflib/desc/pdcp.h b/drivers/common/dpaax/caamflib/desc/pdcp.h
-index 55159d53f0..460f48c9e3 100644
---- a/drivers/common/dpaax/caamflib/desc/pdcp.h
-+++ b/drivers/common/dpaax/caamflib/desc/pdcp.h
-@@ -1,4 +1,4 @@
--/* SPDX-License-Identifier: BSD-3-Clause or GPL-2.0+
-+/* SPDX-License-Identifier: (BSD-3-Clause OR GPL-2.0+)
-  * Copyright 2008-2013 Freescale Semiconductor, Inc.
-  * Copyright 2019-2025 NXP
-  */
-diff --git a/drivers/event/dpaa/dpaa_eventdev.c b/drivers/event/dpaa/dpaa_eventdev.c
-index 400e0ecd1c..e5d93afca2 100644
---- a/drivers/event/dpaa/dpaa_eventdev.c
-+++ b/drivers/event/dpaa/dpaa_eventdev.c
-@@ -1,4 +1,4 @@
--/*   SPDX-License-Identifier:        BSD-3-Clause
-+/*   SPDX-License-Identifier: BSD-3-Clause
-  *   Copyright 2017-2019 NXP
-  */
- 
-diff --git a/drivers/event/dpaa/dpaa_eventdev.h b/drivers/event/dpaa/dpaa_eventdev.h
-index 047c9781bd..1794f4cde6 100644
---- a/drivers/event/dpaa/dpaa_eventdev.h
-+++ b/drivers/event/dpaa/dpaa_eventdev.h
-@@ -1,4 +1,4 @@
--/*   SPDX-License-Identifier:        BSD-3-Clause
-+/*   SPDX-License-Identifier: BSD-3-Clause
-  *   Copyright 2017 NXP
-  */
- 
-diff --git a/drivers/net/tap/bpf/tap_rss.c b/drivers/net/tap/bpf/tap_rss.c
-index 6a1c3761b7..040cd7488c 100644
---- a/drivers/net/tap/bpf/tap_rss.c
-+++ b/drivers/net/tap/bpf/tap_rss.c
-@@ -1,4 +1,4 @@
--/* SPDX-License-Identifier: BSD-3-Clause OR GPL-2.0
-+/* SPDX-License-Identifier: (BSD-3-Clause OR GPL-2.0)
-  * Copyright 2017 Mellanox Technologies, Ltd
-  */
- 
--- 
-2.51.0
-
+Acked-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
