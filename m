@@ -2,51 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C849FCD4F2F
-	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Nov 2025 04:39:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD5AECCFA18
+	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Nov 2025 04:39:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 427CA40E38;
-	Thu, 13 Nov 2025 05:39:12 +0100 (CET)
-Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
- [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id EEFDE40E2B
- for <dev@dpdk.org>; Thu, 13 Nov 2025 05:39:10 +0100 (CET)
-Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
- 5ACNRovH4031198 for <dev@dpdk.org>; Wed, 12 Nov 2025 20:39:10 -0800
+	by mails.dpdk.org (Postfix) with ESMTP id B7ECC40E25;
+	Thu, 13 Nov 2025 05:39:18 +0100 (CET)
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
+ [67.231.156.173])
+ by mails.dpdk.org (Postfix) with ESMTP id 61EC640E2B
+ for <dev@dpdk.org>; Thu, 13 Nov 2025 05:39:17 +0100 (CET)
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+ by mx0b-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
+ 5ACMqYkX1056270 for <dev@dpdk.org>; Wed, 12 Nov 2025 20:39:16 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
  cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=r
- kgt17TlWe3RzcTbattlq1Y+A9w34QuFMjj03lPh3ug=; b=giS87JwKrX9sRKw13
- vwZpiHic8rzvDYf/11JxAwnKYgQWAixcOtfpLzN/1eSt7uK1FGOai/5mqPV+ABr6
- yna0OHXqf4ls9crK886VFd8uUkW54JPmf/ZGe8y9VU8ChQj024Clxz3I9MdbHpIV
- /PJ0snNn++Mgu+NSJ7UhPS6xEvj0B88jscsxNaZ5HulUlJpEgZLYOfmsx+kCLHRX
- 7NZLdGQU7e9XsMWFJW0vz9qbrK6E2VBaWjpqW6MSov2Y0X639b7iHa5jLDL3JLgT
- djTZZGSxIyKibZIuTNofUFwZ9SznA3yFCIo5kn3yRyu2h43FrQns3wRVj1yLq/Lf
- DdL9g==
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=z
+ ePmewATE3KyCGC2COblLqwAla198RKKbB7q7zIzWNA=; b=FRtkOiV4AaOmNBicK
+ OSbX+E6creTbEgyrmUC+qx6MicgeCF+e/t5LFsJNWGC+T58EgjVMOguwQRCpzkPH
+ 7FPOcg4YY0Feuy7RYt7tblDJD9+rNPFqOzBANAHku/mz2jd3fe5HAk493TcjjbHQ
+ IPyamUuMnEW+vrdMRM++QREIG2Ovl/0IjN81ZTT/52FkpfofAEpO4HNt3YAJ22+w
+ bjU5ohnl9YlGTDkyUlvg88qBsbMmxkE2XmnCaNa/cJG+cA0cHO3YUK7YpvHRL6hU
+ GTTCZ4QPAGTXKMkYMrvQaNgUoeEzuXgO32OakbbcqCadwlyve+Mm/suJw0TtaDJF
+ AMKdQ==
 Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 4ad3xbgkge-1
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4acru1aa66-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Wed, 12 Nov 2025 20:39:09 -0800 (PST)
+ for <dev@dpdk.org>; Wed, 12 Nov 2025 20:39:16 -0800 (PST)
 Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
  DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Wed, 12 Nov 2025 20:39:08 -0800
+ 15.2.1544.25; Wed, 12 Nov 2025 20:39:16 -0800
 Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
  (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Wed, 12 Nov 2025 20:39:08 -0800
+ Transport; Wed, 12 Nov 2025 20:39:16 -0800
 Received: from hyd1588t430.caveonetworks.com (unknown [10.29.52.204])
- by maili.marvell.com (Postfix) with ESMTP id 4F8F13F7076;
- Wed, 12 Nov 2025 20:39:03 -0800 (PST)
+ by maili.marvell.com (Postfix) with ESMTP id D2E463F7076;
+ Wed, 12 Nov 2025 20:39:09 -0800 (PST)
 From: Nithin Dabilpuram <ndabilpuram@marvell.com>
 To: Nithin Dabilpuram <ndabilpuram@marvell.com>, Kiran Kumar K
  <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, Satha Rao
  <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>
-CC: <jerinj@marvell.com>, <dev@dpdk.org>
-Subject: [PATCH v5 09/23] common/cnxk: add support for per packet SQ count
- update
-Date: Thu, 13 Nov 2025 10:07:54 +0530
-Message-ID: <20251113043808.1180851-9-ndabilpuram@marvell.com>
+CC: <jerinj@marvell.com>, <dev@dpdk.org>, Rakesh Kudurumalla
+ <rkudurumalla@marvell.com>
+Subject: [PATCH v5 10/23] common/cnxk: feature fn to check 16B alignment
+Date: Thu, 13 Nov 2025 10:07:55 +0530
+Message-ID: <20251113043808.1180851-10-ndabilpuram@marvell.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20251113043808.1180851-1-ndabilpuram@marvell.com>
 References: <20250901073036.1381560-1-ndabilpuram@marvell.com>
@@ -54,19 +54,19 @@ References: <20250901073036.1381560-1-ndabilpuram@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-GUID: qC2tlRkCN0F3ChDn5oyTir8NahEh58oc
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEzMDAyOCBTYWx0ZWRfX7AZSSaXdohLh
- EQGSVl5DGoqZ6cutcbddxHl2BaLJZ9co3fKu+bhd8agpXc5/DieEhA5s5isqmDtSWE96P2/RotD
- q7tMaq7km0sGSKNZsy8n+j9HRz4VAddrCFHU5UA87Pg2IIdOkrXrqdFH9jkQjtJhzipOfcQOzx7
- fpMfx+DFU9BJ8ciOFnOgX41da59wBU3ar8hWquynKP4iDO13kp6i2uh7CFomNlEYGqVmwRL+c2D
- pcBIaT8/qtI1SmXxIyRsaUi1t224lVQW5KsM0V9zIUqurmul0e5cSwU/2bv02QDHTwcrpLMv1O9
- oKNLwwuAt4BhyHiIFoInez99Ar3r1+xsXnbGUzlO6VnE93PbQePTdHZgeq9U0ncnP7ucCZk6snn
- hV8OEW5XpT7Ay783SpN3iKPtUdxN1Q==
-X-Authority-Analysis: v=2.4 cv=Qq9THFyd c=1 sm=1 tr=0 ts=691560ed cx=c_pps
+X-Authority-Analysis: v=2.4 cv=QuFTHFyd c=1 sm=1 tr=0 ts=691560f4 cx=c_pps
  a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
  a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=M5GUcnROAAAA:8
- a=5OEz-aZnzPt5HFAdlcMA:9 a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-ORIG-GUID: qC2tlRkCN0F3ChDn5oyTir8NahEh58oc
+ a=-bsIhdJEouxmazOkw5YA:9 a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-GUID: dbf7Zwu50-nf7i26T7rGS1EusoU2EEgh
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEzMDAyOCBTYWx0ZWRfXxPAFZEEWZrtj
+ EUjBv7zYtNlFP28J34NdPpOtqjGmUqutgUgLhJJa4v0dyHwMNu7ZvpaDscSKWopgod099lffGHp
+ sunOpDI/wYDeI36kZRPdSO3ytn4elFPHfKuQTpn27TmZe2DwEAdcuSGGddEYhCFhtF9kLwrVrl/
+ 6VZYhbFtirBH7WIkhphRuTRcgnSQl+BzLsE8DGgDTMyrK4dg3OH9gLkdigOo1ExjFiFS666kW8D
+ vokdOPj08qO7hFe3ShTkqQjKtHmhBfDO2+zsFwLtadwjOZLOEVESG4VjMOyRe8pdCYSYSyuwqux
+ BA6mf3mKVxIYnavUshrmh1seCkB2EnLrP7KRim4NdrjxCMfoq+1GdjSinSKQDZ6AqvUC7pECRnm
+ M7HYTJFYSrlf46bHZr/sPN4AgLqJLQ==
+X-Proofpoint-ORIG-GUID: dbf7Zwu50-nf7i26T7rGS1EusoU2EEgh
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
  definitions=2025-11-12_06,2025-11-12_01,2025-10-01_01
@@ -83,323 +83,30 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Satha Rao <skoteshwar@marvell.com>
+From: Rakesh Kudurumalla <rkudurumalla@marvell.com>
 
-SQ context extended with new feature, if enabled the counter is updated
-when a packet if processed, whether it is transmitted or dropped.
+Added function to check whether board supports
+16B alignment
 
-Signed-off-by: Satha Rao <skoteshwar@marvell.com>
+Signed-off-by: Rakesh Kudurumalla <rkudurumalla@marvell.com>
 ---
- drivers/common/cnxk/hw/nix.h                  | 47 +++++++------
- drivers/common/cnxk/roc_features.h            |  7 ++
- drivers/common/cnxk/roc_nix.h                 |  3 +
- drivers/common/cnxk/roc_nix_queue.c           | 70 ++++++++++++++++++-
- drivers/common/cnxk/roc_nix_tm.c              |  2 +-
- drivers/common/cnxk/roc_nix_tm_ops.c          |  8 ++-
- drivers/common/cnxk/roc_platform.h            |  6 ++
- .../common/cnxk/roc_platform_base_symbols.c   |  1 +
- 8 files changed, 119 insertions(+), 25 deletions(-)
+ drivers/common/cnxk/roc_features.h | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/common/cnxk/hw/nix.h b/drivers/common/cnxk/hw/nix.h
-index 3b1ea02611..a2a372a56a 100644
---- a/drivers/common/cnxk/hw/nix.h
-+++ b/drivers/common/cnxk/hw/nix.h
-@@ -2092,21 +2092,25 @@ struct nix_cn20k_sq_ctx_hw_s {
- 	uint64_t default_chan : 12;
- 	uint64_t sdp_mcast : 1;
- 	uint64_t sso_ena : 1;
--	uint64_t dse_rsvd1 : 28;
-+	uint64_t dse_rsvd1 : 10;
-+	uint64_t update_sq_count : 2;
-+	uint64_t seb_count : 16;
- 	uint64_t sqb_enqueue_count : 16; /* W4 */
- 	uint64_t tail_offset : 6;
- 	uint64_t lmt_dis : 1;
- 	uint64_t smq_rr_weight : 14;
--	uint64_t dnq_rsvd1 : 27;
-+	uint64_t dnq_rsvd1 : 4;
-+	uint64_t sq_count_iova_lo : 23;
- 	uint64_t tail_sqb : 64; /* W5 */
- 	uint64_t next_sqb : 64; /* W6 */
--	uint64_t smq : 11; /* W7 */
-+	uint64_t smq : 11;	/* W7 */
- 	uint64_t smq_pend : 1;
- 	uint64_t smq_next_sq : 20;
- 	uint64_t smq_next_sq_vld : 1;
- 	uint64_t mnq_dis : 1;
--	uint64_t scm1_rsvd2 : 30;
--	uint64_t smenq_sqb : 64; /* W8 */
-+	uint64_t scm1_rsvd2 : 7;
-+	uint64_t sq_count_iova_hi : 23;
-+	uint64_t smenq_sqb : 64;   /* W8 */
- 	uint64_t smenq_offset : 6; /* W9 */
- 	uint64_t cq_limit : 8;
- 	uint64_t smq_rr_count : 32;
-@@ -2122,7 +2126,7 @@ struct nix_cn20k_sq_ctx_hw_s {
- 	uint64_t smenq_next_sqb_vld : 1;
- 	uint64_t scm_dq_rsvd1 : 9;
- 	uint64_t smenq_next_sqb : 64; /* W11 */
--	uint64_t age_drop_octs : 32; /* W12 */
-+	uint64_t age_drop_octs : 32;  /* W12 */
- 	uint64_t age_drop_pkts : 32;
- 	uint64_t drop_pkts : 48; /* W13 */
- 	uint64_t drop_octs_lsw : 16;
-@@ -2160,19 +2164,20 @@ struct nix_cn20k_sq_ctx_s {
- 	uint64_t lmt_dis : 1;
- 	uint64_t mnq_dis : 1;
- 	uint64_t smq_next_sq : 20;
--	uint64_t smq_lso_segnum :  8;
--	uint64_t tail_offset :  6;
--	uint64_t smenq_offset :  6;
--	uint64_t head_offset :  6;
--	uint64_t smenq_next_sqb_vld :  1;
--	uint64_t smq_pend :  1;
--	uint64_t smq_next_sq_vld :  1;
--	uint64_t reserved_253_255 :  3;
--	uint64_t next_sqb : 64; /* W4 */
--	uint64_t tail_sqb : 64; /* W5 */
--	uint64_t smenq_sqb : 64; /* W6 */
--	uint64_t smenq_next_sqb : 64; /* W7 */
--	uint64_t head_sqb : 64; /* W8 */
-+	uint64_t smq_lso_segnum : 8;
-+	uint64_t tail_offset : 6;
-+	uint64_t smenq_offset : 6;
-+	uint64_t head_offset : 6;
-+	uint64_t smenq_next_sqb_vld : 1;
-+	uint64_t smq_pend : 1;
-+	uint64_t smq_next_sq_vld : 1;
-+	uint64_t update_sq_count : 2;
-+	uint64_t reserved_255_255 : 1;
-+	uint64_t next_sqb : 64;	       /* W4 */
-+	uint64_t tail_sqb : 64;	       /* W5 */
-+	uint64_t smenq_sqb : 64;       /* W6 */
-+	uint64_t smenq_next_sqb : 64;  /* W7 */
-+	uint64_t head_sqb : 64;	       /* W8 */
- 	uint64_t reserved_576_583 : 8; /* W9 */
- 	uint64_t vfi_lso_total : 18;
- 	uint64_t vfi_lso_sizem1 : 3;
-@@ -2183,7 +2188,7 @@ struct nix_cn20k_sq_ctx_s {
- 	uint64_t vfi_lso_vld : 1;
- 	uint64_t reserved_630_639 : 10;
- 	uint64_t scm_lso_rem : 18; /* W10 */
--	uint64_t reserved_658_703 : 46;
-+	uint64_t sq_count_iova : 46;
- 	uint64_t octs : 48; /* W11 */
- 	uint64_t reserved_752_767 : 16;
- 	uint64_t pkts : 48; /* W12 */
-@@ -2193,7 +2198,7 @@ struct nix_cn20k_sq_ctx_s {
- 	uint64_t drop_octs : 48; /* W14 */
- 	uint64_t reserved_944_959 : 16;
- 	uint64_t drop_pkts : 48; /* W15 */
--	uint64_t reserved_1008_1023 : 16;
-+	uint64_t seb_count : 16;
- };
- 
- /* [CN10K, .) NIX sq context hardware structure */
 diff --git a/drivers/common/cnxk/roc_features.h b/drivers/common/cnxk/roc_features.h
-index 00e8b180f0..c7d2a73d99 100644
+index c7d2a73d99..9c6adfe058 100644
 --- a/drivers/common/cnxk/roc_features.h
 +++ b/drivers/common/cnxk/roc_features.h
-@@ -125,4 +125,11 @@ roc_feature_nix_has_cpt_cq_support(void)
- {
+@@ -132,4 +132,9 @@ roc_feature_nix_has_sq_cnt_update(void)
  	return roc_model_is_cn20k();
  }
-+
+ 
 +static inline bool
-+roc_feature_nix_has_sq_cnt_update(void)
++roc_feature_nix_has_16b_align(void)
 +{
 +	return roc_model_is_cn20k();
 +}
-+
  #endif
-diff --git a/drivers/common/cnxk/roc_nix.h b/drivers/common/cnxk/roc_nix.h
-index 4f8118d4e4..0d5e524757 100644
---- a/drivers/common/cnxk/roc_nix.h
-+++ b/drivers/common/cnxk/roc_nix.h
-@@ -493,6 +493,8 @@ struct roc_nix_sq {
- 	void *lmt_addr;
- 	void *sqe_mem;
- 	void *fc;
-+	void *sq_cnt_ptr;
-+	uint8_t update_sq_cnt;
- 	uint8_t tc;
- 	bool enable;
- };
-@@ -1083,6 +1085,7 @@ int __roc_api roc_nix_sq_fini(struct roc_nix_sq *sq);
- int __roc_api roc_nix_sq_ena_dis(struct roc_nix_sq *sq, bool enable);
- void __roc_api roc_nix_sq_head_tail_get(struct roc_nix *roc_nix, uint16_t qid,
- 					uint32_t *head, uint32_t *tail);
-+int __roc_api roc_nix_sq_cnt_update(struct roc_nix_sq *sq, bool enable);
- 
- /* PTP */
- int __roc_api roc_nix_ptp_rx_ena_dis(struct roc_nix *roc_nix, int enable);
-diff --git a/drivers/common/cnxk/roc_nix_queue.c b/drivers/common/cnxk/roc_nix_queue.c
-index e19a6877e6..e59cd77538 100644
---- a/drivers/common/cnxk/roc_nix_queue.c
-+++ b/drivers/common/cnxk/roc_nix_queue.c
-@@ -1464,7 +1464,7 @@ sqb_pool_populate(struct roc_nix *roc_nix, struct roc_nix_sq *sq)
- 
- 	if (roc_nix->sqb_slack)
- 		nb_sqb_bufs += roc_nix->sqb_slack;
--	else
-+	else if (!sq->sq_cnt_ptr)
- 		nb_sqb_bufs += PLT_MAX((int)thr, (int)ROC_NIX_SQB_SLACK_DFLT);
- 	/* Explicitly set nat_align alone as by default pool is with both
- 	 * nat_align and buf_offset = 1 which we don't want for SQB.
-@@ -1473,7 +1473,9 @@ sqb_pool_populate(struct roc_nix *roc_nix, struct roc_nix_sq *sq)
- 	pool.nat_align = 1;
- 
- 	memset(&aura, 0, sizeof(aura));
--	aura.fc_ena = 1;
-+	/* Disable SQ pool FC updates when SQ count updates are used */
-+	if (!sq->sq_cnt_ptr)
-+		aura.fc_ena = 1;
- 	if (roc_model_is_cn9k() || roc_errata_npa_has_no_fc_stype_ststp())
- 		aura.fc_stype = 0x0; /* STF */
- 	else
-@@ -1827,6 +1829,11 @@ sq_init(struct nix *nix, struct roc_nix_sq *sq, uint32_t rr_quantum, uint16_t sm
- 	aq->sq.sq_int_ena |= BIT(NIX_SQINT_SEND_ERR);
- 	aq->sq.sq_int_ena |= BIT(NIX_SQINT_MNQ_ERR);
- 
-+	/* HW atomic update of SQ count */
-+	if (sq->sq_cnt_ptr) {
-+		aq->sq.sq_count_iova = ((uintptr_t)sq->sq_cnt_ptr) >> 3;
-+		aq->sq.update_sq_count = sq->update_sq_cnt;
-+	}
- 	/* Many to one reduction */
- 	aq->sq.qint_idx = sq->qid % nix->qints;
- 	if (roc_errata_nix_assign_incorrect_qint()) {
-@@ -2133,3 +2140,62 @@ roc_nix_q_err_cb_unregister(struct roc_nix *roc_nix)
- 
- 	dev->ops->q_err_cb = NULL;
- }
-+
-+int
-+roc_nix_sq_cnt_update(struct roc_nix_sq *sq, bool enable)
-+{
-+	struct nix *nix = roc_nix_to_nix_priv(sq->roc_nix);
-+	struct mbox *mbox = mbox_get((&nix->dev)->mbox);
-+	int64_t __plt_atomic *sq_cntm = (int64_t __plt_atomic *)sq->sq_cnt_ptr;
-+	struct nix_cn20k_aq_enq_rsp *rsp;
-+	struct nix_cn20k_aq_enq_req *aq;
-+	int rc;
-+
-+	aq = mbox_alloc_msg_nix_cn20k_aq_enq(mbox);
-+	if (!aq) {
-+		mbox_put(mbox);
-+		return -ENOSPC;
-+	}
-+
-+	aq->qidx = sq->qid;
-+	aq->ctype = NIX_AQ_CTYPE_SQ;
-+	aq->op = NIX_AQ_INSTOP_READ;
-+	rc = mbox_process_msg(mbox, (void *)&rsp);
-+	if (rc) {
-+		mbox_put(mbox);
-+		return rc;
-+	}
-+
-+	/* Check if sq is already in same state */
-+	if ((enable && rsp->sq.update_sq_count) || (!enable && !rsp->sq.update_sq_count)) {
-+		mbox_put(mbox);
-+		return 0;
-+	}
-+
-+	/* Disable sq */
-+	aq = mbox_alloc_msg_nix_cn20k_aq_enq(mbox);
-+	if (!aq) {
-+		mbox_put(mbox);
-+		return -ENOSPC;
-+	}
-+
-+	aq->qidx = sq->qid;
-+	aq->ctype = NIX_AQ_CTYPE_SQ;
-+	aq->op = NIX_AQ_INSTOP_WRITE;
-+	aq->sq_mask.update_sq_count = ~aq->sq_mask.update_sq_count;
-+	aq->sq.update_sq_count = enable;
-+	if (enable)
-+		aq->sq.update_sq_count = sq->update_sq_cnt;
-+	rc = mbox_process(mbox);
-+	if (rc) {
-+		mbox_put(mbox);
-+		return rc;
-+	}
-+	if (enable)
-+		plt_atomic_store_explicit(sq_cntm, sq->nb_desc, plt_memory_order_relaxed);
-+	else
-+		plt_atomic_store_explicit(sq_cntm, 0, plt_memory_order_relaxed);
-+
-+	mbox_put(mbox);
-+	return 0;
-+}
-diff --git a/drivers/common/cnxk/roc_nix_tm.c b/drivers/common/cnxk/roc_nix_tm.c
-index 2771fd8fc4..76c0f01884 100644
---- a/drivers/common/cnxk/roc_nix_tm.c
-+++ b/drivers/common/cnxk/roc_nix_tm.c
-@@ -601,7 +601,7 @@ roc_nix_tm_sq_flush_spin(struct roc_nix_sq *sq)
- 
- 		/* SQ reached quiescent state */
- 		if (sqb_cnt <= 1 && head_off == tail_off &&
--		    (*(volatile uint64_t *)sq->fc == sq->aura_sqb_bufs)) {
-+		    (sq->sq_cnt_ptr || (*(volatile uint64_t *)sq->fc == sq->aura_sqb_bufs))) {
- 			break;
- 		}
- 
-diff --git a/drivers/common/cnxk/roc_nix_tm_ops.c b/drivers/common/cnxk/roc_nix_tm_ops.c
-index 951c310a56..09d014a276 100644
---- a/drivers/common/cnxk/roc_nix_tm_ops.c
-+++ b/drivers/common/cnxk/roc_nix_tm_ops.c
-@@ -19,6 +19,12 @@ roc_nix_tm_sq_aura_fc(struct roc_nix_sq *sq, bool enable)
- 	plt_tm_dbg("Setting SQ %u SQB aura FC to %s", sq->qid,
- 		   enable ? "enable" : "disable");
- 
-+	/* For cn20K, enable/disable SQ count updates if the SQ count pointer
-+	 * was allocated based on the enable field.
-+	 */
-+	if (sq->sq_cnt_ptr)
-+		return roc_nix_sq_cnt_update(sq, enable);
-+
- 	lf = idev_npa_obj_get();
- 	if (!lf)
- 		return NPA_ERR_DEVICE_NOT_BOUNDED;
-@@ -554,7 +560,7 @@ roc_nix_tm_hierarchy_disable(struct roc_nix *roc_nix)
- 		tail_off = (val >> 28) & 0x3F;
- 
- 		if (sqb_cnt > 1 || head_off != tail_off ||
--		    (*(uint64_t *)sq->fc != sq->aura_sqb_bufs))
-+		    (!sq->sq_cnt_ptr && (*(uint64_t *)sq->fc != sq->aura_sqb_bufs)))
- 			plt_err("Failed to gracefully flush sq %u", sq->qid);
- 	}
- 
-diff --git a/drivers/common/cnxk/roc_platform.h b/drivers/common/cnxk/roc_platform.h
-index ff3a25e57f..e22a50d47a 100644
---- a/drivers/common/cnxk/roc_platform.h
-+++ b/drivers/common/cnxk/roc_platform.h
-@@ -212,6 +212,12 @@ plt_thread_is_valid(plt_thread_t thr)
- #define plt_io_rmb()		rte_io_rmb()
- #define plt_atomic_thread_fence rte_atomic_thread_fence
- 
-+#define plt_atomic_store_explicit rte_atomic_store_explicit
-+#define plt_atomic_load_explicit  rte_atomic_load_explicit
-+#define plt_memory_order_release  rte_memory_order_release
-+#define plt_memory_order_acquire  rte_memory_order_acquire
-+#define plt_memory_order_relaxed  rte_memory_order_relaxed
-+
- #define plt_bit_relaxed_get32   rte_bit_relaxed_get32
- #define plt_bit_relaxed_set32   rte_bit_relaxed_set32
- #define plt_bit_relaxed_clear32 rte_bit_relaxed_clear32
-diff --git a/drivers/common/cnxk/roc_platform_base_symbols.c b/drivers/common/cnxk/roc_platform_base_symbols.c
-index cbb3fec562..e51a4a111e 100644
---- a/drivers/common/cnxk/roc_platform_base_symbols.c
-+++ b/drivers/common/cnxk/roc_platform_base_symbols.c
-@@ -365,6 +365,7 @@ RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_rss_reta_get)
- RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_rss_flowkey_set)
- RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_rss_default_setup)
- RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_num_xstats_get)
-+RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_sq_cnt_update)
- RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_stats_get)
- RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_stats_reset)
- RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_stats_queue_get)
 -- 
 2.34.1
 
