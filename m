@@ -2,73 +2,152 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E158CCCFA18
-	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Nov 2025 04:40:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D30C5CD4F2F
+	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Nov 2025 05:29:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2DF5340EF1;
-	Thu, 13 Nov 2025 05:40:17 +0100 (CET)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id 677B140FDE
- for <dev@dpdk.org>; Thu, 13 Nov 2025 05:40:15 +0100 (CET)
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
- 5ACMrE7L1057311 for <dev@dpdk.org>; Wed, 12 Nov 2025 20:40:14 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=B
- am0fSgfdjMC6Q+1ePkGZs+iG38GDxc4dOin1kkGteQ=; b=TTqgH4eBi6haZXB6w
- qBd+wTKYkrZNjP9tmATq8g8RKJFBrBQvWPTK/CPcD7laVVtKHOLb9mgZ9ZWx2bHB
- ZVzKSTbZZOkdLPM9yJ3L1g3aOWCM/RvUA/YlOdzhTD22Ugg6UmnWERyJx/4PnwBD
- d/LLbzrg8tue9e3cBrw7B58TtucX5ojar+YiuqIsu92DXBH4P/RCIt0ThaZ13i0M
- mBUyTA5xiVRBt9iF458ETPjyGcAEe3pcfrYGcMCpRWk0iUxreFIyAJRPtU9KPYJM
- Q1Z3jTAbhoC4hf0i4OHMVt8pR2IHSkLZb1YzKWqJPIFrqMHmP93bLhn864OEfs31
- ZVCxg==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4acru1aabw-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Wed, 12 Nov 2025 20:40:14 -0800 (PST)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Wed, 12 Nov 2025 20:40:14 -0800
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Wed, 12 Nov 2025 20:40:14 -0800
-Received: from hyd1588t430.caveonetworks.com (unknown [10.29.52.204])
- by maili.marvell.com (Postfix) with ESMTP id EAF3B3F7086;
- Wed, 12 Nov 2025 20:40:10 -0800 (PST)
-From: Nithin Dabilpuram <ndabilpuram@marvell.com>
-To: Nithin Dabilpuram <ndabilpuram@marvell.com>, Kiran Kumar K
- <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, Satha Rao
- <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>
-CC: <jerinj@marvell.com>, <dev@dpdk.org>, Aarnav JP <ajp@marvell.com>
-Subject: [PATCH v5 23/23] net/cnxk: check for invalid default pre color
-Date: Thu, 13 Nov 2025 10:08:08 +0530
-Message-ID: <20251113043808.1180851-23-ndabilpuram@marvell.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251113043808.1180851-1-ndabilpuram@marvell.com>
-References: <20250901073036.1381560-1-ndabilpuram@marvell.com>
- <20251113043808.1180851-1-ndabilpuram@marvell.com>
-MIME-Version: 1.0
+	by mails.dpdk.org (Postfix) with ESMTP id B082240431;
+	Thu, 13 Nov 2025 06:29:58 +0100 (CET)
+Received: from MRWPR03CU001.outbound.protection.outlook.com
+ (mail-francesouthazon11011017.outbound.protection.outlook.com
+ [40.107.130.17])
+ by mails.dpdk.org (Postfix) with ESMTP id A55B24003C;
+ Thu, 13 Nov 2025 06:29:56 +0100 (CET)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=t9/VDKipNB8g84+8YQ0QXjNflgLpDjuA9JrBDF+RwU65di8+eaDy3NGOjUXSBJTQV/wQ0sPb1G9NoKXQ+NSB3Xv5+ovKNpLAUQvgRqfWbEL4JChxqvZ7wC5saEGYOIaDZPr3IqDsiO5R/Yc+LDX/NJKyiAxM8o5WRYFM9v9Gy8AINJhFcNAexqY5edJ6Ht5iaVcnTUxtTXqZDKwz+HQhAglvr90KxzgV50NRErblaZLjueWvVONmvIl093BndEyidtrYAYqiKuMbjVoe03x6aD0aP8sIN4krBLOIKICCFvbQt3wb8pcqLdZGBIfAk56UfDXpGHgJud3yZDdCteTZFA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=XTMtlK75uyypBwTAS8PdBJXap+OvW+hs7SG+18qPG/U=;
+ b=sxZ30seyFp+hePCV5qsRhlB0LkgE4nAjq0zzKQ2QIHJ/BNSxD3p+VYlID7lTkyVgA9hIuMkorSlGxnoUAeJMvdPmUQqAGhxvyzs22m8vk5Ogp5v/wrSoPzILpO4H8NLFf2vvvzYSr1Ih0EM97DQ/Tvsza7LdiAX+VGgAXCVPyhffnc4R2kOdWxGp20I/UYrE2IVhLt6dAobjwKY83eDmGOnY+dIBiKNbGK0mAD6S68VLLXmLKIdoJbEJTAhk8wNz4PsXkiFQjeCZv5gmDZZSkvyBpB+VtvKolN5/1f5PV9cPsLIo3WbrurTdph1DjHHmfr/6dh6N6KQa0atY/Bg1Vg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1; 
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XTMtlK75uyypBwTAS8PdBJXap+OvW+hs7SG+18qPG/U=;
+ b=e/PcyDL3BF+IohGWX5DaJIoVGckFVRtKXakQA5QE6OxiwmZgV9SWtBzx0MuZCFnWIguz5ay2RhSgApIjbUlDxxhYl9iebK4umMBonzlpvQ18N/OmHSkR5h79an+dvyHutqbsoyIEaiaC5P4l4f35j9hJbn79csOxpCA6UiG9dSH/DIZo4yWIekqlGgsC2wSZMR/lrPiRD6dMNk2hYqhoaiT3nRQ+4qFwre4T6+gfsiljV7Kb4WfptyJb7dq+71ERfDNwnkO/wvDRo8WTZQndFUOrsOxUwRCjWYWkps4vtSK8AWr43B93huuTKd9jSFemGMvm6kyxtKPrIssKu0tbgg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9328.eurprd04.prod.outlook.com (2603:10a6:102:2b6::15)
+ by PR3PR04MB7355.eurprd04.prod.outlook.com (2603:10a6:102:8f::19)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.17; Thu, 13 Nov
+ 2025 05:29:55 +0000
+Received: from PAXPR04MB9328.eurprd04.prod.outlook.com
+ ([fe80::f268:adb3:8817:15e1]) by PAXPR04MB9328.eurprd04.prod.outlook.com
+ ([fe80::f268:adb3:8817:15e1%4]) with mapi id 15.20.9320.013; Thu, 13 Nov 2025
+ 05:29:55 +0000
+From: Hemant Agrawal <hemant.agrawal@nxp.com>
+To: dev@dpdk.org, stephen@networkplumber.org, david.marchand@redhat.com,
+ maxime@leroys.fr
+Cc: sachin.saxena@nxp.com,
+	stable@dpdk.org
+Subject: [PATCH v2 1/5] net/dpaa2: fix duplicate calling of dpaa2 dev close
+Date: Thu, 13 Nov 2025 10:59:27 +0530
+Message-Id: <20251113052931.1784953-1-hemant.agrawal@nxp.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20251106163807.201451-1-hemant.agrawal@nxp.com>
+References: <20251106163807.201451-1-hemant.agrawal@nxp.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Authority-Analysis: v=2.4 cv=QuFTHFyd c=1 sm=1 tr=0 ts=6915612e cx=c_pps
- a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
- a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=M5GUcnROAAAA:8
- a=82TJYTXjL4OvB1Y1nJoA:9 a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-GUID: caFIh4vlMGXygWpBYTgAyLu0JXYp_sVD
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEzMDAyOCBTYWx0ZWRfXyznMFDFE5cmU
- ujBriQFCNehLrQtuXgoh/0JLBKL7DXLPouXF+yc3M3s6PYUuhI/EbBOXifEAvk5q/IHCvtWchtl
- ICx/oHnzn19zen/78xUtcYU100xopgYLwWQ0DFgvM28P7ZQwV1db6DqFHZIH8euzZL8dFipobv+
- FWbm9as1IksGDRCzXAZA6avDXDLbnKj8+ALzmAhtmIjqJR5wYFPfc8G0uTs2K1bj4m19QaWT24R
- cn0lRawpwH4NajyCcXGk7SNLhJeb/vLnwJFr3DE0BDUCoG5eGl6zWiKdyB2LxzenueAdX77w4j8
- o+M79/AqC8lv2gsMnEcYbpxuVQwPwQgWlviukIUk9kZ6j2z9of+qet484EgAauNtDaqm0hBp0XZ
- iQjC2LBC64AFMvkLZt9nf2OTC8mn5Q==
-X-Proofpoint-ORIG-GUID: caFIh4vlMGXygWpBYTgAyLu0JXYp_sVD
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-12_06,2025-11-12_01,2025-10-01_01
+X-ClientProxiedBy: SI2PR02CA0045.apcprd02.prod.outlook.com
+ (2603:1096:4:196::21) To PAXPR04MB9328.eurprd04.prod.outlook.com
+ (2603:10a6:102:2b6::15)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9328:EE_|PR3PR04MB7355:EE_
+X-MS-Office365-Filtering-Correlation-Id: 62123bfc-c812-458d-7aaa-08de2275ad61
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|52116014|1800799024|376014|366016|19092799006|38350700014; 
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?Z0QyamJwZEhLYXV2K2I1bEZFL01NSVVJakZpZEVLMGFxWXBtQVh3TDhNZm9Z?=
+ =?utf-8?B?bFNxOXFJeFREdFpsSER4ZWc0clV5Nkh5ZlFDTGlTUXo1M3ZHVlhQb1RaNjh2?=
+ =?utf-8?B?MUpzUUkrdU9wNDNoNlNhb2d6T3N4SG5PRHdDVEVZVWJ4cW90MCtad1A1Z3V1?=
+ =?utf-8?B?ZWRLWmEvWitLQ3pqUjZWUVE5bC9MSGdoVENwQU90eXpyY0RVRzh3SjNsNmZy?=
+ =?utf-8?B?T0pmN25EdEhPcjIzNkMzMlR6cHc0SU5SZ2c0UktTUGV3aC9KNjNnRlFLTUdH?=
+ =?utf-8?B?V0NsWnVhKzk1N1hndVlzblo5TkpIbXhMS3J0KzlhUzc4MWljZXdGRWtEeUNJ?=
+ =?utf-8?B?MnlXeFBwaHoxT2RoUTBnWUI2blVJdG5CMEx0aFMrdVNhdTBOOVNIYWRPL3Rj?=
+ =?utf-8?B?TFY5Uk8rZHZSdmJId3R1dktrMHJDVGdDZXBNQ3JWelovYndvTW0vemhaOVZN?=
+ =?utf-8?B?bTJLUlZHSDhiTG5xaU5OMzVRTzlsQ2tnTmU1ajhvR0hvejdSbTdpQkpRZ3Bu?=
+ =?utf-8?B?MEFMTUN0TTdMNThlZnBuRTFmMW83WVJKVW5UUU9SK1l1SG5yT2h6aHBYZEJ3?=
+ =?utf-8?B?YWlrTUcvTkVjSlVVU0JKa2RsZHVWQXFRaUkzZGQrS0I1WE9aYjJYT2UyWEdF?=
+ =?utf-8?B?aHZCM1dsNTlnZDRGU240TitsL2VxUlEzTjYwOVZHa2xiRVdvS3BwTlI5dFpi?=
+ =?utf-8?B?MFhOUGwyN3c4cGhTTW4rZUhPQU9KOU1YNisyNGJwSStWckk1M2poQnlWR083?=
+ =?utf-8?B?ZG1HMk05aU1aM0lDekM1MmQzTUhNRGhsanVTVGZLd3M3L2dLV3VwMzFNUFNa?=
+ =?utf-8?B?dGRvNTgwbXZBZ0pIMldpeGZMYWU5bkpzRGxTZVM5RU51QnZlUW9jZS9UUWdz?=
+ =?utf-8?B?T3lsKzRxaDZ2T0lscEhYRUVTckZXS1J4WUhZY3BwaWRoVmh5aUF5THdnREhQ?=
+ =?utf-8?B?dXhPa21tanZrZzdDUWdJV051QUg2NkJxQUpNdVZJSXlpelRYS0RTNnlnLzVz?=
+ =?utf-8?B?NW5ZU2Y3aStVM1IxVjJ4YTgyMWV0U3M3UWNIWmhqTGpZQlpmSS8yR3pVV3FO?=
+ =?utf-8?B?S1JISGpqZERUbHVrQWEwc2srRnFkNTZTcGgxckt6QmRva20rdHhNRnY1TzE1?=
+ =?utf-8?B?Q0M4SUduY3Qra0phbmVsVHVhMnhLVHBVa3N4dENqZHJIbGlTNHowMWg2OGVF?=
+ =?utf-8?B?bndmQXJVQ2dobFdpVWk4UzlQeWZWcmphRFFWVGR5OWJNZmprdkVLSGZEWXlF?=
+ =?utf-8?B?L21CeTJyVStITTR3eXVmbC8ybnN3U0tSZ1pnd3BMaUw5cU1XdWVFbXllcEpE?=
+ =?utf-8?B?NXpZVmgrZFpncS9QbDdJVFJDUll3OWdZR1NoU25lUFZ3NjBwYXBtVDY1Z1Ay?=
+ =?utf-8?B?a1pwOU4yUHRpTGR1Zlh6SWtqcmE1VkExbGxBVG5yTjI4SHRad2t1bVE2VFhE?=
+ =?utf-8?B?NWtuYWJ0V1J2eEJwKzF0emFmV2pIYlhOZzcxVUNNU0pLNVIzZXNXbDcwOHND?=
+ =?utf-8?B?OWgvZkZ2ZHg0aCtoWHo5YVpYS2hSMHJjTVdLTkRlQVRqdFZIdkVGV1gwM1pS?=
+ =?utf-8?B?ZFhneHJmc1oxUUkxUGdtbXJwM2pzZDNLcVEwcWU0VFIyNjZaQUx5ZmNpdThH?=
+ =?utf-8?B?NFF3bDEvTXErNWlyYmRnaUZSS01RVGNBanBnM01iWHR3RXZ6bWtFVVRFNUEv?=
+ =?utf-8?B?UGcrdXFDMUlBOEpMODBkL0NoSmdVcFFLa3lGd1lSamdoYW4xUTByckljSUtq?=
+ =?utf-8?B?WU9MdGUrMnJTdEJIVDBWbGw4SEtoaE1zeDM4amszbjE5Nk9ocW1acXZYajFR?=
+ =?utf-8?B?OXhqSDJZKzdVR2JMQ21zdG15OHdiVE95VWxWdVFsSlh2UW1nYS9oS0NMQlRU?=
+ =?utf-8?B?a3BkcEdINDBXK1lmM2tYVDR0a3I2bEZRSXNjSTNnRjZMUG9maTZKRzRSd2RS?=
+ =?utf-8?B?YWxtQkJkUGphVTV6NVRlYTgrbjlKQ2x3K3NHaGV6M2JuaWEyMzliQUxxRW5u?=
+ =?utf-8?B?UFFabXRXa0Uwb21PTERkRWZWanBMRkJmUjdIQmMybTB4SzRQSDFNVjd0WHpu?=
+ =?utf-8?Q?Z3Ewkn?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:PAXPR04MB9328.eurprd04.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(52116014)(1800799024)(376014)(366016)(19092799006)(38350700014);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?VVBDR3YyL1BjajRHanJwcm9JSGkzeWZKYTZhdUEzcDMvSGtUNVpPcTR1QkxS?=
+ =?utf-8?B?NDkyOFZ0eUhVRmZFK1BCUzZTS3pnNFNmT2wvUFNIOWg0b2oxbzZNVndwT1JX?=
+ =?utf-8?B?N1pPNTVBWmtycWx6MnRkRXBvVUd3aThsdFd4YlV1Wi9nOWV1WDgyWGw4U1hX?=
+ =?utf-8?B?OE9aTlA4UlMvaTVxbnNzbG55cFRHVC9iQjdsS01aMU9heVdBOHJJSjhEcDk3?=
+ =?utf-8?B?TGlyRU9scWZUb0NRc0NJOHhNRG03SDNIVGZSYThrZHlVOUhCNHJoa05UZ3Rn?=
+ =?utf-8?B?S1V6Zm1XdEhpS0Z6QnRHVXErL01vcmxlTEt5QUVZRzBOelBPZHVnWFlTZDJ3?=
+ =?utf-8?B?Sk5nZlY3dTBjT3NsY2FRb3hTblE5c2wwM2NMVzJRSVkzUkN2eWxMclY4ZU0z?=
+ =?utf-8?B?eVVJQ04xcnUrblJlNUUvaDJFc1VSbVdibDFnWEF1T3BUOUdFT2NXNmlhTUVB?=
+ =?utf-8?B?dllOYlp6UzgrQk9vVFdlVG1LcmFSUis3NlZnVVhsbzVjRXYyZ0txellSaHpj?=
+ =?utf-8?B?WVZpcnFkaWtJVndOMDFXZXBWR3kxOWs0NWEwUzdjNUR2M1V0cUh1M1l6WTNl?=
+ =?utf-8?B?U2g1OGl3QlB2YTBJRUhHRWs3enlWYUd1MzVzektkNjRxVi96emt4dmF1M3hj?=
+ =?utf-8?B?Y2hXOTlxMmZob3dXNGhPZG9NUmlmTk8rb2ZmZEpUUkdnSlc0RzRMQ0hMTnh4?=
+ =?utf-8?B?RUhENEZaL1NHeVlKUGxaS3M4WG9FT280cFFDK3ZKMEZRWjFvVWw4TDIzUTlV?=
+ =?utf-8?B?UVg0cEpxVjVaZFloRFd2aEg0QTRQeUwreUVHdCtzdm5mM2FCRUFXWW9FbHNU?=
+ =?utf-8?B?M1VsY2F2NzlSRnpBMVZMazlHUkpWVHBOc3IwblMzQ29WUjFRVnNWK2c5SXI1?=
+ =?utf-8?B?UkxWRUJMalRVazdGNjZGQTNHMGhUU1dEUkFFbDlqbGthcTVXMnBob1R4LzlX?=
+ =?utf-8?B?OWU0KzhTQlFFQmRsWHYxQlQ4cEFFRklpM1BKQXdVWWMyRWdkNTMvd29MQlly?=
+ =?utf-8?B?SldhWE1LK1l2WTJlbU04RnVYOWNUNnhEcEFFQWxJTmNqeW5LWHl0dHZQRElJ?=
+ =?utf-8?B?Z0JvNm5jTnMzUWF0bFdVNW0zcEZObmxvNWNEWWI4S002dXJkak1lbzEyOWp2?=
+ =?utf-8?B?b3BGSUxINGZEYTZGblB1bmp1QmpqaDZEZ25nVy9zVkNSMFMrdU9MSXIwNUI3?=
+ =?utf-8?B?Y3JTYnpvNVJzYnNEQSs1UGtzUndKdlRRZWRwU016L1VZMkJKd2EyNUExdkU0?=
+ =?utf-8?B?eUFCZmwyWDBxaHFhU21IbDhWSDhaRkFUWndxcUtPVDVDUVVqcEdzZUc1Ujdn?=
+ =?utf-8?B?OHhGZkdHd3FMV3hLdnF5Z2RNQU9WeU5mUFNLVzFZN2d4SU1qWUIwbjE2S2RJ?=
+ =?utf-8?B?UUIySXU1a2p5TEprWTZ4c0lQS1c5SkxVZW5JRGpZd0RJL0VQWnJjb2Jqb1Vh?=
+ =?utf-8?B?OVdxQStEZGVNNHdHVEs0TDNvbDBaelY3WUFFMVdDN1VqRmkvYW9reGR3NlBF?=
+ =?utf-8?B?akRiNmN4K1V2OTRtZEFVZUN0cDF5T0NlZnhKNjd3R0R1aDRRNzBtcm1IL0VG?=
+ =?utf-8?B?anZqaFExVG9vNXN1TXNKck41SGdDTytVWUNWaUFFckNlT0JJUCs5dFlzSGsw?=
+ =?utf-8?B?dWlIWWpPa3RWWlpZQ0JnMUVUMCtoTFRweWdxOG5HOEdpb3FxM1ZJVkZWeDda?=
+ =?utf-8?B?VGFpckVyaXllQW9ROERsekJZQ0hmMVVTaE9EMVVUS1J6UW80OVlsMjRxMnRJ?=
+ =?utf-8?B?MEM3WDFrQWdNUDNCTk9yWkcxc0xUenR1c1BaaFVqWjFObms3MitaeDU1cmJQ?=
+ =?utf-8?B?NmZJS3oxK2ZscEU5ZXptSFpkbHNPa2ZxRlUrOGw3dHlDVmxDUzlRVVJCcnVF?=
+ =?utf-8?B?bHFubmpsblJycFp2bUZBZ2lRRXczdk9peURFbThLY0dZZW9oeVVaeFFsOGV5?=
+ =?utf-8?B?OFRJS0NHTE5VLzFKMVlSSDc5elJ0SFNVUGFHYVF1NzBNeWRJZWpuUEE2dHp3?=
+ =?utf-8?B?ZUpCWXVwSDh1aUdGaGlZbVdoMkNaZjRmOWhOUXBEY3dMbm5CSnZWRFYrOCtt?=
+ =?utf-8?B?UlhqK2txNWNTQ1Y2UFdPTTNFWWdGR0o3alpOMnlpVzZPOGVxYWIrR09VNDZN?=
+ =?utf-8?B?S0grOW8vOWlMb3hZQ3U4UU5HbkFHQWZTQkQrZ1BQd3M1WUorK2U4bURPYjV2?=
+ =?utf-8?B?Y1E9PQ==?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 62123bfc-c812-458d-7aaa-08de2275ad61
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9328.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Nov 2025 05:29:55.1136 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: sGFiXKr5mnht3iYEnLaM+vknzGCrwSMoKNJQMyMUTmNkWrHW8oePeMtwEz7urMINSepFT3XB2ztold0rcR++ow==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR3PR04MB7355
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,36 +161,56 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Aarnav JP <ajp@marvell.com>
+When rte_eth_dev_close() is called, it performs the following actions:
 
-While converting to HW specific icolor, check for invalid
-default pre color.
-Fixes: ac35d4bf4cd6 ("net/cnxk: support ingress meter pre-color")
+Calls dev->dev_ops->dev_close(), which in this case is dpaa2_dev_close().
+Then calls rte_eth_dev_release_port(), which releases all device data
+and sets dev->data to NULL.
 
-Signed-off-by: Aarnav JP <ajp@marvell.com>
+Later, when rte_dev_remove() is called, the FSLMC bus invokes
+dev->remove() — that is, rte_dpaa2_remove().
+However, rte_dpaa2_remove() calls dpaa2_dev_close() again. Since dev->data
+was already set to NULL by the previous call, this second invocation
+causes a crash.
+
+Fixes: 5964d36a2904 ("net/dpaa2: release port upon close")
+Cc: sachin.saxena@nxp.com
+Cc: stable@dpdk.org
+
+Signed-off-by: Hemant Agrawal <hemant.agrawal@nxp.com>
 ---
- drivers/net/cnxk/cnxk_ethdev_mtr.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/net/dpaa2/dpaa2_ethdev.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/cnxk/cnxk_ethdev_mtr.c b/drivers/net/cnxk/cnxk_ethdev_mtr.c
-index edeca6dcc3..992e2d446e 100644
---- a/drivers/net/cnxk/cnxk_ethdev_mtr.c
-+++ b/drivers/net/cnxk/cnxk_ethdev_mtr.c
-@@ -1261,7 +1261,13 @@ nix_mtr_config_map(struct cnxk_meter_node *mtr, struct roc_nix_bpf_cfg *cfg)
- 
- 	cfg->alg = alg_map[profile->profile.alg];
- 	cfg->lmode = profile->profile.packet_mode;
--	cfg->icolor = color_map[mtr->params.default_input_color];
-+	int idx = mtr->params.default_input_color;
+diff --git a/drivers/net/dpaa2/dpaa2_ethdev.c b/drivers/net/dpaa2/dpaa2_ethdev.c
+index 7da32ce856..fc63cf4f09 100644
+--- a/drivers/net/dpaa2/dpaa2_ethdev.c
++++ b/drivers/net/dpaa2/dpaa2_ethdev.c
+@@ -3347,14 +3347,19 @@ static int
+ rte_dpaa2_remove(struct rte_dpaa2_device *dpaa2_dev)
+ {
+ 	struct rte_eth_dev *eth_dev;
+-	int ret;
++	int ret = 0;
 +
-+	/* Index validation */
-+	if (idx >= RTE_COLORS)
-+		cfg->icolor = ROC_NIX_BPF_COLOR_GREEN;
-+	else
-+		cfg->icolor = color_map[idx];
++	eth_dev = rte_eth_dev_allocated(dpaa2_dev->device.name);
++	if (eth_dev) {
++		dpaa2_dev_close(eth_dev);
++		ret = rte_eth_dev_release_port(eth_dev);
++	}
  
- 	switch (RTE_MTR_COLOR_IN_PROTO_OUTER_IP) {
- 	case RTE_MTR_COLOR_IN_PROTO_OUTER_IP:
+-	eth_dev = dpaa2_dev->eth_dev;
+-	dpaa2_dev_close(eth_dev);
+ 	dpaa2_valid_dev--;
+-	if (!dpaa2_valid_dev)
++	if (!dpaa2_valid_dev) {
+ 		rte_mempool_free(dpaa2_tx_sg_pool);
+-	ret = rte_eth_dev_release_port(eth_dev);
++		dpaa2_tx_sg_pool = NULL;
++	}
+ 
+ 	return ret;
+ }
 -- 
-2.34.1
+2.25.1
 
