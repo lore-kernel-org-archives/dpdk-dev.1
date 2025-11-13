@@ -2,67 +2,87 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEA88CD98F2
-	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Nov 2025 21:57:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67966CD98F2
+	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Nov 2025 22:37:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C33AA4067D;
-	Thu, 13 Nov 2025 22:57:26 +0100 (CET)
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com
- [209.85.222.179])
- by mails.dpdk.org (Postfix) with ESMTP id 5784340151
- for <dev@dpdk.org>; Thu, 13 Nov 2025 22:57:26 +0100 (CET)
-Received: by mail-qk1-f179.google.com with SMTP id
- af79cd13be357-8b1e54aefc5so119899085a.1
- for <dev@dpdk.org>; Thu, 13 Nov 2025 13:57:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1763071045; x=1763675845; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=hra/gSyDi69Nxig+FplcQWSnmWJEhfkgUSm3oxlax5Y=;
- b=PUqhoD0r9dCc2xKjVQAB+YwxHoM0Xondk/16WnR99gLgbhxXD/U8Vkdi+dwka3iGrS
- 0ei4XwLb4cqvzfO/i4yD2lzDEsgchKY9rLIXd5ljPt3eqJWDzKVUpUhQkch1kVsM/I3K
- IjKdgdBmjdZcbyzYhxP8rfc088if1BjGPxlc8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1763071045; x=1763675845;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=hra/gSyDi69Nxig+FplcQWSnmWJEhfkgUSm3oxlax5Y=;
- b=sb5LLQPfX1sFnYWuuy+Y099zaZFc1/FAwegVQ3SdFvdbq1y8QPrv+ubXWSCT9ZwxLK
- 7zPkx/xxCF8OaKsU+4GmgqhvMMLDSTd4F/AMgYJoiSJbIY12nTMrivkcQlrzMNraqOVc
- gPwT8rDYgn5GzYBoBTLC8RiQmTveK6nih9p+cBxJojLltFNH/2+D6Oty9GibeJOvyQp8
- tphluO4Bgm352sY+/o1lAf9z1c5oC1Hb6SfYw2nsQIYtlKgXiGjA4Bu4IWa9zCF0FSGf
- YPIMDnuAtAcrfmTcZ1Gw7Fw1FhosZtdTccTABhVhDioIKzofESnIiCc7krHTIFAlT3Y7
- FRAA==
-X-Gm-Message-State: AOJu0YzWhbSnj+zIvoWR81/VwSZLZigzzmNACVRt/JUEdzR1mPqsVcEQ
- d83m0TtlMcnmE1vdLbpBUS4J5tGAGQDVK58XOaXxpSx92psE+p0jVbEvkxfY6f4wj+M=
-X-Gm-Gg: ASbGncux0z1KK90Ios1FNJyiCko6UpP+Xwa0HRCmOYTy4nmmJvHzTXGR8SHM0ADvpMz
- kzERPqgElnbXucxzhkOaKUyDBMFLisKoAY4ZRDH3YNVqxG53SuGOAA52l9LGTW/CakZTS/OZKq2
- qMhhyYNqJ84AjHbjdapb5T54cPoB7zu6BMOFZOldoTaMw3arQKFEdG1FywI/utnfhNIaFk4aZu7
- /6djF+xOkWd99YQmkojKj7nQ1F7TpuuF6bmA/QjvZxIwkaaOXXfAZIxWuNubwSgLdQ3zK55VMFz
- hPs2NKbveyK/3rxIXDPCq6+EEKaoMiDtggkrXdovZD0djzLwMc8lynwITz8ApRJ2nqpHBucy79Q
- viy19Tc7gIBIEl+VxGcZWvwF5V3dOR7DdKampoF5phFMnZK2RcKXocWjqpU4J8J2jLJrQxOlY3D
- 2hM6bhcUCRTkxXW5P1iCo=
-X-Google-Smtp-Source: AGHT+IEdml/UHNT5tjG73wsUzX9f3483UIPPACC2iqvaZ8OxEf49pKNqUvFnHqlOJdOSpY8/eAIQWA==
-X-Received: by 2002:a05:620a:1a26:b0:8a6:9a86:75f2 with SMTP id
- af79cd13be357-8b2c31a6288mr132140885a.46.1763071045507; 
- Thu, 13 Nov 2025 13:57:25 -0800 (PST)
-Received: from patrick-laptop.iol.unh.edu
- ([2606:4100:3880:1271:8c70:5b9e:ecd3:14e])
- by smtp.gmail.com with ESMTPSA id
- af79cd13be357-8b2aeeaf78bsm212135585a.15.2025.11.13.13.57.24
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 13 Nov 2025 13:57:25 -0800 (PST)
-From: Patrick Robb <probb@iol.unh.edu>
-To: luca.vizzarro@arm.com
-Cc: dev@dpdk.org, Paul.Szczepanek@arm.com, dmarx@iol.unh.edu,
- abailey@iol.unh.edu, Patrick Robb <probb@iol.unh.edu>
-Subject: [PATCH] dts: mock pydantic for autodoc
-Date: Thu, 13 Nov 2025 16:56:17 -0500
-Message-ID: <20251113215617.183141-1-probb@iol.unh.edu>
-X-Mailer: git-send-email 2.49.0
+	by mails.dpdk.org (Postfix) with ESMTP id 52A7A406BB;
+	Thu, 13 Nov 2025 23:37:49 +0100 (CET)
+Received: from fhigh-b5-smtp.messagingengine.com
+ (fhigh-b5-smtp.messagingengine.com [202.12.124.156])
+ by mails.dpdk.org (Postfix) with ESMTP id 2D49240151;
+ Thu, 13 Nov 2025 23:37:47 +0100 (CET)
+Received: from phl-compute-07.internal (phl-compute-07.internal [10.202.2.47])
+ by mailfhigh.stl.internal (Postfix) with ESMTP id 030AD7A0165;
+ Thu, 13 Nov 2025 17:37:45 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+ by phl-compute-07.internal (MEProxy); Thu, 13 Nov 2025 17:37:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1763073465;
+ x=1763159865; bh=yGzozPc8x8UECHf+UM28FkGg0jlzk84+eiMjzqZVxv0=; b=
+ c5cgYv2nyJjTA0izFrEaI3DUX0FuP9NfEazDCPglq4PGRwBMfOfaRorst9gGeHF1
+ XAO33j/Sdy0z3WbKlk7K52kauxW9ZRTwEcTBWq3A4+tm6bKWtT17QaiTaAu7ox3H
+ hBH5VyjL1M5B+w3neCqfjEuz2c9vujrwGZgDRQ0jd/RILWCPXwB4Df0uWt+V4xdn
+ LHkut9ujjigW0SI0lLFaA/o6n+JQ/pLyzEijZswqGUH0dEKDok76ygayYbLpQqHB
+ /Jy/Mqj3gFbVOycdOCYjoSr6sErmmZgUwWCuPa5r3SZn8asht+UnbwIW4T89H6mP
+ rHImA7BxPWW92vKR/rHghA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1763073465; x=
+ 1763159865; bh=yGzozPc8x8UECHf+UM28FkGg0jlzk84+eiMjzqZVxv0=; b=N
+ ZPIeG7QkYkE1YRhL51wTnrFHK+ck4gFqBuXSArL+SC+L3VQCKqbxxcGkItvnat4U
+ y+DbknVJEb5NOMvCWR2wYktrdC2w4oV2M4JLX3ijZHUyx1M2gGLztm34qkDIFfLB
+ P8HJMecsLuTFfNtq+weTIZ/J7u/fS16DWDDLoCv0qViGo5L+/xWR/pzzMdP3fYvG
+ 5f+GpmR8l51DdG3CUsAJIUZdiMGbc5o2Si6MhrIN6z0pZ594oqUMIarX5oMjMpqx
+ uSNGRwR1Z134PD0ahuWzWgsDeukwKUFIuGtR6mrXx+gYnKIbjS6hD7KkSeiHorsD
+ l/15OFBxT+Wu1xE8VleBg==
+X-ME-Sender: <xms:uV0WaRUirpwWdCttucKk6K1HkHdJcn8K86ApOg-p3jKIbd7IE20Sog>
+ <xme:uV0WaZsyHvW-NzCC-Icq3IqjV8D5qDsCREYpwzTKYarPP7SYv9N2rUQwKx_VluZ3S
+ FMOdmNvpRtSw6MeSs9N9AXbtfgxLy3KDkkpqAHiZnLykZdLDwM>
+X-ME-Received: <xmr:uV0Wac7bz1l3eBxYNrjgUG01c0KZa9kDwL0ZXApi2kw5ZD3ob2hBXWJ5-9VI2I7bEzd3Ho1C6tjHGZskcFrPPtqnlQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvtdekudeiucetufdoteggodetrf
+ dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+ rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+ gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
+ ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
+ frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
+ uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopedufedp
+ mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepihhshhgrrhhonhhisehnvhhiughirg
+ drtghomhdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtphhtthhopehmkhgr
+ shhhrghnihesnhhvihguihgrrdgtohhmpdhrtghpthhtoheprhgrshhlrghnugesnhhvih
+ guihgrrdgtohhmpdhrtghpthhtohepshhtrggslhgvseguphgukhdrohhrghdprhgtphht
+ thhopegsihhnghiisehnvhhiughirgdrtghomhdprhgtphhtthhopegushhoshhnohifsh
+ hkihesnhhvihguihgrrdgtohhmpdhrtghpthhtohepvhhirggthhgvshhlrghvohesnhhv
+ ihguihgrrdgtohhmpdhrtghpthhtohepohhrihhkrgesnhhvihguihgrrdgtohhm
+X-ME-Proxy: <xmx:uV0WaUQpTpU-bofAQhNKbPeauv4s_URLe85HyYv6LEvmTeKe9aKuww>
+ <xmx:uV0WaXvL-koh8rSBWe9sqtzDoSB5WN3EkpB7G72uqaotrHVe71DAjg>
+ <xmx:uV0Wae_EauR_sjYJVtiN5ENXIB8NGPo516YVRPYpeAouBG8AHBcWPA>
+ <xmx:uV0WaYyeopUuUz1nEtAZ7h8G6ZTBFk87P-dmCBTZt2jZoo9jlN09Kg>
+ <xmx:uV0WaTzzpHTlfIq8Cy1I2jrciNGTD1VmlTN2Jk4f_Hrl7e8n44DrIiJ4>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 13 Nov 2025 17:37:43 -0500 (EST)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Itai Sharoni <isharoni@nvidia.com>
+Cc: dev@dpdk.org, mkashani@nvidia.com, rasland@nvidia.com,
+ Itai Sharoni <isharoni@nvidia.com>, stable@dpdk.org,
+ Bing Zhao <bingz@nvidia.com>, Dariusz Sosnowski <dsosnowski@nvidia.com>,
+ Viacheslav Ovsiienko <viacheslavo@nvidia.com>, Ori Kam <orika@nvidia.com>,
+ Suanming Mou <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>,
+ Ophir Munk <ophirmu@nvidia.com>
+Subject: Re: [PATCH] net/mlx5/windows: fix match criteria in flow creation
+Date: Thu, 13 Nov 2025 23:37:40 +0100
+Message-ID: <11095513.IZOipudI63@thomas>
+In-Reply-To: <20251113122642.1193-1-isharoni@nvidia.com>
+References: <20251113122642.1193-1-isharoni@nvidia.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -76,30 +96,18 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Mock the Pydantic import so that even when Pydantic
-is available on the system, it is not loaded by
-Sphinx, ensuring we perform the doc build without
-Pydantic regardless of the environment.
+13/11/2025 13:26, Itai Sharoni:
+> Currently the Windows implementation hardcodes match criteria to
+> MLX5_MATCH_OUTER_HEADERS when creating flow rules, which prevents
+> matching on inner headers and other criteria types like NVGRE.
+> 
+> The fix uses the matcher's match_criteria_enable attribute instead
+> of hardcoding OUTER_HEADERS, and moves the assignment outside the
+> action switch block to apply to all cases.
+> 
+> NVGRE item type is also added to the supported items list.
 
-Signed-off-by: Patrick Robb <probb@iol.unh.edu>
----
- doc/guides/conf.py | 3 +++
- 1 file changed, 3 insertions(+)
+Why adding only NVGRE?
+Should we mention which tunnels are supported on Windows in the doc?
 
-diff --git a/doc/guides/conf.py b/doc/guides/conf.py
-index 2c1aa81bbf..29d5cf019d 100644
---- a/doc/guides/conf.py
-+++ b/doc/guides/conf.py
-@@ -106,6 +106,9 @@
-     # fabric.Connection (without) vs. fabric.connection.Connection (with)
-     autodoc_mock_imports = importlib.import_module('check-dts-requirements').get_missing_imports()
- 
-+    # Always mock Pydantic to avoid autodoc introspecting its internals
-+    autodoc_mock_imports = list(set(autodoc_mock_imports + ['pydantic', 'pydantic_core']))
-+
- 
- # ####### :numref: fallback ########
- # The following hook functions add some simple handling for the :numref:
--- 
-2.49.0
 
