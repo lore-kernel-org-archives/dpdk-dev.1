@@ -2,69 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAA89CD98CE
-	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Nov 2025 18:59:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0D58CD98D0
+	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Nov 2025 19:03:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 79BBE40655;
-	Thu, 13 Nov 2025 19:59:18 +0100 (CET)
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com
- [209.85.128.174])
- by mails.dpdk.org (Postfix) with ESMTP id 414DF40151
- for <dev@dpdk.org>; Thu, 13 Nov 2025 19:59:17 +0100 (CET)
-Received: by mail-yw1-f174.google.com with SMTP id
- 00721157ae682-786943affbaso10360907b3.0
- for <dev@dpdk.org>; Thu, 13 Nov 2025 10:59:17 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id C53D640B9B;
+	Thu, 13 Nov 2025 20:03:13 +0100 (CET)
+Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com
+ [209.85.219.43]) by mails.dpdk.org (Postfix) with ESMTP id 2142940151
+ for <dev@dpdk.org>; Thu, 13 Nov 2025 20:03:13 +0100 (CET)
+Received: by mail-qv1-f43.google.com with SMTP id
+ 6a1803df08f44-87c13813464so16310316d6.1
+ for <dev@dpdk.org>; Thu, 13 Nov 2025 11:03:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1763060356; x=1763665156; darn=dpdk.org;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:from:to:cc:subject:date
+ d=iol.unh.edu; s=unh-iol; t=1763060592; x=1763665392; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=KhU2bhHlpEBaups4VjvO39CPF3zKUcsU5JmKc9lBHpQ=;
- b=CXfnC8HLMpfgWAgmTDnahBEJXEPz84oRrqAG1IV6DXgTELzz08MuUweiNm3fSw3652
- ap2eJTJdGOqBSDX99f191oIXcRBukcl+tI0Un4f6nuis0i0SjhYoUl5nJyfTJNFktmZg
- Zrgekjht+U17AYRvvwG/g1dSSc0OXTBBjQ7vI=
+ bh=2bwiiNLQkiXHgjVrc/LL+AE05Jqphl7eqv1GN52Jtfo=;
+ b=Itsr6opuXQQgjMiNBI4tgH/yjhQFRrpK44Hz3JWmG5iiIUxLY+/p2mrIrbTE6SEW1h
+ Xfd1va9jWn9Hr0XbLFUZOEJSNqD7A0kM8tzDFw94FC21JMXp87i6vRuHG9ybqLF6PhpF
+ okdSUHNm0DeQ7d5tt0WRW1FGlgRlzEzCVuGS4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1763060356; x=1763665156;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+ d=1e100.net; s=20230601; t=1763060592; x=1763665392;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=KhU2bhHlpEBaups4VjvO39CPF3zKUcsU5JmKc9lBHpQ=;
- b=osxY6GgUhsZ0he+n8Q8gdjwKFti67fyjfx3eGQa3X5odE2CWbMrSvvKD0chB/lrZcL
- m3kfSTo99FyYBeK/+u78s+d5xGrssK2AFXTJelnJ851Y4SLKPKRwxp9kdhFYZB6KxzMw
- kUaT9ldlXl0usT0y+ex4XpqpwPmliEHceAFH8OkNEQNAcaKkYu654pk9O4DTb8Y594+I
- R9VfISIPMXZZaVO+qIRMcNJb/ZNQYC7g7v+4BW2rCoBT2UuSorUW68a9UqCAr+tsb4nD
- h/r+qSxziLO43Y8mPaGFI2wks7owRJ5yA4H1P4Vm3VwwHT1Hu5+h/VJhWOK05gKeWgji
- MJNA==
-X-Forwarded-Encrypted: i=1;
- AJvYcCVJ9DMaOPl/nqtuLQVKib4CZ/S6A/vKpZfl3K4fWFOuZ2Tqe9znwMdwB/L5uuqHp1cB/E8=@dpdk.org
-X-Gm-Message-State: AOJu0YxZP8rKjntSZ7wEhAGYZT9nfl1xbRwwus5Tjt74puVMMsbo/zVa
- 0cwayjiS1cp4V8vcmTE9DKcFrDoYPNvA3duGjSjYFo6Vjm/EDN1lkjJvNcr9wuxJFkIQZxQVIY+
- IBIj0XyzuPDJ7pOIHroy0padQaWkdP9202ZfQ31b9Eg==
-X-Gm-Gg: ASbGnctlzkq8peybEO6LKG8UfzFQCWmC3/1yeGHcgUKathlc4/ULDOzL5rUk/huMnBg
- BpGfY6Fj9OcGUoKNF7h/VhAQX9hc8ZCd/zkhk4/sV1LcqbQfCPZlxLIuTkNfNzPWTEcT/+sfVNU
- HDKeNetYbG51/A6tvtNZa9giRqKqcsvYNGPaJeHhDBsUyf//iToI6HPiF5n+Dta4+ZIkpDUHU1m
- 676GFqxgvT96/pdt67jgnwjSIhAiK6jKMb9s84q1zv9oBWaOdvRFL4W7TBQs331GQKwVdSD0ku0
- 5WYiNqlJzw==
-X-Google-Smtp-Source: AGHT+IHIsvLKO8dEEjTJFMnBukpuZHj2qnipy3UdClCCB3z1o/jTEAxFnucJRFrPYV8+f5QTIZJaHT/bHBWsVvyZsYM=
-X-Received: by 2002:a05:690c:a192:b0:784:997d:b86 with SMTP id
- 00721157ae682-78929e0cde1mr3209597b3.2.1763060356511; Thu, 13 Nov 2025
- 10:59:16 -0800 (PST)
-MIME-Version: 1.0
-References: <20251017203159.557830-1-dmarx@iol.unh.edu>
- <20251024181606.604135-1-dmarx@iol.unh.edu>
- <20251024181606.604135-2-dmarx@iol.unh.edu>
- <CAJvnSUDywCd9cdjWtpGjpkdB0Mk-dYs+bmra_CKKNhkD6Q44Mg@mail.gmail.com>
-In-Reply-To: <CAJvnSUDywCd9cdjWtpGjpkdB0Mk-dYs+bmra_CKKNhkD6Q44Mg@mail.gmail.com>
+ bh=2bwiiNLQkiXHgjVrc/LL+AE05Jqphl7eqv1GN52Jtfo=;
+ b=P7WQqalerwTLKE9Yh8fyTjEQLDxf2Qfk/zrBKsNbCG8EHIqgjs5M9phOthuNLH82k8
+ /RghliNiZ9pg10f6nW3h+OYP6op/sKtNr87v+jbTtI6YXG+Brr+XFoiJTKv4NHXpd15w
+ ohYhBGCBTvzj1PUok12L0f6oWIL8gPzmOedAWLTfvBrgcz/sFV4E/Uhz7WPZvMcTMjDr
+ X/P+Wwp9fWr9NyBcebXuGDO0XbQDiGtb9UHNt/aE/xazS3wd2Q6sZxBAR5wGP0tUXiD2
+ rZOfKcmOWAxvFYcG7PrU182hWOQcgQk0ZIhXcxc/QJ4+FzdOPeaJURFNQy0NjkZgLVCW
+ 0azg==
+X-Gm-Message-State: AOJu0YxCym7jxVEaOi+9Ud+0NvPprYmpze1JkSGwoNEacubURiaow2iH
+ kYLM3Gi7Dm/jtSf/262/pOGamzqu7MysjdR6PjpMYEXPBDRSJ3ht/W6taPaLJ7Vd0CU=
+X-Gm-Gg: ASbGncsGbu4nshzmkGd8On8Eulc1vFCeKlUZsc6yISEJIA3jC3so2qaWLNS+Q+Jfjzr
+ EXHjdvN5dK0wnJtczmkuOEPWY8yDTc4tCAZphbia27OUO1EG5yowWpon/6Ngr95FZynPut7Fhb5
+ xdUuP2x3ivxAtrHaF/517I5M8+YohftsAHoMM1vAA+QPal6FmdA+Y4tNNXQSJef8a30GsgU8Kox
+ MUuZEnwqOPbySf8d2LRR59UGUsu4xGFTGGWz+dyB6BKU8DPzGt/S8b93PExkKtkRdw5Dt0PMmoc
+ ydZFWYA5KUjYghXw5ksfpRn7366LFLLlQXwTigetNDT0pyDeQfMCTZYt43XokP0GP0mrnAYajyB
+ hVx9YtrH9OWuoOQfuyZPth9OIAQGdqTYY1bD3vd8/yvH37dwhctPnca2ECcVN7uPb1ac5kmkfwc
+ p7mJwbbTO4oAdTvg==
+X-Google-Smtp-Source: AGHT+IFShH4kLgQETzoVN5ZxB6pFKOxviSWqU6y4ve756oRfvl05it9DXH2loiNWb/XXyoF4M8LNDA==
+X-Received: by 2002:ad4:4eac:0:b0:882:5e6e:9cd3 with SMTP id
+ 6a1803df08f44-882926cbae1mr2963586d6.60.1763060591890; 
+ Thu, 13 Nov 2025 11:03:11 -0800 (PST)
+Received: from d121016.iol.unh.edu ([2606:4100:3880:1210::202])
+ by smtp.gmail.com with ESMTPSA id
+ 6a1803df08f44-882865d3e25sm17248076d6.61.2025.11.13.11.03.11
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Thu, 13 Nov 2025 11:03:11 -0800 (PST)
 From: Dean Marx <dmarx@iol.unh.edu>
-Date: Thu, 13 Nov 2025 13:59:04 -0500
-X-Gm-Features: AWmQ_bmit8Q3QXRxckRR4PIeuodgr6kDx9rdwVcKTmkC0I4licZIj1NRQ3u3oy8
-Message-ID: <CABD7UXNWR-WY+Oe_JFSCXWfB-vGxQy1=68nDRxH4_x-hHQD0Ng@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] dts: add QinQ test suite
-To: Patrick Robb <probb@iol.unh.edu>
-Cc: luca.vizzarro@arm.com, yoan.picchi@foss.arm.com, 
- Honnappa.Nagarahalli@arm.com, paul.szczepanek@arm.com, dev@dpdk.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+To: probb@iol.unh.edu, luca.vizzarro@arm.com, yoan.picchi@foss.arm.com,
+ Honnappa.Nagarahalli@arm.com, paul.szczepanek@arm.com
+Cc: dev@dpdk.org,
+	Dean Marx <dmarx@iol.unh.edu>
+Subject: [PATCH v4 1/2] dts: add QinQ strip and VLAN extend to testpmd shell
+Date: Thu, 13 Nov 2025 14:03:08 -0500
+Message-ID: <20251113190309.310821-1-dmarx@iol.unh.edu>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20251024181606.604135-2-dmarx@iol.unh.edu>
+References: <20251024181606.604135-2-dmarx@iol.unh.edu>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -78,107 +78,76 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, Nov 7, 2025 at 3:15=E2=80=AFPM Patrick Robb <probb@iol.unh.edu> wro=
-te:
-<snip>
->
-> The testcase does look good except that form what I'm seeing, vlan_filter=
- is not supported for 88a8 + 8100 packets (it won't read the 88a8 tag). I s=
-ent Bruce and Morten an email about it. But, I think the most reasonable th=
-ing is to remove this testcase for the 25.11 release since the expected beh=
-avior is either not well defined, or vlan_filter is not supposed to be able=
- to read 88a8 tags.
+Add QinQ strip and VLAN extend methods to TestPmdShell class.
 
-Agreed, I'll remove this in the new version
+Signed-off-by: Dean Marx <dmarx@iol.unh.edu>
+---
+ dts/api/testpmd/__init__.py | 52 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 52 insertions(+)
 
-<snip>
->> +
->> +            verify(packet is not None, "Packet was dropped when it shou=
-ld have been received.")
->> +
->> +            if packet is not None:
->> +                verify(bool(packet.haslayer(Dot1AD)), "QinQ layer not f=
-ound in packet")
->
->
-> I guess you can also verify that packet haslayer(Dot1Q)
+diff --git a/dts/api/testpmd/__init__.py b/dts/api/testpmd/__init__.py
+index 893479fa73..a20dedc25a 100644
+--- a/dts/api/testpmd/__init__.py
++++ b/dts/api/testpmd/__init__.py
+@@ -853,6 +853,58 @@ def set_vlan_filter(self, port: int, enable: bool, verify: bool = True) -> None:
+                     filter on port {port}"""
+                 )
+ 
++    def set_vlan_extend(self, port: int, enable: bool, verify: bool = True) -> None:
++        """Set vlan extend.
++
++        Args:
++            port: The port number to enable VLAN extend on.
++            enable: Enable extend on `port` if :data:`True`, otherwise disable it.
++            verify: If :data:`True`, the output of the command and show port info
++                is scanned to verify that vlan extend was set successfully.
++
++        Raises:
++            InteractiveCommandExecutionError: If `verify` is :data:`True` and extend
++                fails to update.
++        """
++        extend_cmd_output = self.send_command(f"vlan set extend {'on' if enable else 'off'} {port}")
++        if verify:
++            vlan_settings = self.show_port_info(port_id=port).vlan_offload
++            if enable ^ (vlan_settings is not None and VLANOffloadFlag.EXTEND in vlan_settings):
++                self._logger.debug(
++                    f"""Failed to {"enable" if enable else "disable"}
++                                   extend on port {port}: \n{extend_cmd_output}"""
++                )
++                raise InteractiveCommandExecutionError(
++                    f"""Failed to {"enable" if enable else "disable"} extend on port {port}"""
++                )
++
++    def set_qinq_strip(self, port: int, enable: bool, verify: bool = True) -> None:
++        """Set QinQ strip.
++
++        Args:
++            port: The port number to enable QinQ strip on.
++            enable: Enable stripping on `port` if :data:`True`, otherwise disable it.
++            verify: If :data:`True`, the output of the command and show port info
++                is scanned to verify that QinQ strip was set successfully.
++
++        Raises:
++            InteractiveCommandExecutionError: If `verify` is :data:`True` and QinQ strip
++                fails to update.
++        """
++        qinq_cmd_output = self.send_command(
++            f"vlan set qinq_strip {'on' if enable else 'off'} {port}"
++        )
++        if verify:
++            vlan_settings = self.show_port_info(port_id=port).vlan_offload
++            if enable ^ (vlan_settings is not None and VLANOffloadFlag.QINQ_STRIP in vlan_settings):
++                self._logger.debug(
++                    f"Failed to {"enable" if enable else "disable"}"
++                    f"QinQ strip on port {port}: \n{qinq_cmd_output}"
++                )
++                raise InteractiveCommandExecutionError(
++                    f"Failed to {"enable" if enable else "disable"} QinQ strip on port {port}"
++                )
++
+     def set_mac_address(self, port: int, mac_address: str, verify: bool = True) -> None:
+         """Set port's MAC address.
+ 
+-- 
+2.51.0
 
-Great point, I hadn't realized the final if statement could be
-silently failing if the Dot1Q layer doesn't exist. I'll update this
-
-<snip>
->> +            received_packets1 =3D send_packet_and_capture(test_packets[=
-0])
->> +            packet1 =3D self._get_relevant_packet(received_packets1)
->> +            received_packets2 =3D send_packet_and_capture(test_packets[=
-1])
->> +            packet2 =3D self._get_relevant_packet(received_packets2)
->> +            received_packets3 =3D send_packet_and_capture(test_packets[=
-2])
->> +            packet3 =3D self._get_relevant_packet(received_packets3)
->> +            received_packets4 =3D send_packet_and_capture(test_packets[=
-3])
->> +            packet4 =3D self._get_relevant_packet(received_packets4)
->
->
-> rename to make them more descriptive? I.e. vlan_packet, 2_vlan_packet, qi=
-nq_packet, qinq_vlan_packet? Or similar.
-
-Got it
-
->
->>
->> +
->> +            testpmd.stop()
->> +
->> +            tests =3D [
->> +                ("Single 8100 tag", self._strip_verify(packet1, False, =
-"Single 8100 tag")),
->> +                (
->> +                    "Double 8100 tag",
->> +                    self._strip_verify(packet2, True, "Double 8100 tag"=
-),
->> +                ),
->> +                ("Single 88a8 tag", self._strip_verify(packet3, False, =
-"Single 88a8 tag")),
->> +                (
->> +                    "QinQ (88a8 and 8100 tags)",
->> +                    self._strip_verify(packet4, False, "QinQ (88a8 and =
-8100 tags)"),
->> +                ),
->> +            ]
->
->
-> this is good for testing behavior when we have both vlan_strip and qinq_s=
-trip enabled. What about when we have only vlan_strip enabled or only qinq_=
-strip enabled? I.e. when we have only vlan_strip enabled, and we send an 88=
-a8 only packet, nothing should get stripped at all. It probably makes sense=
- to have different testcases for vlan strip, qinq_strip, and vlan_strip + q=
-inq_strip.
-
-My logic here was that vlan strip only is being tested in the vlan
-suite already, even if it isn't with this set of QinQ style packets. I
-think it would make more sense to add those extra cases in the vlan
-suite in the future anyways, rather than in the QinQ suite.
-
-I didn't test only qinq strip either because Stephen Hemminger
-mentioned it was undefined in this email thread (second message):
-
-https://mail.google.com/mail/u/0/#search/label%3Adev+qinq/FMfcgzQbgJNPMqLMR=
-LkTsrxMrfRjJLzq
-
->
->>
->> +
->> +            failed =3D [ctx for ctx, result in tests if not result]
->> +
->> +            verify(
->> +                not failed,
->> +                f"The following packets were not stripped correctly: {'=
-, '.join(failed)}",
->> +            )
->> --
->> 2.51.0
->>
->
-> Reviewed-by: Patrick Robb <probb@iol.unh.edu>
