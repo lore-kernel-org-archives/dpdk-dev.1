@@ -2,66 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EEB6CD98F7
-	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Nov 2025 23:31:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39CE9CDB463
+	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Nov 2025 23:31:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3940F4025A;
-	Fri, 14 Nov 2025 00:31:17 +0100 (CET)
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com
- [209.85.222.175])
- by mails.dpdk.org (Postfix) with ESMTP id BEB1B40151
- for <dev@dpdk.org>; Fri, 14 Nov 2025 00:31:15 +0100 (CET)
-Received: by mail-qk1-f175.google.com with SMTP id
- af79cd13be357-8b272a4ca78so195585985a.1
- for <dev@dpdk.org>; Thu, 13 Nov 2025 15:31:15 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 3E2B4409FA;
+	Fri, 14 Nov 2025 00:31:25 +0100 (CET)
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com
+ [209.85.222.174])
+ by mails.dpdk.org (Postfix) with ESMTP id BA178402CB
+ for <dev@dpdk.org>; Fri, 14 Nov 2025 00:31:23 +0100 (CET)
+Received: by mail-qk1-f174.google.com with SMTP id
+ af79cd13be357-8b28f983333so147837085a.3
+ for <dev@dpdk.org>; Thu, 13 Nov 2025 15:31:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1763076675; x=1763681475; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=+TDI6v5DNZXfhDYdwg8yAcnUgaxcikC0W8DrwItJpJk=;
- b=SiUgQHGqtMvTToJnvvUsXFiPfLGLZ7y8C+GJqfgagcYUQAd+yzvsAN6Et4kihibjAn
- Lth2iExM9T/ab40uAwoYtsvuFwJlriAmA0Xs3ihs5ipInr6ZFt5BSa92201tARTTFYCG
- pvwhxIXAYSgwQdy6FdW1jnC4qtEdEjBsaXN2o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1763076675; x=1763681475;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ d=iol.unh.edu; s=unh-iol; t=1763076683; x=1763681483; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=+TDI6v5DNZXfhDYdwg8yAcnUgaxcikC0W8DrwItJpJk=;
- b=H3DTljZ+kpEnQhXjS1y4+nZ+9tznX9O5DzfnEKpOsDJGvo1PbevCCGVuubpbgx5NaI
- 2VENo0hzZ7m1dRp5+6uaqx/YlP38putHNTstbr9z0g0gLx5564eQoakZYMth5bOGFRpg
- 2rodVF0AK49RK/Sa+15ew5JWVGJhzrladnL3O0ikQCSMw68vCaYW2DaRZI7x7JNKoLFP
- orEgEpXRLqq2UOFUanAgZhVFE4hZzG/IeekwF8BSKXn1fsrz96H9kOvTcIIocDMwYfSo
- mDbMHk/jkqdCiwx1yhOCUUB/ATs37RUTWgM4zWh+BQpN89AM19qzSvOWYK0HcuwwElqh
- 34gA==
-X-Gm-Message-State: AOJu0YwYYCMa7EFttivOuwOKPztWFku2wjANMHPJYWCs23Ev3hTRUIIq
- ISPHiS/QdCXD5apDPLz5XCi638PQ5l7wjwXGCSE26E4Lu0n41uTmnqlRiJMYeFiH4AlSY1EdY0t
- NoNfYRiU=
-X-Gm-Gg: ASbGncsIvLknx9vvW/flvixsZdn/6VMdvSowJuiMEIzA6kxhBLcNEKl3jwDbRr0S1vI
- s5bmyEZIezYEcSJit7oEjZjpySabiAZa66PYLOHWS69aZk8D01sqsIE5TCkT4kho270asLmluey
- vjJW7HUpqlHFlqg/jGZkDutFkuShReQkYj8tt5wa2IPlVRv28F9eH0kwGhcDY7i2l0RTTEGTlaC
- dgBukpUUvEw1gEoglsPo1GxythayPSN0y0rwgHLRrHBsF3YegdT/hwtPgQCeeXR6Az+SnBvACEW
- L/XE8tsaA1V3FH42g+SzfrSZNpWo7fbhu9kZqhHwSR8UzbDXSC4z3bfRcCp/VDB7VXzQnD3yybP
- P/Td1MLQ2gqCVlTc8s068eHYxYAXEVQFBfs+L1QtpT/l4KuEGNFgRRzThE5B7tnxreYfH6Ey1Aa
- KFGvbSuYWzSll68585GNQ=
-X-Google-Smtp-Source: AGHT+IH/4qKDro273K+r/+z77KNs+kv+0ZEeGlFY6Vhfqbaekk6Zh+jAAz0B4TWJF8fFcgNz46nAqQ==
-X-Received: by 2002:a05:620a:3948:b0:8ab:58d3:6030 with SMTP id
- af79cd13be357-8b2c31af060mr162980785a.57.1763076674999; 
- Thu, 13 Nov 2025 15:31:14 -0800 (PST)
+ bh=zdoOFuI7rl4Ksyn2kqdIpyBTYjkOdbDXokc5lrCHfcc=;
+ b=TFRfWP/pD+sorApFUKLQdzvQmkI2gjI2XHGeJSWREhSNRmbAoO1jL62kEYKyA3tR/z
+ qgO02sPpZwqL9HUgg4ie/NTZFM9j7KgokXsfY1xG9SQxMk+hlRT1m6vWfLwbiKHvClbr
+ cLGF2MKR6Vd2laUZCxpBeK7TlZMV1UQRK2QvE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1763076683; x=1763681483;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=zdoOFuI7rl4Ksyn2kqdIpyBTYjkOdbDXokc5lrCHfcc=;
+ b=ljoTbf8DGYgUpzQ4JjVLUbW6mGlk4Pam6sec1oOTWOQOSmKMpgbX6oj5CT+vZz/jIq
+ NSSxW/zz6nj7QnHDHukhkG2/3aXtmkjZ5SdVLm0vi2izf9/gWADDJO3UDoKVyf8bFJ4S
+ wzkpDQKYcJDO9gXudT2X8eKBLT2s8n+YyhLFy+qAH+JpA/x5cWyWFIEWB9/CFppO6vTU
+ P2UrNknjyC4XB8I2viizjpY+61Eki9UqHIrgz1H0+VJCDc9aPaugvDqUD7IAK0JVWr+3
+ IV5uT8WXMimmfUJVHJueDFRYd1eQaGSWRlNjuhKlg7AzXc0AUHSSp+StQQwX4zkJoLrN
+ AjzQ==
+X-Gm-Message-State: AOJu0YwQF/xVgGWwNycWVSz6xF3wggJUR3h09YcRFG7JALA3pnVqyWQh
+ QgYuM/LDmgidjlJhuTNuELs2coS/SXfAXb3xfXaHP9k6LB3DKDPOhoRgg9K9gWOFgpc=
+X-Gm-Gg: ASbGncvkrfbejqOXIVcTtYNAmvMr0pZhp77tIks+SZex8bNwoKNsHFRc1RypvHDsgF4
+ qLBSMZwhqddl8M9QxYwLpS0NFjbwgXAWr8hiuEcFF13pK6PFMT1i8cr+DLfTZjZHRp4X58OpNh6
+ Rv4DJeWK7WeyAINIvNqiNEKHhaMBhsUHWYULcfkfjnQghAlgxhWSxr6SIhWN+oAA6+Oy4nyXYyH
+ lwIVAZWXneKg2hDe50VtNwPTA3T6OKE5sdVjJse+AN3yvtR4pF8Z1bhj3/mnFlDOZLYahwIQZ0B
+ zasXXjCEM2KA9i0iJZ4fKhn/VqNvSmh2rOd2774jC+ZSpz5HA6GiWy0Hx7I+MMVJFiSQBZx5EKk
+ IO6FTALIiKO8H8nR+fWi45mgF9P4K1Cp00rS/roD/C13UaqTYG6GiNNi6zS4oKJbhHmN63gXZvH
+ ZHIag7/VhMrEEcB6fnV42NbrAaCTdwuQ==
+X-Google-Smtp-Source: AGHT+IGkbbfXddJMPbO+siQ+BtiN7/gOwhp3YUtk6YoDPJY3dBCOZ0SfxqEH3V0C0F2KOBaePQQyDw==
+X-Received: by 2002:a05:620a:3729:b0:8b2:621b:fa4b with SMTP id
+ af79cd13be357-8b2c31b5033mr156129785a.76.1763076682737; 
+ Thu, 13 Nov 2025 15:31:22 -0800 (PST)
 Received: from patrick-laptop.iol.unh.edu
  ([2606:4100:3880:1271:8c70:5b9e:ecd3:14e])
  by smtp.gmail.com with ESMTPSA id
- af79cd13be357-8b2af064724sm221837285a.54.2025.11.13.15.31.14
+ af79cd13be357-8b2af064724sm221837285a.54.2025.11.13.15.31.22
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 13 Nov 2025 15:31:14 -0800 (PST)
+ Thu, 13 Nov 2025 15:31:22 -0800 (PST)
 From: Patrick Robb <probb@iol.unh.edu>
 To: luca.vizzarro@arm.com
 Cc: dev@dpdk.org, thomas@monjalon.net, david.marchand@redhat.com,
  Patrick Robb <probb@iol.unh.edu>
-Subject: [PATCH 0/2] Small formatting issue fixes in DTS
-Date: Thu, 13 Nov 2025 18:29:52 -0500
-Message-ID: <20251113232954.273454-1-probb@iol.unh.edu>
+Subject: [PATCH 1/2] dts: fix incorrect import order for RSS testsuite
+Date: Thu, 13 Nov 2025 18:29:53 -0500
+Message-ID: <20251113232954.273454-2-probb@iol.unh.edu>
 X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20251113232954.273454-1-probb@iol.unh.edu>
+References: <20251113232954.273454-1-probb@iol.unh.edu>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -77,18 +79,30 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-There are a few formatting issues in DTS which are being
-reported by the devtools dts-check-format script. The 2
-commits in this series should resolve these issues.
+Fix the order of the imports on the RSS testsuite such that
+the dts check format script is no longer reporting issues.
 
-Patrick Robb (2):
-  dts: fix incorrect import order for RSS testsuite
-  dts: shorten a too long line
+Fixes: 367e950f6d24 ("dts: add RSS test suite")
 
- dts/api/testpmd/__init__.py    | 2 +-
+Signed-off-by: Patrick Robb <probb@iol.unh.edu>
+---
  dts/tests/TestSuite_pmd_rss.py | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/dts/tests/TestSuite_pmd_rss.py b/dts/tests/TestSuite_pmd_rss.py
+index 80f6e310ae..f6adf262c3 100644
+--- a/dts/tests/TestSuite_pmd_rss.py
++++ b/dts/tests/TestSuite_pmd_rss.py
+@@ -20,8 +20,8 @@
+     requires_link_topology,
+     requires_nic_capability,
+ )
+-from api.test import verify
+ from api.packet import send_packets_and_capture
++from api.test import verify
+ from api.testpmd import TestPmd
+ from api.testpmd.config import SimpleForwardingModes
+ from api.testpmd.types import (
 -- 
 2.49.0
 
