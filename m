@@ -2,64 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AC17CD98E4
-	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Nov 2025 21:34:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEA88CD98F2
+	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Nov 2025 21:57:27 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C4BCD40E44;
-	Thu, 13 Nov 2025 22:34:21 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
- by mails.dpdk.org (Postfix) with ESMTP id 056CC4064A
- for <dev@dpdk.org>; Thu, 13 Nov 2025 22:34:18 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1763069659; x=1794605659;
- h=from:date:subject:mime-version:content-transfer-encoding:
- message-id:references:in-reply-to:to:cc;
- bh=a/Ipv4tf+Nmc6f0A5CgEE2RZFqeCmF8dEp156ZWSpi8=;
- b=BetdTSjMsa74DCqsP6YHF7tbSgY3WW1UK58m59Cqmf3J/oqFOawPTNY0
- o2OpYpSijMrQJGOe3QSIgGZxxlJOtsa5gQvSE1YsRJ/MugH2Dz8oIOZYL
- nmxeN7AwejlGi1zQH7OjX3CefIXFgPyUUKoFcQtvBRn3VSvxnJ6Vu0Km1
- kWER8Nv/QzVnwLGVrPaZFzjJ52Qkig07+wQ0QfZ7Sx5G4oUYWjH17y/qy
- C7gSqvg6g3IQ97Idgk7AFbH14neinNS24YZyXv1eTdXuuI0V2j6L64OLq
- DGgIMFmQYVSQhhvGhU/YW2QjrUX5z6QmnFB7kOovZOh4yeFrDM5EA5aLf Q==;
-X-CSE-ConnectionGUID: +nRiojfIQj2GRhh7eCaOgg==
-X-CSE-MsgGUID: OcNHs59FTsqVwMVyIu2Hxw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11612"; a="69027492"
-X-IronPort-AV: E=Sophos;i="6.19,303,1754982000"; d="scan'208";a="69027492"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
- by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 13 Nov 2025 13:34:17 -0800
-X-CSE-ConnectionGUID: sqz4Uc6IRQSMcVyHkaXvfQ==
-X-CSE-MsgGUID: 9WTi2jbTSQCQW6c4tksurg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,303,1754982000"; d="scan'208";a="194051462"
-Received: from orcnseosdtjek.jf.intel.com (HELO [10.166.28.90])
- ([10.166.28.90])
- by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 13 Nov 2025 13:34:17 -0800
-From: Jacob Keller <jacob.e.keller@intel.com>
-Date: Thu, 13 Nov 2025 13:33:45 -0800
-Subject: [PATCH 2/2] net/iavf: check Rx timestamp validity bit
+	by mails.dpdk.org (Postfix) with ESMTP id C33AA4067D;
+	Thu, 13 Nov 2025 22:57:26 +0100 (CET)
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com
+ [209.85.222.179])
+ by mails.dpdk.org (Postfix) with ESMTP id 5784340151
+ for <dev@dpdk.org>; Thu, 13 Nov 2025 22:57:26 +0100 (CET)
+Received: by mail-qk1-f179.google.com with SMTP id
+ af79cd13be357-8b1e54aefc5so119899085a.1
+ for <dev@dpdk.org>; Thu, 13 Nov 2025 13:57:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=iol.unh.edu; s=unh-iol; t=1763071045; x=1763675845; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=hra/gSyDi69Nxig+FplcQWSnmWJEhfkgUSm3oxlax5Y=;
+ b=PUqhoD0r9dCc2xKjVQAB+YwxHoM0Xondk/16WnR99gLgbhxXD/U8Vkdi+dwka3iGrS
+ 0ei4XwLb4cqvzfO/i4yD2lzDEsgchKY9rLIXd5ljPt3eqJWDzKVUpUhQkch1kVsM/I3K
+ IjKdgdBmjdZcbyzYhxP8rfc088if1BjGPxlc8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1763071045; x=1763675845;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=hra/gSyDi69Nxig+FplcQWSnmWJEhfkgUSm3oxlax5Y=;
+ b=sb5LLQPfX1sFnYWuuy+Y099zaZFc1/FAwegVQ3SdFvdbq1y8QPrv+ubXWSCT9ZwxLK
+ 7zPkx/xxCF8OaKsU+4GmgqhvMMLDSTd4F/AMgYJoiSJbIY12nTMrivkcQlrzMNraqOVc
+ gPwT8rDYgn5GzYBoBTLC8RiQmTveK6nih9p+cBxJojLltFNH/2+D6Oty9GibeJOvyQp8
+ tphluO4Bgm352sY+/o1lAf9z1c5oC1Hb6SfYw2nsQIYtlKgXiGjA4Bu4IWa9zCF0FSGf
+ YPIMDnuAtAcrfmTcZ1Gw7Fw1FhosZtdTccTABhVhDioIKzofESnIiCc7krHTIFAlT3Y7
+ FRAA==
+X-Gm-Message-State: AOJu0YzWhbSnj+zIvoWR81/VwSZLZigzzmNACVRt/JUEdzR1mPqsVcEQ
+ d83m0TtlMcnmE1vdLbpBUS4J5tGAGQDVK58XOaXxpSx92psE+p0jVbEvkxfY6f4wj+M=
+X-Gm-Gg: ASbGncux0z1KK90Ios1FNJyiCko6UpP+Xwa0HRCmOYTy4nmmJvHzTXGR8SHM0ADvpMz
+ kzERPqgElnbXucxzhkOaKUyDBMFLisKoAY4ZRDH3YNVqxG53SuGOAA52l9LGTW/CakZTS/OZKq2
+ qMhhyYNqJ84AjHbjdapb5T54cPoB7zu6BMOFZOldoTaMw3arQKFEdG1FywI/utnfhNIaFk4aZu7
+ /6djF+xOkWd99YQmkojKj7nQ1F7TpuuF6bmA/QjvZxIwkaaOXXfAZIxWuNubwSgLdQ3zK55VMFz
+ hPs2NKbveyK/3rxIXDPCq6+EEKaoMiDtggkrXdovZD0djzLwMc8lynwITz8ApRJ2nqpHBucy79Q
+ viy19Tc7gIBIEl+VxGcZWvwF5V3dOR7DdKampoF5phFMnZK2RcKXocWjqpU4J8J2jLJrQxOlY3D
+ 2hM6bhcUCRTkxXW5P1iCo=
+X-Google-Smtp-Source: AGHT+IEdml/UHNT5tjG73wsUzX9f3483UIPPACC2iqvaZ8OxEf49pKNqUvFnHqlOJdOSpY8/eAIQWA==
+X-Received: by 2002:a05:620a:1a26:b0:8a6:9a86:75f2 with SMTP id
+ af79cd13be357-8b2c31a6288mr132140885a.46.1763071045507; 
+ Thu, 13 Nov 2025 13:57:25 -0800 (PST)
+Received: from patrick-laptop.iol.unh.edu
+ ([2606:4100:3880:1271:8c70:5b9e:ecd3:14e])
+ by smtp.gmail.com with ESMTPSA id
+ af79cd13be357-8b2aeeaf78bsm212135585a.15.2025.11.13.13.57.24
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Thu, 13 Nov 2025 13:57:25 -0800 (PST)
+From: Patrick Robb <probb@iol.unh.edu>
+To: luca.vizzarro@arm.com
+Cc: dev@dpdk.org, Paul.Szczepanek@arm.com, dmarx@iol.unh.edu,
+ abailey@iol.unh.edu, Patrick Robb <probb@iol.unh.edu>
+Subject: [PATCH] dts: mock pydantic for autodoc
+Date: Thu, 13 Nov 2025 16:56:17 -0500
+Message-ID: <20251113215617.183141-1-probb@iol.unh.edu>
+X-Mailer: git-send-email 2.49.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251113-jk-dpdk-iavf-rx-timestamping-improvements-v1-2-3d9a0168087b@intel.com>
-References: <20251113-jk-dpdk-iavf-rx-timestamping-improvements-v1-0-3d9a0168087b@intel.com>
-In-Reply-To: <20251113-jk-dpdk-iavf-rx-timestamping-improvements-v1-0-3d9a0168087b@intel.com>
-To: dev@dpdk.org
-Cc: Paul Greenwalt <paul.greenwalt@intel.com>, 
- Vladimir Medvedkin <vladimir.medvedkin@intel.com>, 
- Jacob Keller <jacob.e.keller@intel.com>
-X-Mailer: b4 0.15-dev-f4b34
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4642;
- i=jacob.e.keller@intel.com; h=from:subject:message-id;
- bh=a/Ipv4tf+Nmc6f0A5CgEE2RZFqeCmF8dEp156ZWSpi8=;
- b=owGbwMvMwCWWNS3WLp9f4wXjabUkhkwxvxtnTz/q+Kaf8qJezEbD3ueWo9UF/k/rXnjXXGI9Y
- LNueaJsRykLgxgXg6yYIouCQ8jK68YTwrTeOMvBzGFlAhnCwMUpABNpDWH4n8+wtufVwztTbrkk
- dj+f9TI/P8ZH305fyfzy76j+k8uCXjIyPD35aFZd87xHbxuK7kY4vom6pzb3/dL3a/75v7m39bd
- vOhcA
-X-Developer-Key: i=jacob.e.keller@intel.com; a=openpgp;
- fpr=204054A9D73390562AEC431E6A965D3E6F0F28E8
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -73,106 +76,30 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-When reporting an Rx timestamp from the receive descriptor, the iavf
-driver does not check the validity bit in the time_stamp_low field. In
-the event that hardware does not capture a receive timestamp for any
-reason, this valid bit is unset, and the timestamp value in the
-descriptor is zeroed out.
+Mock the Pydantic import so that even when Pydantic
+is available on the system, it is not loaded by
+Sphinx, ensuring we perform the doc build without
+Pydantic regardless of the environment.
 
-The iavf driver ignores this and passes the zero value into the
-iavf_tstamp_convert_32b_64b function regardless, and proceeds to treat
-the result as a valid timestamp.
-
-Instead of reporting a zero timestamp which users can clearly interpret
-as invalid, the raw 0 value from the descriptor is "extended" to the
-64-bit timestamp. This results in values which are not immediately
-obvious as invalid to users:
-
-  timestamp 1760629088881475583
-  timestamp 1760629088881475583
-  timestamp 1760629088881475583
-
-First, if the value is printed in base 10 it is not immediately obvious
-that the lower 32 bits are zero. Second, multiple packets in sequence
-will receive the same "timestamp".
-
-This occurs because of the timestamp extension logic. The receive
-descriptor timestamps are 40 bits, with 32 bits of nanosecond precision,
-7 bits of subnanosecond precision, and 1 validity bit. The
-sub-nanosecond precision bits are discarded. To obtain a 64-bit
-timestamp, the upper 32 bits are calculated from the lower 32-bits and a
-snapshot of the PHC timer that is captured recently (within ~2 seconds
-of the packet timestamp). This enables reporting proper full 64-bit
-timestamps without needing to store all 64 bits in the receive
-descriptor.
-
-However, when timestamps are not working properly, the raw 'zero' value
-is extended regardless of whether hardware indicated it was a valid
-timestamp. As a result, users can see what appear at a glance as valid
-timestamps. However, they will not match the packet reception time, and
-will only update when the upper bits would roll over. This occurs every
-2^32 seconds, or approximately once every 4 seconds.
-
-Instead of reporting bogus extended timestamp values which could confuse
-user applications, check the validity bit and only report a timestamp of
-the valid bit is set. This matches the implementation used in the Linux
-PF driver.
-
-Signed-off-by: Jacob Keller <jacob.e.keller@intel.com>
+Signed-off-by: Patrick Robb <probb@iol.unh.edu>
 ---
- drivers/net/intel/iavf/iavf_rxtx.h | 3 +++
- drivers/net/intel/iavf/iavf_rxtx.c | 9 ++++++---
- 2 files changed, 9 insertions(+), 3 deletions(-)
+ doc/guides/conf.py | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/net/intel/iavf/iavf_rxtx.h b/drivers/net/intel/iavf/iavf_rxtx.h
-index 5c9339b99f9a..8efb3bd04ee5 100644
---- a/drivers/net/intel/iavf/iavf_rxtx.h
-+++ b/drivers/net/intel/iavf/iavf_rxtx.h
-@@ -504,6 +504,9 @@ enum iavf_tx_ctx_desc_tunnel_l4_tunnel_type {
- /* for iavf_32b_rx_flex_desc.pkt_len member */
- #define IAVF_RX_FLX_DESC_PKT_LEN_M	(0x3FFF) /* 14-bits */
+diff --git a/doc/guides/conf.py b/doc/guides/conf.py
+index 2c1aa81bbf..29d5cf019d 100644
+--- a/doc/guides/conf.py
++++ b/doc/guides/conf.py
+@@ -106,6 +106,9 @@
+     # fabric.Connection (without) vs. fabric.connection.Connection (with)
+     autodoc_mock_imports = importlib.import_module('check-dts-requirements').get_missing_imports()
  
-+/* Valid indicator bit for the time_stamp_low field */
-+#define IAVF_RX_FLX_DESC_TS_VALID	(0x1UL)
++    # Always mock Pydantic to avoid autodoc introspecting its internals
++    autodoc_mock_imports = list(set(autodoc_mock_imports + ['pydantic', 'pydantic_core']))
 +
- int iavf_dev_rx_queue_setup(struct rte_eth_dev *dev,
- 			   uint16_t queue_idx,
- 			   uint16_t nb_desc,
-diff --git a/drivers/net/intel/iavf/iavf_rxtx.c b/drivers/net/intel/iavf/iavf_rxtx.c
-index ea49059f83a1..d8662fd81533 100644
---- a/drivers/net/intel/iavf/iavf_rxtx.c
-+++ b/drivers/net/intel/iavf/iavf_rxtx.c
-@@ -1582,7 +1582,8 @@ iavf_recv_pkts_flex_rxd(void *rx_queue,
- 		rxd_to_pkt_fields_ops[rxq->rxdid](rxq, rxm, &rxd);
- 		pkt_flags = iavf_flex_rxd_error_to_pkt_flags(rx_stat_err0);
  
--		if (iavf_timestamp_dynflag > 0) {
-+		if (iavf_timestamp_dynflag > 0 &&
-+		    rxd.wb.time_stamp_low & IAVF_RX_FLX_DESC_TS_VALID) {
- 			ts_ns = iavf_tstamp_convert_32b_64b(rxq->phc_time,
- 				rte_le_to_cpu_32(rxd.wb.flex_ts.ts_high));
- 
-@@ -1751,7 +1752,8 @@ iavf_recv_scattered_pkts_flex_rxd(void *rx_queue, struct rte_mbuf **rx_pkts,
- 		rxd_to_pkt_fields_ops[rxq->rxdid](rxq, first_seg, &rxd);
- 		pkt_flags = iavf_flex_rxd_error_to_pkt_flags(rx_stat_err0);
- 
--		if (iavf_timestamp_dynflag > 0) {
-+		if (iavf_timestamp_dynflag > 0 &&
-+		    rxd.wb.time_stamp_low & IAVF_RX_FLX_DESC_TS_VALID) {
- 			ts_ns = iavf_tstamp_convert_32b_64b(rxq->phc_time,
- 				rte_le_to_cpu_32(rxd.wb.flex_ts.ts_high));
- 
-@@ -2036,7 +2038,8 @@ iavf_rx_scan_hw_ring_flex_rxd(struct ci_rx_queue *rxq,
- 			stat_err0 = rte_le_to_cpu_16(rxdp[j].wb.status_error0);
- 			pkt_flags = iavf_flex_rxd_error_to_pkt_flags(stat_err0);
- 
--			if (iavf_timestamp_dynflag > 0) {
-+			if (iavf_timestamp_dynflag > 0 &&
-+			    rxdp[j].wb.time_stamp_low & IAVF_RX_FLX_DESC_TS_VALID) {
- 				ts_ns = iavf_tstamp_convert_32b_64b(rxq->phc_time,
- 					rte_le_to_cpu_32(rxdp[j].wb.flex_ts.ts_high));
- 
-
+ # ####### :numref: fallback ########
+ # The following hook functions add some simple handling for the :numref:
 -- 
-2.51.0.rc1.197.g6d975e95c9d7
+2.49.0
 
