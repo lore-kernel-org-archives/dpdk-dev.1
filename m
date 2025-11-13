@@ -2,50 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57512CD5BAE
-	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Nov 2025 09:48:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24E45CD5BAE
+	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Nov 2025 09:50:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3F59A4028B;
-	Thu, 13 Nov 2025 10:48:32 +0100 (CET)
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com
- [209.85.160.180])
- by mails.dpdk.org (Postfix) with ESMTP id DFA3040151
- for <dev@dpdk.org>; Thu, 13 Nov 2025 10:48:31 +0100 (CET)
-Received: by mail-qt1-f180.google.com with SMTP id
- d75a77b69052e-4e89de04d62so5315941cf.0
- for <dev@dpdk.org>; Thu, 13 Nov 2025 01:48:31 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 68BAE40B9C;
+	Thu, 13 Nov 2025 10:49:59 +0100 (CET)
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com
+ [209.85.222.179])
+ by mails.dpdk.org (Postfix) with ESMTP id 56B6D40151
+ for <dev@dpdk.org>; Thu, 13 Nov 2025 10:49:58 +0100 (CET)
+Received: by mail-qk1-f179.google.com with SMTP id
+ af79cd13be357-8b22a30986fso64427085a.2
+ for <dev@dpdk.org>; Thu, 13 Nov 2025 01:49:58 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1763027311; x=1763632111;
+ d=1e100.net; s=20230601; t=1763027398; x=1763632198;
  h=content-transfer-encoding:cc:to:subject:message-id:date:from
  :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=zX0hrP9j3XFyJfD2iQWyXxNiiboowVa/thjagm+VCoI=;
- b=xDHjtgszKtK20VAeIFB1cwU8QuNtF5V/22KcJUQDmqD1vf6OyqedNp15W7M5lQB4mg
- aHg2wCn6VUcf1/e1ok1os7WeUu9eErvByogezIp3kkVOeLxCXkn6U1WIA/7/EPPaxrbc
- 2ctr1kzkWlO+c9YX/99No4sNiLNs9FCQ20puGLCEdTUohrlF4U3GaiDNThLK/OvKlUfL
- EpMFXQk07qBHuQ0K7FHlG+6H2JZhOr0cw5kdnRQsJChjVT62UjqCm1TUfHh1YyZiYL1G
- 1Ij67aXqmA+c2b669FD7kOuSncZclAVsLClbcyhXSsqxBQJ9w2GopEWv6Xl77QTLVsm7
- Uqtw==
-X-Gm-Message-State: AOJu0YxHgf7dBKqO6Dt6HUUcN7/Z+q9K4Kkn1QPjOyABAWr1PNO8mxh2
- invibzrPOPJwQ9/JF1HZRFuW3jrpcW1hbWnKC7Y0c+dsj/TSf4V2EzNbYrBLt9TRvHtK6rlmz3M
- EDW+cVl5CGydn6bqOqN54WoywpLughWg=
-X-Gm-Gg: ASbGncvZCEyfHxIaVRA7uVFEhuADpyOXJbhkGVa4B3zqjb6/7yt8rv9IhzilDOHZ+Am
- 6qctV/bftZxZtvZMAEDef676jbiisBGPf4vhP4Gn/mkZFZ4HWrsu1b0/n8PZ5lXIUQ/qNiUNHBX
- z2qe4uCYEm+yjmKiuQDvH2Qa3XdcydFKxzO+zZvFRqwU2QwRJZlsYvVGMdujiGL4GGQHG9HUY3k
- 1Yw8fl5NoaTwX7iqfOxq3K7GNLGYPoFmJnmApNg/r5ItzoiYCWi49UfcQ==
-X-Google-Smtp-Source: AGHT+IFx6IrWOZUPHY9GDzn9cBjifr+jMR8nAYxwAB+Ir79DSxIcmcrUjv5XqaOn5pJtFxAyeBOLJYyZyaFEa8eF39M=
-X-Received: by 2002:a05:622a:1308:b0:4e8:9f46:3ffd with SMTP id
- d75a77b69052e-4eddbddd3c5mr77915821cf.80.1763027310891; Thu, 13 Nov 2025
- 01:48:30 -0800 (PST)
+ bh=5ihvROuAMPw7PJ4ISZI/N4PyflrJuvhwZQ9a5f1yGo4=;
+ b=XkV/9k4C1l5vKOo7HuegYk0TuzPd8DHsFZRm/PpsYg/HnV85b/AB/oeHfjfrozyk7O
+ SlYcd2/s22XMjqTMPT0/XNTHrdk9wqwYIBVO5Jddgi86wu4c9TN3Urm4MRoO9ok006ZK
+ lx1Dn/ZB9Lv2akRj5GpoVVpmbOmRXFQekyo+z/qvSCLkD/WOB8Whk6rDsfE+I8JYoMub
+ BoYPZInZTKwjaHiM0WujwOXelu48pmTsrKsiEY2obir0Jo5pG6tAN8gcjAV/ZArdTpZB
+ zUur8z6Cf8xsQb5avCGq1rtVyEBYYpjZ2RcbIr/3Obgb8O39VyOVt2hu/x+9t4d23lXX
+ a6qw==
+X-Gm-Message-State: AOJu0YzbQXqYRAuqB5u0VxBTHI1ddCYw/bci3sqbVN1XzHzt0rLvXY2+
+ OsvhxdNk7eCqCjKO00yQflHVgowGZALBJv9uYUAKwH4D6QaAto0cRvAmjarPgm8ogsVbcScEqpe
+ iujZvfEmRVMLv4KqWrsAz30VcyzLxXX8=
+X-Gm-Gg: ASbGnctVZ5G0Mb3SrXkqf668lsS4UprIP/IpJ13pUhrQDGRFZxJITwk3MEjxjVMP86u
+ 6l5LT5SBT+s1Krw7tyirmSfbc2qSt8KIM2tgpQulbhSKiPPuMoGDse0RwScJ16nzPFSw3xdHwl4
+ lVrBvo3CYc7XWK9NPM8XrwsSSgddj8tZQX4dtaaIo2Flgc1/KNISE7D7byeWokbq2+cS+tdMWLB
+ i4IDFJyUXsOkPWBpsyg/XGvaUDI8nOnSfo1c2LaEiqgnz+TQ3qwLSc6Lg==
+X-Google-Smtp-Source: AGHT+IHOuwETNzgS6iYZDBxhE/v1OPB9mhiAX+TImvr5lMw+DUxNVRw+eSslEoWlHlyhR7GybyYsxpiRiAZZh2oXVoo=
+X-Received: by 2002:a05:620a:1790:b0:8b2:24b9:f57 with SMTP id
+ af79cd13be357-8b29b84979bmr840126085a.88.1763027397543; Thu, 13 Nov 2025
+ 01:49:57 -0800 (PST)
 MIME-Version: 1.0
 References: <20251106163807.201451-1-hemant.agrawal@nxp.com>
  <20251113052931.1784953-1-hemant.agrawal@nxp.com>
  <20251113052931.1784953-4-hemant.agrawal@nxp.com>
 In-Reply-To: <20251113052931.1784953-4-hemant.agrawal@nxp.com>
 From: Maxime Leroy <maxime@leroys.fr>
-Date: Thu, 13 Nov 2025 10:48:19 +0100
-X-Gm-Features: AWmQ_bmFAyvy6YZZfzoImkS6hYgq6UGIASuBjwnlLd7VoHuglsIs2pHnAblaeN4
-Message-ID: <CAHHRULVZjEdREuPVVWRyy1+hF+vWTDA0XZ-n81zF__ky7K=Ttg@mail.gmail.com>
+Date: Thu, 13 Nov 2025 10:49:46 +0100
+X-Gm-Features: AWmQ_bkhIq15bJUBJOrRvGCMyzMUBkFQv6ds8nHaQKIhr7V3YvHYWp1hY4yheTk
+Message-ID: <CAHHRULWaiPD9qbVG0ujbMHZ+DoOH+Yp8vCLNRSbHvvSKcBOvVA@mail.gmail.com>
 Subject: Re: [PATCH v2 4/5] net/dpaa2: bifurcate close into close and deinit
 To: Hemant Agrawal <hemant.agrawal@nxp.com>
 Cc: dev@dpdk.org, stephen@networkplumber.org, david.marchand@redhat.com
@@ -217,7 +217,6 @@ et);
 > +               dpaa2_dev_deinit(eth_dev);
 >                 ret =3D rte_eth_dev_release_port(eth_dev);
 >         }
->
 
 When a DPDK application stops, dpaa2_dev_close is no longer called.
 This happens because eal_cleanup() invokes rte_fslmc_close(), which
