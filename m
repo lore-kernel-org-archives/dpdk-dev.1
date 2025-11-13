@@ -2,57 +2,126 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93724CD5BCB
-	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Nov 2025 11:27:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2D63CD5BCE
+	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Nov 2025 11:32:34 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1F31340DD5;
-	Thu, 13 Nov 2025 12:27:51 +0100 (CET)
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com
- [209.85.222.173])
- by mails.dpdk.org (Postfix) with ESMTP id C491A40678
- for <dev@dpdk.org>; Thu, 13 Nov 2025 12:27:49 +0100 (CET)
-Received: by mail-qk1-f173.google.com with SMTP id
- af79cd13be357-8b26b12be9eso78610485a.1
- for <dev@dpdk.org>; Thu, 13 Nov 2025 03:27:49 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1763033269; x=1763638069;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=8UGfnrlqCtK7d1kjHx3SbDjCCVdueI22YfYI3m1lmzU=;
- b=NfhAKEaoqnKSd+YwPo6v/rOXJqs27QLiMUVpxPtYBX2lco+hyhR1RdS2/j3oZXMpJQ
- 4oyaC+KufOe18mRoZ0b1uXSW/VTMOAvCcTmHkNGdk9sa/ffVUheOMEvvjlAzFn+Dz1cp
- 1KVdNbi8juxviGgh2F3ZUxUVeo5rPONXbFvQAuGwp2MKXiB/vbmHZyxicDaiiYDruGCx
- zbZ5U2pbk94kVj2sW6CckfzFJv1KOuoRkjwyxon+mzkDrwc5y0wQzrYmT2mHM5iJeqre
- fu9pUkQgfqAi+jjBqfFLLz/geozlwqaDR0tSegVueXxP44HLUmDFa0iEBtdJM9RwuGjr
- t7zQ==
-X-Gm-Message-State: AOJu0YxsaQaebM6uib6e4sSNNzPJNxf8cQOnZt1Pg/FJEN9Hay4divKT
- fun3SeBRE1+a3EIu0KaXUxUtf6uTRg6WIecZYeHEBN4qB0c/uQLz2arrLgeN08CJ6Un2Mxn0s4Q
- YPYzdsc4VkM3kbi7q7x0i177SemxZ/5Y=
-X-Gm-Gg: ASbGnctvdv8U5AJLgwbKreeEDTVadpL0Y5wwta2gHtvwtu2QoTHmh+ZLY40KMBvk+Ut
- 7EwlohODZNMQihMg3pN5xews+j3kPu40KBFkEKFh1sblAJs7UspEDVmTcz0s9ac3HJecV2TK4xN
- rvp+d8DPW/XSBqd3Djej7nFEFnRcQFhIYp4QEXPHtYKvjP6eV5BaWa2l8fAOWq9OWYYR5uhyI+T
- kac31uzrH27Ma7hVj8b8giFs+lMoK9j3JfYHW8R7S/gvTrn2B4Lgq0HesM=
-X-Google-Smtp-Source: AGHT+IHiAy+p5MYL93JA09gEY3NeRcoCueMb/1uUnLX/n240DwbLno1mt+zg1H5wBlFvSF3TmLi2FYNySoiiGIle9Zs=
-X-Received: by 2002:a05:620a:d85:b0:89e:651b:d6de with SMTP id
- af79cd13be357-8b29b767a00mr768743685a.13.1763033268724; Thu, 13 Nov 2025
- 03:27:48 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id E2C5B40DD2;
+	Thu, 13 Nov 2025 12:32:33 +0100 (CET)
+Received: from PH8PR06CU001.outbound.protection.outlook.com
+ (mail-westus3azon11012024.outbound.protection.outlook.com [40.107.209.24])
+ by mails.dpdk.org (Postfix) with ESMTP id 69EEC40DD2;
+ Thu, 13 Nov 2025 12:32:32 +0100 (CET)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=PYxfbGeu8Ua4XCWq1rNg3U066E/0mVUywv6/4hlm2XqVR77zpCJ5gWgMHV9YF0nYGy7XIEvdQnfW3VJAEDQCD4dDN9W1JRFrhpRS3Zv6DNS5yIu1reDV1lFLNJOIkg9SzwspISeDGVLc6yMfkyOhKEvG5dj0zCd0dDmL2sodTG5VFmeEzsJTihS3qFzyBnaW4nzz1oqV3cWXRqsl+4glIbvL869HIeubHjhRaD0FRYyrjINRBhIf0aLIFVcqfNlwoAVacRQzoVSkjHSkZ5vJ/8j07+3b8pEbCEvm12SPALRvgSzWQ2bZ6wtxYBBrOz9fCpV33XLtb0O9ksuQ2CQgxg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=uzxK4ZtDMeVJRgXYLoABQmzg8mvUeZZtxFoQDHZWlMU=;
+ b=dnLcA++8k3ybVCBMNBk26N1JXlkTponNhtbtjykQgI+L8jpLRUCDeE6GDbjVwMyO5lFF6U1DVSVkAF8h74Ey6uqm/p8jWawhyLH9jp8O/EI2CbCTGoen875DrAmPca6r99zN/wUqYJWSoccon8pQwCA0osuP3U1oiBXGPVIjGejPWqPDTx+kObKDFWN8ulsBZw4e0a/46Cz1hu5C53mvsUYvnjRagNCdyYijXD3j3mgAIx/1fS/6d9RrG87K4AowDpjeEwYlmDuqDvxSUpZwXZP/LVuvvD8wqodyw1jCLjJpvd1/vMewY0RDb0s6Cc1w4xBZeCAuOJew0v64R1/Evw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=dpdk.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1; 
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=uzxK4ZtDMeVJRgXYLoABQmzg8mvUeZZtxFoQDHZWlMU=;
+ b=gNDjRH3UqH0dvp4JEoBnjwc0IX0Ji2OJsm+DSJtPcF4nsNu2ijtuYcLwPryvz8IleDWfPcMAlBVnA8soNyBmmkTGmiqrIJW7rlrvLMPE0+zkx0P61d1OeJo7EUK7+wqRTaY5AWVI+ZysfTcBW1y+Ikrt3wT2LKjB6jxOcwrizDU=
+Received: from CH0PR13CA0027.namprd13.prod.outlook.com (2603:10b6:610:b1::32)
+ by LV3PR12MB9216.namprd12.prod.outlook.com (2603:10b6:408:1a5::13)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.17; Thu, 13 Nov
+ 2025 11:32:27 +0000
+Received: from CH1PEPF0000AD78.namprd04.prod.outlook.com
+ (2603:10b6:610:b1:cafe::84) by CH0PR13CA0027.outlook.office365.com
+ (2603:10b6:610:b1::32) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9343.6 via Frontend Transport; Thu,
+ 13 Nov 2025 11:32:27 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
+Received: from satlexmb07.amd.com (165.204.84.17) by
+ CH1PEPF0000AD78.mail.protection.outlook.com (10.167.244.56) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9320.13 via Frontend Transport; Thu, 13 Nov 2025 11:32:27 +0000
+Received: from BLR-L-VENKANDE.amd.com (10.180.168.240) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Thu, 13 Nov
+ 2025 03:32:25 -0800
+From: Venkat Kumar Ande <VenkatKumar.Ande@amd.com>
+To: <dev@dpdk.org>
+CC: <Selwin.Sebastian@amd.com>, Venkat Kumar Ande
+ <VenkatKumar.Ande@example.com>, <stable@dpdk.org>
+Subject: [PATCH v1] net/axgbe: fix the build warninig for GCC-16
+Date: Thu, 13 Nov 2025 17:00:55 +0530
+Message-ID: <20251113113055.371-1-VenkatKumar.Ande@amd.com>
+X-Mailer: git-send-email 2.40.1.windows.1
 MIME-Version: 1.0
-References: <20251113052931.1784953-1-hemant.agrawal@nxp.com>
- <20251113095917.1973514-1-hemant.agrawal@nxp.com>
- <20251113095917.1973514-2-hemant.agrawal@nxp.com>
-In-Reply-To: <20251113095917.1973514-2-hemant.agrawal@nxp.com>
-From: Maxime Leroy <maxime@leroys.fr>
-Date: Thu, 13 Nov 2025 12:27:37 +0100
-X-Gm-Features: AWmQ_bmo6cYJYd56zI50tGTDy0Eb2x9xvzNQiHMnqkm6sgvFY5RCU5-00TGLb2w
-Message-ID: <CAHHRULU5Lm3VDj8dp1tzuwmPSkbz6rKPteK4u4FCxEyXbZg2=w@mail.gmail.com>
-Subject: Re: [PATCH v3 2/4] net/dpaa2: clear active VDQ state when freeing Rx
- queues
-To: Hemant Agrawal <hemant.agrawal@nxp.com>
-Cc: dev@dpdk.org, stephen@networkplumber.org, david.marchand@redhat.com, 
- jun.yang@nxp.com, stable@dpdk.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.180.168.240]
+X-ClientProxiedBy: satlexmb08.amd.com (10.181.42.217) To satlexmb07.amd.com
+ (10.181.42.216)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH1PEPF0000AD78:EE_|LV3PR12MB9216:EE_
+X-MS-Office365-Filtering-Correlation-Id: 501b156d-df4d-4fb2-58f6-08de22a852e3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|376014|82310400026|1800799024|36860700013; 
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?cjU4SHp3QW9zTVFWam5sMElWYnFWRFRJa3p0MFBwUGRnYWl5OG94ckpkbWRy?=
+ =?utf-8?B?WGhFVEQveERlYVQyU2pMNVNBMGEwZEJZNHoyVkRCeGxUdWZ0NFFlSzJTZG5I?=
+ =?utf-8?B?Yy9WYkxvM3lIcEdJcDRQSHkraDRRclhqZ05qTlJvUS9iMGo1Q21NOWpDYXdh?=
+ =?utf-8?B?Y2tqdEpyVjA5dUkrbjVMd3YyUVhnQWxONDA1MmRINUl2cWdZd2FBYXB0VUhN?=
+ =?utf-8?B?SmR0RTZzenlrdGtzR3JTRUlGdkMwRC9BS0xiZXQ1bk1lM2d1cEVSRURVU0ts?=
+ =?utf-8?B?eVdWMjdGcExhVDFSNm82V2NRcHpPSG8xdWllUFR1eTJDb1NvVExBZjJEVUF5?=
+ =?utf-8?B?NXQ5WjhWMnBJcnhVaUwrMXRybDhoVHo2L243MEtRNWwyWkV5cktvVlpqdlp6?=
+ =?utf-8?B?UTl2c3BIeSt1UFMzM2JMUzkzL1ZNalNvdlBJVzY3RXlibjhwQ3hnUGMzRGZ0?=
+ =?utf-8?B?K0taNmtha1dRTmowSXp6UDMzSWg2RmpUcU9FcExnZmdJOWlONVJNK3Z6c1hJ?=
+ =?utf-8?B?NUNhMjVOQldhY1FwOGJhTk54R011MFF1V0ZUU3JuUFRlTTlBRDdrVmg0T2Rt?=
+ =?utf-8?B?Q2RIb0xzNm1TeUFrUFNXV1JTRWl1MTZYMXJ3RnRHT09IcFA1akFuQklYZmJm?=
+ =?utf-8?B?SHkwaFRPU0xwQm9IWkVrT0UzZlRJaC9hRFBSMXFLaEExMUdEckZ3bW1qQUEz?=
+ =?utf-8?B?cWxOamRDMHlhVFAxTGxKVFQ0ME9SM2NDbFFYSHpPOWZibm9NSkxibHN3Wksy?=
+ =?utf-8?B?YWdnV2dLMHhRYjdYQ2JSTnRkVERMZ2lETjRha1Z5MWIxMmpaejZsWVlYcW1w?=
+ =?utf-8?B?Undwd1MrTzRwYnZpdTdMeVhkTkFMM1JvNGRLclljam9TY2xRclpoekNpOVVN?=
+ =?utf-8?B?U3lRendhTmpLdjU1aUtTNjlndEppZDdHL21OQTVOS2JHOG9iNUIySE5GWXJS?=
+ =?utf-8?B?SmVBRVJDM05pSGRwWjdlZEhTYXlISHFjTkczMW5pNGh6bGNraGkwdVdDKzFH?=
+ =?utf-8?B?U0N6cUlxeXNxc1ZLbjV5cEZtWnQ5MkdqM0VBNS9aUjBxdkN4ck1COWhMekRG?=
+ =?utf-8?B?OEJ3QWRJdGJTek4xQ1R2dlFjMXpEREh3cnUveENQT0pLQmFZOHpxbWJ1bGlX?=
+ =?utf-8?B?UzdsZWQ4STFPVzNkcWNZaDU1VW5lZ1ZTamVhaktRUW5VcjNZRS9Wcm11QlhT?=
+ =?utf-8?B?eVRDS2dqM040K2tjQ3d4aVNkby9nWDlFOExlV0dlQWlTKzE4RVByNEFaMk4w?=
+ =?utf-8?B?eE1FQ245Q09ad1U5UXZoaFdnYXE4cCs2aGVjQ2Jlcjg3MHdjbDZqc2ZCVHRu?=
+ =?utf-8?B?UlowR01CNWNyVk16aXJ3TmhNYWpwZFFLYjRnYkFuQjBpT2xJZWZtS3F5V0RV?=
+ =?utf-8?B?MGw2RWd2aWQwWHZvZllmcFRscjRjWVVqRHhmcHpORU1SalFVTVJKdkNrREFU?=
+ =?utf-8?B?am1hRTJwdUFMRGwxQmJqVFdXb2xkSU40Y0krSHhkK2gvOWtqSDJVdjJkWVhs?=
+ =?utf-8?B?K05RSzd4TytVT3R5TFVSM0UvTXh1Y0Vhc3VUblZJb0ZLa2MyQ29EeFdwWW9N?=
+ =?utf-8?B?OVQyZUs5NHQ0ZnhQVGkxTlI4UDdmbTh5S1RpYndJZE9ZRk1PaUIrYzh2eTB0?=
+ =?utf-8?B?QlcrZHV5WGl6bHlrV2RTem5rajNsYVZkVlJwaGtWYXRxdnNyMHZra0pTazdO?=
+ =?utf-8?B?M0ZaaTdDVjg0MTZWd2JhekJ6aFRTM2ZhMk4veThGTlZNaUJiS3FmN0UvQ3Fs?=
+ =?utf-8?B?UEtRS1V0L0RvMHlhZm9tZDdIcGY4TGFTSXZVUmZtNDBZK3I3Q0VvK3dJRjR6?=
+ =?utf-8?B?SW1zRTh6UllXMXFHR2pDT0FJTEpEMnFSN0RSdGJlTUQ3MGNKMlZkQ0hvNzdr?=
+ =?utf-8?B?RFEyWThLWXhsRHFpcDg4VElZZFA1SndZMkVsWE9qMStJNzJza3FFOVE4U2pj?=
+ =?utf-8?B?cFZhVUZvN2w3bmx2MDZ2ditwcVBKNnl6UFlaMGVxcm52K0FOTGp0R2Ztbzl0?=
+ =?utf-8?B?RlQ1T3ExYldPbTlDRld3cDZCL2QvUFZGVk5LTEwvOVVUME5JU1dXQ1VjOVdj?=
+ =?utf-8?B?R2hYTEVXZDVIK1hma3BPamY5SnhsaW1OTTdIWHVucmp1alRyZnhRUjNvQ0tj?=
+ =?utf-8?Q?2hLE=3D?=
+X-Forefront-Antispam-Report: CIP:165.204.84.17; CTRY:US; LANG:en; SCL:1; SRV:;
+ IPV:CAL; SFV:NSPM; H:satlexmb07.amd.com; PTR:InfoDomainNonexistent; CAT:NONE;
+ SFS:(13230040)(376014)(82310400026)(1800799024)(36860700013); DIR:OUT;
+ SFP:1101; 
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Nov 2025 11:32:27.3118 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 501b156d-df4d-4fb2-58f6-08de22a852e3
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d; Ip=[165.204.84.17];
+ Helo=[satlexmb07.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource: CH1PEPF0000AD78.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR12MB9216
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -66,113 +135,50 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi Hemant,
+From: Venkat Kumar Ande <VenkatKumar.Ande@example.com>
 
-Le jeu. 13 nov. 2025 =C3=A0 10:59, Hemant Agrawal <hemant.agrawal@nxp.com> =
-a =C3=A9crit :
->
-> From: Maxime Leroy <maxime@leroys.fr>
->
-> When using the prefetch Rx path (dpaa2_dev_prefetch_rx), the driver keeps
-> track of one outstanding VDQCR command per DPIO portal in the global
-> rte_global_active_dqs_list[] array. Each queue_storage_info_t also stores
-> the active result buffer and portal index:
->
->   qs->active_dqs
->   qs->active_dpio_id
->
-> Before issuing a new pull command, dpaa2_dev_prefetch_rx() checks for an
-> active entry and spins on qbman_check_command_complete() until the
-> corresponding VDQCR completes.
->
-> On port close / hotplug remove, dpaa2_free_rx_tx_queues() frees all
-> per-lcore queue_storage_info_t structures and their dq_storage[] buffers,
-> but never clears the global rte_global_active_dqs_list[] entries. After a
-> detach/attach sequence (or "del/add" in grout), the prefetch Rx path
-> still sees an active entry for the portal and spins forever on a stale dq
-> buffer that has been freed and will never be completed by hardware. In
-> gdb, dq->dq.tok stays 0 and dpaa2_dev_prefetch_rx() loops in:
->
->   while (!qbman_check_command_complete(get_swp_active_dqs(idx)))
->       ;
->
-> Fix this by clearing the active VDQ state before freeing queue storage.
-> For each Rx queue and lcore, if qs->active_dqs is non-NULL, call
-> clear_swp_active_dqs(qs->active_dpio_id) and set qs->active_dqs to NULL.
-> Then dpaa2_queue_storage_free() can safely free q_storage and
-> dq_storage[].
->
-> After this change, a DPNI detach/attach sequence no longer leaves stale
-> entries in rte_global_active_dqs_list[], and the prefetch Rx loop does
-> not hang waiting for a completion from a previous device instance.
->
-> Reproduction:
->   - grout:
->       grcli interface add  port dpni.1 devargs fslmc:dpni.1
->       grcli interface del  dpni.1
->       grcli interface add  port dpni.1 devargs fslmc:dpni.1
->     -> Rx was stuck in qbman_check_command_complete(), now works.
->
->   - testpmd:
->       dpdk-testpmd -n1 -a fslmc:dpni.65535 -- -i --forward-mode=3Drxonly
->       testpmd> port attach fslmc:dpni.1
->       testpmd> port start all
->       testpmd> start
->       testpmd> stop
->       testpmd> port stop all
->       testpmd> port detach 0
->       testpmd> port attach fslmc:dpni.1
->       testpmd> port start all
->       testpmd> start
->     -> Rx was hanging, now runs normal
->
-> Fixes: 12d98eceb8ac ("bus/fslmc: enhance QBMAN DQ storage logic")
-> Cc: jun.yang@nxp.com
-> Cc: stable@dpdk.org
->
-> Signed-off-by: Maxime Leroy <maxime@leroys.fr>
-> ---
->  .mailmap                         |  2 +-
->  drivers/net/dpaa2/dpaa2_ethdev.c | 22 ++++++++++++++++++++++
->  2 files changed, 23 insertions(+), 1 deletion(-)
->
-> diff --git a/.mailmap b/.mailmap
-> index 10c37a97a6..d92d4fc24b 100644
-> --- a/.mailmap
-> +++ b/.mailmap
-> @@ -1035,7 +1035,7 @@ Mauricio Vasquez B <mauricio.vasquez@polito.it> <ma=
-uricio.vasquezbernal@studenti
->  Mauro Annarumma <mauroannarumma@hotmail.it>
->  Maxime Coquelin <maxime.coquelin@redhat.com>
->  Maxime Gouin <maxime.gouin@6wind.com>
-> -Maxime Leroy <maxime.leroy@6wind.com>
-> +Maxime Leroy <maxime.leroy@6wind.com> <maxime@leroys.fr>
->  Md Fahad Iqbal Polash <md.fahad.iqbal.polash@intel.com>
->  Megha Ajmera <megha.ajmera@intel.com>
->  Meijuan Zhao <meijuanx.zhao@intel.com>
-> diff --git a/drivers/net/dpaa2/dpaa2_ethdev.c b/drivers/net/dpaa2/dpaa2_e=
-thdev.c
-> index fc63cf4f09..c94034104a 100644
-> --- a/drivers/net/dpaa2/dpaa2_ethdev.c
-> +++ b/drivers/net/dpaa2/dpaa2_ethdev.c
-> @@ -631,6 +631,27 @@ dpaa2_alloc_rx_tx_queues(struct rte_eth_dev *dev)
->         return ret;
->  }
->
-> +static void
-> +dpaa2_clear_queue_active_dps(struct dpaa2_queue *q)
-> +{
-> +       int lcore_id;
-> +
-> +       RTE_LCORE_FOREACH(lcore_id) {
+Build warning reported for local variable set and not used on GCC-16.
+Fix the issue by using the variable for missed register write operation.
 
-RTE_LCORE_FOREACH does not iterate over NON-EAL threads. However,
-Grout creates NON-EAL threads using the pthread library to poll the RX
-queue.
+../drivers/net/axgbe/axgbe_ethdev.c: In function ‘axgbe_timesync_disable’:
+../drivers/net/axgbe/axgbe_ethdev.c:1744:22: warning:
+variable ‘mac_tscr’ set but not used [-Wunused-but-set-variable=]
+ 1744 |         unsigned int mac_tscr = 0;
+      |                      ^~~~~~~~
 
-As a result, using RTE_LCORE_FOREACH breaks the fix. We should revert
-to the previous version of the fix.
+Bugzilla ID: 1819
+Fixes: e04449488fdb ("net/axgbe: support IEEE 1588 PTP")
+Cc: stable@dpdk.org
 
-Thanks,
+Signed-off-by: Venkat Kumar Ande <VenkatKumar.Ande@example.com>
+---
+ drivers/net/axgbe/axgbe_ethdev.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Maxime Leroy
+diff --git a/drivers/net/axgbe/axgbe_ethdev.c b/drivers/net/axgbe/axgbe_ethdev.c
+index 31d35ff182..cf3b0d9ef5 100644
+--- a/drivers/net/axgbe/axgbe_ethdev.c
++++ b/drivers/net/axgbe/axgbe_ethdev.c
+@@ -1742,6 +1742,7 @@ axgbe_timesync_disable(struct rte_eth_dev *dev)
+ {
+ 	struct axgbe_port *pdata = dev->data->dev_private;
+ 	unsigned int mac_tscr = 0;
++	unsigned int value = 0;
+ 
+ 	/*disable timestamp for all pkts*/
+ 	AXGMAC_SET_BITS(mac_tscr, MAC_TSCR, TSENALL, 0);
+@@ -1751,6 +1752,11 @@ axgbe_timesync_disable(struct rte_eth_dev *dev)
+ 	AXGMAC_SET_BITS(mac_tscr, MAC_TSCR, TSCFUPDT, 0);
+ 	/*disable time stamp*/
+ 	AXGMAC_SET_BITS(mac_tscr, MAC_TSCR, TSENA, 0);
++
++	value = AXGMAC_IOREAD(pdata, MAC_TSCR);
++	value |= mac_tscr;
++	AXGMAC_IOWRITE(pdata, MAC_TSCR, value);
++
+ 	return 0;
+ }
+ 
+-- 
+2.40.1.windows.1
+
