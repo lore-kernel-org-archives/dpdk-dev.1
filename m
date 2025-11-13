@@ -2,87 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67966CD98F2
-	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Nov 2025 22:37:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D1CFCD98F2
+	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Nov 2025 22:38:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 52A7A406BB;
-	Thu, 13 Nov 2025 23:37:49 +0100 (CET)
-Received: from fhigh-b5-smtp.messagingengine.com
- (fhigh-b5-smtp.messagingengine.com [202.12.124.156])
- by mails.dpdk.org (Postfix) with ESMTP id 2D49240151;
- Thu, 13 Nov 2025 23:37:47 +0100 (CET)
-Received: from phl-compute-07.internal (phl-compute-07.internal [10.202.2.47])
- by mailfhigh.stl.internal (Postfix) with ESMTP id 030AD7A0165;
- Thu, 13 Nov 2025 17:37:45 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-07.internal (MEProxy); Thu, 13 Nov 2025 17:37:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm3; t=1763073465;
- x=1763159865; bh=yGzozPc8x8UECHf+UM28FkGg0jlzk84+eiMjzqZVxv0=; b=
- c5cgYv2nyJjTA0izFrEaI3DUX0FuP9NfEazDCPglq4PGRwBMfOfaRorst9gGeHF1
- XAO33j/Sdy0z3WbKlk7K52kauxW9ZRTwEcTBWq3A4+tm6bKWtT17QaiTaAu7ox3H
- hBH5VyjL1M5B+w3neCqfjEuz2c9vujrwGZgDRQ0jd/RILWCPXwB4Df0uWt+V4xdn
- LHkut9ujjigW0SI0lLFaA/o6n+JQ/pLyzEijZswqGUH0dEKDok76ygayYbLpQqHB
- /Jy/Mqj3gFbVOycdOCYjoSr6sErmmZgUwWCuPa5r3SZn8asht+UnbwIW4T89H6mP
- rHImA7BxPWW92vKR/rHghA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1763073465; x=
- 1763159865; bh=yGzozPc8x8UECHf+UM28FkGg0jlzk84+eiMjzqZVxv0=; b=N
- ZPIeG7QkYkE1YRhL51wTnrFHK+ck4gFqBuXSArL+SC+L3VQCKqbxxcGkItvnat4U
- y+DbknVJEb5NOMvCWR2wYktrdC2w4oV2M4JLX3ijZHUyx1M2gGLztm34qkDIFfLB
- P8HJMecsLuTFfNtq+weTIZ/J7u/fS16DWDDLoCv0qViGo5L+/xWR/pzzMdP3fYvG
- 5f+GpmR8l51DdG3CUsAJIUZdiMGbc5o2Si6MhrIN6z0pZ594oqUMIarX5oMjMpqx
- uSNGRwR1Z134PD0ahuWzWgsDeukwKUFIuGtR6mrXx+gYnKIbjS6hD7KkSeiHorsD
- l/15OFBxT+Wu1xE8VleBg==
-X-ME-Sender: <xms:uV0WaRUirpwWdCttucKk6K1HkHdJcn8K86ApOg-p3jKIbd7IE20Sog>
- <xme:uV0WaZsyHvW-NzCC-Icq3IqjV8D5qDsCREYpwzTKYarPP7SYv9N2rUQwKx_VluZ3S
- FMOdmNvpRtSw6MeSs9N9AXbtfgxLy3KDkkpqAHiZnLykZdLDwM>
-X-ME-Received: <xmr:uV0Wac7bz1l3eBxYNrjgUG01c0KZa9kDwL0ZXApi2kw5ZD3ob2hBXWJ5-9VI2I7bEzd3Ho1C6tjHGZskcFrPPtqnlQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvtdekudeiucetufdoteggodetrf
- dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
- rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
- gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
- ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
- frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
- uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopedufedp
- mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepihhshhgrrhhonhhisehnvhhiughirg
- drtghomhdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtphhtthhopehmkhgr
- shhhrghnihesnhhvihguihgrrdgtohhmpdhrtghpthhtoheprhgrshhlrghnugesnhhvih
- guihgrrdgtohhmpdhrtghpthhtohepshhtrggslhgvseguphgukhdrohhrghdprhgtphht
- thhopegsihhnghiisehnvhhiughirgdrtghomhdprhgtphhtthhopegushhoshhnohifsh
- hkihesnhhvihguihgrrdgtohhmpdhrtghpthhtohepvhhirggthhgvshhlrghvohesnhhv
- ihguihgrrdgtohhmpdhrtghpthhtohepohhrihhkrgesnhhvihguihgrrdgtohhm
-X-ME-Proxy: <xmx:uV0WaUQpTpU-bofAQhNKbPeauv4s_URLe85HyYv6LEvmTeKe9aKuww>
- <xmx:uV0WaXvL-koh8rSBWe9sqtzDoSB5WN3EkpB7G72uqaotrHVe71DAjg>
- <xmx:uV0Wae_EauR_sjYJVtiN5ENXIB8NGPo516YVRPYpeAouBG8AHBcWPA>
- <xmx:uV0WaYyeopUuUz1nEtAZ7h8G6ZTBFk87P-dmCBTZt2jZoo9jlN09Kg>
- <xmx:uV0WaTzzpHTlfIq8Cy1I2jrciNGTD1VmlTN2Jk4f_Hrl7e8n44DrIiJ4>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 13 Nov 2025 17:37:43 -0500 (EST)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Itai Sharoni <isharoni@nvidia.com>
-Cc: dev@dpdk.org, mkashani@nvidia.com, rasland@nvidia.com,
- Itai Sharoni <isharoni@nvidia.com>, stable@dpdk.org,
- Bing Zhao <bingz@nvidia.com>, Dariusz Sosnowski <dsosnowski@nvidia.com>,
- Viacheslav Ovsiienko <viacheslavo@nvidia.com>, Ori Kam <orika@nvidia.com>,
- Suanming Mou <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>,
- Ophir Munk <ophirmu@nvidia.com>
-Subject: Re: [PATCH] net/mlx5/windows: fix match criteria in flow creation
-Date: Thu, 13 Nov 2025 23:37:40 +0100
-Message-ID: <11095513.IZOipudI63@thomas>
-In-Reply-To: <20251113122642.1193-1-isharoni@nvidia.com>
-References: <20251113122642.1193-1-isharoni@nvidia.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 8A08640E3A;
+	Thu, 13 Nov 2025 23:38:18 +0100 (CET)
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com
+ [209.85.215.173])
+ by mails.dpdk.org (Postfix) with ESMTP id 1C7E640DCF
+ for <dev@dpdk.org>; Thu, 13 Nov 2025 23:38:17 +0100 (CET)
+Received: by mail-pg1-f173.google.com with SMTP id
+ 41be03b00d2f7-bc4b952cc9dso635506a12.3
+ for <dev@dpdk.org>; Thu, 13 Nov 2025 14:38:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1763073497;
+ x=1763678297; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=BRVbZs1JNiUgDZzfgi4YVxQblLqhzf8TMSBqFSBt8QA=;
+ b=JD6KgTKkuENUNueSkmRTq6S+DOBp9tpBF8pqjExRDIsuXdZegnIc7e8D1w3MYRc9rF
+ 9CXNbKJAt08jRqf/ZwsLc872bT7mZ3o7pj1fQFvL2jrvJBYuzR6XKzrSpk2EuaQiBaCs
+ je6QTE60Hg0qlZSzF0u7unRSJHhkUbXfL3QfkZ/3spM7fDXdm07uUUDerqjBmMtZ9o1e
+ wzw0sx4PQBZvgJPoJWWB6TmO64/PzTNxwxLsBuFkHA+5yWNApA9edtJzdEiKb87C9dWI
+ w53Rb7ivbaIS3anCzoQwTDLuIZ/5OCiYF8YGBUed/aNqotcSXmEYQ+kY2U/42EA1BGWD
+ ekrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1763073497; x=1763678297;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=BRVbZs1JNiUgDZzfgi4YVxQblLqhzf8TMSBqFSBt8QA=;
+ b=Ak3mmdu9ZjRLDEGuEr1FAWvHhFAaHadh8n/f3RQ3KzmMxbFw7JzhqBAy1cG+qyH6bL
+ jht9sH7N0HCWZjPuJQHvXqMKbI9UTLseS+k9ObFF6CUeTjEaYsQeC767ScB5/TfUQZXV
+ RohBs+xTKiyPpCcVI396Fv4jTrt139aFu/4ShMrGRqLzH/8vgVdffDDaTMJHFDnohlE/
+ 4vIFskweHnt6nhploGOMcNW469hwCQeUYfodw3a7EQvPnLHsU9CRQc2KN9yR4xlwkRIr
+ UPZBo65N5oEX31kbpjN8u1Y0lGAH80MMHVoisSAty8qTLWWegACrDdb1eWaCSrujX3Va
+ sH+g==
+X-Gm-Message-State: AOJu0Ywuer8tKmZZjC2LSDFcgRFojWlp6q+AUNdnsTs3YskFNKNluYWC
+ +wSBkTDx3kjGSvnNZmotVkPvtVIxteK0fNKGmn5p+oyUWKeK6371NgHHNG+P0V6P4eU=
+X-Gm-Gg: ASbGncv/6z1g0mgYQDkrCXq6Ojuw2XAkIGy8BKseP+hxDK09ewUq63DUUHW0FqsAbxE
+ ydB/sk9od3AmYywxRL1owh3fWuy2rgBf8WBpiCLewNAsXDqTAIka8/wsTCd5Z1THIt5HAGBaCv7
+ fJbo/E1IwS90TQoAfVH2nkha+6vG0kZuUaZ1G7H8p0oiKT6bIwmEMvmPTyhPD0aClvTmQEqzmrP
+ GZFcUeSxAsze6RyqmIxF0zlW8UUpaWqCaVsOhUmzrM/M09EZ3i/Cgge0ihsQnX/X+1O0Tb0i9Hi
+ W1Ydcb8u0Aqd6pg96z+04VzgXK3A3i/7kPnwE69aWTgtCCny/hpOCbKd0e72ft2o057w2WN9UIv
+ CKruII43VEs+T/c/eEV5jQ076Y5wKJRc67xiR0vB35KbL3P3YZ3W+GA1VsKUfSr8IPZ1sFhoJgz
+ QgVz0Z7yCJNx4APdz19H+Nev/a92u2KuCt1AF9Rxnkpk5j
+X-Google-Smtp-Source: AGHT+IGNFJ9TMlIqM3S0coKvVc6A1lHLq9LrRV+ghtPC0GF6vV20PWIRVQmLxUufL07kq3F8WWNwOQ==
+X-Received: by 2002:a05:7022:1608:b0:119:e569:f279 with SMTP id
+ a92af1059eb24-11b41200308mr389043c88.34.1763073497021; 
+ Thu, 13 Nov 2025 14:38:17 -0800 (PST)
+Received: from phoenix (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ a92af1059eb24-11b060885e3sm2390002c88.0.2025.11.13.14.38.16
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Thu, 13 Nov 2025 14:38:16 -0800 (PST)
+Date: Thu, 13 Nov 2025 14:38:13 -0800
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Maayan Kashani <mkashani@nvidia.com>
+Cc: <dev@dpdk.org>, <rasland@nvidia.com>, <stable@dpdk.org>, Aman Singh
+ <aman.deep.singh@intel.com>, Viacheslav Ovsiienko <viacheslavo@nvidia.com>,
+ Gregory Etelson <getelson@nvidia.com>
+Subject: Re: [PATCH] app/testpmd: fix flex item link parsing
+Message-ID: <20251113143813.5276622d@phoenix>
+In-Reply-To: <20251113201726.10597-1-mkashani@nvidia.com>
+References: <20251113201726.10597-1-mkashani@nvidia.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -96,18 +83,48 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-13/11/2025 13:26, Itai Sharoni:
-> Currently the Windows implementation hardcodes match criteria to
-> MLX5_MATCH_OUTER_HEADERS when creating flow rules, which prevents
-> matching on inner headers and other criteria types like NVGRE.
+On Thu, 13 Nov 2025 22:17:25 +0200
+Maayan Kashani <mkashani@nvidia.com> wrote:
+
+> The flex_link_item_parse function was using FLEX_MAX_FLOW_PATTERN_LENGTH
+> for all memcpy operations regardless of the actual flow item type. This
+> could lead to copying incorrect amounts of data.
 > 
-> The fix uses the matcher's match_criteria_enable attribute instead
-> of hardcoding OUTER_HEADERS, and moves the assignment outside the
-> action switch block to apply to all cases.
+> This patch adds a switch statement to determine the correct size based
+> on the actual flow item type (IPv4, IPv6, UDP, TCP) and uses that size
+> for the memcpy operations on spec, mask, and last fields.
 > 
-> NVGRE item type is also added to the supported items list.
+> Also adds validation to reject unsupported item types.
+> 
+> Fixes: 59f3a8acbcdb ("app/testpmd: add flex item commands")
+> Cc: stable@dpdk.org
+> 
+> Signed-off-by: Maayan Kashani <mkashani@nvidia.com>
+> ---
+>  app/test-pmd/cmd_flex_item.c | 10 +++++++---
+>  1 file changed, 7 insertions(+), 3 deletions(-)
+> 
+> diff --git a/app/test-pmd/cmd_flex_item.c b/app/test-pmd/cmd_flex_item.c
+> index e6e1cefeb3d..ec19ab63e75 100644
+> --- a/app/test-pmd/cmd_flex_item.c
+> +++ b/app/test-pmd/cmd_flex_item.c
+> @@ -134,6 +134,7 @@ flex_link_item_parse(const char *src, struct rte_flow_item *item)
+>  	struct rte_flow_attr *attr;
+>  	struct rte_flow_item *pattern;
+>  	struct rte_flow_action *actions;
+> +	size_t sz = 0;
+>  
+>  	sprintf(flow_rule,
+>  		"flow create 0 pattern %s / end actions drop / end", src);
+> @@ -143,21 +144,24 @@ flex_link_item_parse(const char *src, struct rte_flow_item *item)
+>  	if (ret)
+>  		return ret;
+>  	item->type = pattern->type;
+> +	ret = rte_flow_conv(RTE_FLOW_CONV_OP_ITEM_MASK, NULL, 0, item, NULL);
+> +	if (ret > 0)
+> +		sz = ret;
 
-Why adding only NVGRE?
-Should we mention which tunnels are supported on Windows in the doc?
-
-
+You don't really need a temporary variable sz, can't you just use the
+return value directly or are you concerned about signed/unsigned mismatch.
+If concerned about signed/unsigned mismatch warnings then would need
+cast on the assignment to sz.
