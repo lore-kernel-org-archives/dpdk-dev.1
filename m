@@ -2,160 +2,151 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DEF9CD5BCE
-	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Nov 2025 11:36:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B938CD5BCF
+	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Nov 2025 11:44:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7BB2840DCD;
-	Thu, 13 Nov 2025 12:36:02 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
- by mails.dpdk.org (Postfix) with ESMTP id F0E8C406A2
- for <dev@dpdk.org>; Thu, 13 Nov 2025 12:36:00 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1763033761; x=1794569761;
- h=date:from:to:cc:subject:message-id:references:
- in-reply-to:mime-version;
- bh=yKtbp0Ox7CDUEVN+vK1X+mj8UmBKnpyQj7KusSJwDpc=;
- b=Z/zKWRvWsEtsV9iIYtSCZZ26MB9S9Tj7hsvhK7KgUZ3CAROiRUb6X9xb
- AKrBCGe/t/0e+R/q6J+L1fVirUVDyuDrO34z1JOy3yTXNZk1PxEL+t0uH
- FQ55MmhZxbS6brhI3HUVcMV2NcL7+3l+ivqWytbxM2aOB+nYchvYMViDG
- 1q2H1NUnLr6RO82ry0ElFYj66mhCzQJeFhsqEoZ6glqvBOd45dE8PMNMD
- dtswu+c1zNsPNbxzfJL1stid9/q1iEbfGfLVsbxuUsN8bmG4i/qA+8lrJ
- xR2sBQp7kMobvEQuxOp8gJH80oJ3ISacbUocaoZCOMSbQZ81cE5/ymJ+9 g==;
-X-CSE-ConnectionGUID: 4E7p5oLSSAOuQRf2gM01lg==
-X-CSE-MsgGUID: TFniro7AQlOzk1cPvGzAAQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11611"; a="65205263"
-X-IronPort-AV: E=Sophos;i="6.19,301,1754982000"; d="scan'208";a="65205263"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
- by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 13 Nov 2025 03:36:00 -0800
-X-CSE-ConnectionGUID: e/SN545qT/SGo0mC7GDS/Q==
-X-CSE-MsgGUID: TGmuZqZmRmmeicaOz31wmQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,301,1754982000"; d="scan'208";a="188750201"
-Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
- by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 13 Nov 2025 03:36:00 -0800
-Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
- fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Thu, 13 Nov 2025 03:35:59 -0800
-Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
- FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Thu, 13 Nov 2025 03:35:59 -0800
-Received: from CY3PR05CU001.outbound.protection.outlook.com (40.93.201.18) by
- edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Thu, 13 Nov 2025 03:35:59 -0800
+	by mails.dpdk.org (Postfix) with ESMTP id 8B5E240A82;
+	Thu, 13 Nov 2025 12:44:15 +0100 (CET)
+Received: from AM0PR02CU008.outbound.protection.outlook.com
+ (mail-westeuropeazon11013066.outbound.protection.outlook.com [52.101.72.66])
+ by mails.dpdk.org (Postfix) with ESMTP id AA78340151;
+ Thu, 13 Nov 2025 12:44:13 +0100 (CET)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kGVOYuF9qIUieRaGB0FDhv33qlM+CHal2ntmvnwlqIi50RjZip7X/LmEQrApbVqPt4p8h8q7BTyzsT3R0sm/F2NKFepPzHslEexNOjojrOvXzdkNNfT4tbNt5/I+nxxG2Taa79ScTlVINyS0ebV4etqs0Z3+3JA9r/6wdeC+6b1WMXGkZGbEgv993yRwBuoL8sHCfcyvI8Ejb2nr94MFxWuyGY71WZOuILA0AriwHHuP/yn6U4Xatbl1k2hh87Vr1vbNTGC3vaWgXEDIVYicPD5P6bpng30cGGGcAxy0RWBBi9a9AVel69570HiXtyHict49JYTBKKwiJRedcJaN0g==
+ b=kdbAip+QWiPPTlOf6D9fsULUShZIAEaX39bUWKeGS7hi7RurJTZxyjnQqTQZGBrsbp2TrVqJEDLDK5ZYpuTieK9U5RGG9sqtioQ8QfzDXJzkhayNTPntpAM+VeLAnCtBMb1sBoa69LuKaFyTFLZV0liP2YoWR3v4LMsfa1C8repu9SVzng/BQgJNSCln+nOArz/Gb6Fr4xSL2gTZUfSCI8vi8Z7u/fvVsVDiPneoi4vXER7YJ2X3IY0TNyGo5IqZXaFb5PKKT0SGMWzFU80VrHgLm/Bw7pLOrEyiuF58J+lLNP1qLe7mZM1N6CTzj32MN3yotdS4ttWRRATCBP3klg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qZpyRUL/YdlqiYTQVTLU0C4xztLqulAlgPkaXlOoiKw=;
- b=eNaFRGIbEz4PgmEPO/fMveUMiBx4qQI670jE1x4S4katv9g/1ReRKQGzOap3jXdOCJctPtwSSxtm8gE5mDLp+dRIeV+RNiDx5d5eNRGYBnWBO3BVbrekkm+5M1hL144opQEb85AfTMiDkEWelWDGZxNEbEAP0bBi1HEkk5vEvWxIOq4yFTIKAihUKZ3QyYOom8EobbBKpdnUSJgO2y2tBjRK6i8a7BHyHjfTpBtm1YY2UN+U/h2dVIeMevkbzBlZwo1/sn9V05Hlflk7GJaVIZLGRuB6Qe6HMGw7oBWv9LdoR1UUNLnJriI5cawBhOID5Pt51wbYQpcu3fmVkW6lOA==
+ bh=XTMtlK75uyypBwTAS8PdBJXap+OvW+hs7SG+18qPG/U=;
+ b=ECzlHTF0AWOZY0RDJESN6jZF9AAAWqu/SKah9Gb8gHKO60kTrMrrWZeQMJdHWgWj4/eEQF1QnIZIyNQCrRTyT+wDa6xp9ul5T+SHMxxaG0A+86LCnIXWQGF7eRoBwZbAp55QCjAKiprFSSjLviH19yqyqlYfhqZMO0QdDrBdXhf+EXl9W7XQZY1pW6LZhLpUZRCCgw0ckclN4jSl/KrgPEwrn7BG9DxuKIzotlrwvyP/U/vFO3mhW2dFiNYADsVVtlNGJerTMGKiDct7hIwM0Cf/QZCNpocg9x1Iav24Lzi27ZZirfiB4iz1qFD/zDOtmQctBnD8FwO/Sl8A66LAlw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1; 
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XTMtlK75uyypBwTAS8PdBJXap+OvW+hs7SG+18qPG/U=;
+ b=djjS/cfp5JcZ9nEvVZACUcwNtLR7a23awiJ1eE1Oj2TexoUUYd3fsHWx5qJVLCc2lafL7PZCDc3V71GZrDMTC3eEGATBTh1pd+7e2bXj3+9MkhEwT9PKPN9g2q+RXVYDMVWDOVTktMOmH+pyJhWCZI2sTvlPMUJaOHzIn/SfcOYQaA92ktjRFNlMgE51bbnfh+5kao0jdekrnO9nfmNgQISjTiR4Xdd+g0481cYEHZ1VKLZc/aEWZDA9fC+KJB2+cl2L2biLvpgQNYbPCtNtFk6/82CFugLBPm6W8Tpllp7sQdeOFfRnG5Lk5e1ZhMfvsMGSl9MgStKYM239TnSSQQ==
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
- by CY5PR11MB6089.namprd11.prod.outlook.com (2603:10b6:930:2f::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.15; Thu, 13 Nov
- 2025 11:35:52 +0000
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b%4]) with mapi id 15.20.9320.013; Thu, 13 Nov 2025
- 11:35:52 +0000
-Date: Thu, 13 Nov 2025 11:35:47 +0000
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: Anurag Mandal <anurag.mandal@intel.com>
-CC: <dev@dpdk.org>, <anatoly.burakov@intel.com>
-Subject: Re: [PATCH] net/ice: add MAC anti-spoof disable option
-Message-ID: <aRXCkzTTkhjwWLI1@bricha3-mobl1.ger.corp.intel.com>
-References: <20251113105914.34949-1-anurag.mandal@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20251113105914.34949-1-anurag.mandal@intel.com>
-X-ClientProxiedBy: DUZPR01CA0022.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:46b::12) To DS0PR11MB7309.namprd11.prod.outlook.com
- (2603:10b6:8:13e::17)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9328.eurprd04.prod.outlook.com (2603:10a6:102:2b6::15)
+ by DB8PR04MB7035.eurprd04.prod.outlook.com (2603:10a6:10:127::17)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.17; Thu, 13 Nov
+ 2025 11:44:12 +0000
+Received: from PAXPR04MB9328.eurprd04.prod.outlook.com
+ ([fe80::f268:adb3:8817:15e1]) by PAXPR04MB9328.eurprd04.prod.outlook.com
+ ([fe80::f268:adb3:8817:15e1%4]) with mapi id 15.20.9320.013; Thu, 13 Nov 2025
+ 11:44:12 +0000
+From: Hemant Agrawal <hemant.agrawal@nxp.com>
+To: dev@dpdk.org, stephen@networkplumber.org, david.marchand@redhat.com,
+ maxime@leroys.fr
+Cc: sachin.saxena@nxp.com,
+	stable@dpdk.org
+Subject: [PATCH v4 1/4] net/dpaa2: fix duplicate calling of dpaa2 dev close
+Date: Thu, 13 Nov 2025 17:13:52 +0530
+Message-Id: <20251113114355.2027438-1-hemant.agrawal@nxp.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20251113095917.1973514-1-hemant.agrawal@nxp.com>
+References: <20251113095917.1973514-1-hemant.agrawal@nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SG2PR01CA0116.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:40::20) To PAXPR04MB9328.eurprd04.prod.outlook.com
+ (2603:10a6:102:2b6::15)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|CY5PR11MB6089:EE_
-X-MS-Office365-Filtering-Correlation-Id: d86eb42c-4512-4fe7-042c-08de22a8cd0a
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9328:EE_|DB8PR04MB7035:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6cd5e142-281f-4e8a-92e7-08de22a9f6d1
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?g3w96754NuZdr4Y2zF+wlgRZF/828xynD3wtXfKvqdd2dLK34TK2hP7VwaQa?=
- =?us-ascii?Q?Lb/sHaUuddeB6/jTTWgxVE0f45idedq8nJD6QWwFZCESveB1J3DXFYMk02QX?=
- =?us-ascii?Q?Z/w5fhVKArVuTUDFwhVQTIZwI2NgXm/dsWFLGvTEwLh1Dheo5Dh8M+Bf1BRy?=
- =?us-ascii?Q?heiK9N/hjMGl8p2Z3NUrBFmeo4K9IDcuur2OiPlqBKLjtgdlzVx2vzaV0L1z?=
- =?us-ascii?Q?eYnBAlK7+4uPFT6aH6jlbD8p7j44+rFiFvxhlinXLaEMdbQjmhiKbM6OjMtd?=
- =?us-ascii?Q?XGdTKbYZLzZXtGPevnlVwh1vnVLbKv7e4Xp+1ihntN0yIOuy25cls2IwFqfa?=
- =?us-ascii?Q?Ae8w2eq6plBYLs0xOdlBksa2HIjVP0q2BJrjHzrqMhrE9ElDSZUZJbqEjlwh?=
- =?us-ascii?Q?Zd7eSSGVlkKrKMEltCwTflvkuxWHOypCqSkkt/2xBVI6n7pIl9HSO+Atd01G?=
- =?us-ascii?Q?XfkXS3SbBijMsnz8TsYR+KSTdCz3C7X1Na55winAmPP8H5bFFoWvz2WqInms?=
- =?us-ascii?Q?5h5rDWwMvyr8bmKXmyXIocvf60hdu6L/L30ChHLhQOIfZhvEI4PGz1gMSatl?=
- =?us-ascii?Q?B3amzyBYmoAN+NHEtKWMAygKaFxTVkNj+9SF9NfXKha54ouWeKgQg0d6voSL?=
- =?us-ascii?Q?OH72v7R7BefiTIqerMQso7u3gnaGS1iwlfkXnBm/g2WV6rQtd3jb0ZVqBGb9?=
- =?us-ascii?Q?xE9NOxx9nqBFNG9oLUA41l7Ji0zS0ussyjYMCgg3YTGxIjREGWEHlErMXXPK?=
- =?us-ascii?Q?kXb6IabA4o3VKbkqpki1OwykRfJsqEVAn5KqLC2lt3ApAY4K+BcaUzU3V38V?=
- =?us-ascii?Q?cF4qpGt6S/VMHokpd+ZaWxBCwPzO+hRURBGB/uVYdv9x2A5NNcEhn7I2f92C?=
- =?us-ascii?Q?PxGZsJNrXkjHdJ3xLcXSmmOd1kXSKqXGyD1XaDEG4qeGua0ziwvQdJpf0qJA?=
- =?us-ascii?Q?x5sgALY9DgArSKuDBv36imDqIh8iucwJiXoa1ZLs6r25aAJ57l4Bl2jYxjCI?=
- =?us-ascii?Q?Vf7GCZDIysuJZUiBKgHDtD8z6QhxDP/yyki8jXzXuST9N5rSgV6CrSDcVdzp?=
- =?us-ascii?Q?28zcfCeJ4TTKNjz3HpbKTlDmK76gDyx9vYFxGuUpAigIwvTbyd5ezaUTSMid?=
- =?us-ascii?Q?EqPjxdeJh0pDoBRWxJz52yPoRV0dlCyUd3Lbnlo+CQfBZFtLC5nqqZKWhG+q?=
- =?us-ascii?Q?l847SEisZIWpGU/s6WVvitJXhdqM9qbwGQUcpApUEK2inXkgfnjPALavMh5X?=
- =?us-ascii?Q?X4O4h5UXQXi1qbU0ManBp13gyQbVGglzSBVePmbsztpd3TCJ87gf54jnWsUm?=
- =?us-ascii?Q?Amrka0A+wziLfK9hfjo3m8qjccpQ8MBizRp7Jk5LTv6bVP0naQkqFE8EnKCB?=
- =?us-ascii?Q?4ZrbQu/hjCJtTHjAqEk0kB5RxMgOpax5xpGhVQXiA1Uz714VURdOH84Z3XSd?=
- =?us-ascii?Q?sHS7eFqNhZQdQzZf7u7LKOwxfqGN3sC1?=
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|1800799024|376014|366016|52116014|19092799006|38350700014; 
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?ZEwyZVdBNTBEREV6QTg0YTllNnJmNjcvNHd1dEtneHNQcEZIUXNLZVlIRVp2?=
+ =?utf-8?B?bm5aTGVrVnJpbVlOeFhsSUxXaWVlenBDa2QyM3JIYUpmNWx3QnRUelU5NHdL?=
+ =?utf-8?B?Vm5zSDZwZlJnYTBhZExsdVkya0xYaVM0bDhkbmM3SHFQQmdwakhHVW11dFFj?=
+ =?utf-8?B?THUwSitnUnBFbWc3YzRSdUtCbG9hQWxHaGZaQUpJcGhhQXBDaXpkYkQxcnEv?=
+ =?utf-8?B?L0ZyR3NWRDlkTG84MmZTMG94RFkrNDNZTGNhMHdrUHJtZkJsTlJKNk9sVW5S?=
+ =?utf-8?B?L2lYZ2FCSW1zenh1dmlIT2V1ZnppRHp3c09GUkdTVTRPMjFZMlcyMEdES1ls?=
+ =?utf-8?B?N2hKV2JpVDlYUGU2STl4VXZxOTFIVnluMkRUNy91QUtMekFGbmlTbVRkRXQ1?=
+ =?utf-8?B?bjlrUG1BRHBJVk96WnFGME1ZUlU5NkhNdkR2TlYySHVteU80VVNrK0hUMzhz?=
+ =?utf-8?B?ME1RbXpNUmVUTG5XdXl0Z3V3d2VMRHNNWDFxNVNiZGpWMHFmY3VuNStPb2tU?=
+ =?utf-8?B?U2Jid3VlRmNQOGhuUEhHb3Zyb1VSQm5JUGl1ZThpNnp0dGNCZW9mVU9SMzhU?=
+ =?utf-8?B?cGZuZjVLdEZ6bTZQZ053LzRzU2ZhOElGUEkwNWVRalB5VWpqZVdzd3luK3B0?=
+ =?utf-8?B?cFhobTFmVHJCNks4K1pLUklZcFJHRm9VTVZmNG51ZFBLNkE4emhkc2hQaEtG?=
+ =?utf-8?B?NWVrRXA5VlFBSlRvbGk3bHVNZXhBd0QyRVJxdHI2am9TSVJjcmUwcU1QclVU?=
+ =?utf-8?B?WUdrVkl5TW83SFVKTXFZYnFGb2xqOTVQYmZqYlZVTzlEWEpGaTVsNTN0NDlW?=
+ =?utf-8?B?YTgwQ1ZERTVHQXVxcUZoTkY1bktqZUluMUJ4Vjh2RUNud2ZTUTdLQWZLK1FR?=
+ =?utf-8?B?RUw3d1BHOCtPVk5hOVhmQkdPajRvejJmL0NHeVphcnYzUGltWmkvZ1NmbUU0?=
+ =?utf-8?B?ZUJPZGtYa3pyTkhPZnlrZmZFY3JuMUFCVld6aCsxa1hkWGs1M1NEMEdCNURR?=
+ =?utf-8?B?STRtdnlDLyswQTlVUmRsaUQzd1B1eGJmQkVMUW8xZHYrNDc1MTFHZDZ1dktM?=
+ =?utf-8?B?ZGNXMnRwUktWL1AxcHRGTGcraStVbDdVVFR1OGZPYjJTUHd4UVVzQ1JqRmUy?=
+ =?utf-8?B?UVltRmkxUnFYSXYyY1ZOVTdUeDFjSmVoTndhSTlGVVg3ZmZBNjhObHh1SXpD?=
+ =?utf-8?B?MjR1ditkUkN0WUM4TkFaTVpDUVI2OWFSSlc4ZTliRVBOblpXUWdhZ3hEa3Fz?=
+ =?utf-8?B?bmZ1d1hyR1YwTUV5N29JMFRmVjhaRUdSQzRxZGtVVU1CcVRMcmZvU1R6SVI0?=
+ =?utf-8?B?QXVIN1l5NG4rRFp3Y0NoL2RNUityNEMzYjQrR2V0YUJPdkJGM1doRnUybncx?=
+ =?utf-8?B?UDM0a0FSL1hKblVDT043NkNZbG96emtLWFZ4b0dQbWp3c2ttT2M0aWw0RFZG?=
+ =?utf-8?B?Z0d2c1FOdWc0alZDU0RVMmNBcHNwcXRwQVFiMHEzNytRbW43N0tPc0RBdUFE?=
+ =?utf-8?B?Mi9RMEQ3YWpzNmNnc2hZNEJDeExMdjJDS0lyWlRzYVJwV3pBSUEvMkRXdWJD?=
+ =?utf-8?B?YWZaakxReTFiV3lOZWhsSDZBakwvS3hXQWN5ZUhkeWlkZWRuY1IyMkRjcDYz?=
+ =?utf-8?B?SGc4SEd1cjRvM2lNZGxjamRTWTZvRVpFNmFjYjVlODVuVS82U1RHbVR6NytC?=
+ =?utf-8?B?aUluTDZWcFF1RjhWWjBGT2d1Ujc5NEV5aWdZanhEcmp0cHVhcEhnQ1E5alVW?=
+ =?utf-8?B?MUZqcEdLeG5PSE8vS2hxbmlGSUVpM1lXN0xlam9aOVBrQzlrSm0reC9ZWFc1?=
+ =?utf-8?B?MmN2ZmFFRUU1bk1hbkR6dkFTblJrQkVkRkVhLytTUVo3Q3lpT08rbUdwQXVC?=
+ =?utf-8?B?RFhHakNWTFJleTd0YWtHemg4ZTB0TXlnRzBjS0c4UHRLcEZNNEt1d0JYcFk3?=
+ =?utf-8?B?TCt5VitneEdzZUp6N2tkd3FEdXppSFdUWHgxUlB4SmJVMXJPZ1NaKy9HWHZZ?=
+ =?utf-8?B?UlY2dVRETnpLNXZzZ2plcTFOdHh2emUrR3p0aW4yR2luMFRhZ2hwODF1SDQ1?=
+ =?utf-8?Q?+DKH88?=
 X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(1800799024)(376014)(366016); DIR:OUT; SFP:1101; 
+ IPV:NLI; SFV:NSPM; H:PAXPR04MB9328.eurprd04.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(1800799024)(376014)(366016)(52116014)(19092799006)(38350700014);
+ DIR:OUT; SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?ThKthY4TvvPZdOMz57Q/iSLVUp1e1vIcNg+OTah1v0wDnNzT2qjFB7VcK7BC?=
- =?us-ascii?Q?3wJee/sFeWPVbKmiBJbO8H4+zRrAlfTNXktQ5nH3Xodbw9EhoI/WB//cfehw?=
- =?us-ascii?Q?1SGDIWyDyh/iGvgwXvu14hZHe2ld24/9R816u465DASVYPmS4xbDhUFJ7sBM?=
- =?us-ascii?Q?gFCFLaqNcSeqXfsDB6zAmbNjdGCn7i6ZeZDqfmDGGChkI0bSFCbtW0CAqouC?=
- =?us-ascii?Q?x1j5Det9FXDH/eL3oR+zHmcRAoJJDkHu4b7WRnAXpHrY81EGA6AlV4fFQldL?=
- =?us-ascii?Q?kJXpNBKetTAsHnCv1Fj7fuakENMWrspbXh+1hJ0FMo3Kf98ZkvBEH0TmLqcy?=
- =?us-ascii?Q?nfqsQblM9Q+dpWZ18RsTJ95c/IALceO8Zr65vD8/VVoCtfL1moMdtju7mweg?=
- =?us-ascii?Q?JpEABM7nZ/iGiy7tYrA/Oj26GhGAimI7DzM/tUiJWEJ/jyMyqiESoTIAFx5A?=
- =?us-ascii?Q?2/eBOsneQ0D3ELiubOdKIjXDw7Lp+SfuwrWJVLs1tWzhCMhQ/DXM1Za8KjE8?=
- =?us-ascii?Q?aDVF0TveqMTR2Z+iOYdwXbNZc8HAhjKsWCLq6ARhWhSIUTU7iJb79rmAbfS/?=
- =?us-ascii?Q?V7nv6Eg33mC4uzgEc85KwZdy4Hrslf96jBNYAablItPBpAsoE2Cy99B7QuIT?=
- =?us-ascii?Q?m/55LuTG+2PRemKkyVBsWW0kWfPvv0XKDsKWHg4XU5Lnrz44qH6ixLGo8+k0?=
- =?us-ascii?Q?ZEaE+mt26QAup/yb72cHWs39ng4ok5Q5NwfruoG8rzjqgda9nHJqJBiJ0Q8/?=
- =?us-ascii?Q?1I3qcU8OGOTS1DZoE5TcIzo0B9v0LCmnKVjninXQ29Z86DXmSfiI1LScDxTm?=
- =?us-ascii?Q?PEmYlgmzOixa81cDJqP/f1oI72V+24HSUgZanBSTkOP/K35/NDL5F8N5K7au?=
- =?us-ascii?Q?YFsCIoqsQWGlqHzefhLxjYIzHCfmt5vCaWPUoscue6ERGtbfrtRIt9UDe5A0?=
- =?us-ascii?Q?cgEG60u35cSk3G2b0vDXvNbpzbOS0B06tCG5jCh/8PHhLh623Tbhq99rsmfS?=
- =?us-ascii?Q?kHNUch8oVbxC6To+UoXQwpZtkfg7STnS4zLobLi60H0m2/L/zVw8zSBFEhDU?=
- =?us-ascii?Q?5ntsvw3olr89xchET2UoYOTK48GsAQoo83ovMT6ge7biRzwBfZGiDjhSVZzR?=
- =?us-ascii?Q?qgbs/55ijmzvBD23yg567UYUbVF+DQqKsLkGoTjtnQDwJV0q0GMHKrJAEs4D?=
- =?us-ascii?Q?wDmSAGvTM6Dv8Ms+86p2OcR1jyBeroio2uCVyia9dZw37PfUfA59NXqrWQYJ?=
- =?us-ascii?Q?AIAKeSpYdMPe2qZU6fxRLfh+kAVYcmJ5Crll8Ppa5oCDn8G8TzKxIgZa/s6Y?=
- =?us-ascii?Q?JruWav4m7VcDiLsd+eZ4lxnxXjbC07nbdAW0pWi7e/+dIBNrXFqqXvgrqanR?=
- =?us-ascii?Q?DEPOWxudM2qNDuLzs/4lW7zNzoOHUHXCJJQtzBe4YIU9i9DtQYvqdUeEhOaB?=
- =?us-ascii?Q?jYRm0NYjumyOV6H9YX+yKef4LTRUjSrFLv2j6QSJlF31flouY7xOQjsPNskY?=
- =?us-ascii?Q?QfeAXEP3PTSsLaaap9g8ClIRTuC00O2I9/ASAOW6rJBR2MKMWfFZck+i11JF?=
- =?us-ascii?Q?zt8KcfcC4hOjVCyLczUizZ1jiiXu9tJood6Loom0v8BzfVCrSwKoEFopImbF?=
- =?us-ascii?Q?rQ=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: d86eb42c-4512-4fe7-042c-08de22a8cd0a
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?S0t0NWFZeitsNmFuY1lqdUxKMy9ZdG1NZnU4NzZCR0gyNGJlK3YyTzhTb2tY?=
+ =?utf-8?B?VC9JaFY0dFFSVkZWcVM0c3hWckU2NlpTbzhFOTJ2RGI0ZytqQk9JZzU3T0Z2?=
+ =?utf-8?B?Ujk3TDU3dlhuSUVJRTY4bGRzUjlsUFhqOVlWcjdZR3o5WDkyMHV6Y1V2K0o3?=
+ =?utf-8?B?L2d4OXBibXlFWkIrYUx6U3F0V1h2QWtYWVVTTkJSa0U4SVpzejdxSzdzZjhM?=
+ =?utf-8?B?ZDJndTl4Qk9Gc0I4cUQyeERNc0YzTzFmK1E1ZHk2SlBSMC9aOVVmSVVWTFIw?=
+ =?utf-8?B?aW9tZlVpaEgwekMrWnJkckd2b1B4d0VWZVVJeWYwQWtWNXZTVlpVQTNOVEZi?=
+ =?utf-8?B?dERqcjZLa3A3VFk0dHZId0lWY2lRUEJHL1FscGJUSURySWtRM3ZoVlYyWmgw?=
+ =?utf-8?B?eHB5SWlTMCtLQWpNd0Z2NWxUNjhadGluQ2p1S1NObzk3VEFzSE10eWh5MTcv?=
+ =?utf-8?B?ZFlyazFMUFowaEJiQXBobzVta0FVdlY3dlFhTmIySk5sekg1Umc5MXJ0TlBE?=
+ =?utf-8?B?K3d2amJlU3FTZDdxRmZoSVEweUxKL0NKSkFrSzhpcFlRMGRSaXgrYnlndlpI?=
+ =?utf-8?B?Rk5NckFPQkw5cStpaGd4a1h3UVZZcWlibHM3a0lkSjV6aUZOalo3djV4enhO?=
+ =?utf-8?B?cC85TGE0M0h4NU5PMmhJT1p1amRMTVZYRDZjWEt3ZWFLT3p5YUFJZHdKZ0k3?=
+ =?utf-8?B?R2xSa09YQkdVOVBHVGJhZ2RjQVZubU54VlJrKzA1MExhVVMzSnhkdGpUWE1I?=
+ =?utf-8?B?M0h5Nm9xU1IrNXhuanlMQkcybEJCZDFVV0NwMm4vREpib0RDdWVBSkFwbERM?=
+ =?utf-8?B?bWZPLzk1K0tyb2gxYldQZlJMcVdXdjh4Y3o2MW9tMERhMFdPdTR5cHVzSnh4?=
+ =?utf-8?B?cUhOTU1hWVpXY05JMXhnYTQ4YmRaV0dzYldzcE5TcjdkMU1JZHN1bHU0OWJx?=
+ =?utf-8?B?UlVxeXdhbWM2Z3VoQkNTRHVvaE5nL2pUR0FLUmhOYjRMdUM0YTh5b0lXNnFi?=
+ =?utf-8?B?S0RjMko4TFVPaC9peDRFZjFteXhFeis3NzMwdnhFbnJiNk9rNllna2dJUkEw?=
+ =?utf-8?B?a01ZSWRLeEg2ZTlQZjV6YUQ0b0Z1V0dpT1lkRmlocDM1M2pEM3lVZ1pmZzZR?=
+ =?utf-8?B?TU5ld2FCdnc1eVpkSng2T0tJSW5Ga2tsNjg4MFhXbTlzMGJPcEJacHlWeU1u?=
+ =?utf-8?B?K0VLV21PWFE4SndUbWw2aTdmME83SmJha0szY2YxUEd0LytZaXlTQ3RienNH?=
+ =?utf-8?B?ZWhvOXFwdmhEM3F0WXhvbnJUZDFDUXhublU5aE1Cb2UxZWVQZjhnTmF5bW9V?=
+ =?utf-8?B?QnduTG5idzJqdW8wN09LRmlDNTFVN0NBam91NmYzd3Q3Umw0eGQ3ZllvNVZS?=
+ =?utf-8?B?a0hxbXQ3Q2N2bTIzdjJCdGR1Wm40QkZzWkwxVkl1VklBakhyMVdsQlFkSTRG?=
+ =?utf-8?B?aGlxNDBGYlNpNVRkYSswaktRMkliRUw4Z1EvTXZURE1ZNXkwYkhzcXpVdjV6?=
+ =?utf-8?B?NmdVcFpMcjgrWnBFMno4eVZiMmpoSWZndTNrbGp1WE45Y01HdTN1d1pvZDdL?=
+ =?utf-8?B?dkZObHlZdkR2amNxRTM5Y1E3cGlXRGJJbnovemNBYUQvTDJCeHNyZngzc2Uy?=
+ =?utf-8?B?MExxT3VpclVZZFNmUTlscVlRWlQzaGxtQTg0N2hDRDV2ek84S1UyMVBQMWZk?=
+ =?utf-8?B?d0wzVm5uWUNjb2s5YVIyYUlwM0xDM0k5TTFDOVp2Mk1WUlBIbmEwSjFWTUlp?=
+ =?utf-8?B?U2d1Y09Wck8vZjJxdWErTUErUVorYU02Zm9yNzJnTi9NOFROMlVXbVNDREc3?=
+ =?utf-8?B?WFlwUENoMEVxRU4ybjBVZjMwVkJBVnB4ZEpBcGs0dGdHbDVaOTR5SVR5UkhW?=
+ =?utf-8?B?MVRNeHBaa0N1Tmw2aDh1RVF4WWJ3VTAwbVJiZnhFalpCUFd4a3pCL0UvU2lj?=
+ =?utf-8?B?aURHS2dlTCtxTEdDUFhEUmd5YkF4bC9TWjZXSE0vN0hiQUFtSE51Vm4yV2tw?=
+ =?utf-8?B?WFlyazc3UnFIV0RSR0s5by9mSVd2RzVhM3VXU3djcTV6SGZSbngwRW9rZU43?=
+ =?utf-8?B?UXNTZXhjUkcxU3ljbG9LTmZqUVhDc1NNU0tKMlFSamxEWWxMclB1cVFsbGxh?=
+ =?utf-8?B?OVp6OTZOT0JlNTdKY0ZlenhoWERNVDhNNUpSUzJIWnZoSUdrZVhsWU9DVXZ1?=
+ =?utf-8?B?RHc9PQ==?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6cd5e142-281f-4e8a-92e7-08de22a9f6d1
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9328.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Nov 2025 11:35:52.4270 (UTC)
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Nov 2025 11:44:12.1368 (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: CmF433/RaK3GCYqWEcPcMZ9d/Npbm/wPnllObWEpyhhX3z9JjQfIKWijZcbolvvWSBAjd9/XKi3H+hrEudMeKwdaVDGalqGf/5H7zIFOJI8=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR11MB6089
-X-OriginatorOrg: intel.com
+X-MS-Exchange-CrossTenant-UserPrincipalName: utqhF2Wj2PwHXemC3k2e0FnZMSOIXts3vjY5QByYwDWcQy42xCdWgNm+aPWKL0OhcrGyQ7GBjFgwTwo0VVm6kw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR04MB7035
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -169,143 +160,56 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, Nov 13, 2025 at 10:59:14AM +0000, Anurag Mandal wrote:
-> VRRP advertisement packets are dropped as TX-errors upon transmission from
-> a vsi of ice PF due to MAC anti-spoof check. There is no way to disable
-> this check in the Tx direction to avoid these packets being dropped.
-> 
-> This patch introduces devarg "mac-anti-spoof-disable" to allow user to
-> disable MAC anti-spoof check. Disable MAC Anti-spoof check in the Tx
-> direction to avoid getting dropped as TX-errors upon packet transmission
-> when their source MAC address matches one of the MAC addresses assigned
-> to that same NIC port.
-> 
-> Signed-off-by: Anurag Mandal <anurag.mandal@intel.com>
+When rte_eth_dev_close() is called, it performs the following actions:
 
-See feedback inline below.
+Calls dev->dev_ops->dev_close(), which in this case is dpaa2_dev_close().
+Then calls rte_eth_dev_release_port(), which releases all device data
+and sets dev->data to NULL.
 
-/Bruce
+Later, when rte_dev_remove() is called, the FSLMC bus invokes
+dev->remove() — that is, rte_dpaa2_remove().
+However, rte_dpaa2_remove() calls dpaa2_dev_close() again. Since dev->data
+was already set to NULL by the previous call, this second invocation
+causes a crash.
 
-> ---
->  doc/guides/nics/ice.rst            | 11 +++++++++++
->  drivers/net/intel/ice/ice_ethdev.c | 22 ++++++++++++++++++++++
->  drivers/net/intel/ice/ice_ethdev.h |  1 +
->  3 files changed, 34 insertions(+)
-> 
-> diff --git a/doc/guides/nics/ice.rst b/doc/guides/nics/ice.rst
-> index 6cc27cefa7..bc86de0081 100644
-> --- a/doc/guides/nics/ice.rst
-> +++ b/doc/guides/nics/ice.rst
-> @@ -194,6 +194,17 @@ Runtime Configuration
->  
->      -a 80:00.0,source-prune=1
->  
-> +- ``MAC Anti-spoof Disable`` (default ``0``)
-> +
-> +  Disable MAC Anti-spoof check in the Tx direction to avoid getting dropped
-> +  as TX-errors upon packet transmission when their source MAC address
-> +  matches one of the MAC addresses assigned to that same NIC port.
-> +
-> +  MAC Anti-spoof can be disabled by setting the devargs parameter ``mac-anti-spoof-disable``,
-> +  for example::
-> +
-> +    -a 80:00.0,mac-anti-spoof-disable=1
-> +
+Fixes: 5964d36a2904 ("net/dpaa2: release port upon close")
+Cc: sachin.saxena@nxp.com
+Cc: stable@dpdk.org
 
-I dislike as a point of principle having options with "disable" in the
-name, because it means that the normal logic for on/off is reversed. For
-example, in this case to enable anti-spoof you set it to 0. Also, having
-disable in the name makes the name longer!
+Signed-off-by: Hemant Agrawal <hemant.agrawal@nxp.com>
+---
+ drivers/net/dpaa2/dpaa2_ethdev.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
-How about having this setting called "mac-anti-spoof" and setting the
-default to 1.
+diff --git a/drivers/net/dpaa2/dpaa2_ethdev.c b/drivers/net/dpaa2/dpaa2_ethdev.c
+index 7da32ce856..fc63cf4f09 100644
+--- a/drivers/net/dpaa2/dpaa2_ethdev.c
++++ b/drivers/net/dpaa2/dpaa2_ethdev.c
+@@ -3347,14 +3347,19 @@ static int
+ rte_dpaa2_remove(struct rte_dpaa2_device *dpaa2_dev)
+ {
+ 	struct rte_eth_dev *eth_dev;
+-	int ret;
++	int ret = 0;
++
++	eth_dev = rte_eth_dev_allocated(dpaa2_dev->device.name);
++	if (eth_dev) {
++		dpaa2_dev_close(eth_dev);
++		ret = rte_eth_dev_release_port(eth_dev);
++	}
+ 
+-	eth_dev = dpaa2_dev->eth_dev;
+-	dpaa2_dev_close(eth_dev);
+ 	dpaa2_valid_dev--;
+-	if (!dpaa2_valid_dev)
++	if (!dpaa2_valid_dev) {
+ 		rte_mempool_free(dpaa2_tx_sg_pool);
+-	ret = rte_eth_dev_release_port(eth_dev);
++		dpaa2_tx_sg_pool = NULL;
++	}
+ 
+ 	return ret;
+ }
+-- 
+2.25.1
 
->  - ``Protocol extraction for per queue``
->  
->    Configure the RX queues to do protocol extraction into mbuf for protocol
-> diff --git a/drivers/net/intel/ice/ice_ethdev.c b/drivers/net/intel/ice/ice_ethdev.c
-> index c1d92435d1..a0eae74bbb 100644
-> --- a/drivers/net/intel/ice/ice_ethdev.c
-> +++ b/drivers/net/intel/ice/ice_ethdev.c
-> @@ -42,6 +42,7 @@
->  #define ICE_DDP_LOAD_SCHED_ARG    "ddp_load_sched_topo"
->  #define ICE_TM_LEVELS_ARG         "tm_sched_levels"
->  #define ICE_SOURCE_PRUNE_ARG      "source-prune"
-> +#define ICE_MAC_ANTI_SPOOF_DISABLE "mac-anti-spoof-disable"
->  #define ICE_LINK_STATE_ON_CLOSE   "link_state_on_close"
->  
->  #define ICE_CYCLECOUNTER_MASK  0xffffffffffffffffULL
-> @@ -60,6 +61,7 @@ static const char * const ice_valid_args[] = {
->  	ICE_DDP_LOAD_SCHED_ARG,
->  	ICE_TM_LEVELS_ARG,
->  	ICE_SOURCE_PRUNE_ARG,
-> +	ICE_MAC_ANTI_SPOOF_DISABLE,
->  	ICE_LINK_STATE_ON_CLOSE,
->  	NULL
->  };
-> @@ -1768,6 +1770,20 @@ ice_setup_vsi(struct ice_pf *pf, enum ice_vsi_type type)
->  			vsi_ctx.info.sw_flags |=
->  				ICE_AQ_VSI_SW_FLAG_SRC_PRUNE;
->  		}
-> +		/* MAC Anti-Spoof */
-> +		if (ad->devargs.mac_anti_spoof_disable == 1) {
-> +			/* Disable mac anti-spoof check in the
-> +			 * Tx direction to avoid getting dropped
-> +			 * as TX-errors for VRRP support when
-> +			 * mac-anti-spoof-disable devarg is set
-> +			 */
-> +			vsi_ctx.info.sw_flags &=
-> +				~ICE_AQ_VSI_SW_FLAG_SRC_PRUNE;
-
-If the source prune feature conflicts with the anti-spoof one in some way,
-then we need to check at devargs processing time for conflicts and warn the
-user. Also, if the user specifies on flag which changes the default of the
-other, a logging message should be emitted (e.g. at INFO or NOTICE level)
-
-> +			vsi_ctx.info.sw_flags |=
-> +				ICE_AQ_VSI_SW_FLAG_ALLOW_LB;
-> +			vsi_ctx.info.sec_flags =
-> +				ICE_AQ_VSI_SEC_FLAG_ENA_MAC_ANTI_SPOOF;
-
-This seems strange to me. When anti-spoof disable flag is set, we turn on
-the ENA (enable, right?) MAC_ANTI_SPOOF flag?
-
-> +		}
->  		cfg = ICE_AQ_VSI_PROP_SW_VALID;
->  		vsi_ctx.info.valid_sections |= rte_cpu_to_le_16(cfg);
->  		vsi_ctx.info.sw_flags2 = ICE_AQ_VSI_SW_FLAG_LAN_ENA;
-> @@ -2467,6 +2483,11 @@ static int ice_parse_devargs(struct rte_eth_dev *dev)
->  	if (ret)
->  		goto bail;
->  
-> +	ret = rte_kvargs_process(kvlist, ICE_MAC_ANTI_SPOOF_DISABLE,
-> +				 &parse_bool, &ad->devargs.mac_anti_spoof_disable);
-> +	if (ret)
-> +		goto bail;
-> +
->  	ret = rte_kvargs_process(kvlist, ICE_LINK_STATE_ON_CLOSE,
->  				 &parse_link_state_on_close, &ad->devargs.link_state_on_close);
->  
-> @@ -7732,6 +7753,7 @@ RTE_PMD_REGISTER_PARAM_STRING(net_ice,
->  			      ICE_DDP_LOAD_SCHED_ARG "=<0|1>"
->  			      ICE_TM_LEVELS_ARG "=<N>"
->  			      ICE_SOURCE_PRUNE_ARG "=<0|1>"
-> +			      ICE_MAC_ANTI_SPOOF_DISABLE "=<0|1>"
->  			      ICE_RX_LOW_LATENCY_ARG "=<0|1>"
->  			      ICE_LINK_STATE_ON_CLOSE "=<down|up|initial>");
->  
-> diff --git a/drivers/net/intel/ice/ice_ethdev.h b/drivers/net/intel/ice/ice_ethdev.h
-> index 72ed65f13b..9b36627d12 100644
-> --- a/drivers/net/intel/ice/ice_ethdev.h
-> +++ b/drivers/net/intel/ice/ice_ethdev.h
-> @@ -617,6 +617,7 @@ struct ice_devargs {
->  	uint8_t ddp_load_sched;
->  	uint8_t tm_exposed_levels;
->  	uint8_t source_prune;
-> +	uint8_t mac_anti_spoof_disable;
->  	int link_state_on_close;
->  	int xtr_field_offs;
->  	uint8_t xtr_flag_offs[PROTO_XTR_MAX];
-> -- 
-> 2.34.1
-> 
