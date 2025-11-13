@@ -2,75 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E318CD8C9D
-	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Nov 2025 17:32:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E14ACCD8C9D
+	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Nov 2025 17:33:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DBAD340E2D;
-	Thu, 13 Nov 2025 18:32:48 +0100 (CET)
-Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com
- [209.85.167.181])
- by mails.dpdk.org (Postfix) with ESMTP id C024340151
- for <dev@dpdk.org>; Thu, 13 Nov 2025 18:32:47 +0100 (CET)
-Received: by mail-oi1-f181.google.com with SMTP id
- 5614622812f47-45033024e59so475156b6e.3
- for <dev@dpdk.org>; Thu, 13 Nov 2025 09:32:47 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 02FE440E4A;
+	Thu, 13 Nov 2025 18:33:19 +0100 (CET)
+Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com
+ [209.85.160.43]) by mails.dpdk.org (Postfix) with ESMTP id EF21A40151
+ for <dev@dpdk.org>; Thu, 13 Nov 2025 18:33:17 +0100 (CET)
+Received: by mail-oa1-f43.google.com with SMTP id
+ 586e51a60fabf-3e0f19a38d0so600455fac.0
+ for <dev@dpdk.org>; Thu, 13 Nov 2025 09:33:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1763055167;
- x=1763659967; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1763055197;
+ x=1763659997; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=9agHCU+Ng/ZxqD6/TUhQiVHLakZO+qJ73YBTBViCQto=;
- b=b8VzzpHd2kZ8gHBLWl7+swkW1oTDhBbWTjHngXQiG/CpEpDrRDPgxYSSgvE+c5KhzE
- ghP1x//b6USRhnGyJVC/3W2AtyArc9X8fN4nDdoxe8HGNCES7pY0NOrIOm4Ip9aW25/k
- JRz5K44Jxsmpi3jT85jprMln0dCkHzLFD6uLkAEcDQ3eh2HQqKWpGzAApxIQ+bcN9VGr
- /Oi3fXbJq8BC6YatneVugy+YFac76jNaIl0n+QXT+E6NJY57GKuWlQkJyJCst/TC3kGe
- kHqYtuElyxt6l9tZwaREFA8pA3jAg+BKOmB2xb7s6Z1Dqwpv9tMOD0IJQoqISnqI4d3B
- ubDw==
+ bh=Mu9i3Hi+p20IUppgpNCmRSgGwm4sR1zih/12OMRLFmw=;
+ b=D8DpgB6RXeP0+tCDivOWtwkebsCOTG8s7ebo4uw2k+yoN7+N26f5tr4VtfixXY6wcI
+ KpAbkCSlNHTYlOUvUZg9l0MDamqlonlUpVvNt3ekdSCOkZPaxyketBmrUS47PkP/MyaP
+ yvdqyFvJS8nZ2bL1Z6sOVWqXRTt/u4bYqCf5wTVuI0K5TtV6WCifz+BlU8XksfszZwCF
+ in8Nc4Ex97oe6uNhwtzqx1DbZJ8MJ+13ZGr7lWfc+HKJRaM87wckzaCFguaWj5OjZN0Z
+ xiZu+HbWMYcO24gG6i+aJhcXupUEyTlJRbnMRph9IzgyCdzW0cnbYAIQi0f0fXufjab+
+ KbQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1763055167; x=1763659967;
+ d=1e100.net; s=20230601; t=1763055197; x=1763659997;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=9agHCU+Ng/ZxqD6/TUhQiVHLakZO+qJ73YBTBViCQto=;
- b=jYTm9COpACeXM+/tMwsE5ZhqoW1YM72ynMx2FPZ/8JaAFlR/ofNH2hH3AXGN1wFMxv
- wJISZRuPzMnC97xW9MyUmAFiv5a9OLcysGH9GmBJByUim0ojQPOhlrKnmN20tN+yRAzU
- QhhPBg2UfoOdY9ZYL6B/kmMTUtxSuFSpT4bfgxgY0oFt1cf04nnIOqdnN09R0MFP7dR/
- Hq+JvqoBKOOQetN9QDPudKi9G4kAtyBshm1e4jG9DQJzL857u22/3ArdOV2CcvwHiHTU
- Gh9Z1DVivgOeDKt6nI0HxVENrergcVHreF7JNa4RNej+ohVadr4LA3eEDhs3vgJ93dHy
- mDVA==
-X-Forwarded-Encrypted: i=1;
- AJvYcCW+XX7Kuw3x51lFKXRata9q6Tlm6mMVqEzGvzxQFHseHsmBv8tiQafGYaq7LDY+Tlk9DC4=@dpdk.org
-X-Gm-Message-State: AOJu0Yy0koHttHOiJ3pTZ1ShxJxUKDbcAd5sVYX3tbDvSrIrOal50zK0
- x3ehVRAPHywJFEitLQkDzz6rN+K0kPTs74PD80GP8o7hQou5lrThPSJ3efaW9l9DPf0=
-X-Gm-Gg: ASbGncvEaFqJy6uWieivWKIyJQ+GDQ79Q/6kLGSePZ0RbB8QYsXVaYG8lwPq8opIC8D
- xr3yAqE05G9ywjahiqLG91+7erdpug6QkJwrJ5GysIdb9O7+/Ww1J92XCs+VNcdzaNLbBIrYTPP
- 6SZvPTB+cbGLuAaFeHXj7TdZUjrj9oRpExvZU1gLv/gPsjw8pI3PEGCQSXctBm5riPxZR/x01gt
- 9Z19js+uqyuoc51whIy8mIpqO8ZHfXVcY3rvlQ+jgEEffpmtPgesUjoXt294H+QHlSOVgPXRaDK
- br8GOZIx0Awt26jZjn4qE+TMuGHJRkWL0NY5iH4PfToW4Wcrc8EZXyq5cNoqLbtSC98hY/UnJEI
- tDppk4Ay2Ymlu/9LwTxIZaTula0fvgIj22hvshCKxWeXAmWev96OKBWqh7g7gCILnQr6farfXWI
- +0AcyWbk5xIlLBeCWnkM0Zs/kV0zfvfTrG6KFEqHgETS7oPCoA63AvjVY=
-X-Google-Smtp-Source: AGHT+IFrBq7DW2m62R4inUNcaCo0B2LLpOfrAzqqyaqPk1qkbFbjkpano+f2uRArKor/6WWbFxe30w==
-X-Received: by 2002:a05:6808:15a3:b0:450:3823:b603 with SMTP id
- 5614622812f47-4509749b780mr15033b6e.18.1763055166930; 
- Thu, 13 Nov 2025 09:32:46 -0800 (PST)
+ bh=Mu9i3Hi+p20IUppgpNCmRSgGwm4sR1zih/12OMRLFmw=;
+ b=injJ8VyA1LYYL3R0+d03M/EVSxmFoDYHmf1X5aOIPsdKbLuqUoPyXCNXsr9PB5eABk
+ MgrP9X25llLaeO/ZrEnkekcdMaJGiktDAOIKZoI0kDaM9uxMFkWmQuQPqDNv75erYWpx
+ n1G7/OVA1oJ4xZgop+jXcBRyguyB8oed31PXxmk70XA1DWWqIJ9ZRu7KppkjWFI7t8oP
+ wMkw2SQ5CDMecDelk93I4/dyxcOxi1UhfjORcy7DgDuQAbG/L7PMJ/PdTGq+CTIrPnEy
+ 61uhVciAt++LXwRmSkYvgupJDpVQiKFIu/IIi8YRqM6K5gXNKb7goHU6Vdhob8UETUhy
+ 7I2w==
+X-Gm-Message-State: AOJu0YwJ0tBxR19AEBX9ljUvmnamUza4+lRwdIG6gaBb8RkmANKnWLZY
+ F72FThbaCtegIhbn3/lWyZlt8LTRPoJlKveU7acY5naolJPNdDRlFVNcY/WcxFIk7y0=
+X-Gm-Gg: ASbGncsgWdEfJ9BGqWRQQxysiLNxEj8/TmQZJi0edV+ACcLUFtmAxMBtTsoDGxMrIyH
+ Ilc8R49I1fo3UGAK8Om/Jj4wdbUL+qlrjr0WHm+qlWx8As0UJFIPm85azkV353s673j+VtCNGnm
+ ia4Qg1xsiyp22q44WuNZ9PhV3IiUVQosvq3HVAe3Df2O+gavvKtrcJunMfe7TAmkhAnqIngSq9E
+ MnIX+vn3XeSVr4ShldO3XmpNNcwty8I2lDL/2DdKTCzAJT+ud2GtQ4Y9GjDTuCzqrQGxVxMRCfV
+ oCIEy7doml2iPXI6hqYWBkDbVJRZcmoqTn5nLT31C0dFoahAfnCgka5zz+fv+gsBB14ieWWIg2d
+ xRIZar78x601+ZT+hl+t1wp4rgg+UjGMLwMgAPrEQVqNEPHZqD+CiFhzYU5OIP1oOecxa8v1XpV
+ Hd3kjTJN/qKp472PypYusBKD6I4Ui3EKrY/Gd4JpEZoepA
+X-Google-Smtp-Source: AGHT+IHwboqN74Egvg0OdlpRLjuZdSWBldVXLfnrvpIzya2aEKE887HClTGUtjQeoFr9yLWMcGK84g==
+X-Received: by 2002:a05:6870:44b:b0:3e7:f55a:f108 with SMTP id
+ 586e51a60fabf-3e869095894mr104759fac.27.1763055197258; 
+ Thu, 13 Nov 2025 09:33:17 -0800 (PST)
 Received: from phoenix (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 586e51a60fabf-3e852044005sm1812181fac.7.2025.11.13.09.32.46
+ 586e51a60fabf-3e85226391csm1804898fac.11.2025.11.13.09.33.16
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 13 Nov 2025 09:32:46 -0800 (PST)
-Date: Thu, 13 Nov 2025 09:32:36 -0800
+ Thu, 13 Nov 2025 09:33:17 -0800 (PST)
+Date: Thu, 13 Nov 2025 09:33:03 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Mohit Kumar Parjapat <mprajapat@marvell.com>
-Cc: Reshma Pattan <reshma.pattan@intel.com>, <dev@dpdk.org>,
- <jerinj@marvell.com>, <hkalra@marvell.com>
-Subject: Re: [PATCH] app/proc-info: allow overriding defaults options
-Message-ID: <20251113093236.6c797c43@phoenix>
-In-Reply-To: <20251112130326.2674728-1-mprajapat@marvell.com>
-References: <20251112130326.2674728-1-mprajapat@marvell.com>
+To: Venkat Kumar Ande <VenkatKumar.Ande@amd.com>
+Cc: <dev@dpdk.org>, <Selwin.Sebastian@amd.com>, <stable@dpdk.org>
+Subject: Re: [PATCH v2] net/axgbe: fix the build warning for GCC-16
+Message-ID: <20251113093303.40f0c83a@phoenix>
+In-Reply-To: <20251113164109.522-1-VenkatKumar.Ande@amd.com>
+References: <20251113113055.371-1-VenkatKumar.Ande@amd.com>
+ <20251113164109.522-1-VenkatKumar.Ande@amd.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,13 +81,25 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 12 Nov 2025 18:33:13 +0530
-Mohit Kumar Parjapat <mprajapat@marvell.com> wrote:
+On Thu, 13 Nov 2025 22:11:09 +0530
+Venkat Kumar Ande <VenkatKumar.Ande@amd.com> wrote:
 
-> This patch overcomes the limitation of proc-info application
-> by allowing users to override the default -l and -n options.
-> 
-> Signed-off-by: Mohit Kumar Parjapat <mprajapat@marvell.com>
+> Build warning reported for local variable set and not used on GCC-16.
+> Fix the issue by using the variable for missed register write operation.
+>=20
+> ../drivers/net/axgbe/axgbe_ethdev.c: In function =E2=80=98axgbe_timesync_=
+disable=E2=80=99:
+> ../drivers/net/axgbe/axgbe_ethdev.c:1744:22: warning:
+> variable =E2=80=98mac_tscr=E2=80=99 set but not used [-Wunused-but-set-va=
+riable=3D]
+>  1744 |         unsigned int mac_tscr =3D 0;
+>       |                      ^~~~~~~~
+>=20
+> Bugzilla ID: 1819
+> Fixes: e04449488fdb ("net/axgbe: support IEEE 1588 PTP")
+> Cc: stable@dpdk.org
+>=20
+> Signed-off-by: Venkat Kumar Ande <VenkatKumar.Ande@amd.com>
+> ---
 
-This program is intended to be a one-shot read of current state.
-Not sure why core and memory channels even matters for this.
+Queued to next-net
