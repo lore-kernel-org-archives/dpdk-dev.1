@@ -2,75 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97C49CD8CB0
-	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Nov 2025 17:50:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAA89CD98CE
+	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Nov 2025 18:59:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 37C2240E4B;
-	Thu, 13 Nov 2025 18:50:56 +0100 (CET)
-Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com
- [209.85.167.169])
- by mails.dpdk.org (Postfix) with ESMTP id A2AE040E21
- for <dev@dpdk.org>; Thu, 13 Nov 2025 18:50:55 +0100 (CET)
-Received: by mail-oi1-f169.google.com with SMTP id
- 5614622812f47-4504458b29eso435266b6e.3
- for <dev@dpdk.org>; Thu, 13 Nov 2025 09:50:55 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 79BBE40655;
+	Thu, 13 Nov 2025 19:59:18 +0100 (CET)
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com
+ [209.85.128.174])
+ by mails.dpdk.org (Postfix) with ESMTP id 414DF40151
+ for <dev@dpdk.org>; Thu, 13 Nov 2025 19:59:17 +0100 (CET)
+Received: by mail-yw1-f174.google.com with SMTP id
+ 00721157ae682-786943affbaso10360907b3.0
+ for <dev@dpdk.org>; Thu, 13 Nov 2025 10:59:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1763056255;
- x=1763661055; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ d=iol.unh.edu; s=unh-iol; t=1763060356; x=1763665156; darn=dpdk.org;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:from:to:cc:subject:date
  :message-id:reply-to;
- bh=mnKDErVQ+YG09GyWiL7Omc32wmV/ekyfp8Jqe6Ty+a4=;
- b=P1V4/BGhG3vSny570OAuLn4CVsXmB/NT8Z3vDQv9cL+IRY1sQf5GkObN/5FcYSMuIf
- ejRTEVnTPiAt6YWlPv12nyW+Brw4ic1DyTjhKrX0mgyYCVcRDYcIxDHWiB4aHeJNyr4E
- NH6M38kyk4qhdCvK1Ci+8M0nNJHPgMZS/AgTyCAQa7VcJdR2UFv3Z/gpMst/9B+IiarE
- n6zcR8O1VZfBxpZF38ZjfGBvw6Q0ErgraMB9OC/IuWGLM2WA8pZTh1LnLko72jEnvBW5
- YPWSCz9b/vv7v4w0Ji5NKhR5CyzWIkK+eaQwNKFVzUONItBi9xubNldpg7dYHijd2Bjs
- lGXQ==
+ bh=KhU2bhHlpEBaups4VjvO39CPF3zKUcsU5JmKc9lBHpQ=;
+ b=CXfnC8HLMpfgWAgmTDnahBEJXEPz84oRrqAG1IV6DXgTELzz08MuUweiNm3fSw3652
+ ap2eJTJdGOqBSDX99f191oIXcRBukcl+tI0Un4f6nuis0i0SjhYoUl5nJyfTJNFktmZg
+ Zrgekjht+U17AYRvvwG/g1dSSc0OXTBBjQ7vI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1763056255; x=1763661055;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ d=1e100.net; s=20230601; t=1763060356; x=1763665156;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=mnKDErVQ+YG09GyWiL7Omc32wmV/ekyfp8Jqe6Ty+a4=;
- b=kE7kFIVV0AZu5LiI4tqPH5sPJ/4ja2TKdSBJRMdY1E52XzUaith+oiCQHh07P02vR2
- fLzBRQ3YueZwOOFi/9CEsSathn5I7M58X23iPmyvmX+QqPrz7iK4U+rCrduq96oLsQoI
- aKQAvaQ8rG33zGmZ+Pi2WlUgVQO+/W4Iuns69K3WeZuBmB5BNOFDX5cCPlBqYZmlb049
- pbrG4yvjnHsyVTFC/+InrZJSqMO/8ySmn/Q7nCQ3q4Qiyr0DzxAXwdEyeFBbUgES+WP3
- p1qSQGcVQjcu3pxXOR2IH9sABLRrMMpR2Fkk3K5AGc2pj3EHymTjQmefUMoty0FYXPTq
- rslg==
-X-Gm-Message-State: AOJu0YwNSdWkLde/FQJhp8SshGgAqjdDpkBGlTKURbviJEXu+OSC0gN5
- ZXdsyRwisJv7CCRgIH1d/ri9S6YYW7u8Fs5mfZLw3NP0juyPirwOcUV+DMVPrRL0c/+cmruiVb3
- z7yxl4XIp/Q==
-X-Gm-Gg: ASbGncswNY83CjLORWPokUXzEnDp9b/tzzqMv3Gr/imcirZs+lRpGSPHflbng5OUQg2
- /u58tGjFTnONqyzvnPooq10aWn4ZAfYDdkY8mySnxlFrk//5W8jIo1NWSqhB1W2yepDV8fiMtoD
- GpTOb5sC0AjQFbaOpzW7AQ8cOad4kWyhLxl8i8Y1Nb0ZbIwE+97QcQuy/INS8l1NkyDFnz5/jdE
- OgSZonsm+PgQnAPzwPXCwRq75G9be2IOdhfwyIgU/Fb3nrKbVlV+uhr1PVs3p2kgdZUYHmfEH/R
- ij+8tfCCB/B3tV73ugVk5XoHRDTKhOjqPmRvIbkw077xJAavzuwYLtg/XWk3LHOZkwGCC0Sg6z/
- RsTOyGD5o1xgO0XJOCTLS6K3hxcZObAL5Uraewcv6ILpEr1W6pVhuQcIiP7rDvvNpM2Mx3NAsQh
- KguP2dcj3j0L7RsK2hvP0BPdjjBv04vdnUArtYAstH1MjO
-X-Google-Smtp-Source: AGHT+IHFw97Tg2XUzPWxpgpfpfyTfsssN8SFngf7RIleYqTdU7OALPXcJPhR2zm+74HcZz3zl0DhGg==
-X-Received: by 2002:a05:6808:6713:b0:441:cabe:907 with SMTP id
- 5614622812f47-45097349b60mr60038b6e.14.1763056254811; 
- Thu, 13 Nov 2025 09:50:54 -0800 (PST)
-Received: from phoenix (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 006d021491bc7-65724cb8732sm1308160eaf.1.2025.11.13.09.50.53
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 13 Nov 2025 09:50:54 -0800 (PST)
-Date: Thu, 13 Nov 2025 09:50:49 -0800
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: stable@dpdk.org, Dariusz Sosnowski <dsosnowski@nvidia.com>, Viacheslav
- Ovsiienko <viacheslavo@nvidia.com>, Bing Zhao <bingz@nvidia.com>, Ori Kam
- <orika@nvidia.com>, Suanming Mou <suanmingm@nvidia.com>, Matan Azrad
- <matan@nvidia.com>, Ophir Munk <ophirmu@nvidia.com>
-Subject: Re: [PATCH] net/mlx5: fix uninitialized warning
-Message-ID: <20251113095049.008bbf9b@phoenix>
-In-Reply-To: <20251113163301.285550-1-stephen@networkplumber.org>
-References: <20251113163301.285550-1-stephen@networkplumber.org>
+ bh=KhU2bhHlpEBaups4VjvO39CPF3zKUcsU5JmKc9lBHpQ=;
+ b=osxY6GgUhsZ0he+n8Q8gdjwKFti67fyjfx3eGQa3X5odE2CWbMrSvvKD0chB/lrZcL
+ m3kfSTo99FyYBeK/+u78s+d5xGrssK2AFXTJelnJ851Y4SLKPKRwxp9kdhFYZB6KxzMw
+ kUaT9ldlXl0usT0y+ex4XpqpwPmliEHceAFH8OkNEQNAcaKkYu654pk9O4DTb8Y594+I
+ R9VfISIPMXZZaVO+qIRMcNJb/ZNQYC7g7v+4BW2rCoBT2UuSorUW68a9UqCAr+tsb4nD
+ h/r+qSxziLO43Y8mPaGFI2wks7owRJ5yA4H1P4Vm3VwwHT1Hu5+h/VJhWOK05gKeWgji
+ MJNA==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCVJ9DMaOPl/nqtuLQVKib4CZ/S6A/vKpZfl3K4fWFOuZ2Tqe9znwMdwB/L5uuqHp1cB/E8=@dpdk.org
+X-Gm-Message-State: AOJu0YxZP8rKjntSZ7wEhAGYZT9nfl1xbRwwus5Tjt74puVMMsbo/zVa
+ 0cwayjiS1cp4V8vcmTE9DKcFrDoYPNvA3duGjSjYFo6Vjm/EDN1lkjJvNcr9wuxJFkIQZxQVIY+
+ IBIj0XyzuPDJ7pOIHroy0padQaWkdP9202ZfQ31b9Eg==
+X-Gm-Gg: ASbGnctlzkq8peybEO6LKG8UfzFQCWmC3/1yeGHcgUKathlc4/ULDOzL5rUk/huMnBg
+ BpGfY6Fj9OcGUoKNF7h/VhAQX9hc8ZCd/zkhk4/sV1LcqbQfCPZlxLIuTkNfNzPWTEcT/+sfVNU
+ HDKeNetYbG51/A6tvtNZa9giRqKqcsvYNGPaJeHhDBsUyf//iToI6HPiF5n+Dta4+ZIkpDUHU1m
+ 676GFqxgvT96/pdt67jgnwjSIhAiK6jKMb9s84q1zv9oBWaOdvRFL4W7TBQs331GQKwVdSD0ku0
+ 5WYiNqlJzw==
+X-Google-Smtp-Source: AGHT+IHIsvLKO8dEEjTJFMnBukpuZHj2qnipy3UdClCCB3z1o/jTEAxFnucJRFrPYV8+f5QTIZJaHT/bHBWsVvyZsYM=
+X-Received: by 2002:a05:690c:a192:b0:784:997d:b86 with SMTP id
+ 00721157ae682-78929e0cde1mr3209597b3.2.1763060356511; Thu, 13 Nov 2025
+ 10:59:16 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+References: <20251017203159.557830-1-dmarx@iol.unh.edu>
+ <20251024181606.604135-1-dmarx@iol.unh.edu>
+ <20251024181606.604135-2-dmarx@iol.unh.edu>
+ <CAJvnSUDywCd9cdjWtpGjpkdB0Mk-dYs+bmra_CKKNhkD6Q44Mg@mail.gmail.com>
+In-Reply-To: <CAJvnSUDywCd9cdjWtpGjpkdB0Mk-dYs+bmra_CKKNhkD6Q44Mg@mail.gmail.com>
+From: Dean Marx <dmarx@iol.unh.edu>
+Date: Thu, 13 Nov 2025 13:59:04 -0500
+X-Gm-Features: AWmQ_bmit8Q3QXRxckRR4PIeuodgr6kDx9rdwVcKTmkC0I4licZIj1NRQ3u3oy8
+Message-ID: <CABD7UXNWR-WY+Oe_JFSCXWfB-vGxQy1=68nDRxH4_x-hHQD0Ng@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] dts: add QinQ test suite
+To: Patrick Robb <probb@iol.unh.edu>
+Cc: luca.vizzarro@arm.com, yoan.picchi@foss.arm.com, 
+ Honnappa.Nagarahalli@arm.com, paul.szczepanek@arm.com, dev@dpdk.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -85,38 +78,107 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 13 Nov 2025 08:33:01 -0800
-Stephen Hemminger <stephen@networkplumber.org> wrote:
+On Fri, Nov 7, 2025 at 3:15=E2=80=AFPM Patrick Robb <probb@iol.unh.edu> wro=
+te:
+<snip>
+>
+> The testcase does look good except that form what I'm seeing, vlan_filter=
+ is not supported for 88a8 + 8100 packets (it won't read the 88a8 tag). I s=
+ent Bruce and Morten an email about it. But, I think the most reasonable th=
+ing is to remove this testcase for the 25.11 release since the expected beh=
+avior is either not well defined, or vlan_filter is not supposed to be able=
+ to read 88a8 tags.
 
-> Gcc-16 detects use of uninitialized variable.
-> ./drivers/net/mlx5/linux/mlx5_ethdev_os.c: In function =E2=80=98mlx5_link=
-_update=E2=80=99:
-> ../drivers/net/mlx5/linux/mlx5_ethdev_os.c:539:15: warning: =E2=80=98*(lo=
-ng unsigned int *)((char *)&dev_link + offsetof(struct rte_eth_link, <U38c0=
->))=E2=80=99 may be used uninitialized [-Wmaybe-uninitialized]
->   539 |         ret =3D !!memcmp(&dev->data->dev_link, &dev_link,
->       |               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->   540 |                        sizeof(struct rte_eth_link));
->       |                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> ../drivers/net/mlx5/linux/mlx5_ethdev_os.c:515:29: note: =E2=80=98*(long =
-unsigned int *)((char *)&dev_link + offsetof(struct rte_eth_link, <U38c0>))=
-=E2=80=99 was declared here
->   515 |         struct rte_eth_link dev_link;
->       |
->=20
-> If the retry loop exits the code would do memcmp against unintialized
-> stack value. Resolve by intializing to zero.
->=20
-> Fixes: 1256805dd54d ("net/mlx5: move Linux-specific functions")
-> Cc: stable@dpdk.org
->=20
-> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-> ---
+Agreed, I'll remove this in the new version
 
-The build fails with clang because of the (annoying) use of pedantic in thi=
-s driver.
-I will let mlx5 maintainers fix it then.
+<snip>
+>> +
+>> +            verify(packet is not None, "Packet was dropped when it shou=
+ld have been received.")
+>> +
+>> +            if packet is not None:
+>> +                verify(bool(packet.haslayer(Dot1AD)), "QinQ layer not f=
+ound in packet")
+>
+>
+> I guess you can also verify that packet haslayer(Dot1Q)
 
-../drivers/net/mlx5/linux/mlx5_ethdev_os.c:515:33: error: use of GNU empty =
-initializer extension [-Werror,-Wgnu-empty-initializer]
-        struct rte_eth_link dev_link =3D { };
+Great point, I hadn't realized the final if statement could be
+silently failing if the Dot1Q layer doesn't exist. I'll update this
+
+<snip>
+>> +            received_packets1 =3D send_packet_and_capture(test_packets[=
+0])
+>> +            packet1 =3D self._get_relevant_packet(received_packets1)
+>> +            received_packets2 =3D send_packet_and_capture(test_packets[=
+1])
+>> +            packet2 =3D self._get_relevant_packet(received_packets2)
+>> +            received_packets3 =3D send_packet_and_capture(test_packets[=
+2])
+>> +            packet3 =3D self._get_relevant_packet(received_packets3)
+>> +            received_packets4 =3D send_packet_and_capture(test_packets[=
+3])
+>> +            packet4 =3D self._get_relevant_packet(received_packets4)
+>
+>
+> rename to make them more descriptive? I.e. vlan_packet, 2_vlan_packet, qi=
+nq_packet, qinq_vlan_packet? Or similar.
+
+Got it
+
+>
+>>
+>> +
+>> +            testpmd.stop()
+>> +
+>> +            tests =3D [
+>> +                ("Single 8100 tag", self._strip_verify(packet1, False, =
+"Single 8100 tag")),
+>> +                (
+>> +                    "Double 8100 tag",
+>> +                    self._strip_verify(packet2, True, "Double 8100 tag"=
+),
+>> +                ),
+>> +                ("Single 88a8 tag", self._strip_verify(packet3, False, =
+"Single 88a8 tag")),
+>> +                (
+>> +                    "QinQ (88a8 and 8100 tags)",
+>> +                    self._strip_verify(packet4, False, "QinQ (88a8 and =
+8100 tags)"),
+>> +                ),
+>> +            ]
+>
+>
+> this is good for testing behavior when we have both vlan_strip and qinq_s=
+trip enabled. What about when we have only vlan_strip enabled or only qinq_=
+strip enabled? I.e. when we have only vlan_strip enabled, and we send an 88=
+a8 only packet, nothing should get stripped at all. It probably makes sense=
+ to have different testcases for vlan strip, qinq_strip, and vlan_strip + q=
+inq_strip.
+
+My logic here was that vlan strip only is being tested in the vlan
+suite already, even if it isn't with this set of QinQ style packets. I
+think it would make more sense to add those extra cases in the vlan
+suite in the future anyways, rather than in the QinQ suite.
+
+I didn't test only qinq strip either because Stephen Hemminger
+mentioned it was undefined in this email thread (second message):
+
+https://mail.google.com/mail/u/0/#search/label%3Adev+qinq/FMfcgzQbgJNPMqLMR=
+LkTsrxMrfRjJLzq
+
+>
+>>
+>> +
+>> +            failed =3D [ctx for ctx, result in tests if not result]
+>> +
+>> +            verify(
+>> +                not failed,
+>> +                f"The following packets were not stripped correctly: {'=
+, '.join(failed)}",
+>> +            )
+>> --
+>> 2.51.0
+>>
+>
+> Reviewed-by: Patrick Robb <probb@iol.unh.edu>
