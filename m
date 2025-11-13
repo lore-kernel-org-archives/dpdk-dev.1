@@ -2,47 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51698CCFA18
-	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Nov 2025 05:30:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0E00CD4F2F
+	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Nov 2025 05:30:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5ED8140E3B;
-	Thu, 13 Nov 2025 06:30:02 +0100 (CET)
-Received: from MRWPR03CU001.outbound.protection.outlook.com
- (mail-francesouthazon11011064.outbound.protection.outlook.com
- [40.107.130.64]) by mails.dpdk.org (Postfix) with ESMTP id EF21540E1B
- for <dev@dpdk.org>; Thu, 13 Nov 2025 06:29:59 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 4BC8940E12;
+	Thu, 13 Nov 2025 06:30:04 +0100 (CET)
+Received: from AM0PR83CU005.outbound.protection.outlook.com
+ (mail-westeuropeazon11010059.outbound.protection.outlook.com [52.101.69.59])
+ by mails.dpdk.org (Postfix) with ESMTP id A0E1440E2D
+ for <dev@dpdk.org>; Thu, 13 Nov 2025 06:30:01 +0100 (CET)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=IdYVuvj4U9Cd7E9m9c6gPWshMAU15TkHuiJZvUuD5SMph16LD+v0feaUE1a2Fwjmt7x5eio1sfwoavh0L9C15zCA1bGOAiy1Pfydp3NXe3SX/SnhLVQhlNZHhsS3Hhv1UyBdvDvG+54KJsvF1FIMu1glxAlc58gFnEKRbitbS6HSKB7Uj5D+DEdP6+dph3Gqi/GpgMh72QrrdXjppNwn22xXR167/C0ermLySHaN4yOAPAFf0N9VrIQxZDUHwFGCCLehjzPj9LuOyZ8KzQE8rj0cliryq41UesTi3RCkxpdYM8lsfCNLa+FAaTfS1fuOpSdyhmK25HaPzcvxygmwtw==
+ b=B5h2HnHwQt22n/VV5ZP4/9dHoxZHG4HScWLItfcjnmFR0XGAYnu1QuGgMnmuFIuAQUkIZ8ZfplnB0cRsdNyvbuOw4it2kvnP5IZ8R7NIKXbYNRv5G2pBHaBHqgMTuAltiyNFWMs+nWFnmkwLgIxov3JGa0Y+0oJlZC3ZXjhFB6QDGItGuIYg4yfTWKf45IatgfOhuEp7UUmVUYMamUIgwNG2F4dVCJXA2N31WCMMMgf+diokBnXZhZ+rJSYNIT1ppGN7MI8bGV5D8sCsGorukf8Lk3NixqYydZ9SDYDnJxqbm3dwfL+G20AdMItibW2R39r/2jf2sNwl6hBemcdWwA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=g16oNUNSXxwD45uSB1I032QfdntXoNvDZb0JtO222ts=;
- b=laUNMZIqLZdFyi3JPc+8iZjbHUfnYeDWR3cH6i7OcPvrx/nxyL0pk/l+KSXG2MkYm7T1oadhJexl0iVkiS1hJcEMs62wyEoekZ8YxhOND8DJZwLVvUAXLj6VU0JTWOAPbAr0jEcuq95A5B5GLiIYKeHypySmX7Nri7zCC13n7j+Po/6VupTDUl8x1bp1W7kto2HNJULcYNhdE7W/jYJB1jYSt1U2tswNJIFuSTxgR3KuK1X1AY+WUMFi2tW6nUpbGWDJhm58ja6tG0VLVMocx5vUdPXyvIS964XCg/BMXBunnjqgcapniHo6al0xpsClEREv4iS3a3vz+y8mdw8prQ==
+ bh=DGMU9nEhwBkXcMCHRjAQtytcLAEmYBoomPQXNLQ+J10=;
+ b=ippziHfg8f7LqXODM2ijjnoE+w+WEBs9K+sLdumFfCDMU2mz/+oRpoLEXq441BVGpevHLqcupaUPYp/XDL3fjNdOsj8BQjX2C0WtWPb4Z434okoMoxCCLjsj/G74uhJ1/i20m0okJ0I5n8PU33jx2nNC9sM+RICtFg8xVFomNywzSd66S+A3QoZXp+b/vS1+k++Nzm1e964vkk6bK6YdKNFNA/drLBTNYtMPWKekQWUMCT3uvP/uH9pr5f7Fo+Tts7zU96ONb+HsrK9H9YcAIOKXlEyFkpA2iH8Dim2jiFqMuG95aEP1IN1angVRjCr/j5t1reXAHDmG1ykRT0160w==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
  header.d=nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1; 
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=g16oNUNSXxwD45uSB1I032QfdntXoNvDZb0JtO222ts=;
- b=fI/B39fgzDa1yWzeg1dZ82SiRtSnlV14Z2h8NSm31v5KvvbrZrf+3xXUeC7D4XfhihQSS0Cwg05kNcHcNXPCrBaxXMjgPjfMcf3uvvCZmk3HYIyiM4mTOZB8QwIyjyT4v8E+dZhiYkQlPtoFEMnFGl+9yF8ersKSO+TlwYt0aEyriC/cuyYBp+xn6xY+9n8a7eToWg+D+s/Dv5Ib3oc7BmTiz+BJUeTRxgDxJ7UqWU/8/qdB6P0nItl/hWrvFrHrq9mC0Chg/KxEs/dWEjexkEp11zfS7KwJiUgyu/psEXil7ylHu7cHoemRfujGfg7wN21cmVQDtrASqD8r8k8uAA==
+ bh=DGMU9nEhwBkXcMCHRjAQtytcLAEmYBoomPQXNLQ+J10=;
+ b=KmFX9Hs83FwXnkKs09sr4c8hMNjnt6JnNwjHZBtyGpRF5VK9q1EC9OP7mBEZIx0mnh+hxB1H4PsV2Bo0Bmag5pQ1lToyijxqBHE1DYxi4dHizbc8SJaL4minvRdEWH0Ae629IyajaAEtd/IHpFud64SSXZESNUvzhpyHm1dkl50A88rmaxoH4Z3zLgEOvsv1S+FFxTSegZYzsqpBDRU0fIm9dkpx0cYnLoEeDo0Ny/442qUmRSYn+K/r2pkdN1txRzkQR6yri6mdjT31pMDK/+8Nc9qBKU7L/mxyQFSdzR7s0YV+W7RlvOrOdshKNoO5Uaj3ZZ/QU6RiRRHhMXer1w==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nxp.com;
 Received: from PAXPR04MB9328.eurprd04.prod.outlook.com (2603:10a6:102:2b6::15)
  by PR3PR04MB7355.eurprd04.prod.outlook.com (2603:10a6:102:8f::19)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.17; Thu, 13 Nov
- 2025 05:29:59 +0000
+ 2025 05:30:00 +0000
 Received: from PAXPR04MB9328.eurprd04.prod.outlook.com
  ([fe80::f268:adb3:8817:15e1]) by PAXPR04MB9328.eurprd04.prod.outlook.com
  ([fe80::f268:adb3:8817:15e1%4]) with mapi id 15.20.9320.013; Thu, 13 Nov 2025
- 05:29:59 +0000
+ 05:30:00 +0000
 From: Hemant Agrawal <hemant.agrawal@nxp.com>
 To: dev@dpdk.org, stephen@networkplumber.org, david.marchand@redhat.com,
  maxime@leroys.fr
-Cc: hemant.agrawal@nxp.com
-Subject: [PATCH v2 3/5] net/dpaa2: fix queue free cleanup
-Date: Thu, 13 Nov 2025 10:59:29 +0530
-Message-Id: <20251113052931.1784953-3-hemant.agrawal@nxp.com>
+Subject: [PATCH v2 4/5] net/dpaa2: bifurcate close into close and deinit
+Date: Thu, 13 Nov 2025 10:59:30 +0530
+Message-Id: <20251113052931.1784953-4-hemant.agrawal@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20251113052931.1784953-1-hemant.agrawal@nxp.com>
 References: <20251106163807.201451-1-hemant.agrawal@nxp.com>
@@ -55,79 +54,79 @@ X-ClientProxiedBy: SI2PR02CA0045.apcprd02.prod.outlook.com
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: PAXPR04MB9328:EE_|PR3PR04MB7355:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4a386721-78e5-4cab-510f-08de2275afc6
+X-MS-Office365-Filtering-Correlation-Id: 976d6469-2b4f-45ae-64db-08de2275b0c2
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
  ARA:13230040|52116014|1800799024|376014|366016|19092799006|38350700014; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?VqugKKb5vlkqNhuaey/hPK5IcXcYK5t7ROriO0plrzWpmYyqtSKqYyFz4vyu?=
- =?us-ascii?Q?Pn5FwtdXCUa07iEVBne4J6hb+bS0bgmi4kg+E6bMGtPu/Tw68I55nDSWP57A?=
- =?us-ascii?Q?xOVBKhvgHNiL3XHDpoh0Ptli5+FFjDj9r340VuTTreesy3vydmazq0DVyT1R?=
- =?us-ascii?Q?fhO61ciohVKYKcPQ0XjqAaYzgIrnzppCIaVP3HnWzuPeDTB7vE3PNvIjmHxR?=
- =?us-ascii?Q?OF2XrOGII5fB2bGLdG/Nx4fgP+kVu6vqLutL93Qf9Co4ZWe5ZAT/FMf0WIhe?=
- =?us-ascii?Q?McFSEH2zdZOOH3xkBXwDpW5L8URX3OJ6L6YG4zYRodIwcKj0QIRKvAUpy1oi?=
- =?us-ascii?Q?w7VLn2StbC8bv0XewnxWjupoQ/fmrVuZSX9vOGs1wbC54aKYxZsM9yGjm9GY?=
- =?us-ascii?Q?PM9LzS9H6zfMwWC1gy96CtaBwx9yGwYSX+2PBXE4IuA8klBU4fjY4FOtJqBy?=
- =?us-ascii?Q?PYC2CpzKpSAQ4P9Q9u6Qd4MZqiycT/KD3LQ9B0saUHmh5P8tsYgOgwvVgqQ/?=
- =?us-ascii?Q?gPauuJGsVmoxn1FCvHfP24IRFk4WYlqZVc54dfKe1ldiOjm3aRc4eI8Hx9w/?=
- =?us-ascii?Q?mHveVdKQNoUYBmwPu5dl85NVVyVnC94G8tw/YdXzP74HQY1Y1csyVd2joadP?=
- =?us-ascii?Q?o5zZnxg23xymTjwpVM0VReGUBigHboF+LfJrfCtYINICjGNU66MKehWO9csn?=
- =?us-ascii?Q?BC4p4qpxO6eUqa9k/N4/AQk003lo3X2qBLCzlBc2Hz0s/wPHRJb4MJdyDt6G?=
- =?us-ascii?Q?6Ap8lfgR81caibVYAYvlCSjjSnhODqa5zSPxpjP4q6qgviLzEVADws0ElCpN?=
- =?us-ascii?Q?MyWkvcf6eFLcTwBVqXnfsf6PRKG39Gx4i1fZk7VQJzcMzeyK0a8eLxiHKeB1?=
- =?us-ascii?Q?K33E290njTVECWm6kOasfTHFJTnYKtDmvNEefNTEUf907AnKe4Zk16WAtsbb?=
- =?us-ascii?Q?qvpCU/ZmU/MiS6BHPzd3zgTVavn0XwHRr214A9J40ZNbD/gFYCLTfTo1Wq6O?=
- =?us-ascii?Q?8csTM+OSKPFAnyZX2Lw0u5WQIK/t0jdJZR+4LtejaSk6/Z6uZqcpsIHZ59ux?=
- =?us-ascii?Q?C9TceH+sHvAiWAcVgbjDfllpBAHcxw7zGIQ1EVBL/89YUiSff36aQ+8hQthH?=
- =?us-ascii?Q?C4/WfwVXeZWw3NhIOfq/3Zl8czPpPwNsz4+0y+LfGT0pW8rvCr7m2WunC/PK?=
- =?us-ascii?Q?OPj4pHNBOZeCI86iv8HIGK8++gF8In+hSQvwO9b3ZOafCg70MFjx1jSecjmQ?=
- =?us-ascii?Q?VSW3GWKSsKqmjL+rjHEPhX8DV/fmRQ4PisVolkNiuCKSOnICqFHpMeyQzaDu?=
- =?us-ascii?Q?rbPsuQHFTqAFh/X0mLEN2yirItXDiC7SjPbWwrBqeEztnxntY/iHIZzFnOMb?=
- =?us-ascii?Q?R6JWReyDlLAI/2ASDQteKfn+U4GGxfSxG4YCKjRodSxfmWGIXwg6lS+QgwOB?=
- =?us-ascii?Q?3giCPvKjpe5ymyfZjugz+wJn5ScuqQ0SWvSrmXBsGGrt4uNzZA22X/MM+vQY?=
- =?us-ascii?Q?u6h2mOUgR45TYIRZLg6vdSMIHbLfGsN+tcqG?=
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?EhO8tu83dbrL9d38NP5xwzmLTZN/9Kju5rxhuz2nNOGw4jSyQmOr4Ocf4rAJ?=
+ =?us-ascii?Q?NRvb7j8ko+7S1B/NfHJ0Mcsxg47xFNHsficr1EEe8diBaOOAtlLzTxlU6Szr?=
+ =?us-ascii?Q?jsX2Dz3z/e8QIAfJn3SZgZ8vQiJTtPYk0SBWbsCI0mKbDfAI96PHVgbPtmhA?=
+ =?us-ascii?Q?KBBWDj93JGa5HUDebp6WbWhmPyj/QNK2p6hFv2xW8czB3eqiynMf/L4GCtLk?=
+ =?us-ascii?Q?iy9sshmrfcjST3XWop5G/v4vX5kLFxr6QCcTHwIqM4xF24xeFlPUJ5KzK8ye?=
+ =?us-ascii?Q?Xsjqw1wLLoTMnbyIRJst71dxz4eLvPOBJ3ThgPrfb3SQPZxFHsYTw+o9urn4?=
+ =?us-ascii?Q?6qoYqzAhxFJ6unq6ftqjmcI9vCLAG1ld38oL2q7ackFbRAXbIa3i+WMcu73t?=
+ =?us-ascii?Q?D8YX+Feyo+EErgy3IgYkAdqlSjezSKnqB3tVB5ecbd/InXtB5XCDSgvL0Zh9?=
+ =?us-ascii?Q?fCEdCTyHCJ8ZADn8h6jU801mQBTNrhWDgRMTsd4xZ9t3rBuuTeq/nGgm1rKJ?=
+ =?us-ascii?Q?Ruf93z/NsL+cI+ZGI4laGIc8r8E3ch5qSKEK+QkA+FJoZ121CBmu3AsBDIXG?=
+ =?us-ascii?Q?m+XHPcLqn8G2HaX32VnaDR6q6Gj1JXWictSGt4GtJZ1m6JSVAjRl0E56GEp1?=
+ =?us-ascii?Q?QoPMEa44u8XFAmVCCFQuDHOrp/Etwq4Cxuz2AsQZ4vbc+zmOyoyNCHkkdJCR?=
+ =?us-ascii?Q?ZcfkbqZE9jEAjAvWdawNpAoqwW1nvpg3j5Bff+pj+vPSdhEGmfT8hyMcE6F/?=
+ =?us-ascii?Q?g1sfEpAd+R3btpB4PsFKfA90AwdxXN22PFcac7UOoMmg8IPTcij7p5Gf+uck?=
+ =?us-ascii?Q?i7uEGuE0MUu/yGCOY0j4lB9sDlWPmj6JJI6M8aSjIXlXpPny0Xy9XwqUS68l?=
+ =?us-ascii?Q?uEIHfHDEOdQso7FAU+KtoAea8Tee00EHBI058vc+eGwQFhDnJQNAQ6+ZJMe3?=
+ =?us-ascii?Q?hmlIlhskES+lLRw+OhxVM1uEfr7l8yeeEqhddnhnVaqBibHdux3RGJnwD/9O?=
+ =?us-ascii?Q?kbGxTduR02OtYEvc3TeI25PS/r0WdXaUYDeMUUkMu7heiyyGoBb8bANUPsv2?=
+ =?us-ascii?Q?/1jEcGNlluQ2ld7jAfPg20bzQ2vzF+D+ajioheEITsiGaodpUAcs4LAtKoO3?=
+ =?us-ascii?Q?5sdTGJepzzg6Pn5MEu6v1/yHgG08QgzU7AaxJQD3AToh/euq22aOZrMSxr4/?=
+ =?us-ascii?Q?G0POelqXZ4gU3tp15VzQxhZ+jtfaPBxwul4A15gJ4fyvVqQMvfB0iAwYCIwr?=
+ =?us-ascii?Q?RbKqcaA0la4pgtvbuOBC9Yq1kkcrPKv01vQ/M1YJQIC+8u0NX6ScOHe62uxm?=
+ =?us-ascii?Q?TSml05bjoZtK31DqhcLKetwXJxNODY0cuwTZ4m75YxhYZupZx/T0RFKHa8n1?=
+ =?us-ascii?Q?aBS0Cwy7Qa+3KdfohAIegHQpwZBBA4vZwxOn8vt1AzICNTGPIY2pIOowGzmz?=
+ =?us-ascii?Q?QwfbpUV7rwWeOX7BWIr46AF5NAP0ht+dKJMtevnE+s9rfFL+55DFwTNsNJag?=
+ =?us-ascii?Q?Pyn7E5nDHTPOTkE2gumu3B0tJNxscCgCP7ih?=
 X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:PAXPR04MB9328.eurprd04.prod.outlook.com; PTR:; CAT:NONE;
  SFS:(13230040)(52116014)(1800799024)(376014)(366016)(19092799006)(38350700014);
  DIR:OUT; SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?8wkdbcwGRB5SGc6OVzfhQpVr5VgUrgFX3GnuOcNkLSm9EsJoIhV5p2Rn6GUh?=
- =?us-ascii?Q?1OvMkXBRWn0BA9ESaOvMkGhLA6xsN7LaGfEoheakiPIa6zaM6a7ENMd3rHHV?=
- =?us-ascii?Q?KP9D8F9fSf3AfFrHSLR3ojyx+zSqpwgyis5Jln/h/wIrubICpImKbkMBtfuQ?=
- =?us-ascii?Q?Nlcw0nQhuSDK9Fzt0QMAvmphXzyJo6Am/vdJdSVUMqSCw/38a1z2fTbAaOjd?=
- =?us-ascii?Q?rzje5zIw+6+fB4dlFUlej2JnzNVmbfrpSJAMjZV4QZCo3mZOLSfPBf0CXg2Q?=
- =?us-ascii?Q?3pR6vF5UtLc367vMMLaXzJskyJ6+cxgxLVst2f/5NJHfRevhD4Qkz/5qX6Uq?=
- =?us-ascii?Q?zot7OULM8dRVAdB9B5UMP0V3HLL/Smo1N/rQXaATX5lLGm1xsx6whBLWKPgk?=
- =?us-ascii?Q?K6f18ZmHh1eVixd5Q/gIJ4IsgwIJetogiJhawIC0SciUeKWMCR70DyTXzog1?=
- =?us-ascii?Q?JGjHQQBOxPqpvhSsF1PdfSIWV8QiNitQ5Ln1CQZcaeemf33PGybyzZwY5J3Y?=
- =?us-ascii?Q?A8OFHthKmJya/WzjD0hWZzd2ruZdIq224GZwg2uFxW45O5Lx2pMnmgVd2r0g?=
- =?us-ascii?Q?pYmU9gqzNL9au3cPSKHaBj+QWh54yUU5D0EqldqgNlqpmcoGO44VEdDTNI14?=
- =?us-ascii?Q?ItSS+hAp7rFbXA+Llg4rs/GmPRQqlA6M1mBv16vWu06W20cfrdzwdVTFw1Ik?=
- =?us-ascii?Q?aKb2g7/jRhMn4DY2UA1A60gs7TlhZow85cCyHr4AswfniXBfQJGL6pN1faEu?=
- =?us-ascii?Q?hfSeSpyKhHW9Jdr9pfR7zH5MFG4pGDSrvGhJduPmyIrVtQie2vItm9D55mFW?=
- =?us-ascii?Q?HCnLAl22t8IL10ZIXUraRO1r/UnlCfvnKMfhLh4I7s+RuF7H0NGevLd2+bzt?=
- =?us-ascii?Q?beXzrMUuulwKTFlmwbLErZpN/Qb4wzoUxApmi5/8xD+URRlB3vdAxqg7TpqB?=
- =?us-ascii?Q?Py44xFIUxYk2gfV9dHuB//H4mwLO44P/Ix7fV0Cmm4chxUJVYfWKQBJ6VHW5?=
- =?us-ascii?Q?st2WTkULkrXvx0ZEaUAz2QS18N2TbNMtYrAVHIUdZDDHn+JHbVBw/zF+ZbPB?=
- =?us-ascii?Q?ot9WEkrwjYWgSh0Gh+K/+cn/Jh+toYHxsN9DgFGdHSPy0mU5QBI1unRXJ+aS?=
- =?us-ascii?Q?e7r5yDICw4FK0rrG26ZgsGj9LsM/PlxHpbFWjH7BU3GHyG6I1kBIOK7sb5dm?=
- =?us-ascii?Q?uFox73ll6tUzlvO8S1saH2UVBJE2f/hurrjb9jgDnNjdk0Cga9V7iAytoRMx?=
- =?us-ascii?Q?xwmKwX1h3DiRVdZxAQ/JUleKT0MyT0tKb+pHeTrTY5xp0WlMnSMWWbQcLKxG?=
- =?us-ascii?Q?I3fAkf+fYptxK6dZnel1hqvkJQ4NGLVeM84RvYyypH5tasD/qvLOlgzPz1qA?=
- =?us-ascii?Q?IY7YCPXOcMdcGgcB1w3oSGSoc59lvmWA2LN1430m0zJsARFMZMVauSQOnVoC?=
- =?us-ascii?Q?GaraggFPeSvrlOvERpNAUmrFHjDa07Y/AJWV1DlYwyCH35Q3hHNPKB/l0MhU?=
- =?us-ascii?Q?1N9CQr1yS+OFGnbcylQM+MzsQASj6n7cPdN4puFZmXP9VdPbt7+m52+sDMoX?=
- =?us-ascii?Q?MnixqKLFcW9WKQL0w8ExQNns4nmn24iusXmi5Jx7MXg4EdgrgMxR0skqOobM?=
- =?us-ascii?Q?Mg=3D=3D?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?RxOFsyEOVwB9AYRdvpaD2epcvB2ddznUyvlWVVyKPliUkFDPiMNKOz+8bxqv?=
+ =?us-ascii?Q?GPRbXeoMz3xJSDeSmbCjQqQMO2S7L2a1jXUq3Vkx9ttF896KfFKHhTQBcP7J?=
+ =?us-ascii?Q?QQ9OAyEJYqVMJFZHrFQXeOgUGVkIPWjnO5i+jCfcppSD+j2QuzT7ZoMBjfs9?=
+ =?us-ascii?Q?CMg49m9QCiMRmsMC0jV3JvdrudwcoAaqvV8CNqMKiD6yCaYzKx7cvqgo9+pt?=
+ =?us-ascii?Q?47FalOeSWyyPuPHB/zG4lJxvu3DvargTYMhPg9Xktc/s/5aFyhT5Xy5qENML?=
+ =?us-ascii?Q?SLNQwKG+ClHSCxkEvs9LavTLDWPJL/Y7ZaSRwLmxFliK21z14wudtLHvnIMb?=
+ =?us-ascii?Q?hL/OYiKpEvyC5t1hHEpfZ36uGcfRx9dC27Jp1+2V0jh0GvE5f0Qazv5hq3wt?=
+ =?us-ascii?Q?8Xu9d8R9pm2BIFzXwCkrYtXATeVOg1J5RuoRuxrQQLb0rtcDHLMz9d+5jU+Z?=
+ =?us-ascii?Q?eunkddhnDZLFHDuZ5vZHdI35OBg89xkrgj/kktLnixGKVFGTPpYRhLBg/APr?=
+ =?us-ascii?Q?1TO/hyLF0lMuXra5PWPBI8wl/0BOHTun8MrVjpjlxYYESUgAl56Q0tTgQYUk?=
+ =?us-ascii?Q?54php8ZAKbB763Z0TM0hcOAW+N2D5UYpac5pB5LZZ8g9tXTEaf2zrJANfl/w?=
+ =?us-ascii?Q?uyd1RUEtIzIbAHuUuZOOdvtBcNzdgn4AWODRHh1yojWrSOB525P+UXgfyHhi?=
+ =?us-ascii?Q?CUcDouYLz3kTzFcF4AQ9OZcqqLcjMfnrZNKcZPxvqfTTl+cGSafnLKD/lQiK?=
+ =?us-ascii?Q?ZTRdq78JkXLEKsLYREWZj3Zu0UpcQQwef9L6vWaTtcduk/al1KsTlnsR4aXZ?=
+ =?us-ascii?Q?VpR/ogO3YLAhujf2K2KsKu3WMbWoh0XVuCz4KldeZOWbPAS0D0GdR+euZnTm?=
+ =?us-ascii?Q?ZRqK+oHGxktO+6TEdrjRmF6aM7XVo63tXPg/xJRfJ33OCipDREi50f2GpEd3?=
+ =?us-ascii?Q?Yn/Vxky8c/LM4k2O06M4Uz1bBglNOSHAyWbdemMbVxeISzhfJ/XcnoOzcMiR?=
+ =?us-ascii?Q?ymqzikbri1BO4RWielvOfbOg05eY1o5zLQOl8fWRg6jitFTBwqgzGk8ite2r?=
+ =?us-ascii?Q?zXlYPEOL6yseeLyEsE3lXwV7Eaur/T41iBZTMLyqvYqz6typjs75x/Z/jqKI?=
+ =?us-ascii?Q?BBNn0BPRezejxxE2cljkIC3/dQ87QnR70n6+BxZvQy1RLZ8MSs7Pfwkp9oFs?=
+ =?us-ascii?Q?8nDk1hrOMO1NEFiB73DYCdhufhlmeczWk0u5l/Iw9Sk3Bo/1xYLsz3TGrL1/?=
+ =?us-ascii?Q?YWwsArllPdAzrHL12yp3jYGoCzJwxWz73498S7vSfGgYKTfrk1tc4c4Qi9LY?=
+ =?us-ascii?Q?D4eb/urR60UDwtV50sX2GBDyepBeLB0f8eximSgh+25MRsdUrqSilMWZOXZ8?=
+ =?us-ascii?Q?ZMB4VDhJB9mM9OCRfZUG4CeChr4tn/B2eC9cFVLF3l1LpHMlCcoSVgZYj3gY?=
+ =?us-ascii?Q?Ggk/Jv+4w5entOUGMEjR8qq5T4/t0sC/mml4hvkQddMWhOSdxX4z5qiJJjqz?=
+ =?us-ascii?Q?0w5Cxjlz16eIaxbH4rV98iljJXNUd0IxTjwMs9PWR0cstHLzSTCNFag4hzhZ?=
+ =?us-ascii?Q?h/lXb03EqZlKvNMXcTrRhWLhwKyowO8lWGi/C1MUxIRbJ5gCDRkQu7H4YgU4?=
+ =?us-ascii?Q?xQ=3D=3D?=
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4a386721-78e5-4cab-510f-08de2275afc6
+X-MS-Exchange-CrossTenant-Network-Message-Id: 976d6469-2b4f-45ae-64db-08de2275b0c2
 X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9328.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Nov 2025 05:29:59.0923 (UTC)
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Nov 2025 05:30:00.7368 (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: KtvoaHdVj4UCqFH2aFMpsL9sbA2/brm0VQvVPw8XifjEH4D/NcMKRTChGgPmrNCB7YWfDlbSKY1Heyw25GzPvQ==
+X-MS-Exchange-CrossTenant-UserPrincipalName: 6b9H7OvBQ/xrPeCeAAcgIRloa0uHdX5U/Q2pwGmI3wlcp3LkjLYQOzWgVrnUouFjXDhRI3tUxbkPHcsxMMZF+w==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR3PR04MB7355
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -142,50 +141,148 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The RX error queue was not being free.
-Also, set the free queues pointers to NULL.
+The close function was overloaded to be also used as deinit function.
+This can cause issues when using functions like hotplug.
 
-Fixes: 407ce3e5384b ("net/dpaa2: replace global variables with flags")
-Cc: hemant.agrawal@nxp.com
+This patch cleans up the code and implement separate close and deinit
 
 Signed-off-by: Hemant Agrawal <hemant.agrawal@nxp.com>
 ---
- drivers/net/dpaa2/dpaa2_ethdev.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/net/dpaa2/dpaa2_ethdev.c | 92 ++++++++++++++++++--------------
+ 1 file changed, 51 insertions(+), 41 deletions(-)
 
 diff --git a/drivers/net/dpaa2/dpaa2_ethdev.c b/drivers/net/dpaa2/dpaa2_ethdev.c
-index c94034104a..f82c50341d 100644
+index f82c50341d..0cd875d715 100644
 --- a/drivers/net/dpaa2/dpaa2_ethdev.c
 +++ b/drivers/net/dpaa2/dpaa2_ethdev.c
-@@ -669,11 +669,13 @@ dpaa2_free_rx_tx_queues(struct rte_eth_dev *dev)
- 			dpaa2_clear_queue_active_dps(dpaa2_q);
- 			dpaa2_queue_storage_free(dpaa2_q,
- 				RTE_MAX_LCORE);
-+			priv->rx_vq[i] = NULL;
- 		}
- 		/* cleanup tx queue cscn */
- 		for (i = 0; i < priv->nb_tx_queues; i++) {
- 			dpaa2_q = priv->tx_vq[i];
- 			rte_free(dpaa2_q->cscn);
-+			priv->tx_vq[i] = NULL;
- 		}
- 		if (priv->flags & DPAA2_TX_CONF_ENABLE) {
- 			/* cleanup tx conf queue storage */
-@@ -681,8 +683,14 @@ dpaa2_free_rx_tx_queues(struct rte_eth_dev *dev)
- 				dpaa2_q = priv->tx_conf_vq[i];
- 				dpaa2_queue_storage_free(dpaa2_q,
- 					RTE_MAX_LCORE);
-+				priv->tx_conf_vq[i] = NULL;
- 			}
- 		}
-+		if (priv->flags & DPAAX_RX_ERROR_QUEUE_FLAG) {
-+			dpaa2_q = priv->rx_err_vq;
-+			dpaa2_queue_storage_free(dpaa2_q, RTE_MAX_LCORE);
-+		}
+@@ -1524,53 +1524,14 @@ dpaa2_dev_stop(struct rte_eth_dev *dev)
+ static int
+ dpaa2_dev_close(struct rte_eth_dev *dev)
+ {
+-	struct dpaa2_dev_priv *priv = dev->data->dev_private;
+-	struct fsl_mc_io *dpni = dev->process_private;
+-	int i, ret;
+-	struct rte_eth_link link;
+-
+ 	PMD_INIT_FUNC_TRACE();
+ 
+ 	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
+ 		return 0;
+ 
+-	if (!dpni) {
+-		DPAA2_PMD_WARN("Already closed or not started");
+-		return -EINVAL;
+-	}
+-
+ 	dpaa2_tm_deinit(dev);
+ 	dpaa2_flow_clean(dev);
+-	/* Clean the device first */
+-	ret = dpni_reset(dpni, CMD_PRI_LOW, priv->token);
+-	if (ret) {
+-		DPAA2_PMD_ERR("Failure cleaning dpni device: err=%d", ret);
+-		return ret;
+-	}
+-
+-	memset(&link, 0, sizeof(link));
+-	rte_eth_linkstatus_set(dev, &link);
+-
+-	/* Free private queues memory */
+-	dpaa2_free_rx_tx_queues(dev);
+-	/* Close the device at underlying layer*/
+-	ret = dpni_close(dpni, CMD_PRI_LOW, priv->token);
+-	if (ret) {
+-		DPAA2_PMD_ERR("Failure closing dpni device with err code %d",
+-			ret);
+-	}
+-
+-	/* Free the allocated memory for ethernet private data and dpni*/
+-	priv->hw = NULL;
+-	dev->process_private = NULL;
+-	rte_free(dpni);
+ 
+-	for (i = 0; i < MAX_TCS; i++)
+-		rte_free(priv->extract.tc_extract_param[i]);
+-
+-	rte_free(priv->extract.qos_extract_param);
+-
+-	DPAA2_PMD_INFO("%s: netdev deleted", dev->data->name);
+ 	return 0;
+ }
+ 
+@@ -2891,6 +2852,55 @@ dpaa2_get_devargs(struct rte_devargs *devargs, const char *key)
+ 	return 1;
+ }
+ 
++static int
++dpaa2_dev_deinit(struct rte_eth_dev *dev)
++{
++	struct dpaa2_dev_priv *priv = dev->data->dev_private;
++	struct fsl_mc_io *dpni = dev->process_private;
++	int i, ret;
++	struct rte_eth_link link;
 +
- 		/*free memory for all queues (RX+TX) */
- 		rte_free(priv->rx_vq[0]);
- 		priv->rx_vq[0] = NULL;
++	PMD_INIT_FUNC_TRACE();
++
++	if (!dpni) {
++		DPAA2_PMD_WARN("Already closed or not started");
++		return -EINVAL;
++	}
++
++	/* Clean the device first */
++	ret = dpni_reset(dpni, CMD_PRI_LOW, priv->token);
++	if (ret) {
++		DPAA2_PMD_ERR("Failure cleaning dpni device: err=%d", ret);
++		return ret;
++	}
++
++	memset(&link, 0, sizeof(link));
++	rte_eth_linkstatus_set(dev, &link);
++
++	/* Free private queues memory */
++	dpaa2_free_rx_tx_queues(dev);
++	/* Close the device at underlying layer*/
++	ret = dpni_close(dpni, CMD_PRI_LOW, priv->token);
++	if (ret) {
++		DPAA2_PMD_ERR("Failure closing dpni device with err code %d",
++			ret);
++	}
++
++	/* Free the allocated memory for ethernet private data and dpni*/
++	priv->hw = NULL;
++	dev->process_private = NULL;
++	rte_free(dpni);
++
++	for (i = 0; i < MAX_TCS; i++)
++		rte_free(priv->extract.tc_extract_param[i]);
++
++	rte_free(priv->extract.qos_extract_param);
++
++	DPAA2_PMD_INFO("%s: netdev deleted", dev->data->name);
++	return 0;
++}
++
++
+ static int
+ dpaa2_dev_init(struct rte_eth_dev *eth_dev)
+ {
+@@ -3177,7 +3187,7 @@ dpaa2_dev_init(struct rte_eth_dev *eth_dev)
+ 
+ 	return 0;
+ init_err:
+-	dpaa2_dev_close(eth_dev);
++	dpaa2_dev_deinit(eth_dev);
+ 
+ 	return ret;
+ }
+@@ -3381,7 +3391,7 @@ rte_dpaa2_remove(struct rte_dpaa2_device *dpaa2_dev)
+ 
+ 	eth_dev = rte_eth_dev_allocated(dpaa2_dev->device.name);
+ 	if (eth_dev) {
+-		dpaa2_dev_close(eth_dev);
++		dpaa2_dev_deinit(eth_dev);
+ 		ret = rte_eth_dev_release_port(eth_dev);
+ 	}
+ 
 -- 
 2.25.1
 
