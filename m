@@ -2,216 +2,126 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5273CD6E4E
-	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Nov 2025 12:47:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83BE9CD4F2F
+	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Nov 2025 13:18:48 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4249240DF6;
-	Thu, 13 Nov 2025 13:47:07 +0100 (CET)
-Received: from mx0a-00154904.pphosted.com (mx0a-00154904.pphosted.com
- [148.163.133.20])
- by mails.dpdk.org (Postfix) with ESMTP id 428AB40BA0
- for <dev@dpdk.org>; Thu, 13 Nov 2025 13:47:05 +0100 (CET)
-Received: from pps.filterd (m0170392.ppops.net [127.0.0.1])
- by mx0a-00154904.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5AD7LUIp030062;
- Thu, 13 Nov 2025 07:47:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dell.com; h=cc
- :content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=smtpout1; bh=A
- sHO9K6odNhhR3rZ4l0WxroWo2QYKn9Enu+2icMun5M=; b=JYalpCq5/l2/PPpEW
- pCLz9Ypq8n87HcDAzJaoq17F6PVc0En8rhkqpdM45A1WOQxlGHbAXNHfA100pui9
- C1ShJifui9uOn+AdPbV86WLTsXgH4bH6iYKZoD8fwvENnQktZlYtjkUkEbdrC8Ha
- 30wrfqgQOC003n9SXtDhVmcYCZvIISEaE/4r6y0mEI+ziBrJ+0a2tWklLZaY06ey
- b6Ea1E320gt1a7CKcJn5RmIGstPYAjyMIExdumdiMBW/tpjvskPdsOYKfAid3M20
- 4/xPCV0awy38ni2alM4lpkpGHGen3ypM3wX9uaAP+4Ie6VHEjZyJuFfBRNffxHIb
- DXwew==
-Received: from mx0b-00154901.pphosted.com (mx0b-00154901.pphosted.com
- [67.231.157.37])
- by mx0a-00154904.pphosted.com (PPS) with ESMTPS id 4aa1wdj6ef-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Thu, 13 Nov 2025 07:47:04 -0500 (EST)
-Received: from pps.filterd (m0144104.ppops.net [127.0.0.1])
- by mx0b-00154901.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5AD94biF015497;
- Thu, 13 Nov 2025 07:47:03 -0500
-Received: from cy3pr05cu001.outbound.protection.outlook.com
- (mail-westcentralusazon11013060.outbound.protection.outlook.com
- [40.93.201.60])
- by mx0b-00154901.pphosted.com (PPS) with ESMTPS id 4ad6k56pc4-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
- Thu, 13 Nov 2025 07:47:03 -0500 (EST)
+	by mails.dpdk.org (Postfix) with ESMTP id 93D1840671;
+	Thu, 13 Nov 2025 14:18:47 +0100 (CET)
+Received: from BN1PR04CU002.outbound.protection.outlook.com
+ (mail-eastus2azon11010028.outbound.protection.outlook.com [52.101.56.28])
+ by mails.dpdk.org (Postfix) with ESMTP id 4392940151
+ for <dev@dpdk.org>; Thu, 13 Nov 2025 14:18:45 +0100 (CET)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=FRQT5qqpdIkfkFfB2FhELfQx+Ik7mrcUB7l5ZmrrrEKkRXeFY4fVNfFQlqLb/AhALtbyHnq00eZd2Ch3uKOHUDADjhsd0SlZ270i5DyEA5FOJ4wm2eFfrEaVBBQqsO/bJEQKHGlYzjifSGXAgEND+cdpjGJ9sFDNEoUL402Lr2AnoDChasqnw/7F+QJp3nn8PlMhxrxIJenScJI5krnUC2rE7TZPz1QPUZS93N+WzIVYDLjabbqkPlJElKtPhecTfTf1BTPZYJxc9ZS2YvBZIvxZIy08pgngjFSDYGc4izjOCABSgQEetjnBJA5L6bj930aDEa6FLatin/4z6QcDuA==
+ b=L53UmsZhMBbG8hwqWXXk+WT+szmr9Jjx7AGnnml76EGU70Jazj+mBO0r6z5wk7LTaCuHSBZH1QI2dk9vmzYPUFtl+cS2oTUkyT6R35r02PB5oWk40hHjzjUEh1pB4HRAflDWzaS8iP/66d1uK05ffZk/zXcu0LukHw/fh4DMtwGTsi84IQ7Xoqjb+L0ZIQztzTYV+Ku0/q3Xz1kpMYQJLd26ghsAMZOclVQrAzhCTTR7ij219E/MRPX1iqwHcjnHWv4rX7lfLvX8YW8DogClCoE+X51el3rwBbVFOqMHuyb6oNAdnsDnxfs1wTlWaI/bmtHVHTjtypWp2rtwyVhsbg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=AsHO9K6odNhhR3rZ4l0WxroWo2QYKn9Enu+2icMun5M=;
- b=Gm0PyW0XlDPtvuXecW66P56HjcqcoJq40/YJc7M/0o1NKAaNQr6KIzgKDf+gOgRsWhFdF6r49oJstrBde9o8le/daSkHDhhmVjqTQ3bJ/Hul6k2jBN0XukrKUxNvf1KrZXOGHuekgkYs5mWYDRlgLNeMi+VHTsK97ZsdvPLBbkLWKCC3zx8TvenKOWB6SEl1DHZzF7WmwWiGP0mR1SBaMAe2XWv00fzyIHZcefY1Y+7M2T8Y+cF1/rtKlO7pQmoy+5MULmp+nKDe1C4ML34LC9HDEk9Zj8BtZxK6RUQ7i+ivsPNX3knPxxuw2X3OrVqzaJTZuLEdmCerxgaDUApKzg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=dell.com; dmarc=pass action=none header.from=dell.com;
- dkim=pass header.d=dell.com; arc=none
-Received: from SJ0PR19MB4606.namprd19.prod.outlook.com (2603:10b6:a03:289::22)
- by DS7PR19MB4471.namprd19.prod.outlook.com (2603:10b6:5:2c9::9) with
- Microsoft SMTP Server (version=TLS1_2,
+ bh=a+7ZrMgt7MbjjT1zQMdDvioVjSgZjgpU2gLNS4p5lZc=;
+ b=eftB/hTs+FpAJ7mNzgbbrQzFjBzM8F2/TMoEciwWneCJdaE9EJ+HnA2n+rTnx3ugmbY4/xu69o3A3ahcRlPulQ4WYSCm+3/VcP4VdEwc8hupLI3z/bJ1ZDASb+CeeGAbAydxr0pGQokHqFhGXnl42oP9EvJWemfDJm4KNgzMJXcLKdvWQj2ilZOTPoUmrgURXbvdemH3eHvpmmV7UfvZyd0B9VeUK3i//GJCBPOOlZ7Am3sas96bmOBOjEqQxw164s9PRgJ5CUlUxaB+Ie3/pQdKqNFchYiF/JzbxvEvHIgvbWufsAALYVIIiNHGKi5TwEb7m13YwDQ2aCR6DNdcSg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=a+7ZrMgt7MbjjT1zQMdDvioVjSgZjgpU2gLNS4p5lZc=;
+ b=Mbt9VyDE+/9lCs1+gqpgvFhYax9IDSp0WhzLj2m0aeS6gr6bkWOwAH7baxyYsvR8HQGoWJQFaTGkjo+o9BprJiiWAqlGPajDtbhTX0s6KyuVKvWgOG2k+imOwxYLWFO3FkcOUBlSbFHz0q/tr7KyOFY02FiUYfqUSmZS2Eu/Z34ruGPFkR1mcAI4K99h3/1VHKk91NjuLmUZy8/qwo6O/kGkhPpECZi/UEmiKnglvp+oL8DZkK3un9zc3F5c8FhNk3Ck/PwFkDQ8zrOPEA76xDrKtPMNTbFG7Adf32f/D3URlyquhM97srzY5Wx7mlhSBETzkOSI2bxDJYuuvm2MoA==
+Received: from BYAPR06CA0010.namprd06.prod.outlook.com (2603:10b6:a03:d4::23)
+ by SA1PR12MB8885.namprd12.prod.outlook.com (2603:10b6:806:376::22)
+ with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.17; Thu, 13 Nov
- 2025 12:47:00 +0000
-Received: from SJ0PR19MB4606.namprd19.prod.outlook.com
- ([fe80::8938:6218:a89e:ba8e]) by SJ0PR19MB4606.namprd19.prod.outlook.com
- ([fe80::8938:6218:a89e:ba8e%3]) with mapi id 15.20.9320.013; Thu, 13 Nov 2025
- 12:47:00 +0000
-From: "Bathija, Pravin" <Pravin.Bathija@dell.com>
-To: fengchengwen <fengchengwen@huawei.com>, "dev@dpdk.org" <dev@dpdk.org>
-CC: "pravin.m.bathija.dev@gmail.com" <pravin.m.bathija.dev@gmail.com>
-Subject: RE: [PATCH v3 5/5] vhost_user: Increase number of memory regions
-Thread-Topic: [PATCH v3 5/5] vhost_user: Increase number of memory regions
-Thread-Index: AQHcTUK2IE85u2Mbw0+mzrCeCVtp8bTiKvSAgAs3/qCAAOkoAIABnizQgABX/QCAAFnnIA==
-Date: Thu, 13 Nov 2025 12:47:00 +0000
-Message-ID: <SJ0PR19MB4606657996C9B331FFD0DAF1F5CDA@SJ0PR19MB4606.namprd19.prod.outlook.com>
-References: <20251104042142.2787631-1-pravin.bathija@dell.com>
- <20251104042142.2787631-6-pravin.bathija@dell.com>
- <d7af7a2d-939a-45b3-9353-2787ef1dd513@huawei.com>
- <SJ0PR19MB46063C6E41E929271093CE1FF5CFA@SJ0PR19MB4606.namprd19.prod.outlook.com>
- <9f38ffe8-bfd0-4af0-bf2f-f1239823c9cd@huawei.com>
- <SJ0PR19MB4606F0D91D66F05CACF74626F5CDA@SJ0PR19MB4606.namprd19.prod.outlook.com>
- <a99915bd-31c5-4224-a427-55d4f758bb4b@huawei.com>
-In-Reply-To: <a99915bd-31c5-4224-a427-55d4f758bb4b@huawei.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_73dd1fcc-24d7-4f55-9dc2-c1518f171327_Enabled=True;
- MSIP_Label_73dd1fcc-24d7-4f55-9dc2-c1518f171327_SiteId=945c199a-83a2-4e80-9f8c-5a91be5752dd;
- MSIP_Label_73dd1fcc-24d7-4f55-9dc2-c1518f171327_SetDate=2025-11-13T12:45:08.0000000Z;
- MSIP_Label_73dd1fcc-24d7-4f55-9dc2-c1518f171327_Name=No
- Protection (Label Only) - Internal
- Use; MSIP_Label_73dd1fcc-24d7-4f55-9dc2-c1518f171327_ContentBits=3;
- MSIP_Label_73dd1fcc-24d7-4f55-9dc2-c1518f171327_Method=Standard
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SJ0PR19MB4606:EE_|DS7PR19MB4471:EE_
-x-ms-office365-filtering-correlation-id: bd2d5a54-6b3d-471d-346b-08de22b2bce9
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
- ARA:13230040|376014|366016|1800799024|7053199007|38070700021; 
-x-microsoft-antispam-message-info: =?utf-7?B?L2tjVWtPZmlCM0JHTE94ZVJNckpmYzh1Ylp5d1F5blpmd21FeUFLbUZDRDZv?=
- =?utf-7?B?WVdEN1QzdjJTd09RRXNFbEJMR2g4bEJsNnBHL2UxR2dJTGk0YUxiZHN1bXp5?=
- =?utf-7?B?UE9rbklZQ3lRbVJrWVBMYnU5cUtXZ1ZOYkV4aWFEWm5xaDRVdlJ2TTg3WEZs?=
- =?utf-7?B?T1NsbjZqRFRoTmd4UGdXRFdsekF1ZGcrLTNwTkQrLVE3MjM0cm1zbk9FN3ZY?=
- =?utf-7?B?cVk2SktZWWtLYlpwa3l2TGNDcXlycWtzRDljRTVKV2RnM0RianNhRklhWmRM?=
- =?utf-7?B?Z0dJVFJVUXR6U2o5cnFBRGhuUFhyeDY2dzlGU21rZystenU0NEw3ZTRZcFAy?=
- =?utf-7?B?Z3Uyenp0aVI3aS9xd3ExcXQ1ZnRlWEVjci9sOExPRGNQR3BaYTNieTlSaXlK?=
- =?utf-7?B?dGt3WmxuNk95OE43emZxbXkySVZFZUxaNnRSVXc1T0JmWS9adzh6UVBrTHNS?=
- =?utf-7?B?cjhwQVlQUGRBNWxTQmp6VzZNWlFJV3crLWlsckUrLWpHdlB1dWVLOThaN2U=?=
- =?utf-7?B?dkErLVUrLVB5M0tRNVlCaFJ2Wmp0Uk53dmY3OWFhSWdTL0hEdy9QMFpsL2lQ?=
- =?utf-7?B?bEZlMDFlcFVRby80STJDa21YaEhTWnZUN1pUbXlTZGM1UWxqTm82Q0VQM0pP?=
- =?utf-7?B?TUpWTzFkVFJDSUZOc0NadHg2WnlOSzBGdDNLc2xLNWxDOUxpd25LY2tWMkFh?=
- =?utf-7?B?b2RSaEhTKy1saVUwb2k5V0l2MkVMTVJZeGFybnJoRlRQRlVGSUlXWmhYcUJD?=
- =?utf-7?B?RTVQc1l3NFVtV0I3Q0RZdHgxMzRjWjZzY3AvZG9Zb3dEKy1sSkcrLWVCWUNU?=
- =?utf-7?B?Qkp4ZXJtSGxwWkVlcW9TaFRhUnZGendtR0NXaEhObDJDVUxWWXJkcXBwQ0dP?=
- =?utf-7?B?NUhGMXhVYWlJelNTUGRoMER0c2d3WkNGQlJuczgrLTJUdDBIQWZqNGdVZEli?=
- =?utf-7?B?VTVwc29FZThwT1RhUkhMc3ZFRistMEhvbVBoc3lNMGVFbHNWS0NPR25tVGhH?=
- =?utf-7?B?dTlqdlYxRW5aNzROSUpkWGd4VXRpN2ZJM011MFlZM2dyOVdKODM4NGZiY2Rv?=
- =?utf-7?B?bDJIOTdhSzBKRDNLN0cxS1hGWExhMmQxcEpiODUvODhUTXI4TUtxVzRFdkRI?=
- =?utf-7?B?cUdTMDNzNDMxOUp1bE1PZzZNSG42cWxadXlsUElPQUZJdHArLWVnUXlNU1JF?=
- =?utf-7?B?VHZSOUlYL2J6eWNXSTIxL0JISXNaTElWQVpOYkc2TXROKy1La050WFJ1ZUpr?=
- =?utf-7?B?aklFQ3k0cjkzL0hXMzBseEV4R0E4ZnFPYUVUa1UrLUhTcHo4S2draE9TNUt2?=
- =?utf-7?B?dHMrLXJIUkFFZUxKNTNSTzJpNUVkejUyRG1xanBSOGxzWW1Kc3JjT1BvTm9C?=
- =?utf-7?B?aE5iTjlUQkkvWnc1RVhyZ3BEaFFsdmw2SEdGazhYNVpaSzNlTG5oM3padFN2?=
- =?utf-7?B?Rml5eDlMSmZTZkNoenJUMystcHdhNWlIcXY4RGF1OE1QWDZYc3pHM1dYZXJh?=
- =?utf-7?B?eUZheWc5U2xUb3BFT3lFMDVQZG1YL2JXKy0wS05aNjVkemR0cFo3bUNvZW9O?=
- =?utf-7?B?Wm5Ba3pUeHRQMzVaTXVsZ3N6WFIzNystMXluSzJvcUh2ekxGTDl2NFp5T3NJ?=
- =?utf-7?B?RWZxMDZ6RmRvRHYyMFlXZEp3T04wKy1CSVY2NDFJRUhwZ2R0dklRR2p2TGp5?=
- =?utf-7?B?WlJaOVQxc0dWZHpUcVFnUk0vUDkzdTdQTHRZcldDSGYyYzJ2bmJES2pRUnls?=
- =?utf-7?B?bWExR3pMKy0xajh4UDhiMmtScEdEWHJjV2VyN0EyMjEzTGdQWW51emkyWFRE?=
- =?utf-7?B?NDlBUWJhY1loTzRDa1haU3RqZEVTQ1N2cVROS2syaDY1dGhUUllkTmFObXk=?=
- =?utf-7?B?Ky1ycHpJbmF6Y1l4aGhZbHFDeTlMVkRhSEpUOS9kTXhMUTJFV040RWkvUS8y?=
- =?utf-7?B?dndLd25sNEUrLURtT2x2b3BEU0FGMGFob2VoQ203UUFXZEdBOEh4QWkzNEFl?=
- =?utf-7?B?M0RpQWpsZGNEVEhVUFlYTzVVRE9WR3IrLUdxZGFkZWZ0ZTNiYTY0UG9UWjNk?=
- =?utf-7?B?a3JaQzdjZXV4QXQxYjZnbXVZT05vNkxocWxVV3VqZkY=?=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:SJ0PR19MB4606.namprd19.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(366016)(1800799024)(7053199007)(38070700021); DIR:OUT;
- SFP:1101; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-7?B?QWZPSVRRTWxXaysteHdHby9NbG56eHZYYnBjelFUZjFQekFEKy0xTkY1Ky1v?=
- =?utf-7?B?MFRtc0FTMHhLd2d4WFFSRml4eUdDWDdRUHYvKy1ka3J6QVQwb2wxOVljbWFH?=
- =?utf-7?B?a251RDg1STkxeEdxOW56cjlzdFZLMVpuWkV1VmxsdGlOTldnNDUzcEFlU1Na?=
- =?utf-7?B?Ky0xcUg1UVBDZ2VmT05QMWlkNEFCczRQQ3IybistQjJLRkVUSkNJR1JBSTRR?=
- =?utf-7?B?U0pkaGxaSDl6VEkrLWgwbWo3N0orLWlybzBtdkNQaktOUCstTHFocDF3RGc4?=
- =?utf-7?B?VU54b0ZvTTFrYUlTKy1HRmdTbmFodXpYbVRqSzZJcFBCMWxlZy9zOTFiVHc=?=
- =?utf-7?B?TystWUVWcUt1TkRPS0U0alo0bU9GYklJRjBmemxkdWU5b09teldRWTA0cnU4?=
- =?utf-7?B?alVHMFN5dU9rVXV3aW03WTNQaG9DbDFycm9URmRXQXh5Wkxrb0dVQWQ3ZXRj?=
- =?utf-7?B?M0RWUHMxNHBzQ0NzNCstYUt6bEpBdHFocUZicXNTZ211SnRTQXFQRmZoQnFH?=
- =?utf-7?B?Q0NMREpJbHNvc21MTlpkM0RCZXJDSFROUlcxS0l1VmV5VUlMdHJ4QThmQTQw?=
- =?utf-7?B?TmVoU1FGckNPWHNxcjcwMnM4cVcrLVhJODAyVlhWaUNJNU1IWE52Ky1pZzVH?=
- =?utf-7?B?RmlZUUZ5S1MxQWR4bFIxWkw5N3Y1OWdHYXNPb3ZzZjBuYU9DQzZFUW5vSDgw?=
- =?utf-7?B?MlYwKy1LUmhnelZSVy93R05lekhTUmNlTEk0empUTzZ0Y0dvc2cvdWg0TGNU?=
- =?utf-7?B?T3l2TmI1U2orLWtNRW9KbndQY0U5aVhOOTZUSmhiakNxVGZTcGtjV1pZMG1B?=
- =?utf-7?B?WjY1Q3lNR2NFZThKR01JZzAxak8zbmZtV0lTdFNZd0gzOVdzaTBnQzBiWVhZ?=
- =?utf-7?B?NFF5YnphTi9BS09uR0Z6MUZjL0I5TTE1d3ByRVJld2p1dFlsejRHL05Ub3pQ?=
- =?utf-7?B?ZkE3MWo5MER4S3hxRFRrL0xIMjJjbTM2SFBaWk8yMUNxVFJUdUV5TXAxRlI=?=
- =?utf-7?B?Ky1ZZkE5NXFONWg2OFUyV0FVMjRyQ0Rvckh3eFVrUjZmZnE3Rmh6VistQmhJ?=
- =?utf-7?B?TWxhNnZHTGxTTm96eDlKaSstN1hPVmF2TjRmTjhIS2daTTNBSlFJRWVWR0pp?=
- =?utf-7?B?OEdSM0VDdU9ML2VOTTNZMistNHVIWmEwYk1iRFRoWDlwZkdkZjQzVjFQdHNB?=
- =?utf-7?B?c0U5T2FVR3FyUUdUdWZTNS9QZzQ2U3laVFNXRThBTllwTHg2NGdZUmpmT080?=
- =?utf-7?B?YUFpa0ZnKy1CUDQzRngycUF6Wk5JMmNjb21jclZSYWVzRzFlZWlOWkQvV0Vn?=
- =?utf-7?B?c2Jud3ZzM1dFWWpmM0NYQTZ0WWFTcHNtbkdnaXhseHFlclB1Zzg1bVluL29z?=
- =?utf-7?B?VHE0cUdrNTVQTE53N3hkMTVuWkZYY2cxVFovVXM4bUV6MTllNG5ZeWVaaUx0?=
- =?utf-7?B?VllLSDBhYmY4MldUSEFFRXV1WnpNYVlNVkpMUUJOaFlqTmNrRDVnNkZxRm40?=
- =?utf-7?B?aFpwcWkwL2U4U1lFV1dmdHJpMFNRUzY1cVhDTWRZYk5lOENCUTFXZVJ4eUJE?=
- =?utf-7?B?NVM2YTBVZGVxN0g5cUpJQWlNQXNXRU45RFBWdlU3RXhkTk5tSHZtVDMzZUFa?=
- =?utf-7?B?SE5TM0J4cUZjb09sZ2oxSXZCSTE3NThEVU5MKy1PVk5SbUhwVFE3MEQvVjl3?=
- =?utf-7?B?UEtHQTNnSWVDTnY4dWplQUErLWdzbnR3ajBOSFRPU2Rjb0N4ZENiN2pzZ3h4?=
- =?utf-7?B?R0xnN2xJL2lBTXlOVXNNODJsaU43N1l0ZFR2Ym9sU2lsaEhGTnd2cTlqcVZw?=
- =?utf-7?B?WWkxdGdvbDllbEhoTTR0YnpDTFRLbU5QRTV4V2lYekQ5SWtpd25tRmdtMWdL?=
- =?utf-7?B?azlORXFzSlg4bWpCbnJHSmM0aDI3b0FQWXRjWmErLUlxNE9BMUtkaW9wemI=?=
- =?utf-7?B?Ky14WEtCcEVoMzV2RnhxTGtQL0VhZGFqaUxYWTlhWEt2c1lOVURYSlB4MTRH?=
- =?utf-7?B?UW91cnoyTHhiQjJsR3JFTjVkNGdCUDZsY1B3YlhjY05EU1NBVURJa21qUnd0?=
- =?utf-7?B?emI2d3hCei9ZNEl2RU9BMUZIS05VL0ZHcUNpVUgvQXNFTzdoM21yQmdkNkZQ?=
- =?utf-7?B?QUhRYjFlcFhSVm1hV2xBOE1KcVJlczEzM0ozRE5CY3ZqNXkrLWN0UE85Sm5U?=
- =?utf-7?B?R0UxeG4rLUpjbw==?=
-Content-Type: text/plain; charset="utf-7"
-Content-Transfer-Encoding: quoted-printable
+ 2025 13:18:39 +0000
+Received: from CO1PEPF000044F3.namprd05.prod.outlook.com
+ (2603:10b6:a03:d4:cafe::d4) by BYAPR06CA0010.outlook.office365.com
+ (2603:10b6:a03:d4::23) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9320.17 via Frontend Transport; Thu,
+ 13 Nov 2025 13:18:39 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com;
+ dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ CO1PEPF000044F3.mail.protection.outlook.com (10.167.241.73) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9320.13 via Frontend Transport; Thu, 13 Nov 2025 13:18:38 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 13 Nov
+ 2025 05:18:15 -0800
+Received: from nvidia.com (10.126.231.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 13 Nov
+ 2025 05:18:12 -0800
+From: Dariusz Sosnowski <dsosnowski@nvidia.com>
+To: Viacheslav Ovsiienko <viacheslavo@nvidia.com>, Bing Zhao
+ <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>, Suanming Mou
+ <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>
+CC: <dev@dpdk.org>, Raslan Darawsheh <rasland@nvidia.com>
+Subject: [PATCH v2] net/mlx5: remove representor matching devarg
+Date: Thu, 13 Nov 2025 14:17:58 +0100
+Message-ID: <20251113131758.1524043-1-dsosnowski@nvidia.com>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20251027193558.770297-1-dsosnowski@nvidia.com>
+References: <20251027193558.770297-1-dsosnowski@nvidia.com>
 MIME-Version: 1.0
-X-OriginatorOrg: Dell.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SJ0PR19MB4606.namprd19.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bd2d5a54-6b3d-471d-346b-08de22b2bce9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Nov 2025 12:47:00.1944 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 945c199a-83a2-4e80-9f8c-5a91be5752dd
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: T770RvTAwbKZbpWOthkEH2adlh73ZbIMpHQDH9J6ltOhRmrhD2vHWnSb8B3O8qWuCkqHJOgdFyY6zI+/+XUYAQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR19MB4471
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-13_02,2025-11-12_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 bulkscore=0 impostorscore=0 suspectscore=0 spamscore=0
- adultscore=0 lowpriorityscore=0 clxscore=1015 phishscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2511130015
-X-Authority-Analysis: v=2.4 cv=Xvf3+FF9 c=1 sm=1 tr=0 ts=6915d348 cx=c_pps
- a=Z2e5DKjA+8LiMDv5v6mwwA==:117 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=wzW8d0FwaosA:10
- a=YU3QZWNX-B8A:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=i0EeH86SAAAA:8 a=iLNU1ar6AAAA:8 a=8rWy6zfcAAAA:8 a=pGLkceISAAAA:8
- a=ytFMdNZ7AAAA:8 a=LfxEVeEBAAAA:8 a=eSb-bNSJAAAA:8 a=QEEkIeqjAAAA:8
- a=yb8YxVxcQ5zwd4HfTYIA:9 a=avxi3fN6y70A:10 a=hlJyneSgMmFPbskH-t2w:22
- a=YjdVzJdQTyZRADMV7wFX:22 a=oxySFUAvEW1-6AXleBSr:22 a=7k9nRlTqVbDGZ3p5_T00:22
- a=h7YW-pclpbZRD8svLbQ0:22 a=iapMWHAMLVzCBf0btcAb:22
-X-Proofpoint-GUID: qlyxyv9u6xzoIrJSuagL7r1g3zBRUdhp
-X-Proofpoint-ORIG-GUID: qlyxyv9u6xzoIrJSuagL7r1g3zBRUdhp
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA4MDA2MyBTYWx0ZWRfXxxrHccplNGIy
- BCNxUHfRC9yOtZ3hOl3VwJaY8eAj+RQ5aTSwePEc8FGN/FNcB5JHGUS26b6x6J6XkKsHqc43K/A
- XNYQg88soDJtTii5rYNSmPTjRUONvQ8m40V/BNi7zvklVKsChA2TuEFSzS7ixpycQ/wCiOhd9ay
- eRlW5Ew0Y3Gk9tUXCWSnDJB6dG37dbXujGFmX2n5SXyyFjZZ+/ndguPTkDF23QpAUNTxm+5t57L
- kCo8RHYGPTb1OcDQD35thY0SkyFJUY0RTsfxgufXXrnq66uAXMAPc/aVRJbp3+j/gNP2kQahMFh
- B3jkVK6mGU/ZSEctmLQqpiDyjLesc6GAXwNqAfK2CCb6LAAVy3X6Tb4w3CE1077C+gfu7hXhXdK
- gHQ7aR2e50rW5yxsiHY1aPgXJLtmBQ==
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0
- suspectscore=0 spamscore=0 priorityscore=1501 clxscore=1015 malwarescore=0
- lowpriorityscore=0 impostorscore=0 phishscore=0 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2511080063
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.126.231.35]
+X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000044F3:EE_|SA1PR12MB8885:EE_
+X-MS-Office365-Filtering-Correlation-Id: aeeea5c0-ed9e-4ebd-7f76-08de22b7286a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|82310400026|1800799024|36860700013|376014; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?R8nY8yH/Zc3MQfwFhm947eLp5rq3BJmzah2LVZ4c5O78TRhVV8Gz78Gmybs8?=
+ =?us-ascii?Q?9wOozZQIrtof3a25sTNaLFXyQnC+2LcX5n3nEik3b3DhPMCy1vwX+utvH3aT?=
+ =?us-ascii?Q?wAi3lAM0KzsPGhO/SngCPzM1Z2zD4RDgF4IXW8R4JbsXORLRqLsH8NKK6keP?=
+ =?us-ascii?Q?RG+9el5vBNblS07qMNsy+jgSomaW3Ndjph1dREp2ppdd6f0ELfjPBY3TIPxm?=
+ =?us-ascii?Q?5ctC2mNd4MputUUuMjfydIyUayd5b0iKrGLMCalVH2LyRl3HLCQIo7uU/GAP?=
+ =?us-ascii?Q?knfD5BMQwZELry+8D5h8YCZuF4Cx/zFhEzjJl17EPcis6yMsUS2Dh/n/gPzo?=
+ =?us-ascii?Q?a9fjmy6ITGOBZEohF31zTWB47ufd6jZMymU+dzKSs2igyYWNbJGZI/4fiyGJ?=
+ =?us-ascii?Q?ITs4504Bsjk6DIGdSmaUxhbZgwUjR5ijOzSJMwf+6QsyBlhIIAmNnfed5d6P?=
+ =?us-ascii?Q?kFMbSZfGnyV0FYOCnKc0lnyZWhiwOAMTPn9I3hfKg05knXbbB3I3a16rLN2V?=
+ =?us-ascii?Q?DR3PT9oeg0FihDWlPERvHrW+QX3JYWeo8rILpmFZviE2oI590lwb1deq3AwR?=
+ =?us-ascii?Q?JDT+SN0LHN020XDEY67b42JkSWG44St/zyKjUZ2L7W16OXOqtdgccKCG5hCO?=
+ =?us-ascii?Q?6zDdnfNUW+IZKvnedr2xpX33pELr4TIXhj2K6OAYSu2a+PjoboKXlsiAgnVs?=
+ =?us-ascii?Q?YlvKcb3iJikkstqCPNOXiQrpBfRybj/cNJPBVoTt+rrPmJLZUmMASU3MJsUc?=
+ =?us-ascii?Q?AfoyBJepeVvbjVE8INON+SGJVX8zW1bXo17KglhaKRXqZtB/HgO/HpkBqmTE?=
+ =?us-ascii?Q?A0U35EIB9sRz7nRqb1eef5KU6vpE49sxBS+RveYVuAX8nvdn16Zy7yWqvMnw?=
+ =?us-ascii?Q?oYgsFHlPr0aKQh7FtHF3jVQvXBieuNHynJNkbdkS4LIXmvGfwQuXVETQUQTD?=
+ =?us-ascii?Q?RV5S2yFZS9Stm1I3Yjv6lJ0CZmoj5u40Ml2l4uJiJs/3wxtQaAfGBnH6rDQO?=
+ =?us-ascii?Q?7TbQDvBtcZB0UdjB7gZLEmN3w7anfNbmmZxedS8PZAOjFMYTRzE+NV1KC/cu?=
+ =?us-ascii?Q?VSUqrGVqzQKpgmitNDzlhliBbK0IzktlJDYmTLE0ro43pdMxSquKxSQ/+Ctt?=
+ =?us-ascii?Q?Pcic9WaGxHZSmFH7gq83aiIVHfOvZjnV220H4id+YxHeHidkp/bNHcyeqPtQ?=
+ =?us-ascii?Q?r0kBzTELhUriKOEkXz4ht9dLu/TyJBvqXisW1dLel9P/4sUh7DCbdGMYKGq4?=
+ =?us-ascii?Q?LlTMxoDqsfCBcQ0Y9+fybB5jIgQtBgqiRpVlmofoaPcheJw/kRCsZwsWjVRX?=
+ =?us-ascii?Q?zqXa+6l0WUNIzgEZskdhtNpRDmu5su7cq8S5nFdW+zV+Qswg6rwnt0zCGBR+?=
+ =?us-ascii?Q?uDNet/VEf4u+09Xz9n08dGlmRm8kZtoaB7g8dd4nql8beDXruVZJNafEbMyx?=
+ =?us-ascii?Q?R3mY1Q5HB84ONWHCS4MytHiEpaSIpzaPyizw7v/I6s/SXeFHGjhqzoad/DD6?=
+ =?us-ascii?Q?YKP2HQnaE2Ii+YTpLeWZBWbYc37hA0Z/12YKQwQZo2zUIYijhvKYqnK2Exp9?=
+ =?us-ascii?Q?lU+CEmzCyJgOVtqPRxo=3D?=
+X-Forefront-Antispam-Report: CIP:216.228.117.160; CTRY:US; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge1.nvidia.com; CAT:NONE;
+ SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014); DIR:OUT;
+ SFP:1101; 
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Nov 2025 13:18:38.4138 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: aeeea5c0-ed9e-4ebd-7f76-08de22b7286a
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.160];
+ Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1PEPF000044F3.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8885
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -225,145 +135,654 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Responses inline.
+As announced in 25.07 release deprecation notice [1],
+this patch removes repr_matching_en device argument from mlx5 driver.
 
+Applications which disabled this option were able to receive traffic
+from any physical port/VF/SF on any representor.
+Specifically, in most cases, this was used to process all traffic
+on representor which is a transfer proxy port.
+Similar behavior in mlx5 PMD can be achieved without
+the use of additional device arguments, by using
+RTE_FLOW_ACTION_TYPE_RSS flow action in transfer flow rules.
 
-Internal Use - Confidential
-+AD4- -----Original Message-----
-+AD4- From: fengchengwen +ADw-fengchengwen+AEA-huawei.com+AD4-
-+AD4- Sent: Wednesday, November 12, 2025 11:23 PM
-+AD4- To: Bathija, Pravin +ADw-Pravin.Bathija+AEA-dell.com+AD4AOw- dev+AEA-=
-dpdk.org
-+AD4- Cc: pravin.m.bathija.dev+AEA-gmail.com
-+AD4- Subject: Re: +AFs-PATCH v3 5/5+AF0- vhost+AF8-user: Increase number o=
-f memory regions
-+AD4-
-+AD4-
-+AD4- +AFs-EXTERNAL EMAIL+AF0-
-+AD4-
-+AD4- On 11/13/2025 10:13 AM, Bathija, Pravin wrote:
-+AD4- +AD4- Answers inline
-+AD4- +AD4-
-+AD4- +AD4-
-+AD4- +AD4- Internal Use - Confidential
-+AD4- +AD4APg- -----Original Message-----
-+AD4- +AD4APg- From: fengchengwen +ADw-fengchengwen+AEA-huawei.com+AD4-
-+AD4- +AD4APg- Sent: Tuesday, November 11, 2025 5:26 PM
-+AD4- +AD4APg- To: Bathija, Pravin +ADw-Pravin.Bathija+AEA-dell.com+AD4AOw-=
- dev+AEA-dpdk.org
-+AD4- +AD4APg- Cc: pravin.m.bathija.dev+AEA-gmail.com
-+AD4- +AD4APg- Subject: Re: +AFs-PATCH v3 5/5+AF0- vhost+AF8-user: Increase=
- number of memory
-+AD4- +AD4APg- regions
-+AD4- +AD4APg-
-+AD4- +AD4APg-
-+AD4- +AD4APg- +AFs-EXTERNAL EMAIL+AF0-
-+AD4- +AD4APg-
-+AD4- +AD4APg- On 11/11/2025 7:34 PM, Bathija, Pravin wrote:
-+AD4- +AD4APgA+- Responses inline.
-+AD4- +AD4APgA+-
-+AD4- +AD4APgA+-
-+AD4- +AD4APgA+- Internal Use - Confidential
-+AD4- +AD4APgA+AD4- -----Original Message-----
-+AD4- +AD4APgA+AD4- From: fengchengwen +ADw-fengchengwen+AEA-huawei.com+AD4=
+[1] https://doc.dpdk.org/guides-25.07/rel_notes/deprecation.html
+
+Signed-off-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
+Acked-by: Bing Zhao <bingz@nvidia.com>
+---
+v2:
+- Rebased on top of the latest commit in next-net-mlx:
+  commit ae657d56b1f0 ("doc: document non-template API limitations on top of HWS")
+
+ doc/guides/nics/mlx5.rst               |  26 +---
+ doc/guides/rel_notes/deprecation.rst   |  11 --
+ doc/guides/rel_notes/release_25_11.rst |   8 +
+ drivers/net/mlx5/linux/mlx5_os.c       |  16 --
+ drivers/net/mlx5/mlx5.c                |  13 --
+ drivers/net/mlx5/mlx5.h                |   1 -
+ drivers/net/mlx5/mlx5_flow.c           |   5 +-
+ drivers/net/mlx5/mlx5_flow.h           |   7 -
+ drivers/net/mlx5/mlx5_flow_hw.c        | 194 +------------------------
+ drivers/net/mlx5/mlx5_trigger.c        |  28 ++--
+ drivers/net/mlx5/mlx5_txq.c            |  17 +--
+ 11 files changed, 25 insertions(+), 301 deletions(-)
+
+diff --git a/doc/guides/nics/mlx5.rst b/doc/guides/nics/mlx5.rst
+index e0ec3e4f6f..6ec47a9fbc 100644
+--- a/doc/guides/nics/mlx5.rst
++++ b/doc/guides/nics/mlx5.rst
+@@ -745,24 +745,6 @@ for an additional list of options shared with other mlx5 drivers.
+
+     <Primary_PCI_BDF>,representor=pf[0,1]vf[0-2]
+
+-- ``repr_matching_en`` parameter [int]
 -
-+AD4- +AD4APgA+AD4- Sent: Tuesday, November 4, 2025 12:12 AM
-+AD4- +AD4APgA+AD4- To: Bathija, Pravin +ADw-Pravin.Bathija+AEA-dell.com+AD=
-4AOw- dev+AEA-dpdk.org
-+AD4- +AD4APgA+AD4- Cc: pravin.m.bathija.dev+AEA-gmail.com
-+AD4- +AD4APgA+AD4- Subject: Re: +AFs-PATCH v3 5/5+AF0- vhost+AF8-user: Inc=
-rease number of memory
-+AD4- +AD4APgA+AD4- regions
-+AD4- +AD4APgA+AD4-
-+AD4- +AD4APgA+AD4-
-+AD4- +AD4APgA+AD4- +AFs-EXTERNAL EMAIL+AF0-
-+AD4- +AD4APgA+AD4-
-+AD4- +AD4APgA+AD4- On 11/4/2025 12:21 PM, Pravin M Bathija wrote:
-+AD4- +AD4APgA+AD4APg- In this patch the number of memory regions are incre=
-ased from
-+AD4- +AD4APgA+AD4APg- 8 to 128. When a vhost-user front-end such as qemu o=
-r libblkio
-+AD4- +AD4APgA+AD4APg- queries the back-end such as dpdk with the message, =
-get max number
-+AD4- +AD4APgA+AD4APg- of memory slots, the back-end replies with this numb=
-er 128 instead
-+AD4- +AD4APgA+AD4APg- of the previously defined 8. The back-end also alloc=
-ates that many
-+AD4- +AD4APgA+AD4APg- slots in the memory table where regions are added/re=
-moved as
-+AD4- +AD4APgA+AD4APg- requested by the vhost-user front-end. This also hel=
-ps the vhost-
-+AD4- +AD4APgA+AD4APg- user front-end to limit the number of memory regions=
- when sending
-+AD4- +AD4APgA+AD4APg- the set mem table message ar adding memory regions.
-+AD4- +AD4APgA+AD4APg-
-+AD4- +AD4APgA+AD4APg- Signed-off-by: Pravin M Bathija +ADw-pravin.bathija+=
-AEA-dell.com+AD4-
-+AD4- +AD4APgA+AD4APg- ---
-+AD4- +AD4APgA+AD4APg-  lib/vhost/vhost+AF8-user.h +AHw- 2 +--
-+AD4- +AD4APgA+AD4APg-  1 file changed, 1 insertion(+-), 1 deletion(-)
-+AD4- +AD4APgA+AD4APg-
-+AD4- +AD4APgA+AD4APg- diff --git a/lib/vhost/vhost+AF8-user.h b/lib/vhost/=
-vhost+AF8-user.h index
-+AD4- +AD4APgA+AD4APg- 5a0e747b58..c6ad5b76d6 100644
-+AD4- +AD4APgA+AD4APg- --- a/lib/vhost/vhost+AF8-user.h
-+AD4- +AD4APgA+AD4APg- +-+-+- b/lib/vhost/vhost+AF8-user.h
-+AD4- +AD4APgA+AD4APg- +AEAAQA- -11,7 +-11,7 +AEAAQA-
-+AD4- +AD4APgA+AD4APg-
-+AD4- +AD4APgA+AD4APg-  /+ACo- refer to hw/virtio/vhost-user.c +ACo-/
-+AD4- +AD4APgA+AD4APg-
-+AD4- +AD4APgA+AD4APg- -+ACM-define VHOST+AF8-MEMORY+AF8-MAX+AF8-NREGIONS 8
-+AD4- +AD4APgA+AD4APg- +-+ACM-define VHOST+AF8-MEMORY+AF8-MAX+AF8-NREGIONS =
-128
-+AD4- +AD4APgA+AD4-
-+AD4- +AD4APgA+AD4- The address translation may increase a lot if the real =
-region is 128.
-+AD4- +AD4APgA+AD4- Maybe we should add another patch to optimize it.
-+AD4- +AD4APgA+-
-+AD4- +AD4APgA+- Could you please share more thoughts on this ?  Are you co=
-ncerned
-+AD4- +AD4APgA+- about
-+AD4- +AD4APg- the number of addresses and translation table bloat ? What
-+AD4- +AD4APg- optimization are you suggesting ?
-+AD4- +AD4APg-
-+AD4- +AD4APg- Because each memory region is independent and does not overl=
-ap, maybe
-+AD4- +AD4APg- we could use binary search to optimize it.
-+AD4- +AD4-
-+AD4- +AD4- From what I gather, both of your latest comments, for patches 4=
- and 5 are
-+AD4- related to performance impact because of 128 memory regions. My thoug=
-hts
-+AD4- on this are, I will work on an algorithm to optimize as you suggested=
-.
-+AD4- Meanwhile we could approve patches 1-4. The rest of the implementatio=
-n does
-+AD4- not need 128 memory regions. The existing 8 regions are fine. I put i=
-n this
-+AD4- change as I felt it makes the system scale more and was also suggeste=
-d by
-+AD4- Maxime. I think patches 1-4 stand by themselves and have been thoroug=
-hly
-+AD4- tested. Please let me know your thoughts on this.
-+AD4-
-+AD4- I am OK for this.
+-  - 0. If representor matching is disabled, then there will be no implicit
+-    item added. As a result, ingress flow rules will match traffic
+-    coming to any port, not only the port on which flow rule is created.
+-    Because of that, default flow rules for ingress traffic cannot be created
+-    and port starts in isolated mode by default. Port cannot be switched back
+-    to non-isolated mode.
+-
+-  - 1. If representor matching is enabled (default setting),
+-    then each ingress pattern template has an implicit REPRESENTED_PORT
+-    item added. Flow rules based on this pattern template will match
+-    the vport associated with port on which rule is created.
+-
+-  .. note::
+-
+-     This parameter is deprecated and will be removed in future releases.
+-
+ - ``max_dump_files_num`` parameter [int]
 
-Thank you for the quick response. I have just submitted v5 of the patchset =
-where I removed the patch which increases the memory regions to 128. Please=
- Ack and help merge to mainline.
+   The maximum number of files per PMD entity that may be created for debug information.
+@@ -2388,7 +2370,6 @@ Runtime configuration
 
-+AD4-
-+AD4- +AD4-
-+AD4- +AD4APg-
-+AD4- +AD4APgA+-
-+AD4- +AD4APgA+AD4-
-+AD4- +AD4APgA+AD4APg-
-+AD4- +AD4APgA+AD4APg-  +ACM-define VHOST+AF8-USER+AF8-NET+AF8-SUPPORTED+AF=
-8-FEATURES +AFw-
-+AD4- +AD4APgA+AD4APg-     (VIRTIO+AF8-NET+AF8-SUPPORTED+AF8-FEATURES +AHw-=
- +AFw-
-+AD4- +AD4APgA+-
-+AD4- +AD4APgA+-
-+AD4- +AD4-
-+AD4- +AD4-
+ The behaviour of port representors is configured
+ with some :ref:`parameters <mlx5_representor_params>`.
+-The option ``repr_matching_en`` has an impact on flow steering.
+
+ Limitations
+ ^^^^^^^^^^^
+@@ -2398,9 +2379,6 @@ Limitations
+ #. A driver limitation for ``RTE_FLOW_ACTION_TYPE_PORT_REPRESENTOR`` action
+    restricts the ``port_id`` configuration to only accept the value ``0xffff``,
+    indicating the E-Switch manager.
+-   If the ``repr_matching_en`` parameter is enabled, the traffic will be directed
+-   to the representor of the source virtual port (SF/VF), while if it is disabled,
+-   the traffic will be routed based on the steering rules in the ingress domain.
+
+ Examples
+ ^^^^^^^^
+@@ -3275,8 +3253,8 @@ Limitations
+
+ #. Only single item is supported per pattern template.
+
+-#. In switch mode, when ``repr_matching_en`` is enabled (default setting),
+-   matching ``RTE_FLOW_ITEM_TYPE_COMPARE`` is not supported for ``ingress`` rules.
++#. In switch mode, ``RTE_FLOW_ITEM_TYPE_COMPARE`` flow item
++   is not supported for ``ingress`` rules.
+    This is because an implicit ``RTE_FLOW_ITEM_TYPE_REPRESENTED_PORT``
+    needs to be added to the matcher,
+    which conflicts with the single item limitation.
+diff --git a/doc/guides/rel_notes/deprecation.rst b/doc/guides/rel_notes/deprecation.rst
+index 1e60ac4e82..8653d6ca03 100644
+--- a/doc/guides/rel_notes/deprecation.rst
++++ b/doc/guides/rel_notes/deprecation.rst
+@@ -147,14 +147,3 @@ Deprecation Notices
+   This change will not result in any feature loss,
+   as the fallback scalar paths which have feature parity with SSE
+   will be used in the cases where the SSE paths would have been used.
+-
+-* net/mlx5: ``repr_matching_en`` device argument is deprecated
+-  and will be removed in DPDK 25.11 release.
+-  With disabled representor matching, behavior of Rx datapath in mlx5 PMD
+-  is incompatible with current DPDK representor model.
+-  Packets from any E-Switch port can arrive on any representor,
+-  depending only on created flow rules.
+-  Such working model should be exposed directly in DPDK ethdev API,
+-  without relying on flow API.
+-  Currently there is no alternative API
+-  providing the same functionality as with ``repr_matching_en`` set to 0.
+diff --git a/doc/guides/rel_notes/release_25_11.rst b/doc/guides/rel_notes/release_25_11.rst
+index 06bc200f25..fbcb2f5f38 100644
+--- a/doc/guides/rel_notes/release_25_11.rst
++++ b/doc/guides/rel_notes/release_25_11.rst
+@@ -239,6 +239,14 @@ Removed Items
+   the functions ``rte_tel_data_add_array_u64`` and ``rte_tel_data_add_dict_u64`` are removed.
+   They are replaced by ``rte_tel_data_add_array_uint`` and ``rte_tel_data_add_dict_uint`` respectively.
+
++* net/mlx5: ``repr_matching_en`` device argument has been removed.
++  Applications which disabled this option were able to receive traffic
++  from any physical port/VF/SF on any representor.
++  Specifically, in most cases, this was used to process all traffic on representor
++  which is a transfer proxy port.
++  Similar behavior in mlx5 PMD can be achieved without the use of additional device arguments,
++  by using ``RTE_FLOW_ACTION_TYPE_RSS`` flow action in transfer flow rules.
++
+
+ API Changes
+ -----------
+diff --git a/drivers/net/mlx5/linux/mlx5_os.c b/drivers/net/mlx5/linux/mlx5_os.c
+index c742e0f282..68448f6554 100644
+--- a/drivers/net/mlx5/linux/mlx5_os.c
++++ b/drivers/net/mlx5/linux/mlx5_os.c
+@@ -1777,22 +1777,6 @@ mlx5_dev_spawn(struct rte_device *dpdk_dev,
+ 			err = EINVAL;
+ 			goto error;
+ 		}
+-		/*
+-		 * If representor matching is disabled, PMD cannot create default flow rules
+-		 * to receive traffic for all ports, since implicit source port match is not added.
+-		 * Isolated mode is forced.
+-		 */
+-		if (priv->sh->config.dv_esw_en && !priv->sh->config.repr_matching) {
+-			err = mlx5_flow_isolate(eth_dev, 1, NULL);
+-			if (err < 0) {
+-				err = -err;
+-				goto error;
+-			}
+-			DRV_LOG(WARNING, "port %u ingress traffic is restricted to defined "
+-					 "flow rules (isolated mode) since representor "
+-					 "matching is disabled",
+-				eth_dev->data->port_id);
+-		}
+ 		eth_dev->data->dev_flags |= RTE_ETH_DEV_FLOW_OPS_THREAD_SAFE;
+ 		return eth_dev;
+ #else
+diff --git a/drivers/net/mlx5/mlx5.c b/drivers/net/mlx5/mlx5.c
+index 666216c21a..9ba4786c5b 100644
+--- a/drivers/net/mlx5/mlx5.c
++++ b/drivers/net/mlx5/mlx5.c
+@@ -182,9 +182,6 @@
+ /* HW steering counter's query interval. */
+ #define MLX5_HWS_CNT_CYCLE_TIME "svc_cycle_time"
+
+-/* Device parameter to control representor matching in ingress/egress flows with HWS. */
+-#define MLX5_REPR_MATCHING_EN "repr_matching_en"
+-
+ /*
+  * Alignment of the Tx queue starting address,
+  * If not set, using separate umem and MR for each TxQ.
+@@ -1432,8 +1429,6 @@ mlx5_dev_args_check_handler(const char *key, const char *val, void *opaque)
+ 		config->cnt_svc.service_core = tmp;
+ 	} else if (strcmp(MLX5_HWS_CNT_CYCLE_TIME, key) == 0) {
+ 		config->cnt_svc.cycle_time = tmp;
+-	} else if (strcmp(MLX5_REPR_MATCHING_EN, key) == 0) {
+-		config->repr_matching = !!tmp;
+ 	} else if (strcmp(MLX5_TXQ_MEM_ALGN, key) == 0) {
+ 		config->txq_mem_algn = (uint32_t)tmp;
+ 	}
+@@ -1474,7 +1469,6 @@ mlx5_shared_dev_ctx_args_config(struct mlx5_dev_ctx_shared *sh,
+ 		MLX5_FDB_DEFAULT_RULE_EN,
+ 		MLX5_HWS_CNT_SERVICE_CORE,
+ 		MLX5_HWS_CNT_CYCLE_TIME,
+-		MLX5_REPR_MATCHING_EN,
+ 		MLX5_TXQ_MEM_ALGN,
+ 		NULL,
+ 	};
+@@ -1497,7 +1491,6 @@ mlx5_shared_dev_ctx_args_config(struct mlx5_dev_ctx_shared *sh,
+ 	config->fdb_def_rule = 1;
+ 	config->cnt_svc.cycle_time = MLX5_CNT_SVC_CYCLE_TIME_DEFAULT;
+ 	config->cnt_svc.service_core = rte_get_main_lcore();
+-	config->repr_matching = 1;
+ 	config->txq_mem_algn = log2above(alignment);
+ 	if (mkvlist != NULL) {
+ 		/* Process parameters. */
+@@ -1532,11 +1525,6 @@ mlx5_shared_dev_ctx_args_config(struct mlx5_dev_ctx_shared *sh,
+ 			config->dv_xmeta_en);
+ 		config->dv_xmeta_en = MLX5_XMETA_MODE_LEGACY;
+ 	}
+-	if (config->dv_flow_en != 2 && !config->repr_matching) {
+-		DRV_LOG(DEBUG, "Disabling representor matching is valid only "
+-			       "when HW Steering is enabled.");
+-		config->repr_matching = 1;
+-	}
+ 	if (config->tx_pp && !sh->dev_cap.txpp_en) {
+ 		DRV_LOG(ERR, "Packet pacing is not supported.");
+ 		rte_errno = ENODEV;
+@@ -1591,7 +1579,6 @@ mlx5_shared_dev_ctx_args_config(struct mlx5_dev_ctx_shared *sh,
+ 	DRV_LOG(DEBUG, "\"allow_duplicate_pattern\" is %u.",
+ 		config->allow_duplicate_pattern);
+ 	DRV_LOG(DEBUG, "\"fdb_def_rule_en\" is %u.", config->fdb_def_rule);
+-	DRV_LOG(DEBUG, "\"repr_matching_en\" is %u.", config->repr_matching);
+ 	DRV_LOG(DEBUG, "\"txq_mem_algn\" is %u.", config->txq_mem_algn);
+ 	return 0;
+ }
+diff --git a/drivers/net/mlx5/mlx5.h b/drivers/net/mlx5/mlx5.h
+index 7e4bfacd11..966e802f5f 100644
+--- a/drivers/net/mlx5/mlx5.h
++++ b/drivers/net/mlx5/mlx5.h
+@@ -397,7 +397,6 @@ struct mlx5_sh_config {
+ 	uint32_t lro_allowed:1; /* Whether LRO is allowed. */
+ 	/* Allow/Prevent the duplicate rules pattern. */
+ 	uint32_t fdb_def_rule:1; /* Create FDB default jump rule */
+-	uint32_t repr_matching:1; /* Enable implicit vport matching in HWS FDB. */
+ 	uint32_t txq_mem_algn; /* logarithm value of the TxQ address alignment. */
+ 	struct {
+ 		uint16_t service_core;
+diff --git a/drivers/net/mlx5/mlx5_flow.c b/drivers/net/mlx5/mlx5_flow.c
+index ed67a90a22..2c48f1b01b 100644
+--- a/drivers/net/mlx5/mlx5_flow.c
++++ b/drivers/net/mlx5/mlx5_flow.c
+@@ -8818,10 +8818,7 @@ mlx5_flow_isolate(struct rte_eth_dev *dev,
+ 				   "port must be stopped first");
+ 		return -rte_errno;
+ 	}
+-	if (!enable && !priv->sh->config.repr_matching)
+-		return rte_flow_error_set(error, ENOTSUP, RTE_FLOW_ERROR_TYPE_UNSPECIFIED, NULL,
+-					  "isolated mode cannot be disabled when "
+-					  "representor matching is disabled");
++
+ 	priv->isolated = !!enable;
+ 	if (enable)
+ 		dev->dev_ops = &mlx5_dev_ops_isolate;
+diff --git a/drivers/net/mlx5/mlx5_flow.h b/drivers/net/mlx5/mlx5_flow.h
+index e8b298dd1d..d7cc60f8d9 100644
+--- a/drivers/net/mlx5/mlx5_flow.h
++++ b/drivers/net/mlx5/mlx5_flow.h
+@@ -3029,9 +3029,6 @@ struct mlx5_flow_hw_ctrl_fdb {
+ 	struct rte_flow_pattern_template *port_items_tmpl;
+ 	struct rte_flow_actions_template *jump_one_actions_tmpl;
+ 	struct rte_flow_template_table *hw_esw_zero_tbl;
+-	struct rte_flow_pattern_template *tx_meta_items_tmpl;
+-	struct rte_flow_actions_template *tx_meta_actions_tmpl;
+-	struct rte_flow_template_table *hw_tx_meta_cpy_tbl;
+ 	struct rte_flow_pattern_template *lacp_rx_items_tmpl;
+ 	struct rte_flow_actions_template *lacp_rx_actions_tmpl;
+ 	struct rte_flow_template_table *hw_lacp_rx_tbl;
+@@ -3610,11 +3607,7 @@ int mlx5_flow_hw_esw_create_sq_miss_flow(struct rte_eth_dev *dev,
+ int mlx5_flow_hw_esw_destroy_sq_miss_flow(struct rte_eth_dev *dev,
+ 					  uint32_t sqn, bool external);
+ int mlx5_flow_hw_esw_create_default_jump_flow(struct rte_eth_dev *dev);
+-int mlx5_flow_hw_create_fdb_tx_default_mreg_copy_flow(struct rte_eth_dev *dev,
+-						  uint32_t sqn, bool external);
+ int mlx5_flow_hw_create_nic_tx_default_mreg_copy_flow(struct rte_eth_dev *dev, uint32_t sqn);
+-int mlx5_flow_hw_destroy_tx_default_mreg_copy_flow(struct rte_eth_dev *dev,
+-						   uint32_t sqn, bool external);
+ int mlx5_flow_hw_create_tx_repr_matching_flow(struct rte_eth_dev *dev,
+ 					      uint32_t sqn, bool external);
+ int mlx5_flow_hw_destroy_tx_repr_matching_flow(struct rte_eth_dev *dev,
+diff --git a/drivers/net/mlx5/mlx5_flow_hw.c b/drivers/net/mlx5/mlx5_flow_hw.c
+index 208f50fbfd..5ba622c291 100644
+--- a/drivers/net/mlx5/mlx5_flow_hw.c
++++ b/drivers/net/mlx5/mlx5_flow_hw.c
+@@ -5320,7 +5320,7 @@ __translate_group(struct rte_eth_dev *dev,
+ 						  "group index not supported");
+ 		*table_group = group + 1;
+ 	} else if (config->dv_esw_en &&
+-		   (config->repr_matching || config->dv_xmeta_en == MLX5_XMETA_MODE_META32_HWS) &&
++		   config->dv_xmeta_en == MLX5_XMETA_MODE_META32_HWS &&
+ 		   external &&
+ 		   flow_attr->egress) {
+ 		/*
+@@ -8576,7 +8576,7 @@ __flow_hw_pattern_validate(struct rte_eth_dev *dev,
+ 			break;
+ 		}
+ 		case RTE_FLOW_ITEM_TYPE_REPRESENTED_PORT:
+-			if (attr->ingress && priv->sh->config.repr_matching)
++			if (attr->ingress)
+ 				return rte_flow_error_set(error, EINVAL,
+ 						  RTE_FLOW_ERROR_TYPE_ITEM, NULL,
+ 						  "represented port item cannot be used"
+@@ -9051,14 +9051,12 @@ flow_hw_pattern_template_create(struct rte_eth_dev *dev,
+ 		return NULL;
+ 	orig_item_nb = rc;
+ 	if (priv->sh->config.dv_esw_en &&
+-	    priv->sh->config.repr_matching &&
+ 	    attr->ingress && !attr->egress && !attr->transfer) {
+ 		copied_items = flow_hw_prepend_item(items, orig_item_nb, &port, error);
+ 		if (!copied_items)
+ 			return NULL;
+ 		tmpl_items = copied_items;
+ 	} else if (priv->sh->config.dv_esw_en &&
+-		   priv->sh->config.repr_matching &&
+ 		   !attr->ingress && attr->egress && !attr->transfer) {
+ 		if (item_flags & MLX5_FLOW_ITEM_SQ) {
+ 			DRV_LOG(DEBUG, "Port %u omitting implicit REG_C_0 match for egress "
+@@ -10006,7 +10004,6 @@ flow_hw_setup_tx_repr_tagging(struct rte_eth_dev *dev, struct rte_flow_error *er
+ 	};
+
+ 	MLX5_ASSERT(priv->sh->config.dv_esw_en);
+-	MLX5_ASSERT(priv->sh->config.repr_matching);
+ 	priv->hw_tx_repr_tagging_pt =
+ 		flow_hw_create_tx_repr_sq_pattern_tmpl(dev, error);
+ 	if (!priv->hw_tx_repr_tagging_pt)
+@@ -10185,46 +10182,6 @@ flow_hw_create_ctrl_port_pattern_template(struct rte_eth_dev *dev,
+ 	return flow_hw_pattern_template_create(dev, &attr, items, error);
+ }
+
+-/*
+- * Creating a flow pattern template with all ETH packets matching.
+- * This template is used to set up a table for default Tx copy (Tx metadata
+- * to REG_C_1) flow rule usage.
+- *
+- * @param dev
+- *   Pointer to Ethernet device.
+- * @param error
+- *   Pointer to error structure.
+- *
+- * @return
+- *   Pointer to flow pattern template on success, NULL otherwise.
+- */
+-static struct rte_flow_pattern_template *
+-flow_hw_create_tx_default_mreg_copy_pattern_template(struct rte_eth_dev *dev,
+-						     struct rte_flow_error *error)
+-{
+-	struct rte_flow_pattern_template_attr tx_pa_attr = {
+-		.relaxed_matching = 0,
+-		.egress = 1,
+-	};
+-	struct rte_flow_item_eth promisc = {
+-		.hdr.dst_addr.addr_bytes = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 },
+-		.hdr.src_addr.addr_bytes = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 },
+-		.hdr.ether_type = 0,
+-	};
+-	struct rte_flow_item eth_all[] = {
+-		[0] = {
+-			.type = RTE_FLOW_ITEM_TYPE_ETH,
+-			.spec = &promisc,
+-			.mask = &promisc,
+-		},
+-		[1] = {
+-			.type = RTE_FLOW_ITEM_TYPE_END,
+-		},
+-	};
+-
+-	return flow_hw_pattern_template_create(dev, &tx_pa_attr, eth_all, error);
+-}
+-
+ /*
+  * Creating a flow pattern template with all LACP packets matching, only for NIC
+  * ingress domain.
+@@ -10745,15 +10702,6 @@ flow_hw_cleanup_ctrl_fdb_tables(struct rte_eth_dev *dev)
+ 	if (hw_ctrl_fdb->lacp_rx_items_tmpl)
+ 		claim_zero(flow_hw_pattern_template_destroy(dev, hw_ctrl_fdb->lacp_rx_items_tmpl,
+ 			   NULL));
+-	/* Clean up templates used for default Tx metadata copy. */
+-	if (hw_ctrl_fdb->hw_tx_meta_cpy_tbl)
+-		claim_zero(flow_hw_table_destroy(dev, hw_ctrl_fdb->hw_tx_meta_cpy_tbl, NULL));
+-	if (hw_ctrl_fdb->tx_meta_actions_tmpl)
+-		claim_zero(flow_hw_actions_template_destroy(dev, hw_ctrl_fdb->tx_meta_actions_tmpl,
+-			   NULL));
+-	if (hw_ctrl_fdb->tx_meta_items_tmpl)
+-		claim_zero(flow_hw_pattern_template_destroy(dev, hw_ctrl_fdb->tx_meta_items_tmpl,
+-			   NULL));
+ 	/* Clean up templates used for default FDB jump rule. */
+ 	if (hw_ctrl_fdb->hw_esw_zero_tbl)
+ 		claim_zero(flow_hw_table_destroy(dev, hw_ctrl_fdb->hw_esw_zero_tbl, NULL));
+@@ -10840,8 +10788,6 @@ flow_hw_create_fdb_ctrl_tables(struct rte_eth_dev *dev, struct rte_flow_error *e
+ {
+ 	struct mlx5_priv *priv = dev->data->dev_private;
+ 	struct mlx5_flow_hw_ctrl_fdb *hw_ctrl_fdb;
+-	uint32_t xmeta = priv->sh->config.dv_xmeta_en;
+-	uint32_t repr_matching = priv->sh->config.repr_matching;
+ 	uint32_t fdb_def_rule = priv->sh->config.fdb_def_rule;
+
+ 	MLX5_ASSERT(priv->hw_ctrl_fdb == NULL);
+@@ -10927,32 +10873,6 @@ flow_hw_create_fdb_ctrl_tables(struct rte_eth_dev *dev, struct rte_flow_error *e
+ 			goto err;
+ 		}
+ 	}
+-	/* Create templates and table for default Tx metadata copy flow rule. */
+-	if (!repr_matching && xmeta == MLX5_XMETA_MODE_META32_HWS) {
+-		hw_ctrl_fdb->tx_meta_items_tmpl =
+-			flow_hw_create_tx_default_mreg_copy_pattern_template(dev, error);
+-		if (!hw_ctrl_fdb->tx_meta_items_tmpl) {
+-			DRV_LOG(ERR, "port %u failed to Tx metadata copy pattern"
+-				" template for control flows", dev->data->port_id);
+-			goto err;
+-		}
+-		hw_ctrl_fdb->tx_meta_actions_tmpl =
+-			flow_hw_create_tx_default_mreg_copy_actions_template(dev, error);
+-		if (!hw_ctrl_fdb->tx_meta_actions_tmpl) {
+-			DRV_LOG(ERR, "port %u failed to Tx metadata copy actions"
+-				" template for control flows", dev->data->port_id);
+-			goto err;
+-		}
+-		hw_ctrl_fdb->hw_tx_meta_cpy_tbl =
+-			flow_hw_create_tx_default_mreg_copy_table
+-				(dev, hw_ctrl_fdb->tx_meta_items_tmpl,
+-				 hw_ctrl_fdb->tx_meta_actions_tmpl, error);
+-		if (!hw_ctrl_fdb->hw_tx_meta_cpy_tbl) {
+-			DRV_LOG(ERR, "port %u failed to create table for default"
+-				" Tx metadata copy flow rule", dev->data->port_id);
+-			goto err;
+-		}
+-	}
+ 	/* Create LACP default miss table. */
+ 	if (!priv->sh->config.lacp_by_user && priv->pf_bond >= 0 && priv->master) {
+ 		hw_ctrl_fdb->lacp_rx_items_tmpl =
+@@ -12186,7 +12106,7 @@ __flow_hw_configure(struct rte_eth_dev *dev,
+ 		if (!priv->hw_tag[i])
+ 			goto err;
+ 	}
+-	if (priv->sh->config.dv_esw_en && priv->sh->config.repr_matching) {
++	if (priv->sh->config.dv_esw_en) {
+ 		ret = flow_hw_setup_tx_repr_tagging(dev, error);
+ 		if (ret)
+ 			goto err;
+@@ -16095,62 +16015,6 @@ mlx5_flow_hw_esw_create_default_jump_flow(struct rte_eth_dev *dev)
+ 					items, 0, actions, 0, &flow_info, false);
+ }
+
+-int
+-mlx5_flow_hw_create_fdb_tx_default_mreg_copy_flow(struct rte_eth_dev *dev,
+-						  uint32_t sqn, bool external)
+-{
+-	struct mlx5_priv *priv = dev->data->dev_private;
+-	struct mlx5_rte_flow_item_sq sq_spec = {
+-		.queue = sqn,
+-	};
+-	struct rte_flow_item items[] = {
+-		{
+-			.type = (enum rte_flow_item_type)MLX5_RTE_FLOW_ITEM_TYPE_SQ,
+-			.spec = &sq_spec,
+-		},
+-		{
+-			.type = RTE_FLOW_ITEM_TYPE_END,
+-		},
+-	};
+-	struct rte_flow_action_modify_field mreg_action = {
+-		.operation = RTE_FLOW_MODIFY_SET,
+-		.dst = {
+-			.field = (enum rte_flow_field_id)MLX5_RTE_FLOW_FIELD_META_REG,
+-			.tag_index = REG_C_1,
+-		},
+-		.src = {
+-			.field = (enum rte_flow_field_id)MLX5_RTE_FLOW_FIELD_META_REG,
+-			.tag_index = REG_A,
+-		},
+-		.width = 32,
+-	};
+-	struct rte_flow_action copy_reg_action[] = {
+-		[0] = {
+-			.type = RTE_FLOW_ACTION_TYPE_MODIFY_FIELD,
+-			.conf = &mreg_action,
+-		},
+-		[1] = {
+-			.type = RTE_FLOW_ACTION_TYPE_JUMP,
+-		},
+-		[2] = {
+-			.type = RTE_FLOW_ACTION_TYPE_END,
+-		},
+-	};
+-	struct mlx5_ctrl_flow_info flow_info = {
+-		.type = MLX5_CTRL_FLOW_TYPE_TX_META_COPY,
+-		.tx_repr_sq = sqn,
+-	};
+-
+-	MLX5_ASSERT(priv->master);
+-	if (!priv->dr_ctx ||
+-	    !priv->hw_ctrl_fdb ||
+-	    !priv->hw_ctrl_fdb->hw_tx_meta_cpy_tbl)
+-		return 0;
+-	return flow_hw_create_ctrl_flow(dev, dev,
+-					priv->hw_ctrl_fdb->hw_tx_meta_cpy_tbl,
+-					items, 0, copy_reg_action, 0, &flow_info, external);
+-}
+-
+ int
+ mlx5_flow_hw_create_nic_tx_default_mreg_copy_flow(struct rte_eth_dev *dev, uint32_t sqn)
+ {
+@@ -16201,56 +16065,6 @@ mlx5_flow_hw_create_nic_tx_default_mreg_copy_flow(struct rte_eth_dev *dev, uint3
+ 					items, 0, copy_reg_action, 0, &flow_info, false);
+ }
+
+-static bool
+-flow_hw_is_matching_tx_mreg_copy_flow(struct mlx5_ctrl_flow_entry *cf,
+-				      struct rte_eth_dev *dev,
+-				      uint32_t sqn)
+-{
+-	if (cf->owner_dev != dev)
+-		return false;
+-	if (cf->info.type == MLX5_CTRL_FLOW_TYPE_TX_META_COPY && cf->info.tx_repr_sq == sqn)
+-		return true;
+-	return false;
+-}
+-
+-int
+-mlx5_flow_hw_destroy_tx_default_mreg_copy_flow(struct rte_eth_dev *dev, uint32_t sqn, bool external)
+-{
+-	uint16_t port_id = dev->data->port_id;
+-	uint16_t proxy_port_id = dev->data->port_id;
+-	struct rte_eth_dev *proxy_dev;
+-	struct mlx5_priv *proxy_priv;
+-	struct mlx5_ctrl_flow_entry *cf;
+-	struct mlx5_ctrl_flow_entry *cf_next;
+-	int ret;
+-
+-	ret = rte_flow_pick_transfer_proxy(port_id, &proxy_port_id, NULL);
+-	if (ret) {
+-		DRV_LOG(ERR, "Unable to pick transfer proxy port for port %u. Transfer proxy "
+-			     "port must be present for default SQ miss flow rules to exist.",
+-			     port_id);
+-		return ret;
+-	}
+-	proxy_dev = &rte_eth_devices[proxy_port_id];
+-	proxy_priv = proxy_dev->data->dev_private;
+-	if (!proxy_priv->dr_ctx ||
+-	    !proxy_priv->hw_ctrl_fdb ||
+-	    !proxy_priv->hw_ctrl_fdb->hw_tx_meta_cpy_tbl)
+-		return 0;
+-	cf = external ? LIST_FIRST(&proxy_priv->hw_ext_ctrl_flows) :
+-			LIST_FIRST(&proxy_priv->hw_ctrl_flows);
+-	while (cf != NULL) {
+-		cf_next = LIST_NEXT(cf, next);
+-		if (flow_hw_is_matching_tx_mreg_copy_flow(cf, dev, sqn)) {
+-			claim_zero(flow_hw_destroy_ctrl_flow(proxy_dev, cf->flow));
+-			LIST_REMOVE(cf, next);
+-			mlx5_free(cf);
+-		}
+-		cf = cf_next;
+-	}
+-	return 0;
+-}
+-
+ int
+ mlx5_flow_hw_create_tx_repr_matching_flow(struct rte_eth_dev *dev, uint32_t sqn, bool external)
+ {
+@@ -16282,8 +16096,6 @@ mlx5_flow_hw_create_tx_repr_matching_flow(struct rte_eth_dev *dev, uint32_t sqn,
+ 		.tx_repr_sq = sqn,
+ 	};
+
+-	/* It is assumed that caller checked for representor matching. */
+-	MLX5_ASSERT(priv->sh->config.repr_matching);
+ 	if (!priv->dr_ctx) {
+ 		DRV_LOG(DEBUG, "Port %u must be configured for HWS, before creating "
+ 			       "default egress flow rules. Omitting creation.",
+diff --git a/drivers/net/mlx5/mlx5_trigger.c b/drivers/net/mlx5/mlx5_trigger.c
+index 996c1eb6ac..c0fb98e78a 100644
+--- a/drivers/net/mlx5/mlx5_trigger.c
++++ b/drivers/net/mlx5/mlx5_trigger.c
+@@ -1132,9 +1132,9 @@ mlx5_hw_representor_port_allowed_start(struct rte_eth_dev *dev)
+ 		rte_errno = EAGAIN;
+ 		return -rte_errno;
+ 	}
+-	if (priv->sh->config.repr_matching && !priv->dr_ctx) {
+-		DRV_LOG(ERR, "Failed to start port %u: with representor matching enabled, port "
+-			     "must be configured for HWS", dev->data->port_id);
++	if (priv->dr_ctx == NULL) {
++		DRV_LOG(ERR, "Failed to start port %u: port must be configured for HWS",
++			dev->data->port_id);
+ 		rte_errno = EINVAL;
+ 		return -rte_errno;
+ 	}
+@@ -1621,27 +1621,17 @@ mlx5_traffic_enable_hws(struct rte_eth_dev *dev)
+ 				goto error;
+ 			}
+ 		}
+-		if (config->dv_esw_en && config->repr_matching) {
++		if (config->dv_esw_en) {
+ 			if (mlx5_flow_hw_create_tx_repr_matching_flow(dev, queue, false)) {
+ 				mlx5_txq_release(dev, i);
+ 				goto error;
+ 			}
+ 		}
+-		/*
+-		 * With extended metadata enabled, the Tx metadata copy is handled by default
+-		 * Tx tagging flow rules, so default Tx flow rule is not needed. It is only
+-		 * required when representor matching is disabled.
+-		 */
+-		if (config->dv_esw_en && !config->repr_matching &&
+-		    config->dv_xmeta_en == MLX5_XMETA_MODE_META32_HWS &&
+-		    (priv->master || priv->representor)) {
+-			ret = mlx5_flow_hw_create_fdb_tx_default_mreg_copy_flow(dev, queue, false);
+-		} else if (mlx5_vport_tx_metadata_passing_enabled(priv->sh)) {
+-			ret = mlx5_flow_hw_create_nic_tx_default_mreg_copy_flow(dev, queue);
+-		}
+-		if (ret != 0) {
+-			mlx5_txq_release(dev, i);
+-			goto error;
++		if (mlx5_vport_tx_metadata_passing_enabled(priv->sh)) {
++			if (mlx5_flow_hw_create_nic_tx_default_mreg_copy_flow(dev, queue)) {
++				mlx5_txq_release(dev, i);
++				goto error;
++			}
+ 		}
+ 		mlx5_txq_release(dev, i);
+ 	}
+diff --git a/drivers/net/mlx5/mlx5_txq.c b/drivers/net/mlx5/mlx5_txq.c
+index e273486809..ad15b20e7b 100644
+--- a/drivers/net/mlx5/mlx5_txq.c
++++ b/drivers/net/mlx5/mlx5_txq.c
+@@ -1453,20 +1453,12 @@ rte_pmd_mlx5_external_sq_enable(uint16_t port_id, uint32_t sq_num)
+ 			sq_miss_created = true;
+ 		}
+
+-		if (priv->sh->config.repr_matching &&
+-		    mlx5_flow_hw_create_tx_repr_matching_flow(dev, sq_num, true)) {
++		if (mlx5_flow_hw_create_tx_repr_matching_flow(dev, sq_num, true)) {
+ 			if (sq_miss_created)
+ 				mlx5_flow_hw_esw_destroy_sq_miss_flow(dev, sq_num, true);
+ 			return -rte_errno;
+ 		}
+
+-		if (!priv->sh->config.repr_matching &&
+-		    priv->sh->config.dv_xmeta_en == MLX5_XMETA_MODE_META32_HWS &&
+-		    mlx5_flow_hw_create_fdb_tx_default_mreg_copy_flow(dev, sq_num, true)) {
+-			if (sq_miss_created)
+-				mlx5_flow_hw_esw_destroy_sq_miss_flow(dev, sq_num, true);
+-			return -rte_errno;
+-		}
+ 		return 0;
+ 	}
+ #endif
+@@ -1510,12 +1502,7 @@ rte_pmd_mlx5_external_sq_disable(uint16_t port_id, uint32_t sq_num)
+ 		if (priv->sh->config.fdb_def_rule &&
+ 		    mlx5_flow_hw_esw_destroy_sq_miss_flow(dev, sq_num, true))
+ 			return -rte_errno;
+-		if (priv->sh->config.repr_matching &&
+-		    mlx5_flow_hw_destroy_tx_repr_matching_flow(dev, sq_num, true))
+-			return -rte_errno;
+-		if (!priv->sh->config.repr_matching &&
+-		    priv->sh->config.dv_xmeta_en == MLX5_XMETA_MODE_META32_HWS &&
+-		    mlx5_flow_hw_destroy_tx_default_mreg_copy_flow(dev, sq_num, true))
++		if (mlx5_flow_hw_destroy_tx_repr_matching_flow(dev, sq_num, true))
+ 			return -rte_errno;
+ 		return 0;
+ 	}
+--
+2.39.5
 
