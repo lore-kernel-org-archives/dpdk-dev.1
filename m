@@ -2,69 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E77D1CD8C9D
-	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Nov 2025 17:31:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E318CD8C9D
+	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Nov 2025 17:32:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D367640DD7;
-	Thu, 13 Nov 2025 18:31:17 +0100 (CET)
-Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com
- [209.85.160.46]) by mails.dpdk.org (Postfix) with ESMTP id 6A0EA40151
- for <dev@dpdk.org>; Thu, 13 Nov 2025 18:31:16 +0100 (CET)
-Received: by mail-oa1-f46.google.com with SMTP id
- 586e51a60fabf-3c9991e6ad1so589908fac.0
- for <dev@dpdk.org>; Thu, 13 Nov 2025 09:31:16 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id DBAD340E2D;
+	Thu, 13 Nov 2025 18:32:48 +0100 (CET)
+Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com
+ [209.85.167.181])
+ by mails.dpdk.org (Postfix) with ESMTP id C024340151
+ for <dev@dpdk.org>; Thu, 13 Nov 2025 18:32:47 +0100 (CET)
+Received: by mail-oi1-f181.google.com with SMTP id
+ 5614622812f47-45033024e59so475156b6e.3
+ for <dev@dpdk.org>; Thu, 13 Nov 2025 09:32:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1763055075;
- x=1763659875; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1763055167;
+ x=1763659967; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=WF/nnVAbuUYEWbvvVMFNPEV2wwUFYnf93JKdeETQBFY=;
- b=JPqzZlJr1XxaZUJDEC1HOhA2LKOB7TU0vA6LeySFWZKywcg5TSTAGFRFjGfFnKV6fO
- Q4or++9U7401fE+N2V72HYZabmE0WMhUrMkdxUz5V5MqlFuXFu7EITcgBppjjjCuPjVO
- KIjhf4+rcoFsybfDl3H17OTAhxxxo1rTXqfWoC0s8vo91su2uYIeeIwCJ3W0+MbJg6em
- 4IeBpNJAmr+HLIBDtpngpvzqJrmrFF2dZ7QvByW+B6tJZN8pENhjTpZwfwNjqLMh1U0G
- eNclIe525u/1x7SMeKyYe5uquxjKxlHZOCMaCaUJPQ2uT7TiM9NJ46Rz601ciCQ2j+pZ
- 6bDw==
+ bh=9agHCU+Ng/ZxqD6/TUhQiVHLakZO+qJ73YBTBViCQto=;
+ b=b8VzzpHd2kZ8gHBLWl7+swkW1oTDhBbWTjHngXQiG/CpEpDrRDPgxYSSgvE+c5KhzE
+ ghP1x//b6USRhnGyJVC/3W2AtyArc9X8fN4nDdoxe8HGNCES7pY0NOrIOm4Ip9aW25/k
+ JRz5K44Jxsmpi3jT85jprMln0dCkHzLFD6uLkAEcDQ3eh2HQqKWpGzAApxIQ+bcN9VGr
+ /Oi3fXbJq8BC6YatneVugy+YFac76jNaIl0n+QXT+E6NJY57GKuWlQkJyJCst/TC3kGe
+ kHqYtuElyxt6l9tZwaREFA8pA3jAg+BKOmB2xb7s6Z1Dqwpv9tMOD0IJQoqISnqI4d3B
+ ubDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1763055075; x=1763659875;
+ d=1e100.net; s=20230601; t=1763055167; x=1763659967;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=WF/nnVAbuUYEWbvvVMFNPEV2wwUFYnf93JKdeETQBFY=;
- b=jDBUlVh997CIFIwaWecFJPzTBLsjqyWkgvfdAACEf9OSk9IA1/OxlU8/90y5ToMviu
- 3ojAPt41Q+xSqn/vpJFcfiZZLyfb+/BsHh0Wtf2UtQSnvmB834KQax+6dnUYQaczCd04
- e9L31o4J7gFiaSAoHyGrlD76fzofYS25lRV+wDDGhLWYQBqS++4skN9aJs5+yBfopbjP
- Z06ue5cVyE+dybsbXSO0+JjrlFrbtWaD5BqX6dOKMPJsRr11sR+HfbmfufZ2YzQ+MpWe
- 3kPs2iS9wOO0lSEqoY2qRJ/NszV9S+V8GxxBACtaBOlXssPpIW0hCYUvyYO0hBWdClUx
- 7iaA==
+ bh=9agHCU+Ng/ZxqD6/TUhQiVHLakZO+qJ73YBTBViCQto=;
+ b=jYTm9COpACeXM+/tMwsE5ZhqoW1YM72ynMx2FPZ/8JaAFlR/ofNH2hH3AXGN1wFMxv
+ wJISZRuPzMnC97xW9MyUmAFiv5a9OLcysGH9GmBJByUim0ojQPOhlrKnmN20tN+yRAzU
+ QhhPBg2UfoOdY9ZYL6B/kmMTUtxSuFSpT4bfgxgY0oFt1cf04nnIOqdnN09R0MFP7dR/
+ Hq+JvqoBKOOQetN9QDPudKi9G4kAtyBshm1e4jG9DQJzL857u22/3ArdOV2CcvwHiHTU
+ Gh9Z1DVivgOeDKt6nI0HxVENrergcVHreF7JNa4RNej+ohVadr4LA3eEDhs3vgJ93dHy
+ mDVA==
 X-Forwarded-Encrypted: i=1;
- AJvYcCWhsbAdgOyVFM+HoHmZfxsRwCaoJH+zGBOfe3YvxYjrzbDkEbJZHV25tC9y+qwFIa8dAPw=@dpdk.org
-X-Gm-Message-State: AOJu0YyMOje1KqFcRXe/1Z+C19jYgtqTAEX/cuhqi4YEysv39KFfIKu0
- FmBJe7B317prK2uASJ6T02hw1eG13uk+5VcubnamFuN+G8sB5dPrvZhyj1z02/kHnuw=
-X-Gm-Gg: ASbGncv5muA1pqC9i/oXDLIHYeoJRKIqlRTafFo9psY8cHv3rhkDTpdeDnKQzvxP9L1
- OIk95ansMxn1Yi3Cd1rOUD6MTnlmEaeDEG2F9tcPwbS/2gigVEe0Zbf1AvgjOC928zbvhsx3dDo
- TlXfoBzAPJYUIBBJgz5ssdr7H6g3Yqw7g35DVr3ZXOSBplEq3dYDttvbmR7aD0KbGbyEhxlTldc
- 1yU9Q9UzKOwbnKZrBRtzpJCJFn9nL8MF8SXoi94ZxuHurwpRShEeTNJvBrMebhc2yhOVPhaP5yd
- zjmfINx75uIjtH8Oastca6nuwJEdqfiKpCvBoZyBG/cF6JX6HOE498IH404PPZ3TLS20Dt0DGuk
- zyqNd/LEkQCUx+TcFzIOAIQ7/EG7pE3FgWmwyaZ7jXIislEAN13JtKjv+5fec1XCiA2PxmNBJrv
- v4hQ889rVUmvuD+ePmq9j7BagmLtSdUSjfFBf1mKOlS49P
-X-Google-Smtp-Source: AGHT+IFgrnUO+CAIyhpVqMB1HmKDF3V/GWaBI6F9u0Ne1u4EKZrPtHgdSyD62FgfdWBnYmplERBpGA==
-X-Received: by 2002:a05:6870:a106:b0:3c9:77fb:dc3b with SMTP id
- 586e51a60fabf-3e84c660560mr2280841fac.18.1763055075433; 
- Thu, 13 Nov 2025 09:31:15 -0800 (PST)
+ AJvYcCW+XX7Kuw3x51lFKXRata9q6Tlm6mMVqEzGvzxQFHseHsmBv8tiQafGYaq7LDY+Tlk9DC4=@dpdk.org
+X-Gm-Message-State: AOJu0Yy0koHttHOiJ3pTZ1ShxJxUKDbcAd5sVYX3tbDvSrIrOal50zK0
+ x3ehVRAPHywJFEitLQkDzz6rN+K0kPTs74PD80GP8o7hQou5lrThPSJ3efaW9l9DPf0=
+X-Gm-Gg: ASbGncvEaFqJy6uWieivWKIyJQ+GDQ79Q/6kLGSePZ0RbB8QYsXVaYG8lwPq8opIC8D
+ xr3yAqE05G9ywjahiqLG91+7erdpug6QkJwrJ5GysIdb9O7+/Ww1J92XCs+VNcdzaNLbBIrYTPP
+ 6SZvPTB+cbGLuAaFeHXj7TdZUjrj9oRpExvZU1gLv/gPsjw8pI3PEGCQSXctBm5riPxZR/x01gt
+ 9Z19js+uqyuoc51whIy8mIpqO8ZHfXVcY3rvlQ+jgEEffpmtPgesUjoXt294H+QHlSOVgPXRaDK
+ br8GOZIx0Awt26jZjn4qE+TMuGHJRkWL0NY5iH4PfToW4Wcrc8EZXyq5cNoqLbtSC98hY/UnJEI
+ tDppk4Ay2Ymlu/9LwTxIZaTula0fvgIj22hvshCKxWeXAmWev96OKBWqh7g7gCILnQr6farfXWI
+ +0AcyWbk5xIlLBeCWnkM0Zs/kV0zfvfTrG6KFEqHgETS7oPCoA63AvjVY=
+X-Google-Smtp-Source: AGHT+IFrBq7DW2m62R4inUNcaCo0B2LLpOfrAzqqyaqPk1qkbFbjkpano+f2uRArKor/6WWbFxe30w==
+X-Received: by 2002:a05:6808:15a3:b0:450:3823:b603 with SMTP id
+ 5614622812f47-4509749b780mr15033b6e.18.1763055166930; 
+ Thu, 13 Nov 2025 09:32:46 -0800 (PST)
 Received: from phoenix (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 46e09a7af769-7c73a3bce15sm1548756a34.23.2025.11.13.09.31.14
+ 586e51a60fabf-3e852044005sm1812181fac.7.2025.11.13.09.32.46
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 13 Nov 2025 09:31:15 -0800 (PST)
-Date: Thu, 13 Nov 2025 09:31:00 -0800
+ Thu, 13 Nov 2025 09:32:46 -0800 (PST)
+Date: Thu, 13 Nov 2025 09:32:36 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: Mohit Kumar Parjapat <mprajapat@marvell.com>
 Cc: Reshma Pattan <reshma.pattan@intel.com>, <dev@dpdk.org>,
  <jerinj@marvell.com>, <hkalra@marvell.com>
 Subject: Re: [PATCH] app/proc-info: allow overriding defaults options
-Message-ID: <20251113093100.7c3aa473@phoenix>
+Message-ID: <20251113093236.6c797c43@phoenix>
 In-Reply-To: <20251112130326.2674728-1-mprajapat@marvell.com>
 References: <20251112130326.2674728-1-mprajapat@marvell.com>
 MIME-Version: 1.0
@@ -86,20 +87,10 @@ Errors-To: dev-bounces@dpdk.org
 On Wed, 12 Nov 2025 18:33:13 +0530
 Mohit Kumar Parjapat <mprajapat@marvell.com> wrote:
 
->  
-> +static void
-> +check_user_args(int argc, char **argv, uint8_t *arg_bitmap)
-> +{
-> +	int i;
-> +
-> +	for (i = 1; i < argc; i++) {
-> +		if (strncmp(argv[i], "-l", 2) == 0)
-> +			*arg_bitmap |= ARG_C_FLAG;
-> +		else if (strncmp(argv[i], "-n", 2) == 0)
-> +			*arg_bitmap |= ARG_N_FLAG;
-> +	}
-> +}
-> +
+> This patch overcomes the limitation of proc-info application
+> by allowing users to override the default -l and -n options.
+> 
+> Signed-off-by: Mohit Kumar Parjapat <mprajapat@marvell.com>
 
-There is no reason for the -n flag in this application.
-Purely cargo-cult coding.
+This program is intended to be a one-shot read of current state.
+Not sure why core and memory channels even matters for this.
