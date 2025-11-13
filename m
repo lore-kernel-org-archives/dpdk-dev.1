@@ -2,50 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77A71CD4F2F
-	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Nov 2025 04:40:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18808CD4F2F
+	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Nov 2025 04:40:31 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7E9FF40E41;
-	Thu, 13 Nov 2025 05:40:08 +0100 (CET)
-Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
- [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id E65F440EDF
- for <dev@dpdk.org>; Thu, 13 Nov 2025 05:40:05 +0100 (CET)
-Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
- 5ACNSMfn4032197 for <dev@dpdk.org>; Wed, 12 Nov 2025 20:40:05 -0800
+	by mails.dpdk.org (Postfix) with ESMTP id 666C840ED3;
+	Thu, 13 Nov 2025 05:40:09 +0100 (CET)
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
+ [67.231.156.173])
+ by mails.dpdk.org (Postfix) with ESMTP id A40F240E54
+ for <dev@dpdk.org>; Thu, 13 Nov 2025 05:40:07 +0100 (CET)
+Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
+ by mx0b-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
+ 5AD2dX8P203309 for <dev@dpdk.org>; Wed, 12 Nov 2025 20:40:07 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
  cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=w
- xJWs8URC+e5GcRccWLcjRnhwDVT0Vx8LNgsQPTX7Vo=; b=MfnTY+GMcMsbzthXU
- 3R31rfWkC+vHlT3pEBVJiQU6SFpk6fc3QZwbjEql485L/9NV84FrFTMB8aKkpEY9
- q4Tu0AVcRcCYzhBKsrBEPwjpw4IdqHFmA0g8D36kFIlcxFmPuN+srDvYKzYHLrtg
- Nct8ZeyxZTC203opdGCDRgUCk22qmM/XqjgT9Z4tSqgV/kBDNsWmrjkz9zexvgE0
- na4rjDcIVnhNH7Fr/m2C1umQtPrKX41Ie3QWo1h8jddLfg5prYMK7TiMDNxpzwDP
- wNUzPM3bxyz7L9Xs4Wn/Rs0zgQ0MQRax1SqskhTqOHvAdHUjWsEbRrhM/fRRA/Sg
- Q8esQ==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 4ad3xbgkk0-1
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=y
+ 7dvXuWfSvw/Wq3KixZxBUKjKN8Elv4S2fZBl5ygWQI=; b=IzD2g0Rg5wkGTqvyz
+ 3rdRJYiP2DABhoNgTPy4Dms1woG0pAoncvf7V7TBGLENkQz/nVhSSI1PHDNC+ze9
+ 4Naga5pZdC0GI0jTBqz6bvSzWmmMixt6PjIzXRSiRhLF0c6cgj36UEb0G2fCNeWv
+ +9XXL709UPSOqz7/anYCWBLpv/Mp4Zj6PEOS5tchyG4O6h9uoqOpyOu2oqHHwvA6
+ ToPBwr2PbreMnp8CAqf2e4XeMGEtVDsKeXZNiL8RXNqHUYDbT11UPQa0qeBxmv+a
+ w0dls/70SbgEy4WelC4VA3yWIxNR0QFJeZwvk1T39250P44bu6clxPZ/u5NFltLc
+ TFGPg==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4ad6r6g6nk-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Wed, 12 Nov 2025 20:40:03 -0800 (PST)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ for <dev@dpdk.org>; Wed, 12 Nov 2025 20:40:06 -0800 (PST)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Wed, 12 Nov 2025 20:40:02 -0800
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Wed, 12 Nov 2025 20:40:02 -0800
+ 15.2.1544.25; Wed, 12 Nov 2025 20:40:17 -0800
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
+ Transport; Wed, 12 Nov 2025 20:40:17 -0800
 Received: from hyd1588t430.caveonetworks.com (unknown [10.29.52.204])
- by maili.marvell.com (Postfix) with ESMTP id 5D41B3F7076;
- Wed, 12 Nov 2025 20:39:59 -0800 (PST)
+ by maili.marvell.com (Postfix) with ESMTP id 073D03F7087;
+ Wed, 12 Nov 2025 20:40:02 -0800 (PST)
 From: Nithin Dabilpuram <ndabilpuram@marvell.com>
 To: Nithin Dabilpuram <ndabilpuram@marvell.com>, Kiran Kumar K
  <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, Satha Rao
  <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>
 CC: <jerinj@marvell.com>, <dev@dpdk.org>, Aarnav JP <ajp@marvell.com>
-Subject: [PATCH v5 20/23] common/cnxk: fix CPT res address config for inline
-Date: Thu, 13 Nov 2025 10:08:05 +0530
-Message-ID: <20251113043808.1180851-20-ndabilpuram@marvell.com>
+Subject: [PATCH v5 21/23] common/cnxk: fix NIX Rx inject enable logic
+Date: Thu, 13 Nov 2025 10:08:06 +0530
+Message-ID: <20251113043808.1180851-21-ndabilpuram@marvell.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20251113043808.1180851-1-ndabilpuram@marvell.com>
 References: <20250901073036.1381560-1-ndabilpuram@marvell.com>
@@ -53,19 +53,19 @@ References: <20250901073036.1381560-1-ndabilpuram@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-GUID: 5cVFgHcz39YW_k4dMmlgGs9G2d6V7yg2
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEzMDAyOCBTYWx0ZWRfX+lnlPlueAmMR
- ilbZAOhZxB11uOKE+c6KSVYFnUGKJVWq3EVJ9yvESH7UEm2vJ+rryhUG+/kymHjyfbLKJduwX7b
- NLAnpduScm8pVLecZHQXXQpl8SHulVMxr6F2dP6U96/P70NxfyxvThME2mYRWgNn3uj+a2JG2Gl
- fqeZUFCRIOzZ6UcvelFmylxX+Z3WzrjTTZYivIwMTfZfQGMCLwRec+PXlZyGksA/ZtXgbqBrRED
- dXeESB0sI4OYDJHL0Miq8rIVO/YR7nLqIWV58y5b7PCSXPXiLSkiGvqiih0CgtfDUgoQ18L8yxI
- WJ0v/GPxCgHsXJvUbbqhmBt3lFkuEmshoZtS9u268P4BZodznllRrrUUd09nIdixip73S2o8rZB
- tAn5rsLZGLutIiaqrdfr8ZS+rDnvAw==
-X-Authority-Analysis: v=2.4 cv=Qq9THFyd c=1 sm=1 tr=0 ts=69156123 cx=c_pps
- a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
+X-Proofpoint-GUID: 3JxNXLzJFMG6oOCgSvRE_VIkOgANhTOE
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEzMDAyOCBTYWx0ZWRfX/fGAX4Uxyxw5
+ 4QayCMnlNrrA1Qxv6VY5Qv8fA+YAkvLSncd3Rt42fezD/o8LqFu/DcZ1uLhfDSHmJrX0xulyVCc
+ vDAXBWbyIB98jZ3w42oQaPhPfn/wYPIi3bHESVKkDtu6jKJJ5D9LQcWmpYLNGImP295k7/+QyiF
+ nIVoyl4oqtKF+CagALAx2Vpp4JpxUFp49/vZZYduoWGkbJYaiG35Hk1mdE45ShYtXX9pBAbbrp0
+ Ah4HIj/A2835Urz0au/wZkYEHWyU5tjDRANeDb6Qg1lTln7S4XQ3FXynxiH+86Akg53d4HkOMjM
+ UdhbjGatbt7AEgqQVO4JQLJOukv8eFxuxXSLFXruaw6pDOElpAvxbIlQtJax2KI8lgaEkr40JAq
+ yvvtD8NWJHf83J4nPNHaJ4YMZR0OPg==
+X-Proofpoint-ORIG-GUID: 3JxNXLzJFMG6oOCgSvRE_VIkOgANhTOE
+X-Authority-Analysis: v=2.4 cv=Ic+KmGqa c=1 sm=1 tr=0 ts=69156126 cx=c_pps
+ a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
  a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=M5GUcnROAAAA:8
- a=qZSRG9XKnlCErq4bdN8A:9 a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-ORIG-GUID: 5cVFgHcz39YW_k4dMmlgGs9G2d6V7yg2
+ a=vutZ09tH4-8uSkFm0o4A:9 a=OBjm3rFKGHvpk9ecZwUJ:22
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
  definitions=2025-11-12_06,2025-11-12_01,2025-10-01_01
@@ -84,44 +84,33 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Aarnav JP <ajp@marvell.com>
 
-Fix CPT res address config logic to avoid garbage values
-and trigger only when inline dev is present.
+Rx inject can only be supported with roc_nix.
 
-Fixes: 3c31a7485172 ("common/cnxk: config CPT result address for CN20K")
+Fixes: 4b8eb5bd6627 ("common/cnxk: reserve CPT LF for Rx inject")
 Signed-off-by: Aarnav JP <ajp@marvell.com>
 ---
- drivers/common/cnxk/roc_nix_inl.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/common/cnxk/roc_nix_inl.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/common/cnxk/roc_nix_inl.c b/drivers/common/cnxk/roc_nix_inl.c
-index 6700f556a0..780f4cbbfc 100644
+index 780f4cbbfc..f8be98efd5 100644
 --- a/drivers/common/cnxk/roc_nix_inl.c
 +++ b/drivers/common/cnxk/roc_nix_inl.c
-@@ -581,7 +581,7 @@ nix_inl_reass_inb_sa_tbl_setup(struct roc_nix *roc_nix)
- 	struct nix_inl_dev *inl_dev = NULL;
- 	uint64_t max_sa = 1, sa_pow2_sz;
- 	uint64_t sa_idx_w, lenm1_max;
--	uint64_t res_addr_offset;
-+	uint64_t res_addr_offset = 0;
- 	uint64_t def_cptq = 0;
- 	size_t inb_sa_sz = 1;
- 	uint8_t profile_id;
-@@ -626,12 +626,11 @@ nix_inl_reass_inb_sa_tbl_setup(struct roc_nix *roc_nix)
+@@ -849,12 +849,12 @@ roc_nix_inl_inb_rx_inject_enable(struct roc_nix *roc_nix, bool inb_inl_dev)
+ 
+ 	if (inb_inl_dev) {
  		inl_dev = idev->nix_inl_dev;
- 		if (inl_dev->nb_inb_cptlfs)
- 			def_cptq = inl_dev->nix_inb_qids[inl_dev->inb_cpt_lf_id];
-+		res_addr_offset = (uint64_t)(inl_dev->res_addr_offset & 0xFF) << 48;
-+		if (res_addr_offset)
-+			res_addr_offset |= (1UL << 56);
+-		if (inl_dev && inl_dev->attach_cptlf && inl_dev->rx_inj_ena &&
++		if (inl_dev && inl_dev->attach_cptlf && inl_dev->rx_inj_ena && roc_nix &&
+ 		    roc_nix->rx_inj_ena)
+ 			return true;
  	}
  
--	res_addr_offset = (uint64_t)(inl_dev->res_addr_offset & 0xFF) << 48;
--	if (res_addr_offset)
--		res_addr_offset |= (1UL << 56);
--
- 	lf_cfg->enable = 1;
- 	lf_cfg->profile_id = profile_id;
- 	lf_cfg->rx_inline_sa_base = (uintptr_t)nix->inb_sa_base[profile_id];
+-	return roc_nix->rx_inj_ena;
++	return roc_nix ? roc_nix->rx_inj_ena : 0;
+ }
+ 
+ uint32_t
 -- 
 2.34.1
 
