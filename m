@@ -2,49 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 401ACCD5BCE
-	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Nov 2025 11:44:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98018CD5BCF
+	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Nov 2025 11:44:27 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DC4B040E1B;
-	Thu, 13 Nov 2025 12:44:18 +0100 (CET)
-Received: from DB3PR0202CU003.outbound.protection.outlook.com
- (mail-northeuropeazon11010013.outbound.protection.outlook.com [52.101.84.13])
- by mails.dpdk.org (Postfix) with ESMTP id EFC3E40E1B;
- Thu, 13 Nov 2025 12:44:16 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id D256640E2B;
+	Thu, 13 Nov 2025 12:44:19 +0100 (CET)
+Received: from DU2PR03CU002.outbound.protection.outlook.com
+ (mail-northeuropeazon11011002.outbound.protection.outlook.com [52.101.65.2])
+ by mails.dpdk.org (Postfix) with ESMTP id 075E340151
+ for <dev@dpdk.org>; Thu, 13 Nov 2025 12:44:18 +0100 (CET)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=DmF3gNdIZJCTM/xCmX7UplyqCrooF0YSqejr8xIsoUXVgzyA9k9FcTE4FsI7O6T0/BL/Ag/2th0qblHFJ63n61ebGwJaJDso2RsN1+vkZC8DZe8Rx+WTt6sWoRaS4/5BiV9jIUEtN3GMifSTHRCYOCs1ZUGd8eMzZI/Odpznw05ROKwn/sz5ed3AXjFTeEjiNI21PVSRs81fRqyiMwjQMi78XPbGAvYHpPnUqoIzkDlqae0znLI3FrjP7talgKy8uDtRPFPsh3Ly+D6K4g1jc7mFA3V9hvSgO9TJCvHGS0c+Gy2eicIZF7QIeLhBwxDdqfVIqmgMI3eabikrYO15LA==
+ b=fEUFHM+bxsMrcJAPlZbI+PmtS768XNTBbnFcQUU72IVq9A1ZdohX7tcEOdzylbPVEfwq4+34fK+6I6kBnzPt6C/4HJKF8cJ63CPlXcfRrSE7AsI5+aNiRiDVlA/vd2l85HRE6XxFTZngncmgmHKy80MA+KQcYEtUlmZO9lGh7gajyhqNzkJspGLkay3k2icZzy2L5Qe/gCoF+jIZfsfA0zmXeoUg+haPey2IOqvy93N4gAooFa0RDD9VmQvPThY813BDUWramIz5BcusrTVX53Xfy1m0jDhPS2N09PYrXOUTq9+gdbcde26nBpDM+NZu4NnC4x/Z3I8j4MMPCY7hFg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7HgBPJsqxB1PD3LEs+vXBlyj3sRKMspBAD5IJyMGeXc=;
- b=iw9TZuZvw+8nFU1ZBJ2pYk3av9brtwbvI0kPlcn540vbp9MZgOUZueXm4/4SE/0C3V/AdMjA7X03zj7XtFJtHbFdf6STknrs5YQkSzCJCZ16VDI1RcHeYGuHK/DIr6FdjTWzbvuphfPttAmqJPVY0Xsv2IOsH9KzoDO0yA5d5eDS3CbFu9uKyQPhZzpZDVVVDK4aoCIzRgW1ifwAJPi/MD2GRDcQI10hb75J6t1pwZ/fCyuSvd4H6BqoCArX918cJPISBg+ksm6uBrxzz0ig94gAg9Uj1QAC/YBY9q0HpaZsXOlOVBUI1nsu7lCxCqiLisLGN2pGIstsFC86+Yj+2A==
+ bh=qMjCpCKPyx6YJuNU0cy7zqnqlzRbMPqeVVVV0KeZNNI=;
+ b=B4wk7AHmhaYJtmoL46ZceSczFDpuZfRq4LUMAFzOgHx6M23tRuYDYeRVr/kBacmWakYbEl/7Emm5daNVE0p9lvsS4TPg4EDy5Q3evSRtKoXFe6qzg3x+Avgp1241r3guiWkztfuGIvOjt6pQ98wBdRv1o89ale0ctr8AyPv2cBkA3XvfoJoZMeOjCAHiY0ijGT7CD+5GWO3D0QteUHFwia3Ky4VaftWElmWnVCNXdhL9iZReobNJ7xwZOsQVs3vU7/IJrEJo+WhGISqLSb95W5Icx4ytdZDDPLslznkAhwso5Ejpa/vz90hNBXnJIdQDRA3MTgy3ucGm8UuwbRZoYg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
  header.d=nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1; 
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7HgBPJsqxB1PD3LEs+vXBlyj3sRKMspBAD5IJyMGeXc=;
- b=chlaXg9082XdIvw4go9N2w+GxBzoWbogqEvwzsNS0LQmHZTfpNz1bndYh3t/mdvaKNQ365yvGdMGoq53YtBRt/6hhu+QFTnqozR5H5PcBGd1om3Sp28C6i+3t4mSd61YuWYmygvhn4mla2O/pdy1lblfP3B2M3oG2xwFBZCXY0IaRocEYgiOBXRjcwZ/vis4TBtaawNA3jI1bmHbsv3/acYw5Yu4k9ZLPgkCr241OwEnzk4tvYTyoWV1yB4CbNWwQX4fS4Gnoa3/H632EmKEDw3mkJTFJJOpXZRbVOblN/A4CpUoy4Ey7BH+VJD0ZZM9jfHJ+IYtqCT68Oc7XssYLg==
+ bh=qMjCpCKPyx6YJuNU0cy7zqnqlzRbMPqeVVVV0KeZNNI=;
+ b=J4X3hOQJA4j0oydF3fCJJNrHC0Hu8DOCrR3H2LgdY/XOUxGj2JOqjpF0BV/7RifQjSQyqcVKc8nn09+H+jMM0r/yjy4+8UJQ6RB8028DsAVDUFwV9Pdn1ae3AGykkanzumdKFA1TJ1O0laPs4Rn5r2gFaBNZSXBO95w0LpX8MqxwyzzniAY/AdmWOHUMVwRNZSPEcULXL/dKIRC1HfrbYRdRD4pvwPNZqUAHv34b6BxrCnHSMzUxVt4cRb0zkujtHXqRgFfkOeRZ+GmJZb5faOYYSqfz9gEYJZQlICXglOfmXcY2gEe5B4zuR7ntls0s3YEYCLcJJmOc1mxqEZG07Q==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nxp.com;
 Received: from PAXPR04MB9328.eurprd04.prod.outlook.com (2603:10a6:102:2b6::15)
  by DB8PR04MB7035.eurprd04.prod.outlook.com (2603:10a6:10:127::17)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.17; Thu, 13 Nov
- 2025 11:44:15 +0000
+ 2025 11:44:16 +0000
 Received: from PAXPR04MB9328.eurprd04.prod.outlook.com
  ([fe80::f268:adb3:8817:15e1]) by PAXPR04MB9328.eurprd04.prod.outlook.com
  ([fe80::f268:adb3:8817:15e1%4]) with mapi id 15.20.9320.013; Thu, 13 Nov 2025
- 11:44:15 +0000
+ 11:44:16 +0000
 From: Hemant Agrawal <hemant.agrawal@nxp.com>
 To: dev@dpdk.org, stephen@networkplumber.org, david.marchand@redhat.com,
  maxime@leroys.fr
-Cc: jun.yang@nxp.com,
-	stable@dpdk.org
-Subject: [PATCH v4 2/4] net/dpaa2: clear active VDQ state when freeing Rx
- queues
-Date: Thu, 13 Nov 2025 17:13:53 +0530
-Message-Id: <20251113114355.2027438-2-hemant.agrawal@nxp.com>
+Cc: hemant.agrawal@nxp.com
+Subject: [PATCH v4 3/4] net/dpaa2: fix queue free cleanup
+Date: Thu, 13 Nov 2025 17:13:54 +0530
+Message-Id: <20251113114355.2027438-3-hemant.agrawal@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20251113114355.2027438-1-hemant.agrawal@nxp.com>
 References: <20251113095917.1973514-1-hemant.agrawal@nxp.com>
@@ -57,79 +55,79 @@ X-ClientProxiedBy: SG2PR01CA0116.apcprd01.prod.exchangelabs.com
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: PAXPR04MB9328:EE_|DB8PR04MB7035:EE_
-X-MS-Office365-Filtering-Correlation-Id: 48dfa586-f741-4c36-666b-08de22a9f827
+X-MS-Office365-Filtering-Correlation-Id: d4edf0dd-c1a0-4457-30ba-08de22a9f961
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
  ARA:13230040|1800799024|376014|366016|52116014|19092799006|38350700014; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?Pwn07sXdFBvkrSdMk4GrvudhngQjGIXbGr3B9jwql9MVls9fPLPraBDVmwJK?=
- =?us-ascii?Q?9w/dntwUoA5JTX5t+i5EZhsja3a7TMPsgpnXwzNv9EweAVrimQSG03r7lwjh?=
- =?us-ascii?Q?Apzx/vLg4vs2E9C9LVlo7qurqHxIq5M69QjwrmAD1ADRllAM+Lm6MWcRsVRB?=
- =?us-ascii?Q?Gq4FyJvMv22UC2gbsHZm5W1ehvTHIEEBgCS5QjWc8dZdCRDs77Ae0z7gHmuq?=
- =?us-ascii?Q?wHh3LPHum/2e37srgU9dbxhCkxbNJWpc+7nsg54tIpsrEp9LQuSAAhWjIR7Y?=
- =?us-ascii?Q?qZwiGLvW1WNT+hqH/f4z/gNdeS9/cLcHOyWzNvWkowDS+5ANE/ukqL2s/lDf?=
- =?us-ascii?Q?y0DLvF5nirfvDg7FiDFNFZPOprw7zMHyr+oN8uER690wjMQ6nOeMj5JMOZ3q?=
- =?us-ascii?Q?qdgdlclHwHbml0YCDoxf6TB2J8vgnuXEVtWQgO9ysvoC1AsPvhH7advh3BPV?=
- =?us-ascii?Q?+L7Va4E/1qcG8afty0IvM7f5jC0zuRCaVBBoX+9l+jpzWkua7xll1QZmzubk?=
- =?us-ascii?Q?d46GgFpyMLl/S3Ttr1U1ZrJdpe8mewmmFlXkFY8iGMnBB5uQLhVW4CjfZ0D5?=
- =?us-ascii?Q?9KBSCfbZUiyt942cUENMs16YcTHbVkP+VMPYL8sSnbrF2pPuKGcT24hBpyNY?=
- =?us-ascii?Q?5BlbOXuFieV1/Z/ivhXNC3t+S5SxOZjK6+GRzDk6Up9qeyiZNLXMhZ80gHBh?=
- =?us-ascii?Q?rV2G5WH+V5EmOXI9iBBPcc0PCe7/7IUKFvCB9c+cfaVvSlVYqeRmvcn+iq03?=
- =?us-ascii?Q?kOy4fz4WFZxwn6Rm+vr78zS4jTWrC+oONohxjn5FkFw4GM9PBqzudYmHQu5g?=
- =?us-ascii?Q?S3H5p1T9NYY204uLHBz72QlYprcuNXFMfciUiqTat6TuoDCYsV9VNIGiPCm7?=
- =?us-ascii?Q?lRmqyqCOeoijcV2TOccAeAS70fCCjWwfN28widTNw2dpsD1Ql6qLmfibqVXv?=
- =?us-ascii?Q?dxInCNQI9roAEzE47MleoGS/paf6lhWjgbBwp3Xeq9zBT/VVYhgD7dWQ5HEp?=
- =?us-ascii?Q?7LNpZmYuIMpmWZfSbSiiF09FV8jPYYYHwg1L1bsipowHoWvffp5VfpbvEuOU?=
- =?us-ascii?Q?q2yUidQBB6YnO0QVWXdkPr1cZHPedHjamVyeaa5YLXOEx7R69T1pCrzgYiKP?=
- =?us-ascii?Q?ZzXqvekeT1fntjdHQpuvCqnQ4X0tUT7pD2EydHR4E08qN6s1EMPEH9eNLCip?=
- =?us-ascii?Q?qW+oNbKs8DJKnKcMY90OIGar+2pu8GrVryQBFx+OBU6VHepIR63zYoi4Guin?=
- =?us-ascii?Q?H7heVUdxJMH3uTysEsTXIOKalD1GSmLe9kPaeBiCYblqVckqYDWdnCIbYEHr?=
- =?us-ascii?Q?bbkYdCHHVu2TuueKKRXuKgiNj3FRI2QsEHIwUoiuThQ/NMBaAh0lBlvyqQqJ?=
- =?us-ascii?Q?0r5UPaMLWQkkaDaVSBCvojb7uC7PE/YZvqSqwdMVEAYOW1mh0HmXu0o5YZzd?=
- =?us-ascii?Q?/h4Y1M3e0xAazIL/a6D9wI0TQ+9ueU97NFgnsjRuxZp661YmkEe1zgTcLR9W?=
- =?us-ascii?Q?IxnhFdOJ+9OmtA3z9YRti6/3Mht/JMiuB2mk?=
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?CS1OwihwK47hOGsNZC5wPL/x7PAq1xqRTSruqqgzBCTlPH1KUrXbqceHxXfE?=
+ =?us-ascii?Q?CEwYuuWOt0pO5DcJ67KUySuXnT8T8ZPrVET2LSo56AXMJ7YeVL7XC4/WMTrj?=
+ =?us-ascii?Q?VaTxAcjOGDTbbn2QUIYev4dkq1YRU/fXxJqJBIgvX5hH5FMzW+UYdqClfVrU?=
+ =?us-ascii?Q?mAyRReGE3JaNi7cL6/FL+6Q9tSM59rjt43/nsLvFl7BKbPW1GsHskcWB/ZUc?=
+ =?us-ascii?Q?L7Nre94pf4wYmmzO0salz7nYKQEt4bU4dv/Dt4BkeWZ/6jqDWlqAZO2/A/77?=
+ =?us-ascii?Q?KHHLhUWVfaLD/iUY7WQ2vb9tkX+JeONpvxweLqYIVdYTtax3QI7RxSirnhN9?=
+ =?us-ascii?Q?2YooHeJYKGixVytgEDR7Th+x5WbL6kS7xCxamo8a2P9XNsMJnl0/EfZEUWj7?=
+ =?us-ascii?Q?GO7C8uFE+08uKESLxVoxRawRRpC7CT5rxlj0ZbZVzc9vKSHR1kydYhSjHGcr?=
+ =?us-ascii?Q?CpYQavdQYWxqBoqOlgKTrutx9eIjlljIrfDJMM2LtUFe5OYwIVDHtSIykZaL?=
+ =?us-ascii?Q?pQf+fs+ns51u2KkXHmxULf12gxfHbLma33yJw7EvnN7ckslLz0btm/1KuGd/?=
+ =?us-ascii?Q?5JGnRtB7IqwzgaJOwwn3wu/WIEFpZpYwEwfJqwQWy3upgHddc6Kq8Y+3bFXu?=
+ =?us-ascii?Q?yaukza3wzqvVaTbMDcZdxW0BCGPYdNFai73jA0fEXssz6g9p1fu9izgZmW4o?=
+ =?us-ascii?Q?/wC5dv8HzZn7fXbhIYaFIPUmhpYCsMtVv2pQVlG/DSyuD+Ias1naV0TNq7SR?=
+ =?us-ascii?Q?yps191ykZDLK7fhmEYN1Ilt3cojKkHdyHFgUJxaB+UQO4b0ty1l0kf8FHC6H?=
+ =?us-ascii?Q?sDS1yg3imbup2Rbhz/ND3oZiXVw8gEDyZDO7XtzHHAda4XPtirQIDXSuA0qu?=
+ =?us-ascii?Q?Re5Plbp3q2OXOkHFUB/sK1syBta7n8073TnV2UxcuTTxvN31hVT405NdJO82?=
+ =?us-ascii?Q?dnuuVemHpV1E9Mb4Mcpr7Lrlpl63HkrnNzo0dxHpF2QkEElC7ok6JNHWYO7b?=
+ =?us-ascii?Q?ESdbsFc8X0kVeHs8SFO749Y36sELEw7TgmYQHZNbalouRgwXcJUmTcywB7Gt?=
+ =?us-ascii?Q?hynLL/Mzx+lfAFVNag5KFcvvSWMcHKHqPI4fieUILamlcklqnwIdLK9NWGU/?=
+ =?us-ascii?Q?UUtavEl0Ts+Araq8PUQOr1oeS3WrB0Gi9gYVjwtGw+fmy5fl8OQntlsH44Bm?=
+ =?us-ascii?Q?+3XEP0+ddN8V7xQE/aRF7rEZJVjT0vuttrsvOQKS80FgmIomP1FPOSwEtki4?=
+ =?us-ascii?Q?4Q23KsycKHq51WBgHeFLlDHpo36U1AQdPuuujvErAAe9LJjMScT8xAnhM8FM?=
+ =?us-ascii?Q?zaKjkBAiBDDjMZPsdtQI5PVKx31UZlpMuxkl6yK5opYn4hRa08nGY9x7FgGt?=
+ =?us-ascii?Q?NTMkBYue+pbwdxY0OnLeh4UjnuTBr4sLf2TEZdNB9JuXo5RPVnz88pPLFT8y?=
+ =?us-ascii?Q?/LmPA102U0GlU5KgTI4bg1DpcndsNfjCKkCG2itkHM+6okAlqgQdeO71igJ6?=
+ =?us-ascii?Q?b66iJXJ0PMyBU9CNOKXXdLv7f+03fqA5Cd/S?=
 X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:PAXPR04MB9328.eurprd04.prod.outlook.com; PTR:; CAT:NONE;
  SFS:(13230040)(1800799024)(376014)(366016)(52116014)(19092799006)(38350700014);
  DIR:OUT; SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?Wq6IpujnJzJ23jmAkrHyl4F4wRC3XzjRuUt7WDMjYoGJ6Ei9AOEpIEl5rIMw?=
- =?us-ascii?Q?r1BJoWV9xMIJqQQMcN0BlO49FANfhT2DMbE2J9R7s15icXvASxAjwNjRVncY?=
- =?us-ascii?Q?F/nw/aB+mLYDj3yA7TDMIHRXZz41nltRXrWVrn9+rfqfrcl249Mv5B4Nkdej?=
- =?us-ascii?Q?ZFkFvEOHx5Xfbv2UW/9L7udD7lsf+bwnsNW6jkcVvLcxJ9KpAMhXDWKndRcs?=
- =?us-ascii?Q?R6TXjBeh83/v7egjyrJUAZf77D/pxgEaywTnDeaHYf4CeeFadQllv/s3zU2H?=
- =?us-ascii?Q?mS6FC3JwoDWN7gBRP0+UzrnhY8N40XRL/h8cSrVJOLcpIJNSYFIwUOrk8NxC?=
- =?us-ascii?Q?gIo880ahHYlah0b8cGvyaWrCuHJDxuT/XUPMJdXi9uupnIvWgpxORaNFSKa1?=
- =?us-ascii?Q?XfpsoqDVSTHgM6INoWAdhayRgDsG6Nsuc+Iyi//GxvaFB2jtUyNwInrmin65?=
- =?us-ascii?Q?3wsAlnZZwRals1eUS2MKe/1QRzf/wFnSx0duSfEui8arIblot/oS7vLxtZoc?=
- =?us-ascii?Q?lIGFGsTomESMS/+285OkJZaYwzwVi31AGV4Id02daOhL9e54mlUXOztqFrEy?=
- =?us-ascii?Q?Q9gpCEfzSp2PShfWtN5/7Oh5/2kd6DDLgAG1R075AB2mePEB4gSsjnGvw5LV?=
- =?us-ascii?Q?I+nmtRBTPdQ6Ayta6pYp0/bq9Df6AHa/2nRnz+XymRUQQ6vTDB4fiSmDeyA8?=
- =?us-ascii?Q?RP/bFy+zQw8ls5Vce3DuBAiyuC38+BqwOkEnFBHpgyO4TyJzXIViMGX8Yh1H?=
- =?us-ascii?Q?9660Ot1HVWrXeZdWzE2jk+8iDlqa/l2EkzbD5zKaRt61QXoAg5fkredn6lPh?=
- =?us-ascii?Q?edxXFbgzmf/tI/ujo9lIaxBvnT4mSJ1BXdZeg3L2A/Hg3dpDZmAO+q+ih3Nt?=
- =?us-ascii?Q?LBi2kCJZtNCRjbhGqA6Rrjrog8Wm5YerLYABuhg4aC1UvXs5c6hZBer5cs8t?=
- =?us-ascii?Q?iOaB03O6zlZgUMwPCmpdHtPPrR8d6DPtg8yZtsM56EVVmwcgekkYtxBs80WO?=
- =?us-ascii?Q?Ohenq5XcGOMRvOqTEbXVCPOzR7vATKCyMf701yLyEQ97mD8bI0UmqPWBnFol?=
- =?us-ascii?Q?BNPG2RWw6ZkDaXHuspVjrNIlDlmpu5VD9SryFJ0Kv/L+yPUo1/SRXInyIVKS?=
- =?us-ascii?Q?HbhSiTmWnaYOzP4CIjGarmPXJNPpH2KcIOEnLTvdnM7L8sN+7moDUI+ySXdX?=
- =?us-ascii?Q?hQGEKXShkdfYAR4ywYSOm/5K/HZ9d5fFVgtD7qHVoImiIsgXs+o3F+gGs/NN?=
- =?us-ascii?Q?/C7L9iapyyEzTuGrayQSiMbnQY9YfCJLc77l305OisqwKuorVq/li+iUG7vB?=
- =?us-ascii?Q?UBuNJo+UX8Ba5P7Qa4+J1gBJn9+fViKJqomjM83Zy0Q34ZZpQNAaSlg4XpqP?=
- =?us-ascii?Q?cXOIBwboCLjREdNCMXTYPi4Ipip6LUT59WSEmlxNl/a5m+6/WS9YBerXpGS+?=
- =?us-ascii?Q?sjHe5gN+Fq6nUzg6hx8HjeeAbjqaQjPzbn63891K6pZfHWXoBD2J5HNk/Fo+?=
- =?us-ascii?Q?ruwNuS9UWwVLln9AKjsOwePM2Q3dKXOIuvVk1Yt3OQkRBP6tbyQBXnIkEOJa?=
- =?us-ascii?Q?8n0lw56Sa2G45/7Vu9LWcb0WRHBMogQ8k55aIFx4de+RnWsYBOhUu6es0fIc?=
- =?us-ascii?Q?/g=3D=3D?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?AzIWVK8MJhlD5+mp9HpUxkUu2xZziRJgLGTLT4IT619Orankg+gA64/THnNU?=
+ =?us-ascii?Q?RYzKqRi55bD9EoAhpm65B4Db1MYb7wke2Hd6hXGxNkWtQhVcrpRCIgml/Iw0?=
+ =?us-ascii?Q?r3/W9OHmPSbKxxYQkom32Foop6uI2/qugTOC9evlZ6mPggdJ1nlR+fIuHROJ?=
+ =?us-ascii?Q?U0ULwTQecbX70U1IELQg4V5wZMuY2Ko8LJDsXjGF8hso6eeuOwhrxhb4dJZ1?=
+ =?us-ascii?Q?1+YFrSz66TRZFKVO6kACQjcUMBD//emrP1rIR5wddK0u4UDRKGGF5ecQ7rZx?=
+ =?us-ascii?Q?yf0zUKDw7Qu7c5rhW4PjOusFtx2a79mUnVoh5n4NuWZQJtHR5F/WAFwULThu?=
+ =?us-ascii?Q?DuL0oJ+fcID1lnfFSFbt7/r6ke6EE6m62c+qWbskmV3TSigpzsoCGmN7UNg4?=
+ =?us-ascii?Q?ZNZ/B8E2XW2reQQ4ujtrYFhV0MdpqyNojR6sFDtp0bR5E92vqU8oLNOSbVG6?=
+ =?us-ascii?Q?+JDLL+5T2Z7liWxDuQ2jVH/vyGxOAKBpYBLFdi+J90Ee6Zaexsiza8V1VGqp?=
+ =?us-ascii?Q?kxeExleza0tgxK0L65srQEXV1vxLUH7mF0zsaE6Aj5G1xiMZra3nOGfNFCG7?=
+ =?us-ascii?Q?tIGv59086sjYAQN62kTKOTA2VARKh0CFq/SJZoRm3eZuNYOoEuQ17jN6xDfz?=
+ =?us-ascii?Q?3OasOseUnr5hgNeigd/hdi1OYME7FxJN8gTsslmqMWd2QvTAx2KNWXtQZm7l?=
+ =?us-ascii?Q?uwpqt0liLYLVXuB/Ku7XguOTbDupXPeK2mhc6zhYdTW//oSJEeuoukxK0CNL?=
+ =?us-ascii?Q?Y18VVG6OEktiiqH9lCe+02p0DQc1DxfrQE6PJwMUDqSa5OeQTN4mSS+84+AQ?=
+ =?us-ascii?Q?eDHyvANETet0WmRHJ64lfzN2TKAcNSKkWv62iBdbbVpB6fd4c/4H8H5MPHyf?=
+ =?us-ascii?Q?S43D7oQyfjGlLi9QTVNbh3sY1RYOlKYb/EcQppDfqNud+eN7d8dSkc3qC03u?=
+ =?us-ascii?Q?9ci0LW0spLBnJF7lpnv05UfKeh9l8DAAuRQ8623b2mjSefdGneqio9CMMzLZ?=
+ =?us-ascii?Q?qER2pAJxuToyo+R77LrgVCms5QvTrGLAMaz3zXbOMc866EuOp07US7eAmKY7?=
+ =?us-ascii?Q?uyN3Fv+VNY8EcxQAD6UBYAb5RsULAX7t8ejdl1GX2KkFRgKu6nGpzS9h5sw3?=
+ =?us-ascii?Q?/Ib8GsAeXnHgLyMqoSNTEVF4h9rFcm8kBIRhDFP8ORwv7gNzm5lK5f+gr21T?=
+ =?us-ascii?Q?NU2f1aSl94pnKTyRScoY72/GVpigTMcyOicEHoNfvIUdoeD3VEL4uXl6AEzP?=
+ =?us-ascii?Q?nxuHaMRTyrOu5Ua4uZUJXWCCicY92etAGRLh7cQmJKg3OzAcKj08jcRJ/JjV?=
+ =?us-ascii?Q?Y5bZaT8DbY2bYSMztqvsrmsR50bFoa2mfjXzDHdirytgaKff0ZP9uqRgeuth?=
+ =?us-ascii?Q?l5kRrwev+FUAppWvEze/SxQwcflwCKv8dwt7/0nfsUYC8LYQxTXx6RU2U9qZ?=
+ =?us-ascii?Q?6p2NM206kzaowNIdIWV6OjaVtK+rRVawF/WYxlJqx7S3Xo3SSdlrouVwPTDS?=
+ =?us-ascii?Q?G/SJW6S6o+B6WwKTIQ4DpZVFVf2I4+h+nkrnCtKHGoQZiugDe0QZmEkv3CDH?=
+ =?us-ascii?Q?vmkynucR4FjQAXTnDrFKwVIUw8hK7LBkFdl0JVzwBBx/O1wi/BA+Yot9xidJ?=
+ =?us-ascii?Q?MQ=3D=3D?=
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 48dfa586-f741-4c36-666b-08de22a9f827
+X-MS-Exchange-CrossTenant-Network-Message-Id: d4edf0dd-c1a0-4457-30ba-08de22a9f961
 X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9328.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Nov 2025 11:44:14.3665 (UTC)
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Nov 2025 11:44:16.7680 (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 8mupDr9zBm19x0PlmA5C9YIZO7HgL+zRwa8eNS2A7ohhI9e7IE7ynmvxuodSHdlszRQNoVVOpL0YCnzB/cKOSw==
+X-MS-Exchange-CrossTenant-UserPrincipalName: VRus+Jp1cEjB/oPm0OyfDoIc9zeaOWMEYjzgeus0Nd6eDftcLP7i06V7n3P8oVojj15PIfh0LN36OFJPem0Ofw==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR04MB7035
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -144,125 +142,50 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Maxime Leroy <maxime@leroys.fr>
+The RX error queue was not being free.
+Also, set the free queues pointers to NULL.
 
-When using the prefetch Rx path (dpaa2_dev_prefetch_rx), the driver keeps
-track of one outstanding VDQCR command per DPIO portal in the global
-rte_global_active_dqs_list[] array. Each queue_storage_info_t also stores
-the active result buffer and portal index:
+Fixes: 407ce3e5384b ("net/dpaa2: replace global variables with flags")
+Cc: hemant.agrawal@nxp.com
 
-  qs->active_dqs
-  qs->active_dpio_id
-
-Before issuing a new pull command, dpaa2_dev_prefetch_rx() checks for an
-active entry and spins on qbman_check_command_complete() until the
-corresponding VDQCR completes.
-
-On port close / hotplug remove, dpaa2_free_rx_tx_queues() frees all
-per-lcore queue_storage_info_t structures and their dq_storage[] buffers,
-but never clears the global rte_global_active_dqs_list[] entries. After a
-detach/attach sequence (or "del/add" in grout), the prefetch Rx path
-still sees an active entry for the portal and spins forever on a stale dq
-buffer that has been freed and will never be completed by hardware. In
-gdb, dq->dq.tok stays 0 and dpaa2_dev_prefetch_rx() loops in:
-
-  while (!qbman_check_command_complete(get_swp_active_dqs(idx)))
-      ;
-
-Fix this by clearing the active VDQ state before freeing queue storage.
-For each Rx queue and lcore, if qs->active_dqs is non-NULL, call
-clear_swp_active_dqs(qs->active_dpio_id) and set qs->active_dqs to NULL.
-Then dpaa2_queue_storage_free() can safely free q_storage and
-dq_storage[].
-
-After this change, a DPNI detach/attach sequence no longer leaves stale
-entries in rte_global_active_dqs_list[], and the prefetch Rx loop does
-not hang waiting for a completion from a previous device instance.
-
-Reproduction:
-  - grout:
-      grcli interface add  port dpni.1 devargs fslmc:dpni.1
-      grcli interface del  dpni.1
-      grcli interface add  port dpni.1 devargs fslmc:dpni.1
-    -> Rx was stuck in qbman_check_command_complete(), now works.
-
-  - testpmd:
-      dpdk-testpmd -n1 -a fslmc:dpni.65535 -- -i --forward-mode=rxonly
-      testpmd> port attach fslmc:dpni.1
-      testpmd> port start all
-      testpmd> start
-      testpmd> stop
-      testpmd> port stop all
-      testpmd> port detach 0
-      testpmd> port attach fslmc:dpni.1
-      testpmd> port start all
-      testpmd> start
-    -> Rx was hanging, now runs normal
-
-Fixes: 12d98eceb8ac ("bus/fslmc: enhance QBMAN DQ storage logic")
-Cc: jun.yang@nxp.com
-Cc: stable@dpdk.org
-
-Signed-off-by: Maxime Leroy <maxime@leroys.fr>
+Signed-off-by: Hemant Agrawal <hemant.agrawal@nxp.com>
 ---
- .mailmap                         |  2 +-
- drivers/net/dpaa2/dpaa2_ethdev.c | 23 +++++++++++++++++++++++
- 2 files changed, 24 insertions(+), 1 deletion(-)
+ drivers/net/dpaa2/dpaa2_ethdev.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/.mailmap b/.mailmap
-index 10c37a97a6..d92d4fc24b 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -1035,7 +1035,7 @@ Mauricio Vasquez B <mauricio.vasquez@polito.it> <mauricio.vasquezbernal@studenti
- Mauro Annarumma <mauroannarumma@hotmail.it>
- Maxime Coquelin <maxime.coquelin@redhat.com>
- Maxime Gouin <maxime.gouin@6wind.com>
--Maxime Leroy <maxime.leroy@6wind.com>
-+Maxime Leroy <maxime.leroy@6wind.com> <maxime@leroys.fr>
- Md Fahad Iqbal Polash <md.fahad.iqbal.polash@intel.com>
- Megha Ajmera <megha.ajmera@intel.com>
- Meijuan Zhao <meijuanx.zhao@intel.com>
 diff --git a/drivers/net/dpaa2/dpaa2_ethdev.c b/drivers/net/dpaa2/dpaa2_ethdev.c
-index fc63cf4f09..3c3a1508fc 100644
+index 3c3a1508fc..cf53ddf639 100644
 --- a/drivers/net/dpaa2/dpaa2_ethdev.c
 +++ b/drivers/net/dpaa2/dpaa2_ethdev.c
-@@ -631,6 +631,27 @@ dpaa2_alloc_rx_tx_queues(struct rte_eth_dev *dev)
- 	return ret;
- }
- 
-+static void
-+dpaa2_clear_queue_active_dps(struct dpaa2_queue *q, int num_lcores)
-+{
-+	int i;
-+
-+	for (i = 0; i < num_lcores; i++) {
-+		struct queue_storage_info_t *qs = q->q_storage[i];
-+
-+		if (!qs)
-+			continue;
-+
-+		if (qs->active_dqs) {
-+			while (!qbman_check_command_complete(qs->active_dqs))
-+				/* wait */;
-+
-+			clear_swp_active_dqs(qs->active_dpio_id);
-+			qs->active_dqs = NULL;
-+		}
-+	}
-+}
-+
- static void
- dpaa2_free_rx_tx_queues(struct rte_eth_dev *dev)
- {
-@@ -645,6 +666,8 @@ dpaa2_free_rx_tx_queues(struct rte_eth_dev *dev)
- 		/* cleaning up queue storage */
- 		for (i = 0; i < priv->nb_rx_queues; i++) {
- 			dpaa2_q = priv->rx_vq[i];
-+			dpaa2_clear_queue_active_dps(dpaa2_q,
-+						RTE_MAX_LCORE);
+@@ -670,11 +670,13 @@ dpaa2_free_rx_tx_queues(struct rte_eth_dev *dev)
+ 						RTE_MAX_LCORE);
  			dpaa2_queue_storage_free(dpaa2_q,
  				RTE_MAX_LCORE);
++			priv->rx_vq[i] = NULL;
  		}
+ 		/* cleanup tx queue cscn */
+ 		for (i = 0; i < priv->nb_tx_queues; i++) {
+ 			dpaa2_q = priv->tx_vq[i];
+ 			rte_free(dpaa2_q->cscn);
++			priv->tx_vq[i] = NULL;
+ 		}
+ 		if (priv->flags & DPAA2_TX_CONF_ENABLE) {
+ 			/* cleanup tx conf queue storage */
+@@ -682,8 +684,14 @@ dpaa2_free_rx_tx_queues(struct rte_eth_dev *dev)
+ 				dpaa2_q = priv->tx_conf_vq[i];
+ 				dpaa2_queue_storage_free(dpaa2_q,
+ 					RTE_MAX_LCORE);
++				priv->tx_conf_vq[i] = NULL;
+ 			}
+ 		}
++		if (priv->flags & DPAAX_RX_ERROR_QUEUE_FLAG) {
++			dpaa2_q = priv->rx_err_vq;
++			dpaa2_queue_storage_free(dpaa2_q, RTE_MAX_LCORE);
++		}
++
+ 		/*free memory for all queues (RX+TX) */
+ 		rte_free(priv->rx_vq[0]);
+ 		priv->rx_vq[0] = NULL;
 -- 
 2.25.1
 
