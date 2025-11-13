@@ -2,130 +2,109 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19A22CD6E42
-	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Nov 2025 12:27:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D47DCD6E4D
+	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Nov 2025 12:42:40 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5C17A40B9E;
-	Thu, 13 Nov 2025 13:27:31 +0100 (CET)
-Received: from CH1PR05CU001.outbound.protection.outlook.com
- (mail-northcentralusazon11010048.outbound.protection.outlook.com
- [52.101.193.48])
- by mails.dpdk.org (Postfix) with ESMTP id 9FA6D40151;
- Thu, 13 Nov 2025 13:27:30 +0100 (CET)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vBKQG88R8C2ehXrRjSBEW50aom5DlxdzixoK7Iq8vEfekHZiF64Dx6HCvO/+0sULciKS6A8etZB7y6B8jBW3cunN1ithweW1SXD0TuSeBHpPA3gwMyKiNRUAGfkSoTZ5pNApp8iIeAmpEuZjOEjvnsiZ0iaUiBqo8VWGbLJ/o6VUiEHHkjMsU0v8oL0/qY3JWWG+wrBDzWYqSGqM/rGETz6UvCVam1wqbTyI0qHsJs+nAevxZ2e0x8PIrlSXZKxwi70cVdchJMAv+3C62GQyMsnQg09pcTCD+vCalr/TO24r8rXG+sNgslMJdSFEXltCVSgnHbLLJ/VOCxvp1uXyqQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XqUbTtIDH/AtUqaQMWBkmfyW1vzt8YerhwgnOAdWZE0=;
- b=F9TB+iYVsyGzW7FiyKTpxiPYqNHcgXYujXrAbScHMKv3bvMnExRoPSROq6KoirkXKSXhAA0pk80rDDWjY+SAPBuG6h+IgCissqCPwcJj0VC2T+XuTZ7pJvCoYWQ7xRJI13k1CBwcPsjOITmZLOeJ670MpSfnl/qMgess3VwtBc1mbFtE85BBTdpL/i+5qj4fdBARHtoLC9mZARwOPgvcZHVERXmc7CA1wqHv02UP3kcK8CYH6UpV9pJVmW5l6ZElBKZqDTCqoPUI5UfWTJkV7Jvh5mkue6DhqgKGAZzJlkgYqgumSKctpu6Z4qXUlvD0iWjjvkTtjLFVGo2cafYBNw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.233) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XqUbTtIDH/AtUqaQMWBkmfyW1vzt8YerhwgnOAdWZE0=;
- b=ghnQtBGchFcdSvN2MxJmpKIF5renVrt3qLRnSP59aX+K03/YDKdVW4vBovvSVGHKcvvdenD+6/pi+8rnKHaAfA+2upKxrarVwQbtgORBTpktybBLgtXOTRIxWTXY/JcrJzf8tXiBz+8b+MnSDlr25QQccaUs7k+sETKJHuckGqxLMnioHmzbbi9hHwDl8beIZYOn4bC/9lXBFapKiJkBtINobndoTjS8+4f6x1vdm40NntUhIhxj1YPp6MbAlFfiwOcBoILaLXQQ9D5HG431XWqmSlozemB1PTgw5ePiLEK5F3L+6cirxqYVOVj2poL3yQRrHUVMnsr/MYGH0DaLtA==
-Received: from SJ0PR13CA0191.namprd13.prod.outlook.com (2603:10b6:a03:2c3::16)
- by LV8PR12MB9358.namprd12.prod.outlook.com (2603:10b6:408:201::12)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.17; Thu, 13 Nov
- 2025 12:27:26 +0000
-Received: from SJ1PEPF00002327.namprd03.prod.outlook.com
- (2603:10b6:a03:2c3:cafe::ed) by SJ0PR13CA0191.outlook.office365.com
- (2603:10b6:a03:2c3::16) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9343.7 via Frontend Transport; Thu,
- 13 Nov 2025 12:27:25 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
- smtp.mailfrom=nvidia.com;
- dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.233) by
- SJ1PEPF00002327.mail.protection.outlook.com (10.167.242.90) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9320.13 via Frontend Transport; Thu, 13 Nov 2025 12:27:25 +0000
-Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
- (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 13 Nov
- 2025 04:27:24 -0800
-Received: from drhqmail201.nvidia.com (10.126.190.180) by
- drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
+	by mails.dpdk.org (Postfix) with ESMTP id 3EACC406A2;
+	Thu, 13 Nov 2025 13:42:39 +0100 (CET)
+Received: from mx0a-00154904.pphosted.com (mx0a-00154904.pphosted.com
+ [148.163.133.20])
+ by mails.dpdk.org (Postfix) with ESMTP id 1ABEB40151
+ for <dev@dpdk.org>; Thu, 13 Nov 2025 13:42:36 +0100 (CET)
+Received: from pps.filterd (m0170390.ppops.net [127.0.0.1])
+ by mx0a-00154904.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5ADB4wZl009164
+ for <dev@dpdk.org>; Thu, 13 Nov 2025 07:42:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dell.com; h=cc
+ :content-transfer-encoding:content-type:date:from:message-id
+ :mime-version:subject:to; s=smtpout1; bh=nvtVk9eSdRGx/37wtDklQ3I
+ 1EHI1CTCtdZV/pXEwTHQ=; b=XEsZ5ie3Bh2/XGwUvCs0wwdXNiIY2UIGs1Rq8NB
+ SKAsQES9Ut6uspnY4XyOaKwqO/OgKTszq1k8vmXBcrO7PFz4+1AM66J8vWJM0YOV
+ VWYf1+CQUEwU9aeU6tWBUDQJgVAEHpLkiFKN55I7ynLNaKHKI7YzdnKIsRlqWn/c
+ uLLE73VNKZS8AH10VxbT2zoo/wtyiufiwX/Kj3zy4Xytua0XWIj3WZFedT5ZWOhc
+ 0xlUBxtiN1V3amIsuWUHrrzJ02CAMfR0u4uzTzIHM8oDvRpsmiusg5yQ0RLpi9LE
+ GgCvLtPAXQvAusqT6OZgIdy55uWJFk7vbsxUhrnmZvKPpbA==
+Received: from mx0b-00154901.pphosted.com (mx0b-00154901.pphosted.com
+ [67.231.157.37])
+ by mx0a-00154904.pphosted.com (PPS) with ESMTPS id 4aa1t7s8aj-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <dev@dpdk.org>; Thu, 13 Nov 2025 07:42:36 -0500 (EST)
+Received: from pps.filterd (m0144103.ppops.net [127.0.0.1])
+ by mx0b-00154901.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5AD7hMcl009508
+ for <dev@dpdk.org>; Thu, 13 Nov 2025 07:42:35 -0500
+Received: from esapsmtplv06.us.dell.com (esapsmtplv06.us.dell.com
+ [143.166.203.146])
+ by mx0b-00154901.pphosted.com (PPS) with ESMTPS id 4adb6hkcat-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
+ for <dev@dpdk.org>; Thu, 13 Nov 2025 07:42:34 -0500 (EST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=dell.com; i=@dell.com; q=dns/txt; s=smtpdev1;
+ t=1763037755; x=1794573755;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=nvtVk9eSdRGx/37wtDklQ3I1EHI1CTCtdZV/pXEwTHQ=;
+ b=qk8KXCEb8Cdd0RShChMjQiF3LaSuYYmqzASgumFysbr47ulp0KFv9Gl4
+ 8ZDokwkyL19w7fAmUdmH0CdnkfNOMZDLOKkCshmlDo8/B7MXXKV4a7Tyv
+ j3o6hCVahj4srVd672+Uh0OMGFaMPVrYPGktKB9UnNUmPG6QFvzCCpymq
+ ndi8n4KZz6YAUpLGAh/4s1iZj8BTBBx4DhxoJhKwgWE4YQ+40rpDIwoa3
+ SwM8RI9WaLFb8cD2VBmW7v71ZmmJRv917hxgLO63xZIO1Br7E44jiPMos
+ /2rqeK1IC+r8671jya7LUxP9CjCkY2EX4GhEk+HSC5KjqCTqS4EaXAo4N A==;
+X-CSE-ConnectionGUID: nv7TW+RQRPGUlD3lNj+mKg==
+X-CSE-MsgGUID: Hbl07qt1R2uzEpcs+slWuw==
+X-LoopCount0: from 10.215.64.31
+X-MS-Exchange-CrossPremises-AuthAs: Internal
+Received: from mx2-adc.dell.com (HELO ieorr5-pvwed002.delllabs.net)
+ ([10.215.64.31])
+ by esapsmtplv06.us.dell.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 13 Nov 2025 12:42:33 +0000
+Received: from ieorr5-pvwer002.delllabs.net (100.64.0.135) by
+ ieorr5-pvwed002.delllabs.net (10.215.64.31) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.20; Thu, 13 Nov 2025 04:27:23 -0800
-Received: from nvidia.com (10.127.8.9) by mail.nvidia.com (10.126.190.180)
- with Microsoft SMTP Server id 15.2.2562.20 via Frontend Transport; Thu, 13
- Nov 2025 04:27:20 -0800
-From: Itai Sharoni <isharoni@nvidia.com>
+ 15.2.1544.36; Thu, 13 Nov 2025 06:43:27 -0600
+Received: from ieorr5-pvwer001.delllabs.net (100.64.0.134) by
+ ieorr5-pvwer002.delllabs.net (100.64.0.135) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.36; Thu, 13 Nov 2025 06:42:32 -0600
+Received: from localhost (10.240.17.25) by smtprelay.delllabs.net
+ (100.64.0.134) with Microsoft SMTP Server id 15.2.1544.36 via Frontend
+ Transport; Thu, 13 Nov 2025 06:42:32 -0600
+From: Pravin M Bathija <pravin.bathija@dell.com>
 To: <dev@dpdk.org>
-CC: <mkashani@nvidia.com>, <rasland@nvidia.com>, Itai Sharoni
- <isharoni@nvidia.com>, <stable@dpdk.org>, Bing Zhao <bingz@nvidia.com>,
- Thomas Monjalon <thomas@monjalon.net>, Dariusz Sosnowski
- <dsosnowski@nvidia.com>, Viacheslav Ovsiienko <viacheslavo@nvidia.com>, "Ori
- Kam" <orika@nvidia.com>, Suanming Mou <suanmingm@nvidia.com>, Matan Azrad
- <matan@nvidia.com>, Ophir Munk <ophirmu@nvidia.com>
-Subject: [PATCH] net/mlx5/windows: fix match criteria in flow creation
-Date: Thu, 13 Nov 2025 14:26:41 +0200
-Message-ID: <20251113122642.1193-1-isharoni@nvidia.com>
-X-Mailer: git-send-email 2.28.0.windows.1
+CC: <pravin.bathija@dell.com>, <pravin.m.bathija.dev@gmail.com>
+Subject: [PATCH v5 0/4] Support add/remove memory region & get-max-slots
+Date: Thu, 13 Nov 2025 12:42:06 +0000
+Message-ID: <20251113124210.2913846-1-pravin.bathija@dell.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF00002327:EE_|LV8PR12MB9358:EE_
-X-MS-Office365-Filtering-Correlation-Id: 03385da5-319c-425a-2d4f-08de22b000e0
-X-LD-Processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|1800799024|36860700013|82310400026|376014; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?Td0xwOdbkvCsrwBnHZYnWJdqeQYKyAs5LsHd7iPtfyXpq8scByBMU1T5geaP?=
- =?us-ascii?Q?WNtoLseJzDrRDGNohZfOD9Ey8Io/MxoLtLL7+AddNVnBlXb415M/jsfczAEO?=
- =?us-ascii?Q?ZiT8nTfK+S55T27P76qdNcqwf7DwyLYhA3Aj6xtKSjq9e80FYLKPvh61Iqoo?=
- =?us-ascii?Q?prGGuGZmDa+WYAfd/vYSmU9Y1NzRJdGNdQcMP5EElY9ER4Y7lNiQ1LOk8iej?=
- =?us-ascii?Q?bx/wVzue9JVKNWue5LzyzGEsdDbCIHGvJk15J4dFT9xPsk/qZc85dV4erUNo?=
- =?us-ascii?Q?8mjV/Iq1b6zbNJGcpwGUoF6aua7jA7oPn0eWm/FNTisKHvx/3yGYXKHrXNEM?=
- =?us-ascii?Q?7GSvwoSp952TUelo6X/PyQsjX8ISKNCTYihWvE5cq0Hk7zt2ZCJsk7q6iqlV?=
- =?us-ascii?Q?fLr6IXD0lO6nbe1D10m2Hgxvh2F7rse6Kw8vhr/y1uaPab5+iByEL53xvQ6t?=
- =?us-ascii?Q?arSrLy4XVDKW0jYHwmH3DRA6IRDepDiqauNZtu/CAcFzIITQs5Nj/eVkuU3E?=
- =?us-ascii?Q?nCHsJdy4IStk1zSxv+IUdF2S9IxjtOda5j79kxCo2OzXOZ5tZOTIqN69Pijt?=
- =?us-ascii?Q?HSRPLDdatM+9ZJ9R3qhKyx3NZIiTwtHtjvtxbixf94KPu6V7HwUpgyf0H45D?=
- =?us-ascii?Q?wNs+kRjxGiv9bY24tba7D4/K70+GPE5BQf6BAFCvvzusLHIcNP2N/d+Nd1W+?=
- =?us-ascii?Q?T6BGqNNuel+Os5KL2mEvD3kHvo7Cn2J8cV7BoS12FPZZMaCQgYpepuPkEY9X?=
- =?us-ascii?Q?vxj3i87zP20rV+azllq0WecUI0rZ4e31+2F27U3zrr9aHg2a1JjudfaF+Zvp?=
- =?us-ascii?Q?tOgq0p1EY+9CwKRKi9a0PnRHQpp7JMR/JuflA5pAcBDmXaX3UOK4PqccEcxo?=
- =?us-ascii?Q?0c68yaMTbzDSX76wtc7sPQa2dNYOewFr3CCEMSJNEmcIOM35w++Z0Z0agGI5?=
- =?us-ascii?Q?3ckC1/GRSApWVtB170ODs+5lVLIemh6E4/Hu1BA+5zfiRNrs7Fi4hFzE2M0v?=
- =?us-ascii?Q?vOUSDklX3wbttnrCTosXyGGtH2qyDoxANArwKcwEco7b4FnCW8ru3pguOCGE?=
- =?us-ascii?Q?uBSeXSkWoC3P98ewC8ms4qkhJVExpE10wCP624tSn3oOVOy0TdccIzaVfP4V?=
- =?us-ascii?Q?FUG2jgPnkbvULFhj6ZG1uALHgInxwxV/ZgPxLgRcvly+dok6pGKUaRnfr2L6?=
- =?us-ascii?Q?srqQVquC42dI58AkgvdNec2Bx3MwWdJ0oGaYSGlz8twHeJZm3IzSXDhfBY3+?=
- =?us-ascii?Q?f/wmrALUGlqYP2KAveT5ZALzevYy/0CahFv8rSx9rvZRRuWUqwfjDoWTpiwl?=
- =?us-ascii?Q?XuKzFcjAtQcFwKIct3xCLzD1dmKRIjOD3QZQAbBdyOPuSIWS9nJge8a+6tKM?=
- =?us-ascii?Q?Jayl6pwRehPQj+hPcXQxD7Hmdv+dSwQDpBWS/tC8g9J8oyoNIQw98I816j/0?=
- =?us-ascii?Q?Sy87rxP8TrWweTBVNoEESyZdhbH9em6IpCkREGSQ4dI1uNc15cwsuwbcKD0r?=
- =?us-ascii?Q?vVJm8IzLoeHcQ38IeUPqCk20Fk44Q1kRuIfhxIFMcof/rBf5MqkUWFIoTx/E?=
- =?us-ascii?Q?clw98pZxsBVXZdKP9K0=3D?=
-X-Forefront-Antispam-Report: CIP:216.228.118.233; CTRY:US; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc7edge2.nvidia.com; CAT:NONE;
- SFS:(13230040)(1800799024)(36860700013)(82310400026)(376014); DIR:OUT;
- SFP:1101; 
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Nov 2025 12:27:25.7261 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 03385da5-319c-425a-2d4f-08de22b000e0
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.118.233];
- Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: SJ1PEPF00002327.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9358
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-13_02,2025-11-12_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 clxscore=1015 spamscore=0 malwarescore=0 phishscore=0
+ impostorscore=0 lowpriorityscore=0 adultscore=0 priorityscore=1501
+ bulkscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2510240000
+ definitions=main-2511130053
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA4MDA2MiBTYWx0ZWRfX7tG+fNgejy8o
+ Qud+koFazaHkpf6ZsZCvuQi/cGIMqn0F5NG/J6AImVqoATvwTC7bSwSOtqhtIXTBPyo4ZHdG1Fx
+ dCbUZ7UHtRuc308deiHrA74eT/4+X6LD8KqlhCW3OXNsyYWXtEM16t4Mh6t2uFM6D8h3B6gRjTH
+ 6vGAvqA2/fuAfRVCnr94VQcgmvmjdTj3ZSqYmHPV2W6MP12W2/8AM2QhL61oiojeP177ys3XcDE
+ 90kT0YgaJ7cCpCH4HDU+czEeh2CnrKQJlPADFRu6sFIZbc4eG9MwfJYQ/ovSaaziBYWpF8dqqoM
+ g8adEPtFsTTtkEVuArWbYJ0JhDFaTjvB/kOr19T1VujPkKI7KCi7ZcvoTSAL46teR3tB7K57hwn
+ sSoFMZqCKVVhCYydNkxKSQaxa+9+JA==
+X-Proofpoint-GUID: BMzybXJfykPGMzyOBXnfet2cxqNI_pbN
+X-Proofpoint-ORIG-GUID: BMzybXJfykPGMzyOBXnfet2cxqNI_pbN
+X-Authority-Analysis: v=2.4 cv=SLxPlevH c=1 sm=1 tr=0 ts=6915d23c cx=c_pps
+ a=Z2e5DKjA+8LiMDv5v6mwwA==:117 a=in+AvElAwLqdjTPPAWhuvg==:17
+ a=6UeiqGixMTsA:10 a=ke5jqHz-1hQA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=6-Zxzzo7zUZZ86AKt5UA:9 a=hlJyneSgMmFPbskH-t2w:22
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0
+ clxscore=1015 impostorscore=0 adultscore=0
+ phishscore=0 priorityscore=1501
+ spamscore=0 suspectscore=0 bulkscore=0 lowpriorityscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2511080062
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -139,67 +118,37 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Currently the Windows implementation hardcodes match criteria to
-MLX5_MATCH_OUTER_HEADERS when creating flow rules, which prevents
-matching on inner headers and other criteria types like NVGRE.
+This is version v5 of the patchset and it incorporates the
+recommendations made by Feng Cheng Wen.
+The patchset includes support for adding and removal of memory
+regions, getting max memory slots and other changes to vhost-user
+messages.  These messages are sent from vhost-user front-end (qemu
+or libblkio) to a vhost-user back-end (dpdk, spdk). Support functions
+for these message functions have been implemented in the interest of
+writing optimized code. Older functions, part of vhost-user back-end
+have also been optimized using these newly defined support functions.
+This implementation has been extensively tested by doing Read/Write
+I/O from multiple instances of fio + libblkio (front-end) talking to
+spdk/dpdk (back-end) based drives.  Also tested with qemu front-end
+talking to dpdk + testpmd (back-end) performing add/removal of memory
+regions.
+Comparing the changes to v4, I have removed the patch that increased the
+number of memory regions from 8 to 128. This will be submitted as a
+separate feature at a later point after incorporating additional optimizations.
 
-The fix uses the matcher's match_criteria_enable attribute instead
-of hardcoding OUTER_HEADERS, and moves the assignment outside the
-action switch block to apply to all cases.
 
-NVGRE item type is also added to the supported items list.
+Pravin M Bathija (4):
+  vhost: add user to mailmap and define to vhost hdr
+  vhost_user: header defines for add/rem mem region
+  vhost_user: support function defines for back-end
+  vhost_user: Function defs for add/rem mem regions
 
-Fixes: 1d194496b9d1 ("net/mlx5: create flow rule on Windows")
-Cc: stable@dpdk.org
+ .mailmap               |   1 +
+ lib/vhost/rte_vhost.h  |   4 +
+ lib/vhost/vhost_user.c | 399 ++++++++++++++++++++++++++++++++++++-----
+ lib/vhost/vhost_user.h |  10 ++
+ 4 files changed, 372 insertions(+), 42 deletions(-)
 
-Signed-off-by: Itai Sharoni <isharoni@nvidia.com>
-Acked-by: Bing Zhao <bingz@nvidia.com>
----
- .mailmap                                | 1 +
- drivers/net/mlx5/windows/mlx5_flow_os.c | 4 ++--
- drivers/net/mlx5/windows/mlx5_flow_os.h | 1 +
- 3 files changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/.mailmap b/.mailmap
-index 50a59a596a..83c2ea91a4 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -639,6 +639,7 @@ Intiyaz Basha <intiyaz.basha@caviumnetworks.com>
- Ioana Ciornei <ioana.ciornei@nxp.com>
- Isaac Boukris <iboukris@gmail.com>
- Itamar Gozlan <igozlan@nvidia.com>
-+Itai Sharoni <isharoni@nvidia.com>
- Itsuro Oda <oda@valinux.co.jp>
- Ivan Boule <ivan.boule@6wind.com>
- Ivan Dyukov <i.dyukov@samsung.com>
-diff --git a/drivers/net/mlx5/windows/mlx5_flow_os.c b/drivers/net/mlx5/windows/mlx5_flow_os.c
-index 7a625fb880..15c6fc5613 100644
---- a/drivers/net/mlx5/windows/mlx5_flow_os.c
-+++ b/drivers/net/mlx5/windows/mlx5_flow_os.c
-@@ -219,9 +219,9 @@ mlx5_flow_os_create_flow(void *matcher, void *match_value,
- 		default:
- 			break;
- 		}
--		MLX5_SET(devx_fs_rule_add_in, in, match_criteria_enable,
--			 MLX5_MATCH_OUTER_HEADERS);
- 	}
-+	MLX5_SET(devx_fs_rule_add_in, in, match_criteria_enable,
-+		mlx5_matcher->attr.match_criteria_enable);
- 	*flow = mlx5_glue->devx_fs_rule_add(mlx5_matcher->ctx, in, sizeof(in));
- 	return (*flow) ? 0 : -1;
- }
-diff --git a/drivers/net/mlx5/windows/mlx5_flow_os.h b/drivers/net/mlx5/windows/mlx5_flow_os.h
-index 2cd4e95325..c087bca4be 100644
---- a/drivers/net/mlx5/windows/mlx5_flow_os.h
-+++ b/drivers/net/mlx5/windows/mlx5_flow_os.h
-@@ -47,6 +47,7 @@ mlx5_flow_os_item_supported(int item)
- 	case RTE_FLOW_ITEM_TYPE_IPV6:
- 	case RTE_FLOW_ITEM_TYPE_VLAN:
- 	case RTE_FLOW_ITEM_TYPE_ESP:
-+	case RTE_FLOW_ITEM_TYPE_NVGRE:
- 		return true;
- 	default:
- 		return false;
 -- 
-2.28.0.windows.1
+2.43.0
 
