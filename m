@@ -2,74 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D1CFCD98F2
-	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Nov 2025 22:38:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EEB6CD98F7
+	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Nov 2025 23:31:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8A08640E3A;
-	Thu, 13 Nov 2025 23:38:18 +0100 (CET)
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com
- [209.85.215.173])
- by mails.dpdk.org (Postfix) with ESMTP id 1C7E640DCF
- for <dev@dpdk.org>; Thu, 13 Nov 2025 23:38:17 +0100 (CET)
-Received: by mail-pg1-f173.google.com with SMTP id
- 41be03b00d2f7-bc4b952cc9dso635506a12.3
- for <dev@dpdk.org>; Thu, 13 Nov 2025 14:38:17 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 3940F4025A;
+	Fri, 14 Nov 2025 00:31:17 +0100 (CET)
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com
+ [209.85.222.175])
+ by mails.dpdk.org (Postfix) with ESMTP id BEB1B40151
+ for <dev@dpdk.org>; Fri, 14 Nov 2025 00:31:15 +0100 (CET)
+Received: by mail-qk1-f175.google.com with SMTP id
+ af79cd13be357-8b272a4ca78so195585985a.1
+ for <dev@dpdk.org>; Thu, 13 Nov 2025 15:31:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1763073497;
- x=1763678297; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=BRVbZs1JNiUgDZzfgi4YVxQblLqhzf8TMSBqFSBt8QA=;
- b=JD6KgTKkuENUNueSkmRTq6S+DOBp9tpBF8pqjExRDIsuXdZegnIc7e8D1w3MYRc9rF
- 9CXNbKJAt08jRqf/ZwsLc872bT7mZ3o7pj1fQFvL2jrvJBYuzR6XKzrSpk2EuaQiBaCs
- je6QTE60Hg0qlZSzF0u7unRSJHhkUbXfL3QfkZ/3spM7fDXdm07uUUDerqjBmMtZ9o1e
- wzw0sx4PQBZvgJPoJWWB6TmO64/PzTNxwxLsBuFkHA+5yWNApA9edtJzdEiKb87C9dWI
- w53Rb7ivbaIS3anCzoQwTDLuIZ/5OCiYF8YGBUed/aNqotcSXmEYQ+kY2U/42EA1BGWD
- ekrQ==
+ d=iol.unh.edu; s=unh-iol; t=1763076675; x=1763681475; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=+TDI6v5DNZXfhDYdwg8yAcnUgaxcikC0W8DrwItJpJk=;
+ b=SiUgQHGqtMvTToJnvvUsXFiPfLGLZ7y8C+GJqfgagcYUQAd+yzvsAN6Et4kihibjAn
+ Lth2iExM9T/ab40uAwoYtsvuFwJlriAmA0Xs3ihs5ipInr6ZFt5BSa92201tARTTFYCG
+ pvwhxIXAYSgwQdy6FdW1jnC4qtEdEjBsaXN2o=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1763073497; x=1763678297;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=BRVbZs1JNiUgDZzfgi4YVxQblLqhzf8TMSBqFSBt8QA=;
- b=Ak3mmdu9ZjRLDEGuEr1FAWvHhFAaHadh8n/f3RQ3KzmMxbFw7JzhqBAy1cG+qyH6bL
- jht9sH7N0HCWZjPuJQHvXqMKbI9UTLseS+k9ObFF6CUeTjEaYsQeC767ScB5/TfUQZXV
- RohBs+xTKiyPpCcVI396Fv4jTrt139aFu/4ShMrGRqLzH/8vgVdffDDaTMJHFDnohlE/
- 4vIFskweHnt6nhploGOMcNW469hwCQeUYfodw3a7EQvPnLHsU9CRQc2KN9yR4xlwkRIr
- UPZBo65N5oEX31kbpjN8u1Y0lGAH80MMHVoisSAty8qTLWWegACrDdb1eWaCSrujX3Va
- sH+g==
-X-Gm-Message-State: AOJu0Ywuer8tKmZZjC2LSDFcgRFojWlp6q+AUNdnsTs3YskFNKNluYWC
- +wSBkTDx3kjGSvnNZmotVkPvtVIxteK0fNKGmn5p+oyUWKeK6371NgHHNG+P0V6P4eU=
-X-Gm-Gg: ASbGncv/6z1g0mgYQDkrCXq6Ojuw2XAkIGy8BKseP+hxDK09ewUq63DUUHW0FqsAbxE
- ydB/sk9od3AmYywxRL1owh3fWuy2rgBf8WBpiCLewNAsXDqTAIka8/wsTCd5Z1THIt5HAGBaCv7
- fJbo/E1IwS90TQoAfVH2nkha+6vG0kZuUaZ1G7H8p0oiKT6bIwmEMvmPTyhPD0aClvTmQEqzmrP
- GZFcUeSxAsze6RyqmIxF0zlW8UUpaWqCaVsOhUmzrM/M09EZ3i/Cgge0ihsQnX/X+1O0Tb0i9Hi
- W1Ydcb8u0Aqd6pg96z+04VzgXK3A3i/7kPnwE69aWTgtCCny/hpOCbKd0e72ft2o057w2WN9UIv
- CKruII43VEs+T/c/eEV5jQ076Y5wKJRc67xiR0vB35KbL3P3YZ3W+GA1VsKUfSr8IPZ1sFhoJgz
- QgVz0Z7yCJNx4APdz19H+Nev/a92u2KuCt1AF9Rxnkpk5j
-X-Google-Smtp-Source: AGHT+IGNFJ9TMlIqM3S0coKvVc6A1lHLq9LrRV+ghtPC0GF6vV20PWIRVQmLxUufL07kq3F8WWNwOQ==
-X-Received: by 2002:a05:7022:1608:b0:119:e569:f279 with SMTP id
- a92af1059eb24-11b41200308mr389043c88.34.1763073497021; 
- Thu, 13 Nov 2025 14:38:17 -0800 (PST)
-Received: from phoenix (204-195-96-226.wavecable.com. [204.195.96.226])
+ d=1e100.net; s=20230601; t=1763076675; x=1763681475;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=+TDI6v5DNZXfhDYdwg8yAcnUgaxcikC0W8DrwItJpJk=;
+ b=H3DTljZ+kpEnQhXjS1y4+nZ+9tznX9O5DzfnEKpOsDJGvo1PbevCCGVuubpbgx5NaI
+ 2VENo0hzZ7m1dRp5+6uaqx/YlP38putHNTstbr9z0g0gLx5564eQoakZYMth5bOGFRpg
+ 2rodVF0AK49RK/Sa+15ew5JWVGJhzrladnL3O0ikQCSMw68vCaYW2DaRZI7x7JNKoLFP
+ orEgEpXRLqq2UOFUanAgZhVFE4hZzG/IeekwF8BSKXn1fsrz96H9kOvTcIIocDMwYfSo
+ mDbMHk/jkqdCiwx1yhOCUUB/ATs37RUTWgM4zWh+BQpN89AM19qzSvOWYK0HcuwwElqh
+ 34gA==
+X-Gm-Message-State: AOJu0YwYYCMa7EFttivOuwOKPztWFku2wjANMHPJYWCs23Ev3hTRUIIq
+ ISPHiS/QdCXD5apDPLz5XCi638PQ5l7wjwXGCSE26E4Lu0n41uTmnqlRiJMYeFiH4AlSY1EdY0t
+ NoNfYRiU=
+X-Gm-Gg: ASbGncsIvLknx9vvW/flvixsZdn/6VMdvSowJuiMEIzA6kxhBLcNEKl3jwDbRr0S1vI
+ s5bmyEZIezYEcSJit7oEjZjpySabiAZa66PYLOHWS69aZk8D01sqsIE5TCkT4kho270asLmluey
+ vjJW7HUpqlHFlqg/jGZkDutFkuShReQkYj8tt5wa2IPlVRv28F9eH0kwGhcDY7i2l0RTTEGTlaC
+ dgBukpUUvEw1gEoglsPo1GxythayPSN0y0rwgHLRrHBsF3YegdT/hwtPgQCeeXR6Az+SnBvACEW
+ L/XE8tsaA1V3FH42g+SzfrSZNpWo7fbhu9kZqhHwSR8UzbDXSC4z3bfRcCp/VDB7VXzQnD3yybP
+ P/Td1MLQ2gqCVlTc8s068eHYxYAXEVQFBfs+L1QtpT/l4KuEGNFgRRzThE5B7tnxreYfH6Ey1Aa
+ KFGvbSuYWzSll68585GNQ=
+X-Google-Smtp-Source: AGHT+IH/4qKDro273K+r/+z77KNs+kv+0ZEeGlFY6Vhfqbaekk6Zh+jAAz0B4TWJF8fFcgNz46nAqQ==
+X-Received: by 2002:a05:620a:3948:b0:8ab:58d3:6030 with SMTP id
+ af79cd13be357-8b2c31af060mr162980785a.57.1763076674999; 
+ Thu, 13 Nov 2025 15:31:14 -0800 (PST)
+Received: from patrick-laptop.iol.unh.edu
+ ([2606:4100:3880:1271:8c70:5b9e:ecd3:14e])
  by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-11b060885e3sm2390002c88.0.2025.11.13.14.38.16
+ af79cd13be357-8b2af064724sm221837285a.54.2025.11.13.15.31.14
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 13 Nov 2025 14:38:16 -0800 (PST)
-Date: Thu, 13 Nov 2025 14:38:13 -0800
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Maayan Kashani <mkashani@nvidia.com>
-Cc: <dev@dpdk.org>, <rasland@nvidia.com>, <stable@dpdk.org>, Aman Singh
- <aman.deep.singh@intel.com>, Viacheslav Ovsiienko <viacheslavo@nvidia.com>,
- Gregory Etelson <getelson@nvidia.com>
-Subject: Re: [PATCH] app/testpmd: fix flex item link parsing
-Message-ID: <20251113143813.5276622d@phoenix>
-In-Reply-To: <20251113201726.10597-1-mkashani@nvidia.com>
-References: <20251113201726.10597-1-mkashani@nvidia.com>
+ Thu, 13 Nov 2025 15:31:14 -0800 (PST)
+From: Patrick Robb <probb@iol.unh.edu>
+To: luca.vizzarro@arm.com
+Cc: dev@dpdk.org, thomas@monjalon.net, david.marchand@redhat.com,
+ Patrick Robb <probb@iol.unh.edu>
+Subject: [PATCH 0/2] Small formatting issue fixes in DTS
+Date: Thu, 13 Nov 2025 18:29:52 -0500
+Message-ID: <20251113232954.273454-1-probb@iol.unh.edu>
+X-Mailer: git-send-email 2.49.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,48 +77,18 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 13 Nov 2025 22:17:25 +0200
-Maayan Kashani <mkashani@nvidia.com> wrote:
+There are a few formatting issues in DTS which are being
+reported by the devtools dts-check-format script. The 2
+commits in this series should resolve these issues.
 
-> The flex_link_item_parse function was using FLEX_MAX_FLOW_PATTERN_LENGTH
-> for all memcpy operations regardless of the actual flow item type. This
-> could lead to copying incorrect amounts of data.
-> 
-> This patch adds a switch statement to determine the correct size based
-> on the actual flow item type (IPv4, IPv6, UDP, TCP) and uses that size
-> for the memcpy operations on spec, mask, and last fields.
-> 
-> Also adds validation to reject unsupported item types.
-> 
-> Fixes: 59f3a8acbcdb ("app/testpmd: add flex item commands")
-> Cc: stable@dpdk.org
-> 
-> Signed-off-by: Maayan Kashani <mkashani@nvidia.com>
-> ---
->  app/test-pmd/cmd_flex_item.c | 10 +++++++---
->  1 file changed, 7 insertions(+), 3 deletions(-)
-> 
-> diff --git a/app/test-pmd/cmd_flex_item.c b/app/test-pmd/cmd_flex_item.c
-> index e6e1cefeb3d..ec19ab63e75 100644
-> --- a/app/test-pmd/cmd_flex_item.c
-> +++ b/app/test-pmd/cmd_flex_item.c
-> @@ -134,6 +134,7 @@ flex_link_item_parse(const char *src, struct rte_flow_item *item)
->  	struct rte_flow_attr *attr;
->  	struct rte_flow_item *pattern;
->  	struct rte_flow_action *actions;
-> +	size_t sz = 0;
->  
->  	sprintf(flow_rule,
->  		"flow create 0 pattern %s / end actions drop / end", src);
-> @@ -143,21 +144,24 @@ flex_link_item_parse(const char *src, struct rte_flow_item *item)
->  	if (ret)
->  		return ret;
->  	item->type = pattern->type;
-> +	ret = rte_flow_conv(RTE_FLOW_CONV_OP_ITEM_MASK, NULL, 0, item, NULL);
-> +	if (ret > 0)
-> +		sz = ret;
+Patrick Robb (2):
+  dts: fix incorrect import order for RSS testsuite
+  dts: shorten a too long line
 
-You don't really need a temporary variable sz, can't you just use the
-return value directly or are you concerned about signed/unsigned mismatch.
-If concerned about signed/unsigned mismatch warnings then would need
-cast on the assignment to sz.
+ dts/api/testpmd/__init__.py    | 2 +-
+ dts/tests/TestSuite_pmd_rss.py | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+-- 
+2.49.0
+
