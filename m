@@ -2,76 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B2FFCD8CA6
-	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Nov 2025 16:33:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E6F7CD8CA7
+	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Nov 2025 16:41:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 456A640BA0;
-	Thu, 13 Nov 2025 17:33:07 +0100 (CET)
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com
- [209.85.215.177])
- by mails.dpdk.org (Postfix) with ESMTP id F2587402A0
- for <dev@dpdk.org>; Thu, 13 Nov 2025 17:33:05 +0100 (CET)
-Received: by mail-pg1-f177.google.com with SMTP id
- 41be03b00d2f7-ba599137cf8so690515a12.0
- for <dev@dpdk.org>; Thu, 13 Nov 2025 08:33:05 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 65387402A0;
+	Thu, 13 Nov 2025 17:41:08 +0100 (CET)
+Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com
+ [209.85.210.46]) by mails.dpdk.org (Postfix) with ESMTP id 4EF8840151
+ for <dev@dpdk.org>; Thu, 13 Nov 2025 17:41:07 +0100 (CET)
+Received: by mail-ot1-f46.google.com with SMTP id
+ 46e09a7af769-7c701097a75so554539a34.3
+ for <dev@dpdk.org>; Thu, 13 Nov 2025 08:41:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1763051585;
- x=1763656385; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=/MagE56ECz05/LPmrk+mHwNDyA+OB2TCKa6N9w4HI/U=;
- b=jxTYJiF3tQg0tnObY6LAiek7m9hqcGipnpu6pqfuCY38LSVF6rhnB0fUkUVBwiZjuD
- +Y8HotidbWNa8qUy/mU7z4dXUz7cRAHM+l/b1NRY1+RNUxitdhz9PBJNI8t5pxZzwKIo
- FMDPZTl7NbVmO8Jalac+z3Eanruyq8kiRGgiy92NmYD6uEXEEgaipyJ/lYaFRmjRyh2B
- EXCQPvJRU6hgU6nY57Mq0LVRLs/9M467eOIU0B+66SR/IUisi+dsm0RnsMmjhLCNm2g4
- A5LUMa5uMRKgZNOKVDmAZMaTTcPPYtZlXXau7E9mVr/lkVIZ/Ct18nsLLbtdQeLQaEd6
- qLSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1763051585; x=1763656385;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1763052066;
+ x=1763656866; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=/MagE56ECz05/LPmrk+mHwNDyA+OB2TCKa6N9w4HI/U=;
- b=eMV6QZoVwKIk1JQmzR2VnpStAU2hAk5N6lZ4i1I5KUj7rFHGmpcYs0k7nvNmyo/FaB
- RFS5fFHZMLVODNjc/KGrpbSbMIC8WpO94kF1SO4t9tR6l68iwVZpAENpR5REIulxqV4y
- N0YO0dRBQglS8Jz15+CdxCzpyLmnxYm5drV+3/5p66C4qs+tt2EGJq/jTjW1rIoxlxBT
- KmP49eO7ts2JosvmxTzUp4zbL8ken8jqI4JapuUcm6ETIoQdfp6opxZ5VpRVfPjmaooZ
- NneJFotNiw/Ddvg7gWbgppnam3Lzo7zfo91tnFsJg5nzsdI2HFyQALuokPdTUYR9JNOW
- ySHQ==
-X-Gm-Message-State: AOJu0Yzx9XGSKaX6A/ucnrpyUXn9QtXAyj31hhfZ168o7Ddi4jRjMIIn
- qAKkfow3dPglHS6BOjqOMH5wkikGXzQU0IzQW8ifi/PN0l6RQvdllxaD7VArSuAJCWrbEaMvJad
- AuoaMNGthzQ==
-X-Gm-Gg: ASbGncs6a/vj+ah7lAfSK+EfJTDVum2T75m5xKKfOuWuimOQRVhS2qLKJTewMX/sDGw
- Fri8CLdPFJs0bf2WNpn+zFicC23gfc6gWJi/HbFowO7sHfzxn4xA3AwGOrcbWefqLUf7CYetz7j
- 3fKutgUavtX8wL7tUv3obtAEK1Q3GJeTH+MK271KiJOO9ske1L/Sjx5rbfAuOJESYOdNYssk1Px
- dG1tVE6RSgPuQw0/weP7NIn8q4FT7ETgpMLMiZ6792g1/ynSd7ocZiXU5AJS4gYhNRKTFdNLi9Z
- hgqt2pFhv9PLHVEXi4IZnOUSzXJ+tMruMlWrR3ViHglBf7Yrkj0MUHI5By7sQoEAtfa8nsetgM8
- 8KpPwHyDiI8lHIHKl+T1x3kNbTAPgRnjYh/5xnOAPAMWL9aNGY2rmswR7Uqnjqkec4hnBY+SUu/
- ec/7CjurS3NIv/j/gs0fZZMFBDU5roLQFvTbmMvIk=
-X-Google-Smtp-Source: AGHT+IF5JtSGZzWXF2Il41lt0gOCOOoMDY4wTpwgK1dRF5iicRNXGkntW4qy5jvSiQCSfhSCaoG71Q==
-X-Received: by 2002:a05:701b:2901:b0:11a:4ffa:bb8f with SMTP id
- a92af1059eb24-11b033ae656mr61564c88.5.1763051584788; 
- Thu, 13 Nov 2025 08:33:04 -0800 (PST)
-Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
+ bh=kHtMwNJdm9f5UDv3qTUAA0azMDa5PZvwRU5ZYcnwsHI=;
+ b=hNln9U4O6B4jZoh8vlzsSFKcRNyt+blufFZEEteU4wMN8QGVe0zfP6X4HnRO3KJ2LU
+ HD6bSVInlLa5C37nNvKL+TtRgHv8g5P36NmlsyxzxaKF9ZjUgd7zi9ItoEsOXbDnx3gT
+ 5b40lDLAbYqCwyA3WOaqa0wr31QNYJMTOemzSIdyHRvIK6cyiZdGWlgRj1PZ/u9z3Dln
+ V3r7U4tYLhJv4bHXrFVCibNddiepsesrkaHQxs7Jz2Cmxc+yTAVDucNeRCh07tTXXGvZ
+ cA6zRF78tcv2wnukMs5gvkcJojtipSPI5fWdn1HteBhkxJYwUdKzL7AHo0WRYHDRj7c0
+ tnvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1763052066; x=1763656866;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=kHtMwNJdm9f5UDv3qTUAA0azMDa5PZvwRU5ZYcnwsHI=;
+ b=IbpS8eYi5NhQhrXvaDfP41Jg9RNVD2YpwBHOMpk+oQN7IB0gOMr0cK3lcqtY/1dhsx
+ 2iRgc1/3dfaWhby/3ZxMR+JzQaZkETOWsnANMim3IXSN0En4fhnFkSzUPr5BWVqM1qDE
+ 8Trm2L180azPSBBSp/C2fT6yqVJ/iTOHhNzY+c/d9+E6NG2+cKRpAs3RwBBfAGph5/ah
+ bJP4GVf54x1EZt84a8yAHLkGvfaroxpPRs3QA8NKtDdW78+fYPkiMYgWDrgpvb4rbjwV
+ WiVfHkEUtvfoTXL0jIrIIqAXDZIn1Mzvb8j6riBaSZzkN2budQt3ZnZQZqm9Tytdnjoz
+ 7D+A==
+X-Gm-Message-State: AOJu0Yymh5+r6U1v7k0vbcWqN1J0pT4qU1XsNBfJW3jsaX4nEfMvUlqh
+ Hqw0L/OoBHJfx/mPsQj+7q75AKhmgIxO+duVAGWYT3u5J+aN4OSPt+ZmnldZfw9CezU=
+X-Gm-Gg: ASbGncutKem4aD0mXImdlOvI5VcCIGcVtOqUYkrufNNSc9MgvcdcpeBCOO/aEK8pEXW
+ RZESKYVhH8TXKt3OVPKqkQwBJW/nOOyTbhmd+RATGoaQxdi+s04CKNvitqC+mvvjV53TFp7RwwF
+ 3m+KZhIXQXMHVvPWf0fI+4jciCr4UZUk6+kuFypz0bkr/KxxLDwjNcT1F163NFj2n/M65syqz/Y
+ WiqCYR2aFUaZ1f5JADxKtVqz0LtB4rE6hI3zX45OyjWBgk3HXIjNgSulCpUuS8mEn8mFz/+M8mo
+ Uk+UT+chfv/E79XgUGARkjv34yo6/cJfiGgKVyZOVFfAGR3kjIJ9GTFcsBszW6FWRsSgEQ3y0yP
+ FPzFuxYwvkSnUu2/vJ7k36TRFOp0aGw2v0orIAAwd78gBO/Vwez3s1lGIX6cC4u5yN6LW46Nn24
+ 8Vzmf+mBHBIM48/qrjbU0gyUvzS+kU1Y6txKUU8bR9XWpA
+X-Google-Smtp-Source: AGHT+IFsY7zUr7yM7gosXvY86kbaPTTb7HIUDE0aXkpoJDUa6klPwU+NV97+phDhUysWgZtnLjoopA==
+X-Received: by 2002:a05:6808:1446:b0:450:730e:d126 with SMTP id
+ 5614622812f47-450745d87f6mr3348464b6e.60.1763052066218; 
+ Thu, 13 Nov 2025 08:41:06 -0800 (PST)
+Received: from phoenix (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-2a49db4a36asm276012eec.5.2025.11.13.08.33.03
+ 5614622812f47-4508a555527sm1225760b6e.7.2025.11.13.08.41.04
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 13 Nov 2025 08:33:04 -0800 (PST)
+ Thu, 13 Nov 2025 08:41:05 -0800 (PST)
+Date: Thu, 13 Nov 2025 08:41:02 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
- Dariusz Sosnowski <dsosnowski@nvidia.com>,
- Viacheslav Ovsiienko <viacheslavo@nvidia.com>,
- Bing Zhao <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>,
- Suanming Mou <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>,
- Ophir Munk <ophirmu@nvidia.com>
-Subject: [PATCH] net/mlx5: fix uninitialized warning
-Date: Thu, 13 Nov 2025 08:33:01 -0800
-Message-ID: <20251113163301.285550-1-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.51.0
+To: Gregory Etelson <getelson@nvidia.com>
+Cc: <dev@dpdk.org>, <mkashani@nvidia.com>, <rasland@nvidia.com>,
+ <thomas@monjalon.net>, Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
+Subject: Re: [PATCH v4 1/2] ethdev: make representor parameter more explicit
+Message-ID: <20251113084102.2ebda214@phoenix>
+In-Reply-To: <20251106055246.360824-1-getelson@nvidia.com>
+References: <20251028095831.53669-1-getelson@nvidia.com>
+ <20251106055246.360824-1-getelson@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -85,41 +82,21 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Gcc-16 detects use of uninitialized variable.
-./drivers/net/mlx5/linux/mlx5_ethdev_os.c: In function ‘mlx5_link_update’:
-../drivers/net/mlx5/linux/mlx5_ethdev_os.c:539:15: warning: ‘*(long unsigned int *)((char *)&dev_link + offsetof(struct rte_eth_link, <U38c0>))’ may be used uninitialized [-Wmaybe-uninitialized]
-  539 |         ret = !!memcmp(&dev->data->dev_link, &dev_link,
-      |               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  540 |                        sizeof(struct rte_eth_link));
-      |                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-../drivers/net/mlx5/linux/mlx5_ethdev_os.c:515:29: note: ‘*(long unsigned int *)((char *)&dev_link + offsetof(struct rte_eth_link, <U38c0>))’ was declared here
-  515 |         struct rte_eth_link dev_link;
-      |
+On Thu, 6 Nov 2025 07:52:44 +0200
+Gregory Etelson <getelson@nvidia.com> wrote:
 
-If the retry loop exits the code would do memcmp against unintialized
-stack value. Resolve by intializing to zero.
+> The current format for a port representor parameter is
+> '-a DBDF,representor=pfXvfY'.
+> That parameter syntax describes port representor relative to
+> PCI device DBDF.
+> In that notation VF Y belongs to PF X and PF X is relative to DBDF.
+> 
+> The syntax 'pfXvfY' will probe 2 port representors: PF X and VF Y.
+> If we want to refer only to VF Y related to PF X, the parameter must
+> be '(pfX)vfY'.
+> In this case only VF Y representor will be probed.
+> 
+> Signed-off-by: Gregory Etelson <getelson@nvidia.com>
+> ---
 
-Fixes: 1256805dd54d ("net/mlx5: move Linux-specific functions")
-Cc: stable@dpdk.org
-
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
----
- drivers/net/mlx5/linux/mlx5_ethdev_os.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/mlx5/linux/mlx5_ethdev_os.c b/drivers/net/mlx5/linux/mlx5_ethdev_os.c
-index 4d8fbed188..d4a544e1a6 100644
---- a/drivers/net/mlx5/linux/mlx5_ethdev_os.c
-+++ b/drivers/net/mlx5/linux/mlx5_ethdev_os.c
-@@ -512,7 +512,7 @@ int
- mlx5_link_update(struct rte_eth_dev *dev, int wait_to_complete)
- {
- 	int ret;
--	struct rte_eth_link dev_link;
-+	struct rte_eth_link dev_link = { };
- 	time_t start_time = time(NULL);
- 	int retry = MLX5_GET_LINK_STATUS_RETRY_COUNT;
- 
--- 
-2.51.0
-
+Both patches queued in next-net
