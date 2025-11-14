@@ -2,49 +2,155 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED54DCDE00D
-	for <dpdk-dev@archiver.kernel.org>; Fri, 14 Nov 2025 12:13:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F262CE7B08
+	for <dpdk-dev@archiver.kernel.org>; Fri, 14 Nov 2025 13:04:40 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 75C4F40DDC;
-	Fri, 14 Nov 2025 13:13:15 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
- by mails.dpdk.org (Postfix) with ESMTP id 5585040151
- for <dev@dpdk.org>; Fri, 14 Nov 2025 13:13:13 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1763122393; x=1794658393;
- h=from:to:subject:date:message-id:in-reply-to:references:
- mime-version:content-transfer-encoding;
- bh=65sHxmwl7hDqZraKwdhcZXs3ngy5SEBw3/In8xxwvR8=;
- b=YCvCgJ6DOvTZhQZ86cbI403RoA3cTlc/d00CuocJloJhcXYuAyKwpCbt
- Dw+WOg/PHXr5NiLi0vfxOvnKBTA9HToUSMmSojcxBXVl5Kl7RjHijQG2Z
- p045t/Q3Wh8PKR6hnlTSRoSVh27XprPep565ywbNDDBIaTByTiunioB61
- 99c75bYbcL6kriw3WgDuMwgXEOS8Z8GEwsze0PmQ6kXzihEjyUrah1K4c
- 2AmJvHfbRb9PpcvsBpJ82rY1CmoXRC3H8w8NvbiUs4lJb4biVJNcIl2N6
- f3noeST1VLqEgOUQ8dQknqyZIm8Mjlvq2HliXqXhRcugvmLOUqR9fvR7f w==;
-X-CSE-ConnectionGUID: UXng9mU4R0Wd8sgMbSOe7Q==
-X-CSE-MsgGUID: PG6ELhAARGGYc2DtXKKmgg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11612"; a="87861898"
-X-IronPort-AV: E=Sophos;i="6.19,304,1754982000"; d="scan'208";a="87861898"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
- by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 14 Nov 2025 04:13:12 -0800
-X-CSE-ConnectionGUID: NCxY4d7wTfqRg+QR2rTxig==
-X-CSE-MsgGUID: OHzRohvbQPiSMDvJ/T/Bkw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,304,1754982000"; d="scan'208";a="194915988"
-Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by orviesa005.jf.intel.com with ESMTP; 14 Nov 2025 04:13:11 -0800
-From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org
-Subject: [PATCH v1 2/2] doc: add device hotplug documentation
-Date: Fri, 14 Nov 2025 12:13:08 +0000
-Message-ID: <d4754501b6378cfe3945524ecc328dde94e9cf8e.1763122378.git.anatoly.burakov@intel.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <f9c79b16f3f90c3521acabdcaa96a9e61dca705b.1763122378.git.anatoly.burakov@intel.com>
-References: 
+	by mails.dpdk.org (Postfix) with ESMTP id 43717402C8;
+	Fri, 14 Nov 2025 14:04:39 +0100 (CET)
+Received: from DM5PR21CU001.outbound.protection.outlook.com
+ (mail-centralusazon11011016.outbound.protection.outlook.com [52.101.62.16])
+ by mails.dpdk.org (Postfix) with ESMTP id 6DA5140151;
+ Fri, 14 Nov 2025 14:04:38 +0100 (CET)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=bwGTzgGtud4uXIl0HFUSK8BbIlnIZ3g2lv/s4UUDEYXMsWhoXIkrIFgXASGf0O8TRgzr2hDLTD9gv/lna6YMayTCwPhK/FWUHgYlDNqPVSjzL12TXSC3PUcWLWoX5PHuywcZG7NbAHxuqBCiH0inaZbRVP09cB+fOYfAQnkvd1saq/W17Cwjt+5ayuyMIZpIarkwQDVZT1csJhAA3OG+E9jCQmgHoEgZasMYPhPM+uC7u7IbFfyw0zxnQD7VnHmKgTgkhbtoi2kUpex8e6kdNkT68UHxL1lPV4gG0PxHZeDQZag6GdaOQ/fh8o0pIGckp8eE3fjxpyzY+w3hrrZTpQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=gzE2d16obt7KIXd3o4Idngtvwb8eH4LEDZBpRWjGFV8=;
+ b=Gh5ZIOa3I60zcPab3t47QEsWNDzy1jIdcb8HEOV55f4gYw+8bo7JKGzczFR4k7EtZdw2Y837LD69Txpwm9rgsIISI4JbRnzh6y3Y1o6HwkLD/nAtUSVL2fZbZvfXw5DGgOifzg5UhfkTt0Q0f+M+aolmuSJL0+mIs/nRdomlI/zeHUwJRRi0YeNkDIwuBosJEBjhOJnRajQF9CxDjG6JknRS0XJ5mh+L+OTKgoJaZhBo7RkZ4UIKlNfYFcypQEeb2F2eBbSGDVa6h7g6CcSIJ6uEZ8xJZQ6oJYDPFXCDymcE2rOU7tVGURt676JDz9mbA6PeoeUeSk/xnrW1GE42Fw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gzE2d16obt7KIXd3o4Idngtvwb8eH4LEDZBpRWjGFV8=;
+ b=CNNMij91LFllODz+yeC7PCD+/3jPhcGQgoRfbB8Aaqdk+EA8H6dKFxEO83l8dGlXWdA9ZTYK4sSo+r3VS68nKejCUhShshEH8S5GPNFeEeKKZ0zAX8DWjjwgJ9vHMZw7S4CmNYKtnvdDgjZFxE2OUmQGz4ffw9Mshg7cff3JgEFB9GoUJDmY/GQd8I4T2gQ2aCrOjs/q/D96X3k447gUgFTWyoeo1hRpVlDi7R1AzytYQyfZER+NLYVsMobv30tKrGaQEZa0RnJy6fU9mnliJDSjYc/pfS3UB48OQrxFcTboQ41Ilq9QjALWk4fnPuRy4sAw4YB6X4c7oXSsy9KXtA==
+Received: from MN6PR12MB8567.namprd12.prod.outlook.com (2603:10b6:208:478::12)
+ by DM3PR12MB9416.namprd12.prod.outlook.com (2603:10b6:0:4b::8) with
+ Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9320.15; Fri, 14 Nov 2025 13:04:33 +0000
+Received: from MN6PR12MB8567.namprd12.prod.outlook.com
+ ([fe80::9bde:b697:6d6d:ee04]) by MN6PR12MB8567.namprd12.prod.outlook.com
+ ([fe80::9bde:b697:6d6d:ee04%3]) with mapi id 15.20.9320.018; Fri, 14 Nov 2025
+ 13:04:33 +0000
+From: Slava Ovsiienko <viacheslavo@nvidia.com>
+To: Sivaprasad Tummala <sivaprasad.tummala@amd.com>, Dariusz Sosnowski
+ <dsosnowski@nvidia.com>, Bing Zhao <bingz@nvidia.com>, Ori Kam
+ <orika@nvidia.com>, Suanming Mou <suanmingm@nvidia.com>, Matan Azrad
+ <matan@nvidia.com>, Alexander Kozyrev <akozyrev@nvidia.com>
+CC: "dev@dpdk.org" <dev@dpdk.org>, "stable@dpdk.org" <stable@dpdk.org>
+Subject: RE: [PATCH v2] net/mlx5: fix spurious CPU wakeups caused by invalid
+ CQE
+Thread-Topic: [PATCH v2] net/mlx5: fix spurious CPU wakeups caused by invalid
+ CQE
+Thread-Index: AQHcUr0M7jcb4+xK2keHHFTFXjJENbTyKNNA
+Date: Fri, 14 Nov 2025 13:04:33 +0000
+Message-ID: <MN6PR12MB856718271C670BAB59DDD477DFCAA@MN6PR12MB8567.namprd12.prod.outlook.com>
+References: <20251015133957.4094235-1-sivaprasad.tummala@amd.com>
+ <20251111034057.3177641-1-sivaprasad.tummala@amd.com>
+In-Reply-To: <20251111034057.3177641-1-sivaprasad.tummala@amd.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: MN6PR12MB8567:EE_|DM3PR12MB9416:EE_
+x-ms-office365-filtering-correlation-id: 8d7907a9-8b1b-4d52-ff8a-08de237e5b11
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0; ARA:13230040|1800799024|376014|366016|38070700021;
+x-microsoft-antispam-message-info: =?utf-8?B?aHZEZFB0QUJxK0QyeGJrY0V5bFFwMkNxR3dHY0RwM0xtYUIrZFVsdmI2OXBQ?=
+ =?utf-8?B?cThML2dpUjFwdzRsaE9nTCt4cWw5bGc4K216SFJBTlp0alZuRktlcnpycEJI?=
+ =?utf-8?B?b3V6SGkxcUFJTkdyYjlPNnoyMkFYcHgvbDIyQ2g5ckkveThEaFhIL1BhakVM?=
+ =?utf-8?B?T0gwVGhiRllnRWxpdVdhdUMvOWExdEhuNkdqQzRoL3h1MDBIajA4ZlJ6bDQv?=
+ =?utf-8?B?cDBwbEd1V1BMVnFvZGdFQVVxSU1Qb0VKdW00VlF0N3YweUpnSllHRjlBdFFN?=
+ =?utf-8?B?OWZyemZuRGhRS2E3UmJVcGV0b2srcGxEOHVJL09ENktYMU9HUUVFTzVNbTE5?=
+ =?utf-8?B?N2JGVFRmYXduZDhtaFN5bzNJalNOdzdFOWRXNHVXOTNxbVo2djlLTHdOeGo1?=
+ =?utf-8?B?cysyajBDMitTVGlFN2FUOXZJQm9qUEtaT0tMa3lwMmQrai9YVFRxYS95ajZV?=
+ =?utf-8?B?NjVQQyszL0lOYjcvaGtpVGxubEl3dm9WcGFBNG1CSEM2MGJYMmlpU3pMR3ha?=
+ =?utf-8?B?d2YxQlNoRFlPVTlSNzhqWEJRR0VSWUFoNUlJWUdidEU2a1hYditsWlBic2JN?=
+ =?utf-8?B?anRXVm5majNpdHZnNitYYWowSFdUNExFQW4ybmEvYkhZaTZtUHdKUHREVGdv?=
+ =?utf-8?B?aytRc1FkMEorcHNQZU8veFU0eE9ReG1TMElHR2RaaG9xMkZ6VUlYak9wSlgr?=
+ =?utf-8?B?NzNHam5JSkFpWFNLNnYyb2VmQkFEVnAydkRwRGdicjYvOEJmMDduTG5yVWp5?=
+ =?utf-8?B?MVROOGFLTXZJSVRQbGxiczBucUUvVHBheEkybVVFR1BOY1RzcFp4Z29FUTZL?=
+ =?utf-8?B?TUdrdXVXbGp2dExpM0pMemozcGkwL1pDVXhPeFd1cE5DSHJ5a2F5Rml4MUR6?=
+ =?utf-8?B?OVBIVDUxQmJ4bkJYTHpsSTExdXFSdmlkOGNObmZPYjU2eTZiN2ZacjBOdUpO?=
+ =?utf-8?B?c2RDVGp4a3NXT3lZOWdTdVV1NzQ2THJpc2svaVZ0UGFoV0g4WWNaWjFaWFJV?=
+ =?utf-8?B?dDc5NFI3V0ZpN3dWYmE3VjRPYUlqVHNNNU5vcXlJTjkwdDZJWWhpWGs1cmlI?=
+ =?utf-8?B?MTJrcGQySGoyNFREbGNGMGk1VFZ6MHJGSE1kbmdUWGhVcFFLRkptTUJUYVNG?=
+ =?utf-8?B?dFBsU2xNekdDUDEyd2dSOVFrak1rNllxVS9vMkNXeTUzS1RSZE90SlBvWmYr?=
+ =?utf-8?B?YkRQTmg0SGkrbEVEanhSajBSNWNyYm1iVDVEQk84V1lVck9lWWgrbzFNUkxD?=
+ =?utf-8?B?am1NTlJDSmhTV0QzWlJmOEF3dTRTNzBubTlXbi9TVE1Da0F0cnVpQlBudm9O?=
+ =?utf-8?B?R2RmL3dLTXRiSzBsWGVzSzNnS25xb2VWZHpFZ0lndnp4Ykxra0k5Z1c0cysv?=
+ =?utf-8?B?SXFHcm1ieDVNMVVTL3dMMC9ONmVScm5FT1cvZUMrWVFUUlFmY3htNUFWQUht?=
+ =?utf-8?B?bDVacVZuOVc3RVA1OE5kRk54enVZaHRHS1AvRzF3a21RTmRPU2M4a2lzM1lV?=
+ =?utf-8?B?b3dlc0prSnNCVHRPektLU0tzSVNBNFFwRTh5K0R1THhhSlE4YkNuVjF2TlBm?=
+ =?utf-8?B?Q0pUamZpQUhpVUFwSi9LY2plcGEvT2dYd0xiYnlHZDhsNlNvaVVTdDVmajJ6?=
+ =?utf-8?B?cFdKZlQ0TVorNmdRSHI3THpBRDhGcTNCaFcweEVmVFpRZTlSOVBWMUo5OHNn?=
+ =?utf-8?B?dHdjdktiRytPTUZFVmMvMHZ5U0JZVnMyV3hNVlFjRFM1NVk5ZVgxYnBaaUpI?=
+ =?utf-8?B?WTAyZkJlUExjVzRhdDQ3MXMvZ0hTVHhyc0lneFQvdWtMOG90MUtaODlTdUpk?=
+ =?utf-8?B?L1YxZUlKNmFBN2N5MG90UytkTTkzV2N5a1B1ejU5MnFXN2pGcGppUGI1Nnpx?=
+ =?utf-8?B?Skpza2hzYUV2QXZvQUhqaUdzSk9KOUgrZjZSMmJOQk13WHFsaDNMZVh5VWg3?=
+ =?utf-8?B?aXgwWUw0ZFliKzQ4bEJvck0xT3J5ZjVsVjIrZS9LTXpiSmdJRHBBK01zcHR1?=
+ =?utf-8?B?dSt2WEIyMUZLUEZWSVo2SWVzcTdqQk5DRUhaTVVjcWY0VEUwZjNhbEJNb2h0?=
+ =?utf-8?Q?lFtTY0?=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:MN6PR12MB8567.namprd12.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(1800799024)(376014)(366016)(38070700021); DIR:OUT; SFP:1101; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?YnFleTRKd0xUeWVITkFaVkNEbHFzNytiVDBaZDB2bmdGL21GR2Urek1ZN0N5?=
+ =?utf-8?B?MGo3ZWNHS2d1OGJqTVdRQU1XY213WVJEOURjMGJHSEZHcTRlMnNwVW9nUG5M?=
+ =?utf-8?B?Z05vSUU4RjlkaXYvc0t1aStXQndjSUxlWkNFSzVGdTZsSllMZVArNVkxbTZr?=
+ =?utf-8?B?aFlGRnV6ckdmQm82dXNRbDJyT0pYMWNmbEo5K21MTUhidnFZQWRQN0JWWXJW?=
+ =?utf-8?B?WTE2Q0pMR01XUlRGZHRFWjhFb3poWlc3TXFWYjlIRm95cE1qRVpYcmE2ZDU3?=
+ =?utf-8?B?eUtMd3RyZXF0Qm9oY1VVc0ZBNWI5QithOEcxaStYUDBQRnpkY2srNWpXVmlZ?=
+ =?utf-8?B?aEthc1RKL0xwL2JPTTMycVZiVjlzS254d0FCWXlUbXVjNmkrVE5qd0JHTTha?=
+ =?utf-8?B?UnYyeVo2aHROczRudHRyZUkyZE5mWmFDY1U1cXZwKzkzN0ZUNE1GWllTMEJS?=
+ =?utf-8?B?K1NvdDFNK3lNTXBNcStMNngrNnp6OTVzM3A0Uk9STXdDMnA2VGJ2TkljWU4r?=
+ =?utf-8?B?dlpPMXBFQkcvYzVRTGlScGxJMXVRWmZocUtOR1graWZiT202aW91OFJuNGd2?=
+ =?utf-8?B?S0RVZG80ZEJuT2dBT043NzRzblUxTi9BYjlOaTcvYTA4cDVwWnlzc3ZtY2dC?=
+ =?utf-8?B?QkliZC9aN1NyejZBdFFqZVdsYnp0WjB4ZVpLY0IxQXFXbWN1Q1Q3UUkveGRa?=
+ =?utf-8?B?YkwwY3M0amlHUS9rbEUwOURNcGNzVy9XdGdyMStkRFBESHhCUHh4ZnlkN1hI?=
+ =?utf-8?B?Z1U1a08vdktGbDdtZjBZTGFuQlBmVCs4ODM5MEQyaGw3T2oxdVNRWEFrZmJE?=
+ =?utf-8?B?RS90VXdWbXo5U3pxcTk5NWVqbmFMc21RMGlEVHZBanAyVEY5Sm1sZmtHdUtY?=
+ =?utf-8?B?RWJuUmNCYytOZUNsTmFOSmc3VFBXZnUrUWFTaGJQemZLeXdKQVdUVHEzckUw?=
+ =?utf-8?B?ZTdLNnFHZVZEYkNFRU9IREJqb0E1Mmg3aktRZ1VuVU82R2JxOExHM2g2cmJD?=
+ =?utf-8?B?M2ZYNjlUc3BwT0dUUW0rd2NCQUh4NXJZZldlWE1xODdBL0tzMG1Md3p0bzdY?=
+ =?utf-8?B?Rys1anBVSXF1cEd3U0psb2lUa1UwVU9UQkRtbGJMVXJQQ1RlME1NTmpEakdv?=
+ =?utf-8?B?VzdnOGNRckZHbnZ1TlVuRERTK0xLWnJPRWJHVnlvTjhHM2Q4Nkx3WHo1eDBO?=
+ =?utf-8?B?cWRlNE5tWWdnODdYU1JZSy9FU09VMWNFajNkOVM3S2VHL0tIeWhLR0I5ZElm?=
+ =?utf-8?B?VEdQMHgxUmMxSWM3djFiN3JhSGFVRXM3cUVTVFhVU2oxVXlNVUdST0NFSDBw?=
+ =?utf-8?B?QWVwMjdlNEh4bE5ETi9HL3NMcDEwT1o1TzFWNjk5aEZ3c2IzRE1sVzN1aGYw?=
+ =?utf-8?B?cE84czgwdUZ2Rk9CRFFqV0h1KzdjdmIrS3EzaHFYNmtaVGJrTmpxNVozUjg0?=
+ =?utf-8?B?VkhZY2Y1NHV3R0JJRlVXaU4vUVZVZ3JRYzY2aWRpRlBlVmJNSnRZcG1KNW1k?=
+ =?utf-8?B?TVh3bVZvTlFMaThGVjVPSWZCWVdxSmx5dkxTMnM1eHBNbXVjVm4yOEROZjNQ?=
+ =?utf-8?B?ME5pWGZFNDRZNlBTTlV2WmJEOEJ1L3BLcXp2ZWJ6R0I3MXREZ0t0RmE3NkNE?=
+ =?utf-8?B?aWF0cisvOHZPUEt0STNWcXlNZWxxZ0VrY1RBQjVOSngvc0pvSk5ha1Z2Q2R0?=
+ =?utf-8?B?WGVVQTk0ekcwWVlHaElXL1pFRHVTY1NmVGZxdnhObytqdlNDNmRkazErMmNJ?=
+ =?utf-8?B?Y1J6NEZHZExzaUdpVFMzR3ZVbGV6UytMWE02S25abkVscWNkWEJaYy96TGRK?=
+ =?utf-8?B?S0xGNlZUWWtHOURQekFMSUpiaW5Na3UyK1BHcUZvNGdxZ0RmcTRYN0FBcmlK?=
+ =?utf-8?B?M0FHTmQ1Nk1IK0ZuT2xoUi9ZZWVJTEhWejNoRlFSWWFGSzB0M212dXhBVU1I?=
+ =?utf-8?B?eGtHa1AveE8vQyt1OEFJZWJzTjJqUnFldzQreWtMSlBPbFhPZlF2UDRhcnBS?=
+ =?utf-8?B?UHlrQ2FkSC9seWQ0a0JwaHduNFAzU20vNFdTUmNmTTNCSTRid0l3OGJHRERL?=
+ =?utf-8?B?SHZnS3ozNTdrbjlnODY1Yi9wMHFiekpsUmZlR3R4MFlPb2hiYS9WcDh0dGk4?=
+ =?utf-8?Q?WGk1a1W4CkHXefv7pGF6pC2ng?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: MN6PR12MB8567.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8d7907a9-8b1b-4d52-ff8a-08de237e5b11
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Nov 2025 13:04:33.3589 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: IW8ENXbA5OzkrEpMQEri/evSOZ3RdfhHJUTL8otMvfRg1CSG5v0bd/cVEm8SECUP9VhQMC5dEn4abR2NqeuxhA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PR12MB9416
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -58,361 +164,62 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Currently, device hotplug is not documented except in API headers. Add
-documentation for device hotplug, both for user facing side of it, and a
-high level overview of its internal workings.
-
-Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
----
- doc/guides/prog_guide/dev_args.rst       |   3 +
- doc/guides/prog_guide/device_hotplug.rst | 305 +++++++++++++++++++++++
- doc/guides/prog_guide/index.rst          |   1 +
- 3 files changed, 309 insertions(+)
- create mode 100644 doc/guides/prog_guide/device_hotplug.rst
-
-diff --git a/doc/guides/prog_guide/dev_args.rst b/doc/guides/prog_guide/dev_args.rst
-index 2997bcdbd3..f888bcef17 100644
---- a/doc/guides/prog_guide/dev_args.rst
-+++ b/doc/guides/prog_guide/dev_args.rst
-@@ -166,6 +166,8 @@ Devargs are used with hotplug APIs to attach devices dynamically:
-    /* Attach with arguments */
-    ret = rte_dev_probe("0000:05:00.0,txq_inline=256");
- 
-+See :doc:`device_hotplug` for detailed information on runtime device management.
-+
- Parsing Devargs in Drivers
- ---------------------------
- 
-@@ -239,5 +241,6 @@ Device arguments provide a flexible and standardized way to specify and configur
- For more information, see:
- 
- * :doc:`../linux_gsg/linux_eal_parameters` - EAL command-line parameters
-+* :doc:`device_hotplug` - Runtime device management
- * API documentation: ``rte_devargs_parse()``, ``rte_devargs_layers_parse()`` (in ``rte_devargs.h``)
- * API documentation: ``rte_eth_devargs_parse()`` (in ``ethdev_driver.h``)
-diff --git a/doc/guides/prog_guide/device_hotplug.rst b/doc/guides/prog_guide/device_hotplug.rst
-new file mode 100644
-index 0000000000..16da8b4192
---- /dev/null
-+++ b/doc/guides/prog_guide/device_hotplug.rst
-@@ -0,0 +1,305 @@
-+..  SPDX-License-Identifier: BSD-3-Clause
-+    Copyright(c) 2025 Intel Corporation.
-+
-+.. _device_hotplug:
-+
-+Device Hotplug
-+==============
-+
-+Introduction
-+------------
-+
-+Device hotplug refers to the ability to attach and detach devices at runtime, after the initial EAL initialization has completed.
-+This feature allows applications to dynamically add or remove physical or virtual devices while the DPDK application is running.
-+
-+.. note::
-+   Device hotplug does not support multiprocess operation nor kernel device event notifications on platforms other than Linux.
-+
-+
-+Basic Usage
-+-----------
-+
-+The primary interface for device hotplug is through two complementary functions: ``rte_dev_probe()`` to attach a device using a devargs string, and ``rte_dev_remove()`` to detach a device.
-+For detailed information about device argument format and syntax, see :doc:`dev_args`.
-+
-+A typical workflow for attaching a device is:
-+
-+.. code-block:: c
-+
-+   /* Probe a PCI device with specific parameters */
-+   ret = rte_dev_probe("0000:02:00.0,arg1=value1");
-+   if (ret < 0) {
-+       /* Handle error */
-+   }
-+
-+   /* Later, find the device and remove it */
-+   struct rte_device *dev = /* find device */;
-+   ret = rte_dev_remove(dev);
-+
-+For convenience, DPDK also provides ``rte_eal_hotplug_add()`` and ``rte_eal_hotplug_remove()`` functions, which accept separate bus name, device name, and arguments instead of a combined devargs string:
-+
-+.. code-block:: c
-+
-+   /* Attach a virtual device */
-+   rte_eal_hotplug_add("vdev", "net_ring0", "");
-+
-+   /* Remove by bus and device name */
-+   rte_eal_hotplug_remove("vdev", "net_ring0");
-+
-+
-+Device Lifecycle Example
-+~~~~~~~~~~~~~~~~~~~~~~~~
-+
-+The ``testpmd`` application provides a reference implementation of device hotplug through the ``port attach`` and ``port detach`` commands, demonstrating proper device lifecycle management.
-+
-+The following example demonstrates attaching a virtual ring PMD Ethernet device, configuring it, and then detaching it:
-+
-+.. code-block:: c
-+
-+   char *devargs = "net_ring0";
-+   struct rte_eth_dev_info info;
-+   struct rte_dev_iterator iterator;
-+   unsigned port_id;
-+
-+   /* Probe the device */
-+   rte_dev_probe(devargs);
-+
-+   /* Enumerate newly attached ports */
-+   RTE_ETH_FOREACH_MATCHING_DEV(port_id, devargs, &iterator) {
-+      /* Get device handle */
-+      rte_eth_dev_info_get(port_id, &info);
-+
-+      /* Set up the device and use it */
-+   }
-+
-+   /* Stop the port */
-+   rte_eth_dev_stop(port_id);
-+
-+   /* Remove the device */
-+   ret = rte_dev_remove(info.device);
-+
-+The key steps in this lifecycle are:
-+
-+1. **Attach**: Call ``rte_dev_probe()`` with the device identifier
-+2. **Find the device**: Use device iterators (such as ``RTE_ETH_FOREACH_MATCHING_DEV()``) to find newly attached port
-+3. **Configure and use**: Configure the port using normal device configuration/start flow
-+4. **Detach**: Stop the device before calling ``rte_dev_remove()``
-+
-+
-+Device Events
-+-------------
-+
-+In addition to providing generic hotplug infrastructure to be used in the above described manner, EAL also offers a device event infrastructure.
-+
-+.. warning::
-+   Because all events are always delivered within the context of an interrupt thread, attempting any memory allocations/deallocations within that context may cause deadlocks.
-+   Therefore, it is recommended to set up a deferred application resource allocation/cleanup with ``rte_eal_alarm_set()`` API or otherwise trigger allocation/cleanup of application resources in another context.
-+
-+Ethernet Device Events
-+~~~~~~~~~~~~~~~~~~~~~~
-+
-+When new Ethernet devices are added (hot plugged using device probe API) to EAL or removed (hot unplugged using device remove API) from EAL, the following events are delivered:
-+
-+* ``RTE_ETH_EVENT_NEW`` - delivered after device probe
-+* ``RTE_ETH_EVENT_DESTROY`` - delivered after device removal
-+
-+The user may subscribe to these events using ``rte_eth_dev_callback_register()`` function.
-+
-+
-+Kernel Device Events
-+~~~~~~~~~~~~~~~~~~~~
-+
-+EAL may also subscribe to generic device events delivered from kernel uevent infrastructure. The following events are delivered:
-+
-+* ``RTE_DEV_EVENT_ADD`` - delivered whenever a new device becomes available for probing
-+* ``RTE_DEV_EVENT_REMOVE`` - delivered whenever a device becomes unavailable (device failure, hot unplug, etc.)
-+
-+The kernel event monitoring is not enabled by default, so before using this feature the user must do the following:
-+
-+* Call ``rte_dev_hotplug_handle_enable()`` to enable ``SIGBUS`` handling in EAL for devices that were hot-unplugged
-+* Call ``rte_dev_event_monitor_start()`` to enable kernel device event monitoring
-+
-+The user may then subscribe to kernel device events using ``rte_dev_event_callback_register()`` function.
-+
-+.. note::
-+   Currently, for ``RTE_DEV_EVENT_ADD``, only PCI devices are monitored
-+
-+.. note::
-+   The ``RTE_DEV_EVENT_ADD`` by itself does not probe the device, it is only a notification that the application may use ``rte_dev_probe()`` on the device in question.
-+   When ``RTE_DEV_EVENT_REMOVE`` event is delivered, the EAL has already released all internal resources associated with the device.
-+
-+
-+Event Notification Usage
-+~~~~~~~~~~~~~~~~~~~~~~~~
-+
-+Example generic device event callback with deferred probe:
-+
-+.. code-block:: c
-+
-+   void
-+   deferred_attach(void *arg)
-+   {
-+       const char *devname = (const char *)arg;
-+       rte_dev_probe(devname);
-+       /* match strdup with free */
-+       free(devname);
-+   }
-+
-+   int
-+   device_event_callback(const char *device_name,
-+                         enum rte_dev_event_type event,
-+                         void *cb_arg)
-+   {
-+       if (event == RTE_DEV_EVENT_ADD) {
-+           /* Schedule deferred attach - don't call rte_dev_probe() here! */
-+           char *devname = strdup(device_name);
-+           if (rte_eal_alarm_set(1, deferred_attach, devname) < 0) {
-+               /* error */
-+           }
-+       } else if (event == RTE_DEV_EVENT_REMOVE) {
-+           /* Handle device removal - schedule cleanup if needed */
-+       }
-+       return 0;
-+   }
-+
-+   rte_dev_event_callback_register(NULL, device_event_callback, user_arg);  /* NULL = all devices */
-+
-+
-+Implementation Details
-+======================
-+
-+Attach and Detach
-+-----------------
-+
-+When ``rte_dev_probe()`` is called, the following sequence occurs:
-+
-+1. **Devargs Parsing**:
-+   The devargs string is parsed to extract the bus name, device name, and driver arguments, which are stored in an ``rte_devargs`` structure and inserted into the global devargs list.
-+
-+2. **Bus Scan**:
-+   The appropriate bus driver's ``scan()`` method is invoked, causing the bus to search for the device.
-+   For PCI devices, this may involve scanning the sysfs filesystem, while for virtual devices, this may create the device structure directly.
-+
-+3. **Device Discovery**:
-+   After scanning, the bus's ``find_device()`` method locates the device by name, and the attach operation fails if the device is not found.
-+
-+4. **Device Probe**:
-+   The bus's ``plug()`` method is called, which triggers the device driver's probe function.
-+   The probe function typically allocates device-specific resources, maps device memory regions, initializes device hardware, and registers the device with the appropriate subsystem (e.g., ethdev for network devices).
-+
-+5. **Multi-process Synchronization**:
-+   If successful in the primary process, an IPC message is sent to all secondary processes to attach the same device.
-+   See `Multi-process Synchronization`_ for details.
-+
-+
-+When ``rte_dev_remove()`` is called, the following sequence occurs:
-+
-+1. **Device Validation**:
-+   The function verifies that the device is currently probed using ``rte_dev_is_probed()``.
-+
-+2. **Multi-process Coordination**:
-+   In multi-process scenarios, the primary process first coordinates with all secondary processes to detach the device, and only if all secondaries successfully detach does the primary proceed.
-+   See `Multi-process Synchronization`_ for details.
-+
-+3. **Device Unplug**:
-+   The bus's ``unplug()`` method is called (``dev->bus->unplug()``), which triggers the driver's remove function.
-+   This typically stops device operations, releases device resources, unmaps memory regions, and unregisters from subsystems.
-+
-+4. **Devargs Cleanup**:
-+   The devargs associated with the device are removed from the global list.
-+
-+
-+Multi-process Synchronization
-+-----------------------------
-+
-+DPDK's hotplug implementation ensures that devices are attached or detached consistently across all processes in a multi-process deployment.
-+Both primary and secondary processes can initiate hotplug operations (by calling ``rte_dev_probe()`` or ``rte_dev_remove()``), which will be synchronized across all processes.
-+
-+.. note::
-+   Multiprocess operations are only supported on Linux
-+
-+**When Application Initiates from Primary**:
-+
-+1. Primary performs the local operation
-+2. Primary broadcasts the request to all secondaries using IPC
-+3. Primary waits for replies from all secondaries with a timeout
-+4. If all secondaries succeed, the operation is complete
-+5. If any secondary fails, primary initiates rollback
-+
-+**When Application Initiates from Secondary**:
-+
-+1. Secondary sends attach/detach request to primary via IPC
-+2. Primary receives the request and performs the local operation
-+3. Primary broadcasts the request to all other secondaries
-+4. Primary waits for replies from all secondaries
-+5. If all succeed, primary sends success reply to the requesting secondary
-+6. If any fail, primary initiates rollback and sends failure reply to the requesting secondary
-+
-+**Secondary Process Flow** (when receiving request from primary):
-+
-+1. Secondary receives IPC request from primary
-+2. Secondary performs the local attach/detach operation
-+3. Secondary sends reply with success or failure status
-+
-+Rollback on Failure
-+~~~~~~~~~~~~~~~~~~~
-+
-+If any step in the attach or detach process fails in a multi-process scenario, DPDK attempts to rollback the operation.
-+For attach failures, the primary process sends rollback requests to detach the device from all secondary processes where it succeeded.
-+For detach failures, the primary process sends rollback requests to all secondary processes to re-attach the device, restoring the previous state.
-+
-+Virtual Devices and Multi-process
-+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+
-+Virtual devices have special handling in multi-process scenarios.
-+
-+During initial startup, when a secondary process starts, it sends a scan request to the primary process via IPC, and the primary responds by sending the list of all virtual devices it has created.
-+This synchronization happens during the bus scan phase.
-+Unlike physical devices where both processes can independently discover hardware, virtual devices only exist in memory, so secondaries must obtain the device list from the primary.
-+
-+At runtime, virtual devices can be hotplugged from either primary or secondary processes using the standard hotplug flow described above, and will be synchronized across all processes.
-+Note that secondary processes can specify virtual devices via ``--vdev`` on the command line during initialization, which creates process-local devices, but runtime hotplug operations using ``rte_dev_probe()`` always synchronize devices across all processes.
-+
-+
-+Kernel Uevent Handling (Linux only)
-+-----------------------------------
-+
-+DPDK's device event monitoring works by listening to Linux kernel uevents via a netlink socket. The application must explicitly start monitoring by calling ``rte_dev_event_monitor_start()``.
-+When ``rte_dev_event_monitor_start()`` is called, DPDK creates a ``NETLINK_KOBJECT_UEVENT`` socket that receives notifications from the kernel about device state changes.
-+
-+The mechanism works as follows:
-+
-+1. **Netlink Socket Creation**: DPDK creates a netlink socket bound to receive all kernel kobject uevents (``nl_groups = 0xffffffff``).
-+2. **Uevent Reception**: When a device is added or removed, the Linux kernel broadcasts a uevent message containing:
-+   - ``ACTION=add`` or ``ACTION=remove``
-+   - ``SUBSYSTEM=pci``, ``uio``, or ``vfio``
-+   - ``PCI_SLOT_NAME=<device>`` (e.g., ``0000:02:00.0``)
-+3. **Event Parsing**: DPDK parses these messages to extract the device name, action type, and subsystem, then invokes registered application callbacks.
-+4. **Interrupt-driven**: The socket is registered with DPDK's interrupt framework, so uevent handling is asynchronous and doesn't require polling.
-+
-+This infrastructure only monitors physical devices managed by the kernel. Virtual devices created by DPDK do not generate kernel uevents.
-+
-+SIGBUS Handling
-+---------------
-+
-+If the application attempts to access memory-mapped device registers after the device is removed, a ``SIGBUS`` signal may be generated.
-+The ``rte_dev_hotplug_handle_enable()`` function registers a signal handler that identifies which device caused the fault using the faulting address, invokes the bus's signal handler to handle the error, and allows the application to continue rather than crashing.
-+
-+Summary
-+=======
-+
-+DPDK's device hotplug infrastructure provides runtime device management for applications.
-+The following facilities are available to applications (subject to platform support):
-+
-+* **Devargs-based API**: ``rte_dev_probe()`` / ``rte_dev_remove()`` or ``rte_eal_hotplug_add()`` / ``rte_eal_hotplug_remove()``.
-+* **Multi-process Safe**: Synchronization of device awareness across all DPDK processes.
-+* **Bus Agnostic**: Works with PCI, virtual (vdev), and most other bus types.
-+* **Graceful and Forcible**: Supports both application-initiated and event-driven device addition/removal.
-+
-+For additional examples, see:
-+
-+* Testpmd application (``app/test-pmd/testpmd.c``) - ``attach_port()`` and ``detach_device()``
-+* Multi-process hotplug example (``examples/multi_process/hotplug_mp/``)
-+* Fail-safe PMD (``drivers/net/failsafe/``) - Uses hotplug for redundancy
-+
-+For device-specific considerations, consult the appropriate device documentation in :doc:`ethdev/index` or other device library documentation.
-diff --git a/doc/guides/prog_guide/index.rst b/doc/guides/prog_guide/index.rst
-index 866b7c5012..7388c11d8f 100644
---- a/doc/guides/prog_guide/index.rst
-+++ b/doc/guides/prog_guide/index.rst
-@@ -74,6 +74,7 @@ Device Libraries
-     :numbered:
- 
-     dev_args
-+    device_hotplug
-     ethdev/index
-     link_bonding_poll_mode_drv_lib
-     vhost_lib
--- 
-2.47.3
-
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBTaXZhcHJhc2FkIFR1bW1hbGEg
+PHNpdmFwcmFzYWQudHVtbWFsYUBhbWQuY29tPg0KPiBTZW50OiBUdWVzZGF5LCBOb3ZlbWJlciAx
+MSwgMjAyNSA1OjQxIEFNDQo+IFRvOiBEYXJpdXN6IFNvc25vd3NraSA8ZHNvc25vd3NraUBudmlk
+aWEuY29tPjsgU2xhdmEgT3ZzaWllbmtvDQo+IDx2aWFjaGVzbGF2b0BudmlkaWEuY29tPjsgQmlu
+ZyBaaGFvIDxiaW5nekBudmlkaWEuY29tPjsgT3JpIEthbQ0KPiA8b3Jpa2FAbnZpZGlhLmNvbT47
+IFN1YW5taW5nIE1vdSA8c3Vhbm1pbmdtQG52aWRpYS5jb20+OyBNYXRhbiBBenJhZA0KPiA8bWF0
+YW5AbnZpZGlhLmNvbT47IEFsZXhhbmRlciBLb3p5cmV2IDxha296eXJldkBudmlkaWEuY29tPg0K
+PiBDYzogZGV2QGRwZGsub3JnOyBzdGFibGVAZHBkay5vcmcNCj4gU3ViamVjdDogW1BBVENIIHYy
+XSBuZXQvbWx4NTogZml4IHNwdXJpb3VzIENQVSB3YWtldXBzIGNhdXNlZCBieSBpbnZhbGlkIENR
+RQ0KPiANCj4gUHJldmlvdXNseSwgdGhlIFBNRCB1c2VkIGEgY29tbW9uIG1vbml0b3IgY2FsbGJh
+Y2sgdG8gZGV0ZXJtaW5lIENRRQ0KPiBvd25lcnNoaXAgZm9yIHBvd2VyLWF3YXJlIHBvbGxpbmcu
+IEhvd2V2ZXIsIHdoZW4gYSBDUUUgY29udGFpbmVkIGFuIGludmFsaWQNCj4gb3Bjb2RlKE1MWDVf
+Q1FFX0lOVkFMSUQpLCBvd25lcnNoaXAgYml0IHdhcyBub3QgcmVsaWFibGUuDQo+IEFzIGEgcmVz
+dWx0LCB0aGUgbW9uaXRvciBjb25kaXRpb24gY291bGQgZmFsc2VseSBpbmRpY2F0ZSBDUUUgYXZh
+aWxhYmlsaXR5IGFuZA0KPiBjYXVzZSB0aGUgQ1BVIHRvIHdha2UgdXAgdW5uZWNlc3NhcmlseSBk
+dXJpbmcgbG93IHRyYWZmaWMgcGVyaW9kcy4NCj4gDQo+IFRoaXMgcmVzdWx0ZWQgaW4gc3B1cmlv
+dXMgd2FrZXVwcyBpbiBtb25pdG9yLXdhaXQgbW9kZSBhbmQgcmVkdWNlZCB0aGUNCj4gZXhwZWN0
+ZWQgcG93ZXIgc2F2aW5ncywgYXMgY29yZXMgZXhpdGVkIHRoZSBzbGVlcCBzdGF0ZSBldmVuIHdo
+ZW4gbm8gdmFsaWQgQ1FFcw0KPiB3ZXJlIGF2YWlsYWJsZS4NCj4gDQo+IFRoaXMgcGF0Y2ggaW50
+cm9kdWNlcyBhIGRlZGljYXRlZCBjYWxsYmFjayB0aGF0IHNraXBzIGludmFsaWQgQ1FFcyBhbmQg
+b3B0aW1pemVzDQo+IHBvd2VyIGVmZmljaWVuY3kgYnkgcHJldmVudGluZyBmYWxzZSB3YWtldXBz
+IGNhdXNlZCBieSBoYXJkd2FyZS1vd25lZCBvcg0KPiBpbnZhbGlkIGVudHJpZXMuDQo+IA0KPiBG
+aXhlczogYThmMGRmNmJmOThkICgibmV0L21seDU6IHN1cHBvcnQgcG93ZXIgbW9uaXRvcmluZyIp
+DQo+IENjOiBha296eXJldkBudmlkaWEuY29tDQo+IENjOiBzdGFibGVAZHBkay5vcmcNCj4gDQo+
+IFNpZ25lZC1vZmYtYnk6IFNpdmFwcmFzYWQgVHVtbWFsYSA8c2l2YXByYXNhZC50dW1tYWxhQGFt
+ZC5jb20+DQo+IA0KPiB2MjoNCj4gIC0gVXBkYXRlZCBDUUUgb3Bjb2RlIGNoZWNrIGxvZ2ljIOKA
+lCByZXBsYWNlZCBYT1Igd2l0aCBjb21wYXJpc29uDQo+ICAtIFJlbmFtZWQgdmFyaWFibGUgbWF0
+Y2ggdG8gc3dfb3duZWQgZm9yIGNsYXJpdHkNCj4gIC0gVXBkYXRlZCBDUUUgb3duZXJzaGlwIGNo
+ZWNrIG9yZGVyDQo+IC0tLQ0KQWNrZWQtYnk6IFZpYWNoZXNsYXYgT3ZzaWllbmtvIDx2aWFjaGVz
+bGF2b0BudmlkaWEuY29tPg0KDQoNCj4gIGRyaXZlcnMvbmV0L21seDUvbWx4NV9yeC5jIHwgMTcg
+KysrKysrKysrKysrKysrKy0NCj4gIDEgZmlsZSBjaGFuZ2VkLCAxNiBpbnNlcnRpb25zKCspLCAx
+IGRlbGV0aW9uKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9uZXQvbWx4NS9tbHg1X3J4
+LmMgYi9kcml2ZXJzL25ldC9tbHg1L21seDVfcnguYyBpbmRleA0KPiA0MjBhMDMwNjhkLi5hYzY2
+M2E5NzhlIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL25ldC9tbHg1L21seDVfcnguYw0KPiArKysg
+Yi9kcml2ZXJzL25ldC9tbHg1L21seDVfcnguYw0KPiBAQCAtMjk1LDYgKzI5NSwyMCBAQCBtbHg1
+X21vbml0b3JfY2FsbGJhY2soY29uc3QgdWludDY0X3QgdmFsdWUsDQo+ICAJcmV0dXJuICh2YWx1
+ZSAmIG0pID09IHYgPyAtMSA6IDA7DQo+ICB9DQo+IA0KPiArc3RhdGljIGludA0KPiArbWx4NV9t
+b25pdG9yX2NxZV9vd25fY2FsbGJhY2soY29uc3QgdWludDY0X3QgdmFsdWUsDQo+ICsJCWNvbnN0
+IHVpbnQ2NF90IG9wYXF1ZVtSVEVfUE9XRVJfTU9OSVRPUl9PUEFRVUVfU1pdKQ0KPiArew0KPiAr
+CWNvbnN0IHVpbnQ2NF90IG0gPSBvcGFxdWVbQ0xCX01TS19JRFhdOw0KPiArCWNvbnN0IHVpbnQ2
+NF90IHYgPSBvcGFxdWVbQ0xCX1ZBTF9JRFhdOw0KPiArCWNvbnN0IHVpbnQ2NF90IHN3X293bmVk
+ID0gKCh2YWx1ZSAmIG0pID09IHYpOw0KPiArCWNvbnN0IHVpbnQ2NF90IG9wY29kZSA9IE1MWDVf
+Q1FFX09QQ09ERSh2YWx1ZSk7DQo+ICsJY29uc3QgdWludDY0X3QgdmFsaWRfb3AgPSAob3Bjb2Rl
+ICE9IE1MWDVfQ1FFX0lOVkFMSUQpOw0KPiArDQo+ICsJLyogb3duZXJzaGlwIGJpdCBpcyBub3Qg
+dmFsaWQgZm9yIGludmFsaWQgb3Bjb2RlOyBDUUUgaXMgSFcgb3duZWQgKi8NCj4gKwlyZXR1cm4g
+LSh2YWxpZF9vcCAmIHN3X293bmVkKTsNCj4gK30NCj4gKw0KPiAgaW50IG1seDVfZ2V0X21vbml0
+b3JfYWRkcih2b2lkICpyeF9xdWV1ZSwgc3RydWN0IHJ0ZV9wb3dlcl9tb25pdG9yX2NvbmQNCj4g
+KnBtYykgIHsNCj4gIAlzdHJ1Y3QgbWx4NV9yeHFfZGF0YSAqcnhxID0gcnhfcXVldWU7DQo+IEBA
+IC0zMTIsMTIgKzMyNiwxMyBAQCBpbnQgbWx4NV9nZXRfbW9uaXRvcl9hZGRyKHZvaWQgKnJ4X3F1
+ZXVlLCBzdHJ1Y3QNCj4gcnRlX3Bvd2VyX21vbml0b3JfY29uZCAqcG1jKQ0KPiAgCQlwbWMtPmFk
+ZHIgPSAmY3FlLT52YWxpZGl0eV9pdGVyYXRpb25fY291bnQ7DQo+ICAJCXBtYy0+b3BhcXVlW0NM
+Ql9WQUxfSURYXSA9IHZpYzsNCj4gIAkJcG1jLT5vcGFxdWVbQ0xCX01TS19JRFhdID0gTUxYNV9D
+UUVfVklDX0lOSVQ7DQo+ICsJCXBtYy0+Zm4gPSBtbHg1X21vbml0b3JfY2FsbGJhY2s7DQo+ICAJ
+fSBlbHNlIHsNCj4gIAkJcG1jLT5hZGRyID0gJmNxZS0+b3Bfb3duOw0KPiAgCQlwbWMtPm9wYXF1
+ZVtDTEJfVkFMX0lEWF0gPSAhIWlkeDsNCj4gIAkJcG1jLT5vcGFxdWVbQ0xCX01TS19JRFhdID0g
+TUxYNV9DUUVfT1dORVJfTUFTSzsNCj4gKwkJcG1jLT5mbiA9IG1seDVfbW9uaXRvcl9jcWVfb3du
+X2NhbGxiYWNrOw0KPiAgCX0NCj4gLQlwbWMtPmZuID0gbWx4NV9tb25pdG9yX2NhbGxiYWNrOw0K
+PiAgCXBtYy0+c2l6ZSA9IHNpemVvZih1aW50OF90KTsNCj4gIAlyZXR1cm4gMDsNCj4gIH0NCj4g
+LS0NCj4gMi40My4wDQoNCg==
