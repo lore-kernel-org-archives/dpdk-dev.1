@@ -2,80 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4772CE8D5F
-	for <dpdk-dev@archiver.kernel.org>; Fri, 14 Nov 2025 17:49:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F3EFCE8D69
+	for <dpdk-dev@archiver.kernel.org>; Fri, 14 Nov 2025 17:51:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1514740EE4;
-	Fri, 14 Nov 2025 18:49:18 +0100 (CET)
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com
- [209.85.215.177])
- by mails.dpdk.org (Postfix) with ESMTP id 24AC440EE4
- for <dev@dpdk.org>; Fri, 14 Nov 2025 18:49:17 +0100 (CET)
-Received: by mail-pg1-f177.google.com with SMTP id
- 41be03b00d2f7-bb7799edea8so1770410a12.3
- for <dev@dpdk.org>; Fri, 14 Nov 2025 09:49:17 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 846E4410FC;
+	Fri, 14 Nov 2025 18:51:18 +0100 (CET)
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com
+ [209.85.214.171])
+ by mails.dpdk.org (Postfix) with ESMTP id 208DB40E19
+ for <dev@dpdk.org>; Fri, 14 Nov 2025 18:51:17 +0100 (CET)
+Received: by mail-pl1-f171.google.com with SMTP id
+ d9443c01a7336-29586626fbeso23343295ad.0
+ for <dev@dpdk.org>; Fri, 14 Nov 2025 09:51:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1763142556;
- x=1763747356; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=/SmM926mL+fYrNE7iO+I60bIr/gx0JEbWqBJqUqyJBU=;
- b=fEhPaWzHNrzu7xnstMSg1a53+qO3XplFgw3mDeUs9ZvvoO2HHe1ctL5M24mNjfdAL7
- 7nIX43gMMJ50m1iqBmg6jkB3v3JHJW4lrKbuHzHfhaiKNjGRwZd2tE++dFQg9feS5dFl
- Uk6PnLSixwNCw3DSyTZupmNY2BsYpN+pjux4nEtxl5gbA0XiW+7hSbsnzvI/xl05Gx+6
- G9C6u+to7jzYa90gfQy1aSdXH3FeP3nQw6OjwdtoKBNuQQsZwLyxyw5g2JvHX5L49OTG
- THyDYKx4cvAiGOzUV34VRlbnEy+TTa0n8fsSmsyCn4cWnTgAmAiRmFzZZrOjiixZJXi4
- atDw==
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1763142676;
+ x=1763747476; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=M0G3BZ6DWw0Dn2YjWZEgXuL71t27lEasTLwqcrvLHtI=;
+ b=fuO6wWLxA1QempEjJWYur68/xh2QysbUxPZHroge+QvQyWQFWkSijyjrLuvGDArLAU
+ 5nOOLNoc+/CFerWm0wkPJhHm8KPbclvCzfdh5OBUoNtys3+gSR+WWX9QdwQkGlSrWng1
+ EwLxX6UVYb78xmvOY+xUt83zEwofnOtGxb6ChQb8lnUN/A7gW4uz+c3JX4oM4zTPUspZ
+ BSazWlJ8AAefn1QB3z0Jbg0Q8gCcBl+9An0VgPOC0RwU3v0jBnVjnWbGDZPd7IHMF2G8
+ F+Y0478B2zZQxypdl/x/9Fh2lqMvTzQM7Z78QAB3gbQ/ebpTCXsokxnIOvcg1RU+XU77
+ Kk4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1763142556; x=1763747356;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=/SmM926mL+fYrNE7iO+I60bIr/gx0JEbWqBJqUqyJBU=;
- b=dfpRh4lmaWsiQiJXdyqCKneQgA9RcqFUvAtuPVvTcw284YVQPkmWreScdQpthANd0q
- qShxFndKTiT1jvjmqDP1ncs69JSzMax0/2E3ltb0jN59o8HRm7dnPgEwCNHHHHdEZQFd
- Tdo3/YAFUoYIhtd8N9dlit6Sr6Hm45UNGmuNl4K6JhkpPz2iUITFbxDHPPzMnpc9GnVq
- 8zvp0HokEZX4phqPPHgM44O8WgAtt1hY1dGDnumP3w897zsZo2xMKkPVnpwXWOMaDiNF
- i1i/fLkvhIOHn+PboYaCeAvTJWCLuPVBPxQQkTjUdwEyp0RV+cVGLq1I3Re7FZq5aRlL
- TYxg==
-X-Gm-Message-State: AOJu0Yz2rCo8wOsvPQbBHhozaopns6pzTG1PKgA6AyoD8EwztgUl//wO
- 3O3VGpqBNGYBwXGa0agShs+upEdEK6tz5TY2BsIAHzVgoA3cN1G0U+vokxqKLIF0xcVp+irn1wY
- KMMuH
-X-Gm-Gg: ASbGncsILhWsgrvgHDcoh18ox+k6wspzGOAI/5856RiA9ANVRNHcMOjaaOp4aDLf/b3
- qNTaPQ8NzO2ZcVwSg9zJ8MDQLX1tlqXrK9XT0e+apScnbekM2CmvJh4oIwRpcfvNWTSWnX7n263
- rq8mWvmBIICM8FY0TCKe6i5ZsCHOvQY/q8eTlWrBrHdntlpShlIGYRlFHTBVX3IfJq6nmx+4aev
- 4goBK01e2AJsjz0UdSiZe3nqfQ25bwpGkSwH9vbq5DGEZ7DThF+MTkpRNnsbSEKtdsIj6KH2PlB
- HzxFPNoDYtHa579n/VMC+S4MBQl0CK4cDdrzsR5ZIBLUzk2rjI5w73IPyen0VAV37azv8al6U9w
- XMIHuxTHvZXBeD6Nqyf9iCbgpdtYTA8kGJx+1R21xv5vov0W7a2Q8HAluwrLK3kMK54E0Uy/NHq
- Yhm5KkdvG8litKGdcH6BOF6yYPyKqy8XUf6ZEZ2L023njuS03q3A==
-X-Google-Smtp-Source: AGHT+IEAyzQka7SurnCqCkolo1DZtQVT/+xE89PyMRpYQ2xhrTP+lk46kLsJgZzp/h1dI9KL8RKgEQ==
-X-Received: by 2002:a05:7300:cc83:b0:2a4:3593:9695 with SMTP id
- 5a478bee46e88-2a4abb32b86mr1389152eec.18.1763142556110; 
- Fri, 14 Nov 2025 09:49:16 -0800 (PST)
+ d=1e100.net; s=20230601; t=1763142676; x=1763747476;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=M0G3BZ6DWw0Dn2YjWZEgXuL71t27lEasTLwqcrvLHtI=;
+ b=DEk6L2FR3uRZYZUyTfC/Fv7YaxmC6GrugFH94r154XphSk7sEJrKiYEwGksvShU9l0
+ N8lFGrbCudYWZk3NusldBXzb9N6TakaeJo0DLk5LmrdE7MWcuvlfvWq1Rq4OVv1xu15l
+ ab9q2QJpFY/ITZEGsSw97qVQd4ib6kb8vKn1BjolZ0H+xcElGda8OW8g4JlYLKNLfIaZ
+ Sx8DkoTjARbdg3+IUzZY068hMJfv4N83VfqDnPOaJfFpKxTWYxspmDt4ddWy887btTSJ
+ 3RWe6jx76TyvQYPOA9ZMge0XSj1fswqBLHueIlei4V1vTOPfHc6LNBVv5GS1X1dKX0RJ
+ 66qw==
+X-Gm-Message-State: AOJu0YwksDYxUWGaD5kFJidPZHPeYjN/07da6H09bi4JG4N9pYgQFG+a
+ o7+WUceDRsSHEFYdeWU2auC3AVjx/c3YC/yH62y3bmj57ur96qUV5k/AXVvAqKwnEZZwH9gP16p
+ uktlD
+X-Gm-Gg: ASbGncvjTuqvzC/NJn3Vw8CTKdobimdXSlbUAFKNoPO60RmOM91tvV2RLc9gkOwU61L
+ MPLoJrrGhBGzF206CgS3HfHt0lzMsfCAOuyGCKm/kwr9dViiE5/zOc1h+qjXY0jLSBogi2OBhL0
+ 4i/PR4NMRPKn28EoqZV7bJTyiIcuVdBKA+PDHXDYbc/jkBA5f8uS+Mwn2GOs6fzXs7WtJhoo5bn
+ O8J6V1O5KrnW1JIgxSxPChPxcUAqzHUFhlJCG+tfphyFvnbbFvdp4bz0pDMJIbWds+A+eMq2eBW
+ L0vef5tAZo4N3e5ex978TgEXFrrHvcf9c2jAUPZ9K34BNtC4BFhY++uwNjlgk9DBL81R0PQXtpN
+ 6EKhwLaAX5Rq6ICSBj2F5tGC6Io4am4hX6LWo7mQbWnhw7TC2T8HVYyANZ1KXfchfh+mp6DFtFU
+ F6UYuEiihHkaJu3dmp4BDw0wW4qhnoMsOc+eyB4avaqNxTPGWt6VeQbqNN7+NE
+X-Google-Smtp-Source: AGHT+IFUNj8C4/5im0ZQipBQYywlURaWO3bNrMyd7KlATqcky5vYhutgjN85JnFQvEKtfo+g2fHkZA==
+X-Received: by 2002:a05:7022:619e:b0:11a:3734:3db3 with SMTP id
+ a92af1059eb24-11b411ff71amr1515097c88.32.1763142675640; 
+ Fri, 14 Nov 2025 09:51:15 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-2a49d695821sm14417916eec.0.2025.11.14.09.49.14
+ a92af1059eb24-11b06088604sm12556777c88.7.2025.11.14.09.51.14
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 14 Nov 2025 09:49:15 -0800 (PST)
+ Fri, 14 Nov 2025 09:51:15 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
- Dariusz Sosnowski <dsosnowski@nvidia.com>,
- Viacheslav Ovsiienko <viacheslavo@nvidia.com>,
- Bing Zhao <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>,
- Suanming Mou <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>,
- Ophir Munk <ophirmu@nvidia.com>,
- Adrien Mazarguil <adrien.mazarguil@6wind.com>,
- Nelio Laranjeiro <nelio.laranjeiro@6wind.com>
-Subject: [PATCH v2] net/mlx5: fix warning from uninitialized variable
-Date: Fri, 14 Nov 2025 09:49:12 -0800
-Message-ID: <20251114174912.1103626-1-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ shuanglin.wang@broadcom.com, Ajit Khaparde <ajit.khaparde@broadcom.com>,
+ Somnath Kotur <somnath.kotur@broadcom.com>,
+ Farah Smith <farah.smith@broadcom.com>,
+ Shahaji Bhosle <shahaji.bhosle@broadcom.com>,
+ Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>
+Subject: [PATCH] net/bnxt: remove unbuilt source files
+Date: Fri, 14 Nov 2025 09:51:12 -0800
+Message-ID: <20251114175112.1103784-1-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251113163301.285550-1-stephen@networkplumber.org>
-References: <20251113163301.285550-1-stephen@networkplumber.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -90,49 +84,1585 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Gcc-16 detects use of uninitialized variable.
-./drivers/net/mlx5/linux/mlx5_ethdev_os.c: In function ‘mlx5_link_update’:
-../drivers/net/mlx5/linux/mlx5_ethdev_os.c:539:15: warning: ‘*(long unsigned int *)((char *)&dev_link + offsetof(struct rte_eth_link, <U38c0>))’ may be used uninitialized [-Wmaybe-uninitialized]
-  539 |         ret = !!memcmp(&dev->data->dev_link, &dev_link,
-      |               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  540 |                        sizeof(struct rte_eth_link));
-      |                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-../drivers/net/mlx5/linux/mlx5_ethdev_os.c:515:29: note: ‘*(long unsigned int *)((char *)&dev_link + offsetof(struct rte_eth_link, <U38c0>))’ was declared here
-  515 |         struct rte_eth_link dev_link;
-      |
+Several C files are never used or built.
+Looks like they were converted to header files but the old source
+was never removed.
 
-If the retry loop exits the code would do memcmp against uninitialized
-stack value. Resolve by initializing to zero.
-
-Bugzilla ID: 1823
-
-Fixes: 1256805dd54d ("net/mlx5: move Linux-specific functions")
-Fixes: cfee94752b8f ("net/mlx5: fix link status to use wait to complete")
-Cc: stable@dpdk.org
+Fixes: aa49b38fa7c3 ("net/bnxt/tf_core: cleanup external EM support")
+Cc: shuanglin.wang@broadcom.com
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/mlx5/linux/mlx5_ethdev_os.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ .../net/bnxt/tf_core/cfa_tcam_mgr_session.c   |  390 ------
+ drivers/net/bnxt/tf_core/tf_em_common.c       |   23 -
+ drivers/net/bnxt/tf_core/tf_em_host.c         |   23 -
+ drivers/net/bnxt/tf_ulp/ulp_utils.c           | 1100 -----------------
+ 4 files changed, 1536 deletions(-)
+ delete mode 100644 drivers/net/bnxt/tf_core/cfa_tcam_mgr_session.c
+ delete mode 100644 drivers/net/bnxt/tf_core/tf_em_common.c
+ delete mode 100644 drivers/net/bnxt/tf_core/tf_em_host.c
+ delete mode 100644 drivers/net/bnxt/tf_ulp/ulp_utils.c
 
-diff --git a/drivers/net/mlx5/linux/mlx5_ethdev_os.c b/drivers/net/mlx5/linux/mlx5_ethdev_os.c
-index 4d8fbed188..50997c187c 100644
---- a/drivers/net/mlx5/linux/mlx5_ethdev_os.c
-+++ b/drivers/net/mlx5/linux/mlx5_ethdev_os.c
-@@ -512,7 +512,7 @@ int
- mlx5_link_update(struct rte_eth_dev *dev, int wait_to_complete)
- {
- 	int ret;
--	struct rte_eth_link dev_link;
-+	struct rte_eth_link dev_link = { 0 };
- 	time_t start_time = time(NULL);
- 	int retry = MLX5_GET_LINK_STATUS_RETRY_COUNT;
- 
-@@ -2073,4 +2073,3 @@ int mlx5_txpp_map_hca_bar(struct rte_eth_dev *dev)
- 		rte_mem_unmap(base, MLX5_ST_SZ_BYTES(initial_seg));
- 	return 0;
- }
+diff --git a/drivers/net/bnxt/tf_core/cfa_tcam_mgr_session.c b/drivers/net/bnxt/tf_core/cfa_tcam_mgr_session.c
+deleted file mode 100644
+index 40bbcc54c8..0000000000
+--- a/drivers/net/bnxt/tf_core/cfa_tcam_mgr_session.c
++++ /dev/null
+@@ -1,390 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2021-2023 Broadcom
+- * All rights reserved.
+- */
 -
+-#include <inttypes.h>
+-#include "hcapi_cfa_defs.h"
+-#include "tf_util.h"
+-#include "cfa_tcam_mgr.h"
+-#include "cfa_tcam_mgr_device.h"
+-#include "cfa_tcam_mgr_session.h"
+-#include "cfa_tcam_mgr_sbmp.h"
+-#include "tfp.h"
+-#include "cfa_tcam_mgr_p58.h"
+-#include "cfa_tcam_mgr_p4.h"
+-
+-struct cfa_tcam_mgr_session_data {
+-	uint32_t session_id;
+-	/* The following are per-session values */
+-	uint16_t max_entries[TF_DIR_MAX][CFA_TCAM_MGR_TBL_TYPE_MAX];
+-	uint16_t used_entries[TF_DIR_MAX][CFA_TCAM_MGR_TBL_TYPE_MAX];
+-};
+-
+-static struct cfa_tcam_mgr_session_data session_data[TF_TCAM_MAX_SESSIONS];
+-
+-static uint16_t last_entry_id;
+-
+-static struct sbmp *session_bmp[TF_TCAM_MAX_SESSIONS];
+-
+-int
+-cfa_tcam_mgr_session_init(int sess_idx, enum cfa_tcam_mgr_device_type type)
+-{
+-	int rc;
+-
+-	switch (type) {
+-	case CFA_TCAM_MGR_DEVICE_TYPE_P4:
+-	case CFA_TCAM_MGR_DEVICE_TYPE_SR:
+-		rc = cfa_tcam_mgr_sess_table_get_p4(sess_idx, &session_bmp[sess_idx]);
+-		break;
+-	case CFA_TCAM_MGR_DEVICE_TYPE_P5:
+-		rc = cfa_tcam_mgr_sess_table_get_p58(sess_idx, &session_bmp[sess_idx]);
+-		break;
+-	default:
+-		CFA_TCAM_MGR_LOG(ERR, "No such device %d\n", type);
+-		rc = -CFA_TCAM_MGR_ERR_CODE(NODEV);
+-	}
+-
+-	return rc;
+-}
+-
+-int
+-cfa_tcam_mgr_get_session_from_context(struct cfa_tcam_mgr_context *context,
+-				      uint32_t *session_id)
+-{
+-	if (context == NULL) {
+-		CFA_TCAM_MGR_LOG_0(ERR, "context passed as NULL pointer.\n");
+-		return -CFA_TCAM_MGR_ERR_CODE(INVAL);
+-	}
+-
+-	*session_id = context->tfp->session->session_id.id;
+-	return 0;
+-}
+-
+-int
+-cfa_tcam_mgr_session_find(unsigned int session_id)
+-{
+-	unsigned int sess_idx;
+-
+-	for (sess_idx = 0; sess_idx < ARRAY_SIZE(session_data); sess_idx++) {
+-		if (session_data[sess_idx].session_id == session_id)
+-			return sess_idx;
+-	}
+-
+-	return -CFA_TCAM_MGR_ERR_CODE(INVAL);
+-}
+-
+-int
+-cfa_tcam_mgr_session_empty(void)
+-{
+-	unsigned int sess_idx;
+-
+-	for (sess_idx = 0; sess_idx < ARRAY_SIZE(session_data); sess_idx++) {
+-		if (session_data[sess_idx].session_id)
+-			return 0;
+-	}
+-
+-	return 1;
+-}
+-
+-int
+-cfa_tcam_mgr_session_add(unsigned int session_id)
+-{
+-	int sess_idx;
+-
+-	sess_idx = cfa_tcam_mgr_session_find(session_id);
+-	if (sess_idx >= 0) {
+-		CFA_TCAM_MGR_LOG_0(ERR, "Session is already bound.\n");
+-		return -CFA_TCAM_MGR_ERR_CODE(BUSY);
+-	}
+-
+-	/* Session not found in table, find first empty entry. */
+-	for (sess_idx = 0;
+-	     sess_idx < (signed int)ARRAY_SIZE(session_data);
+-	     sess_idx++) {
+-		if (session_data[sess_idx].session_id == 0)
+-			break;
+-	}
+-
+-	if (sess_idx >= (signed int)ARRAY_SIZE(session_data)) {
+-		/* No room in the session table */
+-		CFA_TCAM_MGR_LOG_0(ERR, "Session table is full.\n");
+-		return -CFA_TCAM_MGR_ERR_CODE(NOMEM);
+-	}
+-
+-	session_data[sess_idx].session_id = session_id;
+-
+-	return sess_idx;
+-}
+-
+-int
+-cfa_tcam_mgr_session_free(unsigned int session_id,
+-		struct cfa_tcam_mgr_context *context)
+-{
+-	struct cfa_tcam_mgr_free_parms free_parms;
+-	int entry_id;
+-	int sess_idx = cfa_tcam_mgr_session_find(session_id);
+-
+-	if (sess_idx < 0)
+-		return sess_idx;
+-
+-	memset(&free_parms, 0, sizeof(free_parms));
+-	/* Since we are freeing all pending TCAM entries (which is typically
+-	 * done during tcam_unbind), we don't know the type of each entry.
+-	 * So we set the type to MAX as a hint to cfa_tcam_mgr_free() to
+-	 * figure out the actual type. We need to set it through each
+-	 * iteration in the loop below; otherwise, the type determined for
+-	 * the first entry would be used for subsequent entries that may or
+-	 * may not be of the same type, resulting in errors.
+-	 */
+-	for (entry_id = 0; entry_id < cfa_tcam_mgr_max_entries[sess_idx]; entry_id++) {
+-		if (SBMP_MEMBER(session_bmp[sess_idx][entry_id], sess_idx)) {
+-			SBMP_SESSION_REMOVE(session_bmp[sess_idx][entry_id], sess_idx);
+-
+-			free_parms.id = entry_id;
+-			free_parms.type = CFA_TCAM_MGR_TBL_TYPE_MAX;
+-			cfa_tcam_mgr_free(context, &free_parms);
+-		}
+-	}
+-
+-	memset(&session_data[sess_idx], 0, sizeof(session_data[sess_idx]));
+-	return 0;
+-}
+-
+-int
+-cfa_tcam_mgr_session_cfg(unsigned int session_id,
+-			 uint16_t tcam_cnt[][CFA_TCAM_MGR_TBL_TYPE_MAX])
+-{
+-	struct cfa_tcam_mgr_table_data *table_data;
+-	struct cfa_tcam_mgr_session_data *session_entry;
+-	unsigned int dir, type;
+-	int sess_idx = cfa_tcam_mgr_session_find(session_id);
+-	uint16_t requested_cnt;
+-
+-	if (sess_idx < 0)
+-		return sess_idx;
+-
+-	session_entry = &session_data[sess_idx];
+-
+-	/* Validate session request */
+-	for (dir = 0; dir < ARRAY_SIZE(cfa_tcam_mgr_tables[sess_idx]); dir++) {
+-		for (type = 0;
+-		     type < ARRAY_SIZE(cfa_tcam_mgr_tables[sess_idx][dir]);
+-		     type++) {
+-			table_data = &cfa_tcam_mgr_tables[sess_idx][dir][type];
+-			requested_cnt = tcam_cnt[dir][type];
+-			/*
+-			 * Only check if table supported (max_entries > 0).
+-			 */
+-			if (table_data->max_entries > 0 &&
+-			    requested_cnt > table_data->max_entries) {
+-				CFA_TCAM_MGR_LOG_DIR_TYPE(ERR, dir, type,
+-						"Requested %d, available %d.\n",
+-						requested_cnt,
+-						table_data->max_entries);
+-				return -CFA_TCAM_MGR_ERR_CODE(NOSPC);
+-			}
+-		}
+-	}
+-
+-	memcpy(session_entry->max_entries, tcam_cnt,
+-	       sizeof(session_entry->max_entries));
+-	return 0;
+-}
+-
+-void
+-cfa_tcam_mgr_mv_session_used_entries_cnt(int sess_idx, enum tf_dir dir,
+-					 enum cfa_tcam_mgr_tbl_type dst_type,
+-					 enum cfa_tcam_mgr_tbl_type src_type)
+-{
+-	session_data[sess_idx].used_entries[dir][dst_type]++;
+-	session_data[sess_idx].used_entries[dir][src_type]--;
+-}
+-
+-int
+-cfa_tcam_mgr_session_entry_alloc(unsigned int session_id,
+-				 enum tf_dir dir,
+-				 enum cfa_tcam_mgr_tbl_type type)
+-{
+-	int sess_idx;
+-
+-	sess_idx = cfa_tcam_mgr_session_find(session_id);
+-	if (sess_idx < 0) {
+-		CFA_TCAM_MGR_LOG_0(ERR, "Session not found.\n");
+-		return -CFA_TCAM_MGR_ERR_CODE(NODEV);
+-	}
+-
+-	if (session_data[sess_idx].used_entries[dir][type] >=
+-	    session_data[sess_idx].max_entries[dir][type]) {
+-		CFA_TCAM_MGR_LOG_0(ERR, "Table full (session).\n");
+-		return -CFA_TCAM_MGR_ERR_CODE(NOSPC);
+-	}
+-
+-	do {
+-		last_entry_id++;
+-		if (cfa_tcam_mgr_max_entries[sess_idx] <= last_entry_id)
+-			last_entry_id = 0;
+-	} while (!SBMP_IS_NULL(session_bmp[sess_idx][last_entry_id]));
+-
+-	SBMP_SESSION_ADD(session_bmp[sess_idx][last_entry_id], sess_idx);
+-
+-	session_data[sess_idx].used_entries[dir][type] += 1;
+-
+-	return last_entry_id;
+-}
+-
+-int
+-cfa_tcam_mgr_session_entry_free(unsigned int session_id,
+-				unsigned int entry_id,
+-				enum tf_dir dir,
+-				enum cfa_tcam_mgr_tbl_type type)
+-{
+-	int sess_idx;
+-
+-	sess_idx = cfa_tcam_mgr_session_find(session_id);
+-	if (sess_idx < 0) {
+-		CFA_TCAM_MGR_LOG_0(ERR, "Session not found.\n");
+-		return -CFA_TCAM_MGR_ERR_CODE(NODEV);
+-	}
+-
+-	SBMP_SESSION_REMOVE(session_bmp[sess_idx][entry_id], sess_idx);
+-	session_data[sess_idx].used_entries[dir][type] -= 1;
+-
+-	return 0;
+-}
+-
+-#if SBMP_WORD_WIDTH == 16
+-#define SBMP_FORMAT PRIX16
+-#define SBMP_PRECISION "4"
+-#elif SBMP_WORD_WIDTH == 32
+-#define SBMP_FORMAT PRIX32
+-#define SBMP_PRECISION "8"
+-#elif SBMP_WORD_WIDTH == 64
+-#define SBMP_FORMAT PRIX64
+-#define SBMP_PRECISION "16"
+-#else
+-#error "Invalid value for SBMP_WORD_WIDTH."
+-#endif
+-
+-static void
+-cfa_tcam_mgr_session_bitmap_print(struct sbmp *session_bmp)
+-{
+-	unsigned int i;
+-
+-	printf("0x");
+-	for (i = 0;
+-	     i < ARRAY_SIZE(session_bmp->bits);
+-	     i++) {
+-		printf("%0" SBMP_PRECISION SBMP_FORMAT,
+-		       session_bmp->bits[i]);
+-	}
+-}
+-
+-#define SESSION_DUMP_HEADER_1 "                             RX          TX\n"
+-#define SESSION_DUMP_HEADER_2 \
+-	"                         Max   Used  Max   Used\n"
+-
+-static void
+-cfa_tcam_mgr_session_printf(struct cfa_tcam_mgr_session_data *session,
+-			    enum cfa_tcam_mgr_tbl_type tbl_type)
+-{
+-	printf("%-22s: %5u %5u %5u %5u\n",
+-	       cfa_tcam_mgr_tbl_2_str(tbl_type),
+-	       session->max_entries[TF_DIR_RX][tbl_type],
+-	       session->used_entries[TF_DIR_RX][tbl_type],
+-	       session->max_entries[TF_DIR_TX][tbl_type],
+-	       session->used_entries[TF_DIR_TX][tbl_type]);
+-}
+-
+-void
+-cfa_tcam_mgr_sessions_dump(void)
+-{
+-	struct cfa_tcam_mgr_session_data *session;
+-	unsigned int sess_idx;
+-	bool sess_found = false;
+-	enum cfa_tcam_mgr_tbl_type tbl_type;
+-
+-	printf("\nTCAM Sessions Table:\n");
+-	for (sess_idx = 0; sess_idx < ARRAY_SIZE(session_data); sess_idx++) {
+-		if (session_data[sess_idx].session_id != 0) {
+-			session = &session_data[sess_idx];
+-			if (!sess_found) {
+-				printf(SESSION_DUMP_HEADER_1);
+-				printf(SESSION_DUMP_HEADER_2);
+-			}
+-			printf("Session 0x%08x:\n",
+-			       session->session_id);
+-			for (tbl_type = CFA_TCAM_MGR_TBL_TYPE_START;
+-			     tbl_type < CFA_TCAM_MGR_TBL_TYPE_MAX;
+-			     tbl_type++) {
+-				cfa_tcam_mgr_session_printf(session, tbl_type);
+-			}
+-			sess_found = true;
+-		}
+-	}
+-
+-	if (!sess_found)
+-		printf("No sessions found.\n");
+-}
+-
+-/* This dumps all the sessions using an entry */
+-void
+-cfa_tcam_mgr_entry_sessions_dump(int sess_idx, uint16_t id)
+-{
+-	bool session_found = false;
+-
+-	if (id >= cfa_tcam_mgr_max_entries[sess_idx]) {
+-		printf("Entry ID %u out of range for sess_idx %d.  Max ID %u.\n",
+-		       id, sess_idx, cfa_tcam_mgr_max_entries[sess_idx] - 1);
+-		return;
+-	}
+-
+-	if (!SBMP_IS_NULL(session_bmp[sess_idx][id])) {
+-		printf("Sessions using entry ID %u:\n", id);
+-		for (sess_idx = 0; sess_idx < SBMP_SESSION_MAX; sess_idx++)
+-			if (SBMP_MEMBER(session_bmp[sess_idx][id], (sess_idx))) {
+-				if (session_data[sess_idx].session_id != 0) {
+-					printf("0x%08x (index %d)\n",
+-					  session_data[sess_idx].session_id,
+-					  sess_idx);
+-					session_found = true;
+-				} else {
+-					printf("Error! Entry ID %u used by "
+-					       "session index %d which is not "
+-					       "in use.\n",
+-					       id, sess_idx);
+-				}
+-			}
+-		if (!session_found)
+-			printf("No sessions using entry ID %u.\n", id);
+-	} else {
+-		printf("Entry ID %u not in use.\n",
+-		       id);
+-		return;
+-	}
+-}
+-
+-/* This dumps all the entries in use by any session */
+-void
+-cfa_tcam_mgr_session_entries_dump(int sess_idx)
+-{
+-	bool entry_found = false;
+-	uint16_t id;
+-
+-	printf("\nGlobal Maximum Entries for sess_idx %d: %d\n\n",
+-	       sess_idx, cfa_tcam_mgr_max_entries[sess_idx]);
+-	printf("TCAM Session Entry Table:\n");
+-	for (id = 0; id < cfa_tcam_mgr_max_entries[sess_idx]; id++) {
+-		if (!SBMP_IS_NULL(session_bmp[sess_idx][id])) {
+-			if (!entry_found)
+-				printf("  EID Session bitmap\n");
+-			printf("%5u ", id);
+-			cfa_tcam_mgr_session_bitmap_print(&session_bmp[sess_idx][id]);
+-			printf("\n");
+-			entry_found = true;
+-		}
+-	}
+-
+-	if (!entry_found)
+-		printf("No entries found.\n");
+-}
+diff --git a/drivers/net/bnxt/tf_core/tf_em_common.c b/drivers/net/bnxt/tf_core/tf_em_common.c
+deleted file mode 100644
+index 2449759db0..0000000000
+--- a/drivers/net/bnxt/tf_core/tf_em_common.c
++++ /dev/null
+@@ -1,23 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2019-2023 Broadcom
+- * All rights reserved.
+- */
+-
+-#include <string.h>
+-#include <math.h>
+-#include <sys/param.h>
+-#include <rte_common.h>
+-#include <rte_errno.h>
+-#include <rte_log.h>
+-#include "tf_core.h"
+-#include "tf_util.h"
+-#include "tf_common.h"
+-#include "tf_em.h"
+-#include "tf_em_common.h"
+-#include "tf_msg.h"
+-#include "tfp.h"
+-#include "tf_device.h"
+-#include "tf_ext_flow_handle.h"
+-#include "hcapi_cfa.h"
+-#include "bnxt.h"
+-
+diff --git a/drivers/net/bnxt/tf_core/tf_em_host.c b/drivers/net/bnxt/tf_core/tf_em_host.c
+deleted file mode 100644
+index 6db0057b2c..0000000000
+--- a/drivers/net/bnxt/tf_core/tf_em_host.c
++++ /dev/null
+@@ -1,23 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2019-2023 Broadcom
+- * All rights reserved.
+- */
+-
+-#include <string.h>
+-#include <math.h>
+-#include <sys/param.h>
+-#include <rte_common.h>
+-#include <rte_errno.h>
+-#include <rte_log.h>
+-
+-#include "tf_core.h"
+-#include "tf_util.h"
+-#include "tf_common.h"
+-#include "tf_em.h"
+-#include "tf_em_common.h"
+-#include "tf_msg.h"
+-#include "tfp.h"
+-#include "lookup3.h"
+-#include "tf_ext_flow_handle.h"
+-
+-#include "bnxt.h"
+diff --git a/drivers/net/bnxt/tf_ulp/ulp_utils.c b/drivers/net/bnxt/tf_ulp/ulp_utils.c
+deleted file mode 100644
+index 85e309d7a2..0000000000
+--- a/drivers/net/bnxt/tf_ulp/ulp_utils.c
++++ /dev/null
+@@ -1,1100 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2014-2023 Broadcom
+- * All rights reserved.
+- */
+-
+-#include <rte_common.h>
+-#include "ulp_utils.h"
+-#include "bnxt_tf_common.h"
+-
+-/*
+- * Initialize the regfile structure for writing
+- *
+- * regfile [in] Ptr to a regfile instance
+- *
+- * returns zero on success
+- */
+-int32_t
+-ulp_regfile_init(struct ulp_regfile *regfile)
+-{
+-	/* validate the arguments */
+-	if (!regfile) {
+-		BNXT_DRV_DBG(ERR, "invalid argument\n");
+-		return -EINVAL;
+-	}
+-	memset(regfile, 0, sizeof(struct ulp_regfile));
+-	return 0; /* Success */
+-}
+-
+-/*
+- * Read a value from the regfile
+- *
+- * regfile [in] The regfile instance. Must be initialized prior to being used
+- *
+- * field [in] The field to be read within the regfile.
+- *
+- * data [in/out]
+- *
+- * returns zero on success
+- */
+-int32_t
+-ulp_regfile_read(struct ulp_regfile *regfile,
+-		 enum bnxt_ulp_rf_idx field,
+-		 uint64_t *data)
+-{
+-	/* validate the arguments */
+-	if (!regfile || field >= BNXT_ULP_RF_IDX_LAST) {
+-		BNXT_DRV_DBG(ERR, "invalid argument\n");
+-		return -EINVAL;
+-	}
+-
+-	*data = regfile->entry[field].data;
+-	return 0;
+-}
+-
+-/*
+- * Write a value to the regfile
+- *
+- * regfile [in] The regfile instance.  Must be initialized prior to being used
+- *
+- * field [in] The field to be written within the regfile.
+- *
+- * data [in] The value is written into this variable.  It is going to be in the
+- * same byte order as it was written.
+- *
+- * size [in] The size in bytes of the value being written into this
+- * variable.
+- *
+- * returns 0 on success
+- */
+-int32_t
+-ulp_regfile_write(struct ulp_regfile *regfile,
+-		  enum bnxt_ulp_rf_idx field,
+-		  uint64_t data)
+-{
+-	/* validate the arguments */
+-	if (!regfile || field >= BNXT_ULP_RF_IDX_LAST) {
+-		BNXT_DRV_DBG(ERR, "invalid argument\n");
+-		return -EINVAL; /* failure */
+-	}
+-
+-	regfile->entry[field].data = data;
+-	return 0; /* Success */
+-}
+-
+-static void
+-ulp_bs_put_msb(uint8_t *bs, uint16_t bitpos, uint8_t bitlen, uint8_t val)
+-{
+-	uint8_t bitoffs = bitpos % 8;
+-	uint16_t index  = bitpos / 8;
+-	uint8_t mask;
+-	uint8_t tmp;
+-	int8_t shift;
+-
+-	tmp = bs[index];
+-	mask = ((uint8_t)-1 >> (8 - bitlen));
+-	shift = 8 - bitoffs - bitlen;
+-	val &= mask;
+-
+-	if (shift >= 0) {
+-		tmp &= ~(mask << shift);
+-		tmp |= val << shift;
+-		bs[index] = tmp;
+-	} else {
+-		tmp &= ~((uint8_t)-1 >> bitoffs);
+-		tmp |= val >> -shift;
+-		bs[index++] = tmp;
+-
+-		tmp = bs[index];
+-		tmp &= ((uint8_t)-1 >> (bitlen - (8 - bitoffs)));
+-		tmp |= val << (8 + shift);
+-		bs[index] = tmp;
+-	}
+-}
+-
+-static void
+-ulp_bs_put_lsb(uint8_t *bs, uint16_t bitpos, uint8_t bitlen, uint8_t val)
+-{
+-	uint8_t bitoffs = bitpos % 8;
+-	uint16_t index  = bitpos / 8;
+-	uint8_t mask;
+-	uint8_t tmp;
+-	uint8_t shift;
+-	uint8_t partial;
+-
+-	tmp = bs[index];
+-	shift = bitoffs;
+-
+-	if (bitoffs + bitlen <= 8) {
+-		mask = ((1 << bitlen) - 1) << shift;
+-		tmp &= ~mask;
+-		tmp |= ((val << shift) & mask);
+-		bs[index] = tmp;
+-	} else {
+-		partial = 8 - bitoffs;
+-		mask = ((1 << partial) - 1) << shift;
+-		tmp &= ~mask;
+-		tmp |= ((val << shift) & mask);
+-		bs[index++] = tmp;
+-
+-		val >>= partial;
+-		partial = bitlen - partial;
+-		mask = ((1 << partial) - 1);
+-		tmp = bs[index];
+-		tmp &= ~mask;
+-		tmp |= (val & mask);
+-		bs[index] = tmp;
+-	}
+-}
+-
+-/*
+- * Add data to the byte array in Little endian format.
+- *
+- * bs [in] The byte array where data is pushed
+- *
+- * pos [in] The offset where data is pushed
+- *
+- * len [in] The number of bits to be added to the data array.
+- *
+- * val [in] The data to be added to the data array.
+- *
+- * returns the number of bits pushed.
+- */
+-uint32_t
+-ulp_bs_push_lsb(uint8_t *bs, uint16_t pos, uint8_t len, uint8_t *val)
+-{
+-	int i;
+-	int cnt = (len) / 8;
+-	int tlen = len;
+-
+-	if (cnt > 0 && !(len % 8))
+-		cnt -= 1;
+-
+-	for (i = 0; i < cnt; i++) {
+-		ulp_bs_put_lsb(bs, pos, 8, val[cnt - i]);
+-		pos += 8;
+-		tlen -= 8;
+-	}
+-
+-	/* Handle the remainder bits */
+-	if (tlen)
+-		ulp_bs_put_lsb(bs, pos, tlen, val[0]);
+-	return len;
+-}
+-
+-/*
+- * Add data to the byte array in Big endian format.
+- *
+- * bs [in] The byte array where data is pushed
+- *
+- * pos [in] The offset where data is pushed
+- *
+- * len [in] The number of bits to be added to the data array.
+- *
+- * val [in] The data to be added to the data array.
+- *
+- * returns the number of bits pushed.
+- */
+-uint32_t
+-ulp_bs_push_msb(uint8_t *bs, uint16_t pos, uint8_t len, uint8_t *val)
+-{
+-	int i;
+-	int cnt = (len + 7) / 8;
+-
+-	/* Handle any remainder bits */
+-	int tmp = len % 8;
+-
+-	if (!tmp)
+-		tmp = 8;
+-
+-	ulp_bs_put_msb(bs, pos, tmp, val[0]);
+-
+-	pos += tmp;
+-
+-	for (i = 1; i < cnt; i++) {
+-		ulp_bs_put_msb(bs, pos, 8, val[i]);
+-		pos += 8;
+-	}
+-
+-	return len;
+-}
+-
+-/*
+- * Initializes the blob structure for creating binary blob
+- *
+- * blob [in] The blob to be initialized
+- *
+- * bitlen [in] The bit length of the blob
+- *
+- * order [in] The byte order for the blob.  Currently only supporting
+- * big endian.  All fields are packed with this order.
+- *
+- * returns zero on success
+- * Notes - If bitlen is zero then set it to max.
+- */
+-int32_t
+-ulp_blob_init(struct ulp_blob *blob,
+-	      uint16_t bitlen,
+-	      enum bnxt_ulp_byte_order order)
+-{
+-	/* validate the arguments */
+-	if (!blob || bitlen > (8 * sizeof(blob->data))) {
+-		BNXT_DRV_DBG(ERR, "invalid argument\n");
+-		return -EINVAL;
+-	}
+-	if (bitlen)
+-		blob->bitlen = bitlen;
+-	else
+-		blob->bitlen = BNXT_ULP_FLMP_BLOB_SIZE_IN_BITS;
+-	blob->byte_order = order;
+-	blob->write_idx = 0;
+-	memset(blob->data, 0, sizeof(blob->data));
+-	return 0; /* Success */
+-}
+-
+-/*
+- * Add data to the binary blob at the current offset.
+- *
+- * blob [in] The blob that data is added to.  The blob must
+- * be initialized prior to pushing data.
+- *
+- * data [in] A pointer to bytes to be added to the blob.
+- *
+- * datalen [in] The number of bits to be added to the blob.
+- *
+- * The offset of the data is updated after each push of data.
+- *
+- * returns zero on success
+- */
+-#define ULP_BLOB_BYTE		8
+-#define ULP_BLOB_BYTE_HEX	0xFF
+-#define BLOB_MASK_CAL(x)	((0xFF << (x)) & 0xFF)
+-int32_t
+-ulp_blob_push(struct ulp_blob *blob,
+-	      uint8_t *data,
+-	      uint32_t datalen)
+-{
+-	uint32_t rc;
+-
+-	/* validate the arguments */
+-	if (!blob || datalen > (uint32_t)(blob->bitlen - blob->write_idx)) {
+-		BNXT_DRV_DBG(ERR, "invalid argument\n");
+-		return -EINVAL;
+-	}
+-
+-	if (blob->byte_order == BNXT_ULP_BYTE_ORDER_BE)
+-		rc = ulp_bs_push_msb(blob->data,
+-				     blob->write_idx,
+-				     datalen,
+-				     data);
+-	else
+-		rc = ulp_bs_push_lsb(blob->data,
+-				     blob->write_idx,
+-				     datalen,
+-				     data);
+-	if (!rc) {
+-		BNXT_DRV_DBG(ERR, "Failed to write blob\n");
+-		return -EINVAL;
+-	}
+-	blob->write_idx += datalen;
+-	return 0;
+-}
+-
+-/*
+- * Insert data into the binary blob at the given offset.
+- *
+- * blob [in] The blob that data is added to.  The blob must
+- * be initialized prior to pushing data.
+- *
+- * offset [in] The offset where the data needs to be inserted.
+- *
+- * data [in/out] A pointer to bytes to be added to the blob.
+- *
+- * datalen [in] The number of bits to be added to the blob.
+- *
+- * The offset of the data is updated after each push of data.
+- *
+- * returns zero on success
+- */
+-int32_t
+-ulp_blob_insert(struct ulp_blob *blob, uint32_t offset,
+-		uint8_t *data, uint32_t datalen)
+-{
+-	uint32_t rc;
+-	uint8_t local_data[BNXT_ULP_FLMP_BLOB_SIZE];
+-	uint16_t mov_len;
+-
+-	/* validate the arguments */
+-	if (!blob || datalen > (uint32_t)(blob->bitlen - blob->write_idx) ||
+-	    offset > blob->write_idx) {
+-		BNXT_DRV_DBG(ERR, "invalid argument\n");
+-		return -EINVAL;
+-	}
+-
+-	mov_len = blob->write_idx - offset;
+-	/* If offset and data len are not 8 bit aligned then return error */
+-	if (ULP_BITS_IS_BYTE_NOT_ALIGNED(offset) ||
+-	    ULP_BITS_IS_BYTE_NOT_ALIGNED(datalen)) {
+-		BNXT_DRV_DBG(ERR, "invalid argument, not aligned\n");
+-		return -EINVAL;
+-	}
+-
+-	/* copy the data so we can move the data */
+-	memcpy(local_data, &blob->data[ULP_BITS_2_BYTE_NR(offset)],
+-	       ULP_BITS_2_BYTE(mov_len));
+-	blob->write_idx = offset;
+-	if (blob->byte_order == BNXT_ULP_BYTE_ORDER_BE)
+-		rc = ulp_bs_push_msb(blob->data,
+-				     blob->write_idx,
+-				     datalen,
+-				     data);
+-	else
+-		rc = ulp_bs_push_lsb(blob->data,
+-				     blob->write_idx,
+-				     datalen,
+-				     data);
+-	if (!rc) {
+-		BNXT_DRV_DBG(ERR, "Failed to write blob\n");
+-		return -EINVAL;
+-	}
+-	/* copy the previously stored data */
+-	memcpy(&blob->data[ULP_BITS_2_BYTE_NR(offset + datalen)], local_data,
+-	       ULP_BITS_2_BYTE(mov_len));
+-	blob->write_idx += (mov_len + datalen);
+-	return 0;
+-}
+-
+-/*
+- * Add data to the binary blob at the current offset.
+- *
+- * blob [in] The blob that data is added to.  The blob must
+- * be initialized prior to pushing data.
+- *
+- * data [in] 64-bit value to be added to the blob.
+- *
+- * datalen [in] The number of bits to be added to the blob.
+- *
+- * The offset of the data is updated after each push of data.
+- * NULL returned on error, pointer pushed value otherwise.
+- */
+-uint8_t *
+-ulp_blob_push_64(struct ulp_blob *blob,
+-		 uint64_t *data,
+-		 uint32_t datalen)
+-{
+-	uint8_t *val = (uint8_t *)data;
+-	int rc;
+-
+-	int size = (datalen + 7) / 8;
+-
+-	if (!blob || !data ||
+-	    datalen > (uint32_t)(blob->bitlen - blob->write_idx)) {
+-		BNXT_DRV_DBG(ERR, "invalid argument\n");
+-		return NULL;
+-	}
+-
+-	rc = ulp_blob_push(blob, &val[8 - size], datalen);
+-	if (rc)
+-		return NULL;
+-
+-	return &val[8 - size];
+-}
+-
+-/*
+- * Add data to the binary blob at the current offset.
+- *
+- * blob [in] The blob that data is added to.  The blob must
+- * be initialized prior to pushing data.
+- *
+- * data [in] 32-bit value to be added to the blob.
+- *
+- * datalen [in] The number of bits to be added to the blob.
+- *
+- * The offset of the data is updated after each push of data.
+- * NULL returned on error, pointer pushed value otherwise.
+- */
+-uint8_t *
+-ulp_blob_push_32(struct ulp_blob *blob,
+-		 uint32_t *data,
+-		 uint32_t datalen)
+-{
+-	uint8_t *val = (uint8_t *)data;
+-	uint32_t rc;
+-	uint32_t size = ULP_BITS_2_BYTE(datalen);
+-
+-	if (!data || size > sizeof(uint32_t)) {
+-		BNXT_DRV_DBG(ERR, "invalid argument\n");
+-		return NULL;
+-	}
+-
+-	rc = ulp_blob_push(blob, &val[sizeof(uint32_t) - size], datalen);
+-	if (rc)
+-		return NULL;
+-
+-	return &val[sizeof(uint32_t) - size];
+-}
+-
+-/*
+- * Add encap data to the binary blob at the current offset.
+- *
+- * blob [in] The blob that data is added to.  The blob must
+- * be initialized prior to pushing data.
+- *
+- * data [in] value to be added to the blob.
+- *
+- * datalen [in] The number of bits to be added to the blob.
+- *
+- * The offset of the data is updated after each push of data.
+- * NULL returned on error, pointer pushed value otherwise.
+- */
+-int32_t
+-ulp_blob_push_encap(struct ulp_blob *blob,
+-		    uint8_t *data,
+-		    uint32_t datalen)
+-{
+-	uint8_t		*val = (uint8_t *)data;
+-	uint32_t	initial_size, write_size = datalen;
+-	uint32_t	size = 0;
+-
+-	if (!blob || !data ||
+-	    datalen > (uint32_t)(blob->bitlen - blob->write_idx)) {
+-		BNXT_DRV_DBG(ERR, "invalid argument\n");
+-		return -1;
+-	}
+-
+-	initial_size = ULP_BYTE_2_BITS(sizeof(uint64_t)) -
+-	    (blob->write_idx % ULP_BYTE_2_BITS(sizeof(uint64_t)));
+-	while (write_size > 0) {
+-		if (initial_size && write_size > initial_size) {
+-			size = initial_size;
+-			initial_size = 0;
+-		} else if (initial_size && write_size <= initial_size) {
+-			size = write_size;
+-			initial_size = 0;
+-		} else if (write_size > ULP_BYTE_2_BITS(sizeof(uint64_t))) {
+-			size = ULP_BYTE_2_BITS(sizeof(uint64_t));
+-		} else {
+-			size = write_size;
+-		}
+-		if (ulp_blob_push(blob, val, size)) {
+-			BNXT_DRV_DBG(ERR, "push field failed\n");
+-			return -1;
+-		}
+-		val += ULP_BITS_2_BYTE(size);
+-		write_size -= size;
+-	}
+-	return datalen;
+-}
+-
+-/*
+- * Adds pad to an initialized blob at the current offset
+- *
+- * blob [in] The blob that data is added to.  The blob must
+- * be initialized prior to pushing data.
+- *
+- * datalen [in] The number of bits of pad to add
+- *
+- * returns the number of pad bits added, -1 on failure
+- */
+-int32_t
+-ulp_blob_pad_push(struct ulp_blob *blob,
+-		  uint32_t datalen)
+-{
+-	if (datalen > (uint32_t)(blob->bitlen - blob->write_idx)) {
+-		BNXT_DRV_DBG(ERR, "Pad too large for blob\n");
+-		return -1;
+-	}
+-
+-	blob->write_idx += datalen;
+-	return datalen;
+-}
+-
+-/*
+- * Adds pad to an initialized blob at the current offset based on
+- * the alignment.
+- *
+- * blob [in] The blob that needs to be aligned
+- *
+- * align [in] Alignment in bits.
+- *
+- * returns the number of pad bits added, -1 on failure
+- */
+-int32_t
+-ulp_blob_pad_align(struct ulp_blob *blob,
+-		   uint32_t align)
+-{
+-	int32_t pad = 0;
+-
+-	pad = RTE_ALIGN(blob->write_idx, align) - blob->write_idx;
+-	if (pad > (int32_t)(blob->bitlen - blob->write_idx)) {
+-		BNXT_DRV_DBG(ERR, "Pad too large for blob\n");
+-		return -1;
+-	}
+-	blob->write_idx += pad;
+-	return pad;
+-}
+-
+-/* Get data from src and put into dst using little-endian format */
+-static void
+-ulp_bs_get_lsb(uint8_t *src, uint16_t bitpos, uint8_t bitlen, uint8_t *dst)
+-{
+-	uint8_t bitoffs = bitpos % ULP_BLOB_BYTE;
+-	uint16_t index  = ULP_BITS_2_BYTE_NR(bitpos);
+-	uint8_t mask, partial, shift;
+-
+-	shift = bitoffs;
+-	partial = ULP_BLOB_BYTE - bitoffs;
+-	if (bitoffs + bitlen <= ULP_BLOB_BYTE) {
+-		mask = ((1 << bitlen) - 1) << shift;
+-		*dst = (src[index] & mask) >> shift;
+-	} else {
+-		mask = ((1 << partial) - 1) << shift;
+-		*dst = (src[index] & mask) >> shift;
+-		index++;
+-		partial = bitlen - partial;
+-		mask = ((1 << partial) - 1);
+-		*dst |= (src[index] & mask) << (ULP_BLOB_BYTE - bitoffs);
+-	}
+-}
+-
+-/*
+- * Get data from the byte array in Little endian format.
+- *
+- * src [in] The byte array where data is extracted from
+- *
+- * dst [out] The byte array where data is pulled into
+- *
+- * size [in] The size of dst array in bytes
+- *
+- * offset [in] The offset where data is pulled
+- *
+- * len [in] The number of bits to be extracted from the data array
+- *
+- * returns None.
+- */
+-void
+-ulp_bs_pull_lsb(uint8_t *src, uint8_t *dst, uint32_t size,
+-		uint32_t offset, uint32_t len)
+-{
+-	uint32_t idx;
+-	uint32_t cnt = ULP_BITS_2_BYTE_NR(len);
+-
+-	/* iterate bytewise to get data */
+-	for (idx = 0; idx < cnt; idx++) {
+-		ulp_bs_get_lsb(src, offset, ULP_BLOB_BYTE,
+-			       &dst[size - 1 - idx]);
+-		offset += ULP_BLOB_BYTE;
+-		len -= ULP_BLOB_BYTE;
+-	}
+-
+-	/* Extract the last reminder data that is not 8 byte boundary */
+-	if (len)
+-		ulp_bs_get_lsb(src, offset, len, &dst[size - 1 - idx]);
+-}
+-
+-/* Get data from src and put into dst using big-endian format */
+-static void
+-ulp_bs_get_msb(uint8_t *src, uint16_t bitpos, uint8_t bitlen, uint8_t *dst)
+-{
+-	uint8_t bitoffs = bitpos % ULP_BLOB_BYTE;
+-	uint16_t index  = ULP_BITS_2_BYTE_NR(bitpos);
+-	uint8_t mask;
+-	int32_t shift;
+-
+-	shift = ULP_BLOB_BYTE - bitoffs - bitlen;
+-	if (shift >= 0) {
+-		mask = 0xFF >> -bitlen;
+-		*dst = (src[index] >> shift) & mask;
+-	} else {
+-		*dst = (src[index] & (0xFF >> bitoffs)) << -shift;
+-		*dst |= src[index + 1] >> -shift;
+-	}
+-}
+-
+-/*
+- * Get data from the byte array in Big endian format.
+- *
+- * src [in] The byte array where data is extracted from
+- *
+- * dst [out] The byte array where data is pulled into
+- *
+- * offset [in] The offset where data is pulled
+- *
+- * len [in] The number of bits to be extracted from the data array
+- *
+- * returns None.
+- */
+-void
+-ulp_bs_pull_msb(uint8_t *src, uint8_t *dst,
+-		uint32_t offset, uint32_t len)
+-{
+-	uint32_t idx;
+-	uint32_t cnt = ULP_BITS_2_BYTE_NR(len);
+-
+-	/* iterate bytewise to get data */
+-	for (idx = 0; idx < cnt; idx++) {
+-		ulp_bs_get_msb(src, offset, ULP_BLOB_BYTE, &dst[idx]);
+-		offset += ULP_BLOB_BYTE;
+-		len -= ULP_BLOB_BYTE;
+-	}
+-
+-	/* Extract the last reminder data that is not 8 byte boundary */
+-	if (len)
+-		ulp_bs_get_msb(src, offset, len, &dst[idx]);
+-}
+-
+-/*
+- * Extract data from the binary blob using given offset.
+- *
+- * blob [in] The blob that data is extracted from. The blob must
+- * be initialized prior to pulling data.
+- *
+- * data [in] A pointer to put the data.
+- * data_size [in] size of the data buffer in bytes.
+- *offset [in] - Offset in the blob to extract the data in bits format.
+- * len [in] The number of bits to be pulled from the blob.
+- *
+- * Output: zero on success, -1 on failure
+- */
+-int32_t
+-ulp_blob_pull(struct ulp_blob *blob, uint8_t *data, uint32_t data_size,
+-	      uint16_t offset, uint16_t len)
+-{
+-	/* validate the arguments */
+-	if (!blob || (offset + len) > blob->bitlen ||
+-	    ULP_BYTE_2_BITS(data_size) < len) {
+-		BNXT_DRV_DBG(ERR, "invalid argument\n");
+-		return -1; /* failure */
+-	}
+-
+-	if (blob->byte_order == BNXT_ULP_BYTE_ORDER_BE)
+-		ulp_bs_pull_msb(blob->data, data, offset, len);
+-	else
+-		ulp_bs_pull_lsb(blob->data, data, data_size, offset, len);
+-	return 0;
+-}
+-
+-/*
+- * Get the data portion of the binary blob.
+- *
+- * blob [in] The blob's data to be retrieved. The blob must be
+- * initialized prior to pushing data.
+- *
+- * datalen [out] The number of bits that are filled.
+- *
+- * Returns a byte array of the blob data or NULL on error.
+- */
+-uint8_t *
+-ulp_blob_data_get(struct ulp_blob *blob,
+-		  uint16_t *datalen)
+-{
+-	/* validate the arguments */
+-	if (!blob) {
+-		BNXT_DRV_DBG(ERR, "invalid argument\n");
+-		return NULL; /* failure */
+-	}
+-	*datalen = blob->write_idx;
+-	return blob->data;
+-}
+-
+-/*
+- * Get the data length of the binary blob.
+- *
+- * blob [in] The blob's data len to be retrieved.
+- *
+- * returns length of the binary blob
+- */
+-uint16_t
+-ulp_blob_data_len_get(struct ulp_blob *blob)
+-{
+-	/* validate the arguments */
+-	if (!blob) {
+-		BNXT_DRV_DBG(ERR, "invalid argument\n");
+-		return 0; /* failure */
+-	}
+-	return blob->write_idx;
+-}
+-
+-/*
+- * Set the encap swap start index of the binary blob.
+- *
+- * blob [in] The blob's data to be retrieved. The blob must be
+- * initialized prior to pushing data.
+- *
+- * returns void.
+- */
+-void
+-ulp_blob_encap_swap_idx_set(struct ulp_blob *blob)
+-{
+-	/* validate the arguments */
+-	if (!blob) {
+-		BNXT_DRV_DBG(ERR, "invalid argument\n");
+-		return; /* failure */
+-	}
+-	blob->encap_swap_idx = blob->write_idx;
+-}
+-
+-/*
+- * Perform the encap buffer swap to 64 bit reversal.
+- *
+- * blob [in] The blob's data to be used for swap.
+- *
+- * returns void.
+- */
+-void
+-ulp_blob_perform_encap_swap(struct ulp_blob *blob)
+-{
+-	uint32_t i, idx = 0, end_idx = 0, roundoff;
+-	uint8_t temp_val_1, temp_val_2;
+-
+-	/* validate the arguments */
+-	if (!blob) {
+-		BNXT_DRV_DBG(ERR, "invalid argument\n");
+-		return; /* failure */
+-	}
+-	idx = ULP_BITS_2_BYTE_NR(blob->encap_swap_idx);
+-	end_idx = ULP_BITS_2_BYTE(blob->write_idx);
+-	roundoff = ULP_BYTE_2_BITS(ULP_BITS_2_BYTE(end_idx));
+-	if (roundoff > end_idx) {
+-		blob->write_idx += ULP_BYTE_2_BITS(roundoff - end_idx);
+-		end_idx = roundoff;
+-	}
+-	while (idx <= end_idx) {
+-		for (i = 0; i < 4; i = i + 2) {
+-			temp_val_1 = blob->data[idx + i];
+-			temp_val_2 = blob->data[idx + i + 1];
+-			blob->data[idx + i] = blob->data[idx + 6 - i];
+-			blob->data[idx + i + 1] = blob->data[idx + 7 - i];
+-			blob->data[idx + 7 - i] = temp_val_2;
+-			blob->data[idx + 6 - i] = temp_val_1;
+-		}
+-		idx += 8;
+-	}
+-}
+-
+-/*
+- * Perform the blob buffer reversal byte wise.
+- * This api makes the first byte the last and
+- * vice-versa.
+- *
+- * blob [in] The blob's data to be used for swap.
+- * chunk_size[in] the swap is done within the chunk in bytes
+- *
+- * returns void.
+- */
+-void
+-ulp_blob_perform_byte_reverse(struct ulp_blob *blob,
+-			      uint32_t chunk_size)
+-{
+-	uint32_t idx = 0, jdx = 0, num = 0;
+-	uint8_t xchar;
+-	uint8_t *buff;
+-
+-	/* validate the arguments */
+-	if (!blob) {
+-		BNXT_DRV_DBG(ERR, "invalid argument\n");
+-		return; /* failure */
+-	}
+-
+-	buff = blob->data;
+-	num = ULP_BITS_2_BYTE(blob->write_idx) / chunk_size;
+-	for (idx = 0; idx < num; idx++) {
+-		for (jdx = 0; jdx < chunk_size / 2; jdx++) {
+-			xchar = buff[jdx];
+-			buff[jdx] = buff[(chunk_size - 1) - jdx];
+-			buff[(chunk_size - 1) - jdx] = xchar;
+-		}
+-		buff += chunk_size;
+-	}
+-}
+-
+-/*
+- * Perform the blob buffer 64 bit word swap.
+- * This api makes the first 4 bytes the last in
+- * a given 64 bit value and vice-versa.
+- *
+- * blob [in] The blob's data to be used for swap.
+- *
+- * returns void.
+- */
+-void
+-ulp_blob_perform_64B_word_swap(struct ulp_blob *blob)
+-{
+-	uint32_t i, j, num;
+-	uint8_t xchar;
+-	uint32_t word_size = ULP_64B_IN_BYTES / 2;
+-
+-	/* validate the arguments */
+-	if (!blob) {
+-		BNXT_DRV_DBG(ERR, "invalid argument\n");
+-		return; /* failure */
+-	}
+-	num = ULP_BITS_2_BYTE(blob->write_idx);
+-	for (i = 0; i < num; i = i + ULP_64B_IN_BYTES) {
+-		for (j = 0; j < word_size; j++) {
+-			xchar = blob->data[i + j];
+-			blob->data[i + j] = blob->data[i + j + word_size];
+-			blob->data[i + j + word_size] = xchar;
+-		}
+-	}
+-}
+-
+-/*
+- * Perform the blob buffer 64 bit byte swap.
+- * This api makes the first byte the last in
+- * a given 64 bit value and vice-versa.
+- *
+- * blob [in] The blob's data to be used for swap.
+- *
+- * returns void.
+- */
+-void
+-ulp_blob_perform_64B_byte_swap(struct ulp_blob *blob)
+-{
+-	uint32_t i, j, num;
+-	uint8_t xchar;
+-	uint32_t offset = ULP_64B_IN_BYTES - 1;
+-
+-	/* validate the arguments */
+-	if (!blob) {
+-		BNXT_DRV_DBG(ERR, "invalid argument\n");
+-		return; /* failure */
+-	}
+-	num = ULP_BITS_2_BYTE(blob->write_idx);
+-	for (i = 0; i < num; i = i + ULP_64B_IN_BYTES) {
+-		for (j = 0; j < (ULP_64B_IN_BYTES / 2); j++) {
+-			xchar = blob->data[i + j];
+-			blob->data[i + j] = blob->data[i + offset - j];
+-			blob->data[i + offset - j] = xchar;
+-		}
+-	}
+-}
+-
+-static int32_t
+-ulp_blob_msb_block_merge(struct ulp_blob *dst, struct ulp_blob *src,
+-			 uint32_t block_size, uint32_t pad)
+-{
+-	uint32_t i, k, write_bytes, remaining;
+-	uint16_t num;
+-	uint8_t *src_buf = ulp_blob_data_get(src, &num);
+-	uint8_t bluff;
+-
+-	for (i = 0; i < num;) {
+-		if (((dst->write_idx % block_size) + (num - i)) > block_size)
+-			write_bytes = block_size -
+-				(dst->write_idx % block_size);
+-		else
+-			write_bytes = num - i;
+-		for (k = 0; k < ULP_BITS_2_BYTE_NR(write_bytes); k++) {
+-			ulp_bs_put_msb(dst->data, dst->write_idx, ULP_BLOB_BYTE,
+-				       *src_buf);
+-			dst->write_idx += ULP_BLOB_BYTE;
+-			src_buf++;
+-		}
+-		remaining = write_bytes % ULP_BLOB_BYTE;
+-		if (remaining) {
+-			bluff = (*src_buf) & ((uint8_t)-1 <<
+-					      (ULP_BLOB_BYTE - remaining));
+-			ulp_bs_put_msb(dst->data, dst->write_idx,
+-				       ULP_BLOB_BYTE, bluff);
+-			dst->write_idx += remaining;
+-		}
+-		if (write_bytes != (num - i)) {
+-			/* add the padding */
+-			ulp_blob_pad_push(dst, pad);
+-			if (remaining) {
+-				ulp_bs_put_msb(dst->data, dst->write_idx,
+-					       ULP_BLOB_BYTE - remaining,
+-					       *src_buf);
+-				dst->write_idx += ULP_BLOB_BYTE - remaining;
+-				src_buf++;
+-			}
+-		}
+-		i += write_bytes;
+-	}
+-	return 0;
+-}
+-
+-/*
+- * Perform the blob buffer merge.
+- * This api makes the src blob merged to the dst blob.
+- * The block size and pad size help in padding the dst blob
+- *
+- * dst [in] The destination blob, the blob to be merged.
+- * src [in] The src blob.
+- * block_size [in] The size of the block in bytes after which padding gets
+- *                 applied.
+- * pad [in] The size of the pad to be applied.
+- *
+- * returns 0 on success.
+- */
+-int32_t
+-ulp_blob_block_merge(struct ulp_blob *dst, struct ulp_blob *src,
+-		     uint32_t block_size, uint32_t pad)
+-{
+-	if (dst->byte_order == BNXT_ULP_BYTE_ORDER_BE &&
+-	    src->byte_order == BNXT_ULP_BYTE_ORDER_BE)
+-		return ulp_blob_msb_block_merge(dst, src, block_size, pad);
+-
+-	BNXT_DRV_DBG(ERR, "block merge not implemented yet\n");
+-	return -EINVAL;
+-}
+-
+-int32_t
+-ulp_blob_append(struct ulp_blob *dst, struct ulp_blob *src,
+-		uint16_t src_offset, uint16_t src_len)
+-{
+-	uint32_t k, remaining = 0;
+-	uint16_t num;
+-	uint8_t bluff;
+-	uint8_t *src_buf = ulp_blob_data_get(src, &num);
+-
+-	if ((src_offset + src_len) > num)
+-		return -EINVAL;
+-
+-	/* Only supporting BE for now */
+-	if (src->byte_order != BNXT_ULP_BYTE_ORDER_BE ||
+-	    dst->byte_order != BNXT_ULP_BYTE_ORDER_BE)
+-		return -EINVAL;
+-
+-	/* Handle if the source offset is not on a byte boundary */
+-	remaining = src_offset % ULP_BLOB_BYTE;
+-	if (remaining) {
+-		bluff = src_buf[src_offset / ULP_BLOB_BYTE] & ((uint8_t)-1 >>
+-				      (ULP_BLOB_BYTE - remaining));
+-		ulp_bs_put_msb(dst->data, dst->write_idx,
+-			       ULP_BLOB_BYTE, bluff);
+-		dst->write_idx += remaining;
+-		src_offset += remaining;
+-	}
+-
+-	src_buf += ULP_BITS_2_BYTE_NR(src_offset);
+-
+-	/* Push the byte aligned pieces */
+-	for (k = 0; k < ULP_BITS_2_BYTE_NR(src_len); k++) {
+-		ulp_bs_put_msb(dst->data, dst->write_idx, ULP_BLOB_BYTE,
+-			       *src_buf);
+-		dst->write_idx += ULP_BLOB_BYTE;
+-		src_buf++;
+-	}
+-
+-	/* Handle the remaining if length is not a byte boundary */
+-	if (src_len > remaining)
+-		remaining = (src_len - remaining) % ULP_BLOB_BYTE;
+-	else
+-		remaining = 0;
+-	if (remaining) {
+-		bluff = (*src_buf) & ((uint8_t)-1 <<
+-				      (ULP_BLOB_BYTE - remaining));
+-		ulp_bs_put_msb(dst->data, dst->write_idx,
+-			       ULP_BLOB_BYTE, bluff);
+-		dst->write_idx += remaining;
+-	}
+-
+-	return 0;
+-}
+-
+-/*
+- * Perform the blob buffer copy.
+- * This api makes the src blob merged to the dst blob.
+- *
+- * dst [in] The destination blob, the blob to be merged.
+- * src [in] The src blob.
+- *
+- * returns 0 on success.
+- */
+-int32_t
+-ulp_blob_buffer_copy(struct ulp_blob *dst, struct ulp_blob *src)
+-{
+-	if ((dst->write_idx + src->write_idx) > dst->bitlen) {
+-		BNXT_DRV_DBG(ERR, "source buffer too large\n");
+-		return -EINVAL;
+-	}
+-	if (ULP_BITS_IS_BYTE_NOT_ALIGNED(dst->write_idx) ||
+-	    ULP_BITS_IS_BYTE_NOT_ALIGNED(src->write_idx)) {
+-		BNXT_DRV_DBG(ERR, "source buffer is not aligned\n");
+-		return -EINVAL;
+-	}
+-	memcpy(&dst->data[ULP_BITS_2_BYTE_NR(dst->write_idx)],
+-	       src->data, ULP_BITS_2_BYTE_NR(src->write_idx));
+-	dst->write_idx += src->write_idx;
+-	return 0;
+-}
+-
+-/*
+- * Read data from the operand
+- *
+- * operand [in] A pointer to a 16 Byte operand
+- *
+- * val [in/out] The variable to copy the operand to
+- *
+- * bytes [in] The number of bytes to read into val
+- *
+- * returns zero on success.
+- */
+-int32_t
+-ulp_operand_read(uint8_t *operand,
+-		 uint8_t *val,
+-		 uint16_t bytes)
+-{
+-	/* validate the arguments */
+-	if (!operand || !val) {
+-		BNXT_DRV_DBG(ERR, "invalid argument\n");
+-		return -EINVAL;
+-	}
+-	memcpy(val, operand, bytes);
+-	return 0;
+-}
+-
+-/*
+- * Check the buffer is empty
+- *
+- * buf [in] The buffer
+- * size [in] The size of the buffer
+- *
+- */
+-int32_t ulp_buffer_is_empty(const uint8_t *buf, uint32_t size)
+-{
+-	return buf[0] == 0 && !memcmp(buf, buf + 1, size - 1);
+-}
+-
+-/* Function to check if bitmap is zero.Return 1 on success */
+-uint32_t ulp_bitmap_is_zero(uint8_t *bitmap, int32_t size)
+-{
+-	while (size-- > 0) {
+-		if (*bitmap != 0)
+-			return 0;
+-		bitmap++;
+-	}
+-	return 1;
+-}
+-
+-/* Function to check if bitmap is ones. Return 1 on success */
+-uint32_t ulp_bitmap_is_ones(uint8_t *bitmap, int32_t size)
+-{
+-	while (size-- > 0) {
+-		if (*bitmap != 0xFF)
+-			return 0;
+-		bitmap++;
+-	}
+-	return 1;
+-}
+-
+-/* Function to check if bitmap is not zero. Return 1 on success */
+-uint32_t ulp_bitmap_notzero(const uint8_t *bitmap, int32_t size)
+-{
+-	while (size-- > 0) {
+-		if (*bitmap != 0)
+-			return 1;
+-		bitmap++;
+-	}
+-	return 0;
+-}
+-
+-/* returns 0 if input is power of 2 */
+-int32_t ulp_util_is_power_of_2(uint64_t x)
+-{
+-	if (((x - 1) & x))
+-		return -1;
+-	return 0;
+-}
 -- 
 2.51.0
 
