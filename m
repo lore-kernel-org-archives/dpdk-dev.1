@@ -2,47 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B208CE8D67
-	for <dpdk-dev@archiver.kernel.org>; Fri, 14 Nov 2025 17:40:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34040CE8D5F
+	for <dpdk-dev@archiver.kernel.org>; Fri, 14 Nov 2025 17:40:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 51EF140E26;
-	Fri, 14 Nov 2025 18:40:38 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 4A76640EE7;
+	Fri, 14 Nov 2025 18:40:39 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
- by mails.dpdk.org (Postfix) with ESMTP id F29C840288
- for <dev@dpdk.org>; Fri, 14 Nov 2025 18:40:35 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id AAECC40288
+ for <dev@dpdk.org>; Fri, 14 Nov 2025 18:40:36 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1763142036; x=1794678036;
+ t=1763142037; x=1794678037;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=dlKiDifZcxMTxHvhRbB2d1MRjD9Bt2JWhqHxcN2Lias=;
- b=I58QSaBN+pPVIAEsFEGivX6ynDNLt+BVZLwBVq8X1FPeKcXsE5bSiuKT
- VNhmJg53kCZ3cZ7xUaKMJ1BPHHeohkUoPo167M6WjbfLKtEpyhPVTdr+Q
- kfqdwuNDJVkPaIlesGKiN7Yle0v5ue1S6L+MbhiFJMsvtSNnYMNYT6X5S
- FXNECAUip77x+A4IvfGLnqyyg4U4XRA5kulSOrlkKaGlj0NQh2ypkLcVF
- bzoEkahHr+cLco4t9jDhLecX15wbLOTh0J+66fp5gHPl9VTjbJilkItic
- dNjW49nAYlYNG0/+l18JW/M9rbYMRL0rXqMJNcP3EB5RvrDszsZNE8LhG A==;
-X-CSE-ConnectionGUID: HUQUXQIITvm+nI/O6cDyjQ==
-X-CSE-MsgGUID: ieWtbbAwQzOORDb5V7G6HA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11613"; a="68864248"
-X-IronPort-AV: E=Sophos;i="6.19,305,1754982000"; d="scan'208";a="68864248"
+ bh=yknjs5a1TkdVRwvzvLFRHmvyIm2dUVNfMkm/dqI2PG4=;
+ b=fNZT2y2NIV1ZaLrv9HcDn/ZE3XUX0lYQu0NBfKi5+BkifpOTAjrcAF/3
+ JqZEDjV9NH560Y3SQyH6NwgH0KZILjx68bpRvH9zKaHNuep+4WUp7Nhbv
+ q+C8/IiozBjyW4IJw3MqoZ18b4PZ3o6a2cFtd+X1/0aJWCrdF8S08X67J
+ F3NDxjI58lWLBKw8+h57tjTAF5eDwrVaLz1SGtWeLiOQI40sj0/dmsqVa
+ 2GIoXNsvsg0NN3lzepWR2vGdqYZ6dQNQLqEjBqxuSVNjACYDE8KyMtN/a
+ WtUPYIXxdobO/UMXbMBVXATNQiXFMlyCz5QuO1Ik7v5c1XthVTxt6ckjd Q==;
+X-CSE-ConnectionGUID: rZsCPUVuSVmDf5fwZ6KQHQ==
+X-CSE-MsgGUID: qjS/m1+VRhGOengW6SxYQQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11613"; a="68864250"
+X-IronPort-AV: E=Sophos;i="6.19,305,1754982000"; d="scan'208";a="68864250"
 Received: from orviesa009.jf.intel.com ([10.64.159.149])
  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
  14 Nov 2025 09:40:35 -0800
-X-CSE-ConnectionGUID: S+/ZhembSyK2p/x5fJrw/w==
-X-CSE-MsgGUID: MYThoymAT9O58HVRhc7LLQ==
+X-CSE-ConnectionGUID: /3xyPfgWQiO8kXdygMK4jg==
+X-CSE-MsgGUID: JmNkkfHvQQedVLT5/wOGHg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,305,1754982000"; d="scan'208";a="189650707"
+X-IronPort-AV: E=Sophos;i="6.19,305,1754982000"; d="scan'208";a="189650716"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by orviesa009.jf.intel.com with ESMTP; 14 Nov 2025 09:40:34 -0800
+ by orviesa009.jf.intel.com with ESMTP; 14 Nov 2025 09:40:35 -0800
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org
-Subject: [PATCH v2 00/19] Support VFIO cdev API in DPDK
-Date: Fri, 14 Nov 2025 17:40:10 +0000
-Message-ID: <cover.1763142007.git.anatoly.burakov@intel.com>
+Subject: [PATCH v2 01/19] doc: add deprecation notice for VFIO API
+Date: Fri, 14 Nov 2025 17:40:11 +0000
+Message-ID: <60b4075f7b8cb63fc40baa83fbc251815f3b5115.1763142007.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.47.3
-In-Reply-To: <cover.1761669438.git.anatoly.burakov@intel.com>
-References: <cover.1761669438.git.anatoly.burakov@intel.com>
+In-Reply-To: <cover.1763142007.git.anatoly.burakov@intel.com>
+ <cover.1763142007.git.anatoly.burakov@intel.com>
+References: 
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -58,144 +59,26 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This patchset introduces a major refactor of the VFIO subsystem in DPDK to
-support character device (cdev) interface introduced in Linux kernel, as well as
-make the API more streamlined and useful. The goal is to simplify device
-management, improve compatibility, and clarify API responsibilities.
+The entirety of VFIO API will be either made internal and only available to
+drivers, or will be removed. Add upcoming changes to deprecation notices.
 
-The following sections outline the key issues addressed by this patchset and the
-corresponding changes introduced.
+Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
+---
+ doc/guides/rel_notes/deprecation.rst | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-1. Only group mode is supported
-===============================
-
-Since kernel version 4.14.327 (LTS), VFIO supports the new character device
-(cdev)-based way of working with VFIO devices (otherwise known as IOMMUFD). This
-is a device-centric mode and does away with all the complexity regarding groups
-and IOMMU types, delegating it all to the kernel, and exposes a much simpler
-interface to userspace.
-
-The old group interface is still around, and will need to be kept in DPDK both
-for compatibility reasons, as well as supporting special cases (FSLMC bus, NBL
-driver, etc.).
-
-To enable this, VFIO is heavily refactored, so that the code can support both
-modes while relying on (mostly) common infrastructure.
-
-Note that the existing `rte_vfio_device_setup/release` model is fundamentally
-incompatible with cdev mode, because for custom container cases, the expected
-flow is that the user binds the IOMMU group (and thus, implicitly, the device
-itself) to a specific container using `rte_vfio_container_group_bind`, whereas
-this step is not needed for cdev as the device fd is assigned to the container
-straight away.
-
-Therefore, what we do instead is introduce a new API for container device
-assignment which, semantically, will assign a device to specified container, so
-that when it is mapped using `rte_pci_map_device`, the appropriate container is
-selected. Under the hood though, we essentially transition to getting device fd
-straight away at assign stage, so that by the time the PCI bus attempts to map
-the device, it is already mapped and we just return an fd.
-
-Additionally, a new `rte_vfio_get_mode` API is added for those cases that need
-some introspection into VFIO's internals, with three new modes: group
-(old-style), no-iommu (old-style but without IOMMU), and cdev (the new mode).
-Although no-IOMMU is technically a variant of group mode, the distinction is
-largely irrelevant to the user, as all usages of noiommu checks in our codebase
-are for deciding whether to use IOVA or PA, not anything to do with managing
-groups. The current plan for kernel community is to *not* introduce no-IOMMU
-cdev implementation, which is why this will be kept for compatibility for these
-use cases.
-
-There were other users of VFIO which relied on group API but only for convenience
-purposes; no actual VFIO functionality depended on those API's. Therefore, group
-API's are removed and, where appropriate, replaced with the new API's.
-
-List of removed API's:
-
-* `rte_vfio_get_group_fd`
-* `rte_vfio_clear_group`
-* `rte_vfio_container_group_bind`
-* `rte_vfio_container_group_unbind`
-* `rte_vfio_noiommu_is_enabled` (replaced by new mode API)
-
-2. The API responsibilities aren't clear and bleed into each other
-==================================================================
-
-Some API's do multiple things at once. In particular:
-
-* `rte_vfio_get_device_info` will setup the device
-* `rte_vfio_setup_device` will get device info
-
-These API's have been adjusted to do one thing only.
-
-v2:
-- Make the entire API internal
-- More aggressive API pruning, complete removal of group API
-- Fixed a bug in group mode where device could not be used
-- Better documentation and deprecation notice patches
-- Moved doc patches to beginning of patchset
-
-Anatoly Burakov (19):
-  doc: add deprecation notice for VFIO API
-  doc: add deprecation notice for vDPA driver API
-  uapi: update to v6.17 and add iommufd.h
-  vfio: make all functions internal
-  vfio: add container device assignment API
-  vfio: split get device info from setup
-  net/nbl: do not use VFIO group bind API
-  net/ntnic: use container device assignment API
-  vdpa/ifc: use container device assignment API
-  vdpa/nfp: use container device assignment API
-  vdpa/sfc: use container device assignment API
-  vhost: remove group-related API from drivers
-  vfio: cleanup and refactor
-  bus/pci: use the new VFIO mode API
-  bus/fslmc: use the new VFIO mode API
-  net/hinic3: use the new VFIO mode API
-  net/ntnic: use the new VFIO mode API
-  vfio: remove group API functions
-  vfio: introduce cdev mode
-
- config/arm/meson.build                    |    1 +
- config/meson.build                        |    1 +
- doc/guides/prog_guide/vhost_lib.rst       |    4 -
- doc/guides/rel_notes/deprecation.rst      |    7 +
- drivers/bus/cdx/cdx_vfio.c                |   21 +-
- drivers/bus/fslmc/fslmc_bus.c             |   10 +-
- drivers/bus/fslmc/fslmc_vfio.c            |    2 +-
- drivers/bus/pci/linux/pci.c               |    2 +-
- drivers/bus/pci/linux/pci_vfio.c          |   29 +-
- drivers/bus/platform/platform.c           |    8 +-
- drivers/crypto/bcmfs/bcmfs_vfio.c         |   14 +-
- drivers/net/hinic3/base/hinic3_hwdev.c    |    2 +-
- drivers/net/nbl/nbl_common/nbl_userdev.c  |   18 +-
- drivers/net/nbl/nbl_include/nbl_include.h |    1 +
- drivers/net/ntnic/ntnic_ethdev.c          |    2 +-
- drivers/net/ntnic/ntnic_vfio.c            |   30 +-
- drivers/vdpa/ifc/ifcvf_vdpa.c             |   34 +-
- drivers/vdpa/mlx5/mlx5_vdpa.c             |    1 -
- drivers/vdpa/nfp/nfp_vdpa.c               |   37 +-
- drivers/vdpa/sfc/sfc_vdpa.c               |   39 +-
- drivers/vdpa/sfc/sfc_vdpa.h               |    2 -
- kernel/linux/uapi/linux/iommufd.h         | 1292 +++++++++++
- kernel/linux/uapi/linux/vduse.h           |    2 +-
- kernel/linux/uapi/linux/vfio.h            |   12 +-
- kernel/linux/uapi/version                 |    2 +-
- lib/eal/freebsd/eal.c                     |   98 +-
- lib/eal/include/rte_vfio.h                |  386 ++--
- lib/eal/linux/eal_vfio.c                  | 2439 ++++++++-------------
- lib/eal/linux/eal_vfio.h                  |  167 +-
- lib/eal/linux/eal_vfio_cdev.c             |  389 ++++
- lib/eal/linux/eal_vfio_group.c            |  983 +++++++++
- lib/eal/linux/eal_vfio_mp_sync.c          |   80 +-
- lib/eal/linux/meson.build                 |    2 +
- lib/eal/windows/eal.c                     |    4 +-
- lib/vhost/vdpa_driver.h                   |    3 -
- 35 files changed, 4263 insertions(+), 1861 deletions(-)
- create mode 100644 kernel/linux/uapi/linux/iommufd.h
- create mode 100644 lib/eal/linux/eal_vfio_cdev.c
- create mode 100644 lib/eal/linux/eal_vfio_group.c
-
+diff --git a/doc/guides/rel_notes/deprecation.rst b/doc/guides/rel_notes/deprecation.rst
+index 1e60ac4e82..5e3df71048 100644
+--- a/doc/guides/rel_notes/deprecation.rst
++++ b/doc/guides/rel_notes/deprecation.rst
+@@ -158,3 +158,7 @@ Deprecation Notices
+   without relying on flow API.
+   Currently there is no alternative API
+   providing the same functionality as with ``repr_matching_en`` set to 0.
++
++* eal: The entire VFIO API (``rte_vfio_*``) will be made internal only, and will only be available to EAL and drivers.
++  Group-based API (``rte_vfio_*_group_*``) will be removed and replaced with unified container device assignment API.
++  This change will be made in 26.11 release.
 -- 
 2.47.3
 
