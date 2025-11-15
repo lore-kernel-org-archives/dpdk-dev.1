@@ -2,41 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69D2ECEB2C9
-	for <dpdk-dev@archiver.kernel.org>; Sat, 15 Nov 2025 08:31:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F0F7CEB2CA
+	for <dpdk-dev@archiver.kernel.org>; Sat, 15 Nov 2025 10:07:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 357CF402CB;
-	Sat, 15 Nov 2025 09:31:57 +0100 (CET)
-Received: from out28-77.mail.aliyun.com (out28-77.mail.aliyun.com
- [115.124.28.77]) by mails.dpdk.org (Postfix) with ESMTP id 7FDB0400D6
- for <dev@dpdk.org>; Sat, 15 Nov 2025 09:31:54 +0100 (CET)
-X-Alimail-AntiSpam: AC=CONTINUE; BC=0.06663878|-1; CH=green;
- DM=|CONTINUE|false|;
- DS=CONTINUE|ham_regular_dialog|0.0117918-0.0040055-0.984203;
- FP=15596806204566291920|0|0|0|0|-1|-1|-1;
- HT=maildocker-contentspam011083066028; MF=dimon.zhao@nebula-matrix.com; NM=1;
- PH=DW; RN=5; RT=5; SR=0; TI=W4_0.2.3_212504AB_1763195038929_o7001c131i; 
-Received: from WS-web
- (dimon.zhao@nebula-matrix.com[W4_0.2.3_212504AB_1763195038929_o7001c131i]
- cluster:ay29) at Sat, 15 Nov 2025 16:31:52 +0800
-Date: Sat, 15 Nov 2025 16:31:52 +0800
-From: "Dimon" <dimon.zhao@nebula-matrix.com>
-To: "Anatoly Burakov" <anatoly.burakov@intel.com>, "dev" <dev@dpdk.org>,
- "Kyo Liu" <kyo.liu@nebula-matrix.com>, "Leon" <leon.yu@nebula-matrix.com>,
- "Sam" <sam.chen@nebula-matrix.com>, "Alvin" <alvin.wang@nebula-matrix.com>
-Message-ID: <c6d8e973-e365-4254-965e-ceec2eff6fb6.dimon.zhao@nebula-matrix.com>
-Subject: =?UTF-8?B?5Zue5aSN77yaW1BBVENIIHYyIDA3LzE5XSBuZXQvbmJsOiBkbyBub3QgdXNlIFZGSU8gZ3Jv?=
- =?UTF-8?B?dXAgYmluZCBBUEk=?=
-X-Mailer: [Alimail-Mailagent][W4_0.2.3][null][Chrome]
+	by mails.dpdk.org (Postfix) with ESMTP id 1D6AC4029D;
+	Sat, 15 Nov 2025 11:07:16 +0100 (CET)
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com
+ [209.85.208.49]) by mails.dpdk.org (Postfix) with ESMTP id AC4E540288
+ for <dev@dpdk.org>; Sat, 15 Nov 2025 11:07:14 +0100 (CET)
+Received: by mail-ed1-f49.google.com with SMTP id
+ 4fb4d7f45d1cf-6406f3dcc66so4848552a12.3
+ for <dev@dpdk.org>; Sat, 15 Nov 2025 02:07:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20230601; t=1763201234; x=1763806034; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=CkCd0/HWcn/ydlEkkQei6LFCWzLpSInL3iGJvxDgifk=;
+ b=Ete0tOJlGIuf9zWiWkZApNV4R/Ausa+0KfxFvotKZnLJQfwMjSs2Wlzj48iKbHi4iL
+ mD67jUEllCD+ZlFYl2I5+uNMP66n06ru+eKzeqHN5z8GNNnifpuV8J5LE2TNbhR2zk0P
+ eN4trRAanrIiz9VzWzK4aakKaoPxCwbdj8fL347+ENn5Fo7eskikeXz3AyU2Gl9Zzmt+
+ GjR31h5bg1uz5GhFYXp8R28W9k0lBQjdENuqkMCXdmrvzkkOQvwQMMRJoW+H1aIgGKe2
+ OQSYmZAO22dDI/Cy9tb1Hm1+0gqR/tFpPc8FA95IB0uVguYhG1JSMONvh4ru4Coe6yHo
+ 5KgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1763201234; x=1763806034;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=CkCd0/HWcn/ydlEkkQei6LFCWzLpSInL3iGJvxDgifk=;
+ b=LgaXBnJy0uYjYn5+AqT5Iu0VBoKuzmAJZtSrNjKKQCenEY/ltXofJuX548/o++i2Qx
+ YiXH+pUQYUzoGJjWTES29it3OzuFkxoI1nE0kZ1/0VkJwF36MkfQMXtadQMJrcWLEWV8
+ aJA/+NTywPDIchaydRJ3Ui7NUhZXdZLm4j9AHOcwZ8IeTMgTjAgcyq6oBcYNr6qSOD8z
+ yO5AgQs30ylDSh4k+3uIOuKbcpIv9Z/FrwmP4EtRvJ72TGG/7w70//D5ww9dJp+bzX7E
+ pja6k6/4Q8279l3ahiCPLWA+ThiZJ/X29qKLGnyFPR15cMESg3hd8eR2p8RfNiWeOWqJ
+ vaoA==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCVqdmf66GsT7CjNN/Wlx4/K61IMiRudhfd7Krq7feuvPfUjmwlf+nm1wXvqeV/3uueo1FY=@dpdk.org
+X-Gm-Message-State: AOJu0YypMuW85IeZ3E66uw+uHWT9FBqOVFaUaZcfPJkxxqS0/BgvOYI+
+ vjSVIZPbLehTrpR5YpMEJNQ0fS/J9VjbeDUyzo+OfW/gHJafXKWflIDojaDqBSrZ4CQ4Q7BJMxa
+ PRFXSmvrtPBIRqTkgragztr5i8MzQWM0=
+X-Gm-Gg: ASbGncv4Gck3PG3VsHYE046/2WJV/UFDG293LMLbiT/1x1H9QgSaF/M3T4/4zdH8IHE
+ AZVQj1BrVx5aDJ9efMonFNR7XVfctrelocQkWkZk6Axoo4yxt+0K2v1yo+t+UaS6FUuv0BMimxV
+ GvOMZ4FKw1OYvL2jOuZ+qBNwCQy1SnRT7OMoWvio8ARb8PUJz879RPM24x9STR2wtiKoJ0fWbxt
+ nOcnX4yrl4mR0YQNJQk1rh8F2q0kYQNzC2Itnx+v+wS+qDT1Ve1PkDKxVc8fg==
+X-Google-Smtp-Source: AGHT+IGYY9FuG0+hHhXk4f864hV4nCA+TqXtU5H1CwElYYgyJHLwnKDquo8qePNV0HGsxV2UHNM6kBENzj7WLqg6jHw=
+X-Received: by 2002:a17:907:3d09:b0:b6d:4f1d:8c9b with SMTP id
+ a640c23a62f3a-b73678f3399mr686773366b.28.1763201233925; Sat, 15 Nov 2025
+ 02:07:13 -0800 (PST)
 MIME-Version: 1.0
-x-aliyun-im-through: {"version":"v1.0"}
-References: <cover.1763142007.git.anatoly.burakov@intel.com>
- <cover.1763142007.git.anatoly.burakov@intel.com>,
- <c0f24f340813d2e95f28044a535023d18a02cf00.1763142008.git.anatoly.burakov@intel.com>
-x-aliyun-mail-creator: W4_0.2.3_null_EuMTW96aWxsYS81LjAgKFdpbmRvd3MgTlQgMTAuMDsgV2luNjQ7IHg2NCkgQXBwbGVXZWJLaXQvNTM3LjM2IChLSFRNTCwgbGlrZSBHZWNrbykgQ2hyb21lLzEzMy4wLjY5NDMuMTQyIFNhZmFyaS81MzcuMzYgZGluZ3RhbGstd2luLzEuMC4wIG53KDAuMTQuNykgRGluZ1RhbGsoOC4xLjUtUmVsZWFzZS4yNTExMDcwMDEpIE1vam8vMS4wLjAgTmF0aXZlIEFwcFR5cGUocmVsZWFzZSkgQ2hhbm5lbC8yMDEyMDAgQXJjaGl0ZWN0dXJlL3g4Nl82NCB3ZWJEdC9QQw==uL
-In-Reply-To: <c0f24f340813d2e95f28044a535023d18a02cf00.1763142008.git.anatoly.burakov@intel.com>
-Content-Type: multipart/alternative;
- boundary="----=ALIBOUNDARY_1288_7f6368b3e700_69183a78_beead"
+References: <20251011113202.937991-1-16567adigashreesh@gmail.com>
+ <aRdPcuSLTPah6Zry@bricha3-mobl1.ger.corp.intel.com>
+In-Reply-To: <aRdPcuSLTPah6Zry@bricha3-mobl1.ger.corp.intel.com>
+From: Shreesh Adiga <16567adigashreesh@gmail.com>
+Date: Sat, 15 Nov 2025 15:37:02 +0530
+X-Gm-Features: AWmQ_bnVRV7AKgS3mSBtZB-SHKe3-kI-KTDyNVqG1vicCHzSvuBapf0lAwKpRD4
+Message-ID: <CA+-x59aamcto-nwQooHFGTN_K_ahE+u7eb_aJG2kk6muo+MnGw@mail.gmail.com>
+Subject: Re: [PATCH] net/crc: reduce usage of static arrays in net_crc_sse.c
+To: Bruce Richardson <bruce.richardson@intel.com>
+Cc: Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>, 
+ Jasvinder Singh <jasvinder.singh@intel.com>, dev@dpdk.org
+Content-Type: multipart/alternative; boundary="000000000000373af306439f4767"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -48,266 +73,309 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-Reply-To: Dimon <dimon.zhao@nebula-matrix.com>
 Errors-To: dev-bounces@dpdk.org
 
-------=ALIBOUNDARY_1288_7f6368b3e700_69183a78_beead
+--000000000000373af306439f4767
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: quoted-printable
 
-SGkgQW5hdG9seSwKSSBmZWVsIHRoZXJlIG1pZ2h0IGJlIGEgcG9pbnQgdGhhdCBuZWVkcyBhdHRl
-bnRpb24uClRoZSBvbGQgcnRlX3ZmaW9fZ2V0X2dyb3VwX251bSBmdW5jdGlvbiByZXR1cm5zIDw9
-IDAgdG8gaW5kaWNhdGUgZmFpbHVyZSwKd2hpbGUgdGhlIG5ldyBydGVfdmZpb19nZXRfZ3JvdXBf
-bnVtIGZ1bmN0aW9uIHJldHVybnMgPCAwIHRvIGluZGljYXRlIGZhaWx1cmUuClRoZXJlZm9yZSwg
-YWxsIERQREsgY29kZSB0aGF0IGNoZWNrcyB0aGUgcmV0dXJuIHZhbHVlIG9mIHRoZSBydGVfdmZp
-b19nZXRfZ3JvdXBfbnVtIGZ1bmN0aW9uIHNob3VsZCBiZSBtb2RpZmllZC4KRm9yIGV4YW1wbGUs
-IGluIHRoZSBuYmwgbmV0IGRyaXZlciwgdGhlcmUgaXMgdGhlIGZvbGxvd2luZyBjb2RlOgpyZXQg
-PSBydGVfdmZpb19nZXRfZ3JvdXBfbnVtKHBhdGhuYW1lLCBkZXZfbmFtZSwgJmNvbW1vbi0+aW9t
-bXVfZ3JvdXBfbnVtKTsKaWYgKHJldCA8PSAwKSB7CiBOQkxfTE9HKEVSUiwgIm5ibCB2ZmlvIGdy
-b3VwIG51bWJlciBmYWlsZWQiKTsKIHJldHVybiAtMTsKfQpJdCBzaG91bGQgYmUgbW9kaWZpZWQg
-dG86CnJldCA9IHJ0ZV92ZmlvX2dldF9ncm91cF9udW0ocGF0aG5hbWUsIGRldl9uYW1lLCAmY29t
-bW9uLT5pb21tdV9ncm91cF9udW0pOwppZiAocmV0IDwgMCkgewogTkJMX0xPRyhFUlIsICJuYmwg
-dmZpbyBncm91cCBudW1iZXIgZmFpbGVkIik7CiByZXR1cm4gLTE7Cn0KLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCuWPkeS7
-tuS6uu+8mkFuYXRvbHkgQnVyYWtvdiA8YW5hdG9seS5idXJha292QGludGVsLmNvbT4K5Y+R6YCB
-5pe26Ze077yaMjAyNeW5tDEx5pyIMTXml6Uo5ZGo5YWtKSAwMTo0MArmlLbku7bkurrvvJpkZXY8
-ZGV2QGRwZGsub3JnPjsgRGltb248ZGltb24uemhhb0BuZWJ1bGEtbWF0cml4LmNvbT47IEt5byBM
-aXU8a3lvLmxpdUBuZWJ1bGEtbWF0cml4LmNvbT47IExlb248bGVvbi55dUBuZWJ1bGEtbWF0cml4
-LmNvbT47IFNhbTxzYW0uY2hlbkBuZWJ1bGEtbWF0cml4LmNvbT4K5Li744CA6aKY77yaW1BBVENI
-IHYyIDA3LzE5XSBuZXQvbmJsOiBkbyBub3QgdXNlIFZGSU8gZ3JvdXAgYmluZCBBUEkKVGhlIE5C
-TCBkcml2ZXIgY3VycmVudGx5IHVzZXMgZ3JvdXAgYmluZCBBUEksIGJ1dCBpdCBpcyB1c2luZyBp
-dCBvbmx5IHRvCmdldCBncm91cCBmZCBhbmQgbm90aGluZyBlbHNlLiBJbiBjb250ZXh0IG9mIE5C
-TCBkcml2ZXIsIHRoaXMgaXMgdGhlIG9ubHkKdXNhZ2Ugb2YgVkZJTyBBUEkncyBpbiB0aGUgZHJp
-dmVyLCBhbmQgaXQgaXMgbm90IG5lY2Vzc2FyeSB0byB1c2UgaXQgZm9yCndoYXQgTkJMIGRyaXZl
-ciBpcyB0cnlpbmcgdG8gYWNjb21wbGlzaC4KVXNlIGEgZGlyZWN0IGBvcGVuKClgIGNhbGwgaW5z
-dGVhZCwgYW5kIHN0b3JlIHRoZSBncm91cCBmZCBpbiBjb21tb24Kc3RydWN0dXJlLgpTaWduZWQt
-b2ZmLWJ5OiBBbmF0b2x5IEJ1cmFrb3YgPGFuYXRvbHkuYnVyYWtvdkBpbnRlbC5jb20+Ci0tLQog
-ZHJpdmVycy9uZXQvbmJsL25ibF9jb21tb24vbmJsX3VzZXJkZXYuYyB8IDE4ICsrKysrKysrKysr
-LS0tLS0tLQogZHJpdmVycy9uZXQvbmJsL25ibF9pbmNsdWRlL25ibF9pbmNsdWRlLmggfCAxICsK
-IDIgZmlsZXMgY2hhbmdlZCwgMTIgaW5zZXJ0aW9ucygrKSwgNyBkZWxldGlvbnMoLSkKZGlmZiAt
-LWdpdCBhL2RyaXZlcnMvbmV0L25ibC9uYmxfY29tbW9uL25ibF91c2VyZGV2LmMgYi9kcml2ZXJz
-L25ldC9uYmwvbmJsX2NvbW1vbi9uYmxfdXNlcmRldi5jCmluZGV4IDU2NmYzYTExZWUuLmQ2NDFl
-Y2Q5YTggMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvbmV0L25ibC9uYmxfY29tbW9uL25ibF91c2VyZGV2
-LmMKKysrIGIvZHJpdmVycy9uZXQvbmJsL25ibF9jb21tb24vbmJsX3VzZXJkZXYuYwpAQCAtMzg3
-LDYgKzM4NywxMyBAQCBuYmxfdXNlcmRldl9tZW1fZXZlbnRfY2FsbGJhY2soZW51bSBydGVfbWVt
-X2V2ZW50IHR5cGUsIGNvbnN0IHZvaWQgKmFkZHIsIHNpemVfdAogfQogfQorc3RhdGljIGludCBu
-Ymxfb3Blbl9ncm91cF9mZChpbnQgaW9tbXVfZ3JvdXBfbnVtKQoreworIGNoYXIgcGF0aFtQQVRI
-X01BWF07Cisgc25wcmludGYocGF0aCwgc2l6ZW9mKHBhdGgpLCBSVEVfVkZJT19HUk9VUF9GTVQs
-IGlvbW11X2dyb3VwX251bSk7CisgcmV0dXJuIG9wZW4ocGF0aCwgT19SRFdSKTsKK30KKwogc3Rh
-dGljIGludCBuYmxfbWRldl9tYXBfZGV2aWNlKHN0cnVjdCBuYmxfYWRhcHRlciAqYWRhcHRlcikK
-IHsKIGNvbnN0IHN0cnVjdCBydGVfcGNpX2RldmljZSAqcGNpX2RldiA9IGFkYXB0ZXItPnBjaV9k
-ZXY7CkBAIC00MjQsMTEgKzQzMSwxMiBAQCBzdGF0aWMgaW50IG5ibF9tZGV2X21hcF9kZXZpY2Uo
-c3RydWN0IG5ibF9hZGFwdGVyICphZGFwdGVyKQogfQogTkJMX0xPRyhERUJVRywgIm5ibCB2Zmlv
-IGNvbnRhaW5lciAlZCIsIGNvbnRhaW5lcik7Ci0gdmZpb19ncm91cF9mZCA9IHJ0ZV92ZmlvX2Nv
-bnRhaW5lcl9ncm91cF9iaW5kKGNvbnRhaW5lciwgY29tbW9uLT5pb21tdV9ncm91cF9udW0pOwor
-IHZmaW9fZ3JvdXBfZmQgPSBuYmxfb3Blbl9ncm91cF9mZChjb21tb24tPmlvbW11X2dyb3VwX251
-bSk7CiBpZiAodmZpb19ncm91cF9mZCA8IDApIHsKIE5CTF9MT0coRVJSLCAibmJsIHZmaW8gZ3Jv
-dXAgYmluZCBmYWlsZWQsICVkIiwgdmZpb19ncm91cF9mZCk7CiBnb3RvIGZyZWVfY29udGFpbmVy
-OwogfQorIGNvbW1vbi0+Z3JvdXBmZCA9IHZmaW9fZ3JvdXBfZmQ7CiAvKiBjaGVjayBpZiB0aGUg
-Z3JvdXAgaXMgdmlhYmxlICovCiByZXQgPSBpb2N0bCh2ZmlvX2dyb3VwX2ZkLCBWRklPX0dST1VQ
-X0dFVF9TVEFUVVMsICZncm91cF9zdGF0dXMpOwpAQCAtNTM1LDcgKzU0Myw2IEBAIHN0YXRpYyBp
-bnQgbmJsX21kZXZfbWFwX2RldmljZShzdHJ1Y3QgbmJsX2FkYXB0ZXIgKmFkYXB0ZXIpCiB9CiBm
-cmVlX2dyb3VwOgogY2xvc2UodmZpb19ncm91cF9mZCk7Ci0gcnRlX3ZmaW9fY2xlYXJfZ3JvdXAo
-dmZpb19ncm91cF9mZCk7CiBmcmVlX2NvbnRhaW5lcjoKIGlmIChjb250YWluZXJfY3JlYXRlKQog
-cnRlX3ZmaW9fY29udGFpbmVyX2Rlc3Ryb3koY29udGFpbmVyKTsKQEAgLTU0OSwxNyArNTU2LDE0
-IEBAIHN0YXRpYyBpbnQgbmJsX21kZXZfdW5tYXBfZGV2aWNlKHN0cnVjdCBuYmxfYWRhcHRlciAq
-YWRhcHRlcikKIGNsb3NlKGNvbW1vbi0+ZGV2ZmQpOwogcnRlX21jZmdfbWVtX3JlYWRfbG9jaygp
-OwotIHZmaW9fZ3JvdXBfZmQgPSBydGVfdmZpb19jb250YWluZXJfZ3JvdXBfYmluZChuYmxfZGVm
-YXVsdF9jb250YWluZXIsCi0gY29tbW9uLT5pb21tdV9ncm91cF9udW0pOworIHZmaW9fZ3JvdXBf
-ZmQgPSBjb21tb24tPmdyb3VwZmQ7CiBOQkxfTE9HKERFQlVHLCAiY2xvc2UgdmZpb19ncm91cF9m
-ZCAlZCIsIHZmaW9fZ3JvdXBfZmQpOwogcmV0ID0gaW9jdGwodmZpb19ncm91cF9mZCwgVkZJT19H
-Uk9VUF9VTlNFVF9DT05UQUlORVIsICZuYmxfZGVmYXVsdF9jb250YWluZXIpOwogaWYgKHJldCkK
-IE5CTF9MT0coRVJSLCAidW5zZXQgY29udGFpbmVyLCBlcnJvciAlaSAoJXMpICVkIiwKIGVycm5v
-LCBzdHJlcnJvcihlcnJubyksIHJldCk7CiBuYmxfZ3JvdXBfY291bnQtLTsKLSByZXQgPSBydGVf
-dmZpb19jb250YWluZXJfZ3JvdXBfdW5iaW5kKG5ibF9kZWZhdWx0X2NvbnRhaW5lciwgY29tbW9u
-LT5pb21tdV9ncm91cF9udW0pOwotIGlmIChyZXQpCi0gTkJMX0xPRyhFUlIsICJ2ZmlvIGNvbnRh
-aW5lciBncm91cCB1bmJpbmQgZmFpbGVkICVkIiwgcmV0KTsKKyBjbG9zZSh2ZmlvX2dyb3VwX2Zk
-KTsKIGlmICghbmJsX2dyb3VwX2NvdW50KSB7CiBydGVfbWVtX2V2ZW50X2NhbGxiYWNrX3VucmVn
-aXN0ZXIoTkJMX1VTRVJERVZfRVZFTlRfQ0xCX05BTUUsIE5VTEwpOwogbmJsX3VzZXJkZXZfZG1h
-X2ZyZWUoKTsKZGlmZiAtLWdpdCBhL2RyaXZlcnMvbmV0L25ibC9uYmxfaW5jbHVkZS9uYmxfaW5j
-bHVkZS5oIGIvZHJpdmVycy9uZXQvbmJsL25ibF9pbmNsdWRlL25ibF9pbmNsdWRlLmgKaW5kZXgg
-ZWVhZTZhMzMwMS4uYmE5OWI5ZjhlNyAxMDA2NDQKLS0tIGEvZHJpdmVycy9uZXQvbmJsL25ibF9p
-bmNsdWRlL25ibF9pbmNsdWRlLmgKKysrIGIvZHJpdmVycy9uZXQvbmJsL25ibF9pbmNsdWRlL25i
-bF9pbmNsdWRlLmgKQEAgLTEzMiw2ICsxMzIsNyBAQCBzdHJ1Y3QgbmJsX2NvbW1vbl9pbmZvIHsK
-IHUxNiB2c2lfaWQ7CiB1MTYgaW5zdGFuY2VfaWQ7CiBpbnQgZGV2ZmQ7CisgaW50IGdyb3VwZmQ7
-CiBpbnQgZXZlbnRmZDsKIGludCBpZmluZGV4OwogaW50IGlvbW11X2dyb3VwX251bTsKLS0gCjIu
-NDcuMwo=
-------=ALIBOUNDARY_1288_7f6368b3e700_69183a78_beead
+On Fri, Nov 14, 2025 at 9:19=E2=80=AFPM Bruce Richardson <bruce.richardson@=
+intel.com>
+wrote:
+
+> On Sat, Oct 11, 2025 at 04:59:34PM +0530, Shreesh Adiga wrote:
+> > Replace the clearing of lower 32 bits of XMM register with blend of
+> > zero register.
+> > Remove the clearing of upper 64 bits of tmp1 as it is redundant.
+> > tmp1 after clearing upper bits was being xor with tmp2 before the
+> > bits 96:65 from tmp2 were returned. The xor operation of bits 96:65
+> > remains unchanged due to tmp1 having bits 96:64 cleared to 0.
+> > After removing the xor operation, the clearing of upper 64 bits of tmp1
+> > becomes redundant and hence can be removed.
+> > Clang is able to optimize away the AND + memory operand with the
+> > above sequence, however GCC is still emitting the code for AND with
+> > memory operands which is being explicitly eliminated here.
+> >
+> > Additionally replace the 48 byte crc_xmm_shift_tab with the contents of
+> > shf_table which is 32 bytes, achieving the same functionality.
+> >
+> > Signed-off-by: Shreesh Adiga <16567adigashreesh@gmail.com>
+> > ---
+>
+> Sorry for delay in getting back to look at the second version of this. Th=
+e
+> explanation, given in reponse to questions of v1, of the second set of
+> changes in this makes sense.
+>
+> Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+>
+> Ideally, this patch should have been sent in reponse to v1 to keep the
+> thread together. Also, I think this would be better split into two patche=
+s,
+> one for the reduce64_to_32 change and another for the shift table change.
+> That way, you could include the fuller explanation of the second change i=
+n
+> the commit log to make easier review.
+>
+
+Sure I will send an updated patch after splitting into two patches.
+Since I am not familiar with email based patch submissions, it ended up
+being
+a new thread, sorry about that. I will try to update this thread with the
+new revision soon.
+
+
+> > Changes since v1:
+> > Reversed the operands in the blend operation for readability.
+> > Removed tmp1 operations that are not affecting the result and hence
+> > avoid clearing the upper 64 bits for tmp1.
+> >
+> >  lib/net/net_crc_sse.c | 30 ++++++------------------------
+> >  1 file changed, 6 insertions(+), 24 deletions(-)
+> >
+> > diff --git a/lib/net/net_crc_sse.c b/lib/net/net_crc_sse.c
+> > index 112dc94ac1..e590aeb5ac 100644
+> > --- a/lib/net/net_crc_sse.c
+> > +++ b/lib/net/net_crc_sse.c
+> > @@ -96,35 +96,24 @@ crcr32_reduce_128_to_64(__m128i data128, __m128i
+> precomp)
+> >  static __rte_always_inline uint32_t
+> >  crcr32_reduce_64_to_32(__m128i data64, __m128i precomp)
+> >  {
+> > -     static const alignas(16) uint32_t mask1[4] =3D {
+> > -             0xffffffff, 0xffffffff, 0x00000000, 0x00000000
+> > -     };
+> > -
+> > -     static const alignas(16) uint32_t mask2[4] =3D {
+> > -             0x00000000, 0xffffffff, 0xffffffff, 0xffffffff
+> > -     };
+> >       __m128i tmp0, tmp1, tmp2;
+> >
+> > -     tmp0 =3D _mm_and_si128(data64, _mm_load_si128((const __m128i
+> *)mask2));
+> > +     tmp0 =3D _mm_blend_epi16(data64, _mm_setzero_si128(), 0x3);
+> >
+> >       tmp1 =3D _mm_clmulepi64_si128(tmp0, precomp, 0x00);
+> >       tmp1 =3D _mm_xor_si128(tmp1, tmp0);
+> > -     tmp1 =3D _mm_and_si128(tmp1, _mm_load_si128((const __m128i *)mask=
+1));
+> >
+> >       tmp2 =3D _mm_clmulepi64_si128(tmp1, precomp, 0x10);
+> > -     tmp2 =3D _mm_xor_si128(tmp2, tmp1);
+> >       tmp2 =3D _mm_xor_si128(tmp2, tmp0);
+> >
+> >       return _mm_extract_epi32(tmp2, 2);
+> >  }
+> >
+> > -static const alignas(16) uint8_t crc_xmm_shift_tab[48] =3D {
+> > -     0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+> > -     0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+> > +static const alignas(16) uint8_t crc_xmm_shift_tab[32] =3D {
+> > +     0x00, 0x81, 0x82, 0x83, 0x84, 0x85, 0x86, 0x87,
+> > +     0x88, 0x89, 0x8a, 0x8b, 0x8c, 0x8d, 0x8e, 0x8f,
+> >       0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+> > -     0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
+> > -     0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+> > -     0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff
+> > +     0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f
+> >  };
+> >
+> >  /**
+> > @@ -216,19 +205,12 @@ crc32_eth_calc_pclmulqdq(
+> >                       0x80808080, 0x80808080, 0x80808080, 0x80808080
+> >               };
+> >
+> > -             const alignas(16) uint8_t shf_table[32] =3D {
+> > -                     0x00, 0x81, 0x82, 0x83, 0x84, 0x85, 0x86, 0x87,
+> > -                     0x88, 0x89, 0x8a, 0x8b, 0x8c, 0x8d, 0x8e, 0x8f,
+> > -                     0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+> > -                     0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f
+> > -             };
+> > -
+> >               __m128i last16, a, b;
+> >
+> >               last16 =3D _mm_loadu_si128((const __m128i *)&data[data_le=
+n -
+> 16]);
+> >
+> >               temp =3D _mm_loadu_si128((const __m128i *)
+> > -                     &shf_table[data_len & 15]);
+> > +                     &crc_xmm_shift_tab[data_len & 15]);
+> >               a =3D _mm_shuffle_epi8(fold, temp);
+> >
+> >               temp =3D _mm_xor_si128(temp,
+> > --
+> > 2.49.1
+> >
+>
+
+--000000000000373af306439f4767
 Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: quoted-printable
 
-PGRpdiBjbGFzcz0iX19hbGl5dW5fZW1haWxfYm9keV9ibG9jayI+PGRpdiAgc3R5bGU9ImZvbnQt
-ZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBTVEhlaXRpU0MtTGlnaHQsIFNpbVN1biI+PGRpdiAgc3R5
-bGU9ImNsZWFyOiBib3RoOyBmb250LWZhbWlseTogVGFob21hLCBBcmlhbCwgU1RIZWl0aVNDLUxp
-Z2h0LCBTaW1TdW47Ij48c3BhbiAgc3R5bGU9ImZvbnQtZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBT
-VEhlaXRpU0MtTGlnaHQsIFNpbVN1bjsiPkhpJm5ic3A7PHNwYW4gIHN0eWxlPSJjb2xvcjogcmdi
-KDAsIDAsIDApOyBmb250LWZhbWlseTogVGFob21hLCBBcmlhbCwgU1RIZWl0aSwgU2ltU3VuOyBm
-b250LXNpemU6IDE0cHg7IGZvbnQtc3R5bGU6IG5vcm1hbDsgZm9udC12YXJpYW50LWxpZ2F0dXJl
-czogbm9ybWFsOyBmb250LXZhcmlhbnQtY2Fwczogbm9ybWFsOyBmb250LXdlaWdodDogNDAwOyBs
-ZXR0ZXItc3BhY2luZzogbm9ybWFsOyB0ZXh0LWFsaWduOiBzdGFydDsgdGV4dC1pbmRlbnQ6IDBw
-eDsgdGV4dC10cmFuc2Zvcm06IG5vbmU7IHdvcmQtc3BhY2luZzogMHB4OyB3aGl0ZS1zcGFjZTog
-bm9ybWFsOyBiYWNrZ3JvdW5kLWNvbG9yOiByZ2IoMjU1LCAyNTUsIDI1NSk7IHRleHQtZGVjb3Jh
-dGlvbi10aGlja25lc3M6IGluaXRpYWw7IHRleHQtZGVjb3JhdGlvbi1zdHlsZTogaW5pdGlhbDsg
-dGV4dC1kZWNvcmF0aW9uLWNvbG9yOiBpbml0aWFsOyBmbG9hdDogbm9uZTsgZGlzcGxheTogaW5s
-aW5lICFpbXBvcnRhbnQ7Ij5BbmF0b2x5LDwvc3Bhbj48L3NwYW4+PC9kaXY+PGRpdiAgc3R5bGU9
-ImNsZWFyOiBib3RoOyBmb250LWZhbWlseTogVGFob21hLCBBcmlhbCwgU1RIZWl0aVNDLUxpZ2h0
-LCBTaW1TdW47Ij48c3BhbiAgc3R5bGU9ImZvbnQtZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBTVEhl
-aXRpU0MtTGlnaHQsIFNpbVN1bjsiPjxiciA+PC9zcGFuPjwvZGl2PjxkaXYgIHN0eWxlPSJjbGVh
-cjogYm90aDsgZm9udC1mYW1pbHk6IFRhaG9tYSwgQXJpYWwsIFNUSGVpdGlTQy1MaWdodCwgU2lt
-U3VuOyI+PHNwYW4gIHN0eWxlPSJmb250LWZhbWlseTogVGFob21hLCBBcmlhbCwgU1RIZWl0aVND
-LUxpZ2h0LCBTaW1TdW47Ij48c3BhbiA+SSBmZWVsIHRoZXJlIG1pZ2h0IGJlIGEgcG9pbnQgdGhh
-dCBuZWVkcyBhdHRlbnRpb24uPC9zcGFuPjwvc3Bhbj48L2Rpdj48ZGl2ICBzdHlsZT0iY2xlYXI6
-IGJvdGg7IGZvbnQtZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBTVEhlaXRpU0MtTGlnaHQsIFNpbVN1
-bjsiPjxiciA+PC9kaXY+PGRpdiAgc3R5bGU9ImNsZWFyOiBib3RoOyBmb250LWZhbWlseTogVGFo
-b21hLCBBcmlhbCwgU1RIZWl0aVNDLUxpZ2h0LCBTaW1TdW47Ij5UaGUgb2xkIHJ0ZV92ZmlvX2dl
-dF9ncm91cF9udW0gZnVuY3Rpb24gcmV0dXJucyAmbHQ7PSAwIHRvIGluZGljYXRlIGZhaWx1cmUs
-PC9kaXY+PGRpdiAgc3R5bGU9ImNsZWFyOiBib3RoOyBmb250LWZhbWlseTogVGFob21hLCBBcmlh
-bCwgU1RIZWl0aVNDLUxpZ2h0LCBTaW1TdW47Ij48ZGl2ICBzdHlsZT0iY2xlYXI6IGJvdGg7Ij53
-aGlsZSB0aGUgbmV3IHJ0ZV92ZmlvX2dldF9ncm91cF9udW0gZnVuY3Rpb24gcmV0dXJucyAmbHQ7
-IDAgdG8gaW5kaWNhdGUgZmFpbHVyZS48YnIgPjwvZGl2PjxkaXYgIHN0eWxlPSJjbGVhcjogYm90
-aDsiPlRoZXJlZm9yZSwgYWxsIERQREsgY29kZSB0aGF0IGNoZWNrcyB0aGUgcmV0dXJuIHZhbHVl
-IG9mIHRoZSBydGVfdmZpb19nZXRfZ3JvdXBfbnVtIGZ1bmN0aW9uIHNob3VsZCBiZSBtb2RpZmll
-ZC48YnIgPjwvZGl2PjxkaXYgIHN0eWxlPSJjbGVhcjogYm90aDsiPjxiciA+PC9kaXY+PGRpdiAg
-c3R5bGU9ImNsZWFyOiBib3RoOyI+Rm9yIGV4YW1wbGUsIGluIHRoZSBuYmwgbmV0IGRyaXZlciwg
-dGhlcmUgaXMgdGhlIGZvbGxvd2luZyBjb2RlOjxiciA+PC9kaXY+PGRpdiAgc3R5bGU9ImNsZWFy
-OiBib3RoOyI+cmV0ID0gcnRlX3ZmaW9fZ2V0X2dyb3VwX251bShwYXRobmFtZSwgZGV2X25hbWUs
-ICZhbXA7Y29tbW9uLSZndDtpb21tdV9ncm91cF9udW0pOzxiciA+PC9kaXY+PGRpdiAgc3R5bGU9
-ImNsZWFyOiBib3RoOyI+aWYgKHJldCAmbHQ7PSAwKSB7PGJyID48L2Rpdj48ZGl2ICBzdHlsZT0i
-Y2xlYXI6IGJvdGg7Ij4mbmJzcDsgJm5ic3A7IE5CTF9MT0coRVJSLCAibmJsIHZmaW8gZ3JvdXAg
-bnVtYmVyIGZhaWxlZCIpOzxiciA+PC9kaXY+PGRpdiAgc3R5bGU9ImNsZWFyOiBib3RoOyI+Jm5i
-c3A7ICZuYnNwOyByZXR1cm4gLTE7PGJyID48L2Rpdj48ZGl2ICBzdHlsZT0iY2xlYXI6IGJvdGg7
-Ij59PGJyID48L2Rpdj48ZGl2ICBzdHlsZT0iY2xlYXI6IGJvdGg7Ij48YnIgPjwvZGl2PjxkaXYg
-IHN0eWxlPSJjbGVhcjogYm90aDsiPkl0IHNob3VsZCBiZSBtb2RpZmllZCB0bzo8YnIgPjwvZGl2
-PjxkaXYgIHN0eWxlPSJjbGVhcjogYm90aDsiPnJldCA9IHJ0ZV92ZmlvX2dldF9ncm91cF9udW0o
-cGF0aG5hbWUsIGRldl9uYW1lLCAmYW1wO2NvbW1vbi0mZ3Q7aW9tbXVfZ3JvdXBfbnVtKTs8YnIg
-PjwvZGl2PjxkaXYgIHN0eWxlPSJjbGVhcjogYm90aDsiPmlmIChyZXQgJmx0OyAwKSB7PGJyID48
-L2Rpdj48ZGl2ICBzdHlsZT0iY2xlYXI6IGJvdGg7Ij4mbmJzcDsgJm5ic3A7IE5CTF9MT0coRVJS
-LCAibmJsIHZmaW8gZ3JvdXAgbnVtYmVyIGZhaWxlZCIpOzxiciA+PC9kaXY+PGRpdiAgc3R5bGU9
-ImNsZWFyOiBib3RoOyI+Jm5ic3A7ICZuYnNwOyByZXR1cm4gLTE7PGJyID48L2Rpdj48ZGl2ID48
-c3BhbiA+fTwvc3Bhbj48L2Rpdj48cCAgY2xhc3M9ImRzLW1hcmtkb3duLXBhcmFncmFwaCIgc3R5
-bGU9Im1hcmdpbjogMTZweCAwcHg7IGNvbG9yOiByZ2IoMTUsIDE3LCAyMSk7IGZvbnQtZmFtaWx5
-OiBxdW90ZS1jamstcGF0Y2gsIEludGVyLCBzeXN0ZW0tdWksIC1hcHBsZS1zeXN0ZW0sIEJsaW5r
-TWFjU3lzdGVtRm9udCwgJ1NlZ29lIFVJJywgUm9ib3RvLCBPeHlnZW4sIFVidW50dSwgQ2FudGFy
-ZWxsLCAnT3BlbiBTYW5zJywgJ0hlbHZldGljYSBOZXVlJywgc2Fucy1zZXJpZjsgZm9udC1zaXpl
-OiAxNnB4OyBmb250LXN0eWxlOiBub3JtYWw7IGZvbnQtdmFyaWFudC1saWdhdHVyZXM6IG5vcm1h
-bDsgZm9udC12YXJpYW50LWNhcHM6IG5vcm1hbDsgZm9udC13ZWlnaHQ6IDQwMDsgbGV0dGVyLXNw
-YWNpbmc6IG5vcm1hbDsgdGV4dC1hbGlnbjogc3RhcnQ7IHRleHQtaW5kZW50OiAwcHg7IHRleHQt
-dHJhbnNmb3JtOiBub25lOyB3aGl0ZS1zcGFjZTogbm9ybWFsOyB3b3JkLXNwYWNpbmc6IDBweDsg
-YmFja2dyb3VuZC1jb2xvcjogcmdiKDI1NSwgMjU1LCAyNTUpOyB0ZXh0LWRlY29yYXRpb24tc3R5
-bGU6IGluaXRpYWw7IHRleHQtZGVjb3JhdGlvbi1jb2xvcjogaW5pdGlhbDsiPjxzcGFuID48L3Nw
-YW4+PGJyID48L3A+PGRpdiA+PC9kaXY+PHNwYW4gIHN0eWxlPSJmb250LWZhbWlseTogVGFob21h
-LCBBcmlhbCwgU1RIZWl0aVNDLUxpZ2h0LCBTaW1TdW47Ij48YnIgPjwvc3Bhbj48L2Rpdj48ZGl2
-ICBzdHlsZT0iY2xlYXI6IGJvdGg7IGZvbnQtZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBTVEhlaXRp
-U0MtTGlnaHQsIFNpbVN1bjsiPjxzcGFuICBzdHlsZT0iZm9udC1mYW1pbHk6IFRhaG9tYSwgQXJp
-YWwsIFNUSGVpdGlTQy1MaWdodCwgU2ltU3VuOyI+PGJyID48L3NwYW4+PC9kaXY+PGJsb2NrcXVv
-dGUgIF9xdW90ZT0iMSIgc3R5bGU9Im1hcmdpbi1yaWdodDogMHB4OyBtYXJnaW4tdG9wOiAwcHg7
-IG1hcmdpbi1ib3R0b206IDBweDsgZm9udC1mYW1pbHk6IFRhaG9tYSwgQXJpYWwsIFNUSGVpdGks
-IFNpbVN1bjsgZm9udC1zaXplOiAxNHB4OyBjb2xvcjogcmdiKDAsIDAsIDApOyI+PGRpdiAgY2xh
-c3M9ImFsaW1haWwtcXVvdGUiPjxkaXYgIHN0eWxlPSJjbGVhcjogYm90aDsiPi0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLTwv
-ZGl2PjxkaXYgIHN0eWxlPSJjbGVhcjogYm90aDsiPuWPkeS7tuS6uu+8mkFuYXRvbHkgQnVyYWtv
-diAmbHQ7YW5hdG9seS5idXJha292QGludGVsLmNvbSZndDs8L2Rpdj48ZGl2ICBzdHlsZT0iY2xl
-YXI6IGJvdGg7Ij7lj5HpgIHml7bpl7TvvJoyMDI15bm0MTHmnIgxNeaXpSjlkajlha0pIDAxOjQw
-PC9kaXY+PGRpdiAgc3R5bGU9ImNsZWFyOiBib3RoOyI+5pS25Lu25Lq677yaZGV2Jmx0O2RldkBk
-cGRrLm9yZyZndDs7IERpbW9uJmx0O2RpbW9uLnpoYW9AbmVidWxhLW1hdHJpeC5jb20mZ3Q7OyBL
-eW8gTGl1Jmx0O2t5by5saXVAbmVidWxhLW1hdHJpeC5jb20mZ3Q7OyBMZW9uJmx0O2xlb24ueXVA
-bmVidWxhLW1hdHJpeC5jb20mZ3Q7OyBTYW0mbHQ7c2FtLmNoZW5AbmVidWxhLW1hdHJpeC5jb20m
-Z3Q7PC9kaXY+PGRpdiAgc3R5bGU9ImNsZWFyOiBib3RoOyI+5Li744CA6aKY77yaW1BBVENIIHYy
-IDA3LzE5XSBuZXQvbmJsOiBkbyBub3QgdXNlIFZGSU8gZ3JvdXAgYmluZCBBUEk8L2Rpdj48ZGl2
-ICBzdHlsZT0iY2xlYXI6IGJvdGg7Ij48YnIgPjwvZGl2PlRoZSBOQkwgZHJpdmVyIGN1cnJlbnRs
-eSB1c2VzIGdyb3VwIGJpbmQgQVBJLCBidXQgaXQgaXMgdXNpbmcgaXQgb25seSB0bzxiciA+Z2V0
-IGdyb3VwIGZkIGFuZCBub3RoaW5nIGVsc2UuIEluIGNvbnRleHQgb2YgTkJMIGRyaXZlciwgdGhp
-cyBpcyB0aGUgb25seTxiciA+dXNhZ2Ugb2YgVkZJTyBBUEkncyBpbiB0aGUgZHJpdmVyLCBhbmQg
-aXQgaXMgbm90IG5lY2Vzc2FyeSB0byB1c2UgaXQgZm9yPGJyID53aGF0IE5CTCBkcml2ZXIgaXMg
-dHJ5aW5nIHRvIGFjY29tcGxpc2guPGJyID48YnIgPlVzZSBhIGRpcmVjdCBgb3BlbigpYCBjYWxs
-IGluc3RlYWQsIGFuZCBzdG9yZSB0aGUgZ3JvdXAgZmQgaW4gY29tbW9uPGJyID5zdHJ1Y3R1cmUu
-PGJyID48YnIgPlNpZ25lZC1vZmYtYnk6IEFuYXRvbHkgQnVyYWtvdiAmbHQ7YW5hdG9seS5idXJh
-a292QGludGVsLmNvbSZndDs8YnIgPi0tLTxiciA+IGRyaXZlcnMvbmV0L25ibC9uYmxfY29tbW9u
-L25ibF91c2VyZGV2LmMmbmJzcDsgfCAxOCArKysrKysrKysrKy0tLS0tLS08YnIgPiBkcml2ZXJz
-L25ldC9uYmwvbmJsX2luY2x1ZGUvbmJsX2luY2x1ZGUuaCB8Jm5ic3A7IDEgKzxiciA+IDIgZmls
-ZXMgY2hhbmdlZCwgMTIgaW5zZXJ0aW9ucygrKSwgNyBkZWxldGlvbnMoLSk8YnIgPjxiciA+ZGlm
-ZiAtLWdpdCBhL2RyaXZlcnMvbmV0L25ibC9uYmxfY29tbW9uL25ibF91c2VyZGV2LmMgYi9kcml2
-ZXJzL25ldC9uYmwvbmJsX2NvbW1vbi9uYmxfdXNlcmRldi5jPGJyID5pbmRleCA1NjZmM2ExMWVl
-Li5kNjQxZWNkOWE4IDEwMDY0NDxiciA+LS0tIGEvZHJpdmVycy9uZXQvbmJsL25ibF9jb21tb24v
-bmJsX3VzZXJkZXYuYzxiciA+KysrIGIvZHJpdmVycy9uZXQvbmJsL25ibF9jb21tb24vbmJsX3Vz
-ZXJkZXYuYzxiciA+QEAgLTM4Nyw2ICszODcsMTMgQEAgbmJsX3VzZXJkZXZfbWVtX2V2ZW50X2Nh
-bGxiYWNrKGVudW0gcnRlX21lbV9ldmVudCB0eXBlLCBjb25zdCB2b2lkICphZGRyLCBzaXplX3Q8
-YnIgPiZuYnNwOyB9PGJyID4gfTxiciA+IDxiciA+K3N0YXRpYyBpbnQgbmJsX29wZW5fZ3JvdXBf
-ZmQoaW50IGlvbW11X2dyb3VwX251bSk8YnIgPit7PGJyID4rIGNoYXIgcGF0aFtQQVRIX01BWF07
-PGJyID4rIHNucHJpbnRmKHBhdGgsIHNpemVvZihwYXRoKSwgUlRFX1ZGSU9fR1JPVVBfRk1ULCBp
-b21tdV9ncm91cF9udW0pOzxiciA+KyByZXR1cm4gb3BlbihwYXRoLCBPX1JEV1IpOzxiciA+K308
-YnIgPis8YnIgPiBzdGF0aWMgaW50IG5ibF9tZGV2X21hcF9kZXZpY2Uoc3RydWN0IG5ibF9hZGFw
-dGVyICphZGFwdGVyKTxiciA+IHs8YnIgPiZuYnNwOyBjb25zdCBzdHJ1Y3QgcnRlX3BjaV9kZXZp
-Y2UgKnBjaV9kZXYgPSBhZGFwdGVyLSZndDtwY2lfZGV2OzxiciA+QEAgLTQyNCwxMSArNDMxLDEy
-IEBAIHN0YXRpYyBpbnQgbmJsX21kZXZfbWFwX2RldmljZShzdHJ1Y3QgbmJsX2FkYXB0ZXIgKmFk
-YXB0ZXIpPGJyID4mbmJzcDsgfTxiciA+IDxiciA+Jm5ic3A7IE5CTF9MT0coREVCVUcsICJuYmwg
-dmZpbyBjb250YWluZXIgJWQiLCBjb250YWluZXIpOzxiciA+LSB2ZmlvX2dyb3VwX2ZkID0gcnRl
-X3ZmaW9fY29udGFpbmVyX2dyb3VwX2JpbmQoY29udGFpbmVyLCBjb21tb24tJmd0O2lvbW11X2dy
-b3VwX251bSk7PGJyID4rIHZmaW9fZ3JvdXBfZmQgPSBuYmxfb3Blbl9ncm91cF9mZChjb21tb24t
-Jmd0O2lvbW11X2dyb3VwX251bSk7PGJyID4mbmJzcDsgaWYgKHZmaW9fZ3JvdXBfZmQgJmx0OyAw
-KSB7PGJyID4gJm5ic3A7IE5CTF9MT0coRVJSLCAibmJsIHZmaW8gZ3JvdXAgYmluZCBmYWlsZWQs
-ICVkIiwgdmZpb19ncm91cF9mZCk7PGJyID4gJm5ic3A7IGdvdG8gZnJlZV9jb250YWluZXI7PGJy
-ID4mbmJzcDsgfTxiciA+KyBjb21tb24tJmd0O2dyb3VwZmQgPSB2ZmlvX2dyb3VwX2ZkOzxiciA+
-IDxiciA+Jm5ic3A7IC8qIGNoZWNrIGlmIHRoZSBncm91cCBpcyB2aWFibGUgKi88YnIgPiZuYnNw
-OyByZXQgPSBpb2N0bCh2ZmlvX2dyb3VwX2ZkLCBWRklPX0dST1VQX0dFVF9TVEFUVVMsICZhbXA7
-Z3JvdXBfc3RhdHVzKTs8YnIgPkBAIC01MzUsNyArNTQzLDYgQEAgc3RhdGljIGludCBuYmxfbWRl
-dl9tYXBfZGV2aWNlKHN0cnVjdCBuYmxfYWRhcHRlciAqYWRhcHRlcik8YnIgPiZuYnNwOyB9PGJy
-ID4gZnJlZV9ncm91cDo8YnIgPiZuYnNwOyBjbG9zZSh2ZmlvX2dyb3VwX2ZkKTs8YnIgPi0gcnRl
-X3ZmaW9fY2xlYXJfZ3JvdXAodmZpb19ncm91cF9mZCk7PGJyID4gZnJlZV9jb250YWluZXI6PGJy
-ID4mbmJzcDsgaWYgKGNvbnRhaW5lcl9jcmVhdGUpPGJyID4gJm5ic3A7IHJ0ZV92ZmlvX2NvbnRh
-aW5lcl9kZXN0cm95KGNvbnRhaW5lcik7PGJyID5AQCAtNTQ5LDE3ICs1NTYsMTQgQEAgc3RhdGlj
-IGludCBuYmxfbWRldl91bm1hcF9kZXZpY2Uoc3RydWN0IG5ibF9hZGFwdGVyICphZGFwdGVyKTxi
-ciA+IDxiciA+Jm5ic3A7IGNsb3NlKGNvbW1vbi0mZ3Q7ZGV2ZmQpOzxiciA+Jm5ic3A7IHJ0ZV9t
-Y2ZnX21lbV9yZWFkX2xvY2soKTs8YnIgPi0gdmZpb19ncm91cF9mZCA9IHJ0ZV92ZmlvX2NvbnRh
-aW5lcl9ncm91cF9iaW5kKG5ibF9kZWZhdWx0X2NvbnRhaW5lciw8YnIgPi0mbmJzcDsgJm5ic3A7
-ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyBjb21tb24tJmd0O2lvbW11X2dyb3VwX251bSk7
-PGJyID4rIHZmaW9fZ3JvdXBfZmQgPSBjb21tb24tJmd0O2dyb3VwZmQ7PGJyID4mbmJzcDsgTkJM
-X0xPRyhERUJVRywgImNsb3NlIHZmaW9fZ3JvdXBfZmQgJWQiLCB2ZmlvX2dyb3VwX2ZkKTs8YnIg
-PiZuYnNwOyByZXQgPSBpb2N0bCh2ZmlvX2dyb3VwX2ZkLCBWRklPX0dST1VQX1VOU0VUX0NPTlRB
-SU5FUiwgJmFtcDtuYmxfZGVmYXVsdF9jb250YWluZXIpOzxiciA+Jm5ic3A7IGlmIChyZXQpPGJy
-ID4gJm5ic3A7IE5CTF9MT0coRVJSLCAidW5zZXQgY29udGFpbmVyLCBlcnJvciAlaSAoJXMpICVk
-Iiw8YnIgPiZuYnNwOyAmbmJzcDsgZXJybm8sIHN0cmVycm9yKGVycm5vKSwgcmV0KTs8YnIgPiZu
-YnNwOyBuYmxfZ3JvdXBfY291bnQtLTs8YnIgPi0gcmV0ID0gcnRlX3ZmaW9fY29udGFpbmVyX2dy
-b3VwX3VuYmluZChuYmxfZGVmYXVsdF9jb250YWluZXIsIGNvbW1vbi0mZ3Q7aW9tbXVfZ3JvdXBf
-bnVtKTs8YnIgPi0gaWYgKHJldCk8YnIgPi0mbmJzcDsgTkJMX0xPRyhFUlIsICJ2ZmlvIGNvbnRh
-aW5lciBncm91cCB1bmJpbmQgZmFpbGVkICVkIiwgcmV0KTs8YnIgPisgY2xvc2UodmZpb19ncm91
-cF9mZCk7PGJyID4mbmJzcDsgaWYgKCFuYmxfZ3JvdXBfY291bnQpIHs8YnIgPiAmbmJzcDsgcnRl
-X21lbV9ldmVudF9jYWxsYmFja191bnJlZ2lzdGVyKE5CTF9VU0VSREVWX0VWRU5UX0NMQl9OQU1F
-LCBOVUxMKTs8YnIgPiAmbmJzcDsgbmJsX3VzZXJkZXZfZG1hX2ZyZWUoKTs8YnIgPmRpZmYgLS1n
-aXQgYS9kcml2ZXJzL25ldC9uYmwvbmJsX2luY2x1ZGUvbmJsX2luY2x1ZGUuaCBiL2RyaXZlcnMv
-bmV0L25ibC9uYmxfaW5jbHVkZS9uYmxfaW5jbHVkZS5oPGJyID5pbmRleCBlZWFlNmEzMzAxLi5i
-YTk5YjlmOGU3IDEwMDY0NDxiciA+LS0tIGEvZHJpdmVycy9uZXQvbmJsL25ibF9pbmNsdWRlL25i
-bF9pbmNsdWRlLmg8YnIgPisrKyBiL2RyaXZlcnMvbmV0L25ibC9uYmxfaW5jbHVkZS9uYmxfaW5j
-bHVkZS5oPGJyID5AQCAtMTMyLDYgKzEzMiw3IEBAIHN0cnVjdCBuYmxfY29tbW9uX2luZm8gezxi
-ciA+Jm5ic3A7IHUxNiB2c2lfaWQ7PGJyID4mbmJzcDsgdTE2IGluc3RhbmNlX2lkOzxiciA+Jm5i
-c3A7IGludCBkZXZmZDs8YnIgPisgaW50IGdyb3VwZmQ7PGJyID4mbmJzcDsgaW50IGV2ZW50ZmQ7
-PGJyID4mbmJzcDsgaW50IGlmaW5kZXg7PGJyID4mbmJzcDsgaW50IGlvbW11X2dyb3VwX251bTs8
-YnIgPi0tIDxiciA+Mi40Ny4zPC9kaXY+PC9ibG9ja3F1b3RlPjxkaXYgIHN0eWxlPSJsaW5lLWhl
-aWdodDogMjBweDsgY2xlYXI6IGJvdGg7Ij48YnIgPjwvZGl2PjwvZGl2PjwvZGl2Pg0KPGRpdiBz
-dHlsZT0iY2xlYXI6IGJvdGg7Ij48c3BhbiBzdHlsZT0iZm9udC1zaXplOiAxMHB4OyBjb2xvcjog
-cmdiKDIxNiwgMjE2LCAyMTYpOyI+5pys6YKu5Lu25omA5ZCr5L+h5oGv5Y+K5YW25Lu75L2V6ZmE
-5Lu25Li65L+d5a+G5L+h5oGv5LiU5Y+v6IO95bGe5LqO5LiT5pyJ5L+h5oGv44CC5Lu75L2V6Z2e
-5oyH5a6a5o6l5pS25Lq65Z2H5peg5p2D6K6/6Zeu5pys6YKu5Lu244CC5aaC5p6c5oKo5LiN5piv
-6K+l6YKu5Lu255qE5oyH5a6a5o6l5pS25Lq677yM6YKj5LmI5Lu75L2V5a+55pys6YKu5Lu25YaF
-5a656L+b6KGM5oqr6Zyy77yM5aSN5Yi25oiW5L2/55So55qE6KGM5Li65Z2H5piv56aB5q2i55qE
-44CC5aaC5p6c5oKo5LiN5piv6K+l6YKu5Lu255qE5oyH5a6a5o6l5pS25Lq677yM6K+35oKo56uL
-5Y2z6YCa6L+H6YKu5Lu26YCa55+lJm5ic3A7Y29tcGxpYW5jZUBuZWJ1bGEtbWF0cml4LmNvbeW5
-tueri+WNs+WIoOmZpOaCqOmUmeivr+aOpeWPl+eahOmCruS7tuOAgjwvc3Bhbj48L2Rpdj48ZGl2
-IHN0eWxlPSJjbGVhcjogYm90aDsiPjxzcGFuIHN0eWxlPSJmb250LXNpemU6IDEwcHg7IGNvbG9y
-OiByZ2IoMjE2LCAyMTYsIDIxNik7Ij5UaGUmbmJzcDtpbmZvcm1hdGlvbiZuYnNwO2luJm5ic3A7
-dGhpcyZuYnNwO21lc3NhZ2UmbmJzcDthbmQmbmJzcDthbnkmbmJzcDthdHRhY2htZW50cyZuYnNw
-O2lzJm5ic3A7Y29uZmlkZW50aWFsJm5ic3A7YW5kJm5ic3A7bWF5Jm5ic3A7YmUmbmJzcDtwcml2
-aWxlZ2VkLiZuYnNwOyZuYnNwO0FjY2VzcyZuYnNwO3RvJm5ic3A7dGhpcyZuYnNwO2VtYWlsJm5i
-c3A7YnkmbmJzcDthbnlvbmUmbmJzcDtvdGhlciZuYnNwO3RoYW4mbmJzcDt0aGUmbmJzcDtpbnRl
-bmRlZCZuYnNwO3JlY2lwaWVudCZuYnNwO2lzJm5ic3A7bm90Jm5ic3A7YXV0aG9yaXplZC4mbmJz
-cDsmbmJzcDtJZiZuYnNwO3lvdSZuYnNwO2FyZSZuYnNwO25vdCZuYnNwO3RoZSZuYnNwO2ludGVu
-ZGVkJm5ic3A7cmVjaXBpZW50LCZuYnNwO2Rpc2Nsb3N1cmUsJm5ic3A7Y29weWluZyZuYnNwO29y
-Jm5ic3A7dXNlJm5ic3A7b2YmbmJzcDt0aGUmbmJzcDtjb250ZW50cyZuYnNwO29mJm5ic3A7dGhp
-cyZuYnNwO2VtYWlsJm5ic3A7aXMmbmJzcDtwcm9oaWJpdGVkLiZuYnNwOyZuYnNwO0lmJm5ic3A7
-eW91Jm5ic3A7YXJlJm5ic3A7bm90Jm5ic3A7dGhlJm5ic3A7aW50ZW5kZWQmbmJzcDtyZWNpcGll
-bnQsJm5ic3A7cGxlYXNlJm5ic3A7bm90aWZ5Jm5ic3A7Jm5ic3A7Y29tcGxpYW5jZUBuZWJ1bGEt
-bWF0cml4LmNvbSZuYnNwO2ltbWVkaWF0ZWx5Jm5ic3A7YnkmbmJzcDtlbWFpbCwmbmJzcDthbmQm
-bmJzcDtwbGVhc2UmbmJzcDtkZXN0cm95Jm5ic3A7dGhlJm5ic3A7ZW1haWwmbmJzcDt5b3UmbmJz
-cDtyZWNlaXZlZCZuYnNwO2luJm5ic3A7ZXJyb3IuPC9zcGFuPjwvZGl2Pg==
-------=ALIBOUNDARY_1288_7f6368b3e700_69183a78_beead--
+<div dir=3D"ltr"><div dir=3D"ltr"><br></div><br><div class=3D"gmail_quote g=
+mail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Fri, Nov 14,=
+ 2025 at 9:19=E2=80=AFPM Bruce Richardson &lt;<a href=3D"mailto:bruce.richa=
+rdson@intel.com">bruce.richardson@intel.com</a>&gt; wrote:<br></div><blockq=
+uote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1p=
+x solid rgb(204,204,204);padding-left:1ex">On Sat, Oct 11, 2025 at 04:59:34=
+PM +0530, Shreesh Adiga wrote:<br>
+&gt; Replace the clearing of lower 32 bits of XMM register with blend of<br=
+>
+&gt; zero register.<br>
+&gt; Remove the clearing of upper 64 bits of tmp1 as it is redundant.<br>
+&gt; tmp1 after clearing upper bits was being xor with tmp2 before the<br>
+&gt; bits 96:65 from tmp2 were returned. The xor operation of bits 96:65<br=
+>
+&gt; remains unchanged due to tmp1 having bits 96:64 cleared to 0.<br>
+&gt; After removing the xor operation, the clearing of upper 64 bits of tmp=
+1<br>
+&gt; becomes redundant and hence can be removed.<br>
+&gt; Clang is able to optimize away the AND + memory operand with the<br>
+&gt; above sequence, however GCC is still emitting the code for AND with<br=
+>
+&gt; memory operands which is being explicitly eliminated here.<br>
+&gt; <br>
+&gt; Additionally replace the 48 byte crc_xmm_shift_tab with the contents o=
+f<br>
+&gt; shf_table which is 32 bytes, achieving the same functionality.<br>
+&gt; <br>
+&gt; Signed-off-by: Shreesh Adiga &lt;<a href=3D"mailto:16567adigashreesh@g=
+mail.com" target=3D"_blank">16567adigashreesh@gmail.com</a>&gt;<br>
+&gt; ---<br>
+<br>
+Sorry for delay in getting back to look at the second version of this. The<=
+br>
+explanation, given in reponse to questions of v1, of the second set of<br>
+changes in this makes sense.<br>
+<br>
+Acked-by: Bruce Richardson &lt;<a href=3D"mailto:bruce.richardson@intel.com=
+" target=3D"_blank">bruce.richardson@intel.com</a>&gt;<br>
+<br>
+Ideally, this patch should have been sent in reponse to v1 to keep the<br>
+thread together. Also, I think this would be better split into two patches,=
+<br>
+one for the reduce64_to_32 change and another for the shift table change.<b=
+r>
+That way, you could include the fuller explanation of the second change in<=
+br>
+the commit log to make easier review.<br></blockquote><div><br></div><div>S=
+ure I will send an updated patch after splitting into two patches.=C2=A0</d=
+iv><div>Since I am not familiar with email based patch submissions, it ende=
+d up being</div><div>a new thread,=C2=A0sorry about that. I will try to upd=
+ate this thread with the new revision soon.</div><div>=C2=A0</div><blockquo=
+te class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px =
+solid rgb(204,204,204);padding-left:1ex">
+&gt; Changes since v1:<br>
+&gt; Reversed the operands in the blend operation for readability.<br>
+&gt; Removed tmp1 operations that are not affecting the result and hence<br=
+>
+&gt; avoid clearing the upper 64 bits for tmp1.<br>
+&gt; <br>
+&gt;=C2=A0 lib/net/net_crc_sse.c | 30 ++++++------------------------<br>
+&gt;=C2=A0 1 file changed, 6 insertions(+), 24 deletions(-)<br>
+&gt; <br>
+&gt; diff --git a/lib/net/net_crc_sse.c b/lib/net/net_crc_sse.c<br>
+&gt; index 112dc94ac1..e590aeb5ac 100644<br>
+&gt; --- a/lib/net/net_crc_sse.c<br>
+&gt; +++ b/lib/net/net_crc_sse.c<br>
+&gt; @@ -96,35 +96,24 @@ crcr32_reduce_128_to_64(__m128i data128, __m128i p=
+recomp)<br>
+&gt;=C2=A0 static __rte_always_inline uint32_t<br>
+&gt;=C2=A0 crcr32_reduce_64_to_32(__m128i data64, __m128i precomp)<br>
+&gt;=C2=A0 {<br>
+&gt; -=C2=A0 =C2=A0 =C2=A0static const alignas(16) uint32_t mask1[4] =3D {<=
+br>
+&gt; -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A00xffffffff, 0xfffffff=
+f, 0x00000000, 0x00000000<br>
+&gt; -=C2=A0 =C2=A0 =C2=A0};<br>
+&gt; -<br>
+&gt; -=C2=A0 =C2=A0 =C2=A0static const alignas(16) uint32_t mask2[4] =3D {<=
+br>
+&gt; -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A00x00000000, 0xfffffff=
+f, 0xffffffff, 0xffffffff<br>
+&gt; -=C2=A0 =C2=A0 =C2=A0};<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0__m128i tmp0, tmp1, tmp2;<br>
+&gt; <br>
+&gt; -=C2=A0 =C2=A0 =C2=A0tmp0 =3D _mm_and_si128(data64, _mm_load_si128((co=
+nst __m128i *)mask2));<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0tmp0 =3D _mm_blend_epi16(data64, _mm_setzero_si12=
+8(), 0x3);<br>
+&gt; <br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0tmp1 =3D _mm_clmulepi64_si128(tmp0, precomp,=
+ 0x00);<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0tmp1 =3D _mm_xor_si128(tmp1, tmp0);<br>
+&gt; -=C2=A0 =C2=A0 =C2=A0tmp1 =3D _mm_and_si128(tmp1, _mm_load_si128((cons=
+t __m128i *)mask1));<br>
+&gt; <br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0tmp2 =3D _mm_clmulepi64_si128(tmp1, precomp,=
+ 0x10);<br>
+&gt; -=C2=A0 =C2=A0 =C2=A0tmp2 =3D _mm_xor_si128(tmp2, tmp1);<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0tmp2 =3D _mm_xor_si128(tmp2, tmp0);<br>
+&gt; <br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0return _mm_extract_epi32(tmp2, 2);<br>
+&gt;=C2=A0 }<br>
+&gt; <br>
+&gt; -static const alignas(16) uint8_t crc_xmm_shift_tab[48] =3D {<br>
+&gt; -=C2=A0 =C2=A0 =C2=A00xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,<b=
+r>
+&gt; -=C2=A0 =C2=A0 =C2=A00xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,<b=
+r>
+&gt; +static const alignas(16) uint8_t crc_xmm_shift_tab[32] =3D {<br>
+&gt; +=C2=A0 =C2=A0 =C2=A00x00, 0x81, 0x82, 0x83, 0x84, 0x85, 0x86, 0x87,<b=
+r>
+&gt; +=C2=A0 =C2=A0 =C2=A00x88, 0x89, 0x8a, 0x8b, 0x8c, 0x8d, 0x8e, 0x8f,<b=
+r>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A00x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x=
+07,<br>
+&gt; -=C2=A0 =C2=A0 =C2=A00x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,<b=
+r>
+&gt; -=C2=A0 =C2=A0 =C2=A00xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,<b=
+r>
+&gt; -=C2=A0 =C2=A0 =C2=A00xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff<br=
+>
+&gt; +=C2=A0 =C2=A0 =C2=A00x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f<br=
+>
+&gt;=C2=A0 };<br>
+&gt; <br>
+&gt;=C2=A0 /**<br>
+&gt; @@ -216,19 +205,12 @@ crc32_eth_calc_pclmulqdq(<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A00x80808080, 0x80808080, 0x80808080, 0x80808080<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0};<br>
+&gt; <br>
+&gt; -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0const alignas(16) uin=
+t8_t shf_table[32] =3D {<br>
+&gt; -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A00x00, 0x81, 0x82, 0x83, 0x84, 0x85, 0x86, 0x87,<br>
+&gt; -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A00x88, 0x89, 0x8a, 0x8b, 0x8c, 0x8d, 0x8e, 0x8f,<br>
+&gt; -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A00x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,<br>
+&gt; -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A00x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f<br>
+&gt; -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0};<br>
+&gt; -<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0__m128i last16, =
+a, b;<br>
+&gt; <br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0last16 =3D _mm_l=
+oadu_si128((const __m128i *)&amp;data[data_len - 16]);<br>
+&gt; <br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0temp =3D _mm_loa=
+du_si128((const __m128i *)<br>
+&gt; -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0&amp;shf_table[data_len &amp; 15]);<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0&amp;crc_xmm_shift_tab[data_len &amp; 15]);<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0a =3D _mm_shuffl=
+e_epi8(fold, temp);<br>
+&gt; <br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0temp =3D _mm_xor=
+_si128(temp,<br>
+&gt; --<br>
+&gt; 2.49.1<br>
+&gt; <br>
+</blockquote></div></div>
 
+--000000000000373af306439f4767--
