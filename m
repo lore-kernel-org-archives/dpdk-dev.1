@@ -2,73 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B23DCEBF80
-	for <dpdk-dev@archiver.kernel.org>; Sat, 15 Nov 2025 19:34:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 196C6CEBF80
+	for <dpdk-dev@archiver.kernel.org>; Sat, 15 Nov 2025 19:37:56 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 26B14410FD;
-	Sat, 15 Nov 2025 20:34:20 +0100 (CET)
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com
- [209.85.210.169])
- by mails.dpdk.org (Postfix) with ESMTP id D9FDD410FA
- for <dev@dpdk.org>; Sat, 15 Nov 2025 20:34:17 +0100 (CET)
-Received: by mail-pf1-f169.google.com with SMTP id
- d2e1a72fcca58-7ade456b6abso2695402b3a.3
- for <dev@dpdk.org>; Sat, 15 Nov 2025 11:34:17 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 3434B40E13;
+	Sat, 15 Nov 2025 20:37:55 +0100 (CET)
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com
+ [209.85.215.170])
+ by mails.dpdk.org (Postfix) with ESMTP id 6693D40A89
+ for <dev@dpdk.org>; Sat, 15 Nov 2025 20:37:54 +0100 (CET)
+Received: by mail-pg1-f170.google.com with SMTP id
+ 41be03b00d2f7-b55517e74e3so2440228a12.2
+ for <dev@dpdk.org>; Sat, 15 Nov 2025 11:37:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1763235257;
- x=1763840057; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1763235473;
+ x=1763840273; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=PQaB4O5GM69//Id1UMPcDAPMD+xjQw6deQuKA4cZ7os=;
- b=APB71p028ijMM/PAK8UpTKv8Tk2bWcAsQPbgmF06DmH05GBF+Iu33VaununrsZ0R1N
- E2EZlVwotowKInBKibvCMF6QWlcZomWblh6/iVmqcw5aHizlyXHXdu5Lq3HpyJLfZwLx
- vvbxJaixTxNY6wVGrR7NMRfiMumAgtavQW346V6Aiv/RuYDPgr8o0wWb4+RmvfdJXMLp
- qnGdUSU7JR6dq5yLTGsYg1tbEsnwesofGAGqPB0dyWF+NTzhZRpaDuovdiZm9wVTVP8S
- G4F5g+Tf62iaIlw+IVI++GQOstiWv383dTWt7SoJq4rP27A9AbsNZGg5SLjLzlAPm3Vj
- qhrw==
+ bh=Cd/b2KcIoJeOxi36VEY2AzV1B2CkfXDKMcI/TPsONcA=;
+ b=y5vtGmKCvV4KWUpFMKtFxD6076BlVMFbBhUUqqxgQ+rlM1Yz8XErkWmK0MOP9eWwYL
+ XrASo0aEgYs2DtJr6s+aUhPh/n+DD5m3eGBfx0Hr9jNnP6T9JO58qrz7k8dE96ESp+0X
+ 5Qm7yZhdG5N/hzURRHEE5eiJthdu2y5808CGrRHRxshKCe8U/MTZi3JDfSuwogKdairq
+ BgwgHOGSH9ex7cBmNhIIJCd0xxdLAyzcYEPTKTGlw7enWYhpkOAIpNgA7OPzTZakqqiL
+ usSIcBYvRAO/QitFycPsYD/ncA7zE9/62zCC0pD4vJWU3+XrTcp8pIFQKp+dGQMG8zyS
+ m9ZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1763235257; x=1763840057;
+ d=1e100.net; s=20230601; t=1763235473; x=1763840273;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=PQaB4O5GM69//Id1UMPcDAPMD+xjQw6deQuKA4cZ7os=;
- b=P212RKU0WebG1mPfBYsuMgIikcIF7L9mRxKTBmxnIAv9UkLh2p2dmAzVvHCaCOQjZM
- +Z0r7UApb1zxeFfD7yQV1nUxa1u6oRUDbYpDr9jZe3B5se9Ao/Oi9M2/wuWEs1kze6ai
- Ng3KnLUlYacUPY2khokPCr3qnxu81QSiVVxMYxa9LIlVXLSyERegAhBNXh0c8R4d70dv
- Uf9uzG+5w9ppEhdRNOA1VkH5OWuoEf8P/CLAkUFy9FKD+14A0pF4mwKRN1GuCmCriGMn
- WUufCjxG0KdTZExmV6fj4C6/mLVMBbra9ybCSzk7GhIlBOz+3uN4qU5LrUG7gid7Tq8e
- fyHQ==
-X-Gm-Message-State: AOJu0YzgcUmN14AErfKGkBeKB9vUMMrVn185lCgsTlFp1lNMy0+V6PFu
- TBpBN1EjG7BOgPvjDiBv5HW2X/f50P+QIUlREEYkl9BQ6hpSPCM21BqgaMPYRUJdLAVupE/3Q3L
- MguS3
-X-Gm-Gg: ASbGncuicSGwt1VIak9BBQtg4t0aOTtZg24PjtrBIpBR5KZ6eTevmI7F42Tg4jlWi1t
- mdwAnozj28I2TG0+MK2T1fXd0ofUB1ZCOfmnPC5Gf9Vgo+ZNmgJPa1UuRF8Kt0Cx/nxM2N/sNQC
- 6rT2EwPDq6+qFo6QMQMTIno6Tu4eU7jz1hMlOW8UyE+jzTdH2URisju4XkqGHxdVUiufNrIBE0P
- A7Gon+gOkOWEtu7pKxzvV/8XFs+OKDkOd6sWjhonsPw0drO+7ROX65olkgXKXJuBMXP5RdKeQdg
- tLLgHsbq+puRiuOkP0X6xTrbtsRsrGBXSuHuuAwI541XLwqaIi9ruesBhDZtI+Bv5LuIoNVM/Sg
- nJ36gdOORlP7nINUdxnO29vgDKYo+t9yh5hTmRA+ToQtKajL4MasMS0gfgaImWQoYcMGuqh/BPj
- Y1cSFcIm/Qslr3Ygfdg0cAqJ+lKfqZhN3orASwtObfTgIrmsQyDg6+gI28wWe+
-X-Google-Smtp-Source: AGHT+IFcNWefZzDobQjcumOtLYb7bbdztXtZP1IHrLJiN/a44wzhB9f5ARI1bVk3STRUtqzifqqrCg==
-X-Received: by 2002:a05:7022:1b12:b0:11b:c2fd:3960 with SMTP id
- a92af1059eb24-11bc2fd3ad4mr500818c88.28.1763235256899; 
- Sat, 15 Nov 2025 11:34:16 -0800 (PST)
+ bh=Cd/b2KcIoJeOxi36VEY2AzV1B2CkfXDKMcI/TPsONcA=;
+ b=ieCpEp6+7Kgh6iEXn94x+qgpipeWNYWpsBtwuOwSZguE4r2MAvYYQyeEfNYJuFrLp2
+ xwOroepzVf07cEk2Vgp2tImz9t08I42Qsd3+Uu35YiRUdo+VA6UWwZb3JnygHScCq9AK
+ Wo/am+McUf+Yt4pr4zzkRMgYcKrLyP8jA01Z4/bOv6mOgACj1hc1ghd4KExlY43gd8wZ
+ PC7GY2PeZPp/YIzldnaf5rMAEBiI//+uEGuZk/ic6QloLsuMz8UuI87zhb5/ZvBVdWSl
+ jZTIwpW2liG/GLT+piEQzDrTiC2mJKwGaJ6TiguHMRmZU52b/pGMbc/XKa9nMFIEvr0f
+ aJ7Q==
+X-Gm-Message-State: AOJu0YygNjIhsh3xoN5ic9a+CmoPeeeg03BONsHusAeay6OO/vy1pn8c
+ YS24KtGGlIC9Czo+rizTNdgwKq29EHKUos38p0TfL1yBIsCZkPUsqW8CmwsxvOx/4m5dXvY6AED
+ T0C9u
+X-Gm-Gg: ASbGnctRXh6hCIYogG6ga+U8jzkmIcNNHTsW0otjS9DwcfC2Y148zk+6hEMY3cpSXJP
+ xn/HGE0197Icp40RjiAWTHRqbLHsnEBHr2kVzxlBUQd0xK51ddhTBWKBTkCsZL61VlnWhumc9wy
+ 1Jk8Gra0VZu6IwNuA49dlAooNlnuG76BtZioNx0nxAFEhjbopBGTIAz1YZrfLPOn2bsejWad+oc
+ 9+0iTtg4FkKayd+CIU1CGhBsOWw2MkdOdGQPJvLxJbboKv+Cr9DeFxvDMvDUDNiB0HUHfK9TDGR
+ UHmEEh3kAEmHlmGkWRSdRPEKh8PrkuxFhRXcTTiBrWW84fyaTM93IQ1+dWNnvs8Tk/UZ6vZvs8S
+ LnZhFEwKPRY/R5dby1hz+i0DqikTszDlhwIBkNi1xS0E7oWDuAImNTA7OCWxtmg9e/sZObHTB2c
+ M76NT+yBYOoIp1S6Wy+YtTv/rS2VPS8/IMMGepQCaz2ISqHcQzE4jxk7oR/LyT
+X-Google-Smtp-Source: AGHT+IEPoLY+fs6Keeeb9hZ3SJkU38CYueFQh1FlScIYNIo/EVTP1cP3hYQm1YLWGT0Q7Y6m94z+JQ==
+X-Received: by 2002:a05:693c:8207:b0:2a4:3593:c7ce with SMTP id
+ 5a478bee46e88-2a4abab6441mr1985980eec.14.1763235472848; 
+ Sat, 15 Nov 2025 11:37:52 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-11b06088604sm26588644c88.7.2025.11.15.11.34.16
+ 5a478bee46e88-2a49d695821sm28753833eec.0.2025.11.15.11.37.52
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sat, 15 Nov 2025 11:34:16 -0800 (PST)
+ Sat, 15 Nov 2025 11:37:52 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Tyler Retzlaff <roretzla@linux.microsoft.com>
-Subject: [PATCH 4/4] test: use unit test runner for eal flags
-Date: Sat, 15 Nov 2025 11:33:10 -0800
-Message-ID: <20251115193409.99740-5-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v3 0/4] examples: fix format-truncation warnings
+Date: Sat, 15 Nov 2025 11:36:35 -0800
+Message-ID: <20251115193749.101355-1-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251115193409.99740-1-stephen@networkplumber.org>
-References: <20251115193409.99740-1-stephen@networkplumber.org>
+In-Reply-To: <20251110182209.104087-1-stephen@networkplumber.org>
+References: <20251110182209.104087-1-stephen@networkplumber.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -83,60 +83,23 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Make the sub tests in eal flags suite into a group
-so that they are not individual tests.
+Enable and fix format-truncation warnings in examples
 
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
----
- app/test/test_eal_flags.c | 38 ++++++++++++++++++++++++++------------
- 1 file changed, 26 insertions(+), 12 deletions(-)
+v3 - examples only, update commit messages
 
-diff --git a/app/test/test_eal_flags.c b/app/test/test_eal_flags.c
-index 0eead2a422..12ba54339d 100644
---- a/app/test/test_eal_flags.c
-+++ b/app/test/test_eal_flags.c
-@@ -1649,15 +1649,29 @@ test_memory_flags(void)
- 
- #endif /* !RTE_EXEC_ENV_WINDOWS */
- 
--REGISTER_FAST_TEST(eal_flags_c_opt_autotest, false, false, test_missing_c_flag);
--REGISTER_FAST_TEST(eal_flags_main_opt_autotest, false, false, test_main_lcore_flag);
--REGISTER_FAST_TEST(eal_flags_n_opt_autotest, false, false, test_invalid_n_flag);
--REGISTER_FAST_TEST(eal_flags_hpet_autotest, false, false, test_no_hpet_flag);
--REGISTER_FAST_TEST(eal_flags_no_huge_autotest, false, false, test_no_huge_flag);
--REGISTER_FAST_TEST(eal_flags_a_opt_autotest, false, false, test_allow_flag);
--REGISTER_FAST_TEST(eal_flags_b_opt_autotest, false, false, test_invalid_b_flag);
--REGISTER_FAST_TEST(eal_flags_vdev_opt_autotest, false, false, test_invalid_vdev_flag);
--REGISTER_FAST_TEST(eal_flags_r_opt_autotest, false, false, test_invalid_r_flag);
--REGISTER_FAST_TEST(eal_flags_mem_autotest, false, false, test_memory_flags);
--REGISTER_FAST_TEST(eal_flags_file_prefix_autotest, false, false, test_file_prefix);
--REGISTER_FAST_TEST(eal_flags_misc_autotest, false, false, test_misc_flags);
-+static struct unit_test_suite eal_flags_test_suite = {
-+	.suite_name = "EAL flags unit test suite",
-+	.unit_test_cases = {
-+		TEST_CASE(test_missing_c_flag),
-+		TEST_CASE(test_main_lcore_flag),
-+		TEST_CASE(test_invalid_n_flag),
-+		TEST_CASE(test_no_hpet_flag),
-+		TEST_CASE(test_no_huge_flag),
-+		TEST_CASE(test_allow_flag),
-+		TEST_CASE(test_invalid_b_flag),
-+		TEST_CASE(test_invalid_vdev_flag),
-+		TEST_CASE(test_invalid_r_flag),
-+		TEST_CASE(test_memory_flags),
-+		TEST_CASE(test_file_prefix),
-+		TEST_CASE(test_misc_flags),
-+		TEST_CASES_END()
-+	}
-+};
-+
-+static int
-+test_eal_flags(void)
-+{
-+	return unit_test_suite_runner(&eal_flags_test_suite);
-+}
-+
-+REGISTER_FAST_TEST(eal_flags_autotest, false, false, test_eal_flags);
+Stephen Hemminger (4):
+  examples/server_node_efd: fix format overflow
+  examples/vdpa: fix format overflow warning
+  examples/ip_reassembly: add check before formatting name
+  examples: enable format truncation warning
+
+ examples/ip_reassembly/main.c              | 7 +++++++
+ examples/meson.build                       | 5 ++---
+ examples/server_node_efd/efd_server/main.c | 2 +-
+ examples/server_node_efd/shared/common.h   | 3 ++-
+ examples/vdpa/main.c                       | 9 +++++----
+ 5 files changed, 17 insertions(+), 9 deletions(-)
+
 -- 
 2.51.0
 
