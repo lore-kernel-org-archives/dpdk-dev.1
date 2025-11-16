@@ -2,72 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89701CD4F3E
-	for <dpdk-dev@archiver.kernel.org>; Sun, 16 Nov 2025 16:52:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB457CCD19A
+	for <dpdk-dev@archiver.kernel.org>; Sun, 16 Nov 2025 19:00:41 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4542840E7C;
-	Sun, 16 Nov 2025 17:52:42 +0100 (CET)
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com
- [209.85.216.46]) by mails.dpdk.org (Postfix) with ESMTP id 597C6402E3
- for <dev@dpdk.org>; Sun, 16 Nov 2025 17:52:41 +0100 (CET)
-Received: by mail-pj1-f46.google.com with SMTP id
- 98e67ed59e1d1-3436d6aa66dso3469414a91.1
- for <dev@dpdk.org>; Sun, 16 Nov 2025 08:52:41 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 74AD7402E3;
+	Sun, 16 Nov 2025 20:00:40 +0100 (CET)
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com
+ [209.85.210.174])
+ by mails.dpdk.org (Postfix) with ESMTP id 56F5F402D3
+ for <dev@dpdk.org>; Sun, 16 Nov 2025 20:00:39 +0100 (CET)
+Received: by mail-pf1-f174.google.com with SMTP id
+ d2e1a72fcca58-7b89c1ce9easo3425975b3a.2
+ for <dev@dpdk.org>; Sun, 16 Nov 2025 11:00:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1763311960;
- x=1763916760; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1763319638;
+ x=1763924438; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=5yrGOO+kBii+Ejxsmio3KPlRqNtK8VPo9j/mRn/3zGI=;
- b=f7ODJCUlEhflhLbmxBDZbhs8nWGlcFg94liISXUQyVIOXBCkU0QlD/rxhtJBb40kyX
- 9+0hlA9+p9ha1SJwqxtb8Im4U0CyU02LPr/bUHQun6qb9u852urtyEhh04X9SPBH5/6J
- /oz8Q8CWnqk+tDxac2IgOu43YsaMG6hGcSusONZbJ/6tMnL1nfHPwvgNVRsycl0xJhJl
- D5DvOe03km1uXcTou8zMoIZ6N2gqYTwcqpjmdVUaB4VH2TtuGjCAE05/DQM+o2CxnIrX
- Xtsz45RslUGIQFnctZe6arP3S2xzUrbSv3LDAZw8+yRtRtMcKx45Hxwlhv68985Mr8y6
- DmqQ==
+ bh=C7gGUqhjLESmf/n3Bio3He61MW+q4nvsJEvpCa42vFI=;
+ b=2HqQlzoBPlhomEBvPvmsUbWZ5KKk6D2iq9pV3lDoqAl6GKg+g4vcvpWkufR767p/K5
+ 0UADtSM/Z1kXaR9zNLxhfN5uPdLcIhMVHJmYFmJbLJINPTswLUXhlD7HghYBYJoUTd2v
+ mZCHNa/t07IWRvSeKzDqPxQkh5gP+FFXd0bdgPy4gH8WQefZn/qjrTm5CxqWHMj0Q6mq
+ UpGRA2mv2r9GwDV4dzMX1qK6LISDuFH2+j0Nw8Y8STzYlbhTdz3mXbXkzEKU5APpEl6N
+ NCSFnPt69C/Fg/xg+D75tDX+MsTkxgcUeD6glrS/WrkFIL6n/fugD/qNxpLnop0RzFP4
+ kZRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1763311960; x=1763916760;
+ d=1e100.net; s=20230601; t=1763319638; x=1763924438;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=5yrGOO+kBii+Ejxsmio3KPlRqNtK8VPo9j/mRn/3zGI=;
- b=wChmyCBUs6Th4lMRAyjGcgjfEyti9AvLtOTi1iNqC+VGmW2+d3hypDyZchONWbrNmw
- 2P7bYVG3kZ6GJLl5M4FwKw+jxeDOYFOTmjhUZR2wNtqfG4VV9/YdGlx0szRvFrCsHAhY
- OYqUhxGcPA6+qCTB3skwmDTg1mUn6J2j+9pUMy5A9cWzkJk83bj4gwJrhP6SVDOpyG3v
- 7JtALggx1hMT6qSK118f+1FuAHFIXMWfzZBxs+GDIPhWc6J/aaecrko37HskZAQUKDtN
- MZaY4UKjyDg0r3KYwgiR1Yn5gWPsz1qAZ5StyMMvgU7XC4B7/zjHRHDN7lnUktAROKL9
- rloA==
-X-Gm-Message-State: AOJu0YxMXb5uhaYz5JO0SAFsyUnskSrePbRSdd4Ft1hlooBPSbIUjyBc
- pg5OpGLcYiv7IFBxnBdgEJGRwxBeBfSSeoZ4SjUtBBnN90oKB47stAP7+1Vq487p8Vc=
-X-Gm-Gg: ASbGncufNNQumuEg5e7+Vh960bn5QDNTJmkkf3Jq4VY0X/4xrtXR7VYoOg0qHMXCJai
- PLyUGDwHw7krKJBXmlEtwLObrSt+Hnqn3gEuq+YQXwNf13pw8DiGhxmjegaxs5oQ0Rn3skxGO31
- NN0VvvaSNPbSS0hfi9SjNkgUCimSkIXsH6GJtgXS+RIvjIkaB9CpHDLFQe0pCIgmVu8Ut1YpJq3
- H2MC5hUomBaLGWzQvuy87NhUiAJMWDiTyPrIUyq8z0RiRNjLtaA95Ha6vwrt/MUwAsLLmoCGgTd
- 6yiVeyBh4NTnfwhvHMgzWAJvcf7Uudk5CTMUxldyGNswBpuw9dtuDeQXKKqkkczIjVLvM1VYDSg
- V9rE5wDJuVqW4vsRgVms5DTyUXESeYt5k890vDKbaI/YdMgixmPYIPa6vy2CQ1MMeDFc+a3eXes
- 0c2IPsdcR0VairB9xvlAjqV0LQSlPqtNSjbClndFYLfXgN
-X-Google-Smtp-Source: AGHT+IHTy8GvY0lJYq1M2DC89d2+2JDfQuIVRp0oe6H7Pr/GwvzG1xgNwiHbg81qy4W5fO3sr+AvzQ==
-X-Received: by 2002:a05:7022:ea46:10b0:11b:f271:835a with SMTP id
- a92af1059eb24-11bf271857amr934710c88.3.1763311960082; 
- Sun, 16 Nov 2025 08:52:40 -0800 (PST)
-Received: from phoenix (204-195-96-226.wavecable.com. [204.195.96.226])
+ bh=C7gGUqhjLESmf/n3Bio3He61MW+q4nvsJEvpCa42vFI=;
+ b=kbUApBGXDtWLjj75AIuaqxBKLcIC6wEwOXsINBT99tAMZSjHfIikPGWhq9naRMJjln
+ XXkC/GxsSTjSCjJoV4tPqiQWOFab/VDNjr77JeAMHXkzCHGmjAYKeTNbxtWxoq8Ln8pF
+ meWH2bZzs+kdYHfq41wFW748YpJ1Pydh1RtE9gOmAUCj1DT9gV8x/4j/arKWBkzOnEA7
+ 13/9UDXzqmhBgnH1e36ZjFZNx9dgh0Bjs/BL4R5ASN0kYf6KpmCqZ8bA2tS5Oy3oNhaG
+ g2r71ADpMWAf0vJu4f7pxmnAypydkiEJ18m8r8xjL/4Q8lePLI+JOiXblrRhPJ4WGBxN
+ cx7A==
+X-Gm-Message-State: AOJu0Yx8yTMzSQ7uh2I4eemKxD0GkKZD2lupi6x+X1U4fx+OKjFdij4z
+ WsBPU422rhMWar9mjaqx4tFNSoQXS/x7uXZBTu9Gm2an1/tzWQ5XwxvbH6GjlTZHZ06/mWtFUVC
+ GlFys
+X-Gm-Gg: ASbGnctbHctUtFSNu8LP53wIrVzcoT5cQxs2+YaVDAxkZY29G62GJgp+i4Emdl4sh9U
+ mlV5xb5IEbHfpHqDz3MN5whHfny+mR876X6jamjIh+sDVs8S8GZuSaMwyOuJjhBXAMLIL547H5F
+ 7NA1hXt0p/q4n+Oz+/MX01K7gJOyVtT/HVwPrrpD/i4ODsZ/LaQEijHMdMBM88XVJepqxCY8q/n
+ 7U/Bmm5ra8YjoSQ4eNtu579T4/z6gAciEHQyNMJ4/aInCVC4CHmH7tczeUrOi4h9XublMVKDoYq
+ Sw+j2bLP36B0lwwjTz/t9lOCCmEWeRhnFsZJ/PiLvXCtb3ZiKLCqrCQr9r8xb238KELsOmNpSbi
+ oXZkWWxObB0tujGzNtVQPxjvi0I91QNhtitmqtEulsVv5Iij+CFYW0xli6ztxfdpvn4KF1UUXwM
+ gdmaKiBJuRxhKMPB0qJBt1j2Sax2cTeOyrf5Unt7dUQ9IRbpmAoa06uB8eoXPk
+X-Google-Smtp-Source: AGHT+IGKOhe1/wyZVx6Mcyk9G2nu4gBjkcDU37euRlR63Fc6eh7bMz/UqSfoYAZIByjOxpkVUJfjQg==
+X-Received: by 2002:a05:7022:6621:b0:119:e569:f27d with SMTP id
+ a92af1059eb24-11b8f160a01mr2802154c88.38.1763319637950; 
+ Sun, 16 Nov 2025 11:00:37 -0800 (PST)
+Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-11bf23d6967sm6946550c88.3.2025.11.16.08.52.39
+ 5a478bee46e88-2a49dad0aefsm28215946eec.3.2025.11.16.11.00.37
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 16 Nov 2025 08:52:39 -0800 (PST)
-Date: Sun, 16 Nov 2025 08:52:37 -0800
+ Sun, 16 Nov 2025 11:00:37 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Kumara Parameshwaran <kumaraparamesh92@gmail.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH v2] gro : improve GRO performance based on hash table
-Message-ID: <20251116085237.61d9c340@phoenix>
-In-Reply-To: <20251116060634.262352-1-kumaraparamesh92@gmail.com>
-References: <20251110162356.173438-1-kumaraparamesh92@gmail.com>
- <20251116060634.262352-1-kumaraparamesh92@gmail.com>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v2 0/5] enable format-overflow on tests
+Date: Sun, 16 Nov 2025 10:59:28 -0800
+Message-ID: <20251116190035.76123-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20251115193409.99740-1-stephen@networkplumber.org>
+References: <20251115193409.99740-1-stephen@networkplumber.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,446 +83,24 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Sun, 16 Nov 2025 11:36:34 +0530
-Kumara Parameshwaran <kumaraparamesh92@gmail.com> wrote:
+Changes to allow building all tests with format-overflow
+warning enabled.
 
-> Use cuckoo hash library in GRO for flow flookup
-> 
-> Signed-off-by: Kumara Parameshwaran <kumaraparamesh92@gmail.com>
+v2 - fix ACL test
 
+Stephen Hemminger (5):
+  test: increase size of memzone name
+  test: refactor file prefix arg handling
+  test: use unit test runner for eal flags
+  test: fix format overflow warning in ACL test
+  test: re-enable format-truncation warnings
 
-Need  test about what happens when table is DoS attacked.
+ app/test/meson.build      |   1 -
+ app/test/test_eal_flags.c | 161 ++++++++++++++++----------------------
+ app/test/test_memzone.c   |   2 +-
+ app/test/test_table_acl.c |   4 +-
+ 4 files changed, 69 insertions(+), 99 deletions(-)
 
-> 
-> Fix warnings and more validatation to the test
-> 
->  app/test/meson.build |   1 +
->  app/test/test_gro.c  | 237 +++++++++++++++++++++++++++++++++++++++++++
->  lib/gro/gro_tcp4.c   |  60 ++++++-----
->  lib/gro/gro_tcp4.h   |   2 +
->  lib/gro/meson.build  |   2 +-
->  5 files changed, 278 insertions(+), 24 deletions(-)
->  create mode 100644 app/test/test_gro.c
-> 
-> diff --git a/app/test/meson.build b/app/test/meson.build
-> index 8df8d3edd1..03bbe2be1f 100644
-> --- a/app/test/meson.build
-> +++ b/app/test/meson.build
-> @@ -211,6 +211,7 @@ source_file_deps = {
->      'test_trace_register.c': [],
->      'test_vdev.c': ['kvargs', 'bus_vdev'],
->      'test_version.c': [],
-> +    'test_gro.c':['net', 'gro'],
->  }
->  
->  source_file_ext_deps = {
-> diff --git a/app/test/test_gro.c b/app/test/test_gro.c
-> new file mode 100644
-> index 0000000000..3bd0035e68
-> --- /dev/null
-> +++ b/app/test/test_gro.c
-> @@ -0,0 +1,237 @@
-> +/* SPDX-License-Identifier: BSD-3-Clause
-> + * Copyright(c) 2018 Intel Corporation
-> + */
-> +
-> +#include "test.h"
-> +
-> +#include <rte_net.h>
-> +#include <rte_gro.h>
-> +
-> +#define NUM_MBUFS 128
-> +#define BURST 32
-> +
-> +/*
-> + * Sample TCP/IPv4 packets from Iperf run
-> + * Each packet is 132 bytes long and TCP segment is 66 bytes long
-> + *
-> + * 10.1.0.4:52362=>10.1.0.5:5201 Seq = 4251552885 Ack = 428268870
-> + */
-> +unsigned char pkts[][132] = {
-> +	{
-> +		0x12, 0x34, 0x56, 0x78, 0x9a, 0xbc, 0x7c, 0xed, 0x8d, 0xc0,
-> +		0xc1, 0xf5, 0x8, 0x0, 0x45, 0x0, 0x0, 0x76, 0xa4, 0xfb, 0x40,
-> +		0x0, 0x40, 0x6, 0x81, 0x7c, 0xa, 0x1, 0x0, 0x4, 0xa, 0x1, 0x0,
-> +		0x5, 0xcc, 0x8a, 0x14, 0x51, 0xfd, 0x69, 0x8c, 0x75, 0x19, 0x86,
-> +		0xdd, 0x46, 0x80, 0x10, 0x2, 0x0, 0x14, 0x73, 0x0, 0x0, 0x1, 0x1,
-> +		0x8, 0xa, 0x3c, 0x2, 0xd1, 0xa5, 0x36, 0xb6, 0x9e, 0xda, 0x7d, 0xe9,
-> +		0x63, 0xf1, 0x67, 0xeb, 0xc4, 0x93, 0xcf, 0x74, 0xcd, 0xab, 0x93,
-> +		0x86, 0xe8, 0xb0, 0x1c, 0x92, 0xc8, 0x82, 0xef, 0x72, 0x34, 0xe7, 0x86,
-> +		0x6d, 0xd2, 0x96, 0x8, 0x70, 0xae, 0xda, 0x60, 0xe4, 0x25, 0x39, 0xd2,
-> +		0x73, 0xe7, 0xef, 0xf5, 0xf6, 0x7f, 0xbf, 0x7f, 0x5, 0x5a, 0x40, 0x6,
-> +		0x65, 0x13, 0x8f, 0xa4, 0x7, 0x73, 0x41, 0xcb, 0x56, 0x3, 0x15, 0x85,
-> +		0x99, 0x8c, 0xa9, 0xc8, 0x14
-> +	},
-> +	{
-> +		0x12, 0x34, 0x56, 0x78, 0x9a, 0xbc, 0x7c, 0xed, 0x8d, 0xc0, 0xc1,
-> +		0xf5, 0x8, 0x0, 0x45, 0x0, 0x0, 0x76, 0xa4, 0xfc, 0x40, 0x0, 0x40,
-> +		0x6, 0x81, 0x7b, 0xa, 0x1, 0x0, 0x4, 0xa, 0x1, 0x0, 0x5, 0xcc, 0x8a,
-> +		0x14, 0x51, 0xfd, 0x69, 0x8c, 0xb7, 0x19, 0x86, 0xdd, 0x46, 0x80, 0x10,
-> +		0x2, 0x0, 0x14, 0x73, 0x0, 0x0, 0x1, 0x1, 0x8, 0xa, 0x3c, 0x2, 0xd1, 0xa5,
-> +		0x36, 0xb6, 0x9e, 0xda, 0x2a, 0x6a, 0x4e, 0xf9, 0x94, 0x6, 0xaf, 0x2f, 0xeb,
-> +		0xfb, 0xef, 0xa4, 0xaa, 0xe8, 0xd6, 0xc0, 0x34, 0xab, 0x8b, 0xfc, 0x14, 0xb9,
-> +		0x89, 0xcb, 0xb6, 0x15, 0x58, 0xe5, 0x2a, 0x72, 0xcd, 0x1c, 0x71, 0x3, 0xf4,
-> +		0xf9, 0x32, 0x7e, 0x58, 0xec, 0xe6, 0x52, 0x5a, 0x88, 0x8c, 0x24, 0x53, 0xd7,
-> +		0x39, 0x80, 0xb6, 0x66, 0x9b, 0xe5, 0x45, 0xbe, 0x9, 0xf8, 0xac, 0xef, 0xc2,
-> +		0x51, 0x31, 0x87, 0x9c, 0x56
-> +	},
-> +	{
-> +		0x12, 0x34, 0x56, 0x78, 0x9a, 0xbc, 0x7c, 0xed, 0x8d, 0xc0, 0xc1, 0xf5, 0x8,
-> +		0x0, 0x45, 0x0, 0x0, 0x76, 0xa4, 0xfd, 0x40, 0x0, 0x40, 0x6, 0x81, 0x7a, 0xa,
-> +		0x1, 0x0, 0x4, 0xa, 0x1, 0x0, 0x5, 0xcc, 0x8a, 0x14, 0x51, 0xfd, 0x69, 0x8c,
-> +		0xf9, 0x19, 0x86, 0xdd, 0x46, 0x80, 0x10, 0x2, 0x0, 0x14, 0x73, 0x0, 0x0, 0x1,
-> +		0x1, 0x8, 0xa, 0x3c, 0x2, 0xd1, 0xa5, 0x36, 0xb6, 0x9e, 0xda, 0x68, 0x93, 0xec,
-> +		0x8a, 0x35, 0xba, 0xe8, 0x24, 0x9e, 0x78, 0x6c, 0xb8, 0x65, 0xe1, 0x23, 0xc1, 0x48,
-> +		0x5, 0xca, 0xea, 0x6b, 0x5, 0xe7, 0x71, 0x1a, 0x97, 0x5a, 0x23, 0xd2, 0x81, 0xc9,
-> +		0x9a, 0xad, 0x1e, 0x77, 0xb1, 0x9c, 0x43, 0xf, 0xbf, 0x6c, 0xb6, 0x36, 0x46,
-> +		0x99, 0xcc, 0x4, 0xf4, 0xc2, 0x87, 0x41, 0xec, 0xc6, 0xc5, 0xd9, 0x48, 0xcf,
-> +		0x9b, 0xec, 0xb7, 0x2f, 0x91, 0x5f, 0x83, 0x9f, 0xd
-> +	},
-> +	{
-> +		0x12, 0x34, 0x56, 0x78, 0x9a, 0xbc, 0x7c, 0xed, 0x8d, 0xc0, 0xc1, 0xf5, 0x8, 0x0,
-> +		0x45, 0x0, 0x0, 0x76, 0xa4, 0xfe, 0x40, 0x0, 0x40, 0x6, 0x81, 0x79, 0xa, 0x1, 0x0,
-> +		0x4, 0xa, 0x1, 0x0, 0x5, 0xcc, 0x8a, 0x14, 0x51, 0xfd, 0x69, 0x8d, 0x3b, 0x19, 0x86,
-> +		0xdd, 0x46, 0x80, 0x10, 0x2, 0x0, 0x14, 0x73, 0x0, 0x0, 0x1, 0x1, 0x8, 0xa, 0x3c,
-> +		0x2, 0xd1, 0xa5, 0x36, 0xb6, 0x9e, 0xda, 0xdd, 0x72, 0x54, 0xdc, 0x5, 0x51, 0xb6,
-> +		0x4b, 0xdd, 0x10, 0xfb, 0x1c, 0xe8, 0x5d, 0x84, 0x75, 0xd7, 0x20, 0xd3, 0xc, 0xbd,
-> +		0xba, 0x77, 0x1a, 0x14, 0x41, 0x15, 0xd0, 0x34, 0x64, 0x8d, 0x6, 0x32, 0x8f, 0x83,
-> +		0x3e, 0xd6, 0xf, 0xaa, 0xe1, 0x7e, 0xdc, 0xbe, 0x33, 0x43, 0xc6, 0x38, 0xcf, 0x9b,
-> +		0x6f, 0xf2, 0x1e, 0x50, 0x6f, 0xf3, 0x3b, 0x8f, 0xbf, 0x18, 0x60, 0xd5, 0x43, 0xac,
-> +		0xd2, 0xbb, 0x49
-> +	},
-> +	{
-> +		0x12, 0x34, 0x56, 0x78, 0x9a, 0xbc, 0x7c, 0xed, 0x8d, 0xc0, 0xc1, 0xf5, 0x8, 0x0,
-> +		0x45, 0x0, 0x0, 0x76, 0xa4, 0xff, 0x40, 0x0, 0x40, 0x6, 0x81, 0x78, 0xa, 0x1, 0x0,
-> +		0x4, 0xa, 0x1, 0x0, 0x5, 0xcc, 0x8a, 0x14, 0x51, 0xfd, 0x69, 0x8d, 0x7d, 0x19, 0x86,
-> +		0xdd, 0x46, 0x80, 0x18, 0x2, 0x0, 0x14, 0x73, 0x0, 0x0, 0x1, 0x1, 0x8, 0xa, 0x3c,
-> +		0x2, 0xd1, 0xa5, 0x36, 0xb6, 0x9e, 0xda, 0x5a, 0x95, 0x20, 0xf2, 0x20, 0x9b, 0xd,
-> +		0xc1, 0x9, 0xe5, 0x3, 0x68, 0x52, 0x14, 0x2c, 0x7c, 0x98, 0x44, 0x63, 0x6c, 0xc6,
-> +		0xe6, 0xba, 0x8a, 0x0, 0x10, 0x66, 0x45, 0xb1, 0xfd, 0x7b, 0x77, 0xf1, 0xf9, 0x95,
-> +		0xcd, 0x7f, 0x61, 0x12, 0xeb, 0xa5, 0x23, 0xa0, 0x2, 0xe5, 0x31, 0xd8, 0x1f, 0x36,
-> +		0x55, 0x59, 0x46, 0xce, 0x9f, 0xd2, 0x74, 0x6b, 0xf9, 0x63, 0xbe, 0xa1, 0xed, 0xc5,
-> +		0x59, 0x22, 0x8c
-> +	}
-> +};
-
-I would prefer these packets were built by the test, rather than byte arrays.
-Allows for more later, and testing other cases.
-
-> +void *gro_tcp4_ctx;
-> +static struct rte_mempool *pkt_pool;
-> +
-> +static int test_gro_tcp4_setup(void)
-> +{
-> +	pkt_pool = rte_pktmbuf_pool_create("GRO_MBUF_POOL",
-> +			NUM_MBUFS, BURST, 0,
-> +			RTE_MBUF_DEFAULT_BUF_SIZE,
-> +			SOCKET_ID_ANY);
-> +	if (pkt_pool == NULL) {
-> +		printf("%s: Error creating pkt mempool\n", __func__);
-> +		goto failed;
-> +	}
-> +
-> +	gro_tcp4_ctx = rte_gro_ctx_create(&(struct rte_gro_param) {
-> +					.max_flow_num = 1024,
-> +					.max_item_per_flow = 32,
-> +					.gro_types = RTE_GRO_TCP_IPV4,
-> +			});
-> +	if (gro_tcp4_ctx == NULL)
-> +		goto failed;
-> +
-> +	return TEST_SUCCESS;
-> +
-> +failed:
-> +	if (pkt_pool)
-> +		rte_mempool_free(pkt_pool);
-> +	if (gro_tcp4_ctx)
-> +		rte_gro_ctx_destroy(gro_tcp4_ctx);
-> +
-> +	pkt_pool = NULL;
-> +	gro_tcp4_ctx = NULL;
-> +
-> +	return TEST_FAILED;
-> +}
-> +
-> +static void test_gro_tcp4_teardown(void)
-> +{
-> +	if (pkt_pool)
-> +		rte_mempool_free(pkt_pool);
-> +	if (gro_tcp4_ctx)
-> +		rte_gro_ctx_destroy(gro_tcp4_ctx);
-> +	pkt_pool = NULL;
-> +	gro_tcp4_ctx = NULL;
-> +}
-> +
-> +static int testsuite_setup(void)
-> +{
-> +	return TEST_SUCCESS;
-> +}
-> +
-> +static void testsuite_teardown(void)
-> +{
-> +}
-
-If testsuite does not need setup/teardown those callbacks
-can be left NULL. I.E no need for stubs.
-
-> +static int32_t
-> +test_gro_tcp4(void)
-> +{
-> +	struct rte_mbuf *pkts_mb[5];
-> +	struct rte_mbuf *gro_pkts[5];
-> +	int nb_pkts;
-> +	int nb_gro_pkts;
-> +	struct rte_net_hdr_lens hdr_lens = {0};
-> +	struct rte_ether_hdr *eth_hdr;
-> +	struct rte_ipv4_hdr *ipv4_hdr;
-> +	struct rte_tcp_hdr *tcp_hdr;
-> +	struct rte_ether_addr src_addr = {
-> +		.addr_bytes = {0x7c, 0xed, 0x8d, 0xc0, 0xc1, 0xf5}
-> +	};
-> +	struct rte_ether_addr dst_addr = {
-> +		.addr_bytes = {0x12, 0x34, 0x56, 0x78, 0x9a, 0xbc}
-> +	};
-> +
-> +	for (int i = 0; i < 5; i++) {
-> +		pkts_mb[i] = rte_pktmbuf_alloc(pkt_pool);
-> +		if (pkts_mb[i] == NULL)
-> +			goto failed;
-> +		rte_memcpy(rte_pktmbuf_mtod(pkts_mb[i], void *), pkts[i], 132);
-> +		pkts_mb[i]->data_len = 132;
-> +		pkts_mb[i]->pkt_len = 132;
-> +		pkts_mb[i]->packet_type = rte_net_get_ptype(pkts_mb[i], &hdr_lens,
-> +										RTE_PTYPE_ALL_MASK);
-
-Better to use rte_pktmbuf_append, it will fix all the lengths for yu.
-
-> +		pkts_mb[i]->l2_len = hdr_lens.l2_len;
-> +		pkts_mb[i]->l3_len = hdr_lens.l3_len;
-> +		pkts_mb[i]->l4_len = hdr_lens.l4_len;
-> +	}
-> +
-> +	/* GRO reassemble */
-> +	nb_pkts = rte_gro_reassemble(&pkts_mb[0], 5, gro_tcp4_ctx);
-> +	TEST_ASSERT(nb_pkts == 0, "Not expected packets after GRO");
-> +	TEST_ASSERT(rte_gro_get_pkt_count(gro_tcp4_ctx) == 1, "GRO pkt count mismatch");
-> +
-> +	/* GRO timeout flush */
-> +	nb_gro_pkts = rte_gro_timeout_flush(gro_tcp4_ctx, 0, RTE_GRO_TCP_IPV4, gro_pkts, 5);
-> +	TEST_ASSERT(nb_gro_pkts == 1, "GRO timeout flush pkt count mismatch");
-> +	TEST_ASSERT(rte_gro_get_pkt_count(gro_tcp4_ctx) == 0, "GRO pkt count after flush mismatch");
-> +	TEST_ASSERT(gro_pkts[0]->pkt_len == 396, "GRO merged pkt len mismatch");
-> +
-> +	eth_hdr = rte_pktmbuf_mtod(gro_pkts[0], struct rte_ether_hdr *);
-> +	ipv4_hdr = (struct rte_ipv4_hdr *)(rte_pktmbuf_mtod(
-> +					gro_pkts[0], char *) + sizeof(struct rte_ether_hdr));
-> +	tcp_hdr = (struct rte_tcp_hdr *)((char *)ipv4_hdr + sizeof(struct rte_ipv4_hdr));
-> +
-> +	TEST_ASSERT_BUFFERS_ARE_EQUAL(eth_hdr->src_addr.addr_bytes,
-> +		src_addr.addr_bytes, RTE_ETHER_ADDR_LEN, "GRO merged pkt Ethernet SRC MAC mismatch");
-> +	 TEST_ASSERT_BUFFERS_ARE_EQUAL(eth_hdr->dst_addr.addr_bytes,
-> +		dst_addr.addr_bytes, RTE_ETHER_ADDR_LEN, "GRO merged pkt Ethernet DST MAC mismatch");
-> +
-> +	TEST_ASSERT(rte_be_to_cpu_32(ipv4_hdr->src_addr) == 0x0a010004,
-> +		"GRO merged pkt IP src addr mismatch");
-> +	TEST_ASSERT(rte_be_to_cpu_32(ipv4_hdr->dst_addr) == 0x0a010005,
-> +		"GRO merged pkt IP dst addr mismatch");
-> +	TEST_ASSERT(rte_be_to_cpu_16(ipv4_hdr->packet_id) == 0xa4fb,
-> +		"GRO merged pkt IP id mismatch");
-> +
-> +	TEST_ASSERT(rte_be_to_cpu_16(tcp_hdr->src_port) == 52362,
-> +		"GRO merged pkt TCP src port mismatch");
-> +	TEST_ASSERT(rte_be_to_cpu_16(tcp_hdr->dst_port) == 5201,
-> +		"GRO merged pkt TCP dst port mismatch");
-> +	TEST_ASSERT(rte_be_to_cpu_32(tcp_hdr->sent_seq) == 4251552885,
-> +		"GRO merged pkt TCP seq num mismatch");
-> +	TEST_ASSERT(rte_be_to_cpu_32(tcp_hdr->recv_ack) == 428268870,
-> +		"GRO merged pkt TCP ack num mismatch");
-> +
-> +	return TEST_SUCCESS;
-> +
-> +failed:
-> +	return TEST_FAILED;
-> +}
-> +
-> +static struct unit_test_suite gro_testsuite  = {
-> +	.suite_name = "GRO Unit Test Suite",
-> +	.setup = testsuite_setup,
-> +	.teardown = testsuite_teardown,
-> +	.unit_test_cases = {
-> +		TEST_CASE_ST(test_gro_tcp4_setup, test_gro_tcp4_teardown,
-> +			     test_gro_tcp4),
-> +
-> +		TEST_CASES_END() /**< NULL terminate unit test array */
-> +	}
-> +};
-> +
-> +static int
-> +test_gro(void)
-> +{
-> +	rte_log_set_global_level(RTE_LOG_DEBUG);
-> +	rte_log_set_level(RTE_LOGTYPE_EAL, RTE_LOG_DEBUG);
-> +
-> +	return unit_test_suite_runner(&gro_testsuite);
-> +}
-> +
-> +
-> +REGISTER_FAST_TEST(gro_autotest, false, true, test_gro);
-> diff --git a/lib/gro/gro_tcp4.c b/lib/gro/gro_tcp4.c
-> index 855cc7a71d..8459037eef 100644
-> --- a/lib/gro/gro_tcp4.c
-> +++ b/lib/gro/gro_tcp4.c
-> @@ -5,6 +5,8 @@
->  #include <rte_malloc.h>
->  #include <rte_mbuf.h>
->  #include <rte_ethdev.h>
-> +#include <rte_hash.h>
-> +#include <rte_jhash.h>
->  
->  #include "gro_tcp4.h"
->  #include "gro_tcp_internal.h"
-> @@ -57,6 +59,15 @@ gro_tcp4_tbl_create(uint16_t socket_id,
->  		tbl->flows[i].start_index = INVALID_ARRAY_INDEX;
->  	tbl->max_flow_num = entries_num;
->  
-> +	/* Create Hash table for faster lookup of the flows */
-> +	tbl->flow_hash = rte_hash_create(&(struct rte_hash_parameters){
-> +		.name = "gro_tcp4_flow_hash",
-> +		.entries = tbl->max_flow_num,
-> +		.key_len = sizeof(struct tcp4_flow_key),
-> +		.hash_func = rte_jhash,
-> +		.hash_func_init_val = 0
-> +	});
-> +
->  	return tbl;
->  }
->  
-> @@ -69,6 +80,7 @@ gro_tcp4_tbl_destroy(void *tbl)
->  		rte_free(tcp_tbl->items);
->  		rte_free(tcp_tbl->flows);
->  	}
-> +	rte_hash_free(tcp_tbl->flow_hash);
->  	rte_free(tcp_tbl);
->  }
->  
-> @@ -91,11 +103,17 @@ insert_new_flow(struct gro_tcp4_tbl *tbl,
->  {
->  	struct tcp4_flow_key *dst;
->  	uint32_t flow_idx;
-> +	int32_t ret;
->  
->  	flow_idx = find_an_empty_flow(tbl);
->  	if (unlikely(flow_idx == INVALID_ARRAY_INDEX))
->  		return INVALID_ARRAY_INDEX;
->  
-> +	ret = rte_hash_add_key_data(tbl->flow_hash, src,
-> +			(void *)&tbl->flows[flow_idx]);
-> +	if (ret < 0)
-> +		return INVALID_ARRAY_INDEX;
-> +
->  	dst = &(tbl->flows[flow_idx].key);
->  
->  	ASSIGN_COMMON_TCP_KEY((&src->cmn_key), (&dst->cmn_key));
-> @@ -124,9 +142,8 @@ gro_tcp4_reassemble(struct rte_mbuf *pkt,
->  
->  	struct tcp4_flow_key key;
->  	uint32_t item_idx;
-> -	uint32_t i, max_flow_num, remaining_flow_num;
-> -	uint8_t find;
-> -	uint32_t item_start_idx;
-> +	int ret;
-> +	struct gro_tcp4_flow *flow;
->  
->  	/*
->  	 * Don't process the packet whose TCP header length is greater
-> @@ -173,22 +190,8 @@ gro_tcp4_reassemble(struct rte_mbuf *pkt,
->  	is_atomic = (frag_off & RTE_IPV4_HDR_DF_FLAG) == RTE_IPV4_HDR_DF_FLAG;
->  	ip_id = is_atomic ? 0 : rte_be_to_cpu_16(ipv4_hdr->packet_id);
->  
-> -	/* Search for a matched flow. */
-> -	max_flow_num = tbl->max_flow_num;
-> -	remaining_flow_num = tbl->flow_num;
-> -	find = 0;
-> -	for (i = 0; i < max_flow_num && remaining_flow_num; i++) {
-> -		if (tbl->flows[i].start_index != INVALID_ARRAY_INDEX) {
-> -			if (is_same_tcp4_flow(tbl->flows[i].key, key)) {
-> -				find = 1;
-> -				item_start_idx = tbl->flows[i].start_index;
-> -				break;
-> -			}
-> -			remaining_flow_num--;
-> -		}
-> -	}
-> -
-> -	if (find == 1) {
-> +	ret = rte_hash_lookup_data(tbl->flow_hash, &key, (void **)&flow);
-> +	if (ret >= 0) {
->  		/*
->  		 * Any packet with additional flags like PSH,FIN should be processed
->  		 * and flushed immediately.
-> @@ -197,9 +200,9 @@ gro_tcp4_reassemble(struct rte_mbuf *pkt,
->  		 */
->  		if (tcp_hdr->tcp_flags & (RTE_TCP_ACK_FLAG | RTE_TCP_PSH_FLAG | RTE_TCP_FIN_FLAG)) {
->  			if (tcp_hdr->tcp_flags != RTE_TCP_ACK_FLAG)
-> -				tbl->items[item_start_idx].start_time = 0;
-> +				tbl->items[flow->start_index].start_time = 0;
->  			return process_tcp_item(pkt, tcp_hdr, tcp_dl, tbl->items,
-> -						tbl->flows[i].start_index, &tbl->item_num,
-> +						flow->start_index, &tbl->item_num,
->  						tbl->max_item_num, ip_id, is_atomic, start_time);
->  		} else {
->  			return -1;
-> @@ -256,6 +259,8 @@ gro_tcp4_tbl_timeout_flush(struct gro_tcp4_tbl *tbl,
->  	uint16_t k = 0;
->  	uint32_t i, j;
->  	uint32_t max_flow_num = tbl->max_flow_num;
-> +	struct gro_tcp4_flow *flow;
-> +	int ret;
->  
->  	for (i = 0; i < max_flow_num; i++) {
->  		if (unlikely(tbl->flow_num == 0))
-> @@ -273,9 +278,18 @@ gro_tcp4_tbl_timeout_flush(struct gro_tcp4_tbl *tbl,
->  				 */
->  				j = delete_tcp_item(tbl->items, j,
->  							&tbl->item_num, INVALID_ARRAY_INDEX);
-> -				tbl->flows[i].start_index = j;
-> -				if (j == INVALID_ARRAY_INDEX)
-> +				if (j == INVALID_ARRAY_INDEX) {
-> +					flow = &tbl->flows[i];
-> +					ret = rte_hash_del_key(tbl->flow_hash, &flow->key);
-> +					RTE_ASSERT(ret >= 0);
-> +					if (ret >= 0) {
-> +						ret = rte_hash_free_key_with_position(
-> +									tbl->flow_hash, ret);
-> +						RTE_ASSERT(ret == 0);
-> +					}
->  					tbl->flow_num--;
-> +				}
-> +				tbl->flows[i].start_index = j;
->  
->  				if (unlikely(k == nb_out))
->  					return k;
-> diff --git a/lib/gro/gro_tcp4.h b/lib/gro/gro_tcp4.h
-> index 245e5da486..babf4f7d01 100644
-> --- a/lib/gro/gro_tcp4.h
-> +++ b/lib/gro/gro_tcp4.h
-> @@ -33,6 +33,8 @@ struct gro_tcp4_tbl {
->  	struct gro_tcp_item *items;
->  	/* flow array */
->  	struct gro_tcp4_flow *flows;
-> +	/* flow hash table */
-> +	struct rte_hash *flow_hash;
->  	/* current item number */
->  	uint32_t item_num;
->  	/* current flow num */
-> diff --git a/lib/gro/meson.build b/lib/gro/meson.build
-> index dbce05220d..96668dcd94 100644
-> --- a/lib/gro/meson.build
-> +++ b/lib/gro/meson.build
-> @@ -10,4 +10,4 @@ sources = files(
->          'gro_vxlan_udp4.c',
->  )
->  headers = files('rte_gro.h')
-> -deps += ['ethdev']
-> +deps += ['ethdev', 'hash']
+-- 
+2.51.0
 
