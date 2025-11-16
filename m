@@ -2,70 +2,39 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE354CD4F3E
-	for <dpdk-dev@archiver.kernel.org>; Sun, 16 Nov 2025 06:07:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B681CD4F3E
+	for <dpdk-dev@archiver.kernel.org>; Sun, 16 Nov 2025 07:43:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B09D5402E2;
-	Sun, 16 Nov 2025 07:07:03 +0100 (CET)
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com
- [209.85.216.42]) by mails.dpdk.org (Postfix) with ESMTP id 0B8824026C
- for <dev@dpdk.org>; Sun, 16 Nov 2025 07:07:02 +0100 (CET)
-Received: by mail-pj1-f42.google.com with SMTP id
- 98e67ed59e1d1-3438d4ae152so4214685a91.1
- for <dev@dpdk.org>; Sat, 15 Nov 2025 22:07:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1763273220; x=1763878020; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=tBi56n0YUot2BuOGY0dc4dOHJAJBpTRq3Es6lb/u6SY=;
- b=Nh+Z5GXlCXCVJ7h8kRkGunswB1RlY8Z7bXP5uiGv6+Cb/ivmgmt5EWjYEta3S2tco8
- KIbYZJ3KixS6l2gAcknXGABlGelAYF67wp78F1Q9xdlq+8v5gp3JFfqECJ1uthDq5OyE
- vozJmTdeOY1nGfpJUjJdYf7NDR2sjak2mYUGu1xtHb4U9GXjqrT67jDguBXPihd2L08Z
- uOj0oXFoDkefnycn6jPL4zCvTeNzEFXVyGa1aoyBtei5NZ/Fkc9kaOFZk2Vt5dqCB9tk
- id8kBK1gTE0IradoXmA53V+Du5XlwLfafi6Y1NsZb+bF3VM3crZQ/ldxiBQWYfr2StYS
- yoEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1763273220; x=1763878020;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=tBi56n0YUot2BuOGY0dc4dOHJAJBpTRq3Es6lb/u6SY=;
- b=OzKWWH33Lm+bKpXgo0wC/YhrjJJDRVp2AYKHmJTGp2omNYqLAgp5XMEWjmQVTvS25d
- 14a9tJ08hnPjCce2zZiWdXL8KBmvXfQUzEEWnMjR3XecVPc1Dh00WllN4awR+jeKOb0n
- K8TeLX4aQcf9sRo6racMXrOcfMvIbF9kSgxfcTt4CxGz0wIPk1gXdhTqk5A6qJkmH2kJ
- vAKVwf0WCgXN1BvM+7wJYAhvjc7ivNjneH8VXs9bVYQ/EzLePz1oBa3D3iqOVcJEpDHI
- u3BG447e/nIW5J0rZ8LmnpEEbhc3ESCBun42yT0k+Cu9qPiOK4aimgTZaJiFim9P925W
- iZHw==
-X-Gm-Message-State: AOJu0Ywfpu5PDQz/qrye8ApqVhLC5GfKgZG7CA9HEy1pBXra4dYLrA8n
- zQ+87R+0HD95H8rY2jiUjt54/XN0tzdEEmMCr7qXJy6udU6W5WzZvW7DjvUPDA==
-X-Gm-Gg: ASbGncuY9l3Ftzl9P+g/InZi/20PZT6TiJqlacnCSzfPJ3Q4idsI10Plcl6iPlc4TOR
- ElLoBfBHN2NfhOHfY0djsYwUEe3KabnsZN2YVOOmiwbHIhAErDEaiJ4CQGmJt0s7+yimXzLIiyN
- n28EtNGy3e7BOgdRndfAUPEqKba0JlqDz7BlyJELGRlpSyoNh39MKIUqTv5xySUrsIAslh/Htm5
- Gk8CbCIABYtpCJc4NgmjSBry4VS8CVoDT5/LnG4PZBap1NHCFaeQJGkZEON1WOhM+hSprIoCcRz
- A7RR+Rn1bqk6Oz3s0zKUiO7jDH4c8ULCWK1HLeFFlzoNEXOWjj26cxRvHoPTyQZPdKWzOfFs1yX
- ki6yZF40vRaHRwSnkijhxwm1NlUK5KT71pBsxun8QO5jZ/Th1G2t+FtmYfFFusDdWI8ZhN/mlIZ
- INH8kjVybTRXXs8/+z1wwie5XYYiSTgTnUNhvG
-X-Google-Smtp-Source: AGHT+IHpPHXJCjpA1bFyohX07GFtNo/DiL2dchxBWoej6cfbISBTK7Co6Nd1nxTolAfLv6OFvh7s3g==
-X-Received: by 2002:a17:90b:2b48:b0:32c:2cd:4d67 with SMTP id
- 98e67ed59e1d1-343f9ec8fe5mr8740665a91.13.1763273220355; 
- Sat, 15 Nov 2025 22:07:00 -0800 (PST)
-Received: from Param-Desktop.localdomain ([106.51.220.70])
- by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-7b92772fa51sm9471270b3a.58.2025.11.15.22.06.58
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sat, 15 Nov 2025 22:06:59 -0800 (PST)
-From: Kumara Parameshwaran <kumaraparamesh92@gmail.com>
-To: dev@dpdk.org
-Cc: Kumara Parameshwaran <kumaraparamesh92@gmail.com>
-Subject: [PATCH v2] gro : improve GRO performance based on hash table
-Date: Sun, 16 Nov 2025 11:36:34 +0530
-Message-Id: <20251116060634.262352-1-kumaraparamesh92@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20251110162356.173438-1-kumaraparamesh92@gmail.com>
-References: <20251110162356.173438-1-kumaraparamesh92@gmail.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 427CF40A89;
+	Sun, 16 Nov 2025 08:43:58 +0100 (CET)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id EFA994026C
+ for <dev@dpdk.org>; Sun, 16 Nov 2025 08:43:56 +0100 (CET)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id B87CD20C65;
+ Sun, 16 Nov 2025 08:43:55 +0100 (CET)
+Subject: RE: [PATCH v2] net/ice: add MAC anti-spoof option
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Date: Sun, 16 Nov 2025 08:43:54 +0100
+Content-class: urn:content-classes:message
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65562@smartserver.smartshare.dk>
+In-Reply-To: <20251116035749.45922-1-anurag.mandal@intel.com>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+Thread-Topic: [PATCH v2] net/ice: add MAC anti-spoof option
+Thread-Index: AdxWrTT2zGCirvvcTJKsUcbjSN2siAAGLhTg
+References: <20251113105914.34949-1-anurag.mandal@intel.com>
+ <20251116035749.45922-1-anurag.mandal@intel.com>
+From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
+To: "Anurag Mandal" <anurag.mandal@intel.com>, <dev@dpdk.org>,
+ <bruce.richardson@intel.com>, <anatoly.burakov@intel.com>,
+ <thomas@monjalon.net>, <andrew.rybchenko@oktetlabs.ru>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -79,433 +48,73 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Use cuckoo hash library in GRO for flow flookup
++TO: Ethdev maintainers, regarding new Ethdev APIs
 
-Signed-off-by: Kumara Parameshwaran <kumaraparamesh92@gmail.com>
----
+> From: Anurag Mandal [mailto:anurag.mandal@intel.com]
+> Sent: Sunday, 16 November 2025 04.58
+>=20
+> VRRP advertisement packets are dropped as TX-errors upon transmission
+> from
+> a vsi of ice PF due to MAC anti-spoof check which is enabled by
+> default.
+> There is no way to disable this check in the Tx direction to avoid
+> these packets being dropped.
+>=20
+> This patch introduces devargs "mac-anti-spoof" to allow user to
+> disable MAC anti-spoof check. Disable MAC Anti-spoof check
+> in the Tx direction to avoid getting dropped as TX-errors upon packet
+> transmission when their source MAC address matches one of the MAC
+> addresses assigned to that same NIC port.
+>=20
+> Signed-off-by: Anurag Mandal <anurag.mandal@intel.com>
+> ---
 
-Fix warnings and more validatation to the test
+This is the same story as with Source Prune.
+Please disable source-prune filtering by default, and provide an option =
+to enable it.
+Also, suggest shortening the devargs name to simply "anti-spoof", like =
+"source-prune"; they both operate on MAC basis.
 
- app/test/meson.build |   1 +
- app/test/test_gro.c  | 237 +++++++++++++++++++++++++++++++++++++++++++
- lib/gro/gro_tcp4.c   |  60 ++++++-----
- lib/gro/gro_tcp4.h   |   2 +
- lib/gro/meson.build  |   2 +-
- 5 files changed, 278 insertions(+), 24 deletions(-)
- create mode 100644 app/test/test_gro.c
+Let's make something generic instead, to replace those silly devargs.
+We have individual Ethdev APIs to enable/disable various Rx filtering, =
+e.g. "promiscuous", "all multicast".
+Obviously, we don't want to introduce new APIs for every semi-exotic =
+filter any NIC may offer, like "source prune" and "anti spoof", but we =
+could introduce a set of generic Ethdev APIs to support filters such as =
+these, using a bitfield enum. E.g.:
 
-diff --git a/app/test/meson.build b/app/test/meson.build
-index 8df8d3edd1..03bbe2be1f 100644
---- a/app/test/meson.build
-+++ b/app/test/meson.build
-@@ -211,6 +211,7 @@ source_file_deps = {
-     'test_trace_register.c': [],
-     'test_vdev.c': ['kvargs', 'bus_vdev'],
-     'test_version.c': [],
-+    'test_gro.c':['net', 'gro'],
- }
- 
- source_file_ext_deps = {
-diff --git a/app/test/test_gro.c b/app/test/test_gro.c
-new file mode 100644
-index 0000000000..3bd0035e68
---- /dev/null
-+++ b/app/test/test_gro.c
-@@ -0,0 +1,237 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2018 Intel Corporation
-+ */
-+
-+#include "test.h"
-+
-+#include <rte_net.h>
-+#include <rte_gro.h>
-+
-+#define NUM_MBUFS 128
-+#define BURST 32
-+
-+/*
-+ * Sample TCP/IPv4 packets from Iperf run
-+ * Each packet is 132 bytes long and TCP segment is 66 bytes long
-+ *
-+ * 10.1.0.4:52362=>10.1.0.5:5201 Seq = 4251552885 Ack = 428268870
-+ */
-+unsigned char pkts[][132] = {
-+	{
-+		0x12, 0x34, 0x56, 0x78, 0x9a, 0xbc, 0x7c, 0xed, 0x8d, 0xc0,
-+		0xc1, 0xf5, 0x8, 0x0, 0x45, 0x0, 0x0, 0x76, 0xa4, 0xfb, 0x40,
-+		0x0, 0x40, 0x6, 0x81, 0x7c, 0xa, 0x1, 0x0, 0x4, 0xa, 0x1, 0x0,
-+		0x5, 0xcc, 0x8a, 0x14, 0x51, 0xfd, 0x69, 0x8c, 0x75, 0x19, 0x86,
-+		0xdd, 0x46, 0x80, 0x10, 0x2, 0x0, 0x14, 0x73, 0x0, 0x0, 0x1, 0x1,
-+		0x8, 0xa, 0x3c, 0x2, 0xd1, 0xa5, 0x36, 0xb6, 0x9e, 0xda, 0x7d, 0xe9,
-+		0x63, 0xf1, 0x67, 0xeb, 0xc4, 0x93, 0xcf, 0x74, 0xcd, 0xab, 0x93,
-+		0x86, 0xe8, 0xb0, 0x1c, 0x92, 0xc8, 0x82, 0xef, 0x72, 0x34, 0xe7, 0x86,
-+		0x6d, 0xd2, 0x96, 0x8, 0x70, 0xae, 0xda, 0x60, 0xe4, 0x25, 0x39, 0xd2,
-+		0x73, 0xe7, 0xef, 0xf5, 0xf6, 0x7f, 0xbf, 0x7f, 0x5, 0x5a, 0x40, 0x6,
-+		0x65, 0x13, 0x8f, 0xa4, 0x7, 0x73, 0x41, 0xcb, 0x56, 0x3, 0x15, 0x85,
-+		0x99, 0x8c, 0xa9, 0xc8, 0x14
-+	},
-+	{
-+		0x12, 0x34, 0x56, 0x78, 0x9a, 0xbc, 0x7c, 0xed, 0x8d, 0xc0, 0xc1,
-+		0xf5, 0x8, 0x0, 0x45, 0x0, 0x0, 0x76, 0xa4, 0xfc, 0x40, 0x0, 0x40,
-+		0x6, 0x81, 0x7b, 0xa, 0x1, 0x0, 0x4, 0xa, 0x1, 0x0, 0x5, 0xcc, 0x8a,
-+		0x14, 0x51, 0xfd, 0x69, 0x8c, 0xb7, 0x19, 0x86, 0xdd, 0x46, 0x80, 0x10,
-+		0x2, 0x0, 0x14, 0x73, 0x0, 0x0, 0x1, 0x1, 0x8, 0xa, 0x3c, 0x2, 0xd1, 0xa5,
-+		0x36, 0xb6, 0x9e, 0xda, 0x2a, 0x6a, 0x4e, 0xf9, 0x94, 0x6, 0xaf, 0x2f, 0xeb,
-+		0xfb, 0xef, 0xa4, 0xaa, 0xe8, 0xd6, 0xc0, 0x34, 0xab, 0x8b, 0xfc, 0x14, 0xb9,
-+		0x89, 0xcb, 0xb6, 0x15, 0x58, 0xe5, 0x2a, 0x72, 0xcd, 0x1c, 0x71, 0x3, 0xf4,
-+		0xf9, 0x32, 0x7e, 0x58, 0xec, 0xe6, 0x52, 0x5a, 0x88, 0x8c, 0x24, 0x53, 0xd7,
-+		0x39, 0x80, 0xb6, 0x66, 0x9b, 0xe5, 0x45, 0xbe, 0x9, 0xf8, 0xac, 0xef, 0xc2,
-+		0x51, 0x31, 0x87, 0x9c, 0x56
-+	},
-+	{
-+		0x12, 0x34, 0x56, 0x78, 0x9a, 0xbc, 0x7c, 0xed, 0x8d, 0xc0, 0xc1, 0xf5, 0x8,
-+		0x0, 0x45, 0x0, 0x0, 0x76, 0xa4, 0xfd, 0x40, 0x0, 0x40, 0x6, 0x81, 0x7a, 0xa,
-+		0x1, 0x0, 0x4, 0xa, 0x1, 0x0, 0x5, 0xcc, 0x8a, 0x14, 0x51, 0xfd, 0x69, 0x8c,
-+		0xf9, 0x19, 0x86, 0xdd, 0x46, 0x80, 0x10, 0x2, 0x0, 0x14, 0x73, 0x0, 0x0, 0x1,
-+		0x1, 0x8, 0xa, 0x3c, 0x2, 0xd1, 0xa5, 0x36, 0xb6, 0x9e, 0xda, 0x68, 0x93, 0xec,
-+		0x8a, 0x35, 0xba, 0xe8, 0x24, 0x9e, 0x78, 0x6c, 0xb8, 0x65, 0xe1, 0x23, 0xc1, 0x48,
-+		0x5, 0xca, 0xea, 0x6b, 0x5, 0xe7, 0x71, 0x1a, 0x97, 0x5a, 0x23, 0xd2, 0x81, 0xc9,
-+		0x9a, 0xad, 0x1e, 0x77, 0xb1, 0x9c, 0x43, 0xf, 0xbf, 0x6c, 0xb6, 0x36, 0x46,
-+		0x99, 0xcc, 0x4, 0xf4, 0xc2, 0x87, 0x41, 0xec, 0xc6, 0xc5, 0xd9, 0x48, 0xcf,
-+		0x9b, 0xec, 0xb7, 0x2f, 0x91, 0x5f, 0x83, 0x9f, 0xd
-+	},
-+	{
-+		0x12, 0x34, 0x56, 0x78, 0x9a, 0xbc, 0x7c, 0xed, 0x8d, 0xc0, 0xc1, 0xf5, 0x8, 0x0,
-+		0x45, 0x0, 0x0, 0x76, 0xa4, 0xfe, 0x40, 0x0, 0x40, 0x6, 0x81, 0x79, 0xa, 0x1, 0x0,
-+		0x4, 0xa, 0x1, 0x0, 0x5, 0xcc, 0x8a, 0x14, 0x51, 0xfd, 0x69, 0x8d, 0x3b, 0x19, 0x86,
-+		0xdd, 0x46, 0x80, 0x10, 0x2, 0x0, 0x14, 0x73, 0x0, 0x0, 0x1, 0x1, 0x8, 0xa, 0x3c,
-+		0x2, 0xd1, 0xa5, 0x36, 0xb6, 0x9e, 0xda, 0xdd, 0x72, 0x54, 0xdc, 0x5, 0x51, 0xb6,
-+		0x4b, 0xdd, 0x10, 0xfb, 0x1c, 0xe8, 0x5d, 0x84, 0x75, 0xd7, 0x20, 0xd3, 0xc, 0xbd,
-+		0xba, 0x77, 0x1a, 0x14, 0x41, 0x15, 0xd0, 0x34, 0x64, 0x8d, 0x6, 0x32, 0x8f, 0x83,
-+		0x3e, 0xd6, 0xf, 0xaa, 0xe1, 0x7e, 0xdc, 0xbe, 0x33, 0x43, 0xc6, 0x38, 0xcf, 0x9b,
-+		0x6f, 0xf2, 0x1e, 0x50, 0x6f, 0xf3, 0x3b, 0x8f, 0xbf, 0x18, 0x60, 0xd5, 0x43, 0xac,
-+		0xd2, 0xbb, 0x49
-+	},
-+	{
-+		0x12, 0x34, 0x56, 0x78, 0x9a, 0xbc, 0x7c, 0xed, 0x8d, 0xc0, 0xc1, 0xf5, 0x8, 0x0,
-+		0x45, 0x0, 0x0, 0x76, 0xa4, 0xff, 0x40, 0x0, 0x40, 0x6, 0x81, 0x78, 0xa, 0x1, 0x0,
-+		0x4, 0xa, 0x1, 0x0, 0x5, 0xcc, 0x8a, 0x14, 0x51, 0xfd, 0x69, 0x8d, 0x7d, 0x19, 0x86,
-+		0xdd, 0x46, 0x80, 0x18, 0x2, 0x0, 0x14, 0x73, 0x0, 0x0, 0x1, 0x1, 0x8, 0xa, 0x3c,
-+		0x2, 0xd1, 0xa5, 0x36, 0xb6, 0x9e, 0xda, 0x5a, 0x95, 0x20, 0xf2, 0x20, 0x9b, 0xd,
-+		0xc1, 0x9, 0xe5, 0x3, 0x68, 0x52, 0x14, 0x2c, 0x7c, 0x98, 0x44, 0x63, 0x6c, 0xc6,
-+		0xe6, 0xba, 0x8a, 0x0, 0x10, 0x66, 0x45, 0xb1, 0xfd, 0x7b, 0x77, 0xf1, 0xf9, 0x95,
-+		0xcd, 0x7f, 0x61, 0x12, 0xeb, 0xa5, 0x23, 0xa0, 0x2, 0xe5, 0x31, 0xd8, 0x1f, 0x36,
-+		0x55, 0x59, 0x46, 0xce, 0x9f, 0xd2, 0x74, 0x6b, 0xf9, 0x63, 0xbe, 0xa1, 0xed, 0xc5,
-+		0x59, 0x22, 0x8c
-+	}
-+};
-+
-+void *gro_tcp4_ctx;
-+static struct rte_mempool *pkt_pool;
-+
-+static int test_gro_tcp4_setup(void)
-+{
-+	pkt_pool = rte_pktmbuf_pool_create("GRO_MBUF_POOL",
-+			NUM_MBUFS, BURST, 0,
-+			RTE_MBUF_DEFAULT_BUF_SIZE,
-+			SOCKET_ID_ANY);
-+	if (pkt_pool == NULL) {
-+		printf("%s: Error creating pkt mempool\n", __func__);
-+		goto failed;
-+	}
-+
-+	gro_tcp4_ctx = rte_gro_ctx_create(&(struct rte_gro_param) {
-+					.max_flow_num = 1024,
-+					.max_item_per_flow = 32,
-+					.gro_types = RTE_GRO_TCP_IPV4,
-+			});
-+	if (gro_tcp4_ctx == NULL)
-+		goto failed;
-+
-+	return TEST_SUCCESS;
-+
-+failed:
-+	if (pkt_pool)
-+		rte_mempool_free(pkt_pool);
-+	if (gro_tcp4_ctx)
-+		rte_gro_ctx_destroy(gro_tcp4_ctx);
-+
-+	pkt_pool = NULL;
-+	gro_tcp4_ctx = NULL;
-+
-+	return TEST_FAILED;
-+}
-+
-+static void test_gro_tcp4_teardown(void)
-+{
-+	if (pkt_pool)
-+		rte_mempool_free(pkt_pool);
-+	if (gro_tcp4_ctx)
-+		rte_gro_ctx_destroy(gro_tcp4_ctx);
-+	pkt_pool = NULL;
-+	gro_tcp4_ctx = NULL;
-+}
-+
-+static int testsuite_setup(void)
-+{
-+	return TEST_SUCCESS;
-+}
-+
-+static void testsuite_teardown(void)
-+{
-+}
-+
-+static int32_t
-+test_gro_tcp4(void)
-+{
-+	struct rte_mbuf *pkts_mb[5];
-+	struct rte_mbuf *gro_pkts[5];
-+	int nb_pkts;
-+	int nb_gro_pkts;
-+	struct rte_net_hdr_lens hdr_lens = {0};
-+	struct rte_ether_hdr *eth_hdr;
-+	struct rte_ipv4_hdr *ipv4_hdr;
-+	struct rte_tcp_hdr *tcp_hdr;
-+	struct rte_ether_addr src_addr = {
-+		.addr_bytes = {0x7c, 0xed, 0x8d, 0xc0, 0xc1, 0xf5}
-+	};
-+	struct rte_ether_addr dst_addr = {
-+		.addr_bytes = {0x12, 0x34, 0x56, 0x78, 0x9a, 0xbc}
-+	};
-+
-+	for (int i = 0; i < 5; i++) {
-+		pkts_mb[i] = rte_pktmbuf_alloc(pkt_pool);
-+		if (pkts_mb[i] == NULL)
-+			goto failed;
-+		rte_memcpy(rte_pktmbuf_mtod(pkts_mb[i], void *), pkts[i], 132);
-+		pkts_mb[i]->data_len = 132;
-+		pkts_mb[i]->pkt_len = 132;
-+		pkts_mb[i]->packet_type = rte_net_get_ptype(pkts_mb[i], &hdr_lens,
-+										RTE_PTYPE_ALL_MASK);
-+		pkts_mb[i]->l2_len = hdr_lens.l2_len;
-+		pkts_mb[i]->l3_len = hdr_lens.l3_len;
-+		pkts_mb[i]->l4_len = hdr_lens.l4_len;
-+	}
-+
-+	/* GRO reassemble */
-+	nb_pkts = rte_gro_reassemble(&pkts_mb[0], 5, gro_tcp4_ctx);
-+	TEST_ASSERT(nb_pkts == 0, "Not expected packets after GRO");
-+	TEST_ASSERT(rte_gro_get_pkt_count(gro_tcp4_ctx) == 1, "GRO pkt count mismatch");
-+
-+	/* GRO timeout flush */
-+	nb_gro_pkts = rte_gro_timeout_flush(gro_tcp4_ctx, 0, RTE_GRO_TCP_IPV4, gro_pkts, 5);
-+	TEST_ASSERT(nb_gro_pkts == 1, "GRO timeout flush pkt count mismatch");
-+	TEST_ASSERT(rte_gro_get_pkt_count(gro_tcp4_ctx) == 0, "GRO pkt count after flush mismatch");
-+	TEST_ASSERT(gro_pkts[0]->pkt_len == 396, "GRO merged pkt len mismatch");
-+
-+	eth_hdr = rte_pktmbuf_mtod(gro_pkts[0], struct rte_ether_hdr *);
-+	ipv4_hdr = (struct rte_ipv4_hdr *)(rte_pktmbuf_mtod(
-+					gro_pkts[0], char *) + sizeof(struct rte_ether_hdr));
-+	tcp_hdr = (struct rte_tcp_hdr *)((char *)ipv4_hdr + sizeof(struct rte_ipv4_hdr));
-+
-+	TEST_ASSERT_BUFFERS_ARE_EQUAL(eth_hdr->src_addr.addr_bytes,
-+		src_addr.addr_bytes, RTE_ETHER_ADDR_LEN, "GRO merged pkt Ethernet SRC MAC mismatch");
-+	 TEST_ASSERT_BUFFERS_ARE_EQUAL(eth_hdr->dst_addr.addr_bytes,
-+		dst_addr.addr_bytes, RTE_ETHER_ADDR_LEN, "GRO merged pkt Ethernet DST MAC mismatch");
-+
-+	TEST_ASSERT(rte_be_to_cpu_32(ipv4_hdr->src_addr) == 0x0a010004,
-+		"GRO merged pkt IP src addr mismatch");
-+	TEST_ASSERT(rte_be_to_cpu_32(ipv4_hdr->dst_addr) == 0x0a010005,
-+		"GRO merged pkt IP dst addr mismatch");
-+	TEST_ASSERT(rte_be_to_cpu_16(ipv4_hdr->packet_id) == 0xa4fb,
-+		"GRO merged pkt IP id mismatch");
-+
-+	TEST_ASSERT(rte_be_to_cpu_16(tcp_hdr->src_port) == 52362,
-+		"GRO merged pkt TCP src port mismatch");
-+	TEST_ASSERT(rte_be_to_cpu_16(tcp_hdr->dst_port) == 5201,
-+		"GRO merged pkt TCP dst port mismatch");
-+	TEST_ASSERT(rte_be_to_cpu_32(tcp_hdr->sent_seq) == 4251552885,
-+		"GRO merged pkt TCP seq num mismatch");
-+	TEST_ASSERT(rte_be_to_cpu_32(tcp_hdr->recv_ack) == 428268870,
-+		"GRO merged pkt TCP ack num mismatch");
-+
-+	return TEST_SUCCESS;
-+
-+failed:
-+	return TEST_FAILED;
-+}
-+
-+static struct unit_test_suite gro_testsuite  = {
-+	.suite_name = "GRO Unit Test Suite",
-+	.setup = testsuite_setup,
-+	.teardown = testsuite_teardown,
-+	.unit_test_cases = {
-+		TEST_CASE_ST(test_gro_tcp4_setup, test_gro_tcp4_teardown,
-+			     test_gro_tcp4),
-+
-+		TEST_CASES_END() /**< NULL terminate unit test array */
-+	}
-+};
-+
-+static int
-+test_gro(void)
-+{
-+	rte_log_set_global_level(RTE_LOG_DEBUG);
-+	rte_log_set_level(RTE_LOGTYPE_EAL, RTE_LOG_DEBUG);
-+
-+	return unit_test_suite_runner(&gro_testsuite);
-+}
-+
-+
-+REGISTER_FAST_TEST(gro_autotest, false, true, test_gro);
-diff --git a/lib/gro/gro_tcp4.c b/lib/gro/gro_tcp4.c
-index 855cc7a71d..8459037eef 100644
---- a/lib/gro/gro_tcp4.c
-+++ b/lib/gro/gro_tcp4.c
-@@ -5,6 +5,8 @@
- #include <rte_malloc.h>
- #include <rte_mbuf.h>
- #include <rte_ethdev.h>
-+#include <rte_hash.h>
-+#include <rte_jhash.h>
- 
- #include "gro_tcp4.h"
- #include "gro_tcp_internal.h"
-@@ -57,6 +59,15 @@ gro_tcp4_tbl_create(uint16_t socket_id,
- 		tbl->flows[i].start_index = INVALID_ARRAY_INDEX;
- 	tbl->max_flow_num = entries_num;
- 
-+	/* Create Hash table for faster lookup of the flows */
-+	tbl->flow_hash = rte_hash_create(&(struct rte_hash_parameters){
-+		.name = "gro_tcp4_flow_hash",
-+		.entries = tbl->max_flow_num,
-+		.key_len = sizeof(struct tcp4_flow_key),
-+		.hash_func = rte_jhash,
-+		.hash_func_init_val = 0
-+	});
-+
- 	return tbl;
- }
- 
-@@ -69,6 +80,7 @@ gro_tcp4_tbl_destroy(void *tbl)
- 		rte_free(tcp_tbl->items);
- 		rte_free(tcp_tbl->flows);
- 	}
-+	rte_hash_free(tcp_tbl->flow_hash);
- 	rte_free(tcp_tbl);
- }
- 
-@@ -91,11 +103,17 @@ insert_new_flow(struct gro_tcp4_tbl *tbl,
- {
- 	struct tcp4_flow_key *dst;
- 	uint32_t flow_idx;
-+	int32_t ret;
- 
- 	flow_idx = find_an_empty_flow(tbl);
- 	if (unlikely(flow_idx == INVALID_ARRAY_INDEX))
- 		return INVALID_ARRAY_INDEX;
- 
-+	ret = rte_hash_add_key_data(tbl->flow_hash, src,
-+			(void *)&tbl->flows[flow_idx]);
-+	if (ret < 0)
-+		return INVALID_ARRAY_INDEX;
-+
- 	dst = &(tbl->flows[flow_idx].key);
- 
- 	ASSIGN_COMMON_TCP_KEY((&src->cmn_key), (&dst->cmn_key));
-@@ -124,9 +142,8 @@ gro_tcp4_reassemble(struct rte_mbuf *pkt,
- 
- 	struct tcp4_flow_key key;
- 	uint32_t item_idx;
--	uint32_t i, max_flow_num, remaining_flow_num;
--	uint8_t find;
--	uint32_t item_start_idx;
-+	int ret;
-+	struct gro_tcp4_flow *flow;
- 
- 	/*
- 	 * Don't process the packet whose TCP header length is greater
-@@ -173,22 +190,8 @@ gro_tcp4_reassemble(struct rte_mbuf *pkt,
- 	is_atomic = (frag_off & RTE_IPV4_HDR_DF_FLAG) == RTE_IPV4_HDR_DF_FLAG;
- 	ip_id = is_atomic ? 0 : rte_be_to_cpu_16(ipv4_hdr->packet_id);
- 
--	/* Search for a matched flow. */
--	max_flow_num = tbl->max_flow_num;
--	remaining_flow_num = tbl->flow_num;
--	find = 0;
--	for (i = 0; i < max_flow_num && remaining_flow_num; i++) {
--		if (tbl->flows[i].start_index != INVALID_ARRAY_INDEX) {
--			if (is_same_tcp4_flow(tbl->flows[i].key, key)) {
--				find = 1;
--				item_start_idx = tbl->flows[i].start_index;
--				break;
--			}
--			remaining_flow_num--;
--		}
--	}
--
--	if (find == 1) {
-+	ret = rte_hash_lookup_data(tbl->flow_hash, &key, (void **)&flow);
-+	if (ret >= 0) {
- 		/*
- 		 * Any packet with additional flags like PSH,FIN should be processed
- 		 * and flushed immediately.
-@@ -197,9 +200,9 @@ gro_tcp4_reassemble(struct rte_mbuf *pkt,
- 		 */
- 		if (tcp_hdr->tcp_flags & (RTE_TCP_ACK_FLAG | RTE_TCP_PSH_FLAG | RTE_TCP_FIN_FLAG)) {
- 			if (tcp_hdr->tcp_flags != RTE_TCP_ACK_FLAG)
--				tbl->items[item_start_idx].start_time = 0;
-+				tbl->items[flow->start_index].start_time = 0;
- 			return process_tcp_item(pkt, tcp_hdr, tcp_dl, tbl->items,
--						tbl->flows[i].start_index, &tbl->item_num,
-+						flow->start_index, &tbl->item_num,
- 						tbl->max_item_num, ip_id, is_atomic, start_time);
- 		} else {
- 			return -1;
-@@ -256,6 +259,8 @@ gro_tcp4_tbl_timeout_flush(struct gro_tcp4_tbl *tbl,
- 	uint16_t k = 0;
- 	uint32_t i, j;
- 	uint32_t max_flow_num = tbl->max_flow_num;
-+	struct gro_tcp4_flow *flow;
-+	int ret;
- 
- 	for (i = 0; i < max_flow_num; i++) {
- 		if (unlikely(tbl->flow_num == 0))
-@@ -273,9 +278,18 @@ gro_tcp4_tbl_timeout_flush(struct gro_tcp4_tbl *tbl,
- 				 */
- 				j = delete_tcp_item(tbl->items, j,
- 							&tbl->item_num, INVALID_ARRAY_INDEX);
--				tbl->flows[i].start_index = j;
--				if (j == INVALID_ARRAY_INDEX)
-+				if (j == INVALID_ARRAY_INDEX) {
-+					flow = &tbl->flows[i];
-+					ret = rte_hash_del_key(tbl->flow_hash, &flow->key);
-+					RTE_ASSERT(ret >= 0);
-+					if (ret >= 0) {
-+						ret = rte_hash_free_key_with_position(
-+									tbl->flow_hash, ret);
-+						RTE_ASSERT(ret == 0);
-+					}
- 					tbl->flow_num--;
-+				}
-+				tbl->flows[i].start_index = j;
- 
- 				if (unlikely(k == nb_out))
- 					return k;
-diff --git a/lib/gro/gro_tcp4.h b/lib/gro/gro_tcp4.h
-index 245e5da486..babf4f7d01 100644
---- a/lib/gro/gro_tcp4.h
-+++ b/lib/gro/gro_tcp4.h
-@@ -33,6 +33,8 @@ struct gro_tcp4_tbl {
- 	struct gro_tcp_item *items;
- 	/* flow array */
- 	struct gro_tcp4_flow *flows;
-+	/* flow hash table */
-+	struct rte_hash *flow_hash;
- 	/* current item number */
- 	uint32_t item_num;
- 	/* current flow num */
-diff --git a/lib/gro/meson.build b/lib/gro/meson.build
-index dbce05220d..96668dcd94 100644
---- a/lib/gro/meson.build
-+++ b/lib/gro/meson.build
-@@ -10,4 +10,4 @@ sources = files(
-         'gro_vxlan_udp4.c',
- )
- headers = files('rte_gro.h')
--deps += ['ethdev']
-+deps += ['ethdev', 'hash']
--- 
-2.25.1
+/* Enable one or more filters. */
+int rte_ethdev_filter_enable(uin16_t port_id, uint64_t filter);
+
+/* Disable one or more filters. */
+int rte_ethdev_filter_disable(uin16_t port_id, uint64_t filter);
+
+/* Get bit field of filters enabled. */
+int64_t rte_ethdev_filter_get(uin16_t port_id);
+
+/* Get bit field of filters supported by device. */
+int64_t rte_ethdev_filter_capa(uin16_t port_id); /**/
+
+/** Destination MAC must match NIC's MAC address.
+ * (This is the inverse of Promiscuous.)
+ * Default enabled.
+ */
+#define RTE_ETH_FILTER_RX_NON_PROMISC RTE_BIT64(0)
+/** Multicast Hash.
+ * (This is the inverse of All Multicast.)
+ * Default enabled.
+ */
+#define RTE_ETH_FILTER_RX_MULTICAST RTE_BIT64(1)
+/** Source Prune.
+ * [Insert description here.]
+ */
+#define RTE_ETH_FILTER_RX_SOURCE_PRUNE RTE_BIT64(2)
+/* Add new Rx filters here, in increasing order. */
+/* Add new Tx filters here, in decreasing order. */
+/** Anti-Spoof.
+ * [Insert description here.]
+ */
+#define RTE_ETH_FILTER_RX_SOURCE_PRUNE RTE_BIT64(62)
+/** Used for error return values which are negative. */
+#define RTE_ETH_FILTER_ERROR           RTE_BIT64(63)
 
