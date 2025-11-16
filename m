@@ -2,69 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A7C3CD4F3E
-	for <dpdk-dev@archiver.kernel.org>; Sun, 16 Nov 2025 19:01:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED390CCD19A
+	for <dpdk-dev@archiver.kernel.org>; Sun, 16 Nov 2025 19:01:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DFAAF42709;
-	Sun, 16 Nov 2025 20:00:45 +0100 (CET)
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com
- [209.85.210.177])
- by mails.dpdk.org (Postfix) with ESMTP id 8B90C41153
- for <dev@dpdk.org>; Sun, 16 Nov 2025 20:00:43 +0100 (CET)
-Received: by mail-pf1-f177.google.com with SMTP id
- d2e1a72fcca58-7b9387df58cso4869580b3a.3
- for <dev@dpdk.org>; Sun, 16 Nov 2025 11:00:43 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id E6ED04279A;
+	Sun, 16 Nov 2025 20:00:46 +0100 (CET)
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com
+ [209.85.215.169])
+ by mails.dpdk.org (Postfix) with ESMTP id 804FD415D7
+ for <dev@dpdk.org>; Sun, 16 Nov 2025 20:00:44 +0100 (CET)
+Received: by mail-pg1-f169.google.com with SMTP id
+ 41be03b00d2f7-ba2450aba80so2022381a12.1
+ for <dev@dpdk.org>; Sun, 16 Nov 2025 11:00:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1763319643;
- x=1763924443; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1763319644;
+ x=1763924444; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=RdSvE1fwE0hovACbZUMxJ2r+SiMaoD2s6kplsmoLVi0=;
- b=Uzmwq0CjrMmujYBQdxuUT1e2X5XV1QkEPXdw8so6kh9mLXxalBuRBnImzijwJvMoqR
- AgzWEGIUftuIsVd3isPczv75Ah7LaVMlhsrd93klx9jcwuh9TWw2Qdrwu5YgAaNysrhn
- Sv3Qz8SksMVBOLxJ2nTUa4PZOdB0zkxAxv6RSeRLtV+c8Qtgavvw/p7vy5pArGMGZVjD
- c8xxXUy075OJjh2n0vHzolgz8Wq1uSx/ixUCCfz+qpRk+bwMLZzpRZ3r0JPSs1cHM089
- HX223tqJvX+mYlvmUbJtjoggnoAt0TdncK0tgv6X4qT5HorrWtuuhHdPcwJYQlnt40Dj
- iQbA==
+ bh=4N6VXc3tUc7OXtFjeBwHi1Npc8ZSTloPaYoTVmoy8W8=;
+ b=ZIKW9LiggWyHVnNiiIw43FZSP2OOX1h0RVc1oqRH+/U7/jlfZL38msOLijhcI2r9gc
+ hCjU0b8EwHQ5IPrQM/ROulKV8C191vUc8Eq5xXGbxhRrA/usfqXuoBRno952FcPE4PXE
+ bkpo0SIZtrt+5gmHbsT2yjyMNwDDFlGX9QrqLicJpg7YR0HrpJe8autawXrKzN1aUJfu
+ OMFLSReOI57xJN4ZIfsdkT4D5hu5VYyP07acRaFSBT/YSgzesPQTNkQSvUfzuYaXFplz
+ REiVAoTC1nPoNMzSL5TKJT7FYn5/8kARkh10gyteTK+po94MVxIPhiwQzkRne8yiJhmd
+ KMxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1763319643; x=1763924443;
+ d=1e100.net; s=20230601; t=1763319644; x=1763924444;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=RdSvE1fwE0hovACbZUMxJ2r+SiMaoD2s6kplsmoLVi0=;
- b=mWDGquOO8+zzzkGSmSlp3Iv7ue9G+eRDOxDmoEFou2wUlLhhTexgWZc+piBYosbvKH
- Ge/KefCS5cx7IbNFR+fVm2DkVb/IYo9gAituYpch++eqjbFjILCFhloJSw0LgERGej85
- IO9r7YfIbuTk3Of5y2xQOrZh4OgDJW2yNBgYff10RT0zzJ9UjxbC2XQFK4tmc9JISeYw
- ZpSunTrPTjrOwxEfuAogKGfgH2NIfHGKC4ih3ih5UB2h4iTU3p3DtVh1+cXw6+r2qyKS
- rVEkbDCJ3LdfX+UX/FbLaHSMrG5cVbbvOgLhAm6niZiLY+KX1+XNlyzPJbCK6vv6mcHT
- P5zQ==
-X-Gm-Message-State: AOJu0Yzkl3Hgyoq6/c7eCdRw+2ULrd3wqf9Hcrt9wCmZfzTbhzh2l5/t
- 86L9XwgbXM0OJYxZZoQuvgtear9UkbAx1+9v/wKiSSRwtmyc5u5bsgSLbQpuu35/DQWFfa2PqnU
- wnzMq
-X-Gm-Gg: ASbGncvE27Udd4XGBlQtfQan8mV260ZcGFLEvRzGZDrLJWWKF+cbwAud+Xgz8xHvN7y
- KUSzhliQLyvP2H5h7VyRTY/vpBDacX8DiWDwPFESNaZipS1cuH61TG9EZALq9EqrwZ4+aAw79uk
- bZaF+Xn3WAgtHRepSRa2wyE2FhKkj5R1VKExOZHDv30kXzATNJvzKzELA44gD0aFO4JR3MDZ6ug
- KJ8ghteMypMZXDiFkNOzrHlr5eM37A+b/cbpyxehnK4o+lpimHsYZl4M6X6lrrlGI9iyRAJFX0a
- oWKCIeq3K9a8nIFWk1//tq2hM0kQhq4PJL2Q77qxXLtNJcdFYiqPf+6O2R5FQDyzvx88Qmj08bv
- FMLdLOwHfD0sPAKsap95uqoV440A1BpHz23OcyJ8KStnjzFnaqlnJTGcPsILkQ3v1J2+E//KZNd
- mnL1hYv0zswXHJqxm0JNfiiokV1rOKAj/c2WQYd5oedK7jmcYULOlPy24d5BkP
-X-Google-Smtp-Source: AGHT+IGZDGU7ucdMLy93p2PKptSg6kDawYRjCDxdWs0vFRq1uhCtPxuqNajCgz2xV7orJYuQpLZi7Q==
-X-Received: by 2002:a05:701b:240e:b0:119:e56b:c745 with SMTP id
- a92af1059eb24-11b40f92bf6mr3065445c88.10.1763319642523; 
- Sun, 16 Nov 2025 11:00:42 -0800 (PST)
+ bh=4N6VXc3tUc7OXtFjeBwHi1Npc8ZSTloPaYoTVmoy8W8=;
+ b=FZf6+caH3uDL0ytJm2cRscb17s9OP23G9CNvxzBAbVb91QygjK4kof/l8qGNpUQhpV
+ Bn09frljpFHjXgCmH3noXjM84Pdufwjs/+EBXm38yCRv7bFl73lIHcCdA/s1FsqPsbqB
+ fn42FNGRFFE98bbi8UWKIL6OBmvqY0CDErrmcvnBhlSZANaNMZAy40/SqxPFgytjJQXx
+ nS/azHHzC07UznKSpVmnprbSUg+jn0F0uNFsM+iKQjdsW1r+bLzXP+8HYHFlMlMIUndO
+ eVMubQqbyMV67yDRxwmnFgWSfj3jWJkMaHTuarMNyznNoduuP4dyCm+4uDKJgHZBxKKW
+ BHcw==
+X-Gm-Message-State: AOJu0YzA3BB/Vq7z4/DSUyd0XCgMtvcihLAv/uV/k2pluD1oU5HPiMjO
+ 7wOz+x7+QR30DoTiF/tHtVeDmY0Ac0MWrq7PlobUOkPmw5X3ALspIa/XsqkSzE/bkiWn2R3fPyF
+ 6qJAM
+X-Gm-Gg: ASbGncvOo+iQ6kkF1Ffkyr1Qb8AbCHyVkEiLNqglohmopzvKQ3EK3nj5TWH2Iw3POu2
+ Do4mV1ZVvAzut6JRLt4pOf0Sq0Rcw6LK5/7tK54mOwErpNkmL7ouWLvej7bGm8TZRIZhx9ZOjf9
+ 3GBJ8xrYMP+w3tZ5ehTw6XQfWpSfgUNcxBjdWNVSGy8dxR/fSf13mEdeNw16S/7DCFRyWvv84y7
+ DH25aFM9/Qt7jW/QBGuIW1SteqlrZoKQE6uYEhqb06CP1WRqkOprkaRJYIuBbGO+cVRXSidFl1I
+ LzgHqONZHNCzpeZyjijmDZenBEAy0RAIco5eAYcy8uXhYiJJ2g7pRJ01kEHARFNsqxTs++Y1Rr+
+ cMDaWwpO9CXB4+ja6a2joa6znAVElIQ7JTJB3vcmUBZYXuFPlaEjAwRUpWQAdacp0Zgej4ioh9N
+ BOq6ZS/mkZdbUjN3X2P3YHGpN3zBAK6428GIOONfzL7hwPS4oS5w==
+X-Google-Smtp-Source: AGHT+IGS8Z5Q+TF6CaUIMZrlph+uNh7nElsmuTbC1YhdEtE7EhO8Jz7YcSCtLKQd6MHt3jI0AQloog==
+X-Received: by 2002:a05:7301:8614:b0:2a4:3592:c607 with SMTP id
+ 5a478bee46e88-2a4abb27503mr3678808eec.24.1763319643632; 
+ Sun, 16 Nov 2025 11:00:43 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-2a49dad0aefsm28215946eec.3.2025.11.16.11.00.41
+ 5a478bee46e88-2a49dad0aefsm28215946eec.3.2025.11.16.11.00.42
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 16 Nov 2025 11:00:42 -0800 (PST)
+ Sun, 16 Nov 2025 11:00:43 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Cristian Dumitrescu <cristian.dumitrescu@intel.com>
-Subject: [PATCH v2 4/5] test: fix format overflow warning in ACL test
-Date: Sun, 16 Nov 2025 10:59:32 -0800
-Message-ID: <20251116190035.76123-5-stephen@networkplumber.org>
+ Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH v2 5/5] test: re-enable format-truncation warnings
+Date: Sun, 16 Nov 2025 10:59:33 -0800
+Message-ID: <20251116190035.76123-6-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251116190035.76123-1-stephen@networkplumber.org>
 References: <20251115193409.99740-1-stephen@networkplumber.org>
@@ -84,38 +84,26 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This test has an array of input lines, but the two dimensional
-array confuses compiler length checks. Convert to an array
-of pointers to fixed strings which avoids the problem.
-Make both variables static since not shared with other code.
+Tests should be built with warnings.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- app/test/test_table_acl.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ app/test/meson.build | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/app/test/test_table_acl.c b/app/test/test_table_acl.c
-index dff9bddfb9..94edf37234 100644
---- a/app/test/test_table_acl.c
-+++ b/app/test/test_table_acl.c
-@@ -317,7 +317,7 @@ parse_cb_ipv4_rule_del(char *str, struct rte_table_acl_rule_delete_params *v)
-  * separated by ' : ', just ':'. It's a lot more readable and
-  * cleaner, IMO.
-  */
--char lines[][128] = {
-+static const char * const lines[] = {
- 	"@0.0.0.0/0 0.0.0.0/0 0:65535 0:65535 2/0xff", /* Protocol check */
- 	"@192.168.3.1/32 0.0.0.0/0 0:65535 0:65535 0/0", /* Src IP checl */
- 	"@0.0.0.0/0 10.4.4.1/32 0:65535 0:65535 0/0", /* dst IP check */
-@@ -325,7 +325,7 @@ char lines[][128] = {
- 	"@0.0.0.0/0 0.0.0.0/0 0:65535 206:206 0/0", /* dst port check */
- };
+diff --git a/app/test/meson.build b/app/test/meson.build
+index 8df8d3edd1..66cbabe9fe 100644
+--- a/app/test/meson.build
++++ b/app/test/meson.build
+@@ -260,7 +260,6 @@ cflags += no_wvla_cflag
+ extra_flags = [
+         # Strict-aliasing rules are violated by uint8_t[] to context size casts.
+         '-fno-strict-aliasing',
+-        '-Wno-format-truncation',
+ ]
  
--char line[128];
-+static char line[128];
- 
- 
- static int
+ foreach arg: extra_flags
 -- 
 2.51.0
 
