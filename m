@@ -2,126 +2,131 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EAA4CE8D6B
-	for <dpdk-dev@archiver.kernel.org>; Mon, 17 Nov 2025 12:03:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF2AACEBF91
+	for <dpdk-dev@archiver.kernel.org>; Mon, 17 Nov 2025 12:45:06 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8292240262;
-	Mon, 17 Nov 2025 13:03:00 +0100 (CET)
-Received: from CY3PR05CU001.outbound.protection.outlook.com
- (mail-westcentralusazon11013014.outbound.protection.outlook.com
- [40.93.201.14]) by mails.dpdk.org (Postfix) with ESMTP id 4937B4025A
- for <dev@dpdk.org>; Mon, 17 Nov 2025 13:02:59 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 08AA940262;
+	Mon, 17 Nov 2025 13:45:06 +0100 (CET)
+Received: from TYDPR03CU002.outbound.protection.outlook.com
+ (mail-japaneastazon11023098.outbound.protection.outlook.com [52.101.127.98])
+ by mails.dpdk.org (Postfix) with ESMTP id D0F024025A
+ for <dev@dpdk.org>; Mon, 17 Nov 2025 13:45:04 +0100 (CET)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=OXNNz7Ra8C7jsNuP54ehUhCZWAc30yeyz5cyUcE/H+3o8RZlI9pPVSJtXjO1iTYt3WXO9tuSXkImLw0mjGFAPLuDz+Ppa+oWgJP5kGjlE9+FXWBt16t0a9y/ZSBbp8/MwKYFutudJXap15ey2Ne5ja0bjFnqAziNm0guAYOA/o2XE9TcTfn82c/hO39K/KBKb7HhKz0nMndbP37PQIniCpmrBATbelhYWHC0Qz1OBGB9Q3OMcHlt0Zva14l+S/mk/eqJP6AjCBMvxaprl9D9pc2llnrvS0JOu0jClPpKISE97/kSmnMrw1vdZSKlkXm1rsSbB7UvX8OthR91P/2cHw==
+ b=TqzasqlwAhZuim8pWKOl/6a8fFLUc0JxJml6f+oo8ISpiNZ62B0pdFMSynHB0lgFiC7B47TVSFjC2NAVmK0gfXmqsmofQIAvjftFCy9wRzAHlaY9LogWqksRbPJr0S3Ju/CxOqDmmtS2q57jaFKHGpqJRdIEHkpVt+tfEcEfcFnCjHM9ObLM5ZBIuT6At5RIceItHxgHVu5BUZb+S5NGhioyeW+SxEwzxAVfdYLGPNwjZ9XZQKlDtG1plEUfLitVdGoeWWIpHv6HiI+IaM3T3EE2sAW907D1cbn0StQy7EI+tRWN+kddUllduynLQjq4oN0vWMXYvuUXjtE3sbObHg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+b+rmtDZsM8fT1fD18VidHJX6wiwk6MdP4rbRRG15Hw=;
- b=EzaMgVDNNrnXAwr1inscOvFCFuKSTxteAozq2d8y4HG4s/KSLWr1aF6NlsNgGBx8uq0O75KCrLuPAJpSrbjiB6LTk2IQBCbjFgDewdSlWpHVx9hi7+bRPcM2sV1MSqCIGy1HVlj64WDyQ1qam3lrudKr5rh9aSq7c+EjNxgtxk15UxwtxmB6d41yLFk+Mqu6q2ZIOcc2YaCPSfKnMLjWyj5wQ/Y6eZis0neusMaDnrSq28mTlQIHzgWwPKXQIu+vL82r5pu4Skyy0QyCgBpaNu+s4E4w/IQNZzOnKzE+QORVKq2VSVqDirg3uu12IHQfOCq/v7/LclL+VFa2/E+U9Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ bh=NM2SegBAnKPhd6ZCiScrganevZXsgyUCYgwKgsb5TMA=;
+ b=PwMf+tVM0YaSq2WH7GLsiti+iGrW6alevrC6eKgQHJl6Cw1gaCHYzQD9Zdp2JNVhTPJsHXgR5SoF17L3gMb74KRw2QLTAO+c4snQtBamh63FrBM9yJNGsL7XmfpAq9eVTFZpMJAavvkVnwnfO3q9Y2KgixWaDu3+Vajpn96Of+ohuP0Nlnex0YGjpysCpx63kbihBNFJZyGOKbqNrUKMYvTcMi8whD/KwG6pC1hCo6JdP1vhCjJoh3rmjmdSH5sPUPmsTQ63QbdP64DYwNn4vI/V/dp2/mpKShsFtSD0mRDKQCzu90FuyZF2HsQV/lnuDsBCxMeTqsDSV/qu8CQ9ww==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=jaguarmicro.com; dmarc=pass action=none
+ header.from=jaguarmicro.com; dkim=pass header.d=jaguarmicro.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jaguarmicro.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+b+rmtDZsM8fT1fD18VidHJX6wiwk6MdP4rbRRG15Hw=;
- b=Ms2Awtw6oueYVQzimckJcnvnIG2VOE1a62NXK9NZGM2R8LpYDTQ1ifn+wGUL9jTfjpgMh6TBZeKWGmh/ZU3b7QIAOFTiwipUGxF9BLRU9DvmVGCOf/NQOAptK2cNOmZzhQ6NwTrHZ2OCL5Lmc/yYenPmvT+WhjUpOFXUeQoDYLTbQP0E1Y7MeydJ2Yq+Bog5c+a7k0095nuw0JiDw7Y4PgeXAyTprZlFPFAN9Q2KUwLQNJX5Q6DBo2oLC1BiVpsGkLYuK5ezuEKqgCcZiq1rqExCiyNaSI6CoWKLmEwzQa7j2N43/6QDbS4mnXKM9Ha4JQBvCHA4tvRQL6K0auxW5Q==
-Received: from CY8PR10CA0023.namprd10.prod.outlook.com (2603:10b6:930:4f::19)
- by BY5PR12MB4052.namprd12.prod.outlook.com (2603:10b6:a03:209::9)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.22; Mon, 17 Nov
- 2025 12:02:56 +0000
-Received: from CY4PEPF0000FCC4.namprd03.prod.outlook.com
- (2603:10b6:930:4f:cafe::96) by CY8PR10CA0023.outlook.office365.com
- (2603:10b6:930:4f::19) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9320.22 via Frontend Transport; Mon,
- 17 Nov 2025 12:02:58 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com;
- dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- CY4PEPF0000FCC4.mail.protection.outlook.com (10.167.242.106) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9343.9 via Frontend Transport; Mon, 17 Nov 2025 12:02:55 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 17 Nov
- 2025 04:02:42 -0800
-Received: from nvidia.com (10.126.230.35) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 17 Nov
- 2025 04:02:41 -0800
-Date: Mon, 17 Nov 2025 13:02:44 +0100
-From: Dariusz Sosnowski <dsosnowski@nvidia.com>
-To: Bing Zhao <bingz@nvidia.com>
-CC: <viacheslavo@nvidia.com>, <dev@dpdk.org>, <rasland@nvidia.com>,
- <orika@nvidia.com>, <suanmingm@nvidia.com>, <matan@nvidia.com>,
- <thomas@monjalon.net>, <wisamm@nvidia.com>
-Subject: Re: [PATCH] test-flow-perf: fix the incorrect array length
-Message-ID: <20251117120244.ovgvpkee4m67s6f7@ds-vm-debian.local>
-References: <20251117072858.9318-1-bingz@nvidia.com>
+ bh=NM2SegBAnKPhd6ZCiScrganevZXsgyUCYgwKgsb5TMA=;
+ b=MmL39N6i4WBA/JlOYh1YFw6jJJCGzWzK9Iy9GjpmSi9z48b6bF5jyUh/BGg+XBDbSf1rpbWRdfZLgWg9dJ3XcPmh/0JJwKpnHbvD8fxYsvSzO6BF8tz7Dv/qCGtj4kGgbyWrPD8zbcWWqvFcAEppkimqqX5mcCbCyBfZSjMm1umid7mgbFafCvFBgov5NWxID/CgmDGM34eWZsbAwXwu7xWy4/ukE+R0hYzrh9ztTUlua+SrB88OhKPKi0Cmn1BfngPvMCf0hWIaMR8pJqvnC7WxNGEVt1bqRhybD3XYvXBpNMiHkHEuQ8xa87xYqZLFv/PE7WiHtZwGGv9CvkOUwg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=jaguarmicro.com;
+Received: from SI2PR06MB4234.apcprd06.prod.outlook.com (2603:1096:4:15c::13)
+ by KL1PR06MB5895.apcprd06.prod.outlook.com (2603:1096:820:c9::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.20; Mon, 17 Nov
+ 2025 12:44:59 +0000
+Received: from SI2PR06MB4234.apcprd06.prod.outlook.com
+ ([fe80::7c6b:7e04:5448:4be4]) by SI2PR06MB4234.apcprd06.prod.outlook.com
+ ([fe80::7c6b:7e04:5448:4be4%6]) with mapi id 15.20.9320.018; Mon, 17 Nov 2025
+ 12:44:59 +0000
+From: Shaokai Zhang <felix.zhang@jaguarmicro.com>
+To: dev@dpdk.org
+Cc: kai.ji@intel.com,
+	Joey Xing <joey.xing@jaguarmicro.com>
+Subject: [PATCH] crypto/openssl: support AES-XTS operations
+Date: Mon, 17 Nov 2025 20:44:14 +0800
+Message-ID: <20251117124414.1839-1-felix.zhang@jaguarmicro.com>
+X-Mailer: git-send-email 2.47.1.windows.2
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TP0P295CA0035.TWNP295.PROD.OUTLOOK.COM
+ (2603:1096:910:4::17) To SI2PR06MB4234.apcprd06.prod.outlook.com
+ (2603:1096:4:15c::13)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20251117072858.9318-1-bingz@nvidia.com>
-X-Originating-IP: [10.126.230.35]
-X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000FCC4:EE_|BY5PR12MB4052:EE_
-X-MS-Office365-Filtering-Correlation-Id: c930dc72-ac37-439f-50bd-08de25d13e69
-X-LD-Processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
+X-MS-TrafficTypeDiagnostic: SI2PR06MB4234:EE_|KL1PR06MB5895:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9c9f4dd3-e3e6-4437-80aa-08de25d71e89
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|376014|1800799024|82310400026|36860700013; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?5eXuYafthdPV0Jv2QtPp1rc9DtalFepmZ9gZo5px/FpyJTO247hPSv2fjcOA?=
- =?us-ascii?Q?+5cmjHaanNrDC3x2FkKxMzg8fPUIoPMfBPkVEqTCcv2BMo4zUQXPGR8waG+j?=
- =?us-ascii?Q?i/QBvh59YMm/catu6k4cKdDJJDnqwDBfjyumH/UclscrkZXVLb56mtCF+Z0H?=
- =?us-ascii?Q?Wbn+3iXCC3CdpHYTiCPlsodGyC0MnIkelqPiOBBvLoyLtqnMAWBWuaz1VMSj?=
- =?us-ascii?Q?bw4dvZRoY6btF3/nXzu0TwKKIdi1kyEkWL9ZIiY50dgyDd7TKWDcsDdSdA7H?=
- =?us-ascii?Q?nrR5FltZ8CK5S5r++Ln7U9viJbILKp46bTpe9YWEw4Tj+/P+tSX0UBxKNrGX?=
- =?us-ascii?Q?yznbcDHsdpSXz1UJmZ5S4vY5lpEl23XCehXkoiluq6qcFmPj56BM/Dd4qYhH?=
- =?us-ascii?Q?poDJ2S+niTa6aDbf//SNUA792KgI55O1NfPKCcb0LT6NW2k3N36Unuu6Qp+y?=
- =?us-ascii?Q?9y3+3+Ws1cEIIpAZWHtvLZly+aqg305oFPuMrIyB3EuqFKgeH/9b+yn31S7J?=
- =?us-ascii?Q?G3y5qjtyZGy6ec6NBzKlD6uuVb9CLs9ZDWW004TtA+j5CzjTn5H8Sut8vDt8?=
- =?us-ascii?Q?ZgFs5vO1yCgc6W0KJvxe9F6S599XebrfYrjLRnPYEFDh+BQeZilbA1LdlfGC?=
- =?us-ascii?Q?gB6AbG2SnL0QxiVkJ/Hz1rMK2Siyn94HZt73MoiY8qL3uafjmGdoUt0A9UEv?=
- =?us-ascii?Q?RZhl/pbOj+yJRfyxyEpcfZGCqUTTeFVz8V3t3DSYbHy+UhAcTUZ/6Ojin6Aw?=
- =?us-ascii?Q?NtDDEunCLBppbOmvr98fssv+DPwEx5PGbRbaB7JvXpqKWlmC2KB+Rdj7HY1I?=
- =?us-ascii?Q?oNUMStnvpnfCd9a5ux1JObbPMjMnhfd+8nGdDbu1vLj/pSEIzlsk5um/8ZXZ?=
- =?us-ascii?Q?OoMiHIFWnOiTsv8PQz2Fq2yNmvjIfmMoU93iQyRgQ+/uu0MAHmR6wOYyixwn?=
- =?us-ascii?Q?Pzjij/pijYlDbFKyfHrbvdVh7Ugko6RTdlL9cLLRoWGHcJ3M5Nc3ZlnYEWqa?=
- =?us-ascii?Q?ADSFb9Rlq2zEEHtOTBHRPCLnEDZ/I8KIQC92AoHkSDXUaueaPpdNI/M4c0hC?=
- =?us-ascii?Q?Q+rO6kcA9fWH4l0r46zAMWWba/rOxtYYw6fL48WaEklAzVq5iwoDCkeouqsr?=
- =?us-ascii?Q?6cG0TwDm9OITV3AJ6Nw2QiOY/PpbJz8s/fOPvEuWNKasryGX2SAb2dAXRqzG?=
- =?us-ascii?Q?saMKEssAUlQcc7ttnTSgtnjeaWDVzjQ3yuen18bUYV2w4qTKFtAsyblj5WDZ?=
- =?us-ascii?Q?ctzp1Xv5FsdlEFonx8InIHHqDz25T3kuvt173dL/S/we5R5sdxQyuAF/FkFI?=
- =?us-ascii?Q?7APlqy/8VHE+kJMw8spAoWEXyKKVBuw0AqOkKPhobx3/H5+tCjQkfZuHJF8r?=
- =?us-ascii?Q?p+YNEBPB0HkisxT5kky3q27BjnwPCVMdtc/A5sIJxFdWqbUuN+xC5No5aDOA?=
- =?us-ascii?Q?Y+y6KmyuEzghJV5eVXTkfiU3uNzRtjuHUDNxHH3YYW43xlVS7G4KW6qaSrbz?=
- =?us-ascii?Q?RsxVCfgS4OnjK8rx1Z62pU2/mFOrMwlxubWYf8gNxYkK4d1J64FGBYKroKaj?=
- =?us-ascii?Q?TKEqVkCIEvPeUPTgyew=3D?=
-X-Forefront-Antispam-Report: CIP:216.228.117.161; CTRY:US; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge2.nvidia.com; CAT:NONE;
- SFS:(13230040)(376014)(1800799024)(82310400026)(36860700013); DIR:OUT;
- SFP:1101; 
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Nov 2025 12:02:55.7358 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c930dc72-ac37-439f-50bd-08de25d13e69
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.161];
- Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CY4PEPF0000FCC4.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4052
+ ARA:13230040|52116014|376014|1800799024|366016|38350700014; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?SuyJScOhzqNb+Ex9DkjraeI6E+Pi+dk90xAPyguRDToBmZTUcWWP/vx3VZip?=
+ =?us-ascii?Q?kn6qC4qrPbcNqQ4KpR99dqtAWy5xtYQZ3drwSCbv8bTFkB5qEOf0RDNLBUxO?=
+ =?us-ascii?Q?OFHO9tFzI65hVUn/+WmWFYalg9GFGpGGA0GguGVaZQIdUyZpItPEpU7lPLkf?=
+ =?us-ascii?Q?FIgBAiuWNisDp+4qd9NhhGTiHfVkU1mtuj3EIRZG1J3Tdi+I0D2ZPPuFPgi4?=
+ =?us-ascii?Q?rImiqRZylJhuLyY76Y3lqUtZv/DwXcN4DaOGNr5TWylWUbf3/juvDC6Y69ao?=
+ =?us-ascii?Q?wdKlZolULPE0GEwwUl3Ip0/cw+VU9V+kJcSHB2KnYPzsQ02z7e7v/bu8OjKl?=
+ =?us-ascii?Q?HD1y2/tSOsh1tBAiyj9ZN0Mv5f8D98cI0dJHbjVABLbyp5wQWq6pFfJ0RZ6b?=
+ =?us-ascii?Q?7YeTD9wXpTU0fLdMYEyPDA9zRrOt4l+vxC6gOrBpShR54koCxtkDp2onepWR?=
+ =?us-ascii?Q?/dgwggKqrynOORbMF7Qt1RFPytESsgKnS2jtn5zdTozvGecxLFiPIbt6JoDP?=
+ =?us-ascii?Q?1r5hnd5izlB7pC7tbLdjuITv5HBOSZGO3nH7tiSZdbQcI4tMurxDnbzt/sj8?=
+ =?us-ascii?Q?0yXW4Lkm+Bq6WW1LlYhxKljZ31GLPqjVZguzbXZMZ9nLtds9mzpapzpm8Rhr?=
+ =?us-ascii?Q?/zaHC2gs62h7zDR+UXbzxD9Hs3/af3rpol0H4PUCERVxLxbAW25Bd0tsY0tL?=
+ =?us-ascii?Q?P0lneexSFNbcHNOwiOhry4JAnT4LlcuL7iizkyCfX943crg+nM7ywDh9AurV?=
+ =?us-ascii?Q?jxH7i9w0NC7iQu7swP6zemuSrskl3XlbZKu1fEflvpbI2XkJUX1J1c8jwGpD?=
+ =?us-ascii?Q?/t12ryAIe86RtA9KI1WAfyTHunEHG+Aze85DlBmUrPACoxNdJ+0X4uxA8TF0?=
+ =?us-ascii?Q?4inK27tbOO7XNds37lictnD6cWNAmA2c0lQ02yjiJg4ycD0UA2Hzf4v+WIYU?=
+ =?us-ascii?Q?K17mgAnoNP2Ya/SA1iRl8VjEKWiL5KOoTXM/vfNdHCkPQtKd7ZlOnCV2yiKT?=
+ =?us-ascii?Q?utWlolqGPlCcsBbgE11UJfaiLSoqbXW/YT21bKfliCKAzZ3i9sKUdU8haAFc?=
+ =?us-ascii?Q?EPW59v/eDJ2qur8wTY/BUBZhEJI+G9y+cnt6alWgugnTHP2YT20v9xyFo+8x?=
+ =?us-ascii?Q?SksXTjQWTxbe65PVu6siE6sYRxkZSSoyULSjfUttKwpcpzfTK+f4Uk4+uYrR?=
+ =?us-ascii?Q?8DfwiEmboO0mgC3ao6EeB74N2N6h5N8IFDH4WLCo3/MMjTosQzMRlBR6MRHO?=
+ =?us-ascii?Q?vhVpHNDxDgL2mCbLtIJeE1mYvTmeErH6eKU2tPYkd5vCFs6i/Oa4NcomhUKz?=
+ =?us-ascii?Q?LNsFeGPCyzSuAx1qB1ctretOEuNWMmyi+KnDpffor11xBC9T+4hyOwKP9eDd?=
+ =?us-ascii?Q?ZCNwGntbM9lP+JCEoD0xkRkZICZwlY43/ZmLrd7GGdKaEDeQZn4+SiSE75I0?=
+ =?us-ascii?Q?Vpsg3Lk+MGDd1ni+DQAopAY9TEmDiDEOGw2t9jzpeqiM0BATFMNxUdIE3zet?=
+ =?us-ascii?Q?sYt37B4VKWR75gZWWK8MeZ+pxpfH4jyCmj+U?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:SI2PR06MB4234.apcprd06.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(52116014)(376014)(1800799024)(366016)(38350700014); DIR:OUT;
+ SFP:1102; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?3RsEeKPGDkuQ8Le32SiAqONypEVVyn8LT7E5qfOV6Nymn+RUC9f5fuPPBzbM?=
+ =?us-ascii?Q?WNAzRkrJfWFuuRN2WVJto+MIGsj9svIo5PEv8ti/AKy54DXCfV2zD7D8DzgW?=
+ =?us-ascii?Q?y6I4uz82WGHwB8xnu8em9Q8eUP9EY8Zwv7RHdk2MyWNN0KHfcNvEFX3PkhqW?=
+ =?us-ascii?Q?EoQPWvwWbAZvwuUChTN2XqIb4R2Ss0d5zyv60A9sxfxpW85RM/y8irXKa0Kj?=
+ =?us-ascii?Q?sttk7itfnBz0ot5V7yvgYqp2en8iZOaEWxfFiZCgpBwyk96BJ69jRsqDOR31?=
+ =?us-ascii?Q?6Q1oNGWv0WimKq3VhtSM1VbcgQRh/tmoZjqjDwHnnsZiegDr98Rx/hR84ul/?=
+ =?us-ascii?Q?7K6y6Emu/BEEOtdcTxMDif9rbdWQLI/wL3LRxzbhX4CXA8RXPemV0egfrs/b?=
+ =?us-ascii?Q?vGmZ6ZVTJEnFNDH15jbEFcKo8J5OEXIj5qunG8uktWARmTaETUDRLLuNJG7A?=
+ =?us-ascii?Q?iCgV6pWsD0TJ7T3W55QHPOKNJLoN8eRzixvjtDwyibVOSp+7PAzUPKfnfR4f?=
+ =?us-ascii?Q?cpmiO5jAJe3KYLHCSZnEU6h+rmkp/R5JoRY6b1hJPYjFNtqGE8IEtOG+mkRP?=
+ =?us-ascii?Q?GBZbSZhuynS4WyaoTCByPDwWBsK3VbJSPzjf9Ak9YzKwTkz2Ro0H0Nw3XAEk?=
+ =?us-ascii?Q?oj0nohe/i4unL6HSoRp59XlPSsGVBdVOc1a9eIwbO/7ZuGnJuRBzp8pBanDY?=
+ =?us-ascii?Q?ycqEPf/jhB+7MBHuM3TOREK2YfybuyeV4CqYtENf5EEBYAo6gcO5oY2TdvKX?=
+ =?us-ascii?Q?hmWhM1j4GT3GQP07nXgIcUd2F82tpzcvvoizC2iWTKix04RHDzbMkxzJ1zzA?=
+ =?us-ascii?Q?A5xr4C3pA2FO49tsv+i2alebUbRK0Q3u+bX543aSbJC3mJkCBfZdr9XYkSp0?=
+ =?us-ascii?Q?CG9+yIUFQHWrXHlj5z7O35N++UlPVv7B5zlJSABqzLURPGr+LFzteobu9ZsU?=
+ =?us-ascii?Q?BETC8lqeTVtb/csGDKNhGnT9IG3+p2hsA10oa6ss9UE8UDDcIAuddSV4ILja?=
+ =?us-ascii?Q?JSnA7FOKIAdHsjbrDsyk/unAl03sTqk0VB58pnhRuQX84mqLi7X60rm8Mcs7?=
+ =?us-ascii?Q?Jb/UZYX+EHoXnotlAobQNOEuGUAjHXbQRstaDl/xywdm81ZJKbOZMDrt58yY?=
+ =?us-ascii?Q?J1bpEg57PQ9EwKLuag3KLzooK4B3fVmaVKZfQo3hK981HdYQoL+1rePdAqLK?=
+ =?us-ascii?Q?HgL1tyYiUVcWI4vJo69oe/o/vUyzTqTfdILnQNLM2oH0z/iLRWhvlzKrFKvt?=
+ =?us-ascii?Q?75+JdllK1nkBMmVXFcQb6cEosbNXqmDbUMEUBY/hvbLaRXPUMouQhTpzOSe3?=
+ =?us-ascii?Q?BZ4lZqifiaTteJcWNs7NrBuQBBcW+IDjZLllHWUZVWcJuYuh5g3KvNby7QoD?=
+ =?us-ascii?Q?nD8k8ltN4AoaXED2s4qDWblDmVFJwIwXWhcFroAjwZRYLBch+2uYDm8RzgS/?=
+ =?us-ascii?Q?cuWjXYjcVO3PzltbZi1p32AYP+/fr1rST/BmA+puzIWFQjHfh9yuyi+SZ7fj?=
+ =?us-ascii?Q?DVrJ7wZYcuvg29dI2AhH1wE7GogZYYVJgeG1dmIgyyEO8N34fHubP91BWcgi?=
+ =?us-ascii?Q?wFxsxtzGPHLtuYqry1h1hHqr66U7u+dMt7CRrOqOJ8S7TZnpEDa96992aNj5?=
+ =?us-ascii?Q?+Q=3D=3D?=
+X-OriginatorOrg: jaguarmicro.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9c9f4dd3-e3e6-4437-80aa-08de25d71e89
+X-MS-Exchange-CrossTenant-AuthSource: SI2PR06MB4234.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Nov 2025 12:44:59.7429 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 1e45a5c2-d3e1-46b3-a0e6-c5ebf6d8ba7b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: BGAeUiaUM2A/bNmC3OkmvHmshlzMworwpD5AoOX3/LuBbYM6sbVqJyxelDnzGXYf0ZaMqKWQVKGd6l6c4XvlcCqzM2nkz2b1SoQvs8/QuA0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR06MB5895
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -135,18 +140,91 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, Nov 17, 2025 at 09:28:58AM +0200, Bing Zhao wrote:
-> The array used to save the flow rules pointer was allocated with an
-> incorrect length. 1 more rule space should be appended but not 1 byte.
-> 
-> Fixes: 070316d01d3e ("app/flow-perf: add multi-core rule insertion and deletion")
-> Cc: wisamm@nvidia.com
-> 
-> Signed-off-by: Bing Zhao <bingz@nvidia.com>
+Extend openssl crypto PMD to support AES XTS operations.
 
-Looks good to me.
+Signed-off-by: Shaokai Zhang <felix.zhang@jaguarmicro.com>
+Reviewed-by: Joey Xing <joey.xing@jaguarmicro.com>
+---
+ drivers/crypto/openssl/openssl_pmd_private.h |  2 +-
+ drivers/crypto/openssl/rte_openssl_pmd.c     | 13 +++++++++++++
+ drivers/crypto/openssl/rte_openssl_pmd_ops.c | 20 ++++++++++++++++++++
+ 3 files changed, 34 insertions(+), 1 deletion(-)
 
-Reviewed-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
+diff --git a/drivers/crypto/openssl/openssl_pmd_private.h b/drivers/crypto/openssl/openssl_pmd_private.h
+index fe89e522e1..d5a751600a 100644
+--- a/drivers/crypto/openssl/openssl_pmd_private.h
++++ b/drivers/crypto/openssl/openssl_pmd_private.h
+@@ -118,7 +118,7 @@ struct __rte_cache_aligned openssl_session {
+ 		/**< cipher algorithm */
+ 
+ 		struct {
+-			uint8_t data[32];
++			uint8_t data[64];
+ 			/**< key data */
+ 			size_t length;
+ 			/**< key length in bytes */
+diff --git a/drivers/crypto/openssl/rte_openssl_pmd.c b/drivers/crypto/openssl/rte_openssl_pmd.c
+index 4f171f48cc..2d803912d4 100644
+--- a/drivers/crypto/openssl/rte_openssl_pmd.c
++++ b/drivers/crypto/openssl/rte_openssl_pmd.c
+@@ -211,6 +211,18 @@ get_cipher_algo(enum rte_crypto_cipher_algorithm sess_algo, size_t keylen,
+ 				res = -EINVAL;
+ 			}
+ 			break;
++		case RTE_CRYPTO_CIPHER_AES_XTS:
++			switch (keylen) {
++			case 32:
++				*algo = EVP_aes_128_xts();
++				break;
++			case 64:
++				*algo = EVP_aes_256_xts();
++				break;
++			default:
++				res = -EINVAL;
++			}
++			break;
+ 		case RTE_CRYPTO_CIPHER_AES_CTR:
+ 			switch (keylen) {
+ 			case 16:
+@@ -493,6 +505,7 @@ openssl_set_session_cipher_parameters(struct openssl_session *sess,
+ 	case RTE_CRYPTO_CIPHER_3DES_CBC:
+ 	case RTE_CRYPTO_CIPHER_AES_CBC:
+ 	case RTE_CRYPTO_CIPHER_AES_CTR:
++	case RTE_CRYPTO_CIPHER_AES_XTS:
+ 		sess->cipher.mode = OPENSSL_CIPHER_LIB;
+ 		sess->cipher.algo = xform->cipher.algo;
+ 		sess->cipher.ctx = EVP_CIPHER_CTX_new();
+diff --git a/drivers/crypto/openssl/rte_openssl_pmd_ops.c b/drivers/crypto/openssl/rte_openssl_pmd_ops.c
+index 5095e6cbea..df5c12626d 100644
+--- a/drivers/crypto/openssl/rte_openssl_pmd_ops.c
++++ b/drivers/crypto/openssl/rte_openssl_pmd_ops.c
+@@ -269,6 +269,26 @@ static const struct rte_cryptodev_capabilities openssl_pmd_capabilities[] = {
+ 			}, }
+ 		}, }
+ 	},
++	{	/* AES XTS */
++		.op = RTE_CRYPTO_OP_TYPE_SYMMETRIC,
++		{.sym = {
++			.xform_type = RTE_CRYPTO_SYM_XFORM_CIPHER,
++			{.cipher = {
++				.algo = RTE_CRYPTO_CIPHER_AES_XTS,
++				.block_size = 16,
++				.key_size = {
++					.min = 32,
++					.max = 64,
++					.increment = 32
++				},
++				.iv_size = {
++					.min = 16,
++					.max = 16,
++					.increment = 0
++				}
++			}, }
++		}, }
++	},
+ 	{	/* AES CBC */
+ 		.op = RTE_CRYPTO_OP_TYPE_SYMMETRIC,
+ 		{.sym = {
+-- 
+2.47.1.windows.2
 
-Best regards,
-Dariusz Sosnowski
