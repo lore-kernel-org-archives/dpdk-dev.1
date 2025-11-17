@@ -2,82 +2,42 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67F35CE8D6B
-	for <dpdk-dev@archiver.kernel.org>; Mon, 17 Nov 2025 08:59:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F0C8CE8D6B
+	for <dpdk-dev@archiver.kernel.org>; Mon, 17 Nov 2025 09:05:40 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 418C3427B3;
-	Mon, 17 Nov 2025 09:59:17 +0100 (CET)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 0BEE44026F
- for <dev@dpdk.org>; Mon, 17 Nov 2025 09:59:14 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1763369954;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=ALmDHWOwEPcdzO8z7/TiLd5fCQOQCQcxhXjTM8ph72w=;
- b=Wdr9bW91xSSEYPo1b5GGm0GfLRSeYMbpWURKNHJda3yr37J+deMANyY9eQw25U7I4SSzUd
- 4zjknYlUDkKIVB776z6s+9OCwXriy6bIDxpgfOCaAJ3mEjijaK4qEbEPM0nJc/PSlftRKk
- LD04NHzgqUy3gGTRFsIY49xdazOE084=
-Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
- [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-313-AYNSRUWSMxekY0wJ6bV_nA-1; Mon, 17 Nov 2025 03:59:11 -0500
-X-MC-Unique: AYNSRUWSMxekY0wJ6bV_nA-1
-X-Mimecast-MFC-AGG-ID: AYNSRUWSMxekY0wJ6bV_nA_1763369950
-Received: by mail-lf1-f72.google.com with SMTP id
- 2adb3069b0e04-59436279838so3181256e87.0
- for <dev@dpdk.org>; Mon, 17 Nov 2025 00:59:10 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1763369949; x=1763974749;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=ALmDHWOwEPcdzO8z7/TiLd5fCQOQCQcxhXjTM8ph72w=;
- b=jDYkV1gT1u0R/7zDdAObl0oaa/arAPOS0t0Q41zWqtvrvyM1dXWc6c/Cp/XXT10Lw3
- BVCAt188V4EuG6xDZeKb/1onCv3J8Djci01kikYuaLRxg0/IMjGpiF9y5Xs7lKEJ4bMD
- I2CNYPQTViQs/GMqcByb8iOIasKHkJR8B9ZPszpbQMO2uBplOAVKiC4SnLJ6T2QKeXHE
- WBsthjOHm+oyiScf5VJNA5lXQeYxLQg38vJzLmISvbimYywkpu4Gw5SFVG2NnWpUe9nB
- FBc19kFSEze1e0IU+M9B3/i3YCj7FJmu8E6ZOA0h7Nu3Oltfj/LDjW+J8cO0lJx9VCCk
- gdgA==
-X-Gm-Message-State: AOJu0Yzfjtyzlaas3RnUUqSyxnyf+sDtq6nqmMmFrj98IDkp2D85eJmt
- 34ZDkQWtPoJ8pdL4M9RHO65Uf9D5NHyoztp3OFGT8jZvDNDHFNz4fT7+XYylodPbQ479EFylIS9
- VQSMwgkT24FHgt7GAXinpJdfrSxBXn9xG7LLbSGAt7Zbj40Qw/ttvPXrJITr5eqJSDe1csYbGTO
- Io3j449FQZrUALGBZuuv8=
-X-Gm-Gg: ASbGncvSrYaLCKAYMoHvR70zVQcJEunJUq3Dv9mVJIgbXppqER+lXPBmGL5fM24fIPK
- kw+7sctZr8GxsZWS+C1NjTY1M+Ob8xynm48djqpcZIfZC4f7lC5BT2AvwkN/I2w5FWQhnql7pvI
- 41aMNwVjb7U6I9MCjmtNry8mJTYRypVnQHvzrQO4hrqfFy04MZN8OjUeXSD3dLlFtV23RG
-X-Received: by 2002:a05:6512:39cd:b0:594:4b55:d2dc with SMTP id
- 2adb3069b0e04-59584217be0mr3926266e87.47.1763369949534; 
- Mon, 17 Nov 2025 00:59:09 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IE4XiHKc32yxE0iF2DRzCBFvaUwtO7iexOu9nOhP1RRUmKdlQub6f1GT3Xo2l5eFMjPaQzHjZfClET1MGnQW40=
-X-Received: by 2002:a05:6512:39cd:b0:594:4b55:d2dc with SMTP id
- 2adb3069b0e04-59584217be0mr3926255e87.47.1763369949076; Mon, 17 Nov 2025
- 00:59:09 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 32559410E3;
+	Mon, 17 Nov 2025 10:05:39 +0100 (CET)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 48EA84026F
+ for <dev@dpdk.org>; Mon, 17 Nov 2025 10:05:38 +0100 (CET)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 08C4620C65;
+ Mon, 17 Nov 2025 10:05:38 +0100 (CET)
+Content-class: urn:content-classes:message
+Subject: RE: [PATCH v2] net/ice: add MAC anti-spoof option
 MIME-Version: 1.0
-References: <20251108153207.1512863-1-david.marchand@redhat.com>
- <20251112091049.2669481-1-david.marchand@redhat.com>
- <20251112091049.2669481-2-david.marchand@redhat.com>
- <CAHHRULXYKbmYT7tY4Qino9dhZccZwBoQYJusjDNJkOi6e62NHw@mail.gmail.com>
-In-Reply-To: <CAHHRULXYKbmYT7tY4Qino9dhZccZwBoQYJusjDNJkOi6e62NHw@mail.gmail.com>
-From: David Marchand <david.marchand@redhat.com>
-Date: Mon, 17 Nov 2025 09:58:57 +0100
-X-Gm-Features: AWmQ_blSMxupFW8MlDMUCT13gqZXXTcQS5T4FDba_UZ9TeoJ7SaAAC7OkB1KmME
-Message-ID: <CAJFAV8yqgU43xHTn_-Wo0FeSjbBHoPHP7yCbz=ju63np9PxO6A@mail.gmail.com>
-Subject: Re: [PATCH v2 1/5] crypto/dpaa2_sec: remove crypto device in bus
- device
-To: Maxime Leroy <maxime@leroys.fr>,
- Stephen Hemminger <stephen@networkplumber.org>
-Cc: dev@dpdk.org, hemant.agrawal@nxp.com, 
- Sachin Saxena <sachin.saxena@nxp.com>, Gagandeep Singh <g.singh@nxp.com>, 
- Thomas Monjalon <thomas@monjalon.net>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: XkUaa7Go830uYItngwNPAFKR8tr2yU_ZuXMHSwKfjzY_1763369950
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+	charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
+Date: Mon, 17 Nov 2025 10:05:36 +0100
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65566@smartserver.smartshare.dk>
+In-Reply-To: <CY5PR11MB61167F082015E76C562C3635E4C9A@CY5PR11MB6116.namprd11.prod.outlook.com>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+Thread-Topic: [PATCH v2] net/ice: add MAC anti-spoof option
+Thread-Index: AQHcVq02Q5MdAwVwH0eQQbAZdQUWgLT07CkAgAFoL7CAAD5rkA==
+References: <20251113105914.34949-1-anurag.mandal@intel.com>
+ <20251116035749.45922-1-anurag.mandal@intel.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F65562@smartserver.smartshare.dk>
+ <CY5PR11MB61167F082015E76C562C3635E4C9A@CY5PR11MB6116.namprd11.prod.outlook.com>
+From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
+To: "Mandal, Anurag" <anurag.mandal@intel.com>, <dev@dpdk.org>,
+ "Richardson, Bruce" <bruce.richardson@intel.com>,
+ "Burakov, Anatoly" <anatoly.burakov@intel.com>, <thomas@monjalon.net>,
+ <andrew.rybchenko@oktetlabs.ru>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -91,50 +51,128 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hello,
+> From: Mandal, Anurag [mailto:anurag.mandal@intel.com]
+> Sent: Monday, 17 November 2025 06.22
+>=20
+> Hi Morten Br=F8rup,
+>=20
+> Thanks for your mail and review. PFB my answers.
+>=20
+> " This is the same story as with Source Prune.
+> Please disable source-prune filtering by default, and provide an =
+option
+> to enable it.
+> Also, suggest shortening the devargs name to simply "anti-spoof", like
+> "source-prune"; they both operate on MAC basis."
+>=20
+> [Ans]: Source prune is disabled by default and option to enable the
+> same has been already committed:[
+> =
+https://github.com/DPDK/dpdk/commit/980c840a646a2c8ae49a291c17baf20a74f
+> 36086].
 
-On Mon, 17 Nov 2025 at 09:36, Maxime Leroy <maxime@leroys.fr> wrote:
-> > @@ -4526,10 +4524,14 @@ cryptodev_dpaa2_sec_probe(struct rte_dpaa2_driv=
-er *dpaa2_drv __rte_unused,
-> >  static int
-> >  cryptodev_dpaa2_sec_remove(struct rte_dpaa2_device *dpaa2_dev)
-> >  {
-> > +       char cryptodev_name[RTE_CRYPTODEV_NAME_MAX_LEN];
-> >         struct rte_cryptodev *cryptodev;
-> >         int ret;
+Sorry, there was a typo... I meant to write:
+Please disable anti-spoof filtering by default, and provide an option to =
+enable it.
+Like source-prune.
+
+> I also wanted to shorten the name to "anti-spoof" but I found =
+something
+> called " vsi->vlan_anti_spoof_on" in the same file.
+> Hence, to distinguish between them, used "mac-anti-spoof".
+
+OK. Then "mac-anti-spoof" is a good choice.
+
+Is support for "vlan-anti-spoof" in the pipeline?
+
+What are your thoughts about the generic Ethdev APIs I suggested, =
+instead of driver specific devargs?
+
+>=20
+> Thank you.
+>=20
+> Regards,
+> Anurag M
+>=20
+> -----Original Message-----
+> From: Morten Br=F8rup <mb@smartsharesystems.com>
+> Sent: 16 November 2025 13:14
+> To: Mandal, Anurag <anurag.mandal@intel.com>; dev@dpdk.org; =
+Richardson,
+> Bruce <bruce.richardson@intel.com>; Burakov, Anatoly
+> <anatoly.burakov@intel.com>; thomas@monjalon.net;
+> andrew.rybchenko@oktetlabs.ru
+> Subject: RE: [PATCH v2] net/ice: add MAC anti-spoof option
+>=20
+> +TO: Ethdev maintainers, regarding new Ethdev APIs
+>=20
+> > From: Anurag Mandal [mailto:anurag.mandal@intel.com]
+> > Sent: Sunday, 16 November 2025 04.58
 > >
-> > -       cryptodev =3D dpaa2_dev->cryptodev;
-> > +       snprintf(cryptodev_name, sizeof(cryptodev_name), "dpsec-%d",
-> > +                       dpaa2_dev->object_id);
-> > +
-> > +       cryptodev =3D rte_cryptodev_pmd_get_named_dev(cryptodev_name);
-> >         if (cryptodev =3D=3D NULL)
-> >                 return -ENODEV;
+> > VRRP advertisement packets are dropped as TX-errors upon =
+transmission
+> > from a vsi of ice PF due to MAC anti-spoof check which is enabled by
+> > default.
+> > There is no way to disable this check in the Tx direction to avoid
+> > these packets being dropped.
 > >
-> > --
-> > 2.51.0
+> > This patch introduces devargs "mac-anti-spoof" to allow user to
+> > disable MAC anti-spoof check. Disable MAC Anti-spoof check in the Tx
+> > direction to avoid getting dropped as TX-errors upon packet
+> > transmission when their source MAC address matches one of the MAC
+> > addresses assigned to that same NIC port.
 > >
-> Should we add a function to generate the cryptodev name instead of
-> duplicating the code, similar to how it=E2=80=99s done for PCI devices (i=
-.e.,
-> rte_pci_device_name)?
-
-I am not sure I get the parallel..
-rte_pci_device_name is a bus level name, I don't see how we could
-define a fslmc bus level helper that would help here.
-Ah, you mean adding a helper internal to this cryptodev driver?
-
-I can respin this today, but after this, I'll be offline for the rest
-of the week (ovscon 2025).
-
-Btw, this series is a cleanup (those drivers have been like this for a
-long time), and it can be deferred to next release if we are too short
-on time.
-On the other hand, the fixes from
-https://patchwork.dpdk.org/project/dpdk/list/?series=3D36702 seem valid
-for 25.11.0 (or at least backport material for 25.11.1).
-
-
---=20
-David Marchand
+> > Signed-off-by: Anurag Mandal <anurag.mandal@intel.com>
+> > ---
+>=20
+> This is the same story as with Source Prune.
+> Please disable source-prune filtering by default, and provide an =
+option
+> to enable it.
+> Also, suggest shortening the devargs name to simply "anti-spoof", like
+> "source-prune"; they both operate on MAC basis.
+>=20
+> Let's make something generic instead, to replace those silly devargs.
+> We have individual Ethdev APIs to enable/disable various Rx filtering,
+> e.g. "promiscuous", "all multicast".
+> Obviously, we don't want to introduce new APIs for every semi-exotic
+> filter any NIC may offer, like "source prune" and "anti spoof", but we
+> could introduce a set of generic Ethdev APIs to support filters such =
+as
+> these, using a bitfield enum. E.g.:
+>=20
+> /* Enable one or more filters. */
+> int rte_ethdev_filter_enable(uin16_t port_id, uint64_t filter);
+>=20
+> /* Disable one or more filters. */
+> int rte_ethdev_filter_disable(uin16_t port_id, uint64_t filter);
+>=20
+> /* Get bit field of filters enabled. */
+> int64_t rte_ethdev_filter_get(uin16_t port_id);
+>=20
+> /* Get bit field of filters supported by device. */ int64_t
+> rte_ethdev_filter_capa(uin16_t port_id); /**/
+>=20
+> /** Destination MAC must match NIC's MAC address.
+>  * (This is the inverse of Promiscuous.)
+>  * Default enabled.
+>  */
+> #define RTE_ETH_FILTER_RX_NON_PROMISC RTE_BIT64(0)
+> /** Multicast Hash.
+>  * (This is the inverse of All Multicast.)
+>  * Default enabled.
+>  */
+> #define RTE_ETH_FILTER_RX_MULTICAST RTE_BIT64(1)
+> /** Source Prune.
+>  * [Insert description here.]
+>  */
+> #define RTE_ETH_FILTER_RX_SOURCE_PRUNE RTE_BIT64(2)
+> /* Add new Rx filters here, in increasing order. */
+> /* Add new Tx filters here, in decreasing order. */
+> /** Anti-Spoof.
+>  * [Insert description here.]
+>  */
+> #define RTE_ETH_FILTER_RX_SOURCE_PRUNE RTE_BIT64(62)
+> /** Used for error return values which are negative. */
+> #define RTE_ETH_FILTER_ERROR           RTE_BIT64(63)
 
