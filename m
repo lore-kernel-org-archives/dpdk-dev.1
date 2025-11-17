@@ -2,22 +2,22 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 379A0CEACEF
-	for <dpdk-dev@archiver.kernel.org>; Mon, 17 Nov 2025 07:16:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5B09CE8D6B
+	for <dpdk-dev@archiver.kernel.org>; Mon, 17 Nov 2025 07:28:32 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 447E1402C9;
-	Mon, 17 Nov 2025 08:16:08 +0100 (CET)
-Received: from MW6PR02CU001.outbound.protection.outlook.com
- (mail-westus2azon11012034.outbound.protection.outlook.com [52.101.48.34])
- by mails.dpdk.org (Postfix) with ESMTP id A8099402A1;
- Mon, 17 Nov 2025 08:16:05 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id D2A684067C;
+	Mon, 17 Nov 2025 08:28:31 +0100 (CET)
+Received: from PH7PR06CU001.outbound.protection.outlook.com
+ (mail-westus3azon11010044.outbound.protection.outlook.com [52.101.201.44])
+ by mails.dpdk.org (Postfix) with ESMTP id 848C0402A1
+ for <dev@dpdk.org>; Mon, 17 Nov 2025 08:28:30 +0100 (CET)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=efTe0QSQEdC05WPV0JCHQ2PaCFixNQwta9LX7f/ZyTDR5M6KrEwfEkcf42sCxarKVAqXuf+iF2nvoeue0QRF7M7l9IhmIx4w1XqP6vFkjcfYFoOj9h+XvFhIBV7YyRrpffe2qfH+IPX7pH1UK+GLmHKMcaBdBwgOFfe7WNwcUqX592aX2h9VG6RH/2sg9Zhcp905DLXaAIkB4WJQRsyqefjo7+an6KMZRqeuV2ic8iEouk/AHspj9Qs+4c/49WuhBwvxvmWeiVxqQNEGDz6vsV1aIwadoxicz6UKF53hZUmu3CiYdc0e4T5Rw9l1znywst1BGz5pDXqpzSj7KA4WSg==
+ b=hKCTiS0gVzp7fsgMblKiRpNdJojulsGO9VYCb7Eg3RXX9WPGh7jPLVBWPwVhRfhuUID3EiicuJHtqy+0j8tIc50LUSzyNbLnc/51cCJ7ho8E/G17Sz/n6zCVq62Lo04CZYxrRsa/dolcioC2b4WcRGshMeqrcYpNJi/6qg94ZxjKQPckWdbkEw+njnvqTT5RGnTTH0+I3Rm0khGCs1YWYizXwkDr5Bcl5PjlMSaWmyoEKJLh1VO9ahjRtQNJGkFX9jipOvGlCRGJjSbx8RphET+Eyd31GdV/djuNP27goly7kLv7C4a1Pibv90umF5wu5tfWt6cAVtavuHM/kP6LVw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qG/9kwzB8jWRXzuRqDUFNJZMCUJ/+61GB7miR4lX4rQ=;
- b=pFEkNNpYi7jB+HKIK8RCC0+hUo/1+0WEigik1cL50NxMAgYc3Ijv2cYC0DgttnlguxcfJ+8uTNqBDS4zbiaZrBLs1jbO/NJMlBZ6Qkf+jk8xv3yGCZ/hhmQFb71naE64NvQZ54V4vMiNtduRr6R7Z0AROHuq3I+o07tnPFXqEiI78PrtybMJtpD6mNwQcW6NT0fF5WGXr+ull7VU14unMrvrcoJntPeGJxKnfQvhtvno3/ydAUDkSAd9Y1SKwYpWttCo8P8L11cqqBx0TbvM35vZzA+I4/D+XVIdNUyjrnpExt2Wg1pBpNn8PyeWGmxevOSCsnzWf6WTdglnhxBERA==
+ bh=HX/ga96MbkvGLxtSbjyMLt0HkilGw9fpWoQujm1MQU8=;
+ b=n3oYRLPa/5cBUkrEqlFJwCxEgb/l8OXSKj9VTI9uFfEU+YxSQw7tPefRNyEl+EzrSKnNSR91/n0aQSaBv13lYIbhJUnSxhel7sgRfAFcxXGqt9zFn40YDrGJZ1y8vaxhBTpr0NMLBvubP1yGOhJpRthEWYzmhrsOZFMJfVaFGah2MOx7QhJ1e2f79wjqYbO0NMay09GtbETDf5HfkORtuWP0CbeKYpfPxucZQxjpv6/T0gXpGfScLL2FrQQaRYzgWMRdzxv+kTVqdm4mdb7idp2oJ0XexDP/h99oliTOqlm5858oJVFUg4wScMsHmSeny2iemuifONuFufS5y9Aozg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  216.228.117.160) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
@@ -25,18 +25,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qG/9kwzB8jWRXzuRqDUFNJZMCUJ/+61GB7miR4lX4rQ=;
- b=FggWawsOeR3rPT9Gq7UerMIptkXXSh664P9HAGSM8wP6QM8TLCiKlgzr1MyrCYUVBXv2mSzoMgkCM5m0QyNI8iL5iwn5Ouv/9e7OJ7ztqiI8Ig7LszoqrRNp0uaYibTA7C92VA041F3Q7OVs4biaT9SnZY9geIQBb3jtTxTte3C3UlId1llPoHwlYfYi0T6Kq1tBNXduOTL9g0nH8u+s30v0rJ11QMltEa/0v62FXQFaCcIslVum00/0XU7aaBEGxi5zq0NCEeXVsiL2NnjCbLodTP8WZXGGt49+CBoE4sOsRBY2jXyogBWjGo6rxQvy8fpK5PNPSHU4gAlA1ntgsw==
-Received: from PH8P220CA0016.NAMP220.PROD.OUTLOOK.COM (2603:10b6:510:345::26)
- by DS0PR12MB7946.namprd12.prod.outlook.com (2603:10b6:8:151::13) with
+ bh=HX/ga96MbkvGLxtSbjyMLt0HkilGw9fpWoQujm1MQU8=;
+ b=Sa2a4aWBRU/R5Dd/Davz8hzIkKUvcKvm0t8CNGeomuRFDWOOU4TVIxIzJZQrhlwrNM1N7llVrH9V6Aai0w+Rq99xPCW25AdnVkus10NisOrIyKpby1CmJUiOiUfWf70M/zfr9hdbS9/I5YYub260nbJkGUCJZKo9+V5cgskHI3JfkELX1qRGYbr9fV9E+EZHXZne6TPcNkzKrt6YeTpwirEcMZTRFNjSzK1+P/bZqNOEvqJ58HC/HnL+IbtXQgz/+oIm5ZqVSta6XgKvEmKJaZbyOxIQuP3LS7s6+4tX/jxgzlrk8hlwguSQiPybFflf8a5XzOf8sD+Rk3PLjxv1XQ==
+Received: from DS7PR03CA0280.namprd03.prod.outlook.com (2603:10b6:5:3ad::15)
+ by CYYPR12MB8732.namprd12.prod.outlook.com (2603:10b6:930:c8::9) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.21; Mon, 17 Nov
- 2025 07:16:01 +0000
-Received: from CY4PEPF0000E9D8.namprd05.prod.outlook.com
- (2603:10b6:510:345:cafe::e4) by PH8P220CA0016.outlook.office365.com
- (2603:10b6:510:345::26) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9320.22 via Frontend Transport; Mon,
- 17 Nov 2025 07:15:52 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.18; Mon, 17 Nov
+ 2025 07:28:27 +0000
+Received: from DS2PEPF00003446.namprd04.prod.outlook.com
+ (2603:10b6:5:3ad:cafe::8a) by DS7PR03CA0280.outlook.office365.com
+ (2603:10b6:5:3ad::15) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9320.21 via Frontend Transport; Mon,
+ 17 Nov 2025 07:27:57 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
  smtp.mailfrom=nvidia.com;
  dkim=none (message not signed)
@@ -45,93 +45,81 @@ Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
  216.228.117.160 as permitted sender) receiver=protection.outlook.com;
  client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
 Received: from mail.nvidia.com (216.228.117.160) by
- CY4PEPF0000E9D8.mail.protection.outlook.com (10.167.241.71) with Microsoft
+ DS2PEPF00003446.mail.protection.outlook.com (10.167.17.73) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9343.9 via Frontend Transport; Mon, 17 Nov 2025 07:16:00 +0000
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
+ 15.20.9343.9 via Frontend Transport; Mon, 17 Nov 2025 07:28:27 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
  (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Sun, 16 Nov
- 2025 23:15:43 -0800
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail205.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
+ 2025 23:28:11 -0800
+Received: from nvidia.com (10.126.231.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Sun, 16 Nov
- 2025 23:15:42 -0800
-Received: from nvidia.com (10.127.8.14) by mail.nvidia.com (10.129.68.7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Sun, 16 Nov 2025 23:15:39 -0800
-From: Maayan Kashani <mkashani@nvidia.com>
-To: <dev@dpdk.org>
-CC: <mkashani@nvidia.com>, <rasland@nvidia.com>, <stable@dpdk.org>, Bing Zhao
- <bingz@nvidia.com>, Dariusz Sosnowski <dsosnowski@nvidia.com>, "Viacheslav
- Ovsiienko" <viacheslavo@nvidia.com>, Ori Kam <orika@nvidia.com>,
- Suanming Mou <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>
-Subject: [PATCH] net/mlx5: fix segmentation fault in flow destruction path
-Date: Mon, 17 Nov 2025 09:15:36 +0200
-Message-ID: <20251117071536.205328-1-mkashani@nvidia.com>
-X-Mailer: git-send-email 2.21.0
+ 2025 23:28:07 -0800
+From: Bing Zhao <bingz@nvidia.com>
+To: <viacheslavo@nvidia.com>, <dev@dpdk.org>, <rasland@nvidia.com>
+CC: <orika@nvidia.com>, <dsosnowski@nvidia.com>, <suanmingm@nvidia.com>,
+ <matan@nvidia.com>, <thomas@monjalon.net>, <mkashani@nvidia.com>
+Subject: [PATCH] net/mlx5: move auxiliary data inline
+Date: Mon, 17 Nov 2025 09:27:52 +0200
+Message-ID: <20251117072752.9290-1-bingz@nvidia.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-NV-OnPremToCloud: ExternallySecured
+Content-Type: text/plain
+X-Originating-IP: [10.126.231.35]
+X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
+ rnnvmail201.nvidia.com (10.129.68.8)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000E9D8:EE_|DS0PR12MB7946:EE_
-X-MS-Office365-Filtering-Correlation-Id: 75763b1d-73d5-491f-1ccd-08de25a9297f
+X-MS-TrafficTypeDiagnostic: DS2PEPF00003446:EE_|CYYPR12MB8732:EE_
+X-MS-Office365-Filtering-Correlation-Id: 118404da-37bf-4400-fd6b-08de25aae6a4
+X-LD-Processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
  ARA:13230040|376014|1800799024|82310400026|36860700013; 
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?ckZWdEM3ZStBWDV4Z3JIdk5oRUErQ2p2YnlzVWxwR28wMm11aXhESkQvY21p?=
- =?utf-8?B?Q1hjZExFYTd0Snh1Ky9SekJjbHE5UWg0U0luZG1lSU1HdVhoZVJMR0FlNEJM?=
- =?utf-8?B?OXJKcUpQdnJKcVRsV0NZOGo0MDA4RHlTUTVzcVlFUDF0MGIyb3BLUTFRdGRx?=
- =?utf-8?B?NE1oc1ZWNkdidURPMm4rTGJzSklnQ2JSQzBMK1N0c3AvOS9Eb0dHVXIrclp1?=
- =?utf-8?B?Y3hsaGU1Tk8rdG8vSjlxQWJJditicUtqMG95ZGJRblZiQkZ4TnhzZ1pLdGl6?=
- =?utf-8?B?NDFuU1JLUjNmY0V2QmVIYndXdGRzU1Z2Nk5qamxwOFR3MEl3ZjNjdk5rSGlD?=
- =?utf-8?B?c1E4YldFT2JnckhuUnhqZ2xianJwRjQwMXgzRU9hSUk2T1N1SzJibVQ3UmpB?=
- =?utf-8?B?MGdjTkxtY1VnVFNOZ3NReW1lOTBHTFhIUUJ1YUpMZzdES096eENNWlVocVFN?=
- =?utf-8?B?UGwyaDBqcllDN2tlTHlIcnFBMFVzWE16TWR4QnhWSHVVSzhYM2ljay9MODBZ?=
- =?utf-8?B?b2UwdkFJdW1DR29BelMzbzJxdU1XZjVjY3ZuZlp4ZEgzQ09TMkRQcnZZcFhW?=
- =?utf-8?B?My9uclpqSGpBM1BBMzFSUGx6dDRTdzdRRlJBVTEyVTlyR1N2TllTTXJhVml1?=
- =?utf-8?B?V2ZmbVd0T1dRVEVEQ25MOTdWNTBZcDdIakJTcVAyTkp6bFNBS2hsVTlrdTdv?=
- =?utf-8?B?TFV1N3N5NVB3WXFjSDRWZmJKWXVkRGk2VTdKTnFQK2NtUnpEWEpLbjA1WXZR?=
- =?utf-8?B?cFVrTGE1SkJQeXoyc2xZOEg2eUN5NUpZVmNMYVAveGk4bW82ZzNJZUdsZ0V2?=
- =?utf-8?B?SGoxY3MyRE9hTm1iR1daZkZ4WEF4SitNbFNuOWxpbGw3NjRDVXNHNEZaNXZR?=
- =?utf-8?B?OWpCcFhuUzRXTlo4eTdXWHNnQTZ0L09CV0lkMmUwV01BT2NVMk9nQzlKbDdG?=
- =?utf-8?B?NTRmM0cyK0xmVktpSEV6OUVmc0c1ZGJ4S2FZclNaTklmVkFSa2FtT2VTd0wr?=
- =?utf-8?B?UExYdVpGcGN3Ym5CNGtXN3NCNGY1K2lqL0l5UWwvaUhhb0U1SExQa3J5eWQ3?=
- =?utf-8?B?aCtTL3oyWGFLUjFoQ2NvL3Z4dUFUc1E0cXZZZUVKNnZqbFB3OWRGc3NGaVRs?=
- =?utf-8?B?OFB1cHB3dlA4Y3lwa0o0aVcwWHBiZmgwQitCT0dBeE4raHZGVE9rTGNHN2pK?=
- =?utf-8?B?N09UeWtGR3FmZnRBVWo0UGpYN3Vza2NJY040UWRXRWFPNE4wbnpaQUM3akh5?=
- =?utf-8?B?aDRpRGxaU3ZTRUFMY2tZTUtCNjZWZ0EyQlp4VitzMUJwa3k4VzRydHRUcWVU?=
- =?utf-8?B?OEd6UzRYQkhGWmkvQWpMT3VkaUROWEp4UldPVWg0MXFhRzFFU3lPYzhXLzVC?=
- =?utf-8?B?VWszQ2JLZ3VJLzg4Uk9uQVJHZ2RXQzYyMi9zdS91L2ZNV1N5NXdyNmtPOHov?=
- =?utf-8?B?ZG95S1VZa0FOTmZ3dThkN3dINjU3R25RMDdBNkhVd3FjTk5wVURITzJiUmVx?=
- =?utf-8?B?MHBINDJqT2VNNHpCNUhrNERmcVJSSzAvNnd4a2xFVUNxbU9QeHpJS2lrZVhh?=
- =?utf-8?B?UE5pQzlOdnF1VE8rSlFlSThaSC9sR3VCSEdQek9uc0hxOXJBTmVGcldUZThN?=
- =?utf-8?B?VU9xc3hlTVI0V1RiZ1l6UENCeTRHTUlvelhXblR3YWpaam9ZRXdPRHk1cko4?=
- =?utf-8?B?YTRSVDNrVUVNMVdWN1QrUlZ5dHJ6djR0VTdSd1FlRG16MmpjZ2c1QXZnR1Bj?=
- =?utf-8?B?ZUk5V0pYRmRSVEJYSnhoRFhmMU1BcE80YjQvcDlkT3lsMW5TcXg3eThqdTcr?=
- =?utf-8?B?eTByTGp1ZkVGTW9OQnZkalZBUjM2azlPZTIzeGpCZ1NlSzlDQkdiMzk0NCtE?=
- =?utf-8?B?SWx2OTh2d3ZmcnRGWm5tWjBDdHBpMjhhMm5vemNJaVdmYTZCa1pTc0hGdTdz?=
- =?utf-8?B?N0dsMjBXVDRDajB0SHhNbU1HSWljZjZBWWluOTVmWGJRV3dneHY4S3Azc2JQ?=
- =?utf-8?B?dDB5b0RwOUFsNmkrUWNMd1QrRmxtRXV4Q2lad3k0YURoeEFqMEFXVHFBY3lv?=
- =?utf-8?B?VS9iK2p6dXMwL01xVXlWd3JIZ0RiWS9idnpKSXdiRnEyNGt1ekFDbjdaaEJ3?=
- =?utf-8?Q?VEfQ=3D?=
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?sJMzVQz7/5g0A05NiZCnFsGzC/GG6LhVIn+YZ31aLs+ussS72TIbU9i/vTbx?=
+ =?us-ascii?Q?QRBrFTrAHGvXMhAt1tKWvZPBoqYGRpNCpnGZCpYZDo9Ua6M+5+iuBG9AzzgB?=
+ =?us-ascii?Q?bYhc4GC2oO6iB2xmc5pNZ67JA0u1HBlSLpKBTJGhgU7Wx9o+JNp+Ml9JANNU?=
+ =?us-ascii?Q?n55o8HUxHwhzFEx+tIkbALAIwjsRBfd7tMm6SQZEDD/5ncpUF6XgBd8FEIug?=
+ =?us-ascii?Q?JLBQR91ijYMb4pDq1cXLoqYz54S3Z7pM0o01x/7kfcjagsTAad32TcqTjBB5?=
+ =?us-ascii?Q?jx8t/O043spiwPXMNpG2lxGqlJisDf52+qnh2cX4t8ttWGjwZ7obf7QTGwbG?=
+ =?us-ascii?Q?HHuuSH0+bCaXAlvumqZjyc+O/WJ3i798JfvEtdcFO+Zq23y4KC9MgKVtTxaC?=
+ =?us-ascii?Q?Vf6e4zFyuzaafSW0VCQa2IAOkq/1AbzC+IS1lMzsCUP6d9lGtzGPDjhGdyxN?=
+ =?us-ascii?Q?TQUasfWxsONPasrKLIFYzXME9zPrTMOLkKdGpcrnS4FzPcheLcWf8tbL0OuD?=
+ =?us-ascii?Q?44B6YUSNc3iycigzy6bTh0+YB7EWQBzX6e2JK7Vo4rrnvQg0302SARSJoFab?=
+ =?us-ascii?Q?knzmQLw0/9JUwu0hmwhgeBusvrH577gXiFWzCEKH3ZuUhWm/lD93ktN78FoT?=
+ =?us-ascii?Q?OFaqKhOl0c4K+cFnKpNCxg0CwijT4LwuOOYTMeo7s7gOIWlRVUNPDnjX4DyQ?=
+ =?us-ascii?Q?Pi9kbKJamQrkaibKzBr20R1kvDhMwIE0JLb5kIXR0//8dtJvLcbjZl49ASTP?=
+ =?us-ascii?Q?MoVePrD1g+TFzuw7kYRaKa9IMlhIALBK4D87zyDJBSUZk1ZQ+20sKM1YSSdk?=
+ =?us-ascii?Q?ybrCiT5nuJ6P9B8NMSN5D0DA5yZwH790Jo3eiqaVgpdA7my4YP/llPrPb0wU?=
+ =?us-ascii?Q?iQRnwsWtaz1p/2iLzpPzPIAwGSueCRTlLfj6p6AOiBeULaybmbY75VUA9doF?=
+ =?us-ascii?Q?Ce3GZ+9oysazrULG1fC4n3L4dwDx1uWP1dbmAcARNkl4NgtGmHVJkq/jHv9u?=
+ =?us-ascii?Q?YIS6KWdXOSLnn6AwVC10k2A3ZvA3pwy3QggYaw0aeH0dx4GVx1XgZRV1Z8Cn?=
+ =?us-ascii?Q?Pa7uVRUF7ciBIRksT0b052a65Z978xGJfnBPkLujY3LgCPiaKV7HB7Cy8FJK?=
+ =?us-ascii?Q?EmhHyz099IqZnUua0h5bASrvWdZEHZKE8ZYnZIxWkmgObENejJoKmf5wMG29?=
+ =?us-ascii?Q?rs9qtonwKn6ZUmSSG9WY9112G37Ept4mFz7muwgUR19ACWY+GuTNMPIQg8X+?=
+ =?us-ascii?Q?6SKVBh5LbR/4jhYItuMmq49OpSBinr5pMlyfGAKF+MfXcdLWSXWnbWHgeapQ?=
+ =?us-ascii?Q?9ETGb41JxgVYmJdHCarp6hxE4mC4IuOHMyte1YRQZRDV2AeO06BJdV9efNgA?=
+ =?us-ascii?Q?JI6d2lP8dZCYwtgGFuIT3sMnue/VZPPSGcUo1X1zorkPusfn/1QZETWcD0ix?=
+ =?us-ascii?Q?lmXTuDjMrc7Azf4MmsLIRGQYyAATAo8jbVnH3+fvWwqtXaDdFoult1JktnOf?=
+ =?us-ascii?Q?pKE3rnw5p5GvIoTtTa8i6CbyST/fpjdZxOWBf6CS6HhecXBPiIuu/PGUhCuA?=
+ =?us-ascii?Q?XPy1BwKwVX4jzGxjnhY=3D?=
 X-Forefront-Antispam-Report: CIP:216.228.117.160; CTRY:US; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge1.nvidia.com; CAT:NONE;
  SFS:(13230040)(376014)(1800799024)(82310400026)(36860700013); DIR:OUT;
  SFP:1101; 
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Nov 2025 07:16:00.7976 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 75763b1d-73d5-491f-1ccd-08de25a9297f
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Nov 2025 07:28:27.5894 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 118404da-37bf-4400-fd6b-08de25aae6a4
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.160];
  Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CY4PEPF0000E9D8.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: DS2PEPF00003446.namprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7946
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYYPR12MB8732
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -145,170 +133,72 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The mlx5_ipool_free() function was called with a NULL pool pointer
-during HW flow destruction, causing a segmentation fault. This occurred
-when flow creation failed and the cleanup path attempted to free
-resources from an uninitialized flow pool.
-
-The crash happened in the following scenario:
-1. During device start, a default NTA copy action flow is created
-2. If the flow creation fails, mlx5_flow_hw_list_destroy() is called
-3. In hw_cmpl_flow_update_or_destroy(), table->flow pool could be NULL
-4. mlx5_ipool_free(table->flow, flow->idx) was called without checking
-   if table->flow is NULL
-5. Inside mlx5_ipool_free(), accessing pool->cfg.per_core_cache caused
-   a segmentation fault due to NULL pointer dereference
-
-The fix adds two layers of protection,
-1. Add NULL check for table->flow before calling mlx5_ipool_free() in
-   hw_cmpl_flow_update_or_destroy(), consistent with the existing check
-   for table->resource on the previous line
-2. Add NULL check for pool parameter in mlx5_ipool_free() as a defensive
-   measure to prevent similar crashes in other code paths
-
-The fix also renames the ‘flow’ field in rte_flow_template_table
-to ‘flow_pool’ for better code readability.
-
-Stack trace of the fault:
-  mlx5_ipool_free (pool=0x0) at mlx5_utils.c:753
-  hw_cmpl_flow_update_or_destroy at mlx5_flow_hw.c:4481
-  mlx5_flow_hw_destroy at mlx5_flow_hw.c:14219
-  mlx5_flow_hw_list_destroy at mlx5_flow_hw.c:14279
-  flow_hw_list_create at mlx5_flow_hw.c:14415
-  mlx5_flow_start_default at mlx5_flow.c:8263
-  mlx5_dev_start at mlx5_trigger.c:1420
+Since auxiliary structure is associated with per rule, it can be
+allocated in the same ipool allocation to save the extra overhead
+of the *alloc header and the unneeded CPU cycles.
 
 Fixes: 27d171b88031 ("net/mlx5: abstract flow action and enable reconfigure")
-Cc: stable@dpdk.org
+Cc: mkashani@nvidia.com
 
-Signed-off-by: Maayan Kashani <mkashani@nvidia.com>
-Acked-by: Bing Zhao <bingz@nvidia.com>
+Signed-off-by: Bing Zhao <bingz@nvidia.com>
 ---
- drivers/net/mlx5/mlx5_flow.h    |  2 +-
- drivers/net/mlx5/mlx5_flow_hw.c | 25 +++++++++++++------------
- drivers/net/mlx5/mlx5_utils.c   |  2 +-
- 3 files changed, 15 insertions(+), 14 deletions(-)
+ drivers/net/mlx5/linux/mlx5_os.c | 7 ++++---
+ drivers/net/mlx5/mlx5_flow_hw.c  | 9 ++++-----
+ 2 files changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/net/mlx5/mlx5_flow.h b/drivers/net/mlx5/mlx5_flow.h
-index 83a4adc971f..71e7c1f6bb9 100644
---- a/drivers/net/mlx5/mlx5_flow.h
-+++ b/drivers/net/mlx5/mlx5_flow.h
-@@ -1744,7 +1744,7 @@ struct rte_flow_template_table {
- 	struct rte_flow_pattern_template *its[MLX5_HW_TBL_MAX_ITEM_TEMPLATE];
- 	/* Action templates bind to the table. */
- 	struct mlx5_hw_action_template ats[MLX5_HW_TBL_MAX_ACTION_TEMPLATE];
--	struct mlx5_indexed_pool *flow; /* The table's flow ipool. */
-+	struct mlx5_indexed_pool *flow_pool; /* The table's flow ipool. */
- 	struct rte_flow_hw_aux *flow_aux; /**< Auxiliary data stored per flow. */
- 	struct mlx5_indexed_pool *resource; /* The table's resource ipool. */
- 	struct mlx5_flow_template_table_cfg cfg;
+diff --git a/drivers/net/mlx5/linux/mlx5_os.c b/drivers/net/mlx5/linux/mlx5_os.c
+index 099ab65254..21387346b3 100644
+--- a/drivers/net/mlx5/linux/mlx5_os.c
++++ b/drivers/net/mlx5/linux/mlx5_os.c
+@@ -1643,16 +1643,17 @@ mlx5_dev_spawn(struct rte_device *dpdk_dev,
+ 	/* Read link status in case it is up and there will be no event. */
+ 	mlx5_link_update(eth_dev, 0);
+ 	/* Watch LSC interrupts between port probe and port start. */
+-	priv->sh->port[priv->dev_port - 1].nl_ih_port_id =
+-							eth_dev->data->port_id;
++	priv->sh->port[priv->dev_port - 1].nl_ih_port_id = eth_dev->data->port_id;
+ 	mlx5_set_link_up(eth_dev);
+ 	for (i = 0; i < MLX5_FLOW_TYPE_MAXI; i++) {
+ 		icfg[i].release_mem_en = !!sh->config.reclaim_mode;
+ 		if (sh->config.reclaim_mode)
+ 			icfg[i].per_core_cache = 0;
+ #ifdef HAVE_MLX5_HWS_SUPPORT
+-		if (priv->sh->config.dv_flow_en == 2)
++		if (priv->sh->config.dv_flow_en == 2) {
+ 			icfg[i].size = sizeof(struct rte_flow_hw) + sizeof(struct rte_flow_nt2hws);
++			icfg[i].size += sizeof(struct rte_flow_hw_aux);
++		}
+ #endif
+ 		priv->flows[i] = mlx5_ipool_create(&icfg[i]);
+ 		if (!priv->flows[i])
 diff --git a/drivers/net/mlx5/mlx5_flow_hw.c b/drivers/net/mlx5/mlx5_flow_hw.c
-index e0f79932a56..52e42422ce7 100644
+index e0f79932a5..51fa3eafda 100644
 --- a/drivers/net/mlx5/mlx5_flow_hw.c
 +++ b/drivers/net/mlx5/mlx5_flow_hw.c
-@@ -3952,7 +3952,7 @@ flow_hw_async_flow_create_generic(struct rte_eth_dev *dev,
- 			items, pattern_template_index, actions, action_template_index, error))
- 			return NULL;
- 	}
--	flow = mlx5_ipool_malloc(table->flow, &flow_idx);
-+	flow = mlx5_ipool_malloc(table->flow_pool, &flow_idx);
- 	if (!flow) {
- 		rte_errno = ENOMEM;
- 		goto error;
-@@ -4042,7 +4042,7 @@ flow_hw_async_flow_create_generic(struct rte_eth_dev *dev,
- 	if (table->resource && res_idx)
- 		mlx5_ipool_free(table->resource, res_idx);
- 	if (flow_idx)
--		mlx5_ipool_free(table->flow, flow_idx);
-+		mlx5_ipool_free(table->flow_pool, flow_idx);
- 	if (sub_error.cause != RTE_FLOW_ERROR_TYPE_NONE && error != NULL)
- 		*error = sub_error;
- 	else
-@@ -4492,7 +4492,8 @@ hw_cmpl_flow_update_or_destroy(struct rte_eth_dev *dev,
- 		if (!flow->nt_rule) {
- 			if (table->resource)
- 				mlx5_ipool_free(table->resource, res_idx);
--			mlx5_ipool_free(table->flow, flow->idx);
-+			if (table->flow_pool)
-+				mlx5_ipool_free(table->flow_pool, flow->idx);
- 		}
- 	}
- }
-@@ -4780,7 +4781,7 @@ flow_hw_q_flow_flush(struct rte_eth_dev *dev,
- 	LIST_FOREACH(tbl, &priv->flow_hw_tbl, next) {
- 		if (!tbl->cfg.external)
- 			continue;
--		MLX5_IPOOL_FOREACH(tbl->flow, fidx, flow) {
-+		MLX5_IPOOL_FOREACH(tbl->flow_pool, fidx, flow) {
- 			if (flow_hw_async_flow_destroy(dev,
- 						MLX5_DEFAULT_FLUSH_QUEUE,
- 						&attr,
-@@ -5102,8 +5103,8 @@ flow_hw_table_create(struct rte_eth_dev *dev,
- 		goto error;
- 	tbl->cfg = *table_cfg;
- 	/* Allocate flow indexed pool. */
--	tbl->flow = mlx5_ipool_create(&cfg);
--	if (!tbl->flow)
-+	tbl->flow_pool = mlx5_ipool_create(&cfg);
-+	if (!tbl->flow_pool)
- 		goto error;
- 	/* Allocate table of auxiliary flow rule structs. */
- 	tbl->flow_aux = mlx5_malloc(MLX5_MEM_ZERO, sizeof(struct rte_flow_hw_aux) * nb_flows,
-@@ -5258,8 +5259,8 @@ flow_hw_table_create(struct rte_eth_dev *dev,
- 					      &tbl->grp->entry);
- 		if (tbl->flow_aux)
- 			mlx5_free(tbl->flow_aux);
--		if (tbl->flow)
--			mlx5_ipool_destroy(tbl->flow);
-+		if (tbl->flow_pool)
-+			mlx5_ipool_destroy(tbl->flow_pool);
- 		mlx5_free(tbl);
- 	}
- 	if (error != NULL) {
-@@ -5489,10 +5490,10 @@ flow_hw_table_destroy(struct rte_eth_dev *dev,
- 	/* Build ipool allocated object bitmap. */
- 	if (table->resource)
- 		mlx5_ipool_flush_cache(table->resource);
--	mlx5_ipool_flush_cache(table->flow);
-+	mlx5_ipool_flush_cache(table->flow_pool);
- 	/* Check if ipool has allocated objects. */
- 	if (table->refcnt ||
--	    mlx5_ipool_get_next(table->flow, &fidx) ||
-+	    mlx5_ipool_get_next(table->flow_pool, &fidx) ||
- 	    (table->resource && mlx5_ipool_get_next(table->resource, &ridx))) {
- 		DRV_LOG(WARNING, "Table %p is still in use.", (void *)table);
- 		return rte_flow_error_set(error, EBUSY,
-@@ -5522,7 +5523,7 @@ flow_hw_table_destroy(struct rte_eth_dev *dev,
- 	if (table->resource)
- 		mlx5_ipool_destroy(table->resource);
- 	mlx5_free(table->flow_aux);
--	mlx5_ipool_destroy(table->flow);
-+	mlx5_ipool_destroy(table->flow_pool);
- 	mlx5_free(table);
- 	return 0;
- }
-@@ -15310,7 +15311,7 @@ flow_hw_table_resize(struct rte_eth_dev *dev,
- 		return rte_flow_error_set(error, EINVAL,
- 					  RTE_FLOW_ERROR_TYPE_UNSPECIFIED,
- 					  table, "shrinking table is not supported");
--	ret = mlx5_ipool_resize(table->flow, nb_flows, error);
-+	ret = mlx5_ipool_resize(table->flow_pool, nb_flows, error);
- 	if (ret)
- 		return ret;
- 	/*
-diff --git a/drivers/net/mlx5/mlx5_utils.c b/drivers/net/mlx5/mlx5_utils.c
-index cba8cc3f490..defcf80dd7d 100644
---- a/drivers/net/mlx5/mlx5_utils.c
-+++ b/drivers/net/mlx5/mlx5_utils.c
-@@ -748,7 +748,7 @@ mlx5_ipool_free(struct mlx5_indexed_pool *pool, uint32_t idx)
- 	uint32_t trunk_idx;
- 	uint32_t entry_idx;
- 
--	if (!idx)
-+	if (!pool || !idx)
- 		return;
- 	if (pool->cfg.per_core_cache) {
- 		mlx5_ipool_free_cache(pool, idx);
+@@ -13582,8 +13582,9 @@ static int flow_hw_prepare(struct rte_eth_dev *dev,
+ 	(*flow)->nt2hws = (struct rte_flow_nt2hws *)
+ 				((uintptr_t)(*flow) + sizeof(struct rte_flow_hw));
+ 	(*flow)->idx = idx;
+-	(*flow)->nt2hws->flow_aux = mlx5_malloc(MLX5_MEM_ZERO, sizeof(struct rte_flow_hw_aux),
+-				    RTE_CACHE_LINE_SIZE, rte_dev_numa_node(dev->device));
++	(*flow)->nt2hws->flow_aux = (struct rte_flow_hw_aux *)
++		((uintptr_t)((*flow)->nt2hws) + sizeof(struct rte_flow_nt2hws));
++
+ 	if (!(*flow)->nt2hws->flow_aux)
+ 		return rte_flow_error_set(error, ENOMEM,
+ 				RTE_FLOW_ERROR_TYPE_UNSPECIFIED, NULL,
+@@ -14234,10 +14235,8 @@ flow_hw_destroy(struct rte_eth_dev *dev, struct rte_flow_hw *flow)
+ 	  * Notice matcher destroy will take place when matcher's list is destroyed
+ 	  * , same as for DV.
+ 	  */
+-	if (flow->nt2hws->flow_aux) {
+-		mlx5_free(flow->nt2hws->flow_aux);
++	if (flow->nt2hws->flow_aux)
+ 		flow->nt2hws->flow_aux = NULL;
+-	}
+ 	if (flow->nt2hws->rix_encap_decap) {
+ 		flow_encap_decap_resource_release(dev, flow->nt2hws->rix_encap_decap);
+ 		flow->nt2hws->rix_encap_decap = 0;
 -- 
-2.21.0
+2.34.1
 
