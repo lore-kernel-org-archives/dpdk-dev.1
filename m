@@ -2,77 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B771CEACEF
-	for <dpdk-dev@archiver.kernel.org>; Mon, 17 Nov 2025 17:25:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8DFECEACEF
+	for <dpdk-dev@archiver.kernel.org>; Mon, 17 Nov 2025 17:53:38 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3350C4026A;
-	Mon, 17 Nov 2025 18:25:09 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id EE23E402A0;
+	Mon, 17 Nov 2025 18:53:37 +0100 (CET)
 Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com
  [209.85.215.181])
- by mails.dpdk.org (Postfix) with ESMTP id 78B8B40262
- for <dev@dpdk.org>; Mon, 17 Nov 2025 18:25:07 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 8EEC040262
+ for <dev@dpdk.org>; Mon, 17 Nov 2025 18:53:36 +0100 (CET)
 Received: by mail-pg1-f181.google.com with SMTP id
- 41be03b00d2f7-bc29d64b39dso2737119a12.3
- for <dev@dpdk.org>; Mon, 17 Nov 2025 09:25:07 -0800 (PST)
+ 41be03b00d2f7-b9f1d0126e6so2911699a12.1
+ for <dev@dpdk.org>; Mon, 17 Nov 2025 09:53:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1763400306;
- x=1764005106; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1763402015;
+ x=1764006815; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=V3z27S2l56fYBnU+yxh3r4dnrtSrUh2MqVN8pngzn+M=;
- b=HeZ+HWV4QwYsREIvjCIeEfsNi9szGIHfZkkS4H81DvzCfO8lgZlMJw899Q216i4Q5U
- srPD1gri50xLxijlK1yoLGe1rl3v+p8SouGFOJGlE5pIm1l4sHhXyeULT1V40O1VwBrj
- 9mlIKcANeEFdF01Vr1ieXsj1cOGcjiRa4+/2abF8T3///+Qagg+7gQ/kLeciYKrotZsa
- dzHiZbH3htPw0CF3op/gceqBZN0bpf2qLkN2cl93ed1eOSCp1NFisRtNb+kTdAp1UOja
- P0Fy2pXqBxnnXkrctXyKRXiE1/vY2yZpQKo5E3GzaS6Hp10tdMNoVlXenx35ynp6Xbtz
- VTLw==
+ bh=2bnl/ky9T/i/2Ab6J96Hfj4CoCFtyEvPXV6Ghyfm9TA=;
+ b=IXhGNQwU0o2c65U47pK/GnEzhCunB9nyH0zevIEacI0QLqi9alb53iEUy0VA/zG/FD
+ XJgzuiGpyKmyIUFjohhpeSdFuIK8HJDEeD8Dqth8v4Fq1cW89oV6JrGVLoZZ0tEMWVtm
+ Zoh77ZQk4UTPwOpimblHXNl8lYmSvBlr1B/jkS5CG17ZjnAeBZUwsIqxrHA9Zw/CSORT
+ kt4Z3IoUzHNTPViO5+QQOfVKSO/sgZYLIcX0JChbakjuGPhD83ZKh0dDIUV6lC0UolO8
+ dJLHjuFUxSbel0AUS1t+lO1Qaku+CpW2kWTeeIHm3CmVj4c2B4wZ+WdlClq1N7Yx2mBZ
+ Ky/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1763400306; x=1764005106;
+ d=1e100.net; s=20230601; t=1763402015; x=1764006815;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=V3z27S2l56fYBnU+yxh3r4dnrtSrUh2MqVN8pngzn+M=;
- b=GxzeMvpmO35eW9fGnklmX6bn7+iRC2oOygLDWQ6/+hHHkwLol1Le5do8qIlM2zKbbe
- Wg4rYosA+ORJfPsoAn08rEyTiNqtKVotWkA8vslIhPwJS/0GCBAXDAf0Nlntlii6ekYu
- oFWSwLmHvX8CN/jwLUQu3CKWVmjYyi8yu+YwvPzl7+7dDHEM3nJuXq0U1gZ12mlKVY4t
- /tuMvzr1ckowWUCuvfoCEif4gEUxCuUVBCtZwkWCExRX7S+ILf6nwqhQeCi2xetXdLOH
- 9LT4zvuUSNAAf2qKobkitCOFfWenwvIjgE2+QsQMK8Bh+Sb7StxGNwYzFRYf9UIpt5eo
- 4XjQ==
-X-Forwarded-Encrypted: i=1;
- AJvYcCUVwCeWssFIiLtzyF64Pe6UrDfJOTSaRMTveUpHn9VrCNnXpdR/wqxiFHQ29pxABGmnDQI=@dpdk.org
-X-Gm-Message-State: AOJu0YyJ9ZXlM90QlVcRkGX5OHEMHG1EugspHQVCXZRqf8wSabsnSKh4
- rriek/HY5uYIyxAAe4z+uV7naWPzXPSrhhvwFjC1mIp98fZWK68lbrea5MaN/1MOOpU=
-X-Gm-Gg: ASbGncs3QbQH2SZMuC5iI2QaXodKNT/HCIkyb0rPEDLOZtnOuh392oEL2LnGFA3UiN8
- NanuLnDRZXUupnDoqe/scoIdCVG7zFvpyfMvCFeOcprlkvGk2mQm3fwZcq4kQBQedGH2bkKakVm
- /d2ZoFioEMNjZ2RbPVxqSiA5qvWS50E7YH1TobVtZfkTVN9J/RjMdNOHFD74Xlbz9yVe/hWfnXo
- Jsh5rKhO/V5GyjFOcFSnmeF+ZpcFN6iaacS6QAr277BXvQR/AMIBHyZEOISsVEm9ESaNB2LfdRL
- 8eq8XU49tXkXlVpAg/Y4S9Wu3Ec+MHk9LU/LBaYZJ6Qv2z4SFevxXu8dW8IMkLqrh4UKqs6kP6w
- F4J3EVMy2FIyxp445skDj6Ar2anKthiRrPxvv4Ri2pdOq+C5XJrRwH6BGwtDN4CO5X1d7zRNaW2
- EgZ2VDilhCo/Bb0Yg70z4bSR6Oz4Jc5kPpimK1g2l4j1a5szkjT3/paBI=
-X-Google-Smtp-Source: AGHT+IHIlaOfybJIuciVdRYNaSr0uRGPcXZeZru1dahzQYPHRbiOyK5tiQ227//Db5D8+VEohPuZDA==
-X-Received: by 2002:a05:7022:4401:b0:119:e56b:91da with SMTP id
- a92af1059eb24-11b40f98d46mr7387119c88.11.1763400306249; 
- Mon, 17 Nov 2025 09:25:06 -0800 (PST)
-Received: from phoenix (204-195-96-226.wavecable.com. [204.195.96.226])
+ bh=2bnl/ky9T/i/2Ab6J96Hfj4CoCFtyEvPXV6Ghyfm9TA=;
+ b=LNJe1YObX62dEywrE4mUcTBXh21TMHDabrBMtK08muion2rbQNsgBfZLQcnOxmRntb
+ 3ZMLzIX/7yyg0wg2XAPJ1hxIEg02OaxhhlfLQ2M6Su+68kbBahS5/V4AbTE9iwQRj5F1
+ IF/6OYgx6SEIsTu6A20yEJMGTND2cLhnb+HD+Fr8azzMOMUooxw3OdNVvorivg2nO286
+ 5iE4+Ryds6HwQeG3IP3a/gPjk2+6SlK2KuX7fpBEu9coYCyUUMU8NC48O/+ICzWwBIX5
+ TmRilKCvmnl45O3OXUreqnr6uR3YLWgPAeUGDLjMj5PXvA0Rk5+Elhbjmj82WjQ6NzO5
+ SUlw==
+X-Gm-Message-State: AOJu0YwFTeZkVOsVLnd0V+uJ6WN63OCy5ZmFRYBlSLKU/5kyJK/uPuot
+ pP8uENsWNrT410DDemuZ7sgp6vjs/MyXdpZbj7g6lG7rGbD80L1JI8YsWkHbXdnFAg1c/W9o4UN
+ j8lnm
+X-Gm-Gg: ASbGncvWGeLcyIQaRpeZcF4HSVtLL/v79SA5DTNDbWO3j/vBin/Uas9KqClqzYaynCJ
+ wwDQK8ijW1zqHSZpZ5Lod2sp6fBQUFSl/U4kq39uVsMQM6oN0yU8aGKpA6BqhTwaNWl+F/XSDOH
+ QbzDY5tc/TM8Y/byOdEpDEqc6PxZqatqzLT89ATsARHjEOt29j9XBXPbeBEN8rb53Ez+NF5+3Mo
+ kul8esmjgSA5LhQIFxqzm2t6AeUTzSmYUalsH7v9ha/Oz4WjRHdg7N22Z4zJ6i/jq6yKqYodU/Z
+ rL3iyWmEp65sk6jLWM/zAGLvNF8ighLhKr17XbgwygAL1r0VPyp5ENXUo5P9AR3mYEIC6LeCrEH
+ 5XIgdbdYVKNj8spQBVV3aQJ1Rl6xYQyRsBmHLvM4j6nM9x/GW3VpakIF8UiyMVkOXs2zKhPogqc
+ 1mpIxQEUwbHh+tzMBx+nhjN4EPl2jFlwbq1ONOMx0JvmFAactIwlSdC5G4RGup
+X-Google-Smtp-Source: AGHT+IHWkyQ0z4PHY6RSxAxSZKEBeMy8lLZiThAJZitqP8zjSzLIhXAtmikqN8PX9l1/KQYgu0WdHw==
+X-Received: by 2002:a05:7300:ec91:b0:2a4:646c:e096 with SMTP id
+ 5a478bee46e88-2a6c68e10fcmr81790eec.0.1763402015385; 
+ Mon, 17 Nov 2025 09:53:35 -0800 (PST)
+Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-2a49db7a753sm47841501eec.6.2025.11.17.09.25.05
+ 5a478bee46e88-2a49d9ead79sm63457494eec.1.2025.11.17.09.53.34
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 17 Nov 2025 09:25:06 -0800 (PST)
-Date: Mon, 17 Nov 2025 09:25:03 -0800
+ Mon, 17 Nov 2025 09:53:35 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Bing Zhao <bingz@nvidia.com>
-Cc: <viacheslavo@nvidia.com>, <dev@dpdk.org>, <rasland@nvidia.com>,
- <orika@nvidia.com>, <dsosnowski@nvidia.com>, <suanmingm@nvidia.com>,
- <matan@nvidia.com>, <thomas@monjalon.net>
-Subject: Re: [PATCH 1/2] lib/ethdev: support inline calculating masked item
- value
-Message-ID: <20251117092503.59952ea6@phoenix>
-In-Reply-To: <20251117075407.9632-1-bingz@nvidia.com>
-References: <20251117075407.9632-1-bingz@nvidia.com>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v3 0/6] test suite enable format overflow checks
+Date: Mon, 17 Nov 2025 09:52:07 -0800
+Message-ID: <20251117175332.14014-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20251115193409.99740-1-stephen@networkplumber.org>
+References: <20251115193409.99740-1-stephen@networkplumber.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -86,24 +83,27 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 17 Nov 2025 09:54:07 +0200
-Bing Zhao <bingz@nvidia.com> wrote:
+Cleanup the standalone tests to allow enabling detection of
+format overflow.
 
-> diff --git a/lib/ethdev/rte_flow.c b/lib/ethdev/rte_flow.c
-> index fe8f43caff..b94f0e304d 100644
-> --- a/lib/ethdev/rte_flow.c
-> +++ b/lib/ethdev/rte_flow.c
-> @@ -831,6 +831,8 @@ rte_flow_conv_action_conf(void *buf, const size_t size,
->   *   RTE_FLOW_ITEM_TYPE_END is encountered.
->   * @param[out] error
->   *   Perform verbose error reporting if not NULL.
-> + * @param[in] with_mask
-> + *   If true, @p src mask will be applied to spec and last.
->   *
->   * @return
->   *   A positive value representing the number of bytes needed to store
+v3 - fix build on FreeBSD
+   - add additional fixes for ACL and cfgfiles
 
-Sorry, this patch is submitted too late to make it into 25.11 release.
-Missing any release note.
+Stephen Hemminger (6):
+  test: increase size of memzone name
+  test: refactor file prefix arg handling
+  test: use unit test runner for eal flags
+  test: fix format overflow warning in ACL test
+  test: fix impossible format-truncation in cfgfiles
+  test: re-enable format-truncation warnings
 
-This would be a good example of where to use API versioning in a later release.
+ app/test/meson.build      |   1 -
+ app/test/test_cfgfile.c   |   2 +-
+ app/test/test_eal_flags.c | 168 ++++++++++++++++----------------------
+ app/test/test_memzone.c   |   2 +-
+ app/test/test_table_acl.c |   4 +-
+ 5 files changed, 74 insertions(+), 103 deletions(-)
+
+-- 
+2.51.0
+
