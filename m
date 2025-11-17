@@ -2,133 +2,141 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DFCDCE8D6B
-	for <dpdk-dev@archiver.kernel.org>; Mon, 17 Nov 2025 09:09:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C244BCE8D6B
+	for <dpdk-dev@archiver.kernel.org>; Mon, 17 Nov 2025 09:11:04 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7287E41148;
-	Mon, 17 Nov 2025 10:09:15 +0100 (CET)
-Received: from TYPPR03CU001.outbound.protection.outlook.com
- (mail-japaneastazon11022117.outbound.protection.outlook.com [52.101.126.117])
- by mails.dpdk.org (Postfix) with ESMTP id D08E14026F
- for <dev@dpdk.org>; Mon, 17 Nov 2025 10:09:12 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 1814E427AF;
+	Mon, 17 Nov 2025 10:11:04 +0100 (CET)
+Received: from SA9PR02CU001.outbound.protection.outlook.com
+ (mail-southcentralusazon11013011.outbound.protection.outlook.com
+ [40.93.196.11]) by mails.dpdk.org (Postfix) with ESMTP id DA2A24026F;
+ Mon, 17 Nov 2025 10:11:02 +0100 (CET)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ThfJxWW1qkQleHdAsrDKvjcWG+dQVMrb6epP/u/7CXWZfGvbekD04pUk+OAEGDQ4LtGdgdUgnhNWdph99sHHlgMFzSb1mzNzCHt7vFQSg6pY7Fr13edPA7aK3Yg/vFJyXpGq1vHIhaTRASOYM6imisuohbsri3y8VfnyrZNykzA/DWW4/OEqi8Dw43MhNPcTVoOfFK638z5HL0oPIEog2JXRxMXaF2V1re/BJnUW4SAtlghONiCrDhprLwvQHa5ReiIaIIIyWILF0a10Z2IB/axab8Y80uoa8GBB979y17txmtD72Fi+0i7b+wJKvUUQRkIvj7nFW4PfsAe+htpLwQ==
+ b=hsCKlyd9cFcdROli2EumH9I7FJ/NDw/fQN+pICFggxZLunuRGKHJhw4vpdsRgo6ZYckOnhn9skbnyMn0eeLOwd24Id/Mm3zH50SNc+BovGCUIh0GdO8OwWUKo+OQGkkVnBcKGFI3ySNTlFd2NWFU2o8Q5qO+DgtLE/8BREWnALvy8ynmvKaDn0RWTNLMsD8CID0SqjzgAdNupMK5jHPwN8xA03vq+VI6LXLk0S9AKgW0cq9uaqV347P8xiZQPmjOS+MRC+JtTkp/mPNP0WQn0blSf06Uf6zVftoTo3YCLS7ZTd5c3L6rbRUi53pd/FnIr3bErfeDOooGV8PKwmbcSQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=EOCo3bJn1zLWvuaanLaeh9gbXBI6yzvbVAgUbzc4gI8=;
- b=Eo0tbJjKVZkT0ISDknIPefJDG7FL7RHlN9mdlhu+1BzsXOR5haHquADAUGcxxtageaiiHKX9ef57SnmLhXslFkXlxUb4It3tPxqA5iWnN31qM9QmIN7CeAvQ6QZ5hWTAI/2EBvbssdljeqA9pP3+38tWe3UKmjch4HROktvNZ4GQ7saiVhd/3O1v9Ic1udJ1UsJqrLCj3JrFHr9HecEvoDtWQvn7dTrAucqTiIiMhevBD9udbfErWFcvLhzQA6GtyisvPk1HllD6INZvunoO9HoOWy+p6ixD51ydm7AqDqvvnaxyj6SV+PY9pSMag2RLqBB9/h1WCbzACTDaYbleSQ==
+ bh=vDwKW8YM3AXTdz7GGqGJN1rtCNpVB5IkxcB5Pca8gzo=;
+ b=CoEgdlKRsnCvw0W6BXQ6fYtRdyugwKGCjABgmSwvaDioRpGTs8vsj3dPKJiDhYE60lJoytDulDrl+VvXLszTTH8Rt8nYVld4MCNOHohwHh8fhP5I3Ca4tackE9+8sCknA9cnIbfFkLW3QYvTa8huWLmI5msxrofRUiNtbOzoPxbO6niNDM+mxGd9goEtt8jCWFhmt7vxzIpVIZfMO90qDRaS/FaC+fd8E3ZL4Z3Nhrow5B4QZmwt9FUArBHWn05lPP5I+Kto6U70jerF6chdyh9M4rrlMf8wmHUq4qI3H4dEK5h89sFknTbXSRy212YXsCBWdx2zR+RtsT2QX4TEFg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=jaguarmicro.com; dmarc=pass action=none
- header.from=jaguarmicro.com; dkim=pass header.d=jaguarmicro.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jaguarmicro.com;
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EOCo3bJn1zLWvuaanLaeh9gbXBI6yzvbVAgUbzc4gI8=;
- b=rZNei5eYQi9OvYnPQz5jaVAaiTA8SvQrt8U52ikkNf6K/hY85YHokiRWBHO3Syx4+C3/wdryUDzJDBYWkkpfacflZ5V6F7OwYyHcsEOEOQgX+N/iWH9+eyOgZ68MgxYPw1gv+Cpcc3wsnqYcUjTeHONabvq12MpbIoBG2CFoIRIsbvPMWWNRkYYAfvVNKOkg6YxdWyD328+/PJEyFH2ZZ0ybU/lLX42scvvaBcDcoOaCe7+547DtwVrH8C4Ko5HQlwiXgbXAoM595IFlfL17wdTQaEGm0iQuuMq0IamqeJvEMOLNn4zAI6mXnsX58pRq9Ze6Kmgv9z6nJRWCHtXGBw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=jaguarmicro.com;
-Received: from KL1PR0601MB5567.apcprd06.prod.outlook.com
- (2603:1096:820:c5::14) by SEYPR06MB6333.apcprd06.prod.outlook.com
- (2603:1096:101:145::5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.17; Mon, 17 Nov
- 2025 09:09:08 +0000
-Received: from KL1PR0601MB5567.apcprd06.prod.outlook.com
- ([fe80::3ad3:b4d9:7e69:85cb]) by KL1PR0601MB5567.apcprd06.prod.outlook.com
- ([fe80::3ad3:b4d9:7e69:85cb%7]) with mapi id 15.20.9320.013; Mon, 17 Nov 2025
- 09:09:08 +0000
-From: Sunyang Wu <sunyang.wu@jaguarmicro.com>
-To: dev@dpdk.org
-Cc: gakhil@marvell.com
-Subject: [PATCH v2] examples/ipsec-secgw: add support for SM4-CBC cipher and
- SM3-HMAC auth
-Date: Mon, 17 Nov 2025 17:08:51 +0800
-Message-Id: <20251117090851.54748-1-sunyang.wu@jaguarmicro.com>
-X-Mailer: git-send-email 2.19.0.rc0.windows.1
-In-Reply-To: <20251114014616.43476-1-sunyang.wu@jaguarmicro.com>
-References: <20251114014616.43476-1-sunyang.wu@jaguarmicro.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR02CA0054.apcprd02.prod.outlook.com
- (2603:1096:4:54::18) To KL1PR0601MB5567.apcprd06.prod.outlook.com
- (2603:1096:820:c5::14)
+ bh=vDwKW8YM3AXTdz7GGqGJN1rtCNpVB5IkxcB5Pca8gzo=;
+ b=IxLK4Ry5XZph1/ygq+nxTlWMFqBcPmeQXATMtxGxkYvooRuWi9Du4yBdA9OW6KKt6CuZZh48lyVAGbQK5GnaNVM7MlG9Xtm+YopoDdaqBRpF/wc7ldyMyQzAAueaWFW6BuM9fgcG2ZSuYwbNfuA4LfQzIai8PCJlHo08FcoVNvKnAkvYGt8h5hcQr/HdRyZZRxZDI9g0UaaNhElFo7RClt4GYkyFsSpvPvKgiVtz4PevkfutqrmVrOdmAXg265DI64gq1Uwt5VTaKtbQiyJj23WKJlLK/OHd13KenGYU3JLCRzZlBAkQGXv24y0h2AkUUYpi5Yv+vEwLEmFgLTfG9A==
+Received: from SA1PR12MB8699.namprd12.prod.outlook.com (2603:10b6:806:389::15)
+ by IA0PR12MB8350.namprd12.prod.outlook.com (2603:10b6:208:40d::14)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.21; Mon, 17 Nov
+ 2025 09:11:00 +0000
+Received: from SA1PR12MB8699.namprd12.prod.outlook.com
+ ([fe80::670f:5750:aabd:17ba]) by SA1PR12MB8699.namprd12.prod.outlook.com
+ ([fe80::670f:5750:aabd:17ba%5]) with mapi id 15.20.9320.021; Mon, 17 Nov 2025
+ 09:10:59 +0000
+From: Itai Sharoni <isharoni@nvidia.com>
+To: "NBU-Contact-Thomas Monjalon (EXTERNAL)" <thomas@monjalon.net>
+CC: "dev@dpdk.org" <dev@dpdk.org>, Maayan Kashani <mkashani@nvidia.com>,
+ Raslan Darawsheh <rasland@nvidia.com>, "stable@dpdk.org" <stable@dpdk.org>,
+ Bing Zhao <bingz@nvidia.com>, Dariusz Sosnowski <dsosnowski@nvidia.com>,
+ Slava Ovsiienko <viacheslavo@nvidia.com>, Ori Kam <orika@nvidia.com>,
+ Suanming Mou <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>, Ophir
+ Munk <ophirmu@nvidia.com>
+Subject: Re: [PATCH] net/mlx5/windows: fix match criteria in flow creation
+Thread-Topic: [PATCH] net/mlx5/windows: fix match criteria in flow creation
+Thread-Index: AQHcVJjg83j+rU3JukSBEfy5CKIL8LTxMwoAgAVmdik=
+Date: Mon, 17 Nov 2025 09:10:59 +0000
+Message-ID: <SA1PR12MB8699670ECC88DA40004DF41EA1C9A@SA1PR12MB8699.namprd12.prod.outlook.com>
+References: <20251113122642.1193-1-isharoni@nvidia.com>
+ <11095513.IZOipudI63@thomas>
+In-Reply-To: <11095513.IZOipudI63@thomas>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SA1PR12MB8699:EE_|IA0PR12MB8350:EE_
+x-ms-office365-filtering-correlation-id: 6310b105-80cb-4bf6-390e-08de25b9397d
+x-ld-processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0; ARA:13230040|376014|1800799024|366016|38070700021;
+x-microsoft-antispam-message-info: =?iso-8859-1?Q?l0FBMZSDDOGALT+i2rYuUvgPaCcrFwZWnji0+k9iYMiSv2atdqUXEqiNka?=
+ =?iso-8859-1?Q?JzxJp2OB/hE/2cX7X4fSlA1xnwKzkC589X+CphJx5DeVVRkCsCNcnO+My5?=
+ =?iso-8859-1?Q?yE0b8L3x6K+loj/W/W9Nna6C7GFd5Oj62GRPng5eKupT4humIl4C3jcK/4?=
+ =?iso-8859-1?Q?nTuhQu0f/5Gyu8Cp2AVrcx98l7FzP3h9fjD8XEBsdap0R7xooTwKn0TWRc?=
+ =?iso-8859-1?Q?nlUwKsVWPFZO4ppbXHBVv3RrM72CxsZKYGuXk+JMqcIhI5jUQf+VkygD0e?=
+ =?iso-8859-1?Q?l5XHE27E424a4k4rZ6Ozskld+dAf46yN8PDDJEsp8TDlmOp0CYjCIjszFp?=
+ =?iso-8859-1?Q?+lTv8vWQQXbhsvKYR31cz2ZQPUPzqjoKKG+5YIGvHdzERyDA3A4vtqRzqz?=
+ =?iso-8859-1?Q?st0Nevrk3aT72BLdkjIKXbExWDa3P2gvrQ1huPLdDRXAF8lqZ+IIkoWR9I?=
+ =?iso-8859-1?Q?/ETC8ZxQY6252rSopjWoJndYGAkAO+/FN2yrgbl6GUZN7WDA1Eo8Wh55vW?=
+ =?iso-8859-1?Q?7VVDN3RxEFiudPrkZ85K7ZZzcM6wuPQ4NRnrFUwoRob1439U/GMTASj+Sh?=
+ =?iso-8859-1?Q?8ubbogoEEQdSzB/Dv8S2/poT6adTOhlezIt6ttWbPbzFHZjwh2PNKn5Qmb?=
+ =?iso-8859-1?Q?Na1j6xC4+QDALOEVpWLF+sTUFFwwMR0xH53DYsNkt385KbEvTcRvRDF5G1?=
+ =?iso-8859-1?Q?JdzJFLAL0sEAScMGQhN6bxBJDdT+TPOkyYO1jVwPFiad3A1cQc2YKviAJc?=
+ =?iso-8859-1?Q?2Sps6wY+xybkUSZCvssCHLo1/1A0EBTPrbDg21Q6TObOVegkMjkCiA5wea?=
+ =?iso-8859-1?Q?ZbZrxROAHSBkuTcuSxLDI0H3sUFluq/YU8SN0e2tH1gtlJ/r+tFRjS32Sf?=
+ =?iso-8859-1?Q?zJ3bmR0hAQ8CaQEUwJOkQ0/T4eAMw7yB706vvZjhEeTM4391rsaKysFU8M?=
+ =?iso-8859-1?Q?L6XFm1zZdkWHwsBmrrrADcA4MLoOfQJ9Cieq9lL6Clco8WhRyE0ovVCMlw?=
+ =?iso-8859-1?Q?NruXYnNjFRGI0NvoUxhYFaaw7Eh+26AkYn+u3u2nD8z0J77haRiLTIEA3y?=
+ =?iso-8859-1?Q?eJeC5H2eRBAaeFXpREEao0feWwccJPvEobNxmkCb3ow0zcSnH6L8WbJdpb?=
+ =?iso-8859-1?Q?L4Rf9is4iXF2MlXmtD3Xv8HdyL33rwUDg+6wM6U6Posx9dhaFtr+3sB3rb?=
+ =?iso-8859-1?Q?WVVpwuWDLjZ/QPHonmH02DA+tEtVW8zWRi2OUgBhgZh+IvCxRSO5xCel3x?=
+ =?iso-8859-1?Q?nNrgyaCBS9YA9yUbovrCLzPuhfJoKBJ67G7u1moYQxg6jbNSriRV+INvRF?=
+ =?iso-8859-1?Q?rdR5IdTv4bKg9hDthtoWHsvP/aLYLd5MGnYyJjr83+506MHIf3JGeWep2y?=
+ =?iso-8859-1?Q?yYmWwqhN/CuJ8WiHWx93pUOSA58qMrinzRCpw1vd+U991On5AdJhhxIgm0?=
+ =?iso-8859-1?Q?FpXDqo7SmVyy8hQZu79H3MYrsfptc5CiSG1a7S6KWQmgdC1YbhqonV+/8i?=
+ =?iso-8859-1?Q?mdNm328wW4mwCpRVszqKP1Q+KvxXh6DzT8LP9O+ICoiCaAJ8ZEJmTcOgkZ?=
+ =?iso-8859-1?Q?x2vtt8McxZ1tSwySVK/88O5Y4oJH?=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:SA1PR12MB8699.namprd12.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(1800799024)(366016)(38070700021); DIR:OUT; SFP:1101; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?l7LvJAfH+zBcXHFW/F0sGqFdNmjlPt/zKPq2czbk3pabnXYIto5I32HQ2v?=
+ =?iso-8859-1?Q?8a89krcO6e/535oPsjZRzEoyJ9JPVIvirctx0pdy9fBYDD+VihSluL8yKp?=
+ =?iso-8859-1?Q?zE+rlqyyRFju65mhLvuVs6ikwnC7zDZDwz1m8C7NqYRu9w9EDOxzzRfPYO?=
+ =?iso-8859-1?Q?tW9h485n/87ebCZzp12cQcR2iTMRZtNo03VFawv9Uec64YAeW3zjLDeGvK?=
+ =?iso-8859-1?Q?zj4fychc5j6Ig6749bw+GMXiXO6X813hNhhX/plUVYfrU2JapRnH7ZrH1b?=
+ =?iso-8859-1?Q?i4ia1g0gfyuJoEoHurK5extlQzND4OF4KGHyELsPmE9YpMMynj2ADKOcA6?=
+ =?iso-8859-1?Q?J8Cz97/7kbQMUO1EM8Go43h4crGRi0jESQBbNaejEvZrkTiD3ZWmGM9Pze?=
+ =?iso-8859-1?Q?LTVA5i4jwG5ueS3AtjBeIpNEQ8UGXux7bMMZ4jQX8xrVBsIckPrFeK2V8V?=
+ =?iso-8859-1?Q?MzXYZP7s9WI0WUlWIiX2hcvsL5H2NbrmIK76puyLUedDv90nbbR/oVfE/h?=
+ =?iso-8859-1?Q?R86kdJuT9Brmwn824tRUlQkKH5HUiFaiLwUUVOvxS8FrhdwOVPZ5pNpx2r?=
+ =?iso-8859-1?Q?4Qe4ywq9C84hik6pHnNGdfVA5TRNOi3YPmP3Ee2xdeA5q9i7tcaBw46SMw?=
+ =?iso-8859-1?Q?VctwDZhsJkQpauy5yZLjICwixcQcJyJO88HzQLMJJplTBV9MRroou3Udc7?=
+ =?iso-8859-1?Q?tvAH/d5Va9ARuU4QW9v0lxAcOqOCV13GXyByEWeGNrINhPxrTXkEnHKUbq?=
+ =?iso-8859-1?Q?jODSuk+yKauVoIEXQQ1dQXrx1QCOvuBpuH4Tu/LeslAD0TJGQtl/U2ZL8s?=
+ =?iso-8859-1?Q?1T79s1bzMeqApdVanesYN9AaxPGg7ye1k/8i8C/QvYYEnZDHpmQjzKsYYV?=
+ =?iso-8859-1?Q?e8+HDcQG7vXgV3yQoOQJSqhPzpbrubVQYCcDvrTaeg6KVoN/FzDEB97JFJ?=
+ =?iso-8859-1?Q?0AZfvbb4GOdko73j56d5GCxSzg23yQB2Y/+nLf0afRuuA0udHGzBjgv4th?=
+ =?iso-8859-1?Q?tnUGdENPq7FU2UrMTnk/dJ8RPDakoeqxqBal0tOdG9N6tEqyY4tYhjZ812?=
+ =?iso-8859-1?Q?oEXGqnrPMP/iF6CUX5C/fXud4QuhJKi8aWm0kZwtZoQZ4OAj/WYdrYYKyX?=
+ =?iso-8859-1?Q?0+JTiGGjR0igUn0RWhC3sE/XMWNUJwsbIrsT3Fwqsik0Ak9qu0GIQgvn5n?=
+ =?iso-8859-1?Q?8nyF6VSSxbB5kQbp1VjAhlvfJXgdI5cZ+hX6YVmQjHdlMJDB4DZNGmfFN7?=
+ =?iso-8859-1?Q?mEmeYuP7ByU5c3UBmKp3QMLgq34nVSRIoUp23vUqstt5+3AlX6Oy+O1Oqw?=
+ =?iso-8859-1?Q?mWpR8LYM8sWsGSFC69A8cGrg8mz4y5nOOP/Rs48NeqNVz56UVUKwKrO6Rp?=
+ =?iso-8859-1?Q?RIs8MCv0MPAzDCyhPDkAFCiAAiYfXlJTyk1JecZLEviH8MX381sowmC7ph?=
+ =?iso-8859-1?Q?PF/KuuX6eI3dIgQWgwlFiw0mN+Wv1TkmIO58Ay0bqmErQs/VPjL5Lmr2Gt?=
+ =?iso-8859-1?Q?zfHgoeagggaj0haOtD5hG/Zi2KtE0lXllZPeCo1E0SQ4yX87beT9J1YONc?=
+ =?iso-8859-1?Q?XaEBREdvRibYwWOTXQ1ImGGVNVerH/MLhPzYZwKKgp1YAsLwLimZG2dgJu?=
+ =?iso-8859-1?Q?gW6CTSOGIea0M=3D?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: KL1PR0601MB5567:EE_|SEYPR06MB6333:EE_
-X-MS-Office365-Filtering-Correlation-Id: e41a2478-4460-45ee-14be-08de25b8f6f3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|366016|1800799024|52116014|376014|38350700014; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?gWHoxTOTX4oWCMOogdmrzU4C5mgthB+Nt8Mxk20aZZ5H9piaTTESb+SD5Wz4?=
- =?us-ascii?Q?leuxHAWd5v8++/q/xsxIqzlTKySlvKUTalx6S6mmewDDOVltqsO87roMLAm5?=
- =?us-ascii?Q?+lrsJg5Gx4R+w3dk0ZQ0QWUGuPiQOC3NI+XT1882tj0lajqcpVjhT9lzQVWp?=
- =?us-ascii?Q?dlzLr5mJuQ4p/b1OgI4ZqbXRQDMgARYhg75PTDYdJmE5LMOBGT8ypHz4uSSK?=
- =?us-ascii?Q?vT8TKUUGxPDz1cjUgM3QkV6XDfo1Pp2+hr4rvVC73L4TEesXXOZmn8B9oDkv?=
- =?us-ascii?Q?5VPX1LNIpArE6ZpjCRFclMs0QGGPHWlL4CG3uycnKxjYGjbuuk3KD+/ZzjI0?=
- =?us-ascii?Q?jbGVrCmNlOaYJ9YebOa83elN8bE7Y+BqGVAj39GdtgzivJwGdSeM7zSxMIAO?=
- =?us-ascii?Q?/fR1kZdku0vo27HrVhziwtlJVTGmkqFsnwXIbMflbqjxMUOIYQmgPTTkLaA5?=
- =?us-ascii?Q?C3SJe5o903v25XQYQniYS0ZNdAgAN7j8NRH/yJhsSDH6rl9GDuChg3b1T7tW?=
- =?us-ascii?Q?6KrM8Ordh7JmIM8wXD6BmcMMn/luj2GYmPe4PJD7P58fsCR1CgjhdQQ7AJ/w?=
- =?us-ascii?Q?7xzcMXVPdNP2eVCqaOQDkxRdzC84/zxqa50wYabwHEmv04NwkH3T9celCrGS?=
- =?us-ascii?Q?udGD8GJ6ozppI2+Xk54LqtXPSeyEk0B44HEGdexxmI4PdIQLYTttxDhGHcpl?=
- =?us-ascii?Q?BZahT9YR9GvkW8YMTD/pwMRgku5nUHquIe0FKts+8fE/TPl4GC8G3rOg3YXe?=
- =?us-ascii?Q?eveBvy39D/Gb9PV6wE+VjBLRdHAjqzrE/EEw97RmYzhyeA7VZqBiY+ZiLwoB?=
- =?us-ascii?Q?4TK47p6q8U78EuuFjkclrpgg+eg61v9N9gqcIaTVcZSCll/FI4OzF3jJ1vjQ?=
- =?us-ascii?Q?N9oFFZ1vnYf0CWKhX5eGesUDFvjmIlag2iOC5dNNrjFvQYqMRcvA0QEqA3Lf?=
- =?us-ascii?Q?6shLjCgOWZbeWqmg4AfsyH/v6Wq3KExQIovVxK0mJuS+R4mZFnUPefkrH7a+?=
- =?us-ascii?Q?GNc6HdVbZuvTVUcoyouV+dWA9KRdltBgqB6yRuiixScOj2RBX2kLwU3eGzVI?=
- =?us-ascii?Q?HbKyFNOBsmzlWCifEijzTe3T1RSoMwxXXTVlmMZf7yBZKgAqZb9oe0q+bGoq?=
- =?us-ascii?Q?P0PTsVBIejFG1SK7tFr6JxGPS7xqTFm+ZYoVzSL4ajYGAQmkGrAsG/blV3uy?=
- =?us-ascii?Q?jIlteXD+Jx7ztCx07QGwfduIaAyzS/K1J0eyoI4UGLJJVv0KvBcJSudoSndV?=
- =?us-ascii?Q?h1ybWp6W888HT5WLLZyknX4a4Nl929QngeyYtmhXxyNpEMGI/idFNm5xNs37?=
- =?us-ascii?Q?mGMaH5bP3KGbopfAgb9vl57HsqCk9sh1sbmIqM48xadZ70JFaU/aAy6BL9XC?=
- =?us-ascii?Q?FrnbLl2oga7YPCrL8937wL5UfZpKvHUkQv7GUXT6/Xm6aqx6alNTDtpdvkln?=
- =?us-ascii?Q?RQtNPxgFFvHtiIiEky//1XFvACs0VXvtGEUN1nkislcwryo/qFWj33eRxrRS?=
- =?us-ascii?Q?eQjWl/Pec8/GK/CbeJ+fY3oZx3z0nyFY1GIJ?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:KL1PR0601MB5567.apcprd06.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(1800799024)(52116014)(376014)(38350700014); DIR:OUT;
- SFP:1102; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?RCYoBsRk7DNMleVK3AqEC4YG+JOHWvApm1uSAmwKlvQ8D6m6nT+ePt8j+VMc?=
- =?us-ascii?Q?OQ2fSNT9qGU4CODiWoGt5DLUq4lBe7lT6FYa1W2vfqRXdhOt9zSv1KIdS2uB?=
- =?us-ascii?Q?mEWdP0F+R6nzscFdjjuF/ZBQpkksi53fUPTmAEz9rLUDwymvsQ/tYp+A+WWn?=
- =?us-ascii?Q?bIzDHn02C9pea8cDPUvVg/zclqPZdiUKht/XB52Phb6k/LmzlmZ5wu4ZraBM?=
- =?us-ascii?Q?WN1uUaWbFp3+eOc1X2KC0Ly4/YUAJJnKRfl6+R64sSMYOYMHz2JaICv77wSf?=
- =?us-ascii?Q?WPV7z9kfpSIVU2k0L81FjLgK93uWtQf1pDJEGSApBsIGfmn8qyDnwhgzLxVd?=
- =?us-ascii?Q?7tKr3vZwlxvQuVXX1gSE16t2w5P2G+JXVSjgwjiRQ6wJk9OccmhkMCNr3led?=
- =?us-ascii?Q?9kkEX0bRWFctOwA311EzWx63yoNZIUAzw9rjrHObKM0LHdENtn36aM1RqAoZ?=
- =?us-ascii?Q?kLmdYMAEsDxy80gch0jETxt7aVwLpjbzTlsl2OB+KeDHQ6Q2lG7scckuHWAc?=
- =?us-ascii?Q?Ula8xaNd9sl6ry+OCwf2onTtVSCn4ckjWSMfimKheLj5LAV2KhmF3+WH05gC?=
- =?us-ascii?Q?/rrk1ERVjezv1/onFcnLpAg3Dq1cU0/ae9AKd2wH6dIyF3F9A/RDAhjKUwio?=
- =?us-ascii?Q?JHY2B3cSSaHS3NNFOmsbGZZD++kBJwvyxjK1B1h3zKW1cd51HuidEr7Lcjg5?=
- =?us-ascii?Q?2v2IeEIrfkBcAVPZh9LoIm+XztjSBsv1zJeyaFVD+WR4wAAaZ0kKFvKprDOs?=
- =?us-ascii?Q?YZnc95Mc41SKO6qU5DVGbJFBGPCNnI/+mBavkud9OzTQ0AvLYwUYYd8uqyBb?=
- =?us-ascii?Q?mbBAQDbWDR87OA/aduuakceWQmN6FzEO+BRnAhGSxDE714ybHF8NkjN/1/+9?=
- =?us-ascii?Q?Zo65rxNjKf3e7XYnz9v40cp9VbxCVq9DhVg/aGLV84n9nExUGwTdRSEuYqay?=
- =?us-ascii?Q?KvdZt63Kj/aRM2/fgEleYH5/NCk344Y3GCwOz/R0Bdt/BomiC0bgFfUg41e/?=
- =?us-ascii?Q?O/+lABbBO0Ls/a9hG6mEZgzjSWboA4hIsEvx4SdVOvZBUalv6ROm+N42snLU?=
- =?us-ascii?Q?ijGsU1O4FiAhU9DqYx1HikC00Buph4lLlrchXbxpqrQi6wTgT90nTaJWVqKp?=
- =?us-ascii?Q?wGOtCLtAxWXE/M6PpzM7EK1DJIDE0dA2dZhpZOmvBzT0udGqChXmRwh1ywhk?=
- =?us-ascii?Q?wwAap3aOI2Oac865dRke/WSdtJRBhTlIBIMP4EsFqP6FwqS9KAHpU1n8IGE/?=
- =?us-ascii?Q?N0Stvznz3FzO1YuDkCeuUVqSPfxpqrzd1F5DCGREayMsq5McglnHkcV56Jw6?=
- =?us-ascii?Q?puXx/StVSuFC1co6pSZdlVopADbEXd7Z2wdGm0UHQVEhn1dIuqK+EVLBbeT5?=
- =?us-ascii?Q?wxXph2oZoJLphI8nubuvhQOti6xATIapPL5+pt3R0WKffFmfsTMT7fDq5wN2?=
- =?us-ascii?Q?cyuRqqmpNlCuGZZKobO6OQjIlRM+KpPOuAS0TLyVG5eoW5e9h0Ll11qL6jXM?=
- =?us-ascii?Q?v78nM989Y1nxCvFXpVGKoteMjlOsH+P9a21WdO7By77lld0Sn+H1IbBoVnGF?=
- =?us-ascii?Q?Grpj/ISjYJrT+II+7XiVq17A9s13jbax2VH8NpWJHLtWwjQCxvwPqyFNV8Fm?=
- =?us-ascii?Q?IA=3D=3D?=
-X-OriginatorOrg: jaguarmicro.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e41a2478-4460-45ee-14be-08de25b8f6f3
-X-MS-Exchange-CrossTenant-AuthSource: KL1PR0601MB5567.apcprd06.prod.outlook.com
+X-OriginatorOrg: Nvidia.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Nov 2025 09:09:08.2672 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 1e45a5c2-d3e1-46b3-a0e6-c5ebf6d8ba7b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: juky6RXHlu6CdiZSsyMrjEn9Hx0PuD1/qT5hwCowE+nzRdfarCV7VKwTAFJ+Pd7FXFH7iL4uu/8QGhUxB2F4dWTJZZKxeC323QBLrZ+T8fA=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB6333
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR12MB8699.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6310b105-80cb-4bf6-390e-08de25b9397d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Nov 2025 09:10:59.6274 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: z9Xrnm7hKhr1CoFYfy4hsHZNmDtqz3jhGtOK44kLLtTYPqcWn9wAoLdVlB4FtAR+xKmnTrSPmvBKcfJkNeSqrQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8350
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -142,153 +150,22 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This patch adds support for Chinese cryptographic algorithms in the
-IPsec security gateway example application:
-
-1 Add SM4-CBC cipher algorithm support with 16-byte IV and key;
-2 Add SM3-HMAC authentication algorithm support with 20-byte key;
-3 Update SA configuration parsing to recognize "sm4-cbc" and "sm3-hmac"
-keywords;
-4 Implement proper IV handling and authentication offset/length
-configuration.
-
-These additions enable the IPsec security gateway to use Chinese
-national cryptographic standards for secure communications.
-
-Signed-off-by: Sunyang Wu <sunyang.wu@jaguarmicro.com>
----
- doc/guides/sample_app_ug/ipsec_secgw.rst |  9 +++++++++
- examples/ipsec-secgw/esp.c               |  5 +++++
- examples/ipsec-secgw/sa.c                | 17 ++++++++++++++++-
- 3 files changed, 30 insertions(+), 1 deletion(-)
-
-diff --git a/doc/guides/sample_app_ug/ipsec_secgw.rst b/doc/guides/sample_app_ug/ipsec_secgw.rst
-index 7319505fe9..7c31c96b7c 100644
---- a/doc/guides/sample_app_ug/ipsec_secgw.rst
-+++ b/doc/guides/sample_app_ug/ipsec_secgw.rst
-@@ -576,6 +576,7 @@ where each options means:
-    * *aes-128-ctr*: AES-CTR 128-bit algorithm
-    * *3des-cbc*: 3DES-CBC 192-bit algorithm
-    * *des-cbc*: DES-CBC 64-bit algorithm
-+   * *sm4-cbc*: SM4-CBC 128-bit algorithm
- 
-  * Syntax: *cipher_algo <your algorithm>*
- 
-@@ -605,6 +606,7 @@ where each options means:
-     * *sha1-hmac*: HMAC SHA1 algorithm
-     * *sha256-hmac*: HMAC SHA256 algorithm
-     * *aes-xcbc-mac*: AES XCBC MAC algorithm
-+    * *sm3-hmac*: HMAC SM3 algorithm
- 
- ``<auth_key>``
- 
-@@ -820,6 +822,13 @@ Example SA rules:
-     src 1111:1111:1111:1111:1111:1111:1111:5555 \
-     dst 2222:2222:2222:2222:2222:2222:2222:5555
- 
-+    sa out 30 cipher_algo sm4-cbc \
-+    cipher_key 01:23:45:67:89:ab:cd:ef:fe:dc:ba:98:76:54:32:10 \
-+    auth_algo sm3-hmac \
-+    auth_key 01:23:45:67:89:ab:cd:ef:fe:dc:ba:98:76:54:32:10:11:22:33:44 \
-+    mode ipv4-tunnel \
-+    src 172.16.1.5 dst 172.16.2.5
-+
-     sa in 105 aead_algo aes-128-gcm \
-     aead_key de:ad:be:ef:de:ad:be:ef:de:ad:be:ef:de:ad:be:ef:de:ad:be:ef \
-     mode ipv4-tunnel src 172.16.2.5 dst 172.16.1.5
-diff --git a/examples/ipsec-secgw/esp.c b/examples/ipsec-secgw/esp.c
-index b72a5604c8..46c3ad3ec7 100644
---- a/examples/ipsec-secgw/esp.c
-+++ b/examples/ipsec-secgw/esp.c
-@@ -103,6 +103,7 @@ esp_inbound(struct rte_mbuf *m, struct ipsec_sa *sa,
- 		case RTE_CRYPTO_CIPHER_DES_CBC:
- 		case RTE_CRYPTO_CIPHER_3DES_CBC:
- 		case RTE_CRYPTO_CIPHER_AES_CBC:
-+		case RTE_CRYPTO_CIPHER_SM4_CBC:
- 			/* Copy IV at the end of crypto operation */
- 			rte_memcpy(iv_ptr, iv, sa->iv_len);
- 			break;
-@@ -123,6 +124,7 @@ esp_inbound(struct rte_mbuf *m, struct ipsec_sa *sa,
- 		case RTE_CRYPTO_AUTH_SHA1_HMAC:
- 		case RTE_CRYPTO_AUTH_SHA256_HMAC:
- 		case RTE_CRYPTO_AUTH_AES_XCBC_MAC:
-+		case RTE_CRYPTO_AUTH_SM3_HMAC:
- 			sym_cop->auth.data.offset = ip_hdr_len;
- 			sym_cop->auth.data.length = sizeof(struct rte_esp_hdr) +
- 				sa->iv_len + payload_len;
-@@ -341,6 +343,7 @@ esp_outbound(struct rte_mbuf *m, struct ipsec_sa *sa,
- 		case RTE_CRYPTO_CIPHER_DES_CBC:
- 		case RTE_CRYPTO_CIPHER_3DES_CBC:
- 		case RTE_CRYPTO_CIPHER_AES_CBC:
-+		case RTE_CRYPTO_CIPHER_SM4_CBC:
- 			memset(iv, 0, sa->iv_len);
- 			break;
- 		case RTE_CRYPTO_CIPHER_AES_CTR:
-@@ -405,6 +408,7 @@ esp_outbound(struct rte_mbuf *m, struct ipsec_sa *sa,
- 		case RTE_CRYPTO_CIPHER_DES_CBC:
- 		case RTE_CRYPTO_CIPHER_3DES_CBC:
- 		case RTE_CRYPTO_CIPHER_AES_CBC:
-+		case RTE_CRYPTO_CIPHER_SM4_CBC:
- 			sym_cop->cipher.data.offset = ip_hdr_len +
- 				sizeof(struct rte_esp_hdr);
- 			sym_cop->cipher.data.length = pad_payload_len + sa->iv_len;
-@@ -436,6 +440,7 @@ esp_outbound(struct rte_mbuf *m, struct ipsec_sa *sa,
- 		case RTE_CRYPTO_AUTH_SHA1_HMAC:
- 		case RTE_CRYPTO_AUTH_SHA256_HMAC:
- 		case RTE_CRYPTO_AUTH_AES_XCBC_MAC:
-+		case RTE_CRYPTO_AUTH_SM3_HMAC:
- 			sym_cop->auth.data.offset = ip_hdr_len;
- 			sym_cop->auth.data.length = sizeof(struct rte_esp_hdr) +
- 				sa->iv_len + pad_payload_len;
-diff --git a/examples/ipsec-secgw/sa.c b/examples/ipsec-secgw/sa.c
-index 313919b4b5..86aeb25a49 100644
---- a/examples/ipsec-secgw/sa.c
-+++ b/examples/ipsec-secgw/sa.c
-@@ -128,6 +128,13 @@ const struct supported_cipher_algo cipher_algos[] = {
- 		.iv_len = 8,
- 		.block_size = 8,
- 		.key_len = 8
-+	},
-+	{
-+		.keyword = "sm4-cbc",
-+		.algo = RTE_CRYPTO_CIPHER_SM4_CBC,
-+		.iv_len = 16,
-+		.block_size = 16,
-+		.key_len = 16
- 	}
- };
- 
-@@ -175,6 +182,12 @@ const struct supported_auth_algo auth_algos[] = {
- 		.algo = RTE_CRYPTO_AUTH_AES_XCBC_MAC,
- 		.digest_len = 12,
- 		.key_len = 16
-+	},
-+	{
-+		.keyword = "sm3-hmac",
-+		.algo = RTE_CRYPTO_AUTH_SM3_HMAC,
-+		.digest_len = 12,
-+		.key_len = 20
- 	}
- };
- 
-@@ -502,7 +515,8 @@ parse_sa_tokens(char **tokens, uint32_t n_tokens,
- 				return;
- 
- 			if (algo->algo == RTE_CRYPTO_CIPHER_AES_CBC ||
--				algo->algo == RTE_CRYPTO_CIPHER_3DES_CBC)
-+				algo->algo == RTE_CRYPTO_CIPHER_3DES_CBC ||
-+				algo->algo == RTE_CRYPTO_CIPHER_SM4_CBC)
- 				rule->salt = (uint32_t)rte_rand();
- 
- 			if (algo->algo == RTE_CRYPTO_CIPHER_AES_CTR) {
-@@ -1319,6 +1333,7 @@ sa_add_rules(struct sa_ctx *sa_ctx, const struct ipsec_sa entries[],
- 			case RTE_CRYPTO_CIPHER_DES_CBC:
- 			case RTE_CRYPTO_CIPHER_3DES_CBC:
- 			case RTE_CRYPTO_CIPHER_AES_CBC:
-+			case RTE_CRYPTO_CIPHER_SM4_CBC:
- 				iv_length = sa->iv_len;
- 				break;
- 			case RTE_CRYPTO_CIPHER_AES_CTR:
--- 
-2.19.0.rc0.windows.1
-
+> Why adding only NVGRE?=0A=
+=0A=
+We added NVGRE support in response to a specific client request. =0A=
+Unfortunately, we don't have the capacity to test and validate other =0A=
+tunnel types for this upcoming release. We're focusing our resources =0A=
+on ensuring NVGRE works reliably.=0A=
+=0A=
+We definitely see value in expanding tunnel support on Windows in =0A=
+future releases. We can consider adding other tunnel types (VXLAN, =0A=
+GRE, GENEVE, etc.) as a feature for a future release once we have =0A=
+the resources to properly test and validate them.=0A=
+=0A=
+> Should we mention which tunnels are supported on Windows in the doc?=0A=
+=0A=
+Good suggestion, I've added documentation in v2 of the patch. The =0A=
+documentation now lists NVGRE as supported and notes that it requires =0A=
+DevX dynamic insertion mode. This makes it easy to expand the list =0A=
+when we add more tunnel types in future releases.=0A=
+=0A=
