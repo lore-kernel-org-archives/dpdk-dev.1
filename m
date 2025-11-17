@@ -2,125 +2,170 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B99ACE8D6B
-	for <dpdk-dev@archiver.kernel.org>; Mon, 17 Nov 2025 05:06:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BAB5CE8D6B
+	for <dpdk-dev@archiver.kernel.org>; Mon, 17 Nov 2025 05:22:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8E8E940ED9;
-	Mon, 17 Nov 2025 06:06:47 +0100 (CET)
-Received: from PH7PR06CU001.outbound.protection.outlook.com
- (mail-westus3azon11010027.outbound.protection.outlook.com [52.101.201.27])
- by mails.dpdk.org (Postfix) with ESMTP id EE17B41157
- for <dev@dpdk.org>; Mon, 17 Nov 2025 06:06:45 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 63478402CE;
+	Mon, 17 Nov 2025 06:22:34 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+ by mails.dpdk.org (Postfix) with ESMTP id D6AC1402A1
+ for <dev@dpdk.org>; Mon, 17 Nov 2025 06:22:31 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1763356952; x=1794892952;
+ h=from:to:subject:date:message-id:references:in-reply-to:
+ content-transfer-encoding:mime-version;
+ bh=rHP0P4A7edL/Rq1VjITVWLl0ZVti/Izi3HQ10EOKPkk=;
+ b=jO3V8SmBjEtNkrODICaXgKM1eG37f04jCR/vO/RjjlfbvWklSNeLrriv
+ pLtFo0aBgtsKX66FaJhv7XrUIPBZqnbzgkI4ASsUQhKAyVc7t2l+9CyEJ
+ cRy6xJZtWrR4IB/GRTje22VAij84lBSu6j1c6YvDpQ3JBGxM3IgUmX7/f
+ llOsZNi4QJKbdV2pnFJn/qg3z1ORwkseThv3nUYpIOfCQ1E4QcE6XodJf
+ 2tn4LlTTp0AY/daIKiWRYYpTJFC5NA+zpH1xZMqjlkKd3ZKdo9CXfvRrK
+ YPupyV3yDjWnufi/xKoqrOYnSy4r5gpyuv7rraasVeTOYJme0ek+mqsTZ w==;
+X-CSE-ConnectionGUID: fA06MEaNQgaAFMC2jmPeMg==
+X-CSE-MsgGUID: jvZln0kPTgmSwpzrMzs5DQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11615"; a="76451795"
+X-IronPort-AV: E=Sophos;i="6.19,311,1754982000"; d="scan'208";a="76451795"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+ by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 16 Nov 2025 21:22:31 -0800
+X-CSE-ConnectionGUID: s8rXC0QJQWes5/LNnYrghA==
+X-CSE-MsgGUID: l+r/tDqvTJmhojVUPcoV7Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,311,1754982000"; d="scan'208";a="195486916"
+Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
+ by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 16 Nov 2025 21:22:30 -0800
+Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Sun, 16 Nov 2025 21:22:30 -0800
+Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
+ FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Sun, 16 Nov 2025 21:22:30 -0800
+Received: from PH0PR06CU001.outbound.protection.outlook.com (40.107.208.42) by
+ edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Sun, 16 Nov 2025 21:22:30 -0800
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vs7mRzNRGDFuHChEnHFFhpQNHeiXaFhYTohk8/5tN5eCbwacMQPxa9NocIR4FwTYMo9p0cx2R+K7q5l36ZM0/2iqKj9oVaRbFSrs0o4JWsIWddKCTmoGFe7b+MarbcqZu8NgsUWtixfVJrX+ztE+HN+095+zQx5bFKHVwAwDERmBd93TE50jNb1bYctnrzgVrHODf692cLqYNBVcQ6MPv8C/I9oPro2lYyb1IDskgJX5K9Mza15eMCbO7jvHoJ7cg9FwnJNfl6ASrENv3a4SovesnwoXH2SGfP+3ZYQLEgxsUZduzNkQJEdaP9YUBLtcEX5BT2PsMS4/OT3ey3vRIA==
+ b=AdtSHnPVmEvJkGao+Hjw9drpxJPKTJE/XW0I9l3wda63zaGnD8jVjOkvtr69wPFYVSQ05srWAr+EX3D3NDKVNe7gw2i1DPUd1qAbqe7jn6TcUgxnopQiflVAlVYQJalFC9cx0j6VQL+PJGOMK7myVoNSA7JVYEfjdH88DHd4CHA/88VHeDhzfEEv1ZvvrM9PRKC2MiMqRA8ldXemd94q+2+ADkmF9Vx2pj+MJtx40e+2FgyrFKz2X5hbevUoCzqJsrJj+ax4wZu2pDNr1s44kWses/81cQDR7IdvaPmQ0ZE83iYtr5iwRiKVKLq25UrgjR0LjUp/RL9cVaq2Bmwzcg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=IMUJ2E54Ll0YVn9Gl7PFhILOtwsKtD/Df/iVakWjFLY=;
- b=OSVH5c8mccQ1TV8J+0/vvBx4yUTdHY7zoZzJuEqMNg6TnaoOKWRJqDcHXtq0r69tJdOJo9P4prURMWl1aPW3SI9pzUfALG1K0H6ROGEQg2x1GR3LZmO1rIB3aufsu15xBqLYg5LLN8YboZMOeqiNKySkD9esCzosCfWdIVczgHVgMbey9KDQz9RV59KQn2ZQRHQWuPnBLbY2C4sLa1SIqWqrZFtLVBTb7sZ6vJJIFd4+5YyYd8QvbMqo+KVp2rChX8JqXDMDTxWKnMg9IDNQkaodKEI4gw0PsRa44h+Cb26+R24Ifht/Z1dOEohMOPgBVN/FvTsQYlTf397QRQWbKw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IMUJ2E54Ll0YVn9Gl7PFhILOtwsKtD/Df/iVakWjFLY=;
- b=ZEasvbSKi5lY+uYUcxlPRRXGMRM1ABHX/yvw2qmVIEO/+aDXp1GVi8cPxHutYS4YFgRsRwyCgMIIbdEBI5LoB19q2cTBhaUVwB7Ne9/apPdTnUf+TghXSikeuwcyXnhytHMEo/75Rks5OEWSKvYl5FBxBzohKFrudThRCLyeM/K2+IhOJSOnYsvL5D+LmqQ1xRjCLYefOAgzzmGp4Amz9MwVuck2+AjX4PQRrcYvcRUlhZJ7jQMa08xEJpDLdV4XzOQzlr4GfyeEHX0In5pM+D8GJv/ohXdyEDFZ80HKEitYY/VNQeBeDdfgIXMeabPlAoKHNxDSF2Ingqs8dVFBJQ==
-Received: from BN9PR03CA0737.namprd03.prod.outlook.com (2603:10b6:408:110::22)
- by SJ2PR12MB8009.namprd12.prod.outlook.com (2603:10b6:a03:4c7::10)
+ bh=WJXJ34qCqXrS85AbpOoG75Slk2ntkbWkd2rXlGkwoLU=;
+ b=d7fRrDHT/e+GV1cIij/+oofBU4tRApqEyVDjtG08mfos0MkSdXw0+PIZztCQJjm9KLy8qs7n7iKG57qg0e+qILEJo4SW23faxAE+EU71OB8hR7AAhQ6Y7RiRysm+aqZc+5+lZziLiIAgBdmqqj0c/gznd6cJcycm4OdZz5WG6fyVp7rkKnGVZk1PNApOjQtZ51lGmozPVMkzQzaqrrPmQeDaS9IQJeDY2xEksbMOvt2QerQEHJusAEEG9kwZE1x4h7ssUMGioY2jBwBBpfaAO0f7dddX6v/3/2qhYPpdRoJsUmUiuQxq9v7gWsfvReqP84uKejpQwwd9clrFqm+A6A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from CY5PR11MB6116.namprd11.prod.outlook.com (2603:10b6:930:2b::14)
+ by CY8PR11MB7747.namprd11.prod.outlook.com (2603:10b6:930:91::17)
  with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.18; Mon, 17 Nov
- 2025 05:06:40 +0000
-Received: from BN3PEPF0000B073.namprd04.prod.outlook.com
- (2603:10b6:408:110:cafe::e7) by BN9PR03CA0737.outlook.office365.com
- (2603:10b6:408:110::22) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9320.15 via Frontend Transport; Mon,
- 17 Nov 2025 05:06:21 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com;
- dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- BN3PEPF0000B073.mail.protection.outlook.com (10.167.243.118) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9343.9 via Frontend Transport; Mon, 17 Nov 2025 05:06:40 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Sun, 16 Nov
- 2025 21:06:15 -0800
-Received: from nvidia.com (10.126.231.35) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Sun, 16 Nov
- 2025 21:06:11 -0800
-From: Bing Zhao <bingz@nvidia.com>
-To: <viacheslavo@nvidia.com>, <dev@dpdk.org>, <rasland@nvidia.com>
-CC: <orika@nvidia.com>, <dsosnowski@nvidia.com>, <suanmingm@nvidia.com>,
- <matan@nvidia.com>, <thomas@monjalon.net>, Nupur Uttarwar
- <nuttarwar@nvidia.com>
-Subject: [PATCH] net/mlx5: skip Rx control flow tables in isolated mode
-Date: Mon, 17 Nov 2025 07:05:57 +0200
-Message-ID: <20251117050557.8481-1-bingz@nvidia.com>
-X-Mailer: git-send-email 2.34.1
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.19; Mon, 17 Nov
+ 2025 05:22:27 +0000
+Received: from CY5PR11MB6116.namprd11.prod.outlook.com
+ ([fe80::2b59:d9a6:8854:e9b9]) by CY5PR11MB6116.namprd11.prod.outlook.com
+ ([fe80::2b59:d9a6:8854:e9b9%4]) with mapi id 15.20.9320.013; Mon, 17 Nov 2025
+ 05:22:27 +0000
+From: "Mandal, Anurag" <anurag.mandal@intel.com>
+To: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>,
+ "dev@dpdk.org" <dev@dpdk.org>, "Richardson, Bruce"
+ <bruce.richardson@intel.com>, "Burakov, Anatoly" <anatoly.burakov@intel.com>, 
+ "thomas@monjalon.net" <thomas@monjalon.net>, "andrew.rybchenko@oktetlabs.ru"
+ <andrew.rybchenko@oktetlabs.ru>
+Subject: RE: [PATCH v2] net/ice: add MAC anti-spoof option
+Thread-Topic: [PATCH v2] net/ice: add MAC anti-spoof option
+Thread-Index: AQHcVq02Q5MdAwVwH0eQQbAZdQUWgLT07CkAgAFoL7A=
+Date: Mon, 17 Nov 2025 05:22:27 +0000
+Message-ID: <CY5PR11MB61167F082015E76C562C3635E4C9A@CY5PR11MB6116.namprd11.prod.outlook.com>
+References: <20251113105914.34949-1-anurag.mandal@intel.com>
+ <20251116035749.45922-1-anurag.mandal@intel.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F65562@smartserver.smartshare.dk>
+In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F65562@smartserver.smartshare.dk>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CY5PR11MB6116:EE_|CY8PR11MB7747:EE_
+x-ms-office365-filtering-correlation-id: 48ba6804-d6e5-4acf-575c-08de25994c76
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0; ARA:13230040|366016|1800799024|376014|38070700021;
+x-microsoft-antispam-message-info: =?iso-8859-1?Q?7eOJ0X/tsHaFkeG/ZwmOaGigqXl+heedkAa1q6K/IA0n4GdexOUHJQ4Png?=
+ =?iso-8859-1?Q?Y9EXHjJzHp5w9xcIb3XyeDylLBdCHBXaG4rVhY65cHe1j+M4T16L0ir5kH?=
+ =?iso-8859-1?Q?JtVWX81dUkQgl9dKAuuyMuXH8Lne4l13w5GitCFASArSE3ePusnibfrnoL?=
+ =?iso-8859-1?Q?fQlYDO/oB4DtQoKLl5T83PjPdH5xPF0YLlwqeefQ75m/yAFWpYr62bLVvm?=
+ =?iso-8859-1?Q?pvKHveLMubFa06nf2ZtDWyNU9c6DKeUzCEJGibIA0EJu2OVWLUt50APiDu?=
+ =?iso-8859-1?Q?XmAL/HGHhUb6JMmbQduBRdOl9S3n++B/D8MERQ6V9noPhEs32lby04gI9I?=
+ =?iso-8859-1?Q?1DfgL87KNLb2aOJNiMO/TjaiJ8XwVO7LUYhswipiTYgAEu6ZRPrL3mt7K3?=
+ =?iso-8859-1?Q?Ym/PEkfNODRqStApK6z0QYrXDHw9L0ceaDLm3lYDLZbEWHakXtVP57H/hO?=
+ =?iso-8859-1?Q?Fsx0CliTFN/UvdSvqAFGLNgXPtmYyAvwWnGIgyFcJ7skCBvpYd6EHDuzht?=
+ =?iso-8859-1?Q?/Zp8HMEFfq7ioDxxKtemYXs04ftjQzScARaZliuX0A9u8KIiWeFpAyddmm?=
+ =?iso-8859-1?Q?NNmO4111Lo7iHjunLwwXoA1s1QS2iW/AGEBioEA3DYeUWlc/qpAWQlKalc?=
+ =?iso-8859-1?Q?MR18TOx0NFJYSRByWyU6kqEfwsW4XQ4Sd/X+hUqrjFF0gL42akmYuKJg8c?=
+ =?iso-8859-1?Q?Hxi7t9gfMaT/MSDpo9RU6OKQu7wCLDrOIQuxPA4w8gLlOb4BSdx49Bvo7R?=
+ =?iso-8859-1?Q?EhWmvtatxUnHhgFNFi7ZAJQXds3CBa47z7dQUP4y6AE1NaHs1jSULX0aob?=
+ =?iso-8859-1?Q?esBpkgdYRZkrn1HxzAk2Yry+auwXfvL3xduc03BZ+TQjV1EJPs82DbHfxu?=
+ =?iso-8859-1?Q?rWzsQAc5BAePBaR2i976qtOoYN8mWmQaNj2hUzd5apqUJ5Q81U65XJDjs+?=
+ =?iso-8859-1?Q?5oREMvB4tNqjZEuTjHt8YRBWtDUenoOO1VGb46GkgobxUvvZTuAEc+YwsF?=
+ =?iso-8859-1?Q?rHMQUFIBQZGWsCID90lgU0DnicUJx6uNliwrJtC13PC+Hzd+QWxtqD+jfw?=
+ =?iso-8859-1?Q?mUg9nuOa06ppLaRC8bQLHF/zcnG/Eo9uX346oKSuMBrPQ7rLbtDVd1rjnx?=
+ =?iso-8859-1?Q?oIOKRXWgKyDP/wtmXdvublqa+q0sjSu8uxTAe8O73gPd4ZsWewMtMs4JgO?=
+ =?iso-8859-1?Q?8tMW8v0tDY+bzPpNl3aQJR/goYSXr5wc1NdwKOwt3al4I1vIbHEfOFq/MB?=
+ =?iso-8859-1?Q?AqF11zKvK9Zm/cK6A2dQUnxjn19YQyUJ98+/xD9iRaeaonYGHs9esm6htW?=
+ =?iso-8859-1?Q?eGhKt4Qh/II2O7s/Jd7DfL3fxL6A0BfdeNeJ0A24TYDO3fybZxxmgCGEtK?=
+ =?iso-8859-1?Q?GB/mGSgC68R38d3vupS0/mXTsf3zDAbHMwO0+l4fAjXl30q9Hf3Mtav8ET?=
+ =?iso-8859-1?Q?RWdBS3ZQip5BnsCe1utHaQmxikp6aK94p4RWowKzGKPQxZmoYPUJ6d239I?=
+ =?iso-8859-1?Q?lRFXUptn9Cci8ZXFixOgF4GxtB2c9+dDIhOmifdEx811BFGqYhf+UDmDuU?=
+ =?iso-8859-1?Q?dhl0YHN/vByz6gUdO1TWRQlGSFHq?=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:CY5PR11MB6116.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(366016)(1800799024)(376014)(38070700021); DIR:OUT; SFP:1101; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?azz59i4//9TH9/FFXqhcBrqbFkmys+GGVKkXZBHDWX/Y/LyNVA8NffJr75?=
+ =?iso-8859-1?Q?UIyJ4bLNBhKLhnyd1H2JZSchOsEG5gts5AzKLT+FOXbbd6Hyy6XEWOWYzK?=
+ =?iso-8859-1?Q?2i1CBfWTsBCcFWj5EcyNT+I1KM3gxIBuAUAnaaJwE+J7qr+lqDIEOVOtRG?=
+ =?iso-8859-1?Q?ARygMybl9weQaTiA0cFG/k6CcVhjf/NbOxmwnGzsTRPWr1g79X1ZlU9rVC?=
+ =?iso-8859-1?Q?13djq+SKYZTUWF4462NLmn1V3vbyXUr5jXguJr5bRp85zjIQsqIi0nXCf0?=
+ =?iso-8859-1?Q?1NZG3cInsbeyXLo5fx9fJ2VNijY/8zW+zBAcIxEr10MbE0yA0u+r4goi16?=
+ =?iso-8859-1?Q?MGrUPgKB/mYpXmmRFG3OOhIEkGFQI7zyyREGnNlsgjPneKc1t8r6bLXwPf?=
+ =?iso-8859-1?Q?2B+WeVJEh8roqr2sNXU+TCOpDy0MektwRSSjk1r3+ER2J2IRmHev/VKj2C?=
+ =?iso-8859-1?Q?02GDSPjuz6ve7FOau6P8ynsmBG3rRkFlZnMYsUfeO8+h2AuiMsyRUhKxBO?=
+ =?iso-8859-1?Q?P0Zv3e3e/VQmNiWuw14agTc/rgyq/7clx4wXSi8InQkxz6btFXmzLZlANA?=
+ =?iso-8859-1?Q?yw1JNmvxISvAsKB+wodrR59BYbMRc1vPbBQVwIkM7yLiS0Yb5q6yqQaQJR?=
+ =?iso-8859-1?Q?0fQb/QqgXIbOMSLWsF3EhFXqOxy1VtYSESdeNZ51h1Rr4VFK46nQQ1ahcT?=
+ =?iso-8859-1?Q?TegPcN7UyBUwdIzJ3TIK6QAqyj2i6IV3K7YkQATsRqnfx/68B+nA3+I/NC?=
+ =?iso-8859-1?Q?ps7HwKsbPnG3rK02b4/PhG0k3g2xOfhVY960clX1ZieXyTil3GR+ysCWIq?=
+ =?iso-8859-1?Q?VBlKQiUMfCeQfl9+m6L6hesZQtEpweRaoHAessQx+o8nc4DVAg8LAJ3qI1?=
+ =?iso-8859-1?Q?nT8X5+Vimq7k6aQH2Yb1qyQ+maKhIvHRTTOkNuduw/XxOO7X6ZtzuB9THW?=
+ =?iso-8859-1?Q?GB+gR2MtAUnj4t6pobMX59ecTitCswf19L5NDqZfsKF3WmgCrmrWpoybbZ?=
+ =?iso-8859-1?Q?Q4/A0Hfkbr6FIOxcj3Be8eqMvsZWGKjDcq2jozjow7K2PJIwXWuAm5GiN5?=
+ =?iso-8859-1?Q?pJAf88szbRMdngqL/N7cC3QzJfcJdZ9/48kEwWW1Znw6xEU8L51OS97rzb?=
+ =?iso-8859-1?Q?5DQ4nMyKYf2zYuemZK333ioKmTV1ZpyK1OXc+eF4UWMax4TzPp9hsWzA6c?=
+ =?iso-8859-1?Q?4qeptcYhuOsbUss4i7dGb7+Gdn96PoUueNR67abg7s1qURuAs70sKIljop?=
+ =?iso-8859-1?Q?1Jj/7tHq7crph3cQXxXY9skKyazcNTiZ+bfoZtEFeinNIhwy2sUydZ/uT9?=
+ =?iso-8859-1?Q?Y94M4PlkZm+uqgcXeSZLAj3/75uxdzQMFpeWiUkOJ1l/nWa6f/yFNH1sON?=
+ =?iso-8859-1?Q?OY7MODzBULppN1xP155iEVEM2H03fhz6kWMEe/n5Bt5vdcn2QoNrJ11S+j?=
+ =?iso-8859-1?Q?OPcGepew3NpKt4gSwg+xFmo7zM/TlLogZORtOSQBkPCzdSXm4DHXYlrdyD?=
+ =?iso-8859-1?Q?qPIFiEMSWdYO8IVWDZKJtXFNqIRckc6Im/y9alRs7wR7Q7LCIUhOqFYMby?=
+ =?iso-8859-1?Q?eIlvRZ2zT2qXlu64jn0OBU6d5ugpAvEyfUzRpakeDXR7qK42f4DEs1iVQG?=
+ =?iso-8859-1?Q?vNlLXKsdmq3kORY7m/4ikHoRXwS7SOrV54?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.126.231.35]
-X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN3PEPF0000B073:EE_|SJ2PR12MB8009:EE_
-X-MS-Office365-Filtering-Correlation-Id: 060c0cc1-8c7c-4eb2-8cf2-08de25971802
-X-LD-Processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|1800799024|376014|36860700013|82310400026; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?1v5RJs/u//QYE3jTDqsKYGDZMhVLwla/vPJwZP9JeDtBN80PBiB/+AKWXk8R?=
- =?us-ascii?Q?e0kxVKAp1QNJ0saWaMMU4y006H8uT/nK/H4ittirUA9HxfESqa9aW9+njCdS?=
- =?us-ascii?Q?hPDP1bWqoKRDTWifYSrq10d9epamBUZw55hMjBMcjb9m7MLuV7K6VOUhiuXk?=
- =?us-ascii?Q?axIiYYaH7Bx1orE+ghWxLdclSyD8RjS/hBxS+wEZatnEdj2q6ifZ1rwZ0Zk3?=
- =?us-ascii?Q?cmiuwcW3gxjxVKsJN1pV1282K6Xp1AlG9hz5OEva3Bv3BFbj8ijRQCwBiOfy?=
- =?us-ascii?Q?OX/dU08tWA65TDR2pTMZE3uOMDB30fZhevYuBR2Q+owt8dXYwVOCBYvAdw4j?=
- =?us-ascii?Q?CxvFB7xQtMGjnwkphsBK1AqrBnDqle8UIYSamlv8xxByBHYiDiFx2R5gnI4l?=
- =?us-ascii?Q?iEgQtO6d2ISubtHbe0q7jmfztoqnz00MGt+AgObGPv1xRVY4gwGDDFf+Ppkl?=
- =?us-ascii?Q?8pZ8eePrSo8V6llw5N2Co185V3ZpS9FciErOGLyjpRKdIWyKLUKUU814xk0U?=
- =?us-ascii?Q?DsLXwWcN2ibMSkGJXQiyUvNsru6oQAAPJBnugENUJa2FdDxLwBBHZG16fDzO?=
- =?us-ascii?Q?KgiZuhh1owLBj0LZ7JgdiHay0t9dSRYBM5IhaRMOs2LLFDTLH0zFsJI3lWLc?=
- =?us-ascii?Q?jtkayXuqoqpZMHQ5d2HdgAcKZJjSJnqn7b8U5L8ay0ILLlsP6wI8aDyd00/v?=
- =?us-ascii?Q?HzFXC/zRoRMEFo77e4Ms0Sj+k+XOSw/C2YGPBimQSsFlrqWoy+/0jh5I2gcO?=
- =?us-ascii?Q?f7XBQG9FGAtcfJCXUXaii7/sF7KrL7yrwpOPplvTKbsFzX5q8q6TX7wRsP6M?=
- =?us-ascii?Q?JV9z0ENnuuQbNPmFoswkA/qTJAX9RbWd0J/wt0LAPAGtoB3vNKD3bOFhkjiw?=
- =?us-ascii?Q?vq5vNG24ynMeTJ0HLRnG/afftLtEVXWNxo9nbKH3FW1r+7d9LX7oMHBEcAzi?=
- =?us-ascii?Q?/zkf+Pf8MgQUc/wYYZSEHmxtmiP/3/4QVcJ2fNNPkV7/hllQdWiGUQWgkMTW?=
- =?us-ascii?Q?rsENz++yw/p/3Cw8F1M6j9WCsUF77mEdtFD/gKgClcw/fp/QFxNBQr1+wglX?=
- =?us-ascii?Q?Lo9pMUIHqMVmNu+mNOMiI0qCcDNqIz2tgQejovx4KBmIz+HN8Wl8mDS96Qdi?=
- =?us-ascii?Q?IBOhlzodRk5dfSrax5Hg40BiXqKqWz0sp+aydqiFZo3eylRmwE+HA0SX9Xrx?=
- =?us-ascii?Q?oOj7DazQR+Q6HIW/s1dCxzCe35SJ9sPODumKcC02iksBGgcuipLP/lW57ICW?=
- =?us-ascii?Q?4HtkkLw4JPPy9oMvNfhrjUg4Zj3GjMv1OQOiBRF3KZtp+d83nODGdxNgxcw8?=
- =?us-ascii?Q?67ZJahotiMPP5Jn8ti2g/bAxO66O0eWgH9xflOGGRPUOM/t4M2GbdEtri0jD?=
- =?us-ascii?Q?1UWDd1eZzAF5Mbgb1Z4s7Gsb6tnN+cfDupnCvQRIZ63mvJxjMlh+PEzu64Zj?=
- =?us-ascii?Q?IIigYli2OsDz3/yDXuLC0UL+N7LuLG+lfpKnrN4Lr4abduI1D1NW8l4yminz?=
- =?us-ascii?Q?GyU84WMUH4LpL9ap794hyDmpd64gKUK/qzqqzwEIJ3tCaIZ0cbXkoe7H7uPB?=
- =?us-ascii?Q?Wua/PdL6LylFLn0ghRg=3D?=
-X-Forefront-Antispam-Report: CIP:216.228.117.160; CTRY:US; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge1.nvidia.com; CAT:NONE;
- SFS:(13230040)(1800799024)(376014)(36860700013)(82310400026); DIR:OUT;
- SFP:1101; 
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Nov 2025 05:06:40.4288 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 060c0cc1-8c7c-4eb2-8cf2-08de25971802
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.160];
- Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN3PEPF0000B073.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8009
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CY5PR11MB6116.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 48ba6804-d6e5-4acf-575c-08de25994c76
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Nov 2025 05:22:27.5869 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: gPhkcK9oIaI2ay9Wv6mj25MrkljoSyUU/toU4FkmTVL4C5ysT6nbl5ULiNtLbLZG+QbCDPMV/oAD8MGW6yPBow==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR11MB7747
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -134,149 +179,102 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Nupur Uttarwar <nuttarwar@nvidia.com>
+Hi Morten Br=F8rup,
 
-If flow isolation is enabled, then skip flow_hw_create_ctrl_rx_tables
-because these are not used with flow isolation. This is used to save
-the unneeded resource allocation and also speed up the device startup
-time.
+Thanks for your mail and review. PFB my answers.
 
-Add Nupur Uttarwar user to mailmap in the meanwhile.
+" This is the same story as with Source Prune.
+Please disable source-prune filtering by default, and provide an option to =
+enable it.
+Also, suggest shortening the devargs name to simply "anti-spoof", like "sou=
+rce-prune"; they both operate on MAC basis."
 
-Fixes: 9fa7c1cddb85 ("net/mlx5: create control flow rules with HWS")
-Cc: dsosnowski@nvidia.com
+[Ans]: Source prune is disabled by default and option to enable the same ha=
+s been already committed:[ https://github.com/DPDK/dpdk/commit/980c840a646a=
+2c8ae49a291c17baf20a74f36086].
+I also wanted to shorten the name to "anti-spoof" but I found something cal=
+led " vsi->vlan_anti_spoof_on" in the same file.=20
+Hence, to distinguish between them, used "mac-anti-spoof".
 
-Signed-off-by: Nupur Uttarwar <nuttarwar@nvidia.com>
-Signed-off-by: Bing Zhao <bingz@nvidia.com>
-Acked-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
----
- .mailmap                        |  1 +
- drivers/net/mlx5/mlx5_flow.h    |  2 ++
- drivers/net/mlx5/mlx5_flow_hw.c | 17 ++++-------------
- drivers/net/mlx5/mlx5_trigger.c | 14 +++++++++++++-
- 4 files changed, 20 insertions(+), 14 deletions(-)
+Thank you.
 
-diff --git a/.mailmap b/.mailmap
-index 50a59a596a..c4cfa2ccc5 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -1179,6 +1179,7 @@ Noa Ezra <noae@mellanox.com>
- Nobuhiro Miki <nmiki@yahoo-corp.jp>
- Norbert Ciosek <norbertx.ciosek@intel.com>
- Norbert Zulinski <norbertx.zulinski@intel.com>
-+Nupur Uttarwar <nuttarwar@nvidia.com>
- Odi Assli <odia@nvidia.com>
- Ofer Dagan <ofer.d@claroty.com>
- Ognjen Joldzic <ognjen.joldzic@gmail.com>
-diff --git a/drivers/net/mlx5/mlx5_flow.h b/drivers/net/mlx5/mlx5_flow.h
-index 83a4adc971..a33a119b99 100644
---- a/drivers/net/mlx5/mlx5_flow.h
-+++ b/drivers/net/mlx5/mlx5_flow.h
-@@ -3056,6 +3056,8 @@ struct mlx5_flow_hw_ctrl_nic {
- #define MLX5_CTRL_VLAN_FILTER    (RTE_BIT32(6))
- 
- int mlx5_flow_hw_ctrl_flows(struct rte_eth_dev *dev, uint32_t flags);
-+int mlx5_flow_hw_create_ctrl_rx_tables(struct rte_eth_dev *dev);
-+void mlx5_flow_hw_cleanup_ctrl_rx_tables(struct rte_eth_dev *dev);
- 
- /** Create a control flow rule for matching unicast DMAC with VLAN (Verbs and DV). */
- int mlx5_legacy_dmac_flow_create(struct rte_eth_dev *dev, const struct rte_ether_addr *addr);
-diff --git a/drivers/net/mlx5/mlx5_flow_hw.c b/drivers/net/mlx5/mlx5_flow_hw.c
-index e0f79932a5..e34659abe7 100644
---- a/drivers/net/mlx5/mlx5_flow_hw.c
-+++ b/drivers/net/mlx5/mlx5_flow_hw.c
-@@ -11257,8 +11257,8 @@ flow_hw_create_vlan(struct rte_eth_dev *dev)
- 	return 0;
- }
- 
--static void
--flow_hw_cleanup_ctrl_rx_tables(struct rte_eth_dev *dev)
-+void
-+mlx5_flow_hw_cleanup_ctrl_rx_tables(struct rte_eth_dev *dev)
- {
- 	struct mlx5_priv *priv = dev->data->dev_private;
- 	unsigned int i;
-@@ -11543,8 +11543,8 @@ flow_hw_create_ctrl_rx_pattern_template
- 	return flow_hw_pattern_template_create(dev, &attr, items, NULL);
- }
- 
--static int
--flow_hw_create_ctrl_rx_tables(struct rte_eth_dev *dev)
-+int
-+mlx5_flow_hw_create_ctrl_rx_tables(struct rte_eth_dev *dev)
- {
- 	struct mlx5_priv *priv = dev->data->dev_private;
- 	unsigned int i;
-@@ -11580,8 +11580,6 @@ flow_hw_create_ctrl_rx_tables(struct rte_eth_dev *dev)
- 	return 0;
- err:
- 	ret = rte_errno;
--	flow_hw_cleanup_ctrl_rx_tables(dev);
--	rte_errno = ret;
- 	return -ret;
- }
- 
-@@ -11780,7 +11778,6 @@ __flow_hw_resource_release(struct rte_eth_dev *dev, bool ctx_close)
- 	flow_hw_cleanup_ctrl_fdb_tables(dev);
- 	flow_hw_cleanup_ctrl_nic_tables(dev);
- 	flow_hw_cleanup_tx_repr_tagging(dev);
--	flow_hw_cleanup_ctrl_rx_tables(dev);
- 	flow_hw_action_template_drop_release(dev);
- 	grp = LIST_FIRST(&priv->flow_hw_grp);
- 	while (grp) {
-@@ -12138,12 +12135,6 @@ __flow_hw_configure(struct rte_eth_dev *dev,
- 	ret = flow_hw_action_template_drop_init(dev, error);
- 	if (ret)
- 		goto err;
--	ret = flow_hw_create_ctrl_rx_tables(dev);
--	if (ret) {
--		rte_flow_error_set(error, -ret, RTE_FLOW_ERROR_TYPE_UNSPECIFIED, NULL,
--				   "Failed to set up Rx control flow templates");
--		goto err;
--	}
- 	/* Initialize quotas */
- 	if (port_attr->nb_quotas || (host_priv && host_priv->quota_ctx.devx_obj)) {
- 		ret = mlx5_flow_quota_init(dev, port_attr->nb_quotas);
-diff --git a/drivers/net/mlx5/mlx5_trigger.c b/drivers/net/mlx5/mlx5_trigger.c
-index 996c1eb6ac..23b093ca77 100644
---- a/drivers/net/mlx5/mlx5_trigger.c
-+++ b/drivers/net/mlx5/mlx5_trigger.c
-@@ -1660,6 +1660,12 @@ mlx5_traffic_enable_hws(struct rte_eth_dev *dev)
- 			goto error;
- 	if (priv->isolated)
- 		return 0;
-+	ret = mlx5_flow_hw_create_ctrl_rx_tables(dev);
-+	if (ret) {
-+		DRV_LOG(ERR, "Failed to set up Rx control flow templates for port %u, %d",
-+			dev->data->port_id, -ret);
-+		goto error;
-+	}
- 	if (dev->data->promiscuous)
- 		flags |= MLX5_CTRL_PROMISCUOUS;
- 	if (dev->data->all_multicast)
-@@ -1673,6 +1679,7 @@ mlx5_traffic_enable_hws(struct rte_eth_dev *dev)
- error:
- 	ret = rte_errno;
- 	mlx5_flow_hw_flush_ctrl_flows(dev);
-+	mlx5_flow_hw_cleanup_ctrl_rx_tables(dev);
- 	rte_errno = ret;
- 	return -rte_errno;
- }
-@@ -1913,8 +1920,13 @@ mlx5_traffic_disable(struct rte_eth_dev *dev)
- #ifdef HAVE_MLX5_HWS_SUPPORT
- 	struct mlx5_priv *priv = dev->data->dev_private;
- 
--	if (priv->sh->config.dv_flow_en == 2)
-+	if (priv->sh->config.dv_flow_en == 2) {
-+		/* Device started flag was cleared before, this is used to derefer the Rx queues. */
-+		priv->hws_rule_flushing = true;
- 		mlx5_flow_hw_flush_ctrl_flows(dev);
-+		mlx5_flow_hw_cleanup_ctrl_rx_tables(dev);
-+		priv->hws_rule_flushing = false;
-+	}
- 	else
- #endif
- 		mlx5_traffic_disable_legacy(dev);
--- 
-2.34.1
+Regards,
+Anurag M
+
+-----Original Message-----
+From: Morten Br=F8rup <mb@smartsharesystems.com>=20
+Sent: 16 November 2025 13:14
+To: Mandal, Anurag <anurag.mandal@intel.com>; dev@dpdk.org; Richardson, Bru=
+ce <bruce.richardson@intel.com>; Burakov, Anatoly <anatoly.burakov@intel.co=
+m>; thomas@monjalon.net; andrew.rybchenko@oktetlabs.ru
+Subject: RE: [PATCH v2] net/ice: add MAC anti-spoof option
+
++TO: Ethdev maintainers, regarding new Ethdev APIs
+
+> From: Anurag Mandal [mailto:anurag.mandal@intel.com]
+> Sent: Sunday, 16 November 2025 04.58
+>=20
+> VRRP advertisement packets are dropped as TX-errors upon transmission=20
+> from a vsi of ice PF due to MAC anti-spoof check which is enabled by=20
+> default.
+> There is no way to disable this check in the Tx direction to avoid=20
+> these packets being dropped.
+>=20
+> This patch introduces devargs "mac-anti-spoof" to allow user to=20
+> disable MAC anti-spoof check. Disable MAC Anti-spoof check in the Tx=20
+> direction to avoid getting dropped as TX-errors upon packet=20
+> transmission when their source MAC address matches one of the MAC=20
+> addresses assigned to that same NIC port.
+>=20
+> Signed-off-by: Anurag Mandal <anurag.mandal@intel.com>
+> ---
+
+This is the same story as with Source Prune.
+Please disable source-prune filtering by default, and provide an option to =
+enable it.
+Also, suggest shortening the devargs name to simply "anti-spoof", like "sou=
+rce-prune"; they both operate on MAC basis.
+
+Let's make something generic instead, to replace those silly devargs.
+We have individual Ethdev APIs to enable/disable various Rx filtering, e.g.=
+ "promiscuous", "all multicast".
+Obviously, we don't want to introduce new APIs for every semi-exotic filter=
+ any NIC may offer, like "source prune" and "anti spoof", but we could intr=
+oduce a set of generic Ethdev APIs to support filters such as these, using =
+a bitfield enum. E.g.:
+
+/* Enable one or more filters. */
+int rte_ethdev_filter_enable(uin16_t port_id, uint64_t filter);
+
+/* Disable one or more filters. */
+int rte_ethdev_filter_disable(uin16_t port_id, uint64_t filter);
+
+/* Get bit field of filters enabled. */
+int64_t rte_ethdev_filter_get(uin16_t port_id);
+
+/* Get bit field of filters supported by device. */ int64_t rte_ethdev_filt=
+er_capa(uin16_t port_id); /**/
+
+/** Destination MAC must match NIC's MAC address.
+ * (This is the inverse of Promiscuous.)
+ * Default enabled.
+ */
+#define RTE_ETH_FILTER_RX_NON_PROMISC RTE_BIT64(0)
+/** Multicast Hash.
+ * (This is the inverse of All Multicast.)
+ * Default enabled.
+ */
+#define RTE_ETH_FILTER_RX_MULTICAST RTE_BIT64(1)
+/** Source Prune.
+ * [Insert description here.]
+ */
+#define RTE_ETH_FILTER_RX_SOURCE_PRUNE RTE_BIT64(2)
+/* Add new Rx filters here, in increasing order. */
+/* Add new Tx filters here, in decreasing order. */
+/** Anti-Spoof.
+ * [Insert description here.]
+ */
+#define RTE_ETH_FILTER_RX_SOURCE_PRUNE RTE_BIT64(62)
+/** Used for error return values which are negative. */
+#define RTE_ETH_FILTER_ERROR           RTE_BIT64(63)
 
