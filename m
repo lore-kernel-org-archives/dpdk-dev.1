@@ -2,22 +2,23 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E44BCE8D6B
-	for <dpdk-dev@archiver.kernel.org>; Mon, 17 Nov 2025 08:45:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0331BCEACEF
+	for <dpdk-dev@archiver.kernel.org>; Mon, 17 Nov 2025 08:45:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4812A402D9;
-	Mon, 17 Nov 2025 09:45:27 +0100 (CET)
-Received: from CY3PR05CU001.outbound.protection.outlook.com
- (mail-westcentralusazon11013015.outbound.protection.outlook.com
- [40.93.201.15]) by mails.dpdk.org (Postfix) with ESMTP id 0471D402A1
- for <dev@dpdk.org>; Mon, 17 Nov 2025 09:45:25 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 4B68F40EE6;
+	Mon, 17 Nov 2025 09:45:37 +0100 (CET)
+Received: from CH4PR04CU002.outbound.protection.outlook.com
+ (mail-northcentralusazon11013037.outbound.protection.outlook.com
+ [40.107.201.37])
+ by mails.dpdk.org (Postfix) with ESMTP id 3BEC8427B7;
+ Mon, 17 Nov 2025 09:45:36 +0100 (CET)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=K2rlx8bJ6Ty8qRXX6+B6cLH5gJdNCEPPzrrlPecoMdHhrcqvpLku1cHjHEoZybA+DzF5Pg3tMFi2cm7JPgrJ/dEWLl813nsecIaRnhwBgxyEzYHA/Qvh28mYyGwhvJCTI+sVsHpzK0dRKM3LSCGlwwN3e3lTUluQR/igPSaZdNvDN0b+SK2Lx1vVUJP25TPQ3Q2Yh20k/00i5chOZ+WmQ9GhtiEBobUhNyMPTPocMD4lpcCApwhunC08PQnI9znnZRnLNM14t+wrSGCz93HrvxX78eVPiHwViVtjzoD2qG09msLDU3FEa+eAr3RoxPeNEhplhlfFn5nFmmnHg9WpsA==
+ b=NF14q2JySenCAIKq0I2ZV3SC/lZCBYJNjKzYPCGHSZPbs6k6l74JhlfoQw1ZB2YQ574Byht5H85IiZFwseIr+I3cSfVS57ufn+9CLuabMtFnybedaqYb1oK5/D3/kivvhWZPV6tiWX69uq6mn0f66rjxHtDzRyMkD+m5CfDZ00bQVjE5GwW8Zd+IYG9Sjpa7b/Iy0HdHRaGsUA3xdocjFZ8IbElDIVOi6OBH4zgfJO8iOuE4CRQr9/5pgwEuqdKQ7wLGl5ZcbV5Z6bau5Un4Sp78DWK3t5ZaOTg3XxJMizI64qVzwzmc1Liixvkg4cF7/Hze5L3uOa2Mo7pRYcG+ow==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=CjfpwP81sTnaA7UbSoe2OhZDqthsfy9rd+d1owkr9Sw=;
- b=TZK0MbOkV3Hel1hvERcq5z8sM8xD3mr+GJ21+o2CFkeWNZwyXHPYNTiKkHtuD44BVjZ7OgSMdRLxotqanQx97hC1Zf13tcLO4up4cI6isHvBNbZGvHNg8LcDFSmRGXxtoXGP/u8zIuxPXJcZGOpitLB7l621r0eyiPdnxKgRmp65xzadB9E4UGuv39uQ+K5T0MWpZdFRdSxDpzju2WKj5qX63jf982v1Pidk1pL7FjFdefe+Upjuh42eCUtX6BBY0a+76QYFMbJSgZfsAcfNzbmW5S4MGRUYLqXyHRFzSDYNiuA6mWHrE3PMKrKRTEEgSo7jCs+O5kdiWPa5Is2yYA==
+ bh=x+y2xO1yxeWUMW75aFydP1s2GTY0NKlUNg2z68kMY/M=;
+ b=M8uXGbwDSm1VrFSirR80uQHSZVXwlLgrTCWtytNae25jg3keGptCfiYg5q+9gvUX80NACKIfSlWWY6XGxzrZrDZuChP9Zsy3mszokIoCCyJ+niv11DeOwmzuGpXrzY1o/TWiv4oo8X+FEbGUvgR7vmlCbMwIkbFqNhELZPYYUtG8mLEiAO6wpeDJDthTYezP4DqGCyLCb49+5LGYpLkzWAiSG1cvu7WXs7vI5hL4rJagqXhXhpWsQltj9cG1EF1zxq3WvdFBHU8rLxT7ODi/WMro0ayU4OKM0AB+0GPKSElRLWqCP/96xRnbcaIzHmPemt55j09ddYtTNxyJKLaqbQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  216.228.117.161) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
@@ -25,17 +26,17 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CjfpwP81sTnaA7UbSoe2OhZDqthsfy9rd+d1owkr9Sw=;
- b=rt77OSVfYxBjAmPONaOq4LFCk9FhQSOAw1jnnVdrZY923S+kvz6JdTXfMTdEQA2sW9+kSTMh8LEYiEDt29GzxzRz9bDuzk8B6H4+3jacgFmi/q09O83eWYOL0/O63tsCAmCERuw0tM8V021j/7QO8RhNX4CbL0OTSCHSp9//z8Grdlde/MaMyQD01F29wiDrkwr00XrLsTqhfcaylUfb59bg2VR13/JIPnlp/qb+UyDN+VI7zW1PsfelfxqJaElPTFVFqHJUL/LDqdS2PT6Gx4gmsmPgivfjjahFHwCpHeyq1jIRrD6A+w3aPhqDN7McRjNoUhJc5p9/1V5emd2ZfA==
-Received: from MW4PR04CA0275.namprd04.prod.outlook.com (2603:10b6:303:89::10)
- by MW4PR12MB7358.namprd12.prod.outlook.com (2603:10b6:303:22b::19)
+ bh=x+y2xO1yxeWUMW75aFydP1s2GTY0NKlUNg2z68kMY/M=;
+ b=nyJXZNaxSm8ahc44O0zaviGq/xrgQtygwAOptaiV7LfZlJ7Ty6uVQsGRuDqE4n6DlTqA/0wr9Ur9SodiB6yaoIhJ4Qb6pdQWbl4I0Nwb3bAStnxS19WaD6B6ddX2+khXQXCLfW1/O4yrwtYnJk4sdsVD61RLPsQdzRnjVJdTb4dRe/y7orlZDnmvT3OKKfcuyos4dhw71/DEC8NO6tl8CqJoqUSJ1BJrfl842/65tTJVH3FxbmjgXVxx5rHW8Y9Wgi+mGaT+MqUA/KFMa/3tAwsVn0eY1ThJitTCgD05VmoukTfXRWeJyjOXmydi+9gqZK4aKU//m8TrW7A0dIJW9Q==
+Received: from SJ0PR13CA0068.namprd13.prod.outlook.com (2603:10b6:a03:2c4::13)
+ by PH7PR12MB7795.namprd12.prod.outlook.com (2603:10b6:510:278::21)
  with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.21; Mon, 17 Nov
- 2025 08:45:21 +0000
-Received: from CO1PEPF000042AB.namprd03.prod.outlook.com
- (2603:10b6:303:89:cafe::c5) by MW4PR04CA0275.outlook.office365.com
- (2603:10b6:303:89::10) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9320.22 via Frontend Transport; Mon,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.18; Mon, 17 Nov
+ 2025 08:45:32 +0000
+Received: from CO1PEPF000042A8.namprd03.prod.outlook.com
+ (2603:10b6:a03:2c4:cafe::56) by SJ0PR13CA0068.outlook.office365.com
+ (2603:10b6:a03:2c4::13) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9343.10 via Frontend Transport; Mon,
  17 Nov 2025 08:45:21 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
  smtp.mailfrom=nvidia.com;
@@ -45,83 +46,84 @@ Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
  216.228.117.161 as permitted sender) receiver=protection.outlook.com;
  client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
 Received: from mail.nvidia.com (216.228.117.161) by
- CO1PEPF000042AB.mail.protection.outlook.com (10.167.243.40) with Microsoft
+ CO1PEPF000042A8.mail.protection.outlook.com (10.167.243.37) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9343.9 via Frontend Transport; Mon, 17 Nov 2025 08:45:21 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ 15.20.9343.9 via Frontend Transport; Mon, 17 Nov 2025 08:45:31 +0000
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
  (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 17 Nov
- 2025 00:45:07 -0800
-Received: from nvidia.com (10.126.231.35) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ 2025 00:45:14 -0800
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail203.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 17 Nov
- 2025 00:45:02 -0800
-From: Bing Zhao <bingz@nvidia.com>
-To: <viacheslavo@nvidia.com>, <dev@dpdk.org>, <rasland@nvidia.com>
-CC: <orika@nvidia.com>, <dsosnowski@nvidia.com>, <suanmingm@nvidia.com>,
- <matan@nvidia.com>, <thomas@monjalon.net>
-Subject: [PATCH v3] net/mlx5: use private structure for internal tag item
-Date: Mon, 17 Nov 2025 10:44:43 +0200
-Message-ID: <20251117084443.10264-1-bingz@nvidia.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251117074159.9480-1-bingz@nvidia.com>
-References: <20251117074159.9480-1-bingz@nvidia.com>
+ 2025 00:45:13 -0800
+Received: from nvidia.com (10.127.8.9) by mail.nvidia.com (10.129.68.6) with
+ Microsoft SMTP Server id 15.2.2562.20 via Frontend Transport; Mon, 17 Nov
+ 2025 00:45:11 -0800
+From: Itai Sharoni <isharoni@nvidia.com>
+To: <dev@dpdk.org>
+CC: <thomas@monjalon.net>, <bingz@nvidia.com>, Itai Sharoni
+ <isharoni@nvidia.com>, <stable@dpdk.org>
+Subject: [PATCH v2] net/mlx5/windows: fix match criteria in flow creation
+Date: Mon, 17 Nov 2025 10:45:00 +0200
+Message-ID: <20251117084500.1276-1-isharoni@nvidia.com>
+X-Mailer: git-send-email 2.28.0.windows.1
+In-Reply-To: <11095513.IZOipudI63@thomas>
+References: <11095513.IZOipudI63@thomas>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Originating-IP: [10.126.231.35]
-X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
- rnnvmail201.nvidia.com (10.129.68.8)
+X-NV-OnPremToCloud: ExternallySecured
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000042AB:EE_|MW4PR12MB7358:EE_
-X-MS-Office365-Filtering-Correlation-Id: a02014f0-d2dc-46de-fd9f-08de25b5a4a7
+X-MS-TrafficTypeDiagnostic: CO1PEPF000042A8:EE_|PH7PR12MB7795:EE_
+X-MS-Office365-Filtering-Correlation-Id: 198d9c81-5d09-4e65-84b8-08de25b5aae2
 X-LD-Processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|82310400026|1800799024|36860700013|376014; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?RQljGtdSuZt1079WDxzQJ0FVeomuirAK6+szp9D6Q22Gt25StPe/Lr0i/y2o?=
- =?us-ascii?Q?DPp6lRTamXBsJZ8mstLXuXep7Aw+Fb1FckoCup3kh0yCD/kZxnxFrHElqtI6?=
- =?us-ascii?Q?4rVaWhqzH2VmlqeotTFgzJkZTHAImpLTT6ipqmK0Uueb1OCA/oPNAeNywm/J?=
- =?us-ascii?Q?1Mng8wm8cEjFXU82rcu9f4qRWMnrVi9ivUCo0s71XIyeRVRom2UXF8EfDK4L?=
- =?us-ascii?Q?B3McwumHApCfst8ulhSCURSRW09ro2b+QESnJKTugTF+69uttQbNJKV+u2oG?=
- =?us-ascii?Q?psSWJHrSoC52kE/GmEiF107VQBPB+TiPzy58kSuG3DmlFsS5zg2x2QTRrb1H?=
- =?us-ascii?Q?s5arFniAKJ8C59Sqwlj2Ppox+SeoSjYjkKqDavkoHceg7Bcj8GHEMk3umY9q?=
- =?us-ascii?Q?qy3mFA0r+Xscrv/xmrvOXFvcP77tOQRcfroarcWFSump9UGYIHgEyNSO1c4G?=
- =?us-ascii?Q?AMd4miML2XlwggtkgQk5gdenKow1gpX5c2WDIhbd8wYD1sCMTucapYeVxbGE?=
- =?us-ascii?Q?nw+HgMHIykZQrD25xIDfRVlEy7VMjmozOrzTSGp8pJIonD4Wa4/dHY6SH8YQ?=
- =?us-ascii?Q?wvKVR+9Y3L9PS5JBtj/Z/a/vJYjpbjO+/OAbxa2WCd07jjgUQ6dm8yKk2j5E?=
- =?us-ascii?Q?rwjX+59bIbqvusqzxl0Cj7Uv7VZr9TXYYBRRCVw0snCLu9NpMamWdR8R50zS?=
- =?us-ascii?Q?zy0DyjxY6Mu9bW0S6tzIz9k5GdMtYD+kMyCgN/kItmXTArj/qwFjMcQI1W44?=
- =?us-ascii?Q?DF+i7UvZTqqKnTeXTKizmJgzU5WmFSEAaz/D2tYY3AytzeqQZXL/pNwsK6i4?=
- =?us-ascii?Q?021eaDMtON1XKY0pxM/kI01iwKeVdbf1R4G0AXy8LdAVGKks0vJV4meKyiQQ?=
- =?us-ascii?Q?2hO9gl5+pLBntYeTc93dAtw9XVmdFTn8DHcw35OwbBCtg/5UKwHurT6cIqOE?=
- =?us-ascii?Q?pYZPMQ18VEvEHGK8tVA9aUfTaRJeDqedY5c+7d8MUfRnViFVlXjW7LENoeNG?=
- =?us-ascii?Q?y0tVXBgtKIaxIZQH8HJtg06M+GSOcq0pAHvxuayBjse18BGAm81a6Xwt9XH0?=
- =?us-ascii?Q?RFKlUH7toorQMf0kahgPNQlCMFYTwNgVtAtUA2G5+Ai1s32umlb2Od6t3/75?=
- =?us-ascii?Q?WsqRv7Xr9iRjew0P+nvQSfKyp5HrIHR8e9rWjs+Sp49TrKoLmnKy+8GVhblQ?=
- =?us-ascii?Q?X8e/hpusjcnEqvAHGLJjMdIh2hDin+MMr/3Hb0IaF4C7YBT+inij3JRibsjg?=
- =?us-ascii?Q?rX+3q/kFdVrebHdGs5Wz1hGmuoakLv+IDVks6Vkk0NpJM8Vwg271cT6Jeuk5?=
- =?us-ascii?Q?kplUhI8J9hmbmzo5+Fg5rIiCbL6V96eTqr7nDgSGFloD3VI2yHCEifB9e+YP?=
- =?us-ascii?Q?4YmM2dnJhn2Q4+Ei2Ox0ELtQdR8YfR+pDYc6ju3njxeB3qsg+DK/jtiWHCzy?=
- =?us-ascii?Q?Jz3FbO0rep8/wnOlz8gP5oEcCXjIH+Py845Rgy96Gndu6BWfJOFeNopKSIsG?=
- =?us-ascii?Q?LFZQgHW9ltmtaM8Od+nJfrH/V3vXtm7zWnTwFRv+wj/XuMRdETjFprpi81xg?=
- =?us-ascii?Q?QD/47x7xdVjzf1tuxos=3D?=
+ ARA:13230040|82310400026|36860700013|1800799024|376014; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?Mmk7MjrUVAVrnFYmB1tVtZArlmGPyB/cSn2PQEWEc1Pd/P036uPhnFEkSYiO?=
+ =?us-ascii?Q?/ueNTFaa0Eg1q6ZFJIUsjqRrjaS5Oxgm9Tl2rrDz+J1sioE0J+HY8pVHgRUf?=
+ =?us-ascii?Q?X16G1ib0eveOMB/m21BWG8XMMt9zPyWr5hC5MDQP5eFM1mVe5Scy51R2LV8h?=
+ =?us-ascii?Q?622muF2BUdCPNCOj9To30rE2KPMnim4HHLNmc+cC/tIa0yQM+y2KQsHyYNMr?=
+ =?us-ascii?Q?ALfO22WS91uIYX/XZH8Xq4B92hN1X2llUQdxI2R54/9C2QWlFS8QsW/MR+F1?=
+ =?us-ascii?Q?GhuApO49GkqiVXzu5dcoAM+boIRmmfqJowJUbmPbRuWTXQooQMdvZKG0ppOt?=
+ =?us-ascii?Q?vd+gnmKgC75bfMsS5DPsEd7gYI2Tj4b3LEUPMx2z12Ju9HsR6bGuCn2DQWnZ?=
+ =?us-ascii?Q?F0T7zwcQj3rEei+3MdlI+hZiTWFnlTCHMKQgpgsbPZ7P2o8HusELigJE+8B5?=
+ =?us-ascii?Q?163AxPJuLZHUcOK4M8qjcUdWi5P3pN2dZW2URaRWzwExW4cBwfs0Kq4SlYPa?=
+ =?us-ascii?Q?LAJkHLwFpwp/MsIizLbNNgMANTgYWpbXt7FvAk3i7tJ910fA49ppFsSSBJrt?=
+ =?us-ascii?Q?az4XFgUkYXS0t9erhGQlnVv01EBCR16MB98vYaJfXrQk7poETVcqUpPsp6/I?=
+ =?us-ascii?Q?IcKgTW6uibxjGldEF2ByiXjCLvFD+iCajSi51jTKxJemKFzu4MSq1WBxJyoD?=
+ =?us-ascii?Q?UI98HPqNAtuzus/Iv8yH1Aqv1FsaOOK7W10lPKdvmjj4cirW3XdSI52Ohqz4?=
+ =?us-ascii?Q?AXwjMR3P2RV2AlmoPZcaRHwSGsgj+ZTSjDacnbGMGlFf/yDMdNjE+/1NDI0L?=
+ =?us-ascii?Q?Uxqbvo2Fcebksd/4qepU/FdzRC5bKttkTjrtjvhKYzFsYEld6ieJfK555eqU?=
+ =?us-ascii?Q?poxaHoecP8KjwERC6KKRoBPsLnI+2Vjb8aQN7Rt/MqNqmk28nXZEflLWxxIw?=
+ =?us-ascii?Q?WbtFfSvHmWzncJxEPnG9UZgUdlN4kkzUxj3MtkqTQHOaTFfH8byUM0QEyDnV?=
+ =?us-ascii?Q?8yMwVwrNrjscHeFiL9t84fYs8obKMVjUifrabLbjQQMZHVrkUAeLtYHdge6D?=
+ =?us-ascii?Q?pY9dBu2b+NeZrc1LjS94AaLs+9QsmoVmKTnU48Umb7OcPv1OlHSTanzUXUtd?=
+ =?us-ascii?Q?CQp3DSDkEj71W0Bg8N2SHbJkpXe5unMQWEJDr/yeEUdz8McQQmpiU0tNs/Cy?=
+ =?us-ascii?Q?bJvcR9eZB3cF6FT30R7NbUrC4TkAPT0fGlgnkJRBQsrpaBbulNwTmtq6rdBg?=
+ =?us-ascii?Q?ayF3AoNaixSAAydlI9NuKJj7+TDdo1/53FPyj7ZP450RobtcJXmxroootV+X?=
+ =?us-ascii?Q?Sq1M7K7427iBo8kJeVgPzV6JTe5PJt5XBo12TgBoZv33sR+rgIOmKBcemEYX?=
+ =?us-ascii?Q?bPxnLGm19qEQ8reMyWcOVZOnkdzjvC886lOxF7ix3iXdwse1Y6o1SKf1v/ui?=
+ =?us-ascii?Q?xtWiRR8RQ400tcIKxE16glukLLzhFrpegz6+b/cPccRZPO44k5+40dzvpIPq?=
+ =?us-ascii?Q?BPQoWR3vN5XZdrK8aP/qBTr7q0r/Ft3bE9rY6K/OYXQx1Viv+d9NgM65ALaK?=
+ =?us-ascii?Q?TcfL2Fe4lbPzk2/uGgw=3D?=
 X-Forefront-Antispam-Report: CIP:216.228.117.161; CTRY:US; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge2.nvidia.com; CAT:NONE;
- SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014); DIR:OUT;
+ SFS:(13230040)(82310400026)(36860700013)(1800799024)(376014); DIR:OUT;
  SFP:1101; 
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Nov 2025 08:45:21.3537 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a02014f0-d2dc-46de-fd9f-08de25b5a4a7
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Nov 2025 08:45:31.8672 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 198d9c81-5d09-4e65-84b8-08de25b5aae2
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.161];
  Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1PEPF000042AB.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: CO1PEPF000042A8.namprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7358
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7795
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -135,165 +137,87 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The legacy DV API is used to translate the mask of a matcher and the
-value of a rule on the root table, no matter it is in SWS or HWS
-mode. The structure "mlx5_rte_flow_item_tag" is used instead of
-public "rte_flow_item_tag". This is used internally to speed up and
-simplify the usage of the available REG_Cs.
+Currently the Windows implementation hardcodes match criteria to
+MLX5_MATCH_OUTER_HEADERS when creating flow rules, which prevents
+matching on inner headers and other criteria types like NVGRE.
 
-Since the offsets of the fields are different, the DV API would get
-the incorrect value when constructuing the matcher and value. The
-private structure should be used for the DV API. Also, in the
-validation stage, the proper structure should be used.
+The fix uses the matcher's match_criteria_enable attribute instead
+of hardcoding OUTER_HEADERS, and moves the assignment outside the
+action switch block to apply to all cases.
 
-Fixes: 483181f7b6dd ("net/mlx5: support device control of representor matching")
-Fixes: ddb68e47331e ("net/mlx5: add extended metadata mode for HWS")
-Fixes: 26e1eaf2dac4 ("net/mlx5: support device control for E-Switch default rule")
+NVGRE item type is also added to the supported items list.
 
-Signed-off-by: Bing Zhao <bingz@nvidia.com>
+Fixes: 1d194496b9d1 ("net/mlx5: create flow rule on Windows")
+Cc: stable@dpdk.org
+
+Signed-off-by: Itai Sharoni <isharoni@nvidia.com>
+Acked-by: Bing Zhao <bingz@nvidia.com>
 ---
-v2: fix the building failure of the unknown private structure size by
-using memcpy
-v3: some compiler may not consider the structure name as a pointer
-address
----
- drivers/net/mlx5/mlx5.h         |  4 +--
- drivers/net/mlx5/mlx5_flow_hw.c | 46 ++++++++++++++++-----------------
- 2 files changed, 25 insertions(+), 25 deletions(-)
+v2:
+- Added documentation for NVGRE tunnel support on Windows
+- Noted requirement for DevX dynamic insertion mode
 
-diff --git a/drivers/net/mlx5/mlx5.h b/drivers/net/mlx5/mlx5.h
-index 7e4bfacd11..3d1b5371f0 100644
---- a/drivers/net/mlx5/mlx5.h
-+++ b/drivers/net/mlx5/mlx5.h
-@@ -469,8 +469,8 @@ struct mlx5_flow_hw_pattern_params {
- 	struct rte_flow_item items[MLX5_HW_MAX_ITEMS];
- 	/** Temporary REPRESENTED_PORT item generated by PMD. */
- 	struct rte_flow_item_ethdev port_spec;
--	/** Temporary TAG item generated by PMD. */
--	struct rte_flow_item_tag tag_spec;
-+	/** Temporary internal MLX5_TAG item generated by PMD, no more than 2 DWs. */
-+	uint8_t mlx5_tag_spec[sizeof(uint32_t) * 2];
- };
- 
- /* HW steering flow management job descriptor. */
-diff --git a/drivers/net/mlx5/mlx5_flow_hw.c b/drivers/net/mlx5/mlx5_flow_hw.c
-index e0f79932a5..0d8146c149 100644
---- a/drivers/net/mlx5/mlx5_flow_hw.c
-+++ b/drivers/net/mlx5/mlx5_flow_hw.c
-@@ -3844,6 +3844,10 @@ flow_hw_get_rule_items(struct rte_eth_dev *dev,
- 		       struct mlx5_flow_hw_pattern_params *pp)
- {
- 	struct rte_flow_pattern_template *pt = table->its[pattern_template_index];
-+	struct mlx5_rte_flow_item_tag mlx5_tag = {
-+			.id = REG_C_0, /* vport_meta_tag is using C_0 */
-+			.data = flow_hw_tx_tag_regc_value(dev),
-+		};
- 
- 	/* Only one implicit item can be added to flow rule pattern. */
- 	MLX5_ASSERT(!pt->implicit_port || !pt->implicit_tag);
-@@ -3855,7 +3859,7 @@ flow_hw_get_rule_items(struct rte_eth_dev *dev,
- 			return NULL;
- 		}
- 		/* Set up represented port item in pattern params. */
--		pp->port_spec = (struct rte_flow_item_ethdev){
-+		pp->port_spec = (struct rte_flow_item_ethdev) {
- 			.port_id = dev->data->port_id,
- 		};
- 		pp->items[0] = (struct rte_flow_item){
-@@ -3870,12 +3874,10 @@ flow_hw_get_rule_items(struct rte_eth_dev *dev,
- 			return NULL;
- 		}
- 		/* Set up tag item in pattern params. */
--		pp->tag_spec = (struct rte_flow_item_tag){
--			.data = flow_hw_tx_tag_regc_value(dev),
--		};
--		pp->items[0] = (struct rte_flow_item){
-+		rte_memcpy(pp->mlx5_tag_spec, &mlx5_tag, sizeof(struct mlx5_rte_flow_item_tag));
-+		pp->items[0] = (struct rte_flow_item) {
- 			.type = (enum rte_flow_item_type)MLX5_RTE_FLOW_ITEM_TYPE_TAG,
--			.spec = &pp->tag_spec,
-+			.spec = (const void *)&pp->mlx5_tag_spec,
- 		};
- 		rte_memcpy(&pp->items[1], items, sizeof(*items) * pt->orig_item_nb);
- 		return pp->items;
-@@ -8559,21 +8561,21 @@ __flow_hw_pattern_validate(struct rte_eth_dev *dev,
- 		}
- 		case MLX5_RTE_FLOW_ITEM_TYPE_TAG:
- 		{
--			const struct rte_flow_item_tag *tag =
--				(const struct rte_flow_item_tag *)item->spec;
-+			const struct mlx5_rte_flow_item_tag *mlx5_tag =
-+				(const struct mlx5_rte_flow_item_tag *)item->spec;
- 			uint16_t regcs = (uint8_t)priv->sh->cdev->config.hca_attr.set_reg_c;
- 
--			if (!((1 << (tag->index - REG_C_0)) & regcs))
-+			if (!((1 << (mlx5_tag->id - REG_C_0)) & regcs))
- 				return rte_flow_error_set(error, EINVAL,
- 							  RTE_FLOW_ERROR_TYPE_UNSPECIFIED,
- 							  NULL,
- 							  "Unsupported internal tag index");
--			if (tag_bitmap & (1 << tag->index))
-+			if (tag_bitmap & (1 << mlx5_tag->id))
- 				return rte_flow_error_set(error, EINVAL,
- 							  RTE_FLOW_ERROR_TYPE_ITEM,
- 							  NULL,
- 							  "Duplicated tag index");
--			tag_bitmap |= 1 << tag->index;
-+			tag_bitmap |= 1 << mlx5_tag->id;
+ .mailmap                                | 1 +
+ doc/guides/nics/mlx5.rst                | 4 ++++
+ drivers/net/mlx5/windows/mlx5_flow_os.c | 4 ++--
+ drivers/net/mlx5/windows/mlx5_flow_os.h | 1 +
+ 4 files changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/.mailmap b/.mailmap
+index 50a59a596a..83c2ea91a4 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -639,6 +639,7 @@ Intiyaz Basha <intiyaz.basha@caviumnetworks.com>
+ Ioana Ciornei <ioana.ciornei@nxp.com>
+ Isaac Boukris <iboukris@gmail.com>
+ Itamar Gozlan <igozlan@nvidia.com>
++Itai Sharoni <isharoni@nvidia.com>
+ Itsuro Oda <oda@valinux.co.jp>
+ Ivan Boule <ivan.boule@6wind.com>
+ Ivan Dyukov <i.dyukov@samsung.com>
+diff --git a/doc/guides/nics/mlx5.rst b/doc/guides/nics/mlx5.rst
+index e0ec3e4f6f..9efd4726df 100644
+--- a/doc/guides/nics/mlx5.rst
++++ b/doc/guides/nics/mlx5.rst
+@@ -1233,6 +1233,10 @@ On Windows, the features are limited:
+   - IPv4/TCP with CVLAN filtering
+   - L4 steering rules for port RSS of IP, UDP, TCP
+
++- Tunnel protocol support:
++
++  - NVGRE (requires DevX dynamic insertion mode)
++
+
+ .. _mlx5_multiproc:
+
+diff --git a/drivers/net/mlx5/windows/mlx5_flow_os.c b/drivers/net/mlx5/windows/mlx5_flow_os.c
+index 7a625fb880..15c6fc5613 100644
+--- a/drivers/net/mlx5/windows/mlx5_flow_os.c
++++ b/drivers/net/mlx5/windows/mlx5_flow_os.c
+@@ -219,9 +219,9 @@ mlx5_flow_os_create_flow(void *matcher, void *match_value,
+ 		default:
  			break;
  		}
- 		case RTE_FLOW_ITEM_TYPE_REPRESENTED_PORT:
-@@ -9028,13 +9030,13 @@ flow_hw_pattern_template_create(struct rte_eth_dev *dev,
- 		.type = RTE_FLOW_ITEM_TYPE_REPRESENTED_PORT,
- 		.mask = &rte_flow_item_ethdev_mask,
- 	};
--	struct rte_flow_item_tag tag_v = {
-+	struct mlx5_rte_flow_item_tag tag_v = {
- 		.data = 0,
--		.index = REG_C_0,
-+		.id = REG_C_0,
- 	};
--	struct rte_flow_item_tag tag_m = {
-+	struct mlx5_rte_flow_item_tag tag_m = {
- 		.data = flow_hw_tx_tag_regc_mask(dev),
--		.index = 0xff,
-+		.id = (enum modify_reg)0xff,
- 	};
- 	struct rte_flow_item tag = {
- 		.type = (enum rte_flow_item_type)MLX5_RTE_FLOW_ITEM_TYPE_TAG,
-@@ -10119,11 +10121,11 @@ flow_hw_create_ctrl_regc_sq_pattern_template(struct rte_eth_dev *dev,
- 		.relaxed_matching = 0,
- 		.transfer = 1,
- 	};
--	struct rte_flow_item_tag reg_c0_spec = {
--		.index = (uint8_t)REG_C_0,
-+	struct mlx5_rte_flow_item_tag reg_c0_spec = {
-+		.id = (uint8_t)REG_C_0,
- 	};
--	struct rte_flow_item_tag reg_c0_mask = {
--		.index = 0xff,
-+	struct mlx5_rte_flow_item_tag reg_c0_mask = {
-+		.id = (enum modify_reg)0xff,
- 		.data = flow_hw_esw_mgr_regc_marker_mask(dev),
- 	};
- 	struct mlx5_rte_flow_item_sq queue_mask = {
-@@ -10131,14 +10133,12 @@ flow_hw_create_ctrl_regc_sq_pattern_template(struct rte_eth_dev *dev,
- 	};
- 	struct rte_flow_item items[] = {
- 		{
--			.type = (enum rte_flow_item_type)
--				MLX5_RTE_FLOW_ITEM_TYPE_TAG,
-+			.type = (enum rte_flow_item_type)MLX5_RTE_FLOW_ITEM_TYPE_TAG,
- 			.spec = &reg_c0_spec,
- 			.mask = &reg_c0_mask,
- 		},
- 		{
--			.type = (enum rte_flow_item_type)
--				MLX5_RTE_FLOW_ITEM_TYPE_SQ,
-+			.type = (enum rte_flow_item_type)MLX5_RTE_FLOW_ITEM_TYPE_SQ,
- 			.mask = &queue_mask,
- 		},
- 		{
--- 
-2.34.1
+-		MLX5_SET(devx_fs_rule_add_in, in, match_criteria_enable,
+-			 MLX5_MATCH_OUTER_HEADERS);
+ 	}
++	MLX5_SET(devx_fs_rule_add_in, in, match_criteria_enable,
++		mlx5_matcher->attr.match_criteria_enable);
+ 	*flow = mlx5_glue->devx_fs_rule_add(mlx5_matcher->ctx, in, sizeof(in));
+ 	return (*flow) ? 0 : -1;
+ }
+diff --git a/drivers/net/mlx5/windows/mlx5_flow_os.h b/drivers/net/mlx5/windows/mlx5_flow_os.h
+index 2cd4e95325..c087bca4be 100644
+--- a/drivers/net/mlx5/windows/mlx5_flow_os.h
++++ b/drivers/net/mlx5/windows/mlx5_flow_os.h
+@@ -47,6 +47,7 @@ mlx5_flow_os_item_supported(int item)
+ 	case RTE_FLOW_ITEM_TYPE_IPV6:
+ 	case RTE_FLOW_ITEM_TYPE_VLAN:
+ 	case RTE_FLOW_ITEM_TYPE_ESP:
++	case RTE_FLOW_ITEM_TYPE_NVGRE:
+ 		return true;
+ 	default:
+ 		return false;
+--
+2.28.0.windows.1
 
