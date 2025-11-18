@@ -2,73 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17F0ECEACEF
-	for <dpdk-dev@archiver.kernel.org>; Mon, 17 Nov 2025 23:43:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47C81CE8D6B
+	for <dpdk-dev@archiver.kernel.org>; Tue, 18 Nov 2025 00:16:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D3E5E40281;
-	Tue, 18 Nov 2025 00:43:25 +0100 (CET)
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com
- [209.85.210.178])
- by mails.dpdk.org (Postfix) with ESMTP id 95B664027D
- for <dev@dpdk.org>; Tue, 18 Nov 2025 00:43:24 +0100 (CET)
-Received: by mail-pf1-f178.google.com with SMTP id
- d2e1a72fcca58-7b22ffa2a88so3937926b3a.1
- for <dev@dpdk.org>; Mon, 17 Nov 2025 15:43:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1763423003;
- x=1764027803; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=PM6BJTYMe5TZq4remVl1Zez1wNGU4Daihh21CDMeK48=;
- b=d2GHAgqm/PgZEAYgdm3ZSpiPZ+PES4MshTfqGjbVdS7izegsmtMyv1bmAbac1JcEt6
- 3eM76ZBvHwrv2wl6raG5aXjWHue9k9aKvu0SzneipcZLJKU8EDOLainwtJAK2RbooVvV
- YJZIxrQkkBzwB6Apa+w5gcfzRtsO+slTMvTqjcgdr9V7NLvWRv8WIUpsmtdSS3ply4GD
- yTjjuKIH79XvwhT5ydWpd5embP7iy7I3hNJKaHpSQ6BXnTXnMgkFkM4RRZfyAXY1F1Sb
- ftj8aG+Lif8tiO/aBLt//cQGm55yzdmSMN301A2CYCm2cUzoNm9+qS26zZPGQM0ij46B
- pmUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1763423003; x=1764027803;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=PM6BJTYMe5TZq4remVl1Zez1wNGU4Daihh21CDMeK48=;
- b=rMA1fSp6XdML990ltTUy1visQXZNKiU27oc3ooUv4BFYFg3rDosgcAOMSevxcdWpSa
- WwDvtPDj9LZEMhdtv0jlhjOeMvDZM0o1Ttej7DVw8eyvasElSXL/k6TTdwNZ/5Lgrvqb
- t8ryWTlL6kMAKN+1dJsQ0bjLj+O8XVQr2EXQNVT9KBFebhXZSOZEJwWLFlD58oyRtrRx
- afFsEM/GotsVxdUgwHqYtbZuMD2ZoecldOOwkBb2RYY6u/iBPphu4JA0nK3BtZ3FpsNH
- YxZmIZS5PO6Ir8ShMxiSwJtiGaUSdf6Kev8EqN4JJPxpKyfbmPB0I67rAWYrMu+W428X
- xLKA==
-X-Gm-Message-State: AOJu0YwJYMJc3kOc3uMAayPDFJV6vMfVzhiFKbBMUIqJOCW+vDW0QMmQ
- vVhjYKx+RiLWYZZfPYXSTOQQ0dLKosATiFbiSp/4sTJ6TfvN3tpSe+50LCwDrc3BvpqiY/04CIY
- 83qbL
-X-Gm-Gg: ASbGnctmjdxSVG3q2ZFQpn0T/38MM+v9UIfrnDiZ89RrogxpQlknkVwCfoYMmwtNg16
- PHtzZlMoSXcXscZ152rLTi1qqkpelAhyBLJj6nP9aRMzyzB00E/7c4tFyDztqpLROQ39v3MWrwu
- 5FpUol+gfxktfHefs/TlU6yThgrq+QlyTASjJyZruCFXvoMPLat6wvBp9hsJrhBMZ9DFxffnija
- jiuUxAEJtvcvf2eoLpYskhJNPnWp8KVACF0t+MfaNY9UwiU9y7a00hfAYkt2PVqYIHaFcnTuK9y
- 9p5z20m1AEyQTR3YkITYv/rkS0kQmwIWZlX2J5+K2WH6kzXOPXfqKFI8WhhLEU0LJJ5Q44AjjxQ
- e7YGFi74tSh9bIEZoJkDDM4bqNuuDyBOcPFB5lkKEcNaHwNAexsbf1uNZhSfHFluDb8m/VHrdj7
- HTVOcKqLnwaQSIithZbDydbKIiuZQ0AnnjMt865OGPTWfZ
-X-Google-Smtp-Source: AGHT+IGy7qn/q62nVdmV0vCzvqVW+73IyT/Xl/oBkYIWwsWPEWZx7dC9y0dIz4Zwfy9ryEFV+r33SA==
-X-Received: by 2002:a05:7022:5f14:b0:119:e569:f277 with SMTP id
- a92af1059eb24-11b411fe329mr4797493c88.32.1763423003076; 
- Mon, 17 Nov 2025 15:43:23 -0800 (PST)
-Received: from phoenix (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-11b0608860fsm44698952c88.5.2025.11.17.15.43.22
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 17 Nov 2025 15:43:22 -0800 (PST)
-Date: Mon, 17 Nov 2025 15:43:20 -0800
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>
-Cc: <dev@dpdk.org>
-Subject: Re: bugs in rte_pktmbuf_copy
-Message-ID: <20251117154320.1fe3c651@phoenix>
-In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F65567@smartserver.smartshare.dk>
-References: <98CBD80474FA8B44BF855DF32C47DC35F65567@smartserver.smartshare.dk>
+	by mails.dpdk.org (Postfix) with ESMTP id 1347040281;
+	Tue, 18 Nov 2025 01:16:18 +0100 (CET)
+Received: from canpmsgout05.his.huawei.com (canpmsgout05.his.huawei.com
+ [113.46.200.220])
+ by mails.dpdk.org (Postfix) with ESMTP id 937214027D;
+ Tue, 18 Nov 2025 01:16:15 +0100 (CET)
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+ c=relaxed/relaxed; q=dns/txt; h=From;
+ bh=wh/1h2RhG6/7Gbfk7qFoFvsMF7KrkYKy3zLBrPL26Ns=;
+ b=EoeorKHI4x8TRnBO/mBHhZJ212njAJpZthQt/P7QZpAWw4RmDGQOs79BYeDJkbJ23v0SPx/7D
+ zRfoiO6coleKqzqT+1DzzZltgYHHudOmBMH4TidudH/mpGkfLbHN8HSmPv8DTBGbzMzrfqbTX+a
+ WzK71+kcdydO4i7OR6sE1Rg=
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+ by canpmsgout05.his.huawei.com (SkyGuard) with ESMTPS id 4d9Q903Hd3z12LF5;
+ Tue, 18 Nov 2025 08:14:44 +0800 (CST)
+Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
+ by mail.maildlp.com (Postfix) with ESMTPS id C885D140203;
+ Tue, 18 Nov 2025 08:16:12 +0800 (CST)
+Received: from [10.67.121.161] (10.67.121.161) by
+ kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 18 Nov 2025 08:16:12 +0800
+Message-ID: <2ab451a3-accd-41a7-bde3-60a61cb478c0@huawei.com>
+Date: Tue, 18 Nov 2025 08:16:12 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] app/testpmd: revert L4 protocol retrieval from L3
+ header
+To: Mingjin Ye <mingjinx.ye@intel.com>, <dev@dpdk.org>, Stephen Hemminger
+ <stephen@networkplumber.org>
+CC: <stable@dpdk.org>, Aman Singh <aman.deep.singh@intel.com>
+References: <20251105024724.830304-1-mingjinx.ye@intel.com>
+ <20251105024724.830304-2-mingjinx.ye@intel.com>
+Content-Language: en-US
+From: fengchengwen <fengchengwen@huawei.com>
+In-Reply-To: <20251105024724.830304-2-mingjinx.ye@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.67.121.161]
+X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
+ kwepemk500009.china.huawei.com (7.202.194.94)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,34 +59,101 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 17 Nov 2025 12:51:51 +0100
-Morten Br=C3=B8rup <mb@smartsharesystems.com> wrote:
+On 11/5/2025 10:47 AM, Mingjin Ye wrote:
+> This reverts commit 496159613ffc7b6ba592432a1ba4d1a38f6935de.
+> 
+> When the TX IP checksum offload feature is enabled, it may result in
+> internal UDP checksum errors in VXLAN tunnel packets.
+> 
+> Fixes: 496159613ffc ("app/testpmd: fix L4 protocol retrieval from L3 header")
+> Cc: stable@dpdk.org
+> 
+> Signed-off-by: Mingjin Ye <mingjinx.ye@intel.com>
+> ---
+>  app/test-pmd/csumonly.c | 39 +++++++++++++++++++++++----------------
+>  1 file changed, 23 insertions(+), 16 deletions(-)
+> 
+> diff --git a/app/test-pmd/csumonly.c b/app/test-pmd/csumonly.c
+> index a6e872e5a4..d355dbd8c0 100644
+> --- a/app/test-pmd/csumonly.c
+> +++ b/app/test-pmd/csumonly.c
+> @@ -525,8 +525,20 @@ get_tunnel_ol_flags_by_ptype(uint32_t ptype)
+>  	}
+>  }
+>  
+> +static void
+> +parse_inner_l4_proto(void *outer_l3_hdr,
+> +			struct testpmd_offload_info *info)
+> +{
+> +	struct rte_ipv4_hdr *ipv4_hdr = outer_l3_hdr;
+> +	struct rte_ipv6_hdr *ipv6_hdr = outer_l3_hdr;
+> +	if (info->ethertype == _htons(RTE_ETHER_TYPE_IPV4))
+> +		info->l4_proto = ipv4_hdr->next_proto_id;
+> +	else
+> +		info->l4_proto = ipv6_hdr->proto;
 
-> While working on a rte_pktmbuf_copy_bulk() function, I noticed a couple o=
-f bugs in rte_pktmbuf_copy():
->=20
-> 1. If the copy is allocated from a mempool using pinned external buffers,=
- the copy's RTE_MBUF_F_EXTERNAL flag is lost.
-> This is simple to fix:
->=20
-> -	/* copied mbuf is not indirect or external */
-> -	mc->ol_flags =3D m->ol_flags & ~(RTE_MBUF_F_INDIRECT|RTE_MBUF_F_EXTERNA=
-L);
-> +	/* copy flags except indirect and external */
-> +	mc->ol_flags |=3D m->ol_flags & ~(RTE_MBUF_F_INDIRECT|RTE_MBUF_F_EXTERN=
-AL);
+this function get L4 proto direct from header which can't handle inner IPv6 with option.
 
-Good catch, external flag needs to be preserved.=20
+> +}
+> +
+>  static uint8_t
+> -parse_l4_proto(const struct rte_mbuf *m, uint32_t off, uint32_t ptype, bool parse_inner)
+> +parse_l4_proto(const struct rte_mbuf *m, uint32_t off, uint32_t ptype)
+>  {
+>  	int frag = 0, ret;
+>  
+> @@ -545,19 +557,16 @@ parse_l4_proto(const struct rte_mbuf *m, uint32_t off, uint32_t ptype, bool pars
+>  		if (unlikely(ip6h == NULL))
+>  			return 0;
+>  
+> -		if (!parse_inner && (ptype & RTE_PTYPE_L3_MASK) != RTE_PTYPE_L3_IPV6_EXT)
+> -			return ip6h->proto;
+> -
+> -		if (parse_inner && (ptype & RTE_PTYPE_INNER_L3_MASK) != RTE_PTYPE_INNER_L3_IPV6_EXT)
+> -			return ip6h->proto;
+> +		if ((ptype & RTE_PTYPE_INNER_L3_MASK) ==
+> +				RTE_PTYPE_INNER_L3_IPV6_EXT) {
+> +			ret = rte_net_skip_ip6_ext(ip6h->proto, m, &off, &frag);
+> +			if (ret < 0)
+> +				return 0;
 
+this logic has problem: parse_l4_proto was used to prase outer L4 if in tunnel case, but it depend on
+whether inner is L3_IPV6_EXT.
 
-> 2. If the packet is copied with non-zero offset, much of the metadata do =
-not apply to the copy, e.g. many of the offload flags and the packet_type f=
-ield.
-> Maybe metadata should be reset when copying with a non-zero offset?
-> Or maybe rte_pktmbuf_copy() should be considered "payload copy", so the c=
-opy should have all metadata reset?
-
-The use case for using offset, is for removing tunnel headers. I expect tha=
-t the code doing so
-would know what manipulation of offloads was required.=20
+> +			return ret;
+> +		}
+>  
+> -		off += sizeof(struct rte_ipv6_hdr);
+> -		ret = rte_net_skip_ip6_ext(ip6h->proto, m, &off, &frag);
+> -		if (ret < 0)
+> -			return 0;
+> -		return ret;
+> +		return ip6h->proto;
+>  	}
+> -
+>  	return 0;
+>  }
+>  
+> @@ -696,7 +705,7 @@ pkt_burst_checksum_forward(struct fwd_stream *fs)
+>  		info.l4_len = hdr_lens.l4_len;
+>  		info.ethertype = get_ethertype_by_ptype(eth_hdr,
+>  					ptype & RTE_PTYPE_L3_MASK);
+> -		info.l4_proto = parse_l4_proto(m, info.l2_len, ptype, false);
+> +		info.l4_proto = parse_l4_proto(m, info.l2_len, ptype);
+>  
+>  		l3_hdr = (char *)eth_hdr + info.l2_len;
+>  		/* check if it's a supported tunnel */
+> @@ -714,11 +723,9 @@ pkt_burst_checksum_forward(struct fwd_stream *fs)
+>  		}
+>  		/* update l3_hdr and outer_l3_hdr if a tunnel was parsed */
+>  		if (info.is_tunnel) {
+> -			uint16_t l3_off = info.outer_l2_len +  info.outer_l3_len + info.l2_len;
+> -
+>  			outer_l3_hdr = l3_hdr;
+>  			l3_hdr = (char *)l3_hdr + info.outer_l3_len + info.l2_len;
+> -			info.l4_proto = parse_l4_proto(m, l3_off, ptype, true);
+> +			parse_inner_l4_proto(l3_hdr, &info);
+>  		}
+>  		/* step 2: depending on user command line configuration,
+>  		 * recompute checksum either in software or flag the
 
