@@ -2,44 +2,43 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C09DFCEE339
-	for <dpdk-dev@archiver.kernel.org>; Tue, 18 Nov 2025 16:30:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37DEACEE33B
+	for <dpdk-dev@archiver.kernel.org>; Tue, 18 Nov 2025 16:30:40 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9DB2F4065E;
-	Tue, 18 Nov 2025 17:29:42 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id F098C40674;
+	Tue, 18 Nov 2025 17:29:43 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
- by mails.dpdk.org (Postfix) with ESMTP id 896E040651
- for <dev@dpdk.org>; Tue, 18 Nov 2025 17:29:38 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 62AF440667
+ for <dev@dpdk.org>; Tue, 18 Nov 2025 17:29:39 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
  t=1763483379; x=1795019379;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=a+bNdSVO/FU4TZHtnpQX3mVntkCuPVDydRGj/Dhwxn4=;
- b=DAcD++KHP2XXGT5JgsIt2d0wUBAh7oXWBVBAPo7uDZAy37C2z8vdVPjT
- /9mnm70ojsegI6SxVGag5xjehcXYMMJrXeZ1/hMVqwZZcHnSwMskLKXeK
- 3lFkQ7CzYK7GgG+p9wlmFqVswHFST6YLM5BgJy79nAWkOTMTRiCVnYvwN
- G2lxhu+983v8QwxRasSx+Noyd0Id3XxOVoV5BwaWZgC9fCcv3cctITGuK
- zMlmA8pFnFS4X+CIYK0bPEuGTViNSl8I+Yxehy0T+tu5PxCQN07DpGbeL
- 2j72eG4VdbZKq3kHkEFflSwytmxtnNXDz1ApCmR9nRCWP8CY88gOuhGYD A==;
-X-CSE-ConnectionGUID: yKMMBIZSRBaQJv+qXzM4Uw==
-X-CSE-MsgGUID: raUgxNzxSp6Sy6YFM/a26A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11617"; a="65550609"
-X-IronPort-AV: E=Sophos;i="6.19,314,1754982000"; d="scan'208";a="65550609"
+ bh=j9SgHJiGkDd2VBttVtw+GIPkAxZmalcaBq2l12Hht9k=;
+ b=iXxhb8uDc45W4agOqVkFUOJzHXzM+qcYL7x1cl91ceR9LWfMrN/8XFt0
+ YkncUtuFHA96fChBWegujSqvzC66nf6XekNqCubhDSSJW7851eI1H5jkb
+ KbJMq7tG29iBcUuHbx2uaU8sedOA5kcS9Q4auLto5utTuSKN2EtsToA7d
+ /0wb4htuT1mt8Yx5juWuVE/7La31M+z3+csatytncb6o6PTaFeBaT6dWi
+ WGuskwjRdtg3EtSMLbj2nc+nBLUfTXYHw8pK1Hn03AcLKbsJ1Voli00jW
+ W/k0DIOCNWIH1lyGxUiutZ6Rpg3afRrZYKGpUfcYwqzGxr30JV+ti2ZJj Q==;
+X-CSE-ConnectionGUID: TvTitIl8Rsmmsi2cRMQIPg==
+X-CSE-MsgGUID: bVrWJ2N+R1y1towdv14Xkg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11617"; a="65550611"
+X-IronPort-AV: E=Sophos;i="6.19,314,1754982000"; d="scan'208";a="65550611"
 Received: from fmviesa003.fm.intel.com ([10.60.135.143])
  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 18 Nov 2025 08:29:38 -0800
-X-CSE-ConnectionGUID: M7kCKT0jQwWM5XavBoZMcg==
-X-CSE-MsgGUID: ohie9PuyQ2ufDBEt56gaQA==
+ 18 Nov 2025 08:29:39 -0800
+X-CSE-ConnectionGUID: m+4EHhnSSmiYFYl40Ran7g==
+X-CSE-MsgGUID: Gbq4ycf0SYahkf7PWbHEvg==
 X-ExtLoop1: 1
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by fmviesa003.fm.intel.com with ESMTP; 18 Nov 2025 08:29:37 -0800
+ by fmviesa003.fm.intel.com with ESMTP; 18 Nov 2025 08:29:38 -0800
 From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org, Christian Koue Muf <ckm@napatech.com>,
- Serhii Iliushyk <sil-plv@napatech.com>
-Subject: [PATCH v3 08/20] net/ntnic: use container device assignment API
-Date: Tue, 18 Nov 2025 16:29:09 +0000
-Message-ID: <b64516ac0cc6834b67a93e01d408cf2c63d607c0.1763483254.git.anatoly.burakov@intel.com>
+To: dev@dpdk.org
+Subject: [PATCH v3 09/20] vdpa/ifc: use container device assignment API
+Date: Tue, 18 Nov 2025 16:29:10 +0000
+Message-ID: <7ac66bcd5722d2d444c494a93433aa732fab523f.1763483254.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <cover.1763483253.git.anatoly.burakov@intel.com>
  <cover.1763483253.git.anatoly.burakov@intel.com>
@@ -59,88 +58,51 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The NTNIC driver uses VFIO group bind/unbind functionality for container
+The IFC vDPA driver uses VFIO group bind/unbind functionality for container
 device assignment purposes. Use the new container device assignment API
 instead to provide clearer semantics.
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- drivers/net/ntnic/ntnic_vfio.c | 30 +++++++++---------------------
- 1 file changed, 9 insertions(+), 21 deletions(-)
+ drivers/vdpa/ifc/ifcvf_vdpa.c | 15 +++------------
+ 1 file changed, 3 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/net/ntnic/ntnic_vfio.c b/drivers/net/ntnic/ntnic_vfio.c
-index 439468b3a2..c746b300b2 100644
---- a/drivers/net/ntnic/ntnic_vfio.c
-+++ b/drivers/net/ntnic/ntnic_vfio.c
-@@ -28,7 +28,6 @@ nt_vfio_vf_num(const struct rte_pci_device *pdev)
- /* Internal API */
- struct vfio_dev {
- 	int container_fd;
--	int group_fd;
- 	int dev_fd;
- 	uint64_t iova_addr;
- };
-@@ -50,7 +49,6 @@ nthw_vfio_setup(struct rte_pci_device *dev)
+diff --git a/drivers/vdpa/ifc/ifcvf_vdpa.c b/drivers/vdpa/ifc/ifcvf_vdpa.c
+index f319d455ba..6f1c050787 100644
+--- a/drivers/vdpa/ifc/ifcvf_vdpa.c
++++ b/drivers/vdpa/ifc/ifcvf_vdpa.c
+@@ -174,28 +174,19 @@ ifcvf_vfio_setup(struct ifcvf_internal *internal)
  {
- 	int ret;
- 	char devname[RTE_DEV_NAME_MAX_LEN] = { 0 };
+ 	struct rte_pci_device *dev = internal->pdev;
+ 	char devname[RTE_DEV_NAME_MAX_LEN] = {0};
 -	int iommu_group_num;
- 	int vf_num;
- 	struct vfio_dev *vfio;
+-	int i, ret;
++	int i;
  
-@@ -66,14 +64,9 @@ nthw_vfio_setup(struct rte_pci_device *dev)
- 	}
- 
- 	vfio->dev_fd = -1;
--	vfio->group_fd = -1;
- 	vfio->iova_addr = START_VF_IOVA;
+ 	internal->vfio_dev_fd = -1;
+-	internal->vfio_group_fd = -1;
+ 	internal->vfio_container_fd = -1;
  
  	rte_pci_device_name(&dev->addr, devname, RTE_DEV_NAME_MAX_LEN);
--	ret = rte_vfio_get_group_num(rte_pci_get_sysfs_path(), devname, &iommu_group_num);
--	if (ret <= 0)
+-	ret = rte_vfio_get_group_num(rte_pci_get_sysfs_path(), devname,
+-			&iommu_group_num);
+-	if (ret <= 0) {
+-		DRV_LOG(ERR, "%s failed to get IOMMU group", devname);
 -		return -1;
--
- 	if (vf_num == 0) {
- 		/* use default container for pf0 */
- 		vfio->container_fd = RTE_VFIO_DEFAULT_CONTAINER_FD;
-@@ -86,17 +79,14 @@ nthw_vfio_setup(struct rte_pci_device *dev)
- 				"VFIO device setup failed. VFIO container creation failed.");
- 			return -1;
- 		}
 -	}
-+		ret = rte_vfio_container_assign_device(vfio->container_fd,
-+				rte_pci_get_sysfs_path(), devname);
-+		if (ret < 0) {
-+			NT_LOG(ERR, NTNIC,
-+				"VFIO device setup failed. Assign device to container failed.");
-+			goto err;
-+		}
  
--	vfio->group_fd = rte_vfio_container_group_bind(vfio->container_fd, iommu_group_num);
--
--	if (vfio->group_fd < 0) {
--		NT_LOG(ERR, NTNIC,
--			"VFIO device setup failed. VFIO container group bind failed.");
--		goto err;
--	}
--
--	if (vf_num > 0) {
- 		if (rte_pci_map_device(dev)) {
- 			NT_LOG(ERR, NTNIC,
- 				"Map VFIO device failed. is the vfio-pci driver loaded?");
-@@ -106,10 +96,8 @@ nthw_vfio_setup(struct rte_pci_device *dev)
+ 	internal->vfio_container_fd = rte_vfio_container_create();
+ 	if (internal->vfio_container_fd < 0)
+ 		return -1;
  
- 	vfio->dev_fd = rte_intr_dev_fd_get(dev->intr_handle);
+-	internal->vfio_group_fd = rte_vfio_container_group_bind(
+-			internal->vfio_container_fd, iommu_group_num);
+-	if (internal->vfio_group_fd < 0)
++	if (rte_vfio_container_assign_device(internal->vfio_container_fd,
++			rte_pci_get_sysfs_path(), devname) < 0)
+ 		goto err;
  
--	NT_LOG(DBG, NTNIC,
--		"%s: VFIO id=%d, dev_fd=%d, container_fd=%d, group_fd=%d, iommu_group_num=%d",
--		dev->name, vf_num, vfio->dev_fd, vfio->container_fd, vfio->group_fd,
--		iommu_group_num);
-+	NT_LOG(DBG, NTNIC, "%s: VFIO id=%d, dev_fd=%d, container_fd=%d",
-+		dev->name, vf_num, vfio->dev_fd, vfio->container_fd);
- 
- 	return vf_num;
- 
+ 	if (rte_pci_map_device(dev))
 -- 
 2.47.3
 
