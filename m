@@ -2,72 +2,59 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20EFDCEE345
-	for <dpdk-dev@archiver.kernel.org>; Tue, 18 Nov 2025 17:36:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08463CEE344
+	for <dpdk-dev@archiver.kernel.org>; Tue, 18 Nov 2025 17:45:40 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 01B804028D;
-	Tue, 18 Nov 2025 18:36:53 +0100 (CET)
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com
- [209.85.128.43]) by mails.dpdk.org (Postfix) with ESMTP id D1A364027D
- for <dev@dpdk.org>; Tue, 18 Nov 2025 18:36:51 +0100 (CET)
-Received: by mail-wm1-f43.google.com with SMTP id
- 5b1f17b1804b1-4779aa4f928so37565525e9.1
- for <dev@dpdk.org>; Tue, 18 Nov 2025 09:36:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1763487411;
- x=1764092211; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=dbZdAPlyIe0HWSzSMCeml+YkcrO4QayCdWjQah8ZQW0=;
- b=eR/aeJ7rLQeidbFuLHZ8jxarZ2WzHZu1iSU1Z6GxW7jEWJ4glx5abVeDnE8MfdQNZA
- dwsWFNqZ9wDRnD1+81y2kqLeD10V3bnwIWSQFNv9TVMZCvUIYTN8ZMRXkidJV83BBSrv
- S1gQHeBnItSo5qFa3p/jRaOqyy/RNeIX6sLnMuOJ2A+FakGvgdpGZgesEjGIPw33VJKB
- NYXOwAXB9cA/oZbtQQxX+Bm4PScn8LxhRDIADsgXV3ljhMxqyFlo5f+8oORZfZZfAaS6
- AHiuuWzRouaPUIvN+0AOxiZFMBhsYXGB1vux7ko+m2Q6KqXfUOvoloaPrzYk6SG5ZkUG
- CDPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1763487411; x=1764092211;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=dbZdAPlyIe0HWSzSMCeml+YkcrO4QayCdWjQah8ZQW0=;
- b=ETThkH45QtnY2g3hIQjfkRs4VAiAlYJO3170umccoTiIHh9QJ1ghZ/FUKSNbHGTRNi
- 5vFHNKZ/IaV4A7UP1OUYUhZZ+fKsgTTlB/lvYHsRt0XqQC/M0f1x5YKy033TLBu+g4vz
- 0HgEnu48vVHJsTQEFXHe6yoPwZm8XhtqI6r2fHv6JxCSiE7lQW/228h9i10M2DzOiKa8
- zYPdp9lfbDhy/w/mP4PM9Jy8+C5sa7BOOjw5RLEXUebbqWULyjKU0HmTAyfVI0FPhjjX
- wle0S8aYkGZ0IpMI38Lu9u4d0YwvZ0oZQWbGS/3YfskXEkL7q+GfK9e6pY7/PlDjywwb
- aVVQ==
-X-Gm-Message-State: AOJu0YypGPAYZbpXcQlewU+1ZhpGN57NP2/O4XPrll+92LhrVSH2p2cS
- XNYwV1qeVFBm9kXEuGam/72uUvDfbGWwJZrSDvZJvUvCCygKBu1GThqkVm5ntiFuMj0=
-X-Gm-Gg: ASbGncvVMs3bLuWswI0MZVv4vP1ZcVUdkpPL7F8RT2Q4A2hFvKDtEWmKEbeWjNWHnfK
- 0ifkl1U3Mv2I0kf4gUfDoDK3bqsQQ3ZAHiojVDBhqaoI4nGsbHajJBoNK6sXt4fWHco7IhbYcE5
- 0BfXtN0SeCG4u/ylM3dpVPbUazU5x8Ge4LYbIFG48NmZ9Uk654bi7/HNOHg5DzuriguD0Ztxbv4
- ytmKYYTWREoQtAiaQeDm1GPQwBtQPro/3ytZV4x3Ai/qHRouGmYWXtHGpEuXWpipybYqckXAOEP
- jcu8CRBj19uts7oy5qSCiNuSHxz8KvLc7Q8A4v2+wHODWXLrPSraBdqQIYP5G4aA0Cgvw/qzK7D
- 26bRKqW7MZkhp1da0aZoWfYCSQEJS7zP8RiDD/fVCgZVFBikuSRawKLty3EgHaZzIR9edSlpFpk
- 9+39BoFGvHra+gWUDdwqLCAytBoYtgO6ksdEDqnGVkBvHXa0zxVzY6
-X-Google-Smtp-Source: AGHT+IHCbP1+CN8fbtQCZJ8AdkkCHYlRm5DCVhKfMNxNRiH5Bc/1BvZ/0IiOEE1G/nTGW8irMln27Q==
-X-Received: by 2002:a05:600c:1f10:b0:477:8b77:155e with SMTP id
- 5b1f17b1804b1-4778fe4a046mr155679375e9.15.1763487411148; 
- Tue, 18 Nov 2025 09:36:51 -0800 (PST)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-477b1041defsm1419555e9.15.2025.11.18.09.36.49
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 18 Nov 2025 09:36:50 -0800 (PST)
-Date: Tue, 18 Nov 2025 09:36:45 -0800
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Anatoly Burakov <anatoly.burakov@intel.com>
-Cc: dev@dpdk.org, Maxime Coquelin <maxime.coquelin@redhat.com>
-Subject: Re: [PATCH v3 03/20] uapi: update to v6.17 and add iommufd.h
-Message-ID: <20251118093645.1d13d95b@phoenix.local>
-In-Reply-To: <a956a800cba7dcfd85387db04447db282bfba625.1763483253.git.anatoly.burakov@intel.com>
-References: <cover.1763483253.git.anatoly.burakov@intel.com>
- <a956a800cba7dcfd85387db04447db282bfba625.1763483253.git.anatoly.burakov@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id DC61A402C8;
+	Tue, 18 Nov 2025 18:45:39 +0100 (CET)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 722714027D
+ for <dev@dpdk.org>; Tue, 18 Nov 2025 18:45:38 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1763487937;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=oHEgjEaYcQnrA934ff2swxWJuAz6bYzswm22JVlnPyU=;
+ b=LcQnCGDcAX2taNwhxzM0Cc56z0Du+qKPICqrw06F7EpHcQHlJYhkRzH45M37F6+EHGI3GS
+ vPSVakxCaLRvf0FTHZ0AVUC/F0X8YCuPti+E6tCN06bUHtMCI67IN9IuEchg38yaeVFxzK
+ jwCq9CO8+LD3M7UDcwUd6OPh4OX5tHo=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-564-EsCTlgeoOqel8HMvjZjDGw-1; Tue,
+ 18 Nov 2025 12:45:35 -0500
+X-MC-Unique: EsCTlgeoOqel8HMvjZjDGw-1
+X-Mimecast-MFC-AGG-ID: EsCTlgeoOqel8HMvjZjDGw_1763487935
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id AEFD019560B3; Tue, 18 Nov 2025 17:45:34 +0000 (UTC)
+Received: from ringo.redhat.com (unknown [10.44.32.121])
+ by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id 491B3180047F; Tue, 18 Nov 2025 17:45:31 +0000 (UTC)
+From: Robin Jarry <rjarry@redhat.com>
+To: dev@dpdk.org,
+	Stephen Hemminger <stephen@networkplumber.org>
+Cc: Christophe Fontaine <cfontain@redhat.com>,
+	stable@dpdk.org
+Subject: [PATCH dpdk v2] net: ipv6 link local compliance with rfc 4291
+Date: Tue, 18 Nov 2025 18:45:26 +0100
+Message-ID: <20251118174526.321856-1-rjarry@redhat.com>
+In-Reply-To: <20251114105751.54802-3-rjarry@redhat.com>
+References: <20251114105751.54802-3-rjarry@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: 9ubw_EC81YboCfCy9kFI57CTcrcHKjn8G7iQVsQyUeM_1763487935
+X-Mimecast-Originator: redhat.com
+Content-Transfer-Encoding: 8bit
+content-type: text/plain; charset="US-ASCII"; x-default=true
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,12 +68,68 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 18 Nov 2025 16:29:04 +0000
-Anatoly Burakov <anatoly.burakov@intel.com> wrote:
+From: Christophe Fontaine <cfontain@redhat.com>
 
-> In order to support VF tokens for cdev-based VFIO mode, kernel v6.17 is
-> required. Update internal headers to version v6.17 and include iommufd.h.
-> 
-> Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
+As specified in RFC 4291 section 2.5.1, link local addresses must be
+generated based on a modified EUI-64 interface identifier:
 
-Acked-by: Stephen Hemminger <stephen@networkplumber.org>
+> Modified EUI-64 format interface identifiers are formed by inverting
+> the "u" bit (universal/local bit in IEEE EUI-64 terminology) when
+> forming the interface identifier from IEEE EUI-64 identifiers.
+
+This translates to 'mac->addr_bytes[0] ^= 0x02'.
+
+Fixes: 3d6d85f58c1c ("net: add utilities for well known IPv6 address types")
+Cc: stable@dpdk.org
+
+Signed-off-by: Christophe Fontaine <cfontain@redhat.com>
+Signed-off-by: Robin Jarry <rjarry@redhat.com>
+---
+
+Notes:
+    v2:
+    
+    - Stephen: replaced magic number 0x02 with RTE_ETHER_LOCAL_ADMIN_ADDR
+
+ app/test/test_net_ip6.c | 2 +-
+ lib/net/rte_ip6.h       | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/app/test/test_net_ip6.c b/app/test/test_net_ip6.c
+index cfc550940306..e4642c9a39d9 100644
+--- a/app/test/test_net_ip6.c
++++ b/app/test/test_net_ip6.c
+@@ -160,7 +160,7 @@ test_ipv6_llocal_from_ethernet(void)
+ {
+ 	const struct rte_ether_addr local_mac = {{0x04, 0x7b, 0xcb, 0x5c, 0x08, 0x44}};
+ 	const struct rte_ipv6_addr local_ip =
+-		RTE_IPV6(0xfe80, 0, 0, 0, 0x047b, 0xcbff, 0xfe5c, 0x0844);
++		RTE_IPV6(0xfe80, 0, 0, 0, 0x067b, 0xcbff, 0xfe5c, 0x0844);
+ 	struct rte_ipv6_addr ip;
+ 
+ 	rte_ipv6_llocal_from_ethernet(&ip, &local_mac);
+diff --git a/lib/net/rte_ip6.h b/lib/net/rte_ip6.h
+index 98bcac3f4dff..7ffbccacf842 100644
+--- a/lib/net/rte_ip6.h
++++ b/lib/net/rte_ip6.h
+@@ -393,7 +393,7 @@ rte_ipv6_mc_scope(const struct rte_ipv6_addr *ip)
+ 
+ /*
+  * Generate a link-local IPv6 address from an Ethernet address as specified in
+- * RFC 2464, section 5.
++ * RFC 4291, section 2.5.1.
+  *
+  * @param[out] ip
+  *   The link-local IPv6 address to generate.
+@@ -406,7 +406,7 @@ rte_ipv6_llocal_from_ethernet(struct rte_ipv6_addr *ip, const struct rte_ether_a
+ 	ip->a[0] = 0xfe;
+ 	ip->a[1] = 0x80;
+ 	memset(&ip->a[2], 0, 6);
+-	ip->a[8] = mac->addr_bytes[0];
++	ip->a[8] = mac->addr_bytes[0] ^ RTE_ETHER_LOCAL_ADMIN_ADDR;
+ 	ip->a[9] = mac->addr_bytes[1];
+ 	ip->a[10] = mac->addr_bytes[2];
+ 	ip->a[11] = 0xff;
+-- 
+2.51.1
+
