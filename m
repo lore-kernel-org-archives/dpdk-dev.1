@@ -2,184 +2,122 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D372CED27B
-	for <dpdk-dev@archiver.kernel.org>; Tue, 18 Nov 2025 10:40:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A30CCED602
+	for <dpdk-dev@archiver.kernel.org>; Tue, 18 Nov 2025 10:45:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 28C8440281;
-	Tue, 18 Nov 2025 11:40:05 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
- by mails.dpdk.org (Postfix) with ESMTP id C50CD40150
- for <dev@dpdk.org>; Tue, 18 Nov 2025 11:40:03 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1763462404; x=1794998404;
- h=message-id:date:subject:to:references:from:in-reply-to:
- content-transfer-encoding:mime-version;
- bh=fZANkN/XitQpN8WR6KAf4/xaMXmmO6c6Y+AkSYC22Js=;
- b=BqoGbGkmqjwsGsdmHomXYtlo8f0HLE/YFLzY39TbO3CQoyaU+J7VWpE+
- hn/iBvG2o2ZptUAYlonT0cSmBVXvgYKLPuyjRN22jvDTlmLLFjtT3Wtn6
- UvnVFn9cq+Yl8AUgob+J0KsBVVjtjKHJe5C/uOrX/oVerflSi5WbIzMXn
- dudmnnb60loX17cvmf9Krovpaxn+6i9pLHg8c2HmRfPaJ/sDXbmHw73ji
- 5F6Qv0iQg8o4T4Eqg+11R3kIw6m0yxpjwBUyPWxHcmzkhK3cdZhNtmelq
- lFE5K146s2V+oMl7CnVKCTkX1hZ0C80r3je90oafD2UmPvAi7Uj+nwJWQ g==;
-X-CSE-ConnectionGUID: JW1vtn6vT32wSEYyB5UzyA==
-X-CSE-MsgGUID: ovE79FHcRZugC3gN5rmTjQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11616"; a="64480805"
-X-IronPort-AV: E=Sophos;i="6.19,314,1754982000"; d="scan'208";a="64480805"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
- by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 18 Nov 2025 02:40:03 -0800
-X-CSE-ConnectionGUID: 556IE1PwQK2RV2xZWEJPLA==
-X-CSE-MsgGUID: QPimR/u1TGqHRjv3DzZcIA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,314,1754982000"; d="scan'208";a="190518861"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
- by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 18 Nov 2025 02:40:03 -0800
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Tue, 18 Nov 2025 02:40:02 -0800
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Tue, 18 Nov 2025 02:40:02 -0800
-Received: from DM1PR04CU001.outbound.protection.outlook.com (52.101.61.61) by
- edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Tue, 18 Nov 2025 02:40:02 -0800
+	by mails.dpdk.org (Postfix) with ESMTP id 98B6140281;
+	Tue, 18 Nov 2025 11:45:56 +0100 (CET)
+Received: from CO1PR03CU002.outbound.protection.outlook.com
+ (mail-westus2azon11010056.outbound.protection.outlook.com [52.101.46.56])
+ by mails.dpdk.org (Postfix) with ESMTP id 2381740150;
+ Tue, 18 Nov 2025 11:45:55 +0100 (CET)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=IYV+534hpBfAtruP2/n6Sx4cC+gztpfM3WzH5J8GNhwjCKADTvB9N8kb0aHRA+pZ1FO4q9EH5rREfjKLfxayh0HZGWxIS6I2kY471w1jtO078ZzdDBFwMKW177pTjUbAm5FObglHiR90gHsl9Aa/gu75IlNowydekFapAU4lIybN62ggTX7QwBoSvPqYmHJQ6zRm44PW9OTBJx+f/BmQNyUCi/+JO+nKcYzTkcYZ/z103MXJJS56WKJYmwNe5zECN5gAmFpIXcI7JGMgzw8u62alNCnZU5kmDnXvqQN7v84ho78Dz2wpcbq4xrdd39Ax/qOYFdUxSC7kkJ2GuMeWJg==
+ b=CCvLxp+e0y14gjH54dvKW9UfyF5TPfFVGnty57foiIZ5MNXoFFHbMmq7ZM+KbnKYfnJxh+rir/2CyVIaDXGHbk6WKMALIprTooMZCxa5MDQoKYLtrHILZD4u53xzY/5uQPE5OL6r8ufiXhcd7mTzNZkI/ZXboY0IloSB+Gklu88ZQJR9CV16xgXtrg96AhNXoRauLhKOqRFz/cAqi9pqIKJ85JP/n1Ty3wO+Qysbj9zggUn/yihgHQwVS9h/jKIB0YU6BEMhUddg7OIPlHTZ/Q6+2bQ+Wr+b8jxsVht5vljbsP1qS9uflNvpQBZ+jDHB0368CvgYsnTkKUrJkk20DA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=f1RyIYgnnBWo87OTRbi1xqugnoilbjKKaOxN2fz0cH0=;
- b=rRbKxb08RV90D99BUda0rymCycHiZrJg9k+/sVrJq2Z409Pq309ARzYxNksQZmDmrHe4S+7s6aoz7XZGSOjdmH6Nh1b9KDTJt8h2nZheTeluCa/k2vnZf0psyqIWM9AEV0RYP9Ofeiik6S6Qm+TxFCTys2/cLD+CebyITEy1H7N05WgXHtLu29Dsrfo1BTqrTHK6Q794FL+zGdvFDQpBt3l/EjTRjv+ecfCT3wZ8KG5mFvCu4Y3UzmVxGwRWlmL9e77JCEvm0XuOHYoUotbT3IDK+UZ1GcSyxEEuVvPnCdZLgG1Xa9In2FvOFUtUi2E6+Y5U4igGR2d4/F1VCixeIA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DM4PR11MB6502.namprd11.prod.outlook.com (2603:10b6:8:89::7) by
- IA4PR11MB9202.namprd11.prod.outlook.com (2603:10b6:208:56e::13) with
- Microsoft SMTP Server (version=TLS1_2,
+ bh=datwnI3gg2Ncy1oy4hWfXDCLWJMmP8jkSLZzRKz6+Vg=;
+ b=aEP8C2HHIR+i8RosRhvdgLHqZUda5QcjN/lt1kGfRWfKKfdkWK0NYMpCn2gEJebdiphbIBDlXj1jUI5bzsmCf5vnPsbNTPGEP13wDbB3nyuHUqq7o2ZRwesrrNoWUDxySOoZhr9QKwToCTc3wUI55VpWII6qWipMp/ctfXbkGikWbGlJl03DZvzKPncfCsoOYJpoXXfTrRvQDu9lVlrNc7gOlbOEBlR6lQpIBaYGGKTgWpF4Mw2kZSxJZJQSCZPPD4hA0VBHqTEVbtSGAjqL6/fRP9Jzeu5ojvMvrW2YC6UWh2o62Bo7aVWWL5V+fzQ674CaxOsTa1e8m/SSGRsn4Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=datwnI3gg2Ncy1oy4hWfXDCLWJMmP8jkSLZzRKz6+Vg=;
+ b=jwek3mF27IxqGTaW+Dqwcvey69bVmKiMIsuYe4Y56wBGwSg5qDgGx/kxRMl2EJ9l59xkexWvu5zOjkRljrxPLoeGeD2htldb3g6cfXtkO4UpBHDIIWy4mzsHz39MleL2acEq2nYMRyHMddO9dpjygCFwOzeQUWTPwrip3dCRIjjINn18Fw6HzGvSY53VLE+j8L4c+IpPIaaxRQsHGjN9zNS8a4sU1Arae38N+XWptramLsPtPGyE00TNnwA69N22s7ALT+Ia5yqewrkfGOQjAmdLQ3r0Ipv3igOCBI/o4jmOm6OmiAhFleskPTaXqVAaV3lLRWFyzo2YzaX7q+dQqQ==
+Received: from BN9PR03CA0959.namprd03.prod.outlook.com (2603:10b6:408:108::34)
+ by SN7PR12MB7855.namprd12.prod.outlook.com (2603:10b6:806:343::14)
+ with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.21; Tue, 18 Nov
- 2025 10:40:00 +0000
-Received: from DM4PR11MB6502.namprd11.prod.outlook.com
- ([fe80::21e4:2d98:c498:2d7a]) by DM4PR11MB6502.namprd11.prod.outlook.com
- ([fe80::21e4:2d98:c498:2d7a%2]) with mapi id 15.20.9320.021; Tue, 18 Nov 2025
- 10:40:00 +0000
-Message-ID: <c055d2ec-81c4-454e-adfa-f664ad533c9b@intel.com>
-Date: Tue, 18 Nov 2025 11:39:53 +0100
-User-Agent: Mozilla Thunderbird
-Subject: =?UTF-8?B?UmU6IOWbnuWkje+8mltQQVRDSCB2MiAwNy8xOV0gbmV0L25ibDogZG8g?=
- =?UTF-8?Q?not_use_VFIO_group_bind_API?=
-To: Dimon <dimon.zhao@nebula-matrix.com>, dev <dev@dpdk.org>, Kyo Liu
- <kyo.liu@nebula-matrix.com>, Leon <leon.yu@nebula-matrix.com>, Sam
- <sam.chen@nebula-matrix.com>, Alvin <alvin.wang@nebula-matrix.com>
-References: <cover.1763142007.git.anatoly.burakov@intel.com>
- <cover.1763142007.git.anatoly.burakov@intel.com>
- <c0f24f340813d2e95f28044a535023d18a02cf00.1763142008.git.anatoly.burakov@intel.com>
- <c6d8e973-e365-4254-965e-ceec2eff6fb6.dimon.zhao@nebula-matrix.com>
-Content-Language: en-US
-From: "Burakov, Anatoly" <anatoly.burakov@intel.com>
-In-Reply-To: <c6d8e973-e365-4254-965e-ceec2eff6fb6.dimon.zhao@nebula-matrix.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: DUZPR01CA0243.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:4b5::11) To DM4PR11MB6502.namprd11.prod.outlook.com
- (2603:10b6:8:89::7)
+ 2025 10:45:48 +0000
+Received: from BN2PEPF000044A1.namprd02.prod.outlook.com
+ (2603:10b6:408:108:cafe::70) by BN9PR03CA0959.outlook.office365.com
+ (2603:10b6:408:108::34) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9320.15 via Frontend Transport; Tue,
+ 18 Nov 2025 10:45:09 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com;
+ dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ BN2PEPF000044A1.mail.protection.outlook.com (10.167.243.152) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9343.9 via Frontend Transport; Tue, 18 Nov 2025 10:45:47 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 18 Nov
+ 2025 02:45:33 -0800
+Received: from nvidia.com (10.126.231.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 18 Nov
+ 2025 02:45:31 -0800
+From: Dariusz Sosnowski <dsosnowski@nvidia.com>
+To: Aman Singh <aman.deep.singh@intel.com>, Ori Kam <orika@nvidia.com>
+CC: <dev@dpdk.org>, Bing Zhao <bingz@nvidia.com>, <stable@dpdk.org>
+Subject: [PATCH] app/testpmd: fix flow queue job leaks
+Date: Tue, 18 Nov 2025 11:45:18 +0100
+Message-ID: <20251118104518.1714166-1-dsosnowski@nvidia.com>
+X-Mailer: git-send-email 2.39.5
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.126.231.35]
+X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR11MB6502:EE_|IA4PR11MB9202:EE_
-X-MS-Office365-Filtering-Correlation-Id: b95ae803-168f-417f-d3fa-08de268ed2a7
+X-MS-TrafficTypeDiagnostic: BN2PEPF000044A1:EE_|SN7PR12MB7855:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1ad4ef4b-1d5f-4243-aa35-08de268fa277
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?OWpiNGdLdFhLc202L1FoS2xldW45M0FjaHBpVUI3WVhsUUxXbEpnMjVsT0g5?=
- =?utf-8?B?em1NTVVJeXBsVTNYZGtLQzNkNzJUU25ncVp0SXNxM0tGN0wvTkZHdGZOZlg0?=
- =?utf-8?B?MElqWTN3ZitVbjZrcVRHbDQ5ajVkRUozRnI0Y0FuMnNYZjQxdmgra0laaENH?=
- =?utf-8?B?ZXJ3WTBJOUlwVUFRRVdEU0QvOXFWQlA4eVVuemMybk4zaG9HelNtUUZpckZi?=
- =?utf-8?B?cEdiaGtqTlE5TkNFQ3NPVjR4cHl5WmFvbDZMaXJ2WWJRVDNCNUJaNjJ2ZXhz?=
- =?utf-8?B?dHFYdFZ6Yms5UFlIb2tnREpHNy9CbG1pUUhDNlRiYXFNeThveWxlMWF1RUs2?=
- =?utf-8?B?aUlZUWw4USthdUp2dHFNdk5Vb3NSVDU4Z1U4bk1nYk5KSk5aNndaTGdGRGYy?=
- =?utf-8?B?SUtscEZFZ3VqWTNIREI4VEduQTZBWGVpWGxrcTIxUUFSd2FsbGJCUkxpaEIr?=
- =?utf-8?B?MzhEZUl4UTI4KzJBSk52bGwwOGtOTy84VjFDUjF3UmV6ZWlCcTZCc3o5Nmtp?=
- =?utf-8?B?dU5VYlNCUE0vMk9sSDcxQ2NueFhyTThRRitKck9aeFowL3g1dVIzNTZLR3J3?=
- =?utf-8?B?MENXalpEVU1FN0tSSkFDM2gxWkpZVHJ6UVJWbXhxU29VR1plaEdjUXlhV2g1?=
- =?utf-8?B?c3RGd1p4UjdaMUg4aTZrdk5uaUticXVSajRvNnYxeDl2a25XbjlFay9Ba2pi?=
- =?utf-8?B?citEamdiazhvWG5DUkUyc3hudHJXT09QM3F2S2pmOWpYNDBMT1hVTzlQTkxH?=
- =?utf-8?B?YkdEdllTUlZzazlHWDJUSE1yVDVqTFlkYWVTdHk3b1ZNc2JCQlJpcG5LS3Qr?=
- =?utf-8?B?QzRod01ETk1BZFBVRk5PSzYzd1c0ZjliK2Vpdy9GeVdWelFlMFR0MFcrM2w1?=
- =?utf-8?B?VkdRL3BzZmFmTlNWUjNPYTE0UUJpK095ajdIQUhza2lhNEF6dUxtWEw3NzYv?=
- =?utf-8?B?dS95OHZRNXRxcHo3UmU1cTdSVUtEOEZEN0ltZ0FUTExiY1R1ZHUrUk1tWmd5?=
- =?utf-8?B?dmxiNk43Qk51S3FrWmM5RGh2cjk1KzdXbjgvdjNGYXJkV0pOUGJma1JNQ0Yw?=
- =?utf-8?B?aENSZSt6Tld0c2dmR1FvNUNFajZhVGQrcWlzMVV4dHo5a056NWtqUFJxWEdF?=
- =?utf-8?B?ZDdYUWZIK1h2bE9ZUFl2Tzc3RDgxaXRNV01oRmR1VnZLcGE0cGFhS1lJR0xO?=
- =?utf-8?B?UGRycEF6SHNZWjM4ZU95djdYM3VZbG91ejlsU1BFNFhpc09ycDJJRjBpUnJq?=
- =?utf-8?B?Mk8xQ1VNVngxZzE5bWhPRjI4Wityd3lEOHlzZk9xWE5XdXZJOXAzUUMySUNY?=
- =?utf-8?B?RkVtU1pDRWtnb0dqN2ExMHJEaUlnL2xSMG5FMW1oc1hNK2xNSzM3VWJNcElO?=
- =?utf-8?B?aTdKemE0L1hSbDhZTGdHVjJCRmxzNHF2clRvL3RHN0FyVGxtcU1zdE9ucUZ3?=
- =?utf-8?B?YVphenhWb0ZrWVh5bE9SMlQzNjd1SWFIMFhIWVpxTy9RdE1UcFM1dDIxMlRN?=
- =?utf-8?B?eU1ORGkxQ0VxV2x1MWFZZ0tyWlNLdHB3Q25MeDBJbU5BZXFFUzRoTU9XQmxv?=
- =?utf-8?B?N1BxY1lCeldtUCtvUkMvUGxlTUxrc1lQUXQzb0dUbWVjNDJDZG5KTGtET3NX?=
- =?utf-8?B?anJRdEhkcFNRMTArdmpZLzExVExraWRCWkwxQ09oWGRoSzV5MHExZEN2OS83?=
- =?utf-8?B?VHllSC81eWErN05oQU1SdHVPR0pKdDFhMFc4N2szWGovNFRHa0p1M3FqMlRj?=
- =?utf-8?B?RjF0OTdWL1UxZERUNGhIZUdNN3dKcGN3bVVMenlZUnhicXJBMk0vWWF4VHlZ?=
- =?utf-8?B?U29wa3Avb3VRT2RJUlNqYmpjd2NSdW1LZktKK0IydEJSSkZSbXhRQzZBelB3?=
- =?utf-8?B?c3l3d2l3c25FaUNBdzNUZVFpTFdGeXkyVEpGdEhMelNSU3lGM3JGUXVrbDcw?=
- =?utf-8?Q?8HCJO5fPocsyDbwReQHcvmGNAMQmUqhO?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DM4PR11MB6502.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(1800799024)(366016); DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?TEdnaVpCcDJIeVhhZkZvMFlDT25rQ1JXZWFZcVNYQmdVK0xML2hGeVgrZXJT?=
- =?utf-8?B?bW9wZW10SSs4VFpxNEkrUm9oK0tNWU9ic04yOXA0a1dDL0lJVVgyRzJzTVhK?=
- =?utf-8?B?UTRxcEZlQjdMcUJaQ09ZWlZ5WmFZMXp5RXRHdFZoQjhVQ3Nuc1ZNeFh4QTdu?=
- =?utf-8?B?Wlgrdjl3QjRwYkxsQVgxNk8zdmJ1dmt4Ymh1SVlac3RJSWNpVzkzSFZnT2sr?=
- =?utf-8?B?OFpJTUdDWk5ONVJpWTJWbG1OaWFMeTF0T2xLSGM3c3pYQ21ubTlMOWlvdW1u?=
- =?utf-8?B?ODZhUG1IZDRySGQ2RVd4WXlSKzFFM05YRGxCOVlsMi9ZLzBBN2NUU1NKY0xQ?=
- =?utf-8?B?aTNaWnozQ1BncUxETzdFRVd2SzRBYUJXaHh1NTNMNGU3cjFKK0hMMU5heXRo?=
- =?utf-8?B?aGVqVGt0b0U0bmZRenROblRVMXYrQkZKcGRnajZONDZDNW9hZkNDc3JMOC9l?=
- =?utf-8?B?YitUTzRtVm1pRjV2TDhLeWZFenpxeDA2SjQ2bTNYWVVPV0lTZDRPRGVkUWRV?=
- =?utf-8?B?Vlc3TStnOURYeUJFdWNvdFk1NlQrcEsvNWU5MTYwRXdSbWV5L1BQWndtVVdO?=
- =?utf-8?B?LzNKODUrUWF2NkdBam9WNjU4MDMydVZqNlNSdG9XaWMzUW8wRzVaTzhYcTBV?=
- =?utf-8?B?OXpzKzRpVGZJQ0hPU2RUTy9zRFMzWWZCaCs4cHkramY5cHZ4VCtVcy8vNEpI?=
- =?utf-8?B?ZDhZRnBROXFGWG45aGxKa29makFXblZ5UFN1S016YWUvNjRJczRWaVBhaENQ?=
- =?utf-8?B?K2p6cEVtcmFMZExxaDhrUTBDY1lWZ0tVSHI0WHdzM1NWRGJNMDNqMFdBalVK?=
- =?utf-8?B?d202OWVNb2p1cWVTQ0JsWUpWUytCNmk0bWYvMDE4a2s4Tk51bEt2ZkFlS3RV?=
- =?utf-8?B?MDI0YkswcFk2dndyZ1lLR25mZ0ZKL2ZMQ2htRGlnS2dMOVFVRDZQYXZFR09N?=
- =?utf-8?B?MWQ4dklEWi9yL0Jramcrei84SThDd1hYQytlMk40ekJDckNMRFB1MHg2bEFG?=
- =?utf-8?B?WmFKREZEZSt6YUNhcElkREVveVU0RUdRK2xac3Y4d01PbVFpZmJYVTlrMzdF?=
- =?utf-8?B?bnlGQVdrT04xVjhFMS9mWjZUeGFsQ01IaHNxR2NpSmgxRjBlYWF2aUQ0RFdU?=
- =?utf-8?B?Y3ZkRlMyYXR5U3pQS3ZwN08vK0JpRWl0aktxUDFET2pRajRpUmNLL29KUCta?=
- =?utf-8?B?amJibWRqTytub2huZE5DYmhTQUVHTllabzlRN29FN1o3ZnpQWWRreDBiaXlH?=
- =?utf-8?B?NUsxZTdyODE3NTN3WWVHN0ZNRkhORURHSFVRbXdjQkNjbUtzMTllSnk5Q1Ux?=
- =?utf-8?B?UjRjVkh0RTRWKzZXeHJCNTNLb0JZayt4UVdrMWFqOXhyR1E5YXFpSWNqTE1R?=
- =?utf-8?B?dEsvNlE5Yk51d1BRN28wMm96dmxBdm11Q0IrWFF4cUdLZHhTNjNaN0JmdE9w?=
- =?utf-8?B?UGtsUFpWT2FQcEhQajlwL0xqdVpiZWF6V09EbXNiZjZodnZKdnQxTHhKRGlo?=
- =?utf-8?B?YTEzVy9CZTJYSllkcXhCbk9tQ0U1azM3WWxhSU5Ka2xCMkM3ZVdkQ0FiYXJw?=
- =?utf-8?B?WGlIcmdnSDdocFhiQUhvRmtObTZteklOZE91cVUzYWMvRk9MbitndFMrd2hC?=
- =?utf-8?B?MWJkMiszaWpwekRnbVhFTEtla0RJZXdhMTVGVzdVNEx5bUIyejgrYWxwbSs0?=
- =?utf-8?B?WGg1a1pWZ1I3T3VSdjZxNTVKMHJvYTlyalRUNkRLMmpvL3Bxb1NpcHA3YjFP?=
- =?utf-8?B?MWxpbGpjSzc0eVFxR3dlSi9CTGdNd0pDQlpzdUZ5emJaSUFkNUR3ZVFQbnhV?=
- =?utf-8?B?eXpBVjN1SHIxZkhLR1BFL2QwWVBlRXV4b0ZMMTdhVUhZcG5jcjNYMnBhU2Ez?=
- =?utf-8?B?MnVKcWE0aS9OenR5ZWx5dy9UbXF5NWF2Y1VyY0ZOWVQzaU5ndXNWc0Y4amti?=
- =?utf-8?B?akJKcXY4cFVFblcrck1OQ21pS1VWOUF6OFR3QXNuRjFBakdqelg3dnh5d0Vr?=
- =?utf-8?B?Ulh6OWtHb1UvWGV5dVVJcTNqZmRHSGlIekxqbTF3M1ZoaFFhVkNsSjRjVEd2?=
- =?utf-8?B?S1pUL0hTcmJ1R1hCZEtTMUtkYlRyOXFyaENVb1NxVGhjWi9mcUQwOGR0M2ZZ?=
- =?utf-8?B?RTZOeE95Z2ZGMHBPcloxakpVVkM0QzI2RVNaWTVNUXBuWVNaOHBVSTFkUGx6?=
- =?utf-8?B?M0E9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: b95ae803-168f-417f-d3fa-08de268ed2a7
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6502.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Nov 2025 10:40:00.1970 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: dBjWrelVt0Q/8CYWcnOP0Vkax3sM+sGq6s6SmccWMWE2ITonirpwH8DWH91nFI3ewHLhxRUUP446kqEzcNFfDLTdoWXUGfQ4tLf1LDgSXRk=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA4PR11MB9202
-X-OriginatorOrg: intel.com
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|82310400026|1800799024|36860700013|376014; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?wsLgg2m9E1dSuSSgthLBCq5kKk8cWGM9IMs0hGcZsKz3kGQW6VSkvnVeLu/s?=
+ =?us-ascii?Q?CNVzGrNeoJ7RP9mTOjOWaxVN5EDUliAINqnu9Mko0nBb/to1GyMA8aThDAXC?=
+ =?us-ascii?Q?kFmadXM3+QcNggfFQji1eCeR7ZN5HdinfJCunxrSzhmZRdPdnOLliI0BWpUT?=
+ =?us-ascii?Q?qonOx082t7qQEqKqtzhiPA7jQsqyTejOlCVCmKVh6xlOXWxsiCAFWTQISlT6?=
+ =?us-ascii?Q?Wn2+IdWiErZa+da1XqUGAWsMNtvi10wjkISIQYik9oW+0tA6DHE/YFBHNg4e?=
+ =?us-ascii?Q?8DrNfxHBPN26xXtfHss36xked7X297bJjqD/mrbZTmF5IxG8PorywrKGabmp?=
+ =?us-ascii?Q?nxumqDIEHtZurgg2VPDIgXEhe8HLV7OTz9urx2/Jy/yDbdW75zdDslMpdNg4?=
+ =?us-ascii?Q?f3Ic/rHJ1cWh+Vu7fGIEyZ+u9WS+HbVEGjLVsH+0ZE/YLDpmVAwD7UoL2VWY?=
+ =?us-ascii?Q?dNkpyGiUHliOa4Qp8FEszGbzHpA5nkG99hhkHzflb2KBKkwKpuhHzmbz+b5I?=
+ =?us-ascii?Q?/DDvmWO0qdFVQ6PhpnsJ6jtVk9ySpcvkMFMaMt+gvHUlOHctzlOly6NxQ3JU?=
+ =?us-ascii?Q?z77xgycCF13dj5xzRqVjplUYzoW7W2AvSiY8g67GasrVb30aon31zwIaVcAL?=
+ =?us-ascii?Q?SZuykr3p7F0dRnXsu65xFUd+aiIGeNLfQ4sSnDhBznXxkeEwLnSQsPOokHMZ?=
+ =?us-ascii?Q?Viope/rFs8ICI4fGekv79G7eWzaXq2WsucgX2veCWKOntfc3APFPZeQ2fFg5?=
+ =?us-ascii?Q?wn+auWDuCE5JjXfzjYq+HNLL4E5Trk4Bj3XxUMLf9GMr+9ePwHz3jI3SpfCG?=
+ =?us-ascii?Q?wnqEOyt3cyy4OkrOrX85c6shwYENTlJWNgffp1Zv9HBaf+eZgczBvP1ij+Dy?=
+ =?us-ascii?Q?Nguk01QCLIitPGjrl2aOvHSJ7PlslQQDqOO9Sb4ZLoOylmXLLe1S9YENfMGD?=
+ =?us-ascii?Q?Gph3WzPNo5BfXGhPYjSk+Nyk7Cd8afFuf061beHOxvG+V4MC1wTF6UpmI4Sp?=
+ =?us-ascii?Q?uw7ATvCHgDTxJveL1XSOjiHmXYoc+Y5tAfBYfs5em9+DWVXgnMtlBbynecy4?=
+ =?us-ascii?Q?85rvlznAkAXSRDNb38jSbodyMRjYI54l7dcPZIG7J93vLGEb6ZJycA9VsR4t?=
+ =?us-ascii?Q?lf7v8I2jIehm5ySZ3lGGXa/W8E19BAxwzHXO1r4uQ1/xBzbVQfJFWUBauuuW?=
+ =?us-ascii?Q?AU73tqlsIUyfuuezsOzQpbiauDRwdMY5mg/gbdGAa7uScouS4obMH6/j/m0M?=
+ =?us-ascii?Q?n93/DClzBQU/sNf+9ABqu1qDbyhU42zHhSjUUKEMAmRyAOrh0Zghiw3qEH/T?=
+ =?us-ascii?Q?yZHwlcU06P5hJjtl2df6bq6JOTWcgNTCGToVdsqQSMVCwQSQeGC4SUL44SeY?=
+ =?us-ascii?Q?fSd66AkIyHkq/SQRcMkC9xFMMrRUu6i2ciKykcDX+x/ZATpEEp+SzGdfrWV2?=
+ =?us-ascii?Q?XoZMWcJD38KUfrxim16rs6RpzrOHVRo4QKCzDzw+tUIUV2JK4MTGuqFOnBtz?=
+ =?us-ascii?Q?IV6T8Ni3mWfRxiDEKO6eYeuyrRyw3l8Dh55plHyl/yYnpjdCy1g7fLEKIH4a?=
+ =?us-ascii?Q?srCoKIk4REnpGFQnC2o=3D?=
+X-Forefront-Antispam-Report: CIP:216.228.117.161; CTRY:US; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge2.nvidia.com; CAT:NONE;
+ SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014); DIR:OUT;
+ SFP:1101; 
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Nov 2025 10:45:47.9355 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1ad4ef4b-1d5f-4243-aa35-08de268fa277
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.161];
+ Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN2PEPF000044A1.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7855
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -193,37 +131,411 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On 11/15/2025 9:31 AM, Dimon wrote:
-> Hi Anatoly,
-> 
-> I feel there might be a point that needs attention.
-> 
-> The old rte_vfio_get_group_num function returns <= 0 to indicate failure,
-> while the new rte_vfio_get_group_num function returns < 0 to indicate 
-> failure.
-> Therefore, all DPDK code that checks the return value of the 
-> rte_vfio_get_group_num function should be modified.
-> 
-> For example, in the nbl net driver, there is the following code:
-> ret = rte_vfio_get_group_num(pathname, dev_name, &common->iommu_group_num);
-> if (ret <= 0) {
->      NBL_LOG(ERR, "nbl vfio group number failed");
->      return -1;
-> }
-> 
-> It should be modified to:
-> ret = rte_vfio_get_group_num(pathname, dev_name, &common->iommu_group_num);
-> if (ret < 0) {
->      NBL_LOG(ERR, "nbl vfio group number failed");
->      return -1;
-> }
-> 
+Each enqueued async flow operation in testpmd has an associated
+queue_job struct. It is passed in user data and used to determine
+the type of operation when operation results are pulled on a given
+queue. This information informs the necessary additional handling
+(e.g., freeing flow struct or dumping the queried action state).
 
-Hi,
+If async flow operations were enqueued and results were not pulled
+before quitting testpmd, these queue_job structs were leaked as reported
+by ASAN:
 
-Thanks for the review. You're right, I should be more careful with 
-return values from this API, will be fixed in v3.
+Direct leak of 88 byte(s) in 1 object(s) allocated from:
+    #0 0x7f7539084a37 in __interceptor_calloc
+        ../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:154
+    #1 0x55a872c8e512 in port_queue_flow_create
+        (/download/dpdk/install/bin/dpdk-testpmd+0x4cd512)
+    #2 0x55a872c28414 in cmd_flow_cb
+        (/download/dpdk/install/bin/dpdk-testpmd+0x467414)
+    #3 0x55a8734fa6a3 in __cmdline_parse
+        (/download/dpdk/install/bin/dpdk-testpmd+0xd396a3)
+    #4 0x55a8734f6130 in cmdline_valid_buffer
+        (/download/dpdk/install/bin/dpdk-testpmd+0xd35130)
+    #5 0x55a873503b4f in rdline_char_in
+        (/download/dpdk/install/bin/dpdk-testpmd+0xd42b4f)
+    #6 0x55a8734f62ba in cmdline_in
+        (/download/dpdk/install/bin/dpdk-testpmd+0xd352ba)
+    #7 0x55a8734f65eb in cmdline_interact
+        (/download/dpdk/install/bin/dpdk-testpmd+0xd355eb)
+    #8 0x55a872c19b8e in prompt
+        (/download/dpdk/install/bin/dpdk-testpmd+0x458b8e)
+    #9 0x55a872be425a in main
+        (/download/dpdk/install/bin/dpdk-testpmd+0x42325a)
+    #10 0x7f7538756d8f in __libc_start_call_main
+        ../sysdeps/nptl/libc_start_call_main.h:58
 
+This patch addresses that by registering all queue_job structs, for a
+given queue, on a linked list. Whenever operation results are pulled
+and result is handled, queue_job struct will be removed from that list
+and freed.
+Before port is closed, during flow flush, testpmd will pull
+all of the expected results
+(based on the number of queue_job on the list).
+
+Fixes: c9dc03840873 ("ethdev: add indirect action async query")
+Fixes: 99231e480b69 ("ethdev: add template table resize")
+Fixes: 77e7939acf1f ("app/testpmd: add flow rule update command")
+Fixes: 3e3edab530a1 ("ethdev: add flow quota")
+Fixes: 966eb55e9a00 ("ethdev: add queue-based API to report aged flow rules")
+Cc: stable@dpdk.org
+
+Signed-off-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
+---
+ app/test-pmd/config.c  | 160 +++++++++++++++++++++++++++++++++++++++--
+ app/test-pmd/testpmd.c |   8 +++
+ app/test-pmd/testpmd.h |   4 ++
+ 3 files changed, 165 insertions(+), 7 deletions(-)
+
+diff --git a/app/test-pmd/config.c b/app/test-pmd/config.c
+index 8557371488..4049bf03c7 100644
+--- a/app/test-pmd/config.c
++++ b/app/test-pmd/config.c
+@@ -69,6 +69,8 @@
+ 
+ #define NS_PER_SEC 1E9
+ 
++#define FLOW_QUEUE_FLUSH_SLEEP_US (100)
++
+ static const struct {
+ 	enum tx_pkt_split split;
+ 	const char *name;
+@@ -1834,6 +1836,14 @@ port_flow_configure(portid_t port_id,
+ 	port->queue_sz = queue_attr->size;
+ 	for (std_queue = 0; std_queue < nb_queue; std_queue++)
+ 		attr_list[std_queue] = queue_attr;
++	port->job_list = calloc(nb_queue, sizeof(*port->job_list));
++	if (port->job_list == NULL) {
++		TESTPMD_LOG(ERR, "Failed to allocate memory for operations tracking on port %u\n",
++			    port_id);
++		return -ENOMEM;
++	}
++	for (unsigned int i = 0; i < nb_queue; i++)
++		LIST_INIT(&port->job_list[i]);
+ 	/* Poisoning to make sure PMDs update it in case of error. */
+ 	memset(&error, 0x66, sizeof(error));
+ 	if (rte_flow_configure(port_id, port_attr, nb_queue, attr_list, &error))
+@@ -2938,6 +2948,7 @@ port_queue_flow_create(portid_t port_id, queueid_t queue_id,
+ 	pf->flow = flow;
+ 	job->pf = pf;
+ 	port->flow_list = pf;
++	LIST_INSERT_HEAD(&port->job_list[queue_id], job, chain);
+ 	printf("Flow rule #%"PRIu64" creation enqueued\n", pf->id);
+ 	return 0;
+ }
+@@ -2975,6 +2986,7 @@ port_queue_flow_update_resized(portid_t port_id, queueid_t queue_id,
+ 		free(job);
+ 		return port_flow_complain(&error);
+ 	}
++	LIST_INSERT_HEAD(&port->job_list[queue_id], job, chain);
+ 	return 0;
+ }
+ 
+@@ -3028,6 +3040,7 @@ port_queue_flow_destroy(portid_t port_id, queueid_t queue_id,
+ 				ret = port_flow_complain(&error);
+ 				continue;
+ 			}
++			LIST_INSERT_HEAD(&port->job_list[queue_id], job, chain);
+ 			printf("Flow rule #%"PRIu64" destruction enqueued\n",
+ 			       pf->id);
+ 			*tmp = pf->next;
+@@ -3161,6 +3174,7 @@ port_queue_flow_update(portid_t port_id, queueid_t queue_id,
+ 	uf->flow = pf->flow;
+ 	*tmp = uf;
+ 	job->pf = pf;
++	LIST_INSERT_HEAD(&port->job_list[queue_id], job, chain);
+ 
+ 	printf("Flow rule #%"PRIu64" update enqueued\n", pf->id);
+ 	return 0;
+@@ -3215,6 +3229,7 @@ port_queue_action_handle_create(portid_t port_id, uint32_t queue_id,
+ 		free(job);
+ 		return port_flow_complain(&error);
+ 	}
++	LIST_INSERT_HEAD(&port->job_list[queue_id], job, chain);
+ 	printf("Indirect action #%u creation queued\n", pia->id);
+ 	return 0;
+ }
+@@ -3276,6 +3291,7 @@ port_queue_action_handle_destroy(portid_t port_id,
+ 				ret = port_flow_complain(&error);
+ 				continue;
+ 			}
++			LIST_INSERT_HEAD(&port->job_list[queue_id], job, chain);
+ 			*tmp = pia->next;
+ 			printf("Indirect action #%u destruction queued\n",
+ 			       pia->id);
+@@ -3350,6 +3366,7 @@ port_queue_action_handle_update(portid_t port_id,
+ 		free(job);
+ 		return port_flow_complain(&error);
+ 	}
++	LIST_INSERT_HEAD(&port->job_list[queue_id], job, chain);
+ 	printf("Indirect action #%u update queued\n", id);
+ 	return 0;
+ }
+@@ -3365,8 +3382,11 @@ port_queue_action_handle_query_update(portid_t port_id,
+ 	struct rte_flow_error error;
+ 	struct port_indirect_action *pia = action_get_by_id(port_id, id);
+ 	const struct rte_flow_op_attr attr = { .postpone = postpone};
++	struct rte_port *port;
+ 	struct queue_job *job;
+ 
++	port = &ports[port_id];
++
+ 	if (!pia || !pia->handle)
+ 		return;
+ 	job = calloc(1, sizeof(*job));
+@@ -3385,6 +3405,7 @@ port_queue_action_handle_query_update(portid_t port_id,
+ 		port_flow_complain(&error);
+ 		free(job);
+ 	} else {
++		LIST_INSERT_HEAD(&port->job_list[queue_id], job, chain);
+ 		printf("port-%u: indirect action #%u update-and-query queued\n",
+ 		       port_id, id);
+ 	}
+@@ -3426,6 +3447,7 @@ port_queue_action_handle_query(portid_t port_id,
+ 		free(job);
+ 		return port_flow_complain(&error);
+ 	}
++	LIST_INSERT_HEAD(&port->job_list[queue_id], job, chain);
+ 	printf("Indirect action #%u update queued\n", id);
+ 	return 0;
+ }
+@@ -3541,6 +3563,19 @@ port_flow_hash_calc_encap(portid_t port_id,
+ 	return 0;
+ }
+ 
++static void
++port_free_queue_job(struct queue_job *job)
++{
++	if (job->type == QUEUE_JOB_TYPE_FLOW_DESTROY ||
++	    job->type == QUEUE_JOB_TYPE_FLOW_UPDATE)
++		free(job->pf);
++	else if (job->type == QUEUE_JOB_TYPE_ACTION_DESTROY)
++		free(job->pia);
++
++	LIST_REMOVE(job, chain);
++	free(job);
++}
++
+ /** Pull queue operation results from the queue. */
+ static int
+ port_queue_aged_flow_destroy(portid_t port_id, queueid_t queue_id,
+@@ -3578,6 +3613,8 @@ port_queue_aged_flow_destroy(portid_t port_id, queueid_t queue_id,
+ 			return ret;
+ 		}
+ 		while (success < nb_flows) {
++			struct queue_job *job;
++
+ 			ret = rte_flow_pull(port_id, queue_id, res,
+ 					    port->queue_sz, &error);
+ 			if (ret < 0) {
+@@ -3590,6 +3627,13 @@ port_queue_aged_flow_destroy(portid_t port_id, queueid_t queue_id,
+ 			for (i = 0; i < ret; i++) {
+ 				if (res[i].status == RTE_FLOW_OP_SUCCESS)
+ 					success++;
++				job = res[i].user_data;
++				/*
++				 * It is assumed that each enqueued async flow operation
++				 * has a queue_job entry.
++				 */
++				RTE_ASSERT(job != NULL);
++				port_free_queue_job(job);
+ 			}
+ 		}
+ 		rule += n;
+@@ -3738,15 +3782,10 @@ port_queue_flow_pull(portid_t port_id, queueid_t queue_id)
+ 		if (res[i].status == RTE_FLOW_OP_SUCCESS)
+ 			success++;
+ 		job = (struct queue_job *)res[i].user_data;
+-		if (job->type == QUEUE_JOB_TYPE_FLOW_DESTROY ||
+-		    job->type == QUEUE_JOB_TYPE_FLOW_UPDATE)
+-			free(job->pf);
+-		else if (job->type == QUEUE_JOB_TYPE_ACTION_DESTROY)
+-			free(job->pia);
+-		else if (job->type == QUEUE_JOB_TYPE_ACTION_QUERY)
++		if (job->type == QUEUE_JOB_TYPE_ACTION_QUERY)
+ 			port_action_handle_query_dump(port_id, job->pia,
+ 						      &job->query);
+-		free(job);
++		port_free_queue_job(job);
+ 	}
+ 	printf("Queue #%u pulled %u operations (%u failed, %u succeeded)\n",
+ 	       queue_id, ret, ret - success, success);
+@@ -3960,6 +3999,108 @@ port_flow_update(portid_t port_id, uint32_t rule_id,
+ 	return -EINVAL;
+ }
+ 
++static int
++port_flow_queue_job_flush(portid_t port_id, queueid_t queue_id)
++{
++	struct rte_flow_op_result *res;
++	struct rte_flow_error error;
++	unsigned int expected_ops;
++	struct rte_port *port;
++	struct queue_job *job;
++	unsigned int success;
++	unsigned int polled;
++	int ret;
++
++	port = &ports[port_id];
++
++	printf("Flushing flow queue %u on port %u\n", port_id, queue_id);
++
++	/* Poisoning to make sure PMDs update it in case of error. */
++	memset(&error, 0x44, sizeof(error));
++	if (rte_flow_push(port_id, queue_id, &error))
++		port_flow_complain(&error);
++
++	/* Count expected operations. */
++	expected_ops = 0;
++	LIST_FOREACH(job, &port->job_list[queue_id], chain)
++		expected_ops++;
++
++	res = calloc(expected_ops, sizeof(*res));
++	if (res == NULL)
++		return -ENOMEM;
++
++	polled = 0;
++	success = 0;
++	while (expected_ops > 0) {
++		/* Poisoning to make sure PMDs update it in case of error. */
++		memset(&error, 0x55, sizeof(error));
++		ret = rte_flow_pull(port_id, queue_id, res, expected_ops, &error);
++		if (ret < 0) {
++			port_flow_complain(&error);
++			free(res);
++			return ret;
++		}
++		if (ret == 0) {
++			rte_delay_us_sleep(FLOW_QUEUE_FLUSH_SLEEP_US);
++			continue;
++		}
++
++		expected_ops -= ret;
++		polled += ret;
++		for (int i = 0; i < ret; i++) {
++			if (res[i].status == RTE_FLOW_OP_SUCCESS)
++				success++;
++
++			job = (struct queue_job *)res[i].user_data;
++			/*
++			 * It is assumed that each enqueued async flow operation
++			 * has a queue_job entry.
++			 */
++			RTE_ASSERT(job != NULL);
++			port_free_queue_job(job);
++		}
++	}
++	free(res);
++
++	/*
++	 * It is assumed that each enqueued async flow operation
++	 * has a queue_job entry, so if expected_ops reached zero,
++	 * then the queue_job list should be empty.
++	 */
++	RTE_ASSERT(LIST_EMPTY(&port->job_list[queue_id]));
++
++	printf("Flushed flow queue %u on port %u (%u failed, %u succeeded).\n",
++	       port_id, queue_id, polled - success, success);
++
++	return 0;
++}
++
++static int
++port_flow_queues_job_flush(portid_t port_id)
++{
++	struct rte_port *port;
++	int ret;
++
++	port = &ports[port_id];
++
++	if (port->queue_nb == 0)
++		return 0;
++
++	for (queueid_t queue_id = 0; queue_id < port->queue_nb; ++queue_id) {
++		if (LIST_EMPTY(&port->job_list[queue_id]))
++			continue;
++
++		ret = port_flow_queue_job_flush(port_id, queue_id);
++		if (ret < 0) {
++			TESTPMD_LOG(ERR, "Flushing flows queue %u failed on port %u (ret %d)\n",
++				    queue_id, port_id, ret);
++			return ret;
++		}
++	}
++
++	return 0;
++}
++
+ /** Remove all flow rules. */
+ int
+ port_flow_flush(portid_t port_id)
+@@ -3974,6 +4115,11 @@ port_flow_flush(portid_t port_id)
+ 
+ 	port = &ports[port_id];
+ 
++	ret = port_flow_queues_job_flush(port_id);
++	if (ret < 0)
++		TESTPMD_LOG(ERR, "Flushing flows queues failed on port %u (ret %d)\n",
++			    port_id, ret);
++
+ 	if (port->flow_list == NULL)
+ 		return ret;
+ 
+diff --git a/app/test-pmd/testpmd.c b/app/test-pmd/testpmd.c
+index b10f6baee2..789f123c6a 100644
+--- a/app/test-pmd/testpmd.c
++++ b/app/test-pmd/testpmd.c
+@@ -3260,6 +3260,13 @@ remove_invalid_ports(void)
+ 	nb_cfg_ports = nb_fwd_ports;
+ }
+ 
++static void
++port_free_job_list(portid_t pi)
++{
++	struct rte_port *port = &ports[pi];
++	free(port->job_list);
++}
++
+ static void
+ flush_port_owned_resources(portid_t pi)
+ {
+@@ -3270,6 +3277,7 @@ flush_port_owned_resources(portid_t pi)
+ 	port_flow_actions_template_flush(pi);
+ 	port_flex_item_flush(pi);
+ 	port_action_handle_flush(pi);
++	port_free_job_list(pi);
+ }
+ 
+ static void
+diff --git a/app/test-pmd/testpmd.h b/app/test-pmd/testpmd.h
+index fa46865c67..2fed7b9e7d 100644
+--- a/app/test-pmd/testpmd.h
++++ b/app/test-pmd/testpmd.h
+@@ -280,6 +280,7 @@ union port_action_query {
+ 
+ /* Descriptor for queue job. */
+ struct queue_job {
++	LIST_ENTRY(queue_job) chain;
+ 	uint32_t type; /**< Job type. */
+ 	union {
+ 		struct port_flow *pf;
+@@ -288,6 +289,8 @@ struct queue_job {
+ 	union port_action_query query;
+ };
+ 
++LIST_HEAD(queue_job_list, queue_job);
++
+ struct port_flow_tunnel {
+ 	LIST_ENTRY(port_flow_tunnel) chain;
+ 	struct rte_flow_action *pmd_actions;
+@@ -369,6 +372,7 @@ struct rte_port {
+ 	struct port_flow        *flow_list; /**< Associated flows. */
+ 	struct port_indirect_action *actions_list;
+ 	/**< Associated indirect actions. */
++	struct queue_job_list *job_list; /**< Pending async flow API operations, per queue. */
+ 	LIST_HEAD(, port_flow_tunnel) flow_tunnel_list;
+ 	const struct rte_eth_rxtx_callback *rx_dump_cb[RTE_MAX_QUEUES_PER_PORT+1];
+ 	const struct rte_eth_rxtx_callback *tx_dump_cb[RTE_MAX_QUEUES_PER_PORT+1];
 -- 
-Thanks,
-Anatoly
+2.39.5
+
