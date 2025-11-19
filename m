@@ -2,46 +2,55 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DCBCCF2594
-	for <dpdk-dev@archiver.kernel.org>; Wed, 19 Nov 2025 07:55:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F276CF2599
+	for <dpdk-dev@archiver.kernel.org>; Wed, 19 Nov 2025 08:06:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6BFF34029D;
-	Wed, 19 Nov 2025 08:54:58 +0100 (CET)
-Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id 77D6140265
- for <dev@dpdk.org>; Wed, 19 Nov 2025 08:54:57 +0100 (CET)
-Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 7022E48B4B; Wed, 19 Nov 2025 08:54:57 +0100 (CET)
-From: bugzilla@dpdk.org
+	by mails.dpdk.org (Postfix) with ESMTP id 5E34D4029D;
+	Wed, 19 Nov 2025 09:06:49 +0100 (CET)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 2AECA40265
+ for <dev@dpdk.org>; Wed, 19 Nov 2025 09:06:48 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1763539607;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding;
+ bh=H8FjPLIDjljq0lvQmwxZE7gsZKZNCD0nA2TTc6zSAPM=;
+ b=aORsGczm/s8vu0VUh0wgXXW249dmWAmmTx6bGaochnUP9xET40kQhxnE+pekXPSgWRGNvv
+ WWx2RH8DEg7rF4X5mnjCs9zDcb1/9lLR0bT5DHwRN6UK1H1zLrXXacFIWranGOfJ0I0jXX
+ v7t2/Sr2gb1IyS7ZfoncswTGmDiUUOs=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-510-YcaEY6JGM9aHcQ1i4xSYww-1; Wed,
+ 19 Nov 2025 03:06:46 -0500
+X-MC-Unique: YcaEY6JGM9aHcQ1i4xSYww-1
+X-Mimecast-MFC-AGG-ID: YcaEY6JGM9aHcQ1i4xSYww_1763539605
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 91D57195609F; Wed, 19 Nov 2025 08:06:44 +0000 (UTC)
+Received: from dmarchan.lan (unknown [10.45.224.244])
+ by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id BEAE2180049F; Wed, 19 Nov 2025 08:06:42 +0000 (UTC)
+From: David Marchand <david.marchand@redhat.com>
 To: dev@dpdk.org
-Subject: [DPDK/testpmd Bug 1834] [dpdk-25.11-rc2] Segmentation fault in Rx
- offload testcase
-Date: Wed, 19 Nov 2025 07:54:57 +0000
-X-Bugzilla-Reason: AssignedTo
-X-Bugzilla-Type: new
-X-Bugzilla-Watch-Reason: None
-X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: testpmd
-X-Bugzilla-Version: unspecified
-X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: normal
-X-Bugzilla-Who: jiawenwu@trustnetic.com
-X-Bugzilla-Status: UNCONFIRMED
-X-Bugzilla-Resolution: 
-X-Bugzilla-Priority: Normal
-X-Bugzilla-Assigned-To: dev@dpdk.org
-X-Bugzilla-Target-Milestone: ---
-X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
- op_sys bug_status bug_severity priority component assigned_to reporter
- target_milestone
-Message-ID: <bug-1834-3@http.bugs.dpdk.org/>
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-X-Bugzilla-URL: http://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
+Cc: maxime@leroys.fr, Gagandeep Singh <g.singh@nxp.com>,
+ Hemant Agrawal <hemant.agrawal@nxp.com>
+Subject: [PATCH] crypto/dpaa2_sec: use bus device name
+Date: Wed, 19 Nov 2025 09:06:32 +0100
+Message-ID: <20251119080633.25507-1-david.marchand@redhat.com>
 MIME-Version: 1.0
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: O0ck90P_EW6G-SZHPdoZPVrqj3QA-NooxLuTf4NEuRk_1763539605
+X-Mimecast-Originator: redhat.com
+Content-Transfer-Encoding: 8bit
+content-type: text/plain; charset="US-ASCII"; x-default=true
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -55,34 +64,75 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-http://bugs.dpdk.org/show_bug.cgi?id=3D1834
+dpaa2_sec_dev_init() sets the crypto device name again after
+it has been set by rte_cryptodev_pmd_create/allocate().
+Overwritting its value could end up as a bug if the cryptodev
+library changes the way it calls cryptodev objects.
 
-            Bug ID: 1834
-           Summary: [dpdk-25.11-rc2] Segmentation fault in Rx offload
-                    testcase
-           Product: DPDK
-           Version: unspecified
-          Hardware: All
-                OS: Linux
-            Status: UNCONFIRMED
-          Severity: normal
-          Priority: Normal
-         Component: testpmd
-          Assignee: dev@dpdk.org
-          Reporter: jiawenwu@trustnetic.com
-  Target Milestone: ---
+Besides, there is no need to generate a name for the crypto device
+different than the bus device, as there is a 1:1 relation between
+those objects.
 
-There is a bug introduced by:
+Reuse the bus device name directly, iow: dpseci.XXX instead of dpsec-XXX.
 
-Commit 066f3d9cc21c ("ethdev: remove callback checks from fast path")
+Signed-off-by: David Marchand <david.marchand@redhat.com>
+---
+Note: this is a followup cleanup following Maxime comment, no pressure on
+getting this merged for this release.
 
-In test case 139.4 <Rx offload per-port setting in command-line>, testpmd s=
-et
-fwd csum, and only enable Rx csum offload. Meanwhile, driver like txgbe set
-'dev->tx_pkt_prepare =3D NULL' since Tx offload is disabled. Thus
-rte_eth_tx_prepare() calls null pointer cause segmentation fault in
-pkt_burst_checksum_forward(), bacause NULL check was removed.
+---
+ drivers/crypto/dpaa2_sec/dpaa2_sec_dpseci.c | 14 ++------------
+ 1 file changed, 2 insertions(+), 12 deletions(-)
 
---=20
-You are receiving this mail because:
-You are the assignee for the bug.=
+diff --git a/drivers/crypto/dpaa2_sec/dpaa2_sec_dpseci.c b/drivers/crypto/dpaa2_sec/dpaa2_sec_dpseci.c
+index 698548e6ea..995e375fb5 100644
+--- a/drivers/crypto/dpaa2_sec/dpaa2_sec_dpseci.c
++++ b/drivers/crypto/dpaa2_sec/dpaa2_sec_dpseci.c
+@@ -4456,8 +4456,6 @@ dpaa2_sec_dev_init(struct rte_cryptodev *cryptodev)
+ 			     retcode);
+ 		goto init_error;
+ 	}
+-	snprintf(cryptodev->data->name, sizeof(cryptodev->data->name),
+-			"dpsec-%u", hw_id);
+ 
+ 	internals->max_nb_queue_pairs = attr.num_tx_queues;
+ 	cryptodev->data->nb_queue_pairs = internals->max_nb_queue_pairs;
+@@ -4482,7 +4480,6 @@ cryptodev_dpaa2_sec_probe(struct rte_dpaa2_driver *dpaa2_drv __rte_unused,
+ 			  struct rte_dpaa2_device *dpaa2_dev)
+ {
+ 	struct rte_cryptodev *cryptodev;
+-	char cryptodev_name[RTE_CRYPTODEV_NAME_MAX_LEN];
+ 	int retval;
+ 	struct rte_cryptodev_pmd_init_params init_params = {
+ 		.name = "",
+@@ -4493,10 +4490,7 @@ cryptodev_dpaa2_sec_probe(struct rte_dpaa2_driver *dpaa2_drv __rte_unused,
+ 			/* setting default, will be updated in init. */
+ 	};
+ 
+-	snprintf(cryptodev_name, sizeof(cryptodev_name), "dpsec-%d",
+-			dpaa2_dev->object_id);
+-
+-	cryptodev = rte_cryptodev_pmd_create(cryptodev_name, &dpaa2_dev->device,
++	cryptodev = rte_cryptodev_pmd_create(dpaa2_dev->device.name, &dpaa2_dev->device,
+ 			&init_params);
+ 	if (cryptodev == NULL) {
+ 		DPAA2_SEC_ERR("failed to create cryptodev vdev");
+@@ -4524,14 +4518,10 @@ cryptodev_dpaa2_sec_probe(struct rte_dpaa2_driver *dpaa2_drv __rte_unused,
+ static int
+ cryptodev_dpaa2_sec_remove(struct rte_dpaa2_device *dpaa2_dev)
+ {
+-	char cryptodev_name[RTE_CRYPTODEV_NAME_MAX_LEN];
+ 	struct rte_cryptodev *cryptodev;
+ 	int ret;
+ 
+-	snprintf(cryptodev_name, sizeof(cryptodev_name), "dpsec-%d",
+-			dpaa2_dev->object_id);
+-
+-	cryptodev = rte_cryptodev_pmd_get_named_dev(cryptodev_name);
++	cryptodev = rte_cryptodev_pmd_get_named_dev(dpaa2_dev->device.name);
+ 	if (cryptodev == NULL)
+ 		return -ENODEV;
+ 
+-- 
+2.51.1
+
