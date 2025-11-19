@@ -2,125 +2,132 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3217CF319D
-	for <dpdk-dev@archiver.kernel.org>; Wed, 19 Nov 2025 11:12:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F8FFCF31AE
+	for <dpdk-dev@archiver.kernel.org>; Wed, 19 Nov 2025 12:02:56 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 14A884065B;
-	Wed, 19 Nov 2025 12:12:45 +0100 (CET)
-Received: from PH8PR06CU001.outbound.protection.outlook.com
- (mail-westus3azon11012010.outbound.protection.outlook.com [40.107.209.10])
- by mails.dpdk.org (Postfix) with ESMTP id 8E22540265;
- Wed, 19 Nov 2025 12:12:38 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 81E9840267;
+	Wed, 19 Nov 2025 13:02:55 +0100 (CET)
+Received: from TYPPR03CU001.outbound.protection.outlook.com
+ (mail-japaneastazon11022131.outbound.protection.outlook.com [52.101.126.131])
+ by mails.dpdk.org (Postfix) with ESMTP id A27AC40265
+ for <dev@dpdk.org>; Wed, 19 Nov 2025 13:02:54 +0100 (CET)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=mXHv4ar8Qi4r/GbdFzo1iTpTFRzEoRJVZrWyyrKJGKEJm96WUZMf2RDDtHSkqhrpfyhhDxXKooszkuxprybnQMHjCIEU35TGKWAKDeJG1NhLerPfGAK00kPpSs77y2fB+od5UUZW3vgbo6nquCpa0/u9YsoIyx60oyJIxAYRcewM01ioofTUFb2UYZu4dWAEnjGd8ffNPRQ4KYPXbALylDt8LKG8uCXDqmbZcUjpf/IZC3MhbEy+X+m6/GlmpIHojA1xJVDHjntHMeT6W38QG6p9cf3VDq/5yoSOhzU76wmfh9LjHS6tfueM9a7fX9RTSLJhq0qMQGf3MOPlG0R1fg==
+ b=LMmXUN8ZDn7P3DrVDbZ7iGj/0g7C2EIHxtpx2R0bRYRPON2FIZ9AYYilxKWbK5X+/D1v2Wx9ZsNyTpqVhi6RTlubTfH4grqCjBOyELNpyDKkCWy9t2dYVu7zbyjRYp/nCV1HmcmEJ2wJIiEuoSdQZjA1oohjCR6jU87mEvOQy7eUx8PKiBM8XrClg+UtDmnwKC0Ho70rgMa74emYVGuF1sIPvsc3O88zYWl8e1IsdlfnhUWZuXUyXtvWsKWXSn1YAp4hI3pG3Gb+uyomWRFR3XEv0rQGBWi9PPhjpPd6BHB5vUUHViGp+hR36cwkf3Tcfvys1KBpq14IN4u8WCxVqg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MYEH86gYjDVxM2xg7Qksb23bIz6BrSm3+HsR9DvWoFg=;
- b=NDOD1m5C/+EfUKFl3UNBpa9OTA3c8qo8g9SC5pLZEJ6DUAQAGd36QoCCa8LsbrVDJzwND0xCKx+Mp6z6OUR7PYR+fHXYpXDeEWnTWaph2jnvjFLHhG7fjsxtVLTetbwQMqI1fgQjA/jOrHFPQopzoYSzqlkLNJRZS6AiJl7RLr2mbfNJQv9lbxFUkEbVurncqRyWMdWV83Fjdd/8Up5sMBpzl0MWbIZ1++qA+wJU5nVXWoGs9xBh+1SmizQAc5xrXEXxj8d29A5ToWA9Gtd89UKP2R0qpByVWc0X+AItdPiIOUyZYkVCQ9FQQWvVXBBEIQ/rslNexP6IxiY68TY0lA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ bh=pGYJtvxUq+tWzm/Be3CHjMZ3/qonTF61FHiUmbTUvys=;
+ b=mrZdA3dX1/9KSTcF5Ukpddi36YiDYyKftaLTUJQr/lt636SZWuQKo40mUOZnxkz5BGJmWvXNzPx8nYQklv+XofZUBFzcrEDSIDnFl/Sf629Q70B74jutJGhE8AwB0hBQ3OFALfPCnPbJovSBKrXbuYziXYVGmZy1QsMMwzdkE2eiPlhAb7OqIBHMSPAVIzaJKHdpfIqg5eSrgQJxrr6NYZ20x6nbFXCHTISYeVBsCwof9QBrwtqXbDF1YO6QMz5gM2zeT0iXBwDiUEh7w6LxPp9ZuBPzt1rxCttQvoybEmvbU2Rt66piSxF92Ko0E/z/kHjpS6JGWHt05OhFKMYQdg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=jaguarmicro.com; dmarc=pass action=none
+ header.from=jaguarmicro.com; dkim=pass header.d=jaguarmicro.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jaguarmicro.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MYEH86gYjDVxM2xg7Qksb23bIz6BrSm3+HsR9DvWoFg=;
- b=IZOt3gSGI96gdLW2Ddr0I1NXlAfUQD4rss0RuRFEtyX5Az8d4ROw49Ssb8nL6O6LmYEGO57xoQRnuzsF6bkuQzxpbxK34YtJbZrBrJ0pIJ0VN/+Q2aRnTCOP9ZAYQVhcuaPUDebtPtg+NSGYqU2oMw0qusUsxSCM3P1ydkksI3XGwJf6T91fWUn2mS5XCjTjsy7zo5IHLjCKrkHaW+ojBorNUNauPnWHAZRHD0bbq64ZYENrYII3FqyfqXTesWplVsFo15yHnei2tCngCfDEa8Riv5qy3xpDjnHGgsEh/C9AVenG/7GWk44hF7Dcq6BSm2aBWoJSMq9TZ/9PjihLXw==
-Received: from SJ0PR13CA0145.namprd13.prod.outlook.com (2603:10b6:a03:2c6::30)
- by SJ2PR12MB7866.namprd12.prod.outlook.com (2603:10b6:a03:4cc::13)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.22; Wed, 19 Nov
- 2025 11:12:32 +0000
-Received: from SJ5PEPF000001D3.namprd05.prod.outlook.com
- (2603:10b6:a03:2c6:cafe::51) by SJ0PR13CA0145.outlook.office365.com
- (2603:10b6:a03:2c6::30) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9343.10 via Frontend Transport; Wed,
- 19 Nov 2025 11:12:32 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com;
- dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- SJ5PEPF000001D3.mail.protection.outlook.com (10.167.242.55) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9343.9 via Frontend Transport; Wed, 19 Nov 2025 11:12:32 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 19 Nov
- 2025 03:12:20 -0800
-Received: from nvidia.com (10.126.231.35) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 19 Nov
- 2025 03:12:19 -0800
-Date: Wed, 19 Nov 2025 12:12:13 +0100
-From: Dariusz Sosnowski <dsosnowski@nvidia.com>
-To: Junfeng Guo <junfengg@nvidia.com>
-CC: <dev@dpdk.org>, <stable@dpdk.org>, <viacheslavo@nvidia.com>,
- <bingz@nvidia.com>, <orika@nvidia.com>, <suanmingm@nvidia.com>,
- <matan@nvidia.com>, <rasland@nvidia.com>
-Subject: Re: [PATCH] net/mlx5: fix IP tunnel detection for IPIP and IPv6 ENCAP
-Message-ID: <20251119111213.2uqimokwzvcaluls@ds-vm-debian.local>
-References: <20251119103554.44203-1-junfengg@nvidia.com>
+ bh=pGYJtvxUq+tWzm/Be3CHjMZ3/qonTF61FHiUmbTUvys=;
+ b=nPV5q/URHQWNjVu1f2dbJRdcFsqNZ90lWIjNG5XgEJ7jJDYjae7ga7rNmfUmOhf9OuWjV7mvuk5cEwYma6EOG+DxutFkHsxTrAiP7+WjTyRu1To5CPv0jmcfuvrOPVN4pWzjSeVBilEa6Ug9BRjQjjjYpzolQFWEf1bXP0E2sVex9iOvqHYFUtI7umjSPZCczvQI6Qb0qNsIXyI3eeSo1eBzJNoLwOGyVZSG/HW4LY60Ns6awWF7fcQPAoa/zJ614HaXxCJxyCDwFojaMBo6A/DChgHyqQYyE/lb6pSVlUUQRr4FQWLgLui+He31YtIFR4ETSmyOHMr4sc33c409VQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=jaguarmicro.com;
+Received: from SI2PR06MB4234.apcprd06.prod.outlook.com (2603:1096:4:15c::13)
+ by TYZPR06MB5249.apcprd06.prod.outlook.com (2603:1096:400:1fb::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9343.10; Wed, 19 Nov
+ 2025 12:02:49 +0000
+Received: from SI2PR06MB4234.apcprd06.prod.outlook.com
+ ([fe80::7c6b:7e04:5448:4be4]) by SI2PR06MB4234.apcprd06.prod.outlook.com
+ ([fe80::7c6b:7e04:5448:4be4%6]) with mapi id 15.20.9343.009; Wed, 19 Nov 2025
+ 12:02:49 +0000
+From: Shaokai Zhang <felix.zhang@jaguarmicro.com>
+To: dev@dpdk.org
+Cc: gakhil@marvell.com, kai.ji@intel.com, Joey Xing <joey.xing@jaguarmicro.com>
+Subject: [PATCH v2] crypto/openssl: support AES-XTS operations
+Date: Wed, 19 Nov 2025 20:02:30 +0800
+Message-ID: <20251119120231.1399-1-felix.zhang@jaguarmicro.com>
+X-Mailer: git-send-email 2.47.1.windows.2
+In-Reply-To: <20251117124414.1839-1-felix.zhang@jaguarmicro.com>
+References: <20251117124414.1839-1-felix.zhang@jaguarmicro.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR01CA0195.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:189::17) To SI2PR06MB4234.apcprd06.prod.outlook.com
+ (2603:1096:4:15c::13)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20251119103554.44203-1-junfengg@nvidia.com>
-X-Originating-IP: [10.126.231.35]
-X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PEPF000001D3:EE_|SJ2PR12MB7866:EE_
-X-MS-Office365-Filtering-Correlation-Id: a1766519-5d9f-46f3-e105-08de275c892e
+X-MS-TrafficTypeDiagnostic: SI2PR06MB4234:EE_|TYZPR06MB5249:EE_
+X-MS-Office365-Filtering-Correlation-Id: 707d024a-82c1-48ba-af51-08de27638d95
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|376014|1800799024|36860700013|82310400026; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?qwsGyGMjeXipokb2M8P5rYkFa43CLKUGgCS0Kv3y4nKIkFJJHxdttVOa38eQ?=
- =?us-ascii?Q?c5yaPlnoRd0hMoYc/hRMHmseH0DlXrwgeOwyWazDk7txhCDpJmaaqI6154pJ?=
- =?us-ascii?Q?OmF0n/kulo2atih0Mns4chgeudgueLqlD5OT+OgAoLuMoAlVK+AbbOQqoBsS?=
- =?us-ascii?Q?0R09y4g6cvovcradpa7thYI5dtBEO0dwVVdiBFnDZgN8zJzc3p7srbGnRQIc?=
- =?us-ascii?Q?UAw3xqXQC6d0WKfpiP/m6CTQ5tvvjP4I/DJ4dkEhpqV3zlbuC6Jxiz1UcZ0I?=
- =?us-ascii?Q?CWRxNju08d+3XMYqbDzedDwg4mQgXB7gfoRv9X7LbZP30DDkykEj1FBiuoZA?=
- =?us-ascii?Q?T98wXtRBScThA2R7c0vlwWsOqwKE6y76Il+Egj4s8oHvdxG/yM94okLUwcpk?=
- =?us-ascii?Q?pJJJNcFBWBv6WvfxsWNFdERZAwvxhGnIo/Ef++oQ8HN5uYLJEPu8B7tJE4Uc?=
- =?us-ascii?Q?x79t9Lq8h0qRyNVbsnlC6WluEddISlw21YoQDXg6LvnISLU2d40UscGIqAUc?=
- =?us-ascii?Q?cy/BkQqBPRglxhF+9cv7/Fop5EDTrJMTfkjHIMeoHZsQqyDQsitmC2kfpUsQ?=
- =?us-ascii?Q?eiA+Dh89JZdfmlRLinlYoiOmhuRWPfX+xtgdUbQyYoC+Nyr5fv9JfPRIlV+K?=
- =?us-ascii?Q?UdLHAbSSjIzlmxg/9+AjI+hsCAtRgcUp0ZSciycqlNks3FfrA7y/fU6Si4on?=
- =?us-ascii?Q?ifQxmqoT2wY/bvyz36d7gI7bQs6C33Srzh4hBr5Fwg+Ihpl3TDm2xh8bjfgP?=
- =?us-ascii?Q?hOZJsQkkLa77Gu7hk87JEdVn6D0v0Bf5BSIxdmSh1h4caJ0xZgzFKKBDzk0Z?=
- =?us-ascii?Q?DE9sGzAjZ2bhpIT+6+sB7mR78Xoc+h88s+z+pzY04R+Y8Tb8/0RUK0t/NpPO?=
- =?us-ascii?Q?t6whzc+PDlF28rEnn64HKe13snXqmrH8usESpOkE1Ra0tjcgMnHJcmeU8pO2?=
- =?us-ascii?Q?7VPeC49DKVvcc4D+Oru1l4fPVS3a8wifszzTM8USDEa5IxpFl68Nfl3eL9L3?=
- =?us-ascii?Q?PBIfF7Jg46f4NeskD4DDOje3NkqS/G9SaI0qvOKeEqHTIQLhVqj66bgJbAFo?=
- =?us-ascii?Q?5KdBUrQ/bRukK1ilkM3dRPewNM96ByGOUIP+PafHMiZDJd9V1ABXEZwpfdoR?=
- =?us-ascii?Q?IASb+D5FpvtYrPMESHnfQX2DOWECgZs/vry8ID5r6ruCnxG4KDPyG0H/4iSx?=
- =?us-ascii?Q?+tvLXEdcS02icfNSJrBUYJZKXKt4cWDQVi35NHUGhKJV6OuJaSCzU2ThjRPT?=
- =?us-ascii?Q?X1un3lB/28lR/ooKSclLAALSA9V2mAeb+ydMQnSo5bqZMMHSKc/eDC0UCVQY?=
- =?us-ascii?Q?zDGBZPMTe8HL+NLzLiCwlloweY+OUAY2mnr45w/sX0rjPcTSPvPJ8wARIvMg?=
- =?us-ascii?Q?XfjxQYWsFSTqGfXzQ/6oJptjybRuLlpr0X9AX/o6Yt9xLf2s6yM37qLpxnYI?=
- =?us-ascii?Q?Jq3E2QfddrPk1v0jfoXw9/lfgLzFgWy9I2u2ihYio7tUP1oNHVkonbR8sHfC?=
- =?us-ascii?Q?KqBhG6Ch3y9KhH5qKfCkL33Yg0JbEjRndjeGYYyp0jI0yK16QKv9Fs+goasa?=
- =?us-ascii?Q?aiJek/7xrrWy8R6Su74=3D?=
-X-Forefront-Antispam-Report: CIP:216.228.117.161; CTRY:US; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge2.nvidia.com; CAT:NONE;
- SFS:(13230040)(376014)(1800799024)(36860700013)(82310400026); DIR:OUT;
- SFP:1101; 
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Nov 2025 11:12:32.3876 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a1766519-5d9f-46f3-e105-08de275c892e
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.161];
- Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: SJ5PEPF000001D3.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB7866
+ ARA:13230040|1800799024|366016|52116014|376014|38350700014; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?v1AywHouaws5E4aTqR8+z77rPrQ5Z7jCuqn/PkEyhoI6miIGRE3JtLB3hs8z?=
+ =?us-ascii?Q?a/q7VLS1FPoevWZJSXS2wV+a42mWbQD+HusoeysgNinRdlv0T357JjpfAnvY?=
+ =?us-ascii?Q?s+3d5jT8E+sE1BTRWSrlqaXwIJlPGY2NIIsHn9JZh0I2dHG+EHLY9ONCee9A?=
+ =?us-ascii?Q?wseQRnIjyJNm8FMzr9cIXtsDRS73VmtUwkorfz/YNk+abhbZ594rWNttwLn4?=
+ =?us-ascii?Q?RHMG7AzZmYi4Vc5CiVBsRyEq5qw9xsl8kZjkTv5JkDpybxNPeDzBmmbokSCp?=
+ =?us-ascii?Q?1U2HFbwNn2/nb0TAvN8z6nk6be8kp/mJAt/QhWntc8v6+r7pfrtsoMCHo42A?=
+ =?us-ascii?Q?gWKnYN4pOfNvXZ3YFN1KsmbfdbvJuGszF/eCRpcZC/oboRXPZuIvNSlLlVU8?=
+ =?us-ascii?Q?Kad9cdjC7KD3kWo83cpqxp2n17bBFqqPfvHX2y0Z6JdSwWRFykNA7ag0eTJV?=
+ =?us-ascii?Q?RCfU/DhmzyULvtiFrQ1RBnzZ3yD8xWpIoee10r9CsDEHcodFbOhkhHhsY0AX?=
+ =?us-ascii?Q?31jK6g2ylR/Jkkpwj0/0WDjkPhokOTPCVZVxyUYMdJ8HA44VmvKYYE4KDSb6?=
+ =?us-ascii?Q?u9fCwvGVyzCRNFwPgzUrPIM5dTLtg9aLYsnKEBwvOPbu48pSNkdFockFal0V?=
+ =?us-ascii?Q?ntHTwi+aHf8KqBhEEGwL47HbfrpoDAikYxOChsdQ7l4AqkxMRvbRCbblyOuQ?=
+ =?us-ascii?Q?oOWeqZ5Mxghoh/rXAENqamKuDNiZCVDp+5X6L8+kvUmk27P4PHujBjl23LMf?=
+ =?us-ascii?Q?ej42C1YuMgffkmCw2+ja4SHJ/bZ3njgy0sizVM7bZdMStlx/hXwC8LVDjhYl?=
+ =?us-ascii?Q?QQ2FRtXXE8XxhWCmldnXcsU1g3jxKDnxbU5CC3tXcONfYQsrDRWFmqvpMSW7?=
+ =?us-ascii?Q?nMMD8VPeUvXd+EGVQSLDSEOLRlvszb2SNWFUn4Z1X7UZHW5FF0OQJGceMD8s?=
+ =?us-ascii?Q?147xIFyp6WgkixlRn5zyY3cTMhCp4eV9lB3xbD/NQpgdrCgxk3CJUb+jX9cB?=
+ =?us-ascii?Q?li4opkIMd7LTPam3D6A+r69Ad4y6jrWkLwpv4bN1zCbbCy2Ifg63KVenykpl?=
+ =?us-ascii?Q?S3vHM8JfU+54Tpk4PbpsnUh6HLbZaCb1dE824OhlU1xDuv9YZw7lIXYMkfyg?=
+ =?us-ascii?Q?BKDsH+4wDOTxSF34XzWLivV6KkMrV4g9STaVffAMmZu2li7/udPoKOABvoCv?=
+ =?us-ascii?Q?cv28VCY549SfpwEjrE0wZbkQ4tvOmScp7mrhqYtD1ziCr667A3P9yxmq7mZF?=
+ =?us-ascii?Q?NJTJw4D/wNkuSXMjI85MDxVCK/LuJfbOXoFYnUu0OgYRsfMqvEU5Pmn2tadS?=
+ =?us-ascii?Q?dwP1pMHVa8LIB61mC9sfx2MbNVpCiXtF3OhCwGEoFzxdWLfnL5XHKXWd4Sr0?=
+ =?us-ascii?Q?QvnOMwn2Cv4l3lw7DcMWwe9Vo8GX16Lz6fPDkP8y5t7zUjUb8QXw51GlUpp6?=
+ =?us-ascii?Q?0XtnislNfrXHKKwadkX7bxWxKu3myUy0YkrAU7kN0GnUez9GKAaMsizXkdXS?=
+ =?us-ascii?Q?xLkHtQtZ48JcQgcBAPfPaUTqoUgnvTQ1se92?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:SI2PR06MB4234.apcprd06.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(1800799024)(366016)(52116014)(376014)(38350700014); DIR:OUT;
+ SFP:1102; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?LHQUm0YKvh1QWM8bqOocde7/NkBnm78cIeQp/D7C2RS7gXlJRvcqjB1/DwPa?=
+ =?us-ascii?Q?KIOPTwQyxMp6eczyMavdpwwyXfs2iUIlafAKO0J8/lOOygtMuvA2nccz0U/C?=
+ =?us-ascii?Q?o1qleyTzZk9a97g654UJumMUEYrJfAb/cFWmZFZgm2kMohGRqNarEl07oj3S?=
+ =?us-ascii?Q?dllSNQqRUyCY/DFM8X8/vV2j2tZPxu4M5X1w/l/Ev9uZ0S64Oab8SUuDSEyt?=
+ =?us-ascii?Q?fKTT3O3ItwcNX5S5KSssOF+hmxh5piion4ugGNM9P0tj6WAS16gvfp6olvWN?=
+ =?us-ascii?Q?6TI58K6QwnOWf2pnjs3lUssgPDBnocuIm/Y589yndWbiwIHl5NOgUKB/rKsb?=
+ =?us-ascii?Q?zCnojo+FRfoBM8TfwdRZ1xMV66Zz1E+0a5IDoc7BkdnSu1JP2SYMl/Wf+AJ7?=
+ =?us-ascii?Q?upQ1NOHtuU7f4mq2Nw9fs31HkckwKw7oYc53RiTgCr3cm4WlIjT7OvDevmn6?=
+ =?us-ascii?Q?fy3HwqY6KkU4VIccyglnH/4GW755ujHDp8hBmzbH3065FL8WVQx5YzQNnIv+?=
+ =?us-ascii?Q?XMmOJNhbq+wFBIs9uA5tIdoPt+Ln9BIaljW8dwXv22BISjJkIPWs7/qNf2UW?=
+ =?us-ascii?Q?eNJtHs/gkiTNB95ivqxHyxJlNqOcnfQpVXBtnI2kz3Z9D/+YDKTuSm4ofRGJ?=
+ =?us-ascii?Q?P1Xo/v+iXn0rVwDxgRLJBCHbKFYm7LZ6L3F8y60mfFoHd93jbYdjXA4pqeOR?=
+ =?us-ascii?Q?bNAd2tatov+7s1I1G+03xjtv91qxgMA+iLsoRcmscX3vbnsP5quheHeeKRlC?=
+ =?us-ascii?Q?zg7AqjxU5r5HYRr0NlIT1GtOInyuCYKuL6AY+mQMksdh7qhGBDLY8FDdNamL?=
+ =?us-ascii?Q?dJ7ZykInnYZPfLG8enJ+tVgbYCPadSwGOSfmBWBl19iTtxtofK0WHQ13GErq?=
+ =?us-ascii?Q?AiMByh0dHYgnykeectPwLXeJ5//zBV9WY+WneXN0D0FZh+dRwRuMOwZybxr8?=
+ =?us-ascii?Q?nZOLwz8MQ/jB26mNKpValH7JqqIwd1ccP2aqNZgdK7FyrPX8jShBr6yFVS6j?=
+ =?us-ascii?Q?aFcLJt81I8VeHRF1kuZbGA4S9NxsTp/BDclN10aEBzTbfk0LYTBrnOnmWAJu?=
+ =?us-ascii?Q?3JdJnEwMTIFcOISKbQlQvUKNMl/YLmhaXhCwjCtbPxkCrgTgBpW0xJiUmjs5?=
+ =?us-ascii?Q?3xe4jZHcH5qSxL91IhQxwxK2IWYcdbzPy5kP0SnCStZ5RBwTDNaq/YJcDvQb?=
+ =?us-ascii?Q?bi8kl36YKY4bw94ES9jjo/Vku9xfAH6NJLfFW1kwt0NbQ5lc0DZsWMnpEIHE?=
+ =?us-ascii?Q?XYhS0B01yoHOkFhv/Uzi+d6jxg4ez0Qmgme5tNaxQZz3iXc0odf8Pa0mMlBl?=
+ =?us-ascii?Q?uduCjilDrEpUcSQZl+hKboNMW9U42lsCy9D9tg8LOy5ROTvO5D4Ruk3xcSgo?=
+ =?us-ascii?Q?F9hBOXaYg/52+k4kLocMteiWmSgO0ZMvxo/nm7BgVA69RIeb3TnoQBs6qVUT?=
+ =?us-ascii?Q?KWQcmtP4TW0QBPIb2gdhEihDvWXrb/pkrycuFLHnpp5f9MRGHZi9ofSKh89j?=
+ =?us-ascii?Q?EoC+oZ4j0jv3TklT6pwdljR1M+ojMspfjtO3JBikEmvhello1ONegxFvLkuF?=
+ =?us-ascii?Q?O2BW8f/964Jp3TCrd+emmHV1PtVLVfst4ITLdXmJoVr33yO+radI1UYwErUm?=
+ =?us-ascii?Q?Fw=3D=3D?=
+X-OriginatorOrg: jaguarmicro.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 707d024a-82c1-48ba-af51-08de27638d95
+X-MS-Exchange-CrossTenant-AuthSource: SI2PR06MB4234.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Nov 2025 12:02:49.4595 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 1e45a5c2-d3e1-46b3-a0e6-c5ebf6d8ba7b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 9z+f5lDRUGFdXKVW1hp/V5l5GsMvSaLh4mVmQ6d2FzVr2qlNuD91Aon841/C+2gDszaAJhz1QGS4fsyDsyZkMsFTMF0rsSZKrBSi2dUlsIY=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB5249
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -134,39 +141,118 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, Nov 19, 2025 at 12:35:54PM +0200, Junfeng Guo wrote:
-> The HWS (Hardware Steering) IP tunnel detection implementation was not
-> recognizing IPIP tunnel types based on the next protocol value in the
-> outer IP header as specified by RFC 2003 (IP-in-IP) and RFC 2473
-> (IPv6 Encapsulation).
-> 
-> The issue was that the code treated all combinations of [IPv4|6] / [IPv4|6]
-> as IPIP tunnels, setting MLX5_FLOW_LAYER_IPIP flag regardless of the actual
-> protocol. While this happened to work for simple cases due to the fallback
-> classification, it violated RFC compliance and could cause issues with
-> protocol validation.
-> 
-> The fix adds RFC-compliant tunnel detection by
-> 1. Checking the protocol field (IPPROTO_IPIP=4 or IPPROTO_IPV6=41) in the
->    outer IP header to determine tunnel type
-> 2. Adding protocol mismatch validation to ensure outer protocol matches
->    inner header type
-> 3. Correctly setting MLX5_FLOW_LAYER_IPV6_ENCAP for IPv6 encapsulation
-> 
-> The expected tunnel patterns are now:
-> - [ipv4 | ipv6] proto is 4 / ipv4 -> MLX5_FLOW_LAYER_IPIP
-> - [ipv4 | ipv6] proto is 41 / ipv6 -> MLX5_FLOW_LAYER_IPV6_ENCAP
-> 
-> For cases without protocol specification, fallback classification based on
-> inner header type is still supported.
-> 
-> Fixes: f66c7c3ab983 ("net/mlx5/hws: recognize IP-in-IP tunnel in definer layer")
-> Fixes: 4b7044562f59 ("net/mlx5: support IP-in-IP tunnel for all combinations")
-> Cc: stable@dpdk.org
-> 
-> Signed-off-by: Junfeng Guo <junfengg@nvidia.com>
+Extend openssl crypto PMD to support AES XTS operations.
 
-Acked-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
+Signed-off-by: Shaokai Zhang <felix.zhang@jaguarmicro.com>
+Reviewed-by: Joey Xing <joey.xing@jaguarmicro.com>
+---
+ doc/guides/cryptodevs/features/openssl.ini   |  2 ++
+ doc/guides/cryptodevs/openssl.rst            |  1 +
+ drivers/crypto/openssl/openssl_pmd_private.h |  2 +-
+ drivers/crypto/openssl/rte_openssl_pmd.c     | 13 +++++++++++++
+ drivers/crypto/openssl/rte_openssl_pmd_ops.c | 20 ++++++++++++++++++++
+ 5 files changed, 37 insertions(+), 1 deletion(-)
 
-Best regards,
-Dariusz Sosnowski
+diff --git a/doc/guides/cryptodevs/features/openssl.ini b/doc/guides/cryptodevs/features/openssl.ini
+index df6e7de316..1ce6efd3a5 100644
+--- a/doc/guides/cryptodevs/features/openssl.ini
++++ b/doc/guides/cryptodevs/features/openssl.ini
+@@ -24,6 +24,8 @@ AES CBC (256)  = Y
+ AES CTR (128)  = Y
+ AES CTR (192)  = Y
+ AES CTR (256)  = Y
++AES XTS (128)  = Y
++AES XTS (256)  = Y
+ 3DES CBC       = Y
+ 3DES CTR       = Y
+ DES DOCSIS BPI = Y
+diff --git a/doc/guides/cryptodevs/openssl.rst b/doc/guides/cryptodevs/openssl.rst
+index d467069cac..e48f425434 100644
+--- a/doc/guides/cryptodevs/openssl.rst
++++ b/doc/guides/cryptodevs/openssl.rst
+@@ -22,6 +22,7 @@ Supported cipher algorithms:
+ * ``RTE_CRYPTO_CIPHER_3DES_CBC``
+ * ``RTE_CRYPTO_CIPHER_AES_CBC``
+ * ``RTE_CRYPTO_CIPHER_AES_CTR``
++* ``RTE_CRYPTO_CIPHER_AES_XTS``
+ * ``RTE_CRYPTO_CIPHER_3DES_CTR``
+ * ``RTE_CRYPTO_CIPHER_DES_DOCSISBPI``
+ 
+diff --git a/drivers/crypto/openssl/openssl_pmd_private.h b/drivers/crypto/openssl/openssl_pmd_private.h
+index fe89e522e1..d5a751600a 100644
+--- a/drivers/crypto/openssl/openssl_pmd_private.h
++++ b/drivers/crypto/openssl/openssl_pmd_private.h
+@@ -118,7 +118,7 @@ struct __rte_cache_aligned openssl_session {
+ 		/**< cipher algorithm */
+ 
+ 		struct {
+-			uint8_t data[32];
++			uint8_t data[64];
+ 			/**< key data */
+ 			size_t length;
+ 			/**< key length in bytes */
+diff --git a/drivers/crypto/openssl/rte_openssl_pmd.c b/drivers/crypto/openssl/rte_openssl_pmd.c
+index 4f171f48cc..2d803912d4 100644
+--- a/drivers/crypto/openssl/rte_openssl_pmd.c
++++ b/drivers/crypto/openssl/rte_openssl_pmd.c
+@@ -211,6 +211,18 @@ get_cipher_algo(enum rte_crypto_cipher_algorithm sess_algo, size_t keylen,
+ 				res = -EINVAL;
+ 			}
+ 			break;
++		case RTE_CRYPTO_CIPHER_AES_XTS:
++			switch (keylen) {
++			case 32:
++				*algo = EVP_aes_128_xts();
++				break;
++			case 64:
++				*algo = EVP_aes_256_xts();
++				break;
++			default:
++				res = -EINVAL;
++			}
++			break;
+ 		case RTE_CRYPTO_CIPHER_AES_CTR:
+ 			switch (keylen) {
+ 			case 16:
+@@ -493,6 +505,7 @@ openssl_set_session_cipher_parameters(struct openssl_session *sess,
+ 	case RTE_CRYPTO_CIPHER_3DES_CBC:
+ 	case RTE_CRYPTO_CIPHER_AES_CBC:
+ 	case RTE_CRYPTO_CIPHER_AES_CTR:
++	case RTE_CRYPTO_CIPHER_AES_XTS:
+ 		sess->cipher.mode = OPENSSL_CIPHER_LIB;
+ 		sess->cipher.algo = xform->cipher.algo;
+ 		sess->cipher.ctx = EVP_CIPHER_CTX_new();
+diff --git a/drivers/crypto/openssl/rte_openssl_pmd_ops.c b/drivers/crypto/openssl/rte_openssl_pmd_ops.c
+index 5095e6cbea..df5c12626d 100644
+--- a/drivers/crypto/openssl/rte_openssl_pmd_ops.c
++++ b/drivers/crypto/openssl/rte_openssl_pmd_ops.c
+@@ -269,6 +269,26 @@ static const struct rte_cryptodev_capabilities openssl_pmd_capabilities[] = {
+ 			}, }
+ 		}, }
+ 	},
++	{	/* AES XTS */
++		.op = RTE_CRYPTO_OP_TYPE_SYMMETRIC,
++		{.sym = {
++			.xform_type = RTE_CRYPTO_SYM_XFORM_CIPHER,
++			{.cipher = {
++				.algo = RTE_CRYPTO_CIPHER_AES_XTS,
++				.block_size = 16,
++				.key_size = {
++					.min = 32,
++					.max = 64,
++					.increment = 32
++				},
++				.iv_size = {
++					.min = 16,
++					.max = 16,
++					.increment = 0
++				}
++			}, }
++		}, }
++	},
+ 	{	/* AES CBC */
+ 		.op = RTE_CRYPTO_OP_TYPE_SYMMETRIC,
+ 		{.sym = {
+-- 
+2.47.1.windows.2
+
