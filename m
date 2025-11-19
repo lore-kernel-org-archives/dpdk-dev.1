@@ -2,99 +2,88 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF2C7CF34AB
-	for <dpdk-dev@archiver.kernel.org>; Wed, 19 Nov 2025 12:57:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA19DCF34A1
+	for <dpdk-dev@archiver.kernel.org>; Wed, 19 Nov 2025 13:03:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BEA9F40267;
-	Wed, 19 Nov 2025 13:57:17 +0100 (CET)
-Received: from fhigh-a2-smtp.messagingengine.com
- (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
- by mails.dpdk.org (Postfix) with ESMTP id C331C40265;
- Wed, 19 Nov 2025 13:57:16 +0100 (CET)
-Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
- by mailfhigh.phl.internal (Postfix) with ESMTP id 3D0A51400146;
- Wed, 19 Nov 2025 07:57:16 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
- by phl-compute-02.internal (MEProxy); Wed, 19 Nov 2025 07:57:16 -0500
+	by mails.dpdk.org (Postfix) with ESMTP id D658D40265;
+	Wed, 19 Nov 2025 14:03:49 +0100 (CET)
+Received: from fout-a8-smtp.messagingengine.com
+ (fout-a8-smtp.messagingengine.com [103.168.172.151])
+ by mails.dpdk.org (Postfix) with ESMTP id 1901E40262
+ for <dev@dpdk.org>; Wed, 19 Nov 2025 14:03:49 +0100 (CET)
+Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
+ by mailfout.phl.internal (Postfix) with ESMTP id 8BD93EC0211;
+ Wed, 19 Nov 2025 08:03:48 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+ by phl-compute-06.internal (MEProxy); Wed, 19 Nov 2025 08:03:48 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm3; t=1763557036;
- x=1763643436; bh=Pp8tIsBp1A6r/x7cEJE6d/2D4jsIqAnXW30D+yY8ovg=; b=
- iBm4F8PLZDTh0GqvnbGPfCWL634gSLkLJf/CqqFi/oUtum31fZBagL+3pAeDCt8W
- 9IG492cXtI3jZ4vF2TGJd081VbOxEBgQ6vyQ2CWydsJCEebUeSu6JG3Ec3177l2v
- cKn+CDgTAJ44AQIgSrIRt23AyySuCXEn2MpZFDdUDdZ8iobnyRfV4Gug3fv14QoE
- MwZy1J2vohgKTJcN7cFVbLxD9nC57Yp1KbW6+/TSp0nbbYDHUm2L46jQKw7uTzTq
- 3DzAKj9uOTXmInhzSprdvwPuz3luoIGWEcplls3Jg/zWwe5H44IcmrZ0WhaDlc2/
- 0R0vCOJ+2GOAHfL0mD516g==
+ cc:cc:content-transfer-encoding:content-type:date:date:from:from
+ :in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+ :to; s=fm3; t=1763557428; x=1763643828; bh=63oxyiJtKig7055z3BwGp
+ y4kdcEFRD6zqMe7XzF7Qbw=; b=YvECPNUGN/lCDBQnKtad10l0PNkKxC/ISyqJB
+ 8bRRebTuktqRQsXsZljuGYfWy6ja+2yBLmGqmOy1RSVP2+kQvbAxVDNqqkGbRBZe
+ 5CUbCNGHa1qXfQz6/Uz4Ep7gHZm7DQwk6+LjrepJwpIm31tpVh23TKF/M8F1ZEJe
+ g1lzCahy1KGa0+ZjqJB1Uq/a3zyy4zbV0bMRtW9bFkZPW/WPg1HAvDhLFCuMozu2
+ aV5MSWIGgiuGfMQtfniVXSQgV4i4gyA2Cr3UGxpQBCoImnnt5AQj6CVfoGoynqf8
+ cMLtGoGx4IYtbL15A24/JpQfCq9dpI+RBSOxyUoI1/ZPgXEIg==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1763557036; x=
- 1763643436; bh=Pp8tIsBp1A6r/x7cEJE6d/2D4jsIqAnXW30D+yY8ovg=; b=a
- G4EEe+TEMLRfb6O8Go4lOcv8kYHy+R/l4dWSrF7Suqk0ByFtXYKYB7LGkvScoyOE
- DbsAekoDfJt0HG0UTy7icftcbVUBPsXBDrenGZIfpwLWjeeMb950/mwt9D9yKAnO
- BAQvRvMIzJKE09HFn0kLNXtVXQwYk2ktMWoaAKJ3SSWExlYl7Sv4h+AzegQLyt0a
- T/zcXW6ZrYY2awiyXGDF2su9OU+WmbfqNNnLVhAuyTm4g45IBDNDG5FLD1vNC77w
- gPkpAwkFrAHC6p8EbN20rj2320Gb05L5XyaRU7Xjih1tTmZFzZOQWtWEGntYlPo8
- HLSVsSLsIeL9lMfzhEltQ==
-X-ME-Sender: <xms:q74daVMyOQVQn7CfQ3usc5UrNRM5-N3xNXWrlJrmp0m4RG4C0SJqPQ>
- <xme:q74daXYjfBZ6QWpOH1mHWu9sJ5BJRvou9QqT0g9_u7BetWDst0QWDyDjrHvJWd24L
- LbRxnjol1krBNgGQEyqrIVuBYTo6J3QDBceEuj3fYPGLfBCvmW0>
-X-ME-Received: <xmr:q74daVUiqrOOyEEi2vH4INmInJQe-FjGJsMSTHJH-yxyyfFsWRFqayCl9dhXccRYKeppvKb6hRpMVdFLV_5X1x3ZUw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvvdegvdeiucetufdoteggodetrf
+ :content-type:date:date:feedback-id:feedback-id:from:from
+ :in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+ :to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+ 1763557428; x=1763643828; bh=63oxyiJtKig7055z3BwGpy4kdcEFRD6zqMe
+ 7XzF7Qbw=; b=d/MK8LXsenADpcj8ojHiTcb1gKkTFS8K6QOOn3zh7w5PKKyCYPy
+ cdYsGb3i1ZCTcmV9bXlI4ZXNvSWgfRqbU4gUQfCRp+YWBJqoDPEgzJ/AwgXjcVzx
+ TdtGGMbzYz+Ib0eqgY1sLuRuyhht6RrluAjO9g2ID4YNgH4bfwk8YBpc7UPqDbkN
+ a+LGDDQFpvTEqoiTSFYWG4I4elZH+VLrEoNeIYIjU4Z4jAECR6F4yCqiii24iwyb
+ V9NzpmqOPzdKln74zstarhIkzKFfhqjHp4eAqTUyBGVJhF1HA6kaB7rOUI87bXhk
+ ZHoy6sBcS2LD+cezUhBrPnE3Zuy2JwtepOg==
+X-ME-Sender: <xms:M8AdaeCvYJsRVgKJABGq_obmIhhn6osfmHGFsemHFCEVWwPr4sRx5g>
+ <xme:M8AdaUb1kl-wnPm_RgvfSywdUQbNIWqo_ltXkOo1ckgaqfhLpoXeQYL2awVMG--OS
+ QeJ5ZmBz2FdTeNHbMuiSQKsqeFKEQHU3AIngQstzXapAzTbDyrwLA>
+X-ME-Received: <xmr:M8AdaeltQlp1rNMtHa0Z0Ig_mT3sCa0i0Pb1hNn71fSnlJaIgBtBUy4XRQyctYzcya6hEaoCoA31FOiiKFPeRm4Cq7yEPWo>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvvdegvdejucetufdoteggodetrf
  dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
  rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
- gurhephffvvefufffkjghfggfgtgesthhqredttddtjeenucfhrhhomhepvfhhohhmrghs
- ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
- frrghtthgvrhhnpeegtddtleejjeegffekkeektdejvedtheevtdekiedvueeuvdeiuddv
- leevjeeujeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeduiedp
- mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepshhivhgrphhrrghsrggurdhtuhhmmh
- grlhgrsegrmhgurdgtohhmpdhrtghpthhtohepkhhonhhsthgrnhhtihhnrdgrnhgrnhih
- vghvsehhuhgrfigvihdrtghomhdprhgtphhtthhopehnihhthhhinhguudelkeeksehgmh
- grihhlrdgtohhmpdhrtghpthhtohepshhtrggslhgvseguphgukhdrohhrghdprhgtphht
- thhopehjvghrihhnjhesmhgrrhhvvghllhdrtghomhdprhgtphhtthhopehkihhrrghnkh
- humhgrrhhksehmrghrvhgvlhhlrdgtohhmpdhrtghpthhtohepnhgurggsihhlphhurhgr
- mhesmhgrrhhvvghllhdrtghomhdprhgtphhtthhopeihrghniihhihhruhhnpgduieefse
- duieefrdgtohhmpdhrtghpthhtohepuggrvhhiugdrmhgrrhgthhgrnhgusehrvgguhhgr
- thdrtghomh
-X-ME-Proxy: <xmx:q74daWBvT-pcF5D3JnH9MK2NAy7ppkMQkJFIrFumCxhFilvAmjTHFQ>
- <xmx:q74daRIcRm_OucB72m-BquarfM2aJOe15YrtgxcVHgvgX6Kjuad_FA>
- <xmx:q74daUvvOzGGRqPhWutxMSeNYAwvquA-QethcUKVIuaNhdLaMj_tvg>
- <xmx:q74daZVPUY15p-nJIk4UK2OaqpIXf9asuYf99IaTiSqToZAA87JrDw>
- <xmx:rL4daXdTU1yEyG4UHG0DsX8mHqUOjfiQC8WUKvuXE-5FbI92hBDuWvKC>
+ gurhephffvvefufffkofgggfestdekredtredttdenucfhrhhomhepvfhhohhmrghsucfo
+ ohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtffrrg
+ htthgvrhhnpeevveefveeiiefhtedukeegkeelieegffeukeevudetueffieduveetiedu
+ keefleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+ hthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeduvddpmhho
+ uggvpehsmhhtphhouhhtpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghpth
+ htohepjhhirgifvghnfihusehtrhhushhtnhgvthhitgdrtghomhdprhgtphhtthhopeih
+ rghnghigihhnghhuiheshhhurgifvghirdgtohhmpdhrtghpthhtohepfhgvnhhgtghhvg
+ hnghifvghnsehhuhgrfigvihdrtghomhdprhgtphhtthhopeiirghihihufigrnhhgseht
+ rhhushhtnhgvthhitgdrtghomhdprhgtphhtthhopegtkhhmsehnrghprghtvggthhdrtg
+ homhdprhgtphhtthhopehsihhlqdhplhhvsehnrghprghtvggthhdrtghomhdprhgtphht
+ thhopegtrhhishhtihgrnhdrughumhhithhrvghstghusehinhhtvghlrdgtohhmpdhrtg
+ hpthhtohepjhhirghnfigrnhhgsehtrhhushhtnhgvthhitgdrtghomh
+X-ME-Proxy: <xmx:M8AdaRqNBTs75ICz3_-Vrogrgk7CBYFnIHOy9Usf8X3ti2MT1wEWdA>
+ <xmx:M8AdaYCpa4YtpFJX9rFaf4RjHaTC89DjOKwpQqEhWaiItDgwvILcDA>
+ <xmx:M8AdacFozmqe6QKOf0qffDeaZQ9pv7zRGSYeBcEVwzZWRHvJUcOb2A>
+ <xmx:M8Adaa2WdiL9eF_Kb0fe11y2VaHuC2vfxtnwrkMZr4atbPhGW2g6VA>
+ <xmx:NMAdaRZaFEPP_s-IVqs78W4PxFyjyxZaK7WQ1SHF80NlQJ8_PTpgnHoI>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 19 Nov 2025 07:57:13 -0500 (EST)
+ 19 Nov 2025 08:03:45 -0500 (EST)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: "Tummala, Sivaprasad" <Sivaprasad.Tummala@amd.com>
-Cc: Konstantin Ananyev <konstantin.ananyev@huawei.com>,
- Nithin Dabilpuram <nithind1988@gmail.com>,
- "stable@dpdk.org" <stable@dpdk.org>,
- "jerinj@marvell.com" <jerinj@marvell.com>,
- "kirankumark@marvell.com" <kirankumark@marvell.com>,
- "ndabilpuram@marvell.com" <ndabilpuram@marvell.com>,
- "yanzhirun_163@163.com" <yanzhirun_163@163.com>,
- "david.marchand@redhat.com" <david.marchand@redhat.com>,
- "ktraynor@redhat.com" <ktraynor@redhat.com>,
- "konstantin.v.ananyev@yandex.ru" <konstantin.v.ananyev@yandex.ru>,
- "bruce.richardson@intel.com" <bruce.richardson@intel.com>,
- "maxime.coquelin@redhat.com" <maxime.coquelin@redhat.com>,
- "aconole@redhat.com" <aconole@redhat.com>, "dev@dpdk.org" <dev@dpdk.org>,
- "stable@dpdk.org" <stable@dpdk.org>
-Subject: Re: [PATCH] examples/l3fwd-graph: remove redundant Tx queue limit
-Date: Wed, 19 Nov 2025 13:57:12 +0100
-Message-ID: <3175023.Icojqenx9y@thomas>
-In-Reply-To: <CH3PR12MB823340B751F8D8DFA890146686D7A@CH3PR12MB8233.namprd12.prod.outlook.com>
-References: <20250901154400.2333310-1-sivaprasad.tummala@amd.com>
- <4301041.aeNJFYEL58@thomas>
- <CH3PR12MB823340B751F8D8DFA890146686D7A@CH3PR12MB8233.namprd12.prod.outlook.com>
+To: dev@dpdk.org
+Cc: Jiawen Wu <jiawenwu@trustnetic.com>, Xingui Yang <yangxingui@huawei.com>,
+ Chengwen Feng <fengchengwen@huawei.com>,
+ Zaiyu Wang <zaiyuwang@trustnetic.com>,
+ Christian Koue Muf <ckm@napatech.com>,
+ Serhii Iliushyk <sil-plv@napatech.com>,
+ Cristian Dumitrescu <cristian.dumitrescu@intel.com>,
+ Jian Wang <jianwang@trustnetic.com>,
+ Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
+ =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>,
+ Sunil Kumar Kori <skori@marvell.com>
+Subject: [PATCH] drivers/net: fix Tx packet prepare
+Date: Wed, 19 Nov 2025 14:03:33 +0100
+Message-ID: <20251119130333.2697937-1-thomas@monjalon.net>
+X-Mailer: git-send-email 2.51.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -108,68 +97,99 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-19/11/2025 13:08, Tummala, Sivaprasad:
-> From: Thomas Monjalon <thomas@monjalon.net>
-> 06/10/2025 10:58, Tummala, Sivaprasad:
-> > From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-> > > > On Mon, Sep 1, 2025 at 11:39=E2=80=AFPM Sivaprasad Tummala
-> > > > <sivaprasad.tummala@amd.com> wrote:
-> > > > >
-> > > > > In `l3fwd-graph` application, Tx queues are configured per lcore
-> > > > > to enable a lockless design and achieve optimal performance.
-> > > > >
-> > > > > The `MAX_TX_QUEUE_PER_PORT` macro, defined as `RTE_MAX_ETHPORTS`,
-> > > > > introduced an artificial constraint on the number of Tx queues
-> > > > > and limited core-scaling performance.
-> > > > >
-> > > > > This patch removes the unused `MAX_TX_QUEUE_PER_PORT` macro and
-> > > > > redundant Tx queue check, allowing Tx queues to scale directly
-> > > > > with the no. of lcores.
-> > > > >
-> > > > > Fixes: 08bd1a174461 ("examples/l3fwd-graph: add graph-based l3fwd=
- skeleton")
-> > > > > Cc: ndabilpuram@marvell.com
-> > > > > Cc: stable@dpdk.org
-> > > > >
-> > > > > Signed-off-by: Sivaprasad Tummala <sivaprasad.tummala@amd.com>
-> > > > > ---
-> > > > >  examples/l3fwd-graph/main.c | 3 ---
-> > > > >  1 file changed, 3 deletions(-)
-> > > > >
-> > > > > diff --git a/examples/l3fwd-graph/main.c b/examples/l3fwd-graph/m=
-ain.c
-> > > > > index 92cdaa1ebe..12908acbba 100644
-> > > > > --- a/examples/l3fwd-graph/main.c
-> > > > > +++ b/examples/l3fwd-graph/main.c
-> > > > > @@ -49,7 +49,6 @@
-> > > > >  #define RX_DESC_DEFAULT 1024
-> > > > >  #define TX_DESC_DEFAULT 1024
-> > > > >
-> > > > > -#define MAX_TX_QUEUE_PER_PORT RTE_MAX_ETHPORTS
-> > > > >  #define MAX_RX_QUEUE_PER_PORT 128
-> > >
-> > > AFAIK, in the mainline we actually have:
-> > > #define MAX_TX_QUEUE_PER_PORT RTE_MAX_LCORE
-> > >
-> > In l3fwd-graph app, this change is not available and instead we have
-> >> #define MAX_TX_QUEUE_PER_PORT RTE_MAX_ETHPORTS
-> >>
-> >> > since:
-> >> > commit 88256ed85338c572d73006e4c4530a52d3b477ff
-> >> > Author: Harman Kalra <hkalra@marvell.com>
-> >> > Date:   Tue Jan 12 23:54:46 2021 +0530
-> >> >
-> >> >     examples/l3fwd: remove limitation on Tx queue count
-> >> >
-> >> > What I am missing here?
-> >> This patch marked here was fixing l3fwd app and not l3fwd-graph
->=20
-> > Why not applying the same change to both examples?
-> Yes, that's what the patch is intended for to fix l3fwd-graph and tx queu=
-es will scale with lcores and limited by RTE_MAX_LCORES.
+After removing callback checks from ethdev fast path,
+some drivers crashed because tx_pkt_prepare was set to NULL.
 
-But it is not done the same way.
-Here you remove MAX_TX_QUEUE_PER_PORT.
-Do you want to do the same in l3fwd?
+Some drivers (hns3, ngbe, txgbe) need to use rte_eth_tx_pkt_prepare_dummy
+when configuring queues.
+Other drivers (ntnic, softnic) does not need to set tx_pkt_prepare
+as it was set by eth_dev_set_dummy_fops() called by rte_eth_dev_allocate().
 
+Bugzilla ID: 1834
+Fixes: 066f3d9cc21c ("ethdev: remove callback checks from fast path")
+
+Reported-by: Jiawen Wu <jiawenwu@trustnetic.com>
+Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
+---
+ drivers/net/hns3/hns3_rxtx.c          | 4 ++--
+ drivers/net/ngbe/ngbe_rxtx.c          | 2 +-
+ drivers/net/ntnic/ntnic_ethdev.c      | 1 -
+ drivers/net/softnic/rte_eth_softnic.c | 1 -
+ drivers/net/txgbe/txgbe_rxtx.c        | 2 +-
+ 5 files changed, 4 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/net/hns3/hns3_rxtx.c b/drivers/net/hns3/hns3_rxtx.c
+index df703134be..3a99923220 100644
+--- a/drivers/net/hns3/hns3_rxtx.c
++++ b/drivers/net/hns3/hns3_rxtx.c
+@@ -4561,7 +4561,7 @@ hns3_set_rxtx_function(struct rte_eth_dev *eth_dev)
+ 	} else {
+ 		eth_dev->rx_pkt_burst = rte_eth_pkt_burst_dummy;
+ 		eth_dev->tx_pkt_burst = rte_eth_pkt_burst_dummy;
+-		eth_dev->tx_pkt_prepare = NULL;
++		eth_dev->tx_pkt_prepare = rte_eth_tx_pkt_prepare_dummy;
+ 	}
+ 
+ 	hns3_trace_rxtx_function(eth_dev);
+@@ -4917,7 +4917,7 @@ void
+ hns3_stop_tx_datapath(struct rte_eth_dev *dev)
+ {
+ 	dev->tx_pkt_burst = rte_eth_pkt_burst_dummy;
+-	dev->tx_pkt_prepare = NULL;
++	dev->tx_pkt_prepare = rte_eth_tx_pkt_prepare_dummy;
+ 	hns3_eth_dev_fp_ops_config(dev);
+ 
+ 	if (rte_eal_process_type() == RTE_PROC_SECONDARY)
+diff --git a/drivers/net/ngbe/ngbe_rxtx.c b/drivers/net/ngbe/ngbe_rxtx.c
+index 66d72c88df..91e215694c 100644
+--- a/drivers/net/ngbe/ngbe_rxtx.c
++++ b/drivers/net/ngbe/ngbe_rxtx.c
+@@ -1921,7 +1921,7 @@ ngbe_set_tx_function(struct rte_eth_dev *dev, struct ngbe_tx_queue *txq)
+ 	if (txq->offloads == 0 &&
+ 			txq->tx_free_thresh >= RTE_PMD_NGBE_TX_MAX_BURST) {
+ 		PMD_INIT_LOG(DEBUG, "Using simple tx code path");
+-		dev->tx_pkt_prepare = NULL;
++		dev->tx_pkt_prepare = rte_eth_tx_pkt_prepare_dummy;
+ 		if (txq->tx_free_thresh <= RTE_NGBE_TX_MAX_FREE_BUF_SZ &&
+ 				rte_vect_get_max_simd_bitwidth() >= RTE_VECT_SIMD_128 &&
+ 				(rte_eal_process_type() != RTE_PROC_PRIMARY ||
+diff --git a/drivers/net/ntnic/ntnic_ethdev.c b/drivers/net/ntnic/ntnic_ethdev.c
+index 23c3452d2d..89e751e7e0 100644
+--- a/drivers/net/ntnic/ntnic_ethdev.c
++++ b/drivers/net/ntnic/ntnic_ethdev.c
+@@ -2561,7 +2561,6 @@ nthw_pci_dev_init(struct rte_pci_device *pci_dev)
+ 		NT_LOG_DBGX(DBG, NTNIC, "Setting up RX functions for SCG");
+ 		eth_dev->rx_pkt_burst = eth_dev_rx_scg;
+ 		eth_dev->tx_pkt_burst = eth_dev_tx_scg;
+-		eth_dev->tx_pkt_prepare = NULL;
+ 
+ 		struct rte_eth_link pmd_link;
+ 		pmd_link.link_speed = RTE_ETH_SPEED_NUM_NONE;
+diff --git a/drivers/net/softnic/rte_eth_softnic.c b/drivers/net/softnic/rte_eth_softnic.c
+index 91a1c3a98e..868e194509 100644
+--- a/drivers/net/softnic/rte_eth_softnic.c
++++ b/drivers/net/softnic/rte_eth_softnic.c
+@@ -312,7 +312,6 @@ pmd_ethdev_register(struct rte_vdev_device *vdev,
+ 	/* dev */
+ 	dev->rx_pkt_burst = pmd_rx_pkt_burst;
+ 	dev->tx_pkt_burst = pmd_tx_pkt_burst;
+-	dev->tx_pkt_prepare = NULL;
+ 	dev->dev_ops = &pmd_ops;
+ 	dev->device = &vdev->device;
+ 
+diff --git a/drivers/net/txgbe/txgbe_rxtx.c b/drivers/net/txgbe/txgbe_rxtx.c
+index 78199ea00b..e2cd9b8841 100644
+--- a/drivers/net/txgbe/txgbe_rxtx.c
++++ b/drivers/net/txgbe/txgbe_rxtx.c
+@@ -2344,7 +2344,7 @@ txgbe_set_tx_function(struct rte_eth_dev *dev, struct txgbe_tx_queue *txq)
+ #endif
+ 			txq->tx_free_thresh >= RTE_PMD_TXGBE_TX_MAX_BURST) {
+ 		PMD_INIT_LOG(DEBUG, "Using simple tx code path");
+-		dev->tx_pkt_prepare = NULL;
++		dev->tx_pkt_prepare = rte_eth_tx_pkt_prepare_dummy;
+ 		if (txq->tx_free_thresh <= RTE_TXGBE_TX_MAX_FREE_BUF_SZ &&
+ 				rte_vect_get_max_simd_bitwidth() >= RTE_VECT_SIMD_128 &&
+ 				(rte_eal_process_type() != RTE_PROC_PRIMARY ||
+-- 
+2.51.0
 
