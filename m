@@ -2,55 +2,53 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F276CF2599
-	for <dpdk-dev@archiver.kernel.org>; Wed, 19 Nov 2025 08:06:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EEEECF259E
+	for <dpdk-dev@archiver.kernel.org>; Wed, 19 Nov 2025 08:56:42 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5E34D4029D;
-	Wed, 19 Nov 2025 09:06:49 +0100 (CET)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 2AECA40265
- for <dev@dpdk.org>; Wed, 19 Nov 2025 09:06:48 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1763539607;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding;
- bh=H8FjPLIDjljq0lvQmwxZE7gsZKZNCD0nA2TTc6zSAPM=;
- b=aORsGczm/s8vu0VUh0wgXXW249dmWAmmTx6bGaochnUP9xET40kQhxnE+pekXPSgWRGNvv
- WWx2RH8DEg7rF4X5mnjCs9zDcb1/9lLR0bT5DHwRN6UK1H1zLrXXacFIWranGOfJ0I0jXX
- v7t2/Sr2gb1IyS7ZfoncswTGmDiUUOs=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-510-YcaEY6JGM9aHcQ1i4xSYww-1; Wed,
- 19 Nov 2025 03:06:46 -0500
-X-MC-Unique: YcaEY6JGM9aHcQ1i4xSYww-1
-X-Mimecast-MFC-AGG-ID: YcaEY6JGM9aHcQ1i4xSYww_1763539605
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 91D57195609F; Wed, 19 Nov 2025 08:06:44 +0000 (UTC)
-Received: from dmarchan.lan (unknown [10.45.224.244])
- by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id BEAE2180049F; Wed, 19 Nov 2025 08:06:42 +0000 (UTC)
-From: David Marchand <david.marchand@redhat.com>
-To: dev@dpdk.org
-Cc: maxime@leroys.fr, Gagandeep Singh <g.singh@nxp.com>,
- Hemant Agrawal <hemant.agrawal@nxp.com>
-Subject: [PATCH] crypto/dpaa2_sec: use bus device name
-Date: Wed, 19 Nov 2025 09:06:32 +0100
-Message-ID: <20251119080633.25507-1-david.marchand@redhat.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 0E18C4029D;
+	Wed, 19 Nov 2025 09:56:42 +0100 (CET)
+Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
+ by mails.dpdk.org (Postfix) with ESMTP id C73AB40265
+ for <dev@dpdk.org>; Wed, 19 Nov 2025 09:56:39 +0100 (CET)
+X-QQ-mid: esmtpgz13t1763542593t9cec7029
+X-QQ-Originating-IP: 3SjjASF2ZZguRNTeAA7uzCb0vepRB2EuGWoVzwE8y8k=
+Received: from w-MS-7E16.trustnetic.com ( [125.120.152.51])
+ by bizesmtp.qq.com (ESMTP) with 
+ id ; Wed, 19 Nov 2025 16:56:28 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 11931011188576755625
+EX-QQ-RecipientCnt: 3
+From: Jiawen Wu <jiawenwu@trustnetic.com>
+To: dev@dpdk.org,
+	zaiyuwang@trustnetic.com
+Cc: Jiawen Wu <jiawenwu@trustnetic.com>
+Subject: [PATCH] net/txgbe: fix the missing old mailbox interface calls
+Date: Wed, 19 Nov 2025 16:56:24 +0800
+Message-ID: <A4E8D8476CBBC191+20251119085624.73210-1-jiawenwu@trustnetic.com>
+X-Mailer: git-send-email 2.48.1
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: O0ck90P_EW6G-SZHPdoZPVrqj3QA-NooxLuTf4NEuRk_1763539605
-X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
-content-type: text/plain; charset="US-ASCII"; x-default=true
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpgz:trustnetic.com:qybglogicsvrgz:qybglogicsvrgz6b-0
+X-QQ-XMAILINFO: NcfXIs+Ms1qHMDDEqIcWSfaQDTkoJHoctKTlHnbg/hINxVSvD9r22nEv
+ 79JisUYYDw+Ak+vsBFmLGKC++4ReKmL2SZUYWIOvC0692ZpqOinR0sKr/8OSCsfvgVBlkr2
+ 98QJ8f3zwPky4VtGyC4EwTktvv8e1fExtazYece34PbtpH2zIf84hpY2EhBSUhYAKoncS/2
+ p7FS7u+f7aZB62Ft5xnFq5fMTyo/ntq+vazITpt9RixozO49Nx0C5jVUE57NVF7pUjI5jzC
+ VRDB2NvsC6waNSDaqafMRliB4GoUgNxcWUNP56Ew0F60gxym6FdxAJKz8uu22xefKNyjHsB
+ KoAK9cknaZuM4BY4mQHIcpsF0GQAHcGfeFLV293BiQGIDF8y8xmdj/lZAR0D71PeYS7VXwQ
+ +tDgC5NrysBmDB5NpS2rJbnW5bwZ3aCSSXUrUvj7sdJB/Jb8cFABwzWnHVGDrRnVBVtk5O5
+ Gaw2ZDU6yPY757NdaM7fH4ukrry9Y9e+6QMtkC2TO6i+xxrfLkbX2Tn4DEsm53Q6k7pP1Jd
+ //5K8CmS5sj7lJRPVUjCzDRDI8URcYOKbUQcAqI3OnRKXSCjdcmBP0VMlvMBhaSuQlzpml9
+ 8hnzv+IYwS70vrpEPxpyAavl5TdJ7hw0XvvlRUd0sCR/wNmtev4t+HbxApPSdRLEm8GO/fh
+ aX7ayVZqFd2rnr/x0j9hVgqHOTbLk3LiR1DvW4WmyIeOAEM2PbfuVB7QswmT5BlupmrxcN7
+ UifWlD8/V14m/cf/mb0mGqaHwrKxlKDpgBAs71O4tYtnUB/CwM2hvKLkvYcbsNL/bz3MK3y
+ 3GOg97/H/avPCOhrwI9kZrygNWgT2ljmk/hlaDZFsgScMT1RNo2KBrNlQ999qolKjQEQDGb
+ kN5dhGzcsPcHZqkInsJ4A6ReMmuTABpokRpdgd+lP/H86oMrnqgMEDRVyk7FMQ2NM+Wpspn
+ 8cRqCjYHgYsTrny1BVjs81gUGqobhaknxuvoANSfGXSwIZDkflHVhClc+Z3P5tWfvWOlo4z
+ 9knYpdYxhz8nf+Brdr
+X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
+X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -64,75 +62,307 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-dpaa2_sec_dev_init() sets the crypto device name again after
-it has been set by rte_cryptodev_pmd_create/allocate().
-Overwritting its value could end up as a bug if the cryptodev
-library changes the way it calls cryptodev objects.
+There are some SW-FW interactions still call the old mailbox interface
+function, which is used for SP devices. It causes the interaction
+command to time out.
 
-Besides, there is no need to generate a name for the crypto device
-different than the bus device, as there is a 1:1 relation between
-those objects.
+Adjust the interaction flow to use a unified function pointer.
 
-Reuse the bus device name directly, iow: dpseci.XXX instead of dpsec-XXX.
-
-Signed-off-by: David Marchand <david.marchand@redhat.com>
+Fixes: 6a139ade82e7 ("net/txgbe: add new SW-FW mailbox interface")
+Signed-off-by: Jiawen Wu <jiawenwu@trustnetic.com>
 ---
-Note: this is a followup cleanup following Maxime comment, no pressure on
-getting this merged for this release.
+ drivers/net/txgbe/base/txgbe_aml.c    |  4 ++++
+ drivers/net/txgbe/base/txgbe_aml40.c  |  4 ++++
+ drivers/net/txgbe/base/txgbe_eeprom.c | 16 +++++++-------
+ drivers/net/txgbe/base/txgbe_hw.c     |  4 ++++
+ drivers/net/txgbe/base/txgbe_mng.c    | 32 ++++++++++++---------------
+ drivers/net/txgbe/base/txgbe_mng.h    |  4 ++++
+ drivers/net/txgbe/base/txgbe_type.h   |  2 ++
+ 7 files changed, 40 insertions(+), 26 deletions(-)
 
----
- drivers/crypto/dpaa2_sec/dpaa2_sec_dpseci.c | 14 ++------------
- 1 file changed, 2 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/crypto/dpaa2_sec/dpaa2_sec_dpseci.c b/drivers/crypto/dpaa2_sec/dpaa2_sec_dpseci.c
-index 698548e6ea..995e375fb5 100644
---- a/drivers/crypto/dpaa2_sec/dpaa2_sec_dpseci.c
-+++ b/drivers/crypto/dpaa2_sec/dpaa2_sec_dpseci.c
-@@ -4456,8 +4456,6 @@ dpaa2_sec_dev_init(struct rte_cryptodev *cryptodev)
- 			     retcode);
- 		goto init_error;
- 	}
--	snprintf(cryptodev->data->name, sizeof(cryptodev->data->name),
--			"dpsec-%u", hw_id);
- 
- 	internals->max_nb_queue_pairs = attr.num_tx_queues;
- 	cryptodev->data->nb_queue_pairs = internals->max_nb_queue_pairs;
-@@ -4482,7 +4480,6 @@ cryptodev_dpaa2_sec_probe(struct rte_dpaa2_driver *dpaa2_drv __rte_unused,
- 			  struct rte_dpaa2_device *dpaa2_dev)
+diff --git a/drivers/net/txgbe/base/txgbe_aml.c b/drivers/net/txgbe/base/txgbe_aml.c
+index 867cf4c2d3..b2c870973e 100644
+--- a/drivers/net/txgbe/base/txgbe_aml.c
++++ b/drivers/net/txgbe/base/txgbe_aml.c
+@@ -17,6 +17,7 @@ void txgbe_init_ops_aml(struct txgbe_hw *hw)
  {
- 	struct rte_cryptodev *cryptodev;
--	char cryptodev_name[RTE_CRYPTODEV_NAME_MAX_LEN];
- 	int retval;
- 	struct rte_cryptodev_pmd_init_params init_params = {
- 		.name = "",
-@@ -4493,10 +4490,7 @@ cryptodev_dpaa2_sec_probe(struct rte_dpaa2_driver *dpaa2_drv __rte_unused,
- 			/* setting default, will be updated in init. */
- 	};
+ 	struct txgbe_mac_info *mac = &hw->mac;
+ 	struct txgbe_phy_info *phy = &hw->phy;
++	struct txgbe_mbx_info *mbx = &hw->mbx;
  
--	snprintf(cryptodev_name, sizeof(cryptodev_name), "dpsec-%d",
--			dpaa2_dev->object_id);
--
--	cryptodev = rte_cryptodev_pmd_create(cryptodev_name, &dpaa2_dev->device,
-+	cryptodev = rte_cryptodev_pmd_create(dpaa2_dev->device.name, &dpaa2_dev->device,
- 			&init_params);
- 	if (cryptodev == NULL) {
- 		DPAA2_SEC_ERR("failed to create cryptodev vdev");
-@@ -4524,14 +4518,10 @@ cryptodev_dpaa2_sec_probe(struct rte_dpaa2_driver *dpaa2_drv __rte_unused,
- static int
- cryptodev_dpaa2_sec_remove(struct rte_dpaa2_device *dpaa2_dev)
+ 	txgbe_init_ops_generic(hw);
+ 
+@@ -27,6 +28,9 @@ void txgbe_init_ops_aml(struct txgbe_hw *hw)
+ 	mac->init_mac_link_ops = txgbe_init_mac_link_ops_aml;
+ 	mac->get_link_capabilities = txgbe_get_link_capabilities_aml;
+ 	mac->check_link = txgbe_check_mac_link_aml;
++
++	/* MAILBOX */
++	mbx->host_interface_command = txgbe_host_interface_command_aml;
+ }
+ 
+ s32 txgbe_check_mac_link_aml(struct txgbe_hw *hw, u32 *speed,
+diff --git a/drivers/net/txgbe/base/txgbe_aml40.c b/drivers/net/txgbe/base/txgbe_aml40.c
+index c7d64cade6..08e8a7e5d2 100644
+--- a/drivers/net/txgbe/base/txgbe_aml40.c
++++ b/drivers/net/txgbe/base/txgbe_aml40.c
+@@ -18,6 +18,7 @@ void txgbe_init_ops_aml40(struct txgbe_hw *hw)
  {
--	char cryptodev_name[RTE_CRYPTODEV_NAME_MAX_LEN];
- 	struct rte_cryptodev *cryptodev;
- 	int ret;
+ 	struct txgbe_mac_info *mac = &hw->mac;
+ 	struct txgbe_phy_info *phy = &hw->phy;
++	struct txgbe_mbx_info *mbx = &hw->mbx;
  
--	snprintf(cryptodev_name, sizeof(cryptodev_name), "dpsec-%d",
--			dpaa2_dev->object_id);
--
--	cryptodev = rte_cryptodev_pmd_get_named_dev(cryptodev_name);
-+	cryptodev = rte_cryptodev_pmd_get_named_dev(dpaa2_dev->device.name);
- 	if (cryptodev == NULL)
- 		return -ENODEV;
+ 	txgbe_init_ops_generic(hw);
  
+@@ -28,6 +29,9 @@ void txgbe_init_ops_aml40(struct txgbe_hw *hw)
+ 	mac->init_mac_link_ops = txgbe_init_mac_link_ops_aml40;
+ 	mac->get_link_capabilities = txgbe_get_link_capabilities_aml40;
+ 	mac->check_link = txgbe_check_mac_link_aml40;
++
++	/* MAILBOX */
++	mbx->host_interface_command = txgbe_host_interface_command_aml;
+ }
+ 
+ s32 txgbe_check_mac_link_aml40(struct txgbe_hw *hw, u32 *speed,
+diff --git a/drivers/net/txgbe/base/txgbe_eeprom.c b/drivers/net/txgbe/base/txgbe_eeprom.c
+index eb53b35a19..b1d90f6f6b 100644
+--- a/drivers/net/txgbe/base/txgbe_eeprom.c
++++ b/drivers/net/txgbe/base/txgbe_eeprom.c
+@@ -137,7 +137,7 @@ void txgbe_release_eeprom_semaphore(struct txgbe_hw *hw)
+ s32 txgbe_ee_read16(struct txgbe_hw *hw, u32 offset,
+ 			      u16 *data)
+ {
+-	const u32 mask = TXGBE_MNGSEM_SWMBX | TXGBE_MNGSEM_SWFLASH;
++	const u32 mask = TXGBE_MNGSEM_SWFLASH;
+ 	u32 addr = (offset << 1);
+ 	int err;
+ 
+@@ -164,7 +164,7 @@ s32 txgbe_ee_read16(struct txgbe_hw *hw, u32 offset,
+ s32 txgbe_ee_readw_buffer(struct txgbe_hw *hw,
+ 				     u32 offset, u32 words, void *data)
+ {
+-	const u32 mask = TXGBE_MNGSEM_SWMBX | TXGBE_MNGSEM_SWFLASH;
++	const u32 mask = TXGBE_MNGSEM_SWFLASH;
+ 	u32 addr = (offset << 1);
+ 	u32 len = (words << 1);
+ 	u8 *buf = (u8 *)data;
+@@ -195,7 +195,7 @@ s32 txgbe_ee_readw_buffer(struct txgbe_hw *hw,
+ s32 txgbe_ee_readw_sw(struct txgbe_hw *hw, u32 offset,
+ 			      u16 *data)
+ {
+-	const u32 mask = TXGBE_MNGSEM_SWMBX | TXGBE_MNGSEM_SWFLASH;
++	const u32 mask = TXGBE_MNGSEM_SWFLASH;
+ 	u32 addr = hw->rom.sw_addr + (offset << 1);
+ 	int err;
+ 
+@@ -220,7 +220,7 @@ s32 txgbe_ee_readw_sw(struct txgbe_hw *hw, u32 offset,
+  **/
+ s32 txgbe_ee_read32(struct txgbe_hw *hw, u32 addr, u32 *data)
+ {
+-	const u32 mask = TXGBE_MNGSEM_SWMBX | TXGBE_MNGSEM_SWFLASH;
++	const u32 mask = TXGBE_MNGSEM_SWFLASH;
+ 	int err;
+ 
+ 	err = hw->mac.acquire_swfw_sync(hw, mask);
+@@ -245,7 +245,7 @@ s32 txgbe_ee_read32(struct txgbe_hw *hw, u32 addr, u32 *data)
+ s32 txgbe_ee_write16(struct txgbe_hw *hw, u32 offset,
+ 			       u16 data)
+ {
+-	const u32 mask = TXGBE_MNGSEM_SWMBX | TXGBE_MNGSEM_SWFLASH;
++	const u32 mask = TXGBE_MNGSEM_SWFLASH;
+ 	u32 addr = (offset << 1);
+ 	int err;
+ 
+@@ -272,7 +272,7 @@ s32 txgbe_ee_write16(struct txgbe_hw *hw, u32 offset,
+ s32 txgbe_ee_writew_buffer(struct txgbe_hw *hw,
+ 				      u32 offset, u32 words, void *data)
+ {
+-	const u32 mask = TXGBE_MNGSEM_SWMBX | TXGBE_MNGSEM_SWFLASH;
++	const u32 mask = TXGBE_MNGSEM_SWFLASH;
+ 	u32 addr = (offset << 1);
+ 	u32 len = (words << 1);
+ 	u8 *buf = (u8 *)data;
+@@ -301,7 +301,7 @@ s32 txgbe_ee_writew_buffer(struct txgbe_hw *hw,
+ s32 txgbe_ee_writew_sw(struct txgbe_hw *hw, u32 offset,
+ 			       u16 data)
+ {
+-	const u32 mask = TXGBE_MNGSEM_SWMBX | TXGBE_MNGSEM_SWFLASH;
++	const u32 mask = TXGBE_MNGSEM_SWFLASH;
+ 	u32 addr = hw->rom.sw_addr + (offset << 1);
+ 	int err;
+ 
+@@ -326,7 +326,7 @@ s32 txgbe_ee_writew_sw(struct txgbe_hw *hw, u32 offset,
+  **/
+ s32 txgbe_ee_write32(struct txgbe_hw *hw, u32 addr, u32 data)
+ {
+-	const u32 mask = TXGBE_MNGSEM_SWMBX | TXGBE_MNGSEM_SWFLASH;
++	const u32 mask = TXGBE_MNGSEM_SWFLASH;
+ 	int err;
+ 
+ 	err = hw->mac.acquire_swfw_sync(hw, mask);
+diff --git a/drivers/net/txgbe/base/txgbe_hw.c b/drivers/net/txgbe/base/txgbe_hw.c
+index 5017886896..c911234822 100644
+--- a/drivers/net/txgbe/base/txgbe_hw.c
++++ b/drivers/net/txgbe/base/txgbe_hw.c
+@@ -2998,6 +2998,7 @@ void txgbe_init_ops_sp(struct txgbe_hw *hw)
+ {
+ 	struct txgbe_mac_info *mac = &hw->mac;
+ 	struct txgbe_phy_info *phy = &hw->phy;
++	struct txgbe_mbx_info *mbx = &hw->mbx;
+ 
+ 	txgbe_init_ops_generic(hw);
+ 
+@@ -3008,6 +3009,9 @@ void txgbe_init_ops_sp(struct txgbe_hw *hw)
+ 	mac->init_mac_link_ops = txgbe_init_mac_link_ops_sp;
+ 	mac->get_link_capabilities = txgbe_get_link_capabilities_sp;
+ 	mac->check_link = txgbe_check_mac_link_sp;
++
++	/* MAILBOX */
++	mbx->host_interface_command = txgbe_host_interface_command_sp;
+ }
+ 
+ /**
+diff --git a/drivers/net/txgbe/base/txgbe_mng.c b/drivers/net/txgbe/base/txgbe_mng.c
+index 05eb07c0e2..a1974820b6 100644
+--- a/drivers/net/txgbe/base/txgbe_mng.c
++++ b/drivers/net/txgbe/base/txgbe_mng.c
+@@ -79,7 +79,7 @@ txgbe_hic_unlocked(struct txgbe_hw *hw, u32 *buffer, u32 length, u32 timeout)
+ }
+ 
+ /**
+- *  txgbe_host_interface_command - Issue command to manageability block
++ *  txgbe_host_interface_command_sp - Issue command to manageability block
+  *  @hw: pointer to the HW structure
+  *  @buffer: contains the command to write and where the return status will
+  *   be placed
+@@ -96,9 +96,9 @@ txgbe_hic_unlocked(struct txgbe_hw *hw, u32 *buffer, u32 length, u32 timeout)
+  *  else returns semaphore error when encountering an error acquiring
+  *  semaphore or TXGBE_ERR_HOST_INTERFACE_COMMAND when command fails.
+  **/
+-static s32
+-txgbe_host_interface_command(struct txgbe_hw *hw, u32 *buffer,
+-				 u32 length, u32 timeout, bool return_data)
++s32
++txgbe_host_interface_command_sp(struct txgbe_hw *hw, u32 *buffer,
++				u32 length, u32 timeout, bool return_data)
+ {
+ 	u32 hdr_size = sizeof(struct txgbe_hic_hdr);
+ 	struct txgbe_hic_hdr *resp = (struct txgbe_hic_hdr *)buffer;
+@@ -160,7 +160,7 @@ txgbe_host_interface_command(struct txgbe_hw *hw, u32 *buffer,
+ 	return err;
+ }
+ 
+-static s32
++s32
+ txgbe_host_interface_command_aml(struct txgbe_hw *hw, u32 *buffer,
+ 				 u32 length, u32 timeout, bool return_data)
+ {
+@@ -303,12 +303,8 @@ s32 txgbe_hic_sr_read(struct txgbe_hw *hw, u32 addr, u8 *buf, int len)
+ 	command.address = cpu_to_be32(addr);
+ 	command.length = cpu_to_be16(len);
+ 
+-	if (hw->mac.type == txgbe_mac_aml || hw->mac.type == txgbe_mac_aml40)
+-		err = txgbe_host_interface_command_aml(hw, (u32 *)&command,
+-				sizeof(command), TXGBE_HI_COMMAND_TIMEOUT, false);
+-	else
+-		err = txgbe_hic_unlocked(hw, (u32 *)&command,
+-				sizeof(command), TXGBE_HI_COMMAND_TIMEOUT);
++	err = hw->mbx.host_interface_command(hw, (u32 *)&command,
++			sizeof(command), TXGBE_HI_COMMAND_TIMEOUT, false);
+ 	if (err)
+ 		return err;
+ 
+@@ -381,7 +377,7 @@ s32 txgbe_close_notify(struct txgbe_hw *hw)
+ 	buffer.length = 0;
+ 	buffer.address = 0;
+ 
+-	status = txgbe_host_interface_command(hw, (u32 *)&buffer,
++	status = hw->mbx.host_interface_command(hw, (u32 *)&buffer,
+ 					      sizeof(buffer),
+ 					      TXGBE_HI_COMMAND_TIMEOUT, false);
+ 	if (status)
+@@ -411,7 +407,7 @@ s32 txgbe_open_notify(struct txgbe_hw *hw)
+ 	buffer.length = 0;
+ 	buffer.address = 0;
+ 
+-	status = txgbe_host_interface_command(hw, (u32 *)&buffer,
++	status = hw->mbx.host_interface_command(hw, (u32 *)&buffer,
+ 					      sizeof(buffer),
+ 					      TXGBE_HI_COMMAND_TIMEOUT, false);
+ 	if (status)
+@@ -466,7 +462,7 @@ s32 txgbe_hic_set_drv_ver(struct txgbe_hw *hw, u8 maj, u8 min,
+ 				(FW_CEM_HDR_LEN + fw_cmd.hdr.buf_len));
+ 
+ 	for (i = 0; i <= FW_CEM_MAX_RETRIES; i++) {
+-		ret_val = txgbe_host_interface_command(hw, (u32 *)&fw_cmd,
++		ret_val = hw->mbx.host_interface_command(hw, (u32 *)&fw_cmd,
+ 						       sizeof(fw_cmd),
+ 						       TXGBE_HI_COMMAND_TIMEOUT,
+ 						       true);
+@@ -511,7 +507,7 @@ txgbe_hic_reset(struct txgbe_hw *hw)
+ 				(FW_CEM_HDR_LEN + reset_cmd.hdr.buf_len));
+ 
+ 	for (i = 0; i <= FW_CEM_MAX_RETRIES; i++) {
+-		err = txgbe_host_interface_command(hw, (u32 *)&reset_cmd,
++		err = hw->mbx.host_interface_command(hw, (u32 *)&reset_cmd,
+ 						       sizeof(reset_cmd),
+ 						       TXGBE_HI_COMMAND_TIMEOUT,
+ 						       true);
+@@ -568,7 +564,7 @@ s32 txgbe_hic_get_lldp(struct txgbe_hw *hw)
+ 	buffer.hdr.checksum = FW_DEFAULT_CHECKSUM;
+ 	buffer.func = hw->bus.lan_id;
+ 
+-	err = txgbe_host_interface_command(hw, (u32 *)&buffer, sizeof(buffer),
++	err = hw->mbx.host_interface_command(hw, (u32 *)&buffer, sizeof(buffer),
+ 					   TXGBE_HI_COMMAND_TIMEOUT, true);
+ 	if (err)
+ 		return err;
+@@ -599,7 +595,7 @@ s32 txgbe_hic_set_lldp(struct txgbe_hw *hw, bool on)
+ 	buffer.hdr.checksum = FW_DEFAULT_CHECKSUM;
+ 	buffer.func = hw->bus.lan_id;
+ 
+-	return txgbe_host_interface_command(hw, (u32 *)&buffer, sizeof(buffer),
++	return hw->mbx.host_interface_command(hw, (u32 *)&buffer, sizeof(buffer),
+ 					    TXGBE_HI_COMMAND_TIMEOUT, false);
+ }
+ 
+@@ -619,7 +615,7 @@ s32 txgbe_hic_ephy_set_link(struct txgbe_hw *hw, u8 speed, u8 autoneg, u8 duplex
+ 	buffer.duplex = duplex;
+ 
+ 	for (i = 0; i <= FW_CEM_MAX_RETRIES; i++) {
+-		status = txgbe_host_interface_command(hw, (u32 *)&buffer,
++		status = hw->mbx.host_interface_command(hw, (u32 *)&buffer,
+ 						      sizeof(buffer),
+ 						      TXGBE_HI_COMMAND_TIMEOUT_SHORT, true);
+ 		if (status != 0) {
+diff --git a/drivers/net/txgbe/base/txgbe_mng.h b/drivers/net/txgbe/base/txgbe_mng.h
+index 53c5cd5487..da5efecefd 100644
+--- a/drivers/net/txgbe/base/txgbe_mng.h
++++ b/drivers/net/txgbe/base/txgbe_mng.h
+@@ -208,6 +208,10 @@ struct txgbe_hic_write_lldp {
+ 	u16 pad3;
+ };
+ 
++s32 txgbe_host_interface_command_sp(struct txgbe_hw *hw, u32 *buffer,
++				u32 length, u32 timeout, bool return_data);
++s32 txgbe_host_interface_command_aml(struct txgbe_hw *hw, u32 *buffer,
++				u32 length, u32 timeout, bool return_data);
+ s32 txgbe_hic_sr_read(struct txgbe_hw *hw, u32 addr, u8 *buf, int len);
+ s32 txgbe_hic_sr_write(struct txgbe_hw *hw, u32 addr, u8 *buf, int len);
+ s32 txgbe_close_notify(struct txgbe_hw *hw);
+diff --git a/drivers/net/txgbe/base/txgbe_type.h b/drivers/net/txgbe/base/txgbe_type.h
+index b5dbc9b755..ede780321f 100644
+--- a/drivers/net/txgbe/base/txgbe_type.h
++++ b/drivers/net/txgbe/base/txgbe_type.h
+@@ -786,6 +786,8 @@ struct txgbe_mbx_info {
+ 	s32  (*check_for_msg)(struct txgbe_hw *hw, u16 mbx_id);
+ 	s32  (*check_for_ack)(struct txgbe_hw *hw, u16 mbx_id);
+ 	s32  (*check_for_rst)(struct txgbe_hw *hw, u16 mbx_id);
++	s32  (*host_interface_command)(struct txgbe_hw *hw, u32 *buffer,
++				u32 length, u32 timeout, bool return_data);
+ 
+ 	struct txgbe_mbx_stats stats;
+ 	u32 timeout;
 -- 
-2.51.1
+2.48.1
 
