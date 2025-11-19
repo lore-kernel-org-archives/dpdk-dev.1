@@ -2,78 +2,77 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A01B1CF2561
-	for <dpdk-dev@archiver.kernel.org>; Wed, 19 Nov 2025 00:28:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2390DCF256A
+	for <dpdk-dev@archiver.kernel.org>; Wed, 19 Nov 2025 02:59:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8830C40289;
-	Wed, 19 Nov 2025 01:28:04 +0100 (CET)
-Received: from fout-b7-smtp.messagingengine.com
- (fout-b7-smtp.messagingengine.com [202.12.124.150])
- by mails.dpdk.org (Postfix) with ESMTP id C09554027A;
- Wed, 19 Nov 2025 01:28:02 +0100 (CET)
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
- by mailfout.stl.internal (Postfix) with ESMTP id E66791D00189;
- Tue, 18 Nov 2025 19:28:01 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
- by phl-compute-04.internal (MEProxy); Tue, 18 Nov 2025 19:28:02 -0500
+	by mails.dpdk.org (Postfix) with ESMTP id DCC4640265;
+	Wed, 19 Nov 2025 03:59:04 +0100 (CET)
+Received: from fhigh-b1-smtp.messagingengine.com
+ (fhigh-b1-smtp.messagingengine.com [202.12.124.152])
+ by mails.dpdk.org (Postfix) with ESMTP id 4ADC94021E
+ for <dev@dpdk.org>; Wed, 19 Nov 2025 03:59:03 +0100 (CET)
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+ by mailfhigh.stl.internal (Postfix) with ESMTP id 686307A0133;
+ Tue, 18 Nov 2025 21:59:02 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+ by phl-compute-03.internal (MEProxy); Tue, 18 Nov 2025 21:59:02 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm3; t=1763512081;
- x=1763598481; bh=MMVzV0wkcFEqqOAuT8i90lQJs1K0pzmpWHpQkZSZxX0=; b=
- qTMG0zBmg8WMFDIg5F2SmZSeb7BgCNNga5/SWRv26bPWbZSPndwvh9bIqQiEbmON
- zrcxFYJ7nJqvs05NRytn9Be55JFsWvF9VG3FxmMpII6Q4WB4OYhN3QeCX3ghgQgn
- lkm3Y2XOd4MwnLkvAyJNrsg1wFfL5trfDt8/BdNYpSn0zdtc1GtbKMe5qO2d33ka
- t2ISsQx3rw7HuyesaZve1GXiuXVUZxmwmGh+8Joztu9S8P7+6IurlRF4NGqHnlew
- H/wfCyV4ZJCSiZrh2wuuc+9HMOE+kO+L7xV/bQS/pFLMznySdt9yJMGSgmIBLTLY
- sh3Ql8mBQ9vuo954HuB8zA==
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1763521142;
+ x=1763607542; bh=cJjbZJeYCMVYZ8+fxljFG2Eu+xmxZTSIo/4IsLNFhKI=; b=
+ uWSbkBb9RolyW8eATHvxz6VQ4wU529usZJjpGJryyb8OQBhOIimdvj+BTagjG9LL
+ nDIwEmE44P9yoe/MmZXngg2ecYwrCGGtAN6pwNfApEB0iJiQpMViQcX9TOh0yXdQ
+ y+Tyfg6+ezJ1EqwxtrG3sIKLpuhQj256Ibrs11ZuhEtxWXsPqBSm5XZVOXyFNqO/
+ MaqcC2bObZxcpXmD3RKxtOUTxv32dXbXHTnE7/pYdjI75KCSAio1oaN5ZUsBbnyO
+ mg0NHWtSp7tA7gN7w1zuV4pr/KgKv7I0Crfdl2NE4vI3mRCGx1CXI1sTD45lw4aT
+ WrgBcn+bemBtkt7MWZGxag==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1763512081; x=
- 1763598481; bh=MMVzV0wkcFEqqOAuT8i90lQJs1K0pzmpWHpQkZSZxX0=; b=0
- Uh/QPfScerdrLxtvcf4Qe8k6Q+pX/LTZr9Qfd1JvptSpZl0HqfvSRwdZYlplVlJc
- vad2PsonDWWmzVwf/w1ZLjSUR8hnqJLcWk9jYbQ+inlDK9/l0UtQ71Hax7NwgP97
- RUmXP/95Y/D6V69byPBatTV7Z2VRVQliZXb4VZrWKX58RBB5iOPYiEPNZ/BqiS9V
- DoWI/DKVHmz16DPRngfq3/UDGHa90wb1ULJYxbUjpwUQT3NS3uZJRlY9PmO/ONGu
- i5ZqtT7wfYwS2V299PxZ2cjlDumgfEKr4ksDqOni+ORuGffh19iQ1RGjWgmkjE5/
- 2laI4rSEx5s7cYHc6aKSg==
-X-ME-Sender: <xms:EQ8daR0XOhZ6eRuBwinxww0IwWgly4m5ZQcQpyi5OziJK_eUAdCdtw>
- <xme:EQ8daTgz0mrqQNXiUJFIhsJ1GQlKB1grBWeeP5_jxqE7s-b9FnJQkWFMg3lB300Bn
- _it-3_L8qKuvQg0TKt1xI3jgmHmAPGKnfNaI2i5CLNs4D7llWwA8UE>
-X-ME-Received: <xmr:EQ8daVYyD6XggXpHg9NNBRUPaCkg0l1Kar_fqOC7iDJXMJPoP-cwkEKxAb0KEl7er_IlQBqJ6EkAfbxC0vfb88Bkpw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvvddvjeehucetufdoteggodetrf
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1763521142; x=
+ 1763607542; bh=cJjbZJeYCMVYZ8+fxljFG2Eu+xmxZTSIo/4IsLNFhKI=; b=E
+ p2zWW1OGU9SJsNXmrd4aZzrdxbIIuXcDEdJ7pycJTwwNno/ZVisHu4qbetaq5HW2
+ yo6JXKqcHOok4zd8/A4j1b3UpU0I2fFeD7SgaxCrCtAIQeZRFVTboO9SDcvYJ97J
+ JUozgh3c9/d9Mjvt37gSEo+6j2GDzb7RJErBBKN2l5QG6Yn4TEmFzhyy3L1iO8T4
+ 3efPhQFENtfXpUG8VFuuxGQ9mMSvGmtwIg6Og3BdOkwpGOJqbxsw8yEW0ukIZUWN
+ GzJtZp2uXnRRvPsmLPNCAkISiUNXrQzzmcGPE2lAisCG7p09S6GhDJMulY2g1lPy
+ r+Q4e+aRbXJXzTc5bMsGQ==
+X-ME-Sender: <xms:dTIdaSx1P2LR7RTTZWRDfce3hlkmIV5AHIOWgVqyqRtIu7TWTzQdaA>
+ <xme:dTIdaVQsCWgZocEK_z_LHLpgZ15Y5n_WzYkeaJYaQoZXXKIESC1E3fd_Sfbe_2QTn
+ NttsTegZO-3mzPOh2ELYrHkUOX5O_cI2KY04B6AtRDOlR5sBj1a0DQ>
+X-ME-Received: <xmr:dTIdaZVlFa33JnF5v5PKPqogTxVAk29g9vxISkq-wI27a_LqDb4UCm23c-ZWvgagc32E4pXkp_fGTJMgeGiv0ZZXPg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvvdeftdeiucetufdoteggodetrf
  dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
- rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
- gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
- ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
- frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
- uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeehpdhm
- ohguvgepshhmthhpohhuthdprhgtphhtthhopegtfhhonhhtrghinhesrhgvughhrghtrd
- gtohhmpdhrtghpthhtoheprhhjrghrrhihsehrvgguhhgrthdrtghomhdprhgtphhtthho
- pehsthgvphhhvghnsehnvghtfihorhhkphhluhhmsggvrhdrohhrghdprhgtphhtthhope
- hsthgrsghlvgesughpughkrdhorhhgpdhrtghpthhtohepuggvvhesughpughkrdhorhhg
-X-ME-Proxy: <xmx:EQ8daTSZJgXN3v_9UtVL49NMnB9LH50QSwH6kZ77kNtyYi1szGskZA>
- <xmx:EQ8daQSGFtZ_OscAWDXO4mGgjoyp0KbXtRdBNS69G8K6spveT8zaHA>
- <xmx:EQ8dafTRT-2q7q1XEBqxI3nh51xEKCAB8FA2OtGmZuibBCQSXJOCHQ>
- <xmx:EQ8dad5Zoxu4MO5NWlNY4XNx8ybyNYRI5obCIyaK1FRKGBuDs9JDpg>
- <xmx:EQ8dabUcLtI1zSnEO0KyNSX38FwmhiiANXFohJGEWrLJUXbgNW5EdMwI>
+ rghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertd
+ dttdejnecuhfhrohhmpefvhhhomhgrshcuofhonhhjrghlohhnuceothhhohhmrghssehm
+ ohhnjhgrlhhonhdrnhgvtheqnecuggftrfgrthhtvghrnhepjeduveehieevuddutdevff
+ fgtdegkeeuveejffejgedtgeegkefgvdeugfefkeejnecuvehluhhsthgvrhfuihiivgep
+ tdenucfrrghrrghmpehmrghilhhfrhhomhepthhhohhmrghssehmohhnjhgrlhhonhdrnh
+ gvthdpnhgspghrtghpthhtohepgedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohep
+ uggvvhesughpughkrdhorhhgpdhrtghpthhtoheptghhrhhishhtihgrnhdrvghhrhhhrg
+ hrughtsegtrghnohhnihgtrghlrdgtohhmpdhrtghpthhtohepmhgrihgtohhlghgrsghr
+ ihgvlheshhhothhmrghilhdrtghomhdprhgtphhtthhopehrohhrvghtiihlrgeslhhinh
+ hugidrmhhitghrohhsohhfthdrtghomh
+X-ME-Proxy: <xmx:dTIdaXYs3J-H-LU3cqyFpz48UQCsYK4sS6mW8E4WFI7ESooN5GK_NA>
+ <xmx:dTIdaf0nut4WyGak70jlFRYwdeW-z8qXfA_dMg7P_9IXSwQmMMWIvA>
+ <xmx:dTIdaZiiAqdgpwvg0b6jiNbRfOKKxlaLpHeuHIl1HUqSgttuE1EPQg>
+ <xmx:dTIdaTbePrYiZKOyStQUCrYFMqdqnjyi7zkOkibDiIfDZgDbtWQsSg>
+ <xmx:djIdaQREYFRxtI534QciaPf2tOtQ7tMERhf6-BzJgUQTloV9Ss2dEGtp>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 18 Nov 2025 19:28:00 -0500 (EST)
+ 18 Nov 2025 21:59:01 -0500 (EST)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: Christophe Fontaine <cfontain@redhat.com>, Robin Jarry <rjarry@redhat.com>
-Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
- dev@dpdk.org
-Subject: Re: [PATCH dpdk v2] net: ipv6 link local compliance with rfc 4291
-Date: Wed, 19 Nov 2025 01:27:58 +0100
-Message-ID: <4832942.kQq0lBPeGt@thomas>
-In-Reply-To: <3249247.iZASKD2KPV@thomas>
-References: <20251114105751.54802-3-rjarry@redhat.com>
- <20251118174526.321856-1-rjarry@redhat.com> <3249247.iZASKD2KPV@thomas>
+To: dev@dpdk.org
+Cc: christian.ehrhardt@canonical.com, maicolgabriel@hotmail.com,
+ roretzla@linux.microsoft.com
+Subject: Re: [PATCH] maintainers: remove some inactives
+Date: Wed, 19 Nov 2025 03:58:58 +0100
+Message-ID: <10455262.CDJkKcVGEf@thomas>
+In-Reply-To: <20251102161410.4004823-1-thomas@monjalon.net>
+References: <20251102161410.4004823-1-thomas@monjalon.net>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -90,31 +89,13 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-19/11/2025 01:07, Thomas Monjalon:
-> 18/11/2025 18:45, Robin Jarry:
-> > From: Christophe Fontaine <cfontain@redhat.com>
-> > > Modified EUI-64 format interface identifiers are formed by inverting
-> > > the "u" bit (universal/local bit in IEEE EUI-64 terminology) when
-> > > forming the interface identifier from IEEE EUI-64 identifiers.
-> [...]
-> > -	ip->a[8] = mac->addr_bytes[0];
-> > +	ip->a[8] = mac->addr_bytes[0] ^ RTE_ETHER_LOCAL_ADMIN_ADDR;
+02/11/2025 17:14, Thomas Monjalon:
+> Some maintainers known to be inactive for at least a year
+> are removed to make clearer where help is needed.
 > 
-> In all other places, we use the operator OR, so I'm not sure about this XOR.
-> Also, rte_is_universal_ether_addr() and rte_is_local_admin_ether_addr()
-> are comparing this bit with 0.
-> Is this bit always 0 by default in MAC addresses?
+> Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
 
-After checking with Stephen, it appears that XOR is really desired.
-This bit must be inverted, so 0 is local and 1 is universal.
+Applied
 
-Adding this comment in the code to avoid confusion in future:
-    /*
-     * The "u" bit (universal/local bit in IEEE EUI-64 terminology)
-     * must be inverted for IPv6 link local address.
-     * 0 means local scope, 1 means universal scope.
-     */
-
-Applied, thanks.
 
 
