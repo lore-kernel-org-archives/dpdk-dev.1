@@ -2,89 +2,99 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49352CF34B2
-	for <dpdk-dev@archiver.kernel.org>; Wed, 19 Nov 2025 14:42:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFE7DCF34C1
+	for <dpdk-dev@archiver.kernel.org>; Wed, 19 Nov 2025 14:55:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5172540267;
-	Wed, 19 Nov 2025 15:42:50 +0100 (CET)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id F295B40262
- for <dev@dpdk.org>; Wed, 19 Nov 2025 15:42:46 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1763563366;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=blSweLmLEC50GPF4V700MwSYM5ZXGBhUa8g4RsrAHcE=;
- b=W1xGhHnj4zBj0BFvEpFsOF1iw9CtqSehR2DaSn2v/7g8c2z+0AA0I/Se4abvjrGyYm0xfi
- Zyo1RLC9s/PuL91borpIbQJg6vUdUbbKDFovzM+LTX7j5PawXlaQ8p/YI56WZFGfGKSxzq
- vofWi1/K+5XhZo2AwIzj78S+nZ4+PII=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-169-w6FDkRaMPJmCmkUiKhD3VQ-1; Wed, 19 Nov 2025 09:42:44 -0500
-X-MC-Unique: w6FDkRaMPJmCmkUiKhD3VQ-1
-X-Mimecast-MFC-AGG-ID: w6FDkRaMPJmCmkUiKhD3VQ_1763563362
-Received: by mail-wm1-f71.google.com with SMTP id
- 5b1f17b1804b1-47799717212so37520375e9.3
- for <dev@dpdk.org>; Wed, 19 Nov 2025 06:42:44 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1763563362; x=1764168162;
- h=in-reply-to:references:user-agent:subject:to:from:cc:message-id
- :date:content-transfer-encoding:mime-version:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=blSweLmLEC50GPF4V700MwSYM5ZXGBhUa8g4RsrAHcE=;
- b=dz9UNBhMVYu9x1bRjVS0IkrXfCq9qioaO1KSkMX0JzPC7s/NHbrTfo7KK1GVBef9wj
- a/fvttIwX1waY0VtcRIiL3qY8YfiuY5BlZRwO+jzQcBACmSMwTVcYoSBI2SaNnfMxBMP
- Igv+2YVDT/QLHMlWGp0bxdRP5BTpkz16MBwH1Z0MgPNGk30bAMc2XTfMQqvgyXfhixZM
- SKgbpuoDWmlfKvrDPYNHgtPDJPVHYJweHySztzYCGyWeRi0a1yRVj85DYq27ETtHsqg3
- Ld6pwKhycO7610DsKKHtJxx+co6g1ysTPWtrTK1sg/YUaO1itfdZ0BnDgkZrMbYMbWGe
- yhtQ==
-X-Forwarded-Encrypted: i=1;
- AJvYcCVhWyH58TMY2CCB879K5nGKx3JiMuMKGzABAH+/p1iDd2Q6jwuxWZvliTPdH9ecf4fx4iA=@dpdk.org
-X-Gm-Message-State: AOJu0Yx/Fm+K36OXhPXVPTlouD+FTe1hK1CF62pmqvvOpXTipNK+6R/p
- NEkQiYnovWreOxqmFzx+3ESxhgZ9ybM8l5sMINj0dhMBVwgcBVtYN8TN6m9efjd/3O+4+yIXCFJ
- aFCkdAcpQIMjnSHJMT7VM4sJ68sIjcA9yNc8b7DoCOz2R
-X-Gm-Gg: ASbGncsBoEtn8CoZsIRT9NXIdKOCSEf2jGeIEA2lQ+ScFeg6pExahxoeESRxnwMKSvC
- ta/lfO46k+qpRCc+Wqxifs/WewNElHGOmVN8XmUZ9YDNk7htNKdbS6giLihKzegW1HAX1k7y9HM
- fVuJEBhTf2oxamUFRsGuf7AFmSOS68WAlDsDEHW0gJWFaicdXgVTCMDc+EIJTl/wsA3K9T+kx1e
- 1VLMlDdaWmxy0mYL1MwtuPxRW+WAtj/q9n64psgMnZtB6znQQ8nIY9k0u51FmNbzSDJ9WzkXXYF
- PoFkUhEfdLzpBuiul1yNky22cVXLToJV7hagZvz4J9G5RokND4BqZURkQnUVeZYy4/0VCnjZFXT
- mQLU2sfbYtXVKTLvxtjs3OdfpYXyCCkM/vGuy/ORSuAbtQb7Z+qPwusdDbD73ayVsKR5X
-X-Received: by 2002:a05:600c:4f07:b0:477:63b5:6f3a with SMTP id
- 5b1f17b1804b1-4778fead9a4mr191839615e9.27.1763563362099; 
- Wed, 19 Nov 2025 06:42:42 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IH7YipzOw7j2+Oxh6zu9NJAvOkx95S7VVbmIlSfWU3zxg00wNBqVjbDs+R2c5daxIWzqCpv2A==
-X-Received: by 2002:a05:600c:4f07:b0:477:63b5:6f3a with SMTP id
- 5b1f17b1804b1-4778fead9a4mr191839305e9.27.1763563361650; 
- Wed, 19 Nov 2025 06:42:41 -0800 (PST)
-Received: from localhost (2a01cb00021ec000b06e6b63494bd4c5.ipv6.abo.wanadoo.fr.
- [2a01:cb00:21e:c000:b06e:6b63:494b:d4c5])
- by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-477b1035c78sm51807145e9.11.2025.11.19.06.42.40
- (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
- Wed, 19 Nov 2025 06:42:41 -0800 (PST)
-Mime-Version: 1.0
-Date: Wed, 19 Nov 2025 15:42:40 +0100
-Message-Id: <DECR1BBB72GY.3CA5B6PY8ORGW@redhat.com>
-Cc: "Stephen Hemminger" <stephen@networkplumber.org>, <stable@dpdk.org>,
- <dev@dpdk.org>
-From: "Robin Jarry" <rjarry@redhat.com>
-To: "Thomas Monjalon" <thomas@monjalon.net>, "Christophe Fontaine"
- <cfontain@redhat.com>
-Subject: Re: [PATCH dpdk v2] net: ipv6 link local compliance with rfc 4291
-User-Agent: aerc/0.21.0-33-gc811101f9a96
-References: <20251114105751.54802-3-rjarry@redhat.com>
- <20251118174526.321856-1-rjarry@redhat.com> <3249247.iZASKD2KPV@thomas>
- <4832942.kQq0lBPeGt@thomas>
-In-Reply-To: <4832942.kQq0lBPeGt@thomas>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: vMRtPXDvC9o5KwwTdvAQfRJQQGvScE2A20WugjH81vQ_1763563362
-X-Mimecast-Originator: redhat.com
+	by mails.dpdk.org (Postfix) with ESMTP id D2CA940267;
+	Wed, 19 Nov 2025 15:55:18 +0100 (CET)
+Received: from fout-a1-smtp.messagingengine.com
+ (fout-a1-smtp.messagingengine.com [103.168.172.144])
+ by mails.dpdk.org (Postfix) with ESMTP id 9E6B640262;
+ Wed, 19 Nov 2025 15:55:17 +0100 (CET)
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+ by mailfout.phl.internal (Postfix) with ESMTP id 2DA3AEC01E1;
+ Wed, 19 Nov 2025 09:55:17 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+ by phl-compute-02.internal (MEProxy); Wed, 19 Nov 2025 09:55:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1763564117;
+ x=1763650517; bh=hGrnWY8EPyAiN4HtW7yyfpOeHOZAQVfqVkuc1KqrETQ=; b=
+ NQDL7rkDQj8YMy/qW1DAjwE305VnNZOGdAxbeCUj7jfSr50jgTKjEl0iOg/WQDJB
+ Sh0ZegF5dQJ2nP/Qe0Gy6mJiv/tKkId9USKE0tpc/U8sRQFkfHDLi3x25TJWyZBy
+ KC9p4F+GqtYBljXHizRGg/BAEWWXqKsiN46YvFGJR0Rrk7lUGkGaFXENGN0D9V4I
+ s/4O7DxS4b3G27hqEJM2vrzPGNbuR0Bb7JVCau1cax4ByRgu6Pyj6ndAI8iIi84k
+ BDFRy8h9mO/fbm3Fy8+5c0hN1Pyf/k+te5eysTKuTlerooKotji8SA3dYwZ/qH37
+ tD+2pIGbryuIY2h+URJHng==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1763564117; x=
+ 1763650517; bh=hGrnWY8EPyAiN4HtW7yyfpOeHOZAQVfqVkuc1KqrETQ=; b=T
+ khl3KGyUISngHNdXL75SVEMSn/+CBhy0OUfUJbcgCXjhRx8NOnCp3KRr4rxkYI4u
+ Mp5MEHUqPNj6aTFa78Hlk6vlhCcZU+MAqMr5wE735obzmiANcvIFwXZDE38NHPBF
+ R1oiTKYLTlDUAN4zNagOwaTAEVeGHU++9rkc1tEB6rln36jYi5aQtPEcrOL0WNmW
+ aKvC237HRMqIvL4/7KGyRI86PC2huvpF9r0DlSjU4xPMQssxNK72M0Rix/37qsHl
+ MUdm1V/NcN64WPHZsYctApw5MZl9T55maI3vjJvZIjGj5jQG68VMWWShwDq7C/Up
+ sJHIHnS7M1h81YFMn9UWw==
+X-ME-Sender: <xms:VNodaetlXQUiA-ivrgDMXHZw3xyo-eqAVqjQEKccTrKddeUnliJfBg>
+ <xme:VNodaS6rYAxQfiK3gWehWrb3Bfq08aLVrJa-DcYmJNCTnNr-97jQPjWQFp0sdnqG_
+ LXqxfwXNOLIW6kCtpBeeGlyTCiVo6EB5IgPGVNowj25qrQLkWQb>
+X-ME-Received: <xmr:VNodaa07h2XsWluobyYLsj5hiQ8Rd7V3oxLS8lpHiZaJJglxHy2N2fYFruagk6tnntgFfBe2F2NkgLzyTNBom9-ZHg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvvdeggeelucetufdoteggodetrf
+ dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+ rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+ gurhephffvvefufffkjghfggfgtgesthhqredttddtjeenucfhrhhomhepvfhhohhmrghs
+ ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
+ frrghtthgvrhhnpeegtddtleejjeegffekkeektdejvedtheevtdekiedvueeuvdeiuddv
+ leevjeeujeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeduiedp
+ mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepshhivhgrphhrrghsrggurdhtuhhmmh
+ grlhgrsegrmhgurdgtohhmpdhrtghpthhtohepkhhonhhsthgrnhhtihhnrdgrnhgrnhih
+ vghvsehhuhgrfigvihdrtghomhdprhgtphhtthhopehnihhthhhinhguudelkeeksehgmh
+ grihhlrdgtohhmpdhrtghpthhtohepshhtrggslhgvseguphgukhdrohhrghdprhgtphht
+ thhopehjvghrihhnjhesmhgrrhhvvghllhdrtghomhdprhgtphhtthhopehkihhrrghnkh
+ humhgrrhhksehmrghrvhgvlhhlrdgtohhmpdhrtghpthhtohepnhgurggsihhlphhurhgr
+ mhesmhgrrhhvvghllhdrtghomhdprhgtphhtthhopeihrghniihhihhruhhnpgduieefse
+ duieefrdgtohhmpdhrtghpthhtohepuggrvhhiugdrmhgrrhgthhgrnhgusehrvgguhhgr
+ thdrtghomh
+X-ME-Proxy: <xmx:VNodadhJWPcQC8Q35CMMEpT0Bq3npN18XsaQ74LGJsW9MaNq5wrVbg>
+ <xmx:VNodaSrx8mYj6Sdd7StDqh8f2_wVngMJhIww7V4XRFEGK2ERFF7SfA>
+ <xmx:VNodaYM6Zi-7JS3MMrYxLbwMuiqSZAFliSAZpPWzUKDdnZcd9ZJdjg>
+ <xmx:VNodaW2mh6y8OqJRdidWFFStfKDuHS1Jn3jhgp5KmGeYtZ0nj2RPdw>
+ <xmx:VdodaeXMBgX2-GdnzF4Tgw4Qmr1Mmx5vJBkaYufH2E_AveeVdkYx20Nl>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 19 Nov 2025 09:55:14 -0500 (EST)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: "Tummala, Sivaprasad" <Sivaprasad.Tummala@amd.com>
+Cc: Konstantin Ananyev <konstantin.ananyev@huawei.com>,
+ Nithin Dabilpuram <nithind1988@gmail.com>,
+ "stable@dpdk.org" <stable@dpdk.org>,
+ "jerinj@marvell.com" <jerinj@marvell.com>,
+ "kirankumark@marvell.com" <kirankumark@marvell.com>,
+ "ndabilpuram@marvell.com" <ndabilpuram@marvell.com>,
+ "yanzhirun_163@163.com" <yanzhirun_163@163.com>,
+ "david.marchand@redhat.com" <david.marchand@redhat.com>,
+ "ktraynor@redhat.com" <ktraynor@redhat.com>,
+ "konstantin.v.ananyev@yandex.ru" <konstantin.v.ananyev@yandex.ru>,
+ "bruce.richardson@intel.com" <bruce.richardson@intel.com>,
+ "maxime.coquelin@redhat.com" <maxime.coquelin@redhat.com>,
+ "aconole@redhat.com" <aconole@redhat.com>, "dev@dpdk.org" <dev@dpdk.org>,
+ "stable@dpdk.org" <stable@dpdk.org>
+Subject: Re: [PATCH] examples/l3fwd-graph: remove redundant Tx queue limit
+Date: Wed, 19 Nov 2025 15:55:12 +0100
+Message-ID: <882704772.0ifERbkFSE@thomas>
+In-Reply-To: <CH3PR12MB82334C3FDADDAA01A13107D386D7A@CH3PR12MB8233.namprd12.prod.outlook.com>
+References: <20250901154400.2333310-1-sivaprasad.tummala@amd.com>
+ <3175023.Icojqenx9y@thomas>
+ <CH3PR12MB82334C3FDADDAA01A13107D386D7A@CH3PR12MB8233.namprd12.prod.outlook.com>
+MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -98,34 +108,52 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Thomas Monjalon, Nov 19, 2025 at 01:27:
-> After checking with Stephen, it appears that XOR is really desired.
-> This bit must be inverted, so 0 is local and 1 is universal.
->
-> Adding this comment in the code to avoid confusion in future:
->     /*
->      * The "u" bit (universal/local bit in IEEE EUI-64 terminology)
->      * must be inverted for IPv6 link local address.
->      * 0 means local scope, 1 means universal scope.
->      */
->
-> Applied, thanks.
+19/11/2025 14:56, Tummala, Sivaprasad:
+> From: Thomas Monjalon <thomas@monjalon.net>
+> 19/11/2025 13:08, Tummala, Sivaprasad:
+> > From: Thomas Monjalon <thomas@monjalon.net>
+> > 06/10/2025 10:58, Tummala, Sivaprasad:
+> > > From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+> > > > > On Mon, Sep 1, 2025 at 11:39=E2=80=AFPM Sivaprasad Tummala
+> > > > > <sivaprasad.tummala@amd.com> wrote:
+> > > > > > --- a/examples/l3fwd-graph/main.c
+> > > > > > +++ b/examples/l3fwd-graph/main.c
+> > > > > > @@ -49,7 +49,6 @@
+> > > > > >  #define RX_DESC_DEFAULT 1024
+> > > > > >  #define TX_DESC_DEFAULT 1024
+> > > > > >
+> > > > > > -#define MAX_TX_QUEUE_PER_PORT RTE_MAX_ETHPORTS
+> > > > > >  #define MAX_RX_QUEUE_PER_PORT 128
+> > > >
+> > > > AFAIK, in the mainline we actually have:
+> > > > #define MAX_TX_QUEUE_PER_PORT RTE_MAX_LCORE
+> > > >
+> > > In l3fwd-graph app, this change is not available and instead we have
+> > >> #define MAX_TX_QUEUE_PER_PORT RTE_MAX_ETHPORTS
+> > >>
+> > >> > since:
+> > >> > commit 88256ed85338c572d73006e4c4530a52d3b477ff
+> > >> > Author: Harman Kalra <hkalra@marvell.com>
+> > >> > Date:   Tue Jan 12 23:54:46 2021 +0530
+> > >> >
+> > >> >     examples/l3fwd: remove limitation on Tx queue count
+> > >> >
+> > >> > What I am missing here?
+> >> >> This patch marked here was fixing l3fwd app and not l3fwd-graph
+> >>
+> >> > Why not applying the same change to both examples?
+> >> Yes, that's what the patch is intended for to fix l3fwd-graph and tx q=
+ueues will scale with lcores and limited by RTE_MAX_LCORES.
+>=20
+> >But it is not done the same way.
+> > Here you remove MAX_TX_QUEUE_PER_PORT.
+> > Do you want to do the same in l3fwd?
+> Yes, it's better to fix the same in l3fwd as "MAX_TX_QUEUE_PER_PORT" is r=
+edundant.
+> I can submit a separate patch for l3fwd.
 
-Thanks Thomas.
+Better to fix in a single patch.
+Please check if there are similar issue in other examples.
 
-That XOR is described in the RFCs as "flipping the 'u' bit". I.e. the
-bit should be 1 if the address is "global/universal" and 0 if the
-address is "local/administratively configured".
 
-Here's the corresponding code in Linux and BSD:
-
-https://github.com/torvalds/linux/blob/v6.17/include/net/addrconf.h#L201
-
-https://github.com/freebsd/freebsd-src/blob/release/14.3.0/sys/netinet6/in6=
-_ifattach.c#L97
-
---=20
-Robin
-
-> No animals were injured.
 
