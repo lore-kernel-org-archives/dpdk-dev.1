@@ -2,179 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21320CF319B
-	for <dpdk-dev@archiver.kernel.org>; Wed, 19 Nov 2025 11:06:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47B4CCF319B
+	for <dpdk-dev@archiver.kernel.org>; Wed, 19 Nov 2025 11:08:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6D5C740289;
-	Wed, 19 Nov 2025 12:06:43 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
- by mails.dpdk.org (Postfix) with ESMTP id 9CCF940289
- for <dev@dpdk.org>; Wed, 19 Nov 2025 12:06:41 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 964A240289;
+	Wed, 19 Nov 2025 12:08:25 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+ by mails.dpdk.org (Postfix) with ESMTP id 8DD3740265
+ for <dev@dpdk.org>; Wed, 19 Nov 2025 12:08:23 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1763550402; x=1795086402;
- h=message-id:date:subject:to:references:from:in-reply-to:
- content-transfer-encoding:mime-version;
- bh=DKNOHJppWCmEMItnhv0Mafitry4nQHPgKitMjGp83FY=;
- b=HVpBRTP4zPmFzECQEqTt4wFbcr8Z1KG68swBr2KXDgbLDQ1M55i/LlGo
- Q5Nyfxy+ub6v1FJWvAPuYB5kMFln3gEsKOzLxNgZXHDQEkl8zvK+galG4
- CfKA9ne3+0iCqB+yIFL+Wr2KUFqODw/oU1mBtzUNRCXBkBFCFQsz8By06
- dWA2I9PA645WzGQSPP3Dq095yEXGvBmzgIeNB96fcyHFssKfrMhEuXm7R
- HpL3AB822ieov65C1zCM4KsG26L+ZE5MPBREludclC6Oo6rgPqQowyvam
- wmibatau34RvGj4e5Bhuvr/bB74I3ukP0cJKVvz9bvQbUXw8tVbA9ucXg Q==;
-X-CSE-ConnectionGUID: XWi3Aof5QEOi5tOW7JI1kA==
-X-CSE-MsgGUID: p0wJZSjFT1GD3aYmaWAE+g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11617"; a="76693421"
-X-IronPort-AV: E=Sophos;i="6.19,315,1754982000"; d="scan'208";a="76693421"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
- by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 19 Nov 2025 03:06:41 -0800
-X-CSE-ConnectionGUID: AZ09EokRT7mEtCoFevM2KA==
-X-CSE-MsgGUID: SKsT1guIS3qO8jvosfnW8w==
+ t=1763550504; x=1795086504;
+ h=from:to:subject:date:message-id:in-reply-to:references:
+ mime-version:content-transfer-encoding;
+ bh=yskZlrxzY7vfAHSdVUnxs3168Br76IBeEavzTVbWveo=;
+ b=Ddl1NozBXqpvfUK4ShdKhpZGSVQDI++7TVu7ohAv6bHxzgEl1cyUWoHB
+ Vvy4yFWDo3m2Q45GZzSV2+r5T6goVGVeWxGFUDDFvv4UAGD3Bqbqqo4Y0
+ COueC7wyPPZB9Pvx0FwJ2SXJxZ0RSc15gDKGTlH8Qok91xftCqMoT9vDK
+ 1YzI8niaz7BARCEUtoSm8Q1T2uH7/WJucmrM7s1iMkuy7cm/BSC8S9DHH
+ ZLZyuhckNBT7j0eRq7aEB6TqoIxH6b516BRJnKTOocM2A255aTVjcAqgt
+ W43s8wVzbWe1S8GiSc1XGQR326IjewrkH7HhItfat1IsebZ4yyxMYUjAB w==;
+X-CSE-ConnectionGUID: CSP6nDomTK2xUdLIKVipng==
+X-CSE-MsgGUID: yC7QOc03QamswxtF0wJTtg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11617"; a="65744934"
+X-IronPort-AV: E=Sophos;i="6.19,315,1754982000"; d="scan'208";a="65744934"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+ by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 19 Nov 2025 03:08:22 -0800
+X-CSE-ConnectionGUID: GkvGwkMXROqODu4DsCV/qQ==
+X-CSE-MsgGUID: DB/VrM9YT36SZ2I6IYm+aw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,315,1754982000"; d="scan'208";a="190684254"
-Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
- by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 19 Nov 2025 03:06:40 -0800
-Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
- fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Wed, 19 Nov 2025 03:06:40 -0800
-Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
- FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Wed, 19 Nov 2025 03:06:40 -0800
-Received: from PH8PR06CU001.outbound.protection.outlook.com (40.107.209.14) by
- edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Wed, 19 Nov 2025 03:06:40 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ypaO0IzeJ7sfvrL8yV9bR8j1tmpGXPxONAQYqg5LITQvOVQJiL6vWyvjf5B9aeAWzZw451r37LF7VkKcKMOYXhRzXLbMA/gjlZW1uzXQC5xLez1aKL7askDY5aDNZ1iFKA3gbSHcSC9/0gPCGJ2EopyDqTkqtZsKwinLHZTI47jQ75+1tNn8fkiBCcpr1hU6HC6LdX9z3D3i/CVzNnNr0E8esHoG7THvJ5uszKHdR9c94DEKYdr0INgzX3hxDm2jI/amWoNYFlw7j+OW4duxq7SqbEfJqvIMsEB7VzuQEL/t9cAZg7Yk6/D4G0Bkp06fdnuHGKL9uOv5qEgztyg9vg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gGOyJxZ+SH+QmiXv8nG8Y6wSbg+FKppUUrE8Qe/WcVg=;
- b=OuPZ6yl2s4uyxPd9HN52vtCMvJzfPHHdpgZT4ijU3J65mwmlcHmMIC1Tx1bWuBr9CcF4NW+fWNrzLCf07/CvHHSTEWRZQb/LlCBU9G/Ta2KQnl/zJoMdFaQ/JfPtB5eGmY70cJg6uTMSFWz4wznA4BHfpRcDNRs3E5nGi5+QuJId9U0dyArzr+GWy0IaOhFBbO/zjAAnNGdsHUIUKVxiQqi2bT2EkEpUzI/1224D+eyOKPVz3N62gR+paQv8FltcPWwwyPdIkPlOdTvQp4fCjPOjy11/SLM/Um8Nl+aPfDg9tiOhK+9BvUAKqnRwEZxZNe7cCn3IXBK6yedqpKqxmA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from BL3PR11MB6481.namprd11.prod.outlook.com (2603:10b6:208:3bc::21)
- by DS4PPF31CEE2CEC.namprd11.prod.outlook.com (2603:10b6:f:fc02::1c)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9343.10; Wed, 19 Nov
- 2025 11:06:33 +0000
-Received: from BL3PR11MB6481.namprd11.prod.outlook.com
- ([fe80::32d9:6a94:59b7:9528]) by BL3PR11MB6481.namprd11.prod.outlook.com
- ([fe80::32d9:6a94:59b7:9528%4]) with mapi id 15.20.9320.013; Wed, 19 Nov 2025
- 11:06:33 +0000
-Message-ID: <aa6df76f-cced-4cfd-8111-66571534fecf@intel.com>
-Date: Wed, 19 Nov 2025 12:06:27 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 00/17] Support VFIO cdev API in DPDK
-To: <dev@dpdk.org>
+X-IronPort-AV: E=Sophos;i="6.19,315,1754982000"; d="scan'208";a="191158171"
+Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
+ by orviesa008.jf.intel.com with ESMTP; 19 Nov 2025 03:08:22 -0800
+From: Anatoly Burakov <anatoly.burakov@intel.com>
+To: dev@dpdk.org
+Subject: [PATCH v5 00/18] Support VFIO cdev API in DPDK
+Date: Wed, 19 Nov 2025 11:07:58 +0000
+Message-ID: <cover.1763550469.git.anatoly.burakov@intel.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <cover.1761669438.git.anatoly.burakov@intel.com>
 References: <cover.1761669438.git.anatoly.burakov@intel.com>
- <cover.1763549736.git.anatoly.burakov@intel.com>
-Content-Language: en-US
-From: "Burakov, Anatoly" <anatoly.burakov@intel.com>
-In-Reply-To: <cover.1763549736.git.anatoly.burakov@intel.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: DUZPR01CA0208.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:4b6::6) To DM4PR11MB6502.namprd11.prod.outlook.com
- (2603:10b6:8:89::7)
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL3PR11MB6481:EE_|DS4PPF31CEE2CEC:EE_
-X-MS-Office365-Filtering-Correlation-Id: d409d53d-bce0-49cb-7fb3-08de275bb243
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?MHh1SW92M0dMOTh3b3hzR0txdXBsSXlRamRVZGhyYlVDYXJvVTdFS3lydHlX?=
- =?utf-8?B?K0prK2E5cnRjalJMaUI5NnZpc2U5eXFYQmF1dnd3N3RxUlorRTFQQ2Q0RzM1?=
- =?utf-8?B?M3AwdzJteTJNR3ZrZEVKRTVkdmpEMHVveVRnWE9Pc2dib25LN0NocE5OcDhj?=
- =?utf-8?B?dUZuRzR1RWhLN04wbUQxcTNJdmV6MjdRQjBIMVBldS9oYVpybm9WcDF5bXBE?=
- =?utf-8?B?R2REQ0lZdGNBckJoVDlhdnFLUmd0dmNMcG1WY0xHOFY5eE1PQ2VzUkxIcVpr?=
- =?utf-8?B?R0FBN0VDOVgrbGxqa1I2STMyWUtTaUxPdEh1OU9BMUZqWWgxZ3QvRmJzV2Vh?=
- =?utf-8?B?V1cwQnU3OXpWa2VJT1BYdjJMbExOTGVvWDd1Y3E4TndJUXF4VXJvZXZFL2Ns?=
- =?utf-8?B?S1RzNlk4UlFFMzJhVEpBQlFRZlErbG1mRFBoTXhPZlRVdkxqa1JoTUhDekFP?=
- =?utf-8?B?WXMwMFh6UjRpN1hQNUhzUnc4amNpNnkzQVQ1cStzb3ZQSFJTbHVZQnBiWHFk?=
- =?utf-8?B?L1c4WGNpZko1Y09Rams5Z3V3MGRwVEJ3SnByUnpvZ0h5R1B3RVBmODgySmdn?=
- =?utf-8?B?SWxhTDgwTzBRNW45OTVza3dDRmhFekYyckRKZnlWM1dHcFFlcnZNRllwV1Vp?=
- =?utf-8?B?R3dzTjdlbnBUakxPVUdqTld6Y3JwOFRJdXZTZkpHQ1UyRTZPNEVQQk9qd1RK?=
- =?utf-8?B?dTFVc1BibU04ekpjRXBFTEtVSmxhaXd3UHQ3M2l4WDFLcVpVM3JLRU40TDY3?=
- =?utf-8?B?aTJsSFdodkcySlpEZy8zSll6TStsek5aTSsrbUt6OFUybUUrbnlUTC9HVUJl?=
- =?utf-8?B?OWZYeDZXNXUvZitKSzhVR3V0ZENwQWN3ZmNzcDUybndDNlBWcHljamxGdVdw?=
- =?utf-8?B?TUEraVFCRWs4L3JKc2hQQnBkekVVbExjaGhlQndYeit2QzBjOG8zYUgzamJR?=
- =?utf-8?B?eXJMeGYxMGpQS05PclVjVzVUQWxnNTc3RjNtODVUZG5KSlBobFdrZ0ZvV2Nx?=
- =?utf-8?B?N1BtQTBoS3dIZmUyS2JVVmphcU1zd3Z1aUs4d3dOYlFERm5jcVk2aFBGVVVB?=
- =?utf-8?B?d3h0emI0ZkFxSDJpMWVhakNwa3RRRDZZVllBL290NU9xcitVaGxwTTkxOXZx?=
- =?utf-8?B?OVo0akprUGtuUDdTWHl1Ymh1NS83V2pLQVRIN1E5NVMvUklGemVOamd0Ti8y?=
- =?utf-8?B?TTFHTGJBaHh4NG53MElCa3ZkdEhiMENXWDdPVnp2akI2MFhvT3VCZzJnQXd1?=
- =?utf-8?B?ZW8zRXZXQXg4T0I2eFQvVjE1M3lpY0ljRUxIQktGbUR3MGZ0OG9XVTUwa2NX?=
- =?utf-8?B?a1ZGN1pUK2tXRUVYZlAvNVRXYXU1V3pyandVNDZKYW91c0dNNGRqcXpZOEFx?=
- =?utf-8?B?RWY1Z0lwN1ZQOFlNRkgrNDVqaVBpRkdYcDg3b09RR2kwbW1HRHAzVGd0Um1z?=
- =?utf-8?B?Y2lCaFU5OU92ZmVpcG02ZnBsUTBVK2txb2RPb2V2NG0xVlpGUkdUazI4eTVO?=
- =?utf-8?B?MStMemhTMkp6MmN3Tkk4MEZxNGZWaEUvd2R5ZVZuTHh6S2o5VU5yKzhJK0JM?=
- =?utf-8?B?dzg0RkdMdkdzNlJZMVRWVk9WK2s1NnN2Zk94aVRjVEhDOUdpVzg3aGhXVUUx?=
- =?utf-8?B?WllhQjdkWWRRa1NzZFN2L0M1VEpUWFdXVlBRN0N6RjZyeDA0UTUxQUllRkky?=
- =?utf-8?B?OXI2NitDL2E0WFlTeUVSdkphNXdKd1hmak1yckJVbndMbnpGVm9sSnUzT2hh?=
- =?utf-8?B?akswL3h2SEpYT294YVp6bUhaV2lhT3NFUnU1dXU1OEZrazhDTFp3b1BocE9M?=
- =?utf-8?B?ajc2VFV2NWcvSS91UVQyWlQ2cWhHNE1nZVB4TmdId2Vqb1R3KzZYcjdBQ3oy?=
- =?utf-8?B?eDRvelJFZTREZjM3TEo3Y3hXbXV0VTJwWnVNTlcyK2RFd0NOQzZzOUZVZitL?=
- =?utf-8?Q?bdexzi1q4YS7tWQm8pzoTjuEKfSuxwzh?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:BL3PR11MB6481.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(1800799024)(376014); DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?aFV2Qmp4OVh3WGVZc3pZL2E1MklDRC9wbjVObW4xeE96amVUMS9KTW9pcnpk?=
- =?utf-8?B?QVpRV0tQYmRYcm1nQXZHV3Y0RFQrOVFyL3EyL2VVYXhWQXdOWDkxUm9UazY2?=
- =?utf-8?B?S0Qwejd5dmpxM0hFNEc0MjdMazZGS3loRnhoWnl1Nko0U09zcDB5QnBuRTJF?=
- =?utf-8?B?QWE2RC9VdERKakRXdU1mdVc4cWl2UTgwT0VVd3JqSWphTGgzaEh6RjRXbDJS?=
- =?utf-8?B?SW1xUFVjNEhlTU8xL3RwWjFxS1NSaHZDZGE5VHFPZkl0dHFya0tHcERybUJm?=
- =?utf-8?B?RFVhUEc4VE1SQTBuSUt1SVp1SjZxWmlBdjB4UklxTlN1MjVyY0p1MlRWNkFJ?=
- =?utf-8?B?SXl4cklmNGtyaEJJUGpIL3pWWHZLNkF6czdPd3R6SnNPYmsrZE9WaFc3RTNo?=
- =?utf-8?B?U3puby94Qzg2VmZvZEJ4NDIySkRIb0xuck9ycnV5d2k0OWt4ZEFFUENCSkpu?=
- =?utf-8?B?OEIzb0haTERYd2pSV1JQa0dicGdBdXdLMTh0Z0dJR083TWRNRmtFVFFMeW1K?=
- =?utf-8?B?VXJFRW9GdEppVmRSeS9mdytVcUxkYVhOVklxQVNXSEppSkdqWmlwQmI4NjV5?=
- =?utf-8?B?MGIvSmFDaERSY3dsdEJuMGpUM2RWL1pLVTRqbzluR0RKV3NEeDFlZGxlYVBE?=
- =?utf-8?B?T0VPUlpyUXJmY25ucVloeVpMaU1hQlhjbVFxTzFERG1kZnFjbU1MSzVJREVC?=
- =?utf-8?B?YkR4RENySVlDRkwwSkxSTU1VQ0pERVI1a0w1TVdzVjlNcUprNHJRYld6YXEy?=
- =?utf-8?B?NExyVWFTeGFSMldINXBGaHNhdWpETFg5U1VSNzRnVWxmZXdaYUxjVE1ma3Fn?=
- =?utf-8?B?bUdUN1dkZjBFVkJqZFQzYXAvY21FRElOcWJldW5xRkYwQUxCM1JWVi9aZzND?=
- =?utf-8?B?bGhueEN4aThXRFhxczdablM4QWViTmtJcklNMmJHcXBnY0dVcVNpZlBiU0V1?=
- =?utf-8?B?ZHhYMDVxOWpNRTl5ZWxCTC9WZmVGWitnY0k3MVdCT2hMTXptbzdPQlNJaGhW?=
- =?utf-8?B?VnptTFU3ODRzbFZXUmVJOHdqSEh3RjVadXFLZllDUmJRYXNER09lRG1UTVRq?=
- =?utf-8?B?SVpzQ0YzRFpsWEl5c1dORWp0TGMvS2ZBMDUzRm9uNU01TmZQR0c4Y010bldJ?=
- =?utf-8?B?WHB0NDcxMER4VXpuZ0J0bUYxeDlkMnlpWmVtekEyMHdsdnlxZEJ6cUM4djVN?=
- =?utf-8?B?N0xnN1RSbmZ6MEcxOFd3cmtMQVdFWTRDK0toSFZmQ25mdXNvREJOYU5rTG5L?=
- =?utf-8?B?VmRTQUZ2R0s5WEp5bjdHdkpqdFR6YUhhdkZpNHluTVBtZ1BLQmZuTkRmeTBU?=
- =?utf-8?B?ZUk4Q3ZpUmllcU9lWTFGelEvT0todlpoUk1mYkRsWXV4dUEvQnRTZmtEaSt3?=
- =?utf-8?B?WU10S01hVkRERVNQbkhncDZ2YkpoTkFNa1pmaUF1VFY5ZGpJUVRCOFpzVEE0?=
- =?utf-8?B?b0RrdzI0dnJaakhSd0tTSXByeDE5WVJ5TEhVYWZJUWJraGRCejNtSTZOT2dp?=
- =?utf-8?B?Nm9OZWJoc3RCVWxJenMyYytqN2h3NlhQSDAvNHE3Rjd3b0lMdDNMZHFaNkdT?=
- =?utf-8?B?WjZpNlRsYitUU2plYkhoelQ0RHBxMzhRT0FtdmlZVVRaMUN3NWtLWkZpcTFy?=
- =?utf-8?B?YVFGTjhmaUVqT053YXplMWp2dzMwNEl0dmkvMHg1aEtiVEZCVWxtSkhPdXYw?=
- =?utf-8?B?Z1BXWUp5ZjE2ajF4eTFpNlZ2MFpqWEs3STFzdUp0NmtsY2hibk5BQU05NkFO?=
- =?utf-8?B?NlArTUhNS2c4SEMyQXlLNGNNQmZ3SkFxZFpBMFlwTURlZk1hUzRKdlI2Rk9p?=
- =?utf-8?B?bWk3Uk1VZWFHeTRlTUNlTHUrVzlxWHl3Vmw5ZDlJSHlMN2JTR2c3MHJtbmww?=
- =?utf-8?B?V2UvWXNab1hDN3dZSExFYjN2Ti93UjRmMUt4RTgwRGRQZTBBaEZKZkFQVzFB?=
- =?utf-8?B?Mm1BbjVUY3hQZ2o5NzlPZ2hkU1NPM2M5Y0lGSFNpMG5wQlJpQWhnTFJBL3Zl?=
- =?utf-8?B?L0JEc25GL0E5L1MvSFF4NTVCZ0hFQ3ozWUl3QjZ0Nzh5ZXowUmE3RGVuMmI0?=
- =?utf-8?B?a2syRDhFV1EwWTJZZi9FaGtUY2JFdUJ3QnE5S2tvUDB0TFUzQ0JJQStTNEkv?=
- =?utf-8?B?VDBNQ05jYmN5b0NpSlZ2d0dwTWt6QVdhWktkSVhvbzl3d0pMZm5aN2E1dXNG?=
- =?utf-8?B?RGc9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: d409d53d-bce0-49cb-7fb3-08de275bb243
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6502.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Nov 2025 11:06:33.1480 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: UnEIL9iDN54v8fe61DdycmVo0tEXckDnDqcsTf7ZjcYddwdFoatfUVrlWy/jcPs/z7u1UklVyrZw8eqyGWAF4InwFBUE7b8rAzUlwFfvj7Y=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS4PPF31CEE2CEC
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -188,15 +58,156 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On 11/19/2025 12:01 PM, Anatoly Burakov wrote:
-> This patchset introduces a major refactor of the VFIO subsystem in DPDK to
-> support character device (cdev) interface introduced in Linux kernel, as well as
-> make the API more streamlined and useful. The goal is to simplify device
-> management, improve compatibility, and clarify API responsibilities.
-> 
+This patchset introduces a major refactor of the VFIO subsystem in DPDK to
+support character device (cdev) interface introduced in Linux kernel, as well as
+make the API more streamlined and useful. The goal is to simplify device
+management, improve compatibility, and clarify API responsibilities.
 
-Accidentally left out the patchset with iommufd and vfio uapi headers
+The following sections outline the key issues addressed by this patchset and the
+corresponding changes introduced.
+
+1. Only group mode is supported
+===============================
+
+Since kernel version 4.14.327 (LTS), VFIO supports the new character device
+(cdev)-based way of working with VFIO devices (otherwise known as IOMMUFD). This
+is a device-centric mode and does away with all the complexity regarding groups
+and IOMMU types, delegating it all to the kernel, and exposes a much simpler
+interface to userspace.
+
+The old group interface is still around, and will need to be kept in DPDK both
+for compatibility reasons, as well as supporting special cases (FSLMC bus, NBL
+driver, etc.).
+
+To enable this, VFIO is heavily refactored, so that the code can support both
+modes while relying on (mostly) common infrastructure.
+
+Note that the existing `rte_vfio_device_setup/release` model is fundamentally
+incompatible with cdev mode, because for custom container cases, the expected
+flow is that the user binds the IOMMU group (and thus, implicitly, the device
+itself) to a specific container using `rte_vfio_container_group_bind`, whereas
+this step is not needed for cdev as the device fd is assigned to the container
+straight away.
+
+Therefore, what we do instead is introduce a new API for container device
+assignment which, semantically, will assign a device to specified container, so
+that when it is mapped using `rte_pci_map_device`, the appropriate container is
+selected. Under the hood though, we essentially transition to getting device fd
+straight away at assign stage, so that by the time the PCI bus attempts to map
+the device, it is already mapped and we just return an fd. There is no
+"unassign" API because `release_device` already performs that function.
+
+Additionally, a new `rte_vfio_get_mode` API is added for those cases that need
+some introspection into VFIO's internals, with three new modes: group
+(old-style), no-iommu (old-style but without IOMMU), and cdev (the new mode).
+Although no-IOMMU is technically a variant of group mode, the distinction is
+largely irrelevant to the user, as all usages of noiommu checks in our codebase
+are for deciding whether to use IOVA or PA, not anything to do with managing
+groups. The current plan for kernel community is to *not* introduce no-IOMMU
+cdev implementation, which is why this will be kept for compatibility for these
+use cases.
+
+There were other users of VFIO which relied on group API but only for convenience
+purposes; no actual VFIO functionality depended on those API's. Therefore, group
+API's are removed and, where appropriate, replaced with the new API's.
+
+List of removed API's:
+
+* `rte_vfio_get_group_fd`
+* `rte_vfio_clear_group`
+* `rte_vfio_container_group_bind` (replaced by container assign API)
+* `rte_vfio_container_group_unbind`
+* `rte_vfio_noiommu_is_enabled` (replaced by new mode API)
+
+2. The API responsibilities aren't clear and bleed into each other
+==================================================================
+
+Some API's do multiple things at once. In particular:
+
+* `rte_vfio_get_device_info` will setup the device
+* `rte_vfio_setup_device` will get device info
+
+These API's have been adjusted to do one thing only.
+
+v5:
+- Added back missing uapi patch
+
+v4:
+- Fixed issues with documenting rte_vfio_mode enum
+- Separated deprecation notices into a separate patchset
+
+v3:
+- Make API removal cleaner
+- Fix `get_group_num` usages to align with new API
+- Fix issues with function exports
+- Fix issues with `setup_device` returning old-style values in some cases
+
+v2:
+- Make the entire API internal
+- More aggressive API pruning, complete removal of group API
+- Fixed a bug in group mode where device could not be used
+- Better documentation and deprecation notice patches
+- Moved doc patches to beginning of patchset
+
+Anatoly Burakov (18):
+  uapi: update to v6.17 and add iommufd.h
+  vfio: make all functions internal
+  vfio: split get device info from setup
+  vfio: add container device assignment API
+  net/nbl: do not use VFIO group bind API
+  net/ntnic: use container device assignment API
+  vdpa/ifc: use container device assignment API
+  vdpa/nfp: use container device assignment API
+  vdpa/sfc: use container device assignment API
+  vhost: remove group-related API from drivers
+  vfio: remove group-based API
+  vfio: cleanup and refactor
+  bus/pci: use the new VFIO mode API
+  bus/fslmc: use the new VFIO mode API
+  net/hinic3: use the new VFIO mode API
+  net/ntnic: use the new VFIO mode API
+  vfio: remove no-IOMMU check API
+  vfio: introduce cdev mode
+
+ config/arm/meson.build                    |    1 +
+ config/meson.build                        |    1 +
+ doc/guides/prog_guide/vhost_lib.rst       |    4 -
+ drivers/bus/cdx/cdx_vfio.c                |   25 +-
+ drivers/bus/fslmc/fslmc_bus.c             |   10 +-
+ drivers/bus/fslmc/fslmc_vfio.c            |    6 +-
+ drivers/bus/pci/linux/pci.c               |    2 +-
+ drivers/bus/pci/linux/pci_vfio.c          |   33 +-
+ drivers/bus/platform/platform.c           |    9 +-
+ drivers/crypto/bcmfs/bcmfs_vfio.c         |   14 +-
+ drivers/net/hinic3/base/hinic3_hwdev.c    |    2 +-
+ drivers/net/nbl/nbl_common/nbl_userdev.c  |   20 +-
+ drivers/net/nbl/nbl_include/nbl_include.h |    1 +
+ drivers/net/ntnic/ntnic_ethdev.c          |    2 +-
+ drivers/net/ntnic/ntnic_vfio.c            |   30 +-
+ drivers/vdpa/ifc/ifcvf_vdpa.c             |   34 +-
+ drivers/vdpa/mlx5/mlx5_vdpa.c             |    1 -
+ drivers/vdpa/nfp/nfp_vdpa.c               |   37 +-
+ drivers/vdpa/sfc/sfc_vdpa.c               |   39 +-
+ drivers/vdpa/sfc/sfc_vdpa.h               |    2 -
+ kernel/linux/uapi/linux/iommufd.h         | 1292 +++++++++++
+ kernel/linux/uapi/linux/vduse.h           |    2 +-
+ kernel/linux/uapi/linux/vfio.h            |   12 +-
+ kernel/linux/uapi/version                 |    2 +-
+ lib/eal/freebsd/eal.c                     |   98 +-
+ lib/eal/include/rte_vfio.h                |  387 ++--
+ lib/eal/linux/eal_vfio.c                  | 2433 ++++++++-------------
+ lib/eal/linux/eal_vfio.h                  |  167 +-
+ lib/eal/linux/eal_vfio_cdev.c             |  389 ++++
+ lib/eal/linux/eal_vfio_group.c            |  984 +++++++++
+ lib/eal/linux/eal_vfio_mp_sync.c          |   80 +-
+ lib/eal/linux/meson.build                 |    2 +
+ lib/eal/windows/eal.c                     |    4 +-
+ lib/vhost/vdpa_driver.h                   |    3 -
+ 34 files changed, 4260 insertions(+), 1868 deletions(-)
+ create mode 100644 kernel/linux/uapi/linux/iommufd.h
+ create mode 100644 lib/eal/linux/eal_vfio_cdev.c
+ create mode 100644 lib/eal/linux/eal_vfio_group.c
 
 -- 
-Thanks,
-Anatoly
+2.47.3
+
