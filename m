@@ -2,59 +2,81 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08463CEE344
-	for <dpdk-dev@archiver.kernel.org>; Tue, 18 Nov 2025 17:45:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4826CCF2563
+	for <dpdk-dev@archiver.kernel.org>; Wed, 19 Nov 2025 00:07:38 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DC61A402C8;
-	Tue, 18 Nov 2025 18:45:39 +0100 (CET)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 722714027D
- for <dev@dpdk.org>; Tue, 18 Nov 2025 18:45:38 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1763487937;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=oHEgjEaYcQnrA934ff2swxWJuAz6bYzswm22JVlnPyU=;
- b=LcQnCGDcAX2taNwhxzM0Cc56z0Du+qKPICqrw06F7EpHcQHlJYhkRzH45M37F6+EHGI3GS
- vPSVakxCaLRvf0FTHZ0AVUC/F0X8YCuPti+E6tCN06bUHtMCI67IN9IuEchg38yaeVFxzK
- jwCq9CO8+LD3M7UDcwUd6OPh4OX5tHo=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-564-EsCTlgeoOqel8HMvjZjDGw-1; Tue,
- 18 Nov 2025 12:45:35 -0500
-X-MC-Unique: EsCTlgeoOqel8HMvjZjDGw-1
-X-Mimecast-MFC-AGG-ID: EsCTlgeoOqel8HMvjZjDGw_1763487935
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id AEFD019560B3; Tue, 18 Nov 2025 17:45:34 +0000 (UTC)
-Received: from ringo.redhat.com (unknown [10.44.32.121])
- by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id 491B3180047F; Tue, 18 Nov 2025 17:45:31 +0000 (UTC)
-From: Robin Jarry <rjarry@redhat.com>
-To: dev@dpdk.org,
-	Stephen Hemminger <stephen@networkplumber.org>
-Cc: Christophe Fontaine <cfontain@redhat.com>,
-	stable@dpdk.org
-Subject: [PATCH dpdk v2] net: ipv6 link local compliance with rfc 4291
-Date: Tue, 18 Nov 2025 18:45:26 +0100
-Message-ID: <20251118174526.321856-1-rjarry@redhat.com>
-In-Reply-To: <20251114105751.54802-3-rjarry@redhat.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 201ED40289;
+	Wed, 19 Nov 2025 01:07:37 +0100 (CET)
+Received: from fout-b7-smtp.messagingengine.com
+ (fout-b7-smtp.messagingengine.com [202.12.124.150])
+ by mails.dpdk.org (Postfix) with ESMTP id 282544027A;
+ Wed, 19 Nov 2025 01:07:35 +0100 (CET)
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+ by mailfout.stl.internal (Postfix) with ESMTP id 3BC0D1D0018D;
+ Tue, 18 Nov 2025 19:07:34 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+ by phl-compute-02.internal (MEProxy); Tue, 18 Nov 2025 19:07:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1763510854;
+ x=1763597254; bh=Wi/VUKR4+GEEoCfHlg9e6sKXGLA4wQpgw3Ze3vV+b6Y=; b=
+ rNmj3J+JvY//YWnvC57eO462oJ1f+zLhJikkGZjYRsHOarQSUyFPm7jtJPIAGOMv
+ C6SldYFlCchMX8vQ/q5m8sbtlKwibQFSZUv+SnxQqNesSmo5awevDaN7HyShdDjZ
+ 1zob+QF9jpFAZGQkL1gwVKm1SRH7Acrt3UZkeFWmHQ9tmLAm8DclCSU76WZJuA0b
+ RghmXUza/jw6OoVywXywcVDgHD8QB2wnGzmYdbk3QpPWugL6nxE8z8ydYp5VJ5//
+ DMwGTbbUD91rH2BfpkGHPYEwpjXlcI5+mvjDdrFiWR0s8KihBsJlBTeHGsAyczl2
+ u/eNZG7f58gA+1LmJ3uptw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1763510854; x=
+ 1763597254; bh=Wi/VUKR4+GEEoCfHlg9e6sKXGLA4wQpgw3Ze3vV+b6Y=; b=M
+ ThA0hNvZ96QJwtsBy2RXWcdLA6gThYi7CScocKNPkiv4VbhVNgypIzub4rF+k9FI
+ aii/j4bRLQnMEPtkPpTclf3NcjSH+7Fn7mqanH+mJ3XJDbxqW6tBcdXidwxydaKo
+ pZdr1+VZz4fwdUXztmgeGdX5y73VKBxAsD7KGlpeXpSLNGW/dD7+JUzMCtsjFfCs
+ qHGZyJr6ec1nCv7LZ+YZaZFXtFdY9OwmRJSq3IS1Q7Lu/OyIb4RGpwkivFQPc1PY
+ XjQzMw1AN6CcfzjuHc2Txjb9cOgLo1HPTZ0XKSsConUUbXTrVYg0FvDJAkCBfCNn
+ Yvux69AXgqHuaqn/9D6aw==
+X-ME-Sender: <xms:RQodaXilVAyNk6s4QeRJ6ZyB1aggRVK-ABj-GKJ1Bgv_j7tUvYk6GA>
+ <xme:RQodafeR6jX_xzKdI5sMUiZ2dL6wl2b5i7j6tljSDuJhZGcCUDA9Nx102iMtOyC6l
+ Z6ebhplZuhm4wXPx9h5Xt8c1UOicgTLmGZEtIiDHU0u53jfEB_p0w>
+X-ME-Received: <xmr:RQodaakjo_2dqTSanM8H3JbMKK59skLeRIUvvrZTJatIbtsJIqd09QK3Eo2PQItrAR7XasJ_sfhdFZBiehVidg2Fxw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvvddvjedvucetufdoteggodetrf
+ dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+ rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+ gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
+ ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
+ frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
+ uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeehpdhm
+ ohguvgepshhmthhpohhuthdprhgtphhtthhopehsthgvphhhvghnsehnvghtfihorhhkph
+ hluhhmsggvrhdrohhrghdprhgtphhtthhopegtfhhonhhtrghinhesrhgvughhrghtrdgt
+ ohhmpdhrtghpthhtoheprhhjrghrrhihsehrvgguhhgrthdrtghomhdprhgtphhtthhope
+ guvghvseguphgukhdrohhrghdprhgtphhtthhopehsthgrsghlvgesughpughkrdhorhhg
+X-ME-Proxy: <xmx:RQodaYvreBneq9QjqVrlLvC6m_ApFYebWfPjZZNugTAvFNfU6CSF7g>
+ <xmx:RQodaQ-_Uc1Dvz2VGF97cU2qfAnIPSp9FazNKFkKQbZ3vgMi50xPoQ>
+ <xmx:RQodaaP96ob4icmqdusAyNHdEKjT2P5FvtfUVnWVc5yu5eILwRrreg>
+ <xmx:RQodaWEtSPN0cMEtT_tdc77BW-JVWUL8xXF5hiMtB1C21Alc3EhelQ>
+ <xmx:RgodaVQreNF9_qqs67VeosfT87zo1WVyiJekvb820Arp8gc05v_6qYgK>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 18 Nov 2025 19:07:32 -0500 (EST)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Stephen Hemminger <stephen@networkplumber.org>,
+ Christophe Fontaine <cfontain@redhat.com>, Robin Jarry <rjarry@redhat.com>
+Cc: dev@dpdk.org, stable@dpdk.org
+Subject: Re: [PATCH dpdk v2] net: ipv6 link local compliance with rfc 4291
+Date: Wed, 19 Nov 2025 01:07:30 +0100
+Message-ID: <3249247.iZASKD2KPV@thomas>
+In-Reply-To: <20251118174526.321856-1-rjarry@redhat.com>
 References: <20251114105751.54802-3-rjarry@redhat.com>
+ <20251118174526.321856-1-rjarry@redhat.com>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 9ubw_EC81YboCfCy9kFI57CTcrcHKjn8G7iQVsQyUeM_1763487935
-X-Mimecast-Originator: redhat.com
-Content-Transfer-Encoding: 8bit
-content-type: text/plain; charset="US-ASCII"; x-default=true
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -68,68 +90,18 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Christophe Fontaine <cfontain@redhat.com>
+18/11/2025 18:45, Robin Jarry:
+> From: Christophe Fontaine <cfontain@redhat.com>
+> > Modified EUI-64 format interface identifiers are formed by inverting
+> > the "u" bit (universal/local bit in IEEE EUI-64 terminology) when
+> > forming the interface identifier from IEEE EUI-64 identifiers.
+[...]
+> -	ip->a[8] = mac->addr_bytes[0];
+> +	ip->a[8] = mac->addr_bytes[0] ^ RTE_ETHER_LOCAL_ADMIN_ADDR;
 
-As specified in RFC 4291 section 2.5.1, link local addresses must be
-generated based on a modified EUI-64 interface identifier:
+In all other places, we use the operator OR, so I'm not sure about this XOR.
+Also, rte_is_universal_ether_addr() and rte_is_local_admin_ether_addr()
+are comparing this bit with 0.
+Is this bit always 0 by default in MAC addresses?
 
-> Modified EUI-64 format interface identifiers are formed by inverting
-> the "u" bit (universal/local bit in IEEE EUI-64 terminology) when
-> forming the interface identifier from IEEE EUI-64 identifiers.
-
-This translates to 'mac->addr_bytes[0] ^= 0x02'.
-
-Fixes: 3d6d85f58c1c ("net: add utilities for well known IPv6 address types")
-Cc: stable@dpdk.org
-
-Signed-off-by: Christophe Fontaine <cfontain@redhat.com>
-Signed-off-by: Robin Jarry <rjarry@redhat.com>
----
-
-Notes:
-    v2:
-    
-    - Stephen: replaced magic number 0x02 with RTE_ETHER_LOCAL_ADMIN_ADDR
-
- app/test/test_net_ip6.c | 2 +-
- lib/net/rte_ip6.h       | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/app/test/test_net_ip6.c b/app/test/test_net_ip6.c
-index cfc550940306..e4642c9a39d9 100644
---- a/app/test/test_net_ip6.c
-+++ b/app/test/test_net_ip6.c
-@@ -160,7 +160,7 @@ test_ipv6_llocal_from_ethernet(void)
- {
- 	const struct rte_ether_addr local_mac = {{0x04, 0x7b, 0xcb, 0x5c, 0x08, 0x44}};
- 	const struct rte_ipv6_addr local_ip =
--		RTE_IPV6(0xfe80, 0, 0, 0, 0x047b, 0xcbff, 0xfe5c, 0x0844);
-+		RTE_IPV6(0xfe80, 0, 0, 0, 0x067b, 0xcbff, 0xfe5c, 0x0844);
- 	struct rte_ipv6_addr ip;
- 
- 	rte_ipv6_llocal_from_ethernet(&ip, &local_mac);
-diff --git a/lib/net/rte_ip6.h b/lib/net/rte_ip6.h
-index 98bcac3f4dff..7ffbccacf842 100644
---- a/lib/net/rte_ip6.h
-+++ b/lib/net/rte_ip6.h
-@@ -393,7 +393,7 @@ rte_ipv6_mc_scope(const struct rte_ipv6_addr *ip)
- 
- /*
-  * Generate a link-local IPv6 address from an Ethernet address as specified in
-- * RFC 2464, section 5.
-+ * RFC 4291, section 2.5.1.
-  *
-  * @param[out] ip
-  *   The link-local IPv6 address to generate.
-@@ -406,7 +406,7 @@ rte_ipv6_llocal_from_ethernet(struct rte_ipv6_addr *ip, const struct rte_ether_a
- 	ip->a[0] = 0xfe;
- 	ip->a[1] = 0x80;
- 	memset(&ip->a[2], 0, 6);
--	ip->a[8] = mac->addr_bytes[0];
-+	ip->a[8] = mac->addr_bytes[0] ^ RTE_ETHER_LOCAL_ADMIN_ADDR;
- 	ip->a[9] = mac->addr_bytes[1];
- 	ip->a[10] = mac->addr_bytes[2];
- 	ip->a[11] = 0xff;
--- 
-2.51.1
 
