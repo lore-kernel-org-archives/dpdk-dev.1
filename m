@@ -2,115 +2,88 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C6D2CF9C7E
-	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Nov 2025 18:40:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76739CFA446
+	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Nov 2025 21:48:32 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0EFD340285;
-	Thu, 20 Nov 2025 19:40:12 +0100 (CET)
-Received: from SA9PR02CU001.outbound.protection.outlook.com
- (mail-southcentralusazon11013047.outbound.protection.outlook.com
- [40.93.196.47]) by mails.dpdk.org (Postfix) with ESMTP id E15FD40267;
- Thu, 20 Nov 2025 19:40:10 +0100 (CET)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=A+pIqUyObxnfQBD3Zwxl6iTmsbNZatB9Glp48nF9L6JrG1IGYg3KUyIxvPWQn3J6ACa7kc35kqsRENFcT0PjTMWDqtaNr9T+V9fGXmR45TNcF1zF5Zd9bQFq/4TKh4CHgYrhUFW3oKTsSf7VuMWB0EwvsSywN5lxFv19fDa2o+9sY7p+jDz+Z9Zd2lAjLHQ6QzkpKXmc/KxKIMg2I3K+yC53uLazyBDjkoVDcBSBntA1yJwWRcvpV2VpTwVuwuxRmGZmsKOCR5oWZv8wfzpYhcIcEgtYhYSm5utP4R70j1jkd9ptb69f2ijI1MVu+/HsbMqG4h9YOKqOqkSxag5C9w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XTppm4++0xBa1X9XkSTZpQKXqd62IIaWZ1CLUtM0Ou4=;
- b=feGtWMAyDj/Vf5r0m/TCbajMLQpGX67vwW/u8zP/LZzLp/rbTbVgI10V7GnVO55WjuEMQBs0KRnagzN2pWMlhWARMww+mC4y/IS0kaUem9bx1Iq+5j0ihZisDtGm3CIj/yt2rcma35u6N1jYg2P8gi8uKXm6rdSP/D1zmuGKknJ8UZDT52yK0b9OoyJ0I7N0yRv1Le8wnrCZ2Ep5tRdVgULTz6jOnaDHcjjOH6JQ4XsqzFPX37nKtiJQtCo28fcNKTrOWaIM848gHIVlJ2B6RMEPKKQV1yx9Ay/EBR0D4iVgkwl6oF2spb97FLVEPtpX6iRLY/YzfhF93DrDl3NU4w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=dpdk.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1; 
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XTppm4++0xBa1X9XkSTZpQKXqd62IIaWZ1CLUtM0Ou4=;
- b=nt5I5xRwndzQ0ARaWBcLp8S1fYVbbBJitCGYs+c3i9Rr7zxe6uSPfgf3a3XBQfAvueAR91smxe07Kkt253jDvfidbz7JPdaQaFwexBRzlPxceuRP6Cf5MHZgFBORNdM78hYhPhVOSG56fxAfb25PAaj9o8co1Kiwjiia/b605rg=
-Received: from CH2PR03CA0025.namprd03.prod.outlook.com (2603:10b6:610:59::35)
- by SJ2PR12MB7823.namprd12.prod.outlook.com (2603:10b6:a03:4c9::17)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9343.11; Thu, 20 Nov
- 2025 18:40:06 +0000
-Received: from CH1PEPF0000A34C.namprd04.prod.outlook.com
- (2603:10b6:610:59:cafe::73) by CH2PR03CA0025.outlook.office365.com
- (2603:10b6:610:59::35) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9343.11 via Frontend Transport; Thu,
- 20 Nov 2025 18:40:06 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- CH1PEPF0000A34C.mail.protection.outlook.com (10.167.244.6) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9343.9 via Frontend Transport; Thu, 20 Nov 2025 18:40:06 +0000
-Received: from driver-dev1.pensando.io (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Thu, 20 Nov
- 2025 10:40:06 -0800
-From: Andrew Boyer <andrew.boyer@amd.com>
-To: <dev@dpdk.org>
-CC: Andrew Boyer <andrew.boyer@amd.com>, <stable@dpdk.org>
-Subject: [PATCH] doc: update supported ionic devices
-Date: Thu, 20 Nov 2025 10:39:36 -0800
-Message-ID: <20251120183936.8699-1-andrew.boyer@amd.com>
-X-Mailer: git-send-email 2.17.1
+	by mails.dpdk.org (Postfix) with ESMTP id 294B140285;
+	Thu, 20 Nov 2025 22:48:31 +0100 (CET)
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com
+ [148.163.156.1]) by mails.dpdk.org (Postfix) with ESMTP id 03C2740267
+ for <dev@dpdk.org>; Thu, 20 Nov 2025 22:48:29 +0100 (CET)
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+ by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5AKCu2YA029048;
+ Thu, 20 Nov 2025 21:48:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+ content-transfer-encoding:content-type:date:from:in-reply-to
+ :message-id:mime-version:references:subject:to; s=pp1; bh=HpI7ZK
+ UuaRw9lwV5heOjAz66a1pkGa0dTXtvg4gNixk=; b=tOJtzw2J7BQkUOr/fFMMcv
+ elJ0wOabt8W8adDnqctI9IhgYIOUZubCJBzu1JilKe6cX1TYkxT0qFcWIrJFpjsH
+ CuCIHYHFGR0JnSZhcwNucFqzfDgodbIfy/8yCMzpCCd6T+3rWKjxlkko2stIZrM6
+ ZoxH2KeLBzLHrQoL9vN9DBLDanLqMA/gAbT/KytENndjQAOhuJ9zZ2HqNRgdddv3
+ Bv+L0QZS9qqeDU66dA+bJNW+JwJd7H4F1Sai+H6ITjxideabeBeHv/Ryge4dnQos
+ fRwl92JdlB/ZBtjWAelaEtG5F0lJYkNY5u0lJmbGJSC/vQDp9wvBVeDxZRxN3GtQ
+ ==
+Received: from ppma21.wdc07v.mail.ibm.com
+ (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+ by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4aejk1rvc1-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Thu, 20 Nov 2025 21:48:28 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+ by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5AKKLfSQ022386;
+ Thu, 20 Nov 2025 21:48:27 GMT
+Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
+ by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4af4un8tq1-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Thu, 20 Nov 2025 21:48:27 +0000
+Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com
+ [10.39.53.233])
+ by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id
+ 5AKLmQS124576604
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+ Thu, 20 Nov 2025 21:48:27 GMT
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+ by IMSVA (Postfix) with ESMTP id 9DF2158055;
+ Thu, 20 Nov 2025 21:48:26 +0000 (GMT)
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+ by IMSVA (Postfix) with ESMTP id 44C325803F;
+ Thu, 20 Nov 2025 21:48:26 +0000 (GMT)
+Received: from li-4c4c4544-0048-3510-8036-cac04f563434.ibm.com (unknown
+ [9.61.17.251]) by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+ Thu, 20 Nov 2025 21:48:26 +0000 (GMT)
+Message-ID: <80e44945549c8d2cfe1695f4bc2fdb0b39488e81.camel@linux.ibm.com>
+Subject: Re: DPDK release candidate 25.11-rc3
+From: Riley Fletcher <rileyf@linux.ibm.com>
+To: Thomas Monjalon <thomas@monjalon.net>, dev@dpdk.org
+Date: Thu, 20 Nov 2025 15:48:25 -0600
+In-Reply-To: <2831295.atdPhlSkOF@thomas>
+References: <2831295.atdPhlSkOF@thomas>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.1 (3.58.1-1.fc43) 
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.180.168.240]
-X-ClientProxiedBy: satlexmb07.amd.com (10.181.42.216) To satlexmb07.amd.com
- (10.181.42.216)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH1PEPF0000A34C:EE_|SJ2PR12MB7823:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2503b273-c918-4b40-112f-08de286439ef
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|376014|36860700013|82310400026|1800799024|13003099007; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?bRkqrKtzXp9OH01BRmjZoOgM0MMLioVJhJqRBMJnvjUi3BLtNE4DrxsDcxDj?=
- =?us-ascii?Q?oDI8uIfeABe9V8l9eK70aZEV+/x11upfaqLKW9RrXagbaGOOzJ+p9J6nahRL?=
- =?us-ascii?Q?ThvW5YV/h+h12J4+zySLFhM7vLPro8Lp1YQhVv3I+Ke4Psu9trvmQy7xF3lJ?=
- =?us-ascii?Q?LF5HwpSfJwiGVPMPvq0QMbi5U1vcSzGbVI64ypEd0P3v1ABb9m0CljESAXtL?=
- =?us-ascii?Q?80G+UNk91tI9AcyPxzg05Ku89p+O9UeDQmZNHq9uS0HWtM862d2VTVjVPwC7?=
- =?us-ascii?Q?nGBmqh0VUmzFkGn42akgQ6cj4gKRiQJXqJ89BssiZoIGs1NU47mPuR4jqatW?=
- =?us-ascii?Q?lXBgck9pvnXrj4reX8wBqEaCSmYQy8gopzZVe4yf5LOj2nAeeGMfUfuRmFzk?=
- =?us-ascii?Q?+4k9B/cWQvw5szgbZzsoFeT5zQb2jnX2YCJm4lNWC94knwkE85JdgP+vXBBf?=
- =?us-ascii?Q?NMdqXbamF8YrVZYdxr8rtY131yTLbkdB776Jdfg01dorig1iT2YtKHEghz3c?=
- =?us-ascii?Q?UhuYnFsGbXAvOuBav53sHly6l7f9w45If1YmYVYlT2pYkOoeVAgXVexi4c3H?=
- =?us-ascii?Q?4H9r/2ERyXmu54hScyynOXTXKHNiIDSTAZcPzVy1XyG0VvSm3eCfMVIu7klH?=
- =?us-ascii?Q?zpA/qCaFLgvtMSb+icGkcY0xfZ6gmDvd9tWsiRqu9ywmnIm7/eoC6mtK5lpF?=
- =?us-ascii?Q?AqNq1awUnk7xL/oHXg1g5jThmnXl1rLos+afiOGolje+oeq+ZXnho9TTlCBX?=
- =?us-ascii?Q?DuCWYx1Fo7Vc5L5h34n7nr2WPGHPvvK//lnHAucVSLELffwmBHYqszbmnSTN?=
- =?us-ascii?Q?yeaK9hdHlvaZpLshsN55KPS1NnFZO3fP0nccLeTT8DjEQe172CtGtM+bvA04?=
- =?us-ascii?Q?ccEFz6y+TwZgY8bb75cYJ50MWNzwtD/9+fzAgXgzFjPWyOlx/aka8SVfSQMQ?=
- =?us-ascii?Q?4x8ruf5q762qBFSCSG7o6EiIRlJYM9qGuRhP+HIf4AQobpCxhs3Nxo1ocHtb?=
- =?us-ascii?Q?+dTJDanm/9t6niEEk7Wfb+kDwPtx6N/sgzAz1BK2InZ+6x0lxpiN17Qc2fpX?=
- =?us-ascii?Q?TqXbNyK1Ux6GvAW/0WtYM0YOXHKTqSFp2BzC7kYgIgGvFftqeMYAQonsp9Ct?=
- =?us-ascii?Q?3aScE8wfwIW69u0M2O1XwRzrqz7jx/zFkcF/ZWD48HhO+iw0sCilCohjPJiS?=
- =?us-ascii?Q?+hSIzIs2s7gQxCnUUBvLE+MiKC3Sc4JlIW1cqaJFKV9lCb1V8ToCRSnCW5br?=
- =?us-ascii?Q?UjilYO+Wvlck0CyovkujYu59hZ5R3bg7jlEPYrhVCIImzxj/EsXGWHxOwGbC?=
- =?us-ascii?Q?xMug7LW5X6TNJj/sirwZosmcbRZfjredKmjrPkQ0Ih3QPbFUTqyOpkbBT2JR?=
- =?us-ascii?Q?l9+AZzwPfcBtyY3SgLEdM/d0QSlnEqz48tvAkLXsxEwZydZQagvO2LJXdxgy?=
- =?us-ascii?Q?IW/r6Zr0x8cOJ85iJQT71V7TBReE0vpzyn2mAk0eRVBM3L6+bwkFvFVi3O02?=
- =?us-ascii?Q?z7KUeJKSl2rgxKmKYdDwAKnt8C1H2nd2IolYm6Oqvp6P1Q3nAt4mAasOPmbz?=
- =?us-ascii?Q?hQVvneRC82OULDsvECfeVw9HuOzrMCYkuDh+ZFCP?=
-X-Forefront-Antispam-Report: CIP:165.204.84.17; CTRY:US; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:satlexmb07.amd.com; PTR:InfoDomainNonexistent; CAT:NONE;
- SFS:(13230040)(376014)(36860700013)(82310400026)(1800799024)(13003099007);
- DIR:OUT; SFP:1101; 
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Nov 2025 18:40:06.6710 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2503b273-c918-4b40-112f-08de286439ef
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d; Ip=[165.204.84.17];
- Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource: CH1PEPF0000A34C.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB7823
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=C/nkCAP+ c=1 sm=1 tr=0 ts=691f8cac cx=c_pps
+ a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=8rWy6zfcAAAA:8 a=T-I4Skbq5JKMQ5GKcoYA:9 a=QEXdDO2ut3YA:10 a=vwQxE1H_xY0A:10
+ a=YjdVzJdQTyZRADMV7wFX:22
+X-Proofpoint-GUID: 55DMkKhrT1eo8o9e4q99ySocCzsFK2Ob
+X-Proofpoint-ORIG-GUID: 55DMkKhrT1eo8o9e4q99ySocCzsFK2Ob
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTE1MDAzMiBTYWx0ZWRfX3NxFZWBJDtcL
+ G2BHYqwN7kIvuCd4Nm4NJzZhiu/regxMiV1lT3mImHVrvijAGNkmLdPmEQ4eaiK/waKMvxfInk3
+ 1E0URjaCMm5gUO4cAmOFlIv6QeUseO9qSbRbgqblBSv1RlfAmxH5kUhSyFD+L8chG9ctyi2YW8Z
+ A3MSmpIeVb9lKJgDnMeLN9Tn/evOI8Uc4hPTYe4zQ/gD9pCFmGPYtiUB05UnVrZEnDfY3pLfCXa
+ +WKK9cry+V1ykSuFoWyK2GuaAz5aEvvUUwPhV8DZF/scCv31NWMOcMHnQCyk4SD0Y/QDx6qIEg3
+ kMOv4gYB6JQ8SdCsXpN6Ywp2sQXEcE5TVVKeotLufqhshq2MKJJ+/+bQX+9vimhxMOef/dp0ZWP
+ 7QWI0sEn8TjF1IXvMriyYcNzNvwdtw==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-20_09,2025-11-20_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 priorityscore=1501 spamscore=0 impostorscore=0 bulkscore=0
+ malwarescore=0 suspectscore=0 clxscore=1015 lowpriorityscore=0 adultscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2511150032
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -124,56 +97,41 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The Pollara 400 AI NIC is supported without any PMD changes.
-Add a link to the product brief.
+IBM - Power Systems Testing
+DPDK v25.11-rc2 and v25.11-rc3
 
-CC: stable@dpdk.org
-Signed-off-by: Andrew Boyer <andrew.boyer@amd.com>
----
- doc/guides/cryptodevs/ionic.rst | 4 +++-
- doc/guides/nics/ionic.rst       | 4 +++-
- 2 files changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/doc/guides/cryptodevs/ionic.rst b/doc/guides/cryptodevs/ionic.rst
-index d563602ebe..7c9d2ebd04 100644
---- a/doc/guides/cryptodevs/ionic.rst
-+++ b/doc/guides/cryptodevs/ionic.rst
-@@ -1,5 +1,5 @@
- .. SPDX-License-Identifier: BSD-3-Clause
--   Copyright 2021-2024 Advanced Micro Devices, Inc.
-+   Copyright 2021-2025 Advanced Micro Devices, Inc.
- 
- IONIC Crypto Driver
- ===================
-@@ -16,6 +16,8 @@ It currently supports the below models:
-   `(pdf) <https://www.amd.com/content/dam/amd/en/documents/pensando-technical-docs/product-briefs/pensando-elba-product-brief.pdf>`__
- - DSC3-400 dual-port 400G Distributed Services Card
-   `(pdf) <https://www.amd.com/content/dam/amd/en/documents/pensando-technical-docs/product-briefs/pensando-dsc3-product-brief.pdf>`__
-+- Pollara 400 single-port 400G AI NIC
-+  `(pdf) <https://www.amd.com/content/dam/amd/en/documents/pensando-technical-docs/product-briefs/pollara-product-brief.pdf>`__
- 
- Please visit the
- `AMD Pensando Networking
-diff --git a/doc/guides/nics/ionic.rst b/doc/guides/nics/ionic.rst
-index a991a2cf3f..2709a888fb 100644
---- a/doc/guides/nics/ionic.rst
-+++ b/doc/guides/nics/ionic.rst
-@@ -1,5 +1,5 @@
- ..  SPDX-License-Identifier: BSD-3-Clause
--    Copyright 2018-2022 Advanced Micro Devices, Inc.
-+    Copyright 2018-2025 Advanced Micro Devices, Inc.
- 
- IONIC Driver
- ============
-@@ -15,6 +15,8 @@ It currently supports the below models:
-   `(pdf) <https://www.amd.com/content/dam/amd/en/documents/pensando-technical-docs/product-briefs/pensando-elba-product-brief.pdf>`__
- - DSC3-400 dual-port 400G Distributed Services Card
-   `(pdf) <https://www.amd.com/content/dam/amd/en/documents/pensando-technical-docs/product-briefs/pensando-dsc3-product-brief.pdf>`__
-+- Pollara 400 single-port 400G AI NIC
-+  `(pdf) <https://www.amd.com/content/dam/amd/en/documents/pensando-technical-docs/product-briefs/pollara-product-brief.pdf>`__
- 
- Please visit the
- `AMD Pensando Networking
--- 
-2.17.1
+* Build CI on Fedora 40, 41, 42 and 43 container images for ppc64le
+* Basic PF on Mellanox: No issue found
+* Performance: not tested.
+* OS:- RHEL 10.0  kernel: 6.12.0-55.9.1.el10_0.ppc64le
+         with gcc version 14.2.1 20250110 (Red Hat 14.2.1-7)
 
+Systems tested:
+  - LPARs on IBM Power10 CHRP IBM,9105-22A
+     NICs:
+     - Mellanox Technologies MT28800 Family [ConnectX-5 Ex]
+     - Firmware Version: 16.35.2000
+     - OFED 25.07-0.9.7
+
+Regards,
+
+Riley Fletcher
+
+On Wed, 2025-11-19 at 05:50 +0100, Thomas Monjalon wrote:
+> A new DPDK release candidate is ready for testing:
+> 	https://git.dpdk.org/dpdk/tag/?id=3Dv25.11-rc3
+>=20
+> There are 98 new patches in this snapshot.
+>=20
+> Release notes:
+> 	https://doc.dpdk.org/guides/rel_notes/release_25_11.html
+>=20
+> Please test and report new issues on https://bugs.dpdk.org
+>=20
+> The next release candidate (-rc4) is planned for Monday 24.
+> Patches and reviews for examples, tooling and documentation are
+> welcome.
+>=20
+> Thank you everyone
+>=20
