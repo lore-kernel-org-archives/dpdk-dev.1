@@ -2,71 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2BD4CF9C4C
-	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Nov 2025 16:57:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03E91CF9C4C
+	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Nov 2025 16:57:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 98C104026F;
-	Thu, 20 Nov 2025 17:57:18 +0100 (CET)
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com
- [209.85.210.169])
- by mails.dpdk.org (Postfix) with ESMTP id A199140262
- for <dev@dpdk.org>; Thu, 20 Nov 2025 17:57:16 +0100 (CET)
-Received: by mail-pf1-f169.google.com with SMTP id
- d2e1a72fcca58-7aae5f2633dso1212035b3a.3
- for <dev@dpdk.org>; Thu, 20 Nov 2025 08:57:16 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 9C246402DC;
+	Thu, 20 Nov 2025 17:57:19 +0100 (CET)
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com
+ [209.85.210.175])
+ by mails.dpdk.org (Postfix) with ESMTP id 5A2C940262
+ for <dev@dpdk.org>; Thu, 20 Nov 2025 17:57:17 +0100 (CET)
+Received: by mail-pf1-f175.google.com with SMTP id
+ d2e1a72fcca58-7b9c17dd591so1075588b3a.3
+ for <dev@dpdk.org>; Thu, 20 Nov 2025 08:57:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1763657835;
- x=1764262635; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1763657836;
+ x=1764262636; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=6umUv4XNnz9DJdzRQ1uw9JC3yJWKxAEmpWR3o7Cik0o=;
- b=jMlZb3tcK0cA7WxbcYhGGNBsELjoCKETay05jL1ZkV1qzmBBmWy2K3nhYu9R6f7V//
- Uz2yzK0KUvK7Lz5Ubx0DoWTQHcpOrsrnG98/TUB3eQJUcii64A36ie4nVgz7SA0aKhxp
- K/aCGBgxJJfIbLscs4YPiuV+SsTAJ3ySiO1iCNBpJp5fZ9AOJqD97xA3SLIKy0+cV+Uw
- ulcp29pRTZztm6ODW5IsqcxQKoYc8oPjvdkYpPOg3iJy5HSV20u8hWM8s7IHri5YGR9P
- IP/l5FhjbOeWx0ptBjQVDBNLLGD7of8XpQF3TyCwbXO4NuXSOMgaRU6wgmMfcpSMfSUk
- XcbQ==
+ bh=8Lp92mt8DEs+4Z3BFcQSxKPGzAOcDpLQADktLILshNQ=;
+ b=kv+iBkR9QSkf9vlWWDl1Qr1dCtpZ90J/wUaYhsxqrTCjAJbJRLcJi9ufXsEuwfn0Y/
+ YNUFEMpU+Sz7RlsZGxXWi8BEE2/Ga1A21XnBoe82P8aLSBsYOOz8GnRUDTPSkemC4IEh
+ yZ35Q2bt9EXbmkkj6a7ObytKLR4Ea9E1mZzQzTHKi0luGA435Gtae4adnN7lmRFZHNsB
+ hDaYZOmKQLXcC3pYMIkwhWSebKLRlUhZmvXXjP66hw8wgDIS4kQqGW3gFeWwzynf3iRC
+ ILFEI8wHgNLXkuR/tMMaqAniulbxp+nE2I2pNBQWtBPTdpuWKKOE1OkQzB0HDAuf3pSL
+ wuIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1763657835; x=1764262635;
+ d=1e100.net; s=20230601; t=1763657836; x=1764262636;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=6umUv4XNnz9DJdzRQ1uw9JC3yJWKxAEmpWR3o7Cik0o=;
- b=j8wkhN6nv4QJzwKJV6AqoRrGBPtVia+kIabwuqGpzAFDkENMrvJk8pH23cYaeAAkSE
- 024ssnlI3OOyEogYJCun5tjLP7AY/qG9ruMKIVH110FMSecH4XA0coD7gmWr0TxGjd46
- 5tghbo5srG14UqAORkSGbYbjnxbCEm9CJIwn7TxmONiSarYu9Uzr311Tl06SZyzfFx8t
- vcRJRLJ03RtFMi8sXBnezRSbPlPPX9Sqls8gI/R9PDfk2yxVfCY0aEziH6kL9g5gadtM
- GXdveh+t3d078zZPrpz1K/NcvcwSsYxoHoyAoa/4V3XTiWH7n5QA/NmdPIh0JaSdKGMK
- pKKQ==
-X-Gm-Message-State: AOJu0Ywn7XJ/5HZnrjDan1qiA5aWcdLj6yym6tHV3RxHIGYzNIJu0qHE
- 8yOu3cJawUI+vnFYymt3oZ4yel7xfhI1aYDNZMrbNovd7KfwU/Ndh6a6XX8mcCiJ0tA2aIqcJpY
- MVXHq
-X-Gm-Gg: ASbGncufW9/zUYErMAeN+7AALPQNs+K5m1nOrx6kKojXAv2aD72bDuxARUBAGnfUwee
- F86MZ4Ta6UTYmPVwJH+4pUguPilGiZMdD5/+Tc+LX+7+TvhpDt9SPUqZUT7RYc9c6/yXUfLeNFv
- LvhhEXcLtKP5TNwE+0AiI5cFvtShYaOpzf8AYAEwAsukp7N4BrR35tD4jIiqnArMFT3bII20E92
- u4+fLZm4R66oE+SUOuKxKFsOQKNVyzn8hbXExGqhOTnVc+Uf5geB+NvyFAVlVvIjTYhO4SJ8UvF
- Bo2QSUbiLoDe309ge1bhhdYmwvjcdBIUduONmEEZ9YYGFBjyn39pHUETJRMsWUw9A2ZnCjJgNVa
- QnMGc8C692WS534lkAnaB58zl6/oDOPKkF+1yscKZp8NWve1Js/635nWnSkXjx3gNYaeTVndFgi
- v5hKdefMpiDcKRXP5rVEJAeVmAeW9Ch5a4jzrAQ2VYSzDa8RJ/mw==
-X-Google-Smtp-Source: AGHT+IGkQFxdJcOkUHrA/4FcjQbdLmAtwkKlodIXPhy6XeIwVeTEDlaa/t7Ka9NvueWPe251gbkmgg==
-X-Received: by 2002:a05:7022:327:b0:119:e569:fb9b with SMTP id
- a92af1059eb24-11c957351afmr1128827c88.10.1763657835335; 
- Thu, 20 Nov 2025 08:57:15 -0800 (PST)
+ bh=8Lp92mt8DEs+4Z3BFcQSxKPGzAOcDpLQADktLILshNQ=;
+ b=wj1q4hupGHts3bAsdburAgeMVP7ZH2xSmx05K3DrYs6KMiFdSF31g6wu+O8KNKxFaJ
+ +qiagWzYL2cQQXfWdwLeV8SRelUUvcsdjIALhLAErvDLoXCuIiymwsJaYqksv4HYzrWO
+ KvotMK1EG9x9b5RGVAfaUiGHhqhd0BPUC6l4MvZkRpKnn0C6LpwWjj9RqDlEsrG5O0dp
+ BU/fUfM+a7mVd4H3pg2s3GZZc294LPu/AXZfxXP14T7VEaOyQUrhjwxdAJcxRJEkGihU
+ o5JK8EA7w2wu84E3MI0wvtQ6uDPGckAgB7dMLyzodz9SZUc9jHwXx2L1hOWtvVb+6O9L
+ gQ7A==
+X-Gm-Message-State: AOJu0Yx0fALyEsQnCdl7JWW3Eh2/k7PWr3vZdw9WP6X0UWXiqXg2/CQY
+ JIARTNxLv/AF63GdTIcoNdXgeNVRUppAUHHulMi6fGGcxcIRTtTgVzRwbCJ1uJjBgYW7H5IA4PZ
+ oXmUu
+X-Gm-Gg: ASbGncudqetvbaskTNsooXOaa59yqhwOY9UMPJw5KDDoyYAXcTYoq2WFjldD6Dairjz
+ 6M9Viy7QORxHN2w57LlSVKyl5uxl3GCkk1Y01bF984S71ojsIXuhkIIqkwzBiElqZ94TjyHi6dT
+ 4sbZZQDVTY8w00jY2QN2bpFe0te3DGfIWP2/HC04/pZES2CWx7Ub/GfH8cr532lL3eq27/iunRw
+ cOfULhI5miUldXPOcRUKF57aeh2rb8d/VOvLe0R/eyIyyFACZLbMXoaYmVFgkIOHNheYKm5WU0W
+ eWph2V9+dRY4ygvBe+HK2KTxbwsxH2dH4Ds7IFIPnWQl5RLQ+CRdUwipw3d1I4oUkd3rO7Bsfr4
+ T/Q1No65GumWG4sBosfCboe1wUUgwgo+vc2XF5VJ1TEXjdKC9oxqtjIsJ7C4GB7Rv3AEpfMVLub
+ 4vJfI36Rw0kEPQJ+hpueEPwpnsbM8zuAP6R4mS9LOPcPkLPF2fyA==
+X-Google-Smtp-Source: AGHT+IGXav8GX+N1yvqdzBYxZH90qCPQDzhTFEaiLe1g7TZ5D9LmIfwzvbbdoN7Rrw10BjKIdUiXqA==
+X-Received: by 2002:a05:7022:48f:b0:11b:c86b:386a with SMTP id
+ a92af1059eb24-11c938137c7mr1244287c88.5.1763657836307; 
+ Thu, 20 Nov 2025 08:57:16 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-11c93e55af3sm11536747c88.7.2025.11.20.08.57.14
+ a92af1059eb24-11c93e55af3sm11536747c88.7.2025.11.20.08.57.15
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
  Thu, 20 Nov 2025 08:57:15 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v4 0/8] tests: enable format truncation checks
-Date: Thu, 20 Nov 2025 08:55:28 -0800
-Message-ID: <20251120165713.120238-1-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Bruce Richardson <bruce.richardson@intel.com>,
+ Anatoly Burakov <anatoly.burakov@intel.com>
+Subject: [PATCH v4 1/8] test: increase size of memzone name
+Date: Thu, 20 Nov 2025 08:55:29 -0800
+Message-ID: <20251120165713.120238-2-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
-In-Reply-To: <0251115193409.99740-1-stephen@networkplumber.org>
+In-Reply-To: <20251120165713.120238-1-stephen@networkplumber.org>
 References: <0251115193409.99740-1-stephen@networkplumber.org>
+ <20251120165713.120238-1-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -83,30 +86,49 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Enable format truncation warnings on the tests and fix where
-there was an issue.
+The tests were using a name buffer of 20 characters which could
+overflow if number of memory zones got large. The upper limit
+is defined as RTE_MEMZONE_NAMESIZE so use that.
 
-v4 - resolve more warnings found by CI
-   - simpler fix for cfgfile test
+In function ‘test_memzone_free’,
+    inlined from ‘test_memzone’ at ../app/test/test_memzone.c:1117:6:
+../app/test/test_memzone.c:52:35: warning: ‘%u’ directive output may be truncated writing between 1 and 10 bytes into a region of size 4 [-Wformat-truncation=]
+   52 | #define TEST_MEMZONE_NAME(suffix) "MZ_TEST_" suffix
+      |                                   ^~~~~~~~~~
+../app/test/test_memzone.c:931:46: note: in expansion of macro ‘TEST_MEMZONE_NAME’
+  931 |                 snprintf(name, sizeof(name), TEST_MEMZONE_NAME("tempzone%u"),
+      |                                              ^~~~~~~~~~~~~~~~~
+../app/test/test_memzone.c:52:35: note: directive argument in the range [0, 2147483647]
+   52 | #define TEST_MEMZONE_NAME(suffix) "MZ_TEST_" suffix
+      |                                   ^~~~~~~~~~
+../app/test/test_memzone.c:931:46: note: in expansion of macro ‘TEST_MEMZONE_NAME’
+  931 |                 snprintf(name, sizeof(name), TEST_MEMZONE_NAME("tempzone%u"),
+      |                                              ^~~~~~~~~~~~~~~~~
+../app/test/test_memzone.c:931:17: note: ‘snprintf’ output between 18 and 27 bytes into a destination of size 20
+  931 |                 snprintf(name, sizeof(name), TEST_MEMZONE_NAME("tempzone%u"),
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  932 |                                 i);
+      |
 
-Stephen Hemminger (8):
-  test: increase size of memzone name
-  test: refactor file prefix arg handling
-  test: avoid overflowing huge directory path
-  test: use unit test runner for eal flags
-  test: fix format overflow warning in ACL test
-  test: fix impossible format-truncation in cfgfiles
-  test: fix format overflow in cryptodev test
-  test: re-enable format-truncation warnings
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+---
+ app/test/test_memzone.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- app/test/meson.build      |   1 -
- app/test/test_cfgfile.c   |   8 +-
- app/test/test_cryptodev.c |  22 ++++-
- app/test/test_eal_flags.c | 172 ++++++++++++++++----------------------
- app/test/test_memzone.c   |   2 +-
- app/test/test_table_acl.c |   4 +-
- 6 files changed, 95 insertions(+), 114 deletions(-)
-
+diff --git a/app/test/test_memzone.c b/app/test/test_memzone.c
+index 506725ea41..6586dad18d 100644
+--- a/app/test/test_memzone.c
++++ b/app/test/test_memzone.c
+@@ -872,7 +872,7 @@ test_memzone_free(void)
+ {
+ 	const struct rte_memzone **mz;
+ 	int i;
+-	char name[20];
++	char name[RTE_MEMZONE_NAMESIZE];
+ 	int rc = -1;
+ 
+ 	mz = rte_calloc("memzone_test", rte_memzone_max_get() + 1,
 -- 
 2.51.0
 
