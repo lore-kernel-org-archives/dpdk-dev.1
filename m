@@ -2,74 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90D69CF649C
-	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Nov 2025 01:57:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70ACDCF64BF
+	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Nov 2025 05:48:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7B7E640267;
-	Thu, 20 Nov 2025 02:57:57 +0100 (CET)
-Received: from smtpbgeu2.qq.com (smtpbgeu2.qq.com [18.194.254.142])
- by mails.dpdk.org (Postfix) with ESMTP id 6C9C740262
- for <dev@dpdk.org>; Thu, 20 Nov 2025 02:57:54 +0100 (CET)
-X-QQ-mid: Yeas8t1763603869t248t09944
-Received: from 3DB253DBDE8942B29385B9DFB0B7E889 (jiawenwu@trustnetic.com
- [122.231.28.133])
-X-QQ-SSF: 0000000000000000000000000000000
-From: =?utf-8?b?Smlhd2VuIFd1?= <jiawenwu@trustnetic.com>
-X-BIZMAIL-ID: 10405319286998602982
-To: "'Thomas Monjalon'" <thomas@monjalon.net>,
-	<dev@dpdk.org>
-Cc: "'Xingui Yang'" <yangxingui@huawei.com>,
- "'Chengwen Feng'" <fengchengwen@huawei.com>,
- "'Zaiyu Wang'" <zaiyuwang@trustnetic.com>,
- "'Christian Koue Muf'" <ckm@napatech.com>,
- "'Serhii Iliushyk'" <sil-plv@napatech.com>,
- "'Cristian Dumitrescu'" <cristian.dumitrescu@intel.com>,
- "'Jian Wang'" <jianwang@trustnetic.com>,
- "'Andrew Rybchenko'" <andrew.rybchenko@oktetlabs.ru>,
- =?UTF-8?Q?'Morten_Br=C3=B8rup'?= <mb@smartsharesystems.com>,
- "'Sunil Kumar Kori'" <skori@marvell.com>,
- "'Xingui Yang'" <yangxingui@huawei.com>,
- "'Chengwen Feng'" <fengchengwen@huawei.com>,
- "'Zaiyu Wang'" <zaiyuwang@trustnetic.com>,
- "'Christian Koue Muf'" <ckm@napatech.com>,
- "'Serhii Iliushyk'" <sil-plv@napatech.com>,
- "'Cristian Dumitrescu'" <cristian.dumitrescu@intel.com>,
- "'Jian Wang'" <jianwang@trustnetic.com>,
- "'Andrew Rybchenko'" <andrew.rybchenko@oktetlabs.ru>,
- =?UTF-8?Q?'Morten_Br=C3=B8rup'?= <mb@smartsharesystems.com>,
- "'Sunil Kumar Kori'" <skori@marvell.com>
-References: <20251119130333.2697937-1-thomas@monjalon.net>
-In-Reply-To: <20251119130333.2697937-1-thomas@monjalon.net>
-Subject: RE: [PATCH] drivers/net: fix Tx packet prepare
-Date: Thu, 20 Nov 2025 09:57:48 +0800
-Message-ID: <023801dc59c1$122cfa50$3686eef0$@trustnetic.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 496DD40267;
+	Thu, 20 Nov 2025 06:48:01 +0100 (CET)
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com
+ [209.85.210.175])
+ by mails.dpdk.org (Postfix) with ESMTP id 53D9D40262
+ for <dev@dpdk.org>; Thu, 20 Nov 2025 06:48:00 +0100 (CET)
+Received: by mail-pf1-f175.google.com with SMTP id
+ d2e1a72fcca58-7bf0ad0cb87so469182b3a.2
+ for <dev@dpdk.org>; Wed, 19 Nov 2025 21:48:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1763617679;
+ x=1764222479; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=VrtX/xXmHyLjNjN/wZidZI09yePbaRAjs48H9SU1R7o=;
+ b=E4MNzmUN8rEOUazugI+89b0ywEOblrkGDbA7c+Vqu0AF94sbq54LJJawMNMtVZeqCI
+ qam3bYQ4q6zBHZYvC172E4hnSPzVUzDTWTgYrZBW1GslhWt32e8bizHZFX/KzzzIdQlC
+ tFd8KhLZHnf1TBuIvwwdeBtSarT2MRVhZW4uPaJEDTHtPyDWvvfWjVafESMxgU3uvjqX
+ p0qbKs2gf6qwkNziiFbYOZKwKyoqK2T3aQk2bPCFNBOCwYlnFe1ExTMg0JIa+za13Twd
+ xRTequ5RfC0SGe9vsQnmwWQMkVwtDr7t+9ytrAlE32usPRQ2sERk4qxBouemN1JhCxWH
+ hW+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1763617679; x=1764222479;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=VrtX/xXmHyLjNjN/wZidZI09yePbaRAjs48H9SU1R7o=;
+ b=EjFDaEBdJEMz6QPyK4KnhrCqVuxXK0jwamyoZmRi+hSZTh7LnuyNHKu6VgITN+Ze8p
+ 1oprJEE8SFqGqU2uuYp8byXd+/BwyWcp7ZzxDh9zsIZ9WYjldAj1Wdv6fA1st0DIKjrr
+ H+qqvF2lUWgIBNMAyT8/RNp9UHzOqno0oZqMVeDNHrRkldZAEPspxI2OAH7LZWDqTheL
+ jx3qUxMNfB1vhWzo827fJPy+Eotv0HfCufmbSjHbOgbBTUBNoYQ6gCkM8yI0L6uo84y8
+ oyNr/x1hek75nKz0yDy+u9giKOju6DM5pRiYW6JnxXRd4HYF7sYNNhoQMCwo/zvGMFq4
+ g+Zw==
+X-Gm-Message-State: AOJu0YzAAjiSjBXHuIcaKtKY/0agHuuvybB1hY1AUIKQehh4xbqvRAE9
+ 1lBHHuG3/cRLcByh4AeXSbRCQraIrSFbodS/OI/X6LQsCyg/vus8NXhzyw7eFxEkjRs82p6O4Rw
+ z8lLu
+X-Gm-Gg: ASbGncs8Bi6Tkzb0TX2PfS1bRG6NiTE4Akip7mqeGRGDh7SYonffX6mukAMgDzq1F5m
+ 8naoVE6Ma+iGJhWKEKcFhtyIvYbH7vIsbqHXo5PjDF6Jt8OV6rT8eDj7vwxawwBczCLfLlIbkDh
+ UYmt+sL2kxBTgyrfsS8FFzHConMUJpJvN/85zYNhZ8X7oxZw78fmqhSVs8s7KwCwBhuydnfOeVD
+ G2CQOMHMveYhjfomHQgESP7JyHAbHbZ/VY0Gfvvk2V/ozFy8lMN21L9PLUB9U6WXAZiumGeTo0M
+ /5Op9xIC5fdq/b43uTBOZwijlEg417yVCCXMQ4VJeKzAj3rKhWH5IH55KatjgHXA7p10IzdQzwJ
+ r6KyorRXkpqH/5Z6jLSEdOqJddXpREQHCFy2QXoBvZKhFPweFjiMK50VT0MBLAB+dS52NEo9qwx
+ 2HuMMMnTiOH7b7Nmkzojzax7DJqO5KAGR2QelkqQk/fqxPr3WwYlLj
+X-Google-Smtp-Source: AGHT+IF0Kwigx1rKmkdqMMdVp2zJyCBnoMdAMteSFgNSN1u5apYqIGKdgJ789bkOw2PyMRP8r2VQwg==
+X-Received: by 2002:a05:7022:3889:b0:119:e569:f627 with SMTP id
+ a92af1059eb24-11c93893531mr881100c88.32.1763617678963; 
+ Wed, 19 Nov 2025 21:47:58 -0800 (PST)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ a92af1059eb24-11c93db4a23sm6569684c88.2.2025.11.19.21.47.58
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Wed, 19 Nov 2025 21:47:58 -0800 (PST)
+Date: Wed, 19 Nov 2025 21:47:56 -0800
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Jiawen Wu <jiawenwu@trustnetic.com>
+Cc: dev@dpdk.org, zaiyuwang@trustnetic.com
+Subject: Re: [PATCH] net/txgbe: fix the missing old mailbox interface calls
+Message-ID: <20251119214756.6642de30@phoenix.local>
+In-Reply-To: <A4E8D8476CBBC191+20251119085624.73210-1-jiawenwu@trustnetic.com>
+References: <A4E8D8476CBBC191+20251119085624.73210-1-jiawenwu@trustnetic.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Content-Language: zh-cn
-Thread-Index: AQJ6GkSCSNiWHDCayPbTfeKe+f9oybO/Sx5w
-X-QQ-SENDSIZE: 520
-Feedback-ID: Yeas:trustnetic.com:qybglogicsvrgz:qybglogicsvrgz6b-0
-X-QQ-XMAILINFO: NhdiEwnVOUqE3vsNVltN89J8otVuVfktU5IeaWLkp6FkwYIGe22R97C7
- EUxYpmlHn6xHzY6eQWzm4nZ0aWm/VRU2uZiLUFoKWCHDHQLTMolQBGFFIqkYkyBMdS0T6N5
- t10M1Wfj95ZHzkipl7zDwuXyZaT5e+xS+LlgVn8etUtNSt3Z+4E8qSIf90yq/IpOocFPlTN
- VHjDs1BfIPTIHoH4sLAXw/rMOmos42T4zGZW+pSbEimbz5jJ3OrNlg6xs3nG47ANDpqc3+8
- s8HAyFtHi5IG75z/2PEAHriUD1f709tcNbm2dSvojgeitnTV1KJv4L3xOf4HPlXjCWv13rJ
- whO6k5c8QXvR6XZic8xYykkiugmcE6fMsRhbW2b2/umDGhlMHgPhJZy60ZLTgB3gQT1yK+l
- gMbqirektd0XTAoSp+Wt2d8mLcRM+r4p8UHEsehL0aHIkz+cdE+hp66ZLKIcsaK/8/GoVSr
- j3VfQDV5gKYGNGedCtOzw76KvAHhLpLmDz86zBq2nljUOstorbwxn+SWNyLf+ynx/M7ZdYU
- NT3d0ur04D00l29LKeUrsjlV2wOIna40qeOxA69vvQf/n+1w4psGc5OHCSB2n5mbm6dkSsR
- uOQ5s2D0UVUCugvHkSq2IPYgsDpZr15SpPVYmib/wkIScevQVJd1PcVlRrsS1u2Hnajkn0b
- g9+B3V0N0apNu0Bfc7sK8FQ7nWTmwRNoxanLfn54porj7F8bp7XJIBgElRt7Z7+5MVGlZXs
- 067cyjiB333OwxpCzhVxwOZ7aFJjT7O9D26o7m09PqR+l4qQOnBTLT5Q2wLH0IHUQnPV7bY
- yCKg8ksjfzlwrVGTSgSbb6S1N+hz4N0wz9Yyt2Tz9N3c6ktuiVYZ6qGc8i1uEXmpdxKrjS6
- fxUGJsqoYkvXIWL6bfd8FwefLzzqRUM/cG+m+ov7rblUwhsExnt5XY4pQOjLoZ8i+0gbNHN
- /MdgZ7fnHNIPpOBWwwLkj6u2lFtLD02bvgtkCXImrrTfC45JgTqaSXQjSWQlfZ5OY6qQXwG
- EiIi1ymyRz/sT/YFXPC1oiUVLtv6ISQ6NbblfdjBOg77OKsg39
-X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
-X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,21 +82,17 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, Nov 19, 2025 9:04 PM, Thomas Monjalon wrote:
-> After removing callback checks from ethdev fast path,
-> some drivers crashed because tx_pkt_prepare was set to NULL.
-> 
-> Some drivers (hns3, ngbe, txgbe) need to use rte_eth_tx_pkt_prepare_dummy
-> when configuring queues.
-> Other drivers (ntnic, softnic) does not need to set tx_pkt_prepare
-> as it was set by eth_dev_set_dummy_fops() called by rte_eth_dev_allocate().
-> 
-> Bugzilla ID: 1834
-> Fixes: 066f3d9cc21c ("ethdev: remove callback checks from fast path")
-> 
-> Reported-by: Jiawen Wu <jiawenwu@trustnetic.com>
-> Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
-> ---
+On Wed, 19 Nov 2025 16:56:24 +0800
+Jiawen Wu <jiawenwu@trustnetic.com> wrote:
 
-Tested-by: Jiawen Wu <jiawenwu@trustnetic.com>
+> @@ -28,6 +29,9 @@ void txgbe_init_ops_aml40(struct txgbe_hw *hw)
+>  	mac->init_mac_link_ops = txgbe_init_mac_link_ops_aml40;
+>  	mac->get_link_capabilities = txgbe_get_link_capabilities_aml40;
+>  	mac->check_link = txgbe_check_mac_link_aml40;
+> +
+> +	/* MAILBOX */
+> +	mbx->host_interface_command = txgbe_host_interface_command_aml;
+>  }
 
+Maybe that comment means something to you, but it seems like something
+the next maintainer would not know what it means. Could you explain it more?
