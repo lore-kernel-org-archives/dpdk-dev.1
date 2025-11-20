@@ -2,76 +2,76 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78665CF9C42
-	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Nov 2025 16:23:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAF05CF8875
+	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Nov 2025 16:23:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5FDA9402E8;
-	Thu, 20 Nov 2025 17:23:38 +0100 (CET)
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com
- [209.85.215.177])
- by mails.dpdk.org (Postfix) with ESMTP id 76C24402D4
- for <dev@dpdk.org>; Thu, 20 Nov 2025 17:23:35 +0100 (CET)
-Received: by mail-pg1-f177.google.com with SMTP id
- 41be03b00d2f7-bc0e89640b9so678323a12.1
- for <dev@dpdk.org>; Thu, 20 Nov 2025 08:23:35 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id AD183402DD;
+	Thu, 20 Nov 2025 17:23:39 +0100 (CET)
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com
+ [209.85.210.176])
+ by mails.dpdk.org (Postfix) with ESMTP id A8568402E3
+ for <dev@dpdk.org>; Thu, 20 Nov 2025 17:23:36 +0100 (CET)
+Received: by mail-pf1-f176.google.com with SMTP id
+ d2e1a72fcca58-7b80fed1505so1173731b3a.3
+ for <dev@dpdk.org>; Thu, 20 Nov 2025 08:23:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1763655814;
- x=1764260614; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1763655816;
+ x=1764260616; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=BAV57wDUV45aKAL0XKKVCh8ZsI+MeYnrrt8UIS4GUBo=;
- b=QHxtVBxZETpkKMV106ntrE+IG/QHhgH3/uiXobcr/P6xCv5/e4zxGk0DTeT/ZQWcEP
- 015wtBz4YJmQZu3C8WVUYlPeAlKKHwFxZKivUyZA5R1ONSuiuSGTI9SqlbrNgXS9Htq/
- M9ZRs2VMexK6L7tzZw1LI0rpnZ3Ez9h/N1sPbodKe8NUnQTq1MeTfnA+xwVVFHPI7CMr
- Ldrf+cIRjVkbWAyVx6776ZuVgMDA4p9+AVlmgMBw66XNw1GGTmO+EMqdx/baBW04CIP0
- aWd9LPG8dojtKCng9HVcdF7RdBH0GIFqnekxjNosFPvVHgamX+OXffxb1jyiUVeQ0EvP
- 5DUQ==
+ bh=O620v5P7WPTts3LgHtpuSTvliQv5MoIk+z7gtua/7o4=;
+ b=ut8oRCtuUwK5JccNaLHX7Cy+BvTCjz1wDjIzFjwui8I0A7eSLHaPTCfQfXsLIEofgE
+ xSphmqrCJZ7V1L1uwQfmu2nNQAcQa2LQop2pOFI82BeVMHZ5sUob2+6PpEuvbEuJsX7e
+ bT2hxRSdx30MqMjhbEB3bA6wrCTxC9isKqP40NQQ1Ch4h2PGEBMkruxL0kQ3Z1Zxaq08
+ 9WPParUeR+64eXc5Swqy9kjMBk+hmLhRQ7QTa00YeWiyabNgtbHKswB2lNCxHgzNABmN
+ 9hd8q0mWneI5mr9hoalySjJR49fM/Xbm6nn7M8uHibz0Eq5nszOtBYkjU3WkkCpXHIW/
+ 6zdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1763655814; x=1764260614;
+ d=1e100.net; s=20230601; t=1763655816; x=1764260616;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=BAV57wDUV45aKAL0XKKVCh8ZsI+MeYnrrt8UIS4GUBo=;
- b=wAYW5uIiy+mqL5IQY3mP3jsz/gAj1AEy5vv/UdlQUzKH1nVTFLj+euxr0H6fJM7U6H
- NKrD+Np+n8vo3aMPpS8ErlNwARubCywBdNSISOuszlx8tgbZE8N+uwvjQ7cTr+1ySPFZ
- Sl8wR8oxQlKxH0lrHN2Mv4NVKcQVbZAEF4DdPkv036eeQ1xP2/DsINqoQzXMXW3++9Jn
- ugZ3kvACBDbAGRgrquVHDkJfJTxj9kWzuK0yAw0CJXOpXxf8Zgqy+M6zNUI+Olf+RnGU
- vHOG2iydD1z6t9BGzHwK7wNAq1+w3gpJ18ATfNFBnK+ExXpzRvaGohaoNjP1s+8mjp3l
- fXdQ==
-X-Gm-Message-State: AOJu0YywxY7dz7dsUa4azqYAsAaujJm/evukvNJlGxxFSWNER6qqCILL
- wfzdPsHJqNjKfi+y/K5EloedUWjG/6NYQku29Ar75UEOLoR5VOigeM+pGl0QfLlwO6irO9IF3Y+
- GdPkl
-X-Gm-Gg: ASbGncuPwTOvSgefgK3k/A/zR8/8Qupjrf4mb6DopNuELxirjHIoUiwmMVm2nDDfvpF
- kDjRs0gXtIV6ue6bbTUel7lUXqyY9VYIAajz1Y+wCKDecugg9DCxol2mT1rd5uhAngWYYE7gzSg
- HnQ0lKRD9fKVejVndRVF50jHpIbJcwFRWL+Azj6GhZ6Ykak+mINHDgSlOFpS9XXc8V6CWAr+pqZ
- 62YCPlXywrNvNEpX6GgESMcNqLEeY17UYAS2mX8pLF+KRMcd7s4c4U6wTAhUiztmaiIJDWlgA5M
- /Xz4NWKeRsrXRrn+VUauQIb2NhYx11flpqU0IYez024dYMeLXDIZvUj1tIckP2+QQu+IJeL4MFb
- 1sHYuf1jYRv4WJrsoLw6F/oE4jueM+fsL3F5NLoMVvB2M/C1R+207SLopEQvR3+uwiZwTFeK7Rd
- m6sUZYnOn5nZ6WY5icTihk78xIR/pRPBcCSjpx33ENv2AynJE3nQ==
-X-Google-Smtp-Source: AGHT+IHzY/zSs3N916P7DdZZB9UZT/RSTKNIA2sK2KiDqOrABMCYB98NTPaaME7wI04raQx9ET/lVw==
-X-Received: by 2002:a05:7022:fc0a:b0:119:e56c:18b8 with SMTP id
- a92af1059eb24-11c947fe1cfmr915389c88.32.1763655814470; 
- Thu, 20 Nov 2025 08:23:34 -0800 (PST)
+ bh=O620v5P7WPTts3LgHtpuSTvliQv5MoIk+z7gtua/7o4=;
+ b=BiZqhlxHNL1YiXgfDSod1+RC4vEci54LRewVTxEtMrxyVjg/mPn0vMv+krQ8WWCgw4
+ /MrldRmWrCuriG3fHxf+F+uY4MLv6w3JO+aJUPUcsoyWDTjoz/xmb3Qlm8ua2g8LhveB
+ DFevNxpaa95IC2rLGBoC8l1/rweyaXUCDrFdmCBc1kWK8a1tVZsEWCXt8d5izkQgQ2z+
+ Mmxw/WsAKQ2GewDFbmE3CJ4dJJGsLwZMPZAz5iAtkBS7LEK+/Op4jFR8A7c1IjwQehJe
+ FSVXC/6jgwQqe0yipA62Bd/6h6OfdxVWCVSFwA7uuibizVTQUrtncaD99B5zauh9z+7E
+ fw0g==
+X-Gm-Message-State: AOJu0YxQsfbUMOXiwaf1H50bCkdw9h3QtoTLMF33iIQOC3f8MWNFtdCW
+ DiZVDaPbN6X/w0KI1Ka8T5bzIWV3JY4TJy7pZ4GrIvf5VMRMsjLb4z7Tk0vOMgU9MV5jfEkruCa
+ u+UXo
+X-Gm-Gg: ASbGnctEoWnPp3rRaS85mkK7MGyBuN2cLct8dZuPWPsGKPLvQH04EUvb9JQNt6XHYsF
+ Kyf2kZdH747KAi0JFHLKmw+2hk0OwsKO6AYbknXuvHvNhouDSVoKQvxe65jbs/QcBA7N/jw9DwD
+ grxmM91WHywcwr48P810aRjSzAzLhL1lGlBocA2D8itz1eaWLi0s7w0tttDerp3XGSj+lXPTAW2
+ cI2ZYerpgtulmMFct9nanpL7mgfr4EX9yvG1BlP882odbuNmK2qSBSF8oEBjU9qAhug6j4nEVsy
+ VihZ9gvSMn1qRmBUEuMq/VMChy1SyVh/adjBoKmJDjvJggD3WLmMAq23zTaSi6KtEJkRoDJTEXZ
+ OP0Aicg//7KSb3mY7Dz2itKAXbHfU5kMyd2I+0yvX77Aa60P9LCE6qRAjTPt3Rcl41i1Xx/v0VH
+ v9eP1yi/HB8F08cGtqjST9jkU7gk6Aoixnt4/uJH5JDEZmmEawkg==
+X-Google-Smtp-Source: AGHT+IGVP9rSfgHfJkW9zRMcY/ocr3RJ94wuwHCH36ilW6nec4axfd0n1edm4gn1DBJgtc3iKBps2g==
+X-Received: by 2002:a05:7022:789:b0:11b:9386:8261 with SMTP id
+ a92af1059eb24-11c9480ccb9mr1362607c88.46.1763655815697; 
+ Thu, 20 Nov 2025 08:23:35 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-11c93e3e945sm12096427c88.6.2025.11.20.08.23.33
+ a92af1059eb24-11c93e3e945sm12096427c88.6.2025.11.20.08.23.34
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 20 Nov 2025 08:23:34 -0800 (PST)
+ Thu, 20 Nov 2025 08:23:35 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>, maxime.coquelin@redhat.com,
- stable@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>,
- Chenbo Xia <chenbox@nvidia.com>, Adrian Moreno <amorenoz@redhat.com>
-Subject: [PATCH v4 2/4] examples/vdpa: fix format overflow warning
-Date: Thu, 20 Nov 2025 08:22:00 -0800
-Message-ID: <20251120162327.78062-3-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Konstantin Ananyev <konstantin.ananyev@huawei.com>,
+ Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH v4 3/4] examples/ip_reassembly: add check before formatting
+ name
+Date: Thu, 20 Nov 2025 08:22:01 -0800
+Message-ID: <20251120162327.78062-4-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251120162327.78062-1-stephen@networkplumber.org>
 References: <20251110182209.104087-1-stephen@networkplumber.org>
  <20251120162327.78062-1-stephen@networkplumber.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -86,64 +86,36 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The ifname is limited to 128 characters, but it would allow up
-to 128 characters as prefix then could overflow creating ifname.
-
-Change to limit path prefix (iface) to 123 (128 - sizeof("1024"))
-to avoid possible format overflow
-
-../examples/vdpa/main.c:501:76: warning: ‘snprintf’ output may be truncated before the last format character [-Wformat-truncation=]
-  501 |                         snprintf(vports[devcnt].ifname, MAX_PATH_LEN, "%s%d",
-      |                                                                            ^
-../examples/vdpa/main.c:501:25: note: ‘snprintf’ output between 2 and 139 bytes into a destination of size 128
-  501 |                         snprintf(vports[devcnt].ifname, MAX_PATH_LEN, "%s%d",
-      |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  502 |                                         iface, devcnt);
-      |
-
-Fixes: 38f8ab0bbc8d ("vhost: make vDPA framework bus agnostic")
-Cc: maxime.coquelin@redhat.com
-Cc: stable@dpdk.org
+In theory, lcore and queue could be so large that mbuf pool name
+could overflow. But that can never happen since lcore and queue
+will be in range. Add a check so that static tools know that.
+Format overflow warnings seen on older versions of Gcc only.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
 Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- examples/vdpa/main.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ examples/ip_reassembly/main.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/examples/vdpa/main.c b/examples/vdpa/main.c
-index 289db26498..08aa933272 100644
---- a/examples/vdpa/main.c
-+++ b/examples/vdpa/main.c
-@@ -22,6 +22,7 @@
+diff --git a/examples/ip_reassembly/main.c b/examples/ip_reassembly/main.c
+index 17ae76d4ba..25b904dbd4 100644
+--- a/examples/ip_reassembly/main.c
++++ b/examples/ip_reassembly/main.c
+@@ -884,6 +884,13 @@ setup_queue_tbl(struct rx_queue *rxq, uint32_t lcore, uint32_t queue)
  
- #define MAX_PATH_LEN 128
- #define MAX_VDPA_SAMPLE_PORTS 1024
-+#define MAX_VDPA_STR_LEN sizeof(RTE_STR(MAX_VDPA_SAMPLE_PORTS))
- #define RTE_LOGTYPE_VDPA RTE_LOGTYPE_USER1
+ 	nb_mbuf = RTE_MAX(nb_mbuf, (uint32_t)NB_MBUF);
  
- struct vdpa_port {
-@@ -36,7 +37,7 @@ struct vdpa_port {
++	/* Should never happen but check so that pool name won't be too long. */
++	if (lcore > RTE_MAX_LCORE || queue > RTE_MAX_QUEUES_PER_PORT) {
++		RTE_LOG(ERR, IP_RSMBL, "invalid lcore %u or queue %u",
++			lcore, queue);
++		return -1;
++	}
++
+ 	snprintf(buf, sizeof(buf), "mbuf_pool_%u_%u", lcore, queue);
  
- static struct vdpa_port vports[MAX_VDPA_SAMPLE_PORTS];
- 
--static char iface[MAX_PATH_LEN];
-+static char iface[MAX_PATH_LEN - MAX_VDPA_STR_LEN];
- static int devcnt;
- static int interactive;
- static int client_mode;
-@@ -74,9 +75,8 @@ parse_args(int argc, char **argv)
- 			break;
- 		/* long options */
- 		case 0:
--			if (strncmp(long_option[idx].name, "iface",
--						MAX_PATH_LEN) == 0) {
--				rte_strscpy(iface, optarg, MAX_PATH_LEN);
-+			if (!strcmp(long_option[idx].name, "iface")) {
-+				rte_strscpy(iface, optarg, sizeof(iface));
- 				printf("iface %s\n", iface);
- 			}
- 			if (!strcmp(long_option[idx].name, "interactive")) {
+ 	rxq->pool = rte_pktmbuf_pool_create(buf, nb_mbuf, MEMPOOL_CACHE_SIZE, 0,
 -- 
 2.51.0
 
