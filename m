@@ -2,37 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86443CF8845
-	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Nov 2025 11:46:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AFC9CF8875
+	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Nov 2025 16:23:34 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 622724026F;
-	Thu, 20 Nov 2025 12:46:02 +0100 (CET)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 5492F40262
- for <dev@dpdk.org>; Thu, 20 Nov 2025 12:46:01 +0100 (CET)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 24989214DB;
- Thu, 20 Nov 2025 12:46:01 +0100 (CET)
-Received: from dkrd4.smartsharesys.local ([192.168.4.26]) by
- smartserver.smartsharesystems.com with Microsoft SMTPSVC(6.0.3790.4675); 
- Thu, 20 Nov 2025 12:46:00 +0100
-From: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
-To: Bruce Richardson <bruce.richardson@intel.com>,
- Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>,
- Vipin Varghese <vipin.varghese@amd.com>, dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
-Subject: [PATCH] eal/x86: reduce memcpy code duplication
-Date: Thu, 20 Nov 2025 11:45:54 +0000
-Message-ID: <20251120114554.950287-1-mb@smartsharesystems.com>
-X-Mailer: git-send-email 2.43.0
+	by mails.dpdk.org (Postfix) with ESMTP id 52E4A4026F;
+	Thu, 20 Nov 2025 17:23:33 +0100 (CET)
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com
+ [209.85.214.180])
+ by mails.dpdk.org (Postfix) with ESMTP id E020E40262
+ for <dev@dpdk.org>; Thu, 20 Nov 2025 17:23:32 +0100 (CET)
+Received: by mail-pl1-f180.google.com with SMTP id
+ d9443c01a7336-298039e00c2so13953695ad.3
+ for <dev@dpdk.org>; Thu, 20 Nov 2025 08:23:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1763655812;
+ x=1764260612; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=pXkuhtuv4l3tz4KJPYHCiAOaIo0xa/yq1GYzjuoAFUc=;
+ b=sMurmBdsFaFhsMu2RUwqAAI9qBUOuBrq1Bv6qrmlagf3I6W1HsfLy2sjz9yapBaLlD
+ RGYjfnUMwkdT39TLnSEL7jQMuOTXH8jddi7j6/9uMEGJrZaQAcJaqwiJSdi52JH5o17/
+ uz53HsOZ0vO2xiP67eIyrOVrwPwcsKcDHOpvmCdX38gxYo76pSCgYf96FXoSnez8BQ3r
+ jKC3uFEXXmzIc0ifP8zDbAfsao1l5+4jzeTguGJc5KQ7aTqfwaYEpOH/4D9rlJswkbJD
+ TGbKzzA6XAavKY3MLm4sBIRtyaiqQglBHz+pK7CGTLvrWp2OuOQ5atAqd4oDrGF4RPAP
+ wKnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1763655812; x=1764260612;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=pXkuhtuv4l3tz4KJPYHCiAOaIo0xa/yq1GYzjuoAFUc=;
+ b=Nf76uScBp8w/BBrhsYpJTyw36DbcuBFsmXvfkEmNeTKHYsKyJ8balvHGAsMTm2HQNh
+ RaKentbGlx6pv/r90hrPYWsMjXyGrOy20S/JxXDoiQ4aVPWgzQgQqarnpzRHiUJcR4il
+ OtQs4tUZyyOwf7/ov7CjkpHva4JtzmfWVnqWeIvvtRQPZI+WdlCheUvnWzugObt8UMHh
+ Eswm/E4g+51B4zNj1+beazn9EkvfU5iSQJ/oX9XGHMHax1+GFxiRrMtS50ftq/HEitnv
+ Qsfrt581iblcE7SMe1dyu9HiGnRCHANB6ycrndYDgcNKT6rrY7CgRjk7Lnm9QYQ5WJe1
+ ysCQ==
+X-Gm-Message-State: AOJu0YzqKlUj9C5ENJwuwotKEwz811+oYEgpn6GSTrNC/V2OHf7KWuQ6
+ 56AYnzS88su9b3njBp5R873QRnvT0C+Nh7EMbVXb1EXzbDvDFWLjcaDpLZPCMNfipFWSW7qdYdK
+ ubXHa
+X-Gm-Gg: ASbGncssF85L6rgrkYsTEciR/VP2zdyR0X7PcqSBlyQlfWKJ5vyfV+Tq0fan7hEgN0k
+ Sdq4LZjocZMDqJIFBMj7IPFfOP0FPZHkycQH6c9ueTZqipbrTOp9GRTUS4DxIitkwgZ70gflKuq
+ vpdb2J2+x/vAQtA08qp2Wei8QAQctb5FSLkKxqzOdizWHuwZeND5taCHAH8Nl1O2Y0lutSHkyyv
+ LQdOljSrIaXBcAmH8nZ8HSGowZV+cE8/yYPaogkX8ZqTkpJy41tG0UKT28STxSa5z55LFacaTIM
+ xH8JctmE6RAT5QvpaqapP8lv9vQHyvxUYY2RdARK4KjOtUApY5vrlCEHsJFKIrDuwiVQZLvxdp7
+ NWQ64Gatf8hqjm81rRgwGyikOh2wuu35MQxFq5fCh/7h/b5Lam6ACN2Hjk5ySq9K7MGg6LgxBSP
+ zoOOZEGB4e5bNM8NxxRXeDAvbt54N7uNsaX+YVuDNQFjbrmmN++2xTHBbXJuwW
+X-Google-Smtp-Source: AGHT+IHpYSeq0NW0MqohWoBCin1TMsb7B2sMUuNEifkd4r6LS8PN6ZdTTp/oYJga7g9HcSNa67y8Jw==
+X-Received: by 2002:a05:7022:fc0a:b0:119:e56c:18b8 with SMTP id
+ a92af1059eb24-11c947fe1cfmr915346c88.32.1763655811710; 
+ Thu, 20 Nov 2025 08:23:31 -0800 (PST)
+Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ a92af1059eb24-11c93e3e945sm12096427c88.6.2025.11.20.08.23.30
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Thu, 20 Nov 2025 08:23:30 -0800 (PST)
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v4 0/4] examples: fix format-truncation errors
+Date: Thu, 20 Nov 2025 08:21:58 -0800
+Message-ID: <20251120162327.78062-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20251110182209.104087-1-stephen@networkplumber.org>
+References: <20251110182209.104087-1-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 20 Nov 2025 11:46:00.0815 (UTC)
- FILETIME=[3E2AE7F0:01DC5A13]
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -46,327 +83,24 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The implementation for copying up to 64 bytes does not depend on address
-alignment with the size of the CPU's vector registers, so the code
-handling this was moved from the various implementations to the common
-function.
+Enabling format-truncation warning in examples show several
+possible overflows that are easily addressed.
 
-This consolidation also has two minor benefits for the compiled output:
-1. The memory footprint of the copy function is reduced.
-Previously there were two instances of the compiled code to copy up to 64
-bytes, one in the "aligned" code path, and one in the "generic" code path.
-Now there is only one instance, in the "common" code path.
-2. The performance cost of the alignment test and associated branching is
-avoided when copying less than 65 bytes.
+v4 - use RTE_STR()
 
-Furthermore, the missing implementation of rte_mov48() was added.
+Stephen Hemminger (4):
+  examples/server_node_efd: fix format overflow
+  examples/vdpa: fix format overflow warning
+  examples/ip_reassembly: add check before formatting name
+  examples: enable format truncation warning
 
-Signed-off-by: Morten Brørup <mb@smartsharesystems.com>
----
- lib/eal/x86/include/rte_memcpy.h | 214 +++++++++++++++----------------
- 1 file changed, 100 insertions(+), 114 deletions(-)
+ examples/ip_reassembly/main.c              | 7 +++++++
+ examples/meson.build                       | 5 ++---
+ examples/server_node_efd/efd_server/main.c | 2 +-
+ examples/server_node_efd/shared/common.h   | 3 ++-
+ examples/vdpa/main.c                       | 8 ++++----
+ 5 files changed, 16 insertions(+), 9 deletions(-)
 
-diff --git a/lib/eal/x86/include/rte_memcpy.h b/lib/eal/x86/include/rte_memcpy.h
-index 46d34b8081..88820f50a9 100644
---- a/lib/eal/x86/include/rte_memcpy.h
-+++ b/lib/eal/x86/include/rte_memcpy.h
-@@ -132,6 +132,23 @@ rte_mov32(uint8_t *dst, const uint8_t *src)
- #endif
- }
- 
-+/**
-+ * Copy 48 bytes from one location to another,
-+ * locations should not overlap.
-+ */
-+static __rte_always_inline void
-+rte_mov48(uint8_t *dst, const uint8_t *src)
-+{
-+#if defined RTE_MEMCPY_AVX
-+	rte_mov32((uint8_t *)dst, (const uint8_t *)src);
-+	rte_mov32((uint8_t *)dst - 32 + 48, (const uint8_t *)src - 32 + 48);
-+#else /* SSE implementation */
-+	rte_mov16((uint8_t *)dst + 0 * 16, (const uint8_t *)src + 0 * 16);
-+	rte_mov16((uint8_t *)dst + 1 * 16, (const uint8_t *)src + 1 * 16);
-+	rte_mov16((uint8_t *)dst + 2 * 16, (const uint8_t *)src + 2 * 16);
-+#endif
-+}
-+
- /**
-  * Copy 64 bytes from one location to another,
-  * locations should not overlap.
-@@ -172,6 +189,38 @@ rte_mov256(uint8_t *dst, const uint8_t *src)
- 	rte_mov128(dst + 1 * 128, src + 1 * 128);
- }
- 
-+/**
-+ * Copy bytes from one location to another,
-+ * locations should not overlap.
-+ * Use with 16 <= n <= 32, preferably 16 < n <= 32.
-+ */
-+static __rte_always_inline void *
-+rte_mov16_to_32(void *dst, const void *src, size_t n)
-+{
-+	rte_mov16((uint8_t *)dst, (const uint8_t *)src);
-+	rte_mov16((uint8_t *)dst - 16 + n, (const uint8_t *)src - 16 + n);
-+	return dst;
-+}
-+
-+/**
-+ * Copy bytes from one location to another,
-+ * locations should not overlap.
-+ * Use with 32 <= n <= 64, preferably 32 < n <= 64.
-+ */
-+static __rte_always_inline void *
-+rte_mov32_to_64(void *dst, const void *src, size_t n)
-+{
-+	rte_mov32((uint8_t *)dst, (const uint8_t *)src);
-+#if (defined __AVX512F__ && defined RTE_MEMCPY_AVX512) || defined RTE_MEMCPY_AVX
-+	rte_mov32((uint8_t *)dst - 32 + n, (const uint8_t *)src - 32 + n);
-+#else /* SSE implementation */
-+	if (n > 48)
-+		rte_mov16((uint8_t *)dst + 32, (const uint8_t *)src + 32);
-+	rte_mov16((uint8_t *)dst - 16 + n, (const uint8_t *)src - 16 + n);
-+#endif
-+	return dst;
-+}
-+
- #if defined __AVX512F__ && defined RTE_MEMCPY_AVX512
- 
- /**
-@@ -232,45 +281,21 @@ rte_mov512blocks(uint8_t *dst, const uint8_t *src, size_t n)
- 	}
- }
- 
-+/**
-+ * Copy bytes from one location to another,
-+ * locations should not overlap.
-+ * Use with n > 64.
-+ */
- static __rte_always_inline void *
--rte_memcpy_generic(void *dst, const void *src, size_t n)
-+rte_memcpy_generic_more_than_64(void *dst, const void *src, size_t n)
- {
- 	void *ret = dst;
- 	size_t dstofss;
- 	size_t bits;
- 
--	/**
--	 * Copy less than 16 bytes
--	 */
--	if (n < 16) {
--		return rte_mov15_or_less(dst, src, n);
--	}
--
- 	/**
- 	 * Fast way when copy size doesn't exceed 512 bytes
- 	 */
--	if (__rte_constant(n) && n == 32) {
--		rte_mov32((uint8_t *)dst, (const uint8_t *)src);
--		return ret;
--	}
--	if (n <= 32) {
--		rte_mov16((uint8_t *)dst, (const uint8_t *)src);
--		if (__rte_constant(n) && n == 16)
--			return ret; /* avoid (harmless) duplicate copy */
--		rte_mov16((uint8_t *)dst - 16 + n,
--				  (const uint8_t *)src - 16 + n);
--		return ret;
--	}
--	if (__rte_constant(n) && n == 64) {
--		rte_mov64((uint8_t *)dst, (const uint8_t *)src);
--		return ret;
--	}
--	if (n <= 64) {
--		rte_mov32((uint8_t *)dst, (const uint8_t *)src);
--		rte_mov32((uint8_t *)dst - 32 + n,
--				  (const uint8_t *)src - 32 + n);
--		return ret;
--	}
- 	if (n <= 512) {
- 		if (n >= 256) {
- 			n -= 256;
-@@ -381,41 +406,21 @@ rte_mov128blocks(uint8_t *dst, const uint8_t *src, size_t n)
- 	}
- }
- 
-+/**
-+ * Copy bytes from one location to another,
-+ * locations should not overlap.
-+ * Use with n > 64.
-+ */
- static __rte_always_inline void *
--rte_memcpy_generic(void *dst, const void *src, size_t n)
-+rte_memcpy_generic_more_than_64(void *dst, const void *src, size_t n)
- {
- 	void *ret = dst;
- 	size_t dstofss;
- 	size_t bits;
- 
--	/**
--	 * Copy less than 16 bytes
--	 */
--	if (n < 16) {
--		return rte_mov15_or_less(dst, src, n);
--	}
--
- 	/**
- 	 * Fast way when copy size doesn't exceed 256 bytes
- 	 */
--	if (__rte_constant(n) && n == 32) {
--		rte_mov32((uint8_t *)dst, (const uint8_t *)src);
--		return ret;
--	}
--	if (n <= 32) {
--		rte_mov16((uint8_t *)dst, (const uint8_t *)src);
--		if (__rte_constant(n) && n == 16)
--			return ret; /* avoid (harmless) duplicate copy */
--		rte_mov16((uint8_t *)dst - 16 + n,
--				(const uint8_t *)src - 16 + n);
--		return ret;
--	}
--	if (n <= 64) {
--		rte_mov32((uint8_t *)dst, (const uint8_t *)src);
--		rte_mov32((uint8_t *)dst - 32 + n,
--				(const uint8_t *)src - 32 + n);
--		return ret;
--	}
- 	if (n <= 256) {
- 		if (n >= 128) {
- 			n -= 128;
-@@ -573,38 +578,22 @@ rte_memcpy_generic(void *dst, const void *src, size_t n)
-     }                                                                 \
- }
- 
-+/**
-+ * Copy bytes from one location to another,
-+ * locations should not overlap.
-+ * Use with n > 64.
-+ */
- static __rte_always_inline void *
--rte_memcpy_generic(void *dst, const void *src, size_t n)
-+rte_memcpy_generic_more_than_64(void *dst, const void *src, size_t n)
- {
- 	__m128i xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6, xmm7, xmm8;
- 	void *ret = dst;
- 	size_t dstofss;
- 	size_t srcofs;
- 
--	/**
--	 * Copy less than 16 bytes
--	 */
--	if (n < 16) {
--		return rte_mov15_or_less(dst, src, n);
--	}
--
- 	/**
- 	 * Fast way when copy size doesn't exceed 512 bytes
- 	 */
--	if (n <= 32) {
--		rte_mov16((uint8_t *)dst, (const uint8_t *)src);
--		if (__rte_constant(n) && n == 16)
--			return ret; /* avoid (harmless) duplicate copy */
--		rte_mov16((uint8_t *)dst - 16 + n, (const uint8_t *)src - 16 + n);
--		return ret;
--	}
--	if (n <= 64) {
--		rte_mov32((uint8_t *)dst, (const uint8_t *)src);
--		if (n > 48)
--			rte_mov16((uint8_t *)dst + 32, (const uint8_t *)src + 32);
--		rte_mov16((uint8_t *)dst - 16 + n, (const uint8_t *)src - 16 + n);
--		return ret;
--	}
- 	if (n <= 128) {
- 		goto COPY_BLOCK_128_BACK15;
- 	}
-@@ -696,44 +685,16 @@ rte_memcpy_generic(void *dst, const void *src, size_t n)
- 
- #endif /* __AVX512F__ */
- 
-+/**
-+ * Copy bytes from one vector register size aligned location to another,
-+ * locations should not overlap.
-+ * Use with n > 64.
-+ */
- static __rte_always_inline void *
--rte_memcpy_aligned(void *dst, const void *src, size_t n)
-+rte_memcpy_aligned_more_than_64(void *dst, const void *src, size_t n)
- {
- 	void *ret = dst;
- 
--	/* Copy size < 16 bytes */
--	if (n < 16) {
--		return rte_mov15_or_less(dst, src, n);
--	}
--
--	/* Copy 16 <= size <= 32 bytes */
--	if (__rte_constant(n) && n == 32) {
--		rte_mov32((uint8_t *)dst, (const uint8_t *)src);
--		return ret;
--	}
--	if (n <= 32) {
--		rte_mov16((uint8_t *)dst, (const uint8_t *)src);
--		if (__rte_constant(n) && n == 16)
--			return ret; /* avoid (harmless) duplicate copy */
--		rte_mov16((uint8_t *)dst - 16 + n,
--				(const uint8_t *)src - 16 + n);
--
--		return ret;
--	}
--
--	/* Copy 32 < size <= 64 bytes */
--	if (__rte_constant(n) && n == 64) {
--		rte_mov64((uint8_t *)dst, (const uint8_t *)src);
--		return ret;
--	}
--	if (n <= 64) {
--		rte_mov32((uint8_t *)dst, (const uint8_t *)src);
--		rte_mov32((uint8_t *)dst - 32 + n,
--				(const uint8_t *)src - 32 + n);
--
--		return ret;
--	}
--
- 	/* Copy 64 bytes blocks */
- 	for (; n > 64; n -= 64) {
- 		rte_mov64((uint8_t *)dst, (const uint8_t *)src);
-@@ -751,10 +712,35 @@ rte_memcpy_aligned(void *dst, const void *src, size_t n)
- static __rte_always_inline void *
- rte_memcpy(void *dst, const void *src, size_t n)
- {
-+	if (__rte_constant(n) && n == 16) {
-+		rte_mov16((uint8_t *)dst, (const uint8_t *)src);
-+		return dst;
-+	}
-+	if (__rte_constant(n) && n == 32) {
-+		rte_mov32((uint8_t *)dst, (const uint8_t *)src);
-+		return dst;
-+	}
-+	if (__rte_constant(n) && n == 48) {
-+		rte_mov48((uint8_t *)dst, (const uint8_t *)src);
-+		return dst;
-+	}
-+	if (__rte_constant(n) && n == 64) {
-+		rte_mov64((uint8_t *)dst, (const uint8_t *)src);
-+		return dst;
-+	}
-+
-+	if (n < 16)
-+		return rte_mov15_or_less(dst, src, n);
-+	if (n <= 32)
-+		return rte_mov16_to_32(dst, src, n);
-+	if (n <= 64)
-+		return rte_mov32_to_64(dst, src, n);
-+
-+	/* Implementation for size > 64 bytes depends on alignment with vector register size. */
- 	if (!(((uintptr_t)dst | (uintptr_t)src) & ALIGNMENT_MASK))
--		return rte_memcpy_aligned(dst, src, n);
-+		return rte_memcpy_aligned_more_than_64(dst, src, n);
- 	else
--		return rte_memcpy_generic(dst, src, n);
-+		return rte_memcpy_generic_more_than_64(dst, src, n);
- }
- 
- #undef ALIGNMENT_MASK
 -- 
-2.43.0
+2.51.0
 
