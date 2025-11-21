@@ -2,20 +2,20 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36B74CFC296
-	for <dpdk-dev@archiver.kernel.org>; Fri, 21 Nov 2025 17:52:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 295A1CFC296
+	for <dpdk-dev@archiver.kernel.org>; Fri, 21 Nov 2025 17:53:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 546AA4026F;
-	Fri, 21 Nov 2025 18:52:08 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 6F9044026F;
+	Fri, 21 Nov 2025 18:53:34 +0100 (CET)
 Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id D5F1C40267
- for <dev@dpdk.org>; Fri, 21 Nov 2025 18:52:07 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 51F6040267
+ for <dev@dpdk.org>; Fri, 21 Nov 2025 18:53:33 +0100 (CET)
 Received: by inbox.dpdk.org (Postfix, from userid 33)
- id CA60E48B6D; Fri, 21 Nov 2025 18:52:07 +0100 (CET)
+ id 4D28448B6D; Fri, 21 Nov 2025 18:53:33 +0100 (CET)
 From: bugzilla@dpdk.org
 To: dev@dpdk.org
 Subject: [DPDK/DTS Bug 1828] Add additional vlan stripping tests to DTS
-Date: Fri, 21 Nov 2025 17:52:08 +0000
+Date: Fri, 21 Nov 2025 17:53:33 +0000
 X-Bugzilla-Reason: AssignedTo
 X-Bugzilla-Type: changed
 X-Bugzilla-Watch-Reason: None
@@ -25,14 +25,14 @@ X-Bugzilla-Version: unspecified
 X-Bugzilla-Keywords: 
 X-Bugzilla-Severity: minor
 X-Bugzilla-Who: abailey@iol.unh.edu
-X-Bugzilla-Status: RESOLVED
-X-Bugzilla-Resolution: FIXED
+X-Bugzilla-Status: CONFIRMED
+X-Bugzilla-Resolution: 
 X-Bugzilla-Priority: Normal
 X-Bugzilla-Assigned-To: dev@dpdk.org
 X-Bugzilla-Target-Milestone: ---
 X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: resolution cc bug_status
-Message-ID: <bug-1828-3-DLLq46Gwot@http.bugs.dpdk.org/>
+X-Bugzilla-Changed-Fields: resolution everconfirmed bug_status
+Message-ID: <bug-1828-3-2TywujLJLD@http.bugs.dpdk.org/>
 In-Reply-To: <bug-1828-3@http.bugs.dpdk.org/>
 References: <bug-1828-3@http.bugs.dpdk.org/>
 Content-Transfer-Encoding: quoted-printable
@@ -60,12 +60,15 @@ Andrew (abailey@iol.unh.edu) changed:
 
            What    |Removed                     |Added
 ----------------------------------------------------------------------------
-         Resolution|---                         |FIXED
-                 CC|                            |abailey@iol.unh.edu
-             Status|UNCONFIRMED                 |RESOLVED
+         Resolution|FIXED                       |---
+     Ever confirmed|0                           |1
+             Status|RESOLVED                    |CONFIRMED
 
---- Comment #2 from Andrew (abailey@iol.unh.edu) ---
-Resolved: https://git.dpdk.org/dpdk/tree/dts/tests/TestSuite_qinq.py
+--- Comment #3 from Andrew (abailey@iol.unh.edu) ---
+Re-opening, we can close this when the patch for the QinQ testsuite is merg=
+ed
+in 26.03. This patch will add checks for the VLAN/QinQ tag storage in
+TCI/OUTER_TCI.
 
 --=20
 You are receiving this mail because:
