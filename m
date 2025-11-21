@@ -2,60 +2,40 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC2D2CFC50A
-	for <dpdk-dev@archiver.kernel.org>; Fri, 21 Nov 2025 21:09:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE966CFC509
+	for <dpdk-dev@archiver.kernel.org>; Fri, 21 Nov 2025 21:36:36 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 21EAF40280;
-	Fri, 21 Nov 2025 22:09:48 +0100 (CET)
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com
- [209.85.216.50]) by mails.dpdk.org (Postfix) with ESMTP id EEB8940269
- for <dev@dpdk.org>; Fri, 21 Nov 2025 22:09:46 +0100 (CET)
-Received: by mail-pj1-f50.google.com with SMTP id
- 98e67ed59e1d1-3410c86070dso1912031a91.1
- for <dev@dpdk.org>; Fri, 21 Nov 2025 13:09:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1763759386; x=1764364186; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=Vr/B90AtjRVZVq9gSc54Fpf+Ex8NSX+61E3wHKkfU64=;
- b=f5ks01JH8T1S6MUI9fUF10eOUqBIMG7UA6pFS8VNqS+88je0EEgE9ijVO1WqbAE6SR
- E0u0Zg+D48QfTENHYGEhxVqWcz3V6blKQRmBjg3UO/J5zxwwAIGcszG4D3w2ry6GBUMs
- hzG0L+zyEGqC+MCBtu4BvjcA6usBXCh/Z1Rto=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1763759386; x=1764364186;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=Vr/B90AtjRVZVq9gSc54Fpf+Ex8NSX+61E3wHKkfU64=;
- b=L5d9xrFmyPfAD69WY+2VaS/Hesjg5cXvJ/sBkb7d4Adnc6v/I6X/Sjxfu63sdZpzXl
- i5WNPec4wCJLY0nvVoNNm8gm4jf0fob1nHFrH2YT3CDmKYvLV5R4/WJiN0c07FRCwEip
- k4i7CTLcAmfFda5uBHE5ZyQfnUwpphmdtf+1exJNibvTNFurBohz24FxC1pV3FoB7/bP
- dvcPVNSd4+xlDxFjdyNCsk+Kqu3ZYQT3HpG7sKY7BzPle1Pq0BgOBz01oGix5EH9yMrL
- 0wHZBkL/pAmhCqmLzvvpW3xEkac4x18CdtHQTYZJh39hrH5Od3s86jDrpWrNS+yxoEJL
- fmMQ==
-X-Gm-Message-State: AOJu0YwVM/FbH57X8c5CrlA/7nvjjIpuW2dLrPIu26j2zAxQQKBfBHDZ
- 5xDSD3vcaQeLotMW6PCKwsuTAQ7pNKl0NQeHB2ysAKGMMXPF33Z6K1Y/cNcrrFz6Y8Mz8uVFWQY
- mHgYK71IH87xoAwYnrIXr4oYHueBo4ZCaMcZzYfGXkw==
-X-Gm-Gg: ASbGncsk0T6TL7O1xMctK82CN+OVBx7RMzwMI1QWK7CJmUD11PGgPA85YVPtZ5P59n9
- ijUYumfogEpHG6pLm526fgcLziLdL9MoqoJkDwYC9Vo1XovxOIPdXtCU2/is0n7MRuikNWEhLfx
- w4ZoGD6T1vtRWFoSNUUaOws80LKKBUszzAoFS6gFuxl2n046S5yLCNxi+JFmHNEujUhrC+8JOIs
- lEkldvNsGcrVYF0ftIt+BwkartQvZfcyOS0TDlf1VhEM03ciO6+qt08PNXq99X33Wc5rLCZvHnJ
- RG11nUUNNSjtAwjkET9uGmKtQeJi
-X-Google-Smtp-Source: AGHT+IEZHdYGDfZiumwEnI57dUPB6Emhr9htOJmfaNjvhTocwBEEXgz7LbikZ8DOwR/NPNb4+P2tLRlEjxc5RvDN2Mg=
-X-Received: by 2002:a05:7022:ebc3:b0:11a:4ffb:9825 with SMTP id
- a92af1059eb24-11c9d70abb4mr1451603c88.6.1763759386058; Fri, 21 Nov 2025
- 13:09:46 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id CCA9140280;
+	Fri, 21 Nov 2025 22:36:35 +0100 (CET)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 5216740269
+ for <dev@dpdk.org>; Fri, 21 Nov 2025 22:36:34 +0100 (CET)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 2560D20C26;
+ Fri, 21 Nov 2025 22:36:34 +0100 (CET)
+Content-class: urn:content-classes:message
+Subject: RE: [PATCH v2] eal/x86: optimize memcpy of small sizes
 MIME-Version: 1.0
-References: <20251121210650.328804-1-abailey@iol.unh.edu>
-In-Reply-To: <20251121210650.328804-1-abailey@iol.unh.edu>
-From: Patrick Robb <probb@iol.unh.edu>
-Date: Fri, 21 Nov 2025 16:08:22 -0500
-X-Gm-Features: AWmQ_bksArSdQ-aqBmzmsnP-QTQ_9xwbYobMOWZNXbj9vIivCNtxPHHE0Zsxr9Q
-Message-ID: <CAJvnSUA-g8b8yWakMo4-WOwGncsk5FnO-5aw49va-1-VSg=xoA@mail.gmail.com>
-Subject: Re: [PATCH v1] dts: automate VFIO-PCI modprobe
-To: Andrew Bailey <abailey@iol.unh.edu>
-Cc: dev@dpdk.org, dmarx@iol.unh.edu, luca.vizzarro@arm.com
-Content-Type: multipart/alternative; boundary="000000000000acf2380644213b11"
+Content-Type: text/plain;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+Date: Fri, 21 Nov 2025 22:36:33 +0100
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65581@smartserver.smartshare.dk>
+In-Reply-To: <20251121091159.4783d97b@phoenix.local>
+X-MS-Has-Attach: 
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH v2] eal/x86: optimize memcpy of small sizes
+Thread-Index: AdxbCfU+hyJqm87mTUWDhRz0RYQTGAAG/2Dw
+References: <20251120114554.950287-1-mb@smartsharesystems.com><20251121103535.1273457-1-mb@smartsharesystems.com><20251121085730.51f0466a@phoenix.local><aSCbGWNQ7dr7EE7A@bricha3-mobl1.ger.corp.intel.com>
+ <20251121091159.4783d97b@phoenix.local>
+From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
+To: "Stephen Hemminger" <stephen@networkplumber.org>,
+ "Bruce Richardson" <bruce.richardson@intel.com>
+Cc: <dev@dpdk.org>, "Konstantin Ananyev" <konstantin.v.ananyev@yandex.ru>,
+ "Vipin Varghese" <vipin.varghese@amd.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -69,92 +49,51 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---000000000000acf2380644213b11
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-I think there is a missing check for if ports is None (user is not
-providing ports, trying to only run NO_LINKS tests).
-
-On Fri, Nov 21, 2025 at 4:06=E2=80=AFPM Andrew Bailey <abailey@iol.unh.edu>=
- wrote:
-
-> Currently, users must modprobe vfio-pci before running DTS when using a
-> non-mellanox NIC. This patch automates the process on test run start up.
->
-> Signed-off-by: Andrew Bailey <abailey@iol.unh.edu>
-> ---
->  dts/framework/test_run.py | 4 ++++
->  1 file changed, 4 insertions(+)
->
-> diff --git a/dts/framework/test_run.py b/dts/framework/test_run.py
-> index ff0a12c9ce..38f9e6c07d 100644
-> --- a/dts/framework/test_run.py
-> +++ b/dts/framework/test_run.py
-> @@ -347,6 +347,10 @@ def next(self) -> State | None:
->          test_run.ctx.dpdk.setup()
->          test_run.ctx.topology.setup()
->
-> +        if test_run.ctx.sut_node.ports[0].config.os_driver_for_dpdk =3D=
-=3D
-> "vfio-pci":
-> +            test_run.ctx.sut_node.main_session.send_command("modprobe
-> vfio")
-> +            test_run.ctx.sut_node.main_session.send_command("modprobe
-> vfio-pci")
-> +
->          if test_run.config.use_virtual_functions:
->              test_run.ctx.topology.instantiate_vf_ports()
->
-> --
-> 2.50.1
->
->
-
---000000000000acf2380644213b11
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr">I think there is a missing check for if ports is None (use=
-r is not providing ports, trying to only run NO_LINKS tests).</div><br><div=
- class=3D"gmail_quote gmail_quote_container"><div dir=3D"ltr" class=3D"gmai=
-l_attr">On Fri, Nov 21, 2025 at 4:06=E2=80=AFPM Andrew Bailey &lt;<a href=
-=3D"mailto:abailey@iol.unh.edu">abailey@iol.unh.edu</a>&gt; wrote:<br></div=
-><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border=
--left:1px solid rgb(204,204,204);padding-left:1ex">Currently, users must mo=
-dprobe vfio-pci before running DTS when using a<br>
-non-mellanox NIC. This patch automates the process on test run start up.<br=
->
-<br>
-Signed-off-by: Andrew Bailey &lt;<a href=3D"mailto:abailey@iol.unh.edu" tar=
-get=3D"_blank">abailey@iol.unh.edu</a>&gt;<br>
----<br>
-=C2=A0dts/framework/test_run.py | 4 ++++<br>
-=C2=A01 file changed, 4 insertions(+)<br>
-<br>
-diff --git a/dts/framework/test_run.py b/dts/framework/test_run.py<br>
-index ff0a12c9ce..38f9e6c07d 100644<br>
---- a/dts/framework/test_run.py<br>
-+++ b/dts/framework/test_run.py<br>
-@@ -347,6 +347,10 @@ def next(self) -&gt; State | None:<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0test_run.ctx.dpdk.setup()<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0test_run.ctx.topology.setup()<br>
-<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 if test_run.ctx.sut_node.ports[0].config.os_dr=
-iver_for_dpdk =3D=3D &quot;vfio-pci&quot;:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 test_run.ctx.sut_node.main_sessi=
-on.send_command(&quot;modprobe vfio&quot;)<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 test_run.ctx.sut_node.main_sessi=
-on.send_command(&quot;modprobe vfio-pci&quot;)<br>
-+<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if test_run.config.use_virtual_functions:=
-<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0test_run.ctx.topology.insta=
-ntiate_vf_ports()<br>
-<br>
--- <br>
-2.50.1<br>
-<br>
-</blockquote></div>
-
---000000000000acf2380644213b11--
+PiBGcm9tOiBTdGVwaGVuIEhlbW1pbmdlciBbbWFpbHRvOnN0ZXBoZW5AbmV0d29ya3BsdW1iZXIu
+b3JnXQ0KPiBTZW50OiBGcmlkYXksIDIxIE5vdmVtYmVyIDIwMjUgMTguMTINCj4gDQo+IE9uIEZy
+aSwgMjEgTm92IDIwMjUgMTc6MDI6MTcgKzAwMDANCj4gQnJ1Y2UgUmljaGFyZHNvbiA8YnJ1Y2Uu
+cmljaGFyZHNvbkBpbnRlbC5jb20+IHdyb3RlOg0KPiANCj4gPiA+IEFzIEkgaGF2ZSBzYWlkIGJl
+Zm9yZSB3b3VsZCByYXRoZXIgdGhhdCBEUERLIG1vdmUgYXdheSBmcm9tIGhhdmluZw0KPiBpdHMN
+Cj4gPiA+IG93biBzcGVjaWFsaXplZCBtZW1jcHkuICBIb3cgaXMgdGhpcyBjb21wYXJlZCB0byBz
+dG9jayBpbmxpbmUgZ2NjPw0KDQpUaGUgIi4vYnVpbGQvYXBwL3Rlc3QvZHBkay10ZXN0IG1lbWNw
+eV9wZXJmX2F1dG90ZXN0IiBjb21wYXJlcyB0byBzdGFuZGFyZCBtZW1jcHkoKS4NCg0KT24gbXkg
+YnVpbGQgc3lzdGVtLCBjb3BpZXMgdXAgdG8gNjQgYnl0ZXMgKHdpdGggc2l6ZSBub3Qga25vd24g
+YXQgYnVpbGQgdGltZSkgdGFrZSA5IGN5Y2xlcyB1c2luZyBtZW1jcHkoKSB2cy4gMi00IGN5Y2xl
+cyB1c2luZyBydGVfbWVtY3B5KCkuDQoNClRoZSBnZW5lcmFsIGRpZmZlcmVuY2Ugd2FzIHByb2Jh
+Ymx5IHdvcnNlIHdpdGggb2xkZXIgY29tcGlsZXJzLg0KV2Ugc2hvdWxkIGNvbXBhcmUgdXNpbmcg
+dGhlIG9sZGVzdCBjb21waWxlciB2ZXJzaW9ucyBvZmZpY2lhbGx5IHN1cHBvcnRlZCBieSBEUERL
+LiAoR0NDLCBDbGFuZywgTVNWQywgLi4uKSBBbmQgYWNyb3NzIHRoZSBzdXBwb3J0ZWQgQ1BVcy4N
+Cg0KVGhlcmUgYXJlIHBsZW50eSBvZiBvcHRpbWl6YXRpb25zIGluIERQREssIHdoaWNoIHdlcmUg
+cmVsZXZhbnQgYXQgdGhlIHRpbWUgb2YgYWRkaXRpb24sIGJ1dCBoYXZlIGJlY29tZSBvYnNvbGV0
+ZSBvdmVyIHRpbWUuDQpJIGRvbid0IHRoaW5rIHJ0ZV9tZW1jcHkoKSBpcyB0aGVyZSB5ZXQuIChH
+dXQgZmVlbGluZywgbm8gZGF0YSB0byBiYWNrIGl0IHVwIHdpdGghKQ0KVW50aWwgd2UgZ2V0IHRo
+ZXJlLCB3ZSBzaG91bGQga2VlcCBvcHRpbWl6aW5nIHJ0ZV9tZW1jcHkoKS4NCg0KRm9yIGFueSBw
+ZXItcGFja2V0IG9wZXJhdGlvbiwgc2hhdmluZyBvZmYgYSBmZXcgY3ljbGVzIGlzIHZhbHVhYmxl
+Lg0KQW5kIGlmIHRoZSBtYWpvcml0eSBvZiBhbiBhcHBsaWNhdGlvbidzIGNvcHkgb3BlcmF0aW9u
+cyBwZXIgcGFja2V0IGFyZSBtb3JlIHRoYW4gYSBmZXcgYnl0ZXMsIHRoZSBhcHBsaWNhdGlvbiB3
+aWxsIG5vdCBhY2hpZXZlIGhpZ2ggcGVyZm9ybWFuY2UuDQpUaHVzLCBJIHRoaW5rIG9wdGltaXpp
+bmcgc21hbGwgY29waWVzIGlzIHJlbGV2YW50OiBBIG5vcm1hbCBEUERLIGFwcGxpY2F0aW9uIHNo
+b3VsZCBwZXJmb3JtIG1hbnkgbW9yZSBzbWFsbCBjb3BpZXMgdGhhbiBsYXJnZSBjb3BpZXMuIChN
+ZWFzdXJlZCBieSBudW1iZXIgb2YgY29weSBvcGVyYXRpb25zLCBub3QgbnVtYmVyIG9mIGNvcGll
+ZCBieXRlcy4pDQoNCj4gPiA+IFRoZSBtYWluIG1vdGl2YXRpb24gaXMgdGhhdCB0aGUgZ2xpYmMv
+Z2NjIHRlYW0gZG9lcyBtb3JlIHRlc3RpbmcNCj4gYWNyb3NzDQo+ID4gPiBtdWx0aXBsZSBhcmNo
+aXRlY3R1cmVzIGFuZCBoYXMgYSBjb21tdW5pdHkgd2l0aCBtb3JlIGV4cGVydGlzZSBvbg0KPiBD
+UFUNCj4gPiA+IHNwZWNpYWwgY2FzZXMuDQo+ID4NCj4gPiBJIHdvdWxkIHRlbmQgdG8gYWdyZWUu
+IEV2ZW4gaWYgd2UgZ2V0IHJ0ZV9tZW1jcHkgYSBmZXcgY3ljbGVzIGZhc3RlciwNCj4gSQ0KPiA+
+IHN1c3BlY3QgbWFueSBhcHBzIHdvdWxkbid0IG5vdGljZSB0aGUgZGlmZmVyZW5jZS4gSG93ZXZl
+ciwgSQ0KPiB1bmRlcnN0YW5kDQo+ID4gdGhhdCB0aGUgdmlydGlvL3Zob3N0IGxpYnJhcmllcyBn
+YWluIGZyb20gdXNpbmcgcnRlX21lbWNweSBvdmVyDQo+IHN0YW5kYXJkDQo+ID4gbWVtY3B5IC0g
+b3IgYXQgbGVhc3QgdXNlZCB0by4gUGVyaGFwcyB3ZSBjYW4gY29uc2lkZXIgZGVwcmVjYXRpbmcN
+Cj4gPiBydGVfbWVtY3B5IGFuZCBqdXN0IHB1dHRpbmcgYSB2aG9zdC1zcGVjaWZpYyBtZW1jcHkg
+aW4gdGhhdCBsaWJyYXJ5Pw0KPiANCj4gSXQgd291bGQgYmUgZ29vZCB0byBmaWd1cmUgb3V0IHdo
+eSB2aG9zdCBpcyBiZXR0ZXIgd2l0aCBydGVfbWVtY3B5LA0KPiBtYXliZSB0aGVyZSBpcyBzb21l
+IGFsaWdubWVudCBhc3N1bXB0aW9uIHRoYXQgaXMgaW4gb25lIGFuZCBub3QgdGhlDQo+IG90aGVy
+Pw0KDQpMb29raW5nIGF0IDEwMjQgYnl0ZXMgY29weSBvbiBteSBidWlsZCBzeXN0ZW0sDQpjYWNo
+ZS10by1tZW0gaXMgMTIgJSBmYXN0ZXIgd2l0aCBydGVfbWVtY3B5KCksIGFuZA0KbWVtLXRvLWNh
+Y2hlIGlzIDEwICUgc2xvd2VyLg0KDQpNYXliZSB0aGUgdmhvc3QgbGlicmFyeSB3b3VsZCBiZW5l
+Zml0IGZyb20gaGF2aW5nIGFjY2VzcyB0byB0d28gcnRlX21lbWNweSB2YXJpYW50cywgcmVzcGVj
+dGl2ZWx5IG9wdGltaXplZCBmb3IgY2FjaGUtdG8tbWVtIGFuZCBtZW0tdG8tY2FjaGUuDQoNClRo
+ZXJlIHdpbGwgYWx3YXlzIGJlIHNvbWUgdXNlIGNhc2VzIHdoZXJlIGEgZ2VuZXJpYyAib3B0aW1p
+emVkIiBydGVfbWVtY3B5KCkgd2lsbCBiZSBzdWJvcHRpbWFsLg0KDQpQcm92aWRpbmcgc3BlY2lm
+aWMgZnVuY3Rpb25zIG9wdGltaXplZCBmb3Igc3BlY2lmaWMgdXNlIGNhc2VzIG1ha2VzIHJlYWxs
+eSBnb29kIHNlbnNlLg0KDQo=
