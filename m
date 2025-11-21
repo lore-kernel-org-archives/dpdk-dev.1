@@ -2,22 +2,22 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C6D8CFA76B
-	for <dpdk-dev@archiver.kernel.org>; Fri, 21 Nov 2025 10:35:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0486BCFA76B
+	for <dpdk-dev@archiver.kernel.org>; Fri, 21 Nov 2025 10:40:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BE2F9402D4;
-	Fri, 21 Nov 2025 11:35:38 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 3F3CA402E5;
+	Fri, 21 Nov 2025 11:40:14 +0100 (CET)
 Received: from dkmailrelay1.smartsharesystems.com
  (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 3743D4026F
- for <dev@dpdk.org>; Fri, 21 Nov 2025 11:35:37 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 37A904026F
+ for <dev@dpdk.org>; Fri, 21 Nov 2025 11:40:13 +0100 (CET)
 Received: from smartserver.smartsharesystems.com
  (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id DBB9320C26;
- Fri, 21 Nov 2025 11:35:36 +0100 (CET)
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 1424320C26;
+ Fri, 21 Nov 2025 11:40:13 +0100 (CET)
 Received: from dkrd4.smartsharesys.local ([192.168.4.26]) by
  smartserver.smartsharesystems.com with Microsoft SMTPSVC(6.0.3790.4675); 
- Fri, 21 Nov 2025 11:35:36 +0100
+ Fri, 21 Nov 2025 11:40:12 +0100
 From: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
 To: dev@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>,
  Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>,
@@ -25,16 +25,16 @@ To: dev@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>,
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
  =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
 Subject: [PATCH v2] eal/x86: optimize memcpy of small sizes
-Date: Fri, 21 Nov 2025 10:35:35 +0000
-Message-ID: <20251121103535.1273457-1-mb@smartsharesystems.com>
+Date: Fri, 21 Nov 2025 10:40:11 +0000
+Message-ID: <20251121104011.1273620-1-mb@smartsharesystems.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251120114554.950287-1-mb@smartsharesystems.com>
 References: <20251120114554.950287-1-mb@smartsharesystems.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 21 Nov 2025 10:35:36.0602 (UTC)
- FILETIME=[92C0E7A0:01DC5AD2]
+X-OriginalArrivalTime: 21 Nov 2025 10:40:12.0806 (UTC)
+ FILETIME=[37624A60:01DC5AD3]
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -74,6 +74,8 @@ And finally, the missing implementation of rte_mov48() was added.
 
 Signed-off-by: Morten Brørup <mb@smartsharesystems.com>
 ---
+v3:
+* Fixed typo in comment.
 v2:
 * Updated patch title to reflect that the performance is improved.
 * Use the design pattern of two overlapping stores for small copies too.
@@ -180,7 +182,7 @@ index 46d34b8081..665902ff62 100644
 + * [-Wmaybe-uninitialized].
 + *
 + * Note: Using "n & X" generates 3-byte "test" instructions,
-+ * instead of "n >= X", which would generate 4-byte "cmp" intructions.
++ * instead of "n >= X", which would generate 4-byte "cmp" instructions.
 + */
 +static __rte_always_inline void *
 +rte_mov16_or_less(void *dst, const void *src, size_t n)
