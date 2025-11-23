@@ -2,68 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7387ECFC518
-	for <dpdk-dev@archiver.kernel.org>; Sun, 23 Nov 2025 17:45:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F918CFC518
+	for <dpdk-dev@archiver.kernel.org>; Sun, 23 Nov 2025 17:45:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 64A9640395;
-	Sun, 23 Nov 2025 18:45:22 +0100 (CET)
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com
- [209.85.214.182])
- by mails.dpdk.org (Postfix) with ESMTP id D0643402D9
- for <dev@dpdk.org>; Sun, 23 Nov 2025 18:45:08 +0100 (CET)
-Received: by mail-pl1-f182.google.com with SMTP id
- d9443c01a7336-2957850c63bso25602235ad.0
- for <dev@dpdk.org>; Sun, 23 Nov 2025 09:45:08 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 60A6C40431;
+	Sun, 23 Nov 2025 18:45:23 +0100 (CET)
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com
+ [209.85.214.172])
+ by mails.dpdk.org (Postfix) with ESMTP id AC419402DD
+ for <dev@dpdk.org>; Sun, 23 Nov 2025 18:45:09 +0100 (CET)
+Received: by mail-pl1-f172.google.com with SMTP id
+ d9443c01a7336-2953ad5517dso43907535ad.0
+ for <dev@dpdk.org>; Sun, 23 Nov 2025 09:45:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1763919908;
- x=1764524708; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1763919909;
+ x=1764524709; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=+3vkj/3rL+hrFaWsusFpryHb3uZdDHR+Wxv3gEycqFk=;
- b=JsXFtoocBQpJvPbvXvH+5QrYEji/j9uFqqifSMC8cvtQTndbF8W9vj8wKd10z1dr8k
- 0vfq0buU8D8N15bg8HkazrIpj4M1aSRkmyQSRxSjX+kYcPKk+KXWcErInREBBOO7a4lJ
- YuXjdisqYBTeTp53l3WPUKJKNCIrPxmWtPhwABOCr5+zTPaUkGNkW0a7KwYHjVO2hnfL
- oX/KWkiP0sbfP1V8meAdWUEjdjskWBb1q+q5W1lnCXuPusholXgHmPc7R5nOwUpCwUwG
- sIgcpBp10d11ZHF2UWmnJZ2/dXGDfhUU+51CL8PLoVmCo2tCSaBoed+CTi0nlJLzIWzI
- R+5g==
+ bh=A6Iwx4wa5+M1K5368dZpDXczj6viFYmm+BcEbvWSe74=;
+ b=j5CPZLPWtKeS1gmyNty6lx3bm/mh+u/W9kuBObGvbTY3VmxMDRtnSzGL5jODmvoApK
+ boV/Wd8/sh0wFN+Ek6ShPGTGInQ2nUv3//CwIwUKx6coTgHHq1y6Q3iq4QQif0Qc0X5/
+ OPcC6tTOWHMdRH9x646AHWd5dVZk2FB+zYmcApYukKLWuLxBGcgTIEmo8vKJLJm8kTXK
+ 1LO1QGDTJRlTMjfecVZoRRP7bL6QCirUNygbkfZGaoCYt4m9hsQCezjfvHXe9/ez/uox
+ MN2a5HNBPzEg9M4O0S1iTXd/1hGF1fBigxqiDrYb5yrWEBTaTl1R3KBTpmjiq6R8DeQ5
+ p4kw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1763919908; x=1764524708;
+ d=1e100.net; s=20230601; t=1763919909; x=1764524709;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=+3vkj/3rL+hrFaWsusFpryHb3uZdDHR+Wxv3gEycqFk=;
- b=Leqpg9wHkurbvSe3oTq3lOooG3xWtYyxdXrJUSCHSVXBzmcHv7NKXBm/UMzaa1MN6l
- qzTTF3QFNEK1Clg3DkUUK6p6AiSlkiZ6bLy5u2PmzQWEn6jbiv1MrIVtu9PNqHG7OZRA
- /QLd6BFWXfh5SwhhK2uqVqcIkxSVGRVithmsjPsI1NBOZNexQSRZCtUSSWkzqhq3VjOH
- dS3Yq3QHCCvkbKaUCZ7qE4soDxdgUGbtKMQ6wo4osyC1UzjxvgFr5OnCEJr/Y1EQhf3u
- uHJdiPwFVGuUL0aBUqJgSgGWZAHYRZ3DGjFVkzcjldzjvqOIKm1nlRGZJbT/ziFgIcH6
- HZBA==
-X-Gm-Message-State: AOJu0YyZLRVZT/o6J3n0OLgKOu1tNs6s7weJK/InnjgvkGbheaU3ZKty
- hOlQbz17oBCa1xgi2nrH3he/CnIK4wmbm5EwxoO+PDGjcEutZmd7Ca0NtTpvdxclLpDndEA7jDJ
- k8VwP
-X-Gm-Gg: ASbGnct2oTWmbSG1Z2yRV8cGL93UBe69sfgOjhK6EGUOeTwx6B0Diy6OWvLmsjT6ZaB
- SZEZRcjwSJ8ywWoQg0BMBRR1cgKw1hNbtfhfLm6rI21LbRCJvAUuDGOG41MFxWR7fNbskHRR1Ox
- otfPcEkECiVhwxfGJeDnkKoNeH64R6MS1DIQINVbS31olYpRETftlHawLAo3kygcYGfwdPCd947
- aUc3JEm9+qq5pDyX7GiCa3OhoUJI9Tty7y3Hc55zj4htUuFj01jK7Qfp3OPU7CEAJInoDtIXwI8
- leWZ6GHthPacK20314cxikbKXXSIpuNnhmZTq4y+A8c4CIGHX9TxZozjd2EnZr7SNrGCseNp5TM
- Awem/sT7SDB4ZlVEd0bmilXellcN8f72MICmU6HySYurxOJgPAc0QUG3fkVO2orYuapv2v9ngoT
- gsOzm52EMqEKFotQtcW9G1b0RIlYgjL4ogJ4YiqOk4wlqwhmRlAEIRaMZEjf5O
-X-Google-Smtp-Source: AGHT+IHkz1bpVxV1KY3/x8SqITN+/KoXQfXOSrRUWkawwpXDWwd3kcraamdGhYreM/fefmau9AOVDw==
-X-Received: by 2002:a17:903:1904:b0:262:f975:fcba with SMTP id
- d9443c01a7336-29b6bf0ffb2mr96664485ad.9.1763919907925; 
- Sun, 23 Nov 2025 09:45:07 -0800 (PST)
+ bh=A6Iwx4wa5+M1K5368dZpDXczj6viFYmm+BcEbvWSe74=;
+ b=cps8DfoqboCL3eX7RBfMYNE9D5osrJt5Ggq24WPWw1o2hyEBlZfnXltF0oVcQNf6Ir
+ X01IanpQfB5S6HHeobzfn4cTl6wFkTnWSpvhV0meyD8G+phq9p9KeH9tdx034MifPOln
+ Zc9+zKvlpxbSoIa8w3vVw3fJPPcAzzY5FWp/SY4Qxun9v3Hlk12kovvTV+SsPAYOGtTR
+ 5yQKYfdOVIUCixBrcM1Qa6nGmZZvaowE4e7G9SNJZjHyHS8FZBjXBePMnWjNZ94tqEfi
+ CbAY8fUvf2bdfx7HbKvz16RY7R4kz5VLnM3fyzfcbjI1xKie7qHG1ca+dNV0pW0Btaht
+ H62A==
+X-Gm-Message-State: AOJu0YzO3gPZPjCBRnR22drTdCECIhVZSPmcjcpy5wABsKzj8QXOrNj/
+ yFsOMjDsKZwt73tgqBAnxsggwZtjnroEQAP+8LLjF7rFDBMw9vgloYsX181yxRz2Aljy8EyDuoH
+ IHOMx
+X-Gm-Gg: ASbGncvFf3qjoPLa9B7C8xjL5dNN/meKqZRe3mK+LQaib3ZJhXcY2Hbz2lCgyVGfVKF
+ mYBmmcjYou/lXyMF1U3asrCYSa2D9jIv2X/Djv8Jc3t7GeQ6aa1qX2Jb2ID81vUh9u7hXXHAeiR
+ daoNU/pkj76iPn0Rk/+ke+1+pr78aOG+f1DwcbMgkRh1IwUIZyfFhqh1rzNR5wtFmPLHLv9l0rz
+ BOLrsaSB7zFzuWEwzhUq1mG9qqxwKSdDqb7sLDdcspfKEYZePtNgzbi4Zasmt1FD8Ej9ES5RNGy
+ UZUC0nzo2rQN2w3KYtLgcwT9XIwiXihb1LUIqKkg3pFPztDiTttgUhsH3+Uh3Ngo9yyPb7jz/As
+ pvYtzDwk80Ppx/gmbGwx96N9L42c3AvX3Ci3qmiYX87Hh36mty8j7XK3mdH841cWZOJqR3sFLeG
+ l2ZO59cdRgXQUHwGtCRnqJuC/V+h/Q7ICxm8j6+Z/QfjS0PqyaPBf+VdzeMLGM
+X-Google-Smtp-Source: AGHT+IFZ/+6j8Jpjp7Z4XjT7bwvPlB58jnIPinfGYTNVkJ+gsVagqEE4HRxM0HweF6Q3ibFnbmceyw==
+X-Received: by 2002:a17:903:1212:b0:269:b2e5:ee48 with SMTP id
+ d9443c01a7336-29b6bf8150bmr98640185ad.52.1763919908784; 
+ Sun, 23 Nov 2025 09:45:08 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-29b5b13b973sm112585985ad.39.2025.11.23.09.45.07
+ d9443c01a7336-29b5b13b973sm112585985ad.39.2025.11.23.09.45.08
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 23 Nov 2025 09:45:07 -0800 (PST)
+ Sun, 23 Nov 2025 09:45:08 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v6 3/9] test: avoid overflowing huge directory path
-Date: Sun, 23 Nov 2025 09:43:26 -0800
-Message-ID: <20251123174503.20880-4-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Anatoly Burakov <anatoly.burakov@intel.com>
+Subject: [PATCH v6 4/9] test: use unit test runner for eal flags
+Date: Sun, 23 Nov 2025 09:43:27 -0800
+Message-ID: <20251123174503.20880-5-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251123174503.20880-1-stephen@networkplumber.org>
 References: <20251110182209.104087-1-stephen@networkplumber.org>
@@ -83,238 +84,98 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Modify the part of the test that is scanning for hugepages
-mount point to use existing getmntent library calls.
-
-As a result, the maximum mount path is smaller which is ok
-since this is all handled by the standard library.
-And the resulting huge path arguments don't overflow.
+Make the sub tests in eal flags suite into a group
+so that they are not individual tests.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+Acked-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- app/test/test_eal_flags.c | 115 ++++++++++++++------------------------
- 1 file changed, 43 insertions(+), 72 deletions(-)
+ app/test/test_eal_flags.c | 46 +++++++++++++++++++++++++--------------
+ 1 file changed, 30 insertions(+), 16 deletions(-)
 
 diff --git a/app/test/test_eal_flags.c b/app/test/test_eal_flags.c
-index c2e6c00edb..0aebb5f611 100644
+index 0aebb5f611..ba25f8e1c8 100644
 --- a/app/test/test_eal_flags.c
 +++ b/app/test/test_eal_flags.c
-@@ -107,6 +107,7 @@ test_misc_flags(void)
- #include <sys/wait.h>
- #include <limits.h>
- #include <fcntl.h>
-+#include <mntent.h>
- 
- #include <rte_lcore.h>
- #include <rte_debug.h>
-@@ -123,6 +124,8 @@ test_misc_flags(void)
- #define vdev "--vdev"
- #define file_prefix "--file-prefix"
- 
-+#define FS_HUGETLB "hugetlbfs"
-+
- #define memtest "memtest"
- #define memtest1 "memtest1"
- #define memtest2 "memtest2"
-@@ -136,24 +139,6 @@ enum hugepage_action {
- 	HUGEPAGE_INVALID
- };
- 
--/* if string contains a hugepage path */
--static int
--get_hugepage_path(char * src, int src_len, char * dst, int dst_len)
--{
--#define NUM_TOKENS 4
--	char *tokens[NUM_TOKENS];
--
--	/* if we couldn't properly split the string */
--	if (rte_strsplit(src, src_len, tokens, NUM_TOKENS, ' ') < NUM_TOKENS)
--		return 0;
--
--	if (strncmp(tokens[2], "hugetlbfs", sizeof("hugetlbfs")) == 0) {
--		strlcpy(dst, tokens[1], dst_len);
--		return 1;
--	}
--	return 0;
--}
--
- /*
-  * Cycles through hugepage directories and looks for hugepage
-  * files associated with a given prefix. Depending on value of
-@@ -165,45 +150,39 @@ get_hugepage_path(char * src, int src_len, char * dst, int dst_len)
-  * Returns -1 if it encounters an error
-  */
- static int
--process_hugefiles(const char * prefix, enum hugepage_action action)
-+process_hugefiles(const char *prefix, enum hugepage_action action)
+@@ -755,7 +755,7 @@ static int
+ test_no_hpet_flag(void)
  {
--	FILE * hugedir_handle = NULL;
--	DIR * hugepage_dir = NULL;
--	struct dirent *dirent = NULL;
--
--	char hugefile_prefix[PATH_MAX] = {0};
--	char hugedir[PATH_MAX] = {0};
--	char line[PATH_MAX] = {0};
--
--	int fd, lck_result, result = 0;
-+	const struct mntent *entry;
-+	char hugefile_prefix[PATH_MAX];
-+	int result = 0;
- 
--	const int prefix_len = snprintf(hugefile_prefix,
--			sizeof(hugefile_prefix), "%smap_", prefix);
--	if (prefix_len <= 0 || prefix_len >= (int)sizeof(hugefile_prefix)
--			|| prefix_len >= (int)sizeof(dirent->d_name)) {
-+	const int prefix_len = snprintf(hugefile_prefix, sizeof(hugefile_prefix), "%smap_", prefix);
-+	if (prefix_len <= 0 || prefix_len >= NAME_MAX) {
- 		printf("Error creating hugefile filename prefix\n");
- 		return -1;
- 	}
- 
- 	/* get hugetlbfs mountpoints from /proc/mounts */
--	hugedir_handle = fopen("/proc/mounts", "r");
--
--	if (hugedir_handle == NULL) {
-+	FILE *mounts = setmntent("/proc/mounts", "r");
-+	if (mounts == NULL) {
- 		printf("Error parsing /proc/mounts!\n");
- 		return -1;
- 	}
- 
--	/* read and parse script output */
--	while (fgets(line, sizeof(line), hugedir_handle) != NULL) {
-+	/* foreach mountpoint */
-+	while ((entry = getmntent(mounts)) != NULL) {
-+		DIR *hugepage_dir;
-+		struct dirent *dirent;
- 
--		/* check if we have a hugepage filesystem path */
--		if (!get_hugepage_path(line, sizeof(line), hugedir, sizeof(hugedir)))
-+		/* only want hugetlbfs filesystems */
-+		if (strcmp(entry->mnt_type, FS_HUGETLB) != 0)
- 			continue;
- 
- 		/* check if directory exists */
--		if ((hugepage_dir = opendir(hugedir)) == NULL) {
--			fclose(hugedir_handle);
--			printf("Error reading %s: %s\n", hugedir, strerror(errno));
-+		hugepage_dir = opendir(entry->mnt_dir);
-+		if (hugepage_dir == NULL) {
-+			endmntent(mounts);
-+			printf("Error reading %s: %s\n", entry->mnt_dir, strerror(errno));
- 			return -1;
- 		}
- 
-@@ -222,10 +201,10 @@ process_hugefiles(const char * prefix, enum hugepage_action action)
- 				break;
- 			case HUGEPAGE_DELETE:
- 				{
--					char file_path[PATH_MAX] = {0};
-+					char file_path[PATH_MAX];
- 
- 					snprintf(file_path, sizeof(file_path),
--						"%s/%s", hugedir, dirent->d_name);
-+						"%s/%s", entry->mnt_dir, dirent->d_name);
- 
- 					/* remove file */
- 					if (remove(file_path) < 0) {
-@@ -240,6 +219,8 @@ process_hugefiles(const char * prefix, enum hugepage_action action)
- 				break;
- 			case HUGEPAGE_CHECK_LOCKED:
- 				{
-+					int fd;
-+
- 					/* try and lock the file */
- 					fd = openat(dirfd(hugepage_dir), dirent->d_name, O_RDONLY);
- 
-@@ -253,10 +234,7 @@ process_hugefiles(const char * prefix, enum hugepage_action action)
- 					}
- 
- 					/* non-blocking lock */
--					lck_result = flock(fd, LOCK_EX | LOCK_NB);
--
--					/* if lock succeeds, there's something wrong */
--					if (lck_result != -1) {
-+					if (flock(fd, LOCK_EX | LOCK_NB) != -1) {
- 						result = 0;
- 
- 						/* unlock the resulting lock */
-@@ -278,7 +256,7 @@ process_hugefiles(const char * prefix, enum hugepage_action action)
- 		closedir(hugepage_dir);
- 	} /* read /proc/mounts */
- end:
--	fclose(hugedir_handle);
-+	endmntent(mounts);
- 	return result;
- }
- 
-@@ -873,10 +851,10 @@ test_no_huge_flag(void)
- static int
- test_misc_flags(void)
- {
--	char hugepath[PATH_MAX] = {0};
--	char hugepath_dir[PATH_MAX] = {0};
--	char hugepath_dir2[PATH_MAX] = {0};
--	char hugepath_dir3[PATH_MAX] = {0};
-+	const char *hugepath = "";
-+	char hugepath_dir[PATH_MAX];
-+	char hugepath_dir2[PATH_MAX];
-+	char hugepath_dir3[PATH_MAX];
  #ifdef RTE_EXEC_ENV_FREEBSD
- 	/* BSD target doesn't support prefixes at this point */
- 	const char * prefix = "";
-@@ -884,9 +862,7 @@ test_misc_flags(void)
+-	return 0;
++	return TEST_SKIPPED;
  #else
  	const char *prefix = get_file_prefix();
- 	const char * nosh_prefix = "--file-prefix=noshconf";
--	FILE * hugedir_handle = NULL;
--	char line[PATH_MAX] = {0};
--	unsigned i, isempty = 1;
-+	struct mntent *entry;
- 
  	if (prefix == NULL)
- 		return -1;
-@@ -896,29 +872,24 @@ test_misc_flags(void)
- 	 */
- 
- 	/* get hugetlbfs mountpoints from /proc/mounts */
--	hugedir_handle = fopen("/proc/mounts", "r");
--
--	if (hugedir_handle == NULL) {
-+	FILE *mounts = setmntent("/proc/mounts", "r");
-+	if (mounts == NULL) {
- 		printf("Error opening /proc/mounts!\n");
+@@ -774,8 +774,8 @@ test_no_hpet_flag(void)
+ 		printf("Error - process did not run ok without --no-hpet flag\n");
  		return -1;
  	}
+-#
+ 	return 0;
++#endif
+ }
  
--	/* read /proc/mounts */
--	while (fgets(line, sizeof(line), hugedir_handle) != NULL) {
--
--		/* find first valid hugepath */
--		if (get_hugepage_path(line, sizeof(line), hugepath, sizeof(hugepath)))
-+	/* foreach mount point */
-+	hugepath = NULL;
-+	while ((entry = getmntent(mounts)) != NULL) {
-+		/* only want hugetlbfs filesystems */
-+		if (strcmp(entry->mnt_type, FS_HUGETLB) == 0) {
-+			hugepath = strdupa(entry->mnt_dir);
- 			break;
-+		}
- 	}
-+	endmntent(mounts);
- 
--	fclose(hugedir_handle);
--
--	/* check if path is not empty */
--	for (i = 0; i < sizeof(hugepath); i++)
--		if (hugepath[i] != '\0')
--			isempty = 0;
--
--	if (isempty) {
-+	if (hugepath == NULL) {
- 		printf("No mounted hugepage dir found!\n");
+ /*
+@@ -844,7 +844,7 @@ test_no_huge_flag(void)
+ 		printf("Error - process run ok with --no-huge and --huge-worker-stack=size flags");
  		return -1;
  	}
+-#endif
++
+ 	return 0;
+ }
+ 
+@@ -1179,7 +1179,7 @@ test_file_prefix(void)
+ 	char prefix[PATH_MAX] = "";
+ 
+ #ifdef RTE_EXEC_ENV_FREEBSD
+-	return 0;
++	return TEST_SKIPPED;
+ #else
+ 	if (get_current_prefix(prefix, sizeof(prefix)) == NULL) {
+ 		printf("Error - unable to get current prefix!\n");
+@@ -1621,15 +1621,29 @@ test_memory_flags(void)
+ 
+ #endif /* !RTE_EXEC_ENV_WINDOWS */
+ 
+-REGISTER_FAST_TEST(eal_flags_c_opt_autotest, false, false, test_missing_c_flag);
+-REGISTER_FAST_TEST(eal_flags_main_opt_autotest, false, false, test_main_lcore_flag);
+-REGISTER_FAST_TEST(eal_flags_n_opt_autotest, false, false, test_invalid_n_flag);
+-REGISTER_FAST_TEST(eal_flags_hpet_autotest, false, false, test_no_hpet_flag);
+-REGISTER_FAST_TEST(eal_flags_no_huge_autotest, false, false, test_no_huge_flag);
+-REGISTER_FAST_TEST(eal_flags_a_opt_autotest, false, false, test_allow_flag);
+-REGISTER_FAST_TEST(eal_flags_b_opt_autotest, false, false, test_invalid_b_flag);
+-REGISTER_FAST_TEST(eal_flags_vdev_opt_autotest, false, false, test_invalid_vdev_flag);
+-REGISTER_FAST_TEST(eal_flags_r_opt_autotest, false, false, test_invalid_r_flag);
+-REGISTER_FAST_TEST(eal_flags_mem_autotest, false, false, test_memory_flags);
+-REGISTER_FAST_TEST(eal_flags_file_prefix_autotest, false, false, test_file_prefix);
+-REGISTER_FAST_TEST(eal_flags_misc_autotest, false, false, test_misc_flags);
++static struct unit_test_suite eal_flags_test_suite = {
++	.suite_name = "EAL flags unit test suite",
++	.unit_test_cases = {
++		TEST_CASE(test_missing_c_flag),
++		TEST_CASE(test_main_lcore_flag),
++		TEST_CASE(test_invalid_n_flag),
++		TEST_CASE(test_no_hpet_flag),
++		TEST_CASE(test_no_huge_flag),
++		TEST_CASE(test_allow_flag),
++		TEST_CASE(test_invalid_b_flag),
++		TEST_CASE(test_invalid_vdev_flag),
++		TEST_CASE(test_invalid_r_flag),
++		TEST_CASE(test_memory_flags),
++		TEST_CASE(test_file_prefix),
++		TEST_CASE(test_misc_flags),
++		TEST_CASES_END()
++	}
++};
++
++static int
++test_eal_flags(void)
++{
++	return unit_test_suite_runner(&eal_flags_test_suite);
++}
++
++REGISTER_FAST_TEST(eal_flags_autotest, false, false, test_eal_flags);
 -- 
 2.51.0
 
