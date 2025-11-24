@@ -2,63 +2,83 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B033CFD313
-	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Nov 2025 15:48:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACD3CCFA466
+	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Nov 2025 16:13:04 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A32C540684;
-	Mon, 24 Nov 2025 16:48:16 +0100 (CET)
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com
- [209.85.210.177])
- by mails.dpdk.org (Postfix) with ESMTP id 7BD10402B1
- for <dev@dpdk.org>; Mon, 24 Nov 2025 16:48:14 +0100 (CET)
-Received: by mail-pf1-f177.google.com with SMTP id
- d2e1a72fcca58-7ba55660769so3887183b3a.1
- for <dev@dpdk.org>; Mon, 24 Nov 2025 07:48:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1763999293; x=1764604093; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=0AT3zD6i5BAbLY0Bqj4NJg5F3OIOiZo2bZX7eo2u4xo=;
- b=J21AcrDcXCmIgn+2B/3u1xfLtYkNRDRyYUfTqlHk4VfHhFgFQPBinexsdLaN+CgNzB
- faERYYaF3ntQRKmI5UetZb4xRuYZQ0IkWU0Kw6xAQ1nTSisK58kuLxboFW84/CawEUeH
- p/PyOxmJOEsVDpffY2gkU8+L0FOpYgDoT5wVI=
+	by mails.dpdk.org (Postfix) with ESMTP id 95965402CB;
+	Mon, 24 Nov 2025 17:13:03 +0100 (CET)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 9594F402B1
+ for <dev@dpdk.org>; Mon, 24 Nov 2025 17:13:01 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1764000781;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=aYpiH7WGW9wnhZ4Qa5eLJhW4o8twlPxgcc8Qxxb0NTo=;
+ b=SoeA+12Esao63Ohp4EGFy3ZGIhipj9LZbqX71kQ6S5va6EA8q6NHrRYfO/FJY1ew61DgCd
+ V+aTFq9dxEalm7dovmsI/aLHmVgY+ti1YatCiYh7yfqn8x2gAkxudV9xH0lPln6zpUDafs
+ /nCa72bJ9lK2apGiBqvg4g86ZCk7EmE=
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
+ [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-534-z7hUvHtvOGaCwJWBlFzXWA-1; Mon, 24 Nov 2025 11:12:56 -0500
+X-MC-Unique: z7hUvHtvOGaCwJWBlFzXWA-1
+X-Mimecast-MFC-AGG-ID: z7hUvHtvOGaCwJWBlFzXWA_1764000775
+Received: by mail-lf1-f70.google.com with SMTP id
+ 2adb3069b0e04-5957bd7530aso3950369e87.2
+ for <dev@dpdk.org>; Mon, 24 Nov 2025 08:12:56 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1763999293; x=1764604093;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=0AT3zD6i5BAbLY0Bqj4NJg5F3OIOiZo2bZX7eo2u4xo=;
- b=CoWzbGz4Oe4jk+/zZvPKXaru9ILqwGtpEPbMZ1368jMciZaKJBQvGtdU2JDpgznW1/
- 8A+eYUngp/dIeCBo1wI/tmvF18vimEWSSC2tqzkIfACjC4wdO7J0hhGhZJm1yLhTTedT
- auYlABYTqCkLyvuVInd54+xTzs0+HdOG7UubrlYYzOET7fO0p/ne3MTV+GyezK63Jq+g
- R8yZJUSSV9YYOK9iksaDhppqaGvX58iOiboQuZb0zwfiiPjcPzcKZmbeVDBCAdD+VqRz
- PEoVe023n6B97VZ2/jo88vrWvjDTpupSwctnwglBtRrZMFILZlAwJMqAVjd4Zy4i0dyz
- ROYw==
-X-Gm-Message-State: AOJu0YxfCRwK3Fe96faNUNJkQeZ0VIH3tlATbf77aIsAWTevcAuwroJ2
- za8qwHyJVaio2vU07uzsp1IqzrwBFsEtAhXJqTYfJd8ARUiNZ1Eimp1HnfV3e48WEMwxyLw3om9
- S8zlsxm8wvDpCLwjaiZxAgvhhgnV2dQ2gyBK8xT9nq0QqO6Tv1tKjHqJwAg==
-X-Gm-Gg: ASbGncuMncVTpuG4hftZWr2qB8tFLHKy5zAHy9jK0aW0RkZk0pVpP/Cxs80CeMdhv+E
- /Ug5vG5nDbsC8T/zpm+pBDXtOFT83htjb9B8PJDOP534AyP97RAmsrexPnhUpQnA2X08tbNmXbO
- /U9LcYSDZQllzPOR9QZkVRN0AvFcBSVfqjksAlXljCJSsEZfAyGDBwFrTDxV5rP+B2HQXqYI694
- 4M1PYFaoIUolOBNrqvoF7BDfbdTBwl/STmUzB5Veli0G7PN3j51ULxyCOBkKUs/XTm2XVEfCi0N
- MXtQwexAAyIb5P3tCOYw+7O1gv3v
-X-Google-Smtp-Source: AGHT+IGRR9QKW4t69DrTLOCwqyepmKOseAX53IhBGBD4Sbc/X8tjGL4ilRqHqfXoRP5a0wxwR9+l6ZJESd6SVx8W5WI=
-X-Received: by 2002:a05:7022:671f:b0:119:e56b:91f2 with SMTP id
- a92af1059eb24-11c9d870411mr7206844c88.35.1763999293518; Mon, 24 Nov 2025
- 07:48:13 -0800 (PST)
+ d=1e100.net; s=20230601; t=1764000775; x=1764605575;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=aYpiH7WGW9wnhZ4Qa5eLJhW4o8twlPxgcc8Qxxb0NTo=;
+ b=oCRpgafLnB5B4COH9SJM86OoBnWe/BCkLq7QOK7n1ncX/qgkWLsQvlWdUtZR6YV4yJ
+ pX+iQ4BgnkfoOOzGceOkdaNLYSFDXmjBI0qOw4QUaR61WaFp8i7jeOfN58JOk3bH6Of7
+ Tggs6MT1pvV5gSJslOiiPLxUN+KH9O8CylvG1OwWRqJisliKqk6lvViRDMSQtMXcCoHp
+ RUZ0l4+NmTlGAS2hf3u8lBBR+u0GtaWOA4b5Nba3c6a7//4WilG/WPF/7BuPSzbDj7Rx
+ 2k+IdXaAYwrQ5uuRYuux7JgILUDYrDoU82+/B21l4wfGQ95XAxOkUb8wHMhLZNOZBw7k
+ 3n0w==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCU3D0Kp8UH8USxQZuIOT++B7nUJGa2VpvtrmGuTLyOH2Xq/y8GYze9VOd9HoOgkfDu9/GU=@dpdk.org
+X-Gm-Message-State: AOJu0Ywjqs56i6ESBnuLZgvs56delWJkMp0Vv+x+M9uOGq4s+HwBNZDJ
+ /U4Xn7aj5KbU9xZ+ykZQ3GGS+ZwyEnxg1X6bAZcHeytt/vKFG/M1hzNZ2phbyRYtPvoEEEi0kEJ
+ dgn44JvRs21BFrmfitgRuzfpZLqcInzaYuCW89mpJEOTgGpV623MCKw1TovE8KbuhZ4PRXWQJWF
+ 9MpCXP/W4yGtnH/myz0OI=
+X-Gm-Gg: ASbGncvkJ1BHR0dpkahjEI7y8lFJEPi8Zm9cyHKOOyVUpw5Dt2bgE9b8yWBXHr6sCgk
+ Fh9EeiKeFbxyHmw2zaE2oKPS3IxH6EeU/O7vEwXXj0hw6bIIaMqv7wxx5fMPtp2KZkO/CPMOjaC
+ 9/OGwhZBnWoGO4vRaaxMooetwTIYuI96nEeickACLGAcsaMw6cVO89lyC/VHE+8fM4WL8A
+X-Received: by 2002:a05:6512:104a:b0:592:fc68:5b9d with SMTP id
+ 2adb3069b0e04-596a3e9eb5emr4279598e87.10.1764000774877; 
+ Mon, 24 Nov 2025 08:12:54 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHYDq7xobEIP1TwINMuoDbqjeuckq5VMm4NybH+wJEcfWBZYflu1qX/pIQw1gh1zytIyFiY+L+JyV8q93QTOXo=
+X-Received: by 2002:a05:6512:104a:b0:592:fc68:5b9d with SMTP id
+ 2adb3069b0e04-596a3e9eb5emr4279579e87.10.1764000774356; Mon, 24 Nov 2025
+ 08:12:54 -0800 (PST)
 MIME-Version: 1.0
-References: <20251120114554.950287-1-mb@smartsharesystems.com>
- <20251121104052.1273637-1-mb@smartsharesystems.com>
- <98CBD80474FA8B44BF855DF32C47DC35F65588@smartserver.smartshare.dk>
-In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F65588@smartserver.smartshare.dk>
-From: Patrick Robb <probb@iol.unh.edu>
-Date: Mon, 24 Nov 2025 10:46:48 -0500
-X-Gm-Features: AWmQ_bloo8c7i9o5SYuxPtyhXT3IWF5Gbq-PGjSHYxoEbWLOxFls2LShKsEjVTw
-Message-ID: <CAJvnSUAAQhzXXaVYRhO-wcSThvsLyW75FzrQrBRp4wcrfsCrwg@mail.gmail.com>
-Subject: Re: [PATCH v3] eal/x86: optimize memcpy of small sizes
-To: =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>
-Cc: dev@dpdk.org
-Content-Type: multipart/alternative; boundary="0000000000004644710644591728"
+References: <20250609095827.4174387-1-sivaprasad.tummala@amd.com>
+ <20251106141631.179443-1-sivaprasad.tummala@amd.com>
+In-Reply-To: <20251106141631.179443-1-sivaprasad.tummala@amd.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Mon, 24 Nov 2025 17:12:42 +0100
+X-Gm-Features: AWmQ_bmLMd9F9WtggRjCzL8TjIiiprPzVplI4C905T3qGVfxRF5ZnfW3jyhP2LE
+Message-ID: <CAJFAV8yBJhQkUoTxpWX+L8XGWN1MdzPZ6hjFmYYVxsoaTiOu9g@mail.gmail.com>
+Subject: Re: [PATCH v3] examples/l3fwd: add Tx burst size configuration option
+To: Sivaprasad Tummala <sivaprasad.tummala@amd.com>
+Cc: =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>, 
+ Huisong Li <lihuisong@huawei.com>, Chengwen Feng <fengchengwen@huawei.com>, 
+ Jie Hai <haijie1@huawei.com>, dev@dpdk.org, stable@dpdk.org, 
+ Venkat Kumar Ande <venkatkumar.ande@amd.com>,
+ Dengdui Huang <huangdengdui@huawei.com>, 
+ Pavan Nikhilesh <pbhagavatula@marvell.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: rR16IJJVzwwjYB8ip_NbBQEwUXnbUZiLmpk5yHhaJfQ_1764000775
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -72,37 +92,43 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---0000000000004644710644591728
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-Hi. There are some DTS failures on this testbed due to misconfiguration
-applied by us at UNH last week. I'm fixing it and rerunning testing which
-will update the CI checks for your patchseries.
-
-On Mon, Nov 24, 2025 at 8:36=E2=80=AFAM Morten Br=C3=B8rup <mb@smartsharesy=
-stems.com>
-wrote:
-
-> Recheck-request: Intel-compilation, iol-mellanox-Functional
+On Thu, 6 Nov 2025 at 15:17, Sivaprasad Tummala
+<sivaprasad.tummala@amd.com> wrote:
 >
+> Previously, the TX burst size in l3fwd was fixed at 256, which could
+> lead to suboptimal performance in certain scenarios.
 >
-
---0000000000004644710644591728
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr"><div>Hi. There are some DTS failures on this testbed due t=
-o misconfiguration applied by us at UNH last week. I&#39;m fixing it and re=
-running testing=C2=A0which will update the=C2=A0CI checks for your patchser=
-ies.</div></div><br><div class=3D"gmail_quote gmail_quote_container"><div d=
-ir=3D"ltr" class=3D"gmail_attr">On Mon, Nov 24, 2025 at 8:36=E2=80=AFAM Mor=
-ten Br=C3=B8rup &lt;<a href=3D"mailto:mb@smartsharesystems.com">mb@smartsha=
-resystems.com</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quote" sty=
-le=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);paddi=
-ng-left:1ex">Recheck-request: Intel-compilation, iol-mellanox-Functional<br=
+> This patch introduces separate --rx-burst and --tx-burst options to
+> explicitly configure RX and TX burst sizes. By default, the TX burst
+> size now matches the RX burst size for better efficiency and pipeline
+> balance.
 >
-<br>
-</blockquote></div>
+> Fixes: d5c4897ecfb2 ("examples/l3fwd: add option to set Rx burst size")
+>
+> Signed-off-by: Sivaprasad Tummala <sivaprasad.tummala@amd.com>
+> Tested-by: Venkat Kumar Ande <venkatkumar.ande@amd.com>
+> Tested-by: Dengdui Huang <huangdengdui@huawei.com>
+> Tested-by: Pavan Nikhilesh <pbhagavatula@marvell.com>
+>
+> v3:
+>  - Added --tx-burst option to allow independent TX burst configuration
+>  - Renamed --burst to --rx-burst for clarity
+>  - Renamed variables for clarity:
+>      - nb_pkt_per_burst =E2=86=92 rx_burst_size
+>      - max_tx_burst     =E2=86=92 tx_burst_size
+>  - Modified parsing packet burst logic for RX and TX
+>  - Default TX burst size now equals RX burst size
+>  - Added logging of selected RX and TX burst sizes
+>  - Updated documentation for --rx-burst and --tx-burst options
 
---0000000000004644710644591728--
+Please don't put changelog in the commitlog itself.
+Fixed when applying...
+
+I also fixed [RT]X occurences as [RT]x.
+
+Applied, thanks.
+
+
+--=20
+David Marchand
+
