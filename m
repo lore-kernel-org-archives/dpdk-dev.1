@@ -2,47 +2,57 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B90FDCFD2F6
-	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Nov 2025 01:54:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68B53CFD313
+	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Nov 2025 02:03:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7997D4028C;
-	Mon, 24 Nov 2025 02:54:02 +0100 (CET)
-Received: from canpmsgout02.his.huawei.com (canpmsgout02.his.huawei.com
- [113.46.200.217])
- by mails.dpdk.org (Postfix) with ESMTP id 6504E400D7
- for <dev@dpdk.org>; Mon, 24 Nov 2025 02:54:00 +0100 (CET)
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
- c=relaxed/relaxed; q=dns/txt; h=From;
- bh=XeYHnuOWIVia7dri8R/vXK90qaHXswO2w0SwY1ZQX+4=;
- b=fYVWmJXGe2ahFB5eqH5kWA+jYgnjG7dhYSzX1lDyVRG9EVSJCw3ae5fdbQ3p9p+NcVo8Skb3Z
- BgFi30pMoBHnma+LCwIMHj35pNLnmc5DjgFny4hXZU/Ib+J42235CiKnG88LLluaYFEnolMpBpZ
- ypA9FruzIkjVZwFC3zN3mUI=
-Received: from mail.maildlp.com (unknown [172.19.88.194])
- by canpmsgout02.his.huawei.com (SkyGuard) with ESMTPS id 4dF82B3Nk3zcbNK;
- Mon, 24 Nov 2025 09:51:46 +0800 (CST)
-Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
- by mail.maildlp.com (Postfix) with ESMTPS id 4D76A140E1E;
- Mon, 24 Nov 2025 09:53:57 +0800 (CST)
-Received: from [10.67.121.161] (10.67.121.161) by
- kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 24 Nov 2025 09:53:56 +0800
-Message-ID: <aee5ab7a-0f29-40ee-abbd-4407650b97e7@huawei.com>
-Date: Mon, 24 Nov 2025 09:53:56 +0800
+	by mails.dpdk.org (Postfix) with ESMTP id 6B0DC402BB;
+	Mon, 24 Nov 2025 03:03:11 +0100 (CET)
+Received: from smtpbgsg2.qq.com (smtpbgsg2.qq.com [54.254.200.128])
+ by mails.dpdk.org (Postfix) with ESMTP id 16810400D7
+ for <dev@dpdk.org>; Mon, 24 Nov 2025 03:03:08 +0100 (CET)
+X-QQ-mid: Yeas3t1763949783t694t54122
+Received: from 3DB253DBDE8942B29385B9DFB0B7E889 (jiawenwu@trustnetic.com
+ [36.20.107.59])
+X-QQ-SSF: 0000000000000000000000000000000
+From: =?utf-8?b?Smlhd2VuIFd1?= <jiawenwu@trustnetic.com>
+X-BIZMAIL-ID: 16536297905024859870
+To: "'Stephen Hemminger'" <stephen@networkplumber.org>
+Cc: <dev@dpdk.org>,
+	<zaiyuwang@trustnetic.com>
+References: <A4E8D8476CBBC191+20251119085624.73210-1-jiawenwu@trustnetic.com>
+ <20251119214756.6642de30@phoenix.local>
+ <026101dc59e6$5f908850$1eb198f0$@trustnetic.com>
+In-Reply-To: <026101dc59e6$5f908850$1eb198f0$@trustnetic.com>
+Subject: RE: [PATCH] net/txgbe: fix the missing old mailbox interface calls
+Date: Mon, 24 Nov 2025 10:03:02 +0800
+Message-ID: <001701dc5ce6$7757aba0$660702e0$@trustnetic.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 0/9] tests: fix format truncation warnings
-To: Stephen Hemminger <stephen@networkplumber.org>, <dev@dpdk.org>
-References: <20251110182209.104087-1-stephen@networkplumber.org>
- <20251123174503.20880-1-stephen@networkplumber.org>
-Content-Language: en-US
-From: fengchengwen <fengchengwen@huawei.com>
-In-Reply-To: <20251123174503.20880-1-stephen@networkplumber.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+	charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.67.121.161]
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- kwepemk500009.china.huawei.com (7.202.194.94)
+X-Mailer: Microsoft Outlook 16.0
+Content-Language: zh-cn
+Thread-Index: AQC9elXKL3qDM07uIHFB8npHaJETJgEpr90PAbZufrm3J9X4gA==
+X-QQ-SENDSIZE: 520
+Feedback-ID: Yeas:trustnetic.com:qybglogicsvrgz:qybglogicsvrgz6b-0
+X-QQ-XMAILINFO: Mnff/9wu0oJYNZOhQr30h0NXrHdWiP3ff8Bv+156xiw8oIuZb2AIgtGn
+ aG+/kLIZd+fUIldz+Inh0S/iBwlRCB71yhmGyeC0uOklKgBjCjNVjv49R07PRRwQqhakeWV
+ WCkQZRVNgJ80TaN2icomVK+5mp+F+gX+PsW+eK9INsxv4Mif5BbovQhZ4rbE0uav4AsTCsQ
+ rGD/nA1JI+9fwdFUTwnyTtrrsNBhZOJVdYiFXnlJ+BNEs5Zk6YBIYrsI486hFu9Cu957R2M
+ Adxvc+PaxkB88+IoFGKOA8ol8LYr/A254aJOtxB4fP8Wyu6MePCxP3/J+IlMGJrcHD2U6EG
+ 8ji7ncedWziTk6paY1NzpfC1pK5L0I0qs6/IH6/7yfBLs+Qx8vM7lrCTRX4oOn64CYvoQTP
+ kUW1AtScr17aoEsHajFRCPIJ4l+TA7SZqF6P9eJbC+D31o3TP9Id+YYTwLykTBBUdMEQxws
+ YADe/qDXqA+xEF6nrJD9QVD4V6uoQGghAGa9lQYjXuOA3KIsnoTlwFTfHnd6Ou48WiPlJRq
+ ymz6U3s1Lla4/ZXak9VLMY3Xl8dW9jMfbw/3ILT7bORraV9yigR8Pd7iq9ZVOukym4a1CJh
+ RF0yeybfhGTmQHLBkhut9OjFZsWw8mMiwj5omp6h3ceX+TrMpD83Cp4i5h8sOT/J/URwUKJ
+ 4OGtsqg5MU7qXccDHTKnUEbXbthPY79alr44doCyQ/jGW2B+ghGANKSAh/EIsh06utY7W7e
+ FrIGO4YG2LK6Xo5KtyQPOXbUNYdOH+F9QVpH+OSiZq492npbJKS9Xg2vokD0jBCNUCe0I80
+ uRrAdtCsDEO0L3Y9QSI0eu/fdMhX4+W3jyqWDG16dgHzufsY+9lr/lVScHlVj+75oOl04QC
+ UhdETFhncaojYQj8I/Orxu4i1lY9woJWcXanz8dPqxePolvCXUMZkCbsDcWcp9L3DJgit+5
+ 93vjmQNwJVecivwCFNwM6enoRBDhzdODwkKoeA4U3kdk8U+pyvIEtHJvCD+nSnFk3T2bEJt
+ d3Klt0KB3WE7ZDRHxa
+X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
+X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -56,34 +66,39 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Series-acked-by: Chengwen Feng <fengchengwen@huawei.com>
+On Thu, Nov 20, 2025 2:25 PM, Jiawen Wu wrote:
+> On Thu, Nov 20, 2025 1:48 PM, Stephen Hemminger wrote:
+> > On Wed, 19 Nov 2025 16:56:24 +0800
+> > Jiawen Wu <jiawenwu@trustnetic.com> wrote:
+> >
+> > > @@ -28,6 +29,9 @@ void txgbe_init_ops_aml40(struct txgbe_hw *hw)
+> > >  	mac->init_mac_link_ops = txgbe_init_mac_link_ops_aml40;
+> > >  	mac->get_link_capabilities = txgbe_get_link_capabilities_aml40;
+> > >  	mac->check_link = txgbe_check_mac_link_aml40;
+> > > +
+> > > +	/* MAILBOX */
+> > > +	mbx->host_interface_command = txgbe_host_interface_command_aml;
+> > >  }
+> >
+> > Maybe that comment means something to you, but it seems like something
+> > the next maintainer would not know what it means. Could you explain it more?
+> 
+> For different devices, the mailbox flow between software and firmware is
+> different. There are several mailbox command in the txgbe driver, but only
+> txgbe_hic_sr_read() was changed to use the new flow in commit
+> 6a139ade82e7 ("net/txgbe: add new SW-FW mailbox interface"). Because
+> this function invoke the txgbe_hic_unlocked() directly without SW-FW
+> semaphore, I guess.
+> 
+> It lead to other mailbox commands timeout for Amber-Lite devices, which
+> is required to use the new flow. So this patch fills in the missing part.
+> 
+> For the sake of code tidy, txgbe_hic_sr_read() should change to use the
+> locked function txgbe_host_interface_command(), and this function could
+> be change to pointer in struct txgbe_mbx_info for different devices.
 
-On 11/24/2025 1:43 AM, Stephen Hemminger wrote:
-> This series fixes compiler warnings about format truncation
-> in the unit tests.
-> 
-> v6 - alternate strategy for handling huge page mount point
->    - fix warnings which only show up in RHEL8
-> 
-> Stephen Hemminger (9):
->   test: increase size of memzone name
->   test: refactor file prefix arg handling
->   test: avoid overflowing huge directory path
->   test: use unit test runner for eal flags
->   test: fix format overflow warning in ACL test
->   test: fix impossible format-truncation in cfgfiles
->   test: fix format overflow in cryptodev test
->   test: fix overflow warnings in mp_secondary and pdump
->   test: re-enable format-truncation warnings
-> 
->  app/test/meson.build         |   1 -
->  app/test/test_cfgfile.c      |   8 +-
->  app/test/test_cryptodev.c    |  22 ++-
->  app/test/test_eal_flags.c    | 283 ++++++++++++++---------------------
->  app/test/test_memzone.c      |   2 +-
->  app/test/test_mp_secondary.c |   4 +-
->  app/test/test_pdump.c        |   4 +-
->  app/test/test_table_acl.c    |   4 +-
->  8 files changed, 140 insertions(+), 188 deletions(-)
-> 
+Hi Stephen Hemminger,
+
+Does this explanation is sufficient? Should I send v2 patch with these logs?
+ 
 
