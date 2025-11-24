@@ -2,76 +2,78 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E15C2CFD369
-	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Nov 2025 23:35:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2102CFD369
+	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Nov 2025 23:38:42 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 066A8402D6;
-	Tue, 25 Nov 2025 00:35:51 +0100 (CET)
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com
- [209.85.210.173])
- by mails.dpdk.org (Postfix) with ESMTP id 03B2D402A1
- for <dev@dpdk.org>; Tue, 25 Nov 2025 00:35:49 +0100 (CET)
-Received: by mail-pf1-f173.google.com with SMTP id
- d2e1a72fcca58-7acd9a03ba9so5516965b3a.1
- for <dev@dpdk.org>; Mon, 24 Nov 2025 15:35:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1764027349;
- x=1764632149; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=jqE/9pbg3yexzU54MSMlKH7VvUu8O298bIpVzLT/zPM=;
- b=gi+O+HnUMEytCcwPNyiTjtFn/A9A4zT/qyo4HmfCF67y6ASDr1WJmIn51rIbl8Jl3B
- NIqHT9mSot36DklHtVXVeQApMX4WNmVLsHbYIlci/Yk9rUnF2NwkFk+/FHfT5b/wn+AV
- RIocQb6nDkMojShcrRSwEkx680sV1eAwwUT10+nP16qi6wIppKNKdaKXSEPb+JQB0CLM
- H6y2c1AB4RL2VYYgJVwTnwokawrJcV0TwsQzAEu2Dw62jCZzx3N1r58o542mw0ZHpe/P
- 9BXrqMDSYaT9YITdvGVANrkFXm50XSD6PzSejjYDEJtqI1jFRnWFtl6gARtzW/7iCmag
- R6tw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1764027349; x=1764632149;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=jqE/9pbg3yexzU54MSMlKH7VvUu8O298bIpVzLT/zPM=;
- b=mV3dImuwodjI0/XC2zoNfoYIkElceSL/6EsPw8y8aswWvrzlvO4JjtPF7nviCwQ5Ne
- Jx8GiGpuO3WhtrQPoUmMgwewZKreD2Iv59f819EBW9DMGBalzng/UBDeChj+WOXIl1oG
- RwAsFNLciojlgJuuqy6hbEv6D4PggrpmHz1MfsytRPo2dGwOjxze8qr0PAICR0svSV/x
- wrk6OR9Vy65C1bZZzK2s6DqxYgf6KhstHOGLxmeqYaHjCPC7I1ugV9shzfMHWt38HLf5
- ANbQ66xgT/qtTbqd2vWABVU4c8EzUjAQHNfa8Ht6fJeNpgtAE86HH8C7xvlEtZtAvYQa
- Ss6A==
-X-Gm-Message-State: AOJu0YytS5Mqbga/u/myFXnEM2dWvCLWzVQ3hEkGGEqvLM5zSjUrouvH
- RUIm8ktSNVyN77Vb/UEkT7NkkJffvdCfMjKc7vyjcfVGuL33rqJp7thlbDBa6D475/zeKxcU2zH
- PE9Iy
-X-Gm-Gg: ASbGnctL4DO+idDm23GSx9j1vU6LK7nZwMc48lTPzfac5Vtqx8kO8FRaZDT6jN25kNh
- df31TYXS0Ui4rljqvMYCJxRehalyp4K85gV0DaHkxqkrxtkrNmWCCLPgegoCcPO/5ZLhaMcscSU
- v2VVpHySkUFa58tQwUxATcyStymCfV3BzAKw9Ei/q7W7AhLLZnxW+0vvB5NYt93ugTWYW975DrH
- o+0CkM7LZgKCaMMlMQtoHdTAC7abJtl8vUlGJkdfO3PNhOe+j9mqWYIJrxkXi8ctFKgJ5yXQj1T
- blYT5HWFqAksQ/YZX1bFqJ473ThrEaT1L3g/zvngRf+8WDyoBemgik/BFxO09dSDz0BhWhQ5Y//
- LWLCqP1t9IynIPYGJH8py+XGBF3Cin2BCMMagzC7uc1Oss4hoQImzQFZCuYw77Np2Jy6vPv6GWw
- lBoYrvh/0I82J1C8YY5p6E3JUIvubeEiFCJP5mtw0IqR0WuOjB5rg9gHJrI+FdSQ8=
-X-Google-Smtp-Source: AGHT+IEJF1lpUMpV8Ah97tzVgAvYsoDE4yq6+lWivGKB8b0V6trIVjlCkwtq5RVKbHfVPHS+/Sf7Pw==
-X-Received: by 2002:a05:7022:440c:b0:11b:ca88:c4f7 with SMTP id
- a92af1059eb24-11c9d863ae0mr9163680c88.40.1764027348663; 
- Mon, 24 Nov 2025 15:35:48 -0800 (PST)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-11c93e6dbc8sm76668740c88.10.2025.11.24.15.35.47
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 24 Nov 2025 15:35:48 -0800 (PST)
-Date: Mon, 24 Nov 2025 15:35:45 -0800
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Dimon Zhao <dimon.zhao@nebula-matrix.com>
-Cc: dev@dpdk.org, Kyo Liu <kyo.liu@nebula-matrix.com>, Leon Yu
- <leon.yu@nebula-matrix.com>, Sam Chen <sam.chen@nebula-matrix.com>
-Subject: Re: [PATCH v1 1/1] net/nbl: add VLAN offload set interface
-Message-ID: <20251124153545.7123c338@phoenix.local>
-In-Reply-To: <20251124034026.3680873-2-dimon.zhao@nebula-matrix.com>
-References: <20251111113144.3567291-1-dimon.zhao@nebula-matrix.com>
- <20251124034026.3680873-1-dimon.zhao@nebula-matrix.com>
- <20251124034026.3680873-2-dimon.zhao@nebula-matrix.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 7EFDA402D2;
+	Tue, 25 Nov 2025 00:38:41 +0100 (CET)
+Received: from fout-b7-smtp.messagingengine.com
+ (fout-b7-smtp.messagingengine.com [202.12.124.150])
+ by mails.dpdk.org (Postfix) with ESMTP id 01C20402A1;
+ Tue, 25 Nov 2025 00:38:39 +0100 (CET)
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+ by mailfout.stl.internal (Postfix) with ESMTP id 0EE7C1D001B8;
+ Mon, 24 Nov 2025 18:38:39 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+ by phl-compute-05.internal (MEProxy); Mon, 24 Nov 2025 18:38:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1764027518;
+ x=1764113918; bh=5x/P4KkVDBPMalRSvbb+wFldfqHwUwjU8+cxiCkkEI8=; b=
+ adH+MrADo5WUD99xf1RvKojL9so88E5iilbCpSTjQiQuHIioJZTSo9a9eCYxD9L9
+ PIaLHXlDTqpIHzQXUKDDIAzxnrCFTRxxLJ1H+Rs3GdzmrKbKYXh5w8FuK45jjkyS
+ GfvbWmQ7fHczR7jNA3qel0VuMilnyvWxLetSvsp0r9mMHti7p+ncepgoXdwBCpcn
+ aGjY1GFvjWL4Si7N1wyycbNxSptvg9LEhkJHW9WLneNiaj12ixLbKlKmnqCaa/r7
+ iBefzA7HFmjT3Wnx+aQmQDtMlEJSy1bgtRsI+9N0rlHwTysa/fS42QmCiJ84TIrB
+ 5Uy6rojNna5inIwWZPBmLA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1764027518; x=
+ 1764113918; bh=5x/P4KkVDBPMalRSvbb+wFldfqHwUwjU8+cxiCkkEI8=; b=z
+ 16D41GDjEA/FJLp+PaGUkYzlo11QrGIiW4/YnNu3kGrHhGRTZvAybxhYIcLcuj2e
+ Kc6BprV9ksoMLvdFRjndd+KLB/b5G51EPYbqpMKiEyMTvj9KwwnN+h+P0KhJxJ71
+ 62iYNNiK8z3ZZr+SDMlqFiVIzXYegd7lhts0OBueFCQOSzhFlAmqoZkNAMx+sRUd
+ ERg3em+UlOjcUkOKSX5gRHABuHGjuB6GMHlZ8Lw+r7okuBuuLI8+G/DkdwRAJZMZ
+ ACyhVLG1wHGic9cXC1JnisQcEvLuACVs7UwRic1jBJCQs0CslwxjTzLUu+uf9iT6
+ zduKheJfnZgECjydL1uHA==
+X-ME-Sender: <xms:fuwkadr-b1zsN0VuHq_78bdy0DhohKhW6uPXnl9M2sfxEoHSAupM_w>
+ <xme:fuwkaT9KN5XCSXbcWrGERlXzTG94S3b0HxozSp6R9wWUyAWrJoaKQVeT49itLIzZ9
+ I1WQnI4EF-NKrzBIa57Phb47lUCIW7Lyet1oW6R_Txb3FLO7AQ>
+X-ME-Received: <xmr:fuwkaZXp5yQxRWbBN6eLgO0LWPZu2x-eRH6-Odz6CxOLiWNhmGdGfXi2A2XoVwKjq5P51ZExM5peyIpBDaXpCTDuSw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvfeelleegucetufdoteggodetrf
+ dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+ rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+ gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
+ ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
+ frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
+ uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeefpdhm
+ ohguvgepshhmthhpohhuthdprhgtphhtthhopegrnhgurhgvfidrsghohigvrhesrghmug
+ drtghomhdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtphhtthhopehsthgr
+ sghlvgesughpughkrdhorhhg
+X-ME-Proxy: <xmx:fuwkaRBKyE-r8Nf3lqPAFozeA3GjKMY5Vldo59eslbG73caB0k6xEw>
+ <xmx:fuwkaSzxD0a-krWHjJkZk1I4hYC-2cp_crz26MCdVSkSHoFH7NNlZQ>
+ <xmx:fuwkaWC70Yz9KSsENbmJmn1oyVB4p1-TtMgX8XBtiKxOIAKODOhIPA>
+ <xmx:fuwkaXaDhsooTS6Q7-OtPNabBx2b5qHmjqPadeew8Uhzi8mGxNUzsA>
+ <xmx:fuwkabpLc0VdF0NBMR7dncmrpWCO_72F82qqQK8Za8oa31aRruyEul2t>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 24 Nov 2025 18:38:37 -0500 (EST)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Andrew Boyer <andrew.boyer@amd.com>
+Cc: dev@dpdk.org, stable@dpdk.org
+Subject: Re: [PATCH] doc: update supported ionic devices
+Date: Tue, 25 Nov 2025 00:38:36 +0100
+Message-ID: <4270016.AJdgDx1Vlc@thomas>
+In-Reply-To: <20251120183936.8699-1-andrew.boyer@amd.com>
+References: <20251120183936.8699-1-andrew.boyer@amd.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -85,45 +87,13 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Sun, 23 Nov 2025 19:40:26 -0800
-Dimon Zhao <dimon.zhao@nebula-matrix.com> wrote:
-
-> The rte_eth_dev_set_vlan_offload function internally calls
-> the vlan_offload_set interface, so we must implement this function.
-> Otherwise, an error will occur when
-> executing the vlan set strip on command.
+20/11/2025 19:39, Andrew Boyer:
+> The Pollara 400 AI NIC is supported without any PMD changes.
+> Add a link to the product brief.
 > 
-> Fixes: 9d7757dce874 ("net/nbl: simulate VLAN offload")
-> 
-> Signed-off-by: Dimon Zhao <dimon.zhao@nebula-matrix.com>
-> ---
->  drivers/net/nbl/nbl_dev/nbl_dev.c | 5 +++++
->  drivers/net/nbl/nbl_dev/nbl_dev.h | 1 +
->  drivers/net/nbl/nbl_ethdev.c      | 1 +
->  3 files changed, 7 insertions(+)
-> 
-> diff --git a/drivers/net/nbl/nbl_dev/nbl_dev.c b/drivers/net/nbl/nbl_dev/nbl_dev.c
-> index 58eb1c6231..923de2e9d0 100644
-> --- a/drivers/net/nbl/nbl_dev/nbl_dev.c
-> +++ b/drivers/net/nbl/nbl_dev/nbl_dev.c
-> @@ -758,6 +758,11 @@ int nbl_promiscuous_disable(struct rte_eth_dev *eth_dev)
->  	return 0;
->  }
->  
-> +int nbl_vlan_offload_set(__rte_unused struct rte_eth_dev *dev, __rte_unused int mask)
-> +{
-> +	return 0;
-> +}
+> CC: stable@dpdk.org
+> Signed-off-by: Andrew Boyer <andrew.boyer@amd.com>
 
-This seems broken in handling VLAN.
-The intention is that the driver changes how vlans handled based on the mask
-in the API call. 
-
-The driver is not advertising RTE_ETH_VLAN_STRIP_OFFLOAD in the offload flags.
-Same for QINQ or FILTER flags.
-
-What is the intention? How is the hardware handling VLAN tags? Does it
-have the capability to do this in hardware? Can it be enabled and disabled?
-
+Applied, thanks.
 
 
