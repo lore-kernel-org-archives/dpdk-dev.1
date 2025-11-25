@@ -2,40 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBEB8CFD364
-	for <dpdk-dev@archiver.kernel.org>; Tue, 25 Nov 2025 08:19:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A59DCCFD315
+	for <dpdk-dev@archiver.kernel.org>; Tue, 25 Nov 2025 08:36:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0CFC0406B6;
-	Tue, 25 Nov 2025 09:19:12 +0100 (CET)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 7D72E402E8
- for <dev@dpdk.org>; Tue, 25 Nov 2025 09:19:11 +0100 (CET)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 4005C208EA;
- Tue, 25 Nov 2025 09:19:11 +0100 (CET)
-Content-class: urn:content-classes:message
-MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
-Subject: RE: [PATCH v4] eal/x86: optimize memcpy of small sizes
-Date: Tue, 25 Nov 2025 09:19:09 +0100
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F6558A@smartserver.smartshare.dk>
-In-Reply-To: <20251124203122.1339526-1-mb@smartsharesystems.com>
-X-MimeOLE: Produced By Microsoft Exchange V6.5
+	by mails.dpdk.org (Postfix) with ESMTP id B3C80402E8;
+	Tue, 25 Nov 2025 09:36:27 +0100 (CET)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 0896A402E1
+ for <dev@dpdk.org>; Tue, 25 Nov 2025 09:36:25 +0100 (CET)
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4dFwxl6jXgzHnHBj;
+ Tue, 25 Nov 2025 16:35:39 +0800 (CST)
+Received: from dubpeml100004.china.huawei.com (unknown [7.214.146.78])
+ by mail.maildlp.com (Postfix) with ESMTPS id 2FFEE1402F2;
+ Tue, 25 Nov 2025 16:36:24 +0800 (CST)
+Received: from dubpeml500001.china.huawei.com (7.214.147.241) by
+ dubpeml100004.china.huawei.com (7.214.146.78) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.36; Tue, 25 Nov 2025 08:36:23 +0000
+Received: from dubpeml500001.china.huawei.com ([7.214.147.241]) by
+ dubpeml500001.china.huawei.com ([7.214.147.241]) with mapi id 15.02.1544.011; 
+ Tue, 25 Nov 2025 08:36:23 +0000
+From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+To: Thomas Monjalon <thomas@monjalon.net>, "dev@dpdk.org" <dev@dpdk.org>
+CC: Stephen Hemminger <stephen@networkplumber.org>, Marat Khalili
+ <marat.khalili@huawei.com>
+Subject: RE: [PATCH] maintainers: update for BPF test coverage
+Thread-Topic: [PATCH] maintainers: update for BPF test coverage
+Thread-Index: AQHcXW3JLmq4MCuQZ0mL3Fti0dVkc7UDEWcg
+Date: Tue, 25 Nov 2025 08:36:23 +0000
+Message-ID: <2eba644eba404147a57bbaf333bbe6dc@huawei.com>
+References: <20251124181123.3427921-1-thomas@monjalon.net>
+In-Reply-To: <20251124181123.3427921-1-thomas@monjalon.net>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH v4] eal/x86: optimize memcpy of small sizes
-Thread-Index: AdxdgU1DpKZIZ8iHREmpXFjJuNvsTQAYj86A
-References: <20251120114554.950287-1-mb@smartsharesystems.com>
- <20251124203122.1339526-1-mb@smartsharesystems.com>
-From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
-To: <dev@dpdk.org>, "Bruce Richardson" <bruce.richardson@intel.com>,
- "Konstantin Ananyev" <konstantin.v.ananyev@yandex.ru>,
- "Vipin Varghese" <vipin.varghese@amd.com>,
- "Stephen Hemminger" <stephen@networkplumber.org>
+x-originating-ip: [10.206.138.220]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -49,11 +55,39 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-PiBBbHNvLCBhbGwgdXNlcyBvZiBTU0UyIF9tbV9sb2FkdV9zaTEyOCgpIGludHJpbnNpY3Mgd2Vy
-ZSB1cGdyYWRlZCB0bw0KPiBTU0UzIF9tbV9sZGRxdV9zaTEyOCgpLg0KPiBUaGUgSW50ZWwgSW50
-cmluc2ljcyBHdWlkZSBub3RlcyB0aGF0IGl0IG1heSBwZXJmb3JtIGJldHRlciB3aGVuIHRoZQ0K
-PiBkYXRhIGNyb3NzZXMgYSBjYWNoZSBsaW5lIGJvdW5kYXJ5Lg0KDQpJdCB0dXJucyBvdXQgX21t
-X2xkZHF1X3NpMTI4KCkgaXMgbXVjaCBzbG93ZXIgdGhhbiBfbW1fbG9hZHVfc2kxMjgoKS4NCldv
-dWxkIGhhdmUgYmVlbiBuaWNlIGlmIHRoZSBJbnRlbCBJbnRyaW5zaWNzIEd1aWRlIG1lbnRpb25l
-ZCB0aGF0Lg0KDQpNYXJrZWQgdjQgcGF0Y2ggYXMgTm90IEFwcGxpY2FibGUsIGFuZCBjaGFuZ2Vk
-IHYzIHBhdGNoIGJhY2sgdG8gTmV3Lg0KDQo=
+
+
+> When adding the directory app/test/bpf,
+> the file MAINTAINERS was not updated.
+>=20
+> Fixes: cf1e03f881af ("test/bpf: add ELF loading")
+> Fixes: 81038845c90b ("test/bpf: add Rx and Tx filtering")
+>=20
+> Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
+>=20
+> ---
+>=20
+> Kontantin, are you OK to be the maintainer of these new tests?
+
+Yep.
+
+> ---
+>  MAINTAINERS | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 27a4981b10..d7d8dbdb25 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -1907,6 +1907,7 @@ M: Konstantin Ananyev
+> <konstantin.v.ananyev@yandex.ru>
+>  F: lib/bpf/
+>  F: examples/bpf/
+>  F: app/test/test_bpf.c
+> +F: app/test/bpf/
+>  F: app/test-pmd/bpf_cmd.*
+>  F: doc/guides/prog_guide/bpf_lib.rst
+>=20
+> --
+> 2.51.0
+
