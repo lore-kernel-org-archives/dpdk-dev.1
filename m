@@ -2,74 +2,76 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90296CFD372
-	for <dpdk-dev@archiver.kernel.org>; Tue, 25 Nov 2025 01:36:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAC4FCFD36C
+	for <dpdk-dev@archiver.kernel.org>; Tue, 25 Nov 2025 01:47:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5F4C040697;
-	Tue, 25 Nov 2025 02:36:44 +0100 (CET)
-Received: from fhigh-a3-smtp.messagingengine.com
- (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
- by mails.dpdk.org (Postfix) with ESMTP id 36A31402A1
- for <dev@dpdk.org>; Tue, 25 Nov 2025 02:36:43 +0100 (CET)
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
- by mailfhigh.phl.internal (Postfix) with ESMTP id CA8151400073;
- Mon, 24 Nov 2025 20:36:42 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-05.internal (MEProxy); Mon, 24 Nov 2025 20:36:42 -0500
+	by mails.dpdk.org (Postfix) with ESMTP id 9C69B40693;
+	Tue, 25 Nov 2025 02:47:07 +0100 (CET)
+Received: from fhigh-a4-smtp.messagingengine.com
+ (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
+ by mails.dpdk.org (Postfix) with ESMTP id DD529402A1
+ for <dev@dpdk.org>; Tue, 25 Nov 2025 02:47:06 +0100 (CET)
+Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id 3CA8F1400288;
+ Mon, 24 Nov 2025 20:47:06 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+ by phl-compute-10.internal (MEProxy); Mon, 24 Nov 2025 20:47:06 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm3; t=1764034602;
- x=1764121002; bh=FlZ8IkhEgaQzytue7l991H4YQaC+mf1ttC9i6tLpXAE=; b=
- dpo/GaY0gKJmeI0Xzt/56nF+ThYT1NFWCd5sj3SVOOJqigFiAvP6CJ9X+Cjg0T/7
- qCrJmagMThqtLbHUddU2clkLLwDNmsDv2/mSw3YGI6G1PsgluGlSzoDTrLT9iVlk
- XIMeZTg2Y7M2fK2Es7AxrilNsG4VwTFsNKbNZx1rm5fr78JUiW1pqQssBoccFZ+6
- 88/OvruJFYf3aWtigSVrk0xJvY/hpiGMXpjy8agLKAXLFQMSG5C1TYg4MkEhZDfw
- aG9U7/9d9PP7I7GTTSXfyY5Z3y3Ia5Z16OeLhy2f4cJ7WMbucGtDyAfFmNakMqYx
- d0xo9DQHJzyNmkLPX4Hpeg==
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1764035226;
+ x=1764121626; bh=XxCiZaidYvMOZIfvj4yF6ImTbXXmuFmJBhIdPeLSNyo=; b=
+ OtK3uFq7q3YO+scZLD61vwnTBnou5BKNxRehGVT/uXc8OGfrnGz5MtRwoRSPpIXQ
+ HhzGWARR8b6l80x147NYAbq7iQOm/v15r3ST5J9OPIBAkBVJT8r14fPAkZ+7wn5Q
+ UhrcBfmc1DA9Axcwwk/s7TeEp+T6czkewWpeYBPh9cjgt6m+nalCaxV2WWP9QXLc
+ lGdf2zRkDGj8xm5n8TRY/p3YIwJ1KiIF+XAZyiSXic/zuWyvSkP83Li+yE8hKBcl
+ fV0wvvsfxeuGgxOciAG7J7LpyzwqqIaNZXTrPhEhDU2v80rJTIqy7YIqtdbvifHH
+ 5mEyik78ROXzk2AL/rkC9g==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1764034602; x=
- 1764121002; bh=FlZ8IkhEgaQzytue7l991H4YQaC+mf1ttC9i6tLpXAE=; b=R
- tZDhK4bNOg1Nu8K4Wm5kYB+34+5Me7StnJ451uctlhT0djkj+9JMB1mJrIC/djCC
- CUP8o06G3NG6Nc1er1BX6yIqpOpDfBMv4IaPEDBzDiNIqULTBuXxiGYQ/0DNOW/7
- IfFOXo0ozJmMACc2XYzU2n0l2YM6yks7Ip9y8GgBrjttiqd85jCaLraYr+R/PcS4
- gdRF5tElOZm3Pu16pEXAzqNHzZ88JHWY+a57QWRxt5QnwS98cqUm7IhIcZ3z32Cy
- sTYIuubboiC6kOy2npu/4g59W1P8nYukEJEZKQSzuXu/JN9+Yqg8EeYRFIMfv9I+
- RZJs6wvmrRMGSaYChg/AQ==
-X-ME-Sender: <xms:KgglaRQh5j3hzo7JlFFpoNAhaAHDV4MBfD2wl65-zUwuRwMbFi-FxA>
- <xme:KgglaXH6zrT51MzNgUrjavnuESUW4tCo2xJND_Zuuqed0b-wyWvrHlXZTM6BJyHDG
- j6vjEQE9oM1kFNG1yrZRgpzrWVmnUOGA_WMMYnQGl2LPZssvK7Gsw>
-X-ME-Received: <xmr:KgglaZkxTd79xOj6yyahvuRusiXdRThDAsj07hiFLBoDWVT-fm4_U2YM_38YbmIkg3uI0083PiT8SCr2AYVYZFZDTg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvgedtudekucetufdoteggodetrf
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1764035226; x=
+ 1764121626; bh=XxCiZaidYvMOZIfvj4yF6ImTbXXmuFmJBhIdPeLSNyo=; b=e
+ JM9Q3li9CvGrDcc5gdXuwxzLUl1b+uETjtMb59MLDFyAowh5l5Jph7w91pbU6FkB
+ iGaO0ajpCD0lnatDblHhecxcIgQ5XSf1hTcp28AUlA7cTso5GbrzwG6vVL5gXS85
+ OLUHQ4UZg9GPBv83aXR6zMMgLFL85STWB2yzZ9FugHjGsFRUO+Oi3SyNGjMMjTTG
+ xjnB/6DOqs6JJj8/QBnVShnMjSbbFK3znhI1+LeP3Gud/R429Itjkr0ouUMpL1IH
+ j6pBUZFCMbf4N5tLrX3SQ3KJnYAKdDzwkT9ZMn5CcGYi7r8Dk3p9SayDetXxKf1H
+ WRKmdOVysjRPrUcQnipzA==
+X-ME-Sender: <xms:mQolaRYiv3lMtgSzB5zPYQZq558yNAk-LI1DYJ_9e_MO_OanEg1jOA>
+ <xme:mQolaYjI2hkdp4eUTF3Td7VZ_nXQTULDLjBsJxcKfWgzDscr4xBDHwvkzDHL8iK3P
+ tWYipzWqxsM1yurCbqtrMVVC7GUBWaVYqFEC9elN-WX-gWL3lnbsC4>
+X-ME-Received: <xmr:mQolab6bhM16mGrqN6UsT3Spgt-N2SHeWSdT7H3irf5WYA5aKwvk0naoJ_6Snfy-OKgjsSWBrRGRT3JsjfUBDaPPxw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvgedtudelucetufdoteggodetrf
  dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
  rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
  gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
  ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
  frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
  uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopedvpdhm
- ohguvgepshhmthhpohhuthdprhgtphhtthhopehrrghslhgrnhgusehnvhhiughirgdrtg
- homhdprhgtphhtthhopeguvghvseguphgukhdrohhrgh
-X-ME-Proxy: <xmx:Kgglaa0zDUGbVAenr14O40IJZnLjfQHWBjq9XW5wdzC6SSeCTjOCYQ>
- <xmx:KggladRk0WwbwcKNmH_-z6A4kplYdtpWh1d1f_jmnspjapD0D7lBqg>
- <xmx:KgglaUuvCGkyxV4DMjJb5Z5aNoV5d2GAJ0jwGsg3V3e3FbuwANF86g>
- <xmx:KgglaaaCGhNacc4ITh5niPoZW3h_a2a2lewRcPkss1Qor3QUj6DmgQ>
- <xmx:KgglacRSzfACOUY4BmHtwR13fxrWJK49nZOeQHzBtr5NSVXFzUZNznrf>
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeegpdhm
+ ohguvgepshhmthhpohhuthdprhgtphhtthhopeihuhigrdhjihgrnhhgsehinhhtvghlrd
+ gtohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghpthhtohepsghruhgt
+ vgdrrhhitghhrghrughsohhnsehinhhtvghlrdgtohhmpdhrtghpthhtohepjhhohhhnrd
+ hmtghnrghmrghrrgesihhnthgvlhdrtghomh
+X-ME-Proxy: <xmx:mQolaX7EuV-HrspOXE3HNQHgko2vZ7-GsiYfOc3zJCdYkaYy-Nm70A>
+ <xmx:mQolaXfrs36ha82U5mIIVoeC-UI7CI9q-L9OrtUjhT0pT9mjjpUcAQ>
+ <xmx:mQolabA5_LShPb8LJEmULWdhLIT9uNktElCTc4cNPO2Qt-OIkMkVMw>
+ <xmx:mQolaa_luSbY9LE_5OUgp3toYOmTZsM7FCZfc744bfHmqy3q4v2vuA>
+ <xmx:mgoladKJE78Sq13iecsnzPz1bKUSiLc8-FebDP_BvJSXrl127fj_xjeH>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 24 Nov 2025 20:36:41 -0500 (EST)
+ 24 Nov 2025 20:47:04 -0500 (EST)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: Raslan Darawsheh <rasland@nvidia.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH] doc: add tested platforms with NVIDIA NICs
-Date: Tue, 25 Nov 2025 02:36:40 +0100
-Message-ID: <2805356.8hzESeGDPO@thomas>
-In-Reply-To: <20251120112526.75674-1-rasland@nvidia.com>
-References: <20251120112526.75674-1-rasland@nvidia.com>
+To: Yu Jiang <yux.jiang@intel.com>
+Cc: dev@dpdk.org, bruce.richardson@intel.com, john.mcnamara@intel.com
+Subject: Re: [PATCH V1] doc: add tested Intel platforms with Intel NICs
+Date: Tue, 25 Nov 2025 02:47:03 +0100
+Message-ID: <5822813.rnE6jSC6OK@thomas>
+In-Reply-To: <20251124083418.61881-1-yux.jiang@intel.com>
+References: <20251124083418.61881-1-yux.jiang@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -86,12 +88,11 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-20/11/2025 12:25, Raslan Darawsheh:
-> Add tested platforms with NVIDIA NICs to the 25.11 release notes.
+24/11/2025 09:34, Yu Jiang:
+> Add tested Intel platforms with Intel NICs to v25.11 release note.
 > 
-> Signed-off-by: Raslan Darawsheh <rasland@nvidia.com>
+> Signed-off-by: Yu Jiang <yux.jiang@intel.com>
 
 Applied, thanks.
-
 
 
