@@ -2,68 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12FDFD0E6FA
-	for <dpdk-dev@archiver.kernel.org>; Tue, 25 Nov 2025 15:22:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DCEBD0E6F8
+	for <dpdk-dev@archiver.kernel.org>; Tue, 25 Nov 2025 15:22:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DAF9940DC9;
-	Tue, 25 Nov 2025 16:22:43 +0100 (CET)
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com
- [209.85.214.181])
- by mails.dpdk.org (Postfix) with ESMTP id 3E1F640B9C
- for <dev@dpdk.org>; Tue, 25 Nov 2025 16:22:39 +0100 (CET)
-Received: by mail-pl1-f181.google.com with SMTP id
- d9443c01a7336-29555b384acso70511265ad.1
+	by mails.dpdk.org (Postfix) with ESMTP id 1038040DCE;
+	Tue, 25 Nov 2025 16:22:45 +0100 (CET)
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com
+ [209.85.214.176])
+ by mails.dpdk.org (Postfix) with ESMTP id 03D5040BA4
+ for <dev@dpdk.org>; Tue, 25 Nov 2025 16:22:40 +0100 (CET)
+Received: by mail-pl1-f176.google.com with SMTP id
+ d9443c01a7336-29558061c68so75989525ad.0
  for <dev@dpdk.org>; Tue, 25 Nov 2025 07:22:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1764084158;
- x=1764688958; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1764084159;
+ x=1764688959; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=UM3XmI5IeE+Ht4ZLdte70fSdo6e6t102aLiFbDd2o/U=;
- b=JAmujJ/K0JltUnGQxmBdshUsG69GIr1WWxAf3edLi+3J9vtroUAsGMFWuRioTV3fm5
- /TWwER599nFqEZ/fT9xonx3ZTRw63lE09hRpZTk/RYWO5uV/1SqPn6yfINhchqtD50rT
- WeN+2WhedQWIhBJM6eLzd50S2r4WqOacu01M0PfufWLvUm2iM9bu/y8pkGsxvZPCcgoe
- 5DP5rGU/LE+QKUGveTSMEW/A4qYkNdiz5ZA9QJANb9jGMObLBrDRINAQKwFxRKgWPR0o
- SO42tYe2F5s4jO5gXbMJkCTe0TMJm1vpDCbxGKXygITGD4IvrvrsFRAFw67quMWgnuHO
- odoA==
+ bh=wPTbx4oyobx3Xj/wuyYUbnEt7FosXUH/v8+SDAct6VA=;
+ b=uH4RvB/fET67B18Epvv6LtPfvpdNfXF7driFXbTH7JN8X2RNb8lc0KXi8pyD02/BoX
+ i1OyjL6grO0WK6beqPWoo8lQRHcBQedwmKJl7Fcn5QDbOHpYZYDAF+hkDUl/Kb5Z+wFB
+ /kI0FR5h4BtDBtj6Fyoto1MBmqNkoBtwc30gYWoJ0mv3n8Xw0kYH/fvruzhdZGUTAjLb
+ IFWPsm67W4TYa58oYjqYnWU7doXqs326+dFKQ68jFfb2N3IhBVQTAK70XXnAlWK4bwHu
+ z932Y1KQ32XVhFRUW1hHLzoMZvlSTleZUjRYsBi2+tTAa+rimQ6wxgMsu6xRjKDS507a
+ 1Q3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1764084158; x=1764688958;
+ d=1e100.net; s=20230601; t=1764084159; x=1764688959;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=UM3XmI5IeE+Ht4ZLdte70fSdo6e6t102aLiFbDd2o/U=;
- b=xIcoxXQ8p4+lbAALw48yy82W8wqaaFsFeLo53ymGYL6B4XLMlPvLI5sULJCTj4tBub
- w+sj9Aoqtcsd3MiBJezMyrdq7KMM//nC06sXty3W1Ll+kuyaw0ZU6/nNOT15UoLfjV9z
- 6m7FTAt9sofiCmw5bG5RPv3EWq31W9WPzqowO7L/7adqaWmjV/WX1lnzJNFsPEe0lnXB
- vxZjRqte3sw4/Ae+xjvK/D/QcGnVW0K3Px6eEyFaunCdb5VQoIKzAS6Fwo26nALEH1EK
- 5+jEyULBoqlzHOpsUkqkUJZb6FAivXM6Hg7gAU2ZfPEJTx18vIG7zFwL59w8xvOIbCwL
- 4duw==
-X-Gm-Message-State: AOJu0YzKZJTEblU8RyOSM0AT00OXOHhWawoDYnh1ROlAbW4+CnMOkA/D
- Y8GgZbEJgpfX1G2lXmw/BkNUmO9G9tsnyOUaSLQh6Y2fVpM+fhKvESEo0ZFrcJNJhOzgfd/Pyp0
- rhpY5
-X-Gm-Gg: ASbGncsR30qJMtlcztu+JVLMVsRP92ImKYbrxDQ1eRTbQl2PXuBvvWy7S29KKmIFy9S
- GHBnmYoT+ica1mQvWJLQRXlquvxBUUVhclTmpI/Ol1f4gXDxIAhXJOfj7JN3HZ4LXO/VnuFUKkT
- aCR+PTBroyIH2ylS0/ur7t/mTdP4MRullcUXs6QYI1O8rGjk9sQeSXBoplUy/a7wTmDHo9EL629
- dJjDY6LEu2bR3SeGHyGLQ61Ora7eyJSE9cmUTaC+5FZUJsF2+Dv5Tg15G20GnStOKy+Wu2i2slX
- F/D0YRMO2Sdu54KmGA8uHP9HBSHEx9z9XMIU7a4LrBZ4HyL2kk/U/y6TdGSB7jBWH4mVt7ct9t5
- XGp+1uxoYogJJDoyb/fdjC8chRKCVpYaeTyIxhD+4HSZv5k3GrSk3GDXJfAz61ReEAZSB01QPiL
- oMuIgarg4x5FYRw5tFzKlw7tKH2qSsErZKZGnu0nntTdy0NIqSOwCpIVa5620E
-X-Google-Smtp-Source: AGHT+IHUzlafQj2FZkuuoQigHMwU6OII9s1HbaqVW2i/heyhyDCosdOEfnpIWyyhsxEulNbqKQ53kQ==
-X-Received: by 2002:a17:903:11c7:b0:295:bedb:8d7 with SMTP id
- d9443c01a7336-29b6c694376mr154422015ad.48.1764084158160; 
- Tue, 25 Nov 2025 07:22:38 -0800 (PST)
+ bh=wPTbx4oyobx3Xj/wuyYUbnEt7FosXUH/v8+SDAct6VA=;
+ b=NL9mrVR/EGjlJdMU+xSK+P6zPFLLNMfh0eZxaheIAn03i3gf3gyiGz/jiOGYXkvMbw
+ g51LKhhLR4eZhmdXpmS65/EWPBOKhufY+SFIUXnS0IRuKA3lGSqa4tVJdNjIHpZM7wfU
+ fNPDYglUf0Ng+xwGreaxCuuFaFPSvXFr0m/MJP3RvPqmuH7WTLm3EXI2JRORyYtw5okg
+ Ux5bcHc8nY+PfeELMg8sCqdFsRcGCtfCEjoNyI5qZl88E2m9O6AS+KpN4H8pc6NfBJeH
+ Q/QjsHKdQrByppYSdg1+vaYTatGcamswCdAT6mPnjSpsQo1VBZgDsFz37uwveicxaD0r
+ 8a/Q==
+X-Gm-Message-State: AOJu0YyRYTlZePMWNCvy/wcifdqcxR4ROfOweUKG3yz0uGyDWo+kHm0F
+ OEi/R/mLFIBxVJZ/AW8S0rhdJkUIsC2kXfZiyFA8NnvOBApRuYNc2rn8MZnC1ooiYrpk4BPapV9
+ dsXlr
+X-Gm-Gg: ASbGncu5sF32zvKnfRQcL65fJ3lpv9JTH7ngsGXlI3PnLzJj0cXXHMjSuDdj9+cth/k
+ Wl9gPMD2DC6jE3R7hm2OiyiIRaoNQ3t5Hd42iRktGIwbmshMy44EDaH0HBICdFxy/cgCcjoNGZQ
+ O+fgfOxc84bLblA84o1k481C7P4V//NcYCTi1DAd38qJPmQDOFlnqgP3BIT+ZKGtef46/ix/VJf
+ yZCZxod0f75am42SGKxVAtbbuigwZPaahFBTkF5elTfJgU3ZAvDUIr8E+9jaNMCAtWXjqQIoq9T
+ WdOU1srbMDWPR+yv2lGtOq12xVEYKnyRpkJT07Ct5eO+bjPy+XlLXsLghnzymGYBo7DfPVDG/BP
+ pizku/EhRdjI9tkN1Ain6t0Wr1OyuTwL6oO7LKMfpXqbKCYjo6ntd4uqNinWiQKSBFgKf1ybTJM
+ ovsYCqv6Z7Ikc5fvdaU6/td23L9HGKkQ3/cV4qvcahTCeY+s/gvw==
+X-Google-Smtp-Source: AGHT+IG9HMVMPQzyok3+lH02TN5TvQADbgguD8fY8nibCSmkdeDauDgQ7UPsbSEfCYWnMasicaaLxg==
+X-Received: by 2002:a17:903:947:b0:28e:a70f:e879 with SMTP id
+ d9443c01a7336-29b6be8cb2dmr170162985ad.1.1764084159028; 
+ Tue, 25 Nov 2025 07:22:39 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-29b5b111acfsm172573345ad.19.2025.11.25.07.22.37
+ d9443c01a7336-29b5b111acfsm172573345ad.19.2025.11.25.07.22.38
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 25 Nov 2025 07:22:37 -0800 (PST)
+ Tue, 25 Nov 2025 07:22:38 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v7 02/10] test: add new function to get current file-prefix arg
-Date: Tue, 25 Nov 2025 07:20:52 -0800
-Message-ID: <20251125152232.73528-3-stephen@networkplumber.org>
+Subject: [PATCH v7 03/10] test: refactor file prefix arg handling
+Date: Tue, 25 Nov 2025 07:20:53 -0800
+Message-ID: <20251125152232.73528-4-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251125152232.73528-1-stephen@networkplumber.org>
 References: <20251110182209.104087-1-stephen@networkplumber.org>
@@ -83,82 +83,227 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Refactor so that there is one function to get current argument
-for "--file-prefix=XXX".
-
-The code does not need to initialize all these 4K buffers since
-they are directly used by functions that set them.
-The maximum sizeof of the current DPDK prefix is NAME_MAX (128)
-not PATH_MAX(4096) so save a significant amount of space.
+Make setting up --file-prefix arg logic into a function,
+and avoid impossible case of file prefix path causing overflow
+of string.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- app/test/process.h | 38 ++++++++++++++++++++++++++++++++------
- 1 file changed, 32 insertions(+), 6 deletions(-)
+ app/test/test_eal_flags.c | 107 ++++++++------------------------------
+ 1 file changed, 23 insertions(+), 84 deletions(-)
 
-diff --git a/app/test/process.h b/app/test/process.h
-index f948a89786..4e5cbaf3cf 100644
---- a/app/test/process.h
-+++ b/app/test/process.h
-@@ -199,15 +199,22 @@ process_dup(const char *const argv[], int numargs, const char *env_value)
- 	return status;
- }
- 
--/* FreeBSD doesn't support file prefixes, so force compile failures for any
-- * tests attempting to use this function on FreeBSD.
-- */
-+/* FreeBSD doesn't support file prefixes, so no arguement passed. */
-+#ifdef RTE_EXEC_ENV_FREEBSD
-+static inline const char *
-+file_prefix_arg(void)
-+{
-+	/* BSD target doesn't support prefixes at this point */
-+	return "";
-+}
-+#else
+diff --git a/app/test/test_eal_flags.c b/app/test/test_eal_flags.c
+index e32f83d3c8..c3723ee0b8 100644
+--- a/app/test/test_eal_flags.c
++++ b/app/test/test_eal_flags.c
+@@ -121,6 +121,8 @@ test_misc_flags(void)
+ #define no_shconf "--no-shconf"
+ #define allow "--allow"
+ #define vdev "--vdev"
++#define file_prefix "--file-prefix"
 +
- #ifdef RTE_EXEC_ENV_LINUX
- static inline char *
- get_current_prefix(char *prefix, int size)
+ #define memtest "memtest"
+ #define memtest1 "memtest1"
+ #define memtest2 "memtest2"
+@@ -320,18 +322,10 @@ get_number_of_sockets(void)
+ static int
+ test_allow_flag(void)
  {
--	char path[PATH_MAX] = {0};
--	char buf[PATH_MAX] = {0};
-+	char path[64];
-+	char buf[PATH_MAX];
+-	unsigned i;
+-#ifdef RTE_EXEC_ENV_FREEBSD
+-	/* BSD target doesn't support prefixes at this point */
+-	const char * prefix = "";
+-#else
+-	char prefix[PATH_MAX], tmp[PATH_MAX];
+-	if (get_current_prefix(tmp, sizeof(tmp)) == NULL) {
+-		printf("Error - unable to get current prefix!\n");
++	unsigned int i;
++	const char *prefix = file_prefix_arg();
++	if (prefix == NULL)
+ 		return -1;
+-	}
+-	snprintf(prefix, sizeof(prefix), "--file-prefix=%s", tmp);
+-#endif
  
- 	/* get file for config (fd is always 3) */
- 	snprintf(path, sizeof(path), "/proc/self/fd/%d", 3);
-@@ -216,10 +223,29 @@ get_current_prefix(char *prefix, int size)
- 	if (readlink(path, buf, sizeof(buf)) == -1)
- 		return NULL;
+ 	const char *wlinval[][7] = {
+ 		{prgname, prefix, mp_flag,
+@@ -387,17 +381,9 @@ test_allow_flag(void)
+ static int
+ test_invalid_b_flag(void)
+ {
+-#ifdef RTE_EXEC_ENV_FREEBSD
+-	/* BSD target doesn't support prefixes at this point */
+-	const char * prefix = "";
+-#else
+-	char prefix[PATH_MAX], tmp[PATH_MAX];
+-	if (get_current_prefix(tmp, sizeof(tmp)) == NULL) {
+-		printf("Error - unable to get current prefix!\n");
++	const char *prefix = file_prefix_arg();
++	if (prefix == NULL)
+ 		return -1;
+-	}
+-	snprintf(prefix, sizeof(prefix), "--file-prefix=%s", tmp);
+-#endif
  
--	/* get the prefix */
-+	/*
-+	 * path should be something like "/var/run/dpdk/config"
-+	 * which results in prefix of "dpdk"
-+	 */
- 	rte_basename(dirname(buf), prefix, size);
-+	return prefix;
-+}
-+
-+/* Return a --file-prefix=XXXX argument or NULL */
-+static inline const char *
-+file_prefix_arg(void)
-+{
-+	static char prefix[NAME_MAX + sizeof("--file-prefix=")];
-+	char tmp[NAME_MAX];
+ 	const char *blinval[][5] = {
+ 		{prgname, prefix, mp_flag, "-b", "error"},
+@@ -491,17 +477,9 @@ test_invalid_vdev_flag(void)
+ static int
+ test_invalid_r_flag(void)
+ {
+-#ifdef RTE_EXEC_ENV_FREEBSD
+-	/* BSD target doesn't support prefixes at this point */
+-	const char * prefix = "";
+-#else
+-	char prefix[PATH_MAX], tmp[PATH_MAX];
+-	if (get_current_prefix(tmp, sizeof(tmp)) == NULL) {
+-		printf("Error - unable to get current prefix!\n");
++	const char *prefix = file_prefix_arg();
++	if (prefix == NULL)
+ 		return -1;
+-	}
+-	snprintf(prefix, sizeof(prefix), "--file-prefix=%s", tmp);
+-#endif
  
-+	if (get_current_prefix(tmp, sizeof(tmp)) == NULL) {
-+		fprintf(stderr, "Error - unable to get current prefix!\n");
-+		return NULL;
-+	}
-+
-+	snprintf(prefix, sizeof(prefix), "--file-prefix=%s", tmp);
- 	return prefix;
-+#endif
+ 	const char *rinval[][5] = {
+ 			{prgname, prefix, mp_flag, "-r", "error"},
+@@ -535,17 +513,9 @@ test_invalid_r_flag(void)
+ static int
+ test_missing_c_flag(void)
+ {
+-#ifdef RTE_EXEC_ENV_FREEBSD
+-	/* BSD target doesn't support prefixes at this point */
+-	const char * prefix = "";
+-#else
+-	char prefix[PATH_MAX], tmp[PATH_MAX];
+-	if (get_current_prefix(tmp, sizeof(tmp)) == NULL) {
+-		printf("Error - unable to get current prefix!\n");
++	const char *prefix = file_prefix_arg();
++	if (prefix == NULL)
+ 		return -1;
+-	}
+-	snprintf(prefix, sizeof(prefix), "--file-prefix=%s", tmp);
+-#endif
+ 
+ 	/* -c flag but no coremask value */
+ 	const char *argv1[] = { prgname, prefix, mp_flag, "-c"};
+@@ -694,17 +664,9 @@ test_missing_c_flag(void)
+ static int
+ test_main_lcore_flag(void)
+ {
+-#ifdef RTE_EXEC_ENV_FREEBSD
+-	/* BSD target doesn't support prefixes at this point */
+-	const char *prefix = "";
+-#else
+-	char prefix[PATH_MAX], tmp[PATH_MAX];
+-	if (get_current_prefix(tmp, sizeof(tmp)) == NULL) {
+-		printf("Error - unable to get current prefix!\n");
++	const char *prefix = file_prefix_arg();
++	if (prefix == NULL)
+ 		return -1;
+-	}
+-	snprintf(prefix, sizeof(prefix), "--file-prefix=%s", tmp);
+-#endif
+ 
+ 	if (!rte_lcore_is_enabled(0) || !rte_lcore_is_enabled(1))
+ 		return TEST_SKIPPED;
+@@ -751,17 +713,9 @@ test_main_lcore_flag(void)
+ static int
+ test_invalid_n_flag(void)
+ {
+-#ifdef RTE_EXEC_ENV_FREEBSD
+-	/* BSD target doesn't support prefixes at this point */
+-	const char * prefix = "";
+-#else
+-	char prefix[PATH_MAX], tmp[PATH_MAX];
+-	if (get_current_prefix(tmp, sizeof(tmp)) == NULL) {
+-		printf("Error - unable to get current prefix!\n");
++	const char *prefix = file_prefix_arg();
++	if (prefix == NULL)
+ 		return -1;
+-	}
+-	snprintf(prefix, sizeof(prefix), "--file-prefix=%s", tmp);
+-#endif
+ 
+ 	/* -n flag but no value */
+ 	const char *argv1[] = { prgname, prefix, no_huge, no_shconf,
+@@ -803,18 +757,12 @@ test_invalid_n_flag(void)
+ static int
+ test_no_hpet_flag(void)
+ {
+-	char prefix[PATH_MAX] = "";
+-
+ #ifdef RTE_EXEC_ENV_FREEBSD
+ 	return 0;
+ #else
+-	char tmp[PATH_MAX];
+-	if (get_current_prefix(tmp, sizeof(tmp)) == NULL) {
+-		printf("Error - unable to get current prefix!\n");
++	const char *prefix = file_prefix_arg();
++	if (prefix == NULL)
+ 		return -1;
+-	}
+-	snprintf(prefix, sizeof(prefix), "--file-prefix=%s", tmp);
+-#endif
+ 
+ 	/* With --no-hpet */
+ 	const char *argv1[] = {prgname, prefix, mp_flag, no_hpet};
+@@ -829,6 +777,7 @@ test_no_hpet_flag(void)
+ 		printf("Error - process did not run ok without --no-hpet flag\n");
+ 		return -1;
+ 	}
++#
+ 	return 0;
  }
- #endif
  
+@@ -898,6 +847,7 @@ test_no_huge_flag(void)
+ 		printf("Error - process run ok with --no-huge and --huge-worker-stack=size flags");
+ 		return -1;
+ 	}
++#endif
+ 	return 0;
+ }
+ 
+@@ -913,17 +863,14 @@ test_misc_flags(void)
+ 	const char * prefix = "";
+ 	const char * nosh_prefix = "";
+ #else
+-	char prefix[PATH_MAX], tmp[PATH_MAX];
++	const char *prefix = file_prefix_arg();
+ 	const char * nosh_prefix = "--file-prefix=noshconf";
+ 	FILE * hugedir_handle = NULL;
+ 	char line[PATH_MAX] = {0};
+ 	unsigned i, isempty = 1;
+ 
+-	if (get_current_prefix(tmp, sizeof(tmp)) == NULL) {
+-		printf("Error - unable to get current prefix!\n");
++	if (prefix == NULL)
+ 		return -1;
+-	}
+-	snprintf(prefix, sizeof(prefix), "--file-prefix=%s", tmp);
+ 
+ 	/*
+ 	 * get first valid hugepage path
+@@ -1525,17 +1472,9 @@ populate_socket_mem_param(int num_sockets, const char *mem,
+ static int
+ test_memory_flags(void)
+ {
+-#ifdef RTE_EXEC_ENV_FREEBSD
+-	/* BSD target doesn't support prefixes at this point */
+-	const char * prefix = "";
+-#else
+-	char prefix[PATH_MAX], tmp[PATH_MAX];
+-	if (get_current_prefix(tmp, sizeof(tmp)) == NULL) {
+-		printf("Error - unable to get current prefix!\n");
++	const char *prefix = file_prefix_arg();
++	if (prefix == NULL)
+ 		return -1;
+-	}
+-	snprintf(prefix, sizeof(prefix), "--file-prefix=%s", tmp);
+-#endif
+ 
+ 	/* valid -m flag and mp flag */
+ 	const char *argv0[] = {prgname, prefix, mp_flag,
 -- 
 2.51.0
 
