@@ -2,60 +2,164 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A728D0E6CE
-	for <dpdk-dev@archiver.kernel.org>; Tue, 25 Nov 2025 12:15:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB1B3D0E6E1
+	for <dpdk-dev@archiver.kernel.org>; Tue, 25 Nov 2025 13:12:13 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 763D340A80;
-	Tue, 25 Nov 2025 13:15:06 +0100 (CET)
-Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
- by mails.dpdk.org (Postfix) with ESMTP id 09350402E1
- for <dev@dpdk.org>; Tue, 25 Nov 2025 13:15:03 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tencent.com;
- s=s201512; t=1764072900;
- bh=c40m07cBfGyCBCYCYP+Oa8ir0rHXGoV/SDfbCn3qirg=;
- h=From:To:Subject:Date:Message-ID:MIME-Version;
- b=RT7k9KR5YOiBIWhjnf/ejG1ksETLYgsMwWAtUj+23WhS7+zJRE/XfBdL6zv8+/oQp
- Ng+Jus1MnnYGDupClhEasTjG8K66xpcQaa50C7zTTAoAwn76eBTU9/2w9+mRJWGzPy
- qqmhVsLYl2SfX/ckzJHHUyfM161MPGQG1N6a4rtc=
-X-QQ-mid: zesmtpsz7t1764072898t61ebd9ee
-X-QQ-Originating-IP: JE32kJBb8EF6ZvqWmCu9/1oW+GJyE+JgjW8aaRA+7XY=
-Received: from wyfs.. ( [11.176.19.22]) by bizesmtp.qq.com (ESMTP) with 
- id ; Tue, 25 Nov 2025 20:14:51 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 14560715829166119116
-From: "=?gb18030?B?bWFubnl3YW5nKM3108C35Sk=?=" <mannywang@tencent.com>
-To: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-Cc: dev@dpdk.org,
-	YongFeng Wang <mannywang@tencent.com>
-Subject: [PATCH v3] acl: support custom memory allocator
-Date: Tue, 25 Nov 2025 12:14:46 +0000
-Message-ID: <16C60E2E552D75E0+20251125121446.41247-1-mannywang@tencent.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <66734dfb22e841ddad035c630bb74f1c@huawei.com>
-References: <66734dfb22e841ddad035c630bb74f1c@huawei.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 275084065F;
+	Tue, 25 Nov 2025 14:12:13 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+ by mails.dpdk.org (Postfix) with ESMTP id 1197B402E1
+ for <dev@dpdk.org>; Tue, 25 Nov 2025 14:12:11 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1764076332; x=1795612332;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=NkuNp3fV7htZktBJakeFGxsyuoZcHIOpcv8hE3KtsY4=;
+ b=Ftg0SRFomzxn010WXoigMtrB8DJFnJL8V5BKh2oxKBzETbwFzQO+xRuV
+ 37w9jdRwe3O+i8CpYk/lfjtjkggCHAVNBux9wRGrF6MlR9WXnX+VBzm8M
+ el/RVdjTUgY1WducbjthcubJfksOqGl4vY6MQQci0VQxm5QeSDMwaiPnD
+ dk4vh/eHze+fbSThkTyFZGond4rzIGi23RmpPfY8T/A7fU/wu0Q5OpUeX
+ 9bEhgB8G2wWTkJj+NsKX6Jib6Ot/s6jybIHKOMe3SF0D8jlMjcqlf4FrE
+ b2KdoudTjFSs+y038i8TVGKtdV72LMNnx05akNXm1cezwMX/9U625H9zH A==;
+X-CSE-ConnectionGUID: LQ2YEp8uRDersP0i288Oig==
+X-CSE-MsgGUID: JOjRW54HQZG7bcmVvD0jbA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11623"; a="69950585"
+X-IronPort-AV: E=Sophos;i="6.20,225,1758610800"; d="scan'208";a="69950585"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+ by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 25 Nov 2025 05:12:11 -0800
+X-CSE-ConnectionGUID: LeijcsmXTxChegvXG0i7Qg==
+X-CSE-MsgGUID: 45ifLSp5QOOQVctNGAhhWw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.20,225,1758610800"; d="scan'208";a="196795712"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+ by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 25 Nov 2025 05:12:11 -0800
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.29; Tue, 25 Nov 2025 05:12:10 -0800
+Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.29 via Frontend Transport; Tue, 25 Nov 2025 05:12:10 -0800
+Received: from CH4PR04CU002.outbound.protection.outlook.com (40.107.201.42) by
+ edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.29; Tue, 25 Nov 2025 05:12:10 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QNKcKzUIEggGvkkJawGatFF8VlXwhG3MOSHO6BmaH/xlH7TUAQ7AldTYy11tFr+reXEjJewiCtr6o4/cDgirLt0sPN08nVN0EMjb/oSQpmJHuhIjoBafdOvDVSQPqpSHisA1OuWwJ5P3YU6pEdh/8IyVHu3c09mUW9hg0pCEGFK2LI/RC83WYDqCk75XxrY/nqG7jE/1dTjmDUA1ntf7n9elpR4JbfctavfNTe4ZFzRX+i96q/t00bPXUSNyaVfYT9JD/ZEXpSLPqIFpHpwHRYVrkUgiylV5yT5UjOb7PdALTBt/MKC9HPs4DCap0ZTmbH909ikymi69xy19rlBfHA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=icgfeN6VK0oo7ErYNpW4AFDodNJylW//cdz5lZQ8Q/g=;
+ b=E/8em+zf+pnz8OitEK0aI74TYSendaDSuuxXdS/42iHsnrFnDABdRBKBRi3QGu6jHvvhOtKQ0vXJc+Xzj7xKFMXLLr2HbRPe0VlBa2GB49X/+o6quQ/R8s1wLoCmZjHAvLCnv4MUY7VjDQwF0Ckf8jA/RPjWySqm521/+d06ragJXRkp9ONdR0NpCuEzWfwNWB/KoqKmrzibdThuchFNKpnJ8osoKvR91HTc+QSjxz2t4uTQnWmAHSAWmIs5KUoSOsanLoRLXJ09HdEVYrg9mvTnHWWC70DPC27Is20S/u+Btoa8xUACpCdoPkEHachVFAx4nudkMEdqtkdYF+7h6Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
+ by DS0PR11MB6518.namprd11.prod.outlook.com (2603:10b6:8:d2::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9366.11; Tue, 25 Nov
+ 2025 13:12:08 +0000
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b%4]) with mapi id 15.20.9343.016; Tue, 25 Nov 2025
+ 13:12:08 +0000
+Date: Tue, 25 Nov 2025 13:12:02 +0000
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: "Hore, Soumyadeep" <soumyadeep.hore@intel.com>
+CC: "Keller, Jacob E" <jacob.e.keller@intel.com>, "dev@dpdk.org"
+ <dev@dpdk.org>, "Greenwalt, Paul" <paul.greenwalt@intel.com>, "Medvedkin,
+ Vladimir" <vladimir.medvedkin@intel.com>, "Jiale, SongX"
+ <songx.jiale@intel.com>
+Subject: Re: [PATCH] net/iavf: check PTP capabilities during init
+Message-ID: <aSWrIkJwhbsf7YvI@bricha3-mobl1.ger.corp.intel.com>
+References: <20251121-jk-dpdk-iavf-rx-timestamping-fix-v1-1-21c9a337a6f2@intel.com>
+ <CY8PR11MB774717DEAC152077562DB837F9D1A@CY8PR11MB7747.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <CY8PR11MB774717DEAC152077562DB837F9D1A@CY8PR11MB7747.namprd11.prod.outlook.com>
+X-ClientProxiedBy: LO2P265CA0511.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:13b::18) To DS0PR11MB7309.namprd11.prod.outlook.com
+ (2603:10b6:8:13e::17)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpsz:tencent.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: MXwFQ0ww/EjDEXoFaHodpqQ1ZUGkdvPVly8yf4k5lGnPlCVBgLDH8Bt7
- crVFTZkMzVtKtZ/48XuWEVkAJ8UfTwLhCdK0jYsK8dsN/95Tq6Dv5FTOuoSwQ+TraTkPOLu
- 1ZItEbMzJjm+iP9O+JfoqkguVT81giECvE+dOtxE1dBpkwV10vK8tMj7Cvbpr3EoQv4MVZR
- D2rR0y3LJ2lDq94lEC8DRZG1MJBNsIatAqg+r+dX4GWThm2DxvJaMjcxpULzpXtUJN7faQt
- yCKnL4MI2iuxd55gJvTSJYxbDj+OYcYhr6d3fkjDGpH1a7aTLod900XJMf0OHj/ZSOCEAC9
- sSmPvb8j0On9tcQY++cMz4iJ54nGiQRpz3JxtUYI9QgMkUS/wP82IJmySBFcgarG4aAFiw3
- RjP+tY8S8JGFFEjXf+RekIciqeUlmJPXcGylAZPnuIRbt3JmHaiDMZYBYP9EPe0pTw3g2EM
- qlYSY+X7R5JQG2vd64us+LUMkyjcrf38MF67sh/DeHPx3bzPOStzH14At/rH2Oe8bJTEC0t
- HVaakdcDOMl7jkungE1a8DqrTtQtBRT09TOmuUICRHCg5zyoDdtR2esUoRwIgdSosg+kbU2
- 3wIalTFhberdZDc7NELhOtOU4RwdueJpsA7x0U6OzgNJD4486kLPTkJYQWJKA3YoceebpE9
- i1VfVg0Htu9YJ1ERmueF0GPpYNCDiOSn7S33teruWU+NVFZB+wKiFJkmW72LgTQGtZpvwvs
- I3YIBoRKTmTEiyoLye8uxp+4SH/sQUOU2pSr1ygRAowPvsefNuEMA99IhwFoiepHtvT5SLj
- BISaqywh3Bjk4xsmFJNCeJvnLQpJQ/qRAFs4iR8c611R8IyeMa+9zjougHkUlq0x/Tpq4xm
- 0ucNU5IEipmE2OaXrjIAzdQD0Nh0H4xLMoaR7xMAQW+epRXwHHe1pW4C7It/r7hUcNDF9vm
- 3X4+ur9q6ALUXKaDag9bW5bUXKqrDBR87S7B0Loe+9O+wia2yh/YDXcNgoJgd/XRFO2WEq6
- L7QxFOFAfeNaO6gSN6D3FJ9JPS2PSMdYG53+zeTg==
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-X-QQ-RECHKSPAM: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|DS0PR11MB6518:EE_
+X-MS-Office365-Filtering-Correlation-Id: a29ffe96-67b3-40ea-461b-08de2c243c77
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?n2BPEQPVi21Aajn5oVwhNTYIcqT29PEFFReQsj3yW/AyhK0dVvztmIYgE7Nb?=
+ =?us-ascii?Q?P5ldEKBkFwVrz0Y/CUpa3GDvGw8BmswJJwpEXSuOqCUhCGxQ25TnMt9eOO7i?=
+ =?us-ascii?Q?/Pj59wP1tZZ4erZ2DlME5GFjYbkjbbA/sKrA1CD42n0RXEL4+nE6kkGTT0cW?=
+ =?us-ascii?Q?qRmZ2ScEYkXdEYCBtYxYyQeLNTzXooy42ujwa4UkaCxzQFSbN1Q47Yzc1y0X?=
+ =?us-ascii?Q?N2PH1AIzBGTOasaJPLfiL/n9vZAK2lui1XTZos6nIShGRYtRDieak4Zu2Fzm?=
+ =?us-ascii?Q?JWh2xJT05922gU+1WtRZjWB2djupMG3/hNaNsOE+Su/SpXF0Orf2OiSlKD1T?=
+ =?us-ascii?Q?PLoEwvyC0DZn0ednLUjmzjZg2GSxOilrBpI0OHYC9QIoJvEuSD53zLm037lU?=
+ =?us-ascii?Q?7/Q+HAK6EqB5OlcN9fPv60FmXIfkwRm+HOmreY39h4Qypu5O7B32Su8bW0xu?=
+ =?us-ascii?Q?rsb13mb6xLtHkUfXhRT0GnOI8edAdx/nlazDjAqQmri4f00IS799+yyYx6N7?=
+ =?us-ascii?Q?892vUUKzdwtMYWQuqJYf0L6OVV0lkXhon9d8GmvmYbfeKqtiTN1f/ERqfr5d?=
+ =?us-ascii?Q?hSuUI2Cqtz+r74TfSyOjjN3TG0xVGCaPpPoDeygDzI5xSr1RrCuxSTKRtmQ7?=
+ =?us-ascii?Q?wtqtjgf/8WI+Gqb8SP3Is1o1+eHoVRXN+pqZf80bggSj7oCGmkQFQRUwxGUt?=
+ =?us-ascii?Q?8WUwOGUq5JIJkJP0OfUVr7Wh99JP56jjIAuKC5rN/wqBqpjhSQM0MQM7qgGE?=
+ =?us-ascii?Q?zGlJ+QlpGGse1+6Ki40fZPDNG/Nq66HaKEeMJJTnOLrmxfMAK/967tcDfolu?=
+ =?us-ascii?Q?FN8b/gmWFGAbBy33gZXDwCGpgMt/6kLZm/VjV8n0Ausue7WYfmO9yEQl23GD?=
+ =?us-ascii?Q?LtDX26zt+0cGjWbXEfmcfIdHX1/Dpuxf/X/+c2IrthD7scoF3PsjpSizkVoe?=
+ =?us-ascii?Q?tqSNaswEHMfozJJmL3ivjvadkeqCahh4R55+UCJZejiA0veFyju6yOgNMVuX?=
+ =?us-ascii?Q?F/LOKlUvLT6J2JOc4WKnssnw4EOKh13TZhM8XxB951i/4q/6vgaaTGBOaanE?=
+ =?us-ascii?Q?FGXLbc0MWJNICYaumfAFBGpl/qdTtAZJWtp4M0dU006qaI4Kmjf9X3L1SRzN?=
+ =?us-ascii?Q?9kuW/aZlOB2TfW1wepkZAjB8IHFHxc9S9Qub8eko1grbUxZMLOszsigXeJvq?=
+ =?us-ascii?Q?lb/i70PWW+7Up8tAqHXwlg89pyanQivoWe0bG2DnLWzVTdisiPeImGHYULzN?=
+ =?us-ascii?Q?ZmUEekEG6oL76iLglheanLCzTgl2G2BCiosnnqMA6qAl06UZaBb9HsVnGE8c?=
+ =?us-ascii?Q?q+UA6wDEsPU8/6dpcAXjAU8vO9YDz6gm9/Owgntti7FfR9KxPmUXu4X4xE1N?=
+ =?us-ascii?Q?Ky/akMeU01QnwO4cXUuQBWiO8yctSkpgzacO84+J9DxKw6KcXqzMvGVQ4leO?=
+ =?us-ascii?Q?L/TJQw0W9mVdBvOlD3SfxQzsJwoSCljT?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(366016)(1800799024); DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?6HqbsEyoFVH38BdMX6PFAh9sfSjU2d+i6E3XnjbK8jtI4CAT8A0nlINnfh6L?=
+ =?us-ascii?Q?9WGKdxZ2hrbaDoUS7gM7kfoRPONxrtBy1NANpV9tIQOlsiMj9KLYKmBPdi/9?=
+ =?us-ascii?Q?PkXkk9YtrRBfZPs5jzrCU7fP5ye3lC0Enzw6zLn656LmoAr73mIyNFzdXUZP?=
+ =?us-ascii?Q?ZcWoJs2aBbg2vf8k93Ju33yizQWjOnAAL9dnyj6nLkcXA+xkxxqMbuBhghXA?=
+ =?us-ascii?Q?XEKbrU5X0AEGfnszI+g/dZKr5fgmHLR33zKVoFcfA1EXGWHWZi9VDTCc7fGr?=
+ =?us-ascii?Q?YFuInEqq15/Cd0MeAfplfX+vnFqZFHhqXv47E19XPNqcL2JO68QofJMHCCvu?=
+ =?us-ascii?Q?LxL/yHri55VDxIDn23tKuZldGGIXEESh//g8cPpc5V+naNlEujMCFWfanklK?=
+ =?us-ascii?Q?TcPqATEG94fYVkOr6rbBSttUQI4mZcVqeOvUzwUr/kH3dgom+l9IQcvnQifG?=
+ =?us-ascii?Q?4aqOk+huzO6aMAngmmWHbJd90y4ho4QBwsysMIsXXgkYRprkUGqVmBQ2sVIr?=
+ =?us-ascii?Q?3Q/a4nFbCw6R3X0XSx2a7eWh4PgyXEIg3oZyjiIxVNUsfWSr6ziNMbPRsBXL?=
+ =?us-ascii?Q?XeaAUfDHcCiJN45pAtpp8/P2MWpboLUCd8GnbY65Ta9iFSa7X4I8DAqK39o9?=
+ =?us-ascii?Q?bygPNhlDCFgAX1HmN6+i53IjTWmNOfA4yydhFeAflD1j7Xl2BjDnkkw7WWQ9?=
+ =?us-ascii?Q?//NNSdTZYjUp/Bz7xpY8v6g2+UdUHdLRpxSX1/7mHcsmD6/wzjN8sU08TeAw?=
+ =?us-ascii?Q?5XePAaXFPkuT53OhEeeX4SU7OhZHBK6lmKJjHKkGlC+E6QILhPVdfU/CINVP?=
+ =?us-ascii?Q?VC9VNupAOW645P3IVaEpn2itfmasSYXbTpEqQ/iL73GTJj2B9re7WFyfDVU6?=
+ =?us-ascii?Q?mhE/6dvnFs+MX0PwQsZTeDpB4A6+RZesrlsYHpfzEA3iGzsFUb8cMBrFlHXb?=
+ =?us-ascii?Q?kvgQ5Bp/JwX61ICpK/mHxQimv9cjF+d4tjPvPy0h7VsLEuQ2E7NUiJxQY2cP?=
+ =?us-ascii?Q?49r81Ze1ZStzZgA8X7Nx340pk1t+wNjwD2ptDkp55s9VlvHd4GGYFl+x7vg9?=
+ =?us-ascii?Q?AFglqjsDeXfcWBS58lYSL7PVgWMM3LM28vQy2KIKEl/iQ1Ytg0joCDHza5RR?=
+ =?us-ascii?Q?HGx+wjlMut6OJInd+h63o+vnH+r89C8ykPiPH8+YNNIBGBzCnZ7bVpAdO7Vi?=
+ =?us-ascii?Q?2l1SZRbT8rlHcJTQ0UJoaUQ9alxm6oLjT9ShuDBok6qv+NHyzhsPea1pSPew?=
+ =?us-ascii?Q?lPaOn9wE8lEoq8FMZ/lmI1OQRMCFgUivcW29bq47SswoSFtvDe0aYwFmasLw?=
+ =?us-ascii?Q?KHhJzITjC6bsvWw3hkn52jmD/NcQreDwE5T0wn5xv7dTEvW+rvcmZHD1TDKu?=
+ =?us-ascii?Q?EsDHVvJgnaMK6rw0fPLsh8z9c1Idqw/9UfojL7wtceOT6GKKTgiqxpWD21yU?=
+ =?us-ascii?Q?bmBJVVQrdjAPiZhjMYt/hj+Wx0yRmTv/+fnbcRKFwC4QX+tUlWy/UGGIEuy8?=
+ =?us-ascii?Q?9MXYOMltKQm1DZFb2u45/8oEd4+9K2f2/tYC+sQ6uUkm5ju6VnitrOfXDECt?=
+ =?us-ascii?Q?Ew8E7/lDDO4N80F2krfijBwlyvf03rqsU9ZApXrm0CgvwkfRyZOMoDcweO+p?=
+ =?us-ascii?Q?xw=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: a29ffe96-67b3-40ea-461b-08de2c243c77
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Nov 2025 13:12:08.2486 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: pJ4uO50i9G7NR9HkJlmQYT8j/BDCPV+WTq36te7iaKrbq5UrwPPty5KRfCK3EIt54K6/ZlhNVgAJ4U4T08bPhtypHc2B61TyRnskxqMrs6Q=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB6518
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -69,438 +173,56 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Reduce memory fragmentation caused by dynamic memory allocations
-by allowing users to provide custom memory allocator.
+On Tue, Nov 25, 2025 at 10:30:37AM +0000, Hore, Soumyadeep wrote:
+> Commit d21c2fe6e5a1 ("net/iavf: fix check for PF Rx timestamp support") added a check against whether the PF has actually enabled Rx timestamping in iavf_dev_info_get(). Unfortunately, this function may be called prior to the PTP capabilities being exchanged, which results in Rx timestamping not being supported.
+> 
+> Fix this by checking the PF PTP capabilities near the end of iavf_dev_init(). This ensures the VF knows the capabilities at the point where the iavf_dev_info_get() function can be called. Doing the check at init is better than inside the info callback, as the info callback is called many times.
+> 
+> The capability exchange in iavf_dev_start() is kept to ensure that capabilities are updated after resets.
+> 
+> Fixes: d21c2fe6e5a1 ("net/iavf: fix check for PF Rx timestamp support")
+> Signed-off-by: Jacob Keller <jacob.e.keller@intel.com>
+> ---
+> My recent fix to prevent enabling Rx timestamping on PFs which do support PTP capability but do not report Rx timestamping accidentally broke PFs which *do* support Rx timestamping. This is because the driver did not exchange capability before reporting its device info. Fix this by checking PF capabilities during iavf_dev_init().
+> ---
+>  drivers/net/intel/iavf/iavf_ethdev.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/drivers/net/intel/iavf/iavf_ethdev.c b/drivers/net/intel/iavf/iavf_ethdev.c
+> index 3ef766de4704..9b07b11a6b51 100644
+> --- a/drivers/net/intel/iavf/iavf_ethdev.c
+> +++ b/drivers/net/intel/iavf/iavf_ethdev.c
+> @@ -2887,6 +2887,14 @@ iavf_dev_init(struct rte_eth_dev *eth_dev)
+>  		}
+>  	}
+>  
+> +	/* Get PTP caps early to verify device capabilities */
+> +	if (vf->vf_res->vf_cap_flags & VIRTCHNL_VF_CAP_PTP) {
+> +		if (iavf_get_ptp_cap(adapter)) {
+> +			PMD_INIT_LOG(ERR, "Failed to get ptp capability");
+> +			goto security_init_err;
+> +		}
+> +	}
+> +
+>  	iavf_default_rss_disable(adapter);
+>  
+>  	iavf_dev_stats_reset(eth_dev);
+> 
+> ---
+> base-commit: ef98b88455bf4a7c8b7aa3106a761c9e9270d6a3
+> change-id: 20251121-jk-dpdk-iavf-rx-timestamping-fix-abdcb42f0197
+> 
+> Best regards,
+> --
+> Jacob Keller <jacob.e.keller@intel.com>
+> 
+> Hi Jacob,
+> 
+> Currently PTP features are not enabled in DPDK. We only have the Rx timestamp API in place. Typically the change that you want needs to be implemented in ethdev_ops.timesync_enable(), which is not implemented.
+> 
+At this stage we are post final RC for 25.11, so taking this patch would be
+risky anyway. Let's target 26.03 for this, and then look to  backport to
+25.11.1
 
-Add new members to struct rte_acl_config to allow passing custom
-allocator callbacks to rte_acl_build:
-
-- running_alloc: allocator callback for run-time internal memory
-- running_free: free callback for run-time internal memory
-- running_ctx: user-defined context passed to running_alloc/free
-
-- temp_alloc: allocator callback for temporary memory during ACL build
-- temp_reset: reset callback for temporary allocator
-- temp_ctx: user-defined context passed to temp_alloc/reset
-
-These callbacks allow users to provide their own memory pools or
-allocators for both persistent runtime structures and temporary
-build-time data.
-
-A typical approach is to pre-allocate a static memory region
-for rte_acl_ctx, and to provide a global temporary memory manager
-that supports multipleallocations and a single reset during ACL build.
-
-Since tb_mem_pool handles allocation failures using siglongjmp,
-temp_alloc follows the same approach for failure handling.
-
-Signed-off-by: YongFeng Wang <mannywang@tencent.com>
----
- app/test/test_acl.c | 181 +++++++++++++++++++++++++++++++++++++++++++-
- lib/acl/acl.h       |   3 +-
- lib/acl/acl_bld.c   |  14 +++-
- lib/acl/acl_gen.c   |   8 +-
- lib/acl/rte_acl.c   |   5 +-
- lib/acl/rte_acl.h   |  20 +++++
- lib/acl/tb_mem.c    |   8 ++
- lib/acl/tb_mem.h    |   6 ++
- 8 files changed, 236 insertions(+), 9 deletions(-)
-
-diff --git a/app/test/test_acl.c b/app/test/test_acl.c
-index 43d13b5b0f..9c6ed34f0c 100644
---- a/app/test/test_acl.c
-+++ b/app/test/test_acl.c
-@@ -1721,6 +1721,184 @@ test_u32_range(void)
- 	return rc;
- }
- 
-+struct acl_ctx_wrapper_t {
-+	struct rte_acl_ctx *ctx;
-+	void *running_buf;
-+	bool running_buf_using;
-+};
-+
-+struct acl_temp_mem_mgr_t {
-+	void *buf;
-+	uint32_t buf_used;
-+	sigjmp_buf fail;
-+};
-+
-+struct acl_ctx_wrapper_t g_acl_ctx_wrapper;
-+struct acl_temp_mem_mgr_t g_temp_mem_mgr;
-+
-+#define ACL_RUNNING_BUF_SIZE (10 * 1024 * 1024)
-+#define ACL_TEMP_BUF_SIZE (10 * 1024 * 1024)
-+
-+static void *running_alloc(size_t size, unsigned int align, void *cb_data)
-+{
-+	(void)align;
-+	struct acl_ctx_wrapper_t *gwlb_acl_ctx = (struct acl_ctx_wrapper_t *)cb_data;
-+	if (gwlb_acl_ctx->running_buf_using)
-+		return NULL;
-+	printf("running memory alloc for acl context, size=%zu, pointer=%p\n",
-+		size,
-+		gwlb_acl_ctx->running_buf);
-+	gwlb_acl_ctx->running_buf_using = true;
-+	return gwlb_acl_ctx->running_buf;
-+}
-+
-+static void running_free(void *buf, void *cb_data)
-+{
-+	if (!buf)
-+		return;
-+	struct acl_ctx_wrapper_t *gwlb_acl_ctx = (struct acl_ctx_wrapper_t *)cb_data;
-+	printf("running memory free pointer=%p\n", buf);
-+	gwlb_acl_ctx->running_buf_using = false;
-+}
-+
-+static void *temp_alloc(size_t size, sigjmp_buf fail, void *cb_data)
-+{
-+	struct acl_temp_mem_mgr_t *gwlb_acl_build = (struct acl_temp_mem_mgr_t *)cb_data;
-+	if (ACL_TEMP_BUF_SIZE - gwlb_acl_build->buf_used < size) {
-+		printf("Line %i: alloc temp memory fail, size=%zu, used=%d\n",
-+			__LINE__,
-+			size,
-+			gwlb_acl_build->buf_used);
-+		siglongjmp(fail, -ENOMEM);
-+		return NULL;
-+	}
-+	void *ret = (char *)gwlb_acl_build->buf + gwlb_acl_build->buf_used;
-+	gwlb_acl_build->buf_used += size;
-+	return ret;
-+}
-+
-+static void temp_reset(void *cb_data)
-+{
-+	struct acl_temp_mem_mgr_t *gwlb_acl_build = (struct acl_temp_mem_mgr_t *)cb_data;
-+	memset(gwlb_acl_build->buf, 0, ACL_TEMP_BUF_SIZE);
-+	printf("temp memory reset, used total=%u\n", gwlb_acl_build->buf_used);
-+	gwlb_acl_build->buf_used = 0;
-+}
-+
-+static int
-+rte_acl_ipv4vlan_build_wich_mem_cb(struct rte_acl_ctx *ctx,
-+	const uint32_t layout[RTE_ACL_IPV4VLAN_NUM],
-+	uint32_t num_categories)
-+{
-+	struct rte_acl_config cfg;
-+
-+	if (ctx == NULL || layout == NULL)
-+		return -EINVAL;
-+
-+	memset(&cfg, 0, sizeof(cfg));
-+	acl_ipv4vlan_config(&cfg, layout, num_categories);
-+	cfg.running_alloc = running_alloc;
-+	cfg.running_free = running_free;
-+	cfg.running_cb_ctx = &g_acl_ctx_wrapper;
-+	cfg.temp_alloc = temp_alloc;
-+	cfg.temp_reset = temp_reset;
-+	cfg.temp_cb_ctx = &g_temp_mem_mgr;
-+	return rte_acl_build(ctx, &cfg);
-+}
-+
-+static int
-+test_classify_buid_wich_mem_cb(struct rte_acl_ctx *acx,
-+	const struct rte_acl_ipv4vlan_rule *rules, uint32_t num)
-+{
-+	int ret;
-+
-+	/* add rules to the context */
-+	ret = rte_acl_ipv4vlan_add_rules(acx, rules, num);
-+	if (ret != 0) {
-+		printf("Line %i: Adding rules to ACL context failed!\n",
-+			__LINE__);
-+		return ret;
-+	}
-+
-+	/* try building the context */
-+	ret = rte_acl_ipv4vlan_build_wich_mem_cb(acx, ipv4_7tuple_layout,
-+		RTE_ACL_MAX_CATEGORIES);
-+	if (ret != 0) {
-+		printf("Line %i: Building ACL context failed!\n", __LINE__);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int
-+test_mem_cb(void)
-+{
-+	int i, ret;
-+	g_acl_ctx_wrapper.ctx = rte_acl_create(&acl_param);
-+	if (g_acl_ctx_wrapper.ctx == NULL) {
-+		printf("Line %i: Error creating ACL context!\n", __LINE__);
-+		return -1;
-+	}
-+	g_acl_ctx_wrapper.running_buf = rte_zmalloc_socket(
-+		"test_acl",
-+		ACL_RUNNING_BUF_SIZE,
-+		RTE_CACHE_LINE_SIZE,
-+		SOCKET_ID_ANY);
-+	if (!g_acl_ctx_wrapper.running_buf) {
-+		printf("Line %i: Error allocing running buf for acl context!\n", __LINE__);
-+		return 1;
-+	}
-+	g_acl_ctx_wrapper.running_buf_using = false;
-+
-+	g_temp_mem_mgr.buf = malloc(ACL_TEMP_BUF_SIZE);
-+	if (!g_temp_mem_mgr.buf)
-+		printf("Line %i: Error allocing teem buf for acl build!\n", __LINE__);
-+	memset(g_temp_mem_mgr.buf, 0, ACL_TEMP_BUF_SIZE);
-+	g_temp_mem_mgr.buf_used = 0;
-+
-+	ret = 0;
-+	for (i = 0; i != TEST_CLASSIFY_ITER; i++) {
-+
-+		if ((i & 1) == 0)
-+			rte_acl_reset(g_acl_ctx_wrapper.ctx);
-+		else
-+			rte_acl_reset_rules(g_acl_ctx_wrapper.ctx);
-+
-+		ret = test_classify_buid_wich_mem_cb(g_acl_ctx_wrapper.ctx, acl_test_rules,
-+			RTE_DIM(acl_test_rules));
-+		if (ret != 0) {
-+			printf("Line %i, iter: %d: "
-+				"Adding rules to ACL context failed!\n",
-+				__LINE__, i);
-+			break;
-+		}
-+
-+		ret = test_classify_run(g_acl_ctx_wrapper.ctx, acl_test_data,
-+			RTE_DIM(acl_test_data));
-+		if (ret != 0) {
-+			printf("Line %i, iter: %d: %s failed!\n",
-+				__LINE__, i, __func__);
-+			break;
-+		}
-+
-+		/* reset rules and make sure that classify still works ok. */
-+		rte_acl_reset_rules(g_acl_ctx_wrapper.ctx);
-+		ret = test_classify_run(g_acl_ctx_wrapper.ctx, acl_test_data,
-+			RTE_DIM(acl_test_data));
-+		if (ret != 0) {
-+			printf("Line %i, iter: %d: %s failed!\n",
-+				__LINE__, i, __func__);
-+			break;
-+		}
-+	}
-+
-+	rte_acl_free(g_acl_ctx_wrapper.ctx);
-+	free(g_temp_mem_mgr.buf);
-+	rte_free(g_acl_ctx_wrapper.running_buf);
-+	return ret;
-+}
-+
- static int
- test_acl(void)
- {
-@@ -1742,7 +1920,8 @@ test_acl(void)
- 		return -1;
- 	if (test_u32_range() < 0)
- 		return -1;
--
-+	if (test_mem_cb() < 0)
-+		return -1;
- 	return 0;
- }
- 
-diff --git a/lib/acl/acl.h b/lib/acl/acl.h
-index c8e4e72fab..7080fff64d 100644
---- a/lib/acl/acl.h
-+++ b/lib/acl/acl.h
-@@ -189,7 +189,8 @@ struct rte_acl_ctx {
- 
- int rte_acl_gen(struct rte_acl_ctx *ctx, struct rte_acl_trie *trie,
- 	struct rte_acl_bld_trie *node_bld_trie, uint32_t num_tries,
--	uint32_t num_categories, uint32_t data_index_sz, size_t max_size);
-+	uint32_t num_categories, uint32_t data_index_sz, size_t max_size,
-+	const struct rte_acl_config *cfg);
- 
- typedef int (*rte_acl_classify_t)
- (const struct rte_acl_ctx *, const uint8_t **, uint32_t *, uint32_t, uint32_t);
-diff --git a/lib/acl/acl_bld.c b/lib/acl/acl_bld.c
-index 7056b1c117..1fd0ee3aa5 100644
---- a/lib/acl/acl_bld.c
-+++ b/lib/acl/acl_bld.c
-@@ -777,9 +777,12 @@ acl_merge_trie(struct acl_build_context *context,
-  *  - reset all RT related fields to zero.
-  */
- static void
--acl_build_reset(struct rte_acl_ctx *ctx)
-+acl_build_reset(struct rte_acl_ctx *ctx, const struct rte_acl_config *cfg)
- {
--	rte_free(ctx->mem);
-+	if (cfg->running_free)
-+		cfg->running_free(ctx->mem, cfg->running_cb_ctx);
-+	else
-+		rte_free(ctx->mem);
- 	memset(&ctx->num_categories, 0,
- 		sizeof(*ctx) - offsetof(struct rte_acl_ctx, num_categories));
- }
-@@ -1518,6 +1521,9 @@ acl_bld(struct acl_build_context *bcx, struct rte_acl_ctx *ctx,
- 	bcx->acx = ctx;
- 	bcx->pool.alignment = ACL_POOL_ALIGN;
- 	bcx->pool.min_alloc = ACL_POOL_ALLOC_MIN;
-+	bcx->pool.alloc_cb = cfg->temp_alloc;
-+	bcx->pool.reset_cb = cfg->temp_reset;
-+	bcx->pool.cb_ctx = cfg->temp_cb_ctx;
- 	bcx->cfg = *cfg;
- 	bcx->category_mask = RTE_LEN2MASK(bcx->cfg.num_categories,
- 		typeof(bcx->category_mask));
-@@ -1635,7 +1641,7 @@ rte_acl_build(struct rte_acl_ctx *ctx, const struct rte_acl_config *cfg)
- 	if (rc != 0)
- 		return rc;
- 
--	acl_build_reset(ctx);
-+	acl_build_reset(ctx, cfg);
- 
- 	if (cfg->max_size == 0) {
- 		n = NODE_MIN;
-@@ -1655,7 +1661,7 @@ rte_acl_build(struct rte_acl_ctx *ctx, const struct rte_acl_config *cfg)
- 			rc = rte_acl_gen(ctx, bcx.tries, bcx.bld_tries,
- 				bcx.num_tries, bcx.cfg.num_categories,
- 				ACL_MAX_INDEXES * RTE_DIM(bcx.tries) *
--				sizeof(ctx->data_indexes[0]), max_size);
-+				sizeof(ctx->data_indexes[0]), max_size, cfg);
- 			if (rc == 0) {
- 				/* set data indexes. */
- 				acl_set_data_indexes(ctx);
-diff --git a/lib/acl/acl_gen.c b/lib/acl/acl_gen.c
-index 3c53d24056..6aa7d74635 100644
---- a/lib/acl/acl_gen.c
-+++ b/lib/acl/acl_gen.c
-@@ -448,7 +448,8 @@ acl_calc_counts_indices(struct acl_node_counters *counts,
- int
- rte_acl_gen(struct rte_acl_ctx *ctx, struct rte_acl_trie *trie,
- 	struct rte_acl_bld_trie *node_bld_trie, uint32_t num_tries,
--	uint32_t num_categories, uint32_t data_index_sz, size_t max_size)
-+	uint32_t num_categories, uint32_t data_index_sz, size_t max_size,
-+	const struct rte_acl_config *cfg)
- {
- 	void *mem;
- 	size_t total_size;
-@@ -478,7 +479,10 @@ rte_acl_gen(struct rte_acl_ctx *ctx, struct rte_acl_trie *trie,
- 		return -ERANGE;
- 	}
- 
--	mem = rte_zmalloc_socket(ctx->name, total_size, RTE_CACHE_LINE_SIZE,
-+	if (cfg->running_alloc)
-+		mem = cfg->running_alloc(total_size, RTE_CACHE_LINE_SIZE, cfg->running_cb_ctx);
-+	else
-+		mem = rte_zmalloc_socket(ctx->name, total_size, RTE_CACHE_LINE_SIZE,
- 			ctx->socket_id);
- 	if (mem == NULL) {
- 		ACL_LOG(ERR,
-diff --git a/lib/acl/rte_acl.c b/lib/acl/rte_acl.c
-index 8c0ca29618..e765c40f4f 100644
---- a/lib/acl/rte_acl.c
-+++ b/lib/acl/rte_acl.c
-@@ -362,7 +362,10 @@ rte_acl_free(struct rte_acl_ctx *ctx)
- 
- 	rte_mcfg_tailq_write_unlock();
- 
--	rte_free(ctx->mem);
-+	if (ctx->config.running_free)
-+		ctx->config.running_free(ctx->mem, ctx->config.running_cb_ctx);
-+	else
-+		rte_free(ctx->mem);
- 	rte_free(ctx);
- 	rte_free(te);
- }
-diff --git a/lib/acl/rte_acl.h b/lib/acl/rte_acl.h
-index 95354cabb8..c675c9ff81 100644
---- a/lib/acl/rte_acl.h
-+++ b/lib/acl/rte_acl.h
-@@ -13,6 +13,7 @@
- 
- #include <rte_common.h>
- #include <rte_acl_osdep.h>
-+#include <setjmp.h>
- 
- #ifdef __cplusplus
- extern "C" {
-@@ -61,6 +62,11 @@ struct rte_acl_field_def {
-  * ACL build configuration.
-  * Defines the fields of an ACL trie and number of categories to build with.
-  */
-+typedef void *(*rte_acl_running_alloc_t)(size_t, unsigned int, void *);
-+typedef void  (*rte_acl_running_free_t)(void *, void *);
-+typedef void *(*rte_acl_temp_alloc_t)(size_t, sigjmp_buf, void *);
-+typedef void  (*rte_acl_temp_reset_t)(void *);
-+
- struct rte_acl_config {
- 	uint32_t num_categories; /**< Number of categories to build with. */
- 	uint32_t num_fields;     /**< Number of field definitions. */
-@@ -68,6 +74,20 @@ struct rte_acl_config {
- 	/**< array of field definitions. */
- 	size_t max_size;
- 	/**< max memory limit for internal run-time structures. */
-+
-+	/**< Allocator callback for run-time internal memory. */
-+	rte_acl_running_alloc_t  running_alloc;
-+	/**< Free callback for run-time internal memory. */
-+	rte_acl_running_free_t   running_free;
-+	/**< User context passed to running_alloc/free. */
-+	void                     *running_cb_ctx;
-+
-+	/**< Allocator callback for temporary memory used during build. */
-+	rte_acl_temp_alloc_t     temp_alloc;
-+	/**< Reset callback for temporary allocator. */
-+	rte_acl_temp_reset_t     temp_reset;
-+	/**< User context passed to temp_alloc/reset. */
-+	void                     *temp_cb_ctx;
- };
- 
- /**
-diff --git a/lib/acl/tb_mem.c b/lib/acl/tb_mem.c
-index 9264433422..b9c69b563e 100644
---- a/lib/acl/tb_mem.c
-+++ b/lib/acl/tb_mem.c
-@@ -55,6 +55,9 @@ tb_alloc(struct tb_mem_pool *pool, size_t size)
- 
- 	size = RTE_ALIGN_CEIL(size, pool->alignment);
- 
-+	if (pool->alloc_cb)
-+		return pool->alloc_cb(size, pool->fail, pool->cb_ctx);
-+
- 	block = pool->block;
- 	if (block == NULL || block->size < size) {
- 		new_sz = (size > pool->min_alloc) ? size : pool->min_alloc;
-@@ -71,6 +74,11 @@ tb_free_pool(struct tb_mem_pool *pool)
- {
- 	struct tb_mem_block *next, *block;
- 
-+	if (pool->reset_cb) {
-+		pool->reset_cb(pool->cb_ctx);
-+		return;
-+	}
-+
- 	for (block = pool->block; block != NULL; block = next) {
- 		next = block->next;
- 		free(block);
-diff --git a/lib/acl/tb_mem.h b/lib/acl/tb_mem.h
-index 2093744a6d..2fdebefc31 100644
---- a/lib/acl/tb_mem.h
-+++ b/lib/acl/tb_mem.h
-@@ -24,11 +24,17 @@ struct tb_mem_block {
- 	uint8_t             *mem;
- };
- 
-+typedef void *(*rte_tb_alloc_t)(size_t, sigjmp_buf, void *);
-+typedef void (*rte_tb_reset_t)(void *);
-+
- struct tb_mem_pool {
- 	struct tb_mem_block *block;
- 	size_t               alignment;
- 	size_t               min_alloc;
- 	size_t               alloc;
-+	rte_tb_alloc_t       alloc_cb;
-+	rte_tb_reset_t       reset_cb;
-+	void                 *cb_ctx;
- 	/* jump target in case of memory allocation failure. */
- 	sigjmp_buf           fail;
- };
--- 
-2.43.0
-
+Thanks,
+/Bruce
