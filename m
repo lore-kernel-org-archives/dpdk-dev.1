@@ -2,74 +2,76 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E28D7CFD36C
-	for <dpdk-dev@archiver.kernel.org>; Tue, 25 Nov 2025 01:07:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9657CFD371
+	for <dpdk-dev@archiver.kernel.org>; Tue, 25 Nov 2025 01:22:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1E05D40674;
-	Tue, 25 Nov 2025 02:07:38 +0100 (CET)
-Received: from fout-a1-smtp.messagingengine.com
- (fout-a1-smtp.messagingengine.com [103.168.172.144])
- by mails.dpdk.org (Postfix) with ESMTP id A8CE5402A1
- for <dev@dpdk.org>; Tue, 25 Nov 2025 02:07:36 +0100 (CET)
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
- by mailfout.phl.internal (Postfix) with ESMTP id 2E865EC0178;
- Mon, 24 Nov 2025 20:07:36 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-05.internal (MEProxy); Mon, 24 Nov 2025 20:07:36 -0500
+	by mails.dpdk.org (Postfix) with ESMTP id 2227640685;
+	Tue, 25 Nov 2025 02:22:44 +0100 (CET)
+Received: from fhigh-a3-smtp.messagingengine.com
+ (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
+ by mails.dpdk.org (Postfix) with ESMTP id 6590A402A1
+ for <dev@dpdk.org>; Tue, 25 Nov 2025 02:22:42 +0100 (CET)
+Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id EE1B114001C8;
+ Mon, 24 Nov 2025 20:22:41 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+ by phl-compute-06.internal (MEProxy); Mon, 24 Nov 2025 20:22:41 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm3; t=1764032856;
- x=1764119256; bh=rzZAIEGZ8hvE+5mbxHwYpktXQtMdB8EkkkgJ2zdmHoo=; b=
- VRJukdoiKMrAAlKw6N6lkImKB8Xm++Bwf0ISqAU6hsjYkuUmtihfuTpHIxhyTPNH
- +PLj3P5j2v0KAOv/fYdc4HOKuJUrn1lk8bh442DPcF6JKPP21UVQWy4r4wTT+Bh/
- +wy10VAKZtDs5xSCVKPKBJ8GCvtQHOywWLDThqO76Qm0DLcrLxI/UlzjTgtr5vYV
- Dq6QcHGoaA5R7XvVNLv8rG9Lz8g9hg8nY2mpSvVkfCzkgJXr0eIOJDMmhihWWOGH
- 722aF4JYspSEd34CTuwGIWweM0NI9IcSwf64mtTrlKhZ5i3pxHjkvgJIfpP2LqTU
- mXfk7HypFU16vbf/OfIDOg==
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1764033761;
+ x=1764120161; bh=i2xNY0yt+3/yWtPVPj3xc0xLD83+4fcC7yaf8T9CFU8=; b=
+ tHzOvEw+FaCie9YB0HFGqF8IGqz9sW5L8Ex1mtjWDJc61zxVrOSq2ACO/dAoXvz0
+ Am6kVcShHg0y1zgOdfo6QRwdEQjKNlV7NXmkPOymntHVQaP5WSIhGKN9TouNBqIS
+ 7AlH1ARL8DvlniYTBVR8pVSUEMPPhnVVkb38UZ7Pdlu9JiCq8o+rS1CQ1LqCHk+1
+ RyvFYHpdmLzQsgj061CU5UTB+V9eaI6vu9j1g3iPhbdMZRKjqrD0Uqf/qXVWtJh8
+ qqTOLP1KaPu9D4afIQn+zMNMDW8vYwaI973tX7klO8Kysu/eyVShZTke8Bs7R4CR
+ 8dXXn4E2TR8J2UHAGtS8uA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1764032856; x=
- 1764119256; bh=rzZAIEGZ8hvE+5mbxHwYpktXQtMdB8EkkkgJ2zdmHoo=; b=m
- zet66gt3icZ/YqP9Cr/YPyzDlUA8zivZxbKu2zLnECFtOmXVm68nFA91PK/I4yq0
- nzpdovhWTdytueV/WO+CtZl+chLBgGtto0OHCG572VAr9TmB48LeuqRXtuBGMsSo
- XF4zaNn9FsJHC0K9fYhpTTpx1vHEu3Ngq+99lSdOCWZQ6XF5/jkMJojGAXdKhwqQ
- z+X152NBiq7SICJg0VROVf564GMnwi5CByY7YP6UX4MxXwplNyUC4u5bBm+/T1ep
- hWGrTOOI9kEJKcqmUFl5X9NuvZJLFFTOfIOaNpdT5xb/yyNWZUV+gCydnMHN8cev
- KEZjTCFK96pDIGOz2ySBA==
-X-ME-Sender: <xms:VwElaaSEomvlslvuvZBmb9iSL9UGZjA3rRhwMQXFRfDrY_GfI3ISKg>
- <xme:VwElacG-OBik7HhzClnlZVgP_wnzRY3EPjhFheHlumMe8aKpRZCph5Gt49tswhEzM
- 80cqANM-9haQwqd_H2r9OdBffMc8-DJm_t7GHVg_91zVfwgr6zO>
-X-ME-Received: <xmr:VwElaamndZK5FYzVUTE5pzoJLq7xCeo-f-e5POcG6cnWWhE8jbcZdAxwzrHURkFsgz9dlEB7KC03bcDknUa5eAmAGQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvgedtuddvucetufdoteggodetrf
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1764033761; x=
+ 1764120161; bh=i2xNY0yt+3/yWtPVPj3xc0xLD83+4fcC7yaf8T9CFU8=; b=G
+ sZ5LrJz33FGvxLqjiqEoWnp6O6vy9woAUP6N0GFVvZEGLOyOy5GXzUt2WvSlVbi8
+ bVExDBz91dG21YxFfcKgk4Ce7KOyJLMRJCG3Ki9qKQFZWvkqfMdRMXrvxyNVH5JM
+ 4s1+Fc7wl+JpOywSMkL+9MVm5/EJy3FbAvHFdISV31jkQcZKznDvXdnrQAkGaCFz
+ cxl5dTAOrtGNbqvXscfj8TKQneM8Gwv5cWCoaRRTwJq/5zNWZgQOw39FisfZW4qp
+ KO/HAMrCnBIUibGBCssuls8AaJ5enflum4iBhgS6NweOjUYBC2Je43Svdj6zfgxW
+ 6luEUt8dJ7lEHaOEBdyJg==
+X-ME-Sender: <xms:4QQlacRKEuRNK-fq6qwz2_bRR6CJ1IGv6TyWIQu9S30MUNbdHDxgyw>
+ <xme:4QQlaeHYPQ3Dw8otDes_zijhF7f_4mr4zfvXdoqZT4biF0NNmAwLwkBSpSMf-cfDi
+ pWo372hgghvq-kSKbOZiFU9ApeWCDjkIXQJwe-Xs1aLRJGTbGorlg>
+X-ME-Received: <xmr:4QQlaY8wMB2_11N4dprY0QtMKF-_Q6mvcHxmzKu0F_IL1o9X9SJaDTtgtKTh2pD7NeB22GJZ_CVjp7kaiwZUFoWL9A>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvgedtudehucetufdoteggodetrf
  dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
  rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
  gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
  ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
  frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
  uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopedvpdhm
- ohguvgepshhmthhpohhuthdprhgtphhtthhopehsthgvphhhvghnsehnvghtfihorhhkph
- hluhhmsggvrhdrohhrghdprhgtphhtthhopeguvghvseguphgukhdrohhrgh
-X-ME-Proxy: <xmx:VwElaX3YGQfHyQTzQ3IW43YCD6Hznph9MBIj-a3UO7Ztu7-p1Tg1Mg>
- <xmx:VwElaWRxBmyW-auuI2xvFWE-rUcNup10dClZDrjrPeQWjAW07Qt-8Q>
- <xmx:VwElaZtoqDBHS44YXqcR_qdiUbyzSUJ8mZSMgfG3IIHOWqFNIMAHtw>
- <xmx:VwElabZJWshDAnxY2CMTLQL6nMi6O9cZMTNKS46N9FblU-HrVEVUhA>
- <xmx:WAElaYTZf9bK7wlco-aUT-6dgUA8tghRoujVZddb5ejucgbegk6Qx3R2>
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeefpdhm
+ ohguvgepshhmthhpohhuthdprhgtphhtthhopehluhgtrgdrsghotggtrghsshhisehgmh
+ grihhlrdgtohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghpthhtohep
+ sghruhgtvgdrrhhitghhrghrughsohhnsehinhhtvghlrdgtohhm
+X-ME-Proxy: <xmx:4QQlaYIeyzAhJQloy2pBeaGdJs6LcGwyy-fY988UM_G4SOp0WTKCYQ>
+ <xmx:4QQlabbROlQdck99jM0j02nTRQW6eCA_JbmiyyYf6Rqcy6fr6NFuXw>
+ <xmx:4QQlaSJSB8Zm4EY1bbxUfjNp0JPAJnJfaC_R_qjMO9JGwxEgHzpxvA>
+ <xmx:4QQlaRAAooIzfTa5HuqQNSDaJIGSSHlsQP_dVZwpqciJKAwWUTl9Uw>
+ <xmx:4QQlaV1jRrnrzpHykcAqLTcndw-yDKQWTctcxyPJPCV_AHEGLqtbjAYY>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 24 Nov 2025 20:07:35 -0500 (EST)
+ 24 Nov 2025 20:22:41 -0500 (EST)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH] doc: remove KNI diagrams
-Date: Tue, 25 Nov 2025 02:07:33 +0100
-Message-ID: <3974675.VdNmn5OnKV@thomas>
-In-Reply-To: <20250814154604.6878-1-stephen@networkplumber.org>
-References: <20250814154604.6878-1-stephen@networkplumber.org>
+To: luca.boccassi@gmail.com
+Cc: dev@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>
+Subject: Re: [PATCH] doc: add install_tag to meson
+Date: Tue, 25 Nov 2025 02:22:39 +0100
+Message-ID: <3862772.88bMQJbFj6@thomas>
+In-Reply-To: <Z3uwcddSVFDt6dNn@bricha3-mobl1.ger.corp.intel.com>
+References: <20241223132220.138227-1-luca.boccassi@gmail.com>
+ <Z3uwcddSVFDt6dNn@bricha3-mobl1.ger.corp.intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -86,16 +88,35 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-14/08/2025 17:46, Stephen Hemminger:
-> KNI was removed from DPDK but the diagrams in the documentation
-> were left behind.
-> 
-> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-> ---
->  doc/guides/prog_guide/img/kni_traffic_flow.png | Bin 366308 -> 0 bytes
->  doc/guides/prog_guide/img/pkt_flow_kni.png     | Bin 51088 -> 0 bytes
->  2 files changed, 0 insertions(+), 0 deletions(-)
+06/01/2025 11:29, Bruce Richardson:
+> On Mon, Dec 23, 2024 at 01:21:13PM +0000, luca.boccassi@gmail.com wrote:
+> > From: "bluca@debian.org" <bluca@debian.org>
+> > 
+> > This allows building and installing only the documentation, without
+> > recompiling the whole project, using:
+> > 
+> > meson build -Denable_docs=true
+> > meson compile -C build doc
+> > meson install -C build --no-rebuild --tags doc
+> > 
+> > In Debian/Ubuntu the documentation is built separately from the binaries,
+> > in a separate architecture-independent build job, so that it has to be
+> > done only once, instead of once per supported architecture.
+> > 
+> > Signed-off-by: Luca Boccassi <bluca@debian.org>
+> > ---
+> > This requires meson 0.60, so there's a warning printed as the minimum
+> > defined is 0.57, but it's harmless, and the feature is only used when
+> > explicitly invoked with --tags, which simply has to be done with newer
+> > meson versions. If install --tags is not used, then there's no issue.
+> > 
+> >  doc/api/meson.build    | 3 +++
+> >  doc/guides/meson.build | 1 +
+> >  2 files changed, 4 insertions(+)
+> > 
+> Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 
+This patch was missed.
 Applied, thanks.
 
 
