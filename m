@@ -2,74 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1DE7D0E6F1
-	for <dpdk-dev@archiver.kernel.org>; Tue, 25 Nov 2025 14:30:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD596D0E6F1
+	for <dpdk-dev@archiver.kernel.org>; Tue, 25 Nov 2025 14:46:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C611140A7D;
-	Tue, 25 Nov 2025 15:30:57 +0100 (CET)
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com
- [209.85.215.180])
- by mails.dpdk.org (Postfix) with ESMTP id 84D23402E1
- for <dev@dpdk.org>; Tue, 25 Nov 2025 15:30:56 +0100 (CET)
-Received: by mail-pg1-f180.google.com with SMTP id
- 41be03b00d2f7-bb2447d11ceso3360126a12.0
- for <dev@dpdk.org>; Tue, 25 Nov 2025 06:30:56 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 6BA9E40A84;
+	Tue, 25 Nov 2025 15:46:17 +0100 (CET)
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com
+ [209.85.210.182])
+ by mails.dpdk.org (Postfix) with ESMTP id 6493D402E1
+ for <dev@dpdk.org>; Tue, 25 Nov 2025 15:46:15 +0100 (CET)
+Received: by mail-pf1-f182.google.com with SMTP id
+ d2e1a72fcca58-7acd9a03ba9so6334566b3a.1
+ for <dev@dpdk.org>; Tue, 25 Nov 2025 06:46:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1764081055;
- x=1764685855; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=9U/bFr5acrKfrup9ou+WElZdvQovVFgpu7LDnpF7fZ8=;
- b=IRLnMqhiFqKGICLcW2q1Xg9SS4RNqWd1s3aO7EAwT5UWlTh3tJcQDQG7nONb80nvg4
- iDq4mOCW7fMf2SFAS8WSMKVSr7qxMzPbtj69j2sNr2b8LmeEBVO6gNRTr4Vj54QxisJR
- hiQ78KxtyTAM1jKRjH0evir6hkqt9e9e2KZE1qHO+JS/dEisQK3Z+8DaIglOrtCmYv86
- UqdvApeL78Z2Vkq9mO5SyJ+gYfNcPSgqmCDwRk7JCuEBcjDZiGSKiHV8t0kZa3OnkWEE
- hdElC/YcjsT18lEaCEB9dYc61LT9nmaN+ePxg5o1C+jbPsVPjhFHpXKmAGXsOkVmCK10
- PTJA==
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1764081974;
+ x=1764686774; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=3qcuK7XfmQ4m0UbRzVgBJGFmt1uE+eVlH1l1lQfXIus=;
+ b=gJ92+gf+NKRZlP5UNZmBnPhZJDC+f2P+E4u8uIXr+ceKTWBwfeGqG+zjlZRzuuB3er
+ QiZDYr5nSS3KsFFz/m0ZQ2JLXHaCMkO5Aq3P297Ec5tvntIrXRQQVS2yU6Plmojxu12g
+ +rtmZJRd4vy301GwEsyFvTlaeLma/COTZ3PuXhyIVrgz9yeErNoST/pyRVxUecqY9VLY
+ mO0Nw30JWLCM3hB3xvXWCxdUqmt0NPbBcXY4Wum/hgX2ReHaabhqIxpTX8MLXzVDUh9P
+ OkkVbhHEnLaprnEaLc75s28wBGXrQsssJphMOelo5xNYz2shI87Cj2rQ7Zdur3HEcmzg
+ 5bSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1764081055; x=1764685855;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=9U/bFr5acrKfrup9ou+WElZdvQovVFgpu7LDnpF7fZ8=;
- b=OzRrHaYdulx/OLVCqiY34BoVLoSO7fWoPpgFi+H/d7jJCe9gZ4+plyWtPsUDtx01yM
- UW2iP+pBc/3hLiFWtACbevcyTMrxSLqFzdx5j/PMPU+9w8PjcPLsZziVNvRfbtYn3IBn
- Hcu1zXpHShEv/WQD9d8DZ5ujHbzMivlnwNF0eq9PJSKGVPjluYFxXwhyzrMvrg8ls9JE
- g9cJarji/n+j4tEXRZwFASc2vHeLsHSqUgxuEsvk6vCAwq+xFKr4P6KkbyeqFBZsN+Be
- 63VmpeB9/xuI4rOph4si4XvYvMYO52gMyClrt1kkiRDW94GrWzZCLekVOmxi2kw+0F0W
- GsSQ==
-X-Forwarded-Encrypted: i=1;
- AJvYcCX2v47JqJIDwaghqAwfDjmGvKzcLOVTuO4zs4mRZSZn294U1+mKhP/6qMQ9fp/JYiCm7d0=@dpdk.org
-X-Gm-Message-State: AOJu0Yxejteg2hpdniyXPP0OQbrQMjetjy6nEKcXHAM3bHhiKZ6f/EJ9
- ZAWGsOdCTJN0K0Opq1qG6ipiESWzPtsF2n+Hk4ShW+IaKz8KZi+WgpoAi3ueLFMOJ54=
-X-Gm-Gg: ASbGnctYyGttuyrOD3cavL/lXak1H/nEAiDOo+sLHKWj9OG0kLgDHoqyjX4WDDNfP7r
- 1MSkudE7QnfRXap/Y54bleKd5zc11MvVJFCNtT5li4Ub0Cyb75cuBawEfDEkKIMtZuyWqA/e86y
- kTDkY76btEZVC2wOUTbtwL2HXU8UWn3vXNBv0zEvZK4zX+ssPHsAVxmm8mn7vXfnpD0yIyjke3A
- v7uMAJpGKG1/D6ML3kTkebg9U8Ss01lBPVFobuVDL7t1bdvRjeMmKFPGvJFLyefLXmu3i7G2HTG
- r3txNU21HR+s1MVmkMSnj37ddzhnHGUJDVZ7CniQYp9AAZb7SOO4/3ho5lAfBK/DN5V7tP5lTEf
- MgF0Nzv76RpiRT+KhNbU879JWR0nffccU/N0xtcSABlKkJkJtfdr65vyUvlE/pLwzUj14gpHCkv
- 5Bwj2tC+vhDpUhpGS55YBHKfgO0Z+j1PuqQbJ2xw==
-X-Google-Smtp-Source: AGHT+IHWtJcr/cFWJCx4bPsWIlPc55WZ9aH0rsfe6tHtz+NCvxibNUy21ba2Cd9JFXiizzDCc+sX7Q==
-X-Received: by 2002:a05:7300:f0c9:b0:2a4:5ce8:44d0 with SMTP id
- 5a478bee46e88-2a9418bbca3mr1181916eec.38.1764081055076; 
- Tue, 25 Nov 2025 06:30:55 -0800 (PST)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ d=1e100.net; s=20230601; t=1764081974; x=1764686774;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=3qcuK7XfmQ4m0UbRzVgBJGFmt1uE+eVlH1l1lQfXIus=;
+ b=Qaxs+yrwC07AzWLRF1AipX9DT1g/7LgBcBwabnxI5C/Hz3dAccYrybvifhaQmd90i7
+ I9cHRZXNlfmo+Qm1vBxqv0yLL5ufbhux/SKxzwJqOnTsAK0DV2GkYtFXTn/+Q9VMWEZP
+ k/scoeetgI5N5a4Am+4dtF3J9fdEevVUgHhDvJ8nPqJ4mVzMYvOjxZZ223u9Mzskr63o
+ qdaL4SMRQAt8K8wH5O66HvNuTZI2n96YvQEn81oiRylhJVPlIr3iRhlJCRQYIMVxAofW
+ hnEK4pBE6XXDx/nx0uqnl/msIambB6sTUDhRMbXXouheBOBd7qWPtfoPDb1Wg0VT0cRr
+ yCRg==
+X-Gm-Message-State: AOJu0Yy4QdEOmNBm5W7ur+oHP4DWBszoUyxXTA7+JdqBxFGVucEB+tmH
+ 1eq4NUqvCRs985xWXIu7+DCm2MfCKldE6fcvSrkIbywmV/Aopvvk62RGHlQW0M0nRZKU6b/eXTL
+ Zx/Ms
+X-Gm-Gg: ASbGncv/xJSq8oTLDUQi4jCGwG6yXQWKjnsKRq1+Sy+bm0nWa69KkSuWqR0P+YiKrFB
+ ed8EGvO70K/wwUg4vdqEpi09RyLfHuIVHDfuazNK7guJCrRDU7NpYc2BQRUNh78jYsNdDKvzCX4
+ MkS801qFKUq3WMvRUfELxtSv9fhUIV0DLqAotEGG/RFN8xBXsD8aR1ajxGNgPKjj4H7JGjIfeyx
+ IV5IMuk4LDAddJ/rMt4EFhcF2ZO9t4OLRSiTomsYwNbJ2k42oZzkuBRDPus0LwFOkapF37+ORXa
+ Zt5uJ6HIOwAmQHG56Q6e6qc1VYdbbljLkciqAfrGRINrKnaZmnCawvVo01HNSwwET0PIXWbLdw8
+ +dVwYZP2UkHNEeriip9tw398oX7lHCHlBdtUn93jMfgS3BDUPQXJ0835Ua1hKV+FedaDpjf1IEX
+ khxtd+ZFC/y5//bAzNioVrF+ivJC2xOiiyk8z9LqsGezv/4bdPvA==
+X-Google-Smtp-Source: AGHT+IFGI7gdR7kngg6xxZmbjkpR6y++osx46zuPCZrgPXiaP1YFPFTzTvcR/+H+4PNwl5c161XM+g==
+X-Received: by 2002:a05:701b:2203:b0:11b:a3a7:65be with SMTP id
+ a92af1059eb24-11c9d715238mr7005684c88.16.1764081974275; 
+ Tue, 25 Nov 2025 06:46:14 -0800 (PST)
+Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-2a6fc204881sm69506325eec.0.2025.11.25.06.30.54
+ a92af1059eb24-11c93e5674csm82594011c88.8.2025.11.25.06.46.13
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 25 Nov 2025 06:30:54 -0800 (PST)
-Date: Tue, 25 Nov 2025 06:30:51 -0800
+ Tue, 25 Nov 2025 06:46:13 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: a.schollmeyer@syseleven.de
-Cc: Aman Singh <aman.deep.singh@intel.com>, dev@dpdk.org
-Subject: Re: [PATCH] app/testpmd: warn on shared rxq switch mismatch
-Message-ID: <20251125063051.0563732d@phoenix.local>
-In-Reply-To: <20251125102207.428661-1-a.schollmeyer@syseleven.de>
-References: <20251125102207.428661-1-a.schollmeyer@syseleven.de>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Hemant Agrawal <hemant.agrawal@nxp.com>,
+ Sachin Saxena <sachin.saxena@nxp.com>,
+ Shreyansh Jain <shreyansh.jain@nxp.com>
+Subject: [PATCH] bus/fslmc: fix warning in device scan
+Date: Tue, 25 Nov 2025 06:46:10 -0800
+Message-ID: <20251125144610.37661-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.51.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,30 +83,31 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 25 Nov 2025 11:22:07 +0100
-a.schollmeyer@syseleven.de wrote:
+With latest glibc (Fedora Rawhide):
+../drivers/bus/fslmc/fslmc_bus.c: In function ‘rte_fslmc_parse’:
+../drivers/bus/fslmc/fslmc_bus.c:298:15: error: assignment discards ‘const’ qualifier from pointer target type [-Werror=discarded-qualifiers]
+   298 |         t_ptr = strchr(sep, '.');
+       |               ^
+Fixes: e67a61614d0b ("bus/fslmc: support device iteration")
 
-> +				if (o_dom_id != dom_id) {
-> +					fprintf(stderr, "Bad shared rxq config: "
-> +						"switch domain mismatch in share group/qid %u/%u: "
-> +						"%u (port %u) vs. %u (port %u)\n",
-> +						(unsigned int)rxq->conf.share_group,
-> +						(unsigned int)rxq->conf.share_qid,
-> +						(unsigned int)dom_id,
-> +						(unsigned int)port_id,
-> +						(unsigned int)o_dom_id,
-> +						(unsigned int)pid);
-> +				} else if (o_rx_dom != rx_dom) {
-> +					fprintf(stderr, "Bad shared rxq config: "
-> +						"switch rx domain mismatch in share group/qid %u/%u: "
-> +						"%u (port %u) vs. %u (port %u)\n",
-> +						(unsigned int)rxq->conf.share_group,
-> +						(unsigned int)rxq->conf.share_qid,
-> +						(unsigned int)rx_dom,
-> +						(unsigned int)port_id,
-> +						(unsigned int)o_rx_dom,
-> +						(unsigned int)pid);
-> +				}
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+---
+ drivers/bus/fslmc/fslmc_bus.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Same message repeated twice, change the if logic.
-Also, why so many casts? Those should all be unsigned.
+diff --git a/drivers/bus/fslmc/fslmc_bus.c b/drivers/bus/fslmc/fslmc_bus.c
+index 4529ec5085..abdb0ad50d 100644
+--- a/drivers/bus/fslmc/fslmc_bus.c
++++ b/drivers/bus/fslmc/fslmc_bus.c
+@@ -242,7 +242,7 @@ static int
+ rte_fslmc_parse(const char *name, void *addr)
+ {
+ 	uint16_t dev_id;
+-	char *t_ptr;
++	const char *t_ptr;
+ 	const char *sep;
+ 	uint8_t sep_exists = 0;
+ 	int ret = -1;
+-- 
+2.51.0
+
