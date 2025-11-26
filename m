@@ -2,58 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7C32D1037D
-	for <dpdk-dev@archiver.kernel.org>; Wed, 26 Nov 2025 05:10:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 114AAD1037D
+	for <dpdk-dev@archiver.kernel.org>; Wed, 26 Nov 2025 05:12:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 976A34029A;
-	Wed, 26 Nov 2025 06:10:22 +0100 (CET)
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.35])
- by mails.dpdk.org (Postfix) with ESMTP id 178454026F;
- Wed, 26 Nov 2025 06:10:21 +0100 (CET)
-Received: from mxct.zte.com.cn (unknown [192.168.251.13])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mxhk.zte.com.cn (FangMail) with ESMTPS id 4dGSLK4WHSz7VGTS;
- Wed, 26 Nov 2025 13:10:17 +0800 (CST)
-Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mxct.zte.com.cn (FangMail) with ESMTPS id 4dGSLF4GnZz501bF;
- Wed, 26 Nov 2025 13:10:13 +0800 (CST)
-Received: from szxl2zmapp07.zte.com.cn ([10.1.32.52])
- by mse-fl2.zte.com.cn with SMTP id 5AQ59uum086206;
- Wed, 26 Nov 2025 13:09:56 +0800 (+08)
- (envelope-from xu.yang3@zte.com.cn)
-Received: from LIN-994FDD64572.zte.com.cn (unknown [10.56.184.166])
- by smtp (Zmail) with SMTP; Wed, 26 Nov 2025 13:09:58 +0800
-X-Zmail-TransId: 3e8169268b9e00c-b84e6
-X-Zmail-LocalSMTP: 1
-X-Zmail-RealSender: xu.yang3@zte.com.cn
-From: Yang Xu <xu.yang3@zte.com.cn>
-To: thomas@monjalon.net, dsosnowski@nvidia.com, viacheslavo@nvidia.com,
- bingz@nvidia.com, orika@nvidia.com, suanmingm@nvidia.com,
- matan@nvidia.com, xu.yang3@zte.com.cn, yao.chenghu@zte.com.cn
-Cc: dev@dpdk.org, stable@dpdk.org
-Subject: [PATCH v3 1/1] net/mlx5: fix port down in link detection error branch
-Date: Wed, 26 Nov 2025 13:09:48 +0800
-Message-Id: <20251126050948.3030776-1-xu.yang3@zte.com.cn>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20251119060222.2814478-1-xu.yang3@zte.com.cn--in-reply-to=20251119060222.2814478-1-xu.yang3@zte.com.cn>
-References: <20251119060222.2814478-1-xu.yang3@zte.com.cn--in-reply-to=20251119060222.2814478-1-xu.yang3@zte.com.cn>
+	by mails.dpdk.org (Postfix) with ESMTP id 51BC940B9C;
+	Wed, 26 Nov 2025 06:12:29 +0100 (CET)
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com
+ [209.85.222.175])
+ by mails.dpdk.org (Postfix) with ESMTP id D85A44026F
+ for <dev@dpdk.org>; Wed, 26 Nov 2025 06:12:24 +0100 (CET)
+Received: by mail-qk1-f175.google.com with SMTP id
+ af79cd13be357-8a479c772cfso391447985a.0
+ for <dev@dpdk.org>; Tue, 25 Nov 2025 21:12:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1764133944;
+ x=1764738744; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=4HQ1R6EvJpYnD9hN0xQVX8FgbeaOknQjkBJBW/31LAE=;
+ b=dkgWT03BcAVNLrzqWGTugAnolfKr/v8l9ThN6cSbQKRsCjkz1BZD9+E8S3ngxyFu50
+ hdtMeN5slFqQJm5BROFh4baMB6tWnTRzSVvhB9Fcp59EtG6qcKFFVp78NPGNb3NMxMSt
+ fdn3f7pgACahi/npRevAX1aMqeM9ERLJPbA4h2y7CCuePbTbLuQWskNoMUlI1R6lTw+I
+ 3ippJY7L2HB8SIgBi6Q/KaCo7ScxbKehspD+cki0GM55iN4m/ecvcbTD+BV7rrD9nEjd
+ cQiUAtqAVreTAN55pHb65riwHrVj+4RgDk8+t4IOmsX409TAHRL68ZkJTznkAlrjzSiu
+ h5Ig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1764133944; x=1764738744;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=4HQ1R6EvJpYnD9hN0xQVX8FgbeaOknQjkBJBW/31LAE=;
+ b=YeOUxaDaaj/eMJ/kPnAxGnxjmV6d9SH7LOAK6uWrU4s8+cX9H8eAbE9GA2wV2Y5z/f
+ XDmHF6vr06WSsF8uRqiplYKCv8GOjYE1FUTlZJLVykXIT26Ja8PlcAKfZTJITe9OzdUN
+ Dig4gn6zzLwGYTFMURLAw5UxJl/++YJM84y9+MuuT8LWNnDcI3HMQioNf6bAdXXS82J5
+ eIk6hyM5JpcM6AEFUFfF+q7bzQdR7nfIk2v0odPUdgmGNU05t99iSRHN9BhryrfAR6N1
+ 18QIuJbX6cJlJ4rfjom8NYkpvilF/XG2+yhVTi1MYaGsBA1s1t+OnNtIXBnH9r5kY4Gm
+ hATw==
+X-Gm-Message-State: AOJu0YyWKqNJ8ggYxHjZqdplELPUh/o8fSvfSIxsk0UqXa9n3SZqirol
+ OEqbBA2PeWKLQ6d92/b5QprxwhUgAW8nYUaJJsLLQmbAUybaVOjWx7i/AWh3nOFkgllyWSqdPuX
+ 2phsS
+X-Gm-Gg: ASbGncv/IqNTk+fe6S7fe1Zb8gFkw55en0bk1vWbDC7c1CfhPAsbqzb1hrOnoo6TIMy
+ Bb4EDuuK/Vd3gYZpKR9Kir2JWr0RylvqLjEJ1s1JMUm1nSpIwEGNh7NfRxT4qQ/5crHQ8rUSqYr
+ Es+H2WOqeNOvaw9yxi0sVcZXq8xK3U18SXvmrFKpWg1hYifyi9//9KBosaudfQb7poFUTK3/Gjo
+ D/Pp3bYyLQN5Yc9sVC39UvBpVRvuTmN8o7qOvDPMtdA2Mae02nTC/zjgg8w25RBoPwOyHWOs5HZ
+ RNTz+kwYwe7Vkgn/atXdC0UbT7qKEdIFwws/jHTvA1lG4Al2KhH0mp+IORsJ6iINH3lUmKCGmpl
+ 7d9wrfKMwr8tfh04neesy4+YAUxb9oSKhqYBIgQ5TObNnuUU9lyP0Pv7WR+SQ43yJEUq0jmV+I/
+ HHjIBMVqMX4tGsTlP2q2m6qld0kaMxw5a7VyZvWEXOdzGdNQNNiw==
+X-Google-Smtp-Source: AGHT+IFoELV0g7xO2xMIHZtyV2TGYA70iebQg9ut7b29in950hYtn4oJWb0gW8dWDBQxEfuxkoPxeQ==
+X-Received: by 2002:a05:620a:45a3:b0:8b2:9a8a:118b with SMTP id
+ af79cd13be357-8b4ebdad5e6mr693570685a.73.1764133944021; 
+ Tue, 25 Nov 2025 21:12:24 -0800 (PST)
+Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ af79cd13be357-8b3295e8338sm1327936385a.46.2025.11.25.21.12.23
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 25 Nov 2025 21:12:23 -0800 (PST)
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [RFC] pcapng: improve performance of timestamping
+Date: Tue, 25 Nov 2025 21:12:18 -0800
+Message-ID: <20251126051218.50568-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.51.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: multipart/mixed;
-	boundary="=====_001_next====="
-X-MAIL: mse-fl2.zte.com.cn 5AQ59uum086206
-X-TLS: YES
-X-SPF-DOMAIN: zte.com.cn
-X-ENVELOPE-SENDER: xu.yang3@zte.com.cn
-X-SPF: None
-X-SOURCE-IP: 192.168.251.13 unknown Wed, 26 Nov 2025 13:10:17 +0800
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 69268BB9.000/4dGSLK4WHSz7VGTS
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -67,113 +79,135 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+Avoid doing expensive divide operations when converting
+timestamps from cycles (TSC) to pcapng scaled value (ns).
+This logic was derived from the math used by Linux kernel
+virtual system call with help from AI.
 
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+---
+ lib/pcapng/rte_pcapng.c | 61 ++++++++++++++++++++++++++---------------
+ 1 file changed, 39 insertions(+), 22 deletions(-)
 
---=====_001_next=====
-Content-Type: multipart/related;
-	boundary="=====_002_next====="
-
-
---=====_002_next=====
-Content-Type: multipart/alternative;
-	boundary="=====_003_next====="
-
-
---=====_003_next=====
-Content-Type: text/plain;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
-
-VGhlIHBvcnQgZG93biBzdGF0ZSB3YXMgbm90IGluaXRpYWxpemVkIGluIHRoZSBlcnJvciBicmFu
-Y2ggb2YgbGluaw0KZGV0ZWN0aW9uIHdoZW4gTUxYIE5JQyBsaW5rIHN0YXR1cyB1cGRhdGUgZmFp
-bGVkIChyZXQgPCAwKS4NClRoaXMgcmVzdWx0ZWQgaW4gaW5jb3JyZWN0IGxpbmsgc3RhdGUgcmVw
-b3J0aW5nLCBhcyB0aGUgZGV2aWNlDQpyZXRhaW5lZCBzdGFsZSBsaW5rIHN0YXR1cyBpbnN0ZWFk
-IG9mIHJlZmxlY3RpbmcgdGhlIGFjdHVhbCBkb3duDQpzdGF0ZSB1bmRlciBlcnJvciBjb25kaXRp
-b25zLg0KDQpGaXhlczogMTI1NjgwNWRkNTRkICgibmV0L21seDU6IG1vdmUgTGludXgtc3BlY2lm
-aWMgZnVuY3Rpb25zIikNCkNjOiBzdGFibGVAZHBkay5vcmcNCg0KU2lnbmVkLW9mZi1ieTogWWFu
-ZyBYdSA8eHUueWFuZzNAenRlLmNvbS5jbj4NCi0tLQ0KIC5tYWlsbWFwICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICB8IDEgKw0KIGRyaXZlcnMvbmV0L21seDUvbGludXgvbWx4NV9ldGhk
-ZXZfb3MuYyB8IDEgKw0KIDIgZmlsZXMgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspDQoNCmRpZmYg
-LS1naXQgYS8ubWFpbG1hcCBiLy5tYWlsbWFwDQppbmRleCAzNGE5OWY5M2ExLi4xNGQ2ZWU5M2Rk
-IDEwMDY0NA0KLS0tIGEvLm1haWxtYXANCisrKyBiLy5tYWlsbWFwDQpAQCAtMTg5MSwzICsxODkx
-LDQgQEAgWm9sdGFuIEtpc3MgPHpvbHRhbi5raXNzQHNjaGFtYW4uaHU+IDx6b2x0YW4ua2lzc0Bs
-aW5hcm8ub3JnPg0KIFpvcmlrIE1hY2h1bHNreSA8em9yaWtAYW1hem9uLmNvbT4NCiBaeXRhIFN6
-cGFrIDx6eXRhQG1hcnZlbGwuY29tPiA8enJAc2VtaWhhbGYuY29tPg0KIFp5dGEgU3pwYWsgPHp5
-dGFAbWFydmVsbC5jb20+IDx6eXRhLnN6cGFrQHNlbWloYWxmLmNvbT4NCitZYW5nIFh1IDx4dS55
-YW5nM0B6dGUuY29tLmNuPg0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvbmV0L21seDUvbGludXgvbWx4
-NV9ldGhkZXZfb3MuYyBiL2RyaXZlcnMvbmV0L21seDUvbGludXgvbWx4NV9ldGhkZXZfb3MuYw0K
-aW5kZXggOWRhZWRhNTQzNS4uNDliODhkZmViYiAxMDA2NDQNCi0tLSBhL2RyaXZlcnMvbmV0L21s
-eDUvbGludXgvbWx4NV9ldGhkZXZfb3MuYw0KKysrIGIvZHJpdmVycy9uZXQvbWx4NS9saW51eC9t
-bHg1X2V0aGRldl9vcy5jDQpAQCAtNTA0LDYgKzUwNCw3IEBAIG1seDVfbGlua191cGRhdGUoc3Ry
-dWN0IHJ0ZV9ldGhfZGV2ICpkZXYsIGludCB3YWl0X3RvX2NvbXBsZXRlKQ0KIAkJCQlyZXR1cm4g
-LXJ0ZV9lcnJubzsNCiAJCQl9DQogCQl9IGVsc2UgaWYgKHJldCA8IDApIHsNCisJCQltZW1zZXQo
-JmRldi0+ZGF0YS0+ZGV2X2xpbmssIDAsIHNpemVvZihkZXYtPmRhdGEtPmRldl9saW5rKSk7DQog
-CQkJcmV0dXJuIHJldDsNCiAJCX0NCiAJfSB3aGlsZSAod2FpdF90b19jb21wbGV0ZSB8fCByZXRy
-eS0tID4gMCk7DQotLSANCjIuMjcuMA==
-
-
---=====_003_next=====
-Content-Type: text/html ;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
-
-VGhlJm5ic3A7cG9ydCZuYnNwO2Rvd24mbmJzcDtzdGF0ZSZuYnNwO3dhcyZuYnNwO25vdCZuYnNw
-O2luaXRpYWxpemVkJm5ic3A7aW4mbmJzcDt0aGUmbmJzcDtlcnJvciZuYnNwO2JyYW5jaCZuYnNw
-O29mJm5ic3A7bGluazxiciAvPmRldGVjdGlvbiZuYnNwO3doZW4mbmJzcDtNTFgmbmJzcDtOSUMm
-bmJzcDtsaW5rJm5ic3A7c3RhdHVzJm5ic3A7dXBkYXRlJm5ic3A7ZmFpbGVkJm5ic3A7KHJldCZu
-YnNwOyZsdDsmbmJzcDswKS48YnIgLz5UaGlzJm5ic3A7cmVzdWx0ZWQmbmJzcDtpbiZuYnNwO2lu
-Y29ycmVjdCZuYnNwO2xpbmsmbmJzcDtzdGF0ZSZuYnNwO3JlcG9ydGluZywmbmJzcDthcyZuYnNw
-O3RoZSZuYnNwO2RldmljZTxiciAvPnJldGFpbmVkJm5ic3A7c3RhbGUmbmJzcDtsaW5rJm5ic3A7
-c3RhdHVzJm5ic3A7aW5zdGVhZCZuYnNwO29mJm5ic3A7cmVmbGVjdGluZyZuYnNwO3RoZSZuYnNw
-O2FjdHVhbCZuYnNwO2Rvd248YnIgLz5zdGF0ZSZuYnNwO3VuZGVyJm5ic3A7ZXJyb3ImbmJzcDtj
-b25kaXRpb25zLjxiciAvPg08YnIgLz5GaXhlczombmJzcDsxMjU2ODA1ZGQ1NGQmbmJzcDsoJnF1
-b3Q7bmV0L21seDU6Jm5ic3A7bW92ZSZuYnNwO0xpbnV4LXNwZWNpZmljJm5ic3A7ZnVuY3Rpb25z
-JnF1b3Q7KTxiciAvPkNjOiZuYnNwO3N0YWJsZUBkcGRrLm9yZzxiciAvPg08YnIgLz5TaWduZWQt
-b2ZmLWJ5OiZuYnNwO1lhbmcmbmJzcDtYdSZuYnNwOyZsdDt4dS55YW5nM0B6dGUuY29tLmNuJmd0
-Ow08YnIgLz4tLS08YnIgLz4mbmJzcDsubWFpbG1hcCZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZu
-YnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
-OyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZu
-YnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwO3wmbmJz
-cDsxJm5ic3A7KzxiciAvPiZuYnNwO2RyaXZlcnMvbmV0L21seDUvbGludXgvbWx4NV9ldGhkZXZf
-b3MuYyZuYnNwO3wmbmJzcDsxJm5ic3A7KzxiciAvPiZuYnNwOzImbmJzcDtmaWxlcyZuYnNwO2No
-YW5nZWQsJm5ic3A7MiZuYnNwO2luc2VydGlvbnMoKyk8YnIgLz4NPGJyIC8+ZGlmZiZuYnNwOy0t
-Z2l0Jm5ic3A7YS8ubWFpbG1hcCZuYnNwO2IvLm1haWxtYXA8YnIgLz5pbmRleCZuYnNwOzM0YTk5
-ZjkzYTEuLjE0ZDZlZTkzZGQmbmJzcDsxMDA2NDQ8YnIgLz4tLS0mbmJzcDthLy5tYWlsbWFwPGJy
-IC8+KysrJm5ic3A7Yi8ubWFpbG1hcDxiciAvPkBAJm5ic3A7LTE4OTEsMyZuYnNwOysxODkxLDQm
-bmJzcDtAQCZuYnNwO1pvbHRhbiZuYnNwO0tpc3MmbmJzcDsmbHQ7em9sdGFuLmtpc3NAc2NoYW1h
-bi5odSZndDsmbmJzcDsmbHQ7em9sdGFuLmtpc3NAbGluYXJvLm9yZyZndDsNPGJyIC8+Jm5ic3A7
-Wm9yaWsmbmJzcDtNYWNodWxza3kmbmJzcDsmbHQ7em9yaWtAYW1hem9uLmNvbSZndDsNPGJyIC8+
-Jm5ic3A7Wnl0YSZuYnNwO1N6cGFrJm5ic3A7Jmx0O3p5dGFAbWFydmVsbC5jb20mZ3Q7Jm5ic3A7
-Jmx0O3pyQHNlbWloYWxmLmNvbSZndDsNPGJyIC8+Jm5ic3A7Wnl0YSZuYnNwO1N6cGFrJm5ic3A7
-Jmx0O3p5dGFAbWFydmVsbC5jb20mZ3Q7Jm5ic3A7Jmx0O3p5dGEuc3pwYWtAc2VtaWhhbGYuY29t
-Jmd0Ow08YnIgLz4rWWFuZyZuYnNwO1h1Jm5ic3A7Jmx0O3h1LnlhbmczQHp0ZS5jb20uY24mZ3Q7
-DTxiciAvPmRpZmYmbmJzcDstLWdpdCZuYnNwO2EvZHJpdmVycy9uZXQvbWx4NS9saW51eC9tbHg1
-X2V0aGRldl9vcy5jJm5ic3A7Yi9kcml2ZXJzL25ldC9tbHg1L2xpbnV4L21seDVfZXRoZGV2X29z
-LmM8YnIgLz5pbmRleCZuYnNwOzlkYWVkYTU0MzUuLjQ5Yjg4ZGZlYmImbmJzcDsxMDA2NDQ8YnIg
-Lz4tLS0mbmJzcDthL2RyaXZlcnMvbmV0L21seDUvbGludXgvbWx4NV9ldGhkZXZfb3MuYzxiciAv
-PisrKyZuYnNwO2IvZHJpdmVycy9uZXQvbWx4NS9saW51eC9tbHg1X2V0aGRldl9vcy5jPGJyIC8+
-QEAmbmJzcDstNTA0LDYmbmJzcDsrNTA0LDcmbmJzcDtAQCZuYnNwO21seDVfbGlua191cGRhdGUo
-c3RydWN0Jm5ic3A7cnRlX2V0aF9kZXYmbmJzcDsqZGV2LCZuYnNwO2ludCZuYnNwO3dhaXRfdG9f
-Y29tcGxldGUpPGJyIC8+Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7
-Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5i
-c3A7cmV0dXJuJm5ic3A7LXJ0ZV9lcnJubzs8YnIgLz4mbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsm
-bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDt9PGJy
-IC8+Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7
-fSZuYnNwO2Vsc2UmbmJzcDtpZiZuYnNwOyhyZXQmbmJzcDsmbHQ7Jm5ic3A7MCkmbmJzcDt7PGJy
-IC8+KyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
-OyZuYnNwOyZuYnNwOyZuYnNwO21lbXNldCgmYW1wO2Rldi0mZ3Q7ZGF0YS0mZ3Q7ZGV2X2xpbmss
-Jm5ic3A7MCwmbmJzcDtzaXplb2YoZGV2LSZndDtkYXRhLSZndDtkZXZfbGluaykpOzxiciAvPiZu
-YnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
-OyZuYnNwOyZuYnNwOyZuYnNwO3JldHVybiZuYnNwO3JldDs8YnIgLz4mbmJzcDsmbmJzcDsmbmJz
-cDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDt9PGJyIC8+Jm5ic3A7Jm5ic3A7
-Jm5ic3A7Jm5ic3A7Jm5ic3A7fSZuYnNwO3doaWxlJm5ic3A7KHdhaXRfdG9fY29tcGxldGUmbmJz
-cDt8fCZuYnNwO3JldHJ5LS0mbmJzcDsmZ3Q7Jm5ic3A7MCk7PGJyIC8+LS0mbmJzcDsNPGJyIC8+
-Mi4yNy4wPGJyIC8+
-
-
---=====_003_next=====--
-
---=====_002_next=====--
-
---=====_001_next=====--
+diff --git a/lib/pcapng/rte_pcapng.c b/lib/pcapng/rte_pcapng.c
+index 7c3c400c71..283962fa2d 100644
+--- a/lib/pcapng/rte_pcapng.c
++++ b/lib/pcapng/rte_pcapng.c
+@@ -38,8 +38,14 @@
+ struct rte_pcapng {
+ 	int  outfd;		/* output file */
+ 	unsigned int ports;	/* number of interfaces added */
+-	uint64_t offset_ns;	/* ns since 1/1/1970 when initialized */
+-	uint64_t tsc_base;	/* TSC when started */
++
++	struct pcapng_time_conv {
++		uint64_t tsc_base; 	/* TSC when started */
++		uint64_t ns_base;	/* ns since 1/1/1970 when initialized */
++		uint64_t mult;		/* scaling factor relative to TSC hz */
++		uint32_t shift;		/* shift for scaling (24) */
++		uint64_t mask;		/* mask of bits used (56) */
++	} tc;
+ 
+ 	/* DPDK port id to interface index in file */
+ 	uint32_t port_index[RTE_MAX_ETHPORTS];
+@@ -95,21 +101,38 @@ static ssize_t writev(int fd, const struct iovec *iov, int iovcnt)
+ #define if_indextoname(ifindex, ifname) NULL
+ #endif
+ 
++/* Initialize time conversion based on logic similar to rte_cyclecounter */
++static void
++pcapng_timestamp_init(struct pcapng_time_conv *tc)
++{
++	struct timespec ts;
++	uint64_t cycles = rte_get_tsc_cycles();
++
++	/* record start time in ns since 1/1/1970 */
++	clock_gettime(CLOCK_REALTIME, &ts);
++
++	/* Compute baseline TSC which occured during clock_gettime */
++	tc->tsc_base = (cycles + rte_get_tsc_cycles()) / 2;
++	tc->ns_base = (uint64_t)ts.tv_sec * 1000000000ULL + ts.tv_nsec;
++
++	/* Set conversion factors for reasonabl prescision with no overflow */
++	uint64_t tsc_hz = rte_get_tsc_hz();
++	tc->shift = 24;
++	tc->mult = ((uint64_t)1000000000ULL << tc->shift) / tsc_hz;
++	tc->mask = RTE_BIT64(56) - 1;
++}
++
+ /* Convert from TSC (CPU cycles) to nanoseconds */
+ static uint64_t
+-pcapng_timestamp(const rte_pcapng_t *self, uint64_t cycles)
++pcapng_timestamp(const struct pcapng_time_conv *tc, uint64_t cycles)
+ {
+-	uint64_t delta, rem, secs, ns;
+-	const uint64_t hz = rte_get_tsc_hz();
+-
+-	delta = cycles - self->tsc_base;
++	/* Compute TSC delta with mask to avoid wraparound */
++	uint64_t delta = (cycles - tc->tsc_base) & tc->mask;
+ 
+-	/* Avoid numeric wraparound by computing seconds first */
+-	secs = delta / hz;
+-	rem = delta % hz;
+-	ns = (rem * NS_PER_S) / hz;
++	/* Convert TSC delta to nanoseconds (no division) */
++	uint64_t ns_delta = (delta * tc->mult) >> tc->shift;
+ 
+-	return secs * NS_PER_S + ns + self->offset_ns;
++	return tc->ns_base + ns_delta;
+ }
+ 
+ /* length of option including padding */
+@@ -329,7 +352,7 @@ rte_pcapng_write_stats(rte_pcapng_t *self, uint16_t port_id,
+ {
+ 	struct pcapng_statistics *hdr;
+ 	struct pcapng_option *opt;
+-	uint64_t start_time = self->offset_ns;
++	uint64_t start_time = self->tc.ns_base;
+ 	uint64_t sample_time;
+ 	uint32_t optlen, len;
+ 	uint32_t *buf;
+@@ -379,7 +402,7 @@ rte_pcapng_write_stats(rte_pcapng_t *self, uint16_t port_id,
+ 	hdr->block_length = len;
+ 	hdr->interface_id = self->port_index[port_id];
+ 
+-	sample_time = pcapng_timestamp(self, rte_get_tsc_cycles());
++	sample_time = pcapng_timestamp(&self->tc, rte_get_tsc_cycles());
+ 	hdr->timestamp_hi = sample_time >> 32;
+ 	hdr->timestamp_lo = (uint32_t)sample_time;
+ 
+@@ -658,7 +681,7 @@ rte_pcapng_write_packets(rte_pcapng_t *self,
+ 		/* adjust timestamp recorded in packet */
+ 		cycles = (uint64_t)epb->timestamp_hi << 32;
+ 		cycles += epb->timestamp_lo;
+-		timestamp = pcapng_timestamp(self, cycles);
++		timestamp = pcapng_timestamp(&self->tc, cycles);
+ 		epb->timestamp_hi = timestamp >> 32;
+ 		epb->timestamp_lo = (uint32_t)timestamp;
+ 
+@@ -704,8 +727,6 @@ rte_pcapng_fdopen(int fd,
+ {
+ 	unsigned int i;
+ 	rte_pcapng_t *self;
+-	struct timespec ts;
+-	uint64_t cycles;
+ 
+ 	self = malloc(sizeof(*self));
+ 	if (!self) {
+@@ -716,11 +737,7 @@ rte_pcapng_fdopen(int fd,
+ 	self->outfd = fd;
+ 	self->ports = 0;
+ 
+-	/* record start time in ns since 1/1/1970 */
+-	cycles = rte_get_tsc_cycles();
+-	clock_gettime(CLOCK_REALTIME, &ts);
+-	self->tsc_base = (cycles + rte_get_tsc_cycles()) / 2;
+-	self->offset_ns = rte_timespec_to_ns(&ts);
++	pcapng_timestamp_init(&self->tc);
+ 
+ 	for (i = 0; i < RTE_MAX_ETHPORTS; i++)
+ 		self->port_index[i] = UINT32_MAX;
+-- 
+2.51.0
 
