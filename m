@@ -2,75 +2,78 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1975D0EE29
-	for <dpdk-dev@archiver.kernel.org>; Wed, 26 Nov 2025 06:37:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71C55D10384
+	for <dpdk-dev@archiver.kernel.org>; Wed, 26 Nov 2025 07:57:40 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AECDB4065D;
-	Wed, 26 Nov 2025 07:37:20 +0100 (CET)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id 3E4414026F;
- Wed, 26 Nov 2025 07:37:19 +0100 (CET)
-Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
- 5APEOURZ698753; Tue, 25 Nov 2025 22:37:18 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=U
- wNyROpfPakls7jziirC0hCDHNOv0CpwDn1cip0xHHw=; b=NZiV+6mIosdZEqZpX
- 7MGZ+a47rWq3ivCL+trIgGEi85BjVieNwwD0maW9QzZ/8WpKcf1Pkf8sJOIS6tiV
- wfAMKox77mLjpAgp7mhZJbkY5WiUxsFSZVpMlhatzneK3S0680FKNAX/Szi6qJl+
- s+q5lSzeV/RcZnmsvRca2R/qEr3BivWz32bmxGERySLX9wtCuCTQTvZVm0kAdJt7
- mH7XCbROUt1yN5xdumxEan+718kTzC5H56zQhgx1OwGjDUtYk04K1b7wRYEeFciN
- /iyyE8lZfp4ZE1OuX6kEL/tEIr2otkPhytbjb/0+RaCCw3r+FBkpAByV3QusrlFx
- GXmrQ==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4amxrauucn-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Tue, 25 Nov 2025 22:37:18 -0800 (PST)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Tue, 25 Nov 2025 22:37:17 -0800
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Tue, 25 Nov 2025 22:37:17 -0800
-Received: from LYYJYPGKF4.marvell.com (unknown [10.28.21.218])
- by maili.marvell.com (Postfix) with ESMTP id CF6B03F710F;
- Tue, 25 Nov 2025 22:37:13 -0800 (PST)
-From: <pbhagavatula@marvell.com>
-To: <jerinj@marvell.com>, Pavan Nikhilesh <pbhagavatula@marvell.com>, "Shijith
- Thotton" <sthotton@marvell.com>,
- Nithin Dabilpuram <ndabilpuram@marvell.com>,
- Kiran Kumar K <kirankumark@marvell.com>, Sunil Kumar Kori
- <skori@marvell.com>, Satha Rao <skoteshwar@marvell.com>, Harman Kalra
- <hkalra@marvell.com>
-CC: <dev@dpdk.org>, <stable@dpdk.org>
-Subject: [PATCH v2] event/cnxk: fix offload flags
-Date: Wed, 26 Nov 2025 12:07:10 +0530
-Message-ID: <20251126063711.42115-1-pbhagavatula@marvell.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20251125191102.5324-1-pbhagavatula@marvell.com>
-References: <20251125191102.5324-1-pbhagavatula@marvell.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 6228240691;
+	Wed, 26 Nov 2025 08:57:39 +0100 (CET)
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com
+ [209.85.167.50]) by mails.dpdk.org (Postfix) with ESMTP id 5F49C4026F
+ for <dev@dpdk.org>; Wed, 26 Nov 2025 08:57:37 +0100 (CET)
+Received: by mail-lf1-f50.google.com with SMTP id
+ 2adb3069b0e04-5943b62c47dso6233051e87.1
+ for <dev@dpdk.org>; Tue, 25 Nov 2025 23:57:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20230601; t=1764143857; x=1764748657; darn=dpdk.org;
+ h=content-transfer-encoding:in-reply-to:from:content-language
+ :references:cc:to:subject:user-agent:mime-version:date:message-id
+ :from:to:cc:subject:date:message-id:reply-to;
+ bh=+yXd9lKq9/4qugYUkMEem7Z6PuZr8kXohZrTxmM8TbQ=;
+ b=h9W3w+/TB6QQu6YZOyCwCfoMv4yUhCnLbS7KtErn6qVhZivwLT50CI1kgErYOio2Jq
+ IY3rsocGZ9AMpSURx5e3foym/wEYkCKWMZ8FHKEMdIIpbRMrYM2h4X7WLivdHWIGfrzk
+ NCObpPsByqnQupACDx0OgRSrWxKUwccJwucWS8LP99tY1CWRdVBg9QT9CMLKw5VK5vUy
+ b9z3rAa+g4QH4G1gyesQKlNG1UD5RjYGeY++3eoC99KR8nLG999FI/0HR4Ovhprlykrr
+ qS+HPQpZ61JHrLVbgLz+R1xzRfu3sPRCVQdB9k9sCy1f5feCLZ9+7/OmFc3trlENnYLy
+ 9MrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1764143857; x=1764748657;
+ h=content-transfer-encoding:in-reply-to:from:content-language
+ :references:cc:to:subject:user-agent:mime-version:date:message-id
+ :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=+yXd9lKq9/4qugYUkMEem7Z6PuZr8kXohZrTxmM8TbQ=;
+ b=C8xFjJ6t3GUljOEVCtYgLzreYi1sEIaIlk0KqMrbMoEqXepNat7Z9v9VCsoBpc8PCZ
+ kh61c5DJewMvHf+E2s5moJezXEzq+P8y8eLkmGW3B4J8rpID3penE6BBRiA9PHqhTH1W
+ LdnmPL6BHG66kFZJhYP/jYbBm4N1gmLajkYAb3WxGjFaByobq3IfOMOHtyhYbtwfX/3N
+ W6z1eBKRWA2K25qF7q0qEhCcjWgOPumWMzHcU9HEuaWgSreCtyibrinLwlGa4vUQ+0DI
+ v97fhRiDU4rzq/knAEnYEo4Z26T5KSTvRm+tAqV/L4Y+ijF89jyhF8kx7fy5f4gf5PH1
+ p8yQ==
+X-Gm-Message-State: AOJu0Yw0ihe0UOiCe7ogLqb6s69YQD59H3jtGWjIlX52BbhFvafKWqPM
+ OPvOujOdkaXVd3KZcRsVCTMCShKGQo3UTIIqsxa1tstxOMO2DDAm7O8u
+X-Gm-Gg: ASbGncsnelHuwNzif9eggjOMwFIJa/RS78QwKLR9AWM1nAVG47BjAIMu1HR1mq9CgRe
+ EfmpgucUr1uwOAjBdFSF2enNPKKgecjTxVC42oyimXElZrfqRjK/ub8cVARWsGYyuBI4+4p6DV3
+ 05/hNVo0hCN94bI+XUaoKtu1R/AawduJzF2RaNGPeT78cvnXxWiufXtZDlk9KtAV+Q9yc+1KcOp
+ M77IxWfI/6MkazHj0W6OTlQR8QyHNs3mGusn1MFdq0gQrRTN6fXGigtZMTLvYPiW0BBTVEpJvTs
+ GPvEpmCM9abcvaFsdqCvT/4XtKOkkJPJcdHKKARJAe2Z47VnFaZwdDrQaSOxXwStao8eKJqGpay
+ 109GPucCW2zk05+vqq57dfFzJLAQeaL/BHlwgMol15jUGkwn2d2lsJUcXtAD9Z+8+b+8Cn5+yTR
+ HWzrr4EjQ00S/nN7yyk8M95MNh3jYIKzZze1pEw1lM20/zVImW3soRWXjVjc0ehMjCchdmqPuab
+ 0vC
+X-Google-Smtp-Source: AGHT+IE//2I4sIm9QZpwHlmJWmLYh9c5l3SwlqTARQJqfzZM6uxCuyfseEZK2DaX2JU1JFBWe8lf/A==
+X-Received: by 2002:a05:6512:2347:b0:595:9152:b90e with SMTP id
+ 2adb3069b0e04-596a3edff8emr6474540e87.44.1764143856388; 
+ Tue, 25 Nov 2025 23:57:36 -0800 (PST)
+Received: from [192.168.88.232] (broadband-188-32-202-29.ip.moscow.rt.ru.
+ [188.32.202.29]) by smtp.gmail.com with ESMTPSA id
+ 2adb3069b0e04-5969db894e0sm5828430e87.37.2025.11.25.23.57.34
+ (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+ Tue, 25 Nov 2025 23:57:34 -0800 (PST)
+Message-ID: <cb7c53de-bc26-42c1-8695-00a4a335ebef@gmail.com>
+Date: Wed, 26 Nov 2025 10:57:33 +0300
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Internet]Re: [PATCH v3] acl: support custom memory allocator
+To: =?UTF-8?B?bWFubnl3YW5nKOeOi+awuOWzsCk=?= <mannywang@tencent.com>,
+ Konstantin Ananyev <konstantin.ananyev@huawei.com>
+Cc: dev@dpdk.org
+References: <66734dfb22e841ddad035c630bb74f1c@huawei.com>
+ <16C60E2E552D75E0+20251125121446.41247-1-mannywang@tencent.com>
+ <8e00f0b5-84de-40ce-bec3-673c4b9dd3f1@gmail.com>
+ <7E45BE076ACCC3B2+d9eeffa0-a442-4766-b45f-406cd99700e9@tencent.com>
+Content-Language: en-US
+From: Dmitry Kozlyuk <dmitry.kozliuk@gmail.com>
+In-Reply-To: <7E45BE076ACCC3B2+d9eeffa0-a442-4766-b45f-406cd99700e9@tencent.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Authority-Analysis: v=2.4 cv=Xu/3+FF9 c=1 sm=1 tr=0 ts=6926a01e cx=c_pps
- a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
- a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=M5GUcnROAAAA:8 a=8rWy6zfcAAAA:8
- a=Aq9SgzVazctNzeM_BqcA:9 a=OBjm3rFKGHvpk9ecZwUJ:22 a=YjdVzJdQTyZRADMV7wFX:22
-X-Proofpoint-GUID: UzNQ1-E6PKZC0HztHa29aO1q_2o64Rze
-X-Proofpoint-ORIG-GUID: UzNQ1-E6PKZC0HztHa29aO1q_2o64Rze
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTI2MDA1MiBTYWx0ZWRfX9P4/SXrm6jJW
- kZkKlqwQgnCgYz0esuDBWqR6w1VrKmwnDP97udjFd442gVDGXOzjBl7Msijv0ybx3rdTAE/CFm2
- 8EKnBL00qkqVZnt6fT3qOVXXx/zxi6oLYZFVVXvVbXHf/c6a4dYvp/lmmEYzyqxb+ztvbiR1C6G
- EyC3lvBNZJNC2Z5NAZtF6HPgrJB8mCCPDTBLfXKc1TBWIH+x/+W0ccls/HArhUppTLihBGE1CYb
- ZUnGkYwGxIROBsuu9XVq6dW7PclhFzFEDkHYKH3xdM6BUhkxhi6+mhNN2O4X7M/TVnTxYxLVUWb
- 1fBp21vYozFLv+UGCT6Kqg3uSY4ECSnSb4idjG5OBDZsiKUP1kZ+snHDFvanTQNvMU8DRfCQ++U
- og5d/krKCesjQj0Glp1h+jvFl53rVQ==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-25_02,2025-11-25_01,2025-10-01_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,163 +87,39 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Pavan Nikhilesh <pbhagavatula@marvell.com>
-
-Use device configured Rx offloads instead of hardcoded values while
-draining work.
-
-Fixes: e8594de2731d ("event/cnxk: implement event port quiesce function")
-Cc: stable@dpdk.org
-
-Signed-off-by: Pavan Nikhilesh <pbhagavatula@marvell.com>
----
-v2 Changes:
-- Fix builds
-
- drivers/event/cnxk/cn10k_eventdev.c | 9 +++------
- drivers/event/cnxk/cn10k_worker.h   | 6 +++---
- drivers/event/cnxk/cn20k_eventdev.c | 8 +++-----
- drivers/event/cnxk/cn20k_worker.h   | 4 ++--
- drivers/net/cnxk/cn10k_rx.h         | 4 ++--
- drivers/net/cnxk/cn20k_rx.h         | 2 +-
- 6 files changed, 14 insertions(+), 19 deletions(-)
-
-diff --git a/drivers/event/cnxk/cn10k_eventdev.c b/drivers/event/cnxk/cn10k_eventdev.c
-index 3832eb7e000f..0c1431b4e70c 100644
---- a/drivers/event/cnxk/cn10k_eventdev.c
-+++ b/drivers/event/cnxk/cn10k_eventdev.c
-@@ -126,8 +126,7 @@ cn10k_sso_hws_flush_events(void *hws, uint8_t queue_id, uintptr_t base,
-
- 	while (aq_cnt || cq_ds_cnt || ds_cnt) {
- 		plt_write64(req, ws->base + SSOW_LF_GWS_OP_GET_WORK0);
--		cn10k_sso_hws_get_work_empty(
--			ws, &ev, (NIX_RX_OFFLOAD_MAX - 1) | NIX_RX_REAS_F | NIX_RX_MULTI_SEG_F);
-+		cn10k_sso_hws_get_work_empty(ws, &ev, dev->rx_offloads);
- 		if (fn != NULL && ev.u64 != 0)
- 			fn(arg, ev);
- 		if (ev.sched_type != SSO_TT_EMPTY)
-@@ -473,8 +472,7 @@ cn10k_sso_port_quiesce(struct rte_eventdev *event_dev, void *port,
- 	} while (ptag &
- 		 (BIT_ULL(62) | BIT_ULL(58) | BIT_ULL(56) | BIT_ULL(54)));
-
--	cn10k_sso_hws_get_work_empty(ws, &ev,
--				     (NIX_RX_OFFLOAD_MAX - 1) | NIX_RX_REAS_F | NIX_RX_MULTI_SEG_F);
-+	cn10k_sso_hws_get_work_empty(ws, &ev, dev->rx_offloads);
- 	if (is_pend && ev.u64)
- 		if (flush_cb)
- 			flush_cb(event_dev->data->dev_id, ev, args);
-@@ -503,8 +501,7 @@ cn10k_sso_port_quiesce(struct rte_eventdev *event_dev, void *port,
- 	    SSO_TT_EMPTY) {
- 		plt_write64(BIT_ULL(16) | 1,
- 			    ws->base + SSOW_LF_GWS_OP_GET_WORK0);
--		cn10k_sso_hws_get_work_empty(
--			ws, &ev, (NIX_RX_OFFLOAD_MAX - 1) | NIX_RX_REAS_F | NIX_RX_MULTI_SEG_F);
-+		cn10k_sso_hws_get_work_empty(ws, &ev, dev->rx_offloads);
- 		if (ev.u64) {
- 			if (flush_cb)
- 				flush_cb(event_dev->data->dev_id, ev, args);
-diff --git a/drivers/event/cnxk/cn10k_worker.h b/drivers/event/cnxk/cn10k_worker.h
-index 954dee5a2a9e..9b6abdf18db2 100644
---- a/drivers/event/cnxk/cn10k_worker.h
-+++ b/drivers/event/cnxk/cn10k_worker.h
-@@ -52,12 +52,12 @@ cn10k_process_vwqe(uintptr_t vwqe, uint16_t port_id, const uint32_t flags, struc
- 	uint64_t mbuf_init = 0x100010000ULL | RTE_PKTMBUF_HEADROOM;
- 	struct cnxk_timesync_info *tstamp = ws->tstamp[port_id];
- 	void *lookup_mem = ws->lookup_mem;
-+	uint64_t meta_aura = 0, laddr = 0;
-+	uint16_t lmt_id = 0, d_off = 0;
- 	uintptr_t lbase = ws->lmt_base;
--	uint64_t meta_aura = 0, laddr;
-+	struct rte_mempool *mp = NULL;
- 	struct rte_event_vector *vec;
- 	uint16_t nb_mbufs, non_vec;
--	struct rte_mempool *mp;
--	uint16_t lmt_id, d_off;
- 	struct rte_mbuf **wqe;
- 	struct rte_mbuf *mbuf;
- 	uint64_t sa_base = 0;
-diff --git a/drivers/event/cnxk/cn20k_eventdev.c b/drivers/event/cnxk/cn20k_eventdev.c
-index b25e570211f1..1c5d9272398a 100644
---- a/drivers/event/cnxk/cn20k_eventdev.c
-+++ b/drivers/event/cnxk/cn20k_eventdev.c
-@@ -192,7 +192,7 @@ cn20k_sso_hws_flush_events(void *hws, uint8_t queue_id, uintptr_t base, cnxk_han
-
- 	while (aq_cnt || cq_ds_cnt || ds_cnt) {
- 		plt_write64(req, ws->base + SSOW_LF_GWS_OP_GET_WORK0);
--		cn20k_sso_hws_get_work_empty(ws, &ev, 0);
-+		cn20k_sso_hws_get_work_empty(ws, &ev, dev->rx_offloads);
- 		if (fn != NULL && ev.u64 != 0)
- 			fn(arg, ev);
- 		if (ev.sched_type != SSO_TT_EMPTY)
-@@ -521,8 +521,7 @@ cn20k_sso_port_quiesce(struct rte_eventdev *event_dev, void *port,
- 		ptag = plt_read64(ws->base + SSOW_LF_GWS_PENDSTATE);
- 	} while (ptag & (BIT_ULL(62) | BIT_ULL(58) | BIT_ULL(56) | BIT_ULL(54)));
-
--	cn20k_sso_hws_get_work_empty(ws, &ev,
--				     (NIX_RX_OFFLOAD_MAX - 1) | NIX_RX_REAS_F | NIX_RX_MULTI_SEG_F);
-+	cn20k_sso_hws_get_work_empty(ws, &ev, dev->rx_offloads);
- 	if (is_pend && ev.u64)
- 		if (flush_cb)
- 			flush_cb(event_dev->data->dev_id, ev, args);
-@@ -548,8 +547,7 @@ cn20k_sso_port_quiesce(struct rte_eventdev *event_dev, void *port,
-
- 	if (CNXK_TT_FROM_TAG(plt_read64(ws->base + SSOW_LF_GWS_PRF_WQE0)) != SSO_TT_EMPTY) {
- 		plt_write64(BIT_ULL(16) | 1, ws->base + SSOW_LF_GWS_OP_GET_WORK0);
--		cn20k_sso_hws_get_work_empty(
--			ws, &ev, (NIX_RX_OFFLOAD_MAX - 1) | NIX_RX_REAS_F | NIX_RX_MULTI_SEG_F);
-+		cn20k_sso_hws_get_work_empty(ws, &ev, dev->rx_offloads);
- 		if (ev.u64) {
- 			if (flush_cb)
- 				flush_cb(event_dev->data->dev_id, ev, args);
-diff --git a/drivers/event/cnxk/cn20k_worker.h b/drivers/event/cnxk/cn20k_worker.h
-index df0abd9202fd..608f93dcd465 100644
---- a/drivers/event/cnxk/cn20k_worker.h
-+++ b/drivers/event/cnxk/cn20k_worker.h
-@@ -54,12 +54,12 @@ cn20k_process_vwqe(uintptr_t vwqe, uint16_t port_id, const uint32_t flags, struc
- 	struct cnxk_timesync_info *tstamp = ws->tstamp[port_id];
- 	uint8_t m_sz = sizeof(struct rte_mbuf);
- 	void *lookup_mem = ws->lookup_mem;
-+	uint64_t meta_aura = 0, laddr = 0;
- 	uintptr_t lbase = ws->lmt_base;
--	uint64_t meta_aura = 0, laddr;
-+	uint16_t lmt_id = 0, d_off = 0;
- 	struct rte_event_vector *vec;
- 	uint16_t nb_mbufs, non_vec;
- 	struct rte_mempool *mp;
--	uint16_t lmt_id, d_off;
- 	struct rte_mbuf **wqe;
- 	struct rte_mbuf *mbuf;
- 	uint64_t sa_base = 0;
-diff --git a/drivers/net/cnxk/cn10k_rx.h b/drivers/net/cnxk/cn10k_rx.h
-index e79306e6467f..ef3bf454536d 100644
---- a/drivers/net/cnxk/cn10k_rx.h
-+++ b/drivers/net/cnxk/cn10k_rx.h
-@@ -1464,9 +1464,9 @@ cn10k_nix_recv_pkts_vector(void *args, struct rte_mbuf **mbufs, uint16_t pkts,
- 	struct rte_mbuf *mbuf0, *mbuf1, *mbuf2, *mbuf3;
- 	uint8_t loff = 0, lnum = 0, shft = 0;
- 	struct rte_mempool *meta_pool = NULL;
-+	uint16_t lmt_id = 0, d_off = 0;
-+	uint64_t lbase = 0, laddr = 0;
- 	uint8x16_t f0, f1, f2, f3;
--	uint16_t lmt_id, d_off;
--	uint64_t lbase, laddr;
- 	uintptr_t sa_base = 0;
- 	uint16_t packets = 0;
- 	uint16_t pkts_left;
-diff --git a/drivers/net/cnxk/cn20k_rx.h b/drivers/net/cnxk/cn20k_rx.h
-index 56826318151a..102f0aca73ec 100644
---- a/drivers/net/cnxk/cn20k_rx.h
-+++ b/drivers/net/cnxk/cn20k_rx.h
-@@ -845,8 +845,8 @@ cn20k_nix_recv_pkts_vector(void *args, struct rte_mbuf **mbufs, uint16_t pkts, c
- 	uint64x2_t rearm2 = vdupq_n_u64(mbuf_initializer);
- 	uint64x2_t rearm3 = vdupq_n_u64(mbuf_initializer);
- 	struct rte_mbuf *mbuf0, *mbuf1, *mbuf2, *mbuf3;
-+	uint64_t lbase, laddr = 0, buf_sz = 0;
- 	uint8_t loff = 0, lnum = 0, shft = 0;
--	uint64_t lbase, laddr, buf_sz;
- 	uint8x16_t f0, f1, f2, f3;
- 	uint16_t lmt_id, d_off;
- 	uintptr_t sa_base = 0;
---
-2.50.1 (Apple Git-155)
-
+On 11/26/25 05:44, mannywang(王永峰) wrote:
+> Thanks for sharing this suggestion.
+>
+> We actually evaluated the heap-based approach before implementing this 
+> patch.
+> It can help in some scenarios, but unfortunately it does not fully 
+> solve our
+> use cases. Specifically:
+>
+> 1. **Heap count / scalability**
+>    Our application maintains at least ~200 rte_acl_ctx instances (due 
+> to the
+>    total rule count and multi-tenant isolation). Allowing a dedicated 
+> heap per
+>    context would exceed the practical limits of the current rte_malloc 
+> heap
+>    model. The number of heaps that can be created is not unlimited, and
+>    maintaining hundreds of separate heaps would introduce considerable
+>    management overhead.
+This is a valid point against heaps, thanks.
+> 2. **Temporary allocations in build stage**
+>    During `rte_acl_build`, a significant portion of memory is 
+> allocated through
+>    `calloc()` for internal temporary structures. These allocations are 
+> freed
+>    right after the build completes. Even if runtime memory could come 
+> from a
+>    custom heap, these temporary allocations would still need an 
+> independent
+>    allocator or callback mechanism to avoid fragmentation and repeated
+>    malloc/free cycles.
+I don't understand the build stage issue and why it needs a custom 
+allocator.
+What exactly gets fragmented?
+It is the entire process address space which is practically unlimited?
+How does is malloc/free overhead compare to the overall ACL build time?
