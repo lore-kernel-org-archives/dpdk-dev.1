@@ -2,59 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3CFFD1037E
-	for <dpdk-dev@archiver.kernel.org>; Wed, 26 Nov 2025 06:28:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1975D0EE29
+	for <dpdk-dev@archiver.kernel.org>; Wed, 26 Nov 2025 06:37:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A882A4064F;
-	Wed, 26 Nov 2025 07:28:13 +0100 (CET)
-Received: from smtpbgbr2.qq.com (smtpbgbr2.qq.com [54.207.22.56])
- by mails.dpdk.org (Postfix) with ESMTP id D08394026F
- for <dev@dpdk.org>; Wed, 26 Nov 2025 07:28:10 +0100 (CET)
-X-QQ-mid: Yeas2t1764138480t488t43272
-Received: from 3DB253DBDE8942B29385B9DFB0B7E889 (jiawenwu@trustnetic.com
- [36.20.107.59])
-X-QQ-SSF: 0000000000000000000000000000000
-From: =?utf-8?b?Smlhd2VuIFd1?= <jiawenwu@trustnetic.com>
-X-BIZMAIL-ID: 17670433720732771141
-To: "'Stephen Hemminger'" <stephen@networkplumber.org>,
- "'Thomas Monjalon'" <thomas@monjalon.net>
-Cc: <dev@dpdk.org>,
-	<zaiyuwang@trustnetic.com>
-References: <A4E8D8476CBBC191+20251119085624.73210-1-jiawenwu@trustnetic.com>
- <20251119214756.6642de30@phoenix.local>
- <026101dc59e6$5f908850$1eb198f0$@trustnetic.com>
- <001701dc5ce6$7757aba0$660702e0$@trustnetic.com>
-In-Reply-To: <001701dc5ce6$7757aba0$660702e0$@trustnetic.com>
-Subject: RE: [PATCH] net/txgbe: fix the missing old mailbox interface calls
-Date: Wed, 26 Nov 2025 14:27:59 +0800
-Message-ID: <011a01dc5e9d$cf400cf0$6dc026d0$@trustnetic.com>
+	by mails.dpdk.org (Postfix) with ESMTP id AECDB4065D;
+	Wed, 26 Nov 2025 07:37:20 +0100 (CET)
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
+ [67.231.156.173])
+ by mails.dpdk.org (Postfix) with ESMTP id 3E4414026F;
+ Wed, 26 Nov 2025 07:37:19 +0100 (CET)
+Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
+ by mx0b-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
+ 5APEOURZ698753; Tue, 25 Nov 2025 22:37:18 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+ cc:content-transfer-encoding:content-type:date:from:in-reply-to
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=U
+ wNyROpfPakls7jziirC0hCDHNOv0CpwDn1cip0xHHw=; b=NZiV+6mIosdZEqZpX
+ 7MGZ+a47rWq3ivCL+trIgGEi85BjVieNwwD0maW9QzZ/8WpKcf1Pkf8sJOIS6tiV
+ wfAMKox77mLjpAgp7mhZJbkY5WiUxsFSZVpMlhatzneK3S0680FKNAX/Szi6qJl+
+ s+q5lSzeV/RcZnmsvRca2R/qEr3BivWz32bmxGERySLX9wtCuCTQTvZVm0kAdJt7
+ mH7XCbROUt1yN5xdumxEan+718kTzC5H56zQhgx1OwGjDUtYk04K1b7wRYEeFciN
+ /iyyE8lZfp4ZE1OuX6kEL/tEIr2otkPhytbjb/0+RaCCw3r+FBkpAByV3QusrlFx
+ GXmrQ==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4amxrauucn-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Tue, 25 Nov 2025 22:37:18 -0800 (PST)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Tue, 25 Nov 2025 22:37:17 -0800
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
+ Transport; Tue, 25 Nov 2025 22:37:17 -0800
+Received: from LYYJYPGKF4.marvell.com (unknown [10.28.21.218])
+ by maili.marvell.com (Postfix) with ESMTP id CF6B03F710F;
+ Tue, 25 Nov 2025 22:37:13 -0800 (PST)
+From: <pbhagavatula@marvell.com>
+To: <jerinj@marvell.com>, Pavan Nikhilesh <pbhagavatula@marvell.com>, "Shijith
+ Thotton" <sthotton@marvell.com>,
+ Nithin Dabilpuram <ndabilpuram@marvell.com>,
+ Kiran Kumar K <kirankumark@marvell.com>, Sunil Kumar Kori
+ <skori@marvell.com>, Satha Rao <skoteshwar@marvell.com>, Harman Kalra
+ <hkalra@marvell.com>
+CC: <dev@dpdk.org>, <stable@dpdk.org>
+Subject: [PATCH v2] event/cnxk: fix offload flags
+Date: Wed, 26 Nov 2025 12:07:10 +0530
+Message-ID: <20251126063711.42115-1-pbhagavatula@marvell.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20251125191102.5324-1-pbhagavatula@marvell.com>
+References: <20251125191102.5324-1-pbhagavatula@marvell.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Content-Language: zh-cn
-Thread-Index: AQC9elXKL3qDM07uIHFB8npHaJETJgEpr90PAbZufrkCEQ49hrcau9Dg
-X-QQ-SENDSIZE: 520
-Feedback-ID: Yeas:trustnetic.com:qybglogicsvrgz:qybglogicsvrgz6b-0
-X-QQ-XMAILINFO: OFFjJVuQBI5NyaDJwPFJw0igMH8OWKGoF8m+ki/COP/eHq9SNyqVSaQo
- Ziq1YE0pH7SSkMgxujS2SAq2odh2wWMxsSCQVDH0fOTktUpjRQRMaVQEjNEFRJyUSyCKv07
- //Ezep0wXN2JxY4Wpg4xwTpNbtznjfjsTDO23x822xTBV31DfpYjbYNR1UHqiiRLngQwPDA
- 26e22AXQzodTYqT/L0i0KlD3B/e/XPogCuXvpfTG5428FWiJ/gyqZdzERS2YTqFdAXAK45R
- 07RiAFr5kwjeVUfmoaCrqQCPzFNlonWGKi4fCfliNEd3GCCc6cLuSb3nEu8kGr1nTSnFCDW
- 2cBuCeqhjBGJTU6SEBCfmA2L2b8zAmn9ksnCd++txhYjbVAwPr8OUXYRLI5r8qPnBXa9a6s
- 4PuCfiOzJQxknyPKhPssngn1KHa/rwVDiH88R5xAKXLxwb7FZKMmrCpSv2YxEVM0qRPDVrb
- 2P+XIDiodwVtanrwotTFMavsOA3ejd9RK4BMiSP4wSQygiyJPeQj/1CSK/Cnh1P/q6B3QuX
- CceHEi10Mq7jl30/sdWSJy+l1/Azo81tPULkUO1kSxgoeoElSBRq4PXwUQkssJGtXA+3ljr
- 3Fr5EYA81hB+/bE9rMIkAmLtKC9NT1hk7m+TDYDvdPgoC74sr/IN7HntnizEFwB2fxtVujt
- XBNfaqxoxexukAflIhzWqgP2LJ5kggMwJqwqub2hl7GR5Yz7xLp/lXbQssX54PUYH7wjMuu
- PpoBb0dxbUT6jzZEn/v1ZTgTh2l95qTC2XGOy360G6BIDqX/HtLw2GGlVF/m7si3lt1HN/v
- lSvQjbGuWEvs1gcibLWHdbPgkfsjCZS065fSCPLNaCytdjWKtkOMwKGGroxbc9u3otpjXq0
- ZyXbmhSgaauTavxP+ml28D/uixGs6pwjLV04mz9k1Df0iRPL0Xz+BXGC/uo1QY2ScAEt+t4
- gDZudwZx/FLpfP1gWlq64HNa6qAqJVfB+daeBN4kk82jJpngHlsKW1MMxStNynWxM4QqrxV
- A8itFz+BlJMxlyzkUq
-X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
-X-QQ-RECHKSPAM: 0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Authority-Analysis: v=2.4 cv=Xu/3+FF9 c=1 sm=1 tr=0 ts=6926a01e cx=c_pps
+ a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
+ a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=M5GUcnROAAAA:8 a=8rWy6zfcAAAA:8
+ a=Aq9SgzVazctNzeM_BqcA:9 a=OBjm3rFKGHvpk9ecZwUJ:22 a=YjdVzJdQTyZRADMV7wFX:22
+X-Proofpoint-GUID: UzNQ1-E6PKZC0HztHa29aO1q_2o64Rze
+X-Proofpoint-ORIG-GUID: UzNQ1-E6PKZC0HztHa29aO1q_2o64Rze
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTI2MDA1MiBTYWx0ZWRfX9P4/SXrm6jJW
+ kZkKlqwQgnCgYz0esuDBWqR6w1VrKmwnDP97udjFd442gVDGXOzjBl7Msijv0ybx3rdTAE/CFm2
+ 8EKnBL00qkqVZnt6fT3qOVXXx/zxi6oLYZFVVXvVbXHf/c6a4dYvp/lmmEYzyqxb+ztvbiR1C6G
+ EyC3lvBNZJNC2Z5NAZtF6HPgrJB8mCCPDTBLfXKc1TBWIH+x/+W0ccls/HArhUppTLihBGE1CYb
+ ZUnGkYwGxIROBsuu9XVq6dW7PclhFzFEDkHYKH3xdM6BUhkxhi6+mhNN2O4X7M/TVnTxYxLVUWb
+ 1fBp21vYozFLv+UGCT6Kqg3uSY4ECSnSb4idjG5OBDZsiKUP1kZ+snHDFvanTQNvMU8DRfCQ++U
+ og5d/krKCesjQj0Glp1h+jvFl53rVQ==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-25_02,2025-11-25_01,2025-10-01_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -68,48 +84,163 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi, this fix patch is crucial for the new merged feature in this release.
+From: Pavan Nikhilesh <pbhagavatula@marvell.com>
 
-> -----Original Message-----
-> From: Jiawen Wu <jiawenwu@trustnetic.com>
-> Sent: Monday, November 24, 2025 10:03 AM
-> To: 'Stephen Hemminger' <stephen@networkplumber.org>
-> Cc: dev@dpdk.org; zaiyuwang@trustnetic.com
-> Subject: RE: [PATCH] net/txgbe: fix the missing old mailbox interface calls
-> 
-> On Thu, Nov 20, 2025 2:25 PM, Jiawen Wu wrote:
-> > On Thu, Nov 20, 2025 1:48 PM, Stephen Hemminger wrote:
-> > > On Wed, 19 Nov 2025 16:56:24 +0800
-> > > Jiawen Wu <jiawenwu@trustnetic.com> wrote:
-> > >
-> > > > @@ -28,6 +29,9 @@ void txgbe_init_ops_aml40(struct txgbe_hw *hw)
-> > > >  	mac->init_mac_link_ops = txgbe_init_mac_link_ops_aml40;
-> > > >  	mac->get_link_capabilities = txgbe_get_link_capabilities_aml40;
-> > > >  	mac->check_link = txgbe_check_mac_link_aml40;
-> > > > +
-> > > > +	/* MAILBOX */
-> > > > +	mbx->host_interface_command = txgbe_host_interface_command_aml;
-> > > >  }
-> > >
-> > > Maybe that comment means something to you, but it seems like something
-> > > the next maintainer would not know what it means. Could you explain it more?
-> >
-> > For different devices, the mailbox flow between software and firmware is
-> > different. There are several mailbox command in the txgbe driver, but only
-> > txgbe_hic_sr_read() was changed to use the new flow in commit
-> > 6a139ade82e7 ("net/txgbe: add new SW-FW mailbox interface"). Because
-> > this function invoke the txgbe_hic_unlocked() directly without SW-FW
-> > semaphore, I guess.
-> >
-> > It lead to other mailbox commands timeout for Amber-Lite devices, which
-> > is required to use the new flow. So this patch fills in the missing part.
-> >
-> > For the sake of code tidy, txgbe_hic_sr_read() should change to use the
-> > locked function txgbe_host_interface_command(), and this function could
-> > be change to pointer in struct txgbe_mbx_info for different devices.
-> 
-> Hi Stephen Hemminger,
-> 
-> Does this explanation is sufficient? Should I send v2 patch with these logs?
- 
+Use device configured Rx offloads instead of hardcoded values while
+draining work.
+
+Fixes: e8594de2731d ("event/cnxk: implement event port quiesce function")
+Cc: stable@dpdk.org
+
+Signed-off-by: Pavan Nikhilesh <pbhagavatula@marvell.com>
+---
+v2 Changes:
+- Fix builds
+
+ drivers/event/cnxk/cn10k_eventdev.c | 9 +++------
+ drivers/event/cnxk/cn10k_worker.h   | 6 +++---
+ drivers/event/cnxk/cn20k_eventdev.c | 8 +++-----
+ drivers/event/cnxk/cn20k_worker.h   | 4 ++--
+ drivers/net/cnxk/cn10k_rx.h         | 4 ++--
+ drivers/net/cnxk/cn20k_rx.h         | 2 +-
+ 6 files changed, 14 insertions(+), 19 deletions(-)
+
+diff --git a/drivers/event/cnxk/cn10k_eventdev.c b/drivers/event/cnxk/cn10k_eventdev.c
+index 3832eb7e000f..0c1431b4e70c 100644
+--- a/drivers/event/cnxk/cn10k_eventdev.c
++++ b/drivers/event/cnxk/cn10k_eventdev.c
+@@ -126,8 +126,7 @@ cn10k_sso_hws_flush_events(void *hws, uint8_t queue_id, uintptr_t base,
+
+ 	while (aq_cnt || cq_ds_cnt || ds_cnt) {
+ 		plt_write64(req, ws->base + SSOW_LF_GWS_OP_GET_WORK0);
+-		cn10k_sso_hws_get_work_empty(
+-			ws, &ev, (NIX_RX_OFFLOAD_MAX - 1) | NIX_RX_REAS_F | NIX_RX_MULTI_SEG_F);
++		cn10k_sso_hws_get_work_empty(ws, &ev, dev->rx_offloads);
+ 		if (fn != NULL && ev.u64 != 0)
+ 			fn(arg, ev);
+ 		if (ev.sched_type != SSO_TT_EMPTY)
+@@ -473,8 +472,7 @@ cn10k_sso_port_quiesce(struct rte_eventdev *event_dev, void *port,
+ 	} while (ptag &
+ 		 (BIT_ULL(62) | BIT_ULL(58) | BIT_ULL(56) | BIT_ULL(54)));
+
+-	cn10k_sso_hws_get_work_empty(ws, &ev,
+-				     (NIX_RX_OFFLOAD_MAX - 1) | NIX_RX_REAS_F | NIX_RX_MULTI_SEG_F);
++	cn10k_sso_hws_get_work_empty(ws, &ev, dev->rx_offloads);
+ 	if (is_pend && ev.u64)
+ 		if (flush_cb)
+ 			flush_cb(event_dev->data->dev_id, ev, args);
+@@ -503,8 +501,7 @@ cn10k_sso_port_quiesce(struct rte_eventdev *event_dev, void *port,
+ 	    SSO_TT_EMPTY) {
+ 		plt_write64(BIT_ULL(16) | 1,
+ 			    ws->base + SSOW_LF_GWS_OP_GET_WORK0);
+-		cn10k_sso_hws_get_work_empty(
+-			ws, &ev, (NIX_RX_OFFLOAD_MAX - 1) | NIX_RX_REAS_F | NIX_RX_MULTI_SEG_F);
++		cn10k_sso_hws_get_work_empty(ws, &ev, dev->rx_offloads);
+ 		if (ev.u64) {
+ 			if (flush_cb)
+ 				flush_cb(event_dev->data->dev_id, ev, args);
+diff --git a/drivers/event/cnxk/cn10k_worker.h b/drivers/event/cnxk/cn10k_worker.h
+index 954dee5a2a9e..9b6abdf18db2 100644
+--- a/drivers/event/cnxk/cn10k_worker.h
++++ b/drivers/event/cnxk/cn10k_worker.h
+@@ -52,12 +52,12 @@ cn10k_process_vwqe(uintptr_t vwqe, uint16_t port_id, const uint32_t flags, struc
+ 	uint64_t mbuf_init = 0x100010000ULL | RTE_PKTMBUF_HEADROOM;
+ 	struct cnxk_timesync_info *tstamp = ws->tstamp[port_id];
+ 	void *lookup_mem = ws->lookup_mem;
++	uint64_t meta_aura = 0, laddr = 0;
++	uint16_t lmt_id = 0, d_off = 0;
+ 	uintptr_t lbase = ws->lmt_base;
+-	uint64_t meta_aura = 0, laddr;
++	struct rte_mempool *mp = NULL;
+ 	struct rte_event_vector *vec;
+ 	uint16_t nb_mbufs, non_vec;
+-	struct rte_mempool *mp;
+-	uint16_t lmt_id, d_off;
+ 	struct rte_mbuf **wqe;
+ 	struct rte_mbuf *mbuf;
+ 	uint64_t sa_base = 0;
+diff --git a/drivers/event/cnxk/cn20k_eventdev.c b/drivers/event/cnxk/cn20k_eventdev.c
+index b25e570211f1..1c5d9272398a 100644
+--- a/drivers/event/cnxk/cn20k_eventdev.c
++++ b/drivers/event/cnxk/cn20k_eventdev.c
+@@ -192,7 +192,7 @@ cn20k_sso_hws_flush_events(void *hws, uint8_t queue_id, uintptr_t base, cnxk_han
+
+ 	while (aq_cnt || cq_ds_cnt || ds_cnt) {
+ 		plt_write64(req, ws->base + SSOW_LF_GWS_OP_GET_WORK0);
+-		cn20k_sso_hws_get_work_empty(ws, &ev, 0);
++		cn20k_sso_hws_get_work_empty(ws, &ev, dev->rx_offloads);
+ 		if (fn != NULL && ev.u64 != 0)
+ 			fn(arg, ev);
+ 		if (ev.sched_type != SSO_TT_EMPTY)
+@@ -521,8 +521,7 @@ cn20k_sso_port_quiesce(struct rte_eventdev *event_dev, void *port,
+ 		ptag = plt_read64(ws->base + SSOW_LF_GWS_PENDSTATE);
+ 	} while (ptag & (BIT_ULL(62) | BIT_ULL(58) | BIT_ULL(56) | BIT_ULL(54)));
+
+-	cn20k_sso_hws_get_work_empty(ws, &ev,
+-				     (NIX_RX_OFFLOAD_MAX - 1) | NIX_RX_REAS_F | NIX_RX_MULTI_SEG_F);
++	cn20k_sso_hws_get_work_empty(ws, &ev, dev->rx_offloads);
+ 	if (is_pend && ev.u64)
+ 		if (flush_cb)
+ 			flush_cb(event_dev->data->dev_id, ev, args);
+@@ -548,8 +547,7 @@ cn20k_sso_port_quiesce(struct rte_eventdev *event_dev, void *port,
+
+ 	if (CNXK_TT_FROM_TAG(plt_read64(ws->base + SSOW_LF_GWS_PRF_WQE0)) != SSO_TT_EMPTY) {
+ 		plt_write64(BIT_ULL(16) | 1, ws->base + SSOW_LF_GWS_OP_GET_WORK0);
+-		cn20k_sso_hws_get_work_empty(
+-			ws, &ev, (NIX_RX_OFFLOAD_MAX - 1) | NIX_RX_REAS_F | NIX_RX_MULTI_SEG_F);
++		cn20k_sso_hws_get_work_empty(ws, &ev, dev->rx_offloads);
+ 		if (ev.u64) {
+ 			if (flush_cb)
+ 				flush_cb(event_dev->data->dev_id, ev, args);
+diff --git a/drivers/event/cnxk/cn20k_worker.h b/drivers/event/cnxk/cn20k_worker.h
+index df0abd9202fd..608f93dcd465 100644
+--- a/drivers/event/cnxk/cn20k_worker.h
++++ b/drivers/event/cnxk/cn20k_worker.h
+@@ -54,12 +54,12 @@ cn20k_process_vwqe(uintptr_t vwqe, uint16_t port_id, const uint32_t flags, struc
+ 	struct cnxk_timesync_info *tstamp = ws->tstamp[port_id];
+ 	uint8_t m_sz = sizeof(struct rte_mbuf);
+ 	void *lookup_mem = ws->lookup_mem;
++	uint64_t meta_aura = 0, laddr = 0;
+ 	uintptr_t lbase = ws->lmt_base;
+-	uint64_t meta_aura = 0, laddr;
++	uint16_t lmt_id = 0, d_off = 0;
+ 	struct rte_event_vector *vec;
+ 	uint16_t nb_mbufs, non_vec;
+ 	struct rte_mempool *mp;
+-	uint16_t lmt_id, d_off;
+ 	struct rte_mbuf **wqe;
+ 	struct rte_mbuf *mbuf;
+ 	uint64_t sa_base = 0;
+diff --git a/drivers/net/cnxk/cn10k_rx.h b/drivers/net/cnxk/cn10k_rx.h
+index e79306e6467f..ef3bf454536d 100644
+--- a/drivers/net/cnxk/cn10k_rx.h
++++ b/drivers/net/cnxk/cn10k_rx.h
+@@ -1464,9 +1464,9 @@ cn10k_nix_recv_pkts_vector(void *args, struct rte_mbuf **mbufs, uint16_t pkts,
+ 	struct rte_mbuf *mbuf0, *mbuf1, *mbuf2, *mbuf3;
+ 	uint8_t loff = 0, lnum = 0, shft = 0;
+ 	struct rte_mempool *meta_pool = NULL;
++	uint16_t lmt_id = 0, d_off = 0;
++	uint64_t lbase = 0, laddr = 0;
+ 	uint8x16_t f0, f1, f2, f3;
+-	uint16_t lmt_id, d_off;
+-	uint64_t lbase, laddr;
+ 	uintptr_t sa_base = 0;
+ 	uint16_t packets = 0;
+ 	uint16_t pkts_left;
+diff --git a/drivers/net/cnxk/cn20k_rx.h b/drivers/net/cnxk/cn20k_rx.h
+index 56826318151a..102f0aca73ec 100644
+--- a/drivers/net/cnxk/cn20k_rx.h
++++ b/drivers/net/cnxk/cn20k_rx.h
+@@ -845,8 +845,8 @@ cn20k_nix_recv_pkts_vector(void *args, struct rte_mbuf **mbufs, uint16_t pkts, c
+ 	uint64x2_t rearm2 = vdupq_n_u64(mbuf_initializer);
+ 	uint64x2_t rearm3 = vdupq_n_u64(mbuf_initializer);
+ 	struct rte_mbuf *mbuf0, *mbuf1, *mbuf2, *mbuf3;
++	uint64_t lbase, laddr = 0, buf_sz = 0;
+ 	uint8_t loff = 0, lnum = 0, shft = 0;
+-	uint64_t lbase, laddr, buf_sz;
+ 	uint8x16_t f0, f1, f2, f3;
+ 	uint16_t lmt_id, d_off;
+ 	uintptr_t sa_base = 0;
+--
+2.50.1 (Apple Git-155)
 
