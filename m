@@ -2,69 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4898ED10F4F
-	for <dpdk-dev@archiver.kernel.org>; Wed, 26 Nov 2025 14:16:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4062D10F5D
+	for <dpdk-dev@archiver.kernel.org>; Wed, 26 Nov 2025 15:02:29 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 266A44042F;
-	Wed, 26 Nov 2025 15:16:58 +0100 (CET)
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com
- [209.85.222.177])
- by mails.dpdk.org (Postfix) with ESMTP id D96A9402D1
- for <dev@dpdk.org>; Wed, 26 Nov 2025 15:16:56 +0100 (CET)
-Received: by mail-qk1-f177.google.com with SMTP id
- af79cd13be357-8b2dcdde698so990096285a.3
- for <dev@dpdk.org>; Wed, 26 Nov 2025 06:16:56 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 59BEF406B4;
+	Wed, 26 Nov 2025 16:02:28 +0100 (CET)
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com
+ [209.85.160.178])
+ by mails.dpdk.org (Postfix) with ESMTP id 44CF3402D1
+ for <dev@dpdk.org>; Wed, 26 Nov 2025 16:02:26 +0100 (CET)
+Received: by mail-qt1-f178.google.com with SMTP id
+ d75a77b69052e-4eda26a04bfso76821291cf.2
+ for <dev@dpdk.org>; Wed, 26 Nov 2025 07:02:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1764166616; x=1764771416; darn=dpdk.org;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1764169345;
+ x=1764774145; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=75bmXW4YkNuEjq0LwXTo8a37DYIJmZsYv8Fa7+yrQ3k=;
- b=GO78n37TrdIB2n4wdVlB6pY68jjUXWqByphP4eT7rSLjL+Q1UC0yt/KL2n92suNW6k
- 8/9eK8pW9SfAKrUBKHH8rorusZJu9GvpKG7laOfkPXkHZGwanQa9ozFoD/qg/6lBHjMA
- EJ14CW/Vm8Sm0ayq46RATqdfg36MXDebHJ0UA=
+ bh=iC7OQl5u4XT9w8lInRhDL2VkSX8npDA4puo1vgbwbeM=;
+ b=yK4A07v5eiF6U9X2fqY5UaBfYgT9Nt2QHedm+0ECDjCDbDbpOGY1kd3nyZu67ZFJkj
+ DPGLREliTsrMspmg9eoeh0i85EA/s9GbgfxvkvxkmHm/nF+SMQkQAf++XeGgrYxV45Vp
+ 5Be6e6HqYVtvJ4Yqi2TQMy6Qz2GCp+hIU+18iiRZXJWvE7DAIla69VAk56SQ3G0DnTUa
+ jAPX1id5t9b0iaR/K6N8AAOsdWSs/VtrmJKWLIJQEBB/Dq0P46DFcidMFw8aX/qMPbC7
+ 7CVfmgdfH9dUtEAFC/7CbNJYxYtutIqt7A5qNRsGTMgmfx7s4PfAUV6JIyLxdtZVOZmX
+ w/PQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1764166616; x=1764771416;
+ d=1e100.net; s=20230601; t=1764169345; x=1764774145;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=75bmXW4YkNuEjq0LwXTo8a37DYIJmZsYv8Fa7+yrQ3k=;
- b=p3Cpi4J5Q/EJGQgRjP2KS6etu4BomkfeoucdRyOB3vzFVB1nuDSG/cn1Se0ZhP1TaD
- NfjEIHLm8LnW7464BFVbCgl/G1ZJXe8XLrAp3ayAPiX4lokLmPytEp4LrKsxK8AWlwkM
- pqgVYle0/aUfGAMlQYqz4728DFejGVfJsvFu1Iy8LU04YxRnO8OEySF53Otc0p56oj3P
- dwJ7v97ZR250YzqutBvuRzS/aIi51LGFPNn3Q4YlL5SBPZfEtvl6UTN04wgNBIzvyWJE
- Mxtc98SocgltHfwHcXbnvyoi9NsLuXZZPjn1Epl9PbnHKQ7Sb63Ftt8p/iFH5693gMmJ
- wz+A==
-X-Gm-Message-State: AOJu0YygpvgBHv7STHNHFFvqkLvJQNEt6lbh/m+Mek//lA6E9hK5z9M0
- 6UjlpJhla/ao0a82GRPW71rRbVWIPeTmujONgfg1sfQLYM6tG0IrunpNIuX8kVy2+q8=
-X-Gm-Gg: ASbGncsd5VWMTviK7tSF+diIj8JQH7yDd058dfDfulUnHcG1i/gOmBfMx/rz73LSTWu
- QO8WWoDqNo02w77IITenCMpeBBIXsnglUSEXAr2wzrdmb3a/n6RBAxANNC9+FS7S9JnWUCiWv/F
- ttiW+EjXYCc0LapmHjgIfHg5ug+pOpGsTqwaJGFGavnuWCMfdgRDj8eXkXAm8kgamsXuQINLSi7
- uXy/g7ejMROazFWhdsw/ZgLHwQUhlRuvAmdsDlZ6j1trSF+wtMoIyIW83YgvUkYUYw4rqn6cGe7
- 8UJhG/eAzQq/EEDGbJN7Am7QUToquPpwnDT7+SbId6j1nWF0+CuZ/So/sHhZiivSlEOlHg2NCIB
- l/kFR+Mc9R65rKsxcqG0Bm3WTdWNeBor6LRWhNFaOYf16B+AP0AyJavOg+X4QLRxwdlz2QghSQS
- Y6tmET90Jx1wH2zOZvHRJ2qPo=
-X-Google-Smtp-Source: AGHT+IGeODGALT/WgBJKAIw/0lsiTLtA5bc5KaSC71ZsSBVUTHpKRcwrBOBqVzehiG5jeylJuh19Pw==
-X-Received: by 2002:a05:6214:4a09:b0:87d:fbe9:9566 with SMTP id
- 6a1803df08f44-8847c4e433cmr290103726d6.26.1764166616116; 
- Wed, 26 Nov 2025 06:16:56 -0800 (PST)
-Received: from d122205.iol.unh.edu ([2606:4100:3880:1220:4f6d:e2af:7f5f:4df])
+ bh=iC7OQl5u4XT9w8lInRhDL2VkSX8npDA4puo1vgbwbeM=;
+ b=Gy9jPtTlchoNHhAdzzWkPqml3MuXXF3w3S/UmPBpA4W1PRvfDJnoCfThKBJsPp2dsj
+ 14R5J5g9cDd2ZwDFv94EBHR/eb8uYbacaQDPORnqCsxLYPVC01yrXSjZ+zfmQ6Fiw98z
+ r0HDjtjV6FkW08Wh0QiUQoO4qi5mlQJlB94Ul8dCo39y80vYfE8A9eeYm/KnT++XeHqZ
+ TyW+wNzcyYwmtFZwK7NeL//+uGIcVAlMsJaPszJ5ICLk4qRfUs3j9NHMbbO2B5sIcr9U
+ bXzcy1XzSMwUiOs1JUbMiSqaYr4MrQH9Zd8I/bv5wY16jV1Wv7z4An+YLDNvrNR9OnCU
+ atew==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCU5apoucCdh8Lq6LElMZYGv0Y8qQPL6vXhUwvqZPYQOJI6rQ9zfU4JauGOVsYl618YZcS8=@dpdk.org
+X-Gm-Message-State: AOJu0YwwJHmls/kqgraOflXjX3eqBydzsH+eRlm8bgPanrIOgXI8Sy5m
+ 1OQ/uOQommvHFbrwLXY+h386HL3mifgk9i4fDJlKWzZp0qE6ybF6jjuuyut3snY8LJk=
+X-Gm-Gg: ASbGncsDQ9MPXr5pjJZXg5EthEvW1V6AuQ1NzPCIE93Eui625EDi2Cj5BhaO1hqUYam
+ e0vOu+LmB80Ls0VJWQwyATO7yPk4TsDmfHiQGjrgSimGnHfUNXCYzhcXUq8fbdedJDJdMWb2E5Z
+ MUuk71tp/78n5eeWSxuUe6ftVSPU8LkmC3uS4f1TpinhH6f7m07L0s40mHfoZlMV+/wSWdjEBzI
+ l7IN6+9bSG7DVQI5c3AV+Il2A4EWeoeSPjbJqb6gz9kKsxKkC0Wkz2HTo27KKV6ioZiafVGP7mZ
+ R+y80Q5cDjhYNjLgogf8Kif+c6/oi79JFHsejm8rL7UeD80pL87lLPag/r6qOmk33CZYpmg2Ftk
+ VeBdh/yP+3xxXLYDx/SvWRvr9O0DvRDg+2HWsDaMTkfYmDIKiDcRgKmcvhmGAIXD4VESkcWHv78
+ I9MkcCl29Jy7Y2UTPS1sE1nvHVn+zmtPNswswGTb97PuuKuNU2R1Zo
+X-Google-Smtp-Source: AGHT+IF7yoTNIzmftEPh9onnvOUIdK1huFds9quAGQesaDWE8HMX0b8KSSp9MQc06XJ4CLHV3WXEKQ==
+X-Received: by 2002:a05:622a:304:b0:4ee:24e8:c9b6 with SMTP id
+ d75a77b69052e-4ee58935c51mr267710431cf.59.1764169343716; 
+ Wed, 26 Nov 2025 07:02:23 -0800 (PST)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-8846e48a64asm145590376d6.24.2025.11.26.06.16.54
+ d75a77b69052e-4ee48d538f6sm127520761cf.10.2025.11.26.07.02.22
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 26 Nov 2025 06:16:55 -0800 (PST)
-From: Andrew Bailey <abailey@iol.unh.edu>
-To: probb@iol.unh.edu
-Cc: dev@dpdk.org, dmarx@iol.unh.edu, luca.vizzarro@arm.com,
- Andrew Bailey <abailey@iol.unh.edu>
-Subject: [PATCH v2] dts: automate VFIO-PCI modprobe
-Date: Wed, 26 Nov 2025 09:16:50 -0500
-Message-ID: <20251126141650.367633-1-abailey@iol.unh.edu>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20251121210650.328804-1-abailey@iol.unh.edu>
-References: <20251121210650.328804-1-abailey@iol.unh.edu>
+ Wed, 26 Nov 2025 07:02:23 -0800 (PST)
+Date: Wed, 26 Nov 2025 07:02:17 -0800
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: a.schollmeyer@syseleven.de
+Cc: Aman Singh <aman.deep.singh@intel.com>, dev@dpdk.org
+Subject: Re: [PATCH v2] app/testpmd: warn on shared rxq switch mismatch
+Message-ID: <20251126070217.2b127bac@phoenix.local>
+In-Reply-To: <20251126104009.472852-1-a.schollmeyer@syseleven.de>
+References: <20251125102207.428661-1-a.schollmeyer@syseleven.de>
+ <20251126104009.472852-1-a.schollmeyer@syseleven.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -78,40 +84,15 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Currently, users must modprobe vfio-pci before running DTS when using a
-non-mellanox NIC. This patch automates the process on test run start up.
+On Wed, 26 Nov 2025 11:40:09 +0100
+a.schollmeyer@syseleven.de wrote:
 
-Signed-off-by: Andrew Bailey <abailey@iol.unh.edu>
----
- dts/framework/test_run.py | 8 ++++++++
- 1 file changed, 8 insertions(+)
+> +				if (mismatch) {
+> +					fprintf(stderr, "Bad shared rxq config: "
+> +						"%s mismatch in share group/qid %u/%u: "
 
-diff --git a/dts/framework/test_run.py b/dts/framework/test_run.py
-index ff0a12c9ce..9d7b6271c7 100644
---- a/dts/framework/test_run.py
-+++ b/dts/framework/test_run.py
-@@ -106,6 +106,7 @@
- from types import MethodType
- from typing import ClassVar, Protocol, Union
- 
-+from api.capabilities import LinkTopology
- from framework.config.test_run import TestRunConfiguration
- from framework.context import Context, init_ctx
- from framework.exception import InternalError, SkippedTestException, TestCaseVerifyError
-@@ -347,6 +348,13 @@ def next(self) -> State | None:
-         test_run.ctx.dpdk.setup()
-         test_run.ctx.topology.setup()
- 
-+        if (
-+            test_run.ctx.topology.type != LinkTopology.NO_LINK
-+            and test_run.ctx.sut_node.ports[0].config.os_driver_for_dpdk == "vfio-pci"
-+        ):
-+            test_run.ctx.sut_node.main_session.send_command("modprobe vfio")
-+            test_run.ctx.sut_node.main_session.send_command("modprobe vfio-pci")
-+
-         if test_run.config.use_virtual_functions:
-             test_run.ctx.topology.instantiate_vf_ports()
- 
--- 
-2.50.1
-
+It is better to not split formats across lines.
+Can you shorten it, and put on oneline.
+Despite what checkpatch may say, you can make that a longish line like 200 characters.
+Also, maybe break from the loop on first mismatch? and return an error?
+Then message can be outside the loop.
