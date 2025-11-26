@@ -2,64 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BE3AD1038B
-	for <dpdk-dev@archiver.kernel.org>; Wed, 26 Nov 2025 08:09:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C502D1038C
+	for <dpdk-dev@archiver.kernel.org>; Wed, 26 Nov 2025 08:14:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AD419402AF;
-	Wed, 26 Nov 2025 09:09:28 +0100 (CET)
-Received: from smtpbgbr2.qq.com (smtpbgbr2.qq.com [54.207.22.56])
- by mails.dpdk.org (Postfix) with ESMTP id 8E0414026F
- for <dev@dpdk.org>; Wed, 26 Nov 2025 09:09:25 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tencent.com;
- s=s201512; t=1764144563;
- bh=ufgXPpkKj2eXfJTDWrM2mfblC3N+/a5Q7X+J3jdjGpM=;
- h=Message-ID:Date:MIME-Version:Subject:To:From;
- b=FAEufl9nb9POOeoE7y/NaTQJROaH1QAT3cKDHFM7I7YOV/TO3yldbO5GpOkY1tF5I
- SXtwb4xxQNMOFmcU0LOGaFecz9NaI+S+6MxTyY9Ve3HEtNo9xwg6F4hJjYrxCDq6UV
- TeUSZ9NVbp6JxkZQvF1V1Qwe9rsg4ab78gEdupsg=
-X-QQ-mid: zesmtpsz6t1764144562t4b7064cb
-X-QQ-Originating-IP: o5Hj8krLNsUq2inHS7QM5Z0UqP4FjXuLIhGJ2dkWwqw=
-Received: from [127.0.0.1] ( [11.176.19.22]) by bizesmtp.qq.com (ESMTP) with 
- id ; Wed, 26 Nov 2025 16:09:20 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 17343232685916434492
-Message-ID: <08881270F044B8AD+5e6e521c-8430-4b66-a44c-9b1b8f8f297a@tencent.com>
-Date: Wed, 26 Nov 2025 16:09:20 +0800
+	by mails.dpdk.org (Postfix) with ESMTP id 2F1A840B95;
+	Wed, 26 Nov 2025 09:14:04 +0100 (CET)
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
+ [67.231.156.173])
+ by mails.dpdk.org (Postfix) with ESMTP id 76DC74026F;
+ Wed, 26 Nov 2025 09:14:02 +0100 (CET)
+Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
+ by mx0b-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
+ 5APE2wJj699275; Wed, 26 Nov 2025 00:14:01 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+ cc:content-transfer-encoding:content-type:date:from:in-reply-to
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=5
+ p5QdrYEIlTEp47uFjmzXBewruHUMgDNJOAx0jotUXQ=; b=XYrkEgNryUf4R71GT
+ VvUjzHfqXJ8r0hC80RBoPUeNCx6VKarbtpgID2EGwY/1MJhYok+ETODwO2qa5CD9
+ hDB9L5qmIi3EwVcCeMQVTbi3B4B1/jpqVnBVQvwy3fVAFp9lk4zLXKWshexLRNh+
+ plDBHzmHN0aBE5rQAJKCt43JCUVSLRDEXwfuvXE5mBUoxbD9mAsKU/7+9EfqRsyC
+ 0NxtTebXrDbnAD593LdJFCyurRTqRt5xOLnN4Ddl1WHHayYFIEDBUWxAgWvfvqsm
+ ns+P3nRsGGTVVm63TKBtmzZVqlQmpycD4efMY6xBTH2x4NiPPVjXF9LyivHAN33U
+ VXweA==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4amxrav0fd-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Wed, 26 Nov 2025 00:14:01 -0800 (PST)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Wed, 26 Nov 2025 00:13:59 -0800
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
+ Transport; Wed, 26 Nov 2025 00:13:59 -0800
+Received: from LYYJYPGKF4.marvell.com (unknown [10.28.21.218])
+ by maili.marvell.com (Postfix) with ESMTP id 580423F7040;
+ Wed, 26 Nov 2025 00:13:56 -0800 (PST)
+From: <pbhagavatula@marvell.com>
+To: <jerinj@marvell.com>, Pavan Nikhilesh <pbhagavatula@marvell.com>, "Shijith
+ Thotton" <sthotton@marvell.com>,
+ Nithin Dabilpuram <ndabilpuram@marvell.com>,
+ Kiran Kumar K <kirankumark@marvell.com>, Sunil Kumar Kori
+ <skori@marvell.com>, Satha Rao <skoteshwar@marvell.com>, Harman Kalra
+ <hkalra@marvell.com>
+CC: <dev@dpdk.org>, <stable@dpdk.org>
+Subject: [PATCH v3] event/cnxk: fix offload flags
+Date: Wed, 26 Nov 2025 13:43:53 +0530
+Message-ID: <20251126081353.85811-1-pbhagavatula@marvell.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20251126063711.42115-1-pbhagavatula@marvell.com>
+References: <20251126063711.42115-1-pbhagavatula@marvell.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] acl: support custom memory allocator
-To: Dmitry Kozlyuk <dmitry.kozliuk@gmail.com>,
- Konstantin Ananyev <konstantin.ananyev@huawei.com>
-Cc: dev@dpdk.org
-References: <66734dfb22e841ddad035c630bb74f1c@huawei.com>
- <16C60E2E552D75E0+20251125121446.41247-1-mannywang@tencent.com>
- <8e00f0b5-84de-40ce-bec3-673c4b9dd3f1@gmail.com>
- <7E45BE076ACCC3B2+d9eeffa0-a442-4766-b45f-406cd99700e9@tencent.com>
- <cb7c53de-bc26-42c1-8695-00a4a335ebef@gmail.com>
-From: "=?gb18030?B?bWFubnl3YW5nKM3108C35Sk=?=" <mannywang@tencent.com>
-In-Reply-To: <cb7c53de-bc26-42c1-8695-00a4a335ebef@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpsz:tencent.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: ND42uzdxTIzrYDMzqiHkwPQSY+oag13tE+UFEn53U0ykci/aJ5N/DiVz
- ttMtWj/dC1JRopIQ36gayLOqZdKf0U5O7ZtnOXw5aAaUL3uWAlrGM16prdv56yBXo0aLe5j
- DYpesfPXDQIhjAKfDr4leCS0OA2W5AIamDIUPeS8hyUyLpt6eSqcTUZ8ZYJegqKNX/2xra4
- Z67algKis5routUGOD1Atq4Hc1Vza/R2vD/n7ktSZcXq2bGyLKuU/0eD9qVc6mLJI0FCVMk
- VAjgCMPsCeSUJkeAtGP5VIQwHF1HJ2CG1xbdTpSbUgP4XQoqvCvdvpmGYSoQxwum+3q5RA1
- HTEU0opsGWwdkTgat4aUWl45MM9H7ao4dK78lZQPLW40foXIljbitAE03sA5xt3BapomtsM
- lx8hPQrcM0Blr5Na0SgMtpVTo/KMFa1AGjNKbHAWykg1Qx9888HVfHFRmvbWoFjyM2s46ws
- wPsy/0kdrH4LsiTcMC/QioJIM24jE4CelskyRQ3ImnSJfXMBWyLM6in43OBljfe4YijUqlF
- SyRc95+IcOuvbd9zINkjM1q2ZdhYBCi9lMo+yNWplPK/vO8rEoNnBAVmckzwP6rdmaDHLfP
- OebKcKtMFbT/Z3hwaZIBSk02mOUZKyUO1cQqhqmYfPQ2wKtsVJRlXlRbj3Evt152AW+NqBT
- YOoFrCWjJdf31TOiZTL6Z7q+gQHs77RLhGqXXqR2TRugous7BIgddNYx4PoPueJI1G6p+Ch
- fNk4XTyHGO9/yVnDqI6B1NOAXZho40wGUFSq+TrKdyYEcti2Q2JaCb3CTSxx5leO2rXlrAN
- LGlkINcw3DKWDIeWYNHmldmOkbhItpRFTDIJDDoezB4aT34iOXxbh76fSJnMLOKBGD7CPGi
- XAM8Wb0ssYEJ/3Lzr0rVSu8vUeQZ3t4QlzXq1C9vSjB/ALT/o++nLFmHVgvcY6eEKfDcpVi
- sLd8hmVtLiY7I2IH7jfiTscqak7rRDJh/afY=
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-X-QQ-RECHKSPAM: 0
+Content-Type: text/plain
+X-Authority-Analysis: v=2.4 cv=Xu/3+FF9 c=1 sm=1 tr=0 ts=6926b6c9 cx=c_pps
+ a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
+ a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=M5GUcnROAAAA:8 a=8rWy6zfcAAAA:8
+ a=RY_15DkwN-dEklQYqroA:9 a=OBjm3rFKGHvpk9ecZwUJ:22 a=YjdVzJdQTyZRADMV7wFX:22
+X-Proofpoint-GUID: _cVB4KyYRRaae9lbKwduXYPBQ3kt-uwm
+X-Proofpoint-ORIG-GUID: _cVB4KyYRRaae9lbKwduXYPBQ3kt-uwm
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTI2MDA2NiBTYWx0ZWRfX6bmsI/nQVvDy
+ t0uLq2gT/emhfNB07L2w8UTIJc+ChqsMqJFhGT/U3bKR4nZsE4fLTNBFufoKXsaO3nX9XQ9D0CR
+ glwPqymhDZVMuu9BGjLfwzMOmRbPaWcehCSCGJaQXG4xBl5bSkFBis6sV1LOaJE4/74hfkKJ+bJ
+ KHV/3FX7qt5CrT5uu+eU1V7zBJyfLRLJnmdV5OWklj9nd+rOvZ+qphAAqBeJwNnSWT/P2fL4hky
+ KBV7iDoiqGIQTyAy5qic7YegVBPMyxmBVNJAI9wDwutrCMxMOWoRj4Ys8P7EywASY1Ev7XXJIf0
+ FVmEzTlepRkdce7kl0WKkg4GAlCuBD9VCQ0IZHxRJ8K80XInIDF18PE+Stc7+aCSDJLQCN6AWuD
+ 4dLbcP0GMXVqFxnLRjhHCBBxgcPOjA==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-25_02,2025-11-25_01,2025-10-01_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -73,92 +84,173 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Thanks for the follow-up question.
+From: Pavan Nikhilesh <pbhagavatula@marvell.com>
 
- > I don't understand the build stage issue and why it needs a custom 
-allocator.
+Use device configured Rx offloads instead of hardcoded values while
+draining work.
 
-The fragmentation concern does not come from the amount of address space,
-but from how the underlying heap allocator manages **large / mid-sized
-temporary buffers** that are repeatedly allocated and freed during ACL 
-build.
+Fixes: e8594de2731d ("event/cnxk: implement event port quiesce function")
+Cc: stable@dpdk.org
 
-ACL build allocates many temporary arrays, tables and sorted structures.
-Some of them are several MB in size. When these allocations are done via
-malloc/calloc, they typically end up in the general heap. Every build
-iteration produces a different allocation pattern and size distribution.
-Even if the allocations are freed at the end, the internal heap layout is
-not restored to a “flat” state. Small holes remain, and future allocation of
-large contiguous blocks may fail even if the total free memory is 
-sufficient.
+Signed-off-by: Pavan Nikhilesh <pbhagavatula@marvell.com>
+---
+v3 Changes:
+v2 Changes:
+- Fix build
 
-This becomes a real operational issue in long-running processes.
+ drivers/event/cnxk/cn10k_eventdev.c | 9 +++------
+ drivers/event/cnxk/cn10k_worker.h   | 6 +++---
+ drivers/event/cnxk/cn20k_eventdev.c | 8 +++-----
+ drivers/event/cnxk/cn20k_worker.h   | 4 ++--
+ drivers/net/cnxk/cn10k_rx.h         | 4 ++--
+ drivers/net/cnxk/cn20k_rx.h         | 4 ++--
+ 6 files changed, 15 insertions(+), 20 deletions(-)
 
- > What exactly gets fragmented? It is the entire process address space 
-which is practically unlimited?
+diff --git a/drivers/event/cnxk/cn10k_eventdev.c b/drivers/event/cnxk/cn10k_eventdev.c
+index 3832eb7e000f..0c1431b4e70c 100644
+--- a/drivers/event/cnxk/cn10k_eventdev.c
++++ b/drivers/event/cnxk/cn10k_eventdev.c
+@@ -126,8 +126,7 @@ cn10k_sso_hws_flush_events(void *hws, uint8_t queue_id, uintptr_t base,
 
-It is not the address space that is the limiting factor.
-It is the **allocator's internal arena**.
+ 	while (aq_cnt || cq_ds_cnt || ds_cnt) {
+ 		plt_write64(req, ws->base + SSOW_LF_GWS_OP_GET_WORK0);
+-		cn10k_sso_hws_get_work_empty(
+-			ws, &ev, (NIX_RX_OFFLOAD_MAX - 1) | NIX_RX_REAS_F | NIX_RX_MULTI_SEG_F);
++		cn10k_sso_hws_get_work_empty(ws, &ev, dev->rx_offloads);
+ 		if (fn != NULL && ev.u64 != 0)
+ 			fn(arg, ev);
+ 		if (ev.sched_type != SSO_TT_EMPTY)
+@@ -473,8 +472,7 @@ cn10k_sso_port_quiesce(struct rte_eventdev *event_dev, void *port,
+ 	} while (ptag &
+ 		 (BIT_ULL(62) | BIT_ULL(58) | BIT_ULL(56) | BIT_ULL(54)));
 
-Most allocators (glibc malloc, jemalloc, tcmalloc, etc) retain internal
-metadata, bins, and split blocks. Their fragmentation behavior accumulates
-over time. The process may still have hundreds of MB of “free memory”, but
-not in **contiguous regions** that satisfy the next large request.
+-	cn10k_sso_hws_get_work_empty(ws, &ev,
+-				     (NIX_RX_OFFLOAD_MAX - 1) | NIX_RX_REAS_F | NIX_RX_MULTI_SEG_F);
++	cn10k_sso_hws_get_work_empty(ws, &ev, dev->rx_offloads);
+ 	if (is_pend && ev.u64)
+ 		if (flush_cb)
+ 			flush_cb(event_dev->data->dev_id, ev, args);
+@@ -503,8 +501,7 @@ cn10k_sso_port_quiesce(struct rte_eventdev *event_dev, void *port,
+ 	    SSO_TT_EMPTY) {
+ 		plt_write64(BIT_ULL(16) | 1,
+ 			    ws->base + SSOW_LF_GWS_OP_GET_WORK0);
+-		cn10k_sso_hws_get_work_empty(
+-			ws, &ev, (NIX_RX_OFFLOAD_MAX - 1) | NIX_RX_REAS_F | NIX_RX_MULTI_SEG_F);
++		cn10k_sso_hws_get_work_empty(ws, &ev, dev->rx_offloads);
+ 		if (ev.u64) {
+ 			if (flush_cb)
+ 				flush_cb(event_dev->data->dev_id, ev, args);
+diff --git a/drivers/event/cnxk/cn10k_worker.h b/drivers/event/cnxk/cn10k_worker.h
+index 954dee5a2a9e..9b6abdf18db2 100644
+--- a/drivers/event/cnxk/cn10k_worker.h
++++ b/drivers/event/cnxk/cn10k_worker.h
+@@ -52,12 +52,12 @@ cn10k_process_vwqe(uintptr_t vwqe, uint16_t port_id, const uint32_t flags, struc
+ 	uint64_t mbuf_init = 0x100010000ULL | RTE_PKTMBUF_HEADROOM;
+ 	struct cnxk_timesync_info *tstamp = ws->tstamp[port_id];
+ 	void *lookup_mem = ws->lookup_mem;
++	uint64_t meta_aura = 0, laddr = 0;
++	uint16_t lmt_id = 0, d_off = 0;
+ 	uintptr_t lbase = ws->lmt_base;
+-	uint64_t meta_aura = 0, laddr;
++	struct rte_mempool *mp = NULL;
+ 	struct rte_event_vector *vec;
+ 	uint16_t nb_mbufs, non_vec;
+-	struct rte_mempool *mp;
+-	uint16_t lmt_id, d_off;
+ 	struct rte_mbuf **wqe;
+ 	struct rte_mbuf *mbuf;
+ 	uint64_t sa_base = 0;
+diff --git a/drivers/event/cnxk/cn20k_eventdev.c b/drivers/event/cnxk/cn20k_eventdev.c
+index b25e570211f1..1c5d9272398a 100644
+--- a/drivers/event/cnxk/cn20k_eventdev.c
++++ b/drivers/event/cnxk/cn20k_eventdev.c
+@@ -192,7 +192,7 @@ cn20k_sso_hws_flush_events(void *hws, uint8_t queue_id, uintptr_t base, cnxk_han
 
- > How does malloc/free overhead compare to overall ACL build time?
+ 	while (aq_cnt || cq_ds_cnt || ds_cnt) {
+ 		plt_write64(req, ws->base + SSOW_LF_GWS_OP_GET_WORK0);
+-		cn20k_sso_hws_get_work_empty(ws, &ev, 0);
++		cn20k_sso_hws_get_work_empty(ws, &ev, dev->rx_offloads);
+ 		if (fn != NULL && ev.u64 != 0)
+ 			fn(arg, ev);
+ 		if (ev.sched_type != SSO_TT_EMPTY)
+@@ -521,8 +521,7 @@ cn20k_sso_port_quiesce(struct rte_eventdev *event_dev, void *port,
+ 		ptag = plt_read64(ws->base + SSOW_LF_GWS_PENDSTATE);
+ 	} while (ptag & (BIT_ULL(62) | BIT_ULL(58) | BIT_ULL(56) | BIT_ULL(54)));
 
-The cost of malloc/free calls themselves is not the core problem.
-The overhead is small relative to the total build time.
+-	cn20k_sso_hws_get_work_empty(ws, &ev,
+-				     (NIX_RX_OFFLOAD_MAX - 1) | NIX_RX_REAS_F | NIX_RX_MULTI_SEG_F);
++	cn20k_sso_hws_get_work_empty(ws, &ev, dev->rx_offloads);
+ 	if (is_pend && ev.u64)
+ 		if (flush_cb)
+ 			flush_cb(event_dev->data->dev_id, ev, args);
+@@ -548,8 +547,7 @@ cn20k_sso_port_quiesce(struct rte_eventdev *event_dev, void *port,
 
-The risk is that allocator fragmentation increases unpredictably over a long
-deployment, until a large block allocation fails in the data plane.
-
-Our team has seen this exact behavior in production environments.
-Because we cannot fully control the allocator state, we prefer a model
-with zero dynamic allocation after init:
-
-* persistent runtime structures → pre-allocated static region
-* temporary build data → resettable memory pool
-
-This avoids failure modes caused by allocator history and guarantees stable
-latency regardless of system uptime or build frequency.
-
-On 11/26/2025 3:57 PM, Dmitry Kozlyuk wrote:
-> On 11/26/25 05:44, mannywang(王永峰) wrote:
->> Thanks for sharing this suggestion.
->>
->> We actually evaluated the heap-based approach before implementing this 
->> patch.
->> It can help in some scenarios, but unfortunately it does not fully 
->> solve our
->> use cases. Specifically:
->>
->> 1. **Heap count / scalability**
->>    Our application maintains at least ~200 rte_acl_ctx instances (due 
->> to the
->>    total rule count and multi-tenant isolation). Allowing a dedicated 
->> heap per
->>    context would exceed the practical limits of the current rte_malloc 
->> heap
->>    model. The number of heaps that can be created is not unlimited, and
->>    maintaining hundreds of separate heaps would introduce considerable
->>    management overhead.
-> This is a valid point against heaps, thanks.
->> 2. **Temporary allocations in build stage**
->>    During `rte_acl_build`, a significant portion of memory is 
->> allocated through
->>    `calloc()` for internal temporary structures. These allocations are 
->> freed
->>    right after the build completes. Even if runtime memory could come 
->> from a
->>    custom heap, these temporary allocations would still need an 
->> independent
->>    allocator or callback mechanism to avoid fragmentation and repeated
->>    malloc/free cycles.
-> I don't understand the build stage issue and why it needs a custom 
-> allocator.
-> What exactly gets fragmented?
-> It is the entire process address space which is practically unlimited?
-> How does is malloc/free overhead compare to the overall ACL build time?
-> 
+ 	if (CNXK_TT_FROM_TAG(plt_read64(ws->base + SSOW_LF_GWS_PRF_WQE0)) != SSO_TT_EMPTY) {
+ 		plt_write64(BIT_ULL(16) | 1, ws->base + SSOW_LF_GWS_OP_GET_WORK0);
+-		cn20k_sso_hws_get_work_empty(
+-			ws, &ev, (NIX_RX_OFFLOAD_MAX - 1) | NIX_RX_REAS_F | NIX_RX_MULTI_SEG_F);
++		cn20k_sso_hws_get_work_empty(ws, &ev, dev->rx_offloads);
+ 		if (ev.u64) {
+ 			if (flush_cb)
+ 				flush_cb(event_dev->data->dev_id, ev, args);
+diff --git a/drivers/event/cnxk/cn20k_worker.h b/drivers/event/cnxk/cn20k_worker.h
+index df0abd9202fd..608f93dcd465 100644
+--- a/drivers/event/cnxk/cn20k_worker.h
++++ b/drivers/event/cnxk/cn20k_worker.h
+@@ -54,12 +54,12 @@ cn20k_process_vwqe(uintptr_t vwqe, uint16_t port_id, const uint32_t flags, struc
+ 	struct cnxk_timesync_info *tstamp = ws->tstamp[port_id];
+ 	uint8_t m_sz = sizeof(struct rte_mbuf);
+ 	void *lookup_mem = ws->lookup_mem;
++	uint64_t meta_aura = 0, laddr = 0;
+ 	uintptr_t lbase = ws->lmt_base;
+-	uint64_t meta_aura = 0, laddr;
++	uint16_t lmt_id = 0, d_off = 0;
+ 	struct rte_event_vector *vec;
+ 	uint16_t nb_mbufs, non_vec;
+ 	struct rte_mempool *mp;
+-	uint16_t lmt_id, d_off;
+ 	struct rte_mbuf **wqe;
+ 	struct rte_mbuf *mbuf;
+ 	uint64_t sa_base = 0;
+diff --git a/drivers/net/cnxk/cn10k_rx.h b/drivers/net/cnxk/cn10k_rx.h
+index e79306e6467f..ef3bf454536d 100644
+--- a/drivers/net/cnxk/cn10k_rx.h
++++ b/drivers/net/cnxk/cn10k_rx.h
+@@ -1464,9 +1464,9 @@ cn10k_nix_recv_pkts_vector(void *args, struct rte_mbuf **mbufs, uint16_t pkts,
+ 	struct rte_mbuf *mbuf0, *mbuf1, *mbuf2, *mbuf3;
+ 	uint8_t loff = 0, lnum = 0, shft = 0;
+ 	struct rte_mempool *meta_pool = NULL;
++	uint16_t lmt_id = 0, d_off = 0;
++	uint64_t lbase = 0, laddr = 0;
+ 	uint8x16_t f0, f1, f2, f3;
+-	uint16_t lmt_id, d_off;
+-	uint64_t lbase, laddr;
+ 	uintptr_t sa_base = 0;
+ 	uint16_t packets = 0;
+ 	uint16_t pkts_left;
+diff --git a/drivers/net/cnxk/cn20k_rx.h b/drivers/net/cnxk/cn20k_rx.h
+index 56826318151a..d859c53c20b3 100644
+--- a/drivers/net/cnxk/cn20k_rx.h
++++ b/drivers/net/cnxk/cn20k_rx.h
+@@ -307,7 +307,7 @@ nix_cqe_xtract_mseg(const union nix_rx_parse_u *rx, struct rte_mbuf *mbuf, uint6
+ 	const struct cpt_parse_hdr_s *hdr = (const struct cpt_parse_hdr_s *)cpth;
+ 	struct cn20k_inb_priv_data *inb_priv = NULL;
+ 	const struct cpt_frag_info_s *finfo = NULL;
+-	uint64_t fsz_w1 = 0, cq_w1, cq_w5, sg;
++	uint64_t fsz_w1 = 0, cq_w1, cq_w5 = 0, sg;
+ 	uint32_t offset = hdr->w2.ptr_offset;
+ 	uint8_t num_frags = 0, nxt_frag = 0;
+ 	struct rte_mbuf *head, *last_mbuf;
+@@ -845,8 +845,8 @@ cn20k_nix_recv_pkts_vector(void *args, struct rte_mbuf **mbufs, uint16_t pkts, c
+ 	uint64x2_t rearm2 = vdupq_n_u64(mbuf_initializer);
+ 	uint64x2_t rearm3 = vdupq_n_u64(mbuf_initializer);
+ 	struct rte_mbuf *mbuf0, *mbuf1, *mbuf2, *mbuf3;
++	uint64_t lbase, laddr = 0, buf_sz = 0;
+ 	uint8_t loff = 0, lnum = 0, shft = 0;
+-	uint64_t lbase, laddr, buf_sz;
+ 	uint8x16_t f0, f1, f2, f3;
+ 	uint16_t lmt_id, d_off;
+ 	uintptr_t sa_base = 0;
+--
+2.50.1 (Apple Git-155)
 
