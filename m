@@ -2,40 +2,40 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BA96D1039A
-	for <dpdk-dev@archiver.kernel.org>; Wed, 26 Nov 2025 09:57:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 316E9D1037B
+	for <dpdk-dev@archiver.kernel.org>; Wed, 26 Nov 2025 10:40:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1FBDF406BB;
-	Wed, 26 Nov 2025 10:57:16 +0100 (CET)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 27E0B4042F
- for <dev@dpdk.org>; Wed, 26 Nov 2025 10:57:15 +0100 (CET)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id DD632208AE;
- Wed, 26 Nov 2025 10:57:14 +0100 (CET)
-Content-class: urn:content-classes:message
+	by mails.dpdk.org (Postfix) with ESMTP id DF6B640695;
+	Wed, 26 Nov 2025 11:40:33 +0100 (CET)
+Received: from out-dbl.mail.syseleven.net (out-dbl.mail.syseleven.net
+ [195.192.142.195])
+ by mails.dpdk.org (Postfix) with ESMTP id B63D84042F
+ for <dev@dpdk.org>; Wed, 26 Nov 2025 11:40:32 +0100 (CET)
+Received: from 127.0.0.1 (localhost [127.0.0.1])
+ by out-dbl.mail.syseleven.net (Postfix) with ESMTPSA id 535CA1F81A4;
+ Wed, 26 Nov 2025 11:40:31 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=syseleven.de;
+ s=2022n001; t=1764153631;
+ bh=n0PAyoQsDX3mflDfv00TkAoc/EVuC2NGYmiMo3HdZTc=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=UcOxh3nav3Mz0UWpiL8/JHNv0EZL3/9XKHJrRjw3SUdzeAvI13FFxAnUSUAg16lRd
+ n4Fka5WdblUCjGo/JTZqUB9l5x6NHYyBfnCMV7lC2mPBnXvAjBbJPO8OVtg6y/YbrZ
+ X9aEm4Nsm7wb5tIifiP6F5JE/avk/Ej5Cq+biL1VhFK6p6x9gNoBDtVNwFW+cIAUAH
+ ldMjtkV4g+wvXJ/OuIaMoC97tksSW4Yd1ZkmwVsKuGzDJ52rWcti3vp6n8vbqYY4pE
+ K5kuDprROsJv6bxzsWfTc1d+3nFHOIo0Wr5MlMffdKbewf0ntJJ7LsOPZKaNE/6tId
+ h8MgmkLKJvLDA==
+From: a.schollmeyer@syseleven.de
+To: Aman Singh <aman.deep.singh@intel.com>
+Cc: Stephen Hemminger <stephen@networkplumber.org>, dev@dpdk.org,
+ Adrian Schollmeyer <a.schollmeyer@syseleven.de>
+Subject: [PATCH v2] app/testpmd: warn on shared rxq switch mismatch
+Date: Wed, 26 Nov 2025 11:40:09 +0100
+Message-Id: <20251126104009.472852-1-a.schollmeyer@syseleven.de>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20251125102207.428661-1-a.schollmeyer@syseleven.de>
+References: <20251125102207.428661-1-a.schollmeyer@syseleven.de>
 MIME-Version: 1.0
-Subject: RE: [RFC 1/2] config: add optimal burst size configuration
-Content-Type: text/plain;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 26 Nov 2025 10:57:13 +0100
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65592@smartserver.smartshare.dk>
-In-Reply-To: <20251126082414.91933-1-pbhagavatula@marvell.com>
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [RFC 1/2] config: add optimal burst size configuration
-Thread-Index: AdxerhSpT1HJb7w0TCerY3ZyQTjEBgABR+Nw
-References: <20251126082414.91933-1-pbhagavatula@marvell.com>
-From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
-To: "Pavan Nikhilesh" <pbhagavatula@marvell.com>,
- "Jerin Jacob" <jerinj@marvell.com>,
- "Wathsala Vithanage" <wathsala.vithanage@arm.com>,
- "Bruce Richardson" <bruce.richardson@intel.com>
-Cc: <dev@dpdk.org>
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -49,99 +49,88 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> From: Pavan Nikhilesh <pbhagavatula@marvell.com>
->=20
-> Add RTE_OPTIMAL_BURST_SIZE to allow platforms to configure the
-> optimal burst size.
->=20
-> Set default value to 64 for soc_cn10k and 32 generally.
->=20
-> Signed-off-by: Pavan Nikhilesh <pbhagavatula@marvell.com>
-> ---
-> This improves performance by 5% on l2fwd, other examples showed
-> negligible difference on CN10K.
->
+From: Adrian Schollmeyer <a.schollmeyer@syseleven.de>
 
-I support the concept of having a recommended mbuf burst size, targeting =
-the majority of generic applications.
-Making it CPU dependent seems like a good choice.
+Shared Rx queues do not work with every combination of ports. Besides
+requiring the corresponding device capability, shared Rx queues also
+require all ports of one share group and queue ID have the same switch
+domain and Rx domain. When these fields do not match, shared Rx queues
+are not properly set up and queue sharing may fail silently. This can
+happen even in some less intuitive cases like multiple VFs of one
+physical NIC.
 
-It should be named differently.
-First of all, "optimal" depends on the use case; if targeting low =
-latency, shorter bursts are better, so "OPTIMAL" should not be part of =
-the name.
-Second, I would guess that it only targets mbuf bursts, not also bursts =
-of other operations (e.g. hash lookups), so "MBUF" should be part of the =
-name.
+To help with debugging issues with shared Rx queue configuration when
+using testpmd, this commit introduces simple checks and warning messages
+for all members of a share_group and share_qid to warn whenever there is
+a mismatch in the switch and Rx domain.
 
-Suggestion:
-/* Recommended burst size for generic applications, striking a balance =
-between throughput and latency. */
-dpdk_conf.set('RTE_MBUF_BURST_SIZE_MAX' (or _DEFAULT), 64)
+Signed-off-by: Adrian Schollmeyer <a.schollmeyer@syseleven.de>
+---
+v2 changes:
 
-<feature creep>
-/* Recommended burst size for generic applications targeting low =
-latency. */
-dpdk_conf.set('RTE_MBUF_BURST_SIZE_MIN', 4)
-</feature creep>
+  * remove unnecessary casts
+  * refactor message printing logic to remove duplicate fprintf()
 
-Having these standardized will also allow libraries and drivers to =
-optimize for them, e.g. drivers should support bursts sizes all the way =
-down to RTE_MBUF_BURST_SIZE_MIN, and can static_assert() that the =
-RTE_MBUF_BURST_SIZE_MIN is not lower than supported by the =
-driver/hardware.
+ app/test-pmd/testpmd.c | 46 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 46 insertions(+)
 
-<more feature creep>
-rte_config.h could have "#define RTE_MBUF_BURST_SIZE =
-RTE_MBUF_BURST_SIZE_MAX", for the application developer to change to =
-RTE_MBUF_BURST_SIZE_MIN for low latency applications.
-This will let the libraries and drivers optimize for the specific burst =
-size used by the application.
-</more feature creep>
-
-<rambling>
-Intuitively, I would assume that the optimal burst size essentially =
-depends on the CPU's L1D cache size and the application's number of =
-non-mbuf cache lines accessed per burst.
-Let's say a CPU core has 32 KiB cache (=3D 512 cache lines), and each =
-burst touches 4 cache lines per packet:
-2 cache lines for the mbuf
-1 cache line for the packet data
-1 cache line per packet for some table lookup/forwarding entry
-
-Then the mbuf burst should be max 512/4 =3D 128.
-But local variables also use memory during processing, so using a burst =
-of 64 would leave room for that and some more.
-</rambling>
-
->  config/arm/meson.build | 1 +
->  config/meson.build     | 1 +
->  2 files changed, 2 insertions(+)
->=20
-> diff --git a/config/arm/meson.build b/config/arm/meson.build
-> index 523b0fc0ed50..fa64c07016b1 100644
-> --- a/config/arm/meson.build
-> +++ b/config/arm/meson.build
-> @@ -481,6 +481,7 @@ soc_cn10k =3D {
->          ['RTE_MAX_LCORE', 24],
->          ['RTE_MAX_NUMA_NODES', 1],
->          ['RTE_MEMPOOL_ALIGN', 128],
-> +        ['RTE_OPTIMAL_BURST_SIZE', 64],
->      ],
->      'part_number': '0xd49',
->      'extra_march_features': ['crypto'],
-> diff --git a/config/meson.build b/config/meson.build
-> index 0cb074ab95b7..95367ae88e2d 100644
-> --- a/config/meson.build
-> +++ b/config/meson.build
-> @@ -386,6 +386,7 @@ if get_option('mbuf_refcnt_atomic')
->      dpdk_conf.set('RTE_MBUF_REFCNT_ATOMIC', true)
->  endif
->  dpdk_conf.set10('RTE_IOVA_IN_MBUF', get_option('enable_iova_as_pa'))
-> +dpdk_conf.set('RTE_OPTIMAL_BURST_SIZE', 32)
->=20
->  compile_time_cpuflags =3D []
->  subdir(arch_subdir)
-> --
-> 2.50.1 (Apple Git-155)
+diff --git a/app/test-pmd/testpmd.c b/app/test-pmd/testpmd.c
+index 1fe41d852a..33b99756f7 100644
+--- a/app/test-pmd/testpmd.c
++++ b/app/test-pmd/testpmd.c
+@@ -2675,6 +2675,52 @@ rx_queue_setup(uint16_t port_id, uint16_t rx_queue_id,
+ 	uint32_t prev_hdrs = 0;
+ 	int ret;
+ 
++	if (rx_conf->share_group > 0) {
++		/* Additional warnings for bad Rx queue sharing */
++
++		const uint16_t dom_id = ports[port_id].dev_info.switch_info.domain_id;
++		const uint16_t rx_dom = ports[port_id].dev_info.switch_info.rx_domain;
++
++		uint16_t pid;
++		RTE_ETH_FOREACH_DEV(pid) {
++			struct rte_port *o_port = &ports[pid];
++			for (uint16_t q = 0; q < nb_rxq; ++q) {
++				struct port_rxqueue *rxq = &o_port->rxq[q];
++				if (rxq->conf.share_group != rx_conf->share_group ||
++						rxq->conf.share_qid != rx_conf->share_qid)
++					continue;
++
++				const uint16_t o_dom_id = o_port->dev_info.switch_info.domain_id;
++				const uint16_t o_rx_dom = o_port->dev_info.switch_info.rx_domain;
++				const char *mismatch = NULL;
++				uint16_t this_val = 0;
++				uint16_t other_val = 0;
++
++				if (o_dom_id != dom_id) {
++					mismatch = "switch domain";
++					this_val = dom_id;
++					other_val = o_dom_id;
++				} else if (o_rx_dom != rx_dom) {
++					mismatch = "rx domain";
++					this_val = rx_dom;
++					other_val = o_rx_dom;
++				}
++
++				if (mismatch) {
++					fprintf(stderr, "Bad shared rxq config: "
++						"%s mismatch in share group/qid %u/%u: "
++						"%u (port %u) vs. %u (port %u)\n",
++						mismatch,
++						rxq->conf.share_group,
++						rxq->conf.share_qid,
++						this_val,
++						port_id,
++						other_val,
++						pid);
++				}
++			}
++		}
++	}
+ 
+ 	if ((rx_pkt_nb_segs > 1) &&
+ 	    (rx_conf->offloads & RTE_ETH_RX_OFFLOAD_BUFFER_SPLIT)) {
+-- 
+2.34.1
 
