@@ -2,70 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12E94D111A7
-	for <dpdk-dev@archiver.kernel.org>; Wed, 26 Nov 2025 21:39:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AD8ED111A7
+	for <dpdk-dev@archiver.kernel.org>; Wed, 26 Nov 2025 21:43:40 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0FB4640B91;
-	Wed, 26 Nov 2025 22:39:34 +0100 (CET)
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com
- [209.85.160.180])
- by mails.dpdk.org (Postfix) with ESMTP id B8EAF4013F
- for <dev@dpdk.org>; Wed, 26 Nov 2025 22:39:32 +0100 (CET)
-Received: by mail-qt1-f180.google.com with SMTP id
- d75a77b69052e-4edaf8773c4so3551721cf.1
- for <dev@dpdk.org>; Wed, 26 Nov 2025 13:39:32 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 6EBC740B9A;
+	Wed, 26 Nov 2025 22:43:39 +0100 (CET)
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com
+ [209.85.160.171])
+ by mails.dpdk.org (Postfix) with ESMTP id EE1804013F
+ for <dev@dpdk.org>; Wed, 26 Nov 2025 22:43:37 +0100 (CET)
+Received: by mail-qt1-f171.google.com with SMTP id
+ d75a77b69052e-4ed82ee9e57so4079571cf.0
+ for <dev@dpdk.org>; Wed, 26 Nov 2025 13:43:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1764193172;
- x=1764797972; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1764193417;
+ x=1764798217; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=kKjhK3NEtUiB4wmpgr5AmM2AvYMUkX0ypLM+40onodk=;
- b=X1cEgIhZ2XVkiZLzkuefNfUsUCBOGWUnEggwiRWOCSeJKOZfhJrJskrlk+CHDZq7O3
- RxuguuU3ImaEqWxR+nMgGi/YafuQQStqzr4HElQI6DbzvQZv/Eor37j8w1ccByzYa0g1
- HjOLspkXNTwqUyDnc8e/vZVrkV9nwkaEZz7kU50mIXt9pe3l0i/QiBKORJZF8S0hHSYX
- 0eSAp4Pj3zbjBiDr9Bh5HMVHKKpUYWLsvduyy9eS76JtssVb7fxCTll8ard+JitkATq2
- Ac9LjWahqkeoLNA7D784XrHDCxxeq9mUVbX0AkqHj5ToybjE5uLkwYs6GGZaFAPY+w7S
- qeQw==
+ bh=R07g9ltLw2bx5fpQSwSAZhdohZ9hmlqCPn6syEqQ1RU=;
+ b=GJ2RnG99c/ScKfS5aqRfOdh1C4Rq9196TKbUIWciId4UJj15s/tgRlvzck9kO+Ll28
+ +rivu8O79cfEX4mEoZKbZPGYWAgF6XOCGnEbkKyWcFxOzgWymknd12RXE7ZObG77OG3S
+ YKhFlUqeVIcNKxML/Hpa9rV1FYB6ISe/VK+edKTwJOe4SmptNk375TXNboLVdHfU5H5l
+ OYEuHxlGFSP3UdJkoj8woXaN6+FS4OS9HrL0KkEYZYKbNKP5cZazlfz17FieFLt0+0pl
+ rwMubSkqK9mzpUyoZ3tOWllQFbD/UFgukL0o+LCYdC61UOntwmcOMfRcDS5BCvC2Cez8
+ rr/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1764193172; x=1764797972;
+ d=1e100.net; s=20230601; t=1764193417; x=1764798217;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=kKjhK3NEtUiB4wmpgr5AmM2AvYMUkX0ypLM+40onodk=;
- b=jBVkTtdYZKMc6id0zZaDUkQ6PmezyiUeMW5WfSVe9icRd5QPc6fnCpCavwVCt3cS7G
- sbFcvZAqbk76DWyUNTD4sntmjIqNrHMy48+Cqwo7AJr0HY0JQYxyB8rjDmtDpwIZrsxV
- HXm0l68YUIYvQ2ux9W4kMffO5xTnMLyzy0fjczArM+Fv3fVnKzPH7Wd9xb4cv5+Cxm3X
- cbPMnMlsY0eZYd7jKKJ6etPP15HlMXGNE/94PDCA8T+G8Bg3oGH3ViRzfAW/F+js9qlX
- MDMXXE4ltDYg6dBSNdWuK3uGa/IATZL8RbG74vaj62Lk5jqhwbDErDIzP9IGxLnJoPe1
- +wzA==
-X-Gm-Message-State: AOJu0YwyNvt7QboT3ruCINyLGjknif35SarJzbkoQ7eJ7B5xbHgnP4LF
- 3K90OPiOHq8wfXK6G3Snp/V23/Agf2+qOI1Q+5FFjt2IRBqBvSOQTNNfyxlfga3sFib0x+RP7Lq
- F7s6y
-X-Gm-Gg: ASbGncuLFMIma/uigUnvNNX6dMzKvhJRKlibfTpRLrgzTxPFAHO2nrh+ZowDrZ4yQ/q
- e8BJK44SR+g2N6/SEjludGYLyowaD9xvIkmOR4o4U4Q8vqcL2oUSSR98okrE2Syc/EQflXvT2/Q
- 2PDipGUB3rtfXEmndIZgvEwYV9r8A8Q2eRj5oIlVG7WPneuOQ0BwFQrr7xZ1OTU5dmDlKcfkq6X
- rnk/Ojuya08dxIWyeCKZJ8Bsy1Gqm3UWnSqVB8+4cXfWes8VKhnbknX5nGEquII10nvAXdO9ouu
- mZnkzxh+T62GAUMG3j7wZg2p0KztyVRZ/+umexA/4Ek+vkQPAl6u/aqfCgGhdAidsOCyo6ojQbo
- 0pvtK2dWQbNTm5CYu3+hWkvO/UTdzxShEI1x/XhkQ+PbsRo4VjDqXZs79Y1MqSOr+Cca3+iUC8N
- jvBCBjrPlfPTdkYr2af6vULuquCHASSzAdrzdAECZVHCHyIBwVoJTJ
-X-Google-Smtp-Source: AGHT+IEEXAS4AnQKEqN1p9VI+PKhdGatqsrILbSBBNZDS8nRH03+6Itw84LX90wA63rPLdGsFYUH6w==
-X-Received: by 2002:a05:622a:3cc:b0:4ee:2352:1bb1 with SMTP id
- d75a77b69052e-4ee58a447d3mr346383121cf.5.1764193171975; 
- Wed, 26 Nov 2025 13:39:31 -0800 (PST)
+ bh=R07g9ltLw2bx5fpQSwSAZhdohZ9hmlqCPn6syEqQ1RU=;
+ b=D9hbC9Fa8jNnAZuMCY5IVGRfppDotiAcU6RUZe8KNHYZKa63dz7RcqZ6YmUxOp9MAK
+ 0+uUDncQVs0yW1UxSTWjZYbD8sQ23lN0QAgbzmglnrL7UwncbWnSlAhuY2OaNpA0doEK
+ oRIqXO1T+Duxs9nR1tSRjb+4Z7x/VYHob7tpU696p1mYQxeiw+mj8RD6bTOrMZ0qz0LR
+ ybTg2tijxaW0cLNp5Ioam8chOtHpIFwPYcwJaCEevJFhtjY8CC2WdNf8IfriiUPbc7x/
+ ui68OcdSNEiyndEvLHU8RtTZ3vx2SUZccxxwDZwWd56dsN4WPj8JbYHrdg3MMrafCHxA
+ KUUg==
+X-Gm-Message-State: AOJu0YzboTppBeOZ4HhwCELy7qAGF2WTEif+L8sbD0Gr3BYY/aZqJOZK
+ 6f7tG21HCqqJDwpuDV4ImIlYOAnjOnZWhrtb7dRYjm5I097w6caY00/LqL9E7Y8st9A=
+X-Gm-Gg: ASbGncsBcYx5bx//AruZHD+CcUhZLn5RT+wR/ys2l6vg9LX+NVfPM40GH1Z6KYvMVRC
+ 9Ga8FeBmscbTO9deMMpk4ntZDrKEYQ5WIiD1arEQZGZ/JVROu5M9GQvlVDiERPnM2HI0pc4bETN
+ mlHYzgNlTH20CjPXsu1rv+EgsWP4iNrOobM4WZQf6XY1V4J5+eoNOrDCqBSWtpUmolbvYAv5eP9
+ AMk5KLPnC3xZ87h2YFS8EgMMTTnbdlG7T62m9CKWtcBcmQHUeucDUh7cl1pVMFk2D/7zG1SwMAQ
+ LMSotEb+3tveDfNQGGOZXqOGTnGkBE/iwsMorWgtBFDxC3z/bIbmDfH7qTGufhyovttRGa7YErI
+ GtX6OY0zoVzLUwaLAMBdP+KJzE05VmfuczzkvDzyzAbdmaf2cboJz28BDAfAgBYyIeSAzaLb32X
+ N0iFRf3j90R440fYU2eeChsRLSZwr7AOft8RnnDUPWA3Wx8PxmyWRS
+X-Google-Smtp-Source: AGHT+IFEZ0qHwT660RJGQjCkYxuKo3Z4f/zTq4T9f97DRrx0PESV58mFkKMt7QWaDV1WjNjVwTPCEA==
+X-Received: by 2002:a05:622a:424e:b0:4ef:c4de:2ac9 with SMTP id
+ d75a77b69052e-4efc4de2ba4mr65686441cf.17.1764193417310; 
+ Wed, 26 Nov 2025 13:43:37 -0800 (PST)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d75a77b69052e-4ee48e86bdasm128264231cf.33.2025.11.26.13.39.31
+ 6a1803df08f44-8846e468484sm153668376d6.14.2025.11.26.13.43.36
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 26 Nov 2025 13:39:31 -0800 (PST)
-Date: Wed, 26 Nov 2025 13:39:25 -0800
+ Wed, 26 Nov 2025 13:43:37 -0800 (PST)
+Date: Wed, 26 Nov 2025 13:43:32 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: Jiawen Wu <jiawenwu@trustnetic.com>
 Cc: dev@dpdk.org, zaiyuwang@trustnetic.com
-Subject: Re: [PATCH] net/txgbe: remove the build dependency on security
-Message-ID: <20251126133925.7cb06815@phoenix.local>
-In-Reply-To: <19590B42346A2673+20251121061951.466049-1-jiawenwu@trustnetic.com>
-References: <19590B42346A2673+20251121061951.466049-1-jiawenwu@trustnetic.com>
+Subject: Re: [PATCH v2] net/txgbe: fix the missing old mailbox interface calls
+Message-ID: <20251126134332.77ae1685@phoenix.local>
+In-Reply-To: <9E296F0580980C92+20251126085649.8665-1-jiawenwu@trustnetic.com>
+References: <A4E8D8476CBBC191+20251119085624.73210-1-jiawenwu@trustnetic.com>
+ <9E296F0580980C92+20251126085649.8665-1-jiawenwu@trustnetic.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -82,20 +82,22 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, 21 Nov 2025 14:19:51 +0800
+On Wed, 26 Nov 2025 16:56:49 +0800
 Jiawen Wu <jiawenwu@trustnetic.com> wrote:
 
-> Now lib security is enabled by default, and cannot be disabled if the
-> driver is intended to be used. But there are some functional scenarios
-> where lib security should be disabled, just like to enale Tx descriptor
-> hardware check. See commit 0eabdfcd4af4 ("net/txgbe: enable Tx
-> descriptor error interrupt").
+> For different devices, the mailbox flow between software and firmware is
+> different. There are several mailbox command in the txgbe driver, but only
+> txgbe_hic_sr_read() was changed to use the new flow.
 > 
-> So remove the build dependency on lib security for the driver.
+> It lead to other mailbox commands timeout for Amber-Lite devices, which
+> is required to use the new flow. So this patch fills in the missing part.
 > 
+> For the sake of code tidy, txgbe_hic_sr_read() should change to use the
+> locked function txgbe_host_interface_command(), and this function could
+> be change to pointer in struct txgbe_mbx_info for different devices.
+> 
+> Fixes: 6a139ade82e7 ("net/txgbe: add new SW-FW mailbox interface")
 > Signed-off-by: Jiawen Wu <jiawenwu@trustnetic.com>
+> ---
 
-I would like a review by other maintainers.
-Several other drivers including cn10k, cn20k, ixgbe already have
-similar dependencies. Can't the security library just have stubs
-to always return NULL if not used.
+Queued to next-net
