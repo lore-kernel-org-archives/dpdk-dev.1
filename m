@@ -2,75 +2,181 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C502D1038C
-	for <dpdk-dev@archiver.kernel.org>; Wed, 26 Nov 2025 08:14:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA87CD1038C
+	for <dpdk-dev@archiver.kernel.org>; Wed, 26 Nov 2025 08:14:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2F1A840B95;
-	Wed, 26 Nov 2025 09:14:04 +0100 (CET)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id 76DC74026F;
- Wed, 26 Nov 2025 09:14:02 +0100 (CET)
-Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
- 5APE2wJj699275; Wed, 26 Nov 2025 00:14:01 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=5
- p5QdrYEIlTEp47uFjmzXBewruHUMgDNJOAx0jotUXQ=; b=XYrkEgNryUf4R71GT
- VvUjzHfqXJ8r0hC80RBoPUeNCx6VKarbtpgID2EGwY/1MJhYok+ETODwO2qa5CD9
- hDB9L5qmIi3EwVcCeMQVTbi3B4B1/jpqVnBVQvwy3fVAFp9lk4zLXKWshexLRNh+
- plDBHzmHN0aBE5rQAJKCt43JCUVSLRDEXwfuvXE5mBUoxbD9mAsKU/7+9EfqRsyC
- 0NxtTebXrDbnAD593LdJFCyurRTqRt5xOLnN4Ddl1WHHayYFIEDBUWxAgWvfvqsm
- ns+P3nRsGGTVVm63TKBtmzZVqlQmpycD4efMY6xBTH2x4NiPPVjXF9LyivHAN33U
- VXweA==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4amxrav0fd-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Wed, 26 Nov 2025 00:14:01 -0800 (PST)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+	by mails.dpdk.org (Postfix) with ESMTP id 35D6540DCA;
+	Wed, 26 Nov 2025 09:14:19 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+ by mails.dpdk.org (Postfix) with ESMTP id 0E98D40BA6
+ for <dev@dpdk.org>; Wed, 26 Nov 2025 09:14:17 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1764144858; x=1795680858;
+ h=from:to:cc:subject:date:message-id:references:
+ in-reply-to:content-transfer-encoding:mime-version;
+ bh=Q3AduXvE4pXTeyR4GWSWJm5/n/3oFoMj5cRxq5hlSXs=;
+ b=NpzEKMbkws3sj0wfX++H+O/ojhlVYgfRBwLoNu1CrAGe8XRYxXdUNMcT
+ s5jYHE8rLzZMWyaLeUjojcS7eljvZt0a42Mm0RszgRGJ/EOQIhe3qteGk
+ E/PuwZHP3u5ZynJ89AUwcJIRcG1dIEmi94InBd6U72j4z3U7Sq4Qp/sql
+ flCK1OCM8vem7Qtp3jmm4ANkJxnc/VjhRrMGGIHCfYULOspy0Ln/sEhYc
+ PvdqNbrjM0ZtjijNG9gy/BFpzn4u4B6NUX4WCtlVRDPyw0yvC4QNPUpYl
+ enStY4HJwJHFYj6+UIYiU8wENLPp696sOtKGnWwLVzREZlDOSzbXtodgT A==;
+X-CSE-ConnectionGUID: OF4YCFWAROOBZ9FqV3sLcw==
+X-CSE-MsgGUID: Mfj13m83TXeHoBC7Ab+26g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11624"; a="65882018"
+X-IronPort-AV: E=Sophos;i="6.20,228,1758610800"; d="scan'208";a="65882018"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+ by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 26 Nov 2025 00:14:17 -0800
+X-CSE-ConnectionGUID: 2pSb6GzOT9ipbJYHq0SEnw==
+X-CSE-MsgGUID: O1H4b5cwSwOa+PlaKYlB6Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.20,228,1758610800"; d="scan'208";a="192129891"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+ by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 26 Nov 2025 00:14:16 -0800
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Wed, 26 Nov 2025 00:13:59 -0800
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Wed, 26 Nov 2025 00:13:59 -0800
-Received: from LYYJYPGKF4.marvell.com (unknown [10.28.21.218])
- by maili.marvell.com (Postfix) with ESMTP id 580423F7040;
- Wed, 26 Nov 2025 00:13:56 -0800 (PST)
-From: <pbhagavatula@marvell.com>
-To: <jerinj@marvell.com>, Pavan Nikhilesh <pbhagavatula@marvell.com>, "Shijith
- Thotton" <sthotton@marvell.com>,
- Nithin Dabilpuram <ndabilpuram@marvell.com>,
- Kiran Kumar K <kirankumark@marvell.com>, Sunil Kumar Kori
- <skori@marvell.com>, Satha Rao <skoteshwar@marvell.com>, Harman Kalra
- <hkalra@marvell.com>
-CC: <dev@dpdk.org>, <stable@dpdk.org>
-Subject: [PATCH v3] event/cnxk: fix offload flags
-Date: Wed, 26 Nov 2025 13:43:53 +0530
-Message-ID: <20251126081353.85811-1-pbhagavatula@marvell.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20251126063711.42115-1-pbhagavatula@marvell.com>
-References: <20251126063711.42115-1-pbhagavatula@marvell.com>
+ 15.2.2562.29; Wed, 26 Nov 2025 00:14:16 -0800
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.29 via Frontend Transport; Wed, 26 Nov 2025 00:14:16 -0800
+Received: from PH0PR06CU001.outbound.protection.outlook.com (40.107.208.53) by
+ edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.29; Wed, 26 Nov 2025 00:14:16 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ex66Cc+zR2usMQ3/3/3a4Ht4qygD60cqpB1dnB1qhXSi6+XIveR88lE0hltNEw5H2lysJaR5iy8/mdsx4Hmej2ZGqRdw9OcDxoKx4UUwU+juFycueDGkfTi2sCpJsplnXRDqTxePGfP8DRaF04dRdXm8tCvR5YmUM+GJJocr9eXLzFGszDLi8MetrmX/kztnmprqQ7MBV1R5HH30f1PThmY633bcUku+g4YRrg2vTntj4n3eCJDgoM7ylnSVkvzXn0GWjFR4VBO006xXIcciyOxplNNYr5rEWYUW7bVdp4MTypXR8n9FpL4WWTx/Kx+maxeHzmUQBC0kjaFoHxsqhg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Q3AduXvE4pXTeyR4GWSWJm5/n/3oFoMj5cRxq5hlSXs=;
+ b=q0ctnBJjE2DK+B7dlMl88g+btVPjHQj0edf14ICaZ6fpRLenMhzz+Oi1QVuRzmkdwlpHdfmNXaloT+3CraljgrDcNj3SfjxsASKk9L3hlJI7MzCUtQg6m3h1+JGDJicLYRmwRgoiU8G/IddgOxwQQrelZWHvS8pqzh4A5QSbgw2RMZJexSm3otRrQJ+ihxsJ7C6BDieP8ETR/LsceJQVkedMXQZ5bgxrHlwv3Dk7Kqna8TMJeP7e2CDF1jAt/C69mFOQntaNf0ziIlpmmG0iTrUAdT2tuPWGLXQpdmRRyP5xLu0zmsSa/CLASfpydV0WNvSNOvWDlzNHxwBvm/LdnA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from SJ5PPF04AA7285F.namprd11.prod.outlook.com
+ (2603:10b6:a0f:fc02::806) by BY1PR11MB8031.namprd11.prod.outlook.com
+ (2603:10b6:a03:529::21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9366.12; Wed, 26 Nov
+ 2025 08:14:09 +0000
+Received: from SJ5PPF04AA7285F.namprd11.prod.outlook.com
+ ([fe80::6fef:19a1:45d0:d051]) by SJ5PPF04AA7285F.namprd11.prod.outlook.com
+ ([fe80::6fef:19a1:45d0:d051%3]) with mapi id 15.20.9343.019; Wed, 26 Nov 2025
+ 08:14:09 +0000
+From: "Xu, HailinX" <hailinx.xu@intel.com>
+To: Thomas Monjalon <thomas@monjalon.net>, dev <dev@dpdk.org>
+CC: "Mcnamara, John" <john.mcnamara@intel.com>, "Richardson, Bruce"
+ <bruce.richardson@intel.com>, Ferruh Yigit <ferruh.yigit@xilinx.com>
+Subject: RE: DPDK release candidate 25.11-rc3
+Thread-Topic: DPDK release candidate 25.11-rc3
+Thread-Index: AQHcWRAoGtS3eDY1zUqoUmmyo/5WOrUEps5g
+Date: Wed, 26 Nov 2025 08:14:09 +0000
+Message-ID: <SJ5PPF04AA7285F4397A2FB0ED95244BF859FDEA@SJ5PPF04AA7285F.namprd11.prod.outlook.com>
+References: <2831295.atdPhlSkOF@thomas>
+In-Reply-To: <2831295.atdPhlSkOF@thomas>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SJ5PPF04AA7285F:EE_|BY1PR11MB8031:EE_
+x-ms-office365-filtering-correlation-id: 70159f81-7488-4d23-3ec2-08de2cc3c6c3
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0; ARA:13230040|376014|1800799024|366016|38070700021;
+x-microsoft-antispam-message-info: =?utf-8?B?THN0OGxLV1RhWkduTDBzZGRuZXVweWRSOTB5MmsycXlHRnJ5WlVWUWhxTWt1?=
+ =?utf-8?B?b3BhQk9iZGw5SEVEM3JEbnplb1lhQ2FtZG4wS3kxYUZQemxGZFN3eWtIcnJO?=
+ =?utf-8?B?Ny9rdVA4ajJrc250ak1vVk8wSitpWDZSMlRaOUlnc2M0OGFWaURUdTNLL3NX?=
+ =?utf-8?B?OUYyMm0vSVlRdWVpNkxxVFpnTUpOK3JmM3lzVmt5VnhFWkhBUkc1bzlzbjhP?=
+ =?utf-8?B?SSs5cWlZMFlrb1ZnazJBT2s2akczcmYwNFZjVERyN0NBdjgyd1BjOEgwNWE3?=
+ =?utf-8?B?UHVPTDhxWVFLUFZaUTZkSDFvYUc3emZrZEZWbzZNcmovRFRJZmlicFphMTdE?=
+ =?utf-8?B?eXUxa2tYVHVlUzdndjdHSXo4MUMxc3EycmZPSEt1cFB5MkIyREQ0R2hGT2tE?=
+ =?utf-8?B?QkQ1c2RvQUVnSUJ5Slc3VWJZaFM1QWpZQ1J1c25jK0tOMEErTmQ5bnRjTVp1?=
+ =?utf-8?B?R3VISUwxeWhmYk5RbWY5M1FCVWlkVldSazRCZHRJcUdkRGs3Y29SZkpkTkIx?=
+ =?utf-8?B?ZzdwSVIxNWViK00wVFljUUEyZWlVeVViMnhMQnRkSmVsdTJRdDUwQ3ROU2dO?=
+ =?utf-8?B?V2NmMFdGamQ2SGVYK0FyUFdlZWMyQ2U4S3M1Nll2TEkyNThid3RYSmhWdWhF?=
+ =?utf-8?B?M3h3aGU2cEZUMk5vVEI3SjA4THVmTTNDeStEc0JXLzA3RnNtaWUxc2N4b1dk?=
+ =?utf-8?B?NlZKclZFUFRibUNTcnl1WHFPamY2by8yUEh2eG4vWEQydTBvOVVpWTAwdXlI?=
+ =?utf-8?B?bXRhU1d4OVUvbGNnUU9ubDgzbC9FRXlyQVhXZ0FkOEx1Z3JKU2hnMXVHcnNp?=
+ =?utf-8?B?S1VWL1ozSklVYThUc0FKazZEWWpXOE5tbmFsUlB4RHhsVW0zM3Nvbk9yMWtI?=
+ =?utf-8?B?ZVNGKytvUHRTSGtTK0Rob2hWU0NqdE1aQ3c2L2lITHJDKzFuUHlEUkQ3SG1i?=
+ =?utf-8?B?QkdrWWNEWGdqRzFja2FBcDV1SWhWVVZmK2J0K2NQS2U2di84YmhQS3VrcXdv?=
+ =?utf-8?B?dXh3azdYYXQvZmtFRSsrOGxIV2MzVWlTYi9yYnF6QmlmZ1NBS0E4a1RsWm9M?=
+ =?utf-8?B?MzlEWVRsaUdKWEduR3oyL29RdGFoaGk5S1BjVFd1aWROUnVySE5JUDV2T3Fl?=
+ =?utf-8?B?TDZZTDVvU29ESWhWbndyTk54ZDlLTEVwM0FmZFVrRE5XMXppL3p4N0VoWHg2?=
+ =?utf-8?B?R3BsS2xTVko0SnJ6TDY0VldMZ043eGRYWU8xanFHZW9lamdudGE5b1QyZ0Vj?=
+ =?utf-8?B?VjE4dlM1RzVDZ3ZIVFhkT3lCVlZrYUVFMEoyVVRLWjkvdWR2Rkt6ckorM3BM?=
+ =?utf-8?B?RWhoWmp1SVB5WVhDUDg1YWUyUWNjSEdUa2JpZVQ4T2F4YTJUUURMcnBRMXdL?=
+ =?utf-8?B?S0o1dmdSNTNVelRtdGZmdzRZNm8rd2xLclpGR0FWOStBTTRtQ1hzSVlDWXlL?=
+ =?utf-8?B?dXl1azVWVmMyYTQwMG82aDNpdGxaU2k5aWFwWU5RQXNpM0JmYVp3eVRYUVl3?=
+ =?utf-8?B?VTN5bWRJOW9FYklTYTIvVmFWSi8vblQ1WnVjZWFXcEY1M3FhZ3FwNXUwSHM4?=
+ =?utf-8?B?YWlaVlZWMkR1M00vY3dQMys2TGxXbmFnaW5CMEJuZHRXcndzWU1pN3EwV1pY?=
+ =?utf-8?B?MDB4TFFUM000dnpFNjB6SU54dVYrdEZrdXhSNG0vLzJUOHM5WldrcE4zYS9J?=
+ =?utf-8?B?UTFEOEZuWDVvNmtpOTAydGNvM2lUNTQ3K2NvNmZ1S1VtaTBIR2pnamtWcHRJ?=
+ =?utf-8?B?enp0NWxuRUxCQXd4cWI5OWlFWlJWWWNIa0R2bUdFZTFsRXVwSUtUTjA4Y2VK?=
+ =?utf-8?B?ZlNMSytOUkdGVjdqUWdQUkhWdkVwdklaWG1Odi9tQmhPc1UrdC9CbU5rbW8v?=
+ =?utf-8?B?RHlVanVEdEhnU255TTFqNVNyOXBoZDVscUV1eGMvUkNnTitaN0RzSGs4UDZx?=
+ =?utf-8?B?UWJKcFVKQ200NDFTK1UvZzNXMG12VUhEVEUzaDFSeWQ2NjJLSllPV0o5dmF5?=
+ =?utf-8?B?b1k2ejZKbkt3PT0=?=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:SJ5PPF04AA7285F.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(1800799024)(366016)(38070700021); DIR:OUT; SFP:1101; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?dEdFb3ZrSFV3cXRvT2hCdVQvVDExMnZML08yK1ZDMFNvTCtwUWU2eVdNL0VQ?=
+ =?utf-8?B?S2wvSFppa0M2M2F3MVdsT0FyVVJXUDlDNE1PUzJOTEl3Zm40Y2dIZUUyTVRn?=
+ =?utf-8?B?cUJ2Z2Z3bmtvSHJpdlV1NStnYWRrc2wyVGllZ1RjK2plaHRUM3dTVU5MTWt3?=
+ =?utf-8?B?bTgwcFRmenY4YTZ5YWlFL0tST1lxSXFSTVlsaGI3cnJzM3oxbFJ0MjgwRUVF?=
+ =?utf-8?B?TlB6NElQRlYvL0p0SVpRMmZXWUl2Nkx3K09GektlKzZ4aWV2MGw5WnBUWi80?=
+ =?utf-8?B?eStobWhPVlhLM2ZkbEx0VklnZ3VScThnWTNJajZEQ1RqYXZXMTFDUDdreFNJ?=
+ =?utf-8?B?YitNNFNYYkx6R0pqcFRMM09vR1BsYzkweDhVTEx4OFlaMEtsUHhuR1RHR3Rh?=
+ =?utf-8?B?UHNPTzFLcUEvOGczN3FnSmQyQ2cvTlloWm9wMzh2c1k1dndWYUV2cmQwalhl?=
+ =?utf-8?B?d2JjaCs2ektkS1NWTUp3Szg5MkE2Y1lkVWtVRDhxbTlOVEhSaWpYa1pyU28y?=
+ =?utf-8?B?ZXlHdlVaZm9NYXk0K0tjdTRuUEo3a0NiRXo4bDB4R3daSjIrUVQ3bzBkNzBR?=
+ =?utf-8?B?anoyVTZEcmoyRlU1QVFRamVaNDVnbU1nZ045T2xPYWc1eUhmT1dJUGhXUEx6?=
+ =?utf-8?B?TFB3U1pYbkFZZXFGVEF6bXhEYzVwOVlkQVNMemM0eWNYVTQ5ckJhUjd6Yy9r?=
+ =?utf-8?B?U25rWGhvNHk0UzcwcWJDaUlRemR4SUVVbUE5SFI0c2xzd2dPMnIwbGlxQTBM?=
+ =?utf-8?B?S0F2OFE3cVhLeVoyelVsSEhLcnZmT2hnVURuVE55UmRzSUJKVTE0b24zZ1F0?=
+ =?utf-8?B?NDJHWjZXcDNENjNZTEJhNnBMT3NZclNKZmhNRVRMekRFZ1ZGZVdhUGt4TWxV?=
+ =?utf-8?B?dzBTSmtkd1NTN2Rad1Z6SUxnaGNHUExsenJydEpySHV2aTJiTWV1K1BhZ2Fr?=
+ =?utf-8?B?d0ZHWWJ4allBQ1FscDBGRTFXV2g2WXIxMW5sQ2pDZ1MzTmdMWjJuV2Z4OW8v?=
+ =?utf-8?B?aEVNbzRjamQvZDBRWnMrYlBqSnRKWFduakFYVnJxRkk5WmV4LzBzMWpTa0FC?=
+ =?utf-8?B?Uk9kV2UwckN3azMrTVJhQTV2N2trMUlQYUh6bHdZUG83cDR3bVF4YWt2dk9U?=
+ =?utf-8?B?dU1CN0c4NFdLRDJUeTZMcVhyeDVjNGFzQVYxZGdQZDc4bFZSZW56Z0sza1Zo?=
+ =?utf-8?B?QmVpemFhTnRGR2VHVTRYWS80bjNiWG8xTkpaL0N6TmdQbERLdFUza096amdH?=
+ =?utf-8?B?VEg0NnZXVXVBbFZyWGJzeHlObk93WjR0eG5Xa2dSWWFYS1FpZnpiajJ4bnM3?=
+ =?utf-8?B?VGtFY0JMdy9mcHU5UWU3K1oybmhWbVRyZlVhVTRZYllEL0xNZnExRTFBVzRM?=
+ =?utf-8?B?VHZIUkRmQndMcm0rc3NYb0dWQzFDM2FZRUhYVjZCN2R6ejRQenA1ZWtWakwy?=
+ =?utf-8?B?ZUdvMzZkaGZFNVRPQkh5R1oyRksxZWtRYW1vbDB3cytYNXFpMUZPem9vWUxx?=
+ =?utf-8?B?Q2dqcDFTNEZFT0QvcUdVOGs0eWl1SnVQYUZ1VjRXS1hGVU9PWVZNclFkL3lB?=
+ =?utf-8?B?YVFOTDk2a3dEYVBsMDFVdDJTV1F1NC95cEVGbEFZVHpJZ2ZFbDlUV2ZkNjRy?=
+ =?utf-8?B?VDlNVFk5OURSUGtlTHl5VWF5bU1nNE83YzN2SnJwdUozcERBQ05aclVRclhL?=
+ =?utf-8?B?Wk9ySy9IZnAzSDlEd0ZEVWZCVit1d2lqUFNadWVOT2xjeWFMZUNoQ3FwMVRG?=
+ =?utf-8?B?SHBNRjZFSlhtSjhvWSt3RmZGNTZGUDQxT1o5ZkJhMHV4TnZKRFhkUjg2L0dt?=
+ =?utf-8?B?Tm5sSjl6TC9jYnlRWm9QVWluYTkrd1RUMGZQaTFVREtWVDhTb1lkTDhsUHN2?=
+ =?utf-8?B?S2hLSjNkRWdmZlEvYmNNenA1OEVKaERUVk9nRGU2azdUWjMrVGRyMlM2Y0dS?=
+ =?utf-8?B?cWJ4OW1VWWltQ0Y4ZGxKOENWVDVxSm81WGZGa3ZzN1hWOS9LdGxPaVgwMTVL?=
+ =?utf-8?B?bGZUNlpLZzErcTJOWE1aanV0ak1PSlhSa0dWdGVCZE1pOGNJZ3N2UzU0TnN2?=
+ =?utf-8?B?RTBTNkZQcVBYMEFxZnhKNklaUnBNbU1RMlhTRVdsOVQzRCtrMGtoYmtST3N3?=
+ =?utf-8?Q?iNZNMNJ3AI0nQtRM3bp3f7Xg4?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Authority-Analysis: v=2.4 cv=Xu/3+FF9 c=1 sm=1 tr=0 ts=6926b6c9 cx=c_pps
- a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
- a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=M5GUcnROAAAA:8 a=8rWy6zfcAAAA:8
- a=RY_15DkwN-dEklQYqroA:9 a=OBjm3rFKGHvpk9ecZwUJ:22 a=YjdVzJdQTyZRADMV7wFX:22
-X-Proofpoint-GUID: _cVB4KyYRRaae9lbKwduXYPBQ3kt-uwm
-X-Proofpoint-ORIG-GUID: _cVB4KyYRRaae9lbKwduXYPBQ3kt-uwm
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTI2MDA2NiBTYWx0ZWRfX6bmsI/nQVvDy
- t0uLq2gT/emhfNB07L2w8UTIJc+ChqsMqJFhGT/U3bKR4nZsE4fLTNBFufoKXsaO3nX9XQ9D0CR
- glwPqymhDZVMuu9BGjLfwzMOmRbPaWcehCSCGJaQXG4xBl5bSkFBis6sV1LOaJE4/74hfkKJ+bJ
- KHV/3FX7qt5CrT5uu+eU1V7zBJyfLRLJnmdV5OWklj9nd+rOvZ+qphAAqBeJwNnSWT/P2fL4hky
- KBV7iDoiqGIQTyAy5qic7YegVBPMyxmBVNJAI9wDwutrCMxMOWoRj4Ys8P7EywASY1Ev7XXJIf0
- FVmEzTlepRkdce7kl0WKkg4GAlCuBD9VCQ0IZHxRJ8K80XInIDF18PE+Stc7+aCSDJLQCN6AWuD
- 4dLbcP0GMXVqFxnLRjhHCBBxgcPOjA==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-25_02,2025-11-25_01,2025-10-01_01
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SJ5PPF04AA7285F.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 70159f81-7488-4d23-3ec2-08de2cc3c6c3
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Nov 2025 08:14:09.7683 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: MO8aGKmmcxKG3S3TmCya8cX5vFj3LZzpmF3Gq2qT3qM5Ij3weX9Vb2mXlKmiTyEyzpCJD10aQR0qb7U8O+XmEg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY1PR11MB8031
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,173 +190,50 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Pavan Nikhilesh <pbhagavatula@marvell.com>
-
-Use device configured Rx offloads instead of hardcoded values while
-draining work.
-
-Fixes: e8594de2731d ("event/cnxk: implement event port quiesce function")
-Cc: stable@dpdk.org
-
-Signed-off-by: Pavan Nikhilesh <pbhagavatula@marvell.com>
----
-v3 Changes:
-v2 Changes:
-- Fix build
-
- drivers/event/cnxk/cn10k_eventdev.c | 9 +++------
- drivers/event/cnxk/cn10k_worker.h   | 6 +++---
- drivers/event/cnxk/cn20k_eventdev.c | 8 +++-----
- drivers/event/cnxk/cn20k_worker.h   | 4 ++--
- drivers/net/cnxk/cn10k_rx.h         | 4 ++--
- drivers/net/cnxk/cn20k_rx.h         | 4 ++--
- 6 files changed, 15 insertions(+), 20 deletions(-)
-
-diff --git a/drivers/event/cnxk/cn10k_eventdev.c b/drivers/event/cnxk/cn10k_eventdev.c
-index 3832eb7e000f..0c1431b4e70c 100644
---- a/drivers/event/cnxk/cn10k_eventdev.c
-+++ b/drivers/event/cnxk/cn10k_eventdev.c
-@@ -126,8 +126,7 @@ cn10k_sso_hws_flush_events(void *hws, uint8_t queue_id, uintptr_t base,
-
- 	while (aq_cnt || cq_ds_cnt || ds_cnt) {
- 		plt_write64(req, ws->base + SSOW_LF_GWS_OP_GET_WORK0);
--		cn10k_sso_hws_get_work_empty(
--			ws, &ev, (NIX_RX_OFFLOAD_MAX - 1) | NIX_RX_REAS_F | NIX_RX_MULTI_SEG_F);
-+		cn10k_sso_hws_get_work_empty(ws, &ev, dev->rx_offloads);
- 		if (fn != NULL && ev.u64 != 0)
- 			fn(arg, ev);
- 		if (ev.sched_type != SSO_TT_EMPTY)
-@@ -473,8 +472,7 @@ cn10k_sso_port_quiesce(struct rte_eventdev *event_dev, void *port,
- 	} while (ptag &
- 		 (BIT_ULL(62) | BIT_ULL(58) | BIT_ULL(56) | BIT_ULL(54)));
-
--	cn10k_sso_hws_get_work_empty(ws, &ev,
--				     (NIX_RX_OFFLOAD_MAX - 1) | NIX_RX_REAS_F | NIX_RX_MULTI_SEG_F);
-+	cn10k_sso_hws_get_work_empty(ws, &ev, dev->rx_offloads);
- 	if (is_pend && ev.u64)
- 		if (flush_cb)
- 			flush_cb(event_dev->data->dev_id, ev, args);
-@@ -503,8 +501,7 @@ cn10k_sso_port_quiesce(struct rte_eventdev *event_dev, void *port,
- 	    SSO_TT_EMPTY) {
- 		plt_write64(BIT_ULL(16) | 1,
- 			    ws->base + SSOW_LF_GWS_OP_GET_WORK0);
--		cn10k_sso_hws_get_work_empty(
--			ws, &ev, (NIX_RX_OFFLOAD_MAX - 1) | NIX_RX_REAS_F | NIX_RX_MULTI_SEG_F);
-+		cn10k_sso_hws_get_work_empty(ws, &ev, dev->rx_offloads);
- 		if (ev.u64) {
- 			if (flush_cb)
- 				flush_cb(event_dev->data->dev_id, ev, args);
-diff --git a/drivers/event/cnxk/cn10k_worker.h b/drivers/event/cnxk/cn10k_worker.h
-index 954dee5a2a9e..9b6abdf18db2 100644
---- a/drivers/event/cnxk/cn10k_worker.h
-+++ b/drivers/event/cnxk/cn10k_worker.h
-@@ -52,12 +52,12 @@ cn10k_process_vwqe(uintptr_t vwqe, uint16_t port_id, const uint32_t flags, struc
- 	uint64_t mbuf_init = 0x100010000ULL | RTE_PKTMBUF_HEADROOM;
- 	struct cnxk_timesync_info *tstamp = ws->tstamp[port_id];
- 	void *lookup_mem = ws->lookup_mem;
-+	uint64_t meta_aura = 0, laddr = 0;
-+	uint16_t lmt_id = 0, d_off = 0;
- 	uintptr_t lbase = ws->lmt_base;
--	uint64_t meta_aura = 0, laddr;
-+	struct rte_mempool *mp = NULL;
- 	struct rte_event_vector *vec;
- 	uint16_t nb_mbufs, non_vec;
--	struct rte_mempool *mp;
--	uint16_t lmt_id, d_off;
- 	struct rte_mbuf **wqe;
- 	struct rte_mbuf *mbuf;
- 	uint64_t sa_base = 0;
-diff --git a/drivers/event/cnxk/cn20k_eventdev.c b/drivers/event/cnxk/cn20k_eventdev.c
-index b25e570211f1..1c5d9272398a 100644
---- a/drivers/event/cnxk/cn20k_eventdev.c
-+++ b/drivers/event/cnxk/cn20k_eventdev.c
-@@ -192,7 +192,7 @@ cn20k_sso_hws_flush_events(void *hws, uint8_t queue_id, uintptr_t base, cnxk_han
-
- 	while (aq_cnt || cq_ds_cnt || ds_cnt) {
- 		plt_write64(req, ws->base + SSOW_LF_GWS_OP_GET_WORK0);
--		cn20k_sso_hws_get_work_empty(ws, &ev, 0);
-+		cn20k_sso_hws_get_work_empty(ws, &ev, dev->rx_offloads);
- 		if (fn != NULL && ev.u64 != 0)
- 			fn(arg, ev);
- 		if (ev.sched_type != SSO_TT_EMPTY)
-@@ -521,8 +521,7 @@ cn20k_sso_port_quiesce(struct rte_eventdev *event_dev, void *port,
- 		ptag = plt_read64(ws->base + SSOW_LF_GWS_PENDSTATE);
- 	} while (ptag & (BIT_ULL(62) | BIT_ULL(58) | BIT_ULL(56) | BIT_ULL(54)));
-
--	cn20k_sso_hws_get_work_empty(ws, &ev,
--				     (NIX_RX_OFFLOAD_MAX - 1) | NIX_RX_REAS_F | NIX_RX_MULTI_SEG_F);
-+	cn20k_sso_hws_get_work_empty(ws, &ev, dev->rx_offloads);
- 	if (is_pend && ev.u64)
- 		if (flush_cb)
- 			flush_cb(event_dev->data->dev_id, ev, args);
-@@ -548,8 +547,7 @@ cn20k_sso_port_quiesce(struct rte_eventdev *event_dev, void *port,
-
- 	if (CNXK_TT_FROM_TAG(plt_read64(ws->base + SSOW_LF_GWS_PRF_WQE0)) != SSO_TT_EMPTY) {
- 		plt_write64(BIT_ULL(16) | 1, ws->base + SSOW_LF_GWS_OP_GET_WORK0);
--		cn20k_sso_hws_get_work_empty(
--			ws, &ev, (NIX_RX_OFFLOAD_MAX - 1) | NIX_RX_REAS_F | NIX_RX_MULTI_SEG_F);
-+		cn20k_sso_hws_get_work_empty(ws, &ev, dev->rx_offloads);
- 		if (ev.u64) {
- 			if (flush_cb)
- 				flush_cb(event_dev->data->dev_id, ev, args);
-diff --git a/drivers/event/cnxk/cn20k_worker.h b/drivers/event/cnxk/cn20k_worker.h
-index df0abd9202fd..608f93dcd465 100644
---- a/drivers/event/cnxk/cn20k_worker.h
-+++ b/drivers/event/cnxk/cn20k_worker.h
-@@ -54,12 +54,12 @@ cn20k_process_vwqe(uintptr_t vwqe, uint16_t port_id, const uint32_t flags, struc
- 	struct cnxk_timesync_info *tstamp = ws->tstamp[port_id];
- 	uint8_t m_sz = sizeof(struct rte_mbuf);
- 	void *lookup_mem = ws->lookup_mem;
-+	uint64_t meta_aura = 0, laddr = 0;
- 	uintptr_t lbase = ws->lmt_base;
--	uint64_t meta_aura = 0, laddr;
-+	uint16_t lmt_id = 0, d_off = 0;
- 	struct rte_event_vector *vec;
- 	uint16_t nb_mbufs, non_vec;
- 	struct rte_mempool *mp;
--	uint16_t lmt_id, d_off;
- 	struct rte_mbuf **wqe;
- 	struct rte_mbuf *mbuf;
- 	uint64_t sa_base = 0;
-diff --git a/drivers/net/cnxk/cn10k_rx.h b/drivers/net/cnxk/cn10k_rx.h
-index e79306e6467f..ef3bf454536d 100644
---- a/drivers/net/cnxk/cn10k_rx.h
-+++ b/drivers/net/cnxk/cn10k_rx.h
-@@ -1464,9 +1464,9 @@ cn10k_nix_recv_pkts_vector(void *args, struct rte_mbuf **mbufs, uint16_t pkts,
- 	struct rte_mbuf *mbuf0, *mbuf1, *mbuf2, *mbuf3;
- 	uint8_t loff = 0, lnum = 0, shft = 0;
- 	struct rte_mempool *meta_pool = NULL;
-+	uint16_t lmt_id = 0, d_off = 0;
-+	uint64_t lbase = 0, laddr = 0;
- 	uint8x16_t f0, f1, f2, f3;
--	uint16_t lmt_id, d_off;
--	uint64_t lbase, laddr;
- 	uintptr_t sa_base = 0;
- 	uint16_t packets = 0;
- 	uint16_t pkts_left;
-diff --git a/drivers/net/cnxk/cn20k_rx.h b/drivers/net/cnxk/cn20k_rx.h
-index 56826318151a..d859c53c20b3 100644
---- a/drivers/net/cnxk/cn20k_rx.h
-+++ b/drivers/net/cnxk/cn20k_rx.h
-@@ -307,7 +307,7 @@ nix_cqe_xtract_mseg(const union nix_rx_parse_u *rx, struct rte_mbuf *mbuf, uint6
- 	const struct cpt_parse_hdr_s *hdr = (const struct cpt_parse_hdr_s *)cpth;
- 	struct cn20k_inb_priv_data *inb_priv = NULL;
- 	const struct cpt_frag_info_s *finfo = NULL;
--	uint64_t fsz_w1 = 0, cq_w1, cq_w5, sg;
-+	uint64_t fsz_w1 = 0, cq_w1, cq_w5 = 0, sg;
- 	uint32_t offset = hdr->w2.ptr_offset;
- 	uint8_t num_frags = 0, nxt_frag = 0;
- 	struct rte_mbuf *head, *last_mbuf;
-@@ -845,8 +845,8 @@ cn20k_nix_recv_pkts_vector(void *args, struct rte_mbuf **mbufs, uint16_t pkts, c
- 	uint64x2_t rearm2 = vdupq_n_u64(mbuf_initializer);
- 	uint64x2_t rearm3 = vdupq_n_u64(mbuf_initializer);
- 	struct rte_mbuf *mbuf0, *mbuf1, *mbuf2, *mbuf3;
-+	uint64_t lbase, laddr = 0, buf_sz = 0;
- 	uint8_t loff = 0, lnum = 0, shft = 0;
--	uint64_t lbase, laddr, buf_sz;
- 	uint8x16_t f0, f1, f2, f3;
- 	uint16_t lmt_id, d_off;
- 	uintptr_t sa_base = 0;
---
-2.50.1 (Apple Git-155)
-
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBUaG9tYXMgTW9uamFsb24gPHRo
+b21hc0Btb25qYWxvbi5uZXQ+DQo+IFNlbnQ6IFdlZG5lc2RheSwgTm92ZW1iZXIgMTksIDIwMjUg
+MTI6NTEgUE0NCj4gVG86IGFubm91bmNlQGRwZGsub3JnDQo+IFN1YmplY3Q6IERQREsgcmVsZWFz
+ZSBjYW5kaWRhdGUgMjUuMTEtcmMzDQo+IA0KPiBBIG5ldyBEUERLIHJlbGVhc2UgY2FuZGlkYXRl
+IGlzIHJlYWR5IGZvciB0ZXN0aW5nOg0KPiAJaHR0cHM6Ly9naXQuZHBkay5vcmcvZHBkay90YWcv
+P2lkPXYyNS4xMS1yYzMNCj4gDQo+IFRoZXJlIGFyZSA5OCBuZXcgcGF0Y2hlcyBpbiB0aGlzIHNu
+YXBzaG90Lg0KPiANCj4gUmVsZWFzZSBub3RlczoNCj4gCWh0dHBzOi8vZG9jLmRwZGsub3JnL2d1
+aWRlcy9yZWxfbm90ZXMvcmVsZWFzZV8yNV8xMS5odG1sDQo+IA0KPiBQbGVhc2UgdGVzdCBhbmQg
+cmVwb3J0IG5ldyBpc3N1ZXMgb24gaHR0cHM6Ly9idWdzLmRwZGsub3JnDQo+IA0KPiBUaGUgbmV4
+dCByZWxlYXNlIGNhbmRpZGF0ZSAoLXJjNCkgaXMgcGxhbm5lZCBmb3IgTW9uZGF5IDI0Lg0KPiBQ
+YXRjaGVzIGFuZCByZXZpZXdzIGZvciBleGFtcGxlcywgdG9vbGluZyBhbmQgZG9jdW1lbnRhdGlv
+biBhcmUgd2VsY29tZS4NCj4gDQo+IFRoYW5rIHlvdSBldmVyeW9uZQ0KPiANClVwZGF0ZSB0aGUg
+dGVzdCBzdGF0dXMgZm9yIEludGVsIHBhcnQuIGRwZGsyNS4xMS1yYzMgYWxsIHZhbGlkYXRpb24g
+dGVzdCBkb25lLiBmb3VuZCBvbmUgbmV3IGlzc3VlLg0KDQpOZXcgaXNzdWU6DQogIDEuIGljZV9p
+YXZmX3J4X3RpbWVzdGFtcDogdGVzdHBtZCBzdGFydCBwb3J0IGZhaWxlZCAgICAgICAgICAtPiBI
+YXMgZml4IHBhdGNoDQoNCiogQnVpbGQgJiBDRkxBRyBjb21waWxlOiBjb3ZlciB0aGUgYnVpbGQg
+dGVzdCB3aXRoIGxhdGVzdCBHQ0MvQ2xhbmcgdmVyc2lvbiBvbiB0aGUgZm9sbG93aW5nIE9TKGFs
+bCBwYXNzZWQpDQogIC0gVWJ1bnR1MjUuMDQvVWJ1bnR1MjQuMDQuMw0KICAtIFJIRUw5LjYvUkhF
+TDEwDQogIC0gRmVkb3JhNDINCiAgLSBGcmVlQlNEMTQuMw0KICAtIFNVU0UxNS42DQogIC0gT3Bl
+bkFub2xpczguMTANCiAgLSBPcGVuRXVsZXIyNC4wNC1TUDINCiAgLSBBenVyZUxpbnV4My4wDQoN
+CiogRnVuY3Rpb24gdGVzdHM6IEFsbCB0ZXN0IGRvbmUgYW5kIGZvdW5kIG9uZSBpc3N1ZS4NCiAg
+LSBJQ0UtKEU4MTAsIEU4MjUsIEU4MzAsIEUyMTAwKSBQRi9WRjogdGVzdCBzY2VuYXJpb3MgaW5j
+bHVkaW5nIGJhc2ljL1JURV9GTE9XL1RTTy9KdW1ib2ZyYW1lL2NoZWNrc3VtIG9mZmxvYWQvbWFj
+X2ZpbHRlci9WTEFOL1ZYTEFOL1JTUy9Td2l0Y2gvUGFja2FnZSBNYW5hZ2VtZW50L0Zsb3cgRGly
+ZWN0b3IvQWR2YW5jZWQgVHgvQWR2YW5jZWQgUlNTL0FDTC9EQ0YvRmxleGlibGUgRGVzY3JpcHRv
+ciwgZXRjLg0KICAtIGk0MEUtKFhYVjcxMCwgWDcyMikgUEYvVkY6IHRlc3Qgc2NlbmFyaW9zIGlu
+Y2x1ZGluZyBiYXNpYy9SVEVfRkxPVy9UU08vSnVtYm9mcmFtZS9jaGVja3N1bSBvZmZsb2FkL21h
+Y19maWx0ZXIvVkxBTi9WWExBTi9SU1MsIGV0Yy4gDQogIC0gSVhHQkUtKEU2MTApIFBGL1ZGOiB0
+ZXN0IHNjZW5hcmlvcyBpbmNsdWRpbmcgYmFzaWMvVFNPL0p1bWJvZnJhbWUvY2hlY2tzdW0gb2Zm
+bG9hZC9tYWNfZmlsdGVyL1ZMQU4vVlhMQU4vUlNTLCBldGMuIA0KICAtIElHQy0oaTIyNikgUEY6
+IHRlc3Qgc2NlbmFyaW9zIGluY2x1ZGluZyBiYXNpYy9SVEVfRkxPVy9UU08vSnVtYm9mcmFtZS9j
+aGVja3N1bSBvZmZsb2FkL21hY19maWx0ZXIvVkxBTi9WWExBTi9SU1MsIGV0Yy4NCiAgLSBJR0It
+KGkzNTApIFBGOiB0ZXN0IHNjZW5hcmlvcyBpbmNsdWRpbmcgYmFzaWMvUlRFX0ZMT1cvVFNPL0p1
+bWJvZnJhbWUvY2hlY2tzdW0gb2ZmbG9hZC9tYWNfZmlsdGVyL1ZMQU4vVlhMQU4vUlNTLCBldGMu
+DQogIC0gSVBzZWM6IHRlc3Qgc2NlbmFyaW9zIGluY2x1ZGluZyBpcHNlYy9pcHNlYy1ndy9pcHNl
+YyBsaWJyYXJ5IGJhc2ljIHRlc3QgLSBRQVQmU1cvRklCIGxpYnJhcnksIGV0Yy4NCiAgLSBWaXJ0
+aW86IGJvdGggZnVuY3Rpb24gYW5kIHBlcmZvcm1hbmNlIHRlc3QgYXJlIGNvdmVyZWQuIFN1Y2gg
+YXMgUFZQL1ZpcnRpb19sb29wYmFjay92aXJ0aW8tdXNlciBsb29wYmFjay92aXJ0aW8tbmV0IFZN
+MlZNIHBlcmYgdGVzdGluZy9WTUFXQVJFIEVTWEkgOS4wLCBldGMuDQogIC0gQ3J5cHRvZGV2OiB0
+ZXN0IHNjZW5hcmlvcyBpbmNsdWRpbmcgQ3J5cHRvZGV2IEFQSSB0ZXN0aW5nL0NvbXByZXNzRGV2
+IElTQS1ML1FBVC9aTElCIFBNRCBUZXN0aW5nL0ZJUFMsIGV0Yy4NCiAgLSBETEI6IHRlc3Qgc2Nl
+bmFyaW9zIGluY2x1ZGluZyBETEIyLjAgYW5kIERMQjIuNQ0KICAtIE90aGVyOiB0ZXN0IHNjZW5h
+cmlvcyBpbmNsdWRpbmcgQUZfWERQLCBQb3dlciwgQ0JETUEsIERTQQ0KDQoqIFBlcmZvcm1hbmNl
+IHRlc3Q6IEFsbCB0ZXN0IGRvbmUgYW5kIHBhc3NlZA0KICAtIFRob3VnaHB1dCBQZXJmb3JtYW5j
+ZQ0KICAtIENyeXB0b2RldiBMYXRlbmN5DQogIC0gUEYvVkYgTklDIHNpbmdsZSBjb3JlDQogIC0g
+WFhWNzEwL0U4MTAvRTIxMDAgTklDIFBlcmZvcm1hbmNlDQoNCg0KUmVnYXJkcywNClh1LCBIYWls
+aW4NCg==
