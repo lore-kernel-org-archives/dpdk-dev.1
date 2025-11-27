@@ -2,73 +2,42 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA01FCFD2F6
-	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Nov 2025 04:49:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6F71CFD2F6
+	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Nov 2025 06:58:36 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9890840E09;
-	Thu, 27 Nov 2025 05:49:46 +0100 (CET)
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com
- [209.85.160.174])
- by mails.dpdk.org (Postfix) with ESMTP id 71E2A4013F
- for <dev@dpdk.org>; Thu, 27 Nov 2025 05:49:45 +0100 (CET)
-Received: by mail-qt1-f174.google.com with SMTP id
- d75a77b69052e-4ee158187aaso6025391cf.0
- for <dev@dpdk.org>; Wed, 26 Nov 2025 20:49:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1764218985; x=1764823785; darn=dpdk.org;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:from:to:cc:subject:date
- :message-id:reply-to;
- bh=1XIMqWQnfNOIlY3RVYr1Ke+XkDqjmPmOAIQOXkeVeLc=;
- b=FBgCKQMitvdPKLtjKinyJEBQfGxsrfZXBMkinsU8gVpRADfhwc22R0lWpW9F+nHs6k
- QHk6jVog84L9ZzaVtx/bsJvnLGup+ghTMozx6Ry1iXdr9rW/KnnP+nNEzGedffeD66+a
- gR3qzINSseijuO8xcxO2lZ/csCwRcnPwAd9iVbcQNyv4AWitZ3WXQPX49QiTsghczeh8
- 5exzRoTmjlUngteLUA/W5QP5gLB5Fr3R+DCOGrd+DWBrRnyleWdfm2ALtAkltZ2JFvAC
- 7LO9xEKbMbH78hyCPOR5V8reAm9uuSHxzJ5UGHPFalKh5WcZcWf3enQ9rs2BdsX6GIBK
- OodA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1764218985; x=1764823785;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=1XIMqWQnfNOIlY3RVYr1Ke+XkDqjmPmOAIQOXkeVeLc=;
- b=ARFy3FG8BRoTzOse+HMXXCxATALXXyR9MTyK4NxixUqB4ilBx+PQC8bearKr1FHsgq
- bSrpXwyi9tq75zkdLwdPN8+S9Odl69k6QfYDEuJvcbhOaUF5sYyZSeTfHTQkpm2tuT12
- gZzamWpg40nsXwPzyBy6b2bG/aWBQUpeC84PLATzr1HiNOgtwu0/q702uA0jHIiaIcLb
- bTczNllHVnHYpJP4hldKd7qnE8NkaMYyqsVpn4WJaztDYugHCq4FCjPYsVMs5KMUpPAi
- fz/6BItIYDMHjO4doamUcztR3e+g/SU87BG8Gy2dpS7IYtmqnhxPM3qpAkxRP/nsx4Ex
- wGpg==
-X-Forwarded-Encrypted: i=1;
- AJvYcCWry1ZOLqxm/m2OfA7boTQSOj+B5TLMh8e4A9fEgDjHVBvLcjJXp5U55SOGITlhHckLkxQ=@dpdk.org
-X-Gm-Message-State: AOJu0YxjFPxo6s3GDeCVbPBWGov/ALcOzcYiafocIQbz4gdQCgCbKPxq
- hEBsmdbszbpyWp6UC9VP1rL+Hf8DFeStsiOgDQ9mXYxGX9PRBaaN0gUivzJjRNGWrkKyikZzlaF
- qME7ynilbJeUsGnXSchYFMs2PQ5b1Gv8=
-X-Gm-Gg: ASbGncuM+TMVbXvCT1VMOBiRiN68rkt45AuiEruKfBilPbxjZtWJjcZ5w3paBaxBYNC
- nlVvGDx9dpFUtom74PMWqEiDCg8wB05LDGMjNy34IJOj7ohhgJe1iLq3z5VB8YhW7GfpHUCnZvL
- 2nyldGpzoPexqwSPsGaU54fnR0WO1AOwbYd37DdthLjo7TlYIstac5Umos139XXRXe1zlA2W23Z
- ZZEpPKsJXIUOa2o8N9wa7Wqj5k7ACRvHpbWJcSkLCFvJuJVFJ5AzOLr+ShZBAE911G5iw==
-X-Google-Smtp-Source: AGHT+IHNhZQRaAKqQazBdwHLWgTX8PeQIaIypUCVwRLfA+bEeU/5elVxJrBs27mDaMhZuUMH2IhTHwuvPaN2izUMkjM=
-X-Received: by 2002:ac8:7d0f:0:b0:4ec:f285:4256 with SMTP id
- d75a77b69052e-4ee5885405amr304562651cf.25.1764218984543; Wed, 26 Nov 2025
- 20:49:44 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 7A83F40B9D;
+	Thu, 27 Nov 2025 07:58:35 +0100 (CET)
+Received: from out28-171.mail.aliyun.com (out28-171.mail.aliyun.com
+ [115.124.28.171])
+ by mails.dpdk.org (Postfix) with ESMTP id 6668D4013F;
+ Thu, 27 Nov 2025 07:58:31 +0100 (CET)
+X-Alimail-AntiSpam: AC=CONTINUE; BC=0.07390226|-1; CH=green;
+ DM=|CONTINUE|false|;
+ DS=CONTINUE|ham_regular_dialog|0.0191879-0.000692852-0.980119;
+ FP=2697895713987630740|0|0|0|0|-1|-1|-1; HT=maildocker-contentspam033037027135;
+ MF=dimon.zhao@nebula-matrix.com; NM=1; PH=DW; RN=5; RT=5; SR=0;
+ TI=W4_0.2.3_212509C9_1764226709530_o7001c1344; 
+Received: from WS-web
+ (dimon.zhao@nebula-matrix.com[W4_0.2.3_212509C9_1764226709530_o7001c1344]
+ cluster:ay29) at Thu, 27 Nov 2025 14:58:29 +0800
+Date: Thu, 27 Nov 2025 14:58:29 +0800
+From: "Dimon" <dimon.zhao@nebula-matrix.com>
+To: "Stephen Hemminger" <stephen@networkplumber.org>
+Cc: "dev" <dev@dpdk.org>, "Kyo Liu" <kyo.liu@nebula-matrix.com>,
+ "Leon" <leon.yu@nebula-matrix.com>, "Sam" <sam.chen@nebula-matrix.com>,
+ "techboard" <techboard@dpdk.org>
+Message-ID: <4a14e2ad-89bd-461c-8119-05cb3afd33e0.dimon.zhao@nebula-matrix.com>
+Subject: =?UTF-8?B?5Zue5aSN77ya5Zue5aSN77ya5Zue5aSN77yaW1BBVENIIHYxIDEvMV0gbmV0L25ibDogYWRk?=
+ =?UTF-8?B?IFZMQU4gb2ZmbG9hZCBzZXQgaW50ZXJmYWNl?=
+X-Mailer: [Alimail-Mailagent revision 35][W4_0.2.3][null][Chrome]
 MIME-Version: 1.0
-References: <20251126081353.85811-1-pbhagavatula@marvell.com>
- <20251126155358.16973-1-pbhagavatula@marvell.com>
- <CALBAE1NMMTEDykgdJ7vC4GdXcXm64ask-iHbAJZA5grGmfPYHg@mail.gmail.com>
-In-Reply-To: <CALBAE1NMMTEDykgdJ7vC4GdXcXm64ask-iHbAJZA5grGmfPYHg@mail.gmail.com>
-From: Jerin Jacob <jerinjacobk@gmail.com>
-Date: Thu, 27 Nov 2025 10:19:18 +0530
-X-Gm-Features: AWmQ_bm16s72j2-tkS1z61aEgMtRA4UE58g5Qko0GIrQ89H93RbAmBtLbuIWlqg
-Message-ID: <CALBAE1MTGzQabVmqoFGWkEzZ_tyH4md4ocEsPzqKrav8a3rMtA@mail.gmail.com>
-Subject: Re: [PATCH v4] event/cnxk: fix offload flags
-To: pbhagavatula@marvell.com, Thomas Monjalon <thomas@monjalon.net>
-Cc: jerinj@marvell.com, Shijith Thotton <sthotton@marvell.com>, 
- Nithin Dabilpuram <ndabilpuram@marvell.com>,
- Kiran Kumar K <kirankumark@marvell.com>, 
- Sunil Kumar Kori <skori@marvell.com>, Satha Rao <skoteshwar@marvell.com>, 
- Harman Kalra <hkalra@marvell.com>, dev@dpdk.org, stable@dpdk.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+x-aliyun-im-through: {"version":"v1.0"}
+References: <20251111113144.3567291-1-dimon.zhao@nebula-matrix.com>	<20251124034026.3680873-1-dimon.zhao@nebula-matrix.com>	<20251124034026.3680873-2-dimon.zhao@nebula-matrix.com>	<20251124153545.7123c338@phoenix.local>	<c28f7d63-7af2-4b48-9c2c-9dcd51ed9ebc.dimon.zhao@nebula-matrix.com>	<20251125072758.37b8b100@phoenix.local>	<2f658961-3fc4-48c9-9d46-99de9fabe9a7.dimon.zhao@nebula-matrix.com>,
+ <20251126141625.55be6cea@phoenix.local>
+x-aliyun-mail-creator: W4_0.2.3_null_EuMTW96aWxsYS81LjAgKFdpbmRvd3MgTlQgMTAuMDsgV2luNjQ7IHg2NCkgQXBwbGVXZWJLaXQvNTM3LjM2IChLSFRNTCwgbGlrZSBHZWNrbykgQ2hyb21lLzEzMy4wLjY5NDMuMTQyIFNhZmFyaS81MzcuMzYgZGluZ3RhbGstd2luLzEuMC4wIG53KDAuMTQuNykgRGluZ1RhbGsoOC4xLjUtUmVsZWFzZS4yNTExMDcwMDEpIE1vam8vMS4wLjAgTmF0aXZlIEFwcFR5cGUocmVsZWFzZSkgQ2hhbm5lbC8yMDEyMDAgQXJjaGl0ZWN0dXJlL3g4Nl82NCB3ZWJEdC9QQw==uL
+In-Reply-To: <20251126141625.55be6cea@phoenix.local>
+Content-Type: multipart/alternative;
+ boundary="----=ALIBOUNDARY_2498_7fd6b4e91700_6927f695_27215"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -80,228 +49,170 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
+Reply-To: Dimon <dimon.zhao@nebula-matrix.com>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, Nov 27, 2025 at 10:17=E2=80=AFAM Jerin Jacob <jerinjacobk@gmail.com=
-> wrote:
->
-> On Wed, Nov 26, 2025 at 9:41=E2=80=AFPM <pbhagavatula@marvell.com> wrote:
-> >
-> > From: Pavan Nikhilesh <pbhagavatula@marvell.com>
-> >
-> > Use device configured Rx offloads instead of hardcoded values while
-> > draining work.
-> >
-> > Fixes: e8594de2731d ("event/cnxk: implement event port quiesce function=
-")
-> > Cc: stable@dpdk.org
-> >
-> > Signed-off-by: Pavan Nikhilesh <pbhagavatula@marvell.com>
->
-> Acked-by: Jerin Jacob <jerinj@marvell.com>
+------=ALIBOUNDARY_2498_7fd6b4e91700_6927f695_27215
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
 
-@Thomas Monjalon  Please merge this patch in this release.
+SGkgU3RlcGhlbiwKVGhhbmsgeW91IGZvciB0aGUgcmV2aWV3LiBJIHJlYWxseSBhcHByZWNpYXRl
+IHlvdXIgaW5zaWdodHMgYW5kIHRoZSBmaXguCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQrlj5Hku7bkurrvvJpTdGVwaGVu
+IEhlbW1pbmdlciA8c3RlcGhlbkBuZXR3b3JrcGx1bWJlci5vcmc+CuWPkemAgeaXtumXtO+8mjIw
+MjXlubQxMeaciDI35pelKOWRqOWbmykgMDY6MTYK5pS25Lu25Lq677yaRGltb248ZGltb24uemhh
+b0BuZWJ1bGEtbWF0cml4LmNvbT4K5oqE44CA6YCB77yaZGV2PGRldkBkcGRrLm9yZz47IEt5byBM
+aXU8a3lvLmxpdUBuZWJ1bGEtbWF0cml4LmNvbT47IExlb248bGVvbi55dUBuZWJ1bGEtbWF0cml4
+LmNvbT47IFNhbTxzYW0uY2hlbkBuZWJ1bGEtbWF0cml4LmNvbT47IHRlY2hib2FyZDx0ZWNoYm9h
+cmRAZHBkay5vcmc+CuS4u+OAgOmimO+8mlJlOiDlm57lpI3vvJrlm57lpI3vvJpbUEFUQ0ggdjEg
+MS8xXSBuZXQvbmJsOiBhZGQgVkxBTiBvZmZsb2FkIHNldCBpbnRlcmZhY2UKT24gV2VkLCAyNiBO
+b3YgMjAyNSAwOTo1MjoxOSArMDgwMAoiRGltb24iIDxkaW1vbi56aGFvQG5lYnVsYS1tYXRyaXgu
+Y29tPiB3cm90ZToKPiBIaSBTdGVwaGVuLAo+IFRoYW5rIHlvdSBmb3IgeW91ciBmZWVkYmFjay4g
+Cj4gV2UgdW5kZXJzdGFuZCB5b3VyIHRlY2huaWNhbCBjb25jZXJuIHJlZ2FyZGluZyB0aGUgVkxB
+TiBvZmZsb2FkIGltcGxlbWVudGF0aW9uLgo+IE91ciBpbXBsZW1lbnRhdGlvbiBjaG9pY2UgaXMg
+ZHJpdmVuIGJ5IHByYWN0aWNhbCBjdXN0b21lciByZXF1aXJlbWVudHMuCj4gSW4gcmVhbC13b3Js
+ZCBkZXBsb3ltZW50IHNjZW5hcmlvcywgdGhlcmUgaXMgYSBzdHJvbmcgZXhwZWN0YXRpb24gdGhh
+dCBiYXNpYyBWTEFOIG9mZmxvYWQgY2FwYWJpbGl0aWVzIGFyZSBhdmFpbGFibGUgYW5kIGZ1bmN0
+aW9uYWwgYnkgZGVmYXVsdC4KPiBOdW1lcm91cyBjdXN0b21lciBhcHBsaWNhdGlvbnMsIGF1dG9t
+YXRpb24gc2NyaXB0cywgYW5kIG5ldHdvcmsgY29uZmlndXJhdGlvbnMgcmVseSBvbiB0aGVzZSBz
+dGFuZGFyZCBWTEFOIG9wZXJhdGlvbnMgImp1c3Qgd29ya2luZywiCj4gaXJyZXNwZWN0aXZlIG9m
+IHdoZXRoZXIgdGhlIHVuZGVybHlpbmcgbWVjaGFuaXNtIGlzIGhhcmR3YXJlLWFjY2VsZXJhdGVk
+IG9yIHNvZnR3YXJlLWJhc2VkLgo+IE91ciBjdXJyZW50IGFwcHJvYWNoIGVuc3VyZXMgdGhhdDoK
+PiBDb21wYXRpYmlsaXR5IGlzIG1haW50YWluZWQ6IEV4aXN0aW5nIGRlcGxveW1lbnQgdG9vbHMg
+YW5kIHNjcmlwdHMgZnVuY3Rpb24gd2l0aG91dCBhbnkgcmVxdWlyZWQgbW9kaWZpY2F0aW9ucy4K
+PiBDdXN0b21lciBleHBlY3RhdGlvbnMgYXJlIG1ldDogVGhlIGZ1bmRhbWVudGFsIFZMQU4gZnVu
+Y3Rpb25hbGl0eSBpcyBwcmVzZW50IGFuZCBvcGVyYXRpb25hbC4KPiBUaGUgYWx0ZXJuYXRpdmXi
+gJRyZXR1cm5pbmcgLUVOT1RTVVDigJR3b3VsZCBpbmRlZWQgYnJlYWsgYSBzaWduaWZpY2FudCBu
+dW1iZXIgb2YgZXhpc3RpbmcgY3VzdG9tZXIgZGVwbG95bWVudHMgdGhhdAo+IG9wZXJhdGUgdW5k
+ZXIgdGhlIHJlYXNvbmFibGUgYXNzdW1wdGlvbiB0aGF0IGJhc2ljIFZMQU4gZmVhdHVyZXMgYXJl
+IGF2YWlsYWJsZS4KPiBUaGFuayB5b3UuCj4gLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCk5ldmVyIG1pbmQsIEkgZ290IGNv
+bmZ1c2VkLgpUaGUgTkJMIGRldmljZSBkb2VzIHJlcG9ydCBWTEFOX1NUUklQIGluIHJ4X29mZmxv
+YWRfY2FwYSBidXQgc2luY2UKaXQgaXMgZG9pbmcgaXQgcHVyZWx5IGluIHNvZnR3YXJlIGRpZG4n
+dCBub3RpY2UgdGhhdC4KVGhlIG90aGVyIGRyaXZlcnMgZG9pbmcgVkxBTiBhbGwgaW4gc29mdHdh
+cmUgaXMgdmlydGlvIGFuZCBkcGFhMi4KWW91ciByaWdodCB0aGUgbWFzayBkb2Vzbid0IG1hdHRl
+ciBzaW5jZSB0aGUgZHJpdmVyIGlzIGRpcmVjdGx5IGxvb2tpbmcKYXQgcnhtb2RlLm9mZmxvYWRz
+IHRvIGRldGVybWluZSB3aGF0IHRvIGRvLgpTaW5jZSB5b3UgYXJlIHJ1bm5pbmcgb24gQVJNIGNv
+dWxkIHNlZSB3cm9uZyB2YWx1ZSBiZWNhdXNlIHRoZSByeG1vZGUub2ZmbG9hZHMKaXMgYmVpbmcg
+dXBkYXRlZCBpbiBvbmUgdGhyZWFkIGFuZCByZWNlaXZlIGxvZ2ljIGlzIHJ1bm5pbmcgaW4gYW5v
+dGhlciB0aHJlYWQuCkxvb2tzIGxpa2UgYXRvbWljIG9wZXJhdGlvbnMgbWlnaHQgYmUgbmVjZXNz
+YXJ5IGhlcmUgKGFuZCB2aXJ0aW8gYW5kIGRwYWEyKQp0byBiZSBzYWZlLgpJIHdpbGwgZ28gYWhl
+YWQgYW5kIHJlY2hlY2sgdGhpcyBhbmQgbWVyZ2UgdG8gbmV4dC1uZXQuCg==
+------=ALIBOUNDARY_2498_7fd6b4e91700_6927f695_27215
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: base64
 
->
->
-> > ---
-> >  drivers/event/cnxk/cn10k_eventdev.c | 9 +++------
-> >  drivers/event/cnxk/cn10k_worker.h   | 6 +++---
-> >  drivers/event/cnxk/cn20k_eventdev.c | 8 +++-----
-> >  drivers/event/cnxk/cn20k_worker.h   | 4 ++--
-> >  drivers/net/cnxk/cn10k_rx.h         | 6 +++---
-> >  drivers/net/cnxk/cn20k_rx.h         | 6 +++---
-> >  6 files changed, 17 insertions(+), 22 deletions(-)
-> >
-> > diff --git a/drivers/event/cnxk/cn10k_eventdev.c b/drivers/event/cnxk/c=
-n10k_eventdev.c
-> > index 3832eb7e000f..0c1431b4e70c 100644
-> > --- a/drivers/event/cnxk/cn10k_eventdev.c
-> > +++ b/drivers/event/cnxk/cn10k_eventdev.c
-> > @@ -126,8 +126,7 @@ cn10k_sso_hws_flush_events(void *hws, uint8_t queue=
-_id, uintptr_t base,
-> >
-> >         while (aq_cnt || cq_ds_cnt || ds_cnt) {
-> >                 plt_write64(req, ws->base + SSOW_LF_GWS_OP_GET_WORK0);
-> > -               cn10k_sso_hws_get_work_empty(
-> > -                       ws, &ev, (NIX_RX_OFFLOAD_MAX - 1) | NIX_RX_REAS=
-_F | NIX_RX_MULTI_SEG_F);
-> > +               cn10k_sso_hws_get_work_empty(ws, &ev, dev->rx_offloads)=
-;
-> >                 if (fn !=3D NULL && ev.u64 !=3D 0)
-> >                         fn(arg, ev);
-> >                 if (ev.sched_type !=3D SSO_TT_EMPTY)
-> > @@ -473,8 +472,7 @@ cn10k_sso_port_quiesce(struct rte_eventdev *event_d=
-ev, void *port,
-> >         } while (ptag &
-> >                  (BIT_ULL(62) | BIT_ULL(58) | BIT_ULL(56) | BIT_ULL(54)=
-));
-> >
-> > -       cn10k_sso_hws_get_work_empty(ws, &ev,
-> > -                                    (NIX_RX_OFFLOAD_MAX - 1) | NIX_RX_=
-REAS_F | NIX_RX_MULTI_SEG_F);
-> > +       cn10k_sso_hws_get_work_empty(ws, &ev, dev->rx_offloads);
-> >         if (is_pend && ev.u64)
-> >                 if (flush_cb)
-> >                         flush_cb(event_dev->data->dev_id, ev, args);
-> > @@ -503,8 +501,7 @@ cn10k_sso_port_quiesce(struct rte_eventdev *event_d=
-ev, void *port,
-> >             SSO_TT_EMPTY) {
-> >                 plt_write64(BIT_ULL(16) | 1,
-> >                             ws->base + SSOW_LF_GWS_OP_GET_WORK0);
-> > -               cn10k_sso_hws_get_work_empty(
-> > -                       ws, &ev, (NIX_RX_OFFLOAD_MAX - 1) | NIX_RX_REAS=
-_F | NIX_RX_MULTI_SEG_F);
-> > +               cn10k_sso_hws_get_work_empty(ws, &ev, dev->rx_offloads)=
-;
-> >                 if (ev.u64) {
-> >                         if (flush_cb)
-> >                                 flush_cb(event_dev->data->dev_id, ev, a=
-rgs);
-> > diff --git a/drivers/event/cnxk/cn10k_worker.h b/drivers/event/cnxk/cn1=
-0k_worker.h
-> > index 954dee5a2a9e..9b6abdf18db2 100644
-> > --- a/drivers/event/cnxk/cn10k_worker.h
-> > +++ b/drivers/event/cnxk/cn10k_worker.h
-> > @@ -52,12 +52,12 @@ cn10k_process_vwqe(uintptr_t vwqe, uint16_t port_id=
-, const uint32_t flags, struc
-> >         uint64_t mbuf_init =3D 0x100010000ULL | RTE_PKTMBUF_HEADROOM;
-> >         struct cnxk_timesync_info *tstamp =3D ws->tstamp[port_id];
-> >         void *lookup_mem =3D ws->lookup_mem;
-> > +       uint64_t meta_aura =3D 0, laddr =3D 0;
-> > +       uint16_t lmt_id =3D 0, d_off =3D 0;
-> >         uintptr_t lbase =3D ws->lmt_base;
-> > -       uint64_t meta_aura =3D 0, laddr;
-> > +       struct rte_mempool *mp =3D NULL;
-> >         struct rte_event_vector *vec;
-> >         uint16_t nb_mbufs, non_vec;
-> > -       struct rte_mempool *mp;
-> > -       uint16_t lmt_id, d_off;
-> >         struct rte_mbuf **wqe;
-> >         struct rte_mbuf *mbuf;
-> >         uint64_t sa_base =3D 0;
-> > diff --git a/drivers/event/cnxk/cn20k_eventdev.c b/drivers/event/cnxk/c=
-n20k_eventdev.c
-> > index b25e570211f1..1c5d9272398a 100644
-> > --- a/drivers/event/cnxk/cn20k_eventdev.c
-> > +++ b/drivers/event/cnxk/cn20k_eventdev.c
-> > @@ -192,7 +192,7 @@ cn20k_sso_hws_flush_events(void *hws, uint8_t queue=
-_id, uintptr_t base, cnxk_han
-> >
-> >         while (aq_cnt || cq_ds_cnt || ds_cnt) {
-> >                 plt_write64(req, ws->base + SSOW_LF_GWS_OP_GET_WORK0);
-> > -               cn20k_sso_hws_get_work_empty(ws, &ev, 0);
-> > +               cn20k_sso_hws_get_work_empty(ws, &ev, dev->rx_offloads)=
-;
-> >                 if (fn !=3D NULL && ev.u64 !=3D 0)
-> >                         fn(arg, ev);
-> >                 if (ev.sched_type !=3D SSO_TT_EMPTY)
-> > @@ -521,8 +521,7 @@ cn20k_sso_port_quiesce(struct rte_eventdev *event_d=
-ev, void *port,
-> >                 ptag =3D plt_read64(ws->base + SSOW_LF_GWS_PENDSTATE);
-> >         } while (ptag & (BIT_ULL(62) | BIT_ULL(58) | BIT_ULL(56) | BIT_=
-ULL(54)));
-> >
-> > -       cn20k_sso_hws_get_work_empty(ws, &ev,
-> > -                                    (NIX_RX_OFFLOAD_MAX - 1) | NIX_RX_=
-REAS_F | NIX_RX_MULTI_SEG_F);
-> > +       cn20k_sso_hws_get_work_empty(ws, &ev, dev->rx_offloads);
-> >         if (is_pend && ev.u64)
-> >                 if (flush_cb)
-> >                         flush_cb(event_dev->data->dev_id, ev, args);
-> > @@ -548,8 +547,7 @@ cn20k_sso_port_quiesce(struct rte_eventdev *event_d=
-ev, void *port,
-> >
-> >         if (CNXK_TT_FROM_TAG(plt_read64(ws->base + SSOW_LF_GWS_PRF_WQE0=
-)) !=3D SSO_TT_EMPTY) {
-> >                 plt_write64(BIT_ULL(16) | 1, ws->base + SSOW_LF_GWS_OP_=
-GET_WORK0);
-> > -               cn20k_sso_hws_get_work_empty(
-> > -                       ws, &ev, (NIX_RX_OFFLOAD_MAX - 1) | NIX_RX_REAS=
-_F | NIX_RX_MULTI_SEG_F);
-> > +               cn20k_sso_hws_get_work_empty(ws, &ev, dev->rx_offloads)=
-;
-> >                 if (ev.u64) {
-> >                         if (flush_cb)
-> >                                 flush_cb(event_dev->data->dev_id, ev, a=
-rgs);
-> > diff --git a/drivers/event/cnxk/cn20k_worker.h b/drivers/event/cnxk/cn2=
-0k_worker.h
-> > index df0abd9202fd..608f93dcd465 100644
-> > --- a/drivers/event/cnxk/cn20k_worker.h
-> > +++ b/drivers/event/cnxk/cn20k_worker.h
-> > @@ -54,12 +54,12 @@ cn20k_process_vwqe(uintptr_t vwqe, uint16_t port_id=
-, const uint32_t flags, struc
-> >         struct cnxk_timesync_info *tstamp =3D ws->tstamp[port_id];
-> >         uint8_t m_sz =3D sizeof(struct rte_mbuf);
-> >         void *lookup_mem =3D ws->lookup_mem;
-> > +       uint64_t meta_aura =3D 0, laddr =3D 0;
-> >         uintptr_t lbase =3D ws->lmt_base;
-> > -       uint64_t meta_aura =3D 0, laddr;
-> > +       uint16_t lmt_id =3D 0, d_off =3D 0;
-> >         struct rte_event_vector *vec;
-> >         uint16_t nb_mbufs, non_vec;
-> >         struct rte_mempool *mp;
-> > -       uint16_t lmt_id, d_off;
-> >         struct rte_mbuf **wqe;
-> >         struct rte_mbuf *mbuf;
-> >         uint64_t sa_base =3D 0;
-> > diff --git a/drivers/net/cnxk/cn10k_rx.h b/drivers/net/cnxk/cn10k_rx.h
-> > index e79306e6467f..e55910b57599 100644
-> > --- a/drivers/net/cnxk/cn10k_rx.h
-> > +++ b/drivers/net/cnxk/cn10k_rx.h
-> > @@ -572,7 +572,7 @@ nix_sec_meta_to_mbuf(uint64_t cq_w1, uint64_t cq_w5=
-, uintptr_t inb_sa,
-> >         const struct cpt_cn10k_parse_hdr_s *hdr =3D
-> >                 (const struct cpt_cn10k_parse_hdr_s *)cpth;
-> >         uint64_t mbuf_init =3D vgetq_lane_u64(*rearm, 0);
-> > -       struct cn10k_inb_priv_data *inb_priv;
-> > +       struct cn10k_inb_priv_data *inb_priv =3D NULL;
-> >         uintptr_t p;
-> >
-> >         /* Clear checksum flags */
-> > @@ -1464,9 +1464,9 @@ cn10k_nix_recv_pkts_vector(void *args, struct rte=
-_mbuf **mbufs, uint16_t pkts,
-> >         struct rte_mbuf *mbuf0, *mbuf1, *mbuf2, *mbuf3;
-> >         uint8_t loff =3D 0, lnum =3D 0, shft =3D 0;
-> >         struct rte_mempool *meta_pool =3D NULL;
-> > +       uint16_t lmt_id =3D 0, d_off =3D 0;
-> > +       uint64_t lbase =3D 0, laddr =3D 0;
-> >         uint8x16_t f0, f1, f2, f3;
-> > -       uint16_t lmt_id, d_off;
-> > -       uint64_t lbase, laddr;
-> >         uintptr_t sa_base =3D 0;
-> >         uint16_t packets =3D 0;
-> >         uint16_t pkts_left;
-> > diff --git a/drivers/net/cnxk/cn20k_rx.h b/drivers/net/cnxk/cn20k_rx.h
-> > index 56826318151a..1944e507b0b2 100644
-> > --- a/drivers/net/cnxk/cn20k_rx.h
-> > +++ b/drivers/net/cnxk/cn20k_rx.h
-> > @@ -307,7 +307,7 @@ nix_cqe_xtract_mseg(const union nix_rx_parse_u *rx,=
- struct rte_mbuf *mbuf, uint6
-> >         const struct cpt_parse_hdr_s *hdr =3D (const struct cpt_parse_h=
-dr_s *)cpth;
-> >         struct cn20k_inb_priv_data *inb_priv =3D NULL;
-> >         const struct cpt_frag_info_s *finfo =3D NULL;
-> > -       uint64_t fsz_w1 =3D 0, cq_w1, cq_w5, sg;
-> > +       uint64_t fsz_w1 =3D 0, cq_w1, cq_w5 =3D 0, sg;
-> >         uint32_t offset =3D hdr->w2.ptr_offset;
-> >         uint8_t num_frags =3D 0, nxt_frag =3D 0;
-> >         struct rte_mbuf *head, *last_mbuf;
-> > @@ -845,10 +845,10 @@ cn20k_nix_recv_pkts_vector(void *args, struct rte=
-_mbuf **mbufs, uint16_t pkts, c
-> >         uint64x2_t rearm2 =3D vdupq_n_u64(mbuf_initializer);
-> >         uint64x2_t rearm3 =3D vdupq_n_u64(mbuf_initializer);
-> >         struct rte_mbuf *mbuf0, *mbuf1, *mbuf2, *mbuf3;
-> > +       uint64_t lbase =3D 0, laddr =3D 0, buf_sz =3D 0;
-> >         uint8_t loff =3D 0, lnum =3D 0, shft =3D 0;
-> > -       uint64_t lbase, laddr, buf_sz;
-> > +       uint16_t lmt_id =3D 0, d_off;
-> >         uint8x16_t f0, f1, f2, f3;
-> > -       uint16_t lmt_id, d_off;
-> >         uintptr_t sa_base =3D 0;
-> >         uint16_t packets =3D 0;
-> >         uint16_t pkts_left;
-> > --
-> > 2.50.1 (Apple Git-155)
-> >
+PGRpdiBjbGFzcz0iX19hbGl5dW5fZW1haWxfYm9keV9ibG9jayI+PGRpdiAgc3R5bGU9ImZvbnQt
+ZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBTVEhlaXRpU0MtTGlnaHQsIFNpbVN1biI+PGRpdiAgc3R5
+bGU9ImNsZWFyOiBib3RoOyBmb250LWZhbWlseTogVGFob21hLCBBcmlhbCwgU1RIZWl0aVNDLUxp
+Z2h0LCBTaW1TdW47Ij48c3BhbiAgc3R5bGU9ImZvbnQtZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBT
+VEhlaXRpU0MtTGlnaHQsIFNpbVN1bjsiPjxzcGFuICBzdHlsZT0iY29sb3I6IHJnYigwLCAwLCAw
+KTsgZm9udC1mYW1pbHk6IFRhaG9tYSwgQXJpYWwsIFNUSGVpdGksIFNpbVN1bjsgZm9udC1zaXpl
+OiAxNHB4OyBmb250LXN0eWxlOiBub3JtYWw7IGZvbnQtdmFyaWFudC1saWdhdHVyZXM6IG5vcm1h
+bDsgZm9udC12YXJpYW50LWNhcHM6IG5vcm1hbDsgZm9udC13ZWlnaHQ6IDQwMDsgbGV0dGVyLXNw
+YWNpbmc6IG5vcm1hbDsgdGV4dC1hbGlnbjogc3RhcnQ7IHRleHQtaW5kZW50OiAwcHg7IHRleHQt
+dHJhbnNmb3JtOiBub25lOyB3b3JkLXNwYWNpbmc6IDBweDsgd2hpdGUtc3BhY2U6IG5vcm1hbDsg
+YmFja2dyb3VuZC1jb2xvcjogcmdiKDI1NSwgMjU1LCAyNTUpOyB0ZXh0LWRlY29yYXRpb24tdGhp
+Y2tuZXNzOiBpbml0aWFsOyB0ZXh0LWRlY29yYXRpb24tc3R5bGU6IGluaXRpYWw7IHRleHQtZGVj
+b3JhdGlvbi1jb2xvcjogaW5pdGlhbDsgZmxvYXQ6IG5vbmU7IGRpc3BsYXk6IGlubGluZSAhaW1w
+b3J0YW50OyI+SGkgU3RlcGhlbiw8L3NwYW4+PC9zcGFuPjwvZGl2PjxkaXYgIHN0eWxlPSJjbGVh
+cjogYm90aDsgZm9udC1mYW1pbHk6IFRhaG9tYSwgQXJpYWwsIFNUSGVpdGlTQy1MaWdodCwgU2lt
+U3VuOyI+PHNwYW4gIHN0eWxlPSJmb250LWZhbWlseTogVGFob21hLCBBcmlhbCwgU1RIZWl0aVND
+LUxpZ2h0LCBTaW1TdW47Ij48c3BhbiAgc3R5bGU9ImNvbG9yOiByZ2IoMCwgMCwgMCk7IGZvbnQt
+ZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBTVEhlaXRpLCBTaW1TdW47IGZvbnQtc2l6ZTogMTRweDsg
+Zm9udC1zdHlsZTogbm9ybWFsOyBmb250LXZhcmlhbnQtbGlnYXR1cmVzOiBub3JtYWw7IGZvbnQt
+dmFyaWFudC1jYXBzOiBub3JtYWw7IGZvbnQtd2VpZ2h0OiA0MDA7IGxldHRlci1zcGFjaW5nOiBu
+b3JtYWw7IHRleHQtYWxpZ246IHN0YXJ0OyB0ZXh0LWluZGVudDogMHB4OyB0ZXh0LXRyYW5zZm9y
+bTogbm9uZTsgd29yZC1zcGFjaW5nOiAwcHg7IHdoaXRlLXNwYWNlOiBub3JtYWw7IGJhY2tncm91
+bmQtY29sb3I6IHJnYigyNTUsIDI1NSwgMjU1KTsgdGV4dC1kZWNvcmF0aW9uLXRoaWNrbmVzczog
+aW5pdGlhbDsgdGV4dC1kZWNvcmF0aW9uLXN0eWxlOiBpbml0aWFsOyB0ZXh0LWRlY29yYXRpb24t
+Y29sb3I6IGluaXRpYWw7IGZsb2F0OiBub25lOyBkaXNwbGF5OiBpbmxpbmUgIWltcG9ydGFudDsi
+PjxiciA+PC9zcGFuPjwvc3Bhbj48L2Rpdj48ZGl2ICBzdHlsZT0iY2xlYXI6IGJvdGg7IGZvbnQt
+ZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBTVEhlaXRpU0MtTGlnaHQsIFNpbVN1bjsiPjxzcGFuICBz
+dHlsZT0iZm9udC1mYW1pbHk6IFRhaG9tYSwgQXJpYWwsIFNUSGVpdGlTQy1MaWdodCwgU2ltU3Vu
+OyI+PHNwYW4gPlRoYW5rIHlvdSBmb3IgdGhlIHJldmlldy4gSSByZWFsbHkgYXBwcmVjaWF0ZSB5
+b3VyIGluc2lnaHRzIGFuZCB0aGUgZml4Ljwvc3Bhbj48L3NwYW4+PC9kaXY+PGRpdiAgc3R5bGU9
+ImNsZWFyOiBib3RoOyBmb250LWZhbWlseTogVGFob21hLCBBcmlhbCwgU1RIZWl0aVNDLUxpZ2h0
+LCBTaW1TdW47Ij48c3BhbiAgc3R5bGU9ImZvbnQtZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBTVEhl
+aXRpU0MtTGlnaHQsIFNpbVN1bjsiPjxiciA+PC9zcGFuPjwvZGl2PjxibG9ja3F1b3RlICBfcXVv
+dGU9IjEiIHN0eWxlPSJtYXJnaW4tcmlnaHQ6IDBweDsgbWFyZ2luLXRvcDogMHB4OyBtYXJnaW4t
+Ym90dG9tOiAwcHg7IGZvbnQtZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBTVEhlaXRpLCBTaW1TdW47
+IGZvbnQtc2l6ZTogMTRweDsgY29sb3I6IHJnYigwLCAwLCAwKTsiPjxkaXYgIGNsYXNzPSJhbGlt
+YWlsLXF1b3RlIj48ZGl2ICBzdHlsZT0iY2xlYXI6IGJvdGg7Ij4tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS08L2Rpdj48ZGl2
+ICBzdHlsZT0iY2xlYXI6IGJvdGg7Ij7lj5Hku7bkurrvvJpTdGVwaGVuIEhlbW1pbmdlciAmbHQ7
+c3RlcGhlbkBuZXR3b3JrcGx1bWJlci5vcmcmZ3Q7PC9kaXY+PGRpdiAgc3R5bGU9ImNsZWFyOiBi
+b3RoOyI+5Y+R6YCB5pe26Ze077yaMjAyNeW5tDEx5pyIMjfml6Uo5ZGo5ZubKSAwNjoxNjwvZGl2
+PjxkaXYgIHN0eWxlPSJjbGVhcjogYm90aDsiPuaUtuS7tuS6uu+8mkRpbW9uJmx0O2RpbW9uLnpo
+YW9AbmVidWxhLW1hdHJpeC5jb20mZ3Q7PC9kaXY+PGRpdiAgc3R5bGU9ImNsZWFyOiBib3RoOyI+
+5oqE44CA6YCB77yaZGV2Jmx0O2RldkBkcGRrLm9yZyZndDs7IEt5byBMaXUmbHQ7a3lvLmxpdUBu
+ZWJ1bGEtbWF0cml4LmNvbSZndDs7IExlb24mbHQ7bGVvbi55dUBuZWJ1bGEtbWF0cml4LmNvbSZn
+dDs7IFNhbSZsdDtzYW0uY2hlbkBuZWJ1bGEtbWF0cml4LmNvbSZndDs7IHRlY2hib2FyZCZsdDt0
+ZWNoYm9hcmRAZHBkay5vcmcmZ3Q7PC9kaXY+PGRpdiAgc3R5bGU9ImNsZWFyOiBib3RoOyI+5Li7
+44CA6aKY77yaUmU6IOWbnuWkje+8muWbnuWkje+8mltQQVRDSCB2MSAxLzFdIG5ldC9uYmw6IGFk
+ZCBWTEFOIG9mZmxvYWQgc2V0IGludGVyZmFjZTwvZGl2PjxkaXYgIHN0eWxlPSJjbGVhcjogYm90
+aDsiPjxiciA+PC9kaXY+T24gV2VkLCAyNiBOb3YgMjAyNSAwOTo1MjoxOSArMDgwMDxiciA+IkRp
+bW9uIiAmbHQ7ZGltb24uemhhb0BuZWJ1bGEtbWF0cml4LmNvbSZndDsgd3JvdGU6PGJyID48YnIg
+PiZndDsgSGkgU3RlcGhlbiw8YnIgPiZndDsgVGhhbmsgeW91IGZvciB5b3VyIGZlZWRiYWNrLiA8
+YnIgPiZndDsgV2UgdW5kZXJzdGFuZCB5b3VyIHRlY2huaWNhbCBjb25jZXJuIHJlZ2FyZGluZyB0
+aGUgVkxBTiBvZmZsb2FkIGltcGxlbWVudGF0aW9uLjxiciA+Jmd0OyBPdXIgaW1wbGVtZW50YXRp
+b24gY2hvaWNlIGlzIGRyaXZlbiBieSBwcmFjdGljYWwgY3VzdG9tZXIgcmVxdWlyZW1lbnRzLjxi
+ciA+Jmd0OyBJbiByZWFsLXdvcmxkIGRlcGxveW1lbnQgc2NlbmFyaW9zLCB0aGVyZSBpcyBhIHN0
+cm9uZyBleHBlY3RhdGlvbiB0aGF0IGJhc2ljIFZMQU4gb2ZmbG9hZCBjYXBhYmlsaXRpZXMgYXJl
+IGF2YWlsYWJsZSBhbmQgZnVuY3Rpb25hbCBieSBkZWZhdWx0LjxiciA+Jmd0OyBOdW1lcm91cyBj
+dXN0b21lciBhcHBsaWNhdGlvbnMsIGF1dG9tYXRpb24gc2NyaXB0cywgYW5kIG5ldHdvcmsgY29u
+ZmlndXJhdGlvbnMgcmVseSBvbiB0aGVzZSBzdGFuZGFyZCBWTEFOIG9wZXJhdGlvbnMgImp1c3Qg
+d29ya2luZywiPGJyID4mZ3Q7IGlycmVzcGVjdGl2ZSBvZiB3aGV0aGVyIHRoZSB1bmRlcmx5aW5n
+IG1lY2hhbmlzbSBpcyBoYXJkd2FyZS1hY2NlbGVyYXRlZCBvciBzb2Z0d2FyZS1iYXNlZC48YnIg
+PiZndDsgT3VyIGN1cnJlbnQgYXBwcm9hY2ggZW5zdXJlcyB0aGF0OjxiciA+Jmd0OyBDb21wYXRp
+YmlsaXR5IGlzIG1haW50YWluZWQ6IEV4aXN0aW5nIGRlcGxveW1lbnQgdG9vbHMgYW5kIHNjcmlw
+dHMgZnVuY3Rpb24gd2l0aG91dCBhbnkgcmVxdWlyZWQgbW9kaWZpY2F0aW9ucy48YnIgPiZndDsg
+Q3VzdG9tZXIgZXhwZWN0YXRpb25zIGFyZSBtZXQ6IFRoZSBmdW5kYW1lbnRhbCBWTEFOIGZ1bmN0
+aW9uYWxpdHkgaXMgcHJlc2VudCBhbmQgb3BlcmF0aW9uYWwuPGJyID4mZ3Q7IFRoZSBhbHRlcm5h
+dGl2ZeKAlHJldHVybmluZyAtRU5PVFNVUOKAlHdvdWxkIGluZGVlZCBicmVhayBhIHNpZ25pZmlj
+YW50IG51bWJlciBvZiBleGlzdGluZyBjdXN0b21lciBkZXBsb3ltZW50cyB0aGF0PGJyID4mZ3Q7
+IG9wZXJhdGUgdW5kZXIgdGhlIHJlYXNvbmFibGUgYXNzdW1wdGlvbiB0aGF0IGJhc2ljIFZMQU4g
+ZmVhdHVyZXMgYXJlIGF2YWlsYWJsZS48YnIgPiZndDsgVGhhbmsgeW91LjxiciA+Jmd0OyAtLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS08YnIgPjxiciA+TmV2ZXIgbWluZCwgSSBnb3QgY29uZnVzZWQuPGJyID48YnIgPlRoZSBO
+QkwgZGV2aWNlIGRvZXMgcmVwb3J0IFZMQU5fU1RSSVAgaW4gcnhfb2ZmbG9hZF9jYXBhIGJ1dCBz
+aW5jZTxiciA+aXQgaXMgZG9pbmcgaXQgcHVyZWx5IGluIHNvZnR3YXJlIGRpZG4ndCBub3RpY2Ug
+dGhhdC48YnIgPlRoZSBvdGhlciBkcml2ZXJzIGRvaW5nIFZMQU4gYWxsIGluIHNvZnR3YXJlIGlz
+IHZpcnRpbyBhbmQgZHBhYTIuPGJyID48YnIgPllvdXIgcmlnaHQgdGhlIG1hc2sgZG9lc24ndCBt
+YXR0ZXIgc2luY2UgdGhlIGRyaXZlciBpcyBkaXJlY3RseSBsb29raW5nPGJyID5hdCByeG1vZGUu
+b2ZmbG9hZHMgdG8gZGV0ZXJtaW5lIHdoYXQgdG8gZG8uPGJyID48YnIgPlNpbmNlIHlvdSBhcmUg
+cnVubmluZyBvbiBBUk0gY291bGQgc2VlIHdyb25nIHZhbHVlIGJlY2F1c2UgdGhlIHJ4bW9kZS5v
+ZmZsb2FkczxiciA+aXMgYmVpbmcgdXBkYXRlZCBpbiBvbmUgdGhyZWFkIGFuZCByZWNlaXZlIGxv
+Z2ljIGlzIHJ1bm5pbmcgaW4gYW5vdGhlciB0aHJlYWQuPGJyID5Mb29rcyBsaWtlIGF0b21pYyBv
+cGVyYXRpb25zIG1pZ2h0IGJlIG5lY2Vzc2FyeSBoZXJlIChhbmQgdmlydGlvIGFuZCBkcGFhMik8
+YnIgPnRvIGJlIHNhZmUuPGJyID48YnIgPkkgd2lsbCBnbyBhaGVhZCBhbmQgcmVjaGVjayB0aGlz
+IGFuZCBtZXJnZSB0byBuZXh0LW5ldC48YnIgPjxiciA+PGJyID48L2Rpdj48L2Jsb2NrcXVvdGU+
+PGRpdiAgc3R5bGU9ImxpbmUtaGVpZ2h0OiAyMHB4OyBjbGVhcjogYm90aDsiPjxiciA+PC9kaXY+
+PC9kaXY+PC9kaXY+DQo8ZGl2IHN0eWxlPSJjbGVhcjogYm90aDsiPjxzcGFuIHN0eWxlPSJmb250
+LXNpemU6IDEwcHg7IGNvbG9yOiByZ2IoMjE2LCAyMTYsIDIxNik7Ij7mnKzpgq7ku7bmiYDlkKvk
+v6Hmga/lj4rlhbbku7vkvZXpmYTku7bkuLrkv53lr4bkv6Hmga/kuJTlj6/og73lsZ7kuo7kuJPm
+nInkv6Hmga/jgILku7vkvZXpnZ7mjIflrprmjqXmlLbkurrlnYfml6DmnYPorr/pl67mnKzpgq7k
+u7bjgILlpoLmnpzmgqjkuI3mmK/or6Xpgq7ku7bnmoTmjIflrprmjqXmlLbkurrvvIzpgqPkuYjk
+u7vkvZXlr7nmnKzpgq7ku7blhoXlrrnov5vooYzmiqvpnLLvvIzlpI3liLbmiJbkvb/nlKjnmoTo
+oYzkuLrlnYfmmK/npoHmraLnmoTjgILlpoLmnpzmgqjkuI3mmK/or6Xpgq7ku7bnmoTmjIflrprm
+jqXmlLbkurrvvIzor7fmgqjnq4vljbPpgJrov4fpgq7ku7bpgJrnn6UmbmJzcDtjb21wbGlhbmNl
+QG5lYnVsYS1tYXRyaXguY29t5bm256uL5Y2z5Yig6Zmk5oKo6ZSZ6K+v5o6l5Y+X55qE6YKu5Lu2
+44CCPC9zcGFuPjwvZGl2PjxkaXYgc3R5bGU9ImNsZWFyOiBib3RoOyI+PHNwYW4gc3R5bGU9ImZv
+bnQtc2l6ZTogMTBweDsgY29sb3I6IHJnYigyMTYsIDIxNiwgMjE2KTsiPlRoZSZuYnNwO2luZm9y
+bWF0aW9uJm5ic3A7aW4mbmJzcDt0aGlzJm5ic3A7bWVzc2FnZSZuYnNwO2FuZCZuYnNwO2FueSZu
+YnNwO2F0dGFjaG1lbnRzJm5ic3A7aXMmbmJzcDtjb25maWRlbnRpYWwmbmJzcDthbmQmbmJzcDtt
+YXkmbmJzcDtiZSZuYnNwO3ByaXZpbGVnZWQuJm5ic3A7Jm5ic3A7QWNjZXNzJm5ic3A7dG8mbmJz
+cDt0aGlzJm5ic3A7ZW1haWwmbmJzcDtieSZuYnNwO2FueW9uZSZuYnNwO290aGVyJm5ic3A7dGhh
+biZuYnNwO3RoZSZuYnNwO2ludGVuZGVkJm5ic3A7cmVjaXBpZW50Jm5ic3A7aXMmbmJzcDtub3Qm
+bmJzcDthdXRob3JpemVkLiZuYnNwOyZuYnNwO0lmJm5ic3A7eW91Jm5ic3A7YXJlJm5ic3A7bm90
+Jm5ic3A7dGhlJm5ic3A7aW50ZW5kZWQmbmJzcDtyZWNpcGllbnQsJm5ic3A7ZGlzY2xvc3VyZSwm
+bmJzcDtjb3B5aW5nJm5ic3A7b3ImbmJzcDt1c2UmbmJzcDtvZiZuYnNwO3RoZSZuYnNwO2NvbnRl
+bnRzJm5ic3A7b2YmbmJzcDt0aGlzJm5ic3A7ZW1haWwmbmJzcDtpcyZuYnNwO3Byb2hpYml0ZWQu
+Jm5ic3A7Jm5ic3A7SWYmbmJzcDt5b3UmbmJzcDthcmUmbmJzcDtub3QmbmJzcDt0aGUmbmJzcDtp
+bnRlbmRlZCZuYnNwO3JlY2lwaWVudCwmbmJzcDtwbGVhc2UmbmJzcDtub3RpZnkmbmJzcDsmbmJz
+cDtjb21wbGlhbmNlQG5lYnVsYS1tYXRyaXguY29tJm5ic3A7aW1tZWRpYXRlbHkmbmJzcDtieSZu
+YnNwO2VtYWlsLCZuYnNwO2FuZCZuYnNwO3BsZWFzZSZuYnNwO2Rlc3Ryb3kmbmJzcDt0aGUmbmJz
+cDtlbWFpbCZuYnNwO3lvdSZuYnNwO3JlY2VpdmVkJm5ic3A7aW4mbmJzcDtlcnJvci48L3NwYW4+
+PC9kaXY+
+------=ALIBOUNDARY_2498_7fd6b4e91700_6927f695_27215--
+
