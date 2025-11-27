@@ -2,40 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64EBDD11183
-	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Nov 2025 08:12:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41973D11183
+	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Nov 2025 08:16:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 31ECC40696;
-	Thu, 27 Nov 2025 09:12:39 +0100 (CET)
-Received: from out28-75.mail.aliyun.com (out28-75.mail.aliyun.com
- [115.124.28.75]) by mails.dpdk.org (Postfix) with ESMTP id C00CF4013F
- for <dev@dpdk.org>; Thu, 27 Nov 2025 09:12:37 +0100 (CET)
-X-Alimail-AntiSpam: AC=CONTINUE; BC=0.07386756|-1; CH=green;
- DM=|CONTINUE|false|;
- DS=CONTINUE|ham_regular_dialog|0.0441808-0.00275999-0.953059;
- FP=15412582465763550414|0|0|0|0|-1|-1|-1;
- HT=maildocker-contentspam033032053168; MF=dimon.zhao@nebula-matrix.com; NM=1;
- PH=DW; RN=4; RT=4; SR=0; TI=W4_0.2.3_21252208_1764231155030_o7001c119m; 
-Received: from WS-web
- (dimon.zhao@nebula-matrix.com[W4_0.2.3_21252208_1764231155030_o7001c119m]
- cluster:ay29) at Thu, 27 Nov 2025 16:12:35 +0800
-Date: Thu, 27 Nov 2025 16:12:35 +0800
-From: "Dimon" <dimon.zhao@nebula-matrix.com>
-To: "Stephen Hemminger" <stephen@networkplumber.org>
-Cc: "dev" <dev@dpdk.org>, "Kyo Liu" <kyo.liu@nebula-matrix.com>,
- "Leon" <leon.yu@nebula-matrix.com>, "Sam" <sam.chen@nebula-matrix.com>
-Message-ID: <b54b8e60-831f-4363-93c9-798258d56719.dimon.zhao@nebula-matrix.com>
-Subject: =?UTF-8?B?5Zue5aSN77yaW1BBVENIIHYxIDEvMV0gbmV0L25ibDogZml4IFJ4L1R4IHN0YXRzIGNvbmN1?=
- =?UTF-8?B?cnJlbmN5?=
-X-Mailer: [Alimail-Mailagent revision 35][W4_0.2.3][null][Chrome]
+	by mails.dpdk.org (Postfix) with ESMTP id 682CF40B8F;
+	Thu, 27 Nov 2025 09:16:01 +0100 (CET)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id DCBFE4013F
+ for <dev@dpdk.org>; Thu, 27 Nov 2025 09:15:59 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1764231359;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:mime-version:mime-version:content-type:content-type;
+ bh=Nga0YxO4hdV0Qx8voSg+5+kFJtERQQ5jpYnLIw1qWNM=;
+ b=QzcITe9LSwQcnRGkVW+I6qnPwWck4UE3xtC1Ya6ppko2P8ayPoa0/w54bA3miHidwMgqsM
+ LEyc+97yWk4RzaX5N5MF5SqRssjzB490HdZHzBwbHe74c0FJlnS7/Ge1qONRjy44KbmXmP
+ hFFsFxDZeCeOvtGZpePKMStmvfVnmfc=
+Received: from mail-oo1-f72.google.com (mail-oo1-f72.google.com
+ [209.85.161.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-231-eA5pWml7PeOwfkA3bHc-Ug-1; Thu, 27 Nov 2025 03:15:53 -0500
+X-MC-Unique: eA5pWml7PeOwfkA3bHc-Ug-1
+X-Mimecast-MFC-AGG-ID: eA5pWml7PeOwfkA3bHc-Ug_1764231353
+Received: by mail-oo1-f72.google.com with SMTP id
+ 006d021491bc7-657501e1dcfso511275eaf.1
+ for <dev@dpdk.org>; Thu, 27 Nov 2025 00:15:53 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1764231352; x=1764836152;
+ h=to:subject:message-id:date:from:mime-version:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+ bh=Nga0YxO4hdV0Qx8voSg+5+kFJtERQQ5jpYnLIw1qWNM=;
+ b=VLnH3xMNEItMsONeuhLokMYFKRcsDUunq9HTLAiSte9G85kcaTwBPXvz265O7IJFPp
+ zKRvDJB2LEgz6ZS3yH7cpVK4Vd63NdXzmqYt4yc31SQXSinHtJ+ZlkiTTYCTm/ETjSHa
+ sqgegd5nCvV6RQ0zcgu9sNMiKDwue1qEQa9evgN94aIh+xjzvUrCyUfcAmpO9ZlpMQUa
+ FDFmuWPjuwz1OWFfSZLuHVLghPHTO+ZePsuF4Es0tiivK63F0oPygG7wl5MxwbhBxEO3
+ Tg8KYa6qh+z5P3urpGpai+HdEZBXs8Wo7V5TwtD0is4rG1LOs+mvpEc3tjJLoTye6bMW
+ elPw==
+X-Gm-Message-State: AOJu0Yx6tn5Jk+reFO6XTuC35teW+nobyfui9r7eXMQQldFoMWwRWkLg
+ ycpls4NiujdWN6daoVKznbxECpkPv58Wu2JWpEqLjRyqGe2aVpCEApwc/dckwo9DzZifORP7sK2
+ WTXTsMOEa3lAEwCyn0MRr15c40Nr0XHFCe8DFAMt8dstGQBo1rtGnhe9UMJRnsg/qKbF1HJ7O1k
+ JSsXvn28QO8hqx0lgWCCXbaBbsWZY6ZgQ0
+X-Gm-Gg: ASbGnctUNTgp4HqqL4Nhd9NRy65y14G1Jy6+X6wmXDBVq41GMuyJu5joflc2b3gxv43
+ BOf2nnZDoJckqQdRK12urd2B6ah5UBS5yPSPBGcK7XAXf/iL9i5aXnv5LYPlbpTxf8MXU/9hgxu
+ 1HOJ4TA3KXnxlGPjKEBTkg5/MM+qTYkh4i1QrYn5G/nThUQ7ecA4LUv9GexG6yI8jFu0w=
+X-Received: by 2002:a05:6820:1525:b0:654:f77a:1a5c with SMTP id
+ 006d021491bc7-65790b0f406mr9215604eaf.3.1764231352495; 
+ Thu, 27 Nov 2025 00:15:52 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGo+k/QOCtdxH1HrzAW4K8P0Y0DuXwVcXL4Cwt8xgsvw590K2mDYKmzeXsJFVQWTwFzaDQNSGDScFu57jVoFKQ=
+X-Received: by 2002:a05:6820:1525:b0:654:f77a:1a5c with SMTP id
+ 006d021491bc7-65790b0f406mr9215600eaf.3.1764231352229; Thu, 27 Nov 2025
+ 00:15:52 -0800 (PST)
 MIME-Version: 1.0
-x-aliyun-im-through: {"version":"v1.0"}
-References: <20251126025436.3714568-1-dimon.zhao@nebula-matrix.com>	<20251126025436.3714568-2-dimon.zhao@nebula-matrix.com>,
- <20251126160713.3943bcef@phoenix.local>
-x-aliyun-mail-creator: W4_0.2.3_null_EuMTW96aWxsYS81LjAgKFdpbmRvd3MgTlQgMTAuMDsgV2luNjQ7IHg2NCkgQXBwbGVXZWJLaXQvNTM3LjM2IChLSFRNTCwgbGlrZSBHZWNrbykgQ2hyb21lLzEzMy4wLjY5NDMuMTQyIFNhZmFyaS81MzcuMzYgZGluZ3RhbGstd2luLzEuMC4wIG53KDAuMTQuNykgRGluZ1RhbGsoOC4xLjUtUmVsZWFzZS4yNTExMDcwMDEpIE1vam8vMS4wLjAgTmF0aXZlIEFwcFR5cGUocmVsZWFzZSkgQ2hhbm5lbC8yMDEyMDAgQXJjaGl0ZWN0dXJlL3g4Nl82NCB3ZWJEdC9QQw==uL
-In-Reply-To: <20251126160713.3943bcef@phoenix.local>
-Content-Type: multipart/alternative;
- boundary="----=ALIBOUNDARY_2497_7fe345b4c700_692807f3_10f12"
+From: Yanghang Liu <yanghliu@redhat.com>
+Date: Thu, 27 Nov 2025 16:15:40 +0800
+X-Gm-Features: AWmQ_bkTs1ql_p0x-MoEFK1qg932CPEcHbf3HITFo4nO7eqpC4irmOotsdGeL1M
+Message-ID: <CAGYh1E-XYZ+-KDpQ=EPat2bqrRfz5gL+i83D=s0TiqH70LVvVw@mail.gmail.com>
+Subject: RedHat QE's test result for DPDK release candidate v25.11-rc4
+To: dev <dev@dpdk.org>, Thomas Monjalon <thomas@monjalon.net>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: e8-m0z_41HFrTt9KfwPNpSbecHEL1imk1hcU7dT33eM_1764231353
+X-Mimecast-Originator: redhat.com
+Content-Type: multipart/alternative; boundary="0000000000000d333806448f1f30"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -47,171 +75,95 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-Reply-To: Dimon <dimon.zhao@nebula-matrix.com>
 Errors-To: dev-bounces@dpdk.org
 
-------=ALIBOUNDARY_2497_7fe345b4c700_692807f3_10f12
+--0000000000000d333806448f1f30
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
 
-SGkgU3RlcGhlbiwKVGhhbmsgeW91IGZvciB0aGUgZmVlZGJhY2suClRoZSBtYWluIGlzc3VlIEkg
-d2FudGVkIHRvIGFkZHJlc3MgaXMgdGhlIHJhY2UgY29uZGl0aW9uIHdoZW4gdGhlIGZsb3cgc3Rv
-cHMuCldpdGggdGhlIG9sZCBtZW1zZXQgY29kZSwgaWYgYSByZXNldCBoYXBwZW5zIGR1cmluZyBh
-IHN0YXRzIHJlYWQvbW9kaWZ5L3dyaXRlIGN5Y2xlIChldmVuIHdpdGggKzAgbW9kaWZpY2F0aW9u
-KSwgdGhlIHplcm9pbmcgY2FuIGJlIGNvbXBsZXRlbHkgbG9zdC4KTXkgbmV3IGNvZGUgaGFuZGxl
-cyB0aGlzIGNhc2UgYmV0dGVyIHVuZGVyIG5vLXRyYWZmaWMgY29uZGl0aW9ucy4KV2UgZG8gbm90
-IG5lZWQgZnVsbHkgcmVsaWFibGUgc3RhdGlzdGljcywgc28gd2UgZG9uJ3QgbmVlZCB0byB1c2Ug
-YXRvbWljIG9wZXJhdGlvbnMuClRoaXMgc2VlbXMgbGlrZSBhIHJlYXNvbmFibGUgY29tcHJvbWlz
-ZSBmb3Igb3VyIHVzZSBjYXNlLgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0K5Y+R5Lu25Lq677yaU3RlcGhlbiBIZW1taW5n
-ZXIgPHN0ZXBoZW5AbmV0d29ya3BsdW1iZXIub3JnPgrlj5HpgIHml7bpl7TvvJoyMDI15bm0MTHm
-nIgyN+aXpSjlkajlm5spIDA4OjA3CuaUtuS7tuS6uu+8mkRpbW9uPGRpbW9uLnpoYW9AbmVidWxh
-LW1hdHJpeC5jb20+CuaKhOOAgOmAge+8mmRldjxkZXZAZHBkay5vcmc+OyBLeW8gTGl1PGt5by5s
-aXVAbmVidWxhLW1hdHJpeC5jb20+OyBMZW9uPGxlb24ueXVAbmVidWxhLW1hdHJpeC5jb20+OyBT
-YW08c2FtLmNoZW5AbmVidWxhLW1hdHJpeC5jb20+CuS4u+OAgOmimO+8mlJlOiBbUEFUQ0ggdjEg
-MS8xXSBuZXQvbmJsOiBmaXggUngvVHggc3RhdHMgY29uY3VycmVuY3kKT24gVHVlLCAyNSBOb3Yg
-MjAyNSAxODo1NDozNiAtMDgwMApEaW1vbiBaaGFvIDxkaW1vbi56aGFvQG5lYnVsYS1tYXRyaXgu
-Y29tPiB3cm90ZToKPiBRdWV1ZSBzdGF0aXN0aWNzIGFyZSBiZWluZyBjb250aW51b3VzbHkgdXBk
-YXRlZCBpbiBSeC9UeCBidXJzdAo+IHJvdXRpbmVzIHdoaWxlIGhhbmRsaW5nIHRyYWZmaWMuIElu
-IGFkZGl0aW9uIHRvIHRoYXQsIHN0YXRpc3RpY3MKPiBjYW4gYmUgcmVzZXQgKHdyaXR0ZW4gd2l0
-aCB6ZXJvZXMpIG9uIHN0YXRpc3RpY3MgcmVzZXQgaW4gb3RoZXIKPiB0aHJlYWRzLCBjYXVzaW5n
-IGEgcmFjZSBjb25kaXRpb24sIHdoaWNoIGluIHR1cm4gY291bGQgcmVzdWx0IGluCj4gd3Jvbmcg
-c3RhdHMuCj4gCj4gVGhlIHBhdGNoIHByb3ZpZGVzIGFuIGFwcHJvYWNoIHdpdGggcmVmZXJlbmNl
-IHZhbHVlcywgYWxsb3dpbmcKPiB0aGUgYWN0dWFsIGNvdW50ZXJzIHRvIGJlIHdyaXRhYmxlIHdp
-dGhpbiBSeC9UeCBidXJzdCB0aHJlYWRzCj4gb25seSwgYW5kIHVwZGF0aW5nIHJlZmVyZW5jZSB2
-YWx1ZXMgb24gc3RhdHMgcmVzZXQuCj4gCj4gRml4ZXM6IDY2MWMwY2NmMjUxMiAoIm5ldC9uYmw6
-IHN1cHBvcnQgc3RhdGlzdGljcyIpCj4gCj4gU2lnbmVkLW9mZi1ieTogRGltb24gWmhhbyA8ZGlt
-b24uemhhb0BuZWJ1bGEtbWF0cml4LmNvbT4KRmlyc3Qgb2ZmLCBtYW55IGRyaXZlcnMgZG8gdGhl
-IHNhbWUgdGhpbmcgYXMgdGhlIGN1cnJlbnQgY29kZS4KSSB0aGluayB2aXJ0aW8gaXMgdGhlIG1v
-c3QgY29tbW9ubHkgdXNlZCBkcml2ZXIgd2l0aCBzYW1lIG1lbXNldC4KVGhleSBqdXN0IHplcm8g
-YW4gYWNjdW11bGF0ZWQgYnVmZmVyLgpUaGUgU1cgY291bnRlcnMgYXJlIG5vdCBtZWFudCB0byBz
-dXBlciBleGFjdCAobm90IGEgZ29vZCBpZGVhIHRvIGJpbGwKY3VzdG9tZXJzIGJhc2VkIG9uIHBh
-Y2tldCBjb3VudHMpLgpZb3VyIG5ldyBtZXRob2QgdXNpbmcgYSBzdGFzaGVkIG9sZCBjb3B5LCBz
-dGlsbCBoYXMgcmFjZXMuClRoZSBvbGQgY29kZSB3b3VsZCByYWNlIHRoZSB6ZXJvIHdpdGggcmVh
-ZC9tb2RpZnkvd3JpdGUgb2YgdGhlIGluY3JlbWVudC4KSWYgdGhlIHJhY2UgaGFwcGVuZWQgdGhl
-IHplcm8gbWlnaHQgaGFwcGVuIGluIHRoZSBtaWRkbGUgb2YgdGhlIG1vZGlmeQpjYXVzaW5nIHRo
-ZSB2YWx1ZSBub3QgdG8gYmUgemVyb2VkLgpUaGUgbmV3IGNvZGUgaXMgbGVzcyBvZiBhIHByb2Js
-ZW0gYnV0IGFzc2lnbm1lbnQgaXMgbm90IGF0b21pYyBvbgptYW55IHBsYXRmb3JtcywgZXNwZWNp
-YWxseSBmb3Igc3RydWN0dXJlIHNpemUgb2JqZWN0cy4gVGhlcmVmb3JlIGl0CmNvdWxkIGhhcHBl
-biB0byBnZXQgcmVhZCBvZiBzdGFsZSBkYXRhLgpJZiB5b3UgcmVhbGx5IHdhbnQgdG8gaGF2ZSBy
-ZWxpYWJsZSBzdGF0aXN0aWNzIGluIFNXLCB5b3UKd291bGQgaGF2ZSB0byB1c2UgYXRvbWljIG9w
-ZXJhdGlvbnMsIGFuZCBwYXkgdGhlIHBlbmFsdHkgb2YgdGhlCmFkZGl0aW9uYWwgbG9ja2VkIG9w
-ZXJhdGlvbnMgaW4gdGhlIGZhc3QgcGF0aC4KUFM6IEZyZWVCU0QgaGFzIHRoZSBzYW1lIHByb2Js
-ZW0gaW4gbWFueSBkcml2ZXJzLgo=
-------=ALIBOUNDARY_2497_7fe345b4c700_692807f3_10f12
+I tested below 18 scenarios on RHEL 9.6 host and didn't find any new dpdk
+issues.
+
+   - VM with device assignment(PF) throughput testing(1G hugepage size):
+   PASS
+   - VM with device assignment(PF) throughput testing(2M hugepage size) :
+   PASS
+   - VM with device assignment(VF) throughput testing: PASS
+   - PVP (host dpdk testpmd as vswitch) 1Q: throughput testing: PASS
+   - PVP vhost-user 2Q throughput testing: PASS
+   - PVP vhost-user 1Q - cross numa node throughput testing: PASS
+   - VM with vhost-user 2 queues throughput testing: PASS
+   - vhost-user reconnect with dpdk-client, qemu-server(qemu reconnect):
+   PASS
+   - vhost-user reconnect with dpdk-client, qemu-server(ovs reconnect): PASS
+   - PVP  reconnect with dpdk-client, qemu-server: PASS
+   - PVP 1Q live migration testing: PASS
+   - PVP 1Q cross numa node live migration testing: PASS
+   - VM with ovs+dpdk+vhost-user 1Q live migration testing: PASS
+   - VM with ovs+dpdk+vhost-user 1Q live migration testing (2M): PASS
+   - VM with ovs+dpdk+vhost-user 2Q live migration testing: PASS
+   - VM with ovs+dpdk+vhost-user 4Q live migration testing: PASS
+   - Host PF + DPDK testing: PASS
+   - Host VF + DPDK testing: PASS
+
+
+Test Versions:
+
+   - qemu-kvm-9.1.0
+   - kernel 5.14
+   - libvirt 10.10
+   - ovs 3.6
+   - git describe
+      - v25.11-rc4
+
+
+   - Test device : X540-AT2 NIC(ixgbe, 10G)
+
+Tested-by: Yanghang Liu <yanghliu@redhat.com>
+
+--0000000000000d333806448f1f30
 Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: quoted-printable
 
-PGRpdiBjbGFzcz0iX19hbGl5dW5fZW1haWxfYm9keV9ibG9jayI+PGRpdiAgc3R5bGU9ImZvbnQt
-ZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBTVEhlaXRpU0MtTGlnaHQsIFNpbVN1biI+PGRpdiAgc3R5
-bGU9ImNsZWFyOiBib3RoOyBmb250LWZhbWlseTogVGFob21hLCBBcmlhbCwgU1RIZWl0aVNDLUxp
-Z2h0LCBTaW1TdW47Ij48c3BhbiAgc3R5bGU9ImZvbnQtZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBT
-VEhlaXRpU0MtTGlnaHQsIFNpbVN1bjsiPkhpJm5ic3A7PHNwYW4gIHN0eWxlPSJjb2xvcjogcmdi
-KDAsIDAsIDApOyBmb250LWZhbWlseTogVGFob21hLCBBcmlhbCwgU1RIZWl0aSwgU2ltU3VuOyBm
-b250LXNpemU6IDE0cHg7IGZvbnQtc3R5bGU6IG5vcm1hbDsgZm9udC12YXJpYW50LWxpZ2F0dXJl
-czogbm9ybWFsOyBmb250LXZhcmlhbnQtY2Fwczogbm9ybWFsOyBmb250LXdlaWdodDogNDAwOyBs
-ZXR0ZXItc3BhY2luZzogbm9ybWFsOyB0ZXh0LWFsaWduOiBzdGFydDsgdGV4dC1pbmRlbnQ6IDBw
-eDsgdGV4dC10cmFuc2Zvcm06IG5vbmU7IHdvcmQtc3BhY2luZzogMHB4OyB3aGl0ZS1zcGFjZTog
-bm9ybWFsOyBiYWNrZ3JvdW5kLWNvbG9yOiByZ2IoMjU1LCAyNTUsIDI1NSk7IHRleHQtZGVjb3Jh
-dGlvbi10aGlja25lc3M6IGluaXRpYWw7IHRleHQtZGVjb3JhdGlvbi1zdHlsZTogaW5pdGlhbDsg
-dGV4dC1kZWNvcmF0aW9uLWNvbG9yOiBpbml0aWFsOyBmbG9hdDogbm9uZTsgZGlzcGxheTogaW5s
-aW5lICFpbXBvcnRhbnQ7Ij5TdGVwaGVuLDwvc3Bhbj48L3NwYW4+PC9kaXY+PGRpdiAgc3R5bGU9
-ImNsZWFyOiBib3RoOyBmb250LWZhbWlseTogVGFob21hLCBBcmlhbCwgU1RIZWl0aVNDLUxpZ2h0
-LCBTaW1TdW47Ij48YnIgPjwvZGl2PjxkaXYgIHN0eWxlPSJjbGVhcjogYm90aDsgZm9udC1mYW1p
-bHk6IFRhaG9tYSwgQXJpYWwsIFNUSGVpdGlTQy1MaWdodCwgU2ltU3VuOyI+PHNwYW4gIHN0eWxl
-PSJmb250LWZhbWlseTogVGFob21hLCBBcmlhbCwgU1RIZWl0aVNDLUxpZ2h0LCBTaW1TdW47Ij48
-c3BhbiA+VGhhbmsgeW91IGZvciB0aGUgZmVlZGJhY2suPGJyID48L3NwYW4+PC9zcGFuPjxkaXYg
-IHN0eWxlPSJjbGVhcjogYm90aDsiPjxiciA+PC9kaXY+PGRpdiAgc3R5bGU9ImNsZWFyOiBib3Ro
-OyI+VGhlIG1haW4gaXNzdWUgSSB3YW50ZWQgdG8gYWRkcmVzcyBpcyB0aGUgcmFjZSBjb25kaXRp
-b24gd2hlbiB0aGUgZmxvdyBzdG9wcy48L2Rpdj48ZGl2ICBzdHlsZT0iY2xlYXI6IGJvdGg7Ij5X
-aXRoIHRoZSBvbGQgbWVtc2V0IGNvZGUsIGlmIGEgcmVzZXQgaGFwcGVucyBkdXJpbmcgYSBzdGF0
-cyByZWFkL21vZGlmeS93cml0ZSBjeWNsZSAoZXZlbiB3aXRoICswIG1vZGlmaWNhdGlvbiksIHRo
-ZSB6ZXJvaW5nIGNhbiBiZSBjb21wbGV0ZWx5IGxvc3QuPC9kaXY+PGRpdiAgc3R5bGU9ImNsZWFy
-OiBib3RoOyI+TXkgbmV3IGNvZGUgaGFuZGxlcyB0aGlzIGNhc2UgYmV0dGVyIHVuZGVyIG5vLXRy
-YWZmaWMgY29uZGl0aW9ucy48YnIgPjwvZGl2PjxkaXYgPjxzcGFuID5XZSBkbyBub3QgbmVlZCBm
-dWxseSByZWxpYWJsZSBzdGF0aXN0aWNzLCBzbyB3ZSBkb24ndCBuZWVkIHRvIHVzZSBhdG9taWMg
-b3BlcmF0aW9ucy48L3NwYW4+PC9kaXY+PGRpdiA+PHNwYW4gPlRoaXMgc2VlbXMgbGlrZSBhIHJl
-YXNvbmFibGUgY29tcHJvbWlzZSBmb3Igb3VyIHVzZSBjYXNlLjwvc3Bhbj48L2Rpdj48c3BhbiAg
-c3R5bGU9ImZvbnQtZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBTVEhlaXRpU0MtTGlnaHQsIFNpbVN1
-bjsiPjxiciA+PC9zcGFuPjwvZGl2PjxkaXYgIHN0eWxlPSJjbGVhcjogYm90aDsgZm9udC1mYW1p
-bHk6IFRhaG9tYSwgQXJpYWwsIFNUSGVpdGlTQy1MaWdodCwgU2ltU3VuOyI+PHNwYW4gIHN0eWxl
-PSJmb250LWZhbWlseTogVGFob21hLCBBcmlhbCwgU1RIZWl0aVNDLUxpZ2h0LCBTaW1TdW47Ij48
-YnIgPjwvc3Bhbj48L2Rpdj48ZGl2ICBzdHlsZT0iY2xlYXI6IGJvdGg7IGZvbnQtZmFtaWx5OiBU
-YWhvbWEsIEFyaWFsLCBTVEhlaXRpU0MtTGlnaHQsIFNpbVN1bjsiPjxzcGFuICBzdHlsZT0iZm9u
-dC1mYW1pbHk6IFRhaG9tYSwgQXJpYWwsIFNUSGVpdGlTQy1MaWdodCwgU2ltU3VuOyI+PGJyID48
-L3NwYW4+PC9kaXY+PGJsb2NrcXVvdGUgIF9xdW90ZT0iMSIgc3R5bGU9Im1hcmdpbi1yaWdodDog
-MHB4OyBtYXJnaW4tdG9wOiAwcHg7IG1hcmdpbi1ib3R0b206IDBweDsgZm9udC1mYW1pbHk6IFRh
-aG9tYSwgQXJpYWwsIFNUSGVpdGksIFNpbVN1bjsgZm9udC1zaXplOiAxNHB4OyBjb2xvcjogcmdi
-KDAsIDAsIDApOyI+PGRpdiAgY2xhc3M9ImFsaW1haWwtcXVvdGUiPjxkaXYgIHN0eWxlPSJjbGVh
-cjogYm90aDsiPi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLTwvZGl2PjxkaXYgIHN0eWxlPSJjbGVhcjogYm90aDsiPuWPkeS7
-tuS6uu+8mlN0ZXBoZW4gSGVtbWluZ2VyICZsdDtzdGVwaGVuQG5ldHdvcmtwbHVtYmVyLm9yZyZn
-dDs8L2Rpdj48ZGl2ICBzdHlsZT0iY2xlYXI6IGJvdGg7Ij7lj5HpgIHml7bpl7TvvJoyMDI15bm0
-MTHmnIgyN+aXpSjlkajlm5spIDA4OjA3PC9kaXY+PGRpdiAgc3R5bGU9ImNsZWFyOiBib3RoOyI+
-5pS25Lu25Lq677yaRGltb24mbHQ7ZGltb24uemhhb0BuZWJ1bGEtbWF0cml4LmNvbSZndDs8L2Rp
-dj48ZGl2ICBzdHlsZT0iY2xlYXI6IGJvdGg7Ij7mioTjgIDpgIHvvJpkZXYmbHQ7ZGV2QGRwZGsu
-b3JnJmd0OzsgS3lvIExpdSZsdDtreW8ubGl1QG5lYnVsYS1tYXRyaXguY29tJmd0OzsgTGVvbiZs
-dDtsZW9uLnl1QG5lYnVsYS1tYXRyaXguY29tJmd0OzsgU2FtJmx0O3NhbS5jaGVuQG5lYnVsYS1t
-YXRyaXguY29tJmd0OzwvZGl2PjxkaXYgIHN0eWxlPSJjbGVhcjogYm90aDsiPuS4u+OAgOmimO+8
-mlJlOiBbUEFUQ0ggdjEgMS8xXSBuZXQvbmJsOiBmaXggUngvVHggc3RhdHMgY29uY3VycmVuY3k8
-L2Rpdj48ZGl2ICBzdHlsZT0iY2xlYXI6IGJvdGg7Ij48YnIgPjwvZGl2Pk9uIFR1ZSwgMjUgTm92
-IDIwMjUgMTg6NTQ6MzYgLTA4MDA8YnIgPkRpbW9uIFpoYW8gJmx0O2RpbW9uLnpoYW9AbmVidWxh
-LW1hdHJpeC5jb20mZ3Q7IHdyb3RlOjxiciA+PGJyID4mZ3Q7IFF1ZXVlIHN0YXRpc3RpY3MgYXJl
-IGJlaW5nIGNvbnRpbnVvdXNseSB1cGRhdGVkIGluIFJ4L1R4IGJ1cnN0PGJyID4mZ3Q7IHJvdXRp
-bmVzIHdoaWxlIGhhbmRsaW5nIHRyYWZmaWMuIEluIGFkZGl0aW9uIHRvIHRoYXQsIHN0YXRpc3Rp
-Y3M8YnIgPiZndDsgY2FuIGJlIHJlc2V0ICh3cml0dGVuIHdpdGggemVyb2VzKSBvbiBzdGF0aXN0
-aWNzIHJlc2V0IGluIG90aGVyPGJyID4mZ3Q7IHRocmVhZHMsIGNhdXNpbmcgYSByYWNlIGNvbmRp
-dGlvbiwgd2hpY2ggaW4gdHVybiBjb3VsZCByZXN1bHQgaW48YnIgPiZndDsgd3Jvbmcgc3RhdHMu
-PGJyID4mZ3Q7IDxiciA+Jmd0OyBUaGUgcGF0Y2ggcHJvdmlkZXMgYW4gYXBwcm9hY2ggd2l0aCBy
-ZWZlcmVuY2UgdmFsdWVzLCBhbGxvd2luZzxiciA+Jmd0OyB0aGUgYWN0dWFsIGNvdW50ZXJzIHRv
-IGJlIHdyaXRhYmxlIHdpdGhpbiBSeC9UeCBidXJzdCB0aHJlYWRzPGJyID4mZ3Q7IG9ubHksIGFu
-ZCB1cGRhdGluZyByZWZlcmVuY2UgdmFsdWVzIG9uIHN0YXRzIHJlc2V0LjxiciA+Jmd0OyA8YnIg
-PiZndDsgRml4ZXM6IDY2MWMwY2NmMjUxMiAoIm5ldC9uYmw6IHN1cHBvcnQgc3RhdGlzdGljcyIp
-PGJyID4mZ3Q7IDxiciA+Jmd0OyBTaWduZWQtb2ZmLWJ5OiBEaW1vbiBaaGFvICZsdDtkaW1vbi56
-aGFvQG5lYnVsYS1tYXRyaXguY29tJmd0OzxiciA+PGJyID5GaXJzdCBvZmYsIG1hbnkgZHJpdmVy
-cyBkbyB0aGUgc2FtZSB0aGluZyBhcyB0aGUgY3VycmVudCBjb2RlLjxiciA+SSB0aGluayB2aXJ0
-aW8gaXMgdGhlIG1vc3QgY29tbW9ubHkgdXNlZCBkcml2ZXIgd2l0aCBzYW1lIG1lbXNldC48YnIg
-PjxiciA+VGhleSBqdXN0IHplcm8gYW4gYWNjdW11bGF0ZWQgYnVmZmVyLjxiciA+VGhlIFNXIGNv
-dW50ZXJzIGFyZSBub3QgbWVhbnQgdG8gc3VwZXIgZXhhY3QgKG5vdCBhIGdvb2QgaWRlYSB0byBi
-aWxsPGJyID5jdXN0b21lcnMgYmFzZWQgb24gcGFja2V0IGNvdW50cykuPGJyID48YnIgPllvdXIg
-bmV3IG1ldGhvZCB1c2luZyBhIHN0YXNoZWQgb2xkIGNvcHksIHN0aWxsIGhhcyByYWNlcy48YnIg
-PlRoZSBvbGQgY29kZSB3b3VsZCByYWNlIHRoZSB6ZXJvIHdpdGggcmVhZC9tb2RpZnkvd3JpdGUg
-b2YgdGhlIGluY3JlbWVudC48YnIgPklmIHRoZSByYWNlIGhhcHBlbmVkIHRoZSB6ZXJvIG1pZ2h0
-IGhhcHBlbiBpbiB0aGUgbWlkZGxlIG9mIHRoZSBtb2RpZnk8YnIgPmNhdXNpbmcgdGhlIHZhbHVl
-IG5vdCB0byBiZSB6ZXJvZWQuPGJyID48YnIgPlRoZSBuZXcgY29kZSBpcyBsZXNzIG9mIGEgcHJv
-YmxlbSBidXQgYXNzaWdubWVudCBpcyBub3QgYXRvbWljIG9uPGJyID5tYW55IHBsYXRmb3Jtcywg
-ZXNwZWNpYWxseSBmb3Igc3RydWN0dXJlIHNpemUgb2JqZWN0cy4gVGhlcmVmb3JlIGl0PGJyID5j
-b3VsZCBoYXBwZW4gdG8gZ2V0IHJlYWQgb2Ygc3RhbGUgZGF0YS48YnIgPjxiciA+SWYgeW91IHJl
-YWxseSB3YW50IHRvIGhhdmUgcmVsaWFibGUgc3RhdGlzdGljcyBpbiBTVywgeW91PGJyID53b3Vs
-ZCBoYXZlIHRvIHVzZSBhdG9taWMgb3BlcmF0aW9ucywgYW5kIHBheSB0aGUgcGVuYWx0eSBvZiB0
-aGU8YnIgPmFkZGl0aW9uYWwgbG9ja2VkIG9wZXJhdGlvbnMgaW4gdGhlIGZhc3QgcGF0aC48YnIg
-PjxiciA+UFM6IEZyZWVCU0QgaGFzIHRoZSBzYW1lIHByb2JsZW0gaW4gbWFueSBkcml2ZXJzLjwv
-ZGl2PjwvYmxvY2txdW90ZT48ZGl2ICBzdHlsZT0ibGluZS1oZWlnaHQ6IDIwcHg7IGNsZWFyOiBi
-b3RoOyI+PGJyID48L2Rpdj48L2Rpdj48L2Rpdj4NCjxkaXYgc3R5bGU9ImNsZWFyOiBib3RoOyI+
-PHNwYW4gc3R5bGU9ImZvbnQtc2l6ZTogMTBweDsgY29sb3I6IHJnYigyMTYsIDIxNiwgMjE2KTsi
-PuacrOmCruS7tuaJgOWQq+S/oeaBr+WPiuWFtuS7u+S9lemZhOS7tuS4uuS/neWvhuS/oeaBr+S4
-lOWPr+iDveWxnuS6juS4k+acieS/oeaBr+OAguS7u+S9lemdnuaMh+WumuaOpeaUtuS6uuWdh+aX
-oOadg+iuv+mXruacrOmCruS7tuOAguWmguaenOaCqOS4jeaYr+ivpemCruS7tueahOaMh+WumuaO
-peaUtuS6uu+8jOmCo+S5iOS7u+S9leWvueacrOmCruS7tuWGheWuuei/m+ihjOaKq+mcsu+8jOWk
-jeWItuaIluS9v+eUqOeahOihjOS4uuWdh+aYr+emgeatoueahOOAguWmguaenOaCqOS4jeaYr+iv
-pemCruS7tueahOaMh+WumuaOpeaUtuS6uu+8jOivt+aCqOeri+WNs+mAmui/h+mCruS7tumAmuef
-pSZuYnNwO2NvbXBsaWFuY2VAbmVidWxhLW1hdHJpeC5jb23lubbnq4vljbPliKDpmaTmgqjplJno
-r6/mjqXlj5fnmoTpgq7ku7bjgII8L3NwYW4+PC9kaXY+PGRpdiBzdHlsZT0iY2xlYXI6IGJvdGg7
-Ij48c3BhbiBzdHlsZT0iZm9udC1zaXplOiAxMHB4OyBjb2xvcjogcmdiKDIxNiwgMjE2LCAyMTYp
-OyI+VGhlJm5ic3A7aW5mb3JtYXRpb24mbmJzcDtpbiZuYnNwO3RoaXMmbmJzcDttZXNzYWdlJm5i
-c3A7YW5kJm5ic3A7YW55Jm5ic3A7YXR0YWNobWVudHMmbmJzcDtpcyZuYnNwO2NvbmZpZGVudGlh
-bCZuYnNwO2FuZCZuYnNwO21heSZuYnNwO2JlJm5ic3A7cHJpdmlsZWdlZC4mbmJzcDsmbmJzcDtB
-Y2Nlc3MmbmJzcDt0byZuYnNwO3RoaXMmbmJzcDtlbWFpbCZuYnNwO2J5Jm5ic3A7YW55b25lJm5i
-c3A7b3RoZXImbmJzcDt0aGFuJm5ic3A7dGhlJm5ic3A7aW50ZW5kZWQmbmJzcDtyZWNpcGllbnQm
-bmJzcDtpcyZuYnNwO25vdCZuYnNwO2F1dGhvcml6ZWQuJm5ic3A7Jm5ic3A7SWYmbmJzcDt5b3Um
-bmJzcDthcmUmbmJzcDtub3QmbmJzcDt0aGUmbmJzcDtpbnRlbmRlZCZuYnNwO3JlY2lwaWVudCwm
-bmJzcDtkaXNjbG9zdXJlLCZuYnNwO2NvcHlpbmcmbmJzcDtvciZuYnNwO3VzZSZuYnNwO29mJm5i
-c3A7dGhlJm5ic3A7Y29udGVudHMmbmJzcDtvZiZuYnNwO3RoaXMmbmJzcDtlbWFpbCZuYnNwO2lz
-Jm5ic3A7cHJvaGliaXRlZC4mbmJzcDsmbmJzcDtJZiZuYnNwO3lvdSZuYnNwO2FyZSZuYnNwO25v
-dCZuYnNwO3RoZSZuYnNwO2ludGVuZGVkJm5ic3A7cmVjaXBpZW50LCZuYnNwO3BsZWFzZSZuYnNw
-O25vdGlmeSZuYnNwOyZuYnNwO2NvbXBsaWFuY2VAbmVidWxhLW1hdHJpeC5jb20mbmJzcDtpbW1l
-ZGlhdGVseSZuYnNwO2J5Jm5ic3A7ZW1haWwsJm5ic3A7YW5kJm5ic3A7cGxlYXNlJm5ic3A7ZGVz
-dHJveSZuYnNwO3RoZSZuYnNwO2VtYWlsJm5ic3A7eW91Jm5ic3A7cmVjZWl2ZWQmbmJzcDtpbiZu
-YnNwO2Vycm9yLjwvc3Bhbj48L2Rpdj4=
-------=ALIBOUNDARY_2497_7fe345b4c700_692807f3_10f12--
+<div dir=3D"ltr"><div dir=3D"ltr"><div><div dir=3D"ltr" class=3D"gmail_sign=
+ature"><div dir=3D"ltr"><div dir=3D"ltr" class=3D"gmail_signature"><div dir=
+=3D"ltr"><font face=3D"arial, sans-serif">I tested below 18 scenarios on RH=
+EL 9.6 host and didn&#39;t find any new dpdk issues.</font></div><div dir=
+=3D"ltr"><ul><li style=3D"margin-left:15px">VM with device assignment(PF) t=
+hroughput testing(1G hugepage size): PASS</li><li style=3D"margin-left:15px=
+">VM with device assignment(PF) throughput testing(2M hugepage size) : PASS=
+</li><li style=3D"margin-left:15px">VM with device assignment(VF) throughpu=
+t testing: PASS</li><li style=3D"margin-left:15px">PVP (host dpdk testpmd a=
+s vswitch) 1Q: throughput testing: PASS</li><li style=3D"margin-left:15px">=
+PVP vhost-user 2Q throughput testing: PASS</li><li style=3D"margin-left:15p=
+x">PVP vhost-user 1Q - cross numa node throughput testing: PASS</li><li sty=
+le=3D"margin-left:15px">VM with vhost-user 2 queues throughput testing: PAS=
+S</li><li style=3D"margin-left:15px">vhost-user reconnect with dpdk-client,=
+ qemu-server(qemu reconnect): PASS</li><li style=3D"margin-left:15px">vhost=
+-user reconnect with dpdk-client, qemu-server(ovs reconnect): PASS</li><li =
+style=3D"margin-left:15px">PVP =C2=A0reconnect with dpdk-client, qemu-serve=
+r: PASS</li><li style=3D"margin-left:15px">PVP 1Q live migration testing: P=
+ASS</li><li style=3D"margin-left:15px">PVP 1Q cross numa node live migratio=
+n testing: PASS</li><li style=3D"margin-left:15px">VM with ovs+dpdk+vhost-u=
+ser 1Q live migration testing: PASS</li><li style=3D"margin-left:15px">VM w=
+ith ovs+dpdk+vhost-user 1Q live migration testing (2M): PASS</li><li style=
+=3D"margin-left:15px">VM with ovs+dpdk+vhost-user 2Q live migration testing=
+: PASS</li><li style=3D"margin-left:15px">VM with ovs+dpdk+vhost-user 4Q li=
+ve migration testing: PASS</li><li style=3D"margin-left:15px">Host PF + DPD=
+K testing: PASS</li><li style=3D"margin-left:15px">Host VF + DPDK testing: =
+PASS</li></ul></div><div><br><font face=3D"arial, sans-serif">Test Versions=
+:<br><ul><li style=3D"margin-left:15px">qemu-kvm-9.1.0</li><li style=3D"mar=
+gin-left:15px">kernel 5.14</li><li style=3D"margin-left:15px">libvirt 10.10=
+</li><li style=3D"margin-left:15px">ovs 3.6</li><li style=3D"margin-left:15=
+px">git describe</li><ul><li style=3D"margin-left:15px">v25.11-rc4</li></ul=
+></ul></font></div></div></div></div><div dir=3D"ltr" class=3D"gmail_signat=
+ure"><div dir=3D"ltr"><div dir=3D"ltr" class=3D"gmail_signature"><font face=
+=3D"arial, sans-serif"><ul><li style=3D"margin-left:15px">Test device : X54=
+0-AT2 NIC(ixgbe, 10G)</li></ul></font></div></div></div><div dir=3D"ltr" cl=
+ass=3D"gmail_signature"><div dir=3D"ltr"><div dir=3D"ltr" class=3D"gmail_si=
+gnature"><div dir=3D"ltr"><div><font face=3D"arial, sans-serif">Tested-by: =
+Yanghang Liu &lt;<a href=3D"mailto:yanghliu@redhat.com" target=3D"_blank">y=
+anghliu@redhat.com</a>&gt;</font></div></div></div></div></div></div></div>
+</div>
+
+--0000000000000d333806448f1f30--
 
