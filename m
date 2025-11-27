@@ -2,72 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2642CFD2F6
-	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Nov 2025 17:56:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0AE9D111A8
+	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Nov 2025 17:56:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AA9A540DF6;
-	Thu, 27 Nov 2025 18:56:04 +0100 (CET)
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com
- [209.85.222.182])
- by mails.dpdk.org (Postfix) with ESMTP id A38294013F
- for <dev@dpdk.org>; Thu, 27 Nov 2025 18:56:02 +0100 (CET)
-Received: by mail-qk1-f182.google.com with SMTP id
- af79cd13be357-8b23b6d9f11so86512785a.3
- for <dev@dpdk.org>; Thu, 27 Nov 2025 09:56:02 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id D69D640E1C;
+	Thu, 27 Nov 2025 18:56:49 +0100 (CET)
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com
+ [209.85.219.52]) by mails.dpdk.org (Postfix) with ESMTP id 992954013F
+ for <dev@dpdk.org>; Thu, 27 Nov 2025 18:56:48 +0100 (CET)
+Received: by mail-qv1-f52.google.com with SMTP id
+ 6a1803df08f44-88054872394so14162086d6.1
+ for <dev@dpdk.org>; Thu, 27 Nov 2025 09:56:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1764266162;
- x=1764870962; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1764266208;
+ x=1764871008; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=tr2YhQSK8cnVH/krYmGBZk3bbx5RAqWi7Pd7pHjjjts=;
- b=r/y3f+FywXRiFqho7g/t9QRfA5LfhRNCB8o2Se6UUNNWGMq8Xbxj0dq+DrZW1ZvnNO
- tVyiXBfbjKrjJ9BxP36i55cSijFCpYimCwhssMUfr7S9nCRDNX7XM1TKsX5kMaihXmq8
- H2wPv/0GLA/WmwQLTrRBQnpJJ+0ww3XLWPB63hQNrtdCQUngLX3q9nWNu17G+yZ5fYx/
- tNUdC/pHu/EZqMnjEd5J8mV1S6VmWrKn+MQ4QmzGjDbwikJJwFao+xNJLODzmJQBs3BP
- gLnT7LflQT2LXGDofCyUaCpFPXKLk1D//GHwHMO8tZG58c4I1R36JMvajRHcbcrum2ag
- zO5A==
+ bh=hEbcNEFEtkumAZ6owN8UqmHJCJbxmcFUg76JAUOclTA=;
+ b=wsyNyZTsIxBzkXfyGS3kkFMSlBmcnH1BPMBvuuAl9hTTSetZkZ8D+wOiFGy29wtIip
+ uCwn7bRdFmE4ylSVyszUr6tEiuEgDLnVhZKB2iSVAPZRFrxyFqguDcdoT13vnusiKW7K
+ FfCE3k2+dJVs8WQ3/FvCpBp7U4DO0l9wpKLIr/1zZWfLnnYu55Hw2NajEBEcQVAcEW7E
+ Xx7OIiTBSdZz0TE2qnThBgP//1gcOiP0ifDkRZtuDpBpUkwVUINZju5loOCF6kMl7/l9
+ n1Tiap85EfqrhOFP7oD1R2yxJviiTymPP3/Bpsnxn5ieTx1AkAs32bPo+NsYRtuvUuH0
+ zKCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1764266162; x=1764870962;
+ d=1e100.net; s=20230601; t=1764266208; x=1764871008;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=tr2YhQSK8cnVH/krYmGBZk3bbx5RAqWi7Pd7pHjjjts=;
- b=CAQ9dSSLg7YsgbSk9pI+9LGK62+M+BjFBTNBf+7xX75hfhdTE7GHnwD5qvkxcIHh7M
- k/InZ3FX4KUBQBN9owj7vvCsHBgGV2QLySiyI6+ckC5bBe5YpSf42Bn0ZcFmr+CbYdXH
- sfY4zEteADURc9n9hljpWCmTeA0u+F3NP+3J54d8gmCg5LBSy7mRzKi15FFsKFqSdL0C
- 6C0ojMW4kTxV0Y4T3MHZ2M4dSS6yleBpTt2fQIn8L1J9+jjbrrgtXb9W4lFQ0QmW2LE3
- b0xubnkou8apfRfCruN/QAJkcZPI0aLYwBa1qLb2GE+uV3ZWIeuLyV+o3ojvcxSqNuCx
- YDeg==
-X-Gm-Message-State: AOJu0YyyY3wLn8vpcHUSdkSzJtzYPkLekP5uZeEwDCNaZx7drvOKH7TO
- Sxvw8Zia5+qRGlKYYglACbvz/LZhIdjooUvejyr33kjIqKMfEMN0rLhT7VegAm3DSkeNOYFi3W+
- Tltzo
-X-Gm-Gg: ASbGncsjD7F7bYSdGhlzFGm3jkfRDWJGeXHHh3SfYOFIzyjmzYY7t5iC5wltSP66MxR
- b8rvICDdEooraJValNFQVtJE7aawm/QQh6E2gGW2aDsz75t0/E6IAiPj5rS2S6eckD7WG6UNWdI
- kr/l/iy+/zt/E7ziQIL0qN+Qw8+qWg9WwFe2l21NhZ9PXoqchm3JzD8ZoNELJNeefUYfrt+ee17
- MHn7TwtShvN1pwMOzehTgyygvR6D0oHad9c160BY7F+TH53/1MKDxaIG2iI6erGldXOa7yTbvaN
- DgTE+faiY9Uoe9/REgJumQPgXKF5EaozP9fwy2f+JGiZhapCOgXoVXN0zm/TTE2sDQuYOhdLXGI
- HRF2YxUDWqRszYnfMzTKp23HS+IrNvD1RsJhOdjgVXUd4pGTWSyp0NNV6BZxYMBbS4y5GD1NDx7
- bc8LpL/251281jCBnJ4xrVXFOSEjCABMuPPYtgVoG6R97kKbHH2vFz4qzFyit9pFo=
-X-Google-Smtp-Source: AGHT+IHQ/G8AGIiFa5jaXbc4yLplWvbFDc/EjmITZCC6RoUl+ML24Kk6csV0/VnE7bFyAzDmOcKzcw==
-X-Received: by 2002:a05:620a:29c7:b0:8b2:dcde:b668 with SMTP id
- af79cd13be357-8b33d4680a5mr3341006385a.62.1764266161733; 
- Thu, 27 Nov 2025 09:56:01 -0800 (PST)
+ bh=hEbcNEFEtkumAZ6owN8UqmHJCJbxmcFUg76JAUOclTA=;
+ b=Bv5xVBclYaqR4crOKEyhwshTKyXVmjMmUQ64lPyBM4lmdq9e+woseqTlqMqKj/B91e
+ 8wNYULyxzoflufopn6OuG0J+bKv5/Eb/BDLaUvSP3BO+Udz8OYEhQr9vVBqKFKkLPe13
+ bKuOvEb0uYtz8XNcadqcsWgOGdQ+O8Z+Bh93jK/EAE/Mo/ehJGB6qWhyo6+RF2Uc6xJw
+ BTXTW0DEOfhY1pZYD9S4PL9sr10VpOuyZYSpnYI0egCf8xZqFu8i8g2YZp9y02pfKfEW
+ 5kf1HiorinHWCLppiKlSwO/5YjEV/38GFCH1ZN2PK4yCfE1HXm+WrrTJkubgx/2Bi388
+ hA0Q==
+X-Gm-Message-State: AOJu0YyAWDLHi+ia9OhYuz5nzAbm8itVZvQRjoiUjJVIZppsFYy4lZKp
+ YyTlu7Xzlb2HhE5MUWPT0avWmxLoGJwN2Bb7dmpwRiYdlR8vmLBJgylj59K/IWgywrI=
+X-Gm-Gg: ASbGnct3fq+pjM9bWUOj0R33wT7tjmEW++oFXu3/MXfdvb/umqfnuUkrkBmyNsn4PkA
+ g1CZruoEnhs7v/LIy1AGafgewWA3L3xyRGXrNrKaUyl2AvvQN5gay5n03jaQ073okq6dQuR6fsD
+ RuDcf/DtrRkEd1d8Z9vH1QqEi0RPf1GBanFBYtZdNCs449CIKUV/enNEyZWmqMbJIBKfBpWOufq
+ hrZlz7BxeD2lb4IH0oI1rSaek68wnHkNf5r1Kil6RZhCV5c9Bf1Mo/LlyyTgFMeSxgpuFVv7NTL
+ DIM+z/rxKRFo37JHK4gvhQWldYyTmfY4hxcafyboWaIcre/Gwhmz5lIYZTsU7+n8nsbXrGEfRfH
+ V3oVtBmqL4iXAMtmn9BpXR+nkX5Ffquwd8D5f7rrGXg3JjHjwGE3iCqhJU0R2R3e0lJZrgJIKsT
+ JRmmqdXW5aIR2tVEueXxShLXbQRdolhf/fqnGEB29YwWa0kCypZCNg
+X-Google-Smtp-Source: AGHT+IFceJN9J+LG1mAFjrcagdkbNH9A/WIjS9HxpeyPbFakZnSyt8bZ5hgm+9ZIxO5OGagHi8byYA==
+X-Received: by 2002:a05:620a:3952:b0:8b2:ea5a:4152 with SMTP id
+ af79cd13be357-8b33d4c6f88mr3185959085a.87.1764266207798; 
+ Thu, 27 Nov 2025 09:56:47 -0800 (PST)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- af79cd13be357-8b52a1b75a9sm147702885a.25.2025.11.27.09.56.00
+ af79cd13be357-8b5299a534asm149847885a.15.2025.11.27.09.56.47
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 27 Nov 2025 09:56:01 -0800 (PST)
-Date: Thu, 27 Nov 2025 09:55:56 -0800
+ Thu, 27 Nov 2025 09:56:47 -0800 (PST)
+Date: Thu, 27 Nov 2025 09:56:43 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: Dimon Zhao <dimon.zhao@nebula-matrix.com>
-Cc: dev@dpdk.org, Kyo Liu <kyo.liu@nebula-matrix.com>, Leon Yu
- <leon.yu@nebula-matrix.com>, Sam Chen <sam.chen@nebula-matrix.com>
-Subject: Re: [PATCH v1 1/1] net/nbl: fix Rx/Tx stats concurrency
-Message-ID: <20251127095556.4dfa5faf@phoenix.local>
-In-Reply-To: <20251126025436.3714568-2-dimon.zhao@nebula-matrix.com>
-References: <20251126025436.3714568-1-dimon.zhao@nebula-matrix.com>
- <20251126025436.3714568-2-dimon.zhao@nebula-matrix.com>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH v2] net/nbl: add VLAN offload set interface
+Message-ID: <20251127095643.012d2ca5@phoenix.local>
+In-Reply-To: <20251127003821.76733-1-stephen@networkplumber.org>
+References: <20251124034026.3680873-1-dimon.zhao@nebula-matrix.com>
+ <20251127003821.76733-1-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -84,21 +81,25 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 25 Nov 2025 18:54:36 -0800
-Dimon Zhao <dimon.zhao@nebula-matrix.com> wrote:
+On Wed, 26 Nov 2025 16:37:14 -0800
+Stephen Hemminger <stephen@networkplumber.org> wrote:
 
-> Queue statistics are being continuously updated in Rx/Tx burst
-> routines while handling traffic. In addition to that, statistics
-> can be reset (written with zeroes) on statistics reset in other
-> threads, causing a race condition, which in turn could result in
-> wrong stats.
+> From: Dimon Zhao <dimon.zhao@nebula-matrix.com>
 > 
-> The patch provides an approach with reference values, allowing
-> the actual counters to be writable within Rx/Tx burst threads
-> only, and updating reference values on stats reset.
+> Implement the vlan_offload_set device operation to allow
+> enabling or disabling VLAN offloads through the API.
 > 
-> Fixes: 661c0ccf2512 ("net/nbl: support statistics")
+> rte_eth_dev_set_vlan_offload() calls the driver to update the hardware
+> configuration. Because this driver performs VLAN stripping entirely in
+> software, only a dummy implementation is needed to avoid returning an
+> error.
+> 
+> Validation of unsupported or invalid flags is already handled in ethdev.
+> 
+> Fixes: 9d7757dce874 ("net/nbl: simulate VLAN offload")
 > 
 > Signed-off-by: Dimon Zhao <dimon.zhao@nebula-matrix.com>
+> Reviewed-by: Stephen Hemminger <stephen@networkplumber.org>
+> ---
 
 Queued to next-net
