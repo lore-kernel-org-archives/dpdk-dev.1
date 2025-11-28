@@ -2,77 +2,77 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D1CDCFD376
-	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Nov 2025 08:39:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EDDCD116EA
+	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Nov 2025 08:49:41 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0ED8D4013F;
-	Fri, 28 Nov 2025 09:39:22 +0100 (CET)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 0D3B2400EF
- for <dev@dpdk.org>; Fri, 28 Nov 2025 09:39:19 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1764319159;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=XE990rsjuL8hsDh069AYsJ45NvPemXOMpw3J27u2Woo=;
- b=KtLP8TpzrCmvSjRh1pFipUNae6QoxqgX0TJwJh4gD53Edi+SnVZVyB11UVZEBBXOFSxlJw
- 64OGsNG4/iaDFaDW+hGyTPtyCTpTiKU+6IDqpWvoPB6wVszEKHm8TjlM5oRlk944UuqYEa
- NkDdyGehLGpC+jhSYFCJD3vweepowi0=
-Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
- [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-692-LUiWFEqzOeuCKU1f4xibeA-1; Fri, 28 Nov 2025 03:39:17 -0500
-X-MC-Unique: LUiWFEqzOeuCKU1f4xibeA-1
-X-Mimecast-MFC-AGG-ID: LUiWFEqzOeuCKU1f4xibeA_1764319156
-Received: by mail-lf1-f72.google.com with SMTP id
- 2adb3069b0e04-5943838a6a3so1078988e87.1
- for <dev@dpdk.org>; Fri, 28 Nov 2025 00:39:17 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1764319156; x=1764923956;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=XE990rsjuL8hsDh069AYsJ45NvPemXOMpw3J27u2Woo=;
- b=ecaG9xFMYEHNXI+LLruayG9HPb9w5GyZVrwI3Hds1AAGEAOGlrU2sKCt5CjiUwELCt
- aZ2n7qyiZX0zSU5vDQyIr6SFrF+DgGbeFb4Z5Zl65dGM1xgOpSTvMbYOctmMfRXzIgk3
- 1W6pmc4lgdDw5IZ3FmEFRMN9HWJrlBo1V6Nrr8fcUbDxxUl6rMZBxbiinp3a/769VLp4
- WJgQsPMDXpSNfrHDv27djkrTDV08nTyCtKMEyRGM2v7qBti2vj9hQQTTJdQQoA33cUxJ
- D3pp3MqrOdD4aShrfexBCDOC7p8bD4VevVmt+ikBq3JB9KdHDAblQY64pLALk5BHGd9b
- MzXw==
-X-Gm-Message-State: AOJu0YwjB6+9GCiJCxqjGVK3tn4jCwCxjQUzB+uZY6kIqtTpnUl97BSO
- 7ey1EYyfpuZPC4I1Y6g5eYOcYYchVE1JNwAkbBedpY+A0NR3fdrEpcw1BR8u0FYoL9nnzMaIDJO
- n1uEn2tdZN1i5OeOFSPK8V+ANJu1N9l30MzQVtXngmpUUa44+yejBsPMAGPzIE9b4m0etUQC84b
- VAaZmbQeJMTsxWAvEhcuI=
-X-Gm-Gg: ASbGncugpocjkIb7UainC3LAAaDsA0BfDFKtbIU85V7qGG3pbgp2ZaS8d/jTjTL9E8Y
- 4jEYEPQPcdkcCbIljo783KIx5lTpOaYg3494OO2iZ7EewVrAb/z0HMYZWpauBzgLYLvxLst7KZ4
- vOco57BZerXOZDCphPpegNdd/WfjCTVWfYjxJ3TznMkfo26RRAOooyrzQ6raOcPK98naTg
-X-Received: by 2002:a05:6512:12cd:b0:595:90f9:b9c2 with SMTP id
- 2adb3069b0e04-596a3e983bemr8543773e87.4.1764319156104; 
- Fri, 28 Nov 2025 00:39:16 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHAJs+bBFMIvyzJVn51zsYtvXn1la+TLNQaklRPcoTqXoPjTMsprbtvgvRjAxiuFd9EoCCRNTWA7hi4KQY76J0=
-X-Received: by 2002:a05:6512:12cd:b0:595:90f9:b9c2 with SMTP id
- 2adb3069b0e04-596a3e983bemr8543761e87.4.1764319155688; Fri, 28 Nov 2025
- 00:39:15 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id E5CE04013F;
+	Fri, 28 Nov 2025 09:49:39 +0100 (CET)
+Received: from fhigh-a4-smtp.messagingengine.com
+ (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
+ by mails.dpdk.org (Postfix) with ESMTP id F08DB400EF
+ for <dev@dpdk.org>; Fri, 28 Nov 2025 09:49:37 +0100 (CET)
+Received: from phl-compute-11.internal (phl-compute-11.internal [10.202.2.51])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id 4FBFC1400199;
+ Fri, 28 Nov 2025 03:49:37 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+ by phl-compute-11.internal (MEProxy); Fri, 28 Nov 2025 03:49:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1764319777;
+ x=1764406177; bh=Pd4O2j0P4zuCWiWmtshDJXJ3pGpZceJTW+cUtdQXf6I=; b=
+ KPqHIhpbM7NivpkQpNK/xlHGoY1cBDNGFwChVTx40vE2dEUGKwWBamYJYqzmdZnH
+ NQrVIFdpXxtoR998A9ZpRbUSTWqBk9h9gSJf/WuHl4xcVXjCAqZfoKJwepK658gm
+ TCUPTWOA/z8z7xoR4JHpBeviArd4UcydaylJRHbRZhyB5eS3rWB1LAc8MvnorRfQ
+ 5QHtg0A3Dl02HL7Ob7ez6bQXD59Cfzd+VnvbAE9VX47vhu6oyHUZ7gA0Jrw1U2e4
+ 2TG14qhR8k9FsiCDfMvilgDpSssgIhBrmjGRYk4oIF5tWNVPVkCYjhoaOq8s+AHI
+ GOd31q6+ym1zhtcZY/tcug==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1764319777; x=
+ 1764406177; bh=Pd4O2j0P4zuCWiWmtshDJXJ3pGpZceJTW+cUtdQXf6I=; b=M
+ dF8DiuV+kjejh/6Df/MOByH+edYLLc08qeg9PfqG8oQI9HzogEtMCwNRfCtBRcQi
+ zxBLUHwByBvrpFn/nEa9BARswXu60TUPC3eSN+xakIwkR6xXuLtje3J/tVd458qr
+ Hg1GLSiTTloO4l9j5LWIdVkIGk3BOVOXjSZGFxZmYd0rn07wNShH5lLs9lZFk6K4
+ eInz15AA2q6ct1iaOz0X+n5zzK/rhwAFAuia8CHmKNVzmnuoGqdEvdlbu1OTybul
+ lr49Xr4XizNK4PpwwbTV/bew8yb9n5sBYTEFBLDx4XYTvJ5T0X2XxlpLb3zbhQlW
+ ipE002nZYDCjkTE8bH3UA==
+X-ME-Sender: <xms:IGIpaUAMyNKGYp6HPlleuB-Yb69-gHlccVdF5iJZW3znRNRaAZ3lLA>
+ <xme:IGIpaS2k2Qb_e3fOLF3hvCTNPys3wUB8MDHjoEP4U4I9o3un4FalV01fD0dfhXJYp
+ oApWpbMsDALGyIOYjifSzhcoFi_m7YBfYIvfeapQOGH43Zm5mdHPjo>
+X-ME-Received: <xmr:IGIpaaVepuJzEyssIqdE5naZ20ZemdP3wkS9-t_eBvA5aUSCV5Ms6uOG-PvI6skC0R4TyWUNRQ_d_GA_vMbL1hIY7A>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvgeelgeegucetufdoteggodetrf
+ dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+ rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+ gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
+ ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
+ frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
+ uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopedvpdhm
+ ohguvgepshhmthhpohhuthdprhgtphhtthhopehjohhhnhdrmhgtnhgrmhgrrhgrsehinh
+ htvghlrdgtohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhg
+X-ME-Proxy: <xmx:IGIpackpjihomx6lsQrl-uAaBoKNO1ztaO6vzNb7ZNbqPijCRr2cxQ>
+ <xmx:IGIpacBWpwVVlsRuDekAbUOE5Q2wrAaQX9cbIJ2XiEoIFQumyRq8HA>
+ <xmx:IGIpace4CmGEwQosZXpfXelJq57iYIgbKsGPbS88J-2M1SxIhLW4Kw>
+ <xmx:IGIpaXL0zcYcLHCQw2dYsnMXsqi9C1SYu8ps7sDk0D8d4cgdJ4n8HQ>
+ <xmx:IWIpaUorXdr2sZut7fg7ksT9-OvopiOwkC2pzCpchtHAp8ZgvMEJJC-l>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 28 Nov 2025 03:49:36 -0500 (EST)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: John McNamara <john.mcnamara@intel.com>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH v1] doc: update release notes for 25.11
+Date: Fri, 28 Nov 2025 09:49:34 +0100
+Message-ID: <6757578.DvuYhMxLoT@thomas>
+In-Reply-To: <20251127094443.109547-1-john.mcnamara@intel.com>
+References: <20251127094443.109547-1-john.mcnamara@intel.com>
 MIME-Version: 1.0
-References: <20251125144610.37661-1-stephen@networkplumber.org>
-In-Reply-To: <20251125144610.37661-1-stephen@networkplumber.org>
-From: David Marchand <david.marchand@redhat.com>
-Date: Fri, 28 Nov 2025 09:39:03 +0100
-X-Gm-Features: AWmQ_bkTVP_ctGUxjkHMVu1ovYljQaGCT3zmsStm1E_aoDVe68H3AsRbaUJLkVs
-Message-ID: <CAJFAV8zuQVd_z5mKOC3x0VmE9QFGXG2REgaeBH4eVm=wxcFHMA@mail.gmail.com>
-Subject: Re: [PATCH] bus/fslmc: fix warning in device scan
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: dev@dpdk.org, Hemant Agrawal <hemant.agrawal@nxp.com>, 
- Sachin Saxena <sachin.saxena@nxp.com>, Shreyansh Jain <shreyansh.jain@nxp.com>,
- Thomas Monjalon <thomas@monjalon.net>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: m--NA5vKxQzJry32lY2a-CxAEsU_rNzrZ0wmVYdmHhE_1764319156
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -86,26 +86,12 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 25 Nov 2025 at 15:46, Stephen Hemminger
-<stephen@networkplumber.org> wrote:
->
-> With latest glibc (Fedora Rawhide):
-> ../drivers/bus/fslmc/fslmc_bus.c: In function =E2=80=98rte_fslmc_parse=E2=
-=80=99:
-> ../drivers/bus/fslmc/fslmc_bus.c:298:15: error: assignment discards =E2=
-=80=98const=E2=80=99 qualifier from pointer target type [-Werror=3Ddiscarde=
-d-qualifiers]
->    298 |         t_ptr =3D strchr(sep, '.');
->        |               ^
-> Fixes: e67a61614d0b ("bus/fslmc: support device iteration")
->
-> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+27/11/2025 10:44, John McNamara:
+> Fix grammar, spelling and formatting of DPDK 25.11 release notes.
+> 
+> Signed-off-by: John McNamara <john.mcnamara@intel.com>
 
-This build warning can be seen in OBS builds.
-
-Acked-by: David Marchand <david.marchand@redhat.com>
+Removed comments and applied, thanks.
 
 
---=20
-David Marchand
 
