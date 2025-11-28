@@ -2,49 +2,77 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72F82D116F1
-	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Nov 2025 14:02:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EB1BCFD376
+	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Nov 2025 14:41:38 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B365D402C5;
-	Fri, 28 Nov 2025 15:02:38 +0100 (CET)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id B8D35402B0
- for <dev@dpdk.org>; Fri, 28 Nov 2025 15:02:37 +0100 (CET)
-Received: from mail.maildlp.com (unknown [172.18.186.231])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4dHw2d621NzHnGj6;
- Fri, 28 Nov 2025 22:01:45 +0800 (CST)
-Received: from dubpeml500002.china.huawei.com (unknown [7.214.145.83])
- by mail.maildlp.com (Postfix) with ESMTPS id 6670E1402FE;
- Fri, 28 Nov 2025 22:02:36 +0800 (CST)
-Received: from dubpeml500001.china.huawei.com (7.214.147.241) by
- dubpeml500002.china.huawei.com (7.214.145.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 28 Nov 2025 14:02:36 +0000
-Received: from dubpeml500001.china.huawei.com ([7.214.147.241]) by
- dubpeml500001.china.huawei.com ([7.214.147.241]) with mapi id 15.02.1544.011; 
- Fri, 28 Nov 2025 14:02:35 +0000
-From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-To: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>,
- "dev@dpdk.org" <dev@dpdk.org>, Bruce Richardson <bruce.richardson@intel.com>, 
- Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>, Vipin Varghese
- <vipin.varghese@amd.com>
-CC: Stephen Hemminger <stephen@networkplumber.org>
-Subject: RE: [PATCH v3] eal/x86: optimize memcpy of small sizes
-Thread-Topic: [PATCH v3] eal/x86: optimize memcpy of small sizes
-Thread-Index: AQHcWtNXD+EKJWk0k0O6HEmUv7nh0LUIKREQ
-Date: Fri, 28 Nov 2025 14:02:35 +0000
-Message-ID: <59db9d3d83d94ec9a7c26ae506fd4813@huawei.com>
-References: <20251120114554.950287-1-mb@smartsharesystems.com>
- <20251121104052.1273637-1-mb@smartsharesystems.com>
-In-Reply-To: <20251121104052.1273637-1-mb@smartsharesystems.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.206.138.220]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by mails.dpdk.org (Postfix) with ESMTP id 4B46940281;
+	Fri, 28 Nov 2025 15:41:37 +0100 (CET)
+Received: from fhigh-a7-smtp.messagingengine.com
+ (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
+ by mails.dpdk.org (Postfix) with ESMTP id E6368400EF
+ for <dev@dpdk.org>; Fri, 28 Nov 2025 15:41:35 +0100 (CET)
+Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id 663BD14001F3;
+ Fri, 28 Nov 2025 09:41:35 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+ by phl-compute-06.internal (MEProxy); Fri, 28 Nov 2025 09:41:35 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:date:date:from:from
+ :in-reply-to:in-reply-to:message-id:mime-version:references
+ :reply-to:subject:subject:to:to; s=fm1; t=1764340895; x=
+ 1764427295; bh=1OTe8eeL3CarRkXxC0TC8nEn6h6iBG2gR0zIOCYRYrY=; b=n
+ qnC5msVMOuq/PlWM6LI6dmQzVk+QBTkxYOMMx+eTZfHc+IyUU9MKjrxXHYeyJj/K
+ lQJpr9o1bRdgsLewGzxUVKR56SJwU2gAkMiXcBi3473N8cdCIu20PxiQlBbKv2TL
+ feM9kWTKTLY14pZHcXiYs23LXmY6O0Z2Y7krjcLk9hDfDWIrsME2eLQKBXF7FuqI
+ DxPJ7gRO9bjlMTYBh9cqEg27bPNQlp5JM5rr6SDf/dBLWM6wM6vzLAHDzhiSvfsX
+ p+ir1djO3+Ao1IePVo9dDL3QMl3szaPjwHwE6kpsB3iG6hn8TTM8g13GzeLFNq/+
+ 8zNJmyCia/eHn9+wL5XmQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:date:date:feedback-id:feedback-id:from:from
+ :in-reply-to:in-reply-to:message-id:mime-version:references
+ :reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
+ :x-me-sender:x-sasl-enc; s=fm1; t=1764340895; x=1764427295; bh=1
+ OTe8eeL3CarRkXxC0TC8nEn6h6iBG2gR0zIOCYRYrY=; b=sR0QizCJnPbhjUUMx
+ TveZbYXVJOfxueTsrYsjBVK26gtjw/40G03cRPD6CM294iloSqX7GN+bUTzvJPni
+ +VzN6QMAM8L21lSUsBTMKQIhS3zV2Yi3oYugHTYA64R/v+yVExNzJ+m8EhTZLhD/
+ KAFrp3ppmzfnPfbNmVv94Q3TZCcgFkCykIrm7NLPrWDLsSgvmpDqjRVusBn9z0bE
+ m6Xm6ufs5GY/XPEJb2uDArX1cyyBUNpeaDyRNG4NdGm9MsUfwEoAfrCULG9vlNDZ
+ ZrOas/RRQYcVJxIGt6VmI8ki9OAuvnHRk5TJEBeb6JElDDeBPiV6IceC7MzJS3EE
+ eZY1Q==
+X-ME-Sender: <xms:nrQpaVQzdOOOTTkdOy-wWPfhQ1VfJGY9bzoaHZW5snN8xut5RaUhCw>
+ <xme:nrQpabE_sik-GUXPYQgkHaSbDuq9E-_utALuN3OsIJHuEXKmZZAArrwIRY50SpaH5
+ 1w0zX2BnJ291Yu8KrVjgIwxRuYsyWKu3nMEWUZ1n41a4aNWnstgZQ>
+X-ME-Received: <xmr:nrQpadktSSodNufhUaPy-z0XE4Ef3mcvQXHZekZL0l4jo-ObaXpDnBfVuZg9eOubWmSwYRM4vosZVsObzwDXDZZJGaHE2X8>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvhedtudehucetufdoteggodetrf
+ dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+ rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+ gurhephffvvefufffkofgjfhgggfestdekredtredttdenucfhrhhomhepvfhhohhmrghs
+ ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
+ frrghtthgvrhhnpedvjefhudeghedvtdeijeeigeetuedugfejueekieeltdfhteevkeeh
+ hfeilefhtdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopedvpdhm
+ ohguvgepshhmthhpohhuthdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtph
+ htthhopegrlhhirghlnhhusehnvhhiughirgdrtghomh
+X-ME-Proxy: <xmx:nrQpae0a-QqpOVazzAQMoxOtSzETT_7Mo5zJ3Y3Uo1C6z87kCh-P8w>
+ <xmx:nrQpaRRbBgdhokWIBh9ry-hkquREhxh7hofkpuhru91XT-8sru5xMw>
+ <xmx:nrQpaYsI0ykmMQAnOf5T1LtAwPECzdGXmkGbNSwiOA1lMHrSfaLMNw>
+ <xmx:nrQpaeYCcrx6Z7kmdKw1MeJma-jNOMTY3YXdoehpBzwNmHu0Htc70g>
+ <xmx:n7QpaQThLo_MayqrEz4o5A4GzjDPOsXk64JUhrnCQvbsWl8LaO8wSR7p>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 28 Nov 2025 09:41:34 -0500 (EST)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: dev@dpdk.org
+Cc: Ali Alnubani <alialnu@nvidia.com>
+Subject: [PATCH v2] devtools: check patch from stdin only if nothing else
+Date: Fri, 28 Nov 2025 15:40:48 +0100
+Message-ID: <20251128144127.1552516-1-thomas@monjalon.net>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <26063275.kmuVQn2iE0@thomas>
+References: <26063275.kmuVQn2iE0@thomas>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -58,36 +86,67 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-PiArLyoqDQo+ICsgKiBDb3B5IGJ5dGVzIGZyb20gb25lIGxvY2F0aW9uIHRvIGFub3RoZXIsDQo+
-ICsgKiBsb2NhdGlvbnMgc2hvdWxkIG5vdCBvdmVybGFwLg0KPiArICogVXNlIHdpdGggbiA8PSAx
-Ni4NCj4gKyAqDQo+ICsgKiBOb3RlOiBDb3B5aW5nIHVuaW5pdGlhbGl6ZWQgbWVtb3J5IGlzIHBl
-cmZlY3RseSBhY2NlcHRhYmxlLg0KPiArICogVXNpbmcgZS5nLiBtZW1jcHkoZHN0LCBzcmMsIDgp
-IGluc3RlYWQgb2YNCj4gKyAqICoodW5hbGlnbmVkX3VpbnQ2NF90KikgPSAqKGNvbnN0IHVuYWxp
-Z25lZF91aW50NjRfdCAqKXNyYw0KPiArICogYXZvaWRzIGNvbXBpbGVyIHdhcm5pbmdzIGFib3V0
-IHNvdXJjZSBkYXRhIG1heSBiZSB1bmluaXRpYWxpemVkDQo+ICsgKiBbLVdtYXliZS11bmluaXRp
-YWxpemVkXS4NCj4gKyAqDQo+ICsgKiBOb3RlOiBVc2luZyAibiAmIFgiIGdlbmVyYXRlcyAzLWJ5
-dGUgInRlc3QiIGluc3RydWN0aW9ucywNCj4gKyAqIGluc3RlYWQgb2YgIm4gPj0gWCIsIHdoaWNo
-IHdvdWxkIGdlbmVyYXRlIDQtYnl0ZSAiY21wIiBpbnN0cnVjdGlvbnMuDQo+ICsgKi8NCj4gK3N0
-YXRpYyBfX3J0ZV9hbHdheXNfaW5saW5lIHZvaWQgKg0KPiArcnRlX21vdjE2X29yX2xlc3Modm9p
-ZCAqZHN0LCBjb25zdCB2b2lkICpzcmMsIHNpemVfdCBuKQ0KPiArew0KPiArCS8qIEZhc3RlciB3
-YXkgd2hlbiBzaXplIGlzIGtub3duIGF0IGJ1aWxkIHRpbWUuICovDQo+ICsJaWYgKF9fcnRlX2Nv
-bnN0YW50KG4pKSB7DQo+ICsJCWlmIChuID09IDIpDQo+ICsJCQlyZXR1cm4gbWVtY3B5KGRzdCwg
-c3JjLCAyKTsNCj4gKwkJaWYgKG4gPT0gNCkNCj4gKwkJCXJldHVybiBtZW1jcHkoZHN0LCBzcmMs
-IDQpOw0KPiArCQlpZiAobiA9PSA2KSAvKiA0ICsgMiAqLw0KPiArCQkJcmV0dXJuIG1lbWNweShk
-c3QsIHNyYywgNik7DQo+ICsJCWlmIChuID09IDgpDQo+ICsJCQlyZXR1cm4gbWVtY3B5KGRzdCwg
-c3JjLCA4KTsNCj4gKwkJaWYgKG4gPT0gMTApIC8qIDggKyAyICovDQo+ICsJCQlyZXR1cm4gbWVt
-Y3B5KGRzdCwgc3JjLCAxMCk7DQo+ICsJCWlmIChuID09IDEyKSAvKiA4ICsgNCAqLw0KPiArCQkJ
-cmV0dXJuIG1lbWNweShkc3QsIHNyYywgMTIpOw0KPiArCQlpZiAobiA9PSAxNikgew0KPiArCQkJ
-cnRlX21vdjE2KCh1aW50OF90ICopZHN0LCAoY29uc3QgdWludDhfdCAqKXNyYyk7DQo+ICsJCQly
-ZXR1cm4gZHN0Ow0KPiArCQl9DQo+ICsJfQ0KPiArDQo+ICsJaWYgKG4gJiAweDE4KSB7IC8qIG4g
-Pj0gOCAqLw0KDQpQcm9iYWJseSAnbiAmIDB4OCc/DQogDQo+ICsJCS8qIGNvcHkgOCB+IDE2IGJ5
-dGVzICovDQo+ICsJCW1lbWNweShkc3QsIHNyYywgOCk7DQo+ICsJCW1lbWNweSgodWludDhfdCAq
-KWRzdCAtIDggKyBuLCAoY29uc3QgdWludDhfdCAqKXNyYyAtIDggKyBuLCA4KTsNCj4gKwl9IGVs
-c2UgaWYgKG4gJiAweDQpIHsNCj4gKwkJLyogY29weSA0IH4gNyBieXRlcyAqLw0KPiArCQltZW1j
-cHkoZHN0LCBzcmMsIDQpOw0KPiArCQltZW1jcHkoKHVpbnQ4X3QgKilkc3QgLSA0ICsgbiwgKGNv
-bnN0IHVpbnQ4X3QgKilzcmMgLSA0ICsgbiwgNCk7DQo+ICsJfSBlbHNlIGlmIChuICYgMHgyKSB7
-DQo+ICsJCS8qIGNvcHkgMiB+IDMgYnl0ZXMgKi8NCj4gKwkJbWVtY3B5KGRzdCwgc3JjLCAyKTsN
-Cj4gKwkJbWVtY3B5KCh1aW50OF90ICopZHN0IC0gMiArIG4sIChjb25zdCB1aW50OF90ICopc3Jj
-IC0gMiArIG4sIDIpOw0KPiArCX0gZWxzZSBpZiAobiAmIDB4MSkgew0KPiArCQkvKiBjb3B5IDEg
-Ynl0ZSAqLw0KPiArCQltZW1jcHkoZHN0LCBzcmMsIDEpOw0KPiArCX0NCj4gKwlyZXR1cm4gZHN0
-Ow0KPiArfQ0K
+From: Ali Alnubani <alialnu@nvidia.com>
+
+The checkpatches.sh script was checking if stdin is a terminal before
+honoring the -n flag, causing it to incorrectly attempt to read patches
+from stdin when run without a TTY (e.g., in Jenkins/CI pipelines).
+
+Reorder the conditionals to check for the -n and -r flags
+before checking stdin state.
+This ensures the -n/-r flags takes precedence
+and the script checks git commits as intended.
+
+Signed-off-by: Ali Alnubani <alialnu@nvidia.com>
+Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
+---
+v2: make also -r a priority (before considering stdin)
+---
+ devtools/checkpatches.sh | 19 +++++++++++--------
+ 1 file changed, 11 insertions(+), 8 deletions(-)
+
+diff --git a/devtools/checkpatches.sh b/devtools/checkpatches.sh
+index 9fb8fd0a07..47e8ca57b4 100755
+--- a/devtools/checkpatches.sh
++++ b/devtools/checkpatches.sh
+@@ -421,8 +421,8 @@ check_release_notes() { # <patch>
+ 		grep -v $current_rel_notes
+ }
+ 
+-number=0
+-range='origin/main..'
++number=
++range=
+ quiet=false
+ verbose=false
+ while getopts hn:qr:v ARG ; do
+@@ -558,17 +558,20 @@ if [ -n "$1" ] ; then
+ 	for patch in "$@" ; do
+ 		check "$patch" ''
+ 	done
+-elif [ ! -t 0 ] ; then # stdin
+-	check '' ''
+-else
+-	if [ $number -eq 0 ] ; then
+-		commits=$(git rev-list --reverse $range)
+-	else
++elif [ -n "$number" ] || [ -n "$range" ] || [ -t 0 ]; then
++	if [ -n "$number" ] ; then
+ 		commits=$(git rev-list --reverse --max-count=$number HEAD)
++	else
++		if [ -z "$range" ] ; then
++			range='origin/main..' # default
++		fi
++		commits=$(git rev-list --reverse $range)
+ 	fi
+ 	for commit in $commits ; do
+ 		check '' $commit
+ 	done
++else # stdin
++	check '' ''
+ fi
+ pass=$(($total - $status))
+ $quiet || printf '\n%d/%d valid patch' $pass $total
+-- 
+2.51.0
+
