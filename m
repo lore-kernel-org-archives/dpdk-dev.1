@@ -2,70 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68F2DD116EA
-	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Nov 2025 22:44:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCB8BD116E2
+	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Nov 2025 22:45:01 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B93CD40658;
-	Fri, 28 Nov 2025 23:44:37 +0100 (CET)
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com
- [209.85.219.52]) by mails.dpdk.org (Postfix) with ESMTP id DD8FE402E6
- for <dev@dpdk.org>; Fri, 28 Nov 2025 23:44:31 +0100 (CET)
-Received: by mail-qv1-f52.google.com with SMTP id
- 6a1803df08f44-88054872394so29982276d6.1
- for <dev@dpdk.org>; Fri, 28 Nov 2025 14:44:31 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id E50FA4064F;
+	Fri, 28 Nov 2025 23:44:38 +0100 (CET)
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com
+ [209.85.219.51]) by mails.dpdk.org (Postfix) with ESMTP id 93902402F1
+ for <dev@dpdk.org>; Fri, 28 Nov 2025 23:44:33 +0100 (CET)
+Received: by mail-qv1-f51.google.com with SMTP id
+ 6a1803df08f44-880503ab181so23105426d6.2
+ for <dev@dpdk.org>; Fri, 28 Nov 2025 14:44:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1764369871;
- x=1764974671; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1764369873;
+ x=1764974673; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=Fm0fKRDS4YRVts/D6rPe52eqre9y2vs0bibayAdUECg=;
- b=0yPONeXojr0bHbx8CZtoc95gUsd4J8hpR777d4RJbwTslJAkjKIt26mdy2cunW3P90
- KiYuoB2I8/t79Ftsd3nXBTGTfamsfgomC9udTG1kFq9QtSfR/NUaKlqF3TOzPR1IYXl0
- x23Ql6NnM57bkHyX+XbGkuzfUqb4gNYKldWV5MrSOIDvcIlWyEqT+J3CMLtoXHYY7T1O
- +wZY+xMDuugbqqe8kjoIwCbj7E8yGVoOXeHf9nhjOFG8QDxnaJbBFtTn0N2WoANcmByn
- TrHeFmkh7fcHwyTQL99edaVvKoWmrFBa0iBtigGEZjy4gKN9w5S/fl1b2mjjLCkY1hS8
- 64UQ==
+ bh=WmT0N/n74EPEE6smaUUFOrqeqMbkWMQqkiLgpTfyWr0=;
+ b=rQzfXn1i7+uXV4VlkfIThEQmtLKFWFcO/0xSnE4j19gbMlhPATZhXISIuro7cNKKve
+ fqplZ9syndmpfJBcVuHkyGJfEnZ3/v2kgp3Ww9LBoLtrjHuF5MLAlHj9YyZfrHB3YpNo
+ EUGxaN93jqoeMHGvl1UYyQ6wkAEHCib35tX/KRXU/77beB4wwsg38Wye7ty4RzHGyWpT
+ 7HKp13zBoSvzJCTU/s+eZFNXAlitkKNb9SOxLSllOo77daQiGjvEpdUrOG10dcQLyzzl
+ v4wU+m3wGTNbEoU/f11opy1LgMNoT2H5/RKc+SwLDKXGY+h6SQQ/vRLJ5lMCAxxtj33k
+ dHSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1764369871; x=1764974671;
+ d=1e100.net; s=20230601; t=1764369873; x=1764974673;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=Fm0fKRDS4YRVts/D6rPe52eqre9y2vs0bibayAdUECg=;
- b=cRHGwYNwrbawfOq+BYgop8m0jzyunyMNcQCg9VtJsN96WLiM4fY2NBDcsSFNUBYPs4
- fw83FCl+udVRQ394xS4C84aVcsmX45GXowNPggd5B+AEreiRNGknMlZQ0n8ntz7Ws8Ld
- tfHjV0Sh9jg9VLJC8TC4Auokn2VF3ESptSMQPVestT9zfG4HEw7GWDVEj7F5QiYuvIl9
- U4RxS6z5JKjyw8PIB7DF/I5ZlvjF99oUsLlI6V2zIq9/InSjyzN5nT+7NqUW/Zn2WdL2
- Cs7ow3fYXZOhE+1f5FsoR49SHLSPXeJlxECAdzlAAFR5ZhqVqGDrdAFJf4VlXO0JXvRA
- upBQ==
-X-Gm-Message-State: AOJu0YzK2WG8j4PLHRJwbxz2EdIpe/vILXnoKOaat995jQZes0XP4VIf
- LNCbRTPltkWrznDXu5Dvwii8HUWen380+fenmPJMvTI+R8Y+YaKtCI7sZAdF3exLBIvXAeFnES1
- wWL2j
-X-Gm-Gg: ASbGncv6p/7JSbQ5cpXBp404sqTr8YFh+IImT44L89eYgA6aKUV4ThJRjvqgQDNpxPj
- yFTHAuWYAKLCKf6GAem/oKd3pW+W4MG2QTH6lhz8p5TQW4O73xLZyBmnO5xIZqUeqerlu/dK74c
- wBGDz66r+ieeHr8J7IN8pg+iZy3SgvWvjlgcJhIdGR5bW8vhXlubbJt77Qh7zRwwLz+oyIl1cFY
- 8hegG57zWUEuqhh9cgab3xBV/IY3TG/U4QNTj+xHf8tkMmufrlecg1o5lE5GKEN03AdwspUixfE
- 9UJb6zc/Zbah1N6TEjfKtZ5wcoEYMDUVdPYLKGRJCuFmeElb2M9UA6WmkPect+JJzK/wByKgwEI
- Dg/0iTplty9M83tKm6hHEj3REvYRnwbqbhoAL54gKGo36J5IahllhhpHjjydUZAK6CkufO68WgM
- 1394j9kGphskNasPjJg4JH1qpnrawq+a7OhjS6BQVEck89nj8oYw==
-X-Google-Smtp-Source: AGHT+IETG+hCiDZlw0HtUh1K4PnHFAsecZZhwIfYvOGtS9o+7kuAp1ArzDf7fbVeGI9UohUfcJWrXA==
-X-Received: by 2002:a05:6214:27c8:b0:880:45ad:3db5 with SMTP id
- 6a1803df08f44-8847c49f4aemr448975066d6.3.1764369871293; 
- Fri, 28 Nov 2025 14:44:31 -0800 (PST)
+ bh=WmT0N/n74EPEE6smaUUFOrqeqMbkWMQqkiLgpTfyWr0=;
+ b=hTOUb2kivl6M5ofhAUDUMfSWHQtWVUF6h+4rI27ssKRf2xSGiKuLMr8fQZJfibAH1y
+ /dFiLfjOxJYMS2gwj4mnrPJXD5icNASJKb8YQWe/c/W8+wCEh3BcvoLgSYKL6DJdX31J
+ 4UT2zzfitzX1npa8MjYHAwR85RnbNUEP5L49x4O6LmE/YkKQZNMWpAGHJAuRrHtCEtB6
+ ZUjz3e+U2dOev9fqMt6vByc5eHgblCjhuWmHVqGJpc9QY4zKa7jEDrW4McJpuETJAIwE
+ mR+qaH5+2j8Zm3xtA9VOvsz2Fr+CkQtYm9OUej/Yau4zsiElgg667fjD9/PlrTWTApWI
+ yE3w==
+X-Gm-Message-State: AOJu0Yx7NbO+nklqxTd2r/IwtqnFDVRbqFZF3VBEA4FlSLm5Xaai+mSX
+ KZCpBT1MyV+f6GqBTuliahcjlUAAe4SZ3AERCHUlOjvcwTwqbXCGb3NyAWZHOSt9XKuub02soQ7
+ VA3tK
+X-Gm-Gg: ASbGncvNhp1umlImEtg4Hi71ZcKZEcPmOv4AVci/OXLgY6QZSeR+gO9r9OfkCP0GDZA
+ uDNUSl9R5naQYG5L6P2M6649OGd190ZAIpbu7SWMQxbqolyKcNQ//TewpudpJ8mu6Ii8KzoFwF3
+ fscI2Arb+PuNbarlvrZuWRHnG+DoIe1gq6Ue66sNExtsAYqQ1CYxr4TdWEOUKKwGLlHP924F20g
+ G77VC4pbBjCzSw3sFsnVQk4cJfDRwqnBS0daORIBo0OeLUbCfDYUQtL1KdDqi2+HiJKh+FpCCVk
+ lSwuRX8u/MY1XIvQh3hJVdW5CzfDy0UHMJ7gMFWe9++JzQ0sYpq3LvGQ3L/BwoHu+vl7uIak7aP
+ sPr5nmaTTeFh4ysfYFT9zoPELAsVXGgqALj1GsCfAaea/09T/vfZpfAfZJf4wTSFT2v3+NsjDDd
+ J+ws2LFGCz/CeEenFXGnKQZu1buvXmy5z4rAHqDvkVJxSrDDsCCg==
+X-Google-Smtp-Source: AGHT+IFypmZlVc3Rkx02DxROAQp2j/Duk5FQyPon6L3v6QkjjZ1ZdUj37DV5bbwIng4sFgQFXC/qvw==
+X-Received: by 2002:a05:6214:262a:b0:87c:81f:6200 with SMTP id
+ 6a1803df08f44-8847c4c7decmr483103906d6.28.1764369872873; 
+ Fri, 28 Nov 2025 14:44:32 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-886524e2b8asm37022216d6.16.2025.11.28.14.44.30
+ 6a1803df08f44-886524e2b8asm37022216d6.16.2025.11.28.14.44.31
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 28 Nov 2025 14:44:30 -0800 (PST)
+ Fri, 28 Nov 2025 14:44:32 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
  Anatoly Burakov <anatoly.burakov@intel.com>,
  Cristian Dumitrescu <cristian.dumitrescu@intel.com>,
- Pablo de Lara <pablo.de.lara.guarch@intel.com>
-Subject: [PATCH v8 05/10] test: fix format overflow warning in ACL test
-Date: Fri, 28 Nov 2025 14:42:08 -0800
-Message-ID: <20251128224420.195013-6-stephen@networkplumber.org>
+ Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH v8 06/10] test: fix impossible format-truncation in cfgfiles
+Date: Fri, 28 Nov 2025 14:42:09 -0800
+Message-ID: <20251128224420.195013-7-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251128224420.195013-1-stephen@networkplumber.org>
 References: <20251110182209.104087-1-stephen@networkplumber.org>
@@ -85,42 +85,41 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This test has an array of input lines, but the two dimensional
-array confuses compiler length checks. Convert to an array
-of pointers to fixed strings which avoids the problem.
-Make both variables static since not shared with other code.
+Although, it is not possible on Linux (which always uses /tmp)
+the compiler complains about possible snprintf() truncation.
 
-Fixes: 5205954791cb ("app/test: packet framework unit tests")
+Use existing code to make empty tmp file which puts the
+OS specific code in one spot and avoids any races if
+two tests are run at once.
+
+Fixes: be22019a58c4 ("test: restore cfgfile tests")
 Cc: stable@dpdk.org
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 Acked-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- app/test/test_table_acl.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ app/test/test_cfgfile.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/app/test/test_table_acl.c b/app/test/test_table_acl.c
-index dff9bddfb9..94edf37234 100644
---- a/app/test/test_table_acl.c
-+++ b/app/test/test_table_acl.c
-@@ -317,7 +317,7 @@ parse_cb_ipv4_rule_del(char *str, struct rte_table_acl_rule_delete_params *v)
-  * separated by ' : ', just ':'. It's a lot more readable and
-  * cleaner, IMO.
-  */
--char lines[][128] = {
-+static const char * const lines[] = {
- 	"@0.0.0.0/0 0.0.0.0/0 0:65535 0:65535 2/0xff", /* Protocol check */
- 	"@192.168.3.1/32 0.0.0.0/0 0:65535 0:65535 0/0", /* Src IP checl */
- 	"@0.0.0.0/0 10.4.4.1/32 0:65535 0:65535 0/0", /* dst IP check */
-@@ -325,7 +325,7 @@ char lines[][128] = {
- 	"@0.0.0.0/0 0.0.0.0/0 0:65535 206:206 0/0", /* dst port check */
- };
+diff --git a/app/test/test_cfgfile.c b/app/test/test_cfgfile.c
+index b189d9d7a5..eabf155404 100644
+--- a/app/test/test_cfgfile.c
++++ b/app/test/test_cfgfile.c
+@@ -178,12 +178,8 @@ test_cfgfile_realloc_sections(void)
+ 	ret = remove(filename);
+ 	TEST_ASSERT_SUCCESS(ret, "Failed to remove file");
  
--char line[128];
-+static char line[128];
+-	char tmp[PATH_MAX] = "/tmp/";
+-#ifdef RTE_EXEC_ENV_WINDOWS
+-	ret = GetTempPathA(sizeof(tmp), tmp);
+-	TEST_ASSERT(ret > 0, "Failed to get tmp directory");
+-#endif
+-	snprintf(filename, sizeof(filename), "%s%s", tmp, "cfg_save.ini");
++	ret = make_tmp_file(filename, "save", "");
++	TEST_ASSERT(ret == 0, "Failed to make empty tmp filename for save");
  
- 
- static int
+ 	ret = rte_cfgfile_save(cfgfile, filename);
+ 	TEST_ASSERT_SUCCESS(ret, "Failed to save to %s", filename);
 -- 
 2.51.0
 
