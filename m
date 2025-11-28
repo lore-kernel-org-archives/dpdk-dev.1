@@ -2,78 +2,84 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DB31CFD376
-	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Nov 2025 08:54:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78144CFD376
+	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Nov 2025 09:15:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5C8AB4021E;
-	Fri, 28 Nov 2025 09:54:09 +0100 (CET)
-Received: from fout-a2-smtp.messagingengine.com
- (fout-a2-smtp.messagingengine.com [103.168.172.145])
- by mails.dpdk.org (Postfix) with ESMTP id 1146D400EF
- for <dev@dpdk.org>; Fri, 28 Nov 2025 09:54:07 +0100 (CET)
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
- by mailfout.phl.internal (Postfix) with ESMTP id 902A6EC036D;
- Fri, 28 Nov 2025 03:54:06 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
- by phl-compute-05.internal (MEProxy); Fri, 28 Nov 2025 03:54:06 -0500
+	by mails.dpdk.org (Postfix) with ESMTP id 7689E4013F;
+	Fri, 28 Nov 2025 10:15:23 +0100 (CET)
+Received: from fhigh-a4-smtp.messagingengine.com
+ (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
+ by mails.dpdk.org (Postfix) with ESMTP id 92A1C400EF
+ for <dev@dpdk.org>; Fri, 28 Nov 2025 10:15:22 +0100 (CET)
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id 0CFED1400073;
+ Fri, 28 Nov 2025 04:15:22 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+ by phl-compute-04.internal (MEProxy); Fri, 28 Nov 2025 04:15:22 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1764320046;
- x=1764406446; bh=rn2s++4DYT7HU6EAnbZGMS/yuzok/pbhcKdMt0yx2nA=; b=
- jrG0eLbfmiFP1hReX+UckRsDMIPyvs4QM6x8jCrmAWHwfkdG2IcA+vkcepqw8xl3
- iuj/c/t+msOnqULYlnUzig6VAam0tsdXZQsHVqRpDjF0xvWxhreah2BxWMk5/UlX
- CvqU3TOg1qTQYxUhGIgtvFjJWiizGoqujFIFRjzRw/UR3opTvmp7/XZ1qZYVWMq6
- QvArq1W306HZ0/nRpPIN1Khl8RFDhWeUlVTS9cXbFgir6zFq+92Lb9Ch462Kj1s8
- FDwrha6X7Eyc+fCferzKaEejZsVaeD4LjeBc4YRNpEIkvVlDVANlZF+61fm3Gm1w
- Qh68AOqplQgQZMYZKmAFkg==
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1764321322;
+ x=1764407722; bh=b/WfVIcS8VHmHzXxRZQplD26KecZQnvIpZSyR3UIuQA=; b=
+ MQg3B6NhPwBvubuY5cX85DzDcjHoDsyKdg99tG5WEcjMMZlE8/zjAEaP6MoY+uy/
+ pFW9XZMCBddP6AEzwDUpG369A3J+/T8Jk447q/55DnY1BdMQ9M/22Ie5KC9924H5
+ Z2HMfe+CKmGVYeV0anBrZZkWRCc1waTchu2TTVdMsPPqiWnX/aQbFbeIBb/5iKpZ
+ WFeu9B5O585nWQng7fmKybQnXYbYq3j1+myu5JDejSP8ImroYUKk5hWtmDWEhDTm
+ gG3l1dey5KX/WpYnvW6scDH73z/zadfRrS1hgxZUdYOYDph98yY2tvLj73yjOjG8
+ HQc7XD56Q+qEhpeIQA17ow==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1764320046; x=
- 1764406446; bh=rn2s++4DYT7HU6EAnbZGMS/yuzok/pbhcKdMt0yx2nA=; b=s
- GYudBLmMLLmKgNf3titIEmyPiUB0B4NkKU3vSNhAkzDetyRAwGQK8N7Eg/Mf6Acm
- Hb1OPzeBdckLhg5RVG0FBEuFHsI3Zg8BQvkYLMdQ684A27h8xyAcAZ0zKKBeeaYW
- pkGfhLX1U1tqNECprhYsA1/E/0Kcxfi9Cb7sXc031Eu6MWBX+VHyhGW5Yz7GB7Uy
- ebkiNpAt31cZAxtVNE4/GUVtB/4gDh6HIwP6Jf7QPBr0/FMNeXaaC+4cTQCEl+n1
- EBsXCTWRtfCZhTWbd96+TMZNC21/vhIhCZLLlapekH7jNBUgRGOE1cHV9j6NC53P
- WWHcYdvnqB8mtYCuPDtgw==
-X-ME-Sender: <xms:LmMpaTZG7GInYw8gDaxlS4WH7d7axhl8Ci1iGgpbL6kUT1rGFITgqQ>
- <xme:LmMpaWtUDpHGdwAbUqjS_VgtlEtUSkLJJWSB4E69Jp6l1-bLdb_odJQM6fs8RKlja
- DcaFhMYf6iCcYcLSYMzRIS3xaU9ml00_KvSWeBQg0O9D-CItANA>
-X-ME-Received: <xmr:LmMpaVHGKhtVmfLNCqZ5-6JnLJnvLK2Uc5nBanuSVQwIKnYnx27Bj92sL1jzQ03nGIZckJMYrOX2zpIGLZ34pbQqCw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvgeelgeehucetufdoteggodetrf
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1764321322; x=
+ 1764407722; bh=b/WfVIcS8VHmHzXxRZQplD26KecZQnvIpZSyR3UIuQA=; b=o
+ NZc+ra+y8NENi26vP02ANXYvWSRS7YDRBQx5Q9YaMIXwqJ4e+3cA7YP65k3fKuSz
+ xizmzQ0lHmWSaWMyPXvqeKd7IOgqc8fj8kHgWc5uQ5Tus4pkcEUlK10MdF3t0Mem
+ OA4m15ZDMhNhiVV/9txQE9nv2bI5pudcKUkE3mPjxsqgB0p+61IADIoe1Uxg9mVU
+ 2mkIEmljwWM9mEOh5ujq8zu9RVW9oe37HPk94jso/PZFFKDmuWGCmEO3cTFCpx+S
+ 1DcNV6cpKzmkqO5gh51/H+YBhnNa8WwwKlsG/DcLQcW7YCmcyrXL0LB2oq81GuZJ
+ ktSaEm8iKtWUKDa0UGUpQ==
+X-ME-Sender: <xms:KWgpaY3HC96MMnl4ib-ERuGxqojWycM_BqwQ84HiGSFxDXgdrlbxRA>
+ <xme:KWgpacD-RGAgrMLlKqe6iOAa2OEbiI9ISc8_lQhucXYi8ZedfnVsKu8jnOZYEemQb
+ Eh-hYsLhZaXDkwxLP7c9JZY1_vU0wWG6PmNr9su-f67M-Bw-oHn>
+X-ME-Received: <xmr:KWgpacc_eqnsXg5ROpYiLfF7ovm9JpVqvwFEUsg_zf-BPg4DWGghLmuoLZVJ4ucXou6SLcU7160V6ULBeseDz2gRhQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvgeelgeelucetufdoteggodetrf
  dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
  rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
- gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
+ gurhephffvvefufffkjghfggfgtgesthhqredttddtjeenucfhrhhomhepvfhhohhmrghs
  ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
- frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
- uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeefpdhm
- ohguvgepshhmthhpohhuthdprhgtphhtthhopehluhgtrgdrsghotggtrghsshhisehgmh
- grihhlrdgtohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghpthhtohep
- sghruhgtvgdrrhhitghhrghrughsohhnsehinhhtvghlrdgtohhm
-X-ME-Proxy: <xmx:LmMpaRwu4cGE_QffxrlxaCAMPbfooWe64q9gKR4NbQQ0kez2SKNicA>
- <xmx:LmMpaUjSm9pofidruMRvC3iqH5b1lv61Je90LfHNgK74beu7Ejp1ww>
- <xmx:LmMpaUy8b0ajDugFeC1t0Se3eLRcD9x50ikenTm7w3d6wbzEf1vVwA>
- <xmx:LmMpafLvMEmK8RHTWqvgyUs2nTk-H1s1zO_MfUcSDfZ_fnqyNCzDBQ>
- <xmx:LmMpaTd2nnoYC3-8A3GPKS2wy0LuDUEldGPUaEXNlezoGNv2aifCol8j>
+ frrghtthgvrhhnpeegtddtleejjeegffekkeektdejvedtheevtdekiedvueeuvdeiuddv
+ leevjeeujeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeeipdhm
+ ohguvgepshhmthhpohhuthdprhgtphhtthhopehsthgvphhhvghnsehnvghtfihorhhkph
+ hluhhmsggvrhdrohhrghdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtphht
+ thhopehhvghmrghnthdrrghgrhgrfigrlhesnhigphdrtghomhdprhgtphhtthhopehsrg
+ gthhhinhdrshgrgigvnhgrsehngihprdgtohhmpdhrtghpthhtohepshhhrhgvhigrnhhs
+ hhdrjhgrihhnsehngihprdgtohhmpdhrtghpthhtohepuggrvhhiugdrmhgrrhgthhgrnh
+ gusehrvgguhhgrthdrtghomh
+X-ME-Proxy: <xmx:KWgpaR4zP1O3Ru6DJfJQZoA8YrFyrA6QjhmD17HR-8yNcvncHPaczg>
+ <xmx:KWgpaXUSQab7yv32RfmVxirZj5fDo63253IikvJNV6Vd09qjhWTbhw>
+ <xmx:KWgpaY5pE56UiQ_FDQbxwmt9HrC7SIk7HYGCs5LgsioXqpexmy8sig>
+ <xmx:KWgpaapUd5hYOELPm7TGoazdM735Y_QAOiuL3hMdy4hXSjmtbGvOUA>
+ <xmx:KmgpaQRXVmvloBTkRZViBiQPse7enX1hNWbJbDac4i-CJUI-WTKRQEOR>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 28 Nov 2025 03:54:05 -0500 (EST)
+ 28 Nov 2025 04:15:20 -0500 (EST)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: luca.boccassi@gmail.com
-Cc: dev@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>
-Subject: Re: [PATCH] test/debug: fix test failure on ppc64
-Date: Fri, 28 Nov 2025 09:54:04 +0100
-Message-ID: <5872466.31r3eYUQgx@thomas>
-In-Reply-To: <aShb5MBcGuyTbb1T@bricha3-mobl1.ger.corp.intel.com>
-References: <20251125103935.1729434-1-luca.boccassi@gmail.com>
- <aShb5MBcGuyTbb1T@bricha3-mobl1.ger.corp.intel.com>
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: dev@dpdk.org, Hemant Agrawal <hemant.agrawal@nxp.com>,
+ Sachin Saxena <sachin.saxena@nxp.com>,
+ Shreyansh Jain <shreyansh.jain@nxp.com>,
+ David Marchand <david.marchand@redhat.com>
+Subject: Re: [PATCH] bus/fslmc: fix warning in device scan
+Date: Fri, 28 Nov 2025 10:15:19 +0100
+Message-ID: <5843664.GXAFRqVoOG@thomas>
+In-Reply-To: <CAJFAV8zuQVd_z5mKOC3x0VmE9QFGXG2REgaeBH4eVm=wxcFHMA@mail.gmail.com>
+References: <20251125144610.37661-1-stephen@networkplumber.org>
+ <CAJFAV8zuQVd_z5mKOC3x0VmE9QFGXG2REgaeBH4eVm=wxcFHMA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -88,39 +94,28 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-27/11/2025 15:10, Bruce Richardson:
-> On Tue, Nov 25, 2025 at 10:39:13AM +0000, luca.boccassi@gmail.com wrote:
-> > From: Luca Boccassi <bluca@debian.org>
-> > 
-> > 1001s Running binary with argv[]:'/tmp/autopkgtest.LvdXhc/build.6vT/src/build/app/dpdk-test' '--file-prefix=debug' '-l' '0' '--no-huge' '-m' '2048'
-> > <...>
-> > 1001s EAL: Cannot use IOVA as 'PA' since physical addresses are not available
-> > 
-> > This is similar to 6b07762e949036389030cf5a1a9bb8a1e4d6ee2d,
-> > on ppc64 iova-mode=pa is the default, but it doesn't work with --no-huge,
-> > so add --iova-mode=va to the test arguments.
-> > 
-> > Fixes: 2b403dd8fb37 ("test/debug: fix crash with mlx5 devices")
-> > Cc: stable@dpdk.org
-> > 
-> > Signed-off-by: Luca Boccassi <bluca@debian.org>
-> > ---
-> Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+28/11/2025 09:39, David Marchand:
+> On Tue, 25 Nov 2025 at 15:46, Stephen Hemminger
+> <stephen@networkplumber.org> wrote:
+> >
+> > With latest glibc (Fedora Rawhide):
+> > ../drivers/bus/fslmc/fslmc_bus.c: In function =E2=80=98rte_fslmc_parse=
+=E2=80=99:
+> > ../drivers/bus/fslmc/fslmc_bus.c:298:15: error: assignment discards =E2=
+=80=98const=E2=80=99 qualifier from pointer target type [-Werror=3Ddiscarde=
+d-qualifiers]
+> >    298 |         t_ptr =3D strchr(sep, '.');
+> >        |               ^
+> > Fixes: e67a61614d0b ("bus/fslmc: support device iteration")
+> >
+> > Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+>=20
+> This build warning can be seen in OBS builds.
+>=20
+> Acked-by: David Marchand <david.marchand@redhat.com>
+
+It is actually in device name parsing function.
 
 Applied, thanks.
-
-
-
-> > +#ifdef RTE_ARCH_PPC_64
-> > +		/* iova=pa is the default, but fails on ppc64 with --no-huge */
-> > +		test_args[7] = "--iova-mode=va";
-> > +#else
-> > +		test_args[7] = "";
-> > +#endif
-> 
-> Next release we should maybe see if we can remove the #ifdefs and just
-> iova=va for all architectures.
-
-Yes
 
 
