@@ -2,74 +2,76 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EDDCD116EA
-	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Nov 2025 08:49:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DB31CFD376
+	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Nov 2025 08:54:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E5CE04013F;
-	Fri, 28 Nov 2025 09:49:39 +0100 (CET)
-Received: from fhigh-a4-smtp.messagingengine.com
- (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
- by mails.dpdk.org (Postfix) with ESMTP id F08DB400EF
- for <dev@dpdk.org>; Fri, 28 Nov 2025 09:49:37 +0100 (CET)
-Received: from phl-compute-11.internal (phl-compute-11.internal [10.202.2.51])
- by mailfhigh.phl.internal (Postfix) with ESMTP id 4FBFC1400199;
- Fri, 28 Nov 2025 03:49:37 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-11.internal (MEProxy); Fri, 28 Nov 2025 03:49:37 -0500
+	by mails.dpdk.org (Postfix) with ESMTP id 5C8AB4021E;
+	Fri, 28 Nov 2025 09:54:09 +0100 (CET)
+Received: from fout-a2-smtp.messagingengine.com
+ (fout-a2-smtp.messagingengine.com [103.168.172.145])
+ by mails.dpdk.org (Postfix) with ESMTP id 1146D400EF
+ for <dev@dpdk.org>; Fri, 28 Nov 2025 09:54:07 +0100 (CET)
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+ by mailfout.phl.internal (Postfix) with ESMTP id 902A6EC036D;
+ Fri, 28 Nov 2025 03:54:06 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+ by phl-compute-05.internal (MEProxy); Fri, 28 Nov 2025 03:54:06 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1764319777;
- x=1764406177; bh=Pd4O2j0P4zuCWiWmtshDJXJ3pGpZceJTW+cUtdQXf6I=; b=
- KPqHIhpbM7NivpkQpNK/xlHGoY1cBDNGFwChVTx40vE2dEUGKwWBamYJYqzmdZnH
- NQrVIFdpXxtoR998A9ZpRbUSTWqBk9h9gSJf/WuHl4xcVXjCAqZfoKJwepK658gm
- TCUPTWOA/z8z7xoR4JHpBeviArd4UcydaylJRHbRZhyB5eS3rWB1LAc8MvnorRfQ
- 5QHtg0A3Dl02HL7Ob7ez6bQXD59Cfzd+VnvbAE9VX47vhu6oyHUZ7gA0Jrw1U2e4
- 2TG14qhR8k9FsiCDfMvilgDpSssgIhBrmjGRYk4oIF5tWNVPVkCYjhoaOq8s+AHI
- GOd31q6+ym1zhtcZY/tcug==
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1764320046;
+ x=1764406446; bh=rn2s++4DYT7HU6EAnbZGMS/yuzok/pbhcKdMt0yx2nA=; b=
+ jrG0eLbfmiFP1hReX+UckRsDMIPyvs4QM6x8jCrmAWHwfkdG2IcA+vkcepqw8xl3
+ iuj/c/t+msOnqULYlnUzig6VAam0tsdXZQsHVqRpDjF0xvWxhreah2BxWMk5/UlX
+ CvqU3TOg1qTQYxUhGIgtvFjJWiizGoqujFIFRjzRw/UR3opTvmp7/XZ1qZYVWMq6
+ QvArq1W306HZ0/nRpPIN1Khl8RFDhWeUlVTS9cXbFgir6zFq+92Lb9Ch462Kj1s8
+ FDwrha6X7Eyc+fCferzKaEejZsVaeD4LjeBc4YRNpEIkvVlDVANlZF+61fm3Gm1w
+ Qh68AOqplQgQZMYZKmAFkg==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1764319777; x=
- 1764406177; bh=Pd4O2j0P4zuCWiWmtshDJXJ3pGpZceJTW+cUtdQXf6I=; b=M
- dF8DiuV+kjejh/6Df/MOByH+edYLLc08qeg9PfqG8oQI9HzogEtMCwNRfCtBRcQi
- zxBLUHwByBvrpFn/nEa9BARswXu60TUPC3eSN+xakIwkR6xXuLtje3J/tVd458qr
- Hg1GLSiTTloO4l9j5LWIdVkIGk3BOVOXjSZGFxZmYd0rn07wNShH5lLs9lZFk6K4
- eInz15AA2q6ct1iaOz0X+n5zzK/rhwAFAuia8CHmKNVzmnuoGqdEvdlbu1OTybul
- lr49Xr4XizNK4PpwwbTV/bew8yb9n5sBYTEFBLDx4XYTvJ5T0X2XxlpLb3zbhQlW
- ipE002nZYDCjkTE8bH3UA==
-X-ME-Sender: <xms:IGIpaUAMyNKGYp6HPlleuB-Yb69-gHlccVdF5iJZW3znRNRaAZ3lLA>
- <xme:IGIpaS2k2Qb_e3fOLF3hvCTNPys3wUB8MDHjoEP4U4I9o3un4FalV01fD0dfhXJYp
- oApWpbMsDALGyIOYjifSzhcoFi_m7YBfYIvfeapQOGH43Zm5mdHPjo>
-X-ME-Received: <xmr:IGIpaaVepuJzEyssIqdE5naZ20ZemdP3wkS9-t_eBvA5aUSCV5Ms6uOG-PvI6skC0R4TyWUNRQ_d_GA_vMbL1hIY7A>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvgeelgeegucetufdoteggodetrf
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1764320046; x=
+ 1764406446; bh=rn2s++4DYT7HU6EAnbZGMS/yuzok/pbhcKdMt0yx2nA=; b=s
+ GYudBLmMLLmKgNf3titIEmyPiUB0B4NkKU3vSNhAkzDetyRAwGQK8N7Eg/Mf6Acm
+ Hb1OPzeBdckLhg5RVG0FBEuFHsI3Zg8BQvkYLMdQ684A27h8xyAcAZ0zKKBeeaYW
+ pkGfhLX1U1tqNECprhYsA1/E/0Kcxfi9Cb7sXc031Eu6MWBX+VHyhGW5Yz7GB7Uy
+ ebkiNpAt31cZAxtVNE4/GUVtB/4gDh6HIwP6Jf7QPBr0/FMNeXaaC+4cTQCEl+n1
+ EBsXCTWRtfCZhTWbd96+TMZNC21/vhIhCZLLlapekH7jNBUgRGOE1cHV9j6NC53P
+ WWHcYdvnqB8mtYCuPDtgw==
+X-ME-Sender: <xms:LmMpaTZG7GInYw8gDaxlS4WH7d7axhl8Ci1iGgpbL6kUT1rGFITgqQ>
+ <xme:LmMpaWtUDpHGdwAbUqjS_VgtlEtUSkLJJWSB4E69Jp6l1-bLdb_odJQM6fs8RKlja
+ DcaFhMYf6iCcYcLSYMzRIS3xaU9ml00_KvSWeBQg0O9D-CItANA>
+X-ME-Received: <xmr:LmMpaVHGKhtVmfLNCqZ5-6JnLJnvLK2Uc5nBanuSVQwIKnYnx27Bj92sL1jzQ03nGIZckJMYrOX2zpIGLZ34pbQqCw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvgeelgeehucetufdoteggodetrf
  dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
  rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
  gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
  ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
  frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
  uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopedvpdhm
- ohguvgepshhmthhpohhuthdprhgtphhtthhopehjohhhnhdrmhgtnhgrmhgrrhgrsehinh
- htvghlrdgtohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhg
-X-ME-Proxy: <xmx:IGIpackpjihomx6lsQrl-uAaBoKNO1ztaO6vzNb7ZNbqPijCRr2cxQ>
- <xmx:IGIpacBWpwVVlsRuDekAbUOE5Q2wrAaQX9cbIJ2XiEoIFQumyRq8HA>
- <xmx:IGIpace4CmGEwQosZXpfXelJq57iYIgbKsGPbS88J-2M1SxIhLW4Kw>
- <xmx:IGIpaXL0zcYcLHCQw2dYsnMXsqi9C1SYu8ps7sDk0D8d4cgdJ4n8HQ>
- <xmx:IWIpaUorXdr2sZut7fg7ksT9-OvopiOwkC2pzCpchtHAp8ZgvMEJJC-l>
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeefpdhm
+ ohguvgepshhmthhpohhuthdprhgtphhtthhopehluhgtrgdrsghotggtrghsshhisehgmh
+ grihhlrdgtohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghpthhtohep
+ sghruhgtvgdrrhhitghhrghrughsohhnsehinhhtvghlrdgtohhm
+X-ME-Proxy: <xmx:LmMpaRwu4cGE_QffxrlxaCAMPbfooWe64q9gKR4NbQQ0kez2SKNicA>
+ <xmx:LmMpaUjSm9pofidruMRvC3iqH5b1lv61Je90LfHNgK74beu7Ejp1ww>
+ <xmx:LmMpaUy8b0ajDugFeC1t0Se3eLRcD9x50ikenTm7w3d6wbzEf1vVwA>
+ <xmx:LmMpafLvMEmK8RHTWqvgyUs2nTk-H1s1zO_MfUcSDfZ_fnqyNCzDBQ>
+ <xmx:LmMpaTd2nnoYC3-8A3GPKS2wy0LuDUEldGPUaEXNlezoGNv2aifCol8j>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 28 Nov 2025 03:49:36 -0500 (EST)
+ 28 Nov 2025 03:54:05 -0500 (EST)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: John McNamara <john.mcnamara@intel.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH v1] doc: update release notes for 25.11
-Date: Fri, 28 Nov 2025 09:49:34 +0100
-Message-ID: <6757578.DvuYhMxLoT@thomas>
-In-Reply-To: <20251127094443.109547-1-john.mcnamara@intel.com>
-References: <20251127094443.109547-1-john.mcnamara@intel.com>
+To: luca.boccassi@gmail.com
+Cc: dev@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>
+Subject: Re: [PATCH] test/debug: fix test failure on ppc64
+Date: Fri, 28 Nov 2025 09:54:04 +0100
+Message-ID: <5872466.31r3eYUQgx@thomas>
+In-Reply-To: <aShb5MBcGuyTbb1T@bricha3-mobl1.ger.corp.intel.com>
+References: <20251125103935.1729434-1-luca.boccassi@gmail.com>
+ <aShb5MBcGuyTbb1T@bricha3-mobl1.ger.corp.intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -86,12 +88,39 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-27/11/2025 10:44, John McNamara:
-> Fix grammar, spelling and formatting of DPDK 25.11 release notes.
+27/11/2025 15:10, Bruce Richardson:
+> On Tue, Nov 25, 2025 at 10:39:13AM +0000, luca.boccassi@gmail.com wrote:
+> > From: Luca Boccassi <bluca@debian.org>
+> > 
+> > 1001s Running binary with argv[]:'/tmp/autopkgtest.LvdXhc/build.6vT/src/build/app/dpdk-test' '--file-prefix=debug' '-l' '0' '--no-huge' '-m' '2048'
+> > <...>
+> > 1001s EAL: Cannot use IOVA as 'PA' since physical addresses are not available
+> > 
+> > This is similar to 6b07762e949036389030cf5a1a9bb8a1e4d6ee2d,
+> > on ppc64 iova-mode=pa is the default, but it doesn't work with --no-huge,
+> > so add --iova-mode=va to the test arguments.
+> > 
+> > Fixes: 2b403dd8fb37 ("test/debug: fix crash with mlx5 devices")
+> > Cc: stable@dpdk.org
+> > 
+> > Signed-off-by: Luca Boccassi <bluca@debian.org>
+> > ---
+> Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+
+Applied, thanks.
+
+
+
+> > +#ifdef RTE_ARCH_PPC_64
+> > +		/* iova=pa is the default, but fails on ppc64 with --no-huge */
+> > +		test_args[7] = "--iova-mode=va";
+> > +#else
+> > +		test_args[7] = "";
+> > +#endif
 > 
-> Signed-off-by: John McNamara <john.mcnamara@intel.com>
+> Next release we should maybe see if we can remove the #ifdefs and just
+> iova=va for all architectures.
 
-Removed comments and applied, thanks.
-
+Yes
 
 
