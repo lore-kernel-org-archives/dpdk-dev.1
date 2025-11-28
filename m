@@ -2,82 +2,55 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C949BD116F1
-	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Nov 2025 13:44:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6878D116F1
+	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Nov 2025 13:56:25 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E93C64013F;
-	Fri, 28 Nov 2025 14:44:52 +0100 (CET)
-Received: from fout-a5-smtp.messagingengine.com
- (fout-a5-smtp.messagingengine.com [103.168.172.148])
- by mails.dpdk.org (Postfix) with ESMTP id F1C0D400EF
- for <dev@dpdk.org>; Fri, 28 Nov 2025 14:44:50 +0100 (CET)
-Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
- by mailfout.phl.internal (Postfix) with ESMTP id 512DBEC050B;
- Fri, 28 Nov 2025 08:44:50 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
- by phl-compute-02.internal (MEProxy); Fri, 28 Nov 2025 08:44:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1764337490;
- x=1764423890; bh=2i1oUjQjm/k6jI/pwv7PIzlVvCgd7lW1w9gjIbkLyIg=; b=
- wvsTQ3p6ZJbhIAivvqdm4SCDtlWzOyVuOf0IY0impft/TIe9aqal25DZVPScegnT
- jn1gCl/3fnULqCn2f3QCPmN8zdNuweBv6GPxj1h4IAL4bAbBuX0NUswxTXItfuo1
- 6DDCa3FCzcM74CQisHKo6o+qb0ZtDrhKqkc9C4UxjyP/yHIaH0eaCpYMsiyfLfxA
- ySXOCbhwexnkhOeGFkcMpC86PSwx9yASAKHDut0oO1+Ee+CH9BUbB2yqzSIY2THs
- GIjzdr548d/6v2kfFFKxrdFAwkdMDj/4n36vxTIWcH/bxeooT7vkW/0thEU4KKpS
- sdF//DQXawFezXxyblM3Qg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1764337490; x=
- 1764423890; bh=2i1oUjQjm/k6jI/pwv7PIzlVvCgd7lW1w9gjIbkLyIg=; b=Z
- UhU4POwzBlwHI8pPQgAinyyc7fF6Vnx7QFEmyn0OxeG3X8YLqdq9gENu/D28IiSY
- Z+1u1oat/TFkICRhcg6IvFmw8z9mBMfxXkksd+G7/y9x19x3Qwuv6yASwY9ZFA46
- /oMzc5pLB9SCfoBRMpd89wsQ7OR2aZBaM2q0p6N0gCuZbzBnMSxNgnz7Zz5dSVl2
- 5g8R4OH9321gNjye7NkKle6C6weymdpf4yG5+jghQS14r5QP5JUXb9yKkT9uUqlY
- jKkzX5ZGvBvg085bRZyXMblzH5LD2Xya2VYwN3L8HWo60fkaXIuFHjwmrJ+x0oTU
- p1Bw1WttJACjCoI7Qu2xg==
-X-ME-Sender: <xms:UacpabgiXzpW9aq3nk_SW3BpUYKStJcP_wKFsCE3ujoqrhsXfIE8DA>
- <xme:UacpaYKZ5O_M3195_sTcqyuiuJNmIZ0FL2tPj8m0p930Pe6KqKYXEDoehpnINOeCb
- E-_QaTnVwb17wtWctvZ1n_llREbhng4NwmOxBWOYeQgrRk8rsfiJQ>
-X-ME-Received: <xmr:UacpaTAy6zNPkD1xRezbzkh_WxLfWFz89OiDNrqWTwxTwGFVRjNR2fxjt0V-xGxDAsAnxwDx2xAz40qKq-1Gc0fQWg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvhedttdefucetufdoteggodetrf
- dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
- rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
- gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
- ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
- frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
- uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeegpdhm
- ohguvgepshhmthhpohhuthdprhgtphhtthhopehkohhnshhtrghnthhinhdrrghnrghnhi
- gvvheshhhurgifvghirdgtohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhr
- tghpthhtohepshhtvghphhgvnhesnhgvthifohhrkhhplhhumhgsvghrrdhorhhgpdhrtg
- hpthhtohepmhgrrhgrthdrkhhhrghlihhliheshhhurgifvghirdgtohhm
-X-ME-Proxy: <xmx:UacpaQg_qrEFCk-1mky_4m3NcRdKhBJX2Gb-A_lHM3FZCdY57rKpXA>
- <xmx:UacpaTkUaBN8sKPz67j3-glqmo1PVj9f2PVj99m7991cYOtYpqONvQ>
- <xmx:UacpaUrgJ7GwmA0ZasM2ooPDNrt_lsGGRs7UUTkgk2hFiTzfS-upvA>
- <xmx:UacpaUEx9t4JYa__KuRnWxmE5Z46q4UBuXAYcB6cmnQkiNaDkekOsA>
- <xmx:UqcpaYJKI7W6YonrcTz4-3E1sWWUKMZnnEt3NmtYsnDy7Ly5gUERCfVp>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 28 Nov 2025 08:44:48 -0500 (EST)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-Cc: "dev@dpdk.org" <dev@dpdk.org>,
- Stephen Hemminger <stephen@networkplumber.org>,
- Marat Khalili <marat.khalili@huawei.com>
-Subject: Re: [PATCH] maintainers: update for BPF test coverage
-Date: Fri, 28 Nov 2025 14:44:47 +0100
-Message-ID: <4203552.44csPzL39Z@thomas>
-In-Reply-To: <2eba644eba404147a57bbaf333bbe6dc@huawei.com>
-References: <20251124181123.3427921-1-thomas@monjalon.net>
- <2eba644eba404147a57bbaf333bbe6dc@huawei.com>
+	by mails.dpdk.org (Postfix) with ESMTP id C77494013F;
+	Fri, 28 Nov 2025 14:56:24 +0100 (CET)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 5BB1D400EF
+ for <dev@dpdk.org>; Fri, 28 Nov 2025 14:56:23 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1764338182;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding;
+ bh=0riyaBP9QoxfzbKIIjoHwrp0c03qfPWdZ5vMToeJr+U=;
+ b=CJsVwwjBNgr5hbb331IqqDaUr4CHdozJBdAhd+Bhl1nY7fATk8OwZ0wFSTMGoKSWKHcWhS
+ yUc3TmOQ95Zu6TNWSnVT1fsBHDpMvzIpL8CbN41O9bbchmWCJkWO5x/dXly8NgkTOPXiK5
+ huUpTSL3NcxWOwlM3G8EQTwgMYGJU9k=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-55-tiV_l5WiPXitJKE2TESlRg-1; Fri,
+ 28 Nov 2025 08:56:20 -0500
+X-MC-Unique: tiV_l5WiPXitJKE2TESlRg-1
+X-Mimecast-MFC-AGG-ID: tiV_l5WiPXitJKE2TESlRg_1764338180
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id ADF491800451
+ for <dev@dpdk.org>; Fri, 28 Nov 2025 13:56:19 +0000 (UTC)
+Received: from dmarchan.lan (unknown [10.44.32.89])
+ by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id D42611800240
+ for <dev@dpdk.org>; Fri, 28 Nov 2025 13:56:18 +0000 (UTC)
+From: David Marchand <david.marchand@redhat.com>
+To: dev@dpdk.org
+Subject: [PATCH 0/7] Fixes for Fedora Rawhide
+Date: Fri, 28 Nov 2025 14:56:08 +0100
+Message-ID: <20251128135616.2662164-1-david.marchand@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: IPBH8cqCc_PDcC2q9mM3QClWSUYhOgAy97VdYjT3kRo_1764338180
+X-Mimecast-Originator: redhat.com
+Content-Transfer-Encoding: 8bit
+content-type: text/plain; charset="US-ASCII"; x-default=true
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -91,23 +64,39 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-25/11/2025 09:36, Konstantin Ananyev:
-> 
-> > When adding the directory app/test/bpf,
-> > the file MAINTAINERS was not updated.
-> > 
-> > Fixes: cf1e03f881af ("test/bpf: add ELF loading")
-> > Fixes: 81038845c90b ("test/bpf: add Rx and Tx filtering")
-> > 
-> > Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
-> > 
-> > ---
-> > 
-> > Kontantin, are you OK to be the maintainer of these new tests?
-> 
-> Yep.
+Similary to https://git.dpdk.org/dpdk/commit/?id=f4ef899bb3ae, we have
+many strstr/str*chr calls on const char * stored to non const pointers.
 
-Applied
+This breaks build in Fedora Rawhide as a change in its glibc now
+triggers build warnings.
 
+Probably too late for 25.11, but sending in any case...
 
+-- 
+David Marchand
+
+David Marchand (7):
+  bus/ifpga: fix const pointer in device name parsing
+  bus/uacce: fix const pointer in device matching
+  drivers: fix some const pointers in qat drivers
+  crypto/caam_jr: fix const pointer in UIO filename parsing
+  net/enetfec: fix const pointer in UIO filename parsing
+  net/memif: fix const pointer in socket check
+  app/procinfo: fix const pointer in collectd format
+
+ app/proc-info/main.c                 |  2 +-
+ drivers/bus/ifpga/ifpga_bus.c        |  4 ++--
+ drivers/bus/uacce/uacce.c            |  2 +-
+ drivers/common/qat/qat_device.c      |  7 ++++---
+ drivers/common/qat/qat_device.h      |  2 +-
+ drivers/compress/qat/qat_comp_pmd.c  |  2 +-
+ drivers/crypto/caam_jr/caam_jr_uio.c | 12 ++----------
+ drivers/crypto/qat/qat_asym.c        |  2 +-
+ drivers/crypto/qat/qat_sym.c         |  2 +-
+ drivers/net/enetfec/enet_uio.c       |  8 +-------
+ drivers/net/memif/rte_eth_memif.c    |  3 ++-
+ 11 files changed, 17 insertions(+), 29 deletions(-)
+
+-- 
+2.51.1
 
