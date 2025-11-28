@@ -2,70 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01BA2D116E2
-	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Nov 2025 19:02:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFC29D116EA
+	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Nov 2025 22:44:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 33EE240281;
-	Fri, 28 Nov 2025 20:02:37 +0100 (CET)
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com
- [209.85.128.47]) by mails.dpdk.org (Postfix) with ESMTP id 75C23400EF
- for <dev@dpdk.org>; Fri, 28 Nov 2025 20:02:36 +0100 (CET)
-Received: by mail-wm1-f47.google.com with SMTP id
- 5b1f17b1804b1-4779cc419b2so21632925e9.3
- for <dev@dpdk.org>; Fri, 28 Nov 2025 11:02:36 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 8F8A440281;
+	Fri, 28 Nov 2025 23:44:27 +0100 (CET)
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com
+ [209.85.219.48]) by mails.dpdk.org (Postfix) with ESMTP id 1E698400EF
+ for <dev@dpdk.org>; Fri, 28 Nov 2025 23:44:25 +0100 (CET)
+Received: by mail-qv1-f48.google.com with SMTP id
+ 6a1803df08f44-88057f5d041so19985036d6.1
+ for <dev@dpdk.org>; Fri, 28 Nov 2025 14:44:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1764356556;
- x=1764961356; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=Wr6obspcZ6tSl6XTX/epv+h7rBnSifhlAVMggkwgj3U=;
- b=E9SWwmZhYWxaAZwbjQABh+T65YgxtIXimR2fEIzWUQ04j4SnVHKWPWIFJFlU8E+mgD
- 93tvR5/RrIs8q1iKq1wK0/1vsiJ6BQ29uhmOwnD6HiXNDXWG31aTZqR2hVAWyd3ImOYz
- oN11w74EmseYaFzgWlAZl/t32rxjC3nLaIR14jq2ZRI6yOwd4VAnu24jFrtua2bfhGQY
- SAcvNgJrPiCUukdM/nEAO5iVT2g9uFftGekkDQK/ejncj1e68NS5juIe3MreM89tPm/G
- ZlmDAOpp5ExDCZpYSYR6pQTiW7XHdRbYpKJaT4cMygeUkwdFQAd9+2qzE8iDOO+WVH8X
- lfwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1764356556; x=1764961356;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1764369865;
+ x=1764974665; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=Wr6obspcZ6tSl6XTX/epv+h7rBnSifhlAVMggkwgj3U=;
- b=quwcMsnoihEg2/s0zbbXptLy0dMm5RKDC+T8jjc2d+PC3hDtD8xfrTo0LMPx2nc9uM
- qOvTXvTHOl4TZWxQpi9BSWgiqZW15Oz0jYb7SNdPR4vlQSiJQOoVer+fhc0tQjNnEqdZ
- HZ8ah/pOJqzUbJYFoQ6mLtVonpg+DWCWqKE7EpKfsh9+t+lYkbaRFuoj5BpCd702k+Cr
- 9mmogipJqq4WJ7gVYLRG3KwqJe+a6lnxVF0tMgSifb4N76czxOoXXozKMh38nj952r17
- pwSSJi6qwmiBJAr+N32Dmh1HNCuNEYyTIbGTtrIIN80/epIx7LKN/113eKakcc06t+6/
- 8C3A==
-X-Gm-Message-State: AOJu0Yy3nS1tZ1CYzdE5rVP/BV9prGYwZIxpILrBRRrBKJnyHCrY1VA3
- Hvohh+iefdzlh/lYQDBDpEGP9VYBbnSKcLW6ogzXqKndGYCFJ84RuZrx8JSFgyLmMzDmvCwbmgx
- s5xa6
-X-Gm-Gg: ASbGncugnIYdnABpU43zTyX+81rMr15TIaXm++NIlzqojevPeQddKsWL7NMhRtsLPxx
- g9M68O8ifbMftXR2vgqhlI88gaDLV+kRrP2MCrKVouBFFtXG8ktKxXd//B1jF7kgoCL6jxsEpg1
- abuFhn2GW/T9dBSQmhjOrhA+/yDMf6axtjTjL+9ca0MEjUft6k7pWK6YGS5UhOBN3DR9Mt/JPk5
- SJxlMA2jXnsKH7a3A3omBvZC9nF70aRvvphPtFHCZaj7+xZfbJ87Rfm94glMyf1sCvj+Vnrhi94
- M8Q2WEJ/PcWhJ+zxfqCzjY8aye4GX4QXetkss4ymKwKfo6mMrB3qmmnx/FPFsPenbplg9uXdJR+
- EC4UaQ+WlOWHWVcKD7zX9SFtkxqtlSESCNYWwg/q9m/fNGzSN04yusxlT3CmTofHKT7HoJs7FIs
- Lnt3zdrnuXI2+nxTs6IHdyCW8Redr4YKuu7CHVNyFs8d0K084AmQ==
-X-Google-Smtp-Source: AGHT+IFXkxS1nc7Os17iPVYin7uL2Zf0LsPrJPHxtP9ZLhkc/9m1sTLtieVImVBOv3e0EPw0yl74Zg==
-X-Received: by 2002:a05:600c:1c25:b0:46e:4586:57e4 with SMTP id
- 5b1f17b1804b1-477c114ed70mr415973735e9.24.1764356555824; 
- Fri, 28 Nov 2025 11:02:35 -0800 (PST)
+ bh=EGCpuu3fIhvjhwzP4d3pQlbALo7r9NWZeaXaPanMnZg=;
+ b=Q0NP5ycoPJp8EE5QQH0DYu7yaAuHR1rg8N1pPT/2vya7iQUj51sROKBivZFgCogAqA
+ iFEHUVMyyZ4K+XvRawiz7uK1OlHBI/mug06Tzi6HcC5aDGMExgdLk/iKibEhw1DGIOCk
+ 8X/RlWhVnTpT4h/kP5vSZ9BAN50b7TY9Q4FmFQ2/ouHkWvOLgUKLpNDlY12p+fgFwsL/
+ jHPcpWp234FeGS0/Gj3fg1gzv5Ss+Ghhrb2KE0T5or62cm4sJX91FrUcnKCUhR/vUYT7
+ zHZxwU6r5b4ucXW14SPZxcFqmcoWscCsZ3n2Q/GmvIbJd/jU/H68+jQmuurD3uLZzl64
+ RDFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1764369865; x=1764974665;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=EGCpuu3fIhvjhwzP4d3pQlbALo7r9NWZeaXaPanMnZg=;
+ b=gs80k7R3RZJ6iYmera6ZsT8GS4O5ia7HxvCoCy+/5EpIg5Cw6dJ0igQzpEx2/iqfhe
+ koeb+Dux0NamxwEpaj6/XQxnKtkG4cmoB6huB34iAyZdVmYhm6VnENkwbF5wfB3jY43/
+ i5pLYTei1iKxNaLq1uhgoGd9+oDJQ2LPkNB/Xn9XlUDuir19z1UBhO0ig6JIwHn+YAYG
+ NPLDMacRJOd0atthvVJd61K0OCFNY3jxoepiLCOUyTeR/TiQUNHTqTo9UTt26ci862ok
+ nKv50yrw3zbtT3bapAofviTrzeqQ6HonFJyghQy9UWukjfFe2O5if4mucenq/ZgizR3p
+ VSDg==
+X-Gm-Message-State: AOJu0Yy0RiUaHUPGN/7OSq6xFqB39Yhq9oaJXatq80mowjutU0ayk5Yk
+ 1ZVhjmbZkHYGDnM06miOO3sIYKYKqU/pXef/lL/BpbeECzw1y9prLJBB/sxp1hOSOWmCaUMHd1i
+ 9q6JT
+X-Gm-Gg: ASbGncsfeDolAQoJTbo1gFU31D4EVisd0cjl8li7ws6HbtLo7L6BVQq4tWKNY5nDY9M
+ Ot15SKrw0NOzzIjWZF2A/AwG5u3gFn0QUa0xCUyduJo0KrU4J7FDb4idYLLXyE+rfUklpzyv/m3
+ NkiL37z6QQlK6qc2NhCDK/iR/LIGOwv74vbSLgQJQgbeCz5kqtL5vRQVFJoogwgCe+uDG/X4Mjv
+ cUJ/ZszxQk9EvBalJVsoBC7uhS3fexbTI5QwVJMUsKDTb9x43zYuZbcFdoechQ+cVekvVH1k69q
+ CAdCKtL1UvlCGNlouuQZCV9BK9Tbmm7HhAQUO4vA3fTg31Tmc2lUffZHfw9g/349nhTY97Np4+j
+ zMnfEKf7uXFfyeOq1t0bcs1d0rNHebuP07pEiyzy2zsCKGlAy7YaZsbDK+PLaOkQD0tZJmAgM0r
+ 3DxpmNzOxVrPpqGHpd7z9xOTbj8S+l1D17wXD0HEFWd3s3rlSNVPxRPJTjpFAM
+X-Google-Smtp-Source: AGHT+IFuk1bXeE+XJhGzBRuw+48RXDC9eBvn88kVyAOIDmSgG8OR4NaqanoVB1MnxSZiRH8M93Gawg==
+X-Received: by 2002:ad4:5cc1:0:b0:880:1e6e:806 with SMTP id
+ 6a1803df08f44-8863aecabaemr220517456d6.2.1764369864999; 
+ Fri, 28 Nov 2025 14:44:24 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-479040d81e4sm102657795e9.3.2025.11.28.11.02.32
+ 6a1803df08f44-886524e2b8asm37022216d6.16.2025.11.28.14.44.24
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 28 Nov 2025 11:02:33 -0800 (PST)
+ Fri, 28 Nov 2025 14:44:24 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Reshma Pattan <reshma.pattan@intel.com>,
- Bruce Richardson <bruce.richardson@intel.com>
-Subject: [RFC] test/latencystats: loosen requirements on measured latency
-Date: Fri, 28 Nov 2025 11:02:20 -0800
-Message-ID: <20251128190228.64278-1-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v8 00/10] test: cleanup and format truncation fixes
+Date: Fri, 28 Nov 2025 14:42:03 -0800
+Message-ID: <20251128224420.195013-1-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20251110182209.104087-1-stephen@networkplumber.org>
+References: <20251110182209.104087-1-stephen@networkplumber.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -80,76 +82,36 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On QEMU Arm there are failures because the minimum measured latency
-was zero. This is likely because the TSC counter emulation is coarse
-enough that successive measurements return same value.
-Modify the test assertions to allow for TSC being slow (or even
-constant).
+This series fixes compiler warnings in unit tests about
+format truncation. It also refactor some the related tests
+to be cleaner and use standard API's.
 
-Also, fix the test to cleanup before validating results
-and print the values if a failure occurs. The field name values
-printing loop was an earlier debug step not needed.
+v8 - avoid building unused code on FreeBSD
 
-Fixes: b34508b9cbcd ("test/latency: update with more checks")
+Stephen Hemminger (10):
+  test: increase size of memzone name
+  test: add new function to get current file-prefix arg
+  test: refactor file prefix arg handling
+  test: avoid overflowing huge directory path
+  test: fix format overflow warning in ACL test
+  test: fix impossible format-truncation in cfgfiles
+  test: fix format overflow in cryptodev test
+  test: fix overflow warnings in several places by using common code
+  test: use unit test runner for eal flags
+  test: re-enable format-truncation warnings
 
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
----
- app/test/test_latencystats.c | 32 +++++++++++++++++---------------
- 1 file changed, 17 insertions(+), 15 deletions(-)
+ app/test/meson.build            |   1 -
+ app/test/process.h              |  38 ++++-
+ app/test/test_cfgfile.c         |   8 +-
+ app/test/test_cryptodev.c       |  22 ++-
+ app/test/test_eal_flags.c       | 294 +++++++++++---------------------
+ app/test/test_memzone.c         |   2 +-
+ app/test/test_mp_secondary.c    |  14 +-
+ app/test/test_pdump.c           |  13 +-
+ app/test/test_table_acl.c       |   4 +-
+ app/test/test_timer_secondary.c |  12 +-
+ 10 files changed, 170 insertions(+), 238 deletions(-)
 
-diff --git a/app/test/test_latencystats.c b/app/test/test_latencystats.c
-index 676a99d385..0907f3f5a6 100644
---- a/app/test/test_latencystats.c
-+++ b/app/test/test_latencystats.c
-@@ -142,7 +142,6 @@ static void test_latency_ring_free(void)
- 
- static int test_latency_packet_forward(void)
- {
--	unsigned int i;
- 	int ret;
- 	struct rte_mbuf *pbuf[LATENCY_NUM_PACKETS] = { };
- 	struct rte_mempool *mp;
-@@ -184,23 +183,26 @@ static int test_latency_packet_forward(void)
- 	ret = rte_latencystats_get(values, NUM_STATS);
- 	TEST_ASSERT(ret == NUM_STATS, "Test failed to get results after forwarding");
- 
--	for (i = 0; i < NUM_STATS; i++) {
--		uint16_t k = values[i].key;
--
--		printf("%s = %"PRIu64"\n",
--		       names[k].name, values[i].value);
--	}
-+	rte_eth_dev_stop(portid);
-+	test_put_mbuf_to_pool(mp, pbuf);
- 
- 	TEST_ASSERT(values[4].value > 0, "No samples taken");
--	TEST_ASSERT(values[0].value > 0, "Min latency should not be zero");
--	TEST_ASSERT(values[1].value > 0, "Avg latency should not be zero");
--	TEST_ASSERT(values[2].value > 0, "Max latency should not be zero");
--	TEST_ASSERT(values[0].value < values[1].value, "Min latency > Avg latency");
--	TEST_ASSERT(values[0].value < values[2].value, "Min latency > Max latency");
--	TEST_ASSERT(values[1].value < values[2].value, "Avg latency > Max latency");
- 
--	rte_eth_dev_stop(portid);
--	test_put_mbuf_to_pool(mp, pbuf);
-+	/*
-+	 * Test maybe run in emulated environment where TSC is very coarse.
-+	 * Therefore can't assume that min/max/avg not zero.
-+	 * But we can check that Min <= Avg <= Max.
-+	 */
-+
-+	TEST_ASSERT(values[0].value <= values[1].value,
-+		    "Min latency %"PRIu64" > Avg latency %"PRIu64,
-+		    values[0].value, values[1].value);
-+	TEST_ASSERT(values[0].value <= values[2].value,
-+		    "Min latency %"PRIu64" > Max latency %"PRIu64,
-+		    values[0].value, values[2].value);
-+	TEST_ASSERT(values[1].value <= values[2].value,
-+		    "Avg latency %"PRIu64 "> Max latency %"PRIu64,
-+		    values[1].value, values[2].value);
- 
- 	return (ret >= 0) ? TEST_SUCCESS : TEST_FAILED;
- }
 -- 
 2.51.0
 
