@@ -2,70 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCB8BD116E2
-	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Nov 2025 22:45:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B981ED116EA
+	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Nov 2025 22:45:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E50FA4064F;
-	Fri, 28 Nov 2025 23:44:38 +0100 (CET)
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com
- [209.85.219.51]) by mails.dpdk.org (Postfix) with ESMTP id 93902402F1
- for <dev@dpdk.org>; Fri, 28 Nov 2025 23:44:33 +0100 (CET)
-Received: by mail-qv1-f51.google.com with SMTP id
- 6a1803df08f44-880503ab181so23105426d6.2
- for <dev@dpdk.org>; Fri, 28 Nov 2025 14:44:33 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 3210C4066D;
+	Fri, 28 Nov 2025 23:44:40 +0100 (CET)
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com
+ [209.85.160.171])
+ by mails.dpdk.org (Postfix) with ESMTP id 3EEC9402F0
+ for <dev@dpdk.org>; Fri, 28 Nov 2025 23:44:35 +0100 (CET)
+Received: by mail-qt1-f171.google.com with SMTP id
+ d75a77b69052e-4ee158187aaso24595621cf.0
+ for <dev@dpdk.org>; Fri, 28 Nov 2025 14:44:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1764369873;
- x=1764974673; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1764369874;
+ x=1764974674; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=WmT0N/n74EPEE6smaUUFOrqeqMbkWMQqkiLgpTfyWr0=;
- b=rQzfXn1i7+uXV4VlkfIThEQmtLKFWFcO/0xSnE4j19gbMlhPATZhXISIuro7cNKKve
- fqplZ9syndmpfJBcVuHkyGJfEnZ3/v2kgp3Ww9LBoLtrjHuF5MLAlHj9YyZfrHB3YpNo
- EUGxaN93jqoeMHGvl1UYyQ6wkAEHCib35tX/KRXU/77beB4wwsg38Wye7ty4RzHGyWpT
- 7HKp13zBoSvzJCTU/s+eZFNXAlitkKNb9SOxLSllOo77daQiGjvEpdUrOG10dcQLyzzl
- v4wU+m3wGTNbEoU/f11opy1LgMNoT2H5/RKc+SwLDKXGY+h6SQQ/vRLJ5lMCAxxtj33k
- dHSA==
+ bh=EOI6bM27vEiVHSX6BhasBCTeQzit2WjXKfgoPCP+2QM=;
+ b=wrJPWNNVPWC4oDD3u6FVv3Vuq5yRaDQiVML8FwGMn0E+4DFtP8QC+I+e+1edoVuI11
+ HO7Q90s7icdQ2SMdYOFTVatcZ5okBDSXEEBkKWWEqQV5QYhQNCsNopPElG1guf03bjV1
+ Rv/tIolsyQCB53iM+5qRX8R8uvrKsMrnRKWnK0WFWOdyjH5qtknKvFcorJiv6QdWtMnY
+ 2v9WkQLoJTNdgcNhRtdavJ0MBZm6RDdMmzzZU8LVRrIkZySOcAJHYADFKC6vX5hEt5fS
+ 86hf+l+ooxJkvgfzTht5sMFXURrHEzvPTObRJvsykX/eWCdYB3nmYWDKXW0cHk56687x
+ dDBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1764369873; x=1764974673;
+ d=1e100.net; s=20230601; t=1764369874; x=1764974674;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=WmT0N/n74EPEE6smaUUFOrqeqMbkWMQqkiLgpTfyWr0=;
- b=hTOUb2kivl6M5ofhAUDUMfSWHQtWVUF6h+4rI27ssKRf2xSGiKuLMr8fQZJfibAH1y
- /dFiLfjOxJYMS2gwj4mnrPJXD5icNASJKb8YQWe/c/W8+wCEh3BcvoLgSYKL6DJdX31J
- 4UT2zzfitzX1npa8MjYHAwR85RnbNUEP5L49x4O6LmE/YkKQZNMWpAGHJAuRrHtCEtB6
- ZUjz3e+U2dOev9fqMt6vByc5eHgblCjhuWmHVqGJpc9QY4zKa7jEDrW4McJpuETJAIwE
- mR+qaH5+2j8Zm3xtA9VOvsz2Fr+CkQtYm9OUej/Yau4zsiElgg667fjD9/PlrTWTApWI
- yE3w==
-X-Gm-Message-State: AOJu0Yx7NbO+nklqxTd2r/IwtqnFDVRbqFZF3VBEA4FlSLm5Xaai+mSX
- KZCpBT1MyV+f6GqBTuliahcjlUAAe4SZ3AERCHUlOjvcwTwqbXCGb3NyAWZHOSt9XKuub02soQ7
- VA3tK
-X-Gm-Gg: ASbGncvNhp1umlImEtg4Hi71ZcKZEcPmOv4AVci/OXLgY6QZSeR+gO9r9OfkCP0GDZA
- uDNUSl9R5naQYG5L6P2M6649OGd190ZAIpbu7SWMQxbqolyKcNQ//TewpudpJ8mu6Ii8KzoFwF3
- fscI2Arb+PuNbarlvrZuWRHnG+DoIe1gq6Ue66sNExtsAYqQ1CYxr4TdWEOUKKwGLlHP924F20g
- G77VC4pbBjCzSw3sFsnVQk4cJfDRwqnBS0daORIBo0OeLUbCfDYUQtL1KdDqi2+HiJKh+FpCCVk
- lSwuRX8u/MY1XIvQh3hJVdW5CzfDy0UHMJ7gMFWe9++JzQ0sYpq3LvGQ3L/BwoHu+vl7uIak7aP
- sPr5nmaTTeFh4ysfYFT9zoPELAsVXGgqALj1GsCfAaea/09T/vfZpfAfZJf4wTSFT2v3+NsjDDd
- J+ws2LFGCz/CeEenFXGnKQZu1buvXmy5z4rAHqDvkVJxSrDDsCCg==
-X-Google-Smtp-Source: AGHT+IFypmZlVc3Rkx02DxROAQp2j/Duk5FQyPon6L3v6QkjjZ1ZdUj37DV5bbwIng4sFgQFXC/qvw==
-X-Received: by 2002:a05:6214:262a:b0:87c:81f:6200 with SMTP id
- 6a1803df08f44-8847c4c7decmr483103906d6.28.1764369872873; 
- Fri, 28 Nov 2025 14:44:32 -0800 (PST)
+ bh=EOI6bM27vEiVHSX6BhasBCTeQzit2WjXKfgoPCP+2QM=;
+ b=sl6Z2z39oGYbjHVFnOYU9d6k+Y/znifs4KRkPw14VVfFXH0CfAREl94iFlh2tDUR/a
+ Co3c+r9EFBnTFbRnWpP3+uGFSmrQQAwRB0LsfHFIah1/FrvVmVvAbGr/yuJ4QTZ3zkvG
+ o0oYkg1gueLpPflibnzOpsqop/iRYnWHtLW+RObZkwawE2n7jR45Nn2g1A5xSzjffWcd
+ YSBd7d5jwD5X/VWugG0RwTGTWrKQ3asfLqG+NO51P/pYLzAZfyOEU7SY4pLnXRcwEzTe
+ oGXDPwstM1j97Tt1OYH5eLUaj0OoGkdfgxMDwITXUvUo6ADX/J81ZKmcqaH/uhTOsbIc
+ bklA==
+X-Gm-Message-State: AOJu0YzNuMg7eU9klgf6oOKJEXrKle5hxGibpGSZL810ILNN03MIPH6D
+ NoXnikcMXwKKbHS3GaSQQgBRdAMa5k2R6f/u/hUB02vCAZ2RfF6NyUoV7ktz8rFxLDu0ORm2AY+
+ hUNll
+X-Gm-Gg: ASbGnctMgRz9DZEsQd4II6QuIwKOmdyqwmg4iJx0KJzCS4qp3mVXXDZhobsVlLnV3LI
+ dcV3qX5mf70TQsagO8hkjPl0r+4Bpbc1bB+Me/LNw/PIi4fL4FPXFLFOq6b0I3q5D/ySZH4twql
+ Q/2YViIgMhJpHsVsV3CnG9ZZatSZ0mrAXQ1JFrK4+oSHfeeUCXO/2tqMIEeQqoYuxAMlz5yr/wT
+ 4axIYiunJGYafq//pzzV+3zx4m+3xXG6P/bZ2J3tKY9pIh0UmFm60iJlLDJ/lrIDTlbiFhepP2w
+ p/dnXDNvf1lZhUj+SQBbyXXGKqNXKHUzqOe/Dcv4m1tACbrBJwxHaVzB5IzG1WK6V71D0YkZ8kX
+ UOJ70MBPVBHTRkoMTsbtbJMNyNlhqDt0+zSvw8D/6l3oVDj6hZ6PqH6GbVlDGsUa2MbVU7ZsNu5
+ NQfHR02BdG5xA0YA9IE9cy3gDQTeySdJrnfqkgf9Hitup7Jb4WvQ==
+X-Google-Smtp-Source: AGHT+IHUA442R6ezRmWXUpeSuwxQHUU0osRs+0cuuj1XAmN8eQxJhYttuywgB1+vqOBGlSynyxYPrQ==
+X-Received: by 2002:a05:622a:1394:b0:4ee:1b36:b5b4 with SMTP id
+ d75a77b69052e-4ee5883fc8cmr327844321cf.15.1764369874597; 
+ Fri, 28 Nov 2025 14:44:34 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-886524e2b8asm37022216d6.16.2025.11.28.14.44.31
+ 6a1803df08f44-886524e2b8asm37022216d6.16.2025.11.28.14.44.33
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 28 Nov 2025 14:44:32 -0800 (PST)
+ Fri, 28 Nov 2025 14:44:34 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
  Anatoly Burakov <anatoly.burakov@intel.com>,
- Cristian Dumitrescu <cristian.dumitrescu@intel.com>,
- Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v8 06/10] test: fix impossible format-truncation in cfgfiles
-Date: Fri, 28 Nov 2025 14:42:09 -0800
-Message-ID: <20251128224420.195013-7-stephen@networkplumber.org>
+ Akhil Goyal <gakhil@marvell.com>, Fan Zhang <fanzhang.oss@gmail.com>,
+ Hemant Agrawal <hemant.agrawal@nxp.com>,
+ Ciara Power <ciara.power@intel.com>,
+ Declan Doherty <declan.doherty@intel.com>
+Subject: [PATCH v8 07/10] test: fix format overflow in cryptodev test
+Date: Fri, 28 Nov 2025 14:42:10 -0800
+Message-ID: <20251128224420.195013-8-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251128224420.195013-1-stephen@networkplumber.org>
 References: <20251110182209.104087-1-stephen@networkplumber.org>
@@ -85,41 +88,58 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Although, it is not possible on Linux (which always uses /tmp)
-the compiler complains about possible snprintf() truncation.
+The vdev args buffer could in theory get truncated if there were
+lots of sockets or lcores. Handle that by checking return value
+of snprintf.
 
-Use existing code to make empty tmp file which puts the
-OS specific code in one spot and avoids any races if
-two tests are run at once.
-
-Fixes: be22019a58c4 ("test: restore cfgfile tests")
-Cc: stable@dpdk.org
+Fixes: 8bfdd8a7f0f1 ("test/crypto: refactor to use sub test suites")
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 Acked-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- app/test/test_cfgfile.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+ app/test/test_cryptodev.c | 22 ++++++++++++++++++----
+ 1 file changed, 18 insertions(+), 4 deletions(-)
 
-diff --git a/app/test/test_cfgfile.c b/app/test/test_cfgfile.c
-index b189d9d7a5..eabf155404 100644
---- a/app/test/test_cfgfile.c
-+++ b/app/test/test_cfgfile.c
-@@ -178,12 +178,8 @@ test_cfgfile_realloc_sections(void)
- 	ret = remove(filename);
- 	TEST_ASSERT_SUCCESS(ret, "Failed to remove file");
- 
--	char tmp[PATH_MAX] = "/tmp/";
--#ifdef RTE_EXEC_ENV_WINDOWS
--	ret = GetTempPathA(sizeof(tmp), tmp);
--	TEST_ASSERT(ret > 0, "Failed to get tmp directory");
--#endif
--	snprintf(filename, sizeof(filename), "%s%s", tmp, "cfg_save.ini");
-+	ret = make_tmp_file(filename, "save", "");
-+	TEST_ASSERT(ret == 0, "Failed to make empty tmp filename for save");
- 
- 	ret = rte_cfgfile_save(cfgfile, filename);
- 	TEST_ASSERT_SUCCESS(ret, "Failed to save to %s", filename);
+diff --git a/app/test/test_cryptodev.c b/app/test/test_cryptodev.c
+index 9bdd357727..bd6a2d3fa6 100644
+--- a/app/test/test_cryptodev.c
++++ b/app/test/test_cryptodev.c
+@@ -17713,8 +17713,16 @@ scheduler_testsuite_setup(void)
+ 		RTE_LCORE_FOREACH_WORKER(i) {
+ 			if (worker_core_count > 1)
+ 				break;
+-			snprintf(vdev_args, sizeof(vdev_args),
+-					"%s%d", temp_str, i);
++			ret = snprintf(vdev_args, sizeof(vdev_args),
++					   "%s%d", temp_str, i);
++
++			/* If too many args the result will have been truncated */
++			if (ret >= VDEV_ARGS_SIZE) {
++				RTE_LOG(ERR, USER1,
++					"Cryptodev scheduler test vdev arg size exceeded\n");
++				return TEST_FAILED;
++			}
++
+ 			strcpy(temp_str, vdev_args);
+ 			strlcat(temp_str, ";", sizeof(temp_str));
+ 			worker_core_count++;
+@@ -17728,8 +17736,14 @@ scheduler_testsuite_setup(void)
+ 			return TEST_FAILED;
+ 		}
+ 		strcpy(temp_str, vdev_args);
+-		snprintf(vdev_args, sizeof(vdev_args), "%s,socket_id=%d",
+-				temp_str, socket_id);
++		ret = snprintf(vdev_args, sizeof(vdev_args), "%s,socket_id=%d",
++			       temp_str, socket_id);
++		if (ret >= VDEV_ARGS_SIZE) {
++			RTE_LOG(ERR, USER1,
++				"Cryptodev scheduler test vdev arg size exceeded\n");
++			return TEST_FAILED;
++		}
++
+ 		RTE_LOG(DEBUG, USER1, "vdev_args: %s\n", vdev_args);
+ 		nb_devs = rte_cryptodev_device_count_by_driver(
+ 				rte_cryptodev_driver_id_get(
 -- 
 2.51.0
 
