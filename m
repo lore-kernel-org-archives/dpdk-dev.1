@@ -2,44 +2,81 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3905FD116EA
-	for <dpdk-dev@archiver.kernel.org>; Sat, 29 Nov 2025 02:17:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87068D116F1
+	for <dpdk-dev@archiver.kernel.org>; Sat, 29 Nov 2025 12:43:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EC8B14021F;
-	Sat, 29 Nov 2025 03:17:22 +0100 (CET)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 05AE34013F
- for <dev@dpdk.org>; Sat, 29 Nov 2025 03:17:21 +0100 (CET)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id A673F20698;
- Sat, 29 Nov 2025 03:17:21 +0100 (CET)
-Content-class: urn:content-classes:message
+	by mails.dpdk.org (Postfix) with ESMTP id 607BD4013F;
+	Sat, 29 Nov 2025 13:43:20 +0100 (CET)
+Received: from fhigh-a5-smtp.messagingengine.com
+ (fhigh-a5-smtp.messagingengine.com [103.168.172.156])
+ by mails.dpdk.org (Postfix) with ESMTP id 96D2C400D7
+ for <dev@dpdk.org>; Sat, 29 Nov 2025 13:43:18 +0100 (CET)
+Received: from phl-compute-11.internal (phl-compute-11.internal [10.202.2.51])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id 1828B140069B;
+ Sat, 29 Nov 2025 07:43:18 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+ by phl-compute-11.internal (MEProxy); Sat, 29 Nov 2025 07:43:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:date:date:from:from
+ :in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+ :to; s=fm1; t=1764420198; x=1764506598; bh=fgwzq7l2puA+gWKKW4sy9
+ ZACsMWuQ8FSMr+UvQ3iOUY=; b=SBUmiQj56B0RsUpRM7aJrFm4XfkerNhgJ5SaN
+ stPSVsnjQoUbiqVhZJlx6khndGXYKGJD3xWNUi3y19aEPWLxLDj3j51Wsa5bOh4a
+ lpYPKjM4QVHALIBisvr60wTe2KY4woJYMuA+M8llzp4lFfR3+G/7Nu/8iFa9imyO
+ 0HmZ/1SKK/P9TD8SDtlWv866HQQ0l3FDn016WdTJWSNd7T1Yltq6MFIlWTCzDhcR
+ 4KbFhge7NDagu4O6WWO5g8uSiSMMGnHNCMxWdAwYVw/cBYNFlscEXelIplBsWXq0
+ hJPnR3Z0eA9aTRsXXZFBu8Aw7UP+NLWMBRf7UVkFmU3TKJBYw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:date:date:feedback-id:feedback-id:from:from
+ :in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+ :to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+ 1764420198; x=1764506598; bh=fgwzq7l2puA+gWKKW4sy9ZACsMWuQ8FSMr+
+ UvQ3iOUY=; b=hoJOp6VQVwxH5+IH1jx6J2cQmShvl23K3S1kfxuy/ocpYV+z8hN
+ YYKKpDqIQNUSLARS5+RSc1EVduAHJXcPbzynf90UnNXb0yDKjmZDB/PXLv6quH8b
+ 2y7iV9r5R/fbKODA3j8mnx7FbrsTgBL4OK/e0c5vvlIlPa7Us7TjPzT/jHjJwqby
+ KyEXgi3JfGjfiWq0G1ue9gq2t3InPWSCIHk/o4WRmJYBlggPpqyH8uzYnJVNIGE8
+ qpcXndFl1X5+OBYukD7t0+CL5ROOHIkEngYjRjERE+YuTLnBI5C+W02b7oU5UlYm
+ m14pwFM6/ynRiJvant+VUJ+yl1Kxcy/Lidg==
+X-ME-Sender: <xms:ZeoqaYrTJokojq4MbJQBaTgjoAA3huQVzc3K7cZBV1oUQnoqj92dSg>
+ <xme:ZeoqaaoLhtctuSwlRVeNtQPtfcYB-BYIowUnkMXtnRXdOoacmWkVAeOLxw2sBE-38
+ Ze9mJ52vtzu-6SEhgdMIfu2rm1msCLLp7kBTxr7pzdhSchq18mFog>
+X-ME-Received: <xmr:ZeoqafYDCeKcv3-3h35_zyQheetA2On9cm9LFa91RmD7wlrDIh4bXPyD93qT3B5KEy0M69hWMlfxxVl9q5CM3pS5v_TG_ig>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvhedvgeekucetufdoteggodetrf
+ dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+ rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+ gurhephffvvefufffkofgggfestdekredtredttdenucfhrhhomhepvfhhohhmrghsucfo
+ ohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtffrrg
+ htthgvrhhnpeevveefveeiiefhtedukeegkeelieegffeukeevudetueffieduveetiedu
+ keefleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+ hthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeelpdhmohgu
+ vgepshhmthhpohhuthdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtphhtth
+ hopegsihhnghiisehnvhhiughirgdrtghomhdprhgtphhtthhopehmkhgrshhhrghnihes
+ nhhvihguihgrrdgtohhmpdhrtghpthhtoheprhgrshhlrghnugesnhhvihguihgrrdgtoh
+ hmpdhrtghpthhtohepughsohhsnhhofihskhhisehnvhhiughirgdrtghomhdprhgtphht
+ thhopehvihgrtghhvghslhgrvhhosehnvhhiughirgdrtghomhdprhgtphhtthhopehorh
+ hikhgrsehnvhhiughirgdrtghomhdprhgtphhtthhopehsuhgrnhhmihhnghhmsehnvhhi
+ ughirgdrtghomhdprhgtphhtthhopehmrghtrghnsehnvhhiughirgdrtghomh
+X-ME-Proxy: <xmx:ZeoqaQ-U4YSuvJZD5pZzNPX_RnFpAp-iVzb2MCT5-PpbkNn5dgVp9Q>
+ <xmx:ZeoqaVlZA0YZ_2GQ9kreagQ4o2OQ1njOsmrOYaaH_2exZpA3iSfG8w>
+ <xmx:ZeoqaVy2S2vnKW9S6dCRDSADNlIM_Zr9flAe555cRIg6CthnzKTDcQ>
+ <xmx:Zeoqaf58YxsWkwsBWqoyfYUh-2f9yOGoCwCpvTd5NSeJoI6i0RKr4Q>
+ <xmx:ZuoqaUBMjUxfo-xJfsbZ7eIjdh0_R6A7c9xf0ZlmiMx21BrE3_mUJinN>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
+ 29 Nov 2025 07:43:16 -0500 (EST)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: dev@dpdk.org
+Cc: bingz@nvidia.com, mkashani@nvidia.com, rasland@nvidia.com,
+ Dariusz Sosnowski <dsosnowski@nvidia.com>,
+ Viacheslav Ovsiienko <viacheslavo@nvidia.com>, Ori Kam <orika@nvidia.com>,
+ Suanming Mou <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>
+Subject: [PATCH] doc: update flow engine availability in mlx5 guide
+Date: Sat, 29 Nov 2025 13:42:57 +0100
+Message-ID: <20251129124257.1619774-1-thomas@monjalon.net>
+X-Mailer: git-send-email 2.51.0
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="UTF-8"
-Subject: RE: [PATCH v3] eal/x86: optimize memcpy of small sizes
-Content-Transfer-Encoding: base64
-Date: Sat, 29 Nov 2025 03:17:16 +0100
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F655A0@smartserver.smartshare.dk>
-In-Reply-To: <11d412346d5548c5a5a3bf578b86f4ee@huawei.com>
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH v3] eal/x86: optimize memcpy of small sizes
-Thread-Index: AQHcWtNXD+EKJWk0k0O6HEmUv7nh0LUIKREQgAAduhCAACfB0IAAh3yA
-References: <20251120114554.950287-1-mb@smartsharesystems.com>
- <20251121104052.1273637-1-mb@smartsharesystems.com>
- <59db9d3d83d94ec9a7c26ae506fd4813@huawei.com>
- <98CBD80474FA8B44BF855DF32C47DC35F6559E@smartserver.smartshare.dk>
- <11d412346d5548c5a5a3bf578b86f4ee@huawei.com>
-From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
-To: "Konstantin Ananyev" <konstantin.ananyev@huawei.com>, <dev@dpdk.org>,
- "Bruce Richardson" <bruce.richardson@intel.com>,
- "Konstantin Ananyev" <konstantin.v.ananyev@yandex.ru>,
- "Vipin Varghese" <vipin.varghese@amd.com>
-Cc: "Stephen Hemminger" <stephen@networkplumber.org>
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -53,55 +90,46 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-PiBGcm9tOiBLb25zdGFudGluIEFuYW55ZXYgW21haWx0bzprb25zdGFudGluLmFuYW55ZXZAaHVh
-d2VpLmNvbV0NCj4gU2VudDogRnJpZGF5LCAyOCBOb3ZlbWJlciAyMDI1IDE5LjExDQo+IA0KPiA+
-ID4gRnJvbTogS29uc3RhbnRpbiBBbmFueWV2IFttYWlsdG86a29uc3RhbnRpbi5hbmFueWV2QGh1
-YXdlaS5jb21dDQo+ID4gPiBTZW50OiBGcmlkYXksIDI4IE5vdmVtYmVyIDIwMjUgMTUuMDMNCj4g
-PiA+DQo+ID4gPiA+ICsvKioNCj4gPiA+ID4gKyAqIENvcHkgYnl0ZXMgZnJvbSBvbmUgbG9jYXRp
-b24gdG8gYW5vdGhlciwNCj4gPiA+ID4gKyAqIGxvY2F0aW9ucyBzaG91bGQgbm90IG92ZXJsYXAu
-DQo+ID4gPiA+ICsgKiBVc2Ugd2l0aCBuIDw9IDE2Lg0KPiA+ID4gPiArICoNCj4gPiA+ID4gKyAq
-IE5vdGU6IENvcHlpbmcgdW5pbml0aWFsaXplZCBtZW1vcnkgaXMgcGVyZmVjdGx5IGFjY2VwdGFi
-bGUuDQo+ID4gPiA+ICsgKiBVc2luZyBlLmcuIG1lbWNweShkc3QsIHNyYywgOCkgaW5zdGVhZCBv
-Zg0KPiA+ID4gPiArICogKih1bmFsaWduZWRfdWludDY0X3QqKSA9ICooY29uc3QgdW5hbGlnbmVk
-X3VpbnQ2NF90ICopc3JjDQo+ID4gPiA+ICsgKiBhdm9pZHMgY29tcGlsZXIgd2FybmluZ3MgYWJv
-dXQgc291cmNlIGRhdGEgbWF5IGJlDQo+IHVuaW5pdGlhbGl6ZWQNCj4gPiA+ID4gKyAqIFstV21h
-eWJlLXVuaW5pdGlhbGl6ZWRdLg0KPiA+ID4gPiArICoNCj4gPiA+ID4gKyAqIE5vdGU6IFVzaW5n
-ICJuICYgWCIgZ2VuZXJhdGVzIDMtYnl0ZSAidGVzdCIgaW5zdHJ1Y3Rpb25zLA0KPiA+ID4gPiAr
-ICogaW5zdGVhZCBvZiAibiA+PSBYIiwgd2hpY2ggd291bGQgZ2VuZXJhdGUgNC1ieXRlICJjbXAi
-DQo+ID4gPiBpbnN0cnVjdGlvbnMuDQo+ID4gPiA+ICsgKi8NCj4gPiA+ID4gK3N0YXRpYyBfX3J0
-ZV9hbHdheXNfaW5saW5lIHZvaWQgKg0KPiA+ID4gPiArcnRlX21vdjE2X29yX2xlc3Modm9pZCAq
-ZHN0LCBjb25zdCB2b2lkICpzcmMsIHNpemVfdCBuKQ0KPiA+ID4gPiArew0KPiA+ID4gPiArCS8q
-IEZhc3RlciB3YXkgd2hlbiBzaXplIGlzIGtub3duIGF0IGJ1aWxkIHRpbWUuICovDQo+ID4gPiA+
-ICsJaWYgKF9fcnRlX2NvbnN0YW50KG4pKSB7DQo+ID4gPiA+ICsJCWlmIChuID09IDIpDQo+ID4g
-PiA+ICsJCQlyZXR1cm4gbWVtY3B5KGRzdCwgc3JjLCAyKTsNCj4gPiA+ID4gKwkJaWYgKG4gPT0g
-NCkNCj4gPiA+ID4gKwkJCXJldHVybiBtZW1jcHkoZHN0LCBzcmMsIDQpOw0KPiA+ID4gPiArCQlp
-ZiAobiA9PSA2KSAvKiA0ICsgMiAqLw0KPiA+ID4gPiArCQkJcmV0dXJuIG1lbWNweShkc3QsIHNy
-YywgNik7DQo+ID4gPiA+ICsJCWlmIChuID09IDgpDQo+ID4gPiA+ICsJCQlyZXR1cm4gbWVtY3B5
-KGRzdCwgc3JjLCA4KTsNCj4gPiA+ID4gKwkJaWYgKG4gPT0gMTApIC8qIDggKyAyICovDQo+ID4g
-PiA+ICsJCQlyZXR1cm4gbWVtY3B5KGRzdCwgc3JjLCAxMCk7DQo+ID4gPiA+ICsJCWlmIChuID09
-IDEyKSAvKiA4ICsgNCAqLw0KPiA+ID4gPiArCQkJcmV0dXJuIG1lbWNweShkc3QsIHNyYywgMTIp
-Ow0KPiA+ID4gPiArCQlpZiAobiA9PSAxNikgew0KPiA+ID4gPiArCQkJcnRlX21vdjE2KCh1aW50
-OF90ICopZHN0LCAoY29uc3QgdWludDhfdA0KPiAqKXNyYyk7DQo+ID4gPiA+ICsJCQlyZXR1cm4g
-ZHN0Ow0KPiA+ID4gPiArCQl9DQo+ID4gPiA+ICsJfQ0KPiA+ID4gPiArDQo+ID4gPiA+ICsJaWYg
-KG4gJiAweDE4KSB7IC8qIG4gPj0gOCAqLw0KPiA+ID4NCj4gPiA+IFByb2JhYmx5ICduICYgMHg4
-Jz8NCj4gPg0KPiA+IEl0J3MgaW50ZW50aW9uYWwsIHRvIGNhdGNoIG4gPT0gMHgxMCB0b28uDQo+
-ID4gSXQgc2VlbXMgdGhlIGFzc29jaWF0ZWQgY29tbWVudCBzaG91bGQgYmUgbW9yZSB2ZXJib3Nl
-LiBIb3cgYWJvdXQ6DQo+ID4gaWYgKG4gJiAweDE4KSB7IC8qIG4gPj0gOCwgaW5jbHVkaW5nIG4g
-PT0gMHgxMCwgaGVuY2UgbiAmIDB4MTggKi8NCj4gDQo+IE9rLCB3aHkganVzdCBub3Qgc2ltcGx5
-IDogaWYgKG4gPj0gOCkgdGhlbj8NCg0KVGhlIHJlYXNvbiBtZW50aW9uZWQgaW4gdGhlIGZ1bmN0
-aW9uIGRlc2NyaXB0aW9uOg0KICogTm90ZTogVXNpbmcgIm4gJiBYIiBnZW5lcmF0ZXMgMy1ieXRl
-ICJ0ZXN0IiBpbnN0cnVjdGlvbnMsDQogKiBpbnN0ZWFkIG9mICJuID49IFgiLCB3aGljaCB3b3Vs
-ZCBnZW5lcmF0ZSA0LWJ5dGUgImNtcCIgaW5zdHJ1Y3Rpb25zLg0KDQpJJ2xsIG1vdmUgdGhhdCBj
-b21tZW50IGRvd24gaGVyZSwganVzdCBiZWZvcmUgdGhlIGNvbXBhcmlzb25zLg0KDQo+IA0KPiA+
-ID4NCj4gPiA+ID4gKwkJLyogY29weSA4IH4gMTYgYnl0ZXMgKi8NCj4gPiA+ID4gKwkJbWVtY3B5
-KGRzdCwgc3JjLCA4KTsNCj4gPiA+ID4gKwkJbWVtY3B5KCh1aW50OF90ICopZHN0IC0gOCArIG4s
-IChjb25zdCB1aW50OF90ICopc3JjIC0NCj4gOCArDQo+ID4gPiBuLCA4KTsNCj4gPiA+ID4gKwl9
-IGVsc2UgaWYgKG4gJiAweDQpIHsNCj4gPiA+ID4gKwkJLyogY29weSA0IH4gNyBieXRlcyAqLw0K
-PiA+ID4gPiArCQltZW1jcHkoZHN0LCBzcmMsIDQpOw0KPiA+ID4gPiArCQltZW1jcHkoKHVpbnQ4
-X3QgKilkc3QgLSA0ICsgbiwgKGNvbnN0IHVpbnQ4X3QgKilzcmMgLQ0KPiA0ICsNCj4gPiA+IG4s
-IDQpOw0KPiA+ID4gPiArCX0gZWxzZSBpZiAobiAmIDB4Mikgew0KPiA+ID4gPiArCQkvKiBjb3B5
-IDIgfiAzIGJ5dGVzICovDQo+ID4gPiA+ICsJCW1lbWNweShkc3QsIHNyYywgMik7DQo+ID4gPiA+
-ICsJCW1lbWNweSgodWludDhfdCAqKWRzdCAtIDIgKyBuLCAoY29uc3QgdWludDhfdCAqKXNyYyAt
-DQo+IDIgKw0KPiA+ID4gbiwgMik7DQo+ID4gPiA+ICsJfSBlbHNlIGlmIChuICYgMHgxKSB7DQo+
-ID4gPiA+ICsJCS8qIGNvcHkgMSBieXRlICovDQo+ID4gPiA+ICsJCW1lbWNweShkc3QsIHNyYywg
-MSk7DQo+ID4gPiA+ICsJfQ0KPiA+ID4gPiArCXJldHVybiBkc3Q7DQo+ID4gPiA+ICt9DQo=
+Starting with NVIDIA ConnectX-9, the future devices will support
+only hardware steering (HWS) flow engine.
+The software steering options (legacy Verbs and Direct Verbs)
+have lower performances, and won't be available for new devices.
+
+Fixes: 1b55eeb7b76f ("common/mlx5: add ConnectX-9 SuperNIC")
+
+Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
+---
+ doc/guides/nics/mlx5.rst | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/doc/guides/nics/mlx5.rst b/doc/guides/nics/mlx5.rst
+index 8481cc974a..904a0ac358 100644
+--- a/doc/guides/nics/mlx5.rst
++++ b/doc/guides/nics/mlx5.rst
+@@ -689,9 +689,11 @@ for an additional list of options shared with other mlx5 drivers.
+ - ``dv_flow_en`` parameter [int]
+ 
+   Value 0 means legacy Verbs flow offloading.
++  It is available for devices older than ConnectX-9.
+ 
+-  Value 1 enables the DV flow steering assuming it is supported by the
+-  driver (requires rdma-core 24 or higher).
++  Value 1 enables the Direct Verbs flow steering.
++  It is available for devices older than ConnectX-9,
++  and requires rdma-core 24 or later.
+ 
+   Value 2 enables the WQE based hardware steering.
+   In this mode, only queue-based flow management is supported.
+@@ -1338,7 +1340,8 @@ Hardware Steering
+ ~~~~~~~~~~~~~~~~~
+ 
+ Faster than software steering (SWS),
+-hardware steering (HWS) is the only mode supporting the flow template async API.
++hardware steering (HWS) is the only mode supporting the flow template async API,
++and the only mode supported on device ConnectX-9 and later.
+ 
+ Flow rules are managed by the hardware,
+ with a WQE-based high scaling and safer flow insertion/destruction.
+-- 
+2.51.0
+
