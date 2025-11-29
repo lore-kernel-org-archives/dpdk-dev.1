@@ -2,75 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A69FD116EA
-	for <dpdk-dev@archiver.kernel.org>; Sat, 29 Nov 2025 19:02:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C82BDD116EA
+	for <dpdk-dev@archiver.kernel.org>; Sat, 29 Nov 2025 19:05:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4F9E04013F;
-	Sat, 29 Nov 2025 20:02:31 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 8488940275;
+	Sat, 29 Nov 2025 20:05:43 +0100 (CET)
 Received: from fhigh-a1-smtp.messagingengine.com
  (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
- by mails.dpdk.org (Postfix) with ESMTP id 77E65400D7
- for <dev@dpdk.org>; Sat, 29 Nov 2025 20:02:29 +0100 (CET)
-Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
- by mailfhigh.phl.internal (Postfix) with ESMTP id EC090140037F;
- Sat, 29 Nov 2025 14:02:28 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
- by phl-compute-06.internal (MEProxy); Sat, 29 Nov 2025 14:02:28 -0500
+ by mails.dpdk.org (Postfix) with ESMTP id 5F3E6400D7
+ for <dev@dpdk.org>; Sat, 29 Nov 2025 20:05:41 +0100 (CET)
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id E70F0140066B;
+ Sat, 29 Nov 2025 14:05:40 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+ by phl-compute-02.internal (MEProxy); Sat, 29 Nov 2025 14:05:40 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1764442948;
- x=1764529348; bh=vOLF6vRR3p58cNUpMa4k2K3ORrJJ91B80tIFdWP/yVY=; b=
- lhIKLjTrnHt25YxrVgyn0XpSmO0qav/y1q69WRiiuicByMDDdT5wmi00PBTWecy5
- iF0jK13343xWFAX7M+CeijPxNQOZ+qFonWLESSy7UHLtPO60cMOqS3GmdYxcaZyn
- ixXB/xmZ63FZbyI6U1UcH1k/ThpCSlWsP2u9yiQrO7hdk3gfbmhwucuu5djQj+Me
- gdYcHZ6qBxWa36Nf7z6pSXQEf4jUUZuLnN4F7tqPFsPlI4dTMwtP8bnbkBw3UxnZ
- q1DahN0oBuwkN/8fWfrGKG/cmBrq8GnWLndGTNIrMjO+pf53FR1yoxnC0mRcnUiU
- So4TtaeJwAH7a679Kp5Wag==
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1764443140;
+ x=1764529540; bh=lusmpwXM1C3DCb0VE+lFAScVSWTOmCrJtUc4pFvR7NM=; b=
+ b72mgigWUp1FyMPP00lMjgVxCFCdAIXc57l0mggomSKC/ZFOwhZ9djICGWLmWWOU
+ 8GKMa46yN0stgkGaYtxa+iIor6OHqs0mbYxPXswwlCpEXnfRYreKKBhLBpN7p/yV
+ sX75P2CsrK2Z22RaTetIl+2JCDpkMkdchtd7P0pFQadX+//6AL9/gwDxYT0o0hf4
+ YuXNoBgippz7axyyFJFX51ERLWe594HinPFdQzrBoO9966gLR+mEUkhyl4i6wLz0
+ FlHj5CdRGYCfRa5mJVcworCezX38H4OwYq544CPEYztUyB066849conz4ixDpF2d
+ bvI4ainhn3mNphzaGw3Y7Q==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1764442948; x=
- 1764529348; bh=vOLF6vRR3p58cNUpMa4k2K3ORrJJ91B80tIFdWP/yVY=; b=L
- pFlfgrVDaAazwVxhVtUIFR7/b3hMWun6x44MlPjbppLxeCa+xna06e34zYmnxMtL
- GOjxIf2jZTLT/aJ1SuwMMer94+McXhaytjNOM5Hc0AwjHD63Uo4H0t+ayzIdZ9pT
- mltwaoZhRSX0JCKPCkINSXypE4Sg2kx171tcYJtuoAW6mGbVVdWLyhElQm9Q/YKB
- OeXJIFT96O7kyHaQx4uziIEjquS+QWLuJD9k5UzAZCQViYTpceaVviIuSzjA+dv9
- 4I0Lv8VWe+AQLny0xSedsYrR8Rtrxw4nWzCFkl9RvBtz30F0rs91U2EUKD3Y5Met
- 1Z9TwHw05rMeZExznagZw==
-X-ME-Sender: <xms:REMraQkVG8fP0IKJkutqNblDJCegTIvXfIcXL9EnufhRECMl_hh6FQ>
- <xme:REMracL3ZA-DPnRkptj7swOsIWI22_uLUyaby9B_RSW1AWNLbV7Pi-jcIohAZKyf6
- uCk7YYeoFVgyTxTecFxsjxNpkmeA5kYbxWSOoKlu5mMk6BVir42cQ>
-X-ME-Received: <xmr:REMraRbTbPazYF4wWaOKgH5_tE32_TxykDyifMpdR2GoO9s7eUcA9pnR6iD9XTpY3RpGf-8MUkjEx9g9EIFrenmBbw>
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1764443140; x=
+ 1764529540; bh=lusmpwXM1C3DCb0VE+lFAScVSWTOmCrJtUc4pFvR7NM=; b=x
+ L+gMBOI6dQqbK/71/FOhi+3EcuyQX3ExzKlELdf7aodZkC/574w5Dk9vYHlQbJHo
+ qUUhab0mOE0b6F5mOIRa0SQqlxbvIoc01ZBptEUblvRzQf662eDPT/uxRx3JT0Gj
+ 0KMFXZ3hNqogRE/s522dW8bSqjSJyBCGrfj9ejk80WL1S0L3hG/NIelK/2uyKI4D
+ 6rYWmuzqEMUJ1SCf2gnazhcRjD9jWQjwGtamq/evmB3OdtYRQTaNg7v0/i2SkN5E
+ M4029AD2KPYjBd+RxRhaM4NTHQAYbfEI/9034c0FsQqJPcP56Hr3DkiyhbHdda9p
+ my1crBPlD18FgRvFAccBg==
+X-ME-Sender: <xms:BEQrafOfLgn1AE6mhwydX80qpi04QBFKuySmzGoMfIZjYLl2DP06uw>
+ <xme:BEQraWRZPbzb6v6f0aMRXGzcUvxW21LyYUP1-sPNm0lwS5FeJIgI8xMJQkwgFvX2a
+ O17dkyT2zn6KoC1EyyWlEKjwAxbx5H-4BxlFkwFgljW9A3qkwZkXA>
+X-ME-Received: <xmr:BEQraRDxnXPWlE1FUR-Q1StQrGT3eOdo4_hR7y9i2s6XxXBBpxuGRYaJyy8Gikii_me75h00lMORamFNi8rkr4Fe1A>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvheefvdehucetufdoteggodetrf
  dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
  rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
  gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
  ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
- frrghtthgvrhhnpeekfeehfedtgedtjeehueeutdfgleefieevkeeikeelkefflefgtdev
- ieehheffudenucffohhmrghinhepughpughkrdhorhhgnecuvehluhhsthgvrhfuihiivg
- eptdenucfrrghrrghmpehmrghilhhfrhhomhepthhhohhmrghssehmohhnjhgrlhhonhdr
- nhgvthdpnhgspghrtghpthhtohepvddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoh
- epuggrvhhiugdrmhgrrhgthhgrnhgusehrvgguhhgrthdrtghomhdprhgtphhtthhopegu
- vghvseguphgukhdrohhrgh
-X-ME-Proxy: <xmx:REMraeZD1zbdA3xggdA2yQkvTazaTdNoA_KIWydF39fhx87A-CqfRg>
- <xmx:REMraRmD-QBL2sS7AWjG44lfVT3YULGgF6t3gCE99obg-hApQqUtGA>
- <xmx:REMraayQ60aIvZuK0uITljS3WNOx3T0EMOM1BZktJ40q58KhASnANA>
- <xmx:REMrafOenUYavxSp9gW_4Gl8IVlEmIhNv6dtypLOVScsi5HWqKCTVw>
- <xmx:REMraT5Z8FXlm4tUENmWUMHkB1WdwsF84e-lgVKrUvtvVIeKDOg47Bd9>
+ frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
+ uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopedvpdhm
+ ohguvgepshhmthhpohhuthdprhgtphhtthhopegrlhhirghlnhhusehnvhhiughirgdrtg
+ homhdprhgtphhtthhopeguvghvseguphgukhdrohhrgh
+X-ME-Proxy: <xmx:BEQraVijJxS8MfBBvh1JZtXLB6s4TBgpLxaSyXvYsTYzsIiuDC8bAQ>
+ <xmx:BEQraaOSCktMHDqzPHYR1MnmB1lZ18oBdpTTn9bNTfeds20EU6xfxg>
+ <xmx:BEQraW4qXSOcJh_OO0dNOexCzqP_cwjAvDL_810m_0J1b90MWIN7RA>
+ <xmx:BEQraY1i-C1NeDO7bCkFNaoSUzp_PthLkZ7sQzLQ9SUuMvkoOVI-YA>
+ <xmx:BEQraTNVJkNvit1hZWZCXAIGwa-UDZDphy7OmSVkLGRrmUPt3NUxdyl0>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 29 Nov 2025 14:02:28 -0500 (EST)
+ 29 Nov 2025 14:05:39 -0500 (EST)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: David Marchand <david.marchand@redhat.com>
+To: Ali Alnubani <alialnu@nvidia.com>
 Cc: dev@dpdk.org
-Subject: Re: [PATCH 0/7] Fixes for Fedora Rawhide
-Date: Sat, 29 Nov 2025 20:02:26 +0100
-Message-ID: <4425601.mvXUDI8C0e@thomas>
-In-Reply-To: <20251128135616.2662164-1-david.marchand@redhat.com>
-References: <20251128135616.2662164-1-david.marchand@redhat.com>
+Subject: Re: [PATCH v2] devtools: check patch from stdin only if nothing else
+Date: Sat, 29 Nov 2025 20:05:38 +0100
+Message-ID: <7561331.DvuYhMxLoT@thomas>
+In-Reply-To: <20251128144127.1552516-1-thomas@monjalon.net>
+References: <26063275.kmuVQn2iE0@thomas>
+ <20251128144127.1552516-1-thomas@monjalon.net>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -87,18 +87,22 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-28/11/2025 14:56, David Marchand:
-> Similary to https://git.dpdk.org/dpdk/commit/?id=f4ef899bb3ae, we have
-> many strstr/str*chr calls on const char * stored to non const pointers.
+28/11/2025 15:40, Thomas Monjalon:
+> From: Ali Alnubani <alialnu@nvidia.com>
 > 
-> This breaks build in Fedora Rawhide as a change in its glibc now
-> triggers build warnings.
+> The checkpatches.sh script was checking if stdin is a terminal before
+> honoring the -n flag, causing it to incorrectly attempt to read patches
+> from stdin when run without a TTY (e.g., in Jenkins/CI pipelines).
 > 
-> Probably too late for 25.11, but sending in any case...
+> Reorder the conditionals to check for the -n and -r flags
+> before checking stdin state.
+> This ensures the -n/-r flags takes precedence
+> and the script checks git commits as intended.
+> 
+> Signed-off-by: Ali Alnubani <alialnu@nvidia.com>
+> Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
 
-CI is green, it looks good to have in 25.11.
-
-Applied, thanks.
+Applied
 
 
 
