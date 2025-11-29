@@ -2,81 +2,78 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87068D116F1
-	for <dpdk-dev@archiver.kernel.org>; Sat, 29 Nov 2025 12:43:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A69FD116EA
+	for <dpdk-dev@archiver.kernel.org>; Sat, 29 Nov 2025 19:02:32 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 607BD4013F;
-	Sat, 29 Nov 2025 13:43:20 +0100 (CET)
-Received: from fhigh-a5-smtp.messagingengine.com
- (fhigh-a5-smtp.messagingengine.com [103.168.172.156])
- by mails.dpdk.org (Postfix) with ESMTP id 96D2C400D7
- for <dev@dpdk.org>; Sat, 29 Nov 2025 13:43:18 +0100 (CET)
-Received: from phl-compute-11.internal (phl-compute-11.internal [10.202.2.51])
- by mailfhigh.phl.internal (Postfix) with ESMTP id 1828B140069B;
- Sat, 29 Nov 2025 07:43:18 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-11.internal (MEProxy); Sat, 29 Nov 2025 07:43:18 -0500
+	by mails.dpdk.org (Postfix) with ESMTP id 4F9E04013F;
+	Sat, 29 Nov 2025 20:02:31 +0100 (CET)
+Received: from fhigh-a1-smtp.messagingengine.com
+ (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
+ by mails.dpdk.org (Postfix) with ESMTP id 77E65400D7
+ for <dev@dpdk.org>; Sat, 29 Nov 2025 20:02:29 +0100 (CET)
+Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id EC090140037F;
+ Sat, 29 Nov 2025 14:02:28 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+ by phl-compute-06.internal (MEProxy); Sat, 29 Nov 2025 14:02:28 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:date:date:from:from
- :in-reply-to:message-id:mime-version:reply-to:subject:subject:to
- :to; s=fm1; t=1764420198; x=1764506598; bh=fgwzq7l2puA+gWKKW4sy9
- ZACsMWuQ8FSMr+UvQ3iOUY=; b=SBUmiQj56B0RsUpRM7aJrFm4XfkerNhgJ5SaN
- stPSVsnjQoUbiqVhZJlx6khndGXYKGJD3xWNUi3y19aEPWLxLDj3j51Wsa5bOh4a
- lpYPKjM4QVHALIBisvr60wTe2KY4woJYMuA+M8llzp4lFfR3+G/7Nu/8iFa9imyO
- 0HmZ/1SKK/P9TD8SDtlWv866HQQ0l3FDn016WdTJWSNd7T1Yltq6MFIlWTCzDhcR
- 4KbFhge7NDagu4O6WWO5g8uSiSMMGnHNCMxWdAwYVw/cBYNFlscEXelIplBsWXq0
- hJPnR3Z0eA9aTRsXXZFBu8Aw7UP+NLWMBRf7UVkFmU3TKJBYw==
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1764442948;
+ x=1764529348; bh=vOLF6vRR3p58cNUpMa4k2K3ORrJJ91B80tIFdWP/yVY=; b=
+ lhIKLjTrnHt25YxrVgyn0XpSmO0qav/y1q69WRiiuicByMDDdT5wmi00PBTWecy5
+ iF0jK13343xWFAX7M+CeijPxNQOZ+qFonWLESSy7UHLtPO60cMOqS3GmdYxcaZyn
+ ixXB/xmZ63FZbyI6U1UcH1k/ThpCSlWsP2u9yiQrO7hdk3gfbmhwucuu5djQj+Me
+ gdYcHZ6qBxWa36Nf7z6pSXQEf4jUUZuLnN4F7tqPFsPlI4dTMwtP8bnbkBw3UxnZ
+ q1DahN0oBuwkN/8fWfrGKG/cmBrq8GnWLndGTNIrMjO+pf53FR1yoxnC0mRcnUiU
+ So4TtaeJwAH7a679Kp5Wag==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:date:date:feedback-id:feedback-id:from:from
- :in-reply-to:message-id:mime-version:reply-to:subject:subject:to
- :to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
- 1764420198; x=1764506598; bh=fgwzq7l2puA+gWKKW4sy9ZACsMWuQ8FSMr+
- UvQ3iOUY=; b=hoJOp6VQVwxH5+IH1jx6J2cQmShvl23K3S1kfxuy/ocpYV+z8hN
- YYKKpDqIQNUSLARS5+RSc1EVduAHJXcPbzynf90UnNXb0yDKjmZDB/PXLv6quH8b
- 2y7iV9r5R/fbKODA3j8mnx7FbrsTgBL4OK/e0c5vvlIlPa7Us7TjPzT/jHjJwqby
- KyEXgi3JfGjfiWq0G1ue9gq2t3InPWSCIHk/o4WRmJYBlggPpqyH8uzYnJVNIGE8
- qpcXndFl1X5+OBYukD7t0+CL5ROOHIkEngYjRjERE+YuTLnBI5C+W02b7oU5UlYm
- m14pwFM6/ynRiJvant+VUJ+yl1Kxcy/Lidg==
-X-ME-Sender: <xms:ZeoqaYrTJokojq4MbJQBaTgjoAA3huQVzc3K7cZBV1oUQnoqj92dSg>
- <xme:ZeoqaaoLhtctuSwlRVeNtQPtfcYB-BYIowUnkMXtnRXdOoacmWkVAeOLxw2sBE-38
- Ze9mJ52vtzu-6SEhgdMIfu2rm1msCLLp7kBTxr7pzdhSchq18mFog>
-X-ME-Received: <xmr:ZeoqafYDCeKcv3-3h35_zyQheetA2On9cm9LFa91RmD7wlrDIh4bXPyD93qT3B5KEy0M69hWMlfxxVl9q5CM3pS5v_TG_ig>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvhedvgeekucetufdoteggodetrf
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1764442948; x=
+ 1764529348; bh=vOLF6vRR3p58cNUpMa4k2K3ORrJJ91B80tIFdWP/yVY=; b=L
+ pFlfgrVDaAazwVxhVtUIFR7/b3hMWun6x44MlPjbppLxeCa+xna06e34zYmnxMtL
+ GOjxIf2jZTLT/aJ1SuwMMer94+McXhaytjNOM5Hc0AwjHD63Uo4H0t+ayzIdZ9pT
+ mltwaoZhRSX0JCKPCkINSXypE4Sg2kx171tcYJtuoAW6mGbVVdWLyhElQm9Q/YKB
+ OeXJIFT96O7kyHaQx4uziIEjquS+QWLuJD9k5UzAZCQViYTpceaVviIuSzjA+dv9
+ 4I0Lv8VWe+AQLny0xSedsYrR8Rtrxw4nWzCFkl9RvBtz30F0rs91U2EUKD3Y5Met
+ 1Z9TwHw05rMeZExznagZw==
+X-ME-Sender: <xms:REMraQkVG8fP0IKJkutqNblDJCegTIvXfIcXL9EnufhRECMl_hh6FQ>
+ <xme:REMracL3ZA-DPnRkptj7swOsIWI22_uLUyaby9B_RSW1AWNLbV7Pi-jcIohAZKyf6
+ uCk7YYeoFVgyTxTecFxsjxNpkmeA5kYbxWSOoKlu5mMk6BVir42cQ>
+X-ME-Received: <xmr:REMraRbTbPazYF4wWaOKgH5_tE32_TxykDyifMpdR2GoO9s7eUcA9pnR6iD9XTpY3RpGf-8MUkjEx9g9EIFrenmBbw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvheefvdehucetufdoteggodetrf
  dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
  rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
- gurhephffvvefufffkofgggfestdekredtredttdenucfhrhhomhepvfhhohhmrghsucfo
- ohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtffrrg
- htthgvrhhnpeevveefveeiiefhtedukeegkeelieegffeukeevudetueffieduveetiedu
- keefleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
- hthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeelpdhmohgu
- vgepshhmthhpohhuthdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtphhtth
- hopegsihhnghiisehnvhhiughirgdrtghomhdprhgtphhtthhopehmkhgrshhhrghnihes
- nhhvihguihgrrdgtohhmpdhrtghpthhtoheprhgrshhlrghnugesnhhvihguihgrrdgtoh
- hmpdhrtghpthhtohepughsohhsnhhofihskhhisehnvhhiughirgdrtghomhdprhgtphht
- thhopehvihgrtghhvghslhgrvhhosehnvhhiughirgdrtghomhdprhgtphhtthhopehorh
- hikhgrsehnvhhiughirgdrtghomhdprhgtphhtthhopehsuhgrnhhmihhnghhmsehnvhhi
- ughirgdrtghomhdprhgtphhtthhopehmrghtrghnsehnvhhiughirgdrtghomh
-X-ME-Proxy: <xmx:ZeoqaQ-U4YSuvJZD5pZzNPX_RnFpAp-iVzb2MCT5-PpbkNn5dgVp9Q>
- <xmx:ZeoqaVlZA0YZ_2GQ9kreagQ4o2OQ1njOsmrOYaaH_2exZpA3iSfG8w>
- <xmx:ZeoqaVy2S2vnKW9S6dCRDSADNlIM_Zr9flAe555cRIg6CthnzKTDcQ>
- <xmx:Zeoqaf58YxsWkwsBWqoyfYUh-2f9yOGoCwCpvTd5NSeJoI6i0RKr4Q>
- <xmx:ZuoqaUBMjUxfo-xJfsbZ7eIjdh0_R6A7c9xf0ZlmiMx21BrE3_mUJinN>
+ gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
+ ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
+ frrghtthgvrhhnpeekfeehfedtgedtjeehueeutdfgleefieevkeeikeelkefflefgtdev
+ ieehheffudenucffohhmrghinhepughpughkrdhorhhgnecuvehluhhsthgvrhfuihiivg
+ eptdenucfrrghrrghmpehmrghilhhfrhhomhepthhhohhmrghssehmohhnjhgrlhhonhdr
+ nhgvthdpnhgspghrtghpthhtohepvddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoh
+ epuggrvhhiugdrmhgrrhgthhgrnhgusehrvgguhhgrthdrtghomhdprhgtphhtthhopegu
+ vghvseguphgukhdrohhrgh
+X-ME-Proxy: <xmx:REMraeZD1zbdA3xggdA2yQkvTazaTdNoA_KIWydF39fhx87A-CqfRg>
+ <xmx:REMraRmD-QBL2sS7AWjG44lfVT3YULGgF6t3gCE99obg-hApQqUtGA>
+ <xmx:REMraayQ60aIvZuK0uITljS3WNOx3T0EMOM1BZktJ40q58KhASnANA>
+ <xmx:REMrafOenUYavxSp9gW_4Gl8IVlEmIhNv6dtypLOVScsi5HWqKCTVw>
+ <xmx:REMraT5Z8FXlm4tUENmWUMHkB1WdwsF84e-lgVKrUvtvVIeKDOg47Bd9>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 29 Nov 2025 07:43:16 -0500 (EST)
+ 29 Nov 2025 14:02:28 -0500 (EST)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: dev@dpdk.org
-Cc: bingz@nvidia.com, mkashani@nvidia.com, rasland@nvidia.com,
- Dariusz Sosnowski <dsosnowski@nvidia.com>,
- Viacheslav Ovsiienko <viacheslavo@nvidia.com>, Ori Kam <orika@nvidia.com>,
- Suanming Mou <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>
-Subject: [PATCH] doc: update flow engine availability in mlx5 guide
-Date: Sat, 29 Nov 2025 13:42:57 +0100
-Message-ID: <20251129124257.1619774-1-thomas@monjalon.net>
-X-Mailer: git-send-email 2.51.0
+To: David Marchand <david.marchand@redhat.com>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH 0/7] Fixes for Fedora Rawhide
+Date: Sat, 29 Nov 2025 20:02:26 +0100
+Message-ID: <4425601.mvXUDI8C0e@thomas>
+In-Reply-To: <20251128135616.2662164-1-david.marchand@redhat.com>
+References: <20251128135616.2662164-1-david.marchand@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -90,46 +87,18 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Starting with NVIDIA ConnectX-9, the future devices will support
-only hardware steering (HWS) flow engine.
-The software steering options (legacy Verbs and Direct Verbs)
-have lower performances, and won't be available for new devices.
+28/11/2025 14:56, David Marchand:
+> Similary to https://git.dpdk.org/dpdk/commit/?id=f4ef899bb3ae, we have
+> many strstr/str*chr calls on const char * stored to non const pointers.
+> 
+> This breaks build in Fedora Rawhide as a change in its glibc now
+> triggers build warnings.
+> 
+> Probably too late for 25.11, but sending in any case...
 
-Fixes: 1b55eeb7b76f ("common/mlx5: add ConnectX-9 SuperNIC")
+CI is green, it looks good to have in 25.11.
 
-Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
----
- doc/guides/nics/mlx5.rst | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+Applied, thanks.
 
-diff --git a/doc/guides/nics/mlx5.rst b/doc/guides/nics/mlx5.rst
-index 8481cc974a..904a0ac358 100644
---- a/doc/guides/nics/mlx5.rst
-+++ b/doc/guides/nics/mlx5.rst
-@@ -689,9 +689,11 @@ for an additional list of options shared with other mlx5 drivers.
- - ``dv_flow_en`` parameter [int]
- 
-   Value 0 means legacy Verbs flow offloading.
-+  It is available for devices older than ConnectX-9.
- 
--  Value 1 enables the DV flow steering assuming it is supported by the
--  driver (requires rdma-core 24 or higher).
-+  Value 1 enables the Direct Verbs flow steering.
-+  It is available for devices older than ConnectX-9,
-+  and requires rdma-core 24 or later.
- 
-   Value 2 enables the WQE based hardware steering.
-   In this mode, only queue-based flow management is supported.
-@@ -1338,7 +1340,8 @@ Hardware Steering
- ~~~~~~~~~~~~~~~~~
- 
- Faster than software steering (SWS),
--hardware steering (HWS) is the only mode supporting the flow template async API.
-+hardware steering (HWS) is the only mode supporting the flow template async API,
-+and the only mode supported on device ConnectX-9 and later.
- 
- Flow rules are managed by the hardware,
- with a WQE-based high scaling and safer flow insertion/destruction.
--- 
-2.51.0
+
 
