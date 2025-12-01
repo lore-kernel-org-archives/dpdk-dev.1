@@ -2,46 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A53EED116F1
-	for <dpdk-dev@archiver.kernel.org>; Mon,  1 Dec 2025 16:29:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29BECD116F3
+	for <dpdk-dev@archiver.kernel.org>; Mon,  1 Dec 2025 16:39:27 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7095A40268;
-	Mon,  1 Dec 2025 17:29:23 +0100 (CET)
-Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id 0337E4021F
- for <dev@dpdk.org>; Mon,  1 Dec 2025 17:29:21 +0100 (CET)
-Received: by inbox.dpdk.org (Postfix, from userid 33)
- id CDFC048BFC; Mon,  1 Dec 2025 17:29:21 +0100 (CET)
-From: bugzilla@dpdk.org
-To: dev@dpdk.org
-Subject: [DPDK/other Bug 1846] [mlx5] adding a vlan filter offload causes
- packets to be steered towards the kernel
-Date: Mon, 01 Dec 2025 16:29:21 +0000
-X-Bugzilla-Reason: AssignedTo
-X-Bugzilla-Type: new
-X-Bugzilla-Watch-Reason: None
-X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: other
-X-Bugzilla-Version: 24.11
-X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: normal
-X-Bugzilla-Who: robin@jarry.cc
-X-Bugzilla-Status: UNCONFIRMED
-X-Bugzilla-Resolution: 
-X-Bugzilla-Priority: Normal
-X-Bugzilla-Assigned-To: dev@dpdk.org
-X-Bugzilla-Target-Milestone: ---
-X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
- op_sys bug_status bug_severity priority component assigned_to reporter
- target_milestone
-Message-ID: <bug-1846-3@http.bugs.dpdk.org/>
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-X-Bugzilla-URL: http://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
+	by mails.dpdk.org (Postfix) with ESMTP id 3094D4021F;
+	Mon,  1 Dec 2025 17:39:27 +0100 (CET)
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com
+ [209.85.128.43]) by mails.dpdk.org (Postfix) with ESMTP id 77E584013F
+ for <dev@dpdk.org>; Mon,  1 Dec 2025 17:39:25 +0100 (CET)
+Received: by mail-wm1-f43.google.com with SMTP id
+ 5b1f17b1804b1-4779a637712so26852885e9.1
+ for <dev@dpdk.org>; Mon, 01 Dec 2025 08:39:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1764607165;
+ x=1765211965; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=xrfLcnWTlm/nQtpKzpY4pzBBXQ9qM2EQFKg0gIqHX+g=;
+ b=CnScQo8Aq9zFerJK+4HMDaXN5KByp0GmVwoLIH9OfNTsG962WFngcm+SAl5ibbp2rF
+ wccBAzdbpcGZt7x7g/SsxnDtSOc89YYrbA7WeJNN/Ae0MDaQoe0dzisvGaAAPy9/nLc5
+ Ug6iRv9S6yJD4iubHbIWi2pojgrssVtUfySLJKm0c9bmYNIEHgu9AL4wZg73zTnB+cjS
+ pBoxvKT974VcR7BHFCLcn/awUXFy7PLqKG3oVymNV11g3btwrd4rAaLJefdD62jJnuu4
+ P2MeowkbMULLh28GcxMaH/jqG/30FAtMN3drW1b4xwDBaEr2j+EDVpU1EYBgtlzbk+vk
+ EhYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1764607165; x=1765211965;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=xrfLcnWTlm/nQtpKzpY4pzBBXQ9qM2EQFKg0gIqHX+g=;
+ b=hrhTFwKM98zZ9y6gPjDDjgANNI97e/NVHjCt/lGqhXTzhxnaelybBvfmUWB67WdI5e
+ DK+GwVUtqYorUWBOO7TViuJOjjlXxZ8O9tPLBh6ZTkT2nDeaSpH0AxFOMjmEIUVdL1AI
+ +izdHRhDLbtme4/Hay6ngcpnPBJvIVVmzyouf/wLCEUVM2ANyi+KNr+ITm5LGZuj0/2q
+ s4TEXLHcOM4eVkVO13wU0IqDISOIO4UdonWYIuFmsxxqyeBfRPeZjc5Cmt0VLyySrbVy
+ HORzSFf3NXFAKyoDTasfKqbWAFZGPbPhyyT3FoqP3FbsegFCM71vBp3yw5XWfLPUr85K
+ nh3w==
+X-Gm-Message-State: AOJu0Yx/ChDH0rlSspqJ8LPk+fBt5kqXRSkF6ApLHvU0qpFAXCa3v8Gd
+ 6g73ldBSG2Aa+mSJ8gPo1dgsAKFzKPKKWlL/sFBBsg+KbwwMT1yDpACg3T61x4pYmO0=
+X-Gm-Gg: ASbGnctgSHBNbUU5H8Mtm6yDBVwU1tlnUojanwLqSTn7Mq5WQbWVrI+K5oF8eo2XUdL
+ mOoOdxFCYSg6a3fPHFlwN2HT6pzK56ANrFnpzQq8xwgCKOcOJfa5E4oNLZDy+neZmWV6fiCtkX/
+ 1MJZlxKkpPitQYGAQM9cOiGHps6OyTCMp4PDWjiu3LhLUaQkYgulQ4bXcOn+vALoW7N0nxn2U62
+ +jxUklM3BGQocP7sLFFzno0Meia1fUKtSYlgdd1rJSnfllgfWzAG0zat70zSASDnruMPyPyLbDy
+ p6IN8OtOR6Ye0lScB9nv83gPpXjh3GebXMPhaX38IvXPdwx/2V+ydlhl87LnJQiqTPIAQiRpmdw
+ WcEj5Kb0jk/cc+clwKkrmDT6oU1qlFH8mKEHdtXBP0SECa7ioZlbgS/R3jECdubpyQZWI114ItY
+ yYyKlvmjq/FM6bOGyMu6FY4pC+mKHs5ylWtKo3f1in/ORZMRX8qrI+/8JIhqP9WGo=
+X-Google-Smtp-Source: AGHT+IEfM7ijtntM/OPoWkDyGrFmFVQf/b54GsBTc7LUAUGp0rRHNmEmXjlou2YIkEx1/o7k4b5EJw==
+X-Received: by 2002:a05:600c:1994:b0:477:7af8:c88b with SMTP id
+ 5b1f17b1804b1-477c01740e1mr369285545e9.11.1764607164654; 
+ Mon, 01 Dec 2025 08:39:24 -0800 (PST)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 5b1f17b1804b1-479111438b9sm280553965e9.2.2025.12.01.08.39.22
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Mon, 01 Dec 2025 08:39:24 -0800 (PST)
+Date: Mon, 1 Dec 2025 08:39:18 -0800
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Donghua Huang <huangdonghua3@h-partners.com>
+Cc: <dev@dpdk.org>, <liuyonglong@huawei.com>, <yangxingui@h-partners.com>,
+ <lihuisong@h-partners.com>, <fengchengwen@huawei.com>
+Subject: Re: [PATCH] Upload some patches of vf multiple tc and some of others
+Message-ID: <20251201083918.1210250c@phoenix.local>
+In-Reply-To: <20251127035116.3877371-1-huangdonghua3@h-partners.com>
+References: <20251127035116.3877371-1-huangdonghua3@h-partners.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -55,181 +81,49 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-http://bugs.dpdk.org/show_bug.cgi?id=3D1846
+On Thu, 27 Nov 2025 11:51:16 +0800
+Donghua Huang <huangdonghua3@h-partners.com> wrote:
 
-            Bug ID: 1846
-           Summary: [mlx5] adding a vlan filter offload causes packets to
-                    be steered towards the kernel
-           Product: DPDK
-           Version: 24.11
-          Hardware: All
-                OS: All
-            Status: UNCONFIRMED
-          Severity: normal
-          Priority: Normal
-         Component: other
-          Assignee: dev@dpdk.org
-          Reporter: robin@jarry.cc
-  Target Milestone: ---
+>  ...euse-RSS-config-when-configuring-DCB.patch |  93 +++
+>  ...stpmd-add-prio-tc-map-in-DCB-command.patch | 296 ++++++++
+>  ...add-queue-restriction-in-DCB-command.patch | 264 +++++++
+>  ...p-testpmd-add-command-to-disable-DCB.patch | 158 ++++
+>  0131-examples-l3fwd-force-link-speed.patch    |  87 +++
+>  ...xamples-l3fwd-power-force-link-speed.patch |  80 ++
+>  0133-config-arm-add-HiSilicon-HIP12.patch     |  96 +++
+>  0134-app-testpmd-fix-DCB-Tx-port.patch        |  51 ++
+>  0135-app-testpmd-fix-DCB-Rx-queues.patch      |  35 +
+>  ...support-specify-TCs-when-DCB-forward.patch | 254 +++++++
+>  ...d-support-multi-cores-process-one-TC.patch | 292 ++++++++
+>  dpdk.spec                                     |  54 +-
+>  25 files changed, 4241 insertions(+), 1 deletion(-)
+>  create mode 100644 0114-app-testpmd-handle-IEEE1588-init-failure.patch
+>  create mode 100644 0115-examples-l3fwd-add-option-to-set-Rx-burst-size.patch
+>  create mode 100644 0116-examples-eventdev-fix-queue-crash-with-generic-pipel.patch
+>  create mode 100644 0117-examples-l3fwd-add-Tx-burst-size-configuration-optio.patch
+>  create mode 100644 0118-net-hns3-remove-duplicate-struct-field.patch
+>  create mode 100644 0119-net-hns3-refactor-DCB-module.patch
+>  create mode 100644 0120-net-hns3-parse-max-TC-number-for-VF.patch
+>  create mode 100644 0121-net-hns3-support-multi-TCs-capability-for-VF.patch
+>  create mode 100644 0122-net-hns3-fix-queue-TC-configuration-on-VF.patch
+>  create mode 100644 0123-net-hns3-support-multi-TCs-configuration-for-VF.patch
+>  create mode 100644 0124-app-testpmd-avoid-crash-in-DCB-config.patch
+>  create mode 100644 0125-app-testpmd-show-all-DCB-priority-TC-map.patch
+>  create mode 100644 0126-app-testpmd-relax-number-of-TCs-in-DCB-command.patch
+>  create mode 100644 0127-app-testpmd-reuse-RSS-config-when-configuring-DCB.patch
+>  create mode 100644 0128-app-testpmd-add-prio-tc-map-in-DCB-command.patch
+>  create mode 100644 0129-app-testpmd-add-queue-restriction-in-DCB-command.patch
+>  create mode 100644 0130-app-testpmd-add-command-to-disable-DCB.patch
+>  create mode 100644 0131-examples-l3fwd-force-link-speed.patch
+>  create mode 100644 0132-examples-l3fwd-power-force-link-speed.patch
+>  create mode 100644 0133-config-arm-add-HiSilicon-HIP12.patch
+>  create mode 100644 0134-app-testpmd-fix-DCB-Tx-port.patch
+>  create mode 100644 0135-app-testpmd-fix-DCB-Rx-queues.patch
+>  create mode 100644 0136-app-testpmd-support-specify-TCs-when-DCB-forward.patch
+>  create mode 100644 0137-app-testpmd-support-multi-cores-process-one-TC.patch
 
-When VLAN filter offload is enabled and a VLAN filter is configured on a VF,
-unicast packets are no longer received by the DPDK driver. Packets go direc=
-tly
-to the kernel netdev. Note: when promisc is enabled, packets are received
-again.
+Please use the regular patch submitting process so that these patches
+can be reviewed and tested.
 
-Hardware config
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+https://doc.dpdk.org/guides/contributing/patches.html
 
-SLOT          DRIVER     IFNAME        MAC                LINK/STATE  SPEED=
-=20=20
-DEVICE
-0000:18:00.0  mlx5_core  enp24s0f0np0  b8:3f:d2:fa:53:86  1/up        25Gb/=
-s=20
-MT2894 Family [ConnectX-6 Lx]
-0000:18:00.2  mlx5_core  enp24s0f0v0   02:aa:aa:aa:aa:00  1/up        25Gb/=
-s=20
-ConnectX Family mlx5Gen Virtual Function
-
-~# cat /sys/class/net/enp24s0f0np0/device/sriov_numvfs
-1
-
-~# devlink dev eswitch show pci/0000:18:00.0
-pci/0000:18:00.0: mode legacy inline-mode none encap-mode basic
-
-~# ip link show enp24s0f0np0
-6: enp24s0f0np0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state =
-UP
-mode DEFAULT group default qlen 1000
-    link/ether b8:3f:d2:fa:53:86 brd ff:ff:ff:ff:ff:ff
-    vf 0     link/ether 02:aa:aa:aa:aa:00 brd ff:ff:ff:ff:ff:ff, spoof chec=
-king
-off, link-state auto, trust on, query_rss off
-
-~# ip link show enp24s0f0v0
-12: enp24s0f0v0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state =
-UP
-mode DEFAULT group default qlen 1000
-    link/ether 02:aa:aa:aa:aa:00 brd ff:ff:ff:ff:ff:ff
-
-How to reproduce
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-
-~# tcpdump -ltpnnei enp24s0f0v0 | sed 's/^/[kernel enp24s0f0v0] /' &
-
-~# dpdk-testpmd -l 0,1 -a 0000:18:00.2 -- --forward-mode=3Drxonly -i
---enable-hw-vlan-filter
-EAL: Detected CPU lcores: 40
-EAL: Detected NUMA nodes: 1
-EAL: Detected shared linkage of DPDK
-EAL: Multi-process socket /var/run/dpdk/rte/mp_socket
-EAL: Selected IOVA mode 'VA'
-EAL: Probe PCI driver: mlx5_pci (15b3:101e) device: 0000:18:00.2 (socket 0)
-TELEMETRY: No legacy callbacks, legacy socket not created
-Set rxonly packet forwarding mode
-Interactive-mode selected
-testpmd: Flow tunnel offload support might be limited or unavailable on por=
-t 0
-testpmd: create a new mbuf pool <mb_pool_0>: n=3D155456, size=3D2176, socke=
-t=3D0
-testpmd: preferred mempool ops selected: ring_mp_mc
-
-Warning! port-topology=3Dpaired and odd forward ports number, the last port=
- will
-pair with itself.
-
-Configuring Port 0 (socket 0)
-Port 0: 02:AA:AA:AA:AA:00
-Checking link statuses...
-Done
-
-testpmd> set verbose 1
-Change verbose level from 0 to 1
-
-testpmd> set promisc all off
-
-testpmd> start
-rxonly packet forwarding - ports=3D1 - cores=3D1 - streams=3D1 - NUMA suppo=
-rt
-enabled, MP allocation mode: native
-Logical Core 18 (socket 0) forwards packets on 1 streams:
-  RX P=3D0/Q=3D0 (socket 0) -> TX P=3D0/Q=3D0 (socket 0) peer=3D02:00:00:00=
-:00:00
-
-port 0/queue 0: received 1 packets
-  src=3D2C:4C:15:07:98:70 - dst=3D01:80:C2:00:00:0E - pool=3Dmb_pool_0 - ty=
-pe=3D0x88cc
-- length=3D457 - nb_segs=3D1 - hw ptype: L2_ETHER  - sw ptype: L2_ETHER  -
-l2_len=3D14 - Receive queue=3D0x0
-  ol_flags: RTE_MBUF_F_RX_L4_CKSUM_UNKNOWN RTE_MBUF_F_RX_IP_CKSUM_UNKNOWN
-RTE_MBUF_F_RX_OUTER_L4_CKSUM_UNKNOWN
-  rxonly packet forwarding packets/burst=3D32
-  nb forwarding cores=3D1 - nb forwarding ports=3D1
-  port 0: RX queue number: 1 Tx queue number: 1
-    Rx offloads=3D0x200 Tx offloads=3D0x10000
-    RX queue: 0
-      RX desc=3D256 - RX free threshold=3D64
-      RX threshold registers: pthresh=3D0 hthresh=3D0  wthresh=3D0
-      RX Offloads=3D0x200
-    TX queue: 0
-      TX desc=3D256 - TX free threshold=3D0
-      TX threshold registers: pthresh=3D0 hthresh=3D0  wthresh=3D0
-      TX offloads=3D0x10000 - TX RS bit threshold=3D0
-
-<send 3 unicast packets towards 02:AA:AA:AA:AA:00>
-
-port 0/queue 0: received 1 packets
-  src=3DB4:45:06:FD:4A:66 - dst=3D02:AA:AA:AA:AA:00 - pool=3Dmb_pool_0 - ty=
-pe=3D0x0800
-- length=3D77 - nb_segs=3D1 - hw ptype: L2_ETHER L3_IPV4_EXT_UNKNOWN L4_UDP=
-  - sw
-ptype: L2_ETHER L3_IPV4 L4_UDP  - l2_len=3D14 - l3_len=3D20 - l4_len=3D8 - =
-Receive
-queue=3D0x0
-  ol_flags: RTE_MBUF_F_RX_L4_CKSUM_GOOD RTE_MBUF_F_RX_IP_CKSUM_GOOD
-RTE_MBUF_F_RX_OUTER_L4_CKSUM_UNKNOWN
-port 0/queue 0: received 1 packets
-  src=3DB4:45:06:FD:4A:66 - dst=3D02:AA:AA:AA:AA:00 - pool=3Dmb_pool_0 - ty=
-pe=3D0x0800
-- length=3D77 - nb_segs=3D1 - hw ptype: L2_ETHER L3_IPV4_EXT_UNKNOWN L4_UDP=
-  - sw
-ptype: L2_ETHER L3_IPV4 L4_UDP  - l2_len=3D14 - l3_len=3D20 - l4_len=3D8 - =
-Receive
-queue=3D0x0
-  ol_flags: RTE_MBUF_F_RX_L4_CKSUM_GOOD RTE_MBUF_F_RX_IP_CKSUM_GOOD
-RTE_MBUF_F_RX_OUTER_L4_CKSUM_UNKNOWN
-port 0/queue 0: received 1 packets
-  src=3DB4:45:06:FD:4A:66 - dst=3D02:AA:AA:AA:AA:00 - pool=3Dmb_pool_0 - ty=
-pe=3D0x0800
-- length=3D77 - nb_segs=3D1 - hw ptype: L2_ETHER L3_IPV4_EXT_UNKNOWN L4_UDP=
-  - sw
-ptype: L2_ETHER L3_IPV4 L4_UDP  - l2_len=3D14 - l3_len=3D20 - l4_len=3D8 - =
-Receive
-queue=3D0x0
-  ol_flags: RTE_MBUF_F_RX_L4_CKSUM_GOOD RTE_MBUF_F_RX_IP_CKSUM_GOOD
-RTE_MBUF_F_RX_OUTER_L4_CKSUM_UNKNOWN
-
-<packets are received by testpmd>
-
-testpmd> rx_vlan add 42 0
-
-<send the same 3 unicast packets towards 02:aa:aa:aa:aa:00>
-
-[kernel enp24s0f0v0] b4:45:06:fd:4a:66 > 02:aa:aa:aa:aa:00, ethertype IPv4
-(0x0800), length 77: 172.16.0.2.53 > 172.16.0.1.53: 27755 updateM [b2&3=3D0=
-x6664]
-[29547a] [27244q] [26212n] [27238au] [|domain]
-[kernel enp24s0f0v0] b4:45:06:fd:4a:66 > 02:aa:aa:aa:aa:00, ethertype IPv4
-(0x0800), length 77: 172.16.0.2.53 > 172.16.0.1.53: 27755 updateM [b2&3=3D0=
-x6664]
-[29547a] [27244q] [26212n] [27238au] [|domain]
-[kernel enp24s0f0v0] b4:45:06:fd:4a:66 > 02:aa:aa:aa:aa:00, ethertype IPv4
-(0x0800), length 77: 172.16.0.2.53 > 172.16.0.1.53: 27755 updateM [b2&3=3D0=
-x6664]
-[29547a] [27244q] [26212n] [27238au] [|domain]
-
-<packets are now received by the kernel>
-
---=20
-You are receiving this mail because:
-You are the assignee for the bug.=
