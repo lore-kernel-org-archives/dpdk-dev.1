@@ -2,47 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2BD2D111A8
-	for <dpdk-dev@archiver.kernel.org>; Mon,  1 Dec 2025 11:45:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 844A2D111A8
+	for <dpdk-dev@archiver.kernel.org>; Mon,  1 Dec 2025 11:45:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8E4BD40261;
-	Mon,  1 Dec 2025 12:45:05 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 819BC402DF;
+	Mon,  1 Dec 2025 12:45:06 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
- by mails.dpdk.org (Postfix) with ESMTP id 3BEC04013F
+ by mails.dpdk.org (Postfix) with ESMTP id E9BEA4013F
  for <dev@dpdk.org>; Mon,  1 Dec 2025 12:45:03 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1764589503; x=1796125503;
+ t=1764589504; x=1796125504;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=9T85Z6oubQrkMqMy5d8iDKfPjAh1aIuivzUzsXPLXro=;
- b=BLkKvEAdxFo5/caTDjdyEXl0eDk3ZD4lWmgSAmzRsM+TLLnLE4+QuAPg
- v+PhPIAR55HdFq6zyJcGmNCrT68c+hj54c+M4PLqHT9fIC5GT18suhvbT
- KFT5Kza+URYA3/bujtNl+FdB/WoynqbMSTMsaiReO+9Skk4Rmnim8t1eR
- RXugXP/8/WfHkr/IcN5Wcq+gQ3AVHCTAM9fWy1tUR4EMWwRE6C//1hdAd
- 2Id50WBhnSev1Xs3aY3fMJi9nakyEmnXewmtcIpbilDLEqARolT7j0SqS
- a3AO5kREYYE8O23qUq1CjET8FORVDlPhW4iJb5YdIKQ9u2Rj2/xIXaem2 g==;
-X-CSE-ConnectionGUID: 7IA3cRVxRae8L0cbiovNkA==
-X-CSE-MsgGUID: Kr50jpW1TIq1jgT0nRNx2g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11629"; a="77991673"
-X-IronPort-AV: E=Sophos;i="6.20,240,1758610800"; d="scan'208";a="77991673"
+ bh=2Y4fnFHKCxvqHYk9mwGCExmprQc4zhJHEk0u2bNp3hg=;
+ b=B/n8T0AoAEYbajivIC0e6MEARd5RCJwLt/meRKGMlbUBBPjc272j3l7e
+ DODdRdh24MsswMbduiDhU5SzBjjqavMp4prP4DmiXX8kFGI0PIi+ziywb
+ IkR+Wcoh9QQPlbw3gxz46GvWWv2Y91FOKaLMBToeJETBwSzGzNw5lDOZm
+ zBubDQA+THpRf6sFdwNUonAc4kMMkTlGuzThSCi1ImHEmQuOFeENG8hcP
+ IXy8f26VDeLZH6jFim9pabdTiC7xCMPUvct1ElYWKAc2NePTMe0gVTYYo
+ /fdMj+oon1b2PQj0d3d+NegeHsQuL7hUjL3tGo/2yPh1roB4AjVnWRh68 A==;
+X-CSE-ConnectionGUID: X0huYPKsTqqQ9Bvd5OrB+g==
+X-CSE-MsgGUID: dHhCAtDvTkyfl6xEJJTEUg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11629"; a="77991675"
+X-IronPort-AV: E=Sophos;i="6.20,240,1758610800"; d="scan'208";a="77991675"
 Received: from fmviesa003.fm.intel.com ([10.60.135.143])
  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 01 Dec 2025 03:45:02 -0800
-X-CSE-ConnectionGUID: jsFQXSHwRqiZub1mToUrug==
-X-CSE-MsgGUID: oti4Dg+ESdeeP5SQmoDVwA==
+ 01 Dec 2025 03:45:03 -0800
+X-CSE-ConnectionGUID: BlDmMR10Sw2B/sGBTEb7wA==
+X-CSE-MsgGUID: SXOcbXkqS+6byJWaWUSr7Q==
 X-ExtLoop1: 1
 Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by fmviesa003.fm.intel.com with ESMTP; 01 Dec 2025 03:45:01 -0800
+ by fmviesa003.fm.intel.com with ESMTP; 01 Dec 2025 03:45:02 -0800
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
-Cc: Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v3 00/31] build DPDK with Wshadow flag
-Date: Mon,  1 Dec 2025 11:44:17 +0000
-Message-ID: <20251201114448.1441377-1-bruce.richardson@intel.com>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Bruce Richardson <bruce.richardson@intel.com>,
+ Chengwen Feng <fengchengwen@huawei.com>,
+ =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
+Subject: [PATCH v3 01/31] eal: add more min/max helpers
+Date: Mon,  1 Dec 2025 11:44:18 +0000
+Message-ID: <20251201114448.1441377-2-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251106140948.2894678-1-bruce.richardson@intel.com>
+In-Reply-To: <20251201114448.1441377-1-bruce.richardson@intel.com>
 References: <20251106140948.2894678-1-bruce.richardson@intel.com>
+ <20251201114448.1441377-1-bruce.richardson@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -59,182 +63,70 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-As flagged in bugs #1742, #1743 and others, much of DPDK fails to build
-when -Wshadow flag is passed to the build. This patchset fixes many issues
-of this nature, but not all, in the hopes we can move towards enabling that
-warning flag for all components for DPDK in future. This patchset fixes the
-following components in DPDK:
+From: Stephen Hemminger <stephen@networkplumber.org>
 
-* all libraries
-* Intel net drivers
-* all apps in the "app" folder
+Add RTE_MIN3() to handle case of RTE_MIN(RTE_MIN(...)), and similarly
+add RTE_MAX3(). Change name of local temporary variables in RTE_MAX()
+to allow for combinations of RTE_MIN(RTE_MAX(...)) without causing
+shadow declaration warnings.
 
-For the rest of the drivers and example applications, any component which
-does not build successfully with the shadow warning enabled has it
-explicitly disabled via cflags. Then the last patch adds -Wshadow to the
-global DPDK build, which should prevent any regressions in components which
-are already working.
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+Acked-by: Chengwen Feng <fengchengwen@huawei.com>
+Acked-by: Morten Brørup <mb@smartsharesystems.com>
+---
+ lib/eal/include/rte_common.h | 31 ++++++++++++++++++++++++++++---
+ 1 file changed, 28 insertions(+), 3 deletions(-)
 
-At that point, we should not have any regressions and we can, over time,
-reduce the number of components needing the -Wno-shadow flag.
-
-v3:
-* rebase on 25.11 release.
-
-RFC v2:
-* take patch from Stephen for RTE_MIN/MAX fixes
-* add additional fixes to clear clang warnings - it's a lot stricter than
-  gcc in this regard, and flags more issues.
-* extend app cleanup to all apps, not just testpmd
-* add per-component disabling, and add global enable flag at the end.
-
-
-Bruce Richardson (30):
-  eal: fix variable shadowing
-  ethdev: fix variable shadowing issues
-  eventdev: fix variable shadowing issues
-  net: remove shadowed variable
-  pipeline: fix variable shadowing
-  table: fix issues with variable shadowing
-  power: rename variable to eliminate shadowing
-  pcapng: rename variable to fix shadowing
-  bbdev: fix variable shadowing
-  bus/pci: remove shadowed variables
-  net/intel: rename function param to avoid shadow warnings
-  net/e1000: fix build with shadow warnings enabled
-  net/i40e: fix build with shadow warnings enabled
-  net/ice: fix build with shadow warnings enabled
-  net/cpfl: fix build with shadow warnings enabled
-  net/ixgbe: fix build with shadow warnings enabled
-  app/testpmd: fix build with shadow warnings enabled
-  app/graph: fix build with shadow warnings enabled
-  app/pdump: fix warning about shadowed variable
-  app/test-bbdev: remove shadow warning from next max calls
-  app/test-compress-perf: rename local vars to fix shadowing
-  app/test-crypto-perf: rename local vars to fix shadowing
-  app/test-eventdev: fix build with shadow warnings enabled
-  app/test-flow-perf: remove unneeded variable
-  app/test-security-perf: fix build with shadow warnings
-  app/test-pipeline: remove unnecessary variable
-  drivers: disable variable shadowing warnings for drivers
-  app/test: disable shadowing warnings for unit tests
-  examples: ignore variable shadowing warnings
-  build: enable shadowed variable warnings
-
-Stephen Hemminger (1):
-  eal: add more min/max helpers
-
- app/graph/conn.c                              | 134 +++++++++---------
- app/pdump/main.c                              |  12 +-
- app/test-bbdev/test_bbdev_perf.c              |   7 +-
- app/test-compress-perf/main.c                 | 122 ++++++++--------
- .../cperf_test_pmd_cyclecount.c               |   6 +-
- app/test-eventdev/evt_main.c                  |   6 +-
- app/test-eventdev/test_atomic_queue.c         |   6 +-
- app/test-eventdev/test_perf_common.c          |   4 +-
- app/test-flow-perf/main.c                     |   1 -
- app/test-pipeline/main.c                      |   1 -
- app/test-pmd/cmdline_flow.c                   |  42 +++---
- app/test-pmd/config.c                         |  15 +-
- app/test-pmd/parameters.c                     |  38 +++--
- app/test-pmd/testpmd.c                        |   2 +-
- app/test-security-perf/test_security_perf.c   |  42 +++---
- app/test/meson.build                          |   1 +
- app/test/test_cryptodev_security_ipsec.c      |  13 +-
- config/meson.build                            |   6 +
- drivers/baseband/fpga_5gnr_fec/meson.build    |   2 +
- drivers/bus/fslmc/meson.build                 |   2 +
- drivers/bus/pci/linux/pci.c                   |   1 -
- drivers/bus/pci/linux/pci_vfio.c              |   2 +-
- drivers/bus/pci/windows/pci.c                 |   1 -
- drivers/common/cnxk/meson.build               |   1 +
- drivers/common/qat/meson.build                |   1 +
- drivers/compress/nitrox/meson.build           |   2 +
- drivers/crypto/cnxk/meson.build               |   1 +
- drivers/crypto/octeontx/meson.build           |   1 +
- drivers/crypto/openssl/meson.build            |   1 +
- drivers/crypto/scheduler/meson.build          |   1 +
- drivers/dma/dpaa2/meson.build                 |   2 +
- drivers/event/cnxk/meson.build                |   1 +
- drivers/event/dlb2/meson.build                |   2 +
- drivers/event/sw/meson.build                  |   1 +
- drivers/net/axgbe/meson.build                 |   2 +-
- drivers/net/bnxt/meson.build                  |   1 +
- drivers/net/bonding/meson.build               |   1 +
- drivers/net/cnxk/meson.build                  |   1 +
- drivers/net/cxgbe/meson.build                 |   1 +
- drivers/net/dpaa/meson.build                  |   1 +
- drivers/net/dpaa2/meson.build                 |   1 +
- drivers/net/ena/meson.build                   |   2 +
- drivers/net/enetfec/meson.build               |   2 +
- drivers/net/enic/meson.build                  |   2 +
- drivers/net/failsafe/meson.build              |   1 +
- drivers/net/intel/common/rx.h                 |   6 +-
- drivers/net/intel/cpfl/cpfl_flow_engine_fxp.c |   2 -
- drivers/net/intel/cpfl/cpfl_flow_parser.c     |   6 +-
- drivers/net/intel/cpfl/cpfl_fxp_rule.h        |   2 -
- drivers/net/intel/cpfl/cpfl_representor.h     |   2 +-
- drivers/net/intel/e1000/igc_ethdev.c          |   6 +-
- drivers/net/intel/i40e/i40e_ethdev.h          |  10 +-
- drivers/net/intel/ice/ice_ethdev.c            |   6 +-
- drivers/net/intel/ixgbe/ixgbe_fdir.c          |   7 +-
- drivers/net/mlx5/meson.build                  |   1 +
- drivers/net/ntnic/meson.build                 |   3 +
- drivers/net/pfe/meson.build                   |   3 +
- drivers/net/qede/meson.build                  |   3 +
- drivers/net/txgbe/meson.build                 |   1 +
- drivers/net/zxdh/meson.build                  |   3 +
- drivers/raw/ifpga/meson.build                 |   2 +
- drivers/vdpa/mlx5/meson.build                 |   1 +
- examples/bbdev_app/meson.build                |   1 +
- examples/bond/meson.build                     |   1 +
- examples/dma/meson.build                      |   1 +
- examples/ethtool/meson.build                  |   1 +
- examples/eventdev_pipeline/meson.build        |   1 +
- examples/flow_filtering/meson.build           |   1 +
- examples/ip_pipeline/meson.build              |   1 +
- examples/ipsec-secgw/meson.build              |   1 +
- examples/l2fwd-crypto/meson.build             |   1 +
- examples/l2fwd-event/meson.build              |   1 +
- examples/l2fwd-jobstats/meson.build           |   1 +
- examples/l2fwd-keepalive/meson.build          |   1 +
- examples/l3fwd-graph/meson.build              |   1 +
- examples/l3fwd-power/meson.build              |   1 +
- examples/l3fwd/meson.build                    |   1 +
- .../client_server_mp/mp_server/meson.build    |   1 +
- examples/packet_ordering/meson.build          |   1 +
- examples/ptpclient/meson.build                |   1 +
- examples/qos_sched/meson.build                |   1 +
- .../server_node_efd/efd_server/meson.build    |   1 +
- examples/vhost/meson.build                    |   1 +
- .../vm_power_manager/guest_cli/meson.build    |   1 +
- examples/vm_power_manager/meson.build         |   1 +
- examples/vmdq/meson.build                     |   1 +
- lib/bbdev/rte_bbdev.c                         |   2 +-
- lib/eal/common/eal_common_options.c           |  22 +--
- lib/eal/common/eal_common_trace.c             |  89 ++++++------
- lib/eal/common/malloc_heap.c                  |   2 +-
- lib/eal/include/rte_common.h                  |  31 +++-
- lib/ethdev/ethdev_driver.c                    |   6 +-
- lib/ethdev/rte_ethdev.c                       |   1 -
- lib/eventdev/rte_event_eth_rx_adapter.c       |   5 +-
- lib/eventdev/rte_event_eth_tx_adapter.c       |   8 +-
- lib/net/net_crc_avx512.c                      |   4 +-
- lib/pcapng/rte_pcapng.c                       |   7 +-
- lib/pipeline/rte_swx_ctl.c                    |  11 +-
- lib/pipeline/rte_swx_pipeline.c               |  21 ++-
- lib/pipeline/rte_swx_pipeline_internal.h      |  10 +-
- lib/power/rte_power_pmd_mgmt.c                |   6 +-
- lib/table/rte_lru.h                           |  38 ++---
- lib/table/rte_lru_arm64.h                     |  14 +-
- lib/table/rte_lru_x86.h                       |   4 +-
- lib/table/rte_swx_table_em.c                  |   2 -
- lib/table/rte_swx_table_learner.c             |   4 +-
- lib/table/rte_table_hash_key16.c              |   4 +-
- lib/table/rte_table_hash_key32.c              |   4 +-
- lib/table/rte_table_hash_key8.c               |   4 +-
- 109 files changed, 473 insertions(+), 409 deletions(-)
-
---
+diff --git a/lib/eal/include/rte_common.h b/lib/eal/include/rte_common.h
+index 9e7d84f929..36400e8e43 100644
+--- a/lib/eal/include/rte_common.h
++++ b/lib/eal/include/rte_common.h
+@@ -799,6 +799,19 @@ __extension__ typedef uint64_t RTE_MARKER64[0];
+ 		_a < _b ? _a : _b; \
+ 	})
+ 
++/**
++ * Macro to return the minimum of three numbers
++ */
++#define RTE_MIN3(a, b, c)                      \
++	__extension__ ({                        \
++		typeof (a) _a = (a);            \
++		typeof (b) _b = (b);            \
++		typeof (c) _c = (c);            \
++		_a < _b ? (_a < _c ? _a : _c)   \
++		        : (_b < _c ? _b : _c);  \
++	})
++
++
+ /**
+  * Macro to return the minimum of two numbers
+  *
+@@ -814,9 +827,21 @@ __extension__ typedef uint64_t RTE_MARKER64[0];
+  */
+ #define RTE_MAX(a, b) \
+ 	__extension__ ({ \
+-		typeof (a) _a = (a); \
+-		typeof (b) _b = (b); \
+-		_a > _b ? _a : _b; \
++		typeof (a) _ax = (a); \
++		typeof (b) _bx = (b); \
++		_ax > _bx ? _ax : _bx; \
++	})
++
++/**
++ * Macro to return the maximum of three numbers
++ */
++#define RTE_MAX3(a, b, c)                      \
++	__extension__ ({                        \
++		typeof (a) _a = (a);            \
++		typeof (b) _b = (b);            \
++		typeof (c) _c = (c);            \
++		_a > _b ? (_a > _c ? _a : _c)   \
++		        : (_b > _c ? _b : _c);  \
+ 	})
+ 
+ /**
+-- 
 2.51.0
 
