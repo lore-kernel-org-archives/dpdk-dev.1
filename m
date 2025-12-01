@@ -2,72 +2,76 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29BECD116F3
-	for <dpdk-dev@archiver.kernel.org>; Mon,  1 Dec 2025 16:39:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD259D116F5
+	for <dpdk-dev@archiver.kernel.org>; Mon,  1 Dec 2025 16:42:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3094D4021F;
-	Mon,  1 Dec 2025 17:39:27 +0100 (CET)
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com
- [209.85.128.43]) by mails.dpdk.org (Postfix) with ESMTP id 77E584013F
- for <dev@dpdk.org>; Mon,  1 Dec 2025 17:39:25 +0100 (CET)
-Received: by mail-wm1-f43.google.com with SMTP id
- 5b1f17b1804b1-4779a637712so26852885e9.1
- for <dev@dpdk.org>; Mon, 01 Dec 2025 08:39:25 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 7D3854021F;
+	Mon,  1 Dec 2025 17:42:16 +0100 (CET)
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com
+ [209.85.221.54]) by mails.dpdk.org (Postfix) with ESMTP id 1C4D34013F
+ for <dev@dpdk.org>; Mon,  1 Dec 2025 17:42:15 +0100 (CET)
+Received: by mail-wr1-f54.google.com with SMTP id
+ ffacd0b85a97d-42e2e77f519so1304559f8f.2
+ for <dev@dpdk.org>; Mon, 01 Dec 2025 08:42:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1764607165;
- x=1765211965; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1764607335;
+ x=1765212135; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=xrfLcnWTlm/nQtpKzpY4pzBBXQ9qM2EQFKg0gIqHX+g=;
- b=CnScQo8Aq9zFerJK+4HMDaXN5KByp0GmVwoLIH9OfNTsG962WFngcm+SAl5ibbp2rF
- wccBAzdbpcGZt7x7g/SsxnDtSOc89YYrbA7WeJNN/Ae0MDaQoe0dzisvGaAAPy9/nLc5
- Ug6iRv9S6yJD4iubHbIWi2pojgrssVtUfySLJKm0c9bmYNIEHgu9AL4wZg73zTnB+cjS
- pBoxvKT974VcR7BHFCLcn/awUXFy7PLqKG3oVymNV11g3btwrd4rAaLJefdD62jJnuu4
- P2MeowkbMULLh28GcxMaH/jqG/30FAtMN3drW1b4xwDBaEr2j+EDVpU1EYBgtlzbk+vk
- EhYw==
+ bh=BJnfrFfY9TWcVyfrzppXW3ibneoqQzopfx8AHreSfE0=;
+ b=RXxDXBY4ipI+DxmD+1ut5LyQeofLNGGEqZaIBTiA+7V0tlkzhgcYNlFSqonDuHvSGd
+ VzH6aNHlYNKtEWqTjJSmG1H0s+E8qgHzRJq1pjLE3pB7bvy8I8Wfjxow2t/2j2IlrJTF
+ Il8Lvv3QnzMYehROVKqeX6MjtwclQGqB9IljTGJQ+As66Jg5fMa6T1FywR7rZY6K1qSk
+ LhWjVnzrPZuIih+SxqPIYH/DsH3EbS2yK4iA8Tn6uNhQGP1OLF0hfP4IrpaNhPRieHl+
+ /LnWSEC4eg+Md3kSbMP00CbuiZ+nQ9uc9iII41D/yJxqiVU+6bxJG4qNb5YBAGvtHIHC
+ WhaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1764607165; x=1765211965;
+ d=1e100.net; s=20230601; t=1764607335; x=1765212135;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=xrfLcnWTlm/nQtpKzpY4pzBBXQ9qM2EQFKg0gIqHX+g=;
- b=hrhTFwKM98zZ9y6gPjDDjgANNI97e/NVHjCt/lGqhXTzhxnaelybBvfmUWB67WdI5e
- DK+GwVUtqYorUWBOO7TViuJOjjlXxZ8O9tPLBh6ZTkT2nDeaSpH0AxFOMjmEIUVdL1AI
- +izdHRhDLbtme4/Hay6ngcpnPBJvIVVmzyouf/wLCEUVM2ANyi+KNr+ITm5LGZuj0/2q
- s4TEXLHcOM4eVkVO13wU0IqDISOIO4UdonWYIuFmsxxqyeBfRPeZjc5Cmt0VLyySrbVy
- HORzSFf3NXFAKyoDTasfKqbWAFZGPbPhyyT3FoqP3FbsegFCM71vBp3yw5XWfLPUr85K
- nh3w==
-X-Gm-Message-State: AOJu0Yx/ChDH0rlSspqJ8LPk+fBt5kqXRSkF6ApLHvU0qpFAXCa3v8Gd
- 6g73ldBSG2Aa+mSJ8gPo1dgsAKFzKPKKWlL/sFBBsg+KbwwMT1yDpACg3T61x4pYmO0=
-X-Gm-Gg: ASbGnctgSHBNbUU5H8Mtm6yDBVwU1tlnUojanwLqSTn7Mq5WQbWVrI+K5oF8eo2XUdL
- mOoOdxFCYSg6a3fPHFlwN2HT6pzK56ANrFnpzQq8xwgCKOcOJfa5E4oNLZDy+neZmWV6fiCtkX/
- 1MJZlxKkpPitQYGAQM9cOiGHps6OyTCMp4PDWjiu3LhLUaQkYgulQ4bXcOn+vALoW7N0nxn2U62
- +jxUklM3BGQocP7sLFFzno0Meia1fUKtSYlgdd1rJSnfllgfWzAG0zat70zSASDnruMPyPyLbDy
- p6IN8OtOR6Ye0lScB9nv83gPpXjh3GebXMPhaX38IvXPdwx/2V+ydlhl87LnJQiqTPIAQiRpmdw
- WcEj5Kb0jk/cc+clwKkrmDT6oU1qlFH8mKEHdtXBP0SECa7ioZlbgS/R3jECdubpyQZWI114ItY
- yYyKlvmjq/FM6bOGyMu6FY4pC+mKHs5ylWtKo3f1in/ORZMRX8qrI+/8JIhqP9WGo=
-X-Google-Smtp-Source: AGHT+IEfM7ijtntM/OPoWkDyGrFmFVQf/b54GsBTc7LUAUGp0rRHNmEmXjlou2YIkEx1/o7k4b5EJw==
-X-Received: by 2002:a05:600c:1994:b0:477:7af8:c88b with SMTP id
- 5b1f17b1804b1-477c01740e1mr369285545e9.11.1764607164654; 
- Mon, 01 Dec 2025 08:39:24 -0800 (PST)
+ bh=BJnfrFfY9TWcVyfrzppXW3ibneoqQzopfx8AHreSfE0=;
+ b=lBJe/aeTItDTx2ZFXEC5GjWXi8ks4Fu9b3WQJBAGBzjbBhXCm4KyN0SLgV8tB/VPYS
+ LNX8AcC0mh4VS8eR4VtZ+8K9JaN8Tk7Jvs/dVN1IB0gOeheSkKiLBye/h8KbKGGtkoBq
+ fRocytZYYss8hGdUsVINy9PobDR8OoeeL7mg4tUfag0QScUPtkWdlNQQR8D0LuHOUUrV
+ NcjsM5AvU4j9H57TabCW57kl2ckTlwR4VMy1nXUmvc63Naa55V090K2if6FWaGMrVfeJ
+ cBCZURkiuvBLdBqUz7K6rkScEivCerto+ifNg1fbi89ntfFmRaTaNf2aVfkgNkl6LvI0
+ /Vdg==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCUbHo8KNlw/OVZDHhewsPOc7tApw4zuw/KE8SZ7vNTUp40XsOcMmia0ke9izR44kKVFPwY=@dpdk.org
+X-Gm-Message-State: AOJu0Yy2tqHIr0ZH8Frt6QRoWa9u2NR3o4Jny+RGA148pxNt6UB3MdPF
+ mtnUHefp53xmL71ZRpmNlAHJgDj77GfMyiauaJh54Wh5V9XmXzxr19/NtIwjAHbxdsPNfGw08dr
+ q6Gwl
+X-Gm-Gg: ASbGncvo/zWb6sF/qN/vZ4IxMS2QRcIx2mk1GkMbiimMdRuxqbn72Jwgc4lcQ/6aBUQ
+ tMa6Lgtpo3Pq0xKWFE2xNlMVx1WXQqulVXovsfT7dJ2Y5I8IfKT/9GQ4tEtPwWCZmXKfXaYEkEj
+ S4BYvQSr4RJ92dlkYTfD3qqosZjkEI91gLT7cwFlmP99hbMAv/TkpC3igkOZtmSSx2i95+U26oC
+ RUCKIy//N8b/a89fXQsfeSViXonpB+aTqKukG4Yn7iKPTaZbfxWFrufdyJM434SC7E1L3aBrznP
+ Vi8HbWYhzxUr3AGFPLchVQApLeO+aJL1IOt2UMp1LcPPqga6JMeQev4I/Ea3xLp9L0Jg67TP7mK
+ kERMRy9Fz+FuZDanBYTxCYZ1MB5dkx8w4Mv1omVbk6fDryoqyjEopRAooDsDOaB5e6rVGzBn0Zb
+ TWsjFSYkU6XUq7DcJAsmCWeEvZesSkEtxnGA+r9gt4vghLQ3ufklWk
+X-Google-Smtp-Source: AGHT+IEvd2Vu24hPfsOhTSlbRxlQtP/i+nkciGnfw/5eQYE2+70C7QHYYVOuJoVEggzzApdPQHUgjQ==
+X-Received: by 2002:a05:6000:2088:b0:42b:4951:8af3 with SMTP id
+ ffacd0b85a97d-42e0f35679fmr27524763f8f.43.1764607334530; 
+ Mon, 01 Dec 2025 08:42:14 -0800 (PST)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-479111438b9sm280553965e9.2.2025.12.01.08.39.22
+ ffacd0b85a97d-42e1ca1a38bsm27772418f8f.24.2025.12.01.08.42.13
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 01 Dec 2025 08:39:24 -0800 (PST)
-Date: Mon, 1 Dec 2025 08:39:18 -0800
+ Mon, 01 Dec 2025 08:42:14 -0800 (PST)
+Date: Mon, 1 Dec 2025 08:42:09 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Donghua Huang <huangdonghua3@h-partners.com>
-Cc: <dev@dpdk.org>, <liuyonglong@huawei.com>, <yangxingui@h-partners.com>,
- <lihuisong@h-partners.com>, <fengchengwen@huawei.com>
-Subject: Re: [PATCH] Upload some patches of vf multiple tc and some of others
-Message-ID: <20251201083918.1210250c@phoenix.local>
-In-Reply-To: <20251127035116.3877371-1-huangdonghua3@h-partners.com>
-References: <20251127035116.3877371-1-huangdonghua3@h-partners.com>
+To: "=?UTF-8?B?bWFubnl3YW5n?=(=?UTF-8?B?546L5rC45bOw?=)"
+ <mannywang@tencent.com>
+Cc: Konstantin Ananyev <konstantin.ananyev@huawei.com>, dev@dpdk.org
+Subject: Re: [PATCH v4] acl: support custom memory allocators in rte_acl_build
+Message-ID: <20251201084209.1439eccf@phoenix.local>
+In-Reply-To: <F28176920A8AE2E0+20251201120508.120236-1-mannywang@tencent.com>
+References: <db4d85aea29e4549b04750288db649c3@huawei.com>
+ <F28176920A8AE2E0+20251201120508.120236-1-mannywang@tencent.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,49 +85,14 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 27 Nov 2025 11:51:16 +0800
-Donghua Huang <huangdonghua3@h-partners.com> wrote:
+On Mon,  1 Dec 2025 12:05:07 +0000
+"mannywang(=E7=8E=8B=E6=B0=B8=E5=B3=B0)" <mannywang@tencent.com> wrote:
 
->  ...euse-RSS-config-when-configuring-DCB.patch |  93 +++
->  ...stpmd-add-prio-tc-map-in-DCB-command.patch | 296 ++++++++
->  ...add-queue-restriction-in-DCB-command.patch | 264 +++++++
->  ...p-testpmd-add-command-to-disable-DCB.patch | 158 ++++
->  0131-examples-l3fwd-force-link-speed.patch    |  87 +++
->  ...xamples-l3fwd-power-force-link-speed.patch |  80 ++
->  0133-config-arm-add-HiSilicon-HIP12.patch     |  96 +++
->  0134-app-testpmd-fix-DCB-Tx-port.patch        |  51 ++
->  0135-app-testpmd-fix-DCB-Rx-queues.patch      |  35 +
->  ...support-specify-TCs-when-DCB-forward.patch | 254 +++++++
->  ...d-support-multi-cores-process-one-TC.patch | 292 ++++++++
->  dpdk.spec                                     |  54 +-
->  25 files changed, 4241 insertions(+), 1 deletion(-)
->  create mode 100644 0114-app-testpmd-handle-IEEE1588-init-failure.patch
->  create mode 100644 0115-examples-l3fwd-add-option-to-set-Rx-burst-size.patch
->  create mode 100644 0116-examples-eventdev-fix-queue-crash-with-generic-pipel.patch
->  create mode 100644 0117-examples-l3fwd-add-Tx-burst-size-configuration-optio.patch
->  create mode 100644 0118-net-hns3-remove-duplicate-struct-field.patch
->  create mode 100644 0119-net-hns3-refactor-DCB-module.patch
->  create mode 100644 0120-net-hns3-parse-max-TC-number-for-VF.patch
->  create mode 100644 0121-net-hns3-support-multi-TCs-capability-for-VF.patch
->  create mode 100644 0122-net-hns3-fix-queue-TC-configuration-on-VF.patch
->  create mode 100644 0123-net-hns3-support-multi-TCs-configuration-for-VF.patch
->  create mode 100644 0124-app-testpmd-avoid-crash-in-DCB-config.patch
->  create mode 100644 0125-app-testpmd-show-all-DCB-priority-TC-map.patch
->  create mode 100644 0126-app-testpmd-relax-number-of-TCs-in-DCB-command.patch
->  create mode 100644 0127-app-testpmd-reuse-RSS-config-when-configuring-DCB.patch
->  create mode 100644 0128-app-testpmd-add-prio-tc-map-in-DCB-command.patch
->  create mode 100644 0129-app-testpmd-add-queue-restriction-in-DCB-command.patch
->  create mode 100644 0130-app-testpmd-add-command-to-disable-DCB.patch
->  create mode 100644 0131-examples-l3fwd-force-link-speed.patch
->  create mode 100644 0132-examples-l3fwd-power-force-link-speed.patch
->  create mode 100644 0133-config-arm-add-HiSilicon-HIP12.patch
->  create mode 100644 0134-app-testpmd-fix-DCB-Tx-port.patch
->  create mode 100644 0135-app-testpmd-fix-DCB-Rx-queues.patch
->  create mode 100644 0136-app-testpmd-support-specify-TCs-when-DCB-forward.patch
->  create mode 100644 0137-app-testpmd-support-multi-cores-process-one-TC.patch
+> +static void *running_alloc(void *udata, char *name, size_t size,
+> +	size_t align, int32_t socket_id)
+> +{
+> +	(void)align;
+> +	(void)name;
+> +	(void)socket_id;
 
-Please use the regular patch submitting process so that these patches
-can be reviewed and tested.
-
-https://doc.dpdk.org/guides/contributing/patches.html
-
+Please use __rte_unused attribute or RTE_SET_USED() macro for this.
