@@ -2,58 +2,59 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9DDDD116F1
-	for <dpdk-dev@archiver.kernel.org>; Mon,  1 Dec 2025 12:05:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21858D116F1
+	for <dpdk-dev@archiver.kernel.org>; Mon,  1 Dec 2025 12:45:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 080FF402E8;
-	Mon,  1 Dec 2025 13:05:33 +0100 (CET)
-Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
- by mails.dpdk.org (Postfix) with ESMTP id D2159402BD
- for <dev@dpdk.org>; Mon,  1 Dec 2025 13:05:30 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id D74364029C;
+	Mon,  1 Dec 2025 13:45:36 +0100 (CET)
+Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
+ by mails.dpdk.org (Postfix) with ESMTP id 9652A40261
+ for <dev@dpdk.org>; Mon,  1 Dec 2025 13:45:33 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tencent.com;
- s=s201512; t=1764590728;
- bh=qLYHpKO/wObfQEePzUXFWb4By0TNiycaitexJ4LWZQw=;
+ s=s201512; t=1764593131;
+ bh=tiMu2pW1LmMcU+58yuPQNRoCXPM6YgAqzsZx4MPnJbs=;
  h=From:To:Subject:Date:Message-ID:MIME-Version;
- b=IQF1y/Nfa1rANC++HQS/qM0zJAg+fam9HfcUvHvJYU8S4Pu6Dt6I5jGAYp9nVQwaE
- S8djVHe8Wm8kS2YW15XYaoE1kBgML2AVEGW5+LvxETsBPpHhDjosiLFziV78zS8aG1
- /i1IBB/9It6tIHFyc0q8l0Tuw4skVZuehj5IwvZI=
-X-QQ-mid: esmtpgz12t1764590725t769a2fda
-X-QQ-Originating-IP: KyUVqgb0qs/XTZAI5MfG9e47kbg+GvBhobFBlxeSuJM=
+ b=BYsrVudBPhn5j1qKvqak1NrtPpj9mh5Ono/ygjoq/tzoGz/5WlCcKvb/8AVjRzhCz
+ u7vo9fmZvv41nSnx6KLHl7mKsRUteEo2jHoZXsOeWF3baHjEWLGpfQusxMq3v9/2Fz
+ Y2RGGapNto87Med+N91eqoMqS8XD+f5u8EWvUO+s=
+X-QQ-mid: zesmtpsz3t1764593129t0f533708
+X-QQ-Originating-IP: GSe2ODfsVv9UgO/8Yhv+7ddCkBLPLxrMFcxjaJDetjI=
 Received: from wyfs.. ( [11.176.19.22]) by bizesmtp.qq.com (ESMTP) with 
- id ; Mon, 01 Dec 2025 20:05:13 +0800 (CST)
+ id ; Mon, 01 Dec 2025 20:45:22 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 813670698053006786
+X-BIZMAIL-ID: 3376244554986283192
 From: "=?gb18030?B?bWFubnl3YW5nKM3108C35Sk=?=" <mannywang@tencent.com>
 To: Konstantin Ananyev <konstantin.ananyev@huawei.com>
 Cc: dev@dpdk.org,
 	YongFeng Wang <mannywang@tencent.com>
-Subject: [PATCH v4] acl: support custom memory allocators in rte_acl_build
-Date: Mon,  1 Dec 2025 12:05:07 +0000
-Message-ID: <F28176920A8AE2E0+20251201120508.120236-1-mannywang@tencent.com>
+Subject: [PATCH v5] acl: support custom memory allocators in rte_acl_build
+Date: Mon,  1 Dec 2025 12:45:17 +0000
+Message-ID: <2AAF65CF8F892CB1+20251201124518.122734-1-mannywang@tencent.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <db4d85aea29e4549b04750288db649c3@huawei.com>
 References: <db4d85aea29e4549b04750288db649c3@huawei.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpgz:tencent.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: OQ/T7jSUrTKHqGmlB+VrxSV/gMZKGlzh8zQYUxD0ce5jgsVbLJX/K9QS
- FB5zMphWXB3Ns1l8FgYDH76ckhhFp5nYKTh+EOdt1U9U5toxYpDumeg4ZcPL/L9b+/h+Qgx
- Va4yb7Ke9ohqMVNUhRArmqAsY03e+4CbPZ6Lx2w9+Hwvd29GNZMLUBQHp9k9XqzjrBKyefi
- G0j30Ixx7ywd10YdGpImPfeRtBUPrhu989IQrZ382MqIO7Sbp+j3O4KlCnYdkchKyRtABgE
- HgwTFPNjy+knevXUIhltk4Ltijqb16UCt4YSE6tuhRrTFaH+eTqVAdFplk60EgnpEBPzzAT
- ZKb24cGMw3TU+VjA6qYgCkyBQPpB0f6mssg+7oiBkoF7soKHQI0xAlDDwgCCSQ2t//xuyV9
- WUgrNxAWpw98QaM2bbn9NbPgUi0qS8aGuLsD+Mcb2f5dlbzFYMlCBRfxgW+ixzOjHXgbihh
- yON2J+RWWO4nn1WC4uTQehS81z7VQzps/KVotxV847NY81FnFAYnh+DtQF+hYpik/zS0Tu+
- U+w03YGhUy2XvBx2+1GSP6BATyNq4p5plofur9Q3/6dnW7Iu5dwDE53uJFSvRt1HoG8x+D0
- UODexayserqkvopwmoEAHJPzk0z1ssB+dhpseXYafD91LSuIrBdADCmDAnikky+XU5frRUi
- xcuxEo6XqbpuOaLwGttx6h/MCqv7872GTLay+pIcyFbMHP1HT6xh0mIirmW2meCusrz4Kn2
- LQ1/1M9j98m3DGSQFmQ/u85kroLCBge7UqfelPd0+utZuTCMgKooQ4aQBB2aRNoXpk12SxV
- DAzK7lfEFB31HO705WXxws2YxUzYK8Q/FWCVqet/zQI2Va3ZgCOff2vASsxDPQcUMPy7/8Q
- EG2DVSnGJrjl4pKdE1lhVisSj+Y3IEIwtJD3EkXmq3P+VkoDDs1cP3H3xMa/j5E5NuMA0ai
- CX5HY/WlDj4Kg0qs/4b2I1ThSD+N4luNRhHFTrwvSUMo5LQ==
-X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+Feedback-ID: zesmtpsz:tencent.com:qybglogicsvrsz:qybglogicsvrsz3b-0
+X-QQ-XMAILINFO: NnvXaJ5yySl8b90qOc6qEx4V1RsWtE+OSNnIxuINLOXHhgff6sMrbGh/
+ oNZLnfhMI4F2xzLJekmsXCkkLjYMjLWhAED57FxsYMN9Qv15NjJzmEzVzOoOotWOgw6PE8G
+ FXwT0oEdZSS2OGdRi+4SN8hXgy8HEuigqTEJkB+fWNp8QvkR+hfCAVS9+SG9G7Nhcws4d11
+ VqH/90b+WU9DSILWIKWa/2N2Co4twoNcRbxVAEQxDsGf7omS/wRbDH7HCnsyleHmvj2TpoP
+ opOEWs+sdXMs5deNWjrV8dzZztkFBOpyB31ZCfN0TTWKYd6lWmqgj/YegXe1wvNE6JAsxoe
+ NbHhpJ92SFb9Yjv0cGGbvaLkoLND/+3PeUxF4Ar0908iqxRhNziIpaGdV/jFcsYfbAIbBWR
+ BSGN3caoaasAgfba/41jpHosUqr3qK2NnS76T+NcmCvSIdEeOsXO9Lu0hzyd84B8Sdw+kc4
+ f64nALwNSHhfYUUy3gMbZ9MSeG8qCEol0wEG1CTljsWrDSjknjgssDoX/f3RrgAm/0oc92/
+ Yh4W/9W9+6sJoddvJNcz41Abwy5KF24JOsMkIsAk1KlDI5CXzh9v6//pn3GWmVtGyL2pgtm
+ rpeETuPF3B13MQCOgnG8+R+l/gM6ntxJG1ZWmr3lG25yIX8FUZQVcoyDuVFkjfJeQVmGbYi
+ AEiUv46yN+uRXLTCRNnHif6nkhWHvWhgj3u4ifySq0F5C/lPvaIx1phAQ2ExI3e3kTz6bsb
+ R104UN3yQWmtXau7a3y13OhWTcyOQ3bqoavcGT9qRqWnCNzTIHVMOcWT1062ODCB24OiFVA
+ J38bJq6wy84024x7FK7uMUln735cBwTEEYNXpeG+hJCAC86Gz6wQzSrK2BHRs8FKekEZdTz
+ CrYMfRYK/ZSQyhaD4HvKBk3IE3sODNwddqYOfN6TrB7B3gJKKknz5k2eEcKrDLUtdwxrc/t
+ YXq2rXZo8pZEiVgiYFOz8Y9ycYem18rhYECPKbYDETWA9ytOdUEIWLbxKijav15ii6KvZqs
+ clD6EK+P9ckjgxy3vzqzrvG0Zq2k09D2YoI5XAxA==
+X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -79,15 +80,20 @@ Key changes:
 - Modified ACL code to call callbacks for runtime allocations instead
   of rte_zmalloc_socket/rte_free directly.
 
+v5:
+- Remove temporary memory allocation callback for build stage.
+- Introduce new API (rte_acl_set_mem_cb / rte_acl_get_mem_cb) instead of
+  modifying existing rte_acl_config to preserve ABI compatibility.
+
 Signed-off-by: YongFeng Wang <mannywang@tencent.com>
 ---
  app/test/test_acl.c | 121 ++++++++++++++++++++++++++++++++++++++++++++
  lib/acl/acl.h       |   1 +
  lib/acl/acl_bld.c   |   2 +-
  lib/acl/acl_gen.c   |   4 +-
- lib/acl/rte_acl.c   |  35 ++++++++++++-
+ lib/acl/rte_acl.c   |  45 +++++++++++++++-
  lib/acl/rte_acl.h   |  42 +++++++++++++++
- 6 files changed, 201 insertions(+), 4 deletions(-)
+ 6 files changed, 211 insertions(+), 4 deletions(-)
 
 diff --git a/app/test/test_acl.c b/app/test/test_acl.c
 index 43d13b5b0f..930fdf8362 100644
@@ -269,7 +275,7 @@ index 3c53d24056..f482317884 100644
  		ACL_LOG(ERR,
  			"allocation of %zu bytes on socket %d for %s failed",
 diff --git a/lib/acl/rte_acl.c b/lib/acl/rte_acl.c
-index 8c0ca29618..0e1fda321a 100644
+index 8c0ca29618..3c1a118c46 100644
 --- a/lib/acl/rte_acl.c
 +++ b/lib/acl/rte_acl.c
 @@ -264,6 +264,20 @@ acl_get_best_alg(void)
@@ -312,12 +318,17 @@ index 8c0ca29618..0e1fda321a 100644
  		strlcpy(ctx->name, param->name, sizeof(ctx->name));
  
  		te->data = (void *) ctx;
-@@ -555,3 +572,19 @@ rte_acl_list_dump(void)
+@@ -555,3 +572,29 @@ rte_acl_list_dump(void)
  	}
  	rte_mcfg_tailq_read_unlock();
  }
 +
-+int rte_acl_set_mem_cb(struct rte_acl_ctx *acl, const struct rte_acl_mem_cb *mcb)
++/*
++ * Set memory allocation callbacks for a given ACL context.
++ */
++RTE_EXPORT_SYMBOL(rte_acl_set_mem_cb)
++int
++rte_acl_set_mem_cb(struct rte_acl_ctx *acl, const struct rte_acl_mem_cb *mcb)
 +{
 +	if (!acl || !mcb || !mcb->zalloc || !mcb->free)
 +		return -EINVAL;
@@ -325,7 +336,12 @@ index 8c0ca29618..0e1fda321a 100644
 +	return 0;
 +}
 +
-+int rte_acl_get_mem_cb(const struct rte_acl_ctx *acl, struct rte_acl_mem_cb *mcb)
++/*
++ * Retrieve the memory allocation callbacks assigned to the ACL context.
++ */
++RTE_EXPORT_SYMBOL(rte_acl_get_mem_cb)
++int
++rte_acl_get_mem_cb(const struct rte_acl_ctx *acl, struct rte_acl_mem_cb *mcb)
 +{
 +	if (!acl || !mcb)
 +		return -EINVAL;
