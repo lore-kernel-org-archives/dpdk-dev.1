@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7F8DD116F1
-	for <dpdk-dev@archiver.kernel.org>; Mon,  1 Dec 2025 11:45:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C74B3D111A8
+	for <dpdk-dev@archiver.kernel.org>; Mon,  1 Dec 2025 11:46:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D01C840669;
-	Mon,  1 Dec 2025 12:45:13 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id D88ED40670;
+	Mon,  1 Dec 2025 12:45:14 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
- by mails.dpdk.org (Postfix) with ESMTP id E76A34064F;
- Mon,  1 Dec 2025 12:45:10 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id E96964065A;
+ Mon,  1 Dec 2025 12:45:11 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1764589511; x=1796125511;
+ t=1764589512; x=1796125512;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=WEChDA3kj/OwOxFgfMjWl7LjOLlCh+ufBwj7OsWE72M=;
- b=KEHwtvuKXbLhVTSbfJ8CpSxHrmNCRvNjnGICKW8jmsGLhRVEz+u3wMhA
- AINgPfFwZEH19EbWvc2NQCFypCcrCbDmkpySl8PNns7bwhsc4PKy4/Lqq
- QjzcG4eO/g1995KuPeoSJoVFzOBaZ0p0bO8AaHSl9QhPmhmz7/ANafYU8
- +MvNYIR+n1Ei08SZRFdgQxfTK5bC/CYPZ3B9Oo48bJIOQAvqXwhW0xY5+
- DB9mPAx2CFtuRQIGHhOHtLl/e5MWNL1Lu5mLbyQifSRMvDtOIXTNP5Ora
- ws28LMhZsWJ0BL1xFj0gMM+KCn1TTke59gemqrL8EilhtSQ5FXG24kSlD w==;
-X-CSE-ConnectionGUID: 9iMVyzF7SS6C1khnDhK9ug==
-X-CSE-MsgGUID: T6dwteAoRDK5KCWrkfvDEw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11629"; a="77991712"
-X-IronPort-AV: E=Sophos;i="6.20,240,1758610800"; d="scan'208";a="77991712"
+ bh=ekcd77hZ9ZkbUrzp6YmGN0q/qY5Z+20UkGzqSIo7E50=;
+ b=U0oMCufNAqQMxHjkUN1/EPsYYCEwJQRX1CoeT++ODGxMPdUj2RKuiecu
+ QGXiSJUmC3YumvbpksblZn850VGiz9KVnpVO5JTXuuSc8L6QFoulHaFyd
+ zpQCtl8voHUAwy8EEiSy+n8K0SVX/JUXcXLLy0p8NjLSZQiV+wqMCoZMa
+ PJhxiijLkkuPIumydvCb1buHlFsUkPV6P7oKlrEANAVSpBiodPrSAHH93
+ U4WUJT4wgXZ1WgtQY3o92GeCfrm9+v8tT/gpGBxl7xIbkgwsEDG7eESvq
+ IDjLBEHyWj/4Kwst8Dn5MqHLnqcgmPTQptvypah5txi6XoPG22Qr5TXLZ w==;
+X-CSE-ConnectionGUID: 6vz8o3yaTtehN9QM5Lbwrg==
+X-CSE-MsgGUID: ylw1nQWoRhWO1HE9nyFYzg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11629"; a="77991715"
+X-IronPort-AV: E=Sophos;i="6.20,240,1758610800"; d="scan'208";a="77991715"
 Received: from fmviesa003.fm.intel.com ([10.60.135.143])
  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 01 Dec 2025 03:45:11 -0800
-X-CSE-ConnectionGUID: Hb1b18Z0TW+AJ4HZNsSgAg==
-X-CSE-MsgGUID: 7Vqy5edWSPKFRgN+5KUT2Q==
+ 01 Dec 2025 03:45:12 -0800
+X-CSE-ConnectionGUID: WG8qr3mqTPqS747Jd4MnHA==
+X-CSE-MsgGUID: 4DQducArTHyRpYX4nl91Pw==
 X-ExtLoop1: 1
 Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by fmviesa003.fm.intel.com with ESMTP; 01 Dec 2025 03:45:10 -0800
+ by fmviesa003.fm.intel.com with ESMTP; 01 Dec 2025 03:45:11 -0800
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: Bruce Richardson <bruce.richardson@intel.com>, stable@dpdk.org,
  Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v3 07/31] table: fix issues with variable shadowing
-Date: Mon,  1 Dec 2025 11:44:24 +0000
-Message-ID: <20251201114448.1441377-8-bruce.richardson@intel.com>
+Subject: [PATCH v3 08/31] power: rename variable to eliminate shadowing
+Date: Mon,  1 Dec 2025 11:44:25 +0000
+Message-ID: <20251201114448.1441377-9-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251201114448.1441377-1-bruce.richardson@intel.com>
 References: <20251106140948.2894678-1-bruce.richardson@intel.com>
@@ -60,217 +60,46 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Building table library with -Wshadow reveals many warnings from shadowed
-variables. Fix these by removing definitions, or renaming variables as
-appropriate.
+The "pause_duration" variable is a global and then shadowed as a local
+var in clb_pause. Rename the local variable to allow building with
+"-Wshadow".
 
-Fixes: 0c06fa3bfa8c ("table: support learner tables")
-Fixes: d0a00966618b ("table: add exact match SWX table")
-Fixes: 1e29a162482c ("table: separate out x86-specific from LRU header")
-Fixes: 8aa327214ceb ("table: hash")
+Fixes: 4a8fbc28e431 ("power: add get/set pause duration API")
 Cc: stable@dpdk.org
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 Acked-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- lib/table/rte_lru.h               | 38 +++++++++++++++----------------
- lib/table/rte_lru_arm64.h         | 14 ++++++------
- lib/table/rte_lru_x86.h           |  4 ++--
- lib/table/rte_swx_table_em.c      |  2 --
- lib/table/rte_swx_table_learner.c |  4 ++--
- lib/table/rte_table_hash_key16.c  |  4 +---
- lib/table/rte_table_hash_key32.c  |  4 +---
- lib/table/rte_table_hash_key8.c   |  4 +---
- 8 files changed, 33 insertions(+), 41 deletions(-)
+ lib/power/rte_power_pmd_mgmt.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/lib/table/rte_lru.h b/lib/table/rte_lru.h
-index 28aab12923..1436425e16 100644
---- a/lib/table/rte_lru.h
-+++ b/lib/table/rte_lru.h
-@@ -41,33 +41,33 @@ while (0)
+diff --git a/lib/power/rte_power_pmd_mgmt.c b/lib/power/rte_power_pmd_mgmt.c
+index 6cacc562c2..a4d53aac2a 100644
+--- a/lib/power/rte_power_pmd_mgmt.c
++++ b/lib/power/rte_power_pmd_mgmt.c
+@@ -337,7 +337,7 @@ clb_pause(uint16_t port_id __rte_unused, uint16_t qidx __rte_unused,
+ 	struct queue_list_entry *queue_conf = arg;
+ 	struct pmd_core_cfg *lcore_conf;
+ 	const bool empty = nb_rx == 0;
+-	uint32_t pause_duration = rte_power_pmd_mgmt_get_pause_duration();
++	const uint32_t duration = rte_power_pmd_mgmt_get_pause_duration();
  
- #define lru_update(bucket, mru_val)					\
- do {									\
--	uint64_t x, pos, x0, x1, x2, mask;				\
-+	uint64_t _x, _pos, _x0, _x1, _x2, _mask;			\
- 									\
--	x = bucket->lru_list;						\
-+	_x = bucket->lru_list;						\
- 									\
--	pos = 4;							\
--	if ((x >> 48) == ((uint64_t) mru_val))				\
--		pos = 3;						\
-+	_pos = 4;							\
-+	if ((_x >> 48) == ((uint64_t) mru_val))			\
-+		_pos = 3;						\
- 									\
--	if (((x >> 32) & 0xFFFFLLU) == ((uint64_t) mru_val))		\
--		pos = 2;						\
-+	if (((_x >> 32) & 0xFFFFLLU) == ((uint64_t) mru_val))		\
-+		_pos = 2;						\
- 									\
--	if (((x >> 16) & 0xFFFFLLU) == ((uint64_t) mru_val))		\
--		pos = 1;						\
-+	if (((_x >> 16) & 0xFFFFLLU) == ((uint64_t) mru_val))		\
-+		_pos = 1;						\
- 									\
--	if ((x & 0xFFFFLLU) == ((uint64_t) mru_val))			\
--		pos = 0;						\
-+	if ((_x & 0xFFFFLLU) == ((uint64_t) mru_val))			\
-+		_pos = 0;						\
- 									\
- 									\
--	pos <<= 4;							\
--	mask = (~0LLU) << pos;						\
--	x0 = x & (~mask);						\
--	x1 = (x >> 16) & mask;						\
--	x2 = (x << (48 - pos)) & (0xFFFFLLU << 48);			\
--	x = x0 | x1 | x2;						\
-+	_pos <<= 4;							\
-+	_mask = (~0LLU) << _pos;					\
-+	_x0 = _x & (~_mask);						\
-+	_x1 = (_x >> 16) & _mask;					\
-+	_x2 = (_x << (48 - _pos)) & (0xFFFFLLU << 48);			\
-+	_x = _x0 | _x1 | _x2;						\
- 									\
--	if (pos != 64)							\
--		bucket->lru_list = x;					\
-+	if (_pos != 64)							\
-+		bucket->lru_list = _x;					\
- } while (0)
+ 	lcore_conf = RTE_LCORE_VAR(lcore_cfgs);
  
- #elif (RTE_TABLE_HASH_LRU_STRATEGY == 2) || (RTE_TABLE_HASH_LRU_STRATEGY == 3)
-diff --git a/lib/table/rte_lru_arm64.h b/lib/table/rte_lru_arm64.h
-index f9a4678ee0..817b791b6e 100644
---- a/lib/table/rte_lru_arm64.h
-+++ b/lib/table/rte_lru_arm64.h
-@@ -40,16 +40,16 @@ f_lru_pos(uint64_t lru_list)
- 
- #define lru_update(bucket, mru_val)					\
- do {									\
--	const uint64_t orvals[] = {0xFFFFLLU, 0xFFFFLLU << 16,		\
-+	const uint64_t _orvals[] = {0xFFFFLLU, 0xFFFFLLU << 16,		\
- 		0xFFFFLLU << 32, 0xFFFFLLU << 48, 0LLU};		\
--	const uint64_t decs[] = {0x1000100010001LLU, 0};		\
--	uint64x1_t lru = vdup_n_u64(bucket->lru_list);			\
--	uint64x1_t vdec = vdup_n_u64(decs[mru_val>>2]);			\
-+	const uint64_t _decs[] = {0x1000100010001LLU, 0};		\
-+	uint64x1_t _lru = vdup_n_u64(bucket->lru_list);			\
-+	uint64x1_t _vdec = vdup_n_u64(_decs[mru_val>>2]);			\
- 	bucket->lru_list = vget_lane_u64(vreinterpret_u64_u16(		\
--				vsub_u16(vreinterpret_u16_u64(lru),	\
--					vreinterpret_u16_u64(vdec))),	\
-+				vsub_u16(vreinterpret_u16_u64(_lru),	\
-+					vreinterpret_u16_u64(_vdec))),	\
- 				0);					\
--	bucket->lru_list |= orvals[mru_val];				\
-+	bucket->lru_list |= _orvals[mru_val];				\
- } while (0)
- 
- #endif
-diff --git a/lib/table/rte_lru_x86.h b/lib/table/rte_lru_x86.h
-index 93f4a136a8..de74513653 100644
---- a/lib/table/rte_lru_x86.h
-+++ b/lib/table/rte_lru_x86.h
-@@ -50,9 +50,9 @@ do {									\
- 	/* Find the minimum value (first zero word, if it's in there) */\
- 	__m128i d = _mm_minpos_epu16(c);				\
- 	/* Second word is the index to found word (first word is the value) */\
--	unsigned int pos = _mm_extract_epi16(d, 1);			\
-+	unsigned int _pos = _mm_extract_epi16(d, 1);			\
- 	/* move the recently used location to top of list */		\
--	__m128i k = _mm_shuffle_epi8(b, *((__m128i *) &masks[2 * pos]));\
-+	__m128i k = _mm_shuffle_epi8(b, *((__m128i *) &masks[2 * _pos]));\
- 	/* Finally, update the original list with the reordered data */	\
- 	bucket->lru_list = _mm_extract_epi64(k, 0);			\
- 	/* Phwew! */							\
-diff --git a/lib/table/rte_swx_table_em.c b/lib/table/rte_swx_table_em.c
-index 4ec54cb635..c408ea6fc3 100644
---- a/lib/table/rte_swx_table_em.c
-+++ b/lib/table/rte_swx_table_em.c
-@@ -621,8 +621,6 @@ table_create(struct rte_swx_table_params *params,
- 		return t;
- 
- 	TAILQ_FOREACH(entry, entries, node) {
--		int status;
--
- 		status = table_add(t, entry);
- 		if (status) {
- 			table_free(t);
-diff --git a/lib/table/rte_swx_table_learner.c b/lib/table/rte_swx_table_learner.c
-index 2d61bceeaf..3680bf26c1 100644
---- a/lib/table/rte_swx_table_learner.c
-+++ b/lib/table/rte_swx_table_learner.c
-@@ -411,13 +411,13 @@ rte_swx_table_learner_lookup(void *table,
- 		for (i = 0; i < TABLE_KEYS_PER_BUCKET; i++) {
- 			uint64_t time = b->time[i];
- 			uint32_t sig = b->sig[i];
--			uint8_t *key = table_bucket_key_get(t, b, i);
-+			uint8_t *k = table_bucket_key_get(t, b, i);
- 
- 			time <<= 32;
- 
- 			if ((time > input_time) &&
- 			    (sig == m->input_sig) &&
--			    t->params.keycmp_func(key, m->input_key, t->params.key_size)) {
-+			    t->params.keycmp_func(k, m->input_key, t->params.key_size)) {
- 				uint64_t *data = table_bucket_data_get(t, b, i);
- 
- 				/* Hit. */
-diff --git a/lib/table/rte_table_hash_key16.c b/lib/table/rte_table_hash_key16.c
-index da24a7985d..5b69106dd7 100644
---- a/lib/table/rte_table_hash_key16.c
-+++ b/lib/table/rte_table_hash_key16.c
-@@ -1133,12 +1133,10 @@ rte_table_hash_lookup_key16_ext(
- 		uint64_t buckets_mask_next = 0;
- 
- 		for ( ; buckets_mask; ) {
--			uint64_t pkt_mask;
- 			uint32_t pkt_index;
- 
- 			pkt_index = rte_ctz64(buckets_mask);
--			pkt_mask = 1LLU << pkt_index;
--			buckets_mask &= ~pkt_mask;
-+			buckets_mask &= ~(1LLU << pkt_index);
- 
- 			lookup_grinder(pkt_index, buckets, keys, pkts_mask_out,
- 				entries, buckets_mask_next, f);
-diff --git a/lib/table/rte_table_hash_key32.c b/lib/table/rte_table_hash_key32.c
-index 297931a2a5..0963f57828 100644
---- a/lib/table/rte_table_hash_key32.c
-+++ b/lib/table/rte_table_hash_key32.c
-@@ -1167,12 +1167,10 @@ rte_table_hash_lookup_key32_ext(
- 		uint64_t buckets_mask_next = 0;
- 
- 		for ( ; buckets_mask; ) {
--			uint64_t pkt_mask;
- 			uint32_t pkt_index;
- 
- 			pkt_index = rte_ctz64(buckets_mask);
--			pkt_mask = 1LLU << pkt_index;
--			buckets_mask &= ~pkt_mask;
-+			buckets_mask &= ~(1LLU << pkt_index);
- 
- 			lookup_grinder(pkt_index, buckets, keys, pkts_mask_out,
- 				entries, buckets_mask_next, f);
-diff --git a/lib/table/rte_table_hash_key8.c b/lib/table/rte_table_hash_key8.c
-index 746863082f..5e9dcf10ee 100644
---- a/lib/table/rte_table_hash_key8.c
-+++ b/lib/table/rte_table_hash_key8.c
-@@ -1101,12 +1101,10 @@ rte_table_hash_lookup_key8_ext(
- 		uint64_t buckets_mask_next = 0;
- 
- 		for ( ; buckets_mask; ) {
--			uint64_t pkt_mask;
- 			uint32_t pkt_index;
- 
- 			pkt_index = rte_ctz64(buckets_mask);
--			pkt_mask = 1LLU << pkt_index;
--			buckets_mask &= ~pkt_mask;
-+			buckets_mask &= ~(1LLU << pkt_index);
- 
- 			lookup_grinder(pkt_index, buckets, keys, pkts_mask_out,
- 				entries, buckets_mask_next, f);
+@@ -357,11 +357,11 @@ clb_pause(uint16_t port_id __rte_unused, uint16_t qidx __rte_unused,
+ 		if (global_data.intrinsics_support.power_pause) {
+ 			const uint64_t cur = rte_rdtsc();
+ 			const uint64_t wait_tsc =
+-					cur + global_data.tsc_per_us * pause_duration;
++				cur + global_data.tsc_per_us * duration;
+ 			rte_power_pause(wait_tsc);
+ 		} else {
+ 			uint64_t i;
+-			for (i = 0; i < global_data.pause_per_us * pause_duration; i++)
++			for (i = 0; i < global_data.pause_per_us * duration; i++)
+ 				rte_pause();
+ 		}
+ 	}
 -- 
 2.51.0
 
