@@ -2,49 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F24D9D116F1
-	for <dpdk-dev@archiver.kernel.org>; Mon,  1 Dec 2025 10:53:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2BD2D111A8
+	for <dpdk-dev@archiver.kernel.org>; Mon,  1 Dec 2025 11:45:06 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E11B740261;
-	Mon,  1 Dec 2025 11:53:03 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
- by mails.dpdk.org (Postfix) with ESMTP id D72BB4013F;
- Mon,  1 Dec 2025 11:53:01 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 8E4BD40261;
+	Mon,  1 Dec 2025 12:45:05 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+ by mails.dpdk.org (Postfix) with ESMTP id 3BEC04013F
+ for <dev@dpdk.org>; Mon,  1 Dec 2025 12:45:03 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1764586382; x=1796122382;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=ELMt/53ukMBfw4EOSE11ezcJbPkIb6U2Y5hrbEzInTs=;
- b=fSo7LSAX2LxzdJj6UxVzLLuK79epmnLnI6YZqsQ45EeWs5g69zyTOjtx
- g39bhJ3SkxsFJs44mceVgx2jRHVPT59zkG/W274LHALYIr6iFrqeouDtS
- bAPRl1YVCGk7wmj84jlSt3EW665PFCacoMw87vkKmR5Wz9kqp/g1b2cb0
- nJJkw5wfTTgVSCA35+hy3QFOeWJvYXfd/GzxDaDbvWNdlGc+xNQ+8pozh
- tdbnyDgwD5DdPm0xm0jaXvcE4wcKWHyn8cu5lTcDmFhZgqpXomtluAnAz
- 20xubIT9z5CgDhZ1vlLyKjxIupaSnOdGp5ODKluu3NNzDJIW/yrzLCTyb Q==;
-X-CSE-ConnectionGUID: Fjr23qkWQI6ZUHBT6qlLYQ==
-X-CSE-MsgGUID: lpgC5973RJ6L0nONIZjlVQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11629"; a="54073936"
-X-IronPort-AV: E=Sophos;i="6.20,240,1758610800"; d="scan'208";a="54073936"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
- by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 01 Dec 2025 02:53:01 -0800
-X-CSE-ConnectionGUID: 1tgR0cgdQSa3T79pRSKIrg==
-X-CSE-MsgGUID: kE+hCEj/TdKDgK83R3xYXQ==
+ t=1764589503; x=1796125503;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=9T85Z6oubQrkMqMy5d8iDKfPjAh1aIuivzUzsXPLXro=;
+ b=BLkKvEAdxFo5/caTDjdyEXl0eDk3ZD4lWmgSAmzRsM+TLLnLE4+QuAPg
+ v+PhPIAR55HdFq6zyJcGmNCrT68c+hj54c+M4PLqHT9fIC5GT18suhvbT
+ KFT5Kza+URYA3/bujtNl+FdB/WoynqbMSTMsaiReO+9Skk4Rmnim8t1eR
+ RXugXP/8/WfHkr/IcN5Wcq+gQ3AVHCTAM9fWy1tUR4EMWwRE6C//1hdAd
+ 2Id50WBhnSev1Xs3aY3fMJi9nakyEmnXewmtcIpbilDLEqARolT7j0SqS
+ a3AO5kREYYE8O23qUq1CjET8FORVDlPhW4iJb5YdIKQ9u2Rj2/xIXaem2 g==;
+X-CSE-ConnectionGUID: 7IA3cRVxRae8L0cbiovNkA==
+X-CSE-MsgGUID: Kr50jpW1TIq1jgT0nRNx2g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11629"; a="77991673"
+X-IronPort-AV: E=Sophos;i="6.20,240,1758610800"; d="scan'208";a="77991673"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+ by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 01 Dec 2025 03:45:02 -0800
+X-CSE-ConnectionGUID: jsFQXSHwRqiZub1mToUrug==
+X-CSE-MsgGUID: oti4Dg+ESdeeP5SQmoDVwA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.20,240,1758610800"; d="scan'208";a="193155596"
-Received: from client-08.iind.intel.com ([10.190.203.57])
- by orviesa006.jf.intel.com with ESMTP; 01 Dec 2025 02:52:59 -0800
-From: Anurag Mandal <anurag.mandal@intel.com>
+Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
+ by fmviesa003.fm.intel.com with ESMTP; 01 Dec 2025 03:45:01 -0800
+From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
-Cc: bruce.richardson@intel.com, aman.deep.singh@intel.com,
- stephen@networkplumber.org, Anurag Mandal <anurag.mandal@intel.com>,
- stable@dpdk.org
-Subject: [PATCH] app/testpmd: fix incorrect function names in logs
-Date: Mon,  1 Dec 2025 10:08:36 +0000
-Message-ID: <20251201100837.422764-1-anurag.mandal@intel.com>
-X-Mailer: git-send-email 2.43.0
+Cc: Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH v3 00/31] build DPDK with Wshadow flag
+Date: Mon,  1 Dec 2025 11:44:17 +0000
+Message-ID: <20251201114448.1441377-1-bruce.richardson@intel.com>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20251106140948.2894678-1-bruce.richardson@intel.com>
+References: <20251106140948.2894678-1-bruce.richardson@intel.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -59,46 +59,182 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-VLAN extend and tpid setting functions have wrong function names
-mentioned in the error logs causing confusion as functions are
-not found in code using those names.
+As flagged in bugs #1742, #1743 and others, much of DPDK fails to build
+when -Wshadow flag is passed to the build. This patchset fixes many issues
+of this nature, but not all, in the hopes we can move towards enabling that
+warning flag for all components for DPDK in future. This patchset fixes the
+following components in DPDK:
 
-Replaced static names with dynamic "__func__" predefined identifier.
+* all libraries
+* Intel net drivers
+* all apps in the "app" folder
 
-Fixes: 61a3b0e5e79f ("app/testpmd: send failure logs to stderr")
-Cc: stable@dpdk.org
+For the rest of the drivers and example applications, any component which
+does not build successfully with the shadow warning enabled has it
+explicitly disabled via cflags. Then the last patch adds -Wshadow to the
+global DPDK build, which should prevent any regressions in components which
+are already working.
 
-Signed-off-by: Anurag Mandal <anurag.mandal@intel.com>
----
- app/test-pmd/config.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+At that point, we should not have any regressions and we can, over time,
+reduce the number of components needing the -Wno-shadow flag.
 
-diff --git a/app/test-pmd/config.c b/app/test-pmd/config.c
-index 6ea506254b..afaf9194ba 100644
---- a/app/test-pmd/config.c
-+++ b/app/test-pmd/config.c
-@@ -6502,8 +6502,8 @@ vlan_extend_set(portid_t port_id, int on)
- 	diag = rte_eth_dev_set_vlan_offload(port_id, vlan_offload);
- 	if (diag < 0) {
- 		fprintf(stderr,
--			"rx_vlan_extend_set(port_pi=%d, on=%d) failed diag=%d\n",
--			port_id, on, diag);
-+			"%s(port_pi=%d, on=%d) failed diag=%d\n",
-+			__func__, port_id, on, diag);
- 		return;
- 	}
- 	ports[port_id].dev_conf.rxmode.offloads = port_rx_offloads;
-@@ -6729,8 +6729,8 @@ vlan_tpid_set(portid_t port_id, enum rte_vlan_type vlan_type, uint16_t tp_id)
- 		return;
- 
- 	fprintf(stderr,
--		"tx_vlan_tpid_set(port_pi=%d, vlan_type=%d, tpid=%d) failed diag=%d\n",
--		port_id, vlan_type, tp_id, diag);
-+		"%s(port_pi=%d, vlan_type=%d, tpid=%d) failed diag=%d\n",
-+		__func__, port_id, vlan_type, tp_id, diag);
- }
- 
- void
--- 
-2.43.0
+v3:
+* rebase on 25.11 release.
+
+RFC v2:
+* take patch from Stephen for RTE_MIN/MAX fixes
+* add additional fixes to clear clang warnings - it's a lot stricter than
+  gcc in this regard, and flags more issues.
+* extend app cleanup to all apps, not just testpmd
+* add per-component disabling, and add global enable flag at the end.
+
+
+Bruce Richardson (30):
+  eal: fix variable shadowing
+  ethdev: fix variable shadowing issues
+  eventdev: fix variable shadowing issues
+  net: remove shadowed variable
+  pipeline: fix variable shadowing
+  table: fix issues with variable shadowing
+  power: rename variable to eliminate shadowing
+  pcapng: rename variable to fix shadowing
+  bbdev: fix variable shadowing
+  bus/pci: remove shadowed variables
+  net/intel: rename function param to avoid shadow warnings
+  net/e1000: fix build with shadow warnings enabled
+  net/i40e: fix build with shadow warnings enabled
+  net/ice: fix build with shadow warnings enabled
+  net/cpfl: fix build with shadow warnings enabled
+  net/ixgbe: fix build with shadow warnings enabled
+  app/testpmd: fix build with shadow warnings enabled
+  app/graph: fix build with shadow warnings enabled
+  app/pdump: fix warning about shadowed variable
+  app/test-bbdev: remove shadow warning from next max calls
+  app/test-compress-perf: rename local vars to fix shadowing
+  app/test-crypto-perf: rename local vars to fix shadowing
+  app/test-eventdev: fix build with shadow warnings enabled
+  app/test-flow-perf: remove unneeded variable
+  app/test-security-perf: fix build with shadow warnings
+  app/test-pipeline: remove unnecessary variable
+  drivers: disable variable shadowing warnings for drivers
+  app/test: disable shadowing warnings for unit tests
+  examples: ignore variable shadowing warnings
+  build: enable shadowed variable warnings
+
+Stephen Hemminger (1):
+  eal: add more min/max helpers
+
+ app/graph/conn.c                              | 134 +++++++++---------
+ app/pdump/main.c                              |  12 +-
+ app/test-bbdev/test_bbdev_perf.c              |   7 +-
+ app/test-compress-perf/main.c                 | 122 ++++++++--------
+ .../cperf_test_pmd_cyclecount.c               |   6 +-
+ app/test-eventdev/evt_main.c                  |   6 +-
+ app/test-eventdev/test_atomic_queue.c         |   6 +-
+ app/test-eventdev/test_perf_common.c          |   4 +-
+ app/test-flow-perf/main.c                     |   1 -
+ app/test-pipeline/main.c                      |   1 -
+ app/test-pmd/cmdline_flow.c                   |  42 +++---
+ app/test-pmd/config.c                         |  15 +-
+ app/test-pmd/parameters.c                     |  38 +++--
+ app/test-pmd/testpmd.c                        |   2 +-
+ app/test-security-perf/test_security_perf.c   |  42 +++---
+ app/test/meson.build                          |   1 +
+ app/test/test_cryptodev_security_ipsec.c      |  13 +-
+ config/meson.build                            |   6 +
+ drivers/baseband/fpga_5gnr_fec/meson.build    |   2 +
+ drivers/bus/fslmc/meson.build                 |   2 +
+ drivers/bus/pci/linux/pci.c                   |   1 -
+ drivers/bus/pci/linux/pci_vfio.c              |   2 +-
+ drivers/bus/pci/windows/pci.c                 |   1 -
+ drivers/common/cnxk/meson.build               |   1 +
+ drivers/common/qat/meson.build                |   1 +
+ drivers/compress/nitrox/meson.build           |   2 +
+ drivers/crypto/cnxk/meson.build               |   1 +
+ drivers/crypto/octeontx/meson.build           |   1 +
+ drivers/crypto/openssl/meson.build            |   1 +
+ drivers/crypto/scheduler/meson.build          |   1 +
+ drivers/dma/dpaa2/meson.build                 |   2 +
+ drivers/event/cnxk/meson.build                |   1 +
+ drivers/event/dlb2/meson.build                |   2 +
+ drivers/event/sw/meson.build                  |   1 +
+ drivers/net/axgbe/meson.build                 |   2 +-
+ drivers/net/bnxt/meson.build                  |   1 +
+ drivers/net/bonding/meson.build               |   1 +
+ drivers/net/cnxk/meson.build                  |   1 +
+ drivers/net/cxgbe/meson.build                 |   1 +
+ drivers/net/dpaa/meson.build                  |   1 +
+ drivers/net/dpaa2/meson.build                 |   1 +
+ drivers/net/ena/meson.build                   |   2 +
+ drivers/net/enetfec/meson.build               |   2 +
+ drivers/net/enic/meson.build                  |   2 +
+ drivers/net/failsafe/meson.build              |   1 +
+ drivers/net/intel/common/rx.h                 |   6 +-
+ drivers/net/intel/cpfl/cpfl_flow_engine_fxp.c |   2 -
+ drivers/net/intel/cpfl/cpfl_flow_parser.c     |   6 +-
+ drivers/net/intel/cpfl/cpfl_fxp_rule.h        |   2 -
+ drivers/net/intel/cpfl/cpfl_representor.h     |   2 +-
+ drivers/net/intel/e1000/igc_ethdev.c          |   6 +-
+ drivers/net/intel/i40e/i40e_ethdev.h          |  10 +-
+ drivers/net/intel/ice/ice_ethdev.c            |   6 +-
+ drivers/net/intel/ixgbe/ixgbe_fdir.c          |   7 +-
+ drivers/net/mlx5/meson.build                  |   1 +
+ drivers/net/ntnic/meson.build                 |   3 +
+ drivers/net/pfe/meson.build                   |   3 +
+ drivers/net/qede/meson.build                  |   3 +
+ drivers/net/txgbe/meson.build                 |   1 +
+ drivers/net/zxdh/meson.build                  |   3 +
+ drivers/raw/ifpga/meson.build                 |   2 +
+ drivers/vdpa/mlx5/meson.build                 |   1 +
+ examples/bbdev_app/meson.build                |   1 +
+ examples/bond/meson.build                     |   1 +
+ examples/dma/meson.build                      |   1 +
+ examples/ethtool/meson.build                  |   1 +
+ examples/eventdev_pipeline/meson.build        |   1 +
+ examples/flow_filtering/meson.build           |   1 +
+ examples/ip_pipeline/meson.build              |   1 +
+ examples/ipsec-secgw/meson.build              |   1 +
+ examples/l2fwd-crypto/meson.build             |   1 +
+ examples/l2fwd-event/meson.build              |   1 +
+ examples/l2fwd-jobstats/meson.build           |   1 +
+ examples/l2fwd-keepalive/meson.build          |   1 +
+ examples/l3fwd-graph/meson.build              |   1 +
+ examples/l3fwd-power/meson.build              |   1 +
+ examples/l3fwd/meson.build                    |   1 +
+ .../client_server_mp/mp_server/meson.build    |   1 +
+ examples/packet_ordering/meson.build          |   1 +
+ examples/ptpclient/meson.build                |   1 +
+ examples/qos_sched/meson.build                |   1 +
+ .../server_node_efd/efd_server/meson.build    |   1 +
+ examples/vhost/meson.build                    |   1 +
+ .../vm_power_manager/guest_cli/meson.build    |   1 +
+ examples/vm_power_manager/meson.build         |   1 +
+ examples/vmdq/meson.build                     |   1 +
+ lib/bbdev/rte_bbdev.c                         |   2 +-
+ lib/eal/common/eal_common_options.c           |  22 +--
+ lib/eal/common/eal_common_trace.c             |  89 ++++++------
+ lib/eal/common/malloc_heap.c                  |   2 +-
+ lib/eal/include/rte_common.h                  |  31 +++-
+ lib/ethdev/ethdev_driver.c                    |   6 +-
+ lib/ethdev/rte_ethdev.c                       |   1 -
+ lib/eventdev/rte_event_eth_rx_adapter.c       |   5 +-
+ lib/eventdev/rte_event_eth_tx_adapter.c       |   8 +-
+ lib/net/net_crc_avx512.c                      |   4 +-
+ lib/pcapng/rte_pcapng.c                       |   7 +-
+ lib/pipeline/rte_swx_ctl.c                    |  11 +-
+ lib/pipeline/rte_swx_pipeline.c               |  21 ++-
+ lib/pipeline/rte_swx_pipeline_internal.h      |  10 +-
+ lib/power/rte_power_pmd_mgmt.c                |   6 +-
+ lib/table/rte_lru.h                           |  38 ++---
+ lib/table/rte_lru_arm64.h                     |  14 +-
+ lib/table/rte_lru_x86.h                       |   4 +-
+ lib/table/rte_swx_table_em.c                  |   2 -
+ lib/table/rte_swx_table_learner.c             |   4 +-
+ lib/table/rte_table_hash_key16.c              |   4 +-
+ lib/table/rte_table_hash_key32.c              |   4 +-
+ lib/table/rte_table_hash_key8.c               |   4 +-
+ 109 files changed, 473 insertions(+), 409 deletions(-)
+
+--
+2.51.0
 
