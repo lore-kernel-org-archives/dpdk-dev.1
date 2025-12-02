@@ -2,143 +2,171 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29796D116F5
-	for <dpdk-dev@archiver.kernel.org>; Tue,  2 Dec 2025 07:37:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4B20CFD2F6
+	for <dpdk-dev@archiver.kernel.org>; Tue,  2 Dec 2025 08:17:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 43D8240268;
-	Tue,  2 Dec 2025 08:37:23 +0100 (CET)
-Received: from CH4PR04CU002.outbound.protection.outlook.com
- (mail-northcentralusazon11013058.outbound.protection.outlook.com
- [40.107.201.58]) by mails.dpdk.org (Postfix) with ESMTP id 0B912400D5
- for <dev@dpdk.org>; Tue,  2 Dec 2025 08:37:22 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id C8FEC40268;
+	Tue,  2 Dec 2025 09:17:08 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+ by mails.dpdk.org (Postfix) with ESMTP id D0E02400D5
+ for <dev@dpdk.org>; Tue,  2 Dec 2025 09:17:06 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1764663427; x=1796199427;
+ h=from:to:subject:date:message-id:references:in-reply-to:
+ content-transfer-encoding:mime-version;
+ bh=XMWItZ7MHLzyIIRRfz01OH3dpYMx1j5NvOa9BVd6Jp4=;
+ b=HpiXVKIvMuYeBUODLmSSpFVrFOCsx0fT8zsK4o0OEEY1vtNtkpAwpoTz
+ nCiEeQy8HEUXKiQnC3j4j6XWzHXca/qIbFK3qgDzGiEz2bYAaBzMVUXXD
+ vpP15EHWndFoubR2cqsG0Mq4Fme5HHTfegfYlJ+4akr0A35GtKxuMW5D0
+ KzEGgBph18cBhfK8yqvk48tdwyQoGIgRxxY2fG0nMUAQdFcP/SrEr9xTH
+ 9FpF4sOCTKEhZEZ8RiAHwgTmzUhnuq+RL2GQfo0ztBAizsne35Rxh61W9
+ 9eVglNv1FeZDmr/rSXwCscQdn7bpyDCaBIKmUCz7ZYgzARHxkqAjgKIVr w==;
+X-CSE-ConnectionGUID: I+WUyX2ARWObuv/HqlC3ZA==
+X-CSE-MsgGUID: yvFcSR8qRLSp62RFkhYKiQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11630"; a="70470544"
+X-IronPort-AV: E=Sophos;i="6.20,242,1758610800"; d="scan'208";a="70470544"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+ by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 02 Dec 2025 00:17:05 -0800
+X-CSE-ConnectionGUID: IH2sx639SsistaeBZc1QNg==
+X-CSE-MsgGUID: oiDL6SbHQpKe6T/i+qhdMQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.20,242,1758610800"; d="scan'208";a="194301047"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+ by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 02 Dec 2025 00:17:05 -0800
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.29; Tue, 2 Dec 2025 00:17:04 -0800
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.29 via Frontend Transport; Tue, 2 Dec 2025 00:17:04 -0800
+Received: from CH4PR04CU002.outbound.protection.outlook.com (40.107.201.67) by
+ edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.29; Tue, 2 Dec 2025 00:17:03 -0800
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lLa0G0TdnGNiV7LBqoHRFTuRRAa6IWU4fscKjEiKIJLBhQtHqUnyPMRxnzoZLvF38qGQdHyFGtx2YX8TzlGyJPju96IxxJacCrKJsJToZi0AvZoXsp7EgM+BVCY2tr0dFISXd5G4kFmsRa3VmPlyniu1Lbdgl+fcMnqORHs/+VtayUwybnJDaWVqUni1e6KuPzN31vY09vE3OwCulCcg5MsJN/+vJBjocf9c6oZOU1DQXAmlHE+1kENAf+49O8G6bkC8eKWQhgARYg9koieMXKfy7lkTbKw0g/QBIp3wBRUGwIebB2/j2AfRk5642GGIUV+psUcIthvjEjS018KC6w==
+ b=S0YG6gR6KFtHLsegEoPFlagzVXzS8iyb7N7Evic2vAvXtrG4J5Xyo7Yaa+l1gDGWPAskgIz9acEz9pR95TPIjZKUcMpcb8oJJyi5L1XaLzfjCgfOfGvxdxDVk22PMf9uYHxnZ4XSoGceB+J85z0t9X6uk4/QeUd5YkKCIoZlWNJdeLQgIV1ts8PagsMvnZF4JS7f7SQY7VvD21AIdD7EWZIZg4TWxJb9a1sfg5gYPwqW4dTSrxkgpRLT3EgY2jJ2r9Gm7AVPztJi/ayxYkRPkInORizNJBNkv94+hI+dKlTmJ8QDlV+5GBRcTK3aoL/pi1ue1BqMXuRedJ2UGC7EfQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hg09ukpSvQngSugdmm9BYq7orPuiDmYnqLz5uGoYYtc=;
- b=dJ148eJt8eRMzzoNvJzD7Et9cJ15cJAlXlAQTOO5wpjlb3QbE/2cTK/uQ8YWs/hN0owQQbbODpZPQcvnjwKk5oFw90SXXeHXxNQY2vtxnwN5HrpNsaVNA0upu7PMGugNkoViF8I6o/dV0vcdI2735lhMBaUVfIEthqfu/kb1ov5K8L+OjJIhCcAetbXtd2zIiUrUOD6bjnBWj6Z+96r2eNNAAnlGVwQzL975nXY2qAvjkLjyzzzfu4ByV4sXpclJMGVP5oSlntQ3d9E4eI8yDvxZqkWjNFIqAAB9atuBeXQIL4DdFRaDHEEqW0X6Y/TJkvVPGniq8efjq/QI6RL+9g==
+ bh=mCfH/cve7N3JhuNQtEOkVnOzeo6w58+1TUq7nkl1Nnw=;
+ b=a2oiHZoT6PwZvzHJkUaMUYy5nxKO4ZiN5TY4WIS3k3jCPRnlwuam6t4GsWOT0y+xjn+G/3/dL807nNGv6mPjVAFGUqW0amsC9u/aTUtFDdS87ONGmX7dkElxpvCrBNMSAn/gq/Tn1HMvpo599/cZi4/vHp6ZoFF3n+5xwxaKa25ZU3dMTzBgn0uILmgV+PJY3/DZQbkc1eTGoeNy9tLl+3iN8hYVwqz0szM/+HqH+nSpJSZSpn3VNHmYK61rFjEJjtdlu2zCT5yS5Gsh3safgcJ6ketzLhLyJ4+WobRO2ecgQd9CqX4ByPo+HRxoh+qHAfWRbrTnszOhk0y/GiOggA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1; 
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hg09ukpSvQngSugdmm9BYq7orPuiDmYnqLz5uGoYYtc=;
- b=jxR2BylRn/b2s9aknkRCmcZ6trybJyMMa4ZpgJAMUwCQdge1zbnyTQxrHkwcMoAyDhejkC+aL7AkSxNUBa5hMUSYQpVWzmyFLzeEjZ5iKk7oymPnACX57y4zBxbAOoPb7OE/JWwhQLx95KaGPRRoYbRJ4y8MDTswXI/4xqnqCsw=
-Received: from DM4PR12MB5055.namprd12.prod.outlook.com (2603:10b6:5:39a::20)
- by SA0PR12MB4413.namprd12.prod.outlook.com (2603:10b6:806:9e::9) with
- Microsoft SMTP Server (version=TLS1_2,
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from CY5PR11MB6116.namprd11.prod.outlook.com (2603:10b6:930:2b::14)
+ by MN0PR11MB6255.namprd11.prod.outlook.com (2603:10b6:208:3c4::13)
+ with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9366.17; Tue, 2 Dec
- 2025 07:37:19 +0000
-Received: from DM4PR12MB5055.namprd12.prod.outlook.com
- ([fe80::2c56:65d9:9ce1:c415]) by DM4PR12MB5055.namprd12.prod.outlook.com
- ([fe80::2c56:65d9:9ce1:c415%4]) with mapi id 15.20.9366.012; Tue, 2 Dec 2025
- 07:37:19 +0000
-From: "Sebastian, Selwin" <Selwin.Sebastian@amd.com>
-To: "Govindaiah, Vinay" <Vinay.Govindaiah@amd.com>, "dev@dpdk.org"
- <dev@dpdk.org>
-CC: "Govindaiah, Vinay" <Vinay.Govindaiah@amd.com>
-Subject: Re: [PATCH] net/axgbe: add support for V4000 Kracken2e
-Thread-Topic: [PATCH] net/axgbe: add support for V4000 Kracken2e
-Thread-Index: AQHcY1r+wWBr/ogsRUCgj6aceKeesbUN9jhD
-Date: Tue, 2 Dec 2025 07:37:19 +0000
-Message-ID: <DM4PR12MB505543F20F4534C5A82A029E8DD8A@DM4PR12MB5055.namprd12.prod.outlook.com>
-References: <20251202071152.317942-1-vigovind@amd.com>
-In-Reply-To: <20251202071152.317942-1-vigovind@amd.com>
+ 2025 08:17:01 +0000
+Received: from CY5PR11MB6116.namprd11.prod.outlook.com
+ ([fe80::2b59:d9a6:8854:e9b9]) by CY5PR11MB6116.namprd11.prod.outlook.com
+ ([fe80::2b59:d9a6:8854:e9b9%4]) with mapi id 15.20.9366.012; Tue, 2 Dec 2025
+ 08:17:00 +0000
+From: "Mandal, Anurag" <anurag.mandal@intel.com>
+To: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>,
+ "dev@dpdk.org" <dev@dpdk.org>, "Richardson, Bruce"
+ <bruce.richardson@intel.com>, "Burakov, Anatoly" <anatoly.burakov@intel.com>, 
+ "thomas@monjalon.net" <thomas@monjalon.net>, "andrew.rybchenko@oktetlabs.ru"
+ <andrew.rybchenko@oktetlabs.ru>
+Subject: RE: [PATCH v2] net/ice: add MAC anti-spoof option
+Thread-Topic: [PATCH v2] net/ice: add MAC anti-spoof option
+Thread-Index: AQHcVq02Q5MdAwVwH0eQQbAZdQUWgLT07CkAgAFoL7CAAD5rkIAXXmCw
+Date: Tue, 2 Dec 2025 08:17:00 +0000
+Message-ID: <CY5PR11MB6116A4601EB74D4943216EA2E4D8A@CY5PR11MB6116.namprd11.prod.outlook.com>
+References: <20251113105914.34949-1-anurag.mandal@intel.com>
+ <20251116035749.45922-1-anurag.mandal@intel.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F65562@smartserver.smartshare.dk>
+ <CY5PR11MB61167F082015E76C562C3635E4C9A@CY5PR11MB6116.namprd11.prod.outlook.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F65566@smartserver.smartshare.dk>
+In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F65566@smartserver.smartshare.dk>
 Accept-Language: en-US
-Content-Language: en-IN
+Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Enabled=True;
- MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;
- MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SetDate=2025-12-02T07:37:06.5216087Z;
- MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Name=AMD
- Internal Distribution
- Only; MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ContentBits=3;
- MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Method=Standard
-x-ms-reactions: allow
 authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
+ header.d=none;dmarc=none action=none header.from=intel.com;
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DM4PR12MB5055:EE_|SA0PR12MB4413:EE_
-x-ms-office365-filtering-correlation-id: 4d41dbec-6ec7-4545-ca84-08de31759fef
+x-ms-traffictypediagnostic: CY5PR11MB6116:EE_|MN0PR11MB6255:EE_
+x-ms-office365-filtering-correlation-id: 4f7b51fe-035b-48bc-67fa-08de317b2b30
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
- ARA:13230040|366016|10070799003|376014|1800799024|38070700021|8096899003|7053199007;
-x-microsoft-antispam-message-info: =?us-ascii?Q?HoG5MX5g4kOAQnttgYo2kVkRQfv6U00aT/GtvES4wa3ie5DVx+QKP0daSRuV?=
- =?us-ascii?Q?FzRWWK7eMOR4uQKWZ9n1NggcMBgx9V2+5T4+0V7hp25en/0dHwpwNGzWqZJg?=
- =?us-ascii?Q?7tgXGdjoieh4WvTBZeE2A70nGtIRhblSk8a01jLrv3/c0jzJWiPSsZ//FnF+?=
- =?us-ascii?Q?LA+zbS4Xup28BbdLQdDMfOz7heAdHlxdc+JCNHJ9kw+EsrHrtlfyOUol4tFW?=
- =?us-ascii?Q?BqFaikR22w5ARJTpT1KvIFzjHyLkuJKA9dz2zW9Ksml9dzO01wQV0I9IfUJN?=
- =?us-ascii?Q?rxBcoAjO/+YNVPTdK3nfWLx/R0lCY3GMXv62JgPjiLNr5c3dVjQ/7KYYZUrU?=
- =?us-ascii?Q?UcriQA5i1W5cmajFlKRqDfZ+Tip1Y86PJjrRjfPjeFIRP3DumuwQjUam9FSF?=
- =?us-ascii?Q?8qveH86mTVrWSfKm/1U3W6fOSqmkK6iaJG+Ld0cwYnQJqvxXcKh5RkaqZ/7N?=
- =?us-ascii?Q?UoABtqR60JQDTu3yXIeIGm6JysEkE4yy3ItlVy7KPti3DQkuy8dYLXzpT6ZN?=
- =?us-ascii?Q?q+y1uVhM726HxgLaG+DhSeRgqPu2H9oCqjcJENUHFIthdGE9T55f+4rYzwpf?=
- =?us-ascii?Q?2GgovV4wt+H1Y+Yk2cZnx77Zbun1/lxMa0EcfLL9Acbed57/4PPhEGRwiSJq?=
- =?us-ascii?Q?OoKFWLht7yLj9R0pEXkpyVVQbchanmTI278V3jQG0r81fYPN3sH7rSk0AT52?=
- =?us-ascii?Q?Gq5UcFnh1LG5n4B9+uKQfH/YYs7IB04ZEBAupKgl6vi0QIdCHoBLPnY2QwLJ?=
- =?us-ascii?Q?siKjWc4cnJiVFTAeLfDKRXuZLejGoVpjCyvpz6jI7tg+xdcZZURExOnkt5T/?=
- =?us-ascii?Q?TMnyrrKMNU5J3OVtlYWvGBGTWYlM1JSOgSK8YmzkLMRjSFJhOxmidvjmHDM0?=
- =?us-ascii?Q?KKKXqNwTHlFc0jyaE6vhYMW0TbKp2QqYQSyc6AJ9+WlkKs6MLnXtsHfaG1qO?=
- =?us-ascii?Q?Y2spz4rfJoNJ9M4fcytd3WZZmx+o/ByHLVtJ2cEb02sSjkquSffkeD+kPO16?=
- =?us-ascii?Q?byh5T1w1VXhGXf/tjPLiHYZGNFA5hSxoMAHkE4ehB3ARmVLUgmArYIj9c3DP?=
- =?us-ascii?Q?p0kSmeOKR1dRcT63/3oeGxxtzm8mYup8ev91n8pWb1mxMEv2cN6c9Rvf0k+9?=
- =?us-ascii?Q?jlG7378eFxkweZ8du8lOmiboTwEt79M9dIhvFgPOos6fsx5iimedsWoKJzzb?=
- =?us-ascii?Q?4pOPqxoLwj9sC8ozDPkA5vlNqsrVgGpndtF6gfI0V7K17W/Zyl4wGJ+Pdst4?=
- =?us-ascii?Q?mHWfKeJn0shExX2qCpS/ZpSIRrsMesRqkduiyDRGS9ueHy/ceB1GlFKHXIma?=
- =?us-ascii?Q?DBnhD6qL/j79C4xi9eSxfG27dc3+JLLGZLojH6CohX4jPsM9V+BJl2byyHse?=
- =?us-ascii?Q?O5c0coYTEHQ2WjY2HORLe8ayq6o60cjrZ27MBBt0dHWEFpkCrHFJj+1+op7X?=
- =?us-ascii?Q?b3VkpkJs4jr4Ah6s2pOSFPdriJe/8IYHMbdiHHupYaKmjv9xO66LuzdajDk7?=
- =?us-ascii?Q?pKwX4FDAO4n/RK/JhXQCIIFP/iFO90ebIzkp?=
+x-microsoft-antispam: BCL:0; ARA:13230040|366016|1800799024|376014|38070700021;
+x-microsoft-antispam-message-info: =?iso-8859-1?Q?3e+jCwl6xVIHamIS/i+VDktgNLL569ENyoPid5Baq5j+uP1KFs6nJPVjYm?=
+ =?iso-8859-1?Q?kGLkFrfVryB269FIP0lNzgq4fqo3naPbRZ6gAvUO7DSAsE1GbP7Z/prBby?=
+ =?iso-8859-1?Q?S+NZdPWw9y+Hg1WQsnKhnkHpHR3NzPkUbIpADQI1dvttRGIXYCbX1h4xuC?=
+ =?iso-8859-1?Q?zsIa9RW2iRd/NelaRzDb7Ijx9tDY458vScMTR81aE6GA5j6iMdzSfGbuaw?=
+ =?iso-8859-1?Q?t1tCyD17JuvFv2JGWUEKIjWTNYFGGkSQI54QHlTIdsXDeOd7OqiE+YplHL?=
+ =?iso-8859-1?Q?osK47e+i2T2s0+Lekl2gDn+R2L9a8Y6IrK2TNeM+Ccnbxx7OOo5SWr0D10?=
+ =?iso-8859-1?Q?wZDx2qYeJuqazehVVBKn1m85P7+DAgs0ATIviGTN+6tI2GGQzzqbMBwqFc?=
+ =?iso-8859-1?Q?v0nLD8qTQsghXJxHWsCjt37dTFpCrq4Tmm4SUf3p/x3RLcPCfbB1wFxIN9?=
+ =?iso-8859-1?Q?0dsFsAC+HnDY4xgukGGrw9O26u1mmzi9icdGsiwO2jcCvKcWUihtvLqM0J?=
+ =?iso-8859-1?Q?TPNDEVHHi5YOlUNK5ujZjVpUJGCJ//OPF1DN4QpMZJafKHbDgRkhMZ7qDD?=
+ =?iso-8859-1?Q?/Fz2oSeDqEdFE6uoCfE+9hks5gxQa8AV+0pkbVC3Ihe4Xp/f3di7zmK2Ma?=
+ =?iso-8859-1?Q?BghWE91DpFw8bvYs17a7m+V7v6tWibxkPni2ZOyusQr+v5ZnAWpiR48M3F?=
+ =?iso-8859-1?Q?vIqcgqOyi8ALgu0ky93YCHrh8bSoiZxLvaEGuqJ3HQ249+vg3HhhG1ZbQP?=
+ =?iso-8859-1?Q?ssy1Nc3CBdC1l2112OQsnK3OgmZzubjsjVDKuvyUccZ2E4gIcb8caRHE81?=
+ =?iso-8859-1?Q?GvgNWWEW31gEsiBoN4Gx3P3P0LCvpU/edJsqYTLzw+9DI1FKc1r2t15vVq?=
+ =?iso-8859-1?Q?MTgrOFzGwIlsUVkzSMa9rD6jiwsYHuULcuaeax8Odu3DtjvCw3KxA9mrR+?=
+ =?iso-8859-1?Q?iU/7qzJ+566d22F4X8PsH/JIBoiRJzSkglQPpsUG1C8MdNH4EjNJVaIW4X?=
+ =?iso-8859-1?Q?jk4OjXS0gblg0Mra09K9T89h4NK8FI5+6k0olCR5ca4r300PXEgTJz6TCH?=
+ =?iso-8859-1?Q?Ulgn8Qe7LuMYiytT3AI0y6Usvzb5tWf1rI9KAZBL0UWq6U7dqZH/2DtfbR?=
+ =?iso-8859-1?Q?xKW3wVD9t2OZT9YknGrl6lZIRW0pSH3wRkncVfXCnTiURCQPH5j5ksvska?=
+ =?iso-8859-1?Q?J4TV+BjS9DQv2GKcjqObH7eB0SOUmnfExOpvP42jVnNndzymO8bpnRMT06?=
+ =?iso-8859-1?Q?qKmFMQsjvcEgj3NRdET7ivJLw8fOLDP4VQrHXfgkNpWLxlXMuhmwEhlV9C?=
+ =?iso-8859-1?Q?E7XvR0H/Iper3tzT2Jvt4f6vyhAbZpPntfSY/j8jzpYgVyLPPDebwSt0fa?=
+ =?iso-8859-1?Q?Jwf49G6u40Qr2e7ALM6hM24wzRpUUCrQE2x8mm6YqA5klnE9WLpowEdBWB?=
+ =?iso-8859-1?Q?8lTJwx9x6dff8Ot6Gd+TI0iOmpU/wQgrHJPhVoPJkCGJ/I0QMN6dcN+JDV?=
+ =?iso-8859-1?Q?wvY6XQIB9vj/UuKmzkKTem3N+fin/gvbM4iQCHjWSvHg=3D=3D?=
 x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DM4PR12MB5055.namprd12.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(10070799003)(376014)(1800799024)(38070700021)(8096899003)(7053199007);
- DIR:OUT; SFP:1101; 
+ IPV:NLI; SFV:NSPM; H:CY5PR11MB6116.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(366016)(1800799024)(376014)(38070700021); DIR:OUT; SFP:1101; 
 x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?OzUhno0JJ9Wz7C/upej1ZwYgZfOhMgr/3OeAJjSDvUdHkJgdmkfLgr1iawuq?=
- =?us-ascii?Q?VTQMWIGgzmivTzVRvC4TtMLroiesr8/CxPVy5NQldtymvfU9TKf3xLxBRcPI?=
- =?us-ascii?Q?j8z7dWXf0VlUlg4/TXs6r5VJ9hXVve5IMOEbfoHCU0ybie34xiqkFJNUZxgS?=
- =?us-ascii?Q?oyeeYo0xgyEXl7MBXEl8ykZWxUMAb92x0lTI1Z3qSs8ETOVIvLpDujfOudnL?=
- =?us-ascii?Q?pqzVJDovKu/EkEw5Nri6A9o7IK3EOuIhtSTqWx6p9KEWyJGDGWkIyvT8Qud5?=
- =?us-ascii?Q?KqUG2fVfPDl4Xm9IOO3XJgemxFDQYotOBaRLqJuen1+6SiKXC7rVyV69GZCM?=
- =?us-ascii?Q?R/YdcVY+646KNKMLWVedwZ5Zv9EBEfdUER81UUSkwIfR/jnBfqEvZZtf29Fc?=
- =?us-ascii?Q?0I0/VupGhrZLdgCdAfVCO2FYbjM4lNmRniHuWPiE4Wn/zixG0t2A6z41XOM/?=
- =?us-ascii?Q?xD1YFtjJGla0Gh/i+0FdmBTGtlJIS4XWlaaw2bbSVnTe94c/8Z9nuEUkNfRJ?=
- =?us-ascii?Q?73EBdeAlBCwosEX9+IV7DOI/vwlz4GmVRYMYZKgcDtnE8rjVrLKJoR+Ht0Ud?=
- =?us-ascii?Q?d9s5BOwU3r+cBQAE7QwxMlah3biDYRzhMLyhHVrBN8aKo8l/8UQVJBtt/mei?=
- =?us-ascii?Q?6Y/aIlN/zGae4xKPAAVel01qKejgWuetbEcN1zi2ZbbtW+4ZRnRQl3S0+K+g?=
- =?us-ascii?Q?DhPXeMPqIH51ruv7Vp0P+PZA9zOLGln2I05uivDRzdFspYaZXPoE52IJaJT6?=
- =?us-ascii?Q?y4j6TnEhUFVAMqXci33yf33BwFpH7J3yNPZvyNLG+GOrr83x4ao6Njgdg9rC?=
- =?us-ascii?Q?MR9b3DQayCfcciQ/OCxehjxFeYemV5RfNrkecDaUCvmvlYpJQUBpnXSnteff?=
- =?us-ascii?Q?erfXYaxcV5PyiuppD2SYQ3pempQKmEepvjrUenTCV1FaueBMEmi+l1YKkO4T?=
- =?us-ascii?Q?t2ePI3GKmkZepXldvdu/36oNtMj6Cb1BCSqMEjiDiINEHq3XZwIU8qvS09NZ?=
- =?us-ascii?Q?gfV6Dq40o69ebljS7/HHKe5Ewow9FZLHsEuRRBMk+kcbDSf/LQgGC3TZRrjC?=
- =?us-ascii?Q?yujxrZLj8F7pzf8qlth6unIvdsWJEvu3HJUyhESm2sNSjUrrZJNAMe+i0yhq?=
- =?us-ascii?Q?N3i6zFB6Cv46w6eX+nTm3+mIgBACUTsk5sFVQhAraJ9OZgWjbopspU0hk+Nd?=
- =?us-ascii?Q?V3/qd89obrUT/IyVMj/NP7FF1xoamfVcZP72eY84ueevTjHtq8Xtfkf2IHME?=
- =?us-ascii?Q?CS5Dk66jXaDsMgzCBTcAMsMyUyB34qkhYJYDhX7t/5bJ2sNGNJgnnV+V0XGZ?=
- =?us-ascii?Q?CXGaFriXuGT489pUM+RZBM+P4afn7l4ans+Lo86FVPnw08rhunNUkabSHoFe?=
- =?us-ascii?Q?7gfxdm26WLuy4YhfsF5B7RtW7HxYIY0lJmkvLzfh2P+VQdKCgu7Npz7QPA3S?=
- =?us-ascii?Q?4COGB0dN0rvv6viUtfpM/9M0bODISWCC8XWBxWgJGNThwctXIBW8F/R8zZ5L?=
- =?us-ascii?Q?LNc7Dag+/nsdUdfv80MBMYuNc12PioPi2mz9tI63ZxzS9Z28ZWafSdHUo/I1?=
- =?us-ascii?Q?eyKrAEwK1SwrEkFExWKr7mt3npSqCFiuUeoj8+WkDQcJLqJtBZNPKIlR6zuj?=
- =?us-ascii?Q?+++2HybbX1y5JMa1+5a0aEBdjOd6syiMBwyP+4PczfNsKHzgpoIZ/Yul6iVn?=
- =?us-ascii?Q?6rv/hA=3D=3D?=
-Content-Type: multipart/alternative;
- boundary="_000_DM4PR12MB505543F20F4534C5A82A029E8DD8ADM4PR12MB5055namp_"
+x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?8SXsrv52eE+DJpzP9FQ17YCZImx7LX9CmksZINiE0vI1PZ3yaQujaueh+B?=
+ =?iso-8859-1?Q?jVu5+DSFjcdseLj99KV6bAmj2vfL1o7J0HWYGSUQb6RBZP+yz1lCerN44u?=
+ =?iso-8859-1?Q?/ddYEwpgAXTiGHQlBksSq1QBL7W5KzkfXLj2A7wWrh7FjLrN9hTRYIMJ3U?=
+ =?iso-8859-1?Q?m320s932jDR4MCEFVR0p+hZteeZ6AH1FVoTFTgUizQgJXO6IQ52DrvWBC+?=
+ =?iso-8859-1?Q?VI66BOL+WCaY2PjfuZzxN8npYWfmqHXZhx4IXXRmAG2NNpGe5KEaec9PkZ?=
+ =?iso-8859-1?Q?iJy9QfLO1MGNCMDBpX8NpmfKvs6hZ5NLK2S3NK3xvYhXfWWJ1icviRo+el?=
+ =?iso-8859-1?Q?8u0xYjBbS8pdv8xjClIDfVqNFTl6QAXlKhO9frxOKhahwmEQ2hri+2vBGt?=
+ =?iso-8859-1?Q?rxUrUx87/jDVui4ehkQ1wmr9z10zDzmYa25lQ9F7INWSx7mCu2Jel44FlG?=
+ =?iso-8859-1?Q?pXgSg4UT/Lzer6JMldw3U1t2n8sbRSdtN+D0GMfG0SMWfEcvBVuAbK+ZPY?=
+ =?iso-8859-1?Q?ulRjs34qfpKA6RV1HCZFUozaxriAxa0UVW9bMg1unOidUR/JsZ98nhllrh?=
+ =?iso-8859-1?Q?CSkHHkK9sL0PWb5hNNsmUJtoV/014NdX2JQZHu+24SqzOdMpEA1YG7d1nZ?=
+ =?iso-8859-1?Q?9J6BuX9cMQKmsX3oSx2vIwCTsqYZvghbAxi+ppGTizc5eSMtOvZsvcnQ4M?=
+ =?iso-8859-1?Q?p9rFhu/WVVYEQgC/fWaFaIaGTh8guKpTvjCgRwZW8DPLwn1nk3400OkHFB?=
+ =?iso-8859-1?Q?ivdiRZaoizeFW83THKKYCPbi7cdCilK+1r75z+jMbvbWSYHNoHXMvR7Eu/?=
+ =?iso-8859-1?Q?xzuPiPugO06EuBcgCeUNkGM8Y2qnO5jZcdg7+u/xVGT8hB8y7TpqWQMsrX?=
+ =?iso-8859-1?Q?7EjwQs8Kv2fWgwqEv+0gqxU6k70COJgKwxeuGMDp+E9eIKv5t/C5ma3Cab?=
+ =?iso-8859-1?Q?xmWbuOQrZVABtP61ve0B15BMMNkXWitfRlj6iipdgoQirQ3eID5jTVoSeo?=
+ =?iso-8859-1?Q?RF45beb/6FZkzQUk5tA+7eZQ2kAqQPb3Snv5XKV//57PJ25Oxp9CyawXRi?=
+ =?iso-8859-1?Q?kuxU86Bxwtg6oS7NglQKib3Ee1F2A14zPAVHuXygj2nv0O+AlWZv7KNqo2?=
+ =?iso-8859-1?Q?alLCE/S9+lw/bUcp3taQa0nvjmGBHg4oxCnmT81FDL11ocNdM9OAoCuyZ/?=
+ =?iso-8859-1?Q?VcFLPyrxAUOY+x0bWQgxhfb4jPXySoIxnb/FiCpzmHwufsFAz1pCiXbKb3?=
+ =?iso-8859-1?Q?xqbUc0qgqpT4F4TZHBtO1BlSUFvBbErdYMOCqiBtmD6cNWynTTSJXx5Nag?=
+ =?iso-8859-1?Q?B7cjxRQug9/6zHt+gmTDq2lWpL4eYrBLQ3AchkKp/Vs8UpC9Ye15UUTotC?=
+ =?iso-8859-1?Q?rkH8SSH6vJkxUsjKsqWp+Y+7pmwTOq3KrGbIbkmjPpTplXIXEgIoaFBHLV?=
+ =?iso-8859-1?Q?uiSaJzc9jd9nfi/h1CswPMlpZyMW1BuDEAQIgEPicgmX4gsqg0kVc268sK?=
+ =?iso-8859-1?Q?LjEXPP5UqZ5EnH1Y5KejiIDlEE6KoRk3MmJwjFmUbI0j8rpulLunmOzV3P?=
+ =?iso-8859-1?Q?3Ym6mandML2FgHUizKgARf9UeK2sUwe8eGTZQNoYsSyvGB4p7J/YCsFQSI?=
+ =?iso-8859-1?Q?uB5ILTeeQhxKLb3uFUU9QiDzr7qe/7blda?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5055.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4d41dbec-6ec7-4545-ca84-08de31759fef
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Dec 2025 07:37:19.7147 (UTC)
+X-MS-Exchange-CrossTenant-AuthSource: CY5PR11MB6116.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4f7b51fe-035b-48bc-67fa-08de317b2b30
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Dec 2025 08:17:00.8088 (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 4IyPsy7jka0Q/as4ogSZNpP/TL3+NA5m460s2UfEJ9huppok2FDZjrJXdQPITkgz09J/ZUHMyFX4+xcelTadYQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB4413
+X-MS-Exchange-CrossTenant-userprincipalname: r/Il8D1A3U79O1MXoy36GeoI1/Oz3sFfo4h2PHtOeMzEFPPqznAKmw379v6P9vgDOMW6aWxzf484yN3yiBJsZg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR11MB6255
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -152,232 +180,160 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---_000_DM4PR12MB505543F20F4534C5A82A029E8DD8ADM4PR12MB5055namp_
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Hi Morten Br=F8rup,
 
-[AMD Official Use Only - AMD Internal Distribution Only]
+Apologies for late reply but as the patch was deferred from DPDK 25.11. Hen=
+ce, I was waiting.
+PFB my answers.
 
-Acked-by: Selwin Sebastian<selwin.sebastian@amd.com>
+Q1: " Please disable anti-spoof filtering by default, and provide an option=
+ to enable it.
+Like source-prune."
+[Ans]: MAC anti-spoof is enabled by default in kernel ice driver.=20
+Hence, it seems a better idea to make it enabled by default to keep it in s=
+ync with kernel and in terms of security.
 
-Get Outlook for iOS<https://aka.ms/o0ukef>
-________________________________
-From: Govindaiah, Vinay <Vinay.Govindaiah@amd.com>
-Sent: Tuesday, December 2, 2025 12:41:52 PM
-To: dev@dpdk.org <dev@dpdk.org>
-Cc: Sebastian, Selwin <Selwin.Sebastian@amd.com>; Govindaiah, Vinay <Vinay.=
-Govindaiah@amd.com>
-Subject: [PATCH] net/axgbe: add support for V4000 Kracken2e
+Q2: " Is support for "vlan-anti-spoof" in the pipeline?"
+[Ans]: Not sure but " vlan_anti_spoof_on" is present in code.
 
-add device ID's for Kracken2e to enable
-driver to support this device.
+Q3: " What are your thoughts about the generic Ethdev APIs I suggested, ins=
+tead of driver specific devargs?"
+[Ans]: It is unlikely that a user would want these mac anti-spoof/src prune=
+ to be set/reset dynamically. Hence,  it seems devargs likely be a better s=
+olution.
+Generic Ethdev APIs is a good idea but should be taken separately as it wil=
+l have much beyond scope than this and would need significant effort.
+Also, that again bring the dynamic nature into the picture.
 
-Signed-off-by: Vinay Govindaiah <vigovind@amd.com>
----
- drivers/net/axgbe/axgbe_common.h |  2 ++
- drivers/net/axgbe/axgbe_ethdev.c | 16 ++++++++++++++++
- 2 files changed, 18 insertions(+)
+Thank you.
 
-diff --git a/drivers/net/axgbe/axgbe_common.h b/drivers/net/axgbe/axgbe_com=
-mon.h
-index 93e6c177b6..6e4e23027d 100644
---- a/drivers/net/axgbe/axgbe_common.h
-+++ b/drivers/net/axgbe/axgbe_common.h
-@@ -905,6 +905,8 @@
- #define PCS_V2_RV_WINDOW_SELECT         0x1064
- #define PCS_V2_YC_WINDOW_DEF            0x18060
- #define PCS_V2_YC_WINDOW_SELECT         0x18064
-+#define PCS_KR_WINDOW_SELECT            0x8080
-+#define PCS_KR_WINDOW_DEF               0x8060
+Regards,
+Anurag M
 
- /* PCS register entry bit positions and sizes */
- #define PCS_V2_WINDOW_DEF_OFFSET_INDEX  6
-diff --git a/drivers/net/axgbe/axgbe_ethdev.c b/drivers/net/axgbe/axgbe_eth=
-dev.c
-index cf3b0d9ef5..aa7d332b44 100644
---- a/drivers/net/axgbe/axgbe_ethdev.c
-+++ b/drivers/net/axgbe/axgbe_ethdev.c
-@@ -185,6 +185,7 @@ static const struct axgbe_xstats axgbe_xstats_strings[]=
- =3D {
+-----Original Message-----
+From: Morten Br=F8rup <mb@smartsharesystems.com>=20
+Sent: 17 November 2025 14:36
+To: Mandal, Anurag <anurag.mandal@intel.com>; dev@dpdk.org; Richardson, Bru=
+ce <bruce.richardson@intel.com>; Burakov, Anatoly <anatoly.burakov@intel.co=
+m>; thomas@monjalon.net; andrew.rybchenko@oktetlabs.ru
+Subject: RE: [PATCH v2] net/ice: add MAC anti-spoof option
 
- #define Fam17h  0x17
- #define Fam19h  0x19
-+#define        Fam1Ah  0x1A
+> From: Mandal, Anurag [mailto:anurag.mandal@intel.com]
+> Sent: Monday, 17 November 2025 06.22
+>=20
+> Hi Morten Br=F8rup,
+>=20
+> Thanks for your mail and review. PFB my answers.
+>=20
+> " This is the same story as with Source Prune.
+> Please disable source-prune filtering by default, and provide an=20
+> option to enable it.
+> Also, suggest shortening the devargs name to simply "anti-spoof", like=20
+> "source-prune"; they both operate on MAC basis."
+>=20
+> [Ans]: Source prune is disabled by default and option to enable the=20
+> same has been already committed:[=20
+> https://github.com/DPDK/dpdk/commit/980c840a646a2c8ae49a291c17baf20a74
+> f
+> 36086].
 
- #define CPUID_VENDOR_AuthenticAMD_ebx   0x68747541
- #define CPUID_VENDOR_AuthenticAMD_ecx   0x444d4163
-@@ -2291,6 +2292,21 @@ eth_axgbe_dev_init(struct rte_eth_dev *eth_dev)
-                         unknown_cpu =3D 1;
-                 }
-                 break;
-+               case Fam1Ah:
-+               /* V4000 (krackan2e) */
-+               if (cpu_model =3D=3D 0x68) {
-+                       pdata->xpcs_window_def_reg =3D PCS_KR_WINDOW_DEF;
-+                       pdata->xpcs_window_sel_reg =3D PCS_KR_WINDOW_SELECT=
-;
-+
-+                       /* V4000-Krkan2e devices do not need cdr workaround=
- */
-+                       pdata->vdata->an_cdr_workaround =3D 0;
-+
-+                       /* V4000-Krkan2e devices do not need rrc */
-+                       pdata->vdata->enable_rrc =3D 0;
-+               } else {
-+                       unknown_cpu =3D 1;
-+               }
-+               break;
-                 default:
-                         unknown_cpu =3D 1;
-                         break;
---
-2.34.1
+Sorry, there was a typo... I meant to write:
+Please disable anti-spoof filtering by default, and provide an option to en=
+able it.
+Like source-prune.
 
+> I also wanted to shorten the name to "anti-spoof" but I found=20
+> something called " vsi->vlan_anti_spoof_on" in the same file.
+> Hence, to distinguish between them, used "mac-anti-spoof".
 
---_000_DM4PR12MB505543F20F4534C5A82A029E8DD8ADM4PR12MB5055namp_
-Content-Type: text/html; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+OK. Then "mac-anti-spoof" is a good choice.
 
-<html>
-<head>
-<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Dus-ascii"=
->
-</head>
-<body>
-<p style=3D"font-family:Calibri;font-size:10pt;color:#0000FF;margin:5pt;fon=
-t-style:normal;font-weight:normal;text-decoration:none;" align=3D"Left">
-[AMD Official Use Only - AMD Internal Distribution Only]<br>
-</p>
-<br>
-<div>
-<div style=3D"font-family: Aptos, -apple-system, HelveticaNeue, sans-serif;=
-font-size: 12pt">
-<div dir=3D"ltr" style=3D"font-family: Aptos; font-size: 15.4px;"><span sty=
-le=3D"color: rgb(33, 33, 33); text-transform: none;">Acked-by: Selwin Sebas=
-tian&lt;</span><span style=3D"color: rgb(15, 108, 189); text-transform: non=
-e;">selwin.sebastian@amd.com</span><span style=3D"color: rgb(33, 33, 33); t=
-ext-transform: none;">&gt;</span></div>
-</div>
-<div id=3D"ms-outlook-mobile-body-separator-line" style=3D"font-family: Apt=
-os, -apple-system, HelveticaNeue, sans-serif;font-size: 12pt" dir=3D"auto">
-<br>
-</div>
-<div id=3D"ms-outlook-mobile-signature" style=3D"font-family: Aptos, -apple=
--system, HelveticaNeue, sans-serif;font-size: 12pt">
-Get <a href=3D"https://aka.ms/o0ukef">Outlook for iOS</a></div>
-<hr style=3D"display:inline-block;width:98%" tabindex=3D"-1">
-<div id=3D"divRplyFwdMsg" dir=3D"ltr"><font face=3D"Calibri, sans-serif" st=
-yle=3D"font-size:11pt" color=3D"#000000"><b>From:</b> Govindaiah, Vinay &lt=
-;Vinay.Govindaiah@amd.com&gt;<br>
-<b>Sent:</b> Tuesday, December 2, 2025 12:41:52 PM<br>
-<b>To:</b> dev@dpdk.org &lt;dev@dpdk.org&gt;<br>
-<b>Cc:</b> Sebastian, Selwin &lt;Selwin.Sebastian@amd.com&gt;; Govindaiah, =
-Vinay &lt;Vinay.Govindaiah@amd.com&gt;<br>
-<b>Subject:</b> [PATCH] net/axgbe: add support for V4000 Kracken2e</font>
-<div>&nbsp;</div>
-</div>
-<div class=3D"BodyFragment"><font size=3D"2"><span style=3D"font-size:11pt;=
-">
-<div class=3D"PlainText">add device ID's for Kracken2e to enable<br>
-driver to support this device.<br>
-<br>
-Signed-off-by: Vinay Govindaiah &lt;vigovind@amd.com&gt;<br>
----<br>
-&nbsp;drivers/net/axgbe/axgbe_common.h |&nbsp; 2 ++<br>
-&nbsp;drivers/net/axgbe/axgbe_ethdev.c | 16 ++++++++++++++++<br>
-&nbsp;2 files changed, 18 insertions(+)<br>
-<br>
-diff --git a/drivers/net/axgbe/axgbe_common.h b/drivers/net/axgbe/axgbe_com=
-mon.h<br>
-index 93e6c177b6..6e4e23027d 100644<br>
---- a/drivers/net/axgbe/axgbe_common.h<br>
-+++ b/drivers/net/axgbe/axgbe_common.h<br>
-@@ -905,6 +905,8 @@<br>
-&nbsp;#define PCS_V2_RV_WINDOW_SELECT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp; 0x1064<br>
-&nbsp;#define PCS_V2_YC_WINDOW_DEF&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp;&nbsp;&nbsp; 0x18060<br>
-&nbsp;#define PCS_V2_YC_WINDOW_SELECT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp; 0x18064<br>
-+#define PCS_KR_WINDOW_SELECT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
-p;&nbsp;&nbsp;&nbsp; 0x8080<br>
-+#define PCS_KR_WINDOW_DEF&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0x8060<br>
-&nbsp;<br>
-&nbsp;/* PCS register entry bit positions and sizes */<br>
-&nbsp;#define PCS_V2_WINDOW_DEF_OFFSET_INDEX&nbsp; 6<br>
-diff --git a/drivers/net/axgbe/axgbe_ethdev.c b/drivers/net/axgbe/axgbe_eth=
-dev.c<br>
-index cf3b0d9ef5..aa7d332b44 100644<br>
---- a/drivers/net/axgbe/axgbe_ethdev.c<br>
-+++ b/drivers/net/axgbe/axgbe_ethdev.c<br>
-@@ -185,6 +185,7 @@ static const struct axgbe_xstats axgbe_xstats_strings[]=
- =3D {<br>
-&nbsp;<br>
-&nbsp;#define Fam17h&nbsp; 0x17<br>
-&nbsp;#define Fam19h&nbsp; 0x19<br>
-+#define&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Fam1Ah&nbsp; 0x1A<br>
-&nbsp;<br>
-&nbsp;#define CPUID_VENDOR_AuthenticAMD_ebx&nbsp;&nbsp; 0x68747541<br>
-&nbsp;#define CPUID_VENDOR_AuthenticAMD_ecx&nbsp;&nbsp; 0x444d4163<br>
-@@ -2291,6 +2292,21 @@ eth_axgbe_dev_init(struct rte_eth_dev *eth_dev)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; unkno=
-wn_cpu =3D 1;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; }<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; break;<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp; case Fam1Ah:<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp; /* V4000 (krackan2e) */<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp; if (cpu_model =3D=3D 0x68) {<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; pdata-&gt;xpcs_w=
-indow_def_reg =3D PCS_KR_WINDOW_DEF;<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; pdata-&gt;xpcs_w=
-indow_sel_reg =3D PCS_KR_WINDOW_SELECT;<br>
-+<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /* V4000-Krkan2e=
- devices do not need cdr workaround */<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; pdata-&gt;vdata-=
-&gt;an_cdr_workaround =3D 0;<br>
-+<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /* V4000-Krkan2e=
- devices do not need rrc */<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; pdata-&gt;vdata-=
-&gt;enable_rrc =3D 0;<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp; } else {<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; unknown_cpu =3D =
-1;<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp; }<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp; break;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; default:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; unkno=
-wn_cpu =3D 1;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; break=
-;<br>
--- <br>
-2.34.1<br>
-<br>
-</div>
-</span></font></div>
-</div>
-</body>
-</html>
+Is support for "vlan-anti-spoof" in the pipeline?
 
---_000_DM4PR12MB505543F20F4534C5A82A029E8DD8ADM4PR12MB5055namp_--
+What are your thoughts about the generic Ethdev APIs I suggested, instead o=
+f driver specific devargs?
+
+>=20
+> Thank you.
+>=20
+> Regards,
+> Anurag M
+>=20
+> -----Original Message-----
+> From: Morten Br=F8rup <mb@smartsharesystems.com>
+> Sent: 16 November 2025 13:14
+> To: Mandal, Anurag <anurag.mandal@intel.com>; dev@dpdk.org;=20
+> Richardson, Bruce <bruce.richardson@intel.com>; Burakov, Anatoly=20
+> <anatoly.burakov@intel.com>; thomas@monjalon.net;=20
+> andrew.rybchenko@oktetlabs.ru
+> Subject: RE: [PATCH v2] net/ice: add MAC anti-spoof option
+>=20
+> +TO: Ethdev maintainers, regarding new Ethdev APIs
+>=20
+> > From: Anurag Mandal [mailto:anurag.mandal@intel.com]
+> > Sent: Sunday, 16 November 2025 04.58
+> >
+> > VRRP advertisement packets are dropped as TX-errors upon=20
+> > transmission from a vsi of ice PF due to MAC anti-spoof check which=20
+> > is enabled by default.
+> > There is no way to disable this check in the Tx direction to avoid=20
+> > these packets being dropped.
+> >
+> > This patch introduces devargs "mac-anti-spoof" to allow user to=20
+> > disable MAC anti-spoof check. Disable MAC Anti-spoof check in the Tx=20
+> > direction to avoid getting dropped as TX-errors upon packet=20
+> > transmission when their source MAC address matches one of the MAC=20
+> > addresses assigned to that same NIC port.
+> >
+> > Signed-off-by: Anurag Mandal <anurag.mandal@intel.com>
+> > ---
+>=20
+> This is the same story as with Source Prune.
+> Please disable source-prune filtering by default, and provide an=20
+> option to enable it.
+> Also, suggest shortening the devargs name to simply "anti-spoof", like=20
+> "source-prune"; they both operate on MAC basis.
+>=20
+> Let's make something generic instead, to replace those silly devargs.
+> We have individual Ethdev APIs to enable/disable various Rx filtering,=20
+> e.g. "promiscuous", "all multicast".
+> Obviously, we don't want to introduce new APIs for every semi-exotic=20
+> filter any NIC may offer, like "source prune" and "anti spoof", but we=20
+> could introduce a set of generic Ethdev APIs to support filters such=20
+> as these, using a bitfield enum. E.g.:
+>=20
+> /* Enable one or more filters. */
+> int rte_ethdev_filter_enable(uin16_t port_id, uint64_t filter);
+>=20
+> /* Disable one or more filters. */
+> int rte_ethdev_filter_disable(uin16_t port_id, uint64_t filter);
+>=20
+> /* Get bit field of filters enabled. */ int64_t=20
+> rte_ethdev_filter_get(uin16_t port_id);
+>=20
+> /* Get bit field of filters supported by device. */ int64_t=20
+> rte_ethdev_filter_capa(uin16_t port_id); /**/
+>=20
+> /** Destination MAC must match NIC's MAC address.
+>  * (This is the inverse of Promiscuous.)
+>  * Default enabled.
+>  */
+> #define RTE_ETH_FILTER_RX_NON_PROMISC RTE_BIT64(0)
+> /** Multicast Hash.
+>  * (This is the inverse of All Multicast.)
+>  * Default enabled.
+>  */
+> #define RTE_ETH_FILTER_RX_MULTICAST RTE_BIT64(1)
+> /** Source Prune.
+>  * [Insert description here.]
+>  */
+> #define RTE_ETH_FILTER_RX_SOURCE_PRUNE RTE_BIT64(2)
+> /* Add new Rx filters here, in increasing order. */
+> /* Add new Tx filters here, in decreasing order. */
+> /** Anti-Spoof.
+>  * [Insert description here.]
+>  */
+> #define RTE_ETH_FILTER_RX_SOURCE_PRUNE RTE_BIT64(62)
+> /** Used for error return values which are negative. */
+> #define RTE_ETH_FILTER_ERROR           RTE_BIT64(63)
+
