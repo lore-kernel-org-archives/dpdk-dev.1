@@ -2,174 +2,59 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87AADCFD2F6
-	for <dpdk-dev@archiver.kernel.org>; Tue,  2 Dec 2025 09:14:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8BEFCFD2F6
+	for <dpdk-dev@archiver.kernel.org>; Tue,  2 Dec 2025 09:25:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 60A2B40268;
-	Tue,  2 Dec 2025 10:14:42 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
- by mails.dpdk.org (Postfix) with ESMTP id 13EBC400D5
- for <dev@dpdk.org>; Tue,  2 Dec 2025 10:14:39 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1764666880; x=1796202880;
- h=from:to:subject:date:message-id:references:in-reply-to:
- content-transfer-encoding:mime-version;
- bh=IXN6dR6PjOgaaBlLBudKnkqfinW9GfueJliBAXZPg+s=;
- b=AsfQwJ6idPWZjFKsiU4zHKhZuhrsAoUNNW5BjgbGYmJ0YR6Jg1mlaYct
- hYkksZAN3Ysaidvu0tW9sCSMfO3BRCjsFxw5uyiAVq5UjDphIeqa9+BW0
- zojlzMzxQEGfNa33e+fQ727RNZOplxaMpMX5eHG9gCk0NxpNepBo8IDWC
- Sw12zXRJi7uY30J5Yg2Ow8TplsK3VRxIGoVXneeYuBLoAOnksM9+dGbpW
- 5vlgaykjine62FK59XFvYihKDKPyhVPWVml//5quFMEnmolEUqxOd07dN
- wCskspCNVnjgE045nHU5KC2bzgxvj3HoCQTp7H2v7S+Sx7dW3GzuyUSGU Q==;
-X-CSE-ConnectionGUID: /9zHo5c4R2uqImce3jA/9A==
-X-CSE-MsgGUID: 84J84o6kS1GUDbFRRNBr9Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11630"; a="66793588"
-X-IronPort-AV: E=Sophos;i="6.20,242,1758610800"; d="scan'208";a="66793588"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
- by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 02 Dec 2025 01:14:39 -0800
-X-CSE-ConnectionGUID: iBmZ/D0URv+vyMUVP664jg==
-X-CSE-MsgGUID: Fon+3siuTlWmJFDLrTvahQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.20,242,1758610800"; d="scan'208";a="194542566"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
- by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 02 Dec 2025 01:14:39 -0800
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.29; Tue, 2 Dec 2025 01:14:38 -0800
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.29 via Frontend Transport; Tue, 2 Dec 2025 01:14:38 -0800
-Received: from CH5PR02CU005.outbound.protection.outlook.com (40.107.200.24) by
- edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.29; Tue, 2 Dec 2025 01:14:37 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gkTTIqawDO4d43yspNgiKzxJs87D2i5FHbHifA9fQCI1ZYHSuF/S+LWWyU+P4dHzDVRYRJPqOPkNVxKA6KIVmajkiO0qSuJA4CnSyynpBns53ittgUjXXYn5QdpclK+ejfP8+e/8KcaBTXufIRWaFDTvXhu0VW0rOWjxZwaqU3qyQeefFLjiQWQyHSDw3FwXSwuBZfm71/LAXcJhh6wZYRcjJ8lEap8W7aPK8lRzXkK01CXMz+mBo8biMyQQ6q+SFhRZTFEsCmjIvfEYgFgImYJXLDrqb6zyFicQ8n49fAa5Yaz7/QkVyPtBRUKVWYWE0CL8FTjRmRl2MWh6cE4VcQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=AyD5ZfFGKPneLuG7sC9iaYgY9wruGBWqeevTHh3W3no=;
- b=jgGGQriGb6ivBocVftdXhBwmaa2SUUBX3HvvmGfXftsFodazykWAl0rmu9IRWrc4C0k3kq4I9DEnSz7gSYHd1McP2SxNpToOeOr+s4YQoWz8scoPFq/RhmSvEQS1q7LWgCx71WnscJWZJQsEqdcFl+yPzoK+ah0Zq/D3d0Zp8waNUh7/g9a4eqP/Pz/fI72vYdFrikUxYQFtp7rrTFGv/+xfgbo11fQLqtW7Cluu93Zc2XdH+yEp5eUrxEdRbuJIFDYMoP06HOhibCO6UgYufHy2a9WTxFvZoenUfMm3GqXczhVYqLCCehCTOQRwtSjMbVK/l8cQyIpeD75O6kizLw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from CY5PR11MB6116.namprd11.prod.outlook.com (2603:10b6:930:2b::14)
- by CH0PR11MB5251.namprd11.prod.outlook.com (2603:10b6:610:e2::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9366.17; Tue, 2 Dec
- 2025 09:14:17 +0000
-Received: from CY5PR11MB6116.namprd11.prod.outlook.com
- ([fe80::2b59:d9a6:8854:e9b9]) by CY5PR11MB6116.namprd11.prod.outlook.com
- ([fe80::2b59:d9a6:8854:e9b9%4]) with mapi id 15.20.9366.012; Tue, 2 Dec 2025
- 09:14:17 +0000
-From: "Mandal, Anurag" <anurag.mandal@intel.com>
-To: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>,
- "dev@dpdk.org" <dev@dpdk.org>, "Richardson, Bruce"
- <bruce.richardson@intel.com>, "Burakov, Anatoly" <anatoly.burakov@intel.com>, 
- "thomas@monjalon.net" <thomas@monjalon.net>, "andrew.rybchenko@oktetlabs.ru"
- <andrew.rybchenko@oktetlabs.ru>, Stephen Hemminger
- <stephen@networkplumber.org>
-Subject: RE: [PATCH v2] net/ice: add MAC anti-spoof option
-Thread-Topic: [PATCH v2] net/ice: add MAC anti-spoof option
-Thread-Index: AQHcVq02Q5MdAwVwH0eQQbAZdQUWgLT07CkAgAFoL7CAAD5rkIAXXmCwgAAuc6CAAAqacA==
-Date: Tue, 2 Dec 2025 09:14:17 +0000
-Message-ID: <CY5PR11MB611648411BC37F6312513596E4D8A@CY5PR11MB6116.namprd11.prod.outlook.com>
-References: <20251113105914.34949-1-anurag.mandal@intel.com>
- <20251116035749.45922-1-anurag.mandal@intel.com>
- <98CBD80474FA8B44BF855DF32C47DC35F65562@smartserver.smartshare.dk>
- <CY5PR11MB61167F082015E76C562C3635E4C9A@CY5PR11MB6116.namprd11.prod.outlook.com>
- <98CBD80474FA8B44BF855DF32C47DC35F65566@smartserver.smartshare.dk>
- <CY5PR11MB6116A4601EB74D4943216EA2E4D8A@CY5PR11MB6116.namprd11.prod.outlook.com>
- <98CBD80474FA8B44BF855DF32C47DC35F655AD@smartserver.smartshare.dk>
-In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F655AD@smartserver.smartshare.dk>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CY5PR11MB6116:EE_|CH0PR11MB5251:EE_
-x-ms-office365-filtering-correlation-id: e2abeb72-5791-475b-c4af-08de31832b73
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0; ARA:13230040|366016|1800799024|376014|38070700021;
-x-microsoft-antispam-message-info: =?iso-8859-1?Q?xcTuyJA6M47jCBsGycrjD8DSeIC8WH5x96Y0t53eT779IlPh+tl8qgpdXj?=
- =?iso-8859-1?Q?/fRspbjSFJTKH9kWGQrDp//m1Npm/WTV49MkIsyuAtR31mKyj6pBE9ipxO?=
- =?iso-8859-1?Q?sBMPAeWD/zx3b203fqTP3SfTn+IZT9NtVzigtrdICq6x4RCxC9AtBC6kqe?=
- =?iso-8859-1?Q?FiDkh4lBW8TSPiIkZ20yVFUEm+L/auyu0Eytrmdqj7hNsGe3xPbA1xcQAJ?=
- =?iso-8859-1?Q?zLsJXXtJqBFlH1WOdMb0OgujUl2ZSww9lpY6+tTnwLBnZfR4U0db//d/b2?=
- =?iso-8859-1?Q?6gllO3DdKYHxrqeFDE5h7MmVfwuwQ7uf3EEr1G7C7EZItTP6lS1llm06kY?=
- =?iso-8859-1?Q?8yFa9wxts0iibhRBLWoq6dq707ag+xO0a99YMTYb88fneU1X3fFnEzF2bB?=
- =?iso-8859-1?Q?+5wk0xnwr9Og1N2lJigYfmMMZpI80FVwMqw9OBNQEpvHWqAp7FR4wEYbh1?=
- =?iso-8859-1?Q?ha/Vklj8infKkMHSVsa+kTc1L7K2dov3gtgdHQUn8k0OfaTWbuV/TLfCYU?=
- =?iso-8859-1?Q?ghgEZn/aidAzz+VHrjGZRsFlInxtUwGf5dVWxcToVVk0UN1pIef/i6utej?=
- =?iso-8859-1?Q?sx+xAjlb28687uSMGv/SMoHOPStJRFzZPMMR4vd7t8wgz9B4j4UWJ31oIV?=
- =?iso-8859-1?Q?9HpOpkK2uMEcUnJYwNAQZPi+aGJKKkSR1jAcEEhdMez9+9CY9NXVMD3jew?=
- =?iso-8859-1?Q?3r+l6GaNyh4Xs7+6wQCPkLmmZtb5oxcQDiVQM9+dsMTkSahEewX8CGNn8v?=
- =?iso-8859-1?Q?cLCY5ATj9uLb3Rs+vrz2KFTgB5vm3uEHcn3pOEUhQjMm+r7vv1N4hHAQjh?=
- =?iso-8859-1?Q?2dsZ8S6VfwRLioIJnjPLA9NTlTR8k0CSMusXd7ztSN/60EAj58HLr/2o4I?=
- =?iso-8859-1?Q?hyDp807DNIJgk4TDouH0kHVPtxSnWopV8WSTMfITSOM6J5/JA/E5obU9kl?=
- =?iso-8859-1?Q?itsvtCmBTFuRA2P/ujZdtp+2M7D1zQltIpHr8hWrsuz34sTQXy5gc3utOT?=
- =?iso-8859-1?Q?zDzukXfTHGFnAMQ2Dgg2OpM8N/y6e/QSoMXx0V9n46BduFHyfNlpacazMk?=
- =?iso-8859-1?Q?gtq+wcHyCegnIqIEbnXDIlPwkxgidZBY9z6adk+GUEtOr7FnMJjJU/A1JX?=
- =?iso-8859-1?Q?Yo6FH5qlQCXFVyxBuLjH1Wh4oXLovu3APgLijy5U0MfoH5V5LPHA3gQQHR?=
- =?iso-8859-1?Q?qjB6HLVUHKY/p+CMnLZVl5CrDYXy1ByU5IFxFE/3ZlwIOMLPJvdM3uC66/?=
- =?iso-8859-1?Q?2zZHN/tCKEUslkYDGgYeStlOWtcBm4XtE8Nl/f44VHfoYGZ10HVCd67iL8?=
- =?iso-8859-1?Q?Rt0eAq04dgkjto6fTMcoeZPTtuU3gBkWCR5LhutZutDk519MzspeLzYtr/?=
- =?iso-8859-1?Q?c3wNVkTY4yd6ITOrL1ACIBGfGO6dl2dlYYpQyfF6b6die4BvPvI316qFJN?=
- =?iso-8859-1?Q?R8iJvsiDPUqWzZW4iAFZ3hzudEdc8hdp415gA5Fkprx2VGMxzAB2BISMVz?=
- =?iso-8859-1?Q?N77ha2tHOpgMV4K6oFkoej8BCuSzklEjTLKNCDr7zRPQ=3D=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:CY5PR11MB6116.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(1800799024)(376014)(38070700021); DIR:OUT; SFP:1101; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?2uvjrxpfaPflQpSvOrIpxE7L5NWfRMQYOp+nIjuK2nJOsZ6dzAWHgMkxDX?=
- =?iso-8859-1?Q?Vykv1WZO+ArA6ZDuQMxbWAE7ka83++OtfEs7ZJqDEeglTvVJ9qcex3Pu4k?=
- =?iso-8859-1?Q?cgi42QSWfckAnpjlluficciejxHdAk35/QK8QoYt/vwMVRy4mQSCeIFDhm?=
- =?iso-8859-1?Q?X1SOhOR+2tlOS0QbWIzaVPHVbiLhDkrRD7oXqLvpoBMrikmAKe+SI+LKVn?=
- =?iso-8859-1?Q?lqrBG9P3Bg6uCo8z1j76WOVCCDxyWRrlBOvXvAVA8DEO/CpMQWjw2czlSG?=
- =?iso-8859-1?Q?yEgRfFDBXwNmSYIKihvZAgvapOE7o2U2WoV0VAnhgXzt3pWf/8FOWJP0sJ?=
- =?iso-8859-1?Q?QQdxnfYmwqkCZ5Lon1PWoir3/KFdAfX4Ld938SHs73bFnMElIQu0agjxhY?=
- =?iso-8859-1?Q?taJB+ZCFHqIzwJOTtEEkSmbCzC7D7mddngzgIKM3JAlGz5KYfvUAFIOU+n?=
- =?iso-8859-1?Q?6W+eZu8KxgLjeJGIkx9kbWsO83BTizJxcy28/nuEt07c7VPQyD73rQXmjE?=
- =?iso-8859-1?Q?H97MSK2b4hfJLTuKvnirBpS2hiJnKT5lauDwyb5N0BjRzV89C+IGSzHdQC?=
- =?iso-8859-1?Q?lzw8ThHeqzK0SB/FQO71UAWcbeja8LvP9uD6E1lWdLiVCRNim+W0cOxtnL?=
- =?iso-8859-1?Q?M8vNv3bfgJACBJEy/Xt8AOJvuhinut0xByAURS+FI5jZoVJjUc6G9BcWk2?=
- =?iso-8859-1?Q?p2h62RGRJKn0PC5PBR/XJbDOpI1mGz3PhPTklkHBYcPsL3pPvRMACkgfxc?=
- =?iso-8859-1?Q?IyQj4qe/CXNRmyzimrRY/aqUtxH+8ATb2T6QrrkcCS765osH4ayvWZEBng?=
- =?iso-8859-1?Q?n/eaTZ8Kkqs8EMGQxMtZZks4yZ19QtaRbpowlEMflCOrfwbu5UXXWBrVZZ?=
- =?iso-8859-1?Q?FQyo8Xj5XaadSyJpvbWiHI3teEZM/+KWF26V1cD0kMXDnfmsKbTndNlraE?=
- =?iso-8859-1?Q?kebR3OvPQ+KikDhyUNJhK2nrzdyi8cQuNedP1WaCijArtcl4O8q3BbTKEY?=
- =?iso-8859-1?Q?6y7iiFm1NpNxIutf2aZBFz2rORd6N+mj5IoGh1UBeAuKtL/YPrwyDEYeqq?=
- =?iso-8859-1?Q?mYO8hZPcpytFYZckq1VvFnRM+7p3mW18hzyDcvmZgXlNNUjeP6CJPHjkMW?=
- =?iso-8859-1?Q?G8YJRMnMHA//BHLZ4doSo3ewSbUDMm2CBwhMbJyz2fNDBxSdg2DHbOnsPM?=
- =?iso-8859-1?Q?e38zmBYjDLPyF+MmsIMOsrGB7d8PUP7SmM9E1URO4CFx9yrD8UetPDAqCR?=
- =?iso-8859-1?Q?mRuD4T89AB8i9F1gmfA5XsoHyWKPx7KoNq4rVm85WUB7OYg2MzLxgQVqo5?=
- =?iso-8859-1?Q?dNyHGLXBDFkLrF4GLvnhE1m+xuUybpT/yK+DA3zge5yFoqcZGJ0xe8zlAG?=
- =?iso-8859-1?Q?2OzKyDVD39CQQGeJCEU3nySfw6kj/V+mO3nJsT1A4KDpUPLdTx4lfBg/jr?=
- =?iso-8859-1?Q?p2/hz4Hfzl0KzCL0lmpp97zobP3b6nW0R2jO6GI+jPQhSn4s6Ej6BLOVos?=
- =?iso-8859-1?Q?cPvlCkkgpzB9BfXy837jsBvnYxFrvMFUcQsYZYK3ri1qW0Ln8LmfrypbxK?=
- =?iso-8859-1?Q?l9OdXHJ2nrhZaFFoyr3mW8VAB5hg3k8iCB4mXrp9UEgdewNMYF1l1YjX7l?=
- =?iso-8859-1?Q?FWwfK5ZJcMmJ68xnGSUs64fbLzakVtBLbq?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	by mails.dpdk.org (Postfix) with ESMTP id CEBC040268;
+	Tue,  2 Dec 2025 10:25:16 +0100 (CET)
+Received: from smtpbgbr1.qq.com (smtpbgbr1.qq.com [54.207.19.206])
+ by mails.dpdk.org (Postfix) with ESMTP id 072BD400D5
+ for <dev@dpdk.org>; Tue,  2 Dec 2025 10:25:13 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tencent.com;
+ s=s201512; t=1764667510;
+ bh=jsfRRNvY1tRUaCZ3eHsNv/B6nuWNrPmywtsptWYk4GU=;
+ h=From:To:Subject:Date:Message-ID:MIME-Version;
+ b=vLX2JjHsFH3eFpo6++I05BdLHTw1nowTh4P2r8brcLtqVNqDo5/zBol1quRM64BUO
+ ehCltHa3DGESpPhaSEM+zuvHu3aSRcndmxtVIAQXN3ebwI/ygGHduFk24GPVEbr9hz
+ jpJcEQDVcU7aYujLpxjtUQbhBObkkjVJFAd1kIss=
+X-QQ-mid: esmtpgz11t1764667507t4833a531
+X-QQ-Originating-IP: 6Ly6xRhf93C7nTZEi1LTvAe8ICxVu1uLYiOTMtOQUr4=
+Received: from wyfs.. ( [11.176.19.22]) by bizesmtp.qq.com (ESMTP) with 
+ id ; Tue, 02 Dec 2025 17:25:05 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 8223132572772222185
+From: "=?gb18030?B?bWFubnl3YW5nKM3108C35Sk=?=" <mannywang@tencent.com>
+To: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+Cc: dev@dpdk.org,
+	YongFeng Wang <mannywang@tencent.com>
+Subject: [PATCH v6] acl: support custom memory allocators
+Date: Tue,  2 Dec 2025 09:25:02 +0000
+Message-ID: <BFA8D0B9488D3A67+20251202092502.165081-1-mannywang@tencent.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <58cca566-08bd-469e-b244-1800e0456cb0@huawei.com>
+References: <58cca566-08bd-469e-b244-1800e0456cb0@huawei.com>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CY5PR11MB6116.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e2abeb72-5791-475b-c4af-08de31832b73
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Dec 2025 09:14:17.2299 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: aBzTRGKDMwbxy9CG6tvyB/9MKjtkaLT14W815D6pzDeCV+CTgJAygvNp6hSaFAtOtiwDyftRUlCjclg1c+JBBw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR11MB5251
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpgz:tencent.com:qybglogicsvrsz:qybglogicsvrsz3b-0
+X-QQ-XMAILINFO: Noqpd7YRZnx107lYqpjNKXmaJVZLOZ49RK6II2NvxMW33scdEatYvqyD
+ mTs6FXWStr1Ff+q6RmXluZ+Ib8B88SA2kTTsxNojxsO9QAM8HXeekMEdrzrxROF0iLZjFpe
+ tcu8VbnmrpLAeSFv+fY52VXAOIXvkhxaddE4MK9FUrYBZGZhZIBmOqVxqLXRJqDXk0u7BvI
+ uqpDdZP4fac3RsmYp5nLGqDNtwBPrAom7dWG/tQzs81HDGkiAXQS47SS057HjdSFBb9sQZw
+ ekVatT6Tmznhc18IcjQKeUcacpD7GjjHuLK3ToElochDGFQk47uVWQHyVrvaCs0obuTwNOe
+ sz0n4nQowef0X403V+J8bJX1puZz0+YdN48Jmf5MqgcvKn3dRmptj9F5YVuUZ6byR5Au2Wf
+ ifRWigPu+4QfAOlFjUS2WLqoe124xBImmWC6oE1dE82OzwExvyzcxkhzUbQX8TrrgdQyu8r
+ JxY+I6j+5ShVax9ezvBWrZifagBylpKp+rOAbLZrsCel/YnHtlFaxCb5Atogh/L2kwLYaSz
+ iZ+CrHIbskXNOnEEivajgPPiVi0JFFE9uNRpu6zT6W6ug+BtUI/QPk+HiOayjYBl7Hd8WvA
+ VJuFzcQAD0dOb7+u2zXRPCtv0q7X9gPNB/3HhERNQTr9tGB4aohxRIhTZE7k/fHXPQZ753e
+ wVQUuYpR3lZBfoa0tbUShcM9VBILOvvGx6sz6MGtnwoo/4Iqe8u920PqGJqQmaJKTpBuZJr
+ JrAmPgQPqVNYdzUoG1MUT6UJ4yBtnI7++mob3sB0g682+lUEltNyF+KoxmumnKJ+gXuIYJy
+ Zlkmv83/rgQmQ6kYuHYYlMgoMhl04/4CRvxuLVSsZSdVj1vM98+wHoi/8yjsHOP3JFOAVdv
+ jZLWGf5DyUUoIKjh/ESz1Ed6e4VA2aa4lE5jj91CkYco4jC62spZueq4v7VZahXRHSAPf9Y
+ UORbpiMFFtXglH1ngrMfhyrMlBuhEFphJ2vA=
+X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
+X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -183,220 +68,393 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi Morten Br=F8rup,
+Allow users to provide custom
+memory allocation hooks for runtime memory in rte_acl_ctx, via
+struct rte_acl_mem_hook.
 
-Ok. I will make Mac-anti-spoof disabled by default, gave option to enable i=
-t  and send a new patch.
+Key changes:
+- Added struct rte_acl_mem_hook with zalloc, free, and udata.
+- Added rte_acl_set_mem_hook / rte_acl_get_mem_hook to set/get callbacks.
+- Default allocation uses existing rte_zmalloc_socket/rte_free.
+- Modified ACL code to call callbacks for runtime allocations instead
+  of rte_zmalloc_socket/rte_free directly.
 
-Thank you.
+v5:
+- Remove temporary memory allocation callback for build stage.
+- Introduce new API (rte_acl_set_mem_hook / rte_acl_get_mem_hook)
+  instead of modifying existing rte_acl_config to preserve
+  ABI compatibility.
 
-Regards,
-Anurag M
+v6:
+- Reworked API to meet consistency and naming conventions.
+- Adjusted parameter order for better readability and alignment.
+- Renamed internal variables for clarity and code consistency.
 
------Original Message-----
-From: Morten Br=F8rup <mb@smartsharesystems.com>=20
-Sent: 02 December 2025 14:31
-To: Mandal, Anurag <anurag.mandal@intel.com>; dev@dpdk.org; Richardson, Bru=
-ce <bruce.richardson@intel.com>; Burakov, Anatoly <anatoly.burakov@intel.co=
-m>; thomas@monjalon.net; andrew.rybchenko@oktetlabs.ru; Stephen Hemminger <=
-stephen@networkplumber.org>
-Subject: RE: [PATCH v2] net/ice: add MAC anti-spoof option
+Signed-off-by: YongFeng Wang <mannywang@tencent.com>
+---
+ app/test/test_acl.c                           | 121 ++++++++++++++++++
+ .../prog_guide/packet_classif_access_ctrl.rst |  31 +++++
+ lib/acl/acl.h                                 |   1 +
+ lib/acl/acl_bld.c                             |   2 +-
+ lib/acl/acl_gen.c                             |   4 +-
+ lib/acl/rte_acl.c                             |  45 ++++++-
+ lib/acl/rte_acl.h                             |  47 +++++++
+ 7 files changed, 247 insertions(+), 4 deletions(-)
 
-+TO: Stephen Hemminger, might have some kernel-related insights on this.
-
-> From: Mandal, Anurag [mailto:anurag.mandal@intel.com]
-> Sent: Tuesday, 2 December 2025 09.17
->=20
-> Hi Morten Br=F8rup,
->=20
-> Apologies for late reply but as the patch was deferred from DPDK 25.11.
-> Hence, I was waiting.
-> PFB my answers.
->=20
-> Q1: " Please disable anti-spoof filtering by default, and provide an=20
-> option to enable it.
-> Like source-prune."
-> [Ans]: MAC anti-spoof is enabled by default in kernel ice driver.
-> Hence, it seems a better idea to make it enabled by default to keep it=20
-> in sync with kernel and in terms of security.
-
-Mac-source-prune is disabled by default in DPDK, although it is enabled by =
-default in the kernel.
-Mac-anti-spoof should behave the same way, i.e. disabled by default in DPDK=
-.
-
-Also, consider that the kernel is mainly designed for client/server applica=
-tions, while DPDK is mainly designed for packet forwarding purposes.
-With that in mind, default enabled makes sense for the kernel, and default =
-disabled makes sense for DPDK.
-
->=20
-> Q2: " Is support for "vlan-anti-spoof" in the pipeline?"
-> [Ans]: Not sure but " vlan_anti_spoof_on" is present in code.
-
-OK.
-
->=20
-> Q3: " What are your thoughts about the generic Ethdev APIs I=20
-> suggested, instead of driver specific devargs?"
-> [Ans]: It is unlikely that a user would want these mac anti-spoof/src=20
-> prune to be set/reset dynamically. Hence,  it seems devargs likely be=20
-> a better solution.
-> Generic Ethdev APIs is a good idea but should be taken separately as=20
-> it will have much beyond scope than this and would need significant=20
-> effort.
-> Also, that again bring the dynamic nature into the picture.
-
-Good point about not needing the dynamic ability. I agree with that.
-But devargs are somewhat difficult to work with for applications not built =
-for specific ethdev drivers. E.g. our application detects available hardwar=
-e at runtime, and configures it appropriately. Generic APIs are much easier=
- to work with than individual driver-specific devargs.
-So I prefer not to introduce more driver specific devargs.
-
-I acknowledge that my Ethdev API extension idea is feature creep, so I will=
- not make it a hard requirement for this patch.
-And when mac-anti-spoof is disabled by default (which I do consider a hard =
-requirement!), the devarg parameter is reduced to something that enables so=
-me exotic filter, which I don't object to.
-
->=20
-> Thank you.
->=20
-> Regards,
-> Anurag M
->=20
-> -----Original Message-----
-> From: Morten Br=F8rup <mb@smartsharesystems.com>
-> Sent: 17 November 2025 14:36
-> To: Mandal, Anurag <anurag.mandal@intel.com>; dev@dpdk.org;=20
-> Richardson, Bruce <bruce.richardson@intel.com>; Burakov, Anatoly=20
-> <anatoly.burakov@intel.com>; thomas@monjalon.net;=20
-> andrew.rybchenko@oktetlabs.ru
-> Subject: RE: [PATCH v2] net/ice: add MAC anti-spoof option
->=20
-> > From: Mandal, Anurag [mailto:anurag.mandal@intel.com]
-> > Sent: Monday, 17 November 2025 06.22
-> >
-> > Hi Morten Br=F8rup,
-> >
-> > Thanks for your mail and review. PFB my answers.
-> >
-> > " This is the same story as with Source Prune.
-> > Please disable source-prune filtering by default, and provide an=20
-> > option to enable it.
-> > Also, suggest shortening the devargs name to simply "anti-spoof",
-> like
-> > "source-prune"; they both operate on MAC basis."
-> >
-> > [Ans]: Source prune is disabled by default and option to enable the=20
-> > same has been already committed:[
-> >
-> https://github.com/DPDK/dpdk/commit/980c840a646a2c8ae49a291c17baf20a74
-> > f
-> > 36086].
->=20
-> Sorry, there was a typo... I meant to write:
-> Please disable anti-spoof filtering by default, and provide an option=20
-> to enable it.
-> Like source-prune.
->=20
-> > I also wanted to shorten the name to "anti-spoof" but I found=20
-> > something called " vsi->vlan_anti_spoof_on" in the same file.
-> > Hence, to distinguish between them, used "mac-anti-spoof".
->=20
-> OK. Then "mac-anti-spoof" is a good choice.
->=20
-> Is support for "vlan-anti-spoof" in the pipeline?
->=20
-> What are your thoughts about the generic Ethdev APIs I suggested,=20
-> instead of driver specific devargs?
->=20
-> >
-> > Thank you.
-> >
-> > Regards,
-> > Anurag M
-> >
-> > -----Original Message-----
-> > From: Morten Br=F8rup <mb@smartsharesystems.com>
-> > Sent: 16 November 2025 13:14
-> > To: Mandal, Anurag <anurag.mandal@intel.com>; dev@dpdk.org;=20
-> > Richardson, Bruce <bruce.richardson@intel.com>; Burakov, Anatoly=20
-> > <anatoly.burakov@intel.com>; thomas@monjalon.net;=20
-> > andrew.rybchenko@oktetlabs.ru
-> > Subject: RE: [PATCH v2] net/ice: add MAC anti-spoof option
-> >
-> > +TO: Ethdev maintainers, regarding new Ethdev APIs
-> >
-> > > From: Anurag Mandal [mailto:anurag.mandal@intel.com]
-> > > Sent: Sunday, 16 November 2025 04.58
-> > >
-> > > VRRP advertisement packets are dropped as TX-errors upon=20
-> > > transmission from a vsi of ice PF due to MAC anti-spoof check=20
-> > > which is enabled by default.
-> > > There is no way to disable this check in the Tx direction to avoid=20
-> > > these packets being dropped.
-> > >
-> > > This patch introduces devargs "mac-anti-spoof" to allow user to=20
-> > > disable MAC anti-spoof check. Disable MAC Anti-spoof check in the
-> Tx
-> > > direction to avoid getting dropped as TX-errors upon packet=20
-> > > transmission when their source MAC address matches one of the MAC=20
-> > > addresses assigned to that same NIC port.
-> > >
-> > > Signed-off-by: Anurag Mandal <anurag.mandal@intel.com>
-> > > ---
-> >
-> > This is the same story as with Source Prune.
-> > Please disable source-prune filtering by default, and provide an=20
-> > option to enable it.
-> > Also, suggest shortening the devargs name to simply "anti-spoof",
-> like
-> > "source-prune"; they both operate on MAC basis.
-> >
-> > Let's make something generic instead, to replace those silly devargs.
-> > We have individual Ethdev APIs to enable/disable various Rx
-> filtering,
-> > e.g. "promiscuous", "all multicast".
-> > Obviously, we don't want to introduce new APIs for every semi-exotic=20
-> > filter any NIC may offer, like "source prune" and "anti spoof", but
-> we
-> > could introduce a set of generic Ethdev APIs to support filters such=20
-> > as these, using a bitfield enum. E.g.:
-> >
-> > /* Enable one or more filters. */
-> > int rte_ethdev_filter_enable(uin16_t port_id, uint64_t filter);
-> >
-> > /* Disable one or more filters. */
-> > int rte_ethdev_filter_disable(uin16_t port_id, uint64_t filter);
-> >
-> > /* Get bit field of filters enabled. */ int64_t=20
-> > rte_ethdev_filter_get(uin16_t port_id);
-> >
-> > /* Get bit field of filters supported by device. */ int64_t=20
-> > rte_ethdev_filter_capa(uin16_t port_id); /**/
-> >
-> > /** Destination MAC must match NIC's MAC address.
-> >  * (This is the inverse of Promiscuous.)
-> >  * Default enabled.
-> >  */
-> > #define RTE_ETH_FILTER_RX_NON_PROMISC RTE_BIT64(0)
-> > /** Multicast Hash.
-> >  * (This is the inverse of All Multicast.)
-> >  * Default enabled.
-> >  */
-> > #define RTE_ETH_FILTER_RX_MULTICAST RTE_BIT64(1)
-> > /** Source Prune.
-> >  * [Insert description here.]
-> >  */
-> > #define RTE_ETH_FILTER_RX_SOURCE_PRUNE RTE_BIT64(2)
-> > /* Add new Rx filters here, in increasing order. */
-> > /* Add new Tx filters here, in decreasing order. */
-> > /** Anti-Spoof.
-> >  * [Insert description here.]
-> >  */
-> > #define RTE_ETH_FILTER_RX_SOURCE_PRUNE RTE_BIT64(62)
-> > /** Used for error return values which are negative. */
-> > #define RTE_ETH_FILTER_ERROR           RTE_BIT64(63)
+diff --git a/app/test/test_acl.c b/app/test/test_acl.c
+index 43d13b5b0f..3c9a0cb8c0 100644
+--- a/app/test/test_acl.c
++++ b/app/test/test_acl.c
+@@ -1721,6 +1721,125 @@ test_u32_range(void)
+ 	return rc;
+ }
+ 
++struct acl_ctx_wrapper {
++	struct rte_acl_ctx *ctx;
++	void *running_buf;
++	bool running_buf_using;
++};
++
++#define ACL_RUNNING_BUF_SIZE (10 * 1024 * 1024)
++
++static void *running_alloc(char *name, size_t size,
++	size_t align, int32_t socket_id, void *udata)
++{
++	RTE_SET_USED(align);
++	RTE_SET_USED(name);
++	RTE_SET_USED(socket_id);
++	if (size > ACL_RUNNING_BUF_SIZE)
++		return NULL;
++	struct acl_ctx_wrapper *acl_ctx = (struct acl_ctx_wrapper *)udata;
++	if (acl_ctx->running_buf_using)
++		return NULL;
++	printf("running memory alloc for acl context, size=%zu, pointer=%p\n",
++		size,
++		acl_ctx->running_buf);
++	memset(acl_ctx->running_buf, 0, size);
++	acl_ctx->running_buf_using = true;
++	return acl_ctx->running_buf;
++}
++
++static void running_free(void *ptr, void *udata)
++{
++	if (!ptr)
++		return;
++	struct acl_ctx_wrapper *acl_ctx = (struct acl_ctx_wrapper *)udata;
++	printf("running memory free, pointer=%p\n", ptr);
++	acl_ctx->running_buf_using = false;
++}
++
++static int
++test_mem_hook(void)
++{
++	int i, ret;
++	struct acl_ctx_wrapper acl_ctx_wrapper = {0};
++	acl_ctx_wrapper.ctx = rte_acl_create(&acl_param);
++	if (acl_ctx_wrapper.ctx == NULL) {
++		printf("Line %i: Error creating ACL context!\n", __LINE__);
++		return -1;
++	}
++	acl_ctx_wrapper.running_buf = rte_zmalloc_socket(
++		"test_acl",
++		ACL_RUNNING_BUF_SIZE,
++		RTE_CACHE_LINE_SIZE,
++		SOCKET_ID_ANY);
++	if (!acl_ctx_wrapper.running_buf) {
++		rte_acl_free(acl_ctx_wrapper.ctx);
++		printf("Line %i: Error allocing running buf for acl context!\n", __LINE__);
++		return 1;
++	}
++	acl_ctx_wrapper.running_buf_using = false;
++
++	struct rte_acl_mem_hook mhook = {
++		.zalloc = running_alloc,
++		.free = running_free,
++		.udata = &acl_ctx_wrapper
++	};
++	ret = rte_acl_set_mem_hook(acl_ctx_wrapper.ctx, &mhook);
++	if (ret != 0) {
++		printf("Line %i: Error set mem hook for acl context!\n", __LINE__);
++		rte_acl_free(acl_ctx_wrapper.ctx);
++		rte_free(acl_ctx_wrapper.running_buf);
++		return 1;
++	}
++	struct rte_acl_mem_hook new_hook;
++	memset(&new_hook, 0, sizeof(struct rte_acl_mem_hook));
++	if (rte_acl_get_mem_hook(acl_ctx_wrapper.ctx, &new_hook) != 0
++		|| memcmp(&mhook, &new_hook, sizeof(struct rte_acl_mem_hook)) != 0) {
++		printf("Line %i: Error get mem hook for acl context!\n", __LINE__);
++		rte_acl_free(acl_ctx_wrapper.ctx);
++		rte_free(acl_ctx_wrapper.running_buf);
++		return 1;
++	}
++	ret = 0;
++	for (i = 0; i < TEST_CLASSIFY_ITER; i++) {
++
++		if ((i & 1) == 0)
++			rte_acl_reset(acl_ctx_wrapper.ctx);
++		else
++			rte_acl_reset_rules(acl_ctx_wrapper.ctx);
++
++		ret = test_classify_buid(acl_ctx_wrapper.ctx, acl_test_rules,
++			RTE_DIM(acl_test_rules));
++		if (ret != 0) {
++			printf("Line %i, iter: %d: Adding rules to ACL context failed!\n",
++				__LINE__, i);
++			break;
++		}
++
++		ret = test_classify_run(acl_ctx_wrapper.ctx, acl_test_data,
++			RTE_DIM(acl_test_data));
++		if (ret != 0) {
++			printf("Line %i, iter: %d: %s failed!\n",
++				__LINE__, i, __func__);
++			break;
++		}
++
++		/* reset rules and make sure that classify still works ok. */
++		rte_acl_reset_rules(acl_ctx_wrapper.ctx);
++		ret = test_classify_run(acl_ctx_wrapper.ctx, acl_test_data,
++			RTE_DIM(acl_test_data));
++		if (ret != 0) {
++			printf("Line %i, iter: %d: %s failed!\n",
++				__LINE__, i, __func__);
++			break;
++		}
++	}
++
++	rte_acl_free(acl_ctx_wrapper.ctx);
++	rte_free(acl_ctx_wrapper.running_buf);
++	return ret;
++}
++
+ static int
+ test_acl(void)
+ {
+@@ -1742,6 +1861,8 @@ test_acl(void)
+ 		return -1;
+ 	if (test_u32_range() < 0)
+ 		return -1;
++	if (test_mem_hook() < 0)
++		return -1;
+ 
+ 	return 0;
+ }
+diff --git a/doc/guides/prog_guide/packet_classif_access_ctrl.rst b/doc/guides/prog_guide/packet_classif_access_ctrl.rst
+index 172f443f6e..55b2018db9 100644
+--- a/doc/guides/prog_guide/packet_classif_access_ctrl.rst
++++ b/doc/guides/prog_guide/packet_classif_access_ctrl.rst
+@@ -359,7 +359,38 @@ For example:
+         ret = rte_acl_build(acx, &cfg);
+      }
+ 
++Custom Memory Hooks
++~~~~~~~~~~~~~~~~~~~~
++
++The ACL library supports custom memory allocation for runtime structures.
++Applications can supply their own memory hooks through:
++
++.. code-block:: c
++
++    int rte_acl_set_mem_hook(struct rte_acl_ctx *ctx,
++                           const struct rte_acl_mem_hook *mhook);
++
++    int rte_acl_get_mem_hook(const struct rte_acl_ctx *ctx,
++                           struct rte_acl_mem_hook *mhook);
++
++The ``rte_acl_mem_hook`` structure defines memory hooks:
++
++.. code-block:: c
++
++    struct rte_acl_mem_hook {
++        /** Allocate zero-initialized memory used during runtime. */
++        void *(*zalloc)(char *name, size_t size, size_t align, int32_t socket_id, void *udata);
++
++        /** Free memory previously allocated by zalloc(). */
++        void (*free)(void *ptr, void *udata);
++
++        /** User-provided context passed to allocation/free hooks. */
++        void *udata;
++    };
++
++Applications may use these hooks to allocate memory from custom pools or pre-allocated buffers.
+ 
++If no memory hook is provided, the ACL library uses rte_zmalloc_socket() internally.
+ 
+ Classification methods
+ ~~~~~~~~~~~~~~~~~~~~~~
+diff --git a/lib/acl/acl.h b/lib/acl/acl.h
+index c8e4e72fab..9c85a3d58a 100644
+--- a/lib/acl/acl.h
++++ b/lib/acl/acl.h
+@@ -174,6 +174,7 @@ struct rte_acl_ctx {
+ 	uint32_t            max_rules;
+ 	uint32_t            rule_sz;
+ 	uint32_t            num_rules;
++	struct rte_acl_mem_hook mem_hook;
+ 	uint32_t            num_categories;
+ 	uint32_t            num_tries;
+ 	uint32_t            match_index;
+diff --git a/lib/acl/acl_bld.c b/lib/acl/acl_bld.c
+index 7056b1c117..99d1dbc467 100644
+--- a/lib/acl/acl_bld.c
++++ b/lib/acl/acl_bld.c
+@@ -779,7 +779,7 @@ acl_merge_trie(struct acl_build_context *context,
+ static void
+ acl_build_reset(struct rte_acl_ctx *ctx)
+ {
+-	rte_free(ctx->mem);
++	ctx->mem_hook.free(ctx->mem, ctx->mem_hook.udata);
+ 	memset(&ctx->num_categories, 0,
+ 		sizeof(*ctx) - offsetof(struct rte_acl_ctx, num_categories));
+ }
+diff --git a/lib/acl/acl_gen.c b/lib/acl/acl_gen.c
+index 3c53d24056..77f19dd13a 100644
+--- a/lib/acl/acl_gen.c
++++ b/lib/acl/acl_gen.c
+@@ -478,8 +478,8 @@ rte_acl_gen(struct rte_acl_ctx *ctx, struct rte_acl_trie *trie,
+ 		return -ERANGE;
+ 	}
+ 
+-	mem = rte_zmalloc_socket(ctx->name, total_size, RTE_CACHE_LINE_SIZE,
+-			ctx->socket_id);
++	mem = ctx->mem_hook.zalloc(ctx->name, total_size,
++			RTE_CACHE_LINE_SIZE, ctx->socket_id, ctx->mem_hook.udata);
+ 	if (mem == NULL) {
+ 		ACL_LOG(ERR,
+ 			"allocation of %zu bytes on socket %d for %s failed",
+diff --git a/lib/acl/rte_acl.c b/lib/acl/rte_acl.c
+index 8c0ca29618..3f2b194206 100644
+--- a/lib/acl/rte_acl.c
++++ b/lib/acl/rte_acl.c
+@@ -264,6 +264,20 @@ acl_get_best_alg(void)
+ 	return alg[i];
+ }
+ 
++static void *
++acl_mem_default_zalloc(char *name, size_t size, size_t align, int32_t socket_id, void *udata)
++{
++	RTE_SET_USED(udata);
++	return rte_zmalloc_socket(name, size, align, socket_id);
++}
++
++static void
++acl_mem_default_free(void *ptr, void *udata)
++{
++	RTE_SET_USED(udata);
++	rte_free(ptr);
++}
++
+ RTE_EXPORT_SYMBOL(rte_acl_set_ctx_classify)
+ extern int
+ rte_acl_set_ctx_classify(struct rte_acl_ctx *ctx, enum rte_acl_classify_alg alg)
+@@ -362,7 +376,7 @@ rte_acl_free(struct rte_acl_ctx *ctx)
+ 
+ 	rte_mcfg_tailq_write_unlock();
+ 
+-	rte_free(ctx->mem);
++	ctx->mem_hook.free(ctx->mem, ctx->mem_hook.udata);
+ 	rte_free(ctx);
+ 	rte_free(te);
+ }
+@@ -425,6 +439,9 @@ rte_acl_create(const struct rte_acl_param *param)
+ 		ctx->rule_sz = param->rule_size;
+ 		ctx->socket_id = param->socket_id;
+ 		ctx->alg = acl_get_best_alg();
++		ctx->mem_hook.zalloc = acl_mem_default_zalloc;
++		ctx->mem_hook.free = acl_mem_default_free;
++		ctx->mem_hook.udata = NULL;
+ 		strlcpy(ctx->name, param->name, sizeof(ctx->name));
+ 
+ 		te->data = (void *) ctx;
+@@ -555,3 +572,29 @@ rte_acl_list_dump(void)
+ 	}
+ 	rte_mcfg_tailq_read_unlock();
+ }
++
++/*
++ * Set memory allocation hooks for a given ACL context.
++ */
++RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_acl_set_mem_hook, 26.03)
++int
++rte_acl_set_mem_hook(struct rte_acl_ctx *acl, const struct rte_acl_mem_hook *mhook)
++{
++	if (acl == NULL || mhook == NULL || mhook->zalloc  == NULL || mhook->free == NULL)
++		return -EINVAL;
++	memcpy(&acl->mem_hook, mhook, sizeof(struct rte_acl_mem_hook));
++	return 0;
++}
++
++/*
++ * Retrieve the memory allocation hooks assigned to the ACL context.
++ */
++RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_acl_get_mem_hook, 26.03)
++int
++rte_acl_get_mem_hook(const struct rte_acl_ctx *acl, struct rte_acl_mem_hook *mhook)
++{
++	if (acl  == NULL || mhook == NULL)
++		return -EINVAL;
++	memcpy(mhook, &acl->mem_hook, sizeof(struct rte_acl_mem_hook));
++	return 0;
++}
+diff --git a/lib/acl/rte_acl.h b/lib/acl/rte_acl.h
+index 95354cabb8..5cae733a65 100644
+--- a/lib/acl/rte_acl.h
++++ b/lib/acl/rte_acl.h
+@@ -136,6 +136,53 @@ struct rte_acl_param {
+ /** @internal opaque ACL handle */
+ struct rte_acl_ctx;
+ 
++/**
++ * Memory allocation hooks for ACL runtime.
++ */
++struct rte_acl_mem_hook {
++	/** Allocate zero-initialized memory used during runtime. */
++	void *(*zalloc)(char *name, size_t size, size_t align, int32_t socket_id, void *udata);
++
++	/** Free memory previously allocated by zalloc(). */
++	void (*free)(void *ptr, void *udata);
++
++	/** User-provided context passed to allocation/free hooks. */
++	void *udata;
++};
++
++/**
++ * Set memory allocation hooks for a given ACL context.
++ *
++ * Applications may use these hooks to allocate memory from custom pools or pre-allocated buffers.
++ * If no memory hook is provided, the ACL library uses rte_zmalloc_socket() internally.
++ *
++ * @param acl
++ *   The ACL context.
++ * @param mhook
++ *   Pointer to the memory hook structure
++ *
++ * @return
++ *   0 on success.
++ *   -EINVAL if parameters are invalid.
++ */
++__rte_experimental
++int rte_acl_set_mem_hook(struct rte_acl_ctx *acl, const struct rte_acl_mem_hook *mhook);
++
++/**
++ * Retrieve the memory allocation hooks assigned to the ACL context.
++ *
++ * @param acl
++ *   The ACL context.
++ * @param mhook
++ *   Output location for the current memory hook structure
++ *
++ * @return
++ *   0 on success.
++ *   -EINVAL if parameters are invalid.
++ */
++__rte_experimental
++int rte_acl_get_mem_hook(const struct rte_acl_ctx *acl, struct rte_acl_mem_hook *mhook);
++
+ /**
+  * De-allocate all memory used by ACL context.
+  *
+-- 
+2.43.0
 
