@@ -2,49 +2,55 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96167CFD376
-	for <dpdk-dev@archiver.kernel.org>; Tue,  2 Dec 2025 10:58:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E7BDCFD2F6
+	for <dpdk-dev@archiver.kernel.org>; Tue,  2 Dec 2025 13:08:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9188040268;
-	Tue,  2 Dec 2025 11:58:40 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
- by mails.dpdk.org (Postfix) with ESMTP id BBA4D400D5;
- Tue,  2 Dec 2025 11:58:38 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1764673119; x=1796209119;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=YJCq2wG22n129R07iazSEduk7zUBvywWfe/g3dTJ6i0=;
- b=VNwYdJi3nRwtaWQKk2bYYqx+FSaJLh+WRyo56PqLBjvCb82+6ODaVTVX
- OHBWlK6cVPauV7HqYMmfwTan34osKwR/b4n1yme0NC04eZch9Y+rOr362
- 5/Eyx/q8fjBFU1T1OHldJ2mD3VT76UO7RmPr4G+elXTerzc+i41gXeqXD
- McSvo+rSyhnMTY6weJcnh4BDO7cV2HlW1Uz7Lp80DwUSy3ld/CCYBZbKd
- A4Bgh/MKEWkMmvirlncw0UlmkvAVRrKsps8x8wOxmTb+RbO9GzX7lFJYp
- yE6UxUMgNqa3P9Bwxr9bi1W/Q23pAiM9//GXyoxIwqC4eD0GynSLLfctQ g==;
-X-CSE-ConnectionGUID: BWoysAPHQgC+OfUk4gL/sg==
-X-CSE-MsgGUID: AOLlfk68S76TcnBm7Pa7oA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11630"; a="66579453"
-X-IronPort-AV: E=Sophos;i="6.20,242,1758610800"; d="scan'208";a="66579453"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
- by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 02 Dec 2025 02:57:35 -0800
-X-CSE-ConnectionGUID: 4o41XHd8R9G9int3E7v7Bg==
-X-CSE-MsgGUID: Q1JnORzrSKmh1+d9GiVxaQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.20,242,1758610800"; d="scan'208";a="194776352"
-Received: from silpixa00401749.ir.intel.com ([10.20.224.233])
- by fmviesa009.fm.intel.com with ESMTP; 02 Dec 2025 02:57:33 -0800
-From: Radu Nicolau <radu.nicolau@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id D483340268;
+	Tue,  2 Dec 2025 14:08:48 +0100 (CET)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id E0FAF400D5
+ for <dev@dpdk.org>; Tue,  2 Dec 2025 14:08:47 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1764680927;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding;
+ bh=9LR3Ajyq/NnYHpG04km6hDxYm3iGsXG7tgdtF1c0gDc=;
+ b=Pj5RO9cToJNoyEd9fFfZF+2TZgMLCjQihtdpjUx+zOTQdRTEdf9JtrDn16NbeUFUzdsT8B
+ ZQ+x4psX8EGOxiLFLOajK5jSuJ3MNAKUC6uzrmvYi/tA0cfvkM/rnEuZnW5iVmUpOaZU7O
+ j3rxtS0vmsPxRZw7w+yPiv6p2pZpZ4g=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-488-YwxP_gWRNWe_wFLyxScfsA-1; Tue,
+ 02 Dec 2025 08:08:45 -0500
+X-MC-Unique: YwxP_gWRNWe_wFLyxScfsA-1
+X-Mimecast-MFC-AGG-ID: YwxP_gWRNWe_wFLyxScfsA_1764680924
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id D5C92180063D; Tue,  2 Dec 2025 13:08:30 +0000 (UTC)
+Received: from dmarchan.lan (unknown [10.44.32.89])
+ by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id C66311955F33; Tue,  2 Dec 2025 13:08:27 +0000 (UTC)
+From: David Marchand <david.marchand@redhat.com>
 To: dev@dpdk.org
-Cc: Radu Nicolau <radu.nicolau@intel.com>, stable@dpdk.org,
- Kai Ji <kai.ji@intel.com>
-Subject: [PATCH] crypto/qat: align the the vector address
-Date: Tue,  2 Dec 2025 10:57:31 +0000
-Message-ID: <20251202105731.851124-1-radu.nicolau@intel.com>
-X-Mailer: git-send-email 2.50.1
+Cc: thomas@monjalon.net,
+	Aaron Conole <aconole@redhat.com>
+Subject: [PATCH] version: 26.03-rc0
+Date: Tue,  2 Dec 2025 14:08:18 +0100
+Message-ID: <20251202130819.3805720-1-david.marchand@redhat.com>
 MIME-Version: 1.0
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: DljqV7rasHyBJzwNoTWy8AJrweF7FJYYue-vT8FMl28_1764680924
+X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
+content-type: text/plain; charset="US-ASCII"; x-default=true
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -58,68 +64,211 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Align the vector address rather than computed source address to
-make sure the alignment is properly propagated.
+Start a new release cycle with empty release notes.
+Bump version and ABI minor.
 
-Fixes: 253174309ff7 ("crypto/qat: fix source buffer alignment")
-Cc: stable@dpdk.org
-
-Signed-off-by: Radu Nicolau <radu.nicolau@intel.com>
+Signed-off-by: David Marchand <david.marchand@redhat.com>
 ---
- drivers/crypto/qat/dev/qat_crypto_pmd_gens.h | 33 +++++++++-----------
- 1 file changed, 15 insertions(+), 18 deletions(-)
+ .github/workflows/build.yml            |   4 +-
+ ABI_VERSION                            |   2 +-
+ VERSION                                |   2 +-
+ doc/guides/rel_notes/index.rst         |   1 +
+ doc/guides/rel_notes/release_26_03.rst | 138 +++++++++++++++++++++++++
+ 5 files changed, 143 insertions(+), 4 deletions(-)
+ create mode 100644 doc/guides/rel_notes/release_26_03.rst
 
-diff --git a/drivers/crypto/qat/dev/qat_crypto_pmd_gens.h b/drivers/crypto/qat/dev/qat_crypto_pmd_gens.h
-index 67dc889b50..22ee0fe4fe 100644
---- a/drivers/crypto/qat/dev/qat_crypto_pmd_gens.h
-+++ b/drivers/crypto/qat/dev/qat_crypto_pmd_gens.h
-@@ -443,6 +443,21 @@ qat_sym_build_req_set_data(struct icp_qat_fw_la_bulk_req *req,
- 			n_dst > QAT_SYM_SGL_MAX_NUMBER))
- 		return -1;
+diff --git a/.github/workflows/build.yml b/.github/workflows/build.yml
+index 39b4275816..ab140f885e 100644
+--- a/.github/workflows/build.yml
++++ b/.github/workflows/build.yml
+@@ -12,7 +12,7 @@ defaults:
+ env:
+   REF_GIT_BRANCH: main
+   REF_GIT_REPO: https://github.com/DPDK/dpdk
+-  REF_GIT_TAG: none
++  REF_GIT_TAG: v25.11
  
-+	/* For crypto API only: try to align the in-place buffers*/
-+	if (op != NULL && likely(n_dst == 0) && likely(!is_sgl)) {
-+		rte_iova_t offset = src_vec[0].iova & RTE_CACHE_LINE_MASK;
-+		if (offset) {
-+			rte_iova_t buff_addr = rte_mbuf_iova_get(op->sym->m_src);
-+			/* make sure src_data_start is still within the buffer */
-+			if (src_vec[0].iova - offset >= buff_addr) {
-+				src_vec[0].iova -= offset;
-+				src_vec[0].len += offset;
-+				ofs->ofs.auth.head += offset;
-+				ofs->ofs.cipher.head += offset;
-+			}
-+		}
-+	}
+ jobs:
+   checkpatch:
+@@ -96,7 +96,7 @@ jobs:
+             checks: stdatomic
+           - os: ubuntu-22.04
+             compiler: gcc
+-            checks: debug+doc+examples+tests
++            checks: abi+debug+doc+examples+tests
+           - os: ubuntu-22.04
+             compiler: clang
+             checks: asan+doc+tests
+diff --git a/ABI_VERSION b/ABI_VERSION
+index facd73a332..dfa88c8ebb 100644
+--- a/ABI_VERSION
++++ b/ABI_VERSION
+@@ -1 +1 @@
+-26.0
++26.1
+diff --git a/VERSION b/VERSION
+index 6cd39b74fa..22103a6c30 100644
+--- a/VERSION
++++ b/VERSION
+@@ -1 +1 @@
+-25.11.0
++26.03.0-rc0
+diff --git a/doc/guides/rel_notes/index.rst b/doc/guides/rel_notes/index.rst
+index bf5ecb266e..b304fc3b41 100644
+--- a/doc/guides/rel_notes/index.rst
++++ b/doc/guides/rel_notes/index.rst
+@@ -8,6 +8,7 @@ Release Notes
+     :maxdepth: 1
+     :numbered:
+ 
++    release_26_03
+     release_25_11
+     release_25_07
+     release_25_03
+diff --git a/doc/guides/rel_notes/release_26_03.rst b/doc/guides/rel_notes/release_26_03.rst
+new file mode 100644
+index 0000000000..15dabee7a1
+--- /dev/null
++++ b/doc/guides/rel_notes/release_26_03.rst
+@@ -0,0 +1,138 @@
++.. SPDX-License-Identifier: BSD-3-Clause
++   Copyright 2025 The DPDK contributors
 +
- 	if (likely(!is_sgl)) {
- 		src_data_start = src_vec[0].iova;
- 		tl_src = total_len_src =
-@@ -503,24 +518,6 @@ qat_sym_build_req_set_data(struct icp_qat_fw_la_bulk_req *req,
- 			dst_data_start = src_data_start;
- 	}
- 
--	/* For crypto API only try to align the in-place buffers*/
--	if (op != NULL && likely(n_dst == 0)) {
--		uint16_t offset = src_data_start & RTE_CACHE_LINE_MASK;
--		if (offset) {
--			rte_iova_t buff_addr = rte_mbuf_iova_get(op->sym->m_src);
--			/* make sure src_data_start is still within the buffer */
--			if (src_data_start - offset >= buff_addr) {
--				src_data_start -= offset;
--				dst_data_start = src_data_start;
--				ofs->ofs.auth.head += offset;
--				ofs->ofs.cipher.head += offset;
--				tl_src += offset;
--				total_len_src = tl_src;
--				total_len_dst = tl_src;
--			}
--		}
--	}
--
- 	req->comn_mid.src_data_addr = src_data_start;
- 	req->comn_mid.dest_data_addr = dst_data_start;
- 	req->comn_mid.src_length = total_len_src;
++.. include:: <isonum.txt>
++
++DPDK Release 26.03
++==================
++
++.. **Read this first.**
++
++   The text in the sections below explains how to update the release notes.
++
++   Use proper spelling, capitalization and punctuation in all sections.
++
++   Variable and config names should be quoted as fixed width text:
++   ``LIKE_THIS``.
++
++   Build the docs and view the output file to ensure the changes are correct::
++
++      ninja -C build doc
++      xdg-open build/doc/guides/html/rel_notes/release_26_03.html
++
++
++New Features
++------------
++
++.. This section should contain new features added in this release.
++   Sample format:
++
++   * **Add a title in the past tense with a full stop.**
++
++     Add a short 1-2 sentence description in the past tense.
++     The description should be enough to allow someone scanning
++     the release notes to understand the new feature.
++
++     If the feature adds a lot of sub-features you can use a bullet list
++     like this:
++
++     * Added feature foo to do something.
++     * Enhanced feature bar to do something else.
++
++     Refer to the previous release notes for examples.
++
++     Suggested order in release notes items:
++     * Core libs (EAL, mempool, ring, mbuf, buses)
++     * Device abstraction libs and PMDs (ordered alphabetically by vendor name)
++       - ethdev (lib, PMDs)
++       - cryptodev (lib, PMDs)
++       - eventdev (lib, PMDs)
++       - etc
++     * Other libs
++     * Apps, Examples, Tools (if significant)
++
++     This section is a comment. Do not overwrite or remove it.
++     Also, make sure to start the actual text at the margin.
++     =======================================================
++
++
++Removed Items
++-------------
++
++.. This section should contain removed items in this release. Sample format:
++
++   * Add a short 1-2 sentence description of the removed item
++     in the past tense.
++
++   This section is a comment. Do not overwrite or remove it.
++   Also, make sure to start the actual text at the margin.
++   =======================================================
++
++
++API Changes
++-----------
++
++.. This section should contain API changes. Sample format:
++
++   * sample: Add a short 1-2 sentence description of the API change
++     which was announced in the previous releases and made in this release.
++     Start with a scope label like "ethdev:".
++     Use fixed width quotes for ``function_names`` or ``struct_names``.
++     Use the past tense.
++
++   This section is a comment. Do not overwrite or remove it.
++   Also, make sure to start the actual text at the margin.
++   =======================================================
++
++
++ABI Changes
++-----------
++
++.. This section should contain ABI changes. Sample format:
++
++   * sample: Add a short 1-2 sentence description of the ABI change
++     which was announced in the previous releases and made in this release.
++     Start with a scope label like "ethdev:".
++     Use fixed width quotes for ``function_names`` or ``struct_names``.
++     Use the past tense.
++
++   This section is a comment. Do not overwrite or remove it.
++   Also, make sure to start the actual text at the margin.
++   =======================================================
++
++* No ABI change that would break compatibility with 25.11.
++
++
++Known Issues
++------------
++
++.. This section should contain new known issues in this release. Sample format:
++
++   * **Add title in present tense with full stop.**
++
++     Add a short 1-2 sentence description of the known issue
++     in the present tense. Add information on any known workarounds.
++
++   This section is a comment. Do not overwrite or remove it.
++   Also, make sure to start the actual text at the margin.
++   =======================================================
++
++
++Tested Platforms
++----------------
++
++.. This section should contain a list of platforms that were tested
++   with this release.
++
++   The format is:
++
++   * <vendor> platform with <vendor> <type of devices> combinations
++
++     * List of CPU
++     * List of OS
++     * List of devices
++     * Other relevant details...
++
++   This section is a comment. Do not overwrite or remove it.
++   Also, make sure to start the actual text at the margin.
++   =======================================================
 -- 
-2.50.1
+2.51.1
 
