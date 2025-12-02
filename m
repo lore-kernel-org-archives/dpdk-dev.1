@@ -2,49 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BE32D12675
-	for <dpdk-dev@archiver.kernel.org>; Tue,  2 Dec 2025 21:42:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9E4CD12689
+	for <dpdk-dev@archiver.kernel.org>; Tue,  2 Dec 2025 23:48:47 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4CD1D4021F;
-	Tue,  2 Dec 2025 22:42:58 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
- by mails.dpdk.org (Postfix) with ESMTP id 12C04400D5
- for <dev@dpdk.org>; Tue,  2 Dec 2025 22:42:56 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1764711777; x=1796247777;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=+dgzQM+6HHYJS+leB65767bDAGE7hzp0f21g7IBd/BE=;
- b=LkWBlYf83WwPZsqmSeSN6imZrxfcebGjHuFfa6EljOywcE2y3CLJCdkR
- UVlaiXi2w9CBySTMrA1SZLra8URDQNImVOakwVMkANKeBRMLhQs+IjBaw
- pQfDsCtROkogjHfvxTuIzpJji4gX74WWe9P68620tZvUA+IUu2m1pBgTu
- XwJQmXcoq89UDaBx4FJ3lKOZ6s05BWIru/CzQiWJYzzVcsEjVq49jftGV
- IaUaINpkKlvvQrgySNcksRQGsSuOzlctSnNRBU/7yDAv56oBVwUPkuxD8
- 8TY+IE6FsJtS3zS5g9JuN6wqQQHbHjfEJcHShe3l6ZrKS/qsxz5Ov+eyN w==;
-X-CSE-ConnectionGUID: SMNHGcbNT6G+9VYTXyvlug==
-X-CSE-MsgGUID: jVwyK2JoRUiukQZ/rob0Cg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11631"; a="66655171"
-X-IronPort-AV: E=Sophos;i="6.20,244,1758610800"; d="scan'208";a="66655171"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
- by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 02 Dec 2025 13:42:55 -0800
-X-CSE-ConnectionGUID: 0DKumTZGQkaOWsINnmWKNQ==
-X-CSE-MsgGUID: sUHAO9w9TziHoxBLVT5fLQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.20,244,1758610800"; d="scan'208";a="195284937"
-Received: from client-08.iind.intel.com ([10.190.203.148])
- by fmviesa010.fm.intel.com with ESMTP; 02 Dec 2025 13:42:54 -0800
-From: Anurag Mandal <anurag.mandal@intel.com>
-To: dev@dpdk.org
-Cc: bruce.richardson@intel.com,
-	Anurag Mandal <anurag.mandal@intel.com>
-Subject: [PATCH] doc: update QinQ strip & VLAN filter notes
-Date: Tue,  2 Dec 2025 20:55:53 +0000
-Message-ID: <20251202205554.24405-1-anurag.mandal@intel.com>
-X-Mailer: git-send-email 2.43.0
+	by mails.dpdk.org (Postfix) with ESMTP id 88D174021F;
+	Wed,  3 Dec 2025 00:48:46 +0100 (CET)
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com
+ [209.85.222.171])
+ by mails.dpdk.org (Postfix) with ESMTP id 57D2A400D5
+ for <dev@dpdk.org>; Wed,  3 Dec 2025 00:48:45 +0100 (CET)
+Received: by mail-qk1-f171.google.com with SMTP id
+ af79cd13be357-8b1f2fbaed7so549159785a.2
+ for <dev@dpdk.org>; Tue, 02 Dec 2025 15:48:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1764719324;
+ x=1765324124; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=JjRU9PFyjVj+6xY+zmq3/I995FZAm0KPuHRNNhAXSjo=;
+ b=wCKpYJEa0LHWs+/uhEC+mBkjpd0Uh4Ma4PfxCwOuJG0mie5MvFeWEe0PSNihQ4eTCv
+ 58VpXza57annIrGdGtppSQy+Y/Ga36mXoj0WMtTdexz97lCfEnGx5+FJ2SLDOBAebOeP
+ vt4hZac8D9459Mc905nucyhGBGl9j1uhEmCBZhWy8JlbO1RGvKzkMKkFMnfcvEPkhjlk
+ z2kwkJI6uXuswdm570AlEtO8+T9kMSGTlDWs+fWJBKAsoBYb5pkhqOg87c3yHjXZ53zM
+ 4jwGDT6eUbWhIlzD2FYMU4+5xegE5gOCH5mC1MtvBrKsXIcyTgdDM1OsAjfLYXdZfkYA
+ gvkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1764719324; x=1765324124;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=JjRU9PFyjVj+6xY+zmq3/I995FZAm0KPuHRNNhAXSjo=;
+ b=w0YuUoRpqJhOlXYO1WuYrjcpIK+FBQDjHaZ3JPcMxMSN/KhTXL4hTJzAOuTAv3Gndp
+ UKAMnWnNOytIoWz6QNS3fhsw68/eYchhKdhupfkdye1T+PmytobruEdik49R2KNlwZmC
+ 4QmYKk7JNhEO1SzSyMgRCHn0Ca2P3GXGiBznpRABgeJ4sT63C8DhwLmVnHbLu3EAqdEd
+ HGToyyGgdRKpAm5ta0WELWE79ex5zKMbt9He5UHQZdSSeWGpMKSH/6jvUnIeNpROX4dn
+ /dK1v6Vskp3PUK5glBkL1ghLwMdKCYRqE8v7m4IQ4QXve5RCPRm39zPTKs309SbtGFsZ
+ em7g==
+X-Gm-Message-State: AOJu0YwwGGFO9XeWC//6KDItDvyQk9YxdEZPW+M1E0IevU5PjJ8Zn1ts
+ /XhdMkfBoWZd8XMm/Qah/kc7QeQFQMWTXXgMOAgIZkoYIZFi8qBTkZIOIPYE9+usyw8=
+X-Gm-Gg: ASbGncvSiXlLqKa0xyNY5o0G8tULD44IddKs/upkB2wYGRqClNVYMTKGbEIX51/iNyr
+ QsAqGOGjmNxuYVHYkxUicZRPf2xWrVBgDaogmepncuYInqmjRoh4vcTZwPgofVwii+DfdZahjFE
+ NthPfuTy4AmTaA4Su/wGBr19eQR1y1ISdv2va74ETaSDq58wNLdjlOuQE4vAzZSf58nrPGOvy2s
+ v8HCcMGTALO/1SS8aNoSpFX92MdsZ3SqpdYSnCpKrkKIdLwua8ugbjANxQ9XX9cE7NPB20OQxWC
+ Rh93MFps/tBPzdZPUg2IxhvMEkU5aCtoL/BvwTWr1uSsaIn2yVAxC8a0Ej3HuUlN2BmUrwgj4rq
+ ZDn8INN6o8SDbvRrBUXuU8+7N27DWtAtPPQC5gMXLDPh7JEZsv3dC8GUXGdV8mWRNa2W06oyYYC
+ DAyJuTjs4D66RNeJEjruRkSE92pZHMnTbjYnOsT2CFY4MMS7GPozYr
+X-Google-Smtp-Source: AGHT+IG98ZXItFi191ZuXuf/eMvu4skqQzu/iBuU+y/QdVJ08bIwYAUx1yYPQogS5f6dxErPcbeaGQ==
+X-Received: by 2002:a05:620a:4416:b0:8b5:5a03:36df with SMTP id
+ af79cd13be357-8b5e47d0452mr43093785a.3.1764719324401; 
+ Tue, 02 Dec 2025 15:48:44 -0800 (PST)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ af79cd13be357-8b529994c8fsm1197494485a.6.2025.12.02.15.48.43
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 02 Dec 2025 15:48:44 -0800 (PST)
+Date: Tue, 2 Dec 2025 15:48:40 -0800
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Shani Peretz <shperetz@nvidia.com>
+Cc: <dev@dpdk.org>, <stable@dpdk.org>, Aman Singh
+ <aman.deep.singh@intel.com>, Gregory Etelson <getelson@nvidia.com>, Dariusz
+ Sosnowski <dsosnowski@nvidia.com>
+Subject: Re: [PATCH] app/testpmd: fix memory leak in port attach
+Message-ID: <20251202154840.5579f76a@phoenix.local>
+In-Reply-To: <20251202095720.264195-1-shperetz@nvidia.com>
+References: <20251202095720.264195-1-shperetz@nvidia.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -58,75 +83,20 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Tested QinQ stripping with TPIDs 0x88A8 and 0x8100.
-Removed QinQ related obsolete notes for FW version >= 8.4.
-Added new "QinQ strip" section under "Sample Application Notes".
-Added VLAN filter enable command to its notes as, VLAN cannot
-be added to port without it.
+On Tue, 2 Dec 2025 11:57:20 +0200
+Shani Peretz <shperetz@nvidia.com> wrote:
 
-Signed-off-by: Anurag Mandal <anurag.mandal@intel.com>
----
- doc/guides/nics/i40e.rst | 37 +++++++++++++++++++++++++++++++++----
- 1 file changed, 33 insertions(+), 4 deletions(-)
+> The convert_pci_address_format() function was leaking memory because
+> rte_devargs_parse() allocates memory internally via strdup(), but the
+> function never called rte_devargs_reset() to free it.
+> 
+> Add a cleanup label to ensure rte_devargs_reset() is called on all
+> return paths.
+> 
+> Fixes: 12c2405989f6 ("app/testpmd: canonicalize short PCI name format")
+> Fixes: acbff64ea5b1 ("app/testpmd: fix devargs format in port attach")
+> Cc: stable@dpdk.org
+> 
+> Signed-off-by: Shani Peretz <shperetz@nvidia.com>
 
-diff --git a/doc/guides/nics/i40e.rst b/doc/guides/nics/i40e.rst
-index 165798fb94..45dc083c94 100644
---- a/doc/guides/nics/i40e.rst
-+++ b/doc/guides/nics/i40e.rst
-@@ -357,9 +357,41 @@ To start ``testpmd``, and add vlan 10 to port 0:
-     ...
- 
-     testpmd> set promisc 0 off
-+    testpmd> vlan set filter on 0
-     testpmd> rx_vlan add 10 0
- 
- 
-+QinQ strip
-+~~~~~~~~~~~
-+
-+QinQ TPID is set as 0x8100 IEEE 802.1Q by default.
-+For QinQ strip with TPID 0x88A8 IEEE 802.1ad, extend VLAN is enabled and VLAN outer tpid is set to 0x88A8.
-+Vlan filter steps can be added before or after.
-+
-+To start ``testpmd``, and enable QinQ strip for TPID 0x88A8 on port 0:
-+
-+.. code-block:: console
-+
-+    ./<build_dir>/app/dpdk-testpmd -l 0-15 -- -i --forward-mode=mac
-+    ...
-+
-+    testpmd> vlan set extend on 0
-+    testpmd> vlan set outer tpid 0x88A8 0
-+    testpmd> vlan set qinq_strip on 0
-+
-+For QinQ strip with TPID 0x8100, extend VLAN is enabled only.
-+
-+To start ``testpmd``, and enable QinQ strip for default TPID on port 0:
-+
-+.. code-block:: console
-+
-+    ./<build_dir>/app/dpdk-testpmd -l 0-15 -- -i --forward-mode=mac
-+    ...
-+
-+    testpmd> vlan set extend on 0
-+    testpmd> vlan set qinq_strip on 0
-+
-+
- Flow Director
- ~~~~~~~~~~~~~
- 
-@@ -919,10 +951,7 @@ Vlan related Features miss when FW >= 8.4
- 
- If FW version >= 8.4, there'll be some Vlan related issues:
- 
--#. TCI input set for QinQ  is invalid.
--#. Fail to configure TPID for QinQ.
--#. Need to enable QinQ before enabling Vlan filter.
--#. Fail to strip outer Vlan.
-+#. TCI input set for QinQ is invalid.
- 
- Example of getting best performance with l3fwd example
- ------------------------------------------------------
--- 
-2.43.0
-
+Queued to next-net for 26.03
