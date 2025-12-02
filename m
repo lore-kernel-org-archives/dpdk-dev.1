@@ -2,70 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1705D12689
-	for <dpdk-dev@archiver.kernel.org>; Tue,  2 Dec 2025 23:49:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BC17D12689
+	for <dpdk-dev@archiver.kernel.org>; Tue,  2 Dec 2025 23:53:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D038F402E2;
-	Wed,  3 Dec 2025 00:49:16 +0100 (CET)
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com
- [209.85.222.178])
- by mails.dpdk.org (Postfix) with ESMTP id 179D4400D5
- for <dev@dpdk.org>; Wed,  3 Dec 2025 00:49:16 +0100 (CET)
-Received: by mail-qk1-f178.google.com with SMTP id
- af79cd13be357-8b28f983333so591867185a.3
- for <dev@dpdk.org>; Tue, 02 Dec 2025 15:49:16 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 4DFC84021F;
+	Wed,  3 Dec 2025 00:53:15 +0100 (CET)
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com
+ [209.85.160.177])
+ by mails.dpdk.org (Postfix) with ESMTP id C72AC400D5
+ for <dev@dpdk.org>; Wed,  3 Dec 2025 00:53:13 +0100 (CET)
+Received: by mail-qt1-f177.google.com with SMTP id
+ d75a77b69052e-4ee2014c228so46592461cf.2
+ for <dev@dpdk.org>; Tue, 02 Dec 2025 15:53:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1764719355;
- x=1765324155; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1764719593;
+ x=1765324393; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=gLVTix3EQH9C4n+3z5DTCOHCl9dB8HKsus3idDkREHk=;
- b=esM5YZ6ljYu5neJf8Q00tbEWgS7wG6Lww4AWFvIVYGobWPAPwdOER605Ga9xoFHfUL
- Pe48WIyqOqMEDnMtTDTVoP3w+HLgXOcMwFyGBvv6KdDOObbgyo2Ggll/+/VNXR/jkEDY
- S0GQAYCIO/ZKMRGSN3+a6Eb4Ony6HHILioY/f892sg/8Z1a4vTMcvsPOJiORHpHdAdcp
- GMOtfRx/y+btZPwfUe9F4iPbSkS2CCMyE4MXuBgNuupz+M4ij2wLh11hcb1LziwojCoF
- ET7PCgcuUAUaNwVQP2Zr3uRuGyn98pI9VI+XU2T+ziSrqydr4DgUb8H5ndt3JmVEtuMu
- 28tw==
+ bh=LJOD9wHqtdr3ZDjUpU4sZHsn5E0o5EhOpjAqTywBsc4=;
+ b=yBWUpyHEHAgPzJ+T8nrPAoiHRow0/h+zjrsxad0I6uvH3YzbhoRPHfWuJtGkbXOh5e
+ CNqs3PMVhS/XWiQYv6YNsy8dsTXL0whIJymr4i9FPsdASDNcgSjCaVMRGAMoxPV35siv
+ Njmrg7O/caVt2jTipBWBIlN0AM951GRdHBtrCPb2vyBGF6TFbx6p0Vml8V8ASxlvPqXl
+ eT1KlShWN4pI69M1VUx3BycH1uKdvahRjdwkzd+35TAr6os2PflptrukxtyWjTp8ln7a
+ F7N/PHx7dWB9k04uBZeM+VsR1SQwHzuVDm5AelcjoM7Tyd75jYdu+YNb8iSffWkhHnJG
+ ux1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1764719355; x=1765324155;
+ d=1e100.net; s=20230601; t=1764719593; x=1765324393;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=gLVTix3EQH9C4n+3z5DTCOHCl9dB8HKsus3idDkREHk=;
- b=I/LrvfT1hgcSVGGeWlDQkvd5fj0OuRnzlGqEnn6UZV85kFtWg9bvN3ImsZ2lMnmQqZ
- r7EnlocvLrxvPteGrr5FInavhDSvusMeKrs+zIHDYn1DbwQqFgvhyLyyIZKf5ya9WzR8
- odD4o6Uuvmg7jZ54eDQwFsAhZcsa1WjFBYIPywA7jw0WD9suYYat/znQcaVvLuFhPsPU
- mNkwosF+toVFwV1JnCJxI4zcHXR65hNCxfosK077jNIMsWJqwVgqqTQDZIyl38LtFHva
- iSInlMXNKJTCXJwPN48FgmxtjYHM0zFr0gfVwtekkvBSEtExZAL+N6YBWAC7v7pzewlM
- ca5Q==
-X-Gm-Message-State: AOJu0YxL2GvcfoAfYlekPbZ4FctmQeudmrAqd+cJnkW1WYY6e2KFqdZa
- bNvp6Rt9cY+jpCjpzSUGLkshTT2phYHMy/PPC8a1uyWuwgsgSjcDux4ayf0Up/FhOo0=
-X-Gm-Gg: ASbGncun2/480Xl6YxAEE7WEuoMYGaC1aPhMWnc5by/Y3TWMoDI/9IxCPPmSvfxOoIn
- alpA3cy0FVR6ee22lQjoFlP1ivGXb3uOhIKkjuqqc41A2lhj+IYu57rFcSKdf5fyi3VtCr1d7n2
- swvFDM+ytskSnxW2um2jbXFFNh/oGlNLEwZb6OCXtQgS68mnWBKG2hCFC3oKMquJ4fdHJiG+QLB
- YoSRy9znL1AuUK3rw0v3+ITnOtYFkWSNoXWFXZHm3gOZvfP1tyfzSZLp1XVW87FU4Yy4st92vVx
- lzmMjgebUpzXV32RKpUb05C/iHYyg0MCAajBCTm+1mXlV+1Q+iE7Ak4WGH+Nc/GHVldSMpdVX8R
- 67VkdhEZDFImAy2/ZSb0OpkY4ecqeuJ6yPl3w/FWrgXUX1O2fpTOy2BGVUcsrSJslnrbJ9TquJt
- ZPPD67mYbg/Kk81qeAGMHsXehcQg75e9+of5ORHxaS7smc4aNFTc7hYnBsWvUgU3A=
-X-Google-Smtp-Source: AGHT+IFyFESdQ8YagY4IY7A+bShwFefYQ2L3dUgkmHP6mSIusuOLafn7wW6Fef7ztYVn7xALrIt8UA==
-X-Received: by 2002:a05:620a:1788:b0:8b2:a0cd:90f1 with SMTP id
- af79cd13be357-8b5e6e856b3mr44790685a.61.1764719355388; 
- Tue, 02 Dec 2025 15:49:15 -0800 (PST)
+ bh=LJOD9wHqtdr3ZDjUpU4sZHsn5E0o5EhOpjAqTywBsc4=;
+ b=j/G8I1rZ5+FhKMkp7mqisSkJd9cKSXL56pYZC68Yu6xd8jmQCKicstNZbX5xpPfJS4
+ XDWCXhdTBpXq+RxQgTqk9Tq6JF0C2XjClFU6/eolqxohwiNjSwHPsDjrUVp3Ykzu8sk2
+ er3yOwEXT6oX6R4qmz55wD+R+VmZsaJ3g1LOOHRIdsrcl72vhXgArd98zSJGfo8fTGIB
+ 5ti5xmYjoJiVg/AkBXy9+5g4hAsMhtoDdlWDkXS02x4BcZQaGlWMQMGO71GDbcVlCE4r
+ CLQAz3whB23UMNZOInFm3YaqhwFUI8Tn5rXkBjUiGtjan3ScUTJ2R8HFzeccIHPGw7TJ
+ 34hQ==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCVllht0NThau7nh87rM0CM0ZI3CpK49DGyptx5duDfD5SMhsi7DYkXKilfKpfSQQLAaBMI=@dpdk.org
+X-Gm-Message-State: AOJu0Yx/VSM0ygDrLMVGmWA/1/3TOR+6GfDH7KKC5OFCZr9sKjCHrBM7
+ nha1T/3LVNr6cT2hxa606yFFXExN5SBRXWDw1f6o8qA4ArMNkQdhVvgdLm/ra8rzUBA=
+X-Gm-Gg: ASbGncs4O6suQfJ4Hx/g9ENsxJ1cxcbkIL1W4hAWqtpqyPkgQxcM6TlkHXmy4AHPf8d
+ A1JLT81aNs7gMPcOiSM0gZn9WNbWtNZ6x5sLJ5MLJ8c5px5YBvf42lGqDmDtA7uuHk8IykIt4Ib
+ UjIyB6iH4X5CHAV7+3N+R3KJRsC/MKAFs/zn2emzI4yvkmwnOOJ6Ll/ykJ1+rJX4jbG/tsiVO0d
+ tAxnKXv6KLtZhLR6LTTcRrUW27euQKjXZlI52mhFMS1/Wj3eCSmAKSpFLOWsZRcky4UNs8b9dqN
+ MX6P8RXfzryQhzSanREfeMlIV0kH0Jx2/9sBg8tfTC5he+szITTChasxWD00uETyX6q/gmYyuwm
+ Wa+OG8kgPZDJeBpyzYTL5Qs0qwbfszajEdSBR03E/ei1jMneanksTJDJ5JnKY4PfU2dtmqcio3N
+ NxgwGAA5T2wkXPRcwH7wsimbi2m0vUXiaqu4B5+k+s04tY07r6qi2630qnaMFW3Io=
+X-Google-Smtp-Source: AGHT+IEriBR+VB3A7Qxw6Ur/svje7+4T5taaefVbmHoMYiehI9FWe6WE6N6Pt14q9Q/QT2AYR5xdRQ==
+X-Received: by 2002:a05:622a:1489:b0:4ed:a744:adc with SMTP id
+ d75a77b69052e-4f01757f2e8mr5531191cf.10.1764719593013; 
+ Tue, 02 Dec 2025 15:53:13 -0800 (PST)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- af79cd13be357-8b5304c960asm1101579785a.19.2025.12.02.15.49.14
+ 6a1803df08f44-88652b8fcb2sm114078916d6.52.2025.12.02.15.53.12
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 02 Dec 2025 15:49:15 -0800 (PST)
-Date: Tue, 2 Dec 2025 15:49:11 -0800
+ Tue, 02 Dec 2025 15:53:12 -0800 (PST)
+Date: Tue, 2 Dec 2025 15:53:09 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Anurag Mandal <anurag.mandal@intel.com>
-Cc: dev@dpdk.org, bruce.richardson@intel.com, aman.deep.singh@intel.com,
- stable@dpdk.org
-Subject: Re: [PATCH] app/testpmd: fix incorrect function names in logs
-Message-ID: <20251202154911.7b1a377c@phoenix.local>
-In-Reply-To: <20251201100837.422764-1-anurag.mandal@intel.com>
-References: <20251201100837.422764-1-anurag.mandal@intel.com>
+To: a.schollmeyer@syseleven.de
+Cc: Aman Singh <aman.deep.singh@intel.com>, dev@dpdk.org
+Subject: Re: [PATCH v3] app/testpmd: fail on shared rxq switch mismatch
+Message-ID: <20251202155254.0d61937d@phoenix.local>
+In-Reply-To: <20251201102211.490071-1-a.schollmeyer@syseleven.de>
+References: <20251125102207.428661-1-a.schollmeyer@syseleven.de>
+ <20251201102211.490071-1-a.schollmeyer@syseleven.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -82,19 +84,26 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon,  1 Dec 2025 10:08:36 +0000
-Anurag Mandal <anurag.mandal@intel.com> wrote:
+On Mon,  1 Dec 2025 11:22:11 +0100
+a.schollmeyer@syseleven.de wrote:
 
-> VLAN extend and tpid setting functions have wrong function names
-> mentioned in the error logs causing confusion as functions are
-> not found in code using those names.
+> From: Adrian Schollmeyer <a.schollmeyer@syseleven.de>
 > 
-> Replaced static names with dynamic "__func__" predefined identifier.
+> Shared Rx queues do not work with every combination of ports. Besides
+> requiring the corresponding device capability, shared Rx queues also
+> require all ports of one share group and queue ID have the same switch
+> domain and Rx domain. When these fields do not match, shared Rx queues
+> are not properly set up and queue sharing may fail silently. This can
+> happen even in some less intuitive cases like multiple VFs of one
+> physical NIC and may cause packets not to be read by the application,
+> depending on how the data path is implemented.
 > 
-> Fixes: 61a3b0e5e79f ("app/testpmd: send failure logs to stderr")
-> Cc: stable@dpdk.org
+> To help with debugging issues with shared Rx queue configuration when
+> using testpmd, this commit introduces simple checks and error messages
+> for members of a share_group and share_qid to fail whenever there is a
+> mismatch in the switch and Rx domain.
 > 
-> Signed-off-by: Anurag Mandal <anurag.mandal@intel.com>
+> Signed-off-by: Adrian Schollmeyer <a.schollmeyer@syseleven.de>
 > ---
 
 Queued to next-net for 26.03
