@@ -2,48 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9A34D1CDB7
-	for <dpdk-dev@archiver.kernel.org>; Thu,  4 Dec 2025 01:13:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A167D1CDB8
+	for <dpdk-dev@archiver.kernel.org>; Thu,  4 Dec 2025 01:53:04 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A6D1B4029D;
-	Thu,  4 Dec 2025 02:13:24 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
- by mails.dpdk.org (Postfix) with ESMTP id 291554027D;
- Thu,  4 Dec 2025 02:13:23 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 757204029D;
+	Thu,  4 Dec 2025 02:53:03 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+ by mails.dpdk.org (Postfix) with ESMTP id 846034027D;
+ Thu,  4 Dec 2025 02:53:01 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1764810804; x=1796346804;
+ t=1764813181; x=1796349181;
  h=from:to:cc:subject:date:message-id:mime-version:
  content-transfer-encoding;
- bh=t/CI9wS9dbkvhcjbmVsTT8u8rS2sTBxYuFYpjJxfJIs=;
- b=IhBG+ntMnN110uR+rTVNwgith+YBULcd7xnvkz7GKAOP3ItmUiEMUHI4
- wW9dOgU3H5ZdFqM3W7fSAZeenWbBIArlnxcTsjEPdrAJRO0cuxgws4axx
- wa+UK+hxdgcjOlf7Wa7sPP1o+GYMbS5PzMZeGy/BtgBmpWYcGAmrYogKX
- aB2dzQGsPIbNtOwiD3NPRataIkPjIHNVLFOojkqboqMLZ8j2Zo2teoXXM
- whb+WhGBUBP6eAjc19yEEFY5ea59JqnMBtVE7G57Jj3tDYAIyceArs1Ni
- Z/wT+thaFmYUC95Mq7+rOEVGPwfI8LJcxLKCXjfyAUid+a/tx8+wGKglP Q==;
-X-CSE-ConnectionGUID: KJRLrL17Sy2Wz+Bjl3CEMg==
-X-CSE-MsgGUID: 3dkbPtULTQ+jTI3DelaAVA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11631"; a="77446210"
-X-IronPort-AV: E=Sophos;i="6.20,247,1758610800"; d="scan'208";a="77446210"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
- by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 03 Dec 2025 17:13:22 -0800
-X-CSE-ConnectionGUID: RoLVDUD4S0aHHoHqlIB+5A==
-X-CSE-MsgGUID: g+jYQWReTiyKX4P7QhCQiQ==
+ bh=SKFFkZLToiZjAyGxuMsN0qlWPX2xZpAOudclEJn2yIs=;
+ b=H5bwoNNRYmpV6t/KAWzTnO3nUKlxrPwDOB7hNlZBese00vpGQv8YNtrY
+ iTEmj+ZFu76frY7w119PChBFT+lGOYLmLDy4q8EwSxWbS0JQKiPu9qyCY
+ Hi8DxX0nHWKmH7cU698tHHQmZj4IgbSej66rYGMaGhtiLO8UTXlSVl6Z4
+ Fbe0gvczS20GToDVWxplNXltOcJ5pku784W7yPD1bzodOOQZgcqWXdY11
+ PsulSq8HOePKPyh5LkH84etNYpeTpvTHTOG13l3KapttJyMUG9VY/3KQ0
+ Oy0x0Aa4pGezHPd+9XXFLtNLBHnq/J69ASBa1ksQreo+XIO2JeMG5pqrM A==;
+X-CSE-ConnectionGUID: iATH4YJKRpGd4EHdfbmZKQ==
+X-CSE-MsgGUID: Sk3OuX3dSgCnbGJrEtWtlA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11631"; a="70439739"
+X-IronPort-AV: E=Sophos;i="6.20,247,1758610800"; d="scan'208";a="70439739"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+ by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 03 Dec 2025 17:53:00 -0800
+X-CSE-ConnectionGUID: +uGX7nToSm69hE7NEyGiKg==
+X-CSE-MsgGUID: eW5rE+smTFuMQ2RwxnWb1Q==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.20,247,1758610800"; d="scan'208";a="195085850"
+X-IronPort-AV: E=Sophos;i="6.20,247,1758610800"; d="scan'208";a="193920774"
 Received: from peter-x299-ud4-pro.png.intel.com ([10.158.122.68])
- by fmviesa008.fm.intel.com with ESMTP; 03 Dec 2025 17:13:21 -0800
+ by orviesa006.jf.intel.com with ESMTP; 03 Dec 2025 17:52:59 -0800
 From: Song Yoong Siang <yoong.siang.song@intel.com>
 To: Bruce Richardson <bruce.richardson@intel.com>,
  David Zage <david.zage@intel.com>,
  Soumyadeep Hore <soumyadeep.hore@intel.com>, dev@dpdk.org
 Cc: stable@dpdk.org
-Subject: [PATCH v1 1/1] net/e1000: force allocation of context descriptor for
- igc launch time
-Date: Thu,  4 Dec 2025 09:30:08 +0800
-Message-ID: <20251204013009.857273-1-yoong.siang.song@intel.com>
+Subject: [PATCH v1 1/1] net/e1000: fix igc launch time calculation
+Date: Thu,  4 Dec 2025 10:09:47 +0800
+Message-ID: <20251204020947.867012-1-yoong.siang.song@intel.com>
 X-Mailer: git-send-email 2.48.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -60,50 +59,55 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-When the timestamp dynamic flag is set in the mbuf offload flags, force
-allocation of a new context descriptor. The launch time feature requires a
-dedicated context descriptor to specify the desired launch time for packet.
+Improve the launch time calculation logic to handle different scenarios:
+ - Set launch time to 0 if txtime has expired.
+ - Set launch time to 0 if txtime exceeds the horizon (beyond the end of
+   the next Qbv cycle).
+ - Mark the first flag in the context descriptor when the packet is the
+   first one scheduled in the next Qbv cycle.
+ - Create a dummy packet to dirty the current cycle before sending
+   packets intended for the next Qbv cycle.
 
 Testing was performed on two Intel ADL-S platforms with i226 NICs
-connected back-to-back. A DPDK sample application is created to send two
-bursts of packets with 100,000 nanosecond burst interval. Each burst is
-having 5 UDP packets and only the first packet in the burst using launch
-time feature. Meanwhile, the tcpdump command below is used on the link
-partner to capture the delta of Rx hardware timestamp of the 10 packets:
+connected back-to-back. A DPDK sample application is created to send 10
+UDP packets with 20,000 nanosecond intervals and their txtime is set to
+the time of the next Qbv cycle. Meanwhile, the tcpdump command below is
+used on the link partner to capture the delta of Rx hardware timestamp
+of the 10 packets:
 
 tcpdump -ttt -ni enp1s0 --time-stamp-precision=nano -j adapter_unsynced
 
-Without this patch, packets of second burst are transmitted immediately as
-the driver din't create context descriptor for the launch time, as shown
-in tcpdump log below:
+Without this patch, packets are transmitted immediately as the hardware
+interprets their launch time as expired, resulting in 8,384 nanosecond
+intervals (wire speed for 1024-byte packets at 1Gbps), as shown in
+tcpdump log below:
 
   00:00:00.000000000 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
   00:00:00.000008384 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
-  00:00:00.000008381 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
   00:00:00.000008384 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
   00:00:00.000008384 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
   00:00:00.000008384 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
-  00:00:00.000008387 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
   00:00:00.000008384 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
-  00:00:00.000008381 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
-  00:00:00.000008387 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
+  00:00:00.000008384 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
+  00:00:00.000008384 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
+  00:00:00.000008384 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
+  00:00:00.000008384 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
 
-With this patch, packets of second burst are properly held until the
-intended 100,000 nanosecond intervals, demonstrating correct launch time
-behavior. As shown in tcpdump log below, the delta of first packet
-between first and second bursts is 8387 + 8384 + 8384 + 8384 + 66461 =
-100,000 nanosecond.
+With this patch, packets are properly held until the next Qbv cycle and
+transmitted at the intended 20,000 nanosecond intervals, demonstrating
+correct launch time behavior, as shown in tcpdump log below:
 
-  00:00:00.000000000 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
-  00:00:00.000008387 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
-  00:00:00.000008384 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
-  00:00:00.000008384 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
-  00:00:00.000008384 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
-  00:00:00.000066461 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
-  00:00:00.000008387 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
-  00:00:00.000008384 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
-  00:00:00.000008384 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
-  00:00:00.000008384 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
+  00:00:00.000000000  [|llc]
+  00:00:00.000862592 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
+  00:00:00.000019993 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
+  00:00:00.000020000 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
+  00:00:00.000020010 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
+  00:00:00.000019997 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
+  00:00:00.000020000 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
+  00:00:00.000020003 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
+  00:00:00.000019990 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
+  00:00:00.000020000 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
+  00:00:00.000020000 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
 
 Fixes: 9630f7c71ecd ("net/igc: enable launch time offloading")
 Cc: stable@dpdk.org
@@ -111,34 +115,374 @@ Cc: stable@dpdk.org
 Signed-off-by: David Zage <david.zage@intel.com>
 Signed-off-by: Song Yoong Siang <yoong.siang.song@intel.com>
 ---
- drivers/net/intel/e1000/igc_txrx.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/net/intel/e1000/igc_txrx.c | 222 ++++++++++++++++++++++++-----
+ drivers/net/intel/e1000/igc_txrx.h |   9 ++
+ 2 files changed, 199 insertions(+), 32 deletions(-)
 
 diff --git a/drivers/net/intel/e1000/igc_txrx.c b/drivers/net/intel/e1000/igc_txrx.c
-index f2a6c34094..35f36d266a 100644
+index f2a6c34094..8c483ecec1 100644
 --- a/drivers/net/intel/e1000/igc_txrx.c
 +++ b/drivers/net/intel/e1000/igc_txrx.c
-@@ -1416,6 +1416,10 @@ what_advctx_update(struct igc_tx_queue *txq, uint64_t flags,
- {
- 	uint32_t curr = txq->ctx_curr;
+@@ -92,9 +92,13 @@
+ /* L4 Packet TYPE of Reserved */
+ #define IGC_ADVTXD_TUCMD_L4T_RSV	0x00001800
  
-+	/* Launch time feature always need a new context descriptor */
-+	if (flags & igc_tx_timestamp_dynflag)
-+		return IGC_CTX_NUM;
++/* Indicate the first packet in a Qbv cycle */
++#define IGC_ADVTXD_TSN_CNTX_FRST	0x00000080
 +
- 	/* If match with the current context */
- 	if (likely(txq->ctx_cache[curr].flags == flags &&
- 		txq->ctx_cache[curr].tx_offload.data ==
-@@ -1621,7 +1625,8 @@ igc_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
- 		tx_last = (uint16_t)(tx_id + tx_pkt->nb_segs - 1);
+ #define IGC_TX_OFFLOAD_NOTSUP_MASK (RTE_MBUF_F_TX_OFFLOAD_MASK ^ IGC_TX_OFFLOAD_MASK)
  
- 		ol_flags = tx_pkt->ol_flags;
--		tx_ol_req = ol_flags & IGC_TX_OFFLOAD_MASK;
-+		tx_ol_req = ol_flags & (IGC_TX_OFFLOAD_MASK |
-+				igc_tx_timestamp_dynflag);
+ #define IGC_TS_HDR_LEN 16
++#define IGC_DUMMY_PKT_SIZE 64
  
- 		/* If a Context Descriptor need be built . */
+ static inline uint64_t
+ rx_desc_statuserr_to_pkt_flags(uint32_t statuserr)
+@@ -1438,34 +1442,166 @@ what_advctx_update(struct igc_tx_queue *txq, uint64_t flags,
+ 	return IGC_CTX_NUM;
+ }
+ 
+-static uint32_t igc_tx_launchtime(uint64_t txtime, uint16_t port_id)
++static uint32_t
++igc_tx_launchtime(uint64_t txtime, struct igc_tx_queue *txq,
++		bool *need_dummy_pkt, bool *need_frst_flag)
+ {
+-	struct rte_eth_dev *dev = &rte_eth_devices[port_id];
++	struct rte_eth_dev *dev = &rte_eth_devices[txq->port_id];
+ 	struct igc_adapter *adapter = IGC_DEV_PRIVATE(dev);
+-	uint64_t base_time = adapter->base_time;
++	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
+ 	uint64_t cycle_time = adapter->cycle_time;
++	uint64_t base_time = adapter->base_time;
++	uint64_t current_cycle_end;
++	uint64_t cycles_elapsed;
+ 	uint32_t launchtime;
++	uint32_t nsec, sec;
++	uint64_t systime;
++
++	/*
++	 * Read current PTP hardware time from SYSTIM registers.
++	 * Reading the SYSTIML register latches the upper 32 bits to the SYSTIMH
++	 * shadow register for coherent access. As long as we read SYSTIML first
++	 * followed by SYSTIMH, we avoid race conditions where the time rolls
++	 * over between the two register reads.
++	 */
++	nsec = E1000_READ_REG(hw, E1000_SYSTIML);
++	sec = E1000_READ_REG(hw, E1000_SYSTIMH);
++	systime = (uint64_t)sec * NSEC_PER_SEC + (uint64_t)nsec;
+ 
++	/* Calculate end time of current Qbv cycle */
++	cycles_elapsed = (systime - base_time) / cycle_time;
++	current_cycle_end = (cycles_elapsed + 1) * cycle_time + base_time;
++
++	/* Set launchtime to 0 if txtime has expired or exceeds the horizon */
++	if (txtime <= systime || txtime >= current_cycle_end + cycle_time) {
++		txq->last_packet_cycle = current_cycle_end;
++		return 0;
++	}
++
++	/* Calculate launchtime to be inserted into Tx context descriptor */
+ 	launchtime = (txtime - base_time) % cycle_time;
+ 
++	/* Handle txtime that fall into next Qbv cycle */
++	if (txtime >= current_cycle_end) {
++		/* Only mark as first if the cycle hasn't had a first pkt yet */
++		if (txq->last_frst_flag != current_cycle_end) {
++			*need_frst_flag = true;
++			txq->last_frst_flag = current_cycle_end;
++
++			/* Check if we need dummy pkt to dirty current cycle */
++			if (txq->last_packet_cycle < current_cycle_end)
++				*need_dummy_pkt = true;
++		}
++		txq->last_packet_cycle = current_cycle_end + cycle_time;
++	} else {
++		txq->last_packet_cycle = current_cycle_end;
++	}
++
+ 	return rte_cpu_to_le_32(launchtime);
+ }
+ 
++/*
++ * If the IGC_ADVTXD_TSN_CNTX_FRST flag is used to schedule a packet for the
++ * next Qbv cycle while no packet was transmitted from that queue in the current
++ * cycle, then the IGC_ADVTXD_TSN_CNTX_FRST flag may be valid in the current
++ * cycle and the packet will be transmitted in the current cycle. To overcome
++ * this issue, we transmit an IGC_DUMMY_PKT_SIZE byte "dummy" packet to "dirty"
++ * the current cycle before sending the packet intended for the next cycle.
++ */
++static void
++igc_insert_dummy_packet(struct igc_tx_queue *txq, uint16_t *tx_id)
++{
++	volatile union e1000_adv_tx_desc * const txr = txq->tx_ring;
++	struct igc_tx_entry * const sw_ring = txq->sw_ring;
++	volatile struct e1000_adv_tx_context_desc *ctx_txd;
++	volatile union e1000_adv_tx_desc *txd;
++	struct igc_tx_entry *txe, *txn;
++
++	/* Get Tx entry (txe) for Tx context descriptor of dummy packet */
++	txe = &sw_ring[*tx_id];
++
++	/* Prepare for next Tx entry (txn) */
++	txn = &sw_ring[txe->next_id];
++	RTE_MBUF_PREFETCH_TO_FREE(txn->mbuf);
++
++	/* Set up Tx context descriptor for dummy packet */
++	ctx_txd = (volatile struct e1000_adv_tx_context_desc *)&txr[*tx_id];
++	ctx_txd->type_tucmd_mlhl = rte_cpu_to_le_32(E1000_ADVTXD_DTYP_CTXT |
++			E1000_ADVTXD_DCMD_DEXT);
++	ctx_txd->mss_l4len_idx = rte_cpu_to_le_32(txq->ctx_curr <<
++			E1000_ADVTXD_IDX_SHIFT);
++	ctx_txd->vlan_macip_lens = 0;
++	ctx_txd->u.launch_time = 0;
++
++	/* Update tx_id and last_id */
++	*tx_id = txe->next_id;
++	txe->last_id = *tx_id;
++
++	/* Get Tx entry (txe) for Tx data descriptor of dummy packet */
++	txe = txn;
++
++	/* Prepare for next Tx entry (txn) */
++	txn = &sw_ring[txe->next_id];
++	RTE_MBUF_PREFETCH_TO_FREE(txn->mbuf);
++
++	/* Free previous mbuf */
++	if (txe->mbuf != NULL) {
++		rte_pktmbuf_free_seg(txe->mbuf);
++		txe->mbuf = NULL;
++	}
++
++	/* Set up Tx data descriptor for dummy packet */
++	txd = &txr[*tx_id];
++	txd->read.buffer_addr = rte_cpu_to_le_64(txq->dummy_pkt_dma);
++	txd->read.cmd_type_len = rte_cpu_to_le_32(txq->txd_type |
++			IGC_DUMMY_PKT_SIZE | E1000_ADVTXD_DCMD_IFCS |
++			E1000_ADVTXD_DCMD_DEXT | E1000_TXD_CMD_EOP |
++			E1000_TXD_CMD_RS);
++	txd->read.olinfo_status = rte_cpu_to_le_32(IGC_DUMMY_PKT_SIZE <<
++			E1000_ADVTXD_PAYLEN_SHIFT);
++
++	/* Update last_id and tx_id */
++	txe->last_id = *tx_id;
++	*tx_id = txe->next_id;
++
++	/* Get Tx entry (txe) for Tx context descriptor of actual packet */
++	txe = txn;
++
++	/* Prepare for next Tx entry (txn) */
++	txn = &sw_ring[txe->next_id];
++	RTE_MBUF_PREFETCH_TO_FREE(txn->mbuf);
++
++	/* Free previous mbuf */
++	if (txe->mbuf != NULL) {
++		rte_pktmbuf_free_seg(txe->mbuf);
++		txe->mbuf = NULL;
++	}
++
++	/* Update ctx_curr */
++	txq->ctx_curr ^= 1;
++}
++
+ /*
+  * This is a separate function, looking for optimization opportunity here
+  * Rework required to go with the pre-defined values.
+  */
+ static inline void
+-igc_set_xmit_ctx(struct igc_tx_queue *txq,
+-		volatile struct e1000_adv_tx_context_desc *ctx_txd,
++igc_set_xmit_ctx(struct igc_tx_queue *txq, uint16_t *tx_id,
+ 		uint64_t ol_flags, union igc_tx_offload tx_offload,
+-		uint64_t txtime)
++		uint64_t txtime, uint16_t tx_last)
+ {
++	volatile union e1000_adv_tx_desc * const txr = txq->tx_ring;
++	struct igc_tx_entry * const sw_ring = txq->sw_ring;
++	volatile struct e1000_adv_tx_context_desc *ctx_txd;
++	struct igc_tx_entry *txe;
+ 	uint32_t type_tucmd_mlhl;
+-	uint32_t mss_l4len_idx;
++	uint32_t mss_l4len_idx = 0;
+ 	uint32_t ctx_curr;
+ 	uint32_t vlan_macip_lens;
+ 	union igc_tx_offload tx_offload_mask;
++	bool need_frst_flag = false;
++	bool need_dummy_pkt = false;
++	uint32_t launch_time = 0;
+ 
+ 	/* Use the previous context */
+ 	txq->ctx_curr ^= 1;
+@@ -1474,9 +1610,6 @@ igc_set_xmit_ctx(struct igc_tx_queue *txq,
+ 	tx_offload_mask.data = 0;
+ 	type_tucmd_mlhl = 0;
+ 
+-	/* Specify which HW CTX to upload. */
+-	mss_l4len_idx = (ctx_curr << E1000_ADVTXD_IDX_SHIFT);
+-
+ 	if (ol_flags & RTE_MBUF_F_TX_VLAN)
+ 		tx_offload_mask.vlan_tci = 0xffff;
+ 
+@@ -1538,18 +1671,32 @@ igc_set_xmit_ctx(struct igc_tx_queue *txq,
+ 		txq->ctx_cache[ctx_curr].tx_offload.data =
+ 			tx_offload_mask.data & tx_offload.data;
+ 		txq->ctx_cache[ctx_curr].tx_offload_mask = tx_offload_mask;
++	} else {
++		launch_time = igc_tx_launchtime(txtime, txq, &need_dummy_pkt,
++				&need_frst_flag);
+ 	}
+ 
++	if (need_frst_flag)
++		mss_l4len_idx |= IGC_ADVTXD_TSN_CNTX_FRST;
++
++	if (need_dummy_pkt)
++		igc_insert_dummy_packet(txq, tx_id);
++
++	/* Specify which HW CTX to upload. */
++	mss_l4len_idx |= (txq->ctx_curr << E1000_ADVTXD_IDX_SHIFT);
++
++	/* Set up Tx context descriptor */
++	ctx_txd = (volatile struct e1000_adv_tx_context_desc *)&txr[*tx_id];
+ 	ctx_txd->type_tucmd_mlhl = rte_cpu_to_le_32(type_tucmd_mlhl);
+ 	vlan_macip_lens = (uint32_t)tx_offload.data;
+ 	ctx_txd->vlan_macip_lens = rte_cpu_to_le_32(vlan_macip_lens);
+ 	ctx_txd->mss_l4len_idx = rte_cpu_to_le_32(mss_l4len_idx);
++	ctx_txd->u.launch_time = launch_time;
+ 
+-	if (txtime)
+-		ctx_txd->u.launch_time = igc_tx_launchtime(txtime,
+-							   txq->port_id);
+-	else
+-		ctx_txd->u.launch_time = 0;
++	/* Update last_id and tx_id */
++	txe = &sw_ring[*tx_id];
++	txe->last_id = tx_last;
++	*tx_id = txe->next_id;
+ }
+ 
+ static inline uint32_t
+@@ -1599,7 +1746,7 @@ igc_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
+ 	uint64_t tx_ol_req;
+ 	uint32_t new_ctx = 0;
+ 	union igc_tx_offload tx_offload = {0};
+-	uint64_t ts;
++	uint64_t ts = 0;
+ 
+ 	tx_id = txq->tx_tail;
+ 	txe = &sw_ring[tx_id];
+@@ -1648,7 +1795,7 @@ igc_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
+ 		/*
+ 		 * Check if there are enough free descriptors in the TX ring
+ 		 * to transmit the next packet.
+-		 * This operation is based on the two following rules:
++		 * This operation is based on the three following rules:
+ 		 *
+ 		 *   1- Only check that the last needed TX descriptor can be
+ 		 *      allocated (by construction, if that descriptor is free,
+@@ -1669,13 +1816,17 @@ igc_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
+ 		 *      By extension, avoid to allocate a free descriptor that
+ 		 *      belongs to the last set of free descriptors allocated
+ 		 *      to the same packet previously transmitted.
++		 *
++		 *   3- Make sure there are two extra descriptors available in
++		 *      the ring, in case a dummy packet is needed to dirty the
++		 *      current Qbv cycle when using launch time feature.
+ 		 */
+ 
+ 		/*
+ 		 * The "last descriptor" of the previously sent packet, if any,
+ 		 * which used the last descriptor to allocate.
+ 		 */
+-		tx_end = sw_ring[tx_last].last_id;
++		tx_end = sw_ring[tx_last + 2].last_id;
+ 
+ 		/*
+ 		 * The next descriptor following that "last descriptor" in the
+@@ -1735,10 +1886,6 @@ igc_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
  		if (tx_ol_req) {
+ 			/* Setup TX Advanced context descriptor if required */
+ 			if (new_ctx) {
+-				volatile struct e1000_adv_tx_context_desc *
+-					ctx_txd = (volatile struct
+-					e1000_adv_tx_context_desc *)&txr[tx_id];
+-
+ 				txn = &sw_ring[txe->next_id];
+ 				RTE_MBUF_PREFETCH_TO_FREE(txn->mbuf);
+ 
+@@ -1747,20 +1894,15 @@ igc_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
+ 					txe->mbuf = NULL;
+ 				}
+ 
+-				if (igc_tx_timestamp_dynflag > 0) {
++				if (igc_tx_timestamp_dynflag > 0)
+ 					ts = *RTE_MBUF_DYNFIELD(tx_pkt,
+ 						igc_tx_timestamp_dynfield_offset,
+ 						uint64_t *);
+-					igc_set_xmit_ctx(txq, ctx_txd,
+-						tx_ol_req, tx_offload, ts);
+-				} else {
+-					igc_set_xmit_ctx(txq, ctx_txd,
+-						tx_ol_req, tx_offload, 0);
+-				}
+ 
+-				txe->last_id = tx_last;
+-				tx_id = txe->next_id;
+-				txe = txn;
++				igc_set_xmit_ctx(txq, &tx_id, tx_ol_req,
++						 tx_offload, ts, tx_last);
++
++				txe = &sw_ring[tx_id];
+ 			}
+ 
+ 			/* Setup the TX Advanced Data Descriptor */
+@@ -1858,6 +2000,7 @@ static void
+ igc_tx_queue_release(struct igc_tx_queue *txq)
+ {
+ 	igc_tx_queue_release_mbufs(txq);
++	rte_free(txq->dummy_pkt_buf);
+ 	rte_free(txq->sw_ring);
+ 	rte_free(txq);
+ }
+@@ -2012,6 +2155,21 @@ int eth_igc_tx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_idx,
+ 	PMD_DRV_LOG(DEBUG, "sw_ring=%p hw_ring=%p dma_addr=0x%" PRIx64,
+ 		txq->sw_ring, txq->tx_ring, txq->tx_ring_phys_addr);
+ 
++	/* Allocate dummy packet buffer */
++	txq->dummy_pkt_buf = rte_zmalloc("dummy_pkt", IGC_DUMMY_PKT_SIZE,
++			RTE_CACHE_LINE_SIZE);
++	if (txq->dummy_pkt_buf == NULL) {
++		igc_tx_queue_release(txq);
++		return -ENOMEM;
++	}
++
++	txq->dummy_pkt_dma = rte_mem_virt2iova(txq->dummy_pkt_buf);
++	if (txq->dummy_pkt_dma == RTE_BAD_IOVA) {
++		PMD_DRV_LOG(ERR, "Failed to get DMA address for dummy packet");
++		igc_tx_queue_release(txq);
++		return -ENOMEM;
++	}
++
+ 	igc_reset_tx_queue(txq);
+ 	dev->tx_pkt_burst = igc_xmit_pkts;
+ 	dev->tx_pkt_prepare = &eth_igc_prep_pkts;
+diff --git a/drivers/net/intel/e1000/igc_txrx.h b/drivers/net/intel/e1000/igc_txrx.h
+index 972508dcc0..29cb138312 100644
+--- a/drivers/net/intel/e1000/igc_txrx.h
++++ b/drivers/net/intel/e1000/igc_txrx.h
+@@ -128,6 +128,15 @@ struct igc_tx_queue {
+ 	struct igc_advctx_info ctx_cache[IGC_CTX_NUM];
+ 	/**< Hardware context history.*/
+ 	uint64_t               offloads; /**< offloads of RTE_ETH_TX_OFFLOAD_* */
++
++	/**< Qbv cycle when the last first flag was marked. */
++	uint64_t               last_frst_flag;
++	/**< Qbv cycle when the last packet was transmitted. */
++	uint64_t               last_packet_cycle;
++	/**< Virtual address of dummy packet buffer for Qbv cycle dirtying. */
++	void                   *dummy_pkt_buf;
++	/**< DMA/physical address of dummy packet buffer for hardware access. */
++	rte_iova_t             dummy_pkt_dma;
+ };
+ 
+ /*
 -- 
 2.48.1
 
