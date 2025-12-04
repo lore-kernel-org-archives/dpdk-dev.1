@@ -2,45 +2,85 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA00BD2168B
-	for <dpdk-dev@archiver.kernel.org>; Thu,  4 Dec 2025 15:17:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D732D216A5
+	for <dpdk-dev@archiver.kernel.org>; Thu,  4 Dec 2025 15:42:48 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DEB7C4021F;
-	Thu,  4 Dec 2025 16:17:39 +0100 (CET)
-Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id D8A3840144
- for <dev@dpdk.org>; Thu,  4 Dec 2025 16:17:38 +0100 (CET)
-Received: by inbox.dpdk.org (Postfix, from userid 33)
- id CA3CC48C28; Thu,  4 Dec 2025 16:17:38 +0100 (CET)
-From: bugzilla@dpdk.org
-To: dev@dpdk.org
-Subject: [DPDK/DTS Bug 1757] Remove optional poetry docs build workflow
-Date: Thu, 04 Dec 2025 15:17:38 +0000
-X-Bugzilla-Reason: AssignedTo
-X-Bugzilla-Type: changed
-X-Bugzilla-Watch-Reason: None
-X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: DTS
-X-Bugzilla-Version: 25.03
-X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: minor
-X-Bugzilla-Who: abailey@iol.unh.edu
-X-Bugzilla-Status: RESOLVED
-X-Bugzilla-Resolution: FIXED
-X-Bugzilla-Priority: Normal
-X-Bugzilla-Assigned-To: dev@dpdk.org
-X-Bugzilla-Target-Milestone: ---
-X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: bug_status cc resolution
-Message-ID: <bug-1757-3-nagfT9oR02@http.bugs.dpdk.org/>
-In-Reply-To: <bug-1757-3@http.bugs.dpdk.org/>
-References: <bug-1757-3@http.bugs.dpdk.org/>
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-X-Bugzilla-URL: http://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
+	by mails.dpdk.org (Postfix) with ESMTP id 049194021F;
+	Thu,  4 Dec 2025 16:42:47 +0100 (CET)
+Received: from fhigh-a8-smtp.messagingengine.com
+ (fhigh-a8-smtp.messagingengine.com [103.168.172.159])
+ by mails.dpdk.org (Postfix) with ESMTP id C23C840144
+ for <dev@dpdk.org>; Thu,  4 Dec 2025 16:42:44 +0100 (CET)
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id 4D05B14001DE;
+ Thu,  4 Dec 2025 10:42:44 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+ by phl-compute-03.internal (MEProxy); Thu, 04 Dec 2025 10:42:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1764862964;
+ x=1764949364; bh=2tKf/wzu7ftseOsv3xOCgr2QUD0m6N9HFbnjhiqgpr0=; b=
+ WA6ZM4Rqp+8S1PfClfHbbGifdxfi0lut1SsLMp4gjQgewkpLpyynZ2w362HHbj5P
+ gc2KGh3uFRECTwYK959uYarvkQWeW5gqSiEQJD6hb4zvznz63b78KR7HTZLrQAT7
+ wJZNC9V0uHhlognmcfUUpYe2HvGptMZAl9Fst9UU0QQfMEZPPobmbqzpyG1FB+qq
+ J+Sy0Cc5Mkaq5CCCNDlwL6BZFXBnKia53nP7RbcNYpZZoobseX93yRtABknlqICT
+ F9CPqxlKL3mZUgkeqOthchqxo5xZZ7Enw1LH+W1lp5M+qQAwB8/Jcv+0s1Lz7bk8
+ vzCTKPO7Vk+jamyFkbJN1w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1764862964; x=
+ 1764949364; bh=2tKf/wzu7ftseOsv3xOCgr2QUD0m6N9HFbnjhiqgpr0=; b=Z
+ 5VeCEV1qTx1WivNpMTOWFSWwUJyGm3dD+aeUUZxHbwC8R68/oeLpKxCxT1pQsyRv
+ eDGZ06VUIEHKvjx5QLFsHcWLtueh5KcDMscN1ZZPLYvgBmCV9kAL1fjDA1+bV2Z9
+ ZqbHtH7qvQqPOXClBLulUtTwV1kvzuApLG8XJ3a2T86H5yia0nYqAzkrWZc+n8ak
+ YHLRi/psvknR2SidMkWa+Sp4Bv3Cz1upmcJ2wDtbhEwGaPlgi4+ynam20KmVmsnp
+ eGmO4p9Jwh/YhmIQGJfaDLODsPNWTYdgw8CEpADGSYHnH87UnyCcbV5nkPvxlBjz
+ p3hzMywsm9rm48ZAgqpuQ==
+X-ME-Sender: <xms:86sxaWZyImfdAuahPAHAAD1P0iGGaPIagkb05fl38mIRlrZX_o4xXQ>
+ <xme:86sxaSWzdsoSm9Oov3z8eMPAuxlgCJnMjILDxMhkbEqD5x29dm99PhAFDbk1YV1SF
+ et-8PBUvyr6P3jHcHUxaE1Whwzx_R2IU0x5bc351tM9hpWTcW0d>
+X-ME-Received: <xmr:86sxacjM0mupBKpfDPdPTKPjFJDm0Fr0MpUzk7Tpy_Q-1VvqGpgykTBb43iClEa5mekgK8Hq8yz_fBDFOdRHSMSS7w>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdehleejucetufdoteggodetrfdotf
+ fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceurghi
+ lhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurh
+ ephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghsucfo
+ ohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtffrrg
+ htthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdvuefg
+ feekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+ hthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeeipdhmohgu
+ vgepshhmthhpohhuthdprhgtphhtthhopeguihhmohhnrdiihhgrohesnhgvsghulhgrqd
+ hmrghtrhhigidrtghomhdprhgtphhtthhopehsthgvphhhvghnsehnvghtfihorhhkphhl
+ uhhmsggvrhdrohhrghdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtphhtth
+ hopehkhihordhlihhusehnvggsuhhlrgdqmhgrthhrihigrdgtohhmpdhrtghpthhtohep
+ lhgvohhnrdihuhesnhgvsghulhgrqdhmrghtrhhigidrtghomhdprhgtphhtthhopehsrg
+ hmrdgthhgvnhesnhgvsghulhgrqdhmrghtrhhigidrtghomh
+X-ME-Proxy: <xmx:86sxaYsijny79Cs1_lSpkK8UzqnI4oaG-_IFC8pIVVUOVu6V1OwXkg>
+ <xmx:86sxad7xdGYxDzHh-LG9C4B2xGpXNXDGPJzYzKrq41Ck5qILZO8EQw>
+ <xmx:86sxaUPfrREGrQXIM2OKsHOHF9w2FDCBZjr29Dt3KqKDsAH9Y_Wfrg>
+ <xmx:86sxabsQ2A-MiQGbFLAStP2puV4aUl1Xd5BO9xhSVJY-F3SMGPrJfw>
+ <xmx:9KsxaRNMQtaF3OdkEVG1QBF8t9nxU9zwXQ2iea7Bo7eB08iM4kp3Dleb>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 4 Dec 2025 10:42:42 -0500 (EST)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Dimon Zhao <dimon.zhao@nebula-matrix.com>,
+ Stephen Hemminger <stephen@networkplumber.org>
+Cc: dev@dpdk.org, Kyo Liu <kyo.liu@nebula-matrix.com>,
+ Leon Yu <leon.yu@nebula-matrix.com>, Sam Chen <sam.chen@nebula-matrix.com>
+Subject: Re: [PATCH v1 1/1] net/nbl: fix issues reported by Coverity
+Date: Thu, 04 Dec 2025 16:42:40 +0100
+Message-ID: <4726803.LvFx2qVVIh@thomas>
+In-Reply-To: <20251111063141.4611949d@phoenix>
+References: <20250627014022.4019625-1-dimon.zhao@nebula-matrix.com>
+ <20251030033619.3386064-2-dimon.zhao@nebula-matrix.com>
+ <20251111063141.4611949d@phoenix>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -54,19 +94,34 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-http://bugs.dpdk.org/show_bug.cgi?id=3D1757
+11/11/2025 15:31, Stephen Hemminger:
+> On Wed, 29 Oct 2025 20:36:19 -0700
+> Dimon Zhao <dimon.zhao@nebula-matrix.com> wrote:
+> 
+> > Coverity issue: 490942
+> > Coverity issue: 490943
+> > Coverity issue: 490946
+> > Coverity issue: 490947
+> > Coverity issue: 490949
+> > Coverity issue: 490950
+> > Coverity issue: 490951
+> > Coverity issue: 490952
+> > Coverity issue: 490953
+> > Coverity issue: 490954
+> > Coverity issue: 490955
+> > Coverity issue: 490957
+> > Coverity issue: 490958
+> > Coverity issue: 490959
+> > Fixes: a1c5ffa13b2c ("net/nbl: add channel layer")
+> > Fixes: dc955cd24c8f ("net/nbl: add coexistence mode")
+> > Fixes: 93b38df5a2ec ("net/nbl: support basic configuration")
+> > 
+> > Signed-off-by: Dimon Zhao <dimon.zhao@nebula-matrix.com>
+> > ---
+> 
+> Queued to next-net
 
-Andrew (abailey@iol.unh.edu) changed:
+Looks like this patch has been missed in next-net,
+and it does not appear in 25.11.
 
-           What    |Removed                     |Added
-----------------------------------------------------------------------------
-             Status|UNCONFIRMED                 |RESOLVED
-                 CC|                            |abailey@iol.unh.edu
-         Resolution|---                         |FIXED
 
---- Comment #1 from Andrew (abailey@iol.unh.edu) ---
-This alternate doc build process has been removed from dts.rst.
-
---=20
-You are receiving this mail because:
-You are the assignee for the bug.=
