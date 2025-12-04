@@ -2,47 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29CE8D29FAB
-	for <dpdk-dev@archiver.kernel.org>; Thu,  4 Dec 2025 18:21:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B00FBD29FA7
+	for <dpdk-dev@archiver.kernel.org>; Thu,  4 Dec 2025 18:21:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A2DE5406BA;
-	Thu,  4 Dec 2025 19:21:08 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 9EA0840685;
+	Thu,  4 Dec 2025 19:21:09 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
- by mails.dpdk.org (Postfix) with ESMTP id B8D254066E;
- Thu,  4 Dec 2025 19:21:05 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 78CD74066E
+ for <dev@dpdk.org>; Thu,  4 Dec 2025 19:21:06 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
  t=1764872466; x=1796408466;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=4emQhvthmL90PjXJHNHLO/a7A64pglFT6afx3qpY5Tk=;
- b=T4rPB9UIZqEfGHLRjdaDiPMY4yrYqh4sn3PNJLj8lU2YBmGNNltmrDbZ
- EnWiCtwsLnyM4gniCor4QUJvKCITWmBoF2qWGB+hC1NvEPssGMYKrXRdA
- 1cp4MN94EpBTnLr96RvTCL73taMY97yYSpUQxJXjiF9aVK17QiRoBfZ5Q
- mHolr8gowWxDjgpwav1Q6R5qOD6QnakC5OSNQPE6WbNpVmhDda1WP4amZ
- 9KGr6ONNATK7EPoF2SoVUmjUCPH/Ho2p/O/RJL5NPbm1gJNA3bYGWq7XR
- v4YTs0iLZ5StXeTeVQZEITMDieY0C9E51gA+gqnECxGHM1TtQyZpZv7eo w==;
-X-CSE-ConnectionGUID: 4aeXbbTFTIKhO6NRovPy9A==
-X-CSE-MsgGUID: ykhXHDZbQiCKxhYcY5wpng==
-X-IronPort-AV: E=McAfee;i="6800,10657,11632"; a="78013019"
-X-IronPort-AV: E=Sophos;i="6.20,249,1758610800"; d="scan'208";a="78013019"
+ bh=fv5JUcFXYGXmjlEqrQlHJ0u6dE2SA/B2NOVmRCfTWTs=;
+ b=h2h0NfeWN2+wn6GnrBvCJaTJV2fXd85jIwNkpqdpB5T57PwJM1NQYcU2
+ Ru1YKF85+IcLjw7aqi3vNKnoodOW8+ReK3fJuD11Ja8iK4ksb+QrCTMZ4
+ k8fntuCkYb4DFUhPNP5DlrALSCl/f1a0lby4f1gtDjymSiz/joN2Bi8I8
+ 6x98sl9TPuthEjt4SVCSLCvXhGj/vdImJ6slkZuXWeRcG//4Ypj8/VlmG
+ FwQG4pbDAcRe4VYzgGcJfW+aErsEEP2r2Q0R5cbtMWgmYzQ037HvPvaIH
+ 4yzULTsUhke4cqEOSk6JkoekngY2Kw5nMlDeEZwerEAWEH4yTKYDUW2kY g==;
+X-CSE-ConnectionGUID: fuoEf+n9TMK/Ni0in20d/g==
+X-CSE-MsgGUID: 02k8RMMpRLOn5QffaZ+POA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11632"; a="78013023"
+X-IronPort-AV: E=Sophos;i="6.20,249,1758610800"; d="scan'208";a="78013023"
 Received: from fmviesa002.fm.intel.com ([10.60.135.142])
  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 04 Dec 2025 10:21:04 -0800
-X-CSE-ConnectionGUID: qBbLLX7iSIO3GuyVf3Jb1g==
-X-CSE-MsgGUID: QTTi9JorRmOdQm0t7xoJgA==
+ 04 Dec 2025 10:21:05 -0800
+X-CSE-ConnectionGUID: kxYA2CyBQNSvR1ggyxY6QQ==
+X-CSE-MsgGUID: D6AL1eDIQJGdebw6yHKUoQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.20,249,1758610800"; d="scan'208";a="218423167"
+X-IronPort-AV: E=Sophos;i="6.20,249,1758610800"; d="scan'208";a="218423171"
 Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by fmviesa002.fm.intel.com with ESMTP; 04 Dec 2025 10:21:04 -0800
+ by fmviesa002.fm.intel.com with ESMTP; 04 Dec 2025 10:21:05 -0800
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
-Cc: Bruce Richardson <bruce.richardson@intel.com>,
-	stable@dpdk.org
-Subject: [PATCH v2 04/10] app/test: fix timer loop hang on secondary process
- failure
-Date: Thu,  4 Dec 2025 18:20:41 +0000
-Message-ID: <20251204182047.3154429-5-bruce.richardson@intel.com>
+Cc: Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH v2 05/10] eal: add internal APIs to query loaded driver paths
+Date: Thu,  4 Dec 2025 18:20:42 +0000
+Message-ID: <20251204182047.3154429-6-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251204182047.3154429-1-bruce.richardson@intel.com>
 References: <20251202154948.1757169-1-bruce.richardson@intel.com>
@@ -62,38 +60,185 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-When the secondary process run from timer_secontary_autotest fails, the
-timer loop is never stopped so the whole process hangs until timeout.
-Fix this by setting the stop flag before checking for success or failure
-of the secondary process.
-
-Fixes: 50247fe03fe0 ("test/timer: exercise new APIs in secondary process")
-Cc: stable@dpdk.org
+Add APIs for internal DPDK use to allow querying the paths of drivers
+loaded into the running instance.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- app/test/test_timer_secondary.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ lib/eal/common/eal_common_options.c | 54 ++++++++++++++++++++++++++---
+ lib/eal/include/rte_eal.h           | 52 +++++++++++++++++++++++++++
+ 2 files changed, 102 insertions(+), 4 deletions(-)
 
-diff --git a/app/test/test_timer_secondary.c b/app/test/test_timer_secondary.c
-index ee2675a821..8580880a56 100644
---- a/app/test/test_timer_secondary.c
-+++ b/app/test/test_timer_secondary.c
-@@ -160,11 +160,12 @@ test_timer_secondary(void)
- 		TEST_ASSERT_SUCCESS(ret, "Failed to launch timer manage loop");
+diff --git a/lib/eal/common/eal_common_options.c b/lib/eal/common/eal_common_options.c
+index b1fb670ea0..a4afbb80a2 100644
+--- a/lib/eal/common/eal_common_options.c
++++ b/lib/eal/common/eal_common_options.c
+@@ -263,6 +263,7 @@ struct shared_driver {
  
- 		ret = timer_secondary_spawn_wait(*sec_lcorep);
--		TEST_ASSERT_SUCCESS(ret, "Secondary process execution failed");
-+		/* must set exit flag even on error case, so check ret later */
+ 	char    name[PATH_MAX];
+ 	void*   lib_handle;
++	bool    from_cmdline; /**< true if from -d flag, false if driver found in a directory */
+ };
  
- 		rte_delay_ms(500);
--
- 		test_info->exit_flag = 1;
+ /* List of external loadable drivers */
+@@ -533,7 +534,7 @@ eal_reset_internal_config(struct internal_config *internal_cfg)
+ }
+ 
+ static int
+-eal_plugin_add(const char *path)
++eal_plugin_add(const char *path, bool from_cmdline)
+ {
+ 	struct shared_driver *solib;
+ 
+@@ -544,6 +545,7 @@ eal_plugin_add(const char *path)
+ 	}
+ 	memset(solib, 0, sizeof(*solib));
+ 	strlcpy(solib->name, path, PATH_MAX);
++	solib->from_cmdline = from_cmdline;
+ 	TAILQ_INSERT_TAIL(&solib_list, solib, next);
+ 
+ 	return 0;
+@@ -595,7 +597,7 @@ eal_plugindir_init(const char *path)
+ 		if (!(stat(sopath, &sb) == 0 && S_ISREG(sb.st_mode)))
+ 			continue;
+ 
+-		if (eal_plugin_add(sopath) == -1)
++		if (eal_plugin_add(sopath, false) == -1)
+ 			break;
+ 	}
+ 
+@@ -727,7 +729,7 @@ eal_plugins_init(void)
+ 			*default_solib_dir != '\0' &&
+ 			stat(default_solib_dir, &sb) == 0 &&
+ 			S_ISDIR(sb.st_mode))
+-		eal_plugin_add(default_solib_dir);
++		eal_plugin_add(default_solib_dir, false);
+ 
+ 	TAILQ_FOREACH(solib, &solib_list, next) {
+ 
+@@ -751,6 +753,50 @@ eal_plugins_init(void)
+ }
+ #endif
+ 
++RTE_EXPORT_SYMBOL(rte_eal_driver_path_next)
++const char *
++rte_eal_driver_path_next(const char *start, bool cmdline_only)
++{
++	struct shared_driver *solib;
 +
-+		TEST_ASSERT_SUCCESS(ret, "Secondary process execution failed");
- 		rte_eal_wait_lcore(*mgr_lcorep);
++	if (start == NULL) {
++		solib = TAILQ_FIRST(&solib_list);
++	} else {
++		/* Find the current entry based on the name string */
++		TAILQ_FOREACH(solib, &solib_list, next) {
++			if (start == solib->name) {
++				solib = TAILQ_NEXT(solib, next);
++				break;
++			}
++		}
++		if (solib == NULL)
++			return NULL;
++	}
++
++	/* Skip entries that were expanded from directories if cmdline_only is true */
++	if (cmdline_only) {
++		while (solib != NULL && !solib->from_cmdline)
++			solib = TAILQ_NEXT(solib, next);
++	}
++
++	return solib ? solib->name : NULL;
++}
++
++RTE_EXPORT_SYMBOL(rte_eal_driver_path_count)
++unsigned int
++rte_eal_driver_path_count(bool cmdline_only)
++{
++	struct shared_driver *solib;
++	unsigned int count = 0;
++
++	TAILQ_FOREACH(solib, &solib_list, next) {
++		if (!cmdline_only || solib->from_cmdline)
++			count++;
++	}
++
++	return count;
++}
++
+ /*
+  * Parse the coremask given as argument (hexadecimal string) and fill
+  * the global configuration (core role and core count) with the parsed
+@@ -1929,7 +1975,7 @@ eal_parse_args(void)
+ 			return -1;
+ 	/* driver loading options */
+ 	TAILQ_FOREACH(arg, &args.driver_path, next)
+-		if (eal_plugin_add(arg->arg) < 0)
++		if (eal_plugin_add(arg->arg, true) < 0)
+ 			return -1;
  
- #ifdef RTE_LIBRTE_TIMER_DEBUG
+ 	if (remap_lcores && args.remap_lcore_ids != (void *)1) {
+diff --git a/lib/eal/include/rte_eal.h b/lib/eal/include/rte_eal.h
+index 619b8fbade..cd0b77c13f 100644
+--- a/lib/eal/include/rte_eal.h
++++ b/lib/eal/include/rte_eal.h
+@@ -491,6 +491,58 @@ rte_eal_mbuf_user_pool_ops(void);
+ const char *
+ rte_eal_get_runtime_dir(void);
+ 
++/**
++ * @internal
++ * Iterate to the next driver path.
++ *
++ * This function iterates through the list of dynamically loaded drivers,
++ * or driver paths that were specified via -d or --driver-path command-line
++ * options during EAL initialization.
++ *
++ * @param start
++ *   Starting iteration point. The iteration will start at the first driver path if NULL.
++ * @param cmdline_only
++ *   If true, only iterate paths from command line (-d flags).
++ *   If false, iterate all paths including those expanded from directories.
++ *
++ * @return
++ *   Next driver path string, NULL if there is none.
++ */
++const char *
++rte_eal_driver_path_next(const char *start, bool cmdline_only);
++
++/**
++ * @internal
++ * Iterate over all driver paths.
++ *
++ * This macro provides a convenient way to iterate through all driver paths
++ * that were loaded via -d flags during EAL initialization.
++ *
++ * @param path
++ *   Iterator variable of type const char *
++ * @param cmdline_only
++ *   If true, only iterate paths from command line (-d flags).
++ *   If false, iterate all paths including those expanded from directories.
++ */
++#define RTE_EAL_DRIVER_PATH_FOREACH(path, cmdline_only) \
++	for (path = rte_eal_driver_path_next(NULL, cmdline_only); \
++	     path != NULL; \
++	     path = rte_eal_driver_path_next(path, cmdline_only))
++
++/**
++ * @internal
++ * Get count of driver paths.
++ *
++ * @param cmdline_only
++ *   If true, only count paths from command line (-d flags).
++ *   If false, count all paths including those expanded from directories.
++ *
++ * @return
++ *   Number of driver paths.
++ */
++unsigned int
++rte_eal_driver_path_count(bool cmdline_only);
++
+ #ifdef __cplusplus
+ }
+ #endif
 -- 
 2.51.0
 
