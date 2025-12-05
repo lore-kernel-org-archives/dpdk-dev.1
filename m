@@ -2,68 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75493D3749B
-	for <dpdk-dev@archiver.kernel.org>; Fri,  5 Dec 2025 20:15:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E979D37497
+	for <dpdk-dev@archiver.kernel.org>; Fri,  5 Dec 2025 20:15:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1F14D402BD;
-	Fri,  5 Dec 2025 21:15:47 +0100 (CET)
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com
- [209.85.128.54]) by mails.dpdk.org (Postfix) with ESMTP id AE27140156
- for <dev@dpdk.org>; Fri,  5 Dec 2025 21:15:44 +0100 (CET)
-Received: by mail-wm1-f54.google.com with SMTP id
- 5b1f17b1804b1-47775fb6cb4so20846755e9.0
- for <dev@dpdk.org>; Fri, 05 Dec 2025 12:15:44 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 5FC8F402E7;
+	Fri,  5 Dec 2025 21:15:49 +0100 (CET)
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com
+ [209.85.128.52]) by mails.dpdk.org (Postfix) with ESMTP id D2EFD402B7
+ for <dev@dpdk.org>; Fri,  5 Dec 2025 21:15:46 +0100 (CET)
+Received: by mail-wm1-f52.google.com with SMTP id
+ 5b1f17b1804b1-477a1c28778so34026265e9.3
+ for <dev@dpdk.org>; Fri, 05 Dec 2025 12:15:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1764965744;
- x=1765570544; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1764965746;
+ x=1765570546; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=fmSXdBjct75LSnoQNuZFUBl2DwMeg+yCcP4lXKUx9yc=;
- b=gYKuh/PzG41BvuA9LXRGcMqn0VG0fWNMU5fe3S/NSSCn5vjhDv91Fycxnc2I+BEMw6
- Iao0bk0HQiS93vVPeu2DfGF08w5dGhCIM050xnhDGsoxKxM7m5CLCCOCIr75u/7f/Sq/
- NatD2lw6C87SsovqZjTpTcBTjGd1Xg7zsvJEvF5FTMwE3aMGqBXu4o+PeYc+IgZXRTUw
- KVlT+5R/iqfw73kGqnbuur4skyi+JrSQXrj9Rdb1I9VjRaymTNaRf4L5W1UwJBeJ/b7Q
- AuMw2OHU1N6g6F54GGIIMFMuofFMeZ94oxOi7otpy0pMG5EZS6pS68KBKn1j3KOhnz1K
- a1Fg==
+ bh=LHfpngJsPBB1aice1mKsOtXuQPDGGzxV2T65XjfPegE=;
+ b=bA28v2yl0t2owrnQFs+QSZ9IcHP6iZC670xedE8BIBGo50Yu3YQSXmNQMSKzhFKyRw
+ pPtVa834tjfNBgRPMauy3teRMlEJ2J2qiM9m9q9GEWnvYnxdem1e4b2qxL6yLp503iG/
+ SYTidy/t5vmh01bgReIIt+wK5v6HHu41PFmHaQLo4k4056VVJOGkZhdlbC4xAzTRoUGc
+ OvYbJrc+QJnoWFjcd7499iuimIL/12JgeiqMGEEcfGtmFyhE2LHEMrFrIOP/f/gnml6l
+ a7h2yHUBLXsA79wE+l/z9sj7NduxNpbzB/V6o4HthMzhlgx70oo9Xf7MZ4awQUyLWOqV
+ HtZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1764965744; x=1765570544;
+ d=1e100.net; s=20230601; t=1764965746; x=1765570546;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=fmSXdBjct75LSnoQNuZFUBl2DwMeg+yCcP4lXKUx9yc=;
- b=b0o0IBp3QoZNxNvHi3AtPjJFcVFapmb+5/5Z8zibFkCu9t7J52w/VssKpESUaAc6yI
- oH/Rb9uvuuDc3xEj6AGtm2r/gy/m9geMmKA7Vv1ADCnnJ0Se3QlMh7z9pTmC5/NY2dLG
- mZpZGNTff49ZU/c81//yse2KVxEHeVamlsdQ2EmhOR//bJ3VYOWWTvrFLWPQhHX1NU2q
- fveNXklM9JsSBXUMgADd1Kub7MvnX6/qHhjTWulU13+3hYJ+sCpQ5ytadxdgHoL7qmIW
- 3jx4DZmIiWU2vcsTj/0qmRPEkpdUsNtnkQ4gfc7BFFQEOWAm74umkz76Yg1zUonm0P4u
- sItw==
-X-Gm-Message-State: AOJu0YxrCPOx2gxDjszO9NuScnAFcx0bSHMWvbcBgHvHP1aUPq5GdCDA
- UCf5Rb4UeeqKSquNShZeGPPRk9CiRDnZslLqYdFILtmSRw9wdeXfBalCWg3+a2WKHGGLezzblbW
- PN+J0
-X-Gm-Gg: ASbGncuV/z9cXTX6VaYLlUfBUecxKRSiBpn8htBhd3ztBRzmIMgpcZOK3NJxIG1icNH
- 9qpZrcmbcVYcVEelAm+K5oPUNzrZQALT2TB1BUVOHYmBgssOpiCNg0V5XqJsDUxCkFRwtI5c/3P
- F98/Pnpozlc0kBneQATiv2rxD99BkwSXjkvP7gi8DyNpfkoZz5YIq5aOsTgsZhpdG/2/FLnQq4N
- Jd8Nmin9KrL+1WHtPRy0PqctVVIjvv0pq8nSC3Xp5s4zp1Odn6D2XTInpPPtExAs52tAIPJQRnp
- LXxpA83BV3PIU2Gu4lLjE+RQw8Dtb2SsfpZz5WQOrXmdLSFRV1DTb8+WZuMNwghpgstpv08nMBq
- Ut0z8LtwoXT57uP5I8Qs59LQI9u+a2QeMPs0ZVWR509HlVPhNIxd5BJzzBkK7AY86Sr8o+jT3x6
- Q28Nk9gKNm3gFxhy0LKGLtvA5cseS6mJSAKWW3Ok3eM8xFzGu2HQ==
-X-Google-Smtp-Source: AGHT+IFh1M3N28ywxqjKFQ4HhW91QA7Gncljkm5Y57EvAqYwuLOkmfG4qhaH4r6hONELpK813hMzCQ==
-X-Received: by 2002:a05:600c:6097:b0:477:632a:fd67 with SMTP id
- 5b1f17b1804b1-47939df44c9mr5737275e9.12.1764965744003; 
- Fri, 05 Dec 2025 12:15:44 -0800 (PST)
+ bh=LHfpngJsPBB1aice1mKsOtXuQPDGGzxV2T65XjfPegE=;
+ b=khUwUASNM6aA0GmM/d2/bJe9AaLC6Ajxo4FMM6ZKtC4CJPpUhBWcoomZbNMgccMIwV
+ 1Gf+I6zXhwfYGCQ5MJbuOxVmqX1zFx4+JuaHLrx+ygy/02qEupdNtvHxNiyOIqRKZqIT
+ U51IShb9mSgUj8OP+Cv+mdf5zON3y/VOchENVAmrUvwUoZvl6jh+1LN1F5DVcyV/aUNw
+ tgg8wbRYjYMGG/hcitXdDNuAV0bmmkxmltBvc1FqDvJ2vxMZd/JNteHPThVPmcOGE+e0
+ Rc+LC4HYMfeYx0jghmXGDX1lilTgq65yFCpb+DSVm7OJEJ93NW27Pw4tsqncAfas/aFQ
+ 8mlQ==
+X-Gm-Message-State: AOJu0YxU1zFD7n133FoM4luVqZchcYEJHnX7LlRXPJ4W3wWrsjauDxdz
+ bu5Z2xdLJxU+1wgK0I5i1YxbGIBCPcvLNZa1D7GacUVEyC8pPjmnFj0BxfursPNkIaYAUZLYh7L
+ 6JiL5
+X-Gm-Gg: ASbGncsQ7CaBBXHY6PLviO1WCqcfIxXVqTCpoTFQb//U3CdrB/f9EHmMy+QCzjPNkG+
+ UcOlsrwpQkUchYN5kknSoNDXPSkb2ULOD1xpVWO+lop5Ge6c0NRUcajiNoKZXpgDW8Q3X4D2wXx
+ 9mQ6ROCLqtBW7kkY8I9WY3X3DgT40Cmgz2i18NQ02no8X3Qim43dxo4Jdlb8xwTLK/abjWBNy7x
+ vTelyscIj5ye9ggyWGmmoFttWg/Xy4jCF1/66uI1/7s3iC8zl6w1KpijbXVaS1sGWIA4FNuVDcQ
+ f+sdYVm+vzKOAb3wT8LK3QtIycm/+xh+lmehKcQyuKrdq8gdJAcL4AXYvH8Ntmn7suKiZIVSJ89
+ EUA2QpW4WJ97A8wkXdcjOfXXv0vT1ctC4DG1iJht9uqlzRAuMJ/iL2lDs1UJhZnkAkzfU2IhSQU
+ wO2Ba371ywYgShrlfdTLzzUaDXPmlg90WSyLpsnA6myxd7utPZz2M4FhKF7pNw
+X-Google-Smtp-Source: AGHT+IGea7Zjxk4Il9e+nvkE2uRaebD95ROhZkpdRTMJimWoRv7/PsL1JA5Z1LU90G/uZEMYxcjzNw==
+X-Received: by 2002:a05:600c:3549:b0:477:89d5:fdac with SMTP id
+ 5b1f17b1804b1-47939e3e525mr5561355e9.31.1764965746289; 
+ Fri, 05 Dec 2025 12:15:46 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-47935fce542sm45344875e9.0.2025.12.05.12.15.42
+ 5b1f17b1804b1-47935fce542sm45344875e9.0.2025.12.05.12.15.44
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 05 Dec 2025 12:15:43 -0800 (PST)
+ Fri, 05 Dec 2025 12:15:45 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v3 01/16] eal: use C library to parse filesystem table
-Date: Fri,  5 Dec 2025 12:11:30 -0800
-Message-ID: <20251205201537.251131-2-stephen@networkplumber.org>
+ Bruce Richardson <bruce.richardson@intel.com>,
+ Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+Subject: [PATCH v3 02/16] lpm: restrict name size
+Date: Fri,  5 Dec 2025 12:11:31 -0800
+Message-ID: <20251205201537.251131-3-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251205201537.251131-1-stephen@networkplumber.org>
 References: <20251205022948.327743-1-stephen@networkplumber.org>
@@ -83,140 +84,27 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Rather than doing parsing of /proc/mounts with open coded string
-handling, use the standard C library routines.
-These exist in BSD and Linux.
-
-It also avoids any possible issues with escaped strings etc
-which the library handles. See getmntent(3) man page.
+Since LPM uses ring internally with a prefix, limit the
+maximum allowed LPM name.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- lib/eal/linux/eal_hugepage_info.c | 58 ++++++++++---------------------
- 1 file changed, 18 insertions(+), 40 deletions(-)
+ lib/lpm/rte_lpm.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/lib/eal/linux/eal_hugepage_info.c b/lib/eal/linux/eal_hugepage_info.c
-index d47a19c56a..7161b1a2fb 100644
---- a/lib/eal/linux/eal_hugepage_info.c
-+++ b/lib/eal/linux/eal_hugepage_info.c
-@@ -13,6 +13,7 @@
- #include <inttypes.h>
- #include <unistd.h>
- #include <errno.h>
-+#include <mntent.h>
- #include <sys/mman.h>
- #include <sys/stat.h>
+diff --git a/lib/lpm/rte_lpm.h b/lib/lpm/rte_lpm.h
+index edfe77b458..21a93b7e44 100644
+--- a/lib/lpm/rte_lpm.h
++++ b/lib/lpm/rte_lpm.h
+@@ -26,7 +26,7 @@ extern "C" {
+ #endif
  
-@@ -195,23 +196,13 @@ get_default_hp_size(void)
- static int
- get_hugepage_dir(uint64_t hugepage_sz, char *hugedir, int len)
- {
--	enum proc_mount_fieldnames {
--		DEVICE = 0,
--		MOUNTPT,
--		FSTYPE,
--		OPTIONS,
--		_FIELDNAME_MAX
--	};
- 	static uint64_t default_size = 0;
- 	const char proc_mounts[] = "/proc/mounts";
--	const char hugetlbfs_str[] = "hugetlbfs";
--	const size_t htlbfs_str_len = sizeof(hugetlbfs_str) - 1;
- 	const char pagesize_opt[] = "pagesize=";
- 	const size_t pagesize_opt_len = sizeof(pagesize_opt) - 1;
--	const char split_tok = ' ';
--	char *splitstr[_FIELDNAME_MAX];
- 	char found[PATH_MAX] = "";
- 	char buf[BUFSIZ];
-+	struct mntent entry;
- 	const struct internal_config *internal_conf =
- 		eal_get_internal_configuration();
- 	const size_t hugepage_dir_len = (internal_conf->hugepage_dir != NULL) ?
-@@ -226,56 +217,43 @@ get_hugepage_dir(uint64_t hugepage_sz, char *hugedir, int len)
- 		return -1;
- 	}
+ /** Max number of characters in LPM name. */
+-#define RTE_LPM_NAMESIZE                32
++#define RTE_LPM_NAMESIZE  (RTE_RING_NAMESIZE - sizeof("LPM_RCU_") + 1)
  
--	FILE *fd = fopen(proc_mounts, "r");
--	if (fd == NULL)
-+	FILE *mounts = setmntent(proc_mounts, "r");
-+	if (mounts == NULL)
- 		rte_panic("Cannot open %s\n", proc_mounts);
- 
- 	if (default_size == 0)
- 		default_size = get_default_hp_size();
- 
--	while (fgets(buf, sizeof(buf), fd)){
-+	while (getmntent_r(mounts, &entry, buf, sizeof(buf))) {
- 		const char *pagesz_str;
--		size_t mountpt_len = 0;
--
--		if (rte_strsplit(buf, sizeof(buf), splitstr, _FIELDNAME_MAX,
--				split_tok) != _FIELDNAME_MAX) {
--			EAL_LOG(ERR, "Error parsing %s", proc_mounts);
--			break; /* return NULL */
--		}
-+		uint64_t pagesz = default_size;
-+		size_t mountpt_len;
- 
--		if (strncmp(splitstr[FSTYPE], hugetlbfs_str, htlbfs_str_len) != 0)
-+		if (strcmp(entry.mnt_type, "hugetlbfs") != 0)
- 			continue;
- 
--		pagesz_str = strstr(splitstr[OPTIONS], pagesize_opt);
-+		pagesz_str = strstr(entry.mnt_opts, pagesize_opt);
-+		if (pagesz_str)
-+			pagesz = rte_str_to_size(&pagesz_str[pagesize_opt_len]);
- 
--		/* if no explicit page size, the default page size is compared */
--		if (pagesz_str == NULL) {
--			if (hugepage_sz != default_size)
--				continue;
--		}
--		/* there is an explicit page size, so check it */
--		else {
--			uint64_t pagesz = rte_str_to_size(&pagesz_str[pagesize_opt_len]);
--			if (pagesz != hugepage_sz)
--				continue;
--		}
-+		if (pagesz != hugepage_sz)
-+			continue;
- 
- 		/*
- 		 * If no --huge-dir option has been given, we're done.
- 		 */
- 		if (internal_conf->hugepage_dir == NULL) {
--			strlcpy(found, splitstr[MOUNTPT], len);
-+			strlcpy(found, entry.mnt_dir, len);
- 			break;
- 		}
- 
--		mountpt_len = strlen(splitstr[MOUNTPT]);
-+		mountpt_len = strlen(entry.mnt_dir);
- 
- 		/*
- 		 * Ignore any mount that doesn't contain the --huge-dir directory
- 		 * or where mount point is not a parent path of --huge-dir
- 		 */
--		if (strncmp(internal_conf->hugepage_dir, splitstr[MOUNTPT],
--				mountpt_len) != 0 ||
-+		if (strncmp(internal_conf->hugepage_dir, entry.mnt_dir, mountpt_len) != 0 ||
- 			(hugepage_dir_len > mountpt_len &&
- 				internal_conf->hugepage_dir[mountpt_len] != '/')) {
- 			continue;
-@@ -286,10 +264,10 @@ get_hugepage_dir(uint64_t hugepage_sz, char *hugedir, int len)
- 		 * (so /mnt/1 is preferred over /mnt for matching /mnt/1/2)).
- 		 */
- 		if (mountpt_len > strlen(found))
--			strlcpy(found, splitstr[MOUNTPT], len);
-+			strlcpy(found, entry.mnt_dir, len);
- 	} /* end while fgets */
- 
--	fclose(fd);
-+	endmntent(mounts);
- 
- 	if (found[0] != '\0') {
- 		/* If needed, return the requested dir, not the mount point. */
+ /** Maximum depth value possible for IPv4 LPM. */
+ #define RTE_LPM_MAX_DEPTH               32
 -- 
 2.51.0
 
