@@ -2,69 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FE22D2CDFE
-	for <dpdk-dev@archiver.kernel.org>; Fri,  5 Dec 2025 02:30:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C20B4D2CDFE
+	for <dpdk-dev@archiver.kernel.org>; Fri,  5 Dec 2025 02:30:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BDBFF40678;
-	Fri,  5 Dec 2025 03:29:55 +0100 (CET)
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com
- [209.85.160.169])
- by mails.dpdk.org (Postfix) with ESMTP id E1CC440156
- for <dev@dpdk.org>; Fri,  5 Dec 2025 03:29:53 +0100 (CET)
-Received: by mail-qt1-f169.google.com with SMTP id
- d75a77b69052e-4ee14ba3d9cso15031101cf.1
- for <dev@dpdk.org>; Thu, 04 Dec 2025 18:29:53 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id CB42940613;
+	Fri,  5 Dec 2025 03:29:57 +0100 (CET)
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com
+ [209.85.160.176])
+ by mails.dpdk.org (Postfix) with ESMTP id 0B60C40653
+ for <dev@dpdk.org>; Fri,  5 Dec 2025 03:29:55 +0100 (CET)
+Received: by mail-qt1-f176.google.com with SMTP id
+ d75a77b69052e-4ed75832448so22294941cf.2
+ for <dev@dpdk.org>; Thu, 04 Dec 2025 18:29:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1764901793;
- x=1765506593; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1764901794;
+ x=1765506594; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=fmSXdBjct75LSnoQNuZFUBl2DwMeg+yCcP4lXKUx9yc=;
- b=Zvj8N24AOO7pOIiDDGZsMu1CuGUbCO5XNwCgy6cfQ0+6f/YFIYd+sN/7AH3pJpl2is
- WIt/y1EfqnxX6/5wSMXOp9xzfkOdmWgTMPUg//xAWlokLx/ozYwIplqFxofSP3VcY/pb
- EdmmOCrSiPmYSoDvsqNO9BcI/45vuueVAvbnRP4aEN3z4rwarE894IuuJZRcaQcI/jiT
- Jn6PZB2SwT/iwNXDWOte//mopasT+hKLNvkN/W2vhfUrRbQ4Aa9HnA3Aqp9yEXv4Cif5
- ZuDQkfRBOV7zM5ThO1sIZSKy7vqWLNwVWHOagqRWrU/leJfssSYVqN6Wwta/9C4gy3wQ
- j+KA==
+ bh=72Gwj6FE486qkGuVYLBhuZG0xkuu5VfNoUdh02LKd8E=;
+ b=kc4fIbupdWJpYMztY6SrHIEGWoaWMMkQl9+AwEH3/VBzprYkUWCVT2L7T3DzsoFsOt
+ HzTJ93WAqwzU5jpZRA7moIe8avcqVkiRdC3ua/JiabyJH871exyvUxpsFTRPkZIk2Azp
+ m4687FeTvM4DJnED0fNbtGlgKRCJkVU42pKO7iAuX05dK86DtvWOdIonZU4HDXkJyB7Z
+ /EHsmHHXKxGbr0n5hnwSinblqbAlmYHI5fv/YNnw6gyCDZHDOiKXz7muRzY/8NQapSoc
+ 0SjrkRtH0C1DzpzvsRgYoiUuy3lRfLYeGcewdNzzRrJAYZ3ZDU7r/hSZQf9DZVm2mxak
+ rxmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1764901793; x=1765506593;
+ d=1e100.net; s=20230601; t=1764901794; x=1765506594;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=fmSXdBjct75LSnoQNuZFUBl2DwMeg+yCcP4lXKUx9yc=;
- b=TBSeyHlGpmvr41jq1sgeGn+LVS8462J4rIvS3foHOLPmc5Hm1AMMRi2P5/3JiLlF4Z
- MYw2WVCHD6s/7Kt5Ib3ejr+KrlTlcZVf6DVokM2Qs+8D0axrAtenouvRKp6ohXddFeQc
- xHBzYcsJaHXZY8yS0eUavybM0OfI1RHjTiml99ziQ4R+QI6b/cL7KLbO0MFGviv8ro20
- ZT5wU9nOmiZxqgLm0aRR9FLv2ipmzI+aI37I3MzGPaTH6qZd2gzIT1ojBIJc6tpVVsN/
- 7Z55vy/vrL5oUNfeiEWcPcCWxQezK0ys7jN/ENJw6UMfOrVkMpVo+dvAYQmQ3qUQvm4a
- zgDw==
-X-Gm-Message-State: AOJu0Yy/jseTjDhtEUmfjMwMtqQu0SIsJR1LUVB3dRjc6xcLBFI1R3/h
- Xt52rO0WbxVFUubcd8OLW/yn7+TgD4QlM8HnE59MSK339izNfkiSjAEc6TNgWmkKm1TmkjQc5jH
- T+VXt
-X-Gm-Gg: ASbGncs1m46xkc/1XrHbOzGNGd6KRFnDQhUZ6/Zw099RsPGdsdnIM0WL52iONRWHwKm
- 0XP+LmCaYZ7pcc4uArWkG1EYxLUYoJwklvI2DSuEjdSOzgTxXgWHtRhCQhg/2FMw4x5fqggSAhC
- WQP+sXv33AO3syHVdiS5DM1cGP/tSquCSMBlFOdBlcM4iJjH0gYRaOgov7VFx6v4OLttnOjle7t
- ecahMK+DIH33eQYWHTO4ijkxj291XGjJnZsGsoeTrx8CTNoujIO6RdG+n29NyakTYc/oS5YYwAn
- 5qVIxTlhUa4VzSbfaUB8MQeVZaDrYNQDx8J84UwxZ+LkobpeiB7sYEPo/gjnGWKbzoM1n2Gz/5U
- stlSBQCbaRL0OilTtOd2MfzNrAuxlJKti0E0h/2LkAVtglb1kBsBRDgtrRaYtbcweKBZMNmdnVP
- FekbkM4qzNFpDL8xC3TdyClsOMpnsJ9vG8y6nDSlLYPmbl++srFIm2HwUxRI7X
-X-Google-Smtp-Source: AGHT+IHYUzmUTAX4kjD0UmBrNUQpbCGJb7kGF6O7hm2gvsYyts9Avj9YfSUXdcjQfj4CeSpgGeW3yA==
-X-Received: by 2002:ac8:5ac8:0:b0:4ee:433c:efbc with SMTP id
- d75a77b69052e-4f0175fd5d8mr104656001cf.40.1764901793145; 
- Thu, 04 Dec 2025 18:29:53 -0800 (PST)
+ bh=72Gwj6FE486qkGuVYLBhuZG0xkuu5VfNoUdh02LKd8E=;
+ b=ECS9R5Je0qMgcPFP4QCvap8fLjI/5y4crTwvrJK54CsTdNK2epbqP2f0EkOt/0Dx0g
+ QX3vcVUyxZQcc8mut2QWybB7+1ysGPc6wN/3j3rJ/ELp7n+rDOMtco1wRfvekm1xmvjV
+ ePvy2CNMeabezMU/ghsc21sSBxJssAVIu+Yy/6VQUH0yZTQVEVmiGvWCH6EQ/iYgkGkI
+ I35kaJRoRhWdrfJohnqxEKpkARErRmQLDUpmZRg2Uj3kJSfRBVVl5ICQZ1713sByo4QF
+ rl2J8dnt+6dEV5gRXme7SGUMf81NqkMwAlXXYFkbIewUEFLWQ2nYWPIr0Fec8WO07wgQ
+ l2rw==
+X-Gm-Message-State: AOJu0YzVtuq/D5JedMr6TVMq18s/8MCYpKS0jSIEWC5kQL6xJDR1gJY9
+ XP6cePxZIv8v04TSnw7cLisA2/xpY6vyHaflE6S8COjiz+yCrZiB5WpPNu8VJyrJ/0lHYZXj3KZ
+ CjvMt
+X-Gm-Gg: ASbGncvKNy/W6zEthlf67t/J9O2n0EtpXyOzIXVCZPQq93zm71crDNf/1ESjFkMH0qt
+ t6ys7ZeRquHTJBQ52BhxZvDsIGIMn+3QqS3cHA1KtH5JmZLKZ2tgFQVVThgGlLIEtAVwFqeBEER
+ uE69hsDS22OGPBlE04WAartkSk6taF0l8YCvSGYTQ+fyhcldvylPbVmmWioAL9kpZ2aVZ0iI46e
+ 2B55sKDOQzYCe6xd+0SPlst32Pb2Qt1AqV82PqscBn0Vj3RBHBcOax94ZouaxukDPABURXBcKSo
+ ROgmYoj0547iC+y0cOXJDqFGWPj6zzWy1k0f0Pw6ABX5KGr3RjlwRf6g/pUc4FFsfJMueBicfBm
+ RniCPT9Ijj5YQv379ltDlAw+MhspUoIj7jJtAqRwPq3eXxE++CXGlFmpTZzUoK7jNcBxtcWwMWA
+ X0N+weBlbAM0v4cKs63aUw8wmiPIkYIaSIAOPY1eEBvPgN36mNJA==
+X-Google-Smtp-Source: AGHT+IFy8CO6CcoBJogf78hfeYb4T2bGIRMrx/o63jHbtoXmUcept8x27cYuqItG3H1/1XY0SWLqoA==
+X-Received: by 2002:a05:622a:286:b0:4dd:7572:216f with SMTP id
+ d75a77b69052e-4f0175cc120mr144373801cf.32.1764901794255; 
+ Thu, 04 Dec 2025 18:29:54 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d75a77b69052e-4f02b7bd0b4sm15655861cf.22.2025.12.04.18.29.52
+ d75a77b69052e-4f02b7bd0b4sm15655861cf.22.2025.12.04.18.29.53
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 04 Dec 2025 18:29:52 -0800 (PST)
+ Thu, 04 Dec 2025 18:29:53 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Bruce Richardson <bruce.richardson@intel.com>
-Subject: [RFC v2 01/14] eal: use C library to parse filesystem table
-Date: Thu,  4 Dec 2025 18:28:10 -0800
-Message-ID: <20251205022948.327743-2-stephen@networkplumber.org>
+	stable@dpdk.org
+Subject: [RFC v2 02/14] test: avoid long hash names
+Date: Thu,  4 Dec 2025 18:28:11 -0800
+Message-ID: <20251205022948.327743-3-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251205022948.327743-1-stephen@networkplumber.org>
 References: <20251202172626.283094-1-stephen@networkplumber.org>
@@ -84,140 +84,115 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Rather than doing parsing of /proc/mounts with open coded string
-handling, use the standard C library routines.
-These exist in BSD and Linux.
+The test was using hash table names which were too long and
+would break if the hash library was checking the parameters.
 
-It also avoids any possible issues with escaped strings etc
-which the library handles. See getmntent(3) man page.
+Fixes: af75078fece3 ("first public release")
+Fixes: 9c7d8eed1a45 ("test/hash: add RCU tests")
+Fixes: 567bb951716f ("hash: reclaim RCU defer queue")
+Cc: stable@dpdk.org
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- lib/eal/linux/eal_hugepage_info.c | 58 ++++++++++---------------------
- 1 file changed, 18 insertions(+), 40 deletions(-)
+ app/test/test_hash.c | 29 +++++++++++++++++++----------
+ 1 file changed, 19 insertions(+), 10 deletions(-)
 
-diff --git a/lib/eal/linux/eal_hugepage_info.c b/lib/eal/linux/eal_hugepage_info.c
-index d47a19c56a..7161b1a2fb 100644
---- a/lib/eal/linux/eal_hugepage_info.c
-+++ b/lib/eal/linux/eal_hugepage_info.c
-@@ -13,6 +13,7 @@
- #include <inttypes.h>
- #include <unistd.h>
- #include <errno.h>
-+#include <mntent.h>
- #include <sys/mman.h>
- #include <sys/stat.h>
- 
-@@ -195,23 +196,13 @@ get_default_hp_size(void)
- static int
- get_hugepage_dir(uint64_t hugepage_sz, char *hugedir, int len)
- {
--	enum proc_mount_fieldnames {
--		DEVICE = 0,
--		MOUNTPT,
--		FSTYPE,
--		OPTIONS,
--		_FIELDNAME_MAX
--	};
- 	static uint64_t default_size = 0;
- 	const char proc_mounts[] = "/proc/mounts";
--	const char hugetlbfs_str[] = "hugetlbfs";
--	const size_t htlbfs_str_len = sizeof(hugetlbfs_str) - 1;
- 	const char pagesize_opt[] = "pagesize=";
- 	const size_t pagesize_opt_len = sizeof(pagesize_opt) - 1;
--	const char split_tok = ' ';
--	char *splitstr[_FIELDNAME_MAX];
- 	char found[PATH_MAX] = "";
- 	char buf[BUFSIZ];
-+	struct mntent entry;
- 	const struct internal_config *internal_conf =
- 		eal_get_internal_configuration();
- 	const size_t hugepage_dir_len = (internal_conf->hugepage_dir != NULL) ?
-@@ -226,56 +217,43 @@ get_hugepage_dir(uint64_t hugepage_sz, char *hugedir, int len)
+diff --git a/app/test/test_hash.c b/app/test/test_hash.c
+index 5791fd7f4c..8cecc28d11 100644
+--- a/app/test/test_hash.c
++++ b/app/test/test_hash.c
+@@ -1399,8 +1399,16 @@ static int test_hash_creation_with_bad_parameters(void)
  		return -1;
  	}
  
--	FILE *fd = fopen(proc_mounts, "r");
--	if (fd == NULL)
-+	FILE *mounts = setmntent(proc_mounts, "r");
-+	if (mounts == NULL)
- 		rte_panic("Cannot open %s\n", proc_mounts);
+-	memcpy(&params, &ut_params, sizeof(params));
+-	params.name = "creation_with_bad_parameters_0";
++	params = ut_params;
++	params.name = "really_long_name_of_22";
++	handle = rte_hash_create(&params);
++	if (handle != NULL) {
++		rte_hash_free(handle);
++		printf("Impossible creating hash successfully with excessively long name\n");
++		return -1;
++	}
++
++	params.name = "with_bad_parameters_0";
+ 	params.entries = RTE_HASH_ENTRIES_MAX + 1;
+ 	handle = rte_hash_create(&params);
+ 	if (handle != NULL) {
+@@ -1410,7 +1418,7 @@ static int test_hash_creation_with_bad_parameters(void)
+ 	}
  
- 	if (default_size == 0)
- 		default_size = get_default_hp_size();
+ 	memcpy(&params, &ut_params, sizeof(params));
+-	params.name = "creation_with_bad_parameters_2";
++	params.name = "with_bad_parameters_2";
+ 	params.entries = BUCKET_ENTRIES - 1;
+ 	handle = rte_hash_create(&params);
+ 	if (handle != NULL) {
+@@ -1420,7 +1428,7 @@ static int test_hash_creation_with_bad_parameters(void)
+ 	}
  
--	while (fgets(buf, sizeof(buf), fd)){
-+	while (getmntent_r(mounts, &entry, buf, sizeof(buf))) {
- 		const char *pagesz_str;
--		size_t mountpt_len = 0;
--
--		if (rte_strsplit(buf, sizeof(buf), splitstr, _FIELDNAME_MAX,
--				split_tok) != _FIELDNAME_MAX) {
--			EAL_LOG(ERR, "Error parsing %s", proc_mounts);
--			break; /* return NULL */
--		}
-+		uint64_t pagesz = default_size;
-+		size_t mountpt_len;
+ 	memcpy(&params, &ut_params, sizeof(params));
+-	params.name = "creation_with_bad_parameters_3";
++	params.name = "with_bad_parameters_3";
+ 	params.key_len = 0;
+ 	handle = rte_hash_create(&params);
+ 	if (handle != NULL) {
+@@ -1430,7 +1438,7 @@ static int test_hash_creation_with_bad_parameters(void)
+ 	}
  
--		if (strncmp(splitstr[FSTYPE], hugetlbfs_str, htlbfs_str_len) != 0)
-+		if (strcmp(entry.mnt_type, "hugetlbfs") != 0)
- 			continue;
+ 	memcpy(&params, &ut_params, sizeof(params));
+-	params.name = "creation_with_bad_parameters_4";
++	params.name = "with_bad_parameters_4";
+ 	params.socket_id = RTE_MAX_NUMA_NODES + 1;
+ 	handle = rte_hash_create(&params);
+ 	if (handle != NULL) {
+@@ -1510,7 +1518,8 @@ static int test_average_table_utilization(uint32_t ext_table)
+ 	printf("Measuring performance, please wait");
+ 	fflush(stdout);
+ 	ut_params.entries = 1 << 16;
+-	ut_params.name = "test_average_utilization";
++	/* the maximum length of name is 21 characters */
++	ut_params.name = "test_avge_utilization";
+ 	ut_params.hash_func = rte_jhash;
+ 	if (ext_table)
+ 		ut_params.extra_flag |= RTE_HASH_EXTRA_FLAGS_EXT_TABLE;
+@@ -1898,7 +1907,7 @@ test_hash_rcu_qsbr_add(void)
  
--		pagesz_str = strstr(splitstr[OPTIONS], pagesize_opt);
-+		pagesz_str = strstr(entry.mnt_opts, pagesize_opt);
-+		if (pagesz_str)
-+			pagesz = rte_str_to_size(&pagesz_str[pagesize_opt_len]);
+ 	printf("\n# Running RCU QSBR add tests\n");
+ 	memcpy(&params, &ut_params, sizeof(params));
+-	params.name = "test_hash_rcu_qsbr_add";
++	params.name = "test_hash_qsbr_add";
+ 	params.extra_flag = RTE_HASH_EXTRA_FLAGS_RW_CONCURRENCY_LF |
+ 				RTE_HASH_EXTRA_FLAGS_MULTI_WRITER_ADD;
+ 	g_handle = rte_hash_create(&params);
+@@ -1976,7 +1985,7 @@ test_hash_rcu_qsbr_dq_mode(uint8_t ext_bkt)
+ 		hash_extra_flag |= RTE_HASH_EXTRA_FLAGS_EXT_TABLE;
  
--		/* if no explicit page size, the default page size is compared */
--		if (pagesz_str == NULL) {
--			if (hugepage_sz != default_size)
--				continue;
--		}
--		/* there is an explicit page size, so check it */
--		else {
--			uint64_t pagesz = rte_str_to_size(&pagesz_str[pagesize_opt_len]);
--			if (pagesz != hugepage_sz)
--				continue;
--		}
-+		if (pagesz != hugepage_sz)
-+			continue;
+ 	struct rte_hash_parameters params_pseudo_hash = {
+-		.name = "test_hash_rcu_qsbr_dq_mode",
++		.name = "test_hash_qsbr_mode",
+ 		.entries = total_entries,
+ 		.key_len = sizeof(struct flow_key),
+ 		.hash_func = pseudo_hash,
+@@ -2146,7 +2155,7 @@ test_hash_rcu_qsbr_sync_mode(uint8_t ext_bkt)
+ 		hash_extra_flag |= RTE_HASH_EXTRA_FLAGS_EXT_TABLE;
  
- 		/*
- 		 * If no --huge-dir option has been given, we're done.
- 		 */
- 		if (internal_conf->hugepage_dir == NULL) {
--			strlcpy(found, splitstr[MOUNTPT], len);
-+			strlcpy(found, entry.mnt_dir, len);
- 			break;
- 		}
- 
--		mountpt_len = strlen(splitstr[MOUNTPT]);
-+		mountpt_len = strlen(entry.mnt_dir);
- 
- 		/*
- 		 * Ignore any mount that doesn't contain the --huge-dir directory
- 		 * or where mount point is not a parent path of --huge-dir
- 		 */
--		if (strncmp(internal_conf->hugepage_dir, splitstr[MOUNTPT],
--				mountpt_len) != 0 ||
-+		if (strncmp(internal_conf->hugepage_dir, entry.mnt_dir, mountpt_len) != 0 ||
- 			(hugepage_dir_len > mountpt_len &&
- 				internal_conf->hugepage_dir[mountpt_len] != '/')) {
- 			continue;
-@@ -286,10 +264,10 @@ get_hugepage_dir(uint64_t hugepage_sz, char *hugedir, int len)
- 		 * (so /mnt/1 is preferred over /mnt for matching /mnt/1/2)).
- 		 */
- 		if (mountpt_len > strlen(found))
--			strlcpy(found, splitstr[MOUNTPT], len);
-+			strlcpy(found, entry.mnt_dir, len);
- 	} /* end while fgets */
- 
--	fclose(fd);
-+	endmntent(mounts);
- 
- 	if (found[0] != '\0') {
- 		/* If needed, return the requested dir, not the mount point. */
+ 	struct rte_hash_parameters params_pseudo_hash = {
+-		.name = "test_hash_rcu_qsbr_sync_mode",
++		.name = "test_hash_qsbr_sync",
+ 		.entries = total_entries,
+ 		.key_len = sizeof(struct flow_key),
+ 		.hash_func = pseudo_hash,
+@@ -2250,7 +2259,7 @@ test_hash_rcu_qsbr_dq_reclaim(void)
+ 	uint32_t reclaim_keys[8] = {10, 11, 12, 13, 14, 15, 16, 17};
+ 	struct rte_hash_rcu_config rcu_cfg = {0};
+ 	struct rte_hash_parameters hash_params = {
+-			.name = "test_hash_rcu_qsbr_dq_reclaim",
++			.name = "test_qsbr_reclaim",
+ 			.entries = total_entries,
+ 			.key_len = sizeof(uint32_t),
+ 			.hash_func = NULL,
 -- 
 2.51.0
 
