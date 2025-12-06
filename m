@@ -2,68 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD21AD3B7E0
-	for <dpdk-dev@archiver.kernel.org>; Sat,  6 Dec 2025 18:44:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 324FDD3B7E0
+	for <dpdk-dev@archiver.kernel.org>; Sat,  6 Dec 2025 18:44:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5FEAD402C6;
-	Sat,  6 Dec 2025 19:44:18 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 94D6F402E1;
+	Sat,  6 Dec 2025 19:44:20 +0100 (CET)
 Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com
- [209.85.221.48]) by mails.dpdk.org (Postfix) with ESMTP id 39A5840156
- for <dev@dpdk.org>; Sat,  6 Dec 2025 19:44:17 +0100 (CET)
+ [209.85.221.48]) by mails.dpdk.org (Postfix) with ESMTP id 60948402D4
+ for <dev@dpdk.org>; Sat,  6 Dec 2025 19:44:19 +0100 (CET)
 Received: by mail-wr1-f48.google.com with SMTP id
- ffacd0b85a97d-42e2e52cc04so1141009f8f.0
- for <dev@dpdk.org>; Sat, 06 Dec 2025 10:44:17 -0800 (PST)
+ ffacd0b85a97d-42e2b78d45bso1486964f8f.0
+ for <dev@dpdk.org>; Sat, 06 Dec 2025 10:44:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1765046657;
- x=1765651457; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1765046659;
+ x=1765651459; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=fmSXdBjct75LSnoQNuZFUBl2DwMeg+yCcP4lXKUx9yc=;
- b=FNgWQL2yOZBLCa92tLD0CG4+TPcB/iekyDw52Fsj+5cSpgDnNkRE8ZwK+V/1s9xZGm
- KkQ5LQLBkgjYTJt17xkH1/Qv3PpJWgzFtBwls3MgSe+QnkVzMOBifeIYAmru5HmfRLIx
- O9w6+9vHJ4U4BRFIlTd+OlQCHHa2gb3cJZUFPRzjvokDpW2Fw4lu3PjuaIXgVjdkEuTv
- Tcrhql3AVwLsMwM1mg2LP0/ybwM8cfBUoJ2KvRI9sKdvceS2qKlY7PLOO9XrZtgMJ1Hn
- Qo/zv6KcohLAxeVWcp7Cf4LdteV+plf88aszq9VAy0NePqHRtDqfa13hQdoF9/HV8jWY
- XCLw==
+ bh=/ar0TVTeIIJ1vt0p5BtykpERdH/+0wBESU7HhKIt4mU=;
+ b=XBC0rwLWEp9rkRY77vTzM5E5AykftaIz1M8l7A8cyZYo4wQ8AsfPbxI+jXutg2ZE0r
+ eQzPIzr9ZKL/ADaJh/uZhV0/wWXjkQsKxq2lwEuijKO69Qi5SpRsXvaTzUf4WsU5S5BQ
+ EjbMRiQ7j55LHZaHO7qY2AYop/Uj1Z/3h/HV4Oy1pxQGPQOuXtjMQK9+QW/XjaHMi9De
+ FUieaI7bwQpFNuTtg2F/nVa2UlTJRFPUHsYhLSdRu7rBmFgrGzlAREbzlg+qWUvjC6+E
+ XJkofsQpS44D41mycjQ59RIbKbMTRQzGpbf7hIAc5ahZs7iqCEBrFUV2aF5Uw7saQtCI
+ lRVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1765046657; x=1765651457;
+ d=1e100.net; s=20230601; t=1765046659; x=1765651459;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=fmSXdBjct75LSnoQNuZFUBl2DwMeg+yCcP4lXKUx9yc=;
- b=RK5Sdp5q4QUSUWlaiKNR8ELirNZ/yVl/CjPDUXunLRxYgWvxVllHN0EjXYPyc9E/yW
- Pm3E7Sqzxett8YFO2qE/GGiPrAE1FHETjeRUDGmpgkBMwfNvfDPJ+zXIrcDEoHZb96/k
- OT7ePjq3vIIAh5HUw2ZLoeC6BSlgsknY1HZqVDhSXWaFa7L+SlDPSFc7tNiUrmHge5mu
- LoVqsJE3gNPwGkjl9NBVvufcYPsYWHuS4w1O3PnajYMNILtKBjQPo0pYAMK9Ple7t92z
- heOwh99Tb5yYtVyF61aPjsIVBAQaEvoencKHhtaI4yX7c2fBOj0sIoz3imkYFz42uQ1/
- j57A==
-X-Gm-Message-State: AOJu0YxJYDSIBm9eYRGcTMR1T3eao1kA6uQl5IF3TAb4LmfAzKedcaNX
- WH3LLKJdXdqQ9p7gVCbTngzzTWoqh5Ue5pIuGSn9WKu0oQ5Vmc2cIJDov6RAkErWsdnxji0VO9c
- T87MI
-X-Gm-Gg: ASbGncvDguT7i6sdZ9TGLKrgbaTknf3t6Lr9cbfh7mxHmz2btXSKRbZ5Ln6QfPGwdWJ
- xcy4qxj31KK9QgQYmg0GQepcuji9y9METs74lgxC/djTqRzx+8FSNpe/56PiniDkUdmGOmd2h4c
- XEX09ABV1PZD57zmANMID9sakMFYToKwIDUuU4R+62FzYTnklhQD8rkY2649migQcCqQI5mv1tj
- X+lIZI/yIyZq2O2aPs7aqi4GCve7odNIaqI+jnjvyDOF43lczsJShAAjRw61Il5xxJdlkiut68e
- 4DxWjKmPzwWl+eg4fIqzSg+QAYSQpCVsbZU85BPWCAnWRMO11jy97yCdbO3y1kp3z7Ixc8Auydi
- W/jn3QO28mjQN4CBIJ2wGf+K92FnMVRO+j3w0XYz3GJoR56Su/n1MW/mH+TCH4FdM5AHoPb/GWQ
- 5uHTDe5v1YgxCxpMgTGloHGZyh2FuuwK5glyitwkPZHMZrAHYOYQ==
-X-Google-Smtp-Source: AGHT+IHePdv6X3wMJmg195vvGof1+TQ5EFz2hks79dMjNML5QRXXfT+r6RHCgcRh/Rp+0isFAMIOsg==
-X-Received: by 2002:a05:6000:2486:b0:3ee:3dce:f672 with SMTP id
- ffacd0b85a97d-42f89f0fab3mr3497949f8f.4.1765046656773; 
- Sat, 06 Dec 2025 10:44:16 -0800 (PST)
+ bh=/ar0TVTeIIJ1vt0p5BtykpERdH/+0wBESU7HhKIt4mU=;
+ b=oCB1tBDYTvm+P/9ICO05wWzPpJQd/JO4q5cvlt2gaz9Y4SsTUzdh0QM0rQ5AX4VYfH
+ 3Wd29u4degJKy8PVI4LNPj9vA3T43QNAL/DWimWz+II6iYU9zgCuB4N2I6/Ocdjz/hJE
+ AxhfTU2vu+9IN/qIegUR5Myr0kmESsbqkNYVWMir1XsOdm1PhITLqSiRs9QGL8KRfuob
+ XNXm7bkIf7XUV6s0OjFB1vowleo5F+LT4t13Hp8ySZJrUNFXZG+2mcVxO984r2/Ju1Oe
+ kUkQjchJHkb2ojAtxCLIYVDudrlvjJVrtiNDzrIUFNo3O2hQk/vES7EUnQPqlISghdnL
+ iX6w==
+X-Gm-Message-State: AOJu0YyRM2ZHHgJYIypFQ3Nk3TUol/kkFwF4GmwHSnDYew/DAgZRd9V9
+ dvQFduHfdYBKie7Mj0Su/tBlrOuwV8yB1YeFtWTMaUCDhfa7NG82voUN7dnPo77qk3Y3ovqdtc9
+ EhnfF
+X-Gm-Gg: ASbGnctTFZMvYs6wB44C1iTyDLuBbFQosIxgORdXqMArSiRiyyp888RaXrfYmA/RE+w
+ xyuJYgijVwctNj7ctXmb2sN9Qwr+AamfpacQlBXWkQXnUZb0IDLQAmRGCEQB0aisd/bBwKLHlCZ
+ XH/nOgkojcqsmSve9sunA2yr/5enK2uWLpvkaGEkOd3UbwgUSqPwfkz2l6qq1+4xDDoAfUswGc4
+ +ANiscVfnTJIICeBOkROIMPjGQD561iOnhYkE4kXpKKf73pmvDqjTMFsClkdG4hy1Rp+tH13Bv1
+ fnGzH4s+VqaUQ06q51lDh8b4pv6V9CZYg5pwZ5m0AcWX5qPXa7Z89HPtw9fYg67GIzHkY9X3lFB
+ loK+Ea0dnaoOgO7BJfGI4VCj2oBpkBoi0ee7q81CqxbfWaJhuIwxaD3wlvw56LrULf7clYcewrn
+ 0Kwlu7o5B1zkOQlJyVsu1Hkbfs41sB5hesv4/zbSrYuZASKt/SZgtioseBAUyW
+X-Google-Smtp-Source: AGHT+IHf5PozjDWZjP/OhQxzjbOcS/7oX6T0+meEN5JoY0aax+hYo3uTyk8q42I2yNPb7lG+Y/xPiA==
+X-Received: by 2002:a05:6000:60f:b0:42f:8816:c018 with SMTP id
+ ffacd0b85a97d-42f89f6708amr3433429f8f.60.1765046658949; 
+ Sat, 06 Dec 2025 10:44:18 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-42f7cbe90fdsm15281616f8f.3.2025.12.06.10.44.15
+ ffacd0b85a97d-42f7cbe90fdsm15281616f8f.3.2025.12.06.10.44.17
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sat, 06 Dec 2025 10:44:16 -0800 (PST)
+ Sat, 06 Dec 2025 10:44:18 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v4 01/16] eal: use C library to parse filesystem table
-Date: Sat,  6 Dec 2025 10:43:02 -0800
-Message-ID: <20251206184410.542725-2-stephen@networkplumber.org>
+ Bruce Richardson <bruce.richardson@intel.com>,
+ Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+Subject: [PATCH v4 02/16] lpm: restrict name size
+Date: Sat,  6 Dec 2025 10:43:03 -0800
+Message-ID: <20251206184410.542725-3-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251206184410.542725-1-stephen@networkplumber.org>
 References: <20251205022948.327743-1-stephen@networkplumber.org>
@@ -83,140 +84,107 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Rather than doing parsing of /proc/mounts with open coded string
-handling, use the standard C library routines.
-These exist in BSD and Linux.
-
-It also avoids any possible issues with escaped strings etc
-which the library handles. See getmntent(3) man page.
+Since LPM uses ring internally with a prefix, limit the
+maximum allowed LPM name.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- lib/eal/linux/eal_hugepage_info.c | 58 ++++++++++---------------------
- 1 file changed, 18 insertions(+), 40 deletions(-)
+ lib/lpm/rte_lpm.c | 25 +++++++++++++++++++------
+ lib/lpm/rte_lpm.h |  2 +-
+ 2 files changed, 20 insertions(+), 7 deletions(-)
 
-diff --git a/lib/eal/linux/eal_hugepage_info.c b/lib/eal/linux/eal_hugepage_info.c
-index d47a19c56a..7161b1a2fb 100644
---- a/lib/eal/linux/eal_hugepage_info.c
-+++ b/lib/eal/linux/eal_hugepage_info.c
-@@ -13,6 +13,7 @@
- #include <inttypes.h>
- #include <unistd.h>
- #include <errno.h>
-+#include <mntent.h>
- #include <sys/mman.h>
- #include <sys/stat.h>
+diff --git a/lib/lpm/rte_lpm.c b/lib/lpm/rte_lpm.c
+index 6dab86a05e..2666d4f208 100644
+--- a/lib/lpm/rte_lpm.c
++++ b/lib/lpm/rte_lpm.c
+@@ -5,6 +5,7 @@
  
-@@ -195,23 +196,13 @@ get_default_hp_size(void)
- static int
- get_hugepage_dir(uint64_t hugepage_sz, char *hugedir, int len)
+ #include <string.h>
+ #include <stdint.h>
++#include <stdlib.h>
+ #include <errno.h>
+ #include <stdio.h>
+ #include <sys/queue.h>
+@@ -152,7 +153,6 @@ struct rte_lpm *
+ rte_lpm_create(const char *name, int socket_id,
+ 		const struct rte_lpm_config *config)
  {
--	enum proc_mount_fieldnames {
--		DEVICE = 0,
--		MOUNTPT,
--		FSTYPE,
--		OPTIONS,
--		_FIELDNAME_MAX
--	};
- 	static uint64_t default_size = 0;
- 	const char proc_mounts[] = "/proc/mounts";
--	const char hugetlbfs_str[] = "hugetlbfs";
--	const size_t htlbfs_str_len = sizeof(hugetlbfs_str) - 1;
- 	const char pagesize_opt[] = "pagesize=";
- 	const size_t pagesize_opt_len = sizeof(pagesize_opt) - 1;
--	const char split_tok = ' ';
--	char *splitstr[_FIELDNAME_MAX];
- 	char found[PATH_MAX] = "";
- 	char buf[BUFSIZ];
-+	struct mntent entry;
- 	const struct internal_config *internal_conf =
- 		eal_get_internal_configuration();
- 	const size_t hugepage_dir_len = (internal_conf->hugepage_dir != NULL) ?
-@@ -226,56 +217,43 @@ get_hugepage_dir(uint64_t hugepage_sz, char *hugedir, int len)
- 		return -1;
+-	char mem_name[RTE_LPM_NAMESIZE];
+ 	struct __rte_lpm *i_lpm;
+ 	struct rte_lpm *lpm = NULL;
+ 	struct rte_tailq_entry *te;
+@@ -170,7 +170,15 @@ rte_lpm_create(const char *name, int socket_id,
+ 		return NULL;
  	}
  
--	FILE *fd = fopen(proc_mounts, "r");
--	if (fd == NULL)
-+	FILE *mounts = setmntent(proc_mounts, "r");
-+	if (mounts == NULL)
- 		rte_panic("Cannot open %s\n", proc_mounts);
+-	snprintf(mem_name, sizeof(mem_name), "LPM_%s", name);
++	if (strlen(name) >= RTE_LPM_NAMESIZE) {
++		rte_errno = ENAMETOOLONG;
++		return NULL;
++	}
++
++	/* This is only used for tracing, ok to be NULL */
++	char *mem_name = NULL;
++	int unused __rte_unused;
++	unused = asprintf(&mem_name, "LPM_%s", name);
  
- 	if (default_size == 0)
- 		default_size = get_default_hp_size();
+ 	rte_mcfg_tailq_write_lock();
  
--	while (fgets(buf, sizeof(buf), fd)){
-+	while (getmntent_r(mounts, &entry, buf, sizeof(buf))) {
- 		const char *pagesz_str;
--		size_t mountpt_len = 0;
--
--		if (rte_strsplit(buf, sizeof(buf), splitstr, _FIELDNAME_MAX,
--				split_tok) != _FIELDNAME_MAX) {
--			EAL_LOG(ERR, "Error parsing %s", proc_mounts);
--			break; /* return NULL */
--		}
-+		uint64_t pagesz = default_size;
-+		size_t mountpt_len;
+@@ -247,6 +255,7 @@ rte_lpm_create(const char *name, int socket_id,
  
--		if (strncmp(splitstr[FSTYPE], hugetlbfs_str, htlbfs_str_len) != 0)
-+		if (strcmp(entry.mnt_type, "hugetlbfs") != 0)
- 			continue;
+ exit:
+ 	rte_mcfg_tailq_write_unlock();
++	free(mem_name);
  
--		pagesz_str = strstr(splitstr[OPTIONS], pagesize_opt);
-+		pagesz_str = strstr(entry.mnt_opts, pagesize_opt);
-+		if (pagesz_str)
-+			pagesz = rte_str_to_size(&pagesz_str[pagesize_opt_len]);
+ 	return lpm;
+ }
+@@ -309,7 +318,6 @@ int
+ rte_lpm_rcu_qsbr_add(struct rte_lpm *lpm, struct rte_lpm_rcu_config *cfg)
+ {
+ 	struct rte_rcu_qsbr_dq_parameters params = {0};
+-	char rcu_dq_name[RTE_RCU_QSBR_DQ_NAMESIZE];
+ 	struct __rte_lpm *i_lpm;
  
--		/* if no explicit page size, the default page size is compared */
--		if (pagesz_str == NULL) {
--			if (hugepage_sz != default_size)
--				continue;
--		}
--		/* there is an explicit page size, so check it */
--		else {
--			uint64_t pagesz = rte_str_to_size(&pagesz_str[pagesize_opt_len]);
--			if (pagesz != hugepage_sz)
--				continue;
--		}
-+		if (pagesz != hugepage_sz)
-+			continue;
- 
- 		/*
- 		 * If no --huge-dir option has been given, we're done.
- 		 */
- 		if (internal_conf->hugepage_dir == NULL) {
--			strlcpy(found, splitstr[MOUNTPT], len);
-+			strlcpy(found, entry.mnt_dir, len);
- 			break;
+ 	if (lpm == NULL || cfg == NULL) {
+@@ -326,9 +334,13 @@ rte_lpm_rcu_qsbr_add(struct rte_lpm *lpm, struct rte_lpm_rcu_config *cfg)
+ 	if (cfg->mode == RTE_LPM_QSBR_MODE_SYNC) {
+ 		/* No other things to do. */
+ 	} else if (cfg->mode == RTE_LPM_QSBR_MODE_DQ) {
++		char rcu_dq_name[RTE_RCU_QSBR_DQ_NAMESIZE];
++
+ 		/* Init QSBR defer queue. */
+-		snprintf(rcu_dq_name, sizeof(rcu_dq_name),
+-				"LPM_RCU_%s", i_lpm->name);
++		if (snprintf(rcu_dq_name, sizeof(rcu_dq_name),
++			     "LPM_RCU_%s", i_lpm->name) >= (int)sizeof(rcu_dq_name))
++			LPM_LOG(NOTICE, "LPM rcu defer queue name truncated");
++
+ 		params.name = rcu_dq_name;
+ 		params.size = cfg->dq_size;
+ 		if (params.size == 0)
+@@ -343,7 +355,8 @@ rte_lpm_rcu_qsbr_add(struct rte_lpm *lpm, struct rte_lpm_rcu_config *cfg)
+ 		params.v = cfg->v;
+ 		i_lpm->dq = rte_rcu_qsbr_dq_create(&params);
+ 		if (i_lpm->dq == NULL) {
+-			LPM_LOG(ERR, "LPM defer queue creation failed");
++			LPM_LOG(ERR, "LPM defer queue creation failed: %s",
++				rte_strerror(rte_errno));
+ 			return 1;
  		}
+ 	} else {
+diff --git a/lib/lpm/rte_lpm.h b/lib/lpm/rte_lpm.h
+index edfe77b458..8e70603ace 100644
+--- a/lib/lpm/rte_lpm.h
++++ b/lib/lpm/rte_lpm.h
+@@ -26,7 +26,7 @@ extern "C" {
+ #endif
  
--		mountpt_len = strlen(splitstr[MOUNTPT]);
-+		mountpt_len = strlen(entry.mnt_dir);
+ /** Max number of characters in LPM name. */
+-#define RTE_LPM_NAMESIZE                32
++#define RTE_LPM_NAMESIZE  RTE_RING_NAMESIZE
  
- 		/*
- 		 * Ignore any mount that doesn't contain the --huge-dir directory
- 		 * or where mount point is not a parent path of --huge-dir
- 		 */
--		if (strncmp(internal_conf->hugepage_dir, splitstr[MOUNTPT],
--				mountpt_len) != 0 ||
-+		if (strncmp(internal_conf->hugepage_dir, entry.mnt_dir, mountpt_len) != 0 ||
- 			(hugepage_dir_len > mountpt_len &&
- 				internal_conf->hugepage_dir[mountpt_len] != '/')) {
- 			continue;
-@@ -286,10 +264,10 @@ get_hugepage_dir(uint64_t hugepage_sz, char *hugedir, int len)
- 		 * (so /mnt/1 is preferred over /mnt for matching /mnt/1/2)).
- 		 */
- 		if (mountpt_len > strlen(found))
--			strlcpy(found, splitstr[MOUNTPT], len);
-+			strlcpy(found, entry.mnt_dir, len);
- 	} /* end while fgets */
- 
--	fclose(fd);
-+	endmntent(mounts);
- 
- 	if (found[0] != '\0') {
- 		/* If needed, return the requested dir, not the mount point. */
+ /** Maximum depth value possible for IPv4 LPM. */
+ #define RTE_LPM_MAX_DEPTH               32
 -- 
 2.51.0
 
