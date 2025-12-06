@@ -2,70 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89714D3B7E0
-	for <dpdk-dev@archiver.kernel.org>; Sat,  6 Dec 2025 18:44:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD21AD3B7E0
+	for <dpdk-dev@archiver.kernel.org>; Sat,  6 Dec 2025 18:44:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4395D40268;
-	Sat,  6 Dec 2025 19:44:17 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 5FEAD402C6;
+	Sat,  6 Dec 2025 19:44:18 +0100 (CET)
 Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com
- [209.85.221.48]) by mails.dpdk.org (Postfix) with ESMTP id 8EF1240156
- for <dev@dpdk.org>; Sat,  6 Dec 2025 19:44:15 +0100 (CET)
+ [209.85.221.48]) by mails.dpdk.org (Postfix) with ESMTP id 39A5840156
+ for <dev@dpdk.org>; Sat,  6 Dec 2025 19:44:17 +0100 (CET)
 Received: by mail-wr1-f48.google.com with SMTP id
- ffacd0b85a97d-42f8e39cf89so187022f8f.3
- for <dev@dpdk.org>; Sat, 06 Dec 2025 10:44:15 -0800 (PST)
+ ffacd0b85a97d-42e2e52cc04so1141009f8f.0
+ for <dev@dpdk.org>; Sat, 06 Dec 2025 10:44:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1765046655;
- x=1765651455; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1765046657;
+ x=1765651457; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=t5MOnI6y6xxIyiTUVtH9tV3evm8NS8iXoUZh8eIIwi8=;
- b=vVc91CIMMvYEIsU8Ye1RvUBWfMxM8jvuWf6rC/lrBi3KiUYH+WqP9VPAMcHbzzKp5U
- ElqyszymRab7SOLk8BngQDYWFlDp4HjeEZzpPtPRbbyBglfWafoqoW56MQVcCB2ly0Tg
- wu4iyD1jF0GcEMXYELqQUyRBBbtpVqiIVB4CMLcD+MWoG/U/E7qNrQVfD1xuY4LwV3lY
- cFBGHDhgGjShNil2ucIUpg6AKcGCrUFC3TotjxNhM3fAux5TPbamJwjRJ3aiqAU4QM3N
- EGjN+MsSVd0Z+nCtVbBNYlxGzhsOiZITF6/9xxZFwPrHo+vYfC4oGzGljtARkXbxJ8gv
- YHkw==
+ bh=fmSXdBjct75LSnoQNuZFUBl2DwMeg+yCcP4lXKUx9yc=;
+ b=FNgWQL2yOZBLCa92tLD0CG4+TPcB/iekyDw52Fsj+5cSpgDnNkRE8ZwK+V/1s9xZGm
+ KkQ5LQLBkgjYTJt17xkH1/Qv3PpJWgzFtBwls3MgSe+QnkVzMOBifeIYAmru5HmfRLIx
+ O9w6+9vHJ4U4BRFIlTd+OlQCHHa2gb3cJZUFPRzjvokDpW2Fw4lu3PjuaIXgVjdkEuTv
+ Tcrhql3AVwLsMwM1mg2LP0/ybwM8cfBUoJ2KvRI9sKdvceS2qKlY7PLOO9XrZtgMJ1Hn
+ Qo/zv6KcohLAxeVWcp7Cf4LdteV+plf88aszq9VAy0NePqHRtDqfa13hQdoF9/HV8jWY
+ XCLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1765046655; x=1765651455;
+ d=1e100.net; s=20230601; t=1765046657; x=1765651457;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=t5MOnI6y6xxIyiTUVtH9tV3evm8NS8iXoUZh8eIIwi8=;
- b=WnFPvGGMo1lgAxJjPzINXg5AILNJNS1xYZscynvd7ioqc1VJ8ya6RlS6/x+y8EbQSs
- vAH4AfR9kC45N+kbwdnlp1WFtro+CLK89BPYF1vxvgXizWRVxIwGLDlyrp2Z2lXM/Dgv
- 7c09H/4/tkKBfjnQ6ovrkVCpgA5APEocgSisAPzbSxTbyWFJ92pkJDJKxEE6KL54LMV1
- VubUKY/VOhNbEI61vEQj0Ia33WwgxN5bHp3rVwMBiGfUHFaIzYpt7htm+I1vbLYqzDma
- BLEl7ZveRImepSKCgWVir6WMmlGk/frO8zutNvKaEwiZ0edwDS2/MU5V5/8lQR6ja1rM
- zy8w==
-X-Gm-Message-State: AOJu0Yy3xSXueNUugFEhOHKPKNuXX/x0fRMLGr7xnSacPJ2wH+2FtcYQ
- x6A6bLtTk6Ioh07qCnBXR32iJRb/QLhxdl56h+hCsjEMk+RyXtZN000/1dZVwAj3RyG/b6QPuK6
- 2Zd7p
-X-Gm-Gg: ASbGncvGjT+spmIeb4wuqPQfJ3576T/NHOnXBsK9RWaFhOFlxmyn8EuYtKmzjDPseDP
- fOj6hsJvnqas7y1zaZweGa+YRD+LNf/dZB2EEDD+3BjkX2GxmaCsMy4z21cMu6ZdZrov+sC7Y+z
- AM1KcsAWXL1AfT7o2Nm82JIH6nm0lQqGz+YByiAIBx1Aml+8ItcIhsAmSFE+L8sd23rUxgeO86r
- LHxn9kJNRzDK85f+pJn0+5p6+qkBmnfhlJwfgemdNkwY5jaELP/+N/XCUneDAHYsQDH0WO+mqHD
- YkLJZZ5hIv2FPTwirAz/qcSmgO+D4QWKT0cHNQhu9qNmqja+TE+FmjwvqC+fxa4mPDga4mOZrA/
- 9pctmr24XpY6O9ltq07OXTops+3KTjuLf4bo13tbNdqKA5uux3rAlJVqVOWS4+1gRV/eO03/asq
- +861YQI3NCrmBds8FuaDlG1D+Hvk6J0nWUy4a1idmdQaaSASoM1w==
-X-Google-Smtp-Source: AGHT+IGk9Wxb9J6A8EytLTijMwWOAHtg7zT7R/0LsbEA0l3sd95x2aIKAYL4trN8dYpDYAeM0wJrCA==
-X-Received: by 2002:a05:6000:2403:b0:42c:b8fd:21bb with SMTP id
- ffacd0b85a97d-42f89f5df37mr3220377f8f.39.1765046654876; 
- Sat, 06 Dec 2025 10:44:14 -0800 (PST)
+ bh=fmSXdBjct75LSnoQNuZFUBl2DwMeg+yCcP4lXKUx9yc=;
+ b=RK5Sdp5q4QUSUWlaiKNR8ELirNZ/yVl/CjPDUXunLRxYgWvxVllHN0EjXYPyc9E/yW
+ Pm3E7Sqzxett8YFO2qE/GGiPrAE1FHETjeRUDGmpgkBMwfNvfDPJ+zXIrcDEoHZb96/k
+ OT7ePjq3vIIAh5HUw2ZLoeC6BSlgsknY1HZqVDhSXWaFa7L+SlDPSFc7tNiUrmHge5mu
+ LoVqsJE3gNPwGkjl9NBVvufcYPsYWHuS4w1O3PnajYMNILtKBjQPo0pYAMK9Ple7t92z
+ heOwh99Tb5yYtVyF61aPjsIVBAQaEvoencKHhtaI4yX7c2fBOj0sIoz3imkYFz42uQ1/
+ j57A==
+X-Gm-Message-State: AOJu0YxJYDSIBm9eYRGcTMR1T3eao1kA6uQl5IF3TAb4LmfAzKedcaNX
+ WH3LLKJdXdqQ9p7gVCbTngzzTWoqh5Ue5pIuGSn9WKu0oQ5Vmc2cIJDov6RAkErWsdnxji0VO9c
+ T87MI
+X-Gm-Gg: ASbGncvDguT7i6sdZ9TGLKrgbaTknf3t6Lr9cbfh7mxHmz2btXSKRbZ5Ln6QfPGwdWJ
+ xcy4qxj31KK9QgQYmg0GQepcuji9y9METs74lgxC/djTqRzx+8FSNpe/56PiniDkUdmGOmd2h4c
+ XEX09ABV1PZD57zmANMID9sakMFYToKwIDUuU4R+62FzYTnklhQD8rkY2649migQcCqQI5mv1tj
+ X+lIZI/yIyZq2O2aPs7aqi4GCve7odNIaqI+jnjvyDOF43lczsJShAAjRw61Il5xxJdlkiut68e
+ 4DxWjKmPzwWl+eg4fIqzSg+QAYSQpCVsbZU85BPWCAnWRMO11jy97yCdbO3y1kp3z7Ixc8Auydi
+ W/jn3QO28mjQN4CBIJ2wGf+K92FnMVRO+j3w0XYz3GJoR56Su/n1MW/mH+TCH4FdM5AHoPb/GWQ
+ 5uHTDe5v1YgxCxpMgTGloHGZyh2FuuwK5glyitwkPZHMZrAHYOYQ==
+X-Google-Smtp-Source: AGHT+IHePdv6X3wMJmg195vvGof1+TQ5EFz2hks79dMjNML5QRXXfT+r6RHCgcRh/Rp+0isFAMIOsg==
+X-Received: by 2002:a05:6000:2486:b0:3ee:3dce:f672 with SMTP id
+ ffacd0b85a97d-42f89f0fab3mr3497949f8f.4.1765046656773; 
+ Sat, 06 Dec 2025 10:44:16 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-42f7cbe90fdsm15281616f8f.3.2025.12.06.10.44.13
+ ffacd0b85a97d-42f7cbe90fdsm15281616f8f.3.2025.12.06.10.44.15
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sat, 06 Dec 2025 10:44:14 -0800 (PST)
+ Sat, 06 Dec 2025 10:44:16 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v4 00/16] lib: find and fix possible string overflows
-Date: Sat,  6 Dec 2025 10:43:01 -0800
-Message-ID: <20251206184410.542725-1-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH v4 01/16] eal: use C library to parse filesystem table
+Date: Sat,  6 Dec 2025 10:43:02 -0800
+Message-ID: <20251206184410.542725-2-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251205022948.327743-1-stephen@networkplumber.org>
+In-Reply-To: <20251206184410.542725-1-stephen@networkplumber.org>
 References: <20251205022948.327743-1-stephen@networkplumber.org>
+ <20251206184410.542725-1-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -81,58 +83,140 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Change all the libraries to find and fix cases where a string
-could overflow when formatting or using strclpy. This does provide
-early indication of possible problems where the file prefix is too
-long to fit in unix domain socket path, and where a hash table
-is being requested that has a name too long.
+Rather than doing parsing of /proc/mounts with open coded string
+handling, use the standard C library routines.
+These exist in BSD and Linux.
 
-v4 - fix build on 32 bit and windows
+It also avoids any possible issues with escaped strings etc
+which the library handles. See getmntent(3) man page.
 
-Stephen Hemminger (16):
-  eal: use C library to parse filesystem table
-  lpm: restrict name size
-  hash: add checks for hash name length
-  graph: avoid overflowing comment buffer
-  latencystats: add check for string overflow
-  efd: handle possible name truncation
-  eal: warn if thread name is truncated
-  eal: avoid format overflow when handling addresses
-  eal: add check for sysfs path overflow
-  eal: limit maximum runtime directory and socket paths
-  eal: check for hugefile path overflow
-  eal: check tailq length
-  eal: handle long shared library path
-  ethdev: avoid possible overflow in xstat names
-  vhost: check for overflow in xstat name
-  lib: enable format overflow warnings
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+---
+ lib/eal/linux/eal_hugepage_info.c | 58 ++++++++++---------------------
+ 1 file changed, 18 insertions(+), 40 deletions(-)
 
- app/test/test_hash.c                   | 21 ++++++
- doc/guides/rel_notes/release_26_03.rst |  3 +
- lib/eal/common/eal_common_config.c     |  6 +-
- lib/eal/common/eal_common_memory.c     |  2 +-
- lib/eal/common/eal_common_options.c    | 17 +++--
- lib/eal/common/eal_common_proc.c       | 83 ++++++++++++++--------
- lib/eal/common/eal_common_tailqs.c     |  5 ++
- lib/eal/common/eal_filesystem.h        | 23 ++++--
- lib/eal/freebsd/eal.c                  |  6 +-
- lib/eal/linux/eal.c                    |  6 +-
- lib/eal/linux/eal_hugepage_info.c      | 98 ++++++++++++--------------
- lib/eal/linux/eal_memalloc.c           | 11 ++-
- lib/eal/linux/eal_memory.c             |  9 ++-
- lib/eal/windows/eal.c                  |  6 +-
- lib/efd/rte_efd.c                      |  7 +-
- lib/ethdev/rte_ethdev.c                | 35 ++++++---
- lib/graph/graph_pcap.c                 |  9 ++-
- lib/hash/rte_cuckoo_hash.c             | 41 +++++++----
- lib/hash/rte_fbk_hash.c                | 14 +++-
- lib/latencystats/rte_latencystats.c    |  9 ++-
- lib/lpm/rte_lpm.c                      | 25 +++++--
- lib/lpm/rte_lpm.h                      |  2 +-
- lib/meson.build                        |  4 --
- lib/vhost/vhost.c                      | 14 ++--
- 24 files changed, 303 insertions(+), 153 deletions(-)
-
+diff --git a/lib/eal/linux/eal_hugepage_info.c b/lib/eal/linux/eal_hugepage_info.c
+index d47a19c56a..7161b1a2fb 100644
+--- a/lib/eal/linux/eal_hugepage_info.c
++++ b/lib/eal/linux/eal_hugepage_info.c
+@@ -13,6 +13,7 @@
+ #include <inttypes.h>
+ #include <unistd.h>
+ #include <errno.h>
++#include <mntent.h>
+ #include <sys/mman.h>
+ #include <sys/stat.h>
+ 
+@@ -195,23 +196,13 @@ get_default_hp_size(void)
+ static int
+ get_hugepage_dir(uint64_t hugepage_sz, char *hugedir, int len)
+ {
+-	enum proc_mount_fieldnames {
+-		DEVICE = 0,
+-		MOUNTPT,
+-		FSTYPE,
+-		OPTIONS,
+-		_FIELDNAME_MAX
+-	};
+ 	static uint64_t default_size = 0;
+ 	const char proc_mounts[] = "/proc/mounts";
+-	const char hugetlbfs_str[] = "hugetlbfs";
+-	const size_t htlbfs_str_len = sizeof(hugetlbfs_str) - 1;
+ 	const char pagesize_opt[] = "pagesize=";
+ 	const size_t pagesize_opt_len = sizeof(pagesize_opt) - 1;
+-	const char split_tok = ' ';
+-	char *splitstr[_FIELDNAME_MAX];
+ 	char found[PATH_MAX] = "";
+ 	char buf[BUFSIZ];
++	struct mntent entry;
+ 	const struct internal_config *internal_conf =
+ 		eal_get_internal_configuration();
+ 	const size_t hugepage_dir_len = (internal_conf->hugepage_dir != NULL) ?
+@@ -226,56 +217,43 @@ get_hugepage_dir(uint64_t hugepage_sz, char *hugedir, int len)
+ 		return -1;
+ 	}
+ 
+-	FILE *fd = fopen(proc_mounts, "r");
+-	if (fd == NULL)
++	FILE *mounts = setmntent(proc_mounts, "r");
++	if (mounts == NULL)
+ 		rte_panic("Cannot open %s\n", proc_mounts);
+ 
+ 	if (default_size == 0)
+ 		default_size = get_default_hp_size();
+ 
+-	while (fgets(buf, sizeof(buf), fd)){
++	while (getmntent_r(mounts, &entry, buf, sizeof(buf))) {
+ 		const char *pagesz_str;
+-		size_t mountpt_len = 0;
+-
+-		if (rte_strsplit(buf, sizeof(buf), splitstr, _FIELDNAME_MAX,
+-				split_tok) != _FIELDNAME_MAX) {
+-			EAL_LOG(ERR, "Error parsing %s", proc_mounts);
+-			break; /* return NULL */
+-		}
++		uint64_t pagesz = default_size;
++		size_t mountpt_len;
+ 
+-		if (strncmp(splitstr[FSTYPE], hugetlbfs_str, htlbfs_str_len) != 0)
++		if (strcmp(entry.mnt_type, "hugetlbfs") != 0)
+ 			continue;
+ 
+-		pagesz_str = strstr(splitstr[OPTIONS], pagesize_opt);
++		pagesz_str = strstr(entry.mnt_opts, pagesize_opt);
++		if (pagesz_str)
++			pagesz = rte_str_to_size(&pagesz_str[pagesize_opt_len]);
+ 
+-		/* if no explicit page size, the default page size is compared */
+-		if (pagesz_str == NULL) {
+-			if (hugepage_sz != default_size)
+-				continue;
+-		}
+-		/* there is an explicit page size, so check it */
+-		else {
+-			uint64_t pagesz = rte_str_to_size(&pagesz_str[pagesize_opt_len]);
+-			if (pagesz != hugepage_sz)
+-				continue;
+-		}
++		if (pagesz != hugepage_sz)
++			continue;
+ 
+ 		/*
+ 		 * If no --huge-dir option has been given, we're done.
+ 		 */
+ 		if (internal_conf->hugepage_dir == NULL) {
+-			strlcpy(found, splitstr[MOUNTPT], len);
++			strlcpy(found, entry.mnt_dir, len);
+ 			break;
+ 		}
+ 
+-		mountpt_len = strlen(splitstr[MOUNTPT]);
++		mountpt_len = strlen(entry.mnt_dir);
+ 
+ 		/*
+ 		 * Ignore any mount that doesn't contain the --huge-dir directory
+ 		 * or where mount point is not a parent path of --huge-dir
+ 		 */
+-		if (strncmp(internal_conf->hugepage_dir, splitstr[MOUNTPT],
+-				mountpt_len) != 0 ||
++		if (strncmp(internal_conf->hugepage_dir, entry.mnt_dir, mountpt_len) != 0 ||
+ 			(hugepage_dir_len > mountpt_len &&
+ 				internal_conf->hugepage_dir[mountpt_len] != '/')) {
+ 			continue;
+@@ -286,10 +264,10 @@ get_hugepage_dir(uint64_t hugepage_sz, char *hugedir, int len)
+ 		 * (so /mnt/1 is preferred over /mnt for matching /mnt/1/2)).
+ 		 */
+ 		if (mountpt_len > strlen(found))
+-			strlcpy(found, splitstr[MOUNTPT], len);
++			strlcpy(found, entry.mnt_dir, len);
+ 	} /* end while fgets */
+ 
+-	fclose(fd);
++	endmntent(mounts);
+ 
+ 	if (found[0] != '\0') {
+ 		/* If needed, return the requested dir, not the mount point. */
 -- 
 2.51.0
 
