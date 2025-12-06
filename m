@@ -2,71 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D236D3B7E0
-	for <dpdk-dev@archiver.kernel.org>; Sat,  6 Dec 2025 18:45:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87F22D3B7DB
+	for <dpdk-dev@archiver.kernel.org>; Sat,  6 Dec 2025 19:11:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 655BC40691;
-	Sat,  6 Dec 2025 19:44:48 +0100 (CET)
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com
- [209.85.221.45]) by mails.dpdk.org (Postfix) with ESMTP id 9803B4067C
- for <dev@dpdk.org>; Sat,  6 Dec 2025 19:44:46 +0100 (CET)
-Received: by mail-wr1-f45.google.com with SMTP id
- ffacd0b85a97d-42e2ddb8a13so1506184f8f.0
- for <dev@dpdk.org>; Sat, 06 Dec 2025 10:44:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1765046686;
- x=1765651486; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=NAHPuQvE2165rpGxsJHW1wsr08rO3/PzDs3KR/V/FX8=;
- b=sZmN+SdClyr1BkqfuLYl4orhFLQucFyu1FPbcvXW7/40REX1PKsE/3CUnmfzR3rPJC
- K6zuXYg8pIN/3wVHYFNXe9SnMTnk8498cvuLtGdMlpf2iwR0nX5V+GRNaQ/FyJ5HXXcf
- 8/hqiCk918aAgfP/1iDgESZEQ8+7GElFVU1gyrEtmvqTTdNUxHcDh7XBIii3drmC5z8W
- WfQynLBiGIykjV+Gql78N2Wh+LM+uyQK1aM4mSHwNTF1xs3V/WxwlBZbGHLyotwEgoYt
- 7PbfhR/vL7mp+xWLySgUMu/Gha2xaoDOhzGyESz1Yw5d449n2FKNwmj1p5bqHXQtzvAQ
- L+qA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1765046686; x=1765651486;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=NAHPuQvE2165rpGxsJHW1wsr08rO3/PzDs3KR/V/FX8=;
- b=QeB4DFD4chvmfPp01PvYLQnI4Dmd9Fcq2dE55+fH+flwAa4pf5KKHeMAFvtl3crNw4
- A6DKAWKL0HXzDmznH6zCcKQ5lti7ENQSyBFGaj9MlpRbH9nnBjL4vVmuHCwbovzeObxY
- lWe6Tp+Wq2cub2vGjit98r2+c7dNofhi8mxAiCuED1ocZK+lZMc1kMjZo8K6LYpA3qOJ
- UAx4zhBoTIL4c+IHysusgm52DJRUJDgDvts1chkZl/Io1icvi8z6DS9uAKFYKA9dHEIk
- xRJt5mwfU16M4JqJjRp5hsW+H+UtruC44iqM2sMJqj8ZVm59Q2XgdT6f7wVzcHBaT1rk
- ZL1A==
-X-Gm-Message-State: AOJu0Yy1SRzVklYmnxxATWxmk4QHywqs603j4vMnHCybI+BeQShi+jWf
- AKwOJtsqoq/bUNW61WWTvGoTSylW1ppI0lvrQJK0eMz2PYVcCSmR2KyE7u5PGZSW8c1I7U8r4t9
- 2CZF3
-X-Gm-Gg: ASbGnctPX5wxT/xOwtgPy9eC4jdPjtfVGtKOasQ4HrLEZS7M6Pis6UbfcTpNjpq28C7
- UX2a8t1dh1eSExLDqXm/DfE+uxfH3z2RxWdsfAOXhYyHvn/n4ScOosM6Eid+t4M8Rl/O9fc514w
- 9CW10rzzxXLeDMr1smcixuOzhVT2rpMmDdNJXG/H9rc3RSQBLO8BZEAyLw1FJlJaH8QUpW0jiul
- JqX2rX52rFeMzkeSe5de+5LW0W5ireyjqcTfYSGweqIeEDMNI4YGT+GjpxHyFIwkgqWBQNXT/t0
- BWKowpqQLaLuDQ63UVyBt6NGTyzlCFQ6HXMzDfc9J4tbwZwzp41oHK3FFCcq9oeOBpFSQFzv2jA
- qY8CjSvSILD7cpCoCQfUY1G/hlIGAONy/lhufHij8EGn6f0W8hII5ps5nwVBBQgBhguJFYXEj4v
- iLZPnCiQvNJmrfheTQQEtPWLsDYc/G29Y3qIHiUTnQa6DCIjpr1Q==
-X-Google-Smtp-Source: AGHT+IFkgJZJgUS9AOEUKo+js8/ezcB+1iM8+yGVN1B8qSwyyI2tgFLpyTJp51JOhVms9BQvjSXiUQ==
-X-Received: by 2002:a05:6000:4006:b0:42b:31da:18b1 with SMTP id
- ffacd0b85a97d-42f89f63deamr3311946f8f.56.1765046686192; 
- Sat, 06 Dec 2025 10:44:46 -0800 (PST)
-Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-42f7cbe90fdsm15281616f8f.3.2025.12.06.10.44.44
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sat, 06 Dec 2025 10:44:45 -0800 (PST)
-From: Stephen Hemminger <stephen@networkplumber.org>
+	by mails.dpdk.org (Postfix) with ESMTP id C085340268;
+	Sat,  6 Dec 2025 20:11:44 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+ by mails.dpdk.org (Postfix) with ESMTP id 016744014F;
+ Sat,  6 Dec 2025 20:11:42 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1765048303; x=1796584303;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=CQsmjWDPdTJA7Bb4fuyxg+oJuqqpPabvrRfJxpSq4rU=;
+ b=h/2MoMrIZr1bbqPSKbA4Vj3o4ENCUuLLFSMcbqaxL+8Q+Ev8y6DXSCwV
+ obYc3zoiWp5Oihka/FEok2RdZeRC7gByHaiifiMg+PRgmVu26DBarYwVB
+ g0MSXl8EN0tdF48It3trAmIfrgGutDIdIjUjrmZyKSmaaaA+3GaAsty4M
+ gNqFDwhkBa+4S7DearKqHXOBCpYZDFUy9R+5/kl5h5xKMJkPSoffTVfmY
+ dooTwI53+31YBz9DErKnRkJgnq3RgedsI3NBejDaeYYFKL1q2D/cfNdkQ
+ xzCY+bcx54P72YIA4QbD0pCxOCT+0Ditjl0H97cPd/AZ8srCfZeNkC6PD Q==;
+X-CSE-ConnectionGUID: M6r9P11iTaaXsBesfjh/xQ==
+X-CSE-MsgGUID: sfncGcUoRyClXkcGWewrXg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11634"; a="78406239"
+X-IronPort-AV: E=Sophos;i="6.20,255,1758610800"; d="scan'208";a="78406239"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+ by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 06 Dec 2025 11:11:42 -0800
+X-CSE-ConnectionGUID: NyHPQMCDRRqK3/c6iRvEXQ==
+X-CSE-MsgGUID: NEAkMK4aQQShOwpxrAaGmg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.20,255,1758610800"; d="scan'208";a="226226958"
+Received: from client-08.iind.intel.com ([10.190.203.57])
+ by orviesa002.jf.intel.com with ESMTP; 06 Dec 2025 11:11:41 -0800
+From: Anurag Mandal <anurag.mandal@intel.com>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v4 16/16] lib: enable format overflow warnings
-Date: Sat,  6 Dec 2025 10:43:17 -0800
-Message-ID: <20251206184410.542725-17-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251206184410.542725-1-stephen@networkplumber.org>
-References: <20251205022948.327743-1-stephen@networkplumber.org>
- <20251206184410.542725-1-stephen@networkplumber.org>
+Cc: bruce.richardson@intel.com, Anurag Mandal <anurag.mandal@intel.com>,
+ stable@dpdk.org
+Subject: [PATCH] net/i40e: fix QinQ stripping
+Date: Sat,  6 Dec 2025 18:24:41 +0000
+Message-ID: <20251206182441.68354-1-anurag.mandal@intel.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -82,28 +58,46 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Enable compiler checking of format overflow
+Outer VLAN strip gets disabled when inner VLAN
+stripping is enabled/disabled after enabling outer
+VLAN stripping.
+This happens because the respective register of
+gets overridden by the VSI params update of
+inner VLAN stripping.
 
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+This patch fixes the issue by re-enabling outer
+VLAN stripping after modification of inner
+VLAN stripping.
+
+Fixes: c52ff36686a4 ("net/i40e: enable QinQ stripping")
+Cc: stable@dpdk.org
+
+Signed-off-by: Anurag Mandal <anurag.mandal@intel.com>
 ---
- lib/meson.build | 4 ----
- 1 file changed, 4 deletions(-)
+ drivers/net/intel/i40e/i40e_ethdev.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/lib/meson.build b/lib/meson.build
-index c8f4270868..8f5cfd28a5 100644
---- a/lib/meson.build
-+++ b/lib/meson.build
-@@ -113,10 +113,6 @@ default_cflags = machine_args
- default_cflags += ['-DALLOW_EXPERIMENTAL_API']
- default_cflags += ['-DALLOW_INTERNAL_API']
+diff --git a/drivers/net/intel/i40e/i40e_ethdev.c b/drivers/net/intel/i40e/i40e_ethdev.c
+index b8ce79061b..c8153f3351 100644
+--- a/drivers/net/intel/i40e/i40e_ethdev.c
++++ b/drivers/net/intel/i40e/i40e_ethdev.c
+@@ -4150,6 +4150,16 @@ i40e_vlan_offload_set(struct rte_eth_dev *dev, int mask)
+ 			i40e_vsi_config_vlan_stripping(vsi, TRUE);
+ 		else
+ 			i40e_vsi_config_vlan_stripping(vsi, FALSE);
++
++		/* When VLAN strip is enabled/disabled
++		 * after enabling outer VLAN stripping,
++		 * outer VLAN stripping gets disabled
++		 * as the register gets overridden by
++		 * VLAN's strip vsi param update.
++		 * Hence, re-enable outer VLAN stripping.
++		 */
++		if (rxmode->offloads & RTE_ETH_RX_OFFLOAD_QINQ_STRIP)
++			i40e_vsi_config_outer_vlan_stripping(vsi, TRUE);
+ 	}
  
--if cc.has_argument('-Wno-format-truncation')
--    default_cflags += '-Wno-format-truncation'
--endif
--
- foreach l:libraries
-     build = true
-     reason = '<unknown reason>' # set if build == false to explain why
+ 	if (mask & RTE_ETH_VLAN_EXTEND_MASK) {
 -- 
-2.51.0
+2.43.0
 
