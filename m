@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BF1BD3B7E2
-	for <dpdk-dev@archiver.kernel.org>; Mon,  8 Dec 2025 11:53:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA296D3B7E2
+	for <dpdk-dev@archiver.kernel.org>; Mon,  8 Dec 2025 11:53:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1B5BF40689;
-	Mon,  8 Dec 2025 12:52:59 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 5DFE0406B7;
+	Mon,  8 Dec 2025 12:53:00 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
- by mails.dpdk.org (Postfix) with ESMTP id B2A0A4066C
- for <dev@dpdk.org>; Mon,  8 Dec 2025 12:52:55 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 8AB8940673
+ for <dev@dpdk.org>; Mon,  8 Dec 2025 12:52:56 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1765194776; x=1796730776;
+ t=1765194777; x=1796730777;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=XZLZTnmz+PIwxYlBQVvxGVctpdIfdDKpdGicLmV63Q0=;
- b=RdlqhFq/lymF0YHPH3ELgbntJR+ZZUGE4iJe03pYBrErH/y0TshZoa/I
- GimQnP4o3gb9voIgMi/KhMvQfz7FlSYvUmYcdStBQZLnMUPYl4K7V9w6+
- D3utNU5bCxDCp0lbqkMylHT8FJ0pS9BKgSWj27i+9rzc4vllJKviEdj6t
- D2VKCK3ZIcokpem+lNPe+qSQJR5cISu+1FqrnEgGp1xAGX1DJDW09xaqB
- XrLiUckxBY2i2P34E53mVC79DuDkX3stix2itEvZgvgtTDon0XKIkRwqL
- s+ls/eA2PD82d+k2GSNZXBWdDZSc8T0gCoNYKMNjEsk3Uv6sEiIL+o+VJ A==;
-X-CSE-ConnectionGUID: VbDLxRJSTyGR+7J98G99wQ==
-X-CSE-MsgGUID: wcwsgM6VQz+lvC3KUWZyRQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11635"; a="67096056"
-X-IronPort-AV: E=Sophos;i="6.20,258,1758610800"; d="scan'208";a="67096056"
+ bh=w/7zeUoZ7mCFB1NxfN987xebHZYmo2YGUzh06uRCiPs=;
+ b=FjMP9hHkSE5dTwZkjqH38+sBlvlkS3R55rQNvF7ugvP0j3wjc5knGjhA
+ LZZflIpnNTGXTALMMlZewxg6P2VZoNbJ+gsOxe//rtGIYH6l6qw/HbYsy
+ Rw00sB6Bg/XJ8/jHBLdbLxrVzSVbIXLFxBObtDY5Hsdj5JPIDu/w8SKRA
+ isehXU6fwxlD7Fsxq/jA9POIzoF2iO5wqq4cZg9zqG35nWuggG/soLR1U
+ Kvop5fgu8hGYxzkAy1Xyluu12zoCAPeaMH4/hgSq4ssq22hc5+HVjSV5+
+ WbMu4Bb2izucjEGIfJPrJbsaEnuAk52TvKCX5ekiFw/NBqDDGaY9iiJe4 Q==;
+X-CSE-ConnectionGUID: 0Z9KWAa+RdSFmi2BPhEhlQ==
+X-CSE-MsgGUID: 8p6ih8u6SWOxqfhP6oYSrQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11635"; a="67096057"
+X-IronPort-AV: E=Sophos;i="6.20,258,1758610800"; d="scan'208";a="67096057"
 Received: from orviesa008.jf.intel.com ([10.64.159.148])
  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 08 Dec 2025 03:52:55 -0800
-X-CSE-ConnectionGUID: uvYRjR88Qee/boqjdjs24g==
-X-CSE-MsgGUID: D3J5c82cQTangES5+HSpLw==
+ 08 Dec 2025 03:52:56 -0800
+X-CSE-ConnectionGUID: NHQzTvmXQti1dynwtDSoCQ==
+X-CSE-MsgGUID: cGTbvxI0T7agnTb2RL4Fww==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.20,258,1758610800"; d="scan'208";a="195970665"
+X-IronPort-AV: E=Sophos;i="6.20,258,1758610800"; d="scan'208";a="195970669"
 Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by orviesa008.jf.intel.com with ESMTP; 08 Dec 2025 03:52:55 -0800
+ by orviesa008.jf.intel.com with ESMTP; 08 Dec 2025 03:52:56 -0800
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v3 06/11] app/test: pass loaded driver info to secondary procs
-Date: Mon,  8 Dec 2025 11:52:40 +0000
-Message-ID: <20251208115245.3809624-7-bruce.richardson@intel.com>
+Subject: [PATCH v3 07/11] app/test: skip power capabilities test if unsupported
+Date: Mon,  8 Dec 2025 11:52:41 +0000
+Message-ID: <20251208115245.3809624-8-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251208115245.3809624-1-bruce.richardson@intel.com>
 References: <20251202154948.1757169-1-bruce.richardson@intel.com>
@@ -60,90 +60,27 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-For unit tests which run secondary processes, allow passing the driver
-paths used by the primary process to that secondary. This allows use of
-mempools in those secondary tests. Without this, any tests using
-mempools in secondary process will fail in shared builds.
+If the power subsystem cannot be initialized e.g. due to not being root,
+skip the capabilities test, rather than failing it.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- app/test/process.h | 28 +++++++++++++++++++++++++++-
- 1 file changed, 27 insertions(+), 1 deletion(-)
+ app/test/test_power_cpufreq.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/app/test/process.h b/app/test/process.h
-index f948a89786..0704616c38 100644
---- a/app/test/process.h
-+++ b/app/test/process.h
-@@ -18,6 +18,7 @@
+diff --git a/app/test/test_power_cpufreq.c b/app/test/test_power_cpufreq.c
+index 96de255f27..1d37b18fed 100644
+--- a/app/test/test_power_cpufreq.c
++++ b/app/test/test_power_cpufreq.c
+@@ -661,7 +661,7 @@ test_power_caps(void)
+ 			"correctly(APCI cpufreq) or operating in another valid "
+ 			"Power management environment\n", TEST_POWER_LCORE_ID);
+ 		rte_power_unset_env();
+-		return -1;
++		return TEST_SKIPPED;
+ 	}
  
- #include <rte_string_fns.h> /* strlcpy */
- #include <rte_devargs.h>
-+#include <rte_eal.h>
- 
- #ifdef RTE_EXEC_ENV_FREEBSD
- #define self "curproc"
-@@ -36,6 +37,7 @@ extern uint16_t flag_for_send_pkts;
- #endif
- 
- #define PREFIX_ALLOW "--allow="
-+#define PREFIX_DRIVER_PATH "--driver-path="
- 
- static int
- add_parameter_allow(char **argv, int max_capacity)
-@@ -63,6 +65,23 @@ add_parameter_allow(char **argv, int max_capacity)
- 	return count;
- }
- 
-+static int
-+add_parameter_driver_path(char **argv, int max_capacity)
-+{
-+	const char *driver_path;
-+	int count = 0;
-+
-+	RTE_EAL_DRIVER_PATH_FOREACH(driver_path, true) {
-+		if (asprintf(&argv[count], PREFIX_DRIVER_PATH"%s", driver_path) < 0)
-+			break;
-+
-+		if (++count == max_capacity)
-+			break;
-+	}
-+
-+	return count;
-+}
-+
- /*
-  * launches a second copy of the test process using the given argv parameters,
-  * which should include argv[0] as the process name. To identify in the
-@@ -75,6 +94,7 @@ process_dup(const char *const argv[], int numargs, const char *env_value)
- 	int num = 0;
- 	char **argv_cpy;
- 	int allow_num;
-+	int driver_path_num;
- 	int argv_num;
- 	int i, status;
- 	char path[32];
-@@ -90,7 +110,8 @@ process_dup(const char *const argv[], int numargs, const char *env_value)
- 		return -1;
- 	else if (pid == 0) {
- 		allow_num = rte_devargs_type_count(RTE_DEVTYPE_ALLOWED);
--		argv_num = numargs + allow_num + 1;
-+		driver_path_num = rte_eal_driver_path_count(true);
-+		argv_num = numargs + allow_num + driver_path_num + 1;
- 		argv_cpy = calloc(argv_num, sizeof(char *));
- 		if (!argv_cpy)
- 			rte_panic("Memory allocation failed\n");
-@@ -105,6 +126,11 @@ process_dup(const char *const argv[], int numargs, const char *env_value)
- 			num = add_parameter_allow(&argv_cpy[i], allow_num);
- 		num += numargs;
- 
-+		if (driver_path_num > 0) {
-+			int added = add_parameter_driver_path(&argv_cpy[num], driver_path_num);
-+			num += added;
-+		}
-+
- #ifdef RTE_EXEC_ENV_LINUX
- 		{
- 			const char *procdir = "/proc/" self "/fd/";
+ 	ret = rte_power_get_capabilities(TEST_POWER_LCORE_ID, &caps);
 -- 
 2.51.0
 
