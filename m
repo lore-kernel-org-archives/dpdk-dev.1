@@ -2,72 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49ABAD3B7E2
-	for <dpdk-dev@archiver.kernel.org>; Mon,  8 Dec 2025 19:14:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EAADD3B7E2
+	for <dpdk-dev@archiver.kernel.org>; Mon,  8 Dec 2025 19:29:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6D2344060F;
-	Mon,  8 Dec 2025 20:14:35 +0100 (CET)
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com
- [209.85.128.52]) by mails.dpdk.org (Postfix) with ESMTP id 76E0D40395
- for <dev@dpdk.org>; Mon,  8 Dec 2025 20:14:33 +0100 (CET)
-Received: by mail-wm1-f52.google.com with SMTP id
- 5b1f17b1804b1-47789cd2083so29108945e9.2
- for <dev@dpdk.org>; Mon, 08 Dec 2025 11:14:33 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 8F1C04060F;
+	Mon,  8 Dec 2025 20:29:25 +0100 (CET)
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com
+ [209.85.128.51]) by mails.dpdk.org (Postfix) with ESMTP id 41E0840395
+ for <dev@dpdk.org>; Mon,  8 Dec 2025 20:29:24 +0100 (CET)
+Received: by mail-wm1-f51.google.com with SMTP id
+ 5b1f17b1804b1-477b198f4bcso42103535e9.3
+ for <dev@dpdk.org>; Mon, 08 Dec 2025 11:29:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1765221273;
- x=1765826073; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1765222164;
+ x=1765826964; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=gl4i5JAJFaisqFtpvh81U5TM8aaE61gQO3k4NmdjbqU=;
- b=0ET/FUHM5TERQXNSW05oXLnVkkUoLqt6qKABiVns5QQ0oDm3Edck3wxcdClE0BHXuo
- qCLXxp5wKsOkdC45l6y1ZMZTlnUCZDclSQkZa48zrlpXEMEcCpJjGlGJ8zSZrf620A69
- KAWH3DddxSlxDU65Zkp81WH41e5BVV70SDVGVdYFWWPP+te7hwUtx5SLahvhh53nqhEO
- U0Uw7uI/AFIvQ5nBR5PWhwzXxlFg7JiQq3Ffd6DcSUVpF13+o2ivPxREpkvVXNB3UwS/
- 3UZHoXWiQlohJLNzjs867vQ/rQz0igE8Xzim0KVgGMLVRtvbUR9KHU0yghJhJJ9d5zss
- d8Jw==
+ bh=Uz00xP7M5oIFDEWi4g4VED8LAWFRdxxTZwX1QXQqLN8=;
+ b=IZO31aEMv4+Tlt1cY3PSAWr6Ju5IXQHWzuvFbWP35eLiEuYWUnXuGvKMSNAVpKA9Q6
+ THUJITBlADMzQ+fQGv5vcOC4t7CkNhi8xj9mcReM+f11R1+UqohHFfVT1VbCQA75CFE3
+ axuxD+EFeqY0ieM6we/da/2hyY7z9YSBqCnO7eH0asDKXhmhrEg/bq4Cgf1OKiW6S0hZ
+ wgrnVxZ8SDpw62lL0pkjyspbJ2aTsn1YDE//MEYSEhDIjc3foACHgICZBGS5eQdK1lvV
+ 5MvjclTu8WP9doe8iACfPExL1R/insxi6zOV5iiK88pA3kKWgrxk7wEIgFLdgbTk9Ptm
+ TUUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1765221273; x=1765826073;
+ d=1e100.net; s=20230601; t=1765222164; x=1765826964;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=gl4i5JAJFaisqFtpvh81U5TM8aaE61gQO3k4NmdjbqU=;
- b=edAKve1EbY+majnRs+SqlVir9x6JtJUjJrz73iFf95Cp1LexmhxuyorDXsfYIxOQ2l
- JZRf5fpCGCTyBtMALhMzE1umoBgLBKjCj7NFp20eZTY1nr64OTxlTMFCl9N8C5NaUn27
- d4SkpJnkRd2Egt4bZnsXSKIPJln5eZjbsFlnpopAz6SIxF2BloOv1N42NbYkWA/No+qI
- UNMiUhqWTrIDjSM4sRu2pGjuzzPehX/hwT6uOk3Qec6YZUC86+3qzshdVQwqszPsF10v
- wdvGnJWjd+Q+1f7nqhP1fz47KYFVwbDUqCDrgZRfGk7EiD8kumX3kpHYxcWW4VOKuUh8
- AEZg==
-X-Gm-Message-State: AOJu0YyBquirIrBIUsdSmVwoB3uG6Px65oHtP0XoHIfAWsJXYXBaEVNv
- 2mID0PZyZp6kYzt+AAkEexmcnZyKeHwzT2YayWq3ZPkId0PaC0HcCxL34O1kPmkg0Pw=
-X-Gm-Gg: ASbGncub5M5AeYqFQSvqcKGIubAU259O8x1nJEDdqtwVpRTgJqJuM9Gmprgm3InYnFM
- ifKiwM6Mt+e5M0cWcYrnCWSoo5Jaw6ctxhFrWTU6Cu6NpPKNKWKI0Wc112z6OLmBHrYNHIt2jjM
- fFl2PvJYCLLTQbCRkmnzGE48MlHedBWd7HQe95ZtbbM8mMBc4z2LVfYv6yF25Sv8GGtEC5JrW7/
- cTIhYpsRGW5HsH8dqk7eA5MIcOqZevZ+IjyPdxEa7QTYI6DdorUVRiEEZeErag0FW83WElzONYm
- Ur7AJrBFRZXZrqGFlM6qGafnzOhW7bZIJ84Ifn1jkvKhsqJZPhbDLAh5Um+qB6/q9dR5JEOMSQg
- uY7lfr76IpvCh/lUTu4syUzE530TS9EdpxhZScgQ0xW6GgzEwIU52yD6MzuvI8XN3bl59reTsXY
- ToX++1I4nb2S2zJtw/U/Z8j8ISoGfF0iTJLULLKtbkbWZDYG11WGZW
-X-Google-Smtp-Source: AGHT+IGDmBsfwiuuJa9odX4UoYR3j298RY4LOR8mVFZkH41EfmR6az8r8G9yo9YakM4Bb8PnfwxmUA==
-X-Received: by 2002:a05:600c:820e:b0:477:55ce:f3c2 with SMTP id
- 5b1f17b1804b1-47939e0408bmr102656585e9.14.1765221273106; 
- Mon, 08 Dec 2025 11:14:33 -0800 (PST)
+ bh=Uz00xP7M5oIFDEWi4g4VED8LAWFRdxxTZwX1QXQqLN8=;
+ b=ODn647eEYj6F1jEPwsajw9OiFro2V58Nvdebyg+D70XanWZhgm2PNjjw7sVPMyfxM4
+ LlIkkVDgQHHizGOw4nM98d4wcSXHz5jglfkfnKu/u8GhioY5+iTBgrJ9KbnIBXg+mcQx
+ J1a6UmcwGkDtypd4rdhyjjWIqztWXmOZ8d48IpcSqPaD6tYTU5sYjynnI40pALMbd2pm
+ sH5oYiWUM5n12c84w8A2Vuk7xt1Lu12Zg+cz0wJ8r3akNgifFeQWkEt8minBfoagl+PU
+ mCQyBXK4d50BS9op90suVl++HtHqKbSzpXbNxG4P6gJ5DXgN1HPD7LnTAY11PG7Kqdq0
+ eQ6Q==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCWdEFVXcy+/yCDXBPTBLmk3x13kBx/gSBYrxC9rSqCG7g3WfxVtGUKE4Ubf4U6v4H66Jzk=@dpdk.org
+X-Gm-Message-State: AOJu0YzObQl73D4FTjlRVb9VOokxaP8oqJOKSlBdQjUYRUMkiRFtfYbQ
+ lGpK1tU80wWsEF8n6ozIyVXlZcXDhVbnPvYeE4LExptTs4zcJK2Hu0jENKGhtpMORG8=
+X-Gm-Gg: ASbGncspqhcQEv7vpVISDjxZtpvLgd1XSwDh04e/gbWf8sTi3idApKxt7hEPz2r2C/P
+ YNZwIQTp+wCqU2LZkHgvKLXKcPVNkFBUm0PeErEDrgXdakZvsEiflZC3eN3z9sB+ehetXGhPCab
+ myKoNZZNuzQrhO+YxYhGiACuUYLvVPMTv6fnf+lKYALmv9lZG/03bJV7NBzYS60701/9uhW/QOX
+ 8l2O/u7tTAipMFaa7f+Lnj1jVFA79xt7lK/LBhXrTeUANbu8AR8bMQzea57tQyub2FAxVan6SBA
+ o/r0vELHCss8KdM29xaH8DQwfcg4XUCpkgTo6F5aCqdGVBaAeH3YPbNUyFXicZeaft4MJ8CT6cr
+ ID7ehyQLg0sYWbZwsqf2d1/zhS+lpr3dq4pFUavvsSXn7jRXkTvzq3M4Sm5Tz1km2SjKlVqLWdy
+ dnApcHVFpaWHW0qTzl9Y5WuSGG3ORAAQQmDpbgOictUV3/F2pkSVoL
+X-Google-Smtp-Source: AGHT+IFjlREfY1GefsDiyTCP/2N0W5X0suF4WRZpsHm3s44OJ1ubAWKb/uCTlNM2QK2nMPyiED9aZw==
+X-Received: by 2002:a05:600c:6592:b0:477:76cb:4812 with SMTP id
+ 5b1f17b1804b1-47939c8b9c7mr85369395e9.0.1765222163593; 
+ Mon, 08 Dec 2025 11:29:23 -0800 (PST)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-47a7d6228basm994245e9.4.2025.12.08.11.14.30
+ 5b1f17b1804b1-47a7d612e3esm1459585e9.2.2025.12.08.11.29.21
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 08 Dec 2025 11:14:32 -0800 (PST)
-Date: Mon, 8 Dec 2025 11:14:27 -0800
+ Mon, 08 Dec 2025 11:29:23 -0800 (PST)
+Date: Mon, 8 Dec 2025 11:29:16 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: <dev@dpdk.org>, Anatoly Burakov <anatoly.burakov@intel.com>
-Subject: Re: [PATCH v3 10/16] eal: limit maximum runtime directory and
- socket paths
-Message-ID: <20251208111427.34faf80c@phoenix.local>
-In-Reply-To: <aTaTLpg2PL2khlVO@bricha3-mobl1.ger.corp.intel.com>
-References: <20251205022948.327743-1-stephen@networkplumber.org>
- <20251205201537.251131-1-stephen@networkplumber.org>
- <20251205201537.251131-11-stephen@networkplumber.org>
- <aTaTLpg2PL2khlVO@bricha3-mobl1.ger.corp.intel.com>
+To: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+Cc: "=?UTF-8?B?bWFubnl3YW5n?=(=?UTF-8?B?546L5rC45bOw?=)"
+ <mannywang@tencent.com>, "dev@dpdk.org" <dev@dpdk.org>
+Subject: Re: [PATCH v6] acl: support custom memory allocators
+Message-ID: <20251208112916.2743f596@phoenix.local>
+In-Reply-To: <2571c074e438491e837c51d1bdc5a538@huawei.com>
+References: <58cca566-08bd-469e-b244-1800e0456cb0@huawei.com>
+ <BFA8D0B9488D3A67+20251202092502.165081-1-mannywang@tencent.com>
+ <2571c074e438491e837c51d1bdc5a538@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -84,24 +85,84 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 8 Dec 2025 08:58:22 +0000
-Bruce Richardson <bruce.richardson@intel.com> wrote:
+On Mon, 8 Dec 2025 09:43:01 +0000
+Konstantin Ananyev <konstantin.ananyev@huawei.com> wrote:
 
-> On Fri, Dec 05, 2025 at 12:11:39PM -0800, Stephen Hemminger wrote:
-> > Linux (and FreeBSD) has a limitation of 108 characters for  
+> > Allow users to provide custom
+> > memory allocation hooks for runtime memory in rte_acl_ctx, via
+> > struct rte_acl_mem_hook.  
 > 
-> 108 characters -> "just over 100 characters"
+> LGTM in general, few extra comments below.
 > 
-> make it generic to cover both linux and bsd
-> 
-> > any unix domain socket path. Therefore DPDK would not work
-> > if a really large runtime directory was used.
+> > Key changes:
+> > - Added struct rte_acl_mem_hook with zalloc, free, and udata.
+> > - Added rte_acl_set_mem_hook / rte_acl_get_mem_hook to set/get callbacks.
+> > - Default allocation uses existing rte_zmalloc_socket/rte_free.
+> > - Modified ACL code to call callbacks for runtime allocations instead
+> >   of rte_zmalloc_socket/rte_free directly.
 > > 
-> > Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>  
+> > v5:
+> > - Remove temporary memory allocation callback for build stage.
+> > - Introduce new API (rte_acl_set_mem_hook / rte_acl_get_mem_hook)
+> >   instead of modifying existing rte_acl_config to preserve
+> >   ABI compatibility.
+> > 
+> > v6:
+> > - Reworked API to meet consistency and naming conventions.
+> > - Adjusted parameter order for better readability and alignment.
+> > - Renamed internal variables for clarity and code consistency.
+> > 
+> > Signed-off-by: YongFeng Wang <mannywang@tencent.com>
+> > ---
+> >  app/test/test_acl.c                           | 121 ++++++++++++++++++
+> >  .../prog_guide/packet_classif_access_ctrl.rst |  31 +++++
+> >  lib/acl/acl.h                                 |   1 +
+> >  lib/acl/acl_bld.c                             |   2 +-
+> >  lib/acl/acl_gen.c                             |   4 +-
+> >  lib/acl/rte_acl.c                             |  45 ++++++-
+> >  lib/acl/rte_acl.h                             |  47 +++++++
+> >  7 files changed, 247 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/app/test/test_acl.c b/app/test/test_acl.c
+> > index 43d13b5b0f..3c9a0cb8c0 100644
+> > --- a/app/test/test_acl.c
+> > +++ b/app/test/test_acl.c
+> > @@ -1721,6 +1721,125 @@ test_u32_range(void)
+> >  	return rc;
+> >  }
+> > 
+> > +struct acl_ctx_wrapper {
+> > +	struct rte_acl_ctx *ctx;
+> > +	void *running_buf;
+> > +	bool running_buf_using;
+> > +};
+> > +
+> > +#define ACL_RUNNING_BUF_SIZE (10 * 1024 * 1024)
+> > +
+> > +static void *running_alloc(char *name, size_t size,
+> > +	size_t align, int32_t socket_id, void *udata)
+> > +{
+> > +	RTE_SET_USED(align);
+> > +	RTE_SET_USED(name);
+> > +	RTE_SET_USED(socket_id);
+> > +	if (size > ACL_RUNNING_BUF_SIZE)
+> > +		return NULL;
+> > +	struct acl_ctx_wrapper *acl_ctx = (struct acl_ctx_wrapper *)udata;
+> > +	if (acl_ctx->running_buf_using)
+> > +		return NULL;
+> > +	printf("running memory alloc for acl context, size=%zu, pointer=%p\n",
+> > +		size,
+> > +		acl_ctx->running_buf);
+> > +	memset(acl_ctx->running_buf, 0, size);
+> > +	acl_ctx->running_buf_using = true;
+> > +	return acl_ctx->running_buf;
+> > +}  
 > 
-> Acked-by: Bruce Richardson <bruce.richardson@intel.com>
-> 
+> Is there any point to have such memhook in our UT?
+> From one side: it doesn't test anything new, as memory is still allocsted via rte_zmalloc().
+> From other side it is error prone, as you don't check that pre-allocated buffer
+> will really satisfy requested  size and alignment parameters.
+> Might be just use libc malloc/free here? 
 
-Since Windows defines UNIX_PATH_MAX in afunix.h probably
-best to just compute the size based on sun_path which is what
-follow up patch does.
+A lot of the problems would go away if ACL just used regular malloc/free more,
+and rte_malloc/rte_free less. The existing rte_malloc is slow and fragments badly
