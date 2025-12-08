@@ -2,45 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AA22D3B7E2
-	for <dpdk-dev@archiver.kernel.org>; Mon,  8 Dec 2025 11:53:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2DA5D3B7DE
+	for <dpdk-dev@archiver.kernel.org>; Mon,  8 Dec 2025 11:53:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3D6594066B;
-	Mon,  8 Dec 2025 12:52:55 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 57E7D4066F;
+	Mon,  8 Dec 2025 12:52:56 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
- by mails.dpdk.org (Postfix) with ESMTP id 1CD684064A
- for <dev@dpdk.org>; Mon,  8 Dec 2025 12:52:52 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id B446A40656;
+ Mon,  8 Dec 2025 12:52:53 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1765194773; x=1796730773;
+ t=1765194774; x=1796730774;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=otR1b4t8n2YFtJTC5hNSWPeSygLIrEo/2q5m/fjFHiU=;
- b=GpwV/+3D64EOjVTfeLpwVMiOnxexMmsRRea/u63iqNn64eLTWA/K5+Bu
- k/Qm7cJoR1nTQCJ4RRgV0ROBSCxEooupGiEQtoZRcJtojrFQgUq39GWyQ
- DqgqGB7mEXUXVx42P+IAHpLMFKFS7FOfo1x74bG/w/l0ZrpPDrefsVuy4
- qVGihhpc70R0BQJoKJArtC/ZInFHCmmglp+YmMbxqlMJytRpvs6lr0+zp
- jEiAyApRUdgyVZ3/CC9Eny0Hpl7f+kBvWeP8Aac3cpWqB6Tju9GY/KtHW
- fytN/irjrNMvx/v74SFCruvzPzGZTA2FipbCn9n4WuCwUmdkAIgZmZ9j6 w==;
-X-CSE-ConnectionGUID: UiDQLyJnSdi1kNzrPpNs/A==
-X-CSE-MsgGUID: pDniZo5tRYaBc/50rianxQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11635"; a="67096053"
-X-IronPort-AV: E=Sophos;i="6.20,258,1758610800"; d="scan'208";a="67096053"
+ bh=4emQhvthmL90PjXJHNHLO/a7A64pglFT6afx3qpY5Tk=;
+ b=fYcPOC+zn20Bz9gpgZ+SaJi/BQ0kQbUNg8haa8ivWJcjLU00Hx9BPvea
+ BH1MoBnd+RmmiM27OfKhxu6+TRKEpt+NIA9y2r8dDZv6MPh5pI2mzOPU1
+ rp4pQ65WZkss5tVC2QIgleEq9fQnsCASNQ3S4wJYHrfRuCPn7KwjQwPCb
+ ecrmviqmaR/020OBbuLp9SROJSlsIIPPX6LPjwnsgSH40UImB9RONhpHi
+ oHDF2qOBTV7dgMor1fMS3QvYReJTcGQgyKqUDKKysCDgLbMSoZZqjLqsw
+ b5f8CvtTy0CbLnFC/PGXcFYco2ZNMd5beGcm51dHK7YUF7QxUcSC6Bkkz w==;
+X-CSE-ConnectionGUID: 3PoMGHV7TFmDQNc35hDTeQ==
+X-CSE-MsgGUID: zD3IeoYMRo2msphli2AYsQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11635"; a="67096054"
+X-IronPort-AV: E=Sophos;i="6.20,258,1758610800"; d="scan'208";a="67096054"
 Received: from orviesa008.jf.intel.com ([10.64.159.148])
  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 08 Dec 2025 03:52:52 -0800
-X-CSE-ConnectionGUID: ZRvj9dMvT3OgJsfREkHVtA==
-X-CSE-MsgGUID: TKa8lVMnQL+zu7QYAotqdA==
+ 08 Dec 2025 03:52:53 -0800
+X-CSE-ConnectionGUID: U1XpbFgjS+e4WwVyisXp0g==
+X-CSE-MsgGUID: iUPA1TwgQAeXpllij5q0tA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.20,258,1758610800"; d="scan'208";a="195970648"
+X-IronPort-AV: E=Sophos;i="6.20,258,1758610800"; d="scan'208";a="195970653"
 Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by orviesa008.jf.intel.com with ESMTP; 08 Dec 2025 03:52:52 -0800
+ by orviesa008.jf.intel.com with ESMTP; 08 Dec 2025 03:52:53 -0800
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
-Cc: Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v3 03/11] app/test: reduce duration of secondary timer test
-Date: Mon,  8 Dec 2025 11:52:37 +0000
-Message-ID: <20251208115245.3809624-4-bruce.richardson@intel.com>
+Cc: Bruce Richardson <bruce.richardson@intel.com>,
+	stable@dpdk.org
+Subject: [PATCH v3 04/11] app/test: fix timer loop hang on secondary process
+ failure
+Date: Mon,  8 Dec 2025 11:52:38 +0000
+Message-ID: <20251208115245.3809624-5-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251208115245.3809624-1-bruce.richardson@intel.com>
 References: <20251202154948.1757169-1-bruce.richardson@intel.com>
@@ -60,39 +62,38 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Reduce the timer duration and the primary wait duration in the secondary
-process timer autotest. This should help ensure it doesn't time out what
-run in a CI environment.
+When the secondary process run from timer_secontary_autotest fails, the
+timer loop is never stopped so the whole process hangs until timeout.
+Fix this by setting the stop flag before checking for success or failure
+of the secondary process.
+
+Fixes: 50247fe03fe0 ("test/timer: exercise new APIs in secondary process")
+Cc: stable@dpdk.org
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- app/test/test_timer_secondary.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ app/test/test_timer_secondary.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
 diff --git a/app/test/test_timer_secondary.c b/app/test/test_timer_secondary.c
-index 60ce8c7507..ee2675a821 100644
+index ee2675a821..8580880a56 100644
 --- a/app/test/test_timer_secondary.c
 +++ b/app/test/test_timer_secondary.c
-@@ -162,7 +162,7 @@ test_timer_secondary(void)
+@@ -160,11 +160,12 @@ test_timer_secondary(void)
+ 		TEST_ASSERT_SUCCESS(ret, "Failed to launch timer manage loop");
+ 
  		ret = timer_secondary_spawn_wait(*sec_lcorep);
- 		TEST_ASSERT_SUCCESS(ret, "Secondary process execution failed");
+-		TEST_ASSERT_SUCCESS(ret, "Secondary process execution failed");
++		/* must set exit flag even on error case, so check ret later */
  
--		rte_delay_ms(2000);
-+		rte_delay_ms(500);
- 
+ 		rte_delay_ms(500);
+-
  		test_info->exit_flag = 1;
++
++		TEST_ASSERT_SUCCESS(ret, "Secondary process execution failed");
  		rte_eal_wait_lcore(*mgr_lcorep);
-@@ -189,8 +189,8 @@ test_timer_secondary(void)
  
- 			rte_timer_init(tim);
- 
--			/* generate timeouts between 10 and 160 ms */
--			timeout_ms = ((rte_rand() & 0xF) + 1) * 10;
-+			/* generate timeouts between 10 and 80 ms */
-+			timeout_ms = ((rte_rand() & 0x7) + 1) * 10;
- 			ticks = timeout_ms * rte_get_timer_hz() / MSECPERSEC;
- 
- 			ret = rte_timer_alt_reset(test_info->timer_data_id,
+ #ifdef RTE_LIBRTE_TIMER_DEBUG
 -- 
 2.51.0
 
