@@ -2,94 +2,64 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AEE6D1CDC6
-	for <dpdk-dev@archiver.kernel.org>; Tue,  9 Dec 2025 14:47:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D7D5D3B981
+	for <dpdk-dev@archiver.kernel.org>; Tue,  9 Dec 2025 17:05:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2C56140A67;
-	Tue,  9 Dec 2025 15:47:10 +0100 (CET)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 5C9A24067D
- for <dev@dpdk.org>; Tue,  9 Dec 2025 15:47:08 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1765291627;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=oL9Dx8OBPIz7ftyyOyS2KrjftE4gGm5Ck4rItFipKGk=;
- b=L8+ykLm3AXIrziB/aJX1CI3dn3xncqVQhIF+gOLREtOAaZwWJ7ZRBGfEqA0mkZw8AnlTyE
- 60UISjbe3z4GtGzshzkRv/h/DgwkpigeZGlYvAOYENkZX9h+wqwpfyGLtS3DLp4GFkn45M
- 5rP2YwSN9im2IbFFH9COxmEago/R5BY=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-647-1SAFykblNPuccl3M9SUj8g-1; Tue, 09 Dec 2025 09:47:06 -0500
-X-MC-Unique: 1SAFykblNPuccl3M9SUj8g-1
-X-Mimecast-MFC-AGG-ID: 1SAFykblNPuccl3M9SUj8g_1765291625
-Received: by mail-wr1-f69.google.com with SMTP id
- ffacd0b85a97d-42b2c8fb84fso2806553f8f.2
- for <dev@dpdk.org>; Tue, 09 Dec 2025 06:47:06 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 654F640689;
+	Tue,  9 Dec 2025 18:05:32 +0100 (CET)
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com
+ [209.85.160.175])
+ by mails.dpdk.org (Postfix) with ESMTP id 187414067D
+ for <dev@dpdk.org>; Tue,  9 Dec 2025 18:05:31 +0100 (CET)
+Received: by mail-qt1-f175.google.com with SMTP id
+ d75a77b69052e-4eddfb8c7f5so57805951cf.1
+ for <dev@dpdk.org>; Tue, 09 Dec 2025 09:05:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20230601; t=1765299930; x=1765904730; darn=dpdk.org;
+ h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+ :from:to:cc:subject:date:message-id:reply-to;
+ bh=NMcKvpK0I4T4ARkfypOE1qCB8SXt2sf9l/z3R0gokPg=;
+ b=TSA0zpO49GyiJJENM1hwk/loaN7/DIt+2+h0X0pWW25gqa+lsbgNrDDPJj12YO6+aN
+ qCppdunOkOITOwtv8ysipqIwZ5ihkCNpm8gO294CevofLXO9cKNUEwkNKw/rTqKklJh4
+ C8Wc+l0j35s4j1NrC7E+CT8xDp2ISMbYYrb45/URK16qLby/Nr8i9YfK2IuV3DTNL6KC
+ CdkIaml66+FwVbFtUHRLlEjjD7m8FVAW6yS74BdSp50XZh5MizrS4L8r9cxCD+HhLw/1
+ kOPTpNfUgBtY3zrE2aOG5hsbPizEZA9P3yIoPCtzSiwfK4CgFdnQXnt8ezFPfXycAWGM
+ fiHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1765291625; x=1765896425;
- h=in-reply-to:references:user-agent:from:cc:subject:to:message-id
- :date:content-transfer-encoding:mime-version:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=oL9Dx8OBPIz7ftyyOyS2KrjftE4gGm5Ck4rItFipKGk=;
- b=P3GExVhLLAe4zxXV2ipAlR38pyJrfEVlp1xC9Fxwxupnzs/RjUzJz5EcLIzumakg46
- BqJF0BwO9iWNjLi7RwUNf5yrIJ1xo+Cm0kBS77ISofXLknQAfqpgTot8SCjBglGBN1Kf
- KrVWMGQgj8aydOr9IR08syX3x5ZMXK3cHatP4t+1dkIO7TFZUnJumIgvlnJzaJGK5g6e
- 5nrrppNvqt0d3L2hcjBVhCLC7cGVlP2CTYe02YGhnKT3HuJwRmCwiaD2o48EjO1hzK9T
- gLXX25zSIyCIiw+G/74WYIm4Q84PAUWNTdo+fSETAlvBHF8m7hKEbyNWoyZHMnlW3cm7
- 5zqg==
-X-Gm-Message-State: AOJu0Yyolr0nTZLUzQ2xuKBd6OXQ0Fv8i6XJDWvSgPfORFSXGA7GHclV
- dYuTfuxihtlKsvhO0eYGX7OPztK12r28617Ke1hRM2BsFaVptop3wDKds7AIwsdduecnHijTNWy
- sgjPlbNKG2wp+lnZ12AXDZJ2r/+ZgC4p5StA4H/Z+jzDl
-X-Gm-Gg: ASbGncuBW6yYinCVLAZYxGpEjXDWop2suZRRMcEX8rUy7aM1ftSM1vkJKzybbLY0KeE
- rCwfZy3ucIu2k6LS7Z2OOqUh1RK4wqlbjpteqaO/WEKqaa2W02blNbQ/V3qcmMHxhZcictSi9hr
- O/mCGbwJPW/59kLmsBOBSlN4M6u4HCxSyajVMt9OPArvADweMLwYhyCfMRcz4j1BkFMq3PFfd+H
- 7hLfWQMK+rlJFTgSTUUmSa2Y7+/V74UoFBnG8cwGI7dqdVSZAuWAYO0idTA/lKPwzoNxrzuBCD2
- VPt/0gpegvynZlC3hknb48Qz3PLmUEXzwxWbNagP+ztdLGJ9moncUxbX9bn1QLJsyNo7Tu2HZ14
- xaSzWb9FNruyI4Ckw3YcmkQSln/uVT/AkANoTVx3cL9PYN+HXMylafgUISbFEZIlOr1I=
-X-Received: by 2002:a05:600c:3b92:b0:477:7ab8:aba with SMTP id
- 5b1f17b1804b1-47939df2644mr110907495e9.1.1765291625138; 
- Tue, 09 Dec 2025 06:47:05 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEa35JmTeD7L6tWrS7arXiPrmAqwMo53un9MrEkXUxBDbX80AHCFZfn1R5JjeEYZDe+Qgehtw==
-X-Received: by 2002:a05:600c:3b92:b0:477:7ab8:aba with SMTP id
- 5b1f17b1804b1-47939df2644mr110907235e9.1.1765291624759; 
- Tue, 09 Dec 2025 06:47:04 -0800 (PST)
-Received: from localhost (2a01cb00021ec0002e23edbec21b0e73.ipv6.abo.wanadoo.fr.
- [2a01:cb00:21e:c000:2e23:edbe:c21b:e73])
- by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-47a7d6eb1f1sm42972805e9.2.2025.12.09.06.47.04
- (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
- Tue, 09 Dec 2025 06:47:04 -0800 (PST)
-Mime-Version: 1.0
-Date: Tue, 09 Dec 2025 15:47:03 +0100
-Message-Id: <DETRNKI1EOKX.1GQT599JGQR7E@redhat.com>
-To: =?utf-8?q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>, "Jerin Jacob"
- <jerinjacobk@gmail.com>
-Subject: Re: [PATCH dpdk 1/2] graph: always count objects and calls
-Cc: <dev@dpdk.org>, "Jerin Jacob" <jerinj@marvell.com>, "Kiran Kumar K"
- <kirankumark@marvell.com>, "Nithin Dabilpuram" <ndabilpuram@marvell.com>,
- "Zhirun Yan" <yanzhirun_163@163.com>
-From: "Robin Jarry" <rjarry@redhat.com>
-User-Agent: aerc/0.21.0-39-ga8d4735cf219-dirty
-References: <20251209085028.115203-4-rjarry@redhat.com>
- <20251209085028.115203-5-rjarry@redhat.com>
- <CALBAE1OMwTX=a5i56G_sPXicw=17ozvb4PBfak0ev2Ps3xwuGw@mail.gmail.com>
- <DETKJKSUL9XG.1CTKW09I3UWSB@redhat.com>
- <98CBD80474FA8B44BF855DF32C47DC35F655C8@smartserver.smartshare.dk>
- <DETNTVDMT8U6.307XVRW7VTBIE@redhat.com>
- <98CBD80474FA8B44BF855DF32C47DC35F655CA@smartserver.smartshare.dk>
- <DETP2Q0QF39V.1KWT5Y2P9RLD4@redhat.com>
- <98CBD80474FA8B44BF855DF32C47DC35F655CB@smartserver.smartshare.dk>
-In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F655CB@smartserver.smartshare.dk>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: EFpWL9ikPXA7pEgs_S0Zm-jPsCXgOoSyEmVZ4HbkNv0_1765291625
-X-Mimecast-Originator: redhat.com
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+ d=1e100.net; s=20230601; t=1765299930; x=1765904730;
+ h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+ :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=NMcKvpK0I4T4ARkfypOE1qCB8SXt2sf9l/z3R0gokPg=;
+ b=scEcKzDxzQQuWy7vYrTotuFUKwZCOEVjkwR1dbSm5WV+8HKRDV7t4gkXdx551FY6t4
+ aeYRXWOR0KA9BT9gQUe+rU9hvmPPeBi0IQaaGmTbuYOotRQ1bi1RKWmLgbsUl5KsgSdu
+ OUfaaDkIsz5qHTmwx/guUIl8tLwJnIAWwGtn6w7GNJLcBM6URfsLAcvHW1Q/tB5tkNz2
+ PbGDtuBhHnIHW2WH3w2joKdvQNDvNUAAn0okYP0Xt06u39zNLJvqN7hj7G+OmT6GnxEh
+ nJMh/gL6QXKd/O5reWo1OBUba7OP/g03duzKJM13I38vPhiJ/dENRUv1YUDK/88IP3bs
+ vMfw==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCXdE3MOTIRW5KsqFctM9xAPmIzVqo0M/7cCDoVPD/6JhiVdgIgz+GzleHecikB5iAojAVk=@dpdk.org
+X-Gm-Message-State: AOJu0YxmmCN/8K/a6PBgvFk2jNt635WkU/cQq1KWRZ4ND2rySG8yPb+Z
+ Ycc3saUwxZJye+UFl/t+9+9/TwC19cS4GvrqUsk0xsJk3N1gsjeRoDsezcb24YYBU7Jo0TwdCxX
+ 3czanZpzlv9+8OAhx6Rea1EECanzzfGfmt83Z
+X-Gm-Gg: ASbGncu9PMXAFIY79QJSgSlBO8aw5XLFK9D3DxSjszEfxlWu/KNWfhWV0bR/4aY7pjH
+ VmHJN2b4BBar+TT00LQqpRU2vIPjdOR3e522FsfC3vWbjrZuqNyUO4tozMF0f7jU0ZKzLlcUdhc
+ 1NScJBsWVRPdzhCodxNSaPRzTFYqzR4MgJ8T8jQdxgAs1ScWAStEFyUhuBGUonqx/B/mpUWwLSu
+ 0R1x+cHKLS7v1Z6VNz+6VANZlkVl8xzIENeCmkq2sNm0RyS+qn7/UQsVHmZXtnlmnkSdQtv
+X-Google-Smtp-Source: AGHT+IHKsIuh9/uv7cUDK5qIyCcj8MNx6u8c6ee6oW1xuEq2v80TN4L25GR1IvuJLVspANoEpcDOBB5MQ+f8YZ+tCKE=
+X-Received: by 2002:a05:622a:908:b0:4ee:2508:3934 with SMTP id
+ d75a77b69052e-4f03fef2c4amr205675341cf.67.1765299928556; Tue, 09 Dec 2025
+ 09:05:28 -0800 (PST)
+MIME-Version: 1.0
+References: <CAFLDJDprPRB8mjybypwuvHOEp+MfXjSK6W1YJD=Db2CURUhLNA@mail.gmail.com>
+In-Reply-To: <CAFLDJDprPRB8mjybypwuvHOEp+MfXjSK6W1YJD=Db2CURUhLNA@mail.gmail.com>
+From: narsimharaj pentam <pnarsimharaj@gmail.com>
+Date: Tue, 9 Dec 2025 22:35:17 +0530
+X-Gm-Features: AQt7F2oflhN4XHQdPjK4r5GmgFr6iKhhFl9eZRFKicSvGUtQ1r5YE4Q6OWcejdE
+Message-ID: <CAFLDJDoVgNj9JjUbDEUP=gaXOMKS2jYiYVFFPULWOthfPqzwFg@mail.gmail.com>
+Subject: Re: Indirect mbuf handling
+To: users@dpdk.org, dev@dpdk.org
+Content-Type: multipart/alternative; boundary="00000000000029e8bb064587eb4a"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -103,14 +73,73 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Morten Br=C3=B8rup, Dec 09, 2025 at 14:45:
-> Sorry about not being more clear. I meant: "Then, if
-> [RTE_LIBRTE_GRAPH_STATS is] enabled [at build time], the total_cycles
-> stats can be controlled by rte_graph_cycle_stats_enable()."
+--00000000000029e8bb064587eb4a
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+Added dev group.
+
+On Tue, Dec 9, 2025 at 10:11=E2=80=AFPM narsimharaj pentam <pnarsimharaj@gm=
+ail.com>
+wrote:
+
+> Hi
 >
-> I proposed that you add your rte_graph_cycle_stats_enable() to control
-> the total_cycles stats, and leave RTE_LIBRTE_GRAPH_STATS as it is now
-> (i.e. to be able to disable all stats at build time).
+> I have a query related to ip fragmentation handling in DPDK.
+>
+> The DPDK application is trying to send a larger packet than the configure=
+d
+> MTU on the interface, before sending the packet to the  i40e PMD the pack=
+et
+> will
+> undergo fragmentation . The DPDK library function
+> *"rte_ipv4_fragment_packet"* is used for fragmentation. Function
+> *rte_ipv4_fragment_packet* will create
+> direct and indirect mbuf's  for a fragment , *the indirect buffers will
+> have reference to the mbuf of the actual packet (zero copy).*
+>
+> The application will call function rte_eth_tx_burst to transmit fragments
+> , which internally invokes *i40e_xmit_pkts *, the question here  is when
+> should main application
+> mbuf should be freed , can It be freed immediately  after i40e_xmit_pkts
+> returns success, not sure because the mbuf's are queued up in software ri=
+ng
+> before actual transmit,
+> I am worried about the fragments holding references to the main
+> application buffer.
+>
+> Thanks.
+>
+> BR
+> Narsimha
+>
 
-OK I see what you mean. I will include these changes in a v2.
+--00000000000029e8bb064587eb4a
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+<div dir=3D"ltr"><div dir=3D"ltr"><br></div><div>Added dev group.</div><br>=
+<div class=3D"gmail_quote gmail_quote_container"><div dir=3D"ltr" class=3D"=
+gmail_attr">On Tue, Dec 9, 2025 at 10:11=E2=80=AFPM narsimharaj pentam &lt;=
+<a href=3D"mailto:pnarsimharaj@gmail.com">pnarsimharaj@gmail.com</a>&gt; wr=
+ote:<br></div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px=
+ 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex"><div dir=3D=
+"ltr"><div>Hi=C2=A0</div><div><br></div><div>I have a query related to ip f=
+ragmentation handling in=C2=A0DPDK.</div><div><br></div><div>The DPDK appli=
+cation is trying to send a larger packet than the configured MTU on the int=
+erface, before sending the packet to the =C2=A0i40e PMD the packet will</di=
+v>undergo fragmentation . The DPDK library function <b>&quot;rte_ipv4_fragm=
+ent_packet&quot;</b> is used for fragmentation. Function <b>rte_ipv4_fragme=
+nt_packet</b> will create<br>direct and indirect mbuf&#39;s=C2=A0 for a fra=
+gment , <b>the indirect buffers will have reference to the mbuf of the actu=
+al packet (zero copy).</b><br><br>The application will call function rte_et=
+h_tx_burst to transmit fragments , which internally invokes <b>i40e_xmit_pk=
+ts </b>, the question here=C2=A0 is when should main application<br>mbuf sh=
+ould be freed , can It be freed immediately=C2=A0 after i40e_xmit_pkts retu=
+rns success, not sure because the mbuf&#39;s are queued up in software ring=
+ before actual transmit,=C2=A0<div>I am worried about the fragments holding=
+ references to the main application buffer.</div><div><br></div><div>Thanks=
+.</div><div><br></div><div>BR</div><div>Narsimha</div></div>
+</blockquote></div></div>
+
+--00000000000029e8bb064587eb4a--
