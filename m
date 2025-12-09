@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E763D3B7EA
-	for <dpdk-dev@archiver.kernel.org>; Tue,  9 Dec 2025 11:27:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB244D3B7EA
+	for <dpdk-dev@archiver.kernel.org>; Tue,  9 Dec 2025 11:28:01 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DC93940C35;
-	Tue,  9 Dec 2025 12:27:17 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id F298040DCF;
+	Tue,  9 Dec 2025 12:27:18 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
- by mails.dpdk.org (Postfix) with ESMTP id 7FE4C40A6C
- for <dev@dpdk.org>; Tue,  9 Dec 2025 12:27:13 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 97FB640A79
+ for <dev@dpdk.org>; Tue,  9 Dec 2025 12:27:14 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1765279634; x=1796815634;
+ t=1765279635; x=1796815635;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=HFbf4fVMFxXveNqzpmyXGHtawkU36HgZb0n5/lais9k=;
- b=jagojAUY2UaVVdziLJZI/QHYcyKJoGXAdN3ButscVompr4MwPn6GsvQ5
- ag/UB6UcUgY+SxtfQqSrta1/1hu6ElUehsgKgxcBspZDS3wgaxJNhaj3+
- Gcd9t01cOxBaCkh9O9ZfxFAZZRW3PHbBMnN+OcwxvTNgI/s35E482ZfZy
- AOW3W0o4hPssC3f/RY7ebYm23mzm+rVAN3Op0O0lFVOUOlXm1F3ke8EwY
- piGYFCJZjlwWPTCK0CoKeDOvWNI7Fb8ZSpj/qjHlMnkuoptOrgKTxFbUV
- znSqOqNvWqDYiSckcShFccWngqQlpxD176RixbhKyB2+trRS6n/DfGu3q A==;
-X-CSE-ConnectionGUID: 1i113F0xSW+93ptov5Y3SA==
-X-CSE-MsgGUID: 4ndWXr4iSR+Qpa1eOeLdjg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11636"; a="67117043"
-X-IronPort-AV: E=Sophos;i="6.20,261,1758610800"; d="scan'208";a="67117043"
+ bh=PhrAvOlFqqYb17HkJwhGt0gUzRzNvVXPBUsHzr+c3Mk=;
+ b=BXYmw2j5vPWWgHC2m0zVst6Gmk9QQ8qyJLm3AIof6TxfHzqzAhzb1I8r
+ wCZapbf4g+sIefLFfQXKKfeT0kxI7bJNVvI6xF/LcOmKIUWGtIcVi5PyZ
+ H99jNum9GeHpgZdlj3wxRmWEBHm+2pOpccDDpr40iSAPTsWk9ECIf+kAz
+ LtL5SMfZJ8s/nYgiJNODBsW2LOSzBR3ZeM4GMurZZoRdcPtZIoriOSl5S
+ DLQ7hxP+G2MoqiVEpCslv6F/p8t7JyWn4SbKSUBIx3ohKxHRh+iABuA5o
+ odLdUsR/MlZnkcaP0r2yZeS6GdzsBHeYyzY2qxcjac+an0mznXQs89mlp w==;
+X-CSE-ConnectionGUID: lhBor1BqR1+aw3rRI/65ow==
+X-CSE-MsgGUID: w3/FOyJ2SOar+6bF1wmFnA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11636"; a="67117045"
+X-IronPort-AV: E=Sophos;i="6.20,261,1758610800"; d="scan'208";a="67117045"
 Received: from orviesa006.jf.intel.com ([10.64.159.146])
  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 09 Dec 2025 03:27:13 -0800
-X-CSE-ConnectionGUID: 8QdvSPVrTFCSt1LgzU1shw==
-X-CSE-MsgGUID: r7m8AScGRxSMHhD7E8JT8g==
+ 09 Dec 2025 03:27:14 -0800
+X-CSE-ConnectionGUID: ss7gQFVwT0Snc6/vpI/o9g==
+X-CSE-MsgGUID: bm38l0qiSaSOa1n+sqFvOA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.20,261,1758610800"; d="scan'208";a="195270223"
+X-IronPort-AV: E=Sophos;i="6.20,261,1758610800"; d="scan'208";a="195270228"
 Received: from silpixa00401177.ir.intel.com ([10.20.224.214])
- by orviesa006.jf.intel.com with ESMTP; 09 Dec 2025 03:27:12 -0800
+ by orviesa006.jf.intel.com with ESMTP; 09 Dec 2025 03:27:13 -0800
 From: Ciara Loftus <ciara.loftus@intel.com>
 To: dev@dpdk.org
 Cc: Ciara Loftus <ciara.loftus@intel.com>
-Subject: [PATCH 07/13] net/i40e: use common Tx path selection infrastructure
-Date: Tue,  9 Dec 2025 11:26:46 +0000
-Message-ID: <20251209112652.963981-8-ciara.loftus@intel.com>
+Subject: [PATCH 08/13] net/idpf: use common Tx path selection infrastructure
+Date: Tue,  9 Dec 2025 11:26:47 +0000
+Message-ID: <20251209112652.963981-9-ciara.loftus@intel.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251209112652.963981-1-ciara.loftus@intel.com>
 References: <20251209112652.963981-1-ciara.loftus@intel.com>
@@ -60,311 +60,318 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 Errors-To: dev-bounces@dpdk.org
 
 Replace the existing complicated logic with the use of the common
-function.
+function. Introduce a new feature "single queue" to the common
+infrastructure which represents whether single or split queue mode is
+used in the given path.
 
 Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
 ---
- drivers/net/intel/i40e/i40e_ethdev.h          |   2 -
- drivers/net/intel/i40e/i40e_rxtx.c            | 112 +++++++++---------
- drivers/net/intel/i40e/i40e_rxtx.h            |  20 +++-
- .../net/intel/i40e/i40e_rxtx_vec_altivec.c    |   6 -
- drivers/net/intel/i40e/i40e_rxtx_vec_neon.c   |   6 -
- drivers/net/intel/i40e/i40e_rxtx_vec_sse.c    |   6 -
- 6 files changed, 78 insertions(+), 74 deletions(-)
+ drivers/net/intel/common/tx.h                 |   5 +
+ drivers/net/intel/idpf/idpf_common_device.h   |  10 ++
+ drivers/net/intel/idpf/idpf_common_rxtx.c     |  49 ++++++++
+ drivers/net/intel/idpf/idpf_common_rxtx.h     |  12 ++
+ drivers/net/intel/idpf/idpf_rxtx.c            | 112 +++++-------------
+ drivers/net/intel/idpf/idpf_rxtx_vec_common.h |  10 --
+ 6 files changed, 107 insertions(+), 91 deletions(-)
 
-diff --git a/drivers/net/intel/i40e/i40e_ethdev.h b/drivers/net/intel/i40e/i40e_ethdev.h
-index 9a89f94f0e..8a86e26858 100644
---- a/drivers/net/intel/i40e/i40e_ethdev.h
-+++ b/drivers/net/intel/i40e/i40e_ethdev.h
-@@ -1290,8 +1290,6 @@ struct i40e_adapter {
- 
- 	/* For RSS reta table update */
- 	uint8_t rss_reta_updated;
--
--	enum rte_vect_max_simd tx_simd_width;
+diff --git a/drivers/net/intel/common/tx.h b/drivers/net/intel/common/tx.h
+index 5d965a86c9..32cee09e8f 100644
+--- a/drivers/net/intel/common/tx.h
++++ b/drivers/net/intel/common/tx.h
+@@ -122,6 +122,7 @@ struct ci_tx_path_features_extra {
+ 	bool simple_tx;
+ 	bool ctx_desc;
+ 	bool disabled;
++	bool single_queue;
  };
  
- /**
-diff --git a/drivers/net/intel/i40e/i40e_rxtx.c b/drivers/net/intel/i40e/i40e_rxtx.c
-index 04c3a6c311..1f9ccd2aa7 100644
---- a/drivers/net/intel/i40e/i40e_rxtx.c
-+++ b/drivers/net/intel/i40e/i40e_rxtx.c
-@@ -2375,8 +2375,7 @@ i40e_dev_tx_queue_setup_runtime(struct rte_eth_dev *dev,
+ struct ci_tx_path_features {
+@@ -318,6 +319,10 @@ ci_tx_path_select(struct ci_tx_path_features req_features,
+ 		if (path_features->extra.simple_tx && !req_features.extra.simple_tx)
+ 			continue;
  
- 	/* check vector conflict */
- 	if (ad->tx_vec_allowed) {
--		if (txq->tx_rs_thresh > I40E_TX_MAX_FREE_BUF_SZ ||
--		    i40e_txq_vec_setup(txq)) {
-+		if (txq->tx_rs_thresh > I40E_TX_MAX_FREE_BUF_SZ) {
- 			PMD_DRV_LOG(ERR, "Failed vector tx setup.");
- 			return -EINVAL;
- 		}
-@@ -3519,42 +3518,73 @@ i40e_set_tx_function_flag(struct rte_eth_dev *dev, struct ci_tx_queue *txq)
- 				txq->queue_id);
- }
++		/* If requested, ensure the path supports single queue TX. */
++		if (path_features->extra.single_queue != req_features.extra.single_queue)
++			continue;
++
+ 		/* Ensure the path supports the requested TX offloads. */
+ 		if ((path_features->tx_offloads & req_features.tx_offloads) !=
+ 				req_features.tx_offloads)
+diff --git a/drivers/net/intel/idpf/idpf_common_device.h b/drivers/net/intel/idpf/idpf_common_device.h
+index c32dcfbb12..eff04a83eb 100644
+--- a/drivers/net/intel/idpf/idpf_common_device.h
++++ b/drivers/net/intel/idpf/idpf_common_device.h
+@@ -75,6 +75,15 @@ enum idpf_rx_func_type {
+ 	IDPF_RX_MAX
+ };
  
--static const struct {
--	eth_tx_burst_t pkt_burst;
--	const char *info;
--} i40e_tx_burst_infos[] = {
-+static const struct ci_tx_path_info i40e_tx_path_infos[] = {
- 	[I40E_TX_DEFAULT] = {
- 		.pkt_burst = i40e_xmit_pkts,
- 		.info = "Scalar",
++enum idpf_tx_func_type {
++	IDPF_TX_DEFAULT,
++	IDPF_TX_SINGLEQ,
++	IDPF_TX_SINGLEQ_AVX2,
++	IDPF_TX_AVX512,
++	IDPF_TX_SINGLEQ_AVX512,
++	IDPF_TX_MAX
++};
++
+ struct idpf_adapter {
+ 	struct idpf_hw hw;
+ 	struct virtchnl2_version_info virtchnl_version;
+@@ -92,6 +101,7 @@ struct idpf_adapter {
+ 	uint64_t time_hw;
+ 
+ 	enum idpf_rx_func_type rx_func_type;
++	enum idpf_tx_func_type tx_func_type;
+ };
+ 
+ struct idpf_chunks_info {
+diff --git a/drivers/net/intel/idpf/idpf_common_rxtx.c b/drivers/net/intel/idpf/idpf_common_rxtx.c
+index a5d0795057..2d926ee939 100644
+--- a/drivers/net/intel/idpf/idpf_common_rxtx.c
++++ b/drivers/net/intel/idpf/idpf_common_rxtx.c
+@@ -1701,3 +1701,52 @@ const struct ci_rx_path_info idpf_rx_path_infos[] = {
+ #endif /* CC_AVX512_SUPPORT */
+ #endif /* RTE_ARCH_X86 */
+ };
++
++RTE_EXPORT_INTERNAL_SYMBOL(idpf_tx_path_infos)
++const struct ci_tx_path_info idpf_tx_path_infos[] = {
++	[IDPF_TX_DEFAULT] = {
++		.pkt_burst = idpf_dp_splitq_xmit_pkts,
++		.info = "Split Scalar",
 +		.features = {
-+			.tx_offloads = I40E_TX_SCALAR_OFFLOADS,
-+		},
-+		.pkt_prep = i40e_prep_pkts,
- 	},
- 	[I40E_TX_SCALAR_SIMPLE] = {
- 		.pkt_burst = i40e_xmit_pkts_simple,
- 		.info = "Scalar Simple",
++			.tx_offloads = IDPF_TX_SCALAR_OFFLOADS
++		}
++	},
++	[IDPF_TX_SINGLEQ] = {
++		.pkt_burst = idpf_dp_singleq_xmit_pkts,
++		.info = "Single Scalar",
 +		.features = {
-+			.tx_offloads = I40E_TX_SCALAR_OFFLOADS,
-+			.extra.simple_tx = true
-+		},
-+		.pkt_prep = i40e_simple_prep_pkts,
- 	},
- #ifdef RTE_ARCH_X86
- 	[I40E_TX_SSE] = {
- 		.pkt_burst = i40e_xmit_pkts_vec,
- 		.info = "Vector SSE",
++			.tx_offloads = IDPF_TX_SCALAR_OFFLOADS,
++			.extra.single_queue = true
++		}
++	},
++#ifdef RTE_ARCH_X86
++	[IDPF_TX_SINGLEQ_AVX2] = {
++		.pkt_burst = idpf_dp_singleq_xmit_pkts_avx2,
++		.info = "Single AVX2",
 +		.features = {
-+			.tx_offloads = I40E_TX_VECTOR_OFFLOADS,
-+			.simd_width = RTE_VECT_SIMD_128,
-+		},
-+		.pkt_prep = i40e_simple_prep_pkts,
- 	},
- 	[I40E_TX_AVX2] = {
- 		.pkt_burst = i40e_xmit_pkts_vec_avx2,
- 		.info = "Vector AVX2",
-+		.features = {
-+			.tx_offloads = I40E_TX_VECTOR_OFFLOADS,
++			.tx_offloads = IDPF_TX_VECTOR_OFFLOADS,
 +			.simd_width = RTE_VECT_SIMD_256,
-+		},
-+		.pkt_prep = i40e_simple_prep_pkts,
- 	},
- #ifdef CC_AVX512_SUPPORT
- 	[I40E_TX_AVX512] = {
- 		.pkt_burst = i40e_xmit_pkts_vec_avx512,
- 		.info = "Vector AVX512",
++			.extra.single_queue = true
++		}
++	},
++#ifdef CC_AVX512_SUPPORT
++	[IDPF_TX_AVX512] = {
++		.pkt_burst = idpf_dp_splitq_xmit_pkts_avx512,
++		.info = "Split AVX512",
 +		.features = {
-+			.tx_offloads = I40E_TX_VECTOR_OFFLOADS,
++			.tx_offloads = IDPF_TX_VECTOR_OFFLOADS,
++			.simd_width = RTE_VECT_SIMD_512
++		}
++	},
++	[IDPF_TX_SINGLEQ_AVX512] = {
++		.pkt_burst = idpf_dp_singleq_xmit_pkts_avx512,
++		.info = "Single AVX512",
++		.features = {
++			.tx_offloads = IDPF_TX_VECTOR_OFFLOADS,
 +			.simd_width = RTE_VECT_SIMD_512,
-+		},
-+		.pkt_prep = i40e_simple_prep_pkts,
- 	},
- #endif
- #elif defined(RTE_ARCH_ARM64)
- 	[I40E_TX_NEON] = {
- 		.pkt_burst = i40e_xmit_pkts_vec,
- 		.info = "Vector Neon",
-+		.features = {
-+			.tx_offloads = I40E_TX_VECTOR_OFFLOADS,
-+			.simd_width = RTE_VECT_SIMD_128,
-+		},
-+		.pkt_prep = i40e_simple_prep_pkts,
- 	},
- #elif defined(RTE_ARCH_PPC_64)
- 	[I40E_TX_ALTIVEC] = {
- 		.pkt_burst = i40e_xmit_pkts_vec,
- 		.info = "Vector AltiVec",
-+		.features = {
-+			.tx_offloads = I40E_TX_VECTOR_OFFLOADS,
-+			.simd_width = RTE_VECT_SIMD_128,
-+		},
-+		.pkt_prep = i40e_simple_prep_pkts,
- 	},
- #endif
++			.extra.single_queue = true
++		}
++	},
++#endif /* CC_AVX512_SUPPORT */
++#endif /* RTE_ARCH_X86 */
++};
+diff --git a/drivers/net/intel/idpf/idpf_common_rxtx.h b/drivers/net/intel/idpf/idpf_common_rxtx.h
+index 3bc3323af4..7c6ff5d047 100644
+--- a/drivers/net/intel/idpf/idpf_common_rxtx.h
++++ b/drivers/net/intel/idpf/idpf_common_rxtx.h
+@@ -106,6 +106,17 @@
+ 		RTE_ETH_RX_OFFLOAD_SCATTER)
+ #define IDPF_RX_VECTOR_OFFLOADS 0
+ 
++#define IDPF_TX_SCALAR_OFFLOADS (		\
++		RTE_ETH_TX_OFFLOAD_IPV4_CKSUM |	\
++		RTE_ETH_TX_OFFLOAD_UDP_CKSUM |	\
++		RTE_ETH_TX_OFFLOAD_TCP_CKSUM |	\
++		RTE_ETH_TX_OFFLOAD_SCTP_CKSUM |	\
++		RTE_ETH_TX_OFFLOAD_TCP_TSO |	\
++		RTE_ETH_TX_OFFLOAD_MULTI_SEGS |	\
++		RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE)
++
++#define IDPF_TX_VECTOR_OFFLOADS RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE
++
+ struct idpf_rx_stats {
+ 	RTE_ATOMIC(uint64_t) mbuf_alloc_failed;
  };
-@@ -3565,64 +3595,40 @@ i40e_set_tx_function(struct rte_eth_dev *dev)
- 	struct i40e_adapter *ad =
- 		I40E_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
- 	uint64_t mbuf_check = ad->mbuf_check;
--	int i;
+@@ -264,5 +275,6 @@ uint16_t idpf_dp_singleq_xmit_pkts_avx2(void *tx_queue,
+ 					uint16_t nb_pkts);
+ 
+ extern const struct ci_rx_path_info idpf_rx_path_infos[IDPF_RX_MAX];
++extern const struct ci_tx_path_info idpf_tx_path_infos[IDPF_TX_MAX];
+ 
+ #endif /* _IDPF_COMMON_RXTX_H_ */
+diff --git a/drivers/net/intel/idpf/idpf_rxtx.c b/drivers/net/intel/idpf/idpf_rxtx.c
+index 4796d8b862..1fd55de9ab 100644
+--- a/drivers/net/intel/idpf/idpf_rxtx.c
++++ b/drivers/net/intel/idpf/idpf_rxtx.c
+@@ -813,97 +813,47 @@ idpf_set_tx_function(struct rte_eth_dev *dev)
+ {
+ 	struct idpf_vport *vport = dev->data->dev_private;
+ #ifdef RTE_ARCH_X86
+-	enum rte_vect_max_simd tx_simd_width = RTE_VECT_SIMD_DISABLED;
+ #ifdef CC_AVX512_SUPPORT
+ 	struct ci_tx_queue *txq;
+ 	int i;
+ #endif /* CC_AVX512_SUPPORT */
+-
+-	if (idpf_tx_vec_dev_check_default(dev) == IDPF_VECTOR_PATH &&
+-	    rte_vect_get_max_simd_bitwidth() >= RTE_VECT_SIMD_128) {
+-		vport->tx_vec_allowed = true;
+-		tx_simd_width = idpf_get_max_simd_bitwidth();
+-#ifdef CC_AVX512_SUPPORT
+-		if (tx_simd_width == RTE_VECT_SIMD_512) {
+-			for (i = 0; i < dev->data->nb_tx_queues; i++) {
+-				txq = dev->data->tx_queues[i];
+-				idpf_qc_tx_vec_avx512_setup(txq);
+-			}
+-		}
+-#else
+-		PMD_DRV_LOG(NOTICE,
+-			    "AVX512 is not supported in build env");
+-#endif /* CC_AVX512_SUPPORT */
+-	} else {
+-		vport->tx_vec_allowed = false;
+-	}
+ #endif /* RTE_ARCH_X86 */
++	struct idpf_adapter *ad = vport->adapter;
 +	struct ci_tx_path_features req_features = {
 +		.tx_offloads = dev->data->dev_conf.txmode.offloads,
 +		.simd_width = RTE_VECT_SIMD_DISABLED,
-+		.extra.simple_tx = ad->tx_simple_allowed
++		.extra.single_queue = (vport->txq_model == VIRTCHNL2_QUEUE_MODEL_SINGLE)
 +	};
++
++#ifdef RTE_ARCH_X86
++	if (idpf_tx_vec_dev_check_default(dev) == IDPF_VECTOR_PATH)
++		req_features.simd_width = idpf_get_max_simd_bitwidth();
++#endif
++
++	ad->tx_func_type = ci_tx_path_select(req_features,
++					&idpf_tx_path_infos[0],
++					IDPF_TX_MAX,
++					IDPF_TX_DEFAULT);
++
++	dev->tx_pkt_burst = idpf_tx_path_infos[ad->tx_func_type].pkt_burst;
++	dev->tx_pkt_prepare = idpf_dp_prep_pkts;
++	PMD_DRV_LOG(NOTICE, "Using %s Tx (port %d).",
++			idpf_tx_path_infos[ad->tx_func_type].info, dev->data->port_id);
  
- 	/* The primary process selects the tx path for all processes. */
- 	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
- 		goto out;
--#ifdef RTE_ARCH_X86
--	ad->tx_simd_width = i40e_get_max_simd_bitwidth();
--#endif
--	if (ad->tx_vec_allowed) {
--		for (i = 0; i < dev->data->nb_tx_queues; i++) {
--			struct ci_tx_queue *txq =
--				dev->data->tx_queues[i];
--
--			if (txq && i40e_txq_vec_setup(txq)) {
--				ad->tx_vec_allowed = false;
--				break;
--			}
--		}
--	}
- 
--	if (rte_vect_get_max_simd_bitwidth() < RTE_VECT_SIMD_128)
--		ad->tx_vec_allowed = false;
--
--	if (ad->tx_simple_allowed) {
--		if (ad->tx_vec_allowed) {
-+	if (ad->tx_vec_allowed) {
  #ifdef RTE_ARCH_X86
--			if (ad->tx_simd_width == RTE_VECT_SIMD_512) {
--#ifdef CC_AVX512_SUPPORT
--				ad->tx_func_type = I40E_TX_AVX512;
-+		req_features.simd_width = i40e_get_max_simd_bitwidth();
- #else
--				ad->tx_func_type = I40E_TX_DEFAULT;
-+		req_features.simd_width = rte_vect_get_max_simd_bitwidth();
- #endif
--			} else {
--				ad->tx_func_type = ad->tx_simd_width == RTE_VECT_SIMD_256 ?
--						    I40E_TX_AVX2 :
--						    I40E_TX_SSE;
--				dev->recycle_tx_mbufs_reuse = i40e_recycle_tx_mbufs_reuse_vec;
+-	if (vport->txq_model == VIRTCHNL2_QUEUE_MODEL_SPLIT) {
+-		if (vport->tx_vec_allowed) {
++	if (idpf_tx_path_infos[ad->tx_func_type].features.simd_width >= RTE_VECT_SIMD_256 &&
++			idpf_tx_path_infos[ad->tx_func_type].features.extra.single_queue) {
+ #ifdef CC_AVX512_SUPPORT
+-			if (tx_simd_width == RTE_VECT_SIMD_512) {
+-				PMD_DRV_LOG(NOTICE,
+-					    "Using Split AVX512 Vector Tx (port %d).",
+-					    dev->data->port_id);
+-				dev->tx_pkt_burst = idpf_dp_splitq_xmit_pkts_avx512;
+-				dev->tx_pkt_prepare = idpf_dp_prep_pkts;
+-				return;
 -			}
--#else /* RTE_ARCH_X86 */
--			ad->tx_func_type = I40E_TX_SSE;
--			dev->recycle_tx_mbufs_reuse = i40e_recycle_tx_mbufs_reuse_vec;
--#endif /* RTE_ARCH_X86 */
--		} else {
--			ad->tx_func_type = I40E_TX_SCALAR_SIMPLE;
--			dev->recycle_tx_mbufs_reuse = i40e_recycle_tx_mbufs_reuse_vec;
--		}
--		dev->tx_pkt_prepare = i40e_simple_prep_pkts;
--	} else {
--		ad->tx_func_type = I40E_TX_DEFAULT;
--		dev->tx_pkt_prepare = i40e_prep_pkts;
- 	}
- 
-+	ad->tx_func_type = ci_tx_path_select(req_features, &i40e_tx_path_infos[0],
-+						RTE_DIM(i40e_tx_path_infos), I40E_TX_DEFAULT);
-+
- out:
- 	dev->tx_pkt_burst = mbuf_check ? i40e_xmit_pkts_check :
--					i40e_tx_burst_infos[ad->tx_func_type].pkt_burst;
-+					i40e_tx_path_infos[ad->tx_func_type].pkt_burst;
- 
- 	PMD_DRV_LOG(NOTICE, "Using %s (port %d).",
--		i40e_tx_burst_infos[ad->tx_func_type].info, dev->data->port_id);
-+		i40e_tx_path_infos[ad->tx_func_type].info, dev->data->port_id);
-+
-+	if (ad->tx_func_type == I40E_TX_SCALAR_SIMPLE ||
-+			ad->tx_func_type == I40E_TX_SSE ||
-+			ad->tx_func_type == I40E_TX_NEON ||
-+			ad->tx_func_type == I40E_TX_ALTIVEC ||
-+			ad->tx_func_type == I40E_TX_AVX2)
-+		dev->recycle_tx_mbufs_reuse = i40e_recycle_tx_mbufs_reuse_vec;
- }
- 
- int
-@@ -3633,10 +3639,10 @@ i40e_tx_burst_mode_get(struct rte_eth_dev *dev, __rte_unused uint16_t queue_id,
- 	int ret = -EINVAL;
- 	unsigned int i;
- 
--	for (i = 0; i < RTE_DIM(i40e_tx_burst_infos); ++i) {
--		if (pkt_burst == i40e_tx_burst_infos[i].pkt_burst) {
-+	for (i = 0; i < RTE_DIM(i40e_tx_path_infos); ++i) {
-+		if (pkt_burst == i40e_tx_path_infos[i].pkt_burst) {
- 			snprintf(mode->info, sizeof(mode->info), "%s",
--				 i40e_tx_burst_infos[i].info);
-+				 i40e_tx_path_infos[i].info);
- 			ret = 0;
- 			break;
+-#endif /* CC_AVX512_SUPPORT */
++		for (i = 0; i < dev->data->nb_tx_queues; i++) {
++			txq = dev->data->tx_queues[i];
++			if (txq == NULL)
++				continue;
++			if (idpf_tx_path_infos[ad->tx_func_type].features.simd_width ==
++					RTE_VECT_SIMD_512)
++				idpf_qc_tx_vec_avx512_setup(txq);
  		}
-diff --git a/drivers/net/intel/i40e/i40e_rxtx.h b/drivers/net/intel/i40e/i40e_rxtx.h
-index b5a901794f..ed173d8f17 100644
---- a/drivers/net/intel/i40e/i40e_rxtx.h
-+++ b/drivers/net/intel/i40e/i40e_rxtx.h
-@@ -91,6 +91,25 @@ enum i40e_header_split_mode {
- 		RTE_ETH_RX_OFFLOAD_VLAN_FILTER |	\
- 		RTE_ETH_RX_OFFLOAD_RSS_HASH)
+-		PMD_DRV_LOG(NOTICE,
+-			    "Using Split Scalar Tx (port %d).",
+-			    dev->data->port_id);
+-		dev->tx_pkt_burst = idpf_dp_splitq_xmit_pkts;
+-		dev->tx_pkt_prepare = idpf_dp_prep_pkts;
+-	} else {
+-		if (vport->tx_vec_allowed) {
+-#ifdef CC_AVX512_SUPPORT
+-			if (tx_simd_width == RTE_VECT_SIMD_512) {
+-				for (i = 0; i < dev->data->nb_tx_queues; i++) {
+-					txq = dev->data->tx_queues[i];
+-					if (txq == NULL)
+-						continue;
+-					idpf_qc_tx_vec_avx512_setup(txq);
+-				}
+-				PMD_DRV_LOG(NOTICE,
+-					    "Using Single AVX512 Vector Tx (port %d).",
+-					    dev->data->port_id);
+-				dev->tx_pkt_burst = idpf_dp_singleq_xmit_pkts_avx512;
+-				dev->tx_pkt_prepare = idpf_dp_prep_pkts;
+-				return;
+-			}
+ #endif /* CC_AVX512_SUPPORT */
+-			if (tx_simd_width == RTE_VECT_SIMD_256) {
+-				PMD_DRV_LOG(NOTICE,
+-					    "Using Single AVX2 Vector Tx (port %d).",
+-					    dev->data->port_id);
+-				dev->tx_pkt_burst = idpf_dp_singleq_xmit_pkts_avx2;
+-				dev->tx_pkt_prepare = idpf_dp_prep_pkts;
+-				return;
+-			}
+-		}
+-		PMD_DRV_LOG(NOTICE,
+-			    "Using Single Scalar Tx (port %d).",
+-			    dev->data->port_id);
+-		dev->tx_pkt_burst = idpf_dp_singleq_xmit_pkts;
+-		dev->tx_pkt_prepare = idpf_dp_prep_pkts;
+-	}
+-#else
+-	if (vport->txq_model == VIRTCHNL2_QUEUE_MODEL_SPLIT) {
+-		PMD_DRV_LOG(NOTICE,
+-			    "Using Split Scalar Tx (port %d).",
+-			    dev->data->port_id);
+-		dev->tx_pkt_burst = idpf_dp_splitq_xmit_pkts;
+-		dev->tx_pkt_prepare = idpf_dp_prep_pkts;
+-	} else {
+-		PMD_DRV_LOG(NOTICE,
+-			    "Using Single Scalar Tx (port %d).",
+-			    dev->data->port_id);
+-		dev->tx_pkt_burst = idpf_dp_singleq_xmit_pkts;
+-		dev->tx_pkt_prepare = idpf_dp_prep_pkts;
++		vport->tx_vec_allowed = true;
+ 	}
+ #endif /* RTE_ARCH_X86 */
+ }
+diff --git a/drivers/net/intel/idpf/idpf_rxtx_vec_common.h b/drivers/net/intel/idpf/idpf_rxtx_vec_common.h
+index ecdf2f0e23..425f0792a1 100644
+--- a/drivers/net/intel/idpf/idpf_rxtx_vec_common.h
++++ b/drivers/net/intel/idpf/idpf_rxtx_vec_common.h
+@@ -23,13 +23,6 @@
+ 		RTE_ETH_RX_OFFLOAD_TCP_CKSUM |	\
+ 		RTE_ETH_RX_OFFLOAD_OUTER_IPV4_CKSUM |	\
+ 		RTE_ETH_RX_OFFLOAD_TIMESTAMP)
+-#define IDPF_TX_NO_VECTOR_FLAGS (		\
+-		RTE_ETH_TX_OFFLOAD_TCP_TSO |	\
+-		RTE_ETH_TX_OFFLOAD_MULTI_SEGS |	\
+-		RTE_ETH_TX_OFFLOAD_IPV4_CKSUM |		\
+-		RTE_ETH_TX_OFFLOAD_SCTP_CKSUM |		\
+-		RTE_ETH_TX_OFFLOAD_UDP_CKSUM |	\
+-		RTE_ETH_TX_OFFLOAD_TCP_CKSUM)
  
-+#define I40E_TX_SCALAR_OFFLOADS (			\
-+		RTE_ETH_TX_OFFLOAD_VLAN_INSERT |	\
-+		RTE_ETH_TX_OFFLOAD_QINQ_INSERT |	\
-+		RTE_ETH_TX_OFFLOAD_IPV4_CKSUM |		\
-+		RTE_ETH_TX_OFFLOAD_UDP_CKSUM |		\
-+		RTE_ETH_TX_OFFLOAD_TCP_CKSUM |		\
-+		RTE_ETH_TX_OFFLOAD_SCTP_CKSUM |		\
-+		RTE_ETH_TX_OFFLOAD_OUTER_IPV4_CKSUM |	\
-+		RTE_ETH_TX_OFFLOAD_TCP_TSO |		\
-+		RTE_ETH_TX_OFFLOAD_VXLAN_TNL_TSO |	\
-+		RTE_ETH_TX_OFFLOAD_GRE_TNL_TSO |	\
-+		RTE_ETH_TX_OFFLOAD_IPIP_TNL_TSO |	\
-+		RTE_ETH_TX_OFFLOAD_GENEVE_TNL_TSO |	\
-+		RTE_ETH_TX_OFFLOAD_MULTI_SEGS |		\
-+		RTE_ETH_TX_OFFLOAD_OUTER_UDP_CKSUM |	\
-+		RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE)
-+
-+#define I40E_TX_VECTOR_OFFLOADS RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE
-+
- /** Offload features */
- union i40e_tx_offload {
- 	uint64_t data;
-@@ -165,7 +184,6 @@ uint16_t i40e_recv_scattered_pkts_vec(void *rx_queue,
- 				      uint16_t nb_pkts);
- int i40e_rx_vec_dev_conf_condition_check(struct rte_eth_dev *dev);
- int i40e_rxq_vec_setup(struct ci_rx_queue *rxq);
--int i40e_txq_vec_setup(struct ci_tx_queue *txq);
- void i40e_rx_queue_release_mbufs_vec(struct ci_rx_queue *rxq);
- uint16_t i40e_xmit_fixed_burst_vec(void *tx_queue, struct rte_mbuf **tx_pkts,
- 				   uint16_t nb_pkts);
-diff --git a/drivers/net/intel/i40e/i40e_rxtx_vec_altivec.c b/drivers/net/intel/i40e/i40e_rxtx_vec_altivec.c
-index 87a57e7520..bbb6d907cf 100644
---- a/drivers/net/intel/i40e/i40e_rxtx_vec_altivec.c
-+++ b/drivers/net/intel/i40e/i40e_rxtx_vec_altivec.c
-@@ -547,12 +547,6 @@ i40e_rxq_vec_setup(struct ci_rx_queue *rxq)
- 	return 0;
+ static inline int
+ idpf_tx_desc_done(struct ci_tx_queue *txq, uint16_t idx)
+@@ -74,9 +67,6 @@ idpf_tx_vec_queue_default(struct ci_tx_queue *txq)
+ 	    (txq->tx_rs_thresh & 3) != 0)
+ 		return IDPF_SCALAR_PATH;
+ 
+-	if ((txq->offloads & IDPF_TX_NO_VECTOR_FLAGS) != 0)
+-		return IDPF_SCALAR_PATH;
+-
+ 	return IDPF_VECTOR_PATH;
  }
  
--int __rte_cold
--i40e_txq_vec_setup(struct ci_tx_queue __rte_unused * txq)
--{
--	return 0;
--}
--
- int __rte_cold
- i40e_rx_vec_dev_conf_condition_check(struct rte_eth_dev *dev)
- {
-diff --git a/drivers/net/intel/i40e/i40e_rxtx_vec_neon.c b/drivers/net/intel/i40e/i40e_rxtx_vec_neon.c
-index c9098e4c1a..b5be0c1b59 100644
---- a/drivers/net/intel/i40e/i40e_rxtx_vec_neon.c
-+++ b/drivers/net/intel/i40e/i40e_rxtx_vec_neon.c
-@@ -697,12 +697,6 @@ i40e_rxq_vec_setup(struct ci_rx_queue *rxq)
- 	return 0;
- }
- 
--int __rte_cold
--i40e_txq_vec_setup(struct ci_tx_queue *txq __rte_unused)
--{
--	return 0;
--}
--
- int __rte_cold
- i40e_rx_vec_dev_conf_condition_check(struct rte_eth_dev *dev)
- {
-diff --git a/drivers/net/intel/i40e/i40e_rxtx_vec_sse.c b/drivers/net/intel/i40e/i40e_rxtx_vec_sse.c
-index c035408dcc..c209135890 100644
---- a/drivers/net/intel/i40e/i40e_rxtx_vec_sse.c
-+++ b/drivers/net/intel/i40e/i40e_rxtx_vec_sse.c
-@@ -704,12 +704,6 @@ i40e_rxq_vec_setup(struct ci_rx_queue *rxq)
- 	return 0;
- }
- 
--int __rte_cold
--i40e_txq_vec_setup(struct ci_tx_queue *txq __rte_unused)
--{
--	return 0;
--}
--
- int __rte_cold
- i40e_rx_vec_dev_conf_condition_check(struct rte_eth_dev *dev)
- {
 -- 
 2.43.0
 
