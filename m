@@ -2,61 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1144D3B7EA
-	for <dpdk-dev@archiver.kernel.org>; Tue,  9 Dec 2025 09:45:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B1BBD3B7EA
+	for <dpdk-dev@archiver.kernel.org>; Tue,  9 Dec 2025 10:59:25 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9008C40270;
-	Tue,  9 Dec 2025 10:45:08 +0100 (CET)
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com
- [209.85.219.43]) by mails.dpdk.org (Postfix) with ESMTP id 998674025F
- for <dev@dpdk.org>; Tue,  9 Dec 2025 10:45:07 +0100 (CET)
-Received: by mail-qv1-f43.google.com with SMTP id
- 6a1803df08f44-8823d5127daso56008656d6.0
- for <dev@dpdk.org>; Tue, 09 Dec 2025 01:45:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1765273507; x=1765878307; darn=dpdk.org;
- h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
- :date:message-id:reply-to;
- bh=91b6vy1gwZeZKD4dneFdPQEzc1LXPWiILYRE5gezMqo=;
- b=dFmI28k2uFC9RMwjD8cvVTnh/gUUOQhvX4egcefNggXueA2VBtkoVui/3iuC4+CCGb
- 8CLg8/sPiZxITAPXsNzM628l7/gpwbjQMZgL9+rAd0JQPtbn1ZtluGhAtIXgzmOUHxFK
- r9TrH54qiP9PC8eAd27D789k7pAzWSO6rfS00oSlF230CtwBDHwg6fYzE/dSOx5f70e/
- NJUStbKMX4ZZ3SOHrn9dpcs8LPQ4D9PhjtUBYjW1QdFzB7tgxwy3+M6FXpex+Pv9snnV
- x6MK+P8mHTG4qJwcKHflYqzfcPP6MCHW6r8Dfr6LaK2lcGmGZckK4iBN3n2Um/OqK7EE
- 11Aw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1765273507; x=1765878307;
- h=to:subject:message-id:date:from:mime-version:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=91b6vy1gwZeZKD4dneFdPQEzc1LXPWiILYRE5gezMqo=;
- b=Zoxz9NdFdYFxqlDVOaJKEHakg1pxA+V/QnRFf7C58Vg3Gp/9vo2uST289CNy/WqdDf
- usaPCQ593Nt8VtjowrTyyGjUacamFJgNAoKP7j+kWRr+vWJpjZtzwjct5fkFzq1V7CpR
- A5mcfMlK2cDE8qhHhdyRhOZ46EY51W3+X1cNMyfD/BIxUJDrSO5AVsOuGQFZveGYjqQl
- Vzi8DN1n9kpSOcT02/okvDrWEl77RLXHFj+/HDkULG/1DQUbIOb8PwBXLYn7FuwDikyb
- VO9+ch6q06Kq8gXsYoHnIYYxvDC1fiXc6QDrPBNfuF74qgGGSGhBjxt4fPUDbNUu8SVz
- tyeQ==
-X-Forwarded-Encrypted: i=1;
- AJvYcCUI6hTLhSgYX8rqKunLKyugFIaPrI4JVo94YB4tVdMMoJSxXAa3BgtojQ68tHgTMnG+l14=@dpdk.org
-X-Gm-Message-State: AOJu0YzOcjOUK5mOj0HhMcT9i8MD0eEO0mAxUfGKrgpXL8fnWMxRoJC0
- 8Plv/rCvTYxW/pd0vO7e0vykCDv7G7/For+2eGV/TBoBsLIzd2wtOw+DPKmPf7phSaowvJz9vfw
- c2K5ZF1Um6bG8mnBcHf4ZVtaxps2nP6o=
-X-Gm-Gg: ASbGncuADkpEG+QVUTAQNWpTbg4YNYVXX/swyeX5qfkvlFgE8amqaD7DPipNKo97afq
- ogw+mIbUGt0Wtx5p6Ex0aTO6hoBCKvZGwykkAEEf47Mt0RNGpcg1ZWvGLYoGYhHv2o7k3vUGc7z
- aLTkq2P5FklK+hOy0UGkxnOlIWUwqv2X+aEKRoj18NwTeN6uE5JxX/AkHrtR0YGCsx7iG3aLeD4
- FfehchXgU4Jvvb1EDFWq01lTpYjmfxGHShrlvbunDLvUGCcysGEK8PR/i8BeQNzGir048WG
-X-Google-Smtp-Source: AGHT+IHtyqUK/xO0j42pI0oX53qB/5VVRS7oVWsuN2yTTkWomEyNW6LKW6GA68UVwF0n1ln7dxZlzl9kxazuKjBzNfc=
-X-Received: by 2002:a05:6214:e8e:b0:882:6797:3a67 with SMTP id
- 6a1803df08f44-8883daba866mr179160806d6.13.1765273506877; Tue, 09 Dec 2025
- 01:45:06 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 3861F40270;
+	Tue,  9 Dec 2025 11:59:24 +0100 (CET)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id CAF224025F
+ for <dev@dpdk.org>; Tue,  9 Dec 2025 11:59:22 +0100 (CET)
+Received: from mail.maildlp.com (unknown [172.18.224.150])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4dQbSt5Q0czHnH2m;
+ Tue,  9 Dec 2025 18:59:10 +0800 (CST)
+Received: from dubpeml100002.china.huawei.com (unknown [7.214.144.156])
+ by mail.maildlp.com (Postfix) with ESMTPS id 16D014048B;
+ Tue,  9 Dec 2025 18:59:20 +0800 (CST)
+Received: from dubpeml500001.china.huawei.com (7.214.147.241) by
+ dubpeml100002.china.huawei.com (7.214.144.156) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.36; Tue, 9 Dec 2025 10:59:19 +0000
+Received: from dubpeml500001.china.huawei.com ([7.214.147.241]) by
+ dubpeml500001.china.huawei.com ([7.214.147.241]) with mapi id 15.02.1544.011; 
+ Tue, 9 Dec 2025 10:59:19 +0000
+From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+To: =?iso-2022-jp?B?bWFubnl3YW5nKBskQjImMUpKdhsoQik=?= <mannywang@tencent.com>
+CC: "dev@dpdk.org" <dev@dpdk.org>
+Subject: RE: [PATCH v7] acl: support custom memory allocators
+Thread-Topic: [PATCH v7] acl: support custom memory allocators
+Thread-Index: AQHcaEI3MHNcvueQOEmLQzxDAd8uurUZIixw
+Date: Tue, 9 Dec 2025 10:59:19 +0000
+Message-ID: <0887b8f3045744199342bcb94e33f65b@huawei.com>
+References: <BFA8D0B9488D3A67+20251202092502.165081-1-mannywang@tencent.com>
+ <68D016D742174F42+20251208125716.19424-1-mannywang@tencent.com>
+In-Reply-To: <68D016D742174F42+20251208125716.19424-1-mannywang@tencent.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.206.138.220]
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-From: coolwilled <coolwilled@gmail.com>
-Date: Tue, 9 Dec 2025 17:44:55 +0800
-X-Gm-Features: AQt7F2rJjJWjdEWau9yxFA9U2MLXr6EHSk4-YgW_i8igAkG5X-Xf7SlYGRponhI
-Message-ID: <CAL2ZP-DO8FuVfQ3TyHLtnw8sXLLa6UW_fX-m6Tb8HO33s=S9NA@mail.gmail.com>
-Subject: Ask help for DPAA_SEC: test_pdcp almost all cases failed
-To: hemant.agrawal@nxp.com, sachin.saxena@oss.nxp.com, g.singh@nxp.com, 
- dev@dpdk.org, users@dpdk.org
-Content-Type: multipart/alternative; boundary="0000000000004f164f064581c403"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -70,54 +55,457 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---0000000000004f164f064581c403
-Content-Type: text/plain; charset="UTF-8"
 
-Hi, NXP and dpdk.org users and developers
 
-Did anyone run test_pdcp on DPAA_SEC ?
+> Allow users to provide custom
+> memory allocation hooks for runtime memory in rte_acl_ctx, via
+> struct rte_acl_mem_hook.
+>=20
+> Key changes:
+> - Added struct rte_acl_mem_hook with zalloc, free, and udata.
+> - Added rte_acl_set_mem_hook / rte_acl_get_mem_hook to set/get callbacks.
+> - Default allocation uses existing rte_zmalloc_socket/rte_free.
+> - Modified ACL code to call callbacks for runtime allocations instead
+>   of rte_zmalloc_socket/rte_free directly.
+>=20
+> v5:
+> - Remove temporary memory allocation callback for build stage.
+> - Introduce new API (rte_acl_set_mem_hook / rte_acl_get_mem_hook)
+>   instead of modifying existing rte_acl_config to preserve
+>   ABI compatibility.
+>=20
+> v6:
+> - Reworked API to meet consistency and naming conventions.
+> - Adjusted parameter order for better readability and alignment.
+> - Renamed internal variables for clarity and code consistency.
+>=20
+> v7:
+> - Switch the UT to use malloc/free.
+> - Update the documentation to clarify that rte_acl_set_mem_hook
+>   must be called before rte_acl_build.
+>=20
+> Signed-off-by: YongFeng Wang <mannywang@tencent.com>
+> ---
+>  app/test/test_acl.c                           | 117 ++++++++++++++++++
+>  .../prog_guide/packet_classif_access_ctrl.rst |  31 +++++
+>  lib/acl/acl.h                                 |   1 +
+>  lib/acl/acl_bld.c                             |   2 +-
+>  lib/acl/acl_gen.c                             |   4 +-
+>  lib/acl/rte_acl.c                             |  45 ++++++-
+>  lib/acl/rte_acl.h                             |  53 ++++++++
+>  7 files changed, 249 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/app/test/test_acl.c b/app/test/test_acl.c
+> index 43d13b5b0f..5472943580 100644
+> --- a/app/test/test_acl.c
+> +++ b/app/test/test_acl.c
+> @@ -1721,6 +1721,121 @@ test_u32_range(void)
+>  	return rc;
+>  }
+>=20
+> +struct acl_ctx_wrapper {
+> +	struct rte_acl_ctx *ctx;
+> +	void *running_buf;
+> +	bool running_buf_using;
+> +};
+> +
+> +#define ACL_RUNNING_BUF_SIZE (10 * 1024 * 1024)
+> +
+> +static void *running_alloc(char *name, size_t size,
+> +	size_t align, int32_t socket_id, void *udata)
+> +{
+> +	RTE_SET_USED(align);
+> +	RTE_SET_USED(name);
+> +	RTE_SET_USED(socket_id);
+> +	if (size > ACL_RUNNING_BUF_SIZE)
+> +		return NULL;
+> +	struct acl_ctx_wrapper *acl_ctx =3D (struct acl_ctx_wrapper *)udata;
+> +	if (acl_ctx->running_buf_using)
+> +		return NULL;
+> +	printf("running memory alloc for acl context, size=3D%zu, pointer=3D%p\=
+n",
+> +		size,
+> +		acl_ctx->running_buf);
+> +	memset(acl_ctx->running_buf, 0, size);
+> +	acl_ctx->running_buf_using =3D true;
+> +	return acl_ctx->running_buf;
+> +}
 
-I have a NXP LS1046A board.
-I have configured DPAA sec and 4 dpaa_sec crypto_dev can be found
-in rte_eal_init().
+Sorry, I didn't express myself clear enough.
+My thought was to use malloc/aligned_alloc() directly in running_alloc() fu=
+nction.
+To be more specific here:
+static void *running_alloc(char *name, size_t size, size_t align, int32_t s=
+ocket_id, void *udata)
+{
+   ...
+   /* just for the API correctness check */
+    If (udata !=3D <expected_value>) {
+           /* report error */
+          return NULL;=20
+   }
 
-I run dpdk-test from dpdk.org git commit = b287e404643a  (24.11.3)
-and almost all cases execpt one PDCP status report case failed.
+   addr =3D aligned_alloc(align, size);
+   if (addr =3D=3D NULL)  {
+        /* report error*/
+   }
+   return addr;
+}
+=20
 
-I also run app/dpdk-test-crypto-perf  throughput  test with dpaa_sec.
-It only measures throughput and doesn't check  correctness.
+> +static void running_free(void *ptr, void *udata)
+> +{
+> +	if (!ptr)
+> +		return;
+> +	struct acl_ctx_wrapper *acl_ctx =3D (struct acl_ctx_wrapper *)udata;
+> +	printf("running memory free, pointer=3D%p\n", ptr);
+> +	acl_ctx->running_buf_using =3D false;
+> +}
+> +
+> +static int
+> +test_mem_hook(void)
+> +{
+> +	int i, ret;
+> +	struct acl_ctx_wrapper acl_ctx_wrapper =3D {0};
+> +	acl_ctx_wrapper.ctx =3D rte_acl_create(&acl_param);
+> +	if (acl_ctx_wrapper.ctx =3D=3D NULL) {
+> +		printf("Line %i: Error creating ACL context!\n", __LINE__);
+> +		return -1;
+> +	}
+> +	acl_ctx_wrapper.running_buf =3D malloc(ACL_RUNNING_BUF_SIZE);
+> +	if (!acl_ctx_wrapper.running_buf) {
+> +		rte_acl_free(acl_ctx_wrapper.ctx);
+> +		printf("Line %i: Error allocing running buf for acl context!\n",
+> __LINE__);
+> +		return 1;
+> +	}
+> +	acl_ctx_wrapper.running_buf_using =3D false;
+> +
+> +	struct rte_acl_mem_hook mhook =3D {
+> +		.zalloc =3D running_alloc,
+> +		.free =3D running_free,
+> +		.udata =3D &acl_ctx_wrapper
+> +	};
+> +	ret =3D rte_acl_set_mem_hook(acl_ctx_wrapper.ctx, &mhook);
+> +	if (ret !=3D 0) {
+> +		printf("Line %i: Error set mem hook for acl context!\n", __LINE__);
+> +		rte_acl_free(acl_ctx_wrapper.ctx);
+> +		free(acl_ctx_wrapper.running_buf);
+> +		return 1;
+> +	}
+> +	struct rte_acl_mem_hook new_hook;
+> +	memset(&new_hook, 0, sizeof(struct rte_acl_mem_hook));
+> +	if (rte_acl_get_mem_hook(acl_ctx_wrapper.ctx, &new_hook) !=3D 0
+> +		|| memcmp(&mhook, &new_hook, sizeof(struct
+> rte_acl_mem_hook)) !=3D 0) {
+> +		printf("Line %i: Error get mem hook for acl context!\n", __LINE__);
+> +		rte_acl_free(acl_ctx_wrapper.ctx);
+> +		free(acl_ctx_wrapper.running_buf);
+> +		return 1;
+> +	}
+> +	ret =3D 0;
+> +	for (i =3D 0; i < TEST_CLASSIFY_ITER; i++) {
+> +
+> +		if ((i & 1) =3D=3D 0)
+> +			rte_acl_reset(acl_ctx_wrapper.ctx);
+> +		else
+> +			rte_acl_reset_rules(acl_ctx_wrapper.ctx);
+> +
+> +		ret =3D test_classify_buid(acl_ctx_wrapper.ctx, acl_test_rules,
+> +			RTE_DIM(acl_test_rules));
+> +		if (ret !=3D 0) {
+> +			printf("Line %i, iter: %d: Adding rules to ACL context
+> failed!\n",
+> +				__LINE__, i);
+> +			break;
+> +		}
+> +
+> +		ret =3D test_classify_run(acl_ctx_wrapper.ctx, acl_test_data,
+> +			RTE_DIM(acl_test_data));
+> +		if (ret !=3D 0) {
+> +			printf("Line %i, iter: %d: %s failed!\n",
+> +				__LINE__, i, __func__);
+> +			break;
+> +		}
+> +
+> +		/* reset rules and make sure that classify still works ok. */
+> +		rte_acl_reset_rules(acl_ctx_wrapper.ctx);
+> +		ret =3D test_classify_run(acl_ctx_wrapper.ctx, acl_test_data,
+> +			RTE_DIM(acl_test_data));
+> +		if (ret !=3D 0) {
+> +			printf("Line %i, iter: %d: %s failed!\n",
+> +				__LINE__, i, __func__);
+> +			break;
+> +		}
+> +	}
+> +
+> +	rte_acl_free(acl_ctx_wrapper.ctx);
+> +	free(acl_ctx_wrapper.running_buf);
+> +	return ret;
+> +}
+> +
+>  static int
+>  test_acl(void)
+>  {
+> @@ -1742,6 +1857,8 @@ test_acl(void)
+>  		return -1;
+>  	if (test_u32_range() < 0)
+>  		return -1;
+> +	if (test_mem_hook() < 0)
+> +		return -1;
+>=20
+>  	return 0;
+>  }
+> diff --git a/doc/guides/prog_guide/packet_classif_access_ctrl.rst
+> b/doc/guides/prog_guide/packet_classif_access_ctrl.rst
+> index 172f443f6e..55b2018db9 100644
+> --- a/doc/guides/prog_guide/packet_classif_access_ctrl.rst
+> +++ b/doc/guides/prog_guide/packet_classif_access_ctrl.rst
+> @@ -359,7 +359,38 @@ For example:
+>          ret =3D rte_acl_build(acx, &cfg);
+>       }
+>=20
+> +Custom Memory Hooks
+> +~~~~~~~~~~~~~~~~~~~~
+> +
+> +The ACL library supports custom memory allocation for runtime structures=
+.
+> +Applications can supply their own memory hooks through:
+> +
+> +.. code-block:: c
+> +
+> +    int rte_acl_set_mem_hook(struct rte_acl_ctx *ctx,
+> +                           const struct rte_acl_mem_hook *mhook);
+> +
+> +    int rte_acl_get_mem_hook(const struct rte_acl_ctx *ctx,
+> +                           struct rte_acl_mem_hook *mhook);
+> +
+> +The ``rte_acl_mem_hook`` structure defines memory hooks:
+> +
+> +.. code-block:: c
+> +
+> +    struct rte_acl_mem_hook {
+> +        /** Allocate zero-initialized memory used during runtime. */
+> +        void *(*zalloc)(char *name, size_t size, size_t align, int32_t s=
+ocket_id, void
+> *udata);
+> +
+> +        /** Free memory previously allocated by zalloc(). */
+> +        void (*free)(void *ptr, void *udata);
+> +
+> +        /** User-provided context passed to allocation/free hooks. */
+> +        void *udata;
+> +    };
+> +
+> +Applications may use these hooks to allocate memory from custom pools or=
+ pre-
+> allocated buffers.
+>=20
+> +If no memory hook is provided, the ACL library uses rte_zmalloc_socket()=
+ internally.
+>=20
+>  Classification methods
+>  ~~~~~~~~~~~~~~~~~~~~~~
+> diff --git a/lib/acl/acl.h b/lib/acl/acl.h
+> index c8e4e72fab..9c85a3d58a 100644
+> --- a/lib/acl/acl.h
+> +++ b/lib/acl/acl.h
+> @@ -174,6 +174,7 @@ struct rte_acl_ctx {
+>  	uint32_t            max_rules;
+>  	uint32_t            rule_sz;
+>  	uint32_t            num_rules;
+> +	struct rte_acl_mem_hook mem_hook;
+>  	uint32_t            num_categories;
+>  	uint32_t            num_tries;
+>  	uint32_t            match_index;
+> diff --git a/lib/acl/acl_bld.c b/lib/acl/acl_bld.c
+> index 7056b1c117..99d1dbc467 100644
+> --- a/lib/acl/acl_bld.c
+> +++ b/lib/acl/acl_bld.c
+> @@ -779,7 +779,7 @@ acl_merge_trie(struct acl_build_context *context,
+>  static void
+>  acl_build_reset(struct rte_acl_ctx *ctx)
+>  {
+> -	rte_free(ctx->mem);
+> +	ctx->mem_hook.free(ctx->mem, ctx->mem_hook.udata);
+>  	memset(&ctx->num_categories, 0,
+>  		sizeof(*ctx) - offsetof(struct rte_acl_ctx, num_categories));
+>  }
+> diff --git a/lib/acl/acl_gen.c b/lib/acl/acl_gen.c
+> index 3c53d24056..77f19dd13a 100644
+> --- a/lib/acl/acl_gen.c
+> +++ b/lib/acl/acl_gen.c
+> @@ -478,8 +478,8 @@ rte_acl_gen(struct rte_acl_ctx *ctx, struct rte_acl_t=
+rie *trie,
+>  		return -ERANGE;
+>  	}
+>=20
+> -	mem =3D rte_zmalloc_socket(ctx->name, total_size, RTE_CACHE_LINE_SIZE,
+> -			ctx->socket_id);
+> +	mem =3D ctx->mem_hook.zalloc(ctx->name, total_size,
+> +			RTE_CACHE_LINE_SIZE, ctx->socket_id, ctx-
+> >mem_hook.udata);
+>  	if (mem =3D=3D NULL) {
+>  		ACL_LOG(ERR,
+>  			"allocation of %zu bytes on socket %d for %s failed",
+> diff --git a/lib/acl/rte_acl.c b/lib/acl/rte_acl.c
+> index 8c0ca29618..3f2b194206 100644
+> --- a/lib/acl/rte_acl.c
+> +++ b/lib/acl/rte_acl.c
+> @@ -264,6 +264,20 @@ acl_get_best_alg(void)
+>  	return alg[i];
+>  }
+>=20
+> +static void *
+> +acl_mem_default_zalloc(char *name, size_t size, size_t align, int32_t so=
+cket_id,
+> void *udata)
+> +{
+> +	RTE_SET_USED(udata);
+> +	return rte_zmalloc_socket(name, size, align, socket_id);
+> +}
+> +
+> +static void
+> +acl_mem_default_free(void *ptr, void *udata)
+> +{
+> +	RTE_SET_USED(udata);
+> +	rte_free(ptr);
+> +}
+> +
+>  RTE_EXPORT_SYMBOL(rte_acl_set_ctx_classify)
+>  extern int
+>  rte_acl_set_ctx_classify(struct rte_acl_ctx *ctx, enum rte_acl_classify_=
+alg alg)
+> @@ -362,7 +376,7 @@ rte_acl_free(struct rte_acl_ctx *ctx)
+>=20
+>  	rte_mcfg_tailq_write_unlock();
+>=20
+> -	rte_free(ctx->mem);
+> +	ctx->mem_hook.free(ctx->mem, ctx->mem_hook.udata);
+>  	rte_free(ctx);
+>  	rte_free(te);
+>  }
+> @@ -425,6 +439,9 @@ rte_acl_create(const struct rte_acl_param *param)
+>  		ctx->rule_sz =3D param->rule_size;
+>  		ctx->socket_id =3D param->socket_id;
+>  		ctx->alg =3D acl_get_best_alg();
+> +		ctx->mem_hook.zalloc =3D acl_mem_default_zalloc;
+> +		ctx->mem_hook.free =3D acl_mem_default_free;
+> +		ctx->mem_hook.udata =3D NULL;
+>  		strlcpy(ctx->name, param->name, sizeof(ctx->name));
+>=20
+>  		te->data =3D (void *) ctx;
+> @@ -555,3 +572,29 @@ rte_acl_list_dump(void)
+>  	}
+>  	rte_mcfg_tailq_read_unlock();
+>  }
+> +
+> +/*
+> + * Set memory allocation hooks for a given ACL context.
+> + */
+> +RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_acl_set_mem_hook, 26.03)
+> +int
+> +rte_acl_set_mem_hook(struct rte_acl_ctx *acl, const struct rte_acl_mem_h=
+ook
+> *mhook)
+> +{
+> +	if (acl =3D=3D NULL || mhook =3D=3D NULL || mhook->zalloc  =3D=3D NULL =
+|| mhook-
+> >free =3D=3D NULL)
+> +		return -EINVAL;
+> +	memcpy(&acl->mem_hook, mhook, sizeof(struct rte_acl_mem_hook));
+> +	return 0;
+> +}
+> +
+> +/*
+> + * Retrieve the memory allocation hooks assigned to the ACL context.
+> + */
+> +RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_acl_get_mem_hook, 26.03)
+> +int
+> +rte_acl_get_mem_hook(const struct rte_acl_ctx *acl, struct rte_acl_mem_h=
+ook
+> *mhook)
+> +{
+> +	if (acl  =3D=3D NULL || mhook =3D=3D NULL)
+> +		return -EINVAL;
+> +	memcpy(mhook, &acl->mem_hook, sizeof(struct rte_acl_mem_hook));
+> +	return 0;
+> +}
+> diff --git a/lib/acl/rte_acl.h b/lib/acl/rte_acl.h
+> index 95354cabb8..18ac30889b 100644
+> --- a/lib/acl/rte_acl.h
+> +++ b/lib/acl/rte_acl.h
+> @@ -136,6 +136,59 @@ struct rte_acl_param {
+>  /** @internal opaque ACL handle */
+>  struct rte_acl_ctx;
+>=20
+> +/**
+> + * Memory allocation hooks for ACL runtime.
+> + */
+> +struct rte_acl_mem_hook {
+> +	/** Allocate zero-initialized memory used during runtime. */
+> +	void *(*zalloc)(char *name, size_t size, size_t align, int32_t socket_i=
+d, void
+> *udata);
+> +
+> +	/** Free memory previously allocated by zalloc(). */
+> +	void (*free)(void *ptr, void *udata);
+> +
+> +	/** User-provided context passed to allocation/free hooks. */
+> +	void *udata;
+> +};
+> +
+> +/**
+> + * Set memory allocation hooks for a given ACL context.
+> + *
+> + * Applications may use these hooks to allocate memory from custom pools=
+ or
+> + * pre-allocated buffers. If no memory hook is provided, the ACL library=
+ uses
+> + * rte_zmalloc_socket() internally.
+> + *
+> + * This function must be called **before** rte_acl_build().
+> + * If the hook needs to be changed after a build, the ACL context must b=
+e reset
+> + * first by invoking rte_acl_reset(), and only then can the memory hook =
+be
+> + * updated followed by another call to rte_acl_build().
+> + *
+> + * @param acl
+> + *   The ACL context.
+> + * @param mhook
+> + *   Pointer to the memory hook structure
+> + *
+> + * @return
+> + *   0 on success.
+> + *   -EINVAL if parameters are invalid.
+> + */
+> +__rte_experimental
+> +int rte_acl_set_mem_hook(struct rte_acl_ctx *acl, const struct rte_acl_m=
+em_hook
+> *mhook);
+> +
+> +/**
+> + * Retrieve the memory allocation hooks assigned to the ACL context.
+> + *
+> + * @param acl
+> + *   The ACL context.
+> + * @param mhook
+> + *   Output location for the current memory hook structure
+> + *
+> + * @return
+> + *   0 on success.
+> + *   -EINVAL if parameters are invalid.
+> + */
+> +__rte_experimental
+> +int rte_acl_get_mem_hook(const struct rte_acl_ctx *acl, struct rte_acl_m=
+em_hook
+> *mhook);
+> +
+>  /**
+>   * De-allocate all memory used by ACL context.
+>   *
+> --
+> 2.43.0
+>=20
 
-I find the session is created with rte_security_session_create() in
-app/test-crypto-perf/cperfops.c for CPERF_PDCP.
-And session is created with rte_cryptodev_sym_session_create()
-in lib/pdcp/pdcp_crypto.c .
-Which type of session should be created ?
-
-How the test_pdcp can succeed in LS1046A DPAA_SEC ?
-
-Thanks a lot.
-
---0000000000004f164f064581c403
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr"><div>Hi, NXP and <a href=3D"http://dpdk.org">dpdk.org</a> =
-users and developers</div><div><br></div><div>Did anyone run test_pdcp on D=
-PAA_SEC ?</div><div><br></div><div>I have a NXP LS1046A board.</div><div>
-<div>I have configured DPAA sec and 4 dpaa_sec crypto_dev can be found</div=
-><div>in rte_eal_init().</div><div></div>
-
-<br></div><div>I run dpdk-test from <a href=3D"http://dpdk.org">dpdk.org</a=
-> git commit =3D b287e404643a=C2=A0 (24.11.3)</div><div>and almost all case=
-s execpt one PDCP status report case failed.</div><div><br></div><div>I als=
-o run app/dpdk-test-crypto-perf=C2=A0
-throughput=C2=A0 test with dpaa_sec.</div><div>It only measures throughput =
-and doesn&#39;t check=C2=A0 correctness.</div><div><br></div><div>I find th=
-e session is created with=C2=A0rte_security_session_create() in</div><div>a=
-pp/test-crypto-perf/cperfops.c for=C2=A0CPERF_PDCP.</div><div>And session i=
-s created with rte_cryptodev_sym_session_create()</div><div>in lib/pdcp/pdc=
-p_crypto.c .</div><div>Which type of session should be created ?</div><div>=
-<br></div><div>How the test_pdcp can succeed in LS1046A DPAA_SEC ?</div><di=
-v><br></div><div>Thanks a lot.</div><br><div><br></div></div>
-
---0000000000004f164f064581c403--
