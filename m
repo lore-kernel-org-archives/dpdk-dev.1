@@ -2,63 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3184FD3B7E2
-	for <dpdk-dev@archiver.kernel.org>; Tue,  9 Dec 2025 02:30:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E0ABD3B7EA
+	for <dpdk-dev@archiver.kernel.org>; Tue,  9 Dec 2025 02:36:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0195B40270;
-	Tue,  9 Dec 2025 03:30:41 +0100 (CET)
-Received: from smtpbg151.qq.com (smtpbg151.qq.com [18.169.211.239])
- by mails.dpdk.org (Postfix) with ESMTP id EE39F4025F
- for <dev@dpdk.org>; Tue,  9 Dec 2025 03:30:38 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tencent.com;
- s=s201512; t=1765247437;
- bh=ZCFkfH7QgYtUcw2J4pXoJFqJFR4H8v9xg/DIN7JBI7I=;
- h=Message-ID:Date:MIME-Version:Subject:To:From;
- b=vt5s7z9ad1I6J/CZoMx4zpyrTxed3IIbjL7ecIYqppuVbdYsPqaZGl9MJjrhGeG7W
- boa8C+w+pyVq3caI7Rwjo9y7kGZuC4pWzFfrpkLwpMPuS/a8lZNRr6QHwS7c7Hlw01
- 4W/0VeeV9ACahO52LVzcWhrU67FLdhamUfb9nTi4=
-X-QQ-mid: zesmtpgz1t1765247433t3d7983d5
-X-QQ-Originating-IP: jAuXglt1p56bDZuJLc/C4b1CnUE2UZi82L0IAffxilw=
-Received: from [127.0.0.1] ( [11.176.19.22]) by bizesmtp.qq.com (ESMTP) with 
- id ; Tue, 09 Dec 2025 10:30:32 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 734143473917541928
-Message-ID: <ACCDEF5FF0444B4A+74e02010-42f4-4b59-bb14-66aeccfe9bfd@tencent.com>
-Date: Tue, 9 Dec 2025 10:30:32 +0800
+	by mails.dpdk.org (Postfix) with ESMTP id ABDA640270;
+	Tue,  9 Dec 2025 03:36:27 +0100 (CET)
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.34])
+ by mails.dpdk.org (Postfix) with ESMTP id 687844025F
+ for <dev@dpdk.org>; Tue,  9 Dec 2025 03:36:25 +0100 (CET)
+Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mxhk.zte.com.cn (FangMail) with ESMTPS id 4dQNJm1J7tz6Fy6B;
+ Tue, 09 Dec 2025 10:36:24 +0800 (CST)
+Received: from szxlzmapp01.zte.com.cn ([10.5.231.85])
+ by mse-fl1.zte.com.cn with SMTP id 5B92Zci2045215;
+ Tue, 9 Dec 2025 10:35:38 +0800 (+08)
+ (envelope-from zhang.tianhao2@zte.com.cn)
+Received: from localhost.localdomain (unknown [192.168.6.15])
+ by smtp (Zmail) with SMTP; Tue, 9 Dec 2025 10:35:39 +0800
+X-Zmail-TransId: 3e8169378aed00e-0796a
+X-Zmail-LocalSMTP: 1
+X-Zmail-RealSender: zhang.tianhao2@zte.com.cn
+From: Tianhao Zhang <zhang.tianhao2@zte.com.cn>
+To: stephen@networkplumber.org, wang.junlong1@zte.com.cn,
+ yang.yonggang@zte.com.cn
+Cc: dev@dpdk.org, Tianhao Zhang <zhang.tianhao2@zte.com.cn>
+Subject: [PATCH v1] net/zxdh: add pcie bar channel check
+Date: Tue,  9 Dec 2025 10:16:09 +0800
+Message-ID: <20251209021609.3911854-1-zhang.tianhao2@zte.com.cn>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Internet]Re: [PATCH v6] acl: support custom memory allocators
-To: Stephen Hemminger <stephen@networkplumber.org>,
- Konstantin Ananyev <konstantin.ananyev@huawei.com>
-Cc: "dev@dpdk.org" <dev@dpdk.org>
-References: <58cca566-08bd-469e-b244-1800e0456cb0@huawei.com>
- <BFA8D0B9488D3A67+20251202092502.165081-1-mannywang@tencent.com>
- <2571c074e438491e837c51d1bdc5a538@huawei.com>
- <20251208112916.2743f596@phoenix.local>
-From: "=?gb18030?B?bWFubnl3YW5nKM3108C35Sk=?=" <mannywang@tencent.com>
-In-Reply-To: <20251208112916.2743f596@phoenix.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpgz:tencent.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: MjqaYNLY8QZGCMINOEup+XmQuWq8eKITx679rXufeLYU2NuYE9pplrHe
- qTHVLADjnTFb1JU+xQfRJ2o7hfO0EEzJawo4glx4tXN2um6XTXk6a1XP2/vnYewXONA54aH
- pnQtL4gT7QuJyHMJCed6FHp6WK84YXIc3dM5K/+Tz/5KhD146spYCx7dvkO03JTEkutrJpI
- duY0V6UXDXCdARb11WyTvPbsvhpOKWd5km2DWddaebG3dagL3OdN9KjwNsJxLNYnU4NjcLz
- v5ngXyPYnYtnyXxn5qX5zumbKCrCTwig2SX4imtpfFDtx8IU7JCVgx2ZVDTnnYBrqt0ElLt
- +RRt99IRdgY5egAxy155InX7uJCkFgLh5iuemNrNjsSrdmJ9bA3fqlul7Zr/Da9NjEnPdIJ
- ORICEHCBoQSh1ptEbyvQdHrqLXq0XWfdCn6uywoSUvni1O0m74eMpEs96mWFcDoYKfMhMUB
- MREHCcTMxlabzaTCQHW+d6u5+EaOtML2U9x+B4fCN32Qc5aU9EqVlTY6t7Z7GVpGZSZ0/3e
- lVpE3WlJRh660hLbpxRI6QVvRcHlzOjD18XMe3JLnbZkRfqnKre9elB2jH42AWF5e+R+0bC
- YJljXYAxRvtUd66FwOUKrXczEQ5Kx/T2a2D0Gi9hlQxGDqLJi0dJEZmJ5pvzCh7BkGLw0H1
- Pfxzolof3bCeAAQEpcNzDkJVPcZbIQnktzr8ak5AWRfjqPJNIwHM1yEaKBhrEB/805bep35
- IugUV5bvoDCSd1o34AObZcZqUmQkAAqaO+qm+pTEpP5T0Z4l7rlkpLlz99CwFkOGKYDhx3y
- cjnutB0cbiKSrD7GCfICpK7DWbfLB7BfjUUnrcoSGNOg+Ez9lSit42N4K9EngoUoN8+DK08
- 7XD4xbg9HGfkQAl0TfmpCpW4GL3rnyntYX4ay4FlcOJtnlnesBJSh2UNSova57iBaOMAOmr
- XDar92evTcjL/szuHCl1WPoyG
-X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
-X-QQ-RECHKSPAM: 0
+Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed;
+	boundary="=====_001_next====="
+X-MAIL: mse-fl1.zte.com.cn 5B92Zci2045215
+X-TLS: YES
+X-SPF-DOMAIN: zte.com.cn
+X-ENVELOPE-SENDER: zhang.tianhao2@zte.com.cn
+X-SPF: None
+X-SOURCE-IP: 10.5.228.132 unknown Tue, 09 Dec 2025 10:36:24 +0800
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 69378B28.000/4dQNJm1J7tz6Fy6B
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -72,20 +58,136 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Just to add some background on how ACL currently allocates memory:
 
-ACL has two types of allocations:
-1. The memory used for the ACL match trie is NUMA-aware.
-    This part relies on specific NUMA placement, so replacing rte_malloc 
-with
-    regular malloc/free is not feasible.
 
-2. The temporary memory used during the build phase already uses 
-malloc/free,
-    since NUMA locality is not required there.
+--=====_001_next=====
+Content-Type: multipart/related;
+	boundary="=====_002_next====="
 
-On 12/9/2025 3:29 AM, Stephen Hemminger wrote:
-> A lot of the problems would go away if ACL just used regular malloc/free more,
-> and rte_malloc/rte_free less. The existing rte_malloc is slow and fragments badly
 
+--=====_002_next=====
+Content-Type: multipart/alternative;
+	boundary="=====_003_next====="
+
+
+--=====_003_next=====
+Content-Type: text/plain;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+
+QWRkIHBjaWUgYmFyIGNoYW5uZWwgY2hlY2sgYWZ0ZXIgZ2V0dGluZyBkdGIgc3BhY2UgbGVmdC4N
+Cg0KU2lnbmVkLW9mZi1ieTogVGlhbmhhbyBaaGFuZyA8emhhbmcudGlhbmhhbzJAenRlLmNvbS5j
+bj4NCi0tLQ0KIGRyaXZlcnMvbmV0L3p4ZGgvenhkaF9ucC5jIHwgNyArKysrKysrDQogZHJpdmVy
+cy9uZXQvenhkaC96eGRoX25wLmggfCAyICsrDQogMiBmaWxlcyBjaGFuZ2VkLCA5IGluc2VydGlv
+bnMoKykNCg0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvbmV0L3p4ZGgvenhkaF9ucC5jIGIvZHJpdmVy
+cy9uZXQvenhkaC96eGRoX25wLmMNCmluZGV4IDAyNGRhMTEzZTIuLjRlMjYzN2UxYjYgMTAwNjQ0
+DQotLS0gYS9kcml2ZXJzL25ldC96eGRoL3p4ZGhfbnAuYw0KKysrIGIvZHJpdmVycy9uZXQvenhk
+aC96eGRoX25wLmMNCkBAIC0zNjk4LDYgKzM2OTgsMTMgQEAgenhkaF9ucF9kdGJfcXVldWVfdW51
+c2VkX2l0ZW1fbnVtX2dldCh1aW50MzJfdCBkZXZfaWQsDQogCXJjID0genhkaF9ucF9yZWdfcmVh
+ZChkZXZfaWQsIFpYREhfRFRCX0lORk9fUVVFVUVfQlVGX1NQQUNFLA0KIAkJMCwgcXVldWVfaWQs
+IHBfaXRlbV9udW0pOw0KIAlaWERIX0NPTU1fQ0hFQ0tfREVWX1JDKGRldl9pZCwgcmMsICJkcHBf
+cmVnX3JlYWQiKTsNCisNCisJaWYoKCpwX2l0ZW1fbnVtICYgWlhESF9EVEJfU1BBQ0VfTEVGVF9N
+QVNLKSA9PSBaWERIX0RUQl9TUEFDRV9MRUZUX01BU0spDQorICAgIHsNCisJCVBNRF9EUlZfTE9H
+KEVSUiwgInBjaWUgYmFyIGFibm9ybWFsLCBnZXQgZHRiIHNwYWNlIGxlZnQgZmFsc2UuIik7DQor
+ICAgICAgICByZXR1cm4gWlhESF9SQ19EVEJfQkFSX0FCTk9STUFMOw0KKyAgICB9DQorCQ0KIAly
+ZXR1cm4gcmM7DQogfQ0KIA0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvbmV0L3p4ZGgvenhkaF9ucC5o
+IGIvZHJpdmVycy9uZXQvenhkaC96eGRoX25wLmgNCmluZGV4IGIwODIzMTkyZTcuLjViOWFlYzlj
+OGYgMTAwNjQ0DQotLS0gYS9kcml2ZXJzL25ldC96eGRoL3p4ZGhfbnAuaA0KKysrIGIvZHJpdmVy
+cy9uZXQvenhkaC96eGRoX25wLmgNCkBAIC05NCw2ICs5NCw3IEBADQogI2RlZmluZSBaWERIX0RU
+Ql9UQUJfQUNLX1NVQ0NFU1NfTUFTSyAgICAgICAgICAgICgweGZmKQ0KICNkZWZpbmUgWlhESF9E
+VEJfVEFCX0FDS19GQUlMRURfTUFTSyAgICAgICAgICAgICAoMHgxKQ0KICNkZWZpbmUgWlhESF9E
+VEJfVEFCX0FDS19DSEVDS19WQUxVRSAgICAgICAgICAgICAoMHgxMjM0NTY3OCkNCisjZGVmaW5l
+IFpYREhfRFRCX1NQQUNFX0xFRlRfTUFTSyAgICAgICAgICAgICAgICAgKDB4M0YpDQogDQogI2Rl
+ZmluZSBaWERIX0RUQl9UQUJfQUNLX1ZMRF9TSElGVCAgICAgICAgICAgICAgICgxMDQpDQogI2Rl
+ZmluZSBaWERIX0RUQl9UQUJfQUNLX1NUQVRVU19TSElGVCAgICAgICAgICAgICg5NikNCkBAIC0z
+MjEsNiArMzIyLDcgQEANCiAjZGVmaW5lIFpYREhfUkNfRFRCX0RVTVBfU0laRV9TTUFMTCAgICAg
+ICAgICAgICAoWlhESF9SQ19EVEJfQkFTRSB8IDB4MTYpDQogI2RlZmluZSBaWERIX1JDX0RUQl9T
+RUFSQ0hfVlBPUlRfUVVFVUVfWkVSTyAgICAgKFpYREhfUkNfRFRCX0JBU0UgfCAweDE3KQ0KICNk
+ZWZpbmUgWlhESF9SQ19EVEJfUVVFVUVfTk9UX0VOQUJMRSAgICAgICAgICAgIChaWERIX1JDX0RU
+Ql9CQVNFIHwgMHgxOCkNCisjZGVmaW5lIFpYREhfUkNfRFRCX0JBUl9BQk5PUk1BTCAgICAgICAg
+ICAgICAgICAoWlhESF9SQ19EVEJfQkFTRSB8IDB4MTkpDQogDQogI2RlZmluZSBaWERIX1JDX0NU
+UkxDSF9CQVNFICAgICAgICAgICAgICAgICAgICAgKDB4ZjAwKQ0KICNkZWZpbmUgWlhESF9SQ19D
+VFJMQ0hfTVNHX0xFTl9aRVJPICAgICAgICAgICAgIChaWERIX1JDX0NUUkxDSF9CQVNFIHwgMHgw
+KQ0KLS0gDQoyLjI3LjA=
+
+
+--=====_003_next=====
+Content-Type: text/html ;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+
+QWRkJm5ic3A7cGNpZSZuYnNwO2JhciZuYnNwO2NoYW5uZWwmbmJzcDtjaGVjayZuYnNwO2FmdGVy
+Jm5ic3A7Z2V0dGluZyZuYnNwO2R0YiZuYnNwO3NwYWNlJm5ic3A7bGVmdC48YnIgLz4NPGJyIC8+
+U2lnbmVkLW9mZi1ieTombmJzcDtUaWFuaGFvJm5ic3A7WmhhbmcmbmJzcDsmbHQ7emhhbmcudGlh
+bmhhbzJAenRlLmNvbS5jbiZndDsNPGJyIC8+LS0tPGJyIC8+Jm5ic3A7ZHJpdmVycy9uZXQvenhk
+aC96eGRoX25wLmMmbmJzcDt8Jm5ic3A7NyZuYnNwOysrKysrKys8YnIgLz4mbmJzcDtkcml2ZXJz
+L25ldC96eGRoL3p4ZGhfbnAuaCZuYnNwO3wmbmJzcDsyJm5ic3A7Kys8YnIgLz4mbmJzcDsyJm5i
+c3A7ZmlsZXMmbmJzcDtjaGFuZ2VkLCZuYnNwOzkmbmJzcDtpbnNlcnRpb25zKCspPGJyIC8+DTxi
+ciAvPmRpZmYmbmJzcDstLWdpdCZuYnNwO2EvZHJpdmVycy9uZXQvenhkaC96eGRoX25wLmMmbmJz
+cDtiL2RyaXZlcnMvbmV0L3p4ZGgvenhkaF9ucC5jPGJyIC8+aW5kZXgmbmJzcDswMjRkYTExM2Uy
+Li40ZTI2MzdlMWI2Jm5ic3A7MTAwNjQ0PGJyIC8+LS0tJm5ic3A7YS9kcml2ZXJzL25ldC96eGRo
+L3p4ZGhfbnAuYzxiciAvPisrKyZuYnNwO2IvZHJpdmVycy9uZXQvenhkaC96eGRoX25wLmM8YnIg
+Lz5AQCZuYnNwOy0zNjk4LDYmbmJzcDsrMzY5OCwxMyZuYnNwO0BAJm5ic3A7enhkaF9ucF9kdGJf
+cXVldWVfdW51c2VkX2l0ZW1fbnVtX2dldCh1aW50MzJfdCZuYnNwO2Rldl9pZCw8YnIgLz4mbmJz
+cDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDtyYyZuYnNwOz0mbmJzcDt6eGRoX25wX3JlZ19yZWFk
+KGRldl9pZCwmbmJzcDtaWERIX0RUQl9JTkZPX1FVRVVFX0JVRl9TUEFDRSw8YnIgLz4mbmJzcDsm
+bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDswLCZuYnNwO3F1
+ZXVlX2lkLCZuYnNwO3BfaXRlbV9udW0pOzxiciAvPiZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZu
+YnNwO1pYREhfQ09NTV9DSEVDS19ERVZfUkMoZGV2X2lkLCZuYnNwO3JjLCZuYnNwOyZxdW90O2Rw
+cF9yZWdfcmVhZCZxdW90Oyk7PGJyIC8+KzxiciAvPismbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDtp
+ZigoKnBfaXRlbV9udW0mbmJzcDsmYW1wOyZuYnNwO1pYREhfRFRCX1NQQUNFX0xFRlRfTUFTSykm
+bmJzcDs9PSZuYnNwO1pYREhfRFRCX1NQQUNFX0xFRlRfTUFTSyk8YnIgLz4rJm5ic3A7Jm5ic3A7
+Jm5ic3A7Jm5ic3A7ezxiciAvPismbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsm
+bmJzcDsmbmJzcDtQTURfRFJWX0xPRyhFUlIsJm5ic3A7JnF1b3Q7cGNpZSZuYnNwO2JhciZuYnNw
+O2Fibm9ybWFsLCZuYnNwO2dldCZuYnNwO2R0YiZuYnNwO3NwYWNlJm5ic3A7bGVmdCZuYnNwO2Zh
+bHNlLiZxdW90Oyk7PGJyIC8+KyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZu
+YnNwOyZuYnNwO3JldHVybiZuYnNwO1pYREhfUkNfRFRCX0JBUl9BQk5PUk1BTDs8YnIgLz4rJm5i
+c3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7fTxiciAvPismbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsNPGJy
+IC8+Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7cmV0dXJuJm5ic3A7cmM7PGJyIC8+Jm5i
+c3A7fTxiciAvPiZuYnNwOw08YnIgLz5kaWZmJm5ic3A7LS1naXQmbmJzcDthL2RyaXZlcnMvbmV0
+L3p4ZGgvenhkaF9ucC5oJm5ic3A7Yi9kcml2ZXJzL25ldC96eGRoL3p4ZGhfbnAuaDxiciAvPmlu
+ZGV4Jm5ic3A7YjA4MjMxOTJlNy4uNWI5YWVjOWM4ZiZuYnNwOzEwMDY0NDxiciAvPi0tLSZuYnNw
+O2EvZHJpdmVycy9uZXQvenhkaC96eGRoX25wLmg8YnIgLz4rKysmbmJzcDtiL2RyaXZlcnMvbmV0
+L3p4ZGgvenhkaF9ucC5oPGJyIC8+QEAmbmJzcDstOTQsNiZuYnNwOys5NCw3Jm5ic3A7QEA8YnIg
+Lz4mbmJzcDsjZGVmaW5lJm5ic3A7WlhESF9EVEJfVEFCX0FDS19TVUNDRVNTX01BU0smbmJzcDsm
+bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJz
+cDsmbmJzcDsoMHhmZik8YnIgLz4mbmJzcDsjZGVmaW5lJm5ic3A7WlhESF9EVEJfVEFCX0FDS19G
+QUlMRURfTUFTSyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
+OyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOygweDEpPGJyIC8+Jm5ic3A7I2RlZmluZSZu
+YnNwO1pYREhfRFRCX1RBQl9BQ0tfQ0hFQ0tfVkFMVUUmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsm
+bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsoMHgx
+MjM0NTY3OCk8YnIgLz4rI2RlZmluZSZuYnNwO1pYREhfRFRCX1NQQUNFX0xFRlRfTUFTSyZuYnNw
+OyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZu
+YnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOygweDNGKTxiciAvPiZuYnNw
+Ow08YnIgLz4mbmJzcDsjZGVmaW5lJm5ic3A7WlhESF9EVEJfVEFCX0FDS19WTERfU0hJRlQmbmJz
+cDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsm
+bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsoMTA0KTxiciAvPiZuYnNwOyNkZWZpbmUmbmJz
+cDtaWERIX0RUQl9UQUJfQUNLX1NUQVRVU19TSElGVCZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZu
+YnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyg5Nik8YnIgLz5A
+QCZuYnNwOy0zMjEsNiZuYnNwOyszMjIsNyZuYnNwO0BAPGJyIC8+Jm5ic3A7I2RlZmluZSZuYnNw
+O1pYREhfUkNfRFRCX0RVTVBfU0laRV9TTUFMTCZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
+OyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyhaWERIX1JD
+X0RUQl9CQVNFJm5ic3A7fCZuYnNwOzB4MTYpPGJyIC8+Jm5ic3A7I2RlZmluZSZuYnNwO1pYREhf
+UkNfRFRCX1NFQVJDSF9WUE9SVF9RVUVVRV9aRVJPJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5i
+c3A7KFpYREhfUkNfRFRCX0JBU0UmbmJzcDt8Jm5ic3A7MHgxNyk8YnIgLz4mbmJzcDsjZGVmaW5l
+Jm5ic3A7WlhESF9SQ19EVEJfUVVFVUVfTk9UX0VOQUJMRSZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
+OyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyhaWERIX1JD
+X0RUQl9CQVNFJm5ic3A7fCZuYnNwOzB4MTgpPGJyIC8+KyNkZWZpbmUmbmJzcDtaWERIX1JDX0RU
+Ql9CQVJfQUJOT1JNQUwmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsm
+bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsoWlhE
+SF9SQ19EVEJfQkFTRSZuYnNwO3wmbmJzcDsweDE5KTxiciAvPiZuYnNwOw08YnIgLz4mbmJzcDsj
+ZGVmaW5lJm5ic3A7WlhESF9SQ19DVFJMQ0hfQkFTRSZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZu
+YnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
+OyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOygweGYwMCk8YnIgLz4m
+bmJzcDsjZGVmaW5lJm5ic3A7WlhESF9SQ19DVFJMQ0hfTVNHX0xFTl9aRVJPJm5ic3A7Jm5ic3A7
+Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5i
+c3A7Jm5ic3A7KFpYREhfUkNfQ1RSTENIX0JBU0UmbmJzcDt8Jm5ic3A7MHgwKTxiciAvPi0tJm5i
+c3A7DTxiciAvPjIuMjcuMDxiciAvPg==
+
+
+--=====_003_next=====--
+
+--=====_002_next=====--
+
+--=====_001_next=====--
 
