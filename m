@@ -2,59 +2,59 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8674D3B7EA
-	for <dpdk-dev@archiver.kernel.org>; Tue,  9 Dec 2025 08:42:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF62AD3B7EA
+	for <dpdk-dev@archiver.kernel.org>; Tue,  9 Dec 2025 08:50:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AB3E940270;
-	Tue,  9 Dec 2025 09:42:20 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
- by mails.dpdk.org (Postfix) with ESMTP id 20E8B4025F
- for <dev@dpdk.org>; Tue,  9 Dec 2025 09:42:16 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id AFEFE40270;
+	Tue,  9 Dec 2025 09:50:16 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+ by mails.dpdk.org (Postfix) with ESMTP id D6EEC4025F
+ for <dev@dpdk.org>; Tue,  9 Dec 2025 09:50:14 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1765269740; x=1796805740;
+ t=1765270215; x=1796806215;
  h=date:from:to:cc:subject:message-id:references:
  in-reply-to:mime-version;
- bh=yzO3DvLgOmdSfZcubbz6XPWQeBrzDLTvmH0K9xmc9xg=;
- b=MOB0CFl4CwP5y7M1b+RsjYS3PEea9sb9+kSk+DTKHvJPcnOJKmWVkRDd
- VtAfLUQXA5l5oHpkriZiv3iLVobQyHp8SS7tfYa/KM4sgyBxzL3GMsDUL
- hmK+l1R1mWrdUc2/KlhwC+QiqohJPPUn8URuJFiUDihREu6iAfFUVNiCF
- 8+bInQbln/KRdyMZbdCi49SwV5Exj6f2kKgLaVFz45tPXcAsE9j1RxpGj
- B8fm/VkgWld119qoOKOYJIoQP+qM/qoy6fHdHUn0pGHrRHcAP1HXbMibZ
- FsPpOL0w2O0R4xIkMujkRVqudKsAg95g5BC1YiCm5NoxzUXfUFE4vXmyo Q==;
-X-CSE-ConnectionGUID: yOH7lUIFSYOpA6IOjJp8nw==
-X-CSE-MsgGUID: kxdRF4RUSti7P1lTOHD9Sw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11636"; a="84827849"
-X-IronPort-AV: E=Sophos;i="6.20,260,1758610800"; d="scan'208";a="84827849"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
- by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 09 Dec 2025 00:42:16 -0800
-X-CSE-ConnectionGUID: YnSfnA6OTRyt9uc60en8cg==
-X-CSE-MsgGUID: kh5ZbHPjT1i8PD/LwGI0vQ==
+ bh=0PjrZEkSNwh57ZsPBHGdYPV3PJ571U8mpHzW/oWmy80=;
+ b=TTc1BvIUbmUcsxbuCX5b+xgCtIWh6oQB3CqcGj3EV9f00w61TGtGHg1y
+ soO9VUz4sV1p4d40SCSWclCjazLV6Hll0S9qK6R1ecXPck0sslOIXyZgX
+ SCsbmQ0Kusk+1JzPqdFQD3NYlWr0KcelQwj3vldtwKdhau0KnMNX/d7o4
+ AMilmglJVHTLJ/2s6RHUfBN3VEC9WXtENhQj3Y7RTteJrc0pVa2jcYBWn
+ kF+xNMrV2YAYPy2gMbJUGpi4PITmzdp6XbWwt+ueWMK67vkdN2XQMmj59
+ GUyRfRsz/qfaTFcLO5njiwrRnbuTpg7SflZ1gnA2epbrWxY+LiMUZCE99 Q==;
+X-CSE-ConnectionGUID: GSLJNBRJTuKNsNVJsJRbrw==
+X-CSE-MsgGUID: rAkxS6KmSaSqDPZpLwtHZw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11636"; a="77908460"
+X-IronPort-AV: E=Sophos;i="6.20,261,1758610800"; d="scan'208";a="77908460"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+ by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 09 Dec 2025 00:50:14 -0800
+X-CSE-ConnectionGUID: tDTk5nL2S0qOsl8q+qA4Hg==
+X-CSE-MsgGUID: tLZhWZZAT+GI+MvH6naJTw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.20,260,1758610800"; d="scan'208";a="219517847"
-Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
- by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 09 Dec 2025 00:42:15 -0800
-Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
- fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+X-IronPort-AV: E=Sophos;i="6.20,261,1758610800"; d="scan'208";a="200646080"
+Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
+ by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 09 Dec 2025 00:50:14 -0800
+Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.29; Tue, 9 Dec 2025 00:42:14 -0800
-Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
- FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ 15.2.2562.29; Tue, 9 Dec 2025 00:50:13 -0800
+Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
+ FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.29 via Frontend Transport; Tue, 9 Dec 2025 00:42:14 -0800
-Received: from CH5PR02CU005.outbound.protection.outlook.com (40.107.200.0) by
- edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
+ 15.2.2562.29 via Frontend Transport; Tue, 9 Dec 2025 00:50:13 -0800
+Received: from SN4PR0501CU005.outbound.protection.outlook.com (40.93.194.70)
+ by edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.29; Tue, 9 Dec 2025 00:42:14 -0800
+ 15.2.2562.29; Tue, 9 Dec 2025 00:50:12 -0800
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Fnts7jdEkn07nqpoA4xSHhrSo7t36tPrm4QXQ+e12CLSZQQa1n4g2mCoUhqaz37EtrgwVlGMURbYqUtKCCgmnxfs3OkHkXHfRruOignyZ0oW45QTUCFtTUwYBl8Tu7w8KriqNvAGJxgzmYg1Ct15jyFNt1diKsEcM9V0pZr2MRVq74lbflJX4vtPYjzwnHPuF7W06aZI15JYMYnwUOVefcnP8pM3veXImKZIc3Jramk1iLMbKjACWY6MpZb+EVNrjinPmgaCQ7bowOkri/gKeXUa+uGov52t6kinT7i6w5onGqpi76YD9D/9ytKcA2FYKDfYu9hvIE24Euh66GwgSQ==
+ b=cr662aPJWSjjHp1s1q2u7xHYZCtInfV4LGsF3vFex5cd7kt0xS6UoXZx2HFBwGR0u1inO1/d8W1/z8WaFjRk2jZ+L+vmYYspfMqIXl61RNIAf4akvtV2i07MkIdaNIzqz9sZX/5XimkIW5etv7kNKYIXSJyUcEGxGAN0Kfvzht/pVOgPMgdBxyGzoEgt74a3ppnQDvZOpfhNX8PrHVNI0HFCWBEOCDt51l8xbZcqM3mxAsgNBIK3e9JFk6zjK+AyXQ6oVDDF+3eIyOE3zWXA8EyowMuR811O749p+ZHFQbS7quaxeaLbygW9MdSKtMCuxOMqjEAr9Eg3a35hEwJMYA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DV2AWRS0cSf3/UC+mMhm9ZPpYDKD5QryBHHXYUxErWg=;
- b=lrIjwk3KtN1VqyV10uwIYCKq2l2baIlnNWO1oxQZwL9xocUp43DEXJ4q2vEnPGkgpQ4NAu4EC98MVk9Llw3chYWthDG+bYmsI4n0tyFDD1INd0MgSGTp552B74sPZC3wQcD/cnDY+s/2b8uTIwA1/gkUUZxMvZREvERzn4jrjPpwdJ0GNFRe7aq9MoQHj/IUUQhw2iKGJYoj4WxPg0eAD8A4p2z4T/m7DZ59ViQU8Ast1uqFQYQVKcNxFn6c9B508V1G9EAl5FxsYGpkSFANFtB2Dna8ARpZgZMNf/DdIgBCiPUWmHgJ7rI7Ula6r4ks1J7Nfn5gM29KpXiyuhNXYw==
+ bh=XO4RREM9v40j1JdYl3CbmU+oeFT9LSnTXbn6A1blwck=;
+ b=tWYMlOhXJVACI0KIUVPHSZZrYhvzeie6egmQWc8nSzHKMVGSChOdOp77kS0Dxep9DKHXQJT/CpBiYwjUBZurCHs/6LJlDCbagvhFe3UM4A6EDG68iOzWr7Nkcm/trqGmZwXn9tkPaDZX1gwPG+Cg27xmzjGCZeEMaOZf3n7iR09ExFn3DhdlBLqOUET/P1cdH05MLMjF7ugsx9S5C2jI7RhBkecxY/gURwZ0iO2PcxvDKOB76ywNvmDIqq+/7Juj1nFD0JSiOBX+zODyIEYBdK8PNvlatKPNwgudFfx23eTvinegpg2gPPnmoLFo/oux0YQHRPngaL9NZdV1WtyyQQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
@@ -63,100 +63,98 @@ Authentication-Results: dkim=none (message not signed)
 Received: from CY8PR11MB7290.namprd11.prod.outlook.com (2603:10b6:930:9a::6)
  by DM4PR11MB6068.namprd11.prod.outlook.com (2603:10b6:8:64::6) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9388.14; Tue, 9 Dec 2025 08:42:12 +0000
+ 15.20.9388.14; Tue, 9 Dec 2025 08:50:11 +0000
 Received: from CY8PR11MB7290.namprd11.prod.outlook.com
  ([fe80::97aa:4b89:4558:19e1]) by CY8PR11MB7290.namprd11.prod.outlook.com
  ([fe80::97aa:4b89:4558:19e1%6]) with mapi id 15.20.9412.005; Tue, 9 Dec 2025
- 08:42:10 +0000
-Date: Tue, 9 Dec 2025 08:41:36 +0000
+ 08:50:11 +0000
+Date: Tue, 9 Dec 2025 08:50:06 +0000
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: Stephen Hemminger <stephen@networkplumber.org>
 CC: <dev@dpdk.org>
-Subject: Re: [PATCH v3 05/11] eal: add internal APIs to query loaded driver
- paths
-Message-ID: <aTfgwAu1Md6MQaiP@bricha3-mobl1.ger.corp.intel.com>
+Subject: Re: [PATCH v3 00/11] Assign all unit tests to suites
+Message-ID: <aTfivuaqs37ESNYx@bricha3-mobl1.ger.corp.intel.com>
 References: <20251202154948.1757169-1-bruce.richardson@intel.com>
  <20251208115245.3809624-1-bruce.richardson@intel.com>
- <20251208115245.3809624-6-bruce.richardson@intel.com>
- <20251208110922.3a442388@phoenix.local>
+ <20251208111053.12535b4f@phoenix.local>
 Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20251208110922.3a442388@phoenix.local>
-X-ClientProxiedBy: DU2PR04CA0241.eurprd04.prod.outlook.com
- (2603:10a6:10:28e::6) To DS0PR11MB7309.namprd11.prod.outlook.com
- (2603:10b6:8:13e::17)
+In-Reply-To: <20251208111053.12535b4f@phoenix.local>
+X-ClientProxiedBy: DUZPR01CA0040.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:468::18) To CY8PR11MB7290.namprd11.prod.outlook.com
+ (2603:10b6:930:9a::6)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: CY8PR11MB7290:EE_|DM4PR11MB6068:EE_
-X-MS-Office365-Filtering-Correlation-Id: 836e8aff-6378-4967-5e8c-08de36fecaea
+X-MS-Office365-Filtering-Correlation-Id: 857fc088-0c9d-474f-fa1e-08de36fff654
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?mWS8X+zFdQldPZTfoWIuOKkmk+Ru55PiHq9MLsFMTdrqyh2vqsEbDjOxdmMV?=
- =?us-ascii?Q?dUVCpqAgxtOt/wkFHZFEJVnMpqIT8hTIsFcBsv+ls3zUepMytJdGVPLpUFfT?=
- =?us-ascii?Q?KgfpOGAJStJnL4lHdpYHcZeAFTo6SF1LaiaC5U3twsx77Xi7bYdmHIBmB4OY?=
- =?us-ascii?Q?E+eLbBVTjo+7Gjhtn3kXO0A+rcGsD0+e4WkmBTmj5sdlImtPDgZ55wD/maiT?=
- =?us-ascii?Q?a4o4BgflYQ1/WUsH6FagDz3C5zZh+c5kv5M2aD4USIIjY1+D6En/RNS5qU9o?=
- =?us-ascii?Q?KmWnASuAUeYdPaUubuxcPL+UA3iH8p5Afsl2E9IDVTRtE2Jyaabw1+X68PU7?=
- =?us-ascii?Q?za2nCtOrwf7t82fMz4dZHvtbFjHm81X0YXuTVvgXyNy16R6xdByxiemOVqqH?=
- =?us-ascii?Q?C4QKBKPGeqG8KznUXlpiDcoX+XblHwDBLIiiaSIMnD8tk340XrPe+Zoh6wJz?=
- =?us-ascii?Q?YDQ2nmDbBNFG7TwxyifMARVEU95PtUwwxZ8nrOv28dEb9V9UNJoYvrazI9xC?=
- =?us-ascii?Q?zAn6pFWhvYsv8HTXKZ7SIjWiCFF7Jim4h1Ohpg6zN5LQZfHIoEMUKurQfmNY?=
- =?us-ascii?Q?J66uo8sw+hKQ20+EcmjCWUBETZEEJ2RS566485QXRoZVOZQXn/okKfJA2QRS?=
- =?us-ascii?Q?VXpOOQ+HfY12lrk2HYFt+Z4b6m9xh4zxTMY11lTrU5h4ZfvFZ99+804UWia5?=
- =?us-ascii?Q?JgbkmPSHAvMgmveETeJAr0kEym0JERjd1lIAmx+XeSJQXYTQHBHkmj1WDyZy?=
- =?us-ascii?Q?GZ/955fFTkwIrHjZLdwMb+q3pOKbCIOj6aJ5QRtM3+p38hJWGLlVeMbBBPQa?=
- =?us-ascii?Q?TRNHqzseNtFs5AiloqkquC455M+DPzPzjmRheSNCYLa5J0lu0aJC7VXYGeJI?=
- =?us-ascii?Q?9cvmerHdXBA3EoYTmmaj9Ei/LngArLC0caH61K6rJOYkB3Q2g+pdrTXYdxbQ?=
- =?us-ascii?Q?/S3DviYXcWtmABLnZxwQ86cbk+kqVXX+IkZSGfs8c/nULAY7y5iCcjoa5o+S?=
- =?us-ascii?Q?MRQROcdXqB8QbA0YU8acg44f8/G9hJfwkF7icQ/E2nDHo/WYxLpJGnqGzbF/?=
- =?us-ascii?Q?Vc3jjvjzUkimkb9H3sA4yQxde/cQATfhMxnBM75bdKzbQUzoCbts5qvyeiVe?=
- =?us-ascii?Q?/QDYNohgoQfirlFHoyRZQgksizWVUtrIlPn+H1xVaQwug/o0wA3241xeqqWV?=
- =?us-ascii?Q?OE1nbvpDyBNhOlstZ13avvbFLsdYAwpPx6rIbCWEr/uBUB6cOC+KE6Khu/nW?=
- =?us-ascii?Q?ke5qJgsdD0mmVwcSR4BYRi22bis0gzWalYKWZVdhG4wGNva0KtQPY301W4Qm?=
- =?us-ascii?Q?da7+fP4aNmz5PKG0WI+bpgdjkEwN6nWwCgc4L7j3qMx9PmWqLvOXevzeZ/SD?=
- =?us-ascii?Q?VRPrisNZxbceYnIIypitChpiud6mP1HNtxo5b5gU06cRQeocKEu+l/fyY3eR?=
- =?us-ascii?Q?O6p/V7gpU13N2vPOqxgLBfcc/KuxWuW4?=
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?OX9/9ZLMUo4WwHgwPAe+rkmuLBgzHOVXJgvQAQV6r6VZ6YO4CW2FTa3db1Yn?=
+ =?us-ascii?Q?4hYxMQRmCae0vUPXJR1t3S8IMNdbU5YHpT6eXpRkNCFBigGIAdKO3wwWmaKe?=
+ =?us-ascii?Q?EOVS3r0fYjiOATIvbs9KA3Apf4whQwfmqq64oHl8oJngJQzgfEGi1OuYfX3I?=
+ =?us-ascii?Q?7vI1dgJhfJAKCLSGWa0rhj0u2y8s6m2IJ23Xd23enhVSRok8bsWTg00/nhag?=
+ =?us-ascii?Q?w75bCbQtQtWNaddPPlYhM9SeA0fHQQzMZwEKK2d1TiWkgftn0Gbd8HIVagG8?=
+ =?us-ascii?Q?JLB6nK5RcduTlwCXjueYBV1Tivbxiqc7x84gxqcLiv38iwIuHVRD53bgSd1R?=
+ =?us-ascii?Q?zevBiip4slsPcFOTxKEB9gl52QEwoTmFhXiBk6AsBxtCkn3qmHWHfA36HFN7?=
+ =?us-ascii?Q?4NRIW9/RN7blpK3rYBOHFPBsdrgeTOGeGoARjv6bIiCLP12raEw9j6z7RK9n?=
+ =?us-ascii?Q?5lCuHljxGOrmJ6LzVRjo/lMy9qfl5014eKuv5n6o1XcD4iiOdpFsQ4h7y+hG?=
+ =?us-ascii?Q?TSql1wKXI/gsA2sHcfQBGXJAlBsAWnMDbwmKKGAaSIfTp7k14Rjkiwc4Pbo0?=
+ =?us-ascii?Q?D6IW65vU3oOl3AjeHLcmvOYSiGHmfWC4HIkxn1rk3uDkFv9nYc+6VJEc0EBZ?=
+ =?us-ascii?Q?J+4UV+sFtf1lt8K+KqBcWaTSikz6g8i8priJcCWyHiRRe08HEWuGfevuWsFD?=
+ =?us-ascii?Q?+GUnJ227pXhPjqdTQqVI2g1arnhJeEttsyjJPBVhqHltBtrHaVAc96sLbnq8?=
+ =?us-ascii?Q?QgaLGEMOZ1mStOwOeqMzlVHHFmGwZ5f1KvOSxDaGHqGmveCXSeDFyL+THVGF?=
+ =?us-ascii?Q?6W1AXtksIqoLmAxdpibz10FFHjXsEU8zog2UAlMjTMhRwnvwypwkJ1qtwwXQ?=
+ =?us-ascii?Q?fUBypSV35ZnFdDHbDExOszrTFsw/bg+4wNSNTiPya8OhoIV5afviW53CK2em?=
+ =?us-ascii?Q?YRT/MfVS0yP2YC0Fiuv6xiBwqIzQvEwtKF4BH/GnFvx1OqLgH81K+21+LC8E?=
+ =?us-ascii?Q?MN8GXziEO8hVURvaK7r62qROgEX6Mja+ZT+0insSP1qjWgPez3JuyrUHhIVv?=
+ =?us-ascii?Q?jl+syPt2R/9tHryl11w6wz0jrUU926Sf/KW6NIHiEdGMJWpoGM/ksDB7XBx0?=
+ =?us-ascii?Q?84ulzwRSj/3UkGzAZ6Fp2xUBiA72KiGdlTk892XgBuJ9GNKVEDw/lCkvEiLj?=
+ =?us-ascii?Q?mzNEKyOcEplp/PqnanJCo1/Q2IT7wMGnclVC9Kf0oy9FGx5EVxSS/Klqphut?=
+ =?us-ascii?Q?pzPx8beKV2S78UkUALR/ozaztCdawys2ShRr9taqcmmdbwERT5n1sC/nzLcI?=
+ =?us-ascii?Q?dtZ37wpoO2gsXe6OFSgGXQNzGjm2Oxe4h6IxEVMdj/5voPVV+4xm9d8hCfOC?=
+ =?us-ascii?Q?Nvoc6QIfw37/DezdySe6mKk6SUHz6OkQi5NWLcq1/THBZsslKmwGAQ1XivZh?=
+ =?us-ascii?Q?ArhuPYu4JqyeweyVuTD60OBvZLlYr/v0?=
 X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:CY8PR11MB7290.namprd11.prod.outlook.com; PTR:; CAT:NONE;
  SFS:(13230040)(366016)(1800799024)(376014); DIR:OUT; SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?7UZLOq4vSz0679isONW9/0zIyDjeCReC/+kqMMfivP8IgymEYgAoYFQ1eVO5?=
- =?us-ascii?Q?Sh33m7+mLke/6MWUyaGybBrBd3XziXpfz4iI7AQRet1YbpPWvNLbEkk/SPLI?=
- =?us-ascii?Q?Af+/cIQ6ZyOrZhiRDdf41d3uBSh+CwbxXrKSzZ9dE4ZMeSGxdzDspdN4VmEi?=
- =?us-ascii?Q?4E/RQZc5R+OpO0SfgpWM1OOC0Sp03SZePi97CJC2cayxogYreG2YkKL6zXy8?=
- =?us-ascii?Q?fYvRdUwslnctX+p8JwhNbnwyZnerLce/NNWpXxs+RCWlgfzxDHGKCJ4DvEKM?=
- =?us-ascii?Q?UgXQ46LOKT7IpTuaxHOY+LgLA+sGgbcU4hk5Yq8Bu909UO6Zu8bKbyKGJuex?=
- =?us-ascii?Q?e9feQQtMf++1fmTWUyF3AD7c8HYJHv5633Th7IBW1+fmKKxBjLcF87WAKzHD?=
- =?us-ascii?Q?r0LZvLQC9zkYhepwpEAGqq6OxPWYJrVdh/8tdS3VS4sqTfB9oNHdSQBryChH?=
- =?us-ascii?Q?BMOf4l8GUPkyKRVqh4f0RSVQC0kCTWUoyJY7a+JMIo96VKa+g83rKTXShLvR?=
- =?us-ascii?Q?TTUMQpD7NwVGIIlDdM1uxW5bNeGlLAgU6wGA88bgBpb7zXjGAtBPF23IKZac?=
- =?us-ascii?Q?44zA+R/Uc0IoBs4RyaFbKTGn5pRhfIS7NsgVkdHV4NIYyDS2JWOkJqAA5SRl?=
- =?us-ascii?Q?63UuwtVjgHNHiTRlUWfTgDtkWSw8q3jzAQAGwEVEXOZPN7A1aO96TX88eTw/?=
- =?us-ascii?Q?DhxwEObFM//Om/olp53IfC06hOiAgcauRWlHl3a1vBw45geMDiWKD+CmA+6J?=
- =?us-ascii?Q?COqFExG5ETooFVgmDdA6j5s/nbQmDHwcQg7baCxh6pDfebgJ6u7w1IPfw8xl?=
- =?us-ascii?Q?uO480kHOA6CtezvVP2+3lt2wJjS08foxrqXtVIhNiNgrPTXIAimD+R9Bkgrc?=
- =?us-ascii?Q?+013vk+SGbyAkKZDxSOrM4pgxdJ5OYgNgBxlF8ZLqtfIB0gihsqUhD14WfDL?=
- =?us-ascii?Q?d1USkMK393jmatzjBPzvsNi5xVrwpedrebhwBXBZ52V3CUTSluJyIAgdYW9O?=
- =?us-ascii?Q?8xGUvXQXmvB+Pf3dlkf0grosgnTAPZY78pOedNBMAT4uEj/2KaUhaclaMNzk?=
- =?us-ascii?Q?XsO1rF3R0rvIigWekl3ji056k9H+DoTSlWdXCFiROXdE6kWmGtOtekvjq4lL?=
- =?us-ascii?Q?u6Z8wvUaq1yrL79vBwSXslMQH2SZ3QxP2JS4zkZTUdEpKGYGrkvizRl+t3HQ?=
- =?us-ascii?Q?ur1GraSTRy4mKgB1Us6fPDw9X+nxSEuBqa0NrHxWSrIV+H+XX/gbBT2xt6NU?=
- =?us-ascii?Q?EH47CTOEPMtl4FvvuC0dCF2AU+zG+l0OxuZoQD1JBumR/IvIugE9qA3TevIj?=
- =?us-ascii?Q?8L3o5iLQIso39Cld/2jXruXJMnPU/QBdEoUb+dedyhcnzP5R75InVaUCqWsW?=
- =?us-ascii?Q?22ZQMskhLOvO6tkPGF6U6Yc8XTUJ/K+crBhVPW+TvDywUL7UJwbdNn5ceQXr?=
- =?us-ascii?Q?Sy38JU/mDKrC1TJ0M/b3M0OLnIcwVJR8fbLVk9lNRakQdj+U5IdyU6q4n/RQ?=
- =?us-ascii?Q?6RQFJhIsTJsoLCU4qdcVknwoXQ073sV2e7JlGh52NxI1h3TTtSZJjWeI4x8d?=
- =?us-ascii?Q?x8WD3MOLIU41TuuKoAYImBwitd51wgN4FDWlD0bHmEqe97p3BqasMQm7ESP9?=
- =?us-ascii?Q?jA=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 836e8aff-6378-4967-5e8c-08de36fecaea
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?+NjwLZGUb2beUi360hXOW0Z9AA8QPlgm2RqP8ovnmAlxQVx7F5S5nvbt89xT?=
+ =?us-ascii?Q?qCfLw6lefLxz11Hy4n7j+J+nRZ6WWho5EHoBmwUcvEVmoiWwqJlQAz3jKlkP?=
+ =?us-ascii?Q?1R2leybQuo34D9P1UCNlh9p5SU7KfnMlF3LWpbowbOa4TL8QfJ0JsbjgU6Rb?=
+ =?us-ascii?Q?9p/Rb+7h1GRMisW4hL8ne6TZ5Yr6bJzqDP+P/kOvSWUU4PiCPww11OgPwHxz?=
+ =?us-ascii?Q?On2h2j/p2xavPa1GvHSJdk3l6ZX+G+JN1LqEXr9nMrz8qSEnZOBvA9YXz/+y?=
+ =?us-ascii?Q?2SKD9ibYmzQJ5zOmMGoj7Tr/fIPSJWgpaR9c7ukRhK7D8bU+Dy1tZFs9/zMT?=
+ =?us-ascii?Q?/dxwRPX6wr7D3TQhdVTOaCA8g2+mnnK0Kzbmsl/ZzcRnebsRTUXVG5DQLZM2?=
+ =?us-ascii?Q?p12GIfpfzzH3W2r3id8nxIzKo00CDnapUmTYoXDhIsZYKwxwhCQr2ijC7y2u?=
+ =?us-ascii?Q?x9RmdJaYTQSQ3BHFkCViAzfBGLXBqMqd0e575QN+d+Pn7OkLN0dqvojSLaxi?=
+ =?us-ascii?Q?imAKJWFoP6S2NKXots7YXgGD9d5H4vDwyNxVMLPxqDZsARCKHWSU2lWU8KWy?=
+ =?us-ascii?Q?odoh6tVbiD2ghpSDI/R0b3A2wT5KRPmdI6zGpA6aDp2iqeNucC/DfksNsGWc?=
+ =?us-ascii?Q?AC72oWXmWQKQ+JSbgREr1c1mg2ZVZGoQZCZj4ihN3nbHWEcTEWFdudBGEVlO?=
+ =?us-ascii?Q?G+tgfBAgROyt7Pw6q/j4SXNG10bwq4fZFZgViDi5N7B6zpkisvl0nC/KfsFX?=
+ =?us-ascii?Q?RjDPqiJBCMNNGviif2ZnbALJ4HAgOtrlNP6pzd5qSO+lGWBv+GfhVGLF6phm?=
+ =?us-ascii?Q?tYI6kE+5njdkwAXfkohIVRGhpfujNErTPIHBmn6u9D6AarH+Oi/O8rjkjlQb?=
+ =?us-ascii?Q?N50KZBlQeKQhJR5A7kRaVnvO06FgxCKo5OnqLzAvbhUldqcGVXPpBf+UAtGC?=
+ =?us-ascii?Q?07pYeYKYjxN3MR7d4Xv9SKiBMYJhDUBWnSg6LqM3PfCOk9heJosfEAUTKvS8?=
+ =?us-ascii?Q?ILPm4aeZtPPApaww9aASiCuLC+BhaHotu2reuiXpimzafZ84OTJbDDFC4BSP?=
+ =?us-ascii?Q?3nm6YacvpRY1cFKJ2STpfAVhO0w8/nAUlTTX5ln8sPRQZXIvBJgHXkaU2mGx?=
+ =?us-ascii?Q?DApPF0Tm88lMwkAPLyu9FkOvjOqzN7/EJ+5dSFH9BWAbFCxcQrhZOnJ7UDPS?=
+ =?us-ascii?Q?JeYsYH6hEGQJwL7RR0FYML/iw7IxQnyGcKX58xl2no7lv8VD2Z6KODOwXo7N?=
+ =?us-ascii?Q?OIADJg7snCZqRPAkn3GRrsfcCOO2gqmD0wnAN3IMsL1ORvmhniZ3CoNabBis?=
+ =?us-ascii?Q?9JceM8Na0h3LGK/bRhAI07dRN+n1i/H2ZJhoVRDS4WUky23nb7B7z31ShjDU?=
+ =?us-ascii?Q?1ESrjNdBqs8daNoU0FaPI8OWC/p8TzqVW1fm4Z6Vp76tZXJ7d9Cbnr4C/FrN?=
+ =?us-ascii?Q?VQ9k8yMD4nh+vZ0ZnhVxsZ3YH9FXi6LAF0HJp1R6d4CbpJX2xfVM/A70I1fv?=
+ =?us-ascii?Q?4A+EqHHbN0252CgJ9DGhthdMmfFEDl+myHE5mpkkJ0qqojntnqxp/RvpK1vz?=
+ =?us-ascii?Q?ILLXQo+XTktf+0rxgxkF1Is9iIPfN22LGYZkmGKDWQxTZ47hTlSnkE4Enb4/?=
+ =?us-ascii?Q?OQ=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 857fc088-0c9d-474f-fa1e-08de36fff654
+X-MS-Exchange-CrossTenant-AuthSource: CY8PR11MB7290.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Dec 2025 08:42:10.1358 (UTC)
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Dec 2025 08:50:11.3154 (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: zCU9Z0Zn7m7wFL7iIvGV8DS+085BffOOKWDRhhCAlbhRo6EY2S4TtxB7tbcbHfJj+CbHBHKDc3BYz2ExmNvEjMBOSwqRZQ+DlndF90aycgs=
+X-MS-Exchange-CrossTenant-UserPrincipalName: RySSDLbFozGHjqHsSJKwGTUHkBf3/L0aEEH2pSulS1ov7vjmLdMMKYJhdUGFTNDEkIPUoSLuo1NZHvJL2Dts4LbuSZsgn8Z0M3bqqGcDxdM=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB6068
 X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
@@ -172,17 +170,176 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, Dec 08, 2025 at 11:09:22AM -0800, Stephen Hemminger wrote:
-> On Mon,  8 Dec 2025 11:52:39 +0000
+On Mon, Dec 08, 2025 at 11:10:53AM -0800, Stephen Hemminger wrote:
+> On Mon,  8 Dec 2025 11:52:34 +0000
 > Bruce Richardson <bruce.richardson@intel.com> wrote:
 > 
-> >  
-> > +RTE_EXPORT_SYMBOL(rte_eal_driver_path_next)
-> > +const char *
-> > +rte_eal_driver_path_next(const char *start, bool cmdline_only)
-> > +{
-> > +
+> > Categorize all unit tests into one of the test suites: generally driver
+> > tests or fast-tests. In order to add some of the tests to fast tests,
+> > some additional work was required, hence the additional patches in this
+> > set. Also, make the parameters for asan and hugepages clearer in each
+> > test's definition.
+> > 
+> > V3:
+> >  - correct comment in patch 1
+> >  - define "attic" suite for unstable tests and add red_autotest to it.
+> > 
+> > V2:
+> > - rename the parameters for fast-test
+> > - fix issues with the tests to be added to fast-tests:
+> >   * allow loading drivers from secondary processes
+> >   * fix undefined behaviour flagged by asan in red test
+> >   * skip unrunnable power tests, rather than failing
+> > - add tests to driver-test suite also
+> > - add patch fixing output in case we have no unattached tests
+> > 
+> > Bruce Richardson (11):
+> >   app/test: make parameters clearer when adding fast tests
+> >   app/test: fix undefined behaviour in red autotest
+> >   app/test: reduce duration of secondary timer test
+> >   app/test: fix timer loop hang on secondary process failure
+> >   eal: add internal APIs to query loaded driver paths
+> >   app/test: pass loaded driver info to secondary procs
+> >   app/test: skip power capabilities test if unsupported
+> >   app/test: add some unattached tests to fast-test suite
+> >   app/test: add tests to driver test suite
+> >   buildtools/get-test-suites: suppress empty output
+> >   app/test: move red autotest to attic
+> > 
+> >  app/test/process.h                     | 28 ++++++++++++-
+> >  app/test/suites/meson.build            | 14 ++++++-
+> >  app/test/test.h                        | 13 ++++++-
+> >  app/test/test_acl.c                    |  2 +-
+> >  app/test/test_alarm.c                  |  2 +-
+> >  app/test/test_argparse.c               |  2 +-
+> >  app/test/test_atomic.c                 |  2 +-
+> >  app/test/test_bitcount.c               |  2 +-
+> >  app/test/test_bitmap.c                 |  2 +-
+> >  app/test/test_bitops.c                 |  2 +-
+> >  app/test/test_bitratestats.c           |  2 +-
+> >  app/test/test_bitset.c                 |  2 +-
+> >  app/test/test_bpf.c                    |  6 +--
+> >  app/test/test_byteorder.c              |  2 +-
+> >  app/test/test_cfgfile.c                |  2 +-
+> >  app/test/test_cksum.c                  |  2 +-
+> >  app/test/test_cmdline.c                |  2 +-
+> >  app/test/test_common.c                 |  2 +-
+> >  app/test/test_compressdev.c            |  2 +-
+> >  app/test/test_cpuflags.c               |  2 +-
+> >  app/test/test_crc.c                    |  2 +-
+> >  app/test/test_cryptodev_crosscheck.c   |  2 +-
+> >  app/test/test_cycles.c                 |  2 +-
+> >  app/test/test_debug.c                  |  2 +-
+> >  app/test/test_devargs.c                |  2 +-
+> >  app/test/test_dispatcher.c             |  2 +-
+> >  app/test/test_distributor.c            |  2 +-
+> >  app/test/test_eal_flags.c              | 24 ++++++------
+> >  app/test/test_eal_fs.c                 |  2 +-
+> >  app/test/test_errno.c                  |  2 +-
+> >  app/test/test_ethdev_api.c             |  2 +-
+> >  app/test/test_ethdev_link.c            |  2 +-
+> >  app/test/test_event_crypto_adapter.c   |  2 +-
+> >  app/test/test_event_eth_rx_adapter.c   |  4 +-
+> >  app/test/test_event_eth_tx_adapter.c   |  2 +-
+> >  app/test/test_event_ring.c             |  2 +-
+> >  app/test/test_event_timer_adapter.c    |  2 +-
+> >  app/test/test_event_vector_adapter.c   |  2 +-
+> >  app/test/test_eventdev.c               |  4 +-
+> >  app/test/test_external_mem.c           |  2 +-
+> >  app/test/test_fbarray.c                |  2 +-
+> >  app/test/test_fib.c                    |  2 +-
+> >  app/test/test_fib6.c                   |  2 +-
+> >  app/test/test_func_reentrancy.c        |  2 +-
+> >  app/test/test_graph.c                  |  4 +-
+> >  app/test/test_graph_feature_arc.c      |  2 +-
+> >  app/test/test_hash.c                   |  2 +-
+> >  app/test/test_hash_readwrite.c         |  2 +-
+> >  app/test/test_interrupts.c             |  2 +-
+> >  app/test/test_ipfrag.c                 |  2 +-
+> >  app/test/test_ipsec.c                  |  2 +-
+> >  app/test/test_ipsec_sad.c              |  2 +-
+> >  app/test/test_kvargs.c                 |  2 +-
+> >  app/test/test_latencystats.c           |  2 +-
+> >  app/test/test_lcore_var.c              |  2 +-
+> >  app/test/test_lcores.c                 |  2 +-
+> >  app/test/test_logs.c                   |  2 +-
+> >  app/test/test_lpm.c                    |  2 +-
+> >  app/test/test_lpm6.c                   |  2 +-
+> >  app/test/test_malloc.c                 |  2 +-
+> >  app/test/test_mbuf.c                   |  2 +-
+> >  app/test/test_mcslock.c                |  2 +-
+> >  app/test/test_member.c                 |  2 +-
+> >  app/test/test_memcpy.c                 |  2 +-
+> >  app/test/test_memory.c                 |  2 +-
+> >  app/test/test_mempool.c                |  2 +-
+> >  app/test/test_memzone.c                |  2 +-
+> >  app/test/test_meter.c                  |  2 +-
+> >  app/test/test_metrics.c                |  2 +-
+> >  app/test/test_mp_secondary.c           |  2 +-
+> >  app/test/test_net_ether.c              |  2 +-
+> >  app/test/test_net_ip6.c                |  2 +-
+> >  app/test/test_pcapng.c                 |  2 +-
+> >  app/test/test_pdcp.c                   |  2 +-
+> >  app/test/test_pdump.c                  |  2 +-
+> >  app/test/test_per_lcore.c              |  2 +-
+> >  app/test/test_pflock.c                 |  2 +-
+> >  app/test/test_pie.c                    |  2 +-
+> >  app/test/test_pmd_ring.c               |  2 +-
+> >  app/test/test_pmu.c                    |  2 +-
+> >  app/test/test_power.c                  |  2 +-
+> >  app/test/test_power_cpufreq.c          |  6 +--
+> >  app/test/test_power_intel_uncore.c     |  2 +-
+> >  app/test/test_power_kvm_vm.c           |  2 +-
+> >  app/test/test_prefetch.c               |  2 +-
+> >  app/test/test_ptr_compress.c           |  2 +-
+> >  app/test/test_rawdev.c                 |  2 +-
+> >  app/test/test_rcu_qsbr.c               |  2 +-
+> >  app/test/test_red.c                    |  2 +-
+> >  app/test/test_reorder.c                |  2 +-
+> >  app/test/test_rib.c                    |  2 +-
+> >  app/test/test_rib6.c                   |  2 +-
+> >  app/test/test_ring.c                   |  2 +-
+> >  app/test/test_rwlock.c                 |  8 ++--
+> >  app/test/test_sched.c                  |  2 +-
+> >  app/test/test_security.c               |  2 +-
+> >  app/test/test_security_inline_macsec.c |  2 +-
+> >  app/test/test_security_inline_proto.c  |  6 +--
+> >  app/test/test_seqlock.c                |  2 +-
+> >  app/test/test_service_cores.c          |  2 +-
+> >  app/test/test_soring.c                 |  2 +-
+> >  app/test/test_spinlock.c               |  2 +-
+> >  app/test/test_stack.c                  |  4 +-
+> >  app/test/test_string_fns.c             |  2 +-
+> >  app/test/test_table.c                  |  2 +-
+> >  app/test/test_tailq.c                  |  2 +-
+> >  app/test/test_telemetry_data.c         |  2 +-
+> >  app/test/test_telemetry_json.c         |  2 +-
+> >  app/test/test_thash.c                  |  2 +-
+> >  app/test/test_threads.c                |  2 +-
+> >  app/test/test_ticketlock.c             |  2 +-
+> >  app/test/test_timer.c                  |  2 +-
+> >  app/test/test_timer_secondary.c        | 13 ++++---
+> >  app/test/test_trace.c                  |  2 +-
+> >  app/test/test_vdev.c                   |  2 +-
+> >  app/test/test_version.c                |  2 +-
+> >  buildtools/get-test-suites.py          |  5 ++-
+> >  doc/guides/contributing/unit_test.rst  | 10 +++--
+> >  lib/eal/common/eal_common_options.c    | 54 ++++++++++++++++++++++++--
+> >  lib/eal/include/rte_eal.h              | 52 +++++++++++++++++++++++++
+> >  lib/sched/rte_red.h                    |  9 ++++-
+> >  121 files changed, 313 insertions(+), 157 deletions(-)
+> > 
+> > --
+> > 2.51.0
+> > 
 > 
-> Shouldn't this be RTE_EXPORT_INTERNAL_SYMBOL
+> 
+> Overall looks good, one comment is to try and make sure the new
+> functions are internal only? or experimental?
 
-Yes, will fix.
+I think internal-only. I've marked them in doxygen as internal-only but did
+not put it in the export line. I don't see the need for apps to use these
+APIs, so let's limit the scope as much as possible, because we can always
+open it up further later.
+
+/Bruce
