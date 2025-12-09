@@ -2,61 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C92FD3B7EA
-	for <dpdk-dev@archiver.kernel.org>; Tue,  9 Dec 2025 12:56:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D03DD1CDC6
+	for <dpdk-dev@archiver.kernel.org>; Tue,  9 Dec 2025 13:46:01 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 09A2740270;
-	Tue,  9 Dec 2025 13:56:20 +0100 (CET)
-Received: from smtpbgau2.qq.com (smtpbgau2.qq.com [54.206.34.216])
- by mails.dpdk.org (Postfix) with ESMTP id 9AD934025F
- for <dev@dpdk.org>; Tue,  9 Dec 2025 13:56:17 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tencent.com;
- s=s201512; t=1765284975;
- bh=yqGAOXnukzygTHieU5lJMcV5XJ50SDFaB9U3W+uM8lQ=;
- h=Message-ID:Date:MIME-Version:Subject:To:From;
- b=V1TCIkavJUdJxFZlE4RxV5XfFr8Nto6pF2+neAOsRGU12cochMsfmIm8/LN6gdVbR
- G/aq/xESNXy+bhiNCpaFkusKjDqCix7vwfphMwOI5ZDIWssvopMvktO3I+jaw7jjKZ
- /chcuGcjjN4xdz2kYAU/HOBUuUqeyE/qLidse/bY=
-X-QQ-mid: esmtpgz16t1765284972tc51ab975
-X-QQ-Originating-IP: 4mCapG5XUFMM+Rw6ApYV47nW+cd+AP6kgdH7c6BTcmk=
-Received: from [127.0.0.1] ( [11.176.19.22]) by bizesmtp.qq.com (ESMTP) with 
- id ; Tue, 09 Dec 2025 20:56:11 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 9438044959225631944
-Message-ID: <DF324D1D0FA61EA8+07c5be16-e072-482e-a443-a1c424464ce2@tencent.com>
-Date: Tue, 9 Dec 2025 20:56:11 +0800
+	by mails.dpdk.org (Postfix) with ESMTP id 12F0140270;
+	Tue,  9 Dec 2025 14:46:01 +0100 (CET)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 2E58E4025F
+ for <dev@dpdk.org>; Tue,  9 Dec 2025 14:45:59 +0100 (CET)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id E4AF7206A1;
+ Tue,  9 Dec 2025 14:45:58 +0100 (CET)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Internet]RE: [PATCH v7] acl: support custom memory allocators
-To: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-Cc: "dev@dpdk.org" <dev@dpdk.org>
-References: <BFA8D0B9488D3A67+20251202092502.165081-1-mannywang@tencent.com>
- <68D016D742174F42+20251208125716.19424-1-mannywang@tencent.com>
- <0887b8f3045744199342bcb94e33f65b@huawei.com>
-From: "=?gb18030?B?bWFubnl3YW5nKM3108C35Sk=?=" <mannywang@tencent.com>
-In-Reply-To: <0887b8f3045744199342bcb94e33f65b@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpgz:tencent.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: OO2wLqYBHUeBSmhVCy1Y5P1A4q7YrEYMJuLfX+BWlYuqlB1IrCRcNUeq
- Gml8X7FfAdTgRbjNI+1oxkoRW4Pli8RNi123tFbaB5vCtH2smO6GawTIE25j/ojhc/aTBBd
- 3rq2R6/WTQHR14/xO5/34QzmjIeBOmDvgVfHXuG3dQ022FPo22BoRF7DXTK/rq5PnESZgNf
- aSCbJ2qyim45I7m6fmqCO9jcplPfCTej1WxOukVzjHaXSVf6hwzmgv6iCm78wbLlcRmctCn
- Vn+8GWP8OLZeDJHKuzVdplVzKd2lQS/8hnxyg/GqYZ5dvx+QnbkE5dK6cTWGpXEHGRZCDqR
- yM1Kw+Wv0dcYZrW7JVJ8W5OfqK4gkic3hUrtMGkUzTw3z2FAha/epi+qBAS/RRnbnJQIPfQ
- J3jDAJIsHOE+/VgrQjbH7ilU3Ma9OX5UJkoKZBdbGSuVLn5blThbz01+wEKH0o2KCI9HhOB
- 1a90DPpbte+lC3SH6SYyYy/5cYjpyif6rAvOSNhRfCTP/gB637ofjeG64DGSgipdY9+LyL6
- F0ckIIO4eHpZ/SXdXCvCe0FVVIrOE1ebGIsw5r6sOlv2ACFKYM7VfdcFnEp2C4HhUmetMhZ
- DYezRuKnvGvzgT5T6ieZvVFA1zt65SyOiO3Jl/cquy/eQ/jChGvK4PNyA7BE7OsmecQKKtH
- 494vlyKoB/cgsBTdbkc1qsxSBoWi5+Og3hkqi1MHR3liI6+rAOuDJt6+eT+Q3WWb9dpL4H4
- r5+FkxaV8C1kNTLA7FIb9f1oN19npvjfVnJF0OLTuSPpkVoYF0JWDOtgqLgF+L+ifHHgKYt
- xKngK3Ur/nELrLxtq/dDqdCx8FemrYevlMzxPBy0rpsajyTLuYVB9Qgt3Nq+Z+YFB2hy9x/
- 40aJtXONzxc2sJcDWehDZ14qbSMOHg6hhPF0KTcEfQXiaTVOEmRcyqUBj5O5N9mJx2g1CL1
- CteQ844P3zbuGLIK+YOWLqod5RsO1V/aFI+yIAvkskfJJww==
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-X-QQ-RECHKSPAM: 0
+Content-Type: text/plain;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+Subject: RE: [PATCH dpdk 1/2] graph: always count objects and calls
+Date: Tue, 9 Dec 2025 14:45:56 +0100
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F655CB@smartserver.smartshare.dk>
+In-Reply-To: <DETP2Q0QF39V.1KWT5Y2P9RLD4@redhat.com>
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH dpdk 1/2] graph: always count objects and calls
+Thread-Index: AdxpCcIScQbItKH8SW63oIIOcfu3zwABCAQQ
+References: <20251209085028.115203-4-rjarry@redhat.com>
+ <20251209085028.115203-5-rjarry@redhat.com>
+ <CALBAE1OMwTX=a5i56G_sPXicw=17ozvb4PBfak0ev2Ps3xwuGw@mail.gmail.com>
+ <DETKJKSUL9XG.1CTKW09I3UWSB@redhat.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F655C8@smartserver.smartshare.dk>
+ <DETNTVDMT8U6.307XVRW7VTBIE@redhat.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F655CA@smartserver.smartshare.dk>
+ <DETP2Q0QF39V.1KWT5Y2P9RLD4@redhat.com>
+From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
+To: "Robin Jarry" <rjarry@redhat.com>,
+	"Jerin Jacob" <jerinjacobk@gmail.com>
+Cc: <dev@dpdk.org>, "Jerin Jacob" <jerinj@marvell.com>,
+ "Kiran Kumar K" <kirankumark@marvell.com>,
+ "Nithin Dabilpuram" <ndabilpuram@marvell.com>,
+ "Zhirun Yan" <yanzhirun_163@163.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -70,32 +57,70 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Thanks for the clarification, and sorry for misunderstanding your 
-intention earlier.
-I’ve updated the implementation to use malloc/aligned_alloc() directly 
-in running_alloc()
-as you suggested. Please check whether the new version matches your 
-expectation.
-
-
-On 12/9/2025 6:59 PM, Konstantin Ananyev wrote:
-> Sorry, I didn't express myself clear enough.
-> My thought was to use malloc/aligned_alloc() directly in running_alloc() function.
-> To be more specific here:
-> static void *running_alloc(char *name, size_t size, size_t align, int32_t socket_id, void *udata)
-> {
->     ...
->     /* just for the API correctness check */
->      If (udata != <expected_value>) {
->             /* report error */
->            return NULL;
->     }
-> 
->     addr = aligned_alloc(align, size);
->     if (addr == NULL)  {
->          /* report error*/
->     }
->     return addr;
-> }
-
-
+PiBGcm9tOiBSb2JpbiBKYXJyeSBbbWFpbHRvOnJqYXJyeUByZWRoYXQuY29tXQ0KPiBTZW50OiBU
+dWVzZGF5LCA5IERlY2VtYmVyIDIwMjUgMTMuNDYNCj4gDQo+IE1vcnRlbiBCcsO4cnVwLCBEZWMg
+MDksIDIwMjUgYXQgMTM6MTE6DQo+ID4+IE15IGlzc3VlIGlzIHRoYXQgSSB3b3VsZCBsaWtlIHRo
+ZSB0b3RhbF9vYmpzIHN0YXQgYnV0IHdpdGhvdXQgdGhlDQo+ID4+IG92ZXJoZWFkIG9mIHJ0ZV9y
+ZHRzYygpIGJlaW5nIGNhbGxlZCB0d2ljZSBmb3IgZXZlcnkgbm9kZSB2aXNpdC4NCj4gPg0KPiA+
+IEkgZ2V0IHRoYXQuIE15IHByb3Bvc2FsIHByb3ZpZGVzIHRoYXQuDQo+IA0KPiBJIGRpZG4ndCBn
+ZXQgdGhhdCBmcm9tIHlvdXIgcHJldmlvdXMgbWVzc2FnZToNCj4gDQo+IE1vcnRlbiBCcsO4cnVw
+LCBEZWMgMDksIDIwMjUgYXQgMTI6MTM6DQo+ID4+PiBMb29raW5nIGF0IHBhdGNoIDIvMiwgSSBk
+aXNhZ3JlZSB3aXRoIHRoZSBhcHByb2FjaC4NCj4gPj4+DQo+ID4+PiBSVEVfTElCUlRFX0dSQVBI
+X1NUQVRTIHNob3VsZCBjb250cm9sIGFsbCBzdGF0cywgaW5jbC4gdG90YWxfY2FsbHMNCj4gYW5k
+IHRvdGFsX29ianMuDQo+ID4+PiBUaGVuLCBpZiBlbmFibGVkLCB0aGUgdG90YWxfY3ljbGVzIHN0
+YXRzIGNhbiBiZSBjb250cm9sbGVkIGJ5DQo+IHJ0ZV9ncmFwaF9jeWNsZV9zdGF0c19lbmFibGUo
+KS4NCj4gPj4+DQo+ID4+PiBZb3VyIHYxIHNlcmllcyBpbnRyb2R1Y2VzIHVubmVjZXNzYXJ5IG92
+ZXJoZWFkIGZvciBhcHBsaWNhdGlvbnMgbm90DQo+IGNhcmluZyBhYm91dCB0b3RhbF9jYWxscy90
+b3RhbF9vYmpzIHN0YXRzIGFuZCB0aHVzIGJ1aWx0IHdpdGhvdXQNCj4gUlRFX0xJQlJURV9HUkFQ
+SF9TVEFUUy4NCj4gDQo+IFdoZXJlIGRvIHlvdSBwcm9wb3NlIGEgbmV3IGZsYWcgdG8gZGV0ZXJt
+aW5lIHdoZXRoZXIgdG90YWxfY2FsbHMgYW5kDQo+IHRvdGFsX29ianMgYXJlIHVwZGF0ZWQgYW5k
+IHRvdGFsX2N5Y2xlcyBhcmUgbm90Pw0KDQpTb3JyeSBhYm91dCBub3QgYmVpbmcgbW9yZSBjbGVh
+ci4gSSBtZWFudDoNCiJUaGVuLCBpZiBbUlRFX0xJQlJURV9HUkFQSF9TVEFUUyBpc10gZW5hYmxl
+ZCBbYXQgYnVpbGQgdGltZV0sIHRoZSB0b3RhbF9jeWNsZXMgc3RhdHMgY2FuIGJlIGNvbnRyb2xs
+ZWQgYnkgcnRlX2dyYXBoX2N5Y2xlX3N0YXRzX2VuYWJsZSgpLiINCg0KSSBwcm9wb3NlZCB0aGF0
+IHlvdSBhZGQgeW91ciBydGVfZ3JhcGhfY3ljbGVfc3RhdHNfZW5hYmxlKCkgdG8gY29udHJvbCB0
+aGUgdG90YWxfY3ljbGVzIHN0YXRzLCBhbmQgbGVhdmUgUlRFX0xJQlJURV9HUkFQSF9TVEFUUyBh
+cyBpdCBpcyBub3cgKGkuZS4gdG8gYmUgYWJsZSB0byBkaXNhYmxlIGFsbCBzdGF0cyBhdCBidWls
+ZCB0aW1lKS4NCg0KPiANCj4gPj4gQW5kIGFsc28sIEkgd291bGQgbGlrZSB0byBiZSBhYmxlIHRv
+IGVuYWJsZS9kaXNhYmxlIHRoZXNlIHN0YXRzICphdA0KPiA+PiBydW50aW1lKi4NCj4gPg0KPiA+
+IFdoeSB3b3VsZCB5b3UgZW5hYmxlL2Rpc2FibGUgdG90YWxfY2FsbHMvdG90YWxfb2JqcyBhdCBy
+dW50aW1lPw0KPiANCj4gSSBkb24ndCB3YW50IHRvIGRpc2FibGUvZW5hYmxlIHRvdGFsX2NhbGxz
+L3RvdGFsX29ianMuIEkgd2FudCB0bw0KPiBkaXNhYmxlL2VuYWJsZSB0b3RhbF9jeWNsZXMgYXQg
+cnVudGltZS4NCg0KT0suIFRoYXQgbWFrZXMgc2Vuc2UuDQoNCj4gDQo+ID4+IEhhdmluZyBpdCBi
+ZWhpbmQgYSBjb21waWxlIHRpbWUgY29uc3RhbnQgbWFrZXMgaXQgdmVyeSBub3QgZmxleGlibGUu
+DQo+ID4NCj4gPiBBZ3JlZSwgYnV0IGluc3RydW1lbnRhdGlvbiBoYXMgYSBwZXJmb3JtYW5jZSBj
+b3N0LCBhbmQgc2hvdWxkIGJlDQo+ID4gcG9zc2libGUgdG8gZGlzYWJsZSBhdCBjb21waWxlIHRp
+bWUuDQo+ID4NCj4gPj4gSSBjb3VsZCBoYXZlIHR3byBib29sZWFucyB0byBjb250cm9sIHdoZXRo
+ZXIgdG90YWxfY2FsbHMvdG90YWxfb2Jqcw0KPiBhcmUNCj4gPj4gdXBkYXRlZCAqYW5kKiB3aGV0
+aGVyIHRvdGFsX2N5Y2xlcyBhcmUgY29tcHV0ZWQuIEJ1dCB0aGF0IHNlZW1zIGENCj4gYml0DQo+
+ID4+IG92ZXJraWxsIGFuZCBpdCB3b3VsZCBtZWFuIHR3byBmaWVsZHMgdG8gY2hlY2sgKHR3byBi
+cmFuY2hlcykNCj4gaW5zdGVhZA0KPiA+PiBvZg0KPiA+PiBvbmUgcGVyIG5vZGUuDQo+ID4+DQo+
+ID4+IElzIGl0IHJlYWxseSB0aGF0IGJhZCB0byB1cGRhdGUgdHdvIHVpbnQ2NF90IGNvdW50ZXJz
+Pw0KPiA+DQo+ID4gVGhlIGNvc3QgaXMgdW5uZWNlc3NhcnkuIEl0J3MgaW5zdHJ1bWVudGF0aW9u
+Lg0KPiANCj4gSW4gdGhhdCBpbnN0YW5jZSwgSSBjb25zaWRlciB0b3RhbF9vYmpzIG5vdCB0byBi
+ZSAiaW5zdHJ1bWVudGF0aW9uIiBidXQNCj4gbW9yZSBsaWtlIHJlZ3VsYXIgY291bnRlcnMgKGUu
+Zy4gZXRoZGV2IHN0YXRzLCB4c3RhdHMsIGV0Yy4pLiBVbmxlc3MNCj4gSSBhbSBtaXN0YWtlbiwg
+dGhlcmUgaXMgbm8gd2F5IHRvIGRpc2FibGUgc3RhdGlzdGljcyBmb3IgaW50ZXJmYWNlcyBmb3IN
+Cj4gZXhhbXBsZS4NCg0KRXRoZGV2IGNvdW50ZXJzIGFyZSB1cGRhdGVkIGJ5IHRoZSBOSUMgc2ls
+aWNvbi4NClRoZXkgaGF2ZSB6ZXJvIHNvZnR3YXJlIHBlcmZvcm1hbmNlIGNvc3QgaW4gdGhlIGRh
+dGEgcGxhbmUuDQoNCj4gDQo+IEZvciBleGFtcGxlLCBpbiBncm91dCwgd2UgdXNlIHRvdGFsX29i
+anMgaW4gdGhlIG1haW4gbG9vcCB0byBkZXRlcm1pbmUNCj4gaWYgd2UgY2FuIHNhdmUgcG93ZXIg
+Ynkgd2lsbGluZ2x5IHB1dHRpbmcgdGhlIENQVSB0byBzbGVlcCBmb3IgdmVyeQ0KPiBzaG9ydCBw
+ZXJpb2RzIG9mIHRpbWUuIElmIHRvdGFsX29ianMgaXMgbm8gbG9uZ2VyIHVwZGF0ZWQsIGdyb3V0
+IGNhbm5vdA0KPiBzYXZlIHBvd2VyLg0KDQpNYWtlcyBzZW5zZS4gV2UgZG8gc29tZXRoaW5nIHNp
+bWlsYXIgaW4gb3VyIGFwcGxpY2F0aW9uLiBMb29rIGF0IHNvbWUgaW5zdHJ1bWVudGF0aW9uIGNv
+dW50ZXJzIHRvIGVzdGltYXRlIHRoZSB3b3JrbG9hZCBhbmQgZGV0ZXJtaW5lIHBvd2VyIHNhdmlu
+ZyBhY3Rpb25zLg0KDQpJZiBHcm91dCBpcyBidWlsdCB3aXRoIFJURV9MSUJSVEVfR1JBUEhfU1RB
+VFMsIGl0IGNhbiB1c2UgdGhlIGdyYXBoIHN0YXRzOyBvdGhlcndpc2UsIGl0IHdpbGwgaGF2ZSB0
+byBsb29rIGF0IHNvbWV0aGluZyBlbHNlLg0KDQpXZSB3YW50IHRvIGtlZXAgRFBESyBwZXJmb3Jt
+YW50LCBzbyBJJ20gb3Bwb3NlZCB0byBtYWtpbmcgb3B0aW9uYWwgaW5zdHJ1bWVudGF0aW9uIG1h
+bmRhdG9yeS4NCg0KPiANCj4gdG90YWxfY3ljbGVzIGhvd2V2ZXIsICppcyogaW5zdHJ1bWVudGF0
+aW9uLiBJdCBpcyBvbmx5IHVzZWZ1bCB0bw0KPiBpZGVudGlmeSBob3RzcG90cyBhbmQgZGVidWcg
+aXNzdWVzLiBCdXQgaXQgY2FuIGJlIGludGVyZXN0aW5nIHRvIGVuYWJsZQ0KPiBpdCAqYXQgcnVu
+dGltZSogd2l0aG91dCByZWNvbXBpbGluZy4NCg0KVGhlIHdvcmQgImluc3RydW1lbnRhdGlvbiIg
+bWlnaHQgbm90IGJlIDEwMCAlIGNsZWFybHkgZGVmaW5lZCwgYW5kIHdlIHNlZW0gdG8gaGF2ZSBz
+bGlnaHRseSBkaWZmZXJlbnQgaW50ZXJwcmV0YXRpb25zIG9mIGl0Lg0KQnV0IHRoYXQgaXMgbm90
+IGltcG9ydGFudC4gTXkgcG9pbnQgaXM6IFRoZXNlIGxpYnJhcnkgY291bnRlcnMgYXJlIGlycmVs
+ZXZhbnQgZm9yIHRoZSBkYXRhIHBsYW5lLCBzbyB0aGV5IHNob3VsZCByZW1haW4gb3B0aW9uYWwu
+DQpUaGV5IGFyZSBhbHNvIGlycmVsZXZhbnQgZm9yIHRoZSBjb250cm9sIHBsYW5lLg0KVGhleSBt
+aWdodCBiZSByZWxldmFudCBmb3IgdGhlIG1hbmFnZW1lbnQgcGxhbmUuDQoNCg==
