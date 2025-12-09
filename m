@@ -2,128 +2,92 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CFC3D1CDC6
-	for <dpdk-dev@archiver.kernel.org>; Tue,  9 Dec 2025 12:24:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC623D3B7EA
+	for <dpdk-dev@archiver.kernel.org>; Tue,  9 Dec 2025 12:45:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 59E3540611;
-	Tue,  9 Dec 2025 13:24:35 +0100 (CET)
-Received: from PH0PR06CU001.outbound.protection.outlook.com
- (mail-westus3azon11011045.outbound.protection.outlook.com [40.107.208.45])
- by mails.dpdk.org (Postfix) with ESMTP id AF90B4025F;
- Tue,  9 Dec 2025 13:24:33 +0100 (CET)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=asRoJFyGoZznw0shJrlPL1NAowGRrogv75TO2FnoHRf1rpuJ1mDrI6Wucy2ktP88QSDtw2lNLs+hJ/0gljSBcphZvPaW5kLybOiOD4xPr+tkUhWSpN5ZTOnyK+DFk6fryLfS0QdVv7I5LGM9xKQ4UsF/YXcm+UXWXLY137YIWqg+rQUgI743uIWItX7Y5nckPSgykFpjk3UyG9TwU3qzPuMytiI6pZzqxFba7vtJeJG8ptgmCC/ExZszKa3A9v3fnkD8TFHj1GWnn/af0q2rn4iQuS/RSX/rkjA8cwVwfjmFA78+XNonZyGX3YYA4LEfF2gS8MZJlDBOPuIlxcH2WQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gmwGbwD209I+YB3tKLWPdT5gdRohhJIze3QKpUuAuWA=;
- b=FNj+rDtOpGlTZZV8DOWBdEsyiYP7Hxorg+Q5/8IgAqp3FqwnVbpUBvOltcH/1Om+3UsR4iKuLCwesc39jItnCaPJqvJ3VdePhH2zz/e1g2GnXO6+uDUMZy+9rm/bSvDaNBySwrTgj+RDfaX6b9vItxXxOubWWk0/gX/HaNsnAyXlNkuWRklyzY7toSWx6vx/PZchK35uvEKR6ozfgy5qJKSOYNEO7mx6VKtuyUoFWhVa+vAfLGUq3EMLnnOBvHWhAMD/U1iDIi5HaZ3agCWv8tYzUX5YNae38IEcQPWSsZn2OvTuJZZIryjGgWr4jkmS0EZRFSnIftoC7fTu57dpFA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.232) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gmwGbwD209I+YB3tKLWPdT5gdRohhJIze3QKpUuAuWA=;
- b=c58QjHvV44i5mxNIr/qtmSR0ob2ueX/W0wecbLqUw7DUcZtp9yFEXAgGJCxLSVf9NvOGGNhZDJDYkaoRsOZ2hn5llmqf9nnvygEgtDlh0e65Dl3IqqAwYOG6DDbrVOwogMjFridpJBmWfVVLyL7Gxcsjglg8A5VCueg/JmOoO5g8kEFlAXUmnWbJfXBlUC/y8DaZEePtuzNW/J2sSr3f6miZ4amI5xgsa2FD6ZRDl8AMRhIkZngs0bWGV5utWoA7ahCymntyH94n+91LyifMAdnSHE94iWv5BgGAwaPCnn0B8tes07QD00bZrbqi1GrHfcf/QxNv4SWq/CmZajrnWA==
-Received: from BL0PR02CA0052.namprd02.prod.outlook.com (2603:10b6:207:3d::29)
- by CH3PR12MB7500.namprd12.prod.outlook.com (2603:10b6:610:148::17)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9412.6; Tue, 9 Dec
- 2025 12:24:29 +0000
-Received: from BL02EPF00021F6A.namprd02.prod.outlook.com
- (2603:10b6:207:3d:cafe::41) by BL0PR02CA0052.outlook.office365.com
- (2603:10b6:207:3d::29) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9412.6 via Frontend Transport; Tue, 9
- Dec 2025 12:24:29 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
- smtp.mailfrom=nvidia.com;
- dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.232) by
- BL02EPF00021F6A.mail.protection.outlook.com (10.167.249.6) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9412.4 via Frontend Transport; Tue, 9 Dec 2025 12:24:28 +0000
-Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
- (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 9 Dec
- 2025 04:24:15 -0800
-Received: from drhqmail202.nvidia.com (10.126.190.181) by
- drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.20; Tue, 9 Dec 2025 04:24:14 -0800
-Received: from nvidia.com (10.127.8.9) by mail.nvidia.com (10.126.190.181)
- with Microsoft SMTP Server id 15.2.2562.20 via Frontend Transport; Tue, 9 Dec
- 2025 04:24:11 -0800
-From: Itai Sharoni <isharoni@nvidia.com>
-To: <dev@dpdk.org>
-CC: <mkashani@nvidia.com>, <rasland@nvidia.com>, Itai Sharoni
- <isharoni@nvidia.com>, <stable@dpdk.org>, Bing Zhao <bingz@nvidia.com>,
- Dariusz Sosnowski <dsosnowski@nvidia.com>, Viacheslav Ovsiienko
- <viacheslavo@nvidia.com>, Ori Kam <orika@nvidia.com>, Suanming Mou
- <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>, Gavin Li
- <gavinl@nvidia.com>
-Subject: [PATCH] net/mlx5/windows: fix MAC address ownership tracking
-Date: Tue, 9 Dec 2025 14:24:05 +0200
-Message-ID: <20251209122406.3364-1-isharoni@nvidia.com>
-X-Mailer: git-send-email 2.28.0.windows.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL02EPF00021F6A:EE_|CH3PR12MB7500:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8b8a27ef-4527-4ea7-6404-08de371de626
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|376014|36860700013|82310400026|1800799024; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?g32M5GturV8i+kewB32igOFIQIBAuq60YjE+LWuQJdYuYrmmrI3wfDBLhmF0?=
- =?us-ascii?Q?G9Z/gypxWRnKMoz5u0NgXojqvd23A08e0jkrtCpZgfMeHIyDSgikQOnulEGB?=
- =?us-ascii?Q?julwphmHhmLEawgyyU/cU8cHdEQ9JqMt1xJEWuLOcs1CWZeINvCv94yGcut8?=
- =?us-ascii?Q?LZWhgmhKTRbVQOSvNiIlCEZZQaiQBhH3/s9mQXYWssBqn/xv9m1RbrpB7+XD?=
- =?us-ascii?Q?jFO8pZpaRq8dLz3cNJXdgp2km9FkXvjIn10wys0qgyJr5J01mdnzwJsVJxs+?=
- =?us-ascii?Q?+OUNKdaFMuzoM6M1czcl8SkNE/Lg365kYK2jgJP58Wkqd+fd7osiE5jkdwE2?=
- =?us-ascii?Q?NhDCwQNWbK0/3cAe4jM/0UNRqvi8YEgjLAoQUVOOGZ8RQ4jogLhFgsWV398K?=
- =?us-ascii?Q?a30GXwOzBcM2zEiLn8iMmAtWgtTtwJrYcCyOaDNdI37/wk2P/6UaXmVzvnnA?=
- =?us-ascii?Q?V/79iii7oK1YWaYnXSEy8PQXQXKsLyYSRdiAPCt6/GPMDyQYvsAYNUCeRVGj?=
- =?us-ascii?Q?Kb19boVWwrSbPRub0RIiMRB6MkbMort9p4tfxlSAbHc6HMrvJR0XPqBJAR7M?=
- =?us-ascii?Q?ZQ/N2OSdFNrZptPgKSv9R6kDd+n9R9Qj4IT8CdewO5UWqD/yWJ3wGuKItpuv?=
- =?us-ascii?Q?QEqgvZSW0LX20qE0xoMcreLzI7eZb8ZTPa3Gk/pCOzRi+CXWOKuZL8rVcS77?=
- =?us-ascii?Q?8MRTyUIJmHNSk6jOobDXnbSMzCKzvo6WkwxtJ48xI6sPg9iMyA7WkOIaCWLl?=
- =?us-ascii?Q?D/3zGUJq/DcUBTwCp+wHRktQnwEltUxIOF25YwDnFyMVd1mAkyUL8oBl9rPj?=
- =?us-ascii?Q?igvXbSaeP83NCRSfHREW6sMs5ZUz4TAj2MMLzNr3qPgNO3M3dpJSCPwgoDl0?=
- =?us-ascii?Q?c4lrvLCpFLNCKf71B7qRpBIT8FQoQQ+NcXogbkDHTKDvKwkN7j/rUoU4D91f?=
- =?us-ascii?Q?qX87WsyyfrmXye/3yTZiieBm3kxqgTXSurALRqUpiCZJ/3eAh0C3HkxY/SIQ?=
- =?us-ascii?Q?40+cgHPqOzl87FechMRx/ipfYagmzW0Fv/QAwY6aNuCGiUjYPevBdfVgOp3L?=
- =?us-ascii?Q?dBndOGTIVGa/yVb8rDawcwjzPNyxyjc0bKMPb+j9sT6MFyeL4L03MJSBGzU9?=
- =?us-ascii?Q?wdWjvTujWxI0cYng05k89K39VU8UGJ4xFbx455Mavkug6L+MdBjn3oQtNo/8?=
- =?us-ascii?Q?V7Iga1QED/iTvHQlP/yLlfK161H8mmnkW4OHKJreU9I14yhJtPICUsw2BZcw?=
- =?us-ascii?Q?LyQvSzYompZcx5xfwfC9qqkrrcpM+mZ2R2qKfAJ69rouMWPRwBW3S16GIK7k?=
- =?us-ascii?Q?+64ytW7cSNGfuN1P2ueLZYv/EJX59azbd2SRrI6R8Vk8dUtW+Y5RQTz+4yuh?=
- =?us-ascii?Q?c98x1mDzSIdGIf8kAqLNGuVkAGlZvVH1wR9eNX06u4qPqcnA/EnFMyj7KJkV?=
- =?us-ascii?Q?96cT6ug0QApREfmMZtWtlgxy5WIMHMOSVj60wiuKplRsKs4xooSPi7LE6aeW?=
- =?us-ascii?Q?1YMASNpEhDMwGRqdo/8JNUCmVVFfH0VYRrPzNl91PCak3AXq7KE35JWfUdBu?=
- =?us-ascii?Q?2mWOuO3hL9BnoQb1ruc=3D?=
-X-Forefront-Antispam-Report: CIP:216.228.118.232; CTRY:US; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc7edge1.nvidia.com; CAT:NONE;
- SFS:(13230040)(376014)(36860700013)(82310400026)(1800799024); DIR:OUT;
- SFP:1101; 
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Dec 2025 12:24:28.6362 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8b8a27ef-4527-4ea7-6404-08de371de626
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.118.232];
- Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BL02EPF00021F6A.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB7500
+	by mails.dpdk.org (Postfix) with ESMTP id 9033F40270;
+	Tue,  9 Dec 2025 13:45:53 +0100 (CET)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 951E04025F
+ for <dev@dpdk.org>; Tue,  9 Dec 2025 13:45:52 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1765284352;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=SkmchTzV3CNA/+LVQd7M9LjwFNUc2+QI8BZLpFUq4Eg=;
+ b=eVE/kZg7C5MiBZosuQ6Ze6DCkBemVOIemPrKlVWmqRqyAbg9wKFb0dmYxf5R4fCtdhw1OH
+ GCCTKtgvtB/aLXsjYTOPS8/n1hyddYk37lGCleldjaiX2b5dUUHnCPBa7BVOFeHVFlsUS5
+ qK3+QEInXn9qwpY441LQvTnQVYDpfAE=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-663-3Fk_ggoJNj-ymSimVsXQzA-1; Tue, 09 Dec 2025 07:45:50 -0500
+X-MC-Unique: 3Fk_ggoJNj-ymSimVsXQzA-1
+X-Mimecast-MFC-AGG-ID: 3Fk_ggoJNj-ymSimVsXQzA_1765284350
+Received: by mail-wr1-f70.google.com with SMTP id
+ ffacd0b85a97d-42b2b642287so2847361f8f.2
+ for <dev@dpdk.org>; Tue, 09 Dec 2025 04:45:50 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1765284349; x=1765889149;
+ h=in-reply-to:references:user-agent:to:from:cc:subject:message-id
+ :date:content-transfer-encoding:mime-version:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+ bh=SkmchTzV3CNA/+LVQd7M9LjwFNUc2+QI8BZLpFUq4Eg=;
+ b=BPkKofU7e919lAdRaQMuFI1+3FtQvp0i8vwSo4J+pGurpxMBuYKIuk6hq//6HStrJV
+ 1ygNL2hAbHFl3rRRI1lwtc/Htltva+ZSuhOn/7qnJcjpUspNRUJ0OUAl5aaMgo0bLMgj
+ OH3vpEeIxhv7H63LNqXRoB4vRVYz6wKQ/GGQ0v5C+0/IMW3Hzh6YAP2fAt02Yw6yUSqb
+ x97sIY4um1+fKuMwhQZxoHhjfTmfMeEm0tR5anXw/damg68+oA8L9DTs2tFdvLbkKqWT
+ /AQ/Vin0LFdgS7c6BkqrY8Hjkump7eEdnXF5pe+MC0uiDsCdHqMXPPHGIKvqYEZtPhIJ
+ edlQ==
+X-Gm-Message-State: AOJu0YxazWOsI0M3c96oFCUuEzM5d4b7sqgj50npYYy9I/WBg7MVr1tK
+ It1zrtVtHdC3nQ9rVOJ4EAx8pnOY/5phIqgUGMei2PqzcnYRZtVvgCA8VWr6T87Yz5dFYo3ObpV
+ kjfCCvhhWLRNg/rlANNemPghHlhe3TYL9RoCq/PVg9dga
+X-Gm-Gg: AY/fxX6lsLhzYo9amlLi462JkWb0z6m0CITpWtDU7nKoLPP3Cr8hm+B2kHlUbtfetsz
+ u++cEc/5H0F5Tt5UpJ9OY1kqTwzTEhR6mBHaJt9uw67+ja8sHnXslyyLA/k4HtBgW3x0Zr7ZnxV
+ 5AMcUJB8OZ8TMvgpMogMUsDpoLHp1IA431ivFYBQCy9WP7sZ+9TnxyLJvMmi6+Q5Qzq4mpXBNz+
+ RH3rBEUIv3qjaECnn/seR05bVkquhimA862vw9XQUhhvMGfCQNw97MlmmzWkydN726C3/LQuGkk
+ 81UJXpRGD0FKEc93gkXPdmFDMwjw7GsPJg3w4k5GsOirVFDW84OWCGWOpIFvgJyS/TOzo6CavrN
+ 7IQrBUh3aLfjYiZUO5/Kf0edIHRswuTWfgEy1RBc0qMuQRMb3Ac3k3ebt+Ozg26sL/0Q=
+X-Received: by 2002:a05:6000:2283:b0:42f:8816:a508 with SMTP id
+ ffacd0b85a97d-42f89f63dd3mr10884480f8f.61.1765284349530; 
+ Tue, 09 Dec 2025 04:45:49 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEIkjlURxnTozY77PC04GVIc8hy6zW1WDoJ7TaI+o7YogXYCJpYUK3IbJJsNqhx1a62jv02/A==
+X-Received: by 2002:a05:6000:2283:b0:42f:8816:a508 with SMTP id
+ ffacd0b85a97d-42f89f63dd3mr10884460f8f.61.1765284349132; 
+ Tue, 09 Dec 2025 04:45:49 -0800 (PST)
+Received: from localhost (2a01cb00021ec0002e23edbec21b0e73.ipv6.abo.wanadoo.fr.
+ [2a01:cb00:21e:c000:2e23:edbe:c21b:e73])
+ by smtp.gmail.com with ESMTPSA id
+ ffacd0b85a97d-42f7d330b20sm30562031f8f.29.2025.12.09.04.45.48
+ (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+ Tue, 09 Dec 2025 04:45:48 -0800 (PST)
+Mime-Version: 1.0
+Date: Tue, 09 Dec 2025 13:45:47 +0100
+Message-Id: <DETP2Q0QF39V.1KWT5Y2P9RLD4@redhat.com>
+Subject: Re: [PATCH dpdk 1/2] graph: always count objects and calls
+Cc: <dev@dpdk.org>, "Jerin Jacob" <jerinj@marvell.com>, "Kiran Kumar K"
+ <kirankumark@marvell.com>, "Nithin Dabilpuram" <ndabilpuram@marvell.com>,
+ "Zhirun Yan" <yanzhirun_163@163.com>
+From: "Robin Jarry" <rjarry@redhat.com>
+To: =?utf-8?q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>, "Jerin Jacob"
+ <jerinjacobk@gmail.com>
+User-Agent: aerc/0.21.0-39-ga8d4735cf219-dirty
+References: <20251209085028.115203-4-rjarry@redhat.com>
+ <20251209085028.115203-5-rjarry@redhat.com>
+ <CALBAE1OMwTX=a5i56G_sPXicw=17ozvb4PBfak0ev2Ps3xwuGw@mail.gmail.com>
+ <DETKJKSUL9XG.1CTKW09I3UWSB@redhat.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F655C8@smartserver.smartshare.dk>
+ <DETNTVDMT8U6.307XVRW7VTBIE@redhat.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F655CA@smartserver.smartshare.dk>
+In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F655CA@smartserver.smartshare.dk>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: VzaXc8gewxG0wltA4yDM3KNepaWDn5PzeDzlgJuNiNE_1765284350
+X-Mimecast-Originator: redhat.com
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -137,119 +101,63 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The Windows implementation was not properly tracking MAC address
-ownership via the mac_own bitfield, unlike the Linux implementation.
-This caused issues with control flow creation for MAC addresses.
+Morten Br=C3=B8rup, Dec 09, 2025 at 13:11:
+>> My issue is that I would like the total_objs stat but without the
+>> overhead of rte_rdtsc() being called twice for every node visit.
+>
+> I get that. My proposal provides that.
 
-Commit 8c06434cd9e4 ("net/mlx5: fix multicast") added a check to skip
-creating control flows for MAC addresses where the mac_own bit is not
-set. Since Windows never set these bits, the primary MAC address flow
-was skipped, resulting in packet drops when promiscuous mode is
-disabled.
+I didn't get that from your previous message:
 
-Update all three MAC address ownership functions to properly manage
-the mac_own bitfield:
+Morten Br=C3=B8rup, Dec 09, 2025 at 12:13:
+>>> Looking at patch 2/2, I disagree with the approach.
+>>>
+>>> RTE_LIBRTE_GRAPH_STATS should control all stats, incl. total_calls and =
+total_objs.
+>>> Then, if enabled, the total_cycles stats can be controlled by rte_graph=
+_cycle_stats_enable().
+>>>
+>>> Your v1 series introduces unnecessary overhead for applications not car=
+ing about total_calls/total_objs stats and thus built without RTE_LIBRTE_GR=
+APH_STATS.
 
-- mlx5_os_mac_addr_add: Set mac_own bit when adding the device's
-  primary MAC address (the only MAC that Windows supports)
+Where do you propose a new flag to determine whether total_calls and
+total_objs are updated and total_cycles are not?
 
-- mlx5_os_mac_addr_remove: Clear mac_own bit for the specified index
-  to maintain internal tracking consistency
+>> And also, I would like to be able to enable/disable these stats *at
+>> runtime*.
+>
+> Why would you enable/disable total_calls/total_objs at runtime?
 
-- mlx5_os_mac_addr_flush: Iterate and clear all mac_own bits during
-  device cleanup
+I don't want to disable/enable total_calls/total_objs. I want to
+disable/enable total_cycles at runtime.
 
-While Windows cannot add or remove MAC addresses from hardware (no
-Netlink equivalent), proper bitfield tracking is essential for internal
-state consistency and correct control flow management.
+>> Having it behind a compile time constant makes it very not flexible.
+>
+> Agree, but instrumentation has a performance cost, and should be
+> possible to disable at compile time.
+>
+>> I could have two booleans to control whether total_calls/total_objs are
+>> updated *and* whether total_cycles are computed. But that seems a bit
+>> overkill and it would mean two fields to check (two branches) instead
+>> of
+>> one per node.
+>>=20
+>> Is it really that bad to update two uint64_t counters?
+>
+> The cost is unnecessary. It's instrumentation.
 
-Fixes: 8c06434cd9e4 ("net/mlx5: fix multicast")
-Cc: stable@dpdk.org
+In that instance, I consider total_objs not to be "instrumentation" but
+more like regular counters (e.g. ethdev stats, xstats, etc.). Unless
+I am mistaken, there is no way to disable statistics for interfaces for
+example.
 
-Signed-off-by: Itai Sharoni <isharoni@nvidia.com>
-Acked-by: Bing Zhao <bingz@nvidia.com>
----
- drivers/net/mlx5/windows/mlx5_os.c | 32 +++++++++++++++++++-----------
- 1 file changed, 20 insertions(+), 12 deletions(-)
+For example, in grout, we use total_objs in the main loop to determine
+if we can save power by willingly putting the CPU to sleep for very
+short periods of time. If total_objs is no longer updated, grout cannot
+save power.
 
-diff --git a/drivers/net/mlx5/windows/mlx5_os.c b/drivers/net/mlx5/windows/mlx5_os.c
-index 4eadc872a5..4a00c28009 100644
---- a/drivers/net/mlx5/windows/mlx5_os.c
-+++ b/drivers/net/mlx5/windows/mlx5_os.c
-@@ -689,23 +689,27 @@ mlx5_os_read_dev_stat(struct mlx5_priv *priv, const char *ctr_name,
- 
- /**
-  * Flush device MAC addresses
-- * Currently it has no support under Windows.
-- *
-+ * Currently Windows does not support adding and removing MAC addresses,
-+ * This function resets the mac_own bit for all MAC addresses for internal tracking.
-  * @param dev
-  *   Pointer to Ethernet device structure.
-- *
-  */
- void
- mlx5_os_mac_addr_flush(struct rte_eth_dev *dev)
- {
--	(void)dev;
--	DRV_LOG(WARNING, "%s: is not supported", __func__);
-+	struct mlx5_priv *priv = dev->data->dev_private;
-+	int i;
-+
-+	for (i = MLX5_MAX_MAC_ADDRESSES - 1; i >= 0; --i) {
-+		if (BITFIELD_ISSET(priv->mac_own, i))
-+			BITFIELD_RESET(priv->mac_own, i);
-+	}
- }
- 
- /**
-  * Remove a MAC address from device
-- * Currently it has no support under Windows.
-- *
-+ * Currently Windows does not support adding and removing MAC addresses,
-+ * This function resets the mac_own bit for the specified index for internal tracking.
-  * @param dev
-  *   Pointer to Ethernet device structure.
-  * @param index
-@@ -714,14 +718,16 @@ mlx5_os_mac_addr_flush(struct rte_eth_dev *dev)
- void
- mlx5_os_mac_addr_remove(struct rte_eth_dev *dev, uint32_t index)
- {
--	(void)dev;
--	(void)(index);
--	DRV_LOG(WARNING, "%s: is not supported", __func__);
-+	struct mlx5_priv *priv = dev->data->dev_private;
-+
-+	if (index < MLX5_MAX_MAC_ADDRESSES)
-+		BITFIELD_RESET(priv->mac_own, index);
- }
- 
- /**
-  * Adds a MAC address to the device
-- * Currently it has no support under Windows.
-+ * Currently Windows does not support adding and removing MAC addresses,
-+ * This function sets the mac_own bit only if the MAC address already exists.
-  *
-  * @param dev
-  *   Pointer to Ethernet device structure.
-@@ -737,7 +743,7 @@ int
- mlx5_os_mac_addr_add(struct rte_eth_dev *dev, struct rte_ether_addr *mac,
- 		     uint32_t index)
- {
--	(void)index;
-+	struct mlx5_priv *priv = dev->data->dev_private;
- 	struct rte_ether_addr lmac;
- 
- 	if (mlx5_get_mac(dev, &lmac.addr_bytes)) {
-@@ -752,6 +758,8 @@ mlx5_os_mac_addr_add(struct rte_eth_dev *dev, struct rte_ether_addr *mac,
- 			"adding new mac address to device is unsupported");
- 		return -ENOTSUP;
- 	}
-+	/* Mark this MAC address as owned by the PMD */
-+	BITFIELD_SET(priv->mac_own, index);
- 	return 0;
- }
- 
--- 
-2.28.0.windows.1
+total_cycles however, *is* instrumentation. It is only useful to
+identify hotspots and debug issues. But it can be interesting to enable
+it *at runtime* without recompiling.
 
