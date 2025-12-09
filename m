@@ -2,92 +2,60 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC623D3B7EA
-	for <dpdk-dev@archiver.kernel.org>; Tue,  9 Dec 2025 12:45:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8AE0D3B7EA
+	for <dpdk-dev@archiver.kernel.org>; Tue,  9 Dec 2025 12:53:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9033F40270;
-	Tue,  9 Dec 2025 13:45:53 +0100 (CET)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 951E04025F
- for <dev@dpdk.org>; Tue,  9 Dec 2025 13:45:52 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1765284352;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=SkmchTzV3CNA/+LVQd7M9LjwFNUc2+QI8BZLpFUq4Eg=;
- b=eVE/kZg7C5MiBZosuQ6Ze6DCkBemVOIemPrKlVWmqRqyAbg9wKFb0dmYxf5R4fCtdhw1OH
- GCCTKtgvtB/aLXsjYTOPS8/n1hyddYk37lGCleldjaiX2b5dUUHnCPBa7BVOFeHVFlsUS5
- qK3+QEInXn9qwpY441LQvTnQVYDpfAE=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-663-3Fk_ggoJNj-ymSimVsXQzA-1; Tue, 09 Dec 2025 07:45:50 -0500
-X-MC-Unique: 3Fk_ggoJNj-ymSimVsXQzA-1
-X-Mimecast-MFC-AGG-ID: 3Fk_ggoJNj-ymSimVsXQzA_1765284350
-Received: by mail-wr1-f70.google.com with SMTP id
- ffacd0b85a97d-42b2b642287so2847361f8f.2
- for <dev@dpdk.org>; Tue, 09 Dec 2025 04:45:50 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1765284349; x=1765889149;
- h=in-reply-to:references:user-agent:to:from:cc:subject:message-id
- :date:content-transfer-encoding:mime-version:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=SkmchTzV3CNA/+LVQd7M9LjwFNUc2+QI8BZLpFUq4Eg=;
- b=BPkKofU7e919lAdRaQMuFI1+3FtQvp0i8vwSo4J+pGurpxMBuYKIuk6hq//6HStrJV
- 1ygNL2hAbHFl3rRRI1lwtc/Htltva+ZSuhOn/7qnJcjpUspNRUJ0OUAl5aaMgo0bLMgj
- OH3vpEeIxhv7H63LNqXRoB4vRVYz6wKQ/GGQ0v5C+0/IMW3Hzh6YAP2fAt02Yw6yUSqb
- x97sIY4um1+fKuMwhQZxoHhjfTmfMeEm0tR5anXw/damg68+oA8L9DTs2tFdvLbkKqWT
- /AQ/Vin0LFdgS7c6BkqrY8Hjkump7eEdnXF5pe+MC0uiDsCdHqMXPPHGIKvqYEZtPhIJ
- edlQ==
-X-Gm-Message-State: AOJu0YxazWOsI0M3c96oFCUuEzM5d4b7sqgj50npYYy9I/WBg7MVr1tK
- It1zrtVtHdC3nQ9rVOJ4EAx8pnOY/5phIqgUGMei2PqzcnYRZtVvgCA8VWr6T87Yz5dFYo3ObpV
- kjfCCvhhWLRNg/rlANNemPghHlhe3TYL9RoCq/PVg9dga
-X-Gm-Gg: AY/fxX6lsLhzYo9amlLi462JkWb0z6m0CITpWtDU7nKoLPP3Cr8hm+B2kHlUbtfetsz
- u++cEc/5H0F5Tt5UpJ9OY1kqTwzTEhR6mBHaJt9uw67+ja8sHnXslyyLA/k4HtBgW3x0Zr7ZnxV
- 5AMcUJB8OZ8TMvgpMogMUsDpoLHp1IA431ivFYBQCy9WP7sZ+9TnxyLJvMmi6+Q5Qzq4mpXBNz+
- RH3rBEUIv3qjaECnn/seR05bVkquhimA862vw9XQUhhvMGfCQNw97MlmmzWkydN726C3/LQuGkk
- 81UJXpRGD0FKEc93gkXPdmFDMwjw7GsPJg3w4k5GsOirVFDW84OWCGWOpIFvgJyS/TOzo6CavrN
- 7IQrBUh3aLfjYiZUO5/Kf0edIHRswuTWfgEy1RBc0qMuQRMb3Ac3k3ebt+Ozg26sL/0Q=
-X-Received: by 2002:a05:6000:2283:b0:42f:8816:a508 with SMTP id
- ffacd0b85a97d-42f89f63dd3mr10884480f8f.61.1765284349530; 
- Tue, 09 Dec 2025 04:45:49 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEIkjlURxnTozY77PC04GVIc8hy6zW1WDoJ7TaI+o7YogXYCJpYUK3IbJJsNqhx1a62jv02/A==
-X-Received: by 2002:a05:6000:2283:b0:42f:8816:a508 with SMTP id
- ffacd0b85a97d-42f89f63dd3mr10884460f8f.61.1765284349132; 
- Tue, 09 Dec 2025 04:45:49 -0800 (PST)
-Received: from localhost (2a01cb00021ec0002e23edbec21b0e73.ipv6.abo.wanadoo.fr.
- [2a01:cb00:21e:c000:2e23:edbe:c21b:e73])
- by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-42f7d330b20sm30562031f8f.29.2025.12.09.04.45.48
- (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
- Tue, 09 Dec 2025 04:45:48 -0800 (PST)
-Mime-Version: 1.0
-Date: Tue, 09 Dec 2025 13:45:47 +0100
-Message-Id: <DETP2Q0QF39V.1KWT5Y2P9RLD4@redhat.com>
-Subject: Re: [PATCH dpdk 1/2] graph: always count objects and calls
-Cc: <dev@dpdk.org>, "Jerin Jacob" <jerinj@marvell.com>, "Kiran Kumar K"
- <kirankumark@marvell.com>, "Nithin Dabilpuram" <ndabilpuram@marvell.com>,
- "Zhirun Yan" <yanzhirun_163@163.com>
-From: "Robin Jarry" <rjarry@redhat.com>
-To: =?utf-8?q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>, "Jerin Jacob"
- <jerinjacobk@gmail.com>
-User-Agent: aerc/0.21.0-39-ga8d4735cf219-dirty
-References: <20251209085028.115203-4-rjarry@redhat.com>
- <20251209085028.115203-5-rjarry@redhat.com>
- <CALBAE1OMwTX=a5i56G_sPXicw=17ozvb4PBfak0ev2Ps3xwuGw@mail.gmail.com>
- <DETKJKSUL9XG.1CTKW09I3UWSB@redhat.com>
- <98CBD80474FA8B44BF855DF32C47DC35F655C8@smartserver.smartshare.dk>
- <DETNTVDMT8U6.307XVRW7VTBIE@redhat.com>
- <98CBD80474FA8B44BF855DF32C47DC35F655CA@smartserver.smartshare.dk>
-In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F655CA@smartserver.smartshare.dk>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: VzaXc8gewxG0wltA4yDM3KNepaWDn5PzeDzlgJuNiNE_1765284350
-X-Mimecast-Originator: redhat.com
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+	by mails.dpdk.org (Postfix) with ESMTP id 3CDAC40270;
+	Tue,  9 Dec 2025 13:53:05 +0100 (CET)
+Received: from smtpbg154.qq.com (smtpbg154.qq.com [15.184.224.54])
+ by mails.dpdk.org (Postfix) with ESMTP id 453284025F
+ for <dev@dpdk.org>; Tue,  9 Dec 2025 13:53:02 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tencent.com;
+ s=s201512; t=1765284780;
+ bh=Gb1t71sxDJBrtUZhxtwvBqR0Xv55JAuhYkwC9W0utS0=;
+ h=From:To:Subject:Date:Message-ID:MIME-Version;
+ b=pvWstDnoSJfJR5xdx7s8zIh82H2PoQfj8b3lhO0J+7W+bJmA3cRuMfK2vbzPJzZUx
+ vmuUrkPLRawNW//uAL5iRfSXaopgZOtWsF32E1WIV5MMvWZamd4lf0JcXz1vuTK0cT
+ OrO4F2vI07kY7z10U3QVtVZ0FgU9EKq4k3rQ7Hlo=
+X-QQ-mid: zesmtpsz7t1765284777t81412abd
+X-QQ-Originating-IP: WNNFPfvvyrMkMbjXGC21YQfVG1Umw8BafKi/kCnQAn4=
+Received: from wyfs.. ( [11.176.19.22]) by bizesmtp.qq.com (ESMTP) with 
+ id ; Tue, 09 Dec 2025 20:52:40 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 4220033116040818748
+From: "=?gb18030?B?bWFubnl3YW5nKM3108C35Sk=?=" <mannywang@tencent.com>
+To: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+Cc: dev@dpdk.org,
+	YongFeng Wang <mannywang@tencent.com>
+Subject: [PATCH v8] acl: support custom memory allocators
+Date: Tue,  9 Dec 2025 12:52:36 +0000
+Message-ID: <531B109557B40560+20251209125236.27095-1-mannywang@tencent.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <68D016D742174F42+20251208125716.19424-1-mannywang@tencent.com>
+References: <68D016D742174F42+20251208125716.19424-1-mannywang@tencent.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpsz:tencent.com:qybglogicsvrsz:qybglogicsvrsz3b-0
+X-QQ-XMAILINFO: Of6ml/llp+z5Q5y2e1ZcxlguM7mvU60gAyvC5ISRFTcAJ6nLNTc/LWnS
+ wntCsxoYCvPU+AM9C2Ip2XwLZq0BM7haHmJ7pJkjfNl5Y2bwLPR+Kd5DP6PnifqzR/BWQ9V
+ bjxgJf4isJon3G3OZfX2l1kFgKR6HFfz8rmsr+/hTWoycON6U9C+ko2yJR2jL/lun7f97OF
+ kEURCfq6sAd5eX2FdKne/S88oNFez9L0bTzcffUJumKyR0reIEuLhKtv1k+6GuzPfyegjWS
+ l66lvmDxRZnCZ7iDGiLFhJU+1p/AkhBjQUCTRl5Z8///BDOV0u2p5dM9/jChtG2vpFInphn
+ gqpAV1WFbzxc7NpOhtieiP7wiz42ddqU1+HCa9bXIrIXl2kH4pY07n1md6dZsgV7iIMAO/h
+ xbC7Dln7RZVvPjm33NjOwZNcaC/aBNR1I0UH/HXYyryoVuvHnNKZ6ybtxakkg5fIp7DJS7u
+ 9UhyVe7R1C+gQ2Lxrt7I3M02MGb67MdiNnkAWQ4/6uu3tceVSBhzeZ5br/Qw6+dKkCpkvk1
+ rgiPQNmcARn8UKXpfPZa3otaV1LS7xGOE5E5nnht5WLQhfPdN2DUs5+YBhF2IJwjX6L4zWh
+ ADcavstG7A7AtZAZDpC77wfTFy38h/CuzNAfA6Jbmm4vd3Kjq2R9jCPE56OvORnO98RcN6t
+ DtXY/4AfG+CHEnCFfYoX7I7VkO0FQ8mvzyRKadWi6zoUq6mZuVSOOV6yjI0vrC5ceFHAZ48
+ bOeDSPrYJQpfAWgsjf7KlLxE6kDU9N0vSFoMKl0F4PGJVnL2/eU7ezEVbkfhgAGWHwg6RTX
+ NYqhzGQHEmYTY+0VorZXORkWTS3QyehBZQ2wkCmnp741xix0GTfi0gmDvLnH2fwb2JT8N30
+ wg4cb/qPs+BzuxUWUbrrkcaorLzcGX0Mdzwk1XtCfiyznZrBv3feH5iVDupzWzxhu8bPdfg
+ QRFe4npmyZwh4C+zqXKK9x3lKxwX5D74KTOsapmXnq/frOdAvnRTV2MocYfSp1LJMube64a
+ 0j9U/4qg==
+X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
+X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -101,63 +69,393 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Morten Br=C3=B8rup, Dec 09, 2025 at 13:11:
->> My issue is that I would like the total_objs stat but without the
->> overhead of rte_rdtsc() being called twice for every node visit.
->
-> I get that. My proposal provides that.
+Allow users to provide custom
+memory allocation hooks for runtime memory in rte_acl_ctx, via
+struct rte_acl_mem_hook.
 
-I didn't get that from your previous message:
+Key changes:
+- Added struct rte_acl_mem_hook with zalloc, free, and udata.
+- Added rte_acl_set_mem_hook / rte_acl_get_mem_hook to set/get callbacks.
+- Default allocation uses existing rte_zmalloc_socket/rte_free.
+- Modified ACL code to call callbacks for runtime allocations instead
+  of rte_zmalloc_socket/rte_free directly.
 
-Morten Br=C3=B8rup, Dec 09, 2025 at 12:13:
->>> Looking at patch 2/2, I disagree with the approach.
->>>
->>> RTE_LIBRTE_GRAPH_STATS should control all stats, incl. total_calls and =
-total_objs.
->>> Then, if enabled, the total_cycles stats can be controlled by rte_graph=
-_cycle_stats_enable().
->>>
->>> Your v1 series introduces unnecessary overhead for applications not car=
-ing about total_calls/total_objs stats and thus built without RTE_LIBRTE_GR=
-APH_STATS.
+v5:
+- Remove temporary memory allocation callback for build stage.
+- Introduce new API (rte_acl_set_mem_hook / rte_acl_get_mem_hook)
+  instead of modifying existing rte_acl_config to preserve
+  ABI compatibility.
 
-Where do you propose a new flag to determine whether total_calls and
-total_objs are updated and total_cycles are not?
+v6:
+- Reworked API to meet consistency and naming conventions.
+- Adjusted parameter order for better readability and alignment.
+- Renamed internal variables for clarity and code consistency.
 
->> And also, I would like to be able to enable/disable these stats *at
->> runtime*.
->
-> Why would you enable/disable total_calls/total_objs at runtime?
+v7:
+- Switch the UT to use malloc/free.
+- Update the documentation to clarify that rte_acl_set_mem_hook
+  must be called before rte_acl_build.
 
-I don't want to disable/enable total_calls/total_objs. I want to
-disable/enable total_cycles at runtime.
+v8:
+- Fix UT code per review.
 
->> Having it behind a compile time constant makes it very not flexible.
->
-> Agree, but instrumentation has a performance cost, and should be
-> possible to disable at compile time.
->
->> I could have two booleans to control whether total_calls/total_objs are
->> updated *and* whether total_cycles are computed. But that seems a bit
->> overkill and it would mean two fields to check (two branches) instead
->> of
->> one per node.
->>=20
->> Is it really that bad to update two uint64_t counters?
->
-> The cost is unnecessary. It's instrumentation.
+Signed-off-by: YongFeng Wang <mannywang@tencent.com>
+---
+ app/test/test_acl.c                           | 107 ++++++++++++++++++
+ .../prog_guide/packet_classif_access_ctrl.rst |  31 +++++
+ lib/acl/acl.h                                 |   1 +
+ lib/acl/acl_bld.c                             |   2 +-
+ lib/acl/acl_gen.c                             |   4 +-
+ lib/acl/rte_acl.c                             |  45 +++++++-
+ lib/acl/rte_acl.h                             |  53 +++++++++
+ 7 files changed, 239 insertions(+), 4 deletions(-)
 
-In that instance, I consider total_objs not to be "instrumentation" but
-more like regular counters (e.g. ethdev stats, xstats, etc.). Unless
-I am mistaken, there is no way to disable statistics for interfaces for
-example.
-
-For example, in grout, we use total_objs in the main loop to determine
-if we can save power by willingly putting the CPU to sleep for very
-short periods of time. If total_objs is no longer updated, grout cannot
-save power.
-
-total_cycles however, *is* instrumentation. It is only useful to
-identify hotspots and debug issues. But it can be interesting to enable
-it *at runtime* without recompiling.
+diff --git a/app/test/test_acl.c b/app/test/test_acl.c
+index 43d13b5b0f..d92b95246f 100644
+--- a/app/test/test_acl.c
++++ b/app/test/test_acl.c
+@@ -1721,6 +1721,111 @@ test_u32_range(void)
+ 	return rc;
+ }
+ 
++static struct rte_acl_ctx *acl_ctx;
++
++static void *running_alloc(char *name, size_t size,
++	size_t align, int32_t socket_id, void *udata)
++{
++	RTE_SET_USED(name);
++	RTE_SET_USED(socket_id);
++
++	if (udata != acl_ctx) {
++		printf("%s#%i udata mismatch!\n",
++			__func__, __LINE__);
++		return NULL;
++	}
++	void *addr = aligned_alloc(align, size);
++	if (addr == NULL) {
++		printf("%s#%i alloc memory failed!\n",
++			__func__, __LINE__);
++	}
++	return addr;
++}
++
++static void running_free(void *ptr, void *udata)
++{
++	if (udata != acl_ctx) {
++		printf("%s#%i udata mismatch!\n",
++			__func__, __LINE__);
++		return;
++	}
++	if (!ptr)
++		return;
++	free(ptr);
++}
++
++static int
++test_mem_hook(void)
++{
++	int i, ret;
++
++	acl_ctx = rte_acl_create(&acl_param);
++	if (acl_ctx == NULL) {
++		printf("Line %i: Error creating ACL context!\n", __LINE__);
++		return -1;
++	}
++
++	struct rte_acl_mem_hook mhook = {
++		.zalloc = running_alloc,
++		.free = running_free,
++		.udata = acl_ctx
++	};
++
++	ret = rte_acl_set_mem_hook(acl_ctx, &mhook);
++	if (ret != 0) {
++		printf("Line %i: Error set mem hook for acl context!\n", __LINE__);
++		rte_acl_free(acl_ctx);
++		return 1;
++	}
++
++	struct rte_acl_mem_hook new_hook;
++	memset(&new_hook, 0, sizeof(struct rte_acl_mem_hook));
++	if (rte_acl_get_mem_hook(acl_ctx, &new_hook) != 0
++		|| memcmp(&mhook, &new_hook, sizeof(struct rte_acl_mem_hook)) != 0) {
++		printf("Line %i: Error get mem hook for acl context!\n", __LINE__);
++		rte_acl_free(acl_ctx);
++		return 1;
++	}
++
++	ret = 0;
++	for (i = 0; i < TEST_CLASSIFY_ITER; i++) {
++
++		if ((i & 1) == 0)
++			rte_acl_reset(acl_ctx);
++		else
++			rte_acl_reset_rules(acl_ctx);
++
++		ret = test_classify_buid(acl_ctx, acl_test_rules,
++			RTE_DIM(acl_test_rules));
++		if (ret != 0) {
++			printf("Line %i, iter: %d: Adding rules to ACL context failed!\n",
++				__LINE__, i);
++			break;
++		}
++
++		ret = test_classify_run(acl_ctx, acl_test_data,
++			RTE_DIM(acl_test_data));
++		if (ret != 0) {
++			printf("Line %i, iter: %d: %s failed!\n",
++				__LINE__, i, __func__);
++			break;
++		}
++
++		/* reset rules and make sure that classify still works ok. */
++		rte_acl_reset_rules(acl_ctx);
++		ret = test_classify_run(acl_ctx, acl_test_data,
++			RTE_DIM(acl_test_data));
++		if (ret != 0) {
++			printf("Line %i, iter: %d: %s failed!\n",
++				__LINE__, i, __func__);
++			break;
++		}
++	}
++
++	rte_acl_free(acl_ctx);
++	return ret;
++}
++
+ static int
+ test_acl(void)
+ {
+@@ -1742,6 +1847,8 @@ test_acl(void)
+ 		return -1;
+ 	if (test_u32_range() < 0)
+ 		return -1;
++	if (test_mem_hook() < 0)
++		return -1;
+ 
+ 	return 0;
+ }
+diff --git a/doc/guides/prog_guide/packet_classif_access_ctrl.rst b/doc/guides/prog_guide/packet_classif_access_ctrl.rst
+index 172f443f6e..55b2018db9 100644
+--- a/doc/guides/prog_guide/packet_classif_access_ctrl.rst
++++ b/doc/guides/prog_guide/packet_classif_access_ctrl.rst
+@@ -359,7 +359,38 @@ For example:
+         ret = rte_acl_build(acx, &cfg);
+      }
+ 
++Custom Memory Hooks
++~~~~~~~~~~~~~~~~~~~~
++
++The ACL library supports custom memory allocation for runtime structures.
++Applications can supply their own memory hooks through:
++
++.. code-block:: c
++
++    int rte_acl_set_mem_hook(struct rte_acl_ctx *ctx,
++                           const struct rte_acl_mem_hook *mhook);
++
++    int rte_acl_get_mem_hook(const struct rte_acl_ctx *ctx,
++                           struct rte_acl_mem_hook *mhook);
++
++The ``rte_acl_mem_hook`` structure defines memory hooks:
++
++.. code-block:: c
++
++    struct rte_acl_mem_hook {
++        /** Allocate zero-initialized memory used during runtime. */
++        void *(*zalloc)(char *name, size_t size, size_t align, int32_t socket_id, void *udata);
++
++        /** Free memory previously allocated by zalloc(). */
++        void (*free)(void *ptr, void *udata);
++
++        /** User-provided context passed to allocation/free hooks. */
++        void *udata;
++    };
++
++Applications may use these hooks to allocate memory from custom pools or pre-allocated buffers.
+ 
++If no memory hook is provided, the ACL library uses rte_zmalloc_socket() internally.
+ 
+ Classification methods
+ ~~~~~~~~~~~~~~~~~~~~~~
+diff --git a/lib/acl/acl.h b/lib/acl/acl.h
+index c8e4e72fab..9c85a3d58a 100644
+--- a/lib/acl/acl.h
++++ b/lib/acl/acl.h
+@@ -174,6 +174,7 @@ struct rte_acl_ctx {
+ 	uint32_t            max_rules;
+ 	uint32_t            rule_sz;
+ 	uint32_t            num_rules;
++	struct rte_acl_mem_hook mem_hook;
+ 	uint32_t            num_categories;
+ 	uint32_t            num_tries;
+ 	uint32_t            match_index;
+diff --git a/lib/acl/acl_bld.c b/lib/acl/acl_bld.c
+index 7056b1c117..99d1dbc467 100644
+--- a/lib/acl/acl_bld.c
++++ b/lib/acl/acl_bld.c
+@@ -779,7 +779,7 @@ acl_merge_trie(struct acl_build_context *context,
+ static void
+ acl_build_reset(struct rte_acl_ctx *ctx)
+ {
+-	rte_free(ctx->mem);
++	ctx->mem_hook.free(ctx->mem, ctx->mem_hook.udata);
+ 	memset(&ctx->num_categories, 0,
+ 		sizeof(*ctx) - offsetof(struct rte_acl_ctx, num_categories));
+ }
+diff --git a/lib/acl/acl_gen.c b/lib/acl/acl_gen.c
+index 3c53d24056..77f19dd13a 100644
+--- a/lib/acl/acl_gen.c
++++ b/lib/acl/acl_gen.c
+@@ -478,8 +478,8 @@ rte_acl_gen(struct rte_acl_ctx *ctx, struct rte_acl_trie *trie,
+ 		return -ERANGE;
+ 	}
+ 
+-	mem = rte_zmalloc_socket(ctx->name, total_size, RTE_CACHE_LINE_SIZE,
+-			ctx->socket_id);
++	mem = ctx->mem_hook.zalloc(ctx->name, total_size,
++			RTE_CACHE_LINE_SIZE, ctx->socket_id, ctx->mem_hook.udata);
+ 	if (mem == NULL) {
+ 		ACL_LOG(ERR,
+ 			"allocation of %zu bytes on socket %d for %s failed",
+diff --git a/lib/acl/rte_acl.c b/lib/acl/rte_acl.c
+index 8c0ca29618..3f2b194206 100644
+--- a/lib/acl/rte_acl.c
++++ b/lib/acl/rte_acl.c
+@@ -264,6 +264,20 @@ acl_get_best_alg(void)
+ 	return alg[i];
+ }
+ 
++static void *
++acl_mem_default_zalloc(char *name, size_t size, size_t align, int32_t socket_id, void *udata)
++{
++	RTE_SET_USED(udata);
++	return rte_zmalloc_socket(name, size, align, socket_id);
++}
++
++static void
++acl_mem_default_free(void *ptr, void *udata)
++{
++	RTE_SET_USED(udata);
++	rte_free(ptr);
++}
++
+ RTE_EXPORT_SYMBOL(rte_acl_set_ctx_classify)
+ extern int
+ rte_acl_set_ctx_classify(struct rte_acl_ctx *ctx, enum rte_acl_classify_alg alg)
+@@ -362,7 +376,7 @@ rte_acl_free(struct rte_acl_ctx *ctx)
+ 
+ 	rte_mcfg_tailq_write_unlock();
+ 
+-	rte_free(ctx->mem);
++	ctx->mem_hook.free(ctx->mem, ctx->mem_hook.udata);
+ 	rte_free(ctx);
+ 	rte_free(te);
+ }
+@@ -425,6 +439,9 @@ rte_acl_create(const struct rte_acl_param *param)
+ 		ctx->rule_sz = param->rule_size;
+ 		ctx->socket_id = param->socket_id;
+ 		ctx->alg = acl_get_best_alg();
++		ctx->mem_hook.zalloc = acl_mem_default_zalloc;
++		ctx->mem_hook.free = acl_mem_default_free;
++		ctx->mem_hook.udata = NULL;
+ 		strlcpy(ctx->name, param->name, sizeof(ctx->name));
+ 
+ 		te->data = (void *) ctx;
+@@ -555,3 +572,29 @@ rte_acl_list_dump(void)
+ 	}
+ 	rte_mcfg_tailq_read_unlock();
+ }
++
++/*
++ * Set memory allocation hooks for a given ACL context.
++ */
++RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_acl_set_mem_hook, 26.03)
++int
++rte_acl_set_mem_hook(struct rte_acl_ctx *acl, const struct rte_acl_mem_hook *mhook)
++{
++	if (acl == NULL || mhook == NULL || mhook->zalloc  == NULL || mhook->free == NULL)
++		return -EINVAL;
++	memcpy(&acl->mem_hook, mhook, sizeof(struct rte_acl_mem_hook));
++	return 0;
++}
++
++/*
++ * Retrieve the memory allocation hooks assigned to the ACL context.
++ */
++RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_acl_get_mem_hook, 26.03)
++int
++rte_acl_get_mem_hook(const struct rte_acl_ctx *acl, struct rte_acl_mem_hook *mhook)
++{
++	if (acl  == NULL || mhook == NULL)
++		return -EINVAL;
++	memcpy(mhook, &acl->mem_hook, sizeof(struct rte_acl_mem_hook));
++	return 0;
++}
+diff --git a/lib/acl/rte_acl.h b/lib/acl/rte_acl.h
+index 95354cabb8..18ac30889b 100644
+--- a/lib/acl/rte_acl.h
++++ b/lib/acl/rte_acl.h
+@@ -136,6 +136,59 @@ struct rte_acl_param {
+ /** @internal opaque ACL handle */
+ struct rte_acl_ctx;
+ 
++/**
++ * Memory allocation hooks for ACL runtime.
++ */
++struct rte_acl_mem_hook {
++	/** Allocate zero-initialized memory used during runtime. */
++	void *(*zalloc)(char *name, size_t size, size_t align, int32_t socket_id, void *udata);
++
++	/** Free memory previously allocated by zalloc(). */
++	void (*free)(void *ptr, void *udata);
++
++	/** User-provided context passed to allocation/free hooks. */
++	void *udata;
++};
++
++/**
++ * Set memory allocation hooks for a given ACL context.
++ *
++ * Applications may use these hooks to allocate memory from custom pools or
++ * pre-allocated buffers. If no memory hook is provided, the ACL library uses
++ * rte_zmalloc_socket() internally.
++ *
++ * This function must be called **before** rte_acl_build().
++ * If the hook needs to be changed after a build, the ACL context must be reset
++ * first by invoking rte_acl_reset(), and only then can the memory hook be
++ * updated followed by another call to rte_acl_build().
++ *
++ * @param acl
++ *   The ACL context.
++ * @param mhook
++ *   Pointer to the memory hook structure
++ *
++ * @return
++ *   0 on success.
++ *   -EINVAL if parameters are invalid.
++ */
++__rte_experimental
++int rte_acl_set_mem_hook(struct rte_acl_ctx *acl, const struct rte_acl_mem_hook *mhook);
++
++/**
++ * Retrieve the memory allocation hooks assigned to the ACL context.
++ *
++ * @param acl
++ *   The ACL context.
++ * @param mhook
++ *   Output location for the current memory hook structure
++ *
++ * @return
++ *   0 on success.
++ *   -EINVAL if parameters are invalid.
++ */
++__rte_experimental
++int rte_acl_get_mem_hook(const struct rte_acl_ctx *acl, struct rte_acl_mem_hook *mhook);
++
+ /**
+  * De-allocate all memory used by ACL context.
+  *
+-- 
+2.43.0
 
