@@ -2,44 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18BE7D1CDC6
-	for <dpdk-dev@archiver.kernel.org>; Tue,  9 Dec 2025 11:13:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62279D1CDC6
+	for <dpdk-dev@archiver.kernel.org>; Tue,  9 Dec 2025 11:27:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0B14540270;
-	Tue,  9 Dec 2025 12:13:22 +0100 (CET)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 23EEC4025F
- for <dev@dpdk.org>; Tue,  9 Dec 2025 12:13:19 +0100 (CET)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 050C8206A1;
- Tue,  9 Dec 2025 12:13:19 +0100 (CET)
-Content-class: urn:content-classes:message
+	by mails.dpdk.org (Postfix) with ESMTP id 2A17B40270;
+	Tue,  9 Dec 2025 12:27:09 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+ by mails.dpdk.org (Postfix) with ESMTP id EADDE4025F
+ for <dev@dpdk.org>; Tue,  9 Dec 2025 12:27:06 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1765279627; x=1796815627;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=5MZDzkX07T7L9oiJYt1zaqwxM6ciQpS4+2OR+Hjt724=;
+ b=liefrpYb0TtkkOeXE0aJI0G8x7Dbo+umbLTA/NttH/xA6KkjCCQAflzc
+ 0d45748hajZu18VH+A3Y8iae2ccHZN81ewqx9WVSA5xBAXJoyo2xdOxVS
+ EHCxE24bDYkv/kRk55ZzDt8TiVwzI5T5/OqGtjnbwSLY7+VnhFhxoUgnB
+ iO4Sxr2o2WV9gmtD3/DkOWfpfp2eBdN6qj4jlUPArpVS2hIWAyosRy8JK
+ wKlpjtmJ41KXkIBqxWcqEkBd2wMxW5Mn66o8WtOz4tqGbcej9ZSjcHsaF
+ a7dtQLT/t7rIqOqXHqtUsHKQ4rdJPaHgkMXqYuQrwQ5JGG8p7WoxURzGD Q==;
+X-CSE-ConnectionGUID: m2K06qqvSjq+oM4yKCEZ2w==
+X-CSE-MsgGUID: PW0J021qRqCYoTUGdkMw7g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11636"; a="67117024"
+X-IronPort-AV: E=Sophos;i="6.20,261,1758610800"; d="scan'208";a="67117024"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+ by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 09 Dec 2025 03:27:06 -0800
+X-CSE-ConnectionGUID: pyU+1OlDRSuACyxxuQoHjg==
+X-CSE-MsgGUID: b4enGWwoSX2MEsul/OZ6zw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.20,261,1758610800"; d="scan'208";a="195270161"
+Received: from silpixa00401177.ir.intel.com ([10.20.224.214])
+ by orviesa006.jf.intel.com with ESMTP; 09 Dec 2025 03:27:05 -0800
+From: Ciara Loftus <ciara.loftus@intel.com>
+To: dev@dpdk.org
+Cc: Ciara Loftus <ciara.loftus@intel.com>
+Subject: [PATCH 00/13] net/intel: tx path selection simplification
+Date: Tue,  9 Dec 2025 11:26:39 +0000
+Message-ID: <20251209112652.963981-1-ciara.loftus@intel.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
-Subject: RE: [PATCH dpdk 1/2] graph: always count objects and calls
-Date: Tue, 9 Dec 2025 12:13:16 +0100
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F655C8@smartserver.smartshare.dk>
-In-Reply-To: <DETKJKSUL9XG.1CTKW09I3UWSB@redhat.com>
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH dpdk 1/2] graph: always count objects and calls
-Thread-Index: Adxo6//p2vxeTvU6SVCIUZNtkqq/2wAD9eHA
-References: <20251209085028.115203-4-rjarry@redhat.com>
- <20251209085028.115203-5-rjarry@redhat.com>
- <CALBAE1OMwTX=a5i56G_sPXicw=17ozvb4PBfak0ev2Ps3xwuGw@mail.gmail.com>
- <DETKJKSUL9XG.1CTKW09I3UWSB@redhat.com>
-From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
-To: "Robin Jarry" <rjarry@redhat.com>,
-	"Jerin Jacob" <jerinjacobk@gmail.com>
-Cc: <dev@dpdk.org>, "Jerin Jacob" <jerinj@marvell.com>,
- "Kiran Kumar K" <kirankumark@marvell.com>,
- "Nithin Dabilpuram" <ndabilpuram@marvell.com>,
- "Zhirun Yan" <yanzhirun_163@163.com>
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -53,20 +57,62 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-PiBGcm9tOiBSb2JpbiBKYXJyeSBbbWFpbHRvOnJqYXJyeUByZWRoYXQuY29tXQ0KPiBTZW50OiBU
-dWVzZGF5LCA5IERlY2VtYmVyIDIwMjUgMTAuMTMNCj4gDQo+IEplcmluIEphY29iLCBEZWMgMDks
-IDIwMjUgYXQgMTA6MDk6DQo+ID4gQnkgZGVmYXVsdCwgUlRFX0xJQlJURV9HUkFQSF9TVEFUUyBp
-cyBlbmFibGVkIGluIGRpc3RybyBidWlsZC4gU28gd2h5DQo+ID4gbmVlZCBzdWNoIGNoYW5nZXM/
-DQo+IA0KPiBUaGlzIG1ha2VzIHNlbnNlIHdpdGggdGhlIG5leHQgcGF0Y2ggaW4gZmFjdC4NCj4g
-DQo+IFRoZSB1c2VyIChlLmcuIGdyb3V0KSBtYXkgbmVlZCB0byBjb2xsZWN0IHRoZSBudW1iZXIg
-b2YgcHJvY2Vzc2VkDQo+IG9iamVjdHMgaW4gb3JkZXIgdG8gbWFrZSBydW50aW1lIGRlY2lzaW9u
-cy4gQnV0IHRoZSBjb3N0IG9mIHJkdHNjKCkgbWF5DQo+IGJlIHRvbyBoaWdoIGFuZCBpdCBtYXkg
-YmUgYSBnb29kIHRoaW5nIHRvIGRpc2FibGUgaXQgdW5sZXNzIHRyeWluZyB0bw0KPiBiZW5jaG1h
-cmsvZGVidWcgc3BlY2lmaWMgaXNzdWVzLg0KDQpMb29raW5nIGF0IHBhdGNoIDIvMiwgSSBkaXNh
-Z3JlZSB3aXRoIHRoZSBhcHByb2FjaC4NCg0KUlRFX0xJQlJURV9HUkFQSF9TVEFUUyBzaG91bGQg
-Y29udHJvbCBhbGwgc3RhdHMsIGluY2wuIHRvdGFsX2NhbGxzIGFuZCB0b3RhbF9vYmpzLg0KVGhl
-biwgaWYgZW5hYmxlZCwgdGhlIHRvdGFsX2N5Y2xlcyBzdGF0cyBjYW4gYmUgY29udHJvbGxlZCBi
-eSBydGVfZ3JhcGhfY3ljbGVfc3RhdHNfZW5hYmxlKCkuDQoNCllvdXIgdjEgc2VyaWVzIGludHJv
-ZHVjZXMgdW5uZWNlc3Nhcnkgb3ZlcmhlYWQgZm9yIGFwcGxpY2F0aW9ucyBub3QgY2FyaW5nIGFi
-b3V0IHRvdGFsX2NhbGxzL3RvdGFsX29ianMgc3RhdHMgYW5kIHRodXMgYnVpbHQgd2l0aG91dCBS
-VEVfTElCUlRFX0dSQVBIX1NUQVRTLg0KDQo=
+This series aims to simplify the process of selecting a Tx burst
+function for the Intel drivers i40e, iavf, ice, idpf and cpfl by:
+1. enforcing the same tx burst function for both primary and secondary
+processes.
+2. using a common function for selecting the tx burst function based on
+maximum SIMD width, function features (context descriptor, single queue, etc.)
+and requested tx offloads.
+
+Some fixes are made to errors in the documentation that became evident
+while implementing the new selection infratructure in each driver.
+
+Ciara Loftus (13):
+  net/intel: introduce infrastructure for Tx path selection
+  net/ice: use same Tx path across processes
+  net/ice: use common Tx path selection infrastructure
+  net/iavf: use same Tx path across processes
+  net/iavf: use common Tx path selection infrastructure
+  net/i40e: use same Tx path across processes
+  net/i40e: use common Tx path selection infrastructure
+  net/idpf: use common Tx path selection infrastructure
+  net/cpfl: use common Tx path selection infrastructure
+  docs: fix TSO and checksum offload feature status in ice doc
+  docs: fix TSO feature status in iavf driver documentation
+  docs: fix inline crypto feature status in iavf driver doc
+  docs: fix TSO feature status in i40e driver documentation
+
+ doc/guides/nics/features/i40e.ini             |   2 +-
+ doc/guides/nics/features/iavf.ini             |   4 +-
+ doc/guides/nics/features/ice.ini              |   6 +-
+ drivers/net/intel/common/tx.h                 | 100 ++++++++
+ drivers/net/intel/cpfl/cpfl_rxtx.c            | 114 +++------
+ drivers/net/intel/cpfl/cpfl_rxtx_vec_common.h |  10 -
+ drivers/net/intel/i40e/i40e_ethdev.h          |  13 +-
+ drivers/net/intel/i40e/i40e_rxtx.c            | 186 ++++++++------
+ drivers/net/intel/i40e/i40e_rxtx.h            |  20 +-
+ .../net/intel/i40e/i40e_rxtx_vec_altivec.c    |   6 -
+ drivers/net/intel/i40e/i40e_rxtx_vec_neon.c   |   6 -
+ drivers/net/intel/i40e/i40e_rxtx_vec_sse.c    |   6 -
+ drivers/net/intel/iavf/iavf.h                 |   2 -
+ drivers/net/intel/iavf/iavf_ethdev.c          |   9 +-
+ drivers/net/intel/iavf/iavf_rxtx.c            | 241 +++++++++---------
+ drivers/net/intel/iavf/iavf_rxtx.h            |  46 ++--
+ drivers/net/intel/iavf/iavf_rxtx_vec_common.h |  39 +--
+ drivers/net/intel/ice/ice_ethdev.c            |   1 +
+ drivers/net/intel/ice/ice_ethdev.h            |  12 +-
+ drivers/net/intel/ice/ice_rxtx.c              | 201 +++++++--------
+ drivers/net/intel/ice/ice_rxtx.h              |  30 ++-
+ drivers/net/intel/ice/ice_rxtx_vec_common.h   |  35 +--
+ drivers/net/intel/ice/ice_rxtx_vec_sse.c      |   6 -
+ drivers/net/intel/idpf/idpf_common_device.h   |  10 +
+ drivers/net/intel/idpf/idpf_common_rxtx.c     |  49 ++++
+ drivers/net/intel/idpf/idpf_common_rxtx.h     |  12 +
+ drivers/net/intel/idpf/idpf_rxtx.c            | 112 +++-----
+ drivers/net/intel/idpf/idpf_rxtx_vec_common.h |  10 -
+ 28 files changed, 664 insertions(+), 624 deletions(-)
+
+-- 
+2.43.0
+
