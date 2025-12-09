@@ -2,60 +2,160 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE701D3B7EA
-	for <dpdk-dev@archiver.kernel.org>; Tue,  9 Dec 2025 08:50:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82840D3B7EA
+	for <dpdk-dev@archiver.kernel.org>; Tue,  9 Dec 2025 08:55:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DC95C4067D;
-	Tue,  9 Dec 2025 09:50:51 +0100 (CET)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 8A83A40674
- for <dev@dpdk.org>; Tue,  9 Dec 2025 09:50:49 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1765270249;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=H+MqkVVDbhjwI94oZxoRasuPDWh1eK5OgSXUOmPJtp8=;
- b=fxibVLbm4EyumjxMdJYTd8pHoTtfS38Ze3OmTcSWlQrNOHOCjb+RO/3JIG2jrZWrZGBTWb
- A8Lm68Vr6s3vjrwTmjWlGESJqzDbRr4UWidjde5oLrhTyBFinjUMJ72H0djRdRfZ0oIvIR
- rSCuwa3S3Z2TGCcQKQX5gsu8z2ag+5s=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-477-SZGBhxQJPeiJ3UcAtcEq7Q-1; Tue,
- 09 Dec 2025 03:50:44 -0500
-X-MC-Unique: SZGBhxQJPeiJ3UcAtcEq7Q-1
-X-Mimecast-MFC-AGG-ID: SZGBhxQJPeiJ3UcAtcEq7Q_1765270243
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 3229B1800669; Tue,  9 Dec 2025 08:50:43 +0000 (UTC)
-Received: from ringo.home (unknown [10.45.225.153])
- by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id 4DCB21800451; Tue,  9 Dec 2025 08:50:41 +0000 (UTC)
-From: Robin Jarry <rjarry@redhat.com>
-To: dev@dpdk.org, Jerin Jacob <jerinj@marvell.com>,
- Kiran Kumar K <kirankumark@marvell.com>,
- Nithin Dabilpuram <ndabilpuram@marvell.com>,
- Zhirun Yan <yanzhirun_163@163.com>
-Subject: [PATCH dpdk 2/2] graph: allow enabling/disabling node visit cycles
- collection
-Date: Tue,  9 Dec 2025 09:50:31 +0100
-Message-ID: <20251209085028.115203-6-rjarry@redhat.com>
-In-Reply-To: <20251209085028.115203-4-rjarry@redhat.com>
-References: <20251209085028.115203-4-rjarry@redhat.com>
+	by mails.dpdk.org (Postfix) with ESMTP id A815B40270;
+	Tue,  9 Dec 2025 09:55:54 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+ by mails.dpdk.org (Postfix) with ESMTP id B2A464025F;
+ Tue,  9 Dec 2025 09:55:52 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1765270553; x=1796806553;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=+DGKAH1kAHQV/IQ/IqGAt0ohrKXVdPSeZUObEMk4LKY=;
+ b=BHmzrTWzhqsuQDpAV7M03rqV3yrth50ahfg+nkE3jSw9JEz8PexkLYlt
+ x0hkXoOJM4HVlfHZDft6/QvGL1M7he3vID2vFq/x4qfUCX13pz7YAj8hv
+ /+ZIOGYhJirn5IdnPMaHq+slni/L+3FR0aQnPiLW0CsdY0gvv0EKLOi2Q
+ V1DeCbRysKEZg6Gywtm+cZE+a3vUOCi9LuaxAFG+bU1x6raWpG3CjCvr8
+ uNuNhzh03zpsS4Rye9wo53eWkGxsGwpJQJzE2PvKG5fkQTv5iFhlrkp2n
+ OLD7MGsNc9+GUju3S/MXf3UJo3D55TnUkdQDOBWu9blcr0IX8UaCpcPYk g==;
+X-CSE-ConnectionGUID: mo6k+/vOR7yIuUyXKD7kUw==
+X-CSE-MsgGUID: vINjcJouTI2TjDUR89godQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11636"; a="92698252"
+X-IronPort-AV: E=Sophos;i="6.20,261,1758610800"; d="scan'208";a="92698252"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+ by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 09 Dec 2025 00:55:51 -0800
+X-CSE-ConnectionGUID: VdTECCZGRauCWi6arePRaA==
+X-CSE-MsgGUID: tVDtmFLlRYu1Vnyq/RhHCA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.20,261,1758610800"; d="scan'208";a="196188693"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+ by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 09 Dec 2025 00:55:50 -0800
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.29; Tue, 9 Dec 2025 00:55:50 -0800
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.29 via Frontend Transport; Tue, 9 Dec 2025 00:55:50 -0800
+Received: from CY3PR05CU001.outbound.protection.outlook.com (40.93.201.55) by
+ edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.29; Tue, 9 Dec 2025 00:55:49 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ljzPedhbNVbDvhX6mjThw356BjC7vwpw1gZtNncfL3+r/ig9FaD23766vxOsLLWnbYuZVMqlodDLDQWmJq/VBQ123xLAl8DXk8zj39WKDYJTeUEySCzF8Q+rtxu7p9rL5U9ur39ESmAcs4Mf7pSGPgSKvMoqW7F0tQUUy+r0LRi+BMCtMMfyvqir82sDv0tWZIrsiEA7g5ewyy9J54VFW+9loPAgco9YeVQB1ynvdQNMA8OeGY1414FDIMjV4V13JBBJyDPuZ+5+p3Y/V5mCgi6SYgw2UUT/XfTL32W+SlOXR6MBCskp8yH/KGt1iDi7aLHMXh7Gz9bGg01tuPBd3Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=sMOjbAzoUjuXz50yztlYGO7ANkQl+9d/hcOtVwTncgg=;
+ b=IKSfhLaFQrpNn3CguWTJmgWPSGSyPLNlySDLCk78TXyPkWq8+YQGJK8g9tPLrCTNz+eveLH4PUMFBr6oibPjVquHPOj+4mD1MmXLDNZj/Ltp91jSuLE/Y8WKbnDHpyN0BeRnFIGvhc2U/1hVRGMHgRjovIrYI0hVvQXB8xTLxWPedlairrVWBkOVaR1p29ZEpu1/CwPas/POnS+CHOvzfAsHdNptzCzzMAOrDtQiv4dtxZUBfADUUBSrs/6UlbV3IumVJrj0eCBY0TlKDw7DM8w8Zp4YnL8IaQ8piu23MUgzC93SNGS1LJxFwT9vVAYf3VY8svXqVSR4FRwbWjyMCA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CY8PR11MB7290.namprd11.prod.outlook.com (2603:10b6:930:9a::6)
+ by SA3PR11MB8076.namprd11.prod.outlook.com (2603:10b6:806:2f0::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9388.14; Tue, 9 Dec
+ 2025 08:55:43 +0000
+Received: from CY8PR11MB7290.namprd11.prod.outlook.com
+ ([fe80::97aa:4b89:4558:19e1]) by CY8PR11MB7290.namprd11.prod.outlook.com
+ ([fe80::97aa:4b89:4558:19e1%6]) with mapi id 15.20.9412.005; Tue, 9 Dec 2025
+ 08:55:43 +0000
+Date: Tue, 9 Dec 2025 08:55:38 +0000
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: Matt Goralka <mgoralka4@gmail.com>
+CC: <users@dpdk.org>, <dev@dpdk.org>
+Subject: Re: contributing to dpdk
+Message-ID: <aTfkCg8pU0OKYTDS@bricha3-mobl1.ger.corp.intel.com>
+References: <CAMf-ZCH+EuZxuUyvrJCJacC1JO15FccXNkg2+nuC4+nMGpJDSg@mail.gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <CAMf-ZCH+EuZxuUyvrJCJacC1JO15FccXNkg2+nuC4+nMGpJDSg@mail.gmail.com>
+X-ClientProxiedBy: DUZPR01CA0124.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:4bc::7) To CY8PR11MB7290.namprd11.prod.outlook.com
+ (2603:10b6:930:9a::6)
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: cJ3KhnwWUWzLrCX5XImGDl8NZNCbwh8LXSXuvJv3HaQ_1765270243
-X-Mimecast-Originator: redhat.com
-Content-Transfer-Encoding: 8bit
-content-type: text/plain; charset="US-ASCII"; x-default=true
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY8PR11MB7290:EE_|SA3PR11MB8076:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9bb2cfa4-31ca-42ad-18a4-08de3700bc38
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?VEBDA0YnE9a36iApnPdt8L+3fLRvXte3HKu7n7ss7LKGvKaRcrjoavjnwRpa?=
+ =?us-ascii?Q?gegI+P5AaucycisWRRFO1/lkIf1gz2sDe60JAJ3520Tu3s5WqamPbcKQs22J?=
+ =?us-ascii?Q?GC0TGyNYn5Q384EVO3jyVV3jiEl06TZrwDQBL8n2884tmZdv0NqacUu4sfl4?=
+ =?us-ascii?Q?NWS3ncZ4StXW0HyWK3fD1Yc+Lo8PaMI8G2cbgkNjZHAKdSbZuJbjrZaKZtOw?=
+ =?us-ascii?Q?DbVsGBejkS+z3tQ/Umg6n/eNPaeYE2v34mMMVBMlClV5aQi1qAv4OWKWOp1L?=
+ =?us-ascii?Q?AP65zYbp3KhqWW48aN/p+lsQnVwMW2l7U+/rauswMHsDWHniHu4dbW2cVVHI?=
+ =?us-ascii?Q?WQL1qsSCneManIc/PyXELp93xPHBfSez7/hqqoH0tl+HEydW6SAnhB/Uh7q2?=
+ =?us-ascii?Q?9IdX4RGE1thuwpnYYhQewymr7ZQ+wUzpiGqfJZ+yOttYAotbE/yviD/8c+SJ?=
+ =?us-ascii?Q?g3anMa08ajfU10zJ5GfARG28vjZZhsfOTQ0yTY2l2rWih1Acjs8sCqsIDlJB?=
+ =?us-ascii?Q?0ZPUoP5aF+2jIF7bv3KjVJNevXb3EqQoqSGwec3+xXquDC7orIEh3ZNYXyJW?=
+ =?us-ascii?Q?pSqqxPu6a4Hg6BlZO30AY+cpNSpfSevQ6Zn2D6Fv14PT11/6dX2IzsUn/NXV?=
+ =?us-ascii?Q?NY9vmYP1dEICVvNIj/zqYW1spBhH64VuNHCT16k/m7m4APz4VTxIFeSQd5zu?=
+ =?us-ascii?Q?ji4tYEyB9wy5me6SjW8k1sgSIPcfLKh0ngOIHU2YrZNRh96318l5Ig//CX4h?=
+ =?us-ascii?Q?Eesgd3pWaueJAUplnw5ZkPNkO/vNTJXhLGktitwJ9BAbyZJg8Wrj2T/1Z4Tn?=
+ =?us-ascii?Q?GnYd5/XHBC1V09FgVOpQsTV36QjxvwwrBbJm023biQucOYg0EknYea5IS59n?=
+ =?us-ascii?Q?AqMEz51zxrArKIUsKVLIB9AjCCX8rD5gZX+7/RJlO1nPLCffNJUZ5UyTZU1t?=
+ =?us-ascii?Q?liyOiEB2ScQmX2TvMKVd6dS1c6HnV2tNL6c7nuiVl528fDelG41NNWjltIr4?=
+ =?us-ascii?Q?32fKVwSNix/UfS5Qsq6PED3eECYmGdEU7sHi1qylQwv34xKLxeRT0R+L7ZZk?=
+ =?us-ascii?Q?g8otRKVsADWxbDJcqs0S+NkyQ8hiv+cyUp6yig+DRx3NVksExwZ+/yRMvT53?=
+ =?us-ascii?Q?15dOk2yuRKojdU4VAIBXLuXv+0noawjjjL8vumxfNeKL+mSTdu/jS6biQBjx?=
+ =?us-ascii?Q?DagVUivDdpMXu4YOaEujqucL5fVM71CflVsXXAePrO4u1VcnRQ13/yzkv61k?=
+ =?us-ascii?Q?4dZR922l8acdrRn7k4/67GOm40KNhxA+HF9tHCuKFVcReEBA0hDQaA/tOHPE?=
+ =?us-ascii?Q?froWue/WIhbVhGZEcUZWUtMrFd50rgW3BTdbEJnSravfMpdALcQs7kPSkwKU?=
+ =?us-ascii?Q?QcS8rz/0S9KBCn3QkBCJ263YQflg4c1avhV+N3LvBKsD5rCvhZkmXuqM+ayR?=
+ =?us-ascii?Q?V7Wvlo3ftQKlSmouxM+7CN0aEWuo9Xi7RFWeinYCaju9sreVcD3FYw=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:CY8PR11MB7290.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(1800799024)(376014)(366016); DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?n/IqYDWFNXEzCdI3+IPk68pAyIb1l6TZtEGet+V8M4udUMzLxu3Xy73OLIYL?=
+ =?us-ascii?Q?aGs3wcHDITYM23tXgtaxGPe4lj3/SH5oKB5hHXctEWyWIV81AbukWdJ/70hD?=
+ =?us-ascii?Q?iNbeiQPDALgtwTwuK0yc+lcCL1NKovIWMgai9j9epKU39FAJHzHye0fh/coD?=
+ =?us-ascii?Q?aP/gBh4K9Dm8z+tnYUzm0+gQ8NTNSug/8xACsOVTHGapLjR9MBZ7WRWw9QhB?=
+ =?us-ascii?Q?CLFYrvShUXejmZWs5ZIPO5iAVVW44fvvgS60lNOEXgN6F5wgj4frfAgqKiAH?=
+ =?us-ascii?Q?O0gktLVUbQy1kMFYNkfJLu0NsVmOhELxuas86HkTZ774LWQwbp6UrcyY8FOf?=
+ =?us-ascii?Q?T/O9k71tQbZUo2QKCl8wwXkHRuXQTJNpGye043JAPdwxNkLc8cPZyyduwmb+?=
+ =?us-ascii?Q?xBurXYYQdS1oHpv2K1JcHBQafjxoiSJY0dop5dK9mDeCbdwcjAs2Sc/K1Jnt?=
+ =?us-ascii?Q?HzTqatO5nEGk6pPh1Do7qqy46mW5GAPN1omd03J1lnUgTOK33h6TbNSDS6N4?=
+ =?us-ascii?Q?oE9bp2/TgCszlnja2YmE+AFb47lpAInZ3DmVGXTGyIUjeRPfKr12SHnm3EH9?=
+ =?us-ascii?Q?7qAIMSC3x08Pxehs9GzoWzd349ysh21adY8JLHxbKSqEYjKYTheIzn9muPq9?=
+ =?us-ascii?Q?B6/BociRLcVt6rhCzzWbl1Fg2OQSs7VNDb4Z8H/n10Fctn3eyPUe+Tt394nv?=
+ =?us-ascii?Q?F4PlD9yEe/T2ylzeBzrZE8Q4SSsuznyb/mCWH504hcwNW8U7mOyjmCrummCz?=
+ =?us-ascii?Q?vbA6+eh9k4rOjqRLKJOlxsjbPX7buELZu4aF1Bf/wdDdzfUI2KceNShbi6qJ?=
+ =?us-ascii?Q?ckgBkUDFqLrfW9+sIH1sbx4DQmOv1CwoupzgZAmagM8eCG7PuEFzbcX0mb5p?=
+ =?us-ascii?Q?tcjVZG9yiMOxi/A4cZbz8/EsyTWY/DzzYQpHfLrin6uqHDVcnvf+mLBRO3gD?=
+ =?us-ascii?Q?1FQ2wDLTJbutifMzjsCJu+SIyk0gGBkjhk95QTxpGGSAQ1krREcwpD3L0Hkd?=
+ =?us-ascii?Q?pMmNRuJD/cpYAqLWvATHJUs7wCq0LzZ0xlya9tbw07mrlR3z7/yA6TAuiajQ?=
+ =?us-ascii?Q?2FTqh3EkwmW+3oLrQ9qKtqXqmIZvwR+RwGrMDm7abWNW3P0kD7byAaPR5ekG?=
+ =?us-ascii?Q?mvwDk1fl1rKoxSFRFiMRAOkbQT72vRY0uSZVkw/OqDb2YlKuiODwOeM7tYLH?=
+ =?us-ascii?Q?DJzRFddvUMCAfsNz+gf9KXgD8/BiisoSbL9Q/BxQtmBJS/qSRrUUhRXUu6YP?=
+ =?us-ascii?Q?SXt4WS0KI3H69h2ppjAjM0V7kjhQz/Uq0I1jkUTQc75sjR3rcl9XoY8+icm+?=
+ =?us-ascii?Q?WjX76voGzv9KOz5YOBGI74QaM6FZlGfOArsMx8PhwLo+ufeIrCJVE3FG3w7s?=
+ =?us-ascii?Q?S70Eyw9AsZDQ+tFgFD2IT8pRPFM3ry4k9qKys8FdQZ1Vs3CSbWlpA9Z0pGj0?=
+ =?us-ascii?Q?dDtebqRZlAEPOKN8nc0CNOfo2gr7bgcs/SkrPAapfNsFT9W8j5Z5+MdYoAWi?=
+ =?us-ascii?Q?zrdkgu1EtjDUgijGa3u9KdY5bAxo1H81TNuXPk5tkuuqiqiI19iaQXs6mmAm?=
+ =?us-ascii?Q?caf+Y7/+9GMN3spJeZqDiD93JcvwpvuEOMr+M9LwvQfC8g9oC3A1OTcG9X/O?=
+ =?us-ascii?Q?qA=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9bb2cfa4-31ca-42ad-18a4-08de3700bc38
+X-MS-Exchange-CrossTenant-AuthSource: CY8PR11MB7290.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Dec 2025 08:55:43.1436 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: EZjryhb9jouVV8h13CY6U+xbygZ6wcZmeShHBN3PxO12Zsu0KEVbGondvTu2QyQrC+pAFKoKByOGicp/82jZOX9y8WoeC5u78vAASAqJZws=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR11MB8076
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -69,74 +169,28 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add a new rte_graph_cycle_stats_enable() function to control whether
-rte_rdtsc() is called twice for each node visit in order to collect the
-number of cycles spent in each node process callback.
+On Sun, Dec 07, 2025 at 02:11:15AM -0600, Matt Goralka wrote:
+>    Hi,
+>    My name is Matt Goralka.  I'm interested in contributing to dpdk and am
+>    wondering if you are taking people and have a few questions if someone
+>    can help get me started.  I have a computer hardware engineering degree
+>    and experience in web dev so not totally starting from scratch.
+>    -How do you guys get newbies started?  Can you kind of get me going?
+>    -I have a gaming laptop with a Ryzen 7 chip and NVIDIA GEFORCE RTX 5060
+>    chip.  Would it be enough to virtualize linux?
+>    Thanks guys, looking forward to hopefully working with you!
+>    -Matt
 
-The default value remains the same as before and is fixed by the compile
-time value RTE_LIBRTE_GRAPH_STATS.
+Hi Matt,
 
-Signed-off-by: Robin Jarry <rjarry@redhat.com>
----
- lib/graph/graph_populate.c          |  1 +
- lib/graph/rte_graph_worker_common.h | 18 ++++++++++++++++--
- 2 files changed, 17 insertions(+), 2 deletions(-)
+new contributions and contributors always welcome! To get started, I'd
+suggest getting linux up and running on whatever hardware you have and then
+build DPDK as described in our linux getting-started-guide doc[1]. Beyond
+that, for questions I'd recommend joining the DPDK slack channel as linked
+on our contribute page [2].
 
-diff --git a/lib/graph/graph_populate.c b/lib/graph/graph_populate.c
-index 026daecb2122..e51e3b39e24a 100644
---- a/lib/graph/graph_populate.c
-+++ b/lib/graph/graph_populate.c
-@@ -64,6 +64,7 @@ graph_header_popluate(struct graph *_graph)
- 	graph->nb_nodes = _graph->node_count;
- 	graph->cir_start = RTE_PTR_ADD(graph, _graph->cir_start);
- 	graph->nodes_start = _graph->nodes_start;
-+	graph->cycles_stats = rte_graph_has_stats_feature();
- 	graph->socket = _graph->socket;
- 	graph->id = _graph->id;
- 	memcpy(graph->name, _graph->name, RTE_GRAPH_NAMESIZE);
-diff --git a/lib/graph/rte_graph_worker_common.h b/lib/graph/rte_graph_worker_common.h
-index c87a6796a96e..4161fc4b02e7 100644
---- a/lib/graph/rte_graph_worker_common.h
-+++ b/lib/graph/rte_graph_worker_common.h
-@@ -56,7 +56,7 @@ struct __rte_cache_aligned rte_graph {
- 	rte_graph_off_t *cir_start;  /**< Pointer to circular buffer. */
- 	rte_graph_off_t nodes_start; /**< Offset at which node memory starts. */
- 	uint8_t model;		     /**< graph model */
--	uint8_t reserved1;	     /**< Reserved for future use. */
-+	uint8_t cycles_stats;	     /**< Reserved for future use. */
- 	uint16_t reserved2;	     /**< Reserved for future use. */
- 	union {
- 		/* Fast schedule area for mcore dispatch model */
-@@ -205,7 +205,7 @@ __rte_node_process(struct rte_graph *graph, struct rte_node *node)
- 	objs = node->objs;
- 	rte_prefetch0(objs);
- 
--	if (rte_graph_has_stats_feature()) {
-+	if (graph->cycles_stats) {
- 		start = rte_rdtsc();
- 		rc = node->process(graph, node, objs, node->idx);
- 		node->total_cycles += rte_rdtsc() - start;
-@@ -560,6 +560,20 @@ rte_graph_model_is_valid(uint8_t model);
-  */
- int rte_graph_worker_model_set(uint8_t model);
- 
-+/**
-+ * Enable/disable collecting of TSC cycles for each node visit. The default
-+ * value for all new or cloned graphs is equal to rte_graph_has_stats_feature()
-+ * which is set to the RTE_LIBRTE_GRAPH_STATS compile time constant.
-+ *
-+ * @param enabled
-+ *   Set to 1 to enable, 0 to disable.
-+ */
-+static inline void
-+rte_graph_cycle_stats_enable(struct rte_graph *graph, uint8_t enabled)
-+{
-+	graph->cycles_stats = enabled;
-+}
-+
- /**
-  * Get the graph worker model
-  *
--- 
-2.52.0
+Regards,
+/Bruce
 
+[1] http://doc.dpdk.org/guides/linux_gsg/index.html
+[2] https://core.dpdk.org/contribute/
