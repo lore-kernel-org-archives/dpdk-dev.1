@@ -2,46 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0684D3C928
-	for <dpdk-dev@archiver.kernel.org>; Wed, 10 Dec 2025 16:56:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55AEBD3C928
+	for <dpdk-dev@archiver.kernel.org>; Wed, 10 Dec 2025 16:56:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C4BE740C35;
-	Wed, 10 Dec 2025 17:55:45 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id C447F40DCB;
+	Wed, 10 Dec 2025 17:55:46 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
- by mails.dpdk.org (Postfix) with ESMTP id 12C8440A84
- for <dev@dpdk.org>; Wed, 10 Dec 2025 17:55:41 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 9205140A84
+ for <dev@dpdk.org>; Wed, 10 Dec 2025 17:55:42 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
  t=1765385743; x=1796921743;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=BxeaOwbNLwx8fUKtHT7wKSKAWAPF8NDdtPMt2Rrb7p4=;
- b=Vl541/fvYR5fWe8n0rmYcIqjoNG3h8VdaIfLkkSS+6h1Oq2AGwuIdE74
- aubCZXtJYb6Y3oZgBvgSIVBtCUTYWXl0dVvi2uYGcpKqeHL4n6XGz3ppK
- La/UkncsE2AMxnf0OaSrkt7SC5y9vXaRQAYCGaBR9O74w2lqiysyRrzs1
- ysO8yUotuPwkd2gSZa3ZxAzhX8Yx+YgUpd5dt5PaDH/hjt8QsgL8kddZy
- vyf3j3FpxfTR74JTBfaK7vmm7ewI+lMRaYhRnq3vZKtynBxMWDOJsVCmW
- u4JDmj50X/b7vP8BmTsujcMDPj8IzpUaRy9IAmAHaAmOoK6ZVjnu6yRFJ g==;
-X-CSE-ConnectionGUID: AZhQff1XRb+L10IRO2kgOQ==
-X-CSE-MsgGUID: iZsGrON7RUqb2FVLhM148Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11638"; a="67088732"
-X-IronPort-AV: E=Sophos;i="6.20,264,1758610800"; d="scan'208";a="67088732"
+ bh=fMc+Kj3gW601WNVyY+UKMkWLI9IMCWoFAdOBnHKoMlg=;
+ b=Yyba5I73xkuddSrFpGcblGEyyOHOfnl5HEi6homvXT9ADf+4RW3l0Phz
+ AbyVnvzRji2e1Prp0UpfX/9uOMJalWCeO5eNVF5yd/b5AA3Gzkz2te8F9
+ D04cGFVnyMNfgELRNOGHUUEyhUhrVPeR+2WN+vItC4VScVyOkAG74oZfx
+ rqD/QEFlWE73MWIMTcL08gY7eU6/grqnJ33vMaHLIHCiNPEuOSbEeNwtd
+ GcghTVGWbCeGcBT8LcnwHflp1P/zPSy6WK+0AywZxMlwNRx3aAC4vARZk
+ zBiiElRqA5ptQDB7Te46RlHAxor5euVnHlFvryMGahYq/pD18tpZZp1jH g==;
+X-CSE-ConnectionGUID: T7W1DcCFQMm4XAGVj666ww==
+X-CSE-MsgGUID: S11sHlndRKiCjm0hgGZGig==
+X-IronPort-AV: E=McAfee;i="6800,10657,11638"; a="67088733"
+X-IronPort-AV: E=Sophos;i="6.20,264,1758610800"; d="scan'208";a="67088733"
 Received: from orviesa010.jf.intel.com ([10.64.159.150])
  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 10 Dec 2025 08:55:42 -0800
-X-CSE-ConnectionGUID: /vVxXLjBTvGORJl9Yr2cNQ==
-X-CSE-MsgGUID: kN8sFJNLRSCBZPamBf0P7A==
+ 10 Dec 2025 08:55:43 -0800
+X-CSE-ConnectionGUID: JRdpJk8oRBKizSvrU+bSlA==
+X-CSE-MsgGUID: VBDHcw9zT0uZqFYeLxn8Vw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.20,264,1758610800"; d="scan'208";a="195828616"
+X-IronPort-AV: E=Sophos;i="6.20,264,1758610800"; d="scan'208";a="195828619"
 Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by orviesa010.jf.intel.com with ESMTP; 10 Dec 2025 08:55:41 -0800
+ by orviesa010.jf.intel.com with ESMTP; 10 Dec 2025 08:55:42 -0800
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: Bruce Richardson <bruce.richardson@intel.com>
-Subject: [RFC PATCH 4/7] usertools/telemetry-watcher: add total and one-line
- opts
-Date: Wed, 10 Dec 2025 16:55:29 +0000
-Message-ID: <20251210165532.103450-5-bruce.richardson@intel.com>
+Subject: [RFC PATCH 5/7] usertools/telemetry-watcher: add thousands separator
+Date: Wed, 10 Dec 2025 16:55:30 +0000
+Message-ID: <20251210165532.103450-6-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251210165532.103450-1-bruce.richardson@intel.com>
 References: <20251210165532.103450-1-bruce.richardson@intel.com>
@@ -60,82 +59,49 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add options to the script to print out totals at the end of each line,
-and to print each line replacing the previous one, saving the output
-scrolling up the screen constantly.
+When printing large values of packets, generally in the millions, things
+are far more readable with thousands and millions separators.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- usertools/dpdk-telemetry-watcher.py | 27 ++++++++++++++++++++++++++-
- 1 file changed, 26 insertions(+), 1 deletion(-)
+ usertools/dpdk-telemetry-watcher.py | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
 diff --git a/usertools/dpdk-telemetry-watcher.py b/usertools/dpdk-telemetry-watcher.py
-index 8af9af867c..bdf1423dd3 100755
+index bdf1423dd3..59ec4c85b6 100755
 --- a/usertools/dpdk-telemetry-watcher.py
 +++ b/usertools/dpdk-telemetry-watcher.py
-@@ -210,10 +210,13 @@ def monitor_stats(process, args):
-     header = "Time".ljust(10)
-     for spec, _, _ in parsed_specs:
-         header += spec.rjust(25)
-+    if args.total:
-+        header += "Total".rjust(25)
-     print(header)
+@@ -15,6 +15,7 @@
+ import errno
+ import json
+ import time
++import locale
  
-     # Monitor loop - once per second
-     count = 0
-+    line_ending = "\r" if args.single_line else "\n"
-     try:
-         while args.timeout is None or count < args.timeout:
-             time.sleep(1)
-@@ -223,6 +226,7 @@ def monitor_stats(process, args):
-             row = timestamp.ljust(10)
  
-             current_values = []
-+            total = 0
-             for i, (spec, command, field) in enumerate(parsed_specs):
-                 data = query_telemetry(process, command)
-                 current_value = data[field]
-@@ -233,11 +237,17 @@ def monitor_stats(process, args):
-                 else:
+ def get_app_name(pid):
+@@ -238,10 +239,10 @@ def monitor_stats(process, args):
                      display_value = current_value
  
-+                total += display_value
-                 row += str(display_value).rjust(25)
+                 total += display_value
+-                row += str(display_value).rjust(25)
++                row += f"{display_value:n}".rjust(25)
  
--            print(row)
-+            if args.total:
-+                row += str(total).rjust(25)
-+
-+            print(row, end=line_ending, flush=True)
+             if args.total:
+-                row += str(total).rjust(25)
++                row += f"{total:n}".rjust(25)
+ 
+             print(row, end=line_ending, flush=True)
              prev_values = current_values
-     except KeyboardInterrupt:
-+        if args.single_line:
-+            print()  # Add newline before exit message
-         print("\nMonitoring stopped")
+@@ -254,6 +255,9 @@ def monitor_stats(process, args):
+ def main():
+     """Main function to parse arguments and run dpdk-telemetry.py with a pipe"""
  
- 
-@@ -282,6 +292,21 @@ def main():
-         default=False,
-         help="Display delta values instead of absolute values",
-     )
-+    parser.add_argument(
-+        "-T",
-+        "--total",
-+        action="store_true",
-+        default=False,
-+        help="Display a total column at the end of each row",
-+    )
-+    parser.add_argument(
-+        "-1",
-+        "--single-line",
-+        action="store_true",
-+        default=False,
-+        dest="single_line",
-+        help="Display output on a single line, replacing the previous output",
-+    )
-     parser.add_argument(
-         "stats",
-         nargs="*",
++    # Set locale for number formatting
++    locale.setlocale(locale.LC_ALL, "")
++
+     # Parse command line arguments - matching dpdk-telemetry.py parameters
+     parser = argparse.ArgumentParser(
+         description="Monitor DPDK telemetry statistics on the command line"
 -- 
 2.51.0
 
