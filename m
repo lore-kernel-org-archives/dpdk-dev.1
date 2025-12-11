@@ -2,69 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A858D3E784
-	for <dpdk-dev@archiver.kernel.org>; Thu, 11 Dec 2025 01:09:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1377D3E783
+	for <dpdk-dev@archiver.kernel.org>; Thu, 11 Dec 2025 01:21:41 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8A52C40289;
-	Thu, 11 Dec 2025 02:09:21 +0100 (CET)
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com
- [209.85.210.178])
- by mails.dpdk.org (Postfix) with ESMTP id 991C940285
- for <dev@dpdk.org>; Thu, 11 Dec 2025 02:09:20 +0100 (CET)
-Received: by mail-pf1-f178.google.com with SMTP id
- d2e1a72fcca58-7a9c64dfa8aso294992b3a.3
- for <dev@dpdk.org>; Wed, 10 Dec 2025 17:09:20 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 97C5640289;
+	Thu, 11 Dec 2025 02:21:40 +0100 (CET)
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com
+ [209.85.214.176])
+ by mails.dpdk.org (Postfix) with ESMTP id F3AE240285
+ for <dev@dpdk.org>; Thu, 11 Dec 2025 02:21:38 +0100 (CET)
+Received: by mail-pl1-f176.google.com with SMTP id
+ d9443c01a7336-295548467c7so5873905ad.2
+ for <dev@dpdk.org>; Wed, 10 Dec 2025 17:21:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1765415359;
- x=1766020159; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1765416098;
+ x=1766020898; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=4zOwFYVt2DsOgTl9qpDFDrnFLlXBBccqJkyzSRf1qnU=;
- b=zBTmRIx4S2R3rAafZV9RVcGQcUTqXyzvDo9Yx5vkSVvcD84+WFkftIbfwj45xbhUcU
- PYWRs5tEkdDxJdGY2dZhvFkOlV89fJuCaOPhM/GO4eLTa75Hietm8rtL4y2eJPJC1uuH
- 7ELWZ1jsZp0rV0Foz1hzWcTNbmD9bzNsJwRCAnKSwoobBXYPyJ7mCZDgetRkfygeOALo
- 8hhQgPf2QIwtYGQNYD9j4e3y6ntoKkQe/SNCKcR+pILpG7VfhqghJvsvMQTWE4+cjdHA
- 6xA50+xnTM+W1aCbv2Ng1oBeNH8/8L9z5JXVjSwd32jKqBLefEr2lRiXLf5vcxYzw2pS
- LXow==
+ bh=u1DEeC2mLuf4TA1lQdvQ72Qth6c4GXCdojZmne2XwE0=;
+ b=Mi7ezmC4gc2+POjNvvuH3nGPX1i0R+y1S5Q/tX3Y/V6LtxMtgQ3g61ou+a/7di3/Zp
+ ZW+z865nSHRGLEKcoYHncBwzZTrJiju23Ff7Jq66GtmWJbDTy44ZtNA7JaIzZ4DzNjla
+ pcodH0FQx5aifvU2+X8U/IPjJHtD5J3DIaOyCIKpp3IztC3SfS2DV6UiAnVwJ1Rk0Uj/
+ SSIwwnP5mjv0VEITNg2pb3/62ITd8zO8gVHjpjZSfX2ykIdGM7kjdBROL1n8vzfmxCZt
+ BefgBf1ic2YW0C70YzUsGm2+abstWzeqgmYGB+NyBMfSe2quQsXMnBx/aEaA/YoWALGb
+ LkNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1765415359; x=1766020159;
+ d=1e100.net; s=20230601; t=1765416098; x=1766020898;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=4zOwFYVt2DsOgTl9qpDFDrnFLlXBBccqJkyzSRf1qnU=;
- b=AxtmUtPVQ3P/HT/k6+igwyUl69QeTNRecfl7tSLOI4V/8yvs5TV7w+4E4z6uqs9qna
- yFzIZsu/WvCBzQFH9idkUYrHCk676UzlPylX2260kYeS5LiNWnEGP+8O3YPmiGal1Qfy
- 4zefZ7c+WhD21IjGAQ/u4N96DkyykdjyTC+XHATt0EspP0S9LI5sRKl87mkMG+Sadl4F
- yOI5aOT+6k0hIA6l9aMok41Nti9pYzIjQTFoeewuPM5CRssf3SOGmt1Ra4D+2rhFqnAz
- m3/3HLtVe+bdWwvAGrN4UmrisG49k9HPGNCEBvPmbc49ZnnZK4cv1IM/0p9EpvBAHFyH
- WHeg==
-X-Gm-Message-State: AOJu0Yz7Uvh/8N8g4rltV1g4Tk6L4Zo/pIEDQq63N6/7qvG3B5zHFpwZ
- BNorsparGESXa76ImfAmWv9+LemLehxUYzew8JE5LxQld7Ju3iu3yvC+3+kU/65fDtI=
-X-Gm-Gg: ASbGncutTrXP7OF8Pr02AC3YUtPTf1iG2DQcldvdmy2EIWOZcG0J94RhXP7AW5kC52+
- zFmo4M+79d299aMdRHWZRtN5DSH0N6nrVaxC1gilqZRKuZAOKmSADel44Bd7zJL1mTq/g4Hut0B
- rw5J3UUUTDkPL3aFFVxYQvc4X4O2e9KdePRuKhLYYtz83ErXKwAS4FAa0kuHF58eCYPPiDzw3MP
- kdG+GyRYFPC4ZPIppEuVo3FDHUOExMw77fnRU0ycDnyFdWtlijBlZ9W50klcAgoEMUOYk6aUDGI
- Y/wkWcVsFfSbKn0b8N/Y29S9yWfm+Uuv6nmMdDJ+gwENCWzD7AM0cCX4mjSR9YteEklQAGOVvaf
- vz3chNEjkvtq2UMYQid/4ym6+VYIHZAv7rCLzmVJlW8DcUAakcJAlZi7kkW2W1BlJS1lUTZLmNn
- F3Pj62Df1w8HofRFNiMeB+VyHIwlLwUC2kAyVYEQqdjVil9UGrmhf2Tlie4vY=
-X-Google-Smtp-Source: AGHT+IH2uNET7Ba+ifRjGOFhn95bsiLdXgKVdjUVCwLQ/ArivN7OOeM1y3c41KCvlqTHcIx/q30gww==
-X-Received: by 2002:a05:6a20:3c8d:b0:366:14af:9bd2 with SMTP id
- adf61e73a8af0-366e31ac1a3mr4102459637.72.1765415359322; 
- Wed, 10 Dec 2025 17:09:19 -0800 (PST)
+ bh=u1DEeC2mLuf4TA1lQdvQ72Qth6c4GXCdojZmne2XwE0=;
+ b=TREK8G/eRzQkkppXf085DhhoLa01U+XmPaPIFfTWdYwWBBt5EWSxs4S9GWUtmYqXsI
+ UTuLjaz1oY/r9lyfLJw1xvLQTX3/QSeDMU+uo6oQ3+bUQe+dcI/CxJ89gJtKwzG6s22j
+ lX0lDWCFnfajdS7J5ugnrHjbkWKFUS5jGF6/2XDUFfwrmMgYY90/bq8bPoltgc1pZuzo
+ c+AzLBhFkCJ7Atb4PvXolYZMCBvlXAx5mXLeN4n2CFIWMUleEEz1Ywo0+xge/LN0c37H
+ i1ZjaagtQ97K/PPr9iialCHQoWNhc8AvBe5zKOw1wrAopm3pm4HnLUgn27s/46d3fLg0
+ aw3Q==
+X-Gm-Message-State: AOJu0YxyYv0PbAQId4xqV3qXs/87XIXQiwBnSVFQm+8ZcIYTyizv6VdD
+ yvzrw2Tnk9DvWEJhetV2SLeI/fLAXB3+IUpprzGXeZ/lPj613HhBNGTz7dyPsvZ6QeY=
+X-Gm-Gg: AY/fxX4Y7lRburyLStJbYCnAgDEyPf2v0J3yaN5Vt6b0AAtIM5iX6FBPq/craY7cR5L
+ cuyFTxR5n0kvbwQ5jwmisdc8CRWVBdMq2eOAOj3qH463AIeZESnb9yY9rOVJAihcmoBbfEq/t5p
+ q2RzGWWmupd+0824r2S/Byztr+/bfdsTk7/y7lIP62+h/6+kiVPTO/5cAGsPfCoGcTcDfunM8IZ
+ e+exPd8DeDmhlGIf1zcw4FXs1tSG74qX54P+RY3VU1N3TWFfDvCK+1A/Td2qeKNJmMeW2vzSCEx
+ CmFlqU5MqHUQnZMYr2+cmcLiaD6wvtX2NVm4VjOyDHgKHkcgatt/fPHEK/Ru9/7nDqcxu4zdxTT
+ wg6Yae6jAgFm2xLGTmMY7cNSBs1uixCrrgwjG8pA6UhEiDRMwLX4T5Tiqc1aVSGWpn9o0OWXlMo
+ 1z5MNTtt2jtC5GxtNb978S0JHV39Rw/N3v43mpchts9wWl3Q7I3jgdYatNL8A=
+X-Google-Smtp-Source: AGHT+IEvp/1MjxVInHvZNfpa2OAmYu78Un+o6PYkt38jJsk8wd2x6jg4TmhHDRk8Zq5g6nm3BeDb8A==
+X-Received: by 2002:a17:903:240c:b0:29e:76b8:41e5 with SMTP id
+ d9443c01a7336-29ec2d3c7cdmr37800415ad.30.1765416097927; 
+ Wed, 10 Dec 2025 17:21:37 -0800 (PST)
 Received: from stephen-xps.local (p99249-ipoefx.ipoe.ocn.ne.jp.
  [153.246.134.248]) by smtp.gmail.com with ESMTPSA id
- 41be03b00d2f7-c0c2632b725sm608338a12.8.2025.12.10.17.09.17
+ d9443c01a7336-29eea043d62sm5312845ad.82.2025.12.10.17.21.36
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 10 Dec 2025 17:09:19 -0800 (PST)
-Date: Thu, 11 Dec 2025 10:09:10 +0900
+ Wed, 10 Dec 2025 17:21:37 -0800 (PST)
+Date: Thu, 11 Dec 2025 10:21:32 +0900
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: dev@dpdk.org
-Subject: Re: [RFC PATCH 0/7] Add script for real-time telemetry monitoring
-Message-ID: <20251211100910.49a107c6@stephen-xps.local>
-In-Reply-To: <20251210165532.103450-1-bruce.richardson@intel.com>
-References: <20251210165532.103450-1-bruce.richardson@intel.com>
+To: Kevin Traynor <ktraynor@redhat.com>
+Cc: "dev@dpdk.org" <dev@dpdk.org>
+Subject: Re: Minutes of Technical Board Meeting, 2024-November-26
+Message-ID: <20251211102132.14addc9b@stephen-xps.local>
+In-Reply-To: <d4dccf88-6813-4bbc-b75e-a8ea4240ce1b@redhat.com>
+References: <d4dccf88-6813-4bbc-b75e-a8ea4240ce1b@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -81,68 +81,23 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 10 Dec 2025 16:55:25 +0000
-Bruce Richardson <bruce.richardson@intel.com> wrote:
+On Wed, 10 Dec 2025 15:01:50 +0000
+Kevin Traynor <ktraynor@redhat.com> wrote:
 
-> TL;DR
-> ------
+> # Discussion of VLAN offload in PMD
 > 
-> For a  quick demo, apply patces, run e.g. testpmd and then in a separate
-> terminal run:
-> 
->   ./usertools/dpdk-telemetry-watcher.py -d1T eth.tx
-> 
-> Output, updated once per second, will be traffic rate per port e.g.:
-> 
-> Connected to application: "dpdk-testpmd"
-> Time       /ethdev/stats,0.opackets /ethdev/stats,1.opackets        Total
-> 16:29:12                  5,213,119                5,214,304   10,427,423
-> 
-> 
-> Fuller details
-> --------------
-> 
-> While we have the dpdk-telemetry.py CLI app for interactive querying of
-> telemetry on the commandline, and a telemetry exporter script for
-> sending telemetry to external tools for real-time monitoring, we don't
-> have an app that can print real-time stats for DPDK apps on the
-> terminal. This patchset adds such a script, developed with the help of
-> Github copilot to fill a need that I found in my testing. Submitting it
-> here in the hopes that others find it of use.
-> 
-> The script acts as a wrapper around the existing dpdk-telemetry.py
-> script, and pipes the commands to that script and reads the responses,
-> querying it once per second. It takes a number of flag parameters, such
-> as the ones above:
->  - "-d" for delta values, i.e. PPS rather than total packets
->  - "-1" for single-line output, i.e. no scrolling up the screen
->  - "-T" to display a total column
-> 
-> Other flag parameters can be seen by looking at the help output.
-> 
-> Beyond the flags, the script also takes a number of positional
-> parameters, which refer to specific stats to display. These stats must
-> be numeric values, and should take the form of the telemetry command to
-> send, followed by a "." and the stat within the result which is to be
-> tracked. As above, a stat would be e.g. "/ethdev/stats,0.opackets",
-> where we send "/ethdev/stats,0" to telemetry and extract the "opackets"
-> part of the result.
-> 
-> However, specifying individual stats can be awkward, so some shortcuts
-> are provided too for the common case of monitoring ethernet ports. Any
-> positional arg starting with "eth" will be replaced by the set of
-> equivalent values for each port, e.g. "eth.imissed" will track the
-> imissed value on all ports in use in the app. The ipackets and opackets
-> values, as common metrics, are also available as shortened values as
-> just "rx" and "tx", so in the example above, "eth.tx" means to track the
-> opackets stat for every ethdev port.
-> 
-> Finally, the script also has reconnection support so you can leave it
-> running while you start and stop your application in another terminal.
-> The watcher will try and reconnect to a running instance every second.
-> 
+> - Discussion over patch for nbl driver that hard codes a return 0 forJ
+> vlan_offload_set callback
+> - https://inbox.dpdk.org/dev/20251124153545.7123c338@phoenix.local/
+> - vlan offload is done in software
+> - Issue is that existing OOT driver does this, so it would break apps vs
+> in-tree driver if it returned ENOSUP
+> - For current release, leave code as is
+> - For future release, consider to do some validation at ethdev level
 
+Just to follow up, the underlying problem here was me misreading the code.
+The driver is doing VLAN offload in software which is fine (it is what virtio does).
 
-There was a previous submission of a nice telemetry TUI which seems to have
-been abandoned, is there overlap with this?
-
+It does raise the issue of maybe this should be done in ethdev layer so
+all drivers that don't do HW offload could just be done in software by ethdev.
+That would make the mbuf consistent across all drivers.
