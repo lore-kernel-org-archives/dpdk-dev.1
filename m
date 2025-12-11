@@ -2,161 +2,162 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 917DFD41D58
-	for <dpdk-dev@archiver.kernel.org>; Thu, 11 Dec 2025 15:32:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BA6FD41D5B
+	for <dpdk-dev@archiver.kernel.org>; Thu, 11 Dec 2025 15:33:46 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6DA58406FF;
-	Thu, 11 Dec 2025 16:32:32 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
- by mails.dpdk.org (Postfix) with ESMTP id B324240151;
- Thu, 11 Dec 2025 16:32:30 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id B0608406FF;
+	Thu, 11 Dec 2025 16:33:45 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+ by mails.dpdk.org (Postfix) with ESMTP id 9673540151;
+ Thu, 11 Dec 2025 16:33:43 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1765467151; x=1797003151;
+ t=1765467224; x=1797003224;
  h=date:from:to:cc:subject:message-id:references:
  in-reply-to:mime-version;
- bh=D31Eup5PfVpKyUQDg2GWakH0L/DcPN8J6aY8QiNje4g=;
- b=n3HJDJu+ASAARD31+gRNe2bz+bAso9Ujk/xbRg8qkyu72g60z44r3M0T
- GKMKggw7C8meJqngsJWWnH1zrpCIIqf7Nq20jERfr/RK2pH0Xdmwn8DSY
- 922hWp2DD48C6oxDF9PspvoP2jc4TlrhayZOQGSNnLMLYUsBR0gAZraWl
- wBsH70QwLpypSwTWNIZziI81+N8wOYb2PhSZn9fi4FekDP+LZgmt8thCZ
- j73nz2jiosoYsVRPWK+JJ9KcJnLDJ5eOhPRlRu9mvqpsMGF8T+ltM+71J
- OFJh/0LbR00DIK45pzljQHYB628WFYAYkb0GyL+6uE+LJD0rVSsLgnbbc A==;
-X-CSE-ConnectionGUID: JoBk9c00RmCcEJyPdbdlPg==
-X-CSE-MsgGUID: AHfLRqHuTRmgmZNbUfOZuw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11639"; a="78914176"
-X-IronPort-AV: E=Sophos;i="6.21,141,1763452800"; d="scan'208";a="78914176"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
- by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 11 Dec 2025 07:32:29 -0800
-X-CSE-ConnectionGUID: z6vBB/e6ThGy8Uovx0bkwA==
-X-CSE-MsgGUID: XX0M1gu6SUObBkyyfw9Rwg==
+ bh=eeR1BPWwZwuY4IW0/13/QlQ9NW9H2pcu+ElxcG779Pw=;
+ b=K9jLn1hbiESLZMDTuQ+ZUzPs5CkyEpqSEJxWIVmTKtON9g4644Cj85WV
+ U1b/0OQvXYEs7whY+xc67XxxEJF7PZ+8jXPEPN/A0nQg/k6DL4OYVDkAd
+ xreMtXKshzp8GE2JyRwd7tzgexA6DlLtKZ8Ao8PzYk/ZBUq+nwiR6n5Ij
+ qMc7ybM3LtB8+NdgRUHUG+A6Pak0LFCs1pLsL00hoBXNOBFQuvMzGRCix
+ MIgyOBnFZRVd62Io20EEgUTJtqJa5EAhrXFWPEp4WIvxwg7iyyyXglnhR
+ 4D8dxMOwVuWyzIny1n1uOX1tljzmdilooatLTlvnlrAGjPvCH10gzptdH w==;
+X-CSE-ConnectionGUID: oCWWlDgxSk+Irg1QGe8qyg==
+X-CSE-MsgGUID: YA3x1SprSR+w1VAgswusLw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11639"; a="78563580"
+X-IronPort-AV: E=Sophos;i="6.21,141,1763452800"; d="scan'208";a="78563580"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+ by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 11 Dec 2025 07:33:43 -0800
+X-CSE-ConnectionGUID: ONthoeW6T+ePt6Hw6TOgUg==
+X-CSE-MsgGUID: q1uO5ttDTEGBE5wnRE8Dnw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,141,1763452800"; d="scan'208";a="201296711"
+X-IronPort-AV: E=Sophos;i="6.21,141,1763452800"; d="scan'208";a="196102420"
 Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
- by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 11 Dec 2025 07:32:30 -0800
+ by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 11 Dec 2025 07:33:42 -0800
 Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
  ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.29; Thu, 11 Dec 2025 07:32:29 -0800
-Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
+ 15.2.2562.29; Thu, 11 Dec 2025 07:33:42 -0800
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
  ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.29 via Frontend Transport; Thu, 11 Dec 2025 07:32:29 -0800
-Received: from PH8PR06CU001.outbound.protection.outlook.com (40.107.209.1) by
- edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
+ 15.2.2562.29 via Frontend Transport; Thu, 11 Dec 2025 07:33:42 -0800
+Received: from CY3PR05CU001.outbound.protection.outlook.com (40.93.201.71) by
+ edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.29; Thu, 11 Dec 2025 07:32:28 -0800
+ 15.2.2562.29; Thu, 11 Dec 2025 07:33:41 -0800
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=dwf7/FTiA5tM74QFzZZMEx6I6ykLeo3AIM+rClR8mU6/KYlF2MNXe+dpe99a46TBxKmBYrgEZ/ZW3l4HPuBrwDu0J8s+X9W8Q6ZWTunXgW9N+LYP/Ru4zdHicdnzl2do44uSJlZXyNeDtiBr85HNUpNIseBNYvWz9/S1NuiV+kCLLgTzHxYugzYbLkGztahpkeM3YOdzKWqLkR6dfdufA+0DXnfoGlu/EeY5lXiX7YwFJDPKSiFRtUCzPHUFTWngqiO+lvYQeLmurz3C8B00x3c/GCs8XM64cdu2Cb1GChColUa9bcSPg9e0ptIN29x1uGHpffgBmKUBjvpLPRgbTA==
+ b=UUhuylzzRiP5GsXCBlMfIPoahv8dpd9YoeALllY/Fs0hUMHW3SLLGqo4P4DhJCq1PtwJwwsRobtguEaCatho7+1K9d/DPzL+g++Dj92g1oykmjxgF21DaxCA/tgovUZsL/MndHJueOfczGWzgxZkWVZgSBSjei5F71GJalxNDWwwVwg/20ujfJnBoxYEmLlbfypsOwSMFLXwBHqsAEdZwSnJuCBNGhx/XBJHD/g3G3mwbt/OLB1vdZZI9jggf6bdyNLmU4ezJ2zl+A2UWCO/tc5mlYdvT1GkaG+E6ex/tXtBWzDiCGfgQUTzrUGHMwDpDMG/zT8NcBhf1ddfABFt5w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=c0piDGOSfslGXhg0nWcTwnd4M68d/NxBSVE8y9McM+g=;
- b=hGUkZVKMDhIpx/PHiW2K7TGLg+6+gtHANbKMr7w3Nrvjhz3CgObOkoHcP0DMbKIjc41VWuJLVIVqbimV7+cAymbmlnhAe3K+iYdcedWFrJWmK8EGwFi0cKIPXTArrrPKRYrUuVdF4Pi/f2J2M32xATO5bJhUTavJ51Pr2YPxznHbxW/KetFnY8v/jg75LMQTLWZIVvSRNO0bMgCh5A/vdjEc/0K4iP3WlVi4H9IDNPcPiz3J/OGeniAUwSOaHJwUM2V6EkZNccRC401q9eRnGloNh46GXyFqJj0dLLxmj4wwIvUnmaaHSwC3zwEj2rh8/BVBtaL1drPgZnc+f+omRA==
+ bh=rz0OTs1W+VI65qm0ydNz8bxnY5McOUxy/MdI0TfqIYs=;
+ b=XkxALE39YbJ9ZczajdXt3VfkAC17m2T1iuW2BQab0pmggabOHZmnweWaFbzBeBDvdhhDD1qn0XFElfidnpaDo3kELWFNVSzrZ51Mc2dJMmYe/QaV5R0PAx04Em8yKXcGCjxCRIGWMXHOhhHbiIUJJGw3/7ih4CVrYzRwOQYaZd7jt8VcJx+eFLEc47xKxGGBDkFbG4uGo4St+s66quYMy0f3f54ozuTrVti0V3l+pxIjoUiqVypNric/oHUP6rf3NKWTFmFo/2QvIwy2oIMXEX5z2NB9NgsDCT2FPr2RTkL9w4PDy4BhMafdRgMxe323yHWxGLbgSrbRddI4yYayEA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=intel.com;
 Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
- by DS0PR11MB7878.namprd11.prod.outlook.com (2603:10b6:8:f6::20) with
+ by IA4PR11MB9177.namprd11.prod.outlook.com (2603:10b6:208:569::19) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9412.10; Thu, 11 Dec
- 2025 15:32:26 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9412.8; Thu, 11 Dec
+ 2025 15:33:40 +0000
 Received: from DS0PR11MB7309.namprd11.prod.outlook.com
  ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
  ([fe80::f120:cc1f:d78d:ae9b%4]) with mapi id 15.20.9412.005; Thu, 11 Dec 2025
- 15:32:24 +0000
-Date: Thu, 11 Dec 2025 15:32:18 +0000
+ 15:33:40 +0000
+Date: Thu, 11 Dec 2025 15:33:35 +0000
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: Song Yoong Siang <yoong.siang.song@intel.com>
 CC: David Zage <david.zage@intel.com>, Soumyadeep Hore
  <soumyadeep.hore@intel.com>, <dev@dpdk.org>, <stable@dpdk.org>
 Subject: Re: [PATCH v1 1/1] net/e1000: force allocation of context descriptor
  for igc launch time
-Message-ID: <aTrkAucUzSwGnbcx@bricha3-mobl1.ger.corp.intel.com>
+Message-ID: <aTrkT4iMHmVI-4Hq@bricha3-mobl1.ger.corp.intel.com>
 References: <20251204013009.857273-1-yoong.siang.song@intel.com>
+ <aTrkAucUzSwGnbcx@bricha3-mobl1.ger.corp.intel.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20251204013009.857273-1-yoong.siang.song@intel.com>
-X-ClientProxiedBy: DU7P251CA0024.EURP251.PROD.OUTLOOK.COM
- (2603:10a6:10:551::11) To DS0PR11MB7309.namprd11.prod.outlook.com
+In-Reply-To: <aTrkAucUzSwGnbcx@bricha3-mobl1.ger.corp.intel.com>
+X-ClientProxiedBy: DUZPR01CA0112.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:4bb::11) To DS0PR11MB7309.namprd11.prod.outlook.com
  (2603:10b6:8:13e::17)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|DS0PR11MB7878:EE_
-X-MS-Office365-Filtering-Correlation-Id: f1273f9e-a7bb-444e-ec96-08de38ca7b7f
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|IA4PR11MB9177:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9eb2e9ef-03b8-4b26-fd1e-08de38caa8eb
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?ps60wLCvNugGt1hM8WMYTr30CmJIMPZjtBgsGsnVme0uw/LokgzppuL3kPGE?=
- =?us-ascii?Q?4n41Cg+MsGP5R7KeoY1PXwR1u9NZapdR3tBhoGw+xxZ0gaG8QTgle/JYUcUC?=
- =?us-ascii?Q?5FCXObP6fN61GTDGbe1XIGVkGr1mWuJE6oTLh9E4GHK9Omfhd3nbb3b05n2+?=
- =?us-ascii?Q?mYwPd19QOjiTLp+NfYEtu9I+ZpemNOll7SsquY02ufSvsKcZ2AvVyKMdk25i?=
- =?us-ascii?Q?tLu3r0XdJP2oq1dD19c79Giizdd++SJW7sSGDpB5prcCkzE0tdAqcZRjkEB9?=
- =?us-ascii?Q?xwKhwrAJhIiziwu55DHbO6rw47gN19jc74mNrikcGaUuEiHDIxZuQ8GFiLH1?=
- =?us-ascii?Q?VqWdyHdKEAzuzTbCXN6TpdtvWu7/3PwtNEb8PYxsgX4t6icuqz5FuamGx44s?=
- =?us-ascii?Q?l2Buft4GXvaV0LhJ2gx83dcEiZp6tfr61Dw7uIZ9oqlhkMHdJZPAMsRt9esa?=
- =?us-ascii?Q?6OtkvxGyj7lo7wnjyGZ0fz3stURZnA0VWbxKzC803xpHOyeIVK7EuVw84yNf?=
- =?us-ascii?Q?hE0XvjU/KU3TB0OjS0nySXkwYazE2AGZWiam7atZs2BeZd+2gq0Np/hRTDAW?=
- =?us-ascii?Q?EU6iQjVBeAeNY6WgnzqAVoBWOqc8TY1tUhO+lR/l3uc+sQ5x/fD0OAjBhKHm?=
- =?us-ascii?Q?zXSWVTSaOQUKdfBTJJs53OyIj+UagitclNjSmwkqNGPDXfqAMjxndeu85JmX?=
- =?us-ascii?Q?yBlBv50NgJfY84NQa5pwuVIiL9PbaXh5I2wl4raFb1x4tZA3DcVzeKnGnaZL?=
- =?us-ascii?Q?Kk03dW6ZP8+Y7QlAm6fo1/dlagVRycwGP1DaY+KXwMYwuVcuoW9Zjkuq0NWt?=
- =?us-ascii?Q?hNTDM6mORRfQ8PYfBAxzJt1uctD7hkZ+xalt0+jspGiL5pNu06r3ggihrUnH?=
- =?us-ascii?Q?5iq76DDTRlTxd0V63oKotIrUx3p13eT03JFMsB6AKMY5kcB5p2UGbTqYutWQ?=
- =?us-ascii?Q?FEUw/drl1qJiC91WJK4wDkVjy0f3jWtN4YXFoqCA51ASar4NaQmC2RpkwaW2?=
- =?us-ascii?Q?nXNZIuCYMdPhaOGYA1zGv16G590ETnPUScGF6JWvTofz5EYnvfkkU1+imQpV?=
- =?us-ascii?Q?leTRj139Gi/aySSIHQJBHdw8rrGAZZFAx8Roj9+OPaPgNGe3Xbo5Zhs2AXNl?=
- =?us-ascii?Q?U2CU/0WWYfFHw4MpVtUZQn/mabHHQ6dPj2lrxX+oX/62zPAypqZYeGMAFEVD?=
- =?us-ascii?Q?XARfUpL81auxPtTnxOxrbY8Gi5yXz+/vrAnLuCYkHI7NaVfmpzf0fvNAz3A6?=
- =?us-ascii?Q?ZLX3Co3J3Wb5tKS8iI6dfIL4Ii+j4tYmXC3DgyZ6jsrS0a2K/eCTZ+ysPEph?=
- =?us-ascii?Q?VknM6Mv4FhaooLLdVY/NNy2MjpDk68bwLO0kAMq/tD++trhv6OvhuEcf/YdC?=
- =?us-ascii?Q?qUtrZFCGwAiqFH8ui6WS17yQZIS8lmbUxU5tswYFyeYkyC5ej53fUPCz2ITR?=
- =?us-ascii?Q?kFKBzyDWYH09kEYqPsQpw0jexujOJvIe?=
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?n9VFqmHVQZ+L5GaD/yX7ZB0YckX0U4EWpZk3owT1QgG7DmTstY81Ra31I0yr?=
+ =?us-ascii?Q?s+fBIJsRD+KGLKqbo1pScaXtyhQi9t31B7DINFSvbb0sO0XiyefNkJc/s8ci?=
+ =?us-ascii?Q?YGmUOH9PPJ0p8J/F4g1GXSIyy5gh7TUhDO+THCvAw2RNkeZRQ0dQuw8PP2tk?=
+ =?us-ascii?Q?awt+9I13pqQCaSv9TsyZ8Spa2H0cFI1gbk+lpCqFOM4FQhIPBr9dKWoKorB+?=
+ =?us-ascii?Q?S/1myYRpeOMs/NNo5leEmJxKBncJWgP+HJteVumfpK0X0V3U+nLSGk00Yv1a?=
+ =?us-ascii?Q?AVR3JpRyhy2eM+6VpWiFJeUkTHI/xOWCGv6qhAbMwXHoqmBnSIiaoWenw9Km?=
+ =?us-ascii?Q?h0y2a6fkXyNvq11crNCpeIB941k9/i+pCSRaoV2uHI/IzGOfF+NDBwMsvQCe?=
+ =?us-ascii?Q?jjO9WgGj2FiAPxuxOwXYrXJF1zHbkyxVd2sCDgSjf0a7BTkk+4k01EFn+AUv?=
+ =?us-ascii?Q?Yh8LvnxzUP3lZXWsyueRTaL0BoLDRp+VBg8cntIjr8K0+tI7KEo4RT8T1PzU?=
+ =?us-ascii?Q?H3EuiEf2uRmho0kOS3xkEOkhq6UV8r7KuBaQS0LgK+TAqa8yERv+44V6hEDE?=
+ =?us-ascii?Q?WTlutKPp7cVd9oKB0Hbvxd9jYOVdJwK+ZldXPRsIYh/ZKfAQ/I75dU+U5q7v?=
+ =?us-ascii?Q?YjWhrVwUyJwN9xR2dgMIwbhWeG4zls4PAyJS2OD68B1rTj2q4tLo1k3toZid?=
+ =?us-ascii?Q?SxqFUILmj/3uiXs6KptcYoQOT0TFUyTPWZ09H8a20g32kNFaMcxR/02xXsT+?=
+ =?us-ascii?Q?+k6Ggy47xFv2ux1MMv+PrSIZvdLyk6G/nkiOZxqxZ4Vt3z7sAKdqv0E6yubG?=
+ =?us-ascii?Q?6aea32KXxnJcifZ0Ivh42LRhFRgubXPk85OiMjMMztutSu9TYQi6V7kQi5To?=
+ =?us-ascii?Q?DECKYiHkHyTbgTh4dNQUu2w+Ha65j3t6A8M44qsrvho9kSrK5D400r+bI8Zm?=
+ =?us-ascii?Q?SsxRteWF8bx3grgcxcTVJw9X5U/bNkCOikAjcS98d1k30lA4N5I+7H6yBtYR?=
+ =?us-ascii?Q?OHlXRIWRqoA/EsvJt9UFrk+9YQTOhNMSq/ec1fcWzz8lsCEHX8pyXFCwtMgF?=
+ =?us-ascii?Q?UHiI75Y8x3jhxX5QegQk3mRzBFgJsfkXfDRFC7sihtMtBel8ta5QR9pgHDFZ?=
+ =?us-ascii?Q?oCjWrR6YH09TwGQQbPy0wyUt2wYGovR4Ynz7w3dD6TCBVfRhzXCm7qSCiq00?=
+ =?us-ascii?Q?TonG4Q2TmvkVCV0dweqZ+9gMe28FkeN5jFOuKGkj+Nnba+hXN/Fxl3f9p7kR?=
+ =?us-ascii?Q?Zvv3GYO2JthcZJnqrnctc93bdKb6JO5gRVx6rO2Ppv07JXWs8N70N08Ol9Do?=
+ =?us-ascii?Q?A5cxZ7nxtihqRKEJiUjr8P9lwOFhXUwbTc8Jw434VycVdo/jivV0h+4dJ9l8?=
+ =?us-ascii?Q?b1wCg62bC3HBBU2aOhJVr3xbtnEGFTVebG24DAKnIe0LPtnludwdvn6Jy8wV?=
+ =?us-ascii?Q?LmMcoAFf4zBv1BwpBkTV2+fsQ4SuQEC6?=
 X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(1800799024)(376014)(366016); DIR:OUT; SFP:1101; 
+ SFS:(13230040)(376014)(1800799024)(366016); DIR:OUT; SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?tM4rnVHZJbk0hXhIP1VJ6jDdZboFNBmuu6BGFHS9oKBqx2mjXRn0CtUWE8gY?=
- =?us-ascii?Q?WB3uCGNDxtP8K6t1PQvKUYT+pTUVjHLCm48JkHAe4nqwBfwRFFvjIR4wUxWp?=
- =?us-ascii?Q?gQnc6JcOj1R2awI0XHSopicNxGMtZgif8qv9BNT6dLakyDH6UsISeKDwQJa3?=
- =?us-ascii?Q?hlqHiZw1PaWy2tVBTq+ghplGoDa4MwP7ZMzvSVKunEM6BIeJAwDUYUWjjxpl?=
- =?us-ascii?Q?kDGTPV0oe8mDFkvbeJm+vFHJzlPSnM7dwxhpTz2aS4M/dk23rUYNQuFuXuVT?=
- =?us-ascii?Q?85klJBfTBI2g5uuP82ffq4I/itciKULA0RUA5nXltbotaiv6keRz1titvoYq?=
- =?us-ascii?Q?2VbtgfrhI+WuyxDm56Tsagfz42n6WHanWcB90tsSgpVoaMMIJG05nN2zEpgh?=
- =?us-ascii?Q?7kzClc+MyufVvhBYjVUT0troRj3zdWV3p56kDVX9S0ZKi5WEVCWsg1oVOIsv?=
- =?us-ascii?Q?rZNqsBkwrxSlYj/jLJjKJAzHTGusREyy5zy54AzaMg/D2erH8h285wMHVtH1?=
- =?us-ascii?Q?S+dkbP8MrqzgDWh4KByspTsAUp6RcgacyMAWJKOh6wNUxytAWbyfR6HotOP1?=
- =?us-ascii?Q?wTdzeHFGuMINXAKNRwSkJ272KbEdP/FVt/fP5FmWwO88FwiIqd+DpFFUQuHZ?=
- =?us-ascii?Q?7KgdlU26+0VbqNzpBkp5p8cUA6/grmPWB3JhFcBTkr4N2aFBb/seBG//QtRW?=
- =?us-ascii?Q?AnnmWg87JfgENkmdgASZb9659ikBVy0sARQD0Ssi8wHNzp4sA5gsyJa4CnLJ?=
- =?us-ascii?Q?ejzH0iznG/h6nhmGKvv4b+sisJXIc/vdoD810u5jOJ88FlNv7R1L5EupgLu5?=
- =?us-ascii?Q?GAj199DbV9VuOnQx7kR7yogU158mjaUAFnCiJSjdhbb3j0/77/Z6K6XCdGvN?=
- =?us-ascii?Q?vkHH7Sa1qiIOTBx6rdaQf7SnXYwjadhN3Qi6tWmLBpWU09kDSrpPSuZ+P3Dl?=
- =?us-ascii?Q?cwwlFfN0523yvbV8V3ERkXXAxGoiQPZCljAjH0O5lBMD8OWYL807UUuxKsYe?=
- =?us-ascii?Q?s4juwCBVsnYepslyxiJDOfBSGF5HXI6XWbt2CtrCQfnt+ktWB/GDyv7d1tvj?=
- =?us-ascii?Q?WdR/3gX0/fR0Xwwn89CVdDndRdQQhBO+AY1J6Kku7QUj+ku0nC66h3/VYR3I?=
- =?us-ascii?Q?Mt5FeM3dioxv+xBsHD2QPrfu7VfGyZzV2DRJb64HYNkFF6S+yx+7rAyCOCOf?=
- =?us-ascii?Q?Q82m6AZNozy97I+Z2CaZQp9s3cfxwuBWM4ICGAAv+f5O5PaPzEeGVlNyK7jq?=
- =?us-ascii?Q?BYGBrMill2dN3qdNdUvx0GItQ9qu3ktohFw5zVWpXjTL37TzCb6FGbB5olQK?=
- =?us-ascii?Q?iLVgYfrI3PRV+IopXUfK1CgKC+ECKkCfgQu4NUXg97SBgt63JAGI+7Cxr6Tk?=
- =?us-ascii?Q?kWmsNyiFbwVfZNp/v9bKGuky0jrYHeYKSMcZUKAVaWDGbUdAel/Eww0whvh5?=
- =?us-ascii?Q?lJuQpD5/OprcJADCxGNJnUVkHmS0M3eEmSHUs8fdKDMbXpHI5bIlMzovkolM?=
- =?us-ascii?Q?ee+9R/JI1PMJdjI3lrgGYnBLz+CTguDEeFL1fcSgkfrg82NiHOBycgu89wtm?=
- =?us-ascii?Q?Buv7jemSVjGg+v1/Q/Kf1xe9aRMTRnvtDKr/wX3xjIYHk7dT2nB+wcoPfgvq?=
- =?us-ascii?Q?xA=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: f1273f9e-a7bb-444e-ec96-08de38ca7b7f
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?VmIF6aYfzAczkgmu2l8PfnLixyHVFjBBZLx2eSUCD2thBZMTloOfYX3nlCG0?=
+ =?us-ascii?Q?pYB3zssudMWWKtddgdHFwCFitwenht5pGuqtk3otNkZmx9bFrvHe6hd2IWKG?=
+ =?us-ascii?Q?pbTKdpKZ+xaWpzV9iut4aN/xY+yGVPR7vJTGGsvz3p1knDhhJ4/w8/nBOfmY?=
+ =?us-ascii?Q?8krniGPiZD8UaTQr0TnMKnpnTMhsp0kIePR1XZV5o9cDgj5CIsdWCer594y4?=
+ =?us-ascii?Q?43DWf97lRWorVknprsHOectlNNEeWx0xEF2sdS/RO0ECrkoUePO6b/CN1Hrj?=
+ =?us-ascii?Q?Ds5QgKQt4QHNcvi080nmBgYuXWUmomFqOk48NZxvMJV0frsvxkFMByj0dfdX?=
+ =?us-ascii?Q?GJ9Vw+yMpnJj32ImmU//A/T9DtfDmP/jc8CH81YyyMK2BuH8pc27GWSy9aA3?=
+ =?us-ascii?Q?eXwodMnrEWDt0sfZdQoQRkseTWLN4z0iR8BmvLxMXKqqXNwBz+bT47yWpDIv?=
+ =?us-ascii?Q?lttMfakEApkTmw0L0GmaMRyOZZCm52HRgKjx3oOV119cDe1/yfw7LGWcybkj?=
+ =?us-ascii?Q?RBo7xhw2tsd0QUHLFK4EMWB2LLayRoXSTt8mxxz238khKY+gAlvfVk0yn+Kb?=
+ =?us-ascii?Q?fTAkjdgQpMzfsdPH6f7cG5OQKaLrLTUl8x+2WvfIXMQ8vPD53hrJdtGiU57B?=
+ =?us-ascii?Q?DV5mfN8fsSBVAslQ12/GCTVhHv42IOTJL494x3Xj5e9H3MJ/xR7BnNkDpbev?=
+ =?us-ascii?Q?9SCKPHKOdNspBS702n8BadgNYnVYDyvZqr6Ww7WPK00bhPGMY/xuxQt0R9sE?=
+ =?us-ascii?Q?GyWRbUerzEoVuAU+7GaA/AYLjduDr6WxCoJYjSyKXZSE0C8xZWolml1HwHa4?=
+ =?us-ascii?Q?FeTJOaIVb1+JO2QXYaKZj9E9YIsxFXSgM4+MZpKZDDk+tTkBz/8MtuoJ6uAp?=
+ =?us-ascii?Q?7yLfH8YsJ/r1/r5D9kjzte9GyFZi8tBk0dTkOkOWbF8UjHqr20DjGI75PttM?=
+ =?us-ascii?Q?z2vOBx7ZyktNpFX31+RvYDWHzL1YuqUFCz728LGMe0y0cEaTbkewS6xHDI0n?=
+ =?us-ascii?Q?jzoLrnraJ/S3U8aYwN68HaO2q+xspDNCpkOrwgAl9kcBgO4mwoaHehA0Mxo1?=
+ =?us-ascii?Q?0BrqbtpA4Oh6o0OUXa/3fTRYcZ+QvmvoQVfw5erFXp6BvK7i/Z6zap+QEcpd?=
+ =?us-ascii?Q?lSuC3Mq/QKoQPWtSS261iXuhy7eTWZ5pyz/r3sOEddO0IvjcV99KtiN61g5a?=
+ =?us-ascii?Q?L0CqrSKBwCIJZSVKYjSkO1K1g4kyAvk261ZzThUg2pbtADRANR/OhnhxIfMm?=
+ =?us-ascii?Q?brxYaOZwitkn/X9pJCRntOxXXFE07xzHlPCqep7BHz5V+s/vtEcDYmiY3ZID?=
+ =?us-ascii?Q?d06fl3JsPR1bR+ndYqkxalMN7NYWcAY1HVQms6HpNYW7GQy1HHvGtGg5Hwc7?=
+ =?us-ascii?Q?hX+i4Ac0ei3LtiTxzPxx+H1EPQqDZrIsKP382+r1c/3asfH4h9nVO027Unke?=
+ =?us-ascii?Q?BYBKzAOmJHWt+fRSABCuTZxD1lNehu85/wuRKH/CheKBqTTtGXNLlgbnGZdU?=
+ =?us-ascii?Q?t6Ry3rU5UDwjUj/kOSW4dpnG9N0bJnJTPkxggVmFxx17jJd6VppQPZvMGHRi?=
+ =?us-ascii?Q?cTyJ6az+Gra3w19MUDC0FchrBE+lNC2hCdNw68E+RGaJfiBSG6MiIpt69mk5?=
+ =?us-ascii?Q?8A=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9eb2e9ef-03b8-4b26-fd1e-08de38caa8eb
 X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Dec 2025 15:32:24.2598 (UTC)
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Dec 2025 15:33:40.4031 (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: TZmheH2QwopfhHDA6MafBm8flZDxlgVr2Cu640Gqu9eei1z1NTqKyexjqOmvXS8ClRt9FwPsHbhrApWI9Z5Ygb+kK9bDmI0FbopnPvfG3Rg=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB7878
+X-MS-Exchange-CrossTenant-UserPrincipalName: VeeKTxXfo+0CLEvfjppBzmAL24CxIr3Xg7sEBg/LJWUH+6BFSvG0BZnSvewopnrdUu7f1DuQ1ytvP4aGKQMt9SpjFinrF8VMwuZ0ViBbVxQ=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA4PR11MB9177
 X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -171,57 +172,61 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, Dec 04, 2025 at 09:30:08AM +0800, Song Yoong Siang wrote:
-> When the timestamp dynamic flag is set in the mbuf offload flags, force
-> allocation of a new context descriptor. The launch time feature requires a
-> dedicated context descriptor to specify the desired launch time for packet.
-> 
-> Testing was performed on two Intel ADL-S platforms with i226 NICs
-> connected back-to-back. A DPDK sample application is created to send two
-> bursts of packets with 100,000 nanosecond burst interval. Each burst is
-> having 5 UDP packets and only the first packet in the burst using launch
-> time feature. Meanwhile, the tcpdump command below is used on the link
-> partner to capture the delta of Rx hardware timestamp of the 10 packets:
-> 
-> tcpdump -ttt -ni enp1s0 --time-stamp-precision=nano -j adapter_unsynced
-> 
-> Without this patch, packets of second burst are transmitted immediately as
-> the driver din't create context descriptor for the launch time, as shown
-> in tcpdump log below:
-> 
->   00:00:00.000000000 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
->   00:00:00.000008384 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
->   00:00:00.000008381 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
->   00:00:00.000008384 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
->   00:00:00.000008384 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
->   00:00:00.000008384 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
->   00:00:00.000008387 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
->   00:00:00.000008384 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
->   00:00:00.000008381 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
->   00:00:00.000008387 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
-> 
-> With this patch, packets of second burst are properly held until the
-> intended 100,000 nanosecond intervals, demonstrating correct launch time
-> behavior. As shown in tcpdump log below, the delta of first packet
-> between first and second bursts is 8387 + 8384 + 8384 + 8384 + 66461 =
-> 100,000 nanosecond.
-> 
->   00:00:00.000000000 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
->   00:00:00.000008387 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
->   00:00:00.000008384 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
->   00:00:00.000008384 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
->   00:00:00.000008384 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
->   00:00:00.000066461 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
->   00:00:00.000008387 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
->   00:00:00.000008384 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
->   00:00:00.000008384 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
->   00:00:00.000008384 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
-> 
-> Fixes: 9630f7c71ecd ("net/igc: enable launch time offloading")
-> Cc: stable@dpdk.org
-> 
-> Signed-off-by: David Zage <david.zage@intel.com>
-> Signed-off-by: Song Yoong Siang <yoong.siang.song@intel.com>
-> ---
-Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+On Thu, Dec 11, 2025 at 03:32:18PM +0000, Bruce Richardson wrote:
+> On Thu, Dec 04, 2025 at 09:30:08AM +0800, Song Yoong Siang wrote:
+> > When the timestamp dynamic flag is set in the mbuf offload flags, force
+> > allocation of a new context descriptor. The launch time feature requires a
+> > dedicated context descriptor to specify the desired launch time for packet.
+> > 
+> > Testing was performed on two Intel ADL-S platforms with i226 NICs
+> > connected back-to-back. A DPDK sample application is created to send two
+> > bursts of packets with 100,000 nanosecond burst interval. Each burst is
+> > having 5 UDP packets and only the first packet in the burst using launch
+> > time feature. Meanwhile, the tcpdump command below is used on the link
+> > partner to capture the delta of Rx hardware timestamp of the 10 packets:
+> > 
+> > tcpdump -ttt -ni enp1s0 --time-stamp-precision=nano -j adapter_unsynced
+> > 
+> > Without this patch, packets of second burst are transmitted immediately as
+> > the driver din't create context descriptor for the launch time, as shown
+> > in tcpdump log below:
+> > 
+> >   00:00:00.000000000 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
+> >   00:00:00.000008384 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
+> >   00:00:00.000008381 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
+> >   00:00:00.000008384 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
+> >   00:00:00.000008384 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
+> >   00:00:00.000008384 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
+> >   00:00:00.000008387 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
+> >   00:00:00.000008384 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
+> >   00:00:00.000008381 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
+> >   00:00:00.000008387 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
+> > 
+> > With this patch, packets of second burst are properly held until the
+> > intended 100,000 nanosecond intervals, demonstrating correct launch time
+> > behavior. As shown in tcpdump log below, the delta of first packet
+> > between first and second bursts is 8387 + 8384 + 8384 + 8384 + 66461 =
+> > 100,000 nanosecond.
+> > 
+> >   00:00:00.000000000 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
+> >   00:00:00.000008387 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
+> >   00:00:00.000008384 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
+> >   00:00:00.000008384 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
+> >   00:00:00.000008384 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
+> >   00:00:00.000066461 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
+> >   00:00:00.000008387 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
+> >   00:00:00.000008384 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
+> >   00:00:00.000008384 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
+> >   00:00:00.000008384 IP 192.168.1.100.2 > 224.1.1.1.5: UDP, length 982
+> > 
+> > Fixes: 9630f7c71ecd ("net/igc: enable launch time offloading")
+> > Cc: stable@dpdk.org
+> > 
+> > Signed-off-by: David Zage <david.zage@intel.com>
+> > Signed-off-by: Song Yoong Siang <yoong.siang.song@intel.com>
+> > ---
+> Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+>
+Applied to dpdk-next-net-intel
 
+/Bruce 
