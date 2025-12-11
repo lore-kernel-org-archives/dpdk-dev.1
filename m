@@ -2,72 +2,76 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1377D3E783
-	for <dpdk-dev@archiver.kernel.org>; Thu, 11 Dec 2025 01:21:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55FF5D3B9AB
+	for <dpdk-dev@archiver.kernel.org>; Thu, 11 Dec 2025 01:46:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 97C5640289;
-	Thu, 11 Dec 2025 02:21:40 +0100 (CET)
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com
- [209.85.214.176])
- by mails.dpdk.org (Postfix) with ESMTP id F3AE240285
- for <dev@dpdk.org>; Thu, 11 Dec 2025 02:21:38 +0100 (CET)
-Received: by mail-pl1-f176.google.com with SMTP id
- d9443c01a7336-295548467c7so5873905ad.2
- for <dev@dpdk.org>; Wed, 10 Dec 2025 17:21:38 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 77E4E40289;
+	Thu, 11 Dec 2025 02:46:34 +0100 (CET)
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com
+ [209.85.214.182])
+ by mails.dpdk.org (Postfix) with ESMTP id BCD9C40285
+ for <dev@dpdk.org>; Thu, 11 Dec 2025 02:46:33 +0100 (CET)
+Received: by mail-pl1-f182.google.com with SMTP id
+ d9443c01a7336-297ef378069so5004575ad.3
+ for <dev@dpdk.org>; Wed, 10 Dec 2025 17:46:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1765416098;
- x=1766020898; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1765417593;
+ x=1766022393; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=u1DEeC2mLuf4TA1lQdvQ72Qth6c4GXCdojZmne2XwE0=;
- b=Mi7ezmC4gc2+POjNvvuH3nGPX1i0R+y1S5Q/tX3Y/V6LtxMtgQ3g61ou+a/7di3/Zp
- ZW+z865nSHRGLEKcoYHncBwzZTrJiju23Ff7Jq66GtmWJbDTy44ZtNA7JaIzZ4DzNjla
- pcodH0FQx5aifvU2+X8U/IPjJHtD5J3DIaOyCIKpp3IztC3SfS2DV6UiAnVwJ1Rk0Uj/
- SSIwwnP5mjv0VEITNg2pb3/62ITd8zO8gVHjpjZSfX2ykIdGM7kjdBROL1n8vzfmxCZt
- BefgBf1ic2YW0C70YzUsGm2+abstWzeqgmYGB+NyBMfSe2quQsXMnBx/aEaA/YoWALGb
- LkNA==
+ bh=S87C7q2++8OeE4xtILR/1ZaxRWJMOMWjngb2+DKd7Zs=;
+ b=C3yDja71m5lks3wMPp6mGYU42aAYFwLtwwDg+Ug1i/Ar0Auso/1l9l3GSeFVR9jdQN
+ FgOTwlBGCIHjezyLzu/3+xV3pi3Boolg8P262L9v3EZ5lA8Kg6G/X1mD2bI/TOGWxsS/
+ Gh6Q5j02BBcefcZLcu2V2EMmwgLof42gVxul24Lram7kNFcCplnPdEaTUFL+pO7h1wQZ
+ Pr9ljg3f+guomHpLX4mm5C7KrpJGzb0iFHcjU0cddBls1orWsTUBYuiKg5puBARP1icR
+ pRYU/b08/Xkj+Ttb3skzfmu1t1zVc8HfgM4IVWoFK7XE9jtlkW9nDwyZTazLLnBRq5Q/
+ G9ow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1765416098; x=1766020898;
+ d=1e100.net; s=20230601; t=1765417593; x=1766022393;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=u1DEeC2mLuf4TA1lQdvQ72Qth6c4GXCdojZmne2XwE0=;
- b=TREK8G/eRzQkkppXf085DhhoLa01U+XmPaPIFfTWdYwWBBt5EWSxs4S9GWUtmYqXsI
- UTuLjaz1oY/r9lyfLJw1xvLQTX3/QSeDMU+uo6oQ3+bUQe+dcI/CxJ89gJtKwzG6s22j
- lX0lDWCFnfajdS7J5ugnrHjbkWKFUS5jGF6/2XDUFfwrmMgYY90/bq8bPoltgc1pZuzo
- c+AzLBhFkCJ7Atb4PvXolYZMCBvlXAx5mXLeN4n2CFIWMUleEEz1Ywo0+xge/LN0c37H
- i1ZjaagtQ97K/PPr9iialCHQoWNhc8AvBe5zKOw1wrAopm3pm4HnLUgn27s/46d3fLg0
- aw3Q==
-X-Gm-Message-State: AOJu0YxyYv0PbAQId4xqV3qXs/87XIXQiwBnSVFQm+8ZcIYTyizv6VdD
- yvzrw2Tnk9DvWEJhetV2SLeI/fLAXB3+IUpprzGXeZ/lPj613HhBNGTz7dyPsvZ6QeY=
-X-Gm-Gg: AY/fxX4Y7lRburyLStJbYCnAgDEyPf2v0J3yaN5Vt6b0AAtIM5iX6FBPq/craY7cR5L
- cuyFTxR5n0kvbwQ5jwmisdc8CRWVBdMq2eOAOj3qH463AIeZESnb9yY9rOVJAihcmoBbfEq/t5p
- q2RzGWWmupd+0824r2S/Byztr+/bfdsTk7/y7lIP62+h/6+kiVPTO/5cAGsPfCoGcTcDfunM8IZ
- e+exPd8DeDmhlGIf1zcw4FXs1tSG74qX54P+RY3VU1N3TWFfDvCK+1A/Td2qeKNJmMeW2vzSCEx
- CmFlqU5MqHUQnZMYr2+cmcLiaD6wvtX2NVm4VjOyDHgKHkcgatt/fPHEK/Ru9/7nDqcxu4zdxTT
- wg6Yae6jAgFm2xLGTmMY7cNSBs1uixCrrgwjG8pA6UhEiDRMwLX4T5Tiqc1aVSGWpn9o0OWXlMo
- 1z5MNTtt2jtC5GxtNb978S0JHV39Rw/N3v43mpchts9wWl3Q7I3jgdYatNL8A=
-X-Google-Smtp-Source: AGHT+IEvp/1MjxVInHvZNfpa2OAmYu78Un+o6PYkt38jJsk8wd2x6jg4TmhHDRk8Zq5g6nm3BeDb8A==
-X-Received: by 2002:a17:903:240c:b0:29e:76b8:41e5 with SMTP id
- d9443c01a7336-29ec2d3c7cdmr37800415ad.30.1765416097927; 
- Wed, 10 Dec 2025 17:21:37 -0800 (PST)
+ bh=S87C7q2++8OeE4xtILR/1ZaxRWJMOMWjngb2+DKd7Zs=;
+ b=mLowKZswn01pgfJB7qqZmbN5t0/PZea7yo+72vZy1+UxjYMiAVCjlFs5tYOcvHu4NR
+ 39Llajy2scEJXuFDv2lROch2R0t9SqjfRS7KyQ4ahOzhc6+ToFOZL/nbE4RuhOipT9Eo
+ 2fG2clPeXJIXGu5/hwgd3UJzfsfuv+fgWe/bA3LpLlU6GBYgYDO0WbtkHuxL7OWyZHEW
+ OVHN3x8YtDzYCNKSkULcOSK9Oj9riQDHkA4V/VQIujRQf8V130NrDdLmRzW7OwRRSQMh
+ YOuWIGcYilTYlhoTpSoOd/2IBwOwm5dVyLCX0UwfML+g9PAYWzOKrog1oAzdh8yj8QxF
+ GVfQ==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCW2Esy8cPY85gKLOvogUKtgKpwHETLCECrU4UwAnT3U/ekZABZXVlKQ04v+FWddVoolDd4=@dpdk.org
+X-Gm-Message-State: AOJu0Yw38ZotmJ1Buv7E3uNziwDdXCGpeOKM9D7a2fIykiG3qglTXKxh
+ hHyLVNvJq9WUmzm7MIentXW6vrlfI7EuEUL/grQ4blU3FmBUc88OADrkVJOvOEU062A=
+X-Gm-Gg: AY/fxX5USZBPXqylo0LhQF/GxPEuUtvQIPpnOyTcQ9Ph+Iq+ufmKyyW36GtmchIVvjI
+ 6AjZbOgRq04PExj6fpuMyw1Jy7SG5wCPF1n+b5UauNjMzVX6THfr9zYkHnRY8r2ETt2Y3+HHxx8
+ IqTukcB1RcfnU5HNS4iQRLq8DwbayusrVjtw0iQknlf5dK8jVY13BmUaQiXX2Bu7eNRJsQrcoKR
+ cV/BXXYg6PGFIBGb4Jn5AkSD98xV8/N9jLm3PvlSFPOS3JYUlI7WHn9Dm/1fMYla+2OqRUwZjDw
+ ksqsfVrmQX3/hbGn8ERbrjuHGTVO3h8eKtsEwmOztlMjsrFDi4GlWTrjzAgRlL3kK4l/y+Q74p8
+ ftyda8Qu/ulbacpvxR1pWd3loqdOxQr6xk9bNoONT5BbLfe9Q0qqjBLQ3GLDfhWcA2NUjdZctRx
+ NhYs7nSqvw6Z7syKigqguOaHykOKggzQK7QBfnqyRrsEdJrXC9OuXLY9UIQXOdnpIItrRWCg==
+X-Google-Smtp-Source: AGHT+IHHbpkQSFnXERwNvV5TmR4xpDduzaGrfEUBI0mTAsUdUzCphr5sY6pwuaHfouGX52Sf0HT2lw==
+X-Received: by 2002:a17:902:f60f:b0:295:9b3a:16b6 with SMTP id
+ d9443c01a7336-29ec27ce459mr45893865ad.49.1765417592746; 
+ Wed, 10 Dec 2025 17:46:32 -0800 (PST)
 Received: from stephen-xps.local (p99249-ipoefx.ipoe.ocn.ne.jp.
  [153.246.134.248]) by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-29eea043d62sm5312845ad.82.2025.12.10.17.21.36
+ d9443c01a7336-29eea016ef4sm6032835ad.56.2025.12.10.17.46.31
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 10 Dec 2025 17:21:37 -0800 (PST)
-Date: Thu, 11 Dec 2025 10:21:32 +0900
+ Wed, 10 Dec 2025 17:46:32 -0800 (PST)
+Date: Thu, 11 Dec 2025 10:46:25 +0900
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Kevin Traynor <ktraynor@redhat.com>
-Cc: "dev@dpdk.org" <dev@dpdk.org>
-Subject: Re: Minutes of Technical Board Meeting, 2024-November-26
-Message-ID: <20251211102132.14addc9b@stephen-xps.local>
-In-Reply-To: <d4dccf88-6813-4bbc-b75e-a8ea4240ce1b@redhat.com>
-References: <d4dccf88-6813-4bbc-b75e-a8ea4240ce1b@redhat.com>
+To: "=?UTF-8?B?bWFubnl3YW5n?=(=?UTF-8?B?546L5rC45bOw?=)"
+ <mannywang@tencent.com>
+Cc: Konstantin Ananyev <konstantin.ananyev@huawei.com>, dev@dpdk.org
+Subject: Re: [PATCH v3] acl: support custom memory allocator
+Message-ID: <20251211104625.39632870@stephen-xps.local>
+In-Reply-To: <16C60E2E552D75E0+20251125121446.41247-1-mannywang@tencent.com>
+References: <66734dfb22e841ddad035c630bb74f1c@huawei.com>
+ <16C60E2E552D75E0+20251125121446.41247-1-mannywang@tencent.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,23 +85,50 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 10 Dec 2025 15:01:50 +0000
-Kevin Traynor <ktraynor@redhat.com> wrote:
+On Tue, 25 Nov 2025 12:14:46 +0000
+"mannywang(=E7=8E=8B=E6=B0=B8=E5=B3=B0)" <mannywang@tencent.com> wrote:
 
-> # Discussion of VLAN offload in PMD
-> 
-> - Discussion over patch for nbl driver that hard codes a return 0 forJ
-> vlan_offload_set callback
-> - https://inbox.dpdk.org/dev/20251124153545.7123c338@phoenix.local/
-> - vlan offload is done in software
-> - Issue is that existing OOT driver does this, so it would break apps vs
-> in-tree driver if it returned ENOSUP
-> - For current release, leave code as is
-> - For future release, consider to do some validation at ethdev level
+> Reduce memory fragmentation caused by dynamic memory allocations
+> by allowing users to provide custom memory allocator.
+>=20
+> Add new members to struct rte_acl_config to allow passing custom
+> allocator callbacks to rte_acl_build:
+>=20
+> - running_alloc: allocator callback for run-time internal memory
+> - running_free: free callback for run-time internal memory
+> - running_ctx: user-defined context passed to running_alloc/free
+>=20
+> - temp_alloc: allocator callback for temporary memory during ACL build
+> - temp_reset: reset callback for temporary allocator
+> - temp_ctx: user-defined context passed to temp_alloc/reset
+>=20
+> These callbacks allow users to provide their own memory pools or
+> allocators for both persistent runtime structures and temporary
+> build-time data.
+>=20
+> A typical approach is to pre-allocate a static memory region
+> for rte_acl_ctx, and to provide a global temporary memory manager
+> that supports multipleallocations and a single reset during ACL build.
+>=20
+> Since tb_mem_pool handles allocation failures using siglongjmp,
+> temp_alloc follows the same approach for failure handling.
+>=20
+> Signed-off-by: YongFeng Wang <mannywang@tencent.com>
+> ---
 
-Just to follow up, the underlying problem here was me misreading the code.
-The driver is doing VLAN offload in software which is fine (it is what virtio does).
+Rather than custom allocators, I did a couple of quick AI queries about
+alternatives. It looks like there are some big global gains possible
+here:
 
-It does raise the issue of maybe this should be done in ethdev layer so
-all drivers that don't do HW offload could just be done in software by ethdev.
-That would make the mbuf consistent across all drivers.
+Summary of Recommendations
+Improvement	Benefit	Complexity	Priority
+ACL Object Pooling	Eliminates ACL-specific fragmentation	Medium	High
+Size-Class Segregation	Reduces general fragmentation	High	High
+Slab Allocator for Build	Better hugepage utilization	Medium	Medium
+Deferred Coalescing	Reduces fragmentation from churn	Medium	Medium
+Thread-Local Caching	Reduces contention, improves locality	Medium	Medium
+
+Also adding some malloc_trim() would help.
+
+https://claude.ai/share/75fcf73c-17e3-4f41-8590-f2ab640f9512
+
