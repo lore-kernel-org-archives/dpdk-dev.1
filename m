@@ -2,46 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE738D41D6B
-	for <dpdk-dev@archiver.kernel.org>; Thu, 11 Dec 2025 17:17:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FC88D41D6B
+	for <dpdk-dev@archiver.kernel.org>; Thu, 11 Dec 2025 17:17:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2F90940E17;
-	Thu, 11 Dec 2025 18:17:21 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 6218F40E22;
+	Thu, 11 Dec 2025 18:17:22 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
- by mails.dpdk.org (Postfix) with ESMTP id BF34E406FF;
- Thu, 11 Dec 2025 18:17:16 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 767B840E0B
+ for <dev@dpdk.org>; Thu, 11 Dec 2025 18:17:17 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1765473437; x=1797009437;
+ t=1765473438; x=1797009438;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=6Kw7bqijBf2I/NoXZC5Dh7Vq52BrYgoh/2yIQXFyNOU=;
- b=FL63cJolc8ixc2oPA4fUCaEHNHiaWzs6SeryN77F6SK0xSw5YNOgetZ4
- ex1oZj+iOVrc8jOT7lQdVpzCclqctOyWwYoBN9PcquejB5D8K2xus9V5e
- TGcr2ZYttfuLopUhTlroBEI0EhqClUQh5eC8PsRJo8NHaV2yrvLJR9MdV
- WtFEovWp2vcSrK3nYGoL56wZ+uqr6ksE+uRkR7RCQAgMskh+DQZ3KKhdL
- cOhnHhilUQlCLb03zkch2+eLsRSknApnLz0UgUVgxPF64oLti84Ocsx5G
- cC+yg+G4XM9EUzaFbrld+i5eqTclG+rtQrravcac3l3Os323NYp4QUinj A==;
-X-CSE-ConnectionGUID: rwnptBTnTQu6KsXs1fwlEQ==
-X-CSE-MsgGUID: FR+oxUESTOa6eM3Ro9nVQQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11639"; a="85069980"
-X-IronPort-AV: E=Sophos;i="6.21,141,1763452800"; d="scan'208";a="85069980"
+ bh=EOS3NmgVb//CZN7hS3ozPArpDyXsNlYHPUkxOaMoYWY=;
+ b=RJDv8JlW+KZA/SeP8fwkkS/alw+gALEp8x61KmIcjMAyseM4/4vqbHUw
+ dTtAPhjWNz9WiBIyL8g/Yl0at73OW3nJ/GcfWaNoFNanPpjqy/KqCI7Og
+ egI/MyXix72P0Ky2jSDfX2CPR0J0Pg0i6Y7PIp8r+wPNPXbEZw0Isb/Bk
+ V9bynEBY/qAvqn1SZGsKmzOaoZt2h8ioO0y9PIsuL0X3YLVdTN0EN6VPF
+ lL5YXNFWSc9WvoXx8VG0/RjUGwVlHG7cbiUsJTWgWarNRXkEb3C0tNsnJ
+ v7dKICL9rqP4whvttBlnb87WVi+BN+pZovBAYwGucyTK/E2tcDqu3kTc2 A==;
+X-CSE-ConnectionGUID: 3624FovXSLeDH8fSPTJQRA==
+X-CSE-MsgGUID: xB+E3mUTRjCZga4bruyilw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11639"; a="85069983"
+X-IronPort-AV: E=Sophos;i="6.21,141,1763452800"; d="scan'208";a="85069983"
 Received: from fmviesa007.fm.intel.com ([10.60.135.147])
  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 11 Dec 2025 09:17:16 -0800
-X-CSE-ConnectionGUID: YKUQfGKBR825JdRDlYPH5A==
-X-CSE-MsgGUID: wODSGx85QMW7wYQAu9KeYw==
+ 11 Dec 2025 09:17:17 -0800
+X-CSE-ConnectionGUID: Wo+5TnLDQ0ut1juEQxdQeQ==
+X-CSE-MsgGUID: kZR8a/PzScOoG3fH+Ad7Aw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,141,1763452800"; d="scan'208";a="196461557"
+X-IronPort-AV: E=Sophos;i="6.21,141,1763452800"; d="scan'208";a="196461561"
 Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by fmviesa007.fm.intel.com with ESMTP; 11 Dec 2025 09:17:15 -0800
+ by fmviesa007.fm.intel.com with ESMTP; 11 Dec 2025 09:17:16 -0800
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
-Cc: Bruce Richardson <bruce.richardson@intel.com>, stable@dpdk.org,
- Marat Khalili <marat.khalili@huawei.com>
-Subject: [PATCH v4 02/11] app/test: fix undefined behaviour in red autotest
-Date: Thu, 11 Dec 2025 17:17:00 +0000
-Message-ID: <20251211171709.714229-3-bruce.richardson@intel.com>
+Cc: Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH v4 03/11] app/test: reduce duration of secondary timer test
+Date: Thu, 11 Dec 2025 17:17:01 +0000
+Message-ID: <20251211171709.714229-4-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251211171709.714229-1-bruce.richardson@intel.com>
 References: <20251202154948.1757169-1-bruce.richardson@intel.com>
@@ -61,41 +60,39 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The shift of a negative number (or very large positive) is undefined
-behaviour which causes errors when run with UBSan. Fix this by making
-the behaviour explicit for the edge case of n being zero in the
-calculation.
-
-Fixes: de3cfa2c9823 ("sched: initial import")
-Cc: stable@dpdk.org
+Reduce the timer duration and the primary wait duration in the secondary
+process timer autotest. This should help ensure it doesn't time out what
+run in a CI environment.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
-Acked-by: Marat Khalili <marat.khalili@huawei.com>
 ---
- lib/sched/rte_red.h | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ app/test/test_timer_secondary.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/lib/sched/rte_red.h b/lib/sched/rte_red.h
-index e62abb9295..3b90cc46a9 100644
---- a/lib/sched/rte_red.h
-+++ b/lib/sched/rte_red.h
-@@ -172,8 +172,15 @@ __rte_red_calc_qempty_factor(uint8_t wq_log2, uint16_t m)
- 	f = (n >> 6) & 0xf;
- 	n >>= 10;
+diff --git a/app/test/test_timer_secondary.c b/app/test/test_timer_secondary.c
+index 4e220559b4..864f175d6a 100644
+--- a/app/test/test_timer_secondary.c
++++ b/app/test/test_timer_secondary.c
+@@ -162,7 +162,7 @@ test_timer_secondary(void)
+ 		ret = timer_secondary_spawn_wait(*sec_lcorep);
+ 		TEST_ASSERT_SUCCESS(ret, "Secondary process execution failed");
  
--	if (n < RTE_RED_SCALING)
-+	if (n < RTE_RED_SCALING) {
-+		/* When n == 0, no rounding or shifting needed.
-+		 * For n > 0, add 2^(n-1) for rounding before right shift.
-+		 * This avoids UB from (1 << -1) when n == 0.
-+		 */
-+		if (n == 0)
-+			return (uint16_t) rte_red_pow2_frac_inv[f];
- 		return (uint16_t) ((rte_red_pow2_frac_inv[f] + (1 << (n - 1))) >> n);
-+	}
+-		rte_delay_ms(2000);
++		rte_delay_ms(500);
  
- 	return 0;
- }
+ 		test_info->exit_flag = 1;
+ 		rte_eal_wait_lcore(*mgr_lcorep);
+@@ -189,8 +189,8 @@ test_timer_secondary(void)
+ 
+ 			rte_timer_init(tim);
+ 
+-			/* generate timeouts between 10 and 160 ms */
+-			timeout_ms = ((rte_rand() & 0xF) + 1) * 10;
++			/* generate timeouts between 10 and 80 ms */
++			timeout_ms = ((rte_rand() & 0x7) + 1) * 10;
+ 			ticks = timeout_ms * rte_get_timer_hz() / MSECPERSEC;
+ 
+ 			ret = rte_timer_alt_reset(test_info->timer_data_id,
 -- 
 2.51.0
 
