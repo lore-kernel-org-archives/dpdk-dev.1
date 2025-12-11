@@ -2,45 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60696D41D6A
-	for <dpdk-dev@archiver.kernel.org>; Thu, 11 Dec 2025 17:18:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E81BCD41D6B
+	for <dpdk-dev@archiver.kernel.org>; Thu, 11 Dec 2025 17:18:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id F15FA40E4B;
-	Thu, 11 Dec 2025 18:17:29 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 3527740E48;
+	Thu, 11 Dec 2025 18:17:31 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
- by mails.dpdk.org (Postfix) with ESMTP id C512740E25
- for <dev@dpdk.org>; Thu, 11 Dec 2025 18:17:22 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id C991640E2E;
+ Thu, 11 Dec 2025 18:17:23 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1765473443; x=1797009443;
+ t=1765473444; x=1797009444;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=Jw38IJeuia8ayLYJzVRpRIg6H9gSEcZaxMV7arPtwQ4=;
- b=P3fioOE2uuyHwAqn/XDJw1sFh29TKgRjo7jVD/gONT+lkkcscuffAkvl
- oRc+0lv27AVSY0LNGoTu8o/+C+Sct2Uf8P1tWJtw5qvPwg7P0o3mU6htQ
- cArgIdx8TIxttN9DN62efeNWiS193VWsR1lXaOPFcEPxIWOoa7+Kup7ZT
- 6T3A71ZplqZ41YLHPHw4GyHcBYYEp8n68osBHc61vf2t7Z2OoT4Zr2KAt
- iBUmyHjhqUpPA4XEtP0Dm2nFc3lBjWWBUKL5+qQuyo7mO/qg+LKTpPnLs
- DBajH+m8Ecwx18rOkoskLVQBGx9QZP21sZklkULmBHyKeqcsHr2IfaSPY g==;
-X-CSE-ConnectionGUID: A1ozPuweSq2cbOT/Z0v7lA==
-X-CSE-MsgGUID: 2WISo70GQU+1t+xUVWkmbQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11639"; a="85069993"
-X-IronPort-AV: E=Sophos;i="6.21,141,1763452800"; d="scan'208";a="85069993"
+ bh=i1gac9Iy3dG4jpWFIwe7aW6X0fO2kmgAD8oRINOd1BM=;
+ b=HamXhbBdG5PbiRxhIMI1U1tcjsxXpVzYS4ZBDTL+gNmzZJjxH+RaVlds
+ jdHOWec+pukW236MKEfaFgy6+YkbjQ+RNOuofRFd/ZGv7ncBIQpK0dR1a
+ YGmGyFkRxG22I98tHTzJABSzVk0W5TTT0uyJQ748c3jufLRC8nYV+6rK+
+ 6Xwrfutz3mMFgJCB93YqPLYHEUCMdxqmc6NuJed+mbKMywGyFkwA7yIG5
+ P4gxyeatA+HzWwOSHMaw1BzIf0NEtZJMRh8A0UA3L9m8LpILFrAWS8thn
+ 0IofXI3Bj3CT1V+tP1NS7en88+ShO333SULPWH3Zvo0LW2DJB2IRsEkMi g==;
+X-CSE-ConnectionGUID: BjyHSMKvQNSerKdtegEp+w==
+X-CSE-MsgGUID: icv/9QFTTzWyeRMV5b7cig==
+X-IronPort-AV: E=McAfee;i="6800,10657,11639"; a="85069994"
+X-IronPort-AV: E=Sophos;i="6.21,141,1763452800"; d="scan'208";a="85069994"
 Received: from fmviesa007.fm.intel.com ([10.60.135.147])
  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 11 Dec 2025 09:17:22 -0800
-X-CSE-ConnectionGUID: GpW24m30Qs+RueLTBiqLXQ==
-X-CSE-MsgGUID: pbtPywkETPWT7HNbXhV60A==
+ 11 Dec 2025 09:17:23 -0800
+X-CSE-ConnectionGUID: YDyKF7gyTRyfnx8mqYpFlg==
+X-CSE-MsgGUID: sp4OYijgQDaG9vqXUZunTw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,141,1763452800"; d="scan'208";a="196461591"
+X-IronPort-AV: E=Sophos;i="6.21,141,1763452800"; d="scan'208";a="196461596"
 Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by fmviesa007.fm.intel.com with ESMTP; 11 Dec 2025 09:17:22 -0800
+ by fmviesa007.fm.intel.com with ESMTP; 11 Dec 2025 09:17:23 -0800
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
-Cc: Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v4 09/11] app/test: add tests to driver test suite
-Date: Thu, 11 Dec 2025 17:17:07 +0000
-Message-ID: <20251211171709.714229-10-bruce.richardson@intel.com>
+Cc: Bruce Richardson <bruce.richardson@intel.com>, stable@dpdk.org,
+ Marat Khalili <marat.khalili@huawei.com>
+Subject: [PATCH v4 10/11] buildtools/get-test-suites: suppress empty output
+Date: Thu, 11 Dec 2025 17:17:08 +0000
+Message-ID: <20251211171709.714229-11-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251211171709.714229-1-bruce.richardson@intel.com>
 References: <20251202154948.1757169-1-bruce.richardson@intel.com>
@@ -60,99 +61,30 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-A number of eventdev, cryptodev and ethdev tests require devices to be
-present in order to run so add them to the "driver" suite of tests.
+If there are no tests which are not assigned to a test suite, omit the
+line printing the non_suite_tests. This avoid having error messages from
+meson about test "" not being in any test suite.
+
+Fixes: 25065ef1f6c0 ("test: emit warning for orphaned tests")
+Cc: stable@dpdk.org
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+Acked-by: Marat Khalili <marat.khalili@huawei.com>
 ---
- app/test/test_cryptodev_crosscheck.c   | 2 +-
- app/test/test_ethdev_api.c             | 2 +-
- app/test/test_event_crypto_adapter.c   | 2 +-
- app/test/test_event_eth_rx_adapter.c   | 4 ++--
- app/test/test_event_timer_adapter.c    | 2 +-
- app/test/test_security_inline_macsec.c | 2 +-
- app/test/test_security_inline_proto.c  | 6 +++---
- 7 files changed, 10 insertions(+), 10 deletions(-)
+ buildtools/get-test-suites.py | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/app/test/test_cryptodev_crosscheck.c b/app/test/test_cryptodev_crosscheck.c
-index b9a53a430c..bb21c3bc50 100644
---- a/app/test/test_cryptodev_crosscheck.c
-+++ b/app/test/test_cryptodev_crosscheck.c
-@@ -1047,4 +1047,4 @@ test_crosscheck(void)
- 	return ret;
- }
+diff --git a/buildtools/get-test-suites.py b/buildtools/get-test-suites.py
+index 73f1d9c9e1..36ed4bedc2 100644
+--- a/buildtools/get-test-suites.py
++++ b/buildtools/get-test-suites.py
+@@ -38,4 +38,5 @@ def get_fast_test_params(test_name, ln):
  
--REGISTER_TEST_COMMAND(cryptodev_crosscheck, test_crosscheck);
-+REGISTER_DRIVER_TEST(cryptodev_crosscheck, test_crosscheck);
-diff --git a/app/test/test_ethdev_api.c b/app/test/test_ethdev_api.c
-index 00d6a5c614..76afd0345c 100644
---- a/app/test/test_ethdev_api.c
-+++ b/app/test/test_ethdev_api.c
-@@ -185,4 +185,4 @@ test_ethdev_api(void)
- /* TODO: Make part of the fast test suite, `REGISTER_FAST_TEST()`,
-  *       when all drivers complies to the queue state requirement
-  */
--REGISTER_TEST_COMMAND(ethdev_api, test_ethdev_api);
-+REGISTER_DRIVER_TEST(ethdev_api, test_ethdev_api);
-diff --git a/app/test/test_event_crypto_adapter.c b/app/test/test_event_crypto_adapter.c
-index ab24e30a97..cac1584f40 100644
---- a/app/test/test_event_crypto_adapter.c
-+++ b/app/test/test_event_crypto_adapter.c
-@@ -1625,5 +1625,5 @@ test_event_crypto_adapter(void)
- 
- #endif /* !RTE_EXEC_ENV_WINDOWS */
- 
--REGISTER_TEST_COMMAND(event_crypto_adapter_autotest,
-+REGISTER_DRIVER_TEST(event_crypto_adapter_autotest,
- 		test_event_crypto_adapter);
-diff --git a/app/test/test_event_eth_rx_adapter.c b/app/test/test_event_eth_rx_adapter.c
-index 9f8c8c1b26..2b623bfb28 100644
---- a/app/test/test_event_eth_rx_adapter.c
-+++ b/app/test/test_event_eth_rx_adapter.c
-@@ -1555,7 +1555,7 @@ test_event_eth_rx_intr_adapter_common(void)
- 
- #endif /* !RTE_EXEC_ENV_WINDOWS */
- 
--REGISTER_TEST_COMMAND(event_eth_rx_adapter_autotest,
-+REGISTER_DRIVER_TEST(event_eth_rx_adapter_autotest,
- 		test_event_eth_rx_adapter_common);
--REGISTER_TEST_COMMAND(event_eth_rx_intr_adapter_autotest,
-+REGISTER_DRIVER_TEST(event_eth_rx_intr_adapter_autotest,
- 		test_event_eth_rx_intr_adapter_common);
-diff --git a/app/test/test_event_timer_adapter.c b/app/test/test_event_timer_adapter.c
-index 2bc2e026a9..bf5ff56bed 100644
---- a/app/test/test_event_timer_adapter.c
-+++ b/app/test/test_event_timer_adapter.c
-@@ -2036,4 +2036,4 @@ test_event_timer_adapter_func(void)
- 
- #endif /* !RTE_EXEC_ENV_WINDOWS */
- 
--REGISTER_TEST_COMMAND(event_timer_adapter_test, test_event_timer_adapter_func);
-+REGISTER_DRIVER_TEST(event_timer_adapter_test, test_event_timer_adapter_func);
-diff --git a/app/test/test_security_inline_macsec.c b/app/test/test_security_inline_macsec.c
-index 4043667701..a929ff5326 100644
---- a/app/test/test_security_inline_macsec.c
-+++ b/app/test/test_security_inline_macsec.c
-@@ -2584,4 +2584,4 @@ test_inline_macsec(void)
- 
- #endif /* !RTE_EXEC_ENV_WINDOWS */
- 
--REGISTER_TEST_COMMAND(inline_macsec_autotest, test_inline_macsec);
-+REGISTER_DRIVER_TEST(inline_macsec_autotest, test_inline_macsec);
-diff --git a/app/test/test_security_inline_proto.c b/app/test/test_security_inline_proto.c
-index 04ecfd02c6..09d710eff2 100644
---- a/app/test/test_security_inline_proto.c
-+++ b/app/test/test_security_inline_proto.c
-@@ -3616,6 +3616,6 @@ test_event_inline_ipsec(void)
- 
- #endif /* !RTE_EXEC_ENV_WINDOWS */
- 
--REGISTER_TEST_COMMAND(inline_ipsec_autotest, test_inline_ipsec);
--REGISTER_TEST_COMMAND(inline_ipsec_sg_autotest, test_inline_ipsec_sg);
--REGISTER_TEST_COMMAND(event_inline_ipsec_autotest, test_event_inline_ipsec);
-+REGISTER_DRIVER_TEST(inline_ipsec_autotest, test_inline_ipsec);
-+REGISTER_DRIVER_TEST(inline_ipsec_sg_autotest, test_inline_ipsec_sg);
-+REGISTER_DRIVER_TEST(event_inline_ipsec_autotest, test_event_inline_ipsec);
+ for suite in test_suites.keys():
+     print(f"{suite}={','.join(test_suites[suite])}")
+-print(f"non_suite_tests={','.join(non_suite_tests)}")
++if non_suite_tests:
++    print(f"non_suite_tests={','.join(non_suite_tests)}")
 -- 
 2.51.0
 
