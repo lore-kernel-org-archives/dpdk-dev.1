@@ -2,51 +2,40 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1EA2D41D6B
-	for <dpdk-dev@archiver.kernel.org>; Thu, 11 Dec 2025 17:18:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1024D43357
+	for <dpdk-dev@archiver.kernel.org>; Thu, 11 Dec 2025 21:45:31 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 631EB40E5E;
-	Thu, 11 Dec 2025 18:17:32 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
- by mails.dpdk.org (Postfix) with ESMTP id 9393640E34
- for <dev@dpdk.org>; Thu, 11 Dec 2025 18:17:24 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1765473445; x=1797009445;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=IDE9hJgHc3DVPsQUeeff0e6ptDqJRDFCzRS56Zn+uSg=;
- b=L8HPJraKAE4RRKwP1Tm3rZmc1DUic4BarL2Q3UTDwDxKSAXNKFfWaqDz
- hSw7xlQIKD6iqyCDhFiZKQzB77R4EIOk7h5lkFjL+ef9zwgWJ5H8h8rCL
- 8YjSi2qROoM3ab5EfNtI0hQk6YAItQ+d/IMEuGsNN1lRAw3wHdglcrRTJ
- IC7my/HSLaJLHiJHDaKBnvGVChu8jgtKuRicsRLjYH4rB5fcWJ9AHy1Lm
- Bs+cWNMNKszBHINJB4NKZ+B0nSUbUeNyae+DTLp3UMDV4xgltHzvpL8yE
- tlMl44v6zkOeqYk6cHgmADCNQaO+x8/3JMwQ/Z2Tf0QV044BBnzQX0hi8 g==;
-X-CSE-ConnectionGUID: q5vuylzvQZOffbAcNRZnmw==
-X-CSE-MsgGUID: C0qaGJBKSkem0JZWuC+P8w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11639"; a="85069996"
-X-IronPort-AV: E=Sophos;i="6.21,141,1763452800"; d="scan'208";a="85069996"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
- by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 11 Dec 2025 09:17:24 -0800
-X-CSE-ConnectionGUID: N16g4n9cRA2BAzUg1BSHSQ==
-X-CSE-MsgGUID: 5LTD6phmQ/mjqN0hGbrEzA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,141,1763452800"; d="scan'208";a="196461599"
-Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by fmviesa007.fm.intel.com with ESMTP; 11 Dec 2025 09:17:24 -0800
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: dev@dpdk.org
-Cc: Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v4 11/11] app/test: move red autotest to attic
-Date: Thu, 11 Dec 2025 17:17:09 +0000
-Message-ID: <20251211171709.714229-12-bruce.richardson@intel.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251211171709.714229-1-bruce.richardson@intel.com>
-References: <20251202154948.1757169-1-bruce.richardson@intel.com>
- <20251211171709.714229-1-bruce.richardson@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 7139840289;
+	Thu, 11 Dec 2025 22:45:28 +0100 (CET)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id E63D64026F
+ for <dev@dpdk.org>; Thu, 11 Dec 2025 22:45:26 +0100 (CET)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 96D4820B75;
+ Thu, 11 Dec 2025 22:45:26 +0100 (CET)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Subject: RE: [PATCH] net/i40e: Fast release optimizations
+Date: Thu, 11 Dec 2025 22:45:25 +0100
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F655DC@smartserver.smartshare.dk>
+In-Reply-To: <aTmnOwyh2u75Y3qp@bricha3-mobl1.ger.corp.intel.com>
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH] net/i40e: Fast release optimizations
+Thread-Index: Adxp9pNTDjvLgLDbQYevuLGXNddypwA7WSXg
+References: <20250624061238.89259-1-mb@smartsharesystems.com>
+ <98CBD80474FA8B44BF855DF32C47DC35E9FE25@smartserver.smartshare.dk>
+ <aTmnOwyh2u75Y3qp@bricha3-mobl1.ger.corp.intel.com>
+From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
+To: "Bruce Richardson" <bruce.richardson@intel.com>
+Cc: <dev@dpdk.org>,
+	"Konstantin Ananyev" <konstantin.ananyev@huawei.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -60,41 +49,64 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Define an "attic" test suite for unstable or unmaintained tests, and
-move the red autotest to that suite.
+> From: Bruce Richardson [mailto:bruce.richardson@intel.com]
+> Sent: Wednesday, 10 December 2025 18.01
+>=20
+> On Mon, Aug 11, 2025 at 02:47:17PM +0200, Morten Br=F8rup wrote:
+> > > From: Morten Br=F8rup [mailto:mb@smartsharesystems.com]
+> > > Sent: Tuesday, 24 June 2025 08.13
+> > >
+> > > When fast releasing mbufs, the mbufs are not accessed, so do not
+> prefetch
+> > > them.
+> > > This saves a mbuf load operation for each fast released TX mbuf.
+> > >
+> > > When fast release of mbufs is enabled for a TX queue, cache the
+> mbuf
+> > > mempool pointer in the TX queue structure.
+> > > This saves one mbuf load operation for each burst of fast released
+> TX
+> > > mbufs.
+> > >
+> > > The txep->mbuf pointer is not used after the mbuf has been freed,
+> so do
+> > > not reset the pointer.
+> > > This saves a txep store operation for each TX mbuf freed.
+> > >
+> > > Signed-off-by: Morten Br=F8rup <mb@smartsharesystems.com>
+> > > ---
+> >
+> > After further consideration, I think this patch should be split in
+> two:
+> > 1. Remove superfluous code: prefetching mbufs and resetting txep-
+> >mbuf pointers.
+> > 2. Cache the mbuf mempool pointer for FAST_FREE.
+> >
+> Hi Morten,
+>=20
+> any plans for a new version of this patch (split or otherwise)? This =
+is
+> popped up again on my list in patchwork and want to decide what to do
+> with
+> it for this release. :-)
+>=20
+> /Bruce
 
-Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
----
- app/test/test.h     | 4 ++++
- app/test/test_red.c | 2 +-
- 2 files changed, 5 insertions(+), 1 deletion(-)
+I'll give it another shot.
 
-diff --git a/app/test/test.h b/app/test/test.h
-index 30a8e1b8f1..10dc45f19d 100644
---- a/app/test/test.h
-+++ b/app/test/test.h
-@@ -218,5 +218,9 @@ void add_test_command(struct test_command *t);
-  */
- #define REGISTER_FAST_TEST(cmd, no_huge, ASan, func)  REGISTER_TEST_COMMAND(cmd, func)
- 
-+/* For unstable or experimental tests cases which need work or which may be removed
-+ * in the future.
-+ */
-+#define REGISTER_ATTIC_TEST REGISTER_TEST_COMMAND
- 
- #endif
-diff --git a/app/test/test_red.c b/app/test/test_red.c
-index 7f38ed1469..23013237c0 100644
---- a/app/test/test_red.c
-+++ b/app/test/test_red.c
-@@ -1872,6 +1872,6 @@ test_red_all(void)
- 
- #endif /* !RTE_EXEC_ENV_WINDOWS */
- 
--REGISTER_TEST_COMMAND(red_autotest, test_red);
-+REGISTER_ATTIC_TEST(red_autotest, test_red);
- REGISTER_PERF_TEST(red_perf, test_red_perf);
- REGISTER_PERF_TEST(red_all, test_red_all);
--- 
-2.51.0
+I took another look at it today, and it looks like the txep->mbuf (i.e. =
+sw_ring[].mbuf) is used by other cleanup functions, so not NULL'ing it =
+needs more detailed review.
+
+Anyway, prefetching the mbufs is a complete waste for fast free, where =
+the mbufs are not being accessed at all. So there's still something to =
+gain here.
+
+Also, my assumption that txq->offloads is hotter than txq->fast_free_mp =
+seems not to hold either, so I'll play around with that too.
+
+I'm considering sending a series of patches with very small steps, so =
+the individual changes are easy to review.
+
+-Morten
 
