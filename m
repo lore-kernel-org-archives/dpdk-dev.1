@@ -2,60 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43147D59D8C
-	for <dpdk-dev@archiver.kernel.org>; Fri, 12 Dec 2025 20:11:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E200D59D8E
+	for <dpdk-dev@archiver.kernel.org>; Fri, 12 Dec 2025 21:02:46 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 455AB4068E;
-	Fri, 12 Dec 2025 21:11:22 +0100 (CET)
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com
- [209.85.216.45]) by mails.dpdk.org (Postfix) with ESMTP id 337C54027D
- for <dev@dpdk.org>; Fri, 12 Dec 2025 21:11:21 +0100 (CET)
-Received: by mail-pj1-f45.google.com with SMTP id
- 98e67ed59e1d1-34c27d14559so230326a91.2
- for <dev@dpdk.org>; Fri, 12 Dec 2025 12:11:21 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 55C9E4027D;
+	Fri, 12 Dec 2025 22:02:45 +0100 (CET)
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com
+ [209.85.222.175])
+ by mails.dpdk.org (Postfix) with ESMTP id 860EF40268
+ for <dev@dpdk.org>; Fri, 12 Dec 2025 22:02:43 +0100 (CET)
+Received: by mail-qk1-f175.google.com with SMTP id
+ af79cd13be357-8b2a4b6876fso225396085a.3
+ for <dev@dpdk.org>; Fri, 12 Dec 2025 13:02:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1765570280; x=1766175080; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
- :date:message-id:reply-to;
- bh=rlqujGESX1+jgLj+5YHh/fLJP/26T2K5JI4+ZBgVmEo=;
- b=XjrAktUrXMpxQvWuBTfFFMDaUNBmCCgLyLZ/3/F0uOJSeAKnHpHAefxqyoXQwomeUN
- U1DFxxKvWC8wHRPS8MaheP8DQKqCXLDHm00M9U/zWACJHvK26cuoXwK5OLW3NLouIsWw
- cInNO/wHq0M/m07V/9MEzlwUXba79iWFW/rQ4=
+ d=iol.unh.edu; s=unh-iol; t=1765573363; x=1766178163; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=7GoKAzRdMbvqW5NLBjP7/Sii+s0u+zYrKqzh1nec2NU=;
+ b=BjcFxmcEpelr9IkhV6CzdEa7UHyRR8l8c6CW024LNLEg8avxX8qkSWaKnYySyzZtsj
+ fvmhlrKqfQHYLzBp/Hcy35trWkb2Uxr65RuNN8UijozRerBrfE0Fs3dbRMfqhAcpl/Bo
+ KU06yuCq3ihNJhNetO7nFNqbmgCEYYMZIlLhc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1765570280; x=1766175080;
- h=cc:to:subject:message-id:date:from:mime-version:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=rlqujGESX1+jgLj+5YHh/fLJP/26T2K5JI4+ZBgVmEo=;
- b=CMztX8XGSC6g8WbNQbArsfGZJhNGQHzgpx6VaFdHVEHTJi8Yry588UeGzzDOAo91KO
- d6R7Z2KnBW2VRjBQIQa3pLJToxi23GsltE5985lZQmRb3Xdg8LimYivsbfBeyVVTondb
- uYZxw+3kOHD9ihJM3l8/BtxEerD6C1d6MAI/ECXrBlEdrcus1TsWONItUnl2HLD8mb/z
- TmiEqKXz1NhjYbjsjVmoTCHHHup2Xv/bWLaeZ6AezROm9sz5h/UDjnPzHjtr3VPmKUlr
- YbgEImtS5jwD8irAmbEmSLjgnDRDWFuasqFyttcDgmGFx3Ts89FQGYiYRJApPNOcLVTm
- /t6A==
-X-Gm-Message-State: AOJu0YyPl8CZz+ONtLNosGEuWX8bpXIJxyjpWIKh7NwFO87A2nI8lNrZ
- i2STnIOnSs1n3eXPP9NyybHapU/sEjU634tPURQjeMezAXYCiU2MYoWHFYtLqhyrVoliL1UylbT
- ciGco2xuG5F2ihs7RpPquoMeny9HEMN2Dy4u9AIrVnS+eXLcFDqyCBO2RcA==
-X-Gm-Gg: AY/fxX6x2guEVwQGH8TSkjcLvWz3xKjBLoq8oZbWjs9y2dA5KMwTdUaEHMqt1aYkmeh
- xOKwuyPYBdOgCJM27xK5D21b/doWSAMkFq4xW5H2xkpXf8V0QqMu/62uriNKmNaEXj9CqxBLFy6
- WmfzNvBvKNjvpOCZnJ1Ihe6aZWx0TnbPgO3MWqRwbXRxzbkmjUm0trqBxZNz88HtWsMtgIrYnJm
- KrxR99mYKATDMLUi/TvlXL4dX25bBwc+Ah2lpxOwbhJwdaKkfpqWnQN+/QLz3Zpfth+cebvjfHW
- Z2Bh9xxntqS+qLtmuiGbfBIgYJ6F
-X-Google-Smtp-Source: AGHT+IF6KCYsH+467l27+7LIdJINgSPj5AvkmVBaFEOSJJH+5onkpWtiCUu8Z+z6FVEtonps5Vsjr9KAezRmuLa/W0c=
-X-Received: by 2002:a05:701b:2212:b0:119:e56b:98be with SMTP id
- a92af1059eb24-11f34c18fd7mr1750605c88.37.1765570279932; Fri, 12 Dec 2025
- 12:11:19 -0800 (PST)
+ d=1e100.net; s=20230601; t=1765573363; x=1766178163;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=7GoKAzRdMbvqW5NLBjP7/Sii+s0u+zYrKqzh1nec2NU=;
+ b=LWpTbYfO8wM7ypncQ4L25c8PWC1/4hD2iuSs/UKUTw9twtaj0/lcPaEIfytXdeMepX
+ Zf+i+p0EHObnGPzUyECBMONlweYmG7HOtO2M7nQAqVe2J8hwjB7VvJ08/WxWJbAs8Ltq
+ EYe5lKOHA+EMU3aejaywKp/IsiQvewBDANGqaWOaOwaAtDVWp9HLdvWMX9Gyyan0gEC/
+ hrY3ObqlkyByMjOkQXYjd3/MYCzqTF2ib7VHthf0RAE23nQb8sIkqE+z0VvJydG2nZRH
+ sS2m0shXnZ/BZ0r/CLa+hDaANUs8I40A1xjUOyMqfvc+KRPJ2chlL/6zIavh6WMBry42
+ ijvw==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCURPU7v7Ys5RRlkdOpV+udF5sMC/NkOOFzZc3lDwB7c+YZ/CcafE7Ew4Rw0em1FC26+g0I=@dpdk.org
+X-Gm-Message-State: AOJu0YwtVlTNXn4ddmLZnIdoWBVRlivRgNJAk/6vwHj6WArmbaU1m8r3
+ Hm5D4oROqKyLU3cN7VZ2CMbR0Wv7C8Nmyll+DBv8hIAyZUqB471K9dydEeYGKQY9a4A=
+X-Gm-Gg: AY/fxX5m4+2UR/yqyKwibIPxmTs+lMi9dkYzH3H7SYgl0JbHS9DCoBhFNPm0AUIKHPK
+ IcDykvxhAjOxdVMYoxtnMUuMhxSPMxrJiSwexOwqFkNIjnTMpsdvvhfEjpeqXdtL9aRhieAFYuG
+ EqLaiLBtuRWEXbSYDQCMOEs+cY7uzIU9tZvv+QNO+BemIG8mxwvyxnHK/LV/4w8muFX8VORO0mF
+ RZIN0WCfGnWqpWe8BLtxVJJikrW9/2XXO5T9LQuCdoqGvDrI4LtjaIaqn020B09yT5vToSKI2Tz
+ 0GJi2umudP0tev6lSm4aocLURB7x2xw7GOPA+SDX8rXwjKVslZWpfD4VKtIaBhI8R8c8HoufOA/
+ NCav/KOGxUC8NtO/+gL8vk9De26pasdcAwU2V+4IsF0fBtSc5W5Cnsjkael2nsofOj8u8aO02CB
+ ET32d379BPvqQghZqmuQU5eEk=
+X-Google-Smtp-Source: AGHT+IF3O6lfeo29DKObf+ZRnsLExqTvtYWchDhVZaFi2SfYZ3Enia/xIqmpTgzmZZEwz45XN1wsbA==
+X-Received: by 2002:a05:620a:4116:b0:8b2:e402:20b4 with SMTP id
+ af79cd13be357-8bb398d914bmr577971585a.10.1765573362691; 
+ Fri, 12 Dec 2025 13:02:42 -0800 (PST)
+Received: from d122205.iol.unh.edu ([2606:4100:3880:1220:4f6d:e2af:7f5f:4df])
+ by smtp.gmail.com with ESMTPSA id
+ 6a1803df08f44-88993b62653sm706386d6.16.2025.12.12.13.02.41
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Fri, 12 Dec 2025 13:02:42 -0800 (PST)
+From: Andrew Bailey <abailey@iol.unh.edu>
+To: luca.vizzarro@arm.com
+Cc: probb@iol.unh.edu, dev@dpdk.org, dmarx@iol.unh.edu,
+ Andrew Bailey <abailey@iol.unh.edu>
+Subject: [PATCH v1] dts: show missing NIC capabilities in DTS logs
+Date: Fri, 12 Dec 2025 16:01:42 -0500
+Message-ID: <20251212210142.669766-1-abailey@iol.unh.edu>
+X-Mailer: git-send-email 2.50.1
 MIME-Version: 1.0
-From: Patrick Robb <probb@iol.unh.edu>
-Date: Fri, 12 Dec 2025 15:09:37 -0500
-X-Gm-Features: AQt7F2pT779vT3CRXsoaNfTBdG4442z0D8KvH5qc9FwnnpyKWim0EINKLOhE4RQ
-Message-ID: <CAJvnSUB6w6ipyyTuP6fGXiO+qg-pN0+S2KVQDAXNC1qyfVXd1A@mail.gmail.com>
-Subject: 26.03 DTS Roadmap
-To: dev <dev@dpdk.org>
-Cc: Dean Marx <dmarx@iol.unh.edu>, Andrew Bailey <abailey@iol.unh.edu>, 
- Lincoln Lavoie <lylavoie@iol.unh.edu>,
- Paul Szczepanek <Paul.Szczepanek@arm.com>, 
- Luca Vizzarro <Luca.Vizzarro@arm.com>, ci@dpdk.org
-Content-Type: multipart/alternative; boundary="0000000000005c98110645c6dd24"
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -69,186 +77,33 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---0000000000005c98110645c6dd24
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+When a test was skipped due to a missing NIC capability, the logs should
+print the name of the missing capability. This has since changed to show
+only the integer representation of the missing capability. This patch
+restores the previous behavior of printing the name of the missing
+capability to the user.
 
-Hello,
+Bugzilla ID: 1803
 
-The DTS group has met and agreed on the development goals for the 26.03
-DPDK release.
+Signed-off-by: Andrew Bailey <abailey@iol.unh.edu>
+---
+ dts/api/capabilities.py | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Roadmap:
+diff --git a/dts/api/capabilities.py b/dts/api/capabilities.py
+index 243759668f..d80e59c1dc 100644
+--- a/dts/api/capabilities.py
++++ b/dts/api/capabilities.py
+@@ -219,6 +219,9 @@ class NicCapability(IntEnum):
+     PORT_TX_OFFLOAD_SEND_ON_TIMESTAMP = auto()
+     QUEUE_TX_OFFLOAD_SEND_ON_TIMESTAMP = auto()
+ 
++    def __str__(self):
++        """Override the default string representation to return the name of the capability."""
++        return self.name
+ 
+ def requires_link_topology(
+     link_topology: LinkTopology,
+-- 
+2.50.1
 
-* DTS API
-
-* Remove all existing framework imports and replace with imports from the
-DTS API
-
-* Cryptodev testing
-
-* Adding a new cryptodev package to the DTS API for handling
-dpdk-crypto-perf app arguments
-
-* (testsuites) : Encrypt/decrypt workloads with the various supported
-algorithms on DPDK crypto cards.
-
-* Supporting DTS testruns on 1 physical host:
-
-* Provide additional documentation and framework updates for testing on a
-single host with a single NIC
-
-* Virtio testing support:
-
-* Enable additional testing topologies and scenarios (e.g. add a PvvP test
-which is structured similar to the existing PvP test)
-
-* Flow Offload Testsuites:
-
-* Add a new testsuite which categorizes network protocols and their
-respective valid field values by OSI layer, and creates all unique
-combinations of these as flow rules. This should create =E2=80=9Ccomprehens=
-ive=E2=80=9D
-coverage of flow rules where previously we just had the minimal set of flow
-offload rules tested.
-
-* Asynchronous API testing
-
-* Additional functional ethdev testsuites:
-
-* Ethertype Testsuite
-
-* QinQ testing: Extend this testsuite to validate that IDs are being stored
-in the correct TCI / OUTER_TCI via testpmd verbose logs
-
-* Add support for producing code coverage reports from a DTS testrun (so,
-show how much of the DPDK code the testsuites are touching)
-
-* Misc QoL improvements (e.g. update testsuite names for clarity)
-
---0000000000005c98110645c6dd24
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr"><font color=3D"#000000">Hello,</font><div><font color=3D"#=
-000000"><br></font></div><div><font color=3D"#000000">The DTS group has met=
- and agreed on the development goals for the 26.03 DPDK release.</font></di=
-v><div><font color=3D"#000000"><br></font></div><div><font color=3D"#000000=
-">Roadmap:</font></div><div><span id=3D"gmail-docs-internal-guid-7ce0ce7f-7=
-fff-13e6-0917-1556e9671c91"><font color=3D"#000000"><p dir=3D"ltr" style=3D=
-"line-height:1.38;margin-top:0pt;margin-bottom:0pt"><span style=3D"font-fam=
-ily:Arial,sans-serif;background-color:transparent;font-variant-numeric:norm=
-al;font-variant-east-asian:normal;font-variant-alternates:normal;vertical-a=
-lign:baseline">* DTS API</span></p><p dir=3D"ltr" style=3D"line-height:1.38=
-;margin-top:0pt;margin-bottom:0pt"><span style=3D"font-family:Arial,sans-se=
-rif;background-color:transparent;font-variant-numeric:normal;font-variant-e=
-ast-asian:normal;font-variant-alternates:normal;vertical-align:baseline"><s=
-pan class=3D"gmail-Apple-tab-span" style=3D"text-wrap-mode: nowrap;">	</spa=
-n></span><span style=3D"font-family:Arial,sans-serif;background-color:trans=
-parent;font-variant-numeric:normal;font-variant-east-asian:normal;font-vari=
-ant-alternates:normal;vertical-align:baseline">* Remove all existing framew=
-ork imports and replace with imports from the DTS API</span></p><p dir=3D"l=
-tr" style=3D"line-height:1.38;margin-top:0pt;margin-bottom:0pt"><span style=
-=3D"font-family:Arial,sans-serif;background-color:transparent;font-variant-=
-numeric:normal;font-variant-east-asian:normal;font-variant-alternates:norma=
-l;vertical-align:baseline">* Cryptodev testing</span></p><p dir=3D"ltr" sty=
-le=3D"line-height:1.38;margin-top:0pt;margin-bottom:0pt"><span style=3D"fon=
-t-family:Arial,sans-serif;background-color:transparent;font-variant-numeric=
-:normal;font-variant-east-asian:normal;font-variant-alternates:normal;verti=
-cal-align:baseline"><span class=3D"gmail-Apple-tab-span" style=3D"text-wrap=
--mode: nowrap;">	</span></span><span style=3D"font-family:Arial,sans-serif;=
-background-color:transparent;font-variant-numeric:normal;font-variant-east-=
-asian:normal;font-variant-alternates:normal;vertical-align:baseline">* Addi=
-ng a new cryptodev package to the DTS API for handling dpdk-crypto-perf app=
- arguments</span></p><p dir=3D"ltr" style=3D"line-height:1.38;margin-top:0p=
-t;margin-bottom:0pt"><span style=3D"font-family:Arial,sans-serif;background=
--color:transparent;font-variant-numeric:normal;font-variant-east-asian:norm=
-al;font-variant-alternates:normal;vertical-align:baseline"><span class=3D"g=
-mail-Apple-tab-span" style=3D"text-wrap-mode: nowrap;">	</span></span><span=
- style=3D"font-family:Arial,sans-serif;background-color:transparent;font-va=
-riant-numeric:normal;font-variant-east-asian:normal;font-variant-alternates=
-:normal;vertical-align:baseline">* (testsuites) : Encrypt/decrypt workloads=
- with the various supported algorithms on DPDK crypto cards.</span></p><p d=
-ir=3D"ltr" style=3D"line-height:1.38;margin-top:0pt;margin-bottom:0pt"><spa=
-n style=3D"font-family:Arial,sans-serif;background-color:transparent;font-v=
-ariant-numeric:normal;font-variant-east-asian:normal;font-variant-alternate=
-s:normal;vertical-align:baseline">* Supporting DTS testruns on 1 physical h=
-ost:</span></p><p dir=3D"ltr" style=3D"line-height:1.38;margin-top:0pt;marg=
-in-bottom:0pt"><span style=3D"font-family:Arial,sans-serif;background-color=
-:transparent;font-variant-numeric:normal;font-variant-east-asian:normal;fon=
-t-variant-alternates:normal;vertical-align:baseline"><span class=3D"gmail-A=
-pple-tab-span" style=3D"text-wrap-mode: nowrap;">	</span></span><span style=
-=3D"font-family:Arial,sans-serif;background-color:transparent;font-variant-=
-numeric:normal;font-variant-east-asian:normal;font-variant-alternates:norma=
-l;vertical-align:baseline">* Provide additional documentation and framework=
- updates for testing on a single host with a single NIC</span></p><p dir=3D=
-"ltr" style=3D"line-height:1.38;margin-top:0pt;margin-bottom:0pt"><span sty=
-le=3D"font-family:Arial,sans-serif;background-color:transparent;font-varian=
-t-numeric:normal;font-variant-east-asian:normal;font-variant-alternates:nor=
-mal;vertical-align:baseline">* Virtio testing support:</span></p><p dir=3D"=
-ltr" style=3D"line-height:1.38;margin-top:0pt;margin-bottom:0pt"><span styl=
-e=3D"font-family:Arial,sans-serif;background-color:transparent;font-variant=
--numeric:normal;font-variant-east-asian:normal;font-variant-alternates:norm=
-al;vertical-align:baseline"><span class=3D"gmail-Apple-tab-span" style=3D"t=
-ext-wrap-mode: nowrap;">	</span></span><span style=3D"font-family:Arial,san=
-s-serif;background-color:transparent;font-variant-numeric:normal;font-varia=
-nt-east-asian:normal;font-variant-alternates:normal;vertical-align:baseline=
-">* Enable additional testing topologies and scenarios (e.g. add a PvvP tes=
-t which is structured similar to the existing PvP test)</span></p><p dir=3D=
-"ltr" style=3D"line-height:1.38;margin-top:0pt;margin-bottom:0pt"><span sty=
-le=3D"font-family:Arial,sans-serif;background-color:transparent;font-varian=
-t-numeric:normal;font-variant-east-asian:normal;font-variant-alternates:nor=
-mal;vertical-align:baseline">* Flow Offload Testsuites:</span></p><p dir=3D=
-"ltr" style=3D"line-height:1.38;margin-top:0pt;margin-bottom:0pt"><span sty=
-le=3D"font-family:Arial,sans-serif;background-color:transparent;font-varian=
-t-numeric:normal;font-variant-east-asian:normal;font-variant-alternates:nor=
-mal;vertical-align:baseline"><span class=3D"gmail-Apple-tab-span" style=3D"=
-text-wrap-mode: nowrap;">	</span></span><span style=3D"font-family:Arial,sa=
-ns-serif;background-color:transparent;font-variant-numeric:normal;font-vari=
-ant-east-asian:normal;font-variant-alternates:normal;vertical-align:baselin=
-e">* Add a new testsuite which categorizes network protocols and their resp=
-ective valid field values by OSI layer, and creates all unique combinations=
- of these as flow rules. This should create =E2=80=9Ccomprehensive=E2=80=9D=
- coverage of flow rules where previously we just had the minimal set of flo=
-w offload rules tested.</span></p><p dir=3D"ltr" style=3D"line-height:1.38;=
-margin-top:0pt;margin-bottom:0pt"><span style=3D"font-family:Arial,sans-ser=
-if;background-color:transparent;font-variant-numeric:normal;font-variant-ea=
-st-asian:normal;font-variant-alternates:normal;vertical-align:baseline"><sp=
-an class=3D"gmail-Apple-tab-span" style=3D"text-wrap-mode: nowrap;">	</span=
-></span><span style=3D"font-family:Arial,sans-serif;background-color:transp=
-arent;font-variant-numeric:normal;font-variant-east-asian:normal;font-varia=
-nt-alternates:normal;vertical-align:baseline">* Asynchronous API testing</s=
-pan></p><p dir=3D"ltr" style=3D"line-height:1.38;margin-top:0pt;margin-bott=
-om:0pt"><span style=3D"font-family:Arial,sans-serif;background-color:transp=
-arent;font-variant-numeric:normal;font-variant-east-asian:normal;font-varia=
-nt-alternates:normal;vertical-align:baseline">* Additional functional ethde=
-v testsuites:</span></p><p dir=3D"ltr" style=3D"line-height:1.38;margin-top=
-:0pt;margin-bottom:0pt"><span style=3D"font-family:Arial,sans-serif;backgro=
-und-color:transparent;font-variant-numeric:normal;font-variant-east-asian:n=
-ormal;font-variant-alternates:normal;vertical-align:baseline"><span class=
-=3D"gmail-Apple-tab-span" style=3D"text-wrap-mode: nowrap;">	</span></span>=
-<span style=3D"font-family:Arial,sans-serif;background-color:transparent;fo=
-nt-variant-numeric:normal;font-variant-east-asian:normal;font-variant-alter=
-nates:normal;vertical-align:baseline">* Ethertype Testsuite</span></p><p di=
-r=3D"ltr" style=3D"line-height:1.38;margin-top:0pt;margin-bottom:0pt"><span=
- style=3D"font-family:Arial,sans-serif;background-color:transparent;font-va=
-riant-numeric:normal;font-variant-east-asian:normal;font-variant-alternates=
-:normal;vertical-align:baseline"><span class=3D"gmail-Apple-tab-span" style=
-=3D"text-wrap-mode: nowrap;">	</span></span><span style=3D"font-family:Aria=
-l,sans-serif;background-color:transparent;font-variant-numeric:normal;font-=
-variant-east-asian:normal;font-variant-alternates:normal;vertical-align:bas=
-eline">* QinQ testing: Extend this testsuite to validate that IDs are being=
- stored in the correct TCI / OUTER_TCI via testpmd verbose logs</span></p><=
-p style=3D"line-height:1.38;margin-top:0pt;margin-bottom:0pt"><span style=
-=3D"font-family:Arial,sans-serif;background-color:transparent;font-variant-=
-numeric:normal;font-variant-east-asian:normal;font-variant-alternates:norma=
-l;vertical-align:baseline">* Add support for producing code coverage report=
-s from a DTS testrun (so, show how much of the DPDK code the testsuites are=
- touching)</span></p><p dir=3D"ltr" style=3D"line-height:1.38;margin-top:0p=
-t;margin-bottom:0pt"><span style=3D"font-family:Arial,sans-serif;background=
--color:transparent;font-variant-numeric:normal;font-variant-east-asian:norm=
-al;font-variant-alternates:normal;vertical-align:baseline">* Misc QoL impro=
-vements (e.g. update testsuite names for clarity)</span></p></font></span><=
-br class=3D"gmail-Apple-interchange-newline"></div></div>
-
---0000000000005c98110645c6dd24--
