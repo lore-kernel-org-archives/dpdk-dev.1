@@ -2,47 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B218D44166
-	for <dpdk-dev@archiver.kernel.org>; Fri, 12 Dec 2025 10:33:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6428DD44176
+	for <dpdk-dev@archiver.kernel.org>; Fri, 12 Dec 2025 10:33:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2717040659;
-	Fri, 12 Dec 2025 11:33:38 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 2425640664;
+	Fri, 12 Dec 2025 11:33:39 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
- by mails.dpdk.org (Postfix) with ESMTP id E4CE6400D6
- for <dev@dpdk.org>; Fri, 12 Dec 2025 11:33:35 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id A78F740268
+ for <dev@dpdk.org>; Fri, 12 Dec 2025 11:33:36 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1765535616; x=1797071616;
+ t=1765535617; x=1797071617;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=21XtYNXoUnMiCBnuEzBv59saebS+SYvaJF91MIiHGhQ=;
- b=M0zNzW/zVbIbEgDEr+L9ZfH+ACTAYYVQGAT58+H09GO40pl91RyAomK9
- frr9eXPeG6Uewt1i2iJJWiNQ4RF2wCpnej1XvuTM90FitU/CnOEQO5vfp
- eF9ysZ1P68TPvLw3lF5DvNkcfbfRMzY4Orbh7729ePOagcDQPQqzTK7Pg
- mmY8F2DmKT5KJgYhE4qemouRdgf2IQpaVsUw1y3QYRCn4xUuT5dlHaIQP
- B6owtACte5oop38T1GH+jv609F87UpfmGkTMlZ5WGpvXniRmj7sOKQMyW
- 0QmPZEGp0BNzcush4iWN33hF0Z9cvnzJPAjZ0o3xxgs38rTeJIRE5UlMb w==;
-X-CSE-ConnectionGUID: T/AmX6kbS06NoKkKZ3VFww==
-X-CSE-MsgGUID: utQon5iVRDiOC6XeTTpTsQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11639"; a="66522876"
-X-IronPort-AV: E=Sophos;i="6.21,143,1763452800"; d="scan'208";a="66522876"
+ bh=eHNio8XZdSO+whsTgWOOqRrkYKknTzflzaX+zXhoCeA=;
+ b=bLv6LaotVAyzOCF4OFnAwZGDOf4e8Vgk/M8uBsAWcokWcKiD8lIijCoY
+ RW8Kz/s/IkrDCSEWXU5GGA5oYxOf2JfaUU4cAXLnUkRcvzxiBJcRvvyiO
+ dQWu0YZig9pVqjtlGxemB/NxMu81nrbbSAx7Mitu6bBQTqFSZkXjpc6DX
+ SFncJqTlZTSLf9dOfzQzLjWK+gQv55t6NlRv7Eep5ckJKlAzY2p5tegRN
+ HKrt8hkhIOb964fvtNRqIeoLq4Al6mLWmnrZl1naY0YbsbkdZ43l5gY5c
+ Kt0bzQwNkIlUboNMuj12IwCKGjSexlfpoyOCHBycORv/sBwN6UNkftTn5 g==;
+X-CSE-ConnectionGUID: VVhtqec7TEKxcX4pwpu+oQ==
+X-CSE-MsgGUID: jjvylfbLSD+VFLLhJploww==
+X-IronPort-AV: E=McAfee;i="6800,10657,11639"; a="66522877"
+X-IronPort-AV: E=Sophos;i="6.21,143,1763452800"; d="scan'208";a="66522877"
 Received: from fmviesa003.fm.intel.com ([10.60.135.143])
  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
  12 Dec 2025 02:33:35 -0800
-X-CSE-ConnectionGUID: p1YstGASQ4Cq8pGWgXrCjQ==
-X-CSE-MsgGUID: 4OtrnxO3TWyuEzICifprZg==
+X-CSE-ConnectionGUID: XMVJ1bgvSFGDwcxRIDTq0w==
+X-CSE-MsgGUID: 1ujUtMWrRrqCSlg4Pa0/Cw==
 X-ExtLoop1: 1
 Received: from silpixa00401177.ir.intel.com ([10.20.224.214])
- by fmviesa003.fm.intel.com with ESMTP; 12 Dec 2025 02:33:27 -0800
+ by fmviesa003.fm.intel.com with ESMTP; 12 Dec 2025 02:33:28 -0800
 From: Ciara Loftus <ciara.loftus@intel.com>
 To: dev@dpdk.org
-Cc: Ciara Loftus <ciara.loftus@intel.com>
-Subject: [PATCH v2 00/10] net/intel: tx path selection simplification
-Date: Fri, 12 Dec 2025 10:33:13 +0000
-Message-ID: <20251212103323.1481307-1-ciara.loftus@intel.com>
+Cc: Ciara Loftus <ciara.loftus@intel.com>,
+ Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH v2 01/10] net/intel: introduce infrastructure for Tx path
+ selection
+Date: Fri, 12 Dec 2025 10:33:14 +0000
+Message-ID: <20251212103323.1481307-2-ciara.loftus@intel.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251209112652.963981-1-ciara.loftus@intel.com>
+In-Reply-To: <20251212103323.1481307-1-ciara.loftus@intel.com>
 References: <20251209112652.963981-1-ciara.loftus@intel.com>
+ <20251212103323.1481307-1-ciara.loftus@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -58,67 +61,135 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This series aims to simplify the process of selecting a Tx burst
-function for the Intel drivers i40e, iavf, ice, idpf and cpfl by:
-1. enforcing the same tx burst function for both primary and secondary
-processes.
-2. using a common function for selecting the tx burst function based on
-maximum SIMD width, function features (context descriptor, single queue, etc.)
-and requested tx offloads.
+The code for determining which Tx path to select during initialisation
+has become complicated in many intel drivers due to the amount of
+different paths and features available within each path. This commit
+aims to simplify and genericize the path selection logic.
 
-Some fixes are made to errors in the documentation that became evident
-while implementing the new selection infratructure in each driver.
+The following information about each Tx burst function is stored and
+used by the new common function to select the appropriate Tx path:
+- Tx Offloads
+- SIMD bitwidth
+- "Simple" Tx
 
+The implementation is based off the Rx path selection infrastructure
+introduced in a previous commit.
+
+Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
+Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+---
 v2:
-* Consolidated the patches that enforce primary/secondary path selection
-alignment and the introduction of the infrastructure per driver.
-* Introduce the "simple tx" feature in patch 1 rather than later.
-* Changed some types and arrangements of structs in tx.h
-* Fixed some issues relating to mbuf_check and tx_pkt_prepare
-* Use the same path in primary and secondary for idpf and cpfl as well.
+* Change req_features to pointer instead of passing by value
+* Change num_paths from int to size_t
+* Change i from int to unsigned int and define it inside the for
+statement.
+* Remove ci_tx_path_features_extra substructure
+* Add simple tx feature in this patch rather in a later patch when it
+is first used by a driver.
+---
+ drivers/net/intel/common/tx.h | 77 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 77 insertions(+)
 
-Ciara Loftus (10):
-  net/intel: introduce infrastructure for Tx path selection
-  net/ice: use common Tx path selection infrastructure
-  net/iavf: use common Tx path selection infrastructure
-  net/i40e: use common Tx path selection infrastructure
-  net/idpf: use common Tx path selection infrastructure
-  net/cpfl: use common Tx path selection infrastructure
-  docs: fix TSO and checksum offload feature status in ice doc
-  docs: fix TSO feature status in iavf driver documentation
-  docs: fix inline crypto feature status in iavf driver doc
-  docs: fix TSO feature status in i40e driver documentation
-
- doc/guides/nics/features/i40e.ini             |   2 +-
- doc/guides/nics/features/iavf.ini             |   4 +-
- doc/guides/nics/features/ice.ini              |   6 +-
- drivers/net/intel/common/tx.h                 |  96 +++++++
- drivers/net/intel/cpfl/cpfl_rxtx.c            | 120 +++------
- drivers/net/intel/cpfl/cpfl_rxtx_vec_common.h |  10 -
- drivers/net/intel/i40e/i40e_ethdev.h          |  14 +-
- drivers/net/intel/i40e/i40e_rxtx.c            | 190 +++++++-------
- drivers/net/intel/i40e/i40e_rxtx.h            |  20 +-
- .../net/intel/i40e/i40e_rxtx_vec_altivec.c    |   6 -
- drivers/net/intel/i40e/i40e_rxtx_vec_neon.c   |   6 -
- drivers/net/intel/i40e/i40e_rxtx_vec_sse.c    |   6 -
- drivers/net/intel/iavf/iavf.h                 |   2 -
- drivers/net/intel/iavf/iavf_ethdev.c          |   9 +-
- drivers/net/intel/iavf/iavf_rxtx.c            | 240 +++++++++---------
- drivers/net/intel/iavf/iavf_rxtx.h            |  46 ++--
- drivers/net/intel/iavf/iavf_rxtx_vec_common.h |  39 +--
- drivers/net/intel/ice/ice_ethdev.c            |   1 +
- drivers/net/intel/ice/ice_ethdev.h            |  14 +-
- drivers/net/intel/ice/ice_rxtx.c              | 204 ++++++++-------
- drivers/net/intel/ice/ice_rxtx.h              |  30 ++-
- drivers/net/intel/ice/ice_rxtx_vec_common.h   |  35 +--
- drivers/net/intel/ice/ice_rxtx_vec_sse.c      |   6 -
- drivers/net/intel/idpf/idpf_common_device.h   |  12 +-
- drivers/net/intel/idpf/idpf_common_rxtx.c     |  49 ++++
- drivers/net/intel/idpf/idpf_common_rxtx.h     |  12 +
- drivers/net/intel/idpf/idpf_rxtx.c            | 118 +++------
- drivers/net/intel/idpf/idpf_rxtx_vec_common.h |  10 -
- 28 files changed, 675 insertions(+), 632 deletions(-)
-
+diff --git a/drivers/net/intel/common/tx.h b/drivers/net/intel/common/tx.h
+index 5af64a4cfe..04d9aa8473 100644
+--- a/drivers/net/intel/common/tx.h
++++ b/drivers/net/intel/common/tx.h
+@@ -8,6 +8,7 @@
+ #include <stdint.h>
+ #include <rte_mbuf.h>
+ #include <rte_ethdev.h>
++#include <rte_vect.h>
+ 
+ /* forward declaration of the common intel (ci) queue structure */
+ struct ci_tx_queue;
+@@ -117,6 +118,19 @@ struct ci_tx_queue {
+ 	};
+ };
+ 
++struct ci_tx_path_features {
++	uint32_t tx_offloads;
++	enum rte_vect_max_simd simd_width;
++	bool simple_tx;
++};
++
++struct ci_tx_path_info {
++	eth_tx_burst_t pkt_burst;
++	const char *info;
++	struct ci_tx_path_features features;
++	eth_tx_prep_t pkt_prep;
++};
++
+ static __rte_always_inline void
+ ci_tx_backlog_entry(struct ci_tx_entry *txep, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
+ {
+@@ -262,4 +276,67 @@ ci_txq_release_all_mbufs(struct ci_tx_queue *txq, bool use_ctx)
+ 	memset(txq->sw_ring_vec, 0, sizeof(txq->sw_ring_vec[0]) * nb_desc);
+ }
+ 
++/**
++ * Select the best matching Tx path based on features
++ *
++ * @param req_features
++ *   The requested features for the Tx path
++ * @param infos
++ *   Array of information about the available Tx paths
++ * @param num_paths
++ *   Number of available paths in the infos array
++ * @param default_path
++ *   Index of the default path to use if no suitable path is found
++ *
++ * @return
++ *   The packet burst function index that best matches the requested features,
++ *   or default_path if no suitable path is found
++ */
++static inline int
++ci_tx_path_select(const struct ci_tx_path_features *req_features,
++			const struct ci_tx_path_info *infos,
++			size_t num_paths,
++			int default_path)
++{
++	int idx = default_path;
++	const struct ci_tx_path_features *chosen_path_features = NULL;
++
++	for (unsigned int i = 0; i < num_paths; i++) {
++		const struct ci_tx_path_features *path_features = &infos[i].features;
++
++		/* Do not use a simple tx path if not requested. */
++		if (path_features->simple_tx && !req_features->simple_tx)
++			continue;
++
++		/* Ensure the path supports the requested TX offloads. */
++		if ((path_features->tx_offloads & req_features->tx_offloads) !=
++				req_features->tx_offloads)
++			continue;
++
++		/* Ensure the path's SIMD width is compatible with the requested width. */
++		if (path_features->simd_width > req_features->simd_width)
++			continue;
++
++		/* Do not select the path if it is less suitable than the chosen path. */
++		if (chosen_path_features != NULL) {
++			/* Do not select paths with lower SIMD width than the chosen path. */
++			if (path_features->simd_width < chosen_path_features->simd_width)
++				continue;
++			/* Do not select paths with more offloads enabled than the chosen path if
++			 * the SIMD widths are the same.
++			 */
++			if (path_features->simd_width == chosen_path_features->simd_width &&
++					rte_popcount32(path_features->tx_offloads) >
++					rte_popcount32(chosen_path_features->tx_offloads))
++				continue;
++		}
++
++		/* Finally, select the path since it has met all the requirements. */
++		idx = i;
++		chosen_path_features = &infos[idx].features;
++	}
++
++	return idx;
++}
++
+ #endif /* _COMMON_INTEL_TX_H_ */
 -- 
 2.43.0
 
