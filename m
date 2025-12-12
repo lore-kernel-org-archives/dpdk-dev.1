@@ -2,44 +2,44 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5039FD4417E
-	for <dpdk-dev@archiver.kernel.org>; Fri, 12 Dec 2025 11:06:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07C06D4417D
+	for <dpdk-dev@archiver.kernel.org>; Fri, 12 Dec 2025 11:06:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 033FC40DFD;
-	Fri, 12 Dec 2025 12:06:41 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 09D3340A7A;
+	Fri, 12 Dec 2025 12:06:42 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
- by mails.dpdk.org (Postfix) with ESMTP id A2AF5400D6
- for <dev@dpdk.org>; Fri, 12 Dec 2025 12:06:38 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 999D8400D6
+ for <dev@dpdk.org>; Fri, 12 Dec 2025 12:06:39 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1765537599; x=1797073599;
+ t=1765537600; x=1797073600;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=W4l/g7IvMrM3VvzDdRV0p9NP86FmyRbVZxAEIC0HMnc=;
- b=J/6zcFP60gA+gq+PrYY05oJd50yezfWfArw3VyqrDWstq9P8ro0irVeo
- w51UiqNNcCGp62O6+ye8GKIIlW9rqce3ev4AUFGFJ3KYk8rYMoyyzTJLR
- m2kWdvx2uWjVilOJJ3iClno5aLkdsC/X354+xjS1Ngk7DDDBZjLGedH0n
- ZkieVvUCqfbAWLpqZZ+dsm/nHEUvzM1CxgrJEEEvPaviowHkenRuy9qcL
- AU8ZyJss+4ILQClv+Xv2twWM/XUkc8vVJkSZDIr4vv3yyV6dkqiQ+1HGu
- THIQZNSu/ZPUbbIafF1l7tJxdkkB/ZprEb5TikuAzaKjzEhf8C5zTPVph Q==;
-X-CSE-ConnectionGUID: maVuP+mIRrecyqTmKoMb/w==
-X-CSE-MsgGUID: UchI8Hj/QneCGNgiYX8AjA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11635"; a="67472047"
-X-IronPort-AV: E=Sophos;i="6.20,256,1758610800"; d="scan'208";a="67472047"
+ bh=OrlRRZ70aE75oZRcZGupTbG3o2W6PO3KLRxNzX/uL40=;
+ b=eKSnMl7IQaeFIc+Snvb/HVFiZV3TBhwAzDX7goW5VHo8s9m17Gdua1a9
+ 1XsaxUY/5XVvQ5TqIsKh88Irqvp8OAbrhtz0UW/A1r+29ha1ihh5dHUmB
+ S29wZMQS55E3Ixx/ykGFQdzxqOwxurgM58+Gitrm8fPSVn+uO2ZSAOtFu
+ WjFOQ7nYhVl8+PfT/AO1RY/L0h9HkSqUi7RITKsxs+DEbWAEGp6Zu7WUl
+ wKY7+LTTh+emZWeEhdttP/vSrAO+z23bNK8+h+GQH6gjdcJ7jv8+MYsRw
+ l22Q17XyEKjrnucYHGi2Mf7ZUydEL0C40F1cdmhP7404Yaz8oPKHN1dI/ Q==;
+X-CSE-ConnectionGUID: wGQvgtGsSh6Y57FOnerh0Q==
+X-CSE-MsgGUID: Dumve4KoQuOzsHfLePlaWg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11635"; a="67472048"
+X-IronPort-AV: E=Sophos;i="6.20,256,1758610800"; d="scan'208";a="67472048"
 Received: from fmviesa003.fm.intel.com ([10.60.135.143])
  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 12 Dec 2025 03:06:38 -0800
-X-CSE-ConnectionGUID: D7iCX+sMQ3CUACEz3edxWg==
-X-CSE-MsgGUID: Mlu95Hy9TTOSpjY7gXYbSQ==
+ 12 Dec 2025 03:06:39 -0800
+X-CSE-ConnectionGUID: v/tgNX5FTk2R0FNs+itTFQ==
+X-CSE-MsgGUID: ImV524TuQE2+z47XQ5e6Cg==
 X-ExtLoop1: 1
 Received: from silpixa00401177.ir.intel.com ([10.20.224.214])
- by fmviesa003.fm.intel.com with ESMTP; 12 Dec 2025 03:06:37 -0800
+ by fmviesa003.fm.intel.com with ESMTP; 12 Dec 2025 03:06:38 -0800
 From: Ciara Loftus <ciara.loftus@intel.com>
 To: dev@dpdk.org
 Cc: Ciara Loftus <ciara.loftus@intel.com>
-Subject: [PATCH v3 02/10] net/ice: use common Tx path selection infrastructure
-Date: Fri, 12 Dec 2025 11:06:20 +0000
-Message-ID: <20251212110628.1634703-3-ciara.loftus@intel.com>
+Subject: [PATCH v3 03/10] net/iavf: use common Tx path selection infrastructure
+Date: Fri, 12 Dec 2025 11:06:21 +0000
+Message-ID: <20251212110628.1634703-4-ciara.loftus@intel.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251212110628.1634703-1-ciara.loftus@intel.com>
 References: <20251212103323.1481307-1-ciara.loftus@intel.com>
@@ -60,464 +60,561 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 Errors-To: dev-bounces@dpdk.org
 
 Replace the existing complicated logic with the use of the common
-function. Also let the primary process select the Tx path to be used by
-all processes using the given device.
+function. Let the primary process select the Tx path to be used by all
+processes using the given device.
+
+Introduce two new features "disabled" and "context desc" to the common
+infrastructure which represents whether or not the path is disabled, or
+if it uses a context descriptor.
 
 Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
 ---
+v3:
+* Fixed cross compile issue
+
 v2:
-* Fixed mbuf_check function
 * Merged the patch which consolidates path selection among process types
 with the introduction of the new infrastructure.
 ---
- drivers/net/intel/ice/ice_ethdev.c          |   1 +
- drivers/net/intel/ice/ice_ethdev.h          |  14 +-
- drivers/net/intel/ice/ice_rxtx.c            | 204 ++++++++++----------
- drivers/net/intel/ice/ice_rxtx.h            |  30 ++-
- drivers/net/intel/ice/ice_rxtx_vec_common.h |  35 +---
- drivers/net/intel/ice/ice_rxtx_vec_sse.c    |   6 -
- 6 files changed, 142 insertions(+), 148 deletions(-)
+ drivers/net/intel/common/tx.h                 |  14 +
+ drivers/net/intel/iavf/iavf.h                 |   2 -
+ drivers/net/intel/iavf/iavf_ethdev.c          |   9 +-
+ drivers/net/intel/iavf/iavf_rxtx.c            | 240 +++++++++---------
+ drivers/net/intel/iavf/iavf_rxtx.h            |  46 ++--
+ drivers/net/intel/iavf/iavf_rxtx_vec_common.h |  39 +--
+ 6 files changed, 168 insertions(+), 182 deletions(-)
 
-diff --git a/drivers/net/intel/ice/ice_ethdev.c b/drivers/net/intel/ice/ice_ethdev.c
-index c721d135f5..a805e78d03 100644
---- a/drivers/net/intel/ice/ice_ethdev.c
-+++ b/drivers/net/intel/ice/ice_ethdev.c
-@@ -3900,6 +3900,7 @@ ice_dev_configure(struct rte_eth_dev *dev)
- 	ad->tx_simple_allowed = true;
+diff --git a/drivers/net/intel/common/tx.h b/drivers/net/intel/common/tx.h
+index 04d9aa8473..60b1bd642a 100644
+--- a/drivers/net/intel/common/tx.h
++++ b/drivers/net/intel/common/tx.h
+@@ -122,6 +122,8 @@ struct ci_tx_path_features {
+ 	uint32_t tx_offloads;
+ 	enum rte_vect_max_simd simd_width;
+ 	bool simple_tx;
++	bool ctx_desc;
++	bool disabled;
+ };
  
- 	ad->rx_func_type = ICE_RX_DEFAULT;
-+	ad->tx_func_type = ICE_TX_DEFAULT;
+ struct ci_tx_path_info {
+@@ -304,10 +306,18 @@ ci_tx_path_select(const struct ci_tx_path_features *req_features,
+ 	for (unsigned int i = 0; i < num_paths; i++) {
+ 		const struct ci_tx_path_features *path_features = &infos[i].features;
+ 
++		/* Do not select a disabled tx path. */
++		if (path_features->disabled)
++			continue;
++
+ 		/* Do not use a simple tx path if not requested. */
+ 		if (path_features->simple_tx && !req_features->simple_tx)
+ 			continue;
+ 
++		/* If a context descriptor is requested, ensure the path supports it. */
++		if (!path_features->ctx_desc && req_features->ctx_desc)
++			continue;
++
+ 		/* Ensure the path supports the requested TX offloads. */
+ 		if ((path_features->tx_offloads & req_features->tx_offloads) !=
+ 				req_features->tx_offloads)
+@@ -329,6 +339,10 @@ ci_tx_path_select(const struct ci_tx_path_features *req_features,
+ 					rte_popcount32(path_features->tx_offloads) >
+ 					rte_popcount32(chosen_path_features->tx_offloads))
+ 				continue;
++
++			/* Don't use a context descriptor unless necessary */
++			if (path_features->ctx_desc && !chosen_path_features->ctx_desc)
++				continue;
+ 		}
+ 
+ 		/* Finally, select the path since it has met all the requirements. */
+diff --git a/drivers/net/intel/iavf/iavf.h b/drivers/net/intel/iavf/iavf.h
+index d78582e05c..921bf0a607 100644
+--- a/drivers/net/intel/iavf/iavf.h
++++ b/drivers/net/intel/iavf/iavf.h
+@@ -375,8 +375,6 @@ struct iavf_adapter {
+ 	struct iavf_security_ctx *security_ctx;
+ 
+ 	bool rx_bulk_alloc_allowed;
+-	/* For vector PMD */
+-	bool tx_vec_allowed;
+ 	alignas(RTE_CACHE_LINE_MIN_SIZE) uint32_t ptype_tbl[IAVF_MAX_PKT_TYPE];
+ 	bool stopped;
+ 	bool closed;
+diff --git a/drivers/net/intel/iavf/iavf_ethdev.c b/drivers/net/intel/iavf/iavf_ethdev.c
+index 15e49fe248..bf1186c20f 100644
+--- a/drivers/net/intel/iavf/iavf_ethdev.c
++++ b/drivers/net/intel/iavf/iavf_ethdev.c
+@@ -666,10 +666,8 @@ iavf_dev_configure(struct rte_eth_dev *dev)
+ 		return -EIO;
+ 
+ 	ad->rx_bulk_alloc_allowed = true;
+-	/* Initialize to TRUE. If any of Rx queues doesn't meet the
+-	 * vector Rx/Tx preconditions, it will be reset.
+-	 */
+-	ad->tx_vec_allowed = true;
++
++	ad->tx_func_type = IAVF_TX_DEFAULT;
  
  	if (dev->data->dev_conf.rxmode.mq_mode & RTE_ETH_MQ_RX_RSS_FLAG)
  		dev->data->dev_conf.rxmode.offloads |= RTE_ETH_RX_OFFLOAD_RSS_HASH;
-diff --git a/drivers/net/intel/ice/ice_ethdev.h b/drivers/net/intel/ice/ice_ethdev.h
-index 72ed65f13b..7fa2db1bd2 100644
---- a/drivers/net/intel/ice/ice_ethdev.h
-+++ b/drivers/net/intel/ice/ice_ethdev.h
-@@ -208,6 +208,16 @@ enum ice_rx_func_type {
- 	ICE_RX_AVX512_SCATTERED_OFFLOAD,
- };
+@@ -2795,8 +2793,7 @@ iavf_dev_init(struct rte_eth_dev *eth_dev)
+ 	eth_dev->tx_pkt_prepare = &iavf_prep_pkts;
  
-+enum ice_tx_func_type {
-+	ICE_TX_DEFAULT,
-+	ICE_TX_SIMPLE,
-+	ICE_TX_SSE,
-+	ICE_TX_AVX2,
-+	ICE_TX_AVX2_OFFLOAD,
-+	ICE_TX_AVX512,
-+	ICE_TX_AVX512_OFFLOAD,
-+};
-+
- struct ice_adapter;
- 
- /**
-@@ -658,14 +668,13 @@ struct ice_adapter {
- 	bool tx_vec_allowed;
- 	bool tx_simple_allowed;
- 	enum ice_rx_func_type rx_func_type;
-+	enum ice_tx_func_type tx_func_type;
- 	/* ptype mapping table */
- 	alignas(RTE_CACHE_LINE_MIN_SIZE) uint32_t ptype_tbl[ICE_MAX_PKT_TYPE];
- 	bool is_safe_mode;
- 	struct ice_devargs devargs;
- 	enum ice_pkg_type active_pkg_type; /* loaded ddp package type */
- 	uint16_t fdir_ref_cnt;
--	/* For vector PMD */
--	eth_rx_burst_t tx_pkt_burst;
- 	/* For PTP */
- 	uint8_t ptp_tx_block;
- 	uint8_t ptp_tx_index;
-@@ -679,7 +688,6 @@ struct ice_adapter {
- 	/* Set bit if the engine is disabled */
- 	unsigned long disabled_engine_mask;
- 	struct ice_parser *psr;
--	enum rte_vect_max_simd tx_simd_width;
- 	bool rx_vec_offload_support;
- };
- 
-diff --git a/drivers/net/intel/ice/ice_rxtx.c b/drivers/net/intel/ice/ice_rxtx.c
-index 74db0fbec9..3fdb9fbf6e 100644
---- a/drivers/net/intel/ice/ice_rxtx.c
-+++ b/drivers/net/intel/ice/ice_rxtx.c
-@@ -3929,6 +3929,75 @@ ice_check_empty_mbuf(struct rte_mbuf *tx_pkt)
+ 	/* For secondary processes, we don't initialise any further as primary
+-	 * has already done this work. Only check if we need a different RX
+-	 * and TX function.
++	 * has already done this work.
+ 	 */
+ 	if (rte_eal_process_type() != RTE_PROC_PRIMARY) {
+ 		iavf_set_rx_function(eth_dev);
+diff --git a/drivers/net/intel/iavf/iavf_rxtx.c b/drivers/net/intel/iavf/iavf_rxtx.c
+index d8662fd815..9ba8ff0979 100644
+--- a/drivers/net/intel/iavf/iavf_rxtx.c
++++ b/drivers/net/intel/iavf/iavf_rxtx.c
+@@ -208,19 +208,6 @@ check_tx_thresh(uint16_t nb_desc, uint16_t tx_rs_thresh,
  	return 0;
  }
  
-+static const struct ci_tx_path_info ice_tx_path_infos[] = {
-+	[ICE_TX_DEFAULT] = {
-+		.pkt_burst = ice_xmit_pkts,
-+		.info = "Scalar",
-+		.features = {
-+			.tx_offloads = ICE_TX_SCALAR_OFFLOADS
-+		},
-+		.pkt_prep = ice_prep_pkts
-+	},
-+	[ICE_TX_SIMPLE] = {
-+		.pkt_burst = ice_xmit_pkts_simple,
-+		.info = "Scalar Simple",
-+		.features = {
-+			.tx_offloads = ICE_TX_SCALAR_OFFLOADS,
-+			.simple_tx = true
-+		},
-+		.pkt_prep = rte_eth_tx_pkt_prepare_dummy
-+	},
-+#ifdef RTE_ARCH_X86
-+	[ICE_TX_SSE] = {
-+		.pkt_burst = ice_xmit_pkts_vec,
-+		.info = "Vector SSE",
-+		.features = {
-+			.tx_offloads = ICE_TX_VECTOR_OFFLOADS,
-+			.simd_width = RTE_VECT_SIMD_128
-+		},
-+		.pkt_prep = rte_eth_tx_pkt_prepare_dummy
-+	},
-+	[ICE_TX_AVX2] = {
-+		.pkt_burst = ice_xmit_pkts_vec_avx2,
-+		.info = "Vector AVX2",
-+		.features = {
-+			.tx_offloads = ICE_TX_VECTOR_OFFLOADS,
-+			.simd_width = RTE_VECT_SIMD_256
-+		},
-+		.pkt_prep = rte_eth_tx_pkt_prepare_dummy
-+	},
-+	[ICE_TX_AVX2_OFFLOAD] = {
-+		.pkt_burst = ice_xmit_pkts_vec_avx2_offload,
-+		.info = "Offload Vector AVX2",
-+		.features = {
-+			.tx_offloads = ICE_TX_VECTOR_OFFLOAD_OFFLOADS,
-+			.simd_width = RTE_VECT_SIMD_256
-+		},
-+		.pkt_prep = ice_prep_pkts
-+	},
-+#ifdef CC_AVX512_SUPPORT
-+	[ICE_TX_AVX512] = {
-+		.pkt_burst = ice_xmit_pkts_vec_avx512,
-+		.info = "Vector AVX512",
-+		.features = {
-+			.tx_offloads = ICE_TX_VECTOR_OFFLOADS,
-+			.simd_width = RTE_VECT_SIMD_512
-+		},
-+		.pkt_prep = rte_eth_tx_pkt_prepare_dummy
-+	},
-+	[ICE_TX_AVX512_OFFLOAD] = {
-+		.pkt_burst = ice_xmit_pkts_vec_avx512_offload,
-+		.info = "Offload Vector AVX512",
-+		.features = {
-+			.tx_offloads = ICE_TX_VECTOR_OFFLOAD_OFFLOADS,
-+			.simd_width = RTE_VECT_SIMD_512
-+		},
-+		.pkt_prep = ice_prep_pkts
-+	},
-+#endif
-+#endif
-+};
-+
- /* Tx mbuf check */
- static uint16_t
- ice_xmit_pkts_check(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
-@@ -3941,6 +4010,7 @@ ice_xmit_pkts_check(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
- 	const char *reason = NULL;
- 	struct ice_adapter *adapter = txq->ice_vsi->adapter;
- 	uint64_t ol_flags;
-+	enum ice_tx_func_type tx_func_type = adapter->tx_func_type;
- 
- 	for (idx = 0; idx < nb_pkts; idx++) {
- 		mb = tx_pkts[idx];
-@@ -4025,7 +4095,7 @@ ice_xmit_pkts_check(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
- 			return 0;
- 	}
- 
--	return adapter->tx_pkt_burst(tx_queue, tx_pkts, good_pkts);
-+	return ice_tx_path_infos[tx_func_type].pkt_burst(tx_queue, tx_pkts, good_pkts);
- }
- 
- uint16_t
-@@ -4097,113 +4167,37 @@ ice_set_tx_function(struct rte_eth_dev *dev)
- 	struct ice_adapter *ad =
- 		ICE_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
- 	int mbuf_check = ad->devargs.mbuf_check;
--#ifdef RTE_ARCH_X86
--	struct ci_tx_queue *txq;
--	int i;
--	int tx_check_ret = -1;
--
--	if (rte_eal_process_type() == RTE_PROC_PRIMARY) {
--		ad->tx_simd_width = RTE_VECT_SIMD_DISABLED;
--		tx_check_ret = ice_tx_vec_dev_check(dev);
--		ad->tx_simd_width = ice_get_max_simd_bitwidth();
--		if (tx_check_ret >= 0 &&
--		    rte_vect_get_max_simd_bitwidth() >= RTE_VECT_SIMD_128) {
--			ad->tx_vec_allowed = true;
--
--			if (ad->tx_simd_width < RTE_VECT_SIMD_256 &&
--				tx_check_ret == ICE_VECTOR_OFFLOAD_PATH)
--				ad->tx_vec_allowed = false;
--
--			if (ad->tx_vec_allowed) {
--				for (i = 0; i < dev->data->nb_tx_queues; i++) {
--					txq = dev->data->tx_queues[i];
--					if (txq && ice_txq_vec_setup(txq)) {
--						ad->tx_vec_allowed = false;
--						break;
--					}
--				}
--			}
--		} else {
--			ad->tx_vec_allowed = false;
--		}
+-static inline bool
+-check_tx_vec_allow(struct ci_tx_queue *txq)
+-{
+-	if (!(txq->offloads & IAVF_TX_NO_VECTOR_FLAGS) &&
+-	    txq->tx_rs_thresh >= IAVF_VPMD_TX_BURST &&
+-	    txq->tx_rs_thresh <= IAVF_VPMD_TX_MAX_FREE_BUF) {
+-		PMD_INIT_LOG(DEBUG, "Vector tx can be enabled on this txq.");
+-		return true;
 -	}
-+	struct ci_tx_path_features req_features = {
-+		.tx_offloads = dev->data->dev_conf.txmode.offloads,
-+		.simd_width = RTE_VECT_SIMD_DISABLED,
-+	};
- 
--	if (ad->tx_vec_allowed) {
--		dev->tx_pkt_prepare = rte_eth_tx_pkt_prepare_dummy;
--		if (ad->tx_simd_width == RTE_VECT_SIMD_512) {
--#ifdef CC_AVX512_SUPPORT
--			if (tx_check_ret == ICE_VECTOR_OFFLOAD_PATH) {
--				PMD_DRV_LOG(NOTICE,
--					    "Using AVX512 OFFLOAD Vector Tx (port %d).",
--					    dev->data->port_id);
--				dev->tx_pkt_burst =
--					ice_xmit_pkts_vec_avx512_offload;
--				dev->tx_pkt_prepare = ice_prep_pkts;
--			} else {
--				PMD_DRV_LOG(NOTICE,
--					    "Using AVX512 Vector Tx (port %d).",
--					    dev->data->port_id);
--				dev->tx_pkt_burst = ice_xmit_pkts_vec_avx512;
--			}
--#endif
--		} else {
--			if (tx_check_ret == ICE_VECTOR_OFFLOAD_PATH) {
--				PMD_DRV_LOG(NOTICE,
--					    "Using AVX2 OFFLOAD Vector Tx (port %d).",
--					    dev->data->port_id);
--				dev->tx_pkt_burst =
--					ice_xmit_pkts_vec_avx2_offload;
--				dev->tx_pkt_prepare = ice_prep_pkts;
--			} else {
--				PMD_DRV_LOG(DEBUG, "Using %sVector Tx (port %d).",
--					    ad->tx_simd_width == RTE_VECT_SIMD_256 ? "avx2 " : "",
--					    dev->data->port_id);
--				dev->tx_pkt_burst = ad->tx_simd_width == RTE_VECT_SIMD_256 ?
--						    ice_xmit_pkts_vec_avx2 :
--						    ice_xmit_pkts_vec;
--			}
--		}
-+	/* The primary process selects the tx path for all processes. */
-+	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
-+		goto out;
- 
--		if (mbuf_check) {
--			ad->tx_pkt_burst = dev->tx_pkt_burst;
--			dev->tx_pkt_burst = ice_xmit_pkts_check;
--		}
--		return;
--	}
-+	req_features.simple_tx = ad->tx_simple_allowed;
-+
-+#ifdef RTE_ARCH_X86
-+	if (ice_tx_vec_dev_check(dev) != -1)
-+		req_features.simd_width = ice_get_max_simd_bitwidth();
- #endif
- 
--	if (ad->tx_simple_allowed) {
--		PMD_INIT_LOG(DEBUG, "Simple tx finally be used.");
--		dev->tx_pkt_burst = ice_xmit_pkts_simple;
--		dev->tx_pkt_prepare = rte_eth_tx_pkt_prepare_dummy;
--	} else {
--		PMD_INIT_LOG(DEBUG, "Normal tx finally be used.");
--		dev->tx_pkt_burst = ice_xmit_pkts;
--		dev->tx_pkt_prepare = ice_prep_pkts;
--	}
-+	ad->tx_func_type = ci_tx_path_select(&req_features,
-+						&ice_tx_path_infos[0],
-+						RTE_DIM(ice_tx_path_infos),
-+						ICE_TX_DEFAULT);
- 
--	if (mbuf_check) {
--		ad->tx_pkt_burst = dev->tx_pkt_burst;
--		dev->tx_pkt_burst = ice_xmit_pkts_check;
--	}
+-	PMD_INIT_LOG(DEBUG, "Vector Tx cannot be enabled on this txq.");
+-	return false;
 -}
-+out:
-+	if (ice_tx_path_infos[ad->tx_func_type].features.simd_width >= RTE_VECT_SIMD_128)
-+		ad->tx_vec_allowed = true;
+-
+ static inline bool
+ check_rx_bulk_allow(struct ci_rx_queue *rxq)
+ {
+@@ -861,12 +848,6 @@ iavf_dev_tx_queue_setup(struct rte_eth_dev *dev,
+ 	dev->data->tx_queues[queue_idx] = txq;
+ 	txq->qtx_tail = hw->hw_addr + IAVF_QTX_TAIL1(queue_idx);
+ 
+-	if (check_tx_vec_allow(txq) == false) {
+-		struct iavf_adapter *ad =
+-			IAVF_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
+-		ad->tx_vec_allowed = false;
+-	}
+-
+ 	if (vf->vf_res->vf_cap_flags & VIRTCHNL_VF_OFFLOAD_QOS &&
+ 	    vf->tm_conf.committed) {
+ 		int tc;
+@@ -4002,26 +3983,82 @@ iavf_rx_burst_mode_get(struct rte_eth_dev *dev,
+ 	return -EINVAL;
+ }
  
 -static const struct {
 -	eth_tx_burst_t pkt_burst;
 -	const char *info;
--} ice_tx_burst_infos[] = {
--	{ ice_xmit_pkts_simple,   "Scalar Simple" },
--	{ ice_xmit_pkts,          "Scalar" },
--#ifdef RTE_ARCH_X86
--#ifdef CC_AVX512_SUPPORT
--	{ ice_xmit_pkts_vec_avx512, "Vector AVX512" },
--	{ ice_xmit_pkts_vec_avx512_offload, "Offload Vector AVX512" },
--#endif
--	{ ice_xmit_pkts_vec_avx2,         "Vector AVX2" },
--	{ ice_xmit_pkts_vec_avx2_offload, "Offload Vector AVX2" },
--	{ ice_xmit_pkts_vec,              "Vector SSE" },
--#endif
--};
-+	dev->tx_pkt_burst = mbuf_check ? ice_xmit_pkts_check :
-+					 ice_tx_path_infos[ad->tx_func_type].pkt_burst;
-+	dev->tx_pkt_prepare = ice_tx_path_infos[ad->tx_func_type].pkt_prep;
-+	PMD_DRV_LOG(NOTICE, "Using %s (port %d).",
-+		ice_tx_path_infos[ad->tx_func_type].info, dev->data->port_id);
-+}
+-} iavf_tx_pkt_burst_ops[] = {
+-	[IAVF_TX_DISABLED] = {iavf_xmit_pkts_no_poll, "Disabled"},
+-	[IAVF_TX_DEFAULT] = {iavf_xmit_pkts, "Scalar"},
++static const struct ci_tx_path_info iavf_tx_path_infos[] = {
++	[IAVF_TX_DISABLED] = {
++		.pkt_burst = iavf_xmit_pkts_no_poll,
++		.info = "Disabled",
++		.features = {
++			.disabled = true
++		}
++	},
++	[IAVF_TX_DEFAULT] = {
++		.pkt_burst = iavf_xmit_pkts,
++		.info = "Scalar",
++		.features = {
++			.tx_offloads = IAVF_TX_SCALAR_OFFLOADS,
++			.ctx_desc = true
++		}
++	},
+ #ifdef RTE_ARCH_X86
+-	[IAVF_TX_SSE] = {iavf_xmit_pkts_vec, "Vector SSE"},
+-	[IAVF_TX_AVX2] = {iavf_xmit_pkts_vec_avx2, "Vector AVX2"},
+-	[IAVF_TX_AVX2_OFFLOAD] = {iavf_xmit_pkts_vec_avx2_offload,
+-		"Vector AVX2 Offload"},
++	[IAVF_TX_SSE] = {
++		.pkt_burst = iavf_xmit_pkts_vec,
++		.info = "Vector SSE",
++		.features = {
++			.tx_offloads = IAVF_TX_VECTOR_OFFLOADS,
++			.simd_width = RTE_VECT_SIMD_128
++		}
++	},
++	[IAVF_TX_AVX2] = {
++		.pkt_burst = iavf_xmit_pkts_vec_avx2,
++		.info = "Vector AVX2",
++		.features = {
++			.tx_offloads = IAVF_TX_VECTOR_OFFLOADS,
++			.simd_width = RTE_VECT_SIMD_256
++		}
++	},
++	[IAVF_TX_AVX2_OFFLOAD] = {
++		.pkt_burst = iavf_xmit_pkts_vec_avx2_offload,
++		.info = "Vector AVX2 Offload",
++		.features = {
++			.tx_offloads = IAVF_TX_VECTOR_OFFLOAD_OFFLOADS,
++			.simd_width = RTE_VECT_SIMD_256
++		}
++	},
+ #ifdef CC_AVX512_SUPPORT
+-	[IAVF_TX_AVX512] = {iavf_xmit_pkts_vec_avx512, "Vector AVX512"},
+-	[IAVF_TX_AVX512_OFFLOAD] = {iavf_xmit_pkts_vec_avx512_offload,
+-		"Vector AVX512 Offload"},
+-	[IAVF_TX_AVX512_CTX] = {iavf_xmit_pkts_vec_avx512_ctx,
+-		"Vector AVX512 Ctx"},
++	[IAVF_TX_AVX512] = {
++		.pkt_burst = iavf_xmit_pkts_vec_avx512,
++		.info = "Vector AVX512",
++		.features = {
++			.tx_offloads = IAVF_TX_VECTOR_OFFLOADS,
++			.simd_width = RTE_VECT_SIMD_512
++		}
++	},
++	[IAVF_TX_AVX512_OFFLOAD] = {
++		.pkt_burst = iavf_xmit_pkts_vec_avx512_offload,
++		.info = "Vector AVX512 Offload",
++		.features = {
++			.tx_offloads = IAVF_TX_VECTOR_OFFLOAD_OFFLOADS,
++			.simd_width = RTE_VECT_SIMD_512
++		}
++	},
++	[IAVF_TX_AVX512_CTX] = {
++		.pkt_burst = iavf_xmit_pkts_vec_avx512_ctx,
++		.info = "Vector AVX512 Ctx",
++		.features = {
++			.tx_offloads = IAVF_TX_VECTOR_OFFLOADS,
++			.simd_width = RTE_VECT_SIMD_512,
++			.ctx_desc = true
++		}
++	},
+ 	[IAVF_TX_AVX512_CTX_OFFLOAD] = {
+-		iavf_xmit_pkts_vec_avx512_ctx_offload,
+-		"Vector AVX512 Ctx Offload"},
++		.pkt_burst = iavf_xmit_pkts_vec_avx512_ctx_offload,
++		.info = "Vector AVX512 Ctx Offload",
++		.features = {
++			.tx_offloads = IAVF_TX_VECTOR_CTX_OFFLOAD_OFFLOADS,
++			.simd_width = RTE_VECT_SIMD_512,
++			.ctx_desc = true
++		}
++	},
+ #endif
+ #endif
+ };
+@@ -4034,10 +4071,10 @@ iavf_tx_burst_mode_get(struct rte_eth_dev *dev,
+ 	eth_tx_burst_t pkt_burst = dev->tx_pkt_burst;
+ 	size_t i;
  
- int
- ice_tx_burst_mode_get(struct rte_eth_dev *dev, __rte_unused uint16_t queue_id,
-@@ -4213,10 +4207,10 @@ ice_tx_burst_mode_get(struct rte_eth_dev *dev, __rte_unused uint16_t queue_id,
- 	int ret = -EINVAL;
- 	unsigned int i;
- 
--	for (i = 0; i < RTE_DIM(ice_tx_burst_infos); ++i) {
--		if (pkt_burst == ice_tx_burst_infos[i].pkt_burst) {
-+	for (i = 0; i < RTE_DIM(ice_tx_path_infos); ++i) {
-+		if (pkt_burst == ice_tx_path_infos[i].pkt_burst) {
+-	for (i = 0; i < RTE_DIM(iavf_tx_pkt_burst_ops); i++) {
+-		if (pkt_burst == iavf_tx_pkt_burst_ops[i].pkt_burst) {
++	for (i = 0; i < RTE_DIM(iavf_tx_path_infos); i++) {
++		if (pkt_burst == iavf_tx_path_infos[i].pkt_burst) {
  			snprintf(mode->info, sizeof(mode->info), "%s",
--				 ice_tx_burst_infos[i].info);
-+				 ice_tx_path_infos[i].info);
- 			ret = 0;
- 			break;
+-				 iavf_tx_pkt_burst_ops[i].info);
++				 iavf_tx_path_infos[i].info);
+ 			return 0;
  		}
-diff --git a/drivers/net/intel/ice/ice_rxtx.h b/drivers/net/intel/ice/ice_rxtx.h
-index 141a62a7da..d7e8c1b0c4 100644
---- a/drivers/net/intel/ice/ice_rxtx.h
-+++ b/drivers/net/intel/ice/ice_rxtx.h
-@@ -108,6 +108,35 @@
- 		RTE_ETH_RX_OFFLOAD_VLAN_FILTER |\
- 		RTE_ETH_RX_OFFLOAD_RSS_HASH)
+ 	}
+@@ -4073,7 +4110,7 @@ iavf_xmit_pkts_no_poll(void *tx_queue, struct rte_mbuf **tx_pkts,
  
-+/* basic scalar path */
-+#define ICE_TX_SCALAR_OFFLOADS (		\
-+	RTE_ETH_TX_OFFLOAD_VLAN_INSERT |	\
-+	RTE_ETH_TX_OFFLOAD_TCP_TSO |		\
-+	RTE_ETH_TX_OFFLOAD_MULTI_SEGS |		\
-+	RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE |	\
-+	RTE_ETH_TX_OFFLOAD_QINQ_INSERT |	\
-+	RTE_ETH_TX_OFFLOAD_IPV4_CKSUM |		\
-+	RTE_ETH_TX_OFFLOAD_UDP_CKSUM |		\
-+	RTE_ETH_TX_OFFLOAD_TCP_CKSUM |		\
-+	RTE_ETH_TX_OFFLOAD_SCTP_CKSUM |		\
-+	RTE_ETH_TX_OFFLOAD_OUTER_IPV4_CKSUM |	\
-+	RTE_ETH_TX_OFFLOAD_OUTER_UDP_CKSUM |	\
-+	RTE_ETH_TX_OFFLOAD_VXLAN_TNL_TSO |	\
-+	RTE_ETH_TX_OFFLOAD_GRE_TNL_TSO |	\
-+	RTE_ETH_TX_OFFLOAD_IPIP_TNL_TSO |	\
-+	RTE_ETH_TX_OFFLOAD_GENEVE_TNL_TSO |	\
-+	RTE_ETH_TX_OFFLOAD_SEND_ON_TIMESTAMP)
-+/* basic vector path */
-+#define ICE_TX_VECTOR_OFFLOADS RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE
-+/* vector offload paths */
-+#define ICE_TX_VECTOR_OFFLOAD_OFFLOADS (	\
-+	ICE_TX_VECTOR_OFFLOADS |		\
-+	RTE_ETH_TX_OFFLOAD_VLAN_INSERT |	\
-+	RTE_ETH_TX_OFFLOAD_IPV4_CKSUM |		\
-+	RTE_ETH_TX_OFFLOAD_UDP_CKSUM |		\
-+	RTE_ETH_TX_OFFLOAD_TCP_CKSUM |		\
-+	RTE_ETH_TX_OFFLOAD_SCTP_CKSUM)
-+
- /* Max header size can be 2K - 64 bytes */
- #define ICE_RX_HDR_BUF_SIZE    (2048 - 64)
+ 	tx_func_type = txq->iavf_vsi->adapter->tx_func_type;
  
-@@ -249,7 +278,6 @@ void ice_select_rxd_to_pkt_fields_handler(struct ci_rx_queue *rxq,
- int ice_rx_vec_dev_check(struct rte_eth_dev *dev);
- int ice_tx_vec_dev_check(struct rte_eth_dev *dev);
- int ice_rxq_vec_setup(struct ci_rx_queue *rxq);
--int ice_txq_vec_setup(struct ci_tx_queue *txq);
- uint16_t ice_recv_pkts_vec(void *rx_queue, struct rte_mbuf **rx_pkts,
- 			   uint16_t nb_pkts);
- uint16_t ice_recv_scattered_pkts_vec(void *rx_queue, struct rte_mbuf **rx_pkts,
-diff --git a/drivers/net/intel/ice/ice_rxtx_vec_common.h b/drivers/net/intel/ice/ice_rxtx_vec_common.h
-index 39581cb7ae..ff46a8fb49 100644
---- a/drivers/net/intel/ice/ice_rxtx_vec_common.h
-+++ b/drivers/net/intel/ice/ice_rxtx_vec_common.h
-@@ -51,28 +51,6 @@ _ice_rx_queue_release_mbufs_vec(struct ci_rx_queue *rxq)
- 	memset(rxq->sw_ring, 0, sizeof(rxq->sw_ring[0]) * rxq->nb_rx_desc);
+-	return iavf_tx_pkt_burst_ops[tx_func_type].pkt_burst(tx_queue,
++	return iavf_tx_path_infos[tx_func_type].pkt_burst(tx_queue,
+ 								tx_pkts, nb_pkts);
  }
  
--#define ICE_TX_NO_VECTOR_FLAGS (			\
--		RTE_ETH_TX_OFFLOAD_MULTI_SEGS |		\
--		RTE_ETH_TX_OFFLOAD_QINQ_INSERT |	\
--		RTE_ETH_TX_OFFLOAD_OUTER_IPV4_CKSUM |	\
--		RTE_ETH_TX_OFFLOAD_TCP_TSO |	\
--		RTE_ETH_TX_OFFLOAD_VXLAN_TNL_TSO |    \
--		RTE_ETH_TX_OFFLOAD_GRE_TNL_TSO |    \
--		RTE_ETH_TX_OFFLOAD_IPIP_TNL_TSO |    \
--		RTE_ETH_TX_OFFLOAD_GENEVE_TNL_TSO |    \
--		RTE_ETH_TX_OFFLOAD_OUTER_UDP_CKSUM |	\
--		RTE_ETH_TX_OFFLOAD_SEND_ON_TIMESTAMP)
--
--#define ICE_TX_VECTOR_OFFLOAD (				\
--		RTE_ETH_TX_OFFLOAD_VLAN_INSERT |		\
--		RTE_ETH_TX_OFFLOAD_IPV4_CKSUM |		\
--		RTE_ETH_TX_OFFLOAD_SCTP_CKSUM |		\
--		RTE_ETH_TX_OFFLOAD_UDP_CKSUM |		\
--		RTE_ETH_TX_OFFLOAD_TCP_CKSUM)
--
--#define ICE_VECTOR_PATH		0
--#define ICE_VECTOR_OFFLOAD_PATH	1
--
- static inline int
- ice_rx_vec_queue_default(struct ci_rx_queue *rxq)
+@@ -4158,7 +4195,7 @@ iavf_xmit_pkts_check(void *tx_queue, struct rte_mbuf **tx_pkts,
+ 			return 0;
+ 	}
+ 
+-	return iavf_tx_pkt_burst_ops[tx_func_type].pkt_burst(tx_queue, tx_pkts, good_pkts);
++	return iavf_tx_path_infos[tx_func_type].pkt_burst(tx_queue, tx_pkts, good_pkts);
+ }
+ 
+ /* choose rx function*/
+@@ -4229,109 +4266,66 @@ iavf_set_tx_function(struct rte_eth_dev *dev)
  {
-@@ -98,13 +76,7 @@ ice_tx_vec_queue_default(struct ci_tx_queue *txq)
- 	    txq->tx_rs_thresh > ICE_TX_MAX_FREE_BUF_SZ)
+ 	struct iavf_adapter *adapter =
+ 		IAVF_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
+-	enum iavf_tx_func_type tx_func_type;
+ 	int mbuf_check = adapter->devargs.mbuf_check;
+ 	int no_poll_on_link_down = adapter->devargs.no_poll_on_link_down;
+ #ifdef RTE_ARCH_X86
+ 	struct ci_tx_queue *txq;
+ 	int i;
+-	int check_ret;
+-	bool use_sse = false;
+-	bool use_avx2 = false;
+-	bool use_avx512 = false;
+-	enum rte_vect_max_simd tx_simd_path = iavf_get_max_simd_bitwidth();
+-
+-	check_ret = iavf_tx_vec_dev_check(dev);
+-
+-	if (check_ret >= 0 &&
+-	    rte_vect_get_max_simd_bitwidth() >= RTE_VECT_SIMD_128) {
+-		/* SSE not support offload path yet. */
+-		if (check_ret == IAVF_VECTOR_PATH) {
+-			use_sse = true;
+-		}
++#endif
++	struct ci_tx_path_features req_features = {
++		.tx_offloads = dev->data->dev_conf.txmode.offloads,
++		.simd_width = RTE_VECT_SIMD_DISABLED,
++	};
++
++	/* The primary process selects the tx path for all processes. */
++	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
++		goto out;
+ 
+-		use_avx2 = tx_simd_path == RTE_VECT_SIMD_256;
+-		use_avx512 = tx_simd_path == RTE_VECT_SIMD_512;
++#ifdef RTE_ARCH_X86
++	if (iavf_tx_vec_dev_check(dev) != -1)
++		req_features.simd_width = iavf_get_max_simd_bitwidth();
+ 
+-		if (!use_sse && !use_avx2 && !use_avx512)
+-			goto normal;
++	if (rte_pmd_iavf_tx_lldp_dynfield_offset > 0)
++		req_features.ctx_desc = true;
+ 
+-		if (use_sse) {
+-			PMD_DRV_LOG(DEBUG, "Using Vector Tx (port %d).",
+-				    dev->data->port_id);
+-			tx_func_type = IAVF_TX_SSE;
+-		}
+-		if (!use_avx512 && use_avx2) {
+-			if (check_ret == IAVF_VECTOR_PATH) {
+-				tx_func_type = IAVF_TX_AVX2;
+-				PMD_DRV_LOG(DEBUG, "Using AVX2 Vector Tx (port %d).",
+-					    dev->data->port_id);
+-			} else if (check_ret == IAVF_VECTOR_CTX_OFFLOAD_PATH) {
+-				PMD_DRV_LOG(DEBUG,
+-					"AVX2 does not support requested Tx offloads.");
+-				goto normal;
+-			} else {
+-				tx_func_type = IAVF_TX_AVX2_OFFLOAD;
+-				PMD_DRV_LOG(DEBUG, "Using AVX2 OFFLOAD Vector Tx (port %d).",
+-					    dev->data->port_id);
+-			}
+-		}
+-#ifdef CC_AVX512_SUPPORT
+-		if (use_avx512) {
+-			if (check_ret == IAVF_VECTOR_PATH) {
+-				tx_func_type = IAVF_TX_AVX512;
+-				PMD_DRV_LOG(DEBUG, "Using AVX512 Vector Tx (port %d).",
+-					    dev->data->port_id);
+-			} else if (check_ret == IAVF_VECTOR_OFFLOAD_PATH) {
+-				tx_func_type = IAVF_TX_AVX512_OFFLOAD;
+-				PMD_DRV_LOG(DEBUG, "Using AVX512 OFFLOAD Vector Tx (port %d).",
+-					    dev->data->port_id);
+-			} else if (check_ret == IAVF_VECTOR_CTX_PATH) {
+-				tx_func_type = IAVF_TX_AVX512_CTX;
+-				PMD_DRV_LOG(DEBUG, "Using AVX512 CONTEXT Vector Tx (port %d).",
+-						dev->data->port_id);
+-			} else {
+-				tx_func_type = IAVF_TX_AVX512_CTX_OFFLOAD;
+-				PMD_DRV_LOG(DEBUG, "Using AVX512 CONTEXT OFFLOAD Vector Tx (port %d).",
+-					    dev->data->port_id);
+-			}
+-		}
++	for (i = 0; i < dev->data->nb_tx_queues; i++) {
++		txq = dev->data->tx_queues[i];
++		if (!txq)
++			continue;
++		if (txq->offloads & RTE_ETH_TX_OFFLOAD_VLAN_INSERT &&
++				txq->vlan_flag == IAVF_TX_FLAGS_VLAN_TAG_LOC_L2TAG2)
++			req_features.ctx_desc = true;
++	}
+ #endif
+ 
++	adapter->tx_func_type = ci_tx_path_select(&req_features,
++						&iavf_tx_path_infos[0],
++						RTE_DIM(iavf_tx_path_infos),
++						IAVF_TX_DEFAULT);
++
++out:
++#ifdef RTE_ARCH_X86
++	if (iavf_tx_path_infos[adapter->tx_func_type].features.simd_width != 0) {
+ 		for (i = 0; i < dev->data->nb_tx_queues; i++) {
+ 			txq = dev->data->tx_queues[i];
+ 			if (!txq)
+ 				continue;
+ 			iavf_txq_vec_setup(txq);
++			txq->use_ctx =
++				iavf_tx_path_infos[adapter->tx_func_type].features.ctx_desc;
+ 		}
+-
+-		if (no_poll_on_link_down) {
+-			adapter->tx_func_type = tx_func_type;
+-			dev->tx_pkt_burst = iavf_xmit_pkts_no_poll;
+-		} else if (mbuf_check) {
+-			adapter->tx_func_type = tx_func_type;
+-			dev->tx_pkt_burst = iavf_xmit_pkts_check;
+-		} else {
+-			dev->tx_pkt_burst = iavf_tx_pkt_burst_ops[tx_func_type].pkt_burst;
+-		}
+-		return;
+ 	}
+-
+-normal:
+ #endif
+-	PMD_DRV_LOG(DEBUG, "Using Basic Tx callback (port=%d).",
+-		    dev->data->port_id);
+-	tx_func_type = IAVF_TX_DEFAULT;
+ 
+-	if (no_poll_on_link_down) {
+-		adapter->tx_func_type = tx_func_type;
++	if (no_poll_on_link_down)
+ 		dev->tx_pkt_burst = iavf_xmit_pkts_no_poll;
+-	} else if (mbuf_check) {
+-		adapter->tx_func_type = tx_func_type;
++	else if (mbuf_check)
+ 		dev->tx_pkt_burst = iavf_xmit_pkts_check;
+-	} else {
+-		dev->tx_pkt_burst = iavf_tx_pkt_burst_ops[tx_func_type].pkt_burst;
+-	}
++	else
++		dev->tx_pkt_burst = iavf_tx_path_infos[adapter->tx_func_type].pkt_burst;
++
++	PMD_DRV_LOG(NOTICE, "Using %s (port %d).",
++		 iavf_tx_path_infos[adapter->tx_func_type].info, dev->data->port_id);
+ }
+ 
+ static int
+diff --git a/drivers/net/intel/iavf/iavf_rxtx.h b/drivers/net/intel/iavf/iavf_rxtx.h
+index 8efb3bd04e..bff456e509 100644
+--- a/drivers/net/intel/iavf/iavf_rxtx.h
++++ b/drivers/net/intel/iavf/iavf_rxtx.h
+@@ -35,22 +35,38 @@
+ #define IAVF_VPMD_DESCS_PER_LOOP_WIDE  CI_VPMD_DESCS_PER_LOOP_WIDE
+ #define IAVF_VPMD_TX_MAX_FREE_BUF      64
+ 
+-#define IAVF_TX_NO_VECTOR_FLAGS (				 \
+-		RTE_ETH_TX_OFFLOAD_MULTI_SEGS |		 \
+-		RTE_ETH_TX_OFFLOAD_TCP_TSO |		 \
+-		RTE_ETH_TX_OFFLOAD_VXLAN_TNL_TSO |	 \
+-		RTE_ETH_TX_OFFLOAD_GRE_TNL_TSO |	 \
+-		RTE_ETH_TX_OFFLOAD_IPIP_TNL_TSO |	 \
+-		RTE_ETH_TX_OFFLOAD_GENEVE_TNL_TSO |	 \
+-		RTE_ETH_TX_OFFLOAD_SECURITY)
+-
+-#define IAVF_TX_VECTOR_OFFLOAD (				 \
+-		RTE_ETH_TX_OFFLOAD_IPV4_CKSUM |		 \
+-		RTE_ETH_TX_OFFLOAD_SCTP_CKSUM |		 \
+-		RTE_ETH_TX_OFFLOAD_UDP_CKSUM |		 \
++/* basic scalar path */
++#define IAVF_TX_SCALAR_OFFLOADS (			\
++		RTE_ETH_TX_OFFLOAD_VLAN_INSERT |	\
++		RTE_ETH_TX_OFFLOAD_IPV4_CKSUM |		\
++		RTE_ETH_TX_OFFLOAD_UDP_CKSUM |		\
++		RTE_ETH_TX_OFFLOAD_TCP_CKSUM |		\
++		RTE_ETH_TX_OFFLOAD_SCTP_CKSUM |		\
++		RTE_ETH_TX_OFFLOAD_TCP_TSO |		\
++		RTE_ETH_TX_OFFLOAD_OUTER_IPV4_CKSUM |	\
++		RTE_ETH_TX_OFFLOAD_VXLAN_TNL_TSO |	\
++		RTE_ETH_TX_OFFLOAD_QINQ_INSERT |	\
++		RTE_ETH_TX_OFFLOAD_GRE_TNL_TSO |	\
++		RTE_ETH_TX_OFFLOAD_IPIP_TNL_TSO |	\
++		RTE_ETH_TX_OFFLOAD_GENEVE_TNL_TSO |	\
++		RTE_ETH_TX_OFFLOAD_MULTI_SEGS |		\
++		RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE |	\
++		RTE_ETH_TX_OFFLOAD_SECURITY |		\
++		RTE_ETH_TX_OFFLOAD_OUTER_UDP_CKSUM)
++/* basic vector path */
++#define IAVF_TX_VECTOR_OFFLOADS RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE
++/* offload vector path */
++#define IAVF_TX_VECTOR_OFFLOAD_OFFLOADS (		\
++		IAVF_TX_VECTOR_OFFLOADS |		\
++		RTE_ETH_TX_OFFLOAD_VLAN_INSERT |	\
++		RTE_ETH_TX_OFFLOAD_IPV4_CKSUM |		\
++		RTE_ETH_TX_OFFLOAD_SCTP_CKSUM |		\
++		RTE_ETH_TX_OFFLOAD_UDP_CKSUM |		\
+ 		RTE_ETH_TX_OFFLOAD_TCP_CKSUM)
+-
+-#define IAVF_TX_VECTOR_OFFLOAD_CTX (			\
++/* offload vector path with context descriptor */
++#define IAVF_TX_VECTOR_CTX_OFFLOAD_OFFLOADS (		\
++		IAVF_TX_VECTOR_OFFLOADS |		\
++		IAVF_TX_VECTOR_OFFLOAD_OFFLOADS |	\
+ 		RTE_ETH_TX_OFFLOAD_OUTER_IPV4_CKSUM |	\
+ 		RTE_ETH_TX_OFFLOAD_OUTER_UDP_CKSUM |	\
+ 		RTE_ETH_TX_OFFLOAD_QINQ_INSERT)
+diff --git a/drivers/net/intel/iavf/iavf_rxtx_vec_common.h b/drivers/net/intel/iavf/iavf_rxtx_vec_common.h
+index 66f65b46e9..f1ea57034f 100644
+--- a/drivers/net/intel/iavf/iavf_rxtx_vec_common.h
++++ b/drivers/net/intel/iavf/iavf_rxtx_vec_common.h
+@@ -73,8 +73,6 @@ iavf_rx_vec_queue_default(struct ci_rx_queue *rxq)
+ static inline int
+ iavf_tx_vec_queue_default(struct ci_tx_queue *txq)
+ {
+-	bool vlan_offload = false, vlan_needs_ctx = false;
+-
+ 	if (!txq)
  		return -1;
  
--	if (txq->offloads & ICE_TX_NO_VECTOR_FLAGS)
+@@ -82,35 +80,7 @@ iavf_tx_vec_queue_default(struct ci_tx_queue *txq)
+ 	    txq->tx_rs_thresh > IAVF_VPMD_TX_MAX_FREE_BUF)
+ 		return -1;
+ 
+-	if (txq->offloads & IAVF_TX_NO_VECTOR_FLAGS)
 -		return -1;
 -
--	if (txq->offloads & ICE_TX_VECTOR_OFFLOAD)
--		return ICE_VECTOR_OFFLOAD_PATH;
+-	if (rte_pmd_iavf_tx_lldp_dynfield_offset > 0) {
+-		txq->use_ctx = 1;
+-		return IAVF_VECTOR_CTX_PATH;
+-	}
 -
--	return ICE_VECTOR_PATH;
+-	/* Vlan tci needs to be inserted via ctx desc, if the vlan_flag is L2TAG2. */
+-	if (txq->offloads & RTE_ETH_TX_OFFLOAD_VLAN_INSERT) {
+-		vlan_offload = true;
+-		if (txq->vlan_flag == IAVF_TX_FLAGS_VLAN_TAG_LOC_L2TAG2)
+-			vlan_needs_ctx = true;
+-	}
+-
+-	/**
+-	 * Tunneling parameters and other fields need be configured in ctx desc
+-	 * if the outer checksum offload is enabled.
+-	 */
+-	if (txq->offloads & (IAVF_TX_VECTOR_OFFLOAD | IAVF_TX_VECTOR_OFFLOAD_CTX) || vlan_offload) {
+-		if (txq->offloads & IAVF_TX_VECTOR_OFFLOAD_CTX || vlan_needs_ctx) {
+-			txq->use_ctx = 1;
+-			return IAVF_VECTOR_CTX_OFFLOAD_PATH;
+-		} else {
+-			return IAVF_VECTOR_OFFLOAD_PATH;
+-		}
+-	} else {
+-		return IAVF_VECTOR_PATH;
+-	}
 +	return 0;
  }
  
  static inline int
-@@ -130,18 +102,15 @@ ice_tx_vec_dev_check_default(struct rte_eth_dev *dev)
+@@ -137,19 +107,16 @@ iavf_tx_vec_dev_check_default(struct rte_eth_dev *dev)
  	int i;
  	struct ci_tx_queue *txq;
- 	int ret = 0;
+ 	int ret;
 -	int result = 0;
  
  	for (i = 0; i < dev->data->nb_tx_queues; i++) {
  		txq = dev->data->tx_queues[i];
- 		ret = ice_tx_vec_queue_default(txq);
+ 		ret = iavf_tx_vec_queue_default(txq);
+ 
  		if (ret < 0)
- 			return -1;
--		if (ret == ICE_VECTOR_OFFLOAD_PATH)
+-			return -1;
+-		if (ret > result)
 -			result = ret;
++			break;
  	}
  
 -	return result;
 +	return ret;
  }
  
- static inline void
-diff --git a/drivers/net/intel/ice/ice_rxtx_vec_sse.c b/drivers/net/intel/ice/ice_rxtx_vec_sse.c
-index 1545bc3b6e..4fc1b7e881 100644
---- a/drivers/net/intel/ice/ice_rxtx_vec_sse.c
-+++ b/drivers/net/intel/ice/ice_rxtx_vec_sse.c
-@@ -718,12 +718,6 @@ ice_rxq_vec_setup(struct ci_rx_queue *rxq)
- 	return 0;
- }
- 
--int __rte_cold
--ice_txq_vec_setup(struct ci_tx_queue *txq __rte_unused)
--{
--	return 0;
--}
--
- int __rte_cold
- ice_rx_vec_dev_check(struct rte_eth_dev *dev)
- {
+ /******************************************************************************
 -- 
 2.43.0
 
