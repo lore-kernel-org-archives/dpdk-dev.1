@@ -2,40 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1024D43357
-	for <dpdk-dev@archiver.kernel.org>; Thu, 11 Dec 2025 21:45:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA2E8D4336E
+	for <dpdk-dev@archiver.kernel.org>; Fri, 12 Dec 2025 05:32:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7139840289;
-	Thu, 11 Dec 2025 22:45:28 +0100 (CET)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id E63D64026F
- for <dev@dpdk.org>; Thu, 11 Dec 2025 22:45:26 +0100 (CET)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 96D4820B75;
- Thu, 11 Dec 2025 22:45:26 +0100 (CET)
-Content-class: urn:content-classes:message
+	by mails.dpdk.org (Postfix) with ESMTP id B8AF940273;
+	Fri, 12 Dec 2025 06:32:58 +0100 (CET)
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com
+ [209.85.214.182])
+ by mails.dpdk.org (Postfix) with ESMTP id 8424A400D6
+ for <dev@dpdk.org>; Fri, 12 Dec 2025 06:32:57 +0100 (CET)
+Received: by mail-pl1-f182.google.com with SMTP id
+ d9443c01a7336-299d40b0845so12461455ad.3
+ for <dev@dpdk.org>; Thu, 11 Dec 2025 21:32:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1765517576;
+ x=1766122376; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=11YdiNgznOpQIbk5aML70W68/NSIzR7JLc5YfVsQeok=;
+ b=idW80iUYea/qvYzI1TEY6xBWKBiVCGq5V5RJq1CaHcH2ZzIcFfF19xMm9GTdGNyl6C
+ 2/GbYpotO2a3iyHBOzOocxD0MUlLCqaDMzvZSHXBSq4Kx89/CC9OQqwzDs1SHK3vG4U5
+ oALbgFNz+DaDcfZQmzWzF4BXgx6aLcbz4SNlvmPnT/E2x+8vmlfR8HpEFe2MeroDXNP1
+ HJlRlKrLZYhDF+4a6Thb7sCY+c8vQWmLypZC9xjPO7rySFGCwqAkLll33I3TnMVr+sx3
+ wFd2ljYabu8KdeukTg7n4BtvR0KhOAYe0VD00ZNVpCf/lhTiUBZ3RHmwPXfao7EN8/TG
+ Leaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1765517576; x=1766122376;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=11YdiNgznOpQIbk5aML70W68/NSIzR7JLc5YfVsQeok=;
+ b=wEHg0BLa9qaZfDiGKTYd7n70OFF6T2LU9Ro8vS1Gdg7QB+w6OsRA2YfnyeeokH2RAe
+ FbkgnrnzEEoGoJclMlOZJ7kbw2+x26+2SCSaDqAZrBR/GUDjWpi4IDsq6lhntXflnNj0
+ GALZeKVJQZlSQ70L5A0Qi6fSTpWifFIPOT5P89NpX+ZIfvk6zcgAyd8YByj8uPIyX8dx
+ b1+tRr98pkKBTvibUh9c2orcQSBQ9b8CKNwKAePs3Xco+G3iym96iaA9ghG7Fh+AToAV
+ j25hRD04MVY16F7JcOxS+QPPPRLvhA1p47BtnQAbz3+uree09q3/aBfzf51OYfh2Xz1m
+ ErCg==
+X-Gm-Message-State: AOJu0YxKp0UkIJJydCxQ04QjYa1AnrNpGw4DAG/87VBGiX5MXV9ylaLz
+ ndW2ES/TrSDCifdBgAQX31YRUsPqC/PU/0tMk/XAEguW3Gm8eGSWvVhAEYkK2JNR9xO253GYu7y
+ XeCdQzZA=
+X-Gm-Gg: AY/fxX64vD0agj4nPp7NECgHTZ+FbOVtD1WIOAPeCEUiU75BIrmRFSO3LklKG37xE9X
+ Ypjy+2nm7s+cMosGsq81cLtA9f3agGRl0PtXmJKFHmxAEZkrrFKImf4RUIeA1Z1eG2OVFqARfBw
+ mqXhcN1SAlodGGccJihHXqcS6YLp0aYA+RL7/lQTsGUWeIDbv+f9/h9L10Q9CVoYUexlS35J/LY
+ 89I+xZt/RFIi6ZH5/opxVgIwyRpuD8cLtqQVBm3jHOEP2Pqf4ru68JSVuXtpjthKmvODGtGlUKp
+ dJUoG8uMgVqSxJBAIYUOTnu2Ugc8/edZ4oSGxgxWrc1RAVmMxhazXdQjpgXMH7ShAWAvT0lBLOn
+ lAU/HPKPo9qxK5IIzqUaW0Z5fHYI7w52bfdGXBn2rN/3ZRr1YwO1dxH0gYvhl4WpAZJ+sM8a+Tn
+ fxZH0T+nN6KTfgzsABSRNs2t3qmppaLw8qaYtoTy/I/uE1eQJwnO8IcLCr5mwdXHwe9IzpPzQ=
+X-Google-Smtp-Source: AGHT+IFP//eYyicCCuf8z0niij7K/ufvSIIBeSdjB557CPydwKbKAAm+wqSUVSvhNjE+Qg7kX1sT4w==
+X-Received: by 2002:a17:902:d4c8:b0:295:557e:7465 with SMTP id
+ d9443c01a7336-29f23ae279fmr10254735ad.11.1765517576174; 
+ Thu, 11 Dec 2025 21:32:56 -0800 (PST)
+Received: from stephen-xps.local (fs98a57d9c.tkyc007.ap.nuro.jp.
+ [152.165.125.156]) by smtp.gmail.com with ESMTPSA id
+ d9443c01a7336-29eea06dd9bsm41687385ad.99.2025.12.11.21.32.55
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Thu, 11 Dec 2025 21:32:56 -0800 (PST)
+Date: Fri, 12 Dec 2025 14:32:49 +0900
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Bruce Richardson <bruce.richardson@intel.com>
+Cc: dev@dpdk.org
+Subject: Re: [RFC PATCH 0/7] Add script for real-time telemetry monitoring
+Message-ID: <20251212143249.2fdbeaab@stephen-xps.local>
+In-Reply-To: <20251210165532.103450-1-bruce.richardson@intel.com>
+References: <20251210165532.103450-1-bruce.richardson@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Subject: RE: [PATCH] net/i40e: Fast release optimizations
-Date: Thu, 11 Dec 2025 22:45:25 +0100
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F655DC@smartserver.smartshare.dk>
-In-Reply-To: <aTmnOwyh2u75Y3qp@bricha3-mobl1.ger.corp.intel.com>
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH] net/i40e: Fast release optimizations
-Thread-Index: Adxp9pNTDjvLgLDbQYevuLGXNddypwA7WSXg
-References: <20250624061238.89259-1-mb@smartsharesystems.com>
- <98CBD80474FA8B44BF855DF32C47DC35E9FE25@smartserver.smartshare.dk>
- <aTmnOwyh2u75Y3qp@bricha3-mobl1.ger.corp.intel.com>
-From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
-To: "Bruce Richardson" <bruce.richardson@intel.com>
-Cc: <dev@dpdk.org>,
-	"Konstantin Ananyev" <konstantin.ananyev@huawei.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -49,64 +82,86 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> From: Bruce Richardson [mailto:bruce.richardson@intel.com]
-> Sent: Wednesday, 10 December 2025 18.01
->=20
-> On Mon, Aug 11, 2025 at 02:47:17PM +0200, Morten Br=F8rup wrote:
-> > > From: Morten Br=F8rup [mailto:mb@smartsharesystems.com]
-> > > Sent: Tuesday, 24 June 2025 08.13
-> > >
-> > > When fast releasing mbufs, the mbufs are not accessed, so do not
-> prefetch
-> > > them.
-> > > This saves a mbuf load operation for each fast released TX mbuf.
-> > >
-> > > When fast release of mbufs is enabled for a TX queue, cache the
-> mbuf
-> > > mempool pointer in the TX queue structure.
-> > > This saves one mbuf load operation for each burst of fast released
-> TX
-> > > mbufs.
-> > >
-> > > The txep->mbuf pointer is not used after the mbuf has been freed,
-> so do
-> > > not reset the pointer.
-> > > This saves a txep store operation for each TX mbuf freed.
-> > >
-> > > Signed-off-by: Morten Br=F8rup <mb@smartsharesystems.com>
-> > > ---
-> >
-> > After further consideration, I think this patch should be split in
-> two:
-> > 1. Remove superfluous code: prefetching mbufs and resetting txep-
-> >mbuf pointers.
-> > 2. Cache the mbuf mempool pointer for FAST_FREE.
-> >
-> Hi Morten,
->=20
-> any plans for a new version of this patch (split or otherwise)? This =
-is
-> popped up again on my list in patchwork and want to decide what to do
-> with
-> it for this release. :-)
->=20
-> /Bruce
+On Wed, 10 Dec 2025 16:55:25 +0000
+Bruce Richardson <bruce.richardson@intel.com> wrote:
 
-I'll give it another shot.
+> TL;DR
+> ------
+> 
+> For a  quick demo, apply patces, run e.g. testpmd and then in a separate
+> terminal run:
+> 
+>   ./usertools/dpdk-telemetry-watcher.py -d1T eth.tx
+> 
+> Output, updated once per second, will be traffic rate per port e.g.:
+> 
+> Connected to application: "dpdk-testpmd"
+> Time       /ethdev/stats,0.opackets /ethdev/stats,1.opackets        Total
+> 16:29:12                  5,213,119                5,214,304   10,427,423
+> 
+> 
+> Fuller details
+> --------------
+> 
+> While we have the dpdk-telemetry.py CLI app for interactive querying of
+> telemetry on the commandline, and a telemetry exporter script for
+> sending telemetry to external tools for real-time monitoring, we don't
+> have an app that can print real-time stats for DPDK apps on the
+> terminal. This patchset adds such a script, developed with the help of
+> Github copilot to fill a need that I found in my testing. Submitting it
+> here in the hopes that others find it of use.
+> 
+> The script acts as a wrapper around the existing dpdk-telemetry.py
+> script, and pipes the commands to that script and reads the responses,
+> querying it once per second. It takes a number of flag parameters, such
+> as the ones above:
+>  - "-d" for delta values, i.e. PPS rather than total packets
+>  - "-1" for single-line output, i.e. no scrolling up the screen
+>  - "-T" to display a total column
+> 
+> Other flag parameters can be seen by looking at the help output.
+> 
+> Beyond the flags, the script also takes a number of positional
+> parameters, which refer to specific stats to display. These stats must
+> be numeric values, and should take the form of the telemetry command to
+> send, followed by a "." and the stat within the result which is to be
+> tracked. As above, a stat would be e.g. "/ethdev/stats,0.opackets",
+> where we send "/ethdev/stats,0" to telemetry and extract the "opackets"
+> part of the result.
+> 
+> However, specifying individual stats can be awkward, so some shortcuts
+> are provided too for the common case of monitoring ethernet ports. Any
+> positional arg starting with "eth" will be replaced by the set of
+> equivalent values for each port, e.g. "eth.imissed" will track the
+> imissed value on all ports in use in the app. The ipackets and opackets
+> values, as common metrics, are also available as shortened values as
+> just "rx" and "tx", so in the example above, "eth.tx" means to track the
+> opackets stat for every ethdev port.
+> 
+> Finally, the script also has reconnection support so you can leave it
+> running while you start and stop your application in another terminal.
+> The watcher will try and reconnect to a running instance every second.
+> 
+> 
+> Bruce Richardson (7):
+>   usertools: add new script to monitor telemetry on terminal
+>   usertools/telemetry-watcher: add displaying stats
+>   usertools/telemetry-watcher: add delta and timeout opts
+>   usertools/telemetry-watcher: add total and one-line opts
+>   usertools/telemetry-watcher: add thousands separator
+>   usertools/telemetry-watcher: add eth name shortcuts
+>   usertools/telemetry-watcher: support reconnection
+> 
+>  usertools/dpdk-telemetry-watcher.py | 429 ++++++++++++++++++++++++++++
+>  usertools/meson.build               |   1 +
+>  2 files changed, 430 insertions(+)
+>  create mode 100755 usertools/dpdk-telemetry-watcher.py
+> 
+> --
+> 2.51.0
 
-I took another look at it today, and it looks like the txep->mbuf (i.e. =
-sw_ring[].mbuf) is used by other cleanup functions, so not NULL'ing it =
-needs more detailed review.
 
-Anyway, prefetching the mbufs is a complete waste for fast free, where =
-the mbufs are not being accessed at all. So there's still something to =
-gain here.
+The TUI patch was
+https://patchwork.dpdk.org/project/dpdk/patch/20220831115250.362189-2-conor.walsh@intel.com/
 
-Also, my assumption that txq->offloads is hotter than txq->fast_free_mp =
-seems not to hold either, so I'll play around with that too.
-
-I'm considering sending a series of patches with very small steps, so =
-the individual changes are easy to review.
-
--Morten
 
