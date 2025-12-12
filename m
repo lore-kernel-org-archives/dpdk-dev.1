@@ -2,46 +2,163 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2914ED4922D
-	for <dpdk-dev@archiver.kernel.org>; Fri, 12 Dec 2025 15:00:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 917A3D59D65
+	for <dpdk-dev@archiver.kernel.org>; Fri, 12 Dec 2025 15:26:38 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 367254028E;
-	Fri, 12 Dec 2025 16:00:54 +0100 (CET)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 352AB40268
- for <dev@dpdk.org>; Fri, 12 Dec 2025 16:00:52 +0100 (CET)
-Received: from mail.maildlp.com (unknown [172.18.224.83])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4dSXgx3qjBzJ46Ck;
- Fri, 12 Dec 2025 23:00:29 +0800 (CST)
-Received: from dubpeml100002.china.huawei.com (unknown [7.214.144.156])
- by mail.maildlp.com (Postfix) with ESMTPS id DEA0E40565;
- Fri, 12 Dec 2025 23:00:50 +0800 (CST)
-Received: from dubpeml500001.china.huawei.com (7.214.147.241) by
- dubpeml100002.china.huawei.com (7.214.144.156) with Microsoft SMTP Server
+	by mails.dpdk.org (Postfix) with ESMTP id 683C64028E;
+	Fri, 12 Dec 2025 16:26:37 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+ by mails.dpdk.org (Postfix) with ESMTP id 6D5FD40268
+ for <dev@dpdk.org>; Fri, 12 Dec 2025 16:26:35 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1765553195; x=1797089195;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=QAOCXc4SlnRBt2yI/qS78VnwQC+HcQ+rlJfCVpHKNhc=;
+ b=fiE+nrbgBvaJLg4W/6gFGAapMlkkaRNaHgs5xyxITv5qSX9Y8UmFljq8
+ HiA3fr2oOKK0F25Hz3DMlmIWaJNJzZCzKdxw2iXQNt3SokPa9SwyLQLR8
+ HiO30Gz5tjVRLFdVCpZF0f0/tmJTsceD36L3mJlN6fC4ByGP8TLOmkoz7
+ Fxpy+FGjcnVmiEXs3nfs9n4+KQB7nSCPAK4VonMBYQ3VKy7ZRRuBQ34lN
+ PM/0esLUy58HI3LoJQaIQLEYHioyk3vvtB7e13rmMI4c1yrcfdH3dJQni
+ 2/MqpLee33tkMR4TONkvFuCa2T/w8s3PICMDg2k1Kz9KHekqrKs3oD2Ka w==;
+X-CSE-ConnectionGUID: 7ULOHHrOT42CIX75dhNP/Q==
+X-CSE-MsgGUID: dgn6o/4cRG2go/xsryg2rg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11640"; a="55122439"
+X-IronPort-AV: E=Sophos;i="6.21,144,1763452800"; d="scan'208";a="55122439"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+ by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 12 Dec 2025 07:26:34 -0800
+X-CSE-ConnectionGUID: NhPR1bB/QpKt4bx7N1fZXA==
+X-CSE-MsgGUID: J1fpoRXFRiiwcGB8UVA/kA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,144,1763452800"; d="scan'208";a="201291924"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+ by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 12 Dec 2025 07:26:34 -0800
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.36; Fri, 12 Dec 2025 15:00:50 +0000
-Received: from dubpeml500001.china.huawei.com ([7.214.147.241]) by
- dubpeml500001.china.huawei.com ([7.214.147.241]) with mapi id 15.02.1544.011; 
- Fri, 12 Dec 2025 15:00:50 +0000
-From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-To: =?iso-2022-jp?B?bWFubnl3YW5nKBskQjImMUpKdhsoQik=?= <mannywang@tencent.com>
-CC: "dev@dpdk.org" <dev@dpdk.org>
-Subject: RE: [PATCH v8] acl: support custom memory allocators
-Thread-Topic: [PATCH v8] acl: support custom memory allocators
-Thread-Index: AQHcaQrApJQ0h2QK20G6khmQqDquQ7UeHKcQ
-Date: Fri, 12 Dec 2025 15:00:50 +0000
-Message-ID: <e39d17c866a248829cef4bf45ac07602@huawei.com>
-References: <68D016D742174F42+20251208125716.19424-1-mannywang@tencent.com>
- <531B109557B40560+20251209125236.27095-1-mannywang@tencent.com>
-In-Reply-To: <531B109557B40560+20251209125236.27095-1-mannywang@tencent.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.195.244.111]
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-Transfer-Encoding: quoted-printable
+ 15.2.2562.29; Fri, 12 Dec 2025 07:26:33 -0800
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.29 via Frontend Transport; Fri, 12 Dec 2025 07:26:33 -0800
+Received: from PH8PR06CU001.outbound.protection.outlook.com (40.107.209.70) by
+ edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.29; Fri, 12 Dec 2025 07:26:33 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=MdGK2t2IM7HsPHM+7Y+umlZMJH3JDju8kH017/dC+w/GDmVF22kCgSTzKA5/09Di42T+aK9tOjzTXi7JWSH+RQd4cqpuIHLPuZFgHtIbAjIfqxPvROwjOd/rb0BnbuCXBrWdkFnpqc4++6FKC/UE1kLiLJYeFeZXaR8DwPcIDRxu0UmTlWxkES0W8ypOfCopPe3vJiXDsQABzy6PRxmfFGm47aAqV0VVbGmSp58F6TXedcmXopZ6hhM2EDpnK0Qq6J2SL1FSPQgGoBtN6A6PqNtbBkAJfHiiw8t/js9nY6MPJvqpoQEg1JDpV/Eiyt5333LHfZ/Rd5ZTOgWMlU2KLw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=jDLhfPT43ZgN9rx8nKqGa792d7wiLy21UXKne90Fw9w=;
+ b=RRd4IEsC1MMXsDlaqRiUzhjxyCyeOqWCvrxzzP1zxrqgYcxSUrUfhq7J7yyQyPoKOSeY5Qe5fhBWnRCfZQt3tUbqhL1nqYh79P8j81k/uQeCv4//U20SWf+fZoAd4LmmAaSjKmBapkjI1hAHYG/9rKlSVXTHq1Kfb7UG152Z1RQZRj3Mm157kz8iDWsGIjQzA40F3nw74mbDs3pdODUI/C1Vr61251GTN6qrCP/WCKKy10USOK3e3l0n6Q7hiW83ntqEGHbukOXuDpmWfJmk0SUqrvZNFHXjE4Ii1kxJnyLLFZe97GHbws9mGTdlQ5XAXiAoINTDMWnwbW8fIYi2HQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
+ by PH7PR11MB7076.namprd11.prod.outlook.com (2603:10b6:510:20f::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9412.12; Fri, 12 Dec
+ 2025 15:26:31 +0000
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b%4]) with mapi id 15.20.9412.005; Fri, 12 Dec 2025
+ 15:26:30 +0000
+Date: Fri, 12 Dec 2025 15:26:25 +0000
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: Ciara Loftus <ciara.loftus@intel.com>
+CC: <dev@dpdk.org>
+Subject: Re: [PATCH v3 05/10] net/idpf: use common Tx path selection
+ infrastructure
+Message-ID: <aTw0IS3eOx8hDTy1@bricha3-mobl1.ger.corp.intel.com>
+References: <20251212103323.1481307-1-ciara.loftus@intel.com>
+ <20251212110628.1634703-1-ciara.loftus@intel.com>
+ <20251212110628.1634703-6-ciara.loftus@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20251212110628.1634703-6-ciara.loftus@intel.com>
+X-ClientProxiedBy: DU7P195CA0022.EURP195.PROD.OUTLOOK.COM
+ (2603:10a6:10:54d::16) To DS0PR11MB7309.namprd11.prod.outlook.com
+ (2603:10b6:8:13e::17)
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|PH7PR11MB7076:EE_
+X-MS-Office365-Filtering-Correlation-Id: ec20d9f0-9876-4672-4aff-08de3992d363
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?ieqAZE+Ro10SM0enfjvvMQvxE/TKx8xdqRW6hODzx8gL5X6cg0pnSYrQux7X?=
+ =?us-ascii?Q?VVcJU+BskBpd2qy81m2CwpVPhguHAdogvvqkcYVQ2XmwF5w5ZjC9Ume+EcUe?=
+ =?us-ascii?Q?El5de15WJBKziCl5P4C+7DjCHsSxxIj7i05u2cbTBzVOMrmmXAZzvYBEM8pR?=
+ =?us-ascii?Q?CjGuIRpM3QqejsrDyfUX8wrymzEq5otUb9ZFCSqw5cZQu0qKgA21CiVUZHQv?=
+ =?us-ascii?Q?pE1GZ0kDOCz6OvPa39kxuz6jDAMB6tR42/k+cXXsbch/S9bbYUQmwLRGYPqd?=
+ =?us-ascii?Q?DEBNBRjpMgMYTgKh9Zyxo1GRCLQagMOoX2px9Nh//3ScRWDqg022ak3YaXnk?=
+ =?us-ascii?Q?uSoJ25E7ltYTHuakAznjmTkaKS3qsbylf6KEjS05ROMlKkP4oHhIkEiuaDaM?=
+ =?us-ascii?Q?4zARWaBLRQf28A5u05RTEMeAIchmhnc0llmx83GNuvTpK2hbivAD1B+t2PWN?=
+ =?us-ascii?Q?OtN2IR7HtbFyfOMYWg1fzL3Kkwo64X7ylmu5QZXdaMY+uoHuRvubJWb5u5q1?=
+ =?us-ascii?Q?1zw1SBPMPAFa7JsjD/NDLjJyI4A7EGzD9w92xiuQLrN1mdPN18yOcF53LljH?=
+ =?us-ascii?Q?8VCztPEYqEat2sepbz/rcSO/gC4tf939XMocTo0D/TS4QN68VprXAnj4Zab8?=
+ =?us-ascii?Q?AWnX+HRh1/9kuhaLfYOAETKMw5TBMTaJYbXYXOp59eLgpWVEdD0neUC50G9k?=
+ =?us-ascii?Q?XD2dz4VM5nR/+0qn7rbME6DfCMGFqO8e38bpp2qQRAMiZbvqVknGU8a9CEKG?=
+ =?us-ascii?Q?gwzK3grQ3u1/7z0hgbo8uRdMHszea+Ge/0VRmTFth0EWr6RnGS2gzNUXJPoE?=
+ =?us-ascii?Q?82F8w2Kk3BuaE4i1Nvb1fOZD2AhbxnDnfjblch+TrTf8VvxIK74M5qlJIRZr?=
+ =?us-ascii?Q?o6rWHJgNJuj6NFR3+BU1iGC5mpCSK/5yu+L1cz8CVpv6LvP1LB6jmVLzHq/Q?=
+ =?us-ascii?Q?m8FidTvXYhZCxbm5a4C25NT4cHWliAMSVDYVoun/aHd4lBUoz3/9ZMPp9p1d?=
+ =?us-ascii?Q?h7bsnX7n2kKEFoSfVjvKgfwSFqw4KOEMv8OeEFZe95Zr3ckGLF6LlIdONQtV?=
+ =?us-ascii?Q?TKJm72wjZ58r7z9TENzeeHqZZ9qkW6/i5cLpfbmIPmvpiQ+WtgghCEcKL9Fo?=
+ =?us-ascii?Q?Vx2awCxbdeQJ92IafrA0AwEVGzd2o1lVvkWVrMnZX/Fa0MvBzgmd+8BCAySl?=
+ =?us-ascii?Q?q679ubELf4F6jqkmnjA2WXpEXwoQLYN972zVT/Gm+xJsXqwy8qtLy05Zc0kR?=
+ =?us-ascii?Q?ifIqkXf17PfLtPEVgJhztbGuike4ts/iFumZVTXFk6TE3wXjmDlzvJg/VOMY?=
+ =?us-ascii?Q?K4E+1UBotXVr0btZGobvLX4vUzChMF43fFPd7DGpdOjR/x+luv/MIpnaI2bs?=
+ =?us-ascii?Q?JWkxpjO2FeziY8ipdNGodjHUaKVZ3wZJl08y2Wj5pOJNFkl1A8PESfFmJK2w?=
+ =?us-ascii?Q?7TT1BxDZSPi0mys/t5goRJphzVrHfxd0?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(366016)(376014)(1800799024); DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?PfILYwfcYpFloaH/wXtkNTPeUF5IOvNWreUr+/J/bM6xdYNITEPF029nLIyx?=
+ =?us-ascii?Q?TdQUvo+P72jgIEeGvlyrecVvhF61bX9/vL2dRY1TcGHVjPTujiuIm5C+ktql?=
+ =?us-ascii?Q?gwlfTCildEWReqf0nl7rw8GWlY7jmsFgBU6n3LChzofljJcMtPSIFIEl/47g?=
+ =?us-ascii?Q?yM6PD20JI59BOJyI3Tv8nZYJD+ig3kBLLqGOoQQ6FthtgINfqSRY5KR6+nUE?=
+ =?us-ascii?Q?vn1fn3kHJW7LBI/X8Tbc+4h2hkKAbVlCThgOGVPcl8lYroNX2mdCxgBR8WPK?=
+ =?us-ascii?Q?t6nIkQ515PCJEjWmGm9MQ7003tv8LQjVVEnEE8V5PWSEXEMcq77nYmkOofSb?=
+ =?us-ascii?Q?5bJHggaVkwxEJGXbI32lj8+/0DYD1QPGq21DcbVWY486bN/Zmj0vfPYOcBAv?=
+ =?us-ascii?Q?v6iMtvcLOdAlNltCdsE+CQkDb0b+xaaE50MKU6i3nywDpoEjRSWadSs7IOCe?=
+ =?us-ascii?Q?oWcPtl5b6iegiOyWHzMj3lu2Qps9q+kNuEYRG16ozEhy9hycdybqyOGk3XAk?=
+ =?us-ascii?Q?vYQYVwtwsqd4XRZXGLpfn5TZtGfvVTLY4hRYc//Yp1ACMcsFDhvleJcz8wIQ?=
+ =?us-ascii?Q?cR8fCyslFP9hgw2sKPFuRGII/bVDbxCivTnR3FNomQq5ibCaizf33ubfMMl+?=
+ =?us-ascii?Q?PJFnDV99bKrPeK6Rb8PHjMoaCVXhterVAWTjZux3mIWOC9o1ele9ltfoN9nR?=
+ =?us-ascii?Q?3BFsTA3quA9Q9ziU4DEHsksf3ftRqQj42hnPqbUq6WLAvhW9Df18tVsyeigT?=
+ =?us-ascii?Q?78AP2xUhVZXXJvjvD5st0KCIu6INE4nXWBa4JVQPbkxKRaBOdMG7Qph2988j?=
+ =?us-ascii?Q?jlSzoWdiIArmax3Zj7K8FcBEWNGY3hUEKcf4hSzmTMRvaK79sfUatXTUoyGg?=
+ =?us-ascii?Q?lnilnamEWxE0cOhdNNjnNSyNmV4+kF5dKQ4aWFRNOzazyua91rHTEs6/p6WM?=
+ =?us-ascii?Q?W+rLUPGOEiyQS8b+YBbfjD3rLUM6lBSidpOEU3ylm5vxAwamzbL1cLtUhF1K?=
+ =?us-ascii?Q?EPrVZBsEiUAlsSFGp9Xokn4f3RktbfpbXQXnP5r66G/CYR8PGC7Rj3EjEASs?=
+ =?us-ascii?Q?mMZMOU5TEI8C/ULrje+Ceh+D58tvdS5e60A4e8+Ps63sXzv2LPEBCoT71UBs?=
+ =?us-ascii?Q?0jK2RgTR9hMshKIIiwPYLRKEAfyrEATV/5Exd09J0FYn3nQheB/pSbtrSBEj?=
+ =?us-ascii?Q?He7HC/CwlNGrX0jDQbMviodZ/k72aJHeNT3RTJ1S4oyvEcSOD/x9DoHNkULy?=
+ =?us-ascii?Q?+HvPZrJHN5Egyeofdz/h5MD3Hn8l9JNtzyu547t1KUdZmZxT+A+lsMCf1bg0?=
+ =?us-ascii?Q?vr3kaYpu0xHDRbNqrvE36xdImrkLD2UYItoOQkZYhHDUSr3mQbf1ydR9wSBW?=
+ =?us-ascii?Q?qqwE/ASAqlDwQZNEEowDsNMlia+n8G6FluRe9lf3SAyKd2sf/NhiDZAUYBcw?=
+ =?us-ascii?Q?UYyQdLLGkJDfuveCwW2lAsdX3kdcKBY3aEf6ZXNJGYFVY+sZg77XElR0cEaO?=
+ =?us-ascii?Q?yBSUmasSasF8eDsRQ8quwiaQTNx2/+soLVV4WhXWlDveEnyuFhI/k8iKoPvt?=
+ =?us-ascii?Q?uzzWFUaGnS/QYtUirUN+Wxivpm/7mx1l+C0dKxnXWs6G5TzMIKpknr6Q1DZA?=
+ =?us-ascii?Q?IA=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: ec20d9f0-9876-4672-4aff-08de3992d363
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Dec 2025 15:26:30.9126 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 97umvMgtkE5OPkPBEgpOvW3egzYTYO6WpD5LlWw72GA2z23U9/ybQzaEYSdJXxw0aPeZoD7ggjhcxcUdG1DpcbIHZxrG1cHNYfZA0FncIUI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB7076
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -55,445 +172,72 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+On Fri, Dec 12, 2025 at 11:06:23AM +0000, Ciara Loftus wrote:
+> Replace the existing complicated logic with the use of the common
+> function. Let the primary process select the Tx path to be used by all
+> processes using the given device.
+> 
+> Introduce a new feature "single queue" to the common infrastructure
+> which represents whether single or split queue mode is used in the given
+> path.
+> 
+> Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
 
+Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 
->=20
-> Allow users to provide custom
-> memory allocation hooks for runtime memory in rte_acl_ctx, via
-> struct rte_acl_mem_hook.
-
-Almost there, just few extra nits spotted.
-Pls see below.
-
-> Key changes:
-> - Added struct rte_acl_mem_hook with zalloc, free, and udata.
-> - Added rte_acl_set_mem_hook / rte_acl_get_mem_hook to set/get callbacks.
-> - Default allocation uses existing rte_zmalloc_socket/rte_free.
-> - Modified ACL code to call callbacks for runtime allocations instead
->   of rte_zmalloc_socket/rte_free directly.
->=20
-> v5:
-> - Remove temporary memory allocation callback for build stage.
-> - Introduce new API (rte_acl_set_mem_hook / rte_acl_get_mem_hook)
->   instead of modifying existing rte_acl_config to preserve
->   ABI compatibility.
->=20
-> v6:
-> - Reworked API to meet consistency and naming conventions.
-> - Adjusted parameter order for better readability and alignment.
-> - Renamed internal variables for clarity and code consistency.
->=20
-> v7:
-> - Switch the UT to use malloc/free.
-> - Update the documentation to clarify that rte_acl_set_mem_hook
->   must be called before rte_acl_build.
->=20
-> v8:
-> - Fix UT code per review.
->=20
-> Signed-off-by: YongFeng Wang <mannywang@tencent.com>
 > ---
->  app/test/test_acl.c                           | 107 ++++++++++++++++++
->  .../prog_guide/packet_classif_access_ctrl.rst |  31 +++++
->  lib/acl/acl.h                                 |   1 +
->  lib/acl/acl_bld.c                             |   2 +-
->  lib/acl/acl_gen.c                             |   4 +-
->  lib/acl/rte_acl.c                             |  45 +++++++-
->  lib/acl/rte_acl.h                             |  53 +++++++++
->  7 files changed, 239 insertions(+), 4 deletions(-)
->=20
-> diff --git a/app/test/test_acl.c b/app/test/test_acl.c
-> index 43d13b5b0f..d92b95246f 100644
-> --- a/app/test/test_acl.c
-> +++ b/app/test/test_acl.c
-> @@ -1721,6 +1721,111 @@ test_u32_range(void)
->  	return rc;
->  }
->=20
-> +static struct rte_acl_ctx *acl_ctx;
+> v2:
+> * removed unnecessary tx_vec_allowed
+> ---
+>  drivers/net/intel/common/tx.h                 |   5 +
+>  drivers/net/intel/idpf/idpf_common_device.h   |  10 ++
+>  drivers/net/intel/idpf/idpf_common_rxtx.c     |  49 ++++++++
+>  drivers/net/intel/idpf/idpf_common_rxtx.h     |  12 ++
+>  drivers/net/intel/idpf/idpf_rxtx.c            | 118 ++++++------------
+>  drivers/net/intel/idpf/idpf_rxtx_vec_common.h |  10 --
+>  6 files changed, 112 insertions(+), 92 deletions(-)
+> 
+> diff --git a/drivers/net/intel/common/tx.h b/drivers/net/intel/common/tx.h
+> index 60b1bd642a..24fcfbe225 100644
+> --- a/drivers/net/intel/common/tx.h
+> +++ b/drivers/net/intel/common/tx.h
+> @@ -124,6 +124,7 @@ struct ci_tx_path_features {
+>  	bool simple_tx;
+>  	bool ctx_desc;
+>  	bool disabled;
+> +	bool single_queue;
+>  };
+>  
+>  struct ci_tx_path_info {
+> @@ -318,6 +319,10 @@ ci_tx_path_select(const struct ci_tx_path_features *req_features,
+>  		if (!path_features->ctx_desc && req_features->ctx_desc)
+>  			continue;
+>  
+> +		/* If requested, ensure the path supports single queue TX. */
+> +		if (path_features->single_queue != req_features->single_queue)
+> +			continue;
 > +
-> +static void *running_alloc(char *name, size_t size,
-> +	size_t align, int32_t socket_id, void *udata)
-> +{
-> +	RTE_SET_USED(name);
-> +	RTE_SET_USED(socket_id);
-> +
-> +	if (udata !=3D acl_ctx) {
-> +		printf("%s#%i udata mismatch!\n",
-> +			__func__, __LINE__);
-> +		return NULL;
-> +	}
-> +	void *addr =3D aligned_alloc(align, size);
-> +	if (addr =3D=3D NULL) {
-> +		printf("%s#%i alloc memory failed!\n",
-> +			__func__, __LINE__);
-> +	}
-> +	return addr;
-> +}
-> +
-> +static void running_free(void *ptr, void *udata)
-> +{
-> +	if (udata !=3D acl_ctx) {
-> +		printf("%s#%i udata mismatch!\n",
-> +			__func__, __LINE__);
-> +		return;
-> +	}
-> +	if (!ptr)
-> +		return;
+>  		/* Ensure the path supports the requested TX offloads. */
+>  		if ((path_features->tx_offloads & req_features->tx_offloads) !=
+>  				req_features->tx_offloads)
+> diff --git a/drivers/net/intel/idpf/idpf_common_device.h b/drivers/net/intel/idpf/idpf_common_device.h
+> index c32dcfbb12..eff04a83eb 100644
+> --- a/drivers/net/intel/idpf/idpf_common_device.h
+> +++ b/drivers/net/intel/idpf/idpf_common_device.h
+> @@ -75,6 +75,15 @@ enum idpf_rx_func_type {
+>  	IDPF_RX_MAX
+>  };
+>  
+> +enum idpf_tx_func_type {
+> +	IDPF_TX_DEFAULT,
+> +	IDPF_TX_SINGLEQ,
+> +	IDPF_TX_SINGLEQ_AVX2,
+> +	IDPF_TX_AVX512,
+> +	IDPF_TX_SINGLEQ_AVX512,
+> +	IDPF_TX_MAX
 
-That's unnecessary, free() works perfect well with NULL pointers.
-=20
-> +	free(ptr);
-> +}
-> +
-> +static int
-> +test_mem_hook(void)
-> +{
-> +	int i, ret;
-> +
-> +	acl_ctx =3D rte_acl_create(&acl_param);
-> +	if (acl_ctx =3D=3D NULL) {
-> +		printf("Line %i: Error creating ACL context!\n", __LINE__);
-> +		return -1;
-> +	}
-> +
-> +	struct rte_acl_mem_hook mhook =3D {
-> +		.zalloc =3D running_alloc,
-> +		.free =3D running_free,
-> +		.udata =3D acl_ctx
-> +	};
-> +
-> +	ret =3D rte_acl_set_mem_hook(acl_ctx, &mhook);
-> +	if (ret !=3D 0) {
-> +		printf("Line %i: Error set mem hook for acl context!\n", __LINE__);
-> +		rte_acl_free(acl_ctx);
-> +		return 1;
-
-Here and below, I suppose you either have to return negative value, or
-change the if condition below:
-+	if (test_mem_hook() < 0)
-=20
-> +	}
-> +
-> +	struct rte_acl_mem_hook new_hook;
-
-My preference would be to have all local vars when possible to be defined
-at the start of the function/compound statement,
-even though it is not mandatory any more.=20
-
-> +	memset(&new_hook, 0, sizeof(struct rte_acl_mem_hook));
-> +	if (rte_acl_get_mem_hook(acl_ctx, &new_hook) !=3D 0
-> +		|| memcmp(&mhook, &new_hook, sizeof(struct
-> rte_acl_mem_hook)) !=3D 0) {
-> +		printf("Line %i: Error get mem hook for acl context!\n", __LINE__);
-> +		rte_acl_free(acl_ctx);
-> +		return 1;
-> +	}
-> +
-> +	ret =3D 0;
-> +	for (i =3D 0; i < TEST_CLASSIFY_ITER; i++) {
-> +
-> +		if ((i & 1) =3D=3D 0)
-> +			rte_acl_reset(acl_ctx);
-> +		else
-> +			rte_acl_reset_rules(acl_ctx);
-> +
-> +		ret =3D test_classify_buid(acl_ctx, acl_test_rules,
-> +			RTE_DIM(acl_test_rules));
-> +		if (ret !=3D 0) {
-> +			printf("Line %i, iter: %d: Adding rules to ACL context
-> failed!\n",
-> +				__LINE__, i);
-> +			break;
-> +		}
-> +
-> +		ret =3D test_classify_run(acl_ctx, acl_test_data,
-> +			RTE_DIM(acl_test_data));
-> +		if (ret !=3D 0) {
-> +			printf("Line %i, iter: %d: %s failed!\n",
-> +				__LINE__, i, __func__);
-> +			break;
-> +		}
-> +
-> +		/* reset rules and make sure that classify still works ok. */
-> +		rte_acl_reset_rules(acl_ctx);
-> +		ret =3D test_classify_run(acl_ctx, acl_test_data,
-> +			RTE_DIM(acl_test_data));
-> +		if (ret !=3D 0) {
-> +			printf("Line %i, iter: %d: %s failed!\n",
-> +				__LINE__, i, __func__);
-> +			break;
-> +		}
-> +	}
-> +
-> +	rte_acl_free(acl_ctx);
-
-It would be safer to reset acl_ct to NULL
-
-> +	return ret;
-> +}
-> +
->  static int
->  test_acl(void)
->  {
-> @@ -1742,6 +1847,8 @@ test_acl(void)
->  		return -1;
->  	if (test_u32_range() < 0)
->  		return -1;
-> +	if (test_mem_hook() < 0)
-> +		return -1;
->=20
->  	return 0;
->  }
-> diff --git a/doc/guides/prog_guide/packet_classif_access_ctrl.rst
-> b/doc/guides/prog_guide/packet_classif_access_ctrl.rst
-> index 172f443f6e..55b2018db9 100644
-> --- a/doc/guides/prog_guide/packet_classif_access_ctrl.rst
-> +++ b/doc/guides/prog_guide/packet_classif_access_ctrl.rst
-> @@ -359,7 +359,38 @@ For example:
->          ret =3D rte_acl_build(acx, &cfg);
->       }
->=20
-> +Custom Memory Hooks
-> +~~~~~~~~~~~~~~~~~~~~
-> +
-> +The ACL library supports custom memory allocation for runtime structures=
-.
-> +Applications can supply their own memory hooks through:
-> +
-> +.. code-block:: c
-> +
-> +    int rte_acl_set_mem_hook(struct rte_acl_ctx *ctx,
-> +                           const struct rte_acl_mem_hook *mhook);
-> +
-> +    int rte_acl_get_mem_hook(const struct rte_acl_ctx *ctx,
-> +                           struct rte_acl_mem_hook *mhook);
-> +
-> +The ``rte_acl_mem_hook`` structure defines memory hooks:
-> +
-> +.. code-block:: c
-> +
-> +    struct rte_acl_mem_hook {
-> +        /** Allocate zero-initialized memory used during runtime. */
-> +        void *(*zalloc)(char *name, size_t size, size_t align, int32_t s=
-ocket_id, void
-> *udata);
-> +
-> +        /** Free memory previously allocated by zalloc(). */
-> +        void (*free)(void *ptr, void *udata);
-> +
-> +        /** User-provided context passed to allocation/free hooks. */
-> +        void *udata;
-> +    };
-> +
-> +Applications may use these hooks to allocate memory from custom pools or=
- pre-
-> allocated buffers.
->=20
-> +If no memory hook is provided, the ACL library uses rte_zmalloc_socket()=
- internally.
->=20
->  Classification methods
->  ~~~~~~~~~~~~~~~~~~~~~~
-> diff --git a/lib/acl/acl.h b/lib/acl/acl.h
-> index c8e4e72fab..9c85a3d58a 100644
-> --- a/lib/acl/acl.h
-> +++ b/lib/acl/acl.h
-> @@ -174,6 +174,7 @@ struct rte_acl_ctx {
->  	uint32_t            max_rules;
->  	uint32_t            rule_sz;
->  	uint32_t            num_rules;
-> +	struct rte_acl_mem_hook mem_hook;
->  	uint32_t            num_categories;
->  	uint32_t            num_tries;
->  	uint32_t            match_index;
-> diff --git a/lib/acl/acl_bld.c b/lib/acl/acl_bld.c
-> index 7056b1c117..99d1dbc467 100644
-> --- a/lib/acl/acl_bld.c
-> +++ b/lib/acl/acl_bld.c
-> @@ -779,7 +779,7 @@ acl_merge_trie(struct acl_build_context *context,
->  static void
->  acl_build_reset(struct rte_acl_ctx *ctx)
->  {
-> -	rte_free(ctx->mem);
-> +	ctx->mem_hook.free(ctx->mem, ctx->mem_hook.udata);
->  	memset(&ctx->num_categories, 0,
->  		sizeof(*ctx) - offsetof(struct rte_acl_ctx, num_categories));
->  }
-> diff --git a/lib/acl/acl_gen.c b/lib/acl/acl_gen.c
-> index 3c53d24056..77f19dd13a 100644
-> --- a/lib/acl/acl_gen.c
-> +++ b/lib/acl/acl_gen.c
-> @@ -478,8 +478,8 @@ rte_acl_gen(struct rte_acl_ctx *ctx, struct rte_acl_t=
-rie *trie,
->  		return -ERANGE;
->  	}
->=20
-> -	mem =3D rte_zmalloc_socket(ctx->name, total_size, RTE_CACHE_LINE_SIZE,
-> -			ctx->socket_id);
-> +	mem =3D ctx->mem_hook.zalloc(ctx->name, total_size,
-> +			RTE_CACHE_LINE_SIZE, ctx->socket_id, ctx-
-> >mem_hook.udata);
->  	if (mem =3D=3D NULL) {
->  		ACL_LOG(ERR,
->  			"allocation of %zu bytes on socket %d for %s failed",
-> diff --git a/lib/acl/rte_acl.c b/lib/acl/rte_acl.c
-> index 8c0ca29618..3f2b194206 100644
-> --- a/lib/acl/rte_acl.c
-> +++ b/lib/acl/rte_acl.c
-> @@ -264,6 +264,20 @@ acl_get_best_alg(void)
->  	return alg[i];
->  }
->=20
-> +static void *
-> +acl_mem_default_zalloc(char *name, size_t size, size_t align, int32_t so=
-cket_id,
-> void *udata)
-> +{
-> +	RTE_SET_USED(udata);
-> +	return rte_zmalloc_socket(name, size, align, socket_id);
-> +}
-> +
-> +static void
-> +acl_mem_default_free(void *ptr, void *udata)
-> +{
-> +	RTE_SET_USED(udata);
-> +	rte_free(ptr);
-> +}
-> +
->  RTE_EXPORT_SYMBOL(rte_acl_set_ctx_classify)
->  extern int
->  rte_acl_set_ctx_classify(struct rte_acl_ctx *ctx, enum rte_acl_classify_=
-alg alg)
-> @@ -362,7 +376,7 @@ rte_acl_free(struct rte_acl_ctx *ctx)
->=20
->  	rte_mcfg_tailq_write_unlock();
->=20
-> -	rte_free(ctx->mem);
-> +	ctx->mem_hook.free(ctx->mem, ctx->mem_hook.udata);
->  	rte_free(ctx);
->  	rte_free(te);
->  }
-> @@ -425,6 +439,9 @@ rte_acl_create(const struct rte_acl_param *param)
->  		ctx->rule_sz =3D param->rule_size;
->  		ctx->socket_id =3D param->socket_id;
->  		ctx->alg =3D acl_get_best_alg();
-> +		ctx->mem_hook.zalloc =3D acl_mem_default_zalloc;
-> +		ctx->mem_hook.free =3D acl_mem_default_free;
-> +		ctx->mem_hook.udata =3D NULL;
->  		strlcpy(ctx->name, param->name, sizeof(ctx->name));
->=20
->  		te->data =3D (void *) ctx;
-> @@ -555,3 +572,29 @@ rte_acl_list_dump(void)
->  	}
->  	rte_mcfg_tailq_read_unlock();
->  }
-> +
-> +/*
-> + * Set memory allocation hooks for a given ACL context.
-> + */
-> +RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_acl_set_mem_hook, 26.03)
-> +int
-> +rte_acl_set_mem_hook(struct rte_acl_ctx *acl, const struct rte_acl_mem_h=
-ook
-> *mhook)
-> +{
-> +	if (acl =3D=3D NULL || mhook =3D=3D NULL || mhook->zalloc  =3D=3D NULL =
-|| mhook-
-> >free =3D=3D NULL)
-> +		return -EINVAL;
-> +	memcpy(&acl->mem_hook, mhook, sizeof(struct rte_acl_mem_hook));
-> +	return 0;
-> +}
-> +
-> +/*
-> + * Retrieve the memory allocation hooks assigned to the ACL context.
-> + */
-> +RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_acl_get_mem_hook, 26.03)
-> +int
-> +rte_acl_get_mem_hook(const struct rte_acl_ctx *acl, struct rte_acl_mem_h=
-ook
-> *mhook)
-> +{
-> +	if (acl  =3D=3D NULL || mhook =3D=3D NULL)
-> +		return -EINVAL;
-> +	memcpy(mhook, &acl->mem_hook, sizeof(struct rte_acl_mem_hook));
-> +	return 0;
-> +}
-> diff --git a/lib/acl/rte_acl.h b/lib/acl/rte_acl.h
-> index 95354cabb8..18ac30889b 100644
-> --- a/lib/acl/rte_acl.h
-> +++ b/lib/acl/rte_acl.h
-> @@ -136,6 +136,59 @@ struct rte_acl_param {
->  /** @internal opaque ACL handle */
->  struct rte_acl_ctx;
->=20
-> +/**
-> + * Memory allocation hooks for ACL runtime.
-> + */
-> +struct rte_acl_mem_hook {
-> +	/** Allocate zero-initialized memory used during runtime. */
-> +	void *(*zalloc)(char *name, size_t size, size_t align, int32_t socket_i=
-d, void
-> *udata);
-> +
-> +	/** Free memory previously allocated by zalloc(). */
-> +	void (*free)(void *ptr, void *udata);
-> +
-> +	/** User-provided context passed to allocation/free hooks. */
-> +	void *udata;
-> +};
-> +
-> +/**
-> + * Set memory allocation hooks for a given ACL context.
-> + *
-> + * Applications may use these hooks to allocate memory from custom pools=
- or
-> + * pre-allocated buffers. If no memory hook is provided, the ACL library=
- uses
-> + * rte_zmalloc_socket() internally.
-> + *
-> + * This function must be called **before** rte_acl_build().
-> + * If the hook needs to be changed after a build, the ACL context must b=
-e reset
-> + * first by invoking rte_acl_reset(), and only then can the memory hook =
-be
-> + * updated followed by another call to rte_acl_build().
-> + *
-> + * @param acl
-> + *   The ACL context.
-> + * @param mhook
-> + *   Pointer to the memory hook structure
-> + *
-> + * @return
-> + *   0 on success.
-> + *   -EINVAL if parameters are invalid.
-> + */
-> +__rte_experimental
-> +int rte_acl_set_mem_hook(struct rte_acl_ctx *acl, const struct rte_acl_m=
-em_hook
-> *mhook);
-> +
-> +/**
-> + * Retrieve the memory allocation hooks assigned to the ACL context.
-> + *
-> + * @param acl
-> + *   The ACL context.
-> + * @param mhook
-> + *   Output location for the current memory hook structure
-> + *
-> + * @return
-> + *   0 on success.
-> + *   -EINVAL if parameters are invalid.
-> + */
-> +__rte_experimental
-> +int rte_acl_get_mem_hook(const struct rte_acl_ctx *acl, struct rte_acl_m=
-em_hook
-> *mhook);
-> +
->  /**
->   * De-allocate all memory used by ACL context.
->   *
-> --
-> 2.43.0
-
+Following up offline with Ciara about the need for this MAX value - it's
+necessary due to the fact that the function type array needs to be shared
+with the cpfl driver, but array definition itself is in an idpf C file, so
+cpfl cannot use RTE_DIM to find the size.
+Will add a comment to explain this a little, on apply.
