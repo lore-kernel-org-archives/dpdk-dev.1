@@ -2,59 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1ABCD5B172
-	for <dpdk-dev@archiver.kernel.org>; Mon, 15 Dec 2025 14:38:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F21BD5B175
+	for <dpdk-dev@archiver.kernel.org>; Mon, 15 Dec 2025 14:41:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DE2F84026F;
-	Mon, 15 Dec 2025 15:38:32 +0100 (CET)
-Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
- by mails.dpdk.org (Postfix) with ESMTP id 8CBD740151
- for <dev@dpdk.org>; Mon, 15 Dec 2025 15:38:28 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tencent.com;
- s=s201512; t=1765809505;
- bh=2XbDaO6m3h9fQBwpfEL5vnNioPY4lYHMtTAvuq8bIWY=;
- h=From:To:Subject:Date:Message-ID:MIME-Version;
- b=ikZAhp59b+1jtMfFd9iGZUQ9w40x5vCTMX4rnppxKaL6bLgvhsD4jkpGvWasXq0Ee
- gUeFawsWR3bZXrepBA0xkWwk/aRLWQtv6V8csAzEMX85xzqXRifFvHofdCoUuqV5Wt
- YARnYCD2+IWJgTbwn2es9jccdtofYPnKOC5M1Ci0=
-X-QQ-mid: esmtpgz12t1765809503t699e529d
-X-QQ-Originating-IP: N+cZlMqAP+JCFH4n8ZcfsEPjjXNkalI4f2OvjglAE7E=
-Received: from wyfs.. ( [11.176.19.22]) by bizesmtp.qq.com (ESMTP) with 
- id ; Mon, 15 Dec 2025 22:38:05 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 11686777791676242979
-From: "=?gb18030?B?bWFubnl3YW5nKM3108C35Sk=?=" <mannywang@tencent.com>
-To: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-Cc: dev@dpdk.org,
-	YongFeng Wang <mannywang@tencent.com>
-Subject: [PATCH v11] acl: support custom memory allocators
-Date: Mon, 15 Dec 2025 14:38:01 +0000
-Message-ID: <F60FE144EB2491DE+20251215143802.4274-1-mannywang@tencent.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <052877E03EF66856+20251213012735.34054-1-mannywang@tencent.com>
-References: <052877E03EF66856+20251213012735.34054-1-mannywang@tencent.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 56B854026F;
+	Mon, 15 Dec 2025 15:41:13 +0100 (CET)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
+ [185.176.79.56])
+ by mails.dpdk.org (Postfix) with ESMTP id C10C940151;
+ Mon, 15 Dec 2025 15:41:12 +0100 (CET)
+Received: from mail.maildlp.com (unknown [172.18.224.107])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4dVN5n0dCmzJ46c7;
+ Mon, 15 Dec 2025 22:40:45 +0800 (CST)
+Received: from dubpeml500001.china.huawei.com (unknown [7.214.147.241])
+ by mail.maildlp.com (Postfix) with ESMTPS id 508A740571;
+ Mon, 15 Dec 2025 22:41:11 +0800 (CST)
+Received: from dubpeml500001.china.huawei.com (7.214.147.241) by
+ dubpeml500001.china.huawei.com (7.214.147.241) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 15 Dec 2025 14:41:10 +0000
+Received: from dubpeml500001.china.huawei.com ([7.214.147.241]) by
+ dubpeml500001.china.huawei.com ([7.214.147.241]) with mapi id 15.02.1544.011; 
+ Mon, 15 Dec 2025 14:41:10 +0000
+From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+To: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>,
+ "dev@dpdk.org" <dev@dpdk.org>, "techboard@dpdk.org" <techboard@dpdk.org>
+Subject: RE: mbuf fast-free requirements analysis
+Thread-Topic: mbuf fast-free requirements analysis
+Thread-Index: AdxtsuI54Ph/Or7ES4uJIkNuHGVH/AAHMGow
+Date: Mon, 15 Dec 2025 14:41:10 +0000
+Message-ID: <0d1645e1c83f4ec4ad676095b910845c@huawei.com>
+References: <98CBD80474FA8B44BF855DF32C47DC35F655E0@smartserver.smartshare.dk>
+In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F655E0@smartserver.smartshare.dk>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.206.138.220]
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpgz:tencent.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: NG8VJ60AcVdMXJzFG2gqT1YGtDOmJjA/BOBHBEQ8FHbAhCLBdnHQtfPN
- TGqsH+k6tQeSL1D2LrkqJlmzFGb0cYw91wpF3i3iSGNdrbNUk2EmxFeUHV3opFuVw15HA/g
- jx7+7UHVD0qsBBov7bd22Gt22V+Rcw0A06vhPmrcKww09G5Dfj8KVFRBO6bJxgFXlDs6rfp
- ajU8oYHLYxHHpXHq0hljxsDmE9KLtYHvUiBv6okrNTqi/z+OHa31QN+9YQSUDlx6/LjEFN3
- WaYyiakVMQQaVaCG3gfdxmSqhCboaqOpIGPIfYp6LyLZ07/8GzNx5QMHfbZW28Y3yDyIZFb
- Y7p1NceUDlpvw9vorqL/k58+C7grOSebre5DwL6tpLaFqAZVVzEnBRl990t2yAqXXu2fzWt
- LY+Z+pGZMiHEiyGbWVo1yv3n9Njkp1Hk9JhLs1vTDOxuqt3JCIic4zuQk3KgeKzE7ozK3n1
- +p3qJKtkO9XhM2xk1OIY9DLOXtckDk1ztfQbqc6t41ozy4fbvrsDVjYHaP4rJzaIZuMLGEw
- hTKuHQQJeGeXS62M2yXEsc9NvtfMxpJZ9+rpQt321MBIdbUH1auGlaM894kGd9TV6YdBxBT
- ljgwmXmqjtI+PUOViMcoc+/2WD+02xYRRAgdOyyL01IBftgjMTclJlGE+wKbhDBAxzClPvO
- y6r34kQAoIucHbcdMViT7Vu1XhS8FJ5ka4qSYp/AplQ/J6wcuKLNylSatiCa9BRTqO8RpWF
- Qm37s/1jVkefGhSQnKYTEHfawBNcp9+ATMDyVm82GCHMOz5B6ZgzYQcYp897QgBpTvRLDkW
- 8fJPVZz71JiVuec3xL9mhG1PWj1O/1ZnwDkDgXSkqkLyibbNObUlnjoazAn2qW72gJ7h4nt
- vpDHEJvHgALQNnvmJb0jQIzre6ekWN6HvQcWlLXe1hF1gAh65/+nCd7kBZ23EXkLvb+2/WB
- ZZBxxYZdjhvRPo9nGhM9gxRayXOPfU/b4OD302M5eaRtag6z89BxnhUX8pgWG0biYERM=
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
-X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -68,402 +55,278 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Allow users to provide custom
-memory allocation hooks for runtime memory in rte_acl_ctx, via
-struct rte_acl_mem_hook.
 
-Key changes:
-- Added struct rte_acl_mem_hook with zalloc, free, and udata.
-- Added rte_acl_set_mem_hook / rte_acl_get_mem_hook to set/get callbacks.
-- Default allocation uses existing rte_zmalloc_socket/rte_free.
-- Modified ACL code to call callbacks for runtime allocations instead
-  of rte_zmalloc_socket/rte_free directly.
 
-v5:
-- Remove temporary memory allocation callback for build stage.
-- Introduce new API (rte_acl_set_mem_hook / rte_acl_get_mem_hook)
-  instead of modifying existing rte_acl_config to preserve
-  ABI compatibility.
+>=20
+> Executive Summary:
+>=20
+> My analysis shows that the mbuf library is not a barrier for fast-freeing
+> segmented packet mbufs, and thus fast-free of jumbo frames is possible.
+>=20
+>=20
+> Detailed Analysis:
+>=20
+> The purpose of the mbuf fast-free Tx optimization is to reduce
+> rte_pktmbuf_free_seg() to something much simpler in the ethdev drivers, b=
+y
+> eliminating the code path related to indirect mbufs.
+> Optimally, we want to simplify the ethdev driver's function that frees th=
+e
+> transmitted mbufs, so it can free them directly to their mempool without
+> accessing the mbufs themselves.
+>=20
+> If the driver cannot access the mbuf itself, it cannot determine which
+> mempool it belongs to.
+> We don't want the driver to access every mbuf being freed; but if all
+> mbufs of a Tx queue belong to the same mempool, the driver can determine
+> which mempool by looking into just one of the mbufs.
+>=20
+> REQUIREMENT 1: The mbufs of a Tx queue must come from the same mempool.
+>=20
+>=20
+> When an mbuf is freed to its mempool, some of the fields in the mbuf must
+> be initialized.
+> So, for fast-free, this must be done by the driver's function that
+> prepares the Tx descriptor.
+> This is a requirement to the driver, not a requirement to the application=
+.
+>=20
+> Now, let's dig into the code for freeing an mbuf.
+> Note: For readability purposes, I'll cut out some code and comments
+> unrelated to this topic.
+>=20
+> static __rte_always_inline void
+> rte_pktmbuf_free_seg(struct rte_mbuf *m)
+> {
+> 	m =3D rte_pktmbuf_prefree_seg(m);
+> 	if (likely(m !=3D NULL))
+> 		rte_mbuf_raw_free(m);
+> }
+>=20
+>=20
+> rte_mbuf_raw_free(m) is simple, so nothing to gain there:
+>=20
+> /**
+>  * Put mbuf back into its original mempool.
+>  *
+>  * The caller must ensure that the mbuf is direct and properly
+>  * reinitialized (refcnt=3D1, next=3DNULL, nb_segs=3D1), as done by
+>  * rte_pktmbuf_prefree_seg().
+>  */
+> static __rte_always_inline void
+> rte_mbuf_raw_free(struct rte_mbuf *m)
+> {
+> 	rte_mbuf_history_mark(m, RTE_MBUF_HISTORY_OP_LIB_FREE);
+> 	rte_mempool_put(m->pool, m);
+> }
+>=20
+> Note that the description says that the mbuf must be direct.
+> This is not entirely accurate; the mbuf is allowed to use a pinned
+> external buffer, if the mbuf holds the only reference to it.
+> (Most of the mbuf library functions have this documentation inaccuracy,
+> which should be fixed some day.)
+>=20
+> So, the fast-free optimization really comes down to
+> rte_pktmbuf_prefree_seg(m), which must not return NULL.
+>=20
+> Let's dig into that.
+>=20
+> /**
+>  * Decrease reference counter and unlink a mbuf segment
+>  *
+>  * This function does the same than a free, except that it does not
+>  * return the segment to its pool.
+>  * It decreases the reference counter, and if it reaches 0, it is
+>  * detached from its parent for an indirect mbuf.
+>  *
+>  * @return
+>  *   - (m) if it is the last reference. It can be recycled or freed.
+>  *   - (NULL) if the mbuf still has remaining references on it.
+>  */
+> static __rte_always_inline struct rte_mbuf *
+> rte_pktmbuf_prefree_seg(struct rte_mbuf *m)
+> {
+> 	bool refcnt_not_one;
+>=20
+> 	refcnt_not_one =3D unlikely(rte_mbuf_refcnt_read(m) !=3D 1);
+> 	if (refcnt_not_one && __rte_mbuf_refcnt_update(m, -1) !=3D 0)
+> 		return NULL;
+>=20
+> 	if (unlikely(!RTE_MBUF_DIRECT(m))) {
+> 		rte_pktmbuf_detach(m);
+> 		if (RTE_MBUF_HAS_EXTBUF(m) &&
+> 				RTE_MBUF_HAS_PINNED_EXTBUF(m) &&
+> 				__rte_pktmbuf_pinned_extbuf_decref(m))
+> 			return NULL;
+> 	}
+>=20
+> 	if (refcnt_not_one)
+> 		rte_mbuf_refcnt_set(m, 1);
+> 	if (m->nb_segs !=3D 1)
+> 		m->nb_segs =3D 1;
+> 	if (m->next !=3D NULL)
+> 		m->next =3D NULL;
+>=20
+> 	return m;
+> }
+>=20
+> This function can only succeed (i.e. return non-NULL) when 'refcnt' is 1
+> (or reaches 0).
+>=20
+> REQUIREMENT 2: The driver must hold the only reference to the mbuf,
+> i.e. 'm->refcnt' must be 1.
+>=20
+>=20
+> When the function succeeds, it initializes the mbuf fields as required by
+> rte_mbuf_raw_free() before returning.
+>=20
+> Now, since the driver has exclusive access to the mbuf, it is free to
+> initialize the 'm->next' and 'm->nb_segs' at any time.
+> It could do that when preparing the Tx descriptor.
+>=20
+> This is very interesting, because it means that fast-free does not
+> prohibit segmented packets!
+> (But the driver must have sufficient Tx descriptors for all segments in
+> the mbuf.)
+>=20
+>=20
+> Now, lets dig into rte_pktmbuf_prefree_seg()'s block handling non-direct
+> mbufs, i.e. cloned mbufs and mbufs with external buffer:
+>=20
+> 	if (unlikely(!RTE_MBUF_DIRECT(m))) {
+> 		rte_pktmbuf_detach(m);
+> 		if (RTE_MBUF_HAS_EXTBUF(m) &&
+> 				RTE_MBUF_HAS_PINNED_EXTBUF(m) &&
+> 				__rte_pktmbuf_pinned_extbuf_decref(m))
+> 			return NULL;
+> 	}
+>=20
+> Starting with rte_pktmbuf_detach():
+>=20
+> static inline void rte_pktmbuf_detach(struct rte_mbuf *m)
+> {
+> 	struct rte_mempool *mp =3D m->pool;
+> 	uint32_t mbuf_size, buf_len;
+> 	uint16_t priv_size;
+>=20
+> 	if (RTE_MBUF_HAS_EXTBUF(m)) {
+> 		/*
+> 		 * The mbuf has the external attached buffer,
+> 		 * we should check the type of the memory pool where
+> 		 * the mbuf was allocated from to detect the pinned
+> 		 * external buffer.
+> 		 */
+> 		uint32_t flags =3D rte_pktmbuf_priv_flags(mp);
+>=20
+> 		if (flags & RTE_PKTMBUF_POOL_F_PINNED_EXT_BUF) {
+> 			/*
+> 			 * The pinned external buffer should not be
+> 			 * detached from its backing mbuf, just exit.
+> 			 */
+> 			return;
+> 		}
+> 		__rte_pktmbuf_free_extbuf(m);
+> 	} else {
+> 		__rte_pktmbuf_free_direct(m);
+> 	}
+> 	priv_size =3D rte_pktmbuf_priv_size(mp);
+> 	mbuf_size =3D (uint32_t)(sizeof(struct rte_mbuf) + priv_size);
+> 	buf_len =3D rte_pktmbuf_data_room_size(mp);
+>=20
+> 	m->priv_size =3D priv_size;
+> 	m->buf_addr =3D (char *)m + mbuf_size;
+> 	rte_mbuf_iova_set(m, rte_mempool_virt2iova(m) + mbuf_size);
+> 	m->buf_len =3D (uint16_t)buf_len;
+> 	rte_pktmbuf_reset_headroom(m);
+> 	m->data_len =3D 0;
+> 	m->ol_flags =3D 0;
+> }
+>=20
+> The only quick and simple code path through this function is when the mbu=
+f
+> uses a pinned external buffer:
+> 	if (RTE_MBUF_HAS_EXTBUF(m)) {
+> 		uint32_t flags =3D rte_pktmbuf_priv_flags(mp);
+> 		if (flags & RTE_PKTMBUF_POOL_F_PINNED_EXT_BUF)
+> 			return;
+>=20
+> REQUIREMENT 3: The mbuf must not be cloned or use a non-pinned external
+> buffer.
+>=20
+>=20
+> Continuing with the next part of rte_pktmbuf_prefree_seg()'s block:
+>  		if (RTE_MBUF_HAS_EXTBUF(m) &&
+> 				RTE_MBUF_HAS_PINNED_EXTBUF(m) &&
+> 				__rte_pktmbuf_pinned_extbuf_decref(m))
+> 			return NULL;
+>=20
+> Continuing with the next part of the block in rte_pktmbuf_prefree_seg():
+>=20
+> /**
+>  * @internal Handle the packet mbufs with attached pinned external buffer
+>  * on the mbuf freeing:
+>  *
+>  *  - return zero if reference counter in shinfo is one. It means there i=
+s
+>  *  no more reference to this pinned buffer and mbuf can be returned to
+>  *  the pool
+>  *
+>  *  - otherwise (if reference counter is not one), decrement reference
+>  *  counter and return non-zero value to prevent freeing the backing mbuf=
+.
+>  *
+>  * Returns non zero if mbuf should not be freed.
+>  */
+> static inline int __rte_pktmbuf_pinned_extbuf_decref(struct rte_mbuf *m)
+> {
+> 	struct rte_mbuf_ext_shared_info *shinfo;
+>=20
+> 	/* Clear flags, mbuf is being freed. */
+> 	m->ol_flags =3D RTE_MBUF_F_EXTERNAL;
+> 	shinfo =3D m->shinfo;
+>=20
+> 	/* Optimize for performance - do not dec/reinit */
+> 	if (likely(rte_mbuf_ext_refcnt_read(shinfo) =3D=3D 1))
+> 		return 0;
+>=20
+> 	/*
+> 	 * Direct usage of add primitive to avoid
+> 	 * duplication of comparing with one.
+> 	 */
+> 	if (likely(rte_atomic_fetch_add_explicit(&shinfo->refcnt, -1,
+> 				     rte_memory_order_acq_rel) - 1))
+> 		return 1;
+>=20
+> 	/* Reinitialize counter before mbuf freeing. */
+> 	rte_mbuf_ext_refcnt_set(shinfo, 1);
+> 	return 0;
+> }
+>=20
+> Essentially, if the mbuf does use a pinned external buffer,
+> rte_pktmbuf_prefree_seg() only succeeds if that pinned external buffer is
+> only referred to by the mbuf.
+>=20
+> REQUIREMENT 4: If the mbuf uses a pinned external buffer, the mbuf must
+> hold the only reference to that pinned external buffer, i.e. in that case=
+,
+> 'm->shinfo->refcnt' must be 1.
+>=20
+>=20
+> Please review.
+>=20
+> If I'm not mistaken, the mbuf library is not a barrier for fast-freeing
+> segmented packet mbufs, and thus fast-free of jumbo frames is possible.
+>=20
+> We need a driver developer to confirm that my suggested approach -
+> resetting the mbuf fields, incl. 'm->nb_segs' and 'm->next', when
+> preparing the Tx descriptor - is viable.
 
-v6:
-- Reworked API to meet consistency and naming conventions.
-- Adjusted parameter order for better readability and alignment.
-- Renamed internal variables for clarity and code consistency.
+Great analysis, makes a lot of sense to me.
+Shall we add then a special API to make PMD maintainers life a bit easier:
+Something like rte_mbuf_fast_free_prep(mp, mb), that will optionally check
+that requirements outlined  above are satisfied for given mbuf and
+also reset mbuf fields to expected values?
+Konstantin
 
-v7:
-- Switch the UT to use malloc/free.
-- Update the documentation to clarify that rte_acl_set_mem_hook
-  must be called before rte_acl_build.
 
-v8:
-- Fix UT code per review.
-
-v9:
-- Fix UT code per review.
-
-v10:
-- Fix memory allocation alignment issue in UT code
-
-v11:
-- Use RTE_ALIGN_CEIL() instead of open-coded alignment
-
-Signed-off-by: YongFeng Wang <mannywang@tencent.com>
-Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
----
- app/test/test_acl.c                           | 106 ++++++++++++++++++
- .../prog_guide/packet_classif_access_ctrl.rst |  31 +++++
- lib/acl/acl.h                                 |   1 +
- lib/acl/acl_bld.c                             |   2 +-
- lib/acl/acl_gen.c                             |   4 +-
- lib/acl/rte_acl.c                             |  45 +++++++-
- lib/acl/rte_acl.h                             |  53 +++++++++
- 7 files changed, 238 insertions(+), 4 deletions(-)
-
-diff --git a/app/test/test_acl.c b/app/test/test_acl.c
-index 43d13b5b0f..d1537a0e97 100644
---- a/app/test/test_acl.c
-+++ b/app/test/test_acl.c
-@@ -1721,6 +1721,110 @@ test_u32_range(void)
- 	return rc;
- }
- 
-+static struct rte_acl_ctx *acl_ctx;
-+
-+static void *running_alloc(char *name, size_t size,
-+	size_t align, int32_t socket_id, void *udata)
-+{
-+	size_t aligned_size = RTE_ALIGN_CEIL(size, align);
-+	RTE_SET_USED(name);
-+	RTE_SET_USED(socket_id);
-+
-+	if (udata != acl_ctx) {
-+		printf("%s#%i udata mismatch!\n",
-+			__func__, __LINE__);
-+		return NULL;
-+	}
-+	void *addr = aligned_alloc(align, aligned_size);
-+	if (addr == NULL) {
-+		printf("%s#%i alloc memory failed!\n",
-+			__func__, __LINE__);
-+	}
-+	return addr;
-+}
-+
-+static void running_free(void *ptr, void *udata)
-+{
-+	if (udata != acl_ctx) {
-+		printf("%s#%i udata mismatch!\n",
-+			__func__, __LINE__);
-+		return;
-+	}
-+	free(ptr);
-+}
-+
-+static int
-+test_mem_hook(void)
-+{
-+	int i, ret;
-+	struct rte_acl_mem_hook new_hook;
-+
-+	acl_ctx = rte_acl_create(&acl_param);
-+	if (acl_ctx == NULL) {
-+		printf("Line %i: Error creating ACL context!\n", __LINE__);
-+		return -1;
-+	}
-+
-+	struct rte_acl_mem_hook mhook = {
-+		.zalloc = running_alloc,
-+		.free = running_free,
-+		.udata = acl_ctx
-+	};
-+
-+	ret = rte_acl_set_mem_hook(acl_ctx, &mhook);
-+	if (ret != 0) {
-+		printf("Line %i: Error set mem hook for acl context!\n", __LINE__);
-+		rte_acl_free(acl_ctx);
-+		return -1;
-+	}
-+
-+	memset(&new_hook, 0, sizeof(struct rte_acl_mem_hook));
-+	if (rte_acl_get_mem_hook(acl_ctx, &new_hook) != 0
-+		|| memcmp(&mhook, &new_hook, sizeof(struct rte_acl_mem_hook)) != 0) {
-+		printf("Line %i: Error get mem hook for acl context!\n", __LINE__);
-+		rte_acl_free(acl_ctx);
-+		return -1;
-+	}
-+
-+	ret = 0;
-+	for (i = 0; i < TEST_CLASSIFY_ITER; i++) {
-+		if ((i & 1) == 0)
-+			rte_acl_reset(acl_ctx);
-+		else
-+			rte_acl_reset_rules(acl_ctx);
-+
-+		ret = test_classify_buid(acl_ctx, acl_test_rules,
-+			RTE_DIM(acl_test_rules));
-+		if (ret != 0) {
-+			printf("Line %i, iter: %d: Adding rules to ACL context failed!\n",
-+				__LINE__, i);
-+			break;
-+		}
-+
-+		ret = test_classify_run(acl_ctx, acl_test_data,
-+			RTE_DIM(acl_test_data));
-+		if (ret != 0) {
-+			printf("Line %i, iter: %d: %s failed!\n",
-+				__LINE__, i, __func__);
-+			break;
-+		}
-+
-+		/* reset rules and make sure that classify still works ok. */
-+		rte_acl_reset_rules(acl_ctx);
-+		ret = test_classify_run(acl_ctx, acl_test_data,
-+			RTE_DIM(acl_test_data));
-+		if (ret != 0) {
-+			printf("Line %i, iter: %d: %s failed!\n",
-+				__LINE__, i, __func__);
-+			break;
-+		}
-+	}
-+
-+	rte_acl_free(acl_ctx);
-+	acl_ctx = NULL;
-+	return ret;
-+}
-+
- static int
- test_acl(void)
- {
-@@ -1742,6 +1846,8 @@ test_acl(void)
- 		return -1;
- 	if (test_u32_range() < 0)
- 		return -1;
-+	if (test_mem_hook() < 0)
-+		return -1;
- 
- 	return 0;
- }
-diff --git a/doc/guides/prog_guide/packet_classif_access_ctrl.rst b/doc/guides/prog_guide/packet_classif_access_ctrl.rst
-index 172f443f6e..55b2018db9 100644
---- a/doc/guides/prog_guide/packet_classif_access_ctrl.rst
-+++ b/doc/guides/prog_guide/packet_classif_access_ctrl.rst
-@@ -359,7 +359,38 @@ For example:
-         ret = rte_acl_build(acx, &cfg);
-      }
- 
-+Custom Memory Hooks
-+~~~~~~~~~~~~~~~~~~~~
-+
-+The ACL library supports custom memory allocation for runtime structures.
-+Applications can supply their own memory hooks through:
-+
-+.. code-block:: c
-+
-+    int rte_acl_set_mem_hook(struct rte_acl_ctx *ctx,
-+                           const struct rte_acl_mem_hook *mhook);
-+
-+    int rte_acl_get_mem_hook(const struct rte_acl_ctx *ctx,
-+                           struct rte_acl_mem_hook *mhook);
-+
-+The ``rte_acl_mem_hook`` structure defines memory hooks:
-+
-+.. code-block:: c
-+
-+    struct rte_acl_mem_hook {
-+        /** Allocate zero-initialized memory used during runtime. */
-+        void *(*zalloc)(char *name, size_t size, size_t align, int32_t socket_id, void *udata);
-+
-+        /** Free memory previously allocated by zalloc(). */
-+        void (*free)(void *ptr, void *udata);
-+
-+        /** User-provided context passed to allocation/free hooks. */
-+        void *udata;
-+    };
-+
-+Applications may use these hooks to allocate memory from custom pools or pre-allocated buffers.
- 
-+If no memory hook is provided, the ACL library uses rte_zmalloc_socket() internally.
- 
- Classification methods
- ~~~~~~~~~~~~~~~~~~~~~~
-diff --git a/lib/acl/acl.h b/lib/acl/acl.h
-index c8e4e72fab..9c85a3d58a 100644
---- a/lib/acl/acl.h
-+++ b/lib/acl/acl.h
-@@ -174,6 +174,7 @@ struct rte_acl_ctx {
- 	uint32_t            max_rules;
- 	uint32_t            rule_sz;
- 	uint32_t            num_rules;
-+	struct rte_acl_mem_hook mem_hook;
- 	uint32_t            num_categories;
- 	uint32_t            num_tries;
- 	uint32_t            match_index;
-diff --git a/lib/acl/acl_bld.c b/lib/acl/acl_bld.c
-index 7056b1c117..99d1dbc467 100644
---- a/lib/acl/acl_bld.c
-+++ b/lib/acl/acl_bld.c
-@@ -779,7 +779,7 @@ acl_merge_trie(struct acl_build_context *context,
- static void
- acl_build_reset(struct rte_acl_ctx *ctx)
- {
--	rte_free(ctx->mem);
-+	ctx->mem_hook.free(ctx->mem, ctx->mem_hook.udata);
- 	memset(&ctx->num_categories, 0,
- 		sizeof(*ctx) - offsetof(struct rte_acl_ctx, num_categories));
- }
-diff --git a/lib/acl/acl_gen.c b/lib/acl/acl_gen.c
-index 3c53d24056..77f19dd13a 100644
---- a/lib/acl/acl_gen.c
-+++ b/lib/acl/acl_gen.c
-@@ -478,8 +478,8 @@ rte_acl_gen(struct rte_acl_ctx *ctx, struct rte_acl_trie *trie,
- 		return -ERANGE;
- 	}
- 
--	mem = rte_zmalloc_socket(ctx->name, total_size, RTE_CACHE_LINE_SIZE,
--			ctx->socket_id);
-+	mem = ctx->mem_hook.zalloc(ctx->name, total_size,
-+			RTE_CACHE_LINE_SIZE, ctx->socket_id, ctx->mem_hook.udata);
- 	if (mem == NULL) {
- 		ACL_LOG(ERR,
- 			"allocation of %zu bytes on socket %d for %s failed",
-diff --git a/lib/acl/rte_acl.c b/lib/acl/rte_acl.c
-index 8c0ca29618..3f2b194206 100644
---- a/lib/acl/rte_acl.c
-+++ b/lib/acl/rte_acl.c
-@@ -264,6 +264,20 @@ acl_get_best_alg(void)
- 	return alg[i];
- }
- 
-+static void *
-+acl_mem_default_zalloc(char *name, size_t size, size_t align, int32_t socket_id, void *udata)
-+{
-+	RTE_SET_USED(udata);
-+	return rte_zmalloc_socket(name, size, align, socket_id);
-+}
-+
-+static void
-+acl_mem_default_free(void *ptr, void *udata)
-+{
-+	RTE_SET_USED(udata);
-+	rte_free(ptr);
-+}
-+
- RTE_EXPORT_SYMBOL(rte_acl_set_ctx_classify)
- extern int
- rte_acl_set_ctx_classify(struct rte_acl_ctx *ctx, enum rte_acl_classify_alg alg)
-@@ -362,7 +376,7 @@ rte_acl_free(struct rte_acl_ctx *ctx)
- 
- 	rte_mcfg_tailq_write_unlock();
- 
--	rte_free(ctx->mem);
-+	ctx->mem_hook.free(ctx->mem, ctx->mem_hook.udata);
- 	rte_free(ctx);
- 	rte_free(te);
- }
-@@ -425,6 +439,9 @@ rte_acl_create(const struct rte_acl_param *param)
- 		ctx->rule_sz = param->rule_size;
- 		ctx->socket_id = param->socket_id;
- 		ctx->alg = acl_get_best_alg();
-+		ctx->mem_hook.zalloc = acl_mem_default_zalloc;
-+		ctx->mem_hook.free = acl_mem_default_free;
-+		ctx->mem_hook.udata = NULL;
- 		strlcpy(ctx->name, param->name, sizeof(ctx->name));
- 
- 		te->data = (void *) ctx;
-@@ -555,3 +572,29 @@ rte_acl_list_dump(void)
- 	}
- 	rte_mcfg_tailq_read_unlock();
- }
-+
-+/*
-+ * Set memory allocation hooks for a given ACL context.
-+ */
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_acl_set_mem_hook, 26.03)
-+int
-+rte_acl_set_mem_hook(struct rte_acl_ctx *acl, const struct rte_acl_mem_hook *mhook)
-+{
-+	if (acl == NULL || mhook == NULL || mhook->zalloc  == NULL || mhook->free == NULL)
-+		return -EINVAL;
-+	memcpy(&acl->mem_hook, mhook, sizeof(struct rte_acl_mem_hook));
-+	return 0;
-+}
-+
-+/*
-+ * Retrieve the memory allocation hooks assigned to the ACL context.
-+ */
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_acl_get_mem_hook, 26.03)
-+int
-+rte_acl_get_mem_hook(const struct rte_acl_ctx *acl, struct rte_acl_mem_hook *mhook)
-+{
-+	if (acl  == NULL || mhook == NULL)
-+		return -EINVAL;
-+	memcpy(mhook, &acl->mem_hook, sizeof(struct rte_acl_mem_hook));
-+	return 0;
-+}
-diff --git a/lib/acl/rte_acl.h b/lib/acl/rte_acl.h
-index 95354cabb8..18ac30889b 100644
---- a/lib/acl/rte_acl.h
-+++ b/lib/acl/rte_acl.h
-@@ -136,6 +136,59 @@ struct rte_acl_param {
- /** @internal opaque ACL handle */
- struct rte_acl_ctx;
- 
-+/**
-+ * Memory allocation hooks for ACL runtime.
-+ */
-+struct rte_acl_mem_hook {
-+	/** Allocate zero-initialized memory used during runtime. */
-+	void *(*zalloc)(char *name, size_t size, size_t align, int32_t socket_id, void *udata);
-+
-+	/** Free memory previously allocated by zalloc(). */
-+	void (*free)(void *ptr, void *udata);
-+
-+	/** User-provided context passed to allocation/free hooks. */
-+	void *udata;
-+};
-+
-+/**
-+ * Set memory allocation hooks for a given ACL context.
-+ *
-+ * Applications may use these hooks to allocate memory from custom pools or
-+ * pre-allocated buffers. If no memory hook is provided, the ACL library uses
-+ * rte_zmalloc_socket() internally.
-+ *
-+ * This function must be called **before** rte_acl_build().
-+ * If the hook needs to be changed after a build, the ACL context must be reset
-+ * first by invoking rte_acl_reset(), and only then can the memory hook be
-+ * updated followed by another call to rte_acl_build().
-+ *
-+ * @param acl
-+ *   The ACL context.
-+ * @param mhook
-+ *   Pointer to the memory hook structure
-+ *
-+ * @return
-+ *   0 on success.
-+ *   -EINVAL if parameters are invalid.
-+ */
-+__rte_experimental
-+int rte_acl_set_mem_hook(struct rte_acl_ctx *acl, const struct rte_acl_mem_hook *mhook);
-+
-+/**
-+ * Retrieve the memory allocation hooks assigned to the ACL context.
-+ *
-+ * @param acl
-+ *   The ACL context.
-+ * @param mhook
-+ *   Output location for the current memory hook structure
-+ *
-+ * @return
-+ *   0 on success.
-+ *   -EINVAL if parameters are invalid.
-+ */
-+__rte_experimental
-+int rte_acl_get_mem_hook(const struct rte_acl_ctx *acl, struct rte_acl_mem_hook *mhook);
-+
- /**
-  * De-allocate all memory used by ACL context.
-  *
--- 
-2.43.0
 
