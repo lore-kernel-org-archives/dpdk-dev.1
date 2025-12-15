@@ -2,43 +2,64 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C0B5D5B866
-	for <dpdk-dev@archiver.kernel.org>; Mon, 15 Dec 2025 18:53:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A43ED5B866
+	for <dpdk-dev@archiver.kernel.org>; Mon, 15 Dec 2025 21:18:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AEEBC4029A;
-	Mon, 15 Dec 2025 19:53:29 +0100 (CET)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 0488E40151
- for <dev@dpdk.org>; Mon, 15 Dec 2025 19:53:27 +0100 (CET)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id D77D1202E1;
- Mon, 15 Dec 2025 19:53:27 +0100 (CET)
-Content-class: urn:content-classes:message
+	by mails.dpdk.org (Postfix) with ESMTP id 4F2334026C;
+	Mon, 15 Dec 2025 22:18:14 +0100 (CET)
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com
+ [209.85.210.182])
+ by mails.dpdk.org (Postfix) with ESMTP id 800624025F
+ for <dev@dpdk.org>; Mon, 15 Dec 2025 22:18:12 +0100 (CET)
+Received: by mail-pf1-f182.google.com with SMTP id
+ d2e1a72fcca58-7bc248dc16aso3224248b3a.0
+ for <dev@dpdk.org>; Mon, 15 Dec 2025 13:18:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=iol.unh.edu; s=unh-iol; t=1765833491; x=1766438291; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=k2ZORqRX5W+4e1jzdNbRMDedElP7X4RrtDhfK5CZH+g=;
+ b=Myu/mS15Tx5HfeshI1hfznVtYkyHRwOm9affuY2JDMaPU5NVhnkKLi+GPdNsvEgweo
+ Qoaipdxre7hSCIJCX9fYC2u2S43fFVjQNoZ6Qo9nApqsb7raOkXvL3aOy1GoMpoOp8cD
+ tZ/Is56odOFPru2C9/23hrIyFDyaU5hzemLt4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1765833491; x=1766438291;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=k2ZORqRX5W+4e1jzdNbRMDedElP7X4RrtDhfK5CZH+g=;
+ b=IJAa390Ok8zoblslhJyDItOd0tPaakhRZDRfvA3Zy0//ku2P4RmPzhuTBJgOmHqibq
+ E5OM+Wy5DVBalByYdq/OrkZqX78ZK2j/JIJ3xucoukU/p/pPb60iu95Efnx6jnW9dHDa
+ rQx3A+DrdMDjF7CaOw5/RoeWCpQxd6+gBAOeuCC19ftppXPej02RlaMGMW97VvhrsAuL
+ qnl755Vht0K2dsQDRXtcQPxtybPMd9EkRGh9AFhk0ZT78C9Gq2vbMaXksL+Q0dTXf8Ut
+ iYsPqJzXK/qA7bmqOWSaYoorW0je30A176cbDmkYez/YzxF09Z+ERcYAHPq+PvDL/m0M
+ kRXQ==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCWXGSMAixxgDYR1E1653ztYa31p3YlddCllKh8ZKvuosUqcmsaSpUbIzVTlZeCree2Bs/A=@dpdk.org
+X-Gm-Message-State: AOJu0YzvwB/VAhnMq6t2zoSdWhW8rJTgevEQnRfjnH9NAPUtIxQ5Pg7n
+ y4J5i4PoreovMagI8saqunnc1aeOSDAEXn2IPyVbZlO5EUYewkHTp7k3lc4Py5evV1P3qto00IZ
+ VbWKU0wGm2k8ASXoJ0x4ffJE/DTBG14O6fNGz8XBZgQ==
+X-Gm-Gg: AY/fxX5tHU+x/jC1G2na3Lxk54PSxB0E7/7306+mDItfybp+8CZBfozx2Ra6MfmxMbi
+ OBsH85/CfYBAlwAP7It3wRZCeso9oPUf+KGKj6lJ1l0kt/fcBMpS9fnfBQJbSPy9lo5IkeqbFsI
+ ev4nnpCpZg7vNO/9hWT5a51YfmTZNRAC32sGeA+o33ppkMQkTvU4b0OC7MpMH9f7Olhvtxz0wxh
+ pNBFtN3KneXEbVTtGmEANx+g+IRUYo5AkEhqVXKcqPlzgQhKhMbvLAO1ehrVPlyXn2lWi7l/tSN
+ Zjm/URnnGVeHRfHujLx/KvwxAjOO
+X-Google-Smtp-Source: AGHT+IF5rVvoEhbFNQrpxqSuqGhGpprRXWSqpwu6sdCUWm2Oy+343q+0PeBbolNkn7L+KgkAqaPnw2b8yrhrDAnwVyM=
+X-Received: by 2002:a05:7022:4429:b0:11b:9386:8272 with SMTP id
+ a92af1059eb24-11f34c2f9famr9097402c88.47.1765833491481; Mon, 15 Dec 2025
+ 13:18:11 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Subject: RE: [PATCH] net/intel: improve Rx descriptor ring size checks
-Date: Mon, 15 Dec 2025 19:53:27 +0100
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F655E7@smartserver.smartshare.dk>
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-In-Reply-To: <aUBReiTLkIp-M46a@bricha3-mobl1.ger.corp.intel.com>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH] net/intel: improve Rx descriptor ring size checks
-Thread-Index: Adxt741lhnho/bI2SoeKYhdVhRDkmgAAvMVw
-References: <20251215173543.1707960-1-bruce.richardson@intel.com>
- <98CBD80474FA8B44BF855DF32C47DC35F655E6@smartserver.smartshare.dk>
- <aUBMSa4u2Qjyy4t3@bricha3-mobl1.ger.corp.intel.com>
- <aUBReiTLkIp-M46a@bricha3-mobl1.ger.corp.intel.com>
-From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
-To: "Bruce Richardson" <bruce.richardson@intel.com>
-Cc: <dev@dpdk.org>, "Praveen Shetty" <praveen.shetty@intel.com>,
- "Vladimir Medvedkin" <vladimir.medvedkin@intel.com>,
- "Anatoly Burakov" <anatoly.burakov@intel.com>,
- "Jingjing Wu" <jingjing.wu@intel.com>
+References: <20251212210142.669766-1-abailey@iol.unh.edu>
+ <20251215183658.674252-1-abailey@iol.unh.edu>
+In-Reply-To: <20251215183658.674252-1-abailey@iol.unh.edu>
+From: Patrick Robb <probb@iol.unh.edu>
+Date: Mon, 15 Dec 2025 16:16:25 -0500
+X-Gm-Features: AQt7F2pAASbwGJXYhTdr_D2vzCFo8-qAvStqTUFWphF0Dd9HUN-QM61Df4ArqGw
+Message-ID: <CAJvnSUDKrsNiQLj1q4mpEiPb6CXRr_9kpb1__qX7Mo-b2O1SiQ@mail.gmail.com>
+Subject: Re: [PATCH v2] dts: show missing NIC capabilities in DTS logs
+To: Andrew Bailey <abailey@iol.unh.edu>
+Cc: luca.vizzarro@arm.com, dmarx@iol.unh.edu, dev@dpdk.org
+Content-Type: multipart/alternative; boundary="000000000000fe1504064604259c"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -52,55 +73,24 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> From: Bruce Richardson [mailto:bruce.richardson@intel.com]
-> Sent: Monday, 15 December 2025 19.21
->=20
-> On Mon, Dec 15, 2025 at 05:58:33PM +0000, Bruce Richardson wrote:
-> > On Mon, Dec 15, 2025 at 06:54:50PM +0100, Morten Br=F8rup wrote:
-> > > > From: Bruce Richardson [mailto:bruce.richardson@intel.com]
-> > > > Sent: Monday, 15 December 2025 18.36
-> > > >
-> > > > The default Rx ring size checks did not account for the fact =
-that
-> the
-> > > > port would not work correctly if the Rx ring size was only twice
-> the
-> > > > free threshold size or less, so add in a new check for this. =
-This
-> would
-> > > > generally only apply in cases where very small rings sizes are
-> being
-> > > > used, for example, with default Rx free thresh of 32, only ring
-> size of
-> > > > 64 would cause issues.
-> > > >
-> > > > Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
-> > > > ---
-> > >
-> > > Does dev_info.rx_desc_lim.nb_min returned by =
-rte_eth_dev_info_get()
-> need correction too?
-> > >
-> > The minimum number of descriptors stays the same, however, if
-> choosing the
-> > minimum number of descriptors you may need to reduce the
-> rx_free_thresh
-> > value.
-> >
-> However, I think you raise a good point. I'll see about adding a
-> specific
-> error message in case the user is using the default threshold and
-> setting
-> the min ring size.
+--000000000000fe1504064604259c
+Content-Type: text/plain; charset="UTF-8"
 
-The applications need some generic code sequence that always works, on =
-all NICs.
+Looks good, thanks Andrew. If it is simple for you to see the commit
+which caused this regression, can you include the hash in a "fixes: <hash>"
+as is described in the DPDK contributor guidelines?
 
-E.g. if an application uses rte_eth_dev_adjust_nb_rx_tx_desc() to move a =
-requested crazy number of descriptors within bounds, and uses the =
-default values for all other parameters, it should work.
+Reviewed-by: Patrick Robb <probb@iol.unh.edu>
 
-Nonetheless, more detailed error messages are always helpful. :-)
+--000000000000fe1504064604259c
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
--Morten
+<div dir=3D"ltr"><div dir=3D"ltr">Looks good, thanks Andrew. If it is simpl=
+e=C2=A0for you to see the commit which=C2=A0caused=C2=A0this regression, ca=
+n you include the hash in a &quot;fixes: &lt;hash&gt;&quot; as is described=
+ in the DPDK contributor guidelines?<div><br></div><div>Reviewed-by: Patric=
+k Robb &lt;<a href=3D"mailto:probb@iol.unh.edu">probb@iol.unh.edu</a>&gt;</=
+div></div></div>
 
+--000000000000fe1504064604259c--
