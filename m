@@ -2,38 +2,160 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99F7DD5B84C
-	for <dpdk-dev@archiver.kernel.org>; Mon, 15 Dec 2025 16:14:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51999D5B84C
+	for <dpdk-dev@archiver.kernel.org>; Mon, 15 Dec 2025 16:36:36 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 84E64402D9;
-	Mon, 15 Dec 2025 17:14:37 +0100 (CET)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id CD2AB40151;
- Mon, 15 Dec 2025 17:14:36 +0100 (CET)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id BD8FD202E1;
- Mon, 15 Dec 2025 17:14:36 +0100 (CET)
-Content-class: urn:content-classes:message
+	by mails.dpdk.org (Postfix) with ESMTP id 432654029A;
+	Mon, 15 Dec 2025 17:36:35 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+ by mails.dpdk.org (Postfix) with ESMTP id 8853040151
+ for <dev@dpdk.org>; Mon, 15 Dec 2025 17:36:33 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1765816594; x=1797352594;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=E26yP8EO2PZzCdDy07Fz+7SH/l+YWu5emyKk1B3UAA4=;
+ b=imijlsNE7E1i5EwsawyelWWZAP8vEjsLm4WnAvH+rHDACIWzd93IWI/F
+ hC/WLAoms9Ltm0LT+/okpB2jm7+6Jq4aEALJIvDTfz379SvvFs8C3kvcr
+ Q4mzmYEiHI2Au2C+MZY37LgQ6bPDH4FHVUW2975sEL0L4IKSVuTHwfnzd
+ 5br/c9E10uRufBRxfrLqQFne14mGAjpfFff0ig3EeW04T7KwldI7krQxb
+ VsrmiKTjDFyV+X/3oULj0ZFNVWLAJ43pvJvIRq4F7qCHdKVqTpYdRR7jS
+ KVcpcA/wrnK1fvxKhThwiEihhAGuCe0CpkcJfHppoLsjTe8bge4c0hrP1 A==;
+X-CSE-ConnectionGUID: xWqxt9u8QrSO4DnhPtZoLA==
+X-CSE-MsgGUID: 3kgzbtNkSweQy8EkpGN2bQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11643"; a="85133141"
+X-IronPort-AV: E=Sophos;i="6.21,151,1763452800"; d="scan'208";a="85133141"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+ by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 15 Dec 2025 08:36:33 -0800
+X-CSE-ConnectionGUID: AgIi+t4wSYip+fML2bJgVg==
+X-CSE-MsgGUID: 0qh1r3R+Q1ifA9VWWYMOyA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,151,1763452800"; d="scan'208";a="201946203"
+Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
+ by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 15 Dec 2025 08:36:33 -0800
+Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.29; Mon, 15 Dec 2025 08:36:31 -0800
+Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
+ FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.29 via Frontend Transport; Mon, 15 Dec 2025 08:36:31 -0800
+Received: from BYAPR05CU005.outbound.protection.outlook.com (52.101.85.19) by
+ edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.29; Mon, 15 Dec 2025 08:36:30 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=X8F8TqL1tv3PXJPhSYKYkqV/xMp2nSPU4CGNlWW7eDG63x7PAdVhX1PuT/j6vG/evq9388NtIRE92phMjxo/57UM+cJvaqM1CBPoQ/6lr7Ar2V6z1dND4o5K7KxgbWcwYt/X4JuDYBYZE9byIA3sRoU0DMmjTf6iw5ydg7zlEyBA3smw/+e9oa0+E6UF4NHD1px8yxKfi+rWTH+7uFKMwInWDSRBKZLKDuz7aPO8sjfrs7rhoCyANvYMbePgnqLf2qXBaFV5go8hGuRogtijkbvwn023jLDnbr5Et0N6Pc4EXoCLVyr5AEdMJvSGjQvbjSyYhvWp7IxzidZi8+crDw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=JDvbEEslBGejTsgpt342tYcFHBS0JJ23nwTxivItvUY=;
+ b=GV/vi0AwKQim2QzWZ7OxQYlUHwpq3vyvaFBqQti/sdYcVHh+YYxnBq0wrSkShZpLeK2jr6JLPQBrF+UievbWcmRWgJEqMWisbtnOt1JUad9SDulOH92/IbrI6nwTEMgZ6+PSUcOd65ASZVsHVDYsfDtdTBeJZwQxiMDjXaXqaKP9Dt4d20Xn5uFueCT37vQBTDV9gQ/zsSspt4Uo9Aa6AR8QGxCqEyc8k5l01gs+3CcxP2SIQd2ywDMrAeMdR5Dg/cxAWyJ/HVre8C0DsOLRUwnrVuxPKt2JEkZzyPz/j2VlNcI1Ih/1EuaWOzbEY/HoFCV49VTBRctAax1A+NMsGw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
+ by LV3PR11MB8601.namprd11.prod.outlook.com (2603:10b6:408:1b8::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9412.13; Mon, 15 Dec
+ 2025 16:36:29 +0000
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b%4]) with mapi id 15.20.9412.011; Mon, 15 Dec 2025
+ 16:36:29 +0000
+Date: Mon, 15 Dec 2025 16:36:24 +0000
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: Sandeep Penigalapati <sandeep.penigalapati@intel.com>
+CC: <dev@dpdk.org>
+Subject: Re: [PATCH] net/iavf: add fragment RSS types for symmetric Toeplitz
+Message-ID: <aUA5CG_Lx2qg2mk1@bricha3-mobl1.ger.corp.intel.com>
+References: <20251205175537.137011-1-sandeep.penigalapati@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20251205175537.137011-1-sandeep.penigalapati@intel.com>
+X-ClientProxiedBy: DU2PR04CA0298.eurprd04.prod.outlook.com
+ (2603:10a6:10:28c::33) To DS0PR11MB7309.namprd11.prod.outlook.com
+ (2603:10b6:8:13e::17)
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Subject: RE: mbuf fast-free requirements analysis
-Date: Mon, 15 Dec 2025 17:14:33 +0100
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F655E5@smartserver.smartshare.dk>
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-In-Reply-To: <0d1645e1c83f4ec4ad676095b910845c@huawei.com>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: mbuf fast-free requirements analysis
-Thread-Index: AdxtsuI54Ph/Or7ES4uJIkNuHGVH/AAHMGowAACuIkA=
-References: <98CBD80474FA8B44BF855DF32C47DC35F655E0@smartserver.smartshare.dk>
- <0d1645e1c83f4ec4ad676095b910845c@huawei.com>
-From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
-To: "Konstantin Ananyev" <konstantin.ananyev@huawei.com>, <dev@dpdk.org>,
- <techboard@dpdk.org>, <bruce.richardson@intel.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|LV3PR11MB8601:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5f2278a6-6355-41e6-3702-08de3bf818ed
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?Bj8qXmKPlHpWgh9bV3um0ch2VA7K2N+mPzzBUAAMdlXh+8NVAcWYEzifup/f?=
+ =?us-ascii?Q?LD71VCVtyJJFx7ezFlcT4x+mcsgPpPo69Rdv3Y+H8nEO658vL/3zlYzr1oF5?=
+ =?us-ascii?Q?wOOM3cdPNYRvytk/m1I73rkHam+pF01dt/tH14/GD/IcFOC+CmxdLdlIyfH6?=
+ =?us-ascii?Q?sGxLiZjTF93HWqceSG8Vw/Qu1NL5R8K57GCmDNXIEJ5gi+e5B1l4zASiUcRS?=
+ =?us-ascii?Q?34LlNXwsiwIyeta/2m5mPwk1G3YSzR8amMDRuPah0JBRneYOL+B9+7IOCoqi?=
+ =?us-ascii?Q?4BN/uzIX423tKj8xc4E3QsWOx5fhy83VwvTaUyW0sJfgIl7rXtf++JzbstW/?=
+ =?us-ascii?Q?+mI0aROZIpbVzkhOHo+sw6sRjeRQY0Dw6BDI3Oo8e78HS3KiIszKef8bQqaB?=
+ =?us-ascii?Q?Un2i19s9Yv4bjMoKs7vNfXMm+3c7W+HnzM/lSVgvENpv77rHI74xmYwfYciJ?=
+ =?us-ascii?Q?A1Lqgq1aAPUt8WpLyU6mFBVaL9NlM4M/jfmcMMrm1cqKcRmjXYuFOulzT23h?=
+ =?us-ascii?Q?HFdNn/m+VCzBJ9EHHGheUsBqlVybo4ub9HMY9ZMvM/vhh8YaoFjAKgApviwO?=
+ =?us-ascii?Q?rd+SklXvFuLcqA4LOHIVsm4E6UHROsZDAtlAiW9d5NE+5vAeWhvtLvXcpcHn?=
+ =?us-ascii?Q?W1px103fb6Lftgworr3UfiOQ3yvQKeE5dvVFuxkOmWvCoqSgTan31uYRpeV0?=
+ =?us-ascii?Q?96tLw/RGW4Vvspa7mDL/pIQUPNxYZxYWdJdAQYX2Yr6EQnE9wbU/eDOnzKPM?=
+ =?us-ascii?Q?WIp/mJ9hm3ASqcOpw4gRQqm03fA9V5fJFdltmbU90FLGk1TRep8BVhnB3QdB?=
+ =?us-ascii?Q?yI3xKmJt/5mU821KTFobIADjGDTrlEuW4GLvcqOsGpTd99gF00bdWI3EGH9P?=
+ =?us-ascii?Q?bMEF6le/GX3MuKkjNhXFSWRSJe0keoF2QnxZkmZmpMBLWL/LV3ZDKw3Z2MZ4?=
+ =?us-ascii?Q?yYYtkd6EuEYVyAJ9xNxQ5rIm3sLwqvyJ5V+eA950z3kOQ9PoztPA7NN2MyDV?=
+ =?us-ascii?Q?taHj/iFtm63Texn2ocXrzJPE8fg41OBqEPGDCUQWJJNcgIBTJMmAF87UNVfW?=
+ =?us-ascii?Q?w4b4MQIXDlV4JdA9LXkNcBrSVSWZjRZ/bL+8HjYcCPPH8UtIB47qxGXxNZrG?=
+ =?us-ascii?Q?e8JHvJMbusAxvZItWht1oySAt300YAXAhljK8HRGxn4Fq6YtmV+MegyLFNzp?=
+ =?us-ascii?Q?2g4g6fdkMfn4yNCGyGUi7fSVl6fPEtGZAVF2PajrjbAPi2nqDteIeISUsnMc?=
+ =?us-ascii?Q?CmbDihqZMS/KCoOBOTDN5VX6Bie6FhrAlfY7QSJv2vKd5GubkudqFgMBthjo?=
+ =?us-ascii?Q?8JB+nR/lxcGsqnAC/3yd2ZJVlg/dlbAIIzInqUDDsItD/mfy5gLydKmiqcpF?=
+ =?us-ascii?Q?n/Jn8UrKG7nnEjGukSNwOjOonpRt9ZH7I2IRhqNYAqAi9aRh259O36p5lI61?=
+ =?us-ascii?Q?Qkn+2ptGCQH6ofLiBbrhCf8PF7+yUhMa?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(366016)(376014)(1800799024); DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?Zyz3a66a8nK2PoUw7K7ft6PWj+LjYojYjeApzfHtNW3U3XHmBRgwsUi4zf92?=
+ =?us-ascii?Q?9DwNmUPLs4IG0DGtSi+xT5/fopu2r36/Ajf6LJ0NCnh5J9bB37AcQWgh3axF?=
+ =?us-ascii?Q?cahSXTmcuPP585BlMurYIbrLMq4S1LTKRy8NlwOZKd34SSAbIUT0usicKXAE?=
+ =?us-ascii?Q?2NSOFGy8GXtekjJF65tAFeW7y3BBg5d/7/JgUuncrXa9N5t8tMrt+lakCQoe?=
+ =?us-ascii?Q?eeOgqewNWjzQQctB4oLTbWIFen32zBzkl3HDAN/bq+MEzwuozRId+taS7VXl?=
+ =?us-ascii?Q?QQuR99Ul/GOCgQUyaCLxeGxDejSDDyqjZZz+14Bh9A3yn2bLc3y76KuT11kx?=
+ =?us-ascii?Q?dGBWMkGTw4tCJfEiKOUgBLHqXc8Hgirn3YGox0RJAjdCzgLCykm3dCMqh3qI?=
+ =?us-ascii?Q?bxvhZxCwb3CNoLlzxNjZsNVuCS1z8Upai9Z7UFuYbmxzILV2+yxOzXODHfpr?=
+ =?us-ascii?Q?XqJnqhEre52W7HxZeZysN/uCmfxdO1ij5t6RN9P3sCuQ4zYSMZ/sNgn0yh46?=
+ =?us-ascii?Q?GLtL0pTH5WBToT3hDASg60JSA6iwMFIKmUttbfzH8IqqZieqbmFBS1mwTOQo?=
+ =?us-ascii?Q?TEapZrqtjAuE80kqJ1LyZrGvPn1fjzBfeFc6BtiHvF9brdr48AIaaZ/9IG7m?=
+ =?us-ascii?Q?FogILB9b4qL81i4sDKtErmyDyW7e2r3UXIjHzKqPeK22N4M5+YK/2Yd8iNE7?=
+ =?us-ascii?Q?8IRuTxftiD3RNbHDQtxMWK39fsINqHkMv7MsoCiaxuEKOq9x9kroBkgm4mc0?=
+ =?us-ascii?Q?JBXW4cVaQ8mtNnhTvpBGS1tuVkAnpB6Wbq0YIP4kzcpoYedmdj3xvmCIguyN?=
+ =?us-ascii?Q?KopkJlMdvdeeCq4GIKSrcuetxO7JfzmyVZTwpFd73WAuaACCnTzzUIdzwaEW?=
+ =?us-ascii?Q?oxOdVNH3W/TlmIRyZ2MXdbMptQBUhB7aq+vwrnP9ZMeIHcQ+bZ4Q2q3WKkMq?=
+ =?us-ascii?Q?U/IGLJ3FB3xNs1rMj5lCfiojm2nAX5D8zHD4QaSjMRfleDb/nVOjb6DtuOGZ?=
+ =?us-ascii?Q?loIM3W7Fq8le3hfez8CRYikG834nSKthuCyqlFKvFzeMSwRdHr1lEBeZTaTX?=
+ =?us-ascii?Q?rM72NAW/DzmYBXTUgCBuP94MYJV7ZKenKKZc0FhAifsuGEFRhIvwObDYUudQ?=
+ =?us-ascii?Q?oIuR79AlzKeFs+zTkbtpi6jQgfCJKX/jWJHyQAJU0c4SoQJvE6ussExYWozY?=
+ =?us-ascii?Q?2Nwo3vU2ZfAKMtEAbJytCGqZqzpDvP++6OnR0UsnPFLNj06/qylGxqkZEait?=
+ =?us-ascii?Q?frdbD4XBgy2hW5sKQkGvu1abitXQ4K0IW+lCu4Z1sG7yw/gIh3yxixWjhy+8?=
+ =?us-ascii?Q?4KVOJ5Mz5QNMu14Q2Axo7glkNpq2DDx3LpbElafjH0t7BquUOBITC8Ty9lo1?=
+ =?us-ascii?Q?+5wt7Vu5FptxlqD40mk+wq9bx/JDsR4AeRLISUae4fYeD2PgozDOHlHqWHan?=
+ =?us-ascii?Q?l+3vNAYmpdt/C7bwiGrqRgMD2ZJKqql5xvAn3gqxuPL/gC6IotU1P++Iieud?=
+ =?us-ascii?Q?Wkd/RKV8PUc5ETWKSkZSQbRI9VhiTD6Re+0W/BNJ0jMN6CUOjGEa/gQt2Dco?=
+ =?us-ascii?Q?n8K2iryJxC50iS0pwaNrCMsDEihxiVhD+87UYfw1KaQ4ptj0YethK/kXBbpA?=
+ =?us-ascii?Q?4Q=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5f2278a6-6355-41e6-3702-08de3bf818ed
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Dec 2025 16:36:29.1061 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: OfRZaSzO6UxtCbBWboxN3nhsXFnpYuxQSKZCyD9XGMes5KgfEwJIp7ejw/CNFquG++NCr/NO4xLM4Hpz/QRfyZfQvdbP/GZlRXZok3lhLfk=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR11MB8601
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -47,387 +169,15 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> From: Konstantin Ananyev [mailto:konstantin.ananyev@huawei.com]
-> Sent: Monday, 15 December 2025 15.41
->=20
-> >
-> > Executive Summary:
-> >
-> > My analysis shows that the mbuf library is not a barrier for fast-
-> freeing
-> > segmented packet mbufs, and thus fast-free of jumbo frames is
-> possible.
-> >
-> >
-> > Detailed Analysis:
-> >
-> > The purpose of the mbuf fast-free Tx optimization is to reduce
-> > rte_pktmbuf_free_seg() to something much simpler in the ethdev
-> drivers, by
-> > eliminating the code path related to indirect mbufs.
-> > Optimally, we want to simplify the ethdev driver's function that
-> frees the
-> > transmitted mbufs, so it can free them directly to their mempool
-> without
-> > accessing the mbufs themselves.
-> >
-> > If the driver cannot access the mbuf itself, it cannot determine
-> which
-> > mempool it belongs to.
-> > We don't want the driver to access every mbuf being freed; but if =
-all
-> > mbufs of a Tx queue belong to the same mempool, the driver can
-> determine
-> > which mempool by looking into just one of the mbufs.
-> >
-> > REQUIREMENT 1: The mbufs of a Tx queue must come from the same
-> mempool.
-> >
-> >
-> > When an mbuf is freed to its mempool, some of the fields in the mbuf
-> must
-> > be initialized.
-> > So, for fast-free, this must be done by the driver's function that
-> > prepares the Tx descriptor.
-> > This is a requirement to the driver, not a requirement to the
-> application.
-> >
-> > Now, let's dig into the code for freeing an mbuf.
-> > Note: For readability purposes, I'll cut out some code and comments
-> > unrelated to this topic.
-> >
-> > static __rte_always_inline void
-> > rte_pktmbuf_free_seg(struct rte_mbuf *m)
-> > {
-> > 	m =3D rte_pktmbuf_prefree_seg(m);
-> > 	if (likely(m !=3D NULL))
-> > 		rte_mbuf_raw_free(m);
-> > }
-> >
-> >
-> > rte_mbuf_raw_free(m) is simple, so nothing to gain there:
-> >
-> > /**
-> >  * Put mbuf back into its original mempool.
-> >  *
-> >  * The caller must ensure that the mbuf is direct and properly
-> >  * reinitialized (refcnt=3D1, next=3DNULL, nb_segs=3D1), as done by
-> >  * rte_pktmbuf_prefree_seg().
-> >  */
-> > static __rte_always_inline void
-> > rte_mbuf_raw_free(struct rte_mbuf *m)
-> > {
-> > 	rte_mbuf_history_mark(m, RTE_MBUF_HISTORY_OP_LIB_FREE);
-> > 	rte_mempool_put(m->pool, m);
-> > }
-> >
-> > Note that the description says that the mbuf must be direct.
-> > This is not entirely accurate; the mbuf is allowed to use a pinned
-> > external buffer, if the mbuf holds the only reference to it.
-> > (Most of the mbuf library functions have this documentation
-> inaccuracy,
-> > which should be fixed some day.)
-> >
-> > So, the fast-free optimization really comes down to
-> > rte_pktmbuf_prefree_seg(m), which must not return NULL.
-> >
-> > Let's dig into that.
-> >
-> > /**
-> >  * Decrease reference counter and unlink a mbuf segment
-> >  *
-> >  * This function does the same than a free, except that it does not
-> >  * return the segment to its pool.
-> >  * It decreases the reference counter, and if it reaches 0, it is
-> >  * detached from its parent for an indirect mbuf.
-> >  *
-> >  * @return
-> >  *   - (m) if it is the last reference. It can be recycled or freed.
-> >  *   - (NULL) if the mbuf still has remaining references on it.
-> >  */
-> > static __rte_always_inline struct rte_mbuf *
-> > rte_pktmbuf_prefree_seg(struct rte_mbuf *m)
-> > {
-> > 	bool refcnt_not_one;
-> >
-> > 	refcnt_not_one =3D unlikely(rte_mbuf_refcnt_read(m) !=3D 1);
-> > 	if (refcnt_not_one && __rte_mbuf_refcnt_update(m, -1) !=3D 0)
-> > 		return NULL;
-> >
-> > 	if (unlikely(!RTE_MBUF_DIRECT(m))) {
-> > 		rte_pktmbuf_detach(m);
-> > 		if (RTE_MBUF_HAS_EXTBUF(m) &&
-> > 				RTE_MBUF_HAS_PINNED_EXTBUF(m) &&
-> > 				__rte_pktmbuf_pinned_extbuf_decref(m))
-> > 			return NULL;
-> > 	}
-> >
-> > 	if (refcnt_not_one)
-> > 		rte_mbuf_refcnt_set(m, 1);
-> > 	if (m->nb_segs !=3D 1)
-> > 		m->nb_segs =3D 1;
-> > 	if (m->next !=3D NULL)
-> > 		m->next =3D NULL;
-> >
-> > 	return m;
-> > }
-> >
-> > This function can only succeed (i.e. return non-NULL) when 'refcnt'
-> is 1
-> > (or reaches 0).
-> >
-> > REQUIREMENT 2: The driver must hold the only reference to the mbuf,
-> > i.e. 'm->refcnt' must be 1.
-> >
-> >
-> > When the function succeeds, it initializes the mbuf fields as
-> required by
-> > rte_mbuf_raw_free() before returning.
-> >
-> > Now, since the driver has exclusive access to the mbuf, it is free =
-to
-> > initialize the 'm->next' and 'm->nb_segs' at any time.
-> > It could do that when preparing the Tx descriptor.
-> >
-> > This is very interesting, because it means that fast-free does not
-> > prohibit segmented packets!
-> > (But the driver must have sufficient Tx descriptors for all segments
-> in
-> > the mbuf.)
-> >
-> >
-> > Now, lets dig into rte_pktmbuf_prefree_seg()'s block handling non-
-> direct
-> > mbufs, i.e. cloned mbufs and mbufs with external buffer:
-> >
-> > 	if (unlikely(!RTE_MBUF_DIRECT(m))) {
-> > 		rte_pktmbuf_detach(m);
-> > 		if (RTE_MBUF_HAS_EXTBUF(m) &&
-> > 				RTE_MBUF_HAS_PINNED_EXTBUF(m) &&
-> > 				__rte_pktmbuf_pinned_extbuf_decref(m))
-> > 			return NULL;
-> > 	}
-> >
-> > Starting with rte_pktmbuf_detach():
-> >
-> > static inline void rte_pktmbuf_detach(struct rte_mbuf *m)
-> > {
-> > 	struct rte_mempool *mp =3D m->pool;
-> > 	uint32_t mbuf_size, buf_len;
-> > 	uint16_t priv_size;
-> >
-> > 	if (RTE_MBUF_HAS_EXTBUF(m)) {
-> > 		/*
-> > 		 * The mbuf has the external attached buffer,
-> > 		 * we should check the type of the memory pool where
-> > 		 * the mbuf was allocated from to detect the pinned
-> > 		 * external buffer.
-> > 		 */
-> > 		uint32_t flags =3D rte_pktmbuf_priv_flags(mp);
-> >
-> > 		if (flags & RTE_PKTMBUF_POOL_F_PINNED_EXT_BUF) {
-> > 			/*
-> > 			 * The pinned external buffer should not be
-> > 			 * detached from its backing mbuf, just exit.
-> > 			 */
-> > 			return;
-> > 		}
-> > 		__rte_pktmbuf_free_extbuf(m);
-> > 	} else {
-> > 		__rte_pktmbuf_free_direct(m);
-> > 	}
-> > 	priv_size =3D rte_pktmbuf_priv_size(mp);
-> > 	mbuf_size =3D (uint32_t)(sizeof(struct rte_mbuf) + priv_size);
-> > 	buf_len =3D rte_pktmbuf_data_room_size(mp);
-> >
-> > 	m->priv_size =3D priv_size;
-> > 	m->buf_addr =3D (char *)m + mbuf_size;
-> > 	rte_mbuf_iova_set(m, rte_mempool_virt2iova(m) + mbuf_size);
-> > 	m->buf_len =3D (uint16_t)buf_len;
-> > 	rte_pktmbuf_reset_headroom(m);
-> > 	m->data_len =3D 0;
-> > 	m->ol_flags =3D 0;
-> > }
-> >
-> > The only quick and simple code path through this function is when =
-the
-> mbuf
-> > uses a pinned external buffer:
-> > 	if (RTE_MBUF_HAS_EXTBUF(m)) {
-> > 		uint32_t flags =3D rte_pktmbuf_priv_flags(mp);
-> > 		if (flags & RTE_PKTMBUF_POOL_F_PINNED_EXT_BUF)
-> > 			return;
-> >
-> > REQUIREMENT 3: The mbuf must not be cloned or use a non-pinned
-> external
-> > buffer.
-> >
-> >
-> > Continuing with the next part of rte_pktmbuf_prefree_seg()'s block:
-> >  		if (RTE_MBUF_HAS_EXTBUF(m) &&
-> > 				RTE_MBUF_HAS_PINNED_EXTBUF(m) &&
-> > 				__rte_pktmbuf_pinned_extbuf_decref(m))
-> > 			return NULL;
-> >
-> > Continuing with the next part of the block in
-> rte_pktmbuf_prefree_seg():
-> >
-> > /**
-> >  * @internal Handle the packet mbufs with attached pinned external
-> buffer
-> >  * on the mbuf freeing:
-> >  *
-> >  *  - return zero if reference counter in shinfo is one. It means
-> there is
-> >  *  no more reference to this pinned buffer and mbuf can be returned
-> to
-> >  *  the pool
-> >  *
-> >  *  - otherwise (if reference counter is not one), decrement
-> reference
-> >  *  counter and return non-zero value to prevent freeing the backing
-> mbuf.
-> >  *
-> >  * Returns non zero if mbuf should not be freed.
-> >  */
-> > static inline int __rte_pktmbuf_pinned_extbuf_decref(struct rte_mbuf
-> *m)
-> > {
-> > 	struct rte_mbuf_ext_shared_info *shinfo;
-> >
-> > 	/* Clear flags, mbuf is being freed. */
-> > 	m->ol_flags =3D RTE_MBUF_F_EXTERNAL;
-> > 	shinfo =3D m->shinfo;
-> >
-> > 	/* Optimize for performance - do not dec/reinit */
-> > 	if (likely(rte_mbuf_ext_refcnt_read(shinfo) =3D=3D 1))
-> > 		return 0;
-> >
-> > 	/*
-> > 	 * Direct usage of add primitive to avoid
-> > 	 * duplication of comparing with one.
-> > 	 */
-> > 	if (likely(rte_atomic_fetch_add_explicit(&shinfo->refcnt, -1,
-> > 				     rte_memory_order_acq_rel) - 1))
-> > 		return 1;
-> >
-> > 	/* Reinitialize counter before mbuf freeing. */
-> > 	rte_mbuf_ext_refcnt_set(shinfo, 1);
-> > 	return 0;
-> > }
-> >
-> > Essentially, if the mbuf does use a pinned external buffer,
-> > rte_pktmbuf_prefree_seg() only succeeds if that pinned external
-> buffer is
-> > only referred to by the mbuf.
-> >
-> > REQUIREMENT 4: If the mbuf uses a pinned external buffer, the mbuf
-> must
-> > hold the only reference to that pinned external buffer, i.e. in that
-> case,
-> > 'm->shinfo->refcnt' must be 1.
-> >
-> >
-> > Please review.
-> >
-> > If I'm not mistaken, the mbuf library is not a barrier for fast-
-> freeing
-> > segmented packet mbufs, and thus fast-free of jumbo frames is
-> possible.
-> >
-> > We need a driver developer to confirm that my suggested approach -
-> > resetting the mbuf fields, incl. 'm->nb_segs' and 'm->next', when
-> > preparing the Tx descriptor - is viable.
->=20
-> Great analysis, makes a lot of sense to me.
-> Shall we add then a special API to make PMD maintainers life a bit
-> easier:
-> Something like rte_mbuf_fast_free_prep(mp, mb), that will optionally
-> check
-> that requirements outlined  above are satisfied for given mbuf and
-> also reset mbuf fields to expected values?
+On Fri, Dec 05, 2025 at 12:55:37PM -0500, Sandeep Penigalapati wrote:
+> The ICE PMD supports RTE_ETH_RSS_FRAG_IPV4 and RTE_ETH_RSS_FRAG_IPV6
+> with symmetric Toeplitz, but these were missing from IAVF PMD.
+> Added the fragment RSS types to enable fragment hashing support in VF,
+> matching the PF driver capability.
+> 
+> Signed-off-by: Sandeep Penigalapati <sandeep.penigalapati@intel.com>
+Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 
-Good idea, Konstantin.
-
-Detailed suggestion below.
-Note that __rte_mbuf_raw_sanity_check_mp() is used to checks the =
-requirements after 'nb_segs' and 'next' have been initialized.
-
-/**
- * Reinitialize an mbuf for freeing back into the mempool.
- *
- * The caller must ensure that the mbuf comes from the specified =
-mempool,
- * is direct and only referred to by the caller (refcnt=3D1).
- *
- * This function is used by drivers in their transmit function for mbuf =
-fast release
- * when the transmit descriptor is initialized,
- * so the driver can call rte_mbuf_raw_free()
- * when the packet segment has been transmitted.
- *
- * @see RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE
- *
- * @param mp
- *   The mempool to which the mbuf belong.
- * @param m
- *   The mbuf being reinitialized.
- */
-static __rte_always_inline void
-rte_mbuf_raw_prefree_seg(const struct rte_mempool *mp, struct rte_mbuf =
-*m)
-{
-	if (m->nb_segs !=3D 1)
-		m->nb_segs =3D 1;
-	if (m->next !=3D NULL)
-		m->next =3D NULL;
-
-	__rte_mbuf_raw_sanity_check_mp(m, mp);
-	rte_mbuf_history_mark(mbuf, RTE_MBUF_HISTORY_OP_LIB_PREFREE_RAW);
-}
-
-/**
- * Reinitialize a bulk of mbufs for freeing back into the mempool.
- *
- * The caller must ensure that the mbufs come from the specified =
-mempool,
- * are direct and only referred to by the caller (refcnt=3D1).
- *
- * This function is used by drivers in their transmit function for mbuf =
-fast release
- * when the transmit descriptors are initialized,
- * so the driver can call rte_mbuf_raw_free_bulk()
- * when the packet segments have been transmitted.
- *
- * @see RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE
- *
- * @param mp
- *   The mempool to which the mbufs belong.
- * @param mbufs
- *   Array of pointers to mbufs being reinitialized.
- *   The array must not contain NULL pointers.
- * @param count
- *   Array size.
- */
-static __rte_always_inline void
-rte_mbuf_raw_prefree_seg_bulk(const struct rte_mempool *mp, struct =
-rte_mbuf **mbufs, unsigned int count)
-{
-	for (unsigned int idx =3D 0; idx < count; idx++) {
-		struct rte_mbuf *m =3D mbufs[idx];
-
-		if (m->nb_segs !=3D 1)
-			m->nb_segs =3D 1;
-		if (m->next !=3D NULL)
-			m->next =3D NULL;
-
-		__rte_mbuf_raw_sanity_check_mp(m, mp);
-	}
-	rte_mbuf_history_mark_bulk(mbufs, count, =
-RTE_MBUF_HISTORY_OP_LIB_PREFREE_RAW);
-}
-
-> Konstantin
->=20
->=20
+Applied to dpdk-next-net-intel.
+Thanks.
 
