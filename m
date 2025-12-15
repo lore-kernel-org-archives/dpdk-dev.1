@@ -2,64 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A43ED5B866
-	for <dpdk-dev@archiver.kernel.org>; Mon, 15 Dec 2025 21:18:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 934AED5B872
+	for <dpdk-dev@archiver.kernel.org>; Mon, 15 Dec 2025 21:40:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4F2334026C;
-	Mon, 15 Dec 2025 22:18:14 +0100 (CET)
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com
- [209.85.210.182])
- by mails.dpdk.org (Postfix) with ESMTP id 800624025F
- for <dev@dpdk.org>; Mon, 15 Dec 2025 22:18:12 +0100 (CET)
-Received: by mail-pf1-f182.google.com with SMTP id
- d2e1a72fcca58-7bc248dc16aso3224248b3a.0
- for <dev@dpdk.org>; Mon, 15 Dec 2025 13:18:12 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 3E2F7402D3;
+	Mon, 15 Dec 2025 22:40:56 +0100 (CET)
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com
+ [209.85.160.182])
+ by mails.dpdk.org (Postfix) with ESMTP id BCC294026C
+ for <dev@dpdk.org>; Mon, 15 Dec 2025 22:40:54 +0100 (CET)
+Received: by mail-qt1-f182.google.com with SMTP id
+ d75a77b69052e-4ee13dc0c52so34164171cf.2
+ for <dev@dpdk.org>; Mon, 15 Dec 2025 13:40:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1765833491; x=1766438291; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=k2ZORqRX5W+4e1jzdNbRMDedElP7X4RrtDhfK5CZH+g=;
- b=Myu/mS15Tx5HfeshI1hfznVtYkyHRwOm9affuY2JDMaPU5NVhnkKLi+GPdNsvEgweo
- Qoaipdxre7hSCIJCX9fYC2u2S43fFVjQNoZ6Qo9nApqsb7raOkXvL3aOy1GoMpoOp8cD
- tZ/Is56odOFPru2C9/23hrIyFDyaU5hzemLt4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1765833491; x=1766438291;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ d=iol.unh.edu; s=unh-iol; t=1765834854; x=1766439654; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=k2ZORqRX5W+4e1jzdNbRMDedElP7X4RrtDhfK5CZH+g=;
- b=IJAa390Ok8zoblslhJyDItOd0tPaakhRZDRfvA3Zy0//ku2P4RmPzhuTBJgOmHqibq
- E5OM+Wy5DVBalByYdq/OrkZqX78ZK2j/JIJ3xucoukU/p/pPb60iu95Efnx6jnW9dHDa
- rQx3A+DrdMDjF7CaOw5/RoeWCpQxd6+gBAOeuCC19ftppXPej02RlaMGMW97VvhrsAuL
- qnl755Vht0K2dsQDRXtcQPxtybPMd9EkRGh9AFhk0ZT78C9Gq2vbMaXksL+Q0dTXf8Ut
- iYsPqJzXK/qA7bmqOWSaYoorW0je30A176cbDmkYez/YzxF09Z+ERcYAHPq+PvDL/m0M
- kRXQ==
+ bh=F59kQnptSJZTKDlGOPYR1PWb26hAEAlitzAawNI24Bw=;
+ b=gkiZW5E4EII9AYgN8Vg3qPhCJwZomvG92UXvXcfh9LVmkO+p8NkeDWBb8DJFKTQbd4
+ O9supApgYM1yMXdMXN0KdZl001RVNv5Z33tKpZbTl8SBYsXpCg0Nt+scDnJ8/YFjuROy
+ X9FvHKoZrlPrVcq7wWt1NdaXn98Qyeie36Gms=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1765834854; x=1766439654;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=F59kQnptSJZTKDlGOPYR1PWb26hAEAlitzAawNI24Bw=;
+ b=Fb1tRYv4OysKwxvG+s1tUc5uoJOmbcqnJgcpBSia3m9hWG8jpABnNHm101By8j8GXH
+ 8Y5TvowwmRTwYU8LlYHdMe99DKcL9QknDMJtACc1FpcUpCVltAiJLuwldmKRo7P3ECte
+ FfpDeOuGKEW1CcnSsaUGftGJ7tnO5MHmv66Mijo/Bnq6EtxlgeeeTAn3dGvQrZzztXRJ
+ j+OMd5Wt7V6UMivGej6ceukO24OJ6kAj1y29VIQWa1XXYg1NPSaWXkgo/1VXRm3qRkgq
+ yRfv+9Yy+Q8R17MotklcOeWjL3Bt7qxAJImqR4wc2PGECy9TJ6FBTPC1Ga9G7ySKp5As
+ VvsQ==
 X-Forwarded-Encrypted: i=1;
- AJvYcCWXGSMAixxgDYR1E1653ztYa31p3YlddCllKh8ZKvuosUqcmsaSpUbIzVTlZeCree2Bs/A=@dpdk.org
-X-Gm-Message-State: AOJu0YzvwB/VAhnMq6t2zoSdWhW8rJTgevEQnRfjnH9NAPUtIxQ5Pg7n
- y4J5i4PoreovMagI8saqunnc1aeOSDAEXn2IPyVbZlO5EUYewkHTp7k3lc4Py5evV1P3qto00IZ
- VbWKU0wGm2k8ASXoJ0x4ffJE/DTBG14O6fNGz8XBZgQ==
-X-Gm-Gg: AY/fxX5tHU+x/jC1G2na3Lxk54PSxB0E7/7306+mDItfybp+8CZBfozx2Ra6MfmxMbi
- OBsH85/CfYBAlwAP7It3wRZCeso9oPUf+KGKj6lJ1l0kt/fcBMpS9fnfBQJbSPy9lo5IkeqbFsI
- ev4nnpCpZg7vNO/9hWT5a51YfmTZNRAC32sGeA+o33ppkMQkTvU4b0OC7MpMH9f7Olhvtxz0wxh
- pNBFtN3KneXEbVTtGmEANx+g+IRUYo5AkEhqVXKcqPlzgQhKhMbvLAO1ehrVPlyXn2lWi7l/tSN
- Zjm/URnnGVeHRfHujLx/KvwxAjOO
-X-Google-Smtp-Source: AGHT+IF5rVvoEhbFNQrpxqSuqGhGpprRXWSqpwu6sdCUWm2Oy+343q+0PeBbolNkn7L+KgkAqaPnw2b8yrhrDAnwVyM=
-X-Received: by 2002:a05:7022:4429:b0:11b:9386:8272 with SMTP id
- a92af1059eb24-11f34c2f9famr9097402c88.47.1765833491481; Mon, 15 Dec 2025
- 13:18:11 -0800 (PST)
-MIME-Version: 1.0
+ AJvYcCX6MtSJnem9Q6USFsGN/nEkRNDwkgnqSQKx47RNEf5+kyhQVR5qEc/poNFb6W+NPNSJcaw=@dpdk.org
+X-Gm-Message-State: AOJu0Ywpe/uH27oXBiaJEBll+jNwbY8kPxo8/nFNNiarPCskiNRsgYb4
+ xpR9hJ9hDeRDs3g2ZSh8LwMV4oQQ4Tq8RSLVy/hU9z8nuV/8zMT1JKEcf7vtyvR4iyQ=
+X-Gm-Gg: AY/fxX71j/vk6tNLxgYavCiQ2torTj+YptZblh9fz6KYg994LrLFSRvj4vdPz+P+1Ij
+ d7G9jYVFpqTiu4oj4mmucuZ1+PxrNQEvIPJZ6dNaPsb/A2wDCubYMJ9YhtehAGFs4aIfphhMBsn
+ LE1vz+uJ3pcdsfhsWdjRvV3tFnWQ9JrSiv6WU9QjLR8/8KEOQValgjYnO15rxngGJvJt56cehev
+ 1VmHw5BwjcCDEN2XHa5B7LIoAyZBjtTxFRdpZQ0198AHg4lhwHAuBVEvq0tv/Exc54LW/j9dqOS
+ 6TX9tFvXeLYOFpFgoVp3psUpwA+58qwqAmZ2FiaD0JYEi4+MtuCKZzH277ibOs1Cp3O7Qunoc5F
+ 7527oBY9Etcg4nThpyLM/fv4Tx9tXlqECUiYhtOZ54NfqpiZ136W+hw1Ot4cTqdGPdbWNdxhLiR
+ 9HXiZFvTyZDDnVwa+U2triMUI=
+X-Google-Smtp-Source: AGHT+IEIzvRVWYQv4+ioh00aCAyCL+DTM+RvSYCezlmppHpVuEdFPTo4Jr2NZXXO4M5CTOImtkiFoQ==
+X-Received: by 2002:ac8:7fc8:0:b0:4ed:ae8e:cc73 with SMTP id
+ d75a77b69052e-4f1d0625feamr179840941cf.65.1765834853809; 
+ Mon, 15 Dec 2025 13:40:53 -0800 (PST)
+Received: from d122205.iol.unh.edu ([2606:4100:3880:1220:4f6d:e2af:7f5f:4df])
+ by smtp.gmail.com with ESMTPSA id
+ d75a77b69052e-4f345b16f72sm3508241cf.3.2025.12.15.13.40.52
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Mon, 15 Dec 2025 13:40:53 -0800 (PST)
+From: Andrew Bailey <abailey@iol.unh.edu>
+To: probb@iol.unh.edu
+Cc: luca.vizzarro@arm.com, paul.szczepanek@arm.com, dmarx@iol.unh.edu,
+ dev@dpdk.org, Andrew Bailey <abailey@iol.unh.edu>
+Subject: [PATCH v3] dts: show missing NIC capabilities in DTS logs
+Date: Mon, 15 Dec 2025 16:40:49 -0500
+Message-ID: <20251215214049.694604-1-abailey@iol.unh.edu>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20251212210142.669766-1-abailey@iol.unh.edu>
 References: <20251212210142.669766-1-abailey@iol.unh.edu>
- <20251215183658.674252-1-abailey@iol.unh.edu>
-In-Reply-To: <20251215183658.674252-1-abailey@iol.unh.edu>
-From: Patrick Robb <probb@iol.unh.edu>
-Date: Mon, 15 Dec 2025 16:16:25 -0500
-X-Gm-Features: AQt7F2pAASbwGJXYhTdr_D2vzCFo8-qAvStqTUFWphF0Dd9HUN-QM61Df4ArqGw
-Message-ID: <CAJvnSUDKrsNiQLj1q4mpEiPb6CXRr_9kpb1__qX7Mo-b2O1SiQ@mail.gmail.com>
-Subject: Re: [PATCH v2] dts: show missing NIC capabilities in DTS logs
-To: Andrew Bailey <abailey@iol.unh.edu>
-Cc: luca.vizzarro@arm.com, dmarx@iol.unh.edu, dev@dpdk.org
-Content-Type: multipart/alternative; boundary="000000000000fe1504064604259c"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -73,24 +80,36 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---000000000000fe1504064604259c
-Content-Type: text/plain; charset="UTF-8"
+When a test was skipped due to a missing NIC capability, the logs should
+print the name of the missing capability. This has since changed to show
+only the integer representation of the missing capability. This patch
+restores the previous behavior of printing the name of the missing
+capability to the user.
 
-Looks good, thanks Andrew. If it is simple for you to see the commit
-which caused this regression, can you include the hash in a "fixes: <hash>"
-as is described in the DPDK contributor guidelines?
+Bugzilla ID: 1803
+Fixes: eba657ae3c3c ("dts: move testpmd module from framework to API
+directory")
 
-Reviewed-by: Patrick Robb <probb@iol.unh.edu>
+Signed-off-by: Andrew Bailey <abailey@iol.unh.edu>
+---
+ dts/api/capabilities.py | 4 ++++
+ 1 file changed, 4 insertions(+)
 
---000000000000fe1504064604259c
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+diff --git a/dts/api/capabilities.py b/dts/api/capabilities.py
+index 243759668f..2d0cd65854 100644
+--- a/dts/api/capabilities.py
++++ b/dts/api/capabilities.py
+@@ -219,6 +219,10 @@ class NicCapability(IntEnum):
+     PORT_TX_OFFLOAD_SEND_ON_TIMESTAMP = auto()
+     QUEUE_TX_OFFLOAD_SEND_ON_TIMESTAMP = auto()
+ 
++    def __str__(self):
++        """Override the default string representation to return the name of the capability."""
++        return self.name
++
+ 
+ def requires_link_topology(
+     link_topology: LinkTopology,
+-- 
+2.50.1
 
-<div dir=3D"ltr"><div dir=3D"ltr">Looks good, thanks Andrew. If it is simpl=
-e=C2=A0for you to see the commit which=C2=A0caused=C2=A0this regression, ca=
-n you include the hash in a &quot;fixes: &lt;hash&gt;&quot; as is described=
- in the DPDK contributor guidelines?<div><br></div><div>Reviewed-by: Patric=
-k Robb &lt;<a href=3D"mailto:probb@iol.unh.edu">probb@iol.unh.edu</a>&gt;</=
-div></div></div>
-
---000000000000fe1504064604259c--
