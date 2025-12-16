@@ -2,33 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2E85D609D9
-	for <dpdk-dev@archiver.kernel.org>; Tue, 16 Dec 2025 18:21:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26E93D609D9
+	for <dpdk-dev@archiver.kernel.org>; Tue, 16 Dec 2025 18:21:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C02C240649;
-	Tue, 16 Dec 2025 19:21:16 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 13B444060A;
+	Tue, 16 Dec 2025 19:21:23 +0100 (CET)
 Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
  [185.176.79.56])
- by mails.dpdk.org (Postfix) with ESMTP id 205A640648;
- Tue, 16 Dec 2025 19:21:16 +0100 (CET)
-Received: from mail.maildlp.com (unknown [172.18.224.150])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4dW4xJ1bNmzHnGjy;
- Wed, 17 Dec 2025 02:20:52 +0800 (CST)
+ by mails.dpdk.org (Postfix) with ESMTP id C6DBB4060F;
+ Tue, 16 Dec 2025 19:21:21 +0100 (CET)
+Received: from mail.maildlp.com (unknown [172.18.224.107])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4dW4xK3RJwzJ46CH;
+ Wed, 17 Dec 2025 02:20:53 +0800 (CST)
 Received: from frapema500003.china.huawei.com (unknown [7.182.19.114])
- by mail.maildlp.com (Postfix) with ESMTPS id E592B40539;
- Wed, 17 Dec 2025 02:21:15 +0800 (CST)
+ by mail.maildlp.com (Postfix) with ESMTPS id 962AE40570;
+ Wed, 17 Dec 2025 02:21:21 +0800 (CST)
 Received: from localhost.localdomain (10.220.239.45) by
  frapema500003.china.huawei.com (7.182.19.114) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 16 Dec 2025 19:21:15 +0100
+ 15.2.1544.11; Tue, 16 Dec 2025 19:21:21 +0100
 From: Marat Khalili <marat.khalili@huawei.com>
 To: <stephen@networkplumber.org>, <jerinjacobk@gmail.com>,
- <mb@smartsharesystems.com>, Wathsala Vithanage <wathsala.vithanage@arm.com>,
- Konstantin Ananyev <konstantin.ananyev@huawei.com>
+ <mb@smartsharesystems.com>, Konstantin Ananyev
+ <konstantin.ananyev@huawei.com>
 CC: <dev@dpdk.org>, <stable@dpdk.org>
-Subject: [PATCH v2 2/5] bpf: fix signed shift overflows in ARM JIT
-Date: Tue, 16 Dec 2025 18:20:32 +0000
-Message-ID: <20251216182036.77869-3-marat.khalili@huawei.com>
+Subject: [PATCH v2 3/5] bpf: disallow empty program
+Date: Tue, 16 Dec 2025 18:20:33 +0000
+Message-ID: <20251216182036.77869-4-marat.khalili@huawei.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251216182036.77869-1-marat.khalili@huawei.com>
 References: <20251110153046.63518-1-marat.khalili@huawei.com>
@@ -52,372 +52,224 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Left shifts of integer literals and bool values overwriting the sign bit
-were used multiple times in bpf_jit_arm64.c. E.g.:
+Add tests for some simple cases:
+* Program with no instructions;
+* Program with only EXIT instruction but no return value set;
+* Program with return value set but no EXIT instruction;
+* Minimal valid program with return value set and an EXIT instruction.
 
-    insn = (!!is64) << 31;
-
-where is64 has type bool (double bang is a no-op here). The operand of
-left shift was promoted to type int, which when 32-bit wide cannot
-represent the result. Similarly literal integers have int type by
-default.  Sanitizer produced the following diagnostic during runtime
-(for various lines):
-
-    lib/bpf/bpf_jit_arm64.c:241:18: runtime error: left shift of 1 by 31
-    places cannot be represented in type 'int'
-
-To fix the issue use RTE_BIT32 and similar macros instead.
+Fix found bugs:
+* a program with no instructions was accepted;
+* a program with no EXIT instruction read outside the buffer.
 
 Signed-off-by: Marat Khalili <marat.khalili@huawei.com>
+Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
 ---
- lib/bpf/bpf_jit_arm64.c | 162 ++++++++++++++++++++--------------------
- 1 file changed, 81 insertions(+), 81 deletions(-)
+ app/test/test_bpf.c    | 118 +++++++++++++++++++++++++++++++++++++++++
+ lib/bpf/bpf_load.c     |   2 +-
+ lib/bpf/bpf_validate.c |  20 +++++--
+ 3 files changed, 135 insertions(+), 5 deletions(-)
 
-diff --git a/lib/bpf/bpf_jit_arm64.c b/lib/bpf/bpf_jit_arm64.c
-index 96b8cd2e03..76df1e4ba1 100644
---- a/lib/bpf/bpf_jit_arm64.c
-+++ b/lib/bpf/bpf_jit_arm64.c
-@@ -28,7 +28,7 @@
- #define A64_ZR			31
+diff --git a/app/test/test_bpf.c b/app/test/test_bpf.c
+index b7c94ba1c7..6ecc49efff 100644
+--- a/app/test/test_bpf.c
++++ b/app/test/test_bpf.c
+@@ -34,6 +34,124 @@ test_bpf(void)
+ #include <rte_ip.h>
  
- #define check_imm(n, val) (((val) >= 0) ? !!((val) >> (n)) : !!((~val) >> (n)))
--#define mask_imm(n, val) ((val) & ((1 << (n)) - 1))
-+#define mask_imm(n, val) ((val) & (RTE_BIT32(n) - 1))
  
- struct ebpf_a64_map {
- 	uint32_t off; /* eBPF to arm64 insn offset mapping for jump */
-@@ -238,12 +238,12 @@ emit_add_sub_imm(struct a64_jit_ctx *ctx, bool is64, bool sub, uint8_t rd,
- 	uint32_t insn, imm;
++/* Tests of most simple BPF programs (no instructions, one instruction etc.) */
++
++/*
++ * Try to load a simple bpf program from the instructions array.
++ *
++ * When `expected_errno` is zero, expect it to load successfully.
++ * When `expected_errno` is non-zero, expect it to fail with this `rte_errno`.
++ *
++ * @param nb_ins
++ *   Number of instructions in the `ins` array.
++ * @param ins
++ *   BPF instructions array.
++ * @param expected_errno
++ *   Expected result.
++ * @return
++ *   TEST_SUCCESS on success, error code on failure.
++ */
++static int
++bpf_load_test(uint32_t nb_ins, const struct ebpf_insn *ins, int expected_errno)
++{
++	const struct rte_bpf_prm prm = {
++		.ins = ins,
++		.nb_ins = nb_ins,
++		.prog_arg = {
++			.type = RTE_BPF_ARG_RAW,
++			.size = sizeof(uint64_t),
++		},
++	};
++
++	struct rte_bpf *const bpf = rte_bpf_load(&prm);
++	const int actual_errno = rte_errno;
++	rte_bpf_destroy(bpf);
++
++	if (expected_errno != 0) {
++		RTE_TEST_ASSERT_EQUAL(bpf, NULL,
++			"expect rte_bpf_load() == NULL");
++		RTE_TEST_ASSERT_EQUAL(actual_errno, expected_errno,
++			"expect rte_errno == %d, found %d",
++			expected_errno, actual_errno);
++	} else
++		RTE_TEST_ASSERT_NOT_EQUAL(bpf, NULL,
++			"expect rte_bpf_load() != NULL");
++
++	return TEST_SUCCESS;
++}
++
++/*
++ * Try and load completely empty BPF program.
++ * Should fail because there is no EXIT (and also return value is undefined).
++ */
++static int
++test_no_instructions(void)
++{
++	static const struct ebpf_insn ins[] = {};
++	return bpf_load_test(RTE_DIM(ins), ins, EINVAL);
++}
++
++REGISTER_FAST_TEST(bpf_no_instructions_autotest, true, true, test_no_instructions);
++
++/*
++ * Try and load a BPF program comprising single EXIT instruction.
++ * Should fail because the return value is undefined.
++ */
++static int
++test_exit_only(void)
++{
++	static const struct ebpf_insn ins[] = {
++		{
++			.code = (BPF_JMP | EBPF_EXIT),
++		},
++	};
++	return bpf_load_test(RTE_DIM(ins), ins, EINVAL);
++}
++
++REGISTER_FAST_TEST(bpf_exit_only_autotest, true, true, test_exit_only);
++
++/*
++ * Try and load a BPF program with no EXIT instruction.
++ * Should fail because of this.
++ */
++static int
++test_no_exit(void)
++{
++	static const struct ebpf_insn ins[] = {
++		{
++			/* Set return value to the program argument. */
++			.code = (EBPF_ALU64 | EBPF_MOV | BPF_X),
++			.src_reg = EBPF_REG_1,
++			.dst_reg = EBPF_REG_0,
++		},
++	};
++	return bpf_load_test(RTE_DIM(ins), ins, EINVAL);
++}
++
++REGISTER_FAST_TEST(bpf_no_exit_autotest, true, true, test_no_exit);
++
++/*
++ * Try and load smallest possible valid BPF program.
++ */
++static int
++test_minimal_working(void)
++{
++	static const struct ebpf_insn ins[] = {
++		{
++			/* Set return value to the program argument. */
++			.code = (EBPF_ALU64 | EBPF_MOV | BPF_X),
++			.src_reg = EBPF_REG_1,
++			.dst_reg = EBPF_REG_0,
++		},
++		{
++			.code = (BPF_JMP | EBPF_EXIT),
++		},
++	};
++	return bpf_load_test(RTE_DIM(ins), ins, 0);
++}
++
++REGISTER_FAST_TEST(bpf_minimal_working_autotest, true, true, test_minimal_working);
++
+ /*
+  * Basic functional tests for librte_bpf.
+  * The main procedure - load eBPF program, execute it and
+diff --git a/lib/bpf/bpf_load.c b/lib/bpf/bpf_load.c
+index 556e613762..6983c026af 100644
+--- a/lib/bpf/bpf_load.c
++++ b/lib/bpf/bpf_load.c
+@@ -88,7 +88,7 @@ rte_bpf_load(const struct rte_bpf_prm *prm)
+ 	int32_t rc;
+ 	uint32_t i;
  
- 	imm = mask_imm(12, imm12);
--	insn = (!!is64) << 31;
--	insn |= (!!sub) << 30;
-+	insn = RTE_SHIFT_VAL32(is64, 31);
-+	insn |= RTE_SHIFT_VAL32(sub, 30);
- 	insn |= 0x11000000;
- 	insn |= rd;
--	insn |= rn << 5;
--	insn |= imm << 10;
-+	insn |= RTE_SHIFT_VAL32(rn, 5);
-+	insn |= RTE_SHIFT_VAL32(imm, 10);
- 
- 	emit_insn(ctx, insn,
- 		  check_reg(rd) || check_reg(rn) || check_imm(12, imm12));
-@@ -279,16 +279,16 @@ emit_ls_pair_64(struct a64_jit_ctx *ctx, uint8_t rt, uint8_t rt2, uint8_t rn,
+-	if (prm == NULL || prm->ins == NULL ||
++	if (prm == NULL || prm->ins == NULL || prm->nb_ins == 0 ||
+ 			(prm->nb_xsym != 0 && prm->xsym == NULL)) {
+ 		rte_errno = EINVAL;
+ 		return NULL;
+diff --git a/lib/bpf/bpf_validate.c b/lib/bpf/bpf_validate.c
+index 4f47d6dc7b..23444b3eaa 100644
+--- a/lib/bpf/bpf_validate.c
++++ b/lib/bpf/bpf_validate.c
+@@ -1827,7 +1827,7 @@ add_edge(struct bpf_verifier *bvf, struct inst_node *node, uint32_t nidx)
  {
- 	uint32_t insn;
+ 	uint32_t ne;
  
--	insn = (!!load) << 22;
--	insn |= (!!pre_index) << 24;
-+	insn = RTE_SHIFT_VAL32(load, 22);
-+	insn |= RTE_SHIFT_VAL32(pre_index, 24);
- 	insn |= 0xa8800000;
- 	insn |= rt;
--	insn |= rn << 5;
--	insn |= rt2 << 10;
-+	insn |= RTE_SHIFT_VAL32(rn, 5);
-+	insn |= RTE_SHIFT_VAL32(rt2, 10);
- 	if (push)
--		insn |= 0x7e << 15; /* 0x7e means -2 with imm7 */
-+		insn |= RTE_SHIFT_VAL32(0x7e, 15); /* 0x7e means -2 with imm7 */
- 	else
--		insn |= 0x2 << 15;
-+		insn |= RTE_SHIFT_VAL32(0x2, 15);
- 
- 	emit_insn(ctx, insn, check_reg(rn) || check_reg(rt) || check_reg(rt2));
- 
-@@ -317,11 +317,11 @@ mov_imm(struct a64_jit_ctx *ctx, bool is64, uint8_t rd, uint8_t type,
+-	if (nidx > bvf->prm->nb_ins) {
++	if (nidx >= bvf->prm->nb_ins) {
+ 		RTE_BPF_LOG_LINE(ERR,
+ 			"%s: program boundary violation at pc: %u, next pc: %u",
+ 			__func__, get_node_idx(bvf, node), nidx);
+@@ -1886,14 +1886,20 @@ get_prev_node(struct bpf_verifier *bvf, struct inst_node *node)
+  * Control Flow Graph (CFG).
+  * Information collected at this path would be used later
+  * to determine is there any loops, and/or unreachable instructions.
++ * PREREQUISITE: there is at least one node.
+  */
+ static void
+ dfs(struct bpf_verifier *bvf)
  {
- 	uint32_t insn;
+ 	struct inst_node *next, *node;
  
--	insn = (!!is64) << 31;
--	insn |= type << 29;
--	insn |= 0x25 << 23;
--	insn |= (shift/16) << 21;
--	insn |= imm16 << 5;
-+	insn = RTE_SHIFT_VAL32(is64, 31);
-+	insn |= RTE_SHIFT_VAL32(type, 29);
-+	insn |= RTE_SHIFT_VAL32(0x25, 23);
-+	insn |= RTE_SHIFT_VAL32(shift/16, 21);
-+	insn |= RTE_SHIFT_VAL32(imm16, 5);
- 	insn |= rd;
+-	node = bvf->in;
+-	while (node != NULL) {
++	RTE_ASSERT(bvf->nb_nodes != 0);
++	/*
++	 * Since there is at least one node, node with index 0 always exists;
++	 * it is our program entry point.
++	 */
++	node = &bvf->in[0];
++	do {
  
- 	emit_insn(ctx, insn, check_reg(rd) || check_mov_hw(is64, shift));
-@@ -334,7 +334,7 @@ emit_mov_imm32(struct a64_jit_ctx *ctx, bool is64, uint8_t rd, uint32_t val)
- 	uint16_t lower = val & 0xffff;
- 
- 	/* Positive number */
--	if ((val & 1UL << 31) == 0) {
-+	if ((val & RTE_BIT32(31)) == 0) {
- 		mov_imm(ctx, is64, rd, A64_MOVZ, lower, 0);
- 		if (upper)
- 			mov_imm(ctx, is64, rd, A64_MOVK, upper, 16);
-@@ -393,21 +393,21 @@ emit_ls(struct a64_jit_ctx *ctx, uint8_t sz, uint8_t rt, uint8_t rn, uint8_t rm,
- {
- 	uint32_t insn;
- 
--	insn = 0x1c1 << 21;
-+	insn = RTE_SHIFT_VAL32(0x1c1, 21);
- 	if (load)
--		insn |= 1 << 22;
-+		insn |= RTE_BIT32(22);
- 	if (sz == BPF_B)
--		insn |= 0 << 30;
-+		insn |= RTE_SHIFT_VAL32(0, 30);
- 	else if (sz == BPF_H)
--		insn |= 1 << 30;
-+		insn |= RTE_SHIFT_VAL32(1, 30);
- 	else if (sz == BPF_W)
--		insn |= 2 << 30;
-+		insn |= RTE_SHIFT_VAL32(2, 30);
- 	else if (sz == EBPF_DW)
--		insn |= 3 << 30;
-+		insn |= RTE_SHIFT_VAL32(3, 30);
- 
--	insn |= rm << 16;
--	insn |= 0x1a << 10; /* LSL and S = 0 */
--	insn |= rn << 5;
-+	insn |= RTE_SHIFT_VAL32(rm, 16);
-+	insn |= RTE_SHIFT_VAL32(0x1a, 10); /* LSL and S = 0 */
-+	insn |= RTE_SHIFT_VAL32(rn, 5);
- 	insn |= rt;
- 
- 	emit_insn(ctx, insn, check_reg(rt) || check_reg(rn) || check_reg(rm) ||
-@@ -436,10 +436,10 @@ emit_add_sub(struct a64_jit_ctx *ctx, bool is64, uint8_t rd, uint8_t rn,
- {
- 	uint32_t insn;
- 
--	insn = (!!is64) << 31;
--	insn |= op << 21; /* shift == 0 */
--	insn |= rm << 16;
--	insn |= rn << 5;
-+	insn = RTE_SHIFT_VAL32(is64, 31);
-+	insn |= RTE_SHIFT_VAL32(op, 21); /* shift == 0 */
-+	insn |= RTE_SHIFT_VAL32(rm, 16);
-+	insn |= RTE_SHIFT_VAL32(rn, 5);
- 	insn |= rd;
- 
- 	emit_insn(ctx, insn, check_reg(rd) || check_reg(rm));
-@@ -468,11 +468,11 @@ emit_mul(struct a64_jit_ctx *ctx, bool is64, uint8_t rd, uint8_t rm)
- {
- 	uint32_t insn;
- 
--	insn = (!!is64) << 31;
--	insn |= 0xd8 << 21;
--	insn |= rm << 16;
--	insn |= A64_ZR << 10;
--	insn |= rd << 5;
-+	insn = RTE_SHIFT_VAL32(is64, 31);
-+	insn |= RTE_SHIFT_VAL32(0xd8, 21);
-+	insn |= RTE_SHIFT_VAL32(rm, 16);
-+	insn |= RTE_SHIFT_VAL32(A64_ZR, 10);
-+	insn |= RTE_SHIFT_VAL32(rd, 5);
- 	insn |= rd;
- 
- 	emit_insn(ctx, insn, check_reg(rd) || check_reg(rm));
-@@ -489,11 +489,11 @@ emit_data_process_two_src(struct a64_jit_ctx *ctx, bool is64, uint8_t rd,
- {
- 	uint32_t insn;
- 
--	insn = (!!is64) << 31;
--	insn |= 0xd6 << 21;
--	insn |= rm << 16;
--	insn |= op << 10;
--	insn |= rn << 5;
-+	insn = RTE_SHIFT_VAL32(is64, 31);
-+	insn |= RTE_SHIFT_VAL32(0xd6, 21);
-+	insn |= RTE_SHIFT_VAL32(rm, 16);
-+	insn |= RTE_SHIFT_VAL32(op, 10);
-+	insn |= RTE_SHIFT_VAL32(rn, 5);
- 	insn |= rd;
- 
- 	emit_insn(ctx, insn, check_reg(rd) || check_reg(rm));
-@@ -532,14 +532,14 @@ emit_bitfield(struct a64_jit_ctx *ctx, bool is64, uint8_t rd, uint8_t rn,
- {
- 	uint32_t insn;
- 
--	insn = (!!is64) << 31;
-+	insn = RTE_SHIFT_VAL32(is64, 31);
- 	if (insn)
--		insn |= 1 << 22; /* Set N bit when is64 is set */
--	insn |= op << 29;
--	insn |= 0x26 << 23;
--	insn |= immr << 16;
--	insn |= imms << 10;
--	insn |= rn << 5;
-+		insn |= RTE_BIT32(22); /* Set N bit when is64 is set */
-+	insn |= RTE_SHIFT_VAL32(op, 29);
-+	insn |= RTE_SHIFT_VAL32(0x26, 23);
-+	insn |= RTE_SHIFT_VAL32(immr, 16);
-+	insn |= RTE_SHIFT_VAL32(imms, 10);
-+	insn |= RTE_SHIFT_VAL32(rn, 5);
- 	insn |= rd;
- 
- 	emit_insn(ctx, insn, check_reg(rd) || check_reg(rn) ||
-@@ -578,11 +578,11 @@ emit_logical(struct a64_jit_ctx *ctx, bool is64, uint8_t rd,
- {
- 	uint32_t insn;
- 
--	insn = (!!is64) << 31;
--	insn |= op << 29;
--	insn |= 0x50 << 21;
--	insn |= rm << 16;
--	insn |= rd << 5;
-+	insn = RTE_SHIFT_VAL32(is64, 31);
-+	insn |= RTE_SHIFT_VAL32(op, 29);
-+	insn |= RTE_SHIFT_VAL32(0x50, 21);
-+	insn |= RTE_SHIFT_VAL32(rm, 16);
-+	insn |= RTE_SHIFT_VAL32(rd, 5);
- 	insn |= rd;
- 
- 	emit_insn(ctx, insn, check_reg(rd) || check_reg(rm));
-@@ -612,12 +612,12 @@ emit_msub(struct a64_jit_ctx *ctx, bool is64, uint8_t rd, uint8_t rn,
- {
- 	uint32_t insn;
- 
--	insn = (!!is64) << 31;
--	insn |= 0xd8 << 21;
--	insn |= rm << 16;
--	insn |= 0x1 << 15;
--	insn |= ra << 10;
--	insn |= rn << 5;
-+	insn = RTE_SHIFT_VAL32(is64, 31);
-+	insn |= RTE_SHIFT_VAL32(0xd8, 21);
-+	insn |= RTE_SHIFT_VAL32(rm, 16);
-+	insn |= RTE_SHIFT_VAL32(0x1, 15);
-+	insn |= RTE_SHIFT_VAL32(ra, 10);
-+	insn |= RTE_SHIFT_VAL32(rn, 5);
- 	insn |= rd;
- 
- 	emit_insn(ctx, insn, check_reg(rd) || check_reg(rn) || check_reg(rm) ||
-@@ -638,7 +638,7 @@ emit_blr(struct a64_jit_ctx *ctx, uint8_t rn)
- 	uint32_t insn;
- 
- 	insn = 0xd63f0000;
--	insn |= rn << 5;
-+	insn |= RTE_SHIFT_VAL32(rn, 5);
- 
- 	emit_insn(ctx, insn, check_reg(rn));
+ 		if (node->colour == WHITE)
+ 			set_node_colour(bvf, node, GREY);
+@@ -1923,7 +1929,7 @@ dfs(struct bpf_verifier *bvf)
+ 			}
+ 		} else
+ 			node = NULL;
+-	}
++	} while (node != NULL);
  }
-@@ -669,22 +669,22 @@ emit_rev(struct a64_jit_ctx *ctx, uint8_t rd, int32_t imm)
- 	uint32_t insn;
  
- 	insn = 0xdac00000;
--	insn |= rd << 5;
-+	insn |= RTE_SHIFT_VAL32(rd, 5);
- 	insn |= rd;
+ /*
+@@ -2062,6 +2068,12 @@ validate(struct bpf_verifier *bvf)
+ 	if (rc != 0)
+ 		return rc;
  
- 	switch (imm) {
- 	case 16:
--		insn |= 1 << 10;
-+		insn |= RTE_SHIFT_VAL32(1, 10);
- 		emit_insn(ctx, insn, check_reg(rd));
- 		emit_zero_extend(ctx, rd, 16);
- 		break;
- 	case 32:
--		insn |= 2 << 10;
-+		insn |= RTE_SHIFT_VAL32(2, 10);
- 		emit_insn(ctx, insn, check_reg(rd));
- 		/* Upper 32 bits already cleared */
- 		break;
- 	case 64:
--		insn |= 3 << 10;
-+		insn |= RTE_SHIFT_VAL32(3, 10);
- 		emit_insn(ctx, insn, check_reg(rd));
- 		break;
- 	default:
-@@ -933,9 +933,9 @@ emit_cbnz(struct a64_jit_ctx *ctx, bool is64, uint8_t rt, int32_t imm19)
- 	uint32_t insn, imm;
++	if (bvf->nb_nodes == 0) {
++		RTE_BPF_LOG_LINE(ERR, "%s(%p) the program is empty",
++			__func__, bvf);
++		return -EINVAL;
++	}
++
+ 	dfs(bvf);
  
- 	imm = mask_imm(19, imm19);
--	insn = (!!is64) << 31;
--	insn |= 0x35 << 24;
--	insn |= imm << 5;
-+	insn = RTE_SHIFT_VAL32(is64, 31);
-+	insn |= RTE_SHIFT_VAL32(0x35, 24);
-+	insn |= RTE_SHIFT_VAL32(imm, 5);
- 	insn |= rt;
- 
- 	emit_insn(ctx, insn, check_reg(rt) || check_imm(19, imm19));
-@@ -947,7 +947,7 @@ emit_b(struct a64_jit_ctx *ctx, int32_t imm26)
- 	uint32_t insn, imm;
- 
- 	imm = mask_imm(26, imm26);
--	insn = 0x5 << 26;
-+	insn = RTE_SHIFT_VAL32(0x5, 26);
- 	insn |= imm;
- 
- 	emit_insn(ctx, insn, check_imm(26, imm26));
-@@ -971,9 +971,9 @@ emit_stadd(struct a64_jit_ctx *ctx, bool is64, uint8_t rs, uint8_t rn)
- 	uint32_t insn;
- 
- 	insn = 0xb820001f;
--	insn |= (!!is64) << 30;
--	insn |= rs << 16;
--	insn |= rn << 5;
-+	insn |= RTE_SHIFT_VAL32(is64, 30);
-+	insn |= RTE_SHIFT_VAL32(rs, 16);
-+	insn |= RTE_SHIFT_VAL32(rn, 5);
- 
- 	emit_insn(ctx, insn, check_reg(rs) || check_reg(rn));
- }
-@@ -984,8 +984,8 @@ emit_ldxr(struct a64_jit_ctx *ctx, bool is64, uint8_t rt, uint8_t rn)
- 	uint32_t insn;
- 
- 	insn = 0x885f7c00;
--	insn |= (!!is64) << 30;
--	insn |= rn << 5;
-+	insn |= RTE_SHIFT_VAL32(is64, 30);
-+	insn |= RTE_SHIFT_VAL32(rn, 5);
- 	insn |= rt;
- 
- 	emit_insn(ctx, insn, check_reg(rt) || check_reg(rn));
-@@ -998,9 +998,9 @@ emit_stxr(struct a64_jit_ctx *ctx, bool is64, uint8_t rs, uint8_t rt,
- 	uint32_t insn;
- 
- 	insn = 0x88007c00;
--	insn |= (!!is64) << 30;
--	insn |= rs << 16;
--	insn |= rn << 5;
-+	insn |= RTE_SHIFT_VAL32(is64, 30);
-+	insn |= RTE_SHIFT_VAL32(rs, 16);
-+	insn |= RTE_SHIFT_VAL32(rn, 5);
- 	insn |= rt;
- 
- 	emit_insn(ctx, insn, check_reg(rs) || check_reg(rt) || check_reg(rn));
-@@ -1051,9 +1051,9 @@ emit_cmp_tst(struct a64_jit_ctx *ctx, bool is64, uint8_t rn, uint8_t rm,
- 	uint32_t insn;
- 
- 	insn = opc;
--	insn |= (!!is64) << 31;
--	insn |= rm << 16;
--	insn |= rn << 5;
-+	insn |= RTE_SHIFT_VAL32(is64, 31);
-+	insn |= RTE_SHIFT_VAL32(rm, 16);
-+	insn |= RTE_SHIFT_VAL32(rn, 5);
- 
- 	emit_insn(ctx, insn, check_reg(rn) || check_reg(rm));
- }
-@@ -1076,8 +1076,8 @@ emit_b_cond(struct a64_jit_ctx *ctx, uint8_t cond, int32_t imm19)
- 	uint32_t insn, imm;
- 
- 	imm = mask_imm(19, imm19);
--	insn = 0x15 << 26;
--	insn |= imm << 5;
-+	insn = RTE_SHIFT_VAL32(0x15, 26);
-+	insn |= RTE_SHIFT_VAL32(imm, 5);
- 	insn |= cond;
- 
- 	emit_insn(ctx, insn, check_cond(cond) || check_imm(19, imm19));
-@@ -1301,7 +1301,7 @@ emit(struct a64_jit_ctx *ctx, struct rte_bpf *bpf)
- 			break;
- 		/* dst = imm64 */
- 		case (BPF_LD | BPF_IMM | EBPF_DW):
--			u64 = ((uint64_t)ins[1].imm << 32) | (uint32_t)imm;
-+			u64 = RTE_SHIFT_VAL64(ins[1].imm, 32) | (uint32_t)imm;
- 			emit_mov_imm(ctx, 1, dst, u64);
- 			i++;
- 			break;
+ 	RTE_LOG(DEBUG, BPF, "%s(%p) stats:\n"
 -- 
 2.43.0
 
