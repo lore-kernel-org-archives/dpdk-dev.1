@@ -2,55 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3206D5B161
-	for <dpdk-dev@archiver.kernel.org>; Tue, 16 Dec 2025 06:12:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 401DAD5B87C
+	for <dpdk-dev@archiver.kernel.org>; Tue, 16 Dec 2025 06:20:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BEAB24026C;
-	Tue, 16 Dec 2025 07:12:41 +0100 (CET)
-Received: from smtpbgsg1.qq.com (smtpbgsg1.qq.com [54.254.200.92])
- by mails.dpdk.org (Postfix) with ESMTP id 2212A4025F
- for <dev@dpdk.org>; Tue, 16 Dec 2025 07:12:39 +0100 (CET)
-X-QQ-mid: Yeas4t1765865551t173t45867
-Received: from 3DB253DBDE8942B29385B9DFB0B7E889 (jiawenwu@trustnetic.com
- [115.206.160.202])
+	by mails.dpdk.org (Postfix) with ESMTP id 5CB924026C;
+	Tue, 16 Dec 2025 07:20:52 +0100 (CET)
+Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
+ by mails.dpdk.org (Postfix) with ESMTP id 87A1D4025F
+ for <dev@dpdk.org>; Tue, 16 Dec 2025 07:20:50 +0100 (CET)
+X-QQ-mid: esmtpgz10t1765866038t17a9762f
+X-QQ-Originating-IP: Oayw9UPQE3wyRj8PIiJOWsjmWMzpRWiFMcMbPD5KeHM=
+Received: from w-MS-7E16.trustnetic.com ( [115.206.160.202])
+ by bizesmtp.qq.com (ESMTP) with 
+ id ; Tue, 16 Dec 2025 14:20:32 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
-From: =?utf-8?b?Smlhd2VuIFd1?= <jiawenwu@trustnetic.com>
-X-BIZMAIL-ID: 4054320336177348285
-To: "'Stephen Hemminger'" <stephen@networkplumber.org>
-Cc: <dev@dpdk.org>,
-	<zaiyuwang@trustnetic.com>
-References: <19590B42346A2673+20251121061951.466049-1-jiawenwu@trustnetic.com>
- <20251126133925.7cb06815@phoenix.local>
-In-Reply-To: <20251126133925.7cb06815@phoenix.local>
-Subject: RE: [PATCH] net/txgbe: remove the build dependency on security
-Date: Tue, 16 Dec 2025 14:12:30 +0800
-Message-ID: <002401dc6e52$f5bfbeb0$e13f3c10$@trustnetic.com>
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 10793031978743711658
+EX-QQ-RecipientCnt: 2
+From: Jiawen Wu <jiawenwu@trustnetic.com>
+To: dev@dpdk.org
+Cc: Jiawen Wu <jiawenwu@trustnetic.com>
+Subject: [PATCH] maintainers: update Wangxun maintainers
+Date: Tue, 16 Dec 2025 14:20:31 +0800
+Message-ID: <BA4B85C9F816456A+20251216062031.93100-1-jiawenwu@trustnetic.com>
+X-Mailer: git-send-email 2.48.1
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Content-Language: zh-cn
-Thread-Index: AQLlOmEE8lhguW28n63n1wB9qLoz1gLpm2lTsvrjqsA=
+Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
-Feedback-ID: Yeas:trustnetic.com:qybglogicsvrgz:qybglogicsvrgz6b-0
-X-QQ-XMAILINFO: Ms7zrqvpzOE3PKNNC/AZ8O/0pdnIzxRLPHMEv/0xNienR9nWf50bd179
- +yzdCt9MgK+MRx6JRJA49x+2tR8mTCyv0weZOpGmH4haWVusk6ID249IYxejEsS553GXljI
- KhkkPQvo5cvUR+u8v0tkhlAtgVw5sDiMqaUIqhtpxv/A9tZ3rGHlAC4fNpSDFBoNHOyxlwC
- wP/vrItN4Ky/DyfuXj1ZUgKpOdacUI1l/sFnW80YZ9WKTgfs95vzO/Qokfz/N4wohNC1teW
- UNQ/k2caXmb2bGys7WEvRi4bNjQOTetthT19QDSk4t0zGvmShod0ScV/J3Xt/A7sQiiscKf
- PVX96lcmPzl5mhybbQTHEYdqoqO1h1KZ0VS29V+YEeFw6XsSGCVo0VRUwak42FgdW85xOJV
- G53Hy0uVLWd79O+BA5geedXQaIf/1rOry1hVvvx8oBwOmqlMw+W/BxWF1bQxrCDxnGLV12w
- PL4a1M8YAzFgNQADFYS0aAb9QEQYxCyqkWvX822UDal6c9xGmGIPDbBjKWOzaqGZSlNoaob
- YVYT0uuitaL9Da3QfX3ANR6j30veHvoBIf7hPL1R/qUlplyvJTzPRebk4MlQUcdnWKpW9F5
- eK/cxPubw3JWLxFwa+/jnWPA3DNKDBh6UWdtNGbJbIOzGENEW2qK1Id38gXwmcPxdjvVBKl
- ZWnLUf/cZwTBbzVuBU/zj/k3xn69jQlIaWRXNax9IS5n68D8BKl20l+XghQsTXpxPIOnI3A
- YNEEwdFcDqs7et6mS4l7ppQKyWFLoh7rhvcq8aZVK0pFjlSN6Ntc/M/yuIh4cpNXx19m7Hj
- I+mESDCvW6XS4Yoi+oGufKzP4DTPntvqbc3C1oNvBpl4c0gbA2G+7N63fzwEnQI0KdEbt9V
- 5kzp0k17/prUMA870oQ6lG7z8VXBkkha7AhnEcDhm4c3gGsg1pV4PhJXbUlfZLWFkf5xSvY
- Ju0pXe1njUqHxIMfN+M/qfUmkyT/o0XKLXjvcaOeJ9OMYCjE/0RGI0Hx1zHOafu65i0Ys5V
- tmTEHWLz/3aXP6SnT2
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+Feedback-ID: esmtpgz:trustnetic.com:qybglogicsvrgz:qybglogicsvrgz6b-0
+X-QQ-XMAILINFO: OKKHiI6c9SH3r7pr1TGpj0+wwTasEjsSaZlw60Cr996mMsAaCwJbxBYu
+ LUQdVQ+3H9BIEv13xKrh1/GVwfeTkGk03/pnciTEL7a7eAeGDPzGmu6/JMU2KC6FZnWYy8j
+ XFDRhfsh6mbxHV5aotbCZMgRJ6iPSfgedAcicQsk6+J4qsSRtMo7wbq0GqQ6bmTF9CAWBPa
+ qXNKXmeh2+1qVH5yiCbehJhNRRq9g3eshqaSy6KZ1SqRmdmvlwggXa/aPnFeJutEVp4w46p
+ Hfhw5wbuF25NjGymz2hSjySQqaldeNl0kkbTcaOzKdxjKU1ZGOgdKLbClpqrmASvOdPC3Y0
+ bAdMf+KRfi6qfHwSeDKrl9USiLvzSkD1wTIcTNuECslnDoaepI635rwI7norMrQHXva87H+
+ RLTXU6wKHnUYFIVCLaz12cmG2+Yzzj3qT/yZJ0obEDR2fRJzrFzUV8QMehHSHADW71ZJrZc
+ onmkqbNWNlVIMVA8lhPJ5IRsR2JisxCQcvEx8LnO/bnuO/oWMPzcXzZ6aV4n9XIwQfU+OWe
+ L1HOkVtfhCgqglrYAzKDQmV6ggTljmL5KCp6Rg2MXuHh88nU5W7fpUrrwFwXSyBQlfI2pRf
+ 018UPiZFjeW4TBkYDPKQb5ukWwYzwl+8kFMyVLlgnjhDHhXcZdCQVHeUUN920KbK5iu9NzZ
+ HHq2nxO7nrJO6oYb42l0owm2/bpr3bYmcxwnuCioOnnDqf3uJITjjr30ZyH8PLIKve9E5tU
+ T0gMMV4MjtwjgJaM7tBO80sfBBB1RL+3HruoRy4RaxHe8WHpV6J9ss1aqmvss1kMihFpE/T
+ 3/NdsqNu4+NSXx3skfO8GMrfjdceRxtRRBDHrzGT6WqTkssQuNBZQDdepEvtdh9NxRi3ieg
+ BTpdInkctSzJlR3sMmaIA4b540pTyw3SSnQkwpFYAIlo9QJZVdRD57GxmwZa3A7R0t2Wr4f
+ uba0w7V2Anhg4fp90XcTU6BZJqITtQRP06c4woSRKIFgcps8+GSFYonOjXjiAytLw4+3DiI
+ H3t3Pabzv4AZPlQbBH53XJMzDYgLTmrUKYX7+yrpd0tviIXYzMuvk8LV9/Tps=
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -65,26 +61,25 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, Nov 27, 2025 5:39 AM, Stephen Hemminger wrote:
-> On Fri, 21 Nov 2025 14:19:51 +0800
-> Jiawen Wu <jiawenwu@trustnetic.com> wrote:
-> 
-> > Now lib security is enabled by default, and cannot be disabled if the
-> > driver is intended to be used. But there are some functional scenarios
-> > where lib security should be disabled, just like to enale Tx descriptor
-> > hardware check. See commit 0eabdfcd4af4 ("net/txgbe: enable Tx
-> > descriptor error interrupt").
-> >
-> > So remove the build dependency on lib security for the driver.
-> >
-> > Signed-off-by: Jiawen Wu <jiawenwu@trustnetic.com>
-> 
-> I would like a review by other maintainers.
-> Several other drivers including cn10k, cn20k, ixgbe already have
-> similar dependencies. Can't the security library just have stubs
-> to always return NULL if not used.
+Remove the developer who are no longer involved.
 
-Hi Stephen,
+Signed-off-by: Jiawen Wu <jiawenwu@trustnetic.com>
+---
+ MAINTAINERS | 1 -
+ 1 file changed, 1 deletion(-)
 
-What should we do next for this patch?
+diff --git a/MAINTAINERS b/MAINTAINERS
+index d7d8dbdb25..341fabbf93 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1052,7 +1052,6 @@ F: doc/guides/nics/features/ngbe.ini
+ 
+ Wangxun txgbe
+ M: Jiawen Wu <jiawenwu@trustnetic.com>
+-M: Jian Wang <jianwang@trustnetic.com>
+ M: Zaiyu Wang <zaiyuwang@trustnetic.com>
+ F: drivers/net/txgbe/
+ F: doc/guides/nics/txgbe.rst
+-- 
+2.48.1
 
