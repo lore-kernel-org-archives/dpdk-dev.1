@@ -2,68 +2,166 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2128CD5C0C2
-	for <dpdk-dev@archiver.kernel.org>; Tue, 16 Dec 2025 08:56:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41B6FD5C0F9
+	for <dpdk-dev@archiver.kernel.org>; Tue, 16 Dec 2025 09:06:31 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 30DA6402AC;
-	Tue, 16 Dec 2025 09:56:04 +0100 (CET)
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com
- [209.85.128.180])
- by mails.dpdk.org (Postfix) with ESMTP id CC6AD40689
- for <dev@dpdk.org>; Tue,  9 Dec 2025 17:40:47 +0100 (CET)
-Received: by mail-yw1-f180.google.com with SMTP id
- 00721157ae682-78c4aa7af99so27466697b3.0
- for <dev@dpdk.org>; Tue, 09 Dec 2025 08:40:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1765298447; x=1765903247; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=WmgIz9e/tMxQlI7bn7f9SpWFjQyMSSU2tt8f0rwy6o8=;
- b=OhfPNs+bsfRg3ehbwDHqWZqL+Wmj2bDfAROgQT4lziatP9XhuQ8AFIDv3YnjAn3/Aq
- gvzHGHBljl5Q/wzTF7vjg8mzk+yQnuyTZ43jlE6CxwoK2Ek2TUnbLtfUt/gJBE8rcq7q
- gmV9xx6wHn+oF17BI3Hyb1LHa7TFqPZJIYLpWxHBUSjus5yBz1JcyxTkud3mn9V+3/qW
- H1NYtE6fy6IbptHO0qiBVv1VG57iPFAEwwvGOTfSk3vBGv6UcUH+hPSdQveZ5XN7Cmed
- UWif9XLJ+tx7q+suwaj6FohqE2D9MUnr9Y/f1VoheIH/dQkxGOUBVoQkhZclBRdsAoff
- LqAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1765298447; x=1765903247;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=WmgIz9e/tMxQlI7bn7f9SpWFjQyMSSU2tt8f0rwy6o8=;
- b=WITZsmGyaE5xcP81GEdQplCnlOT4QwSwhlxBtr0Ieusm/dhCCUXh1W54rFAjFuV/Xi
- GZgYSe7PD4PEb5a2gir2MQGRTF+tGjaAWvu5/+towARF9lWbuW9nyvbwBkJ4zz0xd7Ww
- cvAm08cDckfiC/n80eYlPxVQ01T6A/HKW06zZraYXSrP6svoZT7U6SC0xJrTEyBtKgNu
- h5BQJdpp7BbOq+oVAtH7Vc4nWXNd1vGuYThVTs7fzzlhGcoISTaQxxPMNJ1PAfgu+OZv
- EFE9egMxtjfOFDeoqr7IaAGUPGnuGJhXMIBVPsjQfxyFEE1TsoCNk8zk0iRY8zACVGSK
- JyqQ==
-X-Forwarded-Encrypted: i=1;
- AJvYcCWscTy3lIYJlfxkuEuFXGdOvKAVpDjSly7MihXXCVxObKTyCzODEj9J0oIquQIbN5pqq1Q=@dpdk.org
-X-Gm-Message-State: AOJu0YyP+nX+63uVziOXsUiSv5f5dMQZIHrDEQS/MzIWSk4CSQj1AVdF
- VnN+44ZKVHw2qybq/+iLruBI6YMTnnruGRBYS5WLbmn8KuPnGGwfs5Ri4aLpS74C94J6HZ/EIBw
- W/bz1Rni14GcBvQ1oCYBsZUCINbPJJQQ=
-X-Gm-Gg: AY/fxX7ZurqRE92eL2ct6FY2n9KN78HOK1t4IHxedTcskVDWueg5IDp4sK4a+4HNiet
- nugFOx0h+Lm1iT1uyKwHVsUwTpTML8OR3/nwX/qZo/p8YSDKpkbLg/ucVvDrNNPWWdoE5HxM3oI
- oXH0llid2SIoO7HpdGCw2oBAAIV22P1Xfi0+j17rBnNZBvX4nfl2rp0zszd45kBmNdzO7m6+LR5
- PHyXI8K7V2H3B3vU4k8fLuoBrRKG5HamhNokStk9KXS7mQcABYUHPY/rAJhPN27AJPKdqDQoelt
- I/2Iuc/MWLxVAyt2S6vO9EdP0H0tJA==
-X-Google-Smtp-Source: AGHT+IFGIVDlmL7RBfiLRhlpG3R4Xm7FWmsu29xw5wRh00wuz11pRm9bAkjVk8qbFqXijFPr+7TGFZSju2G9JoXl+10=
-X-Received: by 2002:a05:690e:245a:b0:63f:a713:c6aa with SMTP id
- 956f58d0204a3-6444e750298mr9359200d50.4.1765298446929; Tue, 09 Dec 2025
- 08:40:46 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 38963402AC;
+	Tue, 16 Dec 2025 10:06:30 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+ by mails.dpdk.org (Postfix) with ESMTP id F08D74026C
+ for <dev@dpdk.org>; Tue, 16 Dec 2025 10:06:27 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1765875988; x=1797411988;
+ h=from:to:cc:subject:date:message-id:references:
+ in-reply-to:content-transfer-encoding:mime-version;
+ bh=rQ4w2QCbACp7nqGGWMMkC7eDGWcQmpBYe4CKsUwbbbQ=;
+ b=Jsxk0gFtWvYEDbYw7FpYdpjgbMxu2R/2/Y7KiPe8IGRuqCwveiA480mZ
+ LTKAXaED+8zbXlou7rORTQ0XRdvwhw8ubkToYTKiKM80U9VX4J7kvK46u
+ +Ucb6NUMxftHsqIIJH9zXgvl5j/TtcuuExWhYaZlxgE0OhjUCZa/+k8b6
+ 4WunKvbZwNSETujaQ/emHyUCVbYzrKPbgllLcodros6MstP0SmFi1XFGJ
+ a4/NgEnytANRS6x+/t6bFna9uXpSZu1fTxjcsfYtjx0hbe76QhUSi8jmN
+ 2RQc80UiL6ur9HN+8sieBVM8A2xVnJcVqU4tqB7XNjE1fbOE41UMjGj9o A==;
+X-CSE-ConnectionGUID: lFgpJjBARRaDX6VIosPByg==
+X-CSE-MsgGUID: m91nGiUtTzmm59Y5f0rsPA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11643"; a="66776869"
+X-IronPort-AV: E=Sophos;i="6.21,152,1763452800"; d="scan'208";a="66776869"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+ by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 16 Dec 2025 01:06:27 -0800
+X-CSE-ConnectionGUID: wHEdqcC0RMKvpFSccdM4pA==
+X-CSE-MsgGUID: +h3WDxtBQbifQHD7LD+3RQ==
+X-ExtLoop1: 1
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+ by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 16 Dec 2025 01:06:26 -0800
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.29; Tue, 16 Dec 2025 01:06:26 -0800
+Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.29 via Frontend Transport; Tue, 16 Dec 2025 01:06:26 -0800
+Received: from CY3PR05CU001.outbound.protection.outlook.com (40.93.201.58) by
+ edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.29; Tue, 16 Dec 2025 01:06:26 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=AAoGZKnn2pJhOpYu+7Zg91VYIPRdvZpHsqh51sWXiNcTi8A+RiuzJiDQrzVME7Me5I6rUQtDH2LPc1aNCHKkPdLQxk9pVbevhuUXB0Nrd/vPyngJb3UVbKdo/SUKX+PDPf5/KnzNH0OFrCD8fbFj8vftN0BAvBQvAwhDVyXCPUlLc3t9abJr/7oec0mPHVDN6SAco3N72bdrCVYpYl7JO/EjBVvRCjhvaf3KOCqU3aJRCBpMlFSrVJgxSbMpuJUGOUkJt012lMeHyXXmb7wW0RSW9LG4IO8P8aDO6ZQkLkYfyguOG6lg6UnNj7HRTEGqz8A+/tPjnvU5jRsJQt4EHA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rQ4w2QCbACp7nqGGWMMkC7eDGWcQmpBYe4CKsUwbbbQ=;
+ b=mnfmseb/Xvw+8IN5Zaq+Xz6Qm6lH1eYu8CDhlBJb9x43+FIoOKyw0LyETkdRGMjFVqaNYoa2KprMGfqU50vIS3NDBos4Eq1M09r7jiQJYNr2lJ9U1RtiTrzz0QJOROteAjAWgNlSUosxlQ/vRFYfmeFlEZHi6eQSMCO4gkhGnazTaKOCfkSBbU2xc7YWkX9HZd1jqOodxxamCyZbXHcqV5p1kPh3tysmkKxCG8KMH3J/z8CM13tPMu1uQUl5nD0LJuTFsMB/gCaFPS51UokRC3+wnkolcXY/UjZxQnw3hDV8MQr17RW9QMOOcN5CLcC9kkUfRzddttAy82F6xA7Ncw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from DM3PPF7D18F34A1.namprd11.prod.outlook.com
+ (2603:10b6:f:fc00::f32) by BN9PR11MB5243.namprd11.prod.outlook.com
+ (2603:10b6:408:134::10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9412.13; Tue, 16 Dec
+ 2025 09:06:24 +0000
+Received: from DM3PPF7D18F34A1.namprd11.prod.outlook.com
+ ([fe80::5f81:9e50:1761:ca54]) by DM3PPF7D18F34A1.namprd11.prod.outlook.com
+ ([fe80::5f81:9e50:1761:ca54%6]) with mapi id 15.20.9412.011; Tue, 16 Dec 2025
+ 09:06:24 +0000
+From: "Loftus, Ciara" <ciara.loftus@intel.com>
+To: "Richardson, Bruce" <bruce.richardson@intel.com>
+CC: "dev@dpdk.org" <dev@dpdk.org>
+Subject: RE: [PATCH 0/8] Fixes for Intel common rx/tx path selection
+Thread-Topic: [PATCH 0/8] Fixes for Intel common rx/tx path selection
+Thread-Index: AQHcbcw4xVK5IuBpekG4nULse2jFObUiyumAgAEvn0A=
+Date: Tue, 16 Dec 2025 09:06:24 +0000
+Message-ID: <DM3PPF7D18F34A1CD0FF9DDDB3CAB6147D38EAAA@DM3PPF7D18F34A1.namprd11.prod.outlook.com>
+References: <20251215140553.2283531-1-ciara.loftus@intel.com>
+ <aUAiDdY6K5_ugFHb@bricha3-mobl1.ger.corp.intel.com>
+In-Reply-To: <aUAiDdY6K5_ugFHb@bricha3-mobl1.ger.corp.intel.com>
+Accept-Language: en-IE, en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DM3PPF7D18F34A1:EE_|BN9PR11MB5243:EE_
+x-ms-office365-filtering-correlation-id: 302bed09-0577-4c25-7562-08de3c826361
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+ ARA:13230040|366016|1800799024|10070799003|376014|38070700021; 
+x-microsoft-antispam-message-info: =?us-ascii?Q?UxP+dz8hlzgp/XlnIZDDu7ldaFyptM41qTB4tbgwY+fl6xE0DlIQPXBPGhsq?=
+ =?us-ascii?Q?vKHn2REnH4mtW3joDb6n9z9GiuXqq23qUlPSPArezNZ3bxf3CyqSn30HkLhG?=
+ =?us-ascii?Q?tEo18imnZ6+9gUqd+GORGgRGlHfZsp6yfzG1Xb3wgDskWjg7Capd8/Flewr2?=
+ =?us-ascii?Q?I2n3MeLR4VJ9UQRqcu5pIf2A9+Ymkdc9qE2YzPfcD3tH0rIS10YQM7oFOQkZ?=
+ =?us-ascii?Q?m5kmjbYf3ynqufh4xgFrJe5rOdXfNfdpYaJsdSUGxLff+JiPtzwPMg/+XgyM?=
+ =?us-ascii?Q?TsRMPbao35UNJsxC0Gm+XZ9SX1DxT1JpucFczjNNgESWroZKFJFyA1mZU4RU?=
+ =?us-ascii?Q?qMLrbl6sshW+B8fjNTOAbG3L1/9WJ4T2SB+EqF0KOydH+UOyxkg5gmzCZnyi?=
+ =?us-ascii?Q?3Hi78ZZWIZjiw7yiLmySNwE5COG+woSR5Qzh9n9KqOY7lkUfD/9jeyyvMcnf?=
+ =?us-ascii?Q?SvtU6vS/3/dV1tTy/AM7O/0SnjTb2vi/+idiZXRFqg23VT82plK+B3O8eZeD?=
+ =?us-ascii?Q?KxjPsknMF/3hHept3VJnxzju4n4XfG81LQBTjr9f1L4y5GAXQY+3eI1y0Mcy?=
+ =?us-ascii?Q?S4HUb+J6X1xQGwqWUA7LXS4NpW6h1PsUkDRWtUVh77VeP4WlKj8z8/JldALX?=
+ =?us-ascii?Q?RG+wKdK7Wv/D6vMw/JofHf5Ew9Xu6W3RwmubzX8MxhktCUhXrbN/AHFdro5+?=
+ =?us-ascii?Q?4VFwyId1CqpC5r2Y9inJE7ArDSBL1GwOBZ6MCiT+A5uW4+9cWXNLgYl67CEQ?=
+ =?us-ascii?Q?pRKBxcUCcaFT9L9yy2U+sL3Z6pCvKPdf0vvXqgTeyGteRLKQF9nY5yPs4p3U?=
+ =?us-ascii?Q?S7cbBVLxdOR0LH1TNZUb5pGzQ3u1PertIhkod8l0k0SwzkIi4LQCKqLyAbzL?=
+ =?us-ascii?Q?aM5GXN4hH/LsKsB253udzRAoQT1FjOdrQxyHVeLmQRnAE6k74LQTpcdTMqjw?=
+ =?us-ascii?Q?r+J1wNRTIz+I7z0998PzDHo/P1xiRkhaUEheaXzXPq4+QMJr0Jt2cnbc0z9E?=
+ =?us-ascii?Q?l/5aEG0n8uES0pIcpeUFG7EtyLwFXu9p2L/SvMj6vBs8fwDPexs1UAu1Ofga?=
+ =?us-ascii?Q?5PApRu114csQzbVJoociH5xTW9r3hhEArJE44RhmqWtEJz/SWvm8tsyvyGsV?=
+ =?us-ascii?Q?zXDncH+10bkyRlbCc0TubMluSwIgj7HRaU6ojnyTTSWpyz0pFIWHtZtAw3Ht?=
+ =?us-ascii?Q?XeboXp7oJIlaAn+cV3dImM7aDjgvz6QXHd0FkJ0iMQ5C5OqMk1Rqm0EsxE8S?=
+ =?us-ascii?Q?wesbTfVQqxJKNjmN7K8Ey9O0/D/53IATF1K4w1/i7MhtFYdhTY1NvFzYNUTD?=
+ =?us-ascii?Q?V45oVug1mA7KFJOlUUfn/KRffDSEIlf8aaB1g/U3DKCECZaVn2g2zjGsNLw6?=
+ =?us-ascii?Q?58ZQ+soElhDk9rwfP7j3eQyAHLMZXTLCVJURP2Tk8NrsmuLP73iNa+Mmhsip?=
+ =?us-ascii?Q?JlSBnnJk/6rWuzqPr2L9vKYh9szoSZRmrWnwBrQtBsHcQPaGnjBbsDenGXE/?=
+ =?us-ascii?Q?WkPDAvql8A8xE4ax3lKEsHhrQfkTZ2gmzy34?=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DM3PPF7D18F34A1.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(366016)(1800799024)(10070799003)(376014)(38070700021); DIR:OUT;
+ SFP:1101; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?5J0KXagLf9EN6XoqKsMXo2zvMIpDuevJjt8eTB4zFEIJCqxYztYWLhPx3qlY?=
+ =?us-ascii?Q?UwfClKLOShfZl4ahxKp7L2Re1VNPYA0/EvuxUBbmsl2ubPxw0M8ollzx7XiU?=
+ =?us-ascii?Q?XqgLUiFaozPm72EyJnhDsdcyMOQR/ShDI3u/zK8I8+5q0QHdVHRMPQyFv80H?=
+ =?us-ascii?Q?2Wo/qKRueWTNJ/yLrMDF0ASSQkiKpb+2dVb2sYS3Q7p0guD4DZXHInXmr0RD?=
+ =?us-ascii?Q?puX/ejeea8Y+N5vuPkO3S41+WqS2R5k9YAm29xmCNPDEc5Q3tTn/Wj8I7/V3?=
+ =?us-ascii?Q?tO1V8EZgMGmRdgm5mI9vD0afYfPF+1s+H9ertCPDbHkHX00PHsdzZ+nxP75Z?=
+ =?us-ascii?Q?zjJ80C25ZYeOYtVHtIYEp8EDiUQx4AVLIV8KdlY5wmfcK8WyfY9zMdmc2ejC?=
+ =?us-ascii?Q?iROTMrqN4ViRo5WO4kU0fBKq9y9mVLXgcndHSuoq3Xg4yO4EI88fPQnHqTsH?=
+ =?us-ascii?Q?rvkBa348ROQhrCFWZh5E8YbjsMhADTV29MRMDpiYUD4CoCECCVe1/2+lrGP9?=
+ =?us-ascii?Q?ZQmlVQFGdZ0U7iTjVULKhZegZSGkrxf8cCQE51/+QVR+OnqLUX/Jd8GNp1bi?=
+ =?us-ascii?Q?e3PqbgfAJ1EvyV33KKrEMMl5NxW1AYGYbYhwmb1p2c0hMh7yTO954fUlR8ME?=
+ =?us-ascii?Q?sBigL56WCvaV0HFLso0MoV8+/bsv5JP1236sfELldrD0GIXw2WaljlCCPaos?=
+ =?us-ascii?Q?0Pb9fkvnjIZ3eTgHRcWqoeastWFed4eYcjrtgQDCKOOP7rHafvegD49YW2VJ?=
+ =?us-ascii?Q?rXKrcf7UBgvmu4W8vXAUlaOCcn96qCrDXPdElNKHE9RGocMjOqfR+R7C4gyO?=
+ =?us-ascii?Q?1tdeG4cIIsstCpfqKl4F+zMdH4or2zwlOnVeOtSrdmI9F4m13Igm1NxwhKlq?=
+ =?us-ascii?Q?gef+mnTkEijSGvGSZkXB0tiKhQtIAacriaAQNNazOikepF/9OYQUqR3Vlj5T?=
+ =?us-ascii?Q?gJwPJzRikNdRksdt6LSoBLwkN+FJ6yWPQemC+KCTdn6/YvExO50UrtLoY+GT?=
+ =?us-ascii?Q?TMBaejtY+PRTHBN3iS8lnz/XCJLc2PPCVFoessgPLUxroegGcHnIp/aS6C2q?=
+ =?us-ascii?Q?2Ytmgm84tPJS+yL9Kh1C51IcYxjeqmK6A80vVtCISRBd311fTWEDHBzRbL+1?=
+ =?us-ascii?Q?MROWAQfXNuxAEqsbioVXp/8gWZ/xcM2RZ8HYoW7w239AJIDODUSmjMVn0DUG?=
+ =?us-ascii?Q?GGooDM7bS8Ol64MCpXJ1UBOEf1TBmN4kYsQyIxedXPisdxzJfuYTSClLI2W0?=
+ =?us-ascii?Q?8qM3/0ta0aqhBf9VdRJnQ3tBbVMl6AcUrFEvVqaQ7CpGiupsxn4hDJ80AU7R?=
+ =?us-ascii?Q?UNBHipkvWSjgpSRrmE7lNgjslheZ6PV69lk572vKpg5by6Jv44sXRt93YZNa?=
+ =?us-ascii?Q?9lA3j9yTXEvoToqQwmoiR5/EeJxc6Szt8T6W76VGPlFxr0RN/aBcMTZLzqLE?=
+ =?us-ascii?Q?IYUUBEPwh2tfeNnQ4a+iNmVJnB3ppYL7ezXa4QAr5+iTjkN1mSjm/+LJkiqK?=
+ =?us-ascii?Q?86Md2nrTrVoyrZS8n7oxbETrME5i/9XTc20OEWoYaAbYv69BZT3541k10Pdr?=
+ =?us-ascii?Q?5p9Cc0fTnnrM5LmY7j41Pld9qY9D0g6jSsA6U9RG/IHz+iYXVTMAfduNiQxM?=
+ =?us-ascii?Q?ih/QpplGpkCau2TheI/R/T0bqWG1XJoUaC0Gs7qafdwb?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <CAMf-ZCH+EuZxuUyvrJCJacC1JO15FccXNkg2+nuC4+nMGpJDSg@mail.gmail.com>
- <aTfkCg8pU0OKYTDS@bricha3-mobl1.ger.corp.intel.com>
-In-Reply-To: <aTfkCg8pU0OKYTDS@bricha3-mobl1.ger.corp.intel.com>
-From: Matt Goralka <mgoralka4@gmail.com>
-Date: Tue, 9 Dec 2025 10:40:35 -0600
-X-Gm-Features: AQt7F2qBC-1zC6HUlzUniKnR_QSMF8_9npQoJMCJ-QluNQ8MF0WGwdHqV2xdkvE
-Message-ID: <CAMf-ZCE3TJUV4XQp_moOTrhggunzcL_sDf6iwbkk_cLiCNKNHQ@mail.gmail.com>
-Subject: Re: contributing to dpdk
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: users@dpdk.org, dev@dpdk.org
-Content-Type: multipart/alternative; boundary="000000000000da14510645879216"
-X-Mailman-Approved-At: Tue, 16 Dec 2025 09:56:02 +0100
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DM3PPF7D18F34A1.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 302bed09-0577-4c25-7562-08de3c826361
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Dec 2025 09:06:24.3503 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 716sbuIzRALHpy6Y1KrWDX8elK80A9/qtyu9Z4lk0N800zSRePlXGMeF1SsflDZGqzisTgbKVbWgcsOqFP4jEQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN9PR11MB5243
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -77,102 +175,40 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---000000000000da14510645879216
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-Thanks Bruce! I have a few things to figure out but I will lyk!
-
-Best,
-Matt
-
-On Tue, Dec 9, 2025, 2:55=E2=80=AFAM Bruce Richardson <bruce.richardson@int=
-el.com>
-wrote:
-
-> On Sun, Dec 07, 2025 at 02:11:15AM -0600, Matt Goralka wrote:
-> >    Hi,
-> >    My name is Matt Goralka.  I'm interested in contributing to dpdk and
-> am
-> >    wondering if you are taking people and have a few questions if someo=
-ne
-> >    can help get me started.  I have a computer hardware engineering
-> degree
-> >    and experience in web dev so not totally starting from scratch.
-> >    -How do you guys get newbies started?  Can you kind of get me going?
-> >    -I have a gaming laptop with a Ryzen 7 chip and NVIDIA GEFORCE RTX
-> 5060
-> >    chip.  Would it be enough to virtualize linux?
-> >    Thanks guys, looking forward to hopefully working with you!
-> >    -Matt
->
-> Hi Matt,
->
-> new contributions and contributors always welcome! To get started, I'd
-> suggest getting linux up and running on whatever hardware you have and th=
-en
-> build DPDK as described in our linux getting-started-guide doc[1]. Beyond
-> that, for questions I'd recommend joining the DPDK slack channel as linke=
+> Subject: Re: [PATCH 0/8] Fixes for Intel common rx/tx path selection
+>=20
+> On Mon, Dec 15, 2025 at 02:05:45PM +0000, Ciara Loftus wrote:
+> > An issue exists with the way Rx and Tx paths are defined and then used
+> > by the common selection infrastructure, which in some cases means not
+> > all paths are available for selection. The issue affects four drivers o=
+n
+> > both Rx and Tx paths resulting in eight fix patches.
+> >
+> > Depending on the underlying architecture and CPU flags available, a
+> > different set of paths are defined for each driver. The path selection
+> > function iterates sequentially from zero to num_paths where num_paths i=
+s
+> > the size of the array as determined by the RTE_DIM macro. However,
+> > depending on the platform, some of these entries may be empty, and vali=
 d
-> on our contribute page [2].
->
-> Regards,
+> > entries at the end of the array may never be considered in the selectio=
+n
+> > function. Fix this by editing each driver's rx/tx "func_type" enum and
+> > only defining a value for the path if it is implemented in the driver's
+> > rx/tx "path_infos" array.
+> >
+> I wonder if there is an alternative/better approach that can work here. F=
+or
+> each array, RTE_DIM will correctly give its size, and the indexes are set
+> according to the enum values which are common across each platform.
+> Therefore, the remaining entries in each array are going to be all zeroed=
+,
+> since they are not explicitly initialized, e.g. the AXV entries on ARM
+> platforms. Would it not then work to just check during selection for a
+> non-NULL pkt_burst pointer in each entry we are comparing and skip those
+> which are NULL?
+
+That would indeed be much simpler - I'll submit a v2 shortly. Thanks!
+
+>=20
 > /Bruce
->
-> [1] http://doc.dpdk.org/guides/linux_gsg/index.html
-> [2] https://core.dpdk.org/contribute/
->
-
---000000000000da14510645879216
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"auto">Thanks Bruce! I have a few things to figure out but I wil=
-l lyk!<div dir=3D"auto"><br></div><div dir=3D"auto">Best,</div><div dir=3D"=
-auto">Matt</div></div><br><div class=3D"gmail_quote gmail_quote_container">=
-<div dir=3D"ltr" class=3D"gmail_attr">On Tue, Dec 9, 2025, 2:55=E2=80=AFAM =
-Bruce Richardson &lt;<a href=3D"mailto:bruce.richardson@intel.com">bruce.ri=
-chardson@intel.com</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quote=
-" style=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;padding-left:1ex">O=
-n Sun, Dec 07, 2025 at 02:11:15AM -0600, Matt Goralka wrote:<br>
-&gt;=C2=A0 =C2=A0 Hi,<br>
-&gt;=C2=A0 =C2=A0 My name is Matt Goralka.=C2=A0 I&#39;m interested in cont=
-ributing to dpdk and am<br>
-&gt;=C2=A0 =C2=A0 wondering if you are taking people and have a few questio=
-ns if someone<br>
-&gt;=C2=A0 =C2=A0 can help get me started.=C2=A0 I have a computer hardware=
- engineering degree<br>
-&gt;=C2=A0 =C2=A0 and experience in web dev so not totally starting from sc=
-ratch.<br>
-&gt;=C2=A0 =C2=A0 -How do you guys get newbies started?=C2=A0 Can you kind =
-of get me going?<br>
-&gt;=C2=A0 =C2=A0 -I have a gaming laptop with a Ryzen 7 chip and NVIDIA GE=
-FORCE RTX 5060<br>
-&gt;=C2=A0 =C2=A0 chip.=C2=A0 Would it be enough to virtualize linux?<br>
-&gt;=C2=A0 =C2=A0 Thanks guys, looking forward to hopefully working with yo=
-u!<br>
-&gt;=C2=A0 =C2=A0 -Matt<br>
-<br>
-Hi Matt,<br>
-<br>
-new contributions and contributors always welcome! To get started, I&#39;d<=
-br>
-suggest getting linux up and running on whatever hardware you have and then=
-<br>
-build DPDK as described in our linux getting-started-guide doc[1]. Beyond<b=
-r>
-that, for questions I&#39;d recommend joining the DPDK slack channel as lin=
-ked<br>
-on our contribute page [2].<br>
-<br>
-Regards,<br>
-/Bruce<br>
-<br>
-[1] <a href=3D"http://doc.dpdk.org/guides/linux_gsg/index.html" rel=3D"nore=
-ferrer noreferrer" target=3D"_blank">http://doc.dpdk.org/guides/linux_gsg/i=
-ndex.html</a><br>
-[2] <a href=3D"https://core.dpdk.org/contribute/" rel=3D"noreferrer norefer=
-rer" target=3D"_blank">https://core.dpdk.org/contribute/</a><br>
-</blockquote></div>
-
---000000000000da14510645879216--
