@@ -2,71 +2,56 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 934AED5B872
-	for <dpdk-dev@archiver.kernel.org>; Mon, 15 Dec 2025 21:40:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3206D5B161
+	for <dpdk-dev@archiver.kernel.org>; Tue, 16 Dec 2025 06:12:42 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3E2F7402D3;
-	Mon, 15 Dec 2025 22:40:56 +0100 (CET)
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com
- [209.85.160.182])
- by mails.dpdk.org (Postfix) with ESMTP id BCC294026C
- for <dev@dpdk.org>; Mon, 15 Dec 2025 22:40:54 +0100 (CET)
-Received: by mail-qt1-f182.google.com with SMTP id
- d75a77b69052e-4ee13dc0c52so34164171cf.2
- for <dev@dpdk.org>; Mon, 15 Dec 2025 13:40:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1765834854; x=1766439654; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=F59kQnptSJZTKDlGOPYR1PWb26hAEAlitzAawNI24Bw=;
- b=gkiZW5E4EII9AYgN8Vg3qPhCJwZomvG92UXvXcfh9LVmkO+p8NkeDWBb8DJFKTQbd4
- O9supApgYM1yMXdMXN0KdZl001RVNv5Z33tKpZbTl8SBYsXpCg0Nt+scDnJ8/YFjuROy
- X9FvHKoZrlPrVcq7wWt1NdaXn98Qyeie36Gms=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1765834854; x=1766439654;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=F59kQnptSJZTKDlGOPYR1PWb26hAEAlitzAawNI24Bw=;
- b=Fb1tRYv4OysKwxvG+s1tUc5uoJOmbcqnJgcpBSia3m9hWG8jpABnNHm101By8j8GXH
- 8Y5TvowwmRTwYU8LlYHdMe99DKcL9QknDMJtACc1FpcUpCVltAiJLuwldmKRo7P3ECte
- FfpDeOuGKEW1CcnSsaUGftGJ7tnO5MHmv66Mijo/Bnq6EtxlgeeeTAn3dGvQrZzztXRJ
- j+OMd5Wt7V6UMivGej6ceukO24OJ6kAj1y29VIQWa1XXYg1NPSaWXkgo/1VXRm3qRkgq
- yRfv+9Yy+Q8R17MotklcOeWjL3Bt7qxAJImqR4wc2PGECy9TJ6FBTPC1Ga9G7ySKp5As
- VvsQ==
-X-Forwarded-Encrypted: i=1;
- AJvYcCX6MtSJnem9Q6USFsGN/nEkRNDwkgnqSQKx47RNEf5+kyhQVR5qEc/poNFb6W+NPNSJcaw=@dpdk.org
-X-Gm-Message-State: AOJu0Ywpe/uH27oXBiaJEBll+jNwbY8kPxo8/nFNNiarPCskiNRsgYb4
- xpR9hJ9hDeRDs3g2ZSh8LwMV4oQQ4Tq8RSLVy/hU9z8nuV/8zMT1JKEcf7vtyvR4iyQ=
-X-Gm-Gg: AY/fxX71j/vk6tNLxgYavCiQ2torTj+YptZblh9fz6KYg994LrLFSRvj4vdPz+P+1Ij
- d7G9jYVFpqTiu4oj4mmucuZ1+PxrNQEvIPJZ6dNaPsb/A2wDCubYMJ9YhtehAGFs4aIfphhMBsn
- LE1vz+uJ3pcdsfhsWdjRvV3tFnWQ9JrSiv6WU9QjLR8/8KEOQValgjYnO15rxngGJvJt56cehev
- 1VmHw5BwjcCDEN2XHa5B7LIoAyZBjtTxFRdpZQ0198AHg4lhwHAuBVEvq0tv/Exc54LW/j9dqOS
- 6TX9tFvXeLYOFpFgoVp3psUpwA+58qwqAmZ2FiaD0JYEi4+MtuCKZzH277ibOs1Cp3O7Qunoc5F
- 7527oBY9Etcg4nThpyLM/fv4Tx9tXlqECUiYhtOZ54NfqpiZ136W+hw1Ot4cTqdGPdbWNdxhLiR
- 9HXiZFvTyZDDnVwa+U2triMUI=
-X-Google-Smtp-Source: AGHT+IEIzvRVWYQv4+ioh00aCAyCL+DTM+RvSYCezlmppHpVuEdFPTo4Jr2NZXXO4M5CTOImtkiFoQ==
-X-Received: by 2002:ac8:7fc8:0:b0:4ed:ae8e:cc73 with SMTP id
- d75a77b69052e-4f1d0625feamr179840941cf.65.1765834853809; 
- Mon, 15 Dec 2025 13:40:53 -0800 (PST)
-Received: from d122205.iol.unh.edu ([2606:4100:3880:1220:4f6d:e2af:7f5f:4df])
- by smtp.gmail.com with ESMTPSA id
- d75a77b69052e-4f345b16f72sm3508241cf.3.2025.12.15.13.40.52
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 15 Dec 2025 13:40:53 -0800 (PST)
-From: Andrew Bailey <abailey@iol.unh.edu>
-To: probb@iol.unh.edu
-Cc: luca.vizzarro@arm.com, paul.szczepanek@arm.com, dmarx@iol.unh.edu,
- dev@dpdk.org, Andrew Bailey <abailey@iol.unh.edu>
-Subject: [PATCH v3] dts: show missing NIC capabilities in DTS logs
-Date: Mon, 15 Dec 2025 16:40:49 -0500
-Message-ID: <20251215214049.694604-1-abailey@iol.unh.edu>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20251212210142.669766-1-abailey@iol.unh.edu>
-References: <20251212210142.669766-1-abailey@iol.unh.edu>
+	by mails.dpdk.org (Postfix) with ESMTP id BEAB24026C;
+	Tue, 16 Dec 2025 07:12:41 +0100 (CET)
+Received: from smtpbgsg1.qq.com (smtpbgsg1.qq.com [54.254.200.92])
+ by mails.dpdk.org (Postfix) with ESMTP id 2212A4025F
+ for <dev@dpdk.org>; Tue, 16 Dec 2025 07:12:39 +0100 (CET)
+X-QQ-mid: Yeas4t1765865551t173t45867
+Received: from 3DB253DBDE8942B29385B9DFB0B7E889 (jiawenwu@trustnetic.com
+ [115.206.160.202])
+X-QQ-SSF: 0000000000000000000000000000000
+From: =?utf-8?b?Smlhd2VuIFd1?= <jiawenwu@trustnetic.com>
+X-BIZMAIL-ID: 4054320336177348285
+To: "'Stephen Hemminger'" <stephen@networkplumber.org>
+Cc: <dev@dpdk.org>,
+	<zaiyuwang@trustnetic.com>
+References: <19590B42346A2673+20251121061951.466049-1-jiawenwu@trustnetic.com>
+ <20251126133925.7cb06815@phoenix.local>
+In-Reply-To: <20251126133925.7cb06815@phoenix.local>
+Subject: RE: [PATCH] net/txgbe: remove the build dependency on security
+Date: Tue, 16 Dec 2025 14:12:30 +0800
+Message-ID: <002401dc6e52$f5bfbeb0$e13f3c10$@trustnetic.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+	charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Content-Language: zh-cn
+Thread-Index: AQLlOmEE8lhguW28n63n1wB9qLoz1gLpm2lTsvrjqsA=
+X-QQ-SENDSIZE: 520
+Feedback-ID: Yeas:trustnetic.com:qybglogicsvrgz:qybglogicsvrgz6b-0
+X-QQ-XMAILINFO: Ms7zrqvpzOE3PKNNC/AZ8O/0pdnIzxRLPHMEv/0xNienR9nWf50bd179
+ +yzdCt9MgK+MRx6JRJA49x+2tR8mTCyv0weZOpGmH4haWVusk6ID249IYxejEsS553GXljI
+ KhkkPQvo5cvUR+u8v0tkhlAtgVw5sDiMqaUIqhtpxv/A9tZ3rGHlAC4fNpSDFBoNHOyxlwC
+ wP/vrItN4Ky/DyfuXj1ZUgKpOdacUI1l/sFnW80YZ9WKTgfs95vzO/Qokfz/N4wohNC1teW
+ UNQ/k2caXmb2bGys7WEvRi4bNjQOTetthT19QDSk4t0zGvmShod0ScV/J3Xt/A7sQiiscKf
+ PVX96lcmPzl5mhybbQTHEYdqoqO1h1KZ0VS29V+YEeFw6XsSGCVo0VRUwak42FgdW85xOJV
+ G53Hy0uVLWd79O+BA5geedXQaIf/1rOry1hVvvx8oBwOmqlMw+W/BxWF1bQxrCDxnGLV12w
+ PL4a1M8YAzFgNQADFYS0aAb9QEQYxCyqkWvX822UDal6c9xGmGIPDbBjKWOzaqGZSlNoaob
+ YVYT0uuitaL9Da3QfX3ANR6j30veHvoBIf7hPL1R/qUlplyvJTzPRebk4MlQUcdnWKpW9F5
+ eK/cxPubw3JWLxFwa+/jnWPA3DNKDBh6UWdtNGbJbIOzGENEW2qK1Id38gXwmcPxdjvVBKl
+ ZWnLUf/cZwTBbzVuBU/zj/k3xn69jQlIaWRXNax9IS5n68D8BKl20l+XghQsTXpxPIOnI3A
+ YNEEwdFcDqs7et6mS4l7ppQKyWFLoh7rhvcq8aZVK0pFjlSN6Ntc/M/yuIh4cpNXx19m7Hj
+ I+mESDCvW6XS4Yoi+oGufKzP4DTPntvqbc3C1oNvBpl4c0gbA2G+7N63fzwEnQI0KdEbt9V
+ 5kzp0k17/prUMA870oQ6lG7z8VXBkkha7AhnEcDhm4c3gGsg1pV4PhJXbUlfZLWFkf5xSvY
+ Ju0pXe1njUqHxIMfN+M/qfUmkyT/o0XKLXjvcaOeJ9OMYCjE/0RGI0Hx1zHOafu65i0Ys5V
+ tmTEHWLz/3aXP6SnT2
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -80,36 +65,26 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-When a test was skipped due to a missing NIC capability, the logs should
-print the name of the missing capability. This has since changed to show
-only the integer representation of the missing capability. This patch
-restores the previous behavior of printing the name of the missing
-capability to the user.
+On Thu, Nov 27, 2025 5:39 AM, Stephen Hemminger wrote:
+> On Fri, 21 Nov 2025 14:19:51 +0800
+> Jiawen Wu <jiawenwu@trustnetic.com> wrote:
+> 
+> > Now lib security is enabled by default, and cannot be disabled if the
+> > driver is intended to be used. But there are some functional scenarios
+> > where lib security should be disabled, just like to enale Tx descriptor
+> > hardware check. See commit 0eabdfcd4af4 ("net/txgbe: enable Tx
+> > descriptor error interrupt").
+> >
+> > So remove the build dependency on lib security for the driver.
+> >
+> > Signed-off-by: Jiawen Wu <jiawenwu@trustnetic.com>
+> 
+> I would like a review by other maintainers.
+> Several other drivers including cn10k, cn20k, ixgbe already have
+> similar dependencies. Can't the security library just have stubs
+> to always return NULL if not used.
 
-Bugzilla ID: 1803
-Fixes: eba657ae3c3c ("dts: move testpmd module from framework to API
-directory")
+Hi Stephen,
 
-Signed-off-by: Andrew Bailey <abailey@iol.unh.edu>
----
- dts/api/capabilities.py | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/dts/api/capabilities.py b/dts/api/capabilities.py
-index 243759668f..2d0cd65854 100644
---- a/dts/api/capabilities.py
-+++ b/dts/api/capabilities.py
-@@ -219,6 +219,10 @@ class NicCapability(IntEnum):
-     PORT_TX_OFFLOAD_SEND_ON_TIMESTAMP = auto()
-     QUEUE_TX_OFFLOAD_SEND_ON_TIMESTAMP = auto()
- 
-+    def __str__(self):
-+        """Override the default string representation to return the name of the capability."""
-+        return self.name
-+
- 
- def requires_link_topology(
-     link_topology: LinkTopology,
--- 
-2.50.1
+What should we do next for this patch?
 
