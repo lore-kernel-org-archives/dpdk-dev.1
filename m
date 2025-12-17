@@ -2,70 +2,190 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9728D64088
-	for <dpdk-dev@archiver.kernel.org>; Wed, 17 Dec 2025 07:55:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10B9CD64092
+	for <dpdk-dev@archiver.kernel.org>; Wed, 17 Dec 2025 08:39:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 05099402E3;
-	Wed, 17 Dec 2025 08:55:40 +0100 (CET)
-Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com
- [209.85.217.45]) by mails.dpdk.org (Postfix) with ESMTP id 8CD7E40275
- for <dev@dpdk.org>; Wed, 17 Dec 2025 08:55:37 +0100 (CET)
-Received: by mail-vs1-f45.google.com with SMTP id
- ada2fe7eead31-5e5478f3dedso4224373137.3
- for <dev@dpdk.org>; Tue, 16 Dec 2025 23:55:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1765958137;
- x=1766562937; darn=dpdk.org; 
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=qN57d7UyXs8QFhzjdw5IKCyE3RpQrWCsQnqX9DdnDz0=;
- b=CDNzKAr+DcUL7ducixwVPIH3WJ6shf8IXVoe+OGUFqLDvm246wecjMdLmNHKeMbHs9
- E12Wx0NaPErxaYPiPMbva8Vmhcwu1wJXO9bGTUBz3BBFnMuZg4B1CPlP2+1JrzRn8H0V
- qK25mzVgJ4OlGAs5uqtLsZ5e3yIDz/L1hrCO2vRoAdJguwKKNq3LdEkDwFWMDzGhAJWk
- TOoQAXzu9kJeObqM/qwUQNS5eBBJkP4B/9LP0s3nEq3arNtP26B3JTFcki8+4M59fT1J
- O2iIDqr7ZY9nQya0l/AiFFnkrwWh47yYRvV8BFe40FUdHiP4HiF0InEIasYguwPhMBB8
- 1YPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1765958137; x=1766562937;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=qN57d7UyXs8QFhzjdw5IKCyE3RpQrWCsQnqX9DdnDz0=;
- b=vewXpiVC0guNQrd1pBsBoQ1YYoX/4AquGNcSTZJUsEYwTKPxP5isjqFfY/PoZWdaeP
- VK8gAeXMyw89acwHrH7XcEH2p/YIwXtS0li4VCPINHXt4WKAmWY/t7LP8f50rvdMe966
- ef8avW4K/KKwwUlrH7U6BF5NL7+T/haqjlefMi4zevUPj8DVFOcqZUYB7DTdMbpeatD9
- 2VTapiBnORJVOKeVDzSgAeLBeB4AmIJzFgDzIkL8Ef/55NUFuWgZK8FQg70W5Q5TbAQB
- +2lHx0dbVt1lJmd+2Jp3MLddZpgnpbaFEheVAp99QBwvZjHGa8yDKhU7Vb5hESMWYZNU
- b2gg==
-X-Forwarded-Encrypted: i=1;
- AJvYcCWRXWSQ8I2tcIIUrOVLpeNg/YcPrcZGYkWwElWpBxagJfmI8Qrhek2LomBBO6TuuivUgYk=@dpdk.org
-X-Gm-Message-State: AOJu0Yy++30Vb/dRC63dsLFC0LiTRleGEK+mYhewpdaTlPJVw3ILuBEk
- TdCzEz9IUPAVdwNFQUt9ZzhM22TKNOzoU4Yq4NWOGJThynr2iYG0bEgDYCbtOZgLtE+2Y+1uoKP
- ouDcaRBHoVc68QUfKEkMi1O90RuGHSm6aqSa7assh7A==
-X-Gm-Gg: AY/fxX7Ws/DZaM09W3Pvo7YmluR04nbtnLD5+amGfgpbtsZY9lCMDyNYKtEhVmKA34l
- oT6nfcdb6nXKBkbOlQWKclAveQxtYEwdbeahSc7O8T13Eun0YB4SWpJd0eR/VNRmXaiFiuFPx50
- 0j8YRT394Vc0Hp/T8KN9A/5Pxwrt4pL6osb4RvOBE1no7snvHYRAKSDtN6cWfh4PE4fBVBWuj/L
- oW6e5lHSxM/VUioT5cUPIL8TQGn6k2XC0QTtUuhNrpXusuNvgFYp6ganuTxWTjdGYWJO0Dn2Q==
-X-Google-Smtp-Source: AGHT+IF+PZ51thPpSAmGVwX5uWXJU81enmm1G/WJ3XSSikTwCv2nq0cv+lCCM/alTM0lSZoYAllW8RpIk3gw0E2n93I=
-X-Received: by 2002:a67:e707:0:b0:5e4:956c:e7ce with SMTP id
- ada2fe7eead31-5e8274881dcmr5824126137.1.1765958136618; Tue, 16 Dec 2025
- 23:55:36 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id D547240275;
+	Wed, 17 Dec 2025 09:39:09 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+ by mails.dpdk.org (Postfix) with ESMTP id 528074026C;
+ Wed, 17 Dec 2025 09:39:08 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1765960749; x=1797496749;
+ h=from:to:cc:subject:date:message-id:references:
+ in-reply-to:content-transfer-encoding:mime-version;
+ bh=MObTsnQB12++XSYEMTwO8ZqeCqS0PDwP0lnj+qpe9mw=;
+ b=Sy4SvcqxCpQAHNTNXaceJDPfxAGkTFKfZG+GuP9UCa2dPxgZ/RM8WBSl
+ DN5C/Mt+kxlT+wdDpHkJ55q/jjwPwofdHIhao2RoICIUScYTly5K6P290
+ hAtelXB14wxagctTkSLISN24ssA1f/8teDWx1Rtl00gogABsc1r7KSFSj
+ f4QXepchX+ri1Pq7agv+LU1n2zz6anGdg47Fh5geIH0BqJxSvy8eKAUDl
+ 44RYZbT9qhOIf0dCKQnBzVdST2gogPDpjaiBuRsF0t4o4XGQAMjAZe6Bk
+ t1kGbMQucVTElVBGECjzysK/V09L2/YW9oviP88lOth6mYJEs+BwVAp2x A==;
+X-CSE-ConnectionGUID: TMsneJtsQXiin6DZj51+CA==
+X-CSE-MsgGUID: CefIWE3KRn2qK9ubHMWgtw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11644"; a="67086498"
+X-IronPort-AV: E=Sophos;i="6.21,155,1763452800"; d="scan'208";a="67086498"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+ by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 17 Dec 2025 00:39:07 -0800
+X-CSE-ConnectionGUID: NlzrxsrkR8CQYepeCqXcNw==
+X-CSE-MsgGUID: n8NO5ZweRWaO0N0/nxECtQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,155,1763452800"; d="scan'208";a="198511664"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+ by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 17 Dec 2025 00:39:06 -0800
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.29; Wed, 17 Dec 2025 00:39:05 -0800
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.29 via Frontend Transport; Wed, 17 Dec 2025 00:39:05 -0800
+Received: from BL0PR03CU003.outbound.protection.outlook.com (52.101.53.21) by
+ edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.29; Wed, 17 Dec 2025 00:39:05 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=m+HDsePDAWLlF39e1eIR3666TgC/dU38sY5MeYxr9kCBEbJSgPK2Dz/0DZJUnODjmYDCzYMH4jMeFoGCKdV3RDcWo2TkRzkydFbKMwRMaSkjv9umlUfriPqsgm7vbyjJJfxBTcYJcFESAodj0dm88Ec89olQ2GG2hucuHLQ7YZBniA9v+RcmcFmKedvAMd5O13OtDDavmFxUr2h9gdGOSwuux7Qfj3MY7C5b4ZzxoYpmy716FF1tEn25Mi1lcKF13uREiRO9z79T+TvTwlkklNT0CYlLkS4XmO0C6H6damHiDqiqpdAUjMaxnJB1Nf+9SHYqW9qE4nzWFW1u6wp2Ww==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=MObTsnQB12++XSYEMTwO8ZqeCqS0PDwP0lnj+qpe9mw=;
+ b=QAXmE2ncW+UTDilfnfjbi/o5X8ck4jZKHK8/A8k/Hb69xkvj10r4aEmmLVeGN+qJ3GNCqvS9mSSnuNFrsrADFMnRlPGaU+ySJwvojoLg6xhYm6IzHu7ScSeQlXyQhp2vafDWvQ9U6iGNVHyD89YpX8e45hDIhFdFTmU1Mlasn+lOA1D9mIYKEqI8tkwAVrcchZbesf+wi3Ox7MZiLYDCZSblGnyTVFUo5WxSkpECinurnLLdOeJMvZkFoaRZ3+rdvXkqo4zLz/yzIEfLmAMNUODI6Zj24Cufeth5AwRWrwpMu/k9UpL/TR49dmgND4PnfZDQ3LWOP/gzKpTScX/KQw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from SJ5PPF04AA7285F.namprd11.prod.outlook.com
+ (2603:10b6:a0f:fc02::806) by DS0PR11MB7406.namprd11.prod.outlook.com
+ (2603:10b6:8:136::20) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9434.6; Wed, 17 Dec
+ 2025 08:39:00 +0000
+Received: from SJ5PPF04AA7285F.namprd11.prod.outlook.com
+ ([fe80::6fef:19a1:45d0:d051]) by SJ5PPF04AA7285F.namprd11.prod.outlook.com
+ ([fe80::6fef:19a1:45d0:d051%3]) with mapi id 15.20.9434.001; Wed, 17 Dec 2025
+ 08:39:00 +0000
+From: "Xu, HailinX" <hailinx.xu@intel.com>
+To: Kevin Traynor <ktraynor@redhat.com>, "stable@dpdk.org" <stable@dpdk.org>
+CC: "dev@dpdk.org" <dev@dpdk.org>, Abhishek Marathe
+ <Abhishek.Marathe@microsoft.com>, Ali Alnubani <alialnu@nvidia.com>, "David
+ Christensen" <drc@linux.vnet.ibm.com>, Hemant Agrawal
+ <hemant.agrawal@nxp.com>, Jerin Jacob <jerinj@marvell.com>, "Mcnamara, John"
+ <john.mcnamara@intel.com>, Ju-Hyoung Lee <juhlee@microsoft.com>, "Luca
+ Boccassi" <bluca@debian.org>, Pei Zhang <pezhang@redhat.com>, "Raslan
+ Darawsheh" <rasland@nvidia.com>, Thomas Monjalon <thomas@monjalon.net>,
+ "yanghliu@redhat.com" <yanghliu@redhat.com>
+Subject: RE: 24.11.4 patches review and test
+Thread-Topic: 24.11.4 patches review and test
+Thread-Index: AQHcZc4Cr27PCHOFY0qSpAUzyRUPW7UllFEg
+Date: Wed, 17 Dec 2025 08:39:00 +0000
+Message-ID: <SJ5PPF04AA7285FC7C77D1EEC605C92DE989FABA@SJ5PPF04AA7285F.namprd11.prod.outlook.com>
+References: <20251205095931.160577-1-ktraynor@redhat.com>
+In-Reply-To: <20251205095931.160577-1-ktraynor@redhat.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SJ5PPF04AA7285F:EE_|DS0PR11MB7406:EE_
+x-ms-office365-filtering-correlation-id: c413fc1d-163d-4f8c-8fcd-08de3d47ba0f
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+ ARA:13230040|7416014|376014|1800799024|366016|38070700021; 
+x-microsoft-antispam-message-info: =?utf-8?B?bTJ3SEUzT3hjcnlZcE9hQ1FUdVVkK2pocEdVZnBTZ3B1Ulp0N0xHSUZ3NVZT?=
+ =?utf-8?B?dEduRGd6S0JjM2MwcUR6cVhrd01XMUxFUXVHSDgwTFYrT2tOSHNOV1drakdz?=
+ =?utf-8?B?QUhtMFhrQUt2anRkbEdnVVlkQlFLNkkzK3BRZitGNFpDajV1MnMrYldBejFq?=
+ =?utf-8?B?SnJkR2xFN2kvbXJLbFNnSUtMMjBDUUx3amZkUm9HUFpTZ3kvM1NGNk1DYzdC?=
+ =?utf-8?B?TUhhaGVhd1FDNW5HazVXSHhncWU3V1p6OGdQRlZncE81L2JTSjIveHorZW5I?=
+ =?utf-8?B?L2Z1YkxEYUt1amdBeXUzcFE2QU04NzF0eTZOLzdISloxc2Z3MlQ4Y0tGVmJi?=
+ =?utf-8?B?STZVVFJJWFNjaitjN1FSOHlNZ0paeFNlMEdkREt1cnlHN0ZuNkk4aTBJRDZD?=
+ =?utf-8?B?MDh6NVErdVA2RGVXKzNZQVhTNXZzSE9EQXY2ZStsMG4vbEUreG9nUkxjRzdO?=
+ =?utf-8?B?WjJsMkliMEhsVy83dVF2a0JGazlnb3hFZlJHaEZMWmpVU1Nhc0toallrUkQx?=
+ =?utf-8?B?dmF6VTI0TGMvWFNWSWdRSU9XYVdrdFJxRWp0QWpTQ25BR01ubzIzL2FuVHVo?=
+ =?utf-8?B?REZ5a0Q4L3k4dDRaV1dEbXZlS2F4aWJaTU5YVVltbE9jb0F0YWpMd0FCUWpH?=
+ =?utf-8?B?WHRjR3pCcHBPTTErbDBmNnp5WGEwSkZuVXZlRFZaUDdYRlVmUXN2dHBvL1da?=
+ =?utf-8?B?MGt6NWEzT1Z1a0hXTkROVXZNK2ZlRUM4NE9MQXB4d05yR3dwd2Q4Y2kwQmRo?=
+ =?utf-8?B?VjFCRG1vZmlwSkplNlVZQ25xQmdXVnVBV0FlT3Q1cnFGSERXMCt2ZUZ4Y0NG?=
+ =?utf-8?B?VzBvU1BNWXYxTCsvT2ZnaEw2YVMwZUROUkZPWURJaFRxOHF4cHgwd0ZzRVVB?=
+ =?utf-8?B?MlBkUzB6L2x4QytKTHJsL1RsWUpXYW85bUQvVDBNejdLZlQ4bGh2OHNVc0NL?=
+ =?utf-8?B?UkZLMktNZVdDMFo0d0c5K3VBTkF3eWJWandwMXhJd0pWTlV0MXlpZkJuTDhL?=
+ =?utf-8?B?UzJCM3pHbk9rbVk0bEVFbmp5Ly9Vd1ByV3BLaUd6Skl6TGxGZWVUVXFLM1E2?=
+ =?utf-8?B?MUtWQ0NpaHpXTFBHRlovSmI1TWM4MHpJaGRMc0lzSlZXYlJEbCtqc2hKSVo3?=
+ =?utf-8?B?dElyRnhCdjF3aGN0dVJlNHB1OHV2VzBHVzdnd3g1bGIwNnNkVm1QbTJUREJH?=
+ =?utf-8?B?cktqYkJiRHo5YXFCZk54d25hbDFRVmc3WDQ5OThuR3BvWHpuYUJxeFJBUlJE?=
+ =?utf-8?B?TWFscG16SlZqdHFQMUxnNlB6Rm94aFFveXMrR3VtNVRaRjFCL053WU4vczh0?=
+ =?utf-8?B?MXZFeVdGZGt6WW9lK2dlUnlaYlQ5ckdYcHRJcExJOFE1ZkZxb1J6allkMFky?=
+ =?utf-8?B?UUhhL2k0UkZ4cVNBQTNOeUxqTTMxVUFXYVFGUmpyN3c4UExWK29QSUhZbDY2?=
+ =?utf-8?B?S2RaNWx1SzhmcVN1NzAwMnpTcVVudXVKekhoVDE5TG9YM1B2RXNrc3BDdTQ5?=
+ =?utf-8?B?RDNSbkhnV2JzZjVWZFNHUG1EVlhvck1SZ2RLVmVrZW9yMExiNHhtOFh3MU0v?=
+ =?utf-8?B?ekVBSmgrc1p5Q2IwNmE4TTgreHQzLytEZTUzQmg5bkpETFlCK3dEYlFLMC9X?=
+ =?utf-8?B?cUl0MVpUT2R4WkhtY2dxczI2ZEIwYjUvN3haMENtUVlpY2NtVFJSbmxvVXZh?=
+ =?utf-8?B?VHhHN2FlVnhkdHlYNno4UWhoOGM2VHBjM3dFRjJnKzN4d1RJUFdHcVlOR0l3?=
+ =?utf-8?B?OEV6ZWdSWFBMTk1pNkZHYXo4WDhsbFhlQ3VNb3FicHJ4UmFaaWJMVHJlTDZL?=
+ =?utf-8?B?U2o1ZkdNQ0VDYVlsSGZLLzFseG9VeEJBZmJ2MkhhNzlaM081YnpPend5NlFH?=
+ =?utf-8?B?RlJPWXorZjRXZ1RKcHEzQ21pUFdmb1FNYlVQbk5YVTR4REVteDRaTXA2SXR6?=
+ =?utf-8?B?WEhlUi8vSzUyM2E4a2cwODIwemptUWo5UnBsMmZVM1RTbXB1cHAwanRzbFdU?=
+ =?utf-8?B?VjUwZ1gxYTJoa2p0MlNhTURXUmJNRGlWeXhrNXdGeUxDL0dqbGpUbzM5VUcz?=
+ =?utf-8?B?Q0t2Rm52UE8xMXd0RGFFcGswNklrMEdrRHF6dz09?=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:SJ5PPF04AA7285F.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(7416014)(376014)(1800799024)(366016)(38070700021); DIR:OUT;
+ SFP:1101; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?OTljV2x1aUp6aldUVzNuK0RQZnFUVUVIc0kvZW9jdVAxWlBEaUhRbUxjbzFw?=
+ =?utf-8?B?ZHpyQmUwcjRBVDl1eGV5NDRRK3VvOGZlbzBGVFZOTXZkNUVnNHZ3QVZHeUZD?=
+ =?utf-8?B?dlNpUTM5dkNINWxxUTRYSGJMRG9heGU1OGphay9ydUNxUlRxdXFtNjN6b2c5?=
+ =?utf-8?B?Q08xQmN1OGhqaDFtNmdUeE81OVFMdVE1b0dFd0pPbXNwVC9uWjAwOWVIWHRj?=
+ =?utf-8?B?MFlBMFZwc1RIa3pZQTNyTlBXQ0hhUG9LUFFOS25nL2xtSlpzdTZtdHdnWHVG?=
+ =?utf-8?B?cGdQS0VidzJOc0JGR0RKM000THVSYXJQWkx0YXdqVnZDWGIvdlZiVFJBOXdT?=
+ =?utf-8?B?K2lWSnN6bUl6NFE1T29xVTNUVWZvZVJHQkRWM1ZJVjhKWVdIUEV1OW81Q3JG?=
+ =?utf-8?B?R2JRRFJZM0RFdWVjTDYvT3BiNTVITjd6Sjk0ZE4zYzdaWUszZk0xNzBzR0Vv?=
+ =?utf-8?B?RmViamQ5ak5UU0Y0QUZFVUMxZ2x2aG81SWc1aGdYNWJYL1dGQndtT2ZBdU5E?=
+ =?utf-8?B?d21mbGNYZDJOZjgxaVlBZlpnZWRUU2ZKNzJSMWxzVGk2WEZHb09zQnlOTzhK?=
+ =?utf-8?B?ZmxFTUcweWYvR1hIamcvanQ1bXUvS3NuWWVPTW53YzR2eEVWdnpoUTJqaVZw?=
+ =?utf-8?B?VHFDc0JvQ3J4OEY5eGprdFMwNS85VWg2VU5lMFZrbU5MVGZ2Vnh5SDFNckNN?=
+ =?utf-8?B?bFJ4N29oWGFhTG40OUdmRUd2R2dYRndYYldyUjJiSnZWT2YyMytkWW51RUdR?=
+ =?utf-8?B?dm5OMnhlLytGNk8wcGRZb2hyTC9hSDJHV29NRWhVYlZCTjI3dSt0NU1ITndF?=
+ =?utf-8?B?NXNQeTZNanRNdVVuUzVPdEJEdUdFYmg5R1BSaXp3SVFJS3I3eFlDYmtyRjFM?=
+ =?utf-8?B?TVM4TTE1MkRxeU5JdVlFYVFKWFRUT3lBU0U0ZWk1WStLejljMlBzUUYveHo2?=
+ =?utf-8?B?WVFMYzFqb25qenoraUdjdjJQVFNCVlhZNi8yQjRvU2luZG9ZblloYnNFeEho?=
+ =?utf-8?B?QjVabFB1bVh3TFBoTG41MVRlNnF1ek5EK0NQOTRYbmxFZCt5Z0pZTGpOTkIv?=
+ =?utf-8?B?SmJ1dlJrUjNTbVF6b3E0UDF2VytUa2s0cGdsUVBmbFdldVcwVWJUWUU1ZlA5?=
+ =?utf-8?B?dEpUZzJXZWM4MGsvWWVjak14TjlJZ3FUWEpIRGJwUE84cG9PRVNEVHEyN0J1?=
+ =?utf-8?B?R3J2cVk5UXBPOUpwQlBCM0RhS1djalg4NDAxb24rVXNyRWp1SVQ1eklwaWox?=
+ =?utf-8?B?aCsvbVpLdTNoVllQMTY2TjQ0YUxwU3ZaZExvUXVNYUl2eG5MVjhqbmkzZ09w?=
+ =?utf-8?B?czhjMkFScE9VSUdQU05hT0w2RmVKcEpCTGg1Z2diT3U2N3ZGcEZ0djdNTWtW?=
+ =?utf-8?B?WUduYktaV2lETDdTRURpb1o2aCs1WkZqV3J2Y0QwUnNkeThPT2N4NGZ4cXAw?=
+ =?utf-8?B?WjVUS0J3SGZGYzFYclJQdG4rTWsyeE1vQTVGcWpPR3crRUFBU2QyZFAxbzVD?=
+ =?utf-8?B?amhHYWJpTTNWeXJmaXBhUURTaG01YkhUM2NYOERDb1F5c05CVHdTeU9zVENW?=
+ =?utf-8?B?Y25ISnRPVmptOFZnb3hONnpkb3JZK0JlVSszOXhlUWdWTUd5TnREV0Q0ZHIw?=
+ =?utf-8?B?RXZRQmh6Sm1DbDNiaFRhQk9GaDdoSlhKQUFhS1RKWUVPZW8rdUpsOHFFNVlt?=
+ =?utf-8?B?L2NlQ1A5cWhVcVMxVllJaHFHUVc1eExySkM4b2lDOWJLdzUzNkdGNnYzWjFy?=
+ =?utf-8?B?R0FWTDJxTXB5RFdtbUtyTTYwOW5yYWRUQ1R3alFCTGM4RTQ4cTQrNnUyVTNt?=
+ =?utf-8?B?bWRuVVNlYm9pclhaTFJRQ2VFQ09namF3RkNIR2ZJVUhYUjZ2Z21OK1Iyb2FH?=
+ =?utf-8?B?Z0VHd0kwUUVNSWprdHZFMHdTbElydU5mZFJqbXU2UGREWWgySEZBNUJLd0dD?=
+ =?utf-8?B?eWtDcnlJbmVHWHRnSllqbXhFL3kvQ09CSjd0NHI3WS9LMjJpOVR5bm9mVC9D?=
+ =?utf-8?B?eE1WK01hbjVEcHQvUmk4U0h0TFI2d1ZhbS9GMmZ5Q0dTQXAvdFVWUjBjTFdL?=
+ =?utf-8?B?dlZwcENCR0xCNjBHc3dlYStCZEx6QmtlZ0FyRnIyaVJERE9nRVhhQ0J3YmFj?=
+ =?utf-8?Q?Ckv3UPQL5AOdB34Gmv9uf0aeB?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <20251110153046.63518-1-marat.khalili@huawei.com>
- <20251216182036.77869-1-marat.khalili@huawei.com>
- <20251216182036.77869-4-marat.khalili@huawei.com>
-In-Reply-To: <20251216182036.77869-4-marat.khalili@huawei.com>
-From: Stephen Hemminger <stephen@networkplumber.org>
-Date: Wed, 17 Dec 2025 16:54:06 -0800
-X-Gm-Features: AQt7F2o0Xzp3QLAwXsU5Lu6l45NHd6k0e6BH-EJVH78HKFNzU7-Dfx--2ZzUXF8
-Message-ID: <CAOaVG17N6Qi-Ovk99R9vEQRzVXbeUR6JG6h2smEOAcS8zgUNpQ@mail.gmail.com>
-Subject: Re: [PATCH v2 3/5] bpf: disallow empty program
-To: Marat Khalili <marat.khalili@huawei.com>
-Cc: Jerin Jacob <jerinjacobk@gmail.com>,
- =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>, 
- Konstantin Ananyev <konstantin.ananyev@huawei.com>, dev <dev@dpdk.org>,
- stable@dpdk.org
-Content-Type: multipart/alternative; boundary="0000000000006bee490646212bdb"
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SJ5PPF04AA7285F.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c413fc1d-163d-4f8c-8fcd-08de3d47ba0f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Dec 2025 08:39:00.5973 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 74kmzqrqZo4zNH/Tun52zvvOVLoc1mEfvb61S9/leu41zICvA2ByWGdcHX59iLxlCiIPWnluml/UMgQXmdvaZg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB7406
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -79,534 +199,63 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---0000000000006bee490646212bdb
-Content-Type: text/plain; charset="UTF-8"
-
-I see no need for docbook style comments for static functions.
-Especially in test only code
-
-On Tue, Dec 16, 2025, 10:21 Marat Khalili <marat.khalili@huawei.com> wrote:
-
-> Add tests for some simple cases:
-> * Program with no instructions;
-> * Program with only EXIT instruction but no return value set;
-> * Program with return value set but no EXIT instruction;
-> * Minimal valid program with return value set and an EXIT instruction.
->
-> Fix found bugs:
-> * a program with no instructions was accepted;
-> * a program with no EXIT instruction read outside the buffer.
->
-> Signed-off-by: Marat Khalili <marat.khalili@huawei.com>
-> Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-> ---
->  app/test/test_bpf.c    | 118 +++++++++++++++++++++++++++++++++++++++++
->  lib/bpf/bpf_load.c     |   2 +-
->  lib/bpf/bpf_validate.c |  20 +++++--
->  3 files changed, 135 insertions(+), 5 deletions(-)
->
-> diff --git a/app/test/test_bpf.c b/app/test/test_bpf.c
-> index b7c94ba1c7..6ecc49efff 100644
-> --- a/app/test/test_bpf.c
-> +++ b/app/test/test_bpf.c
-> @@ -34,6 +34,124 @@ test_bpf(void)
->  #include <rte_ip.h>
->
->
-> +/* Tests of most simple BPF programs (no instructions, one instruction
-> etc.) */
-> +
-> +/*
-> + * Try to load a simple bpf program from the instructions array.
-> + *
-> + * When `expected_errno` is zero, expect it to load successfully.
-> + * When `expected_errno` is non-zero, expect it to fail with this
-> `rte_errno`.
-> + *
-> + * @param nb_ins
-> + *   Number of instructions in the `ins` array.
-> + * @param ins
-> + *   BPF instructions array.
-> + * @param expected_errno
-> + *   Expected result.
-> + * @return
-> + *   TEST_SUCCESS on success, error code on failure.
-> + */
-> +static int
-> +bpf_load_test(uint32_t nb_ins, const struct ebpf_insn *ins, int
-> expected_errno)
-> +{
-> +       const struct rte_bpf_prm prm = {
-> +               .ins = ins,
-> +               .nb_ins = nb_ins,
-> +               .prog_arg = {
-> +                       .type = RTE_BPF_ARG_RAW,
-> +                       .size = sizeof(uint64_t),
-> +               },
-> +       };
-> +
-> +       struct rte_bpf *const bpf = rte_bpf_load(&prm);
-> +       const int actual_errno = rte_errno;
-> +       rte_bpf_destroy(bpf);
-> +
-> +       if (expected_errno != 0) {
-> +               RTE_TEST_ASSERT_EQUAL(bpf, NULL,
-> +                       "expect rte_bpf_load() == NULL");
-> +               RTE_TEST_ASSERT_EQUAL(actual_errno, expected_errno,
-> +                       "expect rte_errno == %d, found %d",
-> +                       expected_errno, actual_errno);
-> +       } else
-> +               RTE_TEST_ASSERT_NOT_EQUAL(bpf, NULL,
-> +                       "expect rte_bpf_load() != NULL");
-> +
-> +       return TEST_SUCCESS;
-> +}
-> +
-> +/*
-> + * Try and load completely empty BPF program.
-> + * Should fail because there is no EXIT (and also return value is
-> undefined).
-> + */
-> +static int
-> +test_no_instructions(void)
-> +{
-> +       static const struct ebpf_insn ins[] = {};
-> +       return bpf_load_test(RTE_DIM(ins), ins, EINVAL);
-> +}
-> +
-> +REGISTER_FAST_TEST(bpf_no_instructions_autotest, true, true,
-> test_no_instructions);
-> +
-> +/*
-> + * Try and load a BPF program comprising single EXIT instruction.
-> + * Should fail because the return value is undefined.
-> + */
-> +static int
-> +test_exit_only(void)
-> +{
-> +       static const struct ebpf_insn ins[] = {
-> +               {
-> +                       .code = (BPF_JMP | EBPF_EXIT),
-> +               },
-> +       };
-> +       return bpf_load_test(RTE_DIM(ins), ins, EINVAL);
-> +}
-> +
-> +REGISTER_FAST_TEST(bpf_exit_only_autotest, true, true, test_exit_only);
-> +
-> +/*
-> + * Try and load a BPF program with no EXIT instruction.
-> + * Should fail because of this.
-> + */
-> +static int
-> +test_no_exit(void)
-> +{
-> +       static const struct ebpf_insn ins[] = {
-> +               {
-> +                       /* Set return value to the program argument. */
-> +                       .code = (EBPF_ALU64 | EBPF_MOV | BPF_X),
-> +                       .src_reg = EBPF_REG_1,
-> +                       .dst_reg = EBPF_REG_0,
-> +               },
-> +       };
-> +       return bpf_load_test(RTE_DIM(ins), ins, EINVAL);
-> +}
-> +
-> +REGISTER_FAST_TEST(bpf_no_exit_autotest, true, true, test_no_exit);
-> +
-> +/*
-> + * Try and load smallest possible valid BPF program.
-> + */
-> +static int
-> +test_minimal_working(void)
-> +{
-> +       static const struct ebpf_insn ins[] = {
-> +               {
-> +                       /* Set return value to the program argument. */
-> +                       .code = (EBPF_ALU64 | EBPF_MOV | BPF_X),
-> +                       .src_reg = EBPF_REG_1,
-> +                       .dst_reg = EBPF_REG_0,
-> +               },
-> +               {
-> +                       .code = (BPF_JMP | EBPF_EXIT),
-> +               },
-> +       };
-> +       return bpf_load_test(RTE_DIM(ins), ins, 0);
-> +}
-> +
-> +REGISTER_FAST_TEST(bpf_minimal_working_autotest, true, true,
-> test_minimal_working);
-> +
->  /*
->   * Basic functional tests for librte_bpf.
->   * The main procedure - load eBPF program, execute it and
-> diff --git a/lib/bpf/bpf_load.c b/lib/bpf/bpf_load.c
-> index 556e613762..6983c026af 100644
-> --- a/lib/bpf/bpf_load.c
-> +++ b/lib/bpf/bpf_load.c
-> @@ -88,7 +88,7 @@ rte_bpf_load(const struct rte_bpf_prm *prm)
->         int32_t rc;
->         uint32_t i;
->
-> -       if (prm == NULL || prm->ins == NULL ||
-> +       if (prm == NULL || prm->ins == NULL || prm->nb_ins == 0 ||
->                         (prm->nb_xsym != 0 && prm->xsym == NULL)) {
->                 rte_errno = EINVAL;
->                 return NULL;
-> diff --git a/lib/bpf/bpf_validate.c b/lib/bpf/bpf_validate.c
-> index 4f47d6dc7b..23444b3eaa 100644
-> --- a/lib/bpf/bpf_validate.c
-> +++ b/lib/bpf/bpf_validate.c
-> @@ -1827,7 +1827,7 @@ add_edge(struct bpf_verifier *bvf, struct inst_node
-> *node, uint32_t nidx)
->  {
->         uint32_t ne;
->
-> -       if (nidx > bvf->prm->nb_ins) {
-> +       if (nidx >= bvf->prm->nb_ins) {
->                 RTE_BPF_LOG_LINE(ERR,
->                         "%s: program boundary violation at pc: %u, next
-> pc: %u",
->                         __func__, get_node_idx(bvf, node), nidx);
-> @@ -1886,14 +1886,20 @@ get_prev_node(struct bpf_verifier *bvf, struct
-> inst_node *node)
->   * Control Flow Graph (CFG).
->   * Information collected at this path would be used later
->   * to determine is there any loops, and/or unreachable instructions.
-> + * PREREQUISITE: there is at least one node.
->   */
->  static void
->  dfs(struct bpf_verifier *bvf)
->  {
->         struct inst_node *next, *node;
->
-> -       node = bvf->in;
-> -       while (node != NULL) {
-> +       RTE_ASSERT(bvf->nb_nodes != 0);
-> +       /*
-> +        * Since there is at least one node, node with index 0 always
-> exists;
-> +        * it is our program entry point.
-> +        */
-> +       node = &bvf->in[0];
-> +       do {
->
->                 if (node->colour == WHITE)
->                         set_node_colour(bvf, node, GREY);
-> @@ -1923,7 +1929,7 @@ dfs(struct bpf_verifier *bvf)
->                         }
->                 } else
->                         node = NULL;
-> -       }
-> +       } while (node != NULL);
->  }
->
->  /*
-> @@ -2062,6 +2068,12 @@ validate(struct bpf_verifier *bvf)
->         if (rc != 0)
->                 return rc;
->
-> +       if (bvf->nb_nodes == 0) {
-> +               RTE_BPF_LOG_LINE(ERR, "%s(%p) the program is empty",
-> +                       __func__, bvf);
-> +               return -EINVAL;
-> +       }
-> +
->         dfs(bvf);
->
->         RTE_LOG(DEBUG, BPF, "%s(%p) stats:\n"
-> --
-> 2.43.0
->
->
-
---0000000000006bee490646212bdb
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"auto">I see no need for docbook style comments for static funct=
-ions.<div dir=3D"auto">Especially in test only code</div></div><br><div cla=
-ss=3D"gmail_quote gmail_quote_container"><div dir=3D"ltr" class=3D"gmail_at=
-tr">On Tue, Dec 16, 2025, 10:21 Marat Khalili &lt;<a href=3D"mailto:marat.k=
-halili@huawei.com">marat.khalili@huawei.com</a>&gt; wrote:<br></div><blockq=
-uote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1p=
-x solid rgb(204,204,204);padding-left:1ex">Add tests for some simple cases:=
-<br>
-* Program with no instructions;<br>
-* Program with only EXIT instruction but no return value set;<br>
-* Program with return value set but no EXIT instruction;<br>
-* Minimal valid program with return value set and an EXIT instruction.<br>
-<br>
-Fix found bugs:<br>
-* a program with no instructions was accepted;<br>
-* a program with no EXIT instruction read outside the buffer.<br>
-<br>
-Signed-off-by: Marat Khalili &lt;<a href=3D"mailto:marat.khalili@huawei.com=
-" target=3D"_blank" rel=3D"noreferrer">marat.khalili@huawei.com</a>&gt;<br>
-Acked-by: Konstantin Ananyev &lt;<a href=3D"mailto:konstantin.ananyev@huawe=
-i.com" target=3D"_blank" rel=3D"noreferrer">konstantin.ananyev@huawei.com</=
-a>&gt;<br>
----<br>
-=C2=A0app/test/test_bpf.c=C2=A0 =C2=A0 | 118 ++++++++++++++++++++++++++++++=
-+++++++++++<br>
-=C2=A0lib/bpf/bpf_load.c=C2=A0 =C2=A0 =C2=A0|=C2=A0 =C2=A02 +-<br>
-=C2=A0lib/bpf/bpf_validate.c |=C2=A0 20 +++++--<br>
-=C2=A03 files changed, 135 insertions(+), 5 deletions(-)<br>
-<br>
-diff --git a/app/test/test_bpf.c b/app/test/test_bpf.c<br>
-index b7c94ba1c7..6ecc49efff 100644<br>
---- a/app/test/test_bpf.c<br>
-+++ b/app/test/test_bpf.c<br>
-@@ -34,6 +34,124 @@ test_bpf(void)<br>
-=C2=A0#include &lt;rte_ip.h&gt;<br>
-<br>
-<br>
-+/* Tests of most simple BPF programs (no instructions, one instruction etc=
-.) */<br>
-+<br>
-+/*<br>
-+ * Try to load a simple bpf program from the instructions array.<br>
-+ *<br>
-+ * When `expected_errno` is zero, expect it to load successfully.<br>
-+ * When `expected_errno` is non-zero, expect it to fail with this `rte_err=
-no`.<br>
-+ *<br>
-+ * @param nb_ins<br>
-+ *=C2=A0 =C2=A0Number of instructions in the `ins` array.<br>
-+ * @param ins<br>
-+ *=C2=A0 =C2=A0BPF instructions array.<br>
-+ * @param expected_errno<br>
-+ *=C2=A0 =C2=A0Expected result.<br>
-+ * @return<br>
-+ *=C2=A0 =C2=A0TEST_SUCCESS on success, error code on failure.<br>
-+ */<br>
-+static int<br>
-+bpf_load_test(uint32_t nb_ins, const struct ebpf_insn *ins, int expected_e=
-rrno)<br>
-+{<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0const struct rte_bpf_prm prm =3D {<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0.ins =3D ins,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0.nb_ins =3D nb_ins,=
-<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0.prog_arg =3D {<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0.type =3D RTE_BPF_ARG_RAW,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0.size =3D sizeof(uint64_t),<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0},<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0};<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0struct rte_bpf *const bpf =3D rte_bpf_load(&amp=
-;prm);<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0const int actual_errno =3D rte_errno;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0rte_bpf_destroy(bpf);<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0if (expected_errno !=3D 0) {<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0RTE_TEST_ASSERT_EQU=
-AL(bpf, NULL,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0&quot;expect rte_bpf_load() =3D=3D NULL&quot;);<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0RTE_TEST_ASSERT_EQU=
-AL(actual_errno, expected_errno,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0&quot;expect rte_errno =3D=3D %d, found %d&quot;,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0expected_errno, actual_errno);<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0} else<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0RTE_TEST_ASSERT_NOT=
-_EQUAL(bpf, NULL,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0&quot;expect rte_bpf_load() !=3D NULL&quot;);<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0return TEST_SUCCESS;<br>
-+}<br>
-+<br>
-+/*<br>
-+ * Try and load completely empty BPF program.<br>
-+ * Should fail because there is no EXIT (and also return value is undefine=
-d).<br>
-+ */<br>
-+static int<br>
-+test_no_instructions(void)<br>
-+{<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0static const struct ebpf_insn ins[] =3D {};<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0return bpf_load_test(RTE_DIM(ins), ins, EINVAL)=
-;<br>
-+}<br>
-+<br>
-+REGISTER_FAST_TEST(bpf_no_instructions_autotest, true, true, test_no_instr=
-uctions);<br>
-+<br>
-+/*<br>
-+ * Try and load a BPF program comprising single EXIT instruction.<br>
-+ * Should fail because the return value is undefined.<br>
-+ */<br>
-+static int<br>
-+test_exit_only(void)<br>
-+{<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0static const struct ebpf_insn ins[] =3D {<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0{<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0.code =3D (BPF_JMP | EBPF_EXIT),<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0},<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0};<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0return bpf_load_test(RTE_DIM(ins), ins, EINVAL)=
-;<br>
-+}<br>
-+<br>
-+REGISTER_FAST_TEST(bpf_exit_only_autotest, true, true, test_exit_only);<br=
->
-+<br>
-+/*<br>
-+ * Try and load a BPF program with no EXIT instruction.<br>
-+ * Should fail because of this.<br>
-+ */<br>
-+static int<br>
-+test_no_exit(void)<br>
-+{<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0static const struct ebpf_insn ins[] =3D {<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0{<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0/* Set return value to the program argument. */<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0.code =3D (EBPF_ALU64 | EBPF_MOV | BPF_X),<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0.src_reg =3D EBPF_REG_1,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0.dst_reg =3D EBPF_REG_0,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0},<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0};<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0return bpf_load_test(RTE_DIM(ins), ins, EINVAL)=
-;<br>
-+}<br>
-+<br>
-+REGISTER_FAST_TEST(bpf_no_exit_autotest, true, true, test_no_exit);<br>
-+<br>
-+/*<br>
-+ * Try and load smallest possible valid BPF program.<br>
-+ */<br>
-+static int<br>
-+test_minimal_working(void)<br>
-+{<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0static const struct ebpf_insn ins[] =3D {<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0{<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0/* Set return value to the program argument. */<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0.code =3D (EBPF_ALU64 | EBPF_MOV | BPF_X),<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0.src_reg =3D EBPF_REG_1,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0.dst_reg =3D EBPF_REG_0,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0},<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0{<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0.code =3D (BPF_JMP | EBPF_EXIT),<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0},<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0};<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0return bpf_load_test(RTE_DIM(ins), ins, 0);<br>
-+}<br>
-+<br>
-+REGISTER_FAST_TEST(bpf_minimal_working_autotest, true, true, test_minimal_=
-working);<br>
-+<br>
-=C2=A0/*<br>
-=C2=A0 * Basic functional tests for librte_bpf.<br>
-=C2=A0 * The main procedure - load eBPF program, execute it and<br>
-diff --git a/lib/bpf/bpf_load.c b/lib/bpf/bpf_load.c<br>
-index 556e613762..6983c026af 100644<br>
---- a/lib/bpf/bpf_load.c<br>
-+++ b/lib/bpf/bpf_load.c<br>
-@@ -88,7 +88,7 @@ rte_bpf_load(const struct rte_bpf_prm *prm)<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 int32_t rc;<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 uint32_t i;<br>
-<br>
--=C2=A0 =C2=A0 =C2=A0 =C2=A0if (prm =3D=3D NULL || prm-&gt;ins =3D=3D NULL =
-||<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0if (prm =3D=3D NULL || prm-&gt;ins =3D=3D NULL =
-|| prm-&gt;nb_ins =3D=3D 0 ||<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 (prm-&gt;nb_xsym !=3D 0 &amp;&amp; prm-&gt;xsym =3D=3D NULL)) {<=
-br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 rte_errno =3D EINVA=
-L;<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 return NULL;<br>
-diff --git a/lib/bpf/bpf_validate.c b/lib/bpf/bpf_validate.c<br>
-index 4f47d6dc7b..23444b3eaa 100644<br>
---- a/lib/bpf/bpf_validate.c<br>
-+++ b/lib/bpf/bpf_validate.c<br>
-@@ -1827,7 +1827,7 @@ add_edge(struct bpf_verifier *bvf, struct inst_node *=
-node, uint32_t nidx)<br>
-=C2=A0{<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 uint32_t ne;<br>
-<br>
--=C2=A0 =C2=A0 =C2=A0 =C2=A0if (nidx &gt; bvf-&gt;prm-&gt;nb_ins) {<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0if (nidx &gt;=3D bvf-&gt;prm-&gt;nb_ins) {<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 RTE_BPF_LOG_LINE(ER=
-R,<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 &quot;%s: program boundary violation at pc: %u, next pc: %u&quot=
-;,<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 __func__, get_node_idx(bvf, node), nidx);<br>
-@@ -1886,14 +1886,20 @@ get_prev_node(struct bpf_verifier *bvf, struct inst=
-_node *node)<br>
-=C2=A0 * Control Flow Graph (CFG).<br>
-=C2=A0 * Information collected at this path would be used later<br>
-=C2=A0 * to determine is there any loops, and/or unreachable instructions.<=
-br>
-+ * PREREQUISITE: there is at least one node.<br>
-=C2=A0 */<br>
-=C2=A0static void<br>
-=C2=A0dfs(struct bpf_verifier *bvf)<br>
-=C2=A0{<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 struct inst_node *next, *node;<br>
-<br>
--=C2=A0 =C2=A0 =C2=A0 =C2=A0node =3D bvf-&gt;in;<br>
--=C2=A0 =C2=A0 =C2=A0 =C2=A0while (node !=3D NULL) {<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0RTE_ASSERT(bvf-&gt;nb_nodes !=3D 0);<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0/*<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 * Since there is at least one node, node with =
-index 0 always exists;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 * it is our program entry point.<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 */<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0node =3D &amp;bvf-&gt;in[0];<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0do {<br>
-<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 if (node-&gt;colour=
- =3D=3D WHITE)<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 set_node_colour(bvf, node, GREY);<br>
-@@ -1923,7 +1929,7 @@ dfs(struct bpf_verifier *bvf)<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 }<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 } else<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 node =3D NULL;<br>
--=C2=A0 =C2=A0 =C2=A0 =C2=A0}<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0} while (node !=3D NULL);<br>
-=C2=A0}<br>
-<br>
-=C2=A0/*<br>
-@@ -2062,6 +2068,12 @@ validate(struct bpf_verifier *bvf)<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 if (rc !=3D 0)<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 return rc;<br>
-<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0if (bvf-&gt;nb_nodes =3D=3D 0) {<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0RTE_BPF_LOG_LINE(ER=
-R, &quot;%s(%p) the program is empty&quot;,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0__func__, bvf);<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return -EINVAL;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0}<br>
-+<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 dfs(bvf);<br>
-<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 RTE_LOG(DEBUG, BPF, &quot;%s(%p) stats:\n&quot;=
-<br>
--- <br>
-2.43.0<br>
-<br>
-</blockquote></div>
-
---0000000000006bee490646212bdb--
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBLZXZpbiBUcmF5bm9yIDxrdHJh
+eW5vckByZWRoYXQuY29tPg0KPiBTZW50OiBGcmlkYXksIERlY2VtYmVyIDUsIDIwMjUgNTo1OSBQ
+TQ0KPiBUbzogc3RhYmxlQGRwZGsub3JnDQo+IENjOiBkZXZAZHBkay5vcmc7IEFiaGlzaGVrIE1h
+cmF0aGUgPEFiaGlzaGVrLk1hcmF0aGVAbWljcm9zb2Z0LmNvbT47DQo+IEFsaSBBbG51YmFuaSA8
+YWxpYWxudUBudmlkaWEuY29tPjsgRGF2aWQgQ2hyaXN0ZW5zZW4NCj4gPGRyY0BsaW51eC52bmV0
+LmlibS5jb20+OyBIZW1hbnQgQWdyYXdhbCA8aGVtYW50LmFncmF3YWxAbnhwLmNvbT47DQo+IEpl
+cmluIEphY29iIDxqZXJpbmpAbWFydmVsbC5jb20+OyBNY25hbWFyYSwgSm9obg0KPiA8am9obi5t
+Y25hbWFyYUBpbnRlbC5jb20+OyBKdS1IeW91bmcgTGVlIDxqdWhsZWVAbWljcm9zb2Z0LmNvbT47
+IEtldmluDQo+IFRyYXlub3IgPGt0cmF5bm9yQHJlZGhhdC5jb20+OyBMdWNhIEJvY2Nhc3NpIDxi
+bHVjYUBkZWJpYW4ub3JnPjsgUGVpDQo+IFpoYW5nIDxwZXpoYW5nQHJlZGhhdC5jb20+OyBSYXNs
+YW4gRGFyYXdzaGVoIDxyYXNsYW5kQG52aWRpYS5jb20+Ow0KPiBUaG9tYXMgTW9uamFsb24gPHRo
+b21hc0Btb25qYWxvbi5uZXQ+OyB5YW5naGxpdUByZWRoYXQuY29tDQo+IFN1YmplY3Q6IDI0LjEx
+LjQgcGF0Y2hlcyByZXZpZXcgYW5kIHRlc3QNCj4gDQo+IEhpIGFsbCwNCj4gDQo+IEhlcmUgaXMg
+YSBsaXN0IG9mIHBhdGNoZXMgdGFyZ2V0ZWQgZm9yIHN0YWJsZSByZWxlYXNlIDI0LjExLjQuDQo+
+IA0KPiBUaGUgcGxhbm5lZCBkYXRlIGZvciB0aGUgZmluYWwgcmVsZWFzZSBpcyAxOHRoIERlY2Vt
+YmVyLg0KPiANCj4gUGxlYXNlIGhlbHAgd2l0aCB0ZXN0aW5nIGFuZCB2YWxpZGF0aW9uIG9mIHlv
+dXIgdXNlIGNhc2VzIGFuZCByZXBvcnQgYW55DQo+IGlzc3Vlcy9yZXN1bHRzIHdpdGggcmVwbHkt
+YWxsIHRvIHRoaXMgbWFpbC4gRm9yIHRoZSBmaW5hbCByZWxlYXNlIHRoZSBmaXhlcyBhbmQNCj4g
+cmVwb3J0ZWQgdmFsaWRhdGlvbnMgd2lsbCBiZSBhZGRlZCB0byB0aGUgcmVsZWFzZSBub3Rlcy4N
+Cj4gDQo+IEEgcmVsZWFzZSBjYW5kaWRhdGUgdGFyYmFsbCBjYW4gYmUgZm91bmQgYXQ6DQo+IA0K
+PiAgICAgaHR0cHM6Ly9kcGRrLm9yZy9icm93c2UvZHBkay1zdGFibGUvdGFnLz9pZD12MjQuMTEu
+NC1yYzENCj4gDQo+IFRoZXNlIHBhdGNoZXMgYXJlIGxvY2F0ZWQgYXQgYnJhbmNoIDI0LjExIG9m
+IGRwZGstc3RhYmxlIHJlcG86DQo+ICAgICBodHRwczovL2RwZGsub3JnL2Jyb3dzZS9kcGRrLXN0
+YWJsZS8NCj4gDQo+IFRoYW5rcy4NCj4gDQo+IEtldmluDQo+IA0KPiAtLS0NClVwZGF0ZSB0aGUg
+dGVzdCBzdGF0dXMgZm9yIEludGVsIHBhcnQuIGRwZGsyNC4xMS40LXJjMSBhbGwgdmFsaWRhdGlv
+biB0ZXN0IGRvbmUuIGZvdW5kIHR3byBuZXcgaXNzdWVzLg0KDQpOZXcgaXNzdWVzOg0KICAxLiB2
+aXJ0aW9faXBzZWNfY3J5cHRvZGV2X2Z1bmMvdGVzdF92aXJ0aW9fYWVzX2NiY19zaGExX2htYWM6
+IHZob3N0LXVzZXIgbWVldCBTZWdtZW50YXRpb24gZmF1bHQgYWZ0ZXIgc2VuZGluZyBwYWNrYWdl
+DQogIDIuIEJ1ZyAxODQ5IC0gW2RwZGstMjIuMTEuMTFyYzFdIHZpcnRpb19wZXJmX2NyeXB0b2Rl
+dl9mdW5jL3Rlc3RfdmlydGlvX2Flc19jYmNfc2hhMV9obWFjOiBkcGRrLXRlc3QtY3J5cHRvLXBl
+cmYgRUFMOiBFcnJvcjogSW52YWxpZCBtZW1vcnkNCg0Ka25vd24gaXNzdWU6DQogIDEuIExpbmt2
+aWxsZSB2ZnMgY2FuJ3QgZm9yd2FyZCBwYWNrZXRzIC0uIGhhcyB0d28gZml4IHBhdGNoIG5vdCBt
+ZXJnZSBpbnRvIDI0LjExIExUUyANCiAgICAgLSBoYXMgZml4IHBhdGNoZXM6IGh0dHBzOi8vcGF0
+Y2hlcy5kcGRrLm9yZy9wcm9qZWN0L2RwZGsvbGlzdC8/c2VyaWVzPTM0OTM5JmFyY2hpdmU9Ym90
+aCZzdGF0ZT0qDQoNCiogQnVpbGQgJiBDRkxBRyBjb21waWxlOiBjb3ZlciB0aGUgYnVpbGQgdGVz
+dCB3aXRoIGxhdGVzdCBHQ0MvQ2xhbmcgdmVyc2lvbiBvbiB0aGUgZm9sbG93aW5nIE9TKGFsbCBw
+YXNzZWQpDQogIC0gVWJ1bnR1MjUuMDQvVWJ1bnR1MjQuMDQuMw0KICAtIFJIRUw5LjYvUkhFTDEw
+DQogIC0gRmVkb3JhNDINCiAgLSBGcmVlQlNEMTQuMw0KICAtIFNVU0UxNS42DQogIC0gT3BlbkFu
+b2xpczguMTANCiAgLSBPcGVuRXVsZXIyNC4wNC1TUDINCiAgLSBBenVyZUxpbnV4My4wDQoNCiog
+RnVuY3Rpb24gdGVzdHM6IEFsbCB0ZXN0IGRvbmUgYW5kIHRoZXJlIGFyZSBvbmUga25vd24gaXNz
+dWUgYW5kIGZvdW5kIHR3byBuZXcgaXNzdWVzLg0KICAtIGk0MEUtKFhYVjcxMCwgWDcyMikgUEYv
+VkY6IHRlc3Qgc2NlbmFyaW9zIGluY2x1ZGluZyBiYXNpYy9SVEVfRkxPVy9UU08vSnVtYm9mcmFt
+ZS9jaGVja3N1bSBvZmZsb2FkL21hY19maWx0ZXIvVkxBTi9WWExBTi9SU1MsIGV0Yy4gDQogIC0g
+SVhHQkUtKDgyNTk5LCBFNjEwKSBQRi9WRjogdGVzdCBzY2VuYXJpb3MgaW5jbHVkaW5nIGJhc2lj
+L1JURV9GTE9XL1RTTy9KdW1ib2ZyYW1lL2NoZWNrc3VtIG9mZmxvYWQvbWFjX2ZpbHRlci9WTEFO
+L1ZYTEFOL1JTUywgZXRjLiANCiAgLSBJQ0UtKEU4MTAsIEUyMTAwKSBQRi9WRjogdGVzdCBzY2Vu
+YXJpb3MgaW5jbHVkaW5nIGJhc2ljL1N3aXRjaC9QYWNrYWdlIE1hbmFnZW1lbnQvRmxvdyBEaXJl
+Y3Rvci9BZHZhbmNlZCBUeC9BZHZhbmNlZCBSU1MvQUNML0RDRi9GbGV4aWJsZSBEZXNjcmlwdG9y
+LCBldGMuDQogIC0gSVBzZWM6IHRlc3Qgc2NlbmFyaW9zIGluY2x1ZGluZyBpcHNlYy9pcHNlYy1n
+dy9pcHNlYyBsaWJyYXJ5IGJhc2ljIHRlc3QgLSBRQVQmU1cvRklCIGxpYnJhcnksIGV0Yy4NCiAg
+LSBWaXJ0aW86IGJvdGggZnVuY3Rpb24gYW5kIHBlcmZvcm1hbmNlIHRlc3QgYXJlIGNvdmVyZWQu
+IFN1Y2ggYXMgUFZQL1ZpcnRpb19sb29wYmFjay92aXJ0aW8tdXNlciBsb29wYmFjay92aXJ0aW8t
+bmV0IFZNMlZNIHBlcmYgdGVzdGluZy9WTUFXQVJFIEVTWEkgOC4wLCBldGMuDQogIC0gQ3J5cHRv
+ZGV2OiB0ZXN0IHNjZW5hcmlvcyBpbmNsdWRpbmcgQ3J5cHRvZGV2IEFQSSB0ZXN0aW5nL0NvbXBy
+ZXNzRGV2IElTQS1ML1FBVC9aTElCIFBNRCBUZXN0aW5nL0ZJUFMsIGV0Yy4NCiAgLSBETEI6IHRl
+c3Qgc2NlbmFyaW9zIGluY2x1ZGluZyBETEIyLjAgYW5kIERMQjIuNQ0KICAtIE90aGVyOiB0ZXN0
+IHNjZW5hcmlvcyBpbmNsdWRpbmcgQUZfWERQLCBQb3dlciwgQ0JETUEsIERTQQ0KDQoqIFBlcmZv
+cm1hbmNlIHRlc3Q6IEFsbCB0ZXN0IGRvbmUgYW5kIHBhc3NlZA0KICAtIFRob3VnaHB1dCBQZXJm
+b3JtYW5jZQ0KICAtIENyeXB0b2RldiBMYXRlbmN5DQogIC0gUEYvVkYgTklDIHNpbmdsZSBjb3Jl
+DQogIC0gWFhWNzEwL0U4MTAgTklDIFBlcmZvcm1hbmNlDQo=
