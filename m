@@ -2,65 +2,65 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C305DD66B83
-	for <dpdk-dev@archiver.kernel.org>; Wed, 17 Dec 2025 18:25:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4753D66B81
+	for <dpdk-dev@archiver.kernel.org>; Wed, 17 Dec 2025 18:46:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 058D34029A;
-	Wed, 17 Dec 2025 19:25:47 +0100 (CET)
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com
- [209.85.222.175])
- by mails.dpdk.org (Postfix) with ESMTP id 83F614025A
- for <dev@dpdk.org>; Wed, 17 Dec 2025 19:25:45 +0100 (CET)
-Received: by mail-qk1-f175.google.com with SMTP id
- af79cd13be357-8b2d6df99c5so90869885a.1
- for <dev@dpdk.org>; Wed, 17 Dec 2025 10:25:45 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id A91144029A;
+	Wed, 17 Dec 2025 19:46:52 +0100 (CET)
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com
+ [209.85.160.171])
+ by mails.dpdk.org (Postfix) with ESMTP id 73BE34025A
+ for <dev@dpdk.org>; Wed, 17 Dec 2025 19:46:51 +0100 (CET)
+Received: by mail-qt1-f171.google.com with SMTP id
+ d75a77b69052e-4f1b4bb40aaso36399941cf.3
+ for <dev@dpdk.org>; Wed, 17 Dec 2025 10:46:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1765995945; x=1766600745; darn=dpdk.org;
+ d=iol.unh.edu; s=unh-iol; t=1765997211; x=1766602011; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:message-id:date:subject:cc
  :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=ivPO6XdAbz9OXldhfYN+985mK3aw4S2mLwKtS8NRsos=;
- b=f5PSY8z8OqU2F6xIqLCcTlz+X1dkbZkQVuPgSjj6sFXqE+MJW6nqTNdV0H63GlgnDv
- bWDhgxAI3fY4tgGWbHUKAK0cfBfg0GvP/Z9ImgcBTK1EapLejPNjB9Nd6zT5WEP7qJbe
- 8qSclEICycJJZxgmfz0WvXkyAVQv1/0Fy2Zrs=
+ bh=lnPO4VotKqnLIlTZxwkJ30bIaAzefnilDJVi6N5dr4I=;
+ b=KDB6sSlDcxJLTjt/LhZihF1TWn2tTz2/U20YyzOVA/lSClU4pcsK+muG9mHBvHN/cb
+ 7XwODJ2EfS1Zh69kMmm6uxAcLcatunkOg/+q7RILOflRF9876D+jaUX3K56zzB/SaEbi
+ yDSxxqfi8dPIveWYtmOM2qNVRQvEbBReU4Zks=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1765995945; x=1766600745;
+ d=1e100.net; s=20230601; t=1765997211; x=1766602011;
  h=content-transfer-encoding:mime-version:message-id:date:subject:cc
  :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to;
- bh=ivPO6XdAbz9OXldhfYN+985mK3aw4S2mLwKtS8NRsos=;
- b=oasGoTPjJSy2p4wsUW8+xVD8GSkkoHeI/HizFMdwSgrwjEnVY9Azz2zwK3xE/9xlhZ
- Ovz6by8Tfkmx5FXm9XgFgEYvvguOpHGUNji01kh4/JMiPxwu90ZsaUQfTGOYBlrF7J/1
- XR+PsHrhtb4FWXGSeF6VM6M0AnEdJ1q5z5jgUGk5tZyp2DhGSkxtiQJVhI+MDVpBL4IG
- t/0ioThR+9+Ef/7+VVf1GPg7RZUZOgX15f7a84qVWoWcST7wmddaWn89pZhqPx0p7ddQ
- l7u9JRi4Pv7k1VzPUi4+GpSdwwIHbSAgjgcJRcf7gLqiITnojd1x8PxbtOUt/AkhoTxL
- z1iw==
+ bh=lnPO4VotKqnLIlTZxwkJ30bIaAzefnilDJVi6N5dr4I=;
+ b=FGYlIM+4WZVdi58sKqvF3MkZrypC3t0KfdhykAl0xytAv/fB2cm23Jqp+l3RQAkmpS
+ QQPRSwOmTrsNUlNje7yuC11/P03z9zaB7ukCcJG5aGjXIi89EC5pUPCzW8uoyNPQpixc
+ 6s57/95LuqJrsp5tm10D/H1aKoS1grNSdaecrCC6vcG/kMMFx9Fe49a/hhZGTuKzE4od
+ xkXvAZx4iDpPxovXq9+IM6Xz/F7sQXF+AFFqBu7gCgVDnYXvXDk0vAuOhCaIHqcchO/S
+ 0hbuP93rjWq3HTlJifHFiqTwORNqqjd9ujKK54EmUwhIUnuVow/qY2ren98ySuvVnq4F
+ oz4Q==
 X-Forwarded-Encrypted: i=1;
- AJvYcCXh5tuz0bKYeLjTGIbaEfy4hLSy4xiTGtr8qp/oeaj1ykBIYtqqlQMD0jgWoPEuR1woqDA=@dpdk.org
-X-Gm-Message-State: AOJu0YywFsJwFazkgFp2N3t9a5voyN9nx9m6JQqX4rcbJBgovwI8HoDx
- 7JOD3YAIq8panigZfISPjMlZVyu46/lz3NqyhUonXpC0mlTt71kC4fU2h38WHd6nIwI=
-X-Gm-Gg: AY/fxX7mE3trJ7HIFNUItld7MVL2kq8N+zlM1CSxJZtxzDvXaKa0lZZYqO8kt0r5sys
- icWRO/lBl5IKXLdPPPqg67xpGm256HD0GI76DAjKq+mqQfxiIv2ObdN/P0fgIiwEPRDIHxB93Y4
- FxsmRcKjwcs2N+4cV7UD2SzBJxt6f8fCKXFiGgiNqVQ6BixAOUNPpg4E7oQTCYbJ6RPTvLlLSKz
- DiZ2zRPMpDwZiz3Cl01b/NsPT2kjrhQC7Go2g5sue/EBcJXTnPo6THsgCqtxMSjTd7hPRO60kFB
- dQzQBO4atY1Qi8asNQf7BRG5MCnvlU7b31sUWBYI2njxnwJj0rDf8lDmYnFHCvK4JNV9icpazyX
- nGlBnkQApmU9/WwaNIGeAdnds/p3LAfktqYjSFY43j1u0/j+u99X+WizBfcZERUY2jMTyujqQ/t
- g4awHbRUOZt+p0nw0++Iq4AOs=
-X-Google-Smtp-Source: AGHT+IGx7OCRIS2+US1dwMskn5vEMCRxWpbWryOxvJwl3WnRK0lSJDEjDc+VI9GoJWLNxvS7/lndLw==
-X-Received: by 2002:ac8:5e53:0:b0:4f1:b362:eed7 with SMTP id
- d75a77b69052e-4f35f4849eamr6116971cf.42.1765995944678; 
- Wed, 17 Dec 2025 10:25:44 -0800 (PST)
+ AJvYcCVvxHO5gaj04YB0f9LWd6aRbvhH3ZDP6N4x5HwHK9Bgx6fl06Vzb/ieP45c0pzgMCVtSMY=@dpdk.org
+X-Gm-Message-State: AOJu0YyvbJKrmpBsO9rcSvecX2xu3EW4tFwRILEs+j8mcolMblW3UX8x
+ JcJ+cliRi9n5RrrHr6rh9yX9b0q1Iyc+32RI51o54EASzBdnig7d1ftjVpjsoIywKcI=
+X-Gm-Gg: AY/fxX59v76fd1OW0lP6IuVkggPKVwEjNrcgHZ/JJatwZsQRsXuyUQ7Jsq5gYYyagr4
+ fItWYPf3iIFGsWV4hfXzZa5lOohziuN8RgEBj80SVk5V3qg+Fq6Abp8LLzBN0jdO0HZieQUOytd
+ t3rY0KjCGhL2KBDprzBcDRuLlC/fNFGJzoIHUaA5yrOXEuk2LnGKdazX/GMFDLHkIjatVTb0Q3w
+ S67VcZWjs16rfXNJ+KLgzUolGtmVWJBkKlq5vxO2x9/7DdHFgQaafETm4jBxf4a69l0iKkNcLjZ
+ 6FTN/cYklSXvOEdLxWMSIBg6os6xN+vYNFLDffjPD/lhmbCKT68mEJrepP4YMZ40EADfge99MIl
+ kqZLomtamNRvc0HuXjblRQC5aIpU6v3M0D9HjLbJV2T+Wr6SxMEk9K3uf+aErfwh2uff9oXUQxD
+ Bp++aMgizvWrhtx23+at8lJbw=
+X-Google-Smtp-Source: AGHT+IGomxl11jp66yEB8R8viJl2xS2IFgFY/eBa/hUNqrcZjjb3Uc6jbFTdYd+LxXMAaNvpwEzrRQ==
+X-Received: by 2002:ac8:7f03:0:b0:4ed:e337:2e68 with SMTP id
+ d75a77b69052e-4f1d066fd5bmr239053431cf.81.1765997210625; 
+ Wed, 17 Dec 2025 10:46:50 -0800 (PST)
 Received: from d122205.iol.unh.edu ([2606:4100:3880:1220:4f6d:e2af:7f5f:4df])
  by smtp.gmail.com with ESMTPSA id
- d75a77b69052e-4f35fb68effsm414001cf.0.2025.12.17.10.25.43
+ d75a77b69052e-4f35fd621cfsm363661cf.16.2025.12.17.10.46.49
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 17 Dec 2025 10:25:44 -0800 (PST)
+ Wed, 17 Dec 2025 10:46:50 -0800 (PST)
 From: Andrew Bailey <abailey@iol.unh.edu>
-To: probb@iol.unh.edu
-Cc: luca.vizzarro@arm.com, dmarx@iol.unh.edu, dev@dpdk.org,
+To: luca.vizzarro@arm.com
+Cc: probb@iol.unh.edu, dmarx@iol.unh.edu, thomas.wilks@arm.com, dev@dpdk.org,
  Andrew Bailey <abailey@iol.unh.edu>
-Subject: [PATCH v1] dts: update testuite names to be consistent
-Date: Wed, 17 Dec 2025 13:25:40 -0500
-Message-ID: <20251217182540.715464-1-abailey@iol.unh.edu>
+Subject: [PATCH v1] doc: add missing rst file
+Date: Wed, 17 Dec 2025 13:46:37 -0500
+Message-ID: <20251217184637.719487-1-abailey@iol.unh.edu>
 X-Mailer: git-send-email 2.50.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -77,334 +77,32 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Some test suites were prefixed with PMD which is not meaningful.
-Other test suites used different naming schemes and this patch updates
-this. For example, some abbreviated words that others had not. These
-word are no longer abbreviated.
+The RSS test suite was added to DTS without an RST file. This patch adds
+the missing RST file to the doc directory.
 
-Bugzilla ID: 1826
+Bugzilla ID: 1850
+Fixes: 367e950f6d24 (dts: add RSS test suite)
 
 Signed-off-by: Andrew Bailey <abailey@iol.unh.edu>
 ---
- doc/api/dts/tests.TestSuite_buffer_scatter.rst            | 8 ++++++++
- doc/api/dts/tests.TestSuite_flow_offload.rst              | 8 ++++++++
- ...uite_virtio_fwd.rst => tests.TestSuite_l2_forward.rst} | 4 ++--
- doc/api/dts/tests.TestSuite_l2fwd.rst                     | 8 --------
- doc/api/dts/tests.TestSuite_pmd_buffer_scatter.rst        | 8 --------
- doc/api/dts/tests.TestSuite_queue_start_stop.rst          | 8 --------
- doc/api/dts/tests.TestSuite_queue_toggle.rst              | 8 ++++++++
- doc/api/dts/tests.TestSuite_rte_flow.rst                  | 8 --------
- doc/api/dts/tests.TestSuite_uni_pkt.rst                   | 8 --------
- doc/api/dts/tests.TestSuite_unified_packet.rst            | 8 ++++++++
- doc/api/dts/tests.TestSuite_virtio_forward.rst            | 8 ++++++++
- ..._pmd_buffer_scatter.py => TestSuite_buffer_scatter.py} | 2 +-
- .../{TestSuite_rte_flow.py => TestSuite_flow_offload.py}  | 2 +-
- dts/tests/{TestSuite_l2fwd.py => TestSuite_l2_forward.py} | 2 +-
- ...uite_queue_start_stop.py => TestSuite_queue_toggle.py} | 4 ++--
- dts/tests/{TestSuite_pmd_rss.py => TestSuite_rss.py}      | 4 ++--
- .../{TestSuite_uni_pkt.py => TestSuite_unified_packet.py} | 2 +-
- ...estSuite_virtio_fwd.py => TestSuite_virtio_forward.py} | 2 +-
- 18 files changed, 51 insertions(+), 51 deletions(-)
- create mode 100644 doc/api/dts/tests.TestSuite_buffer_scatter.rst
- create mode 100644 doc/api/dts/tests.TestSuite_flow_offload.rst
- rename doc/api/dts/{tests.TestSuite_virtio_fwd.rst => tests.TestSuite_l2_forward.rst} (60%)
- delete mode 100644 doc/api/dts/tests.TestSuite_l2fwd.rst
- delete mode 100644 doc/api/dts/tests.TestSuite_pmd_buffer_scatter.rst
- delete mode 100644 doc/api/dts/tests.TestSuite_queue_start_stop.rst
- create mode 100644 doc/api/dts/tests.TestSuite_queue_toggle.rst
- delete mode 100644 doc/api/dts/tests.TestSuite_rte_flow.rst
- delete mode 100644 doc/api/dts/tests.TestSuite_uni_pkt.rst
- create mode 100644 doc/api/dts/tests.TestSuite_unified_packet.rst
- create mode 100644 doc/api/dts/tests.TestSuite_virtio_forward.rst
- rename dts/tests/{TestSuite_pmd_buffer_scatter.py => TestSuite_buffer_scatter.py} (99%)
- rename dts/tests/{TestSuite_rte_flow.py => TestSuite_flow_offload.py} (99%)
- rename dts/tests/{TestSuite_l2fwd.py => TestSuite_l2_forward.py} (98%)
- rename dts/tests/{TestSuite_queue_start_stop.py => TestSuite_queue_toggle.py} (98%)
- rename dts/tests/{TestSuite_pmd_rss.py => TestSuite_rss.py} (99%)
- rename dts/tests/{TestSuite_uni_pkt.py => TestSuite_unified_packet.py} (99%)
- rename dts/tests/{TestSuite_virtio_fwd.py => TestSuite_virtio_forward.py} (99%)
+ doc/api/dts/tests.TestSuite_pmd_rss.rst | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+ create mode 100644 doc/api/dts/tests.TestSuite_pmd_rss.rst
 
-diff --git a/doc/api/dts/tests.TestSuite_buffer_scatter.rst b/doc/api/dts/tests.TestSuite_buffer_scatter.rst
+diff --git a/doc/api/dts/tests.TestSuite_pmd_rss.rst b/doc/api/dts/tests.TestSuite_pmd_rss.rst
 new file mode 100644
-index 0000000000..ce764ff0d6
+index 0000000000..942fa5ebdc
 --- /dev/null
-+++ b/doc/api/dts/tests.TestSuite_buffer_scatter.rst
++++ b/doc/api/dts/tests.TestSuite_pmd_rss.rst
 @@ -0,0 +1,8 @@
 +.. SPDX-License-Identifier: BSD-3-Clause
 +
-+buffer_scatter Test Suite
-+=========================
++pmd_rss Test Suite
++==================
 +
-+.. automodule:: tests.TestSuite_buffer_scatter
++.. automodule:: tests.TestSuite_pmd_rss
 +   :members:
 +   :show-inheritance:
-diff --git a/doc/api/dts/tests.TestSuite_flow_offload.rst b/doc/api/dts/tests.TestSuite_flow_offload.rst
-new file mode 100644
-index 0000000000..5fcd3f57c3
---- /dev/null
-+++ b/doc/api/dts/tests.TestSuite_flow_offload.rst
-@@ -0,0 +1,8 @@
-+.. SPDX-License-Identifier: BSD-3-Clause
-+
-+flow_offload Test Suite
-+=======================
-+
-+.. automodule:: tests.TestSuite_flow_offload
-+   :members:
-+   :show-inheritance:
-diff --git a/doc/api/dts/tests.TestSuite_virtio_fwd.rst b/doc/api/dts/tests.TestSuite_l2_forward.rst
-similarity index 60%
-rename from doc/api/dts/tests.TestSuite_virtio_fwd.rst
-rename to doc/api/dts/tests.TestSuite_l2_forward.rst
-index e40cc4ca2b..3570a1e101 100644
---- a/doc/api/dts/tests.TestSuite_virtio_fwd.rst
-+++ b/doc/api/dts/tests.TestSuite_l2_forward.rst
-@@ -1,8 +1,8 @@
- .. SPDX-License-Identifier: BSD-3-Clause
- 
--virtio_fwd Test Suite
-+l2_forward Test Suite
- =====================
- 
--.. automodule:: tests.TestSuite_virtio_fwd
-+.. automodule:: tests.TestSuite_l2_forward
-    :members:
-    :show-inheritance:
-diff --git a/doc/api/dts/tests.TestSuite_l2fwd.rst b/doc/api/dts/tests.TestSuite_l2fwd.rst
-deleted file mode 100644
-index 5a0ca312e9..0000000000
---- a/doc/api/dts/tests.TestSuite_l2fwd.rst
-+++ /dev/null
-@@ -1,8 +0,0 @@
--.. SPDX-License-Identifier: BSD-3-Clause
--
--l2fwd Test Suite
--================
--
--.. automodule:: tests.TestSuite_l2fwd
--   :members:
--   :show-inheritance:
-diff --git a/doc/api/dts/tests.TestSuite_pmd_buffer_scatter.rst b/doc/api/dts/tests.TestSuite_pmd_buffer_scatter.rst
-deleted file mode 100644
-index cdf30fd879..0000000000
---- a/doc/api/dts/tests.TestSuite_pmd_buffer_scatter.rst
-+++ /dev/null
-@@ -1,8 +0,0 @@
--.. SPDX-License-Identifier: BSD-3-Clause
--
--pmd_buffer_scatter Test Suite
--=============================
--
--.. automodule:: tests.TestSuite_pmd_buffer_scatter
--   :members:
--   :show-inheritance:
-diff --git a/doc/api/dts/tests.TestSuite_queue_start_stop.rst b/doc/api/dts/tests.TestSuite_queue_start_stop.rst
-deleted file mode 100644
-index 87121676fb..0000000000
---- a/doc/api/dts/tests.TestSuite_queue_start_stop.rst
-+++ /dev/null
-@@ -1,8 +0,0 @@
--.. SPDX-License-Identifier: BSD-3-Clause
--
--queue_start_stop Test Suite
--===========================
--
--.. automodule:: tests.TestSuite_queue_start_stop
--   :members:
--   :show-inheritance:
-diff --git a/doc/api/dts/tests.TestSuite_queue_toggle.rst b/doc/api/dts/tests.TestSuite_queue_toggle.rst
-new file mode 100644
-index 0000000000..1d6345511f
---- /dev/null
-+++ b/doc/api/dts/tests.TestSuite_queue_toggle.rst
-@@ -0,0 +1,8 @@
-+.. SPDX-License-Identifier: BSD-3-Clause
-+
-+queue_toggle Test Suite
-+=======================
-+
-+.. automodule:: tests.TestSuite_queue_toggle
-+   :members:
-+   :show-inheritance:
-diff --git a/doc/api/dts/tests.TestSuite_rte_flow.rst b/doc/api/dts/tests.TestSuite_rte_flow.rst
-deleted file mode 100644
-index eacbfd3a2a..0000000000
---- a/doc/api/dts/tests.TestSuite_rte_flow.rst
-+++ /dev/null
-@@ -1,8 +0,0 @@
--.. SPDX-License-Identifier: BSD-3-Clause
--
--rte_flow Test Suite
--===================
--
--.. automodule:: tests.TestSuite_rte_flow
--   :members:
--   :show-inheritance:
-diff --git a/doc/api/dts/tests.TestSuite_uni_pkt.rst b/doc/api/dts/tests.TestSuite_uni_pkt.rst
-deleted file mode 100644
-index 95c5a5a28b..0000000000
---- a/doc/api/dts/tests.TestSuite_uni_pkt.rst
-+++ /dev/null
-@@ -1,8 +0,0 @@
--.. SPDX-License-Identifier: BSD-3-Clause
--
--uni_pkt Test Suite
--==================
--
--.. automodule:: tests.TestSuite_uni_pkt
--   :members:
--   :show-inheritance:
-diff --git a/doc/api/dts/tests.TestSuite_unified_packet.rst b/doc/api/dts/tests.TestSuite_unified_packet.rst
-new file mode 100644
-index 0000000000..dddf12b18a
---- /dev/null
-+++ b/doc/api/dts/tests.TestSuite_unified_packet.rst
-@@ -0,0 +1,8 @@
-+.. SPDX-License-Identifier: BSD-3-Clause
-+
-+unified_packet Test Suite
-+=========================
-+
-+.. automodule:: tests.TestSuite_unified_packet
-+   :members:
-+   :show-inheritance:
-diff --git a/doc/api/dts/tests.TestSuite_virtio_forward.rst b/doc/api/dts/tests.TestSuite_virtio_forward.rst
-new file mode 100644
-index 0000000000..9178c73be5
---- /dev/null
-+++ b/doc/api/dts/tests.TestSuite_virtio_forward.rst
-@@ -0,0 +1,8 @@
-+.. SPDX-License-Identifier: BSD-3-Clause
-+
-+virtio_forward Test Suite
-+=========================
-+
-+.. automodule:: tests.TestSuite_virtio_forward
-+   :members:
-+   :show-inheritance:
-diff --git a/dts/tests/TestSuite_pmd_buffer_scatter.py b/dts/tests/TestSuite_buffer_scatter.py
-similarity index 99%
-rename from dts/tests/TestSuite_pmd_buffer_scatter.py
-rename to dts/tests/TestSuite_buffer_scatter.py
-index 96da67ee7d..539082f2e4 100644
---- a/dts/tests/TestSuite_pmd_buffer_scatter.py
-+++ b/dts/tests/TestSuite_buffer_scatter.py
-@@ -35,7 +35,7 @@
- 
- @requires_nic_capability(NicCapability.PHYSICAL_FUNCTION)
- @requires_nic_capability(NicCapability.PORT_RX_OFFLOAD_SCATTER)
--class TestPmdBufferScatter(TestSuite):
-+class TestBufferScatter(TestSuite):
-     """DPDK PMD packet scattering test suite.
- 
-     Configure the Rx queues to have mbuf data buffers
-diff --git a/dts/tests/TestSuite_rte_flow.py b/dts/tests/TestSuite_flow_offload.py
-similarity index 99%
-rename from dts/tests/TestSuite_rte_flow.py
-rename to dts/tests/TestSuite_flow_offload.py
-index 207cbce2d3..fe62648b5f 100644
---- a/dts/tests/TestSuite_rte_flow.py
-+++ b/dts/tests/TestSuite_flow_offload.py
-@@ -32,7 +32,7 @@
- 
- 
- @requires_nic_capability(NicCapability.FLOW_CTRL)
--class TestRteFlow(TestSuite):
-+class TestFlowOffload(TestSuite):
-     """RTE Flow test suite.
- 
-     This suite consists of 12 test cases:
-diff --git a/dts/tests/TestSuite_l2fwd.py b/dts/tests/TestSuite_l2_forward.py
-similarity index 98%
-rename from dts/tests/TestSuite_l2fwd.py
-rename to dts/tests/TestSuite_l2_forward.py
-index 596b892730..95f9c62bdc 100644
---- a/dts/tests/TestSuite_l2fwd.py
-+++ b/dts/tests/TestSuite_l2_forward.py
-@@ -28,7 +28,7 @@
- 
- @requires_nic_capability(NicCapability.PHYSICAL_FUNCTION)
- @requires_link_topology(LinkTopology.TWO_LINKS)
--class TestL2fwd(TestSuite):
-+class TestL2Forward(TestSuite):
-     """L2 forwarding test suite."""
- 
-     #: The total number of packets to generate and send for forwarding.
-diff --git a/dts/tests/TestSuite_queue_start_stop.py b/dts/tests/TestSuite_queue_toggle.py
-similarity index 98%
-rename from dts/tests/TestSuite_queue_start_stop.py
-rename to dts/tests/TestSuite_queue_toggle.py
-index e9048d4245..4dd36c6192 100644
---- a/dts/tests/TestSuite_queue_start_stop.py
-+++ b/dts/tests/TestSuite_queue_toggle.py
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: BSD-3-Clause
- # Copyright(c) 2024 University of New Hampshire
- 
--"""Rx/Tx queue start and stop functionality suite.
-+"""Rx/Tx queue Toggle functionality suite.
- 
- This suite tests the ability of the poll mode driver to start and
- stop either the Rx or Tx queue (depending on the port) during runtime,
-@@ -32,7 +32,7 @@
- @requires_link_topology(LinkTopology.TWO_LINKS)
- @requires_nic_capability(NicCapability.RUNTIME_RX_QUEUE_SETUP)
- @requires_nic_capability(NicCapability.RUNTIME_TX_QUEUE_SETUP)
--class TestQueueStartStop(TestSuite):
-+class TestQueueToggle(TestSuite):
-     """DPDK Queue start/stop test suite.
- 
-     Ensures Rx/Tx queue on a port can be disabled and enabled.
-diff --git a/dts/tests/TestSuite_pmd_rss.py b/dts/tests/TestSuite_rss.py
-similarity index 99%
-rename from dts/tests/TestSuite_pmd_rss.py
-rename to dts/tests/TestSuite_rss.py
-index f6adf262c3..2747c8a36c 100644
---- a/dts/tests/TestSuite_pmd_rss.py
-+++ b/dts/tests/TestSuite_rss.py
-@@ -55,8 +55,8 @@ class HashAlgorithm(StrEnum):
- 
- @requires_link_topology(LinkTopology.ONE_LINK)
- @requires_nic_capability(NicCapability.PORT_RX_OFFLOAD_RSS_HASH)
--class TestPmdRss(TestSuite):
--    """PMD RSS test suite."""
-+class TestRss(TestSuite):
-+    """RSS test suite."""
- 
-     config: Config
- 
-diff --git a/dts/tests/TestSuite_uni_pkt.py b/dts/tests/TestSuite_unified_packet.py
-similarity index 99%
-rename from dts/tests/TestSuite_uni_pkt.py
-rename to dts/tests/TestSuite_unified_packet.py
-index 222276ce67..fcc7f7fbbb 100644
---- a/dts/tests/TestSuite_uni_pkt.py
-+++ b/dts/tests/TestSuite_unified_packet.py
-@@ -31,7 +31,7 @@
- from framework.test_suite import TestSuite, func_test
- 
- 
--class TestUniPkt(TestSuite):
-+class TestUnifiedPacket(TestSuite):
-     """DPDK Unified packet test suite.
- 
-     This testing suite uses testpmd's verbose output hardware/software
-diff --git a/dts/tests/TestSuite_virtio_fwd.py b/dts/tests/TestSuite_virtio_forward.py
-similarity index 99%
-rename from dts/tests/TestSuite_virtio_fwd.py
-rename to dts/tests/TestSuite_virtio_forward.py
-index bdecdb76fd..6efaa4e156 100644
---- a/dts/tests/TestSuite_virtio_fwd.py
-+++ b/dts/tests/TestSuite_virtio_forward.py
-@@ -20,7 +20,7 @@
- from framework.testbed_model.virtual_device import VirtualDevice
- 
- 
--class TestVirtioFwd(TestSuite):
-+class TestVirtioForward(TestSuite):
-     """Virtio forwarding test suite."""
- 
-     virtio_user_vdev = VirtualDevice(
 -- 
 2.50.1
 
