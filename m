@@ -2,35 +2,37 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F30F3D66B80
-	for <dpdk-dev@archiver.kernel.org>; Wed, 17 Dec 2025 18:02:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D459D66B80
+	for <dpdk-dev@archiver.kernel.org>; Wed, 17 Dec 2025 18:03:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0AFF0402AC;
-	Wed, 17 Dec 2025 19:02:07 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 458AD40647;
+	Wed, 17 Dec 2025 19:03:11 +0100 (CET)
 Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
  [185.176.79.56])
- by mails.dpdk.org (Postfix) with ESMTP id 15BB94025A;
- Wed, 17 Dec 2025 19:02:05 +0100 (CET)
-Received: from mail.maildlp.com (unknown [172.18.224.83])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4dWhSd4mlZzHnGgW;
- Thu, 18 Dec 2025 02:01:37 +0800 (CST)
+ by mails.dpdk.org (Postfix) with ESMTP id C634B4025A;
+ Wed, 17 Dec 2025 19:03:09 +0100 (CET)
+Received: from mail.maildlp.com (unknown [172.18.224.107])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4dWhTv29BVzHnGfD;
+ Thu, 18 Dec 2025 02:02:43 +0800 (CST)
 Received: from frapema500003.china.huawei.com (unknown [7.182.19.114])
- by mail.maildlp.com (Postfix) with ESMTPS id 5246A40086;
- Thu, 18 Dec 2025 02:02:03 +0800 (CST)
+ by mail.maildlp.com (Postfix) with ESMTPS id ED31340570;
+ Thu, 18 Dec 2025 02:03:08 +0800 (CST)
 Received: from localhost.localdomain (10.220.239.45) by
  frapema500003.china.huawei.com (7.182.19.114) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 17 Dec 2025 19:02:02 +0100
+ 15.2.1544.11; Wed, 17 Dec 2025 19:03:08 +0100
 From: Marat Khalili <marat.khalili@huawei.com>
 To: <stephen@networkplumber.org>, <jerinjacobk@gmail.com>,
- <mb@smartsharesystems.com>
+ <mb@smartsharesystems.com>, Jack Bond-Preston
+ <jack.bond-preston@foss.arm.com>
 CC: <dev@dpdk.org>, <stable@dpdk.org>, <konstantin.ananyev@huawei.com>
-Subject: [PATCH v3 0/6] bpf: simple tests and fixes
-Date: Wed, 17 Dec 2025 18:01:33 +0000
-Message-ID: <20251217180141.60227-1-marat.khalili@huawei.com>
+Subject: [PATCH v3 1/6] eal: variable first arguments of RTE_SHIFT_VALxx
+Date: Wed, 17 Dec 2025 18:01:34 +0000
+Message-ID: <20251217180141.60227-2-marat.khalili@huawei.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251216182036.77869-1-marat.khalili@huawei.com>
+In-Reply-To: <20251217180141.60227-1-marat.khalili@huawei.com>
 References: <20251216182036.77869-1-marat.khalili@huawei.com>
+ <20251217180141.60227-1-marat.khalili@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
@@ -50,35 +52,43 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add simple unit-style tests for rte_bpf_load, and fix some minor
-discovered bugs.
+Macros RTE_SHIFT_VAL32 and RTE_SHIFT_VAL64 were implemented by applying
+UINT32_C or UINT64_C correspondingly to its first argument. As a
+consequence first argument had to be a constant. Replace UINT32_C and
+UINT64_C with casts to uint32_t and uint64_t to allow these arguments be
+variable. For constants the result should be the same.
 
-v3:
-* Fixed unfortunate typos in the last patch commit message.
-* Marked all ARM opcodes with UINT32_C for clarity as suggested by
-  Morten Brørup, in a separate commit.
+(Yes, technically UINT64_C promotes to uint_least64_t, not uint64_t, but
+I think most users of RTE_SHIFT_VAL64 expect the result to be uint64_t.)
 
-v2:
-* Moved new tests back into test_bpf.c
-* Changed library macros RTE_SHIFT_VALxx to handle variable first
-  arguments instead of introducing new macros.
-* Added another test and fix, for conditional jump as first instruction.
+Signed-off-by: Marat Khalili <marat.khalili@huawei.com>
+Reviewed-by: Morten Brørup <mb@smartsharesystems.com>
+---
+ lib/eal/include/rte_bitops.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Marat Khalili (6):
-  eal: variable first arguments of RTE_SHIFT_VALxx
-  bpf: fix signed shift overflows in ARM JIT
-  bpf: mark ARM opcodes with UINT32_C
-  bpf: disallow empty program
-  bpf: make add/subtract one program validate
-  bpf: fix BPF validation w/ conditional jump first
-
- app/test/test_bpf.c          | 254 +++++++++++++++++++++++++++++++++++
- lib/bpf/bpf_jit_arm64.c      | 184 ++++++++++++-------------
- lib/bpf/bpf_load.c           |   2 +-
- lib/bpf/bpf_validate.c       |  48 ++++---
- lib/eal/include/rte_bitops.h |   4 +-
- 5 files changed, 375 insertions(+), 117 deletions(-)
-
+diff --git a/lib/eal/include/rte_bitops.h b/lib/eal/include/rte_bitops.h
+index 2d1b9d281c..aa6ac73abb 100644
+--- a/lib/eal/include/rte_bitops.h
++++ b/lib/eal/include/rte_bitops.h
+@@ -51,7 +51,7 @@ extern "C" {
+  * @param nr
+  *   The shift number in range of 0 to (32 - width of val).
+  */
+-#define RTE_SHIFT_VAL32(val, nr) (UINT32_C(val) << (nr))
++#define RTE_SHIFT_VAL32(val, nr) ((uint32_t)(val) << (nr))
+ 
+ /**
+  * Get the uint64_t shifted value.
+@@ -61,7 +61,7 @@ extern "C" {
+  * @param nr
+  *   The shift number in range of 0 to (64 - width of val).
+  */
+-#define RTE_SHIFT_VAL64(val, nr) (UINT64_C(val) << (nr))
++#define RTE_SHIFT_VAL64(val, nr) ((uint64_t)(val) << (nr))
+ 
+ /**
+  * Generate a contiguous 32-bit mask
 -- 
 2.43.0
 
