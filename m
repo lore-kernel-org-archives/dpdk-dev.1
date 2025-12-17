@@ -2,33 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D5E4D66B80
-	for <dpdk-dev@archiver.kernel.org>; Wed, 17 Dec 2025 18:03:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D02C0D65C7C
+	for <dpdk-dev@archiver.kernel.org>; Wed, 17 Dec 2025 18:03:31 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4126540650;
-	Wed, 17 Dec 2025 19:03:16 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 9D14440665;
+	Wed, 17 Dec 2025 19:03:17 +0100 (CET)
 Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
  [185.176.79.56])
- by mails.dpdk.org (Postfix) with ESMTP id EE33940650;
- Wed, 17 Dec 2025 19:03:13 +0100 (CET)
-Received: from mail.maildlp.com (unknown [172.18.224.150])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4dWhTv3NymzJ46Bm;
- Thu, 18 Dec 2025 02:02:43 +0800 (CST)
+ by mails.dpdk.org (Postfix) with ESMTP id B1D0540611;
+ Wed, 17 Dec 2025 19:03:14 +0100 (CET)
+Received: from mail.maildlp.com (unknown [172.18.224.83])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4dWhTw5sGZzJ468g;
+ Thu, 18 Dec 2025 02:02:44 +0800 (CST)
 Received: from frapema500003.china.huawei.com (unknown [7.182.19.114])
- by mail.maildlp.com (Postfix) with ESMTPS id 3662840565;
- Thu, 18 Dec 2025 02:03:13 +0800 (CST)
+ by mail.maildlp.com (Postfix) with ESMTPS id 8BF9640086;
+ Thu, 18 Dec 2025 02:03:14 +0800 (CST)
 Received: from localhost.localdomain (10.220.239.45) by
  frapema500003.china.huawei.com (7.182.19.114) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 17 Dec 2025 19:03:12 +0100
+ 15.2.1544.11; Wed, 17 Dec 2025 19:03:14 +0100
 From: Marat Khalili <marat.khalili@huawei.com>
 To: <stephen@networkplumber.org>, <jerinjacobk@gmail.com>,
- <mb@smartsharesystems.com>, Wathsala Vithanage <wathsala.vithanage@arm.com>,
- Konstantin Ananyev <konstantin.ananyev@huawei.com>
+ <mb@smartsharesystems.com>, Konstantin Ananyev
+ <konstantin.ananyev@huawei.com>
 CC: <dev@dpdk.org>, <stable@dpdk.org>
-Subject: [PATCH v3 3/6] bpf: mark ARM opcodes with UINT32_C
-Date: Wed, 17 Dec 2025 18:01:36 +0000
-Message-ID: <20251217180141.60227-4-marat.khalili@huawei.com>
+Subject: [PATCH v3 4/6] bpf: disallow empty program
+Date: Wed, 17 Dec 2025 18:01:37 +0000
+Message-ID: <20251217180141.60227-5-marat.khalili@huawei.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251217180141.60227-1-marat.khalili@huawei.com>
 References: <20251216182036.77869-1-marat.khalili@huawei.com>
@@ -52,111 +52,224 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-To prevent confusion as to whether operations with them will be executed
-as signed or unsigned (and with what bit width) mark all ARM opcode
-constants with UINT32_C.
+Add tests for some simple cases:
+* Program with no instructions;
+* Program with only EXIT instruction but no return value set;
+* Program with return value set but no EXIT instruction;
+* Minimal valid program with return value set and an EXIT instruction.
+
+Fix found bugs:
+* a program with no instructions was accepted;
+* a program with no EXIT instruction read outside the buffer.
 
 Signed-off-by: Marat Khalili <marat.khalili@huawei.com>
+Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
 ---
- lib/bpf/bpf_jit_arm64.c | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+ app/test/test_bpf.c    | 118 +++++++++++++++++++++++++++++++++++++++++
+ lib/bpf/bpf_load.c     |   2 +-
+ lib/bpf/bpf_validate.c |  20 +++++--
+ 3 files changed, 135 insertions(+), 5 deletions(-)
 
-diff --git a/lib/bpf/bpf_jit_arm64.c b/lib/bpf/bpf_jit_arm64.c
-index 76df1e4ba1..9263234338 100644
---- a/lib/bpf/bpf_jit_arm64.c
-+++ b/lib/bpf/bpf_jit_arm64.c
-@@ -12,7 +12,7 @@
- #include "bpf_impl.h"
+diff --git a/app/test/test_bpf.c b/app/test/test_bpf.c
+index b7c94ba1c7..6ecc49efff 100644
+--- a/app/test/test_bpf.c
++++ b/app/test/test_bpf.c
+@@ -34,6 +34,124 @@ test_bpf(void)
+ #include <rte_ip.h>
  
- #define A64_REG_MASK(r)		((r) & 0x1f)
--#define A64_INVALID_OP_CODE	(0xffffffff)
-+#define A64_INVALID_OP_CODE	(UINT32_C(0xffffffff))
  
- #define TMP_REG_1		(EBPF_REG_10 + 1)
- #define TMP_REG_2		(EBPF_REG_10 + 2)
-@@ -228,7 +228,7 @@ emit_insn(struct a64_jit_ctx *ctx, uint32_t insn, int error)
- static void
- emit_ret(struct a64_jit_ctx *ctx)
++/* Tests of most simple BPF programs (no instructions, one instruction etc.) */
++
++/*
++ * Try to load a simple bpf program from the instructions array.
++ *
++ * When `expected_errno` is zero, expect it to load successfully.
++ * When `expected_errno` is non-zero, expect it to fail with this `rte_errno`.
++ *
++ * @param nb_ins
++ *   Number of instructions in the `ins` array.
++ * @param ins
++ *   BPF instructions array.
++ * @param expected_errno
++ *   Expected result.
++ * @return
++ *   TEST_SUCCESS on success, error code on failure.
++ */
++static int
++bpf_load_test(uint32_t nb_ins, const struct ebpf_insn *ins, int expected_errno)
++{
++	const struct rte_bpf_prm prm = {
++		.ins = ins,
++		.nb_ins = nb_ins,
++		.prog_arg = {
++			.type = RTE_BPF_ARG_RAW,
++			.size = sizeof(uint64_t),
++		},
++	};
++
++	struct rte_bpf *const bpf = rte_bpf_load(&prm);
++	const int actual_errno = rte_errno;
++	rte_bpf_destroy(bpf);
++
++	if (expected_errno != 0) {
++		RTE_TEST_ASSERT_EQUAL(bpf, NULL,
++			"expect rte_bpf_load() == NULL");
++		RTE_TEST_ASSERT_EQUAL(actual_errno, expected_errno,
++			"expect rte_errno == %d, found %d",
++			expected_errno, actual_errno);
++	} else
++		RTE_TEST_ASSERT_NOT_EQUAL(bpf, NULL,
++			"expect rte_bpf_load() != NULL");
++
++	return TEST_SUCCESS;
++}
++
++/*
++ * Try and load completely empty BPF program.
++ * Should fail because there is no EXIT (and also return value is undefined).
++ */
++static int
++test_no_instructions(void)
++{
++	static const struct ebpf_insn ins[] = {};
++	return bpf_load_test(RTE_DIM(ins), ins, EINVAL);
++}
++
++REGISTER_FAST_TEST(bpf_no_instructions_autotest, true, true, test_no_instructions);
++
++/*
++ * Try and load a BPF program comprising single EXIT instruction.
++ * Should fail because the return value is undefined.
++ */
++static int
++test_exit_only(void)
++{
++	static const struct ebpf_insn ins[] = {
++		{
++			.code = (BPF_JMP | EBPF_EXIT),
++		},
++	};
++	return bpf_load_test(RTE_DIM(ins), ins, EINVAL);
++}
++
++REGISTER_FAST_TEST(bpf_exit_only_autotest, true, true, test_exit_only);
++
++/*
++ * Try and load a BPF program with no EXIT instruction.
++ * Should fail because of this.
++ */
++static int
++test_no_exit(void)
++{
++	static const struct ebpf_insn ins[] = {
++		{
++			/* Set return value to the program argument. */
++			.code = (EBPF_ALU64 | EBPF_MOV | BPF_X),
++			.src_reg = EBPF_REG_1,
++			.dst_reg = EBPF_REG_0,
++		},
++	};
++	return bpf_load_test(RTE_DIM(ins), ins, EINVAL);
++}
++
++REGISTER_FAST_TEST(bpf_no_exit_autotest, true, true, test_no_exit);
++
++/*
++ * Try and load smallest possible valid BPF program.
++ */
++static int
++test_minimal_working(void)
++{
++	static const struct ebpf_insn ins[] = {
++		{
++			/* Set return value to the program argument. */
++			.code = (EBPF_ALU64 | EBPF_MOV | BPF_X),
++			.src_reg = EBPF_REG_1,
++			.dst_reg = EBPF_REG_0,
++		},
++		{
++			.code = (BPF_JMP | EBPF_EXIT),
++		},
++	};
++	return bpf_load_test(RTE_DIM(ins), ins, 0);
++}
++
++REGISTER_FAST_TEST(bpf_minimal_working_autotest, true, true, test_minimal_working);
++
+ /*
+  * Basic functional tests for librte_bpf.
+  * The main procedure - load eBPF program, execute it and
+diff --git a/lib/bpf/bpf_load.c b/lib/bpf/bpf_load.c
+index 556e613762..6983c026af 100644
+--- a/lib/bpf/bpf_load.c
++++ b/lib/bpf/bpf_load.c
+@@ -88,7 +88,7 @@ rte_bpf_load(const struct rte_bpf_prm *prm)
+ 	int32_t rc;
+ 	uint32_t i;
+ 
+-	if (prm == NULL || prm->ins == NULL ||
++	if (prm == NULL || prm->ins == NULL || prm->nb_ins == 0 ||
+ 			(prm->nb_xsym != 0 && prm->xsym == NULL)) {
+ 		rte_errno = EINVAL;
+ 		return NULL;
+diff --git a/lib/bpf/bpf_validate.c b/lib/bpf/bpf_validate.c
+index 4f47d6dc7b..23444b3eaa 100644
+--- a/lib/bpf/bpf_validate.c
++++ b/lib/bpf/bpf_validate.c
+@@ -1827,7 +1827,7 @@ add_edge(struct bpf_verifier *bvf, struct inst_node *node, uint32_t nidx)
  {
--	emit_insn(ctx, 0xd65f03c0, 0);
-+	emit_insn(ctx, UINT32_C(0xd65f03c0), 0);
+ 	uint32_t ne;
+ 
+-	if (nidx > bvf->prm->nb_ins) {
++	if (nidx >= bvf->prm->nb_ins) {
+ 		RTE_BPF_LOG_LINE(ERR,
+ 			"%s: program boundary violation at pc: %u, next pc: %u",
+ 			__func__, get_node_idx(bvf, node), nidx);
+@@ -1886,14 +1886,20 @@ get_prev_node(struct bpf_verifier *bvf, struct inst_node *node)
+  * Control Flow Graph (CFG).
+  * Information collected at this path would be used later
+  * to determine is there any loops, and/or unreachable instructions.
++ * PREREQUISITE: there is at least one node.
+  */
+ static void
+ dfs(struct bpf_verifier *bvf)
+ {
+ 	struct inst_node *next, *node;
+ 
+-	node = bvf->in;
+-	while (node != NULL) {
++	RTE_ASSERT(bvf->nb_nodes != 0);
++	/*
++	 * Since there is at least one node, node with index 0 always exists;
++	 * it is our program entry point.
++	 */
++	node = &bvf->in[0];
++	do {
+ 
+ 		if (node->colour == WHITE)
+ 			set_node_colour(bvf, node, GREY);
+@@ -1923,7 +1929,7 @@ dfs(struct bpf_verifier *bvf)
+ 			}
+ 		} else
+ 			node = NULL;
+-	}
++	} while (node != NULL);
  }
  
- static void
-@@ -240,7 +240,7 @@ emit_add_sub_imm(struct a64_jit_ctx *ctx, bool is64, bool sub, uint8_t rd,
- 	imm = mask_imm(12, imm12);
- 	insn = RTE_SHIFT_VAL32(is64, 31);
- 	insn |= RTE_SHIFT_VAL32(sub, 30);
--	insn |= 0x11000000;
-+	insn |= UINT32_C(0x11000000);
- 	insn |= rd;
- 	insn |= RTE_SHIFT_VAL32(rn, 5);
- 	insn |= RTE_SHIFT_VAL32(imm, 10);
-@@ -281,7 +281,7 @@ emit_ls_pair_64(struct a64_jit_ctx *ctx, uint8_t rt, uint8_t rt2, uint8_t rn,
+ /*
+@@ -2062,6 +2068,12 @@ validate(struct bpf_verifier *bvf)
+ 	if (rc != 0)
+ 		return rc;
  
- 	insn = RTE_SHIFT_VAL32(load, 22);
- 	insn |= RTE_SHIFT_VAL32(pre_index, 24);
--	insn |= 0xa8800000;
-+	insn |= UINT32_C(0xa8800000);
- 	insn |= rt;
- 	insn |= RTE_SHIFT_VAL32(rn, 5);
- 	insn |= RTE_SHIFT_VAL32(rt2, 10);
-@@ -637,7 +637,7 @@ emit_blr(struct a64_jit_ctx *ctx, uint8_t rn)
- {
- 	uint32_t insn;
++	if (bvf->nb_nodes == 0) {
++		RTE_BPF_LOG_LINE(ERR, "%s(%p) the program is empty",
++			__func__, bvf);
++		return -EINVAL;
++	}
++
+ 	dfs(bvf);
  
--	insn = 0xd63f0000;
-+	insn = UINT32_C(0xd63f0000);
- 	insn |= RTE_SHIFT_VAL32(rn, 5);
- 
- 	emit_insn(ctx, insn, check_reg(rn));
-@@ -668,7 +668,7 @@ emit_rev(struct a64_jit_ctx *ctx, uint8_t rd, int32_t imm)
- {
- 	uint32_t insn;
- 
--	insn = 0xdac00000;
-+	insn = UINT32_C(0xdac00000);
- 	insn |= RTE_SHIFT_VAL32(rd, 5);
- 	insn |= rd;
- 
-@@ -970,7 +970,7 @@ emit_stadd(struct a64_jit_ctx *ctx, bool is64, uint8_t rs, uint8_t rn)
- {
- 	uint32_t insn;
- 
--	insn = 0xb820001f;
-+	insn = UINT32_C(0xb820001f);
- 	insn |= RTE_SHIFT_VAL32(is64, 30);
- 	insn |= RTE_SHIFT_VAL32(rs, 16);
- 	insn |= RTE_SHIFT_VAL32(rn, 5);
-@@ -983,7 +983,7 @@ emit_ldxr(struct a64_jit_ctx *ctx, bool is64, uint8_t rt, uint8_t rn)
- {
- 	uint32_t insn;
- 
--	insn = 0x885f7c00;
-+	insn = UINT32_C(0x885f7c00);
- 	insn |= RTE_SHIFT_VAL32(is64, 30);
- 	insn |= RTE_SHIFT_VAL32(rn, 5);
- 	insn |= rt;
-@@ -997,7 +997,7 @@ emit_stxr(struct a64_jit_ctx *ctx, bool is64, uint8_t rs, uint8_t rt,
- {
- 	uint32_t insn;
- 
--	insn = 0x88007c00;
-+	insn = UINT32_C(0x88007c00);
- 	insn |= RTE_SHIFT_VAL32(is64, 30);
- 	insn |= RTE_SHIFT_VAL32(rs, 16);
- 	insn |= RTE_SHIFT_VAL32(rn, 5);
-@@ -1042,8 +1042,8 @@ emit_xadd(struct a64_jit_ctx *ctx, uint8_t op, uint8_t tmp1, uint8_t tmp2,
- 	}
- }
- 
--#define A64_CMP 0x6b00000f
--#define A64_TST 0x6a00000f
-+#define A64_CMP (UINT32_C(0x6b00000f))
-+#define A64_TST (UINT32_C(0x6a00000f))
- static void
- emit_cmp_tst(struct a64_jit_ctx *ctx, bool is64, uint8_t rn, uint8_t rm,
- 	     uint32_t opc)
+ 	RTE_LOG(DEBUG, BPF, "%s(%p) stats:\n"
 -- 
 2.43.0
 
