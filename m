@@ -2,42 +2,169 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6F1FD65526
-	for <dpdk-dev@archiver.kernel.org>; Wed, 17 Dec 2025 09:50:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F75CD6554E
+	for <dpdk-dev@archiver.kernel.org>; Wed, 17 Dec 2025 11:53:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 682F8402F1;
-	Wed, 17 Dec 2025 10:50:00 +0100 (CET)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 2282C4026C;
- Wed, 17 Dec 2025 10:49:58 +0100 (CET)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id DB42A202CC;
- Wed, 17 Dec 2025 10:49:57 +0100 (CET)
-Content-class: urn:content-classes:message
+	by mails.dpdk.org (Postfix) with ESMTP id 901C340275;
+	Wed, 17 Dec 2025 12:53:11 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+ by mails.dpdk.org (Postfix) with ESMTP id 534E44026C
+ for <dev@dpdk.org>; Wed, 17 Dec 2025 12:53:09 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1765972390; x=1797508390;
+ h=date:from:to:cc:subject:message-id:references:
+ content-transfer-encoding:in-reply-to:mime-version;
+ bh=kzevQzoaw+5i8gU8kRM+Ui/Z8oE86RivYCQQY+UYkAQ=;
+ b=dtHhLTvyil551e2jE6wNFtqhS1XeYkoAKUV/Z66mW9XJnCmYrJGQzgvv
+ K31HojCmNG+lrpMnT1w/hDYLRQkt4aHX4NIlUJffI77HAjVfs2lTjO0+Y
+ Ep8iWhi/5tRJOWqTPlexO8GJAbL+9RknkMo8GSMaxFJTgDwJFK07YI+Yq
+ h+BRtw+X1aiBYdgukU11QRXvuP/Ty4A9vEVq2KG+tQ7ExFgbCqJBN4l+Q
+ lh0yJlE0774enl9dUft+KazLdsZJCOi2lNAVNw9e6NOGBZgc2BMdwLTnw
+ tHcBbmeWjjxAUQfKoWeq/C0+5jkuj+NfL97cSF+CifzqIxzalbF0lz8qz g==;
+X-CSE-ConnectionGUID: fpVh70ClSXiLR2hxj1X0jg==
+X-CSE-MsgGUID: D7F+POQGTBSIa1vX5467jA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11644"; a="90566327"
+X-IronPort-AV: E=Sophos;i="6.21,155,1763452800"; d="scan'208";a="90566327"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+ by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 17 Dec 2025 03:53:08 -0800
+X-CSE-ConnectionGUID: /xFnesWyRau9eCQl6eO6cQ==
+X-CSE-MsgGUID: 4C4WbbjrSc+6yeqcRXal8w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,155,1763452800"; d="scan'208";a="202666558"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+ by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 17 Dec 2025 03:53:07 -0800
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.29; Wed, 17 Dec 2025 03:53:06 -0800
+Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.29 via Frontend Transport; Wed, 17 Dec 2025 03:53:06 -0800
+Received: from SA9PR02CU001.outbound.protection.outlook.com (40.93.196.24) by
+ edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.29; Wed, 17 Dec 2025 03:53:06 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=mrottqAu8Bm7025uTjvl2Do62JLS53xsmW643+oHJJ2w2laiZrT7yXWNKLJyIm6DQxek/XEfLrh2QU/2/cZytHUB33qRvfVxsXdu14oSBizGmtEKGOICGRZbe57W7vCFlFR7zjLYsjg/NqGJSXb7z5haLMaw37WHxhsXs8jGOVX5VpG/SHdAvtQWwEegHDzcoM+vy1eczICOsEX92K3PVs/VQsi4y6lWljQC+iL7cr7T1rgDl8SV+6pqgoh4kqhMBj2so4emNrjJUvBr3Ps4hOUSVWkUduM/8ReAy97CzmKO9V9fcF9Jfby5maN8cyfOtjjkUyadwd3IgoC1P6JTzQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=NXelNOh1KCshZ5n5UljVfVR73QQfS0qGLmvWnjdHrhM=;
+ b=OYWnhfP3lYDwfD7O8XunxxPJOLns2tczkgarGlMkWtCE9sbOCGz+MBSr1prLaiKcs0l0RNG+1IM9YhbJSM+nHgbpNNQU4/a7bS9fWLKtunubZ/LpVWIU+Q6iQMD/Q4LfWu26UJXHYNC0DhWcKMwZqCrndiPYTCkdZBSS8BjXaghjRxoAN3PL5p84QXIWLMa+h5gp4PtBrVO/xfdNrX91DYxZtOCggL2iMbKcEGuoT+JfcsGMbBijmHZWZEwey8iGMyJPxd28w8lHKPD+5vvEOvQcTGNspvT/SP4TLeY2FzfGEoh8RZn92xTpsDGSGsKYEpowh+cmWYwDgrdFA4Y7iA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
+ by IA4PR11MB9059.namprd11.prod.outlook.com (2603:10b6:208:560::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9412.13; Wed, 17 Dec
+ 2025 11:53:04 +0000
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b%4]) with mapi id 15.20.9434.001; Wed, 17 Dec 2025
+ 11:53:04 +0000
+Date: Wed, 17 Dec 2025 11:52:59 +0000
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: "Mandal, Anurag" <anurag.mandal@intel.com>
+CC: <dev@dpdk.org>, "Burakov, Anatoly" <anatoly.burakov@intel.com>, Morten
+ =?iso-8859-1?Q?Br=F8rup?= <mb@smartsharesystems.com>
+Subject: Re: [PATCH v3] net/ice: add MAC anti-spoof option
+Message-ID: <aUKZmzuLWYguKOlE@bricha3-mobl1.ger.corp.intel.com>
+References: <20251113105914.34949-1-anurag.mandal@intel.com>
+ <20251203104126.75935-1-anurag.mandal@intel.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F655B7@smartserver.smartshare.dk>
+ <CY5PR11MB61160E99ADCBFDE1182D6BABE4D9A@CY5PR11MB6116.namprd11.prod.outlook.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F655BA@smartserver.smartshare.dk>
+ <aTrhuMI14CVK27aS@bricha3-mobl1.ger.corp.intel.com>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aTrhuMI14CVK27aS@bricha3-mobl1.ger.corp.intel.com>
+X-ClientProxiedBy: DU7PR01CA0031.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:50e::10) To DS0PR11MB7309.namprd11.prod.outlook.com
+ (2603:10b6:8:13e::17)
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Subject: RE: [PATCH v2 2/5] bpf: fix signed shift overflows in ARM JIT
-Date: Wed, 17 Dec 2025 10:49:57 +0100
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F655F1@smartserver.smartshare.dk>
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-In-Reply-To: <20251216182036.77869-3-marat.khalili@huawei.com>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH v2 2/5] bpf: fix signed shift overflows in ARM JIT
-Thread-Index: AdxuuMSEoWNBsNXVRxGEfLSPGv9VrgAfxBdQ
-References: <20251110153046.63518-1-marat.khalili@huawei.com>
- <20251216182036.77869-1-marat.khalili@huawei.com>
- <20251216182036.77869-3-marat.khalili@huawei.com>
-From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
-To: "Marat Khalili" <marat.khalili@huawei.com>, <stephen@networkplumber.org>,
- <jerinjacobk@gmail.com>, "Wathsala Vithanage" <wathsala.vithanage@arm.com>,
- "Konstantin Ananyev" <konstantin.ananyev@huawei.com>
-Cc: <dev@dpdk.org>,
-	<stable@dpdk.org>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|IA4PR11MB9059:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9fae3ba6-d843-4bb1-6115-08de3d62d627
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info: =?iso-8859-1?Q?RX4BHjzQiYHlFzblySHIIYDT9D+9pIkvGb9XKulFT1NvIPOdOhh5z85609?=
+ =?iso-8859-1?Q?POMR/QFn9z4cd6MZIF5fq5TV3D484bu23nyJimupp47M0Bbjue2hSPcjFO?=
+ =?iso-8859-1?Q?bfA2j1gFPgI2tQvC8XOXJMyNZIwdrKcQmDYMSFqw/Asp2MhK9wX7CQT9sD?=
+ =?iso-8859-1?Q?Ri4shVGM3c5ua2ZNDrVon8pDnNo4r9lTx6aNKJxQR0rkVowRkTQ5OhtoaQ?=
+ =?iso-8859-1?Q?j00XDxf9qw7Mebsp19f/oPfeog/auGzDh6xckyy8W8+p4KfAzFCLoZNZ3T?=
+ =?iso-8859-1?Q?9ynHOUaf+46T1Ktf27yvZUIYyC7ULdZC9/TeGo1+FVhW4B+y0w2KMgTktc?=
+ =?iso-8859-1?Q?rz5/NyMWr+KhQ/QiK+j/OPchoPD5BUj3C5rey4c37NlhL6aUDY4J1Y0Tpl?=
+ =?iso-8859-1?Q?J2mUk7/s5gZSfID/C5sjsPuTdNkeksOvgI2642Azf3q/3XsYShP4dGqIan?=
+ =?iso-8859-1?Q?K6NWdUEyki5MNvZIsSqe/KYRof2pZTOACCEsnzxEcRq8tnRWXrXuIN0R/1?=
+ =?iso-8859-1?Q?YWb+JXs69z5aX94QEhlHPJ6guSMLzYFm9VPkhawe1LcK//aP0JJj+C7v7s?=
+ =?iso-8859-1?Q?UYtnJGugna8nS/xvqHCCYve64jdzBYVWf989+7jifCU7uPI7LDT34NV9Xj?=
+ =?iso-8859-1?Q?c8LFqmwVcbl2v6XySykGGUn2b7GKb9t8npceVuBf3apseyGJDjrp8pKvMT?=
+ =?iso-8859-1?Q?izylHmmuC1tdtaXewrbN/VktQCrnlnykoWHMf7/TJM8o0MjJJzWn3PqZsU?=
+ =?iso-8859-1?Q?Nue9GDtriDzpST2XzGox7EFbx3bewUO4LkugcsdICiNrbRykLvAvVq7IWO?=
+ =?iso-8859-1?Q?kb6Lfi0nP+jiENJWiMz73q9pKR+cFc3Gtee0wPpcyroL71DE0GdguCaUME?=
+ =?iso-8859-1?Q?fHuBT7MKyy/O1hlsNMbtj7iUQI9kpU8gLb2191Zh3nO/mlt8lBrgg0LcfN?=
+ =?iso-8859-1?Q?ttOVSyJ8q8IBx5bbO/iGljLhsXfpGOkYEl3ZdSa+dr5hZ4wxr+X539w5mk?=
+ =?iso-8859-1?Q?mYcUpVuoEDCnHhya5eNS/ZrW4hkCWSGDKu9S/k0RZYq5EWkPeVOtErBoWu?=
+ =?iso-8859-1?Q?hmkk0nrsYv9SG/oi7AhS3YUsm1Pq08WXT0WxRoHnfzkrDCuMm9c0RuXZ5L?=
+ =?iso-8859-1?Q?+NGKoGsfG5jMAJFfcaHF4NtIeSkKbBis8GuY7SWzR9tvhlJqhcRGjlhWPh?=
+ =?iso-8859-1?Q?mnlyEyq2P0+wm7XhqrbIuzGnMl7inw0EjTWsAw7I6PFqy3djRuM+rEtSI7?=
+ =?iso-8859-1?Q?4BygidrnP7xg3nB8JzrL4Mkv4l1CZIqwvn46AqKBSgicJq+gM7cFUsSuPM?=
+ =?iso-8859-1?Q?YLcKofe8YyRGqiad+3R9NTHvKKbG7pW17py4LQpmgCMobWqESHhyP39TlM?=
+ =?iso-8859-1?Q?qetEMz7bpWbQW/2jGZVf8BqSKAFuWNvFE0OLxNNVRgXKwlmrol+USFlvKh?=
+ =?iso-8859-1?Q?w3li8DeYNKQDMgP5oabxayZA9vM/bTJUOJxtAbChBNCRfcfAnHGwi3034S?=
+ =?iso-8859-1?Q?8yxq2EvZKgaNFVDF3SgtV4?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(1800799024)(366016)(376014); DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?iso-8859-1?Q?8gFYTOzZEkLXIBazf5upL+v/eQRX8z47v7tqlkzETiDbVGCjixqIkQZGVd?=
+ =?iso-8859-1?Q?9Vf80BFXpo68cORCS6OfZJgijW8P+r3zhw1j6JY8K7OX1byURINQq0N5ib?=
+ =?iso-8859-1?Q?8fSGuEtcoa6lkahnleF7qWANaOcyaeHQmvZvPVo6VJeQ4JT91InyS5R/Lz?=
+ =?iso-8859-1?Q?5uLLpm7gA6SkXZBngF6AccFaSc2hSwIBLuINgo12mCTh1C5Gn7wmuUhXvM?=
+ =?iso-8859-1?Q?GOuWkH7nmqD3xQaF5cC9mem79p/4UtwxpE7i1DW4A7BLwVYYFMPh3FWDYs?=
+ =?iso-8859-1?Q?0OuiovEAKBP1t54lG5Vx3dYkSEZUpt30RytLHYw+woqVXXBSpT0UZMDvTu?=
+ =?iso-8859-1?Q?Cqc6dYqnLzfukRbo/PhLy2qEZH9BE4M+6ayX0l5FaBrC6x0FOKlFwMDXHQ?=
+ =?iso-8859-1?Q?eisQVHzXtZaeIBFzrVR4PFTV3SxDaix1yOYsShbhO5gAyPUfp+cEn0IS/Y?=
+ =?iso-8859-1?Q?FcNLsKfJSvigSGgNyCMUhhSh0QzoAoKrE5WOdur7jPp0+vx8eRiAjWip5E?=
+ =?iso-8859-1?Q?C/bIWvx7ZWiD0vm/voCphdWWOYqGLdr+wGxpa3vSSE9T7K9yIFIoMzFA82?=
+ =?iso-8859-1?Q?g22gst2rgLnqQoJURCa0Xe003vkBBsmMXTlQ/nutI9UuReA1re3IhvOhYg?=
+ =?iso-8859-1?Q?mB3sK7w+OM2Gdt0h8d2UnhOR+T8xEn5IruoW0YGzPUwMlIQ17DJ4OXZ5Zh?=
+ =?iso-8859-1?Q?Kh8HuNKgJLKTXV6BNcHMVOhp8YmWUWbDcQetcR6dqFMq9RJFQ0D4eFgNr7?=
+ =?iso-8859-1?Q?gwAZiRVYe5nocqVnH/714wALNDHzGCig5lFybBOziO8WMEAVxjHJ7yUhQe?=
+ =?iso-8859-1?Q?kHz4sQlqKewdYpvFTaI/xMCSUdhhI9DgEtvk8ThuBaBa9+eltRZVGVURQ8?=
+ =?iso-8859-1?Q?cyjWBuoV+UpGh67HqmSeT2AAmYKdBKcJK9qVyjwWiCVdeqINIP2uv59TWR?=
+ =?iso-8859-1?Q?thyTrrtwnndNcd0FOE1QQfshivs/BnEzatKYl/jdaBFymDdHqNP+XP+Ipb?=
+ =?iso-8859-1?Q?BBPopn1bt8eeWT/QAy4ro1jy1SWVXHAySMCEXPXnQCnhrSTV24NK7I/HSF?=
+ =?iso-8859-1?Q?PuZrmOMf7beYNFAFO5VwlAu1f6ltl5GSyIoBu0x2JctvOhvSRUS80jdLQR?=
+ =?iso-8859-1?Q?ipxXz3/+Pvw79OEsn37il6oaQJVsrgZyGnrb09+RgvLZVkfwhsiVBFZd/c?=
+ =?iso-8859-1?Q?DIVkLG+YIJ8tq3O8aV+o7a4CH0zvJ7wmMGkcTnUT7w5QVnlsx+2N6bxLKx?=
+ =?iso-8859-1?Q?/YjHmGo7JxMXXPKEswb7cPkj0F24hquRk2kZO2/cwC95TZTtg5qKFilDGt?=
+ =?iso-8859-1?Q?v5/welq/GOzPXkkUo7T4s+fmdKVnQ4y5Cdg0kUd1wyJVtDhOtcWn4wIaHR?=
+ =?iso-8859-1?Q?AyLu/4dp+n5tC88uwa0wemAPG8RyHoIvUSfv2pV/BUtXvgm2mcRPQDKUvR?=
+ =?iso-8859-1?Q?CVnnfzV8nWKdU6u7CbhL3CH27+TFHntJRCSM4jq3TLR+29W8VWd2lXfZE0?=
+ =?iso-8859-1?Q?pFtcjOZFjz3Y4E1IQqWn830iY3EmQjqn2QC6DIJkFPOO1JIkCEpMa5twEE?=
+ =?iso-8859-1?Q?Wfqy8qXBKdhCJZGsosBosA9EpEPB5eB8qma+zZ1HM0An0k2nin48aZzmI6?=
+ =?iso-8859-1?Q?bxEwu1X+G1Dj2+Y2IcpoPu8xUCMQNOyQA0CTomZQ1MC9w9UXxka0B7uQ?=
+ =?iso-8859-1?Q?=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9fae3ba6-d843-4bb1-6115-08de3d62d627
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Dec 2025 11:53:04.4904 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: AvILNneyd0y7G5sjzlcE14RovAdFk3Q77c1x7FkhOLGjuesHboxTSyANXuKWDLpkNDrajRUVPwWJKqfnI6iSxAS0psC/v29NS9yc1jVybFM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA4PR11MB9059
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -51,436 +178,76 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> From: Marat Khalili [mailto:marat.khalili@huawei.com]
-> Sent: Tuesday, 16 December 2025 19.21
->=20
-> Left shifts of integer literals and bool values overwriting the sign
-> bit
-> were used multiple times in bpf_jit_arm64.c. E.g.:
->=20
->     insn =3D (!!is64) << 31;
->=20
-> where is64 has type bool (double bang is a no-op here).
+On Thu, Dec 11, 2025 at 03:22:32PM +0000, Bruce Richardson wrote:
+> On Wed, Dec 03, 2025 at 03:47:08PM +0100, Morten Brørup wrote:
+> > > From: Mandal, Anurag [mailto:anurag.mandal@intel.com]
+> > > Sent: Wednesday, 3 December 2025 15.36
+> > > 
+> > > Hi Morten Brørup,
+> > > 
+> > > From: Morten Brørup <mb@smartsharesystems.com>
+> > > Sent: 03 December 2025 17:11
+> > > > @@ -1761,13 +1763,39 @@ ice_setup_vsi(struct ice_pf *pf, enum
+> > > > ice_vsi_type type)
+> > > >  		/* Source Prune */
+> > > >  		if (ad->devargs.source_prune != 1) {
+> > > >  			/* Disable source prune to support VRRP
+> > > > -			 * when source-prune devarg is not set
+> > > > +			 * when source-prune devargs is not set
+> > > >  			 */
+> > > >  			vsi_ctx.info.sw_flags =
+> > > >  				ICE_AQ_VSI_SW_FLAG_LOCAL_LB;
+> > > > -			vsi_ctx.info.sw_flags |=
+> > > > +		} else { /* Enable Source Prune in Rx */
+> > > > +			vsi_ctx.info.sw_flags =
+> > > >  				ICE_AQ_VSI_SW_FLAG_SRC_PRUNE;
+> > > >  		}
+> > > 
+> > > This looks like a bug fix related to Source Prune?
+> > > 
+> > > Ans: Not exactly.
+> > > Initially, Source Prune was disabled, and MAC Anti-spoof check was
+> > > enabled by default. This was done by following:-
+> > > Source Prune is disabled by setting local loopback with
+> > > ICE_AQ_VSI_SW_FLAG_LOCAL_LB flag in the Rx direction.
+> > > ICE_AQ_VSI_SW_FLAG_SRC_PRUNE is added to prevent transmitted packets
+> > > from being looped back in some circumstances.
+> > > Now, MAC Anti-spoof check can be disabled by clearing both
+> > > ICE_AQ_VSI_SW_FLAG_SRC_PRUNE and
+> > > ICE_AQ_VSI_SEC_FLAG_ENA_MAC_ANTI_SPOOF flags and setting Tx loopback
+> > > with
+> > > ICE_AQ_VSI_SW_FLAG_ALLOW_LB flag in the Tx direction.
+> > > 
+> > > As we moved to making both source prune and mac anti-spoof check
+> > > disabled by default, I thought no point to set
+> > > ICE_AQ_VSI_SW_FLAG_SRC_PRUNE during source prune disable and then
+> > > clearing it to disable mac anti-spoof.
+> > 
+> > OK. Thank you for elaborating.
+> > 
+> > > 
+> > > Thank you.
+> > > 
+> > > Regards,
+> > > Anurag M
+> > 
+> > Note to maintainers:
+> > This devarg is like the Source Prune devarg.
+> > If we want to elevate these exotic features into proper Ethdev APIs, it should be done for both devargs in a separate patch.
+> > 
+> > Acked-by: Morten Brørup <mb@smartsharesystems.com>
+> > 
+> Applied to dpdk-next-net-intel.
+> 
+Unfortunately, this patch causes changes in the driver behaviour leading to
+CI failures. These issues can be seen with testpmd where packets are
+looping back inside a nic port unexpectedly. Therefore, this patch needs to
+be dropped from next-net-intel.
 
-Yes, multiple online sources [1] confirms that the bool type can only =
-hold two values, 0 and 1, and converting any non-zero value to bool =
-results in 1.
+Can you please do a new version adding the feature you require while still
+keeping the existing default behaviour.  I'm going to move the patch status
+from accepted to "changes requested" in patchwork, in anticipation of a new
+version.
 
-So, using !!x where x is a bool is literally a no-op, since x - being a =
-bool - could already only hold the values 0 and 1.
-
-[1]: E.g.
-https://www.gnu.org/software/c-intro-and-ref/manual/html_node/Boolean-Typ=
-e.html
-https://embedded.fm/blog/2016/5/3/ew-bools
-
-> The operand of
-> left shift was promoted to type int, which when 32-bit wide cannot
-> represent the result. Similarly literal integers have int type by
-> default.  Sanitizer produced the following diagnostic during runtime
-> (for various lines):
->=20
->     lib/bpf/bpf_jit_arm64.c:241:18: runtime error: left shift of 1 by
-> 31
->     places cannot be represented in type 'int'
->=20
-> To fix the issue use RTE_BIT32 and similar macros instead.
->=20
-> Signed-off-by: Marat Khalili <marat.khalili@huawei.com>
-> ---
->  lib/bpf/bpf_jit_arm64.c | 162 =
-++++++++++++++++++++--------------------
->  1 file changed, 81 insertions(+), 81 deletions(-)
->=20
-> diff --git a/lib/bpf/bpf_jit_arm64.c b/lib/bpf/bpf_jit_arm64.c
-> index 96b8cd2e03..76df1e4ba1 100644
-> --- a/lib/bpf/bpf_jit_arm64.c
-> +++ b/lib/bpf/bpf_jit_arm64.c
-> @@ -28,7 +28,7 @@
->  #define A64_ZR			31
->=20
->  #define check_imm(n, val) (((val) >=3D 0) ? !!((val) >> (n)) : =
-!!((~val)
-> >> (n)))
-> -#define mask_imm(n, val) ((val) & ((1 << (n)) - 1))
-> +#define mask_imm(n, val) ((val) & (RTE_BIT32(n) - 1))
->=20
->  struct ebpf_a64_map {
->  	uint32_t off; /* eBPF to arm64 insn offset mapping for jump */
-> @@ -238,12 +238,12 @@ emit_add_sub_imm(struct a64_jit_ctx *ctx, bool
-> is64, bool sub, uint8_t rd,
->  	uint32_t insn, imm;
->=20
->  	imm =3D mask_imm(12, imm12);
-> -	insn =3D (!!is64) << 31;
-> -	insn |=3D (!!sub) << 30;
-> +	insn =3D RTE_SHIFT_VAL32(is64, 31);
-> +	insn |=3D RTE_SHIFT_VAL32(sub, 30);
-
-As mentioned above, !!is64 and !!sub are literally no-ops, so it is safe =
-to remove them.
-
->  	insn |=3D 0x11000000;
->  	insn |=3D rd;
-> -	insn |=3D rn << 5;
-> -	insn |=3D imm << 10;
-> +	insn |=3D RTE_SHIFT_VAL32(rn, 5);
-> +	insn |=3D RTE_SHIFT_VAL32(imm, 10);
->=20
->  	emit_insn(ctx, insn,
->  		  check_reg(rd) || check_reg(rn) || check_imm(12, imm12));
-> @@ -279,16 +279,16 @@ emit_ls_pair_64(struct a64_jit_ctx *ctx, uint8_t
-> rt, uint8_t rt2, uint8_t rn,
->  {
->  	uint32_t insn;
->=20
-> -	insn =3D (!!load) << 22;
-> -	insn |=3D (!!pre_index) << 24;
-> +	insn =3D RTE_SHIFT_VAL32(load, 22);
-> +	insn |=3D RTE_SHIFT_VAL32(pre_index, 24);
->  	insn |=3D 0xa8800000;
-
-This constant has the high bit set, consider:
-insn |=3D UINT32_C(0xa8800000);
-
-And for consistency, consider also doing it for constants where the high =
-bit isn't set.
-
-Throughout the file.
-
->  	insn |=3D rt;
-> -	insn |=3D rn << 5;
-> -	insn |=3D rt2 << 10;
-> +	insn |=3D RTE_SHIFT_VAL32(rn, 5);
-> +	insn |=3D RTE_SHIFT_VAL32(rt2, 10);
->  	if (push)
-> -		insn |=3D 0x7e << 15; /* 0x7e means -2 with imm7 */
-> +		insn |=3D RTE_SHIFT_VAL32(0x7e, 15); /* 0x7e means -2 with
-> imm7 */
->  	else
-> -		insn |=3D 0x2 << 15;
-> +		insn |=3D RTE_SHIFT_VAL32(0x2, 15);
->=20
->  	emit_insn(ctx, insn, check_reg(rn) || check_reg(rt) ||
-> check_reg(rt2));
->=20
-> @@ -317,11 +317,11 @@ mov_imm(struct a64_jit_ctx *ctx, bool is64,
-> uint8_t rd, uint8_t type,
->  {
->  	uint32_t insn;
->=20
-> -	insn =3D (!!is64) << 31;
-> -	insn |=3D type << 29;
-> -	insn |=3D 0x25 << 23;
-> -	insn |=3D (shift/16) << 21;
-> -	insn |=3D imm16 << 5;
-> +	insn =3D RTE_SHIFT_VAL32(is64, 31);
-> +	insn |=3D RTE_SHIFT_VAL32(type, 29);
-> +	insn |=3D RTE_SHIFT_VAL32(0x25, 23);
-> +	insn |=3D RTE_SHIFT_VAL32(shift/16, 21);
-> +	insn |=3D RTE_SHIFT_VAL32(imm16, 5);
->  	insn |=3D rd;
->=20
->  	emit_insn(ctx, insn, check_reg(rd) || check_mov_hw(is64, shift));
-> @@ -334,7 +334,7 @@ emit_mov_imm32(struct a64_jit_ctx *ctx, bool is64,
-> uint8_t rd, uint32_t val)
->  	uint16_t lower =3D val & 0xffff;
->=20
->  	/* Positive number */
-> -	if ((val & 1UL << 31) =3D=3D 0) {
-> +	if ((val & RTE_BIT32(31)) =3D=3D 0) {
->  		mov_imm(ctx, is64, rd, A64_MOVZ, lower, 0);
->  		if (upper)
->  			mov_imm(ctx, is64, rd, A64_MOVK, upper, 16);
-> @@ -393,21 +393,21 @@ emit_ls(struct a64_jit_ctx *ctx, uint8_t sz,
-> uint8_t rt, uint8_t rn, uint8_t rm,
->  {
->  	uint32_t insn;
->=20
-> -	insn =3D 0x1c1 << 21;
-> +	insn =3D RTE_SHIFT_VAL32(0x1c1, 21);
->  	if (load)
-> -		insn |=3D 1 << 22;
-> +		insn |=3D RTE_BIT32(22);
->  	if (sz =3D=3D BPF_B)
-> -		insn |=3D 0 << 30;
-> +		insn |=3D RTE_SHIFT_VAL32(0, 30);
->  	else if (sz =3D=3D BPF_H)
-> -		insn |=3D 1 << 30;
-> +		insn |=3D RTE_SHIFT_VAL32(1, 30);
->  	else if (sz =3D=3D BPF_W)
-> -		insn |=3D 2 << 30;
-> +		insn |=3D RTE_SHIFT_VAL32(2, 30);
->  	else if (sz =3D=3D EBPF_DW)
-> -		insn |=3D 3 << 30;
-> +		insn |=3D RTE_SHIFT_VAL32(3, 30);
->=20
-> -	insn |=3D rm << 16;
-> -	insn |=3D 0x1a << 10; /* LSL and S =3D 0 */
-> -	insn |=3D rn << 5;
-> +	insn |=3D RTE_SHIFT_VAL32(rm, 16);
-> +	insn |=3D RTE_SHIFT_VAL32(0x1a, 10); /* LSL and S =3D 0 */
-> +	insn |=3D RTE_SHIFT_VAL32(rn, 5);
->  	insn |=3D rt;
->=20
->  	emit_insn(ctx, insn, check_reg(rt) || check_reg(rn) ||
-> check_reg(rm) ||
-> @@ -436,10 +436,10 @@ emit_add_sub(struct a64_jit_ctx *ctx, bool is64,
-> uint8_t rd, uint8_t rn,
->  {
->  	uint32_t insn;
->=20
-> -	insn =3D (!!is64) << 31;
-> -	insn |=3D op << 21; /* shift =3D=3D 0 */
-> -	insn |=3D rm << 16;
-> -	insn |=3D rn << 5;
-> +	insn =3D RTE_SHIFT_VAL32(is64, 31);
-> +	insn |=3D RTE_SHIFT_VAL32(op, 21); /* shift =3D=3D 0 */
-> +	insn |=3D RTE_SHIFT_VAL32(rm, 16);
-> +	insn |=3D RTE_SHIFT_VAL32(rn, 5);
->  	insn |=3D rd;
->=20
->  	emit_insn(ctx, insn, check_reg(rd) || check_reg(rm));
-> @@ -468,11 +468,11 @@ emit_mul(struct a64_jit_ctx *ctx, bool is64,
-> uint8_t rd, uint8_t rm)
->  {
->  	uint32_t insn;
->=20
-> -	insn =3D (!!is64) << 31;
-> -	insn |=3D 0xd8 << 21;
-> -	insn |=3D rm << 16;
-> -	insn |=3D A64_ZR << 10;
-> -	insn |=3D rd << 5;
-> +	insn =3D RTE_SHIFT_VAL32(is64, 31);
-> +	insn |=3D RTE_SHIFT_VAL32(0xd8, 21);
-> +	insn |=3D RTE_SHIFT_VAL32(rm, 16);
-> +	insn |=3D RTE_SHIFT_VAL32(A64_ZR, 10);
-> +	insn |=3D RTE_SHIFT_VAL32(rd, 5);
->  	insn |=3D rd;
->=20
->  	emit_insn(ctx, insn, check_reg(rd) || check_reg(rm));
-> @@ -489,11 +489,11 @@ emit_data_process_two_src(struct a64_jit_ctx
-> *ctx, bool is64, uint8_t rd,
->  {
->  	uint32_t insn;
->=20
-> -	insn =3D (!!is64) << 31;
-> -	insn |=3D 0xd6 << 21;
-> -	insn |=3D rm << 16;
-> -	insn |=3D op << 10;
-> -	insn |=3D rn << 5;
-> +	insn =3D RTE_SHIFT_VAL32(is64, 31);
-> +	insn |=3D RTE_SHIFT_VAL32(0xd6, 21);
-> +	insn |=3D RTE_SHIFT_VAL32(rm, 16);
-> +	insn |=3D RTE_SHIFT_VAL32(op, 10);
-> +	insn |=3D RTE_SHIFT_VAL32(rn, 5);
->  	insn |=3D rd;
->=20
->  	emit_insn(ctx, insn, check_reg(rd) || check_reg(rm));
-> @@ -532,14 +532,14 @@ emit_bitfield(struct a64_jit_ctx *ctx, bool =
-is64,
-> uint8_t rd, uint8_t rn,
->  {
->  	uint32_t insn;
->=20
-> -	insn =3D (!!is64) << 31;
-> +	insn =3D RTE_SHIFT_VAL32(is64, 31);
->  	if (insn)
-> -		insn |=3D 1 << 22; /* Set N bit when is64 is set */
-> -	insn |=3D op << 29;
-> -	insn |=3D 0x26 << 23;
-> -	insn |=3D immr << 16;
-> -	insn |=3D imms << 10;
-> -	insn |=3D rn << 5;
-> +		insn |=3D RTE_BIT32(22); /* Set N bit when is64 is set */
-> +	insn |=3D RTE_SHIFT_VAL32(op, 29);
-> +	insn |=3D RTE_SHIFT_VAL32(0x26, 23);
-> +	insn |=3D RTE_SHIFT_VAL32(immr, 16);
-> +	insn |=3D RTE_SHIFT_VAL32(imms, 10);
-> +	insn |=3D RTE_SHIFT_VAL32(rn, 5);
->  	insn |=3D rd;
->=20
->  	emit_insn(ctx, insn, check_reg(rd) || check_reg(rn) ||
-> @@ -578,11 +578,11 @@ emit_logical(struct a64_jit_ctx *ctx, bool is64,
-> uint8_t rd,
->  {
->  	uint32_t insn;
->=20
-> -	insn =3D (!!is64) << 31;
-> -	insn |=3D op << 29;
-> -	insn |=3D 0x50 << 21;
-> -	insn |=3D rm << 16;
-> -	insn |=3D rd << 5;
-> +	insn =3D RTE_SHIFT_VAL32(is64, 31);
-> +	insn |=3D RTE_SHIFT_VAL32(op, 29);
-> +	insn |=3D RTE_SHIFT_VAL32(0x50, 21);
-> +	insn |=3D RTE_SHIFT_VAL32(rm, 16);
-> +	insn |=3D RTE_SHIFT_VAL32(rd, 5);
->  	insn |=3D rd;
->=20
->  	emit_insn(ctx, insn, check_reg(rd) || check_reg(rm));
-> @@ -612,12 +612,12 @@ emit_msub(struct a64_jit_ctx *ctx, bool is64,
-> uint8_t rd, uint8_t rn,
->  {
->  	uint32_t insn;
->=20
-> -	insn =3D (!!is64) << 31;
-> -	insn |=3D 0xd8 << 21;
-> -	insn |=3D rm << 16;
-> -	insn |=3D 0x1 << 15;
-> -	insn |=3D ra << 10;
-> -	insn |=3D rn << 5;
-> +	insn =3D RTE_SHIFT_VAL32(is64, 31);
-> +	insn |=3D RTE_SHIFT_VAL32(0xd8, 21);
-> +	insn |=3D RTE_SHIFT_VAL32(rm, 16);
-> +	insn |=3D RTE_SHIFT_VAL32(0x1, 15);
-> +	insn |=3D RTE_SHIFT_VAL32(ra, 10);
-> +	insn |=3D RTE_SHIFT_VAL32(rn, 5);
->  	insn |=3D rd;
->=20
->  	emit_insn(ctx, insn, check_reg(rd) || check_reg(rn) ||
-> check_reg(rm) ||
-> @@ -638,7 +638,7 @@ emit_blr(struct a64_jit_ctx *ctx, uint8_t rn)
->  	uint32_t insn;
->=20
->  	insn =3D 0xd63f0000;
-> -	insn |=3D rn << 5;
-> +	insn |=3D RTE_SHIFT_VAL32(rn, 5);
->=20
->  	emit_insn(ctx, insn, check_reg(rn));
->  }
-> @@ -669,22 +669,22 @@ emit_rev(struct a64_jit_ctx *ctx, uint8_t rd,
-> int32_t imm)
->  	uint32_t insn;
->=20
->  	insn =3D 0xdac00000;
-> -	insn |=3D rd << 5;
-> +	insn |=3D RTE_SHIFT_VAL32(rd, 5);
->  	insn |=3D rd;
->=20
->  	switch (imm) {
->  	case 16:
-> -		insn |=3D 1 << 10;
-> +		insn |=3D RTE_SHIFT_VAL32(1, 10);
->  		emit_insn(ctx, insn, check_reg(rd));
->  		emit_zero_extend(ctx, rd, 16);
->  		break;
->  	case 32:
-> -		insn |=3D 2 << 10;
-> +		insn |=3D RTE_SHIFT_VAL32(2, 10);
->  		emit_insn(ctx, insn, check_reg(rd));
->  		/* Upper 32 bits already cleared */
->  		break;
->  	case 64:
-> -		insn |=3D 3 << 10;
-> +		insn |=3D RTE_SHIFT_VAL32(3, 10);
->  		emit_insn(ctx, insn, check_reg(rd));
->  		break;
->  	default:
-> @@ -933,9 +933,9 @@ emit_cbnz(struct a64_jit_ctx *ctx, bool is64,
-> uint8_t rt, int32_t imm19)
->  	uint32_t insn, imm;
->=20
->  	imm =3D mask_imm(19, imm19);
-> -	insn =3D (!!is64) << 31;
-> -	insn |=3D 0x35 << 24;
-> -	insn |=3D imm << 5;
-> +	insn =3D RTE_SHIFT_VAL32(is64, 31);
-> +	insn |=3D RTE_SHIFT_VAL32(0x35, 24);
-> +	insn |=3D RTE_SHIFT_VAL32(imm, 5);
->  	insn |=3D rt;
->=20
->  	emit_insn(ctx, insn, check_reg(rt) || check_imm(19, imm19));
-> @@ -947,7 +947,7 @@ emit_b(struct a64_jit_ctx *ctx, int32_t imm26)
->  	uint32_t insn, imm;
->=20
->  	imm =3D mask_imm(26, imm26);
-> -	insn =3D 0x5 << 26;
-> +	insn =3D RTE_SHIFT_VAL32(0x5, 26);
->  	insn |=3D imm;
->=20
->  	emit_insn(ctx, insn, check_imm(26, imm26));
-> @@ -971,9 +971,9 @@ emit_stadd(struct a64_jit_ctx *ctx, bool is64,
-> uint8_t rs, uint8_t rn)
->  	uint32_t insn;
->=20
->  	insn =3D 0xb820001f;
-> -	insn |=3D (!!is64) << 30;
-> -	insn |=3D rs << 16;
-> -	insn |=3D rn << 5;
-> +	insn |=3D RTE_SHIFT_VAL32(is64, 30);
-> +	insn |=3D RTE_SHIFT_VAL32(rs, 16);
-> +	insn |=3D RTE_SHIFT_VAL32(rn, 5);
->=20
->  	emit_insn(ctx, insn, check_reg(rs) || check_reg(rn));
->  }
-> @@ -984,8 +984,8 @@ emit_ldxr(struct a64_jit_ctx *ctx, bool is64,
-> uint8_t rt, uint8_t rn)
->  	uint32_t insn;
->=20
->  	insn =3D 0x885f7c00;
-> -	insn |=3D (!!is64) << 30;
-> -	insn |=3D rn << 5;
-> +	insn |=3D RTE_SHIFT_VAL32(is64, 30);
-> +	insn |=3D RTE_SHIFT_VAL32(rn, 5);
->  	insn |=3D rt;
->=20
->  	emit_insn(ctx, insn, check_reg(rt) || check_reg(rn));
-> @@ -998,9 +998,9 @@ emit_stxr(struct a64_jit_ctx *ctx, bool is64,
-> uint8_t rs, uint8_t rt,
->  	uint32_t insn;
->=20
->  	insn =3D 0x88007c00;
-> -	insn |=3D (!!is64) << 30;
-> -	insn |=3D rs << 16;
-> -	insn |=3D rn << 5;
-> +	insn |=3D RTE_SHIFT_VAL32(is64, 30);
-> +	insn |=3D RTE_SHIFT_VAL32(rs, 16);
-> +	insn |=3D RTE_SHIFT_VAL32(rn, 5);
->  	insn |=3D rt;
->=20
->  	emit_insn(ctx, insn, check_reg(rs) || check_reg(rt) ||
-> check_reg(rn));
-> @@ -1051,9 +1051,9 @@ emit_cmp_tst(struct a64_jit_ctx *ctx, bool is64,
-> uint8_t rn, uint8_t rm,
->  	uint32_t insn;
->=20
->  	insn =3D opc;
-> -	insn |=3D (!!is64) << 31;
-> -	insn |=3D rm << 16;
-> -	insn |=3D rn << 5;
-> +	insn |=3D RTE_SHIFT_VAL32(is64, 31);
-> +	insn |=3D RTE_SHIFT_VAL32(rm, 16);
-> +	insn |=3D RTE_SHIFT_VAL32(rn, 5);
->=20
->  	emit_insn(ctx, insn, check_reg(rn) || check_reg(rm));
->  }
-> @@ -1076,8 +1076,8 @@ emit_b_cond(struct a64_jit_ctx *ctx, uint8_t
-> cond, int32_t imm19)
->  	uint32_t insn, imm;
->=20
->  	imm =3D mask_imm(19, imm19);
-> -	insn =3D 0x15 << 26;
-> -	insn |=3D imm << 5;
-> +	insn =3D RTE_SHIFT_VAL32(0x15, 26);
-> +	insn |=3D RTE_SHIFT_VAL32(imm, 5);
->  	insn |=3D cond;
->=20
->  	emit_insn(ctx, insn, check_cond(cond) || check_imm(19, imm19));
-> @@ -1301,7 +1301,7 @@ emit(struct a64_jit_ctx *ctx, struct rte_bpf
-> *bpf)
->  			break;
->  		/* dst =3D imm64 */
->  		case (BPF_LD | BPF_IMM | EBPF_DW):
-> -			u64 =3D ((uint64_t)ins[1].imm << 32) | (uint32_t)imm;
-> +			u64 =3D RTE_SHIFT_VAL64(ins[1].imm, 32) |
-> (uint32_t)imm;
->  			emit_mov_imm(ctx, 1, dst, u64);
->  			i++;
->  			break;
-> --
-> 2.43.0
-
-With or without suggested changes,
-Acked-by: Morten Br=F8rup <mb@smartsharesystems.com>
-
+Regards,
+/Bruce
