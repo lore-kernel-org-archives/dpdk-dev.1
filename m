@@ -2,68 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AC49D6D22A
-	for <dpdk-dev@archiver.kernel.org>; Thu, 18 Dec 2025 14:09:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DC79D6D22C
+	for <dpdk-dev@archiver.kernel.org>; Thu, 18 Dec 2025 15:07:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4F34E40275;
-	Thu, 18 Dec 2025 15:09:39 +0100 (CET)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id 0678B4026A
- for <dev@dpdk.org>; Thu, 18 Dec 2025 15:09:36 +0100 (CET)
-Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
- 5BI6cxVm1673236; Thu, 18 Dec 2025 06:09:36 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:message-id
- :mime-version:subject:to; s=pfpt0220; bh=LmHccCRMM1n+Cykw3j95MBA
- qs+yxhHJnrpIW2zEn9h8=; b=DdwX0ORZRhoqZEAmx/UuAtHouBN+htzKJwUjYJw
- 0mDSsQ0jRJNfQu66S3HwcLu5/TdhxQdLkzWNmWJXc2JlXR+I1cczaAfIDOnfav6o
- xs4rab9FNm4HexbIPh0TVyZ05ulPMNp9XIEAXTNNZwiYspOb/iGrob83uOlPFvbT
- 6rarOdGci1rx1QzAAX5UlIyOvNKDgN5CDqdT1myVJC5lOusjw881nUM0nMY117qm
- otIytuQfmVJCwYvTsYTHFpSwIOgsLcbYXP17eqMdGzOQriqrUxwJPrD2I5oGp1MS
- hJkIcanrjxa2rLDtLZKI3I2v20YUBDfZRvF1/fqJAw7vexw==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4b3w2htvhe-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Thu, 18 Dec 2025 06:09:36 -0800 (PST)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Thu, 18 Dec 2025 06:09:48 -0800
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Thu, 18 Dec 2025 06:09:48 -0800
-Received: from hyd11149.caveonetworks.com (unknown [10.29.44.105])
- by maili.marvell.com (Postfix) with ESMTP id DED055B6949;
- Thu, 18 Dec 2025 06:09:32 -0800 (PST)
-From: Rupesh Chiluka <rchiluka@marvell.com>
-To: Akhil Goyal <gakhil@marvell.com>, Fan Zhang <fanzhang.oss@gmail.com>
-CC: <dev@dpdk.org>, <anoobj@marvell.com>, <ktejasree@marvell.com>,
- <kai.ji@intel.com>, Rupesh Chiluka <rchiluka@marvell.com>
-Subject: [PATCH] test/crypto: remove PMD specific asym testsuites
-Date: Thu, 18 Dec 2025 19:39:09 +0530
-Message-ID: <20251218140909.1816595-1-rchiluka@marvell.com>
-X-Mailer: git-send-email 2.48.1
+	by mails.dpdk.org (Postfix) with ESMTP id C544340275;
+	Thu, 18 Dec 2025 16:07:29 +0100 (CET)
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com
+ [209.85.219.52]) by mails.dpdk.org (Postfix) with ESMTP id 5A3414026A
+ for <dev@dpdk.org>; Thu, 18 Dec 2025 16:07:28 +0100 (CET)
+Received: by mail-qv1-f52.google.com with SMTP id
+ 6a1803df08f44-88a346c284fso8394916d6.3
+ for <dev@dpdk.org>; Thu, 18 Dec 2025 07:07:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=iol.unh.edu; s=unh-iol; t=1766070447; x=1766675247; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=/KGew/kE0AciKJiiiPEqmELw3hoZAz5oNB0oiYzu2Nc=;
+ b=V1g0rFCG59K4c4n/qnfWLRFR2/ImJV42KfH9J9mE96VIbCWEitI3UniRfLHdF/0w3P
+ Qtj06UYdi0ON8xGcy4rIa+4N1aWySCXqCh8FTt+dUTwA+RjRThevUAMWVZEfx1Kdoke/
+ jHyw0dcBl3juf6DYQO7ICDXR8InF2xbfQHaf8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1766070447; x=1766675247;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=/KGew/kE0AciKJiiiPEqmELw3hoZAz5oNB0oiYzu2Nc=;
+ b=Ohq2nIYJcg5ed9x7R2rggYvrPGDQkAsYG2wMJuNm7sPATwQ4KpGmNZrvTJQAu1Novq
+ nGbRr4ggWo81IzxmNMDfuKd1IFLTx14lSYiMO/cAfjGvgD/xYoNG6V45m6usPdqgQP1R
+ rZNxXgASiql6i70f+CekD/7FrJmF8z1ASrOm78v69tHNYnDQdRuqtCqKlYGDphzY0ofq
+ l5kxI/gVbdE74yLIbYbuHEkQsc32yUS2gduh0Kt3g2HUbVDi0Jc/p9FrYxbgZ+SQ2Nrd
+ I+2ZR+FbJyb99df1PA7jRvHCp3DmlcPl2GR7GEorvjwUTKZpxYLy5hflHf3B8e6aNx5F
+ 9hIw==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCX/ZmuoqOS84zQfMXjOK6GH34F4+pn0fRHGthT2UJomEgB2km9Xv6M1B0wnbhynovQKZlg=@dpdk.org
+X-Gm-Message-State: AOJu0YwqELLkWIvMsTQn3wAz0BWjjLb8g7qd7L+QNQyfSEID+izXoyrc
+ T8gz0PTO+sc7TR+g1kTWcvdUFSsYiHG0Y15jmpyaDxLCyxdmuuVXKgo/can4gDgBhLE=
+X-Gm-Gg: AY/fxX6Yoz1IUtKw03GbBwg3lTpGx+8cCx3MEhC8swAWvzQBA8R06o4ZcA60XRFhPkV
+ UOyg+qOGgOOYzpn5J25wj/BMW+a1LknKO/dGx1E95HxX+renAirtxz0BtOcmruXqvk33ApEe+ov
+ kIPbVSOArdeTtJ3DnZA5Eg1gpPzHAz5ijL/HFTF6BoAiVIDLr2436vJC2MUsc7HtAFL8dXx+b0J
+ v9UFGxQDDSik546CIgidiMDpd9yinaxtbm2Pdfu7/3X0QFHJUVZBipP8afGQdiBNbV31/EI8XO4
+ uP62w8IR9NhJk5HO8MA8CAtFN/cKRI7Yx/8zkfUUUVUxnGLVHuAnY6WXa8vQLrmFyoLP29WNtK9
+ dRIsexQ4jM/Xrfsng5jjV+etRB+qDuPgg9aVOxq1kHn0WADJgYxshi7nKuoAvGUwSpdq9AM1NNZ
+ xfFCQR8MRDu7RgA3COw1LvxgU=
+X-Google-Smtp-Source: AGHT+IHxhCCsL7U24KJ+USbw0CL33YKlA0TLL8xacWnOTObT0BGP/mFm9qAGDcvkjM6vvexeC5+fpQ==
+X-Received: by 2002:a05:6214:4015:b0:880:5001:17d3 with SMTP id
+ 6a1803df08f44-8887e101533mr337351296d6.40.1766070447466; 
+ Thu, 18 Dec 2025 07:07:27 -0800 (PST)
+Received: from d122205.iol.unh.edu ([2606:4100:3880:1220:4f6d:e2af:7f5f:4df])
+ by smtp.gmail.com with ESMTPSA id
+ 6a1803df08f44-88c6089aecesm20801096d6.32.2025.12.18.07.07.26
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Thu, 18 Dec 2025 07:07:26 -0800 (PST)
+From: Andrew Bailey <abailey@iol.unh.edu>
+To: probb@iol.unh.edu
+Cc: luca.vizzarro@arm.com, dmarx@iol.unh.edu, dev@dpdk.org,
+ Andrew Bailey <abailey@iol.unh.edu>
+Subject: [PATCH v2] dts: update testsuite named to be clear and consistent
+Date: Thu, 18 Dec 2025 10:07:18 -0500
+Message-ID: <20251218150718.738116-1-abailey@iol.unh.edu>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20251217182540.715464-1-abailey@iol.unh.edu>
+References: <20251217182540.715464-1-abailey@iol.unh.edu>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Authority-Analysis: v=2.4 cv=EMkLElZC c=1 sm=1 tr=0 ts=69440b20 cx=c_pps
- a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
- a=wP3pNCr1ah4A:10 a=VkNPw1HP01LnGYTKEx00:22 a=M5GUcnROAAAA:8
- a=j-M2EO107KMftwdfWSsA:9 a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-GUID: QmegkkCj7e7gVmMq-7MXUrJDrtqZOiFE
-X-Proofpoint-ORIG-GUID: QmegkkCj7e7gVmMq-7MXUrJDrtqZOiFE
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMjE4MDExNyBTYWx0ZWRfXzfOYVkHZy5hK
- ZPGGM7bgko1KynYjCRha58VBx+tbnTxdXEGuvcSMqFERqGE0tFYBo1l/KVmMsA6jkUGwCdqFk1k
- S4LOaAtFb68/5WUsvC3YXHQgQ4hixrcE1ex9wZNHDn7fYgmtakXsKBNLRJA2PkYyPhsZUa4xXgW
- +1OskIvg/ctcmGQQHoSUHBQVIpftgcpY2xpP4ynf9LafjIgm40iiiU1d0cAr5Tm7QCY76923pE/
- C0Gg2NnuZE5sSva85709GTHCETn1YcG4ljg/3/UNGbuSSynQuUOIW+sxvkvms9iBaXqKajnmhJ5
- o9Lpo7Koad+qMz6JczqTheBLeQxeDN2zro0b5BjqU1Ok54L4FfwSUbXTPuaKqUEYBzZ3woxzAy7
- cOOes7/HTt0JXM8oDe9vVWf3xlYGZQ==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-12-18_02,2025-12-17_02,2025-10-01_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -77,670 +79,347 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Change PMD specific asymmetric testsuites to
-capabilities based testsuites
+Some test suites were prefixed with PMD which is not meaningful.
+Other test suites used different naming schemes and this patch updates
+this. For example, some abbreviated words that others had not. These
+word are no longer abbreviated.
 
-Signed-off-by: Rupesh Chiluka <rchiluka@marvell.com>
+Bugzilla ID: 1826
+
+Signed-off-by: Andrew Bailey <abailey@iol.unh.edu>
 ---
- app/test/test_cryptodev_asym.c | 540 ++++++++++++++++++++++-----------
- 1 file changed, 364 insertions(+), 176 deletions(-)
+ doc/api/dts/tests.TestSuite_buffer_scatter.rst            | 8 ++++++++
+ doc/api/dts/tests.TestSuite_flow_offload.rst              | 8 ++++++++
+ ...uite_virtio_fwd.rst => tests.TestSuite_l2_forward.rst} | 4 ++--
+ doc/api/dts/tests.TestSuite_l2fwd.rst                     | 8 --------
+ doc/api/dts/tests.TestSuite_pmd_buffer_scatter.rst        | 8 --------
+ doc/api/dts/tests.TestSuite_queue_start_stop.rst          | 8 --------
+ doc/api/dts/tests.TestSuite_queue_toggle.rst              | 8 ++++++++
+ doc/api/dts/tests.TestSuite_rte_flow.rst                  | 8 --------
+ doc/api/dts/tests.TestSuite_uni_pkt.rst                   | 8 --------
+ doc/api/dts/tests.TestSuite_unified_packet.rst            | 8 ++++++++
+ doc/api/dts/tests.TestSuite_virtio_forward.rst            | 8 ++++++++
+ ..._pmd_buffer_scatter.py => TestSuite_buffer_scatter.py} | 4 ++--
+ .../{TestSuite_rte_flow.py => TestSuite_flow_offload.py}  | 6 +++---
+ dts/tests/{TestSuite_l2fwd.py => TestSuite_l2_forward.py} | 2 +-
+ ...uite_queue_start_stop.py => TestSuite_queue_toggle.py} | 6 +++---
+ dts/tests/{TestSuite_pmd_rss.py => TestSuite_rss.py}      | 2 +-
+ .../{TestSuite_uni_pkt.py => TestSuite_unified_packet.py} | 2 +-
+ ...estSuite_virtio_fwd.py => TestSuite_virtio_forward.py} | 2 +-
+ 18 files changed, 54 insertions(+), 54 deletions(-)
+ create mode 100644 doc/api/dts/tests.TestSuite_buffer_scatter.rst
+ create mode 100644 doc/api/dts/tests.TestSuite_flow_offload.rst
+ rename doc/api/dts/{tests.TestSuite_virtio_fwd.rst => tests.TestSuite_l2_forward.rst} (60%)
+ delete mode 100644 doc/api/dts/tests.TestSuite_l2fwd.rst
+ delete mode 100644 doc/api/dts/tests.TestSuite_pmd_buffer_scatter.rst
+ delete mode 100644 doc/api/dts/tests.TestSuite_queue_start_stop.rst
+ create mode 100644 doc/api/dts/tests.TestSuite_queue_toggle.rst
+ delete mode 100644 doc/api/dts/tests.TestSuite_rte_flow.rst
+ delete mode 100644 doc/api/dts/tests.TestSuite_uni_pkt.rst
+ create mode 100644 doc/api/dts/tests.TestSuite_unified_packet.rst
+ create mode 100644 doc/api/dts/tests.TestSuite_virtio_forward.rst
+ rename dts/tests/{TestSuite_pmd_buffer_scatter.py => TestSuite_buffer_scatter.py} (98%)
+ rename dts/tests/{TestSuite_rte_flow.py => TestSuite_flow_offload.py} (99%)
+ rename dts/tests/{TestSuite_l2fwd.py => TestSuite_l2_forward.py} (98%)
+ rename dts/tests/{TestSuite_queue_start_stop.py => TestSuite_queue_toggle.py} (97%)
+ rename dts/tests/{TestSuite_pmd_rss.py => TestSuite_rss.py} (99%)
+ rename dts/tests/{TestSuite_uni_pkt.py => TestSuite_unified_packet.py} (99%)
+ rename dts/tests/{TestSuite_virtio_fwd.py => TestSuite_virtio_forward.py} (99%)
 
-diff --git a/app/test/test_cryptodev_asym.c b/app/test/test_cryptodev_asym.c
-index 111f675c94..cc4590a500 100644
---- a/app/test/test_cryptodev_asym.c
-+++ b/app/test/test_cryptodev_asym.c
-@@ -39,6 +39,10 @@
- #define TEST_VECTOR_SIZE 256
- #define DEQ_TIMEOUT 10000
+diff --git a/doc/api/dts/tests.TestSuite_buffer_scatter.rst b/doc/api/dts/tests.TestSuite_buffer_scatter.rst
+new file mode 100644
+index 0000000000..ce764ff0d6
+--- /dev/null
++++ b/doc/api/dts/tests.TestSuite_buffer_scatter.rst
+@@ -0,0 +1,8 @@
++.. SPDX-License-Identifier: BSD-3-Clause
++
++buffer_scatter Test Suite
++=========================
++
++.. automodule:: tests.TestSuite_buffer_scatter
++   :members:
++   :show-inheritance:
+diff --git a/doc/api/dts/tests.TestSuite_flow_offload.rst b/doc/api/dts/tests.TestSuite_flow_offload.rst
+new file mode 100644
+index 0000000000..5fcd3f57c3
+--- /dev/null
++++ b/doc/api/dts/tests.TestSuite_flow_offload.rst
+@@ -0,0 +1,8 @@
++.. SPDX-License-Identifier: BSD-3-Clause
++
++flow_offload Test Suite
++=======================
++
++.. automodule:: tests.TestSuite_flow_offload
++   :members:
++   :show-inheritance:
+diff --git a/doc/api/dts/tests.TestSuite_virtio_fwd.rst b/doc/api/dts/tests.TestSuite_l2_forward.rst
+similarity index 60%
+rename from doc/api/dts/tests.TestSuite_virtio_fwd.rst
+rename to doc/api/dts/tests.TestSuite_l2_forward.rst
+index e40cc4ca2b..3570a1e101 100644
+--- a/doc/api/dts/tests.TestSuite_virtio_fwd.rst
++++ b/doc/api/dts/tests.TestSuite_l2_forward.rst
+@@ -1,8 +1,8 @@
+ .. SPDX-License-Identifier: BSD-3-Clause
  
-+#define ADD_ASYM_TESTSUITE(index, parent_ts, child_ts, num_child_ts)	\
-+	for (j = 0; j < num_child_ts; index++, j++)			\
-+		parent_ts.unit_test_suites[index] = child_ts[j]
-+
- static int gbl_driver_id;
- static struct crypto_testsuite_params_asym {
- 	struct rte_mempool *op_mpool;
-@@ -3113,6 +3117,9 @@ test_sm2_enc(void)
- 	capa = rte_cryptodev_asym_capability_get(dev_id, &idx);
- 	if (capa == NULL)
- 		return -ENOTSUP;
-+	if (!rte_cryptodev_asym_xform_capability_check_opcap(capa,
-+			RTE_CRYPTO_ASYM_OP_ENCRYPT, 0))
-+		return TEST_SKIPPED;
+-virtio_fwd Test Suite
++l2_forward Test Suite
+ =====================
  
- 	/* Setup crypto op data structure */
- 	op = rte_crypto_op_alloc(op_mpool, RTE_CRYPTO_OP_TYPE_ASYMMETRIC);
-@@ -3297,6 +3304,9 @@ test_sm2_dec(void)
- 	capa = rte_cryptodev_asym_capability_get(dev_id, &idx);
- 	if (capa == NULL)
- 		return -ENOTSUP;
-+	if (!rte_cryptodev_asym_xform_capability_check_opcap(capa,
-+			RTE_CRYPTO_ASYM_OP_DECRYPT, 0))
-+		return TEST_SKIPPED;
- 
- 	/* Setup crypto op data structure */
- 	op = rte_crypto_op_alloc(op_mpool, RTE_CRYPTO_OP_TYPE_ASYMMETRIC);
-@@ -4995,27 +5005,254 @@ test_sm2_partial_decryption(const void *data)
- 	return 0;
- }
- 
--static struct unit_test_suite cryptodev_openssl_asym_testsuite  = {
--	.suite_name = "Crypto Device OPENSSL ASYM Unit Test Suite",
--	.setup = testsuite_setup,
--	.teardown = testsuite_teardown,
-+static int
-+check_asym_capabilities_supported(const enum rte_crypto_asym_xform_type xform_type)
-+{
-+	uint8_t dev_id = testsuite_params.valid_devs[0];
-+	struct rte_cryptodev_asym_capability_idx idx = {xform_type};
-+
-+	if (rte_cryptodev_asym_capability_get(dev_id, &idx) == NULL)
-+		return TEST_SKIPPED;
-+	return 0;
-+}
-+
-+static int
-+crypto_asym_dh_testsuite_setup(void)
-+{
-+	const enum rte_crypto_asym_xform_type xform_type = RTE_CRYPTO_ASYM_XFORM_DH;
-+
-+	if (check_asym_capabilities_supported(xform_type) != 0) {
-+		RTE_LOG(INFO, USER1,
-+			"Device doesn't support required ASYM capabilities. Test skipped\n");
-+		return TEST_SKIPPED;
-+	}
-+	return 0;
-+}
-+
-+static int
-+crypto_asym_dsa_testsuite_setup(void)
-+{
-+	const enum rte_crypto_asym_xform_type xform_type = RTE_CRYPTO_ASYM_XFORM_DSA;
-+
-+	if (check_asym_capabilities_supported(xform_type) != 0) {
-+		RTE_LOG(INFO, USER1,
-+			"Device doesn't support required ASYM capabilities. Test skipped\n");
-+		return TEST_SKIPPED;
-+	}
-+	return 0;
-+}
-+
-+static int
-+crypto_asym_ecdh_testsuite_setup(void)
-+{
-+	const enum rte_crypto_asym_xform_type xform_type = RTE_CRYPTO_ASYM_XFORM_ECDH;
-+
-+	if (check_asym_capabilities_supported(xform_type) != 0) {
-+		RTE_LOG(INFO, USER1,
-+			"Device doesn't support required ASYM capabilities. Test skipped\n");
-+		return TEST_SKIPPED;
-+	}
-+	return 0;
-+}
-+
-+static int
-+crypto_asym_ecdsa_testsuite_setup(void)
-+{
-+	const enum rte_crypto_asym_xform_type xform_type = RTE_CRYPTO_ASYM_XFORM_ECDSA;
-+
-+	if (check_asym_capabilities_supported(xform_type) != 0) {
-+		RTE_LOG(INFO, USER1,
-+			"Device doesn't support required ASYM capabilities. Test skipped\n");
-+		return TEST_SKIPPED;
-+	}
-+	return 0;
-+}
-+
-+static int
-+crypto_asym_ecpm_testsuite_setup(void)
-+{
-+	const enum rte_crypto_asym_xform_type xform_type = RTE_CRYPTO_ASYM_XFORM_ECPM;
-+
-+	if (check_asym_capabilities_supported(xform_type) != 0) {
-+		RTE_LOG(INFO, USER1,
-+			"Device doesn't support required ASYM capabilities. Test skipped\n");
-+		return TEST_SKIPPED;
-+	}
-+	return 0;
-+}
-+
-+static int
-+crypto_asym_eddsa_testsuite_setup(void)
-+{
-+	const enum rte_crypto_asym_xform_type xform_type = RTE_CRYPTO_ASYM_XFORM_EDDSA;
-+
-+	if (check_asym_capabilities_supported(xform_type) != 0) {
-+		RTE_LOG(INFO, USER1,
-+			"Device doesn't support required ASYM capabilities. Test skipped\n");
-+		return TEST_SKIPPED;
-+	}
-+	return 0;
-+}
-+
-+static int
-+crypto_asym_mod_ex_testsuite_setup(void)
-+{
-+	const enum rte_crypto_asym_xform_type xform_type = RTE_CRYPTO_ASYM_XFORM_MODEX;
-+
-+	if (check_asym_capabilities_supported(xform_type) != 0) {
-+		RTE_LOG(INFO, USER1,
-+			"Device doesn't support required ASYM capabilities. Test skipped\n");
-+		return TEST_SKIPPED;
-+	}
-+	return 0;
-+}
-+
-+static int
-+crypto_asym_mod_inv_testsuite_setup(void)
-+{
-+	const enum rte_crypto_asym_xform_type xform_type = RTE_CRYPTO_ASYM_XFORM_MODINV;
-+
-+	if (check_asym_capabilities_supported(xform_type) != 0) {
-+		RTE_LOG(INFO, USER1,
-+			"Device doesn't support required ASYM capabilities. Test skipped\n");
-+		return TEST_SKIPPED;
-+	}
-+	return 0;
-+}
-+
-+static int
-+crypto_asym_rsa_testsuite_setup(void)
-+{
-+	const enum rte_crypto_asym_xform_type xform_type = RTE_CRYPTO_ASYM_XFORM_RSA;
-+
-+	if (check_asym_capabilities_supported(xform_type) != 0) {
-+		RTE_LOG(INFO, USER1,
-+			"Device doesn't support required ASYM capabilities. Test skipped\n");
-+		return TEST_SKIPPED;
-+	}
-+	return 0;
-+}
-+
-+static int
-+crypto_asym_sm2_testsuite_setup(void)
-+{
-+	const enum rte_crypto_asym_xform_type xform_type = RTE_CRYPTO_ASYM_XFORM_SM2;
-+
-+	if (check_asym_capabilities_supported(xform_type) != 0) {
-+		RTE_LOG(INFO, USER1,
-+			"Device doesn't support required ASYM capabilities. Test skipped\n");
-+		return TEST_SKIPPED;
-+	}
-+	return 0;
-+}
-+
-+static int
-+crypto_asym_ml_kem_testsuite_setup(void)
-+{
-+	const enum rte_crypto_asym_xform_type xform_type = RTE_CRYPTO_ASYM_XFORM_ML_KEM;
-+
-+	if (check_asym_capabilities_supported(xform_type) != 0) {
-+		RTE_LOG(INFO, USER1,
-+			"Device doesn't support required ASYM capabilities. Test skipped\n");
-+		return TEST_SKIPPED;
-+	}
-+	return 0;
-+}
-+
-+static int
-+crypto_asym_ml_dsa_testsuite_setup(void)
-+{
-+	const enum rte_crypto_asym_xform_type xform_type = RTE_CRYPTO_ASYM_XFORM_ML_DSA;
-+
-+	if (check_asym_capabilities_supported(xform_type) != 0) {
-+		RTE_LOG(INFO, USER1,
-+			"Device doesn't support required ASYM capabilities. Test skipped\n");
-+		return TEST_SKIPPED;
-+	}
-+	return 0;
-+}
-+
-+static struct unit_test_suite cryptodev_asym_gen_testsuite = {
-+	.suite_name = "Cryptodev ASYM General Unit Test Suite",
- 	.unit_test_cases = {
- 		TEST_CASE_ST(ut_setup_asym, ut_teardown_asym, test_capability),
-+		TEST_CASES_END()
-+	}
-+};
-+
-+static struct unit_test_suite cryptodev_asym_dh_testsuite = {
-+	.suite_name = "Cryptodev ASYM DH Unit Test Suite",
-+	.setup = crypto_asym_dh_testsuite_setup,
-+	.unit_test_cases = {
-+		TEST_CASE_ST(ut_setup_asym, ut_teardown_asym, test_dh_key_generation),
-+		TEST_CASES_END() /**< NULL terminate unit test array */
-+	}
-+};
-+
-+static struct unit_test_suite cryptodev_asym_dsa_testsuite = {
-+	.suite_name = "Cryptodev ASYM DSA Unit Test Suite",
-+	.setup = crypto_asym_dsa_testsuite_setup,
-+	.unit_test_cases = {
- 		TEST_CASE_ST(ut_setup_asym, ut_teardown_asym, test_dsa),
-+		TEST_CASES_END()
-+	}
-+};
-+
-+static struct unit_test_suite cryptodev_asym_ecdh_testsuite = {
-+	.suite_name = "Cryptodev ASYM ECDH Unit Test Suite",
-+	.setup = crypto_asym_ecdh_testsuite_setup,
-+	.unit_test_cases = {
- 		TEST_CASE_ST(ut_setup_asym, ut_teardown_asym,
--				test_dh_key_generation),
--		TEST_CASE_ST(ut_setup_asym, ut_teardown_asym, test_sm2_sign),
--		TEST_CASE_ST(ut_setup_asym, ut_teardown_asym, test_sm2_verify),
--		TEST_CASE_ST(ut_setup_asym, ut_teardown_asym, test_sm2_enc),
--		TEST_CASE_ST(ut_setup_asym, ut_teardown_asym, test_sm2_dec),
--		TEST_CASE_ST(ut_setup_asym, ut_teardown_asym, test_rsa_enc_dec),
--		TEST_CASE_ST(ut_setup_asym, ut_teardown_asym,
--				test_rsa_sign_verify),
-+				test_ecdh_all_curve),
-+		TEST_CASE_NAMED_ST(
-+			"ECDH Elliptic Curve tests",
-+			ut_setup_asym, ut_teardown_asym,
-+			test_ecdh_qat_curves),
-+		TEST_CASES_END()
-+	}
-+};
-+
-+static struct unit_test_suite cryptodev_asym_ecdsa_testsuite = {
-+	.suite_name = "Cryptodev ASYM ECDSA Unit Test Suite",
-+	.setup = crypto_asym_ecdsa_testsuite_setup,
-+	.unit_test_cases = {
- 		TEST_CASE_ST(ut_setup_asym, ut_teardown_asym,
--				test_rsa_enc_dec_crt),
-+			     test_ecdsa_sign_verify_all_curve),
-+		TEST_CASE_NAMED_ST(
-+			"ECDSA Elliptic Curve tests",
-+			ut_setup_asym, ut_teardown_asym,
-+			test_ecdsa_sign_verify_qat_curves),
-+		TEST_CASES_END()
-+	}
-+};
-+
-+static struct unit_test_suite cryptodev_asym_ecpm_testsuite = {
-+	.suite_name = "Cryptodev ASYM ECPM Unit Test Suite",
-+	.setup = crypto_asym_ecpm_testsuite_setup,
-+	.unit_test_cases = {
- 		TEST_CASE_ST(ut_setup_asym, ut_teardown_asym,
--				test_rsa_sign_verify_crt),
--		TEST_CASE_ST(ut_setup_asym, ut_teardown_asym, test_mod_inv),
-+				test_ecpm_all_curve),
-+		TEST_CASE_NAMED_ST(
-+			"ECPM Elliptic Curve tests",
-+			ut_setup_asym, ut_teardown_asym,
-+			test_ecpm_qat_curves),
-+		TEST_CASES_END()
-+	}
-+};
-+
-+static struct unit_test_suite cryptodev_asym_eddsa_testsuite = {
-+	.suite_name = "Cryptodev ASYM EdDSA Unit Test Suite",
-+	.setup = crypto_asym_eddsa_testsuite_setup,
-+	.unit_test_cases = {
-+		TEST_CASE_ST(ut_setup_asym, ut_teardown_asym, test_eddsa_sign_verify_all_curve),
-+		TEST_CASES_END()
-+	}
-+};
-+
-+static struct unit_test_suite cryptodev_asym_mod_ex_testsuite = {
-+	.suite_name = "Cryptodev ASYM MOD Ex Unit Test Suite",
-+	.setup = crypto_asym_mod_ex_testsuite_setup,
-+	.unit_test_cases = {
- 		TEST_CASE_ST(ut_setup_asym, ut_teardown_asym, test_mod_exp),
- 		TEST_CASE_NAMED_WITH_DATA(
- 			"Modex test for zero padding",
-@@ -5057,34 +5294,39 @@ static struct unit_test_suite cryptodev_openssl_asym_testsuite  = {
- 			"Modex Group 24 subgroup test",
- 			ut_setup_asym, ut_teardown_asym,
- 			modular_exponentiation, &modex_group_test_cases[7]),
--		TEST_CASE_ST(ut_setup_asym, ut_teardown_asym, test_eddsa_sign_verify_all_curve),
+-.. automodule:: tests.TestSuite_virtio_fwd
++.. automodule:: tests.TestSuite_l2_forward
+    :members:
+    :show-inheritance:
+diff --git a/doc/api/dts/tests.TestSuite_l2fwd.rst b/doc/api/dts/tests.TestSuite_l2fwd.rst
+deleted file mode 100644
+index 5a0ca312e9..0000000000
+--- a/doc/api/dts/tests.TestSuite_l2fwd.rst
++++ /dev/null
+@@ -1,8 +0,0 @@
+-.. SPDX-License-Identifier: BSD-3-Clause
 -
--		TEST_CASES_END() /**< NULL terminate unit test array */
--	}
--};
+-l2fwd Test Suite
+-================
 -
--static struct unit_test_suite cryptodev_qat_asym_testsuite  = {
--	.suite_name = "Crypto Device QAT ASYM Unit Test Suite",
--	.setup = testsuite_setup,
--	.teardown = testsuite_teardown,
--	.unit_test_cases = {
--		TEST_CASE_NAMED_WITH_DATA(
--			"SM2 encryption - test case 1",
--			ut_setup_asym, ut_teardown_asym,
--			test_sm2_partial_encryption, &sm2_enc_hw_t1),
--		TEST_CASE_NAMED_WITH_DATA(
--			"SM2 decryption - test case 1",
--			ut_setup_asym, ut_teardown_asym,
--			test_sm2_partial_decryption, &sm2_enc_hw_t1),
- 		TEST_CASE_NAMED_WITH_DATA(
- 			"Modular Exponentiation (mod=128, base=20, exp=3, res=128)",
- 			ut_setup_asym, ut_teardown_asym,
- 			modular_exponentiation, &modex_test_case_m128_b20_e3),
-+		TEST_CASES_END()
-+	}
-+};
-+
-+static struct unit_test_suite cryptodev_asym_mod_inv_testsuite = {
-+	.suite_name = "Cryptodev ASYM MOD Inv Unit Test Suite",
-+	.setup = crypto_asym_mod_inv_testsuite_setup,
-+	.unit_test_cases = {
-+		TEST_CASE_ST(ut_setup_asym, ut_teardown_asym, test_mod_inv),
- 		/* Modular Multiplicative Inverse */
- 		TEST_CASE_NAMED_WITH_DATA(
- 			"Modular Inverse (mod=128, base=20, exp=3, inv=128)",
- 			ut_setup_asym, ut_teardown_asym,
- 			modular_multiplicative_inverse, &modinv_test_case),
-+		TEST_CASES_END()
-+	}
-+};
-+
-+static struct unit_test_suite cryptodev_asym_rsa_testsuite = {
-+	.suite_name = "Cryptodev ASYM RSA Unit Test Suite",
-+	.setup = crypto_asym_rsa_testsuite_setup,
-+	.unit_test_cases = {
-+		TEST_CASE_ST(ut_setup_asym, ut_teardown_asym, test_rsa_enc_dec),
-+		TEST_CASE_ST(ut_setup_asym, ut_teardown_asym,
-+				test_rsa_sign_verify),
-+		TEST_CASE_ST(ut_setup_asym, ut_teardown_asym,
-+				test_rsa_enc_dec_crt),
-+		TEST_CASE_ST(ut_setup_asym, ut_teardown_asym,
-+				test_rsa_sign_verify_crt),
- 		/* RSA EXP */
- 		TEST_CASE_NAMED_WITH_DATA(
- 			"RSA Encryption (n=128, pt=20, e=3) EXP, Padding: NONE",
-@@ -5103,203 +5345,149 @@ static struct unit_test_suite cryptodev_qat_asym_testsuite  = {
- 			"RSA Decryption (n=128, pt=20, e=3) CRT, Padding: NONE",
- 			ut_setup_asym, ut_teardown_asym,
- 			kat_rsa_decrypt_crt, &rsa_vector_128_20_3_none),
--		TEST_CASE_NAMED_ST(
--			"ECDH Elliptic Curve tests",
--			ut_setup_asym, ut_teardown_asym,
--			test_ecdh_qat_curves),
--		TEST_CASE_NAMED_ST(
--			"ECPM Elliptic Curve tests",
--			ut_setup_asym, ut_teardown_asym,
--			test_ecpm_qat_curves),
--		TEST_CASE_NAMED_ST(
--			"ECDSA Elliptic Curve tests",
--			ut_setup_asym, ut_teardown_asym,
--			test_ecdsa_sign_verify_qat_curves),
+-.. automodule:: tests.TestSuite_l2fwd
+-   :members:
+-   :show-inheritance:
+diff --git a/doc/api/dts/tests.TestSuite_pmd_buffer_scatter.rst b/doc/api/dts/tests.TestSuite_pmd_buffer_scatter.rst
+deleted file mode 100644
+index cdf30fd879..0000000000
+--- a/doc/api/dts/tests.TestSuite_pmd_buffer_scatter.rst
++++ /dev/null
+@@ -1,8 +0,0 @@
+-.. SPDX-License-Identifier: BSD-3-Clause
 -
--		TEST_CASES_END() /**< NULL terminate unit test array */
-+		TEST_CASES_END()
- 	}
- };
- 
--static struct unit_test_suite cryptodev_octeontx_asym_testsuite  = {
--	.suite_name = "Crypto Device OCTEONTX ASYM Unit Test Suite",
--	.setup = testsuite_setup,
--	.teardown = testsuite_teardown,
-+static struct unit_test_suite cryptodev_asym_sm2_testsuite = {
-+	.suite_name = "Cryptodev ASYM SM2 Unit Test Suite",
-+	.setup = crypto_asym_sm2_testsuite_setup,
- 	.unit_test_cases = {
--		TEST_CASE_ST(ut_setup_asym, ut_teardown_asym, test_capability),
--		TEST_CASE_ST(ut_setup_asym, ut_teardown_asym,
--				test_rsa_enc_dec_crt),
--		TEST_CASE_ST(ut_setup_asym, ut_teardown_asym,
--				test_rsa_sign_verify_crt),
--		TEST_CASE_ST(ut_setup_asym, ut_teardown_asym, test_rsa_enc_dec),
--		TEST_CASE_ST(ut_setup_asym, ut_teardown_asym,
--				test_rsa_sign_verify),
--		TEST_CASE_ST(ut_setup_asym, ut_teardown_asym, test_mod_exp),
--		TEST_CASE_NAMED_WITH_DATA(
--			"Modex test for zero padding",
--			ut_setup_asym, ut_teardown_asym,
--			modular_exponentiation, &modex_test_cases[0]),
--		TEST_CASE_NAMED_WITH_DATA(
--			"Modex test for zero padding (2)",
--			ut_setup_asym, ut_teardown_asym,
--			modular_exponentiation, &modex_test_cases[1]),
--		TEST_CASE_NAMED_WITH_DATA(
--			"Modex Group 5 test",
--			ut_setup_asym, ut_teardown_asym,
--			modular_exponentiation, &modex_group_test_cases[0]),
--		TEST_CASE_NAMED_WITH_DATA(
--			"Modex Group 14 test",
--			ut_setup_asym, ut_teardown_asym,
--			modular_exponentiation, &modex_group_test_cases[1]),
--		TEST_CASE_NAMED_WITH_DATA(
--			"Modex Group 15 test",
--			ut_setup_asym, ut_teardown_asym,
--			modular_exponentiation, &modex_group_test_cases[2]),
--		TEST_CASE_NAMED_WITH_DATA(
--			"Modex Group 16 test",
--			ut_setup_asym, ut_teardown_asym,
--			modular_exponentiation, &modex_group_test_cases[3]),
--		TEST_CASE_NAMED_WITH_DATA(
--			"Modex Group 17 test",
--			ut_setup_asym, ut_teardown_asym,
--			modular_exponentiation, &modex_group_test_cases[4]),
--		TEST_CASE_NAMED_WITH_DATA(
--			"Modex Group 18 test",
--			ut_setup_asym, ut_teardown_asym,
--			modular_exponentiation, &modex_group_test_cases[5]),
-+		TEST_CASE_ST(ut_setup_asym, ut_teardown_asym, test_sm2_sign),
-+		TEST_CASE_ST(ut_setup_asym, ut_teardown_asym, test_sm2_verify),
-+		TEST_CASE_ST(ut_setup_asym, ut_teardown_asym, test_sm2_enc),
-+		TEST_CASE_ST(ut_setup_asym, ut_teardown_asym, test_sm2_dec),
- 		TEST_CASE_NAMED_WITH_DATA(
--			"Modex Group 24 test",
-+			"SM2 encryption - test case 1",
- 			ut_setup_asym, ut_teardown_asym,
--			modular_exponentiation, &modex_group_test_cases[6]),
-+			test_sm2_partial_encryption, &sm2_enc_hw_t1),
- 		TEST_CASE_NAMED_WITH_DATA(
--			"Modex Group 24 subgroup test",
-+			"SM2 decryption - test case 1",
- 			ut_setup_asym, ut_teardown_asym,
--			modular_exponentiation, &modex_group_test_cases[7]),
--		TEST_CASE_ST(ut_setup_asym, ut_teardown_asym,
--			     test_ecdsa_sign_verify_all_curve),
--		TEST_CASE_ST(ut_setup_asym, ut_teardown_asym, test_sm2_sign),
--		TEST_CASE_ST(ut_setup_asym, ut_teardown_asym, test_sm2_verify),
--		TEST_CASE_ST(ut_setup_asym, ut_teardown_asym,
--				test_ecdh_all_curve),
--		TEST_CASE_ST(ut_setup_asym, ut_teardown_asym,
--				test_ecpm_all_curve),
--		TEST_CASE_ST(ut_setup_asym, ut_teardown_asym, test_eddsa_sign_verify_all_curve),
-+			test_sm2_partial_decryption, &sm2_enc_hw_t1),
-+		TEST_CASES_END()
-+	}
-+};
-+
-+static struct unit_test_suite cryptodev_asym_ml_kem_testsuite = {
-+	.suite_name = "Cryptodev ASYM ML KEM Unit Test Suite",
-+	.setup = crypto_asym_ml_kem_testsuite_setup,
-+	.unit_test_cases = {
- 		TEST_CASE_ST(ut_setup_asym, ut_teardown_asym, test_mlkem_keygen),
- 		TEST_CASE_ST(ut_setup_asym, ut_teardown_asym, test_mlkem_encap),
- 		TEST_CASE_ST(ut_setup_asym, ut_teardown_asym, test_mlkem_decap),
-+		TEST_CASES_END()
-+	}
-+};
-+
-+static struct unit_test_suite cryptodev_asym_ml_dsa_testsuite = {
-+	.suite_name = "Cryptodev ASYM ML DSA Unit Test Suite",
-+	.setup = crypto_asym_ml_dsa_testsuite_setup,
-+	.unit_test_cases = {
- 		TEST_CASE_ST(ut_setup_asym, ut_teardown_asym, test_mldsa_keygen),
- 		TEST_CASE_ST(ut_setup_asym, ut_teardown_asym, test_mldsa_sign),
- 		TEST_CASE_ST(ut_setup_asym, ut_teardown_asym, test_mldsa_verify),
--		TEST_CASES_END() /**< NULL terminate unit test array */
-+		TEST_CASES_END()
- 	}
- };
- 
--static struct unit_test_suite cryptodev_virtio_asym_testsuite  = {
--	.suite_name = "Crypto Device VIRTIO ASYM Unit Test Suite",
--	.setup = testsuite_setup,
--	.teardown = testsuite_teardown,
--	.unit_test_cases = {
--		TEST_CASE_ST(ut_setup_asym, ut_teardown_asym, test_capability),
--		TEST_CASE_ST(ut_setup_asym, ut_teardown_asym,
--				test_rsa_sign_verify_crt),
--		TEST_CASE_ST(ut_setup_asym, ut_teardown_asym, test_rsa_enc_dec_crt),
--		TEST_CASES_END() /**< NULL terminate unit test array */
--	}
-+static struct unit_test_suite end_testsuite = {
-+	.suite_name = NULL,
-+	.setup = NULL,
-+	.teardown = NULL,
-+	.unit_test_suites = NULL
- };
- 
- static int
--test_cryptodev_openssl_asym(void)
-+run_cryptodev_asym_testsuite(const char *pmd_name)
- {
--	gbl_driver_id = rte_cryptodev_driver_id_get(
--			RTE_STR(CRYPTODEV_NAME_OPENSSL_PMD));
+-pmd_buffer_scatter Test Suite
+-=============================
 -
-+	uint8_t ret, j, i = 0;
-+
-+	struct unit_test_suite *asym_suites[] = {
-+		&cryptodev_asym_gen_testsuite,
-+		&cryptodev_asym_dh_testsuite,
-+		&cryptodev_asym_dsa_testsuite,
-+		&cryptodev_asym_ecdh_testsuite,
-+		&cryptodev_asym_ecdsa_testsuite,
-+		&cryptodev_asym_ecpm_testsuite,
-+		&cryptodev_asym_eddsa_testsuite,
-+		&cryptodev_asym_mod_ex_testsuite,
-+		&cryptodev_asym_mod_inv_testsuite,
-+		&cryptodev_asym_rsa_testsuite,
-+		&cryptodev_asym_sm2_testsuite,
-+		&cryptodev_asym_ml_kem_testsuite,
-+		&cryptodev_asym_ml_dsa_testsuite,
-+		&end_testsuite
-+	};
-+
-+	static struct unit_test_suite asym_ts = {
-+		.suite_name = "Cryptodev ASYM Unit Test Suite",
-+		.setup = testsuite_setup,
-+		.teardown = testsuite_teardown,
-+		.unit_test_cases = {TEST_CASES_END()}
-+	};
-+
-+	gbl_driver_id = rte_cryptodev_driver_id_get(pmd_name);
- 	if (gbl_driver_id == -1) {
--		RTE_LOG(ERR, USER1, "OPENSSL PMD must be loaded.\n");
-+		RTE_LOG(ERR, USER1, "%s PMD must be loaded.\n", pmd_name);
- 		return TEST_SKIPPED;
- 	}
- 
--	return unit_test_suite_runner(&cryptodev_openssl_asym_testsuite);
-+	asym_ts.unit_test_suites = malloc(sizeof(struct unit_test_suite *) * RTE_DIM(asym_suites));
-+	if (asym_ts.unit_test_suites == NULL) {
-+		RTE_LOG(ERR, USER1,
-+			"Failed to allocate memory for unit test suites\n");
-+		return TEST_FAILED;
-+	}
-+
-+	ADD_ASYM_TESTSUITE(i, asym_ts, asym_suites, RTE_DIM(asym_suites));
-+	ret = unit_test_suite_runner(&asym_ts);
-+
-+	free(asym_ts.unit_test_suites);
-+
-+	return ret;
- }
- 
- static int
--test_cryptodev_qat_asym(void)
-+test_cryptodev_openssl_asym(void)
- {
--	gbl_driver_id = rte_cryptodev_driver_id_get(
--			RTE_STR(CRYPTODEV_NAME_QAT_ASYM_PMD));
+-.. automodule:: tests.TestSuite_pmd_buffer_scatter
+-   :members:
+-   :show-inheritance:
+diff --git a/doc/api/dts/tests.TestSuite_queue_start_stop.rst b/doc/api/dts/tests.TestSuite_queue_start_stop.rst
+deleted file mode 100644
+index 87121676fb..0000000000
+--- a/doc/api/dts/tests.TestSuite_queue_start_stop.rst
++++ /dev/null
+@@ -1,8 +0,0 @@
+-.. SPDX-License-Identifier: BSD-3-Clause
 -
--	if (gbl_driver_id == -1) {
--		RTE_LOG(ERR, USER1, "QAT PMD must be loaded.\n");
--		return TEST_SKIPPED;
--	}
-+	return run_cryptodev_asym_testsuite(RTE_STR(CRYPTODEV_NAME_OPENSSL_PMD));
-+}
- 
--	return unit_test_suite_runner(&cryptodev_qat_asym_testsuite);
-+static int
-+test_cryptodev_qat_asym(void)
-+{
-+	return run_cryptodev_asym_testsuite(RTE_STR(CRYPTODEV_NAME_QAT_ASYM_PMD));
- }
- 
- static int
- test_cryptodev_octeontx_asym(void)
- {
--	gbl_driver_id = rte_cryptodev_driver_id_get(
--			RTE_STR(CRYPTODEV_NAME_OCTEONTX_SYM_PMD));
--	if (gbl_driver_id == -1) {
--		RTE_LOG(ERR, USER1, "OCTEONTX PMD must be loaded.\n");
--		return TEST_SKIPPED;
--	}
--	return unit_test_suite_runner(&cryptodev_octeontx_asym_testsuite);
-+	return run_cryptodev_asym_testsuite(RTE_STR(CRYPTODEV_NAME_OCTEONTX_SYM_PMD));
- }
- 
- static int
- test_cryptodev_cn9k_asym(void)
- {
--	gbl_driver_id = rte_cryptodev_driver_id_get(
--			RTE_STR(CRYPTODEV_NAME_CN9K_PMD));
--	if (gbl_driver_id == -1) {
--		RTE_LOG(ERR, USER1, "CN9K PMD must be loaded.\n");
--		return TEST_SKIPPED;
--	}
+-queue_start_stop Test Suite
+-===========================
 -
--	/* Use test suite registered for crypto_octeontx PMD */
--	return unit_test_suite_runner(&cryptodev_octeontx_asym_testsuite);
-+	return run_cryptodev_asym_testsuite(RTE_STR(CRYPTODEV_NAME_CN9K_PMD));
- }
- 
- static int
- test_cryptodev_cn10k_asym(void)
- {
--	gbl_driver_id = rte_cryptodev_driver_id_get(
--			RTE_STR(CRYPTODEV_NAME_CN10K_PMD));
--	if (gbl_driver_id == -1) {
--		RTE_LOG(ERR, USER1, "CN10K PMD must be loaded.\n");
--		return TEST_SKIPPED;
--	}
+-.. automodule:: tests.TestSuite_queue_start_stop
+-   :members:
+-   :show-inheritance:
+diff --git a/doc/api/dts/tests.TestSuite_queue_toggle.rst b/doc/api/dts/tests.TestSuite_queue_toggle.rst
+new file mode 100644
+index 0000000000..1d6345511f
+--- /dev/null
++++ b/doc/api/dts/tests.TestSuite_queue_toggle.rst
+@@ -0,0 +1,8 @@
++.. SPDX-License-Identifier: BSD-3-Clause
++
++queue_toggle Test Suite
++=======================
++
++.. automodule:: tests.TestSuite_queue_toggle
++   :members:
++   :show-inheritance:
+diff --git a/doc/api/dts/tests.TestSuite_rte_flow.rst b/doc/api/dts/tests.TestSuite_rte_flow.rst
+deleted file mode 100644
+index eacbfd3a2a..0000000000
+--- a/doc/api/dts/tests.TestSuite_rte_flow.rst
++++ /dev/null
+@@ -1,8 +0,0 @@
+-.. SPDX-License-Identifier: BSD-3-Clause
 -
--	/* Use test suite registered for crypto_octeontx PMD */
--	return unit_test_suite_runner(&cryptodev_octeontx_asym_testsuite);
-+	return run_cryptodev_asym_testsuite(RTE_STR(CRYPTODEV_NAME_CN10K_PMD));
- }
- 
- static int
- test_cryptodev_virtio_asym(void)
- {
--	gbl_driver_id = rte_cryptodev_driver_id_get(
--			RTE_STR(CRYPTODEV_NAME_VIRTIO_PMD));
--	if (gbl_driver_id == -1) {
--		RTE_LOG(ERR, USER1, "virtio PMD must be loaded.\n");
--		return TEST_SKIPPED;
--	}
+-rte_flow Test Suite
+-===================
 -
--	/* Use test suite registered for crypto_virtio PMD */
--	return unit_test_suite_runner(&cryptodev_virtio_asym_testsuite);
-+	return run_cryptodev_asym_testsuite(RTE_STR(CRYPTODEV_NAME_VIRTIO_PMD));
- }
- 
- static int
- test_cryptodev_virtio_user_asym(void)
- {
--	gbl_driver_id = rte_cryptodev_driver_id_get(
--			RTE_STR(CRYPTODEV_NAME_VIRTIO_USER_PMD));
--	if (gbl_driver_id == -1) {
--		RTE_LOG(ERR, USER1, "virtio user PMD must be loaded.\n");
--		return TEST_SKIPPED;
--	}
+-.. automodule:: tests.TestSuite_rte_flow
+-   :members:
+-   :show-inheritance:
+diff --git a/doc/api/dts/tests.TestSuite_uni_pkt.rst b/doc/api/dts/tests.TestSuite_uni_pkt.rst
+deleted file mode 100644
+index 95c5a5a28b..0000000000
+--- a/doc/api/dts/tests.TestSuite_uni_pkt.rst
++++ /dev/null
+@@ -1,8 +0,0 @@
+-.. SPDX-License-Identifier: BSD-3-Clause
 -
--	/* Use test suite registered for crypto_virtio_user PMD */
--	return unit_test_suite_runner(&cryptodev_virtio_asym_testsuite);
-+	return run_cryptodev_asym_testsuite(RTE_STR(CRYPTODEV_NAME_VIRTIO_USER_PMD));
- }
+-uni_pkt Test Suite
+-==================
+-
+-.. automodule:: tests.TestSuite_uni_pkt
+-   :members:
+-   :show-inheritance:
+diff --git a/doc/api/dts/tests.TestSuite_unified_packet.rst b/doc/api/dts/tests.TestSuite_unified_packet.rst
+new file mode 100644
+index 0000000000..dddf12b18a
+--- /dev/null
++++ b/doc/api/dts/tests.TestSuite_unified_packet.rst
+@@ -0,0 +1,8 @@
++.. SPDX-License-Identifier: BSD-3-Clause
++
++unified_packet Test Suite
++=========================
++
++.. automodule:: tests.TestSuite_unified_packet
++   :members:
++   :show-inheritance:
+diff --git a/doc/api/dts/tests.TestSuite_virtio_forward.rst b/doc/api/dts/tests.TestSuite_virtio_forward.rst
+new file mode 100644
+index 0000000000..9178c73be5
+--- /dev/null
++++ b/doc/api/dts/tests.TestSuite_virtio_forward.rst
+@@ -0,0 +1,8 @@
++.. SPDX-License-Identifier: BSD-3-Clause
++
++virtio_forward Test Suite
++=========================
++
++.. automodule:: tests.TestSuite_virtio_forward
++   :members:
++   :show-inheritance:
+diff --git a/dts/tests/TestSuite_pmd_buffer_scatter.py b/dts/tests/TestSuite_buffer_scatter.py
+similarity index 98%
+rename from dts/tests/TestSuite_pmd_buffer_scatter.py
+rename to dts/tests/TestSuite_buffer_scatter.py
+index 96da67ee7d..48c0167de6 100644
+--- a/dts/tests/TestSuite_pmd_buffer_scatter.py
++++ b/dts/tests/TestSuite_buffer_scatter.py
+@@ -35,8 +35,8 @@
  
- REGISTER_DRIVER_TEST(cryptodev_openssl_asym_autotest, test_cryptodev_openssl_asym);
+ @requires_nic_capability(NicCapability.PHYSICAL_FUNCTION)
+ @requires_nic_capability(NicCapability.PORT_RX_OFFLOAD_SCATTER)
+-class TestPmdBufferScatter(TestSuite):
+-    """DPDK PMD packet scattering test suite.
++class TestBufferScatter(TestSuite):
++    """DPDK packet scattering test suite.
+ 
+     Configure the Rx queues to have mbuf data buffers
+     whose sizes are smaller than the maximum packet size.
+diff --git a/dts/tests/TestSuite_rte_flow.py b/dts/tests/TestSuite_flow_offload.py
+similarity index 99%
+rename from dts/tests/TestSuite_rte_flow.py
+rename to dts/tests/TestSuite_flow_offload.py
+index 207cbce2d3..7339749908 100644
+--- a/dts/tests/TestSuite_rte_flow.py
++++ b/dts/tests/TestSuite_flow_offload.py
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: BSD-3-Clause
+ # Copyright(c) 2025 University of New Hampshire
+ 
+-"""RTE Flow testing suite.
++"""Flow Offload testing suite.
+ 
+ This suite verifies a range of flow rules built using patterns
+ and actions from the RTE Flow API. It would be impossible to cover
+@@ -32,8 +32,8 @@
+ 
+ 
+ @requires_nic_capability(NicCapability.FLOW_CTRL)
+-class TestRteFlow(TestSuite):
+-    """RTE Flow test suite.
++class TestFlowOffload(TestSuite):
++    """Flow Offload test suite.
+ 
+     This suite consists of 12 test cases:
+     1. Queue Action Ethernet: Verifies queue actions with ethernet patterns
+diff --git a/dts/tests/TestSuite_l2fwd.py b/dts/tests/TestSuite_l2_forward.py
+similarity index 98%
+rename from dts/tests/TestSuite_l2fwd.py
+rename to dts/tests/TestSuite_l2_forward.py
+index 596b892730..95f9c62bdc 100644
+--- a/dts/tests/TestSuite_l2fwd.py
++++ b/dts/tests/TestSuite_l2_forward.py
+@@ -28,7 +28,7 @@
+ 
+ @requires_nic_capability(NicCapability.PHYSICAL_FUNCTION)
+ @requires_link_topology(LinkTopology.TWO_LINKS)
+-class TestL2fwd(TestSuite):
++class TestL2Forward(TestSuite):
+     """L2 forwarding test suite."""
+ 
+     #: The total number of packets to generate and send for forwarding.
+diff --git a/dts/tests/TestSuite_queue_start_stop.py b/dts/tests/TestSuite_queue_toggle.py
+similarity index 97%
+rename from dts/tests/TestSuite_queue_start_stop.py
+rename to dts/tests/TestSuite_queue_toggle.py
+index e9048d4245..50d371e975 100644
+--- a/dts/tests/TestSuite_queue_start_stop.py
++++ b/dts/tests/TestSuite_queue_toggle.py
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: BSD-3-Clause
+ # Copyright(c) 2024 University of New Hampshire
+ 
+-"""Rx/Tx queue start and stop functionality suite.
++"""Rx/Tx queue toggle functionality suite.
+ 
+ This suite tests the ability of the poll mode driver to start and
+ stop either the Rx or Tx queue (depending on the port) during runtime,
+@@ -32,8 +32,8 @@
+ @requires_link_topology(LinkTopology.TWO_LINKS)
+ @requires_nic_capability(NicCapability.RUNTIME_RX_QUEUE_SETUP)
+ @requires_nic_capability(NicCapability.RUNTIME_TX_QUEUE_SETUP)
+-class TestQueueStartStop(TestSuite):
+-    """DPDK Queue start/stop test suite.
++class TestQueueToggle(TestSuite):
++    """DPDK Queue toggle test suite.
+ 
+     Ensures Rx/Tx queue on a port can be disabled and enabled.
+     Verifies packets are not received when either queue is disabled.
+diff --git a/dts/tests/TestSuite_pmd_rss.py b/dts/tests/TestSuite_rss.py
+similarity index 99%
+rename from dts/tests/TestSuite_pmd_rss.py
+rename to dts/tests/TestSuite_rss.py
+index f6adf262c3..f941248d7a 100644
+--- a/dts/tests/TestSuite_pmd_rss.py
++++ b/dts/tests/TestSuite_rss.py
+@@ -55,7 +55,7 @@ class HashAlgorithm(StrEnum):
+ 
+ @requires_link_topology(LinkTopology.ONE_LINK)
+ @requires_nic_capability(NicCapability.PORT_RX_OFFLOAD_RSS_HASH)
+-class TestPmdRss(TestSuite):
++class TestRss(TestSuite):
+     """PMD RSS test suite."""
+ 
+     config: Config
+diff --git a/dts/tests/TestSuite_uni_pkt.py b/dts/tests/TestSuite_unified_packet.py
+similarity index 99%
+rename from dts/tests/TestSuite_uni_pkt.py
+rename to dts/tests/TestSuite_unified_packet.py
+index 97d61cd03a..a35e25d25b 100644
+--- a/dts/tests/TestSuite_uni_pkt.py
++++ b/dts/tests/TestSuite_unified_packet.py
+@@ -34,7 +34,7 @@
+ 
+ 
+ @requires_link_topology(LinkTopology.TWO_LINKS)
+-class TestUniPkt(TestSuite):
++class TestUnifiedPacket(TestSuite):
+     """DPDK Unified packet test suite.
+ 
+     This testing suite uses testpmd's verbose output hardware/software
+diff --git a/dts/tests/TestSuite_virtio_fwd.py b/dts/tests/TestSuite_virtio_forward.py
+similarity index 99%
+rename from dts/tests/TestSuite_virtio_fwd.py
+rename to dts/tests/TestSuite_virtio_forward.py
+index bdecdb76fd..6efaa4e156 100644
+--- a/dts/tests/TestSuite_virtio_fwd.py
++++ b/dts/tests/TestSuite_virtio_forward.py
+@@ -20,7 +20,7 @@
+ from framework.testbed_model.virtual_device import VirtualDevice
+ 
+ 
+-class TestVirtioFwd(TestSuite):
++class TestVirtioForward(TestSuite):
+     """Virtio forwarding test suite."""
+ 
+     virtio_user_vdev = VirtualDevice(
 -- 
-2.48.1
+2.50.1
 
