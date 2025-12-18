@@ -2,39 +2,157 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A50BD6E2BD
-	for <dpdk-dev@archiver.kernel.org>; Thu, 18 Dec 2025 17:11:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C502DD6E2CC
+	for <dpdk-dev@archiver.kernel.org>; Thu, 18 Dec 2025 18:24:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5C4B040615;
-	Thu, 18 Dec 2025 18:11:14 +0100 (CET)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id E9E104060A
- for <dev@dpdk.org>; Thu, 18 Dec 2025 18:11:12 +0100 (CET)
-Received: from mail.maildlp.com (unknown [172.18.224.150])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4dXHHS3vj9zHnGdq
- for <dev@dpdk.org>; Fri, 19 Dec 2025 01:10:44 +0800 (CST)
-Received: from frapema500003.china.huawei.com (unknown [7.182.19.114])
- by mail.maildlp.com (Postfix) with ESMTPS id 1BADE4056A
- for <dev@dpdk.org>; Fri, 19 Dec 2025 01:11:12 +0800 (CST)
-Received: from localhost.localdomain (10.220.239.45) by
- frapema500003.china.huawei.com (7.182.19.114) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 18 Dec 2025 18:11:11 +0100
-From: Marat Khalili <marat.khalili@huawei.com>
-To: <dev@dpdk.org>, Konstantin Ananyev <konstantin.ananyev@huawei.com>
-Subject: [PATCH v2 2/2] bpf: dump additional instructions
-Date: Thu, 18 Dec 2025 17:09:13 +0000
-Message-ID: <20251218170914.7737-3-marat.khalili@huawei.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251218170914.7737-1-marat.khalili@huawei.com>
-References: <20251217172037.59170-1-marat.khalili@huawei.com>
- <20251218170914.7737-1-marat.khalili@huawei.com>
-MIME-Version: 1.0
+	by mails.dpdk.org (Postfix) with ESMTP id 9D4A640275;
+	Thu, 18 Dec 2025 19:24:16 +0100 (CET)
+Received: from CO1PR03CU002.outbound.protection.outlook.com
+ (mail-westus2azon11010012.outbound.protection.outlook.com [52.101.46.12])
+ by mails.dpdk.org (Postfix) with ESMTP id 02B2C4026A;
+ Thu, 18 Dec 2025 19:24:15 +0100 (CET)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=xw8bGVcgyjm6pifjshkPUQq9if4vWOvNoL9ZQXUXZ7NZMlfAYlfM+cUXE8Fx0wIo2zyE0+3sBKRnhWuMP5gsaVHy/J2tvrT1eQ+jyqa7hQ+C8AVYJOTaCxr+/56eZmVhGOfSfZXVlSFupIdmJO/PXohTDRcxkNrYjwcZxrp4IqZ593pk4cwWW9Ro31vlxOQcH8icl/kRz3Ecpn+pzUjaktpxUkyp46bp6v/YQ+OyfPkTYy2yzmk98JaBUDoqAMBH7m9oakioOKWSRpVkDjFSr96R7QNPLjiibyqnvQ87lQvFKqI7PxuqYX0lz7Iik4OSs242ZtmVEPnG6aMklC9A7Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=RyUJn03JSZ0WWQw/Y3fhQ7TKRVcajonZQRpQGaUCjrY=;
+ b=FpBwPOB1Gq2X6PAPW0konqXYgIQ1/xEQAcJ34Z1j19hk7UkETTbWHz3ubwvraDtTy4hyz1dSsqYAcb6QzXYYAeNVqo4qw+lrDsZjs7PtHRWrfzVv5K1uE0CeM39HMrIGS3+hNSI51HwYQSTJaM8Fh4Cgu3PS36TFV7VDama8+ARulg10aHW5jVS6RUqd/Jiap9ix9t5iUuc9inYXUPXvRRh9b06gibPRq+oV3AdypwD+6APaB9skGMQkSKe2j4k073OHO6ORcW5hrMtC7ff/o5KBvTtHTXMo+xPeeD/DQLeVP3ga3JXtjtLuSWsg52IiFI2WQZQfWk14ViUeoxuhQA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=RyUJn03JSZ0WWQw/Y3fhQ7TKRVcajonZQRpQGaUCjrY=;
+ b=INe5tNG/DjUJr6JcVO2CPRPpkuSeHhw0GEQOYiP/vTVUpvXIVLDJSMku+oDKWGBkcefi7gpTNiCMrpbU6SkBfilUQaUXBDU4LvYbDGPMA9XRlmTANWedyki+loOPU+uV04ZOnUGc3S73X9hrN68tSAgmqzJHcny/BAj3TsQ/uR/Qf0OkhcZwbw0DmW1TeDbZbsqvYXOLYrDgOWt9cRjHVwdN3k/31Wbikypac6LTKHZjMuL7Q7tz8Jix+H1Ucm79NuKQVA2FOQ6qrODqZjRZ1nJoPpB95vzY5O4IPcWlR8ojyieWhQDN+fZW7vigPtnear0vO55F6GVNTSTl/HZYSQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from PH7PR12MB9173.namprd12.prod.outlook.com (2603:10b6:510:2ee::9)
+ by SA1PR12MB8860.namprd12.prod.outlook.com (2603:10b6:806:38b::15)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9434.8; Thu, 18 Dec
+ 2025 18:24:08 +0000
+Received: from PH7PR12MB9173.namprd12.prod.outlook.com
+ ([fe80::4be:bdae:b21:3fd0]) by PH7PR12MB9173.namprd12.prod.outlook.com
+ ([fe80::4be:bdae:b21:3fd0%3]) with mapi id 15.20.9434.001; Thu, 18 Dec 2025
+ 18:24:08 +0000
+Message-ID: <18458ac8-1c0d-4bc9-bf4b-97ee06c1eef0@nvidia.com>
+Date: Thu, 18 Dec 2025 20:23:10 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: 22.11.11 patches review and test
+To: luca.boccassi@gmail.com, stable@dpdk.org
+Cc: dev@dpdk.org, Abhishek Marathe <Abhishek.Marathe@microsoft.com>,
+ David Christensen <drc@linux.vnet.ibm.com>,
+ Hemant Agrawal <hemant.agrawal@nxp.com>, Ian Stokes <ian.stokes@intel.com>,
+ Jerin Jacob <jerinj@marvell.com>, John McNamara <john.mcnamara@intel.com>,
+ Ju-Hyoung Lee <juhlee@microsoft.com>, Kevin Traynor <ktraynor@redhat.com>,
+ Luca Boccassi <bluca@debian.org>, Pei Zhang <pezhang@redhat.com>,
+ Raslan Darawsheh <rasland@nvidia.com>, Thomas Monjalon
+ <thomas@monjalon.net>, Yanghang Liu <yanghliu@redhat.com>,
+ sbadawi@nvidia.com, waela@nvidia.com
+References: <20251204005603.3236032-1-luca.boccassi@gmail.com>
+Content-Language: en-US
+From: Ali Alnubani <alialnu@nvidia.com>
+In-Reply-To: <20251204005603.3236032-1-luca.boccassi@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.220.239.45]
-X-ClientProxiedBy: frapema500002.china.huawei.com (7.182.19.148) To
- frapema500003.china.huawei.com (7.182.19.114)
+X-ClientProxiedBy: TLZP290CA0002.ISRP290.PROD.OUTLOOK.COM (2603:1096:950:9::8)
+ To PH7PR12MB9173.namprd12.prod.outlook.com
+ (2603:10b6:510:2ee::9)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB9173:EE_|SA1PR12MB8860:EE_
+X-MS-Office365-Filtering-Correlation-Id: e1478d37-7680-4b44-015e-08de3e62a1d9
+X-LD-Processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|366016|7416014|376014|1800799024|7053199007; 
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?ZjBqN000cEdIaGZnRjR5Wm9zUXFtV0JGbkdzbXFPVXFMVHROa05SUk0vbWd0?=
+ =?utf-8?B?UnhCd0VYN0NRNTMwSUdFTDE4MlJlMHVuVTdrdGdZYlFhZTU4cUF2cUd1VWhn?=
+ =?utf-8?B?c05oQ0tFT0ZYc0ZhODZHb2hHWFgyaER0NFd6NU5qREpKc0REUVRIdERaRW5H?=
+ =?utf-8?B?Y09FSU1VMlZOelROTnNTNTFsUGVuSWRFSXNqUWxmTHR4VVQ5dHlseER1UHlP?=
+ =?utf-8?B?UDYyRTVCWEs4YlY4N0RzSkJYdmVUcVB6Vkd3REdqU1l1SHVoSzEzOHU5bVVl?=
+ =?utf-8?B?RWlyS0tIdWFOMTlKS3lZK2V6Tm1jeUw4d1VxK1dOdDBBK1M4Zk1HQ3RnelR0?=
+ =?utf-8?B?ek1LeVcyOVdjVThDc0JOdUVHQUNkKzl0MFBJR2lMaDhhVCtSUWhDVS9sQlZC?=
+ =?utf-8?B?VVRkUEoySTFsbTRiajBVdHBxYWNsUlJCNFEvckJOTE84amFSaG50cER1MFZt?=
+ =?utf-8?B?bXIwYUFrRi9pN0pHcmtqUWpkOExYYitYQTkzRnJzNEg4a1VjbkNzTUZGMmtT?=
+ =?utf-8?B?ZW9CNENtL3JXSEFUa3dkbXB2OU00M1krRzZMeml1SzRLLzFEU0lOa2s2emky?=
+ =?utf-8?B?ZG1rSmZOY2U1UlNiQlRLWk5SQzlLc0F1d01qU1hEM1lxbHpvMStwVitPWHEx?=
+ =?utf-8?B?TklncW9QYisyNUo1UVc5STZtaGxpbW04WGRZK3Z5dnIvcHhCL2krTU9SalZy?=
+ =?utf-8?B?VkgrT04yWVNYKzYyeEhXeVhLM2Y1TldQbWJBOWNWUUNkblhlb0UxbkRiMjV1?=
+ =?utf-8?B?TnBIVDFoRlowcGpmZEFBc1FPT3U3SzNGV1dLYnJTdXQwL211MlpkdWlUY2px?=
+ =?utf-8?B?bVMzRkhRejVVTlV1ZGhTYkNGbVF4NUlIM0ZrSWE2YzFLMmI3bjJoQmtRT2JV?=
+ =?utf-8?B?NHJrbnRSNWdwOUtlRTBEeEhQUDFJOHZ5c3paTlI1MEhsc3VQUFBhYkhaYXB4?=
+ =?utf-8?B?d3RtRXluK1pRaWVxSU5QUkNxYml1ejU0U3MxR2tEMVRTaW9kOGRKNmFaRzhz?=
+ =?utf-8?B?Q0cwZzdHWThNY1AzTWx6Z3EyVWZGcDhYZzJnT1o0Ly9YMWUyV3BIdUZZZU1H?=
+ =?utf-8?B?b3A2VFVjVlhiNWcrSUlkM2lMOGp0TSthRmo3U0xnODJGWHlraDdDdjBvbjBy?=
+ =?utf-8?B?bDJGaWFlMjRBSnQzallOUnBTMnIyT3F0UEVTbjJtSWlmazVUWWI0bkpqck5S?=
+ =?utf-8?B?S3FrWTVxUXJtYjZ4YmlpSkxoNlRYOHJ6U0FTaUVvQzZ6dEpUdzMyb3BzZVNr?=
+ =?utf-8?B?QTJzclRGWURaQkhuUWVCZFJUSFU5WXFqamJLUVVCY2hYaVdrTVZqdURMOE9s?=
+ =?utf-8?B?RlZKSnp1MVJKM0ZsV01kQTl1aGdwMFFiM2lqM25udzJ0dVdqZkJOenhIM3Rq?=
+ =?utf-8?B?NEdiZzlVMnUrWnVuVlRaUjNiWEsvUWtFREgzN2dxRHFxdkdtSGYzWGxaekp0?=
+ =?utf-8?B?NHF2T2JtNEdaaVA3ODIyRWt1aFhEV2RFeWJDWkE2TUJIUlNpNklMb21DUXhl?=
+ =?utf-8?B?cG9LT0FFdWJDU2RmT2pTUUxJSXJNRTdJcFNxZWIwSEN5U0lEeDY4aGd4Q0Fi?=
+ =?utf-8?B?T1hLY3luWk13QmkrMlY1MDFqaWNLc0RhWjE3aWRiQVRTMzFCakFZcjZjejFU?=
+ =?utf-8?B?L0xSNWFUZEJJOFVWSFJNN01mcDBTcmRDTkl6c2J3ZjdQQTRXY3J1RlEzcVo1?=
+ =?utf-8?B?VHdvdm9DZHk0Z0ZocGxsZDFzbkYzNVhNWmxBY2pjNGZDZ3VqUldRL3N1ajA0?=
+ =?utf-8?B?cXVxdlVtdHZvbDJxcFNVdkk4ZFVXL1d0ZWh2SGRpWWk3UmdobmI2QzNiZ0Vn?=
+ =?utf-8?B?cnBNUmUyemVsTWRENjQ0bGUvRzRkZDZ3d3luZkZINjdmazZtVEcvR2tqV09j?=
+ =?utf-8?B?RHBpZlFKdStTbGNVdnFPLzR1WXg1L3hrYjFxb2RRQUhRL1lzZG1mRnkxa20x?=
+ =?utf-8?Q?aCHH0GtFl3X/NlEPWKBBFPIkO2GeVloy?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:PH7PR12MB9173.namprd12.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(366016)(7416014)(376014)(1800799024)(7053199007); DIR:OUT;
+ SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?Yzh5dllneVIzODlVZTNhZnc0NWxoMUk0VXpRNE9jRXIvVVJFbG90NWhrRFpF?=
+ =?utf-8?B?MFFXcFpyMjhRRFJkRjdsblNWM2dHTWdFdlA0QTUvSEp2b2ZzV1lzZFB6VlFp?=
+ =?utf-8?B?NHdIdFVxWUIxd1BtYTlJcFpXR0pnaHdFTm03MWdoT2ZyQ3dGVkZCTVNjczJM?=
+ =?utf-8?B?NzBlUFhReEdLMU5yZE9ZSzdQeUREbkJYTFNWdmUxb2VMeW9yR09HZzd4dFlX?=
+ =?utf-8?B?WnY4Y3B0VmVxZjZORXNNMHE4dFlEbnQyK3haTDZqdkttRjVsaDNPb0hrOEdK?=
+ =?utf-8?B?YlNocitqcUhtb29wdFNqTE8zT3dlY0psM2tYdTdJOWV5RmhYMTMxc3V1d2Yr?=
+ =?utf-8?B?TUFjRGdwbXQ3cXllNTBFbU0wZXVCcWRibzZsUXpLZWFkR01tOXRRMXhvZlJy?=
+ =?utf-8?B?QkNhaHpvRko3cnFiUTlJc2p6Sm5ZdGRhdTVXRXVIanNwRndSL2FOSktGeWFl?=
+ =?utf-8?B?RHk1TzFteFFhOWhHMWcxKzV0SGNjbU4zY1dLb1c3K0Evalh0MWFDSUdTQXZU?=
+ =?utf-8?B?cXh1NDdsNklRMXpiQUZVdmZ0TmVUcDQwTDdwYmR5QS9WSldwUTRsQkpGa1Fx?=
+ =?utf-8?B?S0xUcCtBWE04ZlJSVU56ZmdHZkRMRG9uTklKbkdRalhwN3h3ZFRBS1RkTUJi?=
+ =?utf-8?B?VW93b0dXUE1JejJMN2hOS0lJVllPS1RuNDdYem5DckhKay96bStzWmRRWkpB?=
+ =?utf-8?B?WU0yd1k0Nkk1YVdGQTVIcldUV1hhSFV1U2NVRlc0Rnc0dHJNSS9kZ042cEVt?=
+ =?utf-8?B?d3FReXc2ZHpNVS9RNk1IcE1vd0JWbEozUHAzSy9kRGtaRWREalAxc0Fod2k3?=
+ =?utf-8?B?c01xNHFERFBjK21sNEZHc1piVi9ocVgyNWp3R0MvTDdRaEtJRTJ5ZjhLd2xp?=
+ =?utf-8?B?Z0FNcjhnVDQxMTRxQTIxcmE5QkpQSVpOOVcyVDM0U1RWVHhHM0lCRksxSkJ6?=
+ =?utf-8?B?bTFXdnkwV21tK2FueDEzOU9HcHJ4UCs4a09qMFQ2RW8rSnJFcEQ3K1QrR1B0?=
+ =?utf-8?B?ZFZrejBqVk1udDI0cGxIa0NvUXBwWExyVmZjVDdzQ0dvVVVsTzB3Tnd4YmRj?=
+ =?utf-8?B?N2cxSGdKWCtQL2d1eXFMRnZ3UnVHNklqMGZJeFlyaEM3Q1pORWRpcm9Rdm5u?=
+ =?utf-8?B?S2wvU0VOQlRiNWRtKzVFSE9QLzQ3UUhqYlVPWHBQeHVBanZjVDZEWnlhYlFa?=
+ =?utf-8?B?dkdySkRJTFBtRCtaS3QxTEJwenpScHUrM0k1ajJaWTdjVGtKQ0Z2R2VIWk5h?=
+ =?utf-8?B?ZDdHM3FKSjZSRDdqSFRFQzVtREd2SGN0T1hFTzlkbG1IWCs1dDU2VjJmeHRm?=
+ =?utf-8?B?R3JBNFB2Vi9LeEdiWDhqT2J0dUVjdzM3aHJTaEM5VDIrSlgxWXZKUVAvTmlH?=
+ =?utf-8?B?WnNsdzgrbjVWWnEyYWZ2RUlESEtRSml4NXQvWEprUStkWkJWR1k4bWlMMEEy?=
+ =?utf-8?B?eUMyOXJaSzBFejNzUkF0dzEyT1JLQ0J1Vm4wMGRjNHdDTW8ybEZDSUhjZjZU?=
+ =?utf-8?B?NXdjMDQwc2ZJZkFidzVRK3MyTmlwVVBkclkzeUk1SndSb04vRnVDaWQrR3JP?=
+ =?utf-8?B?YVh5WkhIQTlyZTI5aGFLTm5CM1c5Tk5lSXFTL2dIeG5qNlRVc29DWlAwUU1a?=
+ =?utf-8?B?dkoreEtrUlJHZkYwTFRIZkhXNElXNEZiNGtrU3pFSDh6Y3hOVU5rbWtONGxo?=
+ =?utf-8?B?QXQ4WllvR3hvNE1lTnN4MkFTeXo4c3lTT0lRVVU5ZEVJbjJyOTdzVzAyNzg5?=
+ =?utf-8?B?SGNZN2VodTk5V2ovZHZTNFVwV0xxMU0xZUZtcmw5NHg0L3ducTVZVk9Wb01z?=
+ =?utf-8?B?UTA0L2ZNa0p1T29hSnY0R2tGZzJxZ25uTVprT0RCR29pZGtuVFZQTVI1Uitu?=
+ =?utf-8?B?M25PZjV0Zm9DRDVoZS9yTHp5a0o5UGZWSGhDcGc5WGVjcE1LeWNzUm5rOUpp?=
+ =?utf-8?B?NU5GbG1MK2hyRTJWMHhieXFWNnkwTndkRnU4eExmT2RlYTlWVHRlL1J6M01I?=
+ =?utf-8?B?NXZHeHo5WjM2MGVIZGNvMENPOHJXTENjRldnU01GYU9NYThxYnY2bnNsUXkr?=
+ =?utf-8?B?enZUMTZmOFBtMmd5d1V4dDZIMUVYbE5zVjZVaFdCZE9ZSXcvN0ZpdWEwa01N?=
+ =?utf-8?Q?ISnYcHHZaKwA6YL5bioqs2eEt?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e1478d37-7680-4b44-015e-08de3e62a1d9
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB9173.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Dec 2025 18:24:07.8549 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: niNXDUrKogtDimWwEatvd+Q6ljPxoMDfKopcO0T0pOC9usJodz0M0j6VBf7wJUu+kr2UoM5C0av+6gaqTo0xog==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8860
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -48,164 +166,64 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Fix issues with rte_bpf_dump not supporting or printing incorrectly some
-instructions that lib/bpf supports, and add warnings when it doesn't:
+On 12/4/25 2:56 AM, luca.boccassi@gmail.com wrote:
 
-* Conditional jump with condition between two registers was incorrectly
-  printed by rte_bpf_dump as one with condition between register and
-  immediate. Add missing handling of BPF_X flag.
+> Hi all,
+>
+> Here is a list of patches targeted for stable release 22.11.11.
+>
+> The planned date for the final release is December 18th.
+>
+> Please help with testing and validation of your use cases and report
+> any issues/results with reply-all to this mail. For the final release
+> the fixes and reported validations will be added to the release notes.
+>
+> A release candidate tarball can be found at:
+>
+>      https://dpdk.org/browse/dpdk-stable/tag/?id=v22.11.11-rc1
+>
+> These patches are located at branch 22.11 of dpdk-stable repo:
+>      https://dpdk.org/browse/dpdk-stable/
+>
+> Thanks.
+>
+> Luca Boccassi
 
-* Call instruction was printed by rte_bpf_dump as conditional jump. Add
-  explicit handling for it.
+Hello,
 
-* We only support stx and ldx instructions in BPF_MEM mode, but were not
-  checking the mode in rte_bpf_dump. Check for mode and only print
-  mnemonic if the mode is BPF_MEM, otherwise print an error.
+We ran the following functional tests with Nvidia hardware on v22.11.11-rc1:
+- Basic functionality:
+   Send and receive multiple types of traffic.
+- testpmd xstats counter test.
+- testpmd timestamp test.
+- Changing/checking link status through testpmd.
+- rte_flow tests 
+(https://doc.dpdk.org/guides/nics/mlx5.html#supported-hardware-offloads)
+- RSS tests.
+- VLAN filtering, stripping, and insertion tests.
+- Checksum and TSO tests.
+- ptype tests.
+- link_status_interrupt example application tests.
+- l3fwd-power example application tests.
+- Multi-process example applications tests.
+- Hardware LRO tests.
+- Buffer Split tests.
+- Tx scheduling tests.
 
-* Atomic instructions were not previously supported by rte_bpf_dump. Add
-  necessary handling.
+Functional tests ran on ConnectX-6 Dx (OS: Ubuntu 22.04 | Driver: 
+MLNX_OFED_LINUX-5.8-7.0.6.1 | Firmware: 22.35.8002).
 
-* Some instructions have variations with previously unused src_reg or
-  offset fields set to non-zero value. We do not support any of these
-  variations yet, and were printing them as a standard instruction.
-  Print small note after such instructions warning the user that this is
-  a variation.
+An engineer from my team reported 2 issues:
 
-Signed-off-by: Marat Khalili <marat.khalili@huawei.com>
----
- lib/bpf/bpf_dump.c | 69 ++++++++++++++++++++++++++++++++++++++--------
- 1 file changed, 57 insertions(+), 12 deletions(-)
+https://bugs.dpdk.org/show_bug.cgi?id=1851
+Did not reproduce in 22.11.10, git-bisect points to 58a6421bc396 
+("net/mlx5: fix multicast")..
 
-diff --git a/lib/bpf/bpf_dump.c b/lib/bpf/bpf_dump.c
-index 6ee0e32b43..91bc7c0a7a 100644
---- a/lib/bpf/bpf_dump.c
-+++ b/lib/bpf/bpf_dump.c
-@@ -44,6 +44,19 @@ static const char *const jump_tbl[16] = {
- 	[EBPF_CALL >> 4] = "call", [EBPF_EXIT >> 4] = "exit",
- };
- 
-+static inline const char *
-+atomic_op(int32_t imm)
-+{
-+	switch (imm) {
-+	case BPF_ATOMIC_ADD:
-+		return "xadd";
-+	case BPF_ATOMIC_XCHG:
-+		return "xchg";
-+	default:
-+		return NULL;
-+	}
-+}
-+
- RTE_EXPORT_SYMBOL(rte_bpf_dump)
- void rte_bpf_dump(FILE *f, const struct ebpf_insn *buf, uint32_t len)
- {
-@@ -52,7 +65,7 @@ void rte_bpf_dump(FILE *f, const struct ebpf_insn *buf, uint32_t len)
- 	for (i = 0; i < len; ++i) {
- 		const struct ebpf_insn *ins = buf + i;
- 		uint8_t cls = BPF_CLASS(ins->code);
--		const char *op, *postfix = "";
-+		const char *op, *postfix = "", *warning = "";
- 
- 		fprintf(f, " L%u:\t", i);
- 
-@@ -66,12 +79,15 @@ void rte_bpf_dump(FILE *f, const struct ebpf_insn *buf, uint32_t len)
- 			/* fall through */
- 		case EBPF_ALU64:
- 			op = alu_op_tbl[BPF_OP_INDEX(ins->code)];
-+			if (ins->off != 0)
-+				/* Not yet supported variation with non-zero offset. */
-+				warning = ", off != 0";
- 			if (BPF_SRC(ins->code) == BPF_X)
--				fprintf(f, "%s%s r%u, r%u\n", op, postfix, ins->dst_reg,
--					ins->src_reg);
-+				fprintf(f, "%s%s r%u, r%u%s\n", op, postfix, ins->dst_reg,
-+					ins->src_reg, warning);
- 			else
--				fprintf(f, "%s%s r%u, #0x%x\n", op, postfix,
--					ins->dst_reg, ins->imm);
-+				fprintf(f, "%s%s r%u, #0x%x%s\n", op, postfix,
-+					ins->dst_reg, ins->imm, warning);
- 			break;
- 		case BPF_LD:
- 			op = "ld";
-@@ -79,10 +95,13 @@ void rte_bpf_dump(FILE *f, const struct ebpf_insn *buf, uint32_t len)
- 			if (ins->code == (BPF_LD | BPF_IMM | EBPF_DW)) {
- 				uint64_t val;
- 
-+				if (ins->src_reg != 0)
-+					/* Not yet supported variation with non-zero src. */
-+					warning = ", src != 0";
- 				val = (uint32_t)ins[0].imm |
- 					(uint64_t)(uint32_t)ins[1].imm << 32;
--				fprintf(f, "%s%s r%d, #0x%"PRIx64"\n",
--					op, postfix, ins->dst_reg, val);
-+				fprintf(f, "%s%s r%d, #0x%"PRIx64"%s\n",
-+					op, postfix, ins->dst_reg, val, warning);
- 				i++;
- 			} else if (BPF_MODE(ins->code) == BPF_IMM)
- 				fprintf(f, "%s%s r%d, #0x%x\n", op, postfix,
-@@ -100,8 +119,12 @@ void rte_bpf_dump(FILE *f, const struct ebpf_insn *buf, uint32_t len)
- 		case BPF_LDX:
- 			op = "ldx";
- 			postfix = size_tbl[BPF_SIZE_INDEX(ins->code)];
--			fprintf(f, "%s%s r%d, [r%u + %d]\n", op, postfix, ins->dst_reg,
--				ins->src_reg, ins->off);
-+			if (BPF_MODE(ins->code) == BPF_MEM)
-+				fprintf(f, "%s%s r%d, [r%u + %d]\n", op, postfix, ins->dst_reg,
-+					ins->src_reg, ins->off);
-+			else
-+				fprintf(f, "// BUG: LDX opcode 0x%02x in eBPF insns\n",
-+					ins->code);
- 			break;
- 		case BPF_ST:
- 			op = "st";
-@@ -114,7 +137,20 @@ void rte_bpf_dump(FILE *f, const struct ebpf_insn *buf, uint32_t len)
- 					ins->code);
- 			break;
- 		case BPF_STX:
--			op = "stx";
-+			if (BPF_MODE(ins->code) == BPF_MEM)
-+				op = "stx";
-+			else if (BPF_MODE(ins->code) == EBPF_ATOMIC) {
-+				op = atomic_op(ins->imm);
-+				if (op == NULL) {
-+					fprintf(f, "// BUG: ATOMIC operation 0x%x in eBPF insns\n",
-+						ins->imm);
-+					break;
-+				}
-+			} else {
-+				fprintf(f, "// BUG: STX opcode 0x%02x in eBPF insns\n",
-+					ins->code);
-+				break;
-+			}
- 			postfix = size_tbl[BPF_SIZE_INDEX(ins->code)];
- 			fprintf(f, "%s%s [r%d + %d], r%u\n", op, postfix,
- 				ins->dst_reg, ins->off, ins->src_reg);
-@@ -122,12 +158,21 @@ void rte_bpf_dump(FILE *f, const struct ebpf_insn *buf, uint32_t len)
- #define L(pc, off) ((int)(pc) + 1 + (off))
- 		case BPF_JMP:
- 			op = jump_tbl[BPF_OP_INDEX(ins->code)];
-+			if (ins->src_reg != 0)
-+				/* Not yet supported variation with non-zero src w/o condition. */
-+				warning = ", src != 0";
- 			if (op == NULL)
- 				fprintf(f, "invalid jump opcode: %#x\n", ins->code);
- 			else if (BPF_OP(ins->code) == BPF_JA)
--				fprintf(f, "%s L%d\n", op, L(i, ins->off));
-+				fprintf(f, "%s L%d%s\n", op, L(i, ins->off), warning);
-+			else if (BPF_OP(ins->code) == EBPF_CALL)
-+				/* Call of helper function with index in immediate. */
-+				fprintf(f, "%s #%u%s\n", op, ins->imm, warning);
- 			else if (BPF_OP(ins->code) == EBPF_EXIT)
--				fprintf(f, "%s\n", op);
-+				fprintf(f, "%s%s\n", op, warning);
-+			else if (BPF_SRC(ins->code) == BPF_X)
-+				fprintf(f, "%s r%u, r%u, L%d\n", op, ins->dst_reg,
-+					ins->src_reg, L(i, ins->off));
- 			else
- 				fprintf(f, "%s r%u, #0x%x, L%d\n", op, ins->dst_reg,
- 					ins->imm, L(i, ins->off));
--- 
-2.43.0
+https://bugs.dpdk.org/show_bug.cgi?id=1852
+Reproduces on v22.11.10.
+
+We don't see other issues caused by changes in this release.
+
+Regards,
+Ali
 
