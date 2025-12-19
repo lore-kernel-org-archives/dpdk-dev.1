@@ -2,65 +2,63 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96945E66891
-	for <dpdk-dev@archiver.kernel.org>; Fri, 19 Dec 2025 22:02:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4976E6689C
+	for <dpdk-dev@archiver.kernel.org>; Fri, 19 Dec 2025 22:02:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D28D64027A;
-	Fri, 19 Dec 2025 23:02:10 +0100 (CET)
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com
- [209.85.214.169])
- by mails.dpdk.org (Postfix) with ESMTP id D338C40276
- for <dev@dpdk.org>; Fri, 19 Dec 2025 23:02:09 +0100 (CET)
-Received: by mail-pl1-f169.google.com with SMTP id
- d9443c01a7336-29f102b013fso28035945ad.2
- for <dev@dpdk.org>; Fri, 19 Dec 2025 14:02:09 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id DFF274027A;
+	Fri, 19 Dec 2025 23:02:49 +0100 (CET)
+Received: from mail-dl1-f49.google.com (mail-dl1-f49.google.com [74.125.82.49])
+ by mails.dpdk.org (Postfix) with ESMTP id EB30E40276
+ for <dev@dpdk.org>; Fri, 19 Dec 2025 23:02:48 +0100 (CET)
+Received: by mail-dl1-f49.google.com with SMTP id
+ a92af1059eb24-11b6bc976d6so4880947c88.0
+ for <dev@dpdk.org>; Fri, 19 Dec 2025 14:02:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1766181729; x=1766786529; darn=dpdk.org;
+ d=iol.unh.edu; s=unh-iol; t=1766181767; x=1766786567; darn=dpdk.org;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=XdQ5NkAZdpqyvEdKr7r6rfMLq/xKe2B6AJKuwYCFV5s=;
- b=EPCGT58xjQa/DYBbMonO4jYBp1z+NFsVuNEDbXj0fdYL+g7Fd1Y52aM8y10CFl6SG1
- R/iilQaLK9vp2p8fpvhMDmhSG50ZeCD9YIy7q5bc/IkhK49Pso5ffl2IpHwN96xjvJkW
- Xv0Tsz+J3QrYSCxWDOP/Z3nstsJ7MebTNSZ5I=
+ bh=KlJVPDyvcmoQhlf35bdp93QIr5lOgvPowEAiECkslBY=;
+ b=RzQsS8aiZULZQ+/cRgm95os1x/WC9xriXPrsvp9lO5nLOnEhpvJEBH5+iOHEVruflP
+ rSgikygUy5Y1kH7W+JyCpEnqQnokDin5VD1wloBXWG0rs5INagNayHTnWDGsVpI2oHxN
+ WX6wgnCrOFgYZ+ZrDiWcq1MNPjGRQX+0ESFIY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1766181729; x=1766786529;
+ d=1e100.net; s=20230601; t=1766181767; x=1766786567;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to;
- bh=XdQ5NkAZdpqyvEdKr7r6rfMLq/xKe2B6AJKuwYCFV5s=;
- b=KFTF/U7pSYbgO6vEopK4jsHCKubLXaZ36eKPUA+uljIaYA6wInfmfl0XwPEBH4FzMS
- v8etlS6wT1jvSdvQzMH6qujOkmkgpucm0nTmoV6JqPz7PzhnDO4uV4jy+n6BOW3ozHOR
- DaB9/4e6IlP1QombBtndWjYDcKiAudMh2BatZ3kzZW4GMJMakw/QumeP+6WjsKb9tR80
- AEG/X1kDd40TrWHSUqKnSPyS2kDGFHrv+SxJ6537JIuu7jshYgKieH2WSrEEr2H9/wEC
- /YBWBj28vvg3UxXDCIWj79eMA0pXEUPjOgRWlRgbQSv6iQGZY8yNjMx93dShGz8pTUcD
- MeyQ==
+ bh=KlJVPDyvcmoQhlf35bdp93QIr5lOgvPowEAiECkslBY=;
+ b=Qgcgoo9QpegoiRKXJJ+Qpe2TQGjKqZNzNL0goaxqkkyacyehZcEqpPVPEsg3Rkyu4B
+ 45J+BhdKIQpB8HRaEXo4jfLt5v5jER4UFRWvUTz/TS0DRZivM6kNguF31CJG9h1qIbui
+ u0Yj1LAcWI3HF7d2Rhz3Af86zx364+Nyje6qDKPzY0w1IQTTTB8WTKauLlQTDAM+SwBL
+ gHpCafrRVpVhhPb2lqjfHXLI+oBcvLGO5bZwtVBP3LoVYRSAlrx5FH8WuYgIyKdpQ5yu
+ XJYbQlc4LOOelczWgW/XdN+BlMV14CJ3Y+ZrfjTAlwRl35v4/erH969WpwUdpm5QBzIY
+ Qq3A==
 X-Forwarded-Encrypted: i=1;
- AJvYcCW8DiYQaJHoD667HyRNClcnmdLjhsFCqjoD92fKvJzC5iFCctYXeZhUjNscIGG9nqVrd0w=@dpdk.org
-X-Gm-Message-State: AOJu0YzUhFDoVbmHdFllRjcbdPwC+KB+Xcpm5oDcEqTod2e6+319r7tC
- /tlsQiWOJ7+4WLzCLS9rXZWMPWKTaz/9QwjXi+8NH/L1SBMTUmlTdCHpoe12hIb4puYosVHVHK5
- +C3FigCvTo1/EzYrYyPeydCAdwJsEiMk+MaL69yF3tA==
-X-Gm-Gg: AY/fxX4W+4k/yAxRHrVlPoiYI19V/zIvg1xxgni7dss7FmnBq2uvmYOaZ1Wl+2k2aq3
- YuXmii7+dI6t6LDShCjvif9MMCkkD00G6WjDoDCPwKQPz5o2taCnQA0VDHFYxvXpnWg4UMJqTb4
- wp0oelnlvHxW0Yt1ANZpYik4ekqoX/zQvQR6J4fp5o9SRyCndkH806q7JJGvXR7QFtWTSeGPVi/
- z5VXpGFZhC/gn8humG6dT26+FKY6BhZmWEttjoztgXERKsTnPkwj/sYchXaXUSthgoIHmD/48XZ
- 9hJqV+dQrQ==
-X-Google-Smtp-Source: AGHT+IFrEQ50BhnbL5yOB+du2O/0J8GRt18K+IJLcPM7Zn53LKwNm7u58Slpcez2PDDz5O685RrByJwUmQvI/g0EgNw=
-X-Received: by 2002:a05:7022:4185:b0:11a:2ec0:dd02 with SMTP id
- a92af1059eb24-121722ebc42mr5574115c88.33.1766181728895; Fri, 19 Dec 2025
- 14:02:08 -0800 (PST)
+ AJvYcCXRJt2tZXHgZrjlUVBGYGhDqmTJWSSXI8DU6xC7B5HvdAVsGMOY54umsW2rDRYEcwFCE8Y=@dpdk.org
+X-Gm-Message-State: AOJu0YzeDXeT549l7dKtm+aydBX+HcDd6lWUBl+ubHqb5Dz7BgvSZZqa
+ iyjSuQv0AW5169nkcMdylDV1Ix/TKLXe1bA3yk62U4vOmqagBP/N14g7vZWh0rEkX8xYJBOtGVf
+ ue1ltm4vz4+666rRDQEMOLHCkIV561X6jQMG1Cg74Fg==
+X-Gm-Gg: AY/fxX7et/SuRRa9dI2zcW3xjQ3z6pP2kAyc2wVY1a+/v1gffqM2DgX1dkOkFJ6FNiJ
+ liZKkdwjf1Z5Aeb04FXWn/ZC7vHq/rnsfUOMomDe+iWmnGTcpIHQp4sQnzjWOQt/OShOkDEAIEK
+ SIdIyDqyCftI+zeDW+Xm8xvkDJ0Cmpa7595BYlMiQVP4Wpd1UuQl/0JXaCvblw38av/hARBODTX
+ chOrPmR0XQTE1SJQAwJnuAGKO42ahuLZB0wgBGXJUclMDoSwn6yikl/qLUvALlnI09yJfAMhrzE
+ mFuY+hD3CA==
+X-Google-Smtp-Source: AGHT+IHdVb2qgyqyTWktQElEMkTH6RdWt0WJz5FQg+914Xzne3Ijur8jHZSlqk2T0pAFTMTog9VnuBk/XiRVVC58++U=
+X-Received: by 2002:a05:7022:670d:b0:119:e569:f84d with SMTP id
+ a92af1059eb24-120619279c2mr7881696c88.4.1766181767299; Fri, 19 Dec 2025
+ 14:02:47 -0800 (PST)
 MIME-Version: 1.0
-References: <20251212210142.669766-1-abailey@iol.unh.edu>
- <20251215214049.694604-1-abailey@iol.unh.edu>
-In-Reply-To: <20251215214049.694604-1-abailey@iol.unh.edu>
+References: <20251212110944.59350-1-madhukar.mythri@gmail.com>
+In-Reply-To: <20251212110944.59350-1-madhukar.mythri@gmail.com>
 From: Patrick Robb <probb@iol.unh.edu>
-Date: Fri, 19 Dec 2025 17:00:17 -0500
-X-Gm-Features: AQt7F2rrVSQ6FNHbTWZ3ZtNimnwXYD2bjsv51oKpCT1YgB8nx4_oyygoSkcNyyo
-Message-ID: <CAJvnSUB-VkmZJOKSpemKFeSBOppxhFCvypgVK0e0aWqwy_PuRQ@mail.gmail.com>
-Subject: Re: [PATCH v3] dts: show missing NIC capabilities in DTS logs
-To: Andrew Bailey <abailey@iol.unh.edu>
-Cc: luca.vizzarro@arm.com, paul.szczepanek@arm.com, dmarx@iol.unh.edu, 
- dev@dpdk.org
-Content-Type: multipart/alternative; boundary="0000000000008f58a30646553ac7"
+Date: Fri, 19 Dec 2025 17:00:56 -0500
+X-Gm-Features: AQt7F2qxjJnP6RdpoPHe7bPr0u6cXY6XKcO7kAi_QwonXiazZ3yZxNQZWS4O61s
+Message-ID: <CAJvnSUDa=vcR+bm5wZJcUm_vKgW6zPqpj9fXruu5P6HrX4NwbA@mail.gmail.com>
+Subject: Re: [PATCH] net/netvsc: Fix on race condition of multiple commands
+To: Madhuker Mythri <madhukar.mythri@gmail.com>
+Cc: longli@microsoft.com, dev@dpdk.org, stephen@networkplumber.org, 
+ madhuker.mythri@oracle.com
+Content-Type: multipart/alternative; boundary="000000000000d958ab0646553cfc"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -74,15 +72,19 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---0000000000008f58a30646553ac7
+--000000000000d958ab0646553cfc
 Content-Type: text/plain; charset="UTF-8"
 
 Recheck-request: iol-intel-Performance
 
---0000000000008f58a30646553ac7
+I am putting in a CI retest - no action is needed on your end.
+
+--000000000000d958ab0646553cfc
 Content-Type: text/html; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-<div dir=3D"ltr">Recheck-request:=C2=A0iol-intel-Performance</div>
+<div dir=3D"ltr">Recheck-request:=C2=A0iol-intel-Performance<div><br></div>=
+<div>I am putting in a CI retest - no action is needed on your end.</div></=
+div>
 
---0000000000008f58a30646553ac7--
+--000000000000d958ab0646553cfc--
