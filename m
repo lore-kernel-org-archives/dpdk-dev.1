@@ -2,46 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C79B5D767DC
-	for <dpdk-dev@archiver.kernel.org>; Fri, 19 Dec 2025 11:31:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54E8AD767FF
+	for <dpdk-dev@archiver.kernel.org>; Fri, 19 Dec 2025 13:04:03 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C6B7A4026A;
-	Fri, 19 Dec 2025 12:31:39 +0100 (CET)
-Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id 7881740150
- for <dev@dpdk.org>; Fri, 19 Dec 2025 12:31:38 +0100 (CET)
-Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 376B44708F; Fri, 19 Dec 2025 12:31:38 +0100 (CET)
-From: bugzilla@dpdk.org
-To: dev@dpdk.org
-Subject: [DPDK/ethdev Bug 1856] i40evf_check_api_version(): PF/VF API version
- mismatch:(0.0)-(1.1) with multiple DPDK instances using different VFs
- with the same PF
-Date: Fri, 19 Dec 2025 11:31:37 +0000
-X-Bugzilla-Reason: AssignedTo
-X-Bugzilla-Type: new
-X-Bugzilla-Watch-Reason: None
-X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: ethdev
-X-Bugzilla-Version: 24.11
-X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: normal
-X-Bugzilla-Who: srija.bhattacharyya@wipro.com
-X-Bugzilla-Status: UNCONFIRMED
-X-Bugzilla-Resolution: 
-X-Bugzilla-Priority: Normal
-X-Bugzilla-Assigned-To: dev@dpdk.org
-X-Bugzilla-Target-Milestone: ---
-X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
- op_sys bug_status bug_severity priority component assigned_to reporter
- target_milestone
-Message-ID: <bug-1856-3@http.bugs.dpdk.org/>
+	by mails.dpdk.org (Postfix) with ESMTP id 1804B4026A;
+	Fri, 19 Dec 2025 14:04:02 +0100 (CET)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 1865040150
+ for <dev@dpdk.org>; Fri, 19 Dec 2025 14:04:01 +0100 (CET)
+Received: from mail.maildlp.com (unknown [172.18.224.150])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4dXnlk0LrrzHnGdH;
+ Fri, 19 Dec 2025 21:03:30 +0800 (CST)
+Received: from dubpeml100004.china.huawei.com (unknown [7.214.146.78])
+ by mail.maildlp.com (Postfix) with ESMTPS id 3523D4056B;
+ Fri, 19 Dec 2025 21:03:59 +0800 (CST)
+Received: from dubpeml500001.china.huawei.com (7.214.147.241) by
+ dubpeml100004.china.huawei.com (7.214.146.78) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.36; Fri, 19 Dec 2025 13:03:58 +0000
+Received: from dubpeml500001.china.huawei.com ([7.214.147.241]) by
+ dubpeml500001.china.huawei.com ([7.214.147.241]) with mapi id 15.02.1544.011; 
+ Fri, 19 Dec 2025 13:03:58 +0000
+From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+To: Marat Khalili <marat.khalili@huawei.com>, "dev@dpdk.org" <dev@dpdk.org>,
+ Wathsala Vithanage <wathsala.vithanage@arm.com>
+Subject: RE: [PATCH v2 1/2] bpf: add atomic xchg support
+Thread-Topic: [PATCH v2 1/2] bpf: add atomic xchg support
+Thread-Index: AQHccEFJb7pDn1lviUu63DVy+6TZFrUo7tPA
+Date: Fri, 19 Dec 2025 13:03:58 +0000
+Message-ID: <6d981cf05ad34f19a0956db69faf99b6@huawei.com>
+References: <20251217172037.59170-1-marat.khalili@huawei.com>
+ <20251218170914.7737-1-marat.khalili@huawei.com>
+ <20251218170914.7737-2-marat.khalili@huawei.com>
+In-Reply-To: <20251218170914.7737-2-marat.khalili@huawei.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.195.245.175]
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-X-Bugzilla-URL: http://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
 MIME-Version: 1.0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -56,46 +56,23 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-http://bugs.dpdk.org/show_bug.cgi?id=3D1856
 
-            Bug ID: 1856
-           Summary: i40evf_check_api_version(): PF/VF API version
-                    mismatch:(0.0)-(1.1) with multiple DPDK instances
-                    using different VFs with the same PF
-           Product: DPDK
-           Version: 24.11
-          Hardware: All
-                OS: All
-            Status: UNCONFIRMED
-          Severity: normal
-          Priority: Normal
-         Component: ethdev
-          Assignee: dev@dpdk.org
-          Reporter: srija.bhattacharyya@wipro.com
-  Target Milestone: ---
 
-We encountered an issue with DPDK initialization, where a PF/VF API version
-mismatch occurred for VFs from the same PF. This issue was previously repor=
-ted
-under Bug ID:578.
-Below here is a list of firmware versions that we tested with DPDK 24.11:
+> Add support for BPF atomic xchg instruction, and tests for it. This
+> instruction can be produced using compiler intrinsics.
+>=20
+> Signed-off-by: Marat Khalili <marat.khalili@huawei.com>
+> ---
+>  app/test/test_bpf.c     | 459 ++++++++++++++++++++++++++++++++++++++++
+>  lib/bpf/bpf_def.h       |   5 +
+>  lib/bpf/bpf_exec.c      |  35 ++-
+>  lib/bpf/bpf_jit_arm64.c |  59 ++++--
+>  lib/bpf/bpf_jit_x86.c   |  37 +++-
+>  lib/bpf/bpf_validate.c  |  22 +-
+>  6 files changed, 580 insertions(+), 37 deletions(-)
 
-Driver  Driver version  firmware version
-i40e    2.22.18         6.00 0x800063b6 18.5.17
-i40e    2.22.18         8.40 0x8000b1fb 20.5.16=20=20=20=20=20=20=20=20=20
-i40e    2.22.18         8.40 0x8000b1fb 20.5.16
-i40e    2.22.18         9.54 0x800063b6 24.0.5
-i40e    2.22.18         7.10 0x80009d2d 19.5.15
+Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+Tested-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
 
-We would like to confirm if this issue has been fixed in any of the newer
-firmware or driver versions. If it has been resolved, kindly specify which
-driver and firmware version contains the fix.
-We would appreciate any guidance on whether the issue persists or is addres=
-sed
-in any of those versions.
+> 2.43.0
 
-Thanks,
-
---=20
-You are receiving this mail because:
-You are the assignee for the bug.=
