@@ -2,47 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E8DED78770
-	for <dpdk-dev@archiver.kernel.org>; Fri, 19 Dec 2025 17:28:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 380F0E66880
+	for <dpdk-dev@archiver.kernel.org>; Fri, 19 Dec 2025 17:28:20 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C068340A81;
-	Fri, 19 Dec 2025 18:26:36 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id E08A040B8F;
+	Fri, 19 Dec 2025 18:26:37 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
- by mails.dpdk.org (Postfix) with ESMTP id B21CF406B6
- for <dev@dpdk.org>; Fri, 19 Dec 2025 18:26:33 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id A33A940A72
+ for <dev@dpdk.org>; Fri, 19 Dec 2025 18:26:34 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1766165194; x=1797701194;
+ t=1766165195; x=1797701195;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=eEdg8vxt9w3YoEsT+OS/Nop5RccRkYednv7Ekj09oxs=;
- b=Ur8WPOWshkN72XUP64mnUlYsRbjnLvOdja3R5I4GtKT2ld6lDq5xqF8M
- B9heLmRRa/CV8f2AXl1MkJ+M3wBVZA1mTpakjgoBnMrnhxFQDlvBdTkTq
- GhIawOJmMNApr/pR/lIkAXPIQ3dp6Ly0H8fz4LY1hIJtiAaAKCGc1JKF3
- ymNfh9AC5y+oVl4MrTRgCyrV0qukjc+IcMvKKdBmviTQiI6ExwanXsmBu
- 0hczTst4SsV0kaxDHtB0o0wW8obbjeBOSOvXBCXHaIS9Xwrqv9cMn4FMd
- eEqA1PSszGgyyh0rnNYtjMEx7Oa/RUyx93MM7w0d1A03oNj0QrBvzMloW g==;
-X-CSE-ConnectionGUID: ZYdBLV3ER1WuI5kLBI5zBQ==
-X-CSE-MsgGUID: A+pw5NX/QXafiGhdrPak4A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11647"; a="71759502"
-X-IronPort-AV: E=Sophos;i="6.21,161,1763452800"; d="scan'208";a="71759502"
+ bh=0aBJPl+Yt4yYDmaxd0LS05Vb2llACZejmyDkVkvRs04=;
+ b=GD9QmzMyHG4M2gi7kczN+wtU8+boIRLlLJonMhJyOO/6L8cbA8YLnlPC
+ P9g//Zs1XBqGpC3FkptnIf0g5WYzUY3I4kq5vtZ2Bz7uE4Xgehmy67IuT
+ 7dRkcqIjbzMp4hVkTGzqlnXWFveQ3dCZpWWQ/YQNrhsw3RB58YjfIEOs4
+ Fuku/PFpDk/PmPAnlZq26qetVkXOLpqqqFD4eve18xf6upuj1HGKgRVpU
+ oK0WfN34WLy/za9JX/9SCrIekB7EVBE7B3M8O4JnE8o7O8wyFFiyn0bYt
+ j5TYShxjFlNy0O9hTdDeLH6SOmQglG+nzFHtnhdMlRvJIXARZW6Z5UksH g==;
+X-CSE-ConnectionGUID: +6WK6wZsRWuEaczlGlXK3Q==
+X-CSE-MsgGUID: +ksqbB2eRmSDsqX20okatA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11647"; a="71759505"
+X-IronPort-AV: E=Sophos;i="6.21,161,1763452800"; d="scan'208";a="71759505"
 Received: from orviesa010.jf.intel.com ([10.64.159.150])
  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 19 Dec 2025 09:26:34 -0800
-X-CSE-ConnectionGUID: 1y5gCmXWSBak3wr90gnn9A==
-X-CSE-MsgGUID: nbiH3U71Ts+n2lL4Nj2NUQ==
+ 19 Dec 2025 09:26:35 -0800
+X-CSE-ConnectionGUID: MJl6K/P0SWWBSvXHTdKUFg==
+X-CSE-MsgGUID: 3KCUdIrmSB+XxGqfGD4paA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,161,1763452800"; d="scan'208";a="198170489"
+X-IronPort-AV: E=Sophos;i="6.21,161,1763452800"; d="scan'208";a="198170495"
 Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by orviesa010.jf.intel.com with ESMTP; 19 Dec 2025 09:26:32 -0800
+ by orviesa010.jf.intel.com with ESMTP; 19 Dec 2025 09:26:33 -0800
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
-Cc: Bruce Richardson <bruce.richardson@intel.com>,
- Jingjing Wu <jingjing.wu@intel.com>,
- Praveen Shetty <praveen.shetty@intel.com>
-Subject: [RFC PATCH 18/27] net/idpf: use common scalar Tx function
-Date: Fri, 19 Dec 2025 17:25:35 +0000
-Message-ID: <20251219172548.2660777-19-bruce.richardson@intel.com>
+Cc: Bruce Richardson <bruce.richardson@intel.com>
+Subject: [RFC PATCH 19/27] net/intel: avoid writing the final pkt descriptor
+ twice
+Date: Fri, 19 Dec 2025 17:25:36 +0000
+Message-ID: <20251219172548.2660777-20-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251219172548.2660777-1-bruce.richardson@intel.com>
 References: <20251219172548.2660777-1-bruce.richardson@intel.com>
@@ -61,236 +60,58 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Update idpf driver to use the common scalar Tx function in single-queue
-configuration.
+In the scalar datapath, there is a loop to handle multi-segment, and
+multi-descriptor packets on Tx. After that loop, the end-of-packet bit
+was written to the descriptor separately, meaning that for each
+single-descriptor packet there were two writes to the second quad-word -
+basically 3 x 64-bit writes rather than just 2. Adjusting the code to
+compute the EOP bit inside the loop saves that extra write per packet
+and so improves performance.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- drivers/net/intel/idpf/idpf_common_rxtx.c | 179 ++--------------------
- 1 file changed, 11 insertions(+), 168 deletions(-)
+ drivers/net/intel/common/tx_scalar_fns.h | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/net/intel/idpf/idpf_common_rxtx.c b/drivers/net/intel/idpf/idpf_common_rxtx.c
-index b34d545a0a..81bc45f6ef 100644
---- a/drivers/net/intel/idpf/idpf_common_rxtx.c
-+++ b/drivers/net/intel/idpf/idpf_common_rxtx.c
-@@ -8,7 +8,6 @@
+diff --git a/drivers/net/intel/common/tx_scalar_fns.h b/drivers/net/intel/common/tx_scalar_fns.h
+index 6079a558e4..7b643fcf44 100644
+--- a/drivers/net/intel/common/tx_scalar_fns.h
++++ b/drivers/net/intel/common/tx_scalar_fns.h
+@@ -378,6 +378,10 @@ ci_xmit_pkts(struct ci_tx_queue *txq,
+ 				txn = &sw_ring[txe->next_id];
+ 			}
  
- #include "idpf_common_rxtx.h"
- #include "idpf_common_device.h"
--#include "../common/rx.h"
- 
- int idpf_timestamp_dynfield_offset = -1;
- uint64_t idpf_timestamp_dynflag;
-@@ -848,9 +847,11 @@ idpf_calc_context_desc(uint64_t flags)
- /* set TSO context descriptor, returns 0 if no context needed, 1 if context set
-  */
- static inline uint16_t
--idpf_set_tso_ctx(uint64_t ol_flags, struct rte_mbuf *mbuf,
--			union ci_tx_offload tx_offload,
--			uint64_t *qw0, uint64_t *qw1)
-+idpf_set_tso_ctx(uint64_t ol_flags, const struct rte_mbuf *mbuf,
-+		 const union ci_tx_offload *tx_offload,
-+		 const struct ci_tx_queue *txq __rte_unused,
-+		 uint32_t *td_offset __rte_unused,
-+		 uint64_t *qw0, uint64_t *qw1)
- {
- 	uint16_t cmd_dtype = IDPF_TX_DESC_DTYPE_FLEX_TSO_CTX | IDPF_TX_FLEX_CTX_DESC_CMD_TSO;
- 	uint16_t tso_segsz = mbuf->tso_segsz;
-@@ -861,12 +862,12 @@ idpf_set_tso_ctx(uint64_t ol_flags, struct rte_mbuf *mbuf,
- 		return 0;
- 
- 	/* TSO context descriptor setup */
--	if (tx_offload.l4_len == 0) {
-+	if (tx_offload->l4_len == 0) {
- 		TX_LOG(DEBUG, "L4 length set to 0");
- 		return 0;
- 	}
- 
--	hdr_len = tx_offload.l2_len + tx_offload.l3_len + tx_offload.l4_len;
-+	hdr_len = tx_offload->l2_len + tx_offload->l3_len + tx_offload->l4_len;
- 	tso_len = mbuf->pkt_len - hdr_len;
- 
- 	*qw0 = rte_cpu_to_le_32(tso_len & IDPF_TXD_FLEX_CTX_MSS_RT_M) |
-@@ -933,7 +934,8 @@ idpf_dp_splitq_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
- 		tx_offload.tso_segsz = tx_pkt->tso_segsz;
- 		/* Calculate the number of context descriptors needed. */
- 		uint64_t cd_qw0, cd_qw1;
--		nb_ctx = idpf_set_tso_ctx(ol_flags, tx_pkt, tx_offload, &cd_qw0, &cd_qw1);
-+		nb_ctx = idpf_set_tso_ctx(ol_flags, tx_pkt, &tx_offload, txq,
-+					  NULL /* unused */, &cd_qw0, &cd_qw1);
- 
- 		/* Calculate the number of TX descriptors needed for
- 		 * each packet. For TSO packets, use ci_calc_pkt_desc as
-@@ -1339,167 +1341,8 @@ uint16_t
- idpf_dp_singleq_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
- 			  uint16_t nb_pkts)
- {
--	volatile struct ci_tx_desc *txd;
--	volatile struct ci_tx_desc *txr;
--	union ci_tx_offload tx_offload = {0};
--	struct ci_tx_entry *txe, *txn;
--	struct ci_tx_entry *sw_ring;
--	struct ci_tx_queue *txq;
--	struct rte_mbuf *tx_pkt;
--	struct rte_mbuf *m_seg;
--	uint64_t buf_dma_addr;
--	uint32_t td_offset;
--	uint64_t ol_flags;
--	uint16_t tx_last;
--	uint16_t nb_used;
--	uint16_t nb_ctx;
--	uint16_t td_cmd;
--	uint16_t tx_id;
--	uint16_t nb_tx;
--	uint16_t slen;
++			/* fill the last descriptor with End of Packet (EOP) bit */
++			if (m_seg->next == NULL)
++				td_cmd |= CI_TX_DESC_CMD_EOP;
++
+ 			txd->buffer_addr = rte_cpu_to_le_64(buf_dma_addr);
+ 			txd->cmd_type_offset_bsz = rte_cpu_to_le_64(CI_TX_DESC_DTYPE_DATA |
+ 				((uint64_t)td_cmd << CI_TXD_QW1_CMD_S) |
+@@ -390,21 +394,17 @@ ci_xmit_pkts(struct ci_tx_queue *txq,
+ 			txe = txn;
+ 			m_seg = m_seg->next;
+ 		} while (m_seg);
 -
--	nb_tx = 0;
--	txq = tx_queue;
--
--	if (unlikely(txq == NULL))
--		return nb_tx;
--
--	sw_ring = txq->sw_ring;
--	txr = txq->ci_tx_ring;
--	tx_id = txq->tx_tail;
--	txe = &sw_ring[tx_id];
--
--	/* Check if the descriptor ring needs to be cleaned. */
--	if (txq->nb_tx_free < txq->tx_free_thresh)
--		(void)ci_tx_xmit_cleanup(txq);
--
--	for (nb_tx = 0; nb_tx < nb_pkts; nb_tx++) {
--		td_cmd = 0;
--		td_offset = 0;
--
--		tx_pkt = *tx_pkts++;
--		RTE_MBUF_PREFETCH_TO_FREE(txe->mbuf);
--
--		ol_flags = tx_pkt->ol_flags;
--		tx_offload.l2_len = tx_pkt->l2_len;
--		tx_offload.l3_len = tx_pkt->l3_len;
--		tx_offload.l4_len = tx_pkt->l4_len;
--		tx_offload.tso_segsz = tx_pkt->tso_segsz;
--		/* Calculate the number of context descriptors needed. */
--		uint64_t cd_qw0, cd_qw1;
--		nb_ctx = idpf_set_tso_ctx(ol_flags, tx_pkt, tx_offload, &cd_qw0, &cd_qw1);
--
--		/* The number of descriptors that must be allocated for
--		 * a packet. For TSO packets, use ci_calc_pkt_desc as
--		 * the mbuf data size might exceed max data size that hw allows
--		 * per tx desc.
--		 */
--		if (ol_flags & RTE_MBUF_F_TX_TCP_SEG)
--			nb_used = (uint16_t)(ci_calc_pkt_desc(tx_pkt) + nb_ctx);
--		else
--			nb_used = (uint16_t)(tx_pkt->nb_segs + nb_ctx);
--		tx_last = (uint16_t)(tx_id + nb_used - 1);
--
--		/* Circular ring */
--		if (tx_last >= txq->nb_tx_desc)
--			tx_last = (uint16_t)(tx_last - txq->nb_tx_desc);
--
--		TX_LOG(DEBUG, "port_id=%u queue_id=%u"
--		       " tx_first=%u tx_last=%u",
--		       txq->port_id, txq->queue_id, tx_id, tx_last);
--
--		if (nb_used > txq->nb_tx_free) {
--			if (ci_tx_xmit_cleanup(txq) != 0) {
--				if (nb_tx == 0)
--					return 0;
--				goto end_of_tx;
--			}
--			if (unlikely(nb_used > txq->tx_rs_thresh)) {
--				while (nb_used > txq->nb_tx_free) {
--					if (ci_tx_xmit_cleanup(txq) != 0) {
--						if (nb_tx == 0)
--							return 0;
--						goto end_of_tx;
--					}
--				}
--			}
--		}
--
--		if (ol_flags & CI_TX_CKSUM_OFFLOAD_MASK)
--			td_cmd |= IDPF_TX_FLEX_DESC_CMD_CS_EN;
--
--		if (nb_ctx != 0) {
--			/* Setup TX context descriptor if required */
--			uint64_t *ctx_txd = RTE_CAST_PTR(uint64_t *, &txr[tx_id]);
--
--			txn = &sw_ring[txe->next_id];
--			RTE_MBUF_PREFETCH_TO_FREE(txn->mbuf);
--			if (txe->mbuf != NULL) {
--				rte_pktmbuf_free_seg(txe->mbuf);
--				txe->mbuf = NULL;
--			}
--
--			ctx_txd[0] = cd_qw0;
--			ctx_txd[1] = cd_qw1;
--
--			txe->last_id = tx_last;
--			tx_id = txe->next_id;
--			txe = txn;
--		}
--
--		m_seg = tx_pkt;
--		do {
--			txd = &txr[tx_id];
--			txn = &sw_ring[txe->next_id];
--
--			if (txe->mbuf != NULL)
--				rte_pktmbuf_free_seg(txe->mbuf);
--			txe->mbuf = m_seg;
--
--			/* Setup TX Descriptor */
--			slen = m_seg->data_len;
--			buf_dma_addr = rte_mbuf_data_iova(m_seg);
--			txd->buffer_addr = rte_cpu_to_le_64(buf_dma_addr);
--			txd->cmd_type_offset_bsz = rte_cpu_to_le_64(CI_TX_DESC_DTYPE_DATA |
--				((uint64_t)td_cmd  << CI_TXD_QW1_CMD_S) |
--				((uint64_t)td_offset << CI_TXD_QW1_OFFSET_S) |
--				((uint64_t)slen << CI_TXD_QW1_TX_BUF_SZ_S));
--
--			txe->last_id = tx_last;
--			tx_id = txe->next_id;
--			txe = txn;
--			m_seg = m_seg->next;
--		} while (m_seg);
--
--		/* The last packet data descriptor needs End Of Packet (EOP) */
+-		/* fill the last descriptor with End of Packet (EOP) bit */
 -		td_cmd |= CI_TX_DESC_CMD_EOP;
--		txq->nb_tx_used = (uint16_t)(txq->nb_tx_used + nb_used);
--		txq->nb_tx_free = (uint16_t)(txq->nb_tx_free - nb_used);
--
--		if (txq->nb_tx_used >= txq->tx_rs_thresh) {
--			TX_LOG(DEBUG, "Setting RS bit on TXD id="
--			       "%4u (port=%d queue=%d)",
--			       tx_last, txq->port_id, txq->queue_id);
--
--			td_cmd |= CI_TX_DESC_CMD_RS;
--
--			/* Update txq RS bit counters */
--			txq->nb_tx_used = 0;
--		}
--
--		txd->cmd_type_offset_bsz |= rte_cpu_to_le_16(td_cmd << CI_TXD_QW1_CMD_S);
--	}
--
--end_of_tx:
--	rte_wmb();
--
--	TX_LOG(DEBUG, "port_id=%u queue_id=%u tx_tail=%u nb_tx=%u",
--	       txq->port_id, txq->queue_id, tx_id, nb_tx);
--
--	IDPF_PCI_REG_WRITE(txq->qtx_tail, tx_id);
--	txq->tx_tail = tx_id;
--
--	return nb_tx;
-+	return ci_xmit_pkts(tx_queue, tx_pkts, nb_pkts, CI_VLAN_IN_L2TAG1,
-+			idpf_set_tso_ctx, NULL, NULL);
- }
+ 		txq->nb_tx_used = (uint16_t)(txq->nb_tx_used + nb_used);
+ 		txq->nb_tx_free = (uint16_t)(txq->nb_tx_free - nb_used);
  
- /* TX prep functions */
+ 		/* set RS bit on the last descriptor of one packet */
+ 		if (txq->nb_tx_used >= txq->tx_rs_thresh) {
+-			td_cmd |= CI_TX_DESC_CMD_RS;
++			txd->cmd_type_offset_bsz |=
++					rte_cpu_to_le_64(CI_TX_DESC_CMD_RS << CI_TXD_QW1_CMD_S);
+ 
+ 			/* Update txq RS bit counters */
+ 			txq->nb_tx_used = 0;
+ 		}
+-		txd->cmd_type_offset_bsz |=
+-				rte_cpu_to_le_64(((uint64_t)td_cmd) << CI_TXD_QW1_CMD_S);
+ 
+ 		if (ts_fns != NULL)
+ 			ts_id = ts_fns->write_ts_desc(txq, tx_pkt, tx_id, ts_id);
 -- 
 2.51.0
 
