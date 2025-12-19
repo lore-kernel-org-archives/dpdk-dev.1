@@ -2,44 +2,43 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84B4ED767FF
-	for <dpdk-dev@archiver.kernel.org>; Fri, 19 Dec 2025 13:06:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6473CD767FF
+	for <dpdk-dev@archiver.kernel.org>; Fri, 19 Dec 2025 13:13:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5FC04402EE;
-	Fri, 19 Dec 2025 14:06:38 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 128B6402E9;
+	Fri, 19 Dec 2025 14:13:32 +0100 (CET)
 Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
  [185.176.79.56])
- by mails.dpdk.org (Postfix) with ESMTP id 9454D40150;
- Fri, 19 Dec 2025 14:06:36 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 7E82440150;
+ Fri, 19 Dec 2025 14:13:30 +0100 (CET)
 Received: from mail.maildlp.com (unknown [172.18.224.150])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4dXnpg2XDCzJ46Ck;
- Fri, 19 Dec 2025 21:06:03 +0800 (CST)
-Received: from dubpeml500004.china.huawei.com (unknown [7.214.147.1])
- by mail.maildlp.com (Postfix) with ESMTPS id 0142240539;
- Fri, 19 Dec 2025 21:06:36 +0800 (CST)
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4dXnyd0B2MzJ46Bv;
+ Fri, 19 Dec 2025 21:12:57 +0800 (CST)
+Received: from dubpeml100003.china.huawei.com (unknown [7.214.147.98])
+ by mail.maildlp.com (Postfix) with ESMTPS id A5E2B40539;
+ Fri, 19 Dec 2025 21:13:29 +0800 (CST)
 Received: from dubpeml500001.china.huawei.com (7.214.147.241) by
- dubpeml500004.china.huawei.com (7.214.147.1) with Microsoft SMTP Server
+ dubpeml100003.china.huawei.com (7.214.147.98) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 19 Dec 2025 13:06:35 +0000
+ 15.2.1544.36; Fri, 19 Dec 2025 13:13:29 +0000
 Received: from dubpeml500001.china.huawei.com ([7.214.147.241]) by
  dubpeml500001.china.huawei.com ([7.214.147.241]) with mapi id 15.02.1544.011; 
- Fri, 19 Dec 2025 13:06:35 +0000
+ Fri, 19 Dec 2025 13:13:29 +0000
 From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
 To: Marat Khalili <marat.khalili@huawei.com>, "stephen@networkplumber.org"
  <stephen@networkplumber.org>, "jerinjacobk@gmail.com"
  <jerinjacobk@gmail.com>, "mb@smartsharesystems.com"
- <mb@smartsharesystems.com>, Jack Bond-Preston
- <jack.bond-preston@foss.arm.com>
+ <mb@smartsharesystems.com>, Wathsala Vithanage <wathsala.vithanage@arm.com>
 CC: "dev@dpdk.org" <dev@dpdk.org>, "stable@dpdk.org" <stable@dpdk.org>
-Subject: RE: [PATCH v3 1/6] eal: variable first arguments of RTE_SHIFT_VALxx
-Thread-Topic: [PATCH v3 1/6] eal: variable first arguments of RTE_SHIFT_VALxx
-Thread-Index: AQHcb39nrSZKOKtjmEeKWvw5j5nRdrUo8YBw
-Date: Fri, 19 Dec 2025 13:06:35 +0000
-Message-ID: <645dc8e37c2c4abc8b894362614d10ba@huawei.com>
+Subject: RE: [PATCH v3 2/6] bpf: fix signed shift overflows in ARM JIT
+Thread-Topic: [PATCH v3 2/6] bpf: fix signed shift overflows in ARM JIT
+Thread-Index: AQHcb39oaXN2p+kuN06nAGJHbmqCHbUo80Zg
+Date: Fri, 19 Dec 2025 13:13:29 +0000
+Message-ID: <ce03cd32a7a04eb7b06524d978047265@huawei.com>
 References: <20251216182036.77869-1-marat.khalili@huawei.com>
  <20251217180141.60227-1-marat.khalili@huawei.com>
- <20251217180141.60227-2-marat.khalili@huawei.com>
-In-Reply-To: <20251217180141.60227-2-marat.khalili@huawei.com>
+ <20251217180141.60227-3-marat.khalili@huawei.com>
+In-Reply-To: <20251217180141.60227-3-marat.khalili@huawei.com>
 Accept-Language: en-GB, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -61,32 +60,19 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-DQoNCj4gTWFjcm9zIFJURV9TSElGVF9WQUwzMiBhbmQgUlRFX1NISUZUX1ZBTDY0IHdlcmUgaW1w
-bGVtZW50ZWQgYnkgYXBwbHlpbmcNCj4gVUlOVDMyX0Mgb3IgVUlOVDY0X0MgY29ycmVzcG9uZGlu
-Z2x5IHRvIGl0cyBmaXJzdCBhcmd1bWVudC4gQXMgYQ0KPiBjb25zZXF1ZW5jZSBmaXJzdCBhcmd1
-bWVudCBoYWQgdG8gYmUgYSBjb25zdGFudC4gUmVwbGFjZSBVSU5UMzJfQyBhbmQNCj4gVUlOVDY0
-X0Mgd2l0aCBjYXN0cyB0byB1aW50MzJfdCBhbmQgdWludDY0X3QgdG8gYWxsb3cgdGhlc2UgYXJn
-dW1lbnRzIGJlDQo+IHZhcmlhYmxlLiBGb3IgY29uc3RhbnRzIHRoZSByZXN1bHQgc2hvdWxkIGJl
-IHRoZSBzYW1lLg0KPiANCj4gKFllcywgdGVjaG5pY2FsbHkgVUlOVDY0X0MgcHJvbW90ZXMgdG8g
-dWludF9sZWFzdDY0X3QsIG5vdCB1aW50NjRfdCwgYnV0DQo+IEkgdGhpbmsgbW9zdCB1c2VycyBv
-ZiBSVEVfU0hJRlRfVkFMNjQgZXhwZWN0IHRoZSByZXN1bHQgdG8gYmUgdWludDY0X3QuKQ0KPiAN
+DQoNCj4gDQo+IExlZnQgc2hpZnRzIG9mIGludGVnZXIgbGl0ZXJhbHMgYW5kIGJvb2wgdmFsdWVz
+IG92ZXJ3cml0aW5nIHRoZSBzaWduIGJpdA0KPiB3ZXJlIHVzZWQgbXVsdGlwbGUgdGltZXMgaW4g
+YnBmX2ppdF9hcm02NC5jLiBFLmcuOg0KPiANCj4gICAgIGluc24gPSAoISFpczY0KSA8PCAzMTsN
+Cj4gDQo+IHdoZXJlIGlzNjQgaGFzIHR5cGUgYm9vbCAoZG91YmxlIGJhbmcgaXMgYSBuby1vcCBo
+ZXJlKS4gVGhlIG9wZXJhbmQgb2YNCj4gbGVmdCBzaGlmdCB3YXMgcHJvbW90ZWQgdG8gdHlwZSBp
+bnQsIHdoaWNoIHdoZW4gMzItYml0IHdpZGUgY2Fubm90DQo+IHJlcHJlc2VudCB0aGUgcmVzdWx0
+LiBTaW1pbGFybHkgbGl0ZXJhbCBpbnRlZ2VycyBoYXZlIGludCB0eXBlIGJ5DQo+IGRlZmF1bHQu
+ICBTYW5pdGl6ZXIgcHJvZHVjZWQgdGhlIGZvbGxvd2luZyBkaWFnbm9zdGljIGR1cmluZyBydW50
+aW1lDQo+IChmb3IgdmFyaW91cyBsaW5lcyk6DQo+IA0KPiAgICAgbGliL2JwZi9icGZfaml0X2Fy
+bTY0LmM6MjQxOjE4OiBydW50aW1lIGVycm9yOiBsZWZ0IHNoaWZ0IG9mIDEgYnkgMzENCj4gICAg
+IHBsYWNlcyBjYW5ub3QgYmUgcmVwcmVzZW50ZWQgaW4gdHlwZSAnaW50Jw0KPiANCj4gVG8gZml4
+IHRoZSBpc3N1ZSB1c2UgUlRFX0JJVDMyIGFuZCBzaW1pbGFyIG1hY3JvcyBpbnN0ZWFkLg0KPiAN
 Cj4gU2lnbmVkLW9mZi1ieTogTWFyYXQgS2hhbGlsaSA8bWFyYXQua2hhbGlsaUBodWF3ZWkuY29t
-Pg0KPiBSZXZpZXdlZC1ieTogTW9ydGVuIEJyw7hydXAgPG1iQHNtYXJ0c2hhcmVzeXN0ZW1zLmNv
-bT4NCj4gLS0tDQo+ICBsaWIvZWFsL2luY2x1ZGUvcnRlX2JpdG9wcy5oIHwgNCArKy0tDQo+ICAx
-IGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspLCAyIGRlbGV0aW9ucygtKQ0KPiANCj4gZGlm
-ZiAtLWdpdCBhL2xpYi9lYWwvaW5jbHVkZS9ydGVfYml0b3BzLmggYi9saWIvZWFsL2luY2x1ZGUv
-cnRlX2JpdG9wcy5oDQo+IGluZGV4IDJkMWI5ZDI4MWMuLmFhNmFjNzNhYmIgMTAwNjQ0DQo+IC0t
-LSBhL2xpYi9lYWwvaW5jbHVkZS9ydGVfYml0b3BzLmgNCj4gKysrIGIvbGliL2VhbC9pbmNsdWRl
-L3J0ZV9iaXRvcHMuaA0KPiBAQCAtNTEsNyArNTEsNyBAQCBleHRlcm4gIkMiIHsNCj4gICAqIEBw
-YXJhbSBucg0KPiAgICogICBUaGUgc2hpZnQgbnVtYmVyIGluIHJhbmdlIG9mIDAgdG8gKDMyIC0g
-d2lkdGggb2YgdmFsKS4NCj4gICAqLw0KPiAtI2RlZmluZSBSVEVfU0hJRlRfVkFMMzIodmFsLCBu
-cikgKFVJTlQzMl9DKHZhbCkgPDwgKG5yKSkNCj4gKyNkZWZpbmUgUlRFX1NISUZUX1ZBTDMyKHZh
-bCwgbnIpICgodWludDMyX3QpKHZhbCkgPDwgKG5yKSkNCj4gDQo+ICAvKioNCj4gICAqIEdldCB0
-aGUgdWludDY0X3Qgc2hpZnRlZCB2YWx1ZS4NCj4gQEAgLTYxLDcgKzYxLDcgQEAgZXh0ZXJuICJD
-IiB7DQo+ICAgKiBAcGFyYW0gbnINCj4gICAqICAgVGhlIHNoaWZ0IG51bWJlciBpbiByYW5nZSBv
-ZiAwIHRvICg2NCAtIHdpZHRoIG9mIHZhbCkuDQo+ICAgKi8NCj4gLSNkZWZpbmUgUlRFX1NISUZU
-X1ZBTDY0KHZhbCwgbnIpIChVSU5UNjRfQyh2YWwpIDw8IChucikpDQo+ICsjZGVmaW5lIFJURV9T
-SElGVF9WQUw2NCh2YWwsIG5yKSAoKHVpbnQ2NF90KSh2YWwpIDw8IChucikpDQo+IA0KPiAgLyoq
-DQo+ICAgKiBHZW5lcmF0ZSBhIGNvbnRpZ3VvdXMgMzItYml0IG1hc2sNCj4gLS0NCg0KQWNrZWQt
-Ynk6IEtvbnN0YW50aW4gQW5hbnlldiA8a29uc3RhbnRpbi5hbmFueWV2QGh1YXdlaS5jb20+DQoN
-Cj4gMi40My4wDQoNCg==
+Pg0KPiBBY2tlZC1ieTogTW9ydGVuIEJyw7hydXAgPG1iQHNtYXJ0c2hhcmVzeXN0ZW1zLmNvbT4N
+Cj4gLS0tDQoNCkFja2VkLWJ5OiBLb25zdGFudGluIEFuYW55ZXYgPGtvbnN0YW50aW4uYW5hbnll
+dkBodWF3ZWkuY29tPiANCg0KPiAtLQ0KPiAyLjQzLjANCg0K
