@@ -2,63 +2,65 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4976E6689C
-	for <dpdk-dev@archiver.kernel.org>; Fri, 19 Dec 2025 22:02:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20F6DE6689C
+	for <dpdk-dev@archiver.kernel.org>; Fri, 19 Dec 2025 22:04:01 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DFF274027A;
-	Fri, 19 Dec 2025 23:02:49 +0100 (CET)
-Received: from mail-dl1-f49.google.com (mail-dl1-f49.google.com [74.125.82.49])
- by mails.dpdk.org (Postfix) with ESMTP id EB30E40276
- for <dev@dpdk.org>; Fri, 19 Dec 2025 23:02:48 +0100 (CET)
-Received: by mail-dl1-f49.google.com with SMTP id
- a92af1059eb24-11b6bc976d6so4880947c88.0
- for <dev@dpdk.org>; Fri, 19 Dec 2025 14:02:48 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 40D804060A;
+	Fri, 19 Dec 2025 23:04:00 +0100 (CET)
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com
+ [209.85.214.174])
+ by mails.dpdk.org (Postfix) with ESMTP id 4CE0D40276
+ for <dev@dpdk.org>; Fri, 19 Dec 2025 23:03:59 +0100 (CET)
+Received: by mail-pl1-f174.google.com with SMTP id
+ d9443c01a7336-2a07f8dd9cdso24534995ad.1
+ for <dev@dpdk.org>; Fri, 19 Dec 2025 14:03:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1766181767; x=1766786567; darn=dpdk.org;
+ d=iol.unh.edu; s=unh-iol; t=1766181838; x=1766786638; darn=dpdk.org;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=KlJVPDyvcmoQhlf35bdp93QIr5lOgvPowEAiECkslBY=;
- b=RzQsS8aiZULZQ+/cRgm95os1x/WC9xriXPrsvp9lO5nLOnEhpvJEBH5+iOHEVruflP
- rSgikygUy5Y1kH7W+JyCpEnqQnokDin5VD1wloBXWG0rs5INagNayHTnWDGsVpI2oHxN
- WX6wgnCrOFgYZ+ZrDiWcq1MNPjGRQX+0ESFIY=
+ bh=yrqZ8y9uxfm3kRCqt1JBcO7uNUMyYN8sRcObn1RcfS8=;
+ b=CidI/U57nh2xYkQqdur6ruJ9paJGlwZnDp0OJyb5nlz5kALV3LojM+pE4LxkxkOVTU
+ teq4wOZP5b16G59scsIyQCkV6kg6Wp6fW5eNdMNsSmKYK6IWKMdBBCvdPh5zFfCEmsm5
+ POynqeyV9D3IcPGpdJubRZVhBBhrB1QiJ6R4A=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1766181767; x=1766786567;
+ d=1e100.net; s=20230601; t=1766181838; x=1766786638;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to;
- bh=KlJVPDyvcmoQhlf35bdp93QIr5lOgvPowEAiECkslBY=;
- b=Qgcgoo9QpegoiRKXJJ+Qpe2TQGjKqZNzNL0goaxqkkyacyehZcEqpPVPEsg3Rkyu4B
- 45J+BhdKIQpB8HRaEXo4jfLt5v5jER4UFRWvUTz/TS0DRZivM6kNguF31CJG9h1qIbui
- u0Yj1LAcWI3HF7d2Rhz3Af86zx364+Nyje6qDKPzY0w1IQTTTB8WTKauLlQTDAM+SwBL
- gHpCafrRVpVhhPb2lqjfHXLI+oBcvLGO5bZwtVBP3LoVYRSAlrx5FH8WuYgIyKdpQ5yu
- XJYbQlc4LOOelczWgW/XdN+BlMV14CJ3Y+ZrfjTAlwRl35v4/erH969WpwUdpm5QBzIY
- Qq3A==
-X-Forwarded-Encrypted: i=1;
- AJvYcCXRJt2tZXHgZrjlUVBGYGhDqmTJWSSXI8DU6xC7B5HvdAVsGMOY54umsW2rDRYEcwFCE8Y=@dpdk.org
-X-Gm-Message-State: AOJu0YzeDXeT549l7dKtm+aydBX+HcDd6lWUBl+ubHqb5Dz7BgvSZZqa
- iyjSuQv0AW5169nkcMdylDV1Ix/TKLXe1bA3yk62U4vOmqagBP/N14g7vZWh0rEkX8xYJBOtGVf
- ue1ltm4vz4+666rRDQEMOLHCkIV561X6jQMG1Cg74Fg==
-X-Gm-Gg: AY/fxX7et/SuRRa9dI2zcW3xjQ3z6pP2kAyc2wVY1a+/v1gffqM2DgX1dkOkFJ6FNiJ
- liZKkdwjf1Z5Aeb04FXWn/ZC7vHq/rnsfUOMomDe+iWmnGTcpIHQp4sQnzjWOQt/OShOkDEAIEK
- SIdIyDqyCftI+zeDW+Xm8xvkDJ0Cmpa7595BYlMiQVP4Wpd1UuQl/0JXaCvblw38av/hARBODTX
- chOrPmR0XQTE1SJQAwJnuAGKO42ahuLZB0wgBGXJUclMDoSwn6yikl/qLUvALlnI09yJfAMhrzE
- mFuY+hD3CA==
-X-Google-Smtp-Source: AGHT+IHdVb2qgyqyTWktQElEMkTH6RdWt0WJz5FQg+914Xzne3Ijur8jHZSlqk2T0pAFTMTog9VnuBk/XiRVVC58++U=
-X-Received: by 2002:a05:7022:670d:b0:119:e569:f84d with SMTP id
- a92af1059eb24-120619279c2mr7881696c88.4.1766181767299; Fri, 19 Dec 2025
- 14:02:47 -0800 (PST)
+ bh=yrqZ8y9uxfm3kRCqt1JBcO7uNUMyYN8sRcObn1RcfS8=;
+ b=KBdpyy0wMhR3CUP9/teg9Ha+JkZElNLdKHGUpZDbVFJOnhvWAyyqd/76Y1qLKXAT5X
+ SQ0zQnfNPDIPPkEd6EED09WfB4z1LF/yU+dJsIRCsACNF6H+s2C+FyNAOLjw4FwqEaoh
+ b9bQN+FqBANKtLe/U04yTzbIiHEK5EdzaPpk81iKHybjT271R6D0kuSQf/b2XkYnz/im
+ G6hU9cxhB2NtD19oiGOFy5gBqvwRnSr+PkeylWMjNCGT2JNuxZbG9OSLB+ERm468rlT0
+ Qv3tO+W8+vVstoXCl4vQY9kt9Y5FVQo+CJDBtp54MOWryanHSW4i2f1BFkh3eSC00r2B
+ hfJg==
+X-Gm-Message-State: AOJu0Yy38HMlSQ8Ad3xuBlBbtZ7pZZylY1qjD8RtsCw4DScdCcJWfvwG
+ boFpcre4RahJmEI/KPVmtvbCkRJw5PHEIPDAgHkMRC6hePi1rrNuuGDLPiBSceHadawQNq0YT5p
+ TyRAxhji/3IIX86e8Yz/QT/Wklu9dTDL6wMN47teSXA==
+X-Gm-Gg: AY/fxX4spEayA8UZNSKW8ui2OYRsQAagkkLtAU65/4IXl2LEeEvmLJwENBzRgnxh/ps
+ 2XYVFPyXgXt/LTQyAdAc6PQz1Nch0r9YRpphH8tGOrbOkKCF+0RTTrX8RlRs+E8JxrxuXKUvlhp
+ mcDKFx3G/Vt623KEm5U0n4zeawEx2Yqzksl/064henDB9bRFy/eWxHjLZOxv9hyYhv9PpCNqu2f
+ OfVk6ZVEJp9kGqcaoNcbd5YaQ6ZPNNOpwquzOBrk/r1imqTcZH+d838XK+bro0piKdSRKJs1a3C
+ osSDpMcIXA==
+X-Google-Smtp-Source: AGHT+IFWxrcIe0NXv39G88QonLW87+cgolKxbN/w+Ip0Xl86Oa2UXMZ+XIEVsAzu3Nz8YLWyrPwisLz+M5OhdRaeqZs=
+X-Received: by 2002:a05:7022:b883:b0:11b:923d:7735 with SMTP id
+ a92af1059eb24-121722abe66mr3032290c88.1.1766181838377; Fri, 19 Dec 2025
+ 14:03:58 -0800 (PST)
 MIME-Version: 1.0
-References: <20251212110944.59350-1-madhukar.mythri@gmail.com>
-In-Reply-To: <20251212110944.59350-1-madhukar.mythri@gmail.com>
+References: <20251208101203.315647-1-rongweil@nvidia.com>
+In-Reply-To: <20251208101203.315647-1-rongweil@nvidia.com>
 From: Patrick Robb <probb@iol.unh.edu>
-Date: Fri, 19 Dec 2025 17:00:56 -0500
-X-Gm-Features: AQt7F2qxjJnP6RdpoPHe7bPr0u6cXY6XKcO7kAi_QwonXiazZ3yZxNQZWS4O61s
-Message-ID: <CAJvnSUDa=vcR+bm5wZJcUm_vKgW6zPqpj9fXruu5P6HrX4NwbA@mail.gmail.com>
-Subject: Re: [PATCH] net/netvsc: Fix on race condition of multiple commands
-To: Madhuker Mythri <madhukar.mythri@gmail.com>
-Cc: longli@microsoft.com, dev@dpdk.org, stephen@networkplumber.org, 
- madhuker.mythri@oracle.com
-Content-Type: multipart/alternative; boundary="000000000000d958ab0646553cfc"
+Date: Fri, 19 Dec 2025 17:02:07 -0500
+X-Gm-Features: AQt7F2rHH-VqG80bs2WU4cdGCQ2opysbTdZmpDXSCBuGcRmE4GDD3eIIQ1J0DGM
+Message-ID: <CAJvnSUAcVA_RAX1JrrRGs_wXFE5tHHcJCjXDyMxk0LFrkv0WRw@mail.gmail.com>
+Subject: Re: [PATCH v1] net/mlx5: fix job leak on indirect meter creation
+ failure
+To: Rongwei Liu <rongweil@nvidia.com>
+Cc: dev@dpdk.org, matan@nvidia.com, viacheslavo@nvidia.com, orika@nvidia.com, 
+ suanmingm@nvidia.com, thomas@monjalon.net, getelson@nvidia.com, 
+ stable@dpdk.org, Dariusz Sosnowski <dsosnowski@nvidia.com>,
+ Bing Zhao <bingz@nvidia.com>
+Content-Type: multipart/alternative; boundary="00000000000015e17d06465541c1"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -72,14 +74,14 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---000000000000d958ab0646553cfc
+--00000000000015e17d06465541c1
 Content-Type: text/plain; charset="UTF-8"
 
 Recheck-request: iol-intel-Performance
 
 I am putting in a CI retest - no action is needed on your end.
 
---000000000000d958ab0646553cfc
+--00000000000015e17d06465541c1
 Content-Type: text/html; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
@@ -87,4 +89,4 @@ Content-Transfer-Encoding: quoted-printable
 <div>I am putting in a CI retest - no action is needed on your end.</div></=
 div>
 
---000000000000d958ab0646553cfc--
+--00000000000015e17d06465541c1--
