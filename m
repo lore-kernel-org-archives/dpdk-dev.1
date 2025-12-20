@@ -2,44 +2,76 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24C2AE668AE
-	for <dpdk-dev@archiver.kernel.org>; Sat, 20 Dec 2025 09:05:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 574EBE668B4
+	for <dpdk-dev@archiver.kernel.org>; Sat, 20 Dec 2025 18:25:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 38112402B5;
-	Sat, 20 Dec 2025 10:05:49 +0100 (CET)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id A45DB40296
- for <dev@dpdk.org>; Sat, 20 Dec 2025 10:05:48 +0100 (CET)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id B6E7022B35;
- Sat, 20 Dec 2025 10:05:47 +0100 (CET)
-Content-class: urn:content-classes:message
+	by mails.dpdk.org (Postfix) with ESMTP id 20FFA402B5;
+	Sat, 20 Dec 2025 19:25:11 +0100 (CET)
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com
+ [209.85.128.50]) by mails.dpdk.org (Postfix) with ESMTP id 88CE840296
+ for <dev@dpdk.org>; Sat, 20 Dec 2025 19:25:10 +0100 (CET)
+Received: by mail-wm1-f50.google.com with SMTP id
+ 5b1f17b1804b1-477ba2c1ca2so27866275e9.2
+ for <dev@dpdk.org>; Sat, 20 Dec 2025 10:25:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1766255110;
+ x=1766859910; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=CK+kBA01lbbHgWQK6knLqPegl9nWTyYKmuDp04WmxsA=;
+ b=St7lMPXE9qA7XUSzwBYAUfGQOCbRogS2k8C+09UlkfU7ew/DssMFidoat4jZoWoGma
+ aKOM8xF9PFTBFXNq2pSc93cytmi48A0KCe1LpOSCcaXT90ht0FeawSx/P5ofozbuNMQY
+ 179Gdh48N/hePqU+K3mFpWEyLHTt4cmTMZwYDuosie8nq2v0tG9b7woOTAGEfzw7m+Vq
+ GfhPH7+37kzI25zhto3exDeId4wqdHMW+1nPG5hoouQm48+OaOxwcymwIMz9AbIRZzXI
+ Rbwurjzj4Ks3l5vXZI4TV9BSdw1oTrRyIXdXcZvGXrU66uFRqDBG+7RFqE8cLPWVy1rh
+ tE0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1766255110; x=1766859910;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=CK+kBA01lbbHgWQK6knLqPegl9nWTyYKmuDp04WmxsA=;
+ b=qPTygiG13fNkP21N+E8pJkqvTLjQCYYReKfWcSLHMeYkKTiNlKlcHRLjyeSk+EV/ye
+ 4jFPegawJrCGeBod02fRBLoN/RbYiBbzT0bSy8IeOxKwk9g5pZ3b7YQQVL2D+Itieag8
+ hzsQMNjs3DOPVP9yx4opNZ7ur5RdKQmukWeIbKGhwmNSCc+ZxsoFsCZSCfaujgMHOtfV
+ IztrAthh/qxHNQGjeKgDG5efsMKM5Ioue4JNUIuH2RYJuhqocTCVGtwjQ7ZFIldKAlyu
+ kZzmWwaKUwU5eEiFuLfC32F9SzmFHZBIvxMBmDNibCWy3xmusE0TCjU3N7cbplhsDTHN
+ fFYg==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCXLVwF1/QxQcQamUBGLvanae5N0PtLZqWSdxEFTI80035hE8edzzseYhHM1ee4jJBH9T8M=@dpdk.org
+X-Gm-Message-State: AOJu0YyiMVJAmeyOTqDNcPKd3NCm1Uj5GUkLLiociAg0PCyw9BgAs1a4
+ COfjk+TMkkMSmo0IWvyNpXDlKnfNYgdqW7myTKuIlyvCNeWetP/H6Z5lLlJ5vRf1HOo=
+X-Gm-Gg: AY/fxX5DPCTKnCU1AwVWy5cPzxpuUr9VFygnzRoEWFZQ7qqfxb6JdImHtF2Sas3ee4X
+ ppWMPaGX/x75UC945gRfEKKTo9a65hcXJuVcX1Oz3Iy9VfedY572IW+ny8KgCk/M9b3+h46H7TP
+ cddtA+Sl3xZi3pm1lNl84/Frh7Zpciw9TqnAirMwQ8Y3bqniaIDU/eUyAcjn1MHirwIjQemZsJl
+ 2Doyrw4fObSrPfUDcn4aZLiFcsDGh93X9pWmwm8G+WVEtznLxgFHIlRk8wC9L5k5WkgVGW7RWoX
+ I+c4ZhQ4FZSwlx4ZjMich8Ck5ik/29ZNbR8UEmELytUKF9Q+duV69fdY9Br/I9Q7Vu1Dt+Vo8QF
+ 5qNU3wtRICx21IOW6jO/jilmLv7qTVYPogUW2eQH24fwBBrOCH2kkK/NvvK5eMQ2dN+dz65zwR5
+ oUUx5v9apjfd43qK/GXyEL1s9TJixG5Z/C+9ZBygD0NUNRVwk7uVJe
+X-Google-Smtp-Source: AGHT+IEMKR36eB7/ZAgA2Ar/F6h568NhxMXoQ6ctpb58rZBpLtczkZjiCYeUPH7T8mD781BBhjkogQ==
+X-Received: by 2002:a05:6000:26cf:b0:42f:f627:3aa3 with SMTP id
+ ffacd0b85a97d-4324e709b83mr7036014f8f.56.1766255109550; 
+ Sat, 20 Dec 2025 10:25:09 -0800 (PST)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ ffacd0b85a97d-4325dbc522esm1230595f8f.11.2025.12.20.10.25.07
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Sat, 20 Dec 2025 10:25:09 -0800 (PST)
+Date: Sat, 20 Dec 2025 10:25:03 -0800
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Long Li <longli@microsoft.com>
+Cc: Madhuker Mythri <madhukar.mythri@gmail.com>, "dev@dpdk.org"
+ <dev@dpdk.org>, "madhuker.mythri@oracle.com" <madhuker.mythri@oracle.com>
+Subject: Re: [EXTERNAL] [PATCH] net/netvsc: Fix on race condition of
+ multiple commands
+Message-ID: <20251220102503.54d04c5d@phoenix.local>
+In-Reply-To: <DS3PR21MB5735BCEBB4C726C7E0B7AC4DCEA9A@DS3PR21MB5735.namprd21.prod.outlook.com>
+References: <20251212115238.59710-1-madhukar.mythri@gmail.com>
+ <DS3PR21MB5735BCEBB4C726C7E0B7AC4DCEA9A@DS3PR21MB5735.namprd21.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Subject: RE: [RFC PATCH 27/27] net/intel: remove index for tracking end of
- packet
-Date: Sat, 20 Dec 2025 10:05:45 +0100
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65603@smartserver.smartshare.dk>
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-In-Reply-To: <20251219172548.2660777-28-bruce.richardson@intel.com>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [RFC PATCH 27/27] net/intel: remove index for tracking end of
- packet
-Thread-Index: AdxxDPqPDTlhdlhAQ/+nlVMaOys6kwAgh/vA
-References: <20251219172548.2660777-1-bruce.richardson@intel.com>
- <20251219172548.2660777-28-bruce.richardson@intel.com>
-From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
-To: "Bruce Richardson" <bruce.richardson@intel.com>,
-	<dev@dpdk.org>
-Cc: "Vladimir Medvedkin" <vladimir.medvedkin@intel.com>,
- "Anatoly Burakov" <anatoly.burakov@intel.com>,
- "Jingjing Wu" <jingjing.wu@intel.com>,
- "Praveen Shetty" <praveen.shetty@intel.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -53,43 +85,31 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> From: Bruce Richardson [mailto:bruce.richardson@intel.com]
-> Sent: Friday, 19 December 2025 18.26
->=20
-> The last_id value in each tx_sw_queue entry was no longer used in the
-> datapath, remove it and its initialization. For the function releasing
-> packets back, rather than relying on "last_id" to identify end of
-> packet, instead check for the next pointer being NULL.
->=20
-> Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
-> ---
+On Fri, 19 Dec 2025 17:35:33 +0000
+Long Li <longli@microsoft.com> wrote:
 
-[...]
+> > When multiple processes issue command requests(like: device info get and
+> > link-status) at same-time, then we could see the command request failures,
+> > due to race-condition of common function execution.  
+> 
+> Hi Madhuker,
+> 
+> I'm not sure if we should use a lock in the driver for this. It's not clear in DPDK documents but in general the calls to query device status are not thread safe.
+> 
+> Is it possible that the application uses a lock to sync calling to this?
+> 
 
-> @@ -2523,14 +2523,13 @@ i40e_tx_done_cleanup_full(struct ci_tx_queue
-> *txq,
->  			pkt_cnt < free_cnt &&
->  			tx_id !=3D tx_last; i++) {
->  			if (swr_ring[tx_id].mbuf !=3D NULL) {
-> -				rte_pktmbuf_free_seg(swr_ring[tx_id].mbuf);
-> -				swr_ring[tx_id].mbuf =3D NULL;
-> -
->  				/*
->  				 * last segment in the packet,
->  				 * increment packet count
->  				 */
-> -				pkt_cnt +=3D (swr_ring[tx_id].last_id =3D=3D tx_id);
-> +				pkt_cnt +=3D (swr_ring[tx_id].mbuf->next =3D=3D NULL)
-> ? 1 : 0;
+I do not know of any restrictions about threads calling query operations.
 
-Note to reviewers:
-Dereferencing the mbuf (instead of checking last_id) does not add a =
-potential cache miss, because rte_pktmbuf_free_seg() dereferences it =
-anyway.
+For info_get() the transaction is in rndis_get_offload().
+There are couple of ways to handle this better. One would to do
+the query during probe and remember the result. The hypervisor is
+not going to change supported offload. The other and simpler way
+would be to just have hardcoded offload values. The code for query
+got compute offloads is inherited for BSD and unless someone was trying
+to run on Windows 2012 or earlier version of Hyper-V it would never change.
 
-> +				rte_pktmbuf_free_seg(swr_ring[tx_id].mbuf);
-> +				swr_ring[tx_id].mbuf =3D NULL;
->  			}
->=20
->  			tx_id =3D swr_ring[tx_id].next_id;
-
+Link status is a little more complex. Does the hyper-visor ever report
+that the software path is down? And reading through the hn_rdis_exec code
+it looks like if multiple operations are in process the second one
+should return -EBUSY. Application could retry in that case.
