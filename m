@@ -2,69 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB7ADE67808
-	for <dpdk-dev@archiver.kernel.org>; Mon, 22 Dec 2025 23:31:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64A2DE6B260
+	for <dpdk-dev@archiver.kernel.org>; Mon, 22 Dec 2025 23:53:56 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1F9B7402CB;
-	Tue, 23 Dec 2025 00:31:23 +0100 (CET)
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com
- [209.85.128.45]) by mails.dpdk.org (Postfix) with ESMTP id C37C240265
- for <dev@dpdk.org>; Tue, 23 Dec 2025 00:31:20 +0100 (CET)
-Received: by mail-wm1-f45.google.com with SMTP id
- 5b1f17b1804b1-47774d3536dso34781325e9.0
- for <dev@dpdk.org>; Mon, 22 Dec 2025 15:31:20 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 0F25340296;
+	Tue, 23 Dec 2025 00:53:55 +0100 (CET)
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com
+ [209.85.128.42]) by mails.dpdk.org (Postfix) with ESMTP id 46A7640265
+ for <dev@dpdk.org>; Tue, 23 Dec 2025 00:53:54 +0100 (CET)
+Received: by mail-wm1-f42.google.com with SMTP id
+ 5b1f17b1804b1-47774d3536dso34851165e9.0
+ for <dev@dpdk.org>; Mon, 22 Dec 2025 15:53:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1766446280;
- x=1767051080; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1766447634;
+ x=1767052434; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=492wpApSEG7sfTBMeHI7gurerxYv+Ga7f3id9SLMLhk=;
- b=dftsye5ygqlarhHAjbUeyKqp0dRe9l5tvHJLe17Q5kHjYFcUHzjTMESwS7qw5TAMZb
- n5nd0A767m3IBc6Y0luDq4xuADMgVByrWygvICKP9trSjSvT3gj3xmdI0qcwndSoB7L/
- L2M6e458ks0URCMNkXc7GFCinwkK2opZrMHLlGKWNAIePWb+PQV8AdPsX1KF4hRLkTr0
- /A15nHIu6LHOlAtqHOsz8zfdIxuLLxEvZewCuqx3agFyFi+BSol8InIRBllhHlGgFBJs
- o4CLzfY1DjPBn4T/BXDjNHu363LzdD3xyjPGDFM1aJLx/8Z97SYs9sWttOqYX6WSqICh
- 47yg==
+ bh=8NIdkCMhtP1/sgCre59UZ3rSlUG5IjQiNciiSGAYSwU=;
+ b=MYuyWU07FUAfyI372zPkm/ZJ3oZCsbdB8ALRIVtDFrn3UA//okiEJ0CTHMlxYaK8bo
+ bPTFGh/Rsh6qxP1kJkkUSyW2QMqEre1zxJfS0N0PlHbvKaOsKJcf6G+i2QZpiiB2bK74
+ EkgilYTgoOOoq15LcqySN2juQrqMqzW8i1mz0zi89R9/f4uGqc1moA2zjUm2FjgJRvqA
+ 8StNGANMJHa+exMYKAdTV6ykwNOPVsHfm/pNyBqGKb9aqn3trXa11+NYdd+NFQyICA6H
+ fS/MbmsseXv38zFPTty/9z9vNpk1vvsUVZg8/s2PFwfsYfl/MhVlrBqkONnaeUfnPXnE
+ TOeg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1766446280; x=1767051080;
+ d=1e100.net; s=20230601; t=1766447634; x=1767052434;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=492wpApSEG7sfTBMeHI7gurerxYv+Ga7f3id9SLMLhk=;
- b=r/OcN3qCuFS5Y1hIrJd24MtyaFjjiTsZELm7T82U4suuRBWnHT4xuElnGuVtB/cEDk
- 3kfaT0ilvK0zMRRB4Hor8i1Kwy6sX/uwrommtpBwuMepSyUgOW22FXsw3YkrFLJ6t14X
- ijGAL4QVrjh8LGNoPfpmrgQKJrYLLrBUVhATaG3RawESIiSSb02QQz0XE5N6nteXJdTN
- AYYO8p258lHsDUGeB6ECuXGTL9AF7jvRXFwic00UBFgXWx4XgLz9JewKPQ838e8QYq81
- lFgEl5bvO3ECz5hn06gQXJcSA3eA/PXWK90a4UPDTEedF/D2wS7oVQgqbGYvtCFAuNT3
- mMeQ==
-X-Gm-Message-State: AOJu0YxGROIEsJzHCEowWRoH1lWO7KX6SfGCQsxW5yxi+erR8LqISMXZ
- e+l0hD9M6sXLeciORpDtFwtIN/FT0EInr0Q7ZLWniwiV4FXZMZBKHSUEom2ZwdPm4T0=
-X-Gm-Gg: AY/fxX49etNp0rO9KTvyAMmdlK6XYYvm05vG3NqXZ4YrPSDmT2ellj0WNbHA0Gl7YHq
- WRjWK0NcuUCNW2sGX7TSVI7th7BvXfNpSvLxJE9cFeJb3hXBaoU7QcjNFl+oNgqN78KJqvCir/h
- vaFHnBkZ80+rcCS966h4HeTIK0LEcfyrG5X0BPKKIC2i4FMQBSVA4xgVc+dK6lDuNjezUbKZcnA
- 1NQkguCDGic6psMZBD3p/qLwyCAMgQ2rP23OcoFWn8VZq4eFfPlEIsoPU4X6E4G0W2GUOUTJQuG
- dV5QvQj2BtYvY+3VmJLo4BSWIXEy2kLkaqUXCMy5G1BxdsEre7aJAcC5HsgwRjYT6sttjyLFSsO
- gYTUJwRvu4bqokvjoMNEOE2O3z5/XeVhhDOQR+URJW13K7SQLPR1gyZTTnwzaptuzLO1g++6IS2
- iBNzroiVYiVGRBV9qI3lWezQYHdZeWg4GVmK65kOv4LweBF6wcB82t
-X-Google-Smtp-Source: AGHT+IH9FkvT8+UhZuX/ejDw/AahzPr+ZZTMSZ0QsXc2Q3SIKsn+A6w01BkZ5fALNDLAO5X8/n2njQ==
-X-Received: by 2002:a05:600c:5489:b0:46e:59bd:f7e2 with SMTP id
- 5b1f17b1804b1-47d18bd5651mr128881695e9.11.1766446279784; 
- Mon, 22 Dec 2025 15:31:19 -0800 (PST)
+ bh=8NIdkCMhtP1/sgCre59UZ3rSlUG5IjQiNciiSGAYSwU=;
+ b=XSBLrZ0273KomIUQgiGg9CKUeteeMyFh2HaLtCQWj/+HLAuH3Qo/oI6NwY7lel8V/o
+ mLB4nKPLK9jSFXBZv3jHFOn2+D+yg7DSeJioTDHWA/MLebgwDkJVSdBTU0qsyOWG2JzC
+ fqWMIPe3IMNZNoTVJiW0HJyxkok4FGNMdPpuXq1uqFOdQuqwiMxpuS29duEjcw02TtLh
+ Zvd6OaEFApkCVi0YXyn8Ix9EuP480gRSuyDWob6wxlxqY0/BdOOpCyd37ZegpC1Cbnzu
+ LfQYk0JOfWPNSJPgWFAXZjAoV6pc3XG3Cqf7jo8MOh7j9XliPmEq1JUjaRmy1h0m+rFs
+ ueqw==
+X-Gm-Message-State: AOJu0YxxQhB2B69/fclTvltPVCPsjo8O611nP+Xb82IeueX3wjbHMzIl
+ /f7GnOxF/TFOEjhN1ZOS4XSZw+ZnGFaS4B39fpOt1emJrn592mKdChgHcGkyYDxNmbc=
+X-Gm-Gg: AY/fxX7a40Gt0h57FivfuScAnmwokEmfFj3OJOcy8aioCjV90kWh3VBB9Nt1Sd0Kkbm
+ tZ/mnjSL4Y2R8O0cBT1Xtix0j33GKYm2JM15QywI8HB+My91bZ1ka6D1FAMGV7BJEuafYwVCOIS
+ 54QWTpahyNZLvdsVr1OQbbrjPJyvy8hPHoi1GzD0/7W520ARzG17Tc6DA9YeGysOlvALtuTga5m
+ dDOeRkvu8kGeTgGfzZrbyzQjRJtJm+7PAD2fQXmTswe97Ky2NodVQLjl29XG/ujiwpZKkBQBnMb
+ bDc20DnTxSr6BTvZdBXznbdgg2Ys73OHTlURUQ6TpH0YRquCBdq3DJxGYgj1PWLWunkWTJgtI/T
+ EFY7NeGV/huxmJckZ6L3MNe1u7E3KYX6Xwo0Bt35MQA4WAOtyNU0ZSRSD2FrN6voxYAt5EUZmnn
+ 7t8hWiK8rgl4K52RHuuH0JES56K7UI7pcFFqK38bE8sNDsGAU+KZMh
+X-Google-Smtp-Source: AGHT+IHW88n/zJX5jxelXj/8mZXm8YnyE02CMRjv+1Ol/8V2Qqbm4tkULCeVwnhKu+L9/ehTP6pkRw==
+X-Received: by 2002:a05:600c:6749:b0:471:665:e688 with SMTP id
+ 5b1f17b1804b1-47d18be89d5mr167342935e9.17.1766447633617; 
+ Mon, 22 Dec 2025 15:53:53 -0800 (PST)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-47be3a4651bsm104051325e9.7.2025.12.22.15.31.18
+ 5b1f17b1804b1-47be3a40a14sm115085525e9.2.2025.12.22.15.53.51
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 22 Dec 2025 15:31:19 -0800 (PST)
-Date: Mon, 22 Dec 2025 15:31:14 -0800
+ Mon, 22 Dec 2025 15:53:53 -0800 (PST)
+Date: Mon, 22 Dec 2025 15:53:47 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Shani Peretz <shperetz@nvidia.com>
-Cc: <dev@dpdk.org>, <stable@dpdk.org>, Remy Horton <remy.horton@intel.com>
-Subject: Re: [PATCH v2] examples/ethtool: fix buffer size for pkt pool name
-Message-ID: <20251222153114.24314d10@phoenix.local>
-In-Reply-To: <20251222083858.1035980-1-shperetz@nvidia.com>
-References: <20251203110157.51471-1-shperetz@nvidia.com>
- <20251222083858.1035980-1-shperetz@nvidia.com>
+To: Xingui Yang <yangxingui@huawei.com>
+Cc: <dev@dpdk.org>, <david.marchand@redhat.com>, <fengchengwen@huawei.com>,
+ <lihuisong@huawei.com>, <liuyonglong@huawei.com>, <kangfenglong@huawei.com>
+Subject: Re: [PATCH] net/hns3: fix outer UDP checksum fail with simple BD
+Message-ID: <20251222155347.4b27bd5e@phoenix.local>
+In-Reply-To: <20251205073955.3225775-1-yangxingui@huawei.com>
+References: <20251205073955.3225775-1-yangxingui@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -81,17 +81,23 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 22 Dec 2025 10:38:58 +0200
-Shani Peretz <shperetz@nvidia.com> wrote:
+On Fri, 5 Dec 2025 15:39:55 +0800
+Xingui Yang <yangxingui@huawei.com> wrote:
 
-> Use RTE_MEMPOOL_NAMESIZE for str_name buffer size instead of the
-> hardcoded value 16, which was insufficient as the format
-> string "pkt_pool%i" can produce up to 19 bytes (8 for "pkt_pool",
-> up to 10 for integer value, and 1 for null terminator).
+> From: Chengwen Feng <fengchengwen@huawei.com>
 > 
-> Fixes: bda68ab9d1e7 ("examples/ethtool: add user-space ethtool sample application")
+> On the hardware platform that supports simple BD, if outer-ip, outer-udp
+> and udp checksum offloading are enabled, the hardware incorrectly
+> processes the ether+ipv6+vxlan+ether+ipv4+udp packet (the incorrect
+> field is modified).
+> 
+> The root cause is that the simple BD feature does not exclude outer-udp
+> checksum. This commit add it.
+> 
+> Fixes: 6393fc0b823c ("net/hns3: simplify hardware checksum offloading")
 > Cc: stable@dpdk.org
 > 
-> Signed-off-by: Shani Peretz <shperetz@nvidia.com>
+> Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
+> Signed-off-by: Xingui Yang <yangxingui@huawei.com>
 
-Acked-by: Stephen Hemminger <stephen@networkplumber.org>
+Queued to next-net
