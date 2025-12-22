@@ -2,72 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 594FAE67810
-	for <dpdk-dev@archiver.kernel.org>; Mon, 22 Dec 2025 18:38:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB7ADE67808
+	for <dpdk-dev@archiver.kernel.org>; Mon, 22 Dec 2025 23:31:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 89CC1402AF;
-	Mon, 22 Dec 2025 19:38:50 +0100 (CET)
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com
- [209.85.221.42]) by mails.dpdk.org (Postfix) with ESMTP id 7405640264
- for <dev@dpdk.org>; Mon, 22 Dec 2025 19:38:49 +0100 (CET)
-Received: by mail-wr1-f42.google.com with SMTP id
- ffacd0b85a97d-42b3c5defb2so2816467f8f.2
- for <dev@dpdk.org>; Mon, 22 Dec 2025 10:38:49 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 1F9B7402CB;
+	Tue, 23 Dec 2025 00:31:23 +0100 (CET)
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com
+ [209.85.128.45]) by mails.dpdk.org (Postfix) with ESMTP id C37C240265
+ for <dev@dpdk.org>; Tue, 23 Dec 2025 00:31:20 +0100 (CET)
+Received: by mail-wm1-f45.google.com with SMTP id
+ 5b1f17b1804b1-47774d3536dso34781325e9.0
+ for <dev@dpdk.org>; Mon, 22 Dec 2025 15:31:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1766428729;
- x=1767033529; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1766446280;
+ x=1767051080; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=fR2p2xljmSDsbjCgxBLVo24r/fq7jdwOYbCqEKet8h4=;
- b=wYWuwAueauCQ+ArTp5Yp27jcFFKJVhpNL95IvHh/XO+eFVlG5r+2V7pN1KlBOQ9Uzi
- WV6BXg/t04uMKZDxAX9HrCQYv0paUuqwTzyg4B+JxD3HmpEtjsmPt8aVgFWqEtNivTJx
- LMBWoWsVkZSkKG15/MbmySdBp3S1X7QAx5w/RshMq3zSPRbaZF1np1Uvp7cpzVooLPYV
- hn0Dm+RRzr66Q+TN95GmuK7iI49WJlx1YBt8XIqjvXL1VqwEFsU6aGMFGnl1E1vUvWLT
- bhoFXpyktMRZMyAV3v26AkX3ujPR/l6UNC367yoSfY2wNlWe2EWzfej0F30DyyCThn8y
- H0PA==
+ bh=492wpApSEG7sfTBMeHI7gurerxYv+Ga7f3id9SLMLhk=;
+ b=dftsye5ygqlarhHAjbUeyKqp0dRe9l5tvHJLe17Q5kHjYFcUHzjTMESwS7qw5TAMZb
+ n5nd0A767m3IBc6Y0luDq4xuADMgVByrWygvICKP9trSjSvT3gj3xmdI0qcwndSoB7L/
+ L2M6e458ks0URCMNkXc7GFCinwkK2opZrMHLlGKWNAIePWb+PQV8AdPsX1KF4hRLkTr0
+ /A15nHIu6LHOlAtqHOsz8zfdIxuLLxEvZewCuqx3agFyFi+BSol8InIRBllhHlGgFBJs
+ o4CLzfY1DjPBn4T/BXDjNHu363LzdD3xyjPGDFM1aJLx/8Z97SYs9sWttOqYX6WSqICh
+ 47yg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1766428729; x=1767033529;
+ d=1e100.net; s=20230601; t=1766446280; x=1767051080;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=fR2p2xljmSDsbjCgxBLVo24r/fq7jdwOYbCqEKet8h4=;
- b=l6D1peCQa2Mu0FLCgoG2XXkI5nXSU77gUYZDz3juZMRmOdlJ5DuSYjPSJAzqUGMN2a
- auo7i3ODEpUdYqmgtmmvlWqlbX0/rk3A4KXx9142QIzveZ3wlI18sMuH4EAep31LV5WQ
- /MugIymWYvvtc/mBkdYIA/fo/cItUsPVRfJfh+YVaPrNppmkAQpzgFSQu+Ihip4tFLP3
- O1VTYULUMGVTOKnScTKUHcMWTTOXkkOw1UgqUT2mXDKCWIM34BQhfRVoHEuEP9JdrO4q
- 19KnOkTqzKWRd7QopsDi6Ba61vJfyuyXaQGuA5KFVrBJKlV/W/2rJFJW7N0kw2V08Ex2
- 4nGA==
-X-Forwarded-Encrypted: i=1;
- AJvYcCV4jTQWUFCUjJlCqIuht0UX3deQgkXxGNZDcqdzRf12d+AHnzuPgi2jTUCoeb/6UkZEThg=@dpdk.org
-X-Gm-Message-State: AOJu0Yx3XuE7JpCY9LQ7LJvoMHrDyAXTN18LP6Tm1DBuwHuiivwx/E4E
- aYsATCI5xpos4mCSWHDOtW6A2Xh9M641zNOm1EYTUJ3U1HbNTBXjOm3ilpIgEOQZnE8=
-X-Gm-Gg: AY/fxX5nu+aZS6Z5J3EJP1h2Wedm7/Y9y1gmsjg7GwqQ5gUQcZAf2IkuVNqo1ZhiR8H
- DKWrkRIQ/2N/zQxuiTAJNqTZjAfJBBQ3saJvQxTVvmIVG/1qbr1TMZN0TLnz2jWDDbPwtCVLdR+
- vllmBB4kYR1r7YALnNJAaKHU5zwEA1AioonBXh4AfrMIuWhm7QWtUKlj++obOSYSjtpxCUWMrLL
- di0/A1Pimt30bdujdg010Dt2/cmv0retzPyWjhggLYnS+WA1m/gdpoC0/XyNeZz4h6CuthabJoB
- k9IcZc6WKHq3eQQr5bj2TbbMF1PtiwsHSu5Q86t9TD9hupsPn+w86dyg3+rj3/VE3xyfGHBVRiN
- S0bn0wWZ/cLvG3br3v5MfWBwEj1PMJVmS7p4j1/k0Errt0Kkt4ZInWsEbzf4D8dxj2ywCf4QbxY
- 2IVd2GCVHDUBnryAhaQAHQohfc764gxUTDNBd/NvtMeFYgMODWaTlZ
-X-Google-Smtp-Source: AGHT+IFDLZfj0vB51X/6/MbO4mNBloLfMoXMpO95b9ljygpRzd+tUAcTWJvMEF54P/Gp+3egWABc8A==
-X-Received: by 2002:a05:6000:2c08:b0:431:35a:4a8f with SMTP id
- ffacd0b85a97d-4324e50ab9emr14010423f8f.47.1766428729029; 
- Mon, 22 Dec 2025 10:38:49 -0800 (PST)
+ bh=492wpApSEG7sfTBMeHI7gurerxYv+Ga7f3id9SLMLhk=;
+ b=r/OcN3qCuFS5Y1hIrJd24MtyaFjjiTsZELm7T82U4suuRBWnHT4xuElnGuVtB/cEDk
+ 3kfaT0ilvK0zMRRB4Hor8i1Kwy6sX/uwrommtpBwuMepSyUgOW22FXsw3YkrFLJ6t14X
+ ijGAL4QVrjh8LGNoPfpmrgQKJrYLLrBUVhATaG3RawESIiSSb02QQz0XE5N6nteXJdTN
+ AYYO8p258lHsDUGeB6ECuXGTL9AF7jvRXFwic00UBFgXWx4XgLz9JewKPQ838e8QYq81
+ lFgEl5bvO3ECz5hn06gQXJcSA3eA/PXWK90a4UPDTEedF/D2wS7oVQgqbGYvtCFAuNT3
+ mMeQ==
+X-Gm-Message-State: AOJu0YxGROIEsJzHCEowWRoH1lWO7KX6SfGCQsxW5yxi+erR8LqISMXZ
+ e+l0hD9M6sXLeciORpDtFwtIN/FT0EInr0Q7ZLWniwiV4FXZMZBKHSUEom2ZwdPm4T0=
+X-Gm-Gg: AY/fxX49etNp0rO9KTvyAMmdlK6XYYvm05vG3NqXZ4YrPSDmT2ellj0WNbHA0Gl7YHq
+ WRjWK0NcuUCNW2sGX7TSVI7th7BvXfNpSvLxJE9cFeJb3hXBaoU7QcjNFl+oNgqN78KJqvCir/h
+ vaFHnBkZ80+rcCS966h4HeTIK0LEcfyrG5X0BPKKIC2i4FMQBSVA4xgVc+dK6lDuNjezUbKZcnA
+ 1NQkguCDGic6psMZBD3p/qLwyCAMgQ2rP23OcoFWn8VZq4eFfPlEIsoPU4X6E4G0W2GUOUTJQuG
+ dV5QvQj2BtYvY+3VmJLo4BSWIXEy2kLkaqUXCMy5G1BxdsEre7aJAcC5HsgwRjYT6sttjyLFSsO
+ gYTUJwRvu4bqokvjoMNEOE2O3z5/XeVhhDOQR+URJW13K7SQLPR1gyZTTnwzaptuzLO1g++6IS2
+ iBNzroiVYiVGRBV9qI3lWezQYHdZeWg4GVmK65kOv4LweBF6wcB82t
+X-Google-Smtp-Source: AGHT+IH9FkvT8+UhZuX/ejDw/AahzPr+ZZTMSZ0QsXc2Q3SIKsn+A6w01BkZ5fALNDLAO5X8/n2njQ==
+X-Received: by 2002:a05:600c:5489:b0:46e:59bd:f7e2 with SMTP id
+ 5b1f17b1804b1-47d18bd5651mr128881695e9.11.1766446279784; 
+ Mon, 22 Dec 2025 15:31:19 -0800 (PST)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-4324ea22674sm24342926f8f.10.2025.12.22.10.38.47
+ 5b1f17b1804b1-47be3a4651bsm104051325e9.7.2025.12.22.15.31.18
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 22 Dec 2025 10:38:48 -0800 (PST)
-Date: Mon, 22 Dec 2025 10:38:43 -0800
+ Mon, 22 Dec 2025 15:31:19 -0800 (PST)
+Date: Mon, 22 Dec 2025 15:31:14 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Tianhao Zhang <zhang.tianhao2@zte.com.cn>
-Cc: wang.junlong1@zte.com.cn, yang.yonggang@zte.com.cn, dev@dpdk.org
-Subject: Re: [PATCH v1 2/2] net/zxdh: delete np soft resource uninstallation
-Message-ID: <20251222103843.6ca407e8@phoenix.local>
-In-Reply-To: <20251222102535.401064-3-zhang.tianhao2@zte.com.cn>
-References: <20251209021609.3911854-1-zhang.tianhao2@zte.com.cn>
- <20251222102535.401064-1-zhang.tianhao2@zte.com.cn>
- <20251222102535.401064-3-zhang.tianhao2@zte.com.cn>
+To: Shani Peretz <shperetz@nvidia.com>
+Cc: <dev@dpdk.org>, <stable@dpdk.org>, Remy Horton <remy.horton@intel.com>
+Subject: Re: [PATCH v2] examples/ethtool: fix buffer size for pkt pool name
+Message-ID: <20251222153114.24314d10@phoenix.local>
+In-Reply-To: <20251222083858.1035980-1-shperetz@nvidia.com>
+References: <20251203110157.51471-1-shperetz@nvidia.com>
+ <20251222083858.1035980-1-shperetz@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -84,30 +81,17 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 22 Dec 2025 18:25:35 +0800
-Tianhao Zhang <zhang.tianhao2@zte.com.cn> wrote:
+On Mon, 22 Dec 2025 10:38:58 +0200
+Shani Peretz <shperetz@nvidia.com> wrote:
 
-> Delete np soft resource uninstallation from NP online uninit process.
+> Use RTE_MEMPOOL_NAMESIZE for str_name buffer size instead of the
+> hardcoded value 16, which was insufficient as the format
+> string "pkt_pool%i" can produce up to 19 bytes (8 for "pkt_pool",
+> up to 10 for integer value, and 1 for null terminator).
 > 
-> Signed-off-by: Tianhao Zhang <zhang.tianhao2@zte.com.cn>
-> ---
->  drivers/net/zxdh/zxdh_np.c | 4 ----
->  1 file changed, 4 deletions(-)
+> Fixes: bda68ab9d1e7 ("examples/ethtool: add user-space ethtool sample application")
+> Cc: stable@dpdk.org
 > 
-> diff --git a/drivers/net/zxdh/zxdh_np.c b/drivers/net/zxdh/zxdh_np.c
-> index 4e2637e1b6..3bb765e05d 100644
-> --- a/drivers/net/zxdh/zxdh_np.c
-> +++ b/drivers/net/zxdh/zxdh_np.c
-> @@ -4243,10 +4243,6 @@ zxdh_np_online_uninit(uint32_t dev_id,
->  	if (rc != 0)
->  		PMD_DRV_LOG(ERR, "dtb release port name %s queue id %u", port_name, queue_id);
->  
-> -	rc = zxdh_np_soft_res_uninstall(dev_id);
-> -	if (rc != 0)
-> -		PMD_DRV_LOG(ERR, "zxdh_np_soft_res_uninstall failed");
-> -
->  	return 0;
->  }
->  
+> Signed-off-by: Shani Peretz <shperetz@nvidia.com>
 
-OK, but would like a better explanation. I assume it something like "soft reset is not necessary on device cleanup"
+Acked-by: Stephen Hemminger <stephen@networkplumber.org>
