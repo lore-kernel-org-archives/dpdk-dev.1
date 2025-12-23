@@ -2,67 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8C66E6FE23
-	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Dec 2025 18:15:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A492E6FE23
+	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Dec 2025 18:16:01 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 74CFA40698;
-	Tue, 23 Dec 2025 19:14:48 +0100 (CET)
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com
- [209.85.218.41]) by mails.dpdk.org (Postfix) with ESMTP id B28BD4068E
- for <dev@dpdk.org>; Tue, 23 Dec 2025 19:14:46 +0100 (CET)
-Received: by mail-ej1-f41.google.com with SMTP id
- a640c23a62f3a-b735487129fso943861166b.0
- for <dev@dpdk.org>; Tue, 23 Dec 2025 10:14:46 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id B291E40674;
+	Tue, 23 Dec 2025 19:14:50 +0100 (CET)
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com
+ [209.85.218.47]) by mails.dpdk.org (Postfix) with ESMTP id 9B4E64069D
+ for <dev@dpdk.org>; Tue, 23 Dec 2025 19:14:48 +0100 (CET)
+Received: by mail-ej1-f47.google.com with SMTP id
+ a640c23a62f3a-b734fcbf1e3so1032466866b.3
+ for <dev@dpdk.org>; Tue, 23 Dec 2025 10:14:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1766513686;
- x=1767118486; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1766513688;
+ x=1767118488; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=1UoBNUoi1+EhVE1t3Dqovg1x7UhVI8Us1tilpBbA6+I=;
- b=zVX6mevluZFZXviITAvWzdQbmi8J4EjBeiX4e+OaizCoGKsRFEYoW7Xj2TuuHy1U4d
- KrLRGCzf0Q4EJSUukwiv2cv7wxh3E8QOdtDgmv62HFn+KqTSR8kkkHykdQhdQ0mB/W2D
- wKbFUs34rFNEWlydAV5iPTJw+VFcSKmS5lILGHi1fdsOn3dZG2pNuk9Moq22xFonk8Wh
- NRW+pj7uk0AzW6K9L0oUFr0WZUiPfMgBW3juRXL7Zw7nJShR0BaQAbNo4dYw8SRG484m
- FR1GA1EkkBDhO3oPSoAFlnttA7OsO2B3Gy5xlBY5Bt6kLuTlNZkv3qOFHIK2+ES4Fzw+
- a3ow==
+ bh=ckPcxqjACKxECZIs8TWH87xa+KWpqiOYhGfkjwzJf+A=;
+ b=1FOPpC7z0Yhg6CTRe8WP3U8TVYcKOigTN8m9hQbT4UssrDq/Veygav/M+yxzLdCtDR
+ +YaobzpDGwFPihUnpEplpGZtM+1HQDbGSy2DaotGV+pR0yMVg98eY6V1BgBl4EppRY1D
+ 8lVbTcsO6E+rWL/671PdJnhYBgXsD1yJeZucDl+DYI5GnRvm9LhJZvLUn2oyDqy4RbJU
+ 7U6HKm6ORjN3GmSb9yRcefk5V91MNAzh7s0DJVm8HV+1R6p8f9ru1K/xkYnA+ZSz9ErR
+ vDaR3Eri3GwJ3pLKr2TxRFmEbmJYwNy0zwS3y0l8R0vscJZFqf+1FrV9PaMqeZWeTQzf
+ 1iGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1766513686; x=1767118486;
+ d=1e100.net; s=20230601; t=1766513688; x=1767118488;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=1UoBNUoi1+EhVE1t3Dqovg1x7UhVI8Us1tilpBbA6+I=;
- b=a+NQypSQaHA8oy857jG8Ntf/lZTN2uSUw657VJ+BMaTqUhICDlgEOy+nxi0C9Zxk5+
- B7phDlizg2jnObQKuY9wMUj75yo+YGaQZ8UGBm3rULWcLodviW9XwSzC9n7GIe/M/rXQ
- 9hdbavoNgdkzsn9cUsjWwVpYinvFTghmHQu/VUjpEoDmAHw0NdlU1BHvP57kBCXQlOuO
- DoizzJNfaWZYdvmOtklxW/a+zSLDapEY6wFlVTIwicCel0cWS6X5tJQWCMwC8NaW1Dky
- gWtL+STu/VYeDb9Wwc9v0kC8lwWWl1EcG4NKYtvh3IUOC85rAuUYW5fFXDvXyOj9hERd
- iFVA==
-X-Gm-Message-State: AOJu0YysSMqfgAQcSxsu+HEVZhKAnlqmorFyC58PyfbL6drLicMX5Hdv
- G+8oI9TLQVO0OWHK3mzNhtVo5i15SyYMGureXeNr7fsGTHt9tTIXqpCGE3SC3t1R4S0SFxDAfOJ
- Ujv4skpU=
-X-Gm-Gg: AY/fxX6EzGdfz8F+eBy8wI+vadb2MXKovrhHkaG9/mvKFOTDwpcm89TAsfeR5QzsuuL
- u+OJ69Iz//aoP9Dwx/YhM/NXvzf7PY/koxOvBvhE/VfEdoUCP9DCR2/K8u+8ewCWGv/A+F5QQil
- f6nW3dyXsHFn3OhrqDG4Aw+h36xwnqFdiI1MBWrgN0PbNMuvXoeavdmzaS9w1Mm1JKNni6WOI53
- dF2+dKJ6rrOGhkGwhipMVD7YvZPvEiZZBEyNW+KoFLaQagcRPIyFKvFbUg9RtIlOgsIt4F1loLE
- Sx7DmNAdZux0/HtCbRk/NQH3P67+odPvS9uzYlRKer/5mElwna48W/BxW2YIUKDDKRAIoINsPaL
- NsUYcPIuFIHBaKV9tRhduEUifsKqB0PM432AZT0liilizKZliGAsr4T1j5RaEoq5F4UHae3Zior
- jfx2mUHTFSpz1VHlfQYFGEGsIIaSIG03K7cSNbKpXS9VqUJs4WIVJIkJ692KJ3
-X-Google-Smtp-Source: AGHT+IErF2X9If6zGtc1LOXq3RLL2rrRmRJZiX1tu21IIFEoHd7er9FWQ1TNnhjggzucdexl+h73zQ==
-X-Received: by 2002:a17:907:3faa:b0:b79:fcc9:b00d with SMTP id
- a640c23a62f3a-b80371f353bmr1735880666b.59.1766513686219; 
- Tue, 23 Dec 2025 10:14:46 -0800 (PST)
+ bh=ckPcxqjACKxECZIs8TWH87xa+KWpqiOYhGfkjwzJf+A=;
+ b=F81X5UIKGdKbQEV8FapT87rMQBnZbTML43fthywYp7AlIqXPWd5AhQGOupTz5eWcZg
+ dlN6JQc69V+NIFaZe68VlGOsh3NCr3P9t6r0UHA2YQwENDKXYspLiLDJmbSMNoxZ3uDq
+ fG3wy7PELUY8GQ5kgCA7WUhcTARYIUmETHjnXupMZ3M+V0SeVuxkRkMgsFeKp6c4KuI5
+ UFkI/1XiPKGsHtlP1kxPBQeC3x8/3jDgCSNMHYIQ6X8jLncPQk8y92B7w9k+Xs/am8dy
+ +rWacsMl2dHlFS/L6meqhMy71E9srf670TXxbcet21vF8l85xwhZTAbucu6PoLYYWMHP
+ Vj5g==
+X-Gm-Message-State: AOJu0Yzhkz5k1joJ5wozqql5zBzIFeU7DT1GTcTZj33D6ZTq7O3/XQge
+ HLqRjYUZ8KV7Lt+ylI2cwrleSHt9L0HdJ54baqBsyleLF0rqTO9HHvFQ3NliIoflxSFtJz9X9ux
+ L05wOdDM=
+X-Gm-Gg: AY/fxX69omaFA88YZNZxea7Hp0iOSihFfSIq0KtUUJso5DHz6Mq/nUPD4XGnLUCTUCY
+ qxRHYj7m7Rt2iE4RFfJMT0jK7CYBsnulwIUrV8EIVt3fouE8GpFthr97Nqv0adO1XFdekCnwfiC
+ eLrGUVk+Ix5G/Ue+3TMYy+5CErIzH2p5VHkDv0vQRkYmQOswdvS+IYeaYMXz3s9rT5sVfGfhDRS
+ xuiBGUWdzGjWUpA1M5XipsNqp5moA4fvDfD0t9SGLzCvfeVkEKCGRbSVZG1nWukqsBBvCtZOedP
+ qdzD2JfuQoq0NTeEDyDo6g2uL+y59oEZwZYnskcQv6Q9xUzX5vBH9UhDqbNjS+mvR474xFFLpHa
+ +LmlE+yQwjUhHJpNqW8nX1IHwHD5zOTTqXXjYXVCMNjLnKGCXxjioX/OAZKjXMdaDbAlXOxXzMr
+ NirWleCmuPNVLziQysIBUR4OuFoXbdrEZc6cXS2eUtD9SSJNYJug==
+X-Google-Smtp-Source: AGHT+IHPyzhap4Q4P3hd2Dt18BTXTiHCUc1e/X8FacZuswTSfWUrS/FMj4XzyiTTzetY7iqMdHNllA==
+X-Received: by 2002:a17:907:7f0d:b0:b80:12f5:f6aa with SMTP id
+ a640c23a62f3a-b803722927amr1828048466b.56.1766513688079; 
+ Tue, 23 Dec 2025 10:14:48 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a640c23a62f3a-b8037f3e271sm1495302566b.60.2025.12.23.10.14.44
+ a640c23a62f3a-b8037f3e271sm1495302566b.60.2025.12.23.10.14.46
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 23 Dec 2025 10:14:45 -0800 (PST)
+ Tue, 23 Dec 2025 10:14:47 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v6 14/18] eal: handle long shared library path
-Date: Tue, 23 Dec 2025 10:13:12 -0800
-Message-ID: <20251223181418.40834-15-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH v6 15/18] ethdev: avoid possible overflow in xstat names
+Date: Tue, 23 Dec 2025 10:13:13 -0800
+Message-ID: <20251223181418.40834-16-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251223181418.40834-1-stephen@networkplumber.org>
 References: <20251205022948.327743-1-stephen@networkplumber.org>
@@ -82,60 +83,77 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Instead of a fixed size shared library path that could in theory
-get truncated when concatenating, use a dynamically allocated buffer
-via asprintf.
+The compiler doesn't know that all the elements in the table
+of queue stats are short enough to avoid overflowing the snprintf.
+Add a condition to warn if it ever does;
+maybe some day a new long named queue stat could be added.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- lib/eal/common/eal_common_options.c | 17 +++++++++++++----
- 1 file changed, 13 insertions(+), 4 deletions(-)
+ lib/ethdev/rte_ethdev.c | 35 ++++++++++++++++++++++++-----------
+ 1 file changed, 24 insertions(+), 11 deletions(-)
 
-diff --git a/lib/eal/common/eal_common_options.c b/lib/eal/common/eal_common_options.c
-index b1fb670ea0..6aa078e135 100644
---- a/lib/eal/common/eal_common_options.c
-+++ b/lib/eal/common/eal_common_options.c
-@@ -570,7 +570,6 @@ static int
- eal_plugindir_init(const char *path)
- {
- 	struct dirent *dent = NULL;
--	char sopath[PATH_MAX];
- 	DIR *d = NULL;
+diff --git a/lib/ethdev/rte_ethdev.c b/lib/ethdev/rte_ethdev.c
+index c6fe0d5165..05de3335e5 100644
+--- a/lib/ethdev/rte_ethdev.c
++++ b/lib/ethdev/rte_ethdev.c
+@@ -3489,9 +3489,10 @@ eth_basic_stats_get_names(struct rte_eth_dev *dev,
+ 	uint16_t num_q;
  
- 	if (path == NULL || *path == '\0')
-@@ -584,19 +583,29 @@ eal_plugindir_init(const char *path)
+ 	for (idx = 0; idx < RTE_NB_STATS; idx++) {
+-		strlcpy(xstats_names[cnt_used_entries].name,
+-			eth_dev_stats_strings[idx].name,
+-			sizeof(xstats_names[0].name));
++		if (strlcpy(xstats_names[cnt_used_entries].name, eth_dev_stats_strings[idx].name,
++			    sizeof(xstats_names[0].name)) >= sizeof(xstats_names[0].name))
++			RTE_ETHDEV_LOG_LINE(ERR, "statistic name '%s' will be truncated",
++					    xstats_names[cnt_used_entries].name);
+ 		cnt_used_entries++;
  	}
  
- 	while ((dent = readdir(d)) != NULL) {
-+		char *sopath = NULL;
- 		struct stat sb;
+@@ -3501,10 +3502,17 @@ eth_basic_stats_get_names(struct rte_eth_dev *dev,
+ 	num_q = RTE_MIN(dev->data->nb_rx_queues, RTE_ETHDEV_QUEUE_STAT_CNTRS);
+ 	for (id_queue = 0; id_queue < num_q; id_queue++) {
+ 		for (idx = 0; idx < RTE_NB_RXQ_STATS; idx++) {
+-			snprintf(xstats_names[cnt_used_entries].name,
+-				sizeof(xstats_names[0].name),
+-				"rx_q%u_%s",
+-				id_queue, eth_dev_rxq_stats_strings[idx].name);
++			unsigned int cc;
++
++			cc = snprintf(xstats_names[cnt_used_entries].name,
++				      sizeof(xstats_names[0].name),
++				      "rx_q%u_%s",
++				      id_queue, eth_dev_rxq_stats_strings[idx].name);
++
++			/* could only happen if a long string was added */
++			if (cc >= sizeof(xstats_names[0].name))
++				RTE_ETHDEV_LOG_LINE(ERR, "truncated rxq stat string '%s'",
++						    eth_dev_rxq_stats_strings[idx].name);
+ 			cnt_used_entries++;
+ 		}
  
- 		if (!ends_with(dent->d_name, ".so") && !ends_with(dent->d_name, ".so."ABI_VERSION))
- 			continue;
- 
--		snprintf(sopath, sizeof(sopath), "%s/%s", path, dent->d_name);
-+		if (asprintf(&sopath, "%s/%s", path, dent->d_name) < 0) {
-+			EAL_LOG(ERR, "failed to create full path %s/%s",
-+				path, dent->d_name);
-+			continue;
-+		}
- 
- 		/* if a regular file, add to list to load */
--		if (!(stat(sopath, &sb) == 0 && S_ISREG(sb.st_mode)))
-+		if (!(stat(sopath, &sb) == 0 && S_ISREG(sb.st_mode))) {
-+			free(sopath);
- 			continue;
-+		}
- 
--		if (eal_plugin_add(sopath) == -1)
-+		if (eal_plugin_add(sopath) == -1) {
-+			free(sopath);
- 			break;
-+		}
-+		free(sopath);
+@@ -3512,10 +3520,15 @@ eth_basic_stats_get_names(struct rte_eth_dev *dev,
+ 	num_q = RTE_MIN(dev->data->nb_tx_queues, RTE_ETHDEV_QUEUE_STAT_CNTRS);
+ 	for (id_queue = 0; id_queue < num_q; id_queue++) {
+ 		for (idx = 0; idx < RTE_NB_TXQ_STATS; idx++) {
+-			snprintf(xstats_names[cnt_used_entries].name,
+-				sizeof(xstats_names[0].name),
+-				"tx_q%u_%s",
+-				id_queue, eth_dev_txq_stats_strings[idx].name);
++			unsigned int cc;
++
++			cc = snprintf(xstats_names[cnt_used_entries].name,
++				      sizeof(xstats_names[0].name),
++				      "tx_q%u_%s",
++				      id_queue, eth_dev_txq_stats_strings[idx].name);
++			if (cc >= sizeof(xstats_names[0].name))
++				RTE_ETHDEV_LOG_LINE(ERR, "truncated txq stat string '%s'",
++						    eth_dev_txq_stats_strings[idx].name);
+ 			cnt_used_entries++;
+ 		}
  	}
- 
- 	closedir(d);
 -- 
 2.51.0
 
