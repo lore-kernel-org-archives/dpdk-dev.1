@@ -2,73 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21B79E6FE23
-	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Dec 2025 18:16:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AFB1E6FE2B
+	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Dec 2025 20:14:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7634940A73;
-	Tue, 23 Dec 2025 19:14:56 +0100 (CET)
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com
- [209.85.218.54]) by mails.dpdk.org (Postfix) with ESMTP id 3183B40669
- for <dev@dpdk.org>; Tue, 23 Dec 2025 19:14:53 +0100 (CET)
-Received: by mail-ej1-f54.google.com with SMTP id
- a640c23a62f3a-b7277324054so858760066b.0
- for <dev@dpdk.org>; Tue, 23 Dec 2025 10:14:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1766513693;
- x=1767118493; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=NAHPuQvE2165rpGxsJHW1wsr08rO3/PzDs3KR/V/FX8=;
- b=sQ+tUKVsqTr2QwpMTVx8m71mX8e0+B90kcf7GIF8feqp/A9SIkrKNmPLD0oUkJJgR0
- H81oBwv/6t23AKXOw59zPRAjmEejrVNa0sX9uB2mmYZTKl85g0O+K4y2wMZ38JWSClMB
- 53+63R6Lcr9AzBmShh4EuKGNoeVFdc9940pL8XgHJvP/L4B2dV1de3rhaZKfkzLhwzbE
- GEbIlN4lKCl6hcnKDXbCKmqVhbB4I15gxaWfvPPpwUDgPjoHVacp3i+6PSO6um8p11ez
- WNLQWcIZz8LN2t8fwelOQ8rCR6I9+haaA1OrulWD6Nmk8UQPfET0u7GIRgEe6X9ymoox
- Iizw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1766513693; x=1767118493;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=NAHPuQvE2165rpGxsJHW1wsr08rO3/PzDs3KR/V/FX8=;
- b=XVtqKIk0eS4Cz4pR/kg+9jrS+3LLatmvOsDbzgfg0V9Uk0ly+Glghc7EUPS4L8Av+h
- aa/KFJiVOtFE/yaCUmmWKYAu+/SjKj6D9mcgZZOqCzfnvZSNqqBXw6Rr2sI8evU2Nv2G
- sy0NTGoPzcxsfjWyY/GGqUZ6FwQ47jk5VoKDRxlfPkj07AI5rgQkPJZdRVVsK2Uhy8mF
- NsWO9i2hXp4kEB59j7uwounpscloNQrl2V0AVZAYxeXfWUu4ofvyLM9OSir4rdCCi9H5
- kT4Wt1mYMIFEYql2vGTBYTbhPExYAxvS7fsmdXk/+E1U8/9pWR/N9L2sKDSRRSzsfVM0
- pX9g==
-X-Gm-Message-State: AOJu0YzHZNWJFWIpPKKS5WON7a5SBwDdBcJDUNKP5kJGBYBSGR1NLxbe
- onZ48AYBSzCIJvCDyFdtuDJDiNGmxsQnl2A7F9VRfP+xKHm3JKyEdF4urAndoWRb49So9SAn7Y+
- PVPnSWb0=
-X-Gm-Gg: AY/fxX47cYUSZ/nWw2QvzuWg3obvTBjS+oqxzLdDjNWGOIszW3N07FXKim+Fv9Nvbje
- 8FuTx0bZ5zFEWyeXxyhbUNxOyYu1b2IOlPwiKVUWiubrjc47w1v7OWdTKSQwzFAsvDYd+kDA/Jq
- +EUdYdIVuj/RQpmNdaai1jgVSpivD31MWbZ1A9aR7vJUv24ZT6CxzOLXCNLDXW+HBzjUPgJ1AWA
- MRYiXModqX7xko/Ws5P6vPiwAkMW4Bb6QLUd+qKRxGMD0305FelPYcpY7LcSnYjtoyRx+uIEoDb
- F7RcX/uLHpGVH3s8nPus+FK6fo/dCA5GwGQgqOemrHqcVu2VA0qRi3Ranu1K7GaraViUqR25OUp
- 96LHyABcpjOT8o2ELfk2hLRfdn0mXw34XK57MPVGmzbRnPPLMf/OsHlvZHACWbqC7B7uvatA52J
- jurzpiOyhPcNtySinequlPu0b6hgBIa9SC5SsSaxChLuosIaMrQA==
-X-Google-Smtp-Source: AGHT+IEkERKCxpFTvpHyhcbPwFRGX4S1qHtdFRgi0XrQnF/K1vBvP9hot6fGgWAPnjnvFT/h1DhzAA==
-X-Received: by 2002:a17:906:c104:b0:b73:8d2e:2d38 with SMTP id
- a640c23a62f3a-b8037222776mr1664440066b.50.1766513692683; 
- Tue, 23 Dec 2025 10:14:52 -0800 (PST)
-Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- a640c23a62f3a-b8037f3e271sm1495302566b.60.2025.12.23.10.14.51
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 23 Dec 2025 10:14:52 -0800 (PST)
-From: Stephen Hemminger <stephen@networkplumber.org>
+	by mails.dpdk.org (Postfix) with ESMTP id 385B940265;
+	Tue, 23 Dec 2025 21:14:53 +0100 (CET)
+Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
+ by mails.dpdk.org (Postfix) with ESMTP id 251FC4025A
+ for <dev@dpdk.org>; Tue, 23 Dec 2025 21:14:52 +0100 (CET)
+Received: by inbox.dpdk.org (Postfix, from userid 33)
+ id 09E98470CE; Tue, 23 Dec 2025 21:14:52 +0100 (CET)
+From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v6 18/18] lib: enable format overflow warnings
-Date: Tue, 23 Dec 2025 10:13:16 -0800
-Message-ID: <20251223181418.40834-19-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251223181418.40834-1-stephen@networkplumber.org>
-References: <20251205022948.327743-1-stephen@networkplumber.org>
- <20251223181418.40834-1-stephen@networkplumber.org>
+Subject: [DPDK/meson Bug 1858] [dpdk23.11.5] Meson build failed on Fedora 43
+Date: Tue, 23 Dec 2025 20:14:51 +0000
+X-Bugzilla-Reason: AssignedTo
+X-Bugzilla-Type: new
+X-Bugzilla-Watch-Reason: None
+X-Bugzilla-Product: DPDK
+X-Bugzilla-Component: meson
+X-Bugzilla-Version: 23.11
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: normal
+X-Bugzilla-Who: mlabrecque@iol.unh.edu
+X-Bugzilla-Status: UNCONFIRMED
+X-Bugzilla-Resolution: 
+X-Bugzilla-Priority: Normal
+X-Bugzilla-Assigned-To: dev@dpdk.org
+X-Bugzilla-Target-Milestone: ---
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
+ op_sys bug_status bug_severity priority component assigned_to reporter
+ target_milestone
+Message-ID: <bug-1858-3@http.bugs.dpdk.org/>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,28 +54,108 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Enable compiler checking of format overflow
+http://bugs.dpdk.org/show_bug.cgi?id=3D1858
 
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
----
- lib/meson.build | 4 ----
- 1 file changed, 4 deletions(-)
+            Bug ID: 1858
+           Summary: [dpdk23.11.5] Meson build failed on Fedora 43
+           Product: DPDK
+           Version: 23.11
+          Hardware: All
+                OS: Linux
+            Status: UNCONFIRMED
+          Severity: normal
+          Priority: Normal
+         Component: meson
+          Assignee: dev@dpdk.org
+          Reporter: mlabrecque@iol.unh.edu
+  Target Milestone: ---
 
-diff --git a/lib/meson.build b/lib/meson.build
-index c8f4270868..8f5cfd28a5 100644
---- a/lib/meson.build
-+++ b/lib/meson.build
-@@ -113,10 +113,6 @@ default_cflags = machine_args
- default_cflags += ['-DALLOW_EXPERIMENTAL_API']
- default_cflags += ['-DALLOW_INTERNAL_API']
- 
--if cc.has_argument('-Wno-format-truncation')
--    default_cflags += '-Wno-format-truncation'
--endif
--
- foreach l:libraries
-     build = true
-     reason = '<unknown reason>' # set if build == false to explain why
--- 
-2.51.0
+[DPDK Version]
+dpdk 23.11.5 LTS
 
+[OS version]
+Fedora Linux 43 (Container Image)/6.17.12-300.fc43.x86_64 run via Podman
+GCC15.2.1
+
+[Test Setup]
+# meson setup build
+# ninja
+# meson install
+
+[Error log]
+09:10:22  FAILED: [code=3D1]
+drivers/a715181@@tmp_rte_net_dpaa2@sta/net_dpaa2_dpaa2_flow.c.o=20
+09:10:22  ccache cc -Idrivers/a715181@@tmp_rte_net_dpaa2@sta -Idrivers
+-I../drivers -Idrivers/net/dpaa2 -I../drivers/net/dpaa2
+-I../drivers/net/dpaa2/base -I../drivers/net/dpaa2/mc -Ilib/ethdev
+-I../lib/ethdev -I. -I../ -Iconfig -I../config -Ilib/eal/include
+-I../lib/eal/include -Ilib/eal/linux/include -I../lib/eal/linux/include
+-Ilib/eal/x86/include -I../lib/eal/x86/include -Ilib/eal/common
+-I../lib/eal/common -Ilib/eal -I../lib/eal -Ilib/kvargs -I../lib/kvargs
+-Ilib/log -I../lib/log -Ilib/telemetry/../metrics -I../lib/telemetry/../met=
+rics
+-Ilib/telemetry -I../lib/telemetry -Ilib/net -I../lib/net -Ilib/mbuf
+-I../lib/mbuf -Ilib/mempool -I../lib/mempool -Ilib/ring -I../lib/ring
+-Ilib/meter -I../lib/meter -Idrivers/bus/pci -I../drivers/bus/pci
+-I../drivers/bus/pci/linux -Ilib/pci -I../lib/pci -Idrivers/bus/vdev
+-I../drivers/bus/vdev -Idrivers/mempool/dpaa2 -I../drivers/mempool/dpaa2
+-Idrivers/bus/fslmc -I../drivers/bus/fslmc -I../drivers/bus/fslmc/mc
+-I../drivers/bus/fslmc/qbman/include -I../drivers/bus/fslmc/portal
+-Idrivers/common/dpaax -I../drivers/common/dpaax
+-I../drivers/common/dpaax/caamflib -Ilib/eventdev -I../lib/eventdev -Ilib/h=
+ash
+-I../lib/hash -Ilib/rcu -I../lib/rcu -Ilib/timer -I../lib/timer -Ilib/crypt=
+odev
+-I../lib/cryptodev -Ilib/dmadev -I../lib/dmadev -fdiagnostics-color=3Dalways
+-pipe -D_FILE_OFFSET_BITS=3D64 -Wall -Winvalid-pch -Wextra -Werror -std=3Dc=
+11 -O3
+-include rte_config.h -Wcast-qual -Wdeprecated -Wformat -Wformat-nonliteral
+-Wformat-security -Wmissing-declarations -Wmissing-prototypes -Wnested-exte=
+rns
+-Wold-style-definition -Wpointer-arith -Wsign-compare -Wstrict-prototypes
+-Wundef -Wwrite-strings -Wno-address-of-packed-member -Wno-packed-not-align=
+ed
+-Wno-missing-field-initializers -fzero-init-padding-bits=3Dall
+-Wno-zero-length-bounds -D_GNU_SOURCE -fPIC -march=3Dnative -mrtm
+-DALLOW_EXPERIMENTAL_API -DALLOW_INTERNAL_API -Wno-format-truncation
+-DRTE_LOG_DEFAULT_LOGTYPE=3Dpmd.net.dpaa2 -MD -MQ
+'drivers/a715181@@tmp_rte_net_dpaa2@sta/net_dpaa2_dpaa2_flow.c.o' -MF
+'drivers/a715181@@tmp_rte_net_dpaa2@sta/net_dpaa2_dpaa2_flow.c.o.d' -o
+'drivers/a715181@@tmp_rte_net_dpaa2@sta/net_dpaa2_dpaa2_flow.c.o' -c
+../drivers/net/dpaa2/dpaa2_flow.c
+09:10:22  ../drivers/net/dpaa2/dpaa2_flow.c:103:36: error: initializer-stri=
+ng
+for array of 'unsigned char' truncates NUL terminator but destination lacks
+'nonstring' attribute (7 chars into 6 available)
+[-Werror=3Dunterminated-string-initialization]
+09:10:22    103 |         .hdr.dst_addr.addr_bytes =3D
+"\xff\xff\xff\xff\xff\xff",
+09:10:22        |                                    ^~~~~~~~~~~~~~~~~~~~~~=
+~~~~
+09:10:22  ../drivers/net/dpaa2/dpaa2_flow.c:104:36: error: initializer-stri=
+ng
+for array of 'unsigned char' truncates NUL terminator but destination lacks
+'nonstring' attribute (7 chars into 6 available)
+[-Werror=3Dunterminated-string-initialization]
+09:10:22    104 |         .hdr.src_addr.addr_bytes =3D
+"\xff\xff\xff\xff\xff\xff",
+09:10:22        |                                    ^~~~~~~~~~~~~~~~~~~~~~=
+~~~~
+09:10:22  ../drivers/net/dpaa2/dpaa2_flow.c:121:25: error: initializer-stri=
+ng
+for array of 'unsigned char' truncates NUL terminator but destination lacks
+'nonstring' attribute (17 chars into 16 available)
+[-Werror=3Dunterminated-string-initialization]
+09:10:22    121 |                         "\xff\xff\xff\xff\xff\xff\xff\xff"
+09:10:22        |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+09:10:22  ../drivers/net/dpaa2/dpaa2_flow.c:124:25: error: initializer-stri=
+ng
+for array of 'unsigned char' truncates NUL terminator but destination lacks
+'nonstring' attribute (17 chars into 16 available)
+[-Werror=3Dunterminated-string-initialization]
+09:10:22    124 |                         "\xff\xff\xff\xff\xff\xff\xff\xff"
+09:10:22        |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+--=20
+You are receiving this mail because:
+You are the assignee for the bug.=
