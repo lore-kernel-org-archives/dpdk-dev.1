@@ -2,68 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B546E6FE23
-	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Dec 2025 18:15:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 455DAE6FE23
+	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Dec 2025 18:15:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EA8444067E;
-	Tue, 23 Dec 2025 19:14:43 +0100 (CET)
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com
- [209.85.218.50]) by mails.dpdk.org (Postfix) with ESMTP id C1C5B40678
- for <dev@dpdk.org>; Tue, 23 Dec 2025 19:14:41 +0100 (CET)
-Received: by mail-ej1-f50.google.com with SMTP id
- a640c23a62f3a-b79af62d36bso924750466b.3
- for <dev@dpdk.org>; Tue, 23 Dec 2025 10:14:41 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 2A69540670;
+	Tue, 23 Dec 2025 19:14:46 +0100 (CET)
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com
+ [209.85.218.51]) by mails.dpdk.org (Postfix) with ESMTP id 037BF40685
+ for <dev@dpdk.org>; Tue, 23 Dec 2025 19:14:44 +0100 (CET)
+Received: by mail-ej1-f51.google.com with SMTP id
+ a640c23a62f3a-b728a43e410so966682066b.1
+ for <dev@dpdk.org>; Tue, 23 Dec 2025 10:14:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1766513681;
- x=1767118481; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1766513683;
+ x=1767118483; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=1sGtg/iCWobLclY5oukVNQNXBwpSC/wmMRN8/BXXAAY=;
- b=W39gua9QW9wJz4U2gTgCz8+IhxucU6HnduyOGmkdkldzlEnhA3jkb6YFfxlEKlQKwf
- B/xJIpreDUS4QcqVx3kfiPG7GIqlLlIcVSi2aEFAN07yVmdrmrGj7lvrL0MfM0FEQ1x9
- jBx5tub6OmQMFCJSxYjAKyyqyRfbbPmQFsycCO5sB2nF+MJLaiWsDq++zfhorZ7fZM/z
- B6GGps/RZtfkFBS+GSR+nEeJohhqcvQDY62QLoBM0LfckiSv5CadHa7sR5kpK3tgDX5B
- xwJEBkNdE44K+zhqd7vuNee3GpvOFHaholozvz56jSU3RRoBtFtWv9llM66SfM/airmn
- ShZA==
+ bh=riBaW5deNyN2mFHzkT3osuBjwXs7dH/r89MilBRT6go=;
+ b=f1gXbDZzQbhOPvf4meQp8Nlen2RqFgsLJYL0z07JBonKy3s9ZmgkPme1dYu4KRD01L
+ aq1pJcYFJmjzcQLJVvfqXI+YYz7jDLbxt78eaenpoGNs/GRDNGpqw3s8Rdk6U4k3G48U
+ qSViPlfSSc0EZMvAUJdnWcr5kB/ukfwqUlV0sql0nH0x+6VCq2aRnm9Ca2fkf7fknUUA
+ XEQNBAf2xOiUX48au6hUaPb9eYrWgkdleQRCN151H8I7mboE9Gkobv79sH3KOIcMJcsO
+ 1P+iDQTn4hL/AN1rrTEoaf8qCGlyXxotDEdBwV+y0D2lz0AwVz3S+cClgN8VESaufpVI
+ ImCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1766513681; x=1767118481;
+ d=1e100.net; s=20230601; t=1766513683; x=1767118483;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=1sGtg/iCWobLclY5oukVNQNXBwpSC/wmMRN8/BXXAAY=;
- b=D28RxedfqcJ0FnJPXPG6aF4bKMnGZxUEIFJu7nzJ9n0LsH14+iC6n2cVM1bqNIKYdt
- ib1k0Lwaus8jK04VlOCuL2vd9VK6xXJxfsaRy7zy2SBbt4OUbQdbwVYhCCF5N+1WwJxi
- bAqcZnBJxm7D5x90jVMjp6cHIwLO1aoXEyCowOZiiAoSY8skOm6fZ6Wn/wlOnXzNRib6
- POuW7xbx8r76mOwFgRGtw39yTDey5t1SDTaNfZtQcOI72jFfwn/rzckWkjnGt50XC7xZ
- ZSGttTZicoXVtgsOW5/fpJjHzkJKO6VTMjXxuLlM54wiBuHcFHP2it7dwzEL4aVJlwyO
- re3Q==
-X-Gm-Message-State: AOJu0YxV3xLt0BE0Y5qsAr1rH5JfGlxqoUJGxFn5htCsO9bhWSlMUtH1
- ljCzFtdIVEOpFHd9oPOJAaPYWpGOIxXMLGxKwsAEPcqKF8+SOFAz97y8g8AOLdqaBaHbZAKp9dA
- Btp5caGY=
-X-Gm-Gg: AY/fxX7AW0YJ4NGNJWOzc8s8lXQAummpoZ/+c4LG68diXeY8k+b5B/s1c4K+pTv0v4y
- m1CCD2fBrXqb+2FaFIVhHrRFO1kvbQUP9eCTiMRMtoyKE/oXL2k03qsoITl4Ve6j5p1qwoUn12d
- n9O5OYJMbFXfttkLxYTquu+NZKkxkJY8L7C4YOi8yEp67Hs5dx09bnd/3Ahjx70t3bCNHDdCu7z
- Wj5mVbcE1MDm2aljb6Cn6/4fqWUMinSEDcjy/2ogJ7IPdjDaP71CizXiIknqjM3hkUQm/TbpmWT
- 1Mmx+teKNPdQCagnN5X3SmCVD3RiIw29fvfqXdWZ+HDv/6T9pCM2awREuXWHIH3LFehMemLo1nQ
- UqXQlwNsEs1owhF+juse/B7jFR49iqxpVBgLV/PhCTwjVH/EqO21chWgCfh7x64mJ4LkpLPs+uu
- 1jGCnfGvFI15m4zb1Fn7P/sCUTLmLvz3TyvC9VsCeLF2I6upb1rQ==
-X-Google-Smtp-Source: AGHT+IEN5xk18YnFbr3yzd7jIaMikrLsA4Yt46k/d5IBjxXuUZdkznYsySNVuiUHhomFYHIvy65MOQ==
-X-Received: by 2002:a17:907:6d12:b0:b76:bcf5:a388 with SMTP id
- a640c23a62f3a-b8037198f0cmr1576749566b.50.1766513681286; 
- Tue, 23 Dec 2025 10:14:41 -0800 (PST)
+ bh=riBaW5deNyN2mFHzkT3osuBjwXs7dH/r89MilBRT6go=;
+ b=ZdHos1sBUU9LK/npN9o3cOk5s6o2Kohsh/0kV7MI6emm0c3mM/soEakpyOuzj7Pl4P
+ EK/0R1M7yOnF7Yh0cFgNMUj18x0hFpjtbHd1+7m3/F9y6T2pTtsLL9bMMmxpBvyEfyv8
+ sFE5AnGm9Jr0BuRhjmWATexd/bcX/9uYB8+pxpQMk9wOdkSC4silfdx/RxqNJ5pkvqBr
+ Ku0uvIeETyrnGLG4aZJhKCQxfuAyKkwzpeoivNwktd7xmQxZEmzFF+TK8+Qj/S/+FkjE
+ N0q5/CyM3Sq9IFY9sxbfciV1cNmXwmUs5ELPOS+kgPCv7bWtKDgFqQVtSNlo/N2K8O+D
+ SNYA==
+X-Gm-Message-State: AOJu0YyWQs8Ex2HI+IQAoWBx44vuNuaS96KZAUkUjGqwqmJ2hT0cu9Jy
+ 8Ct4WV1Im9Y35HyZx0aA9aQVQ0y9txL3MYYzibFIohIaODO0P5EMQeSqmyxEgDslX5ALJ8gj9bW
+ bliFQnwg=
+X-Gm-Gg: AY/fxX4OVql8YTmosFjUfWi7QNTUbL/7Xa1008PtDMh80oGKhmAyn2xPY4VoIMt8Z6b
+ LTVvl7aOkORtL4rkeUsNTzcDW4qEP+XuB8HmZtFRNy7ZYhtyj0AG3fqCZkAh6Tbu8flxgZEEH09
+ I+gydvaJZcApochRxaSgzQrjNrLHSPQ9+JPGQU7+PvVn4vMKzmIjxgGDX4V9kC4oIbGiaIXCH8W
+ zVoW8JYssJFeyl1U4e/pK7wnAu0+6HPLGxirtJRZh32eY5RTLbl6f4gUDsmxqgO/t0gsIQRi8XQ
+ 2H0bKbyxUU95+P+5kloJhVAzn05HnBhyWvRYIROsqBYFNXvDuZO9ZZpXuNeWzzEvt3p/Hprq/mw
+ vS1RKihKZZU4kN2rxzBASvUIPVx6Zy9oBOSt/U1WszoiN+LhVsKtv5AGkuepyJQpISfc1bU62ea
+ /bwYlPdObJnN0PS+45JDeAjzge/KGdZ86mPwHIQbhuwHeTwW8ZqRMmXJ7Nvrb6
+X-Google-Smtp-Source: AGHT+IFZ58euyTEVloCVrHzXnpjhUHbFClcp306iBdouanKlWWaoOtXUgr82JWmwkW/cn6+kO7cLog==
+X-Received: by 2002:a17:907:7e97:b0:b7c:fe7c:e37f with SMTP id
+ a640c23a62f3a-b8036f0f1b5mr1486490566b.18.1766513682850; 
+ Tue, 23 Dec 2025 10:14:42 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a640c23a62f3a-b8037f3e271sm1495302566b.60.2025.12.23.10.14.39
+ a640c23a62f3a-b8037f3e271sm1495302566b.60.2025.12.23.10.14.41
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 23 Dec 2025 10:14:40 -0800 (PST)
+ Tue, 23 Dec 2025 10:14:42 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v6 11/18] eal: limit maximum runtime directory and socket paths
-Date: Tue, 23 Dec 2025 10:13:09 -0800
-Message-ID: <20251223181418.40834-12-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v6 12/18] eal: check for hugefile path overflow
+Date: Tue, 23 Dec 2025 10:13:10 -0800
+Message-ID: <20251223181418.40834-13-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251223181418.40834-1-stephen@networkplumber.org>
 References: <20251205022948.327743-1-stephen@networkplumber.org>
@@ -83,268 +82,204 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Linux has a limitation of 108 characters (including null character)
-for AF_UNIX socket path. FreeBSD limit is smaller 104 characters
-and Windows has same definition (108) in afunix.h header.
-
-In current code, EAL will fail in telemetry, so this should
-not break existing users.
-
- EAL: Multi-process socket /var/run/dpdk/x7Q9mP2a...
- EAL: Selected IOVA mode 'VA'
- TELEMETRY: Error with socket binding, path too long
-
-Now long string fails on command line parsing:
- EAL: Runtime directory string too long
- EAL: Cannot create runtime directory
- EAL: Error parsing command line arguments.
+When constructing huge filename path, check for possible
+overflow of PATH_MAX.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- lib/eal/common/eal_common_config.c |  6 ++-
- lib/eal/common/eal_common_proc.c   | 83 +++++++++++++++++++-----------
- lib/eal/common/eal_filesystem.h    | 13 ++++-
- 3 files changed, 70 insertions(+), 32 deletions(-)
+ lib/eal/common/eal_filesystem.h   | 10 ++++---
+ lib/eal/linux/eal_hugepage_info.c | 44 ++++++++++++++++++-------------
+ lib/eal/linux/eal_memalloc.c      | 11 ++++++--
+ lib/eal/linux/eal_memory.c        |  9 +++++--
+ 4 files changed, 48 insertions(+), 26 deletions(-)
 
-diff --git a/lib/eal/common/eal_common_config.c b/lib/eal/common/eal_common_config.c
-index 7fc7611a07..e2e69a75fb 100644
---- a/lib/eal/common/eal_common_config.c
-+++ b/lib/eal/common/eal_common_config.c
-@@ -6,6 +6,7 @@
- 
- #include <eal_export.h>
- #include "eal_private.h"
-+#include "eal_filesystem.h"
- #include "eal_memcfg.h"
- 
- /* early configuration structure, when memory config is not mmapped */
-@@ -24,7 +25,7 @@ static struct rte_config rte_config = {
- };
- 
- /* platform-specific runtime dir */
--static char runtime_dir[PATH_MAX];
-+static char runtime_dir[UNIX_PATH_MAX];
- 
- /* internal configuration */
- static struct internal_config internal_config;
-@@ -39,7 +40,8 @@ rte_eal_get_runtime_dir(void)
- int
- eal_set_runtime_dir(const char *run_dir)
- {
--	if (strlcpy(runtime_dir, run_dir, PATH_MAX) >= PATH_MAX) {
-+	/* runtime directory limited by maximum allowable unix domain socket */
-+	if (strlcpy(runtime_dir, run_dir, UNIX_PATH_MAX) >= UNIX_PATH_MAX) {
- 		EAL_LOG(ERR, "Runtime directory string too long");
- 		return -1;
- 	}
-diff --git a/lib/eal/common/eal_common_proc.c b/lib/eal/common/eal_common_proc.c
-index 62fd4ba88f..dbf749c5b8 100644
---- a/lib/eal/common/eal_common_proc.c
-+++ b/lib/eal/common/eal_common_proc.c
-@@ -36,10 +36,10 @@
- 
- static RTE_ATOMIC(int) mp_fd = -1;
- static rte_thread_t mp_handle_tid;
--static char mp_filter[PATH_MAX];   /* Filter for secondary process sockets */
--static char mp_dir_path[PATH_MAX]; /* The directory path for all mp sockets */
-+static char mp_filter[UNIX_PATH_MAX];   /* Filter for secondary process sockets */
-+static char mp_dir_path[UNIX_PATH_MAX]; /* The directory path for all mp sockets */
- static pthread_mutex_t mp_mutex_action = PTHREAD_MUTEX_INITIALIZER;
--static char peer_name[PATH_MAX];
-+static char peer_name[UNIX_PATH_MAX];
- 
- struct action_entry {
- 	TAILQ_ENTRY(action_entry) next;
-@@ -78,7 +78,7 @@ struct pending_request {
- 		REQUEST_TYPE_SYNC,
- 		REQUEST_TYPE_ASYNC
- 	} type;
--	char dst[PATH_MAX];
-+	char dst[UNIX_PATH_MAX];
- 	struct rte_mp_msg *request;
- 	struct rte_mp_msg *reply;
- 	int reply_received;
-@@ -132,15 +132,19 @@ find_pending_request(const char *dst, const char *act_name)
- 	return r;
- }
- 
--static void
--create_socket_path(const char *name, char *buf, int len)
-+static int
-+create_socket_path(const char *name, char *buf, size_t len)
- {
- 	const char *prefix = eal_mp_socket_path();
- 
--	if (strlen(name) > 0)
--		snprintf(buf, len, "%s_%s", prefix, name);
--	else
--		strlcpy(buf, prefix, len);
-+	if (strlen(name) > 0) {
-+		if (snprintf(buf, len, "%s_%s", prefix, name) >= (int)len)
-+			return -1;
-+	} else {
-+		if (strlcpy(buf, prefix, len) >= len)
-+			return -1;
-+	}
-+	return 0;
- }
- 
- RTE_EXPORT_SYMBOL(rte_eal_primary_proc_alive)
-@@ -572,6 +576,11 @@ open_socket_fd(void)
- 		snprintf(peer_name, sizeof(peer_name),
- 				"%d_%"PRIx64, getpid(), rte_rdtsc());
- 
-+	if (create_socket_path(peer_name, un.sun_path, sizeof(un.sun_path)) < 0) {
-+		EAL_LOG(ERR, "peer '%s' socket path too long", peer_name);
-+		return -1;
-+	}
-+
- 	mp_fd = socket(AF_UNIX, SOCK_DGRAM, 0);
- 	if (mp_fd < 0) {
- 		EAL_LOG(ERR, "failed to create unix socket");
-@@ -581,8 +590,6 @@ open_socket_fd(void)
- 	memset(&un, 0, sizeof(un));
- 	un.sun_family = AF_UNIX;
- 
--	create_socket_path(peer_name, un.sun_path, sizeof(un.sun_path));
--
- 	unlink(un.sun_path); /* May still exist since last run */
- 
- 	if (bind(mp_fd, (struct sockaddr *)&un, sizeof(un)) < 0) {
-@@ -599,17 +606,20 @@ open_socket_fd(void)
- static void
- close_socket_fd(int fd)
- {
--	char path[PATH_MAX];
-+	char path[UNIX_PATH_MAX];
- 
- 	close(fd);
--	create_socket_path(peer_name, path, sizeof(path));
--	unlink(path);
-+
-+	if (create_socket_path(peer_name, path, sizeof(path)) < 0)
-+		EAL_LOG(ERR, "file prefix path for peerr '%s' too long", peer_name);
-+	else
-+		unlink(path);
- }
- 
- int
- rte_mp_channel_init(void)
- {
--	char path[PATH_MAX];
-+	char path[UNIX_PATH_MAX];
- 	int dir_fd;
- 	const struct internal_config *internal_conf =
- 		eal_get_internal_configuration();
-@@ -624,7 +634,12 @@ rte_mp_channel_init(void)
- 	}
- 
- 	/* create filter path */
--	create_socket_path("*", path, sizeof(path));
-+	if (create_socket_path("*", path, sizeof(path)) < 0) {
-+		EAL_LOG(ERR, "file prefix path too long");
-+		rte_errno = ENAMETOOLONG;
-+		return -1;
-+	}
-+
- 	rte_basename(path, mp_filter, sizeof(mp_filter));
- 	strlcpy(mp_dir_path, dirname(path), sizeof(mp_dir_path));
- 
-@@ -779,14 +794,17 @@ mp_send(struct rte_mp_msg *msg, const char *peer, int type)
- 	}
- 
- 	while ((ent = readdir(mp_dir))) {
--		char path[PATH_MAX];
-+		char path[UNIX_PATH_MAX];
- 
- 		if (fnmatch(mp_filter, ent->d_name, 0) != 0)
- 			continue;
- 
--		snprintf(path, sizeof(path), "%s/%s", mp_dir_path,
--			 ent->d_name);
--		if (send_msg(path, msg, type) < 0)
-+		if (snprintf(path, sizeof(path), "%s/%s",
-+			     mp_dir_path, ent->d_name) >= (int)sizeof(path)) {
-+			EAL_LOG(ERR, "Unix domain path %s/%s too long",
-+				mp_dir_path, ent->d_name);
-+			ret = -1;
-+		} else if (send_msg(path, msg, type) < 0)
- 			ret = -1;
- 	}
- 	/* unlock the dir */
-@@ -1055,13 +1073,18 @@ rte_mp_request_sync(struct rte_mp_msg *req, struct rte_mp_reply *reply,
- 
- 	pthread_mutex_lock(&pending_requests.lock);
- 	while ((ent = readdir(mp_dir))) {
--		char path[PATH_MAX];
-+		char path[UNIX_PATH_MAX];
- 
- 		if (fnmatch(mp_filter, ent->d_name, 0) != 0)
- 			continue;
- 
--		snprintf(path, sizeof(path), "%s/%s", mp_dir_path,
--			 ent->d_name);
-+		if (snprintf(path, sizeof(path), "%s/%s",
-+			     mp_dir_path, ent->d_name) >= (int)sizeof(path)) {
-+			EAL_LOG(ERR, "Unix domain socket path '%s/%s' too long",
-+				mp_dir_path, ent->d_name);
-+			rte_errno = ENAMETOOLONG;
-+			goto unlock_end;
-+		}
- 
- 		/* unlocks the mutex while waiting for response,
- 		 * locks on receive
-@@ -1200,15 +1223,17 @@ rte_mp_request_async(struct rte_mp_msg *req, const struct timespec *ts,
- 	}
- 
- 	while ((ent = readdir(mp_dir))) {
--		char path[PATH_MAX];
-+		char path[UNIX_PATH_MAX];
- 
- 		if (fnmatch(mp_filter, ent->d_name, 0) != 0)
- 			continue;
- 
--		snprintf(path, sizeof(path), "%s/%s", mp_dir_path,
--			 ent->d_name);
--
--		if (mp_request_async(path, copy, param, ts))
-+		if (snprintf(path, sizeof(path), "%s/%s",
-+			     mp_dir_path, ent->d_name) >= (int)sizeof(path)) {
-+			EAL_LOG(ERR, "Unix domain path %s/%s too long",
-+				mp_dir_path, ent->d_name);
-+			ret = -1;
-+		} else if (mp_request_async(path, copy, param, ts))
- 			ret = -1;
- 	}
- 	/* if we didn't send anything, put dummy request on the queue */
 diff --git a/lib/eal/common/eal_filesystem.h b/lib/eal/common/eal_filesystem.h
-index 5d21f07c20..2de88d7cc2 100644
+index 2de88d7cc2..90b1cbb484 100644
 --- a/lib/eal/common/eal_filesystem.h
 +++ b/lib/eal/common/eal_filesystem.h
-@@ -45,10 +45,21 @@ eal_runtime_config_path(void)
+@@ -100,12 +100,14 @@ eal_hugepage_data_path(void)
  
- /** Path of primary/secondary communication unix socket file. */
- #define MP_SOCKET_FNAME "mp_socket"
-+
-+#ifdef RTE_EXEC_ENV_WINDOWS
-+#include <winsock2.h>
-+#include <afunix.h>
-+#else
-+#include <sys/un.h>
-+
-+/** Maximum length of unix domain socket path. */
-+#define UNIX_PATH_MAX (sizeof(((struct sockaddr_un *)0)->sun_path))
-+#endif
-+
- static inline const char *
- eal_mp_socket_path(void)
+ /** String format for hugepage map files. */
+ #define HUGEFILE_FMT "%s/%smap_%d"
+-static inline const char *
++static inline __rte_warn_unused_result const char *
+ eal_get_hugefile_path(char *buffer, size_t buflen, const char *hugedir, int f_id)
  {
--	static char buffer[PATH_MAX]; /* static so auto-zeroed */
-+	static char buffer[UNIX_PATH_MAX]; /* static so auto-zeroed */
+-	snprintf(buffer, buflen, HUGEFILE_FMT, hugedir,
+-			eal_get_hugefile_prefix(), f_id);
+-	return buffer;
++	if (snprintf(buffer, buflen, HUGEFILE_FMT, hugedir,
++		     eal_get_hugefile_prefix(), f_id) >= (int)buflen)
++		return NULL;
++	else
++		return buffer;
+ }
  
- 	snprintf(buffer, sizeof(buffer), "%s/%s", rte_eal_get_runtime_dir(),
- 			MP_SOCKET_FNAME);
+ /** define the default filename prefix for the %s values above */
+diff --git a/lib/eal/linux/eal_hugepage_info.c b/lib/eal/linux/eal_hugepage_info.c
+index fe3351259e..cddffb9efb 100644
+--- a/lib/eal/linux/eal_hugepage_info.c
++++ b/lib/eal/linux/eal_hugepage_info.c
+@@ -68,11 +68,14 @@ create_shared_memory(const char *filename, const size_t mem_size)
+ 
+ static int get_hp_sysfs_value(const char *subdir, const char *file, unsigned long *val)
+ {
+-	char path[PATH_MAX];
++	char *path = NULL;
++	int ret;
+ 
+-	snprintf(path, sizeof(path), "%s/%s/%s",
+-			sys_dir_path, subdir, file);
+-	return eal_parse_sysfs_value(path, val);
++	if (asprintf(&path, "%s/%s/%s", sys_dir_path, subdir, file) < 0)
++		return -1;
++	ret = eal_parse_sysfs_value(path, val);
++	free(path);
++	return ret;
+ }
+ 
+ /* this function is only called from eal_hugepage_info_init which itself
+@@ -133,13 +136,15 @@ get_num_hugepages(const char *subdir, size_t sz, unsigned int reusable_pages)
+ static uint32_t
+ get_num_hugepages_on_node(const char *subdir, unsigned int socket, size_t sz)
+ {
+-	char path[PATH_MAX], socketpath[PATH_MAX];
++	char *path = NULL, *socketpath = NULL;
+ 	DIR *socketdir;
+ 	unsigned long num_pages = 0;
+ 	const char *nr_hp_file = "free_hugepages";
+ 
+-	snprintf(socketpath, sizeof(socketpath), "%s/node%u/hugepages",
+-		sys_pages_numa_dir_path, socket);
++	if (asprintf(&socketpath, "%s/node%u/hugepages", sys_pages_numa_dir_path, socket) < 0) {
++		EAL_LOG(ERR, "Can not format node huge page path");
++		goto nopages;
++	}
+ 
+ 	socketdir = opendir(socketpath);
+ 	if (socketdir) {
+@@ -147,17 +152,16 @@ get_num_hugepages_on_node(const char *subdir, unsigned int socket, size_t sz)
+ 		closedir(socketdir);
+ 	} else {
+ 		/* Can't find socket dir, so ignore it */
+-		return 0;
++		goto nopages;
+ 	}
+ 
+-	if (snprintf(path, sizeof(path), "%s/%s/%s", socketpath, subdir, nr_hp_file) >= PATH_MAX) {
+-		EAL_LOG(NOTICE, "Socket path %s/%s/%s is truncated",
+-			socketpath, subdir, nr_hp_file);
+-		return 0;
++	if (asprintf(&path, "%s/%s/%s", socketpath, subdir, nr_hp_file) < 0) {
++		EAL_LOG(ERR, "Can not format free hugepages path");
++		goto nopages;
+ 	}
+ 
+ 	if (eal_parse_sysfs_value(path, &num_pages) < 0)
+-		return 0;
++		goto nopages;
+ 
+ 	if (num_pages == 0)
+ 		EAL_LOG(WARNING, "No free %zu kB hugepages reported on node %u",
+@@ -170,6 +174,10 @@ get_num_hugepages_on_node(const char *subdir, unsigned int socket, size_t sz)
+ 	if (num_pages > UINT32_MAX)
+ 		num_pages = UINT32_MAX;
+ 
++nopages:
++	free(path);
++	free(socketpath);
++
+ 	return num_pages;
+ }
+ 
+@@ -204,7 +212,7 @@ get_hugepage_dir(uint64_t hugepage_sz, char *hugedir, int len)
+ 	const char proc_mounts[] = "/proc/mounts";
+ 	const char pagesize_opt[] = "pagesize=";
+ 	const size_t pagesize_opt_len = sizeof(pagesize_opt) - 1;
+-	char found[PATH_MAX] = "";
++	const char *found = NULL;
+ 	char buf[BUFSIZ];
+ 	struct mntent entry;
+ 	const struct internal_config *internal_conf =
+@@ -247,7 +255,7 @@ get_hugepage_dir(uint64_t hugepage_sz, char *hugedir, int len)
+ 		 * If no --huge-dir option has been given, we're done.
+ 		 */
+ 		if (internal_conf->hugepage_dir == NULL) {
+-			strlcpy(found, entry.mnt_dir, len);
++			found = entry.mnt_dir;
+ 			break;
+ 		}
+ 
+@@ -267,13 +275,13 @@ get_hugepage_dir(uint64_t hugepage_sz, char *hugedir, int len)
+ 		 * We found a match, but only prefer it if it's a longer match
+ 		 * (so /mnt/1 is preferred over /mnt for matching /mnt/1/2)).
+ 		 */
+-		if (mountpt_len > strlen(found))
+-			strlcpy(found, entry.mnt_dir, len);
++		if (found == NULL || mountpt_len > strlen(found))
++			found = strdupa(entry.mnt_dir);
+ 	} /* end while fgets */
+ 
+ 	endmntent(mounts);
+ 
+-	if (found[0] != '\0') {
++	if (found != NULL) {
+ 		/* If needed, return the requested dir, not the mount point. */
+ 		strlcpy(hugedir, internal_conf->hugepage_dir != NULL ?
+ 			internal_conf->hugepage_dir : found, len);
+diff --git a/lib/eal/linux/eal_memalloc.c b/lib/eal/linux/eal_memalloc.c
+index 1e60e21620..d9e8ea76b9 100644
+--- a/lib/eal/linux/eal_memalloc.c
++++ b/lib/eal/linux/eal_memalloc.c
+@@ -260,6 +260,7 @@ get_seg_fd(char *path, int buflen, struct hugepage_info *hi,
+ {
+ 	int fd;
+ 	int *out_fd;
++	const char *huge_path;
+ 	struct stat st;
+ 	int ret;
+ 	const struct internal_config *internal_conf =
+@@ -276,12 +277,18 @@ get_seg_fd(char *path, int buflen, struct hugepage_info *hi,
+ 
+ 	if (internal_conf->single_file_segments) {
+ 		out_fd = &fd_list[list_idx].memseg_list_fd;
+-		eal_get_hugefile_path(path, buflen, hi->hugedir, list_idx);
++		huge_path = eal_get_hugefile_path(path, buflen, hi->hugedir, list_idx);
+ 	} else {
+ 		out_fd = &fd_list[list_idx].fds[seg_idx];
+-		eal_get_hugefile_path(path, buflen, hi->hugedir,
++		huge_path = eal_get_hugefile_path(path, buflen, hi->hugedir,
+ 				list_idx * RTE_MAX_MEMSEG_PER_LIST + seg_idx);
+ 	}
++	if (huge_path == NULL) {
++		EAL_LOG(DEBUG, "%s(): hugefile path truncated: '%s'",
++			__func__, path);
++		return -1;
++	}
++
+ 	fd = *out_fd;
+ 	if (fd >= 0)
+ 		return fd;
+diff --git a/lib/eal/linux/eal_memory.c b/lib/eal/linux/eal_memory.c
+index 8e1763e890..2a0a441398 100644
+--- a/lib/eal/linux/eal_memory.c
++++ b/lib/eal/linux/eal_memory.c
+@@ -337,8 +337,13 @@ map_all_hugepages(struct hugepage_file *hugepg_tbl, struct hugepage_info *hpi,
+ 
+ 		hf->file_id = i;
+ 		hf->size = hugepage_sz;
+-		eal_get_hugefile_path(hf->filepath, sizeof(hf->filepath),
+-				hpi->hugedir, hf->file_id);
++		if (eal_get_hugefile_path(hf->filepath, sizeof(hf->filepath),
++					  hpi->hugedir, hf->file_id) == NULL) {
++			EAL_LOG(DEBUG, "%s(): huge file path '%s' truncated",
++				__func__, hf->filepath);
++			goto out;
++		}
++
+ 		hf->filepath[sizeof(hf->filepath) - 1] = '\0';
+ 
+ 		/* try to create hugepage file */
 -- 
 2.51.0
 
