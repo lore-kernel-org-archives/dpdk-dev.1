@@ -2,67 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 428E7E6FE23
-	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Dec 2025 18:15:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B546E6FE23
+	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Dec 2025 18:15:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D06CC40678;
-	Tue, 23 Dec 2025 19:14:42 +0100 (CET)
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com
- [209.85.218.48]) by mails.dpdk.org (Postfix) with ESMTP id F012D4065A
- for <dev@dpdk.org>; Tue, 23 Dec 2025 19:14:39 +0100 (CET)
-Received: by mail-ej1-f48.google.com with SMTP id
- a640c23a62f3a-b79e7112398so879549766b.3
- for <dev@dpdk.org>; Tue, 23 Dec 2025 10:14:39 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id EA8444067E;
+	Tue, 23 Dec 2025 19:14:43 +0100 (CET)
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com
+ [209.85.218.50]) by mails.dpdk.org (Postfix) with ESMTP id C1C5B40678
+ for <dev@dpdk.org>; Tue, 23 Dec 2025 19:14:41 +0100 (CET)
+Received: by mail-ej1-f50.google.com with SMTP id
+ a640c23a62f3a-b79af62d36bso924750466b.3
+ for <dev@dpdk.org>; Tue, 23 Dec 2025 10:14:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1766513679;
- x=1767118479; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1766513681;
+ x=1767118481; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=FxsF3XY0l0IbGwp44EoJybmMHW80EKZOrZApeykoPeU=;
- b=AzIVYueYGav/5Da+zhru7LMQqq5r36HZm2H8iCbGLn1s8X8TUAYPDESX3vG193T2s0
- ujUIOjaIqH8EMLSLcT4rl7NamzwJ+DNxFEuo+djQAJg7V1AFpY3MUWcAxygJnnC6PsCQ
- 1qGjbjlgATn4RkREY2Uhye5luj4hkqQ4Lj/Wk0IlVAL0hT+k3c6rLWMzsx22jxrK8xK5
- NUeuH4GS8TN3Mk76XhMC4mZnFJYJRIxmfmd6EWqsb363dJKdad4orJn845oGHmGCZ9Lb
- 5woO0ekZC1/iHkKzkRLOZFJNqUg6NeEsTw/NvUt9jK4vUvyMuM44MDhA96RwoZ/va5MG
- 0x3w==
+ bh=1sGtg/iCWobLclY5oukVNQNXBwpSC/wmMRN8/BXXAAY=;
+ b=W39gua9QW9wJz4U2gTgCz8+IhxucU6HnduyOGmkdkldzlEnhA3jkb6YFfxlEKlQKwf
+ B/xJIpreDUS4QcqVx3kfiPG7GIqlLlIcVSi2aEFAN07yVmdrmrGj7lvrL0MfM0FEQ1x9
+ jBx5tub6OmQMFCJSxYjAKyyqyRfbbPmQFsycCO5sB2nF+MJLaiWsDq++zfhorZ7fZM/z
+ B6GGps/RZtfkFBS+GSR+nEeJohhqcvQDY62QLoBM0LfckiSv5CadHa7sR5kpK3tgDX5B
+ xwJEBkNdE44K+zhqd7vuNee3GpvOFHaholozvz56jSU3RRoBtFtWv9llM66SfM/airmn
+ ShZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1766513679; x=1767118479;
+ d=1e100.net; s=20230601; t=1766513681; x=1767118481;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=FxsF3XY0l0IbGwp44EoJybmMHW80EKZOrZApeykoPeU=;
- b=MIQiJAxjGxoNTLi0UD5NlKr+uDwocuUCp5ODLc9ndk0LEWywtv6D6h1DR8OSVxSLab
- xLkx64xhJ/i5j20pxUh+sJ4kvhTWL2PnGCHFw6xUrePYM1ACKQCUs7N+lz0+dQryUA64
- W4onZHHddcswdQQa9Gk60moCisvjRQMNQFYmX4I/yxSi7/36mO39J6qxs7+UI1fCnyct
- /eL10eIJAd0KEfNxpyQ6FpoNE3EScqEgUZumCbRQQAsunduVDS3RwC0s5D6veZPuqL8C
- UzC8o8ZnAlzeUkTn4yyO1BialfNOx27U9HFY+JR8VATFFr2CelTV8UNLacJ3zivX7xTy
- gHNw==
-X-Gm-Message-State: AOJu0YzRSqF6uUaHjnvHm86t9ON1VQ3CFHpUFaegpTL4Gh4l+KRMYzqh
- Vf52QQ97VrEeojpWCKpVVmMkv2spV9zqlHGCa5ma3IlMgjdyZLpfapweKCu0AtelaHev5Vd1dUM
- DxhmaQ/4=
-X-Gm-Gg: AY/fxX7LE/mn+BwLAzZc/egLoSoymDlwgrE08gnJHly9ac+LiwkX/tvVUzWo0XVQLsf
- dPSgUFHPkxw/8qO7zQo1bCOm08vNsIjAhd2ZXpUWFnghxaC26LugjOWrUV5At43aF5VuSoN3kAb
- 6Br/sk6cXsel7RZalHbSkZ7GOJsYri1Vmg90s/YQZ41Jw3waAeKVSu56IDVzLorFrPfWfPsW44P
- HI40Ow6kTx8ghbGBCe5mMpchYfQUM+bxjoiHx/oA9RoHrrteLMPcqeQrrnPWXmBhpGa1aXTk4zY
- CDvDFyf6aFkahvGuEIDBa7KcfO6KUZrNko4QT4kgxnEZBjmxfGgIYP6i7IRWzHOI+YtbOwFehAE
- SL4AwVCaroeCnrKDeEwp7gktHwV6ewQ356oz6fwR/GZhxyluSDucIqgd4T0HQxoX5fZ3QCIDRYn
- JC1YkZQfMRcpD5fS0PGOkfnX/JABsPvUwOpHdFX9Y0ZNPlEF26WQ==
-X-Google-Smtp-Source: AGHT+IGjpnUbE8Sv2xDR+0K6HMX+8iNqWOPNLbCtSoEq9QlHucH9p/81E58S6VXrUS4k9ZtQhO3uGA==
-X-Received: by 2002:a17:907:fdca:b0:b76:3bfd:8afe with SMTP id
- a640c23a62f3a-b8036ebdd5bmr1544992766b.5.1766513679497; 
- Tue, 23 Dec 2025 10:14:39 -0800 (PST)
+ bh=1sGtg/iCWobLclY5oukVNQNXBwpSC/wmMRN8/BXXAAY=;
+ b=D28RxedfqcJ0FnJPXPG6aF4bKMnGZxUEIFJu7nzJ9n0LsH14+iC6n2cVM1bqNIKYdt
+ ib1k0Lwaus8jK04VlOCuL2vd9VK6xXJxfsaRy7zy2SBbt4OUbQdbwVYhCCF5N+1WwJxi
+ bAqcZnBJxm7D5x90jVMjp6cHIwLO1aoXEyCowOZiiAoSY8skOm6fZ6Wn/wlOnXzNRib6
+ POuW7xbx8r76mOwFgRGtw39yTDey5t1SDTaNfZtQcOI72jFfwn/rzckWkjnGt50XC7xZ
+ ZSGttTZicoXVtgsOW5/fpJjHzkJKO6VTMjXxuLlM54wiBuHcFHP2it7dwzEL4aVJlwyO
+ re3Q==
+X-Gm-Message-State: AOJu0YxV3xLt0BE0Y5qsAr1rH5JfGlxqoUJGxFn5htCsO9bhWSlMUtH1
+ ljCzFtdIVEOpFHd9oPOJAaPYWpGOIxXMLGxKwsAEPcqKF8+SOFAz97y8g8AOLdqaBaHbZAKp9dA
+ Btp5caGY=
+X-Gm-Gg: AY/fxX7AW0YJ4NGNJWOzc8s8lXQAummpoZ/+c4LG68diXeY8k+b5B/s1c4K+pTv0v4y
+ m1CCD2fBrXqb+2FaFIVhHrRFO1kvbQUP9eCTiMRMtoyKE/oXL2k03qsoITl4Ve6j5p1qwoUn12d
+ n9O5OYJMbFXfttkLxYTquu+NZKkxkJY8L7C4YOi8yEp67Hs5dx09bnd/3Ahjx70t3bCNHDdCu7z
+ Wj5mVbcE1MDm2aljb6Cn6/4fqWUMinSEDcjy/2ogJ7IPdjDaP71CizXiIknqjM3hkUQm/TbpmWT
+ 1Mmx+teKNPdQCagnN5X3SmCVD3RiIw29fvfqXdWZ+HDv/6T9pCM2awREuXWHIH3LFehMemLo1nQ
+ UqXQlwNsEs1owhF+juse/B7jFR49iqxpVBgLV/PhCTwjVH/EqO21chWgCfh7x64mJ4LkpLPs+uu
+ 1jGCnfGvFI15m4zb1Fn7P/sCUTLmLvz3TyvC9VsCeLF2I6upb1rQ==
+X-Google-Smtp-Source: AGHT+IEN5xk18YnFbr3yzd7jIaMikrLsA4Yt46k/d5IBjxXuUZdkznYsySNVuiUHhomFYHIvy65MOQ==
+X-Received: by 2002:a17:907:6d12:b0:b76:bcf5:a388 with SMTP id
+ a640c23a62f3a-b8037198f0cmr1576749566b.50.1766513681286; 
+ Tue, 23 Dec 2025 10:14:41 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a640c23a62f3a-b8037f3e271sm1495302566b.60.2025.12.23.10.14.38
+ a640c23a62f3a-b8037f3e271sm1495302566b.60.2025.12.23.10.14.39
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 23 Dec 2025 10:14:39 -0800 (PST)
+ Tue, 23 Dec 2025 10:14:40 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v6 10/18] eal: add check for sysfs path overflow
-Date: Tue, 23 Dec 2025 10:13:08 -0800
-Message-ID: <20251223181418.40834-11-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH v6 11/18] eal: limit maximum runtime directory and socket paths
+Date: Tue, 23 Dec 2025 10:13:09 -0800
+Message-ID: <20251223181418.40834-12-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251223181418.40834-1-stephen@networkplumber.org>
 References: <20251205022948.327743-1-stephen@networkplumber.org>
@@ -82,32 +83,268 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Shouldn't happen but in theory sysfs socket could overflow.
-Add a check for it.
+Linux has a limitation of 108 characters (including null character)
+for AF_UNIX socket path. FreeBSD limit is smaller 104 characters
+and Windows has same definition (108) in afunix.h header.
+
+In current code, EAL will fail in telemetry, so this should
+not break existing users.
+
+ EAL: Multi-process socket /var/run/dpdk/x7Q9mP2a...
+ EAL: Selected IOVA mode 'VA'
+ TELEMETRY: Error with socket binding, path too long
+
+Now long string fails on command line parsing:
+ EAL: Runtime directory string too long
+ EAL: Cannot create runtime directory
+ EAL: Error parsing command line arguments.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- lib/eal/linux/eal_hugepage_info.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ lib/eal/common/eal_common_config.c |  6 ++-
+ lib/eal/common/eal_common_proc.c   | 83 +++++++++++++++++++-----------
+ lib/eal/common/eal_filesystem.h    | 13 ++++-
+ 3 files changed, 70 insertions(+), 32 deletions(-)
 
-diff --git a/lib/eal/linux/eal_hugepage_info.c b/lib/eal/linux/eal_hugepage_info.c
-index 7161b1a2fb..fe3351259e 100644
---- a/lib/eal/linux/eal_hugepage_info.c
-+++ b/lib/eal/linux/eal_hugepage_info.c
-@@ -150,8 +150,12 @@ get_num_hugepages_on_node(const char *subdir, unsigned int socket, size_t sz)
- 		return 0;
- 	}
+diff --git a/lib/eal/common/eal_common_config.c b/lib/eal/common/eal_common_config.c
+index 7fc7611a07..e2e69a75fb 100644
+--- a/lib/eal/common/eal_common_config.c
++++ b/lib/eal/common/eal_common_config.c
+@@ -6,6 +6,7 @@
  
--	snprintf(path, sizeof(path), "%s/%s/%s",
-+	if (snprintf(path, sizeof(path), "%s/%s/%s", socketpath, subdir, nr_hp_file) >= PATH_MAX) {
-+		EAL_LOG(NOTICE, "Socket path %s/%s/%s is truncated",
- 			socketpath, subdir, nr_hp_file);
-+		return 0;
+ #include <eal_export.h>
+ #include "eal_private.h"
++#include "eal_filesystem.h"
+ #include "eal_memcfg.h"
+ 
+ /* early configuration structure, when memory config is not mmapped */
+@@ -24,7 +25,7 @@ static struct rte_config rte_config = {
+ };
+ 
+ /* platform-specific runtime dir */
+-static char runtime_dir[PATH_MAX];
++static char runtime_dir[UNIX_PATH_MAX];
+ 
+ /* internal configuration */
+ static struct internal_config internal_config;
+@@ -39,7 +40,8 @@ rte_eal_get_runtime_dir(void)
+ int
+ eal_set_runtime_dir(const char *run_dir)
+ {
+-	if (strlcpy(runtime_dir, run_dir, PATH_MAX) >= PATH_MAX) {
++	/* runtime directory limited by maximum allowable unix domain socket */
++	if (strlcpy(runtime_dir, run_dir, UNIX_PATH_MAX) >= UNIX_PATH_MAX) {
+ 		EAL_LOG(ERR, "Runtime directory string too long");
+ 		return -1;
+ 	}
+diff --git a/lib/eal/common/eal_common_proc.c b/lib/eal/common/eal_common_proc.c
+index 62fd4ba88f..dbf749c5b8 100644
+--- a/lib/eal/common/eal_common_proc.c
++++ b/lib/eal/common/eal_common_proc.c
+@@ -36,10 +36,10 @@
+ 
+ static RTE_ATOMIC(int) mp_fd = -1;
+ static rte_thread_t mp_handle_tid;
+-static char mp_filter[PATH_MAX];   /* Filter for secondary process sockets */
+-static char mp_dir_path[PATH_MAX]; /* The directory path for all mp sockets */
++static char mp_filter[UNIX_PATH_MAX];   /* Filter for secondary process sockets */
++static char mp_dir_path[UNIX_PATH_MAX]; /* The directory path for all mp sockets */
+ static pthread_mutex_t mp_mutex_action = PTHREAD_MUTEX_INITIALIZER;
+-static char peer_name[PATH_MAX];
++static char peer_name[UNIX_PATH_MAX];
+ 
+ struct action_entry {
+ 	TAILQ_ENTRY(action_entry) next;
+@@ -78,7 +78,7 @@ struct pending_request {
+ 		REQUEST_TYPE_SYNC,
+ 		REQUEST_TYPE_ASYNC
+ 	} type;
+-	char dst[PATH_MAX];
++	char dst[UNIX_PATH_MAX];
+ 	struct rte_mp_msg *request;
+ 	struct rte_mp_msg *reply;
+ 	int reply_received;
+@@ -132,15 +132,19 @@ find_pending_request(const char *dst, const char *act_name)
+ 	return r;
+ }
+ 
+-static void
+-create_socket_path(const char *name, char *buf, int len)
++static int
++create_socket_path(const char *name, char *buf, size_t len)
+ {
+ 	const char *prefix = eal_mp_socket_path();
+ 
+-	if (strlen(name) > 0)
+-		snprintf(buf, len, "%s_%s", prefix, name);
+-	else
+-		strlcpy(buf, prefix, len);
++	if (strlen(name) > 0) {
++		if (snprintf(buf, len, "%s_%s", prefix, name) >= (int)len)
++			return -1;
++	} else {
++		if (strlcpy(buf, prefix, len) >= len)
++			return -1;
++	}
++	return 0;
+ }
+ 
+ RTE_EXPORT_SYMBOL(rte_eal_primary_proc_alive)
+@@ -572,6 +576,11 @@ open_socket_fd(void)
+ 		snprintf(peer_name, sizeof(peer_name),
+ 				"%d_%"PRIx64, getpid(), rte_rdtsc());
+ 
++	if (create_socket_path(peer_name, un.sun_path, sizeof(un.sun_path)) < 0) {
++		EAL_LOG(ERR, "peer '%s' socket path too long", peer_name);
++		return -1;
 +	}
 +
- 	if (eal_parse_sysfs_value(path, &num_pages) < 0)
- 		return 0;
+ 	mp_fd = socket(AF_UNIX, SOCK_DGRAM, 0);
+ 	if (mp_fd < 0) {
+ 		EAL_LOG(ERR, "failed to create unix socket");
+@@ -581,8 +590,6 @@ open_socket_fd(void)
+ 	memset(&un, 0, sizeof(un));
+ 	un.sun_family = AF_UNIX;
  
+-	create_socket_path(peer_name, un.sun_path, sizeof(un.sun_path));
+-
+ 	unlink(un.sun_path); /* May still exist since last run */
+ 
+ 	if (bind(mp_fd, (struct sockaddr *)&un, sizeof(un)) < 0) {
+@@ -599,17 +606,20 @@ open_socket_fd(void)
+ static void
+ close_socket_fd(int fd)
+ {
+-	char path[PATH_MAX];
++	char path[UNIX_PATH_MAX];
+ 
+ 	close(fd);
+-	create_socket_path(peer_name, path, sizeof(path));
+-	unlink(path);
++
++	if (create_socket_path(peer_name, path, sizeof(path)) < 0)
++		EAL_LOG(ERR, "file prefix path for peerr '%s' too long", peer_name);
++	else
++		unlink(path);
+ }
+ 
+ int
+ rte_mp_channel_init(void)
+ {
+-	char path[PATH_MAX];
++	char path[UNIX_PATH_MAX];
+ 	int dir_fd;
+ 	const struct internal_config *internal_conf =
+ 		eal_get_internal_configuration();
+@@ -624,7 +634,12 @@ rte_mp_channel_init(void)
+ 	}
+ 
+ 	/* create filter path */
+-	create_socket_path("*", path, sizeof(path));
++	if (create_socket_path("*", path, sizeof(path)) < 0) {
++		EAL_LOG(ERR, "file prefix path too long");
++		rte_errno = ENAMETOOLONG;
++		return -1;
++	}
++
+ 	rte_basename(path, mp_filter, sizeof(mp_filter));
+ 	strlcpy(mp_dir_path, dirname(path), sizeof(mp_dir_path));
+ 
+@@ -779,14 +794,17 @@ mp_send(struct rte_mp_msg *msg, const char *peer, int type)
+ 	}
+ 
+ 	while ((ent = readdir(mp_dir))) {
+-		char path[PATH_MAX];
++		char path[UNIX_PATH_MAX];
+ 
+ 		if (fnmatch(mp_filter, ent->d_name, 0) != 0)
+ 			continue;
+ 
+-		snprintf(path, sizeof(path), "%s/%s", mp_dir_path,
+-			 ent->d_name);
+-		if (send_msg(path, msg, type) < 0)
++		if (snprintf(path, sizeof(path), "%s/%s",
++			     mp_dir_path, ent->d_name) >= (int)sizeof(path)) {
++			EAL_LOG(ERR, "Unix domain path %s/%s too long",
++				mp_dir_path, ent->d_name);
++			ret = -1;
++		} else if (send_msg(path, msg, type) < 0)
+ 			ret = -1;
+ 	}
+ 	/* unlock the dir */
+@@ -1055,13 +1073,18 @@ rte_mp_request_sync(struct rte_mp_msg *req, struct rte_mp_reply *reply,
+ 
+ 	pthread_mutex_lock(&pending_requests.lock);
+ 	while ((ent = readdir(mp_dir))) {
+-		char path[PATH_MAX];
++		char path[UNIX_PATH_MAX];
+ 
+ 		if (fnmatch(mp_filter, ent->d_name, 0) != 0)
+ 			continue;
+ 
+-		snprintf(path, sizeof(path), "%s/%s", mp_dir_path,
+-			 ent->d_name);
++		if (snprintf(path, sizeof(path), "%s/%s",
++			     mp_dir_path, ent->d_name) >= (int)sizeof(path)) {
++			EAL_LOG(ERR, "Unix domain socket path '%s/%s' too long",
++				mp_dir_path, ent->d_name);
++			rte_errno = ENAMETOOLONG;
++			goto unlock_end;
++		}
+ 
+ 		/* unlocks the mutex while waiting for response,
+ 		 * locks on receive
+@@ -1200,15 +1223,17 @@ rte_mp_request_async(struct rte_mp_msg *req, const struct timespec *ts,
+ 	}
+ 
+ 	while ((ent = readdir(mp_dir))) {
+-		char path[PATH_MAX];
++		char path[UNIX_PATH_MAX];
+ 
+ 		if (fnmatch(mp_filter, ent->d_name, 0) != 0)
+ 			continue;
+ 
+-		snprintf(path, sizeof(path), "%s/%s", mp_dir_path,
+-			 ent->d_name);
+-
+-		if (mp_request_async(path, copy, param, ts))
++		if (snprintf(path, sizeof(path), "%s/%s",
++			     mp_dir_path, ent->d_name) >= (int)sizeof(path)) {
++			EAL_LOG(ERR, "Unix domain path %s/%s too long",
++				mp_dir_path, ent->d_name);
++			ret = -1;
++		} else if (mp_request_async(path, copy, param, ts))
+ 			ret = -1;
+ 	}
+ 	/* if we didn't send anything, put dummy request on the queue */
+diff --git a/lib/eal/common/eal_filesystem.h b/lib/eal/common/eal_filesystem.h
+index 5d21f07c20..2de88d7cc2 100644
+--- a/lib/eal/common/eal_filesystem.h
++++ b/lib/eal/common/eal_filesystem.h
+@@ -45,10 +45,21 @@ eal_runtime_config_path(void)
+ 
+ /** Path of primary/secondary communication unix socket file. */
+ #define MP_SOCKET_FNAME "mp_socket"
++
++#ifdef RTE_EXEC_ENV_WINDOWS
++#include <winsock2.h>
++#include <afunix.h>
++#else
++#include <sys/un.h>
++
++/** Maximum length of unix domain socket path. */
++#define UNIX_PATH_MAX (sizeof(((struct sockaddr_un *)0)->sun_path))
++#endif
++
+ static inline const char *
+ eal_mp_socket_path(void)
+ {
+-	static char buffer[PATH_MAX]; /* static so auto-zeroed */
++	static char buffer[UNIX_PATH_MAX]; /* static so auto-zeroed */
+ 
+ 	snprintf(buffer, sizeof(buffer), "%s/%s", rte_eal_get_runtime_dir(),
+ 			MP_SOCKET_FNAME);
 -- 
 2.51.0
 
