@@ -2,70 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC14FE78498
-	for <dpdk-dev@archiver.kernel.org>; Wed, 24 Dec 2025 22:13:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4C48E78497
+	for <dpdk-dev@archiver.kernel.org>; Wed, 24 Dec 2025 22:13:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 92EEC40262;
-	Wed, 24 Dec 2025 23:13:09 +0100 (CET)
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com
- [209.85.221.44]) by mails.dpdk.org (Postfix) with ESMTP id 5912A40150
- for <dev@dpdk.org>; Wed, 24 Dec 2025 23:13:08 +0100 (CET)
-Received: by mail-wr1-f44.google.com with SMTP id
- ffacd0b85a97d-430f5ecaa08so2702481f8f.3
- for <dev@dpdk.org>; Wed, 24 Dec 2025 14:13:08 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 752214042F;
+	Wed, 24 Dec 2025 23:13:12 +0100 (CET)
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com
+ [209.85.221.48]) by mails.dpdk.org (Postfix) with ESMTP id 4AC234042F
+ for <dev@dpdk.org>; Wed, 24 Dec 2025 23:13:11 +0100 (CET)
+Received: by mail-wr1-f48.google.com with SMTP id
+ ffacd0b85a97d-430f2ee2f00so3019196f8f.3
+ for <dev@dpdk.org>; Wed, 24 Dec 2025 14:13:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1766614388;
- x=1767219188; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1766614391;
+ x=1767219191; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=GGdDfB3CKIfuJI0i+exB84zXwRnykJ9OAG3Vjrs6ZgE=;
- b=rhqjrMc8/iIxUgiKVwr8BqnP9Worsuyu2pH8vxncaJ4rTbLcFBtSxV8gsLx5g0qp/K
- xekAWps/di5BalPMSVJNMwHC4t2t2BwYZ874UyrY+d9PrCKO+tzNsmwFUXB5ARyZ0C1f
- M/UyymArseVIbjjTCarzCRujp/hob3c23AJ7h5d/f9f++sYRhwny3fprTUsWXdMXeOk6
- xktyWY9uNjyaq0doMK9Xd64Huuzg1pBuWXTNnikFA52XCzI8XSJOIeO1RJbJ7tvy52bi
- /d/3X51jXQxx6M62WX/mvA5HRMpIjrYuUI8dfb62SDqacF70UkxmEKVrARxh4bQpXJnS
- I2iw==
+ bh=E57LSt9/KCHzx2mqe5qaQ882fj4LRwn3+6bIUYNlnew=;
+ b=XGFE5gnRTkx54ASEy29eUPbESY+HmADyoEAVWgHoEXcrtUyA4R0YxVPIoG3w9tPh+T
+ rRCmfB1lhqDh4Y/IaL6gDIozsyF+YNi05LBdE68bGE269jN3ZEtWDJB6AOtvmRDGVZSR
+ KD1NDwHo72cIfIeeIAkMJpFSLpanhG0r+7gPs5XXYXd/1lO5+2j5FXqPPsTCYtbdED/9
+ 0sHsqJ+0pbFkJAqJJpa3MvmhFAHGB1VGS0CRIEfU6vaPTySRxqJBRd4XMWhYXjC5a7Iu
+ f79K6yxMZW2kaiqavJv4zhyCgkYZYwwTg4qLNWCaUEg6ZFziQmuKjWc7IzoRKScT9Bkz
+ JzDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1766614388; x=1767219188;
+ d=1e100.net; s=20230601; t=1766614391; x=1767219191;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=GGdDfB3CKIfuJI0i+exB84zXwRnykJ9OAG3Vjrs6ZgE=;
- b=LLkmwZ9a48kSqNM9mPq/mV2HyajBJtqh1VdYN/Y1e8iy1cflTnNHPIBSJjjEvVWzAM
- UPeir1xDhdHt+kaInKZHX/dFHYtUZ/hXAOUHFdLeMoEJ01/2WJPajq5WGzgRp/GA9Ydz
- 2L84B2ESfB59P/pmpDDe/O9UPd/wFaP2J4Z6sqoJmvMYPIwku7dnnGSDC0Kw7WY+NsH4
- Qt8v8VIE1xsgttKmiQx3PMR0oNmT6YD3KtLSmiF93ALJYdbarKGEFREVe4hDjeKxMDby
- OmycrTyTz4KbdKTBXaJFPlhk5f6hidHvdXPwHxCFkCxTy4LTC3UKknKndYDEDA+bwD5V
- 8j8A==
-X-Gm-Message-State: AOJu0YzNnbzgRqvoFd0qfr2gdz7vYCjeKFvM9iMZ7DOiwB/epmJAosTh
- UqliYiQVXwPr2YksnmMs/eSudyqSzM5lC7v+KGIt08rP2E+WIFOFDvnRl1wEJDmygEp9fK/LYuk
- jVpCjCgA=
-X-Gm-Gg: AY/fxX4zSk2cnWO3WztUBDZGxjo+rCDXqxmgKBWCu+23f8xpiq469Q8q7Js8e/YsRLO
- E7fkg1PTBNwevQeL5TSXrH4jTkVcvHQuAVmMbnjO9kHun4Sf4LU3KqIFouLx9afnyyxnUaW60KB
- eaQKL2fskddtui2sKurPALVrpMiprJwepouK6SA2lzJ6m5T8vY+GEQtiY6LfiCcqd6S6zlBEz9G
- 05oa8XEmaPEgoM4ofkIcrgsM0brOaT93/eYdNo/JKH4pYGs8BLs684MJkqNvvsIdnq54vZWA4fB
- zdUl027jFP2IWeoAuB9DiHt1LQyN3qKBz6E92PehFfEHEdSbJ1d/h02SkUEO1jAw7J7mFnoEYrt
- KDFLrZmM1wEda7/epNZKO/2BwHIS9Vutb9tArgyr+jQ5JCt52tPE8uOqjen3D2kzaGrsES34YGD
- MPazZ1kHvCvy2gaOsWBId+VZDc+c4BAgnTdX/Ri73T75y2itt1vA==
-X-Google-Smtp-Source: AGHT+IGw0bg6ISSTmXla+Gb/untibtIrjU94qwNHiFqSRAs6tOPK0euvB7gJSRroymvYDoIjbnoYIw==
-X-Received: by 2002:a5d:588f:0:b0:430:ff0c:35fe with SMTP id
- ffacd0b85a97d-4324e50b989mr24327942f8f.45.1766614387533; 
- Wed, 24 Dec 2025 14:13:07 -0800 (PST)
+ bh=E57LSt9/KCHzx2mqe5qaQ882fj4LRwn3+6bIUYNlnew=;
+ b=OVN+BB00jfmIhKsYLhFfuqWsjkhUsm3A3XURIMLEnfi2+t1t7AXNWQT2hmh1jA3UOJ
+ 7ujtA90m7hlwjDpziv/RkC5kyTyQ8Q3i2GxcP0/ORh9ejUc4h9L+BQdQB5NJgm1IEMu2
+ MuSyrLxXFloMSPBECe9lLnDO1Zmqg0c5BwVFwATlnbcqsEPzi3KialZ/BUAaqK2rl8Nu
+ L0f3txUGHFaQAAe8jw1i16oKQkd9fQbhofXuNyMkSNjLlI26+ts28PiG94zSU1Np15Kc
+ whXA+lQLIyUtvAMX57fA4uVBgW1FQK2parDEoTyHVEHs5uVhFhSDTs5VlwmP4F9g/y6N
+ ggXQ==
+X-Gm-Message-State: AOJu0YyOQU2+tiDP0a2fwFvbSe60hRe/5NbEF4GsfZF7BGB8JjL5Wvv1
+ xWinpwTsFaA2TtNYxTDf4BzEl/I2m7w3Z3ykKjasOREfYC0E5OQNegqRnksHj5pK4/4TYprhSk2
+ kG00xpdg=
+X-Gm-Gg: AY/fxX4linX2vWfwJ8lCSr1i5zbGKsVIGO3u2Nfo4iZvQL317mfYXoD185mPTLXCvsP
+ rXPPQMPP8Ztyg4uFYb+fZ7pRIIH2jhw9b1Y/h5Oy73mV7ksIrshKTEww5IvRTkn7AR6ULI1JxtF
+ etuTdm+2XQOsRtjCdQ8oagnfFGR6jm6bbIW7e9O7UGUkAEuP1W7lhxW490eiyRoDt8nDwe0IsH2
+ RUi3XXL69EhoN+2Lyjf+HPkNNWZ/4vRhtvPdFh2dBIHANj05OWA4RGa6uW3bvNpp8cwww9lU44T
+ 4FS+CHf0dEZ1CVFeK9GiVSWel2dslGD88u8/QWtUcPZt76BsDhwy5+m0i85LSvvwDuKulJYsX6o
+ 79xdE4EUgJLX3UQu6hiUgDxIeVjfjU2aaFjawac4wamxDwFyyoM4An0iG7W3npt3+bsawYeVWI3
+ AhI9uIcOW97tv5zE8N4Yi9KTKTwxKA3mx67DSAZDRYXUfj0HZTCw==
+X-Google-Smtp-Source: AGHT+IGbxkWuVbN4L3bm49+fxw7h1MzntZdOr4mhxMEDPJf+NRGCuY8otuef3HASOdI6mR2iJb8o5w==
+X-Received: by 2002:a05:6000:2dc7:b0:431:16d:63d1 with SMTP id
+ ffacd0b85a97d-4324e50dfdamr20847593f8f.44.1766614390823; 
+ Wed, 24 Dec 2025 14:13:10 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-4324ea830fesm36796622f8f.20.2025.12.24.14.13.04
+ ffacd0b85a97d-4324ea830fesm36796622f8f.20.2025.12.24.14.13.07
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 24 Dec 2025 14:13:06 -0800 (PST)
+ Wed, 24 Dec 2025 14:13:09 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v7 00/18] lib: fix format overflows
-Date: Wed, 24 Dec 2025 14:11:41 -0800
-Message-ID: <20251224221301.52714-1-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Bruce Richardson <bruce.richardson@intel.com>,
+ Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+Subject: [PATCH v7 01/18] lpm: restrict name size
+Date: Wed, 24 Dec 2025 14:11:42 -0800
+Message-ID: <20251224221301.52714-2-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251202172626.283094-1-stephen@networkplumber.org>
+In-Reply-To: <20251224221301.52714-1-stephen@networkplumber.org>
 References: <20251202172626.283094-1-stephen@networkplumber.org>
+ <20251224221301.52714-1-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -81,61 +84,70 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Change all the libraries to find and fix cases where a string
-could overflow when formatting or using strclpy. This does provide
-early indication of possible problems where the file prefix is too
-long to fit in unix domain socket path, and where a hash table
-is being requested that has a name too long.
+Chec that lpm name size is within limits and add checks
+for truncation.
 
-v7 - simplify and fix Windows build
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+---
+ lib/lpm/rte_lpm.c | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
 
-Stephen Hemminger (18):
-  lpm: restrict name size
-  hash: add checks for hash name length
-  graph: avoid overflowing comment buffer
-  latencystats: add check for string overflow
-  telemetry: check for path overflow
-  efd: handle possible name truncation
-  eal: use C library to parse filesystem table
-  eal: warn if thread name is truncated
-  eal: avoid format overflow when handling addresses
-  eal: add check for sysfs path overflow
-  eal: limit maximum runtime directory and socket paths
-  eal: check for hugefile path overflow
-  eal: check tailq length
-  eal: handle long shared library path
-  ethdev: avoid possible overflow in xstat names
-  vhost: check for overflow in xstat name
-  cfgfile: add length checks and increase line buffer
-  lib: enable format overflow warnings
-
- app/test/test_hash.c                   | 21 ++++++
- doc/guides/rel_notes/release_26_03.rst |  3 +
- lib/cfgfile/rte_cfgfile.c              | 43 ++++++++---
- lib/eal/common/eal_common_config.c     |  6 +-
- lib/eal/common/eal_common_memory.c     |  2 +-
- lib/eal/common/eal_common_options.c    | 17 +++--
- lib/eal/common/eal_common_proc.c       | 83 ++++++++++++++--------
- lib/eal/common/eal_common_tailqs.c     |  5 ++
- lib/eal/common/eal_filesystem.h        | 23 ++++--
- lib/eal/freebsd/eal.c                  |  6 +-
- lib/eal/linux/eal.c                    |  6 +-
- lib/eal/linux/eal_hugepage_info.c      | 98 ++++++++++++--------------
- lib/eal/linux/eal_memalloc.c           | 11 ++-
- lib/eal/linux/eal_memory.c             |  9 ++-
- lib/eal/windows/eal.c                  |  6 +-
- lib/efd/rte_efd.c                      |  7 +-
- lib/ethdev/rte_ethdev.c                | 35 ++++++---
- lib/graph/graph_pcap.c                 |  9 ++-
- lib/hash/rte_cuckoo_hash.c             | 41 +++++++----
- lib/hash/rte_fbk_hash.c                | 14 +++-
- lib/latencystats/rte_latencystats.c    |  9 ++-
- lib/lpm/rte_lpm.c                      | 17 +++--
- lib/meson.build                        |  4 --
- lib/telemetry/telemetry_legacy.c       |  7 +-
- lib/vhost/vhost.c                      | 14 ++--
- 25 files changed, 335 insertions(+), 161 deletions(-)
-
+diff --git a/lib/lpm/rte_lpm.c b/lib/lpm/rte_lpm.c
+index 6dab86a05e..2b49d82769 100644
+--- a/lib/lpm/rte_lpm.c
++++ b/lib/lpm/rte_lpm.c
+@@ -5,6 +5,7 @@
+ 
+ #include <string.h>
+ #include <stdint.h>
++#include <stdlib.h>
+ #include <errno.h>
+ #include <stdio.h>
+ #include <sys/queue.h>
+@@ -152,7 +153,7 @@ struct rte_lpm *
+ rte_lpm_create(const char *name, int socket_id,
+ 		const struct rte_lpm_config *config)
+ {
+-	char mem_name[RTE_LPM_NAMESIZE];
++	char mem_name[RTE_LPM_NAMESIZE + sizeof("LPM_")];
+ 	struct __rte_lpm *i_lpm;
+ 	struct rte_lpm *lpm = NULL;
+ 	struct rte_tailq_entry *te;
+@@ -170,6 +171,11 @@ rte_lpm_create(const char *name, int socket_id,
+ 		return NULL;
+ 	}
+ 
++	if (strlen(name) >= RTE_LPM_NAMESIZE) {
++		rte_errno = ENAMETOOLONG;
++		return NULL;
++	}
++
+ 	snprintf(mem_name, sizeof(mem_name), "LPM_%s", name);
+ 
+ 	rte_mcfg_tailq_write_lock();
+@@ -327,8 +333,10 @@ rte_lpm_rcu_qsbr_add(struct rte_lpm *lpm, struct rte_lpm_rcu_config *cfg)
+ 		/* No other things to do. */
+ 	} else if (cfg->mode == RTE_LPM_QSBR_MODE_DQ) {
+ 		/* Init QSBR defer queue. */
+-		snprintf(rcu_dq_name, sizeof(rcu_dq_name),
+-				"LPM_RCU_%s", i_lpm->name);
++		if (snprintf(rcu_dq_name, sizeof(rcu_dq_name),
++			     "LPM_RCU_%s", i_lpm->name) >= (int)sizeof(rcu_dq_name))
++			LPM_LOG(NOTICE, "LPM rcu defer queue name truncated");
++
+ 		params.name = rcu_dq_name;
+ 		params.size = cfg->dq_size;
+ 		if (params.size == 0)
+@@ -343,7 +351,8 @@ rte_lpm_rcu_qsbr_add(struct rte_lpm *lpm, struct rte_lpm_rcu_config *cfg)
+ 		params.v = cfg->v;
+ 		i_lpm->dq = rte_rcu_qsbr_dq_create(&params);
+ 		if (i_lpm->dq == NULL) {
+-			LPM_LOG(ERR, "LPM defer queue creation failed");
++			LPM_LOG(ERR, "LPM defer queue creation failed: %s",
++				rte_strerror(rte_errno));
+ 			return 1;
+ 		}
+ 	} else {
 -- 
 2.51.0
 
