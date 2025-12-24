@@ -2,69 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FC07E78497
-	for <dpdk-dev@archiver.kernel.org>; Wed, 24 Dec 2025 22:14:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97F0EE78498
+	for <dpdk-dev@archiver.kernel.org>; Wed, 24 Dec 2025 22:14:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9FBFE40A6D;
-	Wed, 24 Dec 2025 23:13:55 +0100 (CET)
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com
- [209.85.128.52]) by mails.dpdk.org (Postfix) with ESMTP id 59C1E4067E
- for <dev@dpdk.org>; Wed, 24 Dec 2025 23:13:54 +0100 (CET)
-Received: by mail-wm1-f52.google.com with SMTP id
- 5b1f17b1804b1-47d1d8a49f5so29255615e9.3
- for <dev@dpdk.org>; Wed, 24 Dec 2025 14:13:54 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id B7F1D40A76;
+	Wed, 24 Dec 2025 23:13:57 +0100 (CET)
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com
+ [209.85.221.45]) by mails.dpdk.org (Postfix) with ESMTP id CAAE840A73
+ for <dev@dpdk.org>; Wed, 24 Dec 2025 23:13:56 +0100 (CET)
+Received: by mail-wr1-f45.google.com with SMTP id
+ ffacd0b85a97d-42fbc305882so3125072f8f.0
+ for <dev@dpdk.org>; Wed, 24 Dec 2025 14:13:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1766614434;
- x=1767219234; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1766614436;
+ x=1767219236; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=gKp1X4rFlug1AFpiyy0DPS6oNK1tESDzYaGwfxLvZh4=;
- b=YoASQEvIyu+7a9oVcCQyyZPPOJBmwXOy82P+BbF/qeLr+n8evQGIGbc3bhtZ9Wd2M1
- rWfUjKbLrpvb5+oyVQb84gQQy02T2c0nH+Ummxyf0RhDr75kW1PNCAHYfmZk7p9m16oe
- JA+10scbVDdBppqS7khjIRsLK7FTM6u+04MqMXfMvhlJ2l5ocskCrV2S/hgL2HrpTc8o
- cUIy9cvcO3MtZWnB37Cq4Fa9jtH7xBZLedNlALyFI7Rw4cxrHwxumqQyQvBd+xnLYaS4
- J7zsqa5Sn2CxlPXOgSeEjQ0BOsQDvhuU3az0M7OGbU+oA814LDjs3XMh4N8S7QdBwKyb
- GHpg==
+ bh=4zVMWB0SFOF9S/VljVvWvCx3VF/fOMeVOx25MYzPOv0=;
+ b=mSJk7Yh0zaMCf5CsbGMkwZOTUuSkm/OjUqEjTrtemcnRqqph3SXO6HQ9t34K7TY70r
+ fTUQ+lP9tnk6KNCR44YbWKisP7E2WXeax2b/HC9W+wD5JvN21kuLVNlCnulf9VZMTIf9
+ t7P5HZCRHe3Pu4BrbeRyRNQfGQaeZWrNlwMlxP/HtdmkXKUPf+pu43WnLufhemtWo8BQ
+ bZdZMFvHZdUH7R7lZZvLC7hab2Zz61oUxy9lG2iMCDHi1WmyC5qph4RoB0C5l2uaMcMO
+ g04HLFLx/9lYlr+IpcIZeHEFsDCotRkgoQBQdMSB2JeU3DxaGzCGiQn3fyNKup2Hlch5
+ EtTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1766614434; x=1767219234;
+ d=1e100.net; s=20230601; t=1766614436; x=1767219236;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=gKp1X4rFlug1AFpiyy0DPS6oNK1tESDzYaGwfxLvZh4=;
- b=Rsd2IqrnHVmYI7In8I6vHxMM3Qd4z7fjAAbdJLhZfGq07bgSw2ImdHl7fg0n7tlVG4
- lSodEyXRrKahaH/Q/C1KNAiRtXqsZhQgIsTUq9y8N7k18vz9YL+clLndXJ+ISISFqZwV
- qfXbIuevL+jsvtLoyz/4LHerPT8mwRbdQQVMPA0LOl6FbetHTdcEYCuYRA7+wsdSPPZc
- v+T1xbD9smUHg3EtolaBz2nwYnb2jxo81h/Aiy6JpB8JVxBeWSFcX+TFHTunyCp7hOG2
- NqAv2EVUGSd68DFGxoK899ZkIFsUlCxGRjQPO5W8tYOj4VT/HkvL6AigNlnWT4OmflfX
- ZRrA==
-X-Gm-Message-State: AOJu0Yw2dCwdgQZfF4eSq0WaPt5QDcn8NOn80KZRC1dANLwbeEqBEBJF
- OiqFi4jJb0B2gMrshLLE9kf7PIGJuT+RT1VhkMoOTbGgIGpR8O77HzykhRNj0qAT7sqymPvIemG
- 5pTlw6cI=
-X-Gm-Gg: AY/fxX6ZCpi/bLG/e5UtrelCn8F6TOc2e/8RwJG/A318dJOuD9psbWy0iqhL1EQ+ZyG
- kZOLyhTvbGrJ0WvsBagnF0KHwbpzj9x/ySFlvRho1SmQussJPPSTB1SBMtPjaQ9cbONnisHYWxs
- tc55u3nKr+8JnjHBcX7Ig8G3htu0p1NpSYCGQGjPaesuaEoSOl+Ycos0BpDUDC6ZMx1qs1nntwm
- NZYmjv5WZq4lmVEEVdYLcwecXrFDxYKaN2zSz1B2YhpVW8S1FOt7e7CmW6thqPmvnuxFl3C8KbM
- gK5o6iMqoC3cygFogCU3qXNhD2Gx+oglyQGL7mXCbyP0j+mruUQTqt8Dh0qWdM67glw7XV8i/82
- HVpQzwCHippYxpITCAdD//1+Q7Ji9FCaHvEOpSXTRd+kHtNvxqIDk8v9lRcSoIR4Jf3Dk/Xd1hy
- Sikrpp75bNwu/nNwV1ldIA/yAFlYfXOxO2Gwn609vnxfQCVDGReg==
-X-Google-Smtp-Source: AGHT+IHXrmTOKl1U3ejUTvyJno1d4ppUNMQKpwNzidvUq3oREHz5YJdumylgDTCL3W/i0pNEYym0TQ==
-X-Received: by 2002:a05:600c:444b:b0:477:8ba7:fe17 with SMTP id
- 5b1f17b1804b1-47d1953bce7mr160733185e9.7.1766614433911; 
- Wed, 24 Dec 2025 14:13:53 -0800 (PST)
+ bh=4zVMWB0SFOF9S/VljVvWvCx3VF/fOMeVOx25MYzPOv0=;
+ b=TIQ9WFbgZzxRYokQKp7LldV9RMra0d30AQyYnh2XxXxTrr7KSGL7hTbbgDWJdchBNV
+ BoH6tnvRMvsr+JNTh6TK51Jni8sMAdhsV+AfKYa5z4TjL4SsG6UhVhb8iUUPKc26B+ec
+ oNTbBgu9IOynwqKgB1Ux6mfJlbaFtgwxpPcCZYjmgRuKzaH7QM7gW1pm95B2WSYXmKDD
+ kYcqSVGxHkMqkM7vhUnkwGj/1QVT5ZoeuyS7o41NNJdB7edlz0XKZtZByfKiwmNTwIwL
+ SvBhxK3foieNf5yaOKobzpkkZdr+c8HyY30Y1/Wvd+ACNOxZbA9Wvn0w2QJzD/8m7v6i
+ gznQ==
+X-Gm-Message-State: AOJu0YyPCql8zpuVj43EvX/p+7e2cMOi89kJbEYhjDe07QsgG5Vrvy67
+ PD3ak+SYxle3en13aSRgWIUGpwpnKFKlj6MrqLSDuU4dh5bIBvpetqbhkyIpaYzt8JaUzZLrecY
+ 3WZvHZSw=
+X-Gm-Gg: AY/fxX4UYCkME+QLJY8p8WR6ykreFHAwGmnxDCqE+jDf9v/bQ/1Lca7kbvXSjE2VRbq
+ 3w7khsPexHal6PD1v0IZqe4r3iKkI3aZxemx/AgurL8cDvpJ7/6J1x0x2ubNepTPFsVCy+6TytS
+ XveODtv4SLWCxIWNWLQx9URKVVQ0+zXf7Q0FB4W2DT2jIVlGviGjfHCch+gY9WRcX9WKodnaVj3
+ tu7UZgBJDmqu8GaYIy6TV6gzwK592ya6+kMnN96Tl9VGtdZehMGJ8iGA2yagrLi10Ab0qJbnnV3
+ iiYW58Fg9gJVxUTBRGzNS5hoEjAe6L6/jLhvNj+fcb1VsiK9KgDZCWrrMHfxSuSSIjzQdLZke4H
+ wEWRfQF4xZDc8rdC8ZNsE3AUMPUtYLY/ScB3BBjwMO/DlLCheObNo6ZA5Dvgi4yd1klX1vBuk+7
+ yCYW9ZDG/UIoAPypn1SiHC9ocDkPmsOxSZ41QerMp54m3Kleg9Dg==
+X-Google-Smtp-Source: AGHT+IGknQYnl4sC0eo/aOH/9/hnegslHQ4QIzv0xItBVDKQDWzfiRnPrhPCx55VslrCQVbYqKnz6A==
+X-Received: by 2002:a05:6000:2dc5:b0:430:f23f:4bc5 with SMTP id
+ ffacd0b85a97d-4324e50684cmr23002649f8f.45.1766614436359; 
+ Wed, 24 Dec 2025 14:13:56 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-4324ea830fesm36796622f8f.20.2025.12.24.14.13.50
+ ffacd0b85a97d-4324ea830fesm36796622f8f.20.2025.12.24.14.13.54
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 24 Dec 2025 14:13:52 -0800 (PST)
+ Wed, 24 Dec 2025 14:13:55 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Maxime Coquelin <maxime.coquelin@redhat.com>,
- Chenbo Xia <chenbox@nvidia.com>
-Subject: [PATCH v7 16/18] vhost: check for overflow in xstat name
-Date: Wed, 24 Dec 2025 14:11:57 -0800
-Message-ID: <20251224221301.52714-17-stephen@networkplumber.org>
+ Cristian Dumitrescu <cristian.dumitrescu@intel.com>
+Subject: [PATCH v7 17/18] cfgfile: add length checks and increase line buffer
+Date: Wed, 24 Dec 2025 14:11:58 -0800
+Message-ID: <20251224221301.52714-18-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251224221301.52714-1-stephen@networkplumber.org>
 References: <20251202172626.283094-1-stephen@networkplumber.org>
@@ -84,46 +83,134 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The snprintf to format an xstat name could overflow if called with
-a long rte_vhost_stat_name. Check if that happens and warn.
+When adding values to config info, add string length checks instead
+of silently truncating. Increase the size of the buffer used to read
+from a config file so that there will be enough space for longest
+entries.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- lib/vhost/vhost.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+ lib/cfgfile/rte_cfgfile.c | 43 +++++++++++++++++++++++++++++++--------
+ 1 file changed, 34 insertions(+), 9 deletions(-)
 
-diff --git a/lib/vhost/vhost.c b/lib/vhost/vhost.c
-index 416f082dca..540f4e0635 100644
---- a/lib/vhost/vhost.c
-+++ b/lib/vhost/vhost.c
-@@ -2200,6 +2200,7 @@ rte_vhost_vring_stats_get_names(int vid, uint16_t queue_id,
+diff --git a/lib/cfgfile/rte_cfgfile.c b/lib/cfgfile/rte_cfgfile.c
+index 9723ec756f..1aa8f4a597 100644
+--- a/lib/cfgfile/rte_cfgfile.c
++++ b/lib/cfgfile/rte_cfgfile.c
+@@ -2,16 +2,24 @@
+  * Copyright(c) 2010-2014 Intel Corporation
+  */
+ 
++#include <assert.h>
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <string.h>
+ #include <ctype.h>
+ #include <errno.h>
++#include <limits.h>
++
++#ifndef LINE_MAX
++#define LINE_MAX 2048
++#endif
++
+ #include <eal_export.h>
+ #include <rte_string_fns.h>
+ #include <rte_common.h>
+ #include <rte_log.h>
+ 
++
+ #include "rte_cfgfile.h"
+ 
+ struct rte_cfgfile_section {
+@@ -106,6 +114,9 @@ static int
+ _add_entry(struct rte_cfgfile_section *section, const char *entryname,
+ 		const char *entryvalue)
  {
- 	struct virtio_net *dev = get_device(vid);
- 	unsigned int i;
-+	int ret;
- 
- 	if (dev == NULL)
- 		return -1;
-@@ -2213,10 +2214,15 @@ rte_vhost_vring_stats_get_names(int vid, uint16_t queue_id,
- 	if (name == NULL || size < VHOST_NB_VQ_STATS)
- 		return VHOST_NB_VQ_STATS;
- 
--	for (i = 0; i < VHOST_NB_VQ_STATS; i++)
--		snprintf(name[i].name, sizeof(name[i].name), "%s_q%u_%s",
--				(queue_id & 1) ? "rx" : "tx",
--				queue_id / 2, vhost_vq_stat_strings[i].name);
-+	for (i = 0; i < VHOST_NB_VQ_STATS; i++) {
-+		ret = snprintf(name[i].name, sizeof(name[i].name), "%s_q%u_%s",
-+			       (queue_id & 1) ? "rx" : "tx",
-+			       queue_id / 2, vhost_vq_stat_strings[i].name);
-+		if (ret >= (int)sizeof(name[0].name))
-+			VHOST_CONFIG_LOG("device", NOTICE, "truncated xstat '%s_q%u_%s'",
-+					 (queue_id & 1) ? "rx" : "tx",
-+					 queue_id / 2, vhost_vq_stat_strings[i].name);
-+	}
- 
- 	return VHOST_NB_VQ_STATS;
++	if (strlen(entryname) >= CFG_NAME_LEN || strlen(entryvalue) >= CFG_VALUE_LEN)
++		return -ENAMETOOLONG;
++
+ 	/* resize entry structure if we don't have room for more entries */
+ 	if (section->num_entries == section->allocated_entries) {
+ 		struct rte_cfgfile_entry *n_entries = realloc(
+@@ -167,12 +178,16 @@ rte_cfgfile_load(const char *filename, int flags)
+ 					    &default_cfgfile_params);
  }
+ 
++/* Need enough space for largest name and value */
++static_assert(LINE_MAX > CFG_NAME_LEN + CFG_VALUE_LEN + 4,
++	      "not enough space for cfgfile name/value");
++
+ RTE_EXPORT_SYMBOL(rte_cfgfile_load_with_params)
+ struct rte_cfgfile *
+ rte_cfgfile_load_with_params(const char *filename, int flags,
+ 			     const struct rte_cfgfile_parameters *params)
+ {
+-	char buffer[CFG_NAME_LEN + CFG_VALUE_LEN + 4];
++	char buffer[LINE_MAX];
+ 	int lineno = 0;
+ 	struct rte_cfgfile *cfg;
+ 
+@@ -219,7 +234,13 @@ rte_cfgfile_load_with_params(const char *filename, int flags,
+ 			*end = '\0';
+ 			_strip(&buffer[1], end - &buffer[1]);
+ 
+-			rte_cfgfile_add_section(cfg, &buffer[1]);
++			int ret = rte_cfgfile_add_section(cfg, &buffer[1]);
++			if (ret != 0) {
++				CFG_LOG(ERR,
++					"line %d - add section failed: %s",
++					lineno, strerror(-ret));
++				goto error1;
++			}
+ 		} else {
+ 			/* key and value line */
+ 			char *split[2] = {NULL};
+@@ -260,8 +281,13 @@ rte_cfgfile_load_with_params(const char *filename, int flags,
+ 			if (cfg->num_sections == 0)
+ 				goto error1;
+ 
+-			_add_entry(&cfg->sections[cfg->num_sections - 1],
+-					split[0], split[1]);
++			int ret = _add_entry(&cfg->sections[cfg->num_sections - 1],
++					     split[0], split[1]);
++			if (ret != 0) {
++				CFG_LOG(ERR,
++					"line %d - add entry failed: %s", lineno, strerror(-ret));
++				goto error1;
++			}
+ 		}
+ 	}
+ 	fclose(f);
+@@ -341,6 +367,9 @@ rte_cfgfile_add_section(struct rte_cfgfile *cfg, const char *sectionname)
+ 	if (sectionname == NULL)
+ 		return -EINVAL;
+ 
++	if (strlen(sectionname) >= CFG_NAME_LEN)
++		return -ENAMETOOLONG;
++
+ 	/* resize overall struct if we don't have room for more	sections */
+ 	if (cfg->num_sections == cfg->allocated_sections) {
+ 
+@@ -376,8 +405,6 @@ int rte_cfgfile_add_entry(struct rte_cfgfile *cfg,
+ 		const char *sectionname, const char *entryname,
+ 		const char *entryvalue)
+ {
+-	int ret;
+-
+ 	if ((cfg == NULL) || (sectionname == NULL) || (entryname == NULL)
+ 			|| (entryvalue == NULL))
+ 		return -EINVAL;
+@@ -391,9 +418,7 @@ int rte_cfgfile_add_entry(struct rte_cfgfile *cfg,
+ 	if (curr_section == NULL)
+ 		return -EINVAL;
+ 
+-	ret = _add_entry(curr_section, entryname, entryvalue);
+-
+-	return ret;
++	return _add_entry(curr_section, entryname, entryvalue);
+ }
+ 
+ RTE_EXPORT_SYMBOL(rte_cfgfile_set_entry)
 -- 
 2.51.0
 
