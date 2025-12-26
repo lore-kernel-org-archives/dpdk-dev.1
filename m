@@ -2,66 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5733CE8FDAC
-	for <dpdk-dev@archiver.kernel.org>; Fri, 26 Dec 2025 21:05:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA644E8FDBE
+	for <dpdk-dev@archiver.kernel.org>; Fri, 26 Dec 2025 22:39:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 17D4240267;
-	Fri, 26 Dec 2025 22:05:33 +0100 (CET)
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com
- [209.85.218.54]) by mails.dpdk.org (Postfix) with ESMTP id D0D1740262
- for <dev@dpdk.org>; Fri, 26 Dec 2025 22:05:31 +0100 (CET)
-Received: by mail-ej1-f54.google.com with SMTP id
- a640c23a62f3a-b72b495aa81so1259474366b.2
- for <dev@dpdk.org>; Fri, 26 Dec 2025 13:05:31 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 6C98940267;
+	Fri, 26 Dec 2025 23:39:58 +0100 (CET)
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com
+ [209.85.208.42]) by mails.dpdk.org (Postfix) with ESMTP id 57B4E40262
+ for <dev@dpdk.org>; Fri, 26 Dec 2025 23:39:57 +0100 (CET)
+Received: by mail-ed1-f42.google.com with SMTP id
+ 4fb4d7f45d1cf-64b83949fdaso9742405a12.2
+ for <dev@dpdk.org>; Fri, 26 Dec 2025 14:39:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1766783131;
- x=1767387931; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:message-id:subject:to:from
- :date:from:to:cc:subject:date:message-id:reply-to;
- bh=YWNnXe7UTq8Gbj+ZUYh5wc5zQaUdnZ+wYYCrnUEylK8=;
- b=zN1sX+sgmX69wX4doivAOK2kcel6duk+sHSkS/LmuTq7lluuME44ggTOzME+RTvZ6t
- xsgLNcQHLzvm7Lf+6e0NRwsgK4Gu+gg6P1DkYzS9KDxPk9EnCNW67igbChKWC+ElL9Iv
- xLRgZuZ9KF7hwvW+DrO2c8SwJTOQfsxInXWfx2unKU9oQciAAowRTXpmk+7B8dleMdzK
- U0tFRGsv9ArLACeTPFBZjyAhxZvyrFjLy7ISaAuPTDOs+kugdTGdaR1JNve/p8kRnH05
- hOmVMBElHJbM3PCBDS2Dn/5wP6N8dIrAFDmygmhrGxhTsVFLuQqdjw8Xx2DxwrXSlEFo
- dO3Q==
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1766788797;
+ x=1767393597; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=rIQ2aLyM1fCb/zEmBgtgR8O7aP+ybZDBW7wuKCF6Z0Q=;
+ b=hYENfYXVYJkw5Rkrc02V9Egj3j15AfZ+gpxUpBScDGNCScMIN/A008j1zufMkcUp4Y
+ SYpVkkwIdvbupcVWT0cxj6YwjjSz7R0pOEkgYcOJBP4Bt8Qk+qIm8yED8WbRdAtKN0Va
+ TotNNNQ92+SyhbhIQhmwbWVkRW45H9KMmnQoMxwXPnhEPyfKEbPcYqBUKDYj5X72vqmv
+ 3fJQxdZgZgq3ZO6Gz7wVi20XvvU5+Bg+RkJDjvJqHTHdimF2meCZwNF/4TUcNA9cFR8/
+ YEkWp1CF7SCKCszlxXG/263t0JhQBeaMQdXuEWwgH8oon11yJ0C5LG2ebsq63YGoTYz9
+ xU+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1766783131; x=1767387931;
- h=content-transfer-encoding:mime-version:message-id:subject:to:from
- :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=YWNnXe7UTq8Gbj+ZUYh5wc5zQaUdnZ+wYYCrnUEylK8=;
- b=hXkFki9c42PW0KcNdSGh35yVMwUVKOkCHMBc28jtJO/cI6jlXh77B/Uanto6DdIwbJ
- 2bfBe0vweogi8F9R8aqSKTzsVa3Oip1TDhb1vMP6DCtJG+EFfUa26wFWx0zL9D+tJDkb
- xe74kOd5ZAM6tTHVZHZZlEJXe+1jKBktjthkQCwazGfcmR1ORO+FD3xQMdcaf857KFMp
- kGF55mHQ08FuHdLzRvCKWA7Flqn9zm5T92JRSbWxfTX9nLTlivlxP9AFeRFZd+BvWR4g
- YoKSVn09zkUl8FRFWEEbfHsKrpC270vujednc73yIt21HdLOUNdYvXE58rh16CUA3zba
- fCJg==
-X-Gm-Message-State: AOJu0Yx/6eRvpSd3KSzzGZY23jhGRpqGiJ1qRp1cpc0pTQy8xEiK/LHx
- bzpYb5LKImwjEM7M5V3fus4yC6JIKVk6gbE5vgeBZM1qi/d0ie7EddqcjZLo0Uph9FKsG1O2N4K
- 8nY2Q0Og=
-X-Gm-Gg: AY/fxX5lDxL7wOzz93Fwqg1DUYNwIN8wiPckwgs7zH4OA1L4AhcMFhNoCmrDUTpQkrG
- CfiKmO01l3i9z0KkP+HL+nZuSkHtTiBW71jtnDdjfYyc/qISIp7I8Cq4PCczn3ZA+XtUgElWLQH
- mwmM2Kz+KlM6kIouxJxfkGFtU8Zf+UOuEIodwFLWKBohFnmEWLsMCMZl0PcGD65aQUXbKKKcHHo
- oRwb/adyUpHQomanvmBiF9O4OZcAdXjvJbfQ20P/t/wnsrXZXFWItUUe7UdQoP74rhu/eVScuiY
- c5rkAqL3F/aJB895aLox73lngQN9Ia15zLPhDMjgpMkTvz8A6e+8M6gVTQddX4IUyPPV4lARWHr
- UniFlvAt3m0CJogdaQGjNCAhKwAsk6wiB/w1AvqTdo/wU+fxUSVXW5rQOcGz+Xm3nCUCr1EuKgy
- 5sGSAzdLI7CFrFboAWYA/SbN7R5nAsSEbhWenG7tSRlze4gDmNznzx
-X-Google-Smtp-Source: AGHT+IFpyVlGEmxaRZZUXhCW4lBwQIIq+Z9aJ+UL03o/O6h9iXnhQswrj1MOZPDiFJnOSCr+xbCOuw==
-X-Received: by 2002:a17:906:c147:b0:b73:6b24:14ba with SMTP id
- a640c23a62f3a-b8036f31e99mr2327760366b.8.1766783130939; 
- Fri, 26 Dec 2025 13:05:30 -0800 (PST)
+ d=1e100.net; s=20230601; t=1766788797; x=1767393597;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=rIQ2aLyM1fCb/zEmBgtgR8O7aP+ybZDBW7wuKCF6Z0Q=;
+ b=m+65cfcVa+tM2n9bXgo/+48NY9aX/n/LjyDdnavYSbmfXnOBwXIkmXFHcl2VZbcgtc
+ hCGFSvuwkVTsOaR9mzWxIwoOagrVleEb8EPmIam8GvbQqczevxUpE9FVgQq/rtIsn7K7
+ 3NJzfPy+JBb8kGBbgBdQ6+4iw6CcZbdrQkCAIWlVgF44QRvwWVOgmUTNhhg2ros6JCYi
+ TMEaBZrGugpXhy+b0u/4jx+g4kGQrywnHg6KfyXIrjR6+SP+25YPAUNStMCCEHCj7xiK
+ 3e/foK0abdLbTintyT+9LYwAYZkULacdzkek8lwfWIz+rLgvDbUXBE9idgLBR6T7fEOl
+ DZOQ==
+X-Gm-Message-State: AOJu0YyhxbmlLLeuMwczK/QJ/8YoAkYjzXIzMubH7oVq/Xe8kXs4HX7N
+ +ejopUMV3sYPku1VmhzH5JzoshdTgALDpiMtogjPM1Vz3kPciUTOwaEOVoTsiCLAF9HM16cLyFy
+ iQp3ibPY=
+X-Gm-Gg: AY/fxX4PIhuKWvEOXUUHKtup49pG5OGFIUzcqIebUyRyUd9G3dplr8Vilww+wNz7cmO
+ 1GkWLDthFiFu7axVLj+hQhNBDB22syYEXkTpfU8uNCdapKzbwxD0j9y1vn5f9H7ImYE56NSW834
+ vdMbDcqDkjT5MEVBrMtHahc5pGyCx5S4Gzed3jIfCZgF21WI0pHcmI9V0lykRS4YyWwquoREmzP
+ x7JT4nRhZowRagA9RfnUlWRTn4qvxK2bsK7Y7kmeBQojUx+ITGI5DR/rL5nijH0sLI/V+Jn+eB4
+ V5xJE9CI693RFHx397OMWIq1F3rdiJl89KmHpCx8AuIgSos92Zya7TxXLTgyR1wfuOxf4zxCiEa
+ 22kt78GWY1brRV8uuHd3Ki0Bj7BwDUYKDQjC6jwVpT3jnfmQiaO8SHmO8AfEdBQo+vDgBTyuavY
+ B7wIjDlCeo7eAF1ByXOEqCMdb7s8GdNLRM7VFfK462a+NvzUlXEGOF
+X-Google-Smtp-Source: AGHT+IHQDbzCPvyDwEts5uXHNjsD42V8o+Tn/ZAwa+Usm3e+nzZ51GRY1I94XGWSUJ910PfvhD5DOA==
+X-Received: by 2002:a17:907:7e91:b0:b7a:2ba7:198c with SMTP id
+ a640c23a62f3a-b80371efe93mr2848823166b.59.1766788796709; 
+ Fri, 26 Dec 2025 14:39:56 -0800 (PST)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a640c23a62f3a-b8037f3ffbasm2499963466b.61.2025.12.26.13.05.29
- for <dev@dpdk.org>
+ a640c23a62f3a-b8037de142csm2446767266b.38.2025.12.26.14.39.55
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 26 Dec 2025 13:05:30 -0800 (PST)
-Date: Fri, 26 Dec 2025 13:05:24 -0800
+ Fri, 26 Dec 2025 14:39:56 -0800 (PST)
+Date: Fri, 26 Dec 2025 14:39:51 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Subject: github build mingw version
-Message-ID: <20251226130524.00263a6d@phoenix.local>
+To: liujie5@linkdatatechnology.com
+Cc: dev@dpdk.org
+Subject: Re: [PATCH v14 01/13] net/sxe: add base driver directory and doc
+Message-ID: <20251226143951.6943503a@phoenix.local>
+In-Reply-To: <20251225092224.227202-1-liujie5@linkdatatechnology.com>
+References: <20251225081201.177111-13-liujie5@linkdatatechnology.com>
+ <20251225092224.227202-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -78,13 +82,23 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Recent test build of patch series is failing on ubuntu-22.04-gcc-static-mingw
+On Thu, 25 Dec 2025 17:22:12 +0800
+liujie5@linkdatatechnology.com wrote:
 
-The version of Mingw in the github build needs to be updated.
-The minimum version in DPDK doc's is 10, and version 10 has afunix.h.
+> From: Jie Liu <liujie5@linkdatatechnology.com>
+> 
+> Adding a minimum maintainable directory structure for the
+> network driver and request maintenance of the sxe driver.
+> 
+> Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
+
+I do not like that this driver has to invent its own tracing facility.
+The DPDK already has one, and adding a driver specific tracing is
+a bad precedent. The goal of DPDK is to abstract the interface to the
+hardware and make it possible for applications to work everywhere.
+
+I understand that you may need/want more data to resolve internal
+driver bugs. Is it possible to use existing trace API for this.
 
 
-How can the build environment be updated?
-
-
-
+Build is failing please resolve the issues and resubmit.
