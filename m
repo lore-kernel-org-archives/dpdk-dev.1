@@ -2,66 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AB0EE92716
-	for <dpdk-dev@archiver.kernel.org>; Sat, 27 Dec 2025 17:37:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEB7BE92717
+	for <dpdk-dev@archiver.kernel.org>; Sat, 27 Dec 2025 17:42:56 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id ED23E40297;
-	Sat, 27 Dec 2025 18:37:45 +0100 (CET)
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com
- [209.85.210.177])
- by mails.dpdk.org (Postfix) with ESMTP id 131A440267
- for <dev@dpdk.org>; Sat, 27 Dec 2025 18:37:44 +0100 (CET)
-Received: by mail-pf1-f177.google.com with SMTP id
- d2e1a72fcca58-7aae5f2633dso8028361b3a.3
- for <dev@dpdk.org>; Sat, 27 Dec 2025 09:37:43 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id D36AB402B7;
+	Sat, 27 Dec 2025 18:42:55 +0100 (CET)
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com
+ [209.85.210.180])
+ by mails.dpdk.org (Postfix) with ESMTP id 6420740297
+ for <dev@dpdk.org>; Sat, 27 Dec 2025 18:42:54 +0100 (CET)
+Received: by mail-pf1-f180.google.com with SMTP id
+ d2e1a72fcca58-7b8eff36e3bso12683921b3a.2
+ for <dev@dpdk.org>; Sat, 27 Dec 2025 09:42:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1766857062; x=1767461862; darn=dpdk.org;
+ d=gmail.com; s=20230601; t=1766857373; x=1767462173; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=eEvMwcWZj6lIh/y4jwUUryPlAAiw2uBVusaYsmA7Whw=;
- b=iqZnKuDetHG9vVPgQXNqXsPEN8IlReu5DCHEIxcdKx32xRPjeaEq3GPsPPu9nCXTkG
- CJiafLODlOqI1ZOEXh1dB4HdHZPDw4TtHI3ppJHqVaqWVJnrDfF8LOBq2SaEFsAp81A7
- PnJoqGMztLPwv570Q90gtQOmKHsznrUq0u4tvEUh658lHjiUULyP7+09Hb6tD9LBKM8r
- Rv635GXkpBsW77dCCQmBfI5d8lg4G/24h3gs1vQBjUxfijtucyYraYzAIaOBuOd70rfx
- pdHJD5BPypN4hXEvgz7EP1RsjZLsNFyXGdfcXlWNnXxTBOphvVoFG+X3j++KEJjvIy/m
- H12w==
+ bh=sDxUJxqGYS8+rrcHmqNoKehnLVPieRjphyvB2l4tJuM=;
+ b=JNtw72ipwZUA607yJJyjTitJzhblVm2gFOuuft74NH+XS7FmOGx7L5phyDHqLuHOkS
+ 4B/7lk5sH5rb3fpz20YrLsE32MGJw8JWyNxIfXGtJ55KToIFtuet8tyBVpw6cX3giPm6
+ /xNBT/GIse0noRF++9U89UuVNIaLUNfEP9lmMpO/tLmWXb1ai9JW6qHXQ37oPEGn2JDd
+ /kP9V10wytOt8RXq57x0Rj+HGpOslztwG0MNk5OsbVtCcaq7Y9VQG+0vh1q7LL7saHFD
+ WjKocOUNa1jHcGk2S93pXlKZZKt27fGltGCGIFp03vtYHHm+uSkl7ME2E6lSk3VgAYKa
+ UuaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1766857062; x=1767461862;
+ d=1e100.net; s=20230601; t=1766857373; x=1767462173;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=eEvMwcWZj6lIh/y4jwUUryPlAAiw2uBVusaYsmA7Whw=;
- b=RfPYsPa/X99blw0Ve46KXp9It80EaowhOc3ci06/5qJhXFAm9f3Jf2cYKZN8nID4gM
- HiC58yUJboM43l8RvPheS3kv/ZQDTzkRBAH5S7mc9omBqjmeEeJotV/NKW2e7nvODif/
- gRPeru+WhwYSprSGJefABWVhyzg8PnfgydEynFzrMHHCDl3AskYc8Tfq0ROYuJm7oMUw
- aSQETOtyDZPyNkovKScMLTKUAb4tqZrswMBcy9aiX5Mc7uG3VqYisICfyvxw5co16K2D
- vesDsyUbfcM3k0sfpUQth3h0FHMdGnrtpvd/FpxRnjWKvh69+PXsm5zNHZgOtSOVju40
- TqYw==
-X-Gm-Message-State: AOJu0YxDqLLz3czEcspZDSL9cHnxeE4IFuxc9vVI1GuWE0azsOVGcXf1
- R+afJKIo/X9MCqftKy3CI0GQecOvKhmX1PriHwe2A685abpVrr7Pwq82MyiC4tJo
-X-Gm-Gg: AY/fxX4j/+UPl2RVIfXRDU6WJ9RYdcqnlyT8W0bTdPeQF7CUDuOn2B8u1r82zrYI+Db
- lwVbnWkeDr2uWguXK4f3ash5HB1UErDT8SgagqYLb6Vl34FFk4m3c8LmKpgES5vJjapZmH9p025
- FsRQBBiz5AePpRIjZIda7GfGT31SgPeJi+y/onzY0Qb5GySbokWWiitO9NKPmNGgv40tXHIR7do
- hu9V/7XXGDWzFfjsvGPXjWMEOkF5oFmmBMozeRppSZ33N2E3l9eg3tDrPOmjZlUMKRQqlpCplR3
- AM8JBXLhD518R7ZOJcGHXHBgq6k+64JcwYCummMaJ5HiYLoKRfIYRyah3tmF7ytmrPnKmUa0LPO
- 3CBphQ00vRfimEjjpWpC79xHp0OZb5gB0bpBQcvkFotypZWwhlIwOu77Xop6RhcZLE/4ob0fvbw
- t9bhKx5MAeAY2o1hTBi10vrYwY1FpWVQS86BHTROTaPYk72YYR
-X-Google-Smtp-Source: AGHT+IHv4fcVrfVculpefurgjfQgZ1VMAyxz/Yy+SwJ3HhMBknV1j4ltiesYB2U69l5Bb8griaGeZQ==
-X-Received: by 2002:a05:6a00:39a1:b0:7ff:9fe7:9811 with SMTP id
- d2e1a72fcca58-7ff9fe7a134mr21720238b3a.31.1766857061812; 
- Sat, 27 Dec 2025 09:37:41 -0800 (PST)
+ bh=sDxUJxqGYS8+rrcHmqNoKehnLVPieRjphyvB2l4tJuM=;
+ b=W2Og6m9VMzwoHGIliOMx06lMRH57TG9oX0rSF/z7Z4KS+zHtw3VDkBvqLPGok6gZFT
+ tdqGBgcLMBGyw/mNyxdF8+ts2cFnPDhxipy0QosQS40AM7l0P8uRErcdilCnF7YmcYZc
+ hZb+qs/abGONl0XpOGAckXbbfNSE66aVpAaDcM1zeparzcQ364GDhFyp/pg+ytkGN/bA
+ ac2TWqVDWXrHp9eRQvOCr4BdZ+0jdgQR1dqNGQEbqHKoKe+nKz+67FJ9hjfVPky+mroW
+ k57pe+RC4Oi8md93Wj/D3TJGuenIg36Y09xuCdqQ0o+Tr8AZiXgOuMWqi1B4p5rGrEsh
+ 8Z+A==
+X-Gm-Message-State: AOJu0YzIv6PB8WNyjapekqvxQoRvKJwGsDXpEfQQSwmYZrn929TGhN58
+ KFJKVZlKorEAgJiGGpaMW0rwi3+Sq1hLCKvxFCydzP3IvObzCgoK8sb1Qh1bYk+t
+X-Gm-Gg: AY/fxX6NNd/7XcUPZRR+6MbA/goyboJQWJOf56TRPXOZ2IiRCDwMg62pwUrIzvB+eKc
+ WJAo6aHYmN7yihSE2MGfRB+sOQqz1p4EMJ6eRx5wnVrmkzF9eu3GMdVYr2kMwqaGf14nv6VbvEy
+ N2z0qqrunY/9UIq/Udq7jASaLghpaldlauwkU259vXuLwM2KgsyTx9fB48Sc7ho/j4CufHFq+Va
+ MjABSm3l9XKTyDttp9U79GJr+QRCY2i50T1lmIODe+92alSsvW6xxab7a3vkcWHmX5QpZL4rLJl
+ Y5eCTEFOovJPYdc1psYJMiPgk96JwUrO8ZZy40Pu9IR3OVADM6oQVu9jVSwondtMyibmRfB3yyw
+ KqjkMVdyJ6atpYJvpJ8Zf3kRcxUy2h8wSyBX/e8s1ctPCMis/c5qP0kpK4cyIi30dXlCAL7G/TH
+ hOy6THj2sW5AcY0T8w+JNbFQ8dTYETjX0YXPqvnC3sXBVsT0qD
+X-Google-Smtp-Source: AGHT+IH4RI7Epe2uhglXdSjT/dBEZha/1wM2sMVZGRQhf71b2hbK5bMZEXHyTta37FdqLPXFi9QE5A==
+X-Received: by 2002:aa7:9906:0:b0:7ff:da9b:bd82 with SMTP id
+ d2e1a72fcca58-7ffda9bbf79mr16968135b3a.40.1766857372585; 
+ Sat, 27 Dec 2025 09:42:52 -0800 (PST)
 Received: from Param-Desktop.localdomain ([106.51.222.111])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-7ff7dfab841sm25021099b3a.35.2025.12.27.09.37.39
+ d2e1a72fcca58-80c255162d5sm1639954b3a.1.2025.12.27.09.42.50
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sat, 27 Dec 2025 09:37:40 -0800 (PST)
+ Sat, 27 Dec 2025 09:42:51 -0800 (PST)
 From: Kumara Parameshwaran <kumaraparamesh92@gmail.com>
 To: dev@dpdk.org
 Cc: Kumara Parameshwaran <kumaraparamesh92@gmail.com>
-Subject: [PATCH v2] gro : improve GRO performance based on hash table
-Date: Sat, 27 Dec 2025 23:06:45 +0530
-Message-Id: <20251227173645.277376-1-kumaraparamesh92@gmail.com>
+Subject: [PATCH v3] gro : improve GRO performance based on hash table
+Date: Sat, 27 Dec 2025 23:12:21 +0530
+Message-Id: <20251227174221.277640-1-kumaraparamesh92@gmail.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20251116060634.262352-1-kumaraparamesh92@gmail.com>
 References: <20251116060634.262352-1-kumaraparamesh92@gmail.com>
@@ -85,13 +85,13 @@ Use cuckoo hash library in GRO for flow flookup
 Signed-off-by: Kumara Parameshwaran <kumaraparamesh92@gmail.com>
 ---
 
-v2 - address comments provided for unit test
+v3 - address review comments for the test file
 
  app/test/test_gro.c | 795 +++++++++++++++++++++++++++++++++++---------
  1 file changed, 630 insertions(+), 165 deletions(-)
 
 diff --git a/app/test/test_gro.c b/app/test/test_gro.c
-index 3bd0035e68..6d1625cca9 100644
+index 3bd0035e68..7ce0c4563a 100644
 --- a/app/test/test_gro.c
 +++ b/app/test/test_gro.c
 @@ -2,6 +2,9 @@
@@ -472,7 +472,7 @@ index 3bd0035e68..6d1625cca9 100644
 +	struct rte_ipv4_hdr *ip;
 +	struct rte_tcp_hdr *tcp;
 +	char *data;
-+	// Define 8 different flows with different src/dst IPs and ports
++	/* Define 8 different flows with different src/dst IPs and ports */
 +	struct flow_params flows[NUM_FLOWS] = {
 +		{RTE_IPV4(192, 168, 1, 10), RTE_IPV4(192, 168, 1, 20), 50000, 80, 1000},
 +		{RTE_IPV4(192, 168, 1, 11), RTE_IPV4(192, 168, 1, 21), 50001, 80, 2000},
