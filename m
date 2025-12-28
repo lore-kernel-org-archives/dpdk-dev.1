@@ -2,72 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A37CD3B7E5
-	for <dpdk-dev@archiver.kernel.org>; Sun, 28 Dec 2025 18:46:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D472FE784BE
+	for <dpdk-dev@archiver.kernel.org>; Sun, 28 Dec 2025 18:46:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 18FFC40658;
-	Sun, 28 Dec 2025 19:46:00 +0100 (CET)
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com
- [209.85.221.54]) by mails.dpdk.org (Postfix) with ESMTP id D536640649
- for <dev@dpdk.org>; Sun, 28 Dec 2025 19:45:48 +0100 (CET)
-Received: by mail-wr1-f54.google.com with SMTP id
- ffacd0b85a97d-42e2d02a3c9so5199917f8f.3
- for <dev@dpdk.org>; Sun, 28 Dec 2025 10:45:48 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 9602F40654;
+	Sun, 28 Dec 2025 19:46:02 +0100 (CET)
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com
+ [209.85.128.52]) by mails.dpdk.org (Postfix) with ESMTP id 7796A40654
+ for <dev@dpdk.org>; Sun, 28 Dec 2025 19:45:52 +0100 (CET)
+Received: by mail-wm1-f52.google.com with SMTP id
+ 5b1f17b1804b1-477b5e0323bso46869885e9.0
+ for <dev@dpdk.org>; Sun, 28 Dec 2025 10:45:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1766947548;
- x=1767552348; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1766947552;
+ x=1767552352; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=Zaz5hrgCnNp873lhNmZ9Pm/5apsXNL+UG/H1WiUC1hA=;
- b=KMNf7lHnLVvFLYUPweYANc9hjjQY6nAJLNR5TXrBdcjXz319uRfRcjSVDjQgBlV4gp
- oAg58HYpr9fvHWK6LScTorWgBceq28Qn4xiMP+XYr+dUg3/QYa97HlSPlwPSJbEs1MVA
- 3wDJQMZW789Q+K+6O5vTERa2Gl4DmGLqztIRQuSIOftX4yue3LIcp5ibG/hRkYXqgNAR
- uY+o29CChlteICl8ZiZCoeKv5wx/YRMSMZtFJpxbyfMN3PiaWQreadUJhL2EzU5IiBOX
- X6SQXIT7UMp+Ov5kiKSOWVh9hxK4TfrdWmuk4sUzTebuCd/qXwooiJzwOtV1Q6h5AFzM
- O41Q==
+ bh=AZfzALe6PKCrK7rCoXCS7mqZVNQcc5ogYC+0nF/rwYM=;
+ b=x4wEXo8a93JGTH7eUlfz7ZfKKEDdWEHwI8nttT6kqFD+9wRSvo2SruJfq+au2NcJGG
+ vyF/G0PYoB/gnM2tHxA4TMdpaxiPXEw9oWw+D/3zndFrrcwMFylUxxOmPXLenKiFRRIA
+ 3LbVcNd6HYaWg9wfwcIWNNzcGS9wISY3WcbTbMVLASS5dUP5QkKlk6MXeh9Ix/pIapGq
+ p9vSVN6Om5NhPtYC6yLIzFJD7FW2qiozS4nBxQbfoNftXQiZoKBiqr9lmL8tAq+GEg01
+ h0/z7Br8SbWUdHj5mV3WOwJ+4Xc511ySZVuJI33FAnioaKyNRmBJ2B/StZ26C2VH2/SV
+ Tq2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1766947548; x=1767552348;
+ d=1e100.net; s=20230601; t=1766947552; x=1767552352;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=Zaz5hrgCnNp873lhNmZ9Pm/5apsXNL+UG/H1WiUC1hA=;
- b=oINMy9HjHwB+OGGls/6ne8WtMJeXPoc/M9XMIU401ZCSiGjnlqtJshs0PTKq4OOkMy
- YOY6PnrGX6bgn/GFRDAll3NlSnXrY83QcdnhHQcow39FUaA/K0qyYfi0es76FcTIQqQT
- crR54O05UICx/bDezNRzdL2tqRsctxWSkfkA9DXgi0264knUHzwAz2eaASvhFnIcyvox
- NpxoCE+PbzPIvy+SXysC6PmfiiYx4/O1s5A5NpihecF1nKkq3aslO9C8/PIYe5SokQzh
- TCXgiWwTTVJ5RMNFG+pKJj2iGHDL5BHKsU13bw4BEMH7/FU8gb7dSw9dQSXE+GVdlMI8
- 57sw==
-X-Gm-Message-State: AOJu0YxwDUGRY0TWEp0ZqxBJO0xMFsUKDA+zD97NDntjNyzjnajSODuC
- aW1Tls8hoagaX1rB7Fr0aDvLAKFDdNuUQChvAXoP9KgKtSwXAiwdS/VHGs/iM2JQsOaDnsg1N89
- dL2DGFG8=
-X-Gm-Gg: AY/fxX4n3S4lv4Aei1OfOsbj1wlVhHV4chrT4QODF8cvTRkovt1F2u9pOpiSMFOSIdF
- Cl2DZRFgk9xNgxaPws/fn9E7drwwpULHBFNFeEhXThlSickg7i7nKEP/ZinCNOWCPiJynKssmwv
- U63ImtazWoNWgXDg2EEOgbu67//nd3mnqTEG4a8CEY9pyp8lyCVPsBTVUSX/TKLfuGc/QQj6GCB
- NQacR64LzVK0n2f9i3oALC7fBFvev9F09p+0BF65JIIVjxEwU6RA8WcqxaAmL3s+jX7Z/yLuQWj
- 8m4w7cEH8iW/IvC40Ohkgezw9mAmN0OaRoYVB2LhbleOL5J7V++mtlrr9cdul2wcgbpseHll/In
- wBiSv3GQM6jLas8lWGqabyx96tWZfXpH/HHFbwZH6e2Ixp9IE+vwUNQV/AyFWRQjuWjboIBiZKq
- Gllk8SfzgNJUq4sk4YGGO70YBpkZU9mm7D+I7SAh6abQLwdFjGmg==
-X-Google-Smtp-Source: AGHT+IHm+sGIqYpa1Qb0qpud426BSt4D21mUkIJdHA3/UH50sm1A+U1BdU4ZZ0SKc0GkLFWptbhzsg==
-X-Received: by 2002:a05:6000:200e:b0:431:9dd:2cca with SMTP id
- ffacd0b85a97d-4324e4c126fmr32068653f8f.7.1766947548431; 
- Sun, 28 Dec 2025 10:45:48 -0800 (PST)
+ bh=AZfzALe6PKCrK7rCoXCS7mqZVNQcc5ogYC+0nF/rwYM=;
+ b=LIze0yhou0dOZYqHQQ7gCeVKkjE7AYahdCdIzepgr5/lE3Z/RLX7CVyECBtaSdIXJ8
+ XTalbQhJvOFIWFE8ZBxNGBnxJ8uh31kohM4gHZfaqkbYHN0CPaYHTapbg2ehjN0aLjCM
+ FEyfWxgladwrTeDzmD3Esi9iS5M9gd2YbyHfSD/OoTi68gwU8obJRQWi71YLJl2lPvjU
+ SJAZjxDUkSBXiC3pUqNbUEHdPamXPxPRQ4V9FH0QNkayRAicVg2XWJsok0K3Gd8lOofS
+ zfDL4gkqlPfB1knFgiDQuUPV8Kqou6g1PTjttuRJO1aldkGALvY7930fYew2y6u3gDgw
+ qo1A==
+X-Gm-Message-State: AOJu0Yw06nF3yNwwZkbdgC1+gAtXhb36VzFtYMbZLC7OvIqK6jVUAwRe
+ p5TwSxRouQO//ZL9dJUtZZiMWQy2W5yf6ApYawOsLRZIphDbpwNpxPv7y/rgBftmQJKb0Muy8dG
+ KDgHKE/Q=
+X-Gm-Gg: AY/fxX48NztZeTDHNN6bo9dyipRsrDp5OoDL62FLhBsEbnkV+n3AgTCwmdqll5Lj+TI
+ i0fbZoYszO6cW6QnV7BEcCzWpfX+zdh1Nq1J8bLA1JjrkJSgK+VWhShpXq/8HB4+YZM4/97gkwl
+ slu6ddMQs5kzVA17jz92OgpfCM6XUVnvVv6khLPEIfji8fAvQ8HtgQ8DJj5LbOY4iLdGv7bWvPW
+ FgrBd3QTbrRe7uZmPUJWsx4NzR2+PHp7emqQR6rqOm5jkkrpPd5nj3LFcK6Rz7Vs8njUSTuPTm9
+ T0OmlSYXOob47aF3keUGERJmfE4Scd9s66ckMvmDtbtFxGgOPjAEgHenSGv/RELYDdbzUTBvUfS
+ o9ttHSBf1n1OlaeJrb3VTjIuX4QrxUs5G6C7xnFzyQUAC0S519YtAD6QfWaggLM1+fGWa6KAidV
+ Ks0e9MUwatOyq2wjByCEC1f/0NQYbrfVgLx0JjhDO4SWf4ffcfyQ==
+X-Google-Smtp-Source: AGHT+IFdS8+yvG8UxVkAhue46f+hMFBINoXIWLT9SwkmOkc2DVzjYwbXnBbiVCRx2rO8lzzzeBhc6A==
+X-Received: by 2002:a05:6000:2c12:b0:432:88be:27ae with SMTP id
+ ffacd0b85a97d-43288be281fmr5846851f8f.23.1766947551969; 
+ Sun, 28 Dec 2025 10:45:51 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-4324eaa2bdfsm59150275f8f.32.2025.12.28.10.45.46
+ ffacd0b85a97d-4324eaa2bdfsm59150275f8f.32.2025.12.28.10.45.48
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 28 Dec 2025 10:45:47 -0800 (PST)
+ Sun, 28 Dec 2025 10:45:50 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
- Ajit Khaparde <ajit.khaparde@broadcom.com>,
- Somnath Kotur <somnath.kotur@broadcom.com>,
- Kishore Padmanabha <kishore.padmanabha@broadcom.com>,
- Venkat Duvvuru <venkatkumar.duvvuru@broadcom.com>,
- Mike Baucom <michael.baucom@broadcom.com>
-Subject: [PATCH 5/7] net/bnxt: fix uninitialized warning
-Date: Sun, 28 Dec 2025 10:40:18 -0800
-Message-ID: <20251228184300.541639-6-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>, vattunuru@marvell.com,
+ Nithin Dabilpuram <ndabilpuram@marvell.com>,
+ Kiran Kumar K <kirankumark@marvell.com>,
+ Sunil Kumar Kori <skori@marvell.com>, Satha Rao <skoteshwar@marvell.com>,
+ Harman Kalra <hkalra@marvell.com>, Jerin Jacob <jerinj@marvell.com>
+Subject: [PATCH 6/7] common/cnxk: fix array out of bounds
+Date: Sun, 28 Dec 2025 10:40:19 -0800
+Message-ID: <20251228184300.541639-7-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251228184300.541639-1-stephen@networkplumber.org>
 References: <20251228184300.541639-1-stephen@networkplumber.org>
@@ -87,68 +86,45 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-With gcc-16 it inlines a lot more code and creates a warnings
-where it thinks it might be manipulating bits that are not set.
-It looks like this is because the bits in control word (cword)
-in theory could be larger than the variable. Should not
-be possible because wc_ctl_size_bits is only set to 3, 16, or 32
-but that happens outside of the scope of these functions.
+Gcc-16 detects out of bounds reference in this code.
+In function ‘nix_inl_selftest_work_cb’,
+    inlined from ‘inl_outb_soft_exp_poll’ at ../drivers/common/cnxk/roc_nix_inl_dev.c:1173:4,
+    inlined from ‘nix_inl_outb_poll_thread’ at ../drivers/common/cnxk/roc_nix_inl_dev.c:1201:6:
+../drivers/common/cnxk/roc_nix_inl_dev.c:43:19: warning: array subscript 1 is outside array bounds of ‘uint64_t[1]’ {aka ‘long unsigned int[1]’} [-Warray-bounds=]
+   43 |         uintptr_t work = gw[1];
+      |                   ^~~~
+../drivers/common/cnxk/roc_nix_inl_dev.c: In function ‘nix_inl_outb_poll_thread’:
+../drivers/common/cnxk/roc_nix_inl_dev.c:1172:34: note: at offset 8 into object ‘tmp’ of size 8
+ 1172 |                         uint64_t tmp = ~(uint32_t)0x0;
+      |                                  ^~~
 
-Resolve by adding bounds check which compiler sees and knows
-the loop will only see those bits.
-
-In function ‘ulp_bs_push_msb’,
-    inlined from ‘ulp_blob_push’ at ../drivers/net/bnxt/tf_ulp/ulp_utils.h:407:8,
-    inlined from ‘ulp_blob_push_32’ at ../drivers/net/bnxt/tf_ulp/ulp_utils.h:551:7,
-    inlined from ‘ulp_mapper_wc_tcam_tbl_dyn_post_process’ at ../drivers/net/bnxt/tf_ulp/ulp_mapper.c:2487:9:
-../drivers/net/bnxt/tf_ulp/ulp_utils.h:336:17: warning: ‘cword’ may be used uninitialized [-Wmaybe-uninitialized]
-  336 |                 ulp_bs_put_msb(bs, pos, 8, val[i]);
-      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-../drivers/net/bnxt/tf_ulp/ulp_mapper.c: In function ‘ulp_mapper_wc_tcam_tbl_dyn_post_process’:
-../drivers/net/bnxt/tf_ulp/ulp_mapper.c:2443:18: note: ‘cword’ declared here
- 2443 |         uint32_t cword, i, rc;
-      |                  ^~~~~
-
-Bugzilla ID: 1821
-Fixes: 3fe124d2536c ("net/bnxt: support Thor platform")
-Cc: stable@dpdk.org
-
+Fixes: bea5d990a93b ("net/cnxk: support outbound soft expiry notification")
+Cc: vattunuru@marvell.com
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/bnxt/tf_ulp/ulp_mapper.c     | 5 +++++
- drivers/net/bnxt/tf_ulp/ulp_mapper_tfc.c | 4 ++++
- 2 files changed, 9 insertions(+)
+ drivers/common/cnxk/roc_nix_inl_dev.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/net/bnxt/tf_ulp/ulp_mapper.c b/drivers/net/bnxt/tf_ulp/ulp_mapper.c
-index 0ff952950b..960cdda311 100644
---- a/drivers/net/bnxt/tf_ulp/ulp_mapper.c
-+++ b/drivers/net/bnxt/tf_ulp/ulp_mapper.c
-@@ -2446,6 +2446,11 @@ ulp_mapper_wc_tcam_tbl_dyn_post_process(struct bnxt_ulp_device_params *dparms,
+diff --git a/drivers/common/cnxk/roc_nix_inl_dev.c b/drivers/common/cnxk/roc_nix_inl_dev.c
+index 1eb96f913a..3a4f1ac1e7 100644
+--- a/drivers/common/cnxk/roc_nix_inl_dev.c
++++ b/drivers/common/cnxk/roc_nix_inl_dev.c
+@@ -1169,12 +1169,10 @@ inl_outb_soft_exp_poll(struct nix_inl_dev *inl_dev, uint32_t ring_idx)
+ 						     (entry.s.data0 << 7));
  
- 	slice_width = dparms->wc_slice_width;
- 	clen = dparms->wc_ctl_size_bits;
-+	if (clen > 32) {
-+		BNXT_DRV_DBG(ERR, "Key size bits %d too large\n", clen);
-+		return -EINVAL;
-+	}
-+
- 	max_slices = dparms->wc_max_slices;
- 	blen = ulp_blob_data_len_get(key);
- 
-diff --git a/drivers/net/bnxt/tf_ulp/ulp_mapper_tfc.c b/drivers/net/bnxt/tf_ulp/ulp_mapper_tfc.c
-index f99698a1d8..2d89f10d5e 100644
---- a/drivers/net/bnxt/tf_ulp/ulp_mapper_tfc.c
-+++ b/drivers/net/bnxt/tf_ulp/ulp_mapper_tfc.c
-@@ -90,6 +90,10 @@ ulp_mapper_tfc_wc_tcam_post_process(struct bnxt_ulp_device_params *dparms,
- 
- 	slice_width = dparms->wc_slice_width;
- 	clen = dparms->wc_ctl_size_bits;
-+	if (clen > 32) {
-+		BNXT_DRV_DBG(ERR, "Key size bits %d too large\n", clen);
-+		return -EINVAL;
-+	}
- 	max_slices = dparms->wc_max_slices;
- 	blen = ulp_blob_data_len_get(key);
+ 		if (sa != NULL) {
+-			uint64_t tmp = ~(uint32_t)0x0;
+-			inl_dev->work_cb(&tmp, sa, NIX_INL_SOFT_EXPIRY_THRD, NULL, port_id);
+-			__atomic_store_n(ring_base + tail_l + 1, 0ULL,
+-					 __ATOMIC_RELAXED);
+-			__atomic_fetch_add((uint32_t *)ring_base, 1,
+-					   __ATOMIC_ACQ_REL);
++			uint64_t tmp[2];
++			inl_dev->work_cb(tmp, sa, NIX_INL_SOFT_EXPIRY_THRD, NULL, port_id);
++			__atomic_store_n(ring_base + tail_l + 1, 0ULL, __ATOMIC_RELAXED);
++			__atomic_fetch_add((uint32_t *)ring_base, 1, __ATOMIC_ACQ_REL);
+ 		} else
+ 			plt_err("Invalid SA");
  
 -- 
 2.51.0
