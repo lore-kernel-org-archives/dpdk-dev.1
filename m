@@ -2,68 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92DBAD3B7E5
-	for <dpdk-dev@archiver.kernel.org>; Sun, 28 Dec 2025 20:20:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91E37D3B7E5
+	for <dpdk-dev@archiver.kernel.org>; Sun, 28 Dec 2025 20:20:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 44F6F40A6F;
-	Sun, 28 Dec 2025 21:20:00 +0100 (CET)
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com
- [209.85.128.47]) by mails.dpdk.org (Postfix) with ESMTP id 4C73F40695
- for <dev@dpdk.org>; Sun, 28 Dec 2025 21:19:58 +0100 (CET)
-Received: by mail-wm1-f47.google.com with SMTP id
- 5b1f17b1804b1-47d3ba3a4deso16988855e9.2
- for <dev@dpdk.org>; Sun, 28 Dec 2025 12:19:58 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id A779D40A77;
+	Sun, 28 Dec 2025 21:20:03 +0100 (CET)
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com
+ [209.85.128.51]) by mails.dpdk.org (Postfix) with ESMTP id 7957840A71
+ for <dev@dpdk.org>; Sun, 28 Dec 2025 21:20:00 +0100 (CET)
+Received: by mail-wm1-f51.google.com with SMTP id
+ 5b1f17b1804b1-4775e891b5eso34583155e9.2
+ for <dev@dpdk.org>; Sun, 28 Dec 2025 12:20:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1766953198;
- x=1767557998; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1766953200;
+ x=1767558000; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=2IJoXM1x0YqDjKDOjCrbrrJdy/wqMswEGSiJrZQXkZg=;
- b=YumirnujZ+TlEULJkCzzkXH/F9oGEPbWPKIZIauJRd4WM1ubjRGy9m9MIGhVclGS8E
- rGhv8rvDtO5sljlIKzgmoMnvHCtUIuFHANes99NzBCyL+G8zGePUIh2QILa7Yd2bBQzQ
- /l7XbzAFB1+/QEWPQ9C03lUlw/m5nfQkIG8RgNYh+orUBMcoC5e3Zk3WYJkZ9fYeXMeu
- KE5lyE0wqBt6SDtsBDF/Z9z4Hx0SlIwtJ0w54tM/CG7HPmXfEMUZYpNypImYzM5Srqq5
- /AlwsgQDxfgak2XplYNjlc//0g0dbpkqb+F/LthsS8RJCcuTSFAh9ypwacNs3Tj+Nnob
- 2srw==
+ bh=1UoBNUoi1+EhVE1t3Dqovg1x7UhVI8Us1tilpBbA6+I=;
+ b=nzXtYZzljw36IUtufh6dVOQ8A9Pw8eEjL6Pm+oaWlQfbHbFhMVjjp8YUA2dorT+Oqn
+ L29wjwL7ohdK0nE5mmWUrgz81Xg+nfDpXkAIuZjr7J3t+soBMjFv+pJG2BEfh3cvU7Uc
+ h9ahLGcDuoXxH3pswd3Q3lD7c66+FD893EZCfwE0oIFsuS3ERskoHvlTq7fHvUqvFzna
+ eSBywUOnoyRV33FAj3qZKV7qYdVhaPDhqzQFNqTpqYpHPpZ+UXx7FivGVoTWhl1ukDVT
+ 3kqz+yalCjTQnjs7PofU+klHErO5JKGnKO4+m4iCVd++Vt1zlf3/Wb8LYb/92tpTbnlW
+ bCfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1766953198; x=1767557998;
+ d=1e100.net; s=20230601; t=1766953200; x=1767558000;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=2IJoXM1x0YqDjKDOjCrbrrJdy/wqMswEGSiJrZQXkZg=;
- b=G2amHY8DxXvERnAs0DpXb2RQW8QXLpmlHTSFLuDJYSHQRiY2xMYUj2K+2F3UTymdpP
- NzG6XEn4LdOExV9zyvYR2Kb4WdzJU5ZNOg39W8zz9nGgyGK8f8y5t9myFxf+hJkelacx
- EuCU7RT4bgndhPlipqOIolyLYgtHYodRPe1/Ffb7Acugz2osRFuWo+Fm59qoQKEZhrXG
- 6geJJtuwmqzLgRYuBT5qXrfT67gRM2NF/185NHHck41s77SzniI046UeJ3a8p3nkDJU6
- wwFa5DMLVpNc1Q/xaO3aaAHFg5XFuJ9gQ06mls3Bd9eyJMzeA4WZaMMvUzMHLL7ABPE1
- 8bcQ==
-X-Gm-Message-State: AOJu0YzdBVCMOrdSCglaY5ZlpLfU2RRPFpe/k2AKRu2m7o/ulVlQQn+w
- z9zLaVtqBWBwRI3yRaWaFOJVeVvGRQrN83vDbFyppq17J5jcBA7HVtDPemHKa5qIJXh6dS8fmp2
- RTIV8nAs=
-X-Gm-Gg: AY/fxX5u32GUMj2zV2cs/a4oJD0RU9Xk0zT8qQKRqsbVXcBNfHmNgOHtHL24ZdziFA7
- dbCjMgARpTBQCm1nq712PPAC4CRnFfZNA0PaFv3WbieWeNaYjh0+ylxFltzzje3KzrrF2UUHBd1
- nsJpWvEHJ60x+WzpzFDvPPgxS8jf0TpXEOETJc+6+5DoiIHW8YjWNLtP9+EtgzhEaIC+drBv4g1
- DnNCJmwhxZd+TFT7rJlHgTNJI01QoQKZvilBfePRSNxhTFvIwtWRWA4UeVny2FchuQXQXVTHavn
- gBctnHtPy06Wlzphvr2kvzROL+QlmaVJ4tr8wXhR0e0+J6QBqV50pmvE9DXsC4CLzrIRmgkA8W/
- M2bH10I4eMTUXsd8Zc3zyQLSGCepTbSZWS+BE3bE/uIbYqlY7uxTm3LsF5fbQu7/3pgLbkcfXU9
- ivU8FdTKzwRO2wHNqbASw5j8xKtLz1C1FdR90SVs4D1T33654feg==
-X-Google-Smtp-Source: AGHT+IHeZY3vxJy8O4zNKRWoCQh2ieyvo3/6UppF1oei8bT3tL82NiBfOIyVNv0DP1zHAGo3k4Xzwg==
-X-Received: by 2002:a05:600c:6388:b0:477:63db:c718 with SMTP id
- 5b1f17b1804b1-47d19557cd2mr320429335e9.16.1766953197852; 
- Sun, 28 Dec 2025 12:19:57 -0800 (PST)
+ bh=1UoBNUoi1+EhVE1t3Dqovg1x7UhVI8Us1tilpBbA6+I=;
+ b=UwqjycSjOig79jnO9sDvMP3EF4Nt1/F0Dwi74IaDyRNe3tg3wjfL6HiAPSPJ8M7MqE
+ /B31PhSuQo5oBzJDAiHdbmYjr/a5iBEjjyRs+P2xJ2sXuG4udUG1RQZOcxEhmUqCCOM1
+ 8P5DDQUCFiMmWqMPUsrTanJBsT1mms0ktXl6gpYDMxm7OgJz4YmyHKYKhIyj8KBqOQ3/
+ kRA1OahDK5vM68ojmwnqSbE9El20p9o1K8cq2Yh0z5WSUhY3u3S38BLazylyJ59wAkM1
+ UplP05qOVrbYWl5AodGUidedAUT5QHIIpX+xPihpMP5h7h1PrKb0y15r4sETyRGDQy0E
+ kj6g==
+X-Gm-Message-State: AOJu0Yy26YwjBBuSB2nQ+jFbaHsHHJD2jHSNmBlUkax5H+3Ixc1ZLpbC
+ MvYrqrhopBD4PAncOMVF45EKQRxTRsygYPJDrnwO6pPK7gdemhxyabDcu0qWAT6/P2lp9eo672n
+ HMMVEDB8=
+X-Gm-Gg: AY/fxX7X2wrGNUF7S6T5rHrEPiiIcYEFXvUK7Rtup2ypPUhOGAWSKfvA2OePpLAsb6R
+ vv23cv0Up9PdbP/bXVlVIQtLvgC6pIAhQEOkX0OSw+A9s+OW4vIUmS9a+S5loSjT/Wl7ZeUeLa7
+ xlZKW2HRH0jAD0tGLmB8MeGozAtrX+AEOJJUmaBWRLCpH8CG0QKsSt0GgamAbOfA9qg17P7euEd
+ DyhuSQSzdVcuWmZFOxICPymBye/+j1Jk7xB1kN8WJa6HrBTvod5HhwYq5/iB04Qoyfu25auxoMg
+ AfbdGXmaV6LVclKjqSYhwauo+wT09kx01ZdrZELiAXNBQNdNzV9Xe8SK9MD/KbIaIzatcJ5J8wI
+ ghtAUDOq5TgQ1ehSOj1ZtRiDGtyUh6TJA6c4fxS4txZbKiur4EHGncwFlNUjExL42nYgeO7tw24
+ LEsMOGpXqUZQqr7NSnucT/pSHY4UkgWJfgjV5hGIISo98G18/AAg==
+X-Google-Smtp-Source: AGHT+IGykzW8MfWo3LclwCM8jEEpGDLOf6g0SiOhS5t2DeuR4xAqwy29w1AbK51oYnA/1peMSvxfJA==
+X-Received: by 2002:a05:600c:4e8e:b0:477:9f34:17b8 with SMTP id
+ 5b1f17b1804b1-47d195330dcmr315753035e9.1.1766953200075; 
+ Sun, 28 Dec 2025 12:20:00 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-47be3964226sm240319655e9.0.2025.12.28.12.19.55
+ 5b1f17b1804b1-47be3964226sm240319655e9.0.2025.12.28.12.19.58
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 28 Dec 2025 12:19:57 -0800 (PST)
+ Sun, 28 Dec 2025 12:19:59 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v8 13/18] eal: check tailq length
-Date: Sun, 28 Dec 2025 10:56:16 -0800
-Message-ID: <20251228201236.547268-14-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v8 14/18] eal: handle long shared library path
+Date: Sun, 28 Dec 2025 10:56:17 -0800
+Message-ID: <20251228201236.547268-15-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251228201236.547268-1-stephen@networkplumber.org>
 References: <20251202172626.283094-1-stephen@networkplumber.org>
@@ -83,67 +82,60 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The tailq name should not be allowed to exceed limits.
+Instead of a fixed size shared library path that could in theory
+get truncated when concatenating, use a dynamically allocated buffer
+via asprintf.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- lib/eal/common/eal_common_tailqs.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+ lib/eal/common/eal_common_options.c | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
 
-diff --git a/lib/eal/common/eal_common_tailqs.c b/lib/eal/common/eal_common_tailqs.c
-index 47080d75ac..c581f43b6f 100644
---- a/lib/eal/common/eal_common_tailqs.c
-+++ b/lib/eal/common/eal_common_tailqs.c
-@@ -8,6 +8,7 @@
- 
- #include <rte_eal.h>
- #include <rte_eal_memconfig.h>
-+#include <rte_errno.h>
- #include <rte_log.h>
- #include <rte_string_fns.h>
- 
-@@ -30,8 +31,10 @@ rte_eal_tailq_lookup(const char *name)
- 	unsigned i;
- 	struct rte_mem_config *mcfg = rte_eal_get_configuration()->mem_config;
- 
--	if (name == NULL)
-+	if (name == NULL) {
-+		rte_errno = EINVAL;
- 		return NULL;
-+	}
- 
- 	for (i = 0; i < RTE_MAX_TAILQ; i++) {
- 		if (!strncmp(name, mcfg->tailq_head[i].name,
-@@ -39,6 +42,7 @@ rte_eal_tailq_lookup(const char *name)
- 			return &mcfg->tailq_head[i];
- 	}
- 
-+	rte_errno = ENOENT;
- 	return NULL;
- }
- 
-@@ -67,6 +71,12 @@ rte_eal_tailq_create(const char *name)
+diff --git a/lib/eal/common/eal_common_options.c b/lib/eal/common/eal_common_options.c
+index b1fb670ea0..6aa078e135 100644
+--- a/lib/eal/common/eal_common_options.c
++++ b/lib/eal/common/eal_common_options.c
+@@ -570,7 +570,6 @@ static int
+ eal_plugindir_init(const char *path)
  {
- 	struct rte_tailq_head *head = NULL;
+ 	struct dirent *dent = NULL;
+-	char sopath[PATH_MAX];
+ 	DIR *d = NULL;
  
-+	if (strlen(name) >= sizeof(head->name)) {
-+		EAL_LOG(ERR, "tailq name '%s' is too long", name);
-+		rte_errno = ENAMETOOLONG;
-+		return NULL;
-+	}
-+
- 	if (!rte_eal_tailq_lookup(name) &&
- 	    (rte_tailqs_count + 1 < RTE_MAX_TAILQ)) {
- 		struct rte_mem_config *mcfg;
-@@ -115,6 +125,7 @@ rte_eal_tailq_register(struct rte_tailq_elem *t)
- 	if (rte_eal_tailq_local_register(t) < 0) {
- 		EAL_LOG(ERR,
- 			"%s tailq is already registered", t->name);
-+		rte_errno = EEXIST;
- 		goto error;
+ 	if (path == NULL || *path == '\0')
+@@ -584,19 +583,29 @@ eal_plugindir_init(const char *path)
  	}
  
+ 	while ((dent = readdir(d)) != NULL) {
++		char *sopath = NULL;
+ 		struct stat sb;
+ 
+ 		if (!ends_with(dent->d_name, ".so") && !ends_with(dent->d_name, ".so."ABI_VERSION))
+ 			continue;
+ 
+-		snprintf(sopath, sizeof(sopath), "%s/%s", path, dent->d_name);
++		if (asprintf(&sopath, "%s/%s", path, dent->d_name) < 0) {
++			EAL_LOG(ERR, "failed to create full path %s/%s",
++				path, dent->d_name);
++			continue;
++		}
+ 
+ 		/* if a regular file, add to list to load */
+-		if (!(stat(sopath, &sb) == 0 && S_ISREG(sb.st_mode)))
++		if (!(stat(sopath, &sb) == 0 && S_ISREG(sb.st_mode))) {
++			free(sopath);
+ 			continue;
++		}
+ 
+-		if (eal_plugin_add(sopath) == -1)
++		if (eal_plugin_add(sopath) == -1) {
++			free(sopath);
+ 			break;
++		}
++		free(sopath);
+ 	}
+ 
+ 	closedir(d);
 -- 
 2.51.0
 
