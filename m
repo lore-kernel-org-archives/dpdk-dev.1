@@ -2,68 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9461E784BE
-	for <dpdk-dev@archiver.kernel.org>; Sun, 28 Dec 2025 18:45:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C409EE784BE
+	for <dpdk-dev@archiver.kernel.org>; Sun, 28 Dec 2025 18:45:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 76105402EB;
-	Sun, 28 Dec 2025 19:45:43 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 7F2604060A;
+	Sun, 28 Dec 2025 19:45:46 +0100 (CET)
 Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com
- [209.85.221.52]) by mails.dpdk.org (Postfix) with ESMTP id 2035240267
- for <dev@dpdk.org>; Sun, 28 Dec 2025 19:45:40 +0100 (CET)
+ [209.85.221.52]) by mails.dpdk.org (Postfix) with ESMTP id 0632540267
+ for <dev@dpdk.org>; Sun, 28 Dec 2025 19:45:41 +0100 (CET)
 Received: by mail-wr1-f52.google.com with SMTP id
- ffacd0b85a97d-42fb5810d39so5001400f8f.2
- for <dev@dpdk.org>; Sun, 28 Dec 2025 10:45:40 -0800 (PST)
+ ffacd0b85a97d-42fb6ce71c7so6720734f8f.1
+ for <dev@dpdk.org>; Sun, 28 Dec 2025 10:45:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1766947540;
- x=1767552340; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1766947541;
+ x=1767552341; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=4xFDGIABKehAqUGpvyqmRaLuugurynesvxqL+XBLOsw=;
- b=jGmxBSPxWcdD1zKEiLwmfCpbmnHEjIbyjpI3rIKL3/cWLOJaSdJdnOj9ClNl3n4iI+
- hMYBbEz+a2P5VcwUOlzbvw1rkmCBp5AEN+gGVeCVPR+uAXQe6cyO/nxr+2UMlDOYCjN4
- g7/jhTkkl7AAbU55KznS5JbSCEXuuujkRGZg9eLsKK6DsARCqyFSL5uqsiVmErka+rrd
- s8sIFgnPeSHOGt8OLdLaIAJG22FdZ0m8tn3gR0vRZaO76KmUfDgdB91UdwHOnovnXtz8
- PZ2Wrw6R3dyFRx6L1/xLX+H/Wpjv71d86lc2yXIA9JPVOONlP7r2i9vQR4FhY4nKocvS
- PBbw==
+ bh=NAyYELlFSK8dL0E3zXNxrT5yRbE64um/Hu8y+IsOK40=;
+ b=25eQEAm/266bxTfc67SFaS/ApWJDmp7Q79x+H5Pja13irGY2FSpGAYSXtYGLHZq7rn
+ Cp2BNwSmZ1O5PPIqQ72oA/jUhW1XgatBkZHCmSZ/ViUrK/44ngG/iRQd1PGBPPzVWY4V
+ M/J3z/9REL6LskDB4IThGOvLjePPL/8yRmmH5i0PgxlP9RZuffrWZsAgtQ1pBZkLCMyZ
+ 6gHPMpsC1TWkSREts/Zf1rqP/9NyvczvYPFNTSBhHxH72VtdWBZocddYOLYWomJkk3Pl
+ hIccvM679p0JbSYJDlBspUBywoS6j0yGVEzd0XVuXDhrjvWtp978RFaT4c3CZs6jB+cZ
+ 4yDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1766947540; x=1767552340;
+ d=1e100.net; s=20230601; t=1766947541; x=1767552341;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=4xFDGIABKehAqUGpvyqmRaLuugurynesvxqL+XBLOsw=;
- b=Gzfv1a55nlonKPPTNioqabLnuC3n0cOLXd8L3SZEFqwdnbjMJUPGHOeT2uvHJPxYqz
- QuOWvdCIbL4CRRGsylqxO68woIoaHlAYnzeQ9MA94dQXfmawAcwjh5J6BnELJqA9bIVu
- AE11aboWcrfLubQerXfcGri3QYYg+nJarMU4wx1bBBCpFsLtSWK925SMF2Vkba1Bl7mU
- UMgHvY26CO7CswzUqFaqGAB+t04wjS38GhrZdU0DSain8haWgGjtldVCHR0H0W19Mg5n
- BNOK8Mr/swXkcjpzrfd5JA1DLr1jvcbIPBfkYcVC05FtBWlPAziDnuLrvVrvpqtgB2zv
- ic/w==
-X-Gm-Message-State: AOJu0YwtZYRnO+Wz2CmJ1wMvv2tXhIaBLj886iaf28W6/PpWsTraMeI2
- uY39DxDt2By/bzaTKYjAUyW6ojsqhoyD8NHKsrTiLprM3P5Dg/3+zQ7P3K4NFrhqxJfAn9p9UCf
- lqWVh3J4=
-X-Gm-Gg: AY/fxX7DWaxsdj8n/ySkPHS4MdAe8YIh62MBzt4YHO05HJfdmQnDBCQC5FW3Y6SGgk+
- 3RiANMo14iCUet0CpXxgNbzJToGpGrp7MoQ+bIF338vDhY3sBhko0pwCnIirWr6BjHtS4AwiO1/
- ighGFedAQurVX2Ea8ZPRHsYk+AXWZEaBl3xRNDP+qfDjklBrq7AaAzvx0A3xSAyvzjP8NBPV2e/
- 0RjbE91hN3wa9lAM7y3MyBEQZkhQEewRK/pK8KOcuR0fZBuwCmBAf2bqeqoG+mvM3AY875PJyxq
- tC+v7tIU029sXLuFuHST2h+MsaWsF+K35B9OH4X9SpfFZK9mHs1DnQGcm6H1ploaxXGSaQOxZ7h
- lf8EGJU0uarAB8QlggA/cbj7Vz6U7i2UuDM+uIA5mxLzh1ccq5/r9XaqzlfCOAGbIJMxE9Q1IN6
- vaGGoM+cNcAUU6MtxP5QzT8NnNbutMrI5wl+mPR8liMwszdMDdhA==
-X-Google-Smtp-Source: AGHT+IFmdOU6beKqRjLd6V9incqLZfzUBOGDrBHxIB+otD6JENHlLL6yX6ZS45+1LU55ND5iw00P3Q==
-X-Received: by 2002:a05:6000:1842:b0:431:32f:3159 with SMTP id
- ffacd0b85a97d-4324e4c6975mr31326517f8f.7.1766947538959; 
- Sun, 28 Dec 2025 10:45:38 -0800 (PST)
+ bh=NAyYELlFSK8dL0E3zXNxrT5yRbE64um/Hu8y+IsOK40=;
+ b=QTAcbPQgxwj7NKUtJ+LH/uBRVtTGQMstIDmGGNw74ONKo+53R3Z3Tg2nTZ47llmfFL
+ k3Ivf2yllZknqM/hBnJWEzPiU6jvdXZw+esazPDgb/siY6WC4CWM6MIp6uS+udizzmka
+ h8MReRUjbIJirnX2aawy62JHDN/drFj14J+D7rHpbrhqf/I86+SBLMZtarlITmibjjYS
+ dAWgcHWMqOhg7Iv+GteGOQ36W9frBA+tX1l/DJ6Xh3VHOjZAdEumD16dC1aw4P7GT0kZ
+ Gk9fMNM23+VG2cS37iT2d7hTuO4V5a/lADUS/XzOQYbSbJg7BK3eXA8vR+SpsGuXDrpy
+ jAKQ==
+X-Gm-Message-State: AOJu0YyGvwHd4ZKGSAAb2pptz+bq7G/Ddp623fjei6yn16KT0lEU9glE
+ EyIh1V2hq4jpmlpaGqpaiLJYpXBg3e0I0tOmAQLNIpmmcFTKsGivf9y0BIFwa1IOffcSPb5TUmX
+ 5Fzd+qrI=
+X-Gm-Gg: AY/fxX5zLyl7VFWjO5vqbJ+3o8vf47Lei5ftooivLjKe+JXfJQu4pAYTWNbhiCRzwkL
+ sFUb7gzCZCsfWdO51Dfq5gMXd4jdEyTczwJDwLVv8gyDHij553DTFI4mTazhRTFK7nIUw2cPbPo
+ F8+/XGjedC79JdCj/nUUjdnhm+NFwUj6OOgk5lBc0WPWbrsxAd3uDTwNtWP8h1Spd8R8qJ8cU2c
+ XD/Af6Uj8YU133fPmvK6+Fkrh537wmyyo6FAZLGtzhBu6POb64eQI7NHHL3D95wHwyqIY5nAXBM
+ U0kONH/EnXvYCDNGqglsy+QGmuw9MNt6exGBbQXXhzi5/gaszeblJRG0KFs/V3Ii9AuCeUyAKln
+ M/5d9GlCQQBPg0ZPDGuIFEiaVDmHlmEHqEnNhbbzF3EGG37miD5DM0fQLra2CKTtR1suJooLmaj
+ EIdfb5IKwFvr/Ihntpej56i/2R0WsgGr/2nQAv/K3wwDlCjIeGHA==
+X-Google-Smtp-Source: AGHT+IHcbXEgnP08x3Gf7Z+liHr2KPz28YCa+rsJkum2M+pR70bNWJdqzF/GTU3iru+JxYEM8tHprw==
+X-Received: by 2002:adf:f144:0:b0:431:855:c791 with SMTP id
+ ffacd0b85a97d-4324e4c1501mr26577650f8f.3.1766947541426; 
+ Sun, 28 Dec 2025 10:45:41 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-4324eaa2bdfsm59150275f8f.32.2025.12.28.10.45.37
+ ffacd0b85a97d-4324eaa2bdfsm59150275f8f.32.2025.12.28.10.45.39
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 28 Dec 2025 10:45:38 -0800 (PST)
+ Sun, 28 Dec 2025 10:45:41 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
  Reshma Pattan <reshma.pattan@intel.com>
-Subject: [PATCH 1/7] pcapng: use alloca instead of fixed buffer
-Date: Sun, 28 Dec 2025 10:40:14 -0800
-Message-ID: <20251228184300.541639-2-stephen@networkplumber.org>
+Subject: [PATCH 2/7] pcapng: add additional mbuf if space required on copy
+Date: Sun, 28 Dec 2025 10:40:15 -0800
+Message-ID: <20251228184300.541639-3-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251228184300.541639-1-stephen@networkplumber.org>
 References: <20251228184300.541639-1-stephen@networkplumber.org>
@@ -82,90 +82,47 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This is an API that accepts strings as options, and user could
-potentially ask for very large string as comment.
-The dynamic way to fix is to use alloca() to allocate the buffer
-used to hold options.
-
-Bugzilla ID: 1820
+If comment is passed to rte_pcapng_copy(), additional space
+maybe needed at the end of the mbuf. To handle this case generate
+a segmented mbuf with additional space for the options.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- lib/pcapng/rte_pcapng.c | 19 ++++++++++---------
- 1 file changed, 10 insertions(+), 9 deletions(-)
+ lib/pcapng/rte_pcapng.c | 19 ++++++++++++++++---
+ 1 file changed, 16 insertions(+), 3 deletions(-)
 
 diff --git a/lib/pcapng/rte_pcapng.c b/lib/pcapng/rte_pcapng.c
-index 21bc94cea1..3067033e89 100644
+index 3067033e89..7c3c400c71 100644
 --- a/lib/pcapng/rte_pcapng.c
 +++ b/lib/pcapng/rte_pcapng.c
-@@ -34,9 +34,6 @@
- /* conversion from DPDK speed to PCAPNG */
- #define PCAPNG_MBPS_SPEED 1000000ull
+@@ -540,11 +540,24 @@ rte_pcapng_copy(uint16_t port_id, uint32_t queue,
+ 	if (comment)
+ 		optlen += pcapng_optlen(strlen(comment));
  
--/* upper bound for section, stats and interface blocks (in uint32_t) */
--#define PCAPNG_BLKSIZ	(2048 / sizeof(uint32_t))
--
- /* Format of the capture file handle */
- struct rte_pcapng {
- 	int  outfd;		/* output file */
-@@ -145,7 +142,7 @@ pcapng_section_block(rte_pcapng_t *self,
- {
- 	struct pcapng_section_header *hdr;
- 	struct pcapng_option *opt;
--	uint32_t buf[PCAPNG_BLKSIZ];
-+	uint32_t *buf;
- 	uint32_t len;
- 
- 	len = sizeof(*hdr);
-@@ -162,7 +159,8 @@ pcapng_section_block(rte_pcapng_t *self,
- 	len += pcapng_optlen(0);
- 	len += sizeof(uint32_t);
- 
--	if (len > sizeof(buf))
-+	buf = alloca(len);
-+	if (buf == NULL)
- 		return -1;
- 
- 	hdr = (struct pcapng_section_header *)buf;
-@@ -214,7 +212,7 @@ rte_pcapng_add_interface(rte_pcapng_t *self, uint16_t port, uint16_t link_type,
- 	struct pcapng_option *opt;
- 	const uint8_t tsresol = 9;	/* nanosecond resolution */
- 	uint32_t len;
--	uint32_t buf[PCAPNG_BLKSIZ];
-+	uint32_t *buf;
- 	char ifname_buf[IF_NAMESIZE];
- 	char ifhw[256];
- 	uint64_t speed = 0;
-@@ -268,7 +266,8 @@ rte_pcapng_add_interface(rte_pcapng_t *self, uint16_t port, uint16_t link_type,
- 	len += pcapng_optlen(0);
- 	len += sizeof(uint32_t);
- 
--	if (len > sizeof(buf))
-+	buf = alloca(len);
-+	if (buf == NULL)
- 		return -1;
- 
- 	hdr = (struct pcapng_interface_block *)buf;
-@@ -333,7 +332,7 @@ rte_pcapng_write_stats(rte_pcapng_t *self, uint16_t port_id,
- 	uint64_t start_time = self->offset_ns;
- 	uint64_t sample_time;
- 	uint32_t optlen, len;
--	uint32_t buf[PCAPNG_BLKSIZ];
-+	uint32_t *buf;
- 
- 	RTE_ETH_VALID_PORTID_OR_ERR_RET(port_id, -EINVAL);
- 
-@@ -353,7 +352,9 @@ rte_pcapng_write_stats(rte_pcapng_t *self, uint16_t port_id,
- 		optlen += pcapng_optlen(0);
- 
- 	len = sizeof(*hdr) + optlen + sizeof(uint32_t);
--	if (len > sizeof(buf))
+-	/* reserve trailing options and block length */
++	/*
++	 * Try to put options at the end of this mbuf.
++	 * If not use an mbuf chain.
++	 */
+ 	opt = (struct pcapng_option *)
+ 		rte_pktmbuf_append(mc, optlen + sizeof(uint32_t));
+-	if (unlikely(opt == NULL))
+-		goto fail;
++	if (unlikely(opt == NULL)) {
++		struct rte_mbuf *ml = rte_pktmbuf_alloc(mp);
 +
-+	buf = alloca(len);
-+	if (buf == NULL)
- 		return -1;
++		if (unlikely(ml == NULL))
++			goto fail;
++
++		opt = (struct pcapng_option *)rte_pktmbuf_append(ml, optlen + sizeof(uint32_t));
++		if (unlikely(opt == NULL || rte_pktmbuf_chain(mc, ml) != 0)) {
++			rte_pktmbuf_free(ml);
++			goto fail;
++		}
++	}
  
- 	hdr = (struct pcapng_statistics *)buf;
+ 	switch (direction) {
+ 	case RTE_PCAPNG_DIRECTION_IN:
 -- 
 2.51.0
 
