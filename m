@@ -2,71 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99D37E784BE
-	for <dpdk-dev@archiver.kernel.org>; Sun, 28 Dec 2025 20:19:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38005D3B7E5
+	for <dpdk-dev@archiver.kernel.org>; Sun, 28 Dec 2025 20:19:46 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3C64D4065B;
-	Sun, 28 Dec 2025 21:19:39 +0100 (CET)
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com
- [209.85.128.52]) by mails.dpdk.org (Postfix) with ESMTP id E61C740651
- for <dev@dpdk.org>; Sun, 28 Dec 2025 21:19:32 +0100 (CET)
-Received: by mail-wm1-f52.google.com with SMTP id
- 5b1f17b1804b1-47774d3536dso67606025e9.0
- for <dev@dpdk.org>; Sun, 28 Dec 2025 12:19:32 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 6B4894065F;
+	Sun, 28 Dec 2025 21:19:40 +0100 (CET)
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com
+ [209.85.128.46]) by mails.dpdk.org (Postfix) with ESMTP id 6C544402ED
+ for <dev@dpdk.org>; Sun, 28 Dec 2025 21:19:36 +0100 (CET)
+Received: by mail-wm1-f46.google.com with SMTP id
+ 5b1f17b1804b1-47d59da3d81so27285e9.0
+ for <dev@dpdk.org>; Sun, 28 Dec 2025 12:19:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1766953172;
- x=1767557972; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1766953176;
+ x=1767557976; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=e/1PWFyurYOZ/StCT2ahbxSndTGeMa64DSOh4/RhA+k=;
- b=F7qFtylORSAH3njoUEg57XfRgl5r/+jnGrUxxjqmEfPm3rrgK60cFqFsloACXITLo+
- eRVqs4CEVTQxccklTukimrrYNg2CSTpReklBHuJoCjM2Tn536dWB+ONO1AzUKcdtXM15
- VE4gddLnBqS4yuErgo1tfFbO1XBQEEfrKc9bN+9gFvCdNnf6GUfo7WFLa/+8bBavUgjL
- S8poxZIHztCd50Nh1GLeDfyOrspWVNorDGB7sNJws7igCCFxgN5+0r13obc0LrPk7t/8
- 0IHaXvpx20t7RLUSleVZ7+WgLYAuvIaXHgYI4EBDk3uRs5Pwf9Y9JEZ3cuSXLAUs8cs+
- Rixg==
+ bh=3vmW0EapljQF36KN4JI48XscDOxvks/pvjTAp8iLdZ8=;
+ b=qN7woIbX+PWG+uORuDKh9pkwMDRok+dgskdZWVpoDu3ITGxHhKHWMSM2MIDISwW7zy
+ MA34lpOH7ctSxxHe0nrfcUYIoRKV5pGwB6JvAdjbhkwxiLo2FQ/qreeMidyWpUpnjzE2
+ yzWbc8HLeEzTMXDju9UG49LcUXulW/rqMY27RSH+X/Kcp8T1f2knYNTRlU6uRxw4hc81
+ SvAVCiMN+n11KHh1ZU8RCPmnO+Llr3QNewnrIFVm5p9C2Cva3/7HXjP7xV9ygystheL4
+ XCZl43y5umwhlfu0TWJgagixEvhSQl+2Xp+z99q8IgepASAumZaWAGmohlOmowpnmtrc
+ xN0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1766953172; x=1767557972;
+ d=1e100.net; s=20230601; t=1766953176; x=1767557976;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=e/1PWFyurYOZ/StCT2ahbxSndTGeMa64DSOh4/RhA+k=;
- b=BhEhDV6eK/MyRsoYJwHXpwn/kewNciXWeWvxu5TQAgZ/tOQKNLmeIzgZyKcyOHGfyM
- WHAozkPJKKJVl81i8D33znNgXdTKSpTFHBXIsu4k9L24lRdOeyWhNCqsLtostE3oa/uq
- RmVH78f+G9BaWaG3s/0b6W21re7qehg5gJQSFzbx8q7mmu6oB8NwTQSAlpA1sOrlOl/5
- t+NWmopZglBCjNZwtoy7BARJhAEmJ11m5g9S+swjyGL3Ilh4Mu2XEbb43ih1igk+kgvI
- F8cFaDLCAMkIiA7w2njoVCmX1HXMbt7lPtir5CyQ4wzRazuHwr/voMIz9iLvLPa6uU4v
- ZOQw==
-X-Gm-Message-State: AOJu0YxF6HZ92XgKMlqveJjV7TsmbZS7DG0yd1aHPXe3ICVVNngVb3N2
- xmTD+i48GWmrcrgYZ0I4xfQJcdNQYg+5hatZcGI1uSPZ7GkSF5wuFic3ayHcwJXqGzxpjcXR9Ki
- j+h4NbNA=
-X-Gm-Gg: AY/fxX4I1/91FwIldMyUwOvXlBjJ5xHNt1OaD5Hm1G1Q9cdELfuCvUywHtKhBOX+Msa
- HhYAZsGkpro0NvQEPrXHf/mL1b7K9kW8ZBwJlS/A7/VFZYA2HArcl/fZvJt4nGT5r0+e5i65A+s
- JKisKgYGj58oorBsfhEZzkE6rAagsuPWGdO9d5aHHltbhynsVHFo4VkjYnrSQ0R1BskZHBbnSdB
- tLY61O8bv8HjGLaOFGDuMWoYr7bciqxO7RTJIGUPp3U0eRpYf4Lyq1lNfDv2AoknHIMsUoPIRTr
- xj1SxSzb4N7UMwxj7ANUUykVO/qlwaZjj+va4mpRI4bq/NNfCs/CmMFVtYRIs5k89qc2SwYowIX
- vvSHsFQY46S8kpW1+hoqpEmuj3hHFY3R0SRsvI4o9Yx6Vxv6Zq+8WEgftGIj42EyfXDpgq2qk1C
- RAWLyZGVAn0LXYeuvVsnfzckWDQZs7DORzT4Op0DpMfJ+UIYPESg==
-X-Google-Smtp-Source: AGHT+IEheWBrQSBYbGgjm7e+QAAHlWMti3PUOmYwttooXDN4vUmawG9xBeASsFWBwYI6/YiMPIYhRQ==
+ bh=3vmW0EapljQF36KN4JI48XscDOxvks/pvjTAp8iLdZ8=;
+ b=RjyToQBsdsLSyOE7qldvwSOLCShaQ/IdVIQVBHr7Kszu1LAa0Z8Tha1vk0vI03n/mf
+ N0Eh8hzpK3+N3sihU3gpv0y7aLgFqtrwWDt1w7dVoO1Wt/p2U7Ig07rmRRVuzjO3hOgg
+ Y4P3CAogZsyrZwnnCErQa54FShc+blDv1ROp1X4Prrg2ei5DsiXbk8/tN4eFRboFpwDx
+ dLgkuiOl9W9FeYfByjekIi29BrL3XOEVktol3YOHpl+MPsGzXKcfcY9U/2N21lCY2S6D
+ t871R5h0O/KOb1qlmd0dlyJXiMHc/jfXY+8y8OkVTrOTg5EvXz2ZWQ2IRsXSGVUkZxES
+ xhsQ==
+X-Gm-Message-State: AOJu0YzDTrku9v5yydd8WnN698w79nn+ly/vwF3mKp7DdvSyKo0JKUdf
+ RhxGlkBQT23nXANxvAGdk/xYki3ZJ1XHsrqzA2rJYX03KglS+80sUF6MevIGCXo8Qqc2z7H2ekv
+ uDYzgm+4=
+X-Gm-Gg: AY/fxX49lmLfXceCLBYx/hsSQh0+jsWAH6/ia4HtVWJaykoSxOR2NGIBOd0rHd8LOiy
+ 0CjetHflz8up1IdH/2hfO9AQAwkq88xO3uU8kRlVuBlLlTapuQOlXqfaN7ki9L6/nlHt9ECu4yd
+ N11R024EtEOG3GvtnrwMCgIcg6zAQH/r8T4Ljx9T9zznGR/j8FllC0vtfgSK/iQ7j3Q5HHD5of2
+ SuLbLoHufGzUi4d8oBdiIJYLvuemwRSEchL0HSZIOOInCpGcfdSAtGvfjfjEEV0nXrtCtm/milT
+ nPUgvvDGY3Rxd0Fhwer34A52EYveWvhZgxMbSeDbS1p9l0riylh+iNwY1GLFPaiaQVtIziha/Zt
+ xxx4FM4XrdUAceJt3F1rOI1WGgF603sJ47UHGufbsfasWrXwJ48K8HGP9hFr/4VywmlQ1VQWFbF
+ EUN8tYtOKEsjpHhDPLOItgvsZG+UAtuZoYqyhGlh+f62NH5dRjPQGq1xMYuUTW
+X-Google-Smtp-Source: AGHT+IHMOJ4Crfj3CZ57dBRlsO1G4FEzV9QD+KiuAiZ07nWM62mj6eMTDVXa4nL5+/1LfpxJFQubxA==
 X-Received: by 2002:a05:600c:19ca:b0:477:a289:d854 with SMTP id
- 5b1f17b1804b1-47d18b98f87mr335296105e9.5.1766953172503; 
- Sun, 28 Dec 2025 12:19:32 -0800 (PST)
+ 5b1f17b1804b1-47d18b98f87mr335297195e9.5.1766953176039; 
+ Sun, 28 Dec 2025 12:19:36 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-47be3964226sm240319655e9.0.2025.12.28.12.19.30
+ 5b1f17b1804b1-47be3964226sm240319655e9.0.2025.12.28.12.19.32
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 28 Dec 2025 12:19:32 -0800 (PST)
+ Sun, 28 Dec 2025 12:19:35 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Yipeng Wang <yipeng1.wang@intel.com>,
- Sameh Gobriel <sameh.gobriel@intel.com>,
- Bruce Richardson <bruce.richardson@intel.com>,
- Vladimir Medvedkin <vladimir.medvedkin@intel.com>
-Subject: [PATCH v8 02/18] hash: add checks for hash name length
-Date: Sun, 28 Dec 2025 10:56:05 -0800
-Message-ID: <20251228201236.547268-3-stephen@networkplumber.org>
+ Jerin Jacob <jerinj@marvell.com>, Kiran Kumar K <kirankumark@marvell.com>,
+ Nithin Dabilpuram <ndabilpuram@marvell.com>,
+ Zhirun Yan <yanzhirun_163@163.com>
+Subject: [PATCH v8 03/18] graph: avoid overflowing comment buffer
+Date: Sun, 28 Dec 2025 10:56:06 -0800
+Message-ID: <20251228201236.547268-4-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251228201236.547268-1-stephen@networkplumber.org>
 References: <20251202172626.283094-1-stephen@networkplumber.org>
@@ -86,247 +85,55 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add a missing check to the API that the name is within the current
-defined maximum name size. This name is then used internally to
-create ring names, those names could get truncated; if a name
-is truncated add message to log.
-
-If ring creation fails it might be because of name conflict,
-so change the log message to decode error value.
-
-Add additional tests as well.
+The library builds a pcapng comment to put on each packet but
+the buffer is not big enough for the largest possible graph
+node name, etc. Change to use asprintf() to allow any
+string length. Note, if asprintf() fails it is better to
+still log the packet without comment so no data is lost.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- app/test/test_hash.c                   | 21 +++++++++++++
- doc/guides/rel_notes/release_26_03.rst |  3 ++
- lib/hash/rte_cuckoo_hash.c             | 41 ++++++++++++++++++--------
- lib/hash/rte_fbk_hash.c                | 12 ++++++--
- lib/hash/rte_fbk_hash.h                |  1 +
- 5 files changed, 63 insertions(+), 15 deletions(-)
+ lib/graph/graph_pcap.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/app/test/test_hash.c b/app/test/test_hash.c
-index 5791fd7f4c..0b608a3d74 100644
---- a/app/test/test_hash.c
-+++ b/app/test/test_hash.c
-@@ -1120,6 +1120,14 @@ fbk_hash_unit_test(void)
- 		.socket_id = RTE_MAX_NUMA_NODES + 1, /* invalid socket */
- 	};
- 
-+	/* try and create hash with an excessively long name */
-+	struct rte_fbk_hash_params invalid_params_long_name = {
-+		.name = "four_byte_key_hash_name_length_32",
-+		.entries = 4,
-+		.entries_per_bucket = 2,
-+		.socket_id = 0,
-+	};
-+
- 	/* try to create two hashes with identical names
- 	 * in this case, trying to create a second one will not
- 	 * fail but will simply return pointer to the existing
-@@ -1201,6 +1209,9 @@ fbk_hash_unit_test(void)
- 	handle = rte_fbk_hash_create(&invalid_params_7);
- 	RETURN_IF_ERROR_FBK(handle != NULL, "fbk hash creation should have failed");
- 
-+	handle = rte_fbk_hash_create(&invalid_params_long_name);
-+	RETURN_IF_ERROR_FBK(handle != NULL, "fbk hash creation should have failed");
-+
- 	if (rte_eal_has_hugepages()) {
- 		handle = rte_fbk_hash_create(&invalid_params_8);
- 		RETURN_IF_ERROR_FBK(handle != NULL,
-@@ -1439,6 +1450,16 @@ static int test_hash_creation_with_bad_parameters(void)
- 		return -1;
- 	}
- 
-+	memcpy(&params, &ut_params, sizeof(params));
-+	params.name = "hash_creation_with_too_long_name";
-+	params.socket_id = RTE_MAX_NUMA_NODES + 1;
-+	handle = rte_hash_create(&params);
-+	if (handle != NULL) {
-+		rte_hash_free(handle);
-+		printf("Impossible creating hash successfully with long name\n");
-+		return -1;
-+	}
-+
- 	/* test with same name should fail */
- 	memcpy(&params, &ut_params, sizeof(params));
- 	params.name = "same_name";
-diff --git a/doc/guides/rel_notes/release_26_03.rst b/doc/guides/rel_notes/release_26_03.rst
-index 15dabee7a1..a12bd41e86 100644
---- a/doc/guides/rel_notes/release_26_03.rst
-+++ b/doc/guides/rel_notes/release_26_03.rst
-@@ -84,6 +84,9 @@ API Changes
-    Also, make sure to start the actual text at the margin.
-    =======================================================
- 
-+* hash: Added name length validation to hash creation.
-+  The hash name in hash parameters is now checked against RTE_HASH_NAMESIZE.
-+
- 
- ABI Changes
- -----------
-diff --git a/lib/hash/rte_cuckoo_hash.c b/lib/hash/rte_cuckoo_hash.c
-index 2c92c51624..f9c4a0e302 100644
---- a/lib/hash/rte_cuckoo_hash.c
-+++ b/lib/hash/rte_cuckoo_hash.c
-@@ -170,7 +170,6 @@ rte_hash_create(const struct rte_hash_parameters *params)
- 	void *buckets = NULL;
- 	void *buckets_ext = NULL;
- 	char ring_name[RTE_RING_NAMESIZE];
--	char ext_ring_name[RTE_RING_NAMESIZE];
- 	unsigned num_key_slots;
- 	unsigned int hw_trans_mem_support = 0, use_local_cache = 0;
- 	unsigned int ext_table_support = 0;
-@@ -222,6 +221,13 @@ rte_hash_create(const struct rte_hash_parameters *params)
- 		return NULL;
- 	}
- 
-+	if (strlen(params->name) >= RTE_HASH_NAMESIZE) {
-+		rte_errno = ENAMETOOLONG;
-+		HASH_LOG(ERR, "%s() name '%s' exceeds maximum length %d",
-+			 __func__, params->name, RTE_HASH_NAMESIZE);
-+		return NULL;
-+	}
-+
- 	/* Validate correct usage of extra options */
- 	if ((params->extra_flag & RTE_HASH_EXTRA_FLAGS_RW_CONCURRENCY) &&
- 	    (params->extra_flag & RTE_HASH_EXTRA_FLAGS_RW_CONCURRENCY_LF)) {
-@@ -272,12 +278,16 @@ rte_hash_create(const struct rte_hash_parameters *params)
- 	else
- 		num_key_slots = params->entries + 1;
- 
--	snprintf(ring_name, sizeof(ring_name), "HT_%s", params->name);
-+	/* Ring name may get truncated, conflict detected on ring creation */
-+	if (snprintf(ring_name, sizeof(ring_name), "HT_%s", params->name)
-+	    >= (int)sizeof(ring_name))
-+		HASH_LOG(NOTICE, "ring name truncated to '%s'", ring_name);
-+
- 	/* Create ring (Dummy slot index is not enqueued) */
- 	r = rte_ring_create_elem(ring_name, sizeof(uint32_t),
- 			rte_align32pow2(num_key_slots), params->socket_id, 0);
- 	if (r == NULL) {
--		HASH_LOG(ERR, "memory allocation failed");
-+		HASH_LOG(ERR, "ring creation failed: %s", rte_strerror(rte_errno));
- 		goto err;
- 	}
- 
-@@ -286,20 +296,25 @@ rte_hash_create(const struct rte_hash_parameters *params)
- 
- 	/* Create ring for extendable buckets. */
- 	if (ext_table_support) {
--		snprintf(ext_ring_name, sizeof(ext_ring_name), "HT_EXT_%s",
--								params->name);
-+		char ext_ring_name[RTE_RING_NAMESIZE];
-+
-+		if (snprintf(ext_ring_name, sizeof(ext_ring_name),
-+			     "HT_EXT_%s", params->name) >= (int)sizeof(ext_ring_name))
-+			HASH_LOG(NOTICE, "external ring name truncated to '%s'", ext_ring_name);
-+
- 		r_ext = rte_ring_create_elem(ext_ring_name, sizeof(uint32_t),
- 				rte_align32pow2(num_buckets + 1),
- 				params->socket_id, 0);
--
- 		if (r_ext == NULL) {
--			HASH_LOG(ERR, "ext buckets memory allocation "
--								"failed");
-+			HASH_LOG(ERR, "ext buckets ring create failed: %s",
-+				 rte_strerror(rte_errno));
- 			goto err;
- 		}
- 	}
- 
--	snprintf(hash_name, sizeof(hash_name), "HT_%s", params->name);
-+	if (snprintf(hash_name, sizeof(hash_name), "HT_%s", params->name)
-+	    >= (int)sizeof(hash_name))
-+		HASH_LOG(NOTICE, "%s() hash name truncated to '%s'", __func__, hash_name);
- 
- 	rte_mcfg_tailq_write_lock();
- 
-@@ -1606,8 +1621,9 @@ rte_hash_rcu_qsbr_add(struct rte_hash *h, struct rte_hash_rcu_config *cfg)
- 		/* No other things to do. */
- 	} else if (cfg->mode == RTE_HASH_QSBR_MODE_DQ) {
- 		/* Init QSBR defer queue. */
--		snprintf(rcu_dq_name, sizeof(rcu_dq_name),
--					"HASH_RCU_%s", h->name);
-+		if (snprintf(rcu_dq_name, sizeof(rcu_dq_name),
-+			     "HASH_RCU_%s", h->name) >= (int)sizeof(rcu_dq_name))
-+			HASH_LOG(NOTICE, "HASH defer queue name truncated to: %s", rcu_dq_name);
- 		params.name = rcu_dq_name;
- 		params.size = cfg->dq_size;
- 		if (params.size == 0)
-@@ -1623,7 +1639,8 @@ rte_hash_rcu_qsbr_add(struct rte_hash *h, struct rte_hash_rcu_config *cfg)
- 		h->dq = rte_rcu_qsbr_dq_create(&params);
- 		if (h->dq == NULL) {
- 			rte_free(hash_rcu_cfg);
--			HASH_LOG(ERR, "HASH defer queue creation failed");
-+			HASH_LOG(ERR, "HASH defer queue creation failed: %s",
-+				 rte_strerror(rte_errno));
- 			return 1;
- 		}
- 	} else {
-diff --git a/lib/hash/rte_fbk_hash.c b/lib/hash/rte_fbk_hash.c
-index 38b15a14d1..45d4a13427 100644
---- a/lib/hash/rte_fbk_hash.c
-+++ b/lib/hash/rte_fbk_hash.c
-@@ -5,6 +5,7 @@
- #include <stdint.h>
- #include <stdio.h>
- #include <string.h>
-+#include <stdlib.h>
- #include <errno.h>
- #include <sys/queue.h>
- 
-@@ -83,7 +84,7 @@ rte_fbk_hash_create(const struct rte_fbk_hash_params *params)
+diff --git a/lib/graph/graph_pcap.c b/lib/graph/graph_pcap.c
+index 08dcda0d28..602be79ced 100644
+--- a/lib/graph/graph_pcap.c
++++ b/lib/graph/graph_pcap.c
+@@ -194,7 +194,7 @@ graph_pcap_dispatch(struct rte_graph *graph,
+ 			      uint16_t nb_objs)
  {
- 	struct rte_fbk_hash_table *ht = NULL;
- 	struct rte_tailq_entry *te;
--	char hash_name[RTE_FBK_HASH_NAMESIZE];
-+	char hash_name[RTE_FBK_HASH_NAMESIZE + sizeof("FBK_")];
- 	const uint32_t mem_size =
- 			sizeof(*ht) + (sizeof(ht->t[0]) * params->entries);
- 	uint32_t i;
-@@ -96,6 +97,7 @@ rte_fbk_hash_create(const struct rte_fbk_hash_params *params)
- 	/* Error checking of parameters. */
- 	if ((!rte_is_power_of_2(params->entries)) ||
- 			(!rte_is_power_of_2(params->entries_per_bucket)) ||
-+			(params->name == NULL) ||
- 			(params->entries == 0) ||
- 			(params->entries_per_bucket == 0) ||
- 			(params->entries_per_bucket > params->entries) ||
-@@ -105,6 +107,11 @@ rte_fbk_hash_create(const struct rte_fbk_hash_params *params)
- 		return NULL;
+ 	struct rte_mbuf *mbuf_clones[RTE_GRAPH_BURST_SIZE];
+-	char buffer[GRAPH_PCAP_BUF_SZ];
++	char *comment = NULL;
+ 	uint64_t i, num_packets;
+ 	struct rte_mbuf *mbuf;
+ 	ssize_t len;
+@@ -207,19 +207,22 @@ graph_pcap_dispatch(struct rte_graph *graph,
+ 	if (num_packets > nb_objs)
+ 		num_packets = nb_objs;
+ 
+-	snprintf(buffer, GRAPH_PCAP_BUF_SZ, "%s: %s", graph->name, node->name);
++	/* put a comment on all these packets */
++	if (asprintf(&comment, "%s: %s", graph->name, node->name) < 0)
++		graph_err("asprintf for comment failed.");
+ 
+ 	for (i = 0; i < num_packets; i++) {
+ 		struct rte_mbuf *mc;
+ 		mbuf = (struct rte_mbuf *)objs[i];
+ 
+ 		mc = rte_pcapng_copy(mbuf->port, 0, mbuf, pkt_mp, mbuf->pkt_len,
+-				     0, buffer);
++				     0, comment);
+ 		if (mc == NULL)
+ 			break;
+ 
+ 		mbuf_clones[i] = mc;
  	}
++	free(comment);
  
-+	if (strlen(params->name) >= RTE_FBK_HASH_NAMESIZE) {
-+		rte_errno = ENAMETOOLONG;
-+		return NULL;
-+	}
-+
- 	snprintf(hash_name, sizeof(hash_name), "FBK_%s", params->name);
- 
- 	rte_mcfg_tailq_write_lock();
-@@ -128,8 +135,7 @@ rte_fbk_hash_create(const struct rte_fbk_hash_params *params)
- 	}
- 
- 	/* Allocate memory for table. */
--	ht = rte_zmalloc_socket(hash_name, mem_size,
--			0, params->socket_id);
-+	ht = rte_zmalloc_socket(hash_name, mem_size, 0, params->socket_id);
- 	if (ht == NULL) {
- 		HASH_LOG(ERR, "Failed to allocate fbk hash table");
- 		rte_free(te);
-diff --git a/lib/hash/rte_fbk_hash.h b/lib/hash/rte_fbk_hash.h
-index 4aebffd8bf..cea59127fe 100644
---- a/lib/hash/rte_fbk_hash.h
-+++ b/lib/hash/rte_fbk_hash.h
-@@ -348,6 +348,7 @@ void rte_fbk_hash_free(struct rte_fbk_hash_table *ht);
-  *    - ENOSPC - the maximum number of memzones has already been allocated
-  *    - EEXIST - a memzone with the same name already exists
-  *    - ENOMEM - no appropriate memory area found in which to create memzone
-+ *    - ENAMETOOLONG - name is parameters exceeds RTE_FBK_HASH_NAMESIZE
-  */
- struct rte_fbk_hash_table *
- rte_fbk_hash_create(const struct rte_fbk_hash_params *params)
+ 	/* write it to capture file */
+ 	len = rte_pcapng_write_packets(pcapng_fd, mbuf_clones, i);
 -- 
 2.51.0
 
