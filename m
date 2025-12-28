@@ -2,68 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D8F6E784BE
-	for <dpdk-dev@archiver.kernel.org>; Sun, 28 Dec 2025 20:19:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ED79E784BE
+	for <dpdk-dev@archiver.kernel.org>; Sun, 28 Dec 2025 20:20:03 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id F0B3540678;
-	Sun, 28 Dec 2025 21:19:44 +0100 (CET)
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com
- [209.85.128.53]) by mails.dpdk.org (Postfix) with ESMTP id 8513B40666
- for <dev@dpdk.org>; Sun, 28 Dec 2025 21:19:40 +0100 (CET)
-Received: by mail-wm1-f53.google.com with SMTP id
- 5b1f17b1804b1-477770019e4so72219285e9.3
- for <dev@dpdk.org>; Sun, 28 Dec 2025 12:19:40 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 4859A4067C;
+	Sun, 28 Dec 2025 21:19:46 +0100 (CET)
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com
+ [209.85.128.50]) by mails.dpdk.org (Postfix) with ESMTP id 7A4CD40667
+ for <dev@dpdk.org>; Sun, 28 Dec 2025 21:19:42 +0100 (CET)
+Received: by mail-wm1-f50.google.com with SMTP id
+ 5b1f17b1804b1-47d493a9b96so8590295e9.1
+ for <dev@dpdk.org>; Sun, 28 Dec 2025 12:19:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1766953180;
- x=1767557980; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1766953182;
+ x=1767557982; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=JJfbI8F1glCy5wu+Ijoi95wQKbQjQ7c5BdaVZ6BOaNc=;
- b=V2s57i0pOVqYdH10nBVIXq7wNCBpCthGrcfD/rThCTCIUwggfDTG1Rr3y4zbFl4/G3
- r/w7y0DG3OzwhWKl9Aq3VlEQwqnZEZowDdLvYQKZ1iuAuTtNp0sPP5mgAJmUr55eeErL
- q5+jc7q4PVt9NMbfAT9Uo9ot4hEEFIyoiSWLetHXhvCzvhvWaaXzV+kpu22MnKKh5zi8
- kFdytBAiMy5t5IodozAxog/Bo8OmR0VHwebzoHhhSErmSOQ10S/mAyBW4ewLpvSBGT6D
- e7u0gzQEOlS10xwTwlCtLqIEozoJRHbJ7i1qgdx12Yc4bPErxKNs8gnQEwNgINz7Pafq
- ATNA==
+ bh=T4d3PcO9OnlqbXLB5y9kGlylN2T3DcgXZlqglHkAEmw=;
+ b=xAf2UpFPLHIBsLbEcGGrq0sx9Asnp/WhAj0EULy1/ALFVW3k28CwPfve58PxTGj9GV
+ yVbwzfxMz1vry5FU6nCd0tDQsJ/P55JdM0cA8jWGCimQqy/JjFE7vR3RCji4Db74Qryg
+ 7sQUqEbXoSkwsShNm7obVSX42BocOi2Tq/xqZZoZ75orquMC+vM6nsNgThsHbCoeBLH+
+ /xA+sZ7iRb+Ej7MWfODY0s9tGBkqVtQEg1/13ZCXaGQYVPzuJTa2L0+qoAtgXQkDcaw+
+ lrOfCwgeYaN0hBjsWo+x6r4Zsi2j17+EiHrmZAW48PV2cjnaBTsOGH+a2KKoVojQB+g/
+ vrCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1766953180; x=1767557980;
+ d=1e100.net; s=20230601; t=1766953182; x=1767557982;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=JJfbI8F1glCy5wu+Ijoi95wQKbQjQ7c5BdaVZ6BOaNc=;
- b=T1/ZN8r46SRv0+dH+9dlG+cKHd99+dIB/nnPCq+fWdsWogmFjlF9Qce4IZbpdbb8v0
- GCQTQmRwKZT91a5+JW9jbTu7HGBZ4A5e/YDK6QDfzDBbt7830k9QEEjziLft7RV+DLyd
- BJZmwAQk2Mtb3pzsvD+dOkuvaNDQ9FpgGU49+XTaXAWYiUWd/Pw4BvehAguLsc1Lij9N
- U1N7wtuVyc/Q+s/K6sBDNuPamKZhk0JE2ZfjmscBd3n9tRKCriM3JgdBzY9CpfHLjqvA
- dwzunmTixmn7qHncRbPOxZJsHCcvF7L7PBVF3eQEANHsaduxs/7qEpZIJBvtPnAwabLU
- tAYg==
-X-Gm-Message-State: AOJu0Yz5ryAtrbgIIUTAZlGe8/oPWwNSBVpbKia/clwEdTP8NLzpEeI5
- jtmBwpIFd9eCsHB0wb6FFPMaEDKiMABxHxmZvbMsBmPxeG6YR7+KAIQ2IpyGDsYz4qyg64k4At6
- NZhGB8Lw=
-X-Gm-Gg: AY/fxX4ay22QmLHv3Kv27uQekf+dInXtMVjuIyGm0OAgzjFva+8R01qstRSBCSPxNQA
- SwgCpZ98EvQPmzXmqXRjOfrCwLNxipuK4n1EIzS9iGAuQmUdYYe+DBymcmvz5TcRRzqGcq1FOrZ
- JlOC7CnGiwotYce9lKNSTftGDssAviyiOxmhWxkNE1ia1PykHZXDz0X93Xa748Qd88QdqpceRuk
- 1nUEAjbo5d4UiKXaAurngHx1M5BygxoxcfDw8bn2dFmlHAnM9E/o2KctQ7MkJOBTgR+kk6ad43Z
- Y2t56RnnzhWyQ+Ikhj0WeYvZZJm1qNK93nIwvAmUWMEKY0asDeKUaWQ4Ygkt9l89xFTvXd0FgB/
- lSY5zwUM46Q3/DqZRr2OeMh5s+DdvKCE/YdAqs9CCjnnD97gTHifvVxqapXpN1nS6HwZzZsw07m
- PtlBj0vpaLu9tOOMEOnK5rHmzL4yMsJpbUufRpEatHkiyC8QLNDfCct1oMgs7M
-X-Google-Smtp-Source: AGHT+IHWwXm8j4JNZ3Gp4mJVnNJjaK/ejB9ws1qUINZqCANggnLYR1vRhgoDnLq1HeOC7kF0eGqoew==
-X-Received: by 2002:a05:600c:1550:b0:477:7991:5d1e with SMTP id
- 5b1f17b1804b1-47d1958b250mr327620015e9.25.1766953180132; 
- Sun, 28 Dec 2025 12:19:40 -0800 (PST)
+ bh=T4d3PcO9OnlqbXLB5y9kGlylN2T3DcgXZlqglHkAEmw=;
+ b=rvdMsdJ2rgwRf/6pUAt1ZiLSnNduN3Lh2ow4qUhXQKldceu9I62ss3fXOL/92wgTF8
+ xNGfbl3o+Q4Iz2B6iRoCc6+0k7ihPNBjsqeEh4zasuTSew5dbK2PuPhkrIDp1EE9fsEr
+ pyRLrxEYcADuq7zAl9nnXSfjy+FXjlizYmkCDsl4sELYjffhvxCIQfk/MXHEPIFdUZmO
+ AbWZvO3eWmcxkD3BmcdLeGuYUNIbwX/RgPGt+2Us+gUEqmoBH+OD4Mn0CidUl3QoFen9
+ JLGoorjJIfqeMU3MA5ZNImt8mWNBcsSniwbEimqNngnQxnjC0KTPf0q2azKMc4G6yXRI
+ R7cQ==
+X-Gm-Message-State: AOJu0Yzq3mOo6JtBBW0lZUpyvktFQZn2sCvhjbVBFLSjnkac8I+KGZS5
+ cI6H2b9uUMgZq11GhREDPglM2HLeNy5mdbVq2iq8GY1bjtoAqA6Y8K3Qo1/Bfvsz9ExAPuC8PyH
+ ysjo/GII=
+X-Gm-Gg: AY/fxX5CedlMgjVSwRJlUMUGfEpKlhDWpM54uTr0TF+oSj80QxMAprCG558aOis7BE/
+ nD6qpGrm+CxD2BbzxlJoRSDZtrx00YYlc5TMIzMlI9Is+vPix4ZXJEEqPFX7IyzzpTqZk0l03WC
+ 5vSeYtvrsfuGu6rSf+dT8PFUdOOL2E75p9gyCY7HdhDgOQaJtFQ3/6MhtI9+1aGlIHwaRogyoIM
+ GTQKDiUeM1nCyvGlOLhXiennTUwq/hfbtx+Gkgzg5FEZy6N4RS7GDScAQ/+TCrluC09++OFB0aB
+ iK38pD4lhx89aQx3YaPqpTpUhjDYpOMx7dDP0JuzK+Usr/2kquCej89Ko9rDp3JOMiiiSC3eaYR
+ 0egJPq2xTC0OOIA76gK0KbDMfrff9D1yuQViU/q1FhI4dsMFtFXH6c0g6o58YtwyRxNmbANHdBP
+ ElayMwIafKSpT6n2UlEwkg2ZbHDDk94F/FPtmgpQsIvYFZ0P9I6V+teC1j8GI/
+X-Google-Smtp-Source: AGHT+IE1cT0tPBh3CC5jJ63R/xfiI8UvRuLE28u4NPh2NLQj6NGMGXrt5iaJus3dFNUrF1ajRZR7PA==
+X-Received: by 2002:a05:600c:45d3:b0:47d:4044:4ada with SMTP id
+ 5b1f17b1804b1-47d40444b44mr162060335e9.13.1766953182040; 
+ Sun, 28 Dec 2025 12:19:42 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-47be3964226sm240319655e9.0.2025.12.28.12.19.38
+ 5b1f17b1804b1-47be3964226sm240319655e9.0.2025.12.28.12.19.40
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 28 Dec 2025 12:19:39 -0800 (PST)
+ Sun, 28 Dec 2025 12:19:41 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v8 05/18] telemetry: check for path overflow
-Date: Sun, 28 Dec 2025 10:56:08 -0800
-Message-ID: <20251228201236.547268-6-stephen@networkplumber.org>
+ Byron Marohn <byron.marohn@intel.com>, Yipeng Wang <yipeng1.wang@intel.com>
+Subject: [PATCH v8 06/18] efd: handle possible name truncation
+Date: Sun, 28 Dec 2025 10:56:09 -0800
+Message-ID: <20251228201236.547268-7-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251228201236.547268-1-stephen@networkplumber.org>
 References: <20251202172626.283094-1-stephen@networkplumber.org>
@@ -83,37 +83,60 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The unix domain socket path is limited, check for overflow.
+If the conversion of efd name to ring name gets truncated, then
+log it. And if the ring name than causes collision, make sure
+that log message includes error reason.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- lib/telemetry/telemetry_legacy.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ lib/efd/rte_efd.c | 18 ++++++++++++++----
+ 1 file changed, 14 insertions(+), 4 deletions(-)
 
-diff --git a/lib/telemetry/telemetry_legacy.c b/lib/telemetry/telemetry_legacy.c
-index 89ec750c09..1d73282ba8 100644
---- a/lib/telemetry/telemetry_legacy.c
-+++ b/lib/telemetry/telemetry_legacy.c
-@@ -102,14 +102,17 @@ register_client(const char *cmd __rte_unused, const char *params,
- 		return -1;
+diff --git a/lib/efd/rte_efd.c b/lib/efd/rte_efd.c
+index ebf1e0655f..bbd565f404 100644
+--- a/lib/efd/rte_efd.c
++++ b/lib/efd/rte_efd.c
+@@ -517,13 +517,20 @@ rte_efd_create(const char *name, uint32_t max_num_rules, uint32_t key_len,
+ 	efd_list = RTE_TAILQ_CAST(rte_efd_tailq.head, rte_efd_list);
+ 
+ 	if (online_cpu_socket_bitmask == 0) {
+-		EFD_LOG(ERR, "At least one CPU socket must be enabled "
+-				"in the bitmask");
++		EFD_LOG(ERR, "At least one CPU socket must be enabled in the bitmask");
++		rte_errno = EINVAL;
+ 		return NULL;
  	}
- 	*strchr(data, '\"') = 0;
-+	addrs.sun_family = AF_UNIX;
-+	if (strlcpy(addrs.sun_path, data, sizeof(addrs.sun_path)) >= sizeof(addrs.sun_path)) {
-+		fprintf(stderr, "Client path too long\n");
-+		return -1;
+ 
+ 	if (max_num_rules == 0) {
+ 		EFD_LOG(ERR, "Max num rules must be higher than 0");
++		rte_errno = EINVAL;
++		return NULL;
 +	}
- 
- 	fd = socket(AF_UNIX, SOCK_SEQPACKET, 0);
- 	if (fd < 0) {
- 		perror("Failed to open socket");
- 		return -1;
++
++	if (strlen(name) >= RTE_EFD_NAMESIZE) {
++		EFD_LOG(ERR, "Name is too long");
++		rte_errno = ENAMETOOLONG;
+ 		return NULL;
  	}
--	addrs.sun_family = AF_UNIX;
--	strlcpy(addrs.sun_path, data, sizeof(addrs.sun_path));
  
- 	if (connect(fd, (struct sockaddr *)&addrs, sizeof(addrs)) == -1) {
- 		perror("\nClient connection error\n");
+@@ -698,12 +705,15 @@ rte_efd_create(const char *name, uint32_t max_num_rules, uint32_t key_len,
+ 	TAILQ_INSERT_TAIL(efd_list, te, next);
+ 	rte_mcfg_tailq_write_unlock();
+ 
+-	snprintf(ring_name, sizeof(ring_name), "HT_%s", table->name);
++	if (snprintf(ring_name, sizeof(ring_name), "HT_%s", table->name)
++	    >= (int)sizeof(ring_name))
++		EFD_LOG(NOTICE, "EFD ring name truncated to '%s'", ring_name);
++
+ 	/* Create ring (Dummy slot index is not enqueued) */
+ 	r = rte_ring_create(ring_name, rte_align32pow2(table->max_num_rules),
+ 			offline_cpu_socket, 0);
+ 	if (r == NULL) {
+-		EFD_LOG(ERR, "memory allocation failed");
++		EFD_LOG(ERR, "ring creation failed: %s", rte_strerror(rte_errno));
+ 		rte_efd_free(table);
+ 		return NULL;
+ 	}
 -- 
 2.51.0
 
