@@ -2,70 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B75BE784BE
-	for <dpdk-dev@archiver.kernel.org>; Sun, 28 Dec 2025 20:19:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1F20D3B7E5
+	for <dpdk-dev@archiver.kernel.org>; Sun, 28 Dec 2025 20:19:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 66A86402A0;
-	Sun, 28 Dec 2025 21:19:29 +0100 (CET)
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com
- [209.85.128.52]) by mails.dpdk.org (Postfix) with ESMTP id A006740267
- for <dev@dpdk.org>; Sun, 28 Dec 2025 21:19:28 +0100 (CET)
-Received: by mail-wm1-f52.google.com with SMTP id
- 5b1f17b1804b1-477ba2c1ca2so89794725e9.2
- for <dev@dpdk.org>; Sun, 28 Dec 2025 12:19:28 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 96AA740647;
+	Sun, 28 Dec 2025 21:19:32 +0100 (CET)
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com
+ [209.85.128.48]) by mails.dpdk.org (Postfix) with ESMTP id 9B1D3402ED
+ for <dev@dpdk.org>; Sun, 28 Dec 2025 21:19:30 +0100 (CET)
+Received: by mail-wm1-f48.google.com with SMTP id
+ 5b1f17b1804b1-477a2ab455fso82070225e9.3
+ for <dev@dpdk.org>; Sun, 28 Dec 2025 12:19:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1766953168;
- x=1767557968; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1766953170;
+ x=1767557970; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=vkdY1gdXsgEqynkXbwmfM68GHL7sW/2x+mXkuepHYbw=;
- b=nkCDLhbXH+9IPBcDltNU/ubZLZxPHwqrJBpeD4Ty5l9QVSUo2gqj4h6Vv49477x5i/
- EopxT4BvtEqHDlbQtQye+zcsqUOSUpBsHHg3SQKufSPkjg1JpNB6T4ScUBjwk6cpPRos
- l1pfl/aW0XJylff/2KQG1/2MhyfwWP62N3loV21WikTVwU+mEG6N6L6dvimLl4wk5V5l
- O2ugzX2kpd8++nPPyl8CU2MHYE4NNXCovrTK3T+wgVQXsrQSbc6cFFEaYskKx+7+izl0
- XlbKMIyaIJrZvrDRCeIp4IT4ZGmgiv72saXAvPThWBotkXxXVM1l8wpdH+dZzcvci4Tu
- gshQ==
+ bh=uxPM7sAoBjlw5kd3Em+aUyCnez83/vbeYYX/L99dWXI=;
+ b=XhhzRJM+CtHTJD08HbQYVOJyC8WcNLqrj1gVoqg9bjB1h8g20bC6s+sZ8GmDvV/TRY
+ VJ3XUmHUo+bpBXL8Q/G6rV/YnyD7h0GxkAQ9Pv/MstMua19hP1hpvjSlWre6zN+D4hW7
+ CynQ2JaU8WwUBBjB8iNC9SlELZnhcNdz6EU+j7hAJjkkOEd5GbKVyniQJyWhmLxZIxNh
+ MfyxYARvqyUOgKoS8kCMR+Qv6yQ5iqPQO99KDSQ40/X+ejr8xdgmqa9TPJXt6WKMNLa2
+ aHHvuaeYww2FcWgWt2B5D4s0AZtJBXHZBZL3BayCPBGUfj3Ug4GAMAoYdovEq8KO+zrW
+ 5Vew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1766953168; x=1767557968;
+ d=1e100.net; s=20230601; t=1766953170; x=1767557970;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=vkdY1gdXsgEqynkXbwmfM68GHL7sW/2x+mXkuepHYbw=;
- b=gUFf5EzlTUPPSb6cGwtziipnL4Bz+k6J0eU225eMy2z0KstQjQP6bSburjcIMSYSkI
- qvUDXnRlE79nuDdu1Jqc3Fm2J0Zx8x/Ojx18oC3tTmldF+3L3QMVrSfEmx1tjfJNbygT
- hlxrZxWj+yqJlI+ZwoYk9MnN75O5Of/Ora2SsTNWu/qvrVeys51yMOjk5EUu/VUknLTK
- h0au6DV6+z90Rv2GFl4rodOvAzIGXJa0JyBZIW/gGeO+kubxqkpnonqXYHdi4g43TTwy
- WJ/8jNeuu2iKzU0i3JnkUB7fev429fuHBgfx8X4XEYSJ2lw/9mM0rfaucaF1NdM0+Mtg
- GWbA==
-X-Gm-Message-State: AOJu0YzjTxb9Ae4zuk1xWgUqFvu4EU2JcgBBPvVvEAuAlb7A8gecCle6
- fYz0zHq9JkLQPPK8aHLxchG3oOM4gAChVm3Nuib2vg5lf5E5Eg5e/bmG7V0Jo+lznUUMZCaHBBv
- MzfQRz18=
-X-Gm-Gg: AY/fxX5lp+LFgf5ZrA4yEN2clZUlsFNJ+GEI9VFyfu5JZCtnowbtS9ND6ANBHFFOSfm
- OgcuWsAIknm7SUpnnbZixcK4SGYPyJZF4CLEGhrXY2PT281rpJTDe+fZtBMCpo/NTQtcphBOjDC
- Ww1ol/aCN8o1bIsg6kNNMb2OetMAux+NqnVyLyG3F4U+Lr9auxlnOnZ7+VDQIGChCPWlU4RHBTk
- zoThrhHzJDXxVZKKHDZ2XgUYBe36KKQm0OKp308CZYBy2kncmVDV4hTqmN0HrQMyMF5p2ZtAldB
- lbVIco41xFFSqu+1kNGxqWXqoZQiD4UzMUzkEx5V00+1fyUDh5sYsS3H5Vievp21LfxYVSRKG1v
- u7XVueG6/I8R+MLHukZAxtdTuYh/gZ9/TdOCpRDuTWC0VycGLmTp/OcPqHxnopcwl185aZI25SI
- 5vL86AxFhuE3lVB1svW3tLUSB7QwlrPn4BuPYFfUhVLectTzc/+g==
-X-Google-Smtp-Source: AGHT+IHn31IB35QED2IXjOWGlFHa5BgEta+4cp5sEKs+W9tn8LbXHbYnDNsvISF9zG2l9IQFo9qqcw==
-X-Received: by 2002:a05:600c:35c1:b0:477:8b77:155e with SMTP id
- 5b1f17b1804b1-47d19553912mr386566085e9.15.1766953168226; 
- Sun, 28 Dec 2025 12:19:28 -0800 (PST)
+ bh=uxPM7sAoBjlw5kd3Em+aUyCnez83/vbeYYX/L99dWXI=;
+ b=hL5zKtOyPkrM1Jn75xdG+CLh88ce1U0TwYVZvBJ06AQ27nq7H9Q1C7GzHSaonSxZqi
+ c468DGG6AOM73+lkt5wZBMTFM6u6L/KClp0xRIXGhrtgeCDzsEzMrX72wjo3BUAbK5Xy
+ xvsMfYmlmCMAhOegDr6diIminfxyH/fj51/xPgaM5HWJe3PIeMJcTyCvUfIwdnTrLnRC
+ gdiMkNZ7BIPLbqcHVXCdU57v23U+dOePQry4SSJFfXq2HnLXfsDXAt4m+ICzic+8h4CI
+ kMNa240IJiNycczc0T/Nd5C4J+W6fghgCt9hrPXo72F9165ggL1NVN9IqYw0uN126Oif
+ vQNQ==
+X-Gm-Message-State: AOJu0YxFTfn6fiRKG4U5bBgRVK13sbiNLzYIBZ0AJhyg3fXzfwgjCO+V
+ g1Xc8ewI0Mhkbw84EIN4zQZUHlmPdh61Y41HYc/VbMEQuORUejxtBRKghWwujFinZdYr+qk2vb4
+ EdDPG4fg=
+X-Gm-Gg: AY/fxX4Jj6eqgeySNPI/FNgnBTR8irXdONZpO5G5Na2HGgDjSTxXAFwTWRSZW3OuI8f
+ 54q4FwzFZ+GYtOS9sqD9nMLLkVVy3Vbx2mvuQRYSH19tC6lr1+oMG4GM2IpjpUuGLpfNYOIizjH
+ kQqncwmc1CfUbOEf1TD9oott6RZZnd/VLq56A8xgCqQM/CaNQBqD1rUpvRNEIwoFXUakB9407hF
+ ATWSXyZToiBzNTNXB+3bRuACUqNwJvy1Yi+sUdshmQEeQwjHjP/rt9Co8N0QHPRk1kXChmCZiKf
+ brZ99GMP0kymdqM1gsa2aMWPNqTtbiljl8anOptux/ZIZwWetNSrxGxnLTFSPtTGQnMkJezC2go
+ HdFZjw65PZXoVHxKfGCHGSH4CuhWe3M6aU0wj4kXQjJTN5Viqsr3kA3aEAZw/G7sR5HD2htdfKP
+ 4BTFP3R5PeLrR3n6lQ3bNQstgh+gKgQYwZccIcoheI0Oagfinm+A==
+X-Google-Smtp-Source: AGHT+IHJFG+tHotXPdlpv3artOxZGbqewm+xJAi3/fQH0RvEHOmikNuS1RhV2Xgu/p36OCc4c8+TUQ==
+X-Received: by 2002:a05:600c:4e42:b0:47b:de05:aa28 with SMTP id
+ 5b1f17b1804b1-47d1956eb65mr256369035e9.2.1766953170176; 
+ Sun, 28 Dec 2025 12:19:30 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-47be3964226sm240319655e9.0.2025.12.28.12.19.26
+ 5b1f17b1804b1-47be3964226sm240319655e9.0.2025.12.28.12.19.28
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 28 Dec 2025 12:19:27 -0800 (PST)
+ Sun, 28 Dec 2025 12:19:29 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v8 00/18] fix format overflows in libraries
-Date: Sun, 28 Dec 2025 10:56:03 -0800
-Message-ID: <20251228201236.547268-1-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Bruce Richardson <bruce.richardson@intel.com>,
+ Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+Subject: [PATCH v8 01/18] lpm: restrict name size
+Date: Sun, 28 Dec 2025 10:56:04 -0800
+Message-ID: <20251228201236.547268-2-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251202172626.283094-1-stephen@networkplumber.org>
+In-Reply-To: <20251228201236.547268-1-stephen@networkplumber.org>
 References: <20251202172626.283094-1-stephen@networkplumber.org>
+ <20251228201236.547268-1-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -81,66 +84,75 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Change all the libraries to find and fix cases where a string
-could overflow when formatting or using strclpy. This does provide
-early indication of possible problems where the file prefix is too
-long to fit in unix domain socket path, and where a hash table
-is being requested that has a name too long.
+Check that lpm name size is within limits and add checks
+for truncation.
 
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+---
+ lib/lpm/rte_lpm.c | 16 ++++++++++++----
+ lib/lpm/rte_lpm.h |  1 +
+ 2 files changed, 13 insertions(+), 4 deletions(-)
 
-v8 - small changes such as adding updates to docbook comments
-     and avoiding asprintf where not needed
-
-Stephen Hemminger (18):
-  lpm: restrict name size
-  hash: add checks for hash name length
-  graph: avoid overflowing comment buffer
-  latencystats: add check for string overflow
-  telemetry: check for path overflow
-  efd: handle possible name truncation
-  eal: use C library to parse filesystem table
-  eal: warn if thread name is truncated
-  eal: avoid format overflow when handling addresses
-  eal: add check for sysfs path overflow
-  eal: limit maximum runtime directory and socket paths
-  eal: check for hugefile path overflow
-  eal: check tailq length
-  eal: handle long shared library path
-  ethdev: avoid possible overflow in xstat names
-  vhost: check for overflow in xstat name
-  cfgfile: add length checks and increase line buffer
-  lib: enable format overflow warnings
-
- app/test/test_hash.c                   | 21 ++++++
- doc/guides/rel_notes/release_26_03.rst |  3 +
- lib/cfgfile/rte_cfgfile.c              | 43 ++++++++---
- lib/cfgfile/rte_cfgfile.h              |  6 +-
- lib/eal/common/eal_common_config.c     |  6 +-
- lib/eal/common/eal_common_memory.c     |  2 +-
- lib/eal/common/eal_common_options.c    | 17 +++--
- lib/eal/common/eal_common_proc.c       | 83 ++++++++++++++--------
- lib/eal/common/eal_common_tailqs.c     | 13 +++-
- lib/eal/common/eal_filesystem.h        | 23 ++++--
- lib/eal/freebsd/eal.c                  |  6 +-
- lib/eal/linux/eal.c                    |  6 +-
- lib/eal/linux/eal_hugepage_info.c      | 98 ++++++++++++--------------
- lib/eal/linux/eal_memalloc.c           | 11 ++-
- lib/eal/linux/eal_memory.c             |  9 ++-
- lib/eal/windows/eal.c                  |  6 +-
- lib/efd/rte_efd.c                      | 18 +++--
- lib/ethdev/rte_ethdev.c                | 35 ++++++---
- lib/graph/graph_pcap.c                 |  9 ++-
- lib/hash/rte_cuckoo_hash.c             | 41 +++++++----
- lib/hash/rte_fbk_hash.c                | 12 +++-
- lib/hash/rte_fbk_hash.h                |  1 +
- lib/latencystats/rte_latencystats.c    |  9 ++-
- lib/lpm/rte_lpm.c                      | 16 +++--
- lib/lpm/rte_lpm.h                      |  1 +
- lib/meson.build                        |  4 --
- lib/telemetry/telemetry_legacy.c       |  7 +-
- lib/vhost/vhost.c                      | 14 ++--
- 28 files changed, 354 insertions(+), 166 deletions(-)
-
+diff --git a/lib/lpm/rte_lpm.c b/lib/lpm/rte_lpm.c
+index 6dab86a05e..9c20eb731c 100644
+--- a/lib/lpm/rte_lpm.c
++++ b/lib/lpm/rte_lpm.c
+@@ -152,7 +152,7 @@ struct rte_lpm *
+ rte_lpm_create(const char *name, int socket_id,
+ 		const struct rte_lpm_config *config)
+ {
+-	char mem_name[RTE_LPM_NAMESIZE];
++	char mem_name[RTE_LPM_NAMESIZE + sizeof("LPM_")];
+ 	struct __rte_lpm *i_lpm;
+ 	struct rte_lpm *lpm = NULL;
+ 	struct rte_tailq_entry *te;
+@@ -170,6 +170,11 @@ rte_lpm_create(const char *name, int socket_id,
+ 		return NULL;
+ 	}
+ 
++	if (strlen(name) >= RTE_LPM_NAMESIZE) {
++		rte_errno = ENAMETOOLONG;
++		return NULL;
++	}
++
+ 	snprintf(mem_name, sizeof(mem_name), "LPM_%s", name);
+ 
+ 	rte_mcfg_tailq_write_lock();
+@@ -327,8 +332,10 @@ rte_lpm_rcu_qsbr_add(struct rte_lpm *lpm, struct rte_lpm_rcu_config *cfg)
+ 		/* No other things to do. */
+ 	} else if (cfg->mode == RTE_LPM_QSBR_MODE_DQ) {
+ 		/* Init QSBR defer queue. */
+-		snprintf(rcu_dq_name, sizeof(rcu_dq_name),
+-				"LPM_RCU_%s", i_lpm->name);
++		if (snprintf(rcu_dq_name, sizeof(rcu_dq_name),
++			     "LPM_RCU_%s", i_lpm->name) >= (int)sizeof(rcu_dq_name))
++			LPM_LOG(NOTICE, "LPM rcu defer queue name truncated");
++
+ 		params.name = rcu_dq_name;
+ 		params.size = cfg->dq_size;
+ 		if (params.size == 0)
+@@ -343,7 +350,8 @@ rte_lpm_rcu_qsbr_add(struct rte_lpm *lpm, struct rte_lpm_rcu_config *cfg)
+ 		params.v = cfg->v;
+ 		i_lpm->dq = rte_rcu_qsbr_dq_create(&params);
+ 		if (i_lpm->dq == NULL) {
+-			LPM_LOG(ERR, "LPM defer queue creation failed");
++			LPM_LOG(ERR, "LPM defer queue creation failed: %s",
++				rte_strerror(rte_errno));
+ 			return 1;
+ 		}
+ 	} else {
+diff --git a/lib/lpm/rte_lpm.h b/lib/lpm/rte_lpm.h
+index edfe77b458..38a061513f 100644
+--- a/lib/lpm/rte_lpm.h
++++ b/lib/lpm/rte_lpm.h
+@@ -180,6 +180,7 @@ rte_lpm_free(struct rte_lpm *lpm);
+  *    - ENOSPC - the maximum number of memzones has already been allocated
+  *    - EEXIST - a memzone with the same name already exists
+  *    - ENOMEM - no appropriate memory area found in which to create memzone
++ *    - ENAMETOOLONG - LPM object name greater than RTE_LPM_NAMESIZE
+  */
+ struct rte_lpm *
+ rte_lpm_create(const char *name, int socket_id,
 -- 
 2.51.0
 
