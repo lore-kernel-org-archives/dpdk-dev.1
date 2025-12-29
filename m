@@ -2,74 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFA8CE92FC4
-	for <dpdk-dev@archiver.kernel.org>; Mon, 29 Dec 2025 18:10:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50DA8E92FDA
+	for <dpdk-dev@archiver.kernel.org>; Mon, 29 Dec 2025 20:48:27 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9E4E340267;
-	Mon, 29 Dec 2025 19:10:50 +0100 (CET)
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com
- [209.85.221.47]) by mails.dpdk.org (Postfix) with ESMTP id 18B894025A
- for <dev@dpdk.org>; Mon, 29 Dec 2025 19:10:48 +0100 (CET)
-Received: by mail-wr1-f47.google.com with SMTP id
- ffacd0b85a97d-42fbc305882so4421537f8f.0
- for <dev@dpdk.org>; Mon, 29 Dec 2025 10:10:48 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 252FA40267;
+	Mon, 29 Dec 2025 21:48:26 +0100 (CET)
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com
+ [209.85.221.54]) by mails.dpdk.org (Postfix) with ESMTP id DA6A24025A
+ for <dev@dpdk.org>; Mon, 29 Dec 2025 21:48:24 +0100 (CET)
+Received: by mail-wr1-f54.google.com with SMTP id
+ ffacd0b85a97d-43284ed32a0so1257125f8f.3
+ for <dev@dpdk.org>; Mon, 29 Dec 2025 12:48:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1767031848;
- x=1767636648; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1767041304;
+ x=1767646104; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=9XKRhOyZ/SrTBogd3OQOH90raBarKZUWEmYPyQWX4Tw=;
- b=pCGBzeB+817uxfw7Dd3IdlUFdJIYUL9BZWUXNtqaSWfsv8gCK9+w0CmOAJ6ZHYeaAg
- bkApI45k6XHm3TbIdRWKvBJG3kWUWm3t5+OTLD/BjsTHRxijvoiw7KGMhVz7YZwB8pmd
- KGZ7H1sX7C8i30fwmh8ncIOx77QC0NlxuwRVm881wp0P+R0lUu4S3FO+s9graNAYb4Mh
- 2c+mhDfA8EskH1FbtFc7HUM8tIyEd8lP5KBGdGpzB8nuu8+y0ON6+cN1kW+fw0OB0lae
- Tj8DVQIMsU0DUNBB6iyBJgRDVM48NLhhJ3Mep6sfcvk1y89pEG4KQBsx2GQKXo4917Rb
- l6Eg==
+ bh=TWpM+GDKczGfzcpjtUbIh994tTD0DHL9/KAymdOCs7M=;
+ b=2TvYQ9wm8ewWpY08tbI1vQOFoi1YFsMKFDbPKX7jChclVasgpzBirB56NnOqdV12uF
+ 7+gL+C3NQceh12ALBVM8pkluz9CgzU2ryzh5lxtUxphlxTHimRxPd81w5hYCL+a8AP3+
+ 8EaPgwkK7I++qpBVoUWUCd6szSYkzLW93eMXaCbXRt+u4ZG+wKMPv+4h1XiOmQ35+Z6H
+ WtUdKJDaAyNtg6TIQ9vNIVNi4LgEZgcfA2gWRkHMgE9zCldfG9DDCq+myHgkX1II3reL
+ kibO8qrOnkqawEo8zV4BrLZgJMwqg/kzs3aMIIai++13IW1F+NBAuNCykhLJMhejFec+
+ F2rg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1767031848; x=1767636648;
+ d=1e100.net; s=20230601; t=1767041304; x=1767646104;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=9XKRhOyZ/SrTBogd3OQOH90raBarKZUWEmYPyQWX4Tw=;
- b=ACEuU//UGxz0qj/eUQYU4YhX9YkuiZqpG9Uv+aJjTtyEoBnpMHH9W+JPGtIQXgDrES
- 5+zoQsm11grIhJhCDVZ0FhPVcnJqhFVjZ+9Y7csF1JhuzMX3JBWw/JW+DJ6WuryNU9Iy
- Psorc5mtgJ9Py8zUHfoyT4DFzPT8uF0DVG7sFNJu7HA/9ltsBR0APxRIOarzX0tSN2n7
- H7NobhgU3fiao5uBInIWXUipt/NUcOM9BZos4x0Yx7BzIXNvMnrY5Op0TRHrYpbT8sAq
- /17vLF7j51AeyXNt9u3eJzcWuFKCiNsDk16WONoCzEeEtL8ubs2mEEWIMcCwjGcL9TlA
- 8RDw==
-X-Gm-Message-State: AOJu0Yw1LxVqYM6H7LgLZAoM6tDCfA+68sYhd8PZXKxn6fmYygKlO3ne
- binACN+fge5jEsHGuqxyp4gm1AaV4BBmNJl1Sy2S2GzQ475pBdQWkJ2li2+TLxa5QGY=
-X-Gm-Gg: AY/fxX5WwH75/qejtLCojy+11E33YTa4gYqIwty2wbpxHa4Q/grLi6TEMpUHy0hzjyU
- z1D44RFJCwT0rRLifSjSkw7vg1JESO5Kx0Lt3UrKBWKNDhocTnQF0I1obhk+pDc2792ypihB4hU
- 9rVq++1jTrNqN46uuJoIgiI4ZROGpRxu5GkcWv25qeFLMMQbUlOFdwFyKIuX+qFbDQvy+QHvLVj
- G9gGJAQCupKxc3BOzLhL6ceDzQgd+2SMf+cq4eJExpM/SZOqKd8QbaKKlfcTkJEY5xuPbqhW3mm
- hA33cGGUYLTd97qBesKEiEDVF+WKQPuHreCXPYFTSeuJgrNRePlbKBkNLDw7+xI0kGv/mcKidY2
- p9dpBPMxkBb6lrq+aMm/YWxrq3wk6Wg8rYaOktFjvw2EZak/on5CRlzX87WAQW5YvjRdnWsRvdw
- vtoS/5udvXKpIFd39rvwUv1yJ3vvF9tEQ3meFk0W8NlUnHhWmKg4Ex
-X-Google-Smtp-Source: AGHT+IFS8UOkzL5g1HkrqL63TxctbItm8OAirSO+wruSz5zCSf79fcI5V4uWxw/ls1E8Hb7THXSniA==
-X-Received: by 2002:a05:6000:2303:b0:428:3fa7:77ed with SMTP id
- ffacd0b85a97d-4324e5067a6mr37433004f8f.46.1767031848433; 
- Mon, 29 Dec 2025 10:10:48 -0800 (PST)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ bh=TWpM+GDKczGfzcpjtUbIh994tTD0DHL9/KAymdOCs7M=;
+ b=VkIJ2rENK+NktcuSVj4K99qC1NI9d+oCjXLN87zplZf//NH3EiEuqpF+x6WycND7ub
+ y4sHa0RzOgS2/SbhUmT+c8XoCOUKO0lvdOPDG2MLNsm3vS7MMLlSSDE7ukFb2Rs7HwWj
+ ksVq3sqAsky0MhU8kZ5pJ3vXmq4QKhLoZCkELBXZvp9Fp5vb1b3DgxgyBDNKEmH0ipJ1
+ dcwvg+lDIZz3WhJpMSXQiieuHM6plbDQZfqcQWs2p+O3Ar7UvHID43YqJKwKcZkKepb9
+ fcR3n8BXouStANYMZIu4UqLPa0rGeEtp7Csjw2IKdymvN8NEDOybHmoeDRic33dB027K
+ CMmQ==
+X-Gm-Message-State: AOJu0YyxCZNmAloRNcbh88KPTHpxuoVXNXfbO2s5VX2JuY/gNJsNDizQ
+ /aS67KFuvz2pgUB9nycOgEv1pC1hCOEg0feyiZ0XiiQC0oNVxHRC3Ew3VQpTcQSSurDre4kJAq3
+ fuCHJRcE=
+X-Gm-Gg: AY/fxX7k7Zn94TaihIubg+smHOg0fcmgIswd0QfzI18RbH+Mq4dmLzId4GbqKL+zqKF
+ 8dp1VYrUmoy2WFVTZxSlX7scOcQY4kO6MZQXwaHxPV/Vlmpr5eq7kHFbz6OVi5cRYbZNZ2BC0JN
+ Ib63+Sw7HCniNmaaTbyIBuKkbKXONUtYnP09eq5zVKU8+ICoJMRzNB4IcDK+pYw8kWEdPLuDoof
+ ecN7qah4XcP7T3QogPrCVGpXEvWJ9Qpiu5XFdCb/sXY4t6tdMmnXT44cff365xIADzTlUpDbrV3
+ tPC4V3hyX9r91jj3sFM0P6Vax3TUsIoHI2Rl9pVeEU7mZr3cfZVdfKi4P4Csan397J4kNBtv54E
+ KhUIlUuBXKAc3WnVqLEUGxzzXLBRIionVC18THeUlVuUbVhRHfSRfnw7scyLH1as4LvqvVLql/g
+ naHAYQ1XFZQ+JlEtvl1wxokfhEHZejcej1wlPwtCLmrf0Z82tcBg==
+X-Google-Smtp-Source: AGHT+IGOcCqJQJuutd4kkFMCndhkqBih+DlWXksKeL+dg0uIVixrJ4jhC+EMpZF44sKtJ53mbFuL6g==
+X-Received: by 2002:a5d:5451:0:b0:432:5bac:3914 with SMTP id
+ ffacd0b85a97d-4325bac39a8mr24593562f8f.40.1767041304065; 
+ Mon, 29 Dec 2025 12:48:24 -0800 (PST)
+Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-4324ea82feasm64069865f8f.24.2025.12.29.10.10.46
+ ffacd0b85a97d-4324eab2c4fsm64676298f8f.42.2025.12.29.12.48.21
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 29 Dec 2025 10:10:48 -0800 (PST)
-Date: Mon, 29 Dec 2025 10:10:41 -0800
+ Mon, 29 Dec 2025 12:48:22 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Marat Khalili <marat.khalili@huawei.com>
-Cc: <dev@dpdk.org>, Konstantin Ananyev <konstantin.ananyev@huawei.com>,
- Wathsala Vithanage <wathsala.vithanage@arm.com>
-Subject: Re: [PATCH v2 1/2] bpf: add atomic xchg support
-Message-ID: <20251229101041.5245f1ab@phoenix.local>
-In-Reply-To: <20251218170914.7737-2-marat.khalili@huawei.com>
-References: <20251217172037.59170-1-marat.khalili@huawei.com>
- <20251218170914.7737-1-marat.khalili@huawei.com>
- <20251218170914.7737-2-marat.khalili@huawei.com>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v9 00/18] fix format overflow in libraries
+Date: Mon, 29 Dec 2025 11:37:58 -0800
+Message-ID: <20251229204818.61231-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20251202172626.283094-1-stephen@networkplumber.org>
+References: <20251202172626.283094-1-stephen@networkplumber.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,16 +81,67 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 18 Dec 2025 17:09:12 +0000
-Marat Khalili <marat.khalili@huawei.com> wrote:
+Change all the libraries to find and fix cases where a string
+could overflow when formatting or using strclpy. This does provide
+early indication of possible problems where the file prefix is too
+long to fit in unix domain socket path, and where a hash table
+is being requested that has a name too long.
 
-> Add support for BPF atomic xchg instruction, and tests for it. This
-> instruction can be produced using compiler intrinsics.
-> 
-> Signed-off-by: Marat Khalili <marat.khalili@huawei.com>
-> ---
 
-Should make sure that CMP32 and all the other current instructions
-are also covered. See kernel docs for list.
+v9 - fix bug in creating socket path
+   - add more release notes
+   - workaround older mingw in ubuntu 22.04
 
-Acked-by: Stephen Hemminger <stephen@networkplumber.org>
+Stephen Hemminger (18):
+  lpm: restrict name size
+  hash: add checks for hash name length
+  graph: avoid overflowing comment buffer
+  latencystats: add check for string overflow
+  telemetry: check for path overflow
+  efd: handle possible name truncation
+  eal: use C library to parse filesystem table
+  eal: warn if thread name is truncated
+  eal: avoid format overflow when handling addresses
+  eal: add check for sysfs path overflow
+  eal: limit maximum runtime directory and socket paths
+  eal: check for hugefile path overflow
+  eal: check tailq length
+  eal: handle long shared library path
+  ethdev: avoid possible overflow in xstat names
+  vhost: check for overflow in xstat name
+  cfgfile: add length checks and increase line buffer
+  lib: enable format overflow warnings
+
+ app/test/test_hash.c                   | 21 ++++++
+ doc/guides/rel_notes/release_26_03.rst | 13 ++++
+ lib/cfgfile/rte_cfgfile.c              | 43 ++++++++---
+ lib/cfgfile/rte_cfgfile.h              |  6 +-
+ lib/eal/common/eal_common_config.c     |  6 +-
+ lib/eal/common/eal_common_memory.c     |  2 +-
+ lib/eal/common/eal_common_options.c    | 17 +++--
+ lib/eal/common/eal_common_proc.c       | 85 ++++++++++++++--------
+ lib/eal/common/eal_common_tailqs.c     | 13 +++-
+ lib/eal/common/eal_filesystem.h        | 27 +++++--
+ lib/eal/freebsd/eal.c                  |  6 +-
+ lib/eal/linux/eal.c                    |  6 +-
+ lib/eal/linux/eal_hugepage_info.c      | 98 ++++++++++++--------------
+ lib/eal/linux/eal_memalloc.c           | 11 ++-
+ lib/eal/linux/eal_memory.c             |  9 ++-
+ lib/eal/windows/eal.c                  |  6 +-
+ lib/efd/rte_efd.c                      | 18 +++--
+ lib/ethdev/rte_ethdev.c                | 35 ++++++---
+ lib/graph/graph_pcap.c                 |  9 ++-
+ lib/hash/rte_cuckoo_hash.c             | 41 +++++++----
+ lib/hash/rte_fbk_hash.c                | 12 +++-
+ lib/hash/rte_fbk_hash.h                |  1 +
+ lib/latencystats/rte_latencystats.c    |  9 ++-
+ lib/lpm/rte_lpm.c                      | 16 +++--
+ lib/lpm/rte_lpm.h                      |  1 +
+ lib/meson.build                        |  4 --
+ lib/telemetry/telemetry_legacy.c       |  7 +-
+ lib/vhost/vhost.c                      | 14 ++--
+ 28 files changed, 368 insertions(+), 168 deletions(-)
+
+-- 
+2.51.0
+
