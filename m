@@ -2,73 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 654B0E92FD7
-	for <dpdk-dev@archiver.kernel.org>; Mon, 29 Dec 2025 21:54:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52CA2E92FD7
+	for <dpdk-dev@archiver.kernel.org>; Mon, 29 Dec 2025 22:01:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1960F402B3;
-	Mon, 29 Dec 2025 22:54:59 +0100 (CET)
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com
- [209.85.218.52]) by mails.dpdk.org (Postfix) with ESMTP id 77B844025A
- for <dev@dpdk.org>; Mon, 29 Dec 2025 22:54:57 +0100 (CET)
-Received: by mail-ej1-f52.google.com with SMTP id
- a640c23a62f3a-b7355f6ef12so1817316166b.3
- for <dev@dpdk.org>; Mon, 29 Dec 2025 13:54:57 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id EC622402B3;
+	Mon, 29 Dec 2025 23:01:00 +0100 (CET)
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com
+ [209.85.208.51]) by mails.dpdk.org (Postfix) with ESMTP id AF5114025A
+ for <dev@dpdk.org>; Mon, 29 Dec 2025 23:00:58 +0100 (CET)
+Received: by mail-ed1-f51.google.com with SMTP id
+ 4fb4d7f45d1cf-64ba9a00b5aso10886196a12.2
+ for <dev@dpdk.org>; Mon, 29 Dec 2025 14:00:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1767045297;
- x=1767650097; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1767045658;
+ x=1767650458; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=KeQcrs8XYcGrdeJW7WczACA+2VTEFXUUjUG7ChsWkkc=;
- b=15tNbl9KukHlzyd5vvX7gIG+i8EYEGTMUGg8fBfHjdMOP7Jo75gRkGuKq7HJyywtr0
- 0N4EF/DQnINLEuJwLgBuNmj+XPwJMDV+7PSvHxH8LTo6WfwV33dYr74yFwKMj5U+FRfR
- x9VHyB2M2u+qdQmJ6JQmXBmirl1dzsqPr5fyzhZyjLAxJvXcbTWsswK9GQKhBKfp+wQK
- xeB5B9G257Ot/LKmCJbPJTQVz6Daomy/74oS7nlJz+TvmodOl/ReSWt14qyvQoCONE8k
- IqjsoGFOBrwFYxxEqrBoZ3mEfdzlhkWiBfR7yow6iU4ICng7CszJZ6k45yeCgbQe9633
- jqng==
+ bh=M5dZjAwSP0t7Ie29AyafqqknDPvRo8m9P60sgDxjAI0=;
+ b=nstS6NE8kLIyLaRhR2hplREbFV/kZ7plN5LRXpyD/z4p52oQygXqw5Dniyo/NL7K3B
+ FvN5F+Tg+SsOT4kLC5H4vVbHMzGhptnAFdLY2XFGHu539MOsgmew6nmiNZ4KHti7R10+
+ 5rLa9gKf4YE2NtIQXHxE3iO0ZkoT7athZ67O+t6F8pss1BRO7bKk1/4abgQbnny2O3/9
+ 8wAvC96kgGEmYtX9BG2Hc51jMLSWYpS9ViMZD7HLMfb2rW+ddLe00UY0n6jQJdLkk0xV
+ tiFqchjxyFoPnqgTt+6PfIZheMmkcVD4OAFeaJh+2KzdhCKJ8uzfnQZlHNp6qYICJyar
+ 73yg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1767045297; x=1767650097;
+ d=1e100.net; s=20230601; t=1767045658; x=1767650458;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=KeQcrs8XYcGrdeJW7WczACA+2VTEFXUUjUG7ChsWkkc=;
- b=qulFaXjqVTNZU5s93kHAH35Elk2IYiW8vxcK5/8FZUD7q3m+iTjbbcd7M8MQYCSbMp
- 1EL/wSJwrxkKk0fCyDHpjpL8jZdA4xGRxNft0xJyd+mSamTm0XGRDuVg40Ikhpi6efmd
- pWJo+RWY3pdB+9k8tSSjs5d23AM/oGG9mZ/50m/GUtcFz0cnnFGK+R5z6MlzBAems+rD
- iWH0NxBeliuZVZOpaEn2rijDHJp/GVuRPGdDdCN4o8GyKlKD5P3sMfYvzIeNBkhyTV5w
- GShWRUp6xSmEth4adw3Euk92OgoU6sjooNUXNvXkCmZtyNhohihS6rRhaqDY11U1DGWS
- HIsA==
-X-Gm-Message-State: AOJu0Yx0rYRBlHpxgCszslgT6q3I6U08tbBH9pAtSm3KF5xgFIPK7V+R
- RamgZSjxZwqM0L/wTlOz/VPCEGS8JfEYcmDP4KyTnUbl8JT3byryUmMN30nlDcKRz54mHRiOAs+
- lA9taaes=
-X-Gm-Gg: AY/fxX6H1DVZ5neSPmFEAOa9Ymv1uicKebwHg0C7Pae9mg7t2mEKFMOxnA05EE+AxiF
- hJlwrt8nfBlPvcLGU016flrdQ5kZeuZDKLK+ldqTDNX6Q7V6AXKZ57ByiBqxXiUtVxWckonThTV
- UU3nOkr+BQZbEQBdfY1RoWNvvJMe3YswNPTlkM/V8Ck1w3DMkA9UF2aSVFMbbrLZmy9Q4KUiXkO
- 0/8cnZko43JEtXtbVzBlf1G3F1X5QYOh118dQ9P4sTUox7z9tFML1FdVUIpQVyndJ9e8rri/aLT
- awucMGCk02s4xp1EBD+UWvpg4sD5qpVTFqR92Fdzf4JSGlLoSx4WHcNGk/gGPVsTZ0vy/m990Ev
- LogsUOTj7QcXv0aY/oEnrHLP+VtWZddKe/MkNb5ewgii17ki0pLjW7go/7wkNtlhiG/CFwnrOIn
- RfQQWKWs0VBYnJ/d0E9anvXxaB0zqwS8eH4V3oejcCUsHP46dELAI2
-X-Google-Smtp-Source: AGHT+IEk7ikQKyFNWrCIp5OZO6ddzMq670ABuGuS+DOxhmoNgcfCyxpqBtvCpuk5CkEYKiLcYh+Hew==
-X-Received: by 2002:a17:906:6a2a:b0:b76:e6bd:7bcd with SMTP id
- a640c23a62f3a-b8036f107cdmr3455843366b.20.1767045296975; 
- Mon, 29 Dec 2025 13:54:56 -0800 (PST)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ bh=M5dZjAwSP0t7Ie29AyafqqknDPvRo8m9P60sgDxjAI0=;
+ b=bOe9EFFWaFBhEi9MOnHMQOt/BBicnXwOnTp8dI8e64zXtM6tYYJQkpdvp+TOnE5ajD
+ HgU3oXPJw8PHfcN7j+CpYX83CQ10wpDAST43guEiuZYsDMSvPst6zL0eS0yjLjuXl9je
+ TB9dJN1LBVSC9N7BGOqSSayJF709zCFvGcD5E8jSwpjO0aE0ok0lbwaCA1YeW93noGDm
+ fAiFDnrkdR+eX40Wtu0hzebWNXdnTQRY4leaciOk6ReZaoeocy6W4Z0qWCD7gTWquexc
+ 8FiTyyKOZkihF/toFLLjJuI/RFHo9FEBzeGHFyZbrkgNhlWK1yFFY8MHtCA/XEwUw2Mj
+ dCFQ==
+X-Gm-Message-State: AOJu0YxPnVHIoBOEfoXK4CnftoyljLSE9wftfbCifovtJHffR86rurdn
+ Tgyp6Lzw6duy6Y/JQHaTzlE8l+cvADDESfNRyhtaMSLmga1msgPvrfBRmwomsedDHg85ARtoJb/
+ I/aCe4+4=
+X-Gm-Gg: AY/fxX7uHRU9z3HCnsujsYJq3Hp7LCM1iqXbyB9Jgb6PJEFRsWhX+49Bsz/R9NhO66d
+ LSdWplevva732Qf+eaAYoLCsFXR5PpBVyFyFng99HwMzGR8hrWiVcmgsJqZIIZYC/TjWqPGazzq
+ PCEofb5WV97dmPeyWx5mT+6CEzpdRbw1i7vLwppvkC2FCj5lfhMiYw+2Qj3bdHhkzz9OQTsmwxa
+ pqcINQHHvuhvaJJhbN8ea1AOpEuoAdTyjXrbbeCa+dsNiundWkoAUZOJwJUbdP+9qV1awB7CoRX
+ IqZg7oJPeHpO5yQ4iEeFZh8iRPXi9ogR3V6F0WjFYsLgCw13n4OZy1lJgC/ZWTUh7foTciXEf6k
+ 2fSiTRQl29AYrJvbgje4g4Z8ArxCjmQ5wvMXFSZjSL1WMa/qE+jR4m0wDWB3CiXZbno3fh0yzoo
+ yRLROvAFXo2/EgQdfHWtvm25fJHjmkwb6yVspXmlyWOXsxGeZH5w==
+X-Google-Smtp-Source: AGHT+IGCctIouUvai3Lm7TQS7E8SLYZcI1xCvYPS9sFWolsJrug376nz9O6klG3RvoAEY28c9QUBoQ==
+X-Received: by 2002:a17:907:6d1e:b0:b83:8f35:773b with SMTP id
+ a640c23a62f3a-b838f35775dmr179933066b.54.1767045658142; 
+ Mon, 29 Dec 2025 14:00:58 -0800 (PST)
+Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a640c23a62f3a-b80426fc164sm3274794566b.30.2025.12.29.13.54.55
+ a640c23a62f3a-b8037a62973sm3496359366b.6.2025.12.29.14.00.56
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 29 Dec 2025 13:54:56 -0800 (PST)
-Date: Mon, 29 Dec 2025 11:07:14 -0800
+ Mon, 29 Dec 2025 14:00:57 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Maxime Coquelin <maxime.coquelin@redhat.com>, Chenbo Xia
- <chenbox@nvidia.com>
-Subject: Re: [RFC] net/virtio: avoid global variable name conflicts
-Message-ID: <20251229110650.6df093d5@phoenix.local>
-In-Reply-To: <20251222004446.62076-1-stephen@networkplumber.org>
-References: <20251222004446.62076-1-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v10 0/9] tests: enable and fix format overflow
+Date: Mon, 29 Dec 2025 13:59:00 -0800
+Message-ID: <20251229220053.21981-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20251110182209.104087-1-stephen@networkplumber.org>
+References: <20251110182209.104087-1-stephen@networkplumber.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,13 +82,36 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Sun, 21 Dec 2025 16:44:46 -0800
-Stephen Hemminger <stephen@networkplumber.org> wrote:
+This series fixes compiler warnings in unit tests about
+format truncation. It also refactor some the related tests
+to be cleaner and use standard API's.
 
-> If PMD is statically linked, all global variables are visible and
-> can clash with application or other drivers and therefore should
-> have a consistent prefix.
-> 
-> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-> ---
-Recheck-request: iol-intel-Functional
+v10 - fix on FreeBSD
+    - rebase for 26.03
+
+Stephen Hemminger (9):
+  test: increase size of memzone name
+  test: add new function to get current file-prefix arg
+  test: refactor file prefix arg handling
+  test: avoid overflowing huge directory path
+  test: fix format overflow warning in ACL test
+  test: fix impossible format-truncation in cfgfiles
+  test: fix format overflow in cryptodev test
+  test: fix overflow warnings in common code
+  test: re-enable format-truncation warnings
+
+ app/test/meson.build            |   1 -
+ app/test/process.h              |  44 ++++--
+ app/test/test_cfgfile.c         |   8 +-
+ app/test/test_cryptodev.c       |  22 ++-
+ app/test/test_eal_flags.c       | 268 +++++++++++---------------------
+ app/test/test_memzone.c         |   2 +-
+ app/test/test_mp_secondary.c    |  14 +-
+ app/test/test_pdump.c           |  13 +-
+ app/test/test_table_acl.c       |   4 +-
+ app/test/test_timer_secondary.c |  12 +-
+ 10 files changed, 161 insertions(+), 227 deletions(-)
+
+-- 
+2.51.0
+
