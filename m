@@ -2,45 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94588EE0205
-	for <dpdk-dev@archiver.kernel.org>; Tue, 30 Dec 2025 15:22:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62D2BEE0205
+	for <dpdk-dev@archiver.kernel.org>; Tue, 30 Dec 2025 15:26:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 26BE940267;
-	Tue, 30 Dec 2025 16:22:31 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 5D59040267;
+	Tue, 30 Dec 2025 16:26:07 +0100 (CET)
 Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 2952C4025A
- for <dev@dpdk.org>; Tue, 30 Dec 2025 16:22:29 +0100 (CET)
-Received: from mail.maildlp.com (unknown [172.18.224.83])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4dgcJ219kPzHnGkW;
- Tue, 30 Dec 2025 23:21:38 +0800 (CST)
-Received: from dubpeml100001.china.huawei.com (unknown [7.214.144.137])
- by mail.maildlp.com (Postfix) with ESMTPS id 26A3E40569;
- Tue, 30 Dec 2025 23:22:29 +0800 (CST)
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 56BD94025A
+ for <dev@dpdk.org>; Tue, 30 Dec 2025 16:26:06 +0100 (CET)
+Received: from mail.maildlp.com (unknown [172.18.224.150])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4dgcNB2BGPzHnH8G;
+ Tue, 30 Dec 2025 23:25:14 +0800 (CST)
+Received: from dubpeml500002.china.huawei.com (unknown [7.214.145.83])
+ by mail.maildlp.com (Postfix) with ESMTPS id 4A8574056A;
+ Tue, 30 Dec 2025 23:26:05 +0800 (CST)
 Received: from dubpeml500001.china.huawei.com (7.214.147.241) by
- dubpeml100001.china.huawei.com (7.214.144.137) with Microsoft SMTP Server
+ dubpeml500002.china.huawei.com (7.214.145.83) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.36; Tue, 30 Dec 2025 15:22:28 +0000
+ 15.2.1544.11; Tue, 30 Dec 2025 15:26:04 +0000
 Received: from dubpeml500001.china.huawei.com ([7.214.147.241]) by
  dubpeml500001.china.huawei.com ([7.214.147.241]) with mapi id 15.02.1544.011; 
- Tue, 30 Dec 2025 15:22:28 +0000
+ Tue, 30 Dec 2025 15:26:04 +0000
 From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-To: Sun Yuechi <sunyuechi@iscas.ac.cn>, "dev@dpdk.org" <dev@dpdk.org>
-CC: Zijian <zijian.oerv@isrc.iscas.ac.cn>,
- =?iso-8859-2?Q?Stanis=B3aw_Kardach?= <stanislaw.kardach@gmail.com>, "Bruce
- Richardson" <bruce.richardson@intel.com>
-Subject: RE: [PATCH v2] acl: add RISC-V vector extension implementation
-Thread-Topic: [PATCH v2] acl: add RISC-V vector extension implementation
-Thread-Index: AQHceIao/EyjVvCjZ0CmVfSeHVv8ubU6TdWw
-Date: Tue, 30 Dec 2025 15:22:28 +0000
-Message-ID: <16712ed73b254bff9795e71a727ff99a@huawei.com>
-References: <20251229054559.2923969-1-sunyuechi@iscas.ac.cn>
-In-Reply-To: <20251229054559.2923969-1-sunyuechi@iscas.ac.cn>
+To: Stephen Hemminger <stephen@networkplumber.org>, "dev@dpdk.org"
+ <dev@dpdk.org>
+CC: Bruce Richardson <bruce.richardson@intel.com>
+Subject: RE: [PATCH v9 07/18] eal: use C library to parse filesystem table
+Thread-Topic: [PATCH v9 07/18] eal: use C library to parse filesystem table
+Thread-Index: AQHceQSbpeaZ2apKs0KdXDgv48c+YbU6Ttmg
+Date: Tue, 30 Dec 2025 15:26:04 +0000
+Message-ID: <d9d43fe06e8340cfa8c9b24cf2a60db3@huawei.com>
+References: <20251202172626.283094-1-stephen@networkplumber.org>
+ <20251229204818.61231-1-stephen@networkplumber.org>
+ <20251229204818.61231-8-stephen@networkplumber.org>
+In-Reply-To: <20251229204818.61231-8-stephen@networkplumber.org>
 Accept-Language: en-GB, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 x-originating-ip: [10.48.152.185]
-Content-Type: text/plain; charset="iso-8859-2"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-BeenThere: dev@dpdk.org
@@ -58,38 +59,152 @@ Errors-To: dev-bounces@dpdk.org
 
 
 
-> Implement ACL classify function for RISC-V architecture
-> using RISC-V Vector Extension instruction set.
+> Rather than doing parsing of /proc/mounts with open coded string
+> handling, use the standard C library routines.
+> These exist in BSD and Linux.
 >=20
-> Signed-off-by: Sun Yuechi <sunyuechi@iscas.ac.cn>
-> Signed-off-by: Zijian <zijian.oerv@isrc.iscas.ac.cn>
+> It also avoids any possible issues with escaped strings etc
+> which the library handles. See getmntent(3) man page.
+>=20
+> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+> Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 > ---
->  app/test-acl/main.c              |   4 +
->  app/test/test_acl.c              |   1 +
->  config/riscv/meson.build         |   1 +
->  examples/l3fwd/l3fwd_acl.c       |   4 +
->  lib/acl/acl.h                    |   4 +
->  lib/acl/acl_run.h                |   2 +
->  lib/acl/acl_run_rvv.c            |  18 ++
->  lib/acl/acl_run_rvv.h            | 326 +++++++++++++++++++++++++++++++
->  lib/acl/meson.build              |   2 +
->  lib/acl/rte_acl.c                |  34 ++++
->  lib/acl/rte_acl.h                |   1 +
->  lib/eal/riscv/include/rte_vect.h |   2 +-
->  12 files changed, 398 insertions(+), 1 deletion(-)
->  create mode 100644 lib/acl/acl_run_rvv.c
->  create mode 100644 lib/acl/acl_run_rvv.h
+>  lib/eal/linux/eal_hugepage_info.c | 58 ++++++++++---------------------
+>  1 file changed, 18 insertions(+), 40 deletions(-)
 >=20
-
-Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-
-One more thing, that I nearly fogot:
-As it is a new feature, it is probably worth to add a new entry into Releas=
-e Notes.
-If you'll decide to go ahead with that - pls keep my Ack.
-Konstantin
-
+> diff --git a/lib/eal/linux/eal_hugepage_info.c b/lib/eal/linux/eal_hugepa=
+ge_info.c
+> index d47a19c56a..7161b1a2fb 100644
+> --- a/lib/eal/linux/eal_hugepage_info.c
+> +++ b/lib/eal/linux/eal_hugepage_info.c
+> @@ -13,6 +13,7 @@
+>  #include <inttypes.h>
+>  #include <unistd.h>
+>  #include <errno.h>
+> +#include <mntent.h>
+>  #include <sys/mman.h>
+>  #include <sys/stat.h>
+>=20
+> @@ -195,23 +196,13 @@ get_default_hp_size(void)
+>  static int
+>  get_hugepage_dir(uint64_t hugepage_sz, char *hugedir, int len)
+>  {
+> -	enum proc_mount_fieldnames {
+> -		DEVICE =3D 0,
+> -		MOUNTPT,
+> -		FSTYPE,
+> -		OPTIONS,
+> -		_FIELDNAME_MAX
+> -	};
+>  	static uint64_t default_size =3D 0;
+>  	const char proc_mounts[] =3D "/proc/mounts";
+> -	const char hugetlbfs_str[] =3D "hugetlbfs";
+> -	const size_t htlbfs_str_len =3D sizeof(hugetlbfs_str) - 1;
+>  	const char pagesize_opt[] =3D "pagesize=3D";
+>  	const size_t pagesize_opt_len =3D sizeof(pagesize_opt) - 1;
+> -	const char split_tok =3D ' ';
+> -	char *splitstr[_FIELDNAME_MAX];
+>  	char found[PATH_MAX] =3D "";
+>  	char buf[BUFSIZ];
+> +	struct mntent entry;
+>  	const struct internal_config *internal_conf =3D
+>  		eal_get_internal_configuration();
+>  	const size_t hugepage_dir_len =3D (internal_conf->hugepage_dir !=3D NUL=
+L) ?
+> @@ -226,56 +217,43 @@ get_hugepage_dir(uint64_t hugepage_sz, char *hugedi=
+r,
+> int len)
+>  		return -1;
+>  	}
+>=20
+> -	FILE *fd =3D fopen(proc_mounts, "r");
+> -	if (fd =3D=3D NULL)
+> +	FILE *mounts =3D setmntent(proc_mounts, "r");
+> +	if (mounts =3D=3D NULL)
+>  		rte_panic("Cannot open %s\n", proc_mounts);
+>=20
+>  	if (default_size =3D=3D 0)
+>  		default_size =3D get_default_hp_size();
+>=20
+> -	while (fgets(buf, sizeof(buf), fd)){
+> +	while (getmntent_r(mounts, &entry, buf, sizeof(buf))) {
+>  		const char *pagesz_str;
+> -		size_t mountpt_len =3D 0;
+> -
+> -		if (rte_strsplit(buf, sizeof(buf), splitstr, _FIELDNAME_MAX,
+> -				split_tok) !=3D _FIELDNAME_MAX) {
+> -			EAL_LOG(ERR, "Error parsing %s", proc_mounts);
+> -			break; /* return NULL */
+> -		}
+> +		uint64_t pagesz =3D default_size;
+> +		size_t mountpt_len;
+>=20
+> -		if (strncmp(splitstr[FSTYPE], hugetlbfs_str, htlbfs_str_len) !=3D 0)
+> +		if (strcmp(entry.mnt_type, "hugetlbfs") !=3D 0)
+>  			continue;
+>=20
+> -		pagesz_str =3D strstr(splitstr[OPTIONS], pagesize_opt);
+> +		pagesz_str =3D strstr(entry.mnt_opts, pagesize_opt);
+> +		if (pagesz_str)
+> +			pagesz =3D rte_str_to_size(&pagesz_str[pagesize_opt_len]);
+>=20
+> -		/* if no explicit page size, the default page size is compared */
+> -		if (pagesz_str =3D=3D NULL) {
+> -			if (hugepage_sz !=3D default_size)
+> -				continue;
+> -		}
+> -		/* there is an explicit page size, so check it */
+> -		else {
+> -			uint64_t pagesz =3D
+> rte_str_to_size(&pagesz_str[pagesize_opt_len]);
+> -			if (pagesz !=3D hugepage_sz)
+> -				continue;
+> -		}
+> +		if (pagesz !=3D hugepage_sz)
+> +			continue;
+>=20
+>  		/*
+>  		 * If no --huge-dir option has been given, we're done.
+>  		 */
+>  		if (internal_conf->hugepage_dir =3D=3D NULL) {
+> -			strlcpy(found, splitstr[MOUNTPT], len);
+> +			strlcpy(found, entry.mnt_dir, len);
+>  			break;
+>  		}
+>=20
+> -		mountpt_len =3D strlen(splitstr[MOUNTPT]);
+> +		mountpt_len =3D strlen(entry.mnt_dir);
+>=20
+>  		/*
+>  		 * Ignore any mount that doesn't contain the --huge-dir directory
+>  		 * or where mount point is not a parent path of --huge-dir
+>  		 */
+> -		if (strncmp(internal_conf->hugepage_dir, splitstr[MOUNTPT],
+> -				mountpt_len) !=3D 0 ||
+> +		if (strncmp(internal_conf->hugepage_dir, entry.mnt_dir,
+> mountpt_len) !=3D 0 ||
+>  			(hugepage_dir_len > mountpt_len &&
+>  				internal_conf->hugepage_dir[mountpt_len] !=3D '/')) {
+>  			continue;
+> @@ -286,10 +264,10 @@ get_hugepage_dir(uint64_t hugepage_sz, char *hugedi=
+r,
+> int len)
+>  		 * (so /mnt/1 is preferred over /mnt for matching /mnt/1/2)).
+>  		 */
+>  		if (mountpt_len > strlen(found))
+> -			strlcpy(found, splitstr[MOUNTPT], len);
+> +			strlcpy(found, entry.mnt_dir, len);
+>  	} /* end while fgets */
+>=20
+> -	fclose(fd);
+> +	endmntent(mounts);
+>=20
+>  	if (found[0] !=3D '\0') {
+>  		/* If needed, return the requested dir, not the mount point. */
 > --
-> 2.52.0
+
+Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>=20
+
+> 2.51.0
 >=20
 
