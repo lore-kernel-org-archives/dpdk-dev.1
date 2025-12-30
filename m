@@ -2,48 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62D2BEE0205
-	for <dpdk-dev@archiver.kernel.org>; Tue, 30 Dec 2025 15:26:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80E3EEE4992
+	for <dpdk-dev@archiver.kernel.org>; Tue, 30 Dec 2025 18:21:13 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5D59040267;
-	Tue, 30 Dec 2025 16:26:07 +0100 (CET)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 56BD94025A
- for <dev@dpdk.org>; Tue, 30 Dec 2025 16:26:06 +0100 (CET)
-Received: from mail.maildlp.com (unknown [172.18.224.150])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4dgcNB2BGPzHnH8G;
- Tue, 30 Dec 2025 23:25:14 +0800 (CST)
-Received: from dubpeml500002.china.huawei.com (unknown [7.214.145.83])
- by mail.maildlp.com (Postfix) with ESMTPS id 4A8574056A;
- Tue, 30 Dec 2025 23:26:05 +0800 (CST)
-Received: from dubpeml500001.china.huawei.com (7.214.147.241) by
- dubpeml500002.china.huawei.com (7.214.145.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 30 Dec 2025 15:26:04 +0000
-Received: from dubpeml500001.china.huawei.com ([7.214.147.241]) by
- dubpeml500001.china.huawei.com ([7.214.147.241]) with mapi id 15.02.1544.011; 
- Tue, 30 Dec 2025 15:26:04 +0000
-From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-To: Stephen Hemminger <stephen@networkplumber.org>, "dev@dpdk.org"
- <dev@dpdk.org>
-CC: Bruce Richardson <bruce.richardson@intel.com>
-Subject: RE: [PATCH v9 07/18] eal: use C library to parse filesystem table
-Thread-Topic: [PATCH v9 07/18] eal: use C library to parse filesystem table
-Thread-Index: AQHceQSbpeaZ2apKs0KdXDgv48c+YbU6Ttmg
-Date: Tue, 30 Dec 2025 15:26:04 +0000
-Message-ID: <d9d43fe06e8340cfa8c9b24cf2a60db3@huawei.com>
-References: <20251202172626.283094-1-stephen@networkplumber.org>
- <20251229204818.61231-1-stephen@networkplumber.org>
- <20251229204818.61231-8-stephen@networkplumber.org>
-In-Reply-To: <20251229204818.61231-8-stephen@networkplumber.org>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.48.152.185]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by mails.dpdk.org (Postfix) with ESMTP id 20C0940267;
+	Tue, 30 Dec 2025 19:21:12 +0100 (CET)
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com
+ [209.85.128.49]) by mails.dpdk.org (Postfix) with ESMTP id 1205C4025A
+ for <dev@dpdk.org>; Tue, 30 Dec 2025 19:21:10 +0100 (CET)
+Received: by mail-wm1-f49.google.com with SMTP id
+ 5b1f17b1804b1-4779aa4f928so102076875e9.1
+ for <dev@dpdk.org>; Tue, 30 Dec 2025 10:21:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1767118870;
+ x=1767723670; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=LLTcjUsBkjk5BPrd4EGxjyW2FEgozdy9xC8rdGJQphU=;
+ b=NAtstYikSVwBXQJCsjkV6bD/2+3nJGDGyP3rirbu7G23bGILa81so83DLIxqepAYBF
+ nLZOh9lsQ6nmDbO70haftqg1zIJWpWP300ByvVvgANa7ba90CgvNW0Domka+ZfZ2jbnd
+ N4aS5xpNCGz42ufeU8xvtgf5WldTqtRxzQ1k27bq0nTxgfBkPgPzV6CF4UIcgbSNLZY7
+ MY5tc2u7s/BN0VtSSDh0NupjAJ9mHcSHnu3fXguAHSa2BvstAR0BFf6Zj6wfSNYdgzpe
+ f4VZ6q0PzQPWV0j0n60A9lvJG/fE2UTURUv4wpeSu/n5PcR85jsjTcYGKaCu8Xf386hH
+ /PYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1767118870; x=1767723670;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=LLTcjUsBkjk5BPrd4EGxjyW2FEgozdy9xC8rdGJQphU=;
+ b=NbdxMgUZ63egyq8sULUmnfwLWVNRU7wmRdmLVU687hsVAz8WEu4VFt7ReGrtYFTOoQ
+ apKX+CbjGkaQR1imj5qa8SS6FmFOCXfJeN6ZNi+AhYQU9DfC4x8HE4STr6WN8Ieo81mR
+ OeCkS/wy0s20PlZFhKmpgYUsXack7GDGQXdBRU8wfRAsNzxvBFEwegbS4n0S5XHNnAwR
+ Ug8AUtC6hIQU4RQRgoNoPUoufFiO5WHhlZSH7JJJ0/CxckAwvZCdBtyXV/UT6/E7cM3s
+ APWVaKlmx2xMH5Ywd7k/+1mUbcxduKE3UjWRI6W0wGFODCQdG6Scq03Ja1Ubub4AY/+M
+ aTBg==
+X-Gm-Message-State: AOJu0Yz2X2waFgCHrA7SePVAt8ghrcDSPl7rYXmx1mR4akJYISDgnYC2
+ UK9NwGjE9ovSt9lnKfFOUU51xbY43hb8eCDE4wOBlYsQlsHmOJcSNQxMKu3B4hytYro=
+X-Gm-Gg: AY/fxX6rb4tJetneMCc2KrugJtsRqGZjPOTR6sGL6U0p5gr6zsTg2EOqGIeSXsb7WSy
+ zjbBk4gcOS4Eo1sTeSoy5QICsL0uRk2v1rscm2vDIc7QIHDpLE1Nh/BD4dkbXrdO7R+l+l00I2a
+ 1JQCnceuaeFLo2GOjMI88k0MHAlGEa7qOBoJ+bbAsnuETFhZHOoiO4/5m73FmGHKT0NZU3tUf9v
+ 6ghJazav0jGZPY2+zesCR/fF3vJwcoUR1ohz/O/jRJvtLJihg/keUSTkxuV5SX/geqsAzH02jEm
+ Vq+0cKlhfj0VIvnJmXxITCEu8IWhm+UiaebvQnAuAMHiYkRB+CpNYcDig8UT7qGMbZ18CnzjUEG
+ d1oBFQOZlHs+lY/4CpoBuKcs8pzx8ziXjXmScaKXLILh12uazN7lC1XF73Z18Vv9jpValY7xaRh
+ A2f8Zl3Qfa4wFgtP7mgIcFYrZ9eKzp69PKcOxw3r1xBfqEYLF0W6S3
+X-Google-Smtp-Source: AGHT+IEApASyvcGZrPVDbfarvORXHEHuD2C65Ojxhp2R24ToHrrVOoujduXNB21qD+OLcDhoEwLjcw==
+X-Received: by 2002:a05:600c:3b8f:b0:475:e09c:960e with SMTP id
+ 5b1f17b1804b1-47d19593d0dmr521372815e9.32.1767118870473; 
+ Tue, 30 Dec 2025 10:21:10 -0800 (PST)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 5b1f17b1804b1-47be272e46fsm641741585e9.4.2025.12.30.10.21.09
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 30 Dec 2025 10:21:10 -0800 (PST)
+Date: Tue, 30 Dec 2025 10:21:05 -0800
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: "Jasper Tran O'Leary" <jtranoleary@google.com>
+Cc: dev@dpdk.org, Joshua Washington <joshwash@google.com>
+Subject: Re: [PATCH] net/gve: add reset path
+Message-ID: <20251230102105.6f5a031c@phoenix.local>
+In-Reply-To: <20251230022958.3842695-1-jtranoleary@google.com>
+References: <20251230022958.3842695-1-jtranoleary@google.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -57,154 +80,19 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+On Tue, 30 Dec 2025 02:29:58 +0000
+"Jasper Tran O'Leary" <jtranoleary@google.com> wrote:
 
-
-> Rather than doing parsing of /proc/mounts with open coded string
-> handling, use the standard C library routines.
-> These exist in BSD and Linux.
->=20
-> It also avoids any possible issues with escaped strings etc
-> which the library handles. See getmntent(3) man page.
->=20
-> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-> Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+> Currently, the driver does not include any reset functionality and hence
+> cannot be reset by the application. This patch introduces a driver
+> callback for the `rte_eth_dev_reset` function which will reset the
+> device.
+> 
+> Also, as a precaution, null out device pointers to rx and tx queue
+> arrays when we release the queues during a reset.
+> 
+> Signed-off-by: Jasper Tran O'Leary <jtranoleary@google.com>
+> Reviewed-by: Joshua Washington <joshwash@google.com>
 > ---
->  lib/eal/linux/eal_hugepage_info.c | 58 ++++++++++---------------------
->  1 file changed, 18 insertions(+), 40 deletions(-)
->=20
-> diff --git a/lib/eal/linux/eal_hugepage_info.c b/lib/eal/linux/eal_hugepa=
-ge_info.c
-> index d47a19c56a..7161b1a2fb 100644
-> --- a/lib/eal/linux/eal_hugepage_info.c
-> +++ b/lib/eal/linux/eal_hugepage_info.c
-> @@ -13,6 +13,7 @@
->  #include <inttypes.h>
->  #include <unistd.h>
->  #include <errno.h>
-> +#include <mntent.h>
->  #include <sys/mman.h>
->  #include <sys/stat.h>
->=20
-> @@ -195,23 +196,13 @@ get_default_hp_size(void)
->  static int
->  get_hugepage_dir(uint64_t hugepage_sz, char *hugedir, int len)
->  {
-> -	enum proc_mount_fieldnames {
-> -		DEVICE =3D 0,
-> -		MOUNTPT,
-> -		FSTYPE,
-> -		OPTIONS,
-> -		_FIELDNAME_MAX
-> -	};
->  	static uint64_t default_size =3D 0;
->  	const char proc_mounts[] =3D "/proc/mounts";
-> -	const char hugetlbfs_str[] =3D "hugetlbfs";
-> -	const size_t htlbfs_str_len =3D sizeof(hugetlbfs_str) - 1;
->  	const char pagesize_opt[] =3D "pagesize=3D";
->  	const size_t pagesize_opt_len =3D sizeof(pagesize_opt) - 1;
-> -	const char split_tok =3D ' ';
-> -	char *splitstr[_FIELDNAME_MAX];
->  	char found[PATH_MAX] =3D "";
->  	char buf[BUFSIZ];
-> +	struct mntent entry;
->  	const struct internal_config *internal_conf =3D
->  		eal_get_internal_configuration();
->  	const size_t hugepage_dir_len =3D (internal_conf->hugepage_dir !=3D NUL=
-L) ?
-> @@ -226,56 +217,43 @@ get_hugepage_dir(uint64_t hugepage_sz, char *hugedi=
-r,
-> int len)
->  		return -1;
->  	}
->=20
-> -	FILE *fd =3D fopen(proc_mounts, "r");
-> -	if (fd =3D=3D NULL)
-> +	FILE *mounts =3D setmntent(proc_mounts, "r");
-> +	if (mounts =3D=3D NULL)
->  		rte_panic("Cannot open %s\n", proc_mounts);
->=20
->  	if (default_size =3D=3D 0)
->  		default_size =3D get_default_hp_size();
->=20
-> -	while (fgets(buf, sizeof(buf), fd)){
-> +	while (getmntent_r(mounts, &entry, buf, sizeof(buf))) {
->  		const char *pagesz_str;
-> -		size_t mountpt_len =3D 0;
-> -
-> -		if (rte_strsplit(buf, sizeof(buf), splitstr, _FIELDNAME_MAX,
-> -				split_tok) !=3D _FIELDNAME_MAX) {
-> -			EAL_LOG(ERR, "Error parsing %s", proc_mounts);
-> -			break; /* return NULL */
-> -		}
-> +		uint64_t pagesz =3D default_size;
-> +		size_t mountpt_len;
->=20
-> -		if (strncmp(splitstr[FSTYPE], hugetlbfs_str, htlbfs_str_len) !=3D 0)
-> +		if (strcmp(entry.mnt_type, "hugetlbfs") !=3D 0)
->  			continue;
->=20
-> -		pagesz_str =3D strstr(splitstr[OPTIONS], pagesize_opt);
-> +		pagesz_str =3D strstr(entry.mnt_opts, pagesize_opt);
-> +		if (pagesz_str)
-> +			pagesz =3D rte_str_to_size(&pagesz_str[pagesize_opt_len]);
->=20
-> -		/* if no explicit page size, the default page size is compared */
-> -		if (pagesz_str =3D=3D NULL) {
-> -			if (hugepage_sz !=3D default_size)
-> -				continue;
-> -		}
-> -		/* there is an explicit page size, so check it */
-> -		else {
-> -			uint64_t pagesz =3D
-> rte_str_to_size(&pagesz_str[pagesize_opt_len]);
-> -			if (pagesz !=3D hugepage_sz)
-> -				continue;
-> -		}
-> +		if (pagesz !=3D hugepage_sz)
-> +			continue;
->=20
->  		/*
->  		 * If no --huge-dir option has been given, we're done.
->  		 */
->  		if (internal_conf->hugepage_dir =3D=3D NULL) {
-> -			strlcpy(found, splitstr[MOUNTPT], len);
-> +			strlcpy(found, entry.mnt_dir, len);
->  			break;
->  		}
->=20
-> -		mountpt_len =3D strlen(splitstr[MOUNTPT]);
-> +		mountpt_len =3D strlen(entry.mnt_dir);
->=20
->  		/*
->  		 * Ignore any mount that doesn't contain the --huge-dir directory
->  		 * or where mount point is not a parent path of --huge-dir
->  		 */
-> -		if (strncmp(internal_conf->hugepage_dir, splitstr[MOUNTPT],
-> -				mountpt_len) !=3D 0 ||
-> +		if (strncmp(internal_conf->hugepage_dir, entry.mnt_dir,
-> mountpt_len) !=3D 0 ||
->  			(hugepage_dir_len > mountpt_len &&
->  				internal_conf->hugepage_dir[mountpt_len] !=3D '/')) {
->  			continue;
-> @@ -286,10 +264,10 @@ get_hugepage_dir(uint64_t hugepage_sz, char *hugedi=
-r,
-> int len)
->  		 * (so /mnt/1 is preferred over /mnt for matching /mnt/1/2)).
->  		 */
->  		if (mountpt_len > strlen(found))
-> -			strlcpy(found, splitstr[MOUNTPT], len);
-> +			strlcpy(found, entry.mnt_dir, len);
->  	} /* end while fgets */
->=20
-> -	fclose(fd);
-> +	endmntent(mounts);
->=20
->  	if (found[0] !=3D '\0') {
->  		/* If needed, return the requested dir, not the mount point. */
-> --
 
-Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>=20
-
-> 2.51.0
->=20
-
+Queued to next-net
