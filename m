@@ -2,68 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A2ABEEB56D
-	for <dpdk-dev@archiver.kernel.org>; Wed, 31 Dec 2025 18:58:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6CA1EEB56D
+	for <dpdk-dev@archiver.kernel.org>; Wed, 31 Dec 2025 18:58:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4B7D94042E;
-	Wed, 31 Dec 2025 19:58:15 +0100 (CET)
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com
- [209.85.208.43]) by mails.dpdk.org (Postfix) with ESMTP id DA8BC402C2
- for <dev@dpdk.org>; Wed, 31 Dec 2025 19:58:13 +0100 (CET)
-Received: by mail-ed1-f43.google.com with SMTP id
- 4fb4d7f45d1cf-64b9b0b4d5dso18525383a12.1
- for <dev@dpdk.org>; Wed, 31 Dec 2025 10:58:13 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 3AD6440431;
+	Wed, 31 Dec 2025 19:58:19 +0100 (CET)
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com
+ [209.85.208.51]) by mails.dpdk.org (Postfix) with ESMTP id 7495E402D6
+ for <dev@dpdk.org>; Wed, 31 Dec 2025 19:58:17 +0100 (CET)
+Received: by mail-ed1-f51.google.com with SMTP id
+ 4fb4d7f45d1cf-64b61f82b5fso14756460a12.0
+ for <dev@dpdk.org>; Wed, 31 Dec 2025 10:58:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1767207493;
- x=1767812293; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1767207497;
+ x=1767812297; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=+/37C5NYix4W5Wj/bIyPv/25fiU5pzAa582eqLLMnik=;
- b=oXQKhtqw+NalwPJzRK9K5GbVD1HcYcXT5VJqtWj/QzwF7mN7wCgB49W3Avfbfgo8XQ
- e9QTN+hOj9NH8r/AQ9/zO8ZEdSmnyKmaEOFKyr2W2AMIEibX9dpNL4gh9ujh6QP+BlIC
- GkF7b7cZCTmxwvCWvJ3x8NisCX8WQ/2s+239ijSHZlDhKpO9FoNIBTdHm53uCZL02Pwu
- d1hGVGhbarf4KAleAaYmTs4UJEKBt94milkWRMOlfQQ1SUzJfJwU/mMO1xLVR+MF/NVI
- mNzSMRHzP0OahIH4YdMZIW516rlOLJwKSnadnZO6BiQsu0dhPZmwHtaFU+JskLOrZ6LD
- 1ZwA==
+ bh=BDhqgKfky9Ufkv9NrN6XCWJUMw+0CDiBkOBk7wTvrSs=;
+ b=IcxPbS+6uWD3jbbJ/zB+4edfZMXaf4q6VXs/ehPEv+LWR1jmNW8mTs0Gg05FY9bKFy
+ tq5CSUtMLzpA9/DDR1dY8fGEa1T3/pu249N+g/nsKU6QuyYtjuu1lx1XYi6LKJkkHdRX
+ DPUA5UIwm+YH3dySV1h+G+WaFqE0Nfjj1LmV3YgJzc5LmEcOCmSiQi+XRQEz1b7l65BQ
+ ClZ4413zn/bGcyzGvZO5Z7YdmHUOWFwQA5ryC2on+rboDh+KWfDC8GOeWZRde0SATUMd
+ Q2y6R/L9+p9b2ytD0XwhEAj4CSZPJolPQBYlj3F5eAhEzSlH+BW60G6u/qV0lS82Bl/w
+ 4Gpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1767207493; x=1767812293;
+ d=1e100.net; s=20230601; t=1767207497; x=1767812297;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=+/37C5NYix4W5Wj/bIyPv/25fiU5pzAa582eqLLMnik=;
- b=TIMuPXuecmqIhrcRYsAsc45jYuqmnS28WShrHTjpxGgsOMbgkNME9SuAWq3I3EkQrT
- nEH/jVZ6ay5Q2KWj5k5B3l7I9SiRVlbqE/t6MmW14nDOnFL1+VLsEqVD1llKEcXyDPok
- IG1SdZLiWYWE1Mi0Hl6kn89ZZrVwleaFdumtSYRu4k5kqJ2lxku0mHEAPqkYC0aWI+VA
- 5AaWT+fsayWfGTYtSgcpMxsYD2OSdtRP1vwGfzt6nf5Q40AoCZg8a8sgBsbAtUBobzYv
- 1sjF+bPJ+2jTK2Nh5MhnW7MwcmYus4K6/aNehh6+njGtoOyaowOGvb+VbwSXa41MPR9e
- PIPA==
-X-Gm-Message-State: AOJu0Yw3B5ZkLpeBZgf6N69pwflVkq/XdgElFStOI0sqL7Bu4SwEgRyN
- e7a9P6Oi0YOn3w5U4yLLHrPiu8rY09MGfyMaFJlvpcStm+g7MFJEW0PF2ovII9hEJasgCuv+PSB
- kFeLKIYM=
-X-Gm-Gg: AY/fxX7fQQlfIkvw9+rpZIQUqfDzh793bEvWOgX0PEVHhFNCgvt+lGJhZDeeBg3Kvu0
- cXCYMZ1uvtw+/kfyBSM3+tpWD/DSOQDdCPOK+IV22+4USa0+jMHeuFWCh5w33mGtYTrc10Oc/sx
- Etvae+s7v9ctebcXFP9Im1N7y+KbTHNxu7+vi5PpwPb7XkvNAgAzK+G4B45T4CI1DI4ljla0Tom
- M75GG2pvaN6iyYpBdi0xUmn7sscUJ8taVRBpgiJgaLN/eluTh5VVJgP1cNrj4p+DQQ0DToG+xpC
- cg9HD5zXPYMTjJCC3hf0QpScwwWrtZ9GuIN6zYDLk+zVqS6lfRA0UDm4QUirypjWjGepXJyQ/zF
- wLq3xKsrfR7Bx4WgHnF7nsdQoFLNxeDWK/sPvGa4G9A1hHDxvHxns0Cskv/A0Bb70uMpBf5D30Z
- WOlZu+M4Us3tbwmQhFCGaPsaCHyj8Uni4PZCJK/8TJ/AWizs6ZTIl4sXMusJWX
-X-Google-Smtp-Source: AGHT+IF3jYp9rLewGo8XsqzgnjOWWk0jIfIPSQBxJnev/7mthp4HZQSCNNGhG7FlZ1f1A4pPlmwbdA==
-X-Received: by 2002:a05:6402:40d2:b0:64c:e9b6:14bb with SMTP id
- 4fb4d7f45d1cf-64ce9b61833mr34492799a12.28.1767207493317; 
- Wed, 31 Dec 2025 10:58:13 -0800 (PST)
+ bh=BDhqgKfky9Ufkv9NrN6XCWJUMw+0CDiBkOBk7wTvrSs=;
+ b=k3DQjjOIO45O4t5yBqCQs5zNb5/UE1daiNlCMobseu9XSp6Ty4dd4T20hdPt8b++hs
+ 2EOK/USCmlQ+L/8Y9Jomi0yMRdmfbH2PxVzhkvRBO0XyfCA9+GxlZkJ8avSCUZalpMsJ
+ auLyADbQa4Aln3RLMTrA6/nIaoIxICFK0wIs/fY5XcD/eYxwS8hk8Ln8hWupt19FUVWc
+ RNwR7a/XbFsaG8GJodyJOzlnp7GCkcg85ToJAi3js4x6SQIv8WP5TsKtmlVvD+AeCmmM
+ R3CsXgu85+caDx0mrAS2CCpCFoPQZgQJs0B+kieMMWQo+fZWGxh3GFvdBGy57nSqGEvV
+ KV0w==
+X-Gm-Message-State: AOJu0YxnkBlxd2T5mZJ1pAFwUcPU6oT2VI6vpfRmBmVGMracPIZFXIrp
+ hzmLNxUSQDAHFD6+yy9HEY8rszXgHvJnYM473t24ZrbqqNe1r+05EuHeIyzpPPZFAq3/finRtv0
+ SglIQ3bo=
+X-Gm-Gg: AY/fxX48/y4o7iSyde7ZGrz+Egisf1xElprKs4N+JzObG238phmHVJehmC4gbqC89Ce
+ IMO36lHLSfKHs7NRjuQ5xrnDRJuzDvDqDSyQSE4iJr/6DoF7CPjk4WBw2aTQD63+YoLnC1YD6VF
+ ZZoQWTuQQVnJXtAc2/ixz3H66n1nZw7qpUWUUDhZUbuPICmRxUPrgOKD5JvBHvR4p5JhrJ4rIph
+ fEzks6H3dlMWzkl06ZpLkM23WeIRSINMPOAmD5WE+9WNMsVu7TjKY0nxMwtaUHODpWizudh2zg9
+ EmdIQRqWXh6bXt2l2WQ/zil3+E0GDNS4yfcfqfpggWSK0hLUlZyDZJ8OgZSWFcFcKkfAq2YEKxY
+ fG3usdHdFAz1lbEEbDRDVotLmADs3Vuh4o7+jUNzhNcGlczt+I0Mi6/Z7gSc5k1OnZnrQTVhjHj
+ 0/ANDMFCsGoOcaSEt9/NzJ804qjGHhVJSR6XwtVrTG2oKnruEygQ==
+X-Google-Smtp-Source: AGHT+IHaQqY2NpslqalSOIO5L33no6Yu5JbCtO6xcq8kisqNyKVTEoNCGIONynZ3B7vv34jgdxSGEA==
+X-Received: by 2002:a05:6402:144a:b0:64b:6e44:2c6c with SMTP id
+ 4fb4d7f45d1cf-64b8ec9b1d3mr38069799a12.16.1767207497007; 
+ Wed, 31 Dec 2025 10:58:17 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 4fb4d7f45d1cf-64b91494dd3sm39000103a12.21.2025.12.31.10.58.10
+ 4fb4d7f45d1cf-64b91494dd3sm39000103a12.21.2025.12.31.10.58.13
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 31 Dec 2025 10:58:12 -0800 (PST)
+ Wed, 31 Dec 2025 10:58:15 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Ciara Loftus <ciara.loftus@intel.com>, Maryam Tahhan <mtahhan@redhat.com>
-Subject: [RFC 1/4] net/af_xdp: replace /tmp with /run/dpdk
-Date: Wed, 31 Dec 2025 10:56:25 -0800
-Message-ID: <20251231185803.90528-2-stephen@networkplumber.org>
+ Anatoly Burakov <anatoly.burakov@intel.com>,
+ David Hunt <david.hunt@intel.com>,
+ Sivaprasad Tummala <sivaprasad.tummala@amd.com>
+Subject: [RFC 2/4] examples/vm_power_manager: replace /tmp with /run/dpdk
+Date: Wed, 31 Dec 2025 10:56:26 -0800
+Message-ID: <20251231185803.90528-3-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251231185803.90528-1-stephen@networkplumber.org>
 References: <20251231185803.90528-1-stephen@networkplumber.org>
@@ -86,22 +88,56 @@ Applications should not use /tmp to store unix domain sockets.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/af_xdp/rte_eth_af_xdp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ doc/guides/sample_app_ug/vm_power_management.rst | 13 ++-----------
+ examples/vm_power_manager/channel_manager.h      |  2 +-
+ 2 files changed, 3 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/net/af_xdp/rte_eth_af_xdp.c b/drivers/net/af_xdp/rte_eth_af_xdp.c
-index f2a8fb95d1..74ffb3ba57 100644
---- a/drivers/net/af_xdp/rte_eth_af_xdp.c
-+++ b/drivers/net/af_xdp/rte_eth_af_xdp.c
-@@ -83,7 +83,7 @@ RTE_LOG_REGISTER_DEFAULT(af_xdp_logtype, NOTICE);
+diff --git a/doc/guides/sample_app_ug/vm_power_management.rst b/doc/guides/sample_app_ug/vm_power_management.rst
+index 1955140bb3..eb9228f0eb 100644
+--- a/doc/guides/sample_app_ug/vm_power_management.rst
++++ b/doc/guides/sample_app_ug/vm_power_management.rst
+@@ -195,7 +195,7 @@ The XML structure is as follows:
+       <address type='pci' domain='0x0000' bus='0x00' slot='0x06' function='0x0'/>
+    </controller>
+    <channel type='unix'>
+-      <source mode='bind' path='/tmp/powermonitor/{vm_name}.{channel_num}'/>
++      <source mode='bind' path='/run/dpdk/powermonitor/{vm_name}.{channel_num}'/>
+       <target type='virtio' name='virtio.serial.port.poweragent.{vm_channel_num}'/>
+       <address type='virtio-serial' controller='0' bus='0' port='{N}'/>
+    </channel>
+@@ -208,18 +208,9 @@ channel. Likewise, the port value ``{N}`` must be incremented for each
+ channel.
  
- #define ETH_AF_XDP_MP_KEY "afxdp_mp_send_fds"
+ On the host, for each channel to appear in the path, ensure the creation
+-of the ``/tmp/powermonitor/`` directory and the assignment of ``qemu``
++of the ``/run/dpdk/powermonitor/`` directory and the assignment of ``qemu``
+ permissions:
  
--#define DP_BASE_PATH			"/tmp/afxdp_dp"
-+#define DP_BASE_PATH			"/run/dpdk/afxdp"
- #define DP_UDS_SOCK             "afxdp.sock"
- #define DP_XSK_MAP				"xsks_map"
- #define MAX_LONG_OPT_SZ			64
+-.. code-block:: console
+-
+-   mkdir /tmp/powermonitor/
+-   chown qemu:qemu /tmp/powermonitor
+-
+-Note that files and directories in ``/tmp`` are generally removed when
+-rebooting the host and you may need to perform the previous steps after
+-each reboot.
+-
+ The serial device as it appears on a VM is configured with the target
+ element attribute name and must be in the form:
+ ``virtio.serial.port.poweragent.{vm_channel_num}``, where
+diff --git a/examples/vm_power_manager/channel_manager.h b/examples/vm_power_manager/channel_manager.h
+index 6f70539815..5fc93ae0be 100644
+--- a/examples/vm_power_manager/channel_manager.h
++++ b/examples/vm_power_manager/channel_manager.h
+@@ -22,7 +22,7 @@ extern "C" {
+ #define CHANNEL_MGR_DEFAULT_HV_PATH "qemu:///system"
+ 
+ /* File socket directory */
+-#define CHANNEL_MGR_SOCKET_PATH     "/tmp/powermonitor/"
++#define CHANNEL_MGR_SOCKET_PATH     "/run/dpdk/powermonitor/"
+ 
+ /* FIFO file name template */
+ #define CHANNEL_MGR_FIFO_PATTERN_NAME   "fifo"
 -- 
 2.51.0
 
