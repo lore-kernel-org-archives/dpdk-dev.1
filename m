@@ -2,67 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49C64EE645E
-	for <dpdk-dev@archiver.kernel.org>; Wed, 31 Dec 2025 18:58:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A2ABEEB56D
+	for <dpdk-dev@archiver.kernel.org>; Wed, 31 Dec 2025 18:58:20 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 108CB402A0;
-	Wed, 31 Dec 2025 19:58:12 +0100 (CET)
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com
- [209.85.218.46]) by mails.dpdk.org (Postfix) with ESMTP id F111B40267
- for <dev@dpdk.org>; Wed, 31 Dec 2025 19:58:10 +0100 (CET)
-Received: by mail-ej1-f46.google.com with SMTP id
- a640c23a62f3a-b79e7112398so1943194666b.3
- for <dev@dpdk.org>; Wed, 31 Dec 2025 10:58:10 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 4B7D94042E;
+	Wed, 31 Dec 2025 19:58:15 +0100 (CET)
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com
+ [209.85.208.43]) by mails.dpdk.org (Postfix) with ESMTP id DA8BC402C2
+ for <dev@dpdk.org>; Wed, 31 Dec 2025 19:58:13 +0100 (CET)
+Received: by mail-ed1-f43.google.com with SMTP id
+ 4fb4d7f45d1cf-64b9b0b4d5dso18525383a12.1
+ for <dev@dpdk.org>; Wed, 31 Dec 2025 10:58:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1767207490;
- x=1767812290; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=XWbDvYME+yR2x7b8xw/xF9w6aXupZvXB4RxIheuIdfk=;
- b=yyMrKad+Rhvwnd7JlTrDTzcq8xA10CvpT9a6brcR1rZXpnNd7dPM450A2YjU+dgS3b
- Iy8V6etKOT9kgjVJ8VbkYCifDEcTlte6TNgs4I37Fc0EMC0Go4n6+kxl+Az5JxKgUX9h
- G6IBD3VBRWwS69+aojdZCMiB0wfpRTtNQArbOfnSZ6d1ly4GWabulQnqf722cZQ1zvZd
- xbroVi8hFvJx3FphxVJKl0lV0wu9WPzFRxfo3cJS48wnLAoJE9fz4KqFXz7vduBAjRa5
- AWrQDqMY8Oo7DlYmFv235tcdYeAW8ainbpXYsMW4Zs8ZRO2gXdvbkwKKlU4/IlEUIQ26
- TYBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1767207490; x=1767812290;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1767207493;
+ x=1767812293; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=XWbDvYME+yR2x7b8xw/xF9w6aXupZvXB4RxIheuIdfk=;
- b=YfI+woePsLtxYLMqCcVRzuJp20fikPh3r0ozBfiDtGSykyF5quYc74XJqodXqRoEqT
- Nl7JB+0tdeUuvADruz7xBDoAuIANWTjBgtHKKAOY7rWzDQt0y8wJT0nm7NwpDkq8gAUe
- OnGk5Idb3pcMjcHJhuP9gvBXWMlA+nbDIbN7H4Lid1UWcNJSl1qaLLZp113NmbVvKLy+
- A7DG/9I3EVaDMmv4hwai6BqfYQkUsLL97jp+5Oi03mBAQwbEs2i2j9CRcCkm18XHR1Ty
- IT6caLyEmIA4BFk9m93wbJKrwJz3vfCzVciFKvmOUnLzYyp+Xvxkgp5/NxgJx8E3bMYX
- GZGQ==
-X-Gm-Message-State: AOJu0YwqW0FN33pXuML/yr4V6y6Zzd7WftrmMPJcVemlHdue1/8qmsvk
- qmEeQk4gIOmJJHVZKwF6hFjS0Pi623QqYOu967+zN1zKaWSv0FTvG4gC6ouEDO2AgYhZA0dIqnj
- 7MFoq2dw=
-X-Gm-Gg: AY/fxX7o2JxvhSEvkicz2m5X3VJrH46JnRd4nNLmhRJPhVzjcUhvl2ebyeE9IsKyZMI
- zFS7dTSJVbbk26HV8mZuaFf04FbVQxGFKepGqemX9aYu00IkrejBbmmQpkXahdK13RS30ndz/IK
- BWQ0Q17zOYk6d5LqeQLNd4ePsViEqcXjLr8k4YHTh77p+qdOalL5UT+1u1z6SaprEO4/ietVZkX
- lNsyhm3LA1kHoRoDTC/U92k/Ab6g111aPKqL6uFeMKT40JrPU+BZQ+7BdpR5miQXTg88ixwPA/2
- Whf0BjRwKf6lF/mIFnr29iRicct2SBEcledP1+qMdIM7PJHCKjfm3Fs7nXHkvMWIriA0eymmi+K
- DYpdaoahpRYf6H5jUWFhrXhe92/y8YJIfjcItjciBOoUMVM/7anVcuNilLCCi1B1SmTchaZ2UGA
- uMieAVrbncNLrPAPHLejJQ5r8/jDgFXl+qti0PRwj0/GnKhhjBmg==
-X-Google-Smtp-Source: AGHT+IEMymX4lCyAaOco7sAgKXNTa1HZiosneEywM9lGlEk2kRe9QeShI7cTEu2GLOWywD1L9wkdsg==
-X-Received: by 2002:a17:906:9f92:b0:b2b:3481:93c8 with SMTP id
- a640c23a62f3a-b8036f1d812mr3669552866b.19.1767207489901; 
- Wed, 31 Dec 2025 10:58:09 -0800 (PST)
+ bh=+/37C5NYix4W5Wj/bIyPv/25fiU5pzAa582eqLLMnik=;
+ b=oXQKhtqw+NalwPJzRK9K5GbVD1HcYcXT5VJqtWj/QzwF7mN7wCgB49W3Avfbfgo8XQ
+ e9QTN+hOj9NH8r/AQ9/zO8ZEdSmnyKmaEOFKyr2W2AMIEibX9dpNL4gh9ujh6QP+BlIC
+ GkF7b7cZCTmxwvCWvJ3x8NisCX8WQ/2s+239ijSHZlDhKpO9FoNIBTdHm53uCZL02Pwu
+ d1hGVGhbarf4KAleAaYmTs4UJEKBt94milkWRMOlfQQ1SUzJfJwU/mMO1xLVR+MF/NVI
+ mNzSMRHzP0OahIH4YdMZIW516rlOLJwKSnadnZO6BiQsu0dhPZmwHtaFU+JskLOrZ6LD
+ 1ZwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1767207493; x=1767812293;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=+/37C5NYix4W5Wj/bIyPv/25fiU5pzAa582eqLLMnik=;
+ b=TIMuPXuecmqIhrcRYsAsc45jYuqmnS28WShrHTjpxGgsOMbgkNME9SuAWq3I3EkQrT
+ nEH/jVZ6ay5Q2KWj5k5B3l7I9SiRVlbqE/t6MmW14nDOnFL1+VLsEqVD1llKEcXyDPok
+ IG1SdZLiWYWE1Mi0Hl6kn89ZZrVwleaFdumtSYRu4k5kqJ2lxku0mHEAPqkYC0aWI+VA
+ 5AaWT+fsayWfGTYtSgcpMxsYD2OSdtRP1vwGfzt6nf5Q40AoCZg8a8sgBsbAtUBobzYv
+ 1sjF+bPJ+2jTK2Nh5MhnW7MwcmYus4K6/aNehh6+njGtoOyaowOGvb+VbwSXa41MPR9e
+ PIPA==
+X-Gm-Message-State: AOJu0Yw3B5ZkLpeBZgf6N69pwflVkq/XdgElFStOI0sqL7Bu4SwEgRyN
+ e7a9P6Oi0YOn3w5U4yLLHrPiu8rY09MGfyMaFJlvpcStm+g7MFJEW0PF2ovII9hEJasgCuv+PSB
+ kFeLKIYM=
+X-Gm-Gg: AY/fxX7fQQlfIkvw9+rpZIQUqfDzh793bEvWOgX0PEVHhFNCgvt+lGJhZDeeBg3Kvu0
+ cXCYMZ1uvtw+/kfyBSM3+tpWD/DSOQDdCPOK+IV22+4USa0+jMHeuFWCh5w33mGtYTrc10Oc/sx
+ Etvae+s7v9ctebcXFP9Im1N7y+KbTHNxu7+vi5PpwPb7XkvNAgAzK+G4B45T4CI1DI4ljla0Tom
+ M75GG2pvaN6iyYpBdi0xUmn7sscUJ8taVRBpgiJgaLN/eluTh5VVJgP1cNrj4p+DQQ0DToG+xpC
+ cg9HD5zXPYMTjJCC3hf0QpScwwWrtZ9GuIN6zYDLk+zVqS6lfRA0UDm4QUirypjWjGepXJyQ/zF
+ wLq3xKsrfR7Bx4WgHnF7nsdQoFLNxeDWK/sPvGa4G9A1hHDxvHxns0Cskv/A0Bb70uMpBf5D30Z
+ WOlZu+M4Us3tbwmQhFCGaPsaCHyj8Uni4PZCJK/8TJ/AWizs6ZTIl4sXMusJWX
+X-Google-Smtp-Source: AGHT+IF3jYp9rLewGo8XsqzgnjOWWk0jIfIPSQBxJnev/7mthp4HZQSCNNGhG7FlZ1f1A4pPlmwbdA==
+X-Received: by 2002:a05:6402:40d2:b0:64c:e9b6:14bb with SMTP id
+ 4fb4d7f45d1cf-64ce9b61833mr34492799a12.28.1767207493317; 
+ Wed, 31 Dec 2025 10:58:13 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 4fb4d7f45d1cf-64b91494dd3sm39000103a12.21.2025.12.31.10.58.06
+ 4fb4d7f45d1cf-64b91494dd3sm39000103a12.21.2025.12.31.10.58.10
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 31 Dec 2025 10:58:08 -0800 (PST)
+ Wed, 31 Dec 2025 10:58:12 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [RFC 0/4] move unix domain sockets from /tmp to /run/dpdk
-Date: Wed, 31 Dec 2025 10:56:24 -0800
-Message-ID: <20251231185803.90528-1-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Ciara Loftus <ciara.loftus@intel.com>, Maryam Tahhan <mtahhan@redhat.com>
+Subject: [RFC 1/4] net/af_xdp: replace /tmp with /run/dpdk
+Date: Wed, 31 Dec 2025 10:56:25 -0800
+Message-ID: <20251231185803.90528-2-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20251231185803.90528-1-stephen@networkplumber.org>
+References: <20251231185803.90528-1-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -78,34 +82,26 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Current best practice is not to use /tmp for Unix domain sockets.
-Move the socket communication to DPDK runtime directory.
+Applications should not use /tmp to store unix domain sockets.
 
-To quote systemd:
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+---
+ drivers/net/af_xdp/rte_eth_af_xdp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-    /run (traditionally /var/run) where privileged daemons can store
-    runtime data, such as communication primitives. This is where your
-    daemon should place its sockets.
-
-See:
-
-    http://0pointer.net/blog/projects/tmp.html
-    https://en.wikipedia.org/wiki/Filesystem_Hierarchy_Standard
-    https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html*
-
-Stephen Hemminger (4):
-  net/af_xdp: replace /tmp with /run/dpdk
-  examples/vm_power_manager: replace /tmp with /run/dpdk
-  net/nfp: replace /tmp with /run/dpdk
-  net/cnxk: move socket from /tmp to /run/dpdk
-
- doc/guides/sample_app_ug/vm_power_management.rst | 13 ++-----------
- drivers/net/af_xdp/rte_eth_af_xdp.c              |  2 +-
- drivers/net/cnxk/cnxk_eswitch.h                  |  2 +-
- drivers/net/nfp/nfp_cpp_bridge.c                 |  4 ++--
- examples/vm_power_manager/channel_manager.h      |  2 +-
- 5 files changed, 7 insertions(+), 16 deletions(-)
-
+diff --git a/drivers/net/af_xdp/rte_eth_af_xdp.c b/drivers/net/af_xdp/rte_eth_af_xdp.c
+index f2a8fb95d1..74ffb3ba57 100644
+--- a/drivers/net/af_xdp/rte_eth_af_xdp.c
++++ b/drivers/net/af_xdp/rte_eth_af_xdp.c
+@@ -83,7 +83,7 @@ RTE_LOG_REGISTER_DEFAULT(af_xdp_logtype, NOTICE);
+ 
+ #define ETH_AF_XDP_MP_KEY "afxdp_mp_send_fds"
+ 
+-#define DP_BASE_PATH			"/tmp/afxdp_dp"
++#define DP_BASE_PATH			"/run/dpdk/afxdp"
+ #define DP_UDS_SOCK             "afxdp.sock"
+ #define DP_XSK_MAP				"xsks_map"
+ #define MAX_LONG_OPT_SZ			64
 -- 
 2.51.0
 
