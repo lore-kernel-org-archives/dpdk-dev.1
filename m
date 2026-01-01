@@ -2,68 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E9C8EED626
-	for <dpdk-dev@archiver.kernel.org>; Thu,  1 Jan 2026 18:13:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E43F7EED632
+	for <dpdk-dev@archiver.kernel.org>; Thu,  1 Jan 2026 18:14:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id F344940267;
-	Thu,  1 Jan 2026 19:13:54 +0100 (CET)
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com
- [209.85.221.44]) by mails.dpdk.org (Postfix) with ESMTP id 69A9B40262
- for <dev@dpdk.org>; Thu,  1 Jan 2026 19:13:53 +0100 (CET)
-Received: by mail-wr1-f44.google.com with SMTP id
- ffacd0b85a97d-430fbb6012bso9685404f8f.1
- for <dev@dpdk.org>; Thu, 01 Jan 2026 10:13:53 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 08249402D5;
+	Thu,  1 Jan 2026 19:13:57 +0100 (CET)
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com
+ [209.85.128.49]) by mails.dpdk.org (Postfix) with ESMTP id A35A4402D3
+ for <dev@dpdk.org>; Thu,  1 Jan 2026 19:13:55 +0100 (CET)
+Received: by mail-wm1-f49.google.com with SMTP id
+ 5b1f17b1804b1-477ba2c1ca2so123568855e9.2
+ for <dev@dpdk.org>; Thu, 01 Jan 2026 10:13:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1767291233;
- x=1767896033; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=X7vaUaT331syWLkw2RSznWL3aLMx88sXJV4cxBAu/pw=;
- b=xfHD/gOBxfo7qRsdDjN1Y2oJfPl7QTBeUAAVAkBpBeN/PpDQQjAx8hUfjJy5epT2dl
- lTFZWhtwtsJaVvYlGEZFmj/MkeqT99zHzhbweNirp+NQC3KrA+z3jBPUVroXmKfG6sx9
- 38N3pM5LyY6015Hf+t+1E285Juxp0aIDG8k08oPoOlWtf1F+T48bT5dhxOwziHc4CM8I
- AHuqF1bhksNWfS01oSlb2llYk94vKqt5AywXCCb1bA6a7ITcZPHGwbfDV6lxksKtEIX5
- 38JtGeK+xMNLnozujKYgJhy/Fa32L3g0ctzxY0VVyRtf6ySOkyuhjxxx9wMWfUerNKDK
- yhIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1767291233; x=1767896033;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1767291235;
+ x=1767896035; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=X7vaUaT331syWLkw2RSznWL3aLMx88sXJV4cxBAu/pw=;
- b=LfH6Y1MBHa2QWfxysje6mMcmYSlNwJQ5EkO2FVof57+rJFfordD7lV54yLQcsFEK6G
- OV17jPzo1Zb24Lpk7tgeW5EhgPFkdH/wbdfos8HyN1PGrB0is1OFeJ0tVNeDGX55bshB
- mn+irUQIS0togVPfFL6pWt3B8MyuBULXTy6Qjg5eA719wIkjrv5R+1Zeh2zAUYlG2Aeh
- YxLSHeOuRMCwxrd57Xjmg/PR8HTGRZfr+slOcBWjEp9FsZOSAyU+6aVwxLJ4kiSSsc/C
- NopmswDFCxYFpeJseb2mVBNEyHPQDv/dnCa0m8kXm3oipFYwyQcECbUVWaEfzBF7d7Lf
- Makw==
-X-Gm-Message-State: AOJu0YwYAV5Wzoc7KpPVbtle1PKsbWw39dtf+WLqWIrTRka1Gd3Dv3Up
- 7D9VlZSVu5MlTnzeP3mrSiOcOYFcgATe2dHMoEuZ5nl6MWhPYnW2pa6mhMeF2qfoqf0nw3XDE+I
- MfPEph8Y=
-X-Gm-Gg: AY/fxX6gBe1Qs6otoPGcCw5oGpMA46qMY6P06p/5TnwFL4mZ+jX//YJvfuS7/uE73EF
- YS8Hktep/Ya6l1osoqmTfibKvYgXMlJo3CBoz1VA7wABG2p6qJTzixAXFwJy9HcF+ML5aRYB7bk
- BdCEwrXJqvvnl8aNE6iZyjMs/9/T/Dg04XmqzA6pYLOAkNOY/qYF19e3eSyJjQrT6hYkFXuv7El
- xZCeyXzfIBZiaM/XWuC0RBeJDn9V5ZN8I+nF9h1UtFUWqTAnpCkWk1L7jZuTGgLglGbmV/S3ufP
- mu9H2P5weNC+w+LZum5ZHO5fH19qaQoDrKSO6vCL2+4+XZ6SzunvIIXzo8wNFE+E0p4iPfnb/Uk
- CkBg1IUuewSr2/RzLDzbjy8nKBImvW9kOJwnCQQJekPAf2MshGi/fNcJCOw5usbQ6OtAc34MaOP
- UzsLyS4afEA+gVHdZNg+dqXnLuLQfDP4+EbeAdSyBG4wgpO416Wg==
-X-Google-Smtp-Source: AGHT+IFTMA3tldJDOYUOMzY/8CKgLBYzMmSVv0UM1CydQYR6E4SsMCIYy4y+NFeqY3ctRKq24FcSNA==
-X-Received: by 2002:a05:6000:4312:b0:430:f1d3:f96 with SMTP id
- ffacd0b85a97d-4324e4c7393mr45834633f8f.6.1767291232578; 
- Thu, 01 Jan 2026 10:13:52 -0800 (PST)
+ bh=zKJYMGxHkbborOnAxf6NesmDRa2JYh6o3PqJH5AnDXc=;
+ b=PGDAU8bldDlE/D7gx5XyDWZb3zX+fVlpeHv7bvnEkLrUCAoEog9rb0yE3M8v+Bu3dM
+ T7tVNlD6u5DG8hUPrLjaEHdPCVjb23ncG5X4waXM/u2igiB47FCDGo1oLAajKzwrO9Hf
+ 97Ga4JDfqpXV2aVeYaC81OtAB4Jv8YklCifhZ/OehoKtS2vieaG1yW4Rwt2teWzZuCnP
+ bAo7Cuw9e/ACU4hJZz0iE995ByBO7ssijjxLGEhxC+5nQ2JjYYNED5yXjqnAT89Cxisd
+ YFEgn7vIgxPrOxHm/Yid8J1Xykru/z1Do2hhg7iRYI3ncyQfx0QTds97jy0zLVmKgWLl
+ U5UA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1767291235; x=1767896035;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=zKJYMGxHkbborOnAxf6NesmDRa2JYh6o3PqJH5AnDXc=;
+ b=Q1EufRxRBLq1MewXYISfhmnrdNdK2X/ObeGX8PhiRPUBqxkRRDRLSt5q4rTrbmwuoJ
+ h7UWmjUGL/PtPjLyrUMnoUw95WenlcegazZrOFH4UFn/hPkx3xXZkji2qx1Nz8+7Rhkf
+ zsRT75UcqnL1qS+liB0deiU/FpdsvzposJWJQPtXiFDwXbZo42TQbsykt/1Ez1N4yeYr
+ ETzARbvaLYSOIr3/ggvOW7iauteuUF8tvHysOMnPcNc9lsN9gCvP57AJ4dx2ad+dYc1y
+ xqb6LLUEKndACP+iBtpeGatbciT6ylwTyEmAabJ68DudWpK0nESDA18r2FS1TO9dg3wl
+ Oajg==
+X-Gm-Message-State: AOJu0YyvVkaJHGter+86N69oCCPfM0Z9mIFlN60A4G/185LSqphXBDCa
+ e+TsR1ljNothv5Y6k1TmxHVDIowHseNE3l5dVfXQ029sHLrreLHLUN9bRtFKlcUMJ/r5/03XEKY
+ 5RZ/TUwc=
+X-Gm-Gg: AY/fxX7CAP+8BxBg9FkEC1I72Kx4+lQmGnvZCu8gSRJV63ao3Ss/ZdVgofDmoQXcnKi
+ XXiF7Nhs+/RDnEjBc+Ce2EIfunKSkkWTWbBW5ZeBgbxhMmGFAh/JzZMFNTuAxSJsnKGbTOPeIwk
+ 0/iyLQtob7UQQ/P53sKW9HdTjcvTGGXoL91SbC3ugB/0HY0+gZWnVRZlPdUVNswPR4szTE0rOXj
+ fNB1cQpBQBSb6qjrMRZSb/eOT6YZ5QCqi/EXAIGTvARgUvIFPlbXtuYuuL4m8zCqirNDcXa4HBY
+ 3iSwQ84YFIMZnJkUpaArjleWGXNXY1BuBapHwk9rBxc0QKIDu3PA3O+POyJ6tP5eKHfpuBESFRQ
+ FZIKncLent3bfNpO0EfPjC79ukhVc9LN+BQbAcKeiKSHaJM5sMWIy573oYy4TD9cGFAJVQ61+bW
+ NaSDNE/CuUe9wmRLGyj8sY2X8oMfUy3Ko7bqLr90PKzaBS1HcBiQ==
+X-Google-Smtp-Source: AGHT+IENMiV7Gvh5Tu+jweLdgEWVGUUUMnTSbuZ164NDASdXRWfWWVErYyqcVRlAAucSvqdU5nSGHg==
+X-Received: by 2002:a05:600c:4f4a:b0:477:58:7cf4 with SMTP id
+ 5b1f17b1804b1-47d1953b79dmr543352015e9.4.1767291235136; 
+ Thu, 01 Jan 2026 10:13:55 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-43264613923sm65738005f8f.26.2026.01.01.10.13.50
+ ffacd0b85a97d-43264613923sm65738005f8f.26.2026.01.01.10.13.53
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 01 Jan 2026 10:13:51 -0800 (PST)
+ Thu, 01 Jan 2026 10:13:54 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Martin Spinler <spinler@cesnet.cz>
-Subject: [PATCH 1/2] net/nfb: remove unused flag
-Date: Thu,  1 Jan 2026 10:13:43 -0800
-Message-ID: <20260101181345.201601-1-stephen@networkplumber.org>
+ "John W. Linville" <linville@tuxdriver.com>
+Subject: [PATCH 2/2] net/af_packet: remove unused attribute
+Date: Thu,  1 Jan 2026 10:13:44 -0800
+Message-ID: <20260101181345.201601-2-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20260101181345.201601-1-stephen@networkplumber.org>
+References: <20260101181345.201601-1-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -79,26 +82,26 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The configure callback does use the device argument.
+The device configure callback does use the device argument.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/nfb/nfb_ethdev.c | 2 +-
+ drivers/net/af_packet/rte_eth_af_packet.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/nfb/nfb_ethdev.c b/drivers/net/nfb/nfb_ethdev.c
-index 98119d70fd..5f1b11a961 100644
---- a/drivers/net/nfb/nfb_ethdev.c
-+++ b/drivers/net/nfb/nfb_ethdev.c
-@@ -181,7 +181,7 @@ nfb_eth_dev_stop(struct rte_eth_dev *dev)
-  *   0 on success, a negative errno value otherwise.
-  */
+diff --git a/drivers/net/af_packet/rte_eth_af_packet.c b/drivers/net/af_packet/rte_eth_af_packet.c
+index ef11b8fb6b..c0ba3381ea 100644
+--- a/drivers/net/af_packet/rte_eth_af_packet.c
++++ b/drivers/net/af_packet/rte_eth_af_packet.c
+@@ -374,7 +374,7 @@ eth_dev_stop(struct rte_eth_dev *dev)
+ }
+ 
  static int
--nfb_eth_dev_configure(struct rte_eth_dev *dev __rte_unused)
-+nfb_eth_dev_configure(struct rte_eth_dev *dev)
+-eth_dev_configure(struct rte_eth_dev *dev __rte_unused)
++eth_dev_configure(struct rte_eth_dev *dev)
  {
- 	int ret;
- 	struct pmd_internals *internals = dev->data->dev_private;
+ 	struct rte_eth_conf *dev_conf = &dev->data->dev_conf;
+ 	const struct rte_eth_rxmode *rxmode = &dev_conf->rxmode;
 -- 
 2.51.0
 
