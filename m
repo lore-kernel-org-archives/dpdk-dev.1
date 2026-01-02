@@ -2,39 +2,39 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CDFCFA374B
-	for <dpdk-dev@archiver.kernel.org>; Fri,  2 Jan 2026 14:04:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FA88FA374B
+	for <dpdk-dev@archiver.kernel.org>; Fri,  2 Jan 2026 14:27:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 72CEA40267;
-	Fri,  2 Jan 2026 15:04:03 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 3F2C740267;
+	Fri,  2 Jan 2026 15:27:22 +0100 (CET)
 Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id DEEF340262
- for <dev@dpdk.org>; Fri,  2 Jan 2026 15:04:01 +0100 (CET)
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 4AB6340262
+ for <dev@dpdk.org>; Fri,  2 Jan 2026 15:27:20 +0100 (CET)
 Received: from mail.maildlp.com (unknown [172.18.224.150])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4djQPz3ffmzJ46CH;
- Fri,  2 Jan 2026 22:03:03 +0800 (CST)
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4djQwv1x9zzJ46B9;
+ Fri,  2 Jan 2026 22:26:23 +0800 (CST)
 Received: from frapema100004.china.huawei.com (unknown [7.182.19.128])
- by mail.maildlp.com (Postfix) with ESMTPS id 18C2A40539;
- Fri,  2 Jan 2026 22:03:59 +0800 (CST)
+ by mail.maildlp.com (Postfix) with ESMTPS id D88B040539;
+ Fri,  2 Jan 2026 22:27:18 +0800 (CST)
 Received: from frapema500003.china.huawei.com (7.182.19.114) by
  frapema100004.china.huawei.com (7.182.19.128) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.36; Fri, 2 Jan 2026 15:03:58 +0100
+ 15.2.1544.36; Fri, 2 Jan 2026 15:27:18 +0100
 Received: from frapema500003.china.huawei.com ([7.182.19.114]) by
  frapema500003.china.huawei.com ([7.182.19.114]) with mapi id 15.02.1544.011;
- Fri, 2 Jan 2026 15:03:58 +0100
+ Fri, 2 Jan 2026 15:27:18 +0100
 From: Marat Khalili <marat.khalili@huawei.com>
-To: Stephen Hemminger <stephen@networkplumber.org>
-CC: "dev@dpdk.org" <dev@dpdk.org>
-Subject: RE: [PATCH v10 3/9] test: refactor file prefix arg handling
-Thread-Topic: [PATCH v10 3/9] test: refactor file prefix arg handling
-Thread-Index: AQHceQ6wUn1ktwVztESYbUXwKFX4VrU+7REw
-Date: Fri, 2 Jan 2026 14:03:58 +0000
-Message-ID: <bc69435eb2f142dd8ffcbbf09c0aa008@huawei.com>
+To: Stephen Hemminger <stephen@networkplumber.org>, "dev@dpdk.org"
+ <dev@dpdk.org>
+Subject: RE: [PATCH v10 4/9] test: avoid overflowing huge directory path
+Thread-Topic: [PATCH v10 4/9] test: avoid overflowing huge directory path
+Thread-Index: AQHceQ7Dvcz17ilTbEC4tNucyPWA/7U+9Y/Q
+Date: Fri, 2 Jan 2026 14:27:18 +0000
+Message-ID: <21c43988241b4271ab76e196777dbffb@huawei.com>
 References: <20251110182209.104087-1-stephen@networkplumber.org>
  <20251229220053.21981-1-stephen@networkplumber.org>
- <20251229220053.21981-4-stephen@networkplumber.org>
-In-Reply-To: <20251229220053.21981-4-stephen@networkplumber.org>
+ <20251229220053.21981-5-stephen@networkplumber.org>
+In-Reply-To: <20251229220053.21981-5-stephen@networkplumber.org>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -56,94 +56,23 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Please see a couple of nits inline.
-
 > -----Original Message-----
 > From: Stephen Hemminger <stephen@networkplumber.org>
 > Sent: Monday 29 December 2025 21:59
 > To: dev@dpdk.org
 > Cc: Stephen Hemminger <stephen@networkplumber.org>
-> Subject: [PATCH v10 3/9] test: refactor file prefix arg handling
+> Subject: [PATCH v10 4/9] test: avoid overflowing huge directory path
 >=20
-> Make setting up --file-prefix arg logic into a function,
-> and avoid impossible case of file prefix path causing overflow
-> of string.
+> Modify the part of the test that is scanning for hugepages
+> mount point to use existing getmntent library calls.
+>=20
+> As a result, the maximum mount path is smaller which is ok
+> since this is all handled by the standard library.
+> And the resulting huge path arguments don't overflow.
+>=20
+> Hugepages aren't used on Window or FreeBSD so this is
+> skipped there.
 >=20
 > Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-> ---
->  app/test/process.h        |   8 +--
->  app/test/test_eal_flags.c | 132 ++++++++++----------------------------
->  2 files changed, 37 insertions(+), 103 deletions(-)
->=20
 
-// snip
-
-> diff --git a/app/test/test_eal_flags.c b/app/test/test_eal_flags.c
-> index e32f83d3c8..12cf123e81 100644
-> --- a/app/test/test_eal_flags.c
-> +++ b/app/test/test_eal_flags.c
-> @@ -121,6 +121,8 @@ test_misc_flags(void)
->  #define no_shconf "--no-shconf"
->  #define allow "--allow"
->  #define vdev "--vdev"
-> +#define file_prefix "--file-prefix"
-> +
-
-Are we using it anywhere?
-
-// snip
-
-> @@ -853,6 +802,18 @@ test_no_huge_flag(void)
->  	const char *argv2[] =3D {prgname, prefix, no_huge,
->  			"-m", DEFAULT_MEM_SIZE};
->=20
-> +	if (launch_proc(argv1) !=3D 0) {
-> +		printf("Error - process did not run ok with --no-huge flag\n");
-> +		return -1;
-> +	}
-> +	if (launch_proc(argv2) !=3D 0) {
-> +		printf("Error - process did not run ok with --no-huge and -m flags\n")=
-;
-> +		return -1;
-> +	}
-> +#ifdef RTE_EXEC_ENV_FREEBSD
-> +	/* no other tests are applicable to FreeBSD */
-> +	return 0;
-> +#else
->  	/* With --no-huge and --socket-mem */
->  	const char *argv3[] =3D {prgname, prefix, no_huge,
->  			"--socket-mem=3D" DEFAULT_MEM_SIZE};
-> @@ -867,19 +828,6 @@ test_no_huge_flag(void)
->  	const char * const argv6[] =3D {prgname, prefix, no_huge,
->  			"--huge-worker-stack=3D512"};
->=20
-> -	if (launch_proc(argv1) !=3D 0) {
-> -		printf("Error - process did not run ok with --no-huge flag\n");
-> -		return -1;
-> -	}
-> -	if (launch_proc(argv2) !=3D 0) {
-> -		printf("Error - process did not run ok with --no-huge and -m flags\n")=
-;
-> -		return -1;
-> -	}
-> -#ifdef RTE_EXEC_ENV_FREEBSD
-> -	/* no other tests are applicable to FreeBSD */
-> -	return 0;
-> -#endif
-> -
->  	if (launch_proc(argv3) =3D=3D 0) {
->  		printf("Error - process run ok with --no-huge and --socket-mem "
->  				"flags\n");
-> @@ -898,6 +846,7 @@ test_no_huge_flag(void)
->  		printf("Error - process run ok with --no-huge and --huge-worker-stack=
-=3Dsize flags");
->  		return -1;
->  	}
-> +#endif
->  	return 0;
-
-Duplicate return in FreeBSD case?
-
->  }
-
-// snip the rest
+Acked-by: Marat Khalili <marat.khalili@huawei.com>
