@@ -2,36 +2,38 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E174EFC617C
-	for <dpdk-dev@archiver.kernel.org>; Sat,  3 Jan 2026 17:41:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45AD8FC6160
+	for <dpdk-dev@archiver.kernel.org>; Sat,  3 Jan 2026 17:46:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9BA0A40267;
-	Sat,  3 Jan 2026 18:41:32 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 23BCD40267;
+	Sat,  3 Jan 2026 18:46:07 +0100 (CET)
 Received: from dkmailrelay1.smartsharesystems.com
  (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 1595140262
- for <dev@dpdk.org>; Sat,  3 Jan 2026 18:41:31 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id BB1AA40262;
+ Sat,  3 Jan 2026 18:46:05 +0100 (CET)
 Received: from smartserver.smartsharesystems.com
  (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 021ED208CF
- for <dev@dpdk.org>; Sat,  3 Jan 2026 18:41:31 +0100 (CET)
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id E2C5B208CF;
+ Sat,  3 Jan 2026 18:46:04 +0100 (CET)
 Content-class: urn:content-classes:message
 MIME-Version: 1.0
 Content-Type: text/plain;
 	charset="UTF-8"
 Content-Transfer-Encoding: base64
-Subject: RE: [PATCH] mbuf: optimize detach direct buffer
-Date: Sat, 3 Jan 2026 18:41:29 +0100
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65619@smartserver.smartshare.dk>
+Subject: RE: [PATCH] mbuf: fix packet copy
+Date: Sat, 3 Jan 2026 18:46:03 +0100
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F6561A@smartserver.smartshare.dk>
 X-MimeOLE: Produced By Microsoft Exchange V6.5
-In-Reply-To: <20260103173454.121220-1-mb@smartsharesystems.com>
+In-Reply-To: <20251119120403.907511-1-mb@smartsharesystems.com>
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH] mbuf: optimize detach direct buffer
-Thread-Index: Adx810qgw9amoHBqSWuU2D8jpYjUpgAANmXw
-References: <20260103173454.121220-1-mb@smartsharesystems.com>
+Thread-Topic: [PATCH] mbuf: fix packet copy
+Thread-Index: AdxZTJorOUhx0EXzTH2tsl7JhzajBgjjB52w
+References: <20251119120403.907511-1-mb@smartsharesystems.com>
 From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
-To: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>, <dev@dpdk.org>
+To: "Stephen Hemminger" <stephen@networkplumber.org>,
+	<dev@dpdk.org>
+Cc: <stable@dpdk.org>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -45,37 +47,31 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-UGxlYXNlIGlnbm9yZSB0aGlzIG9uZS4NCkl0IGhhcyBhIGNvcHktcGFzdGUgZXJyb3IgaW4gdGhl
-IGRlc2NyaXB0aW9uLg0KDQpWZW5saWcgaGlsc2VuIC8gS2luZCByZWdhcmRzLA0KLU1vcnRlbiBC
-csO4cnVwDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogTW9ydGVuIEJy
-w7hydXAgW21haWx0bzptYkBzbWFydHNoYXJlc3lzdGVtcy5jb21dDQo+IFNlbnQ6IFNhdHVyZGF5
-LCAzIEphbnVhcnkgMjAyNiAxOC4zNQ0KPiBUbzogZGV2QGRwZGsub3JnDQo+IENjOiBNb3J0ZW4g
-QnLDuHJ1cA0KPiBTdWJqZWN0OiBbUEFUQ0hdIG1idWY6IG9wdGltaXplIGRldGFjaCBkaXJlY3Qg
-YnVmZmVyDQo+IA0KPiBkb2Vzbid0IHdyaXRlIHRoZSBmaWVsZHMgdGhhdCBhbHJlYWR5IGhhdmUg
-dGhlIHJlcXVpcmVkIHZhbHVlcy4gVGhpcw0KPiBzYXZlcyBhIG1lbW9yeSBzdG9yZSBvcGVyYXRp
-b24gd2hlbiBhbGwgdGhlIGZpZWxkcyBhbHJlYWR5IGhhdmUgdGhlDQo+IHJlcXVpcmVkIHZhbHVl
-cy4NCj4gDQo+IFRoaXMgcGF0Y2ggYWRkcyB0aGUgc2FtZSBvcHRpbWl6YXRpb24gdG8gX19ydGVf
-cGt0bWJ1Zl9mcmVlX2RpcmVjdCgpLA0KPiB0byBpbXByb3ZlIHRoZSBwZXJmb3JtYW5jZSBmb3Ig
-ZnJlZWluZyBhIGRpcmVjdCBidWZmZXIgYmVpbmcgZGV0YWNoZWQNCj4gZnJvbQ0KPiBhIHBhY2tl
-dCBtYnVmLCBpLmUuIHNhdmluZyBhIG1lbW9yeSBzdG9yZSBvcGVyYXRpb24gd2hlbiBhbGwgdGhl
-IGZpZWxkcw0KPiAob2YgdGhlIGJ1ZmZlciBiZWluZyBmcmVlZCkgYWxyZWFkeSBoYXZlIHRoZSBy
-ZXF1aXJlZCB2YWx1ZXMuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBNb3J0ZW4gQnLDuHJ1cCA8bWJA
-c21hcnRzaGFyZXN5c3RlbXMuY29tPg0KPiAtLS0NCj4gIGxpYi9tYnVmL3J0ZV9tYnVmLmggfCAx
-NiArKysrKysrKysrKy0tLS0tDQo+ICAxIGZpbGUgY2hhbmdlZCwgMTEgaW5zZXJ0aW9ucygrKSwg
-NSBkZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9saWIvbWJ1Zi9ydGVfbWJ1Zi5oIGIv
-bGliL21idWYvcnRlX21idWYuaA0KPiBpbmRleCAyMDA0MzkxZjU3Li41OTJhZjIzODhjIDEwMDY0
-NA0KPiAtLS0gYS9saWIvbWJ1Zi9ydGVfbWJ1Zi5oDQo+ICsrKyBiL2xpYi9tYnVmL3J0ZV9tYnVm
-LmgNCj4gQEAgLTEzMzQsMTcgKzEzMzQsMjMgQEAgc3RhdGljIGlubGluZSB2b2lkDQo+ICBfX3J0
-ZV9wa3RtYnVmX2ZyZWVfZGlyZWN0KHN0cnVjdCBydGVfbWJ1ZiAqbSkNCj4gIHsNCj4gIAlzdHJ1
-Y3QgcnRlX21idWYgKm1kOw0KPiArCWJvb2wgcmVmY250X25vdF9vbmU7DQo+IA0KPiAgCVJURV9B
-U1NFUlQoUlRFX01CVUZfQ0xPTkVEKG0pKTsNCj4gDQo+ICAJbWQgPSBydGVfbWJ1Zl9mcm9tX2lu
-ZGlyZWN0KG0pOw0KPiANCj4gLQlpZiAocnRlX21idWZfcmVmY250X3VwZGF0ZShtZCwgLTEpID09
-IDApIHsNCj4gLQkJbWQtPm5leHQgPSBOVUxMOw0KPiAtCQltZC0+bmJfc2VncyA9IDE7DQo+ICsJ
-cmVmY250X25vdF9vbmUgPSB1bmxpa2VseShydGVfbWJ1Zl9yZWZjbnRfcmVhZChtZCkgIT0gMSk7
-DQo+ICsJaWYgKHJlZmNudF9ub3Rfb25lICYmIF9fcnRlX21idWZfcmVmY250X3VwZGF0ZShtZCwg
-LTEpICE9IDApDQo+ICsJCXJldHVybjsNCj4gKw0KPiArCWlmIChyZWZjbnRfbm90X29uZSkNCj4g
-IAkJcnRlX21idWZfcmVmY250X3NldChtZCwgMSk7DQo+IC0JCXJ0ZV9tYnVmX3Jhd19mcmVlKG1k
-KTsNCj4gLQl9DQo+ICsJaWYgKG1kLT5uYl9zZWdzICE9IDEpDQo+ICsJCW1kLT5uYl9zZWdzID0g
-MTsNCj4gKwlpZiAobWQtPm5leHQgIT0gTlVMTCkNCj4gKwkJbWQtPm5leHQgPSBOVUxMOw0KPiAr
-CXJ0ZV9tYnVmX3Jhd19mcmVlKG1kKTsNCj4gIH0NCj4gDQo+ICAvKioNCj4gLS0NCj4gMi40My4w
-DQoNCg==
+UElORyBmb3IgcmV2aWV3Lg0KDQo+IEZyb206IE1vcnRlbiBCcsO4cnVwIFttYWlsdG86bWJAc21h
+cnRzaGFyZXN5c3RlbXMuY29tXQ0KPiBTZW50OiBXZWRuZXNkYXksIDE5IE5vdmVtYmVyIDIwMjUg
+MTMuMDQNCj4gDQo+IFJlcXVlc3RzIGZvciBjb3B5aW5nIHRoZSBhdCB0aGUgZW5kIG9mIGEgcGFj
+a2V0IGluY29ycmVjdGx5IHJldHVybmVkDQo+IE5VTEwsDQo+IGFzIGlmIGNvcHlpbmcgcGFzdCB0
+aGUgZW5kIG9mIGEgcGFja2V0Lg0KPiANCj4gV2hlbiBhbGxvY2F0aW5nIGNvcGllcyBmcm9tIGEg
+bWVtcG9vbCB1c2luZyBwaW5uZWQgZXh0ZXJuYWwgYnVmZmVycywNCj4gdGhlDQo+IGV4dGVybmFs
+IGZsYWcgd2FzIG5vdCBwcmVzZXJ2ZWQgaW4gdGhlc2UgbWJ1ZnMuDQo+IA0KPiBGaXhlczogYzNh
+OTBjMzgxZGFhICgibWJ1ZjogYWRkIGEgY29weSByb3V0aW5lIikNCj4gDQo+IFNpZ25lZC1vZmYt
+Ynk6IE1vcnRlbiBCcsO4cnVwIDxtYkBzbWFydHNoYXJlc3lzdGVtcy5jb20+DQo+IC0tLQ0KPiAg
+bGliL21idWYvcnRlX21idWYuYyB8IDYgKysrLS0tDQo+ICAxIGZpbGUgY2hhbmdlZCwgMyBpbnNl
+cnRpb25zKCspLCAzIGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2xpYi9tYnVmL3J0
+ZV9tYnVmLmMgYi9saWIvbWJ1Zi9ydGVfbWJ1Zi5jDQo+IGluZGV4IDBkOTMxYzdhMTUuLmU2Mzlh
+ZmYwM2UgMTAwNjQ0DQo+IC0tLSBhL2xpYi9tYnVmL3J0ZV9tYnVmLmMNCj4gKysrIGIvbGliL21i
+dWYvcnRlX21idWYuYw0KPiBAQCAtNjc1LDcgKzY3NSw3IEBAIHJ0ZV9wa3RtYnVmX2NvcHkoY29u
+c3Qgc3RydWN0IHJ0ZV9tYnVmICptLCBzdHJ1Y3QNCj4gcnRlX21lbXBvb2wgKm1wLA0KPiAgCV9f
+cnRlX21idWZfc2FuaXR5X2NoZWNrKG0sIDEpOw0KPiANCj4gIAkvKiBjaGVjayBmb3IgcmVxdWVz
+dCB0byBjb3B5IGF0IG9mZnNldCBwYXN0IGVuZCBvZiBtYnVmICovDQo+IC0JaWYgKHVubGlrZWx5
+KG9mZiA+PSBtLT5wa3RfbGVuKSkNCj4gKwlpZiAodW5saWtlbHkob2ZmID4gbS0+cGt0X2xlbikp
+DQo+ICAJCXJldHVybiBOVUxMOw0KPiANCj4gIAltYyA9IHJ0ZV9wa3RtYnVmX2FsbG9jKG1wKTsN
+Cj4gQEAgLTY4OCw4ICs2ODgsOCBAQCBydGVfcGt0bWJ1Zl9jb3B5KGNvbnN0IHN0cnVjdCBydGVf
+bWJ1ZiAqbSwgc3RydWN0DQo+IHJ0ZV9tZW1wb29sICptcCwNCj4gDQo+ICAJX19ydGVfcGt0bWJ1
+Zl9jb3B5X2hkcihtYywgbSk7DQo+IA0KPiAtCS8qIGNvcGllZCBtYnVmIGlzIG5vdCBpbmRpcmVj
+dCBvciBleHRlcm5hbCAqLw0KPiAtCW1jLT5vbF9mbGFncyA9IG0tPm9sX2ZsYWdzICYNCj4gfihS
+VEVfTUJVRl9GX0lORElSRUNUfFJURV9NQlVGX0ZfRVhURVJOQUwpOw0KPiArCS8qIGNvcHkgZmxh
+Z3MgZXhjZXB0IGluZGlyZWN0IGFuZCBleHRlcm5hbCwgYW5kIHByZXNlcnZlIGZsYWdzIG9mDQo+
+IG5ld2x5IGFsbG9jYXRlZCBtYnVmICovDQo+ICsJbWMtPm9sX2ZsYWdzIHw9IG0tPm9sX2ZsYWdz
+ICYNCj4gfihSVEVfTUJVRl9GX0lORElSRUNUfFJURV9NQlVGX0ZfRVhURVJOQUwpOw0KPiANCj4g
+IAlwcmV2ID0gJm1jLT5uZXh0Ow0KPiAgCW1fbGFzdCA9IG1jOw0KPiAtLQ0KPiAyLjQzLjANCg0K
