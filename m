@@ -2,34 +2,36 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29B9BFC617E
-	for <dpdk-dev@archiver.kernel.org>; Sat,  3 Jan 2026 17:41:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E174EFC617C
+	for <dpdk-dev@archiver.kernel.org>; Sat,  3 Jan 2026 17:41:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8B22340267;
-	Sat,  3 Jan 2026 18:41:00 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 9BA0A40267;
+	Sat,  3 Jan 2026 18:41:32 +0100 (CET)
 Received: from dkmailrelay1.smartsharesystems.com
  (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id C67F240262
- for <dev@dpdk.org>; Sat,  3 Jan 2026 18:40:58 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 1595140262
+ for <dev@dpdk.org>; Sat,  3 Jan 2026 18:41:31 +0100 (CET)
 Received: from smartserver.smartsharesystems.com
  (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id CE0A4208CF
- for <dev@dpdk.org>; Sat,  3 Jan 2026 18:40:57 +0100 (CET)
-Received: from dkrd4.smartsharesys.local ([192.168.4.26]) by
- smartserver.smartsharesystems.com with Microsoft SMTPSVC(6.0.3790.4675); 
- Sat, 3 Jan 2026 18:40:56 +0100
-From: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
-To: dev@dpdk.org
-Cc: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
-Subject: [PATCH] mbuf: optimize detach direct buffer
-Date: Sat,  3 Jan 2026 17:40:54 +0000
-Message-ID: <20260103174054.121246-1-mb@smartsharesystems.com>
-X-Mailer: git-send-email 2.43.0
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 021ED208CF
+ for <dev@dpdk.org>; Sat,  3 Jan 2026 18:41:31 +0100 (CET)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 03 Jan 2026 17:40:56.0285 (UTC)
- FILETIME=[1D6EC0D0:01DC7CD8]
+Content-Type: text/plain;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+Subject: RE: [PATCH] mbuf: optimize detach direct buffer
+Date: Sat, 3 Jan 2026 18:41:29 +0100
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65619@smartserver.smartshare.dk>
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+In-Reply-To: <20260103173454.121220-1-mb@smartsharesystems.com>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH] mbuf: optimize detach direct buffer
+Thread-Index: Adx810qgw9amoHBqSWuU2D8jpYjUpgAANmXw
+References: <20260103173454.121220-1-mb@smartsharesystems.com>
+From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
+To: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>, <dev@dpdk.org>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -43,54 +45,37 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-When rte_pktmbuf_prefree_seg() resets an mbuf about to be freed, it
-doesn't write the fields that already have the required values. This
-saves a memory store operation when all the fields already have the
-required values.
-
-This patch adds the same optimization to __rte_pktmbuf_free_direct(),
-to improve the performance for freeing a direct buffer being detached from
-a packet mbuf, i.e. saving a memory store operation when all the fields
-(of the buffer being freed) already have the required values.
-
-Signed-off-by: Morten Brørup <mb@smartsharesystems.com>
----
- lib/mbuf/rte_mbuf.h | 16 +++++++++++-----
- 1 file changed, 11 insertions(+), 5 deletions(-)
-
-diff --git a/lib/mbuf/rte_mbuf.h b/lib/mbuf/rte_mbuf.h
-index 2004391f57..592af2388c 100644
---- a/lib/mbuf/rte_mbuf.h
-+++ b/lib/mbuf/rte_mbuf.h
-@@ -1334,17 +1334,23 @@ static inline void
- __rte_pktmbuf_free_direct(struct rte_mbuf *m)
- {
- 	struct rte_mbuf *md;
-+	bool refcnt_not_one;
- 
- 	RTE_ASSERT(RTE_MBUF_CLONED(m));
- 
- 	md = rte_mbuf_from_indirect(m);
- 
--	if (rte_mbuf_refcnt_update(md, -1) == 0) {
--		md->next = NULL;
--		md->nb_segs = 1;
-+	refcnt_not_one = unlikely(rte_mbuf_refcnt_read(md) != 1);
-+	if (refcnt_not_one && __rte_mbuf_refcnt_update(md, -1) != 0)
-+		return;
-+
-+	if (refcnt_not_one)
- 		rte_mbuf_refcnt_set(md, 1);
--		rte_mbuf_raw_free(md);
--	}
-+	if (md->nb_segs != 1)
-+		md->nb_segs = 1;
-+	if (md->next != NULL)
-+		md->next = NULL;
-+	rte_mbuf_raw_free(md);
- }
- 
- /**
--- 
-2.43.0
-
+UGxlYXNlIGlnbm9yZSB0aGlzIG9uZS4NCkl0IGhhcyBhIGNvcHktcGFzdGUgZXJyb3IgaW4gdGhl
+IGRlc2NyaXB0aW9uLg0KDQpWZW5saWcgaGlsc2VuIC8gS2luZCByZWdhcmRzLA0KLU1vcnRlbiBC
+csO4cnVwDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogTW9ydGVuIEJy
+w7hydXAgW21haWx0bzptYkBzbWFydHNoYXJlc3lzdGVtcy5jb21dDQo+IFNlbnQ6IFNhdHVyZGF5
+LCAzIEphbnVhcnkgMjAyNiAxOC4zNQ0KPiBUbzogZGV2QGRwZGsub3JnDQo+IENjOiBNb3J0ZW4g
+QnLDuHJ1cA0KPiBTdWJqZWN0OiBbUEFUQ0hdIG1idWY6IG9wdGltaXplIGRldGFjaCBkaXJlY3Qg
+YnVmZmVyDQo+IA0KPiBkb2Vzbid0IHdyaXRlIHRoZSBmaWVsZHMgdGhhdCBhbHJlYWR5IGhhdmUg
+dGhlIHJlcXVpcmVkIHZhbHVlcy4gVGhpcw0KPiBzYXZlcyBhIG1lbW9yeSBzdG9yZSBvcGVyYXRp
+b24gd2hlbiBhbGwgdGhlIGZpZWxkcyBhbHJlYWR5IGhhdmUgdGhlDQo+IHJlcXVpcmVkIHZhbHVl
+cy4NCj4gDQo+IFRoaXMgcGF0Y2ggYWRkcyB0aGUgc2FtZSBvcHRpbWl6YXRpb24gdG8gX19ydGVf
+cGt0bWJ1Zl9mcmVlX2RpcmVjdCgpLA0KPiB0byBpbXByb3ZlIHRoZSBwZXJmb3JtYW5jZSBmb3Ig
+ZnJlZWluZyBhIGRpcmVjdCBidWZmZXIgYmVpbmcgZGV0YWNoZWQNCj4gZnJvbQ0KPiBhIHBhY2tl
+dCBtYnVmLCBpLmUuIHNhdmluZyBhIG1lbW9yeSBzdG9yZSBvcGVyYXRpb24gd2hlbiBhbGwgdGhl
+IGZpZWxkcw0KPiAob2YgdGhlIGJ1ZmZlciBiZWluZyBmcmVlZCkgYWxyZWFkeSBoYXZlIHRoZSBy
+ZXF1aXJlZCB2YWx1ZXMuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBNb3J0ZW4gQnLDuHJ1cCA8bWJA
+c21hcnRzaGFyZXN5c3RlbXMuY29tPg0KPiAtLS0NCj4gIGxpYi9tYnVmL3J0ZV9tYnVmLmggfCAx
+NiArKysrKysrKysrKy0tLS0tDQo+ICAxIGZpbGUgY2hhbmdlZCwgMTEgaW5zZXJ0aW9ucygrKSwg
+NSBkZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9saWIvbWJ1Zi9ydGVfbWJ1Zi5oIGIv
+bGliL21idWYvcnRlX21idWYuaA0KPiBpbmRleCAyMDA0MzkxZjU3Li41OTJhZjIzODhjIDEwMDY0
+NA0KPiAtLS0gYS9saWIvbWJ1Zi9ydGVfbWJ1Zi5oDQo+ICsrKyBiL2xpYi9tYnVmL3J0ZV9tYnVm
+LmgNCj4gQEAgLTEzMzQsMTcgKzEzMzQsMjMgQEAgc3RhdGljIGlubGluZSB2b2lkDQo+ICBfX3J0
+ZV9wa3RtYnVmX2ZyZWVfZGlyZWN0KHN0cnVjdCBydGVfbWJ1ZiAqbSkNCj4gIHsNCj4gIAlzdHJ1
+Y3QgcnRlX21idWYgKm1kOw0KPiArCWJvb2wgcmVmY250X25vdF9vbmU7DQo+IA0KPiAgCVJURV9B
+U1NFUlQoUlRFX01CVUZfQ0xPTkVEKG0pKTsNCj4gDQo+ICAJbWQgPSBydGVfbWJ1Zl9mcm9tX2lu
+ZGlyZWN0KG0pOw0KPiANCj4gLQlpZiAocnRlX21idWZfcmVmY250X3VwZGF0ZShtZCwgLTEpID09
+IDApIHsNCj4gLQkJbWQtPm5leHQgPSBOVUxMOw0KPiAtCQltZC0+bmJfc2VncyA9IDE7DQo+ICsJ
+cmVmY250X25vdF9vbmUgPSB1bmxpa2VseShydGVfbWJ1Zl9yZWZjbnRfcmVhZChtZCkgIT0gMSk7
+DQo+ICsJaWYgKHJlZmNudF9ub3Rfb25lICYmIF9fcnRlX21idWZfcmVmY250X3VwZGF0ZShtZCwg
+LTEpICE9IDApDQo+ICsJCXJldHVybjsNCj4gKw0KPiArCWlmIChyZWZjbnRfbm90X29uZSkNCj4g
+IAkJcnRlX21idWZfcmVmY250X3NldChtZCwgMSk7DQo+IC0JCXJ0ZV9tYnVmX3Jhd19mcmVlKG1k
+KTsNCj4gLQl9DQo+ICsJaWYgKG1kLT5uYl9zZWdzICE9IDEpDQo+ICsJCW1kLT5uYl9zZWdzID0g
+MTsNCj4gKwlpZiAobWQtPm5leHQgIT0gTlVMTCkNCj4gKwkJbWQtPm5leHQgPSBOVUxMOw0KPiAr
+CXJ0ZV9tYnVmX3Jhd19mcmVlKG1kKTsNCj4gIH0NCj4gDQo+ICAvKioNCj4gLS0NCj4gMi40My4w
+DQoNCg==
