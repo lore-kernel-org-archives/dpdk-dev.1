@@ -2,75 +2,56 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCED2C79F8A
-	for <dpdk-dev@archiver.kernel.org>; Mon,  5 Jan 2026 12:50:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FE51C79F8A
+	for <dpdk-dev@archiver.kernel.org>; Mon,  5 Jan 2026 12:54:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DCDCB40613;
-	Mon,  5 Jan 2026 13:50:51 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id E171A40648;
+	Mon,  5 Jan 2026 13:54:56 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 128884026F
- for <dev@dpdk.org>; Mon,  5 Jan 2026 13:50:49 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id CD33C4026F
+ for <dev@dpdk.org>; Mon,  5 Jan 2026 13:54:55 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1767617449;
+ s=mimecast20190719; t=1767617695;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=H8RxXLjMSBH//sk3JQZ7qh7IiJ0AJWCmmIZaq86ygfM=;
- b=V40iN9d77nnZNxWWZRkAzBt0V9Pi2ZAN6SXViMAi1knySeke1jv3J3LTzExnQdpNKqL6kE
- hI0AVSEYjNsUOIFXr/dxYkWookOsp7i/FjSB/+5+Lg+i2Wy+hgaKAzk+ojOzLM18gdD6wG
- H/CZtJqeEUzlZPNddS0ovPJ0Dd9s4do=
-Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
- [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-589-ssHLYFljMFigiBXbJ5N3eg-1; Mon, 05 Jan 2026 07:50:48 -0500
-X-MC-Unique: ssHLYFljMFigiBXbJ5N3eg-1
-X-Mimecast-MFC-AGG-ID: ssHLYFljMFigiBXbJ5N3eg_1767617447
-Received: by mail-lj1-f199.google.com with SMTP id
- 38308e7fff4ca-37fd49d4907so67524641fa.1
- for <dev@dpdk.org>; Mon, 05 Jan 2026 04:50:48 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1767617446; x=1768222246;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=H8RxXLjMSBH//sk3JQZ7qh7IiJ0AJWCmmIZaq86ygfM=;
- b=DFvuy3H3PZVW8iFpqxdrDpR59JFFGQYBopbUv4aFel+n/qonviZAnggwVdbk81tlAC
- bXVuRlcxBy9U9lcI5+JVqug4kDpjEZoC7rAVjdUBgxXv3094xi9khbEiLjkT/0C0HHwd
- T60yd4pv9E0pz2FH0iv3bhcDZE3z3R2ZknoPYXISS69QlBwoo8st2Umq219CJ6ZAxPSI
- uTgJILqngskju6cPQJ5USMz0GYOtRySZlTlWCxrCA2ggXOYCxdkswoaLnaK9Vz3mPWS8
- VBoylZJ7fkghNiokm52anCpu8PgVbrTLhwZSmPX0FQJroD7M6jZdtW/Up9hdg20QPGPr
- O7jw==
-X-Gm-Message-State: AOJu0YzidV8OB8PWDWNj9SKfuxDNBGwDhuPJjhvdfQ3ZsV9HgtQukGgl
- dLHnMJph/P/sthqOBM+W93Ba9zbUkEDhzLxRSJMwk1z0hFhWPK0QUPb/WShXJs/5U5cpkmWiwS0
- ZjJt6+AemlaTMg+Q5YN5bSDLbgoHA1TAiwXoCZxmJnF2L/3LFlQLCi3xMD2oULFhqqlpFtBzMk0
- M4Dfn91ZIqqqi2TjoZgo3pRtWTi18=
-X-Gm-Gg: AY/fxX6SJtzzjzrHCZrQWL0HKux9OPGlPueYUCT9IXdbKTjEDNLDYd57l+cmTl5ypfv
- AMAl8lrBc20TGOkU3vJTqiKYZFUS56WdHNNcqYCsOB5SwlmnR2AvnOF2pYfOFk5e61RA5E5/jxx
- cKobk7+oUX0AnBys36oLkFqHZ5Oh2CsQcYpz+fUuiB6+c8surBH0KhD59oEtpc84t7VZRI
-X-Received: by 2002:a05:651c:1443:b0:382:4d6b:993b with SMTP id
- 38308e7fff4ca-3824d6b9c18mr115244181fa.35.1767617446349; 
- Mon, 05 Jan 2026 04:50:46 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHvy2VTgeh8+ZJ1q1VzYyVB2monJczoN/Q625Qj9agaBnacuVg4h2tM88gH3ZoVV5rkcU2gXwk/3qBhwZlH46E=
-X-Received: by 2002:a05:651c:1443:b0:382:4d6b:993b with SMTP id
- 38308e7fff4ca-3824d6b9c18mr115244081fa.35.1767617445886; Mon, 05 Jan 2026
- 04:50:45 -0800 (PST)
-MIME-Version: 1.0
-References: <20260105123640.48325-1-david.marchand@redhat.com>
-In-Reply-To: <20260105123640.48325-1-david.marchand@redhat.com>
+ content-transfer-encoding:content-transfer-encoding;
+ bh=EBBzAk/7e/rVmHywDt8D64NqXUb60u0d2w9h46/Hmes=;
+ b=QnusSeqb4bM/VMA/bJa49oc6VF7MlsFhRdiP76hZjnQw2JwbkB02f4+R82lHvmvSzCwCYj
+ rBq/9Cvydr+JhHuHuryp8/ozXox4MgdS2k7Q5+4pxS9g+DoZ1ah26f+v2nKCHOnLwXyYH6
+ O3IibA8iC124I0/qHGwN1zBxbrB8Xq8=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-573-y_YJmkfqOpOA14d7BxJ4CA-1; Mon,
+ 05 Jan 2026 07:54:51 -0500
+X-MC-Unique: y_YJmkfqOpOA14d7BxJ4CA-1
+X-Mimecast-MFC-AGG-ID: y_YJmkfqOpOA14d7BxJ4CA_1767617690
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 618E7195609D; Mon,  5 Jan 2026 12:54:50 +0000 (UTC)
+Received: from dmarchan.lan (unknown [10.45.224.210])
+ by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id D959F1800576; Mon,  5 Jan 2026 12:54:47 +0000 (UTC)
 From: David Marchand <david.marchand@redhat.com>
-Date: Mon, 5 Jan 2026 13:50:31 +0100
-X-Gm-Features: AQt7F2q9tbXPtj4RcUIDmqoMLooE8doWCt_LCCfUavyYbfyfUJ0ONsd-6XHq1Us
-Message-ID: <CAJFAV8yOrbgZCo6-BFAVt_0SKUZT1nFm29N1RgsBOk1DV6r5GA@mail.gmail.com>
-Subject: Re: [PATCH] net/tap: remove log when running without multiprocess
 To: dev@dpdk.org
-Cc: stable@dpdk.org, Stephen Hemminger <stephen@networkplumber.org>, 
- Ferruh Yigit <ferruh.yigit@amd.com>,
- Kumara Parameshwaran <kumaraparamesh92@gmail.com>
+Cc: stable@dpdk.org, Ciara Loftus <ciara.loftus@intel.com>,
+ Maryam Tahhan <mtahhan@redhat.com>, Xiaolong Ye <xiaolong.ye@intel.com>,
+ Kevin Laatz <kevin.laatz@intel.com>
+Subject: [PATCH] net/af_xdp: fix external mbuf transmit
+Date: Mon,  5 Jan 2026 13:54:41 +0100
+Message-ID: <20260105125441.50447-1-david.marchand@redhat.com>
+MIME-Version: 1.0
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: mKF76x00DXjHGV9OOelz_kmFRATOjKnSHSlw1sDtySU_1767617447
+X-Mimecast-MFC-PROC-ID: Erpfs9K_z2uyDpeakZYwEv4uM5wcFGWeWOzadtkYHOI_1767617690
 X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+content-type: text/plain; charset="US-ASCII"; x-default=true
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,24 +65,35 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 5 Jan 2026 at 13:37, David Marchand <david.marchand@redhat.com> wrote:
->
-> In case DPDK is started with multiprocess disabled (like in OVS), there
-> is no reason to log an error on multiprocess aspects.
->
-> Note: the only caller of this helper does not check the return value.
->
-> Fixes: c36ce7099c21 ("net/tap: fix to populate FDs in secondary process")
-> Cc: stable@dpdk.org
->
-> Signed-off-by: David Marchand <david.marchand@redhat.com>
+A mbuf may be pointing at external buffer like when forwarding a TSO
+packet coming from a vhost-user port in OVS (see
+RTE_VHOST_USER_EXTBUF_SUPPORT).
 
-I chose to simply silence this warning, though I think something is
-wrong with the sync mechanism.
-Secondary processes should be the one requesting fds, instead of the
-primary process broadcasting to all.
+Checking the mbuf mempool to trigger the zero copy optimisation is
+broken: the driver will (at best) read 0s or (at worse) crash when
+reading more data than what the direct buffer can contain.
 
+Fixes: d8a210774e1d ("net/af_xdp: support unaligned umem chunks")
+Cc: stable@dpdk.org
 
+Signed-off-by: David Marchand <david.marchand@redhat.com>
+---
+ drivers/net/af_xdp/rte_eth_af_xdp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/af_xdp/rte_eth_af_xdp.c b/drivers/net/af_xdp/rte_eth_af_xdp.c
+index f2a8fb95d1..10dbcf1333 100644
+--- a/drivers/net/af_xdp/rte_eth_af_xdp.c
++++ b/drivers/net/af_xdp/rte_eth_af_xdp.c
+@@ -608,7 +608,7 @@ af_xdp_tx_zc(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
+ 	for (i = 0; i < nb_pkts; i++) {
+ 		mbuf = bufs[i];
+ 
+-		if (mbuf->pool == umem->mb_pool) {
++		if (RTE_MBUF_DIRECT(mbuf) && mbuf->pool == umem->mb_pool) {
+ 			desc = reserve_and_fill(txq, mbuf, umem, NULL);
+ 			if (!desc) {
+ 				kick_tx(txq, cq);
 -- 
-David Marchand
+2.52.0
 
