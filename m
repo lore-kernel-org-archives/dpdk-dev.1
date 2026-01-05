@@ -2,73 +2,167 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6640C79FAD
-	for <dpdk-dev@archiver.kernel.org>; Mon,  5 Jan 2026 17:38:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BFEFC79FB0
+	for <dpdk-dev@archiver.kernel.org>; Mon,  5 Jan 2026 17:47:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BC5324026F;
-	Mon,  5 Jan 2026 18:38:36 +0100 (CET)
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com
- [209.85.128.43]) by mails.dpdk.org (Postfix) with ESMTP id 0DE6D40267
- for <dev@dpdk.org>; Mon,  5 Jan 2026 18:38:34 +0100 (CET)
-Received: by mail-wm1-f43.google.com with SMTP id
- 5b1f17b1804b1-4779ce2a624so1353145e9.2
- for <dev@dpdk.org>; Mon, 05 Jan 2026 09:38:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1767634714;
- x=1768239514; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=zDoIQoD4MJN1ti3jRGocEieDLDypqVeVeQ+PN74MgWU=;
- b=Y0NUAkw0vTlrQoyzvn5vyLZVSJvHzTBRtKpqmsdbX4HNh4Hr5Rmn8AgM7tJEmfkWpa
- P1Lnwv+f7ADJN3q1m/ehFaZM0nvujcYCCP39kFc1ZyBgcXYuGsIeohJUnZmFJim5YLh2
- O9Jh40LsysymT5UJhMz69WelUS+GEtlRXGegAordf3gwUCftbuJECKCTnvQodm/wFLg/
- uEuAn6f9vAokVO10Pu9G1hd+GZilgJvjWnsyL3dwh4VQ1VOXDxQJIJPV+0qdcEFVx/F0
- 4UiNPDFrRrQ3RYCHJCoaJvZJoIhhZTdGD7ruQQjqRmQeN0nj36UStcWEKE7lfodT4PvP
- qYIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1767634714; x=1768239514;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=zDoIQoD4MJN1ti3jRGocEieDLDypqVeVeQ+PN74MgWU=;
- b=BRb7ZuQIXhhu8RrOBIJHHfQ/IIO5Id00CorBtc0RhurIw1Ux4DDK21qzL66ybK8tU4
- msN8u8XjzysECbyXkR7KD2VCVaqyRSubyC4IeyXNEYIWcY+tlvnqwIe5O6auC/Qe8eU9
- Z+uTGw3AJVvHMTCK7VpJ1tjDovUpDOh9DMN8NZamAX1Sf5nZovuS1fPmSI75MgbrQWPT
- 52CD0tRRSssG86VPJ7tTgN/K39V8XziNd+VYBe9hZjhITdEVS9wdDOUxM6qTu69ctWFG
- YtaJl2OyoiRqZm4KxbSCrSepIJtc3G4tpp3McihgRsV/a8CVIgkrzfUmmIfqY0rJ8vGy
- s+hw==
-X-Gm-Message-State: AOJu0YxTZujMQYIOHsE0iCJuCWOeNaSoZZCrx194MfRCzupK4QNcm/T8
- UatoPEe5LGb+8nhAtX58giSol+Fs4UDRuenf4ILKpalTJLzjHcxZRAad4dW56gaO1SEU1QZo75j
- eXPxMXU8=
-X-Gm-Gg: AY/fxX46EbO0tKHpq0zlk8M0/jhjwJMWeee6utQtQhEdtdtNXh/gsKOyCOhZIwQJVrh
- endupxs15xUGgXFYeUGXsP7xiFoILfYjYZLWM7js7MYgKpta+xtIuR5heb/8VJndLk9IUvZT3WY
- XJa9POKxDVbrm/OjiTVsFIxSw8ztFur8HSlObqlvwNvzOxbSDkgG+zhflxhQzuSSF6lSVwviSj+
- VfVCjuzQWhf7SCEEV6eNVQ1LILDIa/YIYK+bm5oyVX7TjDlER4czxJyd+SaiUuecqL2n+emFsA1
- HXjuO2D0eEap6iOoVAVnjVsDS6YMw/KDtrKKxjV+aNs+0avqlwTTcDoyiEFWlJlC7/QQWH3B21l
- KPvFj50hsFhGPi++REFmreP37+LGdIr7PlqJH7Mnjw3hwz1UJYfgc4QSEGfMya2+58L4jNwIlwu
- XkOHPQI42TXmC8zlgwfFW2vOOHAIHoOXRckdVN9g9uEk66TH+FczpS
-X-Google-Smtp-Source: AGHT+IGsqgLdrjtnpLAsNjJRwKwWgoQp8gezG/gh+nArdxe3F1nxLgQuI1BGrjHGdllpDuQNsfClOw==
-X-Received: by 2002:a05:600c:a108:b0:471:14b1:da13 with SMTP id
- 5b1f17b1804b1-47d7f36e2abmr151115e9.14.1767634714239; 
- Mon, 05 Jan 2026 09:38:34 -0800 (PST)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-47d6c08ef66sm59996275e9.10.2026.01.05.09.38.33
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 05 Jan 2026 09:38:34 -0800 (PST)
-Date: Mon, 5 Jan 2026 09:38:28 -0800
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Marat Khalili <marat.khalili@huawei.com>
-Cc: "dev@dpdk.org" <dev@dpdk.org>
-Subject: Re: [PATCH] test: add a test for null PMD
-Message-ID: <20260105093828.4caee2f5@phoenix.local>
-In-Reply-To: <7957b0215b1d41cbbc7fc5e52919f0da@huawei.com>
-References: <20260104222523.329760-1-stephen@networkplumber.org>
- <7957b0215b1d41cbbc7fc5e52919f0da@huawei.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 5FC534026F;
+	Mon,  5 Jan 2026 18:47:42 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+ by mails.dpdk.org (Postfix) with ESMTP id 261D740267
+ for <dev@dpdk.org>; Mon,  5 Jan 2026 18:47:39 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1767635260; x=1799171260;
+ h=date:from:to:cc:subject:message-id:references:
+ content-transfer-encoding:in-reply-to:mime-version;
+ bh=ZyyLKFi/JP3pQw7UmscvKgfe9GT6cPwm+NADUeCfFP0=;
+ b=dCE39oP3P2IvMeASnk3q7B8ktdxU0QGRNV/H/eLnp5nrTQIkQvZYZkOz
+ tzQPqX1iYf2SpVzE8Q6XQUKvfp6Pfzg1jzsge6RReW837UsX82dvntB+y
+ OTrNNeLFdpNxgpVBuTkp0yG7EpjAkzP9kGlJmUggyCkDeN6V9MTWED/XX
+ CIuRkjEDednFGCU2LHP//1sEHB7sCoEGPG+7CBmuwdnNdb+lrn69Y0Ge6
+ d2L8x3wyavMtErQPhZK/URn/LsIkHumapWo6EedhurNDjmCZHBvVI4XzR
+ HBNZeE6iSvJNVLv/EF/umDG1QE9NXIP1YYfhSVmpD+ORyK34IAhtO9YoI w==;
+X-CSE-ConnectionGUID: ro6l9zp7TnKN31rs+Xf0sg==
+X-CSE-MsgGUID: Lct0t2TGSY+pcg4i0HJ/jA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11662"; a="71581849"
+X-IronPort-AV: E=Sophos;i="6.21,204,1763452800"; d="scan'208";a="71581849"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+ by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 05 Jan 2026 09:47:39 -0800
+X-CSE-ConnectionGUID: RFhNUDfhRCGwzFNTsn9ydA==
+X-CSE-MsgGUID: h6eLzXNdRwKBnKXWgUy4/w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,204,1763452800"; d="scan'208";a="203413914"
+Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
+ by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 05 Jan 2026 09:47:39 -0800
+Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.29; Mon, 5 Jan 2026 09:47:38 -0800
+Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
+ FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.29 via Frontend Transport; Mon, 5 Jan 2026 09:47:38 -0800
+Received: from CY7PR03CU001.outbound.protection.outlook.com (40.93.198.66) by
+ edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.29; Mon, 5 Jan 2026 09:47:38 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=GNxZvGkyLzMwKTpx8ytcHPiWrKEqDBcSE0nQwlFZF2IXopR+2s0C+5+nGsUUDIYdQLDTl3NQ1IpxAZM64onkjAfykoykPft+brNp8X6RSbG0DE/aQD3uD4wj88NMtsIZVrFvOiUOg35QhJUVHCvEqIdKb1vYYGWP/g+TYbqQ8B4Dzdh3W9grkLsWS9ohozmmEfsJibCwgBDNQe1BFL6bQAOogKB5fdzA77Pe/mNJvAOOplf91EnK9YcQSmkoZh53gd9oY5JbHfzBFTCGOmr1bmQn9U9eL0I2FYE0Frn6h/xFLhDPjL8GLFJ0oeKWC1l4rc1YXUkoxN2WPKZoXMgVQg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=29/9xqQkYL19vVI1k0oNLNeiqXAqIUPEDdeZgua3bo0=;
+ b=BvHGSJ5876VWtqoGCg3NU7QaaqB/TbCpfYMQItJOiD2WysPzZtNeaHsWRUX73sSriZbqG+ftM2nNtrLqJbsZD3lLAp003kDnhoV3BGLbjywQUSFBPjJreGNI2I/TSRWmXG43sflANkmx04BEHSm5wKwrFLe18jAfSRxZWU/LA0nXRmzdFjZTuYkAdDCqP7g/rL3FeeyTnY3Z6AB5704EzV4M8S/kR+Asdo5wBjUTn8tFTvhk9CqMUR6x+yOKUAYuNoTaFnAWzKXRntshbkkCrw3sQAqDo5021XI3TB7mi7mau8Ko6a5vqeqVM7xBnCpwP4DcSbAmzXAuvvX66SHbBw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
+ by DS7PR11MB8807.namprd11.prod.outlook.com (2603:10b6:8:255::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9478.4; Mon, 5 Jan
+ 2026 17:47:36 +0000
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b%4]) with mapi id 15.20.9478.004; Mon, 5 Jan 2026
+ 17:47:36 +0000
+Date: Mon, 5 Jan 2026 17:47:31 +0000
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: Morten =?iso-8859-1?Q?Br=F8rup?= <mb@smartsharesystems.com>
+CC: Anatoly Burakov <anatoly.burakov@intel.com>, Vladimir Medvedkin
+ <vladimir.medvedkin@intel.com>, Praveen Shetty <praveen.shetty@intel.com>,
+ Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>, <dev@dpdk.org>
+Subject: Re: [PATCH] net/intel: cache mbuf fast release mempool
+Message-ID: <aVv5M8mXjOOIMdKU@bricha3-mobl1.ger.corp.intel.com>
+References: <20251212111136.103137-1-mb@smartsharesystems.com>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251212111136.103137-1-mb@smartsharesystems.com>
+X-ClientProxiedBy: DUZPR01CA0349.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:4b8::14) To DS0PR11MB7309.namprd11.prod.outlook.com
+ (2603:10b6:8:13e::17)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|DS7PR11MB8807:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1dd45a6d-bfcd-427b-54ea-08de4c8282fa
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|7053199007;
+X-Microsoft-Antispam-Message-Info: =?iso-8859-1?Q?wg14K38KV+2rvJ3E/P62Cdrwgi1h7JfJH7GQp1z0SoBTil8PY96YnqhySG?=
+ =?iso-8859-1?Q?hT+nTFOJRvHR563kGXQtPiDGNH4bayZ25egLJC0T7QdJx7Vm9kmhbI6NHF?=
+ =?iso-8859-1?Q?s/3ZX/sN9At5f5CZ/DoD6onNFFWos7FPy5IEX6li4gICaa2TRkNwvhTmz5?=
+ =?iso-8859-1?Q?xuz4GjfExeEf76omfKJWX5KpxnBb9O30NbSjJCp8lcc5KML6BAOuhbp5FJ?=
+ =?iso-8859-1?Q?BSDpmDah/Og0EErMYOlArY6j3d827c+FPvPpHyLy6YW85Z39zzdVPZe7ox?=
+ =?iso-8859-1?Q?GGM1ym3adDBIBiJOATR5MfCepQF/uGe2Dg8PO4H5njIqXyxpMcFG+Wssor?=
+ =?iso-8859-1?Q?Kmwm/wjNrSBnuBqpwUCW7D4/eOjSoDh4zrnzwJ9NdunuD6rYfU65Xh9Z8J?=
+ =?iso-8859-1?Q?Ir+hCN4W4bATdLyv4UK0PX0JY983K4/xqbBh117pOyv0s7YCLT8Q6NRE2o?=
+ =?iso-8859-1?Q?1pzZ+VrPLXDzNGzOqVKb4MEzqHtgx25eJ+UBG1R3EEZnR8RWAZSUp63qZ1?=
+ =?iso-8859-1?Q?7punpr9U1ePkTBzjRZ/6Iasf4sQdxvYJ9hltHGREbCATeqcbz2zznfijeG?=
+ =?iso-8859-1?Q?NJcuk5U9CtQdzKwI/rapkIeboEkng6BeGmrnMu02JQPef7yjxJeImheJ1f?=
+ =?iso-8859-1?Q?CGtOa15W8+v1xOfhqMpcisErqsYOlVc9Y30OZfnoxzClEjxJ5POFLOx1uK?=
+ =?iso-8859-1?Q?12y/KWB911rT5UmunwgVq/IaauR9+SBab5TDYvrEjGrjhPc3RNnuz1reZf?=
+ =?iso-8859-1?Q?lImZ7c9ajfajsmR3+7f0hGDjtbuH7c6YnhneGl83Tax7H8ouFWFcmkJBRo?=
+ =?iso-8859-1?Q?nzE6YU0uOstTT+MebOJtUkbaRMU0/U3hEZnKpWSNeUpQ7adIuekhzGLbHJ?=
+ =?iso-8859-1?Q?JZTKRzb98bD5HNvNxgTTC1Z+tJTNxKISTIaeVnnR/fTsFRJbXsm3XPZGjG?=
+ =?iso-8859-1?Q?8rZIZK3RubxsDS6ANPykwXaw+XD4TMqq30hu+jeDCO0y+GIMha21llkV1P?=
+ =?iso-8859-1?Q?zGqFzGHT16YD3p6kuZgBV7S35jBjZcvdJQ2Ur6sb8jdIj0cMirvc3Q+275?=
+ =?iso-8859-1?Q?npo/kqgM/JALkhBqlt94HNFn/nRKVSWESrwj73qiurQH7b8jGQR69Iq4HF?=
+ =?iso-8859-1?Q?V2zXm3reYrJRFtLezaNj8oGgcAg4NqkxnFchDWYIvIjKDRy1kSXiq6czqT?=
+ =?iso-8859-1?Q?e6Z2wR4cmLrfVxi2QIj49KhABylVeu5KZA5TYaMO3SWwf0hR69Sx3cRd18?=
+ =?iso-8859-1?Q?GUvwMVvByogiF+N+3yR/IrbzBNpRWjx6jWYcLCpkUpENZKr9VWsBr5UvPb?=
+ =?iso-8859-1?Q?9LcYzvKViO2utbxZwZCsLqekf3JJJJbWxdjut4Cx84WYzoqPrSlf0wBjdX?=
+ =?iso-8859-1?Q?V83AlqccXcWbe+vYfzENFF1esVWe1RkKFPaFOQa2Yp5w3zxqYbcRCfbcWI?=
+ =?iso-8859-1?Q?fDF9MJONzmyv6Cch7SnCw7TSTj7K9ZRuotgZz8Fs5rDmlhXlvW9mdnsmqj?=
+ =?iso-8859-1?Q?zmo3ocaxZCzWx8HD+7xXbh?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(1800799024)(366016)(7053199007); DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?iso-8859-1?Q?QFVmoVaFSsIrCESMHKZpQQOyul9t2ya47nQLpyw0cdopNVf6XWAgWMb6/J?=
+ =?iso-8859-1?Q?Ir+J2Y3HSA52kOMw4oEqi47l/DsWmvmGEHfzaIEtBtqlh3VoLpq9hanESF?=
+ =?iso-8859-1?Q?51qj7NWfL0OZX6z0USs73sUkdKI6uAlHSCj/OTuKGoDSAPMYXyy+ai6GN1?=
+ =?iso-8859-1?Q?qopt2/BG4CjqcuZBuanvYl+3yy1h6fSza/2sbpQNybyEfwe3GAxH8e/bNV?=
+ =?iso-8859-1?Q?WeiQCb/8iv40XIUIIaHPbz73/1wNX1WlKgBlSjLJBS9FSUABrkBxokczUd?=
+ =?iso-8859-1?Q?v8f1NeJKbIaRg7qdiYbJw1xuL7XnMUZALxnubf6M9rzxWELQVQpOeoTlEx?=
+ =?iso-8859-1?Q?MAj7Bfv0hP9MWz2iRVRX59dVmBTalTO+33UMs05S8GmJUU2yMJvWDofVkK?=
+ =?iso-8859-1?Q?m+3GlkxX9lMvAqxXzeSPVyDPm0xFuBd7m2ODUC+aX/o5/98ixj32oHBqRn?=
+ =?iso-8859-1?Q?WNVwMSbHaVmfniAPdBbFa+uUOJM5dshZUiQijXgueQWU6s/L4KnLZJv67O?=
+ =?iso-8859-1?Q?z5+rSM3f/2AQ08aJC5mCOS7byUv7Zy3cfWRPV0CvGzUgIDiif849z9Vui8?=
+ =?iso-8859-1?Q?zjzFIH2vGdDAupwDMRcFezE4SArDm5aR5oH5nHEk29r2J0F5XdVchso1Z+?=
+ =?iso-8859-1?Q?CMMzUuPthxfMAI49i4TV6+8/32ifbZVK5foaR75PsRrotT0CRC0oJE4+Tm?=
+ =?iso-8859-1?Q?7NET30xpm6cQZmjh7++IjiUBQEn/5RoefEerDw8j8gSt6FMpP6sbQr/AJ8?=
+ =?iso-8859-1?Q?XLTNXvyOp5WNTwnC1fzeB9POrQicjLzW9LRFbrLb+9+uiNdKnCcQK4yvs5?=
+ =?iso-8859-1?Q?zoRSZmiwxG1ncbQRbVJrHsnIW/PDQ6E2NzixtXAV4SsERQu2W4hXNFehAH?=
+ =?iso-8859-1?Q?YaC2wrCd4kyyAe0tEHVlFi7o4cljxnmiEvgX26r/vYaYGV37kvbwaXcfNP?=
+ =?iso-8859-1?Q?uZH8oI9yX/D1VsN9I0wtkx1+8IUlCIwMrJ6MzUhIRj8k8zcySBHfvFdEgG?=
+ =?iso-8859-1?Q?vKophPQhmHiUueD3eewoGtNd9MRb4q89Hj2FWIpKnI9F8d6NwOzX16DKyM?=
+ =?iso-8859-1?Q?Ry1ZsGxgXg0fbn+DK+qNKXRcSizEaC24P2s0iS1bAl8XuL40/Sx9SZynpD?=
+ =?iso-8859-1?Q?rw5RHKvBVzWf6O4qZHbQas6GDVXU9nXdaIHijNglc0TA1OQV86mhN3VDwA?=
+ =?iso-8859-1?Q?g7dLfq7fEPZupyAYVO6+RlhKbQhXFCdpuMuVgYFqp6ioiUBXGV94a2/tFl?=
+ =?iso-8859-1?Q?O5lj7aRK/FRY70gL8NZFqjw1uBtA8/6iGnRJbSyUhWDNs7u5FEYjy9JgKc?=
+ =?iso-8859-1?Q?kVllHFzU3BuBJw0EOQfTR/l9vNXQc/lpG2kjmddO3EkAgAT2f57bBOOrP+?=
+ =?iso-8859-1?Q?C6+tuYSLNvLbIOxaMJEPZhCYRbxbVBqO4XSYvoDhmm9RbEnZ45Mv5unQXA?=
+ =?iso-8859-1?Q?P7q6SJlzDPkAoZmPdR2R66Z5rfUBfcwIY87JYfgYSghDfQmPyGuwM3iBpN?=
+ =?iso-8859-1?Q?9MmamvSu4DFUjgFbEHhBr4NAGQ3yBNXr/SbTUCk3Sj0XgSGbOKhOPEZwOm?=
+ =?iso-8859-1?Q?6GNzPHMitBmxZRbvCD5g1s7RGsD7+km2Ag5QGpCl7dP47ehQTCr1PHQ1dA?=
+ =?iso-8859-1?Q?wOKP5pwswLEbCfztihk2bjA11c3BfvWW69m72Dx1PiUy1/HeoNglhhf1/0?=
+ =?iso-8859-1?Q?8qjhnfYjqKtl8xXhIm48rWu4Bp0don+SvUjgtMSKu6cAxsbHBt6JaizqnY?=
+ =?iso-8859-1?Q?xptKPd/5PV2eHRb093Ypmmxt5Q9XbWz7CYQg+JgR8cGRJ+QAtGxM35uYjv?=
+ =?iso-8859-1?Q?uWKBflSLQXhem6l/CU+a69raRwNuA9g=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1dd45a6d-bfcd-427b-54ea-08de4c8282fa
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jan 2026 17:47:36.2865 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: TWLmAWxvHXPVjuhhXZzxYtsduUdumWnNOWPqUKONllTCeWTK+ioKRF2LQXipw7Vz0SM7l4kGTUHqH48MtXV2KdZNgLb59n/oBz01ilFP2Tc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR11MB8807
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,228 +176,274 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 5 Jan 2026 14:49:41 +0000
-Marat Khalili <marat.khalili@huawei.com> wrote:
-> Thank you for doing this. Having tests for things like this is important both 
-> to make sure they work and as a form of documentation.
+On Fri, Dec 12, 2025 at 11:11:36AM +0000, Morten Brørup wrote:
+> When fast release of mbufs is enabled, the mempool to free the mbufs to
+> was determined by looking at the pool pointer of the first mbuf in the
+> burst being freed, potentially costing a cache miss.
 > 
-> In my humble opinion we should not approach this mechanically though, which is 
-> what AI tools tend to do. It is usually said that tests should test desired 
-> behavior, not specific implementation. Particularly in settings some of the 
-> values might not matter, or the whole range might be acceptable, in other cases 
-> current implementation might be questionable and by writing a test we just 
-> legitimize it.
+> This patch adds a mbuf fast release mempool pointer to the common transmit
+> queue structure, so reading the mbufs during fast release is avoided.
+> The pointer in located a cache line already being accessed,
+> and is only set once, when the first mbuf ever is released.
 > 
-> Please more see comments inline.
-
-I did not see anything obviously wrong with the tests that it generated so
-far. And coverage is more important on legacy code.
-
-> > diff --git a/app/test/test_pmd_null.c b/app/test/test_pmd_null.c
-> > new file mode 100644
-> > index 0000000000..ebc2447c6d
-> > --- /dev/null
-> > +++ b/app/test/test_pmd_null.c
-> > @@ -0,0 +1,827 @@
-> > +/* SPDX-License-Identifier: BSD-3-Clause
-> > + * Copyright(c) 2026 Stephen Hemminger
-> > + */
-> > +
-> > +#include <inttypes.h>
-> > +#include <stdbool.h>
-> > +#include <stdio.h>
-> > +#include <string.h>
-> > +
-> > +#include <rte_bus_vdev.h>
-> > +#include <rte_cycles.h>
-> > +#include <rte_ethdev.h>
-> > +#include <rte_ether.h>
-> > +#include <rte_lcore.h>
-> > +#include <rte_mbuf.h>
-> > +#include <rte_mempool.h>  
+> The fast release mempool pointer also indicates if fast release is
+> enabled, so this pointer is checked instead of the
+> RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE flag in the offloads field in the
+> transmit queue structure.
 > 
-> I do not think it is a problem, but just curious: how does test_pmd_ring.c 
-> manage to use much fewer includes?
-
-I tend to run the tool iwyu on the generated code. This gives a more correct
-set of includes without implied includes.
-
-> > +/* Test device names */
-> > +#define NULL_DEV_NAME "net_null_test"
-> > +
-> > +static struct rte_mempool *mp;
-> > +static uint16_t port_id = RTE_MAX_ETHPORTS;
-> > +static bool port_created;
-> > +static bool port_started;  
+> The same optimizations were applied to mbuf recycle.
 > 
-> // snip setup and teardown functions, could find nothing to nitpick there
-
-The code is exercising device in multiple ways so it didn't seem to need them.
-Would be better to avoid global variables though. Like the mempool should
-be set in setup.
-
-> Default packet size repeats a few times in this file, can we have a global
-> constant for it?
+> For the ice driver, prefetcing the mbufs when fast release of mbufs is
+> enabled became superflouous, and has been moved into the branch for normal
+> mbuf release.
 > 
-> > +		TEST_ASSERT(bufs[i]->pkt_len == 64,
-> > +			    "Unexpected pkt_len: %u", bufs[i]->pkt_len);
-> > +		TEST_ASSERT(bufs[i]->data_len == 64,
-> > +			    "Unexpected data_len: %u", bufs[i]->data_len);
-> > +	}
-> > +
-
-Right test should use RTE_ETHER_MIN_LEN
-
-> > +	/* Allocate mbufs for TX */
-> > +	for (i = 0; i < BURST_SIZE; i++) {
-> > +		bufs[i] = rte_pktmbuf_alloc(mp);
-> > +		TEST_ASSERT(bufs[i] != NULL, "Failed to allocate mbuf");
-> > +		bufs[i]->data_len = 64;
-> > +		bufs[i]->pkt_len = 64;  
+> For the i40e driver, prefetcing the mbufs when fast release of mbufs is
+> enabled was already superflouous, and has been moved into the branch for
+> normal mbuf release.
 > 
-> It would help to test sending packets of various sizes, especially spanning 
-> multiple buffers or allocating them at the edge of buffer. May even uncover 
-> some bugs in the copy mode implementation ;)
-
-Good point.
-The copy mode is making several assumptions already and I see bugs there.
-It is confusing dummy_packet as mbuf versus data.
-
-
-The test and the driver should also test multi-segments.
-
-> > +	/* After start, link should be UP */
-> > +	TEST_ASSERT(link.link_status == RTE_ETH_LINK_UP,
-> > +		    "Expected link UP after start");
-> > +	TEST_ASSERT(link.link_speed == RTE_ETH_SPEED_NUM_10G,
-> > +		    "Expected 10G link speed");  
+> Signed-off-by: Morten Brørup <mb@smartsharesystems.com>
+> ---
+>  drivers/net/intel/common/recycle_mbufs.h | 10 +++++---
+>  drivers/net/intel/common/tx.h            | 14 +++++++++--
+>  drivers/net/intel/cpfl/cpfl_rxtx.c       |  2 ++
+>  drivers/net/intel/i40e/i40e_rxtx.c       | 31 +++++++++++++++---------
+>  drivers/net/intel/iavf/iavf_rxtx.c       |  2 ++
+>  drivers/net/intel/ice/ice_rxtx.c         | 15 +++++++++---
+>  drivers/net/intel/idpf/idpf_rxtx.c       |  2 ++
+>  drivers/net/intel/ixgbe/ixgbe_rxtx.c     |  2 ++
+>  8 files changed, 57 insertions(+), 21 deletions(-)
 > 
-> I am not sure it is important to test that the link speed is exactly 10G. Will 
-> it be a bug if it becomes 25G tomorrow? Probably any valid value would do.
 
-It is a dummy driver, speed really doesn't matter and should probably be ignored.
+This change seems reasonable to me. Ran a quick test with 2 x 100G ports
+and saw no degradation in performance, and it seems to improve performance
+by maybe 1-2%, in that quick test.
 
-> > +static int
-> > +test_null_dev_info(void)
-> > +{
-> > +	struct rte_eth_dev_info dev_info;
-> > +	int ret;
-> > +
-> > +	ret = rte_eth_dev_info_get(port_id, &dev_info);
-> > +	TEST_ASSERT(ret == 0, "Failed to get device info");
-> > +
-> > +	/* Verify expected device info values */
-> > +	TEST_ASSERT(dev_info.max_mac_addrs == 1,
-> > +		    "Expected max_mac_addrs=1, got %u", dev_info.max_mac_addrs);
-> > +	TEST_ASSERT(dev_info.max_rx_pktlen == (uint32_t)-1,
-> > +		    "Unexpected max_rx_pktlen");  
+Therefore:
+Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+
+> diff --git a/drivers/net/intel/common/recycle_mbufs.h b/drivers/net/intel/common/recycle_mbufs.h
+> index fbe09eb5d0..564c8320d1 100644
+> --- a/drivers/net/intel/common/recycle_mbufs.h
+> +++ b/drivers/net/intel/common/recycle_mbufs.h
+> @@ -129,10 +129,14 @@ ci_tx_recycle_mbufs(struct ci_tx_queue *txq, ci_desc_done_fn desc_done,
+>  	rxep += refill_head;
+>  
+>  	/* is fast-free enabled in offloads? */
+> -	if (txq->offloads & RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE) {
+> +	struct rte_mempool *fast_free_mp =
+> +			likely(txq->fast_free_mp != (void *)UINTPTR_MAX) ?
+> +			txq->fast_free_mp :
+> +			(txq->fast_free_mp = txep[0].mbuf->pool);
+> +
+> +	if (fast_free_mp != NULL) {
+>  		/* Avoid txq containing buffers from unexpected mempool. */
+> -		if (unlikely(recycle_rxq_info->mp
+> -					!= txep[0].mbuf->pool))
+> +		if (unlikely(recycle_rxq_info->mp != fast_free_mp))
+>  			return 0;
+>  
+>  		/* Directly put mbufs from Tx to Rx. */
+> diff --git a/drivers/net/intel/common/tx.h b/drivers/net/intel/common/tx.h
+> index 5af64a4cfe..44b6ab76e2 100644
+> --- a/drivers/net/intel/common/tx.h
+> +++ b/drivers/net/intel/common/tx.h
+> @@ -61,6 +61,11 @@ struct ci_tx_queue {
+>  	uint16_t reg_idx;
+>  	uint16_t tx_next_dd;
+>  	uint16_t tx_next_rs;
+> +	/* Mempool pointer for fast release of mbufs.
+> +	 * NULL if disabled, UINTPTR_MAX if enabled and not yet known.
+> +	 * Set at first use (if enabled and not yet known).
+> +	 */
+> +	struct rte_mempool *fast_free_mp;
+>  	uint64_t offloads;
+>  	uint64_t mbuf_errors;
+>  	rte_iova_t tx_ring_dma;        /* TX ring DMA address */
+> @@ -154,8 +159,13 @@ ci_tx_free_bufs_vec(struct ci_tx_queue *txq, ci_desc_done_fn desc_done, bool ctx
+>  	struct ci_tx_entry_vec *txep = txq->sw_ring_vec;
+>  	txep += (txq->tx_next_dd >> ctx_descs) - (n - 1);
+>  
+> -	if (txq->offloads & RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE && (n & 31) == 0) {
+> -		struct rte_mempool *mp = txep[0].mbuf->pool;
+> +	/* is fast-free enabled? */
+> +	struct rte_mempool *mp =
+> +			likely(txq->fast_free_mp != (void *)UINTPTR_MAX) ?
+> +			txq->fast_free_mp :
+> +			(txq->fast_free_mp = txep[0].mbuf->pool);
+> +
+> +	if (mp != NULL && (n & 31) == 0) {
+>  		void **cache_objs;
+>  		struct rte_mempool_cache *cache = rte_mempool_default_cache(mp, rte_lcore_id());
+>  
+> diff --git a/drivers/net/intel/cpfl/cpfl_rxtx.c b/drivers/net/intel/cpfl/cpfl_rxtx.c
+> index 453ec975d5..8fe6354325 100644
+> --- a/drivers/net/intel/cpfl/cpfl_rxtx.c
+> +++ b/drivers/net/intel/cpfl/cpfl_rxtx.c
+> @@ -565,6 +565,8 @@ cpfl_tx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_idx,
+>  	txq->tx_free_thresh = tx_free_thresh;
+>  	txq->queue_id = vport->chunks_info.tx_start_qid + queue_idx;
+>  	txq->port_id = dev->data->port_id;
+> +	txq->fast_free_mp = offloads & RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE ?
+> +			(void *)UINTPTR_MAX : NULL;
+>  	txq->offloads = cpfl_tx_offload_convert(offloads);
+>  	txq->tx_deferred_start = tx_conf->tx_deferred_start;
+>  
+> diff --git a/drivers/net/intel/i40e/i40e_rxtx.c b/drivers/net/intel/i40e/i40e_rxtx.c
+> index 255414dd03..5a73e5d1b3 100644
+> --- a/drivers/net/intel/i40e/i40e_rxtx.c
+> +++ b/drivers/net/intel/i40e/i40e_rxtx.c
+> @@ -1337,8 +1337,8 @@ static __rte_always_inline int
+>  i40e_tx_free_bufs(struct ci_tx_queue *txq)
+>  {
+>  	struct ci_tx_entry *txep;
+> -	uint16_t tx_rs_thresh = txq->tx_rs_thresh;
+> -	uint16_t i = 0, j = 0;
+> +	const uint16_t tx_rs_thresh = txq->tx_rs_thresh;
+> +	uint16_t i, j;
+>  	struct rte_mbuf *free[I40E_TX_MAX_FREE_BUF_SZ];
+>  	const uint16_t k = RTE_ALIGN_FLOOR(tx_rs_thresh, I40E_TX_MAX_FREE_BUF_SZ);
+>  	const uint16_t m = tx_rs_thresh % I40E_TX_MAX_FREE_BUF_SZ;
+> @@ -1350,17 +1350,19 @@ i40e_tx_free_bufs(struct ci_tx_queue *txq)
+>  
+>  	txep = &txq->sw_ring[txq->tx_next_dd - (tx_rs_thresh - 1)];
+>  
+> -	for (i = 0; i < tx_rs_thresh; i++)
+> -		rte_prefetch0((txep + i)->mbuf);
+> +	struct rte_mempool *fast_free_mp =
+> +			likely(txq->fast_free_mp != (void *)UINTPTR_MAX) ?
+> +			txq->fast_free_mp :
+> +			(txq->fast_free_mp = txep[0].mbuf->pool);
+>  
+> -	if (txq->offloads & RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE) {
+> +	if (fast_free_mp != NULL) {
+>  		if (k) {
+>  			for (j = 0; j != k; j += I40E_TX_MAX_FREE_BUF_SZ) {
+>  				for (i = 0; i < I40E_TX_MAX_FREE_BUF_SZ; ++i, ++txep) {
+>  					free[i] = txep->mbuf;
+>  					txep->mbuf = NULL;
+>  				}
+> -				rte_mbuf_raw_free_bulk(free[0]->pool, free,
+> +				rte_mbuf_raw_free_bulk(fast_free_mp, free,
+>  						I40E_TX_MAX_FREE_BUF_SZ);
+>  			}
+>  		}
+> @@ -1370,21 +1372,24 @@ i40e_tx_free_bufs(struct ci_tx_queue *txq)
+>  				free[i] = txep->mbuf;
+>  				txep->mbuf = NULL;
+>  			}
+> -			rte_mbuf_raw_free_bulk(free[0]->pool, free, m);
+> +			rte_mbuf_raw_free_bulk(fast_free_mp, free, m);
+>  		}
+>  	} else {
+> -		for (i = 0; i < txq->tx_rs_thresh; ++i, ++txep) {
+> +		for (i = 0; i < tx_rs_thresh; i++)
+> +			rte_prefetch0((txep + i)->mbuf);
+> +
+> +		for (i = 0; i < tx_rs_thresh; ++i, ++txep) {
+>  			rte_pktmbuf_free_seg(txep->mbuf);
+>  			txep->mbuf = NULL;
+>  		}
+>  	}
+>  
+> -	txq->nb_tx_free = (uint16_t)(txq->nb_tx_free + txq->tx_rs_thresh);
+> -	txq->tx_next_dd = (uint16_t)(txq->tx_next_dd + txq->tx_rs_thresh);
+> +	txq->nb_tx_free = (uint16_t)(txq->nb_tx_free + tx_rs_thresh);
+> +	txq->tx_next_dd = (uint16_t)(txq->tx_next_dd + tx_rs_thresh);
+>  	if (txq->tx_next_dd >= txq->nb_tx_desc)
+> -		txq->tx_next_dd = (uint16_t)(txq->tx_rs_thresh - 1);
+> +		txq->tx_next_dd = (uint16_t)(tx_rs_thresh - 1);
+>  
+> -	return txq->tx_rs_thresh;
+> +	return tx_rs_thresh;
+>  }
+>  
+>  /* Populate 4 descriptors with data from 4 mbufs */
+> @@ -2550,6 +2555,8 @@ i40e_dev_tx_queue_setup(struct rte_eth_dev *dev,
+>  	txq->queue_id = queue_idx;
+>  	txq->reg_idx = reg_idx;
+>  	txq->port_id = dev->data->port_id;
+> +	txq->fast_free_mp = offloads & RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE ?
+> +			(void *)UINTPTR_MAX : NULL;
+>  	txq->offloads = offloads;
+>  	txq->i40e_vsi = vsi;
+>  	txq->tx_deferred_start = tx_conf->tx_deferred_start;
+> diff --git a/drivers/net/intel/iavf/iavf_rxtx.c b/drivers/net/intel/iavf/iavf_rxtx.c
+> index d8662fd815..18ec1d5d78 100644
+> --- a/drivers/net/intel/iavf/iavf_rxtx.c
+> +++ b/drivers/net/intel/iavf/iavf_rxtx.c
+> @@ -820,6 +820,8 @@ iavf_dev_tx_queue_setup(struct rte_eth_dev *dev,
+>  	txq->tx_free_thresh = tx_free_thresh;
+>  	txq->queue_id = queue_idx;
+>  	txq->port_id = dev->data->port_id;
+> +	txq->fast_free_mp = offloads & RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE ?
+> +			(void *)UINTPTR_MAX : NULL;
+>  	txq->offloads = offloads;
+>  	txq->tx_deferred_start = tx_conf->tx_deferred_start;
+>  	txq->iavf_vsi = vsi;
+> diff --git a/drivers/net/intel/ice/ice_rxtx.c b/drivers/net/intel/ice/ice_rxtx.c
+> index 74db0fbec9..e4b4aa2806 100644
+> --- a/drivers/net/intel/ice/ice_rxtx.c
+> +++ b/drivers/net/intel/ice/ice_rxtx.c
+> @@ -1628,6 +1628,8 @@ ice_tx_queue_setup(struct rte_eth_dev *dev,
+>  
+>  	txq->reg_idx = vsi->base_queue + queue_idx;
+>  	txq->port_id = dev->data->port_id;
+> +	txq->fast_free_mp = offloads & RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE ?
+> +			(void *)UINTPTR_MAX : NULL;
+>  	txq->offloads = offloads;
+>  	txq->ice_vsi = vsi;
+>  	txq->tx_deferred_start = tx_conf->tx_deferred_start;
+> @@ -3409,15 +3411,20 @@ ice_tx_free_bufs(struct ci_tx_queue *txq)
+>  
+>  	txep = &txq->sw_ring[txq->tx_next_dd - (txq->tx_rs_thresh - 1)];
+>  
+> -	for (i = 0; i < txq->tx_rs_thresh; i++)
+> -		rte_prefetch0((txep + i)->mbuf);
+> +	struct rte_mempool *fast_free_mp =
+> +			likely(txq->fast_free_mp != (void *)UINTPTR_MAX) ?
+> +			txq->fast_free_mp :
+> +			(txq->fast_free_mp = txep[0].mbuf->pool);
+>  
+> -	if (txq->offloads & RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE) {
+> +	if (fast_free_mp != NULL) {
+>  		for (i = 0; i < txq->tx_rs_thresh; ++i, ++txep) {
+> -			rte_mempool_put(txep->mbuf->pool, txep->mbuf);
+> +			rte_mempool_put(fast_free_mp, txep->mbuf);
+>  			txep->mbuf = NULL;
+>  		}
+>  	} else {
+> +		for (i = 0; i < txq->tx_rs_thresh; i++)
+> +			rte_prefetch0((txep + i)->mbuf);
+> +
+>  		for (i = 0; i < txq->tx_rs_thresh; ++i, ++txep) {
+>  			rte_pktmbuf_free_seg(txep->mbuf);
+>  			txep->mbuf = NULL;
+> diff --git a/drivers/net/intel/idpf/idpf_rxtx.c b/drivers/net/intel/idpf/idpf_rxtx.c
+> index 4796d8b862..b838d7650a 100644
+> --- a/drivers/net/intel/idpf/idpf_rxtx.c
+> +++ b/drivers/net/intel/idpf/idpf_rxtx.c
+> @@ -440,6 +440,8 @@ idpf_tx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_idx,
+>  	txq->tx_free_thresh = tx_free_thresh;
+>  	txq->queue_id = vport->chunks_info.tx_start_qid + queue_idx;
+>  	txq->port_id = dev->data->port_id;
+> +	txq->fast_free_mp = offloads & RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE ?
+> +			(void *)UINTPTR_MAX : NULL;
+>  	txq->offloads = idpf_tx_offload_convert(offloads);
+>  	txq->tx_deferred_start = tx_conf->tx_deferred_start;
+>  
+> diff --git a/drivers/net/intel/ixgbe/ixgbe_rxtx.c b/drivers/net/intel/ixgbe/ixgbe_rxtx.c
+> index a7583c178a..824e328230 100644
+> --- a/drivers/net/intel/ixgbe/ixgbe_rxtx.c
+> +++ b/drivers/net/intel/ixgbe/ixgbe_rxtx.c
+> @@ -2878,6 +2878,8 @@ ixgbe_dev_tx_queue_setup(struct rte_eth_dev *dev,
+>  	txq->reg_idx = (uint16_t)((RTE_ETH_DEV_SRIOV(dev).active == 0) ?
+>  		queue_idx : RTE_ETH_DEV_SRIOV(dev).def_pool_q_idx + queue_idx);
+>  	txq->port_id = dev->data->port_id;
+> +	txq->fast_free_mp = offloads & RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE ?
+> +			(void *)UINTPTR_MAX : NULL;
+>  	txq->offloads = offloads;
+>  	txq->ops = &def_txq_ops;
+>  	txq->tx_deferred_start = tx_conf->tx_deferred_start;
+> -- 
+> 2.43.0
 > 
-> Why is (uint32_t)-1 is a valid packet length for this device? Can at actually 
-> accept them?
-
-This is awkward way of saying UINT32_MAX.
-And it means the driver has no limit on what the receive buffer might be.
-This is not really right it does have limits based on the device flags.
-
-> 
-> > +	TEST_ASSERT(dev_info.min_rx_bufsize == 0,
-> > +		    "Expected min_rx_bufsize=0, got %u", dev_info.min_rx_bufsize);
-> > +
-> > +	/* Check TX offload capabilities */
-> > +	TEST_ASSERT(dev_info.tx_offload_capa & RTE_ETH_TX_OFFLOAD_MULTI_SEGS,
-> > +		    "Expected MULTI_SEGS TX offload capability");  
-> 
-> It sure sets these values, but are they correct values, and would anything else 
-> be incorrect?
-
-I think test is ok testing for what it expects to work.
-
-> > +/*
-> > + * Test: RSS configuration
-> > + * Note: RSS requires multi-queue configuration
-> > + */
-> > +static int
-> > +test_null_rss_config(void)
-> > +{
-> > +	struct rte_eth_dev_info dev_info;
-> > +	struct rte_eth_rss_conf rss_conf;
-> > +	struct rte_eth_conf port_conf = {0};
-> > +	uint8_t rss_key[40];
-> > +	uint16_t rss_port;
-> > +	const uint16_t num_queues = 2;
-> > +	uint16_t q;
-> > +	int ret;
-> > +
-> > +	/* Create a new null device for RSS testing with multiple queues */
-> > +	ret = create_null_port("net_null_rss_test", NULL, &rss_port);
-> > +	TEST_ASSERT(ret == 0, "Failed to create null port for RSS test");
-> > +
-> > +	ret = rte_eth_dev_info_get(rss_port, &dev_info);
-> > +	TEST_ASSERT(ret == 0, "Failed to get device info");
-> > +
-> > +	/* Configure with RSS enabled and multiple queues */
-> > +	port_conf.rxmode.mq_mode = RTE_ETH_MQ_RX_RSS;
-> > +	port_conf.rx_adv_conf.rss_conf.rss_hf = dev_info.flow_type_rss_offloads;
-> > +
-> > +	ret = rte_eth_dev_configure(rss_port, num_queues, num_queues, &port_conf);
-> > +	TEST_ASSERT(ret == 0, "Failed to configure RSS port");
-> > +
-> > +	for (q = 0; q < num_queues; q++) {
-> > +		ret = rte_eth_rx_queue_setup(rss_port, q, RING_SIZE,
-> > +					     rte_eth_dev_socket_id(rss_port),
-> > +					     NULL, mp);
-> > +		TEST_ASSERT(ret == 0, "Failed to setup RX queue %u", q);
-> > +
-> > +		ret = rte_eth_tx_queue_setup(rss_port, q, RING_SIZE,
-> > +					     rte_eth_dev_socket_id(rss_port),
-> > +					     NULL);
-> > +		TEST_ASSERT(ret == 0, "Failed to setup TX queue %u", q);
-> > +	}
-> > +
-> > +	ret = rte_eth_dev_start(rss_port);
-> > +	TEST_ASSERT(ret == 0, "Failed to start RSS port");
-> > +
-> > +	/* Get current RSS config */
-> > +	memset(&rss_conf, 0, sizeof(rss_conf));
-> > +	rss_conf.rss_key = rss_key;
-> > +	rss_conf.rss_key_len = sizeof(rss_key);
-> > +
-> > +	ret = rte_eth_dev_rss_hash_conf_get(rss_port, &rss_conf);
-> > +	TEST_ASSERT(ret == 0, "Failed to get RSS hash config");
-> > +
-> > +	/* Update RSS config with new key */
-> > +	memset(rss_key, 0x55, sizeof(rss_key));
-> > +	rss_conf.rss_key = rss_key;
-> > +	rss_conf.rss_key_len = sizeof(rss_key);
-> > +	rss_conf.rss_hf = dev_info.flow_type_rss_offloads;
-> > +
-> > +	ret = rte_eth_dev_rss_hash_update(rss_port, &rss_conf);
-> > +	TEST_ASSERT(ret == 0, "Failed to update RSS hash config");
-> > +
-> > +	/* Verify the update */
-> > +	memset(rss_key, 0, sizeof(rss_key));
-> > +	rss_conf.rss_key = rss_key;
-> > +
-> > +	ret = rte_eth_dev_rss_hash_conf_get(rss_port, &rss_conf);
-> > +	TEST_ASSERT(ret == 0, "Failed to get RSS hash config after update");
-> > +
-> > +	/* Verify key was updated */
-> > +	for (unsigned int i = 0; i < sizeof(rss_key); i++) {
-> > +		TEST_ASSERT(rss_key[i] == 0x55,
-> > +			    "RSS key not updated at byte %u", i);
-> > +	}
-> > +  
-> 
-> Can we receive and send something from/to these queues and verify resulting 
-> statistics? Statistics is one of the most important use cases for the null 
-> device, and it does benefit from multi-queue.
-
-Use of RSS in Null PMD is odd. It really doesn't do RSS. It is lying about it.
-The packets are never hashed on receive. Looks like it was just a way to exercise
-the RSS API's.
-
-My goal is to get some tests for vdev's where there are none now, and fix
-some of the obvious wonky stuff in the drivers (like doing stats in odd and
-slow ways).
-
-
