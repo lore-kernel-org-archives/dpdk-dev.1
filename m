@@ -2,127 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C41AAC79FA7
-	for <dpdk-dev@archiver.kernel.org>; Mon,  5 Jan 2026 16:52:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6640C79FAD
+	for <dpdk-dev@archiver.kernel.org>; Mon,  5 Jan 2026 17:38:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DB9C14026F;
-	Mon,  5 Jan 2026 17:52:36 +0100 (CET)
-Received: from CY7PR03CU001.outbound.protection.outlook.com
- (mail-westcentralusazon11010016.outbound.protection.outlook.com
- [40.93.198.16]) by mails.dpdk.org (Postfix) with ESMTP id EDDBF40267
- for <dev@dpdk.org>; Mon,  5 Jan 2026 17:52:34 +0100 (CET)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=V2EhAz35IYUPXdCfaxREdHPf7pi7/zArJILvJNbYjHSymrc7T4c8LBxdBAlkGrDfmMzGWQf2UifEUHoTb6U1fDAJUehl269AXZ72QbNsmYWvvKI7RLjS+rPt+dcwIgv69wdOfSF618q0VXnlIWxGP+KTrVZEaLSZZEi+0QX6GbIrfVbCsuKL9dQIEuV7ygJtrh/0wyYHkBbRB9WanstRdzp+zsyFjyDEsSewpyIk8Kayzr4M+1mxvsckk1X/PIR6WvKYYu0MrDyvUKNEmNxIQ3EAbadGimfxj7l8bFH5fJ0wuvxqrMsHkVEIHbebMVFsOl8oRA1iZry3sxzuLfgcPw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=250NRgGdXcrMs1vGMQJEXGHn3/IuEBV/YN0n7XB2QkU=;
- b=N44wyy6nG3KA9iUAwEov5NSW4udEDbL6Ky8JsdiKT+gceQHTyn/qPffEQtSaqfcKEcdnPZLpZwE7R53excW7GYVvIf2QZ3ANcL9sgGAsmp/mSfEOugneKc6DCWID5qrFaKarQgAkDcptdIdEyPy9KPDeun+v5M3jt3a3Bp2IpEqMWTHDrtlqb4zJ0pa09UmyOnYPiaboLK7y5IWJfwmXGg+LjJ3PeXVs/5dWuxvByEZ5hu9fTNSosOndw8Rfm7ZLiuR5fJZrZrRmWN1pA+18958vI9m9txbRt5UnbpBSf4MtbPqJXD0jI0H0LdMYNXVVFhAaDuYpoZJlw4pzmPoxsA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=oktetlabs.ru smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=250NRgGdXcrMs1vGMQJEXGHn3/IuEBV/YN0n7XB2QkU=;
- b=Uhs2njnS8Q5c/t+mKtnsOaJKKSRaDFSiz2FNJHAzExG9QLhuSzaTWFpQjufJGclMPFgRZYIa0/mmd2XGggPccLg/MHF2h/ATJ9MJTMA+3Kg8cLVL95q/rKG4b/bdfhBThcWpO2gOj32Ddqm64NUNdxKNzde4JNcKmJT6fQ2BwlDVWS8Xm9OhrekjONX9+PMHrRqvQk5XetABHlJUi5W4unjadqEXAnhyC5MdBy12+AiyDGwevf0aReNxIU/mZpNuztgMXSSntB1aALacr9QlQ7m5tc6MDIRdaLiItgmmnTJh+mTo7cCLDKUlA4RlvQYPTYnCdeav9MJ4hK15ijdWLg==
-Received: from PH7P223CA0021.NAMP223.PROD.OUTLOOK.COM (2603:10b6:510:338::16)
- by PH0PR12MB7814.namprd12.prod.outlook.com (2603:10b6:510:288::15)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9478.4; Mon, 5 Jan
- 2026 16:52:27 +0000
-Received: from CY4PEPF0000E9D3.namprd03.prod.outlook.com
- (2603:10b6:510:338:cafe::9b) by PH7P223CA0021.outlook.office365.com
- (2603:10b6:510:338::16) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9478.5 via Frontend Transport; Mon, 5
- Jan 2026 16:52:21 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com;
- dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- CY4PEPF0000E9D3.mail.protection.outlook.com (10.167.241.138) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9499.1 via Frontend Transport; Mon, 5 Jan 2026 16:52:25 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 5 Jan
- 2026 08:52:03 -0800
-Received: from nvidia.com (10.126.231.35) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 5 Jan
- 2026 08:51:59 -0800
-From: Gregory Etelson <getelson@nvidia.com>
-To: <getelson@nvidia.com>
-CC: <andrew.rybchenko@oktetlabs.ru>, <dev@dpdk.org>, <mkashani@nvidia.com>,
- <thomas@monjalon.net>, <viacheslavo@nvidia.com>, <matan@nvidia.com>,
- <stephen@networkplumber.org>
-Subject: [RFC PATCH v2] ethdev: support selective Rx data
-Date: Mon, 5 Jan 2026 18:51:43 +0200
-Message-ID: <20260105165143.326426-1-getelson@nvidia.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20260104131301.196350-1-getelson@nvidia.com>
-References: <20260104131301.196350-1-getelson@nvidia.com>
+	by mails.dpdk.org (Postfix) with ESMTP id BC5324026F;
+	Mon,  5 Jan 2026 18:38:36 +0100 (CET)
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com
+ [209.85.128.43]) by mails.dpdk.org (Postfix) with ESMTP id 0DE6D40267
+ for <dev@dpdk.org>; Mon,  5 Jan 2026 18:38:34 +0100 (CET)
+Received: by mail-wm1-f43.google.com with SMTP id
+ 5b1f17b1804b1-4779ce2a624so1353145e9.2
+ for <dev@dpdk.org>; Mon, 05 Jan 2026 09:38:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1767634714;
+ x=1768239514; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=zDoIQoD4MJN1ti3jRGocEieDLDypqVeVeQ+PN74MgWU=;
+ b=Y0NUAkw0vTlrQoyzvn5vyLZVSJvHzTBRtKpqmsdbX4HNh4Hr5Rmn8AgM7tJEmfkWpa
+ P1Lnwv+f7ADJN3q1m/ehFaZM0nvujcYCCP39kFc1ZyBgcXYuGsIeohJUnZmFJim5YLh2
+ O9Jh40LsysymT5UJhMz69WelUS+GEtlRXGegAordf3gwUCftbuJECKCTnvQodm/wFLg/
+ uEuAn6f9vAokVO10Pu9G1hd+GZilgJvjWnsyL3dwh4VQ1VOXDxQJIJPV+0qdcEFVx/F0
+ 4UiNPDFrRrQ3RYCHJCoaJvZJoIhhZTdGD7ruQQjqRmQeN0nj36UStcWEKE7lfodT4PvP
+ qYIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1767634714; x=1768239514;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=zDoIQoD4MJN1ti3jRGocEieDLDypqVeVeQ+PN74MgWU=;
+ b=BRb7ZuQIXhhu8RrOBIJHHfQ/IIO5Id00CorBtc0RhurIw1Ux4DDK21qzL66ybK8tU4
+ msN8u8XjzysECbyXkR7KD2VCVaqyRSubyC4IeyXNEYIWcY+tlvnqwIe5O6auC/Qe8eU9
+ Z+uTGw3AJVvHMTCK7VpJ1tjDovUpDOh9DMN8NZamAX1Sf5nZovuS1fPmSI75MgbrQWPT
+ 52CD0tRRSssG86VPJ7tTgN/K39V8XziNd+VYBe9hZjhITdEVS9wdDOUxM6qTu69ctWFG
+ YtaJl2OyoiRqZm4KxbSCrSepIJtc3G4tpp3McihgRsV/a8CVIgkrzfUmmIfqY0rJ8vGy
+ s+hw==
+X-Gm-Message-State: AOJu0YxTZujMQYIOHsE0iCJuCWOeNaSoZZCrx194MfRCzupK4QNcm/T8
+ UatoPEe5LGb+8nhAtX58giSol+Fs4UDRuenf4ILKpalTJLzjHcxZRAad4dW56gaO1SEU1QZo75j
+ eXPxMXU8=
+X-Gm-Gg: AY/fxX46EbO0tKHpq0zlk8M0/jhjwJMWeee6utQtQhEdtdtNXh/gsKOyCOhZIwQJVrh
+ endupxs15xUGgXFYeUGXsP7xiFoILfYjYZLWM7js7MYgKpta+xtIuR5heb/8VJndLk9IUvZT3WY
+ XJa9POKxDVbrm/OjiTVsFIxSw8ztFur8HSlObqlvwNvzOxbSDkgG+zhflxhQzuSSF6lSVwviSj+
+ VfVCjuzQWhf7SCEEV6eNVQ1LILDIa/YIYK+bm5oyVX7TjDlER4czxJyd+SaiUuecqL2n+emFsA1
+ HXjuO2D0eEap6iOoVAVnjVsDS6YMw/KDtrKKxjV+aNs+0avqlwTTcDoyiEFWlJlC7/QQWH3B21l
+ KPvFj50hsFhGPi++REFmreP37+LGdIr7PlqJH7Mnjw3hwz1UJYfgc4QSEGfMya2+58L4jNwIlwu
+ XkOHPQI42TXmC8zlgwfFW2vOOHAIHoOXRckdVN9g9uEk66TH+FczpS
+X-Google-Smtp-Source: AGHT+IGsqgLdrjtnpLAsNjJRwKwWgoQp8gezG/gh+nArdxe3F1nxLgQuI1BGrjHGdllpDuQNsfClOw==
+X-Received: by 2002:a05:600c:a108:b0:471:14b1:da13 with SMTP id
+ 5b1f17b1804b1-47d7f36e2abmr151115e9.14.1767634714239; 
+ Mon, 05 Jan 2026 09:38:34 -0800 (PST)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 5b1f17b1804b1-47d6c08ef66sm59996275e9.10.2026.01.05.09.38.33
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Mon, 05 Jan 2026 09:38:34 -0800 (PST)
+Date: Mon, 5 Jan 2026 09:38:28 -0800
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Marat Khalili <marat.khalili@huawei.com>
+Cc: "dev@dpdk.org" <dev@dpdk.org>
+Subject: Re: [PATCH] test: add a test for null PMD
+Message-ID: <20260105093828.4caee2f5@phoenix.local>
+In-Reply-To: <7957b0215b1d41cbbc7fc5e52919f0da@huawei.com>
+References: <20260104222523.329760-1-stephen@networkplumber.org>
+ <7957b0215b1d41cbbc7fc5e52919f0da@huawei.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.126.231.35]
-X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000E9D3:EE_|PH0PR12MB7814:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2fccdd61-5a2a-4a11-4b99-08de4c7acdee
-X-LD-Processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|36860700013|82310400026|376014|1800799024; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?VQZxupD3tnJ0MnMvpHwxZpBlVXiNH2OQ9Rxa4JfyH7ZBj3Dcyx+4V/+gak0C?=
- =?us-ascii?Q?rpJv5iSxknPkzUYZghjWgOL7h7a6+LKhudq70l2ByCEqCnp7mQ1f3ETXpCJf?=
- =?us-ascii?Q?aGdlj6G6Wvj3x+MLCATVmI/IJ9uiIz6iAsUlE4XdG7tR2LBiDmsKijGXgerk?=
- =?us-ascii?Q?3HUc5tXDZyTXbSTTSYE3+21odYQsSBP/QjgaY5f95UWryfLdftTHLm+44669?=
- =?us-ascii?Q?dUcbO6d4mPL9jTWnOvpmWYkMWulSeQ89mcTewNdtOjgsdCauXuMx9LKl2uFX?=
- =?us-ascii?Q?0tLcgCABpiGIeMmQoJrm742C+aiS+RS6hvE/4xiVmfjWZsNj+zWQgg9TKWfB?=
- =?us-ascii?Q?n9V6PmqZwxcl6z/lH1OfuyOZnPNM0w5vve6QScB3xSoHC6eS+EuCqYLSt7CP?=
- =?us-ascii?Q?oP0B7pkihqw7at57pic7rt4hwh53XZtjFE139+7hPYJ8bkq81eOHwipcpy9I?=
- =?us-ascii?Q?p20O/JB7vVYab7VoXNVMZL1n+vmz8sLrPECk2avXiGUBLao6WWvcmLhJ15S9?=
- =?us-ascii?Q?t09yx5QIr8XJM5HG/1aROGylUHw3RtcJpouot0qELXSBom1Y4ORCykXEgoNg?=
- =?us-ascii?Q?5AYZXdd2FWg/Bsq1CRuSr0c7ZQjRw+XIPpEJr+vDP3w6fnj8Pz14c3MPKh7c?=
- =?us-ascii?Q?ZvzS8wFM9Z9ix71mckOLMgkXmXysdP8EoGGk1dQd/JX1nefgczRpyIskpWS1?=
- =?us-ascii?Q?FGHSQ8Cs2HTKi09aonmgOMWX+q7wZ9vlce5f/VGVFlrIo+a8SKSLvdMsBZtu?=
- =?us-ascii?Q?gMAZV8LceOzg2beGAEnlWQrTosjSFfXWDG+PTzsZFSPau3s0yHu2fBekJXmW?=
- =?us-ascii?Q?Nr7OmlIVOgOk0dfSsShRskBZisni/gutgAC0kml1U3u85hI16qSGiYWONEFH?=
- =?us-ascii?Q?/HjXi0CODS2OqRnu6Ew7N8hgr5wXvPiP9lgJ6GB/dtorGHz53NC82d6EqZJh?=
- =?us-ascii?Q?+UbeXLCrkcHe96q+qA70ropKIs8fRH/ueI5YCMkCSxIxJrBTysxpD6y4bP9X?=
- =?us-ascii?Q?nVqnSBj587CLKsxrBeFrdAuyfj2kIWjmql+vxXxWFGFKHgxYYGdM1QeuyeZF?=
- =?us-ascii?Q?/IQ0a0BreiqYfL8a8a8X5XSP9A5mA7xYsBmLH96AcG0jz8bIsB4LuAYRavDe?=
- =?us-ascii?Q?uV/S/3oK8CE1FOIWPU55KMAZvhzG5Ki0MZ/d1QOTTlZO8x4uq3+QbKcI2Gtm?=
- =?us-ascii?Q?lijwC91IOdmQ2iPvRfvHCgD7EZsH5ntbwea23AlFjLfSWrEDuvYAqbI+X7ex?=
- =?us-ascii?Q?n+r/EQheN9J1zD5xluzaPBQr6izsTLZN7uOqzCEkII43lNI6UqiSSB6ZmPK4?=
- =?us-ascii?Q?/X6eDT31nkm/IEeVm3kbG6c5kJx7vWGGwBszCgZzETv8D1tkkkq67ksTRCGi?=
- =?us-ascii?Q?nXBNs1W1r6JXRkk4IRFt6vlssIaynSm0MshGwUn8EZ8G3KJUVeIhzYOSJ9+e?=
- =?us-ascii?Q?SFutPXiQRMinU6ZpGT4iQMvXxOr0cFkAPUVj0yzRuLKfVbaCAZbr9qgDEo6L?=
- =?us-ascii?Q?go/XXQ18VfacNKuUCln0HImRGEs7d7FBuSjKbzThfmigtaYElagEW2cBfvGZ?=
- =?us-ascii?Q?J2k2SqYru9/ETQiw6Dg=3D?=
-X-Forefront-Antispam-Report: CIP:216.228.117.160; CTRY:US; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge1.nvidia.com; CAT:NONE;
- SFS:(13230040)(36860700013)(82310400026)(376014)(1800799024); DIR:OUT;
- SFP:1101; 
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jan 2026 16:52:25.6489 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2fccdd61-5a2a-4a11-4b99-08de4c7acdee
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.160];
- Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CY4PEPF0000E9D3.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB7814
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -136,77 +82,228 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-In some cases application does not need to receive entire packet
-from port hardware.
-If application could receive required Rx data only and safely discard
-the rest of Rx packet data, that could improve port performance by
-reducing PCI bandwidth and application memory consumption.
+On Mon, 5 Jan 2026 14:49:41 +0000
+Marat Khalili <marat.khalili@huawei.com> wrote:
+> Thank you for doing this. Having tests for things like this is important both 
+> to make sure they work and as a form of documentation.
+> 
+> In my humble opinion we should not approach this mechanically though, which is 
+> what AI tools tend to do. It is usually said that tests should test desired 
+> behavior, not specific implementation. Particularly in settings some of the 
+> values might not matter, or the whole range might be acceptable, in other cases 
+> current implementation might be questionable and by writing a test we just 
+> legitimize it.
+> 
+> Please more see comments inline.
 
-Selective Rx data allows application to receive
-only pre-configured packet segments and discard the rest.
-For example:
-- Deliver the first N bytes only.
-- Deliver the last N bytes only.
-- Deliver N1 bytes from offest Off1 and N2 bytes from offset Off2.
+I did not see anything obviously wrong with the tests that it generated so
+far. And coverage is more important on legacy code.
 
-Selective Rx data is implemented on-top of the existing Rx
-BUFFER_SPLIT functionality:
-- The rte_eth_rxseg_split will use the NULL mempool for data segments
-that should be discarded.
-- PMD will not create MBUF segments if no data was read.
+> > diff --git a/app/test/test_pmd_null.c b/app/test/test_pmd_null.c
+> > new file mode 100644
+> > index 0000000000..ebc2447c6d
+> > --- /dev/null
+> > +++ b/app/test/test_pmd_null.c
+> > @@ -0,0 +1,827 @@
+> > +/* SPDX-License-Identifier: BSD-3-Clause
+> > + * Copyright(c) 2026 Stephen Hemminger
+> > + */
+> > +
+> > +#include <inttypes.h>
+> > +#include <stdbool.h>
+> > +#include <stdio.h>
+> > +#include <string.h>
+> > +
+> > +#include <rte_bus_vdev.h>
+> > +#include <rte_cycles.h>
+> > +#include <rte_ethdev.h>
+> > +#include <rte_ether.h>
+> > +#include <rte_lcore.h>
+> > +#include <rte_mbuf.h>
+> > +#include <rte_mempool.h>  
+> 
+> I do not think it is a problem, but just curious: how does test_pmd_ring.c 
+> manage to use much fewer includes?
 
-For example: Deliver Ethernet header only
+I tend to run the tool iwyu on the generated code. This gives a more correct
+set of includes without implied includes.
 
-Rx queue segments configuration:
-struct rte_eth_rxseg_split split[2] = {
-    {
-        .mp = <some mempool>,
-        .length = sizeof(struct rte_ether_hdr)
-    },
-    {
-        .mp = NULL, /* discard data */
-        .length = <MTU>
-    }
-};
+> > +/* Test device names */
+> > +#define NULL_DEV_NAME "net_null_test"
+> > +
+> > +static struct rte_mempool *mp;
+> > +static uint16_t port_id = RTE_MAX_ETHPORTS;
+> > +static bool port_created;
+> > +static bool port_started;  
+> 
+> // snip setup and teardown functions, could find nothing to nitpick there
 
-Received MBUF configuration:
-mbuf[0].pkt_len = <original packet length>;
-mbuf[0].data_len = sizeof(struct rte_ether_hdr);
-mbuf[0].next = NULL; /* The next segment did not deliver data */
+The code is exercising device in multiple ways so it didn't seem to need them.
+Would be better to avoid global variables though. Like the mempool should
+be set in setup.
 
-A PMD activates the selective Rx data capability by setting the
-rte_eth_rxseg_capa.selective_read bit.
+> Default packet size repeats a few times in this file, can we have a global
+> constant for it?
+> 
+> > +		TEST_ASSERT(bufs[i]->pkt_len == 64,
+> > +			    "Unexpected pkt_len: %u", bufs[i]->pkt_len);
+> > +		TEST_ASSERT(bufs[i]->data_len == 64,
+> > +			    "Unexpected data_len: %u", bufs[i]->data_len);
+> > +	}
+> > +
 
-Signed-off-by: Gregory Etelson <getelson@nvidia.com>
----
- lib/ethdev/rte_ethdev.h | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+Right test should use RTE_ETHER_MIN_LEN
 
-diff --git a/lib/ethdev/rte_ethdev.h b/lib/ethdev/rte_ethdev.h
-index a66c2abbdb..bc456bb6d7 100644
---- a/lib/ethdev/rte_ethdev.h
-+++ b/lib/ethdev/rte_ethdev.h
-@@ -1121,7 +1121,11 @@ struct rte_eth_txmode {
-  *   The rest will be put into the last valid pool.
-  */
- struct rte_eth_rxseg_split {
--	struct rte_mempool *mp; /**< Memory pool to allocate segment from. */
-+	/**
-+	 * Memory pool to allocate segment from.
-+	 * NULL means skipped segment in selective Rx data. @see selective_read.
-+	 */
-+	struct rte_mempool *mp;
- 	uint16_t length; /**< Segment data length, configures split point. */
- 	uint16_t offset; /**< Data offset from beginning of mbuf data buffer. */
- 	/**
-@@ -1757,6 +1761,7 @@ struct rte_eth_rxseg_capa {
- 	__extension__
- 	uint32_t multi_pools:1; /**< Supports receiving to multiple pools.*/
- 	uint32_t offset_allowed:1; /**< Supports buffer offsets. */
-+	uint32_t selective_read:1; /**< Supports selective read. */
- 	uint32_t offset_align_log2:4; /**< Required offset alignment. */
- 	uint16_t max_nseg; /**< Maximum amount of segments to split. */
- 	uint16_t reserved; /**< Reserved field. */
--- 
-2.51.0
+> > +	/* Allocate mbufs for TX */
+> > +	for (i = 0; i < BURST_SIZE; i++) {
+> > +		bufs[i] = rte_pktmbuf_alloc(mp);
+> > +		TEST_ASSERT(bufs[i] != NULL, "Failed to allocate mbuf");
+> > +		bufs[i]->data_len = 64;
+> > +		bufs[i]->pkt_len = 64;  
+> 
+> It would help to test sending packets of various sizes, especially spanning 
+> multiple buffers or allocating them at the edge of buffer. May even uncover 
+> some bugs in the copy mode implementation ;)
+
+Good point.
+The copy mode is making several assumptions already and I see bugs there.
+It is confusing dummy_packet as mbuf versus data.
+
+
+The test and the driver should also test multi-segments.
+
+> > +	/* After start, link should be UP */
+> > +	TEST_ASSERT(link.link_status == RTE_ETH_LINK_UP,
+> > +		    "Expected link UP after start");
+> > +	TEST_ASSERT(link.link_speed == RTE_ETH_SPEED_NUM_10G,
+> > +		    "Expected 10G link speed");  
+> 
+> I am not sure it is important to test that the link speed is exactly 10G. Will 
+> it be a bug if it becomes 25G tomorrow? Probably any valid value would do.
+
+It is a dummy driver, speed really doesn't matter and should probably be ignored.
+
+> > +static int
+> > +test_null_dev_info(void)
+> > +{
+> > +	struct rte_eth_dev_info dev_info;
+> > +	int ret;
+> > +
+> > +	ret = rte_eth_dev_info_get(port_id, &dev_info);
+> > +	TEST_ASSERT(ret == 0, "Failed to get device info");
+> > +
+> > +	/* Verify expected device info values */
+> > +	TEST_ASSERT(dev_info.max_mac_addrs == 1,
+> > +		    "Expected max_mac_addrs=1, got %u", dev_info.max_mac_addrs);
+> > +	TEST_ASSERT(dev_info.max_rx_pktlen == (uint32_t)-1,
+> > +		    "Unexpected max_rx_pktlen");  
+> 
+> Why is (uint32_t)-1 is a valid packet length for this device? Can at actually 
+> accept them?
+
+This is awkward way of saying UINT32_MAX.
+And it means the driver has no limit on what the receive buffer might be.
+This is not really right it does have limits based on the device flags.
+
+> 
+> > +	TEST_ASSERT(dev_info.min_rx_bufsize == 0,
+> > +		    "Expected min_rx_bufsize=0, got %u", dev_info.min_rx_bufsize);
+> > +
+> > +	/* Check TX offload capabilities */
+> > +	TEST_ASSERT(dev_info.tx_offload_capa & RTE_ETH_TX_OFFLOAD_MULTI_SEGS,
+> > +		    "Expected MULTI_SEGS TX offload capability");  
+> 
+> It sure sets these values, but are they correct values, and would anything else 
+> be incorrect?
+
+I think test is ok testing for what it expects to work.
+
+> > +/*
+> > + * Test: RSS configuration
+> > + * Note: RSS requires multi-queue configuration
+> > + */
+> > +static int
+> > +test_null_rss_config(void)
+> > +{
+> > +	struct rte_eth_dev_info dev_info;
+> > +	struct rte_eth_rss_conf rss_conf;
+> > +	struct rte_eth_conf port_conf = {0};
+> > +	uint8_t rss_key[40];
+> > +	uint16_t rss_port;
+> > +	const uint16_t num_queues = 2;
+> > +	uint16_t q;
+> > +	int ret;
+> > +
+> > +	/* Create a new null device for RSS testing with multiple queues */
+> > +	ret = create_null_port("net_null_rss_test", NULL, &rss_port);
+> > +	TEST_ASSERT(ret == 0, "Failed to create null port for RSS test");
+> > +
+> > +	ret = rte_eth_dev_info_get(rss_port, &dev_info);
+> > +	TEST_ASSERT(ret == 0, "Failed to get device info");
+> > +
+> > +	/* Configure with RSS enabled and multiple queues */
+> > +	port_conf.rxmode.mq_mode = RTE_ETH_MQ_RX_RSS;
+> > +	port_conf.rx_adv_conf.rss_conf.rss_hf = dev_info.flow_type_rss_offloads;
+> > +
+> > +	ret = rte_eth_dev_configure(rss_port, num_queues, num_queues, &port_conf);
+> > +	TEST_ASSERT(ret == 0, "Failed to configure RSS port");
+> > +
+> > +	for (q = 0; q < num_queues; q++) {
+> > +		ret = rte_eth_rx_queue_setup(rss_port, q, RING_SIZE,
+> > +					     rte_eth_dev_socket_id(rss_port),
+> > +					     NULL, mp);
+> > +		TEST_ASSERT(ret == 0, "Failed to setup RX queue %u", q);
+> > +
+> > +		ret = rte_eth_tx_queue_setup(rss_port, q, RING_SIZE,
+> > +					     rte_eth_dev_socket_id(rss_port),
+> > +					     NULL);
+> > +		TEST_ASSERT(ret == 0, "Failed to setup TX queue %u", q);
+> > +	}
+> > +
+> > +	ret = rte_eth_dev_start(rss_port);
+> > +	TEST_ASSERT(ret == 0, "Failed to start RSS port");
+> > +
+> > +	/* Get current RSS config */
+> > +	memset(&rss_conf, 0, sizeof(rss_conf));
+> > +	rss_conf.rss_key = rss_key;
+> > +	rss_conf.rss_key_len = sizeof(rss_key);
+> > +
+> > +	ret = rte_eth_dev_rss_hash_conf_get(rss_port, &rss_conf);
+> > +	TEST_ASSERT(ret == 0, "Failed to get RSS hash config");
+> > +
+> > +	/* Update RSS config with new key */
+> > +	memset(rss_key, 0x55, sizeof(rss_key));
+> > +	rss_conf.rss_key = rss_key;
+> > +	rss_conf.rss_key_len = sizeof(rss_key);
+> > +	rss_conf.rss_hf = dev_info.flow_type_rss_offloads;
+> > +
+> > +	ret = rte_eth_dev_rss_hash_update(rss_port, &rss_conf);
+> > +	TEST_ASSERT(ret == 0, "Failed to update RSS hash config");
+> > +
+> > +	/* Verify the update */
+> > +	memset(rss_key, 0, sizeof(rss_key));
+> > +	rss_conf.rss_key = rss_key;
+> > +
+> > +	ret = rte_eth_dev_rss_hash_conf_get(rss_port, &rss_conf);
+> > +	TEST_ASSERT(ret == 0, "Failed to get RSS hash config after update");
+> > +
+> > +	/* Verify key was updated */
+> > +	for (unsigned int i = 0; i < sizeof(rss_key); i++) {
+> > +		TEST_ASSERT(rss_key[i] == 0x55,
+> > +			    "RSS key not updated at byte %u", i);
+> > +	}
+> > +  
+> 
+> Can we receive and send something from/to these queues and verify resulting 
+> statistics? Statistics is one of the most important use cases for the null 
+> device, and it does benefit from multi-queue.
+
+Use of RSS in Null PMD is odd. It really doesn't do RSS. It is lying about it.
+The packets are never hashed on receive. Looks like it was just a way to exercise
+the RSS API's.
+
+My goal is to get some tests for vdev's where there are none now, and fix
+some of the obvious wonky stuff in the drivers (like doing stats in odd and
+slow ways).
+
 
