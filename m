@@ -2,69 +2,186 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86303C2A062
-	for <dpdk-dev@archiver.kernel.org>; Sun,  4 Jan 2026 22:25:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2C58C2A062
+	for <dpdk-dev@archiver.kernel.org>; Mon,  5 Jan 2026 04:21:46 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5A9B5402BA;
-	Sun,  4 Jan 2026 23:25:32 +0100 (CET)
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com
- [209.85.128.44]) by mails.dpdk.org (Postfix) with ESMTP id D780A40273
- for <dev@dpdk.org>; Sun,  4 Jan 2026 23:25:29 +0100 (CET)
-Received: by mail-wm1-f44.google.com with SMTP id
- 5b1f17b1804b1-47796a837c7so86669525e9.0
- for <dev@dpdk.org>; Sun, 04 Jan 2026 14:25:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1767565529;
- x=1768170329; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=MOW9uXTU85ixQHBcLB2PNMEQ49UDBolgdHgOEvb3TnE=;
- b=IfUlHyG2IIsWhZOyfiERjWPV7QHKihpr8d2Iw4dGX/wwsLnYBDkGSbdxkM/SKWstT/
- JdBIxrpkYAl5Z1QF2IF6EnrOFP4mRCd4NBDqOCB+Sg4Qri2p3sgSCZBH33RLj7OHS9Ym
- PUgr2U39JeM7UokOtimOWsfFS33IFepWw5KAMtpTdlXBPpGgAKBxFYBUw4NnzG7ubsRy
- eXHaBB7DRICtKFaq1iyeLyMJ3U4Rqft/MTsyEct9NmO3YQgDVvXNSulyO16Xh2RQIqxF
- BkNOeizQ87H7QPzUIJmsxwc/zce3f9tuJHUDbudCa6TKbE64LDL7Ek1VCa5/iL+yaIiq
- 0EFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1767565529; x=1768170329;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=MOW9uXTU85ixQHBcLB2PNMEQ49UDBolgdHgOEvb3TnE=;
- b=qXsSTVtX+SPJ+uGCru6BEpea/yDBKoIJyRKANEf+ty65Ex85R7o2bjTQ7XV1vZKv/U
- DsCo+ZaFvXub3CNI14C2rdlgv3YoJQi7hrcUYzB6kPNOjPLLDg/2EWeF3OEHQmgPIUyw
- FGr4oQ44CrG+PMnTrA/ZaLOEKEJ/X+xBaVfcq4cyAoCnmBm4D0rTzasdZkeGwKrUu0+b
- IB/0EWRSSquGbywVSRhl1v4txviTZ8TT5spQQCN3gA4aQ2FQ+lqIfVnnXsNGfsVoKRtx
- q5mZr+DCYt/FyRDmjXUv7ytzEmn03Nyio87aIaK/Asu4VsetKnP0uC+72hXYczDgov9U
- FszA==
-X-Gm-Message-State: AOJu0YzdhEPY7A83nginBI8hJz/Hbt7iZaspU76JR2Ie10jrAlL5RDho
- 0hrgUr2Lk+dUKG5JTwvXCXezsDuZG9gZtV4H1TZhRVwX8l9j8slN4AkAJ778apiI8tYBmZ/Mlxt
- m7PS/8KY=
-X-Gm-Gg: AY/fxX7WVQhamPLQfiYJvxNZxoz3oQ+EXi2V+HGXl7Bv6zao0EB7VGhLKzL5Xd8xDmZ
- T4gjvvpiEwxvviSJ3eWYfyZxzvsimaRqZGWYkWrsPMiZ9OqfO9HAC7HVz8WpsbbLGNoY85eWhFk
- uH2MgMnCs4ZMUdXeNi/2t+kzD9G4+Fu860n5+nNRpw1b0btjJzm6qEbKaNuUezQgWm2xdOhF+Oi
- NPWwwdHsSNT5R8/EQkaV9LyjRwe15n03bcgZcUVXXCVJpPVg+ehcyj1ZX+8Rbk1PGWkdNVvdbZa
- RdFS/f7CUyvWb3ZU8vNaMfTlzhmEqRUmWRaTKSsBuFqXXYAKAWWhfgQAUnyuLjui3w69SuOyAy0
- sCbULmJrP/FV30XKbN0EgpgvK9KgpJnpqIlGLSeAbTBrltn7qhqXAYOG8jSc+0ObWPP/H88Hi5i
- CnuZ91RHWHnzwNy0FhI64mE1jmQVFBxM/JzDn2UxYjslVZMV/Vn7O8m/Bxq2Pr
-X-Google-Smtp-Source: AGHT+IH7wnG/ZMPF4JKawrE0B0gGlz250fqtnTUOqdLcCCO8k7s8Ac2mhpOUwM/LerfOT7e7OO9sYA==
-X-Received: by 2002:a05:600c:818f:b0:477:a0dd:b2af with SMTP id
- 5b1f17b1804b1-47d195920damr610707975e9.33.1767565529016; 
- Sun, 04 Jan 2026 14:25:29 -0800 (PST)
-Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-47d73066fdbsm61905715e9.15.2026.01.04.14.25.27
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 04 Jan 2026 14:25:28 -0800 (PST)
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH] test: add a test for null PMD
-Date: Sun,  4 Jan 2026 14:25:23 -0800
-Message-ID: <20260104222523.329760-1-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.51.0
+	by mails.dpdk.org (Postfix) with ESMTP id 9CCAA4028B;
+	Mon,  5 Jan 2026 05:21:45 +0100 (CET)
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
+ [67.231.156.173])
+ by mails.dpdk.org (Postfix) with ESMTP id 1701840273;
+ Mon,  5 Jan 2026 05:21:42 +0100 (CET)
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+ by mx0b-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
+ 604NSP7b1163865; Sun, 4 Jan 2026 20:21:42 -0800
+Received: from sn4pr0501cu005.outbound.protection.outlook.com
+ (mail-southcentralusazon11021139.outbound.protection.outlook.com
+ [40.93.194.139])
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4bf3gmj4mh-1
+ (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+ Sun, 04 Jan 2026 20:21:41 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=uxYA37I9j//kb1tdkh4OuJ0VeesLzySv0fBytknKSSLs2SCOXIVh3wcwwgCzehfiVRlf2xdscnsXSqbeTXWjpO0JkDken/YDqTVuG26g/48Kdh9M3IR3Np/jKN/oP+sm1EzNTPfbTAXIcO6hIPjtLt0SsH6K1SPVaOBe1M4eBGEb99Nz0veeWayPWZ5VtgOfYkklcOURea+VZ3kP4SmHe1dD0+shets+D0aev6q+ILhUa9dDG9lvw09UIDQ/KXytRY9UCkGBxDmJPbpm1EUnuU8q/sgLwIfix5E5LfNXoZsnXlp5Haj2FLpFMlkY3TZLxT8FYVht6VrziauCq64x3g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=9ji1mpGjc+vVW0aNChqk5Vxt0pY/y10oaAUrA8oOjXY=;
+ b=yY9uGT+f7S6Mp2Rn8i1KkmzC5qjJZfKGRc5juwHsgww/s4QTnI3cjPS/9AsLdir+y0ZGJa7ZHopK1TjaDXmvsDOB6OawnmYTEcxdAKAb01LoXXMjmuNQE30KQtZbBu0fPzD2NnaFtekfe6gLhXB8NWIXiTFF0UuvOI1XLoTOs5CqaVXoeFeMIAMuTC3K9h0AGVkUSPmJPxPSVu+gLftshHsapyeVPvzvXzTGWniPIzh+r4YIdgVDaOzI1OKUHxY90AzoiTTQnzdQcPGHbBK/19HUkRUJqXi/D+BvMxzQYrwSGzMh2JiJ2z4HnsWXtfsgst3Xsv33hr78W/n5cXLY0w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
+ dkim=pass header.d=marvell.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9ji1mpGjc+vVW0aNChqk5Vxt0pY/y10oaAUrA8oOjXY=;
+ b=hy6ajC4qUHa8mDNPUxxzN0fCFJa//w+oa6yGBgzbYOobu3tFaqk8Us8/gww2PvYitl/XIVe+g2swYHyrVLB4J8dFA6IuHi1tbaNLh6UvK/7jmQkgtUP4h7pG/pqg/tQvAryt6ItJlJHm+Xdk52pPdrH1TJhidZZveAaRXYbIrhw=
+Received: from CO1PR18MB4714.namprd18.prod.outlook.com (2603:10b6:303:e9::18)
+ by BL1PPF8A51B4558.namprd18.prod.outlook.com
+ (2603:10b6:20f:fc04::da7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9478.4; Mon, 5 Jan
+ 2026 04:21:39 +0000
+Received: from CO1PR18MB4714.namprd18.prod.outlook.com
+ ([fe80::26fb:729e:a947:3e06]) by CO1PR18MB4714.namprd18.prod.outlook.com
+ ([fe80::26fb:729e:a947:3e06%7]) with mapi id 15.20.9478.004; Mon, 5 Jan 2026
+ 04:21:39 +0000
+From: Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>
+To: Stephen Hemminger <stephen@networkplumber.org>, "dev@dpdk.org"
+ <dev@dpdk.org>
+CC: "stable@dpdk.org" <stable@dpdk.org>
+Subject: RE: [EXTERNAL] [PATCH v2 7/7] examples/fips_validation: avoid
+ rte_memcpy() bug
+Thread-Topic: [EXTERNAL] [PATCH v2 7/7] examples/fips_validation: avoid
+ rte_memcpy() bug
+Thread-Index: AQHceb5eAgAgsDlNfUKaz8r62j84drVDAYQQ
+Date: Mon, 5 Jan 2026 04:21:38 +0000
+Message-ID: <CO1PR18MB4714A82172593F7EF513DEAFCB86A@CO1PR18MB4714.namprd18.prod.outlook.com>
+References: <20251228184300.541639-1-stephen@networkplumber.org>
+ <20251230185837.301163-1-stephen@networkplumber.org>
+ <20251230185837.301163-8-stephen@networkplumber.org>
+In-Reply-To: <20251230185837.301163-8-stephen@networkplumber.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CO1PR18MB4714:EE_|BL1PPF8A51B4558:EE_
+x-ms-office365-filtering-correlation-id: e458af95-cdb3-4d5a-e08a-08de4c11ebfd
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+ ARA:13230040|376014|1800799024|366016|38070700021|7142099003; 
+x-microsoft-antispam-message-info: =?utf-8?B?UFRzWDlnN2QzbCtDVlVFNVJsaHdBVjZjMnJFb2E2Z2RxQTlWVGxqL2lvMjRs?=
+ =?utf-8?B?OXY5QWlMMEpBSnZQYlh0TUVQMjMwa21HdHg4NXdPNDNKRXU2NXJ5UExmejhR?=
+ =?utf-8?B?M1QxVjRKR1lUSTdrRHNuVzZWNFk4SnM4UzVubE4zWjZFM2taa0ZDNS9vbDB6?=
+ =?utf-8?B?enhTenZuSzR0QzNIWHErYkNTK3dPeTZMcE5wbzI0Qkkva2JDK3hENGxtT1l3?=
+ =?utf-8?B?c0I1SWd0cWNFcUJKbEd6NVZOQzVQWWthNGRKZ3kxNXhsbmJNeFhGejNvUmVN?=
+ =?utf-8?B?bnVmWG9DY2cweW14RVdLbS8zQ1c1Y3dPQnYyS3BkODhUU2MyRlcrUmxNVVBR?=
+ =?utf-8?B?eVNoTTQrSU5EaWZDNEZZVXE4Q2JBai9rOENDbk56VVMyNEhOYlRMRWRRQXE4?=
+ =?utf-8?B?Szl4Y3p5NzRuUEFSMXlrL2laS0dyMzczZWQwbng4aXRudVFGbEw2eU9iUHN2?=
+ =?utf-8?B?Tm9laHRpWUFYT3phQXBLZXFJT0ozR0RjdkNwVmxHR1BZUmZrY0V6c0poTGg0?=
+ =?utf-8?B?YmMwT2JyTDZUZStjb00rSmp3QzVMNUM5SDdCZHNEYU9hSE94M0dYcmJZM1VR?=
+ =?utf-8?B?RnQ1RFNhUWRxbU8wYzRFYkFHcWcxd05CbjNhVFRzMU9mR3JCd2NTK0ZpSTN5?=
+ =?utf-8?B?UWtlTXJETm5EU1krcjhXTHZ2SW8wWTExazFONERWa0Q2NEdVazlMbzE1SXd5?=
+ =?utf-8?B?MVpHVDFpMmx1TS9wMHgvUlN5Tm9nRVpxY09DbnJ2OWlSOXFvKzZ0VW0vdzk5?=
+ =?utf-8?B?V3FId0dnVWhTd0k0dW54L2ViSE5za3RYUXdTWDZjN1ZSamR2M2xBaTdMV2tG?=
+ =?utf-8?B?TjNiQTFBZDBMTGlHSzhmb1VqTzJBTzMwMG5LN0tybU9sdnE5aXhnWGNIbzJN?=
+ =?utf-8?B?RzNWK0lSRmR2UThJSG00bzY3V0FMOXh1VENFWHFaYmw1aWhqbmp2ZDAxQkFw?=
+ =?utf-8?B?WEFzTVZIbnhlYW5hRHZ6TWtGSEN5WEJuYjNwNXhpb3FoT0taR2NudzlPYzIz?=
+ =?utf-8?B?RGlKT2E2c1lHRmV4aWpOU0FJajQ5ZzJqaFFLNjlSWm83NmlHTE5QTVNEQ3d0?=
+ =?utf-8?B?MUYwbkQ2d3hYeUZ2YStVYlNIcDFmbmxsSisxT2o5V241cjNwUitqQ1VaUUVU?=
+ =?utf-8?B?bVdvWWJwNU9NNlhGQm5abW8waitibkYvNVkrV1R1bGhHWkdINE42dlQ2OW5N?=
+ =?utf-8?B?WVZnMFBRVERzNTh5bzFLYzdnZmNiQzF2QTZjVEFxQUJOMElXNGRrN3pFU3NJ?=
+ =?utf-8?B?NExsVk02ZHJyMmJWYk9wOWVwcnJ4bGdRUnNmZ0RDZWRNV0d1SGExc3dDb0pU?=
+ =?utf-8?B?dkNwZldPMUxmU2hDaWFVUmoxVnl4Rk0rWGVNKzdGL2FGamkxUFFvcUNJbUVw?=
+ =?utf-8?B?QzBqeFFBOUpuam5mZjJrTEN0aVE3KzVzZ0RRU1dpZHUycEdSTGd0aEpSYzc3?=
+ =?utf-8?B?NmR4YWRhV2xCZWtibEtWWDkwTE5SZzQ1Y0dpcU9mZnVIQU8xVlQ3T3Rid0w4?=
+ =?utf-8?B?MThjS3dEaGtNWFhJV0VxOXcxVlphaUlvUVlQWkFwMW0rcTEvWUVEaUQ3NEtK?=
+ =?utf-8?B?dE10aU9lN0t0ZXJuNFdZaGpnc0dZVWIxRG90emNWQVV4QUhpTmcveXJhcFBB?=
+ =?utf-8?B?QXVXQ2t1dy8rb2p5Ry9JUmJrUGpaejd4TGxGeW9Xb2VaYThVbU9OdUlvTmo0?=
+ =?utf-8?B?dHg4cEN5Vmd2L2JNb2xIRS9KdVlJcUFXNlllRGhDZ3VtNEo0djVaZk9sV0xM?=
+ =?utf-8?B?RUNZaWxSeS9wb1oyVmlORStyUUVZUEhEOWxTNERHdDlkbHNSbS9laXFMUXB2?=
+ =?utf-8?B?SXIvVys0ekJxT2p3c3dnMit1bnZJUTZoZSs2L2ZOSDBPMjF5endhdG9VWVph?=
+ =?utf-8?B?KzBCWEFLb3VscmtCQk1mZTE4ZmQ4b1JsMHBYMUZub2s0N3NhWHJwVW83TVY2?=
+ =?utf-8?B?Y3ZyNExRWlNTTzNqUnNYbGY1YWpEdFhmOXlCdFozbXhGbzk0TEQ3RlcxcVhE?=
+ =?utf-8?B?SnlMMG1Eb1lGbGl1SlQ0blF4RzVYSGpmRTFpdmpUUzBMa3ZrYzdCblRudVJE?=
+ =?utf-8?Q?rPkagD?=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:CO1PR18MB4714.namprd18.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(1800799024)(366016)(38070700021)(7142099003); DIR:OUT;
+ SFP:1102; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?NU1Fc2tRQXl5MThiUi9nZy9RWEsrZG5pQXBMeEhwWDZQY2xEQWx6Y2RhZlUv?=
+ =?utf-8?B?VDd0bGNzcXdsY3ZVRWZWSDRDUWwydVFVOENSYXVkTkxuVUQ4eTlWT3F5Tlk3?=
+ =?utf-8?B?dy94NFB0UWtiM0J6VEoxQTl5ZGRUM05OQTRLT2pDOGVSdllsSDBTN2lNcGpU?=
+ =?utf-8?B?WjBFWWY3SGpnVHdUcVNSTlJHUmhGdk90K1FESkg1UVB2cHpzYkVNekFoeHJR?=
+ =?utf-8?B?c2R1b01OaWZhRU1zWXV4cDN3QSsxR2hHWWNNejl3RDY3dm1FQWRraW4zbG9H?=
+ =?utf-8?B?UG5EaDczQm5HWlRYdnVBMGUxZXZpRFZSUmtLTWdnMVNVelJWVno5VlJPb2l6?=
+ =?utf-8?B?NGNVdjRWUzlOeUlQWUtrVGZzTS9EbDlNQ3BnaGdRZnVTaXJ5d0tvVjE2eXRh?=
+ =?utf-8?B?Ym5XeUs0ZVBRY1N5aTR0dXIwSFlQVllxOU1KdUQxb1ZRQmw4NmM4TGUzVUpi?=
+ =?utf-8?B?dEhwRTRaUXJNRW9PeVF5ZVhUS2w0MTBudVJoL05ieng0aXA0dXhYVkVhbm1i?=
+ =?utf-8?B?NS8xZ0lIOW9hVUZWUUhUN0VKS1dhemZDRWVUSnM3M2JqTVl6dTFhQUo4TWtr?=
+ =?utf-8?B?c0xhNXRLak5VQ0Q1bE4zQkVzQnYxWHBoS2Q4eHhmTUhLK2N6R2E4bllzRnBo?=
+ =?utf-8?B?SEhoS1BaL3RkbWYrNkVOelNZYisyNkRFbDBPZ3ZTNlZ2TVZKRVFHcVo0T0w0?=
+ =?utf-8?B?QzQvODFLcWhOelJEZDhQVWR1L05OR3RYWUJtVGlaaXVWQVNFUzQxOG9TeHM2?=
+ =?utf-8?B?SzljZk1RVHQybDBtRG1XdElSd2tHMDFQanhEY1NmS1FuMjhBUEd4ZlU2UFRq?=
+ =?utf-8?B?RzBDU0Y4ZTZKRDJSa0VPeWNmUW5na0ZjVmFSZ28zYTV5SllCdXdrbEZpNUxh?=
+ =?utf-8?B?N2RYZ1dESlZPYVgwT3hUeG1MZitrWmZVUVBIdWkxR1AyVUR2YnFTSG5lbFp2?=
+ =?utf-8?B?SXZpYW5FL0l3azlhYjBZZ0JrY01TT2R4OVJvZ0l0ZVJLU1d1OXNYa3oxdUNa?=
+ =?utf-8?B?Q2s1Z21vWGpXOHpvMFVnQThTb3BMNzUzZEJncEczMjBqOFh6T1JCQitYU1Q4?=
+ =?utf-8?B?TmI0ZXRwTVZYQ2FRWGNsbkhrbW9oc3B1L1JacW00Y1pyNmsrU2VoUGdGUlVY?=
+ =?utf-8?B?QktZRVB3ODBEZ3JKK3JMeGhwbkhLdVVFZmxkdTBqZ1BGd2hucVhJbUNJbnI4?=
+ =?utf-8?B?eTVPV0V6dTRhay9tZFJ0VkE0dmJTVkloUk9JU1VxSHRlZVVWanljZXdTdzVi?=
+ =?utf-8?B?T1hXc3lQSTRMS2k2U1R1RFlycE5LQXkzY25Ddm1GQWhCS2t5eGNFQXpiRFZB?=
+ =?utf-8?B?d0hrbmpnQVdIY0puNUI3QldCUFpUbU10Vmxkc05iOWFtRXp1Y1NOcDc2OXk5?=
+ =?utf-8?B?WFVrd040YndWVGtIQ2hidTlKNTlGdVBLc3BHY3NrU1g0S0pZeVFRWkErZlps?=
+ =?utf-8?B?K3dKK1FPTVo3UlhnZXBlYVJkUTlqTGk2QWNJY2RoK3JXdGlVMStXZkJ1dG1M?=
+ =?utf-8?B?N0JvK3BaOGhLbDNCVXg2N0V0dzdlWHhzZ0VweXR6R3lWQzFZdFc0SG5POHhy?=
+ =?utf-8?B?WE44Ujd2TkpHdzRBTWpuWHd0Z3k3N0ovVzJXOC9mUS9adzJrRDMzRGRsMUVY?=
+ =?utf-8?B?ZWVhTzYwRThobTJSc2FyWmRkRHpBUWtiNXp4cGhTdWd6cklyaHVXQzU1TEd0?=
+ =?utf-8?B?QUVFdU10UUNIVnJOalEwcTNiRXMwd2RJMUF2bDZUOUVITkdjZ3hkMWIxU2J2?=
+ =?utf-8?B?R1Qyejc4c3ZpbnBMYXJjOUhGakNHSmZOcGs0cFpPVEVKbDJCQnVZSVpMVnZZ?=
+ =?utf-8?B?RDdCZUo3T0JWdStKcXY0L1FNS0wzejNqSkdpaEVyQ0hsVkVZUHJnYVlNZTlP?=
+ =?utf-8?B?M09rTnJGZkNDWG9odGVKS2FiOXZ1YndEcmlZNGNYRFNub0laTFBiM2lnem4z?=
+ =?utf-8?B?TWFURkR2NGcwWis2RStQSVBGcFZSVmFkbGJ2d3JrRWcwWmdJOThFNWUwa1Ji?=
+ =?utf-8?B?b0M1Vlc2bmw4bU5VRlJWQ3BMVkxwangwTjhhN0N1RlVhajRYaVEzd2VQVTgy?=
+ =?utf-8?B?ZGlnMVRrY0pvVGVCUXBSYmd5emZlRlp3OFRQalZJWHBuWW9ObkNYOHdzd3Vo?=
+ =?utf-8?B?SGRiOXBoOGZxb3ZlMzNsUFB2VW1DdXBJVTc0OFZ1aHp1TzdPWjJSZW90QXE3?=
+ =?utf-8?B?a2drRjNkVFJXR1dGR2RLSFU4MmVKQjJvcDNCSytGY3Q3NXBTeVJEU2s3OExh?=
+ =?utf-8?B?ZU44aGlvaXBFbElGNlBOL3VJeFF0ZGRGLzhhZ25CL2FsaG9OQXowOW1ndGpm?=
+ =?utf-8?B?UHNWaEJ4YjBjQS9hRGVZb0NsWlduOEM1NHllTDJTUStrL1hVbmZ0Zz09?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: marvell.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CO1PR18MB4714.namprd18.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e458af95-cdb3-4d5a-e08a-08de4c11ebfd
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Jan 2026 04:21:39.0181 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: YCuqP34IOq6MukTkJuiLZWKZNjocyfD9ImKzeKnxnEXWnARFvwOeYIFoneWyQvBg4WWn7b+vl0XDXAN6MV5YiHyy41/k7dnzSziXH87l+WI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PPF8A51B4558
+X-Proofpoint-ORIG-GUID: Zbl13vkcXefadmAzzRR4ufT2T_JS_jFq
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTA1MDAzOCBTYWx0ZWRfX858epSqYShiu
+ zhRc2xwO7mYywR/w3wNdtFs+gjP8Q8VeWRGYWipiHqO5vfHPG9/Yn4GOBMYl81VawlzsVD8RCQo
+ 1oxRPBS9k4i1KWq+dAbtE1948dzj/CcuOc5Dtl8UOy4q8jVXV0gRbZuLMb6OknjO6cdncT4BAHj
+ 3xUMiqNgbQqm2S+0CQ0UnjAq+eAH+69LAfZszgBbBKoQL6aLfnrf6yKwuLgDiZHwA8x4KS3TFCB
+ rULy8yvQuWdJ2SYURyBAgsh4e2/H3gzMrbGW58/Ed/C+QlJdJU0tnuxtxYJyfLVqjJoplx8heDr
+ wB/nOZQ6WvLiN07+l5Qvico/zP1T4UJG3bhciwWS1c+9LsalHXZrczduiV0e5SqhrqZtFn/IqTc
+ cL37gaY7WoCjtYePdxPJpCOjs6zZJ871UK46dVbZCH4EuSKL9RjLDa3rt0OlQ42681vyy0DUiba
+ Xkko5i1WvOYl4PRMMtw==
+X-Authority-Analysis: v=2.4 cv=PcXyRyhd c=1 sm=1 tr=0 ts=695b3c56 cx=c_pps
+ a=pIYMM0/gwuUbaZnCr0OhEQ==:117 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=vUbySO9Y5rIA:10 a=-AAbraWEqlQA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=M5GUcnROAAAA:8 a=8rWy6zfcAAAA:8 a=jZVsG21pAAAA:8 a=TRug3iIhX0IutF_RrBsA:9
+ a=QEXdDO2ut3YA:10 a=OBjm3rFKGHvpk9ecZwUJ:22 a=YjdVzJdQTyZRADMV7wFX:22
+ a=3Sh2lD0sZASs_lUdrUhf:22
+X-Proofpoint-GUID: Zbl13vkcXefadmAzzRR4ufT2T_JS_jFq
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2026-01-04_07,2025-12-31_01,2025-10-01_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -78,862 +195,35 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add a test for null PMD.
-This test was generated with Claude AI based off of existing
-test_pmd_ring.c with some cleanup afterwards.
-
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
----
- app/test/meson.build     |   1 +
- app/test/test_pmd_null.c | 827 +++++++++++++++++++++++++++++++++++++++
- 2 files changed, 828 insertions(+)
- create mode 100644 app/test/test_pmd_null.c
-
-diff --git a/app/test/meson.build b/app/test/meson.build
-index efec42a6bf..967e20d187 100644
---- a/app/test/meson.build
-+++ b/app/test/meson.build
-@@ -141,6 +141,7 @@ source_file_deps = {
-     'test_per_lcore.c': [],
-     'test_pflock.c': [],
-     'test_pie.c': ['sched'],
-+    'test_pmd_null.c': ['ethdev', 'net'],
-     'test_pmd_perf.c': ['ethdev', 'net'] + packet_burst_generator_deps,
-     'test_pmd_ring.c': ['net_ring', 'ethdev', 'bus_vdev'],
-     'test_pmd_ring_perf.c': ['ethdev', 'net_ring', 'bus_vdev'],
-diff --git a/app/test/test_pmd_null.c b/app/test/test_pmd_null.c
-new file mode 100644
-index 0000000000..ebc2447c6d
---- /dev/null
-+++ b/app/test/test_pmd_null.c
-@@ -0,0 +1,827 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2026 Stephen Hemminger
-+ */
-+
-+#include <inttypes.h>
-+#include <stdbool.h>
-+#include <stdio.h>
-+#include <string.h>
-+
-+#include <rte_bus_vdev.h>
-+#include <rte_cycles.h>
-+#include <rte_ethdev.h>
-+#include <rte_ether.h>
-+#include <rte_lcore.h>
-+#include <rte_mbuf.h>
-+#include <rte_mempool.h>
-+
-+#include "test.h"
-+
-+#define NUM_MBUFS 256
-+#define MBUF_CACHE_SIZE 32
-+#define BURST_SIZE 32
-+#define RING_SIZE 512
-+
-+/* Test device names */
-+#define NULL_DEV_NAME "net_null_test"
-+
-+static struct rte_mempool *mp;
-+static uint16_t port_id = RTE_MAX_ETHPORTS;
-+static bool port_created;
-+static bool port_started;
-+
-+static int
-+create_null_port(const char *name, const char *args, uint16_t *out_port_id)
-+{
-+	int ret;
-+
-+	ret = rte_vdev_init(name, args);
-+	if (ret != 0) {
-+		printf("Failed to create null device '%s': %d\n", name, ret);
-+		return ret;
-+	}
-+
-+	ret = rte_eth_dev_get_port_by_name(name, out_port_id);
-+	if (ret != 0) {
-+		printf("Failed to get port id for '%s': %d\n", name, ret);
-+		rte_vdev_uninit(name);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int
-+configure_null_port(uint16_t pid)
-+{
-+	struct rte_eth_conf port_conf = {0};
-+	struct rte_eth_dev_info dev_info;
-+	int ret;
-+
-+	ret = rte_eth_dev_info_get(pid, &dev_info);
-+	if (ret != 0) {
-+		printf("Failed to get device info for port %u: %d\n", pid, ret);
-+		return ret;
-+	}
-+
-+	ret = rte_eth_dev_configure(pid, 1, 1, &port_conf);
-+	if (ret != 0) {
-+		printf("Failed to configure port %u: %d\n", pid, ret);
-+		return ret;
-+	}
-+
-+	ret = rte_eth_rx_queue_setup(pid, 0, RING_SIZE,
-+				     rte_eth_dev_socket_id(pid),
-+				     NULL, mp);
-+	if (ret != 0) {
-+		printf("Failed to setup RX queue for port %u: %d\n", pid, ret);
-+		return ret;
-+	}
-+
-+	ret = rte_eth_tx_queue_setup(pid, 0, RING_SIZE,
-+				     rte_eth_dev_socket_id(pid),
-+				     NULL);
-+	if (ret != 0) {
-+		printf("Failed to setup TX queue for port %u: %d\n", pid, ret);
-+		return ret;
-+	}
-+
-+	ret = rte_eth_dev_start(pid);
-+	if (ret != 0) {
-+		printf("Failed to start port %u: %d\n", pid, ret);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int
-+test_null_setup(void)
-+{
-+	int ret;
-+
-+	/* Create mempool for mbufs */
-+	mp = rte_pktmbuf_pool_create("null_test_pool", NUM_MBUFS,
-+				     MBUF_CACHE_SIZE, 0,
-+				     RTE_MBUF_DEFAULT_BUF_SIZE,
-+				     rte_socket_id());
-+	if (mp == NULL) {
-+		printf("Failed to create mempool\n");
-+		return -1;
-+	}
-+
-+	/* Create and configure null port */
-+	ret = create_null_port(NULL_DEV_NAME, NULL, &port_id);
-+	if (ret != 0) {
-+		printf("Failed to create null port\n");
-+		return -1;
-+	}
-+	port_created = true;
-+
-+	ret = configure_null_port(port_id);
-+	if (ret != 0) {
-+		printf("Failed to configure null port\n");
-+		return -1;
-+	}
-+	port_started = true;
-+
-+	return 0;
-+}
-+
-+static void
-+test_null_teardown(void)
-+{
-+	/* Stop and close test port */
-+	if (port_started) {
-+		rte_eth_dev_stop(port_id);
-+		port_started = false;
-+	}
-+
-+	if (port_created) {
-+		rte_eth_dev_close(port_id);
-+		rte_vdev_uninit(NULL_DEV_NAME);
-+		port_id = RTE_MAX_ETHPORTS;
-+		port_created = false;
-+	}
-+
-+	if (mp != NULL) {
-+		rte_mempool_free(mp);
-+		mp = NULL;
-+	}
-+}
-+
-+/*
-+ * Test: Basic RX - should return empty packets
-+ */
-+static int
-+test_null_rx_basic(void)
-+{
-+	struct rte_mbuf *bufs[BURST_SIZE];
-+	uint16_t nb_rx;
-+	unsigned int i;
-+
-+	/* RX should return requested number of empty packets */
-+	nb_rx = rte_eth_rx_burst(port_id, 0, bufs, BURST_SIZE);
-+	TEST_ASSERT(nb_rx == BURST_SIZE,
-+		    "Expected %u packets, got %u", BURST_SIZE, nb_rx);
-+
-+	/* Verify packets have expected properties */
-+	for (i = 0; i < nb_rx; i++) {
-+		TEST_ASSERT(bufs[i] != NULL, "Received NULL mbuf");
-+		TEST_ASSERT(bufs[i]->port == port_id,
-+			    "Unexpected port id in mbuf: %u", bufs[i]->port);
-+		/* Default packet size is 64 bytes */
-+		TEST_ASSERT(bufs[i]->pkt_len == 64,
-+			    "Unexpected pkt_len: %u", bufs[i]->pkt_len);
-+		TEST_ASSERT(bufs[i]->data_len == 64,
-+			    "Unexpected data_len: %u", bufs[i]->data_len);
-+	}
-+
-+	/* Free received mbufs */
-+	for (i = 0; i < nb_rx; i++)
-+		rte_pktmbuf_free(bufs[i]);
-+
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test: Basic TX - should free all packets
-+ */
-+static int
-+test_null_tx_basic(void)
-+{
-+	struct rte_mbuf *bufs[BURST_SIZE];
-+	uint16_t nb_tx;
-+	unsigned int i;
-+	unsigned int pool_count_before, pool_count_after;
-+
-+	/* Allocate mbufs for TX */
-+	for (i = 0; i < BURST_SIZE; i++) {
-+		bufs[i] = rte_pktmbuf_alloc(mp);
-+		TEST_ASSERT(bufs[i] != NULL, "Failed to allocate mbuf");
-+		bufs[i]->data_len = 64;
-+		bufs[i]->pkt_len = 64;
-+	}
-+
-+	pool_count_before = rte_mempool_avail_count(mp);
-+
-+	/* TX should accept and free all packets */
-+	nb_tx = rte_eth_tx_burst(port_id, 0, bufs, BURST_SIZE);
-+	TEST_ASSERT(nb_tx == BURST_SIZE,
-+		    "Expected to TX %u packets, but sent %u", BURST_SIZE, nb_tx);
-+
-+	/* Give some time for async operations (if any) */
-+	rte_delay_us_block(100);
-+
-+	pool_count_after = rte_mempool_avail_count(mp);
-+
-+	/* Verify mbufs were freed - pool should have same count */
-+	TEST_ASSERT(pool_count_after >= pool_count_before,
-+		    "Mbufs not freed: before=%u, after=%u",
-+		    pool_count_before, pool_count_after);
-+
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test: Statistics verification
-+ */
-+static int
-+test_null_stats(void)
-+{
-+	struct rte_eth_stats stats;
-+	struct rte_mbuf *rx_bufs[BURST_SIZE];
-+	struct rte_mbuf *tx_bufs[BURST_SIZE];
-+	uint16_t nb_rx, nb_tx;
-+	unsigned int i;
-+	int ret;
-+
-+	/* Reset stats */
-+	ret = rte_eth_stats_reset(port_id);
-+	TEST_ASSERT(ret == 0, "Failed to reset stats");
-+
-+	/* Get initial stats */
-+	ret = rte_eth_stats_get(port_id, &stats);
-+	TEST_ASSERT(ret == 0, "Failed to get stats");
-+	TEST_ASSERT(stats.ipackets == 0, "Initial ipackets not zero");
-+	TEST_ASSERT(stats.opackets == 0, "Initial opackets not zero");
-+
-+	/* Perform RX */
-+	nb_rx = rte_eth_rx_burst(port_id, 0, rx_bufs, BURST_SIZE);
-+	TEST_ASSERT(nb_rx == BURST_SIZE, "RX burst failed");
-+
-+	/* Allocate and perform TX */
-+	for (i = 0; i < BURST_SIZE; i++) {
-+		tx_bufs[i] = rte_pktmbuf_alloc(mp);
-+		TEST_ASSERT(tx_bufs[i] != NULL, "Failed to allocate mbuf");
-+		tx_bufs[i]->data_len = 64;
-+		tx_bufs[i]->pkt_len = 64;
-+	}
-+	nb_tx = rte_eth_tx_burst(port_id, 0, tx_bufs, BURST_SIZE);
-+	TEST_ASSERT(nb_tx == BURST_SIZE, "TX burst failed");
-+
-+	/* Get updated stats */
-+	ret = rte_eth_stats_get(port_id, &stats);
-+	TEST_ASSERT(ret == 0, "Failed to get stats after RX/TX");
-+
-+	/* Verify stats */
-+	TEST_ASSERT(stats.ipackets == BURST_SIZE,
-+		    "Expected ipackets=%u, got %"PRIu64,
-+		    BURST_SIZE, stats.ipackets);
-+	TEST_ASSERT(stats.opackets == BURST_SIZE,
-+		    "Expected opackets=%u, got %"PRIu64,
-+		    BURST_SIZE, stats.opackets);
-+	/* Default packet size is 64 bytes */
-+	TEST_ASSERT(stats.ibytes == BURST_SIZE * 64,
-+		    "Expected ibytes=%u, got %"PRIu64,
-+		    BURST_SIZE * 64, stats.ibytes);
-+	TEST_ASSERT(stats.obytes == BURST_SIZE * 64,
-+		    "Expected obytes=%u, got %"PRIu64,
-+		    BURST_SIZE * 64, stats.obytes);
-+
-+	/* Free RX mbufs */
-+	for (i = 0; i < nb_rx; i++)
-+		rte_pktmbuf_free(rx_bufs[i]);
-+
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test: Custom packet size
-+ */
-+static int
-+test_null_custom_size(void)
-+{
-+	struct rte_mbuf *bufs[BURST_SIZE];
-+	uint16_t custom_port;
-+	uint16_t nb_rx;
-+	unsigned int i;
-+	const unsigned int custom_size = 256;
-+	int ret;
-+
-+	/* Create null device with custom size */
-+	ret = create_null_port("net_null_size_test", "size=256", &custom_port);
-+	TEST_ASSERT(ret == 0, "Failed to create null port with custom size");
-+
-+	ret = configure_null_port(custom_port);
-+	TEST_ASSERT(ret == 0, "Failed to configure null port");
-+
-+	/* RX should return packets with custom size */
-+	nb_rx = rte_eth_rx_burst(custom_port, 0, bufs, BURST_SIZE);
-+	TEST_ASSERT(nb_rx == BURST_SIZE, "RX burst failed");
-+
-+	/* Verify custom packet size */
-+	for (i = 0; i < nb_rx; i++) {
-+		TEST_ASSERT(bufs[i]->pkt_len == custom_size,
-+			    "Expected pkt_len=%u, got %u",
-+			    custom_size, bufs[i]->pkt_len);
-+		TEST_ASSERT(bufs[i]->data_len == custom_size,
-+			    "Expected data_len=%u, got %u",
-+			    custom_size, bufs[i]->data_len);
-+		rte_pktmbuf_free(bufs[i]);
-+	}
-+
-+	/* Cleanup custom port */
-+	rte_eth_dev_stop(custom_port);
-+	rte_eth_dev_close(custom_port);
-+	rte_vdev_uninit("net_null_size_test");
-+
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test: Copy mode
-+ */
-+static int
-+test_null_copy_mode(void)
-+{
-+	struct rte_mbuf *rx_bufs[BURST_SIZE];
-+	uint16_t copy_port;
-+	uint16_t nb_rx;
-+	unsigned int i;
-+	int ret;
-+
-+	/* Create null device with copy enabled */
-+	ret = create_null_port("net_null_copy_test", "copy=1", &copy_port);
-+	TEST_ASSERT(ret == 0, "Failed to create null port with copy mode");
-+
-+	ret = configure_null_port(copy_port);
-+	TEST_ASSERT(ret == 0, "Failed to configure null port");
-+
-+	/* RX in copy mode should work */
-+	nb_rx = rte_eth_rx_burst(copy_port, 0, rx_bufs, BURST_SIZE);
-+	TEST_ASSERT(nb_rx == BURST_SIZE, "RX burst in copy mode failed");
-+
-+	/* Free RX mbufs */
-+	for (i = 0; i < nb_rx; i++)
-+		rte_pktmbuf_free(rx_bufs[i]);
-+
-+	/* Cleanup */
-+	rte_eth_dev_stop(copy_port);
-+	rte_eth_dev_close(copy_port);
-+	rte_vdev_uninit("net_null_copy_test");
-+
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test: No-RX mode
-+ */
-+static int
-+test_null_no_rx_mode(void)
-+{
-+	struct rte_mbuf *rx_bufs[BURST_SIZE];
-+	struct rte_mbuf *tx_bufs[BURST_SIZE];
-+	uint16_t norx_port;
-+	uint16_t nb_rx, nb_tx;
-+	unsigned int i;
-+	int ret;
-+
-+	/* Create null device with no-rx enabled */
-+	ret = create_null_port("net_null_norx_test", "no-rx=1", &norx_port);
-+	TEST_ASSERT(ret == 0, "Failed to create null port with no-rx mode");
-+
-+	ret = configure_null_port(norx_port);
-+	TEST_ASSERT(ret == 0, "Failed to configure null port");
-+
-+	/* RX in no-rx mode should return 0 packets */
-+	nb_rx = rte_eth_rx_burst(norx_port, 0, rx_bufs, BURST_SIZE);
-+	TEST_ASSERT(nb_rx == 0,
-+		    "Expected 0 packets in no-rx mode, got %u", nb_rx);
-+
-+	/* TX in no-rx mode should still work (frees packets) */
-+	for (i = 0; i < BURST_SIZE; i++) {
-+		tx_bufs[i] = rte_pktmbuf_alloc(mp);
-+		TEST_ASSERT(tx_bufs[i] != NULL, "Failed to allocate mbuf");
-+		tx_bufs[i]->data_len = 64;
-+		tx_bufs[i]->pkt_len = 64;
-+	}
-+
-+	nb_tx = rte_eth_tx_burst(norx_port, 0, tx_bufs, BURST_SIZE);
-+	TEST_ASSERT(nb_tx == BURST_SIZE, "TX burst in no-rx mode failed");
-+
-+	/* Cleanup */
-+	rte_eth_dev_stop(norx_port);
-+	rte_eth_dev_close(norx_port);
-+	rte_vdev_uninit("net_null_norx_test");
-+
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test: Link status
-+ */
-+static int
-+test_null_link_status(void)
-+{
-+	struct rte_eth_link link;
-+	int ret;
-+
-+	ret = rte_eth_link_get_nowait(port_id, &link);
-+	TEST_ASSERT(ret == 0, "Failed to get link status");
-+
-+	/* After start, link should be UP */
-+	TEST_ASSERT(link.link_status == RTE_ETH_LINK_UP,
-+		    "Expected link UP after start");
-+	TEST_ASSERT(link.link_speed == RTE_ETH_SPEED_NUM_10G,
-+		    "Expected 10G link speed");
-+	TEST_ASSERT(link.link_duplex == RTE_ETH_LINK_FULL_DUPLEX,
-+		    "Expected full duplex");
-+
-+	/* Stop the device */
-+	ret = rte_eth_dev_stop(port_id);
-+	TEST_ASSERT(ret == 0, "Failed to stop device");
-+
-+	ret = rte_eth_link_get_nowait(port_id, &link);
-+	TEST_ASSERT(ret == 0, "Failed to get link status after stop");
-+
-+	/* After stop, link should be DOWN */
-+	TEST_ASSERT(link.link_status == RTE_ETH_LINK_DOWN,
-+		    "Expected link DOWN after stop");
-+
-+	/* Restart for subsequent tests */
-+	ret = rte_eth_dev_start(port_id);
-+	TEST_ASSERT(ret == 0, "Failed to restart device");
-+
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test: Device info
-+ */
-+static int
-+test_null_dev_info(void)
-+{
-+	struct rte_eth_dev_info dev_info;
-+	int ret;
-+
-+	ret = rte_eth_dev_info_get(port_id, &dev_info);
-+	TEST_ASSERT(ret == 0, "Failed to get device info");
-+
-+	/* Verify expected device info values */
-+	TEST_ASSERT(dev_info.max_mac_addrs == 1,
-+		    "Expected max_mac_addrs=1, got %u", dev_info.max_mac_addrs);
-+	TEST_ASSERT(dev_info.max_rx_pktlen == (uint32_t)-1,
-+		    "Unexpected max_rx_pktlen");
-+	TEST_ASSERT(dev_info.min_rx_bufsize == 0,
-+		    "Expected min_rx_bufsize=0, got %u", dev_info.min_rx_bufsize);
-+
-+	/* Check TX offload capabilities */
-+	TEST_ASSERT(dev_info.tx_offload_capa & RTE_ETH_TX_OFFLOAD_MULTI_SEGS,
-+		    "Expected MULTI_SEGS TX offload capability");
-+	TEST_ASSERT(dev_info.tx_offload_capa & RTE_ETH_TX_OFFLOAD_MT_LOCKFREE,
-+		    "Expected MT_LOCKFREE TX offload capability");
-+
-+	/* Check RSS capabilities */
-+	TEST_ASSERT(dev_info.reta_size > 0, "Expected non-zero reta_size");
-+	TEST_ASSERT(dev_info.hash_key_size == 40,
-+		    "Expected hash_key_size=40, got %u", dev_info.hash_key_size);
-+	TEST_ASSERT(dev_info.flow_type_rss_offloads != 0,
-+		    "Expected RSS offloads to be set");
-+
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test: Multiple RX/TX bursts
-+ */
-+static int
-+test_null_multiple_bursts(void)
-+{
-+	struct rte_mbuf *bufs[BURST_SIZE];
-+	struct rte_eth_stats stats;
-+	uint16_t nb_rx, nb_tx;
-+	unsigned int i, burst;
-+	const unsigned int num_bursts = 10;
-+	int ret;
-+
-+	/* Reset stats */
-+	ret = rte_eth_stats_reset(port_id);
-+	TEST_ASSERT(ret == 0, "Failed to reset stats");
-+
-+	/* Perform multiple RX bursts */
-+	for (burst = 0; burst < num_bursts; burst++) {
-+		nb_rx = rte_eth_rx_burst(port_id, 0, bufs, BURST_SIZE);
-+		TEST_ASSERT(nb_rx == BURST_SIZE,
-+			    "Burst %u: Expected %u packets, got %u",
-+			    burst, BURST_SIZE, nb_rx);
-+
-+		for (i = 0; i < nb_rx; i++)
-+			rte_pktmbuf_free(bufs[i]);
-+	}
-+
-+	/* Perform multiple TX bursts */
-+	for (burst = 0; burst < num_bursts; burst++) {
-+		for (i = 0; i < BURST_SIZE; i++) {
-+			bufs[i] = rte_pktmbuf_alloc(mp);
-+			TEST_ASSERT(bufs[i] != NULL, "Failed to allocate mbuf");
-+			bufs[i]->data_len = 64;
-+			bufs[i]->pkt_len = 64;
-+		}
-+
-+		nb_tx = rte_eth_tx_burst(port_id, 0, bufs, BURST_SIZE);
-+		TEST_ASSERT(nb_tx == BURST_SIZE,
-+			    "Burst %u: Expected to TX %u, sent %u",
-+			    burst, BURST_SIZE, nb_tx);
-+	}
-+
-+	/* Verify total stats */
-+	ret = rte_eth_stats_get(port_id, &stats);
-+	TEST_ASSERT(ret == 0, "Failed to get stats");
-+
-+	TEST_ASSERT(stats.ipackets == num_bursts * BURST_SIZE,
-+		    "Expected ipackets=%u, got %"PRIu64,
-+		    num_bursts * BURST_SIZE, stats.ipackets);
-+	TEST_ASSERT(stats.opackets == num_bursts * BURST_SIZE,
-+		    "Expected opackets=%u, got %"PRIu64,
-+		    num_bursts * BURST_SIZE, stats.opackets);
-+
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test: RSS configuration
-+ * Note: RSS requires multi-queue configuration
-+ */
-+static int
-+test_null_rss_config(void)
-+{
-+	struct rte_eth_dev_info dev_info;
-+	struct rte_eth_rss_conf rss_conf;
-+	struct rte_eth_conf port_conf = {0};
-+	uint8_t rss_key[40];
-+	uint16_t rss_port;
-+	const uint16_t num_queues = 2;
-+	uint16_t q;
-+	int ret;
-+
-+	/* Create a new null device for RSS testing with multiple queues */
-+	ret = create_null_port("net_null_rss_test", NULL, &rss_port);
-+	TEST_ASSERT(ret == 0, "Failed to create null port for RSS test");
-+
-+	ret = rte_eth_dev_info_get(rss_port, &dev_info);
-+	TEST_ASSERT(ret == 0, "Failed to get device info");
-+
-+	/* Configure with RSS enabled and multiple queues */
-+	port_conf.rxmode.mq_mode = RTE_ETH_MQ_RX_RSS;
-+	port_conf.rx_adv_conf.rss_conf.rss_hf = dev_info.flow_type_rss_offloads;
-+
-+	ret = rte_eth_dev_configure(rss_port, num_queues, num_queues, &port_conf);
-+	TEST_ASSERT(ret == 0, "Failed to configure RSS port");
-+
-+	for (q = 0; q < num_queues; q++) {
-+		ret = rte_eth_rx_queue_setup(rss_port, q, RING_SIZE,
-+					     rte_eth_dev_socket_id(rss_port),
-+					     NULL, mp);
-+		TEST_ASSERT(ret == 0, "Failed to setup RX queue %u", q);
-+
-+		ret = rte_eth_tx_queue_setup(rss_port, q, RING_SIZE,
-+					     rte_eth_dev_socket_id(rss_port),
-+					     NULL);
-+		TEST_ASSERT(ret == 0, "Failed to setup TX queue %u", q);
-+	}
-+
-+	ret = rte_eth_dev_start(rss_port);
-+	TEST_ASSERT(ret == 0, "Failed to start RSS port");
-+
-+	/* Get current RSS config */
-+	memset(&rss_conf, 0, sizeof(rss_conf));
-+	rss_conf.rss_key = rss_key;
-+	rss_conf.rss_key_len = sizeof(rss_key);
-+
-+	ret = rte_eth_dev_rss_hash_conf_get(rss_port, &rss_conf);
-+	TEST_ASSERT(ret == 0, "Failed to get RSS hash config");
-+
-+	/* Update RSS config with new key */
-+	memset(rss_key, 0x55, sizeof(rss_key));
-+	rss_conf.rss_key = rss_key;
-+	rss_conf.rss_key_len = sizeof(rss_key);
-+	rss_conf.rss_hf = dev_info.flow_type_rss_offloads;
-+
-+	ret = rte_eth_dev_rss_hash_update(rss_port, &rss_conf);
-+	TEST_ASSERT(ret == 0, "Failed to update RSS hash config");
-+
-+	/* Verify the update */
-+	memset(rss_key, 0, sizeof(rss_key));
-+	rss_conf.rss_key = rss_key;
-+
-+	ret = rte_eth_dev_rss_hash_conf_get(rss_port, &rss_conf);
-+	TEST_ASSERT(ret == 0, "Failed to get RSS hash config after update");
-+
-+	/* Verify key was updated */
-+	for (unsigned int i = 0; i < sizeof(rss_key); i++) {
-+		TEST_ASSERT(rss_key[i] == 0x55,
-+			    "RSS key not updated at byte %u", i);
-+	}
-+
-+	/* Cleanup */
-+	rte_eth_dev_stop(rss_port);
-+	rte_eth_dev_close(rss_port);
-+	rte_vdev_uninit("net_null_rss_test");
-+
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test: RETA (Redirection Table) configuration
-+ * Note: RETA requires multi-queue RSS configuration
-+ */
-+static int
-+test_null_reta_config(void)
-+{
-+	struct rte_eth_dev_info dev_info;
-+	struct rte_eth_rss_reta_entry64 reta_conf[RTE_ETH_RSS_RETA_SIZE_128 /
-+						 RTE_ETH_RETA_GROUP_SIZE];
-+	struct rte_eth_conf port_conf = {0};
-+	uint16_t reta_port;
-+	const uint16_t num_queues = 2;
-+	unsigned int i, j;
-+	uint16_t q;
-+	int ret;
-+
-+	/* Create a new null device for RETA testing with multiple queues */
-+	ret = create_null_port("net_null_reta_test", NULL, &reta_port);
-+	TEST_ASSERT(ret == 0, "Failed to create null port for RETA test");
-+
-+	ret = rte_eth_dev_info_get(reta_port, &dev_info);
-+	TEST_ASSERT(ret == 0, "Failed to get device info");
-+
-+	TEST_ASSERT(dev_info.reta_size > 0, "RETA size is zero");
-+
-+	/* Configure with RSS enabled and multiple queues */
-+	port_conf.rxmode.mq_mode = RTE_ETH_MQ_RX_RSS;
-+	port_conf.rx_adv_conf.rss_conf.rss_hf = dev_info.flow_type_rss_offloads;
-+
-+	ret = rte_eth_dev_configure(reta_port, num_queues, num_queues, &port_conf);
-+	TEST_ASSERT(ret == 0, "Failed to configure RETA port");
-+
-+	for (q = 0; q < num_queues; q++) {
-+		ret = rte_eth_rx_queue_setup(reta_port, q, RING_SIZE,
-+					     rte_eth_dev_socket_id(reta_port),
-+					     NULL, mp);
-+		TEST_ASSERT(ret == 0, "Failed to setup RX queue %u", q);
-+
-+		ret = rte_eth_tx_queue_setup(reta_port, q, RING_SIZE,
-+					     rte_eth_dev_socket_id(reta_port),
-+					     NULL);
-+		TEST_ASSERT(ret == 0, "Failed to setup TX queue %u", q);
-+	}
-+
-+	ret = rte_eth_dev_start(reta_port);
-+	TEST_ASSERT(ret == 0, "Failed to start RETA port");
-+
-+	/* Initialize RETA config */
-+	memset(reta_conf, 0, sizeof(reta_conf));
-+	for (i = 0; i < dev_info.reta_size / RTE_ETH_RETA_GROUP_SIZE; i++) {
-+		reta_conf[i].mask = UINT64_MAX;
-+		for (j = 0; j < RTE_ETH_RETA_GROUP_SIZE; j++)
-+			reta_conf[i].reta[j] = j % num_queues;
-+	}
-+
-+	/* Update RETA */
-+	ret = rte_eth_dev_rss_reta_update(reta_port, reta_conf, dev_info.reta_size);
-+	TEST_ASSERT(ret == 0, "Failed to update RETA");
-+
-+	/* Query RETA */
-+	memset(reta_conf, 0, sizeof(reta_conf));
-+	for (i = 0; i < dev_info.reta_size / RTE_ETH_RETA_GROUP_SIZE; i++)
-+		reta_conf[i].mask = UINT64_MAX;
-+
-+	ret = rte_eth_dev_rss_reta_query(reta_port, reta_conf, dev_info.reta_size);
-+	TEST_ASSERT(ret == 0, "Failed to query RETA");
-+
-+	/* Verify RETA values */
-+	for (i = 0; i < dev_info.reta_size / RTE_ETH_RETA_GROUP_SIZE; i++) {
-+		for (j = 0; j < RTE_ETH_RETA_GROUP_SIZE; j++) {
-+			TEST_ASSERT(reta_conf[i].reta[j] == j % num_queues,
-+				    "RETA mismatch at [%u][%u]", i, j);
-+		}
-+	}
-+
-+	/* Cleanup */
-+	rte_eth_dev_stop(reta_port);
-+	rte_eth_dev_close(reta_port);
-+	rte_vdev_uninit("net_null_reta_test");
-+
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test: Stats reset
-+ */
-+static int
-+test_null_stats_reset(void)
-+{
-+	struct rte_eth_stats stats;
-+	struct rte_mbuf *bufs[BURST_SIZE];
-+	uint16_t nb_rx;
-+	unsigned int i;
-+	int ret;
-+
-+	/* Generate some traffic */
-+	nb_rx = rte_eth_rx_burst(port_id, 0, bufs, BURST_SIZE);
-+	TEST_ASSERT(nb_rx > 0, "Failed to receive packets");
-+	for (i = 0; i < nb_rx; i++)
-+		rte_pktmbuf_free(bufs[i]);
-+
-+	/* Verify stats are non-zero */
-+	ret = rte_eth_stats_get(port_id, &stats);
-+	TEST_ASSERT(ret == 0, "Failed to get stats");
-+	TEST_ASSERT(stats.ipackets > 0, "Expected non-zero ipackets");
-+
-+	/* Reset stats */
-+	ret = rte_eth_stats_reset(port_id);
-+	TEST_ASSERT(ret == 0, "Failed to reset stats");
-+
-+	/* Verify stats are zero */
-+	ret = rte_eth_stats_get(port_id, &stats);
-+	TEST_ASSERT(ret == 0, "Failed to get stats after reset");
-+	TEST_ASSERT(stats.ipackets == 0,
-+		    "Expected ipackets=0 after reset, got %"PRIu64,
-+		    stats.ipackets);
-+	TEST_ASSERT(stats.opackets == 0,
-+		    "Expected opackets=0 after reset, got %"PRIu64,
-+		    stats.opackets);
-+	TEST_ASSERT(stats.ibytes == 0,
-+		    "Expected ibytes=0 after reset, got %"PRIu64,
-+		    stats.ibytes);
-+	TEST_ASSERT(stats.obytes == 0,
-+		    "Expected obytes=0 after reset, got %"PRIu64,
-+		    stats.obytes);
-+
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test: MAC address operations
-+ */
-+static int
-+test_null_mac_addr(void)
-+{
-+	struct rte_ether_addr mac_addr;
-+	struct rte_ether_addr new_mac = {
-+		.addr_bytes = {0x00, 0x11, 0x22, 0x33, 0x44, 0x55}
-+	};
-+	int ret;
-+
-+	/* Get current MAC address */
-+	ret = rte_eth_macaddr_get(port_id, &mac_addr);
-+	TEST_ASSERT(ret == 0, "Failed to get MAC address");
-+
-+	/* Set new MAC address */
-+	ret = rte_eth_dev_default_mac_addr_set(port_id, &new_mac);
-+	TEST_ASSERT(ret == 0, "Failed to set MAC address");
-+
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test: Promiscuous and allmulticast modes
-+ */
-+static int
-+test_null_promisc_allmulti(void)
-+{
-+	int ret;
-+
-+	/* Test promiscuous mode - null PMD starts with promiscuous enabled */
-+	ret = rte_eth_promiscuous_get(port_id);
-+	TEST_ASSERT(ret == 1, "Expected promiscuous mode enabled");
-+
-+	/* Test allmulticast mode - null PMD starts with allmulti enabled */
-+	ret = rte_eth_allmulticast_get(port_id);
-+	TEST_ASSERT(ret == 1, "Expected allmulticast mode enabled");
-+
-+	return TEST_SUCCESS;
-+}
-+
-+static struct unit_test_suite null_pmd_test_suite = {
-+	.suite_name = "Null PMD Unit Test Suite",
-+	.setup = test_null_setup,
-+	.teardown = test_null_teardown,
-+	.unit_test_cases = {
-+		TEST_CASE(test_null_rx_basic),
-+		TEST_CASE(test_null_tx_basic),
-+		TEST_CASE(test_null_stats),
-+		TEST_CASE(test_null_custom_size),
-+		TEST_CASE(test_null_copy_mode),
-+		TEST_CASE(test_null_no_rx_mode),
-+		TEST_CASE(test_null_link_status),
-+		TEST_CASE(test_null_dev_info),
-+		TEST_CASE(test_null_multiple_bursts),
-+		TEST_CASE(test_null_rss_config),
-+		TEST_CASE(test_null_reta_config),
-+		TEST_CASE(test_null_stats_reset),
-+		TEST_CASE(test_null_mac_addr),
-+		TEST_CASE(test_null_promisc_allmulti),
-+
-+		TEST_CASES_END() /**< NULL terminate unit test array */
-+	}
-+};
-+
-+static int
-+test_pmd_null(void)
-+{
-+	return unit_test_suite_runner(&null_pmd_test_suite);
-+}
-+
-+REGISTER_FAST_TEST(null_pmd_autotest, true, true, test_pmd_null);
--- 
-2.51.0
-
+QWNrZWQtYnk6IEdvd3Jpc2hhbmthciBNdXRodWtyaXNobmFuIDxnbXV0aHVrcmlzaG5AbWFydmVs
+bC5jb20+DQoNCj4gRml4ZXM6IGFlNWFlM2JmNTk5NiAoImV4YW1wbGVzL2ZpcHNfdmFsaWRhdGlv
+bjogZW5jb2RlIGRpZ2VzdCB3aXRoIGhhc2ggT0lEIikNCj4gQ2M6IGdtdXRodWtyaXNobkBtYXJ2
+ZWxsLmNvbQ0KPiBDYzogc3RhYmxlQGRwZGsub3JnDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBTdGVw
+aGVuIEhlbW1pbmdlciA8c3RlcGhlbkBuZXR3b3JrcGx1bWJlci5vcmc+DQo+IC0tLQ0KPiAgZXhh
+bXBsZXMvZmlwc192YWxpZGF0aW9uL21haW4uYyB8IDE0ICsrKysrKy0tLS0tLS0tDQo+ICAxIGZp
+bGUgY2hhbmdlZCwgNiBpbnNlcnRpb25zKCspLCA4IGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAt
+LWdpdCBhL2V4YW1wbGVzL2ZpcHNfdmFsaWRhdGlvbi9tYWluLmMgYi9leGFtcGxlcy9maXBzX3Zh
+bGlkYXRpb24vbWFpbi5jDQo+IGluZGV4IGYyMTgyNmU5ZDcuLmRhZjI3M2JjODUgMTAwNjQ0DQo+
+IC0tLSBhL2V4YW1wbGVzL2ZpcHNfdmFsaWRhdGlvbi9tYWluLmMNCj4gKysrIGIvZXhhbXBsZXMv
+Zmlwc192YWxpZGF0aW9uL21haW4uYw0KPiBAQCAtODgyLDggKzg4Miw4IEBAIGdldF9oYXNoX29p
+ZChlbnVtIHJ0ZV9jcnlwdG9fYXV0aF9hbGdvcml0aG0gaGFzaCwNCj4gdWludDhfdCAqYnVmKQ0K
+PiAgCXVpbnQ4X3QgaWRfc2hhMVtdID0gezB4MzAsIDB4MjEsIDB4MzAsIDB4MDksIDB4MDYsIDB4
+MDUsDQo+ICAJCQkJMHgyYiwgMHgwZSwgMHgwMywgMHgwMiwgMHgxYSwgMHgwNSwNCj4gIAkJCQkw
+eDAwLCAweDA0LCAweDE0fTsNCj4gLQl1aW50OF90ICppZCA9IE5VTEw7DQo+IC0JaW50IGlkX2xl
+biA9IDA7DQo+ICsJY29uc3QgdWludDhfdCAqaWQ7DQo+ICsJc2l6ZV90IGlkX2xlbjsNCj4gDQo+
+ICAJc3dpdGNoIChoYXNoKSB7DQo+ICAJY2FzZSBSVEVfQ1JZUFRPX0FVVEhfU0hBMToNCj4gQEAg
+LTkwNywxMiArOTA3LDEwIEBAIGdldF9oYXNoX29pZChlbnVtIHJ0ZV9jcnlwdG9fYXV0aF9hbGdv
+cml0aG0gaGFzaCwNCj4gdWludDhfdCAqYnVmKQ0KPiAgCQlpZF9sZW4gPSBzaXplb2YoaWRfc2hh
+NTEyKTsNCj4gIAkJYnJlYWs7DQo+ICAJZGVmYXVsdDoNCj4gLQkJaWRfbGVuID0gLTE7DQo+IC0J
+CWJyZWFrOw0KPiArCQlyZXR1cm4gLTE7DQo+ICAJfQ0KPiANCj4gLQlpZiAoaWQgIT0gTlVMTCkN
+Cj4gLQkJcnRlX21lbWNweShidWYsIGlkLCBpZF9sZW4pOw0KPiArCW1lbWNweShidWYsIGlkLCBp
+ZF9sZW4pOw0KPiANCj4gIAlyZXR1cm4gaWRfbGVuOw0KPiAgfQ0KPiBAQCAtMTYxNCw4ICsxNjEy
+LDggQEAgcHJlcGFyZV9yc2FfeGZvcm0oc3RydWN0IHJ0ZV9jcnlwdG9fYXN5bV94Zm9ybQ0KPiAq
+eGZvcm0pDQo+ICAJCQlpZiAoYl9sZW4pIHsNCj4gIAkJCQltc2cubGVuID0gZW52LmRpZ2VzdF9s
+ZW4gKyBiX2xlbjsNCj4gIAkJCQltc2cudmFsID0gcnRlX3ptYWxsb2MoTlVMTCwgbXNnLmxlbiwg
+MCk7DQo+IC0JCQkJcnRlX21lbWNweShtc2cudmFsLCBiLCBiX2xlbik7DQo+IC0JCQkJcnRlX21l
+bWNweShtc2cudmFsICsgYl9sZW4sIGVudi5kaWdlc3QsDQo+IGVudi5kaWdlc3RfbGVuKTsNCj4g
+KwkJCQltZW1jcHkobXNnLnZhbCwgYiwgYl9sZW4pOw0KPiArCQkJCW1lbWNweShtc2cudmFsICsg
+Yl9sZW4sIGVudi5kaWdlc3QsDQo+IGVudi5kaWdlc3RfbGVuKTsNCj4gIAkJCQlydGVfZnJlZShl
+bnYuZGlnZXN0KTsNCj4gIAkJCQllbnYuZGlnZXN0ID0gbXNnLnZhbDsNCj4gIAkJCQllbnYuZGln
+ZXN0X2xlbiA9IG1zZy5sZW47DQo+IC0tDQo+IDIuNTEuMA0KDQo=
