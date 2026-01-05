@@ -2,73 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D729CC79FAF
-	for <dpdk-dev@archiver.kernel.org>; Mon,  5 Jan 2026 18:58:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D18A4C79FB9
+	for <dpdk-dev@archiver.kernel.org>; Mon,  5 Jan 2026 19:06:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CF1E4402C5;
-	Mon,  5 Jan 2026 19:58:24 +0100 (CET)
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com
- [209.85.128.50]) by mails.dpdk.org (Postfix) with ESMTP id 43A734028B
- for <dev@dpdk.org>; Mon,  5 Jan 2026 19:58:23 +0100 (CET)
-Received: by mail-wm1-f50.google.com with SMTP id
- 5b1f17b1804b1-477619f8ae5so2038695e9.3
- for <dev@dpdk.org>; Mon, 05 Jan 2026 10:58:23 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id CB1CD4028B;
+	Mon,  5 Jan 2026 20:06:53 +0100 (CET)
+Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com
+ [209.85.219.43]) by mails.dpdk.org (Postfix) with ESMTP id AE8304026F
+ for <dev@dpdk.org>; Mon,  5 Jan 2026 20:06:51 +0100 (CET)
+Received: by mail-qv1-f43.google.com with SMTP id
+ 6a1803df08f44-888310b91c5so17747646d6.1
+ for <dev@dpdk.org>; Mon, 05 Jan 2026 11:06:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1767639502;
- x=1768244302; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=xhWZNfT7aMHGgHJ/aZbwgfF00QVc7sf8D/H/7mzybC0=;
- b=nOAMTpGCKKMmM9I5/NVoWOHEztbBg+36p5E/5clnQt7BnP1xWuKeOY/ZJAObYEF8+R
- Gary7U9IW8pXNlOKHUtshqFM7LrWdi+SfmIm+1WFyaf9zxHM4Vhvs97B7ce/tPOzZcuL
- VVBA2XrTDCCYL608ZznEvsgP6pGlVf0t0Hun7CqkjQP8VUxxwE0SulvhPNurjnb3NAaF
- DgMYI0W5H1c3skyQTP1Cx58LAM9i6dm5jQGLLTGuXXyBw71OQcqMRqtSq0D6cvUnabfL
- CDAPVxq4f+VEIlEC4SaNFMGiIz62cqPgwVWz/zyPxJ0WAlZ8EvgpSIiC1nQv9QiORcTg
- ULig==
+ d=iol.unh.edu; s=unh-iol; t=1767640011; x=1768244811; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=866BvrvO50gKYRHYAfuNmOp7Nhx8VxT+bVuKNJtnGhg=;
+ b=icFEOMEO1PCnzFu3nW34ZUXRQo/MRQ5fRgZentN6reoqucg2qhJGG6stsiP5VkDdD2
+ VNPXChSazEscl5HT6ABxHNF3U0GL4QiV2z8hxsnvCQzZ5ZPr8RmntjvVXYM1Lxm9RM2V
+ 8woER7zzUYu5UQdgfPzOSVKUbjNNtx0H5XH4Y=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1767639502; x=1768244302;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=xhWZNfT7aMHGgHJ/aZbwgfF00QVc7sf8D/H/7mzybC0=;
- b=dKKHNHUUETfacGJZ6RNTw62+f4lOre/RJ+jPJPpIiv5QOUCsS6ouDERQA5B+ujsN/P
- tOjiyr1mNLJLSPtfCzCeyicgmSY7o0q6IZgNKmGndjhzTUlOdPd6IVIwQGhKuiL5kX5o
- nasZOheuqauUOkD0Q0YIFlGTjZwa4uQoeoPaI/7vsOjtO+Ss/NGZFxULq9JMxD9uoflh
- bWi8dZTlYoDme1mQrD+dAm4PmN2RtmOI3sH3Kgc8eypq8Mnu2PihuK+afiGl36YNb4fd
- PJMLTWFiyy0KOB/AktQ6LL2PUUqMa6K8Yf5JSjm12nvXNswtqUEkjN6Y1XgetqGd/H42
- AEiA==
-X-Gm-Message-State: AOJu0YzWZa5h4/XepJP/QRoOZjriy9OOcoe4pNeq9ejzrxZrykCxSj/y
- 58OGTFnCp/WyBY+p9Tx20iS3SYrdF1oEN1ZkIayA0wotx4COwiinUKqzr2RGIwP0ZGU=
-X-Gm-Gg: AY/fxX6dlI4q5DSoMQQYDmsOPam1WH1A/ycD4ZFVA9hnd0Jpg5MlE+xoRrklViDPOeX
- HS6AcNzfUWwGvlP5uQj4A/gPmc9JvRcGVCxsPUhJAsYssbodfsREBPFp/SvNXXQzf6W/gywV37P
- xgEOxg+0DJuV3rj5aMhF0kIUKcZBULsrTFBOt3UsDqlbGCmYq+DdYQ2z1IfQzB9tDz4i+auIzWB
- marStqQAxTFg4IcqMd4IXPD1mJ8Af80Gevlea/GdV4zy8HvM14UERy/bdgYI6Em1SgARrsDXtsF
- 3ilgV52NmJil7k/CF/SbRtaCcnHZYAI6sdhqg1QFhLzC1JefJ/BG4PAFoBjpLWUr01lYkqUntez
- GlFW/kjluHPVfpAZzgHnWqXOowC39e0JM2i+JFx8aCz0Y3ivqeBWPduVKj4QIFmHGv7W9wBkB3X
- Gc9hJtesIqiMQlA4GZ5/LsYQXQ5t3nbSu0zcaltqTp85nmcOCawBx6DdUZlb6kUB0=
-X-Google-Smtp-Source: AGHT+IH92UrDwG9VVTrCbRtkgJWPaS28YUfgh1fXEkZTMmFZUiKucsetiuvmiuTwDDemsnJ1T+k+pw==
-X-Received: by 2002:a05:600c:1992:b0:47a:8154:33e3 with SMTP id
- 5b1f17b1804b1-47d7f0a06d0mr3482305e9.28.1767639502290; 
- Mon, 05 Jan 2026 10:58:22 -0800 (PST)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ d=1e100.net; s=20230601; t=1767640011; x=1768244811;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=866BvrvO50gKYRHYAfuNmOp7Nhx8VxT+bVuKNJtnGhg=;
+ b=HAo0pqpkNaDzBoXEk++9Yi/RHHLjCZY86u3N81C3qQVkEVX7brIm5exnBR3QQcEm1w
+ 2BGwbnhBYDDHYBMNI7mcVAEzjIzIS2GMsVhhyuwFQHXPmFrof9VqL3d/J59V3pKqmHFc
+ xK8v/f3/5n+cPE1Sd2Ss8zlmjKSGZ8Wid4FhR3KxwVytGMlZs5mZnPAwdWlYSEnvoHl6
+ BQm0RKfg5y3ALfeHWt4k2NJxgQwP+saEuKJnClv6OdTuE7hThrFaczUkyICrrE0aSSIN
+ vdFi5lDmqqJbvqNRfjltsAOL+ITqfEIp4qvkmkYRRf5T5bKFP1sl5yyb5NFGosSNh8kl
+ pQiA==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCVcTQmbmqfRP2srBJyGnoTt3C5qfYfLVZLNf+61pp9YOyGePZbZdK8S4VDkAwY74pxtNtA=@dpdk.org
+X-Gm-Message-State: AOJu0YwlEzBztFhIDoN8Wc+FKh+0YjAEkpXVkxJlOlRKr4PIO/owcpbk
+ UaPqTPKz03fSkJIobGMv90VqfuMTNhHaF5Hg3ln6LwtoWpzidvKUvOkfC7tabDfcVuQ=
+X-Gm-Gg: AY/fxX6BSdTB/hpQCRlqekxsUT06NdRoPH0VPqYdbIcEC/+gMw0vWLogrj8ftW6MElv
+ gNrNT+CYSL1K54eWPyPmWrHmwzcljEnhMZSRnVOJkCjys5+u4fNhz7HsEmjlTOEN/Aq+e1HOZzJ
+ nM5jXN+GScJ9v3IQ9z7eHK3bjmUPoftiJ3BrVhYJz1uJ95ihzl0SYC6vAoduGELoQbLGEAhYkPs
+ s96la4XrZHHE/gQ7b6Twi3bHFo06sP/xVMq/pFvqCWO47tqFNUxevxOcWcaVccjcTE2O9t6KlQ1
+ VuWDqxqsc8w2k1XNnDWiHxSWJJIG8qfbRYUKFQIz6cS4Ppb3/IHbENE5qbAWXfuCnsNU50HnsYT
+ hlFIx4cYA8zjf+qVO+l6C7dd6VLcBuv52aighsMuE0s+EGzfFppRxJ75/COo9p3vdyjwkKK5bP+
+ d6BX2mwqb/E+ATYnagv5YP1ZE=
+X-Google-Smtp-Source: AGHT+IHFovDUY7ZTfmsYrK3UyaEbABdF7rp3SgyoZueRZGtTAp8o9E2tXKpS1b7W6QQNj+gJu+8s7Q==
+X-Received: by 2002:a05:6214:2485:b0:888:4930:4c85 with SMTP id
+ 6a1803df08f44-89076a40685mr2947826d6.33.1767640010516; 
+ Mon, 05 Jan 2026 11:06:50 -0800 (PST)
+Received: from d122205.iol.unh.edu ([2606:4100:3880:1220:4f6d:e2af:7f5f:4df])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-47d7f7035f2sm1263135e9.12.2026.01.05.10.58.20
+ af79cd13be357-8c37f4b9c9esm12426485a.18.2026.01.05.11.06.49
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 05 Jan 2026 10:58:21 -0800 (PST)
-Date: Mon, 5 Jan 2026 10:58:16 -0800
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: David Marchand <david.marchand@redhat.com>
-Cc: dev@dpdk.org, stable@dpdk.org, Ferruh Yigit <ferruh.yigit@amd.com>,
- Kumara Parameshwaran <kumaraparamesh92@gmail.com>
-Subject: Re: [PATCH] net/tap: remove log when running without multiprocess
-Message-ID: <20260105105816.61d0f1fd@phoenix.local>
-In-Reply-To: <CAJFAV8yOrbgZCo6-BFAVt_0SKUZT1nFm29N1RgsBOk1DV6r5GA@mail.gmail.com>
-References: <20260105123640.48325-1-david.marchand@redhat.com>
- <CAJFAV8yOrbgZCo6-BFAVt_0SKUZT1nFm29N1RgsBOk1DV6r5GA@mail.gmail.com>
+ Mon, 05 Jan 2026 11:06:50 -0800 (PST)
+From: Andrew Bailey <abailey@iol.unh.edu>
+To: luca.vizzarro@arm.com
+Cc: probb@iol.unh.edu, dmarx@iol.unh.edu, dev@dpdk.org,
+ Andrew Bailey <abailey@iol.unh.edu>
+Subject: [RFC PATCH 1/3] dts: add find float method to text parser
+Date: Mon,  5 Jan 2026 14:06:45 -0500
+Message-ID: <20260105190647.63244-1-abailey@iol.unh.edu>
+X-Mailer: git-send-email 2.50.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,26 +76,54 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 5 Jan 2026 13:50:31 +0100
-David Marchand <david.marchand@redhat.com> wrote:
+Currently, there is no way to gather floats from text using the parser.
+Adding a new method to find floats will allow testsuites to utilize
+valuable float values that are output from applications.
 
-> On Mon, 5 Jan 2026 at 13:37, David Marchand <david.marchand@redhat.com> wrote:
-> >
-> > In case DPDK is started with multiprocess disabled (like in OVS), there
-> > is no reason to log an error on multiprocess aspects.
-> >
-> > Note: the only caller of this helper does not check the return value.
-> >
-> > Fixes: c36ce7099c21 ("net/tap: fix to populate FDs in secondary process")
-> > Cc: stable@dpdk.org
-> >
-> > Signed-off-by: David Marchand <david.marchand@redhat.com>  
-> 
-> I chose to simply silence this warning, though I think something is
-> wrong with the sync mechanism.
-> Secondary processes should be the one requesting fds, instead of the
-> primary process broadcasting to all.
-> 
-> 
+Signed-off-by: Andrew Bailey <abailey@iol.unh.edu>
+---
+ dts/framework/parser.py | 28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
 
-Queued to next-net
+diff --git a/dts/framework/parser.py b/dts/framework/parser.py
+index 4170cdb1dd..3075c36857 100644
+--- a/dts/framework/parser.py
++++ b/dts/framework/parser.py
+@@ -220,6 +220,34 @@ def find_int(
+ 
+         return TextParser.wrap(TextParser.find(pattern), partial(int, base=int_base))
+ 
++    @staticmethod
++    def find_float(
++        pattern: str | re.Pattern[str],
++        flags: re.RegexFlag = re.RegexFlag(0),
++    ) -> ParserFn:
++        """Makes a parser function that converts the match of :meth:`~find` to float.
++
++        This function is compatible only with a pattern containing one capturing group.
++
++        Args:
++            pattern: The regular expression pattern.
++            flags: The regular expression flags. Ignored if the given pattern is already compiled.
++
++        Raises:
++            InternalError: If the pattern does not have exactly one capturing group.
++
++        Returns:
++            ParserFn: A dictionary for the `dataclasses.field` metadata argument containing the
++                :meth:`~find` parser function wrapped by the float built-in.
++        """
++        if isinstance(pattern, str):
++            pattern = re.compile(pattern, flags)
++
++        if pattern.groups != 1:
++            raise InternalError("only one capturing group is allowed with this parser function")
++
++        return TextParser.wrap(TextParser.find(pattern), partial(float))
++
+     """============ END PARSER FUNCTIONS ============"""
+ 
+     @classmethod
+-- 
+2.50.1
+
