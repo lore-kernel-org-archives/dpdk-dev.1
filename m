@@ -2,67 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 062FACCF2C2
-	for <dpdk-dev@archiver.kernel.org>; Mon,  5 Jan 2026 20:28:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C3CECD040C
+	for <dpdk-dev@archiver.kernel.org>; Mon,  5 Jan 2026 21:31:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B54894028B;
-	Mon,  5 Jan 2026 21:28:07 +0100 (CET)
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com
- [209.85.208.177])
- by mails.dpdk.org (Postfix) with ESMTP id 64EE54026F
- for <dev@dpdk.org>; Mon,  5 Jan 2026 21:28:05 +0100 (CET)
-Received: by mail-lj1-f177.google.com with SMTP id
- 38308e7fff4ca-37d056f5703so2835961fa.0
- for <dev@dpdk.org>; Mon, 05 Jan 2026 12:28:05 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 222994028B;
+	Mon,  5 Jan 2026 22:31:01 +0100 (CET)
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com
+ [209.85.128.47]) by mails.dpdk.org (Postfix) with ESMTP id 967294026F
+ for <dev@dpdk.org>; Mon,  5 Jan 2026 22:30:59 +0100 (CET)
+Received: by mail-wm1-f47.google.com with SMTP id
+ 5b1f17b1804b1-4779a4fc95aso10045235e9.1
+ for <dev@dpdk.org>; Mon, 05 Jan 2026 13:30:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=i2i-systems-com.20230601.gappssmtp.com; s=20230601; t=1767644884;
- x=1768249684; darn=dpdk.org; 
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=7jToZgLFX7eUGMM6AJZL2YpuoxAujbvPMeBT5g//WQQ=;
- b=ahYHRQUwIGOZpdCQ8b3wyzbWMf8LwKbZgH8Um4JDHDY2usB3kHQ6NqodOWM0s9feiI
- SHLlNLlqJENK5eKVTSoEA7Z+4/un2DNhJlF918/x2HI6k2AoWVa2h2WT9aTFvOMy/xu+
- Bccum5qS0gTEI+i2azSvMK5cFycfHbKTxFIl6ZtPA50DgoPo2dvFO46mz/sNsv00AnJo
- 6VfWjbXhsTA3LCN2OASl0nFnhsdjPpCx8LGIiFUl9Q/Rspfw0c2gJx1+ysbu9/KIK6FN
- apZTzmx6Zt7WniTpSfO+R1h+mbjlBjxjnd4sxeyNXFguLBCYhb9ejdud2ZIglL+e2pET
- ZqiA==
+ d=dyna-nic.com; s=google; t=1767648659; x=1768253459; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=7UjDQ9+s3C25wevXQrfVCCuvkhUsSWv9aa/wFiwjmWs=;
+ b=oUg9x41aQ/Q285/z3fO5hJno9gPJIrvyINTPIbAExT7ZIVhTybG5rKk/UDoH+gKVhf
+ bcVcg9eFevqnZGfzcd1597U3kTAq10J7fTbdOk17wdTg6wGrRBtMNg/SCp8VOKU4L00/
+ PjHukVqNb77KaWk0kebxqI6a6MHvv+lnv4+wq2d+BRi8isNhJQwGHwtctV1QQ/Ujmyg4
+ usabYZBPaYYouZo49KDrvsg4B9LftYe5DrBg0nCSXhu75OdArMzOxCHNqzzq9dQAqJs2
+ 1ILWay3yz0SgsD3yWbVuMm+WJXoNgfPa9ufbjfqcznNxMuW4qiPm+dVvtChRO1bjPVaA
+ HncA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1767644884; x=1768249684;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ d=1e100.net; s=20230601; t=1767648659; x=1768253459;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to;
- bh=7jToZgLFX7eUGMM6AJZL2YpuoxAujbvPMeBT5g//WQQ=;
- b=sWa0QlPV3sjeHryJvom6HAtXQ/jPTKiq/ybprwa1CT6ZSKJ4g+pJLnSaXqqx8NtSbs
- gqr+oRU4c9l+e4LI3aRJzqFcrB8Ij8Pt4uSiWYPencvdKevTPtAcJZ1Jx0KshQ5lZTXZ
- Km3kVxd78XaiznGOS3urfV0WATvKdlkFSSOEg4WrGTYxJZhxBOb2xWdl6t0wiEY5UdTg
- E0Mr/0UTrTumHeKjYzih3N89AYNgs/xSQXNHdSN2p8JM4lCj8VEiimLl6BcVbLTJusyI
- 7z8ZXAFcvdE6I2B65v9/nnd+J/OyS7oFaiVlJiPujE+mWVoGP0+msOa4JCAMN+XcfGKT
- mA0w==
-X-Gm-Message-State: AOJu0Yw4jVl6OC/xyT5c8HyWnJ2Xfb07dVdY+38NTd2C4ueARGQCeY9l
- SOVXnTFSkX1EfWAF1qADzBRi1uIKgyVEossNdpr56dB/rnCrc79yktR0ksb3bMSEYVwi1V9oNBB
- dQQTdMqk8w/T51397jnM2f/N7+RU9jFWFWYbkVQYv+F1X2Cn3oJk9yMzONeD/NoICParITVxbR3
- Zw9exNP8I49A==
-X-Gm-Gg: AY/fxX4xZH8fxnyP+qs+V9qS5YlbDWBBoYvQT+oviEObRJIq7WxQgLC3nJisAPmHnCo
- tAek5eheW8+rY0Kndl6F2pis6T3D1lU3lCEcZj7+SudqwiSDQvWe8GQi7cQT579s56wJlRsHuXg
- YzwqjPeTOcxFVEKwRZfK/FiNlldPLmoDSZ5iVl2+xad36LbvwNBpZTNP8zkDvTHiikyuBbcppqM
- Kty+NBa549YMkSUJgm7ZuvWeJmqApXs65LobSrq1Oqq0egNDMNXQWRYgzWfC0jQRNvM5UjWPsjb
- GZux+vU=
-X-Google-Smtp-Source: AGHT+IHJA7nfdtQodIaJvT8MCqxzX5VX7NTtuJfzXsaubjMU6B7LC4Qezml0vq40PvI2XJ9dByXb2Lpy0bVaMaDr4fI=
-X-Received: by 2002:a05:651c:41c6:b0:37f:e645:9aaa with SMTP id
- 38308e7fff4ca-382eaa06343mr1406891fa.16.1767644884507; Mon, 05 Jan 2026
- 12:28:04 -0800 (PST)
+ bh=7UjDQ9+s3C25wevXQrfVCCuvkhUsSWv9aa/wFiwjmWs=;
+ b=Pd/NUNrLmcunfXmtmx4hyp1QsdYtBi2v5fIhaQdQOUlM1hrekUbRZSzvBFprXEz3Gh
+ oxaXyrX5NuROAOzSV499jJtZpwUzSJn3aj2YdIiY1JPARsLAUVsbfXgUD5MQjRJ5r5g/
+ x+ZHseDjKVjYNEjjl87d1RrI33O1Pjm0E4o/Z9VYwz8ckaWckNHdkBU/9lBvEDqFrAmZ
+ k+OHl+rumLK5VYxIlLt+HssScU2BJ+xys9uUlSc9Kg9ScYbpAd1GCPcJWnzVlSWwOsw6
+ LBDq5sA/VSpgpfT+w0QCJYOKhCwqF2hP8+JGB/tyL8FCkj2egEW9wZ00l6z6ccC8rQhd
+ 5dLg==
+X-Gm-Message-State: AOJu0YyrVgyVn1ouJPIEGJS7QZzn9CXGsgntKd26Xq2nNiGQhwB+qYay
+ +7UTvx3uru6E8XBmodyJyLUwWYciMG8LsWqlBkLPPtRd4MwRpJ35/dW90nmQfI7SxP/FvOdF3n+
+ YkYCmvXA=
+X-Gm-Gg: AY/fxX5Htv9U6waBSf1CwSZD4Jzlynn9qJyZXxhcQnYkXWIn9ugb4MGaidlH5Drtzdq
+ W+TNVCeXZMh+l6C1acxZgsXrqgzf4iLtS8etES5slo5BerFXjwMID9t6d9348ifSBl9bbHumks+
+ smy/vLcP1A1TM45xt5UeFnYRMCv4ti26cyu+DASV2tG3vPN0iDq/T2BoY2NSx43630IqgP/tJUq
+ SbQoz/9Hx+heJLKKP4nVtczCYnFmT3KpBIxFHihjgcCpVQuCunZV6RhQ+AbbHzqrPqweT1KOE5G
+ PG9ornqoIEBa0Rr0CWFciihe/QmtTBfJhI7dNpXf19JFvrRlPWThxlQhMo7KRgelRqH6W+ulLeE
+ A6BURCl4QPmzqK64X0LntosI0lnkBmK3HRagUD/fWMPwbYmHdVXBD3nIz/2fs4fnp2Rv6ptAPNV
+ l42VYGexlUepi19TsRTuAnBAnEhXsUJLMT6QnGUohD1DpojQ==
+X-Google-Smtp-Source: AGHT+IHg8bByPBxxg9NRjNLSgFsvjNnNbzXxXyeQPLp6euKgCJohPONGLyI51Hq4EOge1dVxLFxt6Q==
+X-Received: by 2002:a05:600c:4fd3:b0:475:ddad:c3a9 with SMTP id
+ 5b1f17b1804b1-47d7f41f018mr7335505e9.13.1767648658575; 
+ Mon, 05 Jan 2026 13:30:58 -0800 (PST)
+Received: from claret.liberouter.org (rt-tmc-kou.liberouter.org.
+ [195.113.172.126]) by smtp.gmail.com with ESMTPSA id
+ 5b1f17b1804b1-47d7f4184cbsm8796285e9.6.2026.01.05.13.30.58
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Mon, 05 Jan 2026 13:30:58 -0800 (PST)
+From: Lukas Sismis <sismis@dyna-nic.com>
+To: dev@dpdk.org
+Cc: Lukas Sismis <sismis@dyna-nic.com>
+Subject: [PATCH v1 0/5] flow_parser: add shared parser library
+Date: Mon,  5 Jan 2026 22:30:18 +0100
+Message-ID: <20260105213025.749383-1-sismis@dyna-nic.com>
+X-Mailer: git-send-email 2.43.7
 MIME-Version: 1.0
-References: <20260105113529.65969-1-kerem.aksu@i2i-systems.com>
- <f9a34decfa0340dbaeb62b8854567d58@huawei.com>
-In-Reply-To: <f9a34decfa0340dbaeb62b8854567d58@huawei.com>
-From: Kerem Aksu <kerem.aksu@i2i-systems.com>
-Date: Mon, 5 Jan 2026 23:27:28 +0300
-X-Gm-Features: AQt7F2oA-XOyqraFlfFjFL3CFAo9lLLHEGbAg_6tKw4-rJU-MnCrbskSTngIWWk
-Message-ID: <CAHqJCAnCbe4eGbj7GT_CKSUcagG6afAz9VaEp4ZHczAUa6H4Lw@mail.gmail.com>
-Subject: Re: [PATCH] cmdline: update clear screen behavior
-To: Marat Khalili <marat.khalili@huawei.com>
-Cc: "dev@dpdk.org" <dev@dpdk.org>
-Content-Type: multipart/alternative; boundary="0000000000006e2b860647a9e568"
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -76,64 +77,90 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---0000000000006e2b860647a9e568
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+This series extracts the testpmd flow CLI parser into a reusable library,
+enabling external applications to parse rte_flow rules using testpmd syntax.
 
-On Mon, Jan 5, 2026 at 6:07=E2=80=AFPM Marat Khalili <marat.khalili@huawei.=
-com>
-wrote:
-> Acked-by: Marat Khalili <marat.khalili@huawei.com>
-> Tested-by: Marat Khalili <marat.khalili@huawei.com>
->
-> Interestingly, currently supported combinations also miss Ctrl+U.
+Motivation
+----------
+External applications like Suricata IDS [1] need to express hardware filtering
+rules in a consistent, human-readable format. Rather than inventing custom
+syntax, reusing testpmd's well-tested flow grammar provides immediate
+compatibility with existing documentation and user knowledge.
 
-That can be implemented as another patch if requested.
+Note: This library provides only one way to create rte_flow structures.
+Applications can also construct rte_flow_attr, rte_flow_item[], and
+rte_flow_action[] directly in C code.
 
-Also existing combinations does not behave like their readline(3)
-counterparts.
-For example, Alt+D should kill next word but also should put it into kill
-buffer to be used by Ctrl+Y.
+Design
+------
+The library (librte_flow_parser) exposes:
+- rte_flow_parser_parse(): Parse command strings into structured output
+- rte_flow_parser_parse_attr_str(): Parse attributes only
+- rte_flow_parser_parse_pattern_str(): Parse patterns only
+- rte_flow_parser_parse_actions_str(): Parse actions only
 
---=20
-Yasal Uyar=C4=B1:=C2=A0*Bu elektronik posta bu linki kullanarak ula=C5=9Fab=
-ilece=C4=9Finiz=20
-ko=C5=9Fullara tabidir:**=C2=A0**https://i2i-systems.com/email-disclaimer/=
-=20
-<http://i2i-systems.com/about-us/email-disclaimer/>*
+Testpmd is updated to use the shared library, ensuring a single
+maintained parser implementation.
 
---0000000000006e2b860647a9e568
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Testing
+-------
+- Unit tests: flow_parser_autotest, flow_parser_helpers_autotest
+- Example application: examples/flow_parsing
+- All existing testpmd flow commands work unchanged
 
-<div dir=3D"ltr"><div dir=3D"ltr"><div class=3D"gmail_quote"><div dir=3D"lt=
-r" class=3D"gmail_attr">On Mon, Jan 5, 2026 at 6:07=E2=80=AFPM Marat Khalil=
-i &lt;<a href=3D"mailto:marat.khalili@huawei.com" target=3D"_blank">marat.k=
-halili@huawei.com</a>&gt; wrote:</div><div dir=3D"ltr" class=3D"gmail_attr"=
->&gt; Acked-by: Marat Khalili &lt;<a href=3D"mailto:marat.khalili@huawei.co=
-m" target=3D"_blank">marat.khalili@huawei.com</a>&gt;<br>&gt; Tested-by: Ma=
-rat Khalili &lt;<a href=3D"mailto:marat.khalili@huawei.com" target=3D"_blan=
-k">marat.khalili@huawei.com</a>&gt;<br>&gt;=C2=A0<br>&gt; Interestingly, cu=
-rrently supported combinations also miss Ctrl+U.</div><div dir=3D"ltr" clas=
-s=3D"gmail_attr"><br></div><div class=3D"gmail_attr">That can be implemente=
-d as another patch if requested.=C2=A0</div><div class=3D"gmail_attr"><br><=
-/div><div class=3D"gmail_attr">Also existing combinations does not behave l=
-ike their readline(3) counterparts.=C2=A0</div><div class=3D"gmail_attr">Fo=
-r example, Alt+D should kill next word but also should put it into kill buf=
-fer to be used by Ctrl+Y.</div><div class=3D"gmail_attr"><br></div></div></=
-div>
-</div>
 
-<br>
-<div><font size=3D"1"><font color=3D"#808080"><strong style=3D"font-family:=
-&quot;Times New Roman&quot;,serif"><span style=3D"font-family:&quot;Trebuch=
-et MS&quot;,sans-serif">Yasal Uyar=C4=B1:=C2=A0</span></strong><b style=3D"=
-font-family:Arial,Helvetica,sans-serif"><strong style=3D"font-family:&quot;=
-Trebuchet MS&quot;,sans-serif">Bu elektronik posta bu linki kullanarak ula=
-=C5=9Fabilece=C4=9Finiz ko=C5=9Fullara tabidir:</strong></b></font><b><span=
- style=3D"font-weight:500;color:gray;font-family:&quot;Trebuchet MS&quot;,s=
-ans-serif">=C2=A0</span></b><b><font color=3D"#0066cc" face=3D"Arial, sans-=
-serif"><a href=3D"http://i2i-systems.com/about-us/email-disclaimer/" target=
-=3D"_blank">https://i2i-systems.c<span></span><span></span><wbr>om/email-di=
-sclaimer/</a></font></b></font></div>
---0000000000006e2b860647a9e568--
+
+
+Note:
+This initial submission is to mainly trigger QA, but feedback is highly 
+appreciated.
+
+[1] https://github.com/OISF/suricata/pull/13950
+
+Lukas Sismis (5):
+  flow_parser: add shared parser library
+  app/testpmd: integrate shared flow parser library
+  examples/flow_parsing: add flow parser demo
+  test: add flow parser unit tests
+  doc: add flow parser library maintainers
+
+ .mailmap                                      |     3 +-
+ MAINTAINERS                                   |     3 +
+ app/test-pmd/cmd_flex_item.c                  |    41 +-
+ app/test-pmd/cmdline.c                        |   215 +-
+ app/test-pmd/config.c                         |   109 +-
+ app/test-pmd/flow_parser.c                    |   745 ++
+ app/test-pmd/flow_parser.h                    |     8 +
+ app/test-pmd/flow_parser_cli.c                |   149 +
+ app/test-pmd/meson.build                      |     5 +-
+ app/test-pmd/testpmd.c                        |     4 +
+ app/test-pmd/testpmd.h                        |   124 +-
+ app/test/meson.build                          |     1 +
+ app/test/test_flow_parser.c                   |   226 +
+ doc/guides/prog_guide/flow_parser_lib.rst     |   140 +
+ doc/guides/prog_guide/index.rst               |     1 +
+ doc/guides/rel_notes/release_26_03.rst        |     9 +
+ examples/flow_parsing/main.c                  |   348 +
+ examples/flow_parsing/meson.build             |    11 +
+ examples/meson.build                          |     1 +
+ lib/ethdev/rte_ethdev.c                       |   107 +
+ lib/ethdev/rte_ethdev.h                       |    60 +
+ lib/flow_parser/meson.build                   |     6 +
+ .../flow_parser/rte_flow_parser.c             | 10727 ++++++++--------
+ lib/flow_parser/rte_flow_parser.h             |  1296 ++
+ lib/meson.build                               |     1 +
+ 25 files changed, 8858 insertions(+), 5482 deletions(-)
+ create mode 100644 app/test-pmd/flow_parser.c
+ create mode 100644 app/test-pmd/flow_parser.h
+ create mode 100644 app/test-pmd/flow_parser_cli.c
+ create mode 100644 app/test/test_flow_parser.c
+ create mode 100644 doc/guides/prog_guide/flow_parser_lib.rst
+ create mode 100644 examples/flow_parsing/main.c
+ create mode 100644 examples/flow_parsing/meson.build
+ create mode 100644 lib/flow_parser/meson.build
+ rename app/test-pmd/cmdline_flow.c => lib/flow_parser/rte_flow_parser.c (57%)
+ create mode 100644 lib/flow_parser/rte_flow_parser.h
+
+-- 
+2.43.7
+
