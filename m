@@ -2,41 +2,127 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3442CC79FA3
-	for <dpdk-dev@archiver.kernel.org>; Mon,  5 Jan 2026 16:11:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C41AAC79FA7
+	for <dpdk-dev@archiver.kernel.org>; Mon,  5 Jan 2026 16:52:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2B6A14026F;
-	Mon,  5 Jan 2026 17:11:38 +0100 (CET)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56])
- by mails.dpdk.org (Postfix) with ESMTP id 6BFF140267;
- Mon,  5 Jan 2026 17:11:37 +0100 (CET)
-Received: from mail.maildlp.com (unknown [172.18.224.83])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4dlK6q3VBJzHnH2q;
- Tue,  6 Jan 2026 00:11:31 +0800 (CST)
-Received: from frapema500003.china.huawei.com (unknown [7.182.19.114])
- by mail.maildlp.com (Postfix) with ESMTPS id 050254056F;
- Tue,  6 Jan 2026 00:11:34 +0800 (CST)
-Received: from localhost.localdomain (10.220.239.45) by
- frapema500003.china.huawei.com (7.182.19.114) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 5 Jan 2026 17:11:33 +0100
-From: Marat Khalili <marat.khalili@huawei.com>
-To: <dev@dpdk.org>, Konstantin Ananyev <konstantin.ananyev@huawei.com>, Ferruh
- Yigit <ferruh.yigit@amd.com>
-CC: <stable@dpdk.org>
-Subject: [PATCH v2] bpf: fix x86 call stack alignment, add tests
-Date: Mon, 5 Jan 2026 16:09:57 +0000
-Message-ID: <20260105160958.80443-1-marat.khalili@huawei.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251219182624.19557-1-marat.khalili@huawei.com>
-References: <20251219182624.19557-1-marat.khalili@huawei.com>
+	by mails.dpdk.org (Postfix) with ESMTP id DB9C14026F;
+	Mon,  5 Jan 2026 17:52:36 +0100 (CET)
+Received: from CY7PR03CU001.outbound.protection.outlook.com
+ (mail-westcentralusazon11010016.outbound.protection.outlook.com
+ [40.93.198.16]) by mails.dpdk.org (Postfix) with ESMTP id EDDBF40267
+ for <dev@dpdk.org>; Mon,  5 Jan 2026 17:52:34 +0100 (CET)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=V2EhAz35IYUPXdCfaxREdHPf7pi7/zArJILvJNbYjHSymrc7T4c8LBxdBAlkGrDfmMzGWQf2UifEUHoTb6U1fDAJUehl269AXZ72QbNsmYWvvKI7RLjS+rPt+dcwIgv69wdOfSF618q0VXnlIWxGP+KTrVZEaLSZZEi+0QX6GbIrfVbCsuKL9dQIEuV7ygJtrh/0wyYHkBbRB9WanstRdzp+zsyFjyDEsSewpyIk8Kayzr4M+1mxvsckk1X/PIR6WvKYYu0MrDyvUKNEmNxIQ3EAbadGimfxj7l8bFH5fJ0wuvxqrMsHkVEIHbebMVFsOl8oRA1iZry3sxzuLfgcPw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=250NRgGdXcrMs1vGMQJEXGHn3/IuEBV/YN0n7XB2QkU=;
+ b=N44wyy6nG3KA9iUAwEov5NSW4udEDbL6Ky8JsdiKT+gceQHTyn/qPffEQtSaqfcKEcdnPZLpZwE7R53excW7GYVvIf2QZ3ANcL9sgGAsmp/mSfEOugneKc6DCWID5qrFaKarQgAkDcptdIdEyPy9KPDeun+v5M3jt3a3Bp2IpEqMWTHDrtlqb4zJ0pa09UmyOnYPiaboLK7y5IWJfwmXGg+LjJ3PeXVs/5dWuxvByEZ5hu9fTNSosOndw8Rfm7ZLiuR5fJZrZrRmWN1pA+18958vI9m9txbRt5UnbpBSf4MtbPqJXD0jI0H0LdMYNXVVFhAaDuYpoZJlw4pzmPoxsA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=oktetlabs.ru smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=250NRgGdXcrMs1vGMQJEXGHn3/IuEBV/YN0n7XB2QkU=;
+ b=Uhs2njnS8Q5c/t+mKtnsOaJKKSRaDFSiz2FNJHAzExG9QLhuSzaTWFpQjufJGclMPFgRZYIa0/mmd2XGggPccLg/MHF2h/ATJ9MJTMA+3Kg8cLVL95q/rKG4b/bdfhBThcWpO2gOj32Ddqm64NUNdxKNzde4JNcKmJT6fQ2BwlDVWS8Xm9OhrekjONX9+PMHrRqvQk5XetABHlJUi5W4unjadqEXAnhyC5MdBy12+AiyDGwevf0aReNxIU/mZpNuztgMXSSntB1aALacr9QlQ7m5tc6MDIRdaLiItgmmnTJh+mTo7cCLDKUlA4RlvQYPTYnCdeav9MJ4hK15ijdWLg==
+Received: from PH7P223CA0021.NAMP223.PROD.OUTLOOK.COM (2603:10b6:510:338::16)
+ by PH0PR12MB7814.namprd12.prod.outlook.com (2603:10b6:510:288::15)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9478.4; Mon, 5 Jan
+ 2026 16:52:27 +0000
+Received: from CY4PEPF0000E9D3.namprd03.prod.outlook.com
+ (2603:10b6:510:338:cafe::9b) by PH7P223CA0021.outlook.office365.com
+ (2603:10b6:510:338::16) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9478.5 via Frontend Transport; Mon, 5
+ Jan 2026 16:52:21 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com;
+ dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ CY4PEPF0000E9D3.mail.protection.outlook.com (10.167.241.138) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9499.1 via Frontend Transport; Mon, 5 Jan 2026 16:52:25 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 5 Jan
+ 2026 08:52:03 -0800
+Received: from nvidia.com (10.126.231.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 5 Jan
+ 2026 08:51:59 -0800
+From: Gregory Etelson <getelson@nvidia.com>
+To: <getelson@nvidia.com>
+CC: <andrew.rybchenko@oktetlabs.ru>, <dev@dpdk.org>, <mkashani@nvidia.com>,
+ <thomas@monjalon.net>, <viacheslavo@nvidia.com>, <matan@nvidia.com>,
+ <stephen@networkplumber.org>
+Subject: [RFC PATCH v2] ethdev: support selective Rx data
+Date: Mon, 5 Jan 2026 18:51:43 +0200
+Message-ID: <20260105165143.326426-1-getelson@nvidia.com>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20260104131301.196350-1-getelson@nvidia.com>
+References: <20260104131301.196350-1-getelson@nvidia.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Originating-IP: [10.220.239.45]
-X-ClientProxiedBy: frapema500003.china.huawei.com (7.182.19.114) To
- frapema500003.china.huawei.com (7.182.19.114)
+X-Originating-IP: [10.126.231.35]
+X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000E9D3:EE_|PH0PR12MB7814:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2fccdd61-5a2a-4a11-4b99-08de4c7acdee
+X-LD-Processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|36860700013|82310400026|376014|1800799024; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?VQZxupD3tnJ0MnMvpHwxZpBlVXiNH2OQ9Rxa4JfyH7ZBj3Dcyx+4V/+gak0C?=
+ =?us-ascii?Q?rpJv5iSxknPkzUYZghjWgOL7h7a6+LKhudq70l2ByCEqCnp7mQ1f3ETXpCJf?=
+ =?us-ascii?Q?aGdlj6G6Wvj3x+MLCATVmI/IJ9uiIz6iAsUlE4XdG7tR2LBiDmsKijGXgerk?=
+ =?us-ascii?Q?3HUc5tXDZyTXbSTTSYE3+21odYQsSBP/QjgaY5f95UWryfLdftTHLm+44669?=
+ =?us-ascii?Q?dUcbO6d4mPL9jTWnOvpmWYkMWulSeQ89mcTewNdtOjgsdCauXuMx9LKl2uFX?=
+ =?us-ascii?Q?0tLcgCABpiGIeMmQoJrm742C+aiS+RS6hvE/4xiVmfjWZsNj+zWQgg9TKWfB?=
+ =?us-ascii?Q?n9V6PmqZwxcl6z/lH1OfuyOZnPNM0w5vve6QScB3xSoHC6eS+EuCqYLSt7CP?=
+ =?us-ascii?Q?oP0B7pkihqw7at57pic7rt4hwh53XZtjFE139+7hPYJ8bkq81eOHwipcpy9I?=
+ =?us-ascii?Q?p20O/JB7vVYab7VoXNVMZL1n+vmz8sLrPECk2avXiGUBLao6WWvcmLhJ15S9?=
+ =?us-ascii?Q?t09yx5QIr8XJM5HG/1aROGylUHw3RtcJpouot0qELXSBom1Y4ORCykXEgoNg?=
+ =?us-ascii?Q?5AYZXdd2FWg/Bsq1CRuSr0c7ZQjRw+XIPpEJr+vDP3w6fnj8Pz14c3MPKh7c?=
+ =?us-ascii?Q?ZvzS8wFM9Z9ix71mckOLMgkXmXysdP8EoGGk1dQd/JX1nefgczRpyIskpWS1?=
+ =?us-ascii?Q?FGHSQ8Cs2HTKi09aonmgOMWX+q7wZ9vlce5f/VGVFlrIo+a8SKSLvdMsBZtu?=
+ =?us-ascii?Q?gMAZV8LceOzg2beGAEnlWQrTosjSFfXWDG+PTzsZFSPau3s0yHu2fBekJXmW?=
+ =?us-ascii?Q?Nr7OmlIVOgOk0dfSsShRskBZisni/gutgAC0kml1U3u85hI16qSGiYWONEFH?=
+ =?us-ascii?Q?/HjXi0CODS2OqRnu6Ew7N8hgr5wXvPiP9lgJ6GB/dtorGHz53NC82d6EqZJh?=
+ =?us-ascii?Q?+UbeXLCrkcHe96q+qA70ropKIs8fRH/ueI5YCMkCSxIxJrBTysxpD6y4bP9X?=
+ =?us-ascii?Q?nVqnSBj587CLKsxrBeFrdAuyfj2kIWjmql+vxXxWFGFKHgxYYGdM1QeuyeZF?=
+ =?us-ascii?Q?/IQ0a0BreiqYfL8a8a8X5XSP9A5mA7xYsBmLH96AcG0jz8bIsB4LuAYRavDe?=
+ =?us-ascii?Q?uV/S/3oK8CE1FOIWPU55KMAZvhzG5Ki0MZ/d1QOTTlZO8x4uq3+QbKcI2Gtm?=
+ =?us-ascii?Q?lijwC91IOdmQ2iPvRfvHCgD7EZsH5ntbwea23AlFjLfSWrEDuvYAqbI+X7ex?=
+ =?us-ascii?Q?n+r/EQheN9J1zD5xluzaPBQr6izsTLZN7uOqzCEkII43lNI6UqiSSB6ZmPK4?=
+ =?us-ascii?Q?/X6eDT31nkm/IEeVm3kbG6c5kJx7vWGGwBszCgZzETv8D1tkkkq67ksTRCGi?=
+ =?us-ascii?Q?nXBNs1W1r6JXRkk4IRFt6vlssIaynSm0MshGwUn8EZ8G3KJUVeIhzYOSJ9+e?=
+ =?us-ascii?Q?SFutPXiQRMinU6ZpGT4iQMvXxOr0cFkAPUVj0yzRuLKfVbaCAZbr9qgDEo6L?=
+ =?us-ascii?Q?go/XXQ18VfacNKuUCln0HImRGEs7d7FBuSjKbzThfmigtaYElagEW2cBfvGZ?=
+ =?us-ascii?Q?J2k2SqYru9/ETQiw6Dg=3D?=
+X-Forefront-Antispam-Report: CIP:216.228.117.160; CTRY:US; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge1.nvidia.com; CAT:NONE;
+ SFS:(13230040)(36860700013)(82310400026)(376014)(1800799024); DIR:OUT;
+ SFP:1101; 
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jan 2026 16:52:25.6489 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2fccdd61-5a2a-4a11-4b99-08de4c7acdee
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.160];
+ Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CY4PEPF0000E9D3.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB7814
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -50,489 +136,77 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Correctly align stack pointer on x86 JIT if external calls are present.
+In some cases application does not need to receive entire packet
+from port hardware.
+If application could receive required Rx data only and safely discard
+the rest of Rx packet data, that could improve port performance by
+reducing PCI bandwidth and application memory consumption.
 
-According to x86-64 ABI (https://gitlab.com/x86-psABIs/x86-64-ABI,
-section 3.2.2 The Stack Frame) stack needs to be 16 (or more) bytes
-aligned immediately before the call instruction is executed. Once
-control has been transferred to the function entry point it is always
-off by 8 bytes. It means that JIT-compiled BPF function will always have
-its stack misaligned for any nested call unless it performs operations
-with the stack; even if it does use stack there is still 50% chance of
-stack being misaligned since it uses it in multiples of 8.
+Selective Rx data allows application to receive
+only pre-configured packet segments and discard the rest.
+For example:
+- Deliver the first N bytes only.
+- Deliver the last N bytes only.
+- Deliver N1 bytes from offest Off1 and N2 bytes from offset Off2.
 
-To solve the issue mark RBP as used whenever we have external function
-calls, and align RSP using AND instruction at the end of the prolog.
-Marking RBP as used triggers stack pointer saving in prolog and
-restoration in epilog.
+Selective Rx data is implemented on-top of the existing Rx
+BUFFER_SPLIT functionality:
+- The rte_eth_rxseg_split will use the NULL mempool for data segments
+that should be discarded.
+- PMD will not create MBUF segments if no data was read.
 
-Add tests for external calls from BPF program demonstrating the problem:
-* direct verification of a local variable alignment;
-* operations with 128-bit integers;
-* aligned and unaligned SSE2 instructions;
-* memcpy and rte_memcpy (may use vector instructions in their code).
+For example: Deliver Ethernet header only
 
-(Such variety is needed because not all of these tests are available or
-reproduce the problem on all targets even when the problem exists.)
+Rx queue segments configuration:
+struct rte_eth_rxseg_split split[2] = {
+    {
+        .mp = <some mempool>,
+        .length = sizeof(struct rte_ether_hdr)
+    },
+    {
+        .mp = NULL, /* discard data */
+        .length = <MTU>
+    }
+};
 
-Fixes: cc752e43e079 ("bpf: add JIT compilation for x86_64 ISA")
+Received MBUF configuration:
+mbuf[0].pkt_len = <original packet length>;
+mbuf[0].data_len = sizeof(struct rte_ether_hdr);
+mbuf[0].next = NULL; /* The next segment did not deliver data */
 
-Signed-off-by: Marat Khalili <marat.khalili@huawei.com>
-Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-Tested-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+A PMD activates the selective Rx data capability by setting the
+rte_eth_rxseg_capa.selective_read bit.
 
+Signed-off-by: Gregory Etelson <getelson@nvidia.com>
 ---
+ lib/ethdev/rte_ethdev.h | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-v2: updated commit message with background info and API reference
-
- app/test/test_bpf.c   | 386 ++++++++++++++++++++++++++++++++++++++++++
- lib/bpf/bpf_jit_x86.c |  15 +-
- 2 files changed, 400 insertions(+), 1 deletion(-)
-
-diff --git a/app/test/test_bpf.c b/app/test/test_bpf.c
-index b7c94ba1c7..e3f6b21a8b 100644
---- a/app/test/test_bpf.c
-+++ b/app/test/test_bpf.c
-@@ -3280,6 +3280,392 @@ test_bpf(void)
- 
- REGISTER_FAST_TEST(bpf_autotest, true, true, test_bpf);
- 
-+/* Tests of BPF JIT stack alignment when calling external functions (xfuncs). */
-+
-+/* Function called from the BPF program in a test. */
-+typedef uint64_t (*text_xfunc_t)(uint64_t argument);
-+
-+/* Call function from BPF program, verify that it incremented its argument. */
-+static int
-+call_from_bpf_test(text_xfunc_t xfunc)
-+{
-+	static const struct ebpf_insn ins[] = {
-+		{
-+			.code = (BPF_JMP | EBPF_CALL),
-+			.imm = 0,  /* xsym #0 */
-+		},
-+		{
-+			.code = (BPF_JMP | EBPF_EXIT),
-+		},
-+	};
-+	const struct rte_bpf_xsym xsym[] = {
-+		{
-+			.name = "xfunc",
-+			.type = RTE_BPF_XTYPE_FUNC,
-+			.func = {
-+				.val = (void *)xfunc,
-+				.nb_args = 1,
-+				.args = {
-+					{
-+						.type = RTE_BPF_ARG_RAW,
-+						.size = sizeof(uint64_t),
-+					},
-+				},
-+				.ret = {
-+					.type = RTE_BPF_ARG_RAW,
-+					.size = sizeof(uint64_t),
-+				},
-+			},
-+		},
-+	};
-+	const struct rte_bpf_prm prm = {
-+		.ins = ins,
-+		.nb_ins = RTE_DIM(ins),
-+		.xsym = xsym,
-+		.nb_xsym = RTE_DIM(xsym),
-+		.prog_arg = {
-+			.type = RTE_BPF_ARG_RAW,
-+			.size = sizeof(uint64_t),
-+		},
-+	};
-+
-+	struct rte_bpf_jit jit;
-+
-+	struct rte_bpf *const bpf = rte_bpf_load(&prm);
-+	RTE_TEST_ASSERT_NOT_EQUAL(bpf, NULL,
-+		"expect rte_bpf_load() != NULL");
-+
-+	RTE_TEST_ASSERT_SUCCESS(rte_bpf_get_jit(bpf, &jit),
-+		"expect rte_bpf_get_jit() to succeed");
-+
-+	const text_xfunc_t jit_function = (void *)jit.func;
-+	if (jit_function == NULL) {
-+		rte_bpf_destroy(bpf);
-+		return TEST_SKIPPED;
-+	}
-+
-+	const uint64_t argument = 42;
-+	const uint64_t result = jit_function(argument);
-+	rte_bpf_destroy(bpf);
-+
-+	RTE_TEST_ASSERT_EQUAL(result, argument + 1,
-+		"expect result == %ju, found %ju",
-+		(uintmax_t)(argument + 1), (uintmax_t)result);
-+
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test alignment of a local variable.
-+ *
-+ * NOTE: May produce false negatives with sanitizers if they replace the stack.
-+ */
-+
-+/* Copy of the pointer to max_align stack variable, volatile to thwart optimization. */
-+static volatile uintptr_t stack_alignment_test_pointer;
-+
-+static uint64_t
-+stack_alignment_xfunc(uint64_t argument)
-+{
-+	max_align_t max_align;
-+	stack_alignment_test_pointer = (uintptr_t)&max_align;
-+	return argument + 1;
-+}
-+
-+static int
-+test_stack_alignment(void)
-+{
-+	const int test_rc = call_from_bpf_test(stack_alignment_xfunc);
-+	if (test_rc == TEST_SKIPPED)
-+		return TEST_SKIPPED;
-+
-+	RTE_TEST_ASSERT_SUCCESS(test_rc,
-+		"expect call_from_bpf_test(stack_alignment_xfunc) to succeed");
-+
-+	const uintptr_t test_offset = stack_alignment_test_pointer;
-+	RTE_TEST_ASSERT_NOT_EQUAL(test_offset, 0, "expect test_pointer != 0");
-+
-+	const size_t test_alignment = test_offset % alignof(max_align_t);
-+	RTE_TEST_ASSERT_EQUAL(test_alignment, 0,
-+		"expect test_alignment == 0, found %zu", test_alignment);
-+
-+	return TEST_SUCCESS;
-+}
-+
-+REGISTER_FAST_TEST(bpf_stack_alignment_autotest, true, true, test_stack_alignment);
-+
-+/*
-+ * Test copying `__uint128_t`.
-+ *
-+ * This operation is used by some variations of `rte_memcpy`;
-+ * it can also be produced by vectorizer in the compiler.
-+ */
-+
-+#if defined(__SIZEOF_INT128__)
-+
-+static uint64_t
-+stack_copy_uint128_xfunc(uint64_t argument)
-+{
-+	/* Pass addresses through volatiles to prevent compiler from optimizing it all out. */
-+	char alignas(16) src_buffer[16];
-+	char alignas(16) dst_buffer[16];
-+	void *const src = (char *volatile)src_buffer;
-+	void *const dst = (char *volatile)dst_buffer;
-+	const size_t size = 16;
-+
-+	memset(src, 0x2a, size);
-+	memset(dst, 0x55, size);
-+	const int initial_memcmp_rc = memcmp(dst, src, size);
-+
-+	const __uint128_t *const src128 = (const __uint128_t *)src;
-+	__uint128_t *const dst128 = (__uint128_t *)dst;
-+	*dst128 = *src128;
-+	const int memcmp_rc = memcmp(dst, src, size);
-+
-+	return argument + 1 + !initial_memcmp_rc + memcmp_rc;
-+}
-+
-+static int
-+test_stack_copy_uint128(void)
-+{
-+	const int test_rc = call_from_bpf_test(stack_copy_uint128_xfunc);
-+	if (test_rc == TEST_SKIPPED)
-+		return TEST_SKIPPED;
-+
-+	RTE_TEST_ASSERT_SUCCESS(test_rc,
-+		"expect call_from_bpf_test(stack_copy_uint128_xfunc) to succeed");
-+
-+	return TEST_SUCCESS;
-+}
-+
-+#else
-+
-+static int
-+test_stack_copy_uint128(void)
-+{
-+	return TEST_SKIPPED;
-+}
-+
-+#endif
-+
-+REGISTER_FAST_TEST(bpf_stack_copy_uint128_autotest, true, true, test_stack_copy_uint128);
-+
-+/*
-+ * Test SSE2 load and store intrinsics.
-+ *
-+ * These intrinsics are used by e.g. lib/hash.
-+ *
-+ * Test both aligned and unaligned versions. Unaligned intrinsics may still fail
-+ * when the stack is misaligned, since they only treat memory address as
-+ * unaligned, not stack.
-+ */
-+
-+#if defined(__SSE2__)
-+
-+static uint64_t
-+stack_sse2_aligned_xfunc(uint64_t argument)
-+{
-+	/* Pass addresses through volatiles to prevent compiler from optimizing it all out. */
-+	char alignas(16) src_buffer[16];
-+	char alignas(16) dst_buffer[16];
-+	void *const src = (char *volatile)src_buffer;
-+	void *const dst = (char *volatile)dst_buffer;
-+	const size_t size = 16;
-+
-+	memset(src, 0x2a, size);
-+	memset(dst, 0x55, size);
-+	const int initial_memcmp_rc = memcmp(dst, src, size);
-+
-+	const __m128i tmp = _mm_load_si128((const __m128i *)src);
-+	_mm_store_si128((__m128i *)dst, tmp);
-+	const int memcmp_rc = memcmp(dst, src, size);
-+
-+	return argument + 1 + !initial_memcmp_rc + memcmp_rc;
-+}
-+
-+static uint64_t
-+stack_sse2_unaligned_xfunc(uint64_t argument)
-+{
-+	/* Pass addresses through volatiles to prevent compiler from optimizing it all out. */
-+	char alignas(16) src_buffer[17];
-+	char alignas(16) dst_buffer[17];
-+	void *const src = (char *volatile)src_buffer + 1;
-+	void *const dst = (char *volatile)dst_buffer + 1;
-+	const size_t size = 16;
-+
-+	memset(src, 0x2a, size);
-+	memset(dst, 0x55, size);
-+	const int initial_memcmp_rc = memcmp(dst, src, size);
-+
-+	const __m128i tmp = _mm_loadu_si128((const __m128i *)src);
-+	_mm_storeu_si128((__m128i *)dst, tmp);
-+	const int memcmp_rc = memcmp(dst, src, size);
-+
-+	return argument + 1 + !initial_memcmp_rc + memcmp_rc;
-+}
-+
-+static int
-+test_stack_sse2(void)
-+{
-+	int test_rc;
-+
-+	test_rc = call_from_bpf_test(stack_sse2_aligned_xfunc);
-+	if (test_rc == TEST_SKIPPED)
-+		return test_rc;
-+	RTE_TEST_ASSERT_SUCCESS(test_rc,
-+		"expect call_from_bpf_test(stack_sse2_aligned_xfunc) to succeed");
-+
-+	test_rc = call_from_bpf_test(stack_sse2_unaligned_xfunc);
-+	if (test_rc == TEST_SKIPPED)
-+		return test_rc;
-+	RTE_TEST_ASSERT_SUCCESS(test_rc,
-+		"expect call_from_bpf_test(stack_sse2_unaligned_xfunc) to succeed");
-+
-+	return TEST_SUCCESS;
-+}
-+
-+#else
-+
-+static int
-+test_stack_sse2(void)
-+{
-+	return TEST_SKIPPED;
-+}
-+
-+#endif
-+
-+REGISTER_FAST_TEST(bpf_stack_sse2_autotest, true, true, test_stack_sse2);
-+
-+/*
-+ * Run memcpy and rte_memcpy with various data sizes and offsets (unaligned and aligned).
-+ *
-+ * May produce false negatives even if BPF breaks stack alignment since
-+ * compilers may realign the stack in the beginning of the function to use
-+ * vector instructions with width larger than the default stack alignment.
-+ * However, represents very important use case that was broken in practice.
-+ *
-+ * For the reason specified above test 16-byte fixed-width memcpy explicitly.
-+ */
-+
-+static void *volatile stack_memcpy_dst;
-+static const void *volatile stack_memcpy_src;
-+static size_t volatile stack_memcpy_size;
-+
-+static uint64_t
-+stack_memcpy16_xfunc(uint64_t argument)
-+{
-+	RTE_ASSERT(stack_memcpy_size == 16);
-+	memcpy(stack_memcpy_dst, stack_memcpy_src, 16);
-+	return argument + 1;
-+}
-+
-+static uint64_t
-+stack_rte_memcpy16_xfunc(uint64_t argument)
-+{
-+	RTE_ASSERT(stack_memcpy_size == 16);
-+	rte_memcpy(stack_memcpy_dst, stack_memcpy_src, 16);
-+	return argument + 1;
-+}
-+
-+static uint64_t
-+stack_memcpy_xfunc(uint64_t argument)
-+{
-+	memcpy(stack_memcpy_dst, stack_memcpy_src, stack_memcpy_size);
-+	return argument + 1;
-+}
-+
-+static uint64_t
-+stack_rte_memcpy_xfunc(uint64_t argument)
-+{
-+	rte_memcpy(stack_memcpy_dst, stack_memcpy_src, stack_memcpy_size);
-+	return argument + 1;
-+}
-+
-+static int
-+stack_memcpy_subtest(text_xfunc_t xfunc, size_t size, size_t src_offset, size_t dst_offset)
-+{
-+	stack_memcpy_size = size;
-+
-+	char *const src_buffer = malloc(size + src_offset);
-+	memset(src_buffer + src_offset, 0x2a, size);
-+	stack_memcpy_src = src_buffer + src_offset;
-+
-+	char *const dst_buffer = malloc(size + dst_offset);
-+	memset(dst_buffer + dst_offset, 0x55, size);
-+	stack_memcpy_dst = dst_buffer + dst_offset;
-+
-+	const int initial_memcmp_rc = memcmp(stack_memcpy_dst, stack_memcpy_src, size);
-+	const int test_rc = call_from_bpf_test(xfunc);
-+	const int memcmp_rc = memcmp(stack_memcpy_dst, stack_memcpy_src, size);
-+
-+	free(dst_buffer);
-+	free(src_buffer);
-+
-+	if (test_rc == TEST_SKIPPED)
-+		return TEST_SKIPPED;
-+
-+	RTE_TEST_ASSERT_FAIL(initial_memcmp_rc, "expect memcmp() to fail initially");
-+	RTE_TEST_ASSERT_SUCCESS(test_rc, "expect call_from_bpf_test(xfunc) to succeed");
-+	RTE_TEST_ASSERT_SUCCESS(memcmp_rc, "expect memcmp() to succeed");
-+
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_stack_memcpy(void)
-+{
-+	for (int offsets = 0; offsets < 4; ++offsets) {
-+		const bool src_offset = offsets & 1;
-+		const bool dst_offset = offsets & 2;
-+		int test_rc;
-+
-+		test_rc = stack_memcpy_subtest(stack_memcpy16_xfunc,
-+			16, src_offset, dst_offset);
-+		if (test_rc == TEST_SKIPPED)
-+			return test_rc;
-+		RTE_TEST_ASSERT_SUCCESS(test_rc,
-+			"expect stack_memcpy_subtest(stack_memcpy16_xfunc, "
-+				"16, %i, %i) to succeed",
-+			src_offset, dst_offset);
-+
-+		test_rc = stack_memcpy_subtest(stack_rte_memcpy16_xfunc,
-+			16, src_offset, dst_offset);
-+		if (test_rc == TEST_SKIPPED)
-+			return test_rc;
-+		RTE_TEST_ASSERT_SUCCESS(test_rc,
-+			"expect stack_memcpy_subtest(stack_rte_memcpy16_xfunc, "
-+				"16, %i, %i) to succeed",
-+			src_offset, dst_offset);
-+
-+		for (size_t size = 1; size <= 1024; size <<= 1) {
-+			const bool src_offset = offsets & 1;
-+			const bool dst_offset = offsets & 2;
-+			int test_rc;
-+
-+			test_rc = stack_memcpy_subtest(stack_memcpy_xfunc,
-+				size, src_offset, dst_offset);
-+			if (test_rc == TEST_SKIPPED)
-+				return test_rc;
-+			RTE_TEST_ASSERT_SUCCESS(test_rc,
-+				"expect stack_memcpy_subtest(stack_memcpy_xfunc, "
-+					"%zu, %i, %i) to succeed",
-+				size, src_offset, dst_offset);
-+
-+			test_rc = stack_memcpy_subtest(stack_rte_memcpy_xfunc,
-+				size, src_offset, dst_offset);
-+			if (test_rc == TEST_SKIPPED)
-+				return test_rc;
-+			RTE_TEST_ASSERT_SUCCESS(test_rc,
-+				"expect stack_memcpy_subtest(stack_rte_memcpy_xfunc, "
-+					"%zu, %i, %i) to succeed",
-+				size, src_offset, dst_offset);
-+		}
-+	}
-+	return TEST_SUCCESS;
-+}
-+
-+REGISTER_FAST_TEST(bpf_stack_memcpy_autotest, true, true, test_stack_memcpy);
-+
- #ifdef TEST_BPF_ELF_LOAD
- 
- /*
-diff --git a/lib/bpf/bpf_jit_x86.c b/lib/bpf/bpf_jit_x86.c
-index 4d74e418f8..09865acabb 100644
---- a/lib/bpf/bpf_jit_x86.c
-+++ b/lib/bpf/bpf_jit_x86.c
-@@ -93,6 +93,8 @@ enum {
- /*
-  * callee saved registers list.
-  * keep RBP as the last one.
-+ * RBP is marked as used every time we have external calls
-+ * since we need it to save RSP before stack realignment.
+diff --git a/lib/ethdev/rte_ethdev.h b/lib/ethdev/rte_ethdev.h
+index a66c2abbdb..bc456bb6d7 100644
+--- a/lib/ethdev/rte_ethdev.h
++++ b/lib/ethdev/rte_ethdev.h
+@@ -1121,7 +1121,11 @@ struct rte_eth_txmode {
+  *   The rest will be put into the last valid pool.
   */
- static const uint32_t save_regs[] = {RBX, R12, R13, R14, R15, RBP};
- 
-@@ -685,6 +687,8 @@ emit_call(struct bpf_jit_state *st, uintptr_t trg)
- 	const uint8_t ops = 0xFF;
- 	const uint8_t mods = 2;
- 
-+	/* Mark RBP as used to trigger stack realignment in prolog. */
-+	USED(st->reguse, RBP);
- 	emit_ld_imm64(st, RAX, trg, trg >> 32);
- 	emit_bytes(st, &ops, sizeof(ops));
- 	emit_modregrm(st, MOD_DIRECT, mods, RAX);
-@@ -1204,7 +1208,6 @@ emit_prolog(struct bpf_jit_state *st, int32_t stack_size)
- 	if (spil == 0)
- 		return;
- 
--
- 	emit_alu_imm(st, EBPF_ALU64 | BPF_SUB | BPF_K, RSP,
- 		spil * sizeof(uint64_t));
- 
-@@ -1220,6 +1223,16 @@ emit_prolog(struct bpf_jit_state *st, int32_t stack_size)
- 	if (INUSE(st->reguse, RBP) != 0) {
- 		emit_mov_reg(st, EBPF_ALU64 | EBPF_MOV | BPF_X, RSP, RBP);
- 		emit_alu_imm(st, EBPF_ALU64 | BPF_SUB | BPF_K, RSP, stack_size);
-+
-+		/*
-+		 * Align stack pointer appropriately for function calls.
-+		 * We do not have direct access to function stack alignment
-+		 * value (like gcc internal macro INCOMING_STACK_BOUNDARY),
-+		 * but hopefully `alignof(max_align_t)` will always be greater.
-+		 * Original stack pointer will be restored from rbp.
-+		 */
-+		emit_alu_imm(st, EBPF_ALU64 | BPF_AND | BPF_K, RSP,
-+			-(uint32_t)alignof(max_align_t));
- 	}
- }
- 
+ struct rte_eth_rxseg_split {
+-	struct rte_mempool *mp; /**< Memory pool to allocate segment from. */
++	/**
++	 * Memory pool to allocate segment from.
++	 * NULL means skipped segment in selective Rx data. @see selective_read.
++	 */
++	struct rte_mempool *mp;
+ 	uint16_t length; /**< Segment data length, configures split point. */
+ 	uint16_t offset; /**< Data offset from beginning of mbuf data buffer. */
+ 	/**
+@@ -1757,6 +1761,7 @@ struct rte_eth_rxseg_capa {
+ 	__extension__
+ 	uint32_t multi_pools:1; /**< Supports receiving to multiple pools.*/
+ 	uint32_t offset_allowed:1; /**< Supports buffer offsets. */
++	uint32_t selective_read:1; /**< Supports selective read. */
+ 	uint32_t offset_align_log2:4; /**< Required offset alignment. */
+ 	uint16_t max_nseg; /**< Maximum amount of segments to split. */
+ 	uint16_t reserved; /**< Reserved field. */
 -- 
-2.43.0
+2.51.0
 
