@@ -2,66 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C3CECD040C
-	for <dpdk-dev@archiver.kernel.org>; Mon,  5 Jan 2026 21:31:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CCE5CD040C
+	for <dpdk-dev@archiver.kernel.org>; Mon,  5 Jan 2026 21:31:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 222994028B;
-	Mon,  5 Jan 2026 22:31:01 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id D9BB240674;
+	Mon,  5 Jan 2026 22:31:11 +0100 (CET)
 Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com
- [209.85.128.47]) by mails.dpdk.org (Postfix) with ESMTP id 967294026F
- for <dev@dpdk.org>; Mon,  5 Jan 2026 22:30:59 +0100 (CET)
+ [209.85.128.47]) by mails.dpdk.org (Postfix) with ESMTP id 870014065B
+ for <dev@dpdk.org>; Mon,  5 Jan 2026 22:31:06 +0100 (CET)
 Received: by mail-wm1-f47.google.com with SMTP id
- 5b1f17b1804b1-4779a4fc95aso10045235e9.1
- for <dev@dpdk.org>; Mon, 05 Jan 2026 13:30:59 -0800 (PST)
+ 5b1f17b1804b1-47d5e021a53so2627705e9.3
+ for <dev@dpdk.org>; Mon, 05 Jan 2026 13:31:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=dyna-nic.com; s=google; t=1767648659; x=1768253459; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=7UjDQ9+s3C25wevXQrfVCCuvkhUsSWv9aa/wFiwjmWs=;
- b=oUg9x41aQ/Q285/z3fO5hJno9gPJIrvyINTPIbAExT7ZIVhTybG5rKk/UDoH+gKVhf
- bcVcg9eFevqnZGfzcd1597U3kTAq10J7fTbdOk17wdTg6wGrRBtMNg/SCp8VOKU4L00/
- PjHukVqNb77KaWk0kebxqI6a6MHvv+lnv4+wq2d+BRi8isNhJQwGHwtctV1QQ/Ujmyg4
- usabYZBPaYYouZo49KDrvsg4B9LftYe5DrBg0nCSXhu75OdArMzOxCHNqzzq9dQAqJs2
- 1ILWay3yz0SgsD3yWbVuMm+WJXoNgfPa9ufbjfqcznNxMuW4qiPm+dVvtChRO1bjPVaA
- HncA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1767648659; x=1768253459;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ d=dyna-nic.com; s=google; t=1767648666; x=1768253466; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=7UjDQ9+s3C25wevXQrfVCCuvkhUsSWv9aa/wFiwjmWs=;
- b=Pd/NUNrLmcunfXmtmx4hyp1QsdYtBi2v5fIhaQdQOUlM1hrekUbRZSzvBFprXEz3Gh
- oxaXyrX5NuROAOzSV499jJtZpwUzSJn3aj2YdIiY1JPARsLAUVsbfXgUD5MQjRJ5r5g/
- x+ZHseDjKVjYNEjjl87d1RrI33O1Pjm0E4o/Z9VYwz8ckaWckNHdkBU/9lBvEDqFrAmZ
- k+OHl+rumLK5VYxIlLt+HssScU2BJ+xys9uUlSc9Kg9ScYbpAd1GCPcJWnzVlSWwOsw6
- LBDq5sA/VSpgpfT+w0QCJYOKhCwqF2hP8+JGB/tyL8FCkj2egEW9wZ00l6z6ccC8rQhd
- 5dLg==
-X-Gm-Message-State: AOJu0YyrVgyVn1ouJPIEGJS7QZzn9CXGsgntKd26Xq2nNiGQhwB+qYay
- +7UTvx3uru6E8XBmodyJyLUwWYciMG8LsWqlBkLPPtRd4MwRpJ35/dW90nmQfI7SxP/FvOdF3n+
- YkYCmvXA=
-X-Gm-Gg: AY/fxX5Htv9U6waBSf1CwSZD4Jzlynn9qJyZXxhcQnYkXWIn9ugb4MGaidlH5Drtzdq
- W+TNVCeXZMh+l6C1acxZgsXrqgzf4iLtS8etES5slo5BerFXjwMID9t6d9348ifSBl9bbHumks+
- smy/vLcP1A1TM45xt5UeFnYRMCv4ti26cyu+DASV2tG3vPN0iDq/T2BoY2NSx43630IqgP/tJUq
- SbQoz/9Hx+heJLKKP4nVtczCYnFmT3KpBIxFHihjgcCpVQuCunZV6RhQ+AbbHzqrPqweT1KOE5G
- PG9ornqoIEBa0Rr0CWFciihe/QmtTBfJhI7dNpXf19JFvrRlPWThxlQhMo7KRgelRqH6W+ulLeE
- A6BURCl4QPmzqK64X0LntosI0lnkBmK3HRagUD/fWMPwbYmHdVXBD3nIz/2fs4fnp2Rv6ptAPNV
- l42VYGexlUepi19TsRTuAnBAnEhXsUJLMT6QnGUohD1DpojQ==
-X-Google-Smtp-Source: AGHT+IHg8bByPBxxg9NRjNLSgFsvjNnNbzXxXyeQPLp6euKgCJohPONGLyI51Hq4EOge1dVxLFxt6Q==
-X-Received: by 2002:a05:600c:4fd3:b0:475:ddad:c3a9 with SMTP id
- 5b1f17b1804b1-47d7f41f018mr7335505e9.13.1767648658575; 
- Mon, 05 Jan 2026 13:30:58 -0800 (PST)
+ bh=lVc4/8sC9QJhjm2Pk4fHI5jfIxOvD1LJrEk7CFZulZc=;
+ b=PqaolMIEJvy2uhG9Xa1GVakxGbuBfw8qodGTQAJ/YjCUdaw991J0G1Wdpu7Q/UfGce
+ gnxIWVII7usqtoVEg6Jh6yXLk2PQK68yGWshvMRz0yx+8zvrOTDxhZpzob6U4ZZZziZZ
+ DfLn14HF1djB71bNS4i8n6MsGjV8Y1owFaHk8miN9OLburAHhU6CKjG+cHPm7Soh8XjZ
+ yfhXuccWws/W8je7U0YPyQGY63pwd3PEIWj0M7mdZmSb+znzQCCR0kHgVVtt82wED+ek
+ YdsXYe9T+32Z7mjtNql/PDa41rXcFVUUOQ/70R9GDkfOUt6r+RB4EINfA6OHnkzByswx
+ dcOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1767648666; x=1768253466;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=lVc4/8sC9QJhjm2Pk4fHI5jfIxOvD1LJrEk7CFZulZc=;
+ b=hSJ2YDEjuTpjqH69/UWzqS83WiYvBhFBRE6wSEB/gkIULoc0agdXTj13ROzEWscg2W
+ 5ffS6qg0ti8Euo03AZeZJvxlVY5s30xkQZT3YwkePwcOI0+kmWCZk0fmWi9f0byo0h32
+ 8+0Qb9BNZZ/2Mvt4trtYWIo3LDy+HNmb1fcwpv4xBhzjrOW03lXZyxFJSIUDUMDCRi+Z
+ rHznn4LSxkDMzfK45BCLKRQnus13pJUkREteKnaZbn0sV9J39F/F3LnUV70vYk39tC+W
+ ToioVQtRaTp3IiSSMA7OMtLSQKBxbYtdwFeMCZ3uy1HBeXbdZncH2bMhDZFP4sA8mFQM
+ GMig==
+X-Gm-Message-State: AOJu0YwwNlaTmyPKL3ehJd5VHhFK3EcLe8h1Fi7np1n/xDwKJWeM8Wbq
+ Y2NTmDS3I4zomsTbYWnStI/9p7Yv3gHr2ONxuiy1x+VPraxpC6RqMc1a3IFDG8sHB6aENMGSxBU
+ gRM4N+Sk=
+X-Gm-Gg: AY/fxX5OsQew350uLHefZR0r2llP1D/I1qsmxCMCkKVw/VbcVriqiNUALuyOItCWVoC
+ JPk4BM+sbCO9xY+PjYIYCT3kcAAI0kKfiljf0zB40Yd/7x8UjmvyrmTOCqnDnVKT3nhbbd7X2oZ
+ xM7xX7/X6Fxq2+OibC06J2IYwrPtG1ThOgvtqv3W3ZooKMDPdwDjPPExOs++iav/tiG8bytXLhS
+ yZ4B4kayYWrINQ53jHnrp5oro20Ouh9RxEpj3XcaRvWsGoe2sXKBnWwK7vX2vcGQ1Pp//pc9PKA
+ QSl1BLOHeUgXc+kDTuV1AqxG136YnEs8Z4kCBRK3MO6cGVqK5oMBhhA+dsrTCHLLQE/jomIThlG
+ PWm8psWgAQs/3r+Z17PDMCcoYYAf3u7DvnlW8/Gwv01crDKQjEopjFEzxLZ1CT77mQVbqxSb0h3
+ xsaQxrYVKAUqz9EDms7QxK5CKHHcdh0tnbaFMCKFZyx2G7ug==
+X-Google-Smtp-Source: AGHT+IHSWYJN26RcOFM+Vd58u0+4HNzLrqzDCZ4qXzfox3yihpBeCeLbl4o16pZr5JkhV6xVLPEF/w==
+X-Received: by 2002:a05:600c:3115:b0:477:9f34:17b8 with SMTP id
+ 5b1f17b1804b1-47d7f06cfd2mr10677285e9.1.1767648665822; 
+ Mon, 05 Jan 2026 13:31:05 -0800 (PST)
 Received: from claret.liberouter.org (rt-tmc-kou.liberouter.org.
  [195.113.172.126]) by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-47d7f4184cbsm8796285e9.6.2026.01.05.13.30.58
+ 5b1f17b1804b1-47d7f4184cbsm8796285e9.6.2026.01.05.13.31.05
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 05 Jan 2026 13:30:58 -0800 (PST)
+ Mon, 05 Jan 2026 13:31:05 -0800 (PST)
 From: Lukas Sismis <sismis@dyna-nic.com>
 To: dev@dpdk.org
 Cc: Lukas Sismis <sismis@dyna-nic.com>
-Subject: [PATCH v1 0/5] flow_parser: add shared parser library
-Date: Mon,  5 Jan 2026 22:30:18 +0100
-Message-ID: <20260105213025.749383-1-sismis@dyna-nic.com>
+Subject: [PATCH v1 3/5] examples/flow_parsing: add flow parser demo
+Date: Mon,  5 Jan 2026 22:30:21 +0100
+Message-ID: <20260105213025.749383-4-sismis@dyna-nic.com>
 X-Mailer: git-send-email 2.43.7
+In-Reply-To: <20260105213025.749383-1-sismis@dyna-nic.com>
+References: <20260105213025.749383-1-sismis@dyna-nic.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -77,90 +80,409 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This series extracts the testpmd flow CLI parser into a reusable library,
-enabling external applications to parse rte_flow rules using testpmd syntax.
+Add example application demonstrating the flow parser library API.
 
-Motivation
-----------
-External applications like Suricata IDS [1] need to express hardware filtering
-rules in a consistent, human-readable format. Rather than inventing custom
-syntax, reusing testpmd's well-tested flow grammar provides immediate
-compatibility with existing documentation and user knowledge.
+The example shows:
+- Using parse_attr_str() to parse flow attributes from strings
+- Using parse_pattern_str() to parse match patterns
+- Using parse_actions_str() to parse flow actions
+- Printing parsed results with RTE_FLOW_LOG macros
+- Integration without EAL initialization (library is standalone)
 
-Note: This library provides only one way to create rte_flow structures.
-Applications can also construct rte_flow_attr, rte_flow_item[], and
-rte_flow_action[] directly in C code.
+Build with: meson configure -Dexamples=flow_parsing
 
-Design
-------
-The library (librte_flow_parser) exposes:
-- rte_flow_parser_parse(): Parse command strings into structured output
-- rte_flow_parser_parse_attr_str(): Parse attributes only
-- rte_flow_parser_parse_pattern_str(): Parse patterns only
-- rte_flow_parser_parse_actions_str(): Parse actions only
-
-Testpmd is updated to use the shared library, ensuring a single
-maintained parser implementation.
-
-Testing
--------
-- Unit tests: flow_parser_autotest, flow_parser_helpers_autotest
-- Example application: examples/flow_parsing
-- All existing testpmd flow commands work unchanged
-
-
-
-
-Note:
-This initial submission is to mainly trigger QA, but feedback is highly 
-appreciated.
-
-[1] https://github.com/OISF/suricata/pull/13950
-
-Lukas Sismis (5):
-  flow_parser: add shared parser library
-  app/testpmd: integrate shared flow parser library
-  examples/flow_parsing: add flow parser demo
-  test: add flow parser unit tests
-  doc: add flow parser library maintainers
-
- .mailmap                                      |     3 +-
- MAINTAINERS                                   |     3 +
- app/test-pmd/cmd_flex_item.c                  |    41 +-
- app/test-pmd/cmdline.c                        |   215 +-
- app/test-pmd/config.c                         |   109 +-
- app/test-pmd/flow_parser.c                    |   745 ++
- app/test-pmd/flow_parser.h                    |     8 +
- app/test-pmd/flow_parser_cli.c                |   149 +
- app/test-pmd/meson.build                      |     5 +-
- app/test-pmd/testpmd.c                        |     4 +
- app/test-pmd/testpmd.h                        |   124 +-
- app/test/meson.build                          |     1 +
- app/test/test_flow_parser.c                   |   226 +
- doc/guides/prog_guide/flow_parser_lib.rst     |   140 +
- doc/guides/prog_guide/index.rst               |     1 +
- doc/guides/rel_notes/release_26_03.rst        |     9 +
- examples/flow_parsing/main.c                  |   348 +
- examples/flow_parsing/meson.build             |    11 +
- examples/meson.build                          |     1 +
- lib/ethdev/rte_ethdev.c                       |   107 +
- lib/ethdev/rte_ethdev.h                       |    60 +
- lib/flow_parser/meson.build                   |     6 +
- .../flow_parser/rte_flow_parser.c             | 10727 ++++++++--------
- lib/flow_parser/rte_flow_parser.h             |  1296 ++
- lib/meson.build                               |     1 +
- 25 files changed, 8858 insertions(+), 5482 deletions(-)
- create mode 100644 app/test-pmd/flow_parser.c
- create mode 100644 app/test-pmd/flow_parser.h
- create mode 100644 app/test-pmd/flow_parser_cli.c
- create mode 100644 app/test/test_flow_parser.c
- create mode 100644 doc/guides/prog_guide/flow_parser_lib.rst
+Signed-off-by: Lukas Sismis <sismis@dyna-nic.com>
+---
+ examples/flow_parsing/main.c      | 348 ++++++++++++++++++++++++++++++
+ examples/flow_parsing/meson.build |  11 +
+ examples/meson.build              |   1 +
+ 3 files changed, 360 insertions(+)
  create mode 100644 examples/flow_parsing/main.c
  create mode 100644 examples/flow_parsing/meson.build
- create mode 100644 lib/flow_parser/meson.build
- rename app/test-pmd/cmdline_flow.c => lib/flow_parser/rte_flow_parser.c (57%)
- create mode 100644 lib/flow_parser/rte_flow_parser.h
 
+diff --git a/examples/flow_parsing/main.c b/examples/flow_parsing/main.c
+new file mode 100644
+index 0000000000..b816cd4100
+--- /dev/null
++++ b/examples/flow_parsing/main.c
+@@ -0,0 +1,348 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(c) 2026 Dyna-NIC
++ */
++
++/*
++ * Flow Parsing Example
++ * ====================
++ * This example demonstrates how to use the flow_parser library to parse
++ * flow rule strings into rte_flow C structures. The library provides ONE WAY
++ * to create rte_flow structures - by parsing testpmd-style command strings.
++ *
++ * Alternative approaches:
++ *   - Construct rte_flow_attr, rte_flow_item[], and rte_flow_action[]
++ *     directly in C code and call rte_flow_create()/rte_flow_validate().
++ *
++ * This string-based approach is useful when:
++ *   - Accepting flow rules from user input or configuration files
++ *   - Reusing the familiar testpmd flow command syntax
++ *   - Rapid prototyping without manually constructing C structures
++ *
++ * Key functions demonstrated:
++ *   - rte_flow_parser_parse_attr_str() - Parse flow attributes (ingress/egress/priority)
++ *   - rte_flow_parser_parse_pattern_str() - Parse match patterns (eth/ipv4/tcp/etc)
++ *   - rte_flow_parser_parse_actions_str() - Parse actions (drop/queue/mark/etc)
++ */
++
++#include <stdio.h>
++#include <stdint.h>
++#include <string.h>
++#include <arpa/inet.h>
++
++#include <rte_common.h>
++#include <rte_flow.h>
++#include <rte_flow_parser.h>
++
++/* Helper to print flow attributes */
++static void
++print_attr(const struct rte_flow_attr *attr)
++{
++	printf("  Attributes:\n");
++	printf("    group=%u priority=%u\n", attr->group, attr->priority);
++	printf("    ingress=%u egress=%u transfer=%u\n",
++	       attr->ingress, attr->egress, attr->transfer);
++}
++
++/* Helper to print a MAC address */
++static void
++print_mac(const char *label, const uint8_t *mac)
++{
++	printf("    %s: %02x:%02x:%02x:%02x:%02x:%02x\n", label,
++	       mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
++}
++
++/* Helper to print pattern items */
++static void
++print_pattern(const struct rte_flow_item *pattern, uint32_t pattern_n)
++{
++	uint32_t i;
++
++	printf("  Pattern (%u items):\n", pattern_n);
++	for (i = 0; i < pattern_n; i++) {
++		const struct rte_flow_item *item = &pattern[i];
++
++		switch (item->type) {
++		case RTE_FLOW_ITEM_TYPE_END:
++			printf("    [%u] END\n", i);
++			break;
++		case RTE_FLOW_ITEM_TYPE_ETH:
++			printf("    [%u] ETH", i);
++			if (item->spec) {
++				const struct rte_flow_item_eth *eth = item->spec;
++				printf("\n");
++				print_mac("dst", eth->hdr.dst_addr.addr_bytes);
++				print_mac("src", eth->hdr.src_addr.addr_bytes);
++			} else {
++				printf(" (any)\n");
++			}
++			break;
++		case RTE_FLOW_ITEM_TYPE_IPV4:
++			printf("    [%u] IPV4", i);
++			if (item->spec) {
++				const struct rte_flow_item_ipv4 *ipv4 = item->spec;
++				char src[INET_ADDRSTRLEN], dst[INET_ADDRSTRLEN];
++				inet_ntop(AF_INET, &ipv4->hdr.src_addr, src, sizeof(src));
++				inet_ntop(AF_INET, &ipv4->hdr.dst_addr, dst, sizeof(dst));
++				printf(" src=%s dst=%s\n", src, dst);
++			} else {
++				printf(" (any)\n");
++			}
++			break;
++		case RTE_FLOW_ITEM_TYPE_TCP:
++			printf("    [%u] TCP", i);
++			if (item->spec) {
++				const struct rte_flow_item_tcp *tcp = item->spec;
++				printf(" sport=%u dport=%u\n",
++				       ntohs(tcp->hdr.src_port),
++				       ntohs(tcp->hdr.dst_port));
++			} else {
++				printf(" (any)\n");
++			}
++			break;
++		case RTE_FLOW_ITEM_TYPE_UDP:
++			printf("    [%u] UDP", i);
++			if (item->spec) {
++				const struct rte_flow_item_udp *udp = item->spec;
++				printf(" sport=%u dport=%u\n",
++				       ntohs(udp->hdr.src_port),
++				       ntohs(udp->hdr.dst_port));
++			} else {
++				printf(" (any)\n");
++			}
++			break;
++		default:
++			printf("    [%u] type=%d\n", i, item->type);
++			break;
++		}
++	}
++}
++
++/* Helper to print actions */
++static void
++print_actions(const struct rte_flow_action *actions, uint32_t actions_n)
++{
++	uint32_t i;
++
++	printf("  Actions (%u items):\n", actions_n);
++	for (i = 0; i < actions_n; i++) {
++		const struct rte_flow_action *action = &actions[i];
++
++		switch (action->type) {
++		case RTE_FLOW_ACTION_TYPE_END:
++			printf("    [%u] END\n", i);
++			break;
++		case RTE_FLOW_ACTION_TYPE_DROP:
++			printf("    [%u] DROP\n", i);
++			break;
++		case RTE_FLOW_ACTION_TYPE_QUEUE:
++			if (action->conf) {
++				const struct rte_flow_action_queue *q = action->conf;
++				printf("    [%u] QUEUE index=%u\n", i, q->index);
++			}
++			break;
++		case RTE_FLOW_ACTION_TYPE_MARK:
++			if (action->conf) {
++				const struct rte_flow_action_mark *m = action->conf;
++				printf("    [%u] MARK id=%u\n", i, m->id);
++			}
++			break;
++		case RTE_FLOW_ACTION_TYPE_COUNT:
++			printf("    [%u] COUNT\n", i);
++			break;
++		case RTE_FLOW_ACTION_TYPE_PORT_ID:
++			if (action->conf) {
++				const struct rte_flow_action_port_id *p = action->conf;
++				printf("    [%u] PORT_ID id=%u\n", i, p->id);
++			}
++			break;
++		default:
++			printf("    [%u] type=%d\n", i, action->type);
++			break;
++		}
++	}
++}
++
++/*
++ * Demonstrate parsing flow attributes
++ */
++static void
++demo_parse_attr(void)
++{
++	static const char *attr_strings[] = {
++		"ingress",
++		"egress",
++		"ingress priority 5",
++		"ingress group 1 priority 10",
++		"transfer",
++	};
++	struct rte_flow_attr attr;
++	unsigned int i;
++	int ret;
++
++	printf("\n=== Parsing Flow Attributes ===\n");
++	printf("Use rte_flow_parser_parse_attr_str() to parse attribute strings.\n\n");
++
++	for (i = 0; i < RTE_DIM(attr_strings); i++) {
++		printf("Input: \"%s\"\n", attr_strings[i]);
++		memset(&attr, 0, sizeof(attr));
++		ret = rte_flow_parser_parse_attr_str(attr_strings[i], &attr);
++		if (ret == 0) {
++			print_attr(&attr);
++		} else {
++			printf("  ERROR: %d (%s)\n", ret, strerror(-ret));
++		}
++		printf("\n");
++	}
++}
++
++/*
++ * Demonstrate parsing flow patterns
++ */
++static void
++demo_parse_pattern(void)
++{
++	static const char *pattern_strings[] = {
++		"eth / end",
++		"eth dst is 90:61:ae:fd:41:43 / end",
++		"eth / ipv4 src is 192.168.1.1 / end",
++		"eth / ipv4 / tcp dst is 80 / end",
++		"eth / ipv4 src is 10.0.0.1 dst is 10.0.0.2 / udp src is 1234 dst is 5678 / end",
++	};
++	const struct rte_flow_item *pattern;
++	uint32_t pattern_n;
++	unsigned int i;
++	int ret;
++
++	printf("\n=== Parsing Flow Patterns ===\n");
++	printf("Use rte_flow_parser_parse_pattern_str() to parse pattern strings.\n\n");
++
++	for (i = 0; i < RTE_DIM(pattern_strings); i++) {
++		printf("Input: \"%s\"\n", pattern_strings[i]);
++		ret = rte_flow_parser_parse_pattern_str(pattern_strings[i],
++							&pattern, &pattern_n);
++		if (ret == 0) {
++			print_pattern(pattern, pattern_n);
++		} else {
++			printf("  ERROR: %d (%s)\n", ret, strerror(-ret));
++		}
++		printf("\n");
++	}
++}
++
++/*
++ * Demonstrate parsing flow actions
++ */
++static void
++demo_parse_actions(void)
++{
++	static const char *action_strings[] = {
++		"drop / end",
++		"queue index 3 / end",
++		"mark id 42 / end",
++		"count / queue index 1 / end",
++		"mark id 100 / count / queue index 5 / end",
++	};
++	const struct rte_flow_action *actions;
++	uint32_t actions_n;
++	unsigned int i;
++	int ret;
++
++	printf("\n=== Parsing Flow Actions ===\n");
++	printf("Use rte_flow_parser_parse_actions_str() to parse action strings.\n\n");
++
++	for (i = 0; i < RTE_DIM(action_strings); i++) {
++		printf("Input: \"%s\"\n", action_strings[i]);
++		ret = rte_flow_parser_parse_actions_str(action_strings[i],
++							&actions, &actions_n);
++		if (ret == 0) {
++			print_actions(actions, actions_n);
++		} else {
++			printf("  ERROR: %d (%s)\n", ret, strerror(-ret));
++		}
++		printf("\n");
++	}
++}
++
++/*
++ * Demonstrate combining parsed components
++ *
++ * NOTE: The parse functions return pointers to internal static buffers.
++ * Each subsequent parse call overwrites the previous result.
++ * Therefore, you must use the returned data before calling another parse function,
++ * or copy the data to your own storage.
++ */
++static void
++demo_combine(void)
++{
++	struct rte_flow_attr attr;
++	const struct rte_flow_item *pattern;
++	const struct rte_flow_action *actions;
++	uint32_t pattern_n, actions_n;
++	int ret;
++
++	printf("\n=== Combining Parsed Components ===\n");
++	printf("Parse attributes, patterns, and actions separately,\n");
++	printf("then use each result before the next parse call.\n\n");
++	printf("NOTE: Returned pointers are only valid until the next parse call!\n\n");
++
++	/* Parse and display attributes */
++	ret = rte_flow_parser_parse_attr_str("ingress priority 1", &attr);
++	if (ret != 0) {
++		printf("Failed to parse attributes: %d\n", ret);
++		return;
++	}
++	printf("Parsed attributes:\n");
++	print_attr(&attr);
++
++	/* Parse and display pattern */
++	ret = rte_flow_parser_parse_pattern_str(
++		"eth / ipv4 src is 192.168.1.0 / tcp dst is 443 / end",
++		&pattern, &pattern_n);
++	if (ret != 0) {
++		printf("Failed to parse pattern: %d\n", ret);
++		return;
++	}
++	printf("\nParsed pattern:\n");
++	print_pattern(pattern, pattern_n);
++
++	/* Parse and display actions */
++	ret = rte_flow_parser_parse_actions_str(
++		"mark id 1 / queue index 2 / end",
++		&actions, &actions_n);
++	if (ret != 0) {
++		printf("Failed to parse actions: %d\n", ret);
++		return;
++	}
++	printf("\nParsed actions:\n");
++	print_actions(actions, actions_n);
++
++	printf("\nIn a real application, copy pattern/actions to your own storage,\n");
++	printf("then call:\n");
++	printf("  rte_flow_validate(port_id, &attr, pattern, actions, &error)\n");
++	printf("  rte_flow_create(port_id, &attr, pattern, actions, &error)\n");
++}
++
++int
++main(void)
++{
++	int ret;
++
++	printf("Flow Parser Library Example\n");
++	printf("===========================\n");
++
++	/* Initialize the flow parser */
++	ret = rte_flow_parser_init(NULL);
++	if (ret != 0) {
++		fprintf(stderr, "Failed to initialize flow parser: %d\n", ret);
++		return 1;
++	}
++
++	/* Run demonstrations */
++	demo_parse_attr();
++	demo_parse_pattern();
++	demo_parse_actions();
++	demo_combine();
++
++	printf("\n=== Example Complete ===\n");
++	return 0;
++}
+diff --git a/examples/flow_parsing/meson.build b/examples/flow_parsing/meson.build
+new file mode 100644
+index 0000000000..deab338bfb
+--- /dev/null
++++ b/examples/flow_parsing/meson.build
+@@ -0,0 +1,11 @@
++# SPDX-License-Identifier: BSD-3-Clause
++# Copyright(c) 2024 Intel Corporation
++
++# meson file, for building this example as part of a main DPDK build.
++#
++# To build this example as a standalone application with an already-installed
++# DPDK instance, use 'make'
++
++allow_experimental_apis = true
++deps += 'flow_parser'
++sources = files('main.c')
+diff --git a/examples/meson.build b/examples/meson.build
+index 25d9c88457..22f45e8c81 100644
+--- a/examples/meson.build
++++ b/examples/meson.build
+@@ -17,6 +17,7 @@ all_examples = [
+         'eventdev_pipeline',
+         'fips_validation',
+         'flow_filtering',
++        'flow_parsing',
+         'helloworld',
+         'ip_fragmentation',
+         'ip_pipeline',
 -- 
 2.43.7
 
