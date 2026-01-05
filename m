@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1265CC79FAF
-	for <dpdk-dev@archiver.kernel.org>; Mon,  5 Jan 2026 17:56:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDD8CC79FAF
+	for <dpdk-dev@archiver.kernel.org>; Mon,  5 Jan 2026 17:56:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A59344066B;
-	Mon,  5 Jan 2026 18:56:23 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id CDBC740678;
+	Mon,  5 Jan 2026 18:56:24 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
- by mails.dpdk.org (Postfix) with ESMTP id 61D164064E
- for <dev@dpdk.org>; Mon,  5 Jan 2026 18:56:19 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 4A7024064F
+ for <dev@dpdk.org>; Mon,  5 Jan 2026 18:56:20 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1767635780; x=1799171780;
+ t=1767635781; x=1799171781;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=Ax2XZxWskuNAgNfbV4NUr2RpurL7v67K5uB9Fq9VUiA=;
- b=fD4L5mNNei8YFAS+m+Xt8Nl8+mKnXux6FegpgVPHoqpy7Xd5GC3F9LFi
- iRMikjAVVzbqV3sMDsHoG97GzyFMfD4N78r/FmJJ32iFuBaEbpQ7htSnS
- H9EYXa8OqdGQS1bfr4vDu4ukQnx7P6zPhTykw0z64uI+GwTDbaKBhhJyr
- ACXTnrHei6vWcMlm2m/G/epKIhGybvn4TlOtYxwNt2diZxXgFF/u9klqY
- QFnClCMx094+3awoAMPRj9/mOo5sApD6rAOhlRefZotDRaZDqK+MnJIFV
- rIp5ImqCGWLWfNjWbV7xVun0oRZmqa+WG87ACVQqer5A8TsFcKejb1+wU A==;
-X-CSE-ConnectionGUID: 0DMI+I0KTEed1jCLRxqPKQ==
-X-CSE-MsgGUID: ORa0ZXlXTfashKxtaAXd/Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11662"; a="79308863"
-X-IronPort-AV: E=Sophos;i="6.21,204,1763452800"; d="scan'208";a="79308863"
+ bh=UKE+t1fHeW79H68pukxahQ1+G7DE6OJKsyVSicXWYH0=;
+ b=IyU9Ffec7hW1dtiC9wPdZDKimOFtTOLgLLCBd+GAyqqM8iExJir2inpW
+ vkWe9nE2oOky1QxCttTQIU3R/8LeHQgEFiVKnxsUA9pHxVqc+4xmdZWyk
+ yPsHtEUufPlz/aB4PMfO6gTMhE3Qhz95yRgvfDuPcx3ehSm6TFAqi1JVC
+ UQB+JSbUmEfcZnTAGYz9hqW/LxqunblOtPHvQ4l2Bk+vTMsi+8gPPG5Se
+ dD/2FQnFvKMKThZskopvHifQd0tTKG9VHYp3iKEVCh7FMYCYgkUbWZ4k7
+ dPfZcLIUdW6tKf/Q2ZisUn5CTT/yKikhWEIM8FqIe370qYNCpJL7C5Dmg g==;
+X-CSE-ConnectionGUID: R0SVIRUISYebNxI16lMwDg==
+X-CSE-MsgGUID: 2VoImzGqTQm/VvzCkEPtnw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11662"; a="79308865"
+X-IronPort-AV: E=Sophos;i="6.21,204,1763452800"; d="scan'208";a="79308865"
 Received: from orviesa001.jf.intel.com ([10.64.159.141])
  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 05 Jan 2026 09:56:20 -0800
-X-CSE-ConnectionGUID: ktjCRZu7RKeLuTVNxN3l/A==
-X-CSE-MsgGUID: hiCH34i7Tp+Zbo6KdM1PQw==
+ 05 Jan 2026 09:56:21 -0800
+X-CSE-ConnectionGUID: Ravix4eaQbKglL93CTOvxw==
+X-CSE-MsgGUID: sCudipfSRwSWGOjhg2o7/Q==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,204,1763452800"; d="scan'208";a="239928771"
+X-IronPort-AV: E=Sophos;i="6.21,204,1763452800"; d="scan'208";a="239928779"
 Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by orviesa001.jf.intel.com with ESMTP; 05 Jan 2026 09:56:18 -0800
+ by orviesa001.jf.intel.com with ESMTP; 05 Jan 2026 09:56:19 -0800
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v2 6/7] usertools/telemetry-watcher: add eth name shortcuts
-Date: Mon,  5 Jan 2026 17:56:04 +0000
-Message-ID: <20260105175605.52689-7-bruce.richardson@intel.com>
+Subject: [PATCH v2 7/7] usertools/telemetry-watcher: support reconnection
+Date: Mon,  5 Jan 2026 17:56:05 +0000
+Message-ID: <20260105175605.52689-8-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260105175605.52689-1-bruce.richardson@intel.com>
 References: <20251210165532.103450-1-bruce.richardson@intel.com>
@@ -60,90 +60,141 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Since an expected main use of the script is to monitor ethdev packet
-stats, provide a shortened form of parameters to make it easier to
-monitor all ports on the system. Any stat starting with "eth." is taken
-not as a direct command, but instead as a shortcut for getting the stats
-for all ports on the system. For example: eth.ibytes shows the byte
-counts for all ports.
-
-Beyond that, provide a shortcut for ipackets and opackets as just rx and
-tx respectively. Therefore, to monitor the output rate of an app, one
-can use "dpdk-telemetry-watcher -dT eth.tx"
+Allow the watcher binary to run even when there is no DPDK process
+running. In that case, wait for a suitable process to start and begin
+monitoring then. In case of disconnection, keep trying to reconnect and
+resume once reconnection succeeds.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- usertools/dpdk-telemetry-watcher.py | 49 ++++++++++++++++++++++++++++-
- 1 file changed, 48 insertions(+), 1 deletion(-)
+ usertools/dpdk-telemetry-watcher.py | 52 ++++++++++++++++++++++-------
+ 1 file changed, 40 insertions(+), 12 deletions(-)
 
 diff --git a/usertools/dpdk-telemetry-watcher.py b/usertools/dpdk-telemetry-watcher.py
-index 59ec4c85b6..6beb67d29a 100755
+index 6beb67d29a..5c568c1e88 100755
 --- a/usertools/dpdk-telemetry-watcher.py
 +++ b/usertools/dpdk-telemetry-watcher.py
-@@ -139,6 +139,48 @@ def print_connected_app(process):
-             print(f'Connected to application: "{app_name}"')
- 
- 
-+def expand_shortcuts(process, stat_specs):
-+    """Expand special shortcuts like eth.rx and eth.tx into actual stat specifications.
+@@ -85,6 +85,12 @@ def create_telemetry_process(telemetry_script, args_list):
+             text=True,
+             bufsize=1,  # Line buffered
+         )
 +
-+    Args:
-+        process: The subprocess.Popen handle to the telemetry process
-+        stat_specs: List of stat specifications, possibly including shortcuts
-+
-+    Returns:
-+        List of expanded stat specifications
-+    """
-+    expanded = []
-+    for spec in stat_specs:
-+        if not spec.startswith("eth."):
-+            expanded.append(spec)
-+            continue
-+
-+        # Extract the field name after "eth."
-+        field = spec[4:]  # Remove "eth." prefix
-+        if not field:
-+            print(f"Error: Invalid shortcut '{spec}' - missing field name", file=sys.stderr)
++        # Get and display the connected application name
++        if not print_connected_app(process):
 +            return None
-+
-+        # Map common shortcuts to actual field names
-+        field_map = {
-+            "rx": "ipackets",
-+            "tx": "opackets",
-+        }
-+        field = field_map.get(field, field)
-+
-+        # Get list of ethernet devices
-+        port_list = query_telemetry(process, "/ethdev/list")
-+        if not isinstance(port_list, list):
-+            print(f"Error: Failed to get ethernet device list", file=sys.stderr)
-+            return None
-+
-+        # Create stat specs for each port
-+        for port in port_list:
-+            expanded.append(f"/ethdev/stats,{port}.{field}")
-+
-+    return expanded
-+
-+
- def validate_stats(process, stat_specs):
-     """Validate stat specifications and check that fields are numeric.
++        process.script = telemetry_script  # Store script path for reference
++        process.args = args_list  # Store args for reference
+         return process
+     except FileNotFoundError:
+         print(f"Error: Python interpreter or script not found", file=sys.stderr)
+@@ -102,15 +108,32 @@ def query_telemetry(process, command):
+         command: The telemetry command to send (e.g., "/info" or "/ethdev/stats,0")
  
-@@ -202,8 +244,13 @@ def monitor_stats(process, args):
-         process: The subprocess.Popen handle to the telemetry process
-         args: Parsed command line arguments
+     Returns:
+-        dict: The parsed JSON response with the command wrapper stripped,
++        (process, dict): The process handle, in case of reconnection, and the
++              parsed JSON response with the command wrapper stripped,
+               or None if there was an error
      """
-+    # Expand any shortcuts like eth-rx, eth-tx
-+    expanded_stats = expand_shortcuts(process, args.stats)
-+    if not expanded_stats:
-+        return
++    # Handle case where process is None
++    if process is None:
++        return (None, None)
 +
-     # Validate all stat specifications and get initial values
--    parsed_specs, prev_values = validate_stats(process, args.stats)
-+    parsed_specs, prev_values = validate_stats(process, expanded_stats)
-     if not parsed_specs:
-         return
+     # Send the command
+     process.stdin.write(f"{command}\n")
+     process.stdin.flush()
  
+-    # Read the JSON response
++    # Read the JSON response, reconnecting if necessary
+     response = process.stdout.readline()
++    while not response:
++        script = process.script
++        args_list = process.args
++        process = None
++        print("Application disconnected, retrying...", file=sys.stderr)
++        while not process:
++            time.sleep(1)
++            process = create_telemetry_process(script, args_list)
++        process.stdin.write(f"{command}\n")
++        process.stdin.flush()
++        response = process.stdout.readline()
++
+     try:
+         data = json.loads(response)
+         # When run non-interactively, the response is wrapped with the command
+@@ -119,11 +142,11 @@ def query_telemetry(process, command):
+         # The response should have exactly one key which is the command
+         if len(data) == 1:
+             # Extract the value, ignoring the key
+-            return next(iter(data.values()))
++            return (process, next(iter(data.values())))
+         else:
+-            return data
++            return (process, data)
+     except (json.JSONDecodeError, KeyError):
+-        return None
++        return (None, None)
+ 
+ 
+ def print_connected_app(process):
+@@ -132,11 +155,12 @@ def print_connected_app(process):
+     Args:
+         process: The subprocess.Popen handle to the telemetry process
+     """
+-    info = query_telemetry(process, "/info")
++    process, info = query_telemetry(process, "/info")
+     if info and "pid" in info:
+         app_name = get_app_name(info["pid"])
+         if app_name:
+             print(f'Connected to application: "{app_name}"')
++    return process
+ 
+ 
+ def expand_shortcuts(process, stat_specs):
+@@ -169,7 +193,7 @@ def expand_shortcuts(process, stat_specs):
+         field = field_map.get(field, field)
+ 
+         # Get list of ethernet devices
+-        port_list = query_telemetry(process, "/ethdev/list")
++        process, port_list = query_telemetry(process, "/ethdev/list")
+         if not isinstance(port_list, list):
+             print(f"Error: Failed to get ethernet device list", file=sys.stderr)
+             return None
+@@ -216,7 +240,7 @@ def validate_stats(process, stat_specs):
+             return None, None
+ 
+         # Query the stat once to validate it exists and is numeric
+-        data = query_telemetry(process, command)
++        process, data = query_telemetry(process, command)
+         if not isinstance(data, dict):
+             print(f"Error: Command '{command}' did not return a dictionary", file=sys.stderr)
+             return None, None
+@@ -276,7 +300,9 @@ def monitor_stats(process, args):
+             current_values = []
+             total = 0
+             for i, (spec, command, field) in enumerate(parsed_specs):
+-                data = query_telemetry(process, command)
++                process, data = query_telemetry(process, command)
++                if not data:
++                    continue
+                 current_value = data[field]
+                 current_values.append(current_value)
+ 
+@@ -387,9 +413,11 @@ def main():
+ 
+     # Run dpdk-telemetry.py with pipes for stdin and stdout
+     process = create_telemetry_process(telemetry_script, args_list)
+-
+-    # Get and display the connected application name
+-    print_connected_app(process)
++    if not process:
++        print("Waiting for connection to DPDK application...", file=sys.stderr)
++        while not process:
++            time.sleep(1)
++            process = create_telemetry_process(telemetry_script, args_list)
+ 
+     # Monitor the requested statistics
+     monitor_stats(process, args)
 -- 
 2.51.0
 
