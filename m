@@ -2,41 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4D3BC79F8B
-	for <dpdk-dev@archiver.kernel.org>; Mon,  5 Jan 2026 12:48:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCED2C79F8A
+	for <dpdk-dev@archiver.kernel.org>; Mon,  5 Jan 2026 12:50:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C0EA44026F;
-	Mon,  5 Jan 2026 13:48:27 +0100 (CET)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 8541A40267
- for <dev@dpdk.org>; Mon,  5 Jan 2026 13:48:26 +0100 (CET)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 90CBF20445;
- Mon,  5 Jan 2026 13:48:25 +0100 (CET)
-Content-class: urn:content-classes:message
+	by mails.dpdk.org (Postfix) with ESMTP id DCDCB40613;
+	Mon,  5 Jan 2026 13:50:51 +0100 (CET)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 128884026F
+ for <dev@dpdk.org>; Mon,  5 Jan 2026 13:50:49 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1767617449;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=H8RxXLjMSBH//sk3JQZ7qh7IiJ0AJWCmmIZaq86ygfM=;
+ b=V40iN9d77nnZNxWWZRkAzBt0V9Pi2ZAN6SXViMAi1knySeke1jv3J3LTzExnQdpNKqL6kE
+ hI0AVSEYjNsUOIFXr/dxYkWookOsp7i/FjSB/+5+Lg+i2Wy+hgaKAzk+ojOzLM18gdD6wG
+ H/CZtJqeEUzlZPNddS0ovPJ0Dd9s4do=
+Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
+ [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-589-ssHLYFljMFigiBXbJ5N3eg-1; Mon, 05 Jan 2026 07:50:48 -0500
+X-MC-Unique: ssHLYFljMFigiBXbJ5N3eg-1
+X-Mimecast-MFC-AGG-ID: ssHLYFljMFigiBXbJ5N3eg_1767617447
+Received: by mail-lj1-f199.google.com with SMTP id
+ 38308e7fff4ca-37fd49d4907so67524641fa.1
+ for <dev@dpdk.org>; Mon, 05 Jan 2026 04:50:48 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1767617446; x=1768222246;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=H8RxXLjMSBH//sk3JQZ7qh7IiJ0AJWCmmIZaq86ygfM=;
+ b=DFvuy3H3PZVW8iFpqxdrDpR59JFFGQYBopbUv4aFel+n/qonviZAnggwVdbk81tlAC
+ bXVuRlcxBy9U9lcI5+JVqug4kDpjEZoC7rAVjdUBgxXv3094xi9khbEiLjkT/0C0HHwd
+ T60yd4pv9E0pz2FH0iv3bhcDZE3z3R2ZknoPYXISS69QlBwoo8st2Umq219CJ6ZAxPSI
+ uTgJILqngskju6cPQJ5USMz0GYOtRySZlTlWCxrCA2ggXOYCxdkswoaLnaK9Vz3mPWS8
+ VBoylZJ7fkghNiokm52anCpu8PgVbrTLhwZSmPX0FQJroD7M6jZdtW/Up9hdg20QPGPr
+ O7jw==
+X-Gm-Message-State: AOJu0YzidV8OB8PWDWNj9SKfuxDNBGwDhuPJjhvdfQ3ZsV9HgtQukGgl
+ dLHnMJph/P/sthqOBM+W93Ba9zbUkEDhzLxRSJMwk1z0hFhWPK0QUPb/WShXJs/5U5cpkmWiwS0
+ ZjJt6+AemlaTMg+Q5YN5bSDLbgoHA1TAiwXoCZxmJnF2L/3LFlQLCi3xMD2oULFhqqlpFtBzMk0
+ M4Dfn91ZIqqqi2TjoZgo3pRtWTi18=
+X-Gm-Gg: AY/fxX6SJtzzjzrHCZrQWL0HKux9OPGlPueYUCT9IXdbKTjEDNLDYd57l+cmTl5ypfv
+ AMAl8lrBc20TGOkU3vJTqiKYZFUS56WdHNNcqYCsOB5SwlmnR2AvnOF2pYfOFk5e61RA5E5/jxx
+ cKobk7+oUX0AnBys36oLkFqHZ5Oh2CsQcYpz+fUuiB6+c8surBH0KhD59oEtpc84t7VZRI
+X-Received: by 2002:a05:651c:1443:b0:382:4d6b:993b with SMTP id
+ 38308e7fff4ca-3824d6b9c18mr115244181fa.35.1767617446349; 
+ Mon, 05 Jan 2026 04:50:46 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHvy2VTgeh8+ZJ1q1VzYyVB2monJczoN/Q625Qj9agaBnacuVg4h2tM88gH3ZoVV5rkcU2gXwk/3qBhwZlH46E=
+X-Received: by 2002:a05:651c:1443:b0:382:4d6b:993b with SMTP id
+ 38308e7fff4ca-3824d6b9c18mr115244081fa.35.1767617445886; Mon, 05 Jan 2026
+ 04:50:45 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Subject: RE: [PATCH v5] net/ice: add MAC anti-spoof option
-Date: Mon, 5 Jan 2026 13:48:22 +0100
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65625@smartserver.smartshare.dk>
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-In-Reply-To: <CY5PR11MB61160E26A3AFEA280405C580E486A@CY5PR11MB6116.namprd11.prod.outlook.com>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH v5] net/ice: add MAC anti-spoof option
-Thread-Index: AQHceYIypD5T/+EglUuH43h1ow40F7VDegOQgAAPFXA=
-References: <20251113105914.34949-1-anurag.mandal@intel.com>
- <20251230114828.6156-1-anurag.mandal@intel.com>
- <CY5PR11MB61160E26A3AFEA280405C580E486A@CY5PR11MB6116.namprd11.prod.outlook.com>
-From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
-To: "Mandal, Anurag" <anurag.mandal@intel.com>,
- "Richardson, Bruce" <bruce.richardson@intel.com>
-Cc: "Burakov, Anatoly" <anatoly.burakov@intel.com>,
-	<dev@dpdk.org>
+References: <20260105123640.48325-1-david.marchand@redhat.com>
+In-Reply-To: <20260105123640.48325-1-david.marchand@redhat.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Mon, 5 Jan 2026 13:50:31 +0100
+X-Gm-Features: AQt7F2q9tbXPtj4RcUIDmqoMLooE8doWCt_LCCfUavyYbfyfUJ0ONsd-6XHq1Us
+Message-ID: <CAJFAV8yOrbgZCo6-BFAVt_0SKUZT1nFm29N1RgsBOk1DV6r5GA@mail.gmail.com>
+Subject: Re: [PATCH] net/tap: remove log when running without multiprocess
+To: dev@dpdk.org
+Cc: stable@dpdk.org, Stephen Hemminger <stephen@networkplumber.org>, 
+ Ferruh Yigit <ferruh.yigit@amd.com>,
+ Kumara Parameshwaran <kumaraparamesh92@gmail.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: mKF76x00DXjHGV9OOelz_kmFRATOjKnSHSlw1sDtySU_1767617447
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -50,242 +84,24 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> From: Mandal, Anurag [mailto:anurag.mandal@intel.com]
-> Sent: Monday, 5 January 2026 12.31
->=20
-> > VRRP advertisement packets are dropped as TX-errors upon =
-transmission
-> > from a vsi of ice PF due to MAC anti-spoof check, which is enabled =
-by
-> default.
-> > There is no way to disable this security check in the Tx direction =
-to
-> avoid these
-> > packets being dropped.
-> >
-> > This patch introduces devargs "mac-anti-spoof" to allow user to
-> disable MAC
-> > anti-spoof check. Disable MAC Anti-spoof check in the Tx direction =
-to
-> send
-> > outgoing packets even when their destination MAC address matches one
-> of
-> > the MAC addresses assigned to that same NIC port and avoid getting
-> dropped
-> > as TX-errors.
-> >
-> > Signed-off-by: Anurag Mandal <anurag.mandal@intel.com>
-> > ---
-> > V5: Addressed CI failures
-> >  - Removed ICE_AQ_VSI_SEC_FLAG_ENA_MAC_ANTI_SPOOF
-> >    flag as that is causing CI failures and observed
-> >    MAC Anti-spoof check is enabled by default
-> >    irrespective of that flag.
-> > V4: Addressed ASan CI failures & Morten Br=C3=B8rup's feedback
-> >  - set the default value of the devargs to 1
-> >  - enabled MAC anti-spoof check by default
-> >  - provided devargs option to disbale the same
-> >
-> > V3: Addressed Morten Br=C3=B8rup's feedback
-> >  - set the default value of the devargs to 0
-> >  - disabled MAC anti-spoof check by default
-> >  - provided devargs option to enable the same
-> >  - synchronized with source prune
-> >
-> > V2: Addressed Bruce Richardson's feedback
-> >  - changed devargs name to "mac-anti-spoof"
-> >  - changed devargs member name to "mac_anti_spoof"
-> >  - changed macro name to "ICE_MAC_ANTI_SPOOF_ARG"
-> >  - set the default value of the devargs to 1
-> >  - added NOTICE log msg when MAC Anti-spoof is disabled
-> >  - added more code comments to provide clarity
-> >  - fixed typo error with ICE_AQ_VSI_SEC_FLAG_ENA_MAC_ANTI_SPOOF
-> >
-> >  doc/guides/nics/ice.rst            | 12 ++++++++
-> >  drivers/net/intel/ice/ice_ethdev.c | 44
-> +++++++++++++++++++++++++++++-
-> > drivers/net/intel/ice/ice_ethdev.h |  1 +
-> >  3 files changed, 56 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/doc/guides/nics/ice.rst b/doc/guides/nics/ice.rst index
-> > 6cc27cefa7..c3e9cfaee3 100644
-> > --- a/doc/guides/nics/ice.rst
-> > +++ b/doc/guides/nics/ice.rst
-> > @@ -194,6 +194,18 @@ Runtime Configuration
-> >
-> >      -a 80:00.0,source-prune=3D1
-> >
-> > +- ``MAC Anti-spoof Disable`` (default ``1``)
+On Mon, 5 Jan 2026 at 13:37, David Marchand <david.marchand@redhat.com> wrote:
+>
+> In case DPDK is started with multiprocess disabled (like in OVS), there
+> is no reason to log an error on multiprocess aspects.
+>
+> Note: the only caller of this helper does not check the return value.
+>
+> Fixes: c36ce7099c21 ("net/tap: fix to populate FDs in secondary process")
+> Cc: stable@dpdk.org
+>
+> Signed-off-by: David Marchand <david.marchand@redhat.com>
 
-Suggest removing "Disable" from this headline, to clarify that the =
-default 1 value enables MAC Anti-spoof (does not activate "MAC =
-Anti-spoof Disable").
+I chose to simply silence this warning, though I think something is
+wrong with the sync mechanism.
+Secondary processes should be the one requesting fds, instead of the
+primary process broadcasting to all.
 
-> > +
-> > +  Disable MAC Anti-spoof check in the Tx direction to send outgoing
-> > + packets when their destination MAC address matches one of the  MAC
-> > + addresses assigned to that same NIC port.By default, these
-> outgoing
-> > + packets are dropped due to MAC Anti-spoof check.
 
-The default 1 (instead of 0) is a temporary workaround due to CI issues.
-This (incorrect default value) should be registered as a bug in =
-Bugzilla.
-
-And a warning should be added to the description here =
-(/doc/guides/nics/ice.rst) that the default 1 is a known bug, and is =
-expected to be changed to 0 at a later time. This warning can refer to =
-the bug in Bugzilla.
-
-> > +
-> > +  MAC Anti-spoof can be disabled by resetting the devargs parameter
-> > + ``mac-anti-spoof``,  for example::
-> > +
-> > +    -a 80:00.0,mac-anti-spoof=3D0
-> > +
-> >  - ``Protocol extraction for per queue``
-> >
-> >    Configure the RX queues to do protocol extraction into mbuf for
-> protocol
-> > diff --git a/drivers/net/intel/ice/ice_ethdev.c
-> > b/drivers/net/intel/ice/ice_ethdev.c
-> > index c1d92435d1..7251b111e0 100644
-> > --- a/drivers/net/intel/ice/ice_ethdev.c
-> > +++ b/drivers/net/intel/ice/ice_ethdev.c
-> > @@ -42,6 +42,7 @@
-> >  #define ICE_DDP_LOAD_SCHED_ARG    "ddp_load_sched_topo"
-> >  #define ICE_TM_LEVELS_ARG         "tm_sched_levels"
-> >  #define ICE_SOURCE_PRUNE_ARG      "source-prune"
-> > +#define ICE_MAC_ANTI_SPOOF_ARG    "mac-anti-spoof"
-> >  #define ICE_LINK_STATE_ON_CLOSE   "link_state_on_close"
-> >
-> >  #define ICE_CYCLECOUNTER_MASK  0xffffffffffffffffULL @@ -60,6 +61,7
-> @@
-> > static const char * const ice_valid_args[] =3D {
-> >  	ICE_DDP_LOAD_SCHED_ARG,
-> >  	ICE_TM_LEVELS_ARG,
-> >  	ICE_SOURCE_PRUNE_ARG,
-> > +	ICE_MAC_ANTI_SPOOF_ARG,
-> >  	ICE_LINK_STATE_ON_CLOSE,
-> >  	NULL
-> >  };
-> > @@ -1761,13 +1763,46 @@ ice_setup_vsi(struct ice_pf *pf, enum
-> > ice_vsi_type type)
-> >  		/* Source Prune */
-> >  		if (ad->devargs.source_prune !=3D 1) {
-> >  			/* Disable source prune to support VRRP
-> > -			 * when source-prune devarg is not set
-> > +			 * when source-prune devargs is not set
-> >  			 */
-> >  			vsi_ctx.info.sw_flags =3D
-> >  				ICE_AQ_VSI_SW_FLAG_LOCAL_LB;
-> >  			vsi_ctx.info.sw_flags |=3D
-> >  				ICE_AQ_VSI_SW_FLAG_SRC_PRUNE;
-> >  		}
-> > +		/* MAC Anti-spoof */
-> > +		/* By default, Source Prune in Rx is disabled
-> > +		 * and MAC Anti-spoof check in Tx is enabled.
-> > +		 *
-> > +		 * Source Prune is disabled by setting local
-> > +		 * loopback with ICE_AQ_VSI_SW_FLAG_LOCAL_LB
-> > +		 * flag in the Rx direction.
-> > +		 * ICE_AQ_VSI_SW_FLAG_SRC_PRUNE is added to
-> > +		 * prevent transmitted packets from being
-> > +		 * looped back in some circumstances.
-> > +		 *
-> > +		 * MAC Anti-spoof check can be disabled by
-> > +		 * clearing ICE_AQ_VSI_SW_FLAG_SRC_PRUNE
-> > +		 * flag and setting Tx loopback with
-> > +		 * ICE_AQ_VSI_SW_FLAG_ALLOW_LB flag in the
-> > +		 * Tx direction.
-> > +		 */
-> > +		if (ad->devargs.mac_anti_spoof =3D=3D 0) {
-> > +			/* Disable mac anti-spoof check in the
-> > +			 * Tx direction to avoid outgoing
-> > +			 * packets getting dropped as
-> > +			 * TX-errors for VRRP support when
-> > +			 * mac-anti-spoof devargs is not set
-> > +			 */
-> > +			vsi_ctx.info.sw_flags &=3D
-> > +				~ICE_AQ_VSI_SW_FLAG_SRC_PRUNE;
-> > +			PMD_INIT_LOG(NOTICE,
-> > +				     "Disabling MAC Anti-spoof check "
-> > +				     "in the Tx direction does not "
-> > +				     "affect Source Prune in the Rx
-> direction");
-
-Try shortening the log message to fit on one line, so it is easier to =
-"grep" for.
-
-> > +			vsi_ctx.info.sw_flags |=3D
-> > +				ICE_AQ_VSI_SW_FLAG_ALLOW_LB;
-> > +		}
-
-If implicitly enabled, please PMD_INIT_LOG(WARNING, "MAC Anti-spoof =
-check is enabled"), as this kind of filtering is not the behavior =
-expected by normal applications.
-We can probably not distinguish between implicitly and explicitly =
-enabled, so simply log it if enabled.
-
-> >  		cfg =3D ICE_AQ_VSI_PROP_SW_VALID;
-> >  		vsi_ctx.info.valid_sections |=3D rte_cpu_to_le_16(cfg);
-> >  		vsi_ctx.info.sw_flags2 =3D ICE_AQ_VSI_SW_FLAG_LAN_ENA;
-> > @@ -2398,6 +2433,7 @@ static int ice_parse_devargs(struct =
-rte_eth_dev
-> > *dev)
-> >  		return -EINVAL;
-> >  	}
-> >
-> > +	ad->devargs.mac_anti_spoof =3D 1; /* enabled by default */
-> >  	ad->devargs.proto_xtr_dflt =3D PROTO_XTR_NONE;
-> >  	memset(ad->devargs.proto_xtr, PROTO_XTR_NONE,
-> >  	       sizeof(ad->devargs.proto_xtr)); @@ -2467,6 +2503,11 @@
-> static
-> > int ice_parse_devargs(struct rte_eth_dev *dev)
-> >  	if (ret)
-> >  		goto bail;
-> >
-> > +	ret =3D rte_kvargs_process(kvlist, ICE_MAC_ANTI_SPOOF_ARG,
-> > +				 &parse_bool, &ad-
-> > >devargs.mac_anti_spoof);
-> > +	if (ret)
-> > +		goto bail;
-> > +
-> >  	ret =3D rte_kvargs_process(kvlist, ICE_LINK_STATE_ON_CLOSE,
-> >  				 &parse_link_state_on_close, &ad-
-> > >devargs.link_state_on_close);
-> >
-> > @@ -7732,6 +7773,7 @@ RTE_PMD_REGISTER_PARAM_STRING(net_ice,
-> >  			      ICE_DDP_LOAD_SCHED_ARG "=3D<0|1>"
-> >  			      ICE_TM_LEVELS_ARG "=3D<N>"
-> >  			      ICE_SOURCE_PRUNE_ARG "=3D<0|1>"
-> > +			      ICE_MAC_ANTI_SPOOF_ARG "=3D<0|1>"
-> >  			      ICE_RX_LOW_LATENCY_ARG "=3D<0|1>"
-> >  			      ICE_LINK_STATE_ON_CLOSE
-> > "=3D<down|up|initial>");
-> >
-> > diff --git a/drivers/net/intel/ice/ice_ethdev.h
-> > b/drivers/net/intel/ice/ice_ethdev.h
-> > index 72ed65f13b..5fe4688d57 100644
-> > --- a/drivers/net/intel/ice/ice_ethdev.h
-> > +++ b/drivers/net/intel/ice/ice_ethdev.h
-> > @@ -617,6 +617,7 @@ struct ice_devargs {
-> >  	uint8_t ddp_load_sched;
-> >  	uint8_t tm_exposed_levels;
-> >  	uint8_t source_prune;
-> > +	uint8_t mac_anti_spoof;
-> >  	int link_state_on_close;
-> >  	int xtr_field_offs;
-> >  	uint8_t xtr_flag_offs[PROTO_XTR_MAX];
-> > --
-> > 2.34.1
->=20
-> Hi Morten Br=F8rup/Bruce,
->=20
-> Kindly review this patch. No CI errors reported.
->=20
-> Thank you.
->=20
-> Regards,
-> Anurag M
+-- 
+David Marchand
 
