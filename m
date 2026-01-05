@@ -2,125 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA05DC79F87
-	for <dpdk-dev@archiver.kernel.org>; Mon,  5 Jan 2026 13:30:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ECCBC79F9F
+	for <dpdk-dev@archiver.kernel.org>; Mon,  5 Jan 2026 14:49:47 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D5D4C4026F;
-	Mon,  5 Jan 2026 14:30:26 +0100 (CET)
-Received: from SJ2PR03CU001.outbound.protection.outlook.com
- (mail-westusazon11012061.outbound.protection.outlook.com [52.101.43.61])
- by mails.dpdk.org (Postfix) with ESMTP id 03E1D40267;
- Mon,  5 Jan 2026 14:30:24 +0100 (CET)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=TEspNEqRbjJPonBSpI4BjC568tNF6/VdGyYFW2+4Si+1ClCTYlsO5QtrQMQaFIMgZhZgv8+vX6ARceqsRovsLECw6V8ilTKLZnYnh6s+9JHwRBkTycU0l//GB0ImJtollB5MsV7gvoEAE6bs94hCsL1S9noTWkK98THipZ6julF5d69e//Ck29He6OZwbElm8oBVCrj3Dlbpd9IIedrHvI9ejm/Szvy7o4FRKrINfCmLMTizodC3CncbRie8LepM3Q6c1reJ/SIrJfT/N0+drGQh0v21VSlV69Smm0JFEhG0zZDnNDmkjqlKzXzyomee0/ovRiSEoDnKbDMauj0KPw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=UmfesezdD2P6nlmrKvVh/mqWBbLIIBWzuNP8awAp8jw=;
- b=HE14ort2NLoXQX7i/Sr6cnoM5EHByVUmWvJCyOefl+Rts98vNmAbs3N+jc/W25TtaFyqeIvHCm1P6wCMXXq+22pFWdjQizBXCN1YlE99uYsoH/jrtB04e+V2HiCEr6+i5sbVnvDCNTPWizOGe90YnR2ykufPX7T978WJWnb6PPXUaRB3MKkt4EPAw+lVwPjOwWr9kOoIQrY9H7FGEqexjJFQITYC0SHq8puf+44YmQzhIDTKFCqDO1tMTr6YeE6tBaDiNDa2QkJNrNPkt3O6q5W8fS+s4dd4fQ92aNevR1Xl1Vlfzifz2tAQB2hZhzcs7JJ7887IbjsdohU7wraGiQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UmfesezdD2P6nlmrKvVh/mqWBbLIIBWzuNP8awAp8jw=;
- b=ScvtOP+5SaNQcWCVSwqmJ80aqGWo/Z4eJ1eY8jeTKTZkrNxz70K11iJw2geVocUdAalPhlr+OupUs2sO2utvopzYr/mWhOCF1E6DFt1PgMyfeGeo05vYAv+eq+Y42RktCFqj7yl00FzofojBv+TDK3YSDZt2PRvTNVwIzeSV+s4CFIjR2MCG65dqROJET7W+et1lNiQ4Tp9fCYjYe9C7X/AUnlYVetscIu5bfccEh6tKia1SvK2eqBaqi+65aNfuHtkP5AlR8ycxZekydkIvO+lGD4ob8+Mq9jT9wfvttHn3K70ZI3XpjT0IMgbE51nB8g8zaHiCYuRsHpKHbJdg2A==
-Received: from SJ0PR13CA0122.namprd13.prod.outlook.com (2603:10b6:a03:2c6::7)
- by CY1PR12MB9627.namprd12.prod.outlook.com (2603:10b6:930:104::9)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9478.4; Mon, 5 Jan
- 2026 13:30:14 +0000
-Received: from SJ1PEPF00001CDF.namprd05.prod.outlook.com
- (2603:10b6:a03:2c6:cafe::28) by SJ0PR13CA0122.outlook.office365.com
- (2603:10b6:a03:2c6::7) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9499.1 via Frontend Transport; Mon, 5
- Jan 2026 13:30:03 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com;
- dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- SJ1PEPF00001CDF.mail.protection.outlook.com (10.167.242.7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9499.1 via Frontend Transport; Mon, 5 Jan 2026 13:30:12 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 5 Jan
- 2026 05:29:59 -0800
-Received: from nvidia.com (10.126.231.35) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 5 Jan
- 2026 05:29:55 -0800
-From: Bing Zhao <bingz@nvidia.com>
-To: <viacheslavo@nvidia.com>, <dev@dpdk.org>, <rasland@nvidia.com>
-CC: <orika@nvidia.com>, <dsosnowski@nvidia.com>, <suanmingm@nvidia.com>,
- <matan@nvidia.com>, <thomas@monjalon.net>, Gregory Etelson
- <getelson@nvidia.com>, <stable@dpdk.org>
-Subject: [PATCH] net/mlx5: fix MPESW PF probe
-Date: Mon, 5 Jan 2026 15:29:41 +0200
-Message-ID: <20260105132941.72705-1-bingz@nvidia.com>
-X-Mailer: git-send-email 2.34.1
+	by mails.dpdk.org (Postfix) with ESMTP id 1D13E4026F;
+	Mon,  5 Jan 2026 15:49:46 +0100 (CET)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 1255440267
+ for <dev@dpdk.org>; Mon,  5 Jan 2026 15:49:44 +0100 (CET)
+Received: from mail.maildlp.com (unknown [172.18.224.107])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4dlHJN0PBRzHnH2m;
+ Mon,  5 Jan 2026 22:49:40 +0800 (CST)
+Received: from frapema100003.china.huawei.com (unknown [7.182.19.100])
+ by mail.maildlp.com (Postfix) with ESMTPS id 738DD40570;
+ Mon,  5 Jan 2026 22:49:42 +0800 (CST)
+Received: from frapema500003.china.huawei.com (7.182.19.114) by
+ frapema100003.china.huawei.com (7.182.19.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.36; Mon, 5 Jan 2026 15:49:42 +0100
+Received: from frapema500003.china.huawei.com ([7.182.19.114]) by
+ frapema500003.china.huawei.com ([7.182.19.114]) with mapi id 15.02.1544.011;
+ Mon, 5 Jan 2026 15:49:42 +0100
+From: Marat Khalili <marat.khalili@huawei.com>
+To: Stephen Hemminger <stephen@networkplumber.org>
+CC: "dev@dpdk.org" <dev@dpdk.org>
+Subject: RE: [PATCH] test: add a test for null PMD
+Thread-Topic: [PATCH] test: add a test for null PMD
+Thread-Index: AQHcfckf3H51cQvjmkW1RP74leDirrVDav9w
+Date: Mon, 5 Jan 2026 14:49:41 +0000
+Message-ID: <7957b0215b1d41cbbc7fc5e52919f0da@huawei.com>
+References: <20260104222523.329760-1-stephen@networkplumber.org>
+In-Reply-To: <20260104222523.329760-1-stephen@networkplumber.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.206.137.70]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.126.231.35]
-X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF00001CDF:EE_|CY1PR12MB9627:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4627eff0-69e8-4854-c754-08de4c5e8db1
-X-LD-Processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|376014|1800799024|82310400026|36860700013; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?o3rtUAqtJAyw3KE3EdE7Zeydcw4hl9xQ5Ptx4bUq2s2IB4KONAW+8FY9YQzD?=
- =?us-ascii?Q?0c1AXh8WkGqvaejwH3ICgAutjNrUVCugHFgkzEEi7LRzkiMnOuMECZYh7EeH?=
- =?us-ascii?Q?MrSq3uGka/6GAfcKHl5R7gsGL6JTA3ZfExh5/+nfc+ByWNkT5oPlxtMNaUDZ?=
- =?us-ascii?Q?RXDlTrbsqYuBJc/PxdlCkrTydhHd1N8TQ7c4pRe5vNDbETpR0XuQQzrn4VK/?=
- =?us-ascii?Q?pwSTRxhghLId7B7pXwsJMRIPxeClH/cwvSLkNqufssnn2sigd4nyrIQPJHDU?=
- =?us-ascii?Q?K0M6TIuC7ESZCzKIlyOPMqcQmLxHynqmfVz+ZL3+G5QELPc8CBaHcTRIaqeP?=
- =?us-ascii?Q?ge7R7vNpkIRv6SKuHlh01R7QPjZ5dR7W6rpCCV9dH3sBWse4h8pCJ1YmshEr?=
- =?us-ascii?Q?/iTFlISmz/fDbYCNDGhmaHRCl2WYWu/qGfuOGH7Lw6zZ2UYVNEVDdOA7fBym?=
- =?us-ascii?Q?6NIspR8dgNkgv5XOYkqycK7Opd/cWLu5Y3NEQorPD3ySpLYAcsKXSpdgFKMX?=
- =?us-ascii?Q?n2Ws5Y0x5nKUQ8m8Ge3A81YvjTMdxtraDzvqfKW+tOrH43YLgfloRTtY13bL?=
- =?us-ascii?Q?OBuUY3RQetSuIv1M1D4WUb2uI5T+5+xgEdq1N50/nd6eIeoNGdqz0WaEqcH2?=
- =?us-ascii?Q?KLbsHxeuUN306bdw/IKjkWTpAjmshMgdfIl37veSmyXnTvSM4VLEE/UTuoPG?=
- =?us-ascii?Q?S91FhUDojOQu/FRhMhubwusJP04Vf1kwKCbEPoyRY1t3fLRBAeDCg0FcoO3f?=
- =?us-ascii?Q?TH4ERKgNqPOCvVfDGdfn2wt4CwBpzhohOxiiGSKS0npdudFjdFG+7qvBhY+X?=
- =?us-ascii?Q?CZbJlhuw5zgkkLQj+6wjSWoCXxmIlzQ+PWFE1grG0yyi1SPMRNo8jlkNCHx/?=
- =?us-ascii?Q?e7UHgDk8oYJ9s7CmJhA+YzppMRNwxs4YQsMihB4wL0Noc7fsleuUda/fcGZ6?=
- =?us-ascii?Q?NRFSLd5NN7rrbZbc0pje8LwX5RZp8Loh6egJHj47KvoV9Hu27aGsRHHO4iZR?=
- =?us-ascii?Q?tJLK38NTkmamUogsyuu6zuES8tvoXODmp8xnVDS97f8UkNrqb9FEsJgfxy96?=
- =?us-ascii?Q?YRRwpKUDNWRsolxpKYMQk6XsIozCYttg0g4kGRY1HTCBUy5zIERNFbT6z5SL?=
- =?us-ascii?Q?ZbRdhu5A/r9AYpSnKAebVZr1eIr8BzlDS1qkAhLJgp94jI3+cvQ8oRPNm+ma?=
- =?us-ascii?Q?YQVa16x0slye2mt1uAicaWyrI+bzB2hDWmUsuBnHKmnC4lVF87ldgiOUodxj?=
- =?us-ascii?Q?6u9jgrk0OpnXqJVPz0mzuhF3RfMsKnozV5h0ujYO95UXWl4Tqr0NacrNrQYi?=
- =?us-ascii?Q?tHUgV+2Kpuu6afXIAoDw5e/mBOlE0VSdbvRaKtlM92B8bF1eS1ZxcEyeur17?=
- =?us-ascii?Q?kH1kZOddjA6gFNyFEHKdzgRErFpndxY1fKJqnZxT2gY3PFIIwXGkhGLIcy71?=
- =?us-ascii?Q?h3cULxW2EQaLXPmikUH5GQghxJU/fu1408kPjGoarlkTp/fvNkhObFlOyp9j?=
- =?us-ascii?Q?B+b8RTVHSwzeYcM7gPUCkHVxAUCeCTZbQUBTVtDOiwHHQREXbcwIFDQ3/BXo?=
- =?us-ascii?Q?DXNDjQ7/atTz5NDvQ9g=3D?=
-X-Forefront-Antispam-Report: CIP:216.228.117.160; CTRY:US; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge1.nvidia.com; CAT:NONE;
- SFS:(13230040)(376014)(1800799024)(82310400026)(36860700013); DIR:OUT;
- SFP:1101; 
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jan 2026 13:30:12.0732 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4627eff0-69e8-4854-c754-08de4c5e8db1
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.160];
- Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: SJ1PEPF00001CDF.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR12MB9627
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -134,89 +54,650 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Gregory Etelson <getelson@nvidia.com>
+Thank you for doing this. Having tests for things like this is important bo=
+th=20
+to make sure they work and as a form of documentation.
 
-Current MPESW PF probe was designed for interfaces with up to 2 ports.
+In my humble opinion we should not approach this mechanically though, which=
+ is=20
+what AI tools tend to do. It is usually said that tests should test desired=
+=20
+behavior, not specific implementation. Particularly in settings some of the=
+=20
+values might not matter, or the whole range might be acceptable, in other c=
+ases=20
+current implementation might be questionable and by writing a test we just=
+=20
+legitimize it.
 
-The patch can handle interfaces with any number of ports.
+Please more see comments inline.
 
-Fixes: 11c73de9ef63 ("net/mlx5: probe multi-port E-Switch device")
-Cc: dsosnowski@nvidia.com
-Cc: stable@dpdk.org
+> diff --git a/app/test/test_pmd_null.c b/app/test/test_pmd_null.c
+> new file mode 100644
+> index 0000000000..ebc2447c6d
+> --- /dev/null
+> +++ b/app/test/test_pmd_null.c
+> @@ -0,0 +1,827 @@
+> +/* SPDX-License-Identifier: BSD-3-Clause
+> + * Copyright(c) 2026 Stephen Hemminger
+> + */
+> +
+> +#include <inttypes.h>
+> +#include <stdbool.h>
+> +#include <stdio.h>
+> +#include <string.h>
+> +
+> +#include <rte_bus_vdev.h>
+> +#include <rte_cycles.h>
+> +#include <rte_ethdev.h>
+> +#include <rte_ether.h>
+> +#include <rte_lcore.h>
+> +#include <rte_mbuf.h>
+> +#include <rte_mempool.h>
 
-Signed-off-by: Gregory Etelson <getelson@nvidia.com>
-Reviewed-by: Bing Zhao <bingz@nvidia.com>
-Acked-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
-Signed-off-by: Bing Zhao <bingz@nvidia.com>
----
- drivers/net/mlx5/mlx5_ethdev.c | 47 +++++++++++++++++++---------------
- 1 file changed, 26 insertions(+), 21 deletions(-)
+I do not think it is a problem, but just curious: how does test_pmd_ring.c=
+=20
+manage to use much fewer includes?
 
-diff --git a/drivers/net/mlx5/mlx5_ethdev.c b/drivers/net/mlx5/mlx5_ethdev.c
-index 7747b0c869..c93a7ac4f2 100644
---- a/drivers/net/mlx5/mlx5_ethdev.c
-+++ b/drivers/net/mlx5/mlx5_ethdev.c
-@@ -493,8 +493,9 @@ mlx5_representor_info_get(struct rte_eth_dev *dev,
- 			  struct rte_eth_representor_info *info)
- {
- 	struct mlx5_priv *priv = dev->data->dev_private;
--	int n_type = 5; /* Representor types: PF, VF, HPF@VF, SF and HPF@SF. */
--	int n_pf = 2; /* Number of PFs. */
-+	/* Representor types: PF, VF, HPF@VF, SF and HPF@SF, total 5. */
-+	int n_type = RTE_ETH_REPRESENTOR_PF + 2; /* Maximal type + 2 for HPFs. */
-+	int n_pf = 8; /* Maximal number of PFs. */
- 	int i = 0, pf;
- 	int n_entries;
- 
-@@ -509,25 +510,29 @@ mlx5_representor_info_get(struct rte_eth_dev *dev,
- 	info->pf = 0;
- 	if (mlx5_is_port_on_mpesw_device(priv)) {
- 		info->pf = priv->mpesw_port;
--		/* PF range, both ports will show the same information. */
--		info->ranges[i].type = RTE_ETH_REPRESENTOR_PF;
--		info->ranges[i].controller = 0;
--		info->ranges[i].pf = priv->mpesw_owner + 1;
--		info->ranges[i].vf = 0;
--		/*
--		 * The representor indexes should be the values set of "priv->mpesw_port".
--		 * In the real case now, only 1 PF/UPLINK representor is supported.
--		 * The port index will always be the value of "owner + 1".
--		 */
--		info->ranges[i].id_base =
--			MLX5_REPRESENTOR_ID(priv->mpesw_owner, info->ranges[i].type,
--					    info->ranges[i].pf);
--		info->ranges[i].id_end =
--			MLX5_REPRESENTOR_ID(priv->mpesw_owner, info->ranges[i].type,
--					    info->ranges[i].pf);
--		snprintf(info->ranges[i].name, sizeof(info->ranges[i].name),
--			 "pf%d", info->ranges[i].pf);
--		i++;
-+		for (i = 0; i < n_pf; i++) {
-+			/* PF range, both ports will show the same information. */
-+			info->ranges[i].type = RTE_ETH_REPRESENTOR_PF;
-+			info->ranges[i].controller = 0;
-+			info->ranges[i].pf = priv->mpesw_owner + i + 1;
-+			info->ranges[i].vf = 0;
-+			/*
-+			 * The representor indexes should be the values set of "priv->mpesw_port".
-+			 * In the real case now, only 1 PF/UPLINK representor is supported.
-+			 * The port index will always be the value of "owner + 1".
-+			 */
-+			info->ranges[i].id_base =
-+				MLX5_REPRESENTOR_ID(priv->mpesw_owner,
-+						    info->ranges[i].type,
-+						    info->ranges[i].pf);
-+			info->ranges[i].id_end =
-+				MLX5_REPRESENTOR_ID(priv->mpesw_owner,
-+						    info->ranges[i].type,
-+						    info->ranges[i].pf);
-+			snprintf(info->ranges[i].name,
-+				 sizeof(info->ranges[i].name),
-+				 "pf%d", info->ranges[i].pf);
-+		}
- 	} else if (priv->pf_bond >= 0)
- 		info->pf = priv->pf_bond;
- 	for (pf = 0; pf < n_pf; ++pf) {
--- 
-2.34.1
+> +
+> +#include "test.h"
+> +
+> +#define NUM_MBUFS 256
+> +#define MBUF_CACHE_SIZE 32
+> +#define BURST_SIZE 32
+> +#define RING_SIZE 512
+> +
+> +/* Test device names */
+> +#define NULL_DEV_NAME "net_null_test"
+> +
+> +static struct rte_mempool *mp;
+> +static uint16_t port_id =3D RTE_MAX_ETHPORTS;
+> +static bool port_created;
+> +static bool port_started;
+
+// snip setup and teardown functions, could find nothing to nitpick there
+
+> +/*
+> + * Test: Basic RX - should return empty packets
+> + */
+> +static int
+> +test_null_rx_basic(void)
+> +{
+> +	struct rte_mbuf *bufs[BURST_SIZE];
+> +	uint16_t nb_rx;
+> +	unsigned int i;
+> +
+> +	/* RX should return requested number of empty packets */
+> +	nb_rx =3D rte_eth_rx_burst(port_id, 0, bufs, BURST_SIZE);
+> +	TEST_ASSERT(nb_rx =3D=3D BURST_SIZE,
+> +		    "Expected %u packets, got %u", BURST_SIZE, nb_rx);
+> +
+> +	/* Verify packets have expected properties */
+> +	for (i =3D 0; i < nb_rx; i++) {
+> +		TEST_ASSERT(bufs[i] !=3D NULL, "Received NULL mbuf");
+> +		TEST_ASSERT(bufs[i]->port =3D=3D port_id,
+> +			    "Unexpected port id in mbuf: %u", bufs[i]->port);
+> +		/* Default packet size is 64 bytes */
+
+Default packet size repeats a few times in this file, can we have a global
+constant for it?
+
+> +		TEST_ASSERT(bufs[i]->pkt_len =3D=3D 64,
+> +			    "Unexpected pkt_len: %u", bufs[i]->pkt_len);
+> +		TEST_ASSERT(bufs[i]->data_len =3D=3D 64,
+> +			    "Unexpected data_len: %u", bufs[i]->data_len);
+> +	}
+> +
+> +	/* Free received mbufs */
+> +	for (i =3D 0; i < nb_rx; i++)
+> +		rte_pktmbuf_free(bufs[i]);
+> +
+> +	return TEST_SUCCESS;
+> +}
+> +
+> +/*
+> + * Test: Basic TX - should free all packets
+> + */
+> +static int
+> +test_null_tx_basic(void)
+> +{
+> +	struct rte_mbuf *bufs[BURST_SIZE];
+> +	uint16_t nb_tx;
+> +	unsigned int i;
+> +	unsigned int pool_count_before, pool_count_after;
+> +
+> +	/* Allocate mbufs for TX */
+> +	for (i =3D 0; i < BURST_SIZE; i++) {
+> +		bufs[i] =3D rte_pktmbuf_alloc(mp);
+> +		TEST_ASSERT(bufs[i] !=3D NULL, "Failed to allocate mbuf");
+> +		bufs[i]->data_len =3D 64;
+> +		bufs[i]->pkt_len =3D 64;
+
+It would help to test sending packets of various sizes, especially spanning=
+=20
+multiple buffers or allocating them at the edge of buffer. May even uncover=
+=20
+some bugs in the copy mode implementation ;)
+
+> +	}
+> +
+> +	pool_count_before =3D rte_mempool_avail_count(mp);
+> +
+> +	/* TX should accept and free all packets */
+> +	nb_tx =3D rte_eth_tx_burst(port_id, 0, bufs, BURST_SIZE);
+> +	TEST_ASSERT(nb_tx =3D=3D BURST_SIZE,
+> +		    "Expected to TX %u packets, but sent %u", BURST_SIZE, nb_tx);
+> +
+> +	/* Give some time for async operations (if any) */
+> +	rte_delay_us_block(100);
+> +
+> +	pool_count_after =3D rte_mempool_avail_count(mp);
+> +
+> +	/* Verify mbufs were freed - pool should have same count */
+> +	TEST_ASSERT(pool_count_after >=3D pool_count_before,
+> +		    "Mbufs not freed: before=3D%u, after=3D%u",
+> +		    pool_count_before, pool_count_after);
+> +
+> +	return TEST_SUCCESS;
+> +}
+> +
+> +/*
+> + * Test: Statistics verification
+> + */
+> +static int
+> +test_null_stats(void)
+> +{
+> +	struct rte_eth_stats stats;
+> +	struct rte_mbuf *rx_bufs[BURST_SIZE];
+> +	struct rte_mbuf *tx_bufs[BURST_SIZE];
+> +	uint16_t nb_rx, nb_tx;
+> +	unsigned int i;
+> +	int ret;
+> +
+> +	/* Reset stats */
+> +	ret =3D rte_eth_stats_reset(port_id);
+> +	TEST_ASSERT(ret =3D=3D 0, "Failed to reset stats");
+> +
+> +	/* Get initial stats */
+> +	ret =3D rte_eth_stats_get(port_id, &stats);
+> +	TEST_ASSERT(ret =3D=3D 0, "Failed to get stats");
+> +	TEST_ASSERT(stats.ipackets =3D=3D 0, "Initial ipackets not zero");
+> +	TEST_ASSERT(stats.opackets =3D=3D 0, "Initial opackets not zero");
+> +
+> +	/* Perform RX */
+> +	nb_rx =3D rte_eth_rx_burst(port_id, 0, rx_bufs, BURST_SIZE);
+> +	TEST_ASSERT(nb_rx =3D=3D BURST_SIZE, "RX burst failed");
+> +
+> +	/* Allocate and perform TX */
+> +	for (i =3D 0; i < BURST_SIZE; i++) {
+> +		tx_bufs[i] =3D rte_pktmbuf_alloc(mp);
+> +		TEST_ASSERT(tx_bufs[i] !=3D NULL, "Failed to allocate mbuf");
+> +		tx_bufs[i]->data_len =3D 64;
+> +		tx_bufs[i]->pkt_len =3D 64;
+
+Here and elsewhere, it would be interesting to test something non-default.
+
+> +	}
+> +	nb_tx =3D rte_eth_tx_burst(port_id, 0, tx_bufs, BURST_SIZE);
+> +	TEST_ASSERT(nb_tx =3D=3D BURST_SIZE, "TX burst failed");
+> +
+> +	/* Get updated stats */
+> +	ret =3D rte_eth_stats_get(port_id, &stats);
+> +	TEST_ASSERT(ret =3D=3D 0, "Failed to get stats after RX/TX");
+> +
+> +	/* Verify stats */
+> +	TEST_ASSERT(stats.ipackets =3D=3D BURST_SIZE,
+> +		    "Expected ipackets=3D%u, got %"PRIu64,
+> +		    BURST_SIZE, stats.ipackets);
+> +	TEST_ASSERT(stats.opackets =3D=3D BURST_SIZE,
+> +		    "Expected opackets=3D%u, got %"PRIu64,
+> +		    BURST_SIZE, stats.opackets);
+> +	/* Default packet size is 64 bytes */
+> +	TEST_ASSERT(stats.ibytes =3D=3D BURST_SIZE * 64,
+> +		    "Expected ibytes=3D%u, got %"PRIu64,
+> +		    BURST_SIZE * 64, stats.ibytes);
+> +	TEST_ASSERT(stats.obytes =3D=3D BURST_SIZE * 64,
+> +		    "Expected obytes=3D%u, got %"PRIu64,
+> +		    BURST_SIZE * 64, stats.obytes);
+> +
+> +	/* Free RX mbufs */
+> +	for (i =3D 0; i < nb_rx; i++)
+> +		rte_pktmbuf_free(rx_bufs[i]);
+> +
+> +	return TEST_SUCCESS;
+> +}
+> +
+> +/*
+> + * Test: Custom packet size
+> + */
+> +static int
+> +test_null_custom_size(void)
+> +{
+> +	struct rte_mbuf *bufs[BURST_SIZE];
+> +	uint16_t custom_port;
+> +	uint16_t nb_rx;
+> +	unsigned int i;
+> +	const unsigned int custom_size =3D 256;
+
+What about bigger values, something exceeding RTE_MBUF_DEFAULT_BUF_SIZE? Wi=
+ll=20
+it be able to honour them or at least fail gracefully?
+
+> +	int ret;
+> +
+> +	/* Create null device with custom size */
+> +	ret =3D create_null_port("net_null_size_test", "size=3D256", &custom_po=
+rt);
+> +	TEST_ASSERT(ret =3D=3D 0, "Failed to create null port with custom size"=
+);
+> +
+> +	ret =3D configure_null_port(custom_port);
+> +	TEST_ASSERT(ret =3D=3D 0, "Failed to configure null port");
+> +
+> +	/* RX should return packets with custom size */
+> +	nb_rx =3D rte_eth_rx_burst(custom_port, 0, bufs, BURST_SIZE);
+> +	TEST_ASSERT(nb_rx =3D=3D BURST_SIZE, "RX burst failed");
+> +
+> +	/* Verify custom packet size */
+> +	for (i =3D 0; i < nb_rx; i++) {
+> +		TEST_ASSERT(bufs[i]->pkt_len =3D=3D custom_size,
+> +			    "Expected pkt_len=3D%u, got %u",
+> +			    custom_size, bufs[i]->pkt_len);
+> +		TEST_ASSERT(bufs[i]->data_len =3D=3D custom_size,
+> +			    "Expected data_len=3D%u, got %u",
+> +			    custom_size, bufs[i]->data_len);
+> +		rte_pktmbuf_free(bufs[i]);
+> +	}
+> +
+> +	/* Cleanup custom port */
+> +	rte_eth_dev_stop(custom_port);
+> +	rte_eth_dev_close(custom_port);
+> +	rte_vdev_uninit("net_null_size_test");
+> +
+> +	return TEST_SUCCESS;
+> +}
+> +
+> +/*
+> + * Test: Copy mode
+> + */
+> +static int
+> +test_null_copy_mode(void)
+> +{
+> +	struct rte_mbuf *rx_bufs[BURST_SIZE];
+> +	uint16_t copy_port;
+> +	uint16_t nb_rx;
+> +	unsigned int i;
+> +	int ret;
+> +
+> +	/* Create null device with copy enabled */
+> +	ret =3D create_null_port("net_null_copy_test", "copy=3D1", &copy_port);
+> +	TEST_ASSERT(ret =3D=3D 0, "Failed to create null port with copy mode");
+> +
+> +	ret =3D configure_null_port(copy_port);
+> +	TEST_ASSERT(ret =3D=3D 0, "Failed to configure null port");
+> +
+> +	/* RX in copy mode should work */
+> +	nb_rx =3D rte_eth_rx_burst(copy_port, 0, rx_bufs, BURST_SIZE);
+> +	TEST_ASSERT(nb_rx =3D=3D BURST_SIZE, "RX burst in copy mode failed");
+> +
+> +	/* Free RX mbufs */
+> +	for (i =3D 0; i < nb_rx; i++)
+> +		rte_pktmbuf_free(rx_bufs[i]);
+> +
+> +	/* Cleanup */
+> +	rte_eth_dev_stop(copy_port);
+> +	rte_eth_dev_close(copy_port);
+> +	rte_vdev_uninit("net_null_copy_test");
+> +
+> +	return TEST_SUCCESS;
+> +}
+
+As far as I understand, copy mode should not be different for the end user=
+=20
+(apart from performance and bugs). The test for it is not as comprehensive =
+as=20
+for the default mode. Can we save some LOCs and improve coverage by just=20
+running full tests twice, with a boolean parameter for the copy mode?
+
+> +
+> +/*
+> + * Test: No-RX mode
+> + */
+> +static int
+> +test_null_no_rx_mode(void)
+> +{
+> +	struct rte_mbuf *rx_bufs[BURST_SIZE];
+> +	struct rte_mbuf *tx_bufs[BURST_SIZE];
+> +	uint16_t norx_port;
+> +	uint16_t nb_rx, nb_tx;
+> +	unsigned int i;
+> +	int ret;
+> +
+> +	/* Create null device with no-rx enabled */
+> +	ret =3D create_null_port("net_null_norx_test", "no-rx=3D1", &norx_port)=
+;
+> +	TEST_ASSERT(ret =3D=3D 0, "Failed to create null port with no-rx mode")=
+;
+> +
+> +	ret =3D configure_null_port(norx_port);
+> +	TEST_ASSERT(ret =3D=3D 0, "Failed to configure null port");
+> +
+> +	/* RX in no-rx mode should return 0 packets */
+> +	nb_rx =3D rte_eth_rx_burst(norx_port, 0, rx_bufs, BURST_SIZE);
+> +	TEST_ASSERT(nb_rx =3D=3D 0,
+> +		    "Expected 0 packets in no-rx mode, got %u", nb_rx);
+> +
+> +	/* TX in no-rx mode should still work (frees packets) */
+> +	for (i =3D 0; i < BURST_SIZE; i++) {
+> +		tx_bufs[i] =3D rte_pktmbuf_alloc(mp);
+> +		TEST_ASSERT(tx_bufs[i] !=3D NULL, "Failed to allocate mbuf");
+> +		tx_bufs[i]->data_len =3D 64;
+> +		tx_bufs[i]->pkt_len =3D 64;
+> +	}
+> +
+> +	nb_tx =3D rte_eth_tx_burst(norx_port, 0, tx_bufs, BURST_SIZE);
+> +	TEST_ASSERT(nb_tx =3D=3D BURST_SIZE, "TX burst in no-rx mode failed");
+> +
+> +	/* Cleanup */
+> +	rte_eth_dev_stop(norx_port);
+> +	rte_eth_dev_close(norx_port);
+> +	rte_vdev_uninit("net_null_norx_test");
+> +
+> +	return TEST_SUCCESS;
+
+Probably fine, but could also make it a mode for the rest of the tests to=20
+verify also statistics etc.
+
+> +}
+> +
+> +/*
+> + * Test: Link status
+> + */
+> +static int
+> +test_null_link_status(void)
+> +{
+> +	struct rte_eth_link link;
+> +	int ret;
+> +
+> +	ret =3D rte_eth_link_get_nowait(port_id, &link);
+> +	TEST_ASSERT(ret =3D=3D 0, "Failed to get link status");
+> +
+> +	/* After start, link should be UP */
+> +	TEST_ASSERT(link.link_status =3D=3D RTE_ETH_LINK_UP,
+> +		    "Expected link UP after start");
+> +	TEST_ASSERT(link.link_speed =3D=3D RTE_ETH_SPEED_NUM_10G,
+> +		    "Expected 10G link speed");
+
+I am not sure it is important to test that the link speed is exactly 10G. W=
+ill=20
+it be a bug if it becomes 25G tomorrow? Probably any valid value would do.
+
+> +	TEST_ASSERT(link.link_duplex =3D=3D RTE_ETH_LINK_FULL_DUPLEX,
+> +		    "Expected full duplex");
+> +
+> +	/* Stop the device */
+> +	ret =3D rte_eth_dev_stop(port_id);
+> +	TEST_ASSERT(ret =3D=3D 0, "Failed to stop device");
+> +
+> +	ret =3D rte_eth_link_get_nowait(port_id, &link);
+> +	TEST_ASSERT(ret =3D=3D 0, "Failed to get link status after stop");
+> +
+> +	/* After stop, link should be DOWN */
+> +	TEST_ASSERT(link.link_status =3D=3D RTE_ETH_LINK_DOWN,
+> +		    "Expected link DOWN after stop");
+> +
+> +	/* Restart for subsequent tests */
+> +	ret =3D rte_eth_dev_start(port_id);
+> +	TEST_ASSERT(ret =3D=3D 0, "Failed to restart device");
+> +
+> +	return TEST_SUCCESS;
+> +}
+> +
+> +/*
+> + * Test: Device info
+> + */
+> +static int
+> +test_null_dev_info(void)
+> +{
+> +	struct rte_eth_dev_info dev_info;
+> +	int ret;
+> +
+> +	ret =3D rte_eth_dev_info_get(port_id, &dev_info);
+> +	TEST_ASSERT(ret =3D=3D 0, "Failed to get device info");
+> +
+> +	/* Verify expected device info values */
+> +	TEST_ASSERT(dev_info.max_mac_addrs =3D=3D 1,
+> +		    "Expected max_mac_addrs=3D1, got %u", dev_info.max_mac_addrs);
+> +	TEST_ASSERT(dev_info.max_rx_pktlen =3D=3D (uint32_t)-1,
+> +		    "Unexpected max_rx_pktlen");
+
+Why is (uint32_t)-1 is a valid packet length for this device? Can at actual=
+ly=20
+accept them?
+
+> +	TEST_ASSERT(dev_info.min_rx_bufsize =3D=3D 0,
+> +		    "Expected min_rx_bufsize=3D0, got %u", dev_info.min_rx_bufsize);
+> +
+> +	/* Check TX offload capabilities */
+> +	TEST_ASSERT(dev_info.tx_offload_capa & RTE_ETH_TX_OFFLOAD_MULTI_SEGS,
+> +		    "Expected MULTI_SEGS TX offload capability");
+
+It sure sets these values, but are they correct values, and would anything =
+else=20
+be incorrect?
+
+> +	TEST_ASSERT(dev_info.tx_offload_capa & RTE_ETH_TX_OFFLOAD_MT_LOCKFREE,
+> +		    "Expected MT_LOCKFREE TX offload capability");
+> +
+> +	/* Check RSS capabilities */
+> +	TEST_ASSERT(dev_info.reta_size > 0, "Expected non-zero reta_size");
+> +	TEST_ASSERT(dev_info.hash_key_size =3D=3D 40,
+> +		    "Expected hash_key_size=3D40, got %u", dev_info.hash_key_size);
+> +	TEST_ASSERT(dev_info.flow_type_rss_offloads !=3D 0,
+> +		    "Expected RSS offloads to be set");
+> +
+> +	return TEST_SUCCESS;
+> +}
+
+// snip test_null_multiple_bursts, looks fine
+
+> +/*
+> + * Test: RSS configuration
+> + * Note: RSS requires multi-queue configuration
+> + */
+> +static int
+> +test_null_rss_config(void)
+> +{
+> +	struct rte_eth_dev_info dev_info;
+> +	struct rte_eth_rss_conf rss_conf;
+> +	struct rte_eth_conf port_conf =3D {0};
+> +	uint8_t rss_key[40];
+> +	uint16_t rss_port;
+> +	const uint16_t num_queues =3D 2;
+> +	uint16_t q;
+> +	int ret;
+> +
+> +	/* Create a new null device for RSS testing with multiple queues */
+> +	ret =3D create_null_port("net_null_rss_test", NULL, &rss_port);
+> +	TEST_ASSERT(ret =3D=3D 0, "Failed to create null port for RSS test");
+> +
+> +	ret =3D rte_eth_dev_info_get(rss_port, &dev_info);
+> +	TEST_ASSERT(ret =3D=3D 0, "Failed to get device info");
+> +
+> +	/* Configure with RSS enabled and multiple queues */
+> +	port_conf.rxmode.mq_mode =3D RTE_ETH_MQ_RX_RSS;
+> +	port_conf.rx_adv_conf.rss_conf.rss_hf =3D dev_info.flow_type_rss_offloa=
+ds;
+> +
+> +	ret =3D rte_eth_dev_configure(rss_port, num_queues, num_queues, &port_c=
+onf);
+> +	TEST_ASSERT(ret =3D=3D 0, "Failed to configure RSS port");
+> +
+> +	for (q =3D 0; q < num_queues; q++) {
+> +		ret =3D rte_eth_rx_queue_setup(rss_port, q, RING_SIZE,
+> +					     rte_eth_dev_socket_id(rss_port),
+> +					     NULL, mp);
+> +		TEST_ASSERT(ret =3D=3D 0, "Failed to setup RX queue %u", q);
+> +
+> +		ret =3D rte_eth_tx_queue_setup(rss_port, q, RING_SIZE,
+> +					     rte_eth_dev_socket_id(rss_port),
+> +					     NULL);
+> +		TEST_ASSERT(ret =3D=3D 0, "Failed to setup TX queue %u", q);
+> +	}
+> +
+> +	ret =3D rte_eth_dev_start(rss_port);
+> +	TEST_ASSERT(ret =3D=3D 0, "Failed to start RSS port");
+> +
+> +	/* Get current RSS config */
+> +	memset(&rss_conf, 0, sizeof(rss_conf));
+> +	rss_conf.rss_key =3D rss_key;
+> +	rss_conf.rss_key_len =3D sizeof(rss_key);
+> +
+> +	ret =3D rte_eth_dev_rss_hash_conf_get(rss_port, &rss_conf);
+> +	TEST_ASSERT(ret =3D=3D 0, "Failed to get RSS hash config");
+> +
+> +	/* Update RSS config with new key */
+> +	memset(rss_key, 0x55, sizeof(rss_key));
+> +	rss_conf.rss_key =3D rss_key;
+> +	rss_conf.rss_key_len =3D sizeof(rss_key);
+> +	rss_conf.rss_hf =3D dev_info.flow_type_rss_offloads;
+> +
+> +	ret =3D rte_eth_dev_rss_hash_update(rss_port, &rss_conf);
+> +	TEST_ASSERT(ret =3D=3D 0, "Failed to update RSS hash config");
+> +
+> +	/* Verify the update */
+> +	memset(rss_key, 0, sizeof(rss_key));
+> +	rss_conf.rss_key =3D rss_key;
+> +
+> +	ret =3D rte_eth_dev_rss_hash_conf_get(rss_port, &rss_conf);
+> +	TEST_ASSERT(ret =3D=3D 0, "Failed to get RSS hash config after update")=
+;
+> +
+> +	/* Verify key was updated */
+> +	for (unsigned int i =3D 0; i < sizeof(rss_key); i++) {
+> +		TEST_ASSERT(rss_key[i] =3D=3D 0x55,
+> +			    "RSS key not updated at byte %u", i);
+> +	}
+> +
+
+Can we receive and send something from/to these queues and verify resulting=
+=20
+statistics? Statistics is one of the most important use cases for the null=
+=20
+device, and it does benefit from multi-queue.
+
+> +	/* Cleanup */
+> +	rte_eth_dev_stop(rss_port);
+> +	rte_eth_dev_close(rss_port);
+> +	rte_vdev_uninit("net_null_rss_test");
+> +
+> +	return TEST_SUCCESS;
+> +}
+> +
+> +/*
+> + * Test: RETA (Redirection Table) configuration
+> + * Note: RETA requires multi-queue RSS configuration
+> + */
+> +static int
+> +test_null_reta_config(void)
+> +{
+
+Not sure who actually handles reta for the null device, additional tests=20
+actually using it may or may not be necessary depending on the answer.
+
+// snip the rest of the function
+
+> +}
+
+// snip test_null_stats_reset, looks fine.
+
+> +/*
+> + * Test: MAC address operations
+> + */
+> +static int
+> +test_null_mac_addr(void)
+> +{
+> +	struct rte_ether_addr mac_addr;
+> +	struct rte_ether_addr new_mac =3D {
+> +		.addr_bytes =3D {0x00, 0x11, 0x22, 0x33, 0x44, 0x55}
+> +	};
+> +	int ret;
+> +
+> +	/* Get current MAC address */
+> +	ret =3D rte_eth_macaddr_get(port_id, &mac_addr);
+> +	TEST_ASSERT(ret =3D=3D 0, "Failed to get MAC address");
+> +
+> +	/* Set new MAC address */
+> +	ret =3D rte_eth_dev_default_mac_addr_set(port_id, &new_mac);
+> +	TEST_ASSERT(ret =3D=3D 0, "Failed to set MAC address");
+
+Should we now check that it was actually set?
+
+> +
+> +	return TEST_SUCCESS;
+> +}
+> +
+> +/*
+> + * Test: Promiscuous and allmulticast modes
+> + */
+> +static int
+> +test_null_promisc_allmulti(void)
+> +{
+> +	int ret;
+> +
+> +	/* Test promiscuous mode - null PMD starts with promiscuous enabled */
+> +	ret =3D rte_eth_promiscuous_get(port_id);
+> +	TEST_ASSERT(ret =3D=3D 1, "Expected promiscuous mode enabled");
+> +
+> +	/* Test allmulticast mode - null PMD starts with allmulti enabled */
+> +	ret =3D rte_eth_allmulticast_get(port_id);
+> +	TEST_ASSERT(ret =3D=3D 1, "Expected allmulticast mode enabled");
+
+Similar concerns as with other settings, are these specific values importan=
+t?
+
+> +
+> +	return TEST_SUCCESS;
+> +}
+> +
+> +static struct unit_test_suite null_pmd_test_suite =3D {
+> +	.suite_name =3D "Null PMD Unit Test Suite",
+> +	.setup =3D test_null_setup,
+> +	.teardown =3D test_null_teardown,
+> +	.unit_test_cases =3D {
+> +		TEST_CASE(test_null_rx_basic),
+> +		TEST_CASE(test_null_tx_basic),
+> +		TEST_CASE(test_null_stats),
+> +		TEST_CASE(test_null_custom_size),
+> +		TEST_CASE(test_null_copy_mode),
+> +		TEST_CASE(test_null_no_rx_mode),
+> +		TEST_CASE(test_null_link_status),
+> +		TEST_CASE(test_null_dev_info),
+> +		TEST_CASE(test_null_multiple_bursts),
+> +		TEST_CASE(test_null_rss_config),
+> +		TEST_CASE(test_null_reta_config),
+> +		TEST_CASE(test_null_stats_reset),
+> +		TEST_CASE(test_null_mac_addr),
+> +		TEST_CASE(test_null_promisc_allmulti),
+
+test_pmd_ring.c is also doing some command-line testing, although it requir=
+es=20
+some cooperation from the test framework. Are we not going to cover this pa=
+rt=20
+for now?
+
+> +
+> +		TEST_CASES_END() /**< NULL terminate unit test array */
+> +	}
+> +};
+> +
+> +static int
+> +test_pmd_null(void)
+> +{
+> +	return unit_test_suite_runner(&null_pmd_test_suite);
+> +}
+> +
+> +REGISTER_FAST_TEST(null_pmd_autotest, true, true, test_pmd_null);
+> --
+> 2.51.0
 
