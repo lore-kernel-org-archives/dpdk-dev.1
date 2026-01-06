@@ -2,51 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3678CE9D6A
-	for <dpdk-dev@archiver.kernel.org>; Tue,  6 Jan 2026 15:46:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57217CE9D74
+	for <dpdk-dev@archiver.kernel.org>; Tue,  6 Jan 2026 16:08:38 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2AE7E40A73;
-	Tue,  6 Jan 2026 16:46:59 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 836504069F;
+	Tue,  6 Jan 2026 17:08:37 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id D319840A76
- for <dev@dpdk.org>; Tue,  6 Jan 2026 16:46:57 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 30B8E402DC
+ for <dev@dpdk.org>; Tue,  6 Jan 2026 17:08:36 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1767714417;
+ s=mimecast20190719; t=1767715715;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=xVMMI+wSMlL6s99hIrTcsFnbi3TaANr2lCOivTuVocg=;
- b=MkgGaSW/vFUqGDfwF5K4M/QOJszm/zwEq07/CjkKvKI9pleqeDS+GKOeSW6ZwP08N77i7X
- vlQT2kO3MccFDdDGNQI3NMvU7iCZtdqBrxIrDzx7I/HlYiMtzAmMR1DKmPd8LOumstk6Uc
- AQJu5XBZdp5T43FaCRxkdqS2bEWV8Nc=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ bh=Du+qQxvSregRJa1PXWY3C6IH5P0C2pRUdXJAUEVx7bM=;
+ b=RDP6WkJ+dmqnaGgQWWnh9KNBk0wZHYxfus0+u/6ZzCV5fD3iUEF2t8v19hv2bD6y7kepSR
+ /b0nzNBcDyy7DtDWzOtxPP4wq330Y+BN0cUxtkGtYvBN7ArPg560AawfHgposrYde2epVc
+ x302uV9dbsjiDzDYk1IqQYsAI+0uz/o=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-590-m6upaVh2MOiGB0glBBvKyw-1; Tue,
- 06 Jan 2026 10:46:54 -0500
-X-MC-Unique: m6upaVh2MOiGB0glBBvKyw-1
-X-Mimecast-MFC-AGG-ID: m6upaVh2MOiGB0glBBvKyw_1767714413
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-396-IWQH6SgVM36A9sDCbFcJRA-1; Tue,
+ 06 Jan 2026 11:08:31 -0500
+X-MC-Unique: IWQH6SgVM36A9sDCbFcJRA-1
+X-Mimecast-MFC-AGG-ID: IWQH6SgVM36A9sDCbFcJRA_1767715710
 Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com
  (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 22B871828AB4; Tue,  6 Jan 2026 15:46:28 +0000 (UTC)
+ by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 6CD5D195DE61; Tue,  6 Jan 2026 16:08:30 +0000 (UTC)
 Received: from [10.45.242.22] (unknown [10.45.242.22])
  by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id AD60519560AB; Tue,  6 Jan 2026 15:46:26 +0000 (UTC)
-Message-ID: <7bac0218-2850-4e39-849d-93c80682507e@redhat.com>
-Date: Tue, 6 Jan 2026 16:46:22 +0100
+ id CD43A19560AB; Tue,  6 Jan 2026 16:08:28 +0000 (UTC)
+Message-ID: <7de5dd70-45c2-4a76-954d-19beef994e5a@redhat.com>
+Date: Tue, 6 Jan 2026 17:08:25 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/4] vhost: add user to mailmap and define to vhost hdr
+Subject: Re: [PATCH v5 2/4] vhost_user: header defines for add/rem mem region
 To: Pravin M Bathija <pravin.bathija@dell.com>, dev@dpdk.org
 Cc: pravin.m.bathija.dev@gmail.com
 References: <20251113124425.2913881-1-pravin.bathija@dell.com>
- <20251113124425.2913881-2-pravin.bathija@dell.com>
+ <20251113124425.2913881-3-pravin.bathija@dell.com>
 From: Maxime Coquelin <maxime.coquelin@redhat.com>
 Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  xsFNBFOEQQIBEADjNLYZZqghYuWv1nlLisptPJp+TSxE/KuP7x47e1Gr5/oMDJ1OKNG8rlNg
@@ -91,10 +91,10 @@ Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  fxjSxjSO6rj4/MeenmlJw1yebzkX8ZmaSi8BHe+n6jTGEFNrbiOdWpJgc5yHIZZnwXaW54QT
  UhhSjDL1rV2B4F28w30jYmlRmm2RdN7iCZfbyP3dvFQTzQ4ySquuPkIGcOOHrvZzxbRjzMx1
  Mwqu3GQ=
-In-Reply-To: <20251113124425.2913881-2-pravin.bathija@dell.com>
+In-Reply-To: <20251113124425.2913881-3-pravin.bathija@dell.com>
 X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: dTWDZOhLRmXXsg7Q2ZzuuibLZ2K-WjE3hZj3H0DL1b8_1767714413
+X-Mimecast-MFC-PROC-ID: FHjzA0xkF-PcLRNs2luqOmQ9NB-pL4GDfyUZBkqmFuI_1767715710
 X-Mimecast-Originator: redhat.com
 Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8; format=flowed
@@ -115,19 +115,63 @@ Errors-To: dev-bounces@dpdk.org
 
 
 On 11/13/25 1:44 PM, Pravin M Bathija wrote:
-> - add user to mailmap file.
-> - define a bit-field called VHOST_USER_PROTOCOL_F_CONFIGURE_MEM_SLOTS
->    that depicts if the feature/capability to add/remove memory regions
->    is supported. This is a part of the overall support for add/remove
->    memory region feature in this patchset.
+> The changes in this file cover the enum message requests for
+> supporting add/remove memory regions. The front-end vhost-user
+> client sends messages like get max memory slots, add memory region
+> and remove memory region which are covered in these changes which
+> are on the vhost-user back-end. The changes also include data structure
+> definition of memory region to be added/removed. The data structure
+> VhostUserMsg has been changed to include the memory region.
 > 
 > Signed-off-by: Pravin M Bathija <pravin.bathija@dell.com>
 > ---
->   .mailmap              | 1 +
->   lib/vhost/rte_vhost.h | 4 ++++
->   2 files changed, 5 insertions(+)
+>   lib/vhost/vhost_user.h | 10 ++++++++++
+>   1 file changed, 10 insertions(+)
 > 
+> diff --git a/lib/vhost/vhost_user.h b/lib/vhost/vhost_user.h
+> index ef486545ba..5a0e747b58 100644
+> --- a/lib/vhost/vhost_user.h
+> +++ b/lib/vhost/vhost_user.h
+> @@ -32,6 +32,7 @@
+>   					 (1ULL << VHOST_USER_PROTOCOL_F_BACKEND_SEND_FD) | \
+>   					 (1ULL << VHOST_USER_PROTOCOL_F_HOST_NOTIFIER) | \
+>   					 (1ULL << VHOST_USER_PROTOCOL_F_PAGEFAULT) | \
+> +					 (1ULL << VHOST_USER_PROTOCOL_F_CONFIGURE_MEM_SLOTS) | \
 
-Reviewed-by: Maxime Coquelin <maxime.coquelin@redhat.com>
+It should be enabled only once the feature is actually implemented,
+otherwise bisection may fail.
 
+>   					 (1ULL << VHOST_USER_PROTOCOL_F_STATUS))
+>   
+>   typedef enum VhostUserRequest {
+> @@ -67,6 +68,9 @@ typedef enum VhostUserRequest {
+>   	VHOST_USER_POSTCOPY_END = 30,
+>   	VHOST_USER_GET_INFLIGHT_FD = 31,
+>   	VHOST_USER_SET_INFLIGHT_FD = 32,
+> +	VHOST_USER_GET_MAX_MEM_SLOTS = 36,
+> +	VHOST_USER_ADD_MEM_REG = 37,
+> +	VHOST_USER_REM_MEM_REG = 38,
+>   	VHOST_USER_SET_STATUS = 39,
+>   	VHOST_USER_GET_STATUS = 40,
+>   } VhostUserRequest;
+> @@ -91,6 +95,11 @@ typedef struct VhostUserMemory {
+>   	VhostUserMemoryRegion regions[VHOST_MEMORY_MAX_NREGIONS];
+>   } VhostUserMemory;
+>   
+> +typedef struct VhostUserSingleMemReg {
+> +	uint64_t padding;
+> +	VhostUserMemoryRegion region;
+> +} VhostUserSingleMemReg;
+> +
+>   typedef struct VhostUserLog {
+>   	uint64_t mmap_size;
+>   	uint64_t mmap_offset;
+> @@ -186,6 +195,7 @@ typedef struct __rte_packed_begin VhostUserMsg {
+>   		struct vhost_vring_state state;
+>   		struct vhost_vring_addr addr;
+>   		VhostUserMemory memory;
+> +		VhostUserSingleMemReg memory_single;
+>   		VhostUserLog    log;
+>   		struct vhost_iotlb_msg iotlb;
+>   		VhostUserCryptoSessionParam crypto_session;
 
