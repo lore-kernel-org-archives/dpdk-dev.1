@@ -2,67 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98137CEFCEB
-	for <dpdk-dev@archiver.kernel.org>; Tue,  6 Jan 2026 18:34:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7409FCEFCEB
+	for <dpdk-dev@archiver.kernel.org>; Tue,  6 Jan 2026 18:34:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D643C40E3A;
-	Tue,  6 Jan 2026 19:33:32 +0100 (CET)
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com
- [209.85.208.51]) by mails.dpdk.org (Postfix) with ESMTP id E108840E2B
- for <dev@dpdk.org>; Tue,  6 Jan 2026 19:33:30 +0100 (CET)
-Received: by mail-ed1-f51.google.com with SMTP id
- 4fb4d7f45d1cf-6505cac9879so2026730a12.1
- for <dev@dpdk.org>; Tue, 06 Jan 2026 10:33:30 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 0343940E44;
+	Tue,  6 Jan 2026 19:33:34 +0100 (CET)
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com
+ [209.85.208.52]) by mails.dpdk.org (Postfix) with ESMTP id 87FC440E37
+ for <dev@dpdk.org>; Tue,  6 Jan 2026 19:33:32 +0100 (CET)
+Received: by mail-ed1-f52.google.com with SMTP id
+ 4fb4d7f45d1cf-64b9dfc146fso221396a12.0
+ for <dev@dpdk.org>; Tue, 06 Jan 2026 10:33:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1767724410;
- x=1768329210; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1767724412;
+ x=1768329212; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=ydcH/gyGzjccOhzYIYuQcvr7DKwWGONDU3QaNMbuZOs=;
- b=qRl7MAH2bv9p+GjJiFVEyzscnaT/q23GqTnBUYadhoDlnmDxzS2Bzwvqskbcg2bZSk
- Dgz9O81vodL69Fs8R2x2PU7fhAX1/YkXjrQhA9oXeJpm0zPKWMyeBR5vQ9KMGwqxsaET
- DPslP/ah04VHecW0EEEoNSxRL2o+L30MMyfR1HWDY2E4E2HWAGegzGiZ7nsO1ax16dGE
- NGizD+DNVVQGTPCphoAdI9qWQc5gyLwRrqzABR1gTx0OPRCl8VOhbMGbMXNs5CGMf7Sh
- kx45bNbPd0RmMCI67TmHYqzA4S5NS+oteV0ZLGePylnQQekiwYSoreCUcPRBT3lqju1x
- cEkw==
+ bh=tquIIG4S57JwWVztirFWO7sI/7fexHke+mJcTKFSVtc=;
+ b=Rdjau1CNOfgUUEqKRE1C5nNYkc3cyGRmjAlVFOLOd2M/V2MfZfxereP7c3zzCF364T
+ me/HkZ/pGqd10sPQqy40IzlEWE3k30wimbiz9gDnpAEnjaHbDPfZzXqU5GUeAYtSAfk0
+ 5IkAq2yusTmYupQEvBzxH4IyBJD1IQozahAeJ1D6wHDjMjMF46vDIObyA/qryEjQEOL5
+ cx0KIFb/ECvZYA00s/lTiZyQQZqk1ijXZl3kQD4YWeYhO+Zmi5EGnaQnGBlyhp++RvCv
+ UUCCQnN8SE3wS02sZNauSBpXD6B0vdEZ0wXmkTKBxc5ON/E7ylkVm+cSDIUxzz96g8gI
+ voSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1767724410; x=1768329210;
+ d=1e100.net; s=20230601; t=1767724412; x=1768329212;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=ydcH/gyGzjccOhzYIYuQcvr7DKwWGONDU3QaNMbuZOs=;
- b=Rp2ccRth4mvA3+G/DQSsJCu3ukFSePIIEEfldILyXJxBWW71uaIiEG5y3x3DvCMOPM
- 5+OYkPPRwUiHpYQo3GbgJ1w2VkGCsKuPvw44GIgpHE0ba7ixAZ0DQAd73ZJpaU5+Ncgp
- YyJX3Y4/JM/G8eaT8f/Ip7gbiLP1Z30loEfez56gMQdN8ijN8nPP0eUp8lmKuhBWJ1fp
- 3zWHxWm9QDq1kxecs3o+NMSKWsHmKJdMBSo6PQ8Z7ZEdlLsoh64qEQixh2VwqvE5FHYV
- ORW2weCWTWOMopN1nwbjoVlCagV4uNN7LdoN453QrsKycl4W+kzB3RBZCfTnJgBVg33k
- dcrg==
-X-Gm-Message-State: AOJu0YysAExTgXlvxVgnhXZ2CuqW5carmkh1pYzFLYZZLhVO45ZHSjbp
- VkCXHrjoNml51Uxa8BeY4EzoKvEaYa8E0uSNZmrQ40e7T4ckUKHpYVqBRpk2IgPGT1xmWw70kMr
- QmTbnNLU=
-X-Gm-Gg: AY/fxX5aSfthIMzmGUBEBl08kLWkt6yhMoo+kLazrq6Y3uwejAGl7s28OGdCWfn7b21
- kevkje3Wp8LMIkZZIF0hDbMY5yPIkLQIx7puGJ+WyGz6/tAdgUli/4k7pJRms8aA7/f6lb+JsWL
- DKucABKs7Ql7phMsQwPYMaSqI/X6THWCOCJaB86HKnkZFg7qNfSH+WvlScOyt78UfN6M1BCg5cR
- TwxagIegGZdez21lYfdvcFR2WrqQxyJgP+XqXXrK/bEuMunO3Jqpe2Smnd7WFQKzyMSvisj73tO
- 4Iy/9oSw8gWsJh7O8KW1O0MRNWUZbQB8LBzFqRF7Z1JJ2PfUcYrEFsEbVKaizbC2WJcNuQlGbSo
- dYhJ6Xpon0q2D0Xtmm9q/FFlealgMi/VelAoDs2xF/6vzOd+tJFwVdCQsXRwBilFqetfwacVmk9
- NzYFpc7Ll6a/inxILFGeWk3agC0eq3cRMHpi1ShwKdgsgcG83+DA==
-X-Google-Smtp-Source: AGHT+IEQMlHRCjyovPYd12O3RvfBp/g+kUv9Iu9Nk5EW8CaxdoYMlnEyTbtx5Pdji/cbF5fdVzfwoA==
-X-Received: by 2002:a17:907:60cb:b0:b84:206f:a650 with SMTP id
- a640c23a62f3a-b844501eb89mr11063066b.56.1767724410479; 
- Tue, 06 Jan 2026 10:33:30 -0800 (PST)
+ bh=tquIIG4S57JwWVztirFWO7sI/7fexHke+mJcTKFSVtc=;
+ b=Sje+/v+ncWM+8f4eF0KfRLo5yY2cFF6tFdcuGVLIXvmfrplc6P0LQK1RJPzbtK6dlN
+ tXkglIzgv52rmhvfW8tMeRvFkpPtnGbt7NazW7/X4xvad1Aj67DOmWEQ3IDTVbVW49UH
+ cZat0X+UgIEj8GkHmJA3a1of2/f9vhESwA9DIRUcdHU8QWE7Y5rMg12jbN+isOmGqDkd
+ ie4zFMCnoOCgiJwdbeothKHSJKCeqcgf5htTqC/Vd8LdflBu1pqIZkxVY1gt9lWp129q
+ H8WJzokFolFr6Y4pCXe6QEFmGguSmFYOX8POHlsm8Usa9t+niS1zvLBtEfNhjZYdKfui
+ aRog==
+X-Gm-Message-State: AOJu0Yy23UJrFU5etX2sNCgunn9SrXrVhsJdRnI3RECHaF+x0uddKNnx
+ syFKcF3lnxU5GAedHB1K7FaVWxo2pap0swBliRXOjBxrXvZIJJqJn7XNIu0cTlgVRLRBSP8LWaq
+ ypzMbCDA=
+X-Gm-Gg: AY/fxX5QfKrF4wIfxOFMXFgOfqk+5yLCyEP0vNDH1cBGVzZxxMdNHqvCoYFmzLvCNi/
+ xhBAl29Bz9Vlqc7FG5Kc9YiwpKAy23+t6HXrKSlKYAhIYkrVjW/e9lKkhqBeFq3yMvysbHH0NvC
+ 09LHhQnIEffHQSc8XTjTp4gYKqclicyeeYO+vllvnzqfdJaafxM6buixwdPuzPsiwEb39HI39IU
+ lNr1YpGoQWQYcpa8k5y05GhYdEwhqcK9KSAZlQZX9NBASyCwYKIvAO9jhGtdOphiyR8pTwC/37Z
+ ONSNwC9oxyCv/99tT5DTIzY/pFCk4HGSbpV8FMlvV0y6d3KyShQPXjrS8EnBibnsGk7esyZLfja
+ FBuNVal3jX/+9r2xS80CR9sSe1Ln1VUI3/GecdNIdECYZtBHievMGnX2GvHO4Ci5TjvTI4XVBuA
+ 8nsXZXbyBK067XwLnKYlwftbEvysdAYJUAyLa/qSNXpLBtAg/IBg==
+X-Google-Smtp-Source: AGHT+IEauYD5BLxK1Hjam/6G4wB1WW0JI7TmFMHlP1cVfncLvnfm5cwCB6M+0tw8Z3d9ImUUDcmPhw==
+X-Received: by 2002:aa7:c513:0:b0:64b:aa44:dea6 with SMTP id
+ 4fb4d7f45d1cf-6507c16e5d9mr2514530a12.15.1767724412074; 
+ Tue, 06 Jan 2026 10:33:32 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 4fb4d7f45d1cf-6507bf6d4acsm2728525a12.30.2026.01.06.10.33.29
+ 4fb4d7f45d1cf-6507bf6d4acsm2728525a12.30.2026.01.06.10.33.30
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 06 Jan 2026 10:33:30 -0800 (PST)
+ Tue, 06 Jan 2026 10:33:31 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH 09/12] net/pcap: report receive clock
-Date: Tue,  6 Jan 2026 10:26:48 -0800
-Message-ID: <20260106182823.192350-10-stephen@networkplumber.org>
+Subject: [PATCH 10/12] net/pcap: cleanup MAC address handling
+Date: Tue,  6 Jan 2026 10:26:49 -0800
+Message-ID: <20260106182823.192350-11-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260106182823.192350-1-stephen@networkplumber.org>
 References: <20260106182823.192350-1-stephen@networkplumber.org>
@@ -81,43 +81,38 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Since this drive supports receive timestamping, provide a callback
-so that the application can determine the clock rate for timestamp.
+Use rte_ether_addr structure to avoid memcpy and void *.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/pcap/pcap_ethdev.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/net/pcap/pcap_ethdev.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/net/pcap/pcap_ethdev.c b/drivers/net/pcap/pcap_ethdev.c
-index e283fb3787..3eb313ebb8 100644
+index 3eb313ebb8..bf863e8708 100644
 --- a/drivers/net/pcap/pcap_ethdev.c
 +++ b/drivers/net/pcap/pcap_ethdev.c
-@@ -1103,6 +1103,16 @@ eth_mtu_set(struct rte_eth_dev *dev, uint16_t mtu)
- 	return 0;
- }
- 
-+/* Timestamp values in receive packets from libpcap are in UTC */
-+static int
-+eth_rx_clock(struct rte_eth_dev *dev __rte_unused, uint64_t *timestamp)
-+{
-+	struct timespec cur_time;
-+
-+	timespec_get(&cur_time, TIME_UTC);
-+	*timestamp = rte_timespec_to_ns(&cur_time);
-+	return 0;
-+}
- 
- static const struct eth_dev_ops ops = {
- 	.dev_start = eth_dev_start,
-@@ -1120,6 +1130,7 @@ static const struct eth_dev_ops ops = {
- 	.mtu_set = eth_mtu_set,
- 	.stats_get = eth_stats_get,
- 	.stats_reset = eth_stats_reset,
-+	.read_clock = eth_rx_clock,
- };
+@@ -1383,9 +1383,9 @@ pmd_init_internals(struct rte_vdev_device *vdev,
  
  static int
+ eth_pcap_update_mac(const char *if_name, struct rte_eth_dev *eth_dev,
+-		const unsigned int numa_node)
++		    const unsigned int numa_node)
+ {
+-	void *mac_addrs;
++	struct rte_ether_addr *mac_addrs;
+ 	struct rte_ether_addr mac;
+ 
+ 	if (osdep_iface_mac_get(if_name, &mac) < 0)
+@@ -1396,7 +1396,7 @@ eth_pcap_update_mac(const char *if_name, struct rte_eth_dev *eth_dev,
+ 		return -1;
+ 
+ 	PMD_LOG(INFO, "Setting phy MAC for %s", if_name);
+-	rte_memcpy(mac_addrs, mac.addr_bytes, RTE_ETHER_ADDR_LEN);
++	rte_ether_addr_copy(&mac, mac_addrs);
+ 	eth_dev->data->mac_addrs = mac_addrs;
+ 	return 0;
+ }
 -- 
 2.51.0
 
