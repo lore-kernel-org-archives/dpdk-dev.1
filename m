@@ -2,67 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA8E2CEFCE6
-	for <dpdk-dev@archiver.kernel.org>; Tue,  6 Jan 2026 18:33:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1876ECEFCE6
+	for <dpdk-dev@archiver.kernel.org>; Tue,  6 Jan 2026 18:33:34 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DA48840DFD;
-	Tue,  6 Jan 2026 19:33:20 +0100 (CET)
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com
- [209.85.218.43]) by mails.dpdk.org (Postfix) with ESMTP id 1ABBA40DDB
- for <dev@dpdk.org>; Tue,  6 Jan 2026 19:33:19 +0100 (CET)
-Received: by mail-ej1-f43.google.com with SMTP id
- a640c23a62f3a-b8440cb2dbeso49260166b.3
- for <dev@dpdk.org>; Tue, 06 Jan 2026 10:33:19 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 1348740E0B;
+	Tue,  6 Jan 2026 19:33:22 +0100 (CET)
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com
+ [209.85.208.46]) by mails.dpdk.org (Postfix) with ESMTP id E4FC140E01
+ for <dev@dpdk.org>; Tue,  6 Jan 2026 19:33:20 +0100 (CET)
+Received: by mail-ed1-f46.google.com with SMTP id
+ 4fb4d7f45d1cf-64d1ef53cf3so1817771a12.0
+ for <dev@dpdk.org>; Tue, 06 Jan 2026 10:33:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1767724399;
- x=1768329199; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1767724400;
+ x=1768329200; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=j/FgwKfLuYGsXjmv90rpiDZttlKQovdPvwpGfX77hJU=;
- b=fIGsapYYFb3XhxbFtl8Qd9Ole0CoCLwgBI1P0Vng/R3Y5aqN6Xq5GcLCMcVNZ3OLgD
- 0FBObc0siXk2z+Mt9qoysP68atX4fQGACPGFhd5X56Lfh2tt5JhEG97Z47ebm5/Bd4b2
- qXa3ivjrbRg/6eBPGXHRE12nfazSbqoumTkRx1lK8Kgotk1rpxfNxeb3uP+e91GaVMN3
- txWRF5rq+kySVMLxuJHDS7xjPWe0VHjrycxD5WuPv2Ez0wzqcAnGdoIEtfcLfhIYDgVF
- bn1n3sUgNN4QEUDCWMS2h/IkzuBNOrx7s1pDLcsNzsN0TisZpfVXVV6jLe/rMgsOcm3D
- fktA==
+ bh=3qhN9KInipgpzkPvfJqicnwRvQCn8fPq4LvjWpWHvhQ=;
+ b=1LpcZ+Cc+q3VMWI+nKcXBVzx43Jzua/QLNh0wWh1HEkeMSFT9Z50giEIw2IgcMnazJ
+ a8hn7zWaUrh2hTLNbmEVFTVFTT1YNqXE05zmT3AICpkYDOEIGNXzLW4gZZgy7VMvyt27
+ VMEdsDD/J9lROLj+J2qiBlth8/FaKTGM2z60eUbvBUAX8azZK18M0KwUJmjD35G7KEB0
+ t4L1NEU2eB5C/lGte+pC59XAQwGuIeKbW3HcydIrmszNEnrHT0WiX0JhZnP23t3fs4HS
+ DhHA/ncRNslr9WjUZ5cm356xrwd3GlDw62U70qtaOmn3j93vTq4t5VhL1ukdZR+hjpnT
+ qUPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1767724399; x=1768329199;
+ d=1e100.net; s=20230601; t=1767724400; x=1768329200;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=j/FgwKfLuYGsXjmv90rpiDZttlKQovdPvwpGfX77hJU=;
- b=gfm2mO4SQkg/5oBnVBN0MlBFgbt0LQ19BYbmcPa+Z0JlLqTClEJwtQoUqCnZ7CvjHi
- UCcoEvSVSkVVp7kcvSDpYiKoFzC6PVElvqduZnV/gYQrcb6uXymR9GR2LEpxnxuiFUBk
- 0l1uv+uV13iv/pPErVioePRs7ctEiFfZMdb3vOdyr9kOY5B+MovrT2963YjYw+/lIUcL
- 9LXjpFbwi8LItWsAIHrpUHHcygGw6dMmV/Z73IbBKzSL0BnXotrS4Hdz7alebyJ5rJfa
- sBy9/yayiyiTIjSUV4b5c6SeWAKim+jKfPPcWg87sS+Y6/dwzEHkY+jRJmYa6G2WY+pQ
- 9HFw==
-X-Gm-Message-State: AOJu0YxMP7sDA+Q6K4ToPQsXZK56sVVgJaca5Bd8EO9VTYBd+KQQhKSQ
- 0XGp9or4ZqcNZzra4KgCBCfIIyEpEj+D57N+SatToH9mPa7pOOkykqaJJTpBb+OVBX9jKjBis35
- RTEh7U+w=
-X-Gm-Gg: AY/fxX61BDvfnhPcFyNkw1YnXy+LwxMp7Uz4zKdxb1JPUIPOdsni1/ZzRPXxq+tBK+U
- c+pRQ8Sniv8PFvlYORdgTVmEtXJj37/jrB2wTBqgA/C4vdB4RYe+6r83Y70w9jBkfW/CYyZ9pzO
- j78LhoqVwIE1TQEJV+5QLPF5IWmoyW5i2WbgyzyfuJXi+rfqYywe5uf3SKU4nG91wbAOmRRpdjV
- zpba+qWQqiX7/WgczDmc74vHsQLw5MygyumTT36pK3Hjo7Mpc19nAcT67OoG8aewQH0c/SGkbjf
- +urRirFmo//FWDiPZlpj83wpwwah4K5iqCwfVpD1hi2lZ25kTOdZGj/DG3TYDBCXThFKfRHwjf1
- 3Eo1lrmRGRYzyyQr5cE4QeEznsYV9Bwttd/lkqXDc9C4we6wosrZZxTUOvhZ/yeXDH5mfdkfR6J
- ZpNNtxTGgCxea6CTcCxOC6p+1/bQLmswwLeA77hKVmlo7CRerR0A==
-X-Google-Smtp-Source: AGHT+IH2G+da7lmYeWaTPpe5EEmCKOOqPNXqQ4S31gY7eBWNksRsqmutJ/d0MvIDP9zAzSjkbcoz6g==
-X-Received: by 2002:a17:906:ef0c:b0:b84:2023:8fb2 with SMTP id
- a640c23a62f3a-b844516a72bmr7737366b.5.1767724398624; 
- Tue, 06 Jan 2026 10:33:18 -0800 (PST)
+ bh=3qhN9KInipgpzkPvfJqicnwRvQCn8fPq4LvjWpWHvhQ=;
+ b=KK+tX95U0mtmGSGjXLihWPpK58HUVtO0WwQ6xiriTFYpIwhisjs6hoaSr0BrWy4l9l
+ O0bv08hW7O5nJobbPYBeNIQkbuB7jwMaqE20kBtXpY6nkrewLPcw60mvpxBXWpG7AlZ5
+ 3lzHzWlqdpARY4AA3LG3dHd0szxxveF0nFikvi20TYfzvpWKvLZXNe+y7TwWJK/yaSwp
+ ADC9u4F0MJH9FXkDSexHA3ahGp1ZZHGMr6yQDclGWVHsstu2yOqyt8ug5q7h1stBvIm+
+ jVC196DGUR7JG9d1o60ODls0yGFUNHvCbPKzxiO+1b37S+E0j7t+kfufM/8Dc1ikUDOA
+ cveQ==
+X-Gm-Message-State: AOJu0YwgYBMP58g9XyfqpMQkO5ksac5XWQI0LiMrpfynT0iLCA6cfzFX
+ 44TYO8FBHeDeQx5ICbqIGLtm3uGHmbmUBior2uL4m2PAlQpVorMqqpYtEcspuNrTz81aE/wpVTp
+ tpj5qb0I=
+X-Gm-Gg: AY/fxX5xI6cpSZcFapYvGQjoaYz3GKd4B6FFLQCJQTDdQLDuFyUAaJTEnvu7Q2g3bYY
+ rB/4fcfuhdj+d/313eCxanU13qs/RsFGONCS9F/cQ/scGBYGKJPWlbvblU0IAL7jpE1dKQGuDmT
+ GE2P/n5YIlsUumwKq0jC6EwqTYvEnmM7DyS8cSGdmSQLLPm4Bw/+mHLoFsww3h/adRzzZQAepPa
+ UzotT4eZsw6j2OzMWizOGbTUn+G6YnQc5/9jSRAio6SPn/MglVCeMa4U0b7MywwQ+ipUH0c9rwW
+ FOi8cLOegBQkpTfNevdaE+Azhk1zBqylIqqBoTLJZfB3fu/MckzfN+fbbdHxSvqU6HHok56bBHD
+ XKvrLs6meKaAyiYzSUnSGK9VpaGF7uQZbrkJWI7flCRlX5Zgu+Azm2fgPZmNOtROS2viMqHUc3b
+ c1NcT0Cw10inbn5Ap6il6X9dcStqOgj0miB2rT+YrN1ikjlUKd+g==
+X-Google-Smtp-Source: AGHT+IG8mhpzjsH4SAG2PEIEAfJkMueaCUhFiPkcd46pRpTlQzVIqPXgPhP+70/UyIyS1CB6iC/NXw==
+X-Received: by 2002:a17:907:f815:b0:b80:2315:b4ca with SMTP id
+ a640c23a62f3a-b844536c1e4mr6240366b.46.1767724400197; 
+ Tue, 06 Jan 2026 10:33:20 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 4fb4d7f45d1cf-6507bf6d4acsm2728525a12.30.2026.01.06.10.33.17
+ 4fb4d7f45d1cf-6507bf6d4acsm2728525a12.30.2026.01.06.10.33.18
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 06 Jan 2026 10:33:18 -0800 (PST)
+ Tue, 06 Jan 2026 10:33:19 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH 02/12] net/pcap: support MTU set
-Date: Tue,  6 Jan 2026 10:26:41 -0800
-Message-ID: <20260106182823.192350-3-stephen@networkplumber.org>
+Subject: [PATCH 03/12] net/pcap: use bool for flags
+Date: Tue,  6 Jan 2026 10:26:42 -0800
+Message-ID: <20260106182823.192350-4-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260106182823.192350-1-stephen@networkplumber.org>
 References: <20260106182823.192350-1-stephen@networkplumber.org>
@@ -81,318 +81,155 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-When used as single interface useful to support pass through
-of MTU setting to enable larger frames.
-
-Cleanup the transmit logic so that if packet sent exceeds MTU
-is an error.
+Save some space by using bool for flag values.
+Use common code to parse value of a boolean flag.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/pcap/pcap_ethdev.c        | 94 +++++++++++++++------------
- drivers/net/pcap/pcap_osdep.h         |  1 +
- drivers/net/pcap/pcap_osdep_freebsd.c | 26 ++++++++
- drivers/net/pcap/pcap_osdep_linux.c   | 21 ++++++
- drivers/net/pcap/pcap_osdep_windows.c |  5 ++
- 5 files changed, 104 insertions(+), 43 deletions(-)
+ drivers/net/pcap/pcap_ethdev.c | 73 +++++++++++++++++-----------------
+ 1 file changed, 36 insertions(+), 37 deletions(-)
 
 diff --git a/drivers/net/pcap/pcap_ethdev.c b/drivers/net/pcap/pcap_ethdev.c
-index f323c0b0df..f4cb444395 100644
+index f4cb444395..6a3e89aeab 100644
 --- a/drivers/net/pcap/pcap_ethdev.c
 +++ b/drivers/net/pcap/pcap_ethdev.c
-@@ -22,7 +22,7 @@
- #include "pcap_osdep.h"
- 
- #define RTE_ETH_PCAP_SNAPSHOT_LEN 65535
--#define RTE_ETH_PCAP_SNAPLEN RTE_ETHER_MAX_JUMBO_FRAME_LEN
-+#define RTE_ETH_PCAP_SNAPLEN (RTE_ETHER_MAX_JUMBO_FRAME_LEN - RTE_ETHER_CRC_LEN)
- #define RTE_ETH_PCAP_PROMISC 1
- #define RTE_ETH_PCAP_TIMEOUT -1
- 
-@@ -377,46 +377,46 @@ static uint16_t
- eth_pcap_tx_dumper(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- {
- 	unsigned int i;
--	struct rte_mbuf *mbuf;
- 	struct pmd_process_private *pp;
- 	struct pcap_tx_queue *dumper_q = queue;
- 	uint16_t num_tx = 0;
- 	uint32_t tx_bytes = 0;
--	struct pcap_pkthdr header;
- 	pcap_dumper_t *dumper;
--	unsigned char temp_data[RTE_ETH_PCAP_SNAPLEN];
--	size_t len, caplen;
-+	uint16_t mtu;
- 
- 	pp = rte_eth_devices[dumper_q->port_id].process_private;
- 	dumper = pp->tx_dumper[dumper_q->queue_id];
-+	mtu = rte_eth_devices[dumper_q->port_id].data->mtu;
- 
--	if (dumper == NULL || nb_pkts == 0)
-+	if (unlikely(dumper == NULL || nb_pkts == 0))
- 		return 0;
- 
- 	/* writes the nb_pkts packets to the previously opened pcap file
- 	 * dumper */
- 	for (i = 0; i < nb_pkts; i++) {
--		mbuf = bufs[i];
--		len = caplen = rte_pktmbuf_pkt_len(mbuf);
--		if (unlikely(!rte_pktmbuf_is_contiguous(mbuf) &&
--				len > sizeof(temp_data))) {
--			caplen = sizeof(temp_data);
--		}
-+		struct rte_mbuf *mbuf = bufs[i];
-+		size_t len = rte_pktmbuf_pkt_len(mbuf);
-+		uint8_t temp_data[RTE_ETH_PCAP_SNAPLEN];
-+		struct pcap_pkthdr header;
-+
-+		if (unlikely(len > mtu))
-+			continue;
- 
- 		calculate_timestamp(&header.ts);
- 		header.len = len;
--		header.caplen = caplen;
-+		header.caplen = len;
-+
- 		/* rte_pktmbuf_read() returns a pointer to the data directly
- 		 * in the mbuf (when the mbuf is contiguous) or, otherwise,
- 		 * a pointer to temp_data after copying into it.
- 		 */
--		pcap_dump((u_char *)dumper, &header,
--			rte_pktmbuf_read(mbuf, 0, caplen, temp_data));
-+		const uint8_t *data = rte_pktmbuf_read(mbuf, 0, len, temp_data);
-+		pcap_dump((u_char *)dumper, &header, data);
- 
- 		num_tx++;
--		tx_bytes += caplen;
--		rte_pktmbuf_free(mbuf);
-+		tx_bytes += len;
- 	}
-+	rte_pktmbuf_free_bulk(bufs, nb_pkts);
- 
- 	/*
- 	 * Since there's no place to hook a callback when the forwarding
-@@ -444,15 +444,15 @@ eth_tx_drop(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- 	if (unlikely(nb_pkts == 0))
- 		return 0;
- 
--	for (i = 0; i < nb_pkts; i++) {
-+	for (i = 0; i < nb_pkts; i++)
- 		tx_bytes += bufs[i]->pkt_len;
--		rte_pktmbuf_free(bufs[i]);
--	}
-+
-+	rte_pktmbuf_free_bulk(bufs, nb_pkts);
- 
- 	tx_queue->tx_stat.pkts += nb_pkts;
- 	tx_queue->tx_stat.bytes += tx_bytes;
- 
--	return i;
-+	return nb_pkts;
- }
- 
- /*
-@@ -462,52 +462,45 @@ static uint16_t
- eth_pcap_tx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- {
- 	unsigned int i;
--	int ret;
--	struct rte_mbuf *mbuf;
- 	struct pmd_process_private *pp;
- 	struct pcap_tx_queue *tx_queue = queue;
- 	uint16_t num_tx = 0;
- 	uint32_t tx_bytes = 0;
- 	pcap_t *pcap;
--	unsigned char temp_data[RTE_ETH_PCAP_SNAPLEN];
--	size_t len;
-+	uint16_t mtu;
- 
- 	pp = rte_eth_devices[tx_queue->port_id].process_private;
- 	pcap = pp->tx_pcap[tx_queue->queue_id];
-+	mtu = rte_eth_devices[tx_queue->port_id].data->mtu;
- 
- 	if (unlikely(nb_pkts == 0 || pcap == NULL))
- 		return 0;
- 
- 	for (i = 0; i < nb_pkts; i++) {
--		mbuf = bufs[i];
--		len = rte_pktmbuf_pkt_len(mbuf);
--		if (unlikely(!rte_pktmbuf_is_contiguous(mbuf) &&
--				len > sizeof(temp_data))) {
--			PMD_LOG(ERR,
--				"Dropping multi segment PCAP packet. Size (%zd) > max size (%zd).",
--				len, sizeof(temp_data));
--			rte_pktmbuf_free(mbuf);
-+		struct rte_mbuf *mbuf = bufs[i];
-+		size_t len = rte_pktmbuf_pkt_len(mbuf);
-+		uint8_t temp_data[RTE_ETH_PCAP_SNAPLEN];
-+
-+		if (unlikely(len > mtu))
- 			continue;
--		}
- 
- 		/* rte_pktmbuf_read() returns a pointer to the data directly
- 		 * in the mbuf (when the mbuf is contiguous) or, otherwise,
- 		 * a pointer to temp_data after copying into it.
- 		 */
--		ret = pcap_sendpacket(pcap,
--			rte_pktmbuf_read(mbuf, 0, len, temp_data), len);
--		if (unlikely(ret != 0))
--			break;
--		num_tx++;
--		tx_bytes += len;
--		rte_pktmbuf_free(mbuf);
-+		const uint8_t *data = rte_pktmbuf_read(mbuf, 0, len, temp_data);
-+
-+		if (likely(pcap_sendpacket(pcap, data, len) == 0)) {
-+			num_tx++;
-+			tx_bytes += len;
-+		}
- 	}
- 
- 	tx_queue->tx_stat.pkts += num_tx;
- 	tx_queue->tx_stat.bytes += tx_bytes;
--	tx_queue->tx_stat.err_pkts += i - num_tx;
-+	tx_queue->tx_stat.err_pkts += nb_pkts - num_tx;
- 
--	return i;
-+	return nb_pkts;
- }
- 
- /*
-@@ -745,6 +738,8 @@ eth_dev_info(struct rte_eth_dev *dev,
- 	dev_info->max_rx_queues = dev->data->nb_rx_queues;
- 	dev_info->max_tx_queues = dev->data->nb_tx_queues;
- 	dev_info->min_rx_bufsize = 0;
-+	dev_info->min_mtu = RTE_ETHER_MIN_LEN - RTE_ETHER_HDR_LEN - RTE_ETHER_CRC_LEN;
-+	dev_info->max_mtu = RTE_ETH_PCAP_SNAPLEN;
- 
- 	return 0;
- }
-@@ -1002,6 +997,18 @@ eth_tx_queue_stop(struct rte_eth_dev *dev, uint16_t tx_queue_id)
- 	return 0;
- }
- 
-+static int
-+eth_mtu_set(struct rte_eth_dev *dev, uint16_t mtu)
-+{
-+	struct pmd_internals *internals = dev->data->dev_private;
-+
-+	if (internals->single_iface)
-+		return osdep_iface_mtu_set(internals->if_index, mtu);
-+
-+	return 0;
-+}
-+
-+
- static const struct eth_dev_ops ops = {
- 	.dev_start = eth_dev_start,
- 	.dev_stop = eth_dev_stop,
-@@ -1015,6 +1022,7 @@ static const struct eth_dev_ops ops = {
- 	.rx_queue_stop = eth_rx_queue_stop,
- 	.tx_queue_stop = eth_tx_queue_stop,
- 	.link_update = eth_link_update,
-+	.mtu_set = eth_mtu_set,
- 	.stats_get = eth_stats_get,
- 	.stats_reset = eth_stats_reset,
- };
-diff --git a/drivers/net/pcap/pcap_osdep.h b/drivers/net/pcap/pcap_osdep.h
-index 2aa13f3629..3c8b7ff27b 100644
---- a/drivers/net/pcap/pcap_osdep.h
-+++ b/drivers/net/pcap/pcap_osdep.h
-@@ -14,5 +14,6 @@ extern int eth_pcap_logtype;
- 
- int osdep_iface_index_get(const char *name);
- int osdep_iface_mac_get(const char *name, struct rte_ether_addr *mac);
-+int osdep_iface_mtu_set(int index, uint16_t mtu);
- 
- #endif
-diff --git a/drivers/net/pcap/pcap_osdep_freebsd.c b/drivers/net/pcap/pcap_osdep_freebsd.c
-index 32e4a2bee7..0279dbf00b 100644
---- a/drivers/net/pcap/pcap_osdep_freebsd.c
-+++ b/drivers/net/pcap/pcap_osdep_freebsd.c
-@@ -4,9 +4,12 @@
-  * All rights reserved.
+@@ -5,6 +5,7 @@
   */
  
-+#include <unistd.h>
- #include <net/if.h>
- #include <net/if_dl.h>
- #include <sys/sysctl.h>
-+#include <sys/ioctl.h>
-+#include <sys/sockio.h>
+ #include <stdlib.h>
++#include <stdbool.h>
+ #include <time.h>
  
- #include "pcap_osdep.h"
+ #include <pcap.h>
+@@ -91,9 +92,9 @@ struct pmd_internals {
+ 	char devargs[ETH_PCAP_ARG_MAXLEN];
+ 	struct rte_ether_addr eth_addr;
+ 	int if_index;
+-	int single_iface;
+-	int phy_mac;
+-	unsigned int infinite_rx;
++	bool single_iface;
++	bool phy_mac;
++	bool infinite_rx;
+ };
  
-@@ -54,3 +57,26 @@ osdep_iface_mac_get(const char *if_name, struct rte_ether_addr *mac)
- 	free(buf);
- 	return 0;
+ struct pmd_process_private {
+@@ -103,25 +104,25 @@ struct pmd_process_private {
+ };
+ 
+ struct pmd_devargs {
+-	unsigned int num_of_queue;
++	uint16_t num_of_queue;
++	bool phy_mac;
+ 	struct devargs_queue {
+ 		pcap_dumper_t *dumper;
+ 		pcap_t *pcap;
+ 		const char *name;
+ 		const char *type;
+ 	} queue[RTE_PMD_PCAP_MAX_QUEUES];
+-	int phy_mac;
+ };
+ 
+ struct pmd_devargs_all {
+ 	struct pmd_devargs rx_queues;
+ 	struct pmd_devargs tx_queues;
+-	int single_iface;
+-	unsigned int is_tx_pcap;
+-	unsigned int is_tx_iface;
+-	unsigned int is_rx_pcap;
+-	unsigned int is_rx_iface;
+-	unsigned int infinite_rx;
++	bool single_iface;
++	bool is_tx_pcap;
++	bool is_tx_iface;
++	bool is_rx_pcap;
++	bool is_rx_iface;
++	bool infinite_rx;
+ };
+ 
+ static const char *valid_arguments[] = {
+@@ -858,7 +859,7 @@ eth_dev_close(struct rte_eth_dev *dev)
+ 		}
+ 	}
+ 
+-	if (internals->phy_mac == 0)
++	if (!internals->phy_mac)
+ 		/* not dynamically allocated, must not be freed */
+ 		dev->data->mac_addrs = NULL;
+ 
+@@ -1180,31 +1181,29 @@ open_tx_iface(const char *key, const char *value, void *extra_args)
  }
+ 
+ static int
+-select_phy_mac(const char *key __rte_unused, const char *value,
+-		void *extra_args)
++process_bool_flag(const char *key, const char *value, void *extra_args)
+ {
+-	if (extra_args) {
+-		const int phy_mac = atoi(value);
+-		int *enable_phy_mac = extra_args;
+-
+-		if (phy_mac)
+-			*enable_phy_mac = 1;
+-	}
+-	return 0;
+-}
++	bool *flag = extra_args;
++	/* table of possible representation of boolean */
++	static const char * const values[] = {
++		"false", "true",
++		"0", "1",
++		"disable", "enable",
++		"on", "off",
++	};
+ 
+-static int
+-get_infinite_rx_arg(const char *key __rte_unused,
+-		const char *value, void *extra_args)
+-{
+-	if (extra_args) {
+-		const int infinite_rx = atoi(value);
+-		int *enable_infinite_rx = extra_args;
++	for (unsigned int i = 0; i < RTE_DIM(values); i++) {
++		if (strcmp(value, values[i]) == 0) {
++			*flag = !!(i & 1);
+ 
+-		if (infinite_rx > 0)
+-			*enable_infinite_rx = 1;
++			PMD_LOG(INFO, "%s set to %s",
++				key, *flag ? "true" : "false");
++			return 0;
++		}
+ 	}
+-	return 0;
 +
-+int osdep_iface_mtu_set(int ifindex, uint16_t mtu)
-+{
-+	char ifname[IFNAMSIZ];
-+
-+	if (if_indextoname(ifindex, ifname) == NULL)
-+		return -errno;
-+
-+	int s = socket(AF_INET, SOCK_DGRAM, 0);
-+	if (s < 0)
-+		return -errno;
-+
-+	struct ifreq ifr = { 0 };
-+	if (s < 0)
-+		return -EINVAL;
-+
-+	strlcpy(ifr.ifr_name, ifname, IFNAMSIZ);
-+	ifr.ifr_mtu = mtu;
-+
-+	int ret = ioctl(s, SIOCSIFMTU, &ifr);
-+	close(s);
-+	return (ret < 0) ? -errno : 0;
-+}
-diff --git a/drivers/net/pcap/pcap_osdep_linux.c b/drivers/net/pcap/pcap_osdep_linux.c
-index 97033f57c5..d180e9b4b4 100644
---- a/drivers/net/pcap/pcap_osdep_linux.c
-+++ b/drivers/net/pcap/pcap_osdep_linux.c
-@@ -40,3 +40,24 @@ osdep_iface_mac_get(const char *if_name, struct rte_ether_addr *mac)
- 	close(if_fd);
- 	return 0;
++	PMD_LOG(ERR, "Invalid '%s' value '%s'", key, value);
++	return -1;
  }
-+
-+int
-+osdep_iface_mtu_set(int ifindex, uint16_t mtu)
-+{
-+	char ifname[IFNAMSIZ];
-+
-+	if (if_indextoname(ifindex, ifname) == NULL)
-+		return -errno;
-+
-+	int s = socket(PF_INET, SOCK_DGRAM, 0);
-+	if (s < 0)
-+		return -errno;
-+
-+	struct ifreq ifr = { .ifr_mtu = mtu };
-+	strlcpy(ifr.ifr_name, ifname, IFNAMSIZ);
-+
-+	int ret = ioctl(s, SIOCSIFMTU, &ifr);
-+	close(s);
-+
-+	return (ret < 0) ? -errno : 0;
-+}
-diff --git a/drivers/net/pcap/pcap_osdep_windows.c b/drivers/net/pcap/pcap_osdep_windows.c
-index 1d398dc7ed..fde0db9961 100644
---- a/drivers/net/pcap/pcap_osdep_windows.c
-+++ b/drivers/net/pcap/pcap_osdep_windows.c
-@@ -116,3 +116,8 @@ osdep_iface_mac_get(const char *device_name, struct rte_ether_addr *mac)
- 	free(info);
- 	return ret;
- }
-+
-+int osdep_iface_mtu_set(int index __rte_unused, uint16_t mtu __rte_unused)
-+{
-+	return -ENOTSUP;
-+}
+ 
+ static int
+@@ -1479,7 +1478,7 @@ pmd_pcap_probe(struct rte_vdev_device *dev)
+ 		dumpers.queue[0] = pcaps.queue[0];
+ 
+ 		ret = rte_kvargs_process(kvlist, ETH_PCAP_PHY_MAC_ARG,
+-				&select_phy_mac, &pcaps.phy_mac);
++					 &process_bool_flag, &pcaps.phy_mac);
+ 		if (ret < 0)
+ 			goto free_kvlist;
+ 
+@@ -1518,9 +1517,9 @@ pmd_pcap_probe(struct rte_vdev_device *dev)
+ 
+ 		if (infinite_rx_arg_cnt == 1) {
+ 			ret = rte_kvargs_process(kvlist,
+-					ETH_PCAP_INFINITE_RX_ARG,
+-					&get_infinite_rx_arg,
+-					&devargs_all.infinite_rx);
++						 ETH_PCAP_INFINITE_RX_ARG,
++						 &process_bool_flag,
++						 &devargs_all.infinite_rx);
+ 			if (ret < 0)
+ 				goto free_kvlist;
+ 			PMD_LOG(INFO, "infinite_rx has been %s for %s",
 -- 
 2.51.0
 
