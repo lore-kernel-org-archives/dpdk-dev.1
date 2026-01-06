@@ -2,86 +2,85 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E236CE9D41
-	for <dpdk-dev@archiver.kernel.org>; Tue,  6 Jan 2026 15:00:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F05DCE9D42
+	for <dpdk-dev@archiver.kernel.org>; Tue,  6 Jan 2026 15:05:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D242A4069F;
-	Tue,  6 Jan 2026 16:00:32 +0100 (CET)
-Received: from mail-pf1-f227.google.com (mail-pf1-f227.google.com
- [209.85.210.227])
- by mails.dpdk.org (Postfix) with ESMTP id 6C2AE402DC
- for <dev@dpdk.org>; Tue,  6 Jan 2026 16:00:31 +0100 (CET)
-Received: by mail-pf1-f227.google.com with SMTP id
- d2e1a72fcca58-7b6dd81e2d4so1048777b3a.0
- for <dev@dpdk.org>; Tue, 06 Jan 2026 07:00:31 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1767711630; x=1768316430;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:dkim-signature:x-gm-gg:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=efX1xNkp+x8/QgTfUCAnHcqauvrlPPTQ+yP9sFK7WOU=;
- b=ftWlg08wCJYQ+LFnj/RQpvgKkdzr4vsP+qUHmfAt3T9QSAstjfBvj+2V6nHyxWH323
- 3A6JclU1nwk6lPPEvoCIGK75RS8GyMP6GahxE6U4Ovs+NuHXmTHQ2ozAIt8JKU3QC3E5
- gVIHHqMpxIeF2v9GehTtK+kSDJ5l1FjxV9cTi5lwrQ2F1k3FB/T4UvZ5TG9nvz2nmh0W
- kJJby/TpYUpNabMrA0+TPFTVIUQgr8ftxop6w2RDUDwUiZD9TxCgFG6V5IPt1iH1dTPR
- ixccI6kAwDbiF9OnoaGD1igTHR+CQtRzKt9cvoTEwtE0PMILTjrDzZ71FrmvwefzqoIV
- iVOQ==
-X-Gm-Message-State: AOJu0YyOX2rGNcjlGCYRCd6+a2N+kPwnLO3wRzLLqLafoxo+cR0nj51N
- azYa4WGc92QyWrOuqV4QgDz1F0PwfR36JXAtVjgSWqcT4a2XSZwJrywAD85yTJoG2XUSu8Rksw0
- 8rnmOglb+6vmPqAjDcY9pBbgL1cKhVCyKt8RRTspyjHZqc8DRwzxh4n86H8+RE1uKnacq9epibd
- QOFckv0ts7stVlvsf+zRRD+LEdQGBaOcy/OBetgLhS8m0AQBHX2Qow1EeQLztd4iUgYSwYv3M=
-X-Gm-Gg: AY/fxX78RpKStWZ9vLKX1TArsunf74eRmYHuMx7R5hV7pPnHJhw8zTfIiWmTbDlyi+w
- TJ5XqxLponsfLv7L0pA+Y5LMABBysLQpCiHLAvduDzSbldCn6wtNW+sZFaVZ+M3rZL4gDThTaF9
- 4O4bZaSJM9ocXEGQeoCk8R1Bxl4ZoZL2JXet3sAPd6e0u5eU4a6PJ1fP+XMuJzx12euFWZjvBmj
- +IShsOhcBCNVE8exhg9sBDECX3vsCcZ6aRc9B5GUnD6shQVCq0rYvyrO+lIBUzG3Erj1UZmdti9
- Jv/CNNKV9sZtsUyWyltq9TRnTyDyy4mXHApMOCr1ZA2TyW4jhH4icOzGg+fJve+EsucYTtMsxMJ
- Ie1QfaX0KnpuRnW4mcOYVX49N70/7Sfrgk7mwUFNEwQMcvQE857vMHU+44yzq1anA+uVpZJGfim
- DgApqTJJr64Y0VelpjBiOujwMNzDt73oqUARmNHohm/J4=
-X-Google-Smtp-Source: AGHT+IH5CpxNypJoPJMZzKFTihQTqnN6P1fHDBgRPCRTftcspE53U+NIRRlynPbsKrHgQz5kYyVswyz29l4H
-X-Received: by 2002:a05:6a20:3d1f:b0:35d:8881:e6ba with SMTP id
- adf61e73a8af0-389823aa8d3mr2899317637.49.1767711628550; 
- Tue, 06 Jan 2026 07:00:28 -0800 (PST)
-Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
- (address-144-49-247-1.dlp.protect.broadcom.com. [144.49.247.1])
- by smtp-relay.gmail.com with ESMTPS id
- d9443c01a7336-2a3e3caea08sm2677635ad.32.2026.01.06.07.00.28
- for <dev@dpdk.org>
- (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Tue, 06 Jan 2026 07:00:28 -0800 (PST)
-X-Relaying-Domain: broadcom.com
-X-CFilter-Loop: Reflected
-Received: by mail-pl1-f200.google.com with SMTP id
- d9443c01a7336-2a0f47c0e60so25426315ad.3
- for <dev@dpdk.org>; Tue, 06 Jan 2026 07:00:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1767711626; x=1768316426; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=efX1xNkp+x8/QgTfUCAnHcqauvrlPPTQ+yP9sFK7WOU=;
- b=Fef5YdgAbneNrDv6gWDx5eNgMpafpFCSIu2UzpJYyOaST7HwGBSoJslrwFsI6w3PGB
- mquEBx6eudT19uFCD44VZ6lqBMaxTyhn/7PzW1lTKG5+v0S7wkoXrXvyAiVzqp12SzEr
- NeJkdxyA2viLf1qlsgx8Sz3fYgvY756bZADYo=
-X-Received: by 2002:a17:903:3b86:b0:2a1:deb:c460 with SMTP id
- d9443c01a7336-2a3e2dc817amr29186985ad.33.1767711624194; 
- Tue, 06 Jan 2026 07:00:24 -0800 (PST)
-X-Received: by 2002:a17:903:3b86:b0:2a1:deb:c460 with SMTP id
- d9443c01a7336-2a3e2dc817amr29185475ad.33.1767711621989; 
- Tue, 06 Jan 2026 07:00:21 -0800 (PST)
-Received: from localhost.localdomain ([192.19.161.250])
- by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-2a3e3cc88fcsm25194295ad.83.2026.01.06.07.00.19
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 06 Jan 2026 07:00:21 -0800 (PST)
-From: Ajit Khaparde <ajit.khaparde@broadcom.com>
-To: dev@dpdk.org
-Cc: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
-Subject: [PATCH] maintainers: update for bnxt driver
-Date: Tue,  6 Jan 2026 07:00:11 -0800
-Message-Id: <20260106150012.49022-1-ajit.khaparde@broadcom.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+	by mails.dpdk.org (Postfix) with ESMTP id 576AA4069F;
+	Tue,  6 Jan 2026 16:05:04 +0100 (CET)
+Received: from fout-b4-smtp.messagingengine.com
+ (fout-b4-smtp.messagingengine.com [202.12.124.147])
+ by mails.dpdk.org (Postfix) with ESMTP id 9A816402DC
+ for <dev@dpdk.org>; Tue,  6 Jan 2026 16:05:02 +0100 (CET)
+Received: from phl-compute-11.internal (phl-compute-11.internal [10.202.2.51])
+ by mailfout.stl.internal (Postfix) with ESMTP id C627A1D000F1;
+ Tue,  6 Jan 2026 10:05:01 -0500 (EST)
+Received: from phl-frontend-04 ([10.202.2.163])
+ by phl-compute-11.internal (MEProxy); Tue, 06 Jan 2026 10:05:02 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1767711901;
+ x=1767798301; bh=RUsnAnZdxoZ3wMoHRCKWYySMKQ2fDTuM+XzFAGTFjhw=; b=
+ UFhsbryy1blT6jLYR29jrP7T8GEqmBgn2GwxV12hKrtY4zl5mmJbnKFFYdKo4kXU
+ kJKQowkaoFCmIMMxCG2gNCNP6QbHwE3wuQW2KeRq0uvUOkMTRp4rnBsr4dNcPdw/
+ ZbkZsIvNsv73+36m6xwRXPsXSh1mcXYqoI0C5pwR/75iOyAIlajDlJnLM9t+M0ZV
+ EVbD7PneO07nqGelawitY+toe2kzCn7opmyeJVGAC9c6Bu0utGo5ltxxT4DvRdzf
+ lU3q23W8NAL9MmBORnlx9tLIDhJjplFN+y0RU0PBHr7znAQIpivtAJMy8NLF1Q6W
+ Luw/gfUD+aVDigNvJsjIVA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1767711901; x=
+ 1767798301; bh=RUsnAnZdxoZ3wMoHRCKWYySMKQ2fDTuM+XzFAGTFjhw=; b=S
+ wAw1sjF6GMkv+b1kiTxmrE6Hv+GadtBmXpBvwlSFOedC0WNERw95AtNdWfYLO6gT
+ WzNr0BHwc4cqpvvrYmgpZD+fErKxSJGWOlRvMtBfLHj+jKBS7lM0wIyNoJa/0AqO
+ iH2YGzgw/ibJ7HnNr6jAR3eZRneZ43HsKUD68YYlM9D2PpPc14546ou3QlUZ2REy
+ PJPzzifNQT6CoXwvWyanKcpsPSYpgF18XDJSSVfWimWStqR8ca3Ioc1sqMDQ+jmB
+ ldbjdItmfK8UBwOpd+Dof6sb7X5jS0oCaTTk+fwkrrL9jQTnr1md5igf0cc6hAZg
+ dDAGx39996r5LHIXAMPMw==
+X-ME-Sender: <xms:nCRdafEN735ahIVb9kQLUa0kbH_hm06kseJwHqz3I81K0JUb2D83Ag>
+ <xme:nCRdaWbVyPwciWIG3fmMXdyXPzNfCf4fn2nZcu0z27WsyrXXFyS-MUYf3UNJwA2Aw
+ uHJ2rtLo1WpiY0FmXIz9FAyAV72NUshfw8fe6faTH40ozTi3zq_YxQ>
+X-ME-Received: <xmr:nCRdaRDcHrNoQig-1kwQmeNT7GeAuDEQrjmY21MEBQw1Y60P7UkDNShJyJTsFGob4y3aOlLQQ3MAkQgvcVuIMXwqUg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddutddtheduucetufdoteggodetrf
+ dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+ rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+ gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
+ ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
+ frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
+ uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeekpdhm
+ ohguvgepshhmthhpohhuthdprhgtphhtthhopehgvghtvghlshhonhesnhhvihguihgrrd
+ gtohhmpdhrtghpthhtoheprghnughrvgifrdhrhigstghhvghnkhhosehokhhtvghtlhgr
+ sghsrdhruhdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtphhtthhopehmkh
+ grshhhrghnihesnhhvihguihgrrdgtohhmpdhrtghpthhtohepvhhirggthhgvshhlrghv
+ ohesnhhvihguihgrrdgtohhmpdhrtghpthhtohepmhgrthgrnhesnhhvihguihgrrdgtoh
+ hmpdhrtghpthhtohepshhtvghphhgvnhesnhgvthifohhrkhhplhhumhgsvghrrdhorhhg
+ pdhrtghpthhtohepuggrvhhiugdrmhgrrhgthhgrnhgusehrvgguhhgrthdrtghomh
+X-ME-Proxy: <xmx:nCRdaekNA0tcabEmsy1KZo6iO0S3aDc4TEi3ZrSx3CXyzYUuaKk09Q>
+ <xmx:nCRdaSwAJSM7N6Me9e1Rpy8oSt7TAD4FAMBhgJct2mVdoODeeKufmQ>
+ <xmx:nCRdaYS4YfoM0lTji6wBVamJkTpovKaedkG_saqkcQcm6sp5qKpldw>
+ <xmx:nCRdaa-2UCGn50xUELabR0BoZdIMm2RsvdKr30eP8d5j_ub6oy2cfg>
+ <xmx:nSRdaR12YDiVmkdw3Pw6L5rhU2LcMsyqCdMX8qXa35WYpkJiAs9-F6Ky>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 6 Jan 2026 10:04:59 -0500 (EST)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Gregory Etelson <getelson@nvidia.com>
+Cc: andrew.rybchenko@oktetlabs.ru, dev@dpdk.org, mkashani@nvidia.com,
+ viacheslavo@nvidia.com, matan@nvidia.com, stephen@networkplumber.org,
+ David Marchand <david.marchand@redhat.com>
+Subject: Re: [RFC PATCH v2] ethdev: support selective Rx data
+Date: Tue, 06 Jan 2026 16:04:57 +0100
+Message-ID: <5953641.DvuYhMxLoT@thomas>
+In-Reply-To: <20260105165143.326426-1-getelson@nvidia.com>
+References: <20260104131301.196350-1-getelson@nvidia.com>
+ <20260105165143.326426-1-getelson@nvidia.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -95,29 +94,19 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Kishore is taking over the maintainer role of the bnxt driver.
-Updating the file accordingly.
+05/01/2026 17:51, Gregory Etelson:
+> @@ -1757,6 +1761,7 @@ struct rte_eth_rxseg_capa {
+>  	__extension__
+>  	uint32_t multi_pools:1; /**< Supports receiving to multiple pools.*/
+>  	uint32_t offset_allowed:1; /**< Supports buffer offsets. */
+> +	uint32_t selective_read:1; /**< Supports selective read. */
+>  	uint32_t offset_align_log2:4; /**< Required offset alignment. */
+>  	uint16_t max_nseg; /**< Maximum amount of segments to split. */
+>  	uint16_t reserved; /**< Reserved field. */
 
-Cc: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
-Signed-off-by: Ajit Khaparde <ajit.khaparde@broadcom.com>
----
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Adding a field in the middle in an ABI breakage.
+If the ABI checker is smart enough, it should be OK to move the 1-bit field
+at the end of the bit-fields.
+If we still have an error, we may add an exception to devtools/libabigail.abignore
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index d7d8dbdb25..e6b8281460 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -721,8 +721,8 @@ F: doc/guides/nics/ark.rst
- F: doc/guides/nics/features/ark.ini
- 
- Broadcom bnxt
-+M: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
- M: Ajit Khaparde <ajit.khaparde@broadcom.com>
--M: Somnath Kotur <somnath.kotur@broadcom.com>
- T: git://dpdk.org/next/dpdk-next-net-brcm
- F: drivers/net/bnxt/
- F: doc/guides/nics/bnxt.rst
--- 
-2.39.5 (Apple Git-154)
 
