@@ -2,50 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F4A9CF6BF4
-	for <dpdk-dev@archiver.kernel.org>; Wed,  7 Jan 2026 08:00:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7564CF6C0F
+	for <dpdk-dev@archiver.kernel.org>; Wed,  7 Jan 2026 08:56:31 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DA0EF40267;
-	Wed,  7 Jan 2026 09:00:23 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
- by mails.dpdk.org (Postfix) with ESMTP id 0B6084021E
- for <dev@dpdk.org>; Wed,  7 Jan 2026 09:00:21 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1767772822; x=1799308822;
- h=from:to:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=c40MJmVT6+drtGZrqu/wbspd6H6fioW8kjf75Xn7EyQ=;
- b=hgu8nz1DSkBk6vG6dlxzEKfaWdIGF3MYJ+iWSxQYkatCtO30akd7N09u
- 3GRKQHDaoM7ar0qj+YyYTIN0l/1kdICuwz9k7H8Gb+Sb3s3tTPP3K2vzV
- jlOlbkYo0TtPODcDHdKeu4dIlOvlqca+FN8Dho2S2DY/IXUI8EmAw4EVT
- AhBpE7kg6NxDUIskRBkQuDdWHeiZBScDqaX69VLgbAdVRt+7v2nh5y69G
- dFOUaBjeRf4LOmgjGGQCV6iuZ9V7lRNmLpqE7VNFRZeMHQBWXJRt+I+H8
- AgLEoj5zntOKKgStVr4QSKue/LJzXWRfYk1VE46oXg9JS01Ep7R/xr1PP Q==;
-X-CSE-ConnectionGUID: RMuye4WhRQaEPACAqsKHYA==
-X-CSE-MsgGUID: 7YXVxpHGQkuc9+fEZOOPkA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11663"; a="72992832"
-X-IronPort-AV: E=Sophos;i="6.21,207,1763452800"; d="scan'208";a="72992832"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
- by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 07 Jan 2026 00:00:21 -0800
-X-CSE-ConnectionGUID: xQHq7if9QMW2V2DvWyVk0w==
-X-CSE-MsgGUID: sGMtlbDBQ4qGo1bDYIcJ0g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,207,1763452800"; d="scan'208";a="203308789"
-Received: from unknown (HELO srv24..) ([10.138.182.231])
- by fmviesa009.fm.intel.com with ESMTP; 07 Jan 2026 00:00:18 -0800
-From: Shaiq Wani <shaiq.wani@intel.com>
-To: dev@dpdk.org,
-	bruce.richardson@intel.com,
-	aman.deep.singh@intel.com
-Subject: [PATCH] net/intel: check raw item spec/mask for null
-Date: Wed,  7 Jan 2026 13:29:05 +0530
-Message-Id: <20260107075905.179912-1-shaiq.wani@intel.com>
-X-Mailer: git-send-email 2.34.1
+	by mails.dpdk.org (Postfix) with ESMTP id 9A20240267;
+	Wed,  7 Jan 2026 09:56:30 +0100 (CET)
+Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com
+ [209.85.217.50]) by mails.dpdk.org (Postfix) with ESMTP id 1A689400D7
+ for <dev@dpdk.org>; Tue,  6 Jan 2026 19:16:17 +0100 (CET)
+Received: by mail-vs1-f50.google.com with SMTP id
+ ada2fe7eead31-5dde4444e0cso451126137.0
+ for <dev@dpdk.org>; Tue, 06 Jan 2026 10:16:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20230601; t=1767723376; x=1768328176; darn=dpdk.org;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=BH+ZQ7P2lXgyzpanRLtfWzHA4aM0nnpHqh0Xc6tApZg=;
+ b=EEvurpiAD9iY27V8ErjVbr3nmQPDrPTVV2SLQV/1vUmEmE0qRr7s+MhMPSMOYNfQvJ
+ Zx7gMC8Ga9JQUg14qEpOEEX7jbW2QqeANaDRB+gvvE/0zm2oY6O60olCEVaC5kyZmZlQ
+ j+bURYeJ88Q51cdrIekjWeR53MTYymolCQP25mbFKfJsI4jP6pCds+c5iadG3hzjoFz5
+ KNqI27je+shj8omzEDz7QR7UAicl30P7C/cx2qoI274B1uWQjTvvapMUO6jj2ymx8Fhx
+ A0RTNVytw/mVugy2bOUWHvBHPl/piUZKHipnBHnG93hS85z+Ok86stFtzTD9oaL/662h
+ LYEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1767723376; x=1768328176;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=BH+ZQ7P2lXgyzpanRLtfWzHA4aM0nnpHqh0Xc6tApZg=;
+ b=F5u98wJaDvcZnaZSZMY5i6BTNOYeoLgs9CEE+/nRAIyTppn/OqmiZBgdCcpFN0lltx
+ k1/O+C190SiLyitLr8G1zSe1jMPC0yHT2hO8VDJgHFo0JXyTIL+gjUUAjtkh+FGiWDKL
+ bzLii/tgRdmspGJQ4hdJXggJLb8gQLLgnnJyiIRg1enBLeoSk6hRQWlvmsicRzxFDgP9
+ Xry/H5CluYvx+X4nHGgHde4gN9+7s6pvbO9pGcwfPc9qjpa4Jtrar4Tr4yzKeISuNpju
+ 6CdKAwaeU19DFeDlA3SmUP1Ukz2NHV9HqLJ/3qJYCBYt4PJOUvWBRNpRTcN5S9n/PbJR
+ 847Q==
+X-Gm-Message-State: AOJu0YyVSywNVOrrPMxEdb+mK3kgpklUVt6W8laKhgGUc02FwLPnIyty
+ XeulaRFRvg6UwlEGtN9jzq1YZUwPw4VMF84kUUpkRBF3Ey+NAfYHLMvUpVyIiBJtB6Hnlg5/Sue
+ 2eCTcTRttTBtJ0ywGWaBUan6aAQUwKGxYfbVY
+X-Gm-Gg: AY/fxX6C9j2wISccpMCppXtVwdSr7I6r5MRDZNkM1plg3UGS9c8HYxwNta1sJQftvNz
+ ImKH5Sg4gIjPlZc6d/iAqbbfOWgiKgq4r6/emS6sD350Yv1oyMxSQWiuxc+TRo97BjShprxF5Zn
+ DReY4hKlnM5lRuoVcxkl58uQJUjCRS6JHj60wcwo9J6xNMaM2aNwNf+Uhn2tWwFoJDIPicWGL56
+ tQxJ51dpOXmiY4Ck+4R3WerNCiqyVLScD/PkBIAKiJxzHzQmLfiaVNAn5oNcCepzVMkGwfJGIYc
+ yNw/S3d/saLq1B3ulJdh02k/UkS6R5VfhR5M3g==
+X-Google-Smtp-Source: AGHT+IHGidt0BPLf9ctL6NMp1plYCF8uQ5oEHxsQ0eVw8GAiVJt+6o5ZmCTkdBiXrpD0CY0nMCmjlA7X2kDwnZBQ7E8=
+X-Received: by 2002:a05:6102:3f03:b0:5dd:c5d8:13e5 with SMTP id
+ ada2fe7eead31-5ec745a20dcmr1028579137.44.1767723376203; Tue, 06 Jan 2026
+ 10:16:16 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20260105232754.34404-1-scott.k.mitch1@gmail.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F6562B@smartserver.smartshare.dk>
+In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F6562B@smartserver.smartshare.dk>
+From: Scott Mitchell <scott.k.mitch1@gmail.com>
+Date: Tue, 6 Jan 2026 13:16:05 -0500
+X-Gm-Features: AQt7F2qaFMwlzeUW2xpQ6Q-PRsxfW3_bWe-t125Xa6pDLjRrINuicSSVZ3GnhQ0
+Message-ID: <CAFn2buAhuP0zUsDNxrGbc=j69caCX0G0hg46UK4ZBuVcsNPUAQ@mail.gmail.com>
+Subject: Re: [PATCH] net: optimize raw checksum computation
+To: =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>
+Cc: dev@dpdk.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Mailman-Approved-At: Wed, 07 Jan 2026 09:56:29 +0100
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -59,148 +76,71 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-adds explicit NULL pointer checks for the RAW flow item’s
-spec and mask fields in both the IAVF and ICE PMDs.
-This prevents potential null pointer dereferences
-and provides clearer error reporting to the user.
+On Tue, Jan 6, 2026 at 5:59=E2=80=AFAM Morten Br=C3=B8rup <mb@smartsharesys=
+tems.com> wrote:
+>
+> > From: Scott Mitchell <scott.k.mitch1@gmail.com>
+> >
+> > Optimize __rte_raw_cksum() by processing data in larger unrolled loops
+> > instead of iterating word-by-word. The new implementation processes
+> > 64-byte blocks (32 x uint16_t) in the hot path, followed by smaller
+> > 32/16/8/4/2-byte chunks.
+>
+> Good idea processing in 64-byte blocks!
+>
+> I wonder if there would be further gain by 64-byte aligning the 64-byte c=
+hunks, so the compiler can use vector instructions for summing the 32 2-byt=
+e words of each 64-byte chunk.
+> This would require a 3-step algorithm:
+> 1. Process the first 0..63 bytes preceding the first 64-byte aligned addr=
+ess. (These bytes are unaligned; nothing new here.)
+> 2. Process 64-byte chunks, if any. These are now 64-byte aligned, and you=
+ should ensure that the compiler knows it.
+> 3. Process the last 32/16/8/4/2/1-byte chunks. These are now aligned, whi=
+ch eliminates the need for unaligned_uint16_t in this step. Specifically, t=
+he 32-byte chunk will be 64-byte aligned, allowing the compiler to use vect=
+or instructions. The 16-byte chunk will be 32-byte aligned. Etc.
+>
+> <random idea>
+> Step 1 may be performed in reverse order of step 3, i.e. process in chunk=
+s of 1/2/4/8/16/32 bytes (using the lowest bits of the address as condition=
+) - which will cause the alignment to increase accordingly.
+> </random idea>
+>
+> <feature creep>
+> Checking the alignment at runtime has a non-zero cost, so a an alternativ=
+e (simpler) code path might be beneficial for small lengths (when the align=
+ment is unknown at runtime).
+> </feature creep>
+>
 
-Signed-off-by: Shaiq Wani <shaiq.wani@intel.com>
----
- drivers/net/intel/iavf/iavf_fdir.c      |  9 +++++++++
- drivers/net/intel/iavf/iavf_fsub.c      |  8 ++++++++
- drivers/net/intel/iavf/iavf_hash.c      | 11 ++++++++++-
- drivers/net/intel/ice/ice_fdir_filter.c |  7 +++++++
- drivers/net/intel/ice/ice_hash.c        | 10 +++++++++-
- 5 files changed, 43 insertions(+), 2 deletions(-)
+Good idea! I implemented your suggestion but I didn't observe a
+measurable difference in cksum_perf_autotest. I suggest we proceed
+with the approach in this patch as an incremental step and I can post
+a followup with your suggestion above to review/discuss. Note the
+checksum computation requires processing in 16 bit blocks for
+correctness which requires special case handling for odd
+length/buffer-address alignment so complexity/code is higher.
 
-diff --git a/drivers/net/intel/iavf/iavf_fdir.c b/drivers/net/intel/iavf/iavf_fdir.c
-index 3213464254..0ef6e0d04a 100644
---- a/drivers/net/intel/iavf/iavf_fdir.c
-+++ b/drivers/net/intel/iavf/iavf_fdir.c
-@@ -773,6 +773,15 @@ iavf_fdir_parse_pattern(__rte_unused struct iavf_adapter *ad,
- 			raw_spec = item->spec;
- 			raw_mask = item->mask;
- 
-+			if (!raw_spec || !raw_mask) {
-+				PMD_DRV_LOG(ERR, "NULL RAW spec/mask");
-+				rte_flow_error_set(error, EINVAL,
-+						RTE_FLOW_ERROR_TYPE_ITEM,
-+						item,
-+						"NULL RAW spec/mask");
-+				return -rte_errno;
-+			}
-+
- 			if (item_num != 1)
- 				return -rte_errno;
- 
-diff --git a/drivers/net/intel/iavf/iavf_fsub.c b/drivers/net/intel/iavf/iavf_fsub.c
-index eb5a3feab1..18df9c6500 100644
---- a/drivers/net/intel/iavf/iavf_fsub.c
-+++ b/drivers/net/intel/iavf/iavf_fsub.c
-@@ -185,6 +185,14 @@ iavf_fsub_parse_pattern(const struct rte_flow_item pattern[],
- 			raw_spec = item->spec;
- 			raw_mask = item->mask;
- 
-+			if (!raw_spec || !raw_mask) {
-+				PMD_DRV_LOG(ERR, "NULL RAW spec/mask");
-+				rte_flow_error_set(error, EINVAL,
-+						RTE_FLOW_ERROR_TYPE_ITEM,
-+						item, "NULL RAW spec/mask");
-+				return -rte_errno;
-+			}
-+
- 			if (item_num != 1)
- 				return -rte_errno;
- 
-diff --git a/drivers/net/intel/iavf/iavf_hash.c b/drivers/net/intel/iavf/iavf_hash.c
-index 217f0500ab..b433a89b3b 100644
---- a/drivers/net/intel/iavf/iavf_hash.c
-+++ b/drivers/net/intel/iavf/iavf_hash.c
-@@ -883,6 +883,7 @@ iavf_hash_parse_pattern(const struct rte_flow_item pattern[], uint64_t *phint,
- 
- static int
- iavf_hash_parse_raw_pattern(const struct rte_flow_item *item,
-+			struct rte_flow_error *error,
- 			struct iavf_rss_meta *meta)
- {
- 	const struct rte_flow_item_raw *raw_spec, *raw_mask;
-@@ -895,6 +896,14 @@ iavf_hash_parse_raw_pattern(const struct rte_flow_item *item,
- 	raw_spec = item->spec;
- 	raw_mask = item->mask;
- 
-+	if (!raw_spec || !raw_mask) {
-+		PMD_DRV_LOG(ERR, "NULL RAW spec/mask");
-+		rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ITEM,
-+				item, "NULL RAW spec/mask");
-+		return -rte_errno;
-+	}
-+
- 	spec_len = strlen((char *)(uintptr_t)raw_spec->pattern);
- 	if (strlen((char *)(uintptr_t)raw_mask->pattern) !=
- 		spec_len)
-@@ -1545,7 +1554,7 @@ iavf_hash_parse_pattern_action(__rte_unused struct iavf_adapter *ad,
- 
- 	if (phint == IAVF_PHINT_RAW) {
- 		rss_meta_ptr->raw_ena = true;
--		ret = iavf_hash_parse_raw_pattern(pattern, rss_meta_ptr);
-+		ret = iavf_hash_parse_raw_pattern(pattern, error, rss_meta_ptr);
- 		if (ret) {
- 			rte_flow_error_set(error, EINVAL,
- 					   RTE_FLOW_ERROR_TYPE_ITEM, NULL,
-diff --git a/drivers/net/intel/ice/ice_fdir_filter.c b/drivers/net/intel/ice/ice_fdir_filter.c
-index 9dfe5c02cb..f7730ec6ab 100644
---- a/drivers/net/intel/ice/ice_fdir_filter.c
-+++ b/drivers/net/intel/ice/ice_fdir_filter.c
-@@ -1853,6 +1853,13 @@ ice_fdir_parse_pattern(__rte_unused struct ice_adapter *ad,
- 			raw_spec = item->spec;
- 			raw_mask = item->mask;
- 
-+			if (!raw_spec || !raw_mask) {
-+				rte_flow_error_set(error, EINVAL,
-+						RTE_FLOW_ERROR_TYPE_ITEM,
-+						item, "NULL RAW spec/mask");
-+				return -rte_errno;
-+			}
-+
- 			if (item_num != 1)
- 				break;
- 
-diff --git a/drivers/net/intel/ice/ice_hash.c b/drivers/net/intel/ice/ice_hash.c
-index aa6a21c055..afdc8f220a 100644
---- a/drivers/net/intel/ice/ice_hash.c
-+++ b/drivers/net/intel/ice/ice_hash.c
-@@ -641,6 +641,7 @@ ice_hash_parse_pattern(const struct rte_flow_item pattern[], uint64_t *phint,
- static int
- ice_hash_parse_raw_pattern(struct ice_adapter *ad,
- 				const struct rte_flow_item *item,
-+				struct rte_flow_error *error,
- 				struct ice_rss_meta *meta)
- {
- 	const struct rte_flow_item_raw *raw_spec, *raw_mask;
-@@ -658,6 +659,13 @@ ice_hash_parse_raw_pattern(struct ice_adapter *ad,
- 	raw_spec = item->spec;
- 	raw_mask = item->mask;
- 
-+	if (!raw_spec || !raw_mask) {
-+		rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ITEM,
-+				item, "NULL RAW spec/mask");
-+		return -rte_errno;
-+	}
-+
- 	spec_len = strnlen((char *)(uintptr_t)raw_spec->pattern,
- 		raw_spec->length + 1);
- 	if (spec_len != raw_spec->length)
-@@ -1185,7 +1193,7 @@ ice_hash_parse_pattern_action(__rte_unused struct ice_adapter *ad,
- 
- 	if (phint == ICE_PHINT_RAW) {
- 		rss_meta_ptr->raw.raw_ena = true;
--		ret = ice_hash_parse_raw_pattern(ad, pattern, rss_meta_ptr);
-+		ret = ice_hash_parse_raw_pattern(ad, pattern, error, rss_meta_ptr);
- 		if (ret) {
- 			rte_flow_error_set(error, EINVAL,
- 					   RTE_FLOW_ERROR_TYPE_ITEM, NULL,
--- 
-2.34.1
+> >
+> > Uses uint64_t accumulator to reduce carry propagation overhead
+>
+> You return (uint32_t)sum64 at the end, so why replace the existing 32-bit=
+ "sum" with a 64-bit "sum64" accumulator?
 
+Good catch. It gives more headroom to avoid overflow but not necessary
+and I will revert.
+
+>
+> > and
+> > leverages unaligned_uint16_t for safe unaligned access on all
+> > platforms.
+> >
+> > Performance results from cksum_perf_autotest (TSC cycles/byte):
+> >   Block size    Before    After    Improvement
+> >          100  0.40-0.64  0.13-0.14    ~3-4x
+> >         1500  0.49-0.51  0.10-0.11    ~4-5x
+> >         9000  0.48-0.51  0.11-0.12    ~4x
+> >
+> > Signed-off-by: Scott Mitchell <scott.k.mitch1@gmail.com>
+>
