@@ -2,66 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED52ECE9D64
-	for <dpdk-dev@archiver.kernel.org>; Tue,  6 Jan 2026 15:39:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E569CE9D65
+	for <dpdk-dev@archiver.kernel.org>; Tue,  6 Jan 2026 15:39:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2A88640A81;
-	Tue,  6 Jan 2026 16:39:00 +0100 (CET)
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com
- [209.85.128.45]) by mails.dpdk.org (Postfix) with ESMTP id 3F81940A73
+	by mails.dpdk.org (Postfix) with ESMTP id 463C040A89;
+	Tue,  6 Jan 2026 16:39:01 +0100 (CET)
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com
+ [209.85.128.46]) by mails.dpdk.org (Postfix) with ESMTP id 942FB40A79
  for <dev@dpdk.org>; Tue,  6 Jan 2026 16:38:59 +0100 (CET)
-Received: by mail-wm1-f45.google.com with SMTP id
- 5b1f17b1804b1-477bf34f5f5so10127525e9.0
+Received: by mail-wm1-f46.google.com with SMTP id
+ 5b1f17b1804b1-477ba2c1ca2so11574755e9.2
  for <dev@dpdk.org>; Tue, 06 Jan 2026 07:38:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=dyna-nic.com; s=google; t=1767713938; x=1768318738; darn=dpdk.org;
+ d=dyna-nic.com; s=google; t=1767713939; x=1768318739; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=4w1sLrGXVlzDYmNtlOcb7jiVhx/5m0zecqzMLtrzfoU=;
- b=ZaHtMV3qZM9Wk40b1WIugbs9iz6zBS9e/0GqztOEzrQy9+rezbSmT4d85I4Cx+AleC
- cejJEbd4uRHqgmhQ7nzzO7+oqX2QbQDl9ldnIRp6CFlxDxsG5ugsNp+mVZfYk/fnm02q
- rHtyuypJwAhSxUXMkZgmDgW6byHLYWeNjti65eDPEM86e9X3dHrNS1A+aAAMvkrcBzf9
- D+knT6ZXOWVfmu7h7HQcT5oPDUY+RqXmCvshMZIg8cIm213xn5hCzYail9JSElM6Oefb
- VWWTXPKX4aCR42ve4PvVTmwTY6dLiaFIW7UWSpLFPDe2+ikP0OdcXXOQB/ycU0Cgi3Ll
- /qAQ==
+ bh=/lQOwuldGhpunajh4cgkY2f6+4uBmaNChswoTVrr11g=;
+ b=W2QJ6ST4Lgynof9cBvZgHYZ7GKHhZD7azdHcyx2j7tpbeI+B8r6NzvPTluYqo6wKDT
+ 8wda9qFMhHf9Twg+HsuNf72ZMmRnEoVC8zmky2yVOeY3FKwo2riZIWPZJuJbDYAAq64f
+ n5ZxPEp9NDs7yb4zGxS+HyvCzDZ19dkea4o1HocEzN+G7QCTobM1F1gqYxwoKT5ZyASx
+ 3oKu238CkNqmlAR8lWHt5FQFEqUaj78REqJvDe1DTKdN9wIMBG/7hK5L4Mq52+JMtSkI
+ zsjl9UqvH7E5ubvhQPaIkXmoDBy3b/0jRb4Sjsa+gIbpnvSpIWnlzXUX7TGf+2p9JXRb
+ ZyZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1767713938; x=1768318738;
+ d=1e100.net; s=20230601; t=1767713939; x=1768318739;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=4w1sLrGXVlzDYmNtlOcb7jiVhx/5m0zecqzMLtrzfoU=;
- b=cRELrOg9ipyEZTJCQutYVysmDZR2u5R7WjpoDJxvleKMQ5kELawl/KkPcPHBKZarqf
- 5C0Q7Otzhu+daO1jn5Em/71ck7SZsQJeVJtMllw7zqAmNNC+YWVHpbFURUZTd3WxVrNY
- LujpeRCAfu4DapoSeXvd4luNRDObjS53a47ALhnDK3X8Jwv0yuKS/uegzkmugyBxzpkN
- jikgru7RBnEE0G4V4K2hF/d0/wtjoXS64beMY57gSWRaCBwI0wQtH8MMbNgI2fm/MnZr
- gcaSeFB3AISvWP+K27qxAbxThoYVJpJLhcSOzWwbpop6l2jGxWu+xL0Lw/bXYK7tgeyG
- Nhrg==
-X-Gm-Message-State: AOJu0Yy3Sx4ojxcEPNj9RxhfS/IoJkhv0qw8Wq/lZB3cyWQBeLNXb8cc
- 8puPffjMDXQIKTtPt4fjJfgmpCAgEIDFsAoXrvR6jLzhAUL/2IAgqDOfUie/fNSLPjVeR2wmroS
- HA+fu
-X-Gm-Gg: AY/fxX4Mj5+tGuhyyczJKyAJJbAr2ZQ05dXYUCYOyLCWmc+23jZSDBc2P4Y6NLJBnAU
- HBf6S65j7u8EpigkZRU61qh4bGPc0U1gzEGFC2CgZ/tqtujUASTeYYC3pcE+mDL3Hl1961aw3Y1
- 4M+5hQtziwWZdJLsPRzlABPdumAI81OWfX+e5uop0sgYkk5vWgq2HKBPZYqu706pwt+pEx+OZrY
- VH9mcXYtTBmoSMzsEVcagFOKQfv0DESPGrbyGcuKHNMK6BBBCqdWIpJg+6pE7/SEYqneCsfCLKZ
- BZZQXMrtviw0pw9vIXALgxWUZ2TUbpb2SCYZllsnyCeFtisSKpMpa9UP9z8owxdCkEo7OC92WWP
- I5RuOLoMLUBolGqQftvQP3hsSleCjgt7BAccloP2m+xBpoCI4mwn6uRh9EiAIj66Llm2YboFINd
- 5UX8Fv44yHqJe9AAjv9AobI806/99Y/anShPDZLjtmyUIsESd8Agdi2MJ4
-X-Google-Smtp-Source: AGHT+IGn+DaZoiBFyfLe6HbyBSpNfy1Q1AHFiUSJguWiQ451j101jpBCaXDnCbFNItqaxARiSjUbFw==
-X-Received: by 2002:a05:600c:46ce:b0:477:7bca:8b34 with SMTP id
- 5b1f17b1804b1-47d7f0644c1mr39817665e9.6.1767713938286; 
+ bh=/lQOwuldGhpunajh4cgkY2f6+4uBmaNChswoTVrr11g=;
+ b=a5fipZ5O8ETJx5A2C9t9/Tz084LEefaryzTc8vCEsz4IGNCbO1ROZGJFDfmsk3Py2t
+ Qmc3xoNUq0YdRHxX+2U9JnaDb9AtBj6zUfCK0Vo/FfUdBEaaqoBs3CghqWELdyFhlIBQ
+ QaVkemC578tYh6jlNLJ+SXPM3EdbFF05IhSvVlxOylJI980Q09oPkca0TF2Hw7N40Eu5
+ mNkx6ZkHP+T3/U709CE8BXGMGQihlvXCpIB8tXmlqw+w1a7eLWHhNTwHlPr9I2mxa716
+ /CJq6tOEAII8dyVVSBoB3SXO3gJDWPhsuWG3DQbxowKw23PGS1VuzVzBxubwUGLzCqOv
+ 0w7A==
+X-Gm-Message-State: AOJu0YwBnD2Pw65u649rT5VD/4QUrOaqbEhb929BxLkb32W/QPtmEDIu
+ mqQqU7Nu38/V1++SpdL+deelJAIqd/BBandCM1Xg4G6vAPON4lW7jSr39q7eW+6gMzCoNxfpQ07
+ k8MGT
+X-Gm-Gg: AY/fxX6KXN1JbDaHRkeoPFq58Ws5qDxHWHSH640oGaQop9NlvzJgBu+Y/w/QcEQKVHM
+ r+WwU+Bxydr07YR+ZDsJK5pB6VdWgTqc93K3GCxgJovWNROAKMo2K1icAnm6JnmtrOg+cj7DyAR
+ 37PBEjo9TGK7SJSHqTIi1OxWxL9itV3TYg0t0jUhbGk87tZihNzGHYOlMTml4Uferasy6RvrTol
+ x+VEKXq4VfpWgkGb9lWTagee7cZXphf59vSAzq0ll7O7rZQfn4JTCVWpVo8+uXZgxRa4HHrcdmV
+ ceBW8zdew8s2ld6MpiRn0MuOUVM8bNGjjXUkGYVipI9f1G999yr9InfmYk/RrUyhJzRhHenw5mj
+ cRKtyLxjv6uY2IhGO5yFzOxigCWOWCD20/o+D9jGJ55fm6audZHkhAQxY/9ocIS6NxWq4KsTVq1
+ 2N3uspaaU5zB7pSbPAMzAjCa+WiHjqDFJU0XSCQjD42kkRDw==
+X-Google-Smtp-Source: AGHT+IEauj2lClPDF6i02T5w9gw4jpo1aZ/WrKEePNYMpNeDURFUR8tltQgDk521q2jV3lyOCzrF7Q==
+X-Received: by 2002:a05:600c:4fc4:b0:45b:7d77:b592 with SMTP id
+ 5b1f17b1804b1-47d7f07331dmr39939005e9.12.1767713938916; 
  Tue, 06 Jan 2026 07:38:58 -0800 (PST)
 Received: from claret.liberouter.org (rt-tmc-kou.liberouter.org.
  [195.113.172.126]) by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-47d7fad882asm20975265e9.1.2026.01.06.07.38.57
+ 5b1f17b1804b1-47d7fad882asm20975265e9.1.2026.01.06.07.38.58
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 06 Jan 2026 07:38:57 -0800 (PST)
+ Tue, 06 Jan 2026 07:38:58 -0800 (PST)
 From: Lukas Sismis <sismis@dyna-nic.com>
 To: dev@dpdk.org
 Cc: Lukas Sismis <sismis@dyna-nic.com>
-Subject: [PATCH v2 3/7] examples/flow_parsing: add flow parser demo
-Date: Tue,  6 Jan 2026 16:38:33 +0100
-Message-ID: <20260106153838.398033-4-sismis@dyna-nic.com>
+Subject: [PATCH v2 4/7] test: add flow parser unit tests
+Date: Tue,  6 Jan 2026 16:38:34 +0100
+Message-ID: <20260106153838.398033-5-sismis@dyna-nic.com>
 X-Mailer: git-send-email 2.43.7
 In-Reply-To: <20260106153838.398033-1-sismis@dyna-nic.com>
 References: <20260106153838.398033-1-sismis@dyna-nic.com>
@@ -80,418 +80,273 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add example application demonstrating the flow parser library API.
+Add comprehensive unit tests for the flow parser library.
 
-The example shows:
-- Using parse_attr_str() to parse flow attributes from strings
-- Using parse_pattern_str() to parse match patterns
-- Using parse_actions_str() to parse flow actions
-- Printing parsed results with RTE_FLOW_LOG macros
-- Integration without EAL initialization (library is standalone)
+Tests cover:
+- flow_parser_autotest: Tests rte_flow_parser_parse() with various
+  flow command strings including create, destroy, validate, query,
+  list, and isolate commands. Verifies parsed patterns, actions,
+  and attributes match expected values.
 
-Build with: meson configure -Dexamples=flow_parsing
+- flow_parser_helpers_autotest: Tests the standalone helper functions
+  parse_attr_str(), parse_pattern_str(), and parse_actions_str().
+  Verifies parsing of attributes, patterns with various item types,
+  and action sequences.
+
+Run with: dpdk-test flow_parser_autotest
+          dpdk-test flow_parser_helpers_autotest
 
 Signed-off-by: Lukas Sismis <sismis@dyna-nic.com>
 ---
- app/test-pmd/flow_parser.h        |   2 +-
- examples/flow_parsing/main.c      | 345 ++++++++++++++++++++++++++++++
- examples/flow_parsing/meson.build |  11 +
- examples/meson.build              |   1 +
- 4 files changed, 358 insertions(+), 1 deletion(-)
- create mode 100644 examples/flow_parsing/main.c
- create mode 100644 examples/flow_parsing/meson.build
+ app/test/meson.build        |   1 +
+ app/test/test_flow_parser.c | 226 ++++++++++++++++++++++++++++++++++++
+ 2 files changed, 227 insertions(+)
+ create mode 100644 app/test/test_flow_parser.c
 
-diff --git a/app/test-pmd/flow_parser.h b/app/test-pmd/flow_parser.h
-index 8b5c99cd8b..2f77bc45e8 100644
---- a/app/test-pmd/flow_parser.h
-+++ b/app/test-pmd/flow_parser.h
-@@ -5,4 +5,4 @@
- 
- #include <rte_flow_parser.h>
- 
--#endif /* _TESTPMD_FLOW_PARSER_H_ */
-\ No newline at end of file
-+#endif /* _TESTPMD_FLOW_PARSER_H_ */
-diff --git a/examples/flow_parsing/main.c b/examples/flow_parsing/main.c
+diff --git a/app/test/meson.build b/app/test/meson.build
+index efec42a6bf..03cf8aa70c 100644
+--- a/app/test/meson.build
++++ b/app/test/meson.build
+@@ -88,6 +88,7 @@ source_file_deps = {
+     'test_fib6_perf.c': ['fib'],
+     'test_fib_perf.c': ['net', 'fib'],
+     'test_flow_classify.c': ['net', 'acl', 'table', 'ethdev', 'flow_classify'],
++    'test_flow_parser.c': ['flow_parser', 'cmdline', 'ethdev'],
+     'test_func_reentrancy.c': ['hash', 'lpm'],
+     'test_graph.c': ['graph'],
+     'test_graph_feature_arc.c': ['graph'],
+diff --git a/app/test/test_flow_parser.c b/app/test/test_flow_parser.c
 new file mode 100644
-index 0000000000..9f48e35ed1
+index 0000000000..1e65762d9f
 --- /dev/null
-+++ b/examples/flow_parsing/main.c
-@@ -0,0 +1,345 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2026 Dyna-NIC
-+ */
++++ b/app/test/test_flow_parser.c
+@@ -0,0 +1,226 @@
++/* SPDX-License-Identifier: BSD-3-Clause */
 +
-+/*
-+ * Flow Parsing Example
-+ * ====================
-+ * This example demonstrates how to use the flow_parser library to parse
-+ * flow rule strings into rte_flow C structures. The library provides ONE WAY
-+ * to create rte_flow structures - by parsing testpmd-style command strings.
-+ *
-+ * Alternative approaches:
-+ *   - Construct rte_flow_attr, rte_flow_item[], and rte_flow_action[]
-+ *     directly in C code and call rte_flow_create()/rte_flow_validate().
-+ *
-+ * This string-based approach is useful when:
-+ *   - Accepting flow rules from user input or configuration files
-+ *   - Reusing the familiar testpmd flow command syntax
-+ *   - Rapid prototyping without manually constructing C structures
-+ *
-+ * Key functions demonstrated:
-+ *   - rte_flow_parser_parse_attr_str() - Parse flow attributes (ingress/egress/priority)
-+ *   - rte_flow_parser_parse_pattern_str() - Parse match patterns (eth/ipv4/tcp/etc)
-+ *   - rte_flow_parser_parse_actions_str() - Parse actions (drop/queue/mark/etc)
-+ */
-+
-+#include <stdio.h>
 +#include <stdint.h>
 +#include <string.h>
-+#include <arpa/inet.h>
 +
-+#include <rte_common.h>
 +#include <rte_flow.h>
 +#include <rte_flow_parser.h>
 +
-+/* Helper to print flow attributes */
-+static void
-+print_attr(const struct rte_flow_attr *attr)
++#include "test.h"
++
++static int
++test_flow_parser_command_mapping(void)
 +{
-+	printf("  Attributes:\n");
-+	printf("    group=%u priority=%u\n", attr->group, attr->priority);
-+	printf("    ingress=%u egress=%u transfer=%u\n",
-+	       attr->ingress, attr->egress, attr->transfer);
-+}
-+
-+/* Helper to print a MAC address */
-+static void
-+print_mac(const char *label, const uint8_t *mac)
-+{
-+	printf("    %s: %02x:%02x:%02x:%02x:%02x:%02x\n", label,
-+	       mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
-+}
-+
-+/* Helper to print pattern items */
-+static void
-+print_pattern(const struct rte_flow_item *pattern, uint32_t pattern_n)
-+{
-+	uint32_t i;
-+
-+	printf("  Pattern (%u items):\n", pattern_n);
-+	for (i = 0; i < pattern_n; i++) {
-+		const struct rte_flow_item *item = &pattern[i];
-+
-+		switch (item->type) {
-+		case RTE_FLOW_ITEM_TYPE_END:
-+			printf("    [%u] END\n", i);
-+			break;
-+		case RTE_FLOW_ITEM_TYPE_ETH:
-+			printf("    [%u] ETH", i);
-+			if (item->spec) {
-+				const struct rte_flow_item_eth *eth = item->spec;
-+				printf("\n");
-+				print_mac("dst", eth->hdr.dst_addr.addr_bytes);
-+				print_mac("src", eth->hdr.src_addr.addr_bytes);
-+			} else {
-+				printf(" (any)\n");
-+			}
-+			break;
-+		case RTE_FLOW_ITEM_TYPE_IPV4:
-+			printf("    [%u] IPV4", i);
-+			if (item->spec) {
-+				const struct rte_flow_item_ipv4 *ipv4 = item->spec;
-+				char src[INET_ADDRSTRLEN], dst[INET_ADDRSTRLEN];
-+				inet_ntop(AF_INET, &ipv4->hdr.src_addr, src, sizeof(src));
-+				inet_ntop(AF_INET, &ipv4->hdr.dst_addr, dst, sizeof(dst));
-+				printf(" src=%s dst=%s\n", src, dst);
-+			} else {
-+				printf(" (any)\n");
-+			}
-+			break;
-+		case RTE_FLOW_ITEM_TYPE_TCP:
-+			printf("    [%u] TCP", i);
-+			if (item->spec) {
-+				const struct rte_flow_item_tcp *tcp = item->spec;
-+				printf(" sport=%u dport=%u\n",
-+				       ntohs(tcp->hdr.src_port),
-+				       ntohs(tcp->hdr.dst_port));
-+			} else {
-+				printf(" (any)\n");
-+			}
-+			break;
-+		case RTE_FLOW_ITEM_TYPE_UDP:
-+			printf("    [%u] UDP", i);
-+			if (item->spec) {
-+				const struct rte_flow_item_udp *udp = item->spec;
-+				printf(" sport=%u dport=%u\n",
-+				       ntohs(udp->hdr.src_port),
-+				       ntohs(udp->hdr.dst_port));
-+			} else {
-+				printf(" (any)\n");
-+			}
-+			break;
-+		default:
-+			printf("    [%u] type=%d\n", i, item->type);
-+			break;
-+		}
-+	}
-+}
-+
-+/* Helper to print actions */
-+static void
-+print_actions(const struct rte_flow_action *actions, uint32_t actions_n)
-+{
-+	uint32_t i;
-+
-+	printf("  Actions (%u items):\n", actions_n);
-+	for (i = 0; i < actions_n; i++) {
-+		const struct rte_flow_action *action = &actions[i];
-+
-+		switch (action->type) {
-+		case RTE_FLOW_ACTION_TYPE_END:
-+			printf("    [%u] END\n", i);
-+			break;
-+		case RTE_FLOW_ACTION_TYPE_DROP:
-+			printf("    [%u] DROP\n", i);
-+			break;
-+		case RTE_FLOW_ACTION_TYPE_QUEUE:
-+			if (action->conf) {
-+				const struct rte_flow_action_queue *q = action->conf;
-+				printf("    [%u] QUEUE index=%u\n", i, q->index);
-+			}
-+			break;
-+		case RTE_FLOW_ACTION_TYPE_MARK:
-+			if (action->conf) {
-+				const struct rte_flow_action_mark *m = action->conf;
-+				printf("    [%u] MARK id=%u\n", i, m->id);
-+			}
-+			break;
-+		case RTE_FLOW_ACTION_TYPE_COUNT:
-+			printf("    [%u] COUNT\n", i);
-+			break;
-+		case RTE_FLOW_ACTION_TYPE_PORT_ID:
-+			if (action->conf) {
-+				const struct rte_flow_action_port_id *p = action->conf;
-+				printf("    [%u] PORT_ID id=%u\n", i, p->id);
-+			}
-+			break;
-+		default:
-+			printf("    [%u] type=%d\n", i, action->type);
-+			break;
-+		}
-+	}
-+}
-+
-+/*
-+ * Demonstrate parsing flow attributes
-+ */
-+static void
-+demo_parse_attr(void)
-+{
-+	static const char * const attr_strings[] = {
-+		"ingress",
-+		"egress",
-+		"ingress priority 5",
-+		"ingress group 1 priority 10",
-+		"transfer",
-+	};
-+	struct rte_flow_attr attr;
-+	unsigned int i;
++	static const char *create_cmd =
++		"flow create 0 ingress pattern eth / end "
++		"actions drop / end";
++	static const char *list_cmd = "flow list 0";
++	uint8_t outbuf[4096];
++	struct rte_flow_parser_output *out = (void *)outbuf;
 +	int ret;
 +
-+	printf("\n=== Parsing Flow Attributes ===\n");
-+	printf("Use rte_flow_parser_parse_attr_str() to parse attribute strings.\n\n");
-+
-+	for (i = 0; i < RTE_DIM(attr_strings); i++) {
-+		printf("Input: \"%s\"\n", attr_strings[i]);
-+		memset(&attr, 0, sizeof(attr));
-+		ret = rte_flow_parser_parse_attr_str(attr_strings[i], &attr);
-+		if (ret == 0)
-+			print_attr(&attr);
-+		else
-+			printf("  ERROR: %d (%s)\n", ret, strerror(-ret));
-+		printf("\n");
-+	}
-+}
-+
-+/*
-+ * Demonstrate parsing flow patterns
-+ */
-+static void
-+demo_parse_pattern(void)
-+{
-+	static const char * const pattern_strings[] = {
-+		"eth / end",
-+		"eth dst is 90:61:ae:fd:41:43 / end",
-+		"eth / ipv4 src is 192.168.1.1 / end",
-+		"eth / ipv4 / tcp dst is 80 / end",
-+		"eth / ipv4 src is 10.0.0.1 dst is 10.0.0.2 / udp src is 1234 dst is 5678 / end",
-+	};
-+	const struct rte_flow_item *pattern;
-+	uint32_t pattern_n;
-+	unsigned int i;
-+	int ret;
-+
-+	printf("\n=== Parsing Flow Patterns ===\n");
-+	printf("Use rte_flow_parser_parse_pattern_str() to parse pattern strings.\n\n");
-+
-+	for (i = 0; i < RTE_DIM(pattern_strings); i++) {
-+		printf("Input: \"%s\"\n", pattern_strings[i]);
-+		ret = rte_flow_parser_parse_pattern_str(pattern_strings[i],
-+							&pattern, &pattern_n);
-+		if (ret == 0)
-+			print_pattern(pattern, pattern_n);
-+		else
-+			printf("  ERROR: %d (%s)\n", ret, strerror(-ret));
-+		printf("\n");
-+	}
-+}
-+
-+/*
-+ * Demonstrate parsing flow actions
-+ */
-+static void
-+demo_parse_actions(void)
-+{
-+	static const char * const action_strings[] = {
-+		"drop / end",
-+		"queue index 3 / end",
-+		"mark id 42 / end",
-+		"count / queue index 1 / end",
-+		"mark id 100 / count / queue index 5 / end",
-+	};
-+	const struct rte_flow_action *actions;
-+	uint32_t actions_n;
-+	unsigned int i;
-+	int ret;
-+
-+	printf("\n=== Parsing Flow Actions ===\n");
-+	printf("Use rte_flow_parser_parse_actions_str() to parse action strings.\n\n");
-+
-+	for (i = 0; i < RTE_DIM(action_strings); i++) {
-+		printf("Input: \"%s\"\n", action_strings[i]);
-+		ret = rte_flow_parser_parse_actions_str(action_strings[i],
-+							&actions, &actions_n);
-+		if (ret == 0)
-+			print_actions(actions, actions_n);
-+		else
-+			printf("  ERROR: %d (%s)\n", ret, strerror(-ret));
-+		printf("\n");
-+	}
-+}
-+
-+/*
-+ * Demonstrate combining parsed components
-+ *
-+ * NOTE: The parse functions return pointers to internal static buffers.
-+ * Each subsequent parse call overwrites the previous result.
-+ * Therefore, you must use the returned data before calling another parse function,
-+ * or copy the data to your own storage.
-+ */
-+static void
-+demo_combine(void)
-+{
-+	struct rte_flow_attr attr;
-+	const struct rte_flow_item *pattern;
-+	const struct rte_flow_action *actions;
-+	uint32_t pattern_n, actions_n;
-+	int ret;
-+
-+	printf("\n=== Combining Parsed Components ===\n");
-+	printf("Parse attributes, patterns, and actions separately,\n");
-+	printf("then use each result before the next parse call.\n\n");
-+	printf("NOTE: Returned pointers are only valid until the next parse call!\n\n");
-+
-+	/* Parse and display attributes */
-+	ret = rte_flow_parser_parse_attr_str("ingress priority 1", &attr);
-+	if (ret != 0) {
-+		printf("Failed to parse attributes: %d\n", ret);
-+		return;
-+	}
-+	printf("Parsed attributes:\n");
-+	print_attr(&attr);
-+
-+	/* Parse and display pattern */
-+	ret = rte_flow_parser_parse_pattern_str(
-+		"eth / ipv4 src is 192.168.1.0 / tcp dst is 443 / end",
-+		&pattern, &pattern_n);
-+	if (ret != 0) {
-+		printf("Failed to parse pattern: %d\n", ret);
-+		return;
-+	}
-+	printf("\nParsed pattern:\n");
-+	print_pattern(pattern, pattern_n);
-+
-+	/* Parse and display actions */
-+	ret = rte_flow_parser_parse_actions_str(
-+		"mark id 1 / queue index 2 / end",
-+		&actions, &actions_n);
-+	if (ret != 0) {
-+		printf("Failed to parse actions: %d\n", ret);
-+		return;
-+	}
-+	printf("\nParsed actions:\n");
-+	print_actions(actions, actions_n);
-+
-+	printf("\nIn a real application, copy pattern/actions to your own storage,\n");
-+	printf("then call:\n");
-+	printf("  rte_flow_validate(port_id, &attr, pattern, actions, &error)\n");
-+	printf("  rte_flow_create(port_id, &attr, pattern, actions, &error)\n");
-+}
-+
-+int
-+main(void)
-+{
-+	int ret;
-+
-+	printf("Flow Parser Library Example\n");
-+	printf("===========================\n");
-+
-+	/* Initialize the flow parser */
 +	ret = rte_flow_parser_init(NULL);
++	if (ret != 0)
++		return TEST_FAILED;
++
++	/* Test flow create command parsing */
++	memset(outbuf, 0, sizeof(outbuf));
++	ret = rte_flow_parser_parse(create_cmd, out, sizeof(outbuf));
 +	if (ret != 0) {
-+		fprintf(stderr, "Failed to initialize flow parser: %d\n", ret);
-+		return 1;
++		printf("flow create parse failed: %d\n", ret);
++		return TEST_FAILED;
++	}
++	if (out->command != RTE_FLOW_PARSER_CMD_CREATE) {
++		printf("expected CREATE command, got %d\n", out->command);
++		return TEST_FAILED;
++	}
++	if (out->port != 0) {
++		printf("expected port 0, got %u\n", out->port);
++		return TEST_FAILED;
++	}
++	/* pattern: eth / end = 2 items */
++	if (out->args.vc.pattern_n != 2) {
++		printf("expected 2 pattern items, got %u\n",
++		       out->args.vc.pattern_n);
++		return TEST_FAILED;
++	}
++	if (out->args.vc.pattern[0].type != RTE_FLOW_ITEM_TYPE_ETH) {
++		printf("expected ETH pattern, got %d\n",
++		       out->args.vc.pattern[0].type);
++		return TEST_FAILED;
++	}
++	if (out->args.vc.pattern[1].type != RTE_FLOW_ITEM_TYPE_END) {
++		printf("expected END pattern, got %d\n",
++		       out->args.vc.pattern[1].type);
++		return TEST_FAILED;
++	}
++	/* actions: drop / end = 2 items */
++	if (out->args.vc.actions_n != 2) {
++		printf("expected 2 action items, got %u\n",
++		       out->args.vc.actions_n);
++		return TEST_FAILED;
++	}
++	if (out->args.vc.actions[0].type != RTE_FLOW_ACTION_TYPE_DROP) {
++		printf("expected DROP action, got %d\n",
++		       out->args.vc.actions[0].type);
++		return TEST_FAILED;
++	}
++	if (out->args.vc.actions[1].type != RTE_FLOW_ACTION_TYPE_END) {
++		printf("expected END action, got %d\n",
++		       out->args.vc.actions[1].type);
++		return TEST_FAILED;
++	}
++	/* ingress attribute */
++	if (out->args.vc.attr.ingress != 1 || out->args.vc.attr.egress != 0) {
++		printf("expected ingress=1 egress=0\n");
++		return TEST_FAILED;
 +	}
 +
-+	/* Run demonstrations */
-+	demo_parse_attr();
-+	demo_parse_pattern();
-+	demo_parse_actions();
-+	demo_combine();
++	/* Test flow list command parsing */
++	memset(outbuf, 0, sizeof(outbuf));
++	ret = rte_flow_parser_parse(list_cmd, out, sizeof(outbuf));
++	if (ret != 0 ||
++	    out->command != RTE_FLOW_PARSER_CMD_LIST ||
++	    out->port != 0)
++		return TEST_FAILED;
 +
-+	printf("\n=== Example Complete ===\n");
-+	return 0;
++	return TEST_SUCCESS;
 +}
-diff --git a/examples/flow_parsing/meson.build b/examples/flow_parsing/meson.build
-new file mode 100644
-index 0000000000..deab338bfb
---- /dev/null
-+++ b/examples/flow_parsing/meson.build
-@@ -0,0 +1,11 @@
-+# SPDX-License-Identifier: BSD-3-Clause
-+# Copyright(c) 2024 Intel Corporation
 +
-+# meson file, for building this example as part of a main DPDK build.
-+#
-+# To build this example as a standalone application with an already-installed
-+# DPDK instance, use 'make'
++static int
++test_flow_parser_lightweight_helpers(void)
++{
++	const struct rte_flow_item *pattern = NULL;
++	const struct rte_flow_action *actions = NULL;
++	const struct rte_flow_action_queue *queue_conf;
++	const struct rte_flow_action_mark *mark_conf;
++	struct rte_flow_attr attr;
++	uint32_t pattern_n = 0;
++	uint32_t actions_n = 0;
++	int ret;
 +
-+allow_experimental_apis = true
-+deps += 'flow_parser'
-+sources = files('main.c')
-diff --git a/examples/meson.build b/examples/meson.build
-index 25d9c88457..22f45e8c81 100644
---- a/examples/meson.build
-+++ b/examples/meson.build
-@@ -17,6 +17,7 @@ all_examples = [
-         'eventdev_pipeline',
-         'fips_validation',
-         'flow_filtering',
-+        'flow_parsing',
-         'helloworld',
-         'ip_fragmentation',
-         'ip_pipeline',
++	ret = rte_flow_parser_init(NULL);
++	if (ret != 0)
++		return TEST_FAILED;
++
++	/* Test attribute parsing */
++	memset(&attr, 0, sizeof(attr));
++	ret = rte_flow_parser_parse_attr_str("ingress group 1 priority 5", &attr);
++	if (ret != 0) {
++		printf("attr parse failed: %d\n", ret);
++		return TEST_FAILED;
++	}
++	if (attr.group != 1 || attr.priority != 5 ||
++	    attr.ingress != 1 || attr.egress != 0) {
++		printf("attr mismatch: group=%u priority=%u ingress=%u egress=%u\n",
++		       attr.group, attr.priority, attr.ingress, attr.egress);
++		return TEST_FAILED;
++	}
++
++	/* Test pattern parsing: eth / ipv4 / end = 3 items */
++	ret = rte_flow_parser_parse_pattern_str("eth / ipv4 / end",
++						&pattern, &pattern_n);
++	if (ret != 0) {
++		printf("pattern parse failed: %d\n", ret);
++		return TEST_FAILED;
++	}
++	if (pattern_n != 3) {
++		printf("expected 3 pattern items, got %u\n", pattern_n);
++		return TEST_FAILED;
++	}
++	if (pattern[0].type != RTE_FLOW_ITEM_TYPE_ETH) {
++		printf("pattern[0] expected ETH, got %d\n", pattern[0].type);
++		return TEST_FAILED;
++	}
++	if (pattern[1].type != RTE_FLOW_ITEM_TYPE_IPV4) {
++		printf("pattern[1] expected IPV4, got %d\n", pattern[1].type);
++		return TEST_FAILED;
++	}
++	if (pattern[2].type != RTE_FLOW_ITEM_TYPE_END) {
++		printf("pattern[2] expected END, got %d\n", pattern[2].type);
++		return TEST_FAILED;
++	}
++
++	/* Test actions parsing with config values: queue index 3 / end = 2 items */
++	ret = rte_flow_parser_parse_actions_str("queue index 3 / end",
++						&actions, &actions_n);
++	if (ret != 0) {
++		printf("actions parse failed: %d\n", ret);
++		return TEST_FAILED;
++	}
++	if (actions_n != 2) {
++		printf("expected 2 action items, got %u\n", actions_n);
++		return TEST_FAILED;
++	}
++	if (actions[0].type != RTE_FLOW_ACTION_TYPE_QUEUE) {
++		printf("actions[0] expected QUEUE, got %d\n", actions[0].type);
++		return TEST_FAILED;
++	}
++	queue_conf = actions[0].conf;
++	if (queue_conf == NULL || queue_conf->index != 3) {
++		printf("queue index expected 3, got %u\n",
++		       queue_conf ? queue_conf->index : 0);
++		return TEST_FAILED;
++	}
++	if (actions[1].type != RTE_FLOW_ACTION_TYPE_END) {
++		printf("actions[1] expected END, got %d\n", actions[1].type);
++		return TEST_FAILED;
++	}
++
++	/* Test multiple actions: mark id 42 / drop / end = 3 items */
++	ret = rte_flow_parser_parse_actions_str("mark id 42 / drop / end",
++						&actions, &actions_n);
++	if (ret != 0) {
++		printf("multi-action parse failed: %d\n", ret);
++		return TEST_FAILED;
++	}
++	if (actions_n != 3) {
++		printf("expected 3 action items, got %u\n", actions_n);
++		return TEST_FAILED;
++	}
++	if (actions[0].type != RTE_FLOW_ACTION_TYPE_MARK) {
++		printf("actions[0] expected MARK, got %d\n", actions[0].type);
++		return TEST_FAILED;
++	}
++	mark_conf = actions[0].conf;
++	if (mark_conf == NULL || mark_conf->id != 42) {
++		printf("mark id expected 42, got %u\n",
++		       mark_conf ? mark_conf->id : 0);
++		return TEST_FAILED;
++	}
++	if (actions[1].type != RTE_FLOW_ACTION_TYPE_DROP) {
++		printf("actions[1] expected DROP, got %d\n", actions[1].type);
++		return TEST_FAILED;
++	}
++	if (actions[2].type != RTE_FLOW_ACTION_TYPE_END) {
++		printf("actions[2] expected END, got %d\n", actions[2].type);
++		return TEST_FAILED;
++	}
++
++	/* Test complex pattern: eth / ipv4 / tcp / end = 4 items */
++	ret = rte_flow_parser_parse_pattern_str("eth / ipv4 / tcp / end",
++						&pattern, &pattern_n);
++	if (ret != 0) {
++		printf("complex pattern parse failed: %d\n", ret);
++		return TEST_FAILED;
++	}
++	if (pattern_n != 4) {
++		printf("expected 4 pattern items, got %u\n", pattern_n);
++		return TEST_FAILED;
++	}
++	if (pattern[0].type != RTE_FLOW_ITEM_TYPE_ETH ||
++	    pattern[1].type != RTE_FLOW_ITEM_TYPE_IPV4 ||
++	    pattern[2].type != RTE_FLOW_ITEM_TYPE_TCP ||
++	    pattern[3].type != RTE_FLOW_ITEM_TYPE_END) {
++		printf("complex pattern type mismatch\n");
++		return TEST_FAILED;
++	}
++
++	return TEST_SUCCESS;
++}
++
++REGISTER_FAST_TEST(flow_parser_autotest, true, true,
++		   test_flow_parser_command_mapping);
++
++REGISTER_FAST_TEST(flow_parser_helpers_autotest, true, true,
++		   test_flow_parser_lightweight_helpers);
 -- 
 2.43.7
 
