@@ -2,72 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8C6ECEFCE6
-	for <dpdk-dev@archiver.kernel.org>; Tue,  6 Jan 2026 18:07:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5357CEFCE6
+	for <dpdk-dev@archiver.kernel.org>; Tue,  6 Jan 2026 18:33:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8712D4028B;
-	Tue,  6 Jan 2026 19:07:10 +0100 (CET)
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com
- [209.85.218.54]) by mails.dpdk.org (Postfix) with ESMTP id CBC89400D7
- for <dev@dpdk.org>; Tue,  6 Jan 2026 19:07:09 +0100 (CET)
-Received: by mail-ej1-f54.google.com with SMTP id
- a640c23a62f3a-b843d418e37so15927566b.0
- for <dev@dpdk.org>; Tue, 06 Jan 2026 10:07:09 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id B4F7240DD5;
+	Tue,  6 Jan 2026 19:33:17 +0100 (CET)
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com
+ [209.85.208.53]) by mails.dpdk.org (Postfix) with ESMTP id 0E7DB400D7
+ for <dev@dpdk.org>; Tue,  6 Jan 2026 19:33:15 +0100 (CET)
+Received: by mail-ed1-f53.google.com with SMTP id
+ 4fb4d7f45d1cf-64b7a38f07eso1922651a12.0
+ for <dev@dpdk.org>; Tue, 06 Jan 2026 10:33:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1767722829;
- x=1768327629; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=NySz5u9UGwNZvLrV33P4IZ/vzgE2Xp5XNR2rbj6DYUg=;
- b=LDo7bxYp0ogIGOQpC4Mueo8bJQbX5HnY3aVhXPfL5L0puBc9TKgPlRVQUNQC6b5V8m
- 8cuJwnHbcTsBxGBhwImTnIyXUwhxWwovT7U5lXgdGP8kipRqPvdpJtu8FZgoips9XDCb
- 9DZ3ctAHMUXKTnRPWm/K25WBF4d+4uFAePUVbMgcIBRofmov9yjmQDGpue6eDfQNJ03B
- kqGQAg6rEYwye2usrUKL4cI9oKg1cbXXJrzADBj0BRDksVxVR06+l7DjtppevRSUdrcI
- /Zxi4Byr1af5BRO+AuGFyHSiNAOganuEix/xyDEqdfcRif3wMfpDx7/3nAiw+sn5xhOB
- LdXA==
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1767724395;
+ x=1768329195; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=iMJZxw+AZnCYC2zErpJlsIUrD//pfZBTGe5z57uIVUM=;
+ b=W5MZnE+Q+bGiJvDbTfmfK0U8OOpkabPc6bjFHxIVva86LxO8p3/mVGtQa5w45i/gnI
+ VnPByXkbn33xPBxz0FRPec8ujJcJO17Mq85subArJqLgglwg26W16m5ET3OYudiGY4pK
+ /xRNpQhI3BG1J4Wfah30489P8dj8hLiPMOID/CtvZW6F6mgQZaibc71Sv7S5To37sGJW
+ 1hWposBDWsQzXt/3KvNKY3Yu2wcEQ0xKNwn1baareevyywGwichLyGCjriFsddKg9ZOM
+ P3IXGQ5jKh1VSYWCYirK7x/uuTyv8cpKKaYMtTFQ6EaJckew4oru/MdJjRuLCidSv/pS
+ KtpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1767722829; x=1768327629;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=NySz5u9UGwNZvLrV33P4IZ/vzgE2Xp5XNR2rbj6DYUg=;
- b=qm7BAQAi4aQTQwpWeamLIpautmnhfzYHWMaa/M8W21feIQdkLsToCowomSx78744GC
- 4DUalaCLIb8CGWu5DzU6D3EEHBoPJIjNhIw8f3l7x53sqmzXjB/IHh5EMVkYafG0nBkB
- U2621abDJTcR0ZNivYrx8prhAXrr6dkqYAm5AdG39ZBcORSz4d/5IEIPX/3Cs9IxzFPw
- qQQox3dFd0kJ40e7lkjPmR3rUyMmsplPeOESKADO4pXuXphOIbKf76j6wB9rPjtibIk4
- /IWzYabYS2/bsE6eGiqAhO5q992xiZ5WwTRu7akTCYmfb7Kj/UZFCyKs5pqoJCmGGu2U
- o/Ug==
-X-Gm-Message-State: AOJu0YzKXzzPKxHs7xwX6/46VpxCmb0wTzPhSG0pMFcq0gN3beBwYrrs
- 38W/buXRwoIl8ND+PCi0RNqqJiEV59DKpJAtn3nd4ynolXngpu7Qj8MiISsuW36lr2M=
-X-Gm-Gg: AY/fxX7PcB1v2U0F992caWgR0QWVVBHdofgKWkQzH/ZsMl/GnDVF7kH1qLL8fQ/TPb+
- ZANO4Sj+4m4E/uBzHVzvvKidb50+Jz9luIscJDV5QlNq505mT5Dx3lsnTI3suXZZRrbfGzGCH/N
- 4fqrExdA5f32TDH8MlOouaZFeb3ejqGCcUQ7zcRXIiXaKWCsfBO9pCGZui1qewLeStdI0rs2HOQ
- yhf7BfUnI//05ERvRHepddyXbSZ/q2SQeyICaGBCcitpucAkserSmG2ZGClCNAJIAzUy4dgA6q4
- RFFikKcGhRjflDwAVhCI4OjXdn+SLqLEhBk9nzkCqqBVRFZ65NN689ZFg4y1y5Jdzvzn67uSVck
- 98mD8/nn2N3f84Cs82Tkx6CBA0CuRG/iEPAnmckGR3tkoPWxG0/w+JTG5B9xxbqVrzKLyvjV4Xk
- 1TmOuUK9WsguoE40qkqb6xfdtgWmhiF3pqKliSR7MEDvB/ZQQy2kKl
-X-Google-Smtp-Source: AGHT+IHFVhLHhe6YinZffuuwL5nwp8CgX2Ks8Xo3w7NzLc2eHTm7YpvYxKAuiVo+5bcCJIEaCr5B9A==
-X-Received: by 2002:a17:907:94c3:b0:b80:3fc4:3762 with SMTP id
- a640c23a62f3a-b8444c5a755mr6936866b.1.1767722829391; 
- Tue, 06 Jan 2026 10:07:09 -0800 (PST)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ d=1e100.net; s=20230601; t=1767724395; x=1768329195;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=iMJZxw+AZnCYC2zErpJlsIUrD//pfZBTGe5z57uIVUM=;
+ b=P8VoofiXrBzhGJKPVVwHYCdrq62TyxTMX1Mn1IreuQQGzVJIIdC0vZxXiYtXdbRHYg
+ oaS/snZzXWhXmkrSlPDMVgTwQlsLCPfNesIpREV7VOD15HPHSzwAakhIrjwFI3NQlaH7
+ bX5vP3xUYkj47p5f+XIws3Mtjl64r0Njf9vXfYjVDbSGPEmq7G3/R7g/A+W44fHFGnSf
+ VtdVaLknPJ7lUmHLJ6OWMd79RonKKuqkfkpoXqoSqsI4ZwQHynjrm3lDCU7AYzcbeD04
+ CwfwBGfa8SLK7tGAbQsU/3JK6yFNG0YyL95etmFbixus6pHnHoFO2QXuTNmGI199i5G+
+ /OFw==
+X-Gm-Message-State: AOJu0YzAoh7Zo1FWBiVty+COCtoXmMBdhrbQR65mGLluB9GHX1nF5F3k
+ GYKGRErEqCXLtuggVtybeetp+LFEPO1DCLHEfhWNBgUr7pTnWHlmsnhHQBw4SLT4/62MTRnfyE+
+ eMqWxWCA=
+X-Gm-Gg: AY/fxX5S4E3KJGVty/pvyH6Jl7Y2MVmE03hrPEtMRGfgKpfnJnGJx1bUKWt27L4xVdr
+ yVIqO+ZxqhpuoqPGPbNZJQjD/kpH4dLnwL/uS1d1qL9NppjdXNvEISyfhyp87zgWxPBNpuh/ZEY
+ mtHR8VldmO7B2ziIdMo+v/AAfriFoGeMzkZDGuf0Jtx60PUTH9lOEl24qoOmCpobGgEYqUsqwUF
+ PmqHjONK2x5OPxuImgF2OJwaIn5WoLvut2fdZjI+sLF/rKuSgvrWS7Zt4cGQ8y1v8HCB5zSH7Gd
+ 3TfeTS66OmkgM2flZvpPBxPsStoqncNhQq5Cyi5L/qsgNTsZiNAyFraWcxegV7lNO+L+EKpGfkI
+ 5FLAZaAW6qD1RnQXvApnNpxwg1no+n2sQUl7Ud92ZyMC9WgJWyZ7wKe2iPphY6wfYXxd++9PNyV
+ fZOfV16TqPyEtDF/TWdQVgXEjYlTjTXM1vsXJeVAQ9vw+7f7Whew==
+X-Google-Smtp-Source: AGHT+IGh9/e6ayCWR1DdNPTCmo06tA42w02/nu9nnbS/Bj4/p8jU6CwxZAMvextfS8YvyH4So64Glw==
+X-Received: by 2002:a05:6402:3548:b0:64b:5f4e:9e6d with SMTP id
+ 4fb4d7f45d1cf-6507956190amr3560530a12.18.1767724395402; 
+ Tue, 06 Jan 2026 10:33:15 -0800 (PST)
+Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a640c23a62f3a-b842a4d0290sm279933166b.32.2026.01.06.10.07.08
+ 4fb4d7f45d1cf-6507bf6d4acsm2728525a12.30.2026.01.06.10.33.13
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 06 Jan 2026 10:07:09 -0800 (PST)
-Date: Tue, 6 Jan 2026 10:07:05 -0800
+ Tue, 06 Jan 2026 10:33:15 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Lukas Sismis <sismis@dyna-nic.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH v2 4/7] test: add flow parser unit tests
-Message-ID: <20260106100705.4a27da00@phoenix.local>
-In-Reply-To: <20260106153838.398033-5-sismis@dyna-nic.com>
-References: <20260106153838.398033-1-sismis@dyna-nic.com>
- <20260106153838.398033-5-sismis@dyna-nic.com>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH 00/12] net/pcap: cleanups and test
+Date: Tue,  6 Jan 2026 10:26:39 -0800
+Message-ID: <20260106182823.192350-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.51.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,27 +78,34 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue,  6 Jan 2026 16:38:34 +0100
-Lukas Sismis <sismis@dyna-nic.com> wrote:
+This is a set of enhancements and tests to the PCAP PMD.
+It started out when looking at the handling of timestamps
+then realized lots of other cleanups were needed here.
 
-> Add comprehensive unit tests for the flow parser library.
-> 
-> Tests cover:
-> - flow_parser_autotest: Tests rte_flow_parser_parse() with various
->   flow command strings including create, destroy, validate, query,
->   list, and isolate commands. Verifies parsed patterns, actions,
->   and attributes match expected values.
-> 
-> - flow_parser_helpers_autotest: Tests the standalone helper functions
->   parse_attr_str(), parse_pattern_str(), and parse_actions_str().
->   Verifies parsing of attributes, patterns with various item types,
->   and action sequences.
-> 
-> Run with: dpdk-test flow_parser_autotest
->           dpdk-test flow_parser_helpers_autotest
-> 
-> Signed-off-by: Lukas Sismis <sismis@dyna-nic.com>
-> ---
+Stephen Hemminger (12):
+  net/pcap: avoid using rte_malloc and rte_memcpy
+  net/pcap: support MTU set
+  net/pcap: use bool for flags
+  net/pcap: support Tx offloads
+  net/pcap: support nanosecond timestamp precision
+  net/pcap: remove global variables
+  net/pcap: avoid use of volatile
+  net/pcap: optimize calculation of receive timestamp
+  net/pcap: report receive clock
+  net/pcap: cleanup MAC address handling
+  net/pcap: support MAC address set
+  test: add test for pcap PMD
 
-Should add some negative tests to make sure flow_parser doesn't die on bogus inputs.
-AI might help in creating more tests.
+ app/test/meson.build                  |    2 +
+ app/test/test_pmd_pcap.c              | 1471 +++++++++++++++++++++++++
+ drivers/net/pcap/pcap_ethdev.c        |  373 ++++---
+ drivers/net/pcap/pcap_osdep.h         |    2 +
+ drivers/net/pcap/pcap_osdep_freebsd.c |   60 +-
+ drivers/net/pcap/pcap_osdep_linux.c   |   51 +-
+ drivers/net/pcap/pcap_osdep_windows.c |    5 +
+ 7 files changed, 1830 insertions(+), 134 deletions(-)
+ create mode 100644 app/test/test_pmd_pcap.c
+
+-- 
+2.51.0
+
