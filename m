@@ -2,167 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5235CCFD647
-	for <dpdk-dev@archiver.kernel.org>; Wed,  7 Jan 2026 15:27:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BEF1D0D141
+	for <dpdk-dev@archiver.kernel.org>; Wed,  7 Jan 2026 17:04:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1B61540267;
-	Wed,  7 Jan 2026 16:27:04 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
- by mails.dpdk.org (Postfix) with ESMTP id EC7454021E
- for <dev@dpdk.org>; Wed,  7 Jan 2026 16:27:02 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1767799623; x=1799335623;
- h=from:to:cc:subject:date:message-id:mime-version;
- bh=SQcwKBPT2rJw7ct8YgReLnpOjo3N80QHrRUlgx/SMww=;
- b=Tor7kUxMbBlnBdXMiQSklmsi9oSwmOH7W18rBA9gWXtpLerZma/R0zuA
- 6ZmlwyfKVxbX/XeVaiSkBtsS14TUzdSEPcwuZvUC9seYt/EE5UtXJfw+F
- vAsUFNLqFMa6FEL5g7d6sEA0tmY9xYiroQGjzhJI2NkEaKwglPmQ9vjNd
- ZnhYEmioF8cnOFXEJ9ayler9EoyDR/UpWhl0kfGEfdDxTyf/uL/vV5V43
- Wa0ghUge0R7IotKpMhugHQ+yVH4cBHTdaEYQr+ceQSc6nZviXGmo510ZP
- im15gCdIemdNkI0fgfx83zw0GgfxcDFRdtnK9TbbTYjN8VEKco/gmqtBS A==;
-X-CSE-ConnectionGUID: 2GrqPGSvRw+1CVzRcFVG+A==
-X-CSE-MsgGUID: wtHSx9roRZqMhQbjewPzgA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11664"; a="69330900"
-X-IronPort-AV: E=Sophos;i="6.21,208,1763452800"; d="scan'208,217";a="69330900"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
- by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 07 Jan 2026 07:27:01 -0800
-X-CSE-ConnectionGUID: 4OnF5HqYSsu92vV/Lz+ybA==
-X-CSE-MsgGUID: t2c1YwzXTAaDC4xB/BWHxQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,208,1763452800"; 
- d="scan'208,217";a="234098540"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
- by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 07 Jan 2026 07:27:01 -0800
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.29; Wed, 7 Jan 2026 07:27:00 -0800
-Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.29 via Frontend Transport; Wed, 7 Jan 2026 07:27:00 -0800
-Received: from PH7PR06CU001.outbound.protection.outlook.com (52.101.201.15) by
- edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.29; Wed, 7 Jan 2026 07:27:00 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yualwKKG8Roz4hPBQHoXGW0irLdkLe+kpevs/UaZemLhQU0yWB6Zu4kUwGfWBbp88k2N5rH7SIc8l/hEh9z2ioWMN7novNTaPCmoNPsgKDYWOCzQ70LfVWFzmYoV4cadBAGIJuAaD8nDUTS9s4u3rAZjAUnJ1gbkLXyj8r3xkdogjgwaNuO4lP1sm4nfyuTVdKDMr/K+XF3B5l9DLQROju4DljsOeAmEeyZ1/ORd0CPLAmw8Mt3+MkbhV9IPajV1uuyjRvtc6e0Ex9iutnbFoWaZOp1VIgH6WuRxHvFbujC72ohP7O6XWevWrUgfniqsXoI9J/1GQJR/GbAQmHL14A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=c+tXp7vSE5Un5DPFOM3sibFWUhgNoTlmMvD6vr4D7xo=;
- b=TbFYt+pPF29sGZBfADQz7ObiKPe5sA7YMJU9XvWHzyw7/sw6I+aQH63/uaAwVZyFqHh1G3fxQQ+ws2MLFIlVouqeteVoMn4SevuUUVMF2/hhWApT6n59SCweonshY0Pt1L2FGWkwb3EqVpAwAoUYoQ5YNrgb3pWmZGkH/wYXFsdOAmAtaYmCYhZ8+mD6UIvFyemJ69B+V4E+CEQ9z3HDFBqB3nlUHXYRHb5TJWrQa0xpaYWj5ATL93Y60PSabthL9rxjw7UV65VuJQDWfKxk1RzLIi8zeCQxch0xl8Kj+/CoId/wWrA8I4JCxEFYiqQqzHRpjCWpX++nNg8DdN+rxw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from PH3PPF37F43E35D.namprd11.prod.outlook.com
- (2603:10b6:518:1::d16) by SA2PR11MB4969.namprd11.prod.outlook.com
- (2603:10b6:806:111::12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9499.2; Wed, 7 Jan
- 2026 15:26:57 +0000
-Received: from PH3PPF37F43E35D.namprd11.prod.outlook.com
- ([fe80::bdf:9086:1292:5d72]) by PH3PPF37F43E35D.namprd11.prod.outlook.com
- ([fe80::bdf:9086:1292:5d72%5]) with mapi id 15.20.9499.002; Wed, 7 Jan 2026
- 15:26:57 +0000
-From: "Mcnamara, John" <john.mcnamara@intel.com>
-To: "dev@dpdk.org" <dev@dpdk.org>
-CC: "thomas@monjalon.net" <thomas@monjalon.net>, "Marchand, David"
- <david.marchand@redhat.com>
-Subject: DPDK Release Status Meeting 2026-01-06
-Thread-Topic: DPDK Release Status Meeting 2026-01-06
-Thread-Index: Adx/6fz+qHDWaIawTfam/O2ChWlrrA==
-Date: Wed, 7 Jan 2026 15:26:57 +0000
-Message-ID: <PH3PPF37F43E35DEEB407ED016EC5515CEFFC84A@PH3PPF37F43E35D.namprd11.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PH3PPF37F43E35D:EE_|SA2PR11MB4969:EE_
-x-ms-office365-filtering-correlation-id: ae84edad-b4d4-4c9a-45e1-08de4e013247
-x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
- ARA:13230040|366016|1800799024|376014|38070700021|8096899003; 
-x-microsoft-antispam-message-info: =?us-ascii?Q?zioQUcHwD+NsIMwk1MalB7zlBPw8NqA4B26P1hBCfa8nwlrknCJwt+pCm/P2?=
- =?us-ascii?Q?qQ1vX2GhQsZyRroGG8BLYJ30EfYPpbWUINvb3KxMQp2oMY3HgfU4Qg7pFc1a?=
- =?us-ascii?Q?yPnA7IztuefZFSFpBVnbS1pW2x+q89JrGntv25v2SWVrG+ceDxM0vJqZHlOJ?=
- =?us-ascii?Q?zbQCyM3NB09TmQI/qrDEy9yYhKwe7g7eYRcubofBapF6ow28RgddQ7NvEGR8?=
- =?us-ascii?Q?EqNYUgVMraZZeO3A5DoY5COEYX6WEsA+nqE6qjOtO8sTAtU25ykaQlb802bk?=
- =?us-ascii?Q?bTqBT/8Mi4MqBHby3LtXLA9chEENnnGfR8w7vSLshMbvia/ab6FD/mvW/x0r?=
- =?us-ascii?Q?JvFDVYCx9A6x9raIK/pztJf4X4KF1XMM6/nKSZoRcvP7WgQ5hCWC495CuteF?=
- =?us-ascii?Q?gjVZ6wwvvClWXKQvO9kx+WJJdrPnFbJQEt9S1BlDo7MFSBCz5PgHQ7oST5bH?=
- =?us-ascii?Q?OkGzbrZu6iIBsGbDvjexgQxp6w6RS5MXdNs10k61jVN6i0k6bkcEDBbQz4yj?=
- =?us-ascii?Q?Rmzind9EPRBE1T1s5z0ZwVfZXXJQqSn9dOKeca1+aL2B8NS46sglDkqx/Tsr?=
- =?us-ascii?Q?y1491WCPwRtKqOmyiudJCeO74QicIcgR8jImNMWh38fbCnVasMpctSXTMU0d?=
- =?us-ascii?Q?gKQ1w0a4Dfzmk2WGhYUHTPPa57SFY33QPnWqNtzBcW1n+r92IURA2TorJLdt?=
- =?us-ascii?Q?Hn5K3dbJR6HKKWF4vHNCOapZcm+Gg6rxEhiLhXIpXt4hoAfA0BoGNE6i6XQN?=
- =?us-ascii?Q?Mjo39wcpjePLsKCXqWdwEfGmNUOpD55WzGb2gkeCh4Np+Z8ky0IqpVwMpugs?=
- =?us-ascii?Q?+DIB/JpN8wBmk4kTA2Wey+GQjpE+gTzuKk9tquaOykQWUvuDZPIeVzEsoFP2?=
- =?us-ascii?Q?GZ9tt3X/Sa2j/zpLGMK885SqOyVdY0SRmhlrJ9K6vf2vIwlUf/GbKgoxncgE?=
- =?us-ascii?Q?1Pb0emHQ9morhAL3WwkUL5Mazo9ovZwO3EKEdzwTmcQyktpG8hRzQCiPt8GL?=
- =?us-ascii?Q?+bpa0UOdeq8tNelwL/P5YUwHFdx9ugratvK/mI71cx9ofalyCL/qTpwC4PQQ?=
- =?us-ascii?Q?yTXWngLyFrnWnJ4xffJHx+lXIeOPkhbhXvCO449wHrA7rs03vOPCAhC8aOj2?=
- =?us-ascii?Q?c4gdrFHl5GLzyLVtqqBTvAiRibLyi4KMGF2Za/RfSpiWlPmddURU2pBrTTnz?=
- =?us-ascii?Q?qYKi3C+vJHncFAHjeTNesugof1Htoj50TcytsWHtL3JwTjdTmDVlZxlWBbaU?=
- =?us-ascii?Q?ZGArYdZrDU8LBkZ+wlayeCFoTvpRL6Bp8RpMxNbGIH61voIkL2fZWGxY8+B8?=
- =?us-ascii?Q?BM6l3Y4QRO3oDMznHuaBQG56mVLHHiDJxLeRWFI1gllzPoCimBNN4djeH4TI?=
- =?us-ascii?Q?Z7HtVsx9gz0yzNj6UnGNn9sBgs/zVc5ASSKLIvmtJlhs1aGahPvcAcyzpQu0?=
- =?us-ascii?Q?3e29cugp5dc75jGNPdbfSqG3T1xb/5t5Gd/ELyldCWLiqn93jhhCtg=3D=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:PH3PPF37F43E35D.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(1800799024)(376014)(38070700021)(8096899003); DIR:OUT;
- SFP:1101; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?1081u3QcyPraHcxXKCrsUnya6bYDCxVHdqBnrYCHTbsJg3Uaa4ji1/SaSqt6?=
- =?us-ascii?Q?+BvRKsAiwGusiKW/d5UzriDJ5zx8yBpq8uQCVJatWq88cqNs33ybfB7tfMgE?=
- =?us-ascii?Q?ESNeAXOoZbCyNRw6bO1P1hm2xNx6qcXBd7YOaBAOuQeJqKh460vZ1c6PfVFs?=
- =?us-ascii?Q?/bqyvk3LtXRThV7wQr4L5gTM3Tl5STvMKrukwNoDjeg/CPdnqqP+X8xZ9AC4?=
- =?us-ascii?Q?OuvMfT+iwCYAOwsRsO15x/jn6ZQVKHIeQKUMZRdeb7GTsluodoiRfyZEINJ/?=
- =?us-ascii?Q?8P7o6qKBAdezfcS0NEcmZ2L9/wWEKGrj86RaYNkKn/qNbr6VKZS4lSUsS17m?=
- =?us-ascii?Q?6S+StW1ocL4w96YEz+2lqp6vqjL1Giyw8wiDvcjDuHDQxgrNeLG/v2Gw+CDI?=
- =?us-ascii?Q?USpaOD5r4+ngVUqjg+ENynbDWGiOX5Bozvdv5lkhGjNygvT95RuuAQo3Xa5v?=
- =?us-ascii?Q?uCCqYcgLfYiMxoJoQYdGNHvMCJfq20q26wAe6/DTpJ6GsxmnUdAZJPPhsEbV?=
- =?us-ascii?Q?2e9enXHCUlydVas8uhBMRnci7CqCXddBW5WBKJNa5kr/fEIvly9o3b5pFLrR?=
- =?us-ascii?Q?MAuTPAWzyIYQTw5tbM9NKUAp7cA0OloV/jXGzbdM79zFybzMeXe57WrJcN0U?=
- =?us-ascii?Q?XwKpwtzwgTGrDn6aKzIchTjbI3ZstuX7tHdkFjN8YYdewp/FgktDfdAmX9hH?=
- =?us-ascii?Q?gCDIDn0lVy7JF9mB8L1IX7Ch8pwHoYfWCJ/85oTRHVK7FYL3xdtqYST1/+ib?=
- =?us-ascii?Q?qHc+epuTLJZAm/sJdQtFMWdtErAj0UaSwyoaEWoXG3X5YoPgqayooM6Bnasb?=
- =?us-ascii?Q?v05qqXHwemg1oF83ZbvdeaM7SwbE6fOf+H8CBh2fAK7nm7gY8tAIGOTiHayF?=
- =?us-ascii?Q?3p191w6/pPKimCN17Rd3E8IXM9X2TfWtatmvR6Imi/Vvf5Hy2DRXQ9hLOK0+?=
- =?us-ascii?Q?4W6Ea4IrU9wo/U5QthLAL2BWfTtzbeals0YtSL9h8qMhDOcY8HymlhkwKokI?=
- =?us-ascii?Q?XyQOa4/G46zYFNWFewOO0wpPLT+dTG2l/jW415VX7LKECzbGBiDE0jDXV9BT?=
- =?us-ascii?Q?PorG9HlY4017h/6VS8bsvPmJHVBYapMyeavIlWqRnwNL2aDVLxgX7Fw7QTUc?=
- =?us-ascii?Q?6HZLI6QsQbjXnka5hEqY3TU5xDH+7ZCkdRuTuLn0XuQdtX2+LuMFm385iRf/?=
- =?us-ascii?Q?uxm1S8IAgvh6mFFn7RWVeRLGhJ/qBk8sq8Qjkm14pmTW0/HUri0GSdw5Ni6y?=
- =?us-ascii?Q?yCu5uOovpkU5yCskGZuEbXp78W8q0auszVgwRXm2uiR76R+r7UwBSg49llmb?=
- =?us-ascii?Q?COEB/lvqknwvHFlcVvc1LSnTQrAoII5mMacteTEDiZf6aIS1qc1XxK4pm+A+?=
- =?us-ascii?Q?ZkxJcTjfdIjKQWCugsA0JKKeAKhqsbrwW7++mD2FFozZaAC7BN/8CGa9itq/?=
- =?us-ascii?Q?dwWbpBL5pyjj2ICP2jDA3MpLlminkJ9hyNjTwOJX4QBQMdNlSb0KLW46PWOU?=
- =?us-ascii?Q?faWVyMrI/jDnbK0u5p3CVoUujutySHQ0Py6kvtaLEglpvgAUcaGfVtLrTR18?=
- =?us-ascii?Q?WupxJa1si+q9lXccaCIDJ1Xu16y9km1TIIeng/wiZdAR3fnkx/UMgligdS89?=
- =?us-ascii?Q?zd3h2B3+qmJSW+oIneEWmxUY6ivPYPD9u9hJfZ7dYLrrH6QqqcxXiMoeQ10J?=
- =?us-ascii?Q?Tg2OSfpk931T6/V7blvbzg0Ac9HH+gqCC9tPq6OII0S+VXHjMbYmMoADr0QC?=
- =?us-ascii?Q?BNcKzi07XQ=3D=3D?=
-Content-Type: multipart/alternative;
- boundary="_000_PH3PPF37F43E35DEEB407ED016EC5515CEFFC84APH3PPF37F43E35D_"
+	by mails.dpdk.org (Postfix) with ESMTP id 001C24028E;
+	Wed,  7 Jan 2026 18:04:33 +0100 (CET)
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com
+ [209.85.219.50]) by mails.dpdk.org (Postfix) with ESMTP id C55934021E
+ for <dev@dpdk.org>; Wed,  7 Jan 2026 18:04:32 +0100 (CET)
+Received: by mail-qv1-f50.google.com with SMTP id
+ 6a1803df08f44-88a3bba9fd4so20931296d6.2
+ for <dev@dpdk.org>; Wed, 07 Jan 2026 09:04:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20230601; t=1767805472; x=1768410272; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=UrhTPJPDWo85DvdcV2OLaC71w8aw7CCFZHzXtWl6ikY=;
+ b=edvbIl+tSYHfifrkvhaFBeOkHBnJjtpYCnBV4vRRMIHvXCrT13oFuqBLlxmMtaBdcI
+ RSFlBiLTa0o0QSTCbdPdOXL2yb/b70gq3ed9uwv1TiyK2OLuQF6HxjtWH2/WDlxdseJ8
+ UpIuvHxBYsxV/iFQap4s2u2Ma6JZoY44+HrsIvnIFAp+nDSJ03OLSJNc/0SYj+EW/Ck/
+ BcjjjSBelkmGVGnFaPkQe55eKs90tGoXuRQL6Gh9/yW+fyG+q9zUzX+5OR6G2mNmcSaC
+ UTBl/jStkC/KvvWIO7Bb3jr+FJScsh8QE1HWBIq0LbjEVHjPC7u48fNwfiv65Ol87QyF
+ BOcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1767805472; x=1768410272;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=UrhTPJPDWo85DvdcV2OLaC71w8aw7CCFZHzXtWl6ikY=;
+ b=Tv5/0Qs9LEo3xdhdX+wJhOI0FlMwTRd88OwgxD7H8N/aqvt8Z6bjS4Ul0WO1gPOWEE
+ zZj8ithDxY5nybH4HLvCpUxzjzlHzdzulVS15abK1eegLRuaD8DbYgWpWMBTqf1QhWm1
+ 1lOVdgnruMco/wBfuHQZCReVUZqBlz0RiY1/SloXzuT56VxnRHS7Niz0ky1XJ3E88ToL
+ 91E/RnD/Yzehh45CIHAa1IB4rX3903LjapA4YaqYUXnC1L35A0yarnK3kuf5wRxNvV8a
+ WCjCkpiwKgVloOkfx8WV1BvSU0Goz0VKOisl0RCUhoQwZyBKeAf4m2+9L30LUQduLFNn
+ 4+nA==
+X-Gm-Message-State: AOJu0YyVRpFNTgKCPiXRUrUxIkRtb3lM56OwYtLQE+3QXsU+MUtzcF0n
+ C7yZJi6gSoJ5b3BSva4gn7cQA6d2B/EAicUN2itZ4AQXqu36F9Uwarq/VNjCIA==
+X-Gm-Gg: AY/fxX5mar/FncwCMqo30/31ekYeZ51+6qKVzU7spMPKBsixOyH3QIMo9UtvbZ1zy50
+ DgJzmhA7lxzgfWruHw9lKSoxuA0ZeJTti06HTN8Brd2cBR3Jxx9G2As/dGJBP26rHJz0iGaB+f1
+ QMLJOD7ntkwBg/WSQeDY2wwnQL/tD901XRv+sO0ihcDn9OR160024/hMtaAZaYbxc1p2FHRZCNw
+ vONuMS/dXsVSE61S+/WiE2oiAuXgVLrq0hccRfZOny70MZMHxXT1gG0bwTj6jpw23eFO0gKSuag
+ FZ5yYVoB7X1YMdDwjyb7eRX43TPPWk209JOKde9br/SzbKTNekQLq7Y3mrnuTsrvEnj3RUWbibu
+ hWeoMI/D0GprIymFjw01clWQDKFWw2W8J3GyeVGrgGOWqLI8aeJnS37BANcpI9FCALVaaMw7xs+
+ 9jHxA8hIf+ikPyQU3aip2R33gRPXVPs8792HsjOSIhN4iSK92Pfw5VhVBPGQ==
+X-Google-Smtp-Source: AGHT+IFy+O+cuJarXauYVIZ9etEpOfvvQ1TflomuyooRU7SCvIf9NTFn1QgdUqexNXErVAcoNEXWag==
+X-Received: by 2002:ad4:5968:0:b0:7e3:cc6e:3c89 with SMTP id
+ 6a1803df08f44-89084270b69mr46853046d6.56.1767805470107; 
+ Wed, 07 Jan 2026 09:04:30 -0800 (PST)
+Received: from st47p01nt-relayp02.apple.com
+ ([2601:182:b80:6a50:55a3:c8d2:e6eb:53e3])
+ by smtp.gmail.com with ESMTPSA id
+ 6a1803df08f44-8907725ffc7sm35980536d6.44.2026.01.07.09.04.29
+ (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+ Wed, 07 Jan 2026 09:04:29 -0800 (PST)
+From: scott.k.mitch1@gmail.com
+To: dev@dpdk.org
+Cc: mb@smartsharesystems.com,
+	Scott Mitchell <scott.k.mitch1@gmail.com>
+Subject: [PATCH v3] net: optimize raw checksum computation
+Date: Wed,  7 Jan 2026 12:04:15 -0500
+Message-Id: <20260107170415.80275-1-scott.k.mitch1@gmail.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PH3PPF37F43E35D.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ae84edad-b4d4-4c9a-45e1-08de4e013247
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Jan 2026 15:26:57.8348 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: sIp+tZ0MvwWVX6ZmZliOUL4EAqewYsvFYdl296aOsJUc+cdOTh/IHg5gLXNISEC2i+RTcaqkSVKYfZmrUxbxVA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR11MB4969
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -176,457 +78,431 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---_000_PH3PPF37F43E35DEEB407ED016EC5515CEFFC84APH3PPF37F43E35D_
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+From: Scott Mitchell <scott.k.mitch1@gmail.com>
 
-Release status meeting minutes 2026-01-06
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Optimize __rte_raw_cksum() by processing data in larger unrolled loops
+instead of iterating word-by-word. The new implementation processes
+64-byte blocks (32 x uint16_t) in the hot path, followed by smaller
+32/16/8/4/2-byte chunks.
 
-Agenda:
-- Release Dates
-- Subtrees
-- Roadmaps
-- LTS
-- Defects
-- Opens
+Uses uint32_t accumulator with explicit casts to prevent signed integer
+overflow and leverages unaligned_uint16_t for safe unaligned access on
+all platforms. Adds __rte_no_ubsan_alignment attribute to suppress false
+positive alignment warnings from UndefinedBehaviorSanitizer.
 
-Participants:
-- Broadcom
-- Intel
-- Marvell
-- Nvidia
-- Red Hat
+Performance results from cksum_perf_autotest (TSC cycles/byte):
+  Block size    Before    After    Improvement
+         100  0.40-0.64  0.13-0.14    ~3-4x
+        1500  0.49-0.51  0.10-0.11    ~4-5x
+        9000  0.48-0.51  0.11-0.12    ~4x
 
-Release Dates
--------------
-
-The following are the proposed working dates for 26.03:
-
-
-| Date            | Milestone      | Description                    |
-| --------------- | -------------- | ------------------------------ |
-| 5 January 2026  | RFC/v1 patches | Proposal deadline              |
-| 9 February 2026 | 26.03-rc1      | API freeze                     |
-| 2 March 2026    | 26.03-rc2      | PMD features freeze            |
-| 9 March 2026    | 26.03-rc3      | Builtin apps features freeze   |
-| 16 March 2026   | 26.03-rc4      | Documentation ready            |
-| 19 March 2026   | 26.03.0        | Release                        |
-
-See https://core.dpdk.org/roadmap/
-
-
-Subtrees
---------
-
-- next-net
-  - No update.
-
-- next-net-intel
-  - 18 patches merged, but a large enough backlog of >40 packets.
-
-- next-net-mlx
-  - No major changes in this release.
-
-- next-broadcom
-  - Some fixes.
-
-- next-net-mvl
-  - Some patches in progress.
-
-- next-eventdev
-  - Some patches in progress.
-
-- next-baseband
-  - Under review.
-
-- next-virtio
-  - Under review.
-
-- next-crypto
-  - ~ 11 patches.
-  - Snow 5G.
-
-- next-dts
-  - Two doc changes that could make it in.
-
-- main
-  - Unit test work under review.
-  - Series adding additional warnings and fixing
-    the resulting issues.
-  - Fix for GCC 16.
-
-
-Other
------
-  - None.
-
-LTS
+Signed-off-by: Scott Mitchell <scott.k.mitch1@gmail.com>
 ---
+Changes in v3:
+- Added __rte_no_ubsan_alignment macro to suppress false-positive UBSAN
+  alignment warnings when using unaligned_uint16_t
+- Fixed false-positive GCC maybe-uninitialized warning in rte_ip6.h exposed
+  by optimization (can be split to separate patch once verified on CI)
 
-See also: https://core.dpdk.org/roadmap/#stable
+Changes in v2:
+- Fixed UndefinedBehaviorSanitizer errors by adding uint32_t casts to prevent
+  signed integer overflow in addition chains
+- Restored uint32_t sum accumulator instead of uint64_t
+- Added 64k length to test_cksum_perf.c
 
-LTS versions ongoing/released:
+ app/test/meson.build         |   1 +
+ app/test/test_cksum_fuzz.c   | 241 +++++++++++++++++++++++++++++++++++
+ app/test/test_cksum_perf.c   |   2 +-
+ lib/eal/include/rte_common.h |   9 ++
+ lib/net/rte_cksum.h          |  60 +++++++--
+ lib/net/rte_ip6.h            |   2 +-
+ 6 files changed, 303 insertions(+), 12 deletions(-)
+ create mode 100644 app/test/test_cksum_fuzz.c
 
-- 24.11.6 - Released.
-- 23.11.5 - Ongoing.
-- 22.11.11 - Released.
+diff --git a/app/test/meson.build b/app/test/meson.build
+index efec42a6bf..c92325ad58 100644
+--- a/app/test/meson.build
++++ b/app/test/meson.build
+@@ -38,6 +38,7 @@ source_file_deps = {
+     'test_byteorder.c': [],
+     'test_cfgfile.c': ['cfgfile'],
+     'test_cksum.c': ['net'],
++    'test_cksum_fuzz.c': ['net'],
+     'test_cksum_perf.c': ['net'],
+     'test_cmdline.c': [],
+     'test_cmdline_cirbuf.c': [],
+diff --git a/app/test/test_cksum_fuzz.c b/app/test/test_cksum_fuzz.c
+new file mode 100644
+index 0000000000..cc3c3e71e1
+--- /dev/null
++++ b/app/test/test_cksum_fuzz.c
+@@ -0,0 +1,241 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(c) 2026 Apple Inc.
++ */
++
++#include <stdio.h>
++#include <string.h>
++
++#include <rte_common.h>
++#include <rte_cycles.h>
++#include <rte_hexdump.h>
++#include <rte_cksum.h>
++#include <rte_malloc.h>
++#include <rte_random.h>
++
++#include "test.h"
++
++/*
++ * Fuzz test for __rte_raw_cksum optimization.
++ * Compares the optimized implementation against the original reference
++ * implementation across random data of various lengths.
++ */
++
++#define DEFAULT_ITERATIONS 1000
++#define MAX_TEST_LEN 65536  /* 64K to match GRO frame sizes */
++
++/*
++ * Original (reference) implementation of __rte_raw_cksum from DPDK v23.11.
++ * This is retained here for comparison testing against the optimized version.
++ */
++static inline uint32_t
++__rte_raw_cksum_reference(const void *buf, size_t len, uint32_t sum)
++{
++	const void *end;
++
++	for (end = RTE_PTR_ADD(buf, RTE_ALIGN_FLOOR(len, sizeof(uint16_t)));
++	     buf != end; buf = RTE_PTR_ADD(buf, sizeof(uint16_t))) {
++		uint16_t v;
++
++		memcpy(&v, buf, sizeof(uint16_t));
++		sum += v;
++	}
++
++	/* if length is odd, keeping it byte order independent */
++	if (unlikely(len % 2)) {
++		uint16_t left = 0;
++
++		memcpy(&left, end, 1);
++		sum += left;
++	}
++
++	return sum;
++}
++
++static void
++init_random_buffer(uint8_t *buf, size_t len)
++{
++	size_t i;
++
++	for (i = 0; i < len; i++)
++		buf[i] = (uint8_t)rte_rand();
++}
++
++static inline uint32_t
++get_initial_sum(bool random_initial_sum)
++{
++	return random_initial_sum ? (rte_rand() & 0xFFFFFFFF) : 0;
++}
++
++/*
++ * Test a single buffer length with specific alignment and initial sum
++ */
++static int
++test_cksum_fuzz_length_aligned(size_t len, bool aligned, uint32_t initial_sum)
++{
++	uint8_t *data;
++	uint8_t *buf;
++	size_t alloc_size;
++	uint32_t sum_ref, sum_opt;
++
++	if (len == 0 && !aligned) {
++		/* Skip unaligned test for zero length - nothing to test */
++		return TEST_SUCCESS;
++	}
++
++	/* Allocate exact size for aligned, +1 for unaligned offset */
++	alloc_size = aligned ? len : len + 1;
++	if (alloc_size == 0)
++		alloc_size = 1;  /* rte_malloc doesn't like 0 */
++
++	data = rte_malloc(NULL, alloc_size, 64);
++	if (data == NULL) {
++		printf("Failed to allocate %zu bytes\n", alloc_size);
++		return TEST_FAILED;
++	}
++
++	buf = aligned ? data : (data + 1);
++
++	init_random_buffer(buf, len);
++
++	sum_ref = __rte_raw_cksum_reference(buf, len, initial_sum);
++	sum_opt = __rte_raw_cksum(buf, len, initial_sum);
++
++	if (sum_ref != sum_opt) {
++		printf("MISMATCH at len=%zu aligned='%s' initial_sum=0x%08x ref=0x%08x opt=0x%08x\n",
++		       len, aligned ? "aligned" : "unaligned",
++		       initial_sum, sum_ref, sum_opt);
++		rte_hexdump(stdout, "failing buffer", buf, len);
++		rte_free(data);
++		return TEST_FAILED;
++	}
++
++	rte_free(data);
++	return TEST_SUCCESS;
++}
++
++/*
++ * Test a length with both alignments
++ */
++static int
++test_cksum_fuzz_length(size_t len, uint32_t initial_sum)
++{
++	int rc;
++
++	/* Test aligned */
++	rc = test_cksum_fuzz_length_aligned(len, true, initial_sum);
++	if (rc != TEST_SUCCESS)
++		return rc;
++
++	/* Test unaligned */
++	rc = test_cksum_fuzz_length_aligned(len, false, initial_sum);
++
++	return rc;
++}
++
++/*
++ * Test specific edge case lengths
++ */
++static int
++test_cksum_fuzz_edge_cases(void)
++{
++	/* Edge case lengths that might trigger bugs */
++	static const size_t edge_lengths[] = {
++		0, 1, 2, 3, 4, 5, 6, 7, 8,
++		15, 16, 17,
++		31, 32, 33,
++		63, 64, 65,
++		127, 128, 129,
++		255, 256, 257,
++		511, 512, 513,
++		1023, 1024, 1025,
++		1500, 1501,  /* MTU boundaries */
++		2047, 2048, 2049,
++		4095, 4096, 4097,
++		8191, 8192, 8193,
++		16383, 16384, 16385,
++		32767, 32768, 32769,
++		65534, 65535, 65536  /* 64K GRO boundaries */
++	};
++	unsigned int i;
++	int rc;
++
++	printf("Testing edge case lengths...\n");
++
++	for (i = 0; i < RTE_DIM(edge_lengths); i++) {
++		/* Test with zero initial sum */
++		rc = test_cksum_fuzz_length(edge_lengths[i], 0);
++		if (rc != TEST_SUCCESS)
++			return rc;
++
++		/* Test with random initial sum */
++		rc = test_cksum_fuzz_length(edge_lengths[i], get_initial_sum(true));
++		if (rc != TEST_SUCCESS)
++			return rc;
++	}
++
++	return TEST_SUCCESS;
++}
++
++/*
++ * Test random lengths with optional random initial sums
++ */
++static int
++test_cksum_fuzz_random(unsigned int iterations, bool random_initial_sum)
++{
++	unsigned int i;
++	int rc;
++
++	printf("Testing random lengths (0-%d)%s...\n", MAX_TEST_LEN,
++	       random_initial_sum ? " with random initial sums" : "");
++
++	for (i = 0; i < iterations; i++) {
++		size_t len = rte_rand() % (MAX_TEST_LEN + 1);
++
++		rc = test_cksum_fuzz_length(len, get_initial_sum(random_initial_sum));
++		if (rc != TEST_SUCCESS) {
++			printf("Failed at len=%zu\n", len);
++			return rc;
++		}
++	}
++
++	return TEST_SUCCESS;
++}
++
++static int
++test_cksum_fuzz(void)
++{
++	int rc;
++	unsigned int iterations = DEFAULT_ITERATIONS;
++
++	printf("### __rte_raw_cksum optimization fuzz test ###\n");
++	printf("Iterations per test: %u\n\n", iterations);
++
++	/* Test edge cases */
++	rc = test_cksum_fuzz_edge_cases();
++	if (rc != TEST_SUCCESS) {
++		printf("Edge case test FAILED\n");
++		return rc;
++	}
++	printf("Edge case test PASSED\n\n");
++
++	/* Test random lengths with zero initial sum */
++	rc = test_cksum_fuzz_random(iterations, false);
++	if (rc != TEST_SUCCESS) {
++		printf("Random length test FAILED\n");
++		return rc;
++	}
++	printf("Random length test PASSED\n\n");
++
++	/* Test random lengths with random initial sums */
++	rc = test_cksum_fuzz_random(iterations, true);
++	if (rc != TEST_SUCCESS) {
++		printf("Random initial sum test FAILED\n");
++		return rc;
++	}
++	printf("Random initial sum test PASSED\n\n");
++
++	printf("All fuzz tests PASSED!\n");
++	return TEST_SUCCESS;
++}
++
++REGISTER_FAST_TEST(cksum_fuzz_autotest, true, true, test_cksum_fuzz);
+diff --git a/app/test/test_cksum_perf.c b/app/test/test_cksum_perf.c
+index 0b919cd59f..6b1d4589e0 100644
+--- a/app/test/test_cksum_perf.c
++++ b/app/test/test_cksum_perf.c
+@@ -15,7 +15,7 @@
+ #define NUM_BLOCKS 10
+ #define ITERATIONS 1000000
+ 
+-static const size_t data_sizes[] = { 20, 21, 100, 101, 1500, 1501 };
++static const size_t data_sizes[] = { 20, 21, 100, 101, 1500, 1501, 9000, 9001, 65536, 65537 };
+ 
+ static __rte_noinline uint16_t
+ do_rte_raw_cksum(const void *buf, size_t len)
+diff --git a/lib/eal/include/rte_common.h b/lib/eal/include/rte_common.h
+index 9e7d84f929..37a36a1b22 100644
+--- a/lib/eal/include/rte_common.h
++++ b/lib/eal/include/rte_common.h
+@@ -546,6 +546,15 @@ static void __attribute__((destructor(RTE_PRIO(prio)), used)) func(void)
+ #define __rte_no_asan
+ #endif
+ 
++/**
++ * Disable UndefinedBehaviorSanitizer alignment checks
++ */
++#if defined(RTE_TOOLCHAIN_GCC) || defined(RTE_TOOLCHAIN_CLANG)
++#define __rte_no_ubsan_alignment __attribute__((no_sanitize("alignment")))
++#else
++#define __rte_no_ubsan_alignment
++#endif
++
+ /*********** Macros for pointer arithmetic ********/
+ 
+ /**
+diff --git a/lib/net/rte_cksum.h b/lib/net/rte_cksum.h
+index a8e8927952..d6e313dea5 100644
+--- a/lib/net/rte_cksum.h
++++ b/lib/net/rte_cksum.h
+@@ -39,24 +39,64 @@ extern "C" {
+  * @return
+  *   sum += Sum of all words in the buffer.
+  */
++__rte_no_ubsan_alignment
+ static inline uint32_t
+ __rte_raw_cksum(const void *buf, size_t len, uint32_t sum)
+ {
+-	const void *end;
++	/* Process in 64 byte blocks (32 x uint16_t). */
++	/* Always process as uint16_t chunks to preserve overflow/carry. */
++	const void *end = RTE_PTR_ADD(buf, RTE_ALIGN_FLOOR(len, 64));
++	while (buf != end) {
++		const unaligned_uint16_t *p16 = (const unaligned_uint16_t *)buf;
++		sum += (uint32_t)p16[0] + p16[1] + p16[2] + p16[3] +
++			 p16[4] + p16[5] + p16[6] + p16[7] +
++			 p16[8] + p16[9] + p16[10] + p16[11] +
++			 p16[12] + p16[13] + p16[14] + p16[15] +
++			 p16[16] + p16[17] + p16[18] + p16[19] +
++			 p16[20] + p16[21] + p16[22] + p16[23] +
++			 p16[24] + p16[25] + p16[26] + p16[27] +
++			 p16[28] + p16[29] + p16[30] + p16[31];
++		buf = RTE_PTR_ADD(buf, 64);
++	}
+ 
+-	for (end = RTE_PTR_ADD(buf, RTE_ALIGN_FLOOR(len, sizeof(uint16_t)));
+-	     buf != end; buf = RTE_PTR_ADD(buf, sizeof(uint16_t))) {
+-		uint16_t v;
++	if (len & 32) {
++		const unaligned_uint16_t *p16 = (const unaligned_uint16_t *)buf;
++		sum += (uint32_t)p16[0] + p16[1] + p16[2] + p16[3] +
++			 p16[4] + p16[5] + p16[6] + p16[7] +
++			 p16[8] + p16[9] + p16[10] + p16[11] +
++			 p16[12] + p16[13] + p16[14] + p16[15];
++		buf = RTE_PTR_ADD(buf, 32);
++	}
+ 
+-		memcpy(&v, buf, sizeof(uint16_t));
+-		sum += v;
++	if (len & 16) {
++		const unaligned_uint16_t *p16 = (const unaligned_uint16_t *)buf;
++		sum += (uint32_t)p16[0] + p16[1] + p16[2] + p16[3] +
++			 p16[4] + p16[5] + p16[6] + p16[7];
++		buf = RTE_PTR_ADD(buf, 16);
+ 	}
+ 
+-	/* if length is odd, keeping it byte order independent */
+-	if (unlikely(len % 2)) {
+-		uint16_t left = 0;
++	if (len & 8) {
++		const unaligned_uint16_t *p16 = (const unaligned_uint16_t *)buf;
++		sum += (uint32_t)p16[0] + p16[1] + p16[2] + p16[3];
++		buf = RTE_PTR_ADD(buf, 8);
++	}
+ 
+-		memcpy(&left, end, 1);
++	if (len & 4) {
++		const unaligned_uint16_t *p16 = (const unaligned_uint16_t *)buf;
++		sum += (uint32_t)p16[0] + p16[1];
++		buf = RTE_PTR_ADD(buf, 4);
++	}
++
++	if (len & 2) {
++		const unaligned_uint16_t *p16 = (const unaligned_uint16_t *)buf;
++		sum += *p16;
++		buf = RTE_PTR_ADD(buf, 2);
++	}
++
++	/* If length is odd use memcpy for byte order independence */
++	if (len & 1) {
++		uint16_t left = 0;
++		memcpy(&left, buf, 1);
+ 		sum += left;
+ 	}
+ 
+diff --git a/lib/net/rte_ip6.h b/lib/net/rte_ip6.h
+index d1abf1f5d5..af65a39815 100644
+--- a/lib/net/rte_ip6.h
++++ b/lib/net/rte_ip6.h
+@@ -564,7 +564,7 @@ rte_ipv6_phdr_cksum(const struct rte_ipv6_hdr *ipv6_hdr, uint64_t ol_flags)
+ 	struct {
+ 		rte_be32_t len;   /* L4 length. */
+ 		rte_be32_t proto; /* L4 protocol - top 3 bytes must be zero */
+-	} psd_hdr;
++	} psd_hdr = {0}; /* Empty initializer avoids false-positive maybe-uninitialized warning */
+ 
+ 	psd_hdr.proto = (uint32_t)(ipv6_hdr->proto << 24);
+ 	if (ol_flags & (RTE_MBUF_F_TX_TCP_SEG | RTE_MBUF_F_TX_UDP_SEG))
+-- 
+2.39.5 (Apple Git-154)
 
-Older releases:
-- 20.11.10 - Will only be updated with CVE and critical fixes.
-- 19.11.14 - Will only be updated with CVE and critical fixes.
-
-
-- Distros
-  - Debian 13 contains DPDK v24.11
-  - Ubuntu 25.04 contains DPDK v24.11
-  - Ubuntu 24.04 LTS contains DPDK v23.11
-  - RHEL 9 contains DPDK 24.11
-
-Defects
--------
-
-- Bugzilla links, 'Bugs',  added for hosted projects
-  - https://www.dpdk.org/hosted-projects/
-
-
-
-DPDK Release Status Meetings
-----------------------------
-
-The DPDK Release Status Meeting is intended for DPDK Committers to discuss =
-the
-status of the master tree and sub-trees, and for project managers to track
-progress or milestone dates.
-
-The meeting occurs on every Tuesday at 14:30 DST over Jitsi on https://meet=
-.jit.si/DPDK
-
-You don't need an invite to join the meeting but if you want a calendar rem=
-inder just
-send an email to "John McNamara <john.mcnamara@intel.com>" for the invite.
-
-
---_000_PH3PPF37F43E35DEEB407ED016EC5515CEFFC84APH3PPF37F43E35D_
-Content-Type: text/html; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-
-<html xmlns:o=3D"urn:schemas-microsoft-com:office:office" xmlns:w=3D"urn:sc=
-hemas-microsoft-com:office:word" xmlns:m=3D"http://schemas.microsoft.com/of=
-fice/2004/12/omml" xmlns=3D"http://www.w3.org/TR/REC-html40">
-<head>
-<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Dus-ascii"=
->
-<meta name=3D"Generator" content=3D"Microsoft Word 15 (filtered medium)">
-<style><!--
-/* Font Definitions */
-@font-face
-	{font-family:"Cambria Math";
-	panose-1:2 4 5 3 5 4 6 3 2 4;}
-@font-face
-	{font-family:Aptos;}
-@font-face
-	{font-family:Consolas;
-	panose-1:2 11 6 9 2 2 4 3 2 4;}
-/* Style Definitions */
-p.MsoNormal, li.MsoNormal, div.MsoNormal
-	{margin:0cm;
-	font-size:11.0pt;
-	font-family:"Aptos",sans-serif;
-	mso-ligatures:standardcontextual;
-	mso-fareast-language:EN-US;}
-span.EmailStyle17
-	{mso-style-type:personal-compose;
-	font-family:Consolas;
-	color:windowtext;
-	font-weight:normal;
-	font-style:normal;
-	text-decoration:none none;}
-.MsoChpDefault
-	{mso-style-type:export-only;
-	font-size:11.0pt;
-	mso-fareast-language:EN-US;}
-@page WordSection1
-	{size:612.0pt 792.0pt;
-	margin:72.0pt 72.0pt 72.0pt 72.0pt;}
-div.WordSection1
-	{page:WordSection1;}
---></style>
-</head>
-<body lang=3D"EN-IE" link=3D"#467886" vlink=3D"#96607D" style=3D"word-wrap:=
-break-word">
-<div class=3D"WordSection1">
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">Release status =
-meeting minutes 2026-01-06<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">Agenda:<o:p></o=
-:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- Release Dates=
-<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- Subtrees<o:p>=
-</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- Roadmaps<o:p>=
-</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- LTS<o:p></o:p=
-></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- Defects<o:p><=
-/o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- Opens<o:p></o=
-:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">Participants:<o=
-:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- Broadcom<o:p>=
-</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- Intel<o:p></o=
-:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- Marvell<o:p><=
-/o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- Nvidia<o:p></=
-o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- Red Hat<o:p><=
-/o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">Release Dates<o=
-:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">-------------<o=
-:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">The following a=
-re the proposed working dates for 26.03:<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">| Date&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Milestone&nbsp;=
-&nbsp;&nbsp;&nbsp;&nbsp; | Description&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
-p; |<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">| -------------=
--- | -------------- | ------------------------------ |<o:p></o:p></span></p=
->
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">| 5 January 202=
-6&nbsp; | RFC/v1 patches | Proposal deadline&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">| 9 February 20=
-26 | 26.03-rc1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | API freeze&nbsp;&nbsp;&nbsp;=
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp;&nbsp; |<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">| 2 March 2026&=
-nbsp;&nbsp;&nbsp; | 26.03-rc2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | PMD features =
-freeze&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |<=
-o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">| 9 March 2026&=
-nbsp;&nbsp;&nbsp; | 26.03-rc3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Builtin apps =
-features freeze&nbsp;&nbsp; |<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">| 16 March 2026=
-&nbsp;&nbsp; | 26.03-rc4&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Documentation read=
-y&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |<o:p><=
-/o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">| 19 March 2026=
-&nbsp;&nbsp; | 26.03.0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Release&=
-nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
-p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |<o:p></o:p>=
-</span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">See https://cor=
-e.dpdk.org/roadmap/<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">Subtrees<o:p></=
-o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">--------<o:p></=
-o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- next-net<o:p>=
-</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; - No upd=
-ate.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- next-net-inte=
-l<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; - 18 pat=
-ches merged, but a large enough backlog of &gt;40 packets.<o:p></o:p></span=
-></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- next-net-mlx<=
-o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; - No maj=
-or changes in this release.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- next-broadcom=
-<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; - Some f=
-ixes.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- next-net-mvl<=
-o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; - Some p=
-atches in progress.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- next-eventdev=
-<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; - Some p=
-atches in progress.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- next-baseband=
-<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; - Under =
-review.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- next-virtio<o=
-:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; - Under =
-review.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- next-crypto<o=
-:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; - ~ 11 p=
-atches.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; - Snow 5=
-G.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- next-dts<o:p>=
-</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; - Two do=
-c changes that could make it in.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- main<o:p></o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; - Unit t=
-est work under review.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; - Series=
- adding additional warnings and fixing<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp;&nbsp;&nb=
-sp; the resulting issues.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; - Fix fo=
-r GCC 16.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">Other<o:p></o:p=
-></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">-----<o:p></o:p=
-></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; - None.<=
-o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">LTS<o:p></o:p><=
-/span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">---<o:p></o:p><=
-/span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">See also: https=
-://core.dpdk.org/roadmap/#stable<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">LTS versions on=
-going/released:<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- 24.11.6 - Rel=
-eased.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- 23.11.5 - Ong=
-oing.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- 22.11.11 - Re=
-leased.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">Older releases:=
-<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- 20.11.10 - Wi=
-ll only be updated with CVE and critical fixes.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- 19.11.14 - Wi=
-ll only be updated with CVE and critical fixes.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- Distros<o:p><=
-/o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; - Debian=
- 13 contains DPDK v24.11<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; - Ubuntu=
- 25.04 contains DPDK v24.11<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; - Ubuntu=
- 24.04 LTS contains DPDK v23.11<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; - RHEL 9=
- contains DPDK 24.11<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">Defects<o:p></o=
-:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">-------<o:p></o=
-:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- Bugzilla link=
-s, 'Bugs',&nbsp; added for hosted projects<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; - https:=
-//www.dpdk.org/hosted-projects/<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">DPDK Release St=
-atus Meetings<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">---------------=
--------------<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">The DPDK Releas=
-e Status Meeting is intended for DPDK Committers to discuss the<o:p></o:p><=
-/span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">status of the m=
-aster tree and sub-trees, and for project managers to track<o:p></o:p></spa=
-n></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">progress or mil=
-estone dates.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">The meeting occ=
-urs on every Tuesday at 14:30 DST over Jitsi on https://meet.jit.si/DPDK<o:=
-p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">You don't need =
-an invite to join the meeting but if you want a calendar reminder just<o:p>=
-</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">send an email t=
-o &quot;John McNamara &lt;john.mcnamara@intel.com&gt;&quot; for the invite.=
-<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-</div>
-</body>
-</html>
-
---_000_PH3PPF37F43E35DEEB407ED016EC5515CEFFC84APH3PPF37F43E35D_--
