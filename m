@@ -2,46 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A10E7CD584C
-	for <dpdk-dev@archiver.kernel.org>; Wed,  7 Jan 2026 10:31:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3447CD5854
+	for <dpdk-dev@archiver.kernel.org>; Wed,  7 Jan 2026 10:56:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8DEBF40267;
-	Wed,  7 Jan 2026 11:31:45 +0100 (CET)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 08D7F4021E
- for <dev@dpdk.org>; Wed,  7 Jan 2026 11:31:44 +0100 (CET)
-Received: from mail.maildlp.com (unknown [172.18.224.150])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4dmPTk0bD7zJ46XM;
- Wed,  7 Jan 2026 18:31:38 +0800 (CST)
-Received: from frapema500004.china.huawei.com (unknown [7.182.19.21])
- by mail.maildlp.com (Postfix) with ESMTPS id 29F2D4056A;
- Wed,  7 Jan 2026 18:31:41 +0800 (CST)
-Received: from frapema500003.china.huawei.com (7.182.19.114) by
- frapema500004.china.huawei.com (7.182.19.21) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 7 Jan 2026 11:31:40 +0100
-Received: from frapema500003.china.huawei.com ([7.182.19.114]) by
- frapema500003.china.huawei.com ([7.182.19.114]) with mapi id 15.02.1544.011;
- Wed, 7 Jan 2026 11:31:40 +0100
-From: Marat Khalili <marat.khalili@huawei.com>
-To: Stephen Hemminger <stephen@networkplumber.org>, "dev@dpdk.org"
- <dev@dpdk.org>
-Subject: RE: [PATCH 07/12] net/pcap: avoid use of volatile
-Thread-Topic: [PATCH 07/12] net/pcap: avoid use of volatile
-Thread-Index: AQHcfzsLUelM4i9Wdk+fSX/5GOB0sLVGcrhA
-Date: Wed, 7 Jan 2026 10:31:40 +0000
-Message-ID: <234ce78433ba40a4963e06d4ea0d1c3c@huawei.com>
-References: <20260106182823.192350-1-stephen@networkplumber.org>
- <20260106182823.192350-8-stephen@networkplumber.org>
-In-Reply-To: <20260106182823.192350-8-stephen@networkplumber.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.206.137.70]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by mails.dpdk.org (Postfix) with ESMTP id BB206402D6;
+	Wed,  7 Jan 2026 11:56:57 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+ by mails.dpdk.org (Postfix) with ESMTP id 2FD084021E
+ for <dev@dpdk.org>; Wed,  7 Jan 2026 11:56:54 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1767783416; x=1799319416;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=KHHan2ReU2ioEwhol7k9vnXRdLO+t0yN3yyVyhbK3sM=;
+ b=bpNiz9YbXVj7iUuE19bblRCF0iTAaN23kafYbCJXr3c7NZEqzatWLvOg
+ L8SuRPzShKOxfz2Ywo/mo1xwX14DsTkfXHIGkXavp838PQShtXcmw3lvc
+ gut2T1iWMTKTM9iSnN3tQ9dHxWpZxrb3mI690sVYraEL5pO2X1cq2C4s+
+ cToSMP5W1XC6oz5IdPbcDQzZekKmwSkpHi4mjqGpXBQUSwGRCDVTF+FnY
+ Cqke76F1CDQQnPC3eXNhZs54IPWUtz4xWsUGRNu6MgJe7dlkk/t3lIwq7
+ LAPGLr40xeqcuGyXiKs/90aMDZ0MrjZdGB/Lu8dGGxP20eKi4eXp6OM0Z w==;
+X-CSE-ConnectionGUID: sF8AcLmGT7uVyFI+YkXgZQ==
+X-CSE-MsgGUID: 45l3UP8DTWG24lqfdOpY8Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11663"; a="72998420"
+X-IronPort-AV: E=Sophos;i="6.21,207,1763452800"; d="scan'208";a="72998420"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+ by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 07 Jan 2026 02:56:54 -0800
+X-CSE-ConnectionGUID: LWSgxppbRoSOhEJ77EfjQg==
+X-CSE-MsgGUID: uIhaIIF5Rtq9FK0u07Qs1g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,207,1763452800"; d="scan'208";a="202913015"
+Received: from silpixa00401749.ir.intel.com ([10.20.224.233])
+ by orviesa007.jf.intel.com with ESMTP; 07 Jan 2026 02:56:52 -0800
+From: Radu Nicolau <radu.nicolau@intel.com>
+To: dev@dpdk.org
+Cc: nkaithakadan@marvell.com, kai.ji@intel.com, anoobj@marvell.com,
+ Radu Nicolau <radu.nicolau@intel.com>, Akhil Goyal <gakhil@marvell.com>,
+ Fan Zhang <fanzhang.oss@gmail.com>
+Subject: [PATCH 1/2] cryptodev: add support for 256-NxA4/5/6 algorithms
+Date: Wed,  7 Jan 2026 10:56:48 +0000
+Message-ID: <20260107105649.1708347-1-radu.nicolau@intel.com>
+X-Mailer: git-send-email 2.50.1
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -55,134 +59,141 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> Using volatile for statistics generates expensive atomic rmw
-> operations when not necessary.
+Add support for
 
-I am not sure it is true, AFAIK volatile only affects the compiler. In this=
-=20
-case it mostly guards against these variables being completely cached in=20
-registers. Your new version is actually more correct, but also potentially=
-=20
-slower since general fence affects all reads or writes, not just counters i=
-n=20
-question. I think it is common among drivers to not guarantee visibility of=
-=20
-the most recent counter values for the sake of performance.
+NEA4, NIA4, NCA4: Snow 5G confidentiality, integrity and AEAD modes
+NEA5, NIA5, NCA5: AES 256 confidentiality, integrity and AEAD modes
+NEA6, NIA6, NCA6: ZUC 256 confidentiality, integrity and AEAD modes
 
->=20
-> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-> ---
->  drivers/net/pcap/pcap_ethdev.c | 38 ++++++++++++++++++++++++++--------
->  1 file changed, 29 insertions(+), 9 deletions(-)
->=20
-> diff --git a/drivers/net/pcap/pcap_ethdev.c b/drivers/net/pcap/pcap_ethde=
-v.c
-> index 1658685a28..175d6998f9 100644
-> --- a/drivers/net/pcap/pcap_ethdev.c
-> +++ b/drivers/net/pcap/pcap_ethdev.c
-> @@ -47,10 +47,10 @@ static uint64_t timestamp_rx_dynflag;
->  static int timestamp_dynfield_offset =3D -1;
->=20
->  struct queue_stat {
-> -	volatile unsigned long pkts;
-> -	volatile unsigned long bytes;
-> -	volatile unsigned long err_pkts;
-> -	volatile unsigned long rx_nombuf;
-> +	uint64_t pkts;
-> +	uint64_t bytes;
-> +	uint64_t err_pkts;
-> +	uint64_t rx_nombuf;
->  };
->=20
->  struct queue_missed_stat {
-> @@ -267,6 +267,9 @@ eth_pcap_rx_infinite(void *queue, struct rte_mbuf **b=
-ufs, uint16_t nb_pkts)
->  	pcap_q->rx_stat.pkts +=3D i;
->  	pcap_q->rx_stat.bytes +=3D rx_bytes;
->=20
-> +	/* ensure store operations of statistics are visible */
-> +	rte_atomic_thread_fence(rte_memory_order_release);
-> +
->  	return i;
->  }
->=20
-> @@ -345,6 +348,9 @@ eth_pcap_rx(void *queue, struct rte_mbuf **bufs, uint=
-16_t nb_pkts)
->  	pcap_q->rx_stat.pkts +=3D num_rx;
->  	pcap_q->rx_stat.bytes +=3D rx_bytes;
->=20
-> +	/* ensure store operations of statistics are visible */
-> +	rte_atomic_thread_fence(rte_memory_order_release);
-> +
->  	return num_rx;
->  }
->=20
-> @@ -440,6 +446,9 @@ eth_pcap_tx_dumper(void *queue, struct rte_mbuf **buf=
-s, uint16_t nb_pkts)
->  	dumper_q->tx_stat.bytes +=3D tx_bytes;
->  	dumper_q->tx_stat.err_pkts +=3D nb_pkts - num_tx;
->=20
-> +	/* ensure store operations of statistics are visible */
-> +	rte_atomic_thread_fence(rte_memory_order_release);
-> +
->  	return nb_pkts;
->  }
->=20
-> @@ -464,6 +473,9 @@ eth_tx_drop(void *queue, struct rte_mbuf **bufs, uint=
-16_t nb_pkts)
->  	tx_queue->tx_stat.pkts +=3D nb_pkts;
->  	tx_queue->tx_stat.bytes +=3D tx_bytes;
->=20
-> +	/* ensure store operations of statistics are visible */
-> +	rte_atomic_thread_fence(rte_memory_order_release);
-> +
->  	return nb_pkts;
->  }
->=20
-> @@ -515,6 +527,9 @@ eth_pcap_tx(void *queue, struct rte_mbuf **bufs, uint=
-16_t nb_pkts)
->  	tx_queue->tx_stat.bytes +=3D tx_bytes;
->  	tx_queue->tx_stat.err_pkts +=3D nb_pkts - num_tx;
->=20
-> +	/* ensure store operations of statistics are visible */
-> +	rte_atomic_thread_fence(rte_memory_order_release);
-> +
->  	return nb_pkts;
->  }
->=20
-> @@ -821,13 +836,16 @@ eth_stats_get(struct rte_eth_dev *dev, struct rte_e=
-th_stats *stats,
->  	      struct eth_queue_stats *qstats)
->  {
->  	unsigned int i;
-> -	unsigned long rx_packets_total =3D 0, rx_bytes_total =3D 0;
-> -	unsigned long rx_missed_total =3D 0;
-> -	unsigned long rx_nombuf_total =3D 0, rx_err_total =3D 0;
-> -	unsigned long tx_packets_total =3D 0, tx_bytes_total =3D 0;
-> -	unsigned long tx_packets_err_total =3D 0;
-> +	uint64_t rx_packets_total =3D 0, rx_bytes_total =3D 0;
-> +	uint64_t rx_missed_total =3D 0;
-> +	uint64_t rx_nombuf_total =3D 0, rx_err_total =3D 0;
-> +	uint64_t tx_packets_total =3D 0, tx_bytes_total =3D 0;
-> +	uint64_t tx_packets_err_total =3D 0;
->  	const struct pmd_internals *internal =3D dev->data->dev_private;
->=20
-> +	/* ensure that current statistics are visible */
-> +	rte_atomic_thread_fence(rte_memory_order_acquire);
-> +
->  	for (i =3D 0; i < RTE_ETHDEV_QUEUE_STAT_CNTRS &&
->  			i < dev->data->nb_rx_queues; i++) {
->  		if (qstats !=3D NULL) {
-> @@ -884,6 +902,8 @@ eth_stats_reset(struct rte_eth_dev *dev)
->  		internal->tx_queue[i].tx_stat.err_pkts =3D 0;
->  	}
->=20
-> +	/* ensure store operations of statistics are visible */
-> +	rte_atomic_thread_fence(rte_memory_order_release);
->  	return 0;
->  }
->=20
-> --
-> 2.51.0
->=20
+Signed-off-by: Radu Nicolau <radu.nicolau@intel.com>
+---
+ doc/guides/cryptodevs/features/default.ini |  9 ++++++++
+ lib/cryptodev/rte_crypto_sym.h             | 24 +++++++++++++++++++++-
+ lib/cryptodev/rte_cryptodev.c              | 13 +++++++++++-
+ 3 files changed, 44 insertions(+), 2 deletions(-)
+
+diff --git a/doc/guides/cryptodevs/features/default.ini b/doc/guides/cryptodevs/features/default.ini
+index 64198f013a..d8026c3750 100644
+--- a/doc/guides/cryptodevs/features/default.ini
++++ b/doc/guides/cryptodevs/features/default.ini
+@@ -68,6 +68,9 @@ SM4 CTR        =
+ SM4 CFB        =
+ SM4 OFB        =
+ SM4 XTS        =
++SNOW5G NEA4    =
++AES NEA5       =
++ZUC-256 NEA6   =
+ 
+ ;
+ ; Supported authentication algorithms of a default crypto driver.
+@@ -106,6 +109,9 @@ SM3             =
+ SM3 HMAC        =
+ SHAKE_128       =
+ SHAKE_256       =
++SNOW5G NIA4     =
++AES NIA5        =
++ZUC-256 NIA6    =
+ 
+ ;
+ ; Supported AEAD algorithms of a default crypto driver.
+@@ -119,6 +125,9 @@ AES CCM (192)     =
+ AES CCM (256)     =
+ CHACHA20-POLY1305 =
+ SM4 GCM           =
++SNOW5G NCA4       =
++AES NCA5          =
++ZUC-256 NCA6      =
+ 
+ ;
+ ; Supported Asymmetric algorithms of a default crypto driver.
+diff --git a/lib/cryptodev/rte_crypto_sym.h b/lib/cryptodev/rte_crypto_sym.h
+index 6268bab327..f7b29ccf9a 100644
+--- a/lib/cryptodev/rte_crypto_sym.h
++++ b/lib/cryptodev/rte_crypto_sym.h
+@@ -178,8 +178,15 @@ enum rte_crypto_cipher_algorithm {
+ 	/**< ShangMi 4 (SM4) algorithm in OFB mode */
+ 	RTE_CRYPTO_CIPHER_SM4_CFB,
+ 	/**< ShangMi 4 (SM4) algorithm in CFB mode */
+-	RTE_CRYPTO_CIPHER_SM4_XTS
++	RTE_CRYPTO_CIPHER_SM4_XTS,
+ 	/**< ShangMi 4 (SM4) algorithm in XTS mode */
++
++	RTE_CRYPTO_CIPHER_SNOW5G_NEA4,
++	/**< Snow 5G algorithm in NEA4 mode */
++	RTE_CRYPTO_CIPHER_AES_NEA5,
++	/**< AES algorithm in NEA4 mode */
++	RTE_CRYPTO_CIPHER_ZUC_NEA6,
++	/**< ZUC-256 algorithm in NEA4 mode */
+ };
+ 
+ /** Symmetric Cipher Direction */
+@@ -384,6 +391,14 @@ enum rte_crypto_auth_algorithm {
+ 	/**< 256 bit SHAKE algorithm. */
+ 	RTE_CRYPTO_AUTH_SM3_HMAC,
+ 	/** < HMAC using ShangMi 3 (SM3) algorithm */
++
++	RTE_CRYPTO_AUTH_SNOW5G_NIA4,
++	/**< Snow 5G algorithm in NIA4 mode */
++	RTE_CRYPTO_AUTH_AES_NIA5,
++	/**< AES algorithm in NIA4 mode */
++	RTE_CRYPTO_AUTH_ZUC_NIA6,
++	/**< ZUC-256 algorithm in NIA4 mode */
++
+ };
+ 
+ /** Symmetric Authentication / Hash Operations */
+@@ -486,6 +501,13 @@ enum rte_crypto_aead_algorithm {
+ 	/**< Chacha20 cipher with poly1305 authenticator */
+ 	RTE_CRYPTO_AEAD_SM4_GCM,
+ 	/**< SM4 cipher in GCM mode */
++
++	RTE_CRYPTO_AEAD_SNOW5G_NCA4,
++	/**< Snow 5G algorithm in NCA4 mode */
++	RTE_CRYPTO_AEAD_AES_NCA5,
++	/**< AES algorithm in NCA4 mode */
++	RTE_CRYPTO_AEAD_ZUC_NCA6,
++	/**< ZUC-256 algorithm in NCA4 mode */
+ };
+ 
+ /** Symmetric AEAD Operations */
+diff --git a/lib/cryptodev/rte_cryptodev.c b/lib/cryptodev/rte_cryptodev.c
+index f4c6f692f0..7bddb154c2 100644
+--- a/lib/cryptodev/rte_cryptodev.c
++++ b/lib/cryptodev/rte_cryptodev.c
+@@ -102,7 +102,10 @@ crypto_cipher_algorithm_strings[] = {
+ 	[RTE_CRYPTO_CIPHER_SM4_CTR]	= "sm4-ctr",
+ 	[RTE_CRYPTO_CIPHER_SM4_CFB]	= "sm4-cfb",
+ 	[RTE_CRYPTO_CIPHER_SM4_OFB]	= "sm4-ofb",
+-	[RTE_CRYPTO_CIPHER_SM4_XTS]	= "sm4-xts"
++	[RTE_CRYPTO_CIPHER_SM4_XTS]	= "sm4-xts",
++	[RTE_CRYPTO_CIPHER_SNOW5G_NEA4]	= "snow5g-nea4",
++	[RTE_CRYPTO_CIPHER_AES_NEA5]	= "aes-nea5",
++	[RTE_CRYPTO_CIPHER_ZUC_NEA6]	= "zuc-nea6",
+ };
+ 
+ /**
+@@ -162,6 +165,10 @@ crypto_auth_algorithm_strings[] = {
+ 
+ 	[RTE_CRYPTO_AUTH_SHAKE_128]	 = "shake-128",
+ 	[RTE_CRYPTO_AUTH_SHAKE_256]	 = "shake-256",
++
++	[RTE_CRYPTO_AUTH_SNOW5G_NIA4] = "snow5g-nia4",
++	[RTE_CRYPTO_AUTH_AES_NIA5]	 = "aes-nia5",
++	[RTE_CRYPTO_AUTH_ZUC_NIA6]	 = "zuc-nia6",
+ };
+ 
+ /**
+@@ -175,6 +182,10 @@ crypto_aead_algorithm_strings[] = {
+ 	[RTE_CRYPTO_AEAD_AES_GCM]	= "aes-gcm",
+ 	[RTE_CRYPTO_AEAD_CHACHA20_POLY1305] = "chacha20-poly1305",
+ 	[RTE_CRYPTO_AEAD_SM4_GCM]   = "sm4-gcm",
++
++	[RTE_CRYPTO_AEAD_SNOW5G_NCA4] = "snow5g-nca4",
++	[RTE_CRYPTO_AEAD_AES_NCA5]    = "aes-nca5",
++	[RTE_CRYPTO_AEAD_ZUC_NCA6]    = "zuc-nca6",
+ };
+ 
+ 
+-- 
+2.50.1
 
