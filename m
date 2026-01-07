@@ -2,63 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D003DD0D178
-	for <dpdk-dev@archiver.kernel.org>; Wed,  7 Jan 2026 22:27:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98298D0D178
+	for <dpdk-dev@archiver.kernel.org>; Wed,  7 Jan 2026 22:28:56 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 98F6A4028B;
-	Wed,  7 Jan 2026 23:27:56 +0100 (CET)
-Received: from mail-dl1-f48.google.com (mail-dl1-f48.google.com [74.125.82.48])
- by mails.dpdk.org (Postfix) with ESMTP id 9CDFF4021E
- for <dev@dpdk.org>; Wed,  7 Jan 2026 23:27:54 +0100 (CET)
-Received: by mail-dl1-f48.google.com with SMTP id
- a92af1059eb24-121b14efeb8so4256223c88.1
- for <dev@dpdk.org>; Wed, 07 Jan 2026 14:27:54 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 0A4CB4028B;
+	Wed,  7 Jan 2026 23:28:56 +0100 (CET)
+Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com
+ [209.85.217.45]) by mails.dpdk.org (Postfix) with ESMTP id 06BA44021E
+ for <dev@dpdk.org>; Wed,  7 Jan 2026 23:28:53 +0100 (CET)
+Received: by mail-vs1-f45.google.com with SMTP id
+ ada2fe7eead31-5eae7bb8018so987679137.2
+ for <dev@dpdk.org>; Wed, 07 Jan 2026 14:28:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1767824873; x=1768429673; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=9NTmXykCF9FLd3I9t34UqSziV/0qIOMfNF13/2BAWII=;
- b=hSFagxtUrzOn4dqMSGNgfCg4dBKpsIzxZ6rYApCNwVeFbuXDrxLhvJItUMtZAFKbn7
- dOpnP7CCVaTprkwCEmpkH1Wc747amLdPjzmuKlRAhCVHJ7No5bXTGn2qSMOYhwovcUaX
- 988eCeAinRCVxZO0M17OT48Y9glm9yyEqDvOk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1767824873; x=1768429673;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ d=gmail.com; s=20230601; t=1767824933; x=1768429733; darn=dpdk.org;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:from:to:cc:subject:date
  :message-id:reply-to;
- bh=9NTmXykCF9FLd3I9t34UqSziV/0qIOMfNF13/2BAWII=;
- b=gdGw/9Fz/Thde8MSJHXh2ETe2YeCmUByFY4O9Qlde477fpWGSPkQxvJ3R5zKx+OM2h
- pE5qTmO1VyUG9/goYoNaBoidgPBfUH/inGJp0nwC6toENcdErLE+kL/hkOnIJa8Vnd+D
- AFWiLyxYz4NuEUBXFwRXSRGldYEVtaPmDpo7s6zqfJvH6SrygK9U9kJvVSGv/HJ3ivDY
- EU3aSKNp+DGLp+Rv7umYf54Ll2LjzRJ04FBWTFwY48FnuH1s+Cdav+Qshxh7ztX7d7Lv
- vjXeIrEJcKK2cAtbi5hhrMf5hpxMtKbia0mInKKPm0+xBX90B7oRQSI0OWDwy/1dC0e5
- os7Q==
-X-Forwarded-Encrypted: i=1;
- AJvYcCVUCbjhDhxry7ODzHYbtaZ6riZDgb/16Ekr4EO/3tO1kpr5Wedij02kReSDwvWy9l1FmEI=@dpdk.org
-X-Gm-Message-State: AOJu0YwVOy38oWCpyV2397LiYkwIbBQZUwHm6jh3Wdklz7L5ARdnodI1
- XfZ0CcztYVPWWlNL8j/e7ZvgM7xk/4goyGDTjbRMeeurGNANGkSWoZxQxVxNVLjJpCPV4YV85W+
- qQrv+QyiY8ftnI2PetT4kWc3x+G5H2wogq1R/aEoC7w==
-X-Gm-Gg: AY/fxX5tujqnHHR2SGpDRvxEkjFkvSEZVzWya26m8GbbzKZhrb+EKi1BPhJrBeisxs3
- B7PhItl84eGd4l0J0p1qAzJEXIQZs+DAR/zR0foE2LcouEcfYN0BAXgBxL6vx/Iu4KzGh9Ll/hD
- JksftdYKuKGSkW1QWJhmXvz3woIZl+ATeE1kKUe4ryWE9372ZEeQBYgzGl1ZbKGWQPFgcmK379e
- 4DFQyTNjtTAOlzVRsxT7HwIJ3oPp52rFf8Z8kFAlK8cU6+NDtgauTACJIypgc6O5eYIDuWJj2uj
- UBf2uiyygdafA1CYbbGP2wco1hNG
-X-Google-Smtp-Source: AGHT+IFXT2XJtkz6EDfU53+ssT9K2Mw8OpOeaNXb2UBAvQNzyVKC3gsaAuuMCHMbK70bCxBEFIaZaL3mD9RWqlFcM+c=
-X-Received: by 2002:a05:7022:2492:b0:119:e56b:9590 with SMTP id
- a92af1059eb24-121f8afc1acmr3427549c88.21.1767824873315; Wed, 07 Jan 2026
- 14:27:53 -0800 (PST)
+ bh=OaO7dPM4TgRD+g+kXwBNx8ciDHMI62RnjG4qycqV394=;
+ b=PcMnVj9jL0GRiNCIXEDYWwaVbxWXl7e7xniA5LRmcrZjDb54VLCbXzWjRKZmCGuxqG
+ YBx3xSPAq8v/nTR5TS1piG8GB3q6i9Zy89d3TrI3xlXfDx5WTncN0OlH7guDJGMGtKEB
+ OOLQZoCkgbL1jiGaruKHYl95PAig6YX+UGzaFywfLDsJXXnsDC7bf4zfWsx35mftN+Bp
+ rpt/KqSGbL4jgeeoFJKDO3vARlJeLaEQ/drgoKBXokio4L7DIdV1IEVHozqHpoDrAMFG
+ xj4PJFsjo5zNdrsd3kl5uQZBAxKRHjybOZTdY9cZs4PHTzDeEnVrmkhjalAZ86BvRrwr
+ vojQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1767824933; x=1768429733;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=OaO7dPM4TgRD+g+kXwBNx8ciDHMI62RnjG4qycqV394=;
+ b=s9rZpA9ia1HSpJ2u51WXzHk8l7vQyuA3YiIVlWMU2txSC2wLSYtV7AWfQurEiW9aq5
+ IVW1icipQ0qfqPtyWnEPb1EdwKGU3YUcmnbsCyybuysyeabaCS7nRR2JRcpOaW3gcbYE
+ DJQ2z3IzqE1ceDDRq01P+Ox4Dyl75+DSMa1ot16/MzSfDeE8BXcXKTzGXJro6j88Fncp
+ RbjCrNHBb6zVgwhaFYhZMmCqSvPqUBw8g1BJvk29ugZvdbuAnS2CC0jjg2BzTw3hMllb
+ TSbAGHqgHC4cWSd+qOjtl1Rthq8vwcxkWo95umqCWbUhsrD80Kq8usWXBDrqGE7sGxVV
+ D69Q==
+X-Gm-Message-State: AOJu0YwVtjHs9Ox56Q+THGafJR2R3z9IFIbe+L5xG4sAUPtQ0qDpBEk1
+ K1W7xBB3QK6Zh8siX0/9+rCQjAouMSdtJ7p0mU6aTTDnlKCVxILZXYQjWUPVlrDMDEaFAdyhM0k
+ 461jO8ESL0yRA927EWpshKynYm+W1P10=
+X-Gm-Gg: AY/fxX7WVRUEVQwkAgEGPF+nPYo6uu+T50V94keRU44Earfkl6PDRmUIyuQCqp0NRIF
+ DEnS5tyX9Nqs+vkVkSFbIBGmcYiHYNDfUh4zR+QZreKFjBBEHCYI9M1Fmt64DMVmr0ijtyxYefZ
+ khiHIuqeDa8UIfv8/QB4+z9Sh5CqmpBjSoQmYLvoq86K4GW5s3mUMewPpzA61Vrq/HDNUW9K4yp
+ Y97gOHjUBfESLz15/MZcT7TAuDGAhHJbT+R++E7FHY6c8LCCvR6SVO83wc1eBqromrl1eXXZTbd
+ J9tkKF1zl2NJ8LRn3eiVYMHFARs=
+X-Google-Smtp-Source: AGHT+IEBDfsZPikIymsexjSFN8s9kkvqk8O5vJMw3SQkOpwq52isNwBhUStBGxKJdvihXU+jGAWH6v8pz//lGfyZUu8=
+X-Received: by 2002:a05:6102:560b:b0:5db:3b75:a2aa with SMTP id
+ ada2fe7eead31-5ecb688e212mr1607133137.18.1767824933245; Wed, 07 Jan 2026
+ 14:28:53 -0800 (PST)
 MIME-Version: 1.0
-References: <20260105190647.63244-1-abailey@iol.unh.edu>
- <20260105190647.63244-3-abailey@iol.unh.edu>
-In-Reply-To: <20260105190647.63244-3-abailey@iol.unh.edu>
-From: Patrick Robb <probb@iol.unh.edu>
-Date: Wed, 7 Jan 2026 17:25:49 -0500
-X-Gm-Features: AQt7F2qq1weLe8kjbou4Gjzq8Je_zmB3hPPlxtV7wAutuxeO4MKP4fcfsx0ixDI
-Message-ID: <CAJvnSUBTtGyQ7WtE9GF-gawS=A8rHAqcaqTSo8eWYa+GBkhRwg@mail.gmail.com>
-Subject: Re: [RFC PATCH 3/3] dts: add cryptodev testsuite
-To: Andrew Bailey <abailey@iol.unh.edu>
-Cc: luca.vizzarro@arm.com, dmarx@iol.unh.edu, dev@dpdk.org
-Content-Type: multipart/alternative; boundary="0000000000009971a90647d3cdb5"
+References: <20260107170415.80275-1-scott.k.mitch1@gmail.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F65630@smartserver.smartshare.dk>
+In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F65630@smartserver.smartshare.dk>
+From: Scott Mitchell <scott.k.mitch1@gmail.com>
+Date: Wed, 7 Jan 2026 17:28:41 -0500
+X-Gm-Features: AQt7F2qNvAbNtJNe0P5AAxogWopwmicCQjUAfUkU6kxRbAdX-opT224KRTPBK9k
+Message-ID: <CAFn2buCtACWQZd_EY2Y_k0KS6OQN-8BQmSghtH1CMC7afONs+w@mail.gmail.com>
+Subject: Re: [PATCH v3] net: optimize raw checksum computation
+To: =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>
+Cc: dev@dpdk.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -72,1129 +75,200 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---0000000000009971a90647d3cdb5
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Jan 5, 2026 at 2:06=E2=80=AFPM Andrew Bailey <abailey@iol.unh.edu> =
-wrote:
-
-> Add cryptodev performance testsuite, which runs the dpdk-test-crypto
-> application and verifies output to user specified metrics.
+On Wed, Jan 7, 2026 at 12:56=E2=80=AFPM Morten Br=C3=B8rup <mb@smartsharesy=
+stems.com> wrote:
 >
-
-Can you explain your approach with a little more verbosity in the commit
-message?
-
-What kinds of devices do you want to test?
-
-Which types of operations?
-
-Are these tests functional or performance?
-
-what combinations of algo/device/ops are being tested and why (I realize
-this may still be an open question for this specific testsuite)?
-
-etc.
-
-
+> > From: scott.k.mitch1@gmail.com [mailto:scott.k.mitch1@gmail.com]
+> > Sent: Wednesday, 7 January 2026 18.04
+> >
+> > From: Scott Mitchell <scott.k.mitch1@gmail.com>
+> >
+> > Optimize __rte_raw_cksum() by processing data in larger unrolled loops
+> > instead of iterating word-by-word. The new implementation processes
+> > 64-byte blocks (32 x uint16_t) in the hot path, followed by smaller
+> > 32/16/8/4/2-byte chunks.
 >
-> Signed-off-by: Andrew Bailey <abailey@iol.unh.edu>
-> ---
->  dts/tests/TestSuite_cryptodev_throughput.py | 460 ++++++++++++++++++++
->  1 file changed, 460 insertions(+)
->  create mode 100644 dts/tests/TestSuite_cryptodev_throughput.py
+> Playing around with Godbolt:
+> https://godbolt.org/z/oYdP9xxfG
 >
-> diff --git a/dts/tests/TestSuite_cryptodev_throughput.py
-> b/dts/tests/TestSuite_cryptodev_throughput.py
-> new file mode 100644
-> index 0000000000..adc7b01b99
-> --- /dev/null
-> +++ b/dts/tests/TestSuite_cryptodev_throughput.py
-> @@ -0,0 +1,460 @@
-> +# SPDX-License-Identifier: BSD-3-Clause
-> +# Copyright(c) 2025 University of New Hampshire
-> +"""DPDK cryptodev performance test suite.
-> +
-> +The main goal of this testsuite is to utilize the dpdk-test-cryptodev
-> application to gather
-> +performance metrics for various cryptographic operations supported by
-> DPDK cryptodev-pmd.
-> +It will then compare the results against predefined thresholds defined i=
-n
-> the test_config file to
-> +ensure performance standards are met.
-> +"""
-> +
-> +from api.capabilities import (
-> +    LinkTopology,
-> +    requires_link_topology,
-> +)
-> +from api.cryptodev import Cryptodev
-> +from api.cryptodev.config import (
-> +    AeadAlgName,
-> +    AuthenticationAlgorithm,
-> +    AuthenticationOpMode,
-> +    CipherAlgorithm,
-> +    DeviceType,
-> +    EncryptDecryptSwitch,
-> +    ListWrapper,
-> +    OperationType,
-> +    TestType,
-> +)
-> +from api.cryptodev.types import (
-> +    CryptodevResults,
-> +)
-> +from api.test import verify
-> +from framework.test_suite import BaseConfig, TestSuite, func_test
-> +from framework.testbed_model.virtual_device import VirtualDevice
-> +
-> +
-> +class Config(BaseConfig):
-> +    """Performance test metrics."""
-> +
-> +    throughput_test_parameters: dict[str, int | float] =3D {
-> +        "enqueued": 0,
-> +        "dequeued": 0,
-> +        "failed_enqueued": 0,
-> +        "failed_dequeued": 0,
-> +        "mops": 0,
-> +        "gbps": 0,
-> +        "cycles_per_buffer": 0,
-> +    }
-> +
-> +
-> +@requires_link_topology(LinkTopology.NO_LINK)
-> +class TestCryptodevThroughput(TestSuite):
-> +    """DPDK Crypto Device Testing Suite.
-> +
-> +    This test suite is comprised of 8 test cases:
-> +    1. verify throughput metrics of openssl encrypt virtual device with
-> aes-gcm algorithm
-> +    2. verify throughput metrics of QAT device encrypt with aes-cbc
-> cipher algorithm and sha256-hmac
-> +        auth algorithm
-> +    3. verify throughput metrics of QAT device encrypt with aes-gcm aead
-> algorithm
-> +    4. verify throughput metrics of QAT device decrypt with aes-docsibpi
-> cipher algorithm
-> +    5. verify throughput metrics of QAT device encrypt with aes-docsibpi
-> cipher algorithm
-> +    6. verify throughput metrics of QAT device encrypt with kasumi-f8
-> cipher algorithm and kasumi-f9
-> +        auth algorithm
-> +    7. verify throughput metrics of QAT device encrypt with snow3g-uea2
-> cipher algorithm and
-> +        snow3g-uia2 auth algorithm
-> +    8. verify throughput metrics of QAT device encrypt with zuc-eea3
-> cipher algorithm and zuc-eia3
-> +        auth algorithm
+> With the original code (built with -msse4.2), the compiler vectorizes the=
+ loop to process 16-byte chunks (instead of the 2-byte chunks the source co=
+de indicates).
+> When built with -mavx512f, it processes 32-byte chunks.
 >
-
-Testcases should most likely be device agnostic. I.e. the dpdk-crypto-perf
-app should be able to perform encrypt/decrypt with algorithm X with any
-device that supports X, not just a QAT series crypto device.
-
-
-> +    """
-> +
-> +    config: Config
-> +    unsupported_cryptodevs: list[DeviceType] =3D []
-> +
-> +    def set_up_suite(self) -> None:
-> +        """Set up the test suite.
-> +
-> +        Setup: Retrieve application parameters from the configuration.
-> +        """
-> +        self.throughput_test_parameters =3D
-> self.config.throughput_test_parameters
-> +
-> +    def _verify_throughput(self, results: list[CryptodevResults]) -> Non=
-e:
-> +        """Verify throughput results against predefined thresholds.
+> IMHO, the compiled output of the new code is too big; using more than 12 =
+kB instructions consumes too much L1 Instruction Cache.
+> I suppose the compiler both vectorizes and loop unrolls.
 >
-
-Can you use the term baseline instead of threshold?
-
-
-> +
-> +        Arguments:
-> +            results: The results containing throughput metrics to verify=
-.
-> +        """
-> +        for result in results:
-> +            for key, value in self.throughput_test_parameters.items():
-> +                result_value =3D getattr(result, key, None)
-> +                if result_value is not None:
-> +                    verify(
-> +                        result_value > value,
-> +                        f"Throughput metric {key} is below the threshold=
-:
-> {result_value} < {value}",
-> +                    )
+> >
+> > Uses uint32_t accumulator with explicit casts to prevent signed integer
+> > overflow and leverages unaligned_uint16_t for safe unaligned access on
+> > all platforms. Adds __rte_no_ubsan_alignment attribute to suppress
+> > false
+> > positive alignment warnings from UndefinedBehaviorSanitizer.
+> >
+> > Performance results from cksum_perf_autotest (TSC cycles/byte):
+> >   Block size    Before    After    Improvement
+> >          100  0.40-0.64  0.13-0.14    ~3-4x
+> >         1500  0.49-0.51  0.10-0.11    ~4-5x
+> >         9000  0.48-0.51  0.11-0.12    ~4x
 >
-
-2 possible issues:
-
-1. I think we need to have some "delta tolerance" I assume. I.e. the test
-probably won't produce the literal same amount of operations as expected
-form the baseline, it might be +1% or -1% etc. So, either bake in some
-delta tolerance (like the 5% we use for ethdev performance testing) or
-allow a delta tolerance to be passed in via config (with a default value as
-well of course).
-
-2. I think the way this will work as written is the first time it meets a
-key/value which does not meet the baseline, verify will fail the testsuite.
-This is okay but we want to log the entire table of results before calling
-verify, so that the person running the testsuite can see the whole table
-from results. If 3 of the values are failing, we want to ensure they can
-see all 3, not just the first one. Let me know if this doesn't make sense.
-
-
-> +
-> +    def _run_app(self, app: Cryptodev) -> None:
-> +        """Run the given cryptodev application, print statistics, and
-> verify throughput.
-> +
-> +        Arguments:
-> +            app: The cryptodev application to run and collect data on.
-> +
-> +        Raises:
-> +            SkippedTestException: If the cryptodev application cannot be
-> run with the given
-> +                configuration.
-> +        """
-> +        print("UNSUPPORTED CRYPTO DEVS:", self.unsupported_cryptodevs)
-> +        try:
-> +            results: list[CryptodevResults] =3D app.run_app()
-> +        except Exception as e:
-> +            if "devtype" in str(e):
-> +
-> self.unsupported_cryptodevs.append(app._app_params["devtype"])
-
-
-Just checking that I understand the problem and solution. A use may try to
-run the test with a BDF pointing to a device which dpdk-crypto-perf does
-not support, right? However, don't we just need to indicate that at the
-time when dpdk-crypto-perf does not start, instead of re-printing it every
-time we do a subsequent run of dpdk-crypto-perf? Maybe we can talk in
-person.
-
-
-> +            print(f"Skipping test: {e}")
-> +            raise
-> +        app.print_stats(results)
-> +        self._verify_throughput(results)
-> +
-> +    @func_test
-> +    def openssl_aead_aes_gcm_encrypt(self) -> None:
-> +        """Basic test to run on all NICs with openssl virtual device.
+> On which machine do you achieve these perf numbers?
 >
-
-I don't know about the description above because the testing is being run
-on the vdev, not any NIC (which really isn't involved in the test).
-
-I see from DPDK docs that crypto_openssl vdev supports aead aes-gcm, but so
-do the physical devices, and you have a separate QAT case like the openssl
-one above (and maybe this is a good solution). Is the idea to have a
-testcase per device (physical or virtual) per algo?
-https://doc.dpdk.org/guides-25.11/cryptodevs/overview.html#supported-aead-a=
-lgorithms
-
-
-> +
-> +        Steps:
-> +            * Create a Cryptodev application instance with OpenSSL
-> virtual device
-> +            * Run the application and gather throughput statistics
-> +
-> +        Verify:
-> +            * Throughput results meet predefined thresholds
-> +        """
-> +        app =3D Cryptodev(
-> +            vdevs=3D[VirtualDevice("crypto_openssl")],
-> +            ptest=3DTestType.throughput,
-> +            devtype=3DDeviceType.crypto_openssl,
-> +            aead_algo=3DAeadAlgName.aes_gcm,
-> +            aead_aad_sz=3D16,
-> +            aead_key_sz=3D16,
-> +            aead_iv_sz=3D16,
-> +            digest_sz=3D16,
-> +            aead_op=3DEncryptDecryptSwitch.encrypt,
-> +            optype=3DOperationType.aead,
-> +            total_ops=3D10_000_000,
-> +        )
-> +        self._run_app(app)
-> +
-> +    @func_test
-> +    def qat_cipher_then_auth_aes_cbc_encrypt(self) -> None:
-> +        """Test throughput on a QAT device with aes-cbc and sha2-256-hma=
-c
-> algorithms.
-> +
-> +        Steps:
-> +            * Create a Cryptodev application instance with QAT device
-> +                and cipher_then_auth operation with aes-cbc and
-> sha2-256-hmac algorithms
-> +            * Run the application and gather throughput statistics
-> +
-> +        Verify:
-> +            * Throughput results meet predefined thresholds
-> +        """
-> +        app =3D Cryptodev(
-> +            ptest=3DTestType.throughput,
-> +            devtype=3DDeviceType.crypto_qat,
-> +            optype=3DOperationType.cipher_then_auth,
+> Can a measurable performance increase be achieved using significantly sma=
+ller compiled code than this patch?
 >
-
-args should be ordered the same way for each instantiation of Cryptodev
-even if you are using named args. I.e. no optype as a final arg for the
-previous test and as one of the first for this test.
-
-
-> +            cipher_algo=3DCipherAlgorithm.aes_cbc,
-> +            cipher_op=3DEncryptDecryptSwitch.encrypt,
-> +            cipher_key_sz=3D16,
-> +            cipher_iv_sz=3D16,
-> +            auth_algo=3DAuthenticationAlgorithm.sha2_256_hmac,
-> +            auth_op=3DAuthenticationOpMode.generate,
-> +            auth_key_sz=3D64,
-> +            digest_sz=3D32,
-> +            total_ops=3D10_000_000,
-> +            burst_sz=3D32,
-> +            buffer_sz=3DListWrapper([64, 128, 256, 512, 1024, 2048]),
-> +        )
-> +        self._run_app(app)
-> +
-> +    @func_test
-> +    def qat_aead_aes_gcm_encrypt(self) -> None:
-> +        """Test throughput on a QAT device with aes-gcm algorithm.
-> +
-> +        Steps:
-> +            * Create a Cryptodev application instance with QAT device
-> +                and aead operation with aes-gcm algorithm
-> +            * Run the application and gather throughput statistics
-> +
-> +        Verify:
-> +            * Throughput results meet predefined thresholds
-> +        """
-> +        app =3D Cryptodev(
-> +            ptest=3DTestType.throughput,
-> +            devtype=3DDeviceType.crypto_qat,
-> +            optype=3DOperationType.aead,
-> +            aead_aad_sz=3D16,
-> +            aead_key_sz=3D16,
-> +            aead_iv_sz=3D12,
-> +            aead_op=3DEncryptDecryptSwitch.encrypt,
-> +            aead_algo=3DAeadAlgName.aes_gcm,
-> +            digest_sz=3D16,
-> +            total_ops=3D10_000_000,
-> +            burst_sz=3D32,
-> +            buffer_sz=3DListWrapper([64, 128, 256, 512, 1024, 2048]),
-> +        )
-> +        self._run_app(app)
-> +
-> +    @func_test
-> +    def qat_cipher_aes_docsisbpi_decrypt(self) -> None:
-> +        """Test throughput on a QAT device with aes-docsibpi algorithm.
-> +
-> +        Steps:
-> +            * Create a Cryptodev application instance with QAT device
-> +                and cipher_only operation with aes-docsibpi algorithm
-> +            * Run the application and gather throughput statistics
-> +
-> +        Verify:
-> +            * Throughput results meet predefined thresholds
-> +        """
-> +        app =3D Cryptodev(
-> +            ptest=3DTestType.throughput,
-> +            devtype=3DDeviceType.crypto_qat,
-> +            optype=3DOperationType.cipher_only,
-> +            cipher_algo=3DCipherAlgorithm.aes_docsisbpi,
-> +            cipher_op=3DEncryptDecryptSwitch.decrypt,
-> +            cipher_key_sz=3D32,
-> +            cipher_iv_sz=3D16,
-> +            burst_sz=3D32,
-> +            buffer_sz=3DListWrapper([40, 64, 70, 128, 256, 512, 1024,
-> 2048]),
-> +            total_ops=3D10_000_000,
-> +        )
-> +        self._run_app(app)
-> +
-> +    @func_test
-> +    def qat_cipher_aes_docsisbpi_encrypt(self) -> None:
-> +        """Test throughput on a QAT device with aes-docsibpi algorithm.
-> +
-> +        Steps:
-> +            * Create a Cryptodev application instance with QAT device
-> +                and cipher_only operation with aes-docsibpi algorithm
-> +            * Run the application and gather throughput statistics
-> +
-> +        Verify:
-> +            * Throughput results meet predefined thresholds
-> +        """
-> +        app =3D Cryptodev(
-> +            ptest=3DTestType.throughput,
-> +            devtype=3DDeviceType.crypto_qat,
-> +            optype=3DOperationType.cipher_only,
-> +            cipher_algo=3DCipherAlgorithm.aes_docsisbpi,
-> +            cipher_op=3DEncryptDecryptSwitch.encrypt,
-> +            cipher_key_sz=3D32,
-> +            cipher_iv_sz=3D16,
-> +            burst_sz=3D32,
-> +            buffer_sz=3DListWrapper([40, 64, 70, 128, 256, 512, 1024,
-> 2048]),
-> +            total_ops=3D10_000_000,
-> +        )
-> +        self._run_app(app)
-> +
-> +    @func_test
-> +    def qat_cipher_then_auth_kasumi_f8_encrypt(self) -> None:
-> +        """Test throughput on a QAT device with kasumi-f8 and kasumi-f9
-> algorithms.
-> +
-> +        Steps:
-> +            * Create a Cryptodev application instance with QAT device
-> +                and cipher_then_auth operation with kasumi-f8 and
-> kasumi-f9 algorithms
-> +            * Run the application and gather throughput statistics
-> +
-> +        Verify:
-> +            * Throughput results meet predefined thresholds
-> +        """
-> +        app =3D Cryptodev(
-> +            ptest=3DTestType.throughput,
-> +            devtype=3DDeviceType.crypto_qat,
-> +            optype=3DOperationType.cipher_then_auth,
-> +            cipher_algo=3DCipherAlgorithm.kasumi_f8,
-> +            cipher_op=3DEncryptDecryptSwitch.encrypt,
-> +            cipher_key_sz=3D16,
-> +            cipher_iv_sz=3D8,
-> +            auth_algo=3DAuthenticationAlgorithm.kasumi_f9,
-> +            auth_op=3DAuthenticationOpMode.generate,
-> +            auth_key_sz=3D16,
-> +            digest_sz=3D4,
-> +            total_ops=3D10_000_000,
-> +            burst_sz=3D32,
-> +            buffer_sz=3DListWrapper([64, 128, 256, 512, 1024, 2048]),
-> +        )
-> +        self._run_app(app)
-> +
-> +    @func_test
-> +    def qat_cipher_then_auth_snow3g_uea2_encrpyt(self) -> None:
-> +        """Test throughput on a QAT device with snow3g-uea2 and
-> snow3g-uia2 algorithms.
-> +
-> +        Steps:
-> +            * Create a Cryptodev application instance with QAT device
-> +                and cipher_then_auth operation with snow3g-uea2 and
-> snow3g-uia2 algorithms
-> +            * Run the application and gather throughput statistics
-> +
-> +        Verify:
-> +            * Throughput results meet predefined thresholds
-> +        """
-> +        app =3D Cryptodev(
-> +            ptest=3DTestType.throughput,
-> +            devtype=3DDeviceType.crypto_qat,
-> +            optype=3DOperationType.cipher_then_auth,
-> +            cipher_algo=3DCipherAlgorithm.snow3g_uea2,
-> +            cipher_op=3DEncryptDecryptSwitch.encrypt,
-> +            cipher_key_sz=3D16,
-> +            cipher_iv_sz=3D16,
-> +            auth_algo=3DAuthenticationAlgorithm.snow3g_uia2,
-> +            auth_op=3DAuthenticationOpMode.generate,
-> +            auth_key_sz=3D16,
-> +            auth_iv_sz=3D16,
-> +            digest_sz=3D4,
-> +            total_ops=3D10_000_000,
-> +            burst_sz=3D32,
-> +            buffer_sz=3DListWrapper([64, 128, 256, 512, 1024, 2048]),
-> +        )
-> +        self._run_app(app)
-> +
-> +    @func_test
-> +    def qat_cipher_then_auth_zuc_eea3_encrypt(self) -> None:
-> +        """Test throughput on a QAT device with zuc-eea3 and zuc-eia3
-> algorithms.
-> +
-> +        Steps:
-> +            * Create a Cryptodev application instance with QAT device
-> +                and cipher_then_auth operation with zuc-eea3 and zuc-eia=
-3
-> algorithms
-> +            * Run the application and gather throughput statistics
-> +
-> +        Verify:
-> +            * Throughput results meet predefined thresholds
-> +        """
-> +        app =3D Cryptodev(
-> +            ptest=3DTestType.throughput,
-> +            devtype=3DDeviceType.crypto_qat,
-> +            optype=3DOperationType.cipher_then_auth,
-> +            cipher_algo=3DCipherAlgorithm.zuc_eea3,
-> +            cipher_op=3DEncryptDecryptSwitch.encrypt,
-> +            cipher_key_sz=3D16,
-> +            cipher_iv_sz=3D16,
-> +            auth_algo=3DAuthenticationAlgorithm.zuc_eia3,
-> +            auth_op=3DAuthenticationOpMode.generate,
-> +            auth_key_sz=3D16,
-> +            auth_iv_sz=3D16,
-> +            digest_sz=3D4,
-> +            total_ops=3D10_000_000,
-> +            burst_sz=3D32,
-> +            buffer_sz=3DListWrapper([64, 128, 256, 512, 1024, 2048]),
-> +        )
-> +        self._run_app(app)
-> +
-> +    @func_test
-> +    def a_wrong_devtype(self) -> None:
->
-
-Can you explain the name of this test and its purpose?
-
-
-> +        """Test throughput on a QAT device.
-> +
-> +        Steps:
-> +            * Create a Cryptodev application instance with QAT device
-> +                and cipher_then_auth operation with aes-cbc and
-> sha2-256-hmac algorithms
-> +            * Run the application and gather throughput statistics
-> +
-> +        Verify:
-> +            * Throughput results meet predefined thresholds
-> +        """
-> +        app =3D Cryptodev(
-> +            ptest=3DTestType.throughput,
-> +            devtype=3DDeviceType.crypto_mvsam,
-> +            optype=3DOperationType.cipher_then_auth,
-> +            cipher_algo=3DCipherAlgorithm.aes_cbc,
-> +            cipher_op=3DEncryptDecryptSwitch.encrypt,
-> +            cipher_key_sz=3D16,
-> +            cipher_iv_sz=3D16,
-> +            auth_algo=3DAuthenticationAlgorithm.sha2_256_hmac,
-> +            auth_op=3DAuthenticationOpMode.generate,
-> +            auth_key_sz=3D64,
-> +            digest_sz=3D32,
-> +            total_ops=3D10_000_000,
-> +            burst_sz=3D32,
-> +            buffer_sz=3DListWrapper([64, 128, 256, 512, 1024, 2048]),
-> +        )
-> +        self._run_app(app)
-> +
-> +    @func_test
-> +    def anotha_one(self) -> None:
->
-
-... I'm glad we're in the RFC period!
-
-
-> +        """Test throughput on a QAT device.
+> >
+> > Signed-off-by: Scott Mitchell <scott.k.mitch1@gmail.com>
+> > ---
+> > Changes in v3:
+> > - Added __rte_no_ubsan_alignment macro to suppress false-positive UBSAN
+> >   alignment warnings when using unaligned_uint16_t
+> > - Fixed false-positive GCC maybe-uninitialized warning in rte_ip6.h
+> > exposed
+> >   by optimization (can be split to separate patch once verified on CI)
+> >
+> > Changes in v2:
+> > - Fixed UndefinedBehaviorSanitizer errors by adding uint32_t casts to
+> > prevent
+> >   signed integer overflow in addition chains
+> > - Restored uint32_t sum accumulator instead of uint64_t
+> > - Added 64k length to test_cksum_perf.c
+> >
 >
 >
+> > diff --git a/lib/net/rte_cksum.h b/lib/net/rte_cksum.h
+> > index a8e8927952..d6e313dea5 100644
+> > --- a/lib/net/rte_cksum.h
+> > +++ b/lib/net/rte_cksum.h
+> > @@ -39,24 +39,64 @@ extern "C" {
+> >   * @return
+> >   *   sum +=3D Sum of all words in the buffer.
+> >   */
+> > +__rte_no_ubsan_alignment
+> >  static inline uint32_t
+> >  __rte_raw_cksum(const void *buf, size_t len, uint32_t sum)
+> >  {
+> > -     const void *end;
+> > +     /* Process in 64 byte blocks (32 x uint16_t). */
+> > +     /* Always process as uint16_t chunks to preserve overflow/carry.
+> > */
+> > +     const void *end =3D RTE_PTR_ADD(buf, RTE_ALIGN_FLOOR(len, 64));
+> > +     while (buf !=3D end) {
+> > +             const unaligned_uint16_t *p16 =3D (const unaligned_uint16=
+_t
+> > *)buf;
+> > +             sum +=3D (uint32_t)p16[0] + p16[1] + p16[2] + p16[3] +
+> > +                      p16[4] + p16[5] + p16[6] + p16[7] +
+> > +                      p16[8] + p16[9] + p16[10] + p16[11] +
+> > +                      p16[12] + p16[13] + p16[14] + p16[15] +
+> > +                      p16[16] + p16[17] + p16[18] + p16[19] +
+> > +                      p16[20] + p16[21] + p16[22] + p16[23] +
+> > +                      p16[24] + p16[25] + p16[26] + p16[27] +
+> > +                      p16[28] + p16[29] + p16[30] + p16[31];
+> > +             buf =3D RTE_PTR_ADD(buf, 64);
+> > +     }
+> >
+> > -     for (end =3D RTE_PTR_ADD(buf, RTE_ALIGN_FLOOR(len,
+> > sizeof(uint16_t)));
+> > -          buf !=3D end; buf =3D RTE_PTR_ADD(buf, sizeof(uint16_t))) {
+> > -             uint16_t v;
+> > +     if (len & 32) {
+> > +             const unaligned_uint16_t *p16 =3D (const unaligned_uint16=
+_t
+> > *)buf;
+> > +             sum +=3D (uint32_t)p16[0] + p16[1] + p16[2] + p16[3] +
+> > +                      p16[4] + p16[5] + p16[6] + p16[7] +
+> > +                      p16[8] + p16[9] + p16[10] + p16[11] +
+> > +                      p16[12] + p16[13] + p16[14] + p16[15];
+> > +             buf =3D RTE_PTR_ADD(buf, 32);
+> > +     }
+> >
+> > -             memcpy(&v, buf, sizeof(uint16_t));
+> > -             sum +=3D v;
+> > +     if (len & 16) {
+> > +             const unaligned_uint16_t *p16 =3D (const unaligned_uint16=
+_t
+> > *)buf;
+> > +             sum +=3D (uint32_t)p16[0] + p16[1] + p16[2] + p16[3] +
+> > +                      p16[4] + p16[5] + p16[6] + p16[7];
+> > +             buf =3D RTE_PTR_ADD(buf, 16);
+> >       }
+> >
+> > -     /* if length is odd, keeping it byte order independent */
+> > -     if (unlikely(len % 2)) {
+> > -             uint16_t left =3D 0;
+> > +     if (len & 8) {
+> > +             const unaligned_uint16_t *p16 =3D (const unaligned_uint16=
+_t
+> > *)buf;
+> > +             sum +=3D (uint32_t)p16[0] + p16[1] + p16[2] + p16[3];
+> > +             buf =3D RTE_PTR_ADD(buf, 8);
+> > +     }
+> >
+> > -             memcpy(&left, end, 1);
+> > +     if (len & 4) {
+> > +             const unaligned_uint16_t *p16 =3D (const unaligned_uint16=
+_t
+> > *)buf;
+> > +             sum +=3D (uint32_t)p16[0] + p16[1];
+> > +             buf =3D RTE_PTR_ADD(buf, 4);
+> > +     }
+> > +
+> > +     if (len & 2) {
+> > +             const unaligned_uint16_t *p16 =3D (const unaligned_uint16=
+_t
+> > *)buf;
+> > +             sum +=3D *p16;
+> > +             buf =3D RTE_PTR_ADD(buf, 2);
+> > +     }
+> > +
+> > +     /* If length is odd use memcpy for byte order independence */
+> > +     if (len & 1) {
+> > +             uint16_t left =3D 0;
+> > +             memcpy(&left, buf, 1);
+> >               sum +=3D left;
+> >       }
+> >
+> > diff --git a/lib/net/rte_ip6.h b/lib/net/rte_ip6.h
+> > index d1abf1f5d5..af65a39815 100644
+> > --- a/lib/net/rte_ip6.h
+> > +++ b/lib/net/rte_ip6.h
+> > @@ -564,7 +564,7 @@ rte_ipv6_phdr_cksum(const struct rte_ipv6_hdr
+> > *ipv6_hdr, uint64_t ol_flags)
+> >       struct {
+> >               rte_be32_t len;   /* L4 length. */
+> >               rte_be32_t proto; /* L4 protocol - top 3 bytes must be ze=
+ro
+> > */
+> > -     } psd_hdr;
+> > +     } psd_hdr =3D {0}; /* Empty initializer avoids false-positive
+> > maybe-uninitialized warning */
+> >
+> >       psd_hdr.proto =3D (uint32_t)(ipv6_hdr->proto << 24);
+> >       if (ol_flags & (RTE_MBUF_F_TX_TCP_SEG | RTE_MBUF_F_TX_UDP_SEG))
+>
+> Maybe ipv6 can be fixed like this instead:
+> -       if (ol_flags & (RTE_MBUF_F_TX_TCP_SEG | RTE_MBUF_F_TX_UDP_SEG))
+> -               psd_hdr.len =3D 0;
+> -       else
+> -               psd_hdr.len =3D ipv6_hdr->payload_len;
+> +       psd_hdr.len =3D (ol_flags & (RTE_MBUF_F_TX_TCP_SEG | RTE_MBUF_F_T=
+X_UDP_SEG)) ?
+> +                       0 : psd_hdr.len =3D ipv6_hdr->payload_len;
 >
 
---0000000000009971a90647d3cdb5
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+(sorry missed this in my last response). I tried this and a few other
+options (compound literal with each field explicitly initialized,
+zero/empty initializer) the only code solution that removed the
+warning was an explicit memset(0), but this also modified the
+assembly. Safest option is to use memset (with some runtime cost) and
+a fallback is to add the zero initializer "just in case the
+compiler/target-architecture requires it" and add `#pragma GCC
+diagnostic ignored "-Wmaybe-uninitialized"` for now to suppress
+warning. I'll push the second option in my next patch and we can
+discuss/adjust accordingly.
 
-<div dir=3D"ltr"><div dir=3D"ltr"><div dir=3D"ltr"><br></div><br><div class=
-=3D"gmail_quote"><div dir=3D"ltr" class=3D"gmail_attr">On Mon, Jan 5, 2026 =
-at 2:06=E2=80=AFPM Andrew Bailey &lt;<a href=3D"mailto:abailey@iol.unh.edu"=
- target=3D"_blank">abailey@iol.unh.edu</a>&gt; wrote:<br></div><blockquote =
-class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px sol=
-id rgb(204,204,204);padding-left:1ex">Add cryptodev performance testsuite, =
-which runs the dpdk-test-crypto<br>
-application and verifies output to user specified metrics.<br></blockquote>=
-<div><br></div><div>Can you explain your approach with a little more verbos=
-ity in the commit message?</div><div><br></div><div>What kinds of devices d=
-o you want to test?</div><div><br></div><div>Which types of operations?</di=
-v><div><br></div><div>Are these tests functional or performance?</div><div>=
-<br></div><div>what combinations of algo/device/ops are being tested and wh=
-y (I realize this may still be an open question for this specific testsuite=
-)?</div><div><br></div><div>etc.</div><div>=C2=A0</div><blockquote class=3D=
-"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(2=
-04,204,204);padding-left:1ex">
-<br>
-Signed-off-by: Andrew Bailey &lt;<a href=3D"mailto:abailey@iol.unh.edu" tar=
-get=3D"_blank">abailey@iol.unh.edu</a>&gt;<br>
----<br>
-=C2=A0dts/tests/TestSuite_cryptodev_throughput.py | 460 +++++++++++++++++++=
-+<br>
-=C2=A01 file changed, 460 insertions(+)<br>
-=C2=A0create mode 100644 dts/tests/TestSuite_cryptodev_throughput.py<br>
-<br>
-diff --git a/dts/tests/TestSuite_cryptodev_throughput.py b/dts/tests/TestSu=
-ite_cryptodev_throughput.py<br>
-new file mode 100644<br>
-index 0000000000..adc7b01b99<br>
---- /dev/null<br>
-+++ b/dts/tests/TestSuite_cryptodev_throughput.py<br>
-@@ -0,0 +1,460 @@<br>
-+# SPDX-License-Identifier: BSD-3-Clause<br>
-+# Copyright(c) 2025 University of New Hampshire<br>
-+&quot;&quot;&quot;DPDK cryptodev performance test suite.<br>
-+<br>
-+The main goal of this testsuite is to utilize the dpdk-test-cryptodev appl=
-ication to gather<br>
-+performance metrics for various cryptographic operations supported by DPDK=
- cryptodev-pmd.<br>
-+It will then compare the results against predefined thresholds defined in =
-the test_config file to<br>
-+ensure performance standards are met.<br>
-+&quot;&quot;&quot;<br>
-+<br>
-+from api.capabilities import (<br>
-+=C2=A0 =C2=A0 LinkTopology,<br>
-+=C2=A0 =C2=A0 requires_link_topology,<br>
-+)<br>
-+from api.cryptodev import Cryptodev<br>
-+from api.cryptodev.config import (<br>
-+=C2=A0 =C2=A0 AeadAlgName,<br>
-+=C2=A0 =C2=A0 AuthenticationAlgorithm,<br>
-+=C2=A0 =C2=A0 AuthenticationOpMode,<br>
-+=C2=A0 =C2=A0 CipherAlgorithm,<br>
-+=C2=A0 =C2=A0 DeviceType,<br>
-+=C2=A0 =C2=A0 EncryptDecryptSwitch,<br>
-+=C2=A0 =C2=A0 ListWrapper,<br>
-+=C2=A0 =C2=A0 OperationType,<br>
-+=C2=A0 =C2=A0 TestType,<br>
-+)<br>
-+from api.cryptodev.types import (<br>
-+=C2=A0 =C2=A0 CryptodevResults,<br>
-+)<br>
-+from api.test import verify<br>
-+from framework.test_suite import BaseConfig, TestSuite, func_test<br>
-+from framework.testbed_model.virtual_device import VirtualDevice<br>
-+<br>
-+<br>
-+class Config(BaseConfig):<br>
-+=C2=A0 =C2=A0 &quot;&quot;&quot;Performance test metrics.&quot;&quot;&quot=
-;<br>
-+<br>
-+=C2=A0 =C2=A0 throughput_test_parameters: dict[str, int | float] =3D {<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;enqueued&quot;: 0,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;dequeued&quot;: 0,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;failed_enqueued&quot;: 0,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;failed_dequeued&quot;: 0,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;mops&quot;: 0,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;gbps&quot;: 0,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;cycles_per_buffer&quot;: 0,<br>
-+=C2=A0 =C2=A0 }<br>
-+<br>
-+<br>
-+@requires_link_topology(LinkTopology.NO_LINK)<br>
-+class TestCryptodevThroughput(TestSuite):<br>
-+=C2=A0 =C2=A0 &quot;&quot;&quot;DPDK Crypto Device Testing Suite.<br>
-+<br>
-+=C2=A0 =C2=A0 This test suite is comprised of 8 test cases:<br>
-+=C2=A0 =C2=A0 1. verify throughput metrics of openssl encrypt virtual devi=
-ce with aes-gcm algorithm<br>
-+=C2=A0 =C2=A0 2. verify throughput metrics of QAT device encrypt with aes-=
-cbc cipher algorithm and sha256-hmac<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 auth algorithm<br>
-+=C2=A0 =C2=A0 3. verify throughput metrics of QAT device encrypt with aes-=
-gcm aead algorithm<br>
-+=C2=A0 =C2=A0 4. verify throughput metrics of QAT device decrypt with aes-=
-docsibpi cipher algorithm<br>
-+=C2=A0 =C2=A0 5. verify throughput metrics of QAT device encrypt with aes-=
-docsibpi cipher algorithm<br>
-+=C2=A0 =C2=A0 6. verify throughput metrics of QAT device encrypt with kasu=
-mi-f8 cipher algorithm and kasumi-f9<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 auth algorithm<br>
-+=C2=A0 =C2=A0 7. verify throughput metrics of QAT device encrypt with snow=
-3g-uea2 cipher algorithm and<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 snow3g-uia2 auth algorithm<br>
-+=C2=A0 =C2=A0 8. verify throughput metrics of QAT device encrypt with zuc-=
-eea3 cipher algorithm and zuc-eia3<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 auth algorithm<br></blockquote><div><br></div>=
-<div>Testcases=C2=A0should most likely be device agnostic. I.e. the dpdk-cr=
-ypto-perf app should be able to perform encrypt/decrypt with algorithm X wi=
-th any device that supports X, not just a QAT series crypto device.</div><d=
-iv>=C2=A0</div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0p=
-x 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">
-+=C2=A0 =C2=A0 &quot;&quot;&quot;<br>
-+<br>
-+=C2=A0 =C2=A0 config: Config<br>
-+=C2=A0 =C2=A0 unsupported_cryptodevs: list[DeviceType] =3D []<br>
-+<br>
-+=C2=A0 =C2=A0 def set_up_suite(self) -&gt; None:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;Set up the test suite.<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 Setup: Retrieve application parameters from th=
-e configuration.<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 self.throughput_test_parameters =3D self.confi=
-g.throughput_test_parameters<br>
-+<br>
-+=C2=A0 =C2=A0 def _verify_throughput(self, results: list[CryptodevResults]=
-) -&gt; None:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;Verify throughput results ag=
-ainst predefined thresholds.<br></blockquote><div><br></div><div>Can you us=
-e the term baseline instead of threshold?</div><div>=C2=A0</div><blockquote=
- class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px so=
-lid rgb(204,204,204);padding-left:1ex">
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 Arguments:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 results: The results containing =
-throughput metrics to verify.<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 for result in results:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 for key, value in self.throughpu=
-t_test_parameters.items():<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 result_value =3D g=
-etattr(result, key, None)<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 if result_value is=
- not None:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 veri=
-fy(<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 result_value &gt; value,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 f&quot;Throughput metric {key} is below the threshold: {result_v=
-alue} &lt; {value}&quot;,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 )<br=
-></blockquote><div><br></div><div>2 possible issues:</div><div><br></div><d=
-iv>1. I think we need to have some &quot;delta tolerance&quot; I assume. I.=
-e. the test probably won&#39;t=C2=A0produce the literal same amount of oper=
-ations as expected form the baseline, it might be=C2=A0+1% or -1% etc. So, =
-either bake in some delta tolerance (like the 5% we use for ethdev performa=
-nce testing) or allow a delta tolerance to be passed in via config (with a =
-default value as well of course).</div><div><br></div><div>2. I think the w=
-ay this will work as written is the first time it meets a key/value which d=
-oes not meet the baseline, verify will fail the testsuite. This is okay but=
- we want to log the entire table of results before calling verify, so that =
-the person running the testsuite can see the whole table from results. If 3=
- of the values are failing, we want to ensure they can see all 3, not just =
-the first one. Let me know if this doesn&#39;t make sense.</div><div>=C2=A0=
-</div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;b=
-order-left:1px solid rgb(204,204,204);padding-left:1ex">
-+<br>
-+=C2=A0 =C2=A0 def _run_app(self, app: Cryptodev) -&gt; None:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;Run the given cryptodev appl=
-ication, print statistics, and verify throughput.<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 Arguments:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 app: The cryptodev application t=
-o run and collect data on.<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 Raises:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 SkippedTestException: If the cry=
-ptodev application cannot be run with the given<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 configuration.<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 print(&quot;UNSUPPORTED CRYPTO DEVS:&quot;, se=
-lf.unsupported_cryptodevs)<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 try:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 results: list[CryptodevResults] =
-=3D app.run_app()<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 except Exception as e:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 if &quot;devtype&quot; in str(e)=
-:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 self.unsupported_c=
-ryptodevs.append(app._app_params[&quot;devtype&quot;])</blockquote><div><br=
-></div><div>Just checking that I understand the problem and solution. A use=
- may try to run the test with a BDF pointing to a device which dpdk-crypto-=
-perf does not support, right? However, don&#39;t we just need to indicate t=
-hat at the time when dpdk-crypto-perf does not start, instead of re-printin=
-g it every time we do a subsequent run of dpdk-crypto-perf? Maybe we can ta=
-lk in person.</div><div>=C2=A0</div><blockquote class=3D"gmail_quote" style=
-=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding=
--left:1ex">
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 print(f&quot;Skipping test: {e}&=
-quot;)<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 raise<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 app.print_stats(results)<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 self._verify_throughput(results)<br>
-+<br>
-+=C2=A0 =C2=A0 @func_test<br>
-+=C2=A0 =C2=A0 def openssl_aead_aes_gcm_encrypt(self) -&gt; None:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;Basic test to run on all NIC=
-s with openssl virtual device.<br></blockquote><div><br></div><div>I don&#3=
-9;t know about the description above because the testing is being run on th=
-e vdev, not any NIC (which really isn&#39;t involved in the test).</div><di=
-v><br></div><div>I see from DPDK docs that crypto_openssl vdev supports aea=
-d aes-gcm, but so do the physical devices, and you have a separate QAT case=
- like the openssl one above (and maybe this is a good solution). Is the ide=
-a to have a testcase per device (physical or virtual) per algo?=C2=A0<a hre=
-f=3D"https://doc.dpdk.org/guides-25.11/cryptodevs/overview.html#supported-a=
-ead-algorithms">https://doc.dpdk.org/guides-25.11/cryptodevs/overview.html#=
-supported-aead-algorithms</a></div><div>=C2=A0</div><blockquote class=3D"gm=
-ail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,=
-204,204);padding-left:1ex">
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 Steps:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 * Create a Cryptodev application=
- instance with OpenSSL virtual device<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 * Run the application and gather=
- throughput statistics<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 Verify:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 * Throughput results meet predef=
-ined thresholds<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 app =3D Cryptodev(<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 vdevs=3D[VirtualDevice(&quot;cry=
-pto_openssl&quot;)],<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 ptest=3DTestType.throughput,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 devtype=3DDeviceType.crypto_open=
-ssl,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 aead_algo=3DAeadAlgName.aes_gcm,=
-<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 aead_aad_sz=3D16,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 aead_key_sz=3D16,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 aead_iv_sz=3D16,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 digest_sz=3D16,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 aead_op=3DEncryptDecryptSwitch.e=
-ncrypt,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 optype=3DOperationType.aead,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 total_ops=3D10_000_000,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 )<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 self._run_app(app)<br>
-+<br>
-+=C2=A0 =C2=A0 @func_test<br>
-+=C2=A0 =C2=A0 def qat_cipher_then_auth_aes_cbc_encrypt(self) -&gt; None:<b=
-r>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;Test throughput on a QAT dev=
-ice with aes-cbc and sha2-256-hmac algorithms.<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 Steps:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 * Create a Cryptodev application=
- instance with QAT device<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 and cipher_then_au=
-th operation with aes-cbc and sha2-256-hmac algorithms<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 * Run the application and gather=
- throughput statistics<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 Verify:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 * Throughput results meet predef=
-ined thresholds<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 app =3D Cryptodev(<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 ptest=3DTestType.throughput,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 devtype=3DDeviceType.crypto_qat,=
-<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 optype=3DOperationType.cipher_th=
-en_auth,<br></blockquote><div><br></div><div>args should be ordered the sam=
-e way for each=C2=A0instantiation of Cryptodev even if you are using named =
-args. I.e. no optype=C2=A0as a final arg for the previous test and as one o=
-f the first for this test.</div><div>=C2=A0</div><blockquote class=3D"gmail=
-_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204=
-,204);padding-left:1ex">
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 cipher_algo=3DCipherAlgorithm.ae=
-s_cbc,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 cipher_op=3DEncryptDecryptSwitch=
-.encrypt,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 cipher_key_sz=3D16,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 cipher_iv_sz=3D16,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 auth_algo=3DAuthenticationAlgori=
-thm.sha2_256_hmac,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 auth_op=3DAuthenticationOpMode.g=
-enerate,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 auth_key_sz=3D64,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 digest_sz=3D32,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 total_ops=3D10_000_000,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 burst_sz=3D32,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 buffer_sz=3DListWrapper([64, 128=
-, 256, 512, 1024, 2048]),<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 )<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 self._run_app(app)<br>
-+<br>
-+=C2=A0 =C2=A0 @func_test<br>
-+=C2=A0 =C2=A0 def qat_aead_aes_gcm_encrypt(self) -&gt; None:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;Test throughput on a QAT dev=
-ice with aes-gcm algorithm.<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 Steps:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 * Create a Cryptodev application=
- instance with QAT device<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 and aead operation=
- with aes-gcm algorithm<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 * Run the application and gather=
- throughput statistics<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 Verify:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 * Throughput results meet predef=
-ined thresholds<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 app =3D Cryptodev(<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 ptest=3DTestType.throughput,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 devtype=3DDeviceType.crypto_qat,=
-<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 optype=3DOperationType.aead,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 aead_aad_sz=3D16,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 aead_key_sz=3D16,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 aead_iv_sz=3D12,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 aead_op=3DEncryptDecryptSwitch.e=
-ncrypt,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 aead_algo=3DAeadAlgName.aes_gcm,=
-<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 digest_sz=3D16,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 total_ops=3D10_000_000,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 burst_sz=3D32,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 buffer_sz=3DListWrapper([64, 128=
-, 256, 512, 1024, 2048]),<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 )<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 self._run_app(app)<br>
-+<br>
-+=C2=A0 =C2=A0 @func_test<br>
-+=C2=A0 =C2=A0 def qat_cipher_aes_docsisbpi_decrypt(self) -&gt; None:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;Test throughput on a QAT dev=
-ice with aes-docsibpi algorithm.<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 Steps:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 * Create a Cryptodev application=
- instance with QAT device<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 and cipher_only op=
-eration with aes-docsibpi algorithm<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 * Run the application and gather=
- throughput statistics<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 Verify:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 * Throughput results meet predef=
-ined thresholds<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 app =3D Cryptodev(<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 ptest=3DTestType.throughput,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 devtype=3DDeviceType.crypto_qat,=
-<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 optype=3DOperationType.cipher_on=
-ly,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 cipher_algo=3DCipherAlgorithm.ae=
-s_docsisbpi,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 cipher_op=3DEncryptDecryptSwitch=
-.decrypt,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 cipher_key_sz=3D32,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 cipher_iv_sz=3D16,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 burst_sz=3D32,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 buffer_sz=3DListWrapper([40, 64,=
- 70, 128, 256, 512, 1024, 2048]),<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 total_ops=3D10_000_000,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 )<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 self._run_app(app)<br>
-+<br>
-+=C2=A0 =C2=A0 @func_test<br>
-+=C2=A0 =C2=A0 def qat_cipher_aes_docsisbpi_encrypt(self) -&gt; None:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;Test throughput on a QAT dev=
-ice with aes-docsibpi algorithm.<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 Steps:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 * Create a Cryptodev application=
- instance with QAT device<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 and cipher_only op=
-eration with aes-docsibpi algorithm<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 * Run the application and gather=
- throughput statistics<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 Verify:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 * Throughput results meet predef=
-ined thresholds<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 app =3D Cryptodev(<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 ptest=3DTestType.throughput,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 devtype=3DDeviceType.crypto_qat,=
-<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 optype=3DOperationType.cipher_on=
-ly,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 cipher_algo=3DCipherAlgorithm.ae=
-s_docsisbpi,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 cipher_op=3DEncryptDecryptSwitch=
-.encrypt,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 cipher_key_sz=3D32,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 cipher_iv_sz=3D16,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 burst_sz=3D32,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 buffer_sz=3DListWrapper([40, 64,=
- 70, 128, 256, 512, 1024, 2048]),<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 total_ops=3D10_000_000,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 )<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 self._run_app(app)<br>
-+<br>
-+=C2=A0 =C2=A0 @func_test<br>
-+=C2=A0 =C2=A0 def qat_cipher_then_auth_kasumi_f8_encrypt(self) -&gt; None:=
-<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;Test throughput on a QAT dev=
-ice with kasumi-f8 and kasumi-f9 algorithms.<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 Steps:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 * Create a Cryptodev application=
- instance with QAT device<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 and cipher_then_au=
-th operation with kasumi-f8 and kasumi-f9 algorithms<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 * Run the application and gather=
- throughput statistics<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 Verify:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 * Throughput results meet predef=
-ined thresholds<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 app =3D Cryptodev(<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 ptest=3DTestType.throughput,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 devtype=3DDeviceType.crypto_qat,=
-<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 optype=3DOperationType.cipher_th=
-en_auth,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 cipher_algo=3DCipherAlgorithm.ka=
-sumi_f8,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 cipher_op=3DEncryptDecryptSwitch=
-.encrypt,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 cipher_key_sz=3D16,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 cipher_iv_sz=3D8,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 auth_algo=3DAuthenticationAlgori=
-thm.kasumi_f9,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 auth_op=3DAuthenticationOpMode.g=
-enerate,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 auth_key_sz=3D16,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 digest_sz=3D4,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 total_ops=3D10_000_000,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 burst_sz=3D32,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 buffer_sz=3DListWrapper([64, 128=
-, 256, 512, 1024, 2048]),<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 )<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 self._run_app(app)<br>
-+<br>
-+=C2=A0 =C2=A0 @func_test<br>
-+=C2=A0 =C2=A0 def qat_cipher_then_auth_snow3g_uea2_encrpyt(self) -&gt; Non=
-e:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;Test throughput on a QAT dev=
-ice with snow3g-uea2 and snow3g-uia2 algorithms.<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 Steps:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 * Create a Cryptodev application=
- instance with QAT device<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 and cipher_then_au=
-th operation with snow3g-uea2 and snow3g-uia2 algorithms<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 * Run the application and gather=
- throughput statistics<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 Verify:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 * Throughput results meet predef=
-ined thresholds<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 app =3D Cryptodev(<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 ptest=3DTestType.throughput,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 devtype=3DDeviceType.crypto_qat,=
-<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 optype=3DOperationType.cipher_th=
-en_auth,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 cipher_algo=3DCipherAlgorithm.sn=
-ow3g_uea2,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 cipher_op=3DEncryptDecryptSwitch=
-.encrypt,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 cipher_key_sz=3D16,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 cipher_iv_sz=3D16,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 auth_algo=3DAuthenticationAlgori=
-thm.snow3g_uia2,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 auth_op=3DAuthenticationOpMode.g=
-enerate,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 auth_key_sz=3D16,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 auth_iv_sz=3D16,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 digest_sz=3D4,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 total_ops=3D10_000_000,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 burst_sz=3D32,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 buffer_sz=3DListWrapper([64, 128=
-, 256, 512, 1024, 2048]),<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 )<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 self._run_app(app)<br>
-+<br>
-+=C2=A0 =C2=A0 @func_test<br>
-+=C2=A0 =C2=A0 def qat_cipher_then_auth_zuc_eea3_encrypt(self) -&gt; None:<=
-br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;Test throughput on a QAT dev=
-ice with zuc-eea3 and zuc-eia3 algorithms.<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 Steps:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 * Create a Cryptodev application=
- instance with QAT device<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 and cipher_then_au=
-th operation with zuc-eea3 and zuc-eia3 algorithms<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 * Run the application and gather=
- throughput statistics<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 Verify:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 * Throughput results meet predef=
-ined thresholds<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 app =3D Cryptodev(<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 ptest=3DTestType.throughput,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 devtype=3DDeviceType.crypto_qat,=
-<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 optype=3DOperationType.cipher_th=
-en_auth,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 cipher_algo=3DCipherAlgorithm.zu=
-c_eea3,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 cipher_op=3DEncryptDecryptSwitch=
-.encrypt,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 cipher_key_sz=3D16,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 cipher_iv_sz=3D16,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 auth_algo=3DAuthenticationAlgori=
-thm.zuc_eia3,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 auth_op=3DAuthenticationOpMode.g=
-enerate,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 auth_key_sz=3D16,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 auth_iv_sz=3D16,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 digest_sz=3D4,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 total_ops=3D10_000_000,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 burst_sz=3D32,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 buffer_sz=3DListWrapper([64, 128=
-, 256, 512, 1024, 2048]),<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 )<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 self._run_app(app)<br>
-+<br>
-+=C2=A0 =C2=A0 @func_test<br>
-+=C2=A0 =C2=A0 def a_wrong_devtype(self) -&gt; None:<br></blockquote><div><=
-br></div><div>Can you explain the=C2=A0name of this test and its purpose?</=
-div><div>=C2=A0</div><blockquote class=3D"gmail_quote" style=3D"margin:0px =
-0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;Test throughput on a QAT dev=
-ice.<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 Steps:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 * Create a Cryptodev application=
- instance with QAT device<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 and cipher_then_au=
-th operation with aes-cbc and sha2-256-hmac algorithms<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 * Run the application and gather=
- throughput statistics<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 Verify:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 * Throughput results meet predef=
-ined thresholds<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 app =3D Cryptodev(<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 ptest=3DTestType.throughput,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 devtype=3DDeviceType.crypto_mvsa=
-m,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 optype=3DOperationType.cipher_th=
-en_auth,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 cipher_algo=3DCipherAlgorithm.ae=
-s_cbc,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 cipher_op=3DEncryptDecryptSwitch=
-.encrypt,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 cipher_key_sz=3D16,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 cipher_iv_sz=3D16,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 auth_algo=3DAuthenticationAlgori=
-thm.sha2_256_hmac,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 auth_op=3DAuthenticationOpMode.g=
-enerate,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 auth_key_sz=3D64,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 digest_sz=3D32,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 total_ops=3D10_000_000,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 burst_sz=3D32,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 buffer_sz=3DListWrapper([64, 128=
-, 256, 512, 1024, 2048]),<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 )<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 self._run_app(app)<br>
-+<br>
-+=C2=A0 =C2=A0 @func_test<br>
-+=C2=A0 =C2=A0 def anotha_one(self) -&gt; None:<br></blockquote><div><br></=
-div><div>... I&#39;m glad we&#39;re in the RFC period!</div><div>=C2=A0</di=
-v><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;borde=
-r-left:1px solid rgb(204,204,204);padding-left:1ex">
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;Test throughput on a QAT dev=
-ice.<br><br>
-<br>
-</blockquote></div></div>
-</div>
-
---0000000000009971a90647d3cdb5--
+> > --
+> > 2.39.5 (Apple Git-154)
+>
