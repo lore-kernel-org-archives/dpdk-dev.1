@@ -2,66 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AF32D148A4
-	for <dpdk-dev@archiver.kernel.org>; Thu,  8 Jan 2026 21:47:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DF80D1D48A
+	for <dpdk-dev@archiver.kernel.org>; Thu,  8 Jan 2026 22:02:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0AE0F402DE;
-	Thu,  8 Jan 2026 22:47:20 +0100 (CET)
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com
- [209.85.219.41]) by mails.dpdk.org (Postfix) with ESMTP id 17BDB4028C
- for <dev@dpdk.org>; Thu,  8 Jan 2026 22:47:19 +0100 (CET)
-Received: by mail-qv1-f41.google.com with SMTP id
- 6a1803df08f44-88a2f2e5445so42134526d6.1
- for <dev@dpdk.org>; Thu, 08 Jan 2026 13:47:19 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 86C99402DE;
+	Thu,  8 Jan 2026 23:02:11 +0100 (CET)
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com
+ [209.85.222.182])
+ by mails.dpdk.org (Postfix) with ESMTP id C40544028C
+ for <dev@dpdk.org>; Thu,  8 Jan 2026 23:02:09 +0100 (CET)
+Received: by mail-qk1-f182.google.com with SMTP id
+ af79cd13be357-8b29ff9d18cso383961885a.3
+ for <dev@dpdk.org>; Thu, 08 Jan 2026 14:02:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1767908838; x=1768513638; darn=dpdk.org;
+ d=gmail.com; s=20230601; t=1767909729; x=1768514529; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:message-id:date:subject:cc
  :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=Zcc7U4E41sBlpiPWy/zMVYW8mzMcNrBHBRf8YwCS4L0=;
- b=V10hy0KIvHonom0fMNVSNoyBtxPCAAeWf228oE7xFRKW00ChxXEVH1uXK9OC0e7W/b
- Y8tFFQqrLCN/rm9yIXmx7gIcLD61v/nwYqHwKDHJPDPcUjQOk0wBROS4t1wRURkbbXzV
- u0nJcxBte/zxtn8Y5FLB73GJ17Jda3i9nLT/0k40yxtXDc8Y/O++iiFnxa2iDelvL824
- tpbDveNpaQvSqKu2c6dbIhCR0eFQl6QFC/AwwKe72d4ikVPT/IVsFmKLbRBr0UaDEio8
- kDKahgF8FUh+tkfRIhJKzOTw2Gw6Z8VR1tGnBt0MHewkgR5LOgXTTLfDDg5ZSVqP638V
- +qTQ==
+ bh=sUe+VDbL5PWmEeu4YNB/FhistE7oZC1l6Sw+JGanlbY=;
+ b=XOlgJ/Z/SPHFNJ1X1wPUqI53QRyvnTOjdY1RT3tsFb7iwRRx34shGfluZzBmHAeac/
+ EqYud2AOrYCrq7ZZ/citwM1tEJTzqlKSqvDXfZtiRaVePFYU7KFpiBiyzRADVX+g8+KS
+ uQtAC6DIAF1cZCo2uHbAVh+RLgsXKDfwcdQJni29evQaNUMft42rah3lq3IelGhhXSUx
+ px77YwSC3qw0B6lTaPXASHSqePlwhpafXP8cFCcjInNIidZm4rFSI9SVfCZTSx9HAjF3
+ 5Z+kdh2H4NXYhWJsbjp3SUaSHmwHGwFt9xXSwUD45cazwTVXNT4dvp3CK5837qQtQqYA
+ UBCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1767908838; x=1768513638;
+ d=1e100.net; s=20230601; t=1767909729; x=1768514529;
  h=content-transfer-encoding:mime-version:message-id:date:subject:cc
  :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to;
- bh=Zcc7U4E41sBlpiPWy/zMVYW8mzMcNrBHBRf8YwCS4L0=;
- b=b7nXzSuo2/+/A8r8o2Q0RhAiXgQk+OFlXx3Dh7m7YOapymUbdgLMGXCHNT8duG/ZHS
- O1ruvqULYvm3xIy35g5isI0TcCkJ1/HXfLoH2cvz7ZJwjflN8fumXsVJ5JBYSMYfANAI
- dDiv2teZU28aUwjtpeonNKEFCKQdBBhHkiD/GGNCp/VDM9X2qpgpYlp0rPKhsJZit8na
- R1QvJx7W+RIpx67Y2w+6IDfJ6JbUNsTCSpYA1jlC+Qn+x10npvIlR618GzqvW5z2z/OS
- tCw0LDN3LRsGxoqXGotr9TOvVYaMNfYU1jrz4gSrPAeBGuRZ0M/REQXJUC1UKHVCwvYz
- +h1g==
-X-Gm-Message-State: AOJu0YyFN6SfO7Scl7EA09ZTyFTN8JLiJaOYmWXzFND9niZOkJKphWPr
- ceMcm1KUnZqmDd24Mo5kgmlsvG7/hfCFKKUgC/oL9CSj44IWrXNOI0MWqiXBrA==
-X-Gm-Gg: AY/fxX7nhQXU8nvsJDkeUpr5tquWMa9iPZaQ1iPtKb1sbFT8H60zZHvBWnfbBeco9ub
- WGvjFx3s1B8iUYzF0CSiTyTEICk+pZ72Z+a8imxSn4V7018MkPVhbv3eGlSdkBQm9dbxyIKAv1z
- 1GRTY40sviCEjL3vHeLcdSAZG1M/750/QFuTtMtZ72A4Ik5v+166+t2SLGiUrBxLX4V+X/vH8AO
- WWgFxujvmYCV1wUkNFj3HYegmoztV71ho+mTTTV9MiIRkcU+S/qld8LO5Fn51karShgm5eeGxQM
- skdmpLxSlWzb+z/vW5iwrUZ/k1p83kCGTfqkbez15py9clNGVEjOedblxWub8ORGa0KFVUTSC48
- hMUyioHytSV5xf/8/PnCD5BC1VVBij9Ojz//ih1EdmLSjaOcq6z/RD3LDQjSYSHuGDO1UolMGTD
- Tg08kx2eDaXu5Bxzpr96bzRCLV4gSeEpgGLXI9hFL4HmimjKoBhCP+RMhyZw==
-X-Google-Smtp-Source: AGHT+IGD21g2LfuJ4aiA24feoebpRL9ZnxAkX/0YFd/5mLEqLA37dFT0HR7NkL48zwiJXiytXDh9Ng==
-X-Received: by 2002:ad4:4eaa:0:b0:88f:e9f0:77b9 with SMTP id
- 6a1803df08f44-890842b2851mr106598656d6.58.1767908838169; 
- Thu, 08 Jan 2026 13:47:18 -0800 (PST)
-Received: from st47p01nt-relayp02.apple.com
+ bh=sUe+VDbL5PWmEeu4YNB/FhistE7oZC1l6Sw+JGanlbY=;
+ b=arF3aoPASFEe8WnuvsLfj1RK48TeYr0qeEWF70yHVebglYeYx4HCXGeT7oZv5hvtep
+ SeYKxQnEczEpBBfhYVXnRqYFXk/yw1+WjA70CJUC+dJaXPEDC9E61qwmwpGn7F/ctD7o
+ +bYCq+JfpBrvos2fYVFXm2XAWdR8SiXOR6MwZP6tRKvzQT+47AN3p1QFzzD+6kvmwsIK
+ m1MW4Qk3+Encxz8pN7laUiHFwBGdFX1N1FBoSt/isYdzWQUc6/EJK6fP5E8NK7tCVqZ2
+ eo86DU/Ct1cymeMsBKsP10Lo46Bq7T48aV1396p5hoi9txiUTkwNIHTabrgjrpi83Gh2
+ QAWA==
+X-Gm-Message-State: AOJu0Yzl8Z4oaFOdQdt8UYRS+pX4EErZJyvxyAxrGIYHONAUYu2SxTHJ
+ 8Qg0zPD7U4f4T6kpuEI6564jwhGo7E0m9yB/70mjDgRdFDCbeBVjQ9tW6+CwnA==
+X-Gm-Gg: AY/fxX5liveaF5fUb7KWNiQAmXZUzzUQ59GdP2VrLODRHbSQ8spHRbwyXjnX0MYZG9e
+ hiD0iU3BbzSNYQ5fzoaqqdPm9kTFERTRIx6OezF8TkTYCynYSvIMmi/BvDA0VuJ7fajdiHe2XHH
+ Bw8ZlmOIC8K1Aa5Q4UfjUJ94w5zY5S5eDDnpu1BtdPSRezJzj4P8jvK3TUnSaTQcxp3+rSrBk1j
+ pbe8C16a8fDRLPxqgUb66uFBrSDNbRPrXWU24JNgTpg/hGLlFizROElLpxxkwffs8YfnMb47d07
+ T1VzrGzCYvhxruA5Er8LWuxStN5FDOL0P+qpExM8LDMZzyiUH5Q7DEN8Mb36ZLMXess609I16a2
+ y62YPx1g94rvFo1drevNAoZyKea1sMSi32jvL9NzxnuQjmtTaCKV59icQ/yFS0s1pWbOIea0CtX
+ suViTO4xUH8na+DJawv31YyOUeHQSrzqp1C6v5lqwCZYGqtbD7z23komUWVg==
+X-Google-Smtp-Source: AGHT+IFYtZL3iXfDTNKSUcbed2MAC47zSe6JGMju7snLyGtjwu7wpIcyFxMK/sQF1cHLNfiUH37/Iw==
+X-Received: by 2002:a05:620a:6c86:b0:8a1:ac72:e3dc with SMTP id
+ af79cd13be357-8c3893f53a9mr1002160685a.43.1767909728758; 
+ Thu, 08 Jan 2026 14:02:08 -0800 (PST)
+Received: from st47p01nt-relayp03.apple.com
  ([2601:182:b80:6a50:314a:3f86:1924:bd42])
  by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-8907723436fsm70894406d6.34.2026.01.08.13.47.17
+ af79cd13be357-8c37f51cf95sm687701285a.33.2026.01.08.14.02.08
  (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
- Thu, 08 Jan 2026 13:47:17 -0800 (PST)
+ Thu, 08 Jan 2026 14:02:08 -0800 (PST)
 From: scott.k.mitch1@gmail.com
 To: dev@dpdk.org
 Cc: mb@smartsharesystems.com, stephen@networkplumber.org,
  Scott Mitchell <scott.k.mitch1@gmail.com>
-Subject: [PATCH v9] net: optimize raw checksum computation
-Date: Thu,  8 Jan 2026 16:47:13 -0500
-Message-Id: <20260108214713.52987-1-scott.k.mitch1@gmail.com>
+Subject: [PATCH v10] net: optimize raw checksum computation
+Date: Thu,  8 Jan 2026 17:02:05 -0500
+Message-Id: <20260108220205.64044-1-scott.k.mitch1@gmail.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -95,9 +96,13 @@ Performance results from cksum_perf_autotest on Intel Xeon
 
 Signed-off-by: Scott Mitchell <scott.k.mitch1@gmail.com>
 ---
+Changes in v10:
+- Fixed patch metadata format: removed literal separator markers from v9
+  changelog text that would be interpreted as patch delimiters.
+
 Changes in v9:
-- Fixed patch metadata format: removed duplicate --- separator that was hiding
-  changelog on patches.dpdk.org
+- Fixed patch metadata format: v8 had duplicate separator which caused
+  changelog to not render on patches.dpdk.org. v9 uses correct format.
 
 Changes in v8:
 - __rte_raw_cksum: use native pointer arithmetic instead of RTE_PTR_ADD
@@ -110,6 +115,7 @@ Changes in v8:
 
 Changes in v7:
 - Replaced pointer arithmetic with RTE_PTR_ADD/RTE_ALIGN_FLOOR for DPDK consistency
+  (BROKEN - Clang alias analysis bug causes incorrect UDP checksums)
 
 Changes in v6:
 - Fixed GCC -Wmaybe-uninitialized false positive in mlx5 driver
