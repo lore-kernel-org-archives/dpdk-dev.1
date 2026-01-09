@@ -2,68 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A569D232DC
-	for <dpdk-dev@archiver.kernel.org>; Fri,  9 Jan 2026 04:58:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41BEED232DF
+	for <dpdk-dev@archiver.kernel.org>; Fri,  9 Jan 2026 05:34:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 591B2402A7;
-	Fri,  9 Jan 2026 05:58:00 +0100 (CET)
-Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com
- [209.85.222.53]) by mails.dpdk.org (Postfix) with ESMTP id BFE9F400D5
- for <dev@dpdk.org>; Fri,  9 Jan 2026 05:57:58 +0100 (CET)
-Received: by mail-ua1-f53.google.com with SMTP id
- a1e0cc1a2514c-93f56a97064so1179074241.1
- for <dev@dpdk.org>; Thu, 08 Jan 2026 20:57:58 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 22961402A7;
+	Fri,  9 Jan 2026 06:34:51 +0100 (CET)
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com
+ [209.85.221.48]) by mails.dpdk.org (Postfix) with ESMTP id BF382400D5
+ for <dev@dpdk.org>; Fri,  9 Jan 2026 06:34:49 +0100 (CET)
+Received: by mail-wr1-f48.google.com with SMTP id
+ ffacd0b85a97d-431048c4068so1561142f8f.1
+ for <dev@dpdk.org>; Thu, 08 Jan 2026 21:34:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1767934678; x=1768539478; darn=dpdk.org;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:from:to:cc:subject:date
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1767936889;
+ x=1768541689; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=KkCLBSZnnv1VTIiEImgf1f4UjjWxycgoACpTRsoI5DQ=;
- b=Z3c6DWN6hO+PDyfIrXA34/H7i5BzCjCG9NkkzSF1Wy7mv0C0W8EdR7cpHE/G6NUotr
- OOKwhuCQ9lIboDamI1rMh1dzH0LQskVfEx8hIOao3om1k3KOf4e9zBMZIs+JL95OyrjY
- 22E+hYfYMGPSeYea/Ij0MtLRHI5dpECKoYFu187mojL/MJOoCxTDAyAWdfhP0kh5sdEk
- S0s7YqZDuokNo0lOHCGBY3jp3gOjYeZ0NjdmWEy1aj4euQrBRMbgZth5aDXxJI8hFCp8
- 92mqt/Iv5Qc9Alypx44fTKBld3s5aUX8VBVE4TDRsuB17sdHj0ymOamxubiM5AWOF/0X
- oBSg==
+ bh=9BFLIhvmdZc+LvYeKa3MwS3Hnt2+KDv4m1PgOLyl2Qk=;
+ b=rPFkOO144E1YmOdsjESqKhx9ULnSlz9rzFzQVMj0KtkXj3+C1sPHS6luRVjdiL04qT
+ L3F8rq54hQ7U6I4CsDYJF/BNapypoqpBWiL5n9TiVq3W0mqIN0iwi32/T09AEEEHRUZo
+ cJAAGjiYDrluUxqQ0gXJhRspf0yyLOfyvXOWb8G5rJs2MTSZ38Gy2k4Q6xS2GaJWVAuJ
+ aygDf9YkDWC6e+OXFJMLQZsVN4vEs2qvM70+s1mO/8NKO1jEP+UbQnDbq+b2ResF2kaG
+ aizGUq7cbnrs5SGiGZybfViJa/7hQ97uxt7xtmIxQnBUOtEyyERfufpDyYABE83myTfY
+ /7Dw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1767934678; x=1768539478;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+ d=1e100.net; s=20230601; t=1767936889; x=1768541689;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=KkCLBSZnnv1VTIiEImgf1f4UjjWxycgoACpTRsoI5DQ=;
- b=spC8NZL4zAmjLX3V1fKxk7n8VrwPCk3gcafYk4OBbxLWQbkL2CdVwYVB8cNVde3LJ7
- 9wRU7pIONrTzsgQlT3i+5vvvWX2b6EBLwuUmiM/Rc1wI+dsA4ePF1XsZVOXKriGoGsVo
- PeCXKONLAXmjk+WM7QfrGWH9XsMaT7OcT4/5aO5Vs+LEon1WMP+Lg5ERPUTznObCN3ZG
- az1YYIGeI0sT1EAD5jlcb2JUup/HCYfrAXXvpccZOrPn4F1ItnCVKuHuuJf7SD9fVCfx
- tLi1fsUH9SQE+UKa0L7LzQDNlXNK1ndvyXL53m3p6wHO3lAP7dw6CbDvt34O88gr3Lgr
- hFmA==
-X-Gm-Message-State: AOJu0YxmXUcudy6IlJ7teVnNvV2SIjIlyeWb+iNEfT8cfW5+eMe7UT2C
- 30ZHgX4ZN8LOhiBLf79IvnEekVuAITbgCF0Q7RV95oUQFgrDKuEJ2UZTdnvRLW3rQyVf0H/kxpw
- vjx313XkvAoEFdSBuor1AQFCvTUN4NcTY2Vzd
-X-Gm-Gg: AY/fxX5OmeYaG5yHfn9PkPdXwYGTb7TzKxwaOxEUn/+PE1ov7+ZXlJKCmmDDC3+UGfJ
- qhKW+ZNo6Kd56qJDRPJffZ2LuhBKTDjma66PtHgHdjinqDKqPzF+CuePTnK3oe2WCSPIG0otajF
- cxgPtYlO5cf3u162yntzDC1qBzRxk65MNZNq9J6nU3asj1N3zaK9IAh2PTrgxwPftD+u+sT0Xxu
- 08wPPAzTlFSTiKR3fp1xR0DWAIgEL5BStoUTgCV+ciT9a8nSQNBt4rfrKTt3bMTaBV2KWo7+CoK
- lC7hE7mw6zFu4T4vJeuM38PtFjI=
-X-Google-Smtp-Source: AGHT+IE0Pf4MoQXdw4caISIBqhVO6Qc4wNW7ydC/ZRalka/SFSa1lwd3ZHIegi0kiG1X5NUz+RnjhqYHlUmKdW59VL0=
-X-Received: by 2002:a05:6102:560b:b0:5db:3b75:a2aa with SMTP id
- ada2fe7eead31-5ecb688e212mr3704285137.18.1767934677938; Thu, 08 Jan 2026
- 20:57:57 -0800 (PST)
-MIME-Version: 1.0
-References: <20260108061338.27217-1-scott.k.mitch1@gmail.com>
- <20260108081229.60b095b9@phoenix.local>
- <CAFn2buDp4ffHuSXmTrW8mfNHxm-t3FL=TVgMKFAc2gU7fyXPGg@mail.gmail.com>
- <20260108160058.685cf7a7@phoenix.local>
-In-Reply-To: <20260108160058.685cf7a7@phoenix.local>
-From: Scott Mitchell <scott.k.mitch1@gmail.com>
-Date: Thu, 8 Jan 2026 23:57:46 -0500
-X-Gm-Features: AZwV_QhaRW2YTtQWQZZ6kkGYbwPcRs5qeSdyF3B_MVsy3eOkUqhh1a1F0xHDAFU
-Message-ID: <CAFn2buCqxz=43Xy6QycxS0KaY9A49bcLrsBOGFoP6MzHE0fnNg@mail.gmail.com>
-Subject: Re: [PATCH v5] net: optimize raw checksum computation
-To: Stephen Hemminger <stephen@networkplumber.org>
+ bh=9BFLIhvmdZc+LvYeKa3MwS3Hnt2+KDv4m1PgOLyl2Qk=;
+ b=b5nElVa+BZLPU53f3TlJiqTb49SuFU7NrsH6YM+BmO3cZcBcUMGCiDTReNN2oJsW1e
+ qqMfMnAfRjC3PynsOtk/d4RYjCaEKzfI5a0jHxF8bIICrEy9chrInucNLPdwlG2vvBYM
+ sf2NsOPA6BIDRlNg5v/U2dgGFRkJre79foRflzy+PhcxfUxvHvSWeFjwwuRz4gN0saGC
+ s2Bb4uK8s7aj9eArTtFFCKYxNY7oWX80HbwpATFSGZrmLaLyFNZ+K3tT/VO0GSgnKKkC
+ 0BAsgyWVWQXWVFLfGRI4qJZSTwYGQcKRSd/wmcYaACcFC9Bgbx9mZd4DblP1x18j12/S
+ zg+Q==
+X-Gm-Message-State: AOJu0YxeketLWthvhaN/nkbHCQe4SGXr1SclUY+NbTLZtl1y8U3h5aQt
+ +yCig8NpGgn8lm79X3zmMOAzSsUGxD7cBcltl1NT9cxdZvUBgbCz3v5Mut6Xdn3y0wsryTTZ2gx
+ MUyOt
+X-Gm-Gg: AY/fxX5Gtm0PEzO71qH6DkSwLZvsUPF/liOqP/yVe0Z0vFVDZXKjbrDKtGowd5XoAe0
+ qqOL8Ud2/E8y9D02HA0K1E/Hd0uQbpGy3taqaQbd7j8rhwLEAHXUxkVcNi9IP4zSVrLJosdSk+G
+ 5odFEouuBjtco219KypI3Ow3gB7YiIRkd9hPLdGe/9Kr0WmZ4xJswqpVOmVkXNm58sk/KHbhIhq
+ yXQkrdzTzctrIC8kGKXP6aWuurrSmtAKy4cVdRw07Qy3K2eU1MOg/U+PZ2F56VVQQtcgdg47a/c
+ 7ET5GdZPM8AkRD3lEkss+MdU/cirBO6P0ifZV/5rWZZCkS7bPFhR9MQGPx4hNWPF/zefijFX/PP
+ Qm+yRau4FIsqn0WsYRFuZ+mxeA/2GT86BJsrgyyp43WoXPwrC6TIVldDB0Bi/kV1P7mHfCUD6BF
+ 5MdEcXT2NWx86p9MXv0Qu3/43lPPgVX0UQG97dVY7h6FLyRsodqtl+
+X-Google-Smtp-Source: AGHT+IF97P5Vr6Z/VPZCOq4Td3rjM92GLV+GqFF+Dk4/oUrZSpsBuVJqghxTnWN7KJZA8OuagaZjjQ==
+X-Received: by 2002:a5d:5d86:0:b0:430:fcbc:dc4a with SMTP id
+ ffacd0b85a97d-432bcfd2232mr14001776f8f.19.1767936888938; 
+ Thu, 08 Jan 2026 21:34:48 -0800 (PST)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ ffacd0b85a97d-432bd0dad8bsm20830102f8f.8.2026.01.08.21.34.47
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Thu, 08 Jan 2026 21:34:48 -0800 (PST)
+Date: Thu, 8 Jan 2026 21:34:43 -0800
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: scott.k.mitch1@gmail.com
 Cc: dev@dpdk.org, mb@smartsharesystems.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v9] net: optimize raw checksum computation
+Message-ID: <20260108213443.0ab2f0c3@phoenix.local>
+In-Reply-To: <20260108214713.52987-1-scott.k.mitch1@gmail.com>
+References: <20260108214713.52987-1-scott.k.mitch1@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -77,51 +81,86 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, Jan 8, 2026 at 7:01=E2=80=AFPM Stephen Hemminger
-<stephen@networkplumber.org> wrote:
->
-> On Thu, 8 Jan 2026 16:19:37 -0500
-> Scott Mitchell <scott.k.mitch1@gmail.com> wrote:
->
-> > On Thu, Jan 8, 2026 at 11:12=E2=80=AFAM Stephen Hemminger
-> > <stephen@networkplumber.org> wrote:
-> > >
-> > > On Thu,  8 Jan 2026 01:13:38 -0500
-> > > scott.k.mitch1@gmail.com wrote:
-> > >
-> > > > +#ifdef RTE_CC_GCC
-> > > > +     /* Suppress GCC -Wmaybe-uninitialized false positive. No asse=
-mbly/runtime impacts. */
-> > > > +     asm volatile("" : "+m" (psd_hdr));
-> > > > +#endif
-> > > >
-> > >
-> > > Maybe rte_compiler_barrier() will do same thing?
-> >
-> > Agreed it feels like a compiler bug but looking for advice if I'm
-> > missing something :)
-> >
-> > My initial concern with rte_compiler_barrier is its a general barrier
-> > which may have broader impacts on
-> > optimizations and compiled code. Will that be an issue in this case? I
-> > wasn't sure and the approach
-> > in the patch is targeted at a specific variable and assembly from
-> > clang/gcc was the same. I will
-> > introduce a macro to make it cleaner and I can replace it with
-> > rte_compiler_barrier if preferred.
->
-> Maybe try with -fanalyzer and it might tell you more.
-> I suspect some of the aliasing setting are causing issues.
-> Some drivers are turning on no-strict-aliasing
+On Thu,  8 Jan 2026 16:47:13 -0500
+scott.k.mitch1@gmail.com wrote:
 
-I have more evidence this is a GCC optimizer bug.
-The RTE_SUPPRESS_UNINITIALIZED_WARNING approach serves
-as a workaround to avoid the bug. I created a more minimal reproducer:
-https://gist.github.com/Scottmitch/bf23748b4588e68c9bdb8d124f92f1bd
+> diff --git a/lib/net/rte_ip4.h b/lib/net/rte_ip4.h
+> index 822a660cfb..63852717c9 100644
+> --- a/lib/net/rte_ip4.h
+> +++ b/lib/net/rte_ip4.h
+> @@ -223,21 +223,17 @@ rte_ipv4_phdr_cksum(const struct rte_ipv4_hdr *ipv4_hdr, uint64_t ol_flags)
+>  		uint8_t  zero;     /* zero. */
+>  		uint8_t  proto;    /* L4 protocol type. */
+>  		uint16_t len;      /* L4 length. */
+> -	} psd_hdr;
+> -
+> -	uint32_t l3_len;
+> -
+> -	psd_hdr.src_addr = ipv4_hdr->src_addr;
+> -	psd_hdr.dst_addr = ipv4_hdr->dst_addr;
+> -	psd_hdr.zero = 0;
+> -	psd_hdr.proto = ipv4_hdr->next_proto_id;
+> -	if (ol_flags & (RTE_MBUF_F_TX_TCP_SEG | RTE_MBUF_F_TX_UDP_SEG)) {
+> -		psd_hdr.len = 0;
+> -	} else {
+> -		l3_len = rte_be_to_cpu_16(ipv4_hdr->total_length);
+> -		psd_hdr.len = rte_cpu_to_be_16((uint16_t)(l3_len -
+> -			rte_ipv4_hdr_len(ipv4_hdr)));
+> -	}
+> +	} psd_hdr = {
+> +		.src_addr = ipv4_hdr->src_addr,
+> +		.dst_addr = ipv4_hdr->dst_addr,
+> +		.proto = ipv4_hdr->next_proto_id,
+> +		.len = (ol_flags & (RTE_MBUF_F_TX_TCP_SEG | RTE_MBUF_F_TX_UDP_SEG))
+> +			? (uint16_t)0
+> +			: rte_cpu_to_be_16((uint16_t)(rte_be_to_cpu_16(ipv4_hdr->total_length) -
+> +					rte_ipv4_hdr_len(ipv4_hdr)))
+> +	};
+> +	RTE_SUPPRESS_UNINITIALIZED_WARNING(psd_hdr);
+> +
+>  	return rte_raw_cksum(&psd_hdr, sizeof(psd_hdr));
+>  }
 
-Your suspicion was correct, -fno-strict-aliasing avoids the bug but I don't
-think it is desirable to enable this broadly for DPDK when we have a
-more targeted workaround.
+Since this is all fixed size, why not hand unroll it?
+That is what Linux kernel does for IPv4 checksum and this would be
+another case. No loop is really necessary.
 
-I will reach out to RH to confirm but in the interim I suggest we keep
-RTE_SUPPRESS_UNINITIALIZED_WARNING (or similar alternative).
+static inline uint16_t
+rte_ipv4_phdr_cksum(const struct rte_ipv4_hdr *ipv4_hdr, uint64_t ol_flags)
+{
+	union {
+		struct {
+			uint32_t src_addr;
+			uint32_t dst_addr;
+			uint8_t  zero;
+			uint8_t  proto;
+			rte_be16_t len;
+		} psd;
+		uint16_t u16[6];
+	} hdr = {
+		.psd = {
+			.src_addr = ipv4_hdr->src_addr,
+			.dst_addr = ipv4_hdr->dst_addr,
+			.proto = ipv4_hdr->next_proto_id,
+		}
+	};
+	uint32_t sum;
+
+	if (!(ol_flags & (RTE_MBUF_F_TX_TCP_SEG | RTE_MBUF_F_TX_UDP_SEG))) {
+		hdr.psd.len = rte_cpu_to_be_16(
+			(uint16_t)(rte_be_to_cpu_16(ipv4_hdr->total_length) -
+				   rte_ipv4_hdr_len(ipv4_hdr)));
+	}
+
+	/* Unrolled sum of 6 uint16_t words */
+	sum = hdr.u16[0] + hdr.u16[1] + hdr.u16[2] +
+	      hdr.u16[3] + hdr.u16[4] + hdr.u16[5];
+
+	sum = (sum & 0xffff) + (sum >> 16);
+	sum = (sum & 0xffff) + (sum >> 16);
+	return (uint16_t)sum;
+}
+
+I.e Don't use the rte_raw_cksum at all.
+
+Same for IPv6.
