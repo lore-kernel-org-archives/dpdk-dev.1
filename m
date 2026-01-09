@@ -2,67 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D82A5D232C7
-	for <dpdk-dev@archiver.kernel.org>; Fri,  9 Jan 2026 01:18:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03376D232C6
+	for <dpdk-dev@archiver.kernel.org>; Fri,  9 Jan 2026 01:18:27 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CF48840674;
-	Fri,  9 Jan 2026 02:18:07 +0100 (CET)
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com
- [209.85.218.44]) by mails.dpdk.org (Postfix) with ESMTP id 45BB640687
- for <dev@dpdk.org>; Fri,  9 Jan 2026 02:18:05 +0100 (CET)
-Received: by mail-ej1-f44.google.com with SMTP id
- a640c23a62f3a-b7a6e56193cso632320866b.3
- for <dev@dpdk.org>; Thu, 08 Jan 2026 17:18:05 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id C83B0406BB;
+	Fri,  9 Jan 2026 02:18:08 +0100 (CET)
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com
+ [209.85.218.48]) by mails.dpdk.org (Postfix) with ESMTP id C1084406B8
+ for <dev@dpdk.org>; Fri,  9 Jan 2026 02:18:06 +0100 (CET)
+Received: by mail-ej1-f48.google.com with SMTP id
+ a640c23a62f3a-b728a43e410so660169166b.1
+ for <dev@dpdk.org>; Thu, 08 Jan 2026 17:18:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1767921485;
- x=1768526285; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1767921486;
+ x=1768526286; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=NhypjK/qg3HmwYQihbeKVvOK8zxERIvAwjfRdSO+lbI=;
- b=hJI3gPZgV8Am48DIgeoS+WOE4Fi6nNtuppjsvRbFaVCYKhKJvec/AUfDDg2RuXMkdk
- TDaMRqZybeYds/q7yWFlMjzO6kmUyeGEV1VqJBRa4LZUZZ0jpRcknmNkyUahp6aSj9jz
- hUoPwI2gUkdvs17bP+5Mmp1dZ4KC31f99WARwf5Ij8r2ap5q57s9ljGe35kMTUHdsmZ0
- innQ0hm1lW8OWbqF+5pGLVUTDwHJ0m5umOpreoAdfelQA4o2tLlly2HTK2A265EuMLT1
- fh4thHmnYMHN7gjvdcKbzFKvYGrf3NcCcnU9d20ApLrCCtoyT9vxDmpZXg4+4j9ae9m/
- jTSA==
+ bh=Wz5dpNnIbC6sLjGL52CYxprkQodNvlzFEBBeftG3q88=;
+ b=GC8uygDTwIEh/TiFMqv2nMfOj/rVJgODciR8LO5k+a5poLNDETHpMbOlK+/yDt+S2H
+ /Ild9RdInO5aaKtMk9Oi6fRJhUBv3892lEay6FXtPKyLcUvYKSBd5SwLLEYVqACsEdCC
+ k6ftS+1B09OGjeBZFStIWm1gQBwBLMkOJ6v5H6FNgI5wmOB+aq+2JWl8t3+oL6M41ewI
+ Qc3G/tcjoNz4GuAnjbUFX0aIko3HnG858Lpa21WztJrMn5GOxfxGdFiVDrkbwZeLuuv0
+ 5MrG8hNQzCiumMFKLJ1AjfSzAdX8156YVBR9zLHbWG9vtSvZkPG7rLW8m1CGf1wiaqNX
+ FwIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1767921485; x=1768526285;
+ d=1e100.net; s=20230601; t=1767921486; x=1768526286;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=NhypjK/qg3HmwYQihbeKVvOK8zxERIvAwjfRdSO+lbI=;
- b=byKXlYhSnEmTuOXVqWWebO3KHHXYlsvjTvl47SawFggCVgeCKXgkCdd+kIBc+wmkMD
- B6KfAOHNBpBuB3vNo92GSk8xM/yFNqzWdawK1ermQiLAGjsGv3wSVXTt4Dhx4+4aeJ1g
- A2AtKJFmo/Ay4yZ3Nfy924RzCDFsFlg9jza/kpaZb5mCSxvHhdEQ8ZyHsIckKwJhBPVM
- V3nFu91np+Rxhc72uLsOxs77h98Eq16bMu6W0dFn2pfMmulfSjAZFayLjh47x1UXSy/o
- jeL7mrLFs0yBkMbma1IY0jmCFG6U6FrgM1/ulqHI1M5AiVfw2MksVEDRybEwn5gFL+EB
- gW5g==
-X-Gm-Message-State: AOJu0YwB5oaV1KPoINVKYebeLXoIdRmyEY+yEg8X0C2c9wnAjw21W/Jq
- wt5Gt1GJI32EoMgUmn668keOOqeEBazscAK3NW6brUpB82lFHwAZCKfF3z9yLa0sxZHk2QbCLTA
- 3Q2qs
-X-Gm-Gg: AY/fxX4pT3K4wianIhzmiks/P8Xh0+MGzm7VGUFNoOjpgR4kFqiEuNuTq3g2oKFFMOT
- 00z/S9+59m7ZJpWJz/eNM/cDaN+p27DptDLcFm8NAC8AiU3/+pWTk1lRbLNyXWVS3rQE2EYwYeQ
- hw7aVSi+2Sy8QxBzIn9dPioDRyWBVyUtxoolecPgv7bT55G6Xm8MQiKaWkcNzmFUv/6A6pEsHGb
- ps9yn5tpu6x98xcfaxy4Vf+Z+q3uaB9BhWhoGtx8MEnxbsYdaSxFOLzxwb0+pKI5F3RmJHvPPHz
- xTC8vBPe560JxF2XqfQyXKR2KZqdtM7P3cmiO7yiuDeiqRjnO2cVZ6jaGCM2ndkdR8hxuEQPBSK
- y6JDd8Iua/ECSIOLr7VJNc6traVkJrMWPlvuUQOPNlEC6Sw658Gq7GJ4nfmRnaB5mv25GIQtZaO
- v5ldjbK6l6ErqSOw1dtXAEWZwF5RZMEopVqK52gl3k1hHHfjc8FO8EiIlcZry5
-X-Google-Smtp-Source: AGHT+IHkKMQT4zcUoKZJ0EiXhB3ocfHBP9sbKMtYbgO8xY7RVFgA0vu3ciYNZI3ANeBga2vwclMpkQ==
-X-Received: by 2002:a17:907:3d0b:b0:b83:a88c:b4e7 with SMTP id
- a640c23a62f3a-b8445461628mr628692466b.65.1767921484780; 
- Thu, 08 Jan 2026 17:18:04 -0800 (PST)
+ bh=Wz5dpNnIbC6sLjGL52CYxprkQodNvlzFEBBeftG3q88=;
+ b=f7qZPCupVWkWbUDYvhEBdT0CMSUtZKo9MZbqUQ5MatLZgWS1P++CWye5gTVXANt6W6
+ Evv+oBou9+cJq5AFGOdNODOhWEfCkBCbYenWH+iBoKQIRhjNWB1K/l7FvaCKQ8Q/StRY
+ IZEVunkZzZfSZMNYJ4z9Aj/sIrp/CNYuw+a1BQOxTxY6AZLkcWLrja+HfMrdUy1axPur
+ y4EdCEqVQ0s3QyW3y2msAdqZeSvByOoe0pvDEaE43KKtRZapCRcwCtVPwKNreHYVY/Vb
+ 2QntRAq6SB6purdIbEqbvit51s88EpChLF/ZUJEX5HzYU5ZxYcS1YLBrCyq+A9keIK3n
+ EM/w==
+X-Gm-Message-State: AOJu0Ywa/F0TftSx4qfVeejA/yDGSbEYKG5x3YZnJTn2S/xwwgVEy41g
+ zm9+47IzTyLkbeyjoalGZbL0ZDOxpgVmpOzqY7Az2iLzZ+yDburHIM5d78Q/CU/bho8qu52PYQ+
+ ldDye
+X-Gm-Gg: AY/fxX5a6HOk7T6yTyx7dAh1ZmnOUCdimV2fW4VEd++nep4h1B8MdGaSIs2R5kfv3pP
+ MGAXeF5wyVDPWJ1mcHy/g9lToNZ5x3lYlF3JSFmnGvM4LnXJ0AmjMPfB1JkrMDP9Qe7L6yv86Ns
+ yMMHqWNTxLOF8qd3yjSggpcddBjyJiWziAK/KKR81/hlXrKT1nZP/EguiBOh1bbnhRoP8dveUg1
+ JTVnPqPaCQ/tlAwp36KvEPPkmnX/sEBiZJTOZgN/jms9IFrVaparkcmCVS7RUsNGvliqljR9RyD
+ tx+7RIqur8LVzCYvhiDlUCwV3tzDM2EBtP9zYYfXZp9PcQsasq1BFFhzhyw+fVvAggCs13Uoni6
+ Z+4Y0sHoKWhg3iLfv5rw0EmWAvjf90W2jWOsiaZfDDCANgOnHXWNTDP1ZuDSdxIl4ZjB6Rj+Ee/
+ 293pik6m3yQRqeFK4qX6HK6ErCnI6oxHgXvkGl0/xyOjvad4FDjw==
+X-Google-Smtp-Source: AGHT+IFvH/7Vc7RHSbsBJ5kKnIqxUL1vbNjMLzvGrMRzwmycgftubqJoB42kTGfKPHOmCChFi1F79g==
+X-Received: by 2002:a17:907:2d0e:b0:b84:200d:15b7 with SMTP id
+ a640c23a62f3a-b84453385c0mr842642466b.39.1767921486320; 
+ Thu, 08 Jan 2026 17:18:06 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a640c23a62f3a-b842a27cac3sm954886566b.20.2026.01.08.17.18.03
+ a640c23a62f3a-b842a27cac3sm954886566b.20.2026.01.08.17.18.05
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 08 Jan 2026 17:18:04 -0800 (PST)
+ Thu, 08 Jan 2026 17:18:05 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v2 3/9] net/pcap: use bool for flags
-Date: Thu,  8 Jan 2026 17:16:20 -0800
-Message-ID: <20260109011755.362857-4-stephen@networkplumber.org>
+Subject: [PATCH v2 4/9] net/pcap: support Tx offloads
+Date: Thu,  8 Jan 2026 17:16:21 -0800
+Message-ID: <20260109011755.362857-5-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260109011755.362857-1-stephen@networkplumber.org>
 References: <20260106182823.192350-1-stephen@networkplumber.org>
@@ -82,145 +82,48 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Save some space by using bool for flag values.
+The driver already handles multi-segment mbufs but did not report
+that in offload flags. Driver can easily insert vlan tag making
+testing easier.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/pcap/pcap_ethdev.c | 67 +++++++++++++++-------------------
- 1 file changed, 29 insertions(+), 38 deletions(-)
+ drivers/net/pcap/pcap_ethdev.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
 diff --git a/drivers/net/pcap/pcap_ethdev.c b/drivers/net/pcap/pcap_ethdev.c
-index f4cb444395..5db44ab1ea 100644
+index 5db44ab1ea..a27a132002 100644
 --- a/drivers/net/pcap/pcap_ethdev.c
 +++ b/drivers/net/pcap/pcap_ethdev.c
-@@ -5,6 +5,7 @@
-  */
+@@ -403,6 +403,9 @@ eth_pcap_tx_dumper(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
+ 		if (unlikely(len > mtu))
+ 			continue;
  
- #include <stdlib.h>
-+#include <stdbool.h>
- #include <time.h>
- 
- #include <pcap.h>
-@@ -91,9 +92,9 @@ struct pmd_internals {
- 	char devargs[ETH_PCAP_ARG_MAXLEN];
- 	struct rte_ether_addr eth_addr;
- 	int if_index;
--	int single_iface;
--	int phy_mac;
--	unsigned int infinite_rx;
-+	bool single_iface;
-+	bool phy_mac;
-+	bool infinite_rx;
- };
- 
- struct pmd_process_private {
-@@ -103,25 +104,25 @@ struct pmd_process_private {
- };
- 
- struct pmd_devargs {
--	unsigned int num_of_queue;
-+	uint16_t num_of_queue;
-+	bool phy_mac;
- 	struct devargs_queue {
- 		pcap_dumper_t *dumper;
- 		pcap_t *pcap;
- 		const char *name;
- 		const char *type;
- 	} queue[RTE_PMD_PCAP_MAX_QUEUES];
--	int phy_mac;
- };
- 
- struct pmd_devargs_all {
- 	struct pmd_devargs rx_queues;
- 	struct pmd_devargs tx_queues;
--	int single_iface;
--	unsigned int is_tx_pcap;
--	unsigned int is_tx_iface;
--	unsigned int is_rx_pcap;
--	unsigned int is_rx_iface;
--	unsigned int infinite_rx;
-+	bool single_iface;
-+	bool is_tx_pcap;
-+	bool is_tx_iface;
-+	bool is_rx_pcap;
-+	bool is_rx_iface;
-+	bool infinite_rx;
- };
- 
- static const char *valid_arguments[] = {
-@@ -858,7 +859,7 @@ eth_dev_close(struct rte_eth_dev *dev)
- 		}
- 	}
- 
--	if (internals->phy_mac == 0)
-+	if (!internals->phy_mac)
- 		/* not dynamically allocated, must not be freed */
- 		dev->data->mac_addrs = NULL;
- 
-@@ -1180,29 +1181,19 @@ open_tx_iface(const char *key, const char *value, void *extra_args)
- }
- 
- static int
--select_phy_mac(const char *key __rte_unused, const char *value,
--		void *extra_args)
-+process_bool_flag(const char *key, const char *value, void *extra_args)
- {
--	if (extra_args) {
--		const int phy_mac = atoi(value);
--		int *enable_phy_mac = extra_args;
--
--		if (phy_mac)
--			*enable_phy_mac = 1;
--	}
--	return 0;
--}
--
--static int
--get_infinite_rx_arg(const char *key __rte_unused,
--		const char *value, void *extra_args)
--{
--	if (extra_args) {
--		const int infinite_rx = atoi(value);
--		int *enable_infinite_rx = extra_args;
--
--		if (infinite_rx > 0)
--			*enable_infinite_rx = 1;
-+	bool *flag = extra_args;
++		if ((mbuf->ol_flags & RTE_MBUF_F_TX_VLAN) && rte_vlan_insert(&mbuf))
++			continue;
 +
-+	if (value == NULL || *value == '\0') {
-+		*flag = true; /* default with no additional argument */
-+	} else if (strcmp(value, "0") == 0) {
-+		*flag = false;
-+	} else if (strcmp(value, "1") == 0) {
-+		*flag = true;
-+	} else {
-+		PMD_LOG(ERR, "Invalid '%s' value '%s'", key, value);
-+		return -1;
- 	}
+ 		calculate_timestamp(&header.ts);
+ 		header.len = len;
+ 		header.caplen = len;
+@@ -485,6 +488,9 @@ eth_pcap_tx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
+ 		if (unlikely(len > mtu))
+ 			continue;
+ 
++		if ((mbuf->ol_flags & RTE_MBUF_F_TX_VLAN) && rte_vlan_insert(&mbuf))
++			continue;
++
+ 		/* rte_pktmbuf_read() returns a pointer to the data directly
+ 		 * in the mbuf (when the mbuf is contiguous) or, otherwise,
+ 		 * a pointer to temp_data after copying into it.
+@@ -741,6 +747,8 @@ eth_dev_info(struct rte_eth_dev *dev,
+ 	dev_info->min_rx_bufsize = 0;
+ 	dev_info->min_mtu = RTE_ETHER_MIN_LEN - RTE_ETHER_HDR_LEN - RTE_ETHER_CRC_LEN;
+ 	dev_info->max_mtu = RTE_ETH_PCAP_SNAPLEN;
++	dev_info->tx_offload_capa = RTE_ETH_TX_OFFLOAD_MULTI_SEGS |
++		RTE_ETH_TX_OFFLOAD_VLAN_INSERT;
+ 
  	return 0;
  }
-@@ -1479,7 +1470,7 @@ pmd_pcap_probe(struct rte_vdev_device *dev)
- 		dumpers.queue[0] = pcaps.queue[0];
- 
- 		ret = rte_kvargs_process(kvlist, ETH_PCAP_PHY_MAC_ARG,
--				&select_phy_mac, &pcaps.phy_mac);
-+					 &process_bool_flag, &pcaps.phy_mac);
- 		if (ret < 0)
- 			goto free_kvlist;
- 
-@@ -1518,9 +1509,9 @@ pmd_pcap_probe(struct rte_vdev_device *dev)
- 
- 		if (infinite_rx_arg_cnt == 1) {
- 			ret = rte_kvargs_process(kvlist,
--					ETH_PCAP_INFINITE_RX_ARG,
--					&get_infinite_rx_arg,
--					&devargs_all.infinite_rx);
-+						 ETH_PCAP_INFINITE_RX_ARG,
-+						 &process_bool_flag,
-+						 &devargs_all.infinite_rx);
- 			if (ret < 0)
- 				goto free_kvlist;
- 			PMD_LOG(INFO, "infinite_rx has been %s for %s",
 -- 
 2.51.0
 
