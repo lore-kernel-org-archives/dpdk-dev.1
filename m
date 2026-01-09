@@ -2,43 +2,38 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA65FD232F6
-	for <dpdk-dev@archiver.kernel.org>; Fri,  9 Jan 2026 09:08:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A54ED232FF
+	for <dpdk-dev@archiver.kernel.org>; Fri,  9 Jan 2026 09:26:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BDDD1402A7;
-	Fri,  9 Jan 2026 10:08:06 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 5E1A6402A7;
+	Fri,  9 Jan 2026 10:26:20 +0100 (CET)
 Received: from dkmailrelay1.smartsharesystems.com
  (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 492CB400D5
- for <dev@dpdk.org>; Fri,  9 Jan 2026 10:08:05 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id AB573400D5
+ for <dev@dpdk.org>; Fri,  9 Jan 2026 10:26:18 +0100 (CET)
 Received: from smartserver.smartsharesystems.com
  (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 285EF2073F;
- Fri,  9 Jan 2026 10:08:04 +0100 (CET)
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 0F5992073F;
+ Fri,  9 Jan 2026 10:26:18 +0100 (CET)
 Content-class: urn:content-classes:message
 MIME-Version: 1.0
 Content-Type: text/plain;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
-Subject: RE: [PATCH v5] net: optimize raw checksum computation
-Date: Fri, 9 Jan 2026 10:08:00 +0100
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65637@smartserver.smartshare.dk>
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Subject: RE: [PATCH v11] net: optimize raw checksum computation
+Date: Fri, 9 Jan 2026 10:26:16 +0100
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65638@smartserver.smartshare.dk>
 X-MimeOLE: Produced By Microsoft Exchange V6.5
-In-Reply-To: <CAFn2buCqxz=43Xy6QycxS0KaY9A49bcLrsBOGFoP6MzHE0fnNg@mail.gmail.com>
+In-Reply-To: <20260108230509.6541-1-scott.k.mitch1@gmail.com>
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH v5] net: optimize raw checksum computation
-Thread-Index: AdyBJIdaKfS+JGOzQZ6Vde0TkuGt8wAHJ3tQ
-References: <20260108061338.27217-1-scott.k.mitch1@gmail.com>
- <20260108081229.60b095b9@phoenix.local>
- <CAFn2buDp4ffHuSXmTrW8mfNHxm-t3FL=TVgMKFAc2gU7fyXPGg@mail.gmail.com>
- <20260108160058.685cf7a7@phoenix.local>
- <CAFn2buCqxz=43Xy6QycxS0KaY9A49bcLrsBOGFoP6MzHE0fnNg@mail.gmail.com>
-From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
-To: "Scott Mitchell" <scott.k.mitch1@gmail.com>,
- "Stephen Hemminger" <stephen@networkplumber.org>,
- "Aaron Conole" <aconole@redhat.com>
-Cc: <dev@dpdk.org>
+Thread-Topic: [PATCH v11] net: optimize raw checksum computation
+Thread-Index: AdyA80DEgjZxBvQcQ9iZsgK66ZXnQAAVBZUw
+References: <20260108230509.6541-1-scott.k.mitch1@gmail.com>
+From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
+To: <scott.k.mitch1@gmail.com>,
+	<dev@dpdk.org>
+Cc: <stephen@networkplumber.org>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -52,66 +47,33 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-K0Fhcm9uLCBwbGVhc2UgcmVhZCB1cCBvbiB0aGlzIGRpc2N1c3Npb24sIGFuZCBzdGVwIGluIGlm
-IHlvdSBjYW4gaGVscC4NCg0KKEFhcm9uIGlzIHRoZSBEUERLIFByb2plY3QgdGVzdGluZyBsZWFk
-ZXIsIGFuZCB3b3JrcyBhdCBSZWQgSGF0LikNCg0KPiBGcm9tOiBTY290dCBNaXRjaGVsbCBbbWFp
-bHRvOnNjb3R0LmsubWl0Y2gxQGdtYWlsLmNvbV0NCj4gU2VudDogRnJpZGF5LCA5IEphbnVhcnkg
-MjAyNiAwNS41OA0KPiANCj4gT24gVGh1LCBKYW4gOCwgMjAyNiBhdCA3OjAx4oCvUE0gU3RlcGhl
-biBIZW1taW5nZXINCj4gPHN0ZXBoZW5AbmV0d29ya3BsdW1iZXIub3JnPiB3cm90ZToNCj4gPg0K
-PiA+IE9uIFRodSwgOCBKYW4gMjAyNiAxNjoxOTozNyAtMDUwMA0KPiA+IFNjb3R0IE1pdGNoZWxs
-IDxzY290dC5rLm1pdGNoMUBnbWFpbC5jb20+IHdyb3RlOg0KPiA+DQo+ID4gPiBPbiBUaHUsIEph
-biA4LCAyMDI2IGF0IDExOjEy4oCvQU0gU3RlcGhlbiBIZW1taW5nZXINCj4gPiA+IDxzdGVwaGVu
-QG5ldHdvcmtwbHVtYmVyLm9yZz4gd3JvdGU6DQo+ID4gPiA+DQo+ID4gPiA+IE9uIFRodSwgIDgg
-SmFuIDIwMjYgMDE6MTM6MzggLTA1MDANCj4gPiA+ID4gc2NvdHQuay5taXRjaDFAZ21haWwuY29t
-IHdyb3RlOg0KPiA+ID4gPg0KPiA+ID4gPiA+ICsjaWZkZWYgUlRFX0NDX0dDQw0KPiA+ID4gPiA+
-ICsgICAgIC8qIFN1cHByZXNzIEdDQyAtV21heWJlLXVuaW5pdGlhbGl6ZWQgZmFsc2UgcG9zaXRp
-dmUuIE5vDQo+IGFzc2VtYmx5L3J1bnRpbWUgaW1wYWN0cy4gKi8NCj4gPiA+ID4gPiArICAgICBh
-c20gdm9sYXRpbGUoIiIgOiAiK20iIChwc2RfaGRyKSk7DQo+ID4gPiA+ID4gKyNlbmRpZg0KPiA+
-ID4gPiA+DQo+ID4gPiA+DQo+ID4gPiA+IE1heWJlIHJ0ZV9jb21waWxlcl9iYXJyaWVyKCkgd2ls
-bCBkbyBzYW1lIHRoaW5nPw0KPiA+ID4NCj4gPiA+IEFncmVlZCBpdCBmZWVscyBsaWtlIGEgY29t
-cGlsZXIgYnVnIGJ1dCBsb29raW5nIGZvciBhZHZpY2UgaWYgSSdtDQo+ID4gPiBtaXNzaW5nIHNv
-bWV0aGluZyA6KQ0KPiA+ID4NCj4gPiA+IE15IGluaXRpYWwgY29uY2VybiB3aXRoIHJ0ZV9jb21w
-aWxlcl9iYXJyaWVyIGlzIGl0cyBhIGdlbmVyYWwNCj4gYmFycmllcg0KPiA+ID4gd2hpY2ggbWF5
-IGhhdmUgYnJvYWRlciBpbXBhY3RzIG9uDQo+ID4gPiBvcHRpbWl6YXRpb25zIGFuZCBjb21waWxl
-ZCBjb2RlLiBXaWxsIHRoYXQgYmUgYW4gaXNzdWUgaW4gdGhpcw0KPiBjYXNlPyBJDQo+ID4gPiB3
-YXNuJ3Qgc3VyZSBhbmQgdGhlIGFwcHJvYWNoDQo+ID4gPiBpbiB0aGUgcGF0Y2ggaXMgdGFyZ2V0
-ZWQgYXQgYSBzcGVjaWZpYyB2YXJpYWJsZSBhbmQgYXNzZW1ibHkgZnJvbQ0KPiA+ID4gY2xhbmcv
-Z2NjIHdhcyB0aGUgc2FtZS4gSSB3aWxsDQo+ID4gPiBpbnRyb2R1Y2UgYSBtYWNybyB0byBtYWtl
-IGl0IGNsZWFuZXIgYW5kIEkgY2FuIHJlcGxhY2UgaXQgd2l0aA0KPiA+ID4gcnRlX2NvbXBpbGVy
-X2JhcnJpZXIgaWYgcHJlZmVycmVkLg0KPiA+DQo+ID4gTWF5YmUgdHJ5IHdpdGggLWZhbmFseXpl
-ciBhbmQgaXQgbWlnaHQgdGVsbCB5b3UgbW9yZS4NCj4gPiBJIHN1c3BlY3Qgc29tZSBvZiB0aGUg
-YWxpYXNpbmcgc2V0dGluZyBhcmUgY2F1c2luZyBpc3N1ZXMuDQo+ID4gU29tZSBkcml2ZXJzIGFy
-ZSB0dXJuaW5nIG9uIG5vLXN0cmljdC1hbGlhc2luZw0KPiANCj4gSSBoYXZlIG1vcmUgZXZpZGVu
-Y2UgdGhpcyBpcyBhIEdDQyBvcHRpbWl6ZXIgYnVnLg0KPiBUaGUgUlRFX1NVUFBSRVNTX1VOSU5J
-VElBTElaRURfV0FSTklORyBhcHByb2FjaCBzZXJ2ZXMNCj4gYXMgYSB3b3JrYXJvdW5kIHRvIGF2
-b2lkIHRoZSBidWcuIEkgY3JlYXRlZCBhIG1vcmUgbWluaW1hbCByZXByb2R1Y2VyOg0KPiBodHRw
-czovL2dpc3QuZ2l0aHViLmNvbS9TY290dG1pdGNoL2JmMjM3NDhiNDU4OGU2OGM5YmRiOGQxMjRm
-OTJmMWJkDQo+IA0KPiBZb3VyIHN1c3BpY2lvbiB3YXMgY29ycmVjdCwgLWZuby1zdHJpY3QtYWxp
-YXNpbmcgYXZvaWRzIHRoZSBidWcgYnV0IEkNCj4gZG9uJ3QNCj4gdGhpbmsgaXQgaXMgZGVzaXJh
-YmxlIHRvIGVuYWJsZSB0aGlzIGJyb2FkbHkgZm9yIERQREsgd2hlbiB3ZSBoYXZlIGENCj4gbW9y
-ZSB0YXJnZXRlZCB3b3JrYXJvdW5kLg0KPiANCj4gSSB3aWxsIHJlYWNoIG91dCB0byBSSCB0byBj
-b25maXJtIGJ1dCBpbiB0aGUgaW50ZXJpbSBJIHN1Z2dlc3Qgd2Uga2VlcA0KPiBSVEVfU1VQUFJF
-U1NfVU5JTklUSUFMSVpFRF9XQVJOSU5HIChvciBzaW1pbGFyIGFsdGVybmF0aXZlKS4NCg0KSWYg
-dGhpcyBpcyBhIEdDQyBjb21waWxlciBidWcgbGltaXRlZCB0byB0aGUgR0NDIHZlcnNpb24gb2Zm
-ZXJlZCBieSBSSEVMIDExLCBJIHByZWZlciBzcGxpdHRpbmcgdGhlIHBhdGNoIGludG8gYSBzZXJp
-ZXMgd2l0aCB0aGUgZm9sbG93aW5nIHN0ZXBzOg0KUGF0Y2ggMS8yOiBBZGQgdGhlIG9wdGltaXph
-dGlvbiBhbmQgbmV3IHRlc3QgY2FzZXMgaW4gdGhlaXIgbWluaW1hbCBmb3JtLCBkZXNpZ25lZCB0
-byB3b3JrIG9uIG5vcm1hbCBjb21waWxlcnMuIERpc3JlZ2FyZCBidWdzL3dhcm5pbmdzIGZyb20g
-dGhlIHdlaXJkIFJIRUwgMTEgY29tcGlsZXIuDQpJLmUuIGRvbid0IG1vZGlmeSBsaWIvZWFsL2lu
-Y2x1ZGUvcnRlX2NvbW1vbi5oLCBsaWIvbmV0L3J0ZV9pcDYuaCwgbGliL25ldC9ydGVfaXA0Lmgs
-IGRyaXZlcnMvbmV0L2hpbmljL2hpbmljX3BtZF90eC5jLCBkcml2ZXJzL25ldC9tbHg1L21seDVf
-Zmxvd19kdi5jLg0KUGF0Y2ggMi8yOiBBZGQgdGhlIHdvcmthcm91bmRzIHJlcXVpcmVkIGJ5IHRo
-ZSBSSEVMIDExIGNvbXBpbGVyLg0KDQpBbHNvLCB0aGUgY2hhbmdlIHRvIGRyaXZlcnMvbmV0L2hp
-bmljL2hpbmljX3BtZF90eC5jIHNob3VsZCBiZSBtb3ZlZCB0byBhIHBhdGNoIGluZGVwZW5kZW50
-IG9mIHRoaXMgc2VyaWVzLg0KSXQncyBub3QgZGlyZWN0bHkgcmVsYXRlZCB0byB0aGlzIHNlcmll
-cywgc28gbGV0J3Mgbm90IGFkZCBtb3JlIHRvIHRoZSBkaXNjdXNzaW9uIHRoYW4gd2UgbmVlZCB0
-by4gOy0pDQpBbmQgdGhlIGltcGxlbWVudGF0aW9uIGluIHRoZSBkcml2ZXIgb25seSBjb25zaWRl
-cnMgUlRFX01CVUZfRl9UWF9UQ1BfU0VHLCB3aGVyZWFzIHRoZSBEUERLIGZ1bmN0aW9uIGFsc28g
-Y29uc2lkZXJzIFJURV9NQlVGX0ZfVFhfVURQX1NFRywgc28gaXQgd2FycmFudHMgYSBzZXBhcmF0
-ZSBkaXNjdXNzaW9uOyBpdCBwb3NzaWJseSBmaXhlcyBhIGJ1Zy4NCg0KTWF5YmUgZXZlbiBtb3Zl
-IHRoZSBSSEVMIDExIHJlbGF0ZWQgcGF0Y2hlcyAobXkgc3VnZ2VzdGVkIHBhdGNoIDIvMikgaW50
-byBhIHNlcGFyYXRlIHNlcmllcywgZm9yIHRoZSBzYW1lIGNvbmNlcHR1YWwgcmVhc29ucyBhcyBt
-b3ZpbmcgdGhlIEhJTklDIGRyaXZlciBwYXRjaCBpbnRvIGEgc2VwYXJhdGUgc2VyaWVzLg0KWW91
-IGNhbiB1c2UgdGhlIERlcGVuZHMtT24gdGFnIChodHRwczovL2RvYy5kcGRrLm9yZy9ndWlkZXMv
-Y29udHJpYnV0aW5nL3BhdGNoZXMuaHRtbCNwYXRjaC1kZXBlbmRlbmNpZXMpIGZvciB0aGUgZm9s
-bG93LW9uIGNoYW5nZXMgdG8gX19ydGVfcmF3X2Nrc3VtKCkuDQoNCg==
+> Changes in v8:
+> - __rte_raw_cksum: use native pointer arithmetic instead of =
+RTE_PTR_ADD
+>   to avoid incorrect results with -O3 for UDP checksums. Also improves
+>   performance due to less assembly generated with Clang.
+
+Personally, I also have observed GCC's optimizer behave as if it loses =
+some contextual information when using RTE_PTR_ADD, and thus emitting =
+less optimal code.
+I didn't look further into it, and thus have no data or examples to back =
+up the claim. Which is why I haven't started a discussion about =
+discouraging the use of RTE_PTR_ADD.
+In other words: I support this change.
+
+>  	/* if length is odd, keeping it byte order independent */
+> -	if (unlikely(len % 2)) {
+> +	if (len & 1) {
+>  		uint16_t left =3D 0;
+> -
+>  		memcpy(&left, end, 1);
+>  		sum +=3D left;
+>  	}
+
+Changing "len % 2" to "len & 1" made sense for consistency in previous =
+versions handling 32/16/8/4/2-byte chunks before this 1-byte chunk; now =
+it makes no difference, so consider not changing this part at all.
+Under all circumstances, don't remove the unlikely() for handling odd =
+length in __rte_raw_cksum(). The vast majority of packets (and partial =
+packets, e.g. headers) being checksummed are even length.
+
