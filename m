@@ -2,126 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DB7FD26D7B
-	for <dpdk-dev@archiver.kernel.org>; Fri,  9 Jan 2026 17:43:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 936F1D26D7D
+	for <dpdk-dev@archiver.kernel.org>; Fri,  9 Jan 2026 17:50:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5201A40C35;
-	Fri,  9 Jan 2026 18:43:56 +0100 (CET)
-Received: from DM1PR04CU001.outbound.protection.outlook.com
- (mail-centralusazon11010015.outbound.protection.outlook.com [52.101.61.15])
- by mails.dpdk.org (Postfix) with ESMTP id 6703D400D5;
- Fri,  9 Jan 2026 18:43:54 +0100 (CET)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=x7nVLFDVa0MBp7qlRswzZcdszyktjcv2hrBv6SqhGIjCDIXSE+TKc2ER5cR53KUXlIqVLW/8L0bgmfm3wq6DIxfTB/rcCIRSfSaccr1LzvrqgFLkhJ4PasbT1H+LlaKxIMJzrkIOdnELYEbTh/yvyvKT1yGLkSdjB7qAjPgGkZxKr1TolLtaE6FtXIvsbP7RQ34njHmA2GlsZtZ/sGYca/8q2q92KLzBrIDrn+xHF2vqnaPgYNKj4sFXRFcX19Ag+plxSDCtEhP0VJHhywR44gsZ3vv03/yTn/Osrdc6wSYHifiPpG3ezSpb/BuDFflOx+Yw8BmsT2SVajc7+Z2oBA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=N2519mMub7371fQ7XLB9H+wOEkeGjnSWjizXE+dl0VQ=;
- b=iwgSvfo68VfowxRm83W8iK6Z341HLmNMZrgXARX9YmADYK62kZOsFslLkdaPNq5iUEikjc27vAxOvDAPmiFD4wQqU001YuiQwooGId4uFHFfpQs/Gkz7sdkoOLVX93K1a6n0LlpuXM32jy7SiWIeqhuV4kW4sLYlPXN5YLK5ROqUfLUDeXYMR1xbOEuxLgqtbAiB4UsE8sBqXM2YK+2rU3tIAFq6FVWpzPSWRBRnVdoL+AA5R7JCx6bEQ89VRktaxbQr9fKoeIA96NYigyrqLl+il9T1SwiqjOVuzmB0Z2m2CiQh6tvOjWg4LTUmBgjKLOuKtVcfOzWA9i5K5JruwA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=N2519mMub7371fQ7XLB9H+wOEkeGjnSWjizXE+dl0VQ=;
- b=fkwCOErEitXrSEhmKuIXnxTVfX3kzYuuegv7gScD3SG/IpXnkUeKIgemCVJiKTdd3s66vhOP0vbOeCITp6Cul3LnnXkpJOgenrmAODCxADxOayolGfk/OEuvYXAdkbsOvO8KbWp4xX0erJsGxiPcs+gClfO//JERJNSbaqy4S+Vl0uehLQBiu+5NNfIvVTkLDicEOB1KYe34enQBT5UFDCWHmZe/WA9pbbnAbUB3z29607uSVUKhbMUkH/U4QZ+1Bmv46kv/54hQ9bbfRiumfIF8MYlPsuvutriE8SVdE9AqocKo4qfqcTaG+rAonC9DHUnN4Z6dOnEbIYK2/5hGrg==
-Received: from MN0PR03CA0018.namprd03.prod.outlook.com (2603:10b6:208:52f::20)
- by DM4PR12MB7576.namprd12.prod.outlook.com (2603:10b6:8:10c::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9499.5; Fri, 9 Jan
- 2026 17:43:47 +0000
-Received: from BN2PEPF000055E1.namprd21.prod.outlook.com
- (2603:10b6:208:52f:cafe::a4) by MN0PR03CA0018.outlook.office365.com
- (2603:10b6:208:52f::20) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9499.5 via Frontend Transport; Fri, 9
- Jan 2026 17:43:38 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com;
- dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- BN2PEPF000055E1.mail.protection.outlook.com (10.167.245.11) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9542.0 via Frontend Transport; Fri, 9 Jan 2026 17:43:46 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Fri, 9 Jan
- 2026 09:43:36 -0800
-Received: from nvidia.com (10.126.230.35) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Fri, 9 Jan
- 2026 09:43:36 -0800
-Date: Fri, 9 Jan 2026 18:43:15 +0100
-From: Dariusz Sosnowski <dsosnowski@nvidia.com>
-To: Rongwei Liu <rongweil@nvidia.com>
-CC: <dev@dpdk.org>, <matan@nvidia.com>, <viacheslavo@nvidia.com>,
- <orika@nvidia.com>, <suanmingm@nvidia.com>, <thomas@monjalon.net>,
- <getelson@nvidia.com>, <stable@dpdk.org>, Bing Zhao <bingz@nvidia.com>
-Subject: Re: [PATCH v1] net/mlx5: fix job leak on indirect meter creation
- failure
-Message-ID: <ezowyzibcbouoq7njhnqqun27fjrsskdcjcve3npxcrsnoremg@yiyp2p6miwef>
-References: <20251208101203.315647-1-rongweil@nvidia.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 8CE4D4028E;
+	Fri,  9 Jan 2026 18:50:58 +0100 (CET)
+Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com
+ [209.85.217.54]) by mails.dpdk.org (Postfix) with ESMTP id 96757400D5
+ for <dev@dpdk.org>; Fri,  9 Jan 2026 18:50:57 +0100 (CET)
+Received: by mail-vs1-f54.google.com with SMTP id
+ ada2fe7eead31-5efa4229bd2so339737137.0
+ for <dev@dpdk.org>; Fri, 09 Jan 2026 09:50:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20230601; t=1767981057; x=1768585857; darn=dpdk.org;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=iuAAycXxYTBsD73w5X/eW8uSpGGJAr7+ohmxDeBV5kU=;
+ b=h/MTAL4nZ5B4Cw0ESNSVYRtCbnTbKq3D9rBx+P4sMHnn2XCBP8LsiJxbwBK4xapjkC
+ jVqKh+jFIVI1eVbZUI8hQYOHGmb5N7TuWFAOkWXFbcabloe2u94cSolHKSjyatgR3Rkd
+ 9O155Pjf32pmqyhWCA/mMNoKBrRhf/Z3Wyqiqvwveonj5sL5PoVwO5MtrAMQNiiZ2mIR
+ SmyV2zJPcb3NqhVxsuJ3xPpZBjpEpAiX7H9i0T7iTXXqaXtyqWqXCNwnH07+Bvnj4bsr
+ qN+awlRmjE0/TP2xHxZlpsNdw+YgRAH+7giSXaKqy+28RmXoIM3xc6PrREfsGrOmZyWm
+ ttDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1767981057; x=1768585857;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=iuAAycXxYTBsD73w5X/eW8uSpGGJAr7+ohmxDeBV5kU=;
+ b=ZSWFfg7XXxWWQljMWzpwO2cslcf8KacefWxEmBLjj3yyXaJwtKmwAmrk9SuU31ypuJ
+ /th4FW+OVM+7kBiKrFJv8zUaJKzeSXlf8NrqCy4QNlI1uVZ+xElnLPeO9qlNVRouYryY
+ vEg95IgDNMZR3fFas6oOcUMMDN3db3VWjrvufISsKuIx8MfnN4v0nus5OJejMowR9Xjd
+ rL2j8D1h2GA4zCw0wGC1pj4CE2cO5ZCaNDeq72ATw2jxPpO0KavUPsstCXMJguRLFZ/r
+ w5c2EnLAE+j9Kx/Gw8ODJc5sQmOXi0+WOVcAaLg8xcSszz2VVgIAsPUbQIFOw0U2jKwk
+ /pig==
+X-Gm-Message-State: AOJu0YyXRbCvSfRMO7Kdhbx3dVCDwCR52CKVDDubWJg6+NBpJzQmdlVY
+ oU9FGxBpUtn1W29Jlgxf6+8rV+ABUmqLC4pFXQu6rYL8+g4Mu+N7adTJrizzOmxuIvUysQP2z1u
+ ziRCVQTzow9cmx/yf2AOySycyUtF73c4=
+X-Gm-Gg: AY/fxX4tw5PwkwRe2VZAv08LpZJDQkc5G5+3yJvCUy4vDrq951EuRqE1dhUs/k2YSiY
+ 4nWPVOTqEoQx4nvYZBLiuVRZaZ2r3Ng1MxdjVVEEUQLxgfKA4wf8i+BoEfjvD0ZB5pKEvAqmeHQ
+ qQ4h6q9fm0AVeTPQrOKHVA5s3ea7ilVdODXtKNwXvsLTdByxsnrwy2DhhAP1QEajqOZlaMGIfLq
+ lT5MlZwEbRE4QPVg5d8rsQ/TzbGw21zGGlby3A6dNqZwUWHiJ45Th1w0m6otWRSFWADY3ECyRsn
+ bV7pouK+qu5VI3tSm5OjIvPK1lSvjhFyoiUTPw==
+X-Google-Smtp-Source: AGHT+IHR1agCkXv19cBsKFzdY4vT9plCmSXNzxo3i5wbnJUgKM/q7D6EEYgkoMrmynrDcpBfRxk3zIJFmlLNeRBd0qE=
+X-Received: by 2002:a05:6102:3e82:b0:5db:d60a:6b1a with SMTP id
+ ada2fe7eead31-5ecb69624bemr5106717137.30.1767981056744; Fri, 09 Jan 2026
+ 09:50:56 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20251208101203.315647-1-rongweil@nvidia.com>
-X-Originating-IP: [10.126.230.35]
-X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN2PEPF000055E1:EE_|DM4PR12MB7576:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6fa5b252-7d63-462d-3974-08de4fa6a422
-X-LD-Processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|36860700013|82310400026|376014|1800799024; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?loGDj/7YVhxk3rBpiylPJ7Ck84tRSMM+gUP8Xa7zDuMXCwqZSNebs0nFnp07?=
- =?us-ascii?Q?4z1cttPy5loV7IPvG/mVH5zkjJ85qhtxlKZz9JwCJNRaJgVQofPWlIroV88i?=
- =?us-ascii?Q?ked0nb67+FBaw49aenHs3use4ARBEfNZVG3MkpK2o55f6Jkxm0ZYlEXcGMnt?=
- =?us-ascii?Q?kZeE607NiWXDjjHba4z9JiruQasMoxyU41K1yQ5hxHdKKD8dmR77rdbYZZdO?=
- =?us-ascii?Q?IU5C03Tmhs2re1f9HC41wXoprgtbTKjw0iQfo2HittUFSalupYkaQ2b1MJZz?=
- =?us-ascii?Q?B+KLKhZYPUxUg75aKxzQ+4qHfD9zM7hBJWBdO7Z/r3L4AwdTUgUjWwbms0wM?=
- =?us-ascii?Q?b0qsIW/VjFjZU2bGJj7Oy0UJCj3kwtVBujuNpXvU5dmni13zaK0huSNNfUVm?=
- =?us-ascii?Q?Bf374G096n701CrkxgnebfjAonk8wQZ/SkvM+/CkVTGa55Sd3H8Nv0oM717G?=
- =?us-ascii?Q?pCWWzN2mHIyROSaMogP3wAEbmd+Qa+ZcEIr9VI1GIITSIGKzpozHtQhWZPYP?=
- =?us-ascii?Q?FKA3ff6x6ytkFfwfX1o/s1Ly9mbmfDR2XSWrpy1RcyujzdJO2vfHsBpoV07l?=
- =?us-ascii?Q?jjkki9WXmGi1Xrt4MmooHYxKdgRLnlI8LDAt7c7uNR8eoBfI0j31Ch7lx7jW?=
- =?us-ascii?Q?QvBneOrjeUQLJtgLvjfDWZFClOCA3E12QX5lUCU7H0HLoxoB9jCSI9y7RDfY?=
- =?us-ascii?Q?biIgJAK3s54LQqjMUNwJQRhcaBJYpAP5hT1wqpTyLwrYiUBTt8w1w38CF2Tj?=
- =?us-ascii?Q?c9I6sVtBiWm4qhPDmmE7VUcbvVbz1fX35v4U8/pV/ThvvW9Pydp/6+g4e7ef?=
- =?us-ascii?Q?t47jqBNQ1ug+eel9aa9Mtd8H8lcwsjtuVMOUjfbTG3PcgV7g5cXmgrm4530D?=
- =?us-ascii?Q?UNKcjhd6RPLPCBwuhN5o6P0x4igTs67kk3poD84qgOnbYJJyECNnnlDvz5Jg?=
- =?us-ascii?Q?f2V3AucwmToizNzLAb+xDVl2VZt0+/0eL6mPvy+M4SN+P8Y6j8iKChSPlEUQ?=
- =?us-ascii?Q?gYJ8bGSOvDrzxeo8FluWv/1qESoUoJ8goYNNThqai392G8QKHBb9c6HH3pZn?=
- =?us-ascii?Q?ldjCJ/rNUSUJ0C9H7kk+b7qbjUjr4YHZktVawXG21WAY86bfbsp4NyJdTmVI?=
- =?us-ascii?Q?t6UENuMm7zRlfECNpIet9z03moUyeY0nO/M1ihj8uyCJOCjcnY+vJbeT9xHD?=
- =?us-ascii?Q?0D48njF9c4ZyiF56sUiXIIuc3Smnwp0ytVu2XuLMVQ1NYUePG9XEyuJ0Nkth?=
- =?us-ascii?Q?qgsEFurUEzEwh3IusodPMAtYvqGZ9dgqZx0NdPpeRlHxM+kbgWWCHPN7km6X?=
- =?us-ascii?Q?6lbZudDyVWAmFj2e4TGE34f6ad53MCIdg5pHklFleH40f0tlcbfjfwxoryTm?=
- =?us-ascii?Q?p3KFjBYqwoygcnpxc2v2kSVqzMm3hETSSkxZXeTxkh5+1bnzKS53OADvh02Z?=
- =?us-ascii?Q?BMEAPL1ZZCt/bo0ODGYOwyCDCKqBn2nkeNWhAYANvEgOHVyA5YIfL2AmIcl3?=
- =?us-ascii?Q?yO6h2LMMmI7F5kmlZ2iWBrSYbPqH23dNJKmF?=
-X-Forefront-Antispam-Report: CIP:216.228.117.160; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge1.nvidia.com; CAT:NONE;
- SFS:(13230040)(36860700013)(82310400026)(376014)(1800799024); DIR:OUT;
- SFP:1101; 
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jan 2026 17:43:46.8251 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6fa5b252-7d63-462d-3974-08de4fa6a422
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.160];
- Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN2PEPF000055E1.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB7576
+References: <20260108214713.52987-1-scott.k.mitch1@gmail.com>
+ <20260108213916.618cb75a@phoenix.local>
+In-Reply-To: <20260108213916.618cb75a@phoenix.local>
+From: Scott Mitchell <scott.k.mitch1@gmail.com>
+Date: Fri, 9 Jan 2026 12:50:46 -0500
+X-Gm-Features: AZwV_QhjQLluoSVrrRyQElMpeDq691PybK6rTwfLpktmWZbfMV-rKQ_yV3uA3L8
+Message-ID: <CAFn2buA5NzmzA0+t1_5auigvQTyT7Ne6RMVaPVU=sdC03nd2Lg@mail.gmail.com>
+Subject: Re: [PATCH v9] net: optimize raw checksum computation
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: dev@dpdk.org, mb@smartsharesystems.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -135,23 +75,106 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, Dec 08, 2025 at 12:12:03PM +0200, Rongwei Liu wrote:
-> Indirect meter_mark action needs to allocate a job to track
-> asynchronous HW operation to create the meter object.
-> 
-> When meter_mark creation failed, the job may have been leaked
-> because there was no job cleanup code for sync API.
-> 
-> Add necessary code to check if meter_mark creation failed before or
-> after HW operation is enqueued and call job_put accordingly.
-> 
-> Fixes: 4359d9d1f76b ("net/mlx5: fix sync meter processing in HWS")
-> Cc: getelson@nvidia.com
-> Cc: stable@dpdk.org
-> 
-> Signed-off-by: Rongwei Liu <rongweil@nvidia.com>
+Manual unroll makes sense! Are you OK if we land minimal changes for
+__rte_raw_cksum optimization and consider manual unrolling of
+ipv4/ipv6 headers as a follow up? Morten requested I break the
+patch up and minimize changes (I'm working on this now). If these
+were the only cases causing pain for my patch it makes more sense
+to do the unroll first, but there are other cases to consider:
 
-Acked-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
+- mlx5_flow_dv.c usage of __rte_raw_cksum could arguably
+be unrolled too, but consider a trade-off of spreading around
+manual unroll code. one option is for rte_cksum.h to have
+specialized unrolled length functions to keep the code consolidated
+(but then additional API surface).
+- hinic_pmd_tx.c - should call rte_ipv6_phdr_cksum and
+rte_ipv4_phdr_cksum instead of duplicating logic.
 
-Best regards,
-Dariusz Sosnowski
+
+On Fri, Jan 9, 2026 at 12:39=E2=80=AFAM Stephen Hemminger
+<stephen@networkplumber.org> wrote:
+>
+> On Thu,  8 Jan 2026 16:47:13 -0500
+> scott.k.mitch1@gmail.com wrote:
+>
+> > diff --git a/lib/net/rte_ip6.h b/lib/net/rte_ip6.h
+> > index d1abf1f5d5..8a7e5e4b8a 100644
+> > --- a/lib/net/rte_ip6.h
+> > +++ b/lib/net/rte_ip6.h
+> > @@  -560,19 +560,18 @@ rte_ipv6_phdr_cksum(const struct rte_ipv6_hdr *i=
+pv6_hdr, uint64_t ol_flags)
+> >  static inline uint16_t
+> >  rte_ipv6_phdr_cksum(const struct rte_ipv6_hdr *ipv6_hdr, uint64_t ol_f=
+lags)
+> >  {
+> > -     uint32_t sum;
+> >       struct {
+> >               rte_be32_t len;   /* L4 length. */
+> >               rte_be32_t proto; /* L4 protocol - top 3 bytes must be ze=
+ro */
+> > -     } psd_hdr;
+> > -
+> > -     psd_hdr.proto =3D (uint32_t)(ipv6_hdr->proto << 24);
+> > -     if (ol_flags & (RTE_MBUF_F_TX_TCP_SEG | RTE_MBUF_F_TX_UDP_SEG))
+> > -             psd_hdr.len =3D 0;
+> > -     else
+> > -             psd_hdr.len =3D ipv6_hdr->payload_len;
+> > +     } psd_hdr =3D {
+> > +             .len =3D (ol_flags & (RTE_MBUF_F_TX_TCP_SEG | RTE_MBUF_F_=
+TX_UDP_SEG))
+> > +                     ? (rte_be32_t)0
+> > +                     : ipv6_hdr->payload_len,
+> > +             .proto =3D (uint32_t)(ipv6_hdr->proto << 24)
+> > +     };
+> > +     RTE_SUPPRESS_UNINITIALIZED_WARNING(psd_hdr);
+> >
+> > -     sum =3D __rte_raw_cksum(&ipv6_hdr->src_addr,
+> > +     uint32_t sum =3D __rte_raw_cksum(&ipv6_hdr->src_addr,
+> >               sizeof(ipv6_hdr->src_addr) + sizeof(ipv6_hdr->dst_addr),
+> >               0);
+> >       sum =3D __rte_raw_cksum(&psd_hdr, sizeof(psd_hdr), sum);
+> > --
+>
+> Seems like this could be unrolled as well.
+>
+> static inline uint16_t
+> rte_ipv6_phdr_cksum(const struct rte_ipv6_hdr *ipv6_hdr, uint64_t ol_flag=
+s)
+> {
+>         union {
+>                 struct {
+>                         struct rte_ipv6_addr src_addr;  /* 16 bytes */
+>                         struct rte_ipv6_addr dst_addr;  /* 16 bytes */
+>                         rte_be32_t len;                 /* 4 bytes  */
+>                         rte_be32_t proto;               /* 4 bytes  */
+>                 } psd;
+>                 uint16_t u16[20];
+>         } hdr =3D {
+>                 .psd =3D {
+>                         .src_addr =3D ipv6_hdr->src_addr,
+>                         .dst_addr =3D ipv6_hdr->dst_addr,
+>                         .proto =3D (uint32_t)(ipv6_hdr->proto << 24),
+>                 }
+>         };
+>         uint32_t sum;
+>
+>         if (!(ol_flags & (RTE_MBUF_F_TX_TCP_SEG | RTE_MBUF_F_TX_UDP_SEG))=
+)
+>                 hdr.psd.len =3D ipv6_hdr->payload_len;
+>
+>         /* Unrolled sum of 20 uint16_t words:
+>          * [0-7]:   src_addr
+>          * [8-15]:  dst_addr
+>          * [16-17]: len
+>          * [18-19]: proto (3 zero bytes + next header)
+>          */
+>         sum =3D hdr.u16[0]  + hdr.u16[1]  + hdr.u16[2]  + hdr.u16[3]  +
+>               hdr.u16[4]  + hdr.u16[5]  + hdr.u16[6]  + hdr.u16[7]  +
+>               hdr.u16[8]  + hdr.u16[9]  + hdr.u16[10] + hdr.u16[11] +
+>               hdr.u16[12] + hdr.u16[13] + hdr.u16[14] + hdr.u16[15] +
+>               hdr.u16[16] + hdr.u16[17] + hdr.u16[18] + hdr.u16[19];
+>
+>         sum =3D (sum & 0xffff) + (sum >> 16);
+>         sum =3D (sum & 0xffff) + (sum >> 16);
+>         return (uint16_t)sum;
+> }
