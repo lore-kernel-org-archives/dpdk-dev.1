@@ -2,47 +2,43 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E67FD232C8
-	for <dpdk-dev@archiver.kernel.org>; Fri,  9 Jan 2026 07:05:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA65FD232F6
+	for <dpdk-dev@archiver.kernel.org>; Fri,  9 Jan 2026 09:08:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5656A402A7;
-	Fri,  9 Jan 2026 08:05:14 +0100 (CET)
-Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id 6E43F400D5
- for <dev@dpdk.org>; Fri,  9 Jan 2026 08:05:12 +0100 (CET)
-Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 2B8A1471C3; Fri,  9 Jan 2026 08:05:12 +0100 (CET)
-From: bugzilla@dpdk.org
-To: dev@dpdk.org
-Subject: [DPDK/vhost/virtio Bug 1866] [dpdk-23.11.6rc1][Cryptodev][LTS test]
- virtio_perf_cryptodev_func/testvirtio_aes_cbc_sha1_hmac: Failed to use virtio
- device - Segmentation fault
-Date: Fri, 09 Jan 2026 07:05:10 +0000
-X-Bugzilla-Reason: AssignedTo
-X-Bugzilla-Type: new
-X-Bugzilla-Watch-Reason: None
-X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: vhost/virtio
-X-Bugzilla-Version: 23.11
-X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: normal
-X-Bugzilla-Who: yux.jiang@intel.com
-X-Bugzilla-Status: UNCONFIRMED
-X-Bugzilla-Resolution: 
-X-Bugzilla-Priority: Normal
-X-Bugzilla-Assigned-To: dev@dpdk.org
-X-Bugzilla-Target-Milestone: ---
-X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
- op_sys bug_status bug_severity priority component assigned_to reporter
- target_milestone
-Message-ID: <bug-1866-3@http.bugs.dpdk.org/>
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-X-Bugzilla-URL: http://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
+	by mails.dpdk.org (Postfix) with ESMTP id BDDD1402A7;
+	Fri,  9 Jan 2026 10:08:06 +0100 (CET)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 492CB400D5
+ for <dev@dpdk.org>; Fri,  9 Jan 2026 10:08:05 +0100 (CET)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 285EF2073F;
+ Fri,  9 Jan 2026 10:08:04 +0100 (CET)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
+Content-Type: text/plain;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+Subject: RE: [PATCH v5] net: optimize raw checksum computation
+Date: Fri, 9 Jan 2026 10:08:00 +0100
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65637@smartserver.smartshare.dk>
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+In-Reply-To: <CAFn2buCqxz=43Xy6QycxS0KaY9A49bcLrsBOGFoP6MzHE0fnNg@mail.gmail.com>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH v5] net: optimize raw checksum computation
+Thread-Index: AdyBJIdaKfS+JGOzQZ6Vde0TkuGt8wAHJ3tQ
+References: <20260108061338.27217-1-scott.k.mitch1@gmail.com>
+ <20260108081229.60b095b9@phoenix.local>
+ <CAFn2buDp4ffHuSXmTrW8mfNHxm-t3FL=TVgMKFAc2gU7fyXPGg@mail.gmail.com>
+ <20260108160058.685cf7a7@phoenix.local>
+ <CAFn2buCqxz=43Xy6QycxS0KaY9A49bcLrsBOGFoP6MzHE0fnNg@mail.gmail.com>
+From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
+To: "Scott Mitchell" <scott.k.mitch1@gmail.com>,
+ "Stephen Hemminger" <stephen@networkplumber.org>,
+ "Aaron Conole" <aconole@redhat.com>
+Cc: <dev@dpdk.org>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -56,153 +52,66 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-http://bugs.dpdk.org/show_bug.cgi?id=3D1866
-
-            Bug ID: 1866
-           Summary: [dpdk-23.11.6rc1][Cryptodev][LTS test]
-                    virtio_perf_cryptodev_func/testvirtio_aes_cbc_sha1_hma
-                    c: Failed to use virtio device - Segmentation fault
-           Product: DPDK
-           Version: 23.11
-          Hardware: All
-                OS: All
-            Status: UNCONFIRMED
-          Severity: normal
-          Priority: Normal
-         Component: vhost/virtio
-          Assignee: dev@dpdk.org
-          Reporter: yux.jiang@intel.com
-  Target Milestone: ---
-
-[DPDK Version]
-commit 63864b90e2bf91b38d9f4accb588c52ed90cac4e (HEAD -> v23.11.6-rc1, tag:
-v23.11.6-rc1, origin/23.11, 23.11)
-Author: Shani Peretz <shperetz@nvidia.com>
-Date:   Tue Jan 6 15:04:17 2026 +0200
-
-    version: 23.11.6-rc1
-
-    Signed-off-by: Shani Peretz <shperetz@nvidia.com>
-
-
-[Reproduce]
-rm -rf x86_64-native-linuxapp-gcc
-CC=3Dgcc meson -Dlibdir=3Dlib --default-library=3Dstatic x86_64-native-linu=
-xapp-gcc
-ninja -C x86_64-native-linuxapp-gcc
-meson configure -Dexamples=3Dvhost_crypto x86_64-native-linuxapp-gcc
-ninja -C x86_64-native-linuxapp-gcc
-
-SW Device:
-rm -r /tmp/*
-x86_64-native-linuxapp-gcc/examples/dpdk-vhost_crypto -l 1,2,3 -a 0000:00:0=
-0.0
---vdev crypto_aesni_mb_pmd_1 --socket-mem 2048,0 -n 4 -- --config
-"(2,0,0),(3,0,0)" --socket-file 2,/tmp/vm0_crypto0.sock
---socket-file=3D3,/tmp/vm0_crypto1.sock
-
-Create a NIC VF:
-echo 1 > /sys/bus/pci/devices/0000\:3b\:00.0/sriov_numvfs
-usertools/dpdk-devbind.py --bind=3Dvfio-pci 0000:3b:02.0
-
-lsof -n -i:6600
-taskset -c 11,12,13,14,15,16,17,18 /root/qemu-2.12/bin/qemu-system-x86_64=20
--name vm0 -enable-kvm -pidfile /tmp/.vm0.pid \
--daemonize -monitor unix:/tmp/vm0_monitor.sock,server,nowait -device
-e1000,netdev=3Dnttsip1  \
--netdev user,id=3Dnttsip1,hostfwd=3Dtcp:10.239.252.147:6600-:22 -device
-vfio-pci,host=3D0000:3b:02.0,id=3Dpt_0 \
--cpu host -smp 8 -m 4096 -object
-memory-backend-file,id=3Dmem,size=3D4096M,mem-path=3D/dev/hugepages,share=
-=3Don \
--numa node,memdev=3Dmem -mem-prealloc -vnc :1 \
--chardev socket,path=3D/tmp/vm0_qga0.sock,server,nowait,id=3Dvm0_qga0 -devi=
-ce
-virtio-serial -device
-virtserialport,chardev=3Dvm0_qga0,name=3Dorg.qemu.guest_agent.0 \
--chardev socket,path=3D/tmp/vm0_crypto0.sock,id=3Dvm0_crypto0 -object
-cryptodev-vhost-user,id=3Dcryptodev0,chardev=3Dvm0_crypto0 -device
-virtio-crypto-pci,id=3Dcrypto0,cryptodev=3Dcryptodev0 \
--chardev socket,path=3D/tmp/vm0_crypto1.sock,id=3Dvm0_crypto1 -object
-cryptodev-vhost-user,id=3Dcryptodev1,chardev=3Dvm0_crypto1 -device
-virtio-crypto-pci,id=3Dcrypto1,cryptodev=3Dcryptodev1 \
--drive file=3D/root/VMs/virtio_crypto_vm1.img
-
-In VM:
-rm -rf x86_64-native-linuxapp-gcc
-CC=3Dgcc meson  -Dlibdir=3Dlib --default-library=3Dstatic x86_64-native-lin=
-uxapp-gcc
-ninja -C x86_64-native-linuxapp-gcc -j8
-
-awk '/Hugepagesize/ {print $2}' /proc/meminfo=20=20=20=20=20
-echo 0 > /sys/kernel/mm/hugepages/hugepages-2048kB/nr_hugepages=20=20=20
-echo 1024 >
-/sys/devices/system/node/node0/hugepages/hugepages-2048kB/nr_hugepages
-
-In VM:
-modprobe uio_pci_generic=20=20=20=20=20=20=20=20
-lspci -d:1054|awk '{{print $1}}'=20=20=20=20=20=20
-echo 0000:00:07.0 > /sys/bus/pci/devices/0000\:00\:07.0/driver/unbind=20=20=
-=20=20=20=20
-echo 0000:00:06.0 > /sys/bus/pci/devices/0000\:00\:06.0/driver/unbind=20=20=
-=20=20=20=20
-echo "1af4 1054" > /sys/bus/pci/drivers/uio_pci_generic/new_id=20=20
-
-TestVirtioPerfCryptodevFunc: Test Case test_virtio_aes_cbc_sha1_hmac Begin
-virtdut.10.239.252.147:6600:=20
-x86_64-native-linuxapp-gcc/app/dpdk-test-crypto-perf  -l 0,1 -a 00:06.0
---socket-mem 512,0 -n 4  -- --ptest throughput --silent  --total-ops 100000
---burst-sz 32 --buffer-sz 64,128,256,512,1024,2048 --devtype crypto_virtio
---optype cipher-then-auth --cipher-algo aes-cbc --cipher-op encrypt
---cipher-key-sz 16 --cipher-iv-sz 16 --auth-algo sha1-hmac --auth-op genera=
-te
---auth-key-sz 64 --digest-sz 12
-
-[Actual log]
-vm1:~/dpdk# x86_64-native-linuxapp-gcc/app/dpdk-test-crypto-perf  -l 0,1 -a
-00:06.0 --socket-mem 512,0 -n 4  -- --ptest throughput --silent  --total-ops
-100000 --burst-sz 32 --buffer-sz 64,128,256,512,1024,2048 --devtype
-crypto_virtio --optype cipher-then-auth --cipher-algo aes-cbc --cipher-op
-encrypt --cipher-key-sz 16 --cipher-iv-sz 16 --auth-algo sha1-hmac --auth-op
-generate --auth-key-sz 64 --digest-sz 12
-EAL: Detected CPU lcores: 8
-EAL: Detected NUMA nodes: 1
-EAL: Detected static linkage of DPDK
-EAL: Multi-process socket /var/run/dpdk/rte/mp_socket
-EAL: Selected IOVA mode 'PA'
-EAL: VFIO support initialized
-EAL: Probe PCI driver: crypto_virtio (1af4:1054) device: 0000:00:06.0 (sock=
-et
--1)
-CRYPTODEV: Creating cryptodev 0000:00:06.0
-CRYPTODEV: Initialisation parameters - name: 0000:00:06.0,socket id: -1, max
-queue pairs: 0
-EAL: Requested device 0000:00:06.0 cannot be used
-EAL: Bus (pci) probe failed.
-Segmentation fault (core dumped)
-
-
-[Bad commit]
-commit 9c9ce1e0cef63b173df003aa9d5f0d975ed85cf2 (HEAD -> 9c9ce1e0ce)
-Author: Rajesh Mudimadugula <rmudimadugul@marvell.com>
-Date:   Wed May 28 10:53:47 2025 +0000
-
-    crypto/virtio: fix driver ID
-
-    [ upstream commit 9843181aa5e764fd6876f50e8a795353e9261cb1 ]
-
-    This patch corrects driver id for virtio and virtio_user
-    pmds.
-
-    Fixes: 25500d4b8076 ("crypto/virtio: support device init")
-
-    Signed-off-by: Rajesh Mudimadugula <rmudimadugul@marvell.com>
-    Acked-by: Akhil Goyal <gakhil@marvell.com>
-
-Compare that dpdk stable branch has some gaps with dpdk main branch, may ne=
-ed
-rebase.
-
---=20
-You are receiving this mail because:
-You are the assignee for the bug.=
+K0Fhcm9uLCBwbGVhc2UgcmVhZCB1cCBvbiB0aGlzIGRpc2N1c3Npb24sIGFuZCBzdGVwIGluIGlm
+IHlvdSBjYW4gaGVscC4NCg0KKEFhcm9uIGlzIHRoZSBEUERLIFByb2plY3QgdGVzdGluZyBsZWFk
+ZXIsIGFuZCB3b3JrcyBhdCBSZWQgSGF0LikNCg0KPiBGcm9tOiBTY290dCBNaXRjaGVsbCBbbWFp
+bHRvOnNjb3R0LmsubWl0Y2gxQGdtYWlsLmNvbV0NCj4gU2VudDogRnJpZGF5LCA5IEphbnVhcnkg
+MjAyNiAwNS41OA0KPiANCj4gT24gVGh1LCBKYW4gOCwgMjAyNiBhdCA3OjAx4oCvUE0gU3RlcGhl
+biBIZW1taW5nZXINCj4gPHN0ZXBoZW5AbmV0d29ya3BsdW1iZXIub3JnPiB3cm90ZToNCj4gPg0K
+PiA+IE9uIFRodSwgOCBKYW4gMjAyNiAxNjoxOTozNyAtMDUwMA0KPiA+IFNjb3R0IE1pdGNoZWxs
+IDxzY290dC5rLm1pdGNoMUBnbWFpbC5jb20+IHdyb3RlOg0KPiA+DQo+ID4gPiBPbiBUaHUsIEph
+biA4LCAyMDI2IGF0IDExOjEy4oCvQU0gU3RlcGhlbiBIZW1taW5nZXINCj4gPiA+IDxzdGVwaGVu
+QG5ldHdvcmtwbHVtYmVyLm9yZz4gd3JvdGU6DQo+ID4gPiA+DQo+ID4gPiA+IE9uIFRodSwgIDgg
+SmFuIDIwMjYgMDE6MTM6MzggLTA1MDANCj4gPiA+ID4gc2NvdHQuay5taXRjaDFAZ21haWwuY29t
+IHdyb3RlOg0KPiA+ID4gPg0KPiA+ID4gPiA+ICsjaWZkZWYgUlRFX0NDX0dDQw0KPiA+ID4gPiA+
+ICsgICAgIC8qIFN1cHByZXNzIEdDQyAtV21heWJlLXVuaW5pdGlhbGl6ZWQgZmFsc2UgcG9zaXRp
+dmUuIE5vDQo+IGFzc2VtYmx5L3J1bnRpbWUgaW1wYWN0cy4gKi8NCj4gPiA+ID4gPiArICAgICBh
+c20gdm9sYXRpbGUoIiIgOiAiK20iIChwc2RfaGRyKSk7DQo+ID4gPiA+ID4gKyNlbmRpZg0KPiA+
+ID4gPiA+DQo+ID4gPiA+DQo+ID4gPiA+IE1heWJlIHJ0ZV9jb21waWxlcl9iYXJyaWVyKCkgd2ls
+bCBkbyBzYW1lIHRoaW5nPw0KPiA+ID4NCj4gPiA+IEFncmVlZCBpdCBmZWVscyBsaWtlIGEgY29t
+cGlsZXIgYnVnIGJ1dCBsb29raW5nIGZvciBhZHZpY2UgaWYgSSdtDQo+ID4gPiBtaXNzaW5nIHNv
+bWV0aGluZyA6KQ0KPiA+ID4NCj4gPiA+IE15IGluaXRpYWwgY29uY2VybiB3aXRoIHJ0ZV9jb21w
+aWxlcl9iYXJyaWVyIGlzIGl0cyBhIGdlbmVyYWwNCj4gYmFycmllcg0KPiA+ID4gd2hpY2ggbWF5
+IGhhdmUgYnJvYWRlciBpbXBhY3RzIG9uDQo+ID4gPiBvcHRpbWl6YXRpb25zIGFuZCBjb21waWxl
+ZCBjb2RlLiBXaWxsIHRoYXQgYmUgYW4gaXNzdWUgaW4gdGhpcw0KPiBjYXNlPyBJDQo+ID4gPiB3
+YXNuJ3Qgc3VyZSBhbmQgdGhlIGFwcHJvYWNoDQo+ID4gPiBpbiB0aGUgcGF0Y2ggaXMgdGFyZ2V0
+ZWQgYXQgYSBzcGVjaWZpYyB2YXJpYWJsZSBhbmQgYXNzZW1ibHkgZnJvbQ0KPiA+ID4gY2xhbmcv
+Z2NjIHdhcyB0aGUgc2FtZS4gSSB3aWxsDQo+ID4gPiBpbnRyb2R1Y2UgYSBtYWNybyB0byBtYWtl
+IGl0IGNsZWFuZXIgYW5kIEkgY2FuIHJlcGxhY2UgaXQgd2l0aA0KPiA+ID4gcnRlX2NvbXBpbGVy
+X2JhcnJpZXIgaWYgcHJlZmVycmVkLg0KPiA+DQo+ID4gTWF5YmUgdHJ5IHdpdGggLWZhbmFseXpl
+ciBhbmQgaXQgbWlnaHQgdGVsbCB5b3UgbW9yZS4NCj4gPiBJIHN1c3BlY3Qgc29tZSBvZiB0aGUg
+YWxpYXNpbmcgc2V0dGluZyBhcmUgY2F1c2luZyBpc3N1ZXMuDQo+ID4gU29tZSBkcml2ZXJzIGFy
+ZSB0dXJuaW5nIG9uIG5vLXN0cmljdC1hbGlhc2luZw0KPiANCj4gSSBoYXZlIG1vcmUgZXZpZGVu
+Y2UgdGhpcyBpcyBhIEdDQyBvcHRpbWl6ZXIgYnVnLg0KPiBUaGUgUlRFX1NVUFBSRVNTX1VOSU5J
+VElBTElaRURfV0FSTklORyBhcHByb2FjaCBzZXJ2ZXMNCj4gYXMgYSB3b3JrYXJvdW5kIHRvIGF2
+b2lkIHRoZSBidWcuIEkgY3JlYXRlZCBhIG1vcmUgbWluaW1hbCByZXByb2R1Y2VyOg0KPiBodHRw
+czovL2dpc3QuZ2l0aHViLmNvbS9TY290dG1pdGNoL2JmMjM3NDhiNDU4OGU2OGM5YmRiOGQxMjRm
+OTJmMWJkDQo+IA0KPiBZb3VyIHN1c3BpY2lvbiB3YXMgY29ycmVjdCwgLWZuby1zdHJpY3QtYWxp
+YXNpbmcgYXZvaWRzIHRoZSBidWcgYnV0IEkNCj4gZG9uJ3QNCj4gdGhpbmsgaXQgaXMgZGVzaXJh
+YmxlIHRvIGVuYWJsZSB0aGlzIGJyb2FkbHkgZm9yIERQREsgd2hlbiB3ZSBoYXZlIGENCj4gbW9y
+ZSB0YXJnZXRlZCB3b3JrYXJvdW5kLg0KPiANCj4gSSB3aWxsIHJlYWNoIG91dCB0byBSSCB0byBj
+b25maXJtIGJ1dCBpbiB0aGUgaW50ZXJpbSBJIHN1Z2dlc3Qgd2Uga2VlcA0KPiBSVEVfU1VQUFJF
+U1NfVU5JTklUSUFMSVpFRF9XQVJOSU5HIChvciBzaW1pbGFyIGFsdGVybmF0aXZlKS4NCg0KSWYg
+dGhpcyBpcyBhIEdDQyBjb21waWxlciBidWcgbGltaXRlZCB0byB0aGUgR0NDIHZlcnNpb24gb2Zm
+ZXJlZCBieSBSSEVMIDExLCBJIHByZWZlciBzcGxpdHRpbmcgdGhlIHBhdGNoIGludG8gYSBzZXJp
+ZXMgd2l0aCB0aGUgZm9sbG93aW5nIHN0ZXBzOg0KUGF0Y2ggMS8yOiBBZGQgdGhlIG9wdGltaXph
+dGlvbiBhbmQgbmV3IHRlc3QgY2FzZXMgaW4gdGhlaXIgbWluaW1hbCBmb3JtLCBkZXNpZ25lZCB0
+byB3b3JrIG9uIG5vcm1hbCBjb21waWxlcnMuIERpc3JlZ2FyZCBidWdzL3dhcm5pbmdzIGZyb20g
+dGhlIHdlaXJkIFJIRUwgMTEgY29tcGlsZXIuDQpJLmUuIGRvbid0IG1vZGlmeSBsaWIvZWFsL2lu
+Y2x1ZGUvcnRlX2NvbW1vbi5oLCBsaWIvbmV0L3J0ZV9pcDYuaCwgbGliL25ldC9ydGVfaXA0Lmgs
+IGRyaXZlcnMvbmV0L2hpbmljL2hpbmljX3BtZF90eC5jLCBkcml2ZXJzL25ldC9tbHg1L21seDVf
+Zmxvd19kdi5jLg0KUGF0Y2ggMi8yOiBBZGQgdGhlIHdvcmthcm91bmRzIHJlcXVpcmVkIGJ5IHRo
+ZSBSSEVMIDExIGNvbXBpbGVyLg0KDQpBbHNvLCB0aGUgY2hhbmdlIHRvIGRyaXZlcnMvbmV0L2hp
+bmljL2hpbmljX3BtZF90eC5jIHNob3VsZCBiZSBtb3ZlZCB0byBhIHBhdGNoIGluZGVwZW5kZW50
+IG9mIHRoaXMgc2VyaWVzLg0KSXQncyBub3QgZGlyZWN0bHkgcmVsYXRlZCB0byB0aGlzIHNlcmll
+cywgc28gbGV0J3Mgbm90IGFkZCBtb3JlIHRvIHRoZSBkaXNjdXNzaW9uIHRoYW4gd2UgbmVlZCB0
+by4gOy0pDQpBbmQgdGhlIGltcGxlbWVudGF0aW9uIGluIHRoZSBkcml2ZXIgb25seSBjb25zaWRl
+cnMgUlRFX01CVUZfRl9UWF9UQ1BfU0VHLCB3aGVyZWFzIHRoZSBEUERLIGZ1bmN0aW9uIGFsc28g
+Y29uc2lkZXJzIFJURV9NQlVGX0ZfVFhfVURQX1NFRywgc28gaXQgd2FycmFudHMgYSBzZXBhcmF0
+ZSBkaXNjdXNzaW9uOyBpdCBwb3NzaWJseSBmaXhlcyBhIGJ1Zy4NCg0KTWF5YmUgZXZlbiBtb3Zl
+IHRoZSBSSEVMIDExIHJlbGF0ZWQgcGF0Y2hlcyAobXkgc3VnZ2VzdGVkIHBhdGNoIDIvMikgaW50
+byBhIHNlcGFyYXRlIHNlcmllcywgZm9yIHRoZSBzYW1lIGNvbmNlcHR1YWwgcmVhc29ucyBhcyBt
+b3ZpbmcgdGhlIEhJTklDIGRyaXZlciBwYXRjaCBpbnRvIGEgc2VwYXJhdGUgc2VyaWVzLg0KWW91
+IGNhbiB1c2UgdGhlIERlcGVuZHMtT24gdGFnIChodHRwczovL2RvYy5kcGRrLm9yZy9ndWlkZXMv
+Y29udHJpYnV0aW5nL3BhdGNoZXMuaHRtbCNwYXRjaC1kZXBlbmRlbmNpZXMpIGZvciB0aGUgZm9s
+bG93LW9uIGNoYW5nZXMgdG8gX19ydGVfcmF3X2Nrc3VtKCkuDQoNCg==
