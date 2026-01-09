@@ -2,71 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01083D232DF
-	for <dpdk-dev@archiver.kernel.org>; Fri,  9 Jan 2026 05:39:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E67FD232C8
+	for <dpdk-dev@archiver.kernel.org>; Fri,  9 Jan 2026 07:05:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D0141402A7;
-	Fri,  9 Jan 2026 06:39:21 +0100 (CET)
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com
- [209.85.128.41]) by mails.dpdk.org (Postfix) with ESMTP id 0FCBA400D5
- for <dev@dpdk.org>; Fri,  9 Jan 2026 06:39:21 +0100 (CET)
-Received: by mail-wm1-f41.google.com with SMTP id
- 5b1f17b1804b1-47d63594f7eso23575295e9.0
- for <dev@dpdk.org>; Thu, 08 Jan 2026 21:39:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1767937161;
- x=1768541961; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=4V90jgHyNaKYrdnsAxvWICw0JlPM+0uMlXqTGtub7Mc=;
- b=ZBnTUA0YRR7GYWm8jxzQDL0+vtqVerRlQ3C55zxTcvnDFKjgwWg4Sk0GJx1v3jKn2c
- 1D+OEMDQBSZgceQy/4Rz882Dz+hx1TphFbHb65Qj/okeq4CxPCda6NGMr/FxKFmM7w+N
- iFZqTafTBh36W1Q5iu+jSNsxrKXM5K4nuTiYLh/ns8KJsBUU4tKh7wNPdAAkyaRfPK2U
- RC3bnJOv+YdG66b8Tb83y2sJFKcD2i13dZ7Fb4Bw9GCryT9YQSBUjMFEsocJjg9nuWRf
- GfjzJEaZ0GJqOzSYeOCIZX0txBWdxwOpUohkCyEntsAGnJD6UL2rCI67x4pcPbXtkWO+
- xarw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1767937161; x=1768541961;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=4V90jgHyNaKYrdnsAxvWICw0JlPM+0uMlXqTGtub7Mc=;
- b=ZtEBvcUmlDF4BfCHcSM4BsIc8UI/44gophfCe4bUpBtjkZPTzRikO5srEM00MnGEHl
- CNGC5/l/OflKeTQ9msxZ0jfphGo3xHkRjNYcc/So6M0n8YgTcUOyGiW+rvqbtojxNbcv
- rxaK+/w2WcC8J1WJmFcmPiL+IzV553u7vcPtmG/wcvT5Yy2xTSrUrf669w0gvHy6gbs6
- S/hW3JLU7CXYGTL9xLPH8C3hRg9/yLAbUDQ14Ema1KTBuyvUO7kSYI8IgK4loX+hTrfR
- w4aHoWuyOzZnqr4d/YywUbRkQVAK2YmCNYxSXupzG98Idd5Ipdc+75jV6Wexo17xO0Ra
- PR3w==
-X-Gm-Message-State: AOJu0YyZr/d7QrURYUhj0w2yrca6oZrj0UZIwCb3ScH4M6ZvS6HOYzBk
- NCUg/3iQ76LXh0bdLdfJj1Azv5XlUaDcatd/wLsE/+67SXhRbcY84eU5ePn8ahAxq/g=
-X-Gm-Gg: AY/fxX6SkqJnNwwPpgCrQu8nfb84XPOImkBbt9k6ktbvDSNUCXERpfBch0fkGhi12Rb
- IfJwE+K5JWkDcpK+Sj7rgpPCjLqjLJgKGFCpGXN/rWRH9LbkN03F13x+9gnSOJRabbBx2CRcJ9w
- xPQwpf3drC+oBHjJvCICHRqNZhkHPNoJx5SeeUfJVwSegTSzDg5Jp2zqELW7auilqu25EaWR9Bt
- ZcfZHcyRb8+0rbdQmeC4FdifFInWQwKoj1Mwvqr/gY6VsDeanRdExfqvojl7w2OMcdTltjlolvm
- fLo2P7vJ0w/tWtXXIASHvun4yxle7CW/F6qi2XAoBjpxOoz2zke9BVlmwFdRIEQ8qfAEjgotTW5
- 1JSymgP88nTQ+ptbaIfDz13wki5AG16gMArscBLTY8lnqe356CGrj5kqCS0/IdHuxMR026seFRT
- 65gxYaf999W7gD7BRg2Z1Vz0rPV0vlDUjkjxCiCN7EzjhcyIsVv4du
-X-Google-Smtp-Source: AGHT+IHNWs8fwwrBXrZeCzsJJ5nn2AAqtfrqAPX824mq0K40zRGvWZX3GT/0cMCTw5/KbOFeKRmFEQ==
-X-Received: by 2002:a05:600c:37c8:b0:475:de12:d3b5 with SMTP id
- 5b1f17b1804b1-47d84b40816mr76987195e9.34.1767937160456; 
- Thu, 08 Jan 2026 21:39:20 -0800 (PST)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-47d8660be14sm57073875e9.1.2026.01.08.21.39.19
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 08 Jan 2026 21:39:20 -0800 (PST)
-Date: Thu, 8 Jan 2026 21:39:16 -0800
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: scott.k.mitch1@gmail.com
-Cc: dev@dpdk.org, mb@smartsharesystems.com
-Subject: Re: [PATCH v9] net: optimize raw checksum computation
-Message-ID: <20260108213916.618cb75a@phoenix.local>
-In-Reply-To: <20260108214713.52987-1-scott.k.mitch1@gmail.com>
-References: <20260108214713.52987-1-scott.k.mitch1@gmail.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 5656A402A7;
+	Fri,  9 Jan 2026 08:05:14 +0100 (CET)
+Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
+ by mails.dpdk.org (Postfix) with ESMTP id 6E43F400D5
+ for <dev@dpdk.org>; Fri,  9 Jan 2026 08:05:12 +0100 (CET)
+Received: by inbox.dpdk.org (Postfix, from userid 33)
+ id 2B8A1471C3; Fri,  9 Jan 2026 08:05:12 +0100 (CET)
+From: bugzilla@dpdk.org
+To: dev@dpdk.org
+Subject: [DPDK/vhost/virtio Bug 1866] [dpdk-23.11.6rc1][Cryptodev][LTS test]
+ virtio_perf_cryptodev_func/testvirtio_aes_cbc_sha1_hmac: Failed to use virtio
+ device - Segmentation fault
+Date: Fri, 09 Jan 2026 07:05:10 +0000
+X-Bugzilla-Reason: AssignedTo
+X-Bugzilla-Type: new
+X-Bugzilla-Watch-Reason: None
+X-Bugzilla-Product: DPDK
+X-Bugzilla-Component: vhost/virtio
+X-Bugzilla-Version: 23.11
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: normal
+X-Bugzilla-Who: yux.jiang@intel.com
+X-Bugzilla-Status: UNCONFIRMED
+X-Bugzilla-Resolution: 
+X-Bugzilla-Priority: Normal
+X-Bugzilla-Assigned-To: dev@dpdk.org
+X-Bugzilla-Target-Milestone: ---
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
+ op_sys bug_status bug_severity priority component assigned_to reporter
+ target_milestone
+Message-ID: <bug-1866-3@http.bugs.dpdk.org/>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -80,81 +56,153 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu,  8 Jan 2026 16:47:13 -0500
-scott.k.mitch1@gmail.com wrote:
+http://bugs.dpdk.org/show_bug.cgi?id=3D1866
 
-> diff --git a/lib/net/rte_ip6.h b/lib/net/rte_ip6.h
-> index d1abf1f5d5..8a7e5e4b8a 100644
-> --- a/lib/net/rte_ip6.h
-> +++ b/lib/net/rte_ip6.h
-> @@  -560,19 +560,18 @@ rte_ipv6_phdr_cksum(const struct rte_ipv6_hdr *ipv6_hdr, uint64_t ol_flags)
->  static inline uint16_t
->  rte_ipv6_phdr_cksum(const struct rte_ipv6_hdr *ipv6_hdr, uint64_t ol_flags)
->  {
-> -	uint32_t sum;
->  	struct {
->  		rte_be32_t len;   /* L4 length. */
->  		rte_be32_t proto; /* L4 protocol - top 3 bytes must be zero */
-> -	} psd_hdr;
-> -
-> -	psd_hdr.proto = (uint32_t)(ipv6_hdr->proto << 24);
-> -	if (ol_flags & (RTE_MBUF_F_TX_TCP_SEG | RTE_MBUF_F_TX_UDP_SEG))
-> -		psd_hdr.len = 0;
-> -	else
-> -		psd_hdr.len = ipv6_hdr->payload_len;
-> +	} psd_hdr = {
-> +		.len = (ol_flags & (RTE_MBUF_F_TX_TCP_SEG | RTE_MBUF_F_TX_UDP_SEG))
-> +			? (rte_be32_t)0
-> +			: ipv6_hdr->payload_len,
-> +		.proto = (uint32_t)(ipv6_hdr->proto << 24)
-> +	};
-> +	RTE_SUPPRESS_UNINITIALIZED_WARNING(psd_hdr);
->  
-> -	sum = __rte_raw_cksum(&ipv6_hdr->src_addr,
-> +	uint32_t sum = __rte_raw_cksum(&ipv6_hdr->src_addr,
->  		sizeof(ipv6_hdr->src_addr) + sizeof(ipv6_hdr->dst_addr),
->  		0);
->  	sum = __rte_raw_cksum(&psd_hdr, sizeof(psd_hdr), sum);
-> -- 
+            Bug ID: 1866
+           Summary: [dpdk-23.11.6rc1][Cryptodev][LTS test]
+                    virtio_perf_cryptodev_func/testvirtio_aes_cbc_sha1_hma
+                    c: Failed to use virtio device - Segmentation fault
+           Product: DPDK
+           Version: 23.11
+          Hardware: All
+                OS: All
+            Status: UNCONFIRMED
+          Severity: normal
+          Priority: Normal
+         Component: vhost/virtio
+          Assignee: dev@dpdk.org
+          Reporter: yux.jiang@intel.com
+  Target Milestone: ---
 
-Seems like this could be unrolled as well.
+[DPDK Version]
+commit 63864b90e2bf91b38d9f4accb588c52ed90cac4e (HEAD -> v23.11.6-rc1, tag:
+v23.11.6-rc1, origin/23.11, 23.11)
+Author: Shani Peretz <shperetz@nvidia.com>
+Date:   Tue Jan 6 15:04:17 2026 +0200
 
-static inline uint16_t
-rte_ipv6_phdr_cksum(const struct rte_ipv6_hdr *ipv6_hdr, uint64_t ol_flags)
-{
-	union {
-		struct {
-			struct rte_ipv6_addr src_addr;  /* 16 bytes */
-			struct rte_ipv6_addr dst_addr;  /* 16 bytes */
-			rte_be32_t len;                 /* 4 bytes  */
-			rte_be32_t proto;               /* 4 bytes  */
-		} psd;
-		uint16_t u16[20];
-	} hdr = {
-		.psd = {
-			.src_addr = ipv6_hdr->src_addr,
-			.dst_addr = ipv6_hdr->dst_addr,
-			.proto = (uint32_t)(ipv6_hdr->proto << 24),
-		}
-	};
-	uint32_t sum;
+    version: 23.11.6-rc1
 
-	if (!(ol_flags & (RTE_MBUF_F_TX_TCP_SEG | RTE_MBUF_F_TX_UDP_SEG)))
-		hdr.psd.len = ipv6_hdr->payload_len;
+    Signed-off-by: Shani Peretz <shperetz@nvidia.com>
 
-	/* Unrolled sum of 20 uint16_t words:
-	 * [0-7]:   src_addr
-	 * [8-15]:  dst_addr
-	 * [16-17]: len
-	 * [18-19]: proto (3 zero bytes + next header)
-	 */
-	sum = hdr.u16[0]  + hdr.u16[1]  + hdr.u16[2]  + hdr.u16[3]  +
-	      hdr.u16[4]  + hdr.u16[5]  + hdr.u16[6]  + hdr.u16[7]  +
-	      hdr.u16[8]  + hdr.u16[9]  + hdr.u16[10] + hdr.u16[11] +
-	      hdr.u16[12] + hdr.u16[13] + hdr.u16[14] + hdr.u16[15] +
-	      hdr.u16[16] + hdr.u16[17] + hdr.u16[18] + hdr.u16[19];
 
-	sum = (sum & 0xffff) + (sum >> 16);
-	sum = (sum & 0xffff) + (sum >> 16);
-	return (uint16_t)sum;
-}
+[Reproduce]
+rm -rf x86_64-native-linuxapp-gcc
+CC=3Dgcc meson -Dlibdir=3Dlib --default-library=3Dstatic x86_64-native-linu=
+xapp-gcc
+ninja -C x86_64-native-linuxapp-gcc
+meson configure -Dexamples=3Dvhost_crypto x86_64-native-linuxapp-gcc
+ninja -C x86_64-native-linuxapp-gcc
+
+SW Device:
+rm -r /tmp/*
+x86_64-native-linuxapp-gcc/examples/dpdk-vhost_crypto -l 1,2,3 -a 0000:00:0=
+0.0
+--vdev crypto_aesni_mb_pmd_1 --socket-mem 2048,0 -n 4 -- --config
+"(2,0,0),(3,0,0)" --socket-file 2,/tmp/vm0_crypto0.sock
+--socket-file=3D3,/tmp/vm0_crypto1.sock
+
+Create a NIC VF:
+echo 1 > /sys/bus/pci/devices/0000\:3b\:00.0/sriov_numvfs
+usertools/dpdk-devbind.py --bind=3Dvfio-pci 0000:3b:02.0
+
+lsof -n -i:6600
+taskset -c 11,12,13,14,15,16,17,18 /root/qemu-2.12/bin/qemu-system-x86_64=20
+-name vm0 -enable-kvm -pidfile /tmp/.vm0.pid \
+-daemonize -monitor unix:/tmp/vm0_monitor.sock,server,nowait -device
+e1000,netdev=3Dnttsip1  \
+-netdev user,id=3Dnttsip1,hostfwd=3Dtcp:10.239.252.147:6600-:22 -device
+vfio-pci,host=3D0000:3b:02.0,id=3Dpt_0 \
+-cpu host -smp 8 -m 4096 -object
+memory-backend-file,id=3Dmem,size=3D4096M,mem-path=3D/dev/hugepages,share=
+=3Don \
+-numa node,memdev=3Dmem -mem-prealloc -vnc :1 \
+-chardev socket,path=3D/tmp/vm0_qga0.sock,server,nowait,id=3Dvm0_qga0 -devi=
+ce
+virtio-serial -device
+virtserialport,chardev=3Dvm0_qga0,name=3Dorg.qemu.guest_agent.0 \
+-chardev socket,path=3D/tmp/vm0_crypto0.sock,id=3Dvm0_crypto0 -object
+cryptodev-vhost-user,id=3Dcryptodev0,chardev=3Dvm0_crypto0 -device
+virtio-crypto-pci,id=3Dcrypto0,cryptodev=3Dcryptodev0 \
+-chardev socket,path=3D/tmp/vm0_crypto1.sock,id=3Dvm0_crypto1 -object
+cryptodev-vhost-user,id=3Dcryptodev1,chardev=3Dvm0_crypto1 -device
+virtio-crypto-pci,id=3Dcrypto1,cryptodev=3Dcryptodev1 \
+-drive file=3D/root/VMs/virtio_crypto_vm1.img
+
+In VM:
+rm -rf x86_64-native-linuxapp-gcc
+CC=3Dgcc meson  -Dlibdir=3Dlib --default-library=3Dstatic x86_64-native-lin=
+uxapp-gcc
+ninja -C x86_64-native-linuxapp-gcc -j8
+
+awk '/Hugepagesize/ {print $2}' /proc/meminfo=20=20=20=20=20
+echo 0 > /sys/kernel/mm/hugepages/hugepages-2048kB/nr_hugepages=20=20=20
+echo 1024 >
+/sys/devices/system/node/node0/hugepages/hugepages-2048kB/nr_hugepages
+
+In VM:
+modprobe uio_pci_generic=20=20=20=20=20=20=20=20
+lspci -d:1054|awk '{{print $1}}'=20=20=20=20=20=20
+echo 0000:00:07.0 > /sys/bus/pci/devices/0000\:00\:07.0/driver/unbind=20=20=
+=20=20=20=20
+echo 0000:00:06.0 > /sys/bus/pci/devices/0000\:00\:06.0/driver/unbind=20=20=
+=20=20=20=20
+echo "1af4 1054" > /sys/bus/pci/drivers/uio_pci_generic/new_id=20=20
+
+TestVirtioPerfCryptodevFunc: Test Case test_virtio_aes_cbc_sha1_hmac Begin
+virtdut.10.239.252.147:6600:=20
+x86_64-native-linuxapp-gcc/app/dpdk-test-crypto-perf  -l 0,1 -a 00:06.0
+--socket-mem 512,0 -n 4  -- --ptest throughput --silent  --total-ops 100000
+--burst-sz 32 --buffer-sz 64,128,256,512,1024,2048 --devtype crypto_virtio
+--optype cipher-then-auth --cipher-algo aes-cbc --cipher-op encrypt
+--cipher-key-sz 16 --cipher-iv-sz 16 --auth-algo sha1-hmac --auth-op genera=
+te
+--auth-key-sz 64 --digest-sz 12
+
+[Actual log]
+vm1:~/dpdk# x86_64-native-linuxapp-gcc/app/dpdk-test-crypto-perf  -l 0,1 -a
+00:06.0 --socket-mem 512,0 -n 4  -- --ptest throughput --silent  --total-ops
+100000 --burst-sz 32 --buffer-sz 64,128,256,512,1024,2048 --devtype
+crypto_virtio --optype cipher-then-auth --cipher-algo aes-cbc --cipher-op
+encrypt --cipher-key-sz 16 --cipher-iv-sz 16 --auth-algo sha1-hmac --auth-op
+generate --auth-key-sz 64 --digest-sz 12
+EAL: Detected CPU lcores: 8
+EAL: Detected NUMA nodes: 1
+EAL: Detected static linkage of DPDK
+EAL: Multi-process socket /var/run/dpdk/rte/mp_socket
+EAL: Selected IOVA mode 'PA'
+EAL: VFIO support initialized
+EAL: Probe PCI driver: crypto_virtio (1af4:1054) device: 0000:00:06.0 (sock=
+et
+-1)
+CRYPTODEV: Creating cryptodev 0000:00:06.0
+CRYPTODEV: Initialisation parameters - name: 0000:00:06.0,socket id: -1, max
+queue pairs: 0
+EAL: Requested device 0000:00:06.0 cannot be used
+EAL: Bus (pci) probe failed.
+Segmentation fault (core dumped)
+
+
+[Bad commit]
+commit 9c9ce1e0cef63b173df003aa9d5f0d975ed85cf2 (HEAD -> 9c9ce1e0ce)
+Author: Rajesh Mudimadugula <rmudimadugul@marvell.com>
+Date:   Wed May 28 10:53:47 2025 +0000
+
+    crypto/virtio: fix driver ID
+
+    [ upstream commit 9843181aa5e764fd6876f50e8a795353e9261cb1 ]
+
+    This patch corrects driver id for virtio and virtio_user
+    pmds.
+
+    Fixes: 25500d4b8076 ("crypto/virtio: support device init")
+
+    Signed-off-by: Rajesh Mudimadugula <rmudimadugul@marvell.com>
+    Acked-by: Akhil Goyal <gakhil@marvell.com>
+
+Compare that dpdk stable branch has some gaps with dpdk main branch, may ne=
+ed
+rebase.
+
+--=20
+You are receiving this mail because:
+You are the assignee for the bug.=
