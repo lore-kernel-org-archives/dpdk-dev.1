@@ -2,40 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4C1CD277C1
-	for <dpdk-dev@archiver.kernel.org>; Sat, 10 Jan 2026 15:29:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6F87D277F3
+	for <dpdk-dev@archiver.kernel.org>; Sat, 10 Jan 2026 16:59:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D713F4028E;
-	Sat, 10 Jan 2026 16:29:18 +0100 (CET)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 52DFA40144
- for <dev@dpdk.org>; Sat, 10 Jan 2026 16:29:17 +0100 (CET)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 771E120679;
- Sat, 10 Jan 2026 16:29:16 +0100 (CET)
-Content-class: urn:content-classes:message
-MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Subject: RE: [PATCH v12 3/3] eal/net: add workaround for GCC optimization bug
-Date: Sat, 10 Jan 2026 16:29:14 +0100
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65648@smartserver.smartshare.dk>
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-In-Reply-To: <20260110015651.26201-4-scott.k.mitch1@gmail.com>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH v12 3/3] eal/net: add workaround for GCC optimization bug
-Thread-Index: AdyB1HLgl4G3XQXGR16Zz+0J/2oxxAAbqGTA
+	by mails.dpdk.org (Postfix) with ESMTP id D19414028E;
+	Sat, 10 Jan 2026 17:59:38 +0100 (CET)
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com
+ [209.85.221.54]) by mails.dpdk.org (Postfix) with ESMTP id 9C7F140144
+ for <dev@dpdk.org>; Sat, 10 Jan 2026 17:59:36 +0100 (CET)
+Received: by mail-wr1-f54.google.com with SMTP id
+ ffacd0b85a97d-432d256c2e6so2011150f8f.3
+ for <dev@dpdk.org>; Sat, 10 Jan 2026 08:59:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768064376;
+ x=1768669176; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=cmdYpN2KupftkK1SANx1dTTR1SYgv8I1Xs537VUqaeI=;
+ b=UuRzZdYtSTljgi6Hsr5y8yw8S6fYHKZLIiM1BOOzlrcuurV8xkoPiVzu+EZ5xT72Da
+ h/XCNirU1iVxv+M6921tJhAIgAspslI0hxpTrdJV3rd6SQKi/AL2TN5+64rCyjYhVFCh
+ oHPuyWCt+Qcwh7tOKMp91U4oZjbiJxKHlYWNtdHlRRURvvkiofv5cmT7Z0gx+r7eMD9f
+ 9kYuMtdcmFs9HvbwMYSd11kA4GO0q3SeLquccdkSPI59NOPUnbG8ELLcPj2lH8iz20F1
+ +EUgXDZKR6JK9A5K4GA0fQ9kRb8yHhYxzB0Y2VqXcug4piXYYUiG3A9a9UDxDGL5flXn
+ Vg8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1768064376; x=1768669176;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=cmdYpN2KupftkK1SANx1dTTR1SYgv8I1Xs537VUqaeI=;
+ b=nbdOvI5M3SvhS+An129ArvJRHKc8OV5m3+9wFWi8fo1oFTxIWapRGmTNhXScICotQd
+ w24vSHElNqeJ9k2i3tfz+OCouvqI/XrcK6Aws6k9uOMNFOuWyWoOEvG4T2MqPjT2vSKa
+ bjPc5V61tYO+It2FuI/XkI6goGX/6iesB//SVMpsa/WyIZoInd4L30/1coao7BBLAqN1
+ m0kiDenmuC7nYXml88BmvDe8k0dbCA0eLoOLwmRqZaoLNrUXO7U087i2dBtWyaUdkRH9
+ OoLB1yIYKDPS1Zr1N6K3G3kRClOHJpIXTzsofd/hhP9JQqnlaz5dRE14PKVrUr8hNSlw
+ /B3g==
+X-Gm-Message-State: AOJu0YwHAC8XiopLJ90sMz/pnrtWJWNz/A5Jw9li89d5xiPFDFn3iZIK
+ weegx/Xy1n5wq6T7SoYlqmMr0SNKTvGIKjbrMPDovTqo4w1NH79QuH4h0b0sfkgAcYU=
+X-Gm-Gg: AY/fxX6ISs64qxFiOnON7PfoF1yv1w3ujZ308dX/mYKzleljvz8UgtpoS4LzlpwMb9v
+ IGJIaZ5VEcAcfxoMKsCl8aOsREn2wX+BV0FzS45TZ2uk7cZcFiVwMLkQo8bWoPzqQR5HvD1AIrR
+ ajzP1dyjAhiZbwEI8UEu4fvzpSpanF2E08MudRp4oeqt9fwmjuunCYjccHTvfhajwbVL1V42XyW
+ xqqLxTdOP/IknrdVY8Nbo88jnuTrolY1MJvqAbQDGzw2rCgFYsO7mCWiLKyPKUNyolpEWToK8Vc
+ 1ZVrda6yGNXC7pjHzf6bRVKtOW3kTO68l6KeaQU+FwSXIAsvtzvzhhpsTalWiQOxv39mXXlu1j8
+ XWECw/f3FwQUMt+aHTKxo52betXCjf4saJq4O8UZvesJ15yIEhqY+BAJCspOymEtCtE0mEChT/v
+ OcufM4yE+zrj0yHx+DSoFAPVmtmjrIJUjDE0HL6S7tacNqCSjoPIyFg78ZgcvMqbQ=
+X-Google-Smtp-Source: AGHT+IFY1L7NNURDPeZ+TNVY4tdSt5esEqM2XPmBalass5RfE/VcmsgYzyQcg4kd5YXADf0UTIj/xg==
+X-Received: by 2002:a05:6000:1449:b0:430:feb3:f5ae with SMTP id
+ ffacd0b85a97d-432c37a721dmr13261011f8f.55.1768064375091; 
+ Sat, 10 Jan 2026 08:59:35 -0800 (PST)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ ffacd0b85a97d-432dd78f5a8sm8607691f8f.27.2026.01.10.08.59.33
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Sat, 10 Jan 2026 08:59:34 -0800 (PST)
+Date: Sat, 10 Jan 2026 08:59:29 -0800
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: scott.k.mitch1@gmail.com
+Cc: dev@dpdk.org, mb@smartsharesystems.com
+Subject: Re: [PATCH v12 0/3] net: optimize raw checksum computation
+Message-ID: <20260110085929.712a0a87@phoenix.local>
+In-Reply-To: <20260110015651.26201-1-scott.k.mitch1@gmail.com>
 References: <20260110015651.26201-1-scott.k.mitch1@gmail.com>
- <20260110015651.26201-4-scott.k.mitch1@gmail.com>
-From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
-To: <scott.k.mitch1@gmail.com>,
-	<dev@dpdk.org>
-Cc: <stephen@networkplumber.org>,
-	"Scott" <scott_mitchell@apple.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -49,135 +80,152 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> From: Scott <scott_mitchell@apple.com>
->=20
-> GCC has a bug where it incorrectly elides struct initialization in
-> inline functions when strict aliasing is enabled (-O2/-O3/-Os), =
-causing
-> reads from uninitialized memory. This affects both designated
-> initializers and manual field assignment.
+On Fri,  9 Jan 2026 20:56:48 -0500
+scott.k.mitch1@gmail.com wrote:
 
-Does this still happen after you replaced the RTE_PTR_ADD() with native =
-pointer arithmetic in the checksum function?
-In other words: Is this workaround still necessary?
-
-This is a showstopper:
-If the workaround is necessary, applications with similar use cases also =
-need to apply the workaround.
-If we cannot somehow enforce that, the series is likely to break some =
-applications, which is unacceptable.
-
+> From: Scott Mitchell <scott.k.mitch1@gmail.com>
 >=20
-> Add RTE_FORCE_INIT_BARRIER macro that uses an asm volatile memory
-> barrier
-> to prevent the compiler from incorrectly optimizing away struct
-> initialization. Apply the workaround to pseudo-header checksum
-> functions
-> in rte_ip4.h, rte_ip6.h, hinic driver, and mlx5 driver.
+> This series optimizes __rte_raw_cksum() by replacing memcpy-based access
+> with unaligned_uint16_t pointer access, enabling vectorization in both
+> GCC and Clang. The series is split into three patches to clearly separate
+> the core optimization from compiler-specific workarounds.
 >=20
-> Signed-off-by: Scott Mitchell <scott.k.mitch1@gmail.com>
-> ---
->  drivers/net/hinic/hinic_pmd_tx.c |  2 ++
->  drivers/net/mlx5/mlx5_flow_dv.c  |  2 ++
->  lib/eal/include/rte_common.h     | 14 ++++++++++++++
->  lib/net/rte_ip4.h                |  1 +
->  lib/net/rte_ip6.h                |  1 +
->  5 files changed, 20 insertions(+)
+> Performance improvement from cksum_perf_autotest on Intel Xeon
+> (Cascade Lake, AVX-512) with Clang 18.1 (TSC cycles/byte):
 >=20
-> diff --git a/drivers/net/hinic/hinic_pmd_tx.c
-> b/drivers/net/hinic/hinic_pmd_tx.c
-> index 22fb0bffaf..570715531d 100644
-> --- a/drivers/net/hinic/hinic_pmd_tx.c
-> +++ b/drivers/net/hinic/hinic_pmd_tx.c
-> @@ -725,6 +725,7 @@ hinic_ipv4_phdr_cksum(const struct rte_ipv4_hdr
-> *ipv4_hdr, uint64_t ol_flags)
->  		rte_cpu_to_be_16(rte_be_to_cpu_16(ipv4_hdr->total_length) -
->  				 rte_ipv4_hdr_len(ipv4_hdr));
->  	}
-> +	RTE_FORCE_INIT_BARRIER(psd_hdr);
->  	return rte_raw_cksum(&psd_hdr, sizeof(psd_hdr));
->  }
+>   Block size    Before    After    Improvement
+>          100      0.40     0.24        ~40%
+>         1500      0.50     0.06        ~8x
+>         9000      0.49     0.06        ~8x
 >=20
-> @@ -743,6 +744,7 @@ hinic_ipv6_phdr_cksum(const struct rte_ipv6_hdr
-> *ipv6_hdr, uint64_t ol_flags)
->  	else
->  		psd_hdr.len =3D ipv6_hdr->payload_len;
+> Changes in v12:
+> - Split into 3-patch series per reviewer feedback
+> - Patch 1/3: Core optimization and test additions
+> - Patch 2/3: UBSAN alignment workaround (separate from GCC bug)
+> - Patch 3/3: GCC optimization bug workaround
+> - Reverted len & 1 to len % 2 and restored unlikely() per feedback
+> - Renamed RTE_SUPPRESS_UNINITIALIZED_WARNING to RTE_FORCE_INIT_BARRIER
+> - Applied minimal changes (no refactoring) to existing code
+> - Deferred hinic driver refactoring to future series
 >=20
-> +	RTE_FORCE_INIT_BARRIER(psd_hdr);
->  	sum =3D __rte_raw_cksum(&ipv6_hdr->src_addr,
->  		sizeof(ipv6_hdr->src_addr) + sizeof(ipv6_hdr->dst_addr),
-> 0);
->  	sum =3D __rte_raw_cksum(&psd_hdr, sizeof(psd_hdr), sum);
-> diff --git a/drivers/net/mlx5/mlx5_flow_dv.c
-> b/drivers/net/mlx5/mlx5_flow_dv.c
-> index 47f6d28410..1eeeb6747f 100644
-> --- a/drivers/net/mlx5/mlx5_flow_dv.c
-> +++ b/drivers/net/mlx5/mlx5_flow_dv.c
-> @@ -4445,6 +4445,8 @@ __flow_encap_decap_resource_register(struct
-> rte_eth_dev *dev,
->  			.reserve =3D 0,
->  		}
->  	};
-> +	RTE_FORCE_INIT_BARRIER(encap_decap_key);
-> +
->  	struct mlx5_flow_cb_ctx ctx =3D {
->  		.error =3D error,
->  		.data =3D resource,
-> diff --git a/lib/eal/include/rte_common.h
-> b/lib/eal/include/rte_common.h
-> index 00d428e295..d58e856d96 100644
-> --- a/lib/eal/include/rte_common.h
-> +++ b/lib/eal/include/rte_common.h
-> @@ -555,6 +555,20 @@ static void
-> __attribute__((destructor(RTE_PRIO(prio)), used)) func(void)
->  #define __rte_no_ubsan_alignment
->  #endif
+> Note: Patch 1/3 will trigger compiler warnings/failures on GCC versions
+> with the optimization bug (GCC 11.5.0 and others seen on DPDK CI). These
+> are resolved by patches 2/3 and 3/3.
 >=20
-> +/**
-> + * Force struct initialization to prevent GCC optimization bug.
-> + * GCC has a bug where it incorrectly elides struct initialization in
-> + * inline functions when strict aliasing is enabled, causing reads
-> from
-> + * uninitialized memory. This memory barrier prevents the
-> misoptimization.
-> + */
-> +#ifdef RTE_CC_GCC
-> +#define RTE_FORCE_INIT_BARRIER(var) do {	\
-> +	asm volatile("" : "+m" (var));		\
-> +} while (0)
-> +#else
-> +#define RTE_FORCE_INIT_BARRIER(var)
-> +#endif
-> +
->  /*********** Macros for pointer arithmetic ********/
+> Scott Mitchell (3):
+>   net: optimize __rte_raw_cksum and add tests
+>   eal: add workaround for UBSAN alignment false positive
+>   eal/net: add workaround for GCC optimization bug
 >=20
->  /**
-> diff --git a/lib/net/rte_ip4.h b/lib/net/rte_ip4.h
-> index 822a660cfb..a0839c584e 100644
-> --- a/lib/net/rte_ip4.h
-> +++ b/lib/net/rte_ip4.h
-> @@ -238,6 +238,7 @@ rte_ipv4_phdr_cksum(const struct rte_ipv4_hdr
-> *ipv4_hdr, uint64_t ol_flags)
->  		psd_hdr.len =3D rte_cpu_to_be_16((uint16_t)(l3_len -
->  			rte_ipv4_hdr_len(ipv4_hdr)));
->  	}
-> +	RTE_FORCE_INIT_BARRIER(psd_hdr);
->  	return rte_raw_cksum(&psd_hdr, sizeof(psd_hdr));
->  }
+>  app/test/meson.build             |   1 +
+>  app/test/test_cksum_fuzz.c       | 240 +++++++++++++++++++++++++++++++
+>  app/test/test_cksum_perf.c       |   2 +-
+>  drivers/net/hinic/hinic_pmd_tx.c |   2 +
+>  drivers/net/mlx5/mlx5_flow_dv.c  |   2 +
+>  lib/eal/include/rte_common.h     |  23 +++
+>  lib/net/rte_cksum.h              |  15 +-
+>  lib/net/rte_ip4.h                |   1 +
+>  lib/net/rte_ip6.h                |   1 +
+>  9 files changed, 277 insertions(+), 10 deletions(-)
+>  create mode 100644 app/test/test_cksum_fuzz.c
 >=20
-> diff --git a/lib/net/rte_ip6.h b/lib/net/rte_ip6.h
-> index d1abf1f5d5..902f100a44 100644
-> --- a/lib/net/rte_ip6.h
-> +++ b/lib/net/rte_ip6.h
-> @@ -572,6 +572,7 @@ rte_ipv6_phdr_cksum(const struct rte_ipv6_hdr
-> *ipv6_hdr, uint64_t ol_flags)
->  	else
->  		psd_hdr.len =3D ipv6_hdr->payload_len;
->=20
-> +	RTE_FORCE_INIT_BARRIER(psd_hdr);
->  	sum =3D __rte_raw_cksum(&ipv6_hdr->src_addr,
->  		sizeof(ipv6_hdr->src_addr) + sizeof(ipv6_hdr->dst_addr),
->  		0);
 > --
 > 2.39.5 (Apple Git-154)
+>=20
 
+Do not like to see so much compiler hacking, and not sure if it is worth
+having to do so much special case code for a few cycles.
+
+Feeling lazy, asked AI to compare the FreeBSD and Linux checksum and its
+answer was enlightening.
+
+The optimium solution would in my opinion would be:
+   - specific IP and IPv6 only routines using assembly on a platform basis.
+     Add with carry will be faster than all this compiler flags.
+   - non-inline function for the general case with data.
+
+This should eliminate the need for compiler flags.
+
+
+Compare the algorithm used to compute standard IP checksum in FreeBSD and L=
+inux
+
+Great question! Both implement the same RFC 1071 one's complement checksum,=
+ but their optimization strategies differ in interesting ways.
+
+## Core Algorithm
+
+Both compute a 16-bit one's complement sum: accumulate 16-bit words, fold c=
+arries back in, and complement the result. The differences are in the imple=
+mentation details.
+
+## Linux Approach
+
+Linux uses a layered architecture with generic C fallbacks and arch-specifi=
+c optimizations:
+
+**Generic path** (`lib/checksum.c`, `include/net/checksum.h`):
+- `do_csum()` uses a 64-bit accumulator, processing 32 bytes per loop itera=
+tion (heavily unrolled)
+- Defers folding until the end to minimize carry handling
+- `csum_fold()` does the final 32=E2=86=9216 bit fold with a clever trick:
+  ```c
+  sum =3D (sum & 0xffff) + (sum >> 16);
+  sum =3D (sum & 0xffff) + (sum >> 16);
+  return ~sum;
+  ```
+
+**IP header fast path** (`ip_fast_csum()`):
+- Specialized for the common 20-byte header case
+- On x86-64, uses ADC (add-with-carry) chains to exploit hardware carry pro=
+pagation
+- ARM64 uses similar ADCS instruction chains
+
+## FreeBSD Approach
+
+FreeBSD's `in_cksum()` (`sys/netinet/in_cksum.c`) takes a different approac=
+h:
+
+**mbuf-oriented design**:
+- Walks mbuf chains directly, handling the common case of headers split acr=
+oss mbufs
+- Tracks byte-swapping state when data crosses 16-bit boundaries between mb=
+ufs
+
+**Accumulation strategy**:
+- Uses `int` (32-bit) accumulator in the generic version
+- Processes in 16-byte chunks with explicit unrolling
+- Folds more frequently (after each mbuf) rather than deferring everything
+
+**Architecture-specific versions**:
+- x86 versions historically used inline assembly with ADC chains
+- More recent versions lean on compiler intrinsics
+
+## Key Differences
+
+| Aspect | Linux | FreeBSD |
+|--------|-------|---------|
+| Accumulator | 64-bit, fold once at end | 32-bit, fold per mbuf |
+| Loop unroll | 32 bytes/iteration | 16 bytes/iteration |
+| Data structure | Works on flat buffers via `skb_checksum()` | Direct mbuf=
+ chain walking |
+| Alignment | Handles via initial byte adjustment | Similar, but tracks "od=
+d byte" state across mbufs |
+| IP header | Dedicated `ip_fast_csum()` | Often uses general `in_cksum()` |
+
+## Performance Implications
+
+Linux's approach tends to be faster for large contiguous buffers due to lar=
+ger unrolling and deferred folding. FreeBSD's mbuf-aware design is arguably=
+ cleaner for scattered data but may do more fold operations.
+
+On modern CPUs with good branch prediction and out-of-order execution, the =
+differences are often marginal=E2=80=94the ADC chain optimizations matter m=
+ore than the high-level strategy. Both have moved toward letting the compil=
+er handle more optimization rather than hand-tuned assembly, though Linux s=
+till maintains more arch-specific variants.
+
+Given your DPDK work, you've probably noticed DPDK's `rte_raw_cksum()` take=
+s yet another approach=E2=80=94often vectorized with SIMD when available, w=
+hich can significantly outperform both kernel implementations for large pay=
+loads.
