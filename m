@@ -2,39 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C28C5D277C0
-	for <dpdk-dev@archiver.kernel.org>; Fri,  9 Jan 2026 22:13:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5318ED277C9
+	for <dpdk-dev@archiver.kernel.org>; Sat, 10 Jan 2026 01:57:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 880454028E;
-	Fri,  9 Jan 2026 23:13:11 +0100 (CET)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id D42E7400D5
- for <dev@dpdk.org>; Fri,  9 Jan 2026 23:13:09 +0100 (CET)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 0032120679;
- Fri,  9 Jan 2026 23:13:08 +0100 (CET)
-Content-class: urn:content-classes:message
+	by mails.dpdk.org (Postfix) with ESMTP id 292FA402D5;
+	Sat, 10 Jan 2026 02:57:06 +0100 (CET)
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com
+ [209.85.222.182])
+ by mails.dpdk.org (Postfix) with ESMTP id 095B34021F
+ for <dev@dpdk.org>; Sat, 10 Jan 2026 02:57:04 +0100 (CET)
+Received: by mail-qk1-f182.google.com with SMTP id
+ af79cd13be357-8b29ff9d18cso522737985a.3
+ for <dev@dpdk.org>; Fri, 09 Jan 2026 17:57:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20230601; t=1768010223; x=1768615023; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=hGz9Hb+lpwxjSPHlO+sS7D50eoM2DR9XI0Ma/v6MzmM=;
+ b=bsHbAPw2dcDOj8yTl4eosoekP+RcLIo2Q7R9YcVIo3DVZWbuZ1JR+Kx9znAd1vwTmn
+ T6Bd/EYxJbBsT7RFWyLkEOQGaAfg4bJ62OnQQFB8YWzeyWdE5pfIBuQcTitIR3ebw32w
+ p0aIdAc59hRXkqCvZRiZrxv1In2VgBXxrQPKYQ5etdPlEZlLEwrF/SNVbVrWNFlYVrm+
+ TMtBG8veMHKs9zJC/j0hhOfFSkt0CFhJvyX82m71dAArEo+pWJedYte5K5n2ws8sTfsd
+ zUP4C/8Vft9iuNK9DKja9OZhvWTYj8JNvcs6cOtmAZsyDKdBQ0pQRgzKMKxvluudanEN
+ YqiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1768010223; x=1768615023;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=hGz9Hb+lpwxjSPHlO+sS7D50eoM2DR9XI0Ma/v6MzmM=;
+ b=Hy/FxuwkEdelHdg6R/YT0BaU3YAvvsSiOtVRz56UHpGTofkY50Xn9YWifIKD00a99T
+ t36X99IVk84EK3lG+pUmQUYIe4XAiW0jsKIoXANCiALY4tmcqGJoxdmcCpj+/ibwCt3D
+ Zv/ZFwSWQMZiU/LcPlscs888Wv/DlIO5TC6GehguuU2oaRpP+a71yZyI4k2pkW9xUq0t
+ Nw12f9nDq0aV7m4WYoTxWnfVu6xxOOwVD/QAqysXF3MVPUgNqOeUM+5bSP1Jipy51yB1
+ +C++XPJ4NTZaoCNonIJMlSk7ViZqwc1r4MObQJGCyz5TZGs0wx3ctsnj1KwPPaOwcuEE
+ UWQg==
+X-Gm-Message-State: AOJu0YzL3KIeQYcExnKnclr/Ss1ofx+AOdMkxfUnQW4omEUThytbRBZ4
+ WuXLMLyypq5yeZO6xjlRttVoP1tQzEPEU9GioVXJ/vJET8+xzW/ijwl63RBjAQ==
+X-Gm-Gg: AY/fxX5lXweaEZ4EL7aWQbuiv6324dWvEPzKgn5CcmMmxczJ/KCelFKtRdivcGwTAQB
+ 16Kl7+7WxbUkd9okHcuQcpEzO6R5VydqQGqs7tdaSjPV5FQAQ9aYhhxNbxXwkn9JTtiGJp+zkKn
+ tcNCpFJAaY3EIS26NNGv1LHJ5gXQh1WeNM/v0jOFYdQQOZaCxgfgoEN170mrLoUpXx2+AjI0XnA
+ NhfU/EWWdMzZozirFKc03Dd5D9bE3FTlEIB1IWrbpy+Cbt6s34ndgnrCfCl3a+gAkCq7Mo6q/E+
+ whQ1BhNHuuEFA5dNjC5XbzxADp5kq8z7ZOgbYWNFAvzHXDqpGo1r9ybdwvTpeXcNrK0Et6+00YW
+ 40r7QueEpt6zUm9yooJRYaHHpDbnT3A1XDOgxbgeCceR8otC28oLIGyBEzNleahyRRQxuC3GLwM
+ zlhg+58Jf4XR8MPS909A3U5EmcSrD+2+bKTqgcVBTMTrg54mmhwn+4Fq3GLQ==
+X-Google-Smtp-Source: AGHT+IG0y76zIWSMkV/1zpl/27qHGIREDC4ade5Gvr9pl8AIbEr9tXLF94mWasJ4tf4Pp4x4sVb5oA==
+X-Received: by 2002:a05:620a:2a01:b0:89e:f83c:ee0c with SMTP id
+ af79cd13be357-8c389417b88mr1697532585a.74.1768010223167; 
+ Fri, 09 Jan 2026 17:57:03 -0800 (PST)
+Received: from st57p01nt-relayp01.apple.com
+ ([2601:182:b80:6a50:314a:3f86:1924:bd42])
+ by smtp.gmail.com with ESMTPSA id
+ af79cd13be357-8c37f4a6145sm939379385a.5.2026.01.09.17.57.02
+ (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+ Fri, 09 Jan 2026 17:57:02 -0800 (PST)
+From: scott.k.mitch1@gmail.com
+To: dev@dpdk.org
+Cc: mb@smartsharesystems.com, stephen@networkplumber.org,
+ Scott Mitchell <scott.k.mitch1@gmail.com>
+Subject: [PATCH v12 0/3] net: optimize raw checksum computation
+Date: Fri,  9 Jan 2026 20:56:48 -0500
+Message-Id: <20260110015651.26201-1-scott.k.mitch1@gmail.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
-Subject: RE: [PATCH v11] net: optimize raw checksum computation
-Date: Fri, 9 Jan 2026 23:12:56 +0100
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65642@smartserver.smartshare.dk>
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH v11] net: optimize raw checksum computation
-Thread-Index: AdyBfHJz9SaOBhEeSr2a3Q/2fP7duAAAFakgAA0BI4A=
-References: <20260108230509.6541-1-scott.k.mitch1@gmail.com>
- <98CBD80474FA8B44BF855DF32C47DC35F65638@smartserver.smartshare.dk>
- <CAFn2buDULHpj-5m1TXEcp0xUfMpTA9dKqEuEC98UhDp4qW21og@mail.gmail.com> 
-From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
-To: "Scott Mitchell" <scott.k.mitch1@gmail.com>
-Cc: <dev@dpdk.org>,
-	<stephen@networkplumber.org>
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -48,93 +79,52 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-PiBGcm9tOiBNb3J0ZW4gQnLDuHJ1cA0KPiBTZW50OiBGcmlkYXksIDkgSmFudWFyeSAyMDI2IDE2
-LjU4DQo+IA0KPiA+IEZyb206IFNjb3R0IE1pdGNoZWxsIFttYWlsdG86c2NvdHQuay5taXRjaDFA
-Z21haWwuY29tXQ0KPiA+IFNlbnQ6IEZyaWRheSwgOSBKYW51YXJ5IDIwMjYgMTYuMjcNCj4gPg0K
-PiA+IE9uIEZyaSwgSmFuIDksIDIwMjYgYXQgNDoyNuKAr0FNIE1vcnRlbiBCcsO4cnVwDQo+IDxt
-YkBzbWFydHNoYXJlc3lzdGVtcy5jb20+DQo+ID4gd3JvdGU6DQo+ID4gPg0KPiA+ID4gPiBDaGFu
-Z2VzIGluIHY4Og0KPiA+ID4gPiAtIF9fcnRlX3Jhd19ja3N1bTogdXNlIG5hdGl2ZSBwb2ludGVy
-IGFyaXRobWV0aWMgaW5zdGVhZCBvZg0KPiA+IFJURV9QVFJfQUREDQo+ID4gPiA+ICAgdG8gYXZv
-aWQgaW5jb3JyZWN0IHJlc3VsdHMgd2l0aCAtTzMgZm9yIFVEUCBjaGVja3N1bXMuIEFsc28NCj4g
-PiBpbXByb3Zlcw0KPiA+ID4gPiAgIHBlcmZvcm1hbmNlIGR1ZSB0byBsZXNzIGFzc2VtYmx5IGdl
-bmVyYXRlZCB3aXRoIENsYW5nLg0KPiA+ID4NCj4gPiA+IFBlcnNvbmFsbHksIEkgYWxzbyBoYXZl
-IG9ic2VydmVkIEdDQydzIG9wdGltaXplciBiZWhhdmUgYXMgaWYgaXQNCj4gPiBsb3NlcyBzb21l
-IGNvbnRleHR1YWwgaW5mb3JtYXRpb24gd2hlbiB1c2luZyBSVEVfUFRSX0FERCwgYW5kIHRodXMN
-Cj4gPiBlbWl0dGluZyBsZXNzIG9wdGltYWwgY29kZS4NCj4gPiA+IEkgZGlkbid0IGxvb2sgZnVy
-dGhlciBpbnRvIGl0LCBhbmQgdGh1cyBoYXZlIG5vIGRhdGEgb3IgZXhhbXBsZXMgdG8NCj4gPiBi
-YWNrIHVwIHRoZSBjbGFpbS4gV2hpY2ggaXMgd2h5IEkgaGF2ZW4ndCBzdGFydGVkIGEgZGlzY3Vz
-c2lvbiBhYm91dA0KPiA+IGRpc2NvdXJhZ2luZyB0aGUgdXNlIG9mIFJURV9QVFJfQURELg0KPiA+
-ID4gSW4gb3RoZXIgd29yZHM6IEkgc3VwcG9ydCB0aGlzIGNoYW5nZS4NCj4gPg0KPiA+IFNvdW5k
-cyBnb29kISBJIG9ic2VydmVkIH42MDAgKGRwZGsgcHRyIG1hY3JvcykgdnMgfjUwMCAobmF0aXZl
-IGMgcHRyDQo+ID4gb3BlcmF0aW9ucykgVFNDIGN5Y2xlcy9ibG9jayBpbiBja3N1bV9wZXJmX2F1
-dG90ZXN0Lg0KPiANCj4gVGhhdCBpcyBhIHNpZ25pZmljYW50IHBlcmZvcm1hbmNlIGRlZ3JhZGF0
-aW9uIGNhdXNlZCBieSB0aGUNCj4gUlRFX1BUUl9BREQoKSBtYWNyb3MuIFdlIHJlYWxseSBzaG91
-bGQgbG9vayBpbnRvIHRoYXQgLSBzb21lIGRheS4gOy0pDQo+IE91ciBhcHBsaWNhdGlvbiBjb2Rl
-IGJhc2UgaGFzIFJURV9DT05TVF9QVFJfQUREL1NVQigpIGZvciB0eXBlDQo+IGNvbnNpc3RlbmN5
-IHJlYXNvbnMgKG5vdCBmb3IgcGVyZm9ybWFuY2UgcmVhc29ucykuIEJ1dCBJIGhhdmVuJ3QgZ290
-dGVuDQo+IGFyb3VuZCB0byBzdWJtaXR0aW5nIHRoZW0gdG8gdGhlIERQREsgcHJvamVjdCB5ZXQu
-DQo+IEkgd29uZGVyIGlmIHRoZSBpbXBsaWNpdCBzdHJpcHBpbmcgb2YgImNvbnN0IiB3aGVuIHVz
-aW5nIHRoZQ0KPiBSVEVfUFRSX0FERCgpIG1hY3JvcyBtYWtlcyB0aGUgZGlmZmVyZW5jZSwgb3Ig
-aWYgdGhlIGRpZmZlcmVuY2Ugc3RlbXMNCj4gZnJvbSBvdGhlciBvcHRpbWl6ZXIgY29udGV4dCBn
-ZXR0aW5nIGxvc3QuDQoNCkkganVzdCB0ZXN0ZWQgYnVpbGRpbmcgb3VyIGFwcGxpY2F0aW9uIHdp
-dGggbW9kaWZpZWQgbWFjcm9zIHVzaW5nIEdDQy4NCldpdGggdGhlIGNoYW5nZXMgYmVsb3csIEdD
-QyBlbWl0dGVkIHNsaWdodGx5IG1vcmUgZWZmaWNpZW50IGNvZGUgKGZld2VyIGluc3RydWN0aW9u
-cykuDQpJdCBzaG93cyB0aGF0IHVzaW5nIHVpbnRwdHJfdCBpbnN0ZWFkIG9mIG5vcm1hbCBwb2lu
-dGVyIGFyaXRobWV0aWMgY29uZnVzZXMgdGhlIGNvbXBpbGVyLg0KDQovKioNCiAgKiBhZGQgYSBi
-eXRlLXZhbHVlIG9mZnNldCB0byBhIGNvbnN0IHBvaW50ZXINCiAgKi8NCi0jZGVmaW5lIFJURV9D
-T05TVF9QVFJfQUREKHB0ciwgeCkgKChjb25zdCB2b2lkKikoKHVpbnRwdHJfdCkocHRyKSArICh4
-KSkpDQorI2RlZmluZSBSVEVfQ09OU1RfUFRSX0FERChwdHIsIHgpICgoY29uc3Qgdm9pZCopKChj
-b25zdCBjaGFyKikocHRyKSArICh4KSkpDQoNCiAvKioNCiAgKiBzdWJ0cmFjdCBhIGJ5dGUtdmFs
-dWUgb2Zmc2V0IGZyb20gYSBjb25zdCBwb2ludGVyDQogICovDQotI2RlZmluZSBSVEVfQ09OU1Rf
-UFRSX1NVQihwdHIsIHgpICgoY29uc3Qgdm9pZCopKCh1aW50cHRyX3QpKHB0cikgLSAoeCkpKQ0K
-KyNkZWZpbmUgUlRFX0NPTlNUX1BUUl9TVUIocHRyLCB4KSAoKGNvbnN0IHZvaWQqKSgoY29uc3Qg
-Y2hhciopKHB0cikgLSAoeCkpKQ0KDQoNClNuaXBwZXQgb2YgY29kZSBlbWl0dGVkIHVzaW5nIGNv
-bnN0IGNoYXIqOg0KDQogICAgaWYgKGxpa2VseSgoZXRoLT5ldGhlcl90eXBlID09IFJURV9CRTE2
-KFJURV9FVEhFUl9UWVBFX1ZMQU4pKSB8DQogIDRkYzQ3ZToJNDEgMGYgYjcgNDUgMGMgICAgICAg
-CW1vdnp3bCAweGMoJXIxMyksJWVheA0KICA0ZGM0ODM6CTg5IGM3ICAgICAgICAgICAgICAgIAlt
-b3YgICAgJWVheCwlZWRpDQogIDRkYzQ4NToJODMgZTcgZWYgICAgICAgICAgICAgCWFuZCAgICAk
-MHhmZmZmZmZlZiwlZWRpDQogIDRkYzQ4ODoJNjYgODEgZmYgODEgMDAgICAgICAgCWNtcCAgICAk
-MHg4MSwlZGkNCiAgNGRjNDhkOgk3NCAwYSAgICAgICAgICAgICAgICAJamUgICAgIDRkYzQ5OSA8
-c2VydmljZV9pbmdyZXNzX2RlZGljYXRlZF9tYW5hZ2VtZW50KzB4MWI5Pg0KICA0ZGM0OGY6CTY2
-IDNkIDg4IGE4ICAgICAgICAgIAljbXAgICAgJDB4YTg4OCwlYXgNCiAgNGRjNDkzOgkwZiA4NSAz
-ZiAwMSAwMCAwMCAgICAJam5lICAgIDRkYzVkOCA8c2VydmljZV9pbmdyZXNzX2RlZGljYXRlZF9t
-YW5hZ2VtZW50KzB4MmY4Pg0KICAgICAgICBpZiAodmhkci0+ZXRoX3Byb3RvID09IFJURV9CRTE2
-KFJURV9FVEhFUl9UWVBFX1ZMQU4pKSB7DQogIDRkYzQ5OToJNjYgNDEgODEgN2QgMTAgODEgMDAg
-CWNtcHcgICAkMHg4MSwweDEwKCVyMTMpDQogIDRkYzRhMDoJMGYgODQgMWEgMDEgMDAgMDAgICAg
-CWplICAgICA0ZGM1YzAgPHNlcnZpY2VfaW5ncmVzc19kZWRpY2F0ZWRfbWFuYWdlbWVudCsweDJl
-MD4NCiAgICAgICAgICAgIGV0aCA9IFJURV9DT05TVF9QVFJfQUREKGV0aCwgc2l6ZW9mKHN0cnVj
-dCBydGVfdmxhbl9oZHIpKTsNCiAgNGRjNGE2Ogk0OSA4ZCA3ZCAwNCAgICAgICAgICAJbGVhICAg
-IDB4NCglcjEzKSwlcmRpDQogICAgICAgICAgICBwYWNrZXRfdHlwZSA9ICh1bmlvbiBwYWNrZXRf
-dHlwZSl7DQogIDRkYzRhYToJYjggMDEgMDAgMDAgMDAgICAgICAgCW1vdiAgICAkMHgxLCVlYXgN
-CiAgNGRjNGFmOgk0MSBiOCAxMiAwMCAwMCAwMCAgICAJbW92ICAgICQweDEyLCVyOGQNCiAgICBp
-ZiAobGlrZWx5KCgqKGNvbnN0IHJ0ZV9iZTMyX3QgKilSVEVfQ09OU1RfUFRSX0FERChldGgsIG9m
-ZnNldG9mKHN0cnVjdCBydGVfZXRoZXJfaGRyLCBldGhlcl90eXBlKSkgJiBSVEVfQkUzMigweEZG
-RkZGRjAwKSkgPT0NCiAgNGRjNGI1Ogk0NCA4YiA0ZiAwYyAgICAgICAgICAJbW92ICAgIDB4Yygl
-cmRpKSwlcjlkDQoNClNuaXBwZXQgb2YgY29kZSBlbWl0dGVkIHVzaW5nIHVpbnRwdHJfdDoNCg0K
-ICAgIGlmIChsaWtlbHkoKGV0aC0+ZXRoZXJfdHlwZSA9PSBSVEVfQkUxNihSVEVfRVRIRVJfVFlQ
-RV9WTEFOKSkgfA0KICA0ZGM0N2U6CTQxIDBmIGI3IDQ1IDBjICAgICAgIAltb3Z6d2wgMHhjKCVy
-MTMpLCVlYXgNCisgICAgICAgICAgICBldGggPSBSVEVfQ09OU1RfUFRSX0FERChldGgsIDIgKiBz
-aXplb2Yoc3RydWN0IHJ0ZV92bGFuX2hkcikpOw0KKyAgNGRjNDgzOgk0YyA4OSBlZiAgICAgICAg
-ICAgICAJbW92ICAgICVyMTMsJXJkaQ0KKyAgICBpZiAobGlrZWx5KChldGgtPmV0aGVyX3R5cGUg
-PT0gUlRFX0JFMTYoUlRFX0VUSEVSX1RZUEVfVkxBTikpIHwNCiAgNGRjNDg2Ogk0MSA4OSBjMCAg
-ICAgICAgICAgICAJbW92ICAgICVlYXgsJXI4ZA0KICA0ZGM0ODk6CTQxIDgzIGUwIGVmICAgICAg
-ICAgIAlhbmQgICAgJDB4ZmZmZmZmZWYsJXI4ZA0KICA0ZGM0OGQ6CTY2IDQxIDgxIGY4IDgxIDAw
-ICAgIAljbXAgICAgJDB4ODEsJXI4dw0KICA0ZGM0OTM6CTc0IDBhICAgICAgICAgICAgICAgIAlq
-ZSAgICAgNGRjNDlmIDxzZXJ2aWNlX2luZ3Jlc3NfZGVkaWNhdGVkX21hbmFnZW1lbnQrMHgxYmY+
-DQogIDRkYzQ5NToJNjYgM2QgODggYTggICAgICAgICAgCWNtcCAgICAkMHhhODg4LCVheA0KICA0
-ZGM0OTk6CTBmIDg1IDUxIDAxIDAwIDAwICAgIAlqbmUgICAgNGRjNWYwIDxzZXJ2aWNlX2luZ3Jl
-c3NfZGVkaWNhdGVkX21hbmFnZW1lbnQrMHgzMTA+DQogICAgICAgIGlmICh2aGRyLT5ldGhfcHJv
-dG8gPT0gUlRFX0JFMTYoUlRFX0VUSEVSX1RZUEVfVkxBTikpIHsNCiAgNGRjNDlmOgk2NiA0MSA4
-MSA3ZCAxMCA4MSAwMCAJY21wdyAgICQweDgxLDB4MTAoJXIxMykNCiAgNGRjNGE2OgkwZiA4NCAy
-NCAwMSAwMCAwMCAgICAJamUgICAgIDRkYzVkMCA8c2VydmljZV9pbmdyZXNzX2RlZGljYXRlZF9t
-YW5hZ2VtZW50KzB4MmYwPg0KICAgICAgICAgICAgZXRoID0gUlRFX0NPTlNUX1BUUl9BREQoZXRo
-LCBzaXplb2Yoc3RydWN0IHJ0ZV92bGFuX2hkcikpOw0KICA0ZGM0YWM6CTQ5IDhkIDdkIDA0ICAg
-ICAgICAgIAlsZWEgICAgMHg0KCVyMTMpLCVyZGkNCiAgICAgICAgICAgIHBhY2tldF90eXBlID0g
-KHVuaW9uIHBhY2tldF90eXBlKXsNCiAgNGRjNGIwOgliOCAwMSAwMCAwMCAwMCAgICAgICAJbW92
-ICAgICQweDEsJWVheA0KICA0ZGM0YjU6CTQxIGI4IDEyIDAwIDAwIDAwICAgIAltb3YgICAgJDB4
-MTIsJXI4ZA0KKyAgICAgICAgICAgIGV0aCA9IFJURV9DT05TVF9QVFJfQUREKGV0aCwgc2l6ZW9m
-KHN0cnVjdCBydGVfdmxhbl9oZHIpKTsNCisgIDRkYzRiYjoJNDkgODkgZjkgICAgICAgICAgICAg
-CW1vdiAgICAlcmRpLCVyOQ0KICAgIGlmIChsaWtlbHkoKCooY29uc3QgcnRlX2JlMzJfdCAqKVJU
-RV9DT05TVF9QVFJfQUREKGV0aCwgb2Zmc2V0b2Yoc3RydWN0IHJ0ZV9ldGhlcl9oZHIsIGV0aGVy
-X3R5cGUpKSAmIFJURV9CRTMyKDB4RkZGRkZGMDApKSA9PQ0KICA0ZGM0YmU6CThiIDdmIDBjICAg
-ICAgICAgICAgIAltb3YgICAgMHhjKCVyZGkpLCVlZGkNCg0K
+From: Scott Mitchell <scott.k.mitch1@gmail.com>
+
+This series optimizes __rte_raw_cksum() by replacing memcpy-based access
+with unaligned_uint16_t pointer access, enabling vectorization in both
+GCC and Clang. The series is split into three patches to clearly separate
+the core optimization from compiler-specific workarounds.
+
+Performance improvement from cksum_perf_autotest on Intel Xeon
+(Cascade Lake, AVX-512) with Clang 18.1 (TSC cycles/byte):
+
+  Block size    Before    After    Improvement
+         100      0.40     0.24        ~40%
+        1500      0.50     0.06        ~8x
+        9000      0.49     0.06        ~8x
+
+Changes in v12:
+- Split into 3-patch series per reviewer feedback
+- Patch 1/3: Core optimization and test additions
+- Patch 2/3: UBSAN alignment workaround (separate from GCC bug)
+- Patch 3/3: GCC optimization bug workaround
+- Reverted len & 1 to len % 2 and restored unlikely() per feedback
+- Renamed RTE_SUPPRESS_UNINITIALIZED_WARNING to RTE_FORCE_INIT_BARRIER
+- Applied minimal changes (no refactoring) to existing code
+- Deferred hinic driver refactoring to future series
+
+Note: Patch 1/3 will trigger compiler warnings/failures on GCC versions
+with the optimization bug (GCC 11.5.0 and others seen on DPDK CI). These
+are resolved by patches 2/3 and 3/3.
+
+Scott Mitchell (3):
+  net: optimize __rte_raw_cksum and add tests
+  eal: add workaround for UBSAN alignment false positive
+  eal/net: add workaround for GCC optimization bug
+
+ app/test/meson.build             |   1 +
+ app/test/test_cksum_fuzz.c       | 240 +++++++++++++++++++++++++++++++
+ app/test/test_cksum_perf.c       |   2 +-
+ drivers/net/hinic/hinic_pmd_tx.c |   2 +
+ drivers/net/mlx5/mlx5_flow_dv.c  |   2 +
+ lib/eal/include/rte_common.h     |  23 +++
+ lib/net/rte_cksum.h              |  15 +-
+ lib/net/rte_ip4.h                |   1 +
+ lib/net/rte_ip6.h                |   1 +
+ 9 files changed, 277 insertions(+), 10 deletions(-)
+ create mode 100644 app/test/test_cksum_fuzz.c
+
+--
+2.39.5 (Apple Git-154)
+
