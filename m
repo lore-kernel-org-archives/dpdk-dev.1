@@ -2,132 +2,91 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18002D29DC3
-	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Jan 2026 02:58:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75C89D29DDE
+	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Jan 2026 07:41:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D7E34402E6;
-	Tue, 13 Jan 2026 03:58:53 +0100 (CET)
-Received: from TYDPR03CU002.outbound.protection.outlook.com
- (mail-japaneastazon11023085.outbound.protection.outlook.com [52.101.127.85])
- by mails.dpdk.org (Postfix) with ESMTP id 9199A402E0
- for <dev@dpdk.org>; Tue, 13 Jan 2026 03:58:52 +0100 (CET)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=mnNv8fQphznVWQOnO/3r7XJfE/7HbqKf2vdzjrSsnreDZq5riUW7L8WHT4h1QWSId5it4NDuXhym+91l/4Qbd25aUIScJI4iE/2cBYhTb/WYjwrv8LeabkRxec57Osmy7iXeICsYCOwb/o/iJ8i14mnuzb6f3lAHDm4w8qklzXCwfzet6A7BSoPH42RvwkLeSTPdk3hszTyq4DFZjvO0VRQKbGsv4Z6IM+EqWZPBPOWtXmK9Czgvc1/CDytTpxVCOSbJKLdf/gnbvfDAz/dPkmn++HSwisGtTrrz7dMszW/vqrkGFxkoW6afkoCAa87FFOSjvhr72sOpc99MTPJOvg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=f/XBb0mWI4J+16WL8FekiI8tIWTbpQpeRDrzPIBMbyw=;
- b=L5eOVv733RM+WqkfQyM/T2mZJQOcCX9KTIJTSa2+5e2aysUhhb37256a/fEF5jKBh8JrNi4/AG0Rj09h+b22QnF7p+6OJIif3jJlaFaVPJejnKBFZs3QQbuHb7KEBwWEmb6kNH/GsABly6jO4s7RWjFSXnelSMzBi/xD90+K5ArZplZBDhN7U1bfAkwomWxFg76DC3heOyoVVHpnpLAzGvgzryOVaVzAakUCzh6sSCA6gqyWQYEuqR0mgUST6e+95Jtinobo4YvSVrNjM3/1ErZS+A21+yzID2AM7LYSC8qPOItwr71VkA/BQ5B+BkssJs2scmexGOJMa+D5pWYNQg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=jaguarmicro.com; dmarc=pass action=none
- header.from=jaguarmicro.com; dkim=pass header.d=jaguarmicro.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jaguarmicro.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=f/XBb0mWI4J+16WL8FekiI8tIWTbpQpeRDrzPIBMbyw=;
- b=XNkjuHtbTKYiE/SUtNwnkeRYAeNr41lefa54MLsuTAI/EeWw3wr6D4zNAIPsaNd9ofghdwRmh+6izusS/t2Wp2qHJiUsM9nCj/ZBPrghfRbAFV5SfVzdPlYuV8jrLxuWgcNVWGRN0H7W7JVsUb1xkI+DaJaRU1dYtNUwWXLlHUutgFGUi7mUPfaHDqCB9NKOZxvkLQcsF1ybZ8MQXK8QgPO9SRppiHy97YTwoeHq5BnWDlbTYnEj5fSETgaLMzXKqtp/WiR2fjUySKa+SkJH8x/WAnd1X43xUhW/9/rb3FisEOThKm/SK8yGQa6pqQgYvs0uAssAYIJtlBfuAqgaEg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=jaguarmicro.com;
-Received: from KL1PR0601MB5567.apcprd06.prod.outlook.com
- (2603:1096:820:c5::14) by KUZPR06MB8060.apcprd06.prod.outlook.com
- (2603:1096:d10:44::5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9499.7; Tue, 13 Jan
- 2026 02:58:48 +0000
-Received: from KL1PR0601MB5567.apcprd06.prod.outlook.com
- ([fe80::3ad3:b4d9:7e69:85cb]) by KL1PR0601MB5567.apcprd06.prod.outlook.com
- ([fe80::3ad3:b4d9:7e69:85cb%7]) with mapi id 15.20.9499.005; Tue, 13 Jan 2026
- 02:58:48 +0000
-From: Sunyang Wu <sunyang.wu@jaguarmicro.com>
-To: dev@dpdk.org
-Cc: stephen@networkplumber.org
-Subject: [PATCH] doc: flow-perf: document the --query-rate option
-Date: Tue, 13 Jan 2026 10:57:38 +0800
-Message-Id: <20260113025738.33944-1-sunyang.wu@jaguarmicro.com>
-X-Mailer: git-send-email 2.19.0.rc0.windows.1
+	by mails.dpdk.org (Postfix) with ESMTP id 19FEB4028C;
+	Tue, 13 Jan 2026 08:41:01 +0100 (CET)
+Received: from mx0b-00190b01.pphosted.com (mx0b-00190b01.pphosted.com
+ [67.231.157.127])
+ by mails.dpdk.org (Postfix) with ESMTP id C8AA34013F
+ for <dev@dpdk.org>; Sun, 11 Jan 2026 00:15:31 +0100 (CET)
+Received: from pps.filterd (m0050096.ppops.net [127.0.0.1])
+ by m0050096.ppops.net-00190b01. (8.18.1.11/8.18.1.11) with ESMTP id
+ 60AN0h9T1999941; Sat, 10 Jan 2026 23:15:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akamai.com; h=cc
+ :content-transfer-encoding:content-type:date:from:message-id
+ :mime-version:subject:to; s=jan2016.eng; bh=VxSLWU9XuFQyj3PA/s41
+ KlSBNfI/J81dt6h5d565Esg=; b=Sb345fxwEJ+k5hVR05tRHeqlxXoSq70usr8j
+ Cja/RG9eQjuOYmFiW2/4GMFrZNp9L/As4mK4dR7E7l3d8sUWP2qMFU6AFTmbKasW
+ 9f2uiQJQYFAi4b1VNv/BjAmK+F+/iSfnqu+tzSibYBG3GJ3rbRnSwBtAsTgc3/Ux
+ 7PuDU0554sZlADdhSoZz1apSN1HjQEZLTetHFR8nvJt6RT6uQiBmTlEO/HJDNzFr
+ So47mEB0wqe0COvLayT+iQIgBHamCckTdaKePwAOJDeJn8148bvWgUxNaJJmY7nl
+ k9l+fthkXG2JVRiASeYpeE+uW+LnUjH/QMxH8dX+tYFlLuP5pA==
+Received: from prod-mail-ppoint1 (prod-mail-ppoint1.akamai.com [184.51.33.18])
+ by m0050096.ppops.net-00190b01. (PPS) with ESMTPS id 4bkg279rsy-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Sat, 10 Jan 2026 23:15:30 +0000 (GMT)
+Received: from pps.filterd (prod-mail-ppoint1.akamai.com [127.0.0.1])
+ by prod-mail-ppoint1.akamai.com (8.18.1.2/8.18.1.2) with ESMTP id
+ 60ACwVph003167; Sat, 10 Jan 2026 18:15:30 -0500
+Received: from email.msg.corp.akamai.com ([172.27.91.41])
+ by prod-mail-ppoint1.akamai.com (PPS) with ESMTPS id 4bkk00sjbj-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Sat, 10 Jan 2026 18:15:29 -0500
+Received: from usma1ex-dag5mb2.msg.corp.akamai.com (172.27.91.41) by
+ usma1ex-dag5mb2.msg.corp.akamai.com (172.27.91.41) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.29; Sat, 10 Jan 2026 15:15:29 -0800
+Received: from lon-lph85swt.london.corp.akamai.com (172.27.118.139) by
+ usma1ex-dag5mb2.msg.corp.akamai.com (172.27.91.41) with Microsoft SMTP Server
+ id 15.2.2562.29 via Frontend Transport; Sat, 10 Jan 2026 15:15:29 -0800
+Received: by lon-lph85swt.london.corp.akamai.com (Postfix, from userid 37336)
+ id E43C91560791; Sat, 10 Jan 2026 23:15:28 +0000 (GMT)
+From: Max Tottenham <mtottenh@akamai.com>
+To: <dev@dpdk.org>
+CC: <dsosnowski@nvidia.com>, <viacheslavo@nvidia.com>, <bingz@nvidia.com>,
+ <orika@nvidia.com>, <suanmingm@nvidia.com>, <matan@nvidia.com>,
+ Max Tottenham <mtottenh@akamai.com>
+Subject: [PATCH] common/mlx5: skip ROCE disable for auxiliary SF devices
+Date: Sat, 10 Jan 2026 23:15:10 +0000
+Message-ID: <20260110231510.39095-1-mtottenh@akamai.com>
+X-Mailer: git-send-email 2.51.2
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: SG2PR02CA0065.apcprd02.prod.outlook.com
- (2603:1096:4:54::29) To KL1PR0601MB5567.apcprd06.prod.outlook.com
- (2603:1096:820:c5::14)
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: KL1PR0601MB5567:EE_|KUZPR06MB8060:EE_
-X-MS-Office365-Filtering-Correlation-Id: 478a1433-7ccd-41c0-1943-08de524fac42
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|52116014|376014|1800799024|366016|38350700014; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?VSAezC22BbIOvnon+7ZCtHLWzN6nIBpHmHNpA0+LYfCvgV3D3I5vjtnfISqQ?=
- =?us-ascii?Q?6G3VhsZTYYwY0pIxCZiVSMk0OOhiDlAr6+l8aTNbWgdpP17VNz7WX4EtZMsX?=
- =?us-ascii?Q?6ppxIAzNk7mIKYkZpD2SdFPkZn1QXCssG3zABZ5lPE78HyXcMpA/MeKcgVgf?=
- =?us-ascii?Q?uuCdpMRsZPLrV9Hgz9nJQaNmcuQIgGYO5rg7Su2CXqfNCUgs1+m90cECN0CQ?=
- =?us-ascii?Q?pN91Sshq5b5GY8DEKwf9uw9PFzNX34qKg4grOkJ9YeyCb0v5q3o4u7EeDRHf?=
- =?us-ascii?Q?9pt97pP6k+ZBySz4WdrVum6UW8clvO+F+h1IXkQ+oe9hnqw+hCIfOqCzmhAa?=
- =?us-ascii?Q?UKuqFbNaHFKd+NvnHSouJLY5JrJaUrQhq1CSfl3CLV4N9mbQP1Gimi9DmQWF?=
- =?us-ascii?Q?aiZXSfMQy2m+lBRWcRn/dCE0C1M+6+gVa0mNbVI30Kd7mZZQdVzK8M1pSIeT?=
- =?us-ascii?Q?2PVW3MO8ekcW3xCAj9WLwRagQkqmI4k4UpvZOCncykWLcZKxC9+h2r0SYq5E?=
- =?us-ascii?Q?iPemzQhYbTRMeo9y/Ee+OqO/vj6gQn3eOiad2cfZvz9gSbMR83tqfTjgt98y?=
- =?us-ascii?Q?KkCOFm/qFTw9g3xck7r/8Dl3rAig0t02p2KUfyPAZpFvIAu/OrH77EKM9mbF?=
- =?us-ascii?Q?MvQBro7cAG3D7sHJC8Gf+QaJlxak6O7hCNY4nnsyPL9Q0aWbEPts9UxXvec5?=
- =?us-ascii?Q?adj0SSumaZIoCUlkcwrRK20Vf4w+3Ue2DZZmvOjCDuqlG7sSm/f0nIabczO+?=
- =?us-ascii?Q?b6h1Ctwlqrsz2Ov7CzkY2pGAZm7ZE2AJP9Na9Cmgk/vjs+2TaUp69NCY4QS6?=
- =?us-ascii?Q?JTxIpItK4HlZvIRqHgOP6Agtg7kqLI+l7UCiAD/yX7LlIwkFsRorXDW7NWXE?=
- =?us-ascii?Q?grn6HUXv+O+YkzjqiWPIxCBuPUo/LYOK2MlF/c69Hh6ESCHta6Y+5oxc9wfe?=
- =?us-ascii?Q?cvZbOJORoXaiUncLHI+YJYwErBlE0x/Pz/KroakFhKrqpFq+gzqslfdVniKp?=
- =?us-ascii?Q?Qf9/B/uZESWmwP1ef2HV7q+5gK27xxm+MaOsCAB57u5uQ5uS0xvDb7FNBnZH?=
- =?us-ascii?Q?bVygD8anxXEyipLe+GdD9DKqA4v4YsuYXws5a7SZBewXrwD7h4kp+/qNSzU4?=
- =?us-ascii?Q?5S2Ref2fPrVw1/FGIKgumK9DgEC3aF54YOw6bh8pA3ADFOPdsiC0arR9S8dp?=
- =?us-ascii?Q?SSJubIItvFHKBLykWCk9wVUdZX7m3qGQ0BfOFMRCOFniyLtLBfBWRJ7elvie?=
- =?us-ascii?Q?ghfCvEwc0WUx0S3B5ulFjwaMVYxQNZRUzcTXurtMvPyeE4PX5pIf2FFnFxP6?=
- =?us-ascii?Q?WOuU5qUL3qUoKQa4L1DC2rUO+tZ2OPeYxo4/79JRhTHiRi9nohZo74iMm2CV?=
- =?us-ascii?Q?aNbtu+3y09i2msdNfvpWQkug/92HKglSjhv0q/UCiNnZSJ8li9yLob3+X4My?=
- =?us-ascii?Q?3b23BnXVLOB0RvrHN3guOIuZEemJzrQrdR7XAbKuj2rumZQTpLkG0yL4B6ee?=
- =?us-ascii?Q?TcBU6NxHAZjjoW/5CJmHL0/rVeDbhBqZuNZt?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:KL1PR0601MB5567.apcprd06.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(52116014)(376014)(1800799024)(366016)(38350700014); DIR:OUT;
- SFP:1102; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?qgyhVMkw/mwYXjjZSFrSqZpnI/WBn1ybGLtxnqZsuzuxEs9zKI5QCk2XsCty?=
- =?us-ascii?Q?RULPFwsoE+Urnr8yh0qegb7zEA8MdYjmc66SXeidIL3hVRsCWZFOHf1lUeQF?=
- =?us-ascii?Q?AnoE8w2oflT/ZpdZGaNIYAoaInMMxFaOnmlC67YufroxrFoF2Y5Juga3+ny6?=
- =?us-ascii?Q?USOGildjwaQF1UWeIxudDpL6mSr9TvbjzJaAIXDe0JSXKv1KlqhvE0WMjuR0?=
- =?us-ascii?Q?9jVaILqdfbt/lZxQTIJlGKGdfruVZAeSJ75F9reXkWnikpvkI6YS0YxK0OKb?=
- =?us-ascii?Q?R6Fmc8UqJZAhq3hd17BxavsChVmPeVdTAz2Jz7IgaOUE06rusl7rkr+195Hi?=
- =?us-ascii?Q?Pn4BVh646BfcDea5sp1dayz0xw34pc29LV6LhAWplYduSjhdl5rsd+qe+NEM?=
- =?us-ascii?Q?wL68y7RoTbuDdeGqm/xcANCIXhIIvMFhtAHTcnke8E4272fKuumvsdLao1oJ?=
- =?us-ascii?Q?GM7a9y17B43ChaT0tsWiwAOCNLx0ltu25RL62p4pGA82eKmGOJCixPaNb1FN?=
- =?us-ascii?Q?iVZd/TMvp2yjYUxhfbWKoRk2YYoh8HTU6DoXLmKRESCX3N5Xc+Wcl4T35YtB?=
- =?us-ascii?Q?UCePOoLJ59GIwYiG7vkhxHVKknH4GCMWIb3lhHD+O+LLfgldEYVlyxsEKGF3?=
- =?us-ascii?Q?iEJApLFWvKNjR45Uyf40g4ivYY3OiWix7b+csyMcFDXDdfvGTRCDvucutJX7?=
- =?us-ascii?Q?UYBI1dhZfQHp+cpsqAbJ5xMYWCmMNf0vOX4Oi/f9nOLbu+NgOks+CZoI534T?=
- =?us-ascii?Q?Qf6dscMKVkj8gGdu0MFIHNVkA3yIfgwPsFTaWkkbzE5OfTO3Tj+YcRZcM5jL?=
- =?us-ascii?Q?qrVHCePauIYC6CnIg4UnWE6Rdw9TUgeGBu6TCv2CV0H39cvhxk+x37g/g5gx?=
- =?us-ascii?Q?yjctJGp3uxbTf7hCUDMjOKWH85KlYYQx7JLhFjwQ8TD2iequxpCQFWCAy6K1?=
- =?us-ascii?Q?I6s99Q+n79gG8P27gQitgFUtqB/ZyPUddsAFwKzhRw7L2mL3Ey7mZB37QGaG?=
- =?us-ascii?Q?0uM5kcLmjdDT0AGV63IITmfaujs4OMJWDNmSQCLzHmr+aTCKAUa4rfNXtNdK?=
- =?us-ascii?Q?oHAIUv17cpvqeeWTpMD+vylTqWzvtxaE3zs3ioq9Sde8QnGy5w5fwQ/cfzEi?=
- =?us-ascii?Q?mR2zNIww7nKv6dPt7hMo0sOUZT7qd77IEsVlk1l/rCv0b8ZDPDV9Cd6550us?=
- =?us-ascii?Q?/6z79CdLY8Ow13bFi5ocJd6MsqdpzNpIe7GDZBe+dNsMdOepn+CvAJBYfNSS?=
- =?us-ascii?Q?P837JYpkInxVP3KWl+iteT2MB5envNKCZ7DQGenYzpvLCV5mBIBamoN9WCiL?=
- =?us-ascii?Q?BpQcCsyJKHlpkKPAufQnD+4XF0iP5GtILdREepVMW3vFF+ASv/KTCZs8PgTA?=
- =?us-ascii?Q?DYQk/hty/7+AloLFgPqs5yR+5wOl71F0j8KPQBNofEBRAAxLqB9mhK6thV0F?=
- =?us-ascii?Q?ktnyGdJj6S8MzFNYLhsDFrAFmnBDTnWPBtXq6gqQ3TX07fGX+rT3I7koeJD8?=
- =?us-ascii?Q?fLZbbKAbp7/foPd1az0faPdYI9ho32ch0y4pv+HDmUt3kBpjaW7JFnUWRRqn?=
- =?us-ascii?Q?3jUhiLEvixPMCLZBVNw9uW8+FfdgIE0PRVjIQYJfCOkmlRnnc2jT0S9aGK+i?=
- =?us-ascii?Q?2sxLHTraklfHoDE6d84rGoR2QNb+L5moewZnk1EmMPlUm5BaVonmBJ1v5GJx?=
- =?us-ascii?Q?5kq1ZUGZzhZFjaOLe5uNVciP0rMusHPKp2XYhFs89yxkSUw16W6ND0r3zxgi?=
- =?us-ascii?Q?CmTY1PFdrJgDfG99NTs1h2UzI73s3AY=3D?=
-X-OriginatorOrg: jaguarmicro.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 478a1433-7ccd-41c0-1943-08de524fac42
-X-MS-Exchange-CrossTenant-AuthSource: KL1PR0601MB5567.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jan 2026 02:58:48.1170 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 1e45a5c2-d3e1-46b3-a0e6-c5ebf6d8ba7b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Fkv5k22+dqyZiu2+6ZqKR5SH3RlK5XiShyOgC7vmCNhMtWtQL0QnyB9o9Qz2XeDzQ0i9f7WUmOZrcc4t4TxDi2TREW2MVN1yw6v9a9pKQT4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KUZPR06MB8060
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2026-01-10_07,2026-01-09_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0
+ bulkscore=0 mlxlogscore=867
+ spamscore=0 phishscore=0 adultscore=0 suspectscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2512120000
+ definitions=main-2601100205
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTEwMDIwNyBTYWx0ZWRfX2icgSkMFmUvx
+ 6MiuA59+PaRdWMh1wd8F2YuuHbeW7sexw1fGhoZNVegRckdmyTfcgdY3uEbsl6WTmY0ZtNnB88L
+ luCswo3EocqrdXOyuX6Q4nTvYQT934oAcMvFCaBEbUGozjbnNHZikOBhKzaCptiRKzJz/Vdn4JG
+ HsPMNINxOafl9rFlmN6OpLnlNNhEU6l3XFimIIq0urZR8iTPIrheatRD7nhVadFDuRhwedIm8/N
+ ukA92t7z3Sb3co51gWsswnCxdvJ1wG4wFFAw1SygDssYpQ0F9EzFELvBfmKvT9/hF+Rre1GrVM2
+ Sq2XofzEp6v1KlzIBXmFNb8irHoNjsAFAjCIfH4ukKNYG2Gogi0wn/4Om+gLWTNgP/Elodf6xD6
+ MKJNVXdDhVD+9PTj+8EfUE3Ou2QCmBo6ckgh2zc4a4q75ttKjTYXanZml4uGefGdoZN+SLQdp9I
+ CH265ZGpdD7/YvglraQ==
+X-Proofpoint-GUID: 2d3QC0ncnYyPxBpOXZLDYFMeczxXG4hC
+X-Proofpoint-ORIG-GUID: 2d3QC0ncnYyPxBpOXZLDYFMeczxXG4hC
+X-Authority-Analysis: v=2.4 cv=ScD6t/Ru c=1 sm=1 tr=0 ts=6962dd92 cx=c_pps
+ a=StLZT/nZ0R8Xs+spdojYmg==:117 a=StLZT/nZ0R8Xs+spdojYmg==:17
+ a=vUbySO9Y5rIA:10 a=VkNPw1HP01LnGYTKEx00:22 a=X7Ea-ya5AAAA:8
+ a=KJ5unKwt9qGGm7TnCQ0A:9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2026-01-10_07,2026-01-09_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0
+ spamscore=0 lowpriorityscore=0 suspectscore=0
+ priorityscore=1501
+ clxscore=1011 bulkscore=0 phishscore=0 impostorscore=0 adultscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2512120000 definitions=main-2601100207
+X-Mailman-Approved-At: Tue, 13 Jan 2026 08:40:59 +0100
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -141,29 +100,47 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The flow-perf tool already supports the --query-rate option to enable
-query rate calculations, but the option was missing from the
-documentation.
+When probing an SF as a vDPA device, mlx5_roce_disable() targets the
+parent PF address (via mlx5_dev_to_pci_str). This incorrectly attempts
+to disable ROCE on the parent PF rather than the SF itself.
 
-Signed-off-by: Sunyang Wu <sunyang.wu@jaguarmicro.com>
+This causes vDPA probe failures when the parent PF already has an open
+IB context (e.g., probed for uplink ports or SF representors).
+
+For SubFunctions, ROCE is configured via devlink parameters
+(enable_roce) before device creation. Skip the runtime ROCE disable
+for auxiliary devices since the devlink configuration is already in
+effect and targeting the parent PF is incorrect.
+
+Signed-off-by: Max Tottenham <mtottenh@akamai.com>
 ---
- doc/guides/tools/flow-perf.rst | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/common/mlx5/linux/mlx5_common_os.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/doc/guides/tools/flow-perf.rst b/doc/guides/tools/flow-perf.rst
-index c0c7ffe577..a289ba482b 100644
---- a/doc/guides/tools/flow-perf.rst
-+++ b/doc/guides/tools/flow-perf.rst
-@@ -87,6 +87,9 @@ The command line options are:
- *	``--deletion-rate``
- 	Enable deletion rate calculations.
+diff --git a/drivers/common/mlx5/linux/mlx5_common_os.c b/drivers/common/mlx5/linux/mlx5_common_os.c
+index 2867e21618..6fa12e06eb 100644
+--- a/drivers/common/mlx5/linux/mlx5_common_os.c
++++ b/drivers/common/mlx5/linux/mlx5_common_os.c
+@@ -690,6 +690,19 @@ mlx5_roce_disable(const struct rte_device *dev)
+ {
+ 	char pci_addr[PCI_PRI_STR_SIZE] = { 0 };
  
-+*	``--query-rate``
-+	Enable query rate calculations.
++	/*
++	 * For auxiliary devices (SFs), ROCE is configured via devlink
++	 * parameters (enable_roce) before device creation. Skip runtime
++	 * ROCE disable since mlx5_dev_to_pci_str() returns the parent PF
++	 * address, not the SF - disabling ROCE on the parent PF is both
++	 * incorrect and may fail if the PF already has an active IB context.
++	 */
++	if (!mlx5_dev_is_pci(dev)) {
++		DRV_LOG(INFO, "Skipping ROCE disable for auxiliary device \"%s\"",
++			dev->name);
++		return 0;
++	}
 +
- *	``--dump-socket-mem``
- 	Dump the memory stats for each socket before the insertion and after.
- 
+ 	if (mlx5_dev_to_pci_str(dev, pci_addr, sizeof(pci_addr)) < 0)
+ 		return -rte_errno;
+ 	/* Firstly try to disable ROCE by Netlink and fallback to sysfs. */
 -- 
-2.19.0.rc0.windows.1
+2.51.2
 
