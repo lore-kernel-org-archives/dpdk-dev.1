@@ -2,65 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8FD4D277CA
-	for <dpdk-dev@archiver.kernel.org>; Sat, 10 Jan 2026 02:28:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA727D277CA
+	for <dpdk-dev@archiver.kernel.org>; Sat, 10 Jan 2026 03:41:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 82784402D5;
-	Sat, 10 Jan 2026 03:28:52 +0100 (CET)
-Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com
- [209.85.222.45]) by mails.dpdk.org (Postfix) with ESMTP id 053284021F
- for <dev@dpdk.org>; Sat, 10 Jan 2026 03:28:50 +0100 (CET)
-Received: by mail-ua1-f45.google.com with SMTP id
- a1e0cc1a2514c-93f5774571eso1599039241.1
- for <dev@dpdk.org>; Fri, 09 Jan 2026 18:28:50 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 7ACF4402D5;
+	Sat, 10 Jan 2026 04:41:52 +0100 (CET)
+Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com
+ [209.85.217.44]) by mails.dpdk.org (Postfix) with ESMTP id 8BB1A4021F
+ for <dev@dpdk.org>; Sat, 10 Jan 2026 04:41:50 +0100 (CET)
+Received: by mail-vs1-f44.google.com with SMTP id
+ ada2fe7eead31-5efa4229bd2so635009137.0
+ for <dev@dpdk.org>; Fri, 09 Jan 2026 19:41:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1768012130; x=1768616930; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=HQd414MAwiVtspSXfeoZLW6ldWKM6F/eF7UlwrDeNf4=;
- b=fRY42jL8LX2Egzk2kNeA4nO+Tmn5IHE4rdHrBftHGsxkKy3aej7/2LMX3UrjJWaL+t
- X0VOzZdx/lgbdJRT+Gq53gSUcQez4mBooBCMH2FAPbB5MeP9iKarj+0ZuLn9WQcdEEc7
- QD7nHyElCX1b8a7oIjT4JYPILHeyA6UCDN+qv5h3ZzdChZMj7uBSB0YoN7GuwW9E8Zm3
- hcLxo/3kj2niONhPlT/tY2yzdMvijsojTIzKDSG7TJTigOQIqD1PDB5zQboG7+3B2Fx5
- RQXddvRIaCtkK0oQELwhlfDKSSZR2z+YE9e8z+ki7bLrUuYx2oxHENVQaoopVB6k9Fil
- qwuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768012130; x=1768616930;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ d=gmail.com; s=20230601; t=1768016510; x=1768621310; darn=dpdk.org;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:from:to:cc:subject:date
  :message-id:reply-to;
- bh=HQd414MAwiVtspSXfeoZLW6ldWKM6F/eF7UlwrDeNf4=;
- b=ccu102vFdFrPkIKdVRcM7cSBDFmZQO3JpjOnlpYV6M02BFkgFmlWLNcQnf3MsFMPEc
- 0iYqzAbOJrVskLCFKOP6zIfIS5sL00qFuM8NCl7Eber0mwDJJV8juSVuzYaF8hjOcTy3
- XlOP3S07vVmPUa7PEJBbUUYUBVwiPzc9QOBPPMgf477XGSkgcmayMi2cE64T0gQblGJj
- 1Nd2TGwRd0u1w7oobQUb/OmxQLRqDZ+7QCfMEEglXYRmFaVlP8JHbuiCk/BIWmXOrXHM
- dZVJWhVJrb9FZL2LB6Ch+PdY6te1hL5tZgGz++/+5Gq8Roe3eP4IYHe3BY1yh0geT5o2
- k1AA==
-X-Gm-Message-State: AOJu0YwWDVFjEMGs8teirKQaKuM1cNkrunTSIMug+aSu4+HTR0pGYgr1
- RNqIo6MttOPWHlfoe3AJR4dBh3vaVXr7TQPcjcvXMm/ycJjlbuR7sdW/j55//tS5n0oJaunwxcn
- zo4jxif18gbN2uDc4aAIR7OVCJRpjA7aie7fn
-X-Gm-Gg: AY/fxX6rtFWYP8kw7QR19s3f7lmV82nr7g1DPKr8B3KZSc2afx4+p6H8uUH/1P97g4N
- jAuHDGHhCSzRdaB1VTG3a75B18KT0v6qh9QT9CgHLNialNHfWxwhk2PfEAmktHs8vzbD9avtdZ2
- 3taZ34VtpvebgWKlhFpGz2zjsjG0XabEs2hDim25UlV2GXSoBiiAvuBjqpqfdyurl05/doGYlXP
- bSH8AZWIXjIRv0C/y+yIXSjf1ExwlfmLX1bKZiHrbc8EhAwr8lX2F2vB44Zz58/xWvkvkLodgz2
- 3kzh2WKfubEqwWgUEG1dIWQ032U=
-X-Google-Smtp-Source: AGHT+IFHjcKlX/25pY8rzXC5MoU5PnR8KvTnjSTsk+56oeYf0O0FLio52Fkb+fylhGpTc0xTw1HoCUFjqTk5atfCuyY=
-X-Received: by 2002:a05:6102:4405:b0:5df:b3ed:2c8b with SMTP id
- ada2fe7eead31-5ecb6989064mr4310403137.38.1768012130133; Fri, 09 Jan 2026
- 18:28:50 -0800 (PST)
+ bh=3m041KXcPV2IRoodo9nxvUfYpvp9PFTvTqwYl8bkzqY=;
+ b=c5WdVVWRFbXlnf4NWkGKf476KBI3KVx2+ZxMPwawsZl0uhDZQ1kCbWGuYp8DCZAYt5
+ cttyAikGfBB2h4xvHujXpn6X50TDG4ZhRilQLpnS0rcafgrv3GHE7teRfk+du7OcUfSL
+ VIX1zPNMKEHOGODI2kHzCEpq4Lbe5uWAUl8+M3QYKtDPC0rbQVzC34x+AN6pJSIo0fqk
+ bx1Z+rj6hFXCRotoQgqNYg4uTgzGuvr7HDYgCq6w6L9OttvC14roiO6aBQve1FAtoB2l
+ mb3a4ak0gdVMx8jybSeED5azRDR7saMQEnA87+Eb3NPI1p7gWlt3Ubu1gIjuufazkL26
+ v+6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1768016510; x=1768621310;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=3m041KXcPV2IRoodo9nxvUfYpvp9PFTvTqwYl8bkzqY=;
+ b=qZicct3rcMKJbnXmjl2plbWh5BQh42+WVlkBy1LlQ5D9xn2ZWBkZNdBncaI/Fd9kXF
+ H7tnVMZ3JpdMITG9It+RvGvweg1EtJLqTWtnaZrCCJY9F4uX+K6n7ElwlhOXdpt0ij/Z
+ ZyFWkAFFNr31+hUzTmSdTH5ng4IHxb/Rpc14kgSlkgGxG1IjGs5KfFzaPYX66aQWWiO5
+ bXZkt0JDtx+JZkd5QMDHw+3f+D2ZZa+BAbkCt/7D3qtVdNEfLUp+0TpoK9ymFHMUsKuF
+ afj65vDdyMn6dSrI59KqfoWoVgWJ8OZ+60LzmR/L/TNKS3J7V+wtx5iyrajOQthSS3jc
+ U6hg==
+X-Gm-Message-State: AOJu0Yx7NhmBebQmyseFWHfGN5JLLdo2vkeGSUDI+Rvsry/JEIj1Obc4
+ mFD5DOSizAegCGjcfCXXKcSxd7Zp1mSlHaJaA/zhW0i23r/oCYyMLRndfJhlH2FCPk+Gv32dL9s
+ cBx27L0uTkbgz1YCHsotp4PNYbpxHr5nXWuWZ
+X-Gm-Gg: AY/fxX602Gm9G0UPOcx9UbPc6/UIcOygBPe5JMOC+iFOIj4rAvqtSRMwF4sHr9h6p+a
+ Qk6Ovkwf/HprDwO+HOaGwbV1lu4JhyxUTaVsO7xjEKcZTYED5y6WEACQGl8tN1DEGJqOodtBJdg
+ fXRICPHOQLJwgGi1Pdc3EGi29WIasFu8jCWSITFqQMD6LJMs//Iy1IHj5OBLc4qqX00GUAjA4Ir
+ 0tWxbCNdoMCWQdlOHkOuYofNYnlB05asVMDw0aOIf4l7TZBiHJu3TOfji7MwYlBZQBm2b+Y55HY
+ nhWNPDv8Kn+zAiU0X4ODEG1SBJ4=
+X-Google-Smtp-Source: AGHT+IEEfAFt6m3rDBLBlQ4agfFrJ+pahvgMcG1T2wlopccyNIMAuesj6uyphCH0GphqarROE3+XT8qjIQBkAqUK5lQ=
+X-Received: by 2002:a05:6102:548d:b0:5ef:7221:aa9b with SMTP id
+ ada2fe7eead31-5ef7230f1aemr1560521137.18.1768016509655; Fri, 09 Jan 2026
+ 19:41:49 -0800 (PST)
 MIME-Version: 1.0
-References: <20260110015651.26201-1-scott.k.mitch1@gmail.com>
- <20260110015651.26201-2-scott.k.mitch1@gmail.com>
-In-Reply-To: <20260110015651.26201-2-scott.k.mitch1@gmail.com>
+References: <20260108230509.6541-1-scott.k.mitch1@gmail.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F6563F@smartserver.smartshare.dk>
+In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F6563F@smartserver.smartshare.dk>
 From: Scott Mitchell <scott.k.mitch1@gmail.com>
-Date: Fri, 9 Jan 2026 21:28:39 -0500
-X-Gm-Features: AZwV_Qg57cf4plo-WY4cZ_t5VYxBiryvlXEADqVTsKHAu7kn70V-bGPrRtorkrA
-Message-ID: <CAFn2buDTyMcuGS1fjWQE8uJ2PeaTDaR8zP-MY2MqLyN0f_1_Hw@mail.gmail.com>
-Subject: Re: [PATCH v12 1/3] net: optimize __rte_raw_cksum and add tests
-To: dev@dpdk.org
-Cc: mb@smartsharesystems.com, stephen@networkplumber.org, 
- Scott <scott_mitchell@apple.com>
+Date: Fri, 9 Jan 2026 22:41:38 -0500
+X-Gm-Features: AZwV_QjZYndQanRp5Jnph4u-3pF2pQP1ZVPYlyTTaNzReNMZYkqyft6lxhfgmZA
+Message-ID: <CAFn2buB1o9nfJu+YZddVu30vhDr8rZDKv98zno5_8HzvxkGcrw@mail.gmail.com>
+Subject: Re: [PATCH v11] net: optimize raw checksum computation
+To: =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>
+Cc: dev@dpdk.org, stephen@networkplumber.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -74,5 +75,35 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-I will fix the `ERROR:NO_AUTHOR_SIGN_OFF` issue in a followup submission,
-but will wait in case there is other feedback to address.
+> Here are some more thoughts about loop unroll...
+> In another mail [1], you are discussing manual loop unroll for rte_ipv4/i=
+pv6_phdr_cksum().
+> Perhaps the compiler already loop unrolls those.
+> Check the assembler output for the existing code calling __rte_raw_cksum(=
+).
+> If the compiler doesn't loop unroll __rte_raw_cksum() for those two funct=
+ions, maybe you can help it by modifying __rte_raw_cksum(); try replacing t=
+he end pointer with an int counter, which will be compile time constant whe=
+n called by rte_ipv4/ipv6_phdr_cksum().
+>
+> [1]: https://inbox.dpdk.org/dev/CAFn2buA5NzmzA0+t1_5auigvQTyT7Ne6RMVaPVU=
+=3DsdC03nd2Lg@mail.gmail.com/
+>
+> PS: I do the following when optimizing inline functions: Add non-inline f=
+unctions calling the inline functions, and then use "objdump -S" to look at=
+ the generated code. E.g.:
+>
+> uint32_t review__rte_raw_cksum(const void *buf, size_t len, uint32_t sum)
+> { return __rte_raw_cksum(buf, len, sum); }
+>
+> uint32_t review__rte_raw_cksum_len20(const void *buf, uint32_t sum)
+> { return __rte_raw_cksum(buf, 20, sum); }
+>
+> uint32_t review__rte_raw_cksum_len8(const void *buf, uint32_t sum)
+> { return __rte_raw_cksum(buf, 8, sum); }
+>
+
+https://godbolt.org/z/qr39hf76s
+rte_ipv4_phdr_cksum and rte_ipv6_phdr_cksum are both fully unrolled
+(-O2 or higher). Vectorization also happens (clang chooses
+not to vectorize ipv4). yay compilers :)
