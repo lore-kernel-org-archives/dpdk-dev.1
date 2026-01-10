@@ -2,67 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40DEED277C1
-	for <dpdk-dev@archiver.kernel.org>; Sat, 10 Jan 2026 17:23:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 447EAD277C1
+	for <dpdk-dev@archiver.kernel.org>; Sat, 10 Jan 2026 17:24:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 975EC40E27;
-	Sat, 10 Jan 2026 18:23:46 +0100 (CET)
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com
- [209.85.221.53]) by mails.dpdk.org (Postfix) with ESMTP id 5FBFF40E19
- for <dev@dpdk.org>; Sat, 10 Jan 2026 18:23:44 +0100 (CET)
-Received: by mail-wr1-f53.google.com with SMTP id
- ffacd0b85a97d-42fb0fc5aa9so2392247f8f.1
- for <dev@dpdk.org>; Sat, 10 Jan 2026 09:23:44 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id B3B4F40E2D;
+	Sat, 10 Jan 2026 18:23:47 +0100 (CET)
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com
+ [209.85.128.48]) by mails.dpdk.org (Postfix) with ESMTP id 6680640E1C
+ for <dev@dpdk.org>; Sat, 10 Jan 2026 18:23:46 +0100 (CET)
+Received: by mail-wm1-f48.google.com with SMTP id
+ 5b1f17b1804b1-477619f8ae5so39091665e9.3
+ for <dev@dpdk.org>; Sat, 10 Jan 2026 09:23:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768065824;
- x=1768670624; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768065826;
+ x=1768670626; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=clsSR+u1LNexEtPZAR6K4lNMtgo48D2alenrFeC1/E0=;
- b=kVkTc5aviBWrfAaGwd2ykMsm/TaAhv4NizCIQvGWBn74/anp9m+kjMEP0Pmqkqu1ne
- yeXRr7r/5BeMyGaSrbYeVijiWGf+VXstznzC7A4RnixFE2BMTMqzq8e6IqIdwm6vT57F
- E1ovRUyd3gA9xcUrnWi46igmPtM3T2nIfeQCNlFJ2rI+z43WhS1blV1a6rdNZxmrwmVI
- Ikzq9Mb105aNrfQw1eFrry1hAN610ubzkYDt4Auqhft/9QUYRJ/TbboHNgbIs47x7W4p
- uTjiYNKjXiLOjnUlrNu11jnRpmlT5eZqK9l4peTHKyCuo3JQjFa7hkmfvLgkfRIZ3uZ4
- PS1w==
+ bh=cK3CwUQiyZfDvEV4ZB9oKoYuVTixciPmqvXM+idPYEM=;
+ b=xiHfoQfFsBjw6gvj9NTd7cUJyj+tcbSrdCqn9nnTRPCFBlPJvWQYqZP51MQqu++auB
+ NjvnoxvMmGTxO+OhAJ5+/aNciyn/F/Bn8nkc7HDgrQY4g/cmEPp46mrtLTFfwlcr1wWr
+ Ev9eiVEH2xFjXIGASWcL2Yfp9CEH46dVoVPn03A6Hv5/cD8N50lEnfRMXzsjoTfvgDwQ
+ nMbMyHzSDwWAwopicoNrHEWqyZdB204s88hTQztIBvEf05wCvtUo2TlrmBA+JIt81mtl
+ GV/Lsd6386HCcgH7oCJ5GHkWqcKqc8jNsBEOeEtk0sio4bEIhPOfABxG02KnQCMEQnXO
+ 4e6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768065824; x=1768670624;
+ d=1e100.net; s=20230601; t=1768065826; x=1768670626;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=clsSR+u1LNexEtPZAR6K4lNMtgo48D2alenrFeC1/E0=;
- b=ci0/COhjWFvC+0Xryg72J8QpBNyMmapIW7XgIg/KyObBcalxjCxgDwo0kmojkEG6pX
- MYmfb+vASRzFVufcr7k5gMW7iaW7epkHJMCpAKhxOgVrd7H/Wxeizn8tx3ZOgM2iU/YX
- Y2+MpAsPUm1DBVqXT97exMVrf6qjnE/cVdU3tNoHS5OHRJF9BkbMR7kEV4UmKZOtXBbO
- mZJQxqAXXIlTgprQ7saSacg26onBH9PnIWf0u2R58akrQPW5Q6YWU+dNDGxYK3kE9GQw
- Errp9FoUNTRiubfrKmu7naoZl993yxavTaA4lltt1Zaji034s996zMB9DGXgHxNwSloq
- HbhQ==
-X-Gm-Message-State: AOJu0YzsH2BekxV558pENVi2nJVDFjp09F5gVmQEnrBbV6x0TijDRCQn
- 9/9gp6xK962ATapSOEp/keBoq8lC/ubQ+Pfo4Te8idsursMXE46WgkOjlgK8Be8LXZca499eGoD
- PnI8I
-X-Gm-Gg: AY/fxX4s62qa08/AiwE9CbadSTmw5WRXJ5oeMfWJ/lw3m4sFs3REdv7o8Uzq74NWFgb
- pBp6nklBXKkuMDmupGweQR2753BubIVXP8NERMy7uknPRKRvbmITBegCtuF5t9yLUxHQqzUvixL
- NtcYFExlGDhH9Ibb9VxlYcMWgbc4ZwVL3ANLkeJ0SQA2xzcHERMetDheTBmC9n1eSA6fczBNAEY
- Ws+SpuvCRIhvtOLX3IA5kz31XsnTqq515toI+Y2CZVef9CAmbpk9UignuuT2FoFZadjThEkIlTM
- kBY6QmBXgO7KuSWTCOWivOwuH759kv7c4hNaqCjkq+xClPMsBw/vfS/w3AY6NhJ4an7p+jx0g+D
- w3B8nPnduVvIaUKQH0D56/F57cPmUaIINOlQyFYmtV+WCZo/h+6UazJFit3UjYat2g0XPmOx3/z
- OLX4im4CpczG6Bc/gH6XUpd4LiHBSSbIngqu9sOxKHDDagcIEBDQ==
-X-Google-Smtp-Source: AGHT+IGCLp3p8ExqC/NReRUQgi7sc0z0vyOT18NEo+KO1VPKYUJTv+ZurcVJUjMzK3gNRWnzlywyfg==
-X-Received: by 2002:a5d:588f:0:b0:431:8f8:7f1a with SMTP id
- ffacd0b85a97d-432c3750285mr14922254f8f.31.1768065823897; 
- Sat, 10 Jan 2026 09:23:43 -0800 (PST)
+ bh=cK3CwUQiyZfDvEV4ZB9oKoYuVTixciPmqvXM+idPYEM=;
+ b=l79LlY8F7lltLgBQ33aYJ+KA6Ww7EjDbGh3RKf3ORpkA65oJxzetXsVbuHajlR0TZ2
+ Nr7N1kLxkLiHyGUMA/IqVhCJOs2dHa1VM0JwQ0XajgYl+eXjQDxwgbYr4wrt+gG1dnnx
+ iceVIooiMB+3xYsel8fV9ST+Y609ifBEhv6/3pM1b5PyUCljy9ehvtF4aGqnq8IIH62X
+ RLPqagRzhB5Pp0Wx3xPnQLrkwv53mBGbUbWyBKLE41rFcDIT0B7GwUAuMOyJ4svZjbFz
+ J7RKV7BP3Zye7UWEvblqB24lDVWeZPOlNazdT1UlGR7yyUCKa7/k561JWPUV8EqydmyV
+ XW2g==
+X-Gm-Message-State: AOJu0YwuOE926fQTlTMdMdY+xCsTT9JHL2+HSnROpI+HSjDbqfDW+7gS
+ oruXFdD8uhbZ6LFOOrJ0r8oUMaKGcnDUwhIirqhxn4A1Ryiu4gxjbvnJShZrz4ckp6JMbTH8aGR
+ 0fvh5
+X-Gm-Gg: AY/fxX5zzoNI97uQp/BtjJoppMKAAw7tDrCKxYQ6Ae2HzFZLDUZmRUwVJn+MJY//lJZ
+ cAwntcAbbO8sMUCR5lRaBoshA4BPKtZdp21xvSs1UXWLoG/ATo8RmlYnNTv90124MnRbsODed/y
+ xYg0/LEXHC8vSkT295sK/H7aRaL1tTwJ/3OPg7dY0ognTMUqgDGXblUaO5GVjZbQXaW2YGFIeib
+ zeHrc5OE5usWf8N/CLgUEeO0AS6w88qDyibt+BfpMxMF71rzB0dlo/HbEmjcnydMwBfBLLuDsm6
+ 0OnDguUw64DuFiJbSEPx2ZFz1Fx3uo1U/+sRf07q1pxMawnAD8qrj+s9bxrKeXoj8S0qcSAG7F/
+ S3ENW9KmIiAT01nsx8tYnrRJG5hEp238TeGmaA8iL4fYo6YItQOE76D5A44IE7TxQiId+sNwwMH
+ tf+JPt1cjl+Eri9DSK79Idh2wtKqMDeyf/tOl4u63TOslnRYkOGw==
+X-Google-Smtp-Source: AGHT+IHrtvc5ciLHCJUA5TouDso+fCyQ9/IbIqKsy3gDcOdTVI7JhJT/sVxSFlNzdZGBKTJOMmW/ZA==
+X-Received: by 2002:a05:6000:2c02:b0:430:f3ab:56a1 with SMTP id
+ ffacd0b85a97d-432c3760f16mr16719771f8f.42.1768065825740; 
+ Sat, 10 Jan 2026 09:23:45 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-432bd0e16f4sm29558206f8f.11.2026.01.10.09.23.42
+ ffacd0b85a97d-432bd0e16f4sm29558206f8f.11.2026.01.10.09.23.44
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sat, 10 Jan 2026 09:23:43 -0800 (PST)
+ Sat, 10 Jan 2026 09:23:45 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v4 2/3] test: generate larger packet bursts
-Date: Sat, 10 Jan 2026 09:22:37 -0800
-Message-ID: <20260110172336.9859-3-stephen@networkplumber.org>
+Subject: [PATCH v4 3/3] test: add a test for null PMD
+Date: Sat, 10 Jan 2026 09:22:38 -0800
+Message-ID: <20260110172336.9859-4-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260110172336.9859-1-stephen@networkplumber.org>
 References: <20260104222523.329760-1-stephen@networkplumber.org>
@@ -82,125 +82,1004 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The packet length in packet burst generator was uint8_t which
-limited usefulness for testing larger packet sizes.
+Add a test for null PMD including different packet sizes.
 
-The number of packets segments per packet is currently limited
-by mbuf nb_segs which is 16 bits. The comment is incorrect.
-
-Change nb_pkt_per_burst to uint16_t since that is the limit
-for tx_burst.
+This test was generated with Claude AI based off of existing
+test_pmd_ring.c with some cleanup afterwards.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- app/test/packet_burst_generator.c | 38 +++++++++++++++++--------------
- app/test/packet_burst_generator.h |  4 ++--
- 2 files changed, 23 insertions(+), 19 deletions(-)
+ app/test/meson.build     |   1 +
+ app/test/test_pmd_null.c | 968 +++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 969 insertions(+)
+ create mode 100644 app/test/test_pmd_null.c
 
-diff --git a/app/test/packet_burst_generator.c b/app/test/packet_burst_generator.c
-index 4c17737739..548296e33e 100644
---- a/app/test/packet_burst_generator.c
-+++ b/app/test/packet_burst_generator.c
-@@ -205,24 +205,23 @@ initialize_ipv4_header_proto(struct rte_ipv4_hdr *ip_hdr, uint32_t src_addr,
- 	return pkt_len;
- }
- 
--/*
-- * The maximum number of segments per packet is used when creating
-- * scattered transmit packets composed of a list of mbufs.
-- */
--#define RTE_MAX_SEGS_PER_PKT 255 /**< pkt.nb_segs is a 8-bit unsigned char. */
--
- 
- int
- generate_packet_burst(struct rte_mempool *mp, struct rte_mbuf **pkts_burst,
- 		struct rte_ether_hdr *eth_hdr, uint8_t vlan_enabled,
- 		void *ip_hdr, uint8_t ipv4, struct rte_udp_hdr *udp_hdr,
--		int nb_pkt_per_burst, uint8_t pkt_len, uint8_t nb_pkt_segs)
-+		uint16_t nb_pkt_per_burst, uint16_t pkt_len, uint16_t nb_pkt_segs)
- {
--	const uint8_t pkt_seg_data_len = pkt_len / nb_pkt_segs;
-+	int i, nb_pkt = 0;
-+	size_t eth_hdr_size;
- 	struct rte_mbuf *pkt_seg;
- 	struct rte_mbuf *pkt;
--	size_t eth_hdr_size;
--	int i, nb_pkt = 0;
-+	uint16_t pkt_seg_data_len;
-+	uint16_t last_seg_data_len;
+diff --git a/app/test/meson.build b/app/test/meson.build
+index efec42a6bf..a45991ec34 100644
+--- a/app/test/meson.build
++++ b/app/test/meson.build
+@@ -141,6 +141,7 @@ source_file_deps = {
+     'test_per_lcore.c': [],
+     'test_pflock.c': [],
+     'test_pie.c': ['sched'],
++    'test_pmd_null.c': ['net_ring', 'ethdev', 'bus_vdev'],
+     'test_pmd_perf.c': ['ethdev', 'net'] + packet_burst_generator_deps,
+     'test_pmd_ring.c': ['net_ring', 'ethdev', 'bus_vdev'],
+     'test_pmd_ring_perf.c': ['ethdev', 'net_ring', 'bus_vdev'],
+diff --git a/app/test/test_pmd_null.c b/app/test/test_pmd_null.c
+new file mode 100644
+index 0000000000..1790dc891c
+--- /dev/null
++++ b/app/test/test_pmd_null.c
+@@ -0,0 +1,968 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(c) 2026 Stephen Hemminger
++ */
 +
-+	/* Calculate per-segment data length */
-+	pkt_seg_data_len = pkt_len / nb_pkt_segs;
-+	last_seg_data_len = pkt_seg_data_len + (pkt_len % nb_pkt_segs);
- 
- 	for (nb_pkt = 0; nb_pkt < nb_pkt_per_burst; nb_pkt++) {
- 		pkt = rte_pktmbuf_alloc(mp);
-@@ -243,10 +242,10 @@ generate_packet_burst(struct rte_mempool *mp, struct rte_mbuf **pkts_burst,
- 				goto nomore_mbuf;
- 			}
- 			pkt_seg = pkt_seg->next;
--			if (i != nb_pkt_segs - 1)
-+			if (i != (int)(nb_pkt_segs - 1))
- 				pkt_seg->data_len = pkt_seg_data_len;
- 			else
--				pkt_seg->data_len = pkt_seg_data_len + pkt_len % nb_pkt_segs;
-+				pkt_seg->data_len = last_seg_data_len;
- 		}
- 		pkt_seg->next = NULL; /* Last segment of packet. */
- 
-@@ -300,13 +299,18 @@ generate_packet_burst_proto(struct rte_mempool *mp,
- 		struct rte_mbuf **pkts_burst, struct rte_ether_hdr *eth_hdr,
- 		uint8_t vlan_enabled, void *ip_hdr,
- 		uint8_t ipv4, uint8_t proto, void *proto_hdr,
--		int nb_pkt_per_burst, uint8_t pkt_len, uint8_t nb_pkt_segs)
-+		uint16_t nb_pkt_per_burst, uint16_t pkt_len, uint16_t nb_pkt_segs)
- {
--	const uint8_t pkt_seg_data_len = pkt_len / nb_pkt_segs;
-+	int i, nb_pkt = 0;
-+	size_t eth_hdr_size;
- 	struct rte_mbuf *pkt_seg;
- 	struct rte_mbuf *pkt;
--	size_t eth_hdr_size;
--	int i, nb_pkt = 0;
-+	uint16_t pkt_seg_data_len;
-+	uint16_t last_seg_data_len;
++#include <stdbool.h>
++#include <stdint.h>
++#include <stdio.h>
++#include <string.h>
++#include <inttypes.h>
++#include <errno.h>
 +
-+	/* Calculate per-segment data length */
-+	pkt_seg_data_len = pkt_len / nb_pkt_segs;
-+	last_seg_data_len = pkt_seg_data_len + (pkt_len % nb_pkt_segs);
- 
- 	for (nb_pkt = 0; nb_pkt < nb_pkt_per_burst; nb_pkt++) {
- 		pkt = rte_pktmbuf_alloc(mp);
-@@ -330,7 +334,7 @@ generate_packet_burst_proto(struct rte_mempool *mp,
- 			if (i != nb_pkt_segs - 1)
- 				pkt_seg->data_len = pkt_seg_data_len;
- 			else
--				pkt_seg->data_len = pkt_seg_data_len + pkt_len % nb_pkt_segs;
-+				pkt_seg->data_len = last_seg_data_len;
- 		}
- 		pkt_seg->next = NULL; /* Last segment of packet. */
- 
-diff --git a/app/test/packet_burst_generator.h b/app/test/packet_burst_generator.h
-index cce41bcd0f..bc16764e77 100644
---- a/app/test/packet_burst_generator.h
-+++ b/app/test/packet_burst_generator.h
-@@ -62,14 +62,14 @@ int
- generate_packet_burst(struct rte_mempool *mp, struct rte_mbuf **pkts_burst,
- 		struct rte_ether_hdr *eth_hdr, uint8_t vlan_enabled,
- 		void *ip_hdr, uint8_t ipv4, struct rte_udp_hdr *udp_hdr,
--		int nb_pkt_per_burst, uint8_t pkt_len, uint8_t nb_pkt_segs);
-+		uint16_t nb_pkt_per_burst, uint16_t pkt_len, uint16_t nb_pkt_segs);
- 
- int
- generate_packet_burst_proto(struct rte_mempool *mp,
- 		struct rte_mbuf **pkts_burst, struct rte_ether_hdr *eth_hdr,
- 		uint8_t vlan_enabled, void *ip_hdr,
- 		uint8_t ipv4, uint8_t proto, void *proto_hdr,
--		int nb_pkt_per_burst, uint8_t pkt_len, uint8_t nb_pkt_segs);
-+		uint16_t nb_pkt_per_burst, uint16_t pkt_len, uint16_t nb_pkt_segs);
- 
- #ifdef __cplusplus
- }
++#include <rte_bus_vdev.h>
++#include <rte_cycles.h>
++#include <rte_ethdev.h>
++#include <rte_ether.h>
++#include <rte_launch.h>
++#include <rte_lcore.h>
++#include <rte_mbuf.h>
++#include <rte_mempool.h>
++#include <rte_random.h>
++
++#include "test.h"
++
++#define NUM_MBUFS 256
++#define MBUF_CACHE_SIZE 32
++#define BURST_SIZE 32
++#define RING_SIZE 512
++#define PACKET_SIZE 64
++
++/* Test device names */
++#define NULL_DEV_NAME "net_null_test"
++
++static struct rte_mempool *mp;
++static uint16_t port_id = RTE_MAX_ETHPORTS;
++
++static int
++create_null_port(const char *name, const char *args, uint16_t *out_port_id)
++{
++	int ret;
++
++	ret = rte_vdev_init(name, args);
++	if (ret != 0) {
++		printf("Failed to create null device '%s': %d\n", name, ret);
++		return ret;
++	}
++
++	ret = rte_eth_dev_get_port_by_name(name, out_port_id);
++	if (ret != 0) {
++		printf("Failed to get port id for '%s': %d\n", name, ret);
++		rte_vdev_uninit(name);
++		return ret;
++	}
++
++	return 0;
++}
++
++static int
++configure_null_port(uint16_t pid)
++{
++	struct rte_eth_conf port_conf = {0};
++	struct rte_eth_dev_info dev_info;
++	int ret;
++
++	ret = rte_eth_dev_info_get(pid, &dev_info);
++	if (ret != 0) {
++		printf("Failed to get device info for port %u: %d\n", pid, ret);
++		return ret;
++	}
++
++	ret = rte_eth_dev_configure(pid, 1, 1, &port_conf);
++	if (ret != 0) {
++		printf("Failed to configure port %u: %d\n", pid, ret);
++		return ret;
++	}
++
++	ret = rte_eth_rx_queue_setup(pid, 0, RING_SIZE,
++				     rte_eth_dev_socket_id(pid),
++				     NULL, mp);
++	if (ret != 0) {
++		printf("Failed to setup RX queue for port %u: %d\n", pid, ret);
++		return ret;
++	}
++
++	ret = rte_eth_tx_queue_setup(pid, 0, RING_SIZE,
++				     rte_eth_dev_socket_id(pid),
++				     NULL);
++	if (ret != 0) {
++		printf("Failed to setup TX queue for port %u: %d\n", pid, ret);
++		return ret;
++	}
++
++	ret = rte_eth_dev_start(pid);
++	if (ret != 0) {
++		printf("Failed to start port %u: %d\n", pid, ret);
++		return ret;
++	}
++
++	return 0;
++}
++
++static int
++test_null_setup(void)
++{
++	/* Create mempool for mbufs */
++	mp = rte_pktmbuf_pool_create("null_test_pool", NUM_MBUFS,
++				     MBUF_CACHE_SIZE, 0,
++				     RTE_MBUF_DEFAULT_BUF_SIZE,
++				     rte_socket_id());
++	if (mp == NULL) {
++		printf("Failed to create mempool\n");
++		return -1;
++	}
++
++	/* Create and configure null port */
++	if (create_null_port(NULL_DEV_NAME, NULL, &port_id) != 0) {
++		printf("Failed to create null port\n");
++		return -1;
++	}
++
++	if (configure_null_port(port_id) != 0) {
++		printf("Failed to configure null port\n");
++		return -1;
++	}
++
++	return 0;
++}
++
++static void
++test_null_teardown(void)
++{
++	/* Stop and close test port */
++	rte_eth_dev_stop(port_id);
++	rte_eth_dev_close(port_id);
++	rte_vdev_uninit(NULL_DEV_NAME);
++	port_id = RTE_MAX_ETHPORTS;
++
++	rte_mempool_free(mp);
++	mp = NULL;
++}
++
++/*
++ * Test: Basic RX - should return empty packets
++ */
++static int
++test_null_rx_basic(void)
++{
++	struct rte_mbuf *bufs[BURST_SIZE];
++	uint16_t nb_rx;
++	unsigned int i;
++
++	/* RX should return requested number of empty packets */
++	nb_rx = rte_eth_rx_burst(port_id, 0, bufs, BURST_SIZE);
++	TEST_ASSERT(nb_rx == BURST_SIZE,
++		    "Expected %u packets, got %u", BURST_SIZE, nb_rx);
++
++	/* Verify packets have expected properties */
++	for (i = 0; i < nb_rx; i++) {
++		TEST_ASSERT(bufs[i] != NULL, "Received NULL mbuf");
++		TEST_ASSERT(bufs[i]->port == port_id,
++			    "Unexpected port id in mbuf: %u", bufs[i]->port);
++
++		/* Default packet size is 64 bytes */
++		TEST_ASSERT(bufs[i]->pkt_len == PACKET_SIZE,
++			    "Unexpected pkt_len: %u", bufs[i]->pkt_len);
++		TEST_ASSERT(bufs[i]->data_len == PACKET_SIZE,
++			    "Unexpected data_len: %u", bufs[i]->data_len);
++	}
++
++	/* Free received mbufs */
++	rte_pktmbuf_free_bulk(bufs, nb_rx);
++
++	return TEST_SUCCESS;
++}
++
++/* Create random valid ethernet packets */
++static int
++test_mbuf_setup_burst(struct rte_mbuf **bufs, unsigned int burst_size)
++{
++	unsigned int i;
++
++	if (rte_pktmbuf_alloc_bulk(mp, bufs, burst_size) != 0)
++		return -1;
++
++	for (i = 0; i < burst_size; i++) {
++		struct rte_mbuf *m = bufs[i];
++		uint16_t len;
++
++		/* Choose random length between ether min and available space */
++		len = rte_rand_max(rte_pktmbuf_tailroom(m) - RTE_ETHER_MIN_LEN)
++			+ RTE_ETHER_MIN_LEN;
++		m->data_len = len;
++		m->buf_len = len;
++	}
++	return 0;
++}
++
++/*
++ * Test: Basic TX - should free all packets
++ */
++static int
++test_null_tx_basic(void)
++{
++	struct rte_mbuf *bufs[BURST_SIZE];
++	uint16_t nb_tx;
++	unsigned int pool_count_before, pool_count_after;
++
++	/* Allocate mbufs for TX */
++	TEST_ASSERT(test_mbuf_setup_burst(bufs, BURST_SIZE) == 0,
++		    "Could not allocate mbufs");
++
++	pool_count_before = rte_mempool_avail_count(mp);
++
++	/* TX should accept and free all packets */
++	nb_tx = rte_eth_tx_burst(port_id, 0, bufs, BURST_SIZE);
++	TEST_ASSERT(nb_tx == BURST_SIZE,
++		    "Expected to TX %u packets, but sent %u", BURST_SIZE, nb_tx);
++
++	pool_count_after = rte_mempool_avail_count(mp);
++
++	/* Verify mbufs were freed - pool should have same count */
++	TEST_ASSERT(pool_count_after >= pool_count_before,
++		    "Mbufs not freed: before=%u, after=%u",
++		    pool_count_before, pool_count_after);
++
++	return TEST_SUCCESS;
++}
++
++/*
++ * Test: Statistics verification
++ */
++static int
++test_null_stats(void)
++{
++	struct rte_eth_stats stats;
++	struct rte_mbuf *rx_bufs[BURST_SIZE];
++	struct rte_mbuf *tx_bufs[BURST_SIZE];
++	uint16_t nb_rx, nb_tx;
++	int ret;
++
++	/* Reset stats */
++	ret = rte_eth_stats_reset(port_id);
++	TEST_ASSERT(ret == 0, "Failed to reset stats");
++
++	/* Get initial stats */
++	ret = rte_eth_stats_get(port_id, &stats);
++	TEST_ASSERT(ret == 0, "Failed to get stats");
++	TEST_ASSERT(stats.ipackets == 0, "Initial ipackets not zero");
++	TEST_ASSERT(stats.opackets == 0, "Initial opackets not zero");
++
++	/* Perform RX */
++	nb_rx = rte_eth_rx_burst(port_id, 0, rx_bufs, BURST_SIZE);
++	TEST_ASSERT(nb_rx == BURST_SIZE, "RX burst failed");
++
++	/* Allocate and perform TX */
++	TEST_ASSERT(test_mbuf_setup_burst(tx_bufs, BURST_SIZE) == 0,
++		    "Could not allocate tx mbufs");
++
++	nb_tx = rte_eth_tx_burst(port_id, 0, tx_bufs, BURST_SIZE);
++	TEST_ASSERT(nb_tx == BURST_SIZE, "TX burst failed");
++
++	/* Get updated stats */
++	ret = rte_eth_stats_get(port_id, &stats);
++	TEST_ASSERT(ret == 0, "Failed to get stats after RX/TX");
++
++	/* Verify stats */
++	TEST_ASSERT(stats.ipackets == BURST_SIZE,
++		    "Expected ipackets=%u, got %"PRIu64,
++		    BURST_SIZE, stats.ipackets);
++	TEST_ASSERT(stats.opackets == BURST_SIZE,
++		    "Expected opackets=%u, got %"PRIu64,
++		    BURST_SIZE, stats.opackets);
++
++	rte_pktmbuf_free_bulk(rx_bufs, nb_rx);
++
++	return TEST_SUCCESS;
++}
++
++/*
++ * Test: Custom packet size
++ */
++static int
++test_null_custom_size(void)
++{
++	struct rte_mbuf *bufs[BURST_SIZE];
++	uint16_t custom_port;
++	uint16_t nb_rx;
++	unsigned int i;
++	const unsigned int custom_size = 256;
++	int ret;
++
++	/* Create null device with custom size */
++	ret = create_null_port("net_null_size_test", "size=256", &custom_port);
++	TEST_ASSERT(ret == 0, "Failed to create null port with custom size");
++
++	ret = configure_null_port(custom_port);
++	TEST_ASSERT(ret == 0, "Failed to configure null port");
++
++	/* RX should return packets with custom size */
++	nb_rx = rte_eth_rx_burst(custom_port, 0, bufs, BURST_SIZE);
++	TEST_ASSERT(nb_rx == BURST_SIZE, "RX burst failed");
++
++	/* Verify custom packet size */
++	for (i = 0; i < nb_rx; i++) {
++		TEST_ASSERT(bufs[i]->pkt_len == custom_size,
++			    "Expected pkt_len=%u, got %u",
++			    custom_size, bufs[i]->pkt_len);
++		TEST_ASSERT(bufs[i]->data_len == custom_size,
++			    "Expected data_len=%u, got %u",
++			    custom_size, bufs[i]->data_len);
++	}
++	rte_pktmbuf_free_bulk(bufs, nb_rx);
++
++	/* Cleanup custom port */
++	rte_eth_dev_stop(custom_port);
++	rte_eth_dev_close(custom_port);
++	rte_vdev_uninit("net_null_size_test");
++
++	return TEST_SUCCESS;
++}
++
++/*
++ * Test: Copy mode
++ */
++static int
++test_null_copy_mode(void)
++{
++	struct rte_mbuf *rx_bufs[BURST_SIZE];
++	uint16_t copy_port, nb_rx;
++	int ret;
++
++	/* Create null device with copy enabled */
++	ret = create_null_port("net_null_copy_test", "copy=1", &copy_port);
++	TEST_ASSERT(ret == 0, "Failed to create null port with copy mode");
++
++	ret = configure_null_port(copy_port);
++	TEST_ASSERT(ret == 0, "Failed to configure null port");
++
++	/* RX in copy mode should work */
++	nb_rx = rte_eth_rx_burst(copy_port, 0, rx_bufs, BURST_SIZE);
++	TEST_ASSERT(nb_rx == BURST_SIZE, "RX burst in copy mode failed");
++
++	/* Free RX mbufs */
++	rte_pktmbuf_free_bulk(rx_bufs, nb_rx);
++
++	/* Cleanup */
++	rte_eth_dev_stop(copy_port);
++	rte_eth_dev_close(copy_port);
++	rte_vdev_uninit("net_null_copy_test");
++
++	return TEST_SUCCESS;
++}
++
++/*
++ * Test: No-RX mode
++ */
++static int
++test_null_no_rx_mode(void)
++{
++	struct rte_mbuf *rx_bufs[BURST_SIZE];
++	struct rte_mbuf *tx_bufs[BURST_SIZE];
++	uint16_t norx_port, nb_rx, nb_tx;
++	int ret;
++
++	/* Create null device with no-rx enabled */
++	ret = create_null_port("net_null_norx_test", "no-rx=1", &norx_port);
++	TEST_ASSERT(ret == 0, "Failed to create null port with no-rx mode");
++
++	ret = configure_null_port(norx_port);
++	TEST_ASSERT(ret == 0, "Failed to configure null port");
++
++	/* RX in no-rx mode should return 0 packets */
++	nb_rx = rte_eth_rx_burst(norx_port, 0, rx_bufs, BURST_SIZE);
++	TEST_ASSERT(nb_rx == 0,
++		    "Expected 0 packets in no-rx mode, got %u", nb_rx);
++
++	/* TX in no-rx mode should still work (frees packets) */
++	TEST_ASSERT(test_mbuf_setup_burst(tx_bufs, BURST_SIZE) == 0,
++		    "Could not allocate tx mbufs");
++
++	nb_tx = rte_eth_tx_burst(norx_port, 0, tx_bufs, BURST_SIZE);
++	TEST_ASSERT(nb_tx == BURST_SIZE, "TX burst in no-rx mode failed");
++
++	/* Cleanup */
++	rte_eth_dev_stop(norx_port);
++	rte_eth_dev_close(norx_port);
++	rte_vdev_uninit("net_null_norx_test");
++
++	return TEST_SUCCESS;
++}
++
++/*
++ * Test: Link status
++ */
++static int
++test_null_link_status(void)
++{
++	struct rte_eth_link link;
++	int ret;
++
++	ret = rte_eth_link_get_nowait(port_id, &link);
++	TEST_ASSERT(ret == 0, "Failed to get link status");
++
++	/* After start, link should be UP */
++	TEST_ASSERT(link.link_status == RTE_ETH_LINK_UP,
++		    "Expected link UP after start");
++	TEST_ASSERT(link.link_speed == RTE_ETH_SPEED_NUM_10G,
++		    "Expected 10G link speed");
++	TEST_ASSERT(link.link_duplex == RTE_ETH_LINK_FULL_DUPLEX,
++		    "Expected full duplex");
++
++	/* Stop the device */
++	ret = rte_eth_dev_stop(port_id);
++	TEST_ASSERT(ret == 0, "Failed to stop device");
++
++	ret = rte_eth_link_get_nowait(port_id, &link);
++	TEST_ASSERT(ret == 0, "Failed to get link status after stop");
++
++	/* After stop, link should be DOWN */
++	TEST_ASSERT(link.link_status == RTE_ETH_LINK_DOWN,
++		    "Expected link DOWN after stop");
++
++	/* Restart for subsequent tests */
++	ret = rte_eth_dev_start(port_id);
++	TEST_ASSERT(ret == 0, "Failed to restart device");
++
++	return TEST_SUCCESS;
++}
++
++/*
++ * Test: Device info
++ */
++static int
++test_null_dev_info(void)
++{
++	struct rte_eth_dev_info dev_info;
++	const uint16_t min_mtu = RTE_ETHER_MIN_LEN - RTE_ETHER_HDR_LEN -
++		RTE_ETHER_CRC_LEN;
++	int ret;
++
++	ret = rte_eth_dev_info_get(port_id, &dev_info);
++	TEST_ASSERT(ret == 0, "Failed to get device info");
++
++	/* Verify expected device info values */
++	TEST_ASSERT(dev_info.max_mac_addrs == 1,
++		    "Expected max_mac_addrs=1, got %u", dev_info.max_mac_addrs);
++
++	/* Null PMD has no MTU restrictions, so max_mtu is UINT16_MAX */
++	TEST_ASSERT(dev_info.max_mtu == UINT16_MAX,
++		    "Expected max_mtu=UINT16_MAX, got %u", dev_info.max_mtu);
++	TEST_ASSERT(dev_info.min_mtu == min_mtu,
++		    "Unexpected min_mtu: %u", dev_info.min_mtu);
++
++	/* Check TX offload capabilities */
++	TEST_ASSERT(dev_info.tx_offload_capa & RTE_ETH_TX_OFFLOAD_MULTI_SEGS,
++		    "Expected MULTI_SEGS TX offload capability");
++	TEST_ASSERT(dev_info.tx_offload_capa & RTE_ETH_TX_OFFLOAD_MT_LOCKFREE,
++		    "Expected MT_LOCKFREE TX offload capability");
++
++	/* Check RSS capabilities */
++	TEST_ASSERT(dev_info.reta_size > 0, "Expected non-zero reta_size");
++	TEST_ASSERT(dev_info.hash_key_size == 40,
++		    "Expected hash_key_size=40, got %u", dev_info.hash_key_size);
++	TEST_ASSERT(dev_info.flow_type_rss_offloads != 0,
++		    "Expected RSS offloads to be set");
++
++	return TEST_SUCCESS;
++}
++
++/*
++ * Test: Multiple RX/TX bursts
++ */
++static int
++test_null_multiple_bursts(void)
++{
++	struct rte_eth_stats stats;
++	uint16_t nb_rx, nb_tx;
++	unsigned int burst;
++	const unsigned int num_bursts = 10;
++	int ret;
++
++	/* Reset stats */
++	ret = rte_eth_stats_reset(port_id);
++	TEST_ASSERT(ret == 0, "Failed to reset stats");
++
++	/* Perform multiple RX bursts */
++	for (burst = 0; burst < num_bursts; burst++) {
++		struct rte_mbuf *bufs[BURST_SIZE];
++
++		nb_rx = rte_eth_rx_burst(port_id, 0, bufs, BURST_SIZE);
++		TEST_ASSERT(nb_rx == BURST_SIZE,
++			    "Burst %u: Expected %u packets, got %u",
++			    burst, BURST_SIZE, nb_rx);
++
++		rte_pktmbuf_free_bulk(bufs, nb_rx);
++	}
++
++	/* Perform multiple TX bursts */
++	for (burst = 0; burst < num_bursts; burst++) {
++		struct rte_mbuf *bufs[BURST_SIZE];
++
++		TEST_ASSERT(test_mbuf_setup_burst(bufs, BURST_SIZE) == 0,
++			    "Could not allocate tx mbufs");
++
++		nb_tx = rte_eth_tx_burst(port_id, 0, bufs, BURST_SIZE);
++		TEST_ASSERT(nb_tx == BURST_SIZE,
++			    "Burst %u: Expected to TX %u, sent %u",
++			    burst, BURST_SIZE, nb_tx);
++	}
++
++	/* Verify total stats */
++	ret = rte_eth_stats_get(port_id, &stats);
++	TEST_ASSERT(ret == 0, "Failed to get stats");
++
++	TEST_ASSERT(stats.ipackets == num_bursts * BURST_SIZE,
++		    "Expected ipackets=%u, got %"PRIu64,
++		    num_bursts * BURST_SIZE, stats.ipackets);
++	TEST_ASSERT(stats.opackets == num_bursts * BURST_SIZE,
++		    "Expected opackets=%u, got %"PRIu64,
++		    num_bursts * BURST_SIZE, stats.opackets);
++
++	return TEST_SUCCESS;
++}
++
++/*
++ * Test: RSS configuration
++ * Note: RSS requires multi-queue configuration
++ */
++static int
++test_null_rss_config(void)
++{
++	struct rte_eth_dev_info dev_info;
++	struct rte_eth_rss_conf rss_conf;
++	struct rte_eth_conf port_conf = {0};
++	uint8_t rss_key[40];
++	uint16_t rss_port;
++	const uint16_t num_queues = 2;
++	uint16_t q;
++	int ret;
++
++	/* Create a new null device for RSS testing with multiple queues */
++	ret = create_null_port("net_null_rss_test", NULL, &rss_port);
++	TEST_ASSERT(ret == 0, "Failed to create null port for RSS test");
++
++	ret = rte_eth_dev_info_get(rss_port, &dev_info);
++	TEST_ASSERT(ret == 0, "Failed to get device info");
++
++	/* Configure with RSS enabled and multiple queues */
++	port_conf.rxmode.mq_mode = RTE_ETH_MQ_RX_RSS;
++	port_conf.rx_adv_conf.rss_conf.rss_hf = dev_info.flow_type_rss_offloads;
++
++	ret = rte_eth_dev_configure(rss_port, num_queues, num_queues, &port_conf);
++	TEST_ASSERT(ret == 0, "Failed to configure RSS port");
++
++	for (q = 0; q < num_queues; q++) {
++		ret = rte_eth_rx_queue_setup(rss_port, q, RING_SIZE,
++					     rte_eth_dev_socket_id(rss_port),
++					     NULL, mp);
++		TEST_ASSERT(ret == 0, "Failed to setup RX queue %u", q);
++
++		ret = rte_eth_tx_queue_setup(rss_port, q, RING_SIZE,
++					     rte_eth_dev_socket_id(rss_port),
++					     NULL);
++		TEST_ASSERT(ret == 0, "Failed to setup TX queue %u", q);
++	}
++
++	ret = rte_eth_dev_start(rss_port);
++	TEST_ASSERT(ret == 0, "Failed to start RSS port");
++
++	/* Get current RSS config */
++	memset(&rss_conf, 0, sizeof(rss_conf));
++	rss_conf.rss_key = rss_key;
++	rss_conf.rss_key_len = sizeof(rss_key);
++
++	ret = rte_eth_dev_rss_hash_conf_get(rss_port, &rss_conf);
++	TEST_ASSERT(ret == 0, "Failed to get RSS hash config");
++
++	/* Update RSS config with new key */
++	memset(rss_key, 0x55, sizeof(rss_key));
++	rss_conf.rss_key = rss_key;
++	rss_conf.rss_key_len = sizeof(rss_key);
++	rss_conf.rss_hf = dev_info.flow_type_rss_offloads;
++
++	ret = rte_eth_dev_rss_hash_update(rss_port, &rss_conf);
++	TEST_ASSERT(ret == 0, "Failed to update RSS hash config");
++
++	/* Verify the update */
++	memset(rss_key, 0, sizeof(rss_key));
++	rss_conf.rss_key = rss_key;
++
++	ret = rte_eth_dev_rss_hash_conf_get(rss_port, &rss_conf);
++	TEST_ASSERT(ret == 0, "Failed to get RSS hash config after update");
++
++	/* Verify key was updated */
++	for (unsigned int i = 0; i < sizeof(rss_key); i++) {
++		TEST_ASSERT(rss_key[i] == 0x55,
++			    "RSS key not updated at byte %u", i);
++	}
++
++	/* Cleanup */
++	rte_eth_dev_stop(rss_port);
++	rte_eth_dev_close(rss_port);
++	rte_vdev_uninit("net_null_rss_test");
++
++	return TEST_SUCCESS;
++}
++
++/*
++ * Test: RETA (Redirection Table) configuration
++ * Note: RETA requires multi-queue RSS configuration
++ */
++static int
++test_null_reta_config(void)
++{
++	struct rte_eth_dev_info dev_info;
++	struct rte_eth_rss_reta_entry64 reta_conf[RTE_ETH_RSS_RETA_SIZE_128 /
++						 RTE_ETH_RETA_GROUP_SIZE];
++	struct rte_eth_conf port_conf = {0};
++	uint16_t reta_port;
++	const uint16_t num_queues = 2;
++	unsigned int i, j, nreta;
++	uint16_t q;
++	int ret;
++
++	/* Create a new null device for RETA testing with multiple queues */
++	ret = create_null_port("net_null_reta_test", NULL, &reta_port);
++	TEST_ASSERT(ret == 0, "Failed to create null port for RETA test");
++
++	ret = rte_eth_dev_info_get(reta_port, &dev_info);
++	TEST_ASSERT(ret == 0, "Failed to get device info");
++
++	TEST_ASSERT(dev_info.reta_size > 0, "RETA size is zero");
++
++	/* Configure with RSS enabled and multiple queues */
++	port_conf.rxmode.mq_mode = RTE_ETH_MQ_RX_RSS;
++	port_conf.rx_adv_conf.rss_conf.rss_hf = dev_info.flow_type_rss_offloads;
++
++	ret = rte_eth_dev_configure(reta_port, num_queues, num_queues, &port_conf);
++	TEST_ASSERT(ret == 0, "Failed to configure RETA port");
++
++	for (q = 0; q < num_queues; q++) {
++		ret = rte_eth_rx_queue_setup(reta_port, q, RING_SIZE,
++					     rte_eth_dev_socket_id(reta_port),
++					     NULL, mp);
++		TEST_ASSERT(ret == 0, "Failed to setup RX queue %u", q);
++
++		ret = rte_eth_tx_queue_setup(reta_port, q, RING_SIZE,
++					     rte_eth_dev_socket_id(reta_port),
++					     NULL);
++		TEST_ASSERT(ret == 0, "Failed to setup TX queue %u", q);
++	}
++
++	ret = rte_eth_dev_start(reta_port);
++	TEST_ASSERT(ret == 0, "Failed to start RETA port");
++
++	/* Initialize RETA config */
++	memset(reta_conf, 0, sizeof(reta_conf));
++	nreta = dev_info.reta_size / RTE_ETH_RETA_GROUP_SIZE;
++	for (i = 0; i < nreta; i++) {
++		reta_conf[i].mask = UINT64_MAX;
++		for (j = 0; j < RTE_ETH_RETA_GROUP_SIZE; j++)
++			reta_conf[i].reta[j] = j % num_queues;
++	}
++
++	/* Update RETA */
++	ret = rte_eth_dev_rss_reta_update(reta_port, reta_conf, dev_info.reta_size);
++	TEST_ASSERT(ret == 0, "Failed to update RETA");
++
++	/* Query RETA */
++	memset(reta_conf, 0, sizeof(reta_conf));
++	for (i = 0; i < nreta; i++)
++		reta_conf[i].mask = UINT64_MAX;
++
++	ret = rte_eth_dev_rss_reta_query(reta_port, reta_conf, dev_info.reta_size);
++	TEST_ASSERT(ret == 0, "Failed to query RETA");
++
++	/* Verify RETA values */
++	for (i = 0; i < nreta; i++) {
++		for (j = 0; j < RTE_ETH_RETA_GROUP_SIZE; j++) {
++			TEST_ASSERT(reta_conf[i].reta[j] == j % num_queues,
++				    "RETA mismatch at [%u][%u]", i, j);
++		}
++	}
++
++	/* Cleanup */
++	rte_eth_dev_stop(reta_port);
++	rte_eth_dev_close(reta_port);
++	rte_vdev_uninit("net_null_reta_test");
++
++	return TEST_SUCCESS;
++}
++
++/*
++ * Test: Stats reset
++ */
++static int
++test_null_stats_reset(void)
++{
++	struct rte_eth_stats stats;
++	struct rte_mbuf *bufs[BURST_SIZE];
++	uint16_t nb_rx;
++	int ret;
++
++	/* Generate some traffic */
++	nb_rx = rte_eth_rx_burst(port_id, 0, bufs, BURST_SIZE);
++	TEST_ASSERT(nb_rx > 0, "Failed to receive packets");
++
++	rte_pktmbuf_free_bulk(bufs, nb_rx);
++
++	/* Verify stats are non-zero */
++	ret = rte_eth_stats_get(port_id, &stats);
++	TEST_ASSERT(ret == 0, "Failed to get stats");
++	TEST_ASSERT(stats.ipackets > 0, "Expected non-zero ipackets");
++
++	/* Reset stats */
++	ret = rte_eth_stats_reset(port_id);
++	TEST_ASSERT(ret == 0, "Failed to reset stats");
++
++	/* Verify stats are zero */
++	ret = rte_eth_stats_get(port_id, &stats);
++	TEST_ASSERT(ret == 0, "Failed to get stats after reset");
++	TEST_ASSERT(stats.ipackets == 0,
++		    "Expected ipackets=0 after reset, got %"PRIu64,
++		    stats.ipackets);
++	TEST_ASSERT(stats.opackets == 0,
++		    "Expected opackets=0 after reset, got %"PRIu64,
++		    stats.opackets);
++	TEST_ASSERT(stats.ibytes == 0,
++		    "Expected ibytes=0 after reset, got %"PRIu64,
++		    stats.ibytes);
++	TEST_ASSERT(stats.obytes == 0,
++		    "Expected obytes=0 after reset, got %"PRIu64,
++		    stats.obytes);
++
++	return TEST_SUCCESS;
++}
++
++/*
++ * Test: MAC address operations
++ */
++static int
++test_null_mac_addr(void)
++{
++	struct rte_ether_addr mac_addr;
++	struct rte_ether_addr new_mac = {
++		.addr_bytes = {0x00, 0x11, 0x22, 0x33, 0x44, 0x55}
++	};
++	int ret;
++
++	/* Get current MAC address */
++	ret = rte_eth_macaddr_get(port_id, &mac_addr);
++	TEST_ASSERT(ret == 0, "Failed to get MAC address");
++
++	/* Set new MAC address */
++	ret = rte_eth_dev_default_mac_addr_set(port_id, &new_mac);
++	TEST_ASSERT(ret == 0, "Failed to set MAC address");
++
++	return TEST_SUCCESS;
++}
++
++/*
++ * Test: Promiscuous and allmulticast modes
++ */
++static int
++test_null_promisc_allmulti(void)
++{
++	int ret;
++
++	/* Test promiscuous mode - null PMD starts with promiscuous enabled */
++	ret = rte_eth_promiscuous_get(port_id);
++	TEST_ASSERT(ret == 1, "Expected promiscuous mode enabled");
++
++	/* Test allmulticast mode - null PMD starts with allmulti enabled */
++	ret = rte_eth_allmulticast_get(port_id);
++	TEST_ASSERT(ret == 1, "Expected allmulticast mode enabled");
++
++	return TEST_SUCCESS;
++}
++
++/*
++ * Multi-threaded TX test structures and worker function
++ */
++#define MT_TX_BURSTS_PER_LCORE 100
++#define MT_TX_BURST_SIZE 8
++
++struct mt_tx_args {
++	uint16_t port;
++	uint16_t queue;
++	struct rte_mempool *pool;
++	uint64_t tx_count;	/* packets successfully transmitted */
++	int error;		/* non-zero if worker encountered error */
++};
++
++static int
++mt_tx_worker(void *arg)
++{
++	struct mt_tx_args *args = arg;
++	struct rte_mbuf *bufs[MT_TX_BURST_SIZE];
++	unsigned int burst;
++	uint16_t nb_tx;
++
++	args->tx_count = 0;
++	args->error = 0;
++
++	for (burst = 0; burst < MT_TX_BURSTS_PER_LCORE; burst++) {
++		/* Allocate mbufs */
++		if (rte_pktmbuf_alloc_bulk(args->pool, bufs, MT_TX_BURST_SIZE) != 0) {
++			args->error = -ENOMEM;
++			return -1;
++		}
++
++		/* Set minimal packet size */
++		for (unsigned int i = 0; i < MT_TX_BURST_SIZE; i++) {
++			bufs[i]->data_len = RTE_ETHER_MIN_LEN;
++			bufs[i]->pkt_len = RTE_ETHER_MIN_LEN;
++		}
++
++		/* Transmit on shared queue */
++		nb_tx = rte_eth_tx_burst(args->port, args->queue,
++					 bufs, MT_TX_BURST_SIZE);
++		args->tx_count += nb_tx;
++
++		/* Free any unsent packets */
++		if (nb_tx < MT_TX_BURST_SIZE)
++			rte_pktmbuf_free_bulk(&bufs[nb_tx],
++					      MT_TX_BURST_SIZE - nb_tx);
++	}
++
++	return 0;
++}
++
++/*
++ * Test: Multi-threaded TX on same queue (MT_LOCKFREE)
++ * The null PMD advertises MT_LOCKFREE capability, meaning multiple
++ * threads can transmit on the same queue without external locking.
++ */
++static int
++test_null_mt_tx(void)
++{
++	struct rte_eth_dev_info dev_info;
++	struct rte_mempool *mt_pool;
++	struct mt_tx_args worker_args[RTE_MAX_LCORE];
++	struct rte_eth_stats stats;
++	unsigned int lcore_id;
++	unsigned int num_workers = 0;
++	uint64_t total_expected = 0;
++	int ret;
++
++	/* Check MT_LOCKFREE capability */
++	ret = rte_eth_dev_info_get(port_id, &dev_info);
++	TEST_ASSERT(ret == 0, "Failed to get device info");
++
++	if (!(dev_info.tx_offload_capa & RTE_ETH_TX_OFFLOAD_MT_LOCKFREE)) {
++		printf("  MT_LOCKFREE not supported, skipping test\n");
++		return TEST_SKIPPED;
++	}
++
++	/* Count available worker lcores */
++	RTE_LCORE_FOREACH_WORKER(lcore_id) {
++		num_workers++;
++	}
++
++	if (num_workers < 2) {
++		printf("  Need at least 2 worker lcores for MT test, "
++		       "have %u, skipping\n", num_workers);
++		return TEST_SKIPPED;
++	}
++
++	/* Limit to reasonable number of workers */
++	if (num_workers > 4)
++		num_workers = 4;
++
++	/* Create larger mempool for multi-threaded test */
++	mt_pool = rte_pktmbuf_pool_create("mt_tx_pool",
++					  num_workers * MT_TX_BURSTS_PER_LCORE *
++					  MT_TX_BURST_SIZE * 2,
++					  MBUF_CACHE_SIZE, 0,
++					  RTE_MBUF_DEFAULT_BUF_SIZE,
++					  rte_socket_id());
++	TEST_ASSERT(mt_pool != NULL, "Failed to create MT test mempool");
++
++	/* Reset stats before test */
++	ret = rte_eth_stats_reset(port_id);
++	TEST_ASSERT(ret == 0, "Failed to reset stats");
++
++	/* Launch workers */
++	num_workers = 0;
++	RTE_LCORE_FOREACH_WORKER(lcore_id) {
++		if (num_workers >= 4)
++			break;
++
++		worker_args[num_workers].port = port_id;
++		worker_args[num_workers].queue = 0;  /* All use same queue */
++		worker_args[num_workers].pool = mt_pool;
++		worker_args[num_workers].tx_count = 0;
++		worker_args[num_workers].error = 0;
++
++		ret = rte_eal_remote_launch(mt_tx_worker,
++					    &worker_args[num_workers],
++					    lcore_id);
++		TEST_ASSERT(ret == 0, "Failed to launch worker on lcore %u",
++			    lcore_id);
++		num_workers++;
++	}
++
++	printf("  Launched %u workers for MT TX test\n", num_workers);
++
++	/* Wait for all workers to complete */
++	RTE_LCORE_FOREACH_WORKER(lcore_id) {
++		rte_eal_wait_lcore(lcore_id);
++	}
++
++	/* Check for errors and sum up TX counts */
++	for (unsigned int i = 0; i < num_workers; i++) {
++		TEST_ASSERT(worker_args[i].error == 0,
++			    "Worker %u encountered error: %d",
++			    i, worker_args[i].error);
++		total_expected += worker_args[i].tx_count;
++	}
++
++	/* Verify stats match expected */
++	ret = rte_eth_stats_get(port_id, &stats);
++	TEST_ASSERT(ret == 0, "Failed to get stats");
++
++	printf("  Total TX from workers: %"PRIu64", stats.opackets: %"PRIu64"\n",
++	       total_expected, stats.opackets);
++
++	TEST_ASSERT(stats.opackets == total_expected,
++		    "Stats mismatch: expected %"PRIu64" opackets, got %"PRIu64,
++		    total_expected, stats.opackets);
++
++	/* Cleanup */
++	rte_mempool_free(mt_pool);
++
++	return TEST_SUCCESS;
++}
++
++static struct unit_test_suite null_pmd_test_suite = {
++	.suite_name = "Null PMD Unit Test Suite",
++	.setup = test_null_setup,
++	.teardown = test_null_teardown,
++	.unit_test_cases = {
++		TEST_CASE(test_null_rx_basic),
++		TEST_CASE(test_null_tx_basic),
++		TEST_CASE(test_null_stats),
++		TEST_CASE(test_null_custom_size),
++		TEST_CASE(test_null_copy_mode),
++		TEST_CASE(test_null_no_rx_mode),
++		TEST_CASE(test_null_link_status),
++		TEST_CASE(test_null_dev_info),
++		TEST_CASE(test_null_multiple_bursts),
++		TEST_CASE(test_null_mt_tx),
++		TEST_CASE(test_null_rss_config),
++		TEST_CASE(test_null_reta_config),
++		TEST_CASE(test_null_stats_reset),
++		TEST_CASE(test_null_mac_addr),
++		TEST_CASE(test_null_promisc_allmulti),
++
++		TEST_CASES_END() /**< NULL terminate unit test array */
++	}
++};
++
++static int
++test_pmd_null(void)
++{
++	return unit_test_suite_runner(&null_pmd_test_suite);
++}
++
++REGISTER_FAST_TEST(null_pmd_autotest, true, true, test_pmd_null);
 -- 
 2.51.0
 
