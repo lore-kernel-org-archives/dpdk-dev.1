@@ -2,45 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02F69D2502E
-	for <dpdk-dev@archiver.kernel.org>; Sun, 11 Jan 2026 16:01:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B20F6D2502E
+	for <dpdk-dev@archiver.kernel.org>; Sun, 11 Jan 2026 16:06:31 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 423344065B;
-	Sun, 11 Jan 2026 17:01:44 +0100 (CET)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id F3D8C40655
- for <dev@dpdk.org>; Sun, 11 Jan 2026 17:01:41 +0100 (CET)
-Received: from mail.maildlp.com (unknown [172.18.224.107])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4dq0cW12F5zJ4681;
- Mon, 12 Jan 2026 00:01:31 +0800 (CST)
-Received: from dubpeml500002.china.huawei.com (unknown [7.214.145.83])
- by mail.maildlp.com (Postfix) with ESMTPS id 1F1DF40584;
- Mon, 12 Jan 2026 00:01:41 +0800 (CST)
-Received: from dubpeml500001.china.huawei.com (7.214.147.241) by
- dubpeml500002.china.huawei.com (7.214.145.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Sun, 11 Jan 2026 16:01:40 +0000
-Received: from dubpeml500001.china.huawei.com ([7.214.147.241]) by
- dubpeml500001.china.huawei.com ([7.214.147.241]) with mapi id 15.02.1544.011; 
- Sun, 11 Jan 2026 16:01:40 +0000
-From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-To: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>,
- "dev@dpdk.org" <dev@dpdk.org>
-Subject: RE: [PATCH] mbuf: optimize detach direct buffer
-Thread-Topic: [PATCH] mbuf: optimize detach direct buffer
-Thread-Index: AQHcfNg4Y2Kx2wgdr0CIlI1ySEci6rVNLU7w
-Date: Sun, 11 Jan 2026 16:01:40 +0000
-Message-ID: <6ce9a070d9964ba5b8468be88e9974c5@huawei.com>
-References: <20260103174054.121246-1-mb@smartsharesystems.com>
-In-Reply-To: <20260103174054.121246-1-mb@smartsharesystems.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.195.35.80]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by mails.dpdk.org (Postfix) with ESMTP id D3CA24060B;
+	Sun, 11 Jan 2026 17:06:30 +0100 (CET)
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com
+ [209.85.160.179])
+ by mails.dpdk.org (Postfix) with ESMTP id 0D9574028F
+ for <dev@dpdk.org>; Sun, 11 Jan 2026 17:06:30 +0100 (CET)
+Received: by mail-qt1-f179.google.com with SMTP id
+ d75a77b69052e-4ee257e56aaso51135641cf.0
+ for <dev@dpdk.org>; Sun, 11 Jan 2026 08:06:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20230601; t=1768147589; x=1768752389; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=4Q29+XNJ3Lyjq2LuC3aTQK6noVtfadZ6xcZ7PVCpkF0=;
+ b=a/lD5LOh53khwR4aFeZ9NGv0URC/1mVdX2srtnzCizVRySTkAC3/xIGK4Q5Jesoe6d
+ CsuM+6TKp9yKdZ5wLEB20X3GU3JBoWT59+Pd5qtaOvUQ/pIg9XS/p9LVk16kgYTILKHS
+ GM9RPeHAUktkj8QbR8Ob/rwcTfxxaIq/PrKpxPI4SnZBgz5TKXZN44iPqoFXimEK7Xs5
+ 2mGStxqXb+79v5StgVEmBJyDGUs9rQ5ED5XgzTaf5r2sp67WEaQfmcjBk+w5kzV0MhRR
+ c9dzmYfDKjNnRk9f01YGH2yenTNErwYR+p1nUpVj6AhjUNAKjbbmn7/e7FM/ycuqfwkG
+ 0Cow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1768147589; x=1768752389;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=4Q29+XNJ3Lyjq2LuC3aTQK6noVtfadZ6xcZ7PVCpkF0=;
+ b=Wm4IQhUm7wh4xkw9HdTQa4OzlnlPuqCqjqMUqN5xJq9oxMBnbnE+rgUtKQLJIZtk6U
+ YUN3H5Equay6pAuiUn3V+7XH4Q73Xu6QpE1w9udqjw9Z7eAxv/YMp70U78oRrajTJFzc
+ 1LQ1u5TSXpHVTMBhhS/eMuvUgnSGN3MWZig3IwnYnN7ahOzaowZ4/sDfgs8OLtkuw4Up
+ tndxRUQEx4gGSYdvACEhwWO1xZtv2h/VJFtYg3dajfN05HZLyGMNNPeer8CoEvvinxjh
+ 0v42tIDcfNXsINtIczJ8JcPIHRQNjPWCa56wCYHB30Y4V/rXkuoU98peCJU+jlqfvtyT
+ 2ntQ==
+X-Gm-Message-State: AOJu0Yyr92JIk4J8fuz63hql2BazWzH84HkAKxNLDgT3kAXt0dpzzy79
+ Ljr9ayCqdU9/Cx7PC0PrjJM2TvvV/bCX+gY5QTTPrZpDduO/BxI2QJue0INeFg==
+X-Gm-Gg: AY/fxX7qcdOvUXBiSbyaIBG45jQOGk/k1g+97ufI/d9AyUS2SWc4HoanRzdQ24UN5dF
+ +oNDMPxQajyBcyZ3/4OWE3Is+tjDUkaxQEBR+/Iv3gJ2IyebIZySd8TNeTRga2Dg0n/Ea+U4shl
+ jIWu9iDB2D3CInvfSI63B9WfgiSdnm22RnlPP+UurHbyLTB6RQkCYy2a7iIZxwwjiuA5dDE7sz5
+ 9UUxbuO3NsS4MC86fHU8Gp6U41/BV7sN67RnmR4RcByL6Qkxwm76Hl5e/AP3FmoFW/ND5n3MeMF
+ 08cM0PHcBToVmf/+HXDYuJJHq/tPhzXPklEjulv16ZOQDzlcYEhDhRXqDeE0pewZzMUh3q0ZhZ9
+ qgzsXdx9Bl905DIBN9D6N1reemq4wxP3R67yEhUY0jvd9taac8sGTIJ7SOW0jPwgbo3kggH96oU
+ 9g9/l6bx+H4enBZJyaG9rbvjuye2pNrrh8Ny+zraOjyA1Gkz31c+vHUIWmp7uI
+X-Google-Smtp-Source: AGHT+IHjOZvnK7KlkvHMsDkv6NIi9N+WMQwbCPkyXDnllzDedrX0HqTXqd64bv846Up1lg6Yp5mwgQ==
+X-Received: by 2002:a05:622a:1307:b0:4ee:1dd0:5a50 with SMTP id
+ d75a77b69052e-4ffb3e65dfemr193012671cf.17.1768147589173; 
+ Sun, 11 Jan 2026 08:06:29 -0800 (PST)
+Received: from st57p01nt-relayp02.apple.com
+ ([2600:1000:b19c:b9d9:b0a4:2ee1:3986:5e9d])
+ by smtp.gmail.com with ESMTPSA id
+ d75a77b69052e-4ffa8d3d34fsm106575561cf.4.2026.01.11.08.06.28
+ (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+ Sun, 11 Jan 2026 08:06:28 -0800 (PST)
+From: scott.k.mitch1@gmail.com
+To: dev@dpdk.org
+Cc: mb@smartsharesystems.com, stephen@networkplumber.org,
+ Scott Mitchell <scott.k.mitch1@gmail.com>
+Subject: [PATCH v4 0/2] eal: RTE_PTR_ADD/SUB char* for compiler optimizations
+Date: Sun, 11 Jan 2026 11:06:24 -0500
+Message-Id: <20260111160626.2103-1-scott.k.mitch1@gmail.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -54,33 +79,57 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-DQoNCj4gV2hlbiBydGVfcGt0bWJ1Zl9wcmVmcmVlX3NlZygpIHJlc2V0cyBhbiBtYnVmIGFib3V0
-IHRvIGJlIGZyZWVkLCBpdA0KPiBkb2Vzbid0IHdyaXRlIHRoZSBmaWVsZHMgdGhhdCBhbHJlYWR5
-IGhhdmUgdGhlIHJlcXVpcmVkIHZhbHVlcy4gVGhpcw0KPiBzYXZlcyBhIG1lbW9yeSBzdG9yZSBv
-cGVyYXRpb24gd2hlbiBhbGwgdGhlIGZpZWxkcyBhbHJlYWR5IGhhdmUgdGhlDQo+IHJlcXVpcmVk
-IHZhbHVlcy4NCj4gDQo+IFRoaXMgcGF0Y2ggYWRkcyB0aGUgc2FtZSBvcHRpbWl6YXRpb24gdG8g
-X19ydGVfcGt0bWJ1Zl9mcmVlX2RpcmVjdCgpLA0KPiB0byBpbXByb3ZlIHRoZSBwZXJmb3JtYW5j
-ZSBmb3IgZnJlZWluZyBhIGRpcmVjdCBidWZmZXIgYmVpbmcgZGV0YWNoZWQgZnJvbQ0KPiBhIHBh
-Y2tldCBtYnVmLCBpLmUuIHNhdmluZyBhIG1lbW9yeSBzdG9yZSBvcGVyYXRpb24gd2hlbiBhbGwg
-dGhlIGZpZWxkcw0KPiAob2YgdGhlIGJ1ZmZlciBiZWluZyBmcmVlZCkgYWxyZWFkeSBoYXZlIHRo
-ZSByZXF1aXJlZCB2YWx1ZXMuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBNb3J0ZW4gQnLDuHJ1cCA8
-bWJAc21hcnRzaGFyZXN5c3RlbXMuY29tPg0KPiAtLS0NCj4gIGxpYi9tYnVmL3J0ZV9tYnVmLmgg
-fCAxNiArKysrKysrKysrKy0tLS0tDQo+ICAxIGZpbGUgY2hhbmdlZCwgMTEgaW5zZXJ0aW9ucygr
-KSwgNSBkZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9saWIvbWJ1Zi9ydGVfbWJ1Zi5o
-IGIvbGliL21idWYvcnRlX21idWYuaA0KPiBpbmRleCAyMDA0MzkxZjU3Li41OTJhZjIzODhjIDEw
-MDY0NA0KPiAtLS0gYS9saWIvbWJ1Zi9ydGVfbWJ1Zi5oDQo+ICsrKyBiL2xpYi9tYnVmL3J0ZV9t
-YnVmLmgNCj4gQEAgLTEzMzQsMTcgKzEzMzQsMjMgQEAgc3RhdGljIGlubGluZSB2b2lkDQo+ICBf
-X3J0ZV9wa3RtYnVmX2ZyZWVfZGlyZWN0KHN0cnVjdCBydGVfbWJ1ZiAqbSkNCj4gIHsNCj4gIAlz
-dHJ1Y3QgcnRlX21idWYgKm1kOw0KPiArCWJvb2wgcmVmY250X25vdF9vbmU7DQo+IA0KPiAgCVJU
-RV9BU1NFUlQoUlRFX01CVUZfQ0xPTkVEKG0pKTsNCj4gDQo+ICAJbWQgPSBydGVfbWJ1Zl9mcm9t
-X2luZGlyZWN0KG0pOw0KPiANCj4gLQlpZiAocnRlX21idWZfcmVmY250X3VwZGF0ZShtZCwgLTEp
-ID09IDApIHsNCj4gLQkJbWQtPm5leHQgPSBOVUxMOw0KPiAtCQltZC0+bmJfc2VncyA9IDE7DQo+
-ICsJcmVmY250X25vdF9vbmUgPSB1bmxpa2VseShydGVfbWJ1Zl9yZWZjbnRfcmVhZChtZCkgIT0g
-MSk7DQo+ICsJaWYgKHJlZmNudF9ub3Rfb25lICYmIF9fcnRlX21idWZfcmVmY250X3VwZGF0ZSht
-ZCwgLTEpICE9IDApDQo+ICsJCXJldHVybjsNCj4gKw0KPiArCWlmIChyZWZjbnRfbm90X29uZSkN
-Cj4gIAkJcnRlX21idWZfcmVmY250X3NldChtZCwgMSk7DQo+IC0JCXJ0ZV9tYnVmX3Jhd19mcmVl
-KG1kKTsNCj4gLQl9DQo+ICsJaWYgKG1kLT5uYl9zZWdzICE9IDEpDQo+ICsJCW1kLT5uYl9zZWdz
-ID0gMTsNCj4gKwlpZiAobWQtPm5leHQgIT0gTlVMTCkNCj4gKwkJbWQtPm5leHQgPSBOVUxMOw0K
-PiArCXJ0ZV9tYnVmX3Jhd19mcmVlKG1kKTsNCj4gIH0NCj4gDQo+ICAvKioNCj4gLS0NCg0KQWNr
-ZWQtYnk6IEtvbnN0YW50aW4gQW5hbnlldiA8a29uc3RhbnRpbi5hbmFueWV2QGh1YXdlaS5jb20+
-DQogDQoNCj4gMi40My4wDQoNCg==
+From: Scott Mitchell <scott.k.mitch1@gmail.com>
+
+This series optimizes RTE_PTR_ADD and RTE_PTR_SUB by using char* pointer
+arithmetic instead of uintptr_t casts when operating on pointer types.
+This enables better compiler optimization, particularly for Clang which
+can now recognize simple pointer patterns and apply vectorization, loop
+unrolling, and improved assembly.
+
+The implementation uses C11 _Generic to dispatch based on input type,
+maintaining full API compatibility while enabling significant performance
+improvements in checksum operations (40% for small buffers, up to 8x for
+larger buffers).
+
+The first patch contains the core optimization changes and unit tests.
+The second patch adds a .mailmap entry for consistent git attribution.
+
+Note on checkpatch warnings: The patches generate checkpatch warnings due to
+C11 _Generic syntax not being fully recognized by checkpatch.pl (designed for
+kernel C). The warnings are false positives - the code is valid C11 and
+follows the same pattern as existing DPDK code (e.g., __rte_constant macro,
+rte_bitops.h). The COMPLEX_MACRO warning is explicitly acknowledged by
+checkpatch itself as expected for statement expression macros.
+
+Changes in v4:
+- Fixed duplicate "v3 v3" in subject line from v3
+
+Changes in v3:
+- Fixed CI build failures on GCC
+- Simplified const pointer handling: GCC type-checks all _Generic branches
+  including unselected ones, causing errors with the nested _Generic/ternary
+  approach used in v2. Now uses simple char* cast for all pointer types,
+  which compiles on both GCC and Clang while still achieving the optimization
+  goal (char* arithmetic enables compiler optimizations vs uintptr_t).
+- Removed Clang-specific pragma for -Wconditional-type-mismatch (no longer
+  needed without the ternary operator)
+
+Changes in v2:
+- Fixed copyright in test file to Apple Inc. (was Intel Corporation)
+- Added checkpatch warning explanation to cover letter
+
+Scott Mitchell (2):
+  eal: RTE_PTR_ADD/SUB char* for compiler optimizations
+  mailmap: add Scott Mitchell
+
+ .mailmap                     |   1 +
+ app/test/meson.build         |   1 +
+ app/test/test_ptr_add_sub.c  | 190 +++++++++++++++++++++++++++++++++++
+ lib/eal/include/rte_common.h |  60 +++++++++++
+ 4 files changed, 252 insertions(+)
+ create mode 100644 app/test/test_ptr_add_sub.c
+
+--
+2.39.5 (Apple Git-154)
+
