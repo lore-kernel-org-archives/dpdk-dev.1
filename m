@@ -2,65 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52912D25032
-	for <dpdk-dev@archiver.kernel.org>; Sun, 11 Jan 2026 06:21:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8EAAD2502E
+	for <dpdk-dev@archiver.kernel.org>; Sun, 11 Jan 2026 15:00:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DD91340276;
-	Sun, 11 Jan 2026 07:21:49 +0100 (CET)
-Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com
- [209.85.222.48]) by mails.dpdk.org (Postfix) with ESMTP id 5272540144
- for <dev@dpdk.org>; Sun, 11 Jan 2026 07:21:48 +0100 (CET)
-Received: by mail-ua1-f48.google.com with SMTP id
- a1e0cc1a2514c-93a9f6efe8bso1631572241.0
- for <dev@dpdk.org>; Sat, 10 Jan 2026 22:21:48 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id B6B0140281;
+	Sun, 11 Jan 2026 16:00:51 +0100 (CET)
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com
+ [209.85.222.174])
+ by mails.dpdk.org (Postfix) with ESMTP id 3C87740276
+ for <dev@dpdk.org>; Sun, 11 Jan 2026 16:00:50 +0100 (CET)
+Received: by mail-qk1-f174.google.com with SMTP id
+ af79cd13be357-8b2ed01b95dso619426285a.0
+ for <dev@dpdk.org>; Sun, 11 Jan 2026 07:00:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1768112507; x=1768717307; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=+OK/08hToC/IcjEeQhb/ag1bEt8rMIctq+aV4FK3o7k=;
- b=TzYmgey5zORWcTuPTmKO7wLNWR/nP7WNa2B+tvVUmkWdfu3zSHzL5ES1xX9xmiSGRB
- S1KS+q7EjqLqmQ9SE6LV3ch5O3CDo1dRxNTHf968oNWrm/96QV7vw+2fYlXwmzS0g4wz
- QKi8JeZVTgA8JTJPqkeSAG65u2KsUrmUoNBTwWSjmz9md4SUtcISIicIMR6M26+aRYZT
- btjHJ9+0jZTGlRVgEZ9RA5a0qqfA7/GcxgOoCQFSe+PAAY3yvCttbzKqdN1YXVWa1B+/
- ov9k7fhp+epPcSFiJcXpaFs74R0TEj1KKf18h6SI6AOPpa1GyoYC5TSl66IpAtEAeZ42
- Dcig==
+ d=gmail.com; s=20230601; t=1768143649; x=1768748449; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=MJ7PwmiC3I4q9GOiVO1XO5Fhr3C1J23CvbvQl+R13jo=;
+ b=WAPixx8Dxp4DaZenFknTw6u0nTAMdOEmcYIeuIA43pDzIrm5dS0kc7iLSD7jGH29Tc
+ 735JuU+oVJmiPc80H5hqpBs/xVPgEkHKSRCAJzkFiLoT8w6yB4GDYKpG9MkGZG7hXdaQ
+ v3d96DoJ0PyibPOtSINpYd/GB9ch+KOaYr7AJgjlHMcSdwZaObIheSpcqEmwhiDUye1s
+ MJJGPAeelsHHRTdLdvBqSCl+XOiOaqg2xPqWQWmyUw+GJu3khZONXbiuuBMTHm1RJxTs
+ DS4hHI8HeTqon1ZAvaRhTXxJDbetnQfsFHP6DI72/sS0l4jqAnw8GGKqyijCgrN3ib91
+ i3EQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768112507; x=1768717307;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ d=1e100.net; s=20230601; t=1768143649; x=1768748449;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to;
- bh=+OK/08hToC/IcjEeQhb/ag1bEt8rMIctq+aV4FK3o7k=;
- b=vfQryJYRJq2423zsawDKdGFvwMLJFB6EgDx4TW1OB+bibQqy5XVZAVi19JTMhZW3Zn
- aHt2a3gUtujiN9Sl1vjUdqHpxjLH+T4RmvN87FjSoBU9nXmHo8pIqQWvcmqHheZo9EfJ
- aw3KSw4E/7DaZCLdTOKPAWIDOpJWHl2ABAgrUGqG9gEpqxHkyilJnZgQO/2gR6Myos+J
- 0Dc36jL3qiBdmu5Ia5b8Hah2I89eSmvcnLOL69FqYUurr48MhMUJ+NWOYnQEhQ5ZcD1E
- gz7FDm0lG/Sw6swi/3BTaYR0wW1Y3Sl3Obko65ozxCjvJkDahE6nJJCA3Ekh4kG8r2jz
- K5EA==
-X-Gm-Message-State: AOJu0YzDn1E736I0+zyS2+0pU/D3zc6JMyuAEHxuTAWoHGnZtRniuH3X
- UCu0csqUJBVyKQnUXTpi+5ybrhsxPMD79l28nmMMJoXeUds+t8ClcSSZoGb9jD+SJZmVJPcilwd
- ydG/8Xwev+ON3H3xCmZL9oZ9v9Sj1E2o=
-X-Gm-Gg: AY/fxX6f9ppD/EZgX1PLWRufORWwyIUL+k1FhWVQCKD4rqHHuZc0VQsmqyOQcqaCycq
- lqfdJSymjfIYzjy5Y0aYnhuTQTHzF324DD0ITPZDaQ8ncFdJU0pKx3CXPDLpSoN1iorTT9/+8LV
- 3b2K0Hb4iJwE1QqXWXXmUIB50F+WFKZs7uj/jkfCYD1S5H95SNZ6T2hJEseUvz/uhRVDl95lfwL
- CPpCgldiCHHm4AKOStDPD59toSXYSarkKkVfg6gtBmUUAfAGBU1sP/2gZIlNh31ZXIGh5uX5gYM
- 2cgH9gtzu91XxqhO7MAq3xmyeQm7HOJnelUQrQ==
-X-Google-Smtp-Source: AGHT+IG0zt4G0hcKuIgwLUiJp+HKUezqrydLKA5Jo7qf8F5k8A4fKUFzjaYTHomRdyI274NRUFTR/QW2lGIZNqSE9tU=
-X-Received: by 2002:a05:6102:548b:b0:5db:fe41:747b with SMTP id
- ada2fe7eead31-5ecb4f55775mr5316632137.18.1768112506853; Sat, 10 Jan 2026
- 22:21:46 -0800 (PST)
+ bh=MJ7PwmiC3I4q9GOiVO1XO5Fhr3C1J23CvbvQl+R13jo=;
+ b=N4o9Gjq0CRSx/OWcLGDd9PuA0ctWl7TAxgQnDHf+JvF2I3MgDVDh/bNaXU8y0sOumb
+ PkDvvlEB9Bj9Bi2efdW09iPuua2kOEJYoVayESBzOeZAIO2yCPX3Dy02fZD6kKxzckyc
+ ta1A5ZMfJKfnwkVi8tveSaXLvaOAdu+HVlpX2+OaXI/kyFnEwCdbOoO5wSal2TC8lvgd
+ aGGVx/gJAKSfNnR/PSBZ40VhmGysIhGBM6VI5432Vt89mhf3Z+ppu0h2KEvqECqUnN7N
+ z1/3imI3Ef+miX6H2u+nLraYrMyysulIb4VciMEfSok/fUXC41AwAvpfjMNcWLbIWU7u
+ TKeA==
+X-Gm-Message-State: AOJu0Yz7E34TXusR514LjNPwhb2l9RC1WEOPvbt35cl7UxDLUQdWnm+v
+ cXgFX/VEgwe8VqFrr6MQ9pn+zh3Wf96oySoPLFgzq261V5II9NW/TS8x1VaLUQ==
+X-Gm-Gg: AY/fxX4fIc6PbDhZpOAqFk4dMNEtMWo7luHKlHKkmif13bjChSm/pMtTN7+/vFxcPQZ
+ iHQUbz7YD+dt3y23uI95nkU3N5g3ZnUnOn50+KrZlmZVP7+iFPBTnSBWhz4R3GrIdDmSf7mxu3E
+ X7oPonEHMAIk9KfJbcZrb9xWB8t2JdaQwdWfotgn3mgbKsjNR4IW1Ekxeh+7IfwtBGkt3iGHALR
+ /cemp8322i3swDz2xhnfb+1gF0MMjtXRwCxk8qKC2Mqp1o3AC6qT3P/WcHyOgRmzdg1s64pfQME
+ ASuhxRorls6YB1mK82/AJo8G/+w6detyVvFCQt12MGs7bgiwdniai2LFLPW2faxAySOn5hIAWGU
+ Bv3z/rjQFleHrUWDZ5Le4jHwjnzAboT+Kjvj2Yds3cDVLk4u/j7DAJo0x2xdW1N5l5vbMYF/mIl
+ 9cpVIIZbKu/lBNpvKczYqBaogh9hC/3Q2haw/0Sd6VsgIOkGyUbzvQynlYtKqTLJvRJg==
+X-Google-Smtp-Source: AGHT+IH47lgz9JYZ7VOsbfdWBeciYx9u/xYUS2Yiwr2d/pZmvAQ4BceytGMVimpXNz2SGDzIxGkHGQ==
+X-Received: by 2002:a05:620a:c55:b0:8b2:74e5:b13 with SMTP id
+ af79cd13be357-8c38939ceddmr2023599585a.32.1768143649214; 
+ Sun, 11 Jan 2026 07:00:49 -0800 (PST)
+Received: from st57p01nt-relayp01.apple.com
+ ([2600:1000:b19c:b9d9:b0a4:2ee1:3986:5e9d])
+ by smtp.gmail.com with ESMTPSA id
+ 6a1803df08f44-89077234d08sm119361056d6.28.2026.01.11.07.00.48
+ (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+ Sun, 11 Jan 2026 07:00:48 -0800 (PST)
+From: scott.k.mitch1@gmail.com
+To: dev@dpdk.org
+Cc: mb@smartsharesystems.com, stephen@networkplumber.org,
+ Scott Mitchell <scott.k.mitch1@gmail.com>
+Subject: [PATCH 0/2] eal: RTE_PTR_ADD/SUB char* for compiler optimizations
+Date: Sun, 11 Jan 2026 10:00:31 -0500
+Message-Id: <20260111150033.81760-1-scott.k.mitch1@gmail.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 MIME-Version: 1.0
-References: <20260110015651.26201-1-scott.k.mitch1@gmail.com>
- <20260110015651.26201-4-scott.k.mitch1@gmail.com>
- <98CBD80474FA8B44BF855DF32C47DC35F65648@smartserver.smartshare.dk>
-In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F65648@smartserver.smartshare.dk>
-From: Scott Mitchell <scott.k.mitch1@gmail.com>
-Date: Sun, 11 Jan 2026 01:21:36 -0500
-X-Gm-Features: AZwV_QiRMgBi1hoyEKO4DzBS-bt2wahpw3onX90S6rOJbhTKOwvYh6dxCcdzuIg
-Message-ID: <CAFn2buCsqH5DR9k9rZFek5OyEC3q26G_Cm_u9dUG1=YuWXrgQw@mail.gmail.com>
-Subject: Re: [PATCH v12 3/3] eal/net: add workaround for GCC optimization bug
-To: =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>
-Cc: dev@dpdk.org, stephen@networkplumber.org, Scott <scott_mitchell@apple.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -74,48 +79,31 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> Does this still happen after you replaced the RTE_PTR_ADD() with native pointer arithmetic in the checksum function?
-> In other words: Is this workaround still necessary?
+From: Scott Mitchell <scott.k.mitch1@gmail.com>
 
-Yes unfortunately it is necessary with the pointer access.
-I updated the reproducer which shows this case:
-https://gist.github.com/Scottmitch/bf23748b4588e68c9bdb8d124f92f1bd
+This series optimizes RTE_PTR_ADD and RTE_PTR_SUB by using char* pointer
+arithmetic instead of uintptr_t casts when operating on pointer types.
+This enables better compiler optimization, particularly for Clang which
+can now recognize simple pointer patterns and apply vectorization, loop
+unrolling, and improved assembly.
 
-> This is a showstopper:
-> If the workaround is necessary, applications with similar use cases also need to apply the workaround.
-> If we cannot somehow enforce that, the series is likely to break some applications, which is unacceptable.
+The implementation uses C11 _Generic to dispatch based on input type,
+maintaining full API compatibility while enabling ~40-8x performance
+improvements in checksum operations.
 
-That is a great point. This API isn't internal-only and this would
-effectively be
-an API breaking change which doesn't seem justified.
+The second patch adds a .mailmap entry for consistent git attribution.
 
-Given what I've learned through this process (thank you & stephen for
-valuable feedback)
-we have a few paths to achieve my goal (clang optimizes
-__rte_raw_cksum). I've verified
-if the RTE_PTR_ADD macros are changed to use char* clang optimizes (and gcc
-still does too) [1]. To achieve this we have some options:
+Scott Mitchell (2):
+  eal: RTE_PTR_ADD/SUB char* for compiler optimizations
+  mailmap: add Scott Mitchell
 
-A. Modify RTE_PTR_[ADD|SUB] to use pointers
-pros:
-- [if API can be preserved] provides benefits to all use cases w/out
-usage changes
-- no additional API surface to expose
-cons:
-- more complex macro implementation to preserve API compatibility.
+ .mailmap                     |   1 +
+ app/test/meson.build         |   1 +
+ app/test/test_ptr_add_sub.c  | 190 +++++++++++++++++++++++++++++++++++
+ lib/eal/include/rte_common.h |  76 ++++++++++++++
+ 4 files changed, 268 insertions(+)
+ create mode 100644 app/test/test_ptr_add_sub.c
 
-B. Add RTE_CONST_PTR_[ADD|SUB] with const [void*|char*] & use it in
-__rte_raw_cksum
-pros:
-- no risk of impacting existing RTE_PTR_[ADD|SUB] APIs
-- simple implementation using pointers from the start
-cons:
-- API may not support all use cases as RTE_PTR_[ADD|SUB] (e.g. ptr arg
-as raw integer)
-- requires manual opt-in to new API to get any benefit
+-- 
+2.39.5 (Apple Git-154)
 
-I have a draft of A I will submit as a patch and we can discuss if it
-makes sense
-or fallback to B (or other approaches).
-
-[1] https://godbolt.org/z/5bc1bTrhe
