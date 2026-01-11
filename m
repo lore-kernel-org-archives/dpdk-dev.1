@@ -2,73 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2A4AD2502F
-	for <dpdk-dev@archiver.kernel.org>; Sun, 11 Jan 2026 15:18:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73388D2502E
+	for <dpdk-dev@archiver.kernel.org>; Sun, 11 Jan 2026 15:19:48 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 98867402E1;
-	Sun, 11 Jan 2026 16:18:07 +0100 (CET)
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com
- [209.85.219.48]) by mails.dpdk.org (Postfix) with ESMTP id A096D4042F
- for <dev@dpdk.org>; Sun, 11 Jan 2026 16:18:05 +0100 (CET)
-Received: by mail-qv1-f48.google.com with SMTP id
- 6a1803df08f44-88a2b99d8c5so50114976d6.1
- for <dev@dpdk.org>; Sun, 11 Jan 2026 07:18:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1768144685; x=1768749485; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=HztIkd3sqOJocgSdhV4MJOI3rL1Ay0k8/q15iB6FdSM=;
- b=MbvWVAwxUHUgKarbu5uM9G5XAbo4mLerDneqjD8BXH5Ni/tqJTzFfmFE0Ev7+4JBCW
- ogNV+1vFJ6uGL40ROkTTALeyHCEHuRjTzZSUhHB8gdq8WJDyuz/7gU1QBw2NzG3IzGtG
- I6HnF4ZymvkI5qUU4mQ92fKWN/JxLxwogx+6l5CB4oIX2CFilxzrzPdMDGdUFjpEf+n0
- Px1tFCNZ1zB7uZzg8IN+mwdla4qjtOr4cEFYLZUjRymQwOXJYwEmCF3bNPIjlQTtDM4N
- ST6ador2MsZSztw+iz4p1q3G5FNPQ+IdA2KlZrOgFjS3APPloXNSCt9DN26F8iEKrFBG
- PfpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768144685; x=1768749485;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=HztIkd3sqOJocgSdhV4MJOI3rL1Ay0k8/q15iB6FdSM=;
- b=Y1ebkQeRnBAUZv9iEPK6vWqhNgKcvfQ5ybuFYCGCKIy/m5O8IFcJJcpF4tgrESBa3G
- QaU9NM5zCh9l3EX4b357Kfd2CUociQUi81ls9YVRJelhPWSsqpAF5ryhb4+MbxbCAaQN
- ym8wakuwfpbSuwuPtPv2/46OMAOsvmbMtD+G1L8LHwqNYkDueT2S036r7KpweZUG2lXD
- d6pvgZTzG3I69Y4nVlsl0hSvuYXxfoJpkKmTGGybgQ7LgdS1XnifhBj+NYgOjl8LCtiB
- eyAAcC8fEA9dt9cIpIuDJo7UK320TmpPPseRYwCws4OfIy3eH/Y8K7zImLscIS/GuRYL
- Ln0Q==
-X-Gm-Message-State: AOJu0YyWVWWofWmDv2+Q+kIR+U/hyPeLMCtZIG+v79sCNAcYdjmUw6gN
- GuU9t6vMClN+cp7VkN9KmXAVypyTCm1DkyaBKlV0ZcyhhjVEy41YtMQm5FeL/Q==
-X-Gm-Gg: AY/fxX57ipGVZHyVMwMkEI1IPQylchvW4EAuu/sBKJ7BTI49wgoEEZlH6EzkJALaprd
- G5Cusf/7JIxfXllcpaL2LZctGIFYUgJrQmx1f91TFm9YI4WOXHyfOgSfkM4XRMbL9yd5qaHYYsy
- 8Oea+HJQ59hNiRhw341ZsJgMxIqp4bOOr1IiUI9hJZtKhShXrGQofBvYWTudQhNCqUxXbTtUE5R
- alInW9Io7bvGx3zXQgcNrcHpUEacQYprbWR1Z11jOkavT0H93kV33VlMCCjmQBZGORrjrDV3Mzb
- QrsvuX59aIPkDIk3SR0AQpO3MAYlaES8FG7zeJcrYQfF+EQ2MuyhTf9n5wnimCqU88NsYIWWlVA
- VEuQt0dTArgkGgNTZq2ghox7zmdoBh5Vlu8joR/Nk0H3BZI5D8pP2GJaa2WTXcxHgXqTBH44L9/
- p+3RtI3pROOux8DvO5EvJClYgR6cp0lv1urZ8ci9CU9WitEw+0yyXW1Oc3hmW3qcsKQg==
-X-Google-Smtp-Source: AGHT+IH9Ug+tXWFOf2UeGqgcD1NgDEb2UZTvURkYWo2hu09zwSpfrLr1j/I0gCcoivgCgT1Cq4ZIJw==
-X-Received: by 2002:a05:6214:2c0a:b0:88a:38c0:538f with SMTP id
- 6a1803df08f44-890842dd443mr214519426d6.61.1768144684858; 
- Sun, 11 Jan 2026 07:18:04 -0800 (PST)
-Received: from st47p01nt-relayp01.apple.com
- ([2600:1000:b19c:b9d9:b0a4:2ee1:3986:5e9d])
- by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-890772346e2sm125909716d6.33.2026.01.11.07.18.04
- (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
- Sun, 11 Jan 2026 07:18:04 -0800 (PST)
-From: scott.k.mitch1@gmail.com
-To: dev@dpdk.org
-Cc: mb@smartsharesystems.com, stephen@networkplumber.org,
- Scott Mitchell <scott.k.mitch1@gmail.com>
-Subject: [PATCH v2 2/2] mailmap: add Scott Mitchell
-Date: Sun, 11 Jan 2026 10:17:58 -0500
-Message-Id: <20260111151758.89015-3-scott.k.mitch1@gmail.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20260111151758.89015-1-scott.k.mitch1@gmail.com>
-References: <20260111151758.89015-1-scott.k.mitch1@gmail.com>
+	by mails.dpdk.org (Postfix) with ESMTP id C28DF4028F;
+	Sun, 11 Jan 2026 16:19:47 +0100 (CET)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
+ [185.176.79.56])
+ by mails.dpdk.org (Postfix) with ESMTP id B849D40281;
+ Sun, 11 Jan 2026 16:19:45 +0100 (CET)
+Received: from mail.maildlp.com (unknown [172.18.224.150])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4dpzh65HPxzJ467T;
+ Sun, 11 Jan 2026 23:19:34 +0800 (CST)
+Received: from dubpeml100001.china.huawei.com (unknown [7.214.144.137])
+ by mail.maildlp.com (Postfix) with ESMTPS id A4DB740539;
+ Sun, 11 Jan 2026 23:19:44 +0800 (CST)
+Received: from dubpeml500001.china.huawei.com (7.214.147.241) by
+ dubpeml100001.china.huawei.com (7.214.144.137) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.36; Sun, 11 Jan 2026 15:19:44 +0000
+Received: from dubpeml500001.china.huawei.com ([7.214.147.241]) by
+ dubpeml500001.china.huawei.com ([7.214.147.241]) with mapi id 15.02.1544.011; 
+ Sun, 11 Jan 2026 15:19:43 +0000
+From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+To: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>, "Stephen
+ Hemminger" <stephen@networkplumber.org>, "dev@dpdk.org" <dev@dpdk.org>
+CC: "stable@dpdk.org" <stable@dpdk.org>
+Subject: RE: [PATCH] mbuf: fix packet copy
+Thread-Topic: [PATCH] mbuf: fix packet copy
+Thread-Index: AQHcWUyxZC53baITAUi48xMVA9nXxbVA/w+AgAxm98A=
+Date: Sun, 11 Jan 2026 15:19:43 +0000
+Message-ID: <212f88e700fa4a6a97a421cb3b84e03a@huawei.com>
+References: <20251119120403.907511-1-mb@smartsharesystems.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F6561A@smartserver.smartshare.dk>
+In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F6561A@smartserver.smartshare.dk>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.195.35.80]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,27 +57,39 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Scott Mitchell <scott.k.mitch1@gmail.com>
-
-Add email mapping for consistent git attribution.
-
-Signed-off-by: Scott Mitchell <scott.k.mitch1@gmail.com>
----
- .mailmap | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/.mailmap b/.mailmap
-index 2f089326ff..a0987fc3c7 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -1437,6 +1437,7 @@ Saurabh Singhal <saurabhs@arista.com>
- Savinay Dharmappa <savinay.dharmappa@intel.com>
- Scott Branden <scott.branden@broadcom.com>
- Scott Daniels <daniels@research.att.com>
-+Scott Mitchell <scott.k.mitch1@gmail.com> <scott_mitchell@apple.com>
- Scott W Taylor <scott.w.taylor@intel.com>
- Scott Wasson <scott_wasson@affirmednetworks.com>
- Seán Harte <seanbh@gmail.com>
--- 
-2.39.5 (Apple Git-154)
-
+DQoNCj4gDQo+IFBJTkcgZm9yIHJldmlldy4NCj4gDQo+ID4gRnJvbTogTW9ydGVuIEJyw7hydXAg
+W21haWx0bzptYkBzbWFydHNoYXJlc3lzdGVtcy5jb21dDQo+ID4gU2VudDogV2VkbmVzZGF5LCAx
+OSBOb3ZlbWJlciAyMDI1IDEzLjA0DQo+ID4NCj4gPiBSZXF1ZXN0cyBmb3IgY29weWluZyB0aGUg
+YXQgdGhlIGVuZCBvZiBhIHBhY2tldCBpbmNvcnJlY3RseSByZXR1cm5lZA0KPiA+IE5VTEwsDQo+
+ID4gYXMgaWYgY29weWluZyBwYXN0IHRoZSBlbmQgb2YgYSBwYWNrZXQuDQo+ID4NCj4gPiBXaGVu
+IGFsbG9jYXRpbmcgY29waWVzIGZyb20gYSBtZW1wb29sIHVzaW5nIHBpbm5lZCBleHRlcm5hbCBi
+dWZmZXJzLA0KPiA+IHRoZQ0KPiA+IGV4dGVybmFsIGZsYWcgd2FzIG5vdCBwcmVzZXJ2ZWQgaW4g
+dGhlc2UgbWJ1ZnMuDQo+ID4NCj4gPiBGaXhlczogYzNhOTBjMzgxZGFhICgibWJ1ZjogYWRkIGEg
+Y29weSByb3V0aW5lIikNCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IE1vcnRlbiBCcsO4cnVwIDxt
+YkBzbWFydHNoYXJlc3lzdGVtcy5jb20+DQo+ID4gLS0tDQo+ID4gIGxpYi9tYnVmL3J0ZV9tYnVm
+LmMgfCA2ICsrKy0tLQ0KPiA+ICAxIGZpbGUgY2hhbmdlZCwgMyBpbnNlcnRpb25zKCspLCAzIGRl
+bGV0aW9ucygtKQ0KPiA+DQo+ID4gZGlmZiAtLWdpdCBhL2xpYi9tYnVmL3J0ZV9tYnVmLmMgYi9s
+aWIvbWJ1Zi9ydGVfbWJ1Zi5jDQo+ID4gaW5kZXggMGQ5MzFjN2ExNS4uZTYzOWFmZjAzZSAxMDA2
+NDQNCj4gPiAtLS0gYS9saWIvbWJ1Zi9ydGVfbWJ1Zi5jDQo+ID4gKysrIGIvbGliL21idWYvcnRl
+X21idWYuYw0KPiA+IEBAIC02NzUsNyArNjc1LDcgQEAgcnRlX3BrdG1idWZfY29weShjb25zdCBz
+dHJ1Y3QgcnRlX21idWYgKm0sIHN0cnVjdA0KPiA+IHJ0ZV9tZW1wb29sICptcCwNCj4gPiAgCV9f
+cnRlX21idWZfc2FuaXR5X2NoZWNrKG0sIDEpOw0KPiA+DQo+ID4gIAkvKiBjaGVjayBmb3IgcmVx
+dWVzdCB0byBjb3B5IGF0IG9mZnNldCBwYXN0IGVuZCBvZiBtYnVmICovDQo+ID4gLQlpZiAodW5s
+aWtlbHkob2ZmID49IG0tPnBrdF9sZW4pKQ0KPiA+ICsJaWYgKHVubGlrZWx5KG9mZiA+IG0tPnBr
+dF9sZW4pKQ0KPiA+ICAJCXJldHVybiBOVUxMOw0KDQpTbywgd2hlbiBvZmY9IG0tPnBrdF9sZW4s
+IHdoYXQgZG8gd2Ugd2FudCBpdCB0byByZXR1cm4/DQpOZXcgbWJ1ZiB3aXRoIHBrdF9sZW4gPT0g
+MD8NCkFueSBwb2ludCBvZiBzdWNoIGNvcHlpbmcgdGhlbj8gDQoNCj4gPiAgCW1jID0gcnRlX3Br
+dG1idWZfYWxsb2MobXApOw0KPiA+IEBAIC02ODgsOCArNjg4LDggQEAgcnRlX3BrdG1idWZfY29w
+eShjb25zdCBzdHJ1Y3QgcnRlX21idWYgKm0sIHN0cnVjdA0KPiA+IHJ0ZV9tZW1wb29sICptcCwN
+Cj4gPg0KPiA+ICAJX19ydGVfcGt0bWJ1Zl9jb3B5X2hkcihtYywgbSk7DQo+ID4NCj4gPiAtCS8q
+IGNvcGllZCBtYnVmIGlzIG5vdCBpbmRpcmVjdCBvciBleHRlcm5hbCAqLw0KPiA+IC0JbWMtPm9s
+X2ZsYWdzID0gbS0+b2xfZmxhZ3MgJg0KPiA+IH4oUlRFX01CVUZfRl9JTkRJUkVDVHxSVEVfTUJV
+Rl9GX0VYVEVSTkFMKTsNCj4gPiArCS8qIGNvcHkgZmxhZ3MgZXhjZXB0IGluZGlyZWN0IGFuZCBl
+eHRlcm5hbCwgYW5kIHByZXNlcnZlIGZsYWdzIG9mDQo+ID4gbmV3bHkgYWxsb2NhdGVkIG1idWYg
+Ki8NCj4gPiArCW1jLT5vbF9mbGFncyB8PSBtLT5vbF9mbGFncyAmDQo+ID4gfihSVEVfTUJVRl9G
+X0lORElSRUNUfFJURV9NQlVGX0ZfRVhURVJOQUwpOw0KDQpXaGljaCBmbGFncyBpbiB0aGUgbmV3
+IG1idWYgd2Ugd2FudCB0byBwcmVzZXJ2ZT8NCkFGQUlLIG1idWZfYWxsb2MoKSBkb2Vzbid0IHNl
+dCBhbnkgZmxhZ3MuDQpCVFcsIGlmIHRoZXJlIGFyZSBzb21lIGZsYWdzIHRoYXQgd2Ugd291bGQg
+bGlrZSB0byBwcmVzZXJ2ZSwNCndvdWxkbid0IHRoYXQgYmUgYSAgY2hhbmdlIGluIHB1YmxpYyBB
+UEkgYmVoYXZpb3I/DQoNCj4gPg0KPiA+ICAJcHJldiA9ICZtYy0+bmV4dDsNCj4gPiAgCW1fbGFz
+dCA9IG1jOw0KPiA+IC0tDQo+ID4gMi40My4wDQoNCg==
