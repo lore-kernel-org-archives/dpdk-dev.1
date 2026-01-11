@@ -2,72 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EE47D2502E
-	for <dpdk-dev@archiver.kernel.org>; Sun, 11 Jan 2026 15:01:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57BEED2502F
+	for <dpdk-dev@archiver.kernel.org>; Sun, 11 Jan 2026 15:18:04 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C0540402D5;
-	Sun, 11 Jan 2026 16:00:56 +0100 (CET)
-Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com
- [209.85.219.46]) by mails.dpdk.org (Postfix) with ESMTP id A80D1402B0
- for <dev@dpdk.org>; Sun, 11 Jan 2026 16:00:55 +0100 (CET)
-Received: by mail-qv1-f46.google.com with SMTP id
- 6a1803df08f44-88fe44cce7eso44965966d6.3
- for <dev@dpdk.org>; Sun, 11 Jan 2026 07:00:55 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 65C0B40281;
+	Sun, 11 Jan 2026 16:18:03 +0100 (CET)
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com
+ [209.85.160.173])
+ by mails.dpdk.org (Postfix) with ESMTP id 2767140276
+ for <dev@dpdk.org>; Sun, 11 Jan 2026 16:18:02 +0100 (CET)
+Received: by mail-qt1-f173.google.com with SMTP id
+ d75a77b69052e-4ffbc2b861eso47550891cf.1
+ for <dev@dpdk.org>; Sun, 11 Jan 2026 07:18:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1768143655; x=1768748455; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=HztIkd3sqOJocgSdhV4MJOI3rL1Ay0k8/q15iB6FdSM=;
- b=kCkSUhBzeRAhFVXjb3otjCnfFZSnxQnpGuDs8DWU30q8w0dIBGLu13/Y0g4Mtc9M8j
- qI6KMVmZaFZMGNCl5UzmVf780Bn1A7tUxq7rL/yCT5HLxDF8+F2wSl05f4Xl8Wju+LMN
- Ntac4yIDzCeh4aYt3yLYq0z3r4r6R9XHQC3weGN9Jp5zirTXrpl9X6OQYpj8xR57qGOJ
- mWX1VYYmuSNZV0fUgyvY4GmfGqz3BdjymWhuVX4YkazirSeOhfGBhooryGG/av5+P4eP
- LfhweiVutRmFePQCyh7C25DMJQdn9bmxwvdrTiF31eo+b/ZFgDZ2RQFzSzEQtVnOfokb
- ZZ2w==
+ d=gmail.com; s=20230601; t=1768144681; x=1768749481; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=SdCllBSRIPuQow8HBwBlLgAE3o750r5RHILpu2ecD68=;
+ b=WfHX+Mjn8nd7CPQPM9qvJVLNtQB5ntgsd/NnAm0s4vt2ZpiWOaEtQuflTSQB+304kt
+ 7pm+SzVGCHnscOloq5WNhEXdjKnT3HEIETtgENj9znKmkK8dMEfmwV64gpqFCKefcAA+
+ gzX/zo7yBdzAfnnRSDDHEPDjqJW/18TfeaPSJnXA4UGoCDiUmKu1yL/WZ40wRhgxbHPV
+ aiBkaQQl13RS1FErXsc5m/KzzXcVlg1GQ7zG3U3QnZQewigWqFNeggESibWRU6lXvS97
+ SdUvkJ70MErjbZM/edlmPbZt1HmYfgiFjV7uw5brBWmdOLeofqlYWbdo0AjNLQWuQxlo
+ 4DvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768143655; x=1768748455;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=HztIkd3sqOJocgSdhV4MJOI3rL1Ay0k8/q15iB6FdSM=;
- b=g8l05TYn8o4MttQTqfBnm3aYpW7zK8QOhNo6YSUM7lb7SYmbUGQcIbjbwYBRASOIet
- 9Hd/nKUVic7T0OLl+y5lCxu844yE38yUwu4nNq7ObCYnJgWlow4WzA7NB4X7pg5N9z4Q
- mW1bjNqob/asgtAXMCHUy1DSVCy754hIw+rGqwsGYq3HlNztxEHAuTq8Zvm42a1BMI5Z
- yfBWHKzlTP9igFPyg/QxPiDp/2G2nWx8aZFW3PDrPzBHFs/kutH3X1EPLYpsFPVXNqvS
- OyOpLUYO/GNzmD7xz8l6KyeHCfoHIFr88HHIB+2wrDlAuEdBJWFwspkrSLXASNNzhzzJ
- 1vVQ==
-X-Gm-Message-State: AOJu0YyGAW7vT5f+BU10hOdHiq1BzalG0EYHJjombgDHtofaUSPPVzLG
- UHC3N9h2NL+hHMQ4JIaocu/c6Sxg/xPp1x5RhiLa0igDPl5DXlJJl9Fq+izwXQ==
-X-Gm-Gg: AY/fxX6JmJWFOQhFsEOdBS2cxXD3R4evIXX4pYqZEI+0poq3KKBtTcDpWCxGWTUbALV
- X4sfDM/I996TmKkbTpMuZLVv3qNKCKwgY1RiX3Y1bKUFbS93MdMnzBpaQRyirXoZNhrK7WwXHAV
- dR0ykMDEbzUgriNyr61fabPmRQmo8/C20wPYPywQfjzx0s2/GsML7tq3R1sFz8oF8A7i5rnBXft
- xv47W5OxDU2LOStEbcgCy35DvlPpBNzGpHoDtiDFKEDO9oddUhPGsIElpDby7v9+/LsoUJ7T67u
- d6sgPJxh9Ydu+je/lRZsj6n+smS4oxi5eDUNQgnavJowvaw428H94nLVJ5GJUkmShRXoV6BlV/e
- 8MAyFzYgH0T95HrunLMm+HlJUhScytXpYHq4FWuUKthiHHzI98jFe1cLNqcPxPXuw6LS45Ma604
- f+t+peGXDEQQi0fq1gQOe3nBmSxDyxu4EPuFfaZ85wMQWo5TDDTMzSc1frybpWrd+tdA==
-X-Google-Smtp-Source: AGHT+IFeBkJc1U0GqpltbdUs685uh/76Tj6S/JUUkA+FkZ+NRTtRsJbi/3ahG4zrVnz4MXcJ7UcomQ==
-X-Received: by 2002:a05:6214:1d23:b0:88a:577b:fa4f with SMTP id
- 6a1803df08f44-8908418397cmr191355756d6.12.1768143654717; 
- Sun, 11 Jan 2026 07:00:54 -0800 (PST)
-Received: from st57p01nt-relayp01.apple.com
+ d=1e100.net; s=20230601; t=1768144681; x=1768749481;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=SdCllBSRIPuQow8HBwBlLgAE3o750r5RHILpu2ecD68=;
+ b=pCd+f+NAOZK1cX/FoyoFV6EEv+R2ZpOe2gtoWrrD7OKrOmb0914/3ijMD7ZVLU3Grm
+ BxMclAjm8JLs6QJOlG3NbVuyOsz2TJ8aqm/4R5s0Ev563T7A49e5NwPKrZE9Rrt9tmr9
+ +H3JxR7tUOlNLfKJ5am285nLJ8RNmOSLyRCRro/urxdVpB7TKPaBcEzojerwKAxIM3Wl
+ sDyf6QExrYL4vGAtvliBx0Kj+gwEfDMEjXnfI6MpurcZnfJLEb1202SjJ1OlK7tbR5iU
+ gdRBEQbmCZz7pOsCgz63EYXd9h1yl6aanjLvP1wQF5q4bCqZVb3UlMcaj7KY1+j2tw/+
+ 3BwQ==
+X-Gm-Message-State: AOJu0YxSLnW7kAsgKJ4BAoBDI1y/yprKstw6kibqt7ySJFtUQa7AKCu3
+ A1w/XqzYaB9OxnnJPTIaaxuiUx8W8kdQe9Dtisuk0nRCxrZ+dVVo/zPGtEY9Qw==
+X-Gm-Gg: AY/fxX7XLilswv9xOl6lvjXQfYR1ELj0ODbUvzehCVoI7h8/g7pGoHGxwHm09aAdIzK
+ AoX5bD2GPy/7MbzbUycWJEtgV2hGFXYz07mC7MTa3mWoy/QgfKPMworrxHDAaZsek5mz5GKVuQD
+ lJCeprldt/5fd57BQfvGeTV5a9YSb+Fewk6yM+ynPpcKbm6yZIUvC1S/7cT+sgfCZ6wlL7JYpf0
+ Jl/IinMkfz6BtqJFxyvCJKa13fw4PN+BikGxcv+qSLZs/33ws87gSDos6MLVTM7wpRZw/TSrJoI
+ mSPtuTAFO5RaTZ+djRS1d4TDhHPl8B3awvlqMIoHcV1x5OetIGMkrpiu+jmX1uBmSov+DJ/cM5R
+ qdDFF/l/ODZsj1lC+E52bIH/vaZzWLzuE592NDWDNDU//NQI/nbEVkm6Cz/cKwesGdkxS5w3F+J
+ oBsiAAOhwxeM+GltL2a2FhpdmsheSzZ84HrZAlQnvzjcT7Pc3MUuBO7MylljI8/ddhVQ==
+X-Google-Smtp-Source: AGHT+IFlu/GDnf7PhhaUEbioZS/ejM3nJ8XqclQbV1Kfmcce0UraJPT9BjoswF1w+pNbFfn0lceBiw==
+X-Received: by 2002:ac8:5f0a:0:b0:4e8:af8a:f951 with SMTP id
+ d75a77b69052e-4ffb4aed9ffmr217615521cf.83.1768144681248; 
+ Sun, 11 Jan 2026 07:18:01 -0800 (PST)
+Received: from st47p01nt-relayp01.apple.com
  ([2600:1000:b19c:b9d9:b0a4:2ee1:3986:5e9d])
  by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-89077234d08sm119361056d6.28.2026.01.11.07.00.53
+ 6a1803df08f44-890772346e2sm125909716d6.33.2026.01.11.07.18.00
  (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
- Sun, 11 Jan 2026 07:00:54 -0800 (PST)
+ Sun, 11 Jan 2026 07:18:00 -0800 (PST)
 From: scott.k.mitch1@gmail.com
 To: dev@dpdk.org
 Cc: mb@smartsharesystems.com, stephen@networkplumber.org,
  Scott Mitchell <scott.k.mitch1@gmail.com>
-Subject: [PATCH 2/2] mailmap: add Scott Mitchell
-Date: Sun, 11 Jan 2026 10:00:33 -0500
-Message-Id: <20260111150033.81760-3-scott.k.mitch1@gmail.com>
+Subject: [PATCH v2 0/2] eal: RTE_PTR_ADD/SUB char* for compiler optimizations
+Date: Sun, 11 Jan 2026 10:17:56 -0500
+Message-Id: <20260111151758.89015-1-scott.k.mitch1@gmail.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20260111150033.81760-1-scott.k.mitch1@gmail.com>
-References: <20260111150033.81760-1-scott.k.mitch1@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -84,25 +81,40 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Scott Mitchell <scott.k.mitch1@gmail.com>
 
-Add email mapping for consistent git attribution.
+This series optimizes RTE_PTR_ADD and RTE_PTR_SUB by using char* pointer
+arithmetic instead of uintptr_t casts when operating on pointer types.
+This enables better compiler optimization, particularly for Clang which
+can now recognize simple pointer patterns and apply vectorization, loop
+unrolling, and improved assembly.
 
-Signed-off-by: Scott Mitchell <scott.k.mitch1@gmail.com>
----
- .mailmap | 1 +
- 1 file changed, 1 insertion(+)
+The implementation uses C11 _Generic to dispatch based on input type,
+maintaining full API compatibility while enabling ~40-8x performance
+improvements in checksum operations.
 
-diff --git a/.mailmap b/.mailmap
-index 2f089326ff..a0987fc3c7 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -1437,6 +1437,7 @@ Saurabh Singhal <saurabhs@arista.com>
- Savinay Dharmappa <savinay.dharmappa@intel.com>
- Scott Branden <scott.branden@broadcom.com>
- Scott Daniels <daniels@research.att.com>
-+Scott Mitchell <scott.k.mitch1@gmail.com> <scott_mitchell@apple.com>
- Scott W Taylor <scott.w.taylor@intel.com>
- Scott Wasson <scott_wasson@affirmednetworks.com>
- Seán Harte <seanbh@gmail.com>
+The second patch adds a .mailmap entry for consistent git attribution.
+
+Note on checkpatch warnings: The patches generate checkpatch warnings due to
+C11 _Generic syntax not being fully recognized by checkpatch.pl (designed for
+kernel C). The warnings are false positives - the code is valid C11 and
+follows the same pattern as existing DPDK code (e.g., __rte_constant macro,
+rte_bitops.h). The COMPLEX_MACRO warning is explicitly acknowledged by
+checkpatch itself as expected for statement expression macros.
+
+Changes in v2:
+- Fixed copyright in test file to Apple Inc. (was Intel Corporation)
+- Added checkpatch warning explanation to cover letter
+
+Scott Mitchell (2):
+  eal: RTE_PTR_ADD/SUB char* for compiler optimizations
+  mailmap: add Scott Mitchell
+
+ .mailmap                     |   1 +
+ app/test/meson.build         |   1 +
+ app/test/test_ptr_add_sub.c  | 190 +++++++++++++++++++++++++++++++++++
+ lib/eal/include/rte_common.h |  76 ++++++++++++++
+ 4 files changed, 268 insertions(+)
+ create mode 100644 app/test/test_ptr_add_sub.c
+
 -- 
 2.39.5 (Apple Git-154)
 
