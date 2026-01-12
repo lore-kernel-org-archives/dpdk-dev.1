@@ -2,70 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51284D25031
-	for <dpdk-dev@archiver.kernel.org>; Mon, 12 Jan 2026 01:03:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15B76D2502E
+	for <dpdk-dev@archiver.kernel.org>; Mon, 12 Jan 2026 01:10:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3903B40684;
-	Mon, 12 Jan 2026 02:03:58 +0100 (CET)
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com
- [209.85.208.41]) by mails.dpdk.org (Postfix) with ESMTP id 2BD1B4028F
- for <dev@dpdk.org>; Mon, 12 Jan 2026 02:03:57 +0100 (CET)
-Received: by mail-ed1-f41.google.com with SMTP id
- 4fb4d7f45d1cf-64b8b5410a1so8630271a12.2
- for <dev@dpdk.org>; Sun, 11 Jan 2026 17:03:57 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id B4B8A4028F;
+	Mon, 12 Jan 2026 02:10:24 +0100 (CET)
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com
+ [209.85.128.50]) by mails.dpdk.org (Postfix) with ESMTP id 18F714013F
+ for <dev@dpdk.org>; Mon, 12 Jan 2026 02:10:23 +0100 (CET)
+Received: by mail-wm1-f50.google.com with SMTP id
+ 5b1f17b1804b1-47775fb6c56so55542695e9.1
+ for <dev@dpdk.org>; Sun, 11 Jan 2026 17:10:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768179836;
- x=1768784636; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768180223;
+ x=1768785023; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=plBekXvekZGlBjolRQ+F4I427YZxK8vX5fSngHe6XwI=;
- b=yvXCW2JJYc+aGIFLkhNyKKs3TDsEqwy2swePJVOCc6FtqqEdT9lAPONS8E7QpSr5Tg
- TKWbW7btLirAaveHLWjHfk5lg10u/liulkyYs7qPA+PwIlnsJS0A6j6BGOIX8I7spFNr
- AOTG+n/j+v9TkeEKqlKKLD999RYzyedF/NhVfWzyvr47ehtWY+Bd1OM/RCggf7dBk41/
- A2HnG7iznOu3XnsuBBhQfConwmRKjDrDWzgWbnCrXIZ8FUxOsR2iPoBvWMcDyMUSEfKF
- /f/jcllkajS4NpJPwJ93JkduwNMHP5BDxp8YQM0tmW+dF1Ie2Djzuckc9PKJD+O6swNU
- o0LA==
+ bh=/mLG/UYxt2eqoO0rj5go4ggFHmOMgKxwEOdIKVSanhc=;
+ b=mUE7RTxV7EpR30dKcEeE9pebwCbx8UW41GAidviP6srodgsMsZEq+JcdM+g52RJeVm
+ M36/RsEWt2V+aZ5yq/2y+WDKuwnCRESOW2XHgxBe869GVGkZ59oxscf0I9wyu8Ms5Hu3
+ vCqGofk4uC+mp8MjW5WsLrrDwMjNLpes99iHQP4WNiMB2XMkihTsKg9a6i5MNLtP1BQU
+ N0bG9F6CTSBG/4ZXltQ3R1VIdInQUKyTbfAuz+eEAW8Lsqw7QFJbvPgYWaRts1cLlS4o
+ gHqIwIB2q0sPkes0iRbzDVBgzR1GJb8bq8roaoAP4n7pzg5hVm390dmLhaTbidj0xwCg
+ jz+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768179836; x=1768784636;
+ d=1e100.net; s=20230601; t=1768180223; x=1768785023;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=plBekXvekZGlBjolRQ+F4I427YZxK8vX5fSngHe6XwI=;
- b=hMaHzoKicfMAbFRkCi4Ft9ypTVydVO3LJDfeqlghO74Ydj9c7wPdsUudpE8i+C6gtc
- dJQnyz35d7KD0QFAWD80MGvxstj3e0iTL5zHYkLpKzy8b2ZEJNoc7toTb0XwoLJdXOXp
- SF+UH7O5jMDaYRbvJ5RkuRYi0IOEGpUWIoJZlvSi71esZtJMw7QasFNl4kSobgY7wgfo
- l2sdqgQGbei+TNSn6tLB9Ilf3I9IYxsMVyz3zh3dkMNKzoESY7E1dnhACEA12U8svYC+
- zjiFdCyrQpp556DBzDOv/yqwaUHKZFMB0eIV6WKih/yZ76VlzXsfmaVa9l0fKEspf9F4
- Y4ww==
-X-Gm-Message-State: AOJu0YxTGlJHb0hZSY0cG8zyr6V5rhstBwbKteUqZ/hN7kG5z13HZJsT
- 6KOZG2lmDULxbwKCA+hxm4ESsygELRWBdg43oTS569H321Ttj3B060PReW42efJQkLU=
-X-Gm-Gg: AY/fxX5OqN6hSBDTbTlLUlh5jlKmNM+eEkHIl0bY8Rmj1AeThKE838jPo35gl/KH7qE
- 80jmhr34hkB+0J8kXbpxkUqgLptRJcqcwysvPr/W5dri0LyqWCy3nx/c425gignPBSDoejjnEzx
- +DVxxPxEjfko0FPAZAkL7MPIFNCnb6XAcbk3mYu6ZMPDSSFf8b1JYJM7Zk7nnjdLMMpD23Md+mF
- ODu6mqZRadjuY6R7f+YQ2pIShNqVcmrTLAFVPraXw4IsrJIk6HqEyOynQr5wN9T+EMa0HXr0tej
- 08eCF3KZwtMvRhPz98gsieDvwmcalYCLdutwF0l+HUFsg2p8PqHMsG/D1xuJtkAHJF+enkke1uK
- 97h6pNES61jWP/CHX8lyl3WJojEkDjDZFzy8osNchB3gIxR5IV/ig7TvK7b/swZl+4p7IfXJHzO
- qoMhOZIolkE1ykHQ9KWWcEaQydJ35hVRBx0pRgiOvDtfdDNEACrC2VDXpiona40Fc=
-X-Google-Smtp-Source: AGHT+IG8CZe/l+kmzY4FfUGud0aj6HaaiOjkBuAfVT9z5H+eUIKkvBgEv410jt9DdGZ7CWZV/cC+bw==
-X-Received: by 2002:a17:907:c06:b0:b87:2410:5957 with SMTP id
- a640c23a62f3a-b8724105b20mr48232566b.48.1768179836533; 
- Sun, 11 Jan 2026 17:03:56 -0800 (PST)
+ bh=/mLG/UYxt2eqoO0rj5go4ggFHmOMgKxwEOdIKVSanhc=;
+ b=Vb1kHvPYhaPU82mreNptbD36fBjd15fITOXFSJIHDBOqiy4sccpsHaGFtafhfmdJdr
+ SwarwQj2GauVfG/B+ShIr72KChksAiGJyVIo+JVhaxrJjswRPTXSNS1uPkH7Rv4czxtg
+ 44rUcwNnJVpKJkPx7yG9NuxDyBDlPS4r2SdqrK9Bo37HUHq/TAWgStRSePJv/siTIgEZ
+ WhX6lhN7838EW1t+Y+P0qjQOOHPlg4UOX3Al9RKrhkIzcyKzqHwOj4E37+a6QdQp5zzN
+ Hj7EKwPSFvq3e451UqjQv6yRXjFQfsrcUg9xWpMvMFTOcl4cLJpGxCg37jSOK4+lMlaB
+ vewA==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCXHE6mD1vlS8n1JKclRmOKtH2VH7HPk+vKgwJfcF00pVbyhCiyH85DURBu//X9GFoeYHVY=@dpdk.org
+X-Gm-Message-State: AOJu0Yw2G2PyLShX0wnLh2XVLfo5KPrewat0sT4HijaFfdGet+uVTcNO
+ 44OZz2KyrPg9ZpEzIkHGA68AIFi0mQ0DgITiu3VMRPlkQN6g2XxZ7ZVpHbl4RGR9XGE=
+X-Gm-Gg: AY/fxX7Vx3z8T1OEwKRPWmIQu2UlGyC3YA/FIhztOqFV0N16IQF15gULzj3u6dCYyPQ
+ mXxSG5xxmyhL1BZlBvvcj0Fk+50KTY6aTvboDP9hWVUVXXt3jgiO3ylyPABIlNNb7Xk8Fx4u2Gz
+ iRN3Xoi3RlwCMaRNm3SoGj2t8tbo15ayHsvqi3e0FdgEFrnREx9RrYa06e8OpB6qpAgol7TuULy
+ w0CLTolFxJLTCJcC8r/uMpifgu0T9Up61lPVudMkohhcBs/PDGmvpq64pSm70CORBhXK3TsRUxc
+ 16yHeCOEzsBqiqTvhUmODEvuGa3OwXLTiA9EtD8VtFbMopJHw3YIyVFR/BogUeltYJrzSRJNqng
+ 7nSrE9nCSvG5yjffYJ6obkPUJA2eC9xPnXbJozJ/HM5azMgczyutdqB/QR1E2SGmNTVv72wR5yq
+ uwohkHRArtpbiZcpQe03j5rsUwOSijJl1EJCqTb7wyARZwSUvmNeNm
+X-Google-Smtp-Source: AGHT+IEfO1WH+uhcFiO9s/3pTf753q47O3VQ3PcVoPUAyUBH0NdpOgiD8Caw2YsHe7T60fkuU2uNIg==
+X-Received: by 2002:a05:600c:4ed1:b0:47d:18b0:bb9a with SMTP id
+ 5b1f17b1804b1-47d84b54031mr186840245e9.33.1768180222642; 
+ Sun, 11 Jan 2026 17:10:22 -0800 (PST)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a640c23a62f3a-b842a27c0casm1775021166b.19.2026.01.11.17.03.54
+ 5b1f17b1804b1-47d8717d9e7sm116092745e9.8.2026.01.11.17.10.20
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 11 Jan 2026 17:03:56 -0800 (PST)
-Date: Sun, 11 Jan 2026 17:03:50 -0800
+ Sun, 11 Jan 2026 17:10:22 -0800 (PST)
+Date: Sun, 11 Jan 2026 17:10:16 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: David Marchand <david.marchand@redhat.com>
-Cc: dev@dpdk.org, stable@dpdk.org, Ciara Loftus <ciara.loftus@intel.com>,
- Maryam Tahhan <mtahhan@redhat.com>, Xiaolong Ye <xiaolong.ye@intel.com>,
- Kevin Laatz <kevin.laatz@intel.com>
-Subject: Re: [PATCH] net/af_xdp: fix external mbuf transmit
-Message-ID: <20260111170350.6fa88e03@phoenix.local>
-In-Reply-To: <20260105125441.50447-1-david.marchand@redhat.com>
-References: <20260105125441.50447-1-david.marchand@redhat.com>
+To: Dariusz Sosnowski <dsosnowski@nvidia.com>
+Cc: Aman Singh <aman.deep.singh@intel.com>, Ori Kam <orika@nvidia.com>,
+ <dev@dpdk.org>, Bing Zhao <bingz@nvidia.com>, <stable@dpdk.org>
+Subject: Re: [PATCH v2] app/testpmd: fix flow queue job leaks
+Message-ID: <20260111171016.56ea4285@phoenix.local>
+In-Reply-To: <20260109152607.206389-1-dsosnowski@nvidia.com>
+References: <20251118104518.1714166-1-dsosnowski@nvidia.com>
+ <20260109152607.206389-1-dsosnowski@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -82,127 +84,176 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon,  5 Jan 2026 13:54:41 +0100
-David Marchand <david.marchand@redhat.com> wrote:
+On Fri, 9 Jan 2026 16:26:07 +0100
+Dariusz Sosnowski <dsosnowski@nvidia.com> wrote:
 
-> A mbuf may be pointing at external buffer like when forwarding a TSO
-> packet coming from a vhost-user port in OVS (see
-> RTE_VHOST_USER_EXTBUF_SUPPORT).
+> Each enqueued async flow operation in testpmd has an associated
+> queue_job struct. It is passed in user data and used to determine
+> the type of operation when operation results are pulled on a given
+> queue. This information informs the necessary additional handling
+> (e.g., freeing flow struct or dumping the queried action state).
 >=20
-> Checking the mbuf mempool to trigger the zero copy optimisation is
-> broken: the driver will (at best) read 0s or (at worse) crash when
-> reading more data than what the direct buffer can contain.
+> If async flow operations were enqueued and results were not pulled
+> before quitting testpmd, these queue_job structs were leaked as reported
+> by ASAN:
 >=20
-> Fixes: d8a210774e1d ("net/af_xdp: support unaligned umem chunks")
+> Direct leak of 88 byte(s) in 1 object(s) allocated from:
+>     #0 0x7f7539084a37 in __interceptor_calloc
+>         ../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:154
+>     #1 0x55a872c8e512 in port_queue_flow_create
+>         (/download/dpdk/install/bin/dpdk-testpmd+0x4cd512)
+>     #2 0x55a872c28414 in cmd_flow_cb
+>         (/download/dpdk/install/bin/dpdk-testpmd+0x467414)
+>     #3 0x55a8734fa6a3 in __cmdline_parse
+>         (/download/dpdk/install/bin/dpdk-testpmd+0xd396a3)
+>     #4 0x55a8734f6130 in cmdline_valid_buffer
+>         (/download/dpdk/install/bin/dpdk-testpmd+0xd35130)
+>     #5 0x55a873503b4f in rdline_char_in
+>         (/download/dpdk/install/bin/dpdk-testpmd+0xd42b4f)
+>     #6 0x55a8734f62ba in cmdline_in
+>         (/download/dpdk/install/bin/dpdk-testpmd+0xd352ba)
+>     #7 0x55a8734f65eb in cmdline_interact
+>         (/download/dpdk/install/bin/dpdk-testpmd+0xd355eb)
+>     #8 0x55a872c19b8e in prompt
+>         (/download/dpdk/install/bin/dpdk-testpmd+0x458b8e)
+>     #9 0x55a872be425a in main
+>         (/download/dpdk/install/bin/dpdk-testpmd+0x42325a)
+>     #10 0x7f7538756d8f in __libc_start_call_main
+>         ../sysdeps/nptl/libc_start_call_main.h:58
+>=20
+> This patch addresses that by registering all queue_job structs, for a
+> given queue, on a linked list. Whenever operation results are pulled
+> and result is handled, queue_job struct will be removed from that list
+> and freed.
+> Before port is closed, during flow flush, testpmd will pull
+> all of the expected results
+> (based on the number of queue_job on the list).
+>=20
+> Fixes: c9dc03840873 ("ethdev: add indirect action async query")
+> Fixes: 99231e480b69 ("ethdev: add template table resize")
+> Fixes: 77e7939acf1f ("app/testpmd: add flow rule update command")
+> Fixes: 3e3edab530a1 ("ethdev: add flow quota")
+> Fixes: 966eb55e9a00 ("ethdev: add queue-based API to report aged flow rul=
+es")
 > Cc: stable@dpdk.org
 >=20
-> Signed-off-by: David Marchand <david.marchand@redhat.com>
-> ---
 
-Looks good to me and Claude ;-) but he has more to say.
-Queued to next-net
+Surprisingly AI code spotted a minor bug which I did not see.
 
-## DPDK Patch Review: net/af_xdp: fix external mbuf transmit
+
+---
+
+## DPDK Patch Evaluation: `app/testpmd: fix flow queue job leaks`
 
 ### Summary
 
-This patch fixes a bug in the AF_XDP driver's zero-copy transmit path where=
- mbufs pointing to external buffers (e.g., from vhost-user with `RTE_VHOST_=
-USER_EXTBUF_SUPPORT`) could cause data corruption or crashes. The fix adds =
-an `RTE_MBUF_DIRECT()` check before using the zero-copy optimization.
+| Category | Status |
+|----------|--------|
+| Commit Message | =E2=9C=85 Pass |
+| Tags | =E2=9C=85 Pass |
+| Code Style | =E2=9A=A0=EF=B8=8F Minor issues |
+| Code Correctness | =E2=9D=8C **Bug found** |
 
 ---
 
-### Commit Message Review
+### Commit Message Analysis
 
-| Criterion | Status | Details |
-|-----------|--------|---------|
-| Subject length | =E2=9C=93 Pass | 38 characters (limit: 60) |
-| Subject format | =E2=9C=93 Pass | `net/af_xdp:` prefix is correct for dri=
-ver |
-| Subject case | =E2=9C=93 Pass | Lowercase after colon |
-| Imperative mood | =E2=9C=93 Pass | "fix" not "fixes" or "fixed" |
-| No trailing period | =E2=9C=93 Pass | |
-| Body line wrap | =E2=9C=93 Pass | All lines under 75 characters |
-| Body doesn't start with "It" | =E2=9C=93 Pass | Starts with "A mbuf" |
-| `Fixes:` tag | =E2=9C=93 Pass | 12-char SHA: `d8a210774e1d` |
-| `Cc: stable@dpdk.org` | =E2=9C=93 Pass | Present for bug fix |
-| `Signed-off-by:` | =E2=9C=93 Pass | Present with real name and email |
-| Tag order | =E2=9C=93 Pass | Fixes =E2=86=92 Cc =E2=86=92 blank line =E2=
-=86=92 Signed-off-by |
+**Subject Line:** `app/testpmd: fix flow queue job leaks`
+
+| Criterion | Result |
+|-----------|--------|
+| Length (=E2=89=A460 chars) | =E2=9C=85 37 characters |
+| Format `component: description` | =E2=9C=85 Correct |
+| Component prefix | =E2=9C=85 `app/testpmd:` (not `testpmd:`) |
+| Lowercase after colon | =E2=9C=85 Yes |
+| Imperative mood | =E2=9C=85 "fix" |
+| No trailing period | =E2=9C=85 Correct |
+| No forbidden punctuation | =E2=9C=85 Clean |
+
+**Body:**
+- =E2=9C=85 Does not start with "It"
+- =E2=9C=85 Provides clear context (ASAN leak report, explanation of queue_=
+job lifecycle)
+- =E2=9C=85 Lines appear within 75 character limit
+- =E2=9C=85 Well-structured explanation of the problem and solution
+
+**Tags:**
+- =E2=9C=85 Multiple `Fixes:` tags with 12-character SHAs and quoted subjec=
+ts
+- =E2=9C=85 `Cc: stable@dpdk.org` present (appropriate for bug fix)
+- =E2=9C=85 `Signed-off-by:` with real name and valid email
+- =E2=9C=85 Tag order correct: Fixes =E2=86=92 Cc =E2=86=92 blank line =E2=
+=86=92 Signed-off-by
 
 ---
 
-### Code Review
+### Code Style Analysis
 
-**Change location:** `drivers/net/af_xdp/rte_eth_af_xdp.c`, line 608 (in `a=
-f_xdp_tx_zc()`)
+**Positive:**
+- =E2=9C=85 Function return types on separate lines
+- =E2=9C=85 Explicit comparisons (`res =3D=3D NULL`, `ret < 0`, `ret =3D=3D=
+ 0`)
+- =E2=9C=85 Proper brace style (single statements without braces)
+- =E2=9C=85 Lowercase function names with underscores
+- =E2=9C=85 Comment style follows guidelines
+- =E2=9C=85 Lines within 100 characters
 
+**Info (minor observations):**
+- C99-style loop variable declarations (`for (int i =3D 0; ...)` and `for (=
+queueid_t queue_id =3D 0; ...)`). This is acceptable in DPDK but some maint=
+ainers prefer traditional style.
+
+---
+
+### =E2=9D=8C Critical Bug Found: Format String Argument Mismatch
+
+There are **two printf format string bugs** where arguments are in the wron=
+g order:
+
+**Bug 1 (line ~428-429):**
 ```c
-// Before:
-if (mbuf->pool =3D=3D umem->mb_pool) {
+printf("Flushed flow queue %u on port %u (%u failed, %u succeeded).\n",
+       port_id, queue_id, polled - success, success);
+```
+Format says "queue %u on port %u" but arguments are `port_id, queue_id` =E2=
+=80=94 **reversed**.
 
-// After:
-if (RTE_MBUF_DIRECT(mbuf) && mbuf->pool =3D=3D umem->mb_pool) {
+**Bug 2 (line ~437-438):**
+```c
+TESTPMD_LOG(ERR, "Unable to fully flush flow queue %u on port %u (left ops =
+%u)\n",
+            port_id, queue_id, expected_ops);
+```
+Same issue =E2=80=94 format expects queue then port, but arguments are port=
+ then queue.
+
+**Correct version should be:**
+```c
+printf("Flushed flow queue %u on port %u (%u failed, %u succeeded).\n",
+       queue_id, port_id, polled - success, success);
+
+TESTPMD_LOG(ERR, "Unable to fully flush flow queue %u on port %u (left ops =
+%u)\n",
+            queue_id, port_id, expected_ops);
 ```
 
-| Criterion | Status | Details |
-|-----------|--------|---------|
-| Line length | =E2=9C=93 Pass | Well under 100 characters |
-| Macro naming | =E2=9C=93 Pass | `RTE_MBUF_DIRECT` uses correct `RTE_` pre=
-fix |
-| Technical correctness | =E2=9C=93 Pass | Properly gates zero-copy path |
-| Minimal change | =E2=9C=93 Pass | Single-line fix, targeted |
-
-#### Warning (Minor)
-
-**Implicit boolean comparison:** The `RTE_MBUF_DIRECT(mbuf)` macro returns =
-an integer-like value (0 or non-zero). Per DPDK guidelines, explicit compar=
-ison with zero is preferred for integers:
-
-```c
-// Suggested (strict interpretation):
-if (RTE_MBUF_DIRECT(mbuf) !=3D 0 && mbuf->pool =3D=3D umem->mb_pool) {
-```
-
-However, this macro is semantically boolean and is commonly used in direct =
-form throughout DPDK. This is a stylistic preference, not a blocking issue.
-
----
-
-### Technical Analysis
-
-The fix is correct. Looking at the `af_xdp_tx_zc()` function in the provide=
-d source:
-
-1. **The bug:** Line 624 in the original code only checks `mbuf->pool =3D=
-=3D umem->mb_pool` to decide if zero-copy can be used. This fails for indir=
-ect/external mbufs where `mbuf->buf_addr` points to external memory, not th=
-e pool's memory region.
-
-2. **The consequence:** When zero-copy is incorrectly triggered, `reserve_a=
-nd_fill()` computes addresses relative to `umem->buffer`, which produces in=
-valid addresses for external buffer data.
-
-3. **The fix:** Adding `RTE_MBUF_DIRECT(mbuf)` ensures the mbuf data reside=
-s in its own attached buffer, making the pool check meaningful.
-
-4. **Fallback path:** When the check fails, the code correctly falls throug=
-h to the else branch (lines 633-647) which allocates a local mbuf and perfo=
-rms a copy.
+Note: Line ~475-476 has the correct order (`queue_id, port_id`), which make=
+s this inconsistency more apparent.
 
 ---
 
 ### Verdict
 
-| Severity | Count | Items |
-|----------|-------|-------|
-| **Error** | 0 | =E2=80=94 |
-| **Warning** | 1 | Implicit boolean check on `RTE_MBUF_DIRECT()` |
-| **Info** | 0 | =E2=80=94 |
+| Severity | Issue |
+|----------|-------|
+| **Error** | Format string argument order bug (2 instances) =E2=80=94 will=
+ print misleading debug output |
+| Info | C99 loop variable declarations |
 
-**Recommendation:** **Accept** =E2=80=94 This is a well-crafted bug fix. Th=
-e commit message is clear, properly attributed, and follows DPDK convention=
-s. The code change is minimal, correct, and addresses a real crash/corrupti=
-on scenario. The warning about implicit boolean comparison is minor and mat=
-ches existing DPDK patterns.
+**Recommendation:** Request v3 to fix the printf argument order. The fix it=
+self is sound in design =E2=80=94 tracking queue_job entries on a list and =
+flushing on port close is the right approach. The ASAN leak is properly add=
+ressed. However, the swapped format arguments would cause confusing output =
+during debugging ("Flushed flow queue 0 on port 1" when it should say "queu=
+e 1 on port 0").
+
