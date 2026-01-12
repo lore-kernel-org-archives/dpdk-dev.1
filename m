@@ -2,62 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A804C9EC98
-	for <dpdk-dev@archiver.kernel.org>; Mon, 12 Jan 2026 15:57:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD423C9EC99
+	for <dpdk-dev@archiver.kernel.org>; Mon, 12 Jan 2026 16:00:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7AC8340156;
-	Mon, 12 Jan 2026 16:57:12 +0100 (CET)
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com
- [209.85.167.54]) by mails.dpdk.org (Postfix) with ESMTP id 97A5D40041
- for <dev@dpdk.org>; Mon, 12 Jan 2026 16:57:10 +0100 (CET)
-Received: by mail-lf1-f54.google.com with SMTP id
- 2adb3069b0e04-59b77f2e43aso4059502e87.1
- for <dev@dpdk.org>; Mon, 12 Jan 2026 07:57:10 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id ED83B40156;
+	Mon, 12 Jan 2026 17:00:50 +0100 (CET)
+Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com
+ [209.85.222.52]) by mails.dpdk.org (Postfix) with ESMTP id 2029840041
+ for <dev@dpdk.org>; Mon, 12 Jan 2026 17:00:49 +0100 (CET)
+Received: by mail-ua1-f52.google.com with SMTP id
+ a1e0cc1a2514c-93f56804894so4119328241.3
+ for <dev@dpdk.org>; Mon, 12 Jan 2026 08:00:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1768233429; x=1768838229; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=kPEMLLDcvPNhk0SUtlwh2rkc5BtepANhaFW0DWsAVrg=;
- b=GmN4fMdHvyII7fNPqsoR3eTVHsVKYsKzWpCSNNvnZSLaaMQkKNrhLLbrtc8+PxGGX/
- H2G/J1GUhfJFT7fu2F1KUpyUxnkwL2Xr4d1z8o5NObqHxMU9qOq5f/ItCJ+3ipqtIChQ
- NkGDu9QtrXx3ZwDUPnMZvr9iyBgXyvJOBpfl4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768233429; x=1768838229;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ d=gmail.com; s=20230601; t=1768233648; x=1768838448; darn=dpdk.org;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:from:to:cc:subject:date
  :message-id:reply-to;
- bh=kPEMLLDcvPNhk0SUtlwh2rkc5BtepANhaFW0DWsAVrg=;
- b=Ji30FZwpTlx/dGeJfjq0rkXEW/nBcdsTB/9pt/144wyTrAG5+H/mHhdXxu7FaXIjjf
- 1uFaiMU7hJUD8q6Gxrhvx9JSmw0BMIKpcWgiLTIv76ro0XRnXtZ0ak/lE/j/A9Oeflq9
- Jjg4vbiRmR5yYuOtubJSghDg4ivLJsnjq8UcW++lPrjMI6cr2Y8N3X4VqS2qjHsaP3YQ
- I5f2tYnjjk+MpABoG8vcsT3aZS0ih6XBYRLFXlJcYt6a4zANspW24oFEdAIWQKqUxrZt
- ml+5UNdiHcdH9R+LKQP8ApOAF5OYrmxHgFgjtRg+K2a9/hw8gnjqbYAbtryAf3TBwyQh
- TanQ==
-X-Gm-Message-State: AOJu0YzrTTGyygyptxWa+SVuAUwqLxEUGXXa60bS3z8CGmLGIFv4n2fq
- SFy2R7mluRcZoms8EIF7mxSswqy6z+GPXEnxe+lEq1t6EzG0CLFG0ZeFEvbpOOlGh0+NSk4/N6c
- g8Ut2GavOEAXGXbCjmHb5A1SXtYvNV4ltSItk82pb6g==
-X-Gm-Gg: AY/fxX6+8AF1MVnc261rJU3MBETZ3B56S9eYoloF6QY8OHNhfIZC3aQqcDtOnwWvLn2
- qhtGmUXUpQrjpK4Be+qqqzuBrFGkBR+5KawABA6hXOW3vMWoUP8rcCU2l0Y+WBeBPME0vg8QFqc
- TDbFroQT5o5yqn67qG0wEryGungR72PoHW1QXAn8m2ijTB7G0atp39nC3C5+XlU3h3HBLkNdmWp
- zisR2qTN5SbzAF9UcNCtnigrJTe/WnSEqsKkx+QA8jjTsCHmelc/WAxFpYCFVnm9aMFl6WUftJi
- mMUpsmecGxtwg5CtBrZ2H+BcdkfnmeMUtS84INU=
-X-Google-Smtp-Source: AGHT+IGPRY2Bbl6jdDL1BCgp/4dQeqDhZozqEI7w5wcGk8iHS4i32cxQ5OJXuDHiYrRTTrKYpes0o42Uo6hdzLwG1B4=
-X-Received: by 2002:a05:6512:33cb:b0:59b:73b9:1f49 with SMTP id
- 2adb3069b0e04-59b73b921e7mr5640832e87.26.1768233429253; Mon, 12 Jan 2026
- 07:57:09 -0800 (PST)
+ bh=Jn9NPYWxxOsgJDW/tukn5ShJ0o8QUemHP20ncFDLutk=;
+ b=Yu+ZYb+JW6ER2sqyFt8V+85qImMZDYUOvLdrRNvsHTwsIX8jH/nmGOHYX/Vy7Bypc+
+ mt/CEaamd/gRl68X93nIJgGHQmmOMFa+1bwveyrB9QhdGfu6SFBnXVr98U3ku5GMz4H6
+ M8vOFS9+rvgxm/Tl3zRTiWpe0Fc6ByCWeFRmvxp6NnhSb9AKA3g54GHgxndXqkcSTP2h
+ MqItNBIeIo/KbwriQIkcIFN4gHIuwqhzsq8ZqzzPCBAxEFY1jElg3gCN5xlhrJYHNcEW
+ FMX9WTKq2BrGupOIPNJgwODMi13/N+PXek/qmilX1yuE9bPT+spWwtyyNoyZ0WlOK8+5
+ cQug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1768233648; x=1768838448;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=Jn9NPYWxxOsgJDW/tukn5ShJ0o8QUemHP20ncFDLutk=;
+ b=jaEmuGUsMdAL/c2175cwUuUKKqms6eqt6hx6Ck9cF2zgFgizGY3BmzRxzqf/bT8Erh
+ vKctZCZ8PwEBdp8vTPsAv2mh2kwBuwOrQy7Bl4YX8Lwqcg3HzY+UWktEcaa+2e8VVRY3
+ 1n3kQkjJ65+XoD1WF/yt895joDL9kL/dZXovums0CIK5Fv3eqTrLUQ6LbTLE6ksiJVZJ
+ AmOyx0AEmz/xKWLt5/tNPV1n4UQb7FgWerzHPQY8qYXUXad3rOh3XuzCBQtT9oKd0Cn2
+ YJfGpTnm2GXFS6FYKahUmsa2/OlJGQrBjd1St6JRyTXo8Y7Eamo2tk6zZL3KoF/ngp++
+ AhaQ==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCXqQg9wPQnxgLONNhz0DkVn0/ZW9DtuGxPFYoXFobRoGUWSxDmB5fJhVt/GCdcWN/KsXKE=@dpdk.org
+X-Gm-Message-State: AOJu0Yy3a2ZqIRdZ+hvM1g5ATdp4aSBsLegJkN4ZbnayFNie+jYdb+6P
+ U/+UdNe5CDMLPYcxO3hbtVBOt4HU+DeuVuEjQtgNZqURiq1tblT9nMaN9KXSDtDKmMTkIjqy1Xz
+ k18Wmab7qJZ94f19NRwqAj0KQg10xVWc=
+X-Gm-Gg: AY/fxX4Ps9pMWSONippU03DWWbmvDmzLjeokiLZGznvvtqVibmbEqmeedXiAkV0ZePO
+ FOv9MPHZy9bJQ/Te8FoXrTRjrZUbn66QXXQbdAxsOR/wPSUhH4S3sLHMZrm+66J/xuobrRlGOyf
+ otUko+bCHDYCE/I9fjJwU9mwP2ZqxofEHUdl3KIXIiDd0WTDk3BtXTvwbuPjJ4HbMcFNi1IxTy7
+ T8FWYRM4BNJgtf0NmWylPE5pj/gbzB3TMPSysjgsemtCecguhqvEjMPNUpyoQVaJl1345aZoxbA
+ keFdfg==
+X-Google-Smtp-Source: AGHT+IG5IbfEwe5ylkHXWezejJqPAZhy26htV8pHZxQ4VX5vJlyzt6GCNQggYy/Z5i7h59tjVFvCZiz+ROOXeT7pcvI=
+X-Received: by 2002:a05:6102:5242:b0:5de:31b1:1ffe with SMTP id
+ ada2fe7eead31-5ecb6980e5bmr7811754137.32.1768233646794; Mon, 12 Jan 2026
+ 08:00:46 -0800 (PST)
 MIME-Version: 1.0
-References: <20260107215129.1329960-2-rjarry@redhat.com>
- <20260108105036.1341037-2-rjarry@redhat.com>
-In-Reply-To: <20260108105036.1341037-2-rjarry@redhat.com>
-From: Matthew Labrecque <mlabrecque@iol.unh.edu>
-Date: Mon, 12 Jan 2026 10:56:58 -0500
-X-Gm-Features: AZwV_Qh8Req83rIcbvIvKwetdrXA5j9WUNC9SH_QX2B-FhEwvW-m5Fb1CY2M13w
-Message-ID: <CANGnzyBfmEy3Vccqywvzota=R2CNv1h+cgvfiawq5+qJqA4Rsg@mail.gmail.com>
-Subject: Re: [PATCH dpdk v2] telemetry: fix adding dicts in container arrays
-To: Robin Jarry <rjarry@redhat.com>
-Cc: dev@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>, 
- Ciara Power <ciara.power@intel.com>, stable@dpdk.org
-Content-Type: multipart/alternative; boundary="0000000000006e4f32064832ed11"
+References: <20251120114554.950287-1-mb@smartsharesystems.com>
+ <20251201155525.1538260-1-mb@smartsharesystems.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F6561B@smartserver.smartshare.dk>
+ <c2bf94e103f64dcaad115e1d3d39d654@huawei.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F6564F@smartserver.smartshare.dk>
+In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F6564F@smartserver.smartshare.dk>
+From: Scott Mitchell <scott.k.mitch1@gmail.com>
+Date: Mon, 12 Jan 2026 11:00:36 -0500
+X-Gm-Features: AZwV_Qh9m0TyynoW2ycw9nMSvkuJcFb-NqwuMvoE6SLTgVSoMBwRaRbXGgxOeVM
+Message-ID: <CAFn2buBx3JNXS1pb6w=0S1HOAxmG+HVTkk=_b+1kou5MnAnqpw@mail.gmail.com>
+Subject: Re: [PATCH v5] eal/x86: optimize memcpy of small sizes
+To: =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>
+Cc: Konstantin Ananyev <konstantin.ananyev@huawei.com>, dev@dpdk.org, 
+ Bruce Richardson <bruce.richardson@intel.com>, 
+ Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>,
+ Vipin Varghese <vipin.varghese@amd.com>, 
+ Stephen Hemminger <stephen@networkplumber.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -71,272 +84,44 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---0000000000006e4f32064832ed11
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-Hey Robin, my name is Mathew Labrecque and I work over at the UNH
-InterOperability Laboratory on the Open-Source Team.
-
-I wanted to email you regarding the ARM cross-compile tests that failed on
-the patch. While it says the tests were run on Ubuntu 20.04, these tests
-were actually performed on Ubuntu 24.04. This was due to an internal error
-where we hadn't properly updated the labels for the tests.
-
-Cheers,
-Matthew
-
-On Thu, Jan 8, 2026 at 5:50=E2=80=AFAM Robin Jarry <rjarry@redhat.com> wrot=
-e:
-
-> Currently, adding TEL_DICT containers in TEL_ARRAY_CONTAINER containers
-> is not supported by rte_tel_data_add_array_container. It wrongfully
-> returns -EINVAL where it should allow it.
 >
-> This is supported by the JSON formatter.
+> The discussion about the optimized checksum function [1] has shown us tha=
+t memcpy() sometimes prevents Clang from optimizing (loop unrolling and vec=
+torizing) and potentially causes strict aliasing bugs with GCC, so I will w=
+ork on a new patch version that keeps using the above types, instead of int=
+roducing memcpy() inside rte_memcpy().
 >
-> Allow the same value types than rte_tel_data_add_dict_container().
->
-> Add test case to verify it works as expected.
->
-> Fixes: c933bb5177ca ("telemetry: support array values in data object")
-> Cc: stable@dpdk.org
->
-> Signed-off-by: Robin Jarry <rjarry@redhat.com>
-> ---
->
-> Notes:
->     v2: added test case
->
->  app/test/test_telemetry_data.c | 21 +++++++++++++++++++++
->  lib/telemetry/telemetry_data.c |  6 +++---
->  2 files changed, 24 insertions(+), 3 deletions(-)
->
-> diff --git a/app/test/test_telemetry_data.c
-> b/app/test/test_telemetry_data.c
-> index 59898ff5e983..e904b5a7f210 100644
-> --- a/app/test/test_telemetry_data.c
-> +++ b/app/test/test_telemetry_data.c
-> @@ -405,6 +405,26 @@ test_array_with_array_uint_hex_values_nopadding(void=
-)
->         return CHECK_OUTPUT("[[\"0x888\"],[\"0x8888\"]]");
->  }
->
-> +static int
-> +test_array_with_dict_values(void)
-> +{
-> +       rte_tel_data_start_array(&response_data, RTE_TEL_CONTAINER);
-> +
-> +       struct rte_tel_data *d1 =3D rte_tel_data_alloc();
-> +       rte_tel_data_start_dict(d1);
-> +       rte_tel_data_add_dict_string(d1, "name", "foo");
-> +       rte_tel_data_add_dict_uint(d1, "size", 42);
-> +       rte_tel_data_add_array_container(&response_data, d1, 0);
-> +
-> +       struct rte_tel_data *d2 =3D rte_tel_data_alloc();
-> +       rte_tel_data_start_dict(d2);
-> +       rte_tel_data_add_dict_string(d2, "name", "bar");
-> +       rte_tel_data_add_dict_uint(d2, "size", 666);
-> +       rte_tel_data_add_array_container(&response_data, d2, 0);
-> +
-> +       return
-> CHECK_OUTPUT("[{\"name\":\"foo\",\"size\":42},{\"name\":\"bar\",\"size\":=
-666}]");
-> +}
-> +
->  static int
->  test_case_array_u64(void)
->  {
-> @@ -597,6 +617,7 @@ telemetry_data_autotest(void)
->                         test_array_with_array_string_values,
->                         test_array_with_array_uint_hex_values_padding,
->                         test_array_with_array_uint_hex_values_nopadding,
-> +                       test_array_with_dict_values,
->                         test_string_char_escaping,
->                         test_array_char_escaping,
->                         test_dict_char_escaping,
-> diff --git a/lib/telemetry/telemetry_data.c
-> b/lib/telemetry/telemetry_data.c
-> index 0354a0654804..0a006559ab42 100644
-> --- a/lib/telemetry/telemetry_data.c
-> +++ b/lib/telemetry/telemetry_data.c
-> @@ -96,10 +96,10 @@ int
->  rte_tel_data_add_array_container(struct rte_tel_data *d,
->                 struct rte_tel_data *val, int keep)
->  {
-> -       if (d->type !=3D TEL_ARRAY_CONTAINER ||
-> -                       (val->type !=3D TEL_ARRAY_UINT
-> +       if (d->type !=3D TEL_ARRAY_CONTAINER || (val->type !=3D TEL_ARRAY=
-_UINT
->                         && val->type !=3D TEL_ARRAY_INT
-> -                       && val->type !=3D TEL_ARRAY_STRING))
-> +                       && val->type !=3D TEL_ARRAY_STRING
-> +                       && val->type !=3D TEL_DICT))
->                 return -EINVAL;
->         if (d->data_len >=3D RTE_TEL_MAX_ARRAY_ENTRIES)
->                 return -ENOSPC;
-> --
-> 2.52.0
->
+> [1]: https://inbox.dpdk.org/dev/CAFn2buBzBLFLVN-K=3Du3MgBEbQ-hqbgJLVpDx3v=
+SXVKJpa0yPNg@mail.gmail.com/
 >
 
---=20
-Matthew Labrecque
-Technical Intern, Open Source Team
+Great timing for this thread :)
 
-UNH Interoperability Labs
+My observation:
+- clang is unable to apply optimizations with RTE_PTR_[ADD,SUB]
+like loop unrolling and vectorization (e.g. cksum)
+- Even when clang/gcc do apply optimizations the assembly can be non-optima=
+l
+- direct usage of unaligned_NN_t types can cause incorrect results
+(due to gcc bugs)
 
-21 Madbury Rd, Suite 100, Durham, NH 03824
+I don't think "rte_NN_alias" structs are safe on architectures that don't a=
+llow
+unaligned access bcz the inner "val" needs to indicate it maybe for
+unaligned access.
 
-www.iol.unh.edu
+My suggestion:
+1. Fix unaligned_NN_t types to ensure compiler doesn't aggressively
+apply strict-alias
+optimizations resulting in incorrect results
+(https://patches.dpdk.org/project/dpdk/patch/20260112120411.27314-2-scott.k=
+.mitch1@gmail.com/).
+Intermediate structs rte_NN_alias are then unnecessary and we can directly =
+use
+unaligned_NN_t instead (e.g.
+https://patches.dpdk.org/project/dpdk/patch/20260112120411.27314-3-scott.k.=
+mitch1@gmail.com/)
 
---0000000000006e4f32064832ed11
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr"><div dir=3D"ltr">Hey Robin, my name is Mathew Labrecque an=
-d I work over at the UNH InterOperability Laboratory on the Open-Source Tea=
-m.<div><br></div><div>I wanted to email you regarding the ARM cross-compile=
- tests=C2=A0that failed on the patch. While it says the=C2=A0tests were run=
- on Ubuntu 20.04, these tests were actually performed on Ubuntu 24.04. This=
- was due to an internal error where we hadn&#39;t properly updated the labe=
-ls for the tests.</div><div><br></div><div>Cheers,</div><div>Matthew</div><=
-/div><br><div class=3D"gmail_quote gmail_quote_container"><div dir=3D"ltr" =
-class=3D"gmail_attr">On Thu, Jan 8, 2026 at 5:50=E2=80=AFAM Robin Jarry &lt=
-;<a href=3D"mailto:rjarry@redhat.com">rjarry@redhat.com</a>&gt; wrote:<br><=
-/div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;bo=
-rder-left:1px solid rgb(204,204,204);padding-left:1ex">Currently, adding TE=
-L_DICT containers in TEL_ARRAY_CONTAINER containers<br>
-is not supported by rte_tel_data_add_array_container. It wrongfully<br>
-returns -EINVAL where it should allow it.<br>
-<br>
-This is supported by the JSON formatter.<br>
-<br>
-Allow the same value types than rte_tel_data_add_dict_container().<br>
-<br>
-Add test case to verify it works as expected.<br>
-<br>
-Fixes: c933bb5177ca (&quot;telemetry: support array values in data object&q=
-uot;)<br>
-Cc: <a href=3D"mailto:stable@dpdk.org" target=3D"_blank">stable@dpdk.org</a=
-><br>
-<br>
-Signed-off-by: Robin Jarry &lt;<a href=3D"mailto:rjarry@redhat.com" target=
-=3D"_blank">rjarry@redhat.com</a>&gt;<br>
----<br>
-<br>
-Notes:<br>
-=C2=A0 =C2=A0 v2: added test case<br>
-<br>
-=C2=A0app/test/test_telemetry_data.c | 21 +++++++++++++++++++++<br>
-=C2=A0lib/telemetry/telemetry_data.c |=C2=A0 6 +++---<br>
-=C2=A02 files changed, 24 insertions(+), 3 deletions(-)<br>
-<br>
-diff --git a/app/test/test_telemetry_data.c b/app/test/test_telemetry_data.=
-c<br>
-index 59898ff5e983..e904b5a7f210 100644<br>
---- a/app/test/test_telemetry_data.c<br>
-+++ b/app/test/test_telemetry_data.c<br>
-@@ -405,6 +405,26 @@ test_array_with_array_uint_hex_values_nopadding(void)<=
-br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 return CHECK_OUTPUT(&quot;[[\&quot;0x888\&quot;=
-],[\&quot;0x8888\&quot;]]&quot;);<br>
-=C2=A0}<br>
-<br>
-+static int<br>
-+test_array_with_dict_values(void)<br>
-+{<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0rte_tel_data_start_array(&amp;response_data, RT=
-E_TEL_CONTAINER);<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0struct rte_tel_data *d1 =3D rte_tel_data_alloc(=
-);<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0rte_tel_data_start_dict(d1);<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0rte_tel_data_add_dict_string(d1, &quot;name&quo=
-t;, &quot;foo&quot;);<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0rte_tel_data_add_dict_uint(d1, &quot;size&quot;=
-, 42);<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0rte_tel_data_add_array_container(&amp;response_=
-data, d1, 0);<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0struct rte_tel_data *d2 =3D rte_tel_data_alloc(=
-);<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0rte_tel_data_start_dict(d2);<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0rte_tel_data_add_dict_string(d2, &quot;name&quo=
-t;, &quot;bar&quot;);<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0rte_tel_data_add_dict_uint(d2, &quot;size&quot;=
-, 666);<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0rte_tel_data_add_array_container(&amp;response_=
-data, d2, 0);<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0return CHECK_OUTPUT(&quot;[{\&quot;name\&quot;:=
-\&quot;foo\&quot;,\&quot;size\&quot;:42},{\&quot;name\&quot;:\&quot;bar\&qu=
-ot;,\&quot;size\&quot;:666}]&quot;);<br>
-+}<br>
-+<br>
-=C2=A0static int<br>
-=C2=A0test_case_array_u64(void)<br>
-=C2=A0{<br>
-@@ -597,6 +617,7 @@ telemetry_data_autotest(void)<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 test_array_with_array_string_values,<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 test_array_with_array_uint_hex_values_padding,<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 test_array_with_array_uint_hex_values_nopadding,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0test_array_with_dict_values,<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 test_string_char_escaping,<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 test_array_char_escaping,<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 test_dict_char_escaping,<br>
-diff --git a/lib/telemetry/telemetry_data.c b/lib/telemetry/telemetry_data.=
-c<br>
-index 0354a0654804..0a006559ab42 100644<br>
---- a/lib/telemetry/telemetry_data.c<br>
-+++ b/lib/telemetry/telemetry_data.c<br>
-@@ -96,10 +96,10 @@ int<br>
-=C2=A0rte_tel_data_add_array_container(struct rte_tel_data *d,<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 struct rte_tel_data=
- *val, int keep)<br>
-=C2=A0{<br>
--=C2=A0 =C2=A0 =C2=A0 =C2=A0if (d-&gt;type !=3D TEL_ARRAY_CONTAINER ||<br>
--=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0(val-&gt;type !=3D TEL_ARRAY_UINT<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0if (d-&gt;type !=3D TEL_ARRAY_CONTAINER || (val=
--&gt;type !=3D TEL_ARRAY_UINT<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 &amp;&amp; val-&gt;type !=3D TEL_ARRAY_INT<br>
--=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0&amp;&amp; val-&gt;type !=3D TEL_ARRAY_STRING))<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0&amp;&amp; val-&gt;type !=3D TEL_ARRAY_STRING<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0&amp;&amp; val-&gt;type !=3D TEL_DICT))<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 return -EINVAL;<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 if (d-&gt;data_len &gt;=3D RTE_TEL_MAX_ARRAY_EN=
-TRIES)<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 return -ENOSPC;<br>
--- <br>
-2.52.0<br>
-<br>
-</blockquote></div><div><br clear=3D"all"></div><div><br></div><span class=
-=3D"gmail_signature_prefix">-- </span><br><div dir=3D"ltr" class=3D"gmail_s=
-ignature"><div dir=3D"ltr"><div><span style=3D"background-color:transparent=
-;color:rgb(0,0,0);font-family:Arial;font-size:13.3333px">Matthew Labrecque<=
-/span></div><div><div>Technical Intern, Open Source Team</div><p style=3D"c=
-olor:rgb(34,34,34);line-height:1.2;margin-top:0pt;margin-bottom:0pt"><span =
-style=3D"background-color:transparent;color:rgb(0,0,0);font-family:Arial;fo=
-nt-size:10pt">UNH Interoperability Labs</span></p><p dir=3D"ltr" style=3D"c=
-olor:rgb(34,34,34);line-height:1.2;margin-top:0pt;margin-bottom:0pt"><span =
-style=3D"font-size:10pt;font-family:Arial;color:rgb(0,0,0);background-color=
-:transparent;vertical-align:baseline">21 Madbury Rd, Suite 100, Durham, NH =
-03824</span></p><p dir=3D"ltr" style=3D"color:rgb(34,34,34);line-height:1.2=
-;margin-top:0pt;margin-bottom:0pt"><span style=3D"font-size:10pt;font-famil=
-y:Arial;color:rgb(17,85,204);background-color:transparent;vertical-align:ba=
-seline"><a href=3D"http://www.iol.unh.edu/" style=3D"color:rgb(17,85,204)" =
-target=3D"_blank">www.iol.unh.edu</a></span></p></div></div></div></div>
-
---0000000000006e4f32064832ed11--
+2. Improve RTE_PTR_[ADD,SUB] to be more compiler friendly
+(https://patches.dpdk.org/project/dpdk/patch/20260112154059.36879-1-scott.k=
+.mitch1@gmail.com/)
