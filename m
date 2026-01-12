@@ -2,39 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD613C9EC90
-	for <dpdk-dev@archiver.kernel.org>; Mon, 12 Jan 2026 13:28:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C303C9EC90
+	for <dpdk-dev@archiver.kernel.org>; Mon, 12 Jan 2026 13:53:32 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9376F40A8A;
-	Mon, 12 Jan 2026 14:28:33 +0100 (CET)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id BB63C40156
- for <dev@dpdk.org>; Mon, 12 Jan 2026 14:28:31 +0100 (CET)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id C10FC206E5;
- Mon, 12 Jan 2026 14:28:30 +0100 (CET)
-Content-class: urn:content-classes:message
+	by mails.dpdk.org (Postfix) with ESMTP id 36A6D402EA;
+	Mon, 12 Jan 2026 14:53:31 +0100 (CET)
+Received: from mail-wm1-f98.google.com (mail-wm1-f98.google.com
+ [209.85.128.98]) by mails.dpdk.org (Postfix) with ESMTP id 985CE40156
+ for <dev@dpdk.org>; Mon, 12 Jan 2026 14:53:29 +0100 (CET)
+Received: by mail-wm1-f98.google.com with SMTP id
+ 5b1f17b1804b1-47775fb6cb4so35287125e9.0
+ for <dev@dpdk.org>; Mon, 12 Jan 2026 05:53:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=6wind.com; s=google; t=1768226009; x=1768830809; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=V7D3dbHaVBGkAtBDbY1V4VnFT4XGSuCJhwN4COWpSAU=;
+ b=JgUOk0foWrphU5sTEk9yPLMj2HnnFehDMrG4iRCkYiR7Q+h7FoB+AUvqCoOr4MUeXV
+ qiwqrGpsJKfxE8YQqh2IHKWMdWFgL8rsxRpLy3cHy9//VLvXDjHXq+cJa7or/cH4LE+Z
+ 0njtrKuVdXFAZvDcHR8zEbFctzGcem1T0FzE38x8kNDjwomGaUBd20tzpIMnO/Yhvxla
+ o1WYqUNo0ntd4cXH/NbjCyn8Yl9Kn8xhPoM4cfWwV+EisFSS31I/8CH0KOwpU8Qz8h9Z
+ JvfhjCLMCeYFW4H+0MGxuaMoae/Dpi/tzpX3i6Opxl7l/5EV4CmuRqG4AdSAB+e1+8vk
+ xD0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1768226009; x=1768830809;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=V7D3dbHaVBGkAtBDbY1V4VnFT4XGSuCJhwN4COWpSAU=;
+ b=CpK1Mn+69RCNtx8dLk+gLWs1JG+qvhTqW13IsUrW54ohYAP/PM7jFAvdHeotySyKxJ
+ Ds71M3xvRGwZGpwlkUpMXCPWaBj0cxrgmr0uJ1xWgcasxNs9o7J1Q/Qs6TMK45906M46
+ 8A80yprObK8UjZAjddz4zSMnZzMearp1Wx0o1/jdo3DYIvmMoR61PbK6t4GqxWoaqvlF
+ uLJWx3l5ijF8+aGJbvoxR+ZVagvFC1b1+QzOAEwJL9LjGElGzysds9udU5/NVc6zPfzg
+ GBS3+2WVySOu+tECwLyYjVkBeMIW4KLNezL/AQy8WtppTHE1NT8nObdXfb1tvTNi7stS
+ DLeQ==
+X-Gm-Message-State: AOJu0YxOMTBd3jFvLqDsGBsUMFuvZR1bsl29Vx1BfArhhs6uoWuLF5tY
+ 4JbSaHKN8ydVktkcTss8PmQpMLi3ZT4JWAR8ecwKrSuy+kRxqkEGC+s3Um7pUEekZmeySw2BEFw
+ D/vmn5JsK4qwVVAePuMrxZ8kQ09x8xz/PjLshxTF+ndk=
+X-Gm-Gg: AY/fxX61DOHRV7yYRo0nYWzXCFgo7B5246afOvJSYWFPpdyJpWh7de7sWLYtYrc/Ubq
+ K1zz5oyZ8ega02oKRI0W24yO/hdWBg80iOGjaUK/gvKcmYcSCQORF6g2gcOiRp3znLY4UmEYzqE
+ 2kyBdaJog5ZltKgEKWgFjNI+rSFForT+aT46Hwrca5/B5shlsqv3bdfWlVk88nmhAXozfcc9IuL
+ Uc5ogYjOk/EcvrF95nUSQF1e8spZfpEN8qWoW8wMeNDL7x9cn6+Pca35qWfElxYBfEmZ8jcgYdu
+ 7f+Czq9aCADc+3na2jDEuzpfP8J3jrNXVMTJFYcOEa93lISsJ8xbUceATPp+T3kNWbX3nT/4LQp
+ IIHkhyrk3Y0rLrFZEMa22gRP7AA33ORkve8QshPihgFZYX6FmcXg3RPInaNzmalbh
+X-Google-Smtp-Source: AGHT+IEzRoc599hLj7L0Y7r4QD35oxp1xh+E4MrjEN+KySH7atuw6O3092VVBJjFzKW/jSPVjxvb9qrMm1Xg
+X-Received: by 2002:a05:600c:3e8f:b0:477:5897:a0c4 with SMTP id
+ 5b1f17b1804b1-47d84b0b315mr191388775e9.4.1768226009059; 
+ Mon, 12 Jan 2026 05:53:29 -0800 (PST)
+Received: from smtpservice.6wind.com ([185.13.181.2])
+ by smtp-relay.gmail.com with ESMTP id
+ 5b1f17b1804b1-47d7f3bfbbcsm31969625e9.2.2026.01.12.05.53.28; 
+ Mon, 12 Jan 2026 05:53:29 -0800 (PST)
+X-Relaying-Domain: 6wind.com
+Received: from localhost (vader.dev.6wind.com [10.17.1.39])
+ by smtpservice.6wind.com (Postfix) with ESMTP id B4D181D4FE;
+ Mon, 12 Jan 2026 14:53:28 +0100 (CET)
+From: Thierry Herbelot <thierry.herbelot@6wind.com>
+To: dev@dpdk.org
+Cc: Thierry Herbelot <thierry.herbelot@6wind.com>,
+ Thomas Monjalon <thomas@monjalon.net>,
+ Bruce Richardson <bruce.richardson@intel.com>,
+ Anatoly Burakov <anatoly.burakov@intel.com>, stable@dpdk.org,
+ Olivier Matz <olivier.matz@6wind.com>
+Subject: [PATCH] net/intel: update key_len when getting RSS key
+Date: Mon, 12 Jan 2026 14:53:11 +0100
+Message-Id: <20260112135311.2507243-1-thierry.herbelot@6wind.com>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Subject: RE: [PATCH v14 1/2] eal: add __rte_may_alias to unaligned typedefs
-Date: Mon, 12 Jan 2026 14:28:28 +0100
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65654@smartserver.smartshare.dk>
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-In-Reply-To: <20260112120411.27314-2-scott.k.mitch1@gmail.com>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH v14 1/2] eal: add __rte_may_alias to unaligned typedefs
-Thread-Index: AdyDu5QsI28YBo9bQDyAEV8VPenifgACY7lA
-References: <20260112120411.27314-1-scott.k.mitch1@gmail.com>
- <20260112120411.27314-2-scott.k.mitch1@gmail.com>
-From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
-To: <scott.k.mitch1@gmail.com>,
-	<dev@dpdk.org>
-Cc: <stephen@networkplumber.org>
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -48,96 +83,55 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> From: Scott Mitchell <scott.k.mitch1@gmail.com>
->=20
-> Add __rte_may_alias attribute to unaligned_uint{16,32,64}_t typedefs
-> to prevent GCC strict-aliasing optimization bugs. GCC has a bug where
-> it incorrectly elides struct initialization when strict aliasing is
-> enabled, causing reads from uninitialized memory.
->=20
-> The __rte_may_alias attribute signals to the compiler that these types
-> can alias other types, preventing the incorrect optimization.
+When adding the i40e PMD, the rss_hash_conf_get function was changed to
+update the RSS key len.
+The corresponding functions for ixgbe & e1000 were not updated to
+follow the new convention.
 
-I'm wondering if this is the right place to add __rte_may_alias, i.e. if =
-the scope of the workaround is correct.
+Fixes: 8a387fa85f02 ("ethdev: more RSS flags")
+Signed-off-by: Thierry Herbelot <thierry.herbelot@6wind.com>
+---
+ drivers/net/intel/e1000/igb_rxtx.c   | 1 +
+ drivers/net/intel/e1000/igc_ethdev.c | 1 +
+ drivers/net/intel/ixgbe/ixgbe_rxtx.c | 1 +
+ 3 files changed, 3 insertions(+)
 
-Are the unaligned_uintNN_t types only used in a way where they are =
-affected by the GCC bug?
-If not, adding __rte_may_alias to the types themselves may be too broad.
-
-Does the GCC bug only affect the unaligned_uintNN_t types?
-Or does it occur elsewhere or for other types too? Then this workaround =
-only solves the problem for parts of the code.
-
-Minor detail:
-If the bug only occurs on GCC, not Clang, please make the workaround =
-GCC-only, using the preprocessor.
-
->=20
-> Signed-off-by: Scott Mitchell <scott.k.mitch1@gmail.com>
-> ---
->  lib/eal/include/rte_common.h | 34 +++++++++++++++++++---------------
->  1 file changed, 19 insertions(+), 15 deletions(-)
->=20
-> diff --git a/lib/eal/include/rte_common.h
-> b/lib/eal/include/rte_common.h
-> index 9e7d84f929..ac70270cfb 100644
-> --- a/lib/eal/include/rte_common.h
-> +++ b/lib/eal/include/rte_common.h
-> @@ -121,14 +121,27 @@ extern "C" {
->  #define __rte_aligned(a) __attribute__((__aligned__(a)))
->  #endif
->=20
-> +/**
-> + * Macro to mark a type that is not subject to type-based aliasing
-> rules
-> + */
-> +#ifdef RTE_TOOLCHAIN_MSVC
-> +#define __rte_may_alias
-> +#else
-> +#define __rte_may_alias __attribute__((__may_alias__))
-> +#endif
-> +
-> +/**
-> + * __rte_may_alias avoids compiler bugs (GCC) that elide
-> initialization
-> + * of memory when strict-aliasing is enabled.
-> + */
->  #ifdef RTE_ARCH_STRICT_ALIGN
-> -typedef uint64_t unaligned_uint64_t __rte_aligned(1);
-> -typedef uint32_t unaligned_uint32_t __rte_aligned(1);
-> -typedef uint16_t unaligned_uint16_t __rte_aligned(1);
-> +typedef uint64_t unaligned_uint64_t __rte_may_alias __rte_aligned(1);
-> +typedef uint32_t unaligned_uint32_t __rte_may_alias __rte_aligned(1);
-> +typedef uint16_t unaligned_uint16_t __rte_may_alias __rte_aligned(1);
->  #else
-> -typedef uint64_t unaligned_uint64_t;
-> -typedef uint32_t unaligned_uint32_t;
-> -typedef uint16_t unaligned_uint16_t;
-> +typedef uint64_t unaligned_uint64_t __rte_may_alias;
-> +typedef uint32_t unaligned_uint32_t __rte_may_alias;
-> +typedef uint16_t unaligned_uint16_t __rte_may_alias;
->  #endif
->=20
->  /**
-> @@ -159,15 +172,6 @@ typedef uint16_t unaligned_uint16_t;
->  #define __rte_packed_end __attribute__((__packed__))
->  #endif
->=20
-> -/**
-> - * Macro to mark a type that is not subject to type-based aliasing
-> rules
-> - */
-> -#ifdef RTE_TOOLCHAIN_MSVC
-> -#define __rte_may_alias
-> -#else
-> -#define __rte_may_alias __attribute__((__may_alias__))
-> -#endif
-> -
->  /******* Macro to mark functions and fields scheduled for removal
-> *****/
->  #ifdef RTE_TOOLCHAIN_MSVC
->  #define __rte_deprecated
-> --
-> 2.39.5 (Apple Git-154)
+diff --git a/drivers/net/intel/e1000/igb_rxtx.c b/drivers/net/intel/e1000/igb_rxtx.c
+index cdd7a3338f61..d5c2bc013702 100644
+--- a/drivers/net/intel/e1000/igb_rxtx.c
++++ b/drivers/net/intel/e1000/igb_rxtx.c
+@@ -2042,6 +2042,7 @@ int eth_igb_rss_hash_conf_get(struct rte_eth_dev *dev,
+ 			hash_key[(i * 4) + 2] = (rss_key >> 16) & 0x000000FF;
+ 			hash_key[(i * 4) + 3] = (rss_key >> 24) & 0x000000FF;
+ 		}
++		rss_conf->rss_key_len = 40;
+ 	}
+ 
+ 	/* Get RSS functions configured in MRQC register */
+diff --git a/drivers/net/intel/e1000/igc_ethdev.c b/drivers/net/intel/e1000/igc_ethdev.c
+index b9c91d2446c0..9f6ada3bc6cd 100644
+--- a/drivers/net/intel/e1000/igc_ethdev.c
++++ b/drivers/net/intel/e1000/igc_ethdev.c
+@@ -2559,6 +2559,7 @@ eth_igc_rss_hash_conf_get(struct rte_eth_dev *dev,
+ 		/* read RSS key from register */
+ 		for (i = 0; i < IGC_HKEY_MAX_INDEX; i++)
+ 			hash_key[i] = E1000_READ_REG_LE_VALUE(hw, E1000_RSSRK(i));
++		rss_conf->rss_key_len = IGC_HKEY_MAX_INDEX * sizeof(uint32_t);
+ 	}
+ 
+ 	/* get RSS functions configured in MRQC register */
+diff --git a/drivers/net/intel/ixgbe/ixgbe_rxtx.c b/drivers/net/intel/ixgbe/ixgbe_rxtx.c
+index a7583c178a14..a2c5ffe0b3b0 100644
+--- a/drivers/net/intel/ixgbe/ixgbe_rxtx.c
++++ b/drivers/net/intel/ixgbe/ixgbe_rxtx.c
+@@ -3756,6 +3756,7 @@ ixgbe_dev_rss_hash_conf_get(struct rte_eth_dev *dev,
+ 			hash_key[(i * 4) + 2] = (rss_key >> 16) & 0x000000FF;
+ 			hash_key[(i * 4) + 3] = (rss_key >> 24) & 0x000000FF;
+ 		}
++		rss_conf->rss_key_len = 40;
+ 	}
+ 
+ 	if (!ixgbe_rss_enabled(hw)) { /* RSS is disabled */
+-- 
+2.39.2
 
