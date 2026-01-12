@@ -2,68 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E19E7D2502F
-	for <dpdk-dev@archiver.kernel.org>; Mon, 12 Jan 2026 04:54:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F750D25030
+	for <dpdk-dev@archiver.kernel.org>; Mon, 12 Jan 2026 04:54:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A1AC9406B6;
-	Mon, 12 Jan 2026 05:54:08 +0100 (CET)
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com
- [209.85.208.53]) by mails.dpdk.org (Postfix) with ESMTP id A32A74028F
- for <dev@dpdk.org>; Mon, 12 Jan 2026 05:54:07 +0100 (CET)
-Received: by mail-ed1-f53.google.com with SMTP id
- 4fb4d7f45d1cf-64b921d9e67so10226886a12.3
- for <dev@dpdk.org>; Sun, 11 Jan 2026 20:54:07 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id AF9C8406BB;
+	Mon, 12 Jan 2026 05:54:10 +0100 (CET)
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com
+ [209.85.208.44]) by mails.dpdk.org (Postfix) with ESMTP id 3BBAE406BA
+ for <dev@dpdk.org>; Mon, 12 Jan 2026 05:54:09 +0100 (CET)
+Received: by mail-ed1-f44.google.com with SMTP id
+ 4fb4d7f45d1cf-64b9d01e473so9924633a12.2
+ for <dev@dpdk.org>; Sun, 11 Jan 2026 20:54:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768193647;
- x=1768798447; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768193649;
+ x=1768798449; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=Iuv3LJDzK9GajXQzwnSKoPqRBF3oNEKaIMxGCjcwkWs=;
- b=pVF6B2miXU203jJHuCyRCaChrVEJt3U5MPN954pzIVczPZk5yd2tgLmANWjSAOxw9z
- bsaqVOMxXSv58DME9rLjYr7iitB9bvKSK/OTzCMKCDiS9EfOqPQ6Ywn43XXjOqlZgIqt
- bt+Ve0397gWJ+gkRNPRRKd0bh0c5wSe2Os86jY4U1VnRQS9xP1t70S65bTC1YgBjBylY
- a1E3XRwoDzwzHnUk908KuZLehVq26JfoIvBo7KLpdTripmnBilWLWjBGYLN3kN8naX4b
- 1Q8VytZ4Fc53D6fGkoq4tcgeyBvL0OlbX3h8nKg8g62G/v4PY3r5cqgLWUdjdGWs1Swi
- EuWw==
+ bh=CDdue5NnT8vGqMvdHE0wnDDxGpF0zEbxL8PVq5ZpE0M=;
+ b=XG6ZwQBmOQFq69gOauU2Itz5S7MvngCIBYCbO+NZvp9DOGvRJG+cn0ZTIuUqvfqCCv
+ TRl1hntg8Wq1/d5KSsWNtJfZLKSoDpKqpKtHIQiKYrj9DloGMjSEQls785P8Kd1p5YVS
+ 1ls+FxSv9TDkMQaM9eAo59x12hHwQ3WH5vUbFuzcW8Xd4S9hHYVlrriGT4QWJGxYgJuz
+ 5BX/mnz8gl2uzL1O0nGj1LrW5fD/fYWs+GOKElzbrGFGz+bmm0ILBAMpVeP7MxMl4C8Y
+ V3dAOZuTh6GYAJ1kHEsEwPYuRt7M4rb60PpL7DMY1b4npCKk+GdM0hedGqyp3r3J2KPG
+ lMdg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768193647; x=1768798447;
+ d=1e100.net; s=20230601; t=1768193649; x=1768798449;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=Iuv3LJDzK9GajXQzwnSKoPqRBF3oNEKaIMxGCjcwkWs=;
- b=MwBAiHv5HRkYXQOEi1AJkfXhtrmAxD7NMm+kcLovfh2G0w8y+wfmrCktQLAilDn5eA
- EJj4xmJgoPqNRy3Nz46KnTzJyLHn9+Gb3uNyaO+ut2m6TneVB3Q6pXyVOWTuPaVPji0E
- 2tvyL7CmeMSgRjXLTC+XwbteCtGgM2p0edYcogfY60lYRpX3qBKj6W1JziCaVOHokHNa
- htZDljRgzcC4OHlK4zZ5sZtWo2eo7al3o4ejlODskFTFOAi77/m3Hc20pHwItwOBuUCI
- CyuL1xFgpo1o05n9We02m5whTBc/y63gw7WUQIBgX2aqLorTUohVgkt06NXw1RcSb6dh
- mP+w==
-X-Gm-Message-State: AOJu0YzGxrgoCKfoRTQL+wiBT2m5zhET6vLy7pIrVZSrg8v1VDAcdd6J
- 1Vqs3qE7cjLmClCNzrbfMGel1yvez7cyuE+Jyt4rVrHiOh/rQVYRv5wid96+QIHj3HEDIfmBSuY
- VwcES
-X-Gm-Gg: AY/fxX4ZXfpfiR5EcDm/ulFy1eo8ocLce80ZArQjpGVW0CadfvNsF9losamwgs5rguc
- NMMU+/MmfYrzPDiJjcn0xKQGYsc34EKgIrnu2T/hoJ0C59ceoAKIwQ7dTuQdv1wbb7hzbHNBIWj
- ntKVVWjyqDrb2EfotZvhUES3KPvQWLgqQQDIjpARA6n53RQQ7Gp2frZRugCT72vfhd9wlv+0lbq
- 3r0+7L/6gGzeUNTN90s6xqEocdnrz0jbWrr3U6zbhMI8uee7vjw/B79WK+EKTwUL8t76EkDPkJg
- 5iQfPpTkJPIomFJ/I6SbjBnfelX+ll9wfwPIxp7KLrYJFFi/MFSs/xkuiuS12ZqWw7lc5nchh5k
- 4SPSwjohSBiP+Q0D0xvxHoKUsW0s31zvgFjvD2y9zmmpmfi/YElloBO9VlE9MM/upHMblEa3vMA
- 3VZTHOnzrM3sru1PUgHfwsVr/zhnA6bgwZzX540hj89CxdX2Lgv4cRkpiN7HlI
-X-Google-Smtp-Source: AGHT+IGh1Bo99l4vPFYZM2dsMhhm/jmf9bL910TPUNnh9pwTZwb/M33llYZZUQ6mVYDfU6d9qq/j3Q==
-X-Received: by 2002:a17:907:e114:b0:b87:442:e9b6 with SMTP id
- a640c23a62f3a-b870442ee39mr323508666b.17.1768193646742; 
- Sun, 11 Jan 2026 20:54:06 -0800 (PST)
+ bh=CDdue5NnT8vGqMvdHE0wnDDxGpF0zEbxL8PVq5ZpE0M=;
+ b=bCDj9HoW7+pgNX5iDqjsEtHKHvwxSiF6NPh/i4KWHI/qgiEKFRYbnPpuOUwZ3HEnQc
+ sBZhjFeIYPga89E22DP+mgrrgNrQXECorns1G6qniFehQ6DvWw2epNSHyNgbXTi/6pkw
+ ExPFXXhtm2x/BtcZHQPWI9icowiWTBuqK30LwanlaiLbnguW7EISnNOKwQIrJnxFt4Sr
+ G2BKSQyVNaxbb9tKTw3IA3OTaYaGsk586hgTpR8nyfiOZzGUncY2P+qxmY2b5lPZWkrI
+ Tw8930AxGfxa6Caq+vWRcT1Fs4pY17nsOVD/zcieBLkaCh47e+jDTZSnqvhqf2f9YQg2
+ BhVw==
+X-Gm-Message-State: AOJu0YyjwsVfUwyEAtjfz7vzO07aGbIQo+q8+NxXWNC0ZrD5afnz8sfu
+ XO9FHHfuojuLMMNxDkmB99Z+unbIOEbufOPuWZlHm+sYAUKt+2DwLnW09h1Xw36pB121qm3YS8M
+ DLTA5
+X-Gm-Gg: AY/fxX6h8lCw/wijqfSlSRjqn4W3QyxqIp5DwkoAt/TC+rP/C4jUoe7bLz6nJ2Kj9o2
+ k+OI1vlOV/B4KhZwJqncLRC9PK270Ljuu1Gk0/FJV8STzr1yQo67tOC2u1xxDeTZ6iR2nj8aire
+ /VECpnOZm6aONNsd5NuXm4iuUrJQIofvxgRooP3rPVti7XXs9Wfj6U2Lucqk7ntb3Vslfsas+Wh
+ 7xQVRadxbUNnwPwlcITkI1iEMaPx+fnAPVaPquZjWslwOAZH9W5S8rtRFZP3PcFczfxz8i1aRbA
+ jqO8XddX5YWgTrDteiRvnn2qfR/EWu9DcQR0YZT/8MNFddWm7rkROUSoOvRy1NCeBcvCf6HYUGC
+ E1rofHsC/M0aaOOQ3b7yFjm0h9xVPGfVLo51E1gUQseCKikZKudVHowzhx3tOdgxmSU6BaHpJFM
+ i0+PabjrAeYGLN6SGao/2fYsR+jky1XHwu2TvcMJ9mMlf0C1CYpw==
+X-Google-Smtp-Source: AGHT+IH8Bw3CiyHcq752jjOVGriv4vPS0ii/vvIDsPqi0iQUU2kOH0mmZOqGCSclMCVa8LDdsDA3FA==
+X-Received: by 2002:a17:907:980e:b0:b83:3294:9c56 with SMTP id
+ a640c23a62f3a-b8444c4d0bfmr1715260766b.9.1768193648780; 
+ Sun, 11 Jan 2026 20:54:08 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a640c23a62f3a-b86f9a9103bsm534327166b.30.2026.01.11.20.54.05
+ a640c23a62f3a-b86f9a9103bsm534327166b.30.2026.01.11.20.54.07
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 11 Jan 2026 20:54:06 -0800 (PST)
+ Sun, 11 Jan 2026 20:54:08 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Reshma Pattan <reshma.pattan@intel.com>
-Subject: [PATCH v3 1/7] pcapng: add length checks to string arguments
-Date: Sun, 11 Jan 2026 20:50:14 -0800
-Message-ID: <20260112045359.142999-2-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
+ Reshma Pattan <reshma.pattan@intel.com>, Ray Kinsella <mdr@ashroe.eu>
+Subject: [PATCH v3 2/7] pcapng: use malloc instead of fixed buffer size
+Date: Sun, 11 Jan 2026 20:50:15 -0800
+Message-ID: <20260112045359.142999-3-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260112045359.142999-1-stephen@networkplumber.org>
 References: <20251126051218.50568-1-stephen@networkplumber.org>
@@ -83,126 +83,135 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The pcapng file format has a maximum possible string length
-of 16 bits since information is recorded as type, value, length.
+The administrative APIs accept comments and other meta data
+as strings. This leads to possibility of very large strings
+which can overrun the use of fixed size buffers.
 
-The API should check these lengths before possible memory
-allocation or overwrite failures. Update Doxygen comments
-to include return value.
+Instead, use malloc to allocate a buffer of the necessary
+size and handle potential allocation failures.
+
+Bugzilla ID: 1820
+Fixes: 8d23ce8f5ee9 ("pcapng: add new library for writing pcapng files")
+Cc: stable@dpdk.org
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- lib/pcapng/rte_pcapng.c | 31 ++++++++++++++++++++++++++++---
- lib/pcapng/rte_pcapng.h |  8 +++++++-
- 2 files changed, 35 insertions(+), 4 deletions(-)
+ lib/pcapng/rte_pcapng.c | 36 ++++++++++++++++++++++++------------
+ 1 file changed, 24 insertions(+), 12 deletions(-)
 
 diff --git a/lib/pcapng/rte_pcapng.c b/lib/pcapng/rte_pcapng.c
-index 21bc94cea1..863706a365 100644
+index 863706a365..c2635d8b03 100644
 --- a/lib/pcapng/rte_pcapng.c
 +++ b/lib/pcapng/rte_pcapng.c
-@@ -34,6 +34,9 @@
- /* conversion from DPDK speed to PCAPNG */
- #define PCAPNG_MBPS_SPEED 1000000ull
+@@ -37,9 +37,6 @@
+ /* upper bound for strings in pcapng option data */
+ #define PCAPNG_STR_MAX	UINT16_MAX
  
-+/* upper bound for strings in pcapng option data */
-+#define PCAPNG_STR_MAX	UINT16_MAX
-+
- /* upper bound for section, stats and interface blocks (in uint32_t) */
- #define PCAPNG_BLKSIZ	(2048 / sizeof(uint32_t))
+-/* upper bound for section, stats and interface blocks (in uint32_t) */
+-#define PCAPNG_BLKSIZ	(2048 / sizeof(uint32_t))
+-
+ /* Format of the capture file handle */
+ struct rte_pcapng {
+ 	int  outfd;		/* output file */
+@@ -148,7 +145,7 @@ pcapng_section_block(rte_pcapng_t *self,
+ {
+ 	struct pcapng_section_header *hdr;
+ 	struct pcapng_option *opt;
+-	uint32_t buf[PCAPNG_BLKSIZ];
++	uint32_t *buf;
+ 	uint32_t len;
  
-@@ -218,9 +221,11 @@ rte_pcapng_add_interface(rte_pcapng_t *self, uint16_t port, uint16_t link_type,
+ 	len = sizeof(*hdr);
+@@ -165,8 +162,11 @@ pcapng_section_block(rte_pcapng_t *self,
+ 	len += pcapng_optlen(0);
+ 	len += sizeof(uint32_t);
+ 
+-	if (len > sizeof(buf))
++	buf = malloc(len);
++	if (buf == NULL) {
++		errno = ENOMEM;
+ 		return -1;
++	}
+ 
+ 	hdr = (struct pcapng_section_header *)buf;
+ 	*hdr = (struct pcapng_section_header) {
+@@ -199,7 +199,9 @@ pcapng_section_block(rte_pcapng_t *self,
+ 	/* clone block_length after option */
+ 	memcpy(opt, &hdr->block_length, sizeof(uint32_t));
+ 
+-	return write(self->outfd, buf, len);
++	ssize_t ret = write(self->outfd, buf, len);
++	free(buf);
++	return ret;
+ }
+ 
+ /* Write an interface block for a DPDK port */
+@@ -217,7 +219,7 @@ rte_pcapng_add_interface(rte_pcapng_t *self, uint16_t port, uint16_t link_type,
+ 	struct pcapng_option *opt;
+ 	const uint8_t tsresol = 9;	/* nanosecond resolution */
+ 	uint32_t len;
+-	uint32_t buf[PCAPNG_BLKSIZ];
++	uint32_t *buf;
  	char ifname_buf[IF_NAMESIZE];
  	char ifhw[256];
  	uint64_t speed = 0;
-+	int ret;
+@@ -279,8 +281,11 @@ rte_pcapng_add_interface(rte_pcapng_t *self, uint16_t port, uint16_t link_type,
+ 	len += pcapng_optlen(0);
+ 	len += sizeof(uint32_t);
  
--	if (rte_eth_dev_info_get(port, &dev_info) < 0)
--		return -1;
-+	ret = rte_eth_dev_info_get(port, &dev_info);
-+	if (ret < 0)
-+		return ret;
+-	if (len > sizeof(buf))
++	buf = malloc(len);
++	if (buf == NULL) {
++		errno = ENOMEM;
+ 		return -1;
++	}
  
- 	/* make something like an interface name */
- 	if (ifname == NULL) {
-@@ -230,8 +235,14 @@ rte_pcapng_add_interface(rte_pcapng_t *self, uint16_t port, uint16_t link_type,
- 			snprintf(ifname_buf, IF_NAMESIZE, "dpdk:%u", port);
- 			ifname = ifname_buf;
- 		}
-+	} else if (strlen(ifname) > PCAPNG_STR_MAX) {
-+		return -EINVAL;
- 	}
+ 	hdr = (struct pcapng_interface_block *)buf;
+ 	*hdr = (struct pcapng_interface_block) {
+@@ -327,7 +332,9 @@ rte_pcapng_add_interface(rte_pcapng_t *self, uint16_t port, uint16_t link_type,
+ 	/* remember the file index */
+ 	self->port_index[port] = self->ports++;
  
-+	if ((ifdescr && strlen(ifdescr) > PCAPNG_STR_MAX) ||
-+	    (filter && strlen(filter) > PCAPNG_STR_MAX))
-+		return -EINVAL;
-+
- 	/* make a useful device hardware string */
- 	dev = dev_info.device;
- 	if (dev)
-@@ -337,6 +348,9 @@ rte_pcapng_write_stats(rte_pcapng_t *self, uint16_t port_id,
+-	return write(self->outfd, buf, len);
++	ret = write(self->outfd, buf, len);
++	free(buf);
++	return ret;
+ }
+ 
+ /*
+@@ -344,7 +351,7 @@ rte_pcapng_write_stats(rte_pcapng_t *self, uint16_t port_id,
+ 	uint64_t start_time = self->offset_ns;
+ 	uint64_t sample_time;
+ 	uint32_t optlen, len;
+-	uint32_t buf[PCAPNG_BLKSIZ];
++	uint32_t *buf;
  
  	RTE_ETH_VALID_PORTID_OR_ERR_RET(port_id, -EINVAL);
  
-+	if (comment && strlen(comment) > PCAPNG_STR_MAX)
-+		return -1;
-+
- 	optlen = 0;
+@@ -367,8 +374,11 @@ rte_pcapng_write_stats(rte_pcapng_t *self, uint16_t port_id,
+ 		optlen += pcapng_optlen(0);
  
- 	if (ifrecv != UINT64_MAX)
-@@ -489,6 +503,9 @@ rte_pcapng_copy(uint16_t port_id, uint32_t queue,
- 
- #ifdef RTE_LIBRTE_ETHDEV_DEBUG
- 	RTE_ETH_VALID_PORTID_OR_ERR_RET(port_id, NULL);
-+
-+	if (comment && strlen(comment) > PCAPNG_STR_MAX)
-+		return NULL;
- #endif
- 	orig_len = rte_pktmbuf_pkt_len(md);
- 
-@@ -693,8 +710,16 @@ rte_pcapng_fdopen(int fd,
- 	struct timespec ts;
- 	uint64_t cycles;
- 
-+	if ((osname && strlen(osname) > PCAPNG_STR_MAX) ||
-+	    (hardware && strlen(hardware) > PCAPNG_STR_MAX) ||
-+	    (appname && strlen(appname) > PCAPNG_STR_MAX) ||
-+	    (comment && strlen(comment) > PCAPNG_STR_MAX)) {
-+		rte_errno = ENAMETOOLONG;
-+		return NULL;
+ 	len = sizeof(*hdr) + optlen + sizeof(uint32_t);
+-	if (len > sizeof(buf))
++	buf = malloc(len);
++	if (buf == NULL) {
++		errno = ENOMEM;
+ 		return -1;
 +	}
-+
- 	self = malloc(sizeof(*self));
--	if (!self) {
-+	if (self == NULL) {
- 		rte_errno = ENOMEM;
- 		return NULL;
- 	}
-diff --git a/lib/pcapng/rte_pcapng.h b/lib/pcapng/rte_pcapng.h
-index de1bf953e9..4f085f5c86 100644
---- a/lib/pcapng/rte_pcapng.h
-+++ b/lib/pcapng/rte_pcapng.h
-@@ -89,6 +89,12 @@ rte_pcapng_close(rte_pcapng_t *self);
-  * Interfaces must be added to the output file after opening
-  * and before any packet record. All ports used in packet capture
-  * must be added.
-+ *
-+ * @return
-+ *   - (0) if successful.
-+ *   - (-ENOTSUP) if support for dev_infos_get() does not exist for the device.
-+ *   - (-ENODEV) if *port_id* invalid.
-+ *   - (-EINVAL) if bad parameter.
-  */
- int
- rte_pcapng_add_interface(rte_pcapng_t *self, uint16_t port, uint16_t link_type,
-@@ -192,7 +198,7 @@ rte_pcapng_write_packets(rte_pcapng_t *self,
-  * @param comment
-  *  Optional comment to add to statistics.
-  * @return
-- *  number of bytes written to file, -1 on failure to write file
-+ *  number of bytes written to file, -1 on failure to write file or memory allocation failure.
-  */
- ssize_t
- rte_pcapng_write_stats(rte_pcapng_t *self, uint16_t port,
+ 
+ 	hdr = (struct pcapng_statistics *)buf;
+ 	opt = (struct pcapng_option *)(hdr + 1);
+@@ -399,7 +409,9 @@ rte_pcapng_write_stats(rte_pcapng_t *self, uint16_t port_id,
+ 	/* clone block_length after option */
+ 	memcpy(opt, &len, sizeof(uint32_t));
+ 
+-	return write(self->outfd, buf, len);
++	ssize_t ret = write(self->outfd, buf, len);
++	free(buf);
++	return ret;
+ }
+ 
+ RTE_EXPORT_SYMBOL(rte_pcapng_mbuf_size)
 -- 
 2.51.0
 
