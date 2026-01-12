@@ -2,69 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F9DAD25031
-	for <dpdk-dev@archiver.kernel.org>; Mon, 12 Jan 2026 00:56:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51284D25031
+	for <dpdk-dev@archiver.kernel.org>; Mon, 12 Jan 2026 01:03:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 64FF24028F;
-	Mon, 12 Jan 2026 01:56:07 +0100 (CET)
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com
- [209.85.128.47]) by mails.dpdk.org (Postfix) with ESMTP id 7FACE4013F
- for <dev@dpdk.org>; Mon, 12 Jan 2026 01:56:06 +0100 (CET)
-Received: by mail-wm1-f47.google.com with SMTP id
- 5b1f17b1804b1-47d182a8c6cso34992215e9.1
- for <dev@dpdk.org>; Sun, 11 Jan 2026 16:56:06 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 3903B40684;
+	Mon, 12 Jan 2026 02:03:58 +0100 (CET)
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com
+ [209.85.208.41]) by mails.dpdk.org (Postfix) with ESMTP id 2BD1B4028F
+ for <dev@dpdk.org>; Mon, 12 Jan 2026 02:03:57 +0100 (CET)
+Received: by mail-ed1-f41.google.com with SMTP id
+ 4fb4d7f45d1cf-64b8b5410a1so8630271a12.2
+ for <dev@dpdk.org>; Sun, 11 Jan 2026 17:03:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768179366;
- x=1768784166; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768179836;
+ x=1768784636; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:to:from:date:from:to:cc:subject:date:message-id
- :reply-to; bh=zfy062v9Grk07/gvGJvFtL5QiXDflTXcmTTfuenqZUU=;
- b=H3ESiv2ehR6PlajEzel44al3oAz98jjKhWDG2AlHS58wit5SoVBSKZ8pOT0Gm6cRS5
- oSo5mYVBzmh5XRkrFulTWhWJPaCWXhxPsH78MgIa+Ymusx3T6LOJtC9nmxhFZsIJVn80
- GFUIs2UVW2PD0HtLL5OafOO6rEV8QFPCiFyexhOAZRiYVywaT++LqU0DnQXk87kAlUXv
- TtYUbapu53JEYgxuU0T6zo+UkyciYsCViIfMIVWeWSAehj3ewKcYaG3082OaItp4jYv4
- SMT04xKqGjuJD9pAT6l0YYYk0Mc8vo7qo7AIiuUp0zD7r/72n+HBBzNmt8VWeZWodqQn
- tqQQ==
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=plBekXvekZGlBjolRQ+F4I427YZxK8vX5fSngHe6XwI=;
+ b=yvXCW2JJYc+aGIFLkhNyKKs3TDsEqwy2swePJVOCc6FtqqEdT9lAPONS8E7QpSr5Tg
+ TKWbW7btLirAaveHLWjHfk5lg10u/liulkyYs7qPA+PwIlnsJS0A6j6BGOIX8I7spFNr
+ AOTG+n/j+v9TkeEKqlKKLD999RYzyedF/NhVfWzyvr47ehtWY+Bd1OM/RCggf7dBk41/
+ A2HnG7iznOu3XnsuBBhQfConwmRKjDrDWzgWbnCrXIZ8FUxOsR2iPoBvWMcDyMUSEfKF
+ /f/jcllkajS4NpJPwJ93JkduwNMHP5BDxp8YQM0tmW+dF1Ie2Djzuckc9PKJD+O6swNU
+ o0LA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768179366; x=1768784166;
+ d=1e100.net; s=20230601; t=1768179836; x=1768784636;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:to:from:date:x-gm-gg:x-gm-message-state:from:to
- :cc:subject:date:message-id:reply-to;
- bh=zfy062v9Grk07/gvGJvFtL5QiXDflTXcmTTfuenqZUU=;
- b=M0blCcBWR3X+lIoGAewHVQFgwQx7KnXkfr6Wd3QPKHlvnU/pUue8oH8L2sPuBaT4xf
- r3Y29i6tKBz+o8CT19Arq9yRIB/yhXJzNjtgE0xrNLxKlzrYz5gIVJ3YTrJ8KciTY7kG
- 47h+VxUsOp6R2e4lEKRpKqy6WAfWYT7h4hUSzQBruUvuQX+ut1HrLTEv16ry0IY/eVnM
- mjYdtbh0UkLoKdE1i6tx7XVmrF73eQZknwiW3IP0jBGnKEsS723u1zKPnfy91dZMtI74
- Rber1aYJjSk9S5AiFVcZfKClnp2c8jSFwYS3HkqCLoMAmI1tURjFe548OKyL3hFKISZ/
- nm2w==
-X-Gm-Message-State: AOJu0Yxx7FagDmL16P3p6aYeq9H+z9u/XqmQksAlJnlN2MSYhzjMoKBa
- 3lRcbo/H1brATiElY7/XAFuzE4TGSQk7+78bhPt1TQveY0JfO6opy0iU4/49HgAHa1fDEuuuX9l
- PXYHi
-X-Gm-Gg: AY/fxX5tV1Y2Co/5DRY4LtIdTrhRnl3Y3NUgliL1NwDZES0QymyOqCCwtU2sEscghE8
- MfeHhhQ0IuUped+8ZnPqGCa4rRr4A78ngiVykzJBZhkug2/rHdD7rxdHfucONjSQrEuhiNg6UP5
- neU74kcotthzVbOtGPqInkHQaIjr1eFBUokWHe7bJzFMv/nwQScS27QF9yTZVuVvlVmyCywwYKY
- jLNwCai2cd0lgMP/+w7Y019kymfHmLdoxIYZ5jmg7YarDaNUXML6QekbHFmXLDc61dmBdYgiPkC
- I+Daj2IG3MbuHd+MSY2Zu2jguwiLzpyHftgUQUOn3f5Dj12NpBpHXnDS1kDc/MPBVSdK6ku6wIW
- dHUVtcveG55O6Du9wzGrQLN2aIzO5tBZGIsgY2y3RWw/xi1+MoteZz6jbnJuGpAH4ufE15B6bX+
- DDqX193TqRxVY3FBR30VmAwbHWgXFH0UApg8pA8R377AeYPnjhLzstLFInLFp3eEw=
-X-Google-Smtp-Source: AGHT+IGxc+hHlwrwz1hWJ981Hw9pd9Q+piD/uuTy3o/ArlTCOsX5yS3DSkljAwNkAtRlMULC7iW6sA==
-X-Received: by 2002:a05:600c:83c7:b0:479:3a86:dc1c with SMTP id
- 5b1f17b1804b1-47d84b52e31mr182657495e9.36.1768179365535; 
- Sun, 11 Jan 2026 16:56:05 -0800 (PST)
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=plBekXvekZGlBjolRQ+F4I427YZxK8vX5fSngHe6XwI=;
+ b=hMaHzoKicfMAbFRkCi4Ft9ypTVydVO3LJDfeqlghO74Ydj9c7wPdsUudpE8i+C6gtc
+ dJQnyz35d7KD0QFAWD80MGvxstj3e0iTL5zHYkLpKzy8b2ZEJNoc7toTb0XwoLJdXOXp
+ SF+UH7O5jMDaYRbvJ5RkuRYi0IOEGpUWIoJZlvSi71esZtJMw7QasFNl4kSobgY7wgfo
+ l2sdqgQGbei+TNSn6tLB9Ilf3I9IYxsMVyz3zh3dkMNKzoESY7E1dnhACEA12U8svYC+
+ zjiFdCyrQpp556DBzDOv/yqwaUHKZFMB0eIV6WKih/yZ76VlzXsfmaVa9l0fKEspf9F4
+ Y4ww==
+X-Gm-Message-State: AOJu0YxTGlJHb0hZSY0cG8zyr6V5rhstBwbKteUqZ/hN7kG5z13HZJsT
+ 6KOZG2lmDULxbwKCA+hxm4ESsygELRWBdg43oTS569H321Ttj3B060PReW42efJQkLU=
+X-Gm-Gg: AY/fxX5OqN6hSBDTbTlLUlh5jlKmNM+eEkHIl0bY8Rmj1AeThKE838jPo35gl/KH7qE
+ 80jmhr34hkB+0J8kXbpxkUqgLptRJcqcwysvPr/W5dri0LyqWCy3nx/c425gignPBSDoejjnEzx
+ +DVxxPxEjfko0FPAZAkL7MPIFNCnb6XAcbk3mYu6ZMPDSSFf8b1JYJM7Zk7nnjdLMMpD23Md+mF
+ ODu6mqZRadjuY6R7f+YQ2pIShNqVcmrTLAFVPraXw4IsrJIk6HqEyOynQr5wN9T+EMa0HXr0tej
+ 08eCF3KZwtMvRhPz98gsieDvwmcalYCLdutwF0l+HUFsg2p8PqHMsG/D1xuJtkAHJF+enkke1uK
+ 97h6pNES61jWP/CHX8lyl3WJojEkDjDZFzy8osNchB3gIxR5IV/ig7TvK7b/swZl+4p7IfXJHzO
+ qoMhOZIolkE1ykHQ9KWWcEaQydJ35hVRBx0pRgiOvDtfdDNEACrC2VDXpiona40Fc=
+X-Google-Smtp-Source: AGHT+IG8CZe/l+kmzY4FfUGud0aj6HaaiOjkBuAfVT9z5H+eUIKkvBgEv410jt9DdGZ7CWZV/cC+bw==
+X-Received: by 2002:a17:907:c06:b0:b87:2410:5957 with SMTP id
+ a640c23a62f3a-b8724105b20mr48232566b.48.1768179836533; 
+ Sun, 11 Jan 2026 17:03:56 -0800 (PST)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-47d7f6953fasm320280005e9.5.2026.01.11.16.56.04
- for <dev@dpdk.org>
+ a640c23a62f3a-b842a27c0casm1775021166b.19.2026.01.11.17.03.54
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 11 Jan 2026 16:56:05 -0800 (PST)
-Date: Sun, 11 Jan 2026 16:56:01 -0800
+ Sun, 11 Jan 2026 17:03:56 -0800 (PST)
+Date: Sun, 11 Jan 2026 17:03:50 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Subject: Re: [PATCH v4 0/3] null pmd minor cleanup and add test
-Message-ID: <20260111165601.5b49a621@phoenix.local>
-In-Reply-To: <20260110172336.9859-1-stephen@networkplumber.org>
-References: <20260104222523.329760-1-stephen@networkplumber.org>
- <20260110172336.9859-1-stephen@networkplumber.org>
+To: David Marchand <david.marchand@redhat.com>
+Cc: dev@dpdk.org, stable@dpdk.org, Ciara Loftus <ciara.loftus@intel.com>,
+ Maryam Tahhan <mtahhan@redhat.com>, Xiaolong Ye <xiaolong.ye@intel.com>,
+ Kevin Laatz <kevin.laatz@intel.com>
+Subject: Re: [PATCH] net/af_xdp: fix external mbuf transmit
+Message-ID: <20260111170350.6fa88e03@phoenix.local>
+In-Reply-To: <20260105125441.50447-1-david.marchand@redhat.com>
+References: <20260105125441.50447-1-david.marchand@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -81,176 +82,127 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Sat, 10 Jan 2026 09:22:35 -0800
-Stephen Hemminger <stephen@networkplumber.org> wrote:
+On Mon,  5 Jan 2026 13:54:41 +0100
+David Marchand <david.marchand@redhat.com> wrote:
 
-> This series adds small optimization to net/null and
-> adds a unit test for null PMD.
+> A mbuf may be pointing at external buffer like when forwarding a TSO
+> packet coming from a vhost-user port in OVS (see
+> RTE_VHOST_USER_EXTBUF_SUPPORT).
 >=20
-> v4 - change parameters to packet burst
+> Checking the mbuf mempool to trigger the zero copy optimisation is
+> broken: the driver will (at best) read 0s or (at worse) crash when
+> reading more data than what the direct buffer can contain.
 >=20
-> Stephen Hemminger (3):
->   net/null: cleanup info_get
->   test: generate larger packet bursts
->   test: add a test for null PMD
+> Fixes: d8a210774e1d ("net/af_xdp: support unaligned umem chunks")
+> Cc: stable@dpdk.org
 >=20
->  app/test/meson.build              |   1 +
->  app/test/packet_burst_generator.c |  38 +-
->  app/test/packet_burst_generator.h |   4 +-
->  app/test/test_pmd_null.c          | 968 ++++++++++++++++++++++++++++++
->  drivers/net/null/rte_eth_null.c   |   9 +-
->  5 files changed, 994 insertions(+), 26 deletions(-)
->  create mode 100644 app/test/test_pmd_null.c
->=20
+> Signed-off-by: David Marchand <david.marchand@redhat.com>
+> ---
 
-AI code review feedback:
+Looks good to me and Claude ;-) but he has more to say.
+Queued to next-net
 
-Now let me provide a comprehensive review of these three patches according =
-to the DPDK guidelines.
+## DPDK Patch Review: net/af_xdp: fix external mbuf transmit
+
+### Summary
+
+This patch fixes a bug in the AF_XDP driver's zero-copy transmit path where=
+ mbufs pointing to external buffers (e.g., from vhost-user with `RTE_VHOST_=
+USER_EXTBUF_SUPPORT`) could cause data corruption or crashes. The fix adds =
+an `RTE_MBUF_DIRECT()` check before using the zero-copy optimization.
 
 ---
 
-## DPDK Patch Review: null PMD changes (v4 1-3/3)
+### Commit Message Review
 
-### Patch 1/3: `net/null: cleanup info_get`
-
-**Commit Message:**
-- =E2=9C=85 Subject line: 29 characters (=E2=89=A460 limit)
-- =E2=9C=85 Format: `net/null: cleanup info_get` - correct prefix format
-- =E2=9C=85 Lowercase after colon
-- =E2=9C=85 No trailing period
-- =E2=9C=85 `Signed-off-by:` present with real name and email
-- =E2=9C=85 Body wrapped appropriately
-
-**Code Review:**
-
-| Severity | Issue |
-|----------|-------|
-| =E2=9C=85 Good | Removing redundant NULL checks - ethdev validates argume=
-nts before calling driver callbacks |
-| =E2=9C=85 Good | `UINT32_MAX` is cleaner than `(uint32_t)-1` |
-| =E2=9C=85 Good | Removing `min_rx_bufsize =3D 0` since struct is zero-ini=
-tialized |
-| =E2=9C=85 Good | Combining declaration with initialization |
-
-**Verdict: LGTM** - Clean, straightforward improvement.
+| Criterion | Status | Details |
+|-----------|--------|---------|
+| Subject length | =E2=9C=93 Pass | 38 characters (limit: 60) |
+| Subject format | =E2=9C=93 Pass | `net/af_xdp:` prefix is correct for dri=
+ver |
+| Subject case | =E2=9C=93 Pass | Lowercase after colon |
+| Imperative mood | =E2=9C=93 Pass | "fix" not "fixes" or "fixed" |
+| No trailing period | =E2=9C=93 Pass | |
+| Body line wrap | =E2=9C=93 Pass | All lines under 75 characters |
+| Body doesn't start with "It" | =E2=9C=93 Pass | Starts with "A mbuf" |
+| `Fixes:` tag | =E2=9C=93 Pass | 12-char SHA: `d8a210774e1d` |
+| `Cc: stable@dpdk.org` | =E2=9C=93 Pass | Present for bug fix |
+| `Signed-off-by:` | =E2=9C=93 Pass | Present with real name and email |
+| Tag order | =E2=9C=93 Pass | Fixes =E2=86=92 Cc =E2=86=92 blank line =E2=
+=86=92 Signed-off-by |
 
 ---
 
-### Patch 2/3: `test: generate larger packet bursts`
+### Code Review
 
-**Commit Message:**
+**Change location:** `drivers/net/af_xdp/rte_eth_af_xdp.c`, line 608 (in `a=
+f_xdp_tx_zc()`)
 
-| Severity | Issue |
-|----------|-------|
-| =E2=9A=A0=EF=B8=8F Warning | Subject prefix `test:` should be `app/test:`=
- per DPDK conventions |
-| =E2=9C=85 Good | Subject =E2=89=A460 characters |
-| =E2=9C=85 Good | Signed-off-by present |
-| =E2=9C=85 Good | Body explains the rationale clearly |
-
-**Code Review:**
-
-| Severity | Issue |
-|----------|-------|
-| =E2=9A=A0=EF=B8=8F Warning | Line 245: `if (i !=3D (int)(nb_pkt_segs - 1)=
-)` - awkward cast. Consider changing loop variable `i` to `uint16_t` to avo=
-id mixed signed/unsigned comparison |
-| =E2=84=B9=EF=B8=8F Info | The comment removal about `RTE_MAX_SEGS_PER_PKT=
-` is good - the old comment was misleading (`nb_segs` is 16-bit, not 8-bit)=
- |
-
-**Suggested fix for the cast:**
 ```c
-// Either change loop variable:
-for (uint16_t seg =3D 1; seg < nb_pkt_segs; seg++) {
-    ...
-    if (seg !=3D nb_pkt_segs - 1)
+// Before:
+if (mbuf->pool =3D=3D umem->mb_pool) {
 
-// Or keep int and compare differently:
-if (i < nb_pkt_segs - 1)
+// After:
+if (RTE_MBUF_DIRECT(mbuf) && mbuf->pool =3D=3D umem->mb_pool) {
 ```
 
----
+| Criterion | Status | Details |
+|-----------|--------|---------|
+| Line length | =E2=9C=93 Pass | Well under 100 characters |
+| Macro naming | =E2=9C=93 Pass | `RTE_MBUF_DIRECT` uses correct `RTE_` pre=
+fix |
+| Technical correctness | =E2=9C=93 Pass | Properly gates zero-copy path |
+| Minimal change | =E2=9C=93 Pass | Single-line fix, targeted |
 
-### Patch 3/3: `test: add a test for null PMD`
+#### Warning (Minor)
 
-**Commit Message:**
+**Implicit boolean comparison:** The `RTE_MBUF_DIRECT(mbuf)` macro returns =
+an integer-like value (0 or non-zero). Per DPDK guidelines, explicit compar=
+ison with zero is preferred for integers:
 
-| Severity | Issue |
-|----------|-------|
-| =E2=9A=A0=EF=B8=8F Warning | Subject prefix `test:` should be `app/test:`=
- per DPDK conventions |
-| =E2=9C=85 Good | Subject =E2=89=A460 characters |
-| =E2=9C=85 Good | Signed-off-by present |
-
-**Code Review:**
-
-| Severity | Issue | Location |
-|----------|-------|----------|
-| =E2=9D=8C Error | **Wrong dependency in meson.build**: `'net_ring'` shoul=
-d be `'net_null'` - the test uses null PMD, not ring PMD | `app/test/meson.=
-build` |
-| =E2=9D=8C Error | **Bug in `test_mbuf_setup_burst()`**: Setting `m->buf_l=
-en =3D len` is incorrect. `buf_len` is the buffer size, not packet length. =
-This corrupts the mbuf metadata and could cause memory corruption. Should o=
-nly set `data_len` and `pkt_len`. | Lines 200-201 |
-| =E2=9A=A0=EF=B8=8F Warning | Missing return value checks in `test_null_te=
-ardown()` for `rte_eth_dev_stop()` and `rte_eth_dev_close()` | Lines 137-13=
-8 |
-| =E2=9A=A0=EF=B8=8F Warning | `test_null_mac_addr()` sets MAC but doesn't =
-verify the change took effect | Lines 571-586 |
-| =E2=84=B9=EF=B8=8F Info | Good use of `TEST_SKIPPED` for multi-threaded t=
-est when insufficient lcores available |
-| =E2=9C=85 Good | SPDX license identifier on first line |
-| =E2=9C=85 Good | Copyright immediately follows SPDX |
-| =E2=9C=85 Good | Proper include ordering (system =E2=86=92 DPDK =E2=86=92=
- local) |
-| =E2=9C=85 Good | Comprehensive test coverage: basic RX/TX, stats, custom =
-size, copy mode, no-rx mode, link status, RSS, RETA, MT |
-
-**Critical fix needed in `test_mbuf_setup_burst()`:**
 ```c
-static int
-test_mbuf_setup_burst(struct rte_mbuf **bufs, unsigned int burst_size)
-{
-	unsigned int i;
-
-	if (rte_pktmbuf_alloc_bulk(mp, bufs, burst_size) !=3D 0)
-		return -1;
-
-	for (i =3D 0; i < burst_size; i++) {
-		struct rte_mbuf *m =3D bufs[i];
-		uint16_t len;
-
-		/* Choose random length between ether min and available space */
-		len =3D rte_rand_max(rte_pktmbuf_tailroom(m) - RTE_ETHER_MIN_LEN)
-			+ RTE_ETHER_MIN_LEN;
-		m->data_len =3D len;
--		m->buf_len =3D len;    /* ERROR: buf_len should not be modified! */
-+		m->pkt_len =3D len;    /* Set total packet length */
-	}
-	return 0;
-}
+// Suggested (strict interpretation):
+if (RTE_MBUF_DIRECT(mbuf) !=3D 0 && mbuf->pool =3D=3D umem->mb_pool) {
 ```
 
-**Fix for meson.build:**
-```python
--    'test_pmd_null.c': ['net_ring', 'ethdev', 'bus_vdev'],
-+    'test_pmd_null.c': ['net_null', 'ethdev', 'bus_vdev'],
-```
+However, this macro is semantically boolean and is commonly used in direct =
+form throughout DPDK. This is a stylistic preference, not a blocking issue.
 
 ---
 
-## Summary
+### Technical Analysis
 
-| Patch | Status | Action Required |
-|-------|--------|-----------------|
-| 1/3 `net/null: cleanup info_get` | =E2=9C=85 Ready | None - LGTM |
-| 2/3 `test: generate larger packet bursts` | =E2=9A=A0=EF=B8=8F Minor issu=
-es | Consider prefix fix and cleaner loop variable |
-| 3/3 `test: add a test for null PMD` | =E2=9D=8C Needs v5 | Fix `buf_len` =
-bug, fix meson dependency |
+The fix is correct. Looking at the `af_xdp_tx_zc()` function in the provide=
+d source:
 
-The critical issues in patch 3/3 (the `buf_len` corruption bug and wrong me=
-son dependency) should be fixed before merging.
+1. **The bug:** Line 624 in the original code only checks `mbuf->pool =3D=
+=3D umem->mb_pool` to decide if zero-copy can be used. This fails for indir=
+ect/external mbufs where `mbuf->buf_addr` points to external memory, not th=
+e pool's memory region.
+
+2. **The consequence:** When zero-copy is incorrectly triggered, `reserve_a=
+nd_fill()` computes addresses relative to `umem->buffer`, which produces in=
+valid addresses for external buffer data.
+
+3. **The fix:** Adding `RTE_MBUF_DIRECT(mbuf)` ensures the mbuf data reside=
+s in its own attached buffer, making the pool check meaningful.
+
+4. **Fallback path:** When the check fails, the code correctly falls throug=
+h to the else branch (lines 633-647) which allocates a local mbuf and perfo=
+rms a copy.
+
+---
+
+### Verdict
+
+| Severity | Count | Items |
+|----------|-------|-------|
+| **Error** | 0 | =E2=80=94 |
+| **Warning** | 1 | Implicit boolean check on `RTE_MBUF_DIRECT()` |
+| **Info** | 0 | =E2=80=94 |
+
+**Recommendation:** **Accept** =E2=80=94 This is a well-crafted bug fix. Th=
+e commit message is clear, properly attributed, and follows DPDK convention=
+s. The code change is minimal, correct, and addresses a real crash/corrupti=
+on scenario. The warning about implicit boolean comparison is minor and mat=
+ches existing DPDK patterns.
