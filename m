@@ -2,69 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22388D25031
-	for <dpdk-dev@archiver.kernel.org>; Mon, 12 Jan 2026 00:50:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F9DAD25031
+	for <dpdk-dev@archiver.kernel.org>; Mon, 12 Jan 2026 00:56:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 00C474028F;
-	Mon, 12 Jan 2026 01:50:26 +0100 (CET)
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com
- [209.85.221.46]) by mails.dpdk.org (Postfix) with ESMTP id 611DD4013F
- for <dev@dpdk.org>; Mon, 12 Jan 2026 01:50:24 +0100 (CET)
-Received: by mail-wr1-f46.google.com with SMTP id
- ffacd0b85a97d-42fb0fc5aa4so4355653f8f.1
- for <dev@dpdk.org>; Sun, 11 Jan 2026 16:50:24 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 64FF24028F;
+	Mon, 12 Jan 2026 01:56:07 +0100 (CET)
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com
+ [209.85.128.47]) by mails.dpdk.org (Postfix) with ESMTP id 7FACE4013F
+ for <dev@dpdk.org>; Mon, 12 Jan 2026 01:56:06 +0100 (CET)
+Received: by mail-wm1-f47.google.com with SMTP id
+ 5b1f17b1804b1-47d182a8c6cso34992215e9.1
+ for <dev@dpdk.org>; Sun, 11 Jan 2026 16:56:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768179024;
- x=1768783824; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768179366;
+ x=1768784166; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:to:from:date:from:to:cc:subject:date:message-id
- :reply-to; bh=20+YnTL1ebLd+8fEdZxqhrIczvYzQE0zWivVAd4avhI=;
- b=KUBSL2dsLY4O5XXhfcNGS0XstJlP2SIHMV3R7HocW6ijJBzQsMFuHwROUV3guIiwm1
- +3hWtY/nWWrn/J+6kP6yFaY2TsdU7NtjLj5Sw4N66XIbxMQXTslz6gGXis0lfH9glVFb
- MkopJsRrX36agMS15RAfg9VCujG/O4zqCtKO+av4Zn2rcsEa+jgvanTxjsGyyrSKTGNw
- iilhbELcCTmxObuUqIDwR/9jO4pb1CmHKeMIchmuVSGAxx5WrFob47LjvGSF/PJXwexz
- wdwznrzC39VBLVaZyGwnaoSVn3+xEFpdoMXn+x35hCsJSoCkogVO0u13gDC8UesuzdOY
- qo/g==
+ :reply-to; bh=zfy062v9Grk07/gvGJvFtL5QiXDflTXcmTTfuenqZUU=;
+ b=H3ESiv2ehR6PlajEzel44al3oAz98jjKhWDG2AlHS58wit5SoVBSKZ8pOT0Gm6cRS5
+ oSo5mYVBzmh5XRkrFulTWhWJPaCWXhxPsH78MgIa+Ymusx3T6LOJtC9nmxhFZsIJVn80
+ GFUIs2UVW2PD0HtLL5OafOO6rEV8QFPCiFyexhOAZRiYVywaT++LqU0DnQXk87kAlUXv
+ TtYUbapu53JEYgxuU0T6zo+UkyciYsCViIfMIVWeWSAehj3ewKcYaG3082OaItp4jYv4
+ SMT04xKqGjuJD9pAT6l0YYYk0Mc8vo7qo7AIiuUp0zD7r/72n+HBBzNmt8VWeZWodqQn
+ tqQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768179024; x=1768783824;
+ d=1e100.net; s=20230601; t=1768179366; x=1768784166;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:to:from:date:x-gm-gg:x-gm-message-state:from:to
  :cc:subject:date:message-id:reply-to;
- bh=20+YnTL1ebLd+8fEdZxqhrIczvYzQE0zWivVAd4avhI=;
- b=H+qm3ZlRcTzqp9UBOZdI4RBk2wyN5BX9C7QCT17uKQoaUg51VW+19IqQTz8o1NGD/b
- RfLBcl1bJbkdiWyljYtxK0opvKh1Qdkk58BJ4rACA3N+4OQg9UKBo1J3VUA0OfL5nF1c
- eJiJCwbeWodV2o45B2QojENw9wnPnltZ0PygRmbtRquU1WwcqhcSBO3mbncFly697JQT
- eSOg1TfMLzAX9xGXm/cBR9fp7BX6l5zOdlh78v0X85cOCodu+G3bCSiZXC809ucAvsiw
- ym4kTa7eP5CkvSZ0VmTSRtoOdReTHIITUpVKZgxfBNjFxDc3kdfUiNyvSitSaob/HP3V
- Pn2Q==
-X-Gm-Message-State: AOJu0YxJI75tWmwZtWdph3iXdkINZAQ/klpUonin0tO2zUwSMSds9q8U
- LNfvbhcwdq/wpZYBd+HF9n+uY9hXegM4fvLJvAToEgh/yBxZISJAWWrUfnS9iKZ3Gvcq7/yKHeX
- xrLW5
-X-Gm-Gg: AY/fxX6iyv7XgUBqrEQI1vtGh3TKu89IsxjhiA7dxMhNCD3y+xNslpyKQatXXXGidB6
- w47CUNmQStTqs3Cg2qo5AjbX8tQOU3E7lxCf3EmPm1E7XbJX7FWNYHM0PjACJtu0HI09coAb8Le
- 0el6tBCRNXh/9GDxvUfFcnn96k7xuAPreG/rwHZu5BIeHP4sxBDvmgUiysLXbKvELtV5T8SweER
- Agt5PCtkLmY7MA40mbJf3hTyTrkY5T1o4QOXV0GAjp1O2DYTe7oIH9cLOsYcsZ/ZpwDGJAbRinQ
- iREM/QOm07lHK+wOmSSsvIUs6D4uAFAZUgE1a7WCdHbxTKEONS8DL9QHBwsW+4mPets6U3IaIjY
- AgxSPTNMRktfzjPCMXC+S4zLK2AQJQA2icNgFGboF2BmXAdpcShx4yNkzMSb/qKfMO5CEUT0gZ5
- /d3FbG3982gs/eYH8QQfsjvswI/p1lyDzaFQWVHnUDzX9W5Fy6ZuUl
-X-Google-Smtp-Source: AGHT+IEhZdd7uZ0r9VMWQVuhsP5fQE/JLfNzhuaSXBCwQAWa2p5KG1HAEzkFuCnItYSFp7DiJbAP7w==
-X-Received: by 2002:a05:6000:208a:b0:42b:55a1:214f with SMTP id
- ffacd0b85a97d-432c3760cc9mr19352328f8f.21.1768179023340; 
- Sun, 11 Jan 2026 16:50:23 -0800 (PST)
+ bh=zfy062v9Grk07/gvGJvFtL5QiXDflTXcmTTfuenqZUU=;
+ b=M0blCcBWR3X+lIoGAewHVQFgwQx7KnXkfr6Wd3QPKHlvnU/pUue8oH8L2sPuBaT4xf
+ r3Y29i6tKBz+o8CT19Arq9yRIB/yhXJzNjtgE0xrNLxKlzrYz5gIVJ3YTrJ8KciTY7kG
+ 47h+VxUsOp6R2e4lEKRpKqy6WAfWYT7h4hUSzQBruUvuQX+ut1HrLTEv16ry0IY/eVnM
+ mjYdtbh0UkLoKdE1i6tx7XVmrF73eQZknwiW3IP0jBGnKEsS723u1zKPnfy91dZMtI74
+ Rber1aYJjSk9S5AiFVcZfKClnp2c8jSFwYS3HkqCLoMAmI1tURjFe548OKyL3hFKISZ/
+ nm2w==
+X-Gm-Message-State: AOJu0Yxx7FagDmL16P3p6aYeq9H+z9u/XqmQksAlJnlN2MSYhzjMoKBa
+ 3lRcbo/H1brATiElY7/XAFuzE4TGSQk7+78bhPt1TQveY0JfO6opy0iU4/49HgAHa1fDEuuuX9l
+ PXYHi
+X-Gm-Gg: AY/fxX5tV1Y2Co/5DRY4LtIdTrhRnl3Y3NUgliL1NwDZES0QymyOqCCwtU2sEscghE8
+ MfeHhhQ0IuUped+8ZnPqGCa4rRr4A78ngiVykzJBZhkug2/rHdD7rxdHfucONjSQrEuhiNg6UP5
+ neU74kcotthzVbOtGPqInkHQaIjr1eFBUokWHe7bJzFMv/nwQScS27QF9yTZVuVvlVmyCywwYKY
+ jLNwCai2cd0lgMP/+w7Y019kymfHmLdoxIYZ5jmg7YarDaNUXML6QekbHFmXLDc61dmBdYgiPkC
+ I+Daj2IG3MbuHd+MSY2Zu2jguwiLzpyHftgUQUOn3f5Dj12NpBpHXnDS1kDc/MPBVSdK6ku6wIW
+ dHUVtcveG55O6Du9wzGrQLN2aIzO5tBZGIsgY2y3RWw/xi1+MoteZz6jbnJuGpAH4ufE15B6bX+
+ DDqX193TqRxVY3FBR30VmAwbHWgXFH0UApg8pA8R377AeYPnjhLzstLFInLFp3eEw=
+X-Google-Smtp-Source: AGHT+IGxc+hHlwrwz1hWJ981Hw9pd9Q+piD/uuTy3o/ArlTCOsX5yS3DSkljAwNkAtRlMULC7iW6sA==
+X-Received: by 2002:a05:600c:83c7:b0:479:3a86:dc1c with SMTP id
+ 5b1f17b1804b1-47d84b52e31mr182657495e9.36.1768179365535; 
+ Sun, 11 Jan 2026 16:56:05 -0800 (PST)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-432bd0e6784sm36133309f8f.19.2026.01.11.16.50.22
+ 5b1f17b1804b1-47d7f6953fasm320280005e9.5.2026.01.11.16.56.04
  for <dev@dpdk.org>
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 11 Jan 2026 16:50:23 -0800 (PST)
-Date: Sun, 11 Jan 2026 16:50:18 -0800
+ Sun, 11 Jan 2026 16:56:05 -0800 (PST)
+Date: Sun, 11 Jan 2026 16:56:01 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Subject: Re: [PATCH v2 0/9] pcap: cleanup pcap PMD and add test
-Message-ID: <20260111165018.1f4ced3d@phoenix.local>
-In-Reply-To: <20260109011755.362857-1-stephen@networkplumber.org>
-References: <20260106182823.192350-1-stephen@networkplumber.org>
- <20260109011755.362857-1-stephen@networkplumber.org>
+Subject: Re: [PATCH v4 0/3] null pmd minor cleanup and add test
+Message-ID: <20260111165601.5b49a621@phoenix.local>
+In-Reply-To: <20260110172336.9859-1-stephen@networkplumber.org>
+References: <20260104222523.329760-1-stephen@networkplumber.org>
+ <20260110172336.9859-1-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -81,269 +81,176 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu,  8 Jan 2026 17:16:17 -0800
+On Sat, 10 Jan 2026 09:22:35 -0800
 Stephen Hemminger <stephen@networkplumber.org> wrote:
 
-> This is a set of enhancements and tests to the PCAP PMD.
-> It started out when looking at the handling of timestamps
-> then realized lots of other cleanups were needed here.
+> This series adds small optimization to net/null and
+> adds a unit test for null PMD.
 >=20
-> v2 - review feedback
->    - consolidate patches
+> v4 - change parameters to packet burst
 >=20
-> Stephen Hemminger (9):
->   net/pcap: avoid using rte_malloc and rte_memcpy
->   net/pcap: support MTU set
->   net/pcap: use bool for flags
->   net/pcap: support Tx offloads
->   net/pcap: support nanosecond timestamp precision
->   net/pcap: remove global variables
->   net/pcap: avoid use of volatile
->   net/pcap: support MAC address set
->   test: add test for pcap PMD
+> Stephen Hemminger (3):
+>   net/null: cleanup info_get
+>   test: generate larger packet bursts
+>   test: add a test for null PMD
 >=20
->  app/test/meson.build                  |    2 +
->  app/test/test_pmd_pcap.c              | 1846 +++++++++++++++++++++++++
->  drivers/net/pcap/pcap_ethdev.c        |  353 +++--
->  drivers/net/pcap/pcap_osdep.h         |    2 +
->  drivers/net/pcap/pcap_osdep_freebsd.c |   60 +-
->  drivers/net/pcap/pcap_osdep_linux.c   |   51 +-
->  drivers/net/pcap/pcap_osdep_windows.c |    5 +
->  7 files changed, 2184 insertions(+), 135 deletions(-)
->  create mode 100644 app/test/test_pmd_pcap.c
+>  app/test/meson.build              |   1 +
+>  app/test/packet_burst_generator.c |  38 +-
+>  app/test/packet_burst_generator.h |   4 +-
+>  app/test/test_pmd_null.c          | 968 ++++++++++++++++++++++++++++++
+>  drivers/net/null/rte_eth_null.c   |   9 +-
+>  5 files changed, 994 insertions(+), 26 deletions(-)
+>  create mode 100644 app/test/test_pmd_null.c
 >=20
 
-Results of AI review with AGENTS.md are:
+AI code review feedback:
 
-
-I'll start by reading the AGENTS.md file to understand the review criteria,=
- then examine the patch bundle.Let me view the middle sections of the patch=
- bundle to see all patches:Now I have a comprehensive view of the patch ser=
-ies. Let me provide the review based on the AGENTS.md criteria:
+Now let me provide a comprehensive review of these three patches according =
+to the DPDK guidelines.
 
 ---
 
-## DPDK Patch Review: net/pcap Driver Changes (v2, 9 patches)
+## DPDK Patch Review: null PMD changes (v4 1-3/3)
 
-### Patch Series Overview
+### Patch 1/3: `net/null: cleanup info_get`
 
-| # | Subject | Status |
-|---|---------|--------|
-| 1/9 | net/pcap: avoid using rte_malloc and rte_memcpy | =E2=9C=85 Clean |
-| 2/9 | net/pcap: support MTU set | =E2=9A=A0=EF=B8=8F Minor issues |
-| 3/9 | net/pcap: use bool for flags | =E2=9C=85 Clean |
-| 4/9 | net/pcap: add VLAN insert offload | =E2=9C=85 Clean |
-| 5/9 | net/pcap: support nanosecond timestamp precision | =E2=9C=85 Clean |
-| 6/9 | net/pcap: localize variables | =E2=9C=85 Clean |
-| 7/9 | net/pcap: avoid use of volatile | =E2=9C=85 Clean |
-| 8/9 | net/pcap: support MAC address set | =E2=9A=A0=EF=B8=8F Minor issues=
+**Commit Message:**
+- =E2=9C=85 Subject line: 29 characters (=E2=89=A460 limit)
+- =E2=9C=85 Format: `net/null: cleanup info_get` - correct prefix format
+- =E2=9C=85 Lowercase after colon
+- =E2=9C=85 No trailing period
+- =E2=9C=85 `Signed-off-by:` present with real name and email
+- =E2=9C=85 Body wrapped appropriately
+
+**Code Review:**
+
+| Severity | Issue |
+|----------|-------|
+| =E2=9C=85 Good | Removing redundant NULL checks - ethdev validates argume=
+nts before calling driver callbacks |
+| =E2=9C=85 Good | `UINT32_MAX` is cleaner than `(uint32_t)-1` |
+| =E2=9C=85 Good | Removing `min_rx_bufsize =3D 0` since struct is zero-ini=
+tialized |
+| =E2=9C=85 Good | Combining declaration with initialization |
+
+**Verdict: LGTM** - Clean, straightforward improvement.
+
+---
+
+### Patch 2/3: `test: generate larger packet bursts`
+
+**Commit Message:**
+
+| Severity | Issue |
+|----------|-------|
+| =E2=9A=A0=EF=B8=8F Warning | Subject prefix `test:` should be `app/test:`=
+ per DPDK conventions |
+| =E2=9C=85 Good | Subject =E2=89=A460 characters |
+| =E2=9C=85 Good | Signed-off-by present |
+| =E2=9C=85 Good | Body explains the rationale clearly |
+
+**Code Review:**
+
+| Severity | Issue |
+|----------|-------|
+| =E2=9A=A0=EF=B8=8F Warning | Line 245: `if (i !=3D (int)(nb_pkt_segs - 1)=
+)` - awkward cast. Consider changing loop variable `i` to `uint16_t` to avo=
+id mixed signed/unsigned comparison |
+| =E2=84=B9=EF=B8=8F Info | The comment removal about `RTE_MAX_SEGS_PER_PKT=
+` is good - the old comment was misleading (`nb_segs` is 16-bit, not 8-bit)=
  |
-| 9/9 | test: add test for pcap PMD | =E2=9A=A0=EF=B8=8F Warnings |
+
+**Suggested fix for the cast:**
+```c
+// Either change loop variable:
+for (uint16_t seg =3D 1; seg < nb_pkt_segs; seg++) {
+    ...
+    if (seg !=3D nb_pkt_segs - 1)
+
+// Or keep int and compare differently:
+if (i < nb_pkt_segs - 1)
+```
 
 ---
 
-### Detailed Review
+### Patch 3/3: `test: add a test for null PMD`
 
-#### **Patch 1/9: net/pcap: avoid using rte_malloc and rte_memcpy**
+**Commit Message:**
 
-**Commit Message**: =E2=9C=85 Pass
-- Subject line: 49 chars (=E2=89=A460 =E2=9C=93)
-- Correct component prefix `net/pcap:`
-- Imperative mood, lowercase, no trailing period
-- Signed-off-by present
+| Severity | Issue |
+|----------|-------|
+| =E2=9A=A0=EF=B8=8F Warning | Subject prefix `test:` should be `app/test:`=
+ per DPDK conventions |
+| =E2=9C=85 Good | Subject =E2=89=A460 characters |
+| =E2=9C=85 Good | Signed-off-by present |
 
-**Code Changes**: =E2=9C=85 Pass
-- Simple, correct replacement of `rte_malloc`/`rte_free` with standard `mal=
-loc`/`free`
-- Removes unnecessary includes `<rte_malloc.h>` and `<rte_memcpy.h>`
-- Appropriate for FreeBSD osdep code that doesn't need hugepage allocations
+**Code Review:**
 
----
+| Severity | Issue | Location |
+|----------|-------|----------|
+| =E2=9D=8C Error | **Wrong dependency in meson.build**: `'net_ring'` shoul=
+d be `'net_null'` - the test uses null PMD, not ring PMD | `app/test/meson.=
+build` |
+| =E2=9D=8C Error | **Bug in `test_mbuf_setup_burst()`**: Setting `m->buf_l=
+en =3D len` is incorrect. `buf_len` is the buffer size, not packet length. =
+This corrupts the mbuf metadata and could cause memory corruption. Should o=
+nly set `data_len` and `pkt_len`. | Lines 200-201 |
+| =E2=9A=A0=EF=B8=8F Warning | Missing return value checks in `test_null_te=
+ardown()` for `rte_eth_dev_stop()` and `rte_eth_dev_close()` | Lines 137-13=
+8 |
+| =E2=9A=A0=EF=B8=8F Warning | `test_null_mac_addr()` sets MAC but doesn't =
+verify the change took effect | Lines 571-586 |
+| =E2=84=B9=EF=B8=8F Info | Good use of `TEST_SKIPPED` for multi-threaded t=
+est when insufficient lcores available |
+| =E2=9C=85 Good | SPDX license identifier on first line |
+| =E2=9C=85 Good | Copyright immediately follows SPDX |
+| =E2=9C=85 Good | Proper include ordering (system =E2=86=92 DPDK =E2=86=92=
+ local) |
+| =E2=9C=85 Good | Comprehensive test coverage: basic RX/TX, stats, custom =
+size, copy mode, no-rx mode, link status, RSS, RETA, MT |
 
-#### **Patch 2/9: net/pcap: support MTU set**
+**Critical fix needed in `test_mbuf_setup_burst()`:**
+```c
+static int
+test_mbuf_setup_burst(struct rte_mbuf **bufs, unsigned int burst_size)
+{
+	unsigned int i;
 
-**Commit Message**: =E2=9C=85 Pass
+	if (rte_pktmbuf_alloc_bulk(mp, bufs, burst_size) !=3D 0)
+		return -1;
 
-**Code Review**: =E2=9A=A0=EF=B8=8F Warnings
+	for (i =3D 0; i < burst_size; i++) {
+		struct rte_mbuf *m =3D bufs[i];
+		uint16_t len;
 
-1. **FreeBSD duplicate check** (line 489-491):
-   ```c
-   int s =3D socket(AF_INET, SOCK_DGRAM, 0);
-   if (s < 0)
-       return -errno;
+		/* Choose random length between ether min and available space */
+		len =3D rte_rand_max(rte_pktmbuf_tailroom(m) - RTE_ETHER_MIN_LEN)
+			+ RTE_ETHER_MIN_LEN;
+		m->data_len =3D len;
+-		m->buf_len =3D len;    /* ERROR: buf_len should not be modified! */
++		m->pkt_len =3D len;    /* Set total packet length */
+	}
+	return 0;
+}
+```
 
-   struct ifreq ifr =3D { 0 };
-   if (s < 0)     // <-- Dead code: already checked above
-       return -EINVAL;
-   ```
-   This is dead code - `s < 0` was already handled above. Remove the second=
- check.
-
-2. **Double blank line** (lines 1009-1010): Style issue - extra blank line =
-before `static const struct eth_dev_ops ops`.
-
-3. **Warning (should fix)**: The FreeBSD `osdep_iface_mtu_set` function doe=
-s not close the socket on all error paths before the duplicate check.
-
----
-
-#### **Patch 3/9: net/pcap: use bool for flags**
-
-**Commit Message**: =E2=9C=85 Pass
-
-**Code Changes**: =E2=9C=85 Pass
-- Good cleanup converting `unsigned int` and `int` flags to `bool`
-- Adds `<stdbool.h>` header appropriately
-- Consolidates `select_phy_mac` and `get_infinite_rx_arg` into unified `pro=
-cess_bool_flag`
-- Using `bool` for flags follows DPDK guidelines
-
----
-
-#### **Patch 4/9: net/pcap: add VLAN insert offload**
-
-**Commit Message**: =E2=9C=85 Pass
-
-**Code Changes**: =E2=9C=85 Pass
-- Adds `<rte_vlan.h>` header
-- Correctly adds VLAN insert capability to both TX paths
-- Reports capability in `dev_info->tx_offload_capa`
-
----
-
-#### **Patch 5/9: net/pcap: support nanosecond timestamp precision**
-
-**Commit Message**: =E2=9C=85 Pass
-
-**Code Changes**: =E2=9C=85 Pass
-- Good use of `rte_reciprocal_u64` for efficient division
-- Replaces `pcap_open_live` with `pcap_create`/`pcap_activate` pattern for =
-more control
-- Uses `pcap_open_offline_with_tstamp_precision` for nanosecond precision
-- Adds `read_clock` op for timestamp synchronization
-- Makes timestamp offloading configurable via `rxmode.offloads`
-
-**Info**: Nice optimization using `rte_reciprocal_divide_u64` to avoid expe=
-nsive division operations in the fast path.
+**Fix for meson.build:**
+```python
+-    'test_pmd_null.c': ['net_ring', 'ethdev', 'bus_vdev'],
++    'test_pmd_null.c': ['net_null', 'ethdev', 'bus_vdev'],
+```
 
 ---
 
-#### **Patch 6/9: net/pcap: localize variables**
+## Summary
 
-**Commit Message**: =E2=9C=85 Pass
-- Has `Acked-by:` from reviewer =E2=9C=93
+| Patch | Status | Action Required |
+|-------|--------|-----------------|
+| 1/3 `net/null: cleanup info_get` | =E2=9C=85 Ready | None - LGTM |
+| 2/3 `test: generate larger packet bursts` | =E2=9A=A0=EF=B8=8F Minor issu=
+es | Consider prefix fix and cleaner loop variable |
+| 3/3 `test: add a test for null PMD` | =E2=9D=8C Needs v5 | Fix `buf_len` =
+bug, fix meson dependency |
 
-**Code Changes**: =E2=9C=85 Pass
-- Moves `errbuf` to function-local scope
-- Makes `iface_idx` static within function scope
-- Good practice to reduce global state
-
----
-
-#### **Patch 7/9: net/pcap: avoid use of volatile**
-
-**Commit Message**: =E2=9C=85 Pass
-
-**Code Changes**: =E2=9C=85 Pass
-- Removes `volatile` keyword from statistics structures
-- Changes `unsigned long` to `uint64_t` for consistency
-- Rationale is sound: only one thread operates on a queue at a time in DPDK
-
----
-
-#### **Patch 8/9: net/pcap: support MAC address set**
-
-**Commit Message**: =E2=9C=85 Pass
-
-**Code Review**: =E2=9A=A0=EF=B8=8F Warnings
-
-1. **Double blank line** (lines 1709-1711): Extra blank line after `eth_dev=
-_macaddr_set` function.
-
-2. **Linux code changes** (line 1803-1809): The header reordering is correc=
-t:
-   ```c
-   #include <string.h>
-   #include <stdint.h>
-   #include <unistd.h>
-   #include <errno.h>
-   #include <net/if.h>
-   #include <net/if_arp.h>
-   ```
-   This follows proper include ordering (system headers first).
-
----
-
-#### **Patch 9/9: test: add test for pcap PMD**
-
-**Commit Message**: =E2=9C=85 Pass
-- Subject `test:` prefix is correct for app/test
-
-**Code Review**: =E2=9A=A0=EF=B8=8F Warnings
-
-1. **SPDX/Copyright**: =E2=9C=85 Correct format:
-   ```c
-   /* SPDX-License-Identifier: BSD-3-Clause
-    * Copyright(c) 2026 Stephen Hemminger
-    */
-   ```
-
-2. **Include order issue** (lines 1977-1997): The `"test.h"` and `"packet_b=
-urst_generator.h"` should come **after** system and DPDK includes, not befo=
-re. The correct order per AGENTS.md is:
-   - System/libc includes
-   - DPDK EAL includes
-   - DPDK misc library includes
-   - Application-specific includes
-
-   **Should be:**
-   ```c
-   #include <stdio.h>
-   #include <stdlib.h>
-   ...
-   #include <rte_ethdev.h>
-   ...
-   #include "test.h"
-   #include "packet_burst_generator.h"
-   ```
-
-3. **Meson.build style** (line 1955):
-   ```python
-   'test_pmd_pcap.c': ['net_pcap', 'ethdev',  'bus_vdev']  + packet_burst_g=
-enerator_deps,
-   ```
-   Double space after `'ethdev',` - should be single space.
-
-4. **Test registration** (line 3818): Uses `REGISTER_FAST_TEST` which is co=
-rrect for the test framework.
-
-5. **Line length**: All checked lines are within the 100-char limit =E2=9C=
-=93
-
----
-
-### Summary
-
-| Severity | Count | Issues |
-|----------|-------|--------|
-| **Error** | 0 | None |
-| **Warning** | 4 | Dead code in FreeBSD MTU (2/9), double blank lines (2/9=
-, 8/9), include order in test (9/9), meson spacing (9/9) |
-| **Info** | 1 | Good use of reciprocal divide optimization (5/9) |
-
-### Recommendations
-
-1. **Patch 2/9**: Remove the dead code check `if (s < 0)` on line 490 of `p=
-cap_osdep_freebsd.c`
-
-2. **Patch 2/9, 8/9**: Remove extra blank lines to maintain single blank li=
-ne between functions
-
-3. **Patch 9/9**: Reorder includes in `test_pmd_pcap.c` to place `"test.h"`=
- and `"packet_burst_generator.h"` after DPDK includes
-
-4. **Patch 9/9**: Fix double space in `meson.build`
-
-Overall, this is a well-structured patch series with good separation of con=
-cerns. The issues are minor style/cleanup items that don't affect functiona=
-lity.
+The critical issues in patch 3/3 (the `buf_len` corruption bug and wrong me=
+son dependency) should be fixed before merging.
