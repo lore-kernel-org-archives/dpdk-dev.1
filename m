@@ -2,77 +2,43 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03858D2503F
-	for <dpdk-dev@archiver.kernel.org>; Mon, 12 Jan 2026 07:59:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FC33D25043
+	for <dpdk-dev@archiver.kernel.org>; Mon, 12 Jan 2026 08:02:42 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C59BD40288;
-	Mon, 12 Jan 2026 08:58:59 +0100 (CET)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id F286E4013F
- for <dev@dpdk.org>; Mon, 12 Jan 2026 08:58:57 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1768204737;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=q1A5KlktpdoNrAKG3u7rmMX3ThyuH1/hkv7v5pocO+c=;
- b=CwXt2M38a3RyQ09AKXUHq79bsltliPF0uo0HGsASJkGQuuHrSEMnBwowK92zqEA357YOA0
- RO/fbohxzFdNMA342FroU15Kba/y1nqG35GoSCA1qtTQigg55fNFERAXa3zvoAMiywFAg8
- Y7Y6DaZaV/ttvclDdz/C47imDCpT+n0=
-Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
- [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-591-ar83FCzdPm2XcbRepm9R3Q-1; Mon, 12 Jan 2026 02:58:55 -0500
-X-MC-Unique: ar83FCzdPm2XcbRepm9R3Q-1
-X-Mimecast-MFC-AGG-ID: ar83FCzdPm2XcbRepm9R3Q_1768204734
-Received: by mail-lf1-f70.google.com with SMTP id
- 2adb3069b0e04-59b6fb01675so5650649e87.2
- for <dev@dpdk.org>; Sun, 11 Jan 2026 23:58:55 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768204734; x=1768809534;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=q1A5KlktpdoNrAKG3u7rmMX3ThyuH1/hkv7v5pocO+c=;
- b=jdV8rH2k4+WUXUazWqjlCxyyPmLMLgJm9PhgPAMay/lGML4VzJw5x/0gmapHEE5wvF
- EOS8Gv4W84ruT3mMrOTKM/OQfOaGLVdLvRCDE4eqcbd5XWOdI3ho6VYqofLNQ2f4oz6j
- qKZZxNZGmoH/xgWzOTtvyKJv4dxqyyEuDbilbDQf1lcpUIeF2Cp7e+EYfdmN1Cuqv7Tj
- auTcQpgcVbV4NM5lqCcelJytJW+pwLMW2noP30ZOCKRFnLXhmBkyBxDLflZ9SIFQhVWT
- 7MFOrRpe9IeLRpaDD8mggzNCQeVkeVca6mLqK9HXBS8aBA4yp8Y8umTldrPrMT80mUuh
- 5jLw==
-X-Gm-Message-State: AOJu0YwW1lSa0aSrqIimnyVu5N/2W2J3AGuRkZ/HFydHGI934vGyPCze
- rvjLocNvFA6BXD5cDlLI8FNE1zue37Dg+brxy8E3B1YYhZH484EmJg4MkyWDWDtJw4oZqd9SKOh
- Oc49hoeW1w7MBldaHxmmsKKBFSVebbR2Z4pwfKOuDXs5ykGse8CRyaHIc+Ol/EpxsmvfzY6M9W2
- aVszA7tFOrALY7CrOfGd0=
-X-Gm-Gg: AY/fxX7Z/XKGRTEaMZK+h2fdDHAxzlHFSMVDJ1UjibJp97iX4hLL95H9JtwsDsnK5Yz
- tSCR7fAPWPWYURaYnc+s38YKVn172MJVkGr17chAyEvDJLmxV196p74bddv7Yk701f4tpIOF8za
- IrlVDF4tgGHcOWZ3Mw2lLR/tfTQR/6m7kujxON3n9pn5JFoUz+hacTB7iv1dc93e3mKBhF
-X-Received: by 2002:a05:6512:3d08:b0:595:9d6b:1178 with SMTP id
- 2adb3069b0e04-59b6f048a3emr5837427e87.40.1768204734234; 
- Sun, 11 Jan 2026 23:58:54 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IH149JquUcnokgn5nXZAzYgBOEECbUJ2xeAwkyNMebxquwQOsFY2gx1P8T7akiIXQNpA9AsKXLoQw4VaGYYPyU=
-X-Received: by 2002:a05:6512:3d08:b0:595:9d6b:1178 with SMTP id
- 2adb3069b0e04-59b6f048a3emr5837416e87.40.1768204733845; Sun, 11 Jan 2026
- 23:58:53 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 57D9E40288;
+	Mon, 12 Jan 2026 09:02:41 +0100 (CET)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 427F94013F
+ for <dev@dpdk.org>; Mon, 12 Jan 2026 09:02:40 +0100 (CET)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 57F5B206E5;
+ Mon, 12 Jan 2026 09:02:39 +0100 (CET)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-References: <20260105125441.50447-1-david.marchand@redhat.com>
- <20260111170350.6fa88e03@phoenix.local>
-In-Reply-To: <20260111170350.6fa88e03@phoenix.local>
-From: David Marchand <david.marchand@redhat.com>
-Date: Mon, 12 Jan 2026 08:58:42 +0100
-X-Gm-Features: AZwV_Qg8_iP70SRd-FdAPdFVuG9zFkYUfiaxXGH8GDGQOZ38sPUTbUB4u__8GBE
-Message-ID: <CAJFAV8yvx_eLo9_wBDrzW-G+qiUYftGC1xUdAT6bLeCTVaxcoA@mail.gmail.com>
-Subject: Re: [PATCH] net/af_xdp: fix external mbuf transmit
-To: Stephen Hemminger <stephen@networkplumber.org>,
- =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>
-Cc: dev@dpdk.org, stable@dpdk.org, Ciara Loftus <ciara.loftus@intel.com>, 
- Maryam Tahhan <mtahhan@redhat.com>, Xiaolong Ye <xiaolong.ye@intel.com>, 
- Kevin Laatz <kevin.laatz@intel.com>, Thomas Monjalon <thomas@monjalon.net>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: lp49xguZWVpBkhmiaorEFDkz8kLIJAvJlNvOU2d-JOU_1768204734
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+Subject: RE: [PATCH v5] eal/x86: optimize memcpy of small sizes
+Date: Mon, 12 Jan 2026 09:02:35 +0100
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F6564F@smartserver.smartshare.dk>
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+In-Reply-To: <c2bf94e103f64dcaad115e1d3d39d654@huawei.com>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH v5] eal/x86: optimize memcpy of small sizes
+Thread-Index: AQHcYtsDP6GC7ZfLdUK1Z6q3htreGbVA7e0AgAxp9QCAAQ8ycA==
+References: <20251120114554.950287-1-mb@smartsharesystems.com>
+ <20251201155525.1538260-1-mb@smartsharesystems.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F6561B@smartserver.smartshare.dk>
+ <c2bf94e103f64dcaad115e1d3d39d654@huawei.com>
+From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
+To: "Konstantin Ananyev" <konstantin.ananyev@huawei.com>, <dev@dpdk.org>,
+ "Bruce Richardson" <bruce.richardson@intel.com>,
+ "Konstantin Ananyev" <konstantin.v.ananyev@yandex.ru>,
+ "Vipin Varghese" <vipin.varghese@amd.com>
+Cc: "Stephen Hemminger" <stephen@networkplumber.org>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -86,26 +52,87 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hello,
-
-On Mon, 12 Jan 2026 at 02:04, Stephen Hemminger
-<stephen@networkplumber.org> wrote:
-> #### Warning (Minor)
->
-> **Implicit boolean comparison:** The `RTE_MBUF_DIRECT(mbuf)` macro returns an integer-like value (0 or non-zero). Per DPDK guidelines, explicit comparison with zero is preferred for integers:
->
-> ```c
-> // Suggested (strict interpretation):
-> if (RTE_MBUF_DIRECT(mbuf) != 0 && mbuf->pool == umem->mb_pool) {
-> ```
->
-> However, this macro is semantically boolean and is commonly used in direct form throughout DPDK. This is a stylistic preference, not a blocking issue.
-
-All callers in DPDK are using this macro as a boolean, and I found no
-opensource project doing differently.
-I would either fix the macro or change nothing at all.
-
-
--- 
-David Marchand
-
+PiA+ID4gLQkvKioNCj4gPiA+IC0JICogVXNlIHRoZSBmb2xsb3dpbmcgc3RydWN0cyB0byBhdm9p
+ZCB2aW9sYXRpbmcgQyBzdGFuZGFyZA0KPiA+ID4gLQkgKiBhbGlnbm1lbnQgcmVxdWlyZW1lbnRz
+IGFuZCB0byBhdm9pZCBzdHJpY3QgYWxpYXNpbmcgYnVncw0KPiA+ID4gLQkgKi8NCj4gPiA+IC0J
+c3RydWN0IF9fcnRlX3BhY2tlZF9iZWdpbiBydGVfdWludDY0X2FsaWFzIHsNCj4gPiA+IC0JCXVp
+bnQ2NF90IHZhbDsNCj4gPiA+IC0JfSBfX3J0ZV9wYWNrZWRfZW5kIF9fcnRlX21heV9hbGlhczsN
+Cj4gPiA+IC0Jc3RydWN0IF9fcnRlX3BhY2tlZF9iZWdpbiBydGVfdWludDMyX2FsaWFzIHsNCj4g
+PiA+IC0JCXVpbnQzMl90IHZhbDsNCj4gPiA+IC0JfSBfX3J0ZV9wYWNrZWRfZW5kIF9fcnRlX21h
+eV9hbGlhczsNCj4gPiA+IC0Jc3RydWN0IF9fcnRlX3BhY2tlZF9iZWdpbiBydGVfdWludDE2X2Fs
+aWFzIHsNCj4gPiA+IC0JCXVpbnQxNl90IHZhbDsNCj4gPiA+IC0JfSBfX3J0ZV9wYWNrZWRfZW5k
+IF9fcnRlX21heV9hbGlhczsNCg0KVGhlIGRpc2N1c3Npb24gYWJvdXQgdGhlIG9wdGltaXplZCBj
+aGVja3N1bSBmdW5jdGlvbiBbMV0gaGFzIHNob3duIHVzIHRoYXQgbWVtY3B5KCkgc29tZXRpbWVz
+IHByZXZlbnRzIENsYW5nIGZyb20gb3B0aW1pemluZyAobG9vcCB1bnJvbGxpbmcgYW5kIHZlY3Rv
+cml6aW5nKSBhbmQgcG90ZW50aWFsbHkgY2F1c2VzIHN0cmljdCBhbGlhc2luZyBidWdzIHdpdGgg
+R0NDLCBzbyBJIHdpbGwgd29yayBvbiBhIG5ldyBwYXRjaCB2ZXJzaW9uIHRoYXQga2VlcHMgdXNp
+bmcgdGhlIGFib3ZlIHR5cGVzLCBpbnN0ZWFkIG9mIGludHJvZHVjaW5nIG1lbWNweSgpIGluc2lk
+ZSBydGVfbWVtY3B5KCkuDQoNClsxXTogaHR0cHM6Ly9pbmJveC5kcGRrLm9yZy9kZXYvQ0FGbjJi
+dUJ6QkxGTFZOLUs9dTNNZ0JFYlEtaHFiZ0pMVnBEeDN2U1hWS0pwYTB5UE5nQG1haWwuZ21haWwu
+Y29tLw0KDQo+ID4gPiArc3RhdGljIF9fcnRlX2Fsd2F5c19pbmxpbmUgdm9pZA0KPiA+ID4gK3J0
+ZV9tb3Y0OCh1aW50OF90ICpkc3QsIGNvbnN0IHVpbnQ4X3QgKnNyYykNCj4gPiA+ICt7DQo+ID4g
+PiArI2lmIGRlZmluZWQgUlRFX01FTUNQWV9BVlgNCj4gPiA+ICsJcnRlX21vdjMyKCh1aW50OF90
+ICopZHN0LCAoY29uc3QgdWludDhfdCAqKXNyYyk7DQo+ID4gPiArCXJ0ZV9tb3YzMigodWludDhf
+dCAqKWRzdCAtIDMyICsgNDgsIChjb25zdCB1aW50OF90ICopc3JjIC0gMzIgKw0KPiA+ID4gNDgp
+Ow0KPiANCj4gSnVzdCBhIHMgdGhvdWdodDogd291bGQgY29tcGlsZXIgYW5kIENQVSBiZSBzbWFy
+dCBlbm91Z2ggdG8gcmVhbGl6ZQ0KPiB0aGF0IHRoZXJlIGlzIG5vIGRlcGVuZGVuY3kgYmV0d2Vl
+biB0aGVzZSAyIG9wcywgYW5kIHRoZXkgY2FuIGJlDQo+IGV4ZWN1dGVkIGluIGFueQ0KPiBvcmRl
+cj8NCj4gTWlnaHQgYmUgZG8gbW92MzIoKTsgbW92MTYoKSBpbnN0ZWFkPw0KPiBBZ2FpbicgZGlk
+bid0IHRlc3QgYW55dGhpbmcsIGp1c3QgYSB0aG91Z2h0Lg0KDQpHb29kIGlkZWEuDQpJIHNpbXBs
+eSBjb3BpZWQgd2hhdCB0aGUgZXhpc3RpbmcgQVZYIGNvZGUgZGlkIGZvciBjb3B5aW5nIDQ4IGJ5
+dGVzLCBidXQgSSBhZ3JlZSB3aXRoIHlvdXIgc3VnZ2VzdGlvbi4NCg0KPiANCj4gPiA+ICsjZWxz
+ZSAvKiBTU0UgaW1wbGVtZW50YXRpb24gKi8NCj4gPiA+ICsJcnRlX21vdjE2KCh1aW50OF90ICop
+ZHN0ICsgMCAqIDE2LCAoY29uc3QgdWludDhfdCAqKXNyYyArIDAgKg0KPiA+ID4gMTYpOw0KPiA+
+ID4gKwlydGVfbW92MTYoKHVpbnQ4X3QgKilkc3QgKyAxICogMTYsIChjb25zdCB1aW50OF90ICop
+c3JjICsgMSAqDQo+ID4gPiAxNik7DQo+ID4gPiArCXJ0ZV9tb3YxNigodWludDhfdCAqKWRzdCAr
+IDIgKiAxNiwgKGNvbnN0IHVpbnQ4X3QgKilzcmMgKyAyICoNCj4gPiA+IDE2KTsNCj4gPiA+ICsj
+ZW5kaWYNCj4gPiA+ICt9DQo+ID4gPiArDQo+ID4gPiAgLyoqDQo+ID4gPiAgICogQ29weSA2NCBi
+eXRlcyBmcm9tIG9uZSBsb2NhdGlvbiB0byBhbm90aGVyLA0KPiA+ID4gICAqIGxvY2F0aW9ucyBz
+aG91bGQgbm90IG92ZXJsYXAuDQo+ID4gPiBAQCAtMTcyLDYgKzE0MywxMzcgQEAgcnRlX21vdjI1
+Nih1aW50OF90ICpkc3QsIGNvbnN0IHVpbnQ4X3QgKnNyYykNCj4gPiA+ICAJcnRlX21vdjEyOChk
+c3QgKyAxICogMTI4LCBzcmMgKyAxICogMTI4KTsNCj4gPiA+ICB9DQo+ID4gPg0KPiA+ID4gKy8q
+Kg0KPiA+ID4gKyAqIENvcHkgYnl0ZXMgZnJvbSBvbmUgbG9jYXRpb24gdG8gYW5vdGhlciwNCj4g
+PiA+ICsgKiBsb2NhdGlvbnMgc2hvdWxkIG5vdCBvdmVybGFwLg0KPiA+ID4gKyAqIFVzZSB3aXRo
+IG4gPD0gMTYuDQo+ID4gPiArICoNCj4gPiA+ICsgKiBOb3RlOiBDb3B5aW5nIHVuaW5pdGlhbGl6
+ZWQgbWVtb3J5IGlzIHBlcmZlY3RseSBhY2NlcHRhYmxlLg0KPiA+ID4gKyAqIFVzaW5nIGUuZy4g
+bWVtY3B5KGRzdCwgc3JjLCA4KSBpbnN0ZWFkIG9mDQo+ID4gPiArICogKih1bmFsaWduZWRfdWlu
+dDY0X3QqKSA9ICooY29uc3QgdW5hbGlnbmVkX3VpbnQ2NF90ICopc3JjDQo+ID4gPiArICogYXZv
+aWRzIGNvbXBpbGVyIHdhcm5pbmdzIGFib3V0IHNvdXJjZSBkYXRhIG1heSBiZSB1bmluaXRpYWxp
+emVkDQo+ID4gPiArICogWy1XbWF5YmUtdW5pbml0aWFsaXplZF0uDQo+ID4gPiArICovDQo+ID4g
+PiArc3RhdGljIF9fcnRlX2Fsd2F5c19pbmxpbmUgdm9pZCAqDQo+ID4gPiArcnRlX21vdjE2X29y
+X2xlc3Modm9pZCAqZHN0LCBjb25zdCB2b2lkICpzcmMsIHNpemVfdCBuKQ0KPiA+ID4gK3sNCj4g
+PiA+ICsJLyogRmFzdGVyIHdheSB3aGVuIHNpemUgaXMga25vd24gYXQgYnVpbGQgdGltZS4gKi8N
+Cj4gPiA+ICsJaWYgKF9fcnRlX2NvbnN0YW50KG4pKSB7DQo+ID4gPiArCQlpZiAobiA9PSAyKQ0K
+PiA+ID4gKwkJCXJldHVybiBtZW1jcHkoZHN0LCBzcmMsIDIpOw0KPiA+ID4gKwkJaWYgKG4gPT0g
+NCkNCj4gPiA+ICsJCQlyZXR1cm4gbWVtY3B5KGRzdCwgc3JjLCA0KTsNCj4gPiA+ICsJCWlmIChu
+ID09IDYpIC8qIDQgKyAyICovDQo+ID4gPiArCQkJcmV0dXJuIG1lbWNweShkc3QsIHNyYywgNik7
+DQo+ID4gPiArCQlpZiAobiA9PSA4KQ0KPiA+ID4gKwkJCXJldHVybiBtZW1jcHkoZHN0LCBzcmMs
+IDgpOw0KPiA+ID4gKwkJaWYgKG4gPT0gMTApIC8qIDggKyAyICovDQo+ID4gPiArCQkJcmV0dXJu
+IG1lbWNweShkc3QsIHNyYywgMTApOw0KPiA+ID4gKwkJaWYgKG4gPT0gMTIpIC8qIDggKyA0ICov
+DQo+ID4gPiArCQkJcmV0dXJuIG1lbWNweShkc3QsIHNyYywgMTIpOw0KPiA+ID4gKwkJaWYgKG4g
+PT0gMTYpIHsNCj4gPiA+ICsJCQlydGVfbW92MTYoKHVpbnQ4X3QgKilkc3QsIChjb25zdCB1aW50
+OF90ICopc3JjKTsNCj4gPiA+ICsJCQlyZXR1cm4gZHN0Ow0KPiA+ID4gKwkJfQ0KPiANCj4gSWYg
+biBpcyBjb25zdGFudDsgd291bGRuJ3QgY29tcGlsZXIgdW5yb2xsIHN1Y2ggbWVtY3B5IGl0c2Vs
+Zj8NCj4gU3BlY2lhbGx5IGZvciBzdWNoIHNtYWxsICg8PTE2KSB2YWx1ZXM/DQo+IEkgbWVhbi4g
+Y2FuJ3Qgd2UganVzdDoNCj4gSWYgKG4gPCAxNikgbWVtY3B5KGRzdCwgc3JjLCBuKTsgZWxzZSBy
+dGVfbW92MTYoZHN0LCBzcmMpOw0KDQpVbmZvcnR1bmF0ZWx5IG5vdC4gRm9yIGUuZy4gbiA9PSAx
+Mywgd2Ugd2FudCB0byB1c2UgdGhlIHRyaWNrIHdpdGggdGhlIG92ZXJsYXBwaW5nIGNvcGllcywg
+cmVxdWlyaW5nIG9ubHkgdHdvIDgtYnl0ZSBjb3B5IG9wZXJhdGlvbnMgaW5zdGVhZCBvZiB0aHJl
+ZSBjb3B5IG9wZXJhdGlvbnMgKDgtYnl0ZSArIDQtYnl0ZSArIDEtYnl0ZSkuDQoNCj4gDQo+ID4g
+PiArCX0NCj4gPiA+ICsNCj4gPiA+ICsJLyoNCj4gPiA+ICsJICogTm90ZTogVXNpbmcgIm4gJiBY
+IiBnZW5lcmF0ZXMgMy1ieXRlICJ0ZXN0IiBpbnN0cnVjdGlvbnMsDQo+ID4gPiArCSAqIGluc3Rl
+YWQgb2YgIm4gPj0gWCIsIHdoaWNoIHdvdWxkIGdlbmVyYXRlIDQtYnl0ZSAiY21wIg0KPiA+ID4g
+aW5zdHJ1Y3Rpb25zLg0KPiA+ID4gKwkgKi8NCj4gPiA+ICsJaWYgKG4gJiAweDE4KSB7IC8qIG4g
+Pj0gOCwgaW5jbHVkaW5nIG4gPT0gMHgxMCwgaGVuY2UgbiAmIDB4MTguDQo+ID4gPiAqLw0KPiA+
+ID4gKwkJLyogQ29weSA4IH4gMTYgYnl0ZXMuICovDQo+ID4gPiArCQltZW1jcHkoZHN0LCBzcmMs
+IDgpOw0KPiA+ID4gKwkJbWVtY3B5KCh1aW50OF90ICopZHN0IC0gOCArIG4sIChjb25zdCB1aW50
+OF90ICopc3JjIC0gOCArDQo+ID4gPiBuLCA4KTsNCj4gPiA+ICsJfSBlbHNlIGlmIChuICYgMHg0
+KSB7DQo+ID4gPiArCQkvKiBDb3B5IDQgfiA3IGJ5dGVzLiAqLw0KPiA+ID4gKwkJbWVtY3B5KGRz
+dCwgc3JjLCA0KTsNCj4gPiA+ICsJCW1lbWNweSgodWludDhfdCAqKWRzdCAtIDQgKyBuLCAoY29u
+c3QgdWludDhfdCAqKXNyYyAtIDQgKw0KPiA+ID4gbiwgNCk7DQo+ID4gPiArCX0gZWxzZSBpZiAo
+biAmIDB4Mikgew0KPiA+ID4gKwkJLyogQ29weSAyIH4gMyBieXRlcy4gKi8NCj4gPiA+ICsJCW1l
+bWNweShkc3QsIHNyYywgMik7DQo+ID4gPiArCQltZW1jcHkoKHVpbnQ4X3QgKilkc3QgLSAyICsg
+biwgKGNvbnN0IHVpbnQ4X3QgKilzcmMgLSAyICsNCj4gPiA+IG4sIDIpOw0KPiA+ID4gKwl9IGVs
+c2UgaWYgKG4gJiAweDEpIHsNCj4gPiA+ICsJCS8qIENvcHkgMSBieXRlLiAqLw0KPiA+ID4gKwkJ
+bWVtY3B5KGRzdCwgc3JjLCAxKTsNCj4gPiA+ICsJfQ0KPiA+ID4gKwlyZXR1cm4gZHN0Ow0KPiA+
+ID4gK30NCg0K
