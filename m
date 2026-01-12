@@ -2,48 +2,42 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6EC3C9EC6D
-	for <dpdk-dev@archiver.kernel.org>; Mon, 12 Jan 2026 10:58:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAB0CC9EC6B
+	for <dpdk-dev@archiver.kernel.org>; Mon, 12 Jan 2026 11:01:27 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 96F3B40A6C;
-	Mon, 12 Jan 2026 11:58:34 +0100 (CET)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56])
- by mails.dpdk.org (Postfix) with ESMTP id 0D8F940288;
- Mon, 12 Jan 2026 11:58:33 +0100 (CET)
-Received: from mail.maildlp.com (unknown [172.18.224.107])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4dqTr82GgKzHnGd8;
- Mon, 12 Jan 2026 18:58:16 +0800 (CST)
-Received: from dubpeml500001.china.huawei.com (unknown [7.214.147.241])
- by mail.maildlp.com (Postfix) with ESMTPS id 2C13C40571;
- Mon, 12 Jan 2026 18:58:32 +0800 (CST)
-Received: from dubpeml500001.china.huawei.com (7.214.147.241) by
- dubpeml500001.china.huawei.com (7.214.147.241) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 12 Jan 2026 10:58:31 +0000
-Received: from dubpeml500001.china.huawei.com ([7.214.147.241]) by
- dubpeml500001.china.huawei.com ([7.214.147.241]) with mapi id 15.02.1544.011; 
- Mon, 12 Jan 2026 10:58:31 +0000
-From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-To: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>, "Stephen
- Hemminger" <stephen@networkplumber.org>, "dev@dpdk.org" <dev@dpdk.org>
-CC: "stable@dpdk.org" <stable@dpdk.org>
-Subject: RE: [PATCH] mbuf: fix packet copy
-Thread-Topic: [PATCH] mbuf: fix packet copy
-Thread-Index: AQHcWUyxZC53baITAUi48xMVA9nXxbVA/w+AgA2y4aA=
-Date: Mon, 12 Jan 2026 10:58:31 +0000
-Message-ID: <b11197c7088a4634a49fa34484320043@huawei.com>
-References: <20251119120403.907511-1-mb@smartsharesystems.com>
- <98CBD80474FA8B44BF855DF32C47DC35F6561A@smartserver.smartshare.dk>
-In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F6561A@smartserver.smartshare.dk>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
+	by mails.dpdk.org (Postfix) with ESMTP id 7CF4540A6C;
+	Mon, 12 Jan 2026 12:01:26 +0100 (CET)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 9232840288
+ for <dev@dpdk.org>; Mon, 12 Jan 2026 12:01:25 +0100 (CET)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id B8C74206E5;
+ Mon, 12 Jan 2026 12:01:24 +0100 (CET)
+Content-class: urn:content-classes:message
+MIME-Version: 1.0
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Subject: RE: [PATCH 1/2] eal: RTE_PTR_ADD/SUB char* for compiler optimizations
+Date: Mon, 12 Jan 2026 12:01:21 +0100
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65652@smartserver.smartshare.dk>
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+In-Reply-To: <aWS7YdU11DNPbz4o@bricha3-mobl1.ger.corp.intel.com>
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-originating-ip: [10.126.168.96]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+Thread-Topic: [PATCH 1/2] eal: RTE_PTR_ADD/SUB char* for compiler optimizations
+Thread-Index: AdyDo9eUt8LxvB60SiuECJt9Se1XPwADjYEA
+References: <20260111150033.81760-1-scott.k.mitch1@gmail.com>
+ <20260111150033.81760-2-scott.k.mitch1@gmail.com>
+ <20260111075919.082d12b2@phoenix.local>
+ <aWS7YdU11DNPbz4o@bricha3-mobl1.ger.corp.intel.com>
+From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
+To: "Bruce Richardson" <bruce.richardson@intel.com>,
+ "Stephen Hemminger" <stephen@networkplumber.org>
+Cc: <scott.k.mitch1@gmail.com>,
+	<dev@dpdk.org>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -57,34 +51,92 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-DQo+IFBJTkcgZm9yIHJldmlldy4NCj4gDQo+ID4gRnJvbTogTW9ydGVuIEJyw7hydXAgW21haWx0
-bzptYkBzbWFydHNoYXJlc3lzdGVtcy5jb21dDQo+ID4gU2VudDogV2VkbmVzZGF5LCAxOSBOb3Zl
-bWJlciAyMDI1IDEzLjA0DQo+ID4NCj4gPiBSZXF1ZXN0cyBmb3IgY29weWluZyB0aGUgYXQgdGhl
-IGVuZCBvZiBhIHBhY2tldCBpbmNvcnJlY3RseSByZXR1cm5lZA0KPiA+IE5VTEwsDQo+ID4gYXMg
-aWYgY29weWluZyBwYXN0IHRoZSBlbmQgb2YgYSBwYWNrZXQuDQo+ID4NCj4gPiBXaGVuIGFsbG9j
-YXRpbmcgY29waWVzIGZyb20gYSBtZW1wb29sIHVzaW5nIHBpbm5lZCBleHRlcm5hbCBidWZmZXJz
-LA0KPiA+IHRoZQ0KPiA+IGV4dGVybmFsIGZsYWcgd2FzIG5vdCBwcmVzZXJ2ZWQgaW4gdGhlc2Ug
-bWJ1ZnMuDQo+ID4NCj4gPiBGaXhlczogYzNhOTBjMzgxZGFhICgibWJ1ZjogYWRkIGEgY29weSBy
-b3V0aW5lIikNCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IE1vcnRlbiBCcsO4cnVwIDxtYkBzbWFy
-dHNoYXJlc3lzdGVtcy5jb20+DQo+ID4gLS0tDQo+ID4gIGxpYi9tYnVmL3J0ZV9tYnVmLmMgfCA2
-ICsrKy0tLQ0KPiA+ICAxIGZpbGUgY2hhbmdlZCwgMyBpbnNlcnRpb25zKCspLCAzIGRlbGV0aW9u
-cygtKQ0KPiA+DQo+ID4gZGlmZiAtLWdpdCBhL2xpYi9tYnVmL3J0ZV9tYnVmLmMgYi9saWIvbWJ1
-Zi9ydGVfbWJ1Zi5jDQo+ID4gaW5kZXggMGQ5MzFjN2ExNS4uZTYzOWFmZjAzZSAxMDA2NDQNCj4g
-PiAtLS0gYS9saWIvbWJ1Zi9ydGVfbWJ1Zi5jDQo+ID4gKysrIGIvbGliL21idWYvcnRlX21idWYu
-Yw0KPiA+IEBAIC02NzUsNyArNjc1LDcgQEAgcnRlX3BrdG1idWZfY29weShjb25zdCBzdHJ1Y3Qg
-cnRlX21idWYgKm0sIHN0cnVjdA0KPiA+IHJ0ZV9tZW1wb29sICptcCwNCj4gPiAgCV9fcnRlX21i
-dWZfc2FuaXR5X2NoZWNrKG0sIDEpOw0KPiA+DQo+ID4gIAkvKiBjaGVjayBmb3IgcmVxdWVzdCB0
-byBjb3B5IGF0IG9mZnNldCBwYXN0IGVuZCBvZiBtYnVmICovDQo+ID4gLQlpZiAodW5saWtlbHko
-b2ZmID49IG0tPnBrdF9sZW4pKQ0KPiA+ICsJaWYgKHVubGlrZWx5KG9mZiA+IG0tPnBrdF9sZW4p
-KQ0KPiA+ICAJCXJldHVybiBOVUxMOw0KPiA+DQo+ID4gIAltYyA9IHJ0ZV9wa3RtYnVmX2FsbG9j
-KG1wKTsNCj4gPiBAQCAtNjg4LDggKzY4OCw4IEBAIHJ0ZV9wa3RtYnVmX2NvcHkoY29uc3Qgc3Ry
-dWN0IHJ0ZV9tYnVmICptLCBzdHJ1Y3QNCj4gPiBydGVfbWVtcG9vbCAqbXAsDQo+ID4NCj4gPiAg
-CV9fcnRlX3BrdG1idWZfY29weV9oZHIobWMsIG0pOw0KPiA+DQo+ID4gLQkvKiBjb3BpZWQgbWJ1
-ZiBpcyBub3QgaW5kaXJlY3Qgb3IgZXh0ZXJuYWwgKi8NCj4gPiAtCW1jLT5vbF9mbGFncyA9IG0t
-Pm9sX2ZsYWdzICYNCj4gPiB+KFJURV9NQlVGX0ZfSU5ESVJFQ1R8UlRFX01CVUZfRl9FWFRFUk5B
-TCk7DQo+ID4gKwkvKiBjb3B5IGZsYWdzIGV4Y2VwdCBpbmRpcmVjdCBhbmQgZXh0ZXJuYWwsIGFu
-ZCBwcmVzZXJ2ZSBmbGFncyBvZg0KPiA+IG5ld2x5IGFsbG9jYXRlZCBtYnVmICovDQo+ID4gKwlt
-Yy0+b2xfZmxhZ3MgfD0gbS0+b2xfZmxhZ3MgJg0KPiA+IH4oUlRFX01CVUZfRl9JTkRJUkVDVHxS
-VEVfTUJVRl9GX0VYVEVSTkFMKTsNCj4gPg0KPiA+ICAJcHJldiA9ICZtYy0+bmV4dDsNCj4gPiAg
-CW1fbGFzdCA9IG1jOw0KPiA+IC0tDQoNCkFja2VkLWJ5OiBLb25zdGFudGluIEFuYW55ZXYgPGtv
-bnN0YW50aW4uYW5hbnlldkBodWF3ZWkuY29tPg0KDQo+ID4gMi40My4wDQoNCg==
+> From: Bruce Richardson [mailto:bruce.richardson@intel.com]
+> Sent: Monday, 12 January 2026 10.14
+>=20
+> On Sun, Jan 11, 2026 at 07:59:19AM -0800, Stephen Hemminger wrote:
+> > On Sun, 11 Jan 2026 10:00:32 -0500
+> > scott.k.mitch1@gmail.com wrote:
+> >
+> > > +#define RTE_PTR_ADD(ptr, x) \
+> > > +	(__extension__ ({ \
+> > > +		/* Diagnostics suppressed for internal macro operations
+> only. \
+> > > +		 * Compiler type-checks all _Generic branches even when
+> unselected, \
+> > > +		 * triggering warnings with no external impact. */ \
+> > > +		__rte_diagnostic_push \
+> > > +		__rte_diagnostic_ignored_wcast_qual \
+> > > +		_Pragma("GCC diagnostic ignored \"-Wconditional-type-
+> mismatch\"") \
+> > > +		/* Uses uintptr_t arithmetic for integer types (API
+> compatibility), \
+> > > +		 * and char* arithmetic for pointer types (enables
+> optimization). */ \
+> > > +		__auto_type _ptr_result =3D _Generic((ptr), \
+> > > +			unsigned long long: ((void *)((uintptr_t)(ptr) +
+> (x))), \
+> > > +			long long:          ((void *)((uintptr_t)(ptr) +
+> (x))), \
+> > > +			unsigned long:      ((void *)((uintptr_t)(ptr) +
+> (x))), \
+> > > +			long:               ((void *)((uintptr_t)(ptr) +
+> (x))), \
+> > > +			unsigned int:       ((void *)((uintptr_t)(ptr) +
+> (x))), \
+> > > +			int:                ((void *)((uintptr_t)(ptr) +
+> (x))), \
+> > > +			unsigned short:     ((void *)((uintptr_t)(ptr) +
+> (x))), \
+> > > +			short:              ((void *)((uintptr_t)(ptr) +
+> (x))), \
+> > > +			unsigned char:      ((void *)((uintptr_t)(ptr) +
+> (x))), \
+> > > +			signed char:        ((void *)((uintptr_t)(ptr) +
+> (x))), \
+> > > +			char:               ((void *)((uintptr_t)(ptr) +
+> (x))), \
+> > > +			_Bool:              ((void *)((uintptr_t)(ptr) +
+> (x))), \
+> > > +			/* Ternary with null pointer constant: per C11, if
+> one operand \
+> > > +			 * is a null pointer constant and the other is a
+> pointer, the \
+> > > +			 * result type is qualified per the pointer operand,
+> normalizing \
+> > > +			 * const T* to const void* and T* to void*. */ \
+> > > +			default: _Generic((1 ? (ptr) : (void *)0), \
+> > > +				const void *: ((void *)((const char *)(ptr) +
+> (x))), \
+> > > +				default:      ((void *)((char *)(ptr) + (x))) \
+> > > +			) \
+> > > +		); \
+> > > +		__rte_diagnostic_pop \
+> > > +		_ptr_result; \
+> > > +	}))
+> >
+> > Good idea in general but the macro is way to big and therefore hard
+> to read.
+> > The comments could be outside the macro.
+> >
+> > Any code that adds dependency on a pragma to work is brittle and
+> likely
+> > to allow bugs through. Please figure out how to do it without.
+>=20
+> Do we need to handle the case of users calling RTE_PTR_ADD with =
+integer
+> values? Using this macro to essentially cast an integer to pointer
+> seems
+> strange. Even if it's occasionally used, I think keeping things simple
+> and
+> just globally changing to use "char *" is a better approach.
+>=20
+> The only case where I'd consider trying to keep compatibility using
+> uintptr_t is if the pointer parameter is a volatile one. Even then, we
+> can
+> probably handle that as with the "const" modifier, right?
+
+None of the RTE_PTR_ macros can handle qualifiers (const, volatile).
+Maybe it would be better to provide a new set of macros with a qualifier =
+parameter, instead of adding new macros with e.g. _CONST in the names.
+
