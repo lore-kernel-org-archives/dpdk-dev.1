@@ -2,86 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 681F5C9EC8D
-	for <dpdk-dev@archiver.kernel.org>; Mon, 12 Jan 2026 16:10:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10992CF45A4
+	for <dpdk-dev@archiver.kernel.org>; Mon, 12 Jan 2026 16:43:22 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 631EE40156;
-	Mon, 12 Jan 2026 17:10:51 +0100 (CET)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id DB1EC40041
- for <dev@dpdk.org>; Mon, 12 Jan 2026 17:10:49 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1768234249;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=ukph/IyVum+b75MyaUlFu7Jt8HlLsT3ZH2jmGspGcHY=;
- b=cbXjrC6LYaJ0CK1h/rmyn9HOPDdPWyvIbhrMfOfngKxLQdGShLsWQevuzqb9EdVCjSjwTm
- nFCETDx5/hOhmTXMYzmnqIefLRjJ8HvppkKhE/jhUydBc3HgVrc4vh15OQ6lB2fa2/t0oU
- GckzstaXSUBkdb/53k65U1x+fGOx56o=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-624-J9SvmwwhPw6XDbmK540s-A-1; Mon, 12 Jan 2026 11:10:47 -0500
-X-MC-Unique: J9SvmwwhPw6XDbmK540s-A-1
-X-Mimecast-MFC-AGG-ID: J9SvmwwhPw6XDbmK540s-A_1768234247
-Received: by mail-wr1-f70.google.com with SMTP id
- ffacd0b85a97d-430f527f5easo2918111f8f.1
- for <dev@dpdk.org>; Mon, 12 Jan 2026 08:10:47 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id DB98140281;
+	Mon, 12 Jan 2026 17:43:21 +0100 (CET)
+Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com
+ [209.85.217.53]) by mails.dpdk.org (Postfix) with ESMTP id EB3E240281
+ for <dev@dpdk.org>; Mon, 12 Jan 2026 17:43:19 +0100 (CET)
+Received: by mail-vs1-f53.google.com with SMTP id
+ ada2fe7eead31-5eea3fe88bdso1376770137.3
+ for <dev@dpdk.org>; Mon, 12 Jan 2026 08:43:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20230601; t=1768236199; x=1768840999; darn=dpdk.org;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=1wDXhJo90yLXrag27EQhxNXS7h9Q9nPEPKwqlVxmYng=;
+ b=egI9ZgXns224SZ6ShyOFFfgTB3PMWC/6KwI8ptgrrInG8Dt6BRoPsu3yMCCZ6N0sJy
+ R22KXFFUFfYjSi9/KAAU2oYNrtz+Gt1LIMuwV9HgGLT21E3ldoQKN9KNESzjY6qdH/1u
+ 4PhBcBIxjT7hBuJoK6SdWCEIzKZQoTe1MGQMSOagODj5JxJD7K+82bvm9p4oTBk86sFz
+ u5UrADeH0RSfzNExrMooulwuaMO0vqOfge9iwcwTPfb5xJNU1kNVD8Zcj+9ArlBw4bcN
+ f5Ze5FJ3w23gU1hDalUk53sqGZ4PzGi6ca4jKR9DgZb1aYXgJ/QRqgOFDUxPyofImXZW
+ MZhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768234246; x=1768839046;
- h=in-reply-to:references:user-agent:to:from:cc:subject:message-id
- :date:content-transfer-encoding:mime-version:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=ukph/IyVum+b75MyaUlFu7Jt8HlLsT3ZH2jmGspGcHY=;
- b=n1DkkN4Po3lywGrCNvoyn+VbFeiDmZaBWSyzInF2dF5zJFHqhOAlpuI+yALWjcU/yA
- rshnEjr0+ifm0N4NRd521PnOLU9kqOhyxFtk81UsQPypRRGKlw2F7j+6Kr9d1vWIMm20
- wdBmD7mW5OvI+6TrizdmTysT3LLpr0Fwew7wCckiBTEIY37QxaGIDcg/5SE/pM4rNMMD
- mFRVh1V0ZpbL7O9AePWs5Y8HZX1tEzSZHt9QZX952R6BvJIGMjVoBDyK5bES1wRhpt1D
- zCmgDYxJwAr1M56vGN+6Q2Wv9qxWznlD4YuAXNDP4nTyMybAAmdaZxLGlr9dNuFusc1O
- gIgQ==
-X-Gm-Message-State: AOJu0Yyde6X6NSkv94vSoSJxZNvRx9Bz4EMlN+KXQ5jnjpIWs5XfSBQr
- wmhfBFiSQBR/HYTboAsq9lT9qQ1eQmtb0Qzek6yKukQQNwPzm0TQ2EpkNv2n00jc68a/iwrydIo
- XM7m1w9MKWbPg7vAhh8HWlxhHEfHoxSZBmzXc9JNsDd8g
-X-Gm-Gg: AY/fxX5z85vTH/3VhvjQ6xeqUjPWuKO/Sb9zywFjjTtRH1DCF/wtnsH3++vT0Dq/AEK
- jGsWJ5SrDYV7JQMedBr20cir9vJ1KKjBQGQ/roFineHp53f//Tv4j3hfynyxGBCI9URQNxrUyTn
- bPCHTsf/jBzL7ObiQovmNuO2HF3OVmKx3iQX50PWR0mEM4CrwTJAUASQjNuXj7MCgep5Q4rDVW5
- MhlP0EbJ1Arl5nXByatfqXPrOz8C86enMHFVNAdPT5tlXR1udV/iZ9RYcxCQl1Utw5NgF8Ai0Ru
- D6htVY/V7DQ0UqcPUZa2VYYPGO4XVqw/kpD4/7mbhenQR4nvIYbCdIF/vyH6xco+qj+FYPdQkta
- hNVwt8tiVDf7bQ6bPwzsbQoL7EYWuoWzG2rJy9rSYIvFbYYhrjWNgl8sLmWNri4TAhhg=
-X-Received: by 2002:a05:6000:24c8:b0:432:86e3:84ec with SMTP id
- ffacd0b85a97d-432c3763569mr21422242f8f.23.1768234246665; 
- Mon, 12 Jan 2026 08:10:46 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IE+P/fJGQdlubCQsCcvQb+hKNZC82/oonv0cb++iGdy2Fk2sGE1GPerIkSDsZF4XWSY2kc9LQ==
-X-Received: by 2002:a05:6000:24c8:b0:432:86e3:84ec with SMTP id
- ffacd0b85a97d-432c3763569mr21422196f8f.23.1768234246252; 
- Mon, 12 Jan 2026 08:10:46 -0800 (PST)
-Received: from localhost (2a01cb00021ec0002e23edbec21b0e73.ipv6.abo.wanadoo.fr.
- [2a01:cb00:21e:c000:2e23:edbe:c21b:e73])
- by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-432bd0dad8bsm39814912f8f.8.2026.01.12.08.10.45
- (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
- Mon, 12 Jan 2026 08:10:45 -0800 (PST)
-Mime-Version: 1.0
-Date: Mon, 12 Jan 2026 17:10:45 +0100
-Message-Id: <DFMQQ63UZ4JI.32CUBILUJ8TJU@redhat.com>
-Subject: Re: [PATCH dpdk v2] telemetry: fix adding dicts in container arrays
-Cc: <dev@dpdk.org>, "Bruce Richardson" <bruce.richardson@intel.com>,
- <stable@dpdk.org>
-From: "Robin Jarry" <rjarry@redhat.com>
-To: "Matthew Labrecque" <mlabrecque@iol.unh.edu>
-User-Agent: aerc/0.21.0-97-g6d065a9aaed3-dirty
-References: <20260107215129.1329960-2-rjarry@redhat.com>
- <20260108105036.1341037-2-rjarry@redhat.com>
- <CANGnzyBfmEy3Vccqywvzota=R2CNv1h+cgvfiawq5+qJqA4Rsg@mail.gmail.com>
-In-Reply-To: <CANGnzyBfmEy3Vccqywvzota=R2CNv1h+cgvfiawq5+qJqA4Rsg@mail.gmail.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: pgEDNhmcc_Um0_IjGNMu5LCBgYJfxOj3er23UVOKkiQ_1768234247
-X-Mimecast-Originator: redhat.com
+ d=1e100.net; s=20230601; t=1768236199; x=1768840999;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=1wDXhJo90yLXrag27EQhxNXS7h9Q9nPEPKwqlVxmYng=;
+ b=awsoQVZr9WawtyBPsCh/1CE6y9fOM9a2lg0G9PK+toL08warzMQu455nfO4bscVssd
+ BlGXyySa2qrDFtSic+BigPJrkMNYgay9jy2017wB5sXs6598wfDgIZGorKNMtupVMZgD
+ LDH6OU/ackNG3iqsdug0yzJQR2w3EDeHIVjiYpta4nIj0DGIkAqKrqaea/UKmGSutkyi
+ 1BKA9b46rgyoc0rnI7lkt3fY7dh5wgBxxQa0t77dOo9UYkf7DargoknfT66ys4Xv8mkx
+ 0SJWYr+EN0xDew++9gHzIENz3p7/b7TZpU8tCHN1bKut6b82SIQMwJmMnhhdQtVT8I+I
+ kXKQ==
+X-Gm-Message-State: AOJu0YzCtKN6fXyYss2ByGj+fSbDYTt6fo55baBoyhQqCKfpc75N4hrK
+ eVt1sJtv0nZFz4yWvUxDlRlTieIqx7Gqg5ye/G6GOJgjDCX96NEFjPmOeNY6aO/ueAfVuPMy4OG
+ jhCuDzQ5Nf9GJbQn3pUwA65HK3AR/qyM=
+X-Gm-Gg: AY/fxX5CEClQrxVMsXi9d8qWn4+VSt3m0jjECnd4ycmnB5OJbOUS+AFufZAhWLT/Wk4
+ kgU3RaXSG+sm8xFYku8HJu6yfPx88/JOkgjYPnJvENbGTvsOhgras8lEjqPgD3l/bfm3B2FvAf4
+ i4Wo6NYK1bPPBIhY2gUaQX0bic1GZ5F8+//Xb+nFD0658MlVsMBrckwVK7rek9S1EJl32e9O46J
+ vCSCnEOGh1Qj5KExBNOgEfYrM3xgEMcCAI9/ICl0d4XkyfbmUKSuqsec/Ju94aEDfIFQWRdB3iR
+ 6h/tfg==
+X-Google-Smtp-Source: AGHT+IGReabhORRyWxVWuvUuFengcVQCS5msIIt4l24yKrO1+cC5r7f/5fd4Kp7yFQ/hqbCpiWgQEGX/nc/7rnhWVtY=
+X-Received: by 2002:a05:6102:4a88:b0:5ee:f748:6ceb with SMTP id
+ ada2fe7eead31-5eef7486f18mr4244507137.15.1768236199203; Mon, 12 Jan 2026
+ 08:43:19 -0800 (PST)
+MIME-Version: 1.0
+References: <20260112154059.36879-1-scott.k.mitch1@gmail.com>
+ <aWUcoGX-k12L55KP@bricha3-mobl1.ger.corp.intel.com>
+In-Reply-To: <aWUcoGX-k12L55KP@bricha3-mobl1.ger.corp.intel.com>
+From: Scott Mitchell <scott.k.mitch1@gmail.com>
+Date: Mon, 12 Jan 2026 11:43:08 -0500
+X-Gm-Features: AZwV_QgIGKQFP_YhAshQgWjFw4kY3ZeeBZmEUaJ8qv5tCViiS8E8jj3xe_lO3-M
+Message-ID: <CAFn2buDQabMZNoajAXrEY4LZ_8GPdqT8zdBvfxwQVMnxucss6Q@mail.gmail.com>
+Subject: Re: [PATCH v5] eal: RTE_PTR_ADD/SUB char* for compiler optimizations
+To: Bruce Richardson <bruce.richardson@intel.com>
+Cc: dev@dpdk.org, mb@smartsharesystems.com, stephen@networkplumber.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -95,19 +75,67 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Matthew Labrecque, Jan 12, 2026 at 16:56:
-> Hey Robin, my name is Mathew Labrecque and I work over at the UNH
-> InterOperability Laboratory on the Open-Source Team.
+On Mon, Jan 12, 2026 at 11:09=E2=80=AFAM Bruce Richardson
+<bruce.richardson@intel.com> wrote:
 >
-> I wanted to email you regarding the ARM cross-compile tests that failed o=
-n
-> the patch. While it says the tests were run on Ubuntu 20.04, these tests
-> were actually performed on Ubuntu 24.04. This was due to an internal erro=
-r
-> where we hadn't properly updated the labels for the tests.
+> On Mon, Jan 12, 2026 at 10:40:59AM -0500, scott.k.mitch1@gmail.com wrote:
+> > From: Scott Mitchell <scott.k.mitch1@gmail.com>
+> >
+> > Modify RTE_PTR_ADD and RTE_PTR_SUB to use char* pointer arithmetic
+> > instead of uintptr_t casts. Benefits of this approach:
+> > - API compatibility: works for both integer and pointer inputs
+> > - Retains simple macros: no pragmas, no _Generic
+> > - Enables compiler optimizations: Clang now can unroll and vectorize
+> > pointer loops, and GCC still can apply these optimizations.
+> >
+> > Example use case which benefits is __rte_raw_cksum. Performance
+> > results from cksum_perf_autotest on Intel Xeon (Cascade Lake,
+> > AVX-512) built with Clang 18.1 (TSC cycles/byte):
+> >   Block size    Before    After    Improvement
+> >          100      0.40     0.24        ~40%
+> >         1500      0.50     0.06        ~8x
+> >         9000      0.49     0.06        ~8x
+> >
+> > Signed-off-by: Scott Mitchell <scott.k.mitch1@gmail.com>
+> > ---
+>
+>
+> The macro implementation LGTM
+>
+> Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+>
+> Couple of comments on the unit tests inline below. Most are only
+> suggestions, so feel free to ignore if you think they aren't worth
+> considering.
 
-Hi Matthew,
+Thanks for the review! I will need a v6 as CI detected
+compiler/environment combos
+with errors. I'm trying to thread the needle to find a way to preserve
+APIs and enable clang optimizations.
 
-OK, thanks for the heads up. I don't think this error is relevant
-anyway.
+> Given all the typecasting in the macros, I don't like the casting to
+> uintptr_t when checking the return values. Maybe use (void *) on the valu=
+e
+> being compared-with instead.
+>
+> A suggestion: can you maybe put at the top:
+>
+> #define test_initval 0x1000
+> #define test_increment 100
+> #define test_retval ((void *)0x1064))
+>
+> and use those everywhere rather than the hard-coded constants?
 
+Sounds good!
+
+> Maybe define a new set of macros for small sized ints? Or else just use 1=
+00
+> and 50 generally, rather than 0x1064? The test should be just as good,
+> right?
+
+I'll use macros for different sizes to catch potential for unexpected
+truncation.
+
+> Very comprehensive set of tests, thanks.
+
+No problem!
