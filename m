@@ -2,44 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C004D2D117
-	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Jan 2026 15:04:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FD70D2F327
+	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Jan 2026 15:15:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 198C7402EA;
-	Tue, 13 Jan 2026 16:04:03 +0100 (CET)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56])
- by mails.dpdk.org (Postfix) with ESMTP id D432240276;
- Tue, 13 Jan 2026 16:04:01 +0100 (CET)
-Received: from mail.maildlp.com (unknown [172.18.224.107])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4drCDt0FtWzHnGjl;
- Tue, 13 Jan 2026 23:03:42 +0800 (CST)
-Received: from dubpeml100001.china.huawei.com (unknown [7.214.144.137])
- by mail.maildlp.com (Postfix) with ESMTPS id 313C840571;
- Tue, 13 Jan 2026 23:04:00 +0800 (CST)
-Received: from dubpeml500001.china.huawei.com (7.214.147.241) by
- dubpeml100001.china.huawei.com (7.214.144.137) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.36; Tue, 13 Jan 2026 15:03:59 +0000
-Received: from dubpeml500001.china.huawei.com ([7.214.147.241]) by
- dubpeml500001.china.huawei.com ([7.214.147.241]) with mapi id 15.02.1544.011; 
- Tue, 13 Jan 2026 15:03:59 +0000
-From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-To: "dev@dpdk.org" <dev@dpdk.org>
-CC: "techboard@dpdk.org" <techboard@dpdk.org>
-Subject: Techboard meeting minutes, 2025-Dec-10
-Thread-Topic: Techboard meeting minutes, 2025-Dec-10
-Thread-Index: AdyEncfWVY+Wf0ebSPKDsdxdOEvIkQ==
-Date: Tue, 13 Jan 2026 15:03:59 +0000
-Message-ID: <02bafaca70f2458691c35a21500843af@huawei.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.206.138.220]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by mails.dpdk.org (Postfix) with ESMTP id C05A8402E2;
+	Tue, 13 Jan 2026 16:15:15 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+ by mails.dpdk.org (Postfix) with ESMTP id 34E4740276
+ for <dev@dpdk.org>; Tue, 13 Jan 2026 16:15:14 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1768317314; x=1799853314;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=J+5j/zqOTfAANrbj3z0CpfWv0Ynb8y7FO2IA1GWn1TM=;
+ b=dtMbIxYsFZJeusW//9s6B280cP1hlig0K1JD8JJneKF8VEcBujfLdBmd
+ rjSPsQvvb05n/kNEg396bD2UO/X029m42f48AVuzPtQEqPWS4v3KF5d+i
+ mEzTZa9hTNduaw67kqUlZ/bha8Flg47lneAIta7pCTECnshXbAI6JjzAw
+ EN/g//csRneuR1kTydZfl6/5CPPHN9N3a+nZyHDO417O/na/zFPl9tuXf
+ 9da+c75tIOA6o0EU8xFNpqIDv5nUFWpZGJ0Jrq5hZVuvmzN5NIZ2G7yyf
+ cRGoeytLUnc9TbF0uT70jrqYXcNmIcXDZUiP5HSSltvr3tTwTPy2mwJW+ g==;
+X-CSE-ConnectionGUID: /mL+QzO0RYC99W9E/enuTg==
+X-CSE-MsgGUID: l3v9w5skSkGx4mfVdnVoaQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11670"; a="80969120"
+X-IronPort-AV: E=Sophos;i="6.21,222,1763452800"; d="scan'208";a="80969120"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+ by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 13 Jan 2026 07:15:13 -0800
+X-CSE-ConnectionGUID: 9eA59V+ZQ5mUjIUGe5q6nA==
+X-CSE-MsgGUID: JJmzkJXASM+nqQdv7RlS5w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,222,1763452800"; d="scan'208";a="203556529"
+Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
+ by orviesa006.jf.intel.com with ESMTP; 13 Jan 2026 07:15:12 -0800
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: dev@dpdk.org
+Cc: Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH v2 00/36] combine multiple Intel scalar Tx paths
+Date: Tue, 13 Jan 2026 15:14:24 +0000
+Message-ID: <20260113151505.1871271-1-bruce.richardson@intel.com>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20251219172548.2660777-1-bruce.richardson@intel.com>
+References: <20251219172548.2660777-1-bruce.richardson@intel.com>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -53,18 +59,103 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-DQpNaW51dGVzIG9mIFRlY2huaWNhbCBCb2FyZCBNZWV0aW5nLCAyMDI1LURlYy0xMA0KDQpNZW1i
-ZXJzIGF0dGVuZGluZw0KLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQotIEJydWNlIFJpY2hh
-cmRzb24NCi0gSGVtYW50IEFncmF3YWwNCi0gSmVyaW4gSmFjb2INCi0gS29uc3RhbnRpbiBBbmFu
-eWV2IChjaGFpcikNCi0gTWF4aW1lIENvcXVlbGluDQotIE1vcnRlbiBCcsO4cnVwDQotIFRob21h
-cyBNb25qYWxvbg0KDQpOT1RFOiBUaGUgdGVjaG5pY2FsIGJvYXJkIG1lZXRpbmdzIGV2ZXJ5IHNl
-Y29uZCBXZWRuZXNkYXkgYXQNCmh0dHBzOi8vem9vbS1sZngucGxhdGZvcm0ubGludXhmb3VuZGF0
-aW9uLm9yZy9tZWV0aW5nLzk2NDU5NDg4MzQwP3Bhc3N3b3JkPWQ4MDhmMWY2LTBhMjgtNDE2NS05
-MjllLTVhNWJjYWU3ZWZlYg0KYXQgMyBwbSBVVEMuDQpNZWV0aW5ncyBhcmUgcHVibGljLCBhbmQg
-RFBESyBjb21tdW5pdHkgbWVtYmVycyBhcmUgd2VsY29tZSB0byBhdHRlbmQuDQpBZ2VuZGEgYW5k
-IG1pbnV0ZXMgY2FuIGJlIGZvdW5kIGF0IGh0dHA6Ly9jb3JlLmRwZGsub3JnL3RlY2hib2FyZC9t
-aW51dGVzLg0KTk9URTogTmV4dCBtZWV0aW5nIHdpbGwgYmUgb24gV2VkbmVzZGF5IDIwMjYtIEph
-biAtIDA3dGggQDNwbSBVVEMsIGFuZA0Kd2lsbCBiZSBjaGFpcmVkIGJ5IE1vcnRlbi4NCg0KQWdl
-bmRhIEl0ZW1zOg0KPT09PT09PT09PT09DQoNCi0gTm8gbWFqb3IgaXRlbXMgd2VyZSBkaXNjdXNz
-ZWQuDQotIEFncmVlZCB0byBjYW5jZWwgbWVldGluZyBhdCAyMDI1LURlYy0yMDI1IGR1ZSB0byBo
-b2xpZGF5IHNlYXNvbiBhbmQgZXhwZWN0ZWQgbG93IGF0dGVuZGFuY2UuDQo=
+The scalar Tx paths, with support for offloads and multiple mbufs
+per packet, are almost identical across drivers ice, i40e, iavf and
+the single-queue mode of idpf. Therefore, we can do some rework to
+combine these code paths into a single function which is parameterized
+by compile-time constants, allowing code saving to give us a single
+path to optimize and maintain - apart from edge cases like IPSec
+support in iavf.
+
+The ixgbe driver has a number of similarities too, which we take
+advantage of where we can, but the overall descriptor format is
+sufficiently different that its main scalar code path is kept
+separate.
+
+Once merged, we can then optimize the drivers a bit to improve
+performance, and also easily extend some drivers to use additional
+paths for better performance, e.g. add the "simple scalar" path
+to IDPF driver for better performance on platforms without AVX.
+
+V2:
+ - reworked the simple-scalar path as well as full scalar one
+ - added simple scalar path support to idpf driver
+ - small cleanups, e.g. issues flagged by checkpatch
+
+Bruce Richardson (36):
+  net/intel: create common Tx descriptor structure
+  net/intel: use common Tx ring structure
+  net/intel: create common post-Tx cleanup function
+  net/intel: consolidate definitions for Tx desc fields
+  net/intel: create separate header for Tx scalar fns
+  net/intel: add common fn to calculate needed descriptors
+  net/ice: refactor context descriptor handling
+  net/i40e: refactor context descriptor handling
+  net/idpf: refactor context descriptor handling
+  net/intel: consolidate checksum mask definition
+  net/intel: create common checksum Tx offload function
+  net/intel: create a common scalar Tx function
+  net/i40e: use common scalar Tx function
+  net/intel: add IPsec hooks to common Tx function
+  net/intel: support configurable VLAN tag insertion on Tx
+  net/iavf: use common scalar Tx function
+  net/i40e: document requirement for QinQ support
+  net/idpf: use common scalar Tx function
+  net/intel: avoid writing the final pkt descriptor twice
+  eal: add macro for marking assumed alignment
+  net/intel: write descriptors using non-volatile pointers
+  net/intel: remove unnecessary flag clearing
+  net/intel: mark mid-burst ring cleanup as unlikely
+  net/intel: add special handling for single desc packets
+  net/intel: use separate array for desc status tracking
+  net/ixgbe: use separate array for desc status tracking
+  net/intel: drop unused Tx queue used count
+  net/intel: remove index for tracking end of packet
+  net/intel: merge ring writes in simple Tx for ice and i40e
+  net/intel: consolidate ice and i40e buffer free function
+  net/intel: complete merging simple Tx paths
+  net/intel: use non-volatile stores in simple Tx function
+  net/intel: align scalar simple Tx path with vector logic
+  net/intel: use vector SW ring entry for simple path
+  net/intel: use vector mbuf cleanup from simple scalar path
+  net/idpf: enable simple Tx function
+
+ doc/guides/nics/i40e.rst                      |  18 +
+ drivers/net/intel/common/tx.h                 | 116 ++-
+ drivers/net/intel/common/tx_scalar_fns.h      | 595 ++++++++++++++
+ drivers/net/intel/cpfl/cpfl_rxtx.c            |   8 +-
+ drivers/net/intel/i40e/i40e_fdir.c            |  34 +-
+ drivers/net/intel/i40e/i40e_rxtx.c            | 670 +++-------------
+ drivers/net/intel/i40e/i40e_rxtx.h            |  16 -
+ .../net/intel/i40e/i40e_rxtx_vec_altivec.c    |  25 +-
+ drivers/net/intel/i40e/i40e_rxtx_vec_avx2.c   |  36 +-
+ drivers/net/intel/i40e/i40e_rxtx_vec_avx512.c |  52 +-
+ drivers/net/intel/i40e/i40e_rxtx_vec_common.h |   6 +-
+ drivers/net/intel/i40e/i40e_rxtx_vec_neon.c   |  25 +-
+ drivers/net/intel/iavf/iavf_rxtx.c            | 642 ++++-----------
+ drivers/net/intel/iavf/iavf_rxtx.h            |  30 +-
+ drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c   |  55 +-
+ drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c | 104 +--
+ drivers/net/intel/iavf/iavf_rxtx_vec_common.h |  36 +-
+ drivers/net/intel/ice/ice_dcf_ethdev.c        |  10 +-
+ drivers/net/intel/ice/ice_rxtx.c              | 737 ++++--------------
+ drivers/net/intel/ice/ice_rxtx.h              |  15 -
+ drivers/net/intel/ice/ice_rxtx_vec_avx2.c     |  55 +-
+ drivers/net/intel/ice/ice_rxtx_vec_avx512.c   |  53 +-
+ drivers/net/intel/ice/ice_rxtx_vec_common.h   |  43 +-
+ drivers/net/intel/idpf/idpf_common_device.h   |   2 +
+ drivers/net/intel/idpf/idpf_common_rxtx.c     | 315 ++------
+ drivers/net/intel/idpf/idpf_common_rxtx.h     |  24 +-
+ .../net/intel/idpf/idpf_common_rxtx_avx2.c    |  53 +-
+ .../net/intel/idpf/idpf_common_rxtx_avx512.c  |  55 +-
+ drivers/net/intel/idpf/idpf_rxtx.c            |  43 +-
+ drivers/net/intel/idpf/idpf_rxtx_vec_common.h |   6 +-
+ drivers/net/intel/ixgbe/ixgbe_rxtx.c          | 103 ++-
+ .../net/intel/ixgbe/ixgbe_rxtx_vec_common.c   |   3 +-
+ lib/eal/include/rte_common.h                  |   6 +
+ 33 files changed, 1565 insertions(+), 2426 deletions(-)
+ create mode 100644 drivers/net/intel/common/tx_scalar_fns.h
+
+--
+2.51.0
+
