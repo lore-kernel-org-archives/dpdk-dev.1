@@ -2,47 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 710FDD2F32E
-	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Jan 2026 15:20:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C935D2F32E
+	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Jan 2026 15:20:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CC05C40E64;
-	Tue, 13 Jan 2026 16:16:00 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id BBE7D40E7C;
+	Tue, 13 Jan 2026 16:16:01 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
- by mails.dpdk.org (Postfix) with ESMTP id C358C40E35
- for <dev@dpdk.org>; Tue, 13 Jan 2026 16:15:57 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 2D2DC40679
+ for <dev@dpdk.org>; Tue, 13 Jan 2026 16:15:59 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1768317358; x=1799853358;
+ t=1768317359; x=1799853359;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=y7Qh19OfmsSEP+xbt7kIcYzTgCKOfkV4ZPhSFcYD+sw=;
- b=KQOMM/pCPUvS3ReT4t+mgmHZ8k/2+esX2GVIDEbozs0E5nJzZreRWpAU
- IL0FH1CxjDOUVXicNIET+2gIkNpWb/clk3TLn0B5MjaKQwWgrFlA4hmfY
- NkbpPnLl0v6/4ArpWgYe5ONVw1m71herdJekSLXWKG//XXxm62gBYfNMW
- IMBEhXaKGmzAtktKEEFzdbJO0rXvURGPAoeWfbjqiDi+qSPPou57fjy1h
- 7ZhwZ0e9nxXfV/TUhwJjR3w+xMUTnzmbUMiGsQQfeL+g2StrP7dUnCr16
- iyLK5iHrxmLTDQn4DaL8zXkr/bjSdMG0GTVoNqgxZ1tqzgGEkGkt9Fb5U Q==;
-X-CSE-ConnectionGUID: 171u1cS7RgWaYuAmDdfBlA==
-X-CSE-MsgGUID: /CBA+OTITq2PKMJ9UFJEQw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11670"; a="80969241"
-X-IronPort-AV: E=Sophos;i="6.21,222,1763452800"; d="scan'208";a="80969241"
+ bh=trqIbtZArI/lRJ+CWsy6ZKu1spGivAKHnWF/2EdFieM=;
+ b=EusdE3QUWXu0VniI286uFNUE/dnbg+VdhjGzbc41LMmBn8QXxzK91CbG
+ LAkwK8WFZJI6LV0gtUrbX9SaCaY+eXAxo80bddHqmmc5IM6+oMsMuHczS
+ iYOb5mbSJkEpErkegAVw9+NiaG09CIuz/8AK5GQg94SGTSHZYVmRuGw5V
+ Fq/NkP6eDTXlgtRc8HWRAVBuwe75LY1O2hrq+5oLhrdym9IhtrF6q/M3J
+ PKdu+wN43PP3S0wJQ6l2LbYnQd+gHDKiP3qep3x6B0rGwlyGdatk9TqbM
+ i1/I/Rf7+96QGEtQ9foVGERzRWJOUIpayAktUbaVw1uAhr1wnSIOcFh8Y w==;
+X-CSE-ConnectionGUID: OVfYF08mRsGeH7QGX6GCtQ==
+X-CSE-MsgGUID: kjL45vywTBqSyKaLdI7pGQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11670"; a="80969243"
+X-IronPort-AV: E=Sophos;i="6.21,222,1763452800"; d="scan'208";a="80969243"
 Received: from orviesa006.jf.intel.com ([10.64.159.146])
  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 13 Jan 2026 07:15:57 -0800
-X-CSE-ConnectionGUID: IHRog+mARwWrzUupA1goeA==
-X-CSE-MsgGUID: vTM/dBKrQfyIP/Tk8o4x9Q==
+ 13 Jan 2026 07:15:59 -0800
+X-CSE-ConnectionGUID: ZKWvJvj5TwmyEvf/MWYPPw==
+X-CSE-MsgGUID: NVlxLj/UQKaHsC0Ws62N+w==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,222,1763452800"; d="scan'208";a="203556693"
+X-IronPort-AV: E=Sophos;i="6.21,222,1763452800"; d="scan'208";a="203556700"
 Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by orviesa006.jf.intel.com with ESMTP; 13 Jan 2026 07:15:56 -0800
+ by orviesa006.jf.intel.com with ESMTP; 13 Jan 2026 07:15:58 -0800
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: Bruce Richardson <bruce.richardson@intel.com>,
- Anatoly Burakov <anatoly.burakov@intel.com>
-Subject: [PATCH v2 35/36] net/intel: use vector mbuf cleanup from simple
- scalar path
-Date: Tue, 13 Jan 2026 15:14:59 +0000
-Message-ID: <20260113151505.1871271-36-bruce.richardson@intel.com>
+ Jingjing Wu <jingjing.wu@intel.com>,
+ Praveen Shetty <praveen.shetty@intel.com>
+Subject: [PATCH v2 36/36] net/idpf: enable simple Tx function
+Date: Tue, 13 Jan 2026 15:15:00 +0000
+Message-ID: <20260113151505.1871271-37-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260113151505.1871271-1-bruce.richardson@intel.com>
 References: <20251219172548.2660777-1-bruce.richardson@intel.com>
@@ -62,139 +62,147 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Since the simple scalar path now uses the vector Tx entry struct, we can
-leverage the vector mbuf cleanup function from that path and avoid
-having a separate cleanup function for it.
+The common "simple Tx" function - in some ways a scalar version of the
+vector Tx functions - can be used by the idpf driver as well as i40e and
+ice, so add support for it to the driver.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- drivers/net/intel/common/tx_scalar_fns.h | 71 +++++-------------------
- drivers/net/intel/i40e/i40e_rxtx.c       |  2 +-
- drivers/net/intel/ice/ice_rxtx.c         |  2 +-
- 3 files changed, 17 insertions(+), 58 deletions(-)
+ drivers/net/intel/idpf/idpf_common_device.h |  2 ++
+ drivers/net/intel/idpf/idpf_common_rxtx.c   | 19 +++++++++++++++
+ drivers/net/intel/idpf/idpf_common_rxtx.h   |  3 +++
+ drivers/net/intel/idpf/idpf_rxtx.c          | 26 ++++++++++++++++++++-
+ 4 files changed, 49 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/intel/common/tx_scalar_fns.h b/drivers/net/intel/common/tx_scalar_fns.h
-index b284b80cbe..ce3837a201 100644
---- a/drivers/net/intel/common/tx_scalar_fns.h
-+++ b/drivers/net/intel/common/tx_scalar_fns.h
-@@ -21,6 +21,20 @@ write_txd(volatile void *txd, uint64_t qw0, uint64_t qw1)
- 	txd_qw[1] = rte_cpu_to_le_64(qw1);
+diff --git a/drivers/net/intel/idpf/idpf_common_device.h b/drivers/net/intel/idpf/idpf_common_device.h
+index 31915a03d4..527aa9b3dc 100644
+--- a/drivers/net/intel/idpf/idpf_common_device.h
++++ b/drivers/net/intel/idpf/idpf_common_device.h
+@@ -78,6 +78,7 @@ enum idpf_rx_func_type {
+ enum idpf_tx_func_type {
+ 	IDPF_TX_DEFAULT,
+ 	IDPF_TX_SINGLEQ,
++	IDPF_TX_SINGLEQ_SIMPLE,
+ 	IDPF_TX_SINGLEQ_AVX2,
+ 	IDPF_TX_AVX512,
+ 	IDPF_TX_SINGLEQ_AVX512,
+@@ -100,6 +101,7 @@ struct idpf_adapter {
+ 
+ 	bool is_tx_singleq; /* true - single queue model, false - split queue model */
+ 	bool is_rx_singleq; /* true - single queue model, false - split queue model */
++	bool tx_simple_allowed; /* true if all queues support simple TX */
+ 
+ 	/* For timestamp */
+ 	uint64_t time_hw;
+diff --git a/drivers/net/intel/idpf/idpf_common_rxtx.c b/drivers/net/intel/idpf/idpf_common_rxtx.c
+index 781310e564..bf2e9363d4 100644
+--- a/drivers/net/intel/idpf/idpf_common_rxtx.c
++++ b/drivers/net/intel/idpf/idpf_common_rxtx.c
+@@ -1348,6 +1348,15 @@ idpf_dp_singleq_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
+ 			idpf_set_tso_ctx, NULL, NULL);
  }
  
-+static __rte_always_inline int
-+ci_tx_desc_done_simple(struct ci_tx_queue *txq, uint16_t idx)
++RTE_EXPORT_INTERNAL_SYMBOL(idpf_dp_singleq_xmit_pkts_simple)
++uint16_t
++idpf_dp_singleq_xmit_pkts_simple(void *tx_queue, struct rte_mbuf **tx_pkts,
++				   uint16_t nb_pkts)
 +{
-+	return (txq->ci_tx_ring[idx].cmd_type_offset_bsz & rte_cpu_to_le_64(CI_TXD_QW1_DTYPE_M)) ==
-+			rte_cpu_to_le_64(CI_TX_DESC_DTYPE_DESC_DONE);
++	return ci_xmit_pkts_simple(tx_queue, tx_pkts, nb_pkts);
 +}
 +
-+/* Free transmitted mbufs using vector-style cleanup */
-+static __rte_always_inline int
-+ci_tx_free_bufs_simple(struct ci_tx_queue *txq)
-+{
-+	return ci_tx_free_bufs_vec(txq, ci_tx_desc_done_simple, false);
-+}
 +
- /* Fill hardware descriptor ring with mbuf data (simple path) */
- static inline void
- ci_tx_fill_hw_ring_simple(volatile struct ci_tx_desc *txdp, struct rte_mbuf **pkts,
-@@ -52,61 +66,6 @@ ci_tx_fill_hw_ring_simple(volatile struct ci_tx_desc *txdp, struct rte_mbuf **pk
+ /* TX prep functions */
+ RTE_EXPORT_INTERNAL_SYMBOL(idpf_dp_prep_pkts)
+ uint16_t
+@@ -1533,6 +1542,16 @@ const struct ci_tx_path_info idpf_tx_path_infos[] = {
+ 			.single_queue = true
+ 		}
+ 	},
++	[IDPF_TX_SINGLEQ_SIMPLE] = {
++		.pkt_burst = idpf_dp_singleq_xmit_pkts_simple,
++		.info = "Single Queue Scalar Simple",
++		.features = {
++			.tx_offloads = IDPF_TX_VECTOR_OFFLOADS,
++			.single_queue = true,
++			.simple_tx = true,
++		}
++	},
++
+ #ifdef RTE_ARCH_X86
+ 	[IDPF_TX_SINGLEQ_AVX2] = {
+ 		.pkt_burst = idpf_dp_singleq_xmit_pkts_avx2,
+diff --git a/drivers/net/intel/idpf/idpf_common_rxtx.h b/drivers/net/intel/idpf/idpf_common_rxtx.h
+index fe7094d434..914cab0f25 100644
+--- a/drivers/net/intel/idpf/idpf_common_rxtx.h
++++ b/drivers/net/intel/idpf/idpf_common_rxtx.h
+@@ -221,6 +221,9 @@ __rte_internal
+ uint16_t idpf_dp_singleq_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
+ 				   uint16_t nb_pkts);
+ __rte_internal
++uint16_t idpf_dp_singleq_xmit_pkts_simple(void *tx_queue, struct rte_mbuf **tx_pkts,
++				   uint16_t nb_pkts);
++__rte_internal
+ uint16_t idpf_dp_prep_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
+ 			   uint16_t nb_pkts);
+ __rte_internal
+diff --git a/drivers/net/intel/idpf/idpf_rxtx.c b/drivers/net/intel/idpf/idpf_rxtx.c
+index 5c2516f556..a2bb4b766d 100644
+--- a/drivers/net/intel/idpf/idpf_rxtx.c
++++ b/drivers/net/intel/idpf/idpf_rxtx.c
+@@ -497,6 +497,22 @@ idpf_tx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_idx,
+ 	txq->q_set = true;
+ 	dev->data->tx_queues[queue_idx] = txq;
+ 
++	/* Set tx_simple_allowed flag based on queue configuration.
++	 * For queue 0: explicitly set the flag based on its configuration.
++	 * For other queues: only set to false if this queue cannot use simple_tx.
++	 */
++	if (vport->txq_model == VIRTCHNL2_QUEUE_MODEL_SPLIT)
++		goto out;
++
++	/* for first queue, default to true, disable later if any queue can't meet conditions */
++	if (queue_idx == 0)
++		adapter->tx_simple_allowed = true;
++
++	if ((txq->offloads != (txq->offloads & RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE)) ||
++			txq->tx_rs_thresh < IDPF_VPMD_TX_MAX_BURST)
++		adapter->tx_simple_allowed = false;
++
++out:
+ 	return 0;
+ 
+ err_complq_setup:
+@@ -639,6 +655,7 @@ int
+ idpf_tx_queue_start(struct rte_eth_dev *dev, uint16_t tx_queue_id)
+ {
+ 	struct idpf_vport *vport = dev->data->dev_private;
++	struct idpf_adapter *ad = vport->adapter;
+ 	struct ci_tx_queue *txq = dev->data->tx_queues[tx_queue_id];
+ 	int err = 0;
+ 
+@@ -655,6 +672,12 @@ idpf_tx_queue_start(struct rte_eth_dev *dev, uint16_t tx_queue_id)
+ 		return err;
  	}
- }
  
--/* Free transmitted mbufs from descriptor ring with bulk freeing for Tx simple path */
--static __rte_always_inline int
--ci_tx_free_bufs(struct ci_tx_queue *txq)
--{
--	struct ci_tx_entry_vec *txep;
--	uint16_t tx_rs_thresh = txq->tx_rs_thresh;
--	uint16_t i = 0, j = 0;
--	struct rte_mbuf *free[CI_TX_MAX_FREE_BUF_SZ];
--	const uint16_t k = RTE_ALIGN_FLOOR(tx_rs_thresh, CI_TX_MAX_FREE_BUF_SZ);
--	const uint16_t m = tx_rs_thresh % CI_TX_MAX_FREE_BUF_SZ;
--
--	if ((txq->ci_tx_ring[txq->tx_next_dd].cmd_type_offset_bsz &
--			rte_cpu_to_le_64(CI_TXD_QW1_DTYPE_M)) !=
--			rte_cpu_to_le_64(CI_TX_DESC_DTYPE_DESC_DONE))
--		return 0;
--
--	txep = &txq->sw_ring_vec[txq->tx_next_dd - (tx_rs_thresh - 1)];
--
--	for (i = 0; i < tx_rs_thresh; i++)
--		rte_prefetch0((txep + i)->mbuf);
--
--	if (txq->offloads & RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE) {
--		if (k) {
--			for (j = 0; j != k; j += CI_TX_MAX_FREE_BUF_SZ) {
--				for (i = 0; i < CI_TX_MAX_FREE_BUF_SZ; ++i, ++txep) {
--					free[i] = txep->mbuf;
--					txep->mbuf = NULL;
--				}
--				rte_mbuf_raw_free_bulk(free[0]->pool, free,
--						CI_TX_MAX_FREE_BUF_SZ);
--			}
--		}
--
--		if (m) {
--			for (i = 0; i < m; ++i, ++txep) {
--				free[i] = txep->mbuf;
--				txep->mbuf = NULL;
--			}
--			rte_mbuf_raw_free_bulk(free[0]->pool, free, m);
--		}
--	} else {
--		for (i = 0; i < txq->tx_rs_thresh; ++i, ++txep) {
--			rte_pktmbuf_free_seg(txep->mbuf);
--			txep->mbuf = NULL;
--		}
--	}
--
--	txq->nb_tx_free = (uint16_t)(txq->nb_tx_free + txq->tx_rs_thresh);
--	txq->tx_next_dd = (uint16_t)(txq->tx_next_dd + txq->tx_rs_thresh);
--	if (txq->tx_next_dd >= txq->nb_tx_desc)
--		txq->tx_next_dd = (uint16_t)(txq->tx_rs_thresh - 1);
--
--	return txq->tx_rs_thresh;
--}
--
- /* Simple burst transmit for descriptor-based simple Tx path
-  *
-  * Transmits a burst of packets by filling hardware descriptors with mbuf
-@@ -132,7 +91,7 @@ ci_xmit_burst_simple(struct ci_tx_queue *txq,
- 	 * descriptor, free the associated buffer.
- 	 */
- 	if (txq->nb_tx_free < txq->tx_free_thresh)
--		ci_tx_free_bufs(txq);
-+		ci_tx_free_bufs_simple(txq);
++	/* Record what kind of descriptor cleanup we need on teardown.
++	 * For single queue mode, vector or simple tx paths use vec entry format.
++	 */
++	if (vport->txq_model == VIRTCHNL2_QUEUE_MODEL_SINGLE)
++		txq->use_vec_entry = ad->tx_simple_allowed;
++
+ 	/* Ready to switch the queue on */
+ 	err = idpf_vc_queue_switch(vport, tx_queue_id, false, true,
+ 							VIRTCHNL2_QUEUE_TYPE_TX);
+@@ -835,7 +858,8 @@ idpf_set_tx_function(struct rte_eth_dev *dev)
+ 	struct ci_tx_path_features req_features = {
+ 		.tx_offloads = dev->data->dev_conf.txmode.offloads,
+ 		.simd_width = RTE_VECT_SIMD_DISABLED,
+-		.single_queue = (vport->txq_model == VIRTCHNL2_QUEUE_MODEL_SINGLE)
++		.single_queue = (vport->txq_model == VIRTCHNL2_QUEUE_MODEL_SINGLE),
++		.simple_tx = ad->tx_simple_allowed
+ 	};
  
- 	/* Use available descriptor only */
- 	nb_pkts = (uint16_t)RTE_MIN(txq->nb_tx_free, nb_pkts);
-diff --git a/drivers/net/intel/i40e/i40e_rxtx.c b/drivers/net/intel/i40e/i40e_rxtx.c
-index 185e45fb9a..820a955158 100644
---- a/drivers/net/intel/i40e/i40e_rxtx.c
-+++ b/drivers/net/intel/i40e/i40e_rxtx.c
-@@ -2367,7 +2367,7 @@ i40e_tx_done_cleanup_simple(struct ci_tx_queue *txq,
- 		if (txq->nb_tx_desc - txq->nb_tx_free < txq->tx_rs_thresh)
- 			break;
- 
--		n = ci_tx_free_bufs(txq);
-+		n = ci_tx_free_bufs_simple(txq);
- 
- 		if (n == 0)
- 			break;
-diff --git a/drivers/net/intel/ice/ice_rxtx.c b/drivers/net/intel/ice/ice_rxtx.c
-index 06f7e85c12..be9d88dda6 100644
---- a/drivers/net/intel/ice/ice_rxtx.c
-+++ b/drivers/net/intel/ice/ice_rxtx.c
-@@ -3208,7 +3208,7 @@ ice_tx_done_cleanup_simple(struct ci_tx_queue *txq,
- 		if (txq->nb_tx_desc - txq->nb_tx_free < txq->tx_rs_thresh)
- 			break;
- 
--		n = ci_tx_free_bufs(txq);
-+		n = ci_tx_free_bufs_simple(txq);
- 
- 		if (n == 0)
- 			break;
+ 	/* The primary process selects the tx path for all processes. */
 -- 
 2.51.0
 
