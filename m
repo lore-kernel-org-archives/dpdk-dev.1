@@ -2,75 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7BD8D30CC2
-	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Jan 2026 20:04:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 970F1D30CC1
+	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Jan 2026 20:23:36 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 39FD0402DE;
-	Tue, 13 Jan 2026 21:04:33 +0100 (CET)
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com
- [209.85.218.44]) by mails.dpdk.org (Postfix) with ESMTP id BFD2B4028B
- for <dev@dpdk.org>; Tue, 13 Jan 2026 21:04:31 +0100 (CET)
-Received: by mail-ej1-f44.google.com with SMTP id
- a640c23a62f3a-b871cfb49e6so417627266b.1
- for <dev@dpdk.org>; Tue, 13 Jan 2026 12:04:31 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id C9610402DE;
+	Tue, 13 Jan 2026 21:23:35 +0100 (CET)
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com
+ [209.85.208.42]) by mails.dpdk.org (Postfix) with ESMTP id 7DACE4028B
+ for <dev@dpdk.org>; Tue, 13 Jan 2026 21:23:34 +0100 (CET)
+Received: by mail-ed1-f42.google.com with SMTP id
+ 4fb4d7f45d1cf-64dfb22c7e4so334051a12.1
+ for <dev@dpdk.org>; Tue, 13 Jan 2026 12:23:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768334671;
- x=1768939471; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768335814;
+ x=1768940614; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=16WR6jQsdAXnx0viAH8STYqHBTM+GVmlayphAJqwpbA=;
- b=Ptyovu5aPSAw3/cx81hl52eOzImJmaUPrvMM0Bj2cEdNAWMhlIdzmjIs8VUAUPjIJt
- nka24IjdUAR6dymdT+jefV+LIlUaz34xj4svGrfHi4wt8xN74RzH3c0Yj0z6sPood+e6
- geAcNkJSc7/883r4ji8gZN/Ns3otNbWdeMR6ZhZ17fuxZw3bOfkTZZZ+7XXfuBf2oNX2
- to2Mv5OY6jSOPzL9TSDqmZBgYeQs17c47PXp4cPN+ygN+oyDVJLrmYzIp+In5YxxcTYO
- +bmm9CC2BO+7X9abPe4kTlDSfjBrk4PtgHYElnIDillpJVO4wXMi/qZEd10wCR8cHFGF
- UzCw==
+ bh=IHJGO+zv96s9OuCtG5s/YdJpYw7LqbSt0mSDvEwgp9w=;
+ b=yFDtcXPcR08UB6bjPeSRV0SUPlN35hDWkyi/LFnI8u04PVjRmpkLiT0jbjvSHE3SpI
+ x9MBLnLn0SRJ1uNuxDV+L14+tFi4v3v4ralREh18RpH+Flr8KXE+n0q40FBfo3X0VoHy
+ ISQXJOestLTUBs4msRw3CRPo0Skgu4yYGSpJAUdtPE7MqkhiK12EFaYbFS2K95xRuvLd
+ QfbsKpFvigHv6R5EHliy5afHnRHVb+vPhgHBimwCtCKo/JrWnnIdtZPXR8rjMq/m70IR
+ x8rMcdEN+wvVJ5HhF5X0jLArdmYYo3VO3QPbjqKdr6rT8b9VX7nC2YOax6yxcT1Ve1Tc
+ Jyrg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768334671; x=1768939471;
+ d=1e100.net; s=20230601; t=1768335814; x=1768940614;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=16WR6jQsdAXnx0viAH8STYqHBTM+GVmlayphAJqwpbA=;
- b=Wlu9sVlo0NexeCcVNXWOj9hGF/84IJ6k6YhnvP6++MIt54x2jEv1hDeySG7JuAiX8q
- 1o8Wmn052QuELjuTid0jlxKACXO4fyG5YM8xhfPElEox9osQXAUSqbAf1s1eFayfwTut
- Y2+tFKJkPTiW7x5o7BuKHL5KV01hA6tpMpEQVzmsGPAZOhP5t13E0rGM/lE6IRpXID4V
- v2emzEfz3QMCi07mK0DvPOIN11u9SFWH1ngirtAf27zyIhdvYJCsZ34Eg5sOgciLEaSt
- yDdFXD963lw2lwcwwlFymNKy9uyJaBluUSus8rTtU+OXhTlI4Eqk0ukpZ4HVd+R5mTlQ
- kvWw==
-X-Forwarded-Encrypted: i=1;
- AJvYcCX5o0k0Z8gkGQjJQGE1Ajxo0IJHM5zwm7uF6hmmuEXYuv00573KfFJePToAgWYLfaRgdbI=@dpdk.org
-X-Gm-Message-State: AOJu0YzImomGYOAjndadFILEBnv13Ip0GYdz8o9FbPDkY2AThwyw+yKv
- 4VdU+5Jpb/qMm2Wuvz6pDfNfDAVaLR+9h35XLIuCfP1Lj7PmBU6QRC0veSzEP7wUnRI=
-X-Gm-Gg: AY/fxX6Pd+hA1wEeMm/9oVywTDlRrSFmvdNUhTmsGpX/ys6BwMuJ9/8PUGYtmOdybC1
- ILybOR1zcICRFNKxOVVZJAY9unUTj3YziqfhbLEGSEcINTaXsnMFFCNcv48SqxPun0AsBmRkMMu
- JpUznSWmib3Ey3/JWcShn7wCYkybi5iWwzQ/I8YjnUZKSWFDHZDaC57u7wTSVbPRnJo574lQxEL
- u1xW1cCWB6k5qKWjk5xy0XDK6oAkPywYg+A1Vg+LgmECB8RQSnbmnAT7lr8r1zYcLbnd+t86Nef
- g9ZSbzPQU+bWkh4iMNkhnPkmj531a3cNl6syTxvxBjWXa0W+HKAdPZf7Col2LB9AblPPF73mFmw
- vwbFwkSbug1oEYBhC3OwAjBhgKroi3gP7WrliMB7snaQiEiAHmUwmPtCWEndUV2de05iTwQt3q3
- y7b8tK3ABub2oC/4m7u8e4hc7E7L7MseyStefHWJCGtmvaA1DUvzJJ
-X-Received: by 2002:a17:906:6a14:b0:b80:402e:6e77 with SMTP id
- a640c23a62f3a-b87612b7004mr29814366b.54.1768334671153; 
- Tue, 13 Jan 2026 12:04:31 -0800 (PST)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ bh=IHJGO+zv96s9OuCtG5s/YdJpYw7LqbSt0mSDvEwgp9w=;
+ b=ZKaMNrLaKdIcpDJZMLtBAmys8+Zktmy7iwyjEdHh9fC8MnxshPns5ZLuzqhv0y9mZO
+ 7yemJwaOCQazftUpErB26n1PmdZvQsUjSVoIi2XX86cLZnmBFGDTKiO9Bozs900yo7g1
+ zHJumZ+TmcXGfo2yhi2UA/hnle/saRcIYa7AL1GEYLnDQHEQVlE3Iw17Ki6V8svzNSN9
+ Zu2nrqYYhfja7fgg0B7AKDS2Nsz3ACmQ9TDw5AU9UTzXZvTTU3w3sykZNKxyOWe1kHVW
+ jJeQHo15qKxvnvbVptGhBi28joVVDYuOPpE000WMdhm5+B2QgWQL3bE8i6aT0+9mEaka
+ udCQ==
+X-Gm-Message-State: AOJu0Yw2bZyTPrQ1GZZ0gagCSflq6zChi9SEFJi4Uo0AN8ZslbL0cqjw
+ jKRbPZG8SGpGDv5gnQOWot0WoFo/VFSU7OmexCO0TFvrpxyMlXeFterM0ciM2XM++vvcFsCZRO5
+ WjUbT
+X-Gm-Gg: AY/fxX6W3lBmWuIyl3FD+cXUtPONDxkTQJmtg+NDXIoMKW4aEhzxbMjwfGfkHQ5/qhS
+ JtRiWIwhRyzwhugRJvlgnbthew6Ujvk1CkLLDJ++DzwewZuMd/u0pDs8HpyOHGy2QfyXEqJ4raw
+ /N2pGznlOh24BynIxSYVE6pBaHh5pxaTEQIN8OdIhTBC2tUqpMq+0KPpTRpZ+7KmXPDJDrW+5CB
+ 36onIEqZrrbHxeNmI8p61lnmBqNDs/Gbwwvv4kmRrTrXHUztiIxK1CXKVWKROmqp+ggqUT/uh7A
+ xPQOabpIienU6Q0MZDHPIszEUf6UW6DSzPUGsgFFWtJRXC9V341xWHQDNXJ2pyU+9XKuYOMzpR1
+ SodMLHY5LIKCc02tPAc/7UnqQGpsAWa0QRR1asB0swexieQsUCqDe03mirfvAcuIuFGgZ5cggRL
+ qHbvdDVvb/+GjN3kdhiLqM124OdgAyZi8N0/rS5eXHnGKQl2y42A==
+X-Received: by 2002:a17:907:7244:b0:b72:d577:11cc with SMTP id
+ a640c23a62f3a-b8761c4469fmr24508366b.12.1768335813929; 
+ Tue, 13 Jan 2026 12:23:33 -0800 (PST)
+Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a640c23a62f3a-b86f1e95273sm1065890466b.62.2026.01.13.12.04.29
+ a640c23a62f3a-b842a23433asm2314992166b.3.2026.01.13.12.23.32
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 13 Jan 2026 12:04:30 -0800 (PST)
-Date: Tue, 13 Jan 2026 12:04:25 -0800
+ Tue, 13 Jan 2026 12:23:33 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Wenwu Ma <wenwux.ma@intel.com>
-Cc: ajit.khaparde@broadcom.com, somnath.kotur@broadcom.com,
- amitprakashs@marvell.com, abhinandan.gujjar@intel.com, dev@dpdk.org,
- stable@dpdk.org, tingtingx.liao@intel.com
-Subject: Re: [PATCH 3/3] eventdev: fix uninitialized variable
-Message-ID: <20260113120425.273056ff@phoenix.local>
-In-Reply-To: <20241125064755.3943-4-wenwux.ma@intel.com>
-References: <20241125064755.3943-1-wenwux.ma@intel.com>
- <20241125064755.3943-4-wenwux.ma@intel.com>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v10 00/18] fix format overflow warnings in libraries
+Date: Tue, 13 Jan 2026 12:21:39 -0800
+Message-ID: <20260113202329.35190-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20251202172626.283094-1-stephen@networkplumber.org>
+References: <20251202172626.283094-1-stephen@networkplumber.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,35 +80,90 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 25 Nov 2024 14:47:55 +0800
-Wenwu Ma <wenwux.ma@intel.com> wrote:
+This series fixes format overflow warnings that occur when building
+DPDK libraries with -Wformat-overflow enabled. The final patch in
+the series removes the -Wno-format-truncation flag from lib/meson.build,
+enabling these warnings by default.
 
-> This patch fixes the variable 'events' may be used uninitialized.
-> 
-> Fixes: 3c89e8c42022 ("eventdev/dma: support adapter service function")
-> Cc: stable@dpdk.org
-> 
-> Signed-off-by: Wenwu Ma <wenwux.ma@intel.com>
-> ---
->  lib/eventdev/rte_event_dma_adapter.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/lib/eventdev/rte_event_dma_adapter.c b/lib/eventdev/rte_event_dma_adapter.c
-> index ff2bc408c1..3c05fb615f 100644
-> --- a/lib/eventdev/rte_event_dma_adapter.c
-> +++ b/lib/eventdev/rte_event_dma_adapter.c
-> @@ -655,6 +655,7 @@ edma_ops_enqueue_burst(struct event_dma_adapter *adapter, struct rte_event_dma_a
->  	nb_ev = 0;
->  	retry = 0;
->  	nb_enqueued = 0;
-> +	memset(events, 0, sizeof(events));
->  	num = RTE_MIN(num, DMA_BATCH_SIZE);
->  	for (i = 0; i < num; i++) {
->  		struct rte_event *ev = &events[nb_ev++];
+The changes fall into several categories:
 
+1. Add explicit name length validation to APIs that create named objects
+   (lpm, hash, efd, tailq, cfgfile). These now return ENAMETOOLONG
+   instead of silently truncating names.
 
-This shows that what every tool you are using to detect these errors is broken.
-The loop here is setting the appropriate events.
-Each event has two unions 64 bit words. Both of them are being set.
-I can't see any unitialized data and neither does standard compiler.
+2. Check snprintf() return values and log warnings when truncation
+   occurs in non-fatal cases (thread names, xstat names, ring names).
+
+3. Use asprintf() for dynamic allocation where fixed buffers are
+   insufficient (graph pcap comments, hugepage paths, plugin paths).
+
+4. Increase buffer sizes where the existing size was too small
+   (telemetry address strings, cfgfile line buffer).
+
+5. Replace PATH_MAX with UNIX_PATH_MAX for unix domain socket paths
+   since the actual limit is 108 characters, not 4096.
+
+6. Use standard C library functions where appropriate (getmntent_r
+   for parsing /proc/mounts).
+
+All API changes are documented in the release notes under a single
+entry describing the new name length checks.
+
+v10:
+  - Fixed inconsistent comparison in eal thread name warning
+    (now uses RTE_THREAD_NAME_SIZE on all platforms)
+  - Fixed typo "peerr" -> "peer" in eal_common_proc.c
+
+Stephen Hemminger (18):
+  lpm: restrict name size
+  hash: add checks for hash name length
+  graph: avoid overflowing comment buffer
+  latencystats: add check for string overflow
+  telemetry: check for path overflow
+  efd: handle possible name truncation
+  eal: use C library to parse filesystem table
+  eal: warn if thread name is truncated
+  eal: avoid format overflow when handling addresses
+  eal: add check for sysfs path overflow
+  eal: limit maximum runtime directory and socket paths
+  eal: check for hugefile path overflow
+  eal: check tailq length
+  eal: handle long shared library path
+  ethdev: avoid possible overflow in xstat names
+  vhost: check for overflow in xstat name
+  cfgfile: add length checks and increase line buffer
+  lib: enable format overflow warnings
+
+ app/test/test_hash.c                   | 21 ++++++
+ doc/guides/rel_notes/release_26_03.rst | 13 ++++
+ lib/cfgfile/rte_cfgfile.c              | 43 ++++++++---
+ lib/cfgfile/rte_cfgfile.h              |  6 +-
+ lib/eal/common/eal_common_config.c     |  6 +-
+ lib/eal/common/eal_common_memory.c     |  2 +-
+ lib/eal/common/eal_common_options.c    | 17 +++--
+ lib/eal/common/eal_common_proc.c       | 85 ++++++++++++++--------
+ lib/eal/common/eal_common_tailqs.c     | 13 +++-
+ lib/eal/common/eal_filesystem.h        | 27 +++++--
+ lib/eal/freebsd/eal.c                  |  6 +-
+ lib/eal/linux/eal.c                    |  6 +-
+ lib/eal/linux/eal_hugepage_info.c      | 98 ++++++++++++--------------
+ lib/eal/linux/eal_memalloc.c           | 11 ++-
+ lib/eal/linux/eal_memory.c             |  9 ++-
+ lib/eal/windows/eal.c                  |  6 +-
+ lib/efd/rte_efd.c                      | 18 +++--
+ lib/ethdev/rte_ethdev.c                | 35 ++++++---
+ lib/graph/graph_pcap.c                 |  9 ++-
+ lib/hash/rte_cuckoo_hash.c             | 41 +++++++----
+ lib/hash/rte_fbk_hash.c                | 12 +++-
+ lib/hash/rte_fbk_hash.h                |  1 +
+ lib/latencystats/rte_latencystats.c    |  9 ++-
+ lib/lpm/rte_lpm.c                      | 16 +++--
+ lib/lpm/rte_lpm.h                      |  1 +
+ lib/meson.build                        |  4 --
+ lib/telemetry/telemetry_legacy.c       |  7 +-
+ lib/vhost/vhost.c                      | 14 ++--
+ 28 files changed, 368 insertions(+), 168 deletions(-)
+
+-- 
+2.51.0
 
