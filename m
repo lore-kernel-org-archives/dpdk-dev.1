@@ -2,67 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BB1CD30CC2
-	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Jan 2026 20:24:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 499C8D30CC2
+	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Jan 2026 20:24:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4AFF540670;
-	Tue, 13 Jan 2026 21:23:43 +0100 (CET)
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com
- [209.85.208.51]) by mails.dpdk.org (Postfix) with ESMTP id B170D4066E
- for <dev@dpdk.org>; Tue, 13 Jan 2026 21:23:42 +0100 (CET)
-Received: by mail-ed1-f51.google.com with SMTP id
- 4fb4d7f45d1cf-64b9cb94ff5so11704119a12.2
- for <dev@dpdk.org>; Tue, 13 Jan 2026 12:23:42 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 61AF540677;
+	Tue, 13 Jan 2026 21:23:45 +0100 (CET)
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com
+ [209.85.218.51]) by mails.dpdk.org (Postfix) with ESMTP id 6F1CA40684
+ for <dev@dpdk.org>; Tue, 13 Jan 2026 21:23:44 +0100 (CET)
+Received: by mail-ej1-f51.google.com with SMTP id
+ a640c23a62f3a-b8722834679so327841766b.0
+ for <dev@dpdk.org>; Tue, 13 Jan 2026 12:23:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768335822;
- x=1768940622; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768335824;
+ x=1768940624; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=c85AU4P1C3tQ1LXq/w3KTTyJ+OfMU3cUrzEHUq9+fYQ=;
- b=Nu4+c11h4aFC3OmCOq+NpHEMKuQkdtM1bAWhz4L9HqknjqrgAjCOVzddXJ69tddrz8
- qyJCWeZgW54EOBbyI4YhS+iy82ygZraj4VJ32adQiTajF7dn+bhzmGmPEY3RiF3CAykr
- 1o7tBPBlB7dUsT5D03f1MPfl5CW08miW7DNJWceUsg8MuXoimM33yr3A+6Q/gRz4Zb3C
- ksiip0utf1ks2MgNLZPHz+881FDjdHFyw2l2B28K/K8AtLRFc74xFjVI5nmC04gvl/5r
- wVq9wrqq4e57Y7ZhBlaAIoP2ke9wDGyoLkhgpMZqa1TmKKOjCuTYXFIv1ShG7kQRU37b
- RvtQ==
+ bh=JJfbI8F1glCy5wu+Ijoi95wQKbQjQ7c5BdaVZ6BOaNc=;
+ b=TCGZfletMRZgQqhgnZS9BxamnpRceJtyKMkzSl/NJfzvIjSNXT+TzIa7pbCKCoLijU
+ J++sAxsMcVvtyfQlD7+db+3hH9BWuyT4r3wD3Qt6ZciDxWZiWZyjnx8h6MnxNQ0ba8BY
+ wfQxOwj5l9rMgS4I0HSBqaNnG1Ne2jlmiw/AoAT26Ka9byf0SqQs2iT0QvrcRAIXmdwp
+ l4eL81xNQnB5lJH3l5lrmICtW4WC4Jo4k+wxxROVLfN9x9MItFNzMq3FddKHmi7I8oxp
+ n7NknqW8x4c8rlQp6FItPZ/3ssn+AzI+N7nlRFIt+QxOIeVQrU1BbPlMI+hT6lHejZKK
+ sP4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768335822; x=1768940622;
+ d=1e100.net; s=20230601; t=1768335824; x=1768940624;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=c85AU4P1C3tQ1LXq/w3KTTyJ+OfMU3cUrzEHUq9+fYQ=;
- b=rSceRaNbE0LFeBiy/Ai4jfP3h7zn6FRsoFkNuAYHFqfDDRIu8Z4MWAiYz2hcPRoIPw
- RAEavtR+HQ5fIa9BVT8iRSbLab5zZOCjUNxBs2LBxI/L5wAmtcfE3WuDSix8uPGMjnJM
- KIFDuyPV+shRrYWgBt9y612keFAtgsQ/fKQi8ojl/Zplp24Q8mrPvYE9dN/14iVTu4dM
- 1DAGV8IwJDSq2A2etS2S3HmnahJxDBQGLBsvOZD5ByNz2LVkC1as+eSksys9kOy9zX/O
- ms6GjOw0ch+JG3jzBkFJfN9fBZRQMxlw5zr+Cn98mvxGT2uKf1X3LI27o3MfFlVEGgMg
- 0D/w==
-X-Gm-Message-State: AOJu0YySoKBZL+LMminnuSC/2ve9JuPD52HqkHRm05rXYG/El4j/oAgA
- uULFIjaXa3BIVuHldVxDm7ulhATcLyC7siiAfPKLJ6IczaBpMtO8vYvTJmNyfQqYJbA2isfyavP
- 8xxqy
-X-Gm-Gg: AY/fxX6RDO3fy/uB/IJugdR/TCxnve6+cK+hX2ELsKmc7DbGCh7f0xT7ByeAZZrECtn
- z6va7yAYdoxVm1l6Si8tG3NwuZVrCMntCLdOAseT6kPyh5HTpN3wBdJqBb5DfWDiwaoTDddLZTx
- hYhTNcO7lW6OBgUqbN6uiMLPwKlaYsWpaMjcZ4dfJx0gNR+kP+2yyqgvBLb0Iz/qVuv3AecBqxc
- pHzYWEtYTbOuL/pp61ive8DTG3ZGALp8lBcFBB+b6b/6+3/GXPeulUom/9RJ3lO9GfbVphZtG7T
- TTl1KFCVL8gjFTk48HR/ICZ9wFmqmokvo/YGmMy+zPdJyf+Sfq2zQhELRjQ2OOex4dEbfJ2Dfql
- PEwkytNV0mkUYHx5iyEaY4JM0BUalQBOW7klGi4oOG0zbVjGYtMuDlr3S+xpWQ3UciBTLmqvRST
- o20quKGIoNshw6tHjhvNEsR54aStrfHR2UhxQ/F1mF5I7K38Ahmw==
-X-Received: by 2002:a17:907:3f21:b0:b7a:2ba7:197e with SMTP id
- a640c23a62f3a-b87610438dcmr26186466b.29.1768335822130; 
- Tue, 13 Jan 2026 12:23:42 -0800 (PST)
+ bh=JJfbI8F1glCy5wu+Ijoi95wQKbQjQ7c5BdaVZ6BOaNc=;
+ b=XCEOizEUpsa6JHQapCrGx0iCfLudB08osBECCzCYmd/XmZWPH6k2lKDUVfcU0EOoF6
+ Rm6/9DGaDrUWe7FvNQ0EMy8t5Qfm6oQ3EvwcQM6KAx6qMtmNIguQyiqoR3B3Vk5Kl5xh
+ ceOW47N2BI2tnqo5IVOlPQShZ5W/nTWX20m1XixCXoj2rMVx6l8qNWczlobNc/3noIU8
+ D/3HG3M8iyy7iB1bx3UIPp4Blw4t7H2++bYFSzEJcEOgLw6Ni7awGssWYjDFT+foFjr4
+ DmhFXq59eaGstWar/1rnEEPtfwgG9beLIv0gjY4PpMK8ZE33qGfL7k74ZPjd+28PPE9q
+ XudA==
+X-Gm-Message-State: AOJu0YzKWie9nNR2R5VDaHX58PosMwoRY/1yJsL6NWQa2cxEzzlF6lDS
+ 7eY+ogZcxpTQ1wPELYcHi1+29As+832VnNqSqps+rfizNK34+uwSAI1hMzYUR2asHNuza5GvP9Q
+ 3dVxf
+X-Gm-Gg: AY/fxX6ItXhcJ1de71g04lspxfrVZzZI0VLgXFrseEH7JqK03JxG7qKWaUMhRlnKeTq
+ bFdFNyWH5a3zH0GYvXv2USmteDUkwk4e/W7eRq63pyCJLP6Tyykxo31qEqWvy40O62gH+fCxIa4
+ g4qmFmuZ5hbOEp4H9EJjhr6tDKMPRQfHXMwSsZszk93kBUSk8EUMKXHCjdM5aYz4vbPkAp4dH4N
+ UaA9cmNR0evNrlGrxjHjW70VGG9QO4DLi2/ib/vNJAjMLsVR5aQRXRu0/JCDJnblJMBKhJtCEWF
+ RRm8SAzZKNiR8vtozYxLAFYlnMuEXgg4B4/E5vEhH+dXOa7kYaHymBzZ/Bks4Hst6WI33rTvHgy
+ Q5EMYY0IFYP+12Y/MC7cfFYEASTvYdzS3A4tWuACuI0e/dYY2ElS9v4WxAQPuNyFmHYe3UDFbdE
+ 0d3KLumg6xtqS/EIKSCFyY/BtH+aUMHl/dyWqc3WPLPGJxKxcPLA==
+X-Received: by 2002:a17:907:2d0e:b0:b87:2780:1b36 with SMTP id
+ a640c23a62f3a-b8760fe5f00mr29528266b.13.1768335823866; 
+ Tue, 13 Jan 2026 12:23:43 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a640c23a62f3a-b842a23433asm2314992166b.3.2026.01.13.12.23.40
+ a640c23a62f3a-b842a23433asm2314992166b.3.2026.01.13.12.23.42
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 13 Jan 2026 12:23:41 -0800 (PST)
+ Tue, 13 Jan 2026 12:23:43 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Reshma Pattan <reshma.pattan@intel.com>
-Subject: [PATCH v10 04/18] latencystats: add check for string overflow
-Date: Tue, 13 Jan 2026 12:21:43 -0800
-Message-ID: <20260113202329.35190-5-stephen@networkplumber.org>
+ Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH v10 05/18] telemetry: check for path overflow
+Date: Tue, 13 Jan 2026 12:21:44 -0800
+Message-ID: <20260113202329.35190-6-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260113202329.35190-1-stephen@networkplumber.org>
 References: <20251202172626.283094-1-stephen@networkplumber.org>
@@ -82,34 +82,37 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The copy of latency stat names could get truncated if in the
-future a new value is added. Add warning if that happens.
+The unix domain socket path is limited, check for overflow.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- lib/latencystats/rte_latencystats.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ lib/telemetry/telemetry_legacy.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/lib/latencystats/rte_latencystats.c b/lib/latencystats/rte_latencystats.c
-index f61d5a273f..0861d00c6b 100644
---- a/lib/latencystats/rte_latencystats.c
-+++ b/lib/latencystats/rte_latencystats.c
-@@ -405,9 +405,12 @@ rte_latencystats_get_names(struct rte_metric_name *names, uint16_t size)
- 	if (names == NULL || size < NUM_LATENCY_STATS)
- 		return NUM_LATENCY_STATS;
- 
--	for (i = 0; i < NUM_LATENCY_STATS; i++)
--		strlcpy(names[i].name, lat_stats_strings[i].name,
--			sizeof(names[i].name));
-+	for (i = 0; i < NUM_LATENCY_STATS; i++) {
-+		if (strlcpy(names[i].name, lat_stats_strings[i].name, sizeof(names[0].name))
-+		    >= sizeof(names[0].name))
-+			LATENCY_STATS_LOG(NOTICE, "Latency metric '%s' too long",
-+					  lat_stats_strings[i].name);
+diff --git a/lib/telemetry/telemetry_legacy.c b/lib/telemetry/telemetry_legacy.c
+index 89ec750c09..1d73282ba8 100644
+--- a/lib/telemetry/telemetry_legacy.c
++++ b/lib/telemetry/telemetry_legacy.c
+@@ -102,14 +102,17 @@ register_client(const char *cmd __rte_unused, const char *params,
+ 		return -1;
+ 	}
+ 	*strchr(data, '\"') = 0;
++	addrs.sun_family = AF_UNIX;
++	if (strlcpy(addrs.sun_path, data, sizeof(addrs.sun_path)) >= sizeof(addrs.sun_path)) {
++		fprintf(stderr, "Client path too long\n");
++		return -1;
 +	}
  
- 	return NUM_LATENCY_STATS;
- }
+ 	fd = socket(AF_UNIX, SOCK_SEQPACKET, 0);
+ 	if (fd < 0) {
+ 		perror("Failed to open socket");
+ 		return -1;
+ 	}
+-	addrs.sun_family = AF_UNIX;
+-	strlcpy(addrs.sun_path, data, sizeof(addrs.sun_path));
+ 
+ 	if (connect(fd, (struct sockaddr *)&addrs, sizeof(addrs)) == -1) {
+ 		perror("\nClient connection error\n");
 -- 
 2.51.0
 
