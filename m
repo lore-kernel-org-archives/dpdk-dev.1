@@ -2,68 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 375B2D30CEE
-	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Jan 2026 23:01:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D1A1D30CEE
+	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Jan 2026 23:01:41 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C905240669;
-	Wed, 14 Jan 2026 00:01:07 +0100 (CET)
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com
- [209.85.221.52]) by mails.dpdk.org (Postfix) with ESMTP id 8F0DD4066D
- for <dev@dpdk.org>; Wed, 14 Jan 2026 00:01:06 +0100 (CET)
-Received: by mail-wr1-f52.google.com with SMTP id
- ffacd0b85a97d-432d2670932so3826091f8f.2
- for <dev@dpdk.org>; Tue, 13 Jan 2026 15:01:06 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id CCD0640689;
+	Wed, 14 Jan 2026 00:01:11 +0100 (CET)
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com
+ [209.85.128.45]) by mails.dpdk.org (Postfix) with ESMTP id D17C740613
+ for <dev@dpdk.org>; Wed, 14 Jan 2026 00:01:09 +0100 (CET)
+Received: by mail-wm1-f45.google.com with SMTP id
+ 5b1f17b1804b1-47ee07570deso4895425e9.1
+ for <dev@dpdk.org>; Tue, 13 Jan 2026 15:01:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768345266;
- x=1768950066; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768345269;
+ x=1768950069; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=bVKcnIB+251kMwL/P/yHKb8ouAPSOGYZvp3KQ3UwzCw=;
- b=tlpCFsH9hPdNiBb4n6W11h0nCV/xx/5pJwiMNonKEnwEq+0I16KJI59QzKB6Zu2TB3
- TZZ8x203B4Ybtx28ICn8SAFPztHGU3L17Zovj9He+hOA0omtL1DDXhFiEeDhFMG2yeKd
- ePUdMK+uGDodf8KZlMAuG1/DNSUvtI71YOr8/AOFQWQpv6TJN+rCv6n95pMK1WO3l0ZF
- xS2/7SEnqulipaLchtlX4dlHolXwlRhPFlWXD0e72w1XdUpUifDqTFf9aX7M7Th3iQgr
- W6sncgqGIR9JxUujm9+xLgwyXsbB2EPPb4GJcj2ou0zdALqTUIJdZf3e/rZSfS4a1Zlr
- VlvA==
+ bh=moii3MRh3lSxvET+One3okp49MFBriwurrJ9qdGHAJM=;
+ b=ejVqKPxe0Ad3gWrBd5dKqPT12q4yqbutaM/EvdAvNEh3iVoc4bdmZj3WfRwcQULQS3
+ a3gW2DyBAR7HV0u/WDRDx82reRE1moiU/4gzqQF0qUwM0yMK45AW+aignd1GB38cV7+P
+ JPjnMOA/HDVUvB0yLtswZnAnxHCGSlxyccv2B2ULz7q6Mzm6/UbfrLO05WeZhWJ1ML79
+ q6BRCy8h+VWjZ/wmi+U3NRG9tqe0mptl+v0zU6pJ+lzSRBTSW11A4gYX6/EGG2jfKyFu
+ ke0G9fpr/J0JdHuaaVzNa2XGqQLY/zbh3qLlkrQK3XC1FdVQIplw903hwG/vH4IIuWh2
+ /lng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768345266; x=1768950066;
+ d=1e100.net; s=20230601; t=1768345269; x=1768950069;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=bVKcnIB+251kMwL/P/yHKb8ouAPSOGYZvp3KQ3UwzCw=;
- b=Tk2IAlgnT9nwFiWJDqTkQ9lJTupWE8lF8miB017py8zR6KtEcFqMEAALiHiV76bOIH
- dUSPxcIw8yS0V8wSa24bFvsZ3RZZiThxsT0qIFaamArebY0csFg9IYjTlkMz6cm/so1k
- qB2/v66lHmF1n1D1bQ2uXfAkQGm6KKgxmdz+jMWJT4yEdDP3pOFB7bezLcFdEokfBrZF
- 6GOB8GSHWvL2Bc5rrMcXACgVfTrp2p5fJKEc/lFjFEL0/ga32j4lgJ7Cb2y2/PVaRAsD
- k8FzWYyPSeSrWHy2OIv+a/a7fBDQ/a1aSC5WOGlRyazdYo2AHMDQJu3p07R/o/EX/VrM
- V/OA==
-X-Gm-Message-State: AOJu0YyrA1xWOajy1eI9lFLGwu3KZ1uypCANrgTxwb/HS1TRizj+/8sK
- n91mML5NsJEBJGKIks8K758v/P87ywJY2nAs3vTG/N5UjBrA0nnhvz8jyzXj6Ono49ZEO8w45y7
- 4G0KJ
-X-Gm-Gg: AY/fxX6IkxKaJ6gsAhAWVAqY8D39u8uyNw6NlDjXT/W/Dg/aNHsAvzqPvsS3OndQ4ej
- 6bK9p3+cQhRqwTwImys0JOxMM0DrfNK61frkZAogvmZ0xyAw+ud1wjX3wkt/HtPrKr1+0/QS6AA
- 9HO1PZ6mcaOazLEQ7dhuQjADQsl0hfmCLaecPsAhB2+sPdfQ8Mm43geepkA/vMrDGz27E3/micM
- tyLg6VIU+oBP0k7p+lx2pSFwU9WsQ2eDthzS9vZCQZds9uuRAVirgliEpyPNCLUXkBtL9cJ649r
- DFVMIAwGkrAQLvvjDiBJUR/oBy/Z4iX86aJkbwQNwzy0kCqJvZY5kunnaBe8OVXBRu6m+8Y/mVd
- NK9fMG6qDzUSWrFYf5eP8nIybuVLWJEltjgrGw9JpujRRxy7Ty/hUqbuwQ+rFZVwvLxbhRLndYz
- HjnVqgO973Qugw+130kc4fDDTZzr85hkK2oFqzABf0OsjpbC/T3qCoStrRKCRl
-X-Received: by 2002:a05:6000:220d:b0:430:b100:f591 with SMTP id
- ffacd0b85a97d-4342d39f650mr121106f8f.28.1768345266117; 
- Tue, 13 Jan 2026 15:01:06 -0800 (PST)
+ bh=moii3MRh3lSxvET+One3okp49MFBriwurrJ9qdGHAJM=;
+ b=waXiX6rM4PnE/fLeLvPOFUJPawgHLLrqwAi/OikvqaSOtCMJJB3WesYcBa773yzGC/
+ 9D5LBHiUW7wBLf3toXwb1L/AvOzgHXFGXmFrNVs7E5bFr7Kpe0j1maswbJpFuN1m0+hi
+ CGn1kAAqRwi+0Bpfis5UEJvtbYRwNE7/9qjA3/4d31ebZYa/MhfeAsSpB6f9kxLLeiCn
+ Lt5rpgeQ9j50kB6MWeZhzTP8o8d/SfOAFDAbE73YptomSKdthdtOEUs8Hs6IqDrj5X4q
+ UAS4blGFks2/AUGZEJICfA35ZIcxVJtiHVBkrJ4ET3QaU6kVH8WsEs6xNwZFk9fHafyP
+ AJ3A==
+X-Gm-Message-State: AOJu0YzOyUo2WI8lKrMpP/QHm1Iybzn8vHC4w7yXC8zePaN7NeugZnAG
+ fSXL3Opd9fQePamixploKYwUMUsoNA/pyyOFr515WoFfmOoLHkgVKNo4LwCnCFfrkiVt5eEFdzK
+ uuRfQ
+X-Gm-Gg: AY/fxX65X7ffmE4t2ajGumjmcZl149gjW1gQ5SAv4IjCuMmu8mVo3tzGvJUdLDbb2Zq
+ yDY3ts+hERZyXQWvr7tRy8Mcl4F4IH6K56VV7bqroWxBzARWWhbjwQbFiQZSOkRUqxwubFwvLd9
+ GXh5KhsbnvcJZY8sreZ7XCi81yJ3VcpE7BXyRfFacmA2GrjeVK101sdTfdCHsS8gDyiBeR83fin
+ 5WZoPWWVhFRjc0TJ0MGHDsggUl5fbxjmALnDa42sYpyaTgiMnSNGC23CiRyNxzyWS3tA7X5f7/z
+ WycW9vhiHQZM+k61J+WJVdQGGf+xIHuPBrFGUUOSRXNu06Gddj1XZvE3s7KlSh+EOhj0u5PHoXf
+ ahzeUp8eRejc/lcA1BD9dPL2lMJh0FIyXuWRFmxD9Y2Ir2b8MEnaLa4o2izPR3hibnb14sjAZhQ
+ vIkNBZ4UzQZnZK0BsHKQYKVkHdK09fLK410zDtVLmJc28QTtTzltFamlFMbWlS
+X-Received: by 2002:a05:600c:34cd:b0:477:55ce:f3c2 with SMTP id
+ 5b1f17b1804b1-47ee32fcad5mr7855775e9.14.1768345267748; 
+ Tue, 13 Jan 2026 15:01:07 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-432bd5df8besm44977200f8f.26.2026.01.13.15.01.04
+ ffacd0b85a97d-432bd5df8besm44977200f8f.26.2026.01.13.15.01.06
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 13 Jan 2026 15:01:05 -0800 (PST)
+ Tue, 13 Jan 2026 15:01:07 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
  Nandini Persad <nandinipersad361@gmail.com>
-Subject: [PATCH v3 04/11] doc: correct errors in Linux system requirements
- guide
-Date: Tue, 13 Jan 2026 14:51:06 -0800
-Message-ID: <20260113230052.54435-5-stephen@networkplumber.org>
+Subject: [PATCH v3 05/11] doc: correct grammar in service cores guide
+Date: Tue, 13 Jan 2026 14:51:07 -0800
+Message-ID: <20260113230052.54435-6-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260113230052.54435-1-stephen@networkplumber.org>
 References: <20240513155911.31872-1-nandinipersad361@gmail.com>
@@ -84,72 +83,93 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 Errors-To: dev-bounces@dpdk.org
 
 Changes:
-- Fix capitalization of IBM Advance Toolchain
-- Remove double spaces before "support"
-- Add missing preposition "in" and article "the"
-- Fix hugetlbfs mount command syntax (add -o flag and device)
+- Use "abstract away the differences" instead of unclear
+  "simplify the difference"
+- Fix preposition: "two methods for having" not "to having"
+- Fix reversed phrasing: "Disabling that service on the core"
+  not "that core on the service"
 
 Signed-off-by: Nandini Persad <nandinipersad361@gmail.com>
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- doc/guides/linux_gsg/sys_reqs.rst | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ doc/guides/prog_guide/service_cores.rst | 30 ++++++++++++-------------
+ 1 file changed, 15 insertions(+), 15 deletions(-)
 
-diff --git a/doc/guides/linux_gsg/sys_reqs.rst b/doc/guides/linux_gsg/sys_reqs.rst
-index 52a840fbe9..869584c344 100644
---- a/doc/guides/linux_gsg/sys_reqs.rst
-+++ b/doc/guides/linux_gsg/sys_reqs.rst
-@@ -68,7 +68,7 @@ Compilation of the DPDK
+diff --git a/doc/guides/prog_guide/service_cores.rst b/doc/guides/prog_guide/service_cores.rst
+index 5284eeb96a..ee47a85a90 100644
+--- a/doc/guides/prog_guide/service_cores.rst
++++ b/doc/guides/prog_guide/service_cores.rst
+@@ -4,12 +4,12 @@
+ Service Cores
+ =============
  
- *   Intel\ |reg| oneAPI DPC++/C++ Compiler.
+-DPDK has a concept known as service cores, which enables a dynamic way of
+-performing work on DPDK lcores. Service core support is built into the EAL, and
+-an API is provided to optionally allow applications to control how the service
+-cores are used at runtime.
++DPDK has a concept known as service cores. Service cores enable a dynamic way of
++performing work on DPDK lcores. Service core support is built into the EAL.
++An API is provided to give you the option of allowing applications to control
++how the service cores are used at runtime.
  
--*   IBM\ |reg| Advance ToolChain for Powerlinux. This is a set of open source development tools and runtime libraries
-+*   IBM\ |reg| Advance Toolchain for Powerlinux. This is a set of open source development tools and runtime libraries
-     which allows users to take leading edge advantage of IBM's latest POWER hardware features on Linux. To install
-     it, see the IBM official installation document.
+-The service cores concept is built up out of services (components of DPDK that
++The service cores concept is built out of services (components of DPDK that
+ require CPU cycles to operate) and service cores (DPDK lcores, tasked with
+ running services). The power of the service core concept is that the mapping
+ between service cores and services can be configured to abstract away the
+@@ -18,24 +18,24 @@ difference between platforms and environments.
+ For example, the Eventdev has hardware and software PMDs. Of these the software
+ PMD requires an lcore to perform the scheduling operations, while the hardware
+ PMD does not. With service cores, the application would not directly notice
+-that the scheduling is done in software.
++that the scheduling is done in the software.
  
-@@ -93,7 +93,7 @@ e.g. :doc:`../nics/index`
- Running DPDK Applications
- -------------------------
+ For detailed information about the service core API, please refer to the docs.
  
--To run a DPDK application, some customization may be required on the target machine.
-+To run a DPDK application, customization may be required on the target machine.
+ Service Core Initialization
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~
  
- System Software
- ~~~~~~~~~~~~~~~
-@@ -127,9 +127,9 @@ System Software
+-There are two methods to having service cores in a DPDK application, either by
++There are two methods to having service cores in a DPDK application: either by
+ using the service corelist, or by dynamically adding cores using the API.
+-The simpler of the two is to pass the `-S` corelist argument to EAL, which will
+-take any cores available in the main DPDK corelist, and if also set
+-in the service corelist the cores become service-cores instead of DPDK
++The simpler of the two is to pass the `-S` coremask argument to the EAL, which will
++take any cores available in the main DPDK coremask. If the bits are also set
++in the service coremask, the cores become service-cores instead of DPDK
+ application lcores.
  
-     *   HUGETLBFS
+ Enabling Services on Cores
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~
  
--    *   PROC_PAGE_MONITOR  support
-+    *   PROC_PAGE_MONITOR support
+-Each registered service can be individually mapped to a service core, or set of
++Each registered service can be individually mapped to a service core, or a set of
+ service cores. Enabling a service on a particular core means that the lcore in
+ question will run the service. Disabling that core on the service stops the
+ lcore in question from running the service.
+@@ -48,8 +48,8 @@ function to run the service.
+ Service Core Statistics
+ ~~~~~~~~~~~~~~~~~~~~~~~
  
--    *   HPET and HPET_MMAP configuration options should also be enabled if HPET  support is required.
-+    *   HPET and HPET_MMAP configuration options should also be enabled if HPET support is required.
-         See the section on :ref:`High Precision Event Timer (HPET) Functionality <High_Precision_Event_Timer>` for more details.
+-The service core library is capable of collecting runtime statistics like number
+-of calls to a specific service, and number of cycles used by the service. The
++The service core library is capable of collecting runtime statistics like the number
++of calls to a specific service, and the number of cycles used by the service. The
+ cycle count collection is dynamically configurable, allowing any application to
+ profile the services running on the system at any time.
  
- .. _linux_gsg_hugepages:
-@@ -138,7 +138,7 @@ Use of Hugepages in the Linux Environment
- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@@ -58,9 +58,9 @@ Service Core Tracing
  
- Hugepage support is required for the large memory pool allocation used for packet buffers
--(the HUGETLBFS option must be enabled in the running kernel as indicated the previous section).
-+(the HUGETLBFS option must be enabled in the running kernel as indicated in the previous section).
- By using hugepage allocations, performance is increased since fewer pages are needed,
- and therefore less Translation Lookaside Buffers (TLBs, high speed translation caches),
- which reduce the time it takes to translate a virtual page address to a physical page address.
-@@ -225,10 +225,10 @@ However, in order to use hugepage sizes other than the default, it is necessary
- to manually create mount points for those hugepage sizes (e.g. 1GB pages).
+ The service core library is instrumented with tracepoints using the DPDK Trace
+ Library. These tracepoints allow you to track the service and logical cores
+-state. To activate tracing when launching a DPDK program it is necessary to use the
++state. To activate tracing when launching a DPDK program, it is necessary to use the
+ ``--trace`` option to specify a regular expression to select which tracepoints
+-to enable. Here is an example if you want to only specify service core tracing::
++to enable. Here is an example if you want to specify only service core tracing::
  
- To make the hugepages of size 1GB available for DPDK use,
--following steps must be performed::
-+the following steps must be performed::
- 
-     mkdir /mnt/huge
--    mount -t hugetlbfs pagesize=1GB /mnt/huge
-+    mount -t hugetlbfs -o pagesize=1GB none /mnt/huge
- 
- The mount point can be made permanent across reboots, by adding the following line to the ``/etc/fstab`` file::
+   ./dpdk/examples/service_cores/build/service_cores --trace="lib.eal.thread*" --trace="lib.eal.service*"
  
 -- 
 2.51.0
