@@ -2,69 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E70CD2F347
-	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Jan 2026 17:17:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 657D0D2F34B
+	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Jan 2026 17:27:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9AD35402DE;
-	Tue, 13 Jan 2026 18:17:30 +0100 (CET)
-Received: from mail-ed1-f68.google.com (mail-ed1-f68.google.com
- [209.85.208.68]) by mails.dpdk.org (Postfix) with ESMTP id D7894402D6
- for <dev@dpdk.org>; Tue, 13 Jan 2026 18:17:28 +0100 (CET)
-Received: by mail-ed1-f68.google.com with SMTP id
- 4fb4d7f45d1cf-653780e9eb3so1090438a12.1
- for <dev@dpdk.org>; Tue, 13 Jan 2026 09:17:28 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 9C6E3402DE;
+	Tue, 13 Jan 2026 18:27:18 +0100 (CET)
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com
+ [209.85.221.41]) by mails.dpdk.org (Postfix) with ESMTP id 97859402D6
+ for <dev@dpdk.org>; Tue, 13 Jan 2026 18:27:16 +0100 (CET)
+Received: by mail-wr1-f41.google.com with SMTP id
+ ffacd0b85a97d-4308d81fdf6so4099929f8f.2
+ for <dev@dpdk.org>; Tue, 13 Jan 2026 09:27:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768324648;
- x=1768929448; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768325236;
+ x=1768930036; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=PzWgCcO9NMxs97V+uT6GYuvl5qklSDYSAOBWRNHu8Lk=;
- b=RToCpyHM3ouGrUJGiU4XGT2qeiTETr23VV3GtR9aT9k8YdziskDay0mbzLDOohW2Yo
- icwvVo4kwlpSRB+79QSWmDB9tNw192ATVAKtnvoJkRpQ4gQ2Zh/HcUPzQeaV9TDjxOYI
- qmJCwiHuacwIJx/5FZ4V6yCeoq35b4wLM5qYSHJagZMhVRKy3XUJosCwnUp/Sg9xGYOE
- 0eniS0EgXnxEwJOyRvdJ5g2MUOg/n5MKgF3cp29FO2OXSf8tegVfYbxOP0gU3SDoPQMg
- 80RBHfl6TvCTNEVkrNHErAD/8yAXICehO1vHNqTcYsHRNaPtbaJbt5MZSbK5n4WeHqAa
- SB6A==
+ bh=reAAbYRo5kuwScAyAXsGJmWpzY0zsrs11z5+hHTUKJg=;
+ b=wcAIpoJP8BH7GoVJ/Aw/5y/160cWlZEopBGE7/oYtGxMvXBpgJQ/PqCvWYTZxyoa3S
+ Dowd+k1bG3XXU+szhAJx6i9MG+LWgU6Fsu3ClxUxUFC8l2Cbi+oK7l7LDWZMHVxL8ty6
+ 7mC7sP5D9qcIcyc+vtXrB+azfrpjeca7/2ev2augFm1Znp1XAHhorkpC6/oPG6FFtVpU
+ DOHtzIIJl3VIkiojSUWxb64NxMlJxO5aVVPoPjvTQ8Lg2ZTq07Yzqt0TAGzvkCWr+deS
+ 0r/GV74sROsMCU8iV/um9FlvuXHE1Z9ybfVrAuc5ffeDue9zqjHbn3lfWg1Oqe9bxFN+
+ M4vQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768324648; x=1768929448;
+ d=1e100.net; s=20230601; t=1768325236; x=1768930036;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=PzWgCcO9NMxs97V+uT6GYuvl5qklSDYSAOBWRNHu8Lk=;
- b=rqZIoBwX4EsCa7Og/JkN8LcfxJytvC1d2lflpgX5ymEmaqV+oM7NW0EfOJ8AjHTieo
- xLFTTrzBEVLw6N8iM2JErFzDCNDu6OO72SizXiBlvhj2uFQSpxN66LNtnsEXtWaZYzyO
- VV3VIfT5KkssWC7LdEz9egrPtSzxoiJXUU1FBU44iCDlL81VDpZ8IeebicckK+G4Psbi
- DzDjUV6BA1NHPwnvmMoOaY98CXaYAdFGG8E7YsxMRu45RP1mc5sSe7lsxdW4KU5Vqemh
- J4eNuN4cUc3hxxfw6OMMG7wnGss6PHkHXJn4AtaHU7RROpKNR7Ivpm6vzbHnQw6IUU+M
- ahZA==
-X-Gm-Message-State: AOJu0YyxCld9XyadVKCvCthpXrjxzPFP6A5sMnRasIDageVo5Ojv+J27
- gihvGOXXEyHgKU7t2GrvqZ3al4lmUJnba5UNU5lCpnNp3mnIqjh/oJ1xTxR2BFLYJVI=
-X-Gm-Gg: AY/fxX5D7Y/sbqSF4wrNZ5BGeFKiDfcWjA2chuhKodxO2/Z1n0HkmKAmcQ2jTy+F4dp
- ggQOD7kkOXCFdtDpAEGNiraErW6OVtLUT3y303cUrP7BQFrpfuQVtI+IoDt26+UuBhh0FHXJeEZ
- kjjmLMn7DQxb40xuE2ex69HLF5/8Ui63x2rJgJDceOOmCxvF+nRQc7Ozx7Y/aFBsIPyPnBzamU7
- cACbPBV/VQDWpuiXqOt2orfJDPzcFRi0EZWnFBGzOh7zKntsBmyEMsGjvNAupSsxKBJb/hIsAZL
- jzY/cULimVQaa9W+ktrFG31Hibt/fSew6BExBhxSX18b2WN+6w+hk50wShWATZ0bW4JmSG+Yia8
- 1ekc8+e8zjEO7pzfGtfJ/bGLcFZ8Fugl+Jtf7PLXigNK4qlRrd4Nno5YMT9yj/P0aWQZ6uYyjeb
- UcMNk8jjt6cr5/mAFTJECnKiEm5dmCRTxnY4c2uV1OqIZNUsR+g22N
-X-Google-Smtp-Source: AGHT+IFKp/zb4GzpJK1yWTaFHtsV3Ps7IJpJWPk3o06nqxjoqUpPTKE9RJsfY55W6vV0poxLS4+h0A==
-X-Received: by 2002:a17:907:2d2b:b0:b87:2f29:206f with SMTP id
- a640c23a62f3a-b872f2938e1mr454794566b.17.1768324648163; 
- Tue, 13 Jan 2026 09:17:28 -0800 (PST)
+ bh=reAAbYRo5kuwScAyAXsGJmWpzY0zsrs11z5+hHTUKJg=;
+ b=jQsniKvclE2z8hgWBIb+FZTNBPpR6WMIRuPp/JLl8vgPwunSOvsE6cO4RjxtjoGA9Q
+ Fhvf5ZiwjyOWNg0pRx+NA6llMUs/6cVSUSzdllAzJD2Z5Z5twzc72EK9THgo5v0HRiPb
+ /CwcFSECUC873GHICRTjyzO98UGRVkSsbgvYHqQyONRLvwBARrbCG53ltbhS4ixJO7Fs
+ fqx60fibZllEm6SpBkrSsG2vZv2lCB0xCyIwkoxCUmtzIj2kgFDxLqUF/Gvn4mch4sWW
+ vxCe6x5q1rnW/o2yyeN8ALAcnBgrIfEnoT5etd8FMqPubHA4zr+oiSItedX5Ev+Of9FT
+ Nu6w==
+X-Gm-Message-State: AOJu0YwRmusynV0+426lK000Da1Vo1C1AdqjocxgyseRXrLxJYjnwQUu
+ lBAxnL1+C3+fSv4m4POULYW0GxyK4c3IMqtqpNgQ2PwAA2yMELkFnkC356PF1hXp8kA=
+X-Gm-Gg: AY/fxX7u5KVpUxuFAyjha2yDs6lPjmutxJY1I032PB+zTVOQtUlueqjusQYlsMG1SCJ
+ PhnqZlbxrnswaTI/cnmu7SQNnSqb8haV8FYsH7yKL7WFYLYXysvllkguGUSI8+yXznKXi01zzjI
+ 0d/v+3szhDfXdztx7guzukew8kGkEdRDY0f+ESGcsPsQ5gnAOD2Jtj4I+vCxJnEUIHI194ozCFB
+ ySt9/ME8GxOkQUU9/lbGQmEnfrjgVrZS45vaJANQqZNntdOu086El0h7Z1JRT2bEE7g9IaOeyDR
+ dRxhkOfYWSEz6ujEWVjCe1O9NkAES+x0bJr3MIDK8j/Ne1y2UAI7UdNp2eLyiC68FvFHPgbOt48
+ oQWQIZHFD9W/YlUmyLv7uWgEwom4QJIMt0RLMF/wj/fBrCgG4nzY4bTBnQ0GMeebriMY5s2IOtj
+ MlzCNa7js6q6cUls/rnetqQN3tjh3IeBvc/n8JpFwCrEu+0H/peBPF
+X-Google-Smtp-Source: AGHT+IEhCoEF6FV5/yn3gJnJsUByx5D113oan4ziaWuUdnLN2Q2QT5ILJMYuCofOtEgplHkPcAQk+w==
+X-Received: by 2002:a5d:5c89:0:b0:431:5ca:c1a9 with SMTP id
+ ffacd0b85a97d-432c3632a04mr24927157f8f.23.1768325236086; 
+ Tue, 13 Jan 2026 09:27:16 -0800 (PST)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a640c23a62f3a-b842a56c547sm2269323666b.69.2026.01.13.09.17.27
+ ffacd0b85a97d-432bd5ff0b2sm45254752f8f.42.2026.01.13.09.27.14
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 13 Jan 2026 09:17:27 -0800 (PST)
-Date: Tue, 13 Jan 2026 09:17:21 -0800
+ Tue, 13 Jan 2026 09:27:15 -0800 (PST)
+Date: Tue, 13 Jan 2026 09:27:10 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH v2 00/36] combine multiple Intel scalar Tx paths
-Message-ID: <20260113091721.4ef71ed6@phoenix.local>
-In-Reply-To: <20260113151505.1871271-1-bruce.richardson@intel.com>
-References: <20251219172548.2660777-1-bruce.richardson@intel.com>
- <20260113151505.1871271-1-bruce.richardson@intel.com>
+To: Jie Hai <haijie1@huawei.com>
+Cc: <dev@dpdk.org>, <thomas@monjalon.net>, <ferruh.yigit@amd.com>,
+ <lihuisong@huawei.com>, <fengchengwen@huawei.com>,
+ <huangdengdui@huawei.com>
+Subject: Re: [PATCH v6 00/25] replace strtok with strtok_r
+Message-ID: <20260113092710.5b5c95f5@phoenix.local>
+In-Reply-To: <20241122110458.2156907-1-haijie1@huawei.com>
+References: <20231113104550.2138654-1-haijie1@huawei.com>
+ <20241122110458.2156907-1-haijie1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -81,334 +83,262 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 13 Jan 2026 15:14:24 +0000
-Bruce Richardson <bruce.richardson@intel.com> wrote:
+On Fri, 22 Nov 2024 19:04:32 +0800
+Jie Hai <haijie1@huawei.com> wrote:
 
-> The scalar Tx paths, with support for offloads and multiple mbufs
-> per packet, are almost identical across drivers ice, i40e, iavf and
-> the single-queue mode of idpf. Therefore, we can do some rework to
-> combine these code paths into a single function which is parameterized
-> by compile-time constants, allowing code saving to give us a single
-> path to optimize and maintain - apart from edge cases like IPSec
-> support in iavf.
+> Multiple threads calling the same function may cause condition
+> race issues, which often leads to abnormal behavior and can cause
+> more serious vulnerabilities such as abnormal termination, denial
+> of service, and compromised data integrity.
 >=20
-> The ixgbe driver has a number of similarities too, which we take
-> advantage of where we can, but the overall descriptor format is
-> sufficiently different that its main scalar code path is kept
-> separate.
->=20
-> Once merged, we can then optimize the drivers a bit to improve
-> performance, and also easily extend some drivers to use additional
-> paths for better performance, e.g. add the "simple scalar" path
-> to IDPF driver for better performance on platforms without AVX.
->=20
-> V2:
->  - reworked the simple-scalar path as well as full scalar one
->  - added simple scalar path support to idpf driver
->  - small cleanups, e.g. issues flagged by checkpatch
->=20
-> Bruce Richardson (36):
->   net/intel: create common Tx descriptor structure
->   net/intel: use common Tx ring structure
->   net/intel: create common post-Tx cleanup function
->   net/intel: consolidate definitions for Tx desc fields
->   net/intel: create separate header for Tx scalar fns
->   net/intel: add common fn to calculate needed descriptors
->   net/ice: refactor context descriptor handling
->   net/i40e: refactor context descriptor handling
->   net/idpf: refactor context descriptor handling
->   net/intel: consolidate checksum mask definition
->   net/intel: create common checksum Tx offload function
->   net/intel: create a common scalar Tx function
->   net/i40e: use common scalar Tx function
->   net/intel: add IPsec hooks to common Tx function
->   net/intel: support configurable VLAN tag insertion on Tx
->   net/iavf: use common scalar Tx function
->   net/i40e: document requirement for QinQ support
->   net/idpf: use common scalar Tx function
->   net/intel: avoid writing the final pkt descriptor twice
->   eal: add macro for marking assumed alignment
->   net/intel: write descriptors using non-volatile pointers
->   net/intel: remove unnecessary flag clearing
->   net/intel: mark mid-burst ring cleanup as unlikely
->   net/intel: add special handling for single desc packets
->   net/intel: use separate array for desc status tracking
->   net/ixgbe: use separate array for desc status tracking
->   net/intel: drop unused Tx queue used count
->   net/intel: remove index for tracking end of packet
->   net/intel: merge ring writes in simple Tx for ice and i40e
->   net/intel: consolidate ice and i40e buffer free function
->   net/intel: complete merging simple Tx paths
->   net/intel: use non-volatile stores in simple Tx function
->   net/intel: align scalar simple Tx path with vector logic
->   net/intel: use vector SW ring entry for simple path
->   net/intel: use vector mbuf cleanup from simple scalar path
->   net/idpf: enable simple Tx function
->=20
->  doc/guides/nics/i40e.rst                      |  18 +
->  drivers/net/intel/common/tx.h                 | 116 ++-
->  drivers/net/intel/common/tx_scalar_fns.h      | 595 ++++++++++++++
->  drivers/net/intel/cpfl/cpfl_rxtx.c            |   8 +-
->  drivers/net/intel/i40e/i40e_fdir.c            |  34 +-
->  drivers/net/intel/i40e/i40e_rxtx.c            | 670 +++-------------
->  drivers/net/intel/i40e/i40e_rxtx.h            |  16 -
->  .../net/intel/i40e/i40e_rxtx_vec_altivec.c    |  25 +-
->  drivers/net/intel/i40e/i40e_rxtx_vec_avx2.c   |  36 +-
->  drivers/net/intel/i40e/i40e_rxtx_vec_avx512.c |  52 +-
->  drivers/net/intel/i40e/i40e_rxtx_vec_common.h |   6 +-
->  drivers/net/intel/i40e/i40e_rxtx_vec_neon.c   |  25 +-
->  drivers/net/intel/iavf/iavf_rxtx.c            | 642 ++++-----------
->  drivers/net/intel/iavf/iavf_rxtx.h            |  30 +-
->  drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c   |  55 +-
->  drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c | 104 +--
->  drivers/net/intel/iavf/iavf_rxtx_vec_common.h |  36 +-
->  drivers/net/intel/ice/ice_dcf_ethdev.c        |  10 +-
->  drivers/net/intel/ice/ice_rxtx.c              | 737 ++++--------------
->  drivers/net/intel/ice/ice_rxtx.h              |  15 -
->  drivers/net/intel/ice/ice_rxtx_vec_avx2.c     |  55 +-
->  drivers/net/intel/ice/ice_rxtx_vec_avx512.c   |  53 +-
->  drivers/net/intel/ice/ice_rxtx_vec_common.h   |  43 +-
->  drivers/net/intel/idpf/idpf_common_device.h   |   2 +
->  drivers/net/intel/idpf/idpf_common_rxtx.c     | 315 ++------
->  drivers/net/intel/idpf/idpf_common_rxtx.h     |  24 +-
->  .../net/intel/idpf/idpf_common_rxtx_avx2.c    |  53 +-
->  .../net/intel/idpf/idpf_common_rxtx_avx512.c  |  55 +-
->  drivers/net/intel/idpf/idpf_rxtx.c            |  43 +-
->  drivers/net/intel/idpf/idpf_rxtx_vec_common.h |   6 +-
->  drivers/net/intel/ixgbe/ixgbe_rxtx.c          | 103 ++-
->  .../net/intel/ixgbe/ixgbe_rxtx_vec_common.c   |   3 +-
->  lib/eal/include/rte_common.h                  |   6 +
->  33 files changed, 1565 insertions(+), 2426 deletions(-)
->  create mode 100644 drivers/net/intel/common/tx_scalar_fns.h
+> This patchset replaces strtok with strtok_r in app, example, lib
+> and drivers. And adds check for use of strtok in checkpatches.sh.
 >=20
 > --
-> 2.51.0
+> v6:
+> 1. adapt to the newest codes.
+> 2. fix compile error.
+>=20
+> v5:
+> 1. remove CC stable for some patch.
+> 2. replace strtok for all files.
+>=20
+> v4:
+> 1. fix mispellings.
+> 2. add Acked-bys and Reviewd-bys.
+> 3. remove some patch and add new.=20
+> v3:
+> 1. fix compile error.
+> 2. use strtok_r instead.
+> v2:
+> 1. fix commit log.
+> 2. add check in checkpatches.sh.
+> 3. replace strtok_r with strtok_s.
+> 4. add Acked-by.
+> --
+>=20
+> Jie Hai (25):
+>   app/bbdev: replace strtok with reentrant version
+>   app/compress-perf: replace strtok with reentrant version
+>   app/crypto-perf: replace strtok with reentrant version
+>   app/dma-perf: replace strtok with reentrant version
+>   app/flow-perf: replace strtok with reentrant version
+>   app/test-mldev: replace strtok with reentrant version
+>   app/test-fib: replace strtok with reentrant version
+>   dmadev: replace strtok with reentrant version
+>   eal: replace strtok with reentrant version
+>   ethdev: replace strtok with reentrant version
+>   eventdev: replace strtok with reentrant version
+>   security: replace strtok with reentrant version
+>   telemetry: replace strtok with reentrant version
+>   bus/fslmc: replace strtok with reentrant version
+>   common/cnxk: replace strtok with reentrant version
+>   event/cnxk: replace strtok with reentrant version
+>   net/ark: replace strtok with reentrant version
+>   raw/cnxk_gpio: replace strtok with reentrant version
+>   net/cnxk: replace strtok with reentrant version
+>   common/qat: replace strtok with reentrant version
+>   net/mlx5: replace strtok with reentrant version
+>   examples/l2fwd-crypto: replace strtok with reentrant version
+>   examples/vhost: replace strtok with reentrant version
+>   devtools: check for some reentrant function
+>   eal/linux: install rte_os_shim.h file
+>=20
+>  app/test-bbdev/test_bbdev_vector.c            | 42 +++++++++++--------
+>  .../comp_perf_options_parse.c                 | 17 ++++----
+>  app/test-crypto-perf/cperf_options_parsing.c  | 17 ++++----
+>  .../cperf_test_vector_parsing.c               | 11 +++--
+>  app/test-dma-perf/main.c                      |  9 ++--
+>  app/test-fib/main.c                           | 11 ++---
+>  app/test-flow-perf/main.c                     | 23 +++++-----
+>  app/test-mldev/ml_options.c                   | 19 +++++----
+>  devtools/checkpatches.sh                      |  8 ++++
+>  drivers/bus/fslmc/fslmc_bus.c                 |  6 ++-
+>  drivers/bus/fslmc/portal/dpaa2_hw_dpio.c      |  5 ++-
+>  drivers/common/cnxk/cnxk_telemetry_nix.c      | 13 +++---
+>  drivers/common/qat/qat_device.c               |  6 ++-
+>  drivers/event/cnxk/cnxk_eventdev.c            | 12 ++++--
+>  drivers/event/cnxk/cnxk_tim_evdev.c           | 12 +++---
+>  drivers/net/ark/ark_pktchkr.c                 | 11 ++---
+>  drivers/net/ark/ark_pktgen.c                  | 11 ++---
+>  drivers/net/cnxk/cnxk_ethdev_sec_telemetry.c  |  6 ++-
+>  drivers/net/mlx5/mlx5_testpmd.c               |  5 ++-
+>  drivers/raw/cnxk_gpio/cnxk_gpio.c             |  7 ++--
+>  examples/l2fwd-crypto/main.c                  |  7 ++--
+>  examples/vhost/main.c                         |  4 +-
+>  lib/dmadev/rte_dmadev.c                       |  5 ++-
+>  lib/eal/common/eal_common_memory.c            |  8 ++--
+>  lib/eal/linux/include/meson.build             |  1 +
+>  lib/ethdev/rte_ethdev_telemetry.c             | 10 +++--
+>  lib/eventdev/rte_event_eth_rx_adapter.c       | 39 ++++++++---------
+>  lib/eventdev/rte_eventdev.c                   | 18 ++++----
+>  lib/security/rte_security.c                   |  4 +-
+>  lib/telemetry/telemetry.c                     |  6 ++-
+>  30 files changed, 208 insertions(+), 145 deletions(-)
+>=20
 
 
-Series-Acked-by: Stephen Hemminger <stephen@networkplumber.org>
-
-Looks ok to me, asked Claude for second opinion.
-
-Its suggestion about long log message is overblown.
-Although, I would suggest being more succinct.=20
-
-# DPDK Patch Review: Intel Tx Consolidation Series (v2)
-
-**Series:** `[PATCH v2 01-36/36]` Intel Tx code consolidation =20
-**Author:** Bruce Richardson <bruce.richardson@intel.com> =20
-**Patches Reviewed:** 36 =20
-**Review Date:** January 13, 2026
-
----
-
-## Executive Summary
-
-This is a substantial refactoring series that consolidates Tx (transmit) de=
-scriptor structures and functions across Intel network drivers (i40e, ice, =
-iavf, idpf, ixgbe). The series is well-structured with clear commit message=
-s and proper attribution. A few minor issues were identified.
-
-| Severity | Count |
-|----------|-------|
-| Error    | 1     |
-| Warning  | 4     |
-| Info     | 2     |
-
----
-
-## Errors (Must Fix)
-
-### 1. Patch 17/36: Line exceeds 100 characters
-
-**File:** `drivers/net/intel/i40e/i40e_rxtx.c` =20
-**Subject:** `net/i40e: document requirement for QinQ support`
-
-```c
-PMD_DRV_LOG(WARNING, "Double VLAN insertion may not work correctly without =
-RTE_ETH_RX_OFFLOAD_VLAN_EXTEND set in Rx configuration.");
-```
-
-**Issue:** Line is 136 characters, exceeding the 100-character limit for so=
-urce code.
-
-**Suggested fix:** Split the log message:
-```c
-PMD_DRV_LOG(WARNING, "Double VLAN insertion may not work correctly "
-		"without RTE_ETH_RX_OFFLOAD_VLAN_EXTEND set in Rx configuration.");
-```
-
----
-
-## Warnings (Should Fix)
-
-### 2. Patch 14/36: Implicit pointer comparison
-
-**File:** `drivers/net/intel/common/tx_scalar_fns.h` =20
-**Subject:** `net/intel: add IPsec hooks to common Tx function`
-
-```c
-md =3D RTE_MBUF_DYNFIELD(mbuf, txq->ipsec_crypto_pkt_md_offset,
-			     struct iavf_ipsec_crypto_pkt_metadata *);
-if (!md)
-```
-
-**Issue:** Pointer comparison uses `!md` instead of explicit `md =3D=3D NUL=
-L`.
-
-**Suggested fix:**
-```c
-if (md =3D=3D NULL)
-```
-
-### 3. Patch 16/36: Implicit integer comparison
-
-**File:** `drivers/net/intel/iavf/iavf_rxtx.c` =20
-**Subject:** `net/iavf: use common scalar Tx function`
-
-```c
-if (!iavf_calc_context_desc(mbuf, iavf_vlan_flag))
-```
-
-**Issue:** `iavf_calc_context_desc()` returns `uint16_t`. Comparison should=
- be explicit.
-
-**Suggested fix:**
-```c
-if (iavf_calc_context_desc(mbuf, iavf_vlan_flag) =3D=3D 0)
-```
-
-### 4. Patches 19, 25, 26: Implicit integer comparison with rte_is_power_of=
-_2()
-
-**Multiple files across patches**
-
-```c
-if (!rte_is_power_of_2(tx_rs_thresh)) {
-```
-
-**Issue:** While `rte_is_power_of_2()` acts as a boolean predicate, it retu=
-rns `int`. Strictly, the comparison should be explicit.
-
-**Suggested fix:**
-```c
-if (rte_is_power_of_2(tx_rs_thresh) =3D=3D 0) {
-```
-
-*Note: This is a borderline issue as the function is semantically boolean. =
-May be acceptable.*
-
-### 5. Patch 36/36: Double blank lines
-
-**File:** `drivers/net/intel/idpf/idpf_common_rxtx.c` =20
-**Subject:** `net/idpf: enable simple Tx function`
-
-```c
-	return ci_xmit_pkts_simple(tx_queue, tx_pkts, nb_pkts);
-}
+This patch series seems to have gotten lost or stalled.
+Still worth fixing strtok. But it no longer merges with latest code base.
+Also AI code review sees a bug that needs fixing.
 
 
-/* TX prep functions */
-```
+## DPDK Patch Evaluation Report
 
-**Issue:** Two consecutive blank lines after function definition.
-
-**Suggested fix:** Remove one blank line.
+**Series**: v6 strtok =E2=86=92 strtok_r conversion (patches 1/25, 24/25, 2=
+5/25 from bundle)
 
 ---
 
-## Info (Consider)
+### Patch 1/25: `app/bbdev: replace strtok with reentrant version`
 
-### 6. Patch 20/36: New EAL macro without release notes
+#### Commit Message Analysis
 
-**File:** `lib/eal/include/rte_common.h` =20
-**Subject:** `eal: add macro for marking assumed alignment`
+| Check | Status | Notes |
+|-------|--------|-------|
+| Subject =E2=89=A460 chars | =E2=9C=85 PASS | 47 characters |
+| Lowercase after colon | =E2=9C=85 PASS | |
+| Imperative mood | =E2=9C=85 PASS | "replace" is imperative |
+| No trailing period | =E2=9C=85 PASS | |
+| Correct prefix | =E2=9A=A0=EF=B8=8F INFO | Uses `app/bbdev:` for `app/tes=
+t-bbdev/` =E2=80=94 acceptable shorthand |
+| Body =E2=89=A475 chars/line | =E2=9C=85 PASS | |
+| Body doesn't start with "It" | =E2=9C=85 PASS | Starts with "Multiple" |
+| Signed-off-by present | =E2=9C=85 PASS | Real name, valid email |
+| Fixes: tag format | =E2=9C=85 PASS | 12-char SHA with quoted subject |
+| Tag order | =E2=9C=85 PASS | Fixes =E2=86=92 blank line =E2=86=92 Signed-=
+off-by =E2=86=92 Acked-by |
 
-The patch adds `__rte_assume_aligned` macro to EAL common header. While thi=
-s is an internal optimization helper, significant EAL additions typically w=
-arrant a release note entry.
+#### Warnings
 
-**Suggestion:** Consider adding a brief mention in release notes for the cu=
-rrent release cycle.
+| Issue | Severity | Recommendation |
+|-------|----------|----------------|
+| Missing `Cc: stable@dpdk.org` | =E2=9A=A0=EF=B8=8F WARNING | Bug fix with=
+ `Fixes:` tags should include stable backport CC |
 
-### 7. Overall: No documentation for new internal APIs
+#### Code Quality =E2=80=94 **CRITICAL BUG FOUND**
 
-The series adds new internal functions (e.g., `idpf_dp_singleq_xmit_pkts_si=
-mple`) marked with `__rte_internal`. While internal APIs don't require Doxy=
-gen, brief inline comments explaining their purpose would aid maintainabili=
-ty.
+**Error**: Incorrect `strtok_r()` usage in multiple locations.
 
----
+The patch incorrectly replaces `strtok(NULL, ...)` with `strtok_r(token, ..=
+.)` instead of `strtok_r(NULL, ...)` for continuation calls:
 
-## Compliance Summary
+```c
+/* Lines 187-188: BUG - should be NULL, not token */
+-               tok =3D strtok(NULL, VALUE_DELIMITER);
++               tok =3D strtok_r(token, VALUE_DELIMITER, &sp);  // WRONG!
+                                ^^^^^ should be NULL
+```
 
-### Commit Message Checklist
+This error appears in at least 4 locations:
+- Line 188: `cs_theta_0` parsing loop
+- Line 203: `cs_theta_d` parsing loop =20
+- Line 218: `time_offset` parsing loop
+- Line 234: `fft_window_width` parsing loop
+
+**Correct pattern**:
+```c
+tok =3D strtok_r(token, VALUE_DELIMITER, &sp);  /* Initial call: pass strin=
+g */
+/* ... */
+tok =3D strtok_r(NULL, VALUE_DELIMITER, &sp);   /* Subsequent calls: pass N=
+ULL */
+```
+
+This bug would cause the parser to restart from the beginning of `token` on=
+ each iteration instead of continuing through the string, likely resulting =
+in infinite loops or incorrect data parsing.
+
+#### Other Code Observations
 
 | Check | Status |
 |-------|--------|
-| Subject lines =E2=89=A460 characters | =E2=9C=85 All pass (max: 51 chars)=
- |
-| Lowercase after colon | =E2=9C=85 All pass |
-| Correct component prefix | =E2=9C=85 All pass (`net/intel:`, `net/i40e:`,=
- `eal:`, etc.) |
-| Imperative mood | =E2=9C=85 All pass |
-| No trailing period | =E2=9C=85 All pass |
-| Signed-off-by present | =E2=9C=85 All 36 patches |
-| Real name and valid email | =E2=9C=85 Bruce Richardson <bruce.richardson@=
-intel.com> |
-| Body wrapped at 75 chars | =E2=9C=85 All pass |
+| `#include <rte_os_shim.h>` added | =E2=9C=85 Correct |
+| State variable `char *sp =3D NULL` declared | =E2=9C=85 Correct |
+| First strtok_r calls pass string | =E2=9C=85 Correct |
 
-### Code Style Checklist
+---
+
+### Patch 24/25: `devtools: check for some reentrant function`
+
+#### Commit Message Analysis
+
+| Check | Status | Notes |
+|-------|--------|-------|
+| Subject =E2=89=A460 chars | =E2=9C=85 PASS | 42 characters |
+| Correct prefix | =E2=9C=85 PASS | `devtools:` |
+| Lowercase after colon | =E2=9C=85 PASS | |
+| Imperative mood | =E2=9C=85 PASS | |
+| No trailing period | =E2=9C=85 PASS | |
+| Signed-off-by | =E2=9C=85 PASS | |
+| Cc: stable@dpdk.org | =E2=9C=85 PASS | Present |
+| Tag order | =E2=9C=85 PASS | Cc =E2=86=92 blank =E2=86=92 Signed-off-by =
+=E2=86=92 Acked-by |
+
+#### Code Review
 
 | Check | Status |
 |-------|--------|
-| Lines =E2=89=A4100 characters | =E2=9D=8C 1 violation (Patch 17) |
-| No trailing whitespace | =E2=9C=85 Pass |
-| `__rte_internal` alone on line | =E2=9C=85 Correct usage |
-| Explicit pointer comparisons | =E2=9A=A0=EF=B8=8F 1 violation (Patch 14) |
-| Explicit integer comparisons | =E2=9A=A0=EF=B8=8F ~6 instances |
-| No double blank lines | =E2=9A=A0=EF=B8=8F 1 violation (Patch 36) |
-| No unnecessary void* casts | =E2=9C=85 Pass |
-| No forbidden tokens | =E2=9C=85 Pass |
+| Shell script syntax | =E2=9C=85 Correct |
+| awk pattern for `strtok\(` | =E2=9C=85 Correct |
+| Consistent with existing checks | =E2=9C=85 Follows established pattern |
 
-### Structure Checklist
+**No issues found** =E2=80=94 this patch looks correct.
+
+---
+
+### Patch 25/25: `eal/linux: install rte_os_shim.h file`
+
+#### Commit Message Analysis
+
+| Check | Status | Notes |
+|-------|--------|-------|
+| Subject =E2=89=A460 chars | =E2=9C=85 PASS | 35 characters |
+| Correct prefix | =E2=9C=85 PASS | `eal/linux:` for `lib/eal/linux/` |
+| Imperative mood | =E2=9C=85 PASS | |
+| Signed-off-by | =E2=9C=85 PASS | |
+
+#### Warnings
+
+| Issue | Severity | Notes |
+|-------|----------|-------|
+| Missing `Cc: stable@dpdk.org` | =E2=9A=A0=EF=B8=8F WARNING | This is a bu=
+ild fix; if backporting the strtok_r changes, this would also be needed |
+| No `Fixes:` tag | =E2=84=B9=EF=B8=8F INFO | Could reference the commit th=
+at exposed the missing header |
+
+#### Code Review
 
 | Check | Status |
 |-------|--------|
-| Each commit compiles independently | =E2=9C=85 Appears correct |
-| Code and docs updated together | =E2=9C=85 Patch 17 adds docs with code |
-| New internal APIs marked `__rte_internal` | =E2=9C=85 Correct |
-| Release notes updated | =E2=9A=A0=EF=B8=8F Consider for EAL changes |
+| Meson file syntax | =E2=9C=85 Correct |
+| Alphabetical ordering | =E2=9C=85 Maintained (rte_os.h =E2=86=92 rte_os_s=
+him.h) |
+| Trailing comma | =E2=9C=85 Correct for multi-line list |
 
 ---
 
-## Technical Assessment
+## Summary
 
-The series accomplishes significant code consolidation:
+| Patch | Verdict | Blocking Issues |
+|-------|---------|-----------------|
+| 01/25 app/bbdev | =E2=9D=8C **NEEDS REVISION** | Critical bug: `strtok_r(=
+token,...)` should be `strtok_r(NULL,...)` for continuation calls |
+| 24/25 devtools | =E2=9C=85 **ACCEPTABLE** | None |
+| 25/25 eal/linux | =E2=9C=85 **ACCEPTABLE** | Minor: consider adding `Cc: =
+stable` |
 
-1. **Common Tx descriptor structure** (`struct ci_tx_desc`) unifies identic=
-al 16-byte descriptors across i40e, iavf, ice, and idpf drivers.
+### Required Actions
 
-2. **Shared scalar Tx function** (`ci_xmit_pkts()`) reduces code duplicatio=
-n significantly.
+1. **Patch 1/25**: Fix all `strtok_r()` continuation calls to pass `NULL` i=
+nstead of `token`:
+   ```c
+   /* Wrong */
+   tok =3D strtok_r(token, VALUE_DELIMITER, &sp);
+  =20
+   /* Correct */
+   tok =3D strtok_r(NULL, VALUE_DELIMITER, &sp);
+   ```
 
-3. **Simple Tx path** optimization enables scalar code to use the more effi=
-cient vector SW ring entry format.
-
-4. **New EAL macro** (`__rte_assume_aligned`) provides portable way to mark=
- pointer alignment assumptions for compiler optimization.
-
-The refactoring maintains backward compatibility and should not introduce f=
-unctional regressions.
-
----
-
-## Recommendation
-
-**Acceptable with minor revisions.** Address the Error and consider fixing =
-the Warnings before merge.
-
----
-
-*Review generated according to DPDK AGENTS.md guidelines*
-
-
+2. **Patch 1/25**: Consider adding `Cc: stable@dpdk.org` since this is a bu=
+g fix.
