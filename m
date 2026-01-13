@@ -2,48 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87181D2F32E
-	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Jan 2026 15:20:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A89ADD2F331
+	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Jan 2026 15:21:47 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 71EB84067B;
-	Tue, 13 Jan 2026 16:18:34 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
- by mails.dpdk.org (Postfix) with ESMTP id 21D114065A
- for <dev@dpdk.org>; Tue, 13 Jan 2026 16:18:32 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1768317513; x=1799853513;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=fnEpzRro4rhHuSi0ThteTQ9/YC2JGj4KGkT/VNy+S64=;
- b=P2wBMYsjQpacd01nK78C2lBNKgoeEyrJPMLEom/zIiPwrF9NK2ko2NSk
- 8ePRHD0tHbjjofqDtGseEp79UHqPTfZDKLOk7Urdd7gm7e1KCEMy+wVls
- yQvSxR8jMULMjCLqAAUYGSZ7QEYeL8KLjJue/UoaLXV5DqWIEH5Ee7TE8
- n1czZBK0UNfPFbGnZ9iD5qp8fm4JCgkGzZily9NlJ2QvOChm28D1rGllw
- +Lp87rzhdso2r40R97uiwNhVse8AX6irSOCl0AHM6sTj7fgauesk5wMTM
- LipQ012V7jIwnhjydl53NDLUY/f6NQGSMemFeWJvlqlNmreRPgdAi0nNP Q==;
-X-CSE-ConnectionGUID: whUR2/+0Toy1P+euCwaUmA==
-X-CSE-MsgGUID: fS4loYeORhOcC58EFE0P9g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11670"; a="72185066"
-X-IronPort-AV: E=Sophos;i="6.21,222,1763452800"; d="scan'208";a="72185066"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
- by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 13 Jan 2026 07:18:32 -0800
-X-CSE-ConnectionGUID: 4CBkLMw9TzCBB2CwaIXO3Q==
-X-CSE-MsgGUID: C1atkGjkR9yoNkO+0R+tYw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,222,1763452800"; d="scan'208";a="204298833"
-Received: from silpixa00401177.ir.intel.com ([10.20.224.214])
- by fmviesa006.fm.intel.com with ESMTP; 13 Jan 2026 07:18:31 -0800
-From: Ciara Loftus <ciara.loftus@intel.com>
-To: dev@dpdk.org
-Cc: Ciara Loftus <ciara.loftus@intel.com>
-Subject: [PATCH] net/iavf: support pre and post reset callbacks
-Date: Tue, 13 Jan 2026 15:17:57 +0000
-Message-ID: <20260113151757.567234-1-ciara.loftus@intel.com>
-X-Mailer: git-send-email 2.43.0
+	by mails.dpdk.org (Postfix) with ESMTP id 0AC0A402ED;
+	Tue, 13 Jan 2026 16:21:47 +0100 (CET)
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com
+ [209.85.218.45]) by mails.dpdk.org (Postfix) with ESMTP id 1CFCA40276
+ for <dev@dpdk.org>; Tue, 13 Jan 2026 16:21:46 +0100 (CET)
+Received: by mail-ej1-f45.google.com with SMTP id
+ a640c23a62f3a-b871cfb49e6so367124966b.1
+ for <dev@dpdk.org>; Tue, 13 Jan 2026 07:21:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768317706;
+ x=1768922506; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=oqcJgAfhg2YNS9tLdC7ZPcwDnyzfwrkHRcrC7SCJiCU=;
+ b=zV14WyY3EV/LxttVZz1xD1HA345WDNLLxoxjA0kSQHeVkmq+BZ8axLbou2njJykTpy
+ dYRSSsG3ecvnW+h977+Ep5odASmCYYal93UBdDmFl80ABHY5DDf75DrZypJjiXZPWpmW
+ T04JALpxDNxzSReNtaqyJQtOex6bwpzTgqufXiYV0zq/9WrYLPn1sxYZ+KpcXEFTeWFF
+ q8tuFDxIBG+QlldegkG0mtjQoCQ9QsKyeovOoXTcbbozydMVpGMpWKkIItARlOZb9YvO
+ xMuDAU9B2US7+XxPjuSQBGUhtEspNoAg7eftlK+rbh8Fz6MjcaxoabiXD1fiEJdkWfSU
+ F9zg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1768317706; x=1768922506;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=oqcJgAfhg2YNS9tLdC7ZPcwDnyzfwrkHRcrC7SCJiCU=;
+ b=Xfzxh9raShBG5ag4sRiOgTvPRRfmlTFc1W/IcClfG/576KMR6O26xTWi0uy1RlQNE1
+ D7qnyZqI1s9w6ji0AokEQUlbLeKs5AT+FiI+9G3Y68z5gSaemazUBebAgdWfw6xfk7wR
+ 1dFD3H+f8533w992lpWVBR6C26B69DcDhYPRLExxEdONBOoDIUhUG79PGTHiKqqtJ/Po
+ wlAGB1EGZmzdHeuQYkxYWnPRcscSHNOLQinRBLp9G73iR08L0E7K37cYVslCouB/Kzr4
+ RxzQsBXv0y9ELdWgxuXPQpd/s6vGaN2fZ+Bo4z5qSW++GhspR2jYshOhL8gNO4QYsFXB
+ /hRQ==
+X-Gm-Message-State: AOJu0YwB2dk8biYrlUeZJj6wL6LXGGVL8/P5HfwRh5ibJxqDlrarWKsX
+ iVGPH8AvTwjz6Qjp35rxF8S1zAY1CMGlugdMrl3tU6sH4x5NFI7PtOkKSrj0C7oQJB4=
+X-Gm-Gg: AY/fxX5CVFWCH6zkuwB5UJAh4674Z90Awuat+YdVWh0cJEdTu2Kokz5c7AbuZHZxy3G
+ nMbls5BZz81pOwZ076oIPWoTanaE7l5PuVHY9aPdB8GQu6mVVIPDFdevAgfGCQffky/9h9ssxrL
+ yZYyMzxpw18SUitjVV5Pb5+hdj3GvuNfFHumJrYbbsCfGVY++umB0BlbTV232dLjKODje1u/Tdo
+ ZJbDbFXKr+l4ulKInfzXetC52QXiHKrbLw/zbItnQ4chtS5BdDI6NyGKHo9QeQGgVM7Jd/R/ImP
+ 8fmL2A4lJvkRnQQaH9j77LyAvFFWmmhwCmk7JAQouUNqlV59FyWm/giG4ydb/id6XWxRlnBoIdS
+ UWl+hEZRrTtrRS6M2vjQlrJ9JA/4QHgcSWa9Do8vKUs6qp5d6aPzUiRqsaCQgXDirlyd9yvQ4H9
+ 5GauBw01fMrRlQpkh5FYrEQxSPP0pP8J0PLGSizoCQkDVfuuo+hfTn
+X-Google-Smtp-Source: AGHT+IHqZoLtRiG3M5oMibXMmBGQevfkE9yPt/oMCjXRFe+EhLEahVksIn99ETJMhuX7iEplasv3Cg==
+X-Received: by 2002:a17:906:f58d:b0:b87:1b23:cad3 with SMTP id
+ a640c23a62f3a-b871b23cd09mr549720766b.9.1768317705404; 
+ Tue, 13 Jan 2026 07:21:45 -0800 (PST)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ a640c23a62f3a-b842a2bc6bbsm2265101866b.27.2026.01.13.07.21.43
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 13 Jan 2026 07:21:44 -0800 (PST)
+Date: Tue, 13 Jan 2026 07:21:39 -0800
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Ivan Malov <ivan.malov@arknetworks.am>
+Cc: dev@dpdk.org, Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>, Andy
+ Moreton <andy.moreton@amd.com>, Pieter Jansen Van Vuuren
+ <pieter.jansen-van-vuuren@amd.com>, Viacheslav Galaktionov
+ <viacheslav.galaktionov@arknetworks.am>
+Subject: Re: [PATCH 0/9] net/sfc: SFN7xxx deprecation and Medford fixes
+Message-ID: <20260113072139.073e7d74@phoenix.local>
+In-Reply-To: <20251229213527.37907-1-ivan.malov@arknetworks.am>
+References: <20251229213527.37907-1-ivan.malov@arknetworks.am>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -57,199 +83,242 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The user may want to perform some actions before and/or after a VF
-reset, for example storing settings that may be lost during the reset
-and restoring them after the reset. To facilitate this, introduce a
-new function which allows the user to register either a pre or post
-reset callback, which will be executed before or after the VF has been
-reset. To unregister the callback, simply use the same function with a
-null callback as argument.
+On Tue, 30 Dec 2025 01:35:18 +0400
+Ivan Malov <ivan.malov@arknetworks.am> wrote:
 
-Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
+> The series provides various fixes, primarily for Medford4 support.
+> It also fixes a legacy flow control bug; due to hardware constraints
+> in the fix, SFN7xxx NICs are now marked as deprecated.
+>=20
+> Andy Moreton (1):
+>   common/sfc_efx/base: count Rx TRUNC ERR as CRC errors on X4
+>=20
+> Ivan Malov (8):
+>   doc: remove support for AMD Solarflare SFN7xxx family boards
+>   common/sfc_efx/base: fix flow control setting on legacy MCDI
+>   common/sfc_efx/base: fix indication of requestable FEC flags
+>   common/sfc_efx/base: define mask for pause mode capabilities
+>   net/sfc: avoid speed reset when setting FEC in started state
+>   net/sfc: rework the capability check that is done on FEC set
+>   net/sfc: drop AUTO from FEC capabilities and fix the comment
+>   net/sfc: fix reporting status of autonegotiation to the user
+>=20
+>  doc/guides/nics/sfc_efx.rst            |  14 ---
+>  doc/guides/rel_notes/release_26_03.rst |   4 +
+>  drivers/common/sfc_efx/base/ef10_ev.c  |  41 +++++--
+>  drivers/common/sfc_efx/base/ef10_mac.c |  35 ++++--
+>  drivers/common/sfc_efx/base/ef10_nic.c |  57 +++++-----
+>  drivers/common/sfc_efx/base/efx.h      |   1 +
+>  drivers/common/sfc_efx/base/efx_np.c   |   2 +-
+>  drivers/net/sfc/sfc.h                  |   2 +-
+>  drivers/net/sfc/sfc_ethdev.c           | 141 +++++++++++++++----------
+>  drivers/net/sfc/sfc_ev.c               |   7 +-
+>  drivers/net/sfc/sfc_port.c             |   8 +-
+>  drivers/net/sfc/sfc_repr.c             |   2 +-
+>  12 files changed, 193 insertions(+), 121 deletions(-)
+>=20
+
+AI code review spotted one minor thing but was overall quite happy.
+
+# DPDK Solarflare Driver Patch Series Review
+
+**Patches Reviewed:** 0009-0017 (9 patches) =20
+**Author:** Ivan Malov <ivan.malov@arknetworks.am> (with contribution from =
+Andy Moreton) =20
+**Review Date:** January 13, 2026
+
 ---
- doc/guides/rel_notes/release_26_03.rst |  4 ++
- drivers/net/intel/iavf/iavf.h          | 15 +++++++
- drivers/net/intel/iavf/iavf_ethdev.c   | 62 ++++++++++++++++++++++++++
- drivers/net/intel/iavf/rte_pmd_iavf.h  | 24 ++++++++++
- 4 files changed, 105 insertions(+)
 
-diff --git a/doc/guides/rel_notes/release_26_03.rst b/doc/guides/rel_notes/release_26_03.rst
-index 15dabee7a1..770f9933ee 100644
---- a/doc/guides/rel_notes/release_26_03.rst
-+++ b/doc/guides/rel_notes/release_26_03.rst
-@@ -55,6 +55,10 @@ New Features
-      Also, make sure to start the actual text at the margin.
-      =======================================================
- 
-+* **Updated Intel iavf driver.**
-+
-+  * Added support for pre and post VF reset callbacks.
-+
- 
- Removed Items
- -------------
-diff --git a/drivers/net/intel/iavf/iavf.h b/drivers/net/intel/iavf/iavf.h
-index d78582e05c..5482472549 100644
---- a/drivers/net/intel/iavf/iavf.h
-+++ b/drivers/net/intel/iavf/iavf.h
-@@ -224,6 +224,17 @@ struct iavf_qtc_map {
- 	uint16_t queue_count;
- };
- 
-+enum iavf_reset_cb_type {
-+	IAVF_RESET_CB_TYPE_PRE,
-+	IAVF_RESET_CB_TYPE_POST,
-+};
-+
-+struct iavf_reset_cb_arg {
-+	uint16_t port_id;
-+	int reset_status;
-+	void *user_state;
-+};
-+
- /* Structure to store private data specific for VF instance. */
- struct iavf_info {
- 	uint16_t num_queue_pairs;
-@@ -257,6 +268,10 @@ struct iavf_info {
- 
- 	struct iavf_vsi vsi;
- 	bool vf_reset;	/* true for VF reset pending, false for no VF reset */
-+	void (*pre_reset_cb)(struct iavf_reset_cb_arg *arg); /* Pre reset callback function ptr */
-+	void (*post_reset_cb)(struct iavf_reset_cb_arg *arg); /* Post reset callback function ptr */
-+	struct iavf_reset_cb_arg *pre_reset_cb_arg; /* Pre reset function argument */
-+	struct iavf_reset_cb_arg *post_reset_cb_arg; /* Post reset function argument */
- 	uint64_t flags;
- 
- 	uint8_t *rss_lut;
-diff --git a/drivers/net/intel/iavf/iavf_ethdev.c b/drivers/net/intel/iavf/iavf_ethdev.c
-index 15e49fe248..553f38a286 100644
---- a/drivers/net/intel/iavf/iavf_ethdev.c
-+++ b/drivers/net/intel/iavf/iavf_ethdev.c
-@@ -3120,6 +3120,10 @@ iavf_handle_hw_reset(struct rte_eth_dev *dev, bool vf_initiated_reset)
- 	vf->in_reset_recovery = true;
- 	iavf_set_no_poll(adapter, false);
- 
-+	/* Call the pre reset callback */
-+	if (vf->pre_reset_cb)
-+		(*vf->pre_reset_cb)(vf->pre_reset_cb_arg);
-+
- 	ret = iavf_dev_reset(dev);
- 	if (ret)
- 		goto error;
-@@ -3144,6 +3148,13 @@ iavf_handle_hw_reset(struct rte_eth_dev *dev, bool vf_initiated_reset)
- error:
- 	PMD_DRV_LOG(DEBUG, "RESET recover with error code=%dn", ret);
- exit:
-+	/* Update the reset status */
-+	if (vf->post_reset_cb_arg)
-+		vf->post_reset_cb_arg->reset_status = ret;
-+	/* Call the post reset callback */
-+	if (vf->post_reset_cb)
-+		(*vf->post_reset_cb)(vf->post_reset_cb_arg);
-+
- 	vf->in_reset_recovery = false;
- 	iavf_set_no_poll(adapter, false);
- 
-@@ -3183,6 +3194,57 @@ rte_pmd_iavf_reinit(uint16_t port)
- 	return 0;
- }
- 
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_pmd_iavf_reset_cb_register, 26.03)
-+int
-+rte_pmd_iavf_reset_cb_register(uint16_t port,
-+				   enum iavf_reset_cb_type cb_type,
-+				   void (*reset_cb)(struct iavf_reset_cb_arg *arg),
-+				   struct iavf_reset_cb_arg *reset_arg)
-+{
-+	struct rte_eth_dev *dev;
-+	struct iavf_info *vf;
-+
-+	RTE_ETH_VALID_PORTID_OR_ERR_RET(port, -ENODEV);
-+
-+	dev = &rte_eth_devices[port];
-+
-+	if (!is_iavf_supported(dev)) {
-+		PMD_DRV_LOG(ERR, "Cannot register callback, port %u is not an IAVF device.", port);
-+		return -ENOTSUP;
-+	}
-+
-+	if (reset_cb != NULL && reset_arg == NULL) {
-+		PMD_DRV_LOG(ERR, "Cannot register callback on port %u, arg is NULL.", port);
-+		return -EINVAL;
-+	}
-+
-+	if (reset_arg != NULL)
-+		reset_arg->port_id = port;
-+
-+	vf = IAVF_DEV_PRIVATE_TO_VF(dev->data->dev_private);
-+
-+	if (vf->in_reset_recovery) {
-+		PMD_DRV_LOG(ERR, "Cannot modify reset callback on port %u, VF is resetting.", port);
-+		return -EBUSY;
-+	}
-+
-+	switch (cb_type) {
-+	case IAVF_RESET_CB_TYPE_PRE:
-+		vf->pre_reset_cb = reset_cb;
-+		vf->pre_reset_cb_arg = reset_arg;
-+		break;
-+	case IAVF_RESET_CB_TYPE_POST:
-+		vf->post_reset_cb = reset_cb;
-+		vf->post_reset_cb_arg = reset_arg;
-+		break;
-+	default:
-+		PMD_DRV_LOG(ERR, "Invalid reset callback type: %d", cb_type);
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
- void
- iavf_set_no_poll(struct iavf_adapter *adapter, bool link_change)
- {
-diff --git a/drivers/net/intel/iavf/rte_pmd_iavf.h b/drivers/net/intel/iavf/rte_pmd_iavf.h
-index dea1bd2789..365f8a3e6a 100644
---- a/drivers/net/intel/iavf/rte_pmd_iavf.h
-+++ b/drivers/net/intel/iavf/rte_pmd_iavf.h
-@@ -20,6 +20,8 @@
- #include <rte_mbuf.h>
- #include <rte_mbuf_dyn.h>
- 
-+#include "iavf.h"
-+
- #ifdef __cplusplus
- extern "C" {
- #endif
-@@ -109,6 +111,28 @@ extern uint64_t rte_pmd_ifd_dynflag_proto_xtr_ipsec_crypto_said_mask;
- __rte_experimental
- int rte_pmd_iavf_reinit(uint16_t port);
- 
-+/**
-+ * Register or unregister a pre or post reset event callback
-+ *
-+ * @param port
-+ *   The port identifier of the Ethernet device.
-+ * @param cb_type
-+ *   The callback type, pre-reset (0) or post-reset (1).
-+ * @param reset_cb
-+ *   The callback function that will be invoked by the driver.
-+ *   Pass NULL to unregister an existing callback.
-+ * @param reset_arg
-+ *   The argument passed to the callback function.
-+ *   Can be NULL when unregistering (reset_cb is NULL).
-+ * @return
-+ *   0 if successful, otherwise if a failure occurs.
-+ */
-+__rte_experimental
-+int rte_pmd_iavf_reset_cb_register(uint16_t port,
-+	enum iavf_reset_cb_type cb_type,
-+	void (*reset_cb)(struct iavf_reset_cb_arg *arg),
-+	struct iavf_reset_cb_arg *reset_arg);
-+
- /**
-  * The mbuf dynamic field pointer for flexible descriptor's extraction metadata.
-  */
--- 
-2.43.0
+## Overall Assessment
 
+This patch series is **generally well-prepared** and follows DPDK coding st=
+andards. The patches address a mix of documentation updates, bug fixes in t=
+he sfc_efx base library, and improvements to FEC/flow control handling in t=
+he net/sfc driver. Most patches are suitable for merging with only minor ob=
+servations.
+
+---
+
+## Patch-by-Patch Review
+
+### Patch 0009: doc: remove support for AMD Solarflare SFN7xxx family boards
+
+**Status:** =E2=9C=85 Ready
+
+| Check | Result |
+|-------|--------|
+| Subject =E2=89=A460 chars | =E2=9C=85 59 characters |
+| Subject format | =E2=9C=85 Correct `doc:` prefix, lowercase |
+| Body format | =E2=9C=85 Doesn't start with "It", proper wrapping |
+| Signed-off-by | =E2=9C=85 Present |
+| Release notes | =E2=9C=85 Updated in `release_26_03.rst` |
+
+**Observations:** Clean documentation removal patch. Properly updates both =
+the NIC guide and release notes.
+
+---
+
+### Patch 0010: common/sfc_efx/base: fix flow control setting on legacy MCDI
+
+**Status:** =E2=9C=85 Ready
+
+| Check | Result |
+|-------|--------|
+| Subject =E2=89=A460 chars | =E2=9C=85 60 characters (at limit) |
+| Subject format | =E2=9C=85 Correct prefix, lowercase |
+| Fixes tag | =E2=9C=85 `e7cd430c864f` with correct format |
+| Cc: stable | =E2=9C=85 Present |
+| Tag order | =E2=9C=85 Fixes, Cc, blank line, Signed-off-by, Reviewed-by |
+
+**Code Review:**
+- Uses explicit comparison `!=3D B_FALSE` (line 46) =E2=80=94 acceptable, t=
+hough `=3D=3D B_TRUE` might be slightly clearer
+- Properly adds new fail label and updates error handling
+- Switch statement formatting is correct
+
+---
+
+### Patch 0011: common/sfc_efx/base: fix indication of requestable FEC flags
+
+**Status:** =E2=9C=85 Ready
+
+| Check | Result |
+|-------|--------|
+| Subject =E2=89=A460 chars | =E2=9C=85 59 characters |
+| Fixes tag | =E2=9C=85 `a90549f527eb` present |
+| Cc: stable | =E2=9C=85 Present |
+| Tag order | =E2=9C=85 Correct |
+
+**Code Review:**
+- Refactors code to move FEC capability bits initialization to `ef10_nic_pr=
+obe()`
+- Clean removal of `goto skip_phy_props` pattern
+- Uses explicit comparison `=3D=3D B_FALSE`
+
+---
+
+### Patch 0012: common/sfc_efx/base: define mask for pause mode capabilities
+
+**Status:** =E2=9C=85 Ready
+
+| Check | Result |
+|-------|--------|
+| Subject =E2=89=A460 chars | =E2=9C=85 58 characters |
+| Subject format | =E2=9C=85 Correct |
+| Signed-off-by | =E2=9C=85 Present |
+
+**Observations:** Simple macro addition. No Fixes tag is appropriate since =
+this is a new feature/enhancement required by subsequent patches.
+
+---
+
+### Patch 0013: common/sfc_efx/base: count Rx TRUNC ERR as CRC errors on X4
+
+**Status:** =E2=9A=A0=EF=B8=8F Minor Question
+
+| Check | Result |
+|-------|--------|
+| Subject =E2=89=A460 chars | =E2=9C=85 57 characters |
+| Subject format | =E2=9C=85 Uses correct `Rx` capitalization |
+| Signed-off-by | =E2=9C=85 Two signers (appropriate for co-authored work) |
+
+**Observations:**
+- **Question:** Should this have a `Fixes:` tag and `Cc: stable@dpdk.org`? =
+The commit message describes a workaround for X4 hardware behavior, which c=
+ould be considered a bug fix for X4 support. If the X4 family was added in =
+a specific commit, a Fixes tag referencing that commit would be appropriate.
+- Code correctly duplicates the X4-specific handling in both `ef10_ev_rx_pa=
+cked_stream` and `ef10_ev_rx` functions
+
+---
+
+### Patch 0014: net/sfc: avoid speed reset when setting FEC in started state
+
+**Status:** =E2=9C=85 Ready
+
+| Check | Result |
+|-------|--------|
+| Subject =E2=89=A460 chars | =E2=9C=85 58 characters |
+| Fixes tag | =E2=9C=85 `5efa8fc1cfc0` present |
+| Cc: stable | =E2=9C=85 Present |
+| Dependencies | =E2=9C=85 Uses `EFX_PHY_CAP_PAUSE_MASK` from patch 0012 |
+
+**Code Review:**
+- Correctly preserves pause capabilities while updating FEC settings
+- Proper dependency ordering within the series
+
+---
+
+### Patch 0015: net/sfc: rework the capability check that is done on FEC set
+
+**Status:** =E2=9C=85 Ready
+
+| Check | Result |
+|-------|--------|
+| Subject =E2=89=A460 chars | =E2=9C=85 58 characters |
+| Fixes tag | =E2=9C=85 `5efa8fc1cfc0` present |
+| Cc: stable | =E2=9C=85 Present |
+| New includes | =E2=9C=85 `<stdbool.h>` and `<rte_bitops.h>` added |
+
+**Code Review:**
+- Uses `bool` type appropriately
+- `if (!supported)` at line 156 is acceptable for actual bool types per DPD=
+K guidelines
+- Uses `rte_popcount32()` =E2=80=94 good use of DPDK utility function
+- Commit message includes helpful testpmd reproduction steps
+
+---
+
+### Patch 0016: net/sfc: drop AUTO from FEC capabilities and fix the comment
+
+**Status:** =E2=9C=85 Ready
+
+| Check | Result |
+|-------|--------|
+| Subject =E2=89=A460 chars | =E2=9C=85 58 characters |
+| Fixes tags | =E2=9C=85 Two Fixes tags (both appropriate) |
+| Cc: stable | =E2=9C=85 Present |
+| Tag order | =E2=9C=85 Correct |
+
+**Observations:**=20
+- Multiple Fixes tags are appropriate when a single patch addresses regress=
+ions from multiple commits
+- Updated comments improve code clarity
+
+---
+
+### Patch 0017: net/sfc: fix reporting status of autonegotiation to the user
+
+**Status:** =E2=9C=85 Ready
+
+| Check | Result |
+|-------|--------|
+| Subject =E2=89=A460 chars | =E2=9C=85 58 characters |
+| Fixes tag | =E2=9C=85 `886f8d8a05bf` present |
+| Cc: stable | =E2=9C=85 Present |
+
+**Code Review:**
+- Function signature change is propagated to all call sites
+- Uses explicit comparison `!=3D 0` (good practice)
+- Comment in `sfc_ev.c` appropriately documents a potential race condition =
+and explains the trade-off
+
+---
+
+## Summary
+
+| Severity | Count | Details |
+|----------|-------|---------|
+| **Error** | 0 | None found |
+| **Warning** | 1 | Patch 0013 may benefit from Fixes/Cc:stable tags |
+| **Info** | 0 | =E2=80=94 |
+
+### Series Dependencies
+The patches have proper internal dependencies:
+- Patch 0014 depends on patch 0012 (`EFX_PHY_CAP_PAUSE_MASK`)
+- The series should be applied in order
+
+### Recommendation
+**The series is suitable for merging.** Consider adding `Fixes:` and `Cc: s=
+table@dpdk.org` tags to patch 0013 if X4 support was added in a prior relea=
+se and this constitutes a fix for that support.
