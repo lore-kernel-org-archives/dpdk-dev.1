@@ -2,69 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0536DD2F35C
-	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Jan 2026 19:25:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F769D2F32D
+	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Jan 2026 19:25:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DE458402DE;
-	Tue, 13 Jan 2026 20:25:38 +0100 (CET)
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com
- [209.85.208.41]) by mails.dpdk.org (Postfix) with ESMTP id 66C9C4028B
- for <dev@dpdk.org>; Tue, 13 Jan 2026 20:25:37 +0100 (CET)
-Received: by mail-ed1-f41.google.com with SMTP id
- 4fb4d7f45d1cf-64d02c01865so997830a12.1
- for <dev@dpdk.org>; Tue, 13 Jan 2026 11:25:37 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id E0B6E402ED;
+	Tue, 13 Jan 2026 20:25:40 +0100 (CET)
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com
+ [209.85.218.51]) by mails.dpdk.org (Postfix) with ESMTP id DD9F4402D6
+ for <dev@dpdk.org>; Tue, 13 Jan 2026 20:25:38 +0100 (CET)
+Received: by mail-ej1-f51.google.com with SMTP id
+ a640c23a62f3a-b8718187eb6so370638666b.2
+ for <dev@dpdk.org>; Tue, 13 Jan 2026 11:25:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768332337;
- x=1768937137; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768332338;
+ x=1768937138; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=x106Q+djr9enLSK4Z7XSfx8Df/wjs9enI/txEGP5r68=;
- b=kqvdPsxKXSECZnuTj1Xhtc5zWXEOfrYAfHJfA5rJbcQj+2eplT4qxa9BAnFPIUzP0G
- bx177JMJaNxdD541ILkSpwmk9dOOrrmFn1xpKo6MG7x84BDEbjrGndGShNgwKEfN0lHP
- vfoWlPvXMNL1Q6xOLi4OhQPso7O2dA7hl/YiXOVVrwrIlQlWy4UyURGxnHyTsCAjvXUX
- /2cR0zVMezLdKwRq/kZ0An4OX6Bvk4Of8Wr/UtqEsTz7Ckf8HxAKx29747vzE3q39N1V
- HZKvHmCA9mlcKnMxjWiVDCGyaFpmzNCwKpPHRwB4r8o2y0QEj+QvewpKA+naI46332UC
- RkFQ==
+ bh=u57LCF6gNL4H81w9AAJqyOS7XfOlwxvNtXdCoUMOqn0=;
+ b=UFaQfHwtlKa792w8Bw4xA02b5sgqXfwXZPqvK4uWEwAXP/3rdBL4va66kmcY0hb/nb
+ 5rDbOOIOgFVIofl19t+EHr376YB13nsO1YyXfyOt8BShXFnovvdkNfVFSYNFCfc+NQfx
+ Z4UBmLr4rF2CZSvmvJeSkks5v4YUqWvUcmu9mljOmKWQ9Y+HQHgCfIdqN+/GGvTgLcXS
+ thbevW+zpBCb7H0gOGTBAm2WlX5pK3JEMDMKV3vrCy6wCmcEgLUdvJudMwryF6oj1e8x
+ H85BQWHZRimMTOx1RMYGVCYdbyVKU614OyvZyg8lZ5p83pN4dEzQVuDmss5uElAb/hlZ
+ 0a6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768332337; x=1768937137;
+ d=1e100.net; s=20230601; t=1768332338; x=1768937138;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=x106Q+djr9enLSK4Z7XSfx8Df/wjs9enI/txEGP5r68=;
- b=B7co0VOz6ySoQp5rsIkdQudUJwMr+aoPOGtJHdbeMnQtZsyQD7WwdzjH/DQ0DbGCGQ
- 7gCXc3Ew63aRTBEoyNPnfe2ndd8uKwWBRA2Qup0fkEQp5tcDFp+u387CiFW/vxC1S5W/
- 9jM8zU7Ek9GpYrg3/Ftjt0NN+uSEYBMYNa84YHWNd8p19wQ2Wqimh4KF7umc8JYGIPMN
- cLcdyMQLEUMwz7oTpmYfVbsrn/aUg0MmsQzsJBzhUge1vNbErpfaGpbNWrvu678EaxVt
- r83QKvmflgVzCNoFUVq3ZboXxyi2PRdSfFAAHVdvphqcMDerog0Zi5XBkcggQFtfwZgF
- 6tlw==
-X-Gm-Message-State: AOJu0YxlZOlp4w7OPrgcV9dwg5MbqJc2VjIyvgjhhXt0si2qsgrIRRMl
- 4cZkDUlkVro8P6AsVcKmEp9S1vGQ0zhduMCMgzbFsMJ4Rr+Cv7kLdHxNoTeejvQLgqKWwswPwEm
- uTtaW
-X-Gm-Gg: AY/fxX6yVC2zb4apEgMZvMxRC5OREnwR5vF4GGwgt2MCnQvEGEzyCxjkX//8bodSMwd
- fsAT8+BOmh+7AdHMFZ79ouqqKjL2tapYNS74Nrza6/UDGFCSMbXebVa9tjuBlCIJrOJe7wR00zM
- pFfTCayszMVQdDbSBjbzelMIll4D7Nig29uLErYQ7WM8ltq9LhkgU4AFU7on6IiXtk7W4mXSrkm
- lTezMH5QVeYakI4tRowD1NE4ev+5c7OTG+epKvbS5pWtaaKGWKtyL2j3spcXTA96zZ/k0QN3scA
- Q5/Q8WZ0/1KeWYzeX8aNcMxA/Uyfw8ZjpD7G87CDm6a7qS6X1nE15MyvZLnqxLFR0xrx8I+EPdx
- Ox9YlUb6S2i/jnbRQ+/kT11Skjou+e9iBBuv3hekhXa+jrEEt35CxUWsZvdiFuZiING5SNRyecs
- HUe6rvfBjYPFhngKBmFprB8dI9QStVIuyiYdNxMur2zGAt87aEwA==
-X-Received: by 2002:a05:6402:2693:b0:64d:498b:aeff with SMTP id
- 4fb4d7f45d1cf-653ec46ecf5mr58912a12.34.1768332336784; 
- Tue, 13 Jan 2026 11:25:36 -0800 (PST)
+ bh=u57LCF6gNL4H81w9AAJqyOS7XfOlwxvNtXdCoUMOqn0=;
+ b=sZo/KABp2YOehmmxL/cpDVJ+HsRc3UyqF5Ki7dKyqOXRTghN5oBQvzmInKeX/ePb+o
+ MAGOHyESz6ItNLM5g7IVVXEDoG8/3XKHRlPIRLrh6XUf98vaaIhrxaAu8/kc7WjPVM/x
+ 3A/nmho3nXOhD6b8GIle8siq4WA8SI5Kq3Euumsg4QmVN/BIKtY5DcSGZAWweLSK9m0T
+ k4+EihN9oHQHAAw8z0bi/zp74OptmEUKuUFMUNtwdt8A/W9u536G2CIh5mvO/5TJZwCA
+ 5/bpFsKJLUlWR785IkgW1UCl5jmj0SoCgX8VAwLbxDnUd3Ko7J5DjKTuffwvwfSPZnbF
+ KlbQ==
+X-Gm-Message-State: AOJu0YxAFZgQUnmtwRH+grNLr8PmMCxPnW5BYzC3QC4xGZksE3mAgnZd
+ zo86t2DRPNVthCv92NHZIB82/S/nTOx3KFE1+Y4MGYA5dniD89jA0W29YVdMv6doUKF72vyTy3L
+ 5mcS8
+X-Gm-Gg: AY/fxX7Ol5TvnEdGOqNYEXJ28XI/xu8x0czvhWMdYGaUwkTiYkVY+TY2i2mX+LDoZXD
+ cGnGMb8kH7npiMPWXAZjqeIhdUk04R4/7S5BmJKpZWr0nfm+t6V3rTAeNgvOg8U8In/2V+iWJ4J
+ EfDDXHzev42pgi+KUaWFIaip5xhf2jN9qBn0/xNy7lVCQuRPmrn4SiBl1t5quTa0A9frE5i03PA
+ TrcOxOuZ0ArcrJR3VT3UxFqgGrhg3rFAH8EdKURTRTE4DZOkWQdiQm8i8QlZJqV32oHHPUw8vH1
+ 6rJq3/j5ygv1K1EuDyeYbvrtn9lnNZE6SX49DNIDa2uvRTDhkXm5SvC6sD+uJQN/imvrFtoqGL9
+ fC6wRCnYhDfMzAu4rHjs92BzhoLPoar2v5kkm+wdj5Ak7Pg6sYLfRdJb7ZHukrHYaj4XXBjR18p
+ jHYe8T4xGerOn4U+hQ/9e0AeqY2ybtbU+9lCxPQPkFmJ7p39pZuA==
+X-Received: by 2002:a17:907:d11:b0:b80:3738:2f11 with SMTP id
+ a640c23a62f3a-b8760fe0630mr17382066b.13.1768332338305; 
+ Tue, 13 Jan 2026 11:25:38 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 4fb4d7f45d1cf-6507b22c3absm20945603a12.0.2026.01.13.11.25.34
+ 4fb4d7f45d1cf-6507b22c3absm20945603a12.0.2026.01.13.11.25.37
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 13 Jan 2026 11:25:35 -0800 (PST)
+ Tue, 13 Jan 2026 11:25:37 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v3 0/9] net/pcap: improvements and test coverage
-Date: Tue, 13 Jan 2026 11:23:32 -0800
-Message-ID: <20260113192530.116470-1-stephen@networkplumber.org>
+Subject: [PATCH v3 1/9] doc: update features for PCAP PMD
+Date: Tue, 13 Jan 2026 11:23:33 -0800
+Message-ID: <20260113192530.116470-2-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20260106182823.192350-1-stephen@networkplumber.org>
+In-Reply-To: <20260113192530.116470-1-stephen@networkplumber.org>
 References: <20260106182823.192350-1-stephen@networkplumber.org>
+ <20260113192530.116470-1-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -80,40 +81,34 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This series brings several improvements to the PCAP PMD:
+The PCAP PMD supports more features that were not flagged
+in the feature matrix.
 
- - Update documentation to reflect actually supported features
- - Code cleanups: remove unnecessary rte_malloc/rte_memcpy usage,
-   convert flags to bool, remove global variables, avoid volatile
- - Add MTU set support for single interface mode
- - Add Tx offload support
- - Support nanosecond timestamp precision
- - Add comprehensive test suite
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+---
+ doc/guides/nics/features/pcap.ini | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-This was done via mix of new code and AI feedback.
-
-Stephen Hemminger (9):
-  doc: update features for PCAP PMD
-  net/pcap: avoid using rte_malloc and rte_memcpy
-  net/pcap: support MTU set
-  net/pcap: use bool for flags
-  net/pcap: support Tx offloads
-  net/pcap: support nanosecond timestamp precision
-  net/pcap: remove global variables
-  net/pcap: avoid use of volatile
-  test: add test for pcap PMD
-
- app/test/meson.build                  |    2 +
- app/test/test_pmd_pcap.c              | 1801 +++++++++++++++++++++++++
- doc/guides/nics/features/pcap.ini     |   10 +
- drivers/net/pcap/pcap_ethdev.c        |  336 +++--
- drivers/net/pcap/pcap_osdep.h         |    1 +
- drivers/net/pcap/pcap_osdep_freebsd.c |   37 +-
- drivers/net/pcap/pcap_osdep_linux.c   |   21 +
- drivers/net/pcap/pcap_osdep_windows.c |    6 +
- 8 files changed, 2083 insertions(+), 131 deletions(-)
- create mode 100644 app/test/test_pmd_pcap.c
-
+diff --git a/doc/guides/nics/features/pcap.ini b/doc/guides/nics/features/pcap.ini
+index 7fd22b190e..060b2f4df5 100644
+--- a/doc/guides/nics/features/pcap.ini
++++ b/doc/guides/nics/features/pcap.ini
+@@ -4,8 +4,15 @@
+ ; Refer to default.ini for the full list of available PMD features.
+ ;
+ [Features]
++Link status          = Y
++Queue start/stop     = Y
++Scattered Rx         = Y
++Rx Timestamp         = Y
+ Basic stats          = Y
++Stats per queue      = Y
+ Multiprocess aware   = Y
++FreeBSD              = Y
++Linux                = Y
+ ARMv7                = Y
+ ARMv8                = Y
+ Power8               = Y
 -- 
 2.51.0
 
