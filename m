@@ -2,46 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2658D2F32A
-	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Jan 2026 15:19:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A76D6D2F327
+	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Jan 2026 15:19:47 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0B1EA40E42;
-	Tue, 13 Jan 2026 16:15:56 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 2AE2C40E48;
+	Tue, 13 Jan 2026 16:15:57 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
- by mails.dpdk.org (Postfix) with ESMTP id 11F7240E2E
- for <dev@dpdk.org>; Tue, 13 Jan 2026 16:15:52 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 0BCB340E0F
+ for <dev@dpdk.org>; Tue, 13 Jan 2026 16:15:53 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1768317353; x=1799853353;
+ t=1768317354; x=1799853354;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=M0no5rjVAUbbOgL6JT3/gYyXyG2k4I9FgZC0ip4If8w=;
- b=HcR/rlvmJywGDf8ZDCn+rjt8TfxDe5svDmzv51WjuVhmkK9+CScGRwXX
- YKQ5YFxc5WslSMjeq6SAcIXnwjCwTDM8m94YcDwEmNjSf31UEosBA/vjB
- GuyPOkx75BZqn5YEpaLvWf2UQbaEI1v3eUX6uZoMQ5V+Itr6JGIylIwK5
- GtLR8ci+GQP9SDaFVvWLcovHRUXT9AGP+RQrUBY/3XHLW4seP1Zwdb0xy
- uswQ9uMqzPALrh8DFEhj1sITvdzzv1VmMvzevx9HsujlFOgvraBusY1GQ
- whpAPXqwGqS62oRlQkiGa14o0XyfD9nLk7/45Tvh23jmmiawKBJBaOgMq g==;
-X-CSE-ConnectionGUID: N92ArijHTs2+HPl+h1Sfkw==
-X-CSE-MsgGUID: iOra7cIZTlqjbsZiZQVK3g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11670"; a="80969230"
-X-IronPort-AV: E=Sophos;i="6.21,222,1763452800"; d="scan'208";a="80969230"
+ bh=dfgBBF6GtBPDV45owv0mKWQPf1PAAsBRhRpJZ4E+mmI=;
+ b=Mjz7KJctXRYFL1VzPc28Pm/e+miZ6clswLN+dtWSErfMmqcMm05e2saV
+ HFWa004XI/AXb+Hk3gG2InJwWcGCaJzHO8ysBLV+O8MMhO8S6o7gdnN7a
+ HlsrdrJLdWn6Su8V8w+d7Tt5oohO+vI7fQhnw97NZc4LmsCvgiSwZOFq6
+ 4Y9Wn0F0AFhZ55/y/3isf/34TY1V1jlEnms9TwU0fH2ePPb+NvmhL/caB
+ ReaGUN1lVq9mPc6MMgK82rJPq2Ftd0tb4Ka1T5C2hQ7xNVdYpQsJUS4wM
+ sBI9IHVZGz2EbIJCvM5t1N65hpTRLOrgyntKDzCrYmjniHM37XZj6ePxE Q==;
+X-CSE-ConnectionGUID: vS0q9ZP2SvWWyoVeF8XK3A==
+X-CSE-MsgGUID: yekPE6AuSiaCpCU4Mu2DXQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11670"; a="80969234"
+X-IronPort-AV: E=Sophos;i="6.21,222,1763452800"; d="scan'208";a="80969234"
 Received: from orviesa006.jf.intel.com ([10.64.159.146])
  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 13 Jan 2026 07:15:53 -0800
-X-CSE-ConnectionGUID: 9JG/YwEWTqOPjdE3DPv8EQ==
-X-CSE-MsgGUID: DXYONkLGS+iUMrKyb+wk8w==
+ 13 Jan 2026 07:15:54 -0800
+X-CSE-ConnectionGUID: i1HiiZvZRuiXvyh1rHuvUw==
+X-CSE-MsgGUID: kiUq+g0STEqRUvph9+tS5g==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,222,1763452800"; d="scan'208";a="203556666"
+X-IronPort-AV: E=Sophos;i="6.21,222,1763452800"; d="scan'208";a="203556672"
 Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by orviesa006.jf.intel.com with ESMTP; 13 Jan 2026 07:15:52 -0800
+ by orviesa006.jf.intel.com with ESMTP; 13 Jan 2026 07:15:53 -0800
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
-Cc: Bruce Richardson <bruce.richardson@intel.com>,
- Anatoly Burakov <anatoly.burakov@intel.com>
-Subject: [PATCH v2 31/36] net/intel: complete merging simple Tx paths
-Date: Tue, 13 Jan 2026 15:14:55 +0000
-Message-ID: <20260113151505.1871271-32-bruce.richardson@intel.com>
+Cc: Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH v2 32/36] net/intel: use non-volatile stores in simple Tx
+ function
+Date: Tue, 13 Jan 2026 15:14:56 +0000
+Message-ID: <20260113151505.1871271-33-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260113151505.1871271-1-bruce.richardson@intel.com>
 References: <20251219172548.2660777-1-bruce.richardson@intel.com>
@@ -61,294 +61,103 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Complete the deduplication/merger of the ice and i40e Tx simple scalar
-paths.
+The simple Tx code path can be reworked to use non-volatile stores - as
+is the case with the full-featured Tx path - by reusing the existing
+write_txd function (which just needs to be moved up in the header file).
+This gives a small performance boost.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- drivers/net/intel/common/tx_scalar_fns.h | 87 ++++++++++++++++++++++++
- drivers/net/intel/i40e/i40e_rxtx.c       | 74 +-------------------
- drivers/net/intel/ice/ice_rxtx.c         | 74 +-------------------
- 3 files changed, 89 insertions(+), 146 deletions(-)
+ drivers/net/intel/common/tx_scalar_fns.h | 55 +++++++-----------------
+ 1 file changed, 16 insertions(+), 39 deletions(-)
 
 diff --git a/drivers/net/intel/common/tx_scalar_fns.h b/drivers/net/intel/common/tx_scalar_fns.h
-index d472aa24e0..dcdec200ac 100644
+index dcdec200ac..16f802e902 100644
 --- a/drivers/net/intel/common/tx_scalar_fns.h
 +++ b/drivers/net/intel/common/tx_scalar_fns.h
-@@ -127,6 +127,93 @@ ci_tx_free_bufs(struct ci_tx_queue *txq)
- 	return txq->tx_rs_thresh;
- }
+@@ -12,35 +12,13 @@
+ /* depends on common Tx definitions. */
+ #include "tx.h"
  
-+/* Simple burst transmit for descriptor-based simple Tx path
-+ *
-+ * Transmits a burst of packets by filling hardware descriptors with mbuf
-+ * data. Handles ring wrap-around and RS bit management. Performs descriptor
-+ * cleanup when tx_free_thresh is reached.
-+ *
-+ * Returns: number of packets transmitted
-+ */
-+static inline uint16_t
-+ci_xmit_burst_simple(struct ci_tx_queue *txq,
-+		     struct rte_mbuf **tx_pkts,
-+		     uint16_t nb_pkts)
-+{
-+	volatile struct ci_tx_desc *txr = txq->ci_tx_ring;
-+	uint16_t n = 0;
-+
-+	/**
-+	 * Begin scanning the H/W ring for done descriptors when the number
-+	 * of available descriptors drops below tx_free_thresh. For each done
-+	 * descriptor, free the associated buffer.
-+	 */
-+	if (txq->nb_tx_free < txq->tx_free_thresh)
-+		ci_tx_free_bufs(txq);
-+
-+	/* Use available descriptor only */
-+	nb_pkts = (uint16_t)RTE_MIN(txq->nb_tx_free, nb_pkts);
-+	if (unlikely(!nb_pkts))
-+		return 0;
-+
-+	txq->nb_tx_free = (uint16_t)(txq->nb_tx_free - nb_pkts);
-+	if ((txq->tx_tail + nb_pkts) > txq->nb_tx_desc) {
-+		n = (uint16_t)(txq->nb_tx_desc - txq->tx_tail);
-+		ci_tx_fill_hw_ring(txq, tx_pkts, n);
-+		txr[txq->tx_next_rs].cmd_type_offset_bsz |=
-+			rte_cpu_to_le_64(((uint64_t)CI_TX_DESC_CMD_RS) <<
-+					  CI_TXD_QW1_CMD_S);
-+		txq->tx_next_rs = (uint16_t)(txq->tx_rs_thresh - 1);
-+		txq->tx_tail = 0;
-+	}
-+
-+	/* Fill hardware descriptor ring with mbuf data */
-+	ci_tx_fill_hw_ring(txq, tx_pkts + n, (uint16_t)(nb_pkts - n));
-+	txq->tx_tail = (uint16_t)(txq->tx_tail + (nb_pkts - n));
-+
-+	/* Determine if RS bit needs to be set */
-+	if (txq->tx_tail > txq->tx_next_rs) {
-+		txr[txq->tx_next_rs].cmd_type_offset_bsz |=
-+			rte_cpu_to_le_64(((uint64_t)CI_TX_DESC_CMD_RS) <<
-+					  CI_TXD_QW1_CMD_S);
-+		txq->tx_next_rs =
-+			(uint16_t)(txq->tx_next_rs + txq->tx_rs_thresh);
-+		if (txq->tx_next_rs >= txq->nb_tx_desc)
-+			txq->tx_next_rs = (uint16_t)(txq->tx_rs_thresh - 1);
-+	}
-+
-+	if (txq->tx_tail >= txq->nb_tx_desc)
-+		txq->tx_tail = 0;
-+
-+	/* Update the tx tail register */
-+	rte_write32_wc((uint32_t)txq->tx_tail, txq->qtx_tail);
-+
-+	return nb_pkts;
-+}
-+
-+static __rte_always_inline uint16_t
-+ci_xmit_pkts_simple(struct ci_tx_queue *txq,
-+		     struct rte_mbuf **tx_pkts,
-+		     uint16_t nb_pkts)
-+{
-+	uint16_t nb_tx = 0;
-+
-+	if (likely(nb_pkts <= CI_TX_MAX_BURST))
-+		return ci_xmit_burst_simple(txq, tx_pkts, nb_pkts);
-+
-+	while (nb_pkts) {
-+		uint16_t ret, num = RTE_MIN(nb_pkts, CI_TX_MAX_BURST);
-+
-+		ret = ci_xmit_burst_simple(txq, &tx_pkts[nb_tx], num);
-+		nb_tx += ret;
-+		nb_pkts -= ret;
-+		if (ret < num)
-+			break;
-+	}
-+
-+	return nb_tx;
-+}
-+
- /*
-  * Common transmit descriptor cleanup function for Intel drivers.
-  * Used by ice, i40e, iavf, and idpf drivers.
-diff --git a/drivers/net/intel/i40e/i40e_rxtx.c b/drivers/net/intel/i40e/i40e_rxtx.c
-index 22728af980..ac53554234 100644
---- a/drivers/net/intel/i40e/i40e_rxtx.c
-+++ b/drivers/net/intel/i40e/i40e_rxtx.c
-@@ -1012,84 +1012,12 @@ i40e_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
- 			get_context_desc, NULL, NULL);
- }
+-/* Populate 4 descriptors with data from 4 mbufs */
+ static inline void
+-ci_tx_fill_hw_ring_tx4(volatile struct ci_tx_desc *txdp, struct rte_mbuf **pkts)
++write_txd(volatile void *txd, uint64_t qw0, uint64_t qw1)
+ {
+-	uint64_t dma_addr;
+-	uint32_t i;
+-
+-	for (i = 0; i < 4; i++, txdp++, pkts++) {
+-		dma_addr = rte_mbuf_data_iova(*pkts);
+-		txdp->buffer_addr = rte_cpu_to_le_64(dma_addr);
+-		txdp->cmd_type_offset_bsz =
+-			rte_cpu_to_le_64(CI_TX_DESC_DTYPE_DATA |
+-				((uint64_t)CI_TX_DESC_CMD_DEFAULT << CI_TXD_QW1_CMD_S) |
+-				((uint64_t)(*pkts)->data_len << CI_TXD_QW1_TX_BUF_SZ_S));
+-	}
+-}
++	uint64_t *txd_qw =  __rte_assume_aligned(RTE_CAST_PTR(void *, txd), 16);
  
--static inline uint16_t
--tx_xmit_pkts(struct ci_tx_queue *txq,
--	     struct rte_mbuf **tx_pkts,
--	     uint16_t nb_pkts)
+-/* Populate 1 descriptor with data from 1 mbuf */
+-static inline void
+-ci_tx_fill_hw_ring_tx1(volatile struct ci_tx_desc *txdp, struct rte_mbuf **pkts)
 -{
--	volatile struct ci_tx_desc *txr = txq->ci_tx_ring;
--	uint16_t n = 0;
+-	uint64_t dma_addr;
 -
--	/**
--	 * Begin scanning the H/W ring for done descriptors when the number
--	 * of available descriptors drops below tx_free_thresh. For each done
--	 * descriptor, free the associated buffer.
--	 */
--	if (txq->nb_tx_free < txq->tx_free_thresh)
--		ci_tx_free_bufs(txq);
+-	dma_addr = rte_mbuf_data_iova(*pkts);
+-	txdp->buffer_addr = rte_cpu_to_le_64(dma_addr);
+-	txdp->cmd_type_offset_bsz =
+-		rte_cpu_to_le_64(CI_TX_DESC_DTYPE_DATA |
+-			((uint64_t)CI_TX_DESC_CMD_DEFAULT << CI_TXD_QW1_CMD_S) |
+-			((uint64_t)(*pkts)->data_len << CI_TXD_QW1_TX_BUF_SZ_S));
++	txd_qw[0] = rte_cpu_to_le_64(qw0);
++	txd_qw[1] = rte_cpu_to_le_64(qw1);
+ }
+ 
+ /* Fill hardware descriptor ring with mbuf data */
+@@ -60,14 +38,22 @@ ci_tx_fill_hw_ring(struct ci_tx_queue *txq, struct rte_mbuf **pkts,
+ 	for (i = 0; i < mainpart; i += N_PER_LOOP) {
+ 		for (j = 0; j < N_PER_LOOP; ++j)
+ 			(txep + i + j)->mbuf = *(pkts + i + j);
+-		ci_tx_fill_hw_ring_tx4(txdp + i, pkts + i);
++		for (j = 0; j < N_PER_LOOP; ++j)
++			write_txd(txdp + i + j, rte_mbuf_data_iova(*(pkts + i + j)),
++				CI_TX_DESC_DTYPE_DATA |
++				((uint64_t)CI_TX_DESC_CMD_DEFAULT << CI_TXD_QW1_CMD_S) |
++				((uint64_t)(*(pkts + i + j))->data_len << CI_TXD_QW1_TX_BUF_SZ_S));
+ 	}
+ 
+ 	if (unlikely(leftover > 0)) {
+ 		for (i = 0; i < leftover; ++i) {
+-			(txep + mainpart + i)->mbuf = *(pkts + mainpart + i);
+-			ci_tx_fill_hw_ring_tx1(txdp + mainpart + i,
+-					       pkts + mainpart + i);
++			uint16_t idx = mainpart + i;
++			(txep + idx)->mbuf = *(pkts + idx);
++			write_txd(txdp + idx, rte_mbuf_data_iova(*(pkts + idx)),
++				CI_TX_DESC_DTYPE_DATA |
++				((uint64_t)CI_TX_DESC_CMD_DEFAULT << CI_TXD_QW1_CMD_S) |
++				((uint64_t)(*(pkts + idx))->data_len << CI_TXD_QW1_TX_BUF_SZ_S));
++
+ 		}
+ 	}
+ }
+@@ -367,15 +353,6 @@ struct ci_timesstamp_queue_fns {
+ 	write_ts_tail_t write_ts_tail;
+ };
+ 
+-static inline void
+-write_txd(volatile void *txd, uint64_t qw0, uint64_t qw1)
+-{
+-	uint64_t *txd_qw = __rte_assume_aligned(RTE_CAST_PTR(void *, txd), 16);
 -
--	/* Use available descriptor only */
--	nb_pkts = (uint16_t)RTE_MIN(txq->nb_tx_free, nb_pkts);
--	if (unlikely(!nb_pkts))
--		return 0;
--
--	txq->nb_tx_free = (uint16_t)(txq->nb_tx_free - nb_pkts);
--	if ((txq->tx_tail + nb_pkts) > txq->nb_tx_desc) {
--		n = (uint16_t)(txq->nb_tx_desc - txq->tx_tail);
--		ci_tx_fill_hw_ring(txq, tx_pkts, n);
--		txr[txq->tx_next_rs].cmd_type_offset_bsz |=
--			rte_cpu_to_le_64(((uint64_t)CI_TX_DESC_CMD_RS) << CI_TXD_QW1_CMD_S);
--		txq->tx_next_rs = (uint16_t)(txq->tx_rs_thresh - 1);
--		txq->tx_tail = 0;
--	}
--
--	/* Fill hardware descriptor ring with mbuf data */
--	ci_tx_fill_hw_ring(txq, tx_pkts + n, (uint16_t)(nb_pkts - n));
--	txq->tx_tail = (uint16_t)(txq->tx_tail + (nb_pkts - n));
--
--	/* Determine if RS bit needs to be set */
--	if (txq->tx_tail > txq->tx_next_rs) {
--		txr[txq->tx_next_rs].cmd_type_offset_bsz |=
--			rte_cpu_to_le_64(((uint64_t)CI_TX_DESC_CMD_RS) << CI_TXD_QW1_CMD_S);
--		txq->tx_next_rs =
--			(uint16_t)(txq->tx_next_rs + txq->tx_rs_thresh);
--		if (txq->tx_next_rs >= txq->nb_tx_desc)
--			txq->tx_next_rs = (uint16_t)(txq->tx_rs_thresh - 1);
--	}
--
--	if (txq->tx_tail >= txq->nb_tx_desc)
--		txq->tx_tail = 0;
--
--	/* Update the tx tail register */
--	I40E_PCI_REG_WC_WRITE(txq->qtx_tail, txq->tx_tail);
--
--	return nb_pkts;
+-	txd_qw[0] = rte_cpu_to_le_64(qw0);
+-	txd_qw[1] = rte_cpu_to_le_64(qw1);
 -}
 -
- static uint16_t
- i40e_xmit_pkts_simple(void *tx_queue,
- 		      struct rte_mbuf **tx_pkts,
- 		      uint16_t nb_pkts)
- {
--	uint16_t nb_tx = 0;
--
--	if (likely(nb_pkts <= CI_TX_MAX_BURST))
--		return tx_xmit_pkts((struct ci_tx_queue *)tx_queue,
--						tx_pkts, nb_pkts);
--
--	while (nb_pkts) {
--		uint16_t ret, num = (uint16_t)RTE_MIN(nb_pkts,
--						CI_TX_MAX_BURST);
--
--		ret = tx_xmit_pkts((struct ci_tx_queue *)tx_queue,
--						&tx_pkts[nb_tx], num);
--		nb_tx = (uint16_t)(nb_tx + ret);
--		nb_pkts = (uint16_t)(nb_pkts - ret);
--		if (ret < num)
--			break;
--	}
--
--	return nb_tx;
-+	return ci_xmit_pkts_simple(tx_queue, tx_pkts, nb_pkts);
- }
- 
- #ifndef RTE_ARCH_X86
-diff --git a/drivers/net/intel/ice/ice_rxtx.c b/drivers/net/intel/ice/ice_rxtx.c
-index 468c039ab1..ed82a84dc5 100644
---- a/drivers/net/intel/ice/ice_rxtx.c
-+++ b/drivers/net/intel/ice/ice_rxtx.c
-@@ -3235,84 +3235,12 @@ ice_tx_done_cleanup(void *txq, uint32_t free_cnt)
- 		return ice_tx_done_cleanup_full(q, free_cnt);
- }
- 
--static inline uint16_t
--tx_xmit_pkts(struct ci_tx_queue *txq,
--	     struct rte_mbuf **tx_pkts,
--	     uint16_t nb_pkts)
--{
--	volatile struct ci_tx_desc *txr = txq->ci_tx_ring;
--	uint16_t n = 0;
--
--	/**
--	 * Begin scanning the H/W ring for done descriptors when the number
--	 * of available descriptors drops below tx_free_thresh. For each done
--	 * descriptor, free the associated buffer.
--	 */
--	if (txq->nb_tx_free < txq->tx_free_thresh)
--		ci_tx_free_bufs(txq);
--
--	/* Use available descriptor only */
--	nb_pkts = (uint16_t)RTE_MIN(txq->nb_tx_free, nb_pkts);
--	if (unlikely(!nb_pkts))
--		return 0;
--
--	txq->nb_tx_free = (uint16_t)(txq->nb_tx_free - nb_pkts);
--	if ((txq->tx_tail + nb_pkts) > txq->nb_tx_desc) {
--		n = (uint16_t)(txq->nb_tx_desc - txq->tx_tail);
--		ci_tx_fill_hw_ring(txq, tx_pkts, n);
--		txr[txq->tx_next_rs].cmd_type_offset_bsz |=
--			rte_cpu_to_le_64(((uint64_t)CI_TX_DESC_CMD_RS) << CI_TXD_QW1_CMD_S);
--		txq->tx_next_rs = (uint16_t)(txq->tx_rs_thresh - 1);
--		txq->tx_tail = 0;
--	}
--
--	/* Fill hardware descriptor ring with mbuf data */
--	ci_tx_fill_hw_ring(txq, tx_pkts + n, (uint16_t)(nb_pkts - n));
--	txq->tx_tail = (uint16_t)(txq->tx_tail + (nb_pkts - n));
--
--	/* Determine if RS bit needs to be set */
--	if (txq->tx_tail > txq->tx_next_rs) {
--		txr[txq->tx_next_rs].cmd_type_offset_bsz |=
--			rte_cpu_to_le_64(((uint64_t)CI_TX_DESC_CMD_RS) << CI_TXD_QW1_CMD_S);
--		txq->tx_next_rs =
--			(uint16_t)(txq->tx_next_rs + txq->tx_rs_thresh);
--		if (txq->tx_next_rs >= txq->nb_tx_desc)
--			txq->tx_next_rs = (uint16_t)(txq->tx_rs_thresh - 1);
--	}
--
--	if (txq->tx_tail >= txq->nb_tx_desc)
--		txq->tx_tail = 0;
--
--	/* Update the tx tail register */
--	ICE_PCI_REG_WC_WRITE(txq->qtx_tail, txq->tx_tail);
--
--	return nb_pkts;
--}
--
- static uint16_t
- ice_xmit_pkts_simple(void *tx_queue,
- 		     struct rte_mbuf **tx_pkts,
- 		     uint16_t nb_pkts)
- {
--	uint16_t nb_tx = 0;
--
--	if (likely(nb_pkts <= CI_TX_MAX_BURST))
--		return tx_xmit_pkts((struct ci_tx_queue *)tx_queue,
--				    tx_pkts, nb_pkts);
--
--	while (nb_pkts) {
--		uint16_t ret, num = (uint16_t)RTE_MIN(nb_pkts,
--						      CI_TX_MAX_BURST);
--
--		ret = tx_xmit_pkts((struct ci_tx_queue *)tx_queue,
--				   &tx_pkts[nb_tx], num);
--		nb_tx = (uint16_t)(nb_tx + ret);
--		nb_pkts = (uint16_t)(nb_pkts - ret);
--		if (ret < num)
--			break;
--	}
--
--	return nb_tx;
-+	return ci_xmit_pkts_simple(tx_queue, tx_pkts, nb_pkts);
- }
- 
- static const struct ci_rx_path_info ice_rx_path_infos[] = {
+ static inline uint16_t
+ ci_xmit_pkts(struct ci_tx_queue *txq,
+ 	     struct rte_mbuf **tx_pkts,
 -- 
 2.51.0
 
