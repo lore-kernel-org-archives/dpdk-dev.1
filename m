@@ -2,46 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1D91D2F325
-	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Jan 2026 15:16:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF6ECD2F327
+	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Jan 2026 15:16:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9BE7840698;
-	Tue, 13 Jan 2026 16:15:27 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id A09AF4068A;
+	Tue, 13 Jan 2026 16:15:28 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
- by mails.dpdk.org (Postfix) with ESMTP id 1AC4540672
- for <dev@dpdk.org>; Tue, 13 Jan 2026 16:15:24 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id C4EBA40672
+ for <dev@dpdk.org>; Tue, 13 Jan 2026 16:15:25 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1768317325; x=1799853325;
+ t=1768317326; x=1799853326;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=N8iAKX+X5cCIm3qSSjsnP3d+9k3naiTQ2/vgY5djJCA=;
- b=EUQ6/hmHnENK0LmwGFhQ/FDbgio5z5B4IZSbVszX+r0SGrodeo8XlBsL
- Cq1fD4CcCGX86NofpIDxe5CWDTxfrOjKcpawNNjE2QwsNquSR8/idr6om
- XgxjBuLv4RQDkbg7i/BlMx0WOynLBIRI1L9GkMcd7YTM4GxX3ekyr9tFS
- iAvrwmYbXRIXkqukXo34d0Bz9I+0L1UarXgWSWnTcV3LLnNDAYDO9ihRJ
- sQcVanknub20ZSmPF68ePTNmv5qMmahXNikW5c6Zk1d6tyacZf2asProj
- 0f2Bz8W7q8GSTqx/PDHNOR8bcSp0OcJ9gpWbI6313IP3yOAUpBV058T2V Q==;
-X-CSE-ConnectionGUID: pGnmhPbuSE2kCkuQ3qXS1g==
-X-CSE-MsgGUID: uN2jISDUQq25CiJI1PSzBA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11670"; a="80969147"
-X-IronPort-AV: E=Sophos;i="6.21,222,1763452800"; d="scan'208";a="80969147"
+ bh=Sx+5/yO5CYcjRiQKjzP1UM5QilaUZQqOIXcWNZ/7a4U=;
+ b=AbC0sub2GKL9ZKi1esryv7BY6JeTjLnIyzrb+41xvGUfbsvSFfIAtaiY
+ uOtsYWP6apZS7GrajpVt+qk7OPfG7ZY9Z7orLB1Mqg54DO+JCNTdOQtY2
+ XTVg+ZEMgWsl23q1QN5cLuC+syiGxCQVfjvvB/rUyWfZyk0jJaEgNzPsF
+ KYvmziFf9fx7psIEXwhBeuqOHuI9nZLsR3f8sNSRc/hN7eyUz8clabyr6
+ udx0aU//oXvCYj67InCgbTI6nbiQNlTsiHKGG+v1daw23ZaTYs9cL6DaN
+ tv0t4vvQTp7HoIJVTN8KjVvTAy6jDtlCqqgF9EIdU+TzwtlsFqI0MgCg/ w==;
+X-CSE-ConnectionGUID: Gg2ceJHzR62nTbKX3WXcsQ==
+X-CSE-MsgGUID: TIaZp6XfSOudslOu70+WzA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11670"; a="80969152"
+X-IronPort-AV: E=Sophos;i="6.21,222,1763452800"; d="scan'208";a="80969152"
 Received: from orviesa006.jf.intel.com ([10.64.159.146])
  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 13 Jan 2026 07:15:24 -0800
-X-CSE-ConnectionGUID: HPmVEkRhSVec0q37S/JWyA==
-X-CSE-MsgGUID: cm1Q+zGDSaSGAYmXmAjoQg==
+ 13 Jan 2026 07:15:25 -0800
+X-CSE-ConnectionGUID: XpRBxutbSmOvwZ9PCXuCSQ==
+X-CSE-MsgGUID: +gxEdA3vSBaa6SV8NOkruQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,222,1763452800"; d="scan'208";a="203556565"
+X-IronPort-AV: E=Sophos;i="6.21,222,1763452800"; d="scan'208";a="203556571"
 Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by orviesa006.jf.intel.com with ESMTP; 13 Jan 2026 07:15:23 -0800
+ by orviesa006.jf.intel.com with ESMTP; 13 Jan 2026 07:15:25 -0800
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
-Cc: Bruce Richardson <bruce.richardson@intel.com>,
- Anatoly Burakov <anatoly.burakov@intel.com>
-Subject: [PATCH v2 07/36] net/ice: refactor context descriptor handling
-Date: Tue, 13 Jan 2026 15:14:31 +0000
-Message-ID: <20260113151505.1871271-8-bruce.richardson@intel.com>
+Cc: Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH v2 08/36] net/i40e: refactor context descriptor handling
+Date: Tue, 13 Jan 2026 15:14:32 +0000
+Message-ID: <20260113151505.1871271-9-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260113151505.1871271-1-bruce.richardson@intel.com>
 References: <20251219172548.2660777-1-bruce.richardson@intel.com>
@@ -61,30 +60,28 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Create a single function to manage all context descriptor handling,
-which returns either 0 or 1 depending on whether a descriptor is needed
-or not, as well as returning directly the descriptor contents if
-relevant.
+move all context descriptor handling to a single function, as with the
+ice driver, and use the same function signature as that driver.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- drivers/net/intel/ice/ice_rxtx.c | 96 ++++++++++++++++++--------------
- 1 file changed, 55 insertions(+), 41 deletions(-)
+ drivers/net/intel/i40e/i40e_rxtx.c | 110 ++++++++++++++++-------------
+ 1 file changed, 59 insertions(+), 51 deletions(-)
 
-diff --git a/drivers/net/intel/ice/ice_rxtx.c b/drivers/net/intel/ice/ice_rxtx.c
-index 6599e4d57f..f9dcc30208 100644
---- a/drivers/net/intel/ice/ice_rxtx.c
-+++ b/drivers/net/intel/ice/ice_rxtx.c
-@@ -3040,7 +3040,7 @@ ice_calc_context_desc(uint64_t flags)
+diff --git a/drivers/net/intel/i40e/i40e_rxtx.c b/drivers/net/intel/i40e/i40e_rxtx.c
+index 6598450d8a..7646ea07aa 100644
+--- a/drivers/net/intel/i40e/i40e_rxtx.c
++++ b/drivers/net/intel/i40e/i40e_rxtx.c
+@@ -1004,7 +1004,7 @@ i40e_calc_context_desc(uint64_t flags)
  
- /* set ice TSO context descriptor */
+ /* set i40e TSO context descriptor */
  static inline uint64_t
--ice_set_tso_ctx(struct rte_mbuf *mbuf, union ci_tx_offload tx_offload)
-+ice_set_tso_ctx(uint64_t ol_flags, const struct rte_mbuf *mbuf, union ci_tx_offload tx_offload)
+-i40e_set_tso_ctx(struct rte_mbuf *mbuf, union ci_tx_offload tx_offload)
++i40e_set_tso_ctx(uint64_t ol_flags, const struct rte_mbuf *mbuf, union ci_tx_offload tx_offload)
  {
  	uint64_t ctx_desc = 0;
  	uint32_t cd_cmd, hdr_len, cd_tso_len;
-@@ -3051,7 +3051,7 @@ ice_set_tso_ctx(struct rte_mbuf *mbuf, union ci_tx_offload tx_offload)
+@@ -1015,7 +1015,7 @@ i40e_set_tso_ctx(struct rte_mbuf *mbuf, union ci_tx_offload tx_offload)
  	}
  
  	hdr_len = tx_offload.l2_len + tx_offload.l3_len + tx_offload.l4_len;
@@ -92,8 +89,8 @@ index 6599e4d57f..f9dcc30208 100644
 +	hdr_len += (ol_flags & RTE_MBUF_F_TX_TUNNEL_MASK) ?
  		   tx_offload.outer_l2_len + tx_offload.outer_l3_len : 0;
  
- 	cd_cmd = CI_TX_CTX_DESC_TSO;
-@@ -3063,6 +3063,51 @@ ice_set_tso_ctx(struct rte_mbuf *mbuf, union ci_tx_offload tx_offload)
+ 	cd_cmd = I40E_TX_CTX_DESC_TSO;
+@@ -1029,6 +1029,54 @@ i40e_set_tso_ctx(struct rte_mbuf *mbuf, union ci_tx_offload tx_offload)
  	return ctx_desc;
  }
  
@@ -105,34 +102,37 @@ index 6599e4d57f..f9dcc30208 100644
 + */
 +static __rte_always_inline uint16_t
 +get_context_desc(uint64_t ol_flags, const struct rte_mbuf *tx_pkt,
-+	const union ci_tx_offload *tx_offload, const struct ci_tx_queue *txq,
-+	uint32_t *td_offset, uint64_t *qw0, uint64_t *qw1)
++		 const union ci_tx_offload *tx_offload,
++		 const struct ci_tx_queue *txq __rte_unused,
++		 uint32_t *td_offset, uint64_t *qw0, uint64_t *qw1)
 +{
 +	uint16_t cd_l2tag2 = 0;
-+	uint64_t cd_type_cmd_tso_mss = ICE_TX_DESC_DTYPE_CTX;
++	uint64_t cd_type_cmd_tso_mss = I40E_TX_DESC_DTYPE_CONTEXT;
 +	uint32_t cd_tunneling_params = 0;
-+	uint64_t ptp_tx_index = txq->ice_vsi->adapter->ptp_tx_index;
 +
-+	if (ice_calc_context_desc(ol_flags) == 0)
++	if (i40e_calc_context_desc(ol_flags) == 0)
 +		return 0;
 +
 +	if (ol_flags & RTE_MBUF_F_TX_TUNNEL_MASK) {
 +		*td_offset |= (tx_offload->outer_l2_len >> 1) << CI_TX_DESC_LEN_MACLEN_S;
-+		ice_parse_tunneling_params(ol_flags, *tx_offload, &cd_tunneling_params);
++		i40e_parse_tunneling_params(ol_flags, *tx_offload, &cd_tunneling_params);
 +	}
 +
-+	if (ol_flags & (RTE_MBUF_F_TX_TCP_SEG | RTE_MBUF_F_TX_UDP_SEG))
-+		cd_type_cmd_tso_mss |= ice_set_tso_ctx(ol_flags, tx_pkt, *tx_offload);
-+	else if (ol_flags & RTE_MBUF_F_TX_IEEE1588_TMST)
-+		cd_type_cmd_tso_mss |=
-+			((uint64_t)CI_TX_CTX_DESC_TSYN << CI_TXD_QW1_CMD_S) |
-+			((ptp_tx_index << ICE_TXD_CTX_QW1_TSYN_S) & ICE_TXD_CTX_QW1_TSYN_M);
-+
++	if (ol_flags & RTE_MBUF_F_TX_TCP_SEG) {
++		cd_type_cmd_tso_mss |= i40e_set_tso_ctx(ol_flags, tx_pkt, *tx_offload);
++	} else {
++#ifdef RTE_LIBRTE_IEEE1588
++		if (ol_flags & RTE_MBUF_F_TX_IEEE1588_TMST)
++			cd_type_cmd_tso_mss |=
++				((uint64_t)I40E_TX_CTX_DESC_TSYN << I40E_TXD_CTX_QW1_CMD_SHIFT);
++#endif
++	}
 +
 +	/* TX context descriptor based double VLAN insert */
 +	if (ol_flags & RTE_MBUF_F_TX_QINQ) {
 +		cd_l2tag2 = tx_pkt->vlan_tci_outer;
-+		cd_type_cmd_tso_mss |= ((uint64_t)CI_TX_CTX_DESC_IL2TAG2 << CI_TXD_QW1_CMD_S);
++		cd_type_cmd_tso_mss |=
++				((uint64_t)I40E_TX_CTX_DESC_IL2TAG2 << I40E_TXD_CTX_QW1_CMD_SHIFT);
 +	}
 +
 +	*qw0 = rte_cpu_to_le_32(cd_tunneling_params) |
@@ -143,100 +143,100 @@ index 6599e4d57f..f9dcc30208 100644
 +}
 +
  uint16_t
- ice_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
+ i40e_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
  {
-@@ -3073,7 +3118,6 @@ ice_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
- 	struct ci_tx_entry *txe, *txn;
+@@ -1039,7 +1087,6 @@ i40e_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
+ 	volatile struct ci_tx_desc *txr;
  	struct rte_mbuf *tx_pkt;
  	struct rte_mbuf *m_seg;
 -	uint32_t cd_tunneling_params;
  	uint16_t tx_id;
- 	uint16_t ts_id = -1;
  	uint16_t nb_tx;
-@@ -3102,20 +3146,24 @@ ice_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
- 		(void)ci_tx_xmit_cleanup(txq);
- 
- 	for (nb_tx = 0; nb_tx < nb_pkts; nb_tx++) {
-+		uint64_t cd_qw0, cd_qw1;
- 		tx_pkt = *tx_pkts++;
- 
- 		td_cmd = 0;
- 		td_tag = 0;
- 		td_offset = 0;
- 		ol_flags = tx_pkt->ol_flags;
-+
- 		tx_offload.l2_len = tx_pkt->l2_len;
- 		tx_offload.l3_len = tx_pkt->l3_len;
- 		tx_offload.outer_l2_len = tx_pkt->outer_l2_len;
- 		tx_offload.outer_l3_len = tx_pkt->outer_l3_len;
- 		tx_offload.l4_len = tx_pkt->l4_len;
+ 	uint32_t td_cmd;
+@@ -1080,7 +1127,9 @@ i40e_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
  		tx_offload.tso_segsz = tx_pkt->tso_segsz;
-+
- 		/* Calculate the number of context descriptors needed. */
--		nb_ctx = ice_calc_context_desc(ol_flags);
-+		nb_ctx = get_context_desc(ol_flags, tx_pkt, &tx_offload,
-+			txq, &td_offset, &cd_qw0, &cd_qw1);
  
- 		/* The number of descriptors that must be allocated for
- 		 * a packet equals to the number of the segments of that
-@@ -3157,15 +3205,6 @@ ice_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
- 			td_tag = tx_pkt->vlan_tci;
- 		}
+ 		/* Calculate the number of context descriptors needed. */
+-		nb_ctx = i40e_calc_context_desc(ol_flags);
++		uint64_t cd_qw0 = 0, cd_qw1 = 0;
++		nb_ctx = get_context_desc(ol_flags, tx_pkt, &tx_offload, txq, &td_offset,
++				&cd_qw0, &cd_qw1);
+ 
+ 		/**
+ 		 * The number of descriptors that must be allocated for
+@@ -1126,14 +1175,6 @@ i40e_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
+ 		/* Always enable CRC offload insertion */
+ 		td_cmd |= CI_TX_DESC_CMD_ICRC;
  
 -		/* Fill in tunneling parameters if necessary */
 -		cd_tunneling_params = 0;
 -		if (ol_flags & RTE_MBUF_F_TX_TUNNEL_MASK) {
 -			td_offset |= (tx_offload.outer_l2_len >> 1)
--				<< CI_TX_DESC_LEN_MACLEN_S;
--			ice_parse_tunneling_params(ol_flags, tx_offload,
--						   &cd_tunneling_params);
+-					<< CI_TX_DESC_LEN_MACLEN_S;
+-			i40e_parse_tunneling_params(ol_flags, tx_offload,
+-						    &cd_tunneling_params);
 -		}
--
  		/* Enable checksum offloading */
- 		if (ol_flags & ICE_TX_CKSUM_OFFLOAD_MASK)
- 			ice_txd_enable_checksum(ol_flags, &td_cmd,
-@@ -3173,11 +3212,7 @@ ice_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
+ 		if (ol_flags & I40E_TX_CKSUM_OFFLOAD_MASK)
+ 			i40e_txd_enable_checksum(ol_flags, &td_cmd,
+@@ -1141,12 +1182,7 @@ i40e_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
  
  		if (nb_ctx) {
  			/* Setup TX context descriptor if required */
--			volatile struct ice_tx_ctx_desc *ctx_txd =
--				(volatile struct ice_tx_ctx_desc *)
--					&ci_tx_ring[tx_id];
+-			volatile struct i40e_tx_context_desc *ctx_txd =
+-				(volatile struct i40e_tx_context_desc *)\
+-							&txr[tx_id];
 -			uint16_t cd_l2tag2 = 0;
--			uint64_t cd_type_cmd_tso_mss = ICE_TX_DESC_DTYPE_CTX;
-+			uint64_t *ctx_txd = RTE_CAST_PTR(uint64_t *, &ci_tx_ring[tx_id]);
+-			uint64_t cd_type_cmd_tso_mss =
+-				I40E_TX_DESC_DTYPE_CONTEXT;
++			uint64_t *desc = RTE_CAST_PTR(uint64_t *, &txr[tx_id]);
  
  			txn = &sw_ring[txe->next_id];
  			RTE_MBUF_PREFETCH_TO_FREE(txn->mbuf);
-@@ -3186,29 +3221,8 @@ ice_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
+@@ -1155,41 +1191,13 @@ i40e_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
  				txe->mbuf = NULL;
  			}
  
--			if (ol_flags & (RTE_MBUF_F_TX_TCP_SEG | RTE_MBUF_F_TX_UDP_SEG))
+-			/* TSO enabled means no timestamp */
+-			if (ol_flags & RTE_MBUF_F_TX_TCP_SEG)
 -				cd_type_cmd_tso_mss |=
--					ice_set_tso_ctx(tx_pkt, tx_offload);
--			else if (ol_flags & RTE_MBUF_F_TX_IEEE1588_TMST)
--				cd_type_cmd_tso_mss |=
--					((uint64_t)CI_TX_CTX_DESC_TSYN <<
--					CI_TXD_QW1_CMD_S) |
--					 (((uint64_t)txq->ice_vsi->adapter->ptp_tx_index <<
--					 ICE_TXD_CTX_QW1_TSYN_S) & ICE_TXD_CTX_QW1_TSYN_M);
+-					i40e_set_tso_ctx(tx_pkt, tx_offload);
+-			else {
+-#ifdef RTE_LIBRTE_IEEE1588
+-				if (ol_flags & RTE_MBUF_F_TX_IEEE1588_TMST)
+-					cd_type_cmd_tso_mss |=
+-						((uint64_t)I40E_TX_CTX_DESC_TSYN <<
+-						 I40E_TXD_CTX_QW1_CMD_SHIFT);
+-#endif
+-			}
 -
 -			ctx_txd->tunneling_params =
 -				rte_cpu_to_le_32(cd_tunneling_params);
--
--			/* TX context descriptor based double VLAN insert */
 -			if (ol_flags & RTE_MBUF_F_TX_QINQ) {
 -				cd_l2tag2 = tx_pkt->vlan_tci_outer;
 -				cd_type_cmd_tso_mss |=
--					((uint64_t)CI_TX_CTX_DESC_IL2TAG2 <<
--					 CI_TXD_QW1_CMD_S);
+-					((uint64_t)I40E_TX_CTX_DESC_IL2TAG2 <<
+-						I40E_TXD_CTX_QW1_CMD_SHIFT);
 -			}
 -			ctx_txd->l2tag2 = rte_cpu_to_le_16(cd_l2tag2);
--			ctx_txd->qw1 =
+-			ctx_txd->type_cmd_tso_mss =
 -				rte_cpu_to_le_64(cd_type_cmd_tso_mss);
-+			ctx_txd[0] = cd_qw0;
-+			ctx_txd[1] = cd_qw1;
++			desc[0] = cd_qw0;
++			desc[1] = cd_qw1;
+ 
+ 			PMD_TX_LOG(DEBUG, "mbuf: %p, TCD[%u]: "
+-				"tunneling_params: %#x; "
+-				"l2tag2: %#hx; "
+-				"rsvd: %#hx; "
+-				"type_cmd_tso_mss: %#"PRIx64";",
+-				tx_pkt, tx_id,
+-				ctx_txd->tunneling_params,
+-				ctx_txd->l2tag2,
+-				ctx_txd->rsvd,
+-				ctx_txd->type_cmd_tso_mss);
++				"qw0: %#"PRIx64"; "
++				"qw1: %#"PRIx64";",
++				tx_pkt, tx_id, cd_qw0, cd_qw1);
  
  			txe->last_id = tx_last;
  			tx_id = txe->next_id;
