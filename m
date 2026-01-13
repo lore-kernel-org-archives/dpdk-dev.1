@@ -2,72 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 057FCD2F35C
-	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Jan 2026 19:26:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB1E0D29DE5
+	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Jan 2026 19:52:29 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6BE88406A2;
-	Tue, 13 Jan 2026 20:25:59 +0100 (CET)
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com
- [209.85.208.54]) by mails.dpdk.org (Postfix) with ESMTP id 4C77A40693
- for <dev@dpdk.org>; Tue, 13 Jan 2026 20:25:56 +0100 (CET)
-Received: by mail-ed1-f54.google.com with SMTP id
- 4fb4d7f45d1cf-64d1ef53cf3so11620405a12.0
- for <dev@dpdk.org>; Tue, 13 Jan 2026 11:25:56 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id F29AA402DE;
+	Tue, 13 Jan 2026 20:52:28 +0100 (CET)
+Received: from mail-ed1-f66.google.com (mail-ed1-f66.google.com
+ [209.85.208.66]) by mails.dpdk.org (Postfix) with ESMTP id 7CF764028B
+ for <dev@dpdk.org>; Tue, 13 Jan 2026 20:52:27 +0100 (CET)
+Received: by mail-ed1-f66.google.com with SMTP id
+ 4fb4d7f45d1cf-64bea6c5819so12312688a12.3
+ for <dev@dpdk.org>; Tue, 13 Jan 2026 11:52:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768332356;
- x=1768937156; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768333947;
+ x=1768938747; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=GTq1Wt5vqvNlwY4b2b4KlKT+8Ub9AZzbNi2WfN/pc+s=;
- b=mwD5qaUZGEEIUSzspezEqWDlMn5/BLd3xdq0PDac3K3ejmKoKxg2S4YhDIue8KNVvM
- e9BJYE8SisHvnY+cXmMHbyoizlj6Tr3tmGB579fMHoFxUASPiC6ew7yWotmvifiNUHNp
- lBpzG+2DHEkA5occM0D6iCqfqM0CjnLBc1tMGAL7lVmkspfxVgDNcVHCq0NMeTNX3cJQ
- zsX1mojbhZrXeBpPG1BvQtjWqXh5lQBoI3KLTytXog5X9mauKl3yDC6rxOmhVIsNgPhS
- LV9w/u3WuSisUAh67JJutg7liSWYchlPYf9xVa05sXVakJFIHRtmL2gRTVP7VAQZTvG2
- 5MoA==
+ bh=91/ptWEqYo2U1p0S4Szxg+yu1em9/9YkNKZuWYTPTI0=;
+ b=FznXCCno6MmvUmoTdxx3Go9zkitTqQAY53o+f/AJKhBiMMJF7iD0AGlixI5Dgk/RvM
+ gATdlU0U3nFUXNqEKyE1nr1fmiC64QXMdAuMdw7Uulq+5l2hfmgmYR8afRiaqIkUFvUQ
+ yVa0sao9vqfqWWkJO+pxDGnMVMnosHaeJUcecelBnhNOfdAN2Obi8q65dOxhwf044wZ6
+ v1B/G9AUKeZVFT79AYIfnllnOm4vt0rTNcibDeVoB/8lZrcP0jPhjJnsUmc5h37A7cvz
+ +HPJeQK0mpF6pAMS/FmMK2hRFRjbvANRzA7YDW4yJsfxteimqLDtP+bqXsEpEajmeqPF
+ HamQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768332356; x=1768937156;
+ d=1e100.net; s=20230601; t=1768333947; x=1768938747;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=GTq1Wt5vqvNlwY4b2b4KlKT+8Ub9AZzbNi2WfN/pc+s=;
- b=w83CoGMM0z+qPgpcX03CmqUOwiDIg3cnkrJZGuTznPFNVGNOHhSH8wMrHv+EACfS58
- yZPWL6gZNlqrdTXbcMuMgsjjFtNf/U2NzNjlMX4cbztl7ICW8OH6ETDHnnUKL9Qy6I75
- KRsL5QaP5ju45e+nIHUaJRIjdxDGUxL5P3vK+MrSXsXsmAUAN1+RA2qd7/fNm2zzIiNS
- 42RiAr0nCIsh9hoiTugLidxVTnQ4vw2Hy6lPervFoEjmUNUysekKuQHocnw1ZSLYZSXR
- dckOprHyuJRa9Da1o6Zd0m8vt4mJanSbcflbFM11TTWOY772mN54rAatdTF+AqGwA3F/
- lACw==
-X-Gm-Message-State: AOJu0YynFuiSfttf7MgqUJ9pgxTgrj8oz7m0ImI500Lxi3ZbBbOPIKN1
- veTlow78z4xPD6xLUk/T6qa5X0OrKDJNRwbY3yfJp8Dp4L7wewPp1brS/iG1E9VczetjdAItdmy
- lbYk9
-X-Gm-Gg: AY/fxX6tkZu9U1DgnwHJlIl2oc1Rymp9IvJB1e6YCoCIfNJZ67MDP12MG0+MXoFQPOe
- p7mgw4vZImVAWgNQPTFbCq0OP4BuawWk9AQXvLpp2dswsp4uugXu7jD/v9eVGxN6MkvyBnQ34wk
- VvBraIL7Bgv9fyg5ZiSQNzSIRN7KFJY7BdZyyt5e+vLQdIy+lL9PTKXbQtUPPlNSprMNVAKndmo
- lZakifE9HGWZtoUM9pSBEoDbZ3FQ8d+X55ODbwGJpuMBqwNh4KjnROOlEfyBApaVPf6wl5l8dR2
- 7rbYIOwPS0xKJWdZaCdJ8VRNtnalhrb7tHsZ+luilUiXV8lKSWnU4j548lqwgIXBQIr7U9PUOGq
- bpasfJRxkRNOEtjuD+bcZHgqvv5/qLjXohlmXxWKd0rTGZmWqRp/XXsPOUe//wGJlnHlLSS/kGQ
- WovF/jNFWu9R+r3qz6gl6LqXyTC6ziHbyloapY8hxtsbTrfQ/TnA==
-X-Received: by 2002:a05:6402:2354:b0:64b:7307:9b1f with SMTP id
- 4fb4d7f45d1cf-653ebf7771emr122116a12.0.1768332355552; 
- Tue, 13 Jan 2026 11:25:55 -0800 (PST)
-Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
+ bh=91/ptWEqYo2U1p0S4Szxg+yu1em9/9YkNKZuWYTPTI0=;
+ b=MYx2JDwEm4iX9DoYZnCA9HH+I5Y8GVfpoRal0u/5zm6Q2/2rpB9N2zjSQrx3JhH4jf
+ MwP23oe3bhE4y+rcO93JGkLW1oqn+myT5TcDSmqH/iZoT4MtmJ3XOaKhsvJfThh2avKC
+ PYVpUbY8R7NtypT+6BI/O8mnXmjG68g50LSQlKdgvb5CuxrqfknP1bPW/1A4UKa9ScSk
+ xjdtD1s7rvfM9CoQHGdq9zFMzL7XJmi07W+5nFJaDRJm94LkHMM8gguW//weV5tcTVAs
+ dSSyzgv5a6bdgt0777qrfTP7xSOOeJrLknykRpiuXV1IujstgrHYoWOmy4RXX2Kicjoa
+ CFAg==
+X-Gm-Message-State: AOJu0YzUH6QVXuET7ZtjsipBAG5/YZAdDHlxcG9sIcxHScg+edXXT4p2
+ 7IXjBsoXoFHox8oWw2J/yJApEMZqnSKY2km0sj67PE26qevwtpkWhIep3Bl6U6khh8I=
+X-Gm-Gg: AY/fxX7UsFqcBo3fwul2hOrNKuAtlqfBUhBCXWPajazRX9FQOXcPL2AgkQ+wxQi3J6L
+ YV/WAcW3TCdAWhe052uchZKASnJHvI72vQ4PNU71SkWRtBWFDppLKVJoj8CIed7vREGQ9x3LSH0
+ qdoWCkjihl+FfNFF/3RIY0OS+J9M6600uHTBACilharNwWMc7wuWrzTQeQY+VhbyqVgzeYE7mOf
+ 8+1v4g8GV4rlzRrH6Ar638tzviB17OEYVmbJtVT1V/5RQ7zAajbSb0wJB7SYjEpHuXMVcaWE1fA
+ ZviVKDA2nI3DVXCkqpIxfQltze9VAmjbg9rMcIW/9KmZOlms+jqBRNZraMaymubcNXCDONuR9CW
+ mABh2mwPD9TIjLlOlLU60ljatLYlFvWklMotXIUSpg1DhMoAeJ8oGIgEM/0xw/OeLNiru14B5xH
+ KBqbhnB6oJfuqoKSwyuk0K3SCJCfB+kd4u7K4CChO6IVlOTHBLshjz
+X-Received: by 2002:a17:907:7b84:b0:b7d:3728:7d11 with SMTP id
+ a640c23a62f3a-b87612c5bc7mr21433366b.50.1768333946886; 
+ Tue, 13 Jan 2026 11:52:26 -0800 (PST)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 4fb4d7f45d1cf-6507b22c3absm20945603a12.0.2026.01.13.11.25.53
+ a640c23a62f3a-b87023a8a33sm909261366b.18.2026.01.13.11.52.25
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 13 Jan 2026 11:25:54 -0800 (PST)
+ Tue, 13 Jan 2026 11:52:26 -0800 (PST)
+Date: Tue, 13 Jan 2026 11:52:21 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v3 9/9] test: add test for pcap PMD
-Date: Tue, 13 Jan 2026 11:23:41 -0800
-Message-ID: <20260113192530.116470-10-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20260113192530.116470-1-stephen@networkplumber.org>
-References: <20260106182823.192350-1-stephen@networkplumber.org>
- <20260113192530.116470-1-stephen@networkplumber.org>
+To: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+Cc: dev@dpdk.org, bruce.richardson@intel.com, anatoly.burakov@intel.com,
+ thomas@monjalon.net, andrew.rybchenko@oktetlabs.ru
+Subject: Re: [RFC PATCH 1/6] ethdev: extend and refactor DCB configuration
+Message-ID: <20260113115221.5e5fdd54@phoenix.local>
+In-Reply-To: <20250830171706.428977-2-vladimir.medvedkin@intel.com>
+References: <20250830171706.428977-1-vladimir.medvedkin@intel.com>
+ <20250830171706.428977-2-vladimir.medvedkin@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,1844 +81,226 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This test was generated by Claude AI with some prompting and
-pointing at existing ring PMD test. It tests basic operations,
-timestamps, jumbo frame, and multiple queues.
+On Sat, 30 Aug 2025 17:17:01 +0000
+Vladimir Medvedkin <vladimir.medvedkin@intel.com> wrote:
 
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+> Currently there are two structutes defined for DCB configuration, one for
+> RX and one for TX. They do have slight semantic difference, but in terms
+> of their structure they are identical. Refactor DCB configuration API to
+> use common structute for both TX and RX.
+>=20
+> Additionally, current structure do not reflect everything that is
+> required by the DCB specification, such as per Traffic Class bandwidth
+> allocation and Traffic Selection Algorithm (TSA). Extend rte_eth_dcb_conf
+> with additional DCB settings
+>=20
+> Signed-off-by: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+> ---
+
+This is a good idea, but requires a longer term workflow because of the
+API and ABI changes.  Suggest as a first step making a deprecation notice.
+
+The AI review feedback also spotted some things. I would not blindly follow
+the recommendations on how to handle field changes.
+
+
+## DPDK DCB Patch Review (RFC PATCH 1-6/6)
+
+**Series:** DCB configuration refactoring and extension =20
+**Author:** Vladimir Medvedkin <vladimir.medvedkin@intel.com> =20
+**Status:** RFC
+
 ---
- app/test/meson.build     |    2 +
- app/test/test_pmd_pcap.c | 1801 ++++++++++++++++++++++++++++++++++++++
- 2 files changed, 1803 insertions(+)
- create mode 100644 app/test/test_pmd_pcap.c
 
-diff --git a/app/test/meson.build b/app/test/meson.build
-index efec42a6bf..6c0bf7068d 100644
---- a/app/test/meson.build
-+++ b/app/test/meson.build
-@@ -141,6 +141,7 @@ source_file_deps = {
-     'test_per_lcore.c': [],
-     'test_pflock.c': [],
-     'test_pie.c': ['sched'],
-+    'test_pmd_pcap.c': ['net_pcap', 'ethdev', 'bus_vdev']  + packet_burst_generator_deps,
-     'test_pmd_perf.c': ['ethdev', 'net'] + packet_burst_generator_deps,
-     'test_pmd_ring.c': ['net_ring', 'ethdev', 'bus_vdev'],
-     'test_pmd_ring_perf.c': ['ethdev', 'net_ring', 'bus_vdev'],
-@@ -216,6 +217,7 @@ source_file_deps = {
- source_file_ext_deps = {
-     'test_compressdev.c': ['zlib'],
-     'test_pcapng.c': ['pcap'],
-+    'test_pmd_pcap.c': ['pcap'],
- }
- 
- def_lib = get_option('default_library')
-diff --git a/app/test/test_pmd_pcap.c b/app/test/test_pmd_pcap.c
-new file mode 100644
-index 0000000000..59fedcce9d
---- /dev/null
-+++ b/app/test/test_pmd_pcap.c
-@@ -0,0 +1,1801 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2026 Stephen Hemminger
-+ */
-+
-+#include "test.h"
-+
-+#ifdef RTE_EXEC_ENV_WINDOWS
-+
-+/*
-+ * This test needs OS network interfaces and
-+ * managing that would require more changes on Windows.
-+ */
-+static int
-+test_pmd_pcap(void)
-+{
-+	printf("PCAP test not supported on Windows, skipping test\n");
-+	return TEST_SKIPPED;
-+}
-+
-+#else
-+
-+#include "packet_burst_generator.h"
-+
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <stdint.h>
-+#include <unistd.h>
-+#include <net/if.h>
-+#include <sys/ioctl.h>
-+#include <pcap/pcap.h>
-+
-+#include <rte_ethdev.h>
-+#include <rte_bus_vdev.h>
-+#include <rte_mbuf.h>
-+#include <rte_mbuf_dyn.h>
-+#include <rte_mempool.h>
-+#include <rte_ether.h>
-+#include <rte_string_fns.h>
-+#include <rte_ip.h>
-+#include <rte_udp.h>
-+
-+#define SOCKET0 0
-+#define RING_SIZE 256
-+#define NB_MBUF 1024
-+#define NUM_PACKETS 64
-+#define MAX_PKT_BURST 32
-+#define PCAP_SNAPLEN 65535
-+
-+/* Packet sizes to test */
-+#define PKT_SIZE_MIN 60
-+#define PKT_SIZE_SMALL 128
-+#define PKT_SIZE_MEDIUM 512
-+#define PKT_SIZE_LARGE 1024
-+#define PKT_SIZE_MTU 1500
-+#define PKT_SIZE_JUMBO 9000
-+
-+static struct rte_mempool *mp;
-+
-+/* Timestamp dynamic field access */
-+static int timestamp_dynfield_offset = -1;
-+static uint64_t timestamp_rx_dynflag;
-+
-+/* Temporary file paths */
-+static char tx_pcap_path[PATH_MAX];
-+static char rx_pcap_path[PATH_MAX];
-+static char infinite_pcap_path[PATH_MAX];
-+static char timestamp_pcap_path[PATH_MAX];
-+static char varied_pcap_path[PATH_MAX];
-+static char jumbo_pcap_path[PATH_MAX];
-+
-+/* Constants for multi-queue tests */
-+#define MULTI_QUEUE_NUM_QUEUES   4U
-+#define MULTI_QUEUE_NUM_PACKETS  100U
-+#define MULTI_QUEUE_BURST_SIZE   32U
-+
-+static char multi_tx_pcap_paths[MULTI_QUEUE_NUM_QUEUES][PATH_MAX];
-+static char multi_rx_pcap_path[PATH_MAX];
-+
-+/* MAC addresses for packet generation */
-+static struct rte_ether_addr src_mac;
-+static struct rte_ether_addr dst_mac = {
-+	.addr_bytes = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff }
-+};
-+
-+/* Sample Ethernet/IPv4/UDP packet for testing */
-+static const uint8_t test_packet[] = {
-+	/* Ethernet header */
-+	0xff, 0xff, 0xff, 0xff, 0xff, 0xff,  /* dst MAC (broadcast) */
-+	0x00, 0x11, 0x22, 0x33, 0x44, 0x55,  /* src MAC */
-+	0x08, 0x00,                          /* EtherType: IPv4 */
-+	/* IPv4 header */
-+	0x45, 0x00, 0x00, 0x2e,              /* ver, ihl, tos, len */
-+	0x00, 0x01, 0x00, 0x00,              /* id, flags, frag */
-+	0x40, 0x11, 0x00, 0x00,              /* ttl, proto(UDP), csum */
-+	0x0a, 0x00, 0x00, 0x01,              /* src: 10.0.0.1 */
-+	0x0a, 0x00, 0x00, 0x02,              /* dst: 10.0.0.2 */
-+	/* UDP header */
-+	0x04, 0xd2, 0x04, 0xd2,              /* sport, dport (1234) */
-+	0x00, 0x1a, 0x00, 0x00,              /* len, csum */
-+	/* Payload: "Test packet!" */
-+	0x54, 0x65, 0x73, 0x74, 0x20, 0x70,
-+	0x61, 0x63, 0x6b, 0x65, 0x74, 0x21
-+};
-+
-+/* Helper: Get timestamp from mbuf using dynamic field */
-+static inline rte_mbuf_timestamp_t
-+mbuf_timestamp_get(const struct rte_mbuf *mbuf)
-+{
-+	return *RTE_MBUF_DYNFIELD(mbuf, timestamp_dynfield_offset, rte_mbuf_timestamp_t *);
-+}
-+
-+/* Helper: Check if mbuf has valid timestamp */
-+static inline int
-+mbuf_has_timestamp(const struct rte_mbuf *mbuf)
-+{
-+	return (mbuf->ol_flags & timestamp_rx_dynflag) != 0;
-+}
-+
-+/* Helper: Initialize timestamp dynamic field access */
-+static int
-+timestamp_init(void)
-+{
-+	int offset;
-+
-+	offset = rte_mbuf_dynfield_lookup(RTE_MBUF_DYNFIELD_TIMESTAMP_NAME, NULL);
-+	if (offset < 0) {
-+		printf("Timestamp dynfield not registered\n");
-+		return -1;
-+	}
-+	timestamp_dynfield_offset = offset;
-+
-+	offset = rte_mbuf_dynflag_lookup(RTE_MBUF_DYNFLAG_RX_TIMESTAMP_NAME, NULL);
-+	if (offset < 0) {
-+		printf("Timestamp dynflag not registered\n");
-+		return -1;
-+	}
-+	timestamp_rx_dynflag = RTE_BIT64(offset);
-+	return 0;
-+}
-+
-+/*
-+ * Helper: Create a unique temporary file path
-+ */
-+static int
-+create_temp_path(char *buf, size_t buflen, const char *prefix)
-+{
-+	int fd;
-+
-+	snprintf(buf, buflen, "/tmp/%s_XXXXXX.pcap", prefix);
-+	fd = mkstemps(buf, 5);  /* 5 = strlen(".pcap") */
-+	if (fd < 0)
-+		return -1;
-+	close(fd);
-+	return 0;
-+}
-+
-+/*
-+ * Helper: Create a pcap file with test packets using libpcap
-+ */
-+static int
-+create_test_pcap(const char *path, unsigned int num_pkts)
-+{
-+	pcap_t *pd;
-+	pcap_dumper_t *dumper;
-+	struct pcap_pkthdr hdr;
-+	unsigned int i;
-+
-+	pd = pcap_open_dead(DLT_EN10MB, PCAP_SNAPLEN);
-+	if (pd == NULL) {
-+		printf("pcap_open_dead failed\n");
-+		return -1;
-+	}
-+
-+	dumper = pcap_dump_open(pd, path);
-+	if (dumper == NULL) {
-+		printf("pcap_dump_open failed: %s\n", pcap_geterr(pd));
-+		pcap_close(pd);
-+		return -1;
-+	}
-+
-+	memset(&hdr, 0, sizeof(hdr));
-+	hdr.caplen = sizeof(test_packet);
-+	hdr.len = sizeof(test_packet);
-+
-+	for (i = 0; i < num_pkts; i++) {
-+		hdr.ts.tv_sec = i;
-+		hdr.ts.tv_usec = 0;
-+		pcap_dump((u_char *)dumper, &hdr, test_packet);
-+	}
-+
-+	pcap_dump_close(dumper);
-+	pcap_close(pd);
-+	return 0;
-+}
-+
-+/*
-+ * Helper: Create pcap file with packets of specified size
-+ */
-+static int
-+create_sized_pcap(const char *path, unsigned int num_pkts, uint16_t pkt_size)
-+{
-+	pcap_t *pd;
-+	pcap_dumper_t *dumper;
-+	struct pcap_pkthdr hdr;
-+	uint8_t *pkt_data;
-+	unsigned int i;
-+
-+	/* Minimum valid ethernet frame */
-+	if (pkt_size < 60)
-+		pkt_size = 60;
-+
-+	pkt_data = calloc(1, pkt_size);
-+	if (pkt_data == NULL)
-+		return -1;
-+
-+	/* Build ethernet header */
-+	struct rte_ether_hdr *eth_hdr = (struct rte_ether_hdr *)pkt_data;
-+	rte_ether_addr_copy(&src_mac, &eth_hdr->src_addr);
-+	rte_ether_addr_copy(&dst_mac, &eth_hdr->dst_addr);
-+	eth_hdr->ether_type = rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV4);
-+
-+	/* Build IP header */
-+	struct rte_ipv4_hdr *ip_hdr = (struct rte_ipv4_hdr *)(eth_hdr + 1);
-+	uint16_t ip_len = pkt_size - sizeof(struct rte_ether_hdr);
-+	ip_hdr->version_ihl = RTE_IPV4_VHL_DEF;
-+	ip_hdr->total_length = rte_cpu_to_be_16(ip_len);
-+	ip_hdr->time_to_live = 64;
-+	ip_hdr->next_proto_id = IPPROTO_UDP;
-+	ip_hdr->src_addr = rte_cpu_to_be_32(IPV4_ADDR(10, 0, 0, 1));
-+	ip_hdr->dst_addr = rte_cpu_to_be_32(IPV4_ADDR(10, 0, 0, 2));
-+	ip_hdr->hdr_checksum = 0;
-+	ip_hdr->hdr_checksum = rte_ipv4_cksum(ip_hdr);
-+
-+	/* Build UDP header */
-+	struct rte_udp_hdr *udp_hdr = (struct rte_udp_hdr *)(ip_hdr + 1);
-+	uint16_t udp_len = ip_len - sizeof(struct rte_ipv4_hdr);
-+	udp_hdr->src_port = rte_cpu_to_be_16(1234);
-+	udp_hdr->dst_port = rte_cpu_to_be_16(1234);
-+	udp_hdr->dgram_len = rte_cpu_to_be_16(udp_len);
-+	udp_hdr->dgram_cksum = 0;
-+
-+	/* Fill payload with pattern */
-+	uint8_t *payload = (uint8_t *)(udp_hdr + 1);
-+	uint16_t payload_len = udp_len - sizeof(struct rte_udp_hdr);
-+	for (uint16_t j = 0; j < payload_len; j++)
-+		payload[j] = (uint8_t)(j & 0xFF);
-+
-+	pd = pcap_open_dead(DLT_EN10MB, PCAP_SNAPLEN);
-+	if (pd == NULL) {
-+		free(pkt_data);
-+		return -1;
-+	}
-+
-+	dumper = pcap_dump_open(pd, path);
-+	if (dumper == NULL) {
-+		pcap_close(pd);
-+		free(pkt_data);
-+		return -1;
-+	}
-+
-+	memset(&hdr, 0, sizeof(hdr));
-+	hdr.caplen = pkt_size;
-+	hdr.len = pkt_size;
-+
-+	for (i = 0; i < num_pkts; i++) {
-+		hdr.ts.tv_sec = i;
-+		hdr.ts.tv_usec = 0;
-+		/* Vary sequence byte in payload */
-+		payload[0] = (uint8_t)(i & 0xFF);
-+		pcap_dump((u_char *)dumper, &hdr, pkt_data);
-+	}
-+
-+	pcap_dump_close(dumper);
-+	pcap_close(pd);
-+	free(pkt_data);
-+	return 0;
-+}
-+
-+/*
-+ * Helper: Create pcap file with varied packet sizes
-+ */
-+static int
-+create_varied_pcap(const char *path, unsigned int num_pkts)
-+{
-+	static const uint16_t sizes[] = {
-+		PKT_SIZE_MIN, PKT_SIZE_SMALL, PKT_SIZE_MEDIUM,
-+		PKT_SIZE_LARGE, PKT_SIZE_MTU
-+	};
-+	pcap_t *pd;
-+	pcap_dumper_t *dumper;
-+	struct pcap_pkthdr hdr;
-+	uint8_t *pkt_data;
-+	unsigned int i;
-+
-+	pkt_data = calloc(1, PKT_SIZE_MTU);
-+	if (pkt_data == NULL)
-+		return -1;
-+
-+	pd = pcap_open_dead(DLT_EN10MB, PCAP_SNAPLEN);
-+	if (pd == NULL) {
-+		free(pkt_data);
-+		return -1;
-+	}
-+
-+	dumper = pcap_dump_open(pd, path);
-+	if (dumper == NULL) {
-+		pcap_close(pd);
-+		free(pkt_data);
-+		return -1;
-+	}
-+
-+	for (i = 0; i < num_pkts; i++) {
-+		uint16_t pkt_size = sizes[i % RTE_DIM(sizes)];
-+
-+		memset(pkt_data, 0, pkt_size);
-+
-+		/* Build ethernet header */
-+		struct rte_ether_hdr *eth_hdr = (struct rte_ether_hdr *)pkt_data;
-+		rte_ether_addr_copy(&src_mac, &eth_hdr->src_addr);
-+		rte_ether_addr_copy(&dst_mac, &eth_hdr->dst_addr);
-+		eth_hdr->ether_type = rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV4);
-+
-+		/* Build IP header */
-+		struct rte_ipv4_hdr *ip_hdr = (struct rte_ipv4_hdr *)(eth_hdr + 1);
-+		uint16_t ip_len = pkt_size - sizeof(struct rte_ether_hdr);
-+		ip_hdr->version_ihl = RTE_IPV4_VHL_DEF;
-+		ip_hdr->total_length = rte_cpu_to_be_16(ip_len);
-+		ip_hdr->time_to_live = 64;
-+		ip_hdr->next_proto_id = IPPROTO_UDP;
-+		ip_hdr->src_addr = rte_cpu_to_be_32(IPV4_ADDR(10, 0, 0, 1));
-+		ip_hdr->dst_addr = rte_cpu_to_be_32(IPV4_ADDR(10, 0, 0, 2));
-+		ip_hdr->hdr_checksum = 0;
-+		ip_hdr->hdr_checksum = rte_ipv4_cksum(ip_hdr);
-+
-+		/* Build UDP header */
-+		struct rte_udp_hdr *udp_hdr = (struct rte_udp_hdr *)(ip_hdr + 1);
-+		uint16_t udp_len = ip_len - sizeof(struct rte_ipv4_hdr);
-+		udp_hdr->src_port = rte_cpu_to_be_16(1234);
-+		udp_hdr->dst_port = rte_cpu_to_be_16(1234);
-+		udp_hdr->dgram_len = rte_cpu_to_be_16(udp_len);
-+
-+		memset(&hdr, 0, sizeof(hdr));
-+		hdr.ts.tv_sec = i;
-+		hdr.caplen = pkt_size;
-+		hdr.len = pkt_size;
-+
-+		pcap_dump((u_char *)dumper, &hdr, pkt_data);
-+	}
-+
-+	pcap_dump_close(dumper);
-+	pcap_close(pd);
-+	free(pkt_data);
-+	return 0;
-+}
-+
-+/*
-+ * Helper: Create pcap file with specific timestamps for testing
-+ */
-+static int
-+create_timestamped_pcap(const char *path, unsigned int num_pkts,
-+			uint32_t base_sec, uint32_t usec_increment)
-+{
-+	pcap_t *pd;
-+	pcap_dumper_t *dumper;
-+	struct pcap_pkthdr hdr;
-+	unsigned int i;
-+
-+	pd = pcap_open_dead_with_tstamp_precision(DLT_EN10MB, PCAP_SNAPLEN,
-+						  PCAP_TSTAMP_PRECISION_MICRO);
-+	if (pd == NULL)
-+		return -1;
-+
-+	dumper = pcap_dump_open(pd, path);
-+	if (dumper == NULL) {
-+		pcap_close(pd);
-+		return -1;
-+	}
-+
-+	memset(&hdr, 0, sizeof(hdr));
-+	hdr.caplen = sizeof(test_packet);
-+	hdr.len = sizeof(test_packet);
-+
-+	for (i = 0; i < num_pkts; i++) {
-+		uint64_t total_usec = (uint64_t)i * usec_increment;
-+		hdr.ts.tv_sec = base_sec + total_usec / 1000000;
-+		hdr.ts.tv_usec = total_usec % 1000000;
-+		pcap_dump((u_char *)dumper, &hdr, test_packet);
-+	}
-+
-+	pcap_dump_close(dumper);
-+	pcap_close(pd);
-+	return 0;
-+}
-+
-+/*
-+ * Helper: Count packets in a pcap file using libpcap
-+ */
-+static int
-+count_pcap_packets(const char *path)
-+{
-+	pcap_t *pd;
-+	char errbuf[PCAP_ERRBUF_SIZE];
-+	struct pcap_pkthdr *hdr;
-+	const u_char *data;
-+	int count = 0;
-+
-+	pd = pcap_open_offline(path, errbuf);
-+	if (pd == NULL)
-+		return -1;
-+
-+	while (pcap_next_ex(pd, &hdr, &data) == 1)
-+		count++;
-+
-+	pcap_close(pd);
-+	return count;
-+}
-+
-+/*
-+ * Helper: Get packet sizes from pcap file
-+ */
-+static int
-+get_pcap_packet_sizes(const char *path, uint16_t *sizes, unsigned int max_pkts)
-+{
-+	pcap_t *pd;
-+	char errbuf[PCAP_ERRBUF_SIZE];
-+	struct pcap_pkthdr *hdr;
-+	const u_char *data;
-+	unsigned int count = 0;
-+
-+	pd = pcap_open_offline(path, errbuf);
-+	if (pd == NULL)
-+		return -1;
-+
-+	while (pcap_next_ex(pd, &hdr, &data) == 1 && count < max_pkts) {
-+		sizes[count] = hdr->caplen;
-+		count++;
-+	}
-+
-+	pcap_close(pd);
-+	return count;
-+}
-+
-+/*
-+ * Helper: Configure and start a pcap ethdev port
-+ */
-+static int
-+setup_pcap_port(uint16_t port)
-+{
-+	struct rte_eth_conf port_conf = {
-+		.rxmode.offloads = RTE_ETH_RX_OFFLOAD_TIMESTAMP,
-+	};
-+	int ret;
-+
-+	ret = rte_eth_dev_configure(port, 1, 1, &port_conf);
-+	TEST_ASSERT(ret == 0, "Failed to configure port %u: %s",
-+		    port, rte_strerror(-ret));
-+
-+	ret = rte_eth_rx_queue_setup(port, 0, RING_SIZE, SOCKET0, NULL, mp);
-+	TEST_ASSERT(ret == 0, "Failed to setup RX queue on port %u: %s",
-+		    port, rte_strerror(-ret));
-+
-+	ret = rte_eth_tx_queue_setup(port, 0, RING_SIZE, SOCKET0, NULL);
-+	TEST_ASSERT(ret == 0, "Failed to setup TX queue on port %u: %s",
-+		    port, rte_strerror(-ret));
-+
-+	ret = rte_eth_dev_start(port);
-+	TEST_ASSERT(ret == 0, "Failed to start port %u: %s",
-+		    port, rte_strerror(-ret));
-+
-+	return 0;
-+}
-+
-+/*
-+ * Helper: Create a pcap vdev and return its port ID
-+ */
-+static int
-+create_pcap_vdev(const char *name, const char *devargs, uint16_t *port_id)
-+{
-+	int ret;
-+
-+	ret = rte_vdev_init(name, devargs);
-+	TEST_ASSERT(ret == 0, "Failed to create vdev %s: %s",
-+		    name, rte_strerror(-ret));
-+
-+	ret = rte_eth_dev_get_port_by_name(name, port_id);
-+	TEST_ASSERT(ret == 0, "Failed to get port ID for %s", name);
-+
-+	return 0;
-+}
-+
-+/*
-+ * Helper: Cleanup a pcap vdev
-+ */
-+static void
-+cleanup_pcap_vdev(const char *name, uint16_t port_id)
-+{
-+	rte_eth_dev_stop(port_id);
-+	rte_vdev_uninit(name);
-+}
-+
-+/*
-+ * Helper: Generate test packets using packet_burst_generator
-+ */
-+static int
-+generate_test_packets(struct rte_mempool *pool, struct rte_mbuf **mbufs,
-+		      unsigned int count, uint8_t pkt_len)
-+{
-+	struct rte_ether_hdr eth_hdr;
-+	struct rte_ipv4_hdr ip_hdr;
-+	struct rte_udp_hdr udp_hdr;
-+	uint16_t ip_pkt_data_len;
-+	int nb_pkt;
-+
-+	/* Initialize ethernet header */
-+	initialize_eth_header(&eth_hdr, &src_mac, &dst_mac,
-+			      RTE_ETHER_TYPE_IPV4, 0, 0);
-+
-+	/* Calculate IP payload length (total - eth - ip headers) */
-+	ip_pkt_data_len = pkt_len - sizeof(struct rte_ether_hdr) -
-+			  sizeof(struct rte_ipv4_hdr);
-+
-+	/* Initialize UDP header */
-+	initialize_udp_header(&udp_hdr, 1234, 1234,
-+			      ip_pkt_data_len - sizeof(struct rte_udp_hdr));
-+
-+	/* Initialize IPv4 header */
-+	initialize_ipv4_header(&ip_hdr, IPV4_ADDR(10, 0, 0, 1),
-+			       IPV4_ADDR(10, 0, 0, 2), ip_pkt_data_len);
-+
-+	/* Generate packet burst */
-+	nb_pkt = generate_packet_burst(pool, mbufs, &eth_hdr, 0,
-+				       &ip_hdr, 1, &udp_hdr,
-+				       count, pkt_len, 1);
-+
-+	return nb_pkt;
-+}
-+
-+/*
-+ * Helper: Allocate mbufs and fill with test packet data (legacy method)
-+ */
-+static int
-+alloc_test_mbufs(struct rte_mbuf **mbufs, unsigned int count)
-+{
-+	unsigned int i;
-+	int ret;
-+
-+	ret = rte_pktmbuf_alloc_bulk(mp, mbufs, count);
-+	if (ret != 0)
-+		return -1;
-+
-+	for (i = 0; i < count; i++) {
-+		rte_memcpy(rte_pktmbuf_mtod(mbufs[i], void *),
-+			   test_packet, sizeof(test_packet));
-+		mbufs[i]->data_len = sizeof(test_packet);
-+		mbufs[i]->pkt_len = sizeof(test_packet);
-+	}
-+	return 0;
-+}
-+
-+/*
-+ * Helper: Allocate a multi-segment mbuf for jumbo frames
-+ * Returns the head mbuf with chained segments, or NULL on failure
-+ */
-+static struct rte_mbuf *
-+alloc_jumbo_mbuf(uint32_t pkt_len, uint8_t fill_byte)
-+{
-+	struct rte_mbuf *head = NULL;
-+	struct rte_mbuf **prev = &head;
-+	uint32_t remaining = pkt_len;
-+	uint16_t nb_segs = 0;
-+
-+	while (remaining > 0) {
-+		struct rte_mbuf *seg = rte_pktmbuf_alloc(mp);
-+		uint16_t seg_size;
-+
-+		if (seg == NULL) {
-+			rte_pktmbuf_free(head);
-+			return NULL;
-+		}
-+
-+		seg_size = RTE_MIN(remaining, rte_pktmbuf_tailroom(seg));
-+		seg->data_len = seg_size;
-+
-+		/* Fill segment with pattern */
-+		memset(rte_pktmbuf_mtod(seg, void *), fill_byte, seg_size);
-+
-+		*prev = seg;
-+		prev = &seg->next;
-+		remaining -= seg_size;
-+		nb_segs++;
-+	}
-+
-+	if (head != NULL) {
-+		head->pkt_len = pkt_len;
-+		head->nb_segs = nb_segs;
-+	}
-+
-+	return head;
-+}
-+
-+/*
-+ * Helper: Receive packets from port (no retry needed for file-based RX)
-+ */
-+static int
-+receive_packets(uint16_t port, struct rte_mbuf **mbufs,
-+		unsigned int max_pkts, unsigned int *received)
-+{
-+	unsigned int total = 0;
-+
-+	while (total < max_pkts) {
-+		uint16_t nb_rx = rte_eth_rx_burst(port, 0, &mbufs[total], max_pkts - total);
-+		if (nb_rx == 0)
-+			break;
-+		total += nb_rx;
-+	}
-+	*received = total;
-+	return 0;
-+}
-+
-+/*
-+ * Helper: Verify mbuf contains expected test packet
-+ */
-+static int
-+verify_packet(struct rte_mbuf *mbuf)
-+{
-+	TEST_ASSERT_EQUAL(rte_pktmbuf_data_len(mbuf), sizeof(test_packet),
-+			  "Packet length mismatch");
-+	TEST_ASSERT_BUFFERS_ARE_EQUAL(rte_pktmbuf_mtod(mbuf, void *),
-+				      test_packet, sizeof(test_packet),
-+				      "Packet data mismatch");
-+	return 0;
-+}
-+
-+/*
-+ * Helper: Check if network interface exists
-+ */
-+static int
-+iface_exists(const char *name)
-+{
-+	struct ifreq ifr;
-+	int sock, ret;
-+
-+	sock = socket(AF_INET, SOCK_DGRAM, 0);
-+	if (sock < 0)
-+		return 0;
-+
-+	memset(&ifr, 0, sizeof(ifr));
-+	strlcpy(ifr.ifr_name, name, IFNAMSIZ);
-+	ret = ioctl(sock, SIOCGIFINDEX, &ifr);
-+	close(sock);
-+	return ret == 0;
-+}
-+
-+/*
-+ * Helper: Find a usable test interface
-+ */
-+static const char *
-+find_test_iface(void)
-+{
-+	if (iface_exists("dummy0"))
-+		return "dummy0";
-+	if (iface_exists("lo"))
-+		return "lo";
-+	return NULL;
-+}
-+
-+/*
-+ * Test: Transmit packets to pcap file
-+ */
-+static int
-+test_tx_to_file(void)
-+{
-+	struct rte_mbuf *mbufs[NUM_PACKETS];
-+	char devargs[256];
-+	uint16_t port_id;
-+	int nb_tx, pkt_count;
-+
-+	printf("Testing TX to pcap file\n");
-+
-+	TEST_ASSERT(create_temp_path(tx_pcap_path, sizeof(tx_pcap_path),
-+				     "pcap_tx") == 0,
-+		    "Failed to create temp file path");
-+
-+	snprintf(devargs, sizeof(devargs), "tx_pcap=%s", tx_pcap_path);
-+	TEST_ASSERT(create_pcap_vdev("net_pcap_tx", devargs, &port_id) == 0,
-+		    "Failed to create TX vdev");
-+	TEST_ASSERT(setup_pcap_port(port_id) == 0,
-+		    "Failed to setup TX port");
-+	TEST_ASSERT(alloc_test_mbufs(mbufs, NUM_PACKETS) == 0,
-+		    "Failed to allocate mbufs");
-+
-+	nb_tx = rte_eth_tx_burst(port_id, 0, mbufs, NUM_PACKETS);
-+	TEST_ASSERT_EQUAL(nb_tx, NUM_PACKETS,
-+			  "TX burst failed: sent %d/%d", nb_tx, NUM_PACKETS);
-+
-+	cleanup_pcap_vdev("net_pcap_tx", port_id);
-+
-+	pkt_count = count_pcap_packets(tx_pcap_path);
-+	TEST_ASSERT_EQUAL(pkt_count, NUM_PACKETS,
-+			  "Pcap file has %d packets, expected %d",
-+			  pkt_count, NUM_PACKETS);
-+
-+	printf("TX to file PASSED: %d packets written\n", NUM_PACKETS);
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test: Receive packets from pcap file
-+ * Uses output from TX test as input
-+ */
-+static int
-+test_rx_from_file(void)
-+{
-+	struct rte_mbuf *mbufs[NUM_PACKETS];
-+	char devargs[256];
-+	uint16_t port_id;
-+	unsigned int received, i;
-+
-+	printf("Testing RX from pcap file\n");
-+
-+	/* Create input file if TX test didn't run */
-+	if (access(tx_pcap_path, F_OK) != 0) {
-+		TEST_ASSERT(create_temp_path(tx_pcap_path, sizeof(tx_pcap_path),
-+					     "pcap_rx_input") == 0,
-+			    "Failed to create temp path");
-+		TEST_ASSERT(create_test_pcap(tx_pcap_path, NUM_PACKETS) == 0,
-+			    "Failed to create input pcap");
-+	}
-+
-+	snprintf(devargs, sizeof(devargs), "rx_pcap=%s", tx_pcap_path);
-+	TEST_ASSERT(create_pcap_vdev("net_pcap_rx", devargs, &port_id) == 0,
-+		    "Failed to create RX vdev");
-+	TEST_ASSERT(setup_pcap_port(port_id) == 0,
-+		    "Failed to setup RX port");
-+
-+	receive_packets(port_id, mbufs, NUM_PACKETS, &received);
-+	TEST_ASSERT_EQUAL(received, NUM_PACKETS,
-+			  "Received %u packets, expected %d", received, NUM_PACKETS);
-+
-+	for (i = 0; i < received; i++) {
-+		TEST_ASSERT(verify_packet(mbufs[i]) == 0,
-+			    "Packet %u verification failed", i);
-+	}
-+	rte_pktmbuf_free_bulk(mbufs, received);
-+
-+	cleanup_pcap_vdev("net_pcap_rx", port_id);
-+
-+	printf("RX from file PASSED: %u packets verified\n", received);
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test: TX with varied packet sizes using packet_burst_generator
-+ */
-+static int
-+test_tx_varied_sizes(void)
-+{
-+	static const uint8_t test_sizes[] = {
-+		PKT_SIZE_MIN, PKT_SIZE_SMALL, PACKET_BURST_GEN_PKT_LEN_128
-+	};
-+	char tx_path[PATH_MAX];
-+	char devargs[256];
-+	uint16_t port_id;
-+	unsigned int i;
-+
-+	printf("Testing TX with varied packet sizes\n");
-+
-+	TEST_ASSERT(create_temp_path(tx_path, sizeof(tx_path),
-+				     "pcap_tx_varied") == 0,
-+		    "Failed to create temp file path");
-+
-+	snprintf(devargs, sizeof(devargs), "tx_pcap=%s", tx_path);
-+	TEST_ASSERT(create_pcap_vdev("net_pcap_tx_var", devargs, &port_id) == 0,
-+		    "Failed to create TX vdev");
-+	TEST_ASSERT(setup_pcap_port(port_id) == 0,
-+		    "Failed to setup TX port");
-+
-+	for (i = 0; i < RTE_DIM(test_sizes); i++) {
-+		struct rte_mbuf *mbufs[MAX_PKT_BURST];
-+		int nb_pkt, nb_tx;
-+
-+		nb_pkt = generate_test_packets(mp, mbufs, MAX_PKT_BURST,
-+					       test_sizes[i]);
-+		TEST_ASSERT(nb_pkt > 0,
-+			    "Failed to generate packets of size %u",
-+			    test_sizes[i]);
-+
-+		nb_tx = rte_eth_tx_burst(port_id, 0, mbufs, nb_pkt);
-+		if (nb_tx < nb_pkt)
-+			rte_pktmbuf_free_bulk(&mbufs[nb_tx], nb_pkt - nb_tx);
-+
-+		printf("  Size %u: generated %d, transmitted %d\n",
-+		       test_sizes[i], nb_pkt, nb_tx);
-+		TEST_ASSERT(nb_tx > 0, "Failed to TX packets of size %u",
-+			    test_sizes[i]);
-+	}
-+
-+	cleanup_pcap_vdev("net_pcap_tx_var", port_id);
-+	unlink(tx_path);
-+
-+	printf("TX varied sizes PASSED\n");
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test: RX with varied packet sizes
-+ */
-+static int
-+test_rx_varied_sizes(void)
-+{
-+	static const uint16_t expected_sizes[] = {
-+		PKT_SIZE_MIN, PKT_SIZE_SMALL, PKT_SIZE_MEDIUM,
-+		PKT_SIZE_LARGE, PKT_SIZE_MTU
-+	};
-+	struct rte_mbuf *mbufs[NUM_PACKETS];
-+	uint16_t rx_sizes[NUM_PACKETS];
-+	char devargs[256];
-+	uint16_t port_id;
-+	unsigned int received, i;
-+
-+	printf("Testing RX with varied packet sizes\n");
-+
-+	TEST_ASSERT(create_temp_path(varied_pcap_path, sizeof(varied_pcap_path),
-+				     "pcap_varied") == 0,
-+		    "Failed to create temp path");
-+	TEST_ASSERT(create_varied_pcap(varied_pcap_path, NUM_PACKETS) == 0,
-+		    "Failed to create varied pcap");
-+
-+	snprintf(devargs, sizeof(devargs), "rx_pcap=%s", varied_pcap_path);
-+	TEST_ASSERT(create_pcap_vdev("net_pcap_var", devargs, &port_id) == 0,
-+		    "Failed to create varied RX vdev");
-+	TEST_ASSERT(setup_pcap_port(port_id) == 0,
-+		    "Failed to setup varied RX port");
-+
-+	receive_packets(port_id, mbufs, NUM_PACKETS, &received);
-+	TEST_ASSERT_EQUAL(received, NUM_PACKETS,
-+			  "Received %u packets, expected %d", received, NUM_PACKETS);
-+
-+	/* Verify packet sizes match expected pattern */
-+	for (i = 0; i < received; i++) {
-+		uint16_t expected = expected_sizes[i % RTE_DIM(expected_sizes)];
-+		rx_sizes[i] = rte_pktmbuf_pkt_len(mbufs[i]);
-+		TEST_ASSERT_EQUAL(rx_sizes[i], expected,
-+				  "Packet %u: size %u, expected %u",
-+				  i, rx_sizes[i], expected);
-+	}
-+
-+	rte_pktmbuf_free_bulk(mbufs, received);
-+	cleanup_pcap_vdev("net_pcap_var", port_id);
-+
-+	printf("RX varied sizes PASSED: %u packets with correct sizes\n", received);
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test: Infinite RX mode - loops through pcap file continuously
-+ */
-+static int
-+test_infinite_rx(void)
-+{
-+	struct rte_mbuf *mbufs[MAX_PKT_BURST];
-+	char devargs[256];
-+	uint16_t port_id;
-+	unsigned int total_rx = 0;
-+	int iter, attempts;
-+
-+	printf("Testing infinite RX mode\n");
-+
-+	TEST_ASSERT(create_temp_path(infinite_pcap_path, sizeof(infinite_pcap_path),
-+				     "pcap_inf") == 0,
-+		    "Failed to create temp path");
-+	TEST_ASSERT(create_test_pcap(infinite_pcap_path, NUM_PACKETS) == 0,
-+		    "Failed to create input pcap");
-+
-+	snprintf(devargs, sizeof(devargs),
-+		 "rx_pcap=%s,infinite_rx=1", infinite_pcap_path);
-+	TEST_ASSERT(create_pcap_vdev("net_pcap_inf", devargs, &port_id) == 0,
-+		    "Failed to create infinite RX vdev");
-+	TEST_ASSERT(setup_pcap_port(port_id) == 0,
-+		    "Failed to setup infinite RX port");
-+
-+	/* Read more packets than file contains to verify looping */
-+	for (iter = 0; iter < 3 && total_rx < NUM_PACKETS * 2; iter++) {
-+		for (attempts = 0; attempts < 100 && total_rx < NUM_PACKETS * 2;
-+		     attempts++) {
-+			uint16_t nb_rx = rte_eth_rx_burst(port_id, 0, mbufs,
-+							  MAX_PKT_BURST);
-+			if (nb_rx > 0)
-+				rte_pktmbuf_free_bulk(mbufs, nb_rx);
-+			total_rx += nb_rx;
-+			if (nb_rx == 0)
-+				usleep(100);
-+		}
-+	}
-+
-+	cleanup_pcap_vdev("net_pcap_inf", port_id);
-+
-+	TEST_ASSERT(total_rx >= NUM_PACKETS * 2,
-+		    "Infinite RX: got %u packets, need >= %d",
-+		    total_rx, NUM_PACKETS * 2);
-+
-+	printf("Infinite RX PASSED: %u packets (file has %d)\n",
-+	       total_rx, NUM_PACKETS);
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test: TX drop mode - packets dropped when no tx_pcap specified
-+ */
-+static int
-+test_tx_drop(void)
-+{
-+	struct rte_mbuf *mbufs[NUM_PACKETS];
-+	struct rte_eth_stats stats;
-+	char devargs[256];
-+	uint16_t port_id;
-+	int nb_tx;
-+
-+	printf("Testing TX drop mode\n");
-+
-+	TEST_ASSERT(create_temp_path(rx_pcap_path, sizeof(rx_pcap_path),
-+				     "pcap_drop") == 0,
-+		    "Failed to create temp path");
-+	TEST_ASSERT(create_test_pcap(rx_pcap_path, NUM_PACKETS) == 0,
-+		    "Failed to create input pcap");
-+
-+	/* Only rx_pcap - TX should silently drop */
-+	snprintf(devargs, sizeof(devargs), "rx_pcap=%s", rx_pcap_path);
-+	TEST_ASSERT(create_pcap_vdev("net_pcap_drop", devargs, &port_id) == 0,
-+		    "Failed to create drop vdev");
-+	TEST_ASSERT(setup_pcap_port(port_id) == 0,
-+		    "Failed to setup drop port");
-+	TEST_ASSERT(alloc_test_mbufs(mbufs, NUM_PACKETS) == 0,
-+		    "Failed to allocate mbufs");
-+
-+	TEST_ASSERT(rte_eth_stats_reset(port_id) == 0,
-+		    "Failed to reset stats");
-+	nb_tx = rte_eth_tx_burst(port_id, 0, mbufs, NUM_PACKETS);
-+
-+	/* Packets should be accepted even in drop mode */
-+	TEST_ASSERT_EQUAL(nb_tx, NUM_PACKETS,
-+			  "Drop mode TX: %d/%d accepted", nb_tx, NUM_PACKETS);
-+
-+	TEST_ASSERT(rte_eth_stats_get(port_id, &stats) == 0,
-+		    "Failed to get stats");
-+	cleanup_pcap_vdev("net_pcap_drop", port_id);
-+
-+	printf("TX drop PASSED: %d packets dropped, opackets=%" PRIu64"\n",
-+	       nb_tx, stats.opackets);
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test: Statistics accuracy and reset
-+ */
-+static int
-+test_stats(void)
-+{
-+	struct rte_mbuf *mbufs[NUM_PACKETS];
-+	struct rte_eth_stats stats;
-+	char devargs[256];
-+	char stats_tx_path[PATH_MAX];
-+	uint16_t port_id;
-+	unsigned int received;
-+	int nb_tx;
-+
-+	printf("Testing statistics accuracy\n");
-+
-+	TEST_ASSERT(create_temp_path(rx_pcap_path, sizeof(rx_pcap_path),
-+				     "pcap_stats_rx") == 0,
-+		    "Failed to create RX temp path");
-+	TEST_ASSERT(create_temp_path(stats_tx_path, sizeof(stats_tx_path),
-+				     "pcap_stats_tx") == 0,
-+		    "Failed to create TX temp path");
-+	TEST_ASSERT(create_test_pcap(rx_pcap_path, NUM_PACKETS) == 0,
-+		    "Failed to create input pcap");
-+
-+	snprintf(devargs, sizeof(devargs),
-+		 "rx_pcap=%s,tx_pcap=%s", rx_pcap_path, stats_tx_path);
-+	TEST_ASSERT(create_pcap_vdev("net_pcap_stats", devargs, &port_id) == 0,
-+		    "Failed to create stats vdev");
-+	TEST_ASSERT(setup_pcap_port(port_id) == 0,
-+		    "Failed to setup stats port");
-+
-+	/* Verify stats start at zero */
-+	TEST_ASSERT(rte_eth_stats_reset(port_id) == 0,
-+		    "Failed to reset stats");
-+	TEST_ASSERT(rte_eth_stats_get(port_id, &stats) == 0,
-+		    "Failed to get stats");
-+	TEST_ASSERT(stats.ipackets == 0 && stats.opackets == 0 &&
-+		    stats.ibytes == 0 && stats.obytes == 0,
-+		    "Initial stats not zero");
-+
-+	/* RX and verify stats */
-+	receive_packets(port_id, mbufs, NUM_PACKETS, &received);
-+	TEST_ASSERT(rte_eth_stats_get(port_id, &stats) == 0,
-+		    "Failed to get stats after RX");
-+	TEST_ASSERT_EQUAL(stats.ipackets, received,
-+			  "RX stats: ipackets=%"PRIu64", received=%u",
-+			  stats.ipackets, received);
-+
-+	/* TX and verify stats */
-+	nb_tx = rte_eth_tx_burst(port_id, 0, mbufs, received);
-+	TEST_ASSERT(rte_eth_stats_get(port_id, &stats) == 0,
-+		    "Failed to get stats after TX");
-+	TEST_ASSERT_EQUAL(stats.opackets, (uint64_t)nb_tx,
-+			  "TX stats: opackets=%"PRIu64", sent=%u",
-+			  stats.opackets, nb_tx);
-+
-+	/* Verify stats reset */
-+	TEST_ASSERT(rte_eth_stats_reset(port_id) == 0,
-+		    "Failed to reset stats");
-+	TEST_ASSERT(rte_eth_stats_get(port_id, &stats) == 0,
-+		    "Failed to get stats after reset");
-+	TEST_ASSERT(stats.ipackets == 0 && stats.opackets == 0,
-+		    "Stats not reset to zero");
-+
-+	cleanup_pcap_vdev("net_pcap_stats", port_id);
-+	unlink(stats_tx_path);
-+
-+	printf("Statistics PASSED: RX=%u, TX=%d\n", received, nb_tx);
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test: MTU configuration
-+ */
-+static int
-+test_set_mtu(void)
-+{
-+	char devargs[256];
-+	char mtu_tx_path[PATH_MAX];
-+	uint16_t port_id;
-+	static const uint16_t mtu_values[] = {1500, 9000, 1280};
-+	int ret = 0;
-+	size_t i;
-+
-+	printf("Testing MTU configuration\n");
-+
-+	TEST_ASSERT(create_temp_path(rx_pcap_path, sizeof(rx_pcap_path),
-+				     "pcap_mtu_rx") == 0,
-+		    "Failed to create RX temp path");
-+	TEST_ASSERT(create_temp_path(mtu_tx_path, sizeof(mtu_tx_path),
-+				     "pcap_mtu_tx") == 0,
-+		    "Failed to create TX temp path");
-+	TEST_ASSERT(create_test_pcap(rx_pcap_path, 1) == 0,
-+		    "Failed to create input pcap");
-+
-+	snprintf(devargs, sizeof(devargs),
-+		 "rx_pcap=%s,tx_pcap=%s", rx_pcap_path, mtu_tx_path);
-+	TEST_ASSERT(create_pcap_vdev("net_pcap_mtu", devargs, &port_id) == 0,
-+		    "Failed to create MTU vdev");
-+	TEST_ASSERT(setup_pcap_port(port_id) == 0,
-+		    "Failed to setup MTU port");
-+
-+	for (i = 0; i < RTE_DIM(mtu_values); i++) {
-+		uint16_t mtu;
-+
-+		ret = rte_eth_dev_set_mtu(port_id, mtu_values[i]);
-+		if (ret != 0)
-+			break;
-+
-+		TEST_ASSERT(rte_eth_dev_get_mtu(port_id, &mtu) == 0, "Failed to get MTU");
-+		TEST_ASSERT_EQUAL(mtu, mtu_values[i], "MTU set mismatch for %u", mtu_values[i]);
-+	}
-+
-+	cleanup_pcap_vdev("net_pcap_mtu", port_id);
-+	unlink(mtu_tx_path);
-+
-+	if (ret == 0) {
-+		printf("MTU test completed\n");
-+		return TEST_SUCCESS;
-+	}
-+
-+	if (ret == -ENOTSUP) {
-+		printf("MTU set not supported\n");
-+		return TEST_SKIPPED;
-+	}
-+
-+	printf("Failed to set MTU: %s", strerror(-ret));
-+	return TEST_FAILED;
-+}
-+
-+/*
-+ * Test: Jumbo frame RX (multi-segment mbufs)
-+ */
-+static int
-+test_jumbo_rx(void)
-+{
-+	struct rte_mbuf *mbufs[NUM_PACKETS];
-+	char devargs[256];
-+	uint16_t port_id;
-+	unsigned int received, i;
-+	const unsigned int num_jumbo = 16;
-+
-+	printf("Testing jumbo frame RX (%u byte packets, multi-segment)\n",
-+	       PKT_SIZE_JUMBO);
-+
-+	TEST_ASSERT(create_temp_path(jumbo_pcap_path, sizeof(jumbo_pcap_path),
-+				     "pcap_jumbo") == 0,
-+		    "Failed to create temp path");
-+	TEST_ASSERT(create_sized_pcap(jumbo_pcap_path, num_jumbo,
-+				      PKT_SIZE_JUMBO) == 0,
-+		    "Failed to create jumbo pcap");
-+
-+	snprintf(devargs, sizeof(devargs), "rx_pcap=%s", jumbo_pcap_path);
-+	TEST_ASSERT(create_pcap_vdev("net_pcap_jumbo", devargs, &port_id) == 0,
-+		    "Failed to create jumbo RX vdev");
-+	TEST_ASSERT(setup_pcap_port(port_id) == 0,
-+		    "Failed to setup jumbo RX port");
-+
-+	receive_packets(port_id, mbufs, num_jumbo, &received);
-+	TEST_ASSERT_EQUAL(received, num_jumbo,
-+			  "Received %u packets, expected %u", received, num_jumbo);
-+
-+	/* Verify all packets are jumbo size (may be multi-segment) */
-+	for (i = 0; i < received; i++) {
-+		uint32_t pkt_len = rte_pktmbuf_pkt_len(mbufs[i]);
-+		uint16_t nb_segs = mbufs[i]->nb_segs;
-+
-+		TEST_ASSERT_EQUAL(pkt_len, PKT_SIZE_JUMBO,
-+				  "Packet %u: size %u, expected %u",
-+				  i, pkt_len, PKT_SIZE_JUMBO);
-+
-+		/* Jumbo frames should use multiple segments */
-+		if (nb_segs > 1)
-+			printf("  Packet %u: %u segments\n", i, nb_segs);
-+	}
-+
-+	rte_pktmbuf_free_bulk(mbufs, received);
-+	cleanup_pcap_vdev("net_pcap_jumbo", port_id);
-+
-+	printf("Jumbo RX PASSED: %u jumbo packets received\n", received);
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test: Jumbo frame TX (multi-segment mbufs)
-+ */
-+static int
-+test_jumbo_tx(void)
-+{
-+	struct rte_mbuf *mbufs[MAX_PKT_BURST];
-+	char tx_path[PATH_MAX];
-+	char devargs[256];
-+	uint16_t port_id;
-+	uint16_t sizes[MAX_PKT_BURST];
-+	int nb_tx, pkt_count, ret;
-+	unsigned int i;
-+	const unsigned int num_jumbo = 8;
-+
-+	printf("Testing jumbo frame TX (multi-segment mbufs)\n");
-+
-+	TEST_ASSERT(create_temp_path(tx_path, sizeof(tx_path),
-+				     "pcap_jumbo_tx") == 0,
-+		    "Failed to create temp file path");
-+
-+	snprintf(devargs, sizeof(devargs), "tx_pcap=%s", tx_path);
-+	TEST_ASSERT(create_pcap_vdev("net_pcap_jumbo_tx", devargs, &port_id) == 0,
-+		    "Failed to create TX vdev");
-+	TEST_ASSERT(setup_pcap_port(port_id) == 0,
-+		    "Failed to setup TX port");
-+
-+	/* Set MTU to allow jumbo frames - PMD drops packets exceeding MTU */
-+	ret = rte_eth_dev_set_mtu(port_id, PKT_SIZE_JUMBO);
-+	if (ret != 0) {
-+		printf("Failed to set MTU to %u: %s\n",
-+		       PKT_SIZE_JUMBO, rte_strerror(-ret));
-+		cleanup_pcap_vdev("net_pcap_jumbo_tx", port_id);
-+		unlink(tx_path);
-+		return TEST_SKIPPED;
-+	}
-+
-+	/* Allocate multi-segment mbufs for jumbo frames */
-+	for (i = 0; i < num_jumbo; i++) {
-+		mbufs[i] = alloc_jumbo_mbuf(PKT_SIZE_JUMBO, (uint8_t)(i & 0xFF));
-+		if (mbufs[i] == NULL) {
-+			/* Free already allocated mbufs */
-+			while (i > 0)
-+				rte_pktmbuf_free(mbufs[--i]);
-+			cleanup_pcap_vdev("net_pcap_jumbo_tx", port_id);
-+			unlink(tx_path);
-+			return TEST_FAILED;
-+		}
-+		printf("  Packet %u: %u segments for %u bytes\n",
-+		       i, mbufs[i]->nb_segs, PKT_SIZE_JUMBO);
-+	}
-+
-+	nb_tx = rte_eth_tx_burst(port_id, 0, mbufs, num_jumbo);
-+	/* Free any unsent mbufs */
-+	for (i = nb_tx; i < num_jumbo; i++)
-+		rte_pktmbuf_free(mbufs[i]);
-+
-+	TEST_ASSERT_EQUAL(nb_tx, (int)num_jumbo,
-+			  "TX burst failed: sent %d/%u", nb_tx, num_jumbo);
-+
-+	cleanup_pcap_vdev("net_pcap_jumbo_tx", port_id);
-+
-+	/* Verify pcap file has correct packet count and sizes */
-+	pkt_count = get_pcap_packet_sizes(tx_path, sizes, MAX_PKT_BURST);
-+	TEST_ASSERT_EQUAL(pkt_count, (int)num_jumbo,
-+			  "Pcap file has %d packets, expected %u",
-+			  pkt_count, num_jumbo);
-+
-+	for (i = 0; i < (unsigned int)pkt_count; i++) {
-+		TEST_ASSERT_EQUAL(sizes[i], PKT_SIZE_JUMBO,
-+				  "Packet %u: size %u, expected %u",
-+				  i, sizes[i], PKT_SIZE_JUMBO);
-+	}
-+
-+	unlink(tx_path);
-+
-+	printf("Jumbo TX PASSED: %d jumbo packets written\n", nb_tx);
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test: Layering on Linux network interface
-+ */
-+static int
-+test_iface(void)
-+{
-+	struct rte_mbuf *mbufs[MAX_PKT_BURST];
-+	struct rte_eth_dev_info dev_info;
-+	char devargs[256];
-+	uint16_t port_id;
-+	const char *iface;
-+	int ret, nb_tx, nb_pkt;
-+
-+	printf("Testing pcap on network interface\n");
-+
-+	iface = find_test_iface();
-+	if (iface == NULL) {
-+		printf("No suitable interface, skipping\n");
-+		return TEST_SKIPPED;
-+	}
-+	printf("Using interface: %s\n", iface);
-+
-+	snprintf(devargs, sizeof(devargs), "iface=%s", iface);
-+	if (rte_vdev_init("net_pcap_iface", devargs) < 0) {
-+		printf("Cannot create iface vdev (needs root?), skipping\n");
-+		return TEST_SKIPPED;
-+	}
-+
-+	TEST_ASSERT(rte_eth_dev_get_port_by_name("net_pcap_iface",
-+						 &port_id) == 0,
-+		    "Failed to get iface port ID");
-+	TEST_ASSERT(setup_pcap_port(port_id) == 0,
-+		    "Failed to setup iface port");
-+
-+	ret = rte_eth_dev_info_get(port_id, &dev_info);
-+	TEST_ASSERT(ret == 0, "Failed to get dev info: %s", rte_strerror(-ret));
-+
-+	printf("Driver: %s, max_rx_queues=%u, max_tx_queues=%u\n",
-+	       dev_info.driver_name, dev_info.max_rx_queues,
-+	       dev_info.max_tx_queues);
-+
-+	/* Use packet_burst_generator for interface test */
-+	nb_pkt = generate_test_packets(mp, mbufs, MAX_PKT_BURST,
-+				       PACKET_BURST_GEN_PKT_LEN);
-+	TEST_ASSERT(nb_pkt > 0, "Failed to generate packets");
-+
-+	nb_tx = rte_eth_tx_burst(port_id, 0, mbufs, nb_pkt);
-+	if (nb_tx < nb_pkt)
-+		rte_pktmbuf_free_bulk(&mbufs[nb_tx], nb_pkt - nb_tx);
-+
-+	cleanup_pcap_vdev("net_pcap_iface", port_id);
-+
-+	printf("Interface test PASSED: sent %d packets\n", nb_tx);
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test: Verify receive timestamps from pcap file
-+ */
-+static int
-+test_rx_timestamp(void)
-+{
-+	struct rte_mbuf *mbufs[NUM_PACKETS];
-+	char devargs[256];
-+	uint16_t port_id;
-+	unsigned int received, i;
-+	const uint32_t base_sec = 1000;
-+	const uint32_t usec_increment = 10000; /* 10ms between packets */
-+	rte_mbuf_timestamp_t prev_ts = 0;
-+
-+	printf("Testing RX timestamp accuracy\n");
-+
-+	TEST_ASSERT(create_temp_path(timestamp_pcap_path, sizeof(timestamp_pcap_path),
-+				     "pcap_ts") == 0,
-+		    "Failed to create temp path");
-+	TEST_ASSERT(create_timestamped_pcap(timestamp_pcap_path, NUM_PACKETS,
-+					    base_sec, usec_increment) == 0,
-+		    "Failed to create timestamped pcap");
-+
-+	snprintf(devargs, sizeof(devargs), "rx_pcap=%s", timestamp_pcap_path);
-+	TEST_ASSERT(create_pcap_vdev("net_pcap_ts", devargs, &port_id) == 0,
-+		    "Failed to create timestamp vdev");
-+	TEST_ASSERT(setup_pcap_port(port_id) == 0,
-+		    "Failed to setup timestamp port");
-+
-+	/* Try to initialize timestamp dynamic field access */
-+	TEST_ASSERT(timestamp_init() == 0, "Timestamp dynfield not available");
-+
-+	receive_packets(port_id, mbufs, NUM_PACKETS, &received);
-+	TEST_ASSERT_EQUAL(received, NUM_PACKETS,
-+			  "Received %u packets, expected %d", received, NUM_PACKETS);
-+
-+	/* Check if first packet has timestamp flag set */
-+	if (!mbuf_has_timestamp(mbufs[0])) {
-+		printf("Timestamps not enabled in mbufs, skipping validation\n");
-+		rte_pktmbuf_free_bulk(mbufs, received);
-+		cleanup_pcap_vdev("net_pcap_ts", port_id);
-+		return TEST_SUCCESS;
-+	}
-+
-+	for (i = 0; i < received; i++) {
-+		struct rte_mbuf *m = mbufs[i];
-+
-+		TEST_ASSERT(mbuf_has_timestamp(m),
-+			    "Packet %u missing timestamp flag", i);
-+
-+		/* PCAP PMD stores timestamp in nanoseconds */
-+		rte_mbuf_timestamp_t ts = mbuf_timestamp_get(mbufs[i]);
-+		uint64_t expected = (uint64_t)base_sec * NS_PER_S
-+			+ (uint64_t)i * usec_increment * 1000;
-+
-+		if (ts != expected)
-+			printf("Packet %u: timestamp mismatch, expected=%"PRIu64" actual=%"PRIu64"\n",
-+			       i, expected, ts);
-+
-+		/* Verify monotonically increasing timestamps */
-+		if (i > 0) {
-+			TEST_ASSERT(ts >= prev_ts,
-+				    "Packet %u: timestamp not monotonic %"PRIu64" > %"PRIu64,
-+				    i, prev_ts, ts);
-+		}
-+		prev_ts = ts;
-+	}
-+
-+	rte_pktmbuf_free_bulk(mbufs, received);
-+	cleanup_pcap_vdev("net_pcap_ts", port_id);
-+
-+	printf("RX timestamp PASSED: %u packets with valid timestamps\n", received);
-+	return TEST_SUCCESS;
-+}
-+
-+/* Helper: Generate packets for multi-queue tests */
-+static int
-+generate_mq_test_packets(struct rte_mbuf **pkts, unsigned int nb_pkts, uint16_t queue_id)
-+{
-+	struct rte_ether_hdr eth_hdr;
-+	struct rte_ipv4_hdr ip_hdr;
-+	struct rte_udp_hdr udp_hdr;
-+	uint16_t pkt_data_len;
-+	unsigned int i;
-+
-+	initialize_eth_header(&eth_hdr, &src_mac, &dst_mac, RTE_ETHER_TYPE_IPV4, 0, 0);
-+	pkt_data_len = sizeof(struct rte_udp_hdr);
-+	initialize_udp_header(&udp_hdr, 1234, 1234, pkt_data_len);
-+	initialize_ipv4_header(&ip_hdr, IPV4_ADDR(192, 168, 1, 1), IPV4_ADDR(192, 168, 1, 2),
-+			       pkt_data_len + sizeof(struct rte_udp_hdr));
-+
-+	for (i = 0; i < nb_pkts; i++) {
-+		pkts[i] = rte_pktmbuf_alloc(mp);
-+		if (pkts[i] == NULL) {
-+			printf("Failed to allocate mbuf\n");
-+			while (i > 0)
-+				rte_pktmbuf_free(pkts[--i]);
-+			return -1;
-+		}
-+
-+		char *pkt_data = rte_pktmbuf_append(pkts[i], PACKET_BURST_GEN_PKT_LEN);
-+		if (pkt_data == NULL) {
-+			printf("Failed to append data to mbuf\n");
-+			rte_pktmbuf_free(pkts[i]);
-+			while (i > 0)
-+				rte_pktmbuf_free(pkts[--i]);
-+			return -1;
-+		}
-+
-+		size_t offset = 0;
-+		memcpy(pkt_data + offset, &eth_hdr, sizeof(eth_hdr));
-+		offset += sizeof(eth_hdr);
-+
-+		/* Mark packet with queue ID in IP packet_id field for tracing */
-+		ip_hdr.packet_id = rte_cpu_to_be_16((queue_id << 8) | (i & 0xFF));
-+		ip_hdr.hdr_checksum = 0;
-+		ip_hdr.hdr_checksum = rte_ipv4_cksum(&ip_hdr);
-+
-+		memcpy(pkt_data + offset, &ip_hdr, sizeof(ip_hdr));
-+		offset += sizeof(ip_hdr);
-+		memcpy(pkt_data + offset, &udp_hdr, sizeof(udp_hdr));
-+	}
-+	return (int)nb_pkts;
-+}
-+
-+/* Helper: Validate pcap file structure using libpcap */
-+static int
-+validate_pcap_file(const char *filename)
-+{
-+	pcap_t *pcap;
-+	char errbuf[PCAP_ERRBUF_SIZE];
-+
-+	pcap = pcap_open_offline(filename, errbuf);
-+	if (pcap == NULL) {
-+		printf("Failed to validate pcap file %s: %s\n", filename, errbuf);
-+		return -1;
-+	}
-+	if (pcap_datalink(pcap) != DLT_EN10MB) {
-+		printf("Unexpected datalink type: %d\n", pcap_datalink(pcap));
-+		pcap_close(pcap);
-+		return -1;
-+	}
-+	pcap_close(pcap);
-+	return 0;
-+}
-+
-+/*
-+ * Test: Multiple TX queues writing to separate pcap files
-+ *
-+ * This test creates a pcap PMD with multiple TX queues, each configured
-+ * to write to its own output file. We verify that:
-+ * 1. All packets from all queues are written
-+ * 2. Each resulting pcap file is valid
-+ * 3. Each file has the expected packet count
-+ */
-+static int
-+test_multi_tx_queue(void)
-+{
-+	char devargs[512];
-+	uint16_t port_id;
-+	struct rte_eth_conf port_conf;
-+	struct rte_eth_txconf tx_conf;
-+	struct rte_mbuf *pkts[MULTI_QUEUE_BURST_SIZE];
-+	uint16_t q;
-+	int ret;
-+	unsigned int total_tx = 0;
-+	unsigned int tx_per_queue[MULTI_QUEUE_NUM_QUEUES] = {0};
-+
-+	printf("Testing multiple TX queues to separate files\n");
-+
-+	/* Create temp paths for each TX queue */
-+	for (q = 0; q < MULTI_QUEUE_NUM_QUEUES; q++) {
-+		char prefix[32];
-+		snprintf(prefix, sizeof(prefix), "pcap_multi_tx%u", q);
-+		TEST_ASSERT(create_temp_path(multi_tx_pcap_paths[q],
-+					     sizeof(multi_tx_pcap_paths[q]), prefix) == 0,
-+			    "Failed to create temp path for queue %u", q);
-+	}
-+
-+	/* Create the pcap PMD with multiple TX queues to separate files */
-+	snprintf(devargs, sizeof(devargs), "tx_pcap=%s,tx_pcap=%s,tx_pcap=%s,tx_pcap=%s",
-+		 multi_tx_pcap_paths[0], multi_tx_pcap_paths[1],
-+		 multi_tx_pcap_paths[2], multi_tx_pcap_paths[3]);
-+
-+	ret = rte_vdev_init("net_pcap_multi_tx", devargs);
-+	TEST_ASSERT_SUCCESS(ret, "Failed to create pcap PMD: %s", rte_strerror(-ret));
-+
-+	ret = rte_eth_dev_get_port_by_name("net_pcap_multi_tx", &port_id);
-+	TEST_ASSERT_SUCCESS(ret, "Cannot find added pcap device");
-+
-+	memset(&port_conf, 0, sizeof(port_conf));
-+	ret = rte_eth_dev_configure(port_id, 0, MULTI_QUEUE_NUM_QUEUES, &port_conf);
-+	TEST_ASSERT_SUCCESS(ret, "Failed to configure device: %s", rte_strerror(-ret));
-+
-+	memset(&tx_conf, 0, sizeof(tx_conf));
-+	for (q = 0; q < MULTI_QUEUE_NUM_QUEUES; q++) {
-+		ret = rte_eth_tx_queue_setup(port_id, q, RING_SIZE,
-+					     rte_eth_dev_socket_id(port_id), &tx_conf);
-+		TEST_ASSERT_SUCCESS(ret, "Failed to setup TX queue %u: %s", q, rte_strerror(-ret));
-+	}
-+
-+	ret = rte_eth_dev_start(port_id);
-+	TEST_ASSERT_SUCCESS(ret, "Failed to start device: %s", rte_strerror(-ret));
-+
-+	/* Transmit packets from each queue */
-+	for (q = 0; q < MULTI_QUEUE_NUM_QUEUES; q++) {
-+		unsigned int pkts_to_send = MULTI_QUEUE_NUM_PACKETS / MULTI_QUEUE_NUM_QUEUES;
-+
-+		while (tx_per_queue[q] < pkts_to_send) {
-+			unsigned int burst = RTE_MIN(MULTI_QUEUE_BURST_SIZE,
-+						     pkts_to_send - tx_per_queue[q]);
-+
-+			ret = generate_mq_test_packets(pkts, burst, q);
-+			TEST_ASSERT(ret >= 0, "Failed to generate packets for queue %u", q);
-+
-+			uint16_t nb_tx = rte_eth_tx_burst(port_id, q, pkts, burst);
-+			for (unsigned int i = nb_tx; i < burst; i++)
-+				rte_pktmbuf_free(pkts[i]);
-+
-+			tx_per_queue[q] += nb_tx;
-+			total_tx += nb_tx;
-+
-+			if (nb_tx == 0) {
-+				printf("TX stall on queue %u\n", q);
-+				break;
-+			}
-+		}
-+		printf("  Queue %u: transmitted %u packets\n", q, tx_per_queue[q]);
-+	}
-+
-+	rte_eth_dev_stop(port_id);
-+	rte_vdev_uninit("net_pcap_multi_tx");
-+	rte_delay_ms(100);
-+
-+	/* Validate each pcap file */
-+	unsigned int total_in_files = 0;
-+	for (q = 0; q < MULTI_QUEUE_NUM_QUEUES; q++) {
-+		ret = validate_pcap_file(multi_tx_pcap_paths[q]);
-+		TEST_ASSERT_SUCCESS(ret, "pcap file for queue %u is invalid", q);
-+
-+		int pkt_count = count_pcap_packets(multi_tx_pcap_paths[q]);
-+		TEST_ASSERT(pkt_count >= 0, "Could not count packets in pcap file for queue %u", q);
-+
-+		printf("  Queue %u file: %d packets\n", q, pkt_count);
-+		TEST_ASSERT_EQUAL((unsigned int)pkt_count, tx_per_queue[q],
-+				  "Queue %u: file has %d packets, expected %u",
-+				  q, pkt_count, tx_per_queue[q]);
-+		total_in_files += pkt_count;
-+	}
-+
-+	printf("  Total packets transmitted: %u\n", total_tx);
-+	printf("  Total packets in all files: %u\n", total_in_files);
-+
-+	TEST_ASSERT_EQUAL(total_in_files, total_tx,
-+			  "Total packet count mismatch: expected %u, got %u",
-+			  total_tx, total_in_files);
-+
-+	printf("Multi-TX queue PASSED\n");
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test: Multiple RX queues reading from the same pcap file
-+ *
-+ * This test creates a pcap PMD with multiple RX queues all configured
-+ * to read from the same input file. We verify that:
-+ * 1. Each queue can read packets
-+ * 2. The total packets read equals the file content (or expected behavior)
-+ */
-+static int
-+test_multi_rx_queue_same_file(void)
-+{
-+	char devargs[512];
-+	uint16_t port_id;
-+	struct rte_eth_conf port_conf;
-+	struct rte_eth_rxconf rx_conf;
-+	struct rte_mbuf *pkts[MULTI_QUEUE_BURST_SIZE];
-+	uint16_t q;
-+	int ret;
-+	unsigned int total_rx = 0;
-+	unsigned int rx_per_queue[MULTI_QUEUE_NUM_QUEUES] = {0};
-+	unsigned int seed_packets = MULTI_QUEUE_NUM_PACKETS;
-+	unsigned int expected_total;
-+
-+	printf("Testing multiple RX queues from same file\n");
-+
-+	TEST_ASSERT(create_temp_path(multi_rx_pcap_path, sizeof(multi_rx_pcap_path),
-+				     "pcap_multi_rx") == 0, "Failed to create temp path");
-+
-+	ret = create_test_pcap(multi_rx_pcap_path, seed_packets);
-+	TEST_ASSERT_SUCCESS(ret, "Failed to create seed pcap file");
-+	printf("  Created seed pcap file with %u packets\n", seed_packets);
-+
-+	snprintf(devargs, sizeof(devargs), "rx_pcap=%s,rx_pcap=%s,rx_pcap=%s,rx_pcap=%s",
-+		 multi_rx_pcap_path, multi_rx_pcap_path, multi_rx_pcap_path, multi_rx_pcap_path);
-+
-+	ret = rte_vdev_init("net_pcap_multi_rx", devargs);
-+	TEST_ASSERT_SUCCESS(ret, "Failed to create pcap PMD: %s", rte_strerror(-ret));
-+
-+	ret = rte_eth_dev_get_port_by_name("net_pcap_multi_rx", &port_id);
-+	TEST_ASSERT_SUCCESS(ret, "Cannot find added pcap device");
-+
-+	memset(&port_conf, 0, sizeof(port_conf));
-+	ret = rte_eth_dev_configure(port_id, MULTI_QUEUE_NUM_QUEUES, 0, &port_conf);
-+	TEST_ASSERT_SUCCESS(ret, "Failed to configure device: %s", rte_strerror(-ret));
-+
-+	memset(&rx_conf, 0, sizeof(rx_conf));
-+	for (q = 0; q < MULTI_QUEUE_NUM_QUEUES; q++) {
-+		ret = rte_eth_rx_queue_setup(port_id, q, RING_SIZE,
-+					     rte_eth_dev_socket_id(port_id), &rx_conf, mp);
-+		TEST_ASSERT_SUCCESS(ret, "Failed to setup RX queue %u: %s", q, rte_strerror(-ret));
-+	}
-+
-+	ret = rte_eth_dev_start(port_id);
-+	TEST_ASSERT_SUCCESS(ret, "Failed to start device: %s", rte_strerror(-ret));
-+
-+	/* Receive packets from all queues. Each queue has its own file handle. */
-+	int empty_rounds = 0;
-+	while (empty_rounds < 10) {
-+		int received_this_round = 0;
-+		for (q = 0; q < MULTI_QUEUE_NUM_QUEUES; q++) {
-+			uint16_t nb_rx = rte_eth_rx_burst(port_id, q, pkts, MULTI_QUEUE_BURST_SIZE);
-+			if (nb_rx > 0) {
-+				rx_per_queue[q] += nb_rx;
-+				total_rx += nb_rx;
-+				received_this_round += nb_rx;
-+				rte_pktmbuf_free_bulk(pkts, nb_rx);
-+			}
-+		}
-+		if (received_this_round == 0)
-+			empty_rounds++;
-+		else
-+			empty_rounds = 0;
-+	}
-+
-+	printf("  RX Results:\n");
-+	for (q = 0; q < MULTI_QUEUE_NUM_QUEUES; q++)
-+		printf("    Queue %u: received %u packets\n", q, rx_per_queue[q]);
-+	printf("    Total received: %u packets\n", total_rx);
-+
-+	/* Each RX queue opens its own file handle, so each reads all packets */
-+	expected_total = seed_packets * MULTI_QUEUE_NUM_QUEUES;
-+	printf("    Expected total (each queue reads all): %u packets\n", expected_total);
-+
-+	rte_eth_dev_stop(port_id);
-+	rte_vdev_uninit("net_pcap_multi_rx");
-+
-+	TEST_ASSERT(total_rx > 0, "No packets received at all");
-+	for (q = 0; q < MULTI_QUEUE_NUM_QUEUES; q++) {
-+		TEST_ASSERT(rx_per_queue[q] > 0, "Queue %u received no packets", q);
-+		TEST_ASSERT_EQUAL(rx_per_queue[q], seed_packets,
-+				  "Queue %u received %u packets, expected %u",
-+				  q, rx_per_queue[q], seed_packets);
-+	}
-+	TEST_ASSERT_EQUAL(total_rx, expected_total,
-+			  "Total RX mismatch: expected %u, got %u", expected_total, total_rx);
-+
-+	printf("Multi-RX queue PASSED\n");
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test: Device info reports correct queue counts and MTU limits
-+ *
-+ * This test verifies that rte_eth_dev_info_get() returns correct values:
-+ * 1. max_rx_queues matches the number of rx_pcap files passed
-+ * 2. max_tx_queues matches the number of tx_pcap files passed
-+ * 3. min_mtu and max_mtu are set to reasonable values
-+ */
-+static int
-+test_dev_info(void)
-+{
-+	struct rte_eth_dev_info dev_info;
-+	char devargs[512];
-+	char rx_paths[3][PATH_MAX];
-+	char tx_paths[2][PATH_MAX];
-+	uint16_t port_id;
-+	int ret;
-+	unsigned int i;
-+
-+	printf("Testing device info reporting\n");
-+
-+	/* Create temp RX pcap files (3 queues) */
-+	for (i = 0; i < 3; i++) {
-+		char prefix[32];
-+		snprintf(prefix, sizeof(prefix), "pcap_devinfo_rx%u", i);
-+		TEST_ASSERT(create_temp_path(rx_paths[i], sizeof(rx_paths[i]), prefix) == 0,
-+			    "Failed to create RX temp path %u", i);
-+		TEST_ASSERT(create_test_pcap(rx_paths[i], 1) == 0,
-+			    "Failed to create RX pcap %u", i);
-+	}
-+
-+	/* Create temp TX pcap files (2 queues) */
-+	for (i = 0; i < 2; i++) {
-+		char prefix[32];
-+		snprintf(prefix, sizeof(prefix), "pcap_devinfo_tx%u", i);
-+		TEST_ASSERT(create_temp_path(tx_paths[i], sizeof(tx_paths[i]), prefix) == 0,
-+			    "Failed to create TX temp path %u", i);
-+	}
-+
-+	/* Create device with 3 RX queues and 2 TX queues */
-+	snprintf(devargs, sizeof(devargs), "rx_pcap=%s,rx_pcap=%s,rx_pcap=%s,tx_pcap=%s,tx_pcap=%s",
-+		 rx_paths[0], rx_paths[1], rx_paths[2], tx_paths[0], tx_paths[1]);
-+
-+	ret = rte_vdev_init("net_pcap_devinfo", devargs);
-+	TEST_ASSERT_SUCCESS(ret, "Failed to create pcap PMD: %s", rte_strerror(-ret));
-+
-+	ret = rte_eth_dev_get_port_by_name("net_pcap_devinfo", &port_id);
-+	TEST_ASSERT_SUCCESS(ret, "Cannot find added pcap device");
-+
-+	ret = rte_eth_dev_info_get(port_id, &dev_info);
-+	TEST_ASSERT_SUCCESS(ret, "Failed to get device info: %s", rte_strerror(-ret));
-+
-+	printf("  Device info:\n");
-+	printf("    driver_name: %s\n", dev_info.driver_name);
-+	printf("    max_rx_queues: %u (expected: 3)\n", dev_info.max_rx_queues);
-+	printf("    max_tx_queues: %u (expected: 2)\n", dev_info.max_tx_queues);
-+	printf("    min_mtu: %u\n", dev_info.min_mtu);
-+	printf("    max_mtu: %u\n", dev_info.max_mtu);
-+
-+	/* Verify queue counts match number of pcap files */
-+	TEST_ASSERT_EQUAL(dev_info.max_rx_queues, 3U,
-+			  "max_rx_queues mismatch: expected 3, got %u", dev_info.max_rx_queues);
-+	TEST_ASSERT_EQUAL(dev_info.max_tx_queues, 2U,
-+			  "max_tx_queues mismatch: expected 2, got %u", dev_info.max_tx_queues);
-+
-+	/* Verify MTU limits are reasonable */
-+	TEST_ASSERT(dev_info.min_mtu > 0, "min_mtu should be > 0, got %u", dev_info.min_mtu);
-+	TEST_ASSERT(dev_info.min_mtu <= RTE_ETHER_MIN_MTU,
-+		    "min_mtu should be <= %u, got %u", RTE_ETHER_MIN_MTU, dev_info.min_mtu);
-+	TEST_ASSERT(dev_info.max_mtu <= RTE_ETHER_MAX_JUMBO_FRAME_LEN,
-+		    "max_mtu should be <= %u, got %u",
-+		    RTE_ETHER_MAX_JUMBO_FRAME_LEN, dev_info.max_mtu);
-+
-+	rte_vdev_uninit("net_pcap_devinfo");
-+
-+	/* Cleanup temp files */
-+	for (i = 0; i < 3; i++)
-+		unlink(rx_paths[i]);
-+	for (i = 0; i < 2; i++)
-+		unlink(tx_paths[i]);
-+
-+	printf("Device info PASSED\n");
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test suite setup
-+ */
-+static int
-+test_setup(void)
-+{
-+	/* Generate random source MAC address */
-+	rte_eth_random_addr(src_mac.addr_bytes);
-+
-+	mp = rte_pktmbuf_pool_create("pcap_test_pool", NB_MBUF, 32, 0,
-+				     RTE_MBUF_DEFAULT_BUF_SIZE,
-+				     rte_socket_id());
-+	TEST_ASSERT_NOT_NULL(mp, "Failed to create mempool");
-+
-+	return 0;
-+}
-+
-+/*
-+ * Test suite teardown
-+ */
-+static void
-+test_teardown(void)
-+{
-+	unsigned int i;
-+
-+	/* Cleanup temp files */
-+	if (tx_pcap_path[0] != '\0')
-+		unlink(tx_pcap_path);
-+	if (rx_pcap_path[0] != '\0')
-+		unlink(rx_pcap_path);
-+	if (infinite_pcap_path[0] != '\0')
-+		unlink(infinite_pcap_path);
-+	if (timestamp_pcap_path[0] != '\0')
-+		unlink(timestamp_pcap_path);
-+	if (varied_pcap_path[0] != '\0')
-+		unlink(varied_pcap_path);
-+	if (jumbo_pcap_path[0] != '\0')
-+		unlink(jumbo_pcap_path);
-+	for (i = 0; i < RTE_DIM(multi_tx_pcap_paths); i++) {
-+		if (multi_tx_pcap_paths[i][0] != '\0')
-+			unlink(multi_tx_pcap_paths[i]);
-+	}
-+	if (multi_rx_pcap_path[0] != '\0')
-+		unlink(multi_rx_pcap_path);
-+
-+	rte_mempool_free(mp);
-+	mp = NULL;
-+}
-+
-+static struct unit_test_suite test_pmd_pcap_suite = {
-+	.setup = test_setup,
-+	.teardown = test_teardown,
-+	.suite_name = "PCAP PMD Unit Test Suite",
-+	.unit_test_cases = {
-+		TEST_CASE(test_dev_info),
-+		TEST_CASE(test_tx_to_file),
-+		TEST_CASE(test_rx_from_file),
-+		TEST_CASE(test_tx_varied_sizes),
-+		TEST_CASE(test_rx_varied_sizes),
-+		TEST_CASE(test_jumbo_rx),
-+		TEST_CASE(test_jumbo_tx),
-+		TEST_CASE(test_infinite_rx),
-+		TEST_CASE(test_tx_drop),
-+		TEST_CASE(test_stats),
-+		TEST_CASE(test_set_mtu),
-+		TEST_CASE(test_iface),
-+		TEST_CASE(test_rx_timestamp),
-+		TEST_CASE(test_multi_tx_queue),
-+		TEST_CASE(test_multi_rx_queue_same_file),
-+		TEST_CASES_END()
-+	}
-+};
-+
-+static int
-+test_pmd_pcap(void)
-+{
-+	return unit_test_suite_runner(&test_pmd_pcap_suite);
-+}
-+
-+#endif
-+
-+REGISTER_FAST_TEST(pcap_pmd_autotest, true, true, test_pmd_pcap);
--- 
-2.51.0
+### Overall Assessment
 
+This is a significant API/ABI-breaking RFC series that modernizes the DCB (=
+Data Center Bridging) configuration API. The changes are architecturally so=
+und but require attention to several issues before leaving RFC status.
+
+---
+
+### Patch 1/6: `ethdev: extend and refactor DCB configuration`
+
+**Errors:**
+- None
+
+**Warnings:**
+1. **Missing release notes** =E2=80=93 This patch makes significant API cha=
+nges (unifying `rte_eth_dcb_rx_conf` and `rte_eth_dcb_tx_conf` into `rte_et=
+h_dcb_conf`, adding `dcb_tsa[]` and `dcb_tc_bw[]` fields). Per AGENTS.md, A=
+PI changes require release notes in `doc/guides/rel_notes/`.
+
+2. **ABI break without documentation** =E2=80=93 Removing the separate Rx/T=
+x DCB structures is an ABI break. Needs to follow ABI versioning guidelines.
+
+3. **New API fields not marked experimental** =E2=80=93 The new `dcb_tsa` a=
+nd `dcb_tc_bw` arrays should arguably be marked experimental, or the change=
+ documented in release notes.
+
+**Info:**
+- Line 71 commit body: "structutes" =E2=86=92 "structures" (typo)
+- Line 74: "structute" =E2=86=92 "structure" (typo)
+- Good that testpmd is updated in the same patch
+
+---
+
+### Patch 2/6: `ethdev: remove nb_tcs from rte_eth_dcb_conf structure`
+
+**Errors:**
+- None
+
+**Warnings:**
+1. **Missing release notes** =E2=80=93 Removing `enum rte_eth_nb_tcs` and t=
+he `nb_tcs` field is an API/ABI break requiring documentation.
+
+2. **Missing Cc: stable@dpdk.org** =E2=80=93 If this is considered a cleanu=
+p/fix for hardware abstraction issues, consider tagging for stable.
+
+**Info:**
+- Good rationale explaining why `nb_tcs` was a hardware-specific artifact f=
+rom ixgbe
+- The driver correctly infers TC count from `dcb_tc[]` via popcount
+
+---
+
+### Patch 3/6: `ethdev: decouple VMDq and DCB cofiguration`
+
+**Errors:**
+1. **Subject line typo** =E2=80=93 "cofiguration" should be "configuration"
+
+**Warnings:**
+1. **Missing release notes** =E2=80=93 Removes `rte_eth_vmdq_dcb_conf` and =
+`rte_eth_vmdq_dcb_tx_conf` structures, changes `tx_adv_conf` from union to =
+struct.
+
+2. **ABI break** =E2=80=93 Changing `tx_adv_conf` from union to struct chan=
+ges memory layout.
+
+**Info:**
+- Architecturally sound =E2=80=93 VMDq and DCB should be independently conf=
+igurable
+
+---
+
+### Patch 4/6: `ethdev: extend VMDq/DCB configuration with queue mapping`
+
+**Errors:**
+- None
+
+**Warnings:**
+1. **Missing release notes** =E2=80=93 Moving `q_map` into `rte_eth_conf` a=
+nd making it a configuration input (not just output) is a semantic API chan=
+ge.
+
+2. **Duplicate macro definition** =E2=80=93 Line 1095-1096 redefines `RTE_E=
+TH_DCB_NUM_TCS` and `RTE_ETH_MAX_VMDQ_POOL` which were already defined earl=
+ier (lines 1144-1145 in original). The patch moves them but the mbox shows =
+both locations =E2=80=93 verify no duplication in final code.
+
+**Info:**
+- Line 1107-1108: Comment says "Rx queues" twice =E2=80=93 second should be=
+ "Tx queues":
+  ```c
+  /** Rx queues assigned to tc per Pool */  // line 1103
+  ...
+  /** Rx queues assigned to tc per Pool */  // line 1108 - should be Tx
+  ```
+
+---
+
+### Patch 5/6: `ethdev: remove unused dcb_capability_en field`
+
+**Errors:**
+- None
+
+**Warnings:**
+1. **Missing release notes** =E2=80=93 Removes `RTE_ETH_DCB_PG_SUPPORT`, `R=
+TE_ETH_DCB_PFC_SUPPORT` macros and `dcb_capability_en` field.
+
+2. **Subject line case** =E2=80=93 "dcb_capability_en" contains underscore =
+after colon. Per AGENTS.md line 78: "Underscores after the colon (indicates=
+ code in subject)". Consider: `ethdev: remove unused DCB capability field`
+
+**Info:**
+- Good cleanup =E2=80=93 PFC is now handled via the standard API
+
+---
+
+### Patch 6/6: `ethdev: move mq_mode to [r,t]x_adv_conf`
+
+**Errors:**
+- None
+
+**Warnings:**
+1. **Missing release notes** =E2=80=93 This is a major ABI break affecting =
+virtually all DPDK applications that configure Rx/Tx modes.
+
+2. **Type change from enum to uint32_t** =E2=80=93 Changes `enum rte_eth_rx=
+_mq_mode` and `enum rte_eth_tx_mq_mode` to `uint32_t`. While the rationale =
+is sound (flags vs enum), this affects type safety.
+
+3. **Deprecation of old enums** =E2=80=93 The enums are converted to `#defi=
+ne` macros. Should document that applications using the enum types need upd=
+ating.
+
+**Info:**
+- Wide-reaching change touching 19 files
+- `RTE_ETH_MQ_TX_VMDQ_ONLY` appears to be removed =E2=80=93 verify this is =
+intentional
+
+---
+
+### Global Issues (All Patches)
+
+**Errors:**
+- None
+
+**Warnings:**
+1. **No deprecation notices** =E2=80=93 For this magnitude of ABI change, t=
+he DPDK process typically requires deprecation notices in a prior release. =
+Since this is RFC, that's acceptable, but should be addressed before final =
+submission.
+
+2. **No documentation updates** =E2=80=93 The `doc/guides/` programmers gui=
+de sections on DCB configuration will need updating.
+
+3. **Driver coverage** =E2=80=93 Only the ice driver is updated. Other DCB-=
+capable drivers (ixgbe, i40e, etc.) will need updates or the series is inco=
+mplete.
+
+4. **Missing tests** =E2=80=93 No updates to functional test suite for the =
+new TSA/bandwidth configuration fields.
+
+**Info:**
+- Good that all patches have proper `Signed-off-by` tags
+- Subject lines are within 60 character limit (except for typo in 3/6)
+- Commit bodies are well-written and explain the rationale
+
+---
+
+### Summary Table
+
+| Patch | Subject OK | S-o-b | Release Notes | Tests | Verdict |
+|-------|-----------|-------|---------------|-------|---------|
+| 1/6 | =E2=9C=93 | =E2=9C=93 | Missing | Partial | Needs Work |
+| 2/6 | =E2=9C=93 | =E2=9C=93 | Missing | =E2=9C=93 | Needs Work |
+| 3/6 | Typo | =E2=9C=93 | Missing | =E2=9C=93 | Needs Work |
+| 4/6 | =E2=9C=93 | =E2=9C=93 | Missing | =E2=9C=93 | Needs Work |
+| 5/6 | Warning | =E2=9C=93 | Missing | =E2=9C=93 | Needs Work |
+| 6/6 | =E2=9C=93 | =E2=9C=93 | Missing | N/A | Needs Work |
+
+---
+
+### Recommendations
+
+1. Fix typo in patch 3/6 subject: "cofiguration" =E2=86=92 "configuration"
+2. Add release notes documenting all API/ABI changes
+3. Add deprecation notice for the removed enums and structures
+4. Update DCB documentation in programmer's guide
+5. Consider adding functional tests for new TSA/bandwidth fields
+6. Address comment typo in patch 4/6 (Rx vs Tx queues)
+7. Verify all DCB-capable drivers are updated or document which drivers sup=
+port the new API
+8. Consider experimental marking for new fields if uncertain about final AP=
+I shape
