@@ -2,51 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C935D2F32E
-	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Jan 2026 15:20:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87181D2F32E
+	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Jan 2026 15:20:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BBE7D40E7C;
-	Tue, 13 Jan 2026 16:16:01 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
- by mails.dpdk.org (Postfix) with ESMTP id 2D2DC40679
- for <dev@dpdk.org>; Tue, 13 Jan 2026 16:15:59 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 71EB84067B;
+	Tue, 13 Jan 2026 16:18:34 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+ by mails.dpdk.org (Postfix) with ESMTP id 21D114065A
+ for <dev@dpdk.org>; Tue, 13 Jan 2026 16:18:32 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1768317359; x=1799853359;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=trqIbtZArI/lRJ+CWsy6ZKu1spGivAKHnWF/2EdFieM=;
- b=EusdE3QUWXu0VniI286uFNUE/dnbg+VdhjGzbc41LMmBn8QXxzK91CbG
- LAkwK8WFZJI6LV0gtUrbX9SaCaY+eXAxo80bddHqmmc5IM6+oMsMuHczS
- iYOb5mbSJkEpErkegAVw9+NiaG09CIuz/8AK5GQg94SGTSHZYVmRuGw5V
- Fq/NkP6eDTXlgtRc8HWRAVBuwe75LY1O2hrq+5oLhrdym9IhtrF6q/M3J
- PKdu+wN43PP3S0wJQ6l2LbYnQd+gHDKiP3qep3x6B0rGwlyGdatk9TqbM
- i1/I/Rf7+96QGEtQ9foVGERzRWJOUIpayAktUbaVw1uAhr1wnSIOcFh8Y w==;
-X-CSE-ConnectionGUID: OVfYF08mRsGeH7QGX6GCtQ==
-X-CSE-MsgGUID: kjL45vywTBqSyKaLdI7pGQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11670"; a="80969243"
-X-IronPort-AV: E=Sophos;i="6.21,222,1763452800"; d="scan'208";a="80969243"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
- by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 13 Jan 2026 07:15:59 -0800
-X-CSE-ConnectionGUID: ZKWvJvj5TwmyEvf/MWYPPw==
-X-CSE-MsgGUID: NVlxLj/UQKaHsC0Ws62N+w==
+ t=1768317513; x=1799853513;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=fnEpzRro4rhHuSi0ThteTQ9/YC2JGj4KGkT/VNy+S64=;
+ b=P2wBMYsjQpacd01nK78C2lBNKgoeEyrJPMLEom/zIiPwrF9NK2ko2NSk
+ 8ePRHD0tHbjjofqDtGseEp79UHqPTfZDKLOk7Urdd7gm7e1KCEMy+wVls
+ yQvSxR8jMULMjCLqAAUYGSZ7QEYeL8KLjJue/UoaLXV5DqWIEH5Ee7TE8
+ n1czZBK0UNfPFbGnZ9iD5qp8fm4JCgkGzZily9NlJ2QvOChm28D1rGllw
+ +Lp87rzhdso2r40R97uiwNhVse8AX6irSOCl0AHM6sTj7fgauesk5wMTM
+ LipQ012V7jIwnhjydl53NDLUY/f6NQGSMemFeWJvlqlNmreRPgdAi0nNP Q==;
+X-CSE-ConnectionGUID: whUR2/+0Toy1P+euCwaUmA==
+X-CSE-MsgGUID: fS4loYeORhOcC58EFE0P9g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11670"; a="72185066"
+X-IronPort-AV: E=Sophos;i="6.21,222,1763452800"; d="scan'208";a="72185066"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+ by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 13 Jan 2026 07:18:32 -0800
+X-CSE-ConnectionGUID: 4CBkLMw9TzCBB2CwaIXO3Q==
+X-CSE-MsgGUID: C1atkGjkR9yoNkO+0R+tYw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,222,1763452800"; d="scan'208";a="203556700"
-Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by orviesa006.jf.intel.com with ESMTP; 13 Jan 2026 07:15:58 -0800
-From: Bruce Richardson <bruce.richardson@intel.com>
+X-IronPort-AV: E=Sophos;i="6.21,222,1763452800"; d="scan'208";a="204298833"
+Received: from silpixa00401177.ir.intel.com ([10.20.224.214])
+ by fmviesa006.fm.intel.com with ESMTP; 13 Jan 2026 07:18:31 -0800
+From: Ciara Loftus <ciara.loftus@intel.com>
 To: dev@dpdk.org
-Cc: Bruce Richardson <bruce.richardson@intel.com>,
- Jingjing Wu <jingjing.wu@intel.com>,
- Praveen Shetty <praveen.shetty@intel.com>
-Subject: [PATCH v2 36/36] net/idpf: enable simple Tx function
-Date: Tue, 13 Jan 2026 15:15:00 +0000
-Message-ID: <20260113151505.1871271-37-bruce.richardson@intel.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20260113151505.1871271-1-bruce.richardson@intel.com>
-References: <20251219172548.2660777-1-bruce.richardson@intel.com>
- <20260113151505.1871271-1-bruce.richardson@intel.com>
+Cc: Ciara Loftus <ciara.loftus@intel.com>
+Subject: [PATCH] net/iavf: support pre and post reset callbacks
+Date: Tue, 13 Jan 2026 15:17:57 +0000
+Message-ID: <20260113151757.567234-1-ciara.loftus@intel.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -62,147 +57,199 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The common "simple Tx" function - in some ways a scalar version of the
-vector Tx functions - can be used by the idpf driver as well as i40e and
-ice, so add support for it to the driver.
+The user may want to perform some actions before and/or after a VF
+reset, for example storing settings that may be lost during the reset
+and restoring them after the reset. To facilitate this, introduce a
+new function which allows the user to register either a pre or post
+reset callback, which will be executed before or after the VF has been
+reset. To unregister the callback, simply use the same function with a
+null callback as argument.
 
-Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
 ---
- drivers/net/intel/idpf/idpf_common_device.h |  2 ++
- drivers/net/intel/idpf/idpf_common_rxtx.c   | 19 +++++++++++++++
- drivers/net/intel/idpf/idpf_common_rxtx.h   |  3 +++
- drivers/net/intel/idpf/idpf_rxtx.c          | 26 ++++++++++++++++++++-
- 4 files changed, 49 insertions(+), 1 deletion(-)
+ doc/guides/rel_notes/release_26_03.rst |  4 ++
+ drivers/net/intel/iavf/iavf.h          | 15 +++++++
+ drivers/net/intel/iavf/iavf_ethdev.c   | 62 ++++++++++++++++++++++++++
+ drivers/net/intel/iavf/rte_pmd_iavf.h  | 24 ++++++++++
+ 4 files changed, 105 insertions(+)
 
-diff --git a/drivers/net/intel/idpf/idpf_common_device.h b/drivers/net/intel/idpf/idpf_common_device.h
-index 31915a03d4..527aa9b3dc 100644
---- a/drivers/net/intel/idpf/idpf_common_device.h
-+++ b/drivers/net/intel/idpf/idpf_common_device.h
-@@ -78,6 +78,7 @@ enum idpf_rx_func_type {
- enum idpf_tx_func_type {
- 	IDPF_TX_DEFAULT,
- 	IDPF_TX_SINGLEQ,
-+	IDPF_TX_SINGLEQ_SIMPLE,
- 	IDPF_TX_SINGLEQ_AVX2,
- 	IDPF_TX_AVX512,
- 	IDPF_TX_SINGLEQ_AVX512,
-@@ -100,6 +101,7 @@ struct idpf_adapter {
+diff --git a/doc/guides/rel_notes/release_26_03.rst b/doc/guides/rel_notes/release_26_03.rst
+index 15dabee7a1..770f9933ee 100644
+--- a/doc/guides/rel_notes/release_26_03.rst
++++ b/doc/guides/rel_notes/release_26_03.rst
+@@ -55,6 +55,10 @@ New Features
+      Also, make sure to start the actual text at the margin.
+      =======================================================
  
- 	bool is_tx_singleq; /* true - single queue model, false - split queue model */
- 	bool is_rx_singleq; /* true - single queue model, false - split queue model */
-+	bool tx_simple_allowed; /* true if all queues support simple TX */
++* **Updated Intel iavf driver.**
++
++  * Added support for pre and post VF reset callbacks.
++
  
- 	/* For timestamp */
- 	uint64_t time_hw;
-diff --git a/drivers/net/intel/idpf/idpf_common_rxtx.c b/drivers/net/intel/idpf/idpf_common_rxtx.c
-index 781310e564..bf2e9363d4 100644
---- a/drivers/net/intel/idpf/idpf_common_rxtx.c
-+++ b/drivers/net/intel/idpf/idpf_common_rxtx.c
-@@ -1348,6 +1348,15 @@ idpf_dp_singleq_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
- 			idpf_set_tso_ctx, NULL, NULL);
+ Removed Items
+ -------------
+diff --git a/drivers/net/intel/iavf/iavf.h b/drivers/net/intel/iavf/iavf.h
+index d78582e05c..5482472549 100644
+--- a/drivers/net/intel/iavf/iavf.h
++++ b/drivers/net/intel/iavf/iavf.h
+@@ -224,6 +224,17 @@ struct iavf_qtc_map {
+ 	uint16_t queue_count;
+ };
+ 
++enum iavf_reset_cb_type {
++	IAVF_RESET_CB_TYPE_PRE,
++	IAVF_RESET_CB_TYPE_POST,
++};
++
++struct iavf_reset_cb_arg {
++	uint16_t port_id;
++	int reset_status;
++	void *user_state;
++};
++
+ /* Structure to store private data specific for VF instance. */
+ struct iavf_info {
+ 	uint16_t num_queue_pairs;
+@@ -257,6 +268,10 @@ struct iavf_info {
+ 
+ 	struct iavf_vsi vsi;
+ 	bool vf_reset;	/* true for VF reset pending, false for no VF reset */
++	void (*pre_reset_cb)(struct iavf_reset_cb_arg *arg); /* Pre reset callback function ptr */
++	void (*post_reset_cb)(struct iavf_reset_cb_arg *arg); /* Post reset callback function ptr */
++	struct iavf_reset_cb_arg *pre_reset_cb_arg; /* Pre reset function argument */
++	struct iavf_reset_cb_arg *post_reset_cb_arg; /* Post reset function argument */
+ 	uint64_t flags;
+ 
+ 	uint8_t *rss_lut;
+diff --git a/drivers/net/intel/iavf/iavf_ethdev.c b/drivers/net/intel/iavf/iavf_ethdev.c
+index 15e49fe248..553f38a286 100644
+--- a/drivers/net/intel/iavf/iavf_ethdev.c
++++ b/drivers/net/intel/iavf/iavf_ethdev.c
+@@ -3120,6 +3120,10 @@ iavf_handle_hw_reset(struct rte_eth_dev *dev, bool vf_initiated_reset)
+ 	vf->in_reset_recovery = true;
+ 	iavf_set_no_poll(adapter, false);
+ 
++	/* Call the pre reset callback */
++	if (vf->pre_reset_cb)
++		(*vf->pre_reset_cb)(vf->pre_reset_cb_arg);
++
+ 	ret = iavf_dev_reset(dev);
+ 	if (ret)
+ 		goto error;
+@@ -3144,6 +3148,13 @@ iavf_handle_hw_reset(struct rte_eth_dev *dev, bool vf_initiated_reset)
+ error:
+ 	PMD_DRV_LOG(DEBUG, "RESET recover with error code=%dn", ret);
+ exit:
++	/* Update the reset status */
++	if (vf->post_reset_cb_arg)
++		vf->post_reset_cb_arg->reset_status = ret;
++	/* Call the post reset callback */
++	if (vf->post_reset_cb)
++		(*vf->post_reset_cb)(vf->post_reset_cb_arg);
++
+ 	vf->in_reset_recovery = false;
+ 	iavf_set_no_poll(adapter, false);
+ 
+@@ -3183,6 +3194,57 @@ rte_pmd_iavf_reinit(uint16_t port)
+ 	return 0;
  }
  
-+RTE_EXPORT_INTERNAL_SYMBOL(idpf_dp_singleq_xmit_pkts_simple)
-+uint16_t
-+idpf_dp_singleq_xmit_pkts_simple(void *tx_queue, struct rte_mbuf **tx_pkts,
-+				   uint16_t nb_pkts)
++RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_pmd_iavf_reset_cb_register, 26.03)
++int
++rte_pmd_iavf_reset_cb_register(uint16_t port,
++				   enum iavf_reset_cb_type cb_type,
++				   void (*reset_cb)(struct iavf_reset_cb_arg *arg),
++				   struct iavf_reset_cb_arg *reset_arg)
 +{
-+	return ci_xmit_pkts_simple(tx_queue, tx_pkts, nb_pkts);
++	struct rte_eth_dev *dev;
++	struct iavf_info *vf;
++
++	RTE_ETH_VALID_PORTID_OR_ERR_RET(port, -ENODEV);
++
++	dev = &rte_eth_devices[port];
++
++	if (!is_iavf_supported(dev)) {
++		PMD_DRV_LOG(ERR, "Cannot register callback, port %u is not an IAVF device.", port);
++		return -ENOTSUP;
++	}
++
++	if (reset_cb != NULL && reset_arg == NULL) {
++		PMD_DRV_LOG(ERR, "Cannot register callback on port %u, arg is NULL.", port);
++		return -EINVAL;
++	}
++
++	if (reset_arg != NULL)
++		reset_arg->port_id = port;
++
++	vf = IAVF_DEV_PRIVATE_TO_VF(dev->data->dev_private);
++
++	if (vf->in_reset_recovery) {
++		PMD_DRV_LOG(ERR, "Cannot modify reset callback on port %u, VF is resetting.", port);
++		return -EBUSY;
++	}
++
++	switch (cb_type) {
++	case IAVF_RESET_CB_TYPE_PRE:
++		vf->pre_reset_cb = reset_cb;
++		vf->pre_reset_cb_arg = reset_arg;
++		break;
++	case IAVF_RESET_CB_TYPE_POST:
++		vf->post_reset_cb = reset_cb;
++		vf->post_reset_cb_arg = reset_arg;
++		break;
++	default:
++		PMD_DRV_LOG(ERR, "Invalid reset callback type: %d", cb_type);
++		return -EINVAL;
++	}
++
++	return 0;
 +}
 +
-+
- /* TX prep functions */
- RTE_EXPORT_INTERNAL_SYMBOL(idpf_dp_prep_pkts)
- uint16_t
-@@ -1533,6 +1542,16 @@ const struct ci_tx_path_info idpf_tx_path_infos[] = {
- 			.single_queue = true
- 		}
- 	},
-+	[IDPF_TX_SINGLEQ_SIMPLE] = {
-+		.pkt_burst = idpf_dp_singleq_xmit_pkts_simple,
-+		.info = "Single Queue Scalar Simple",
-+		.features = {
-+			.tx_offloads = IDPF_TX_VECTOR_OFFLOADS,
-+			.single_queue = true,
-+			.simple_tx = true,
-+		}
-+	},
-+
- #ifdef RTE_ARCH_X86
- 	[IDPF_TX_SINGLEQ_AVX2] = {
- 		.pkt_burst = idpf_dp_singleq_xmit_pkts_avx2,
-diff --git a/drivers/net/intel/idpf/idpf_common_rxtx.h b/drivers/net/intel/idpf/idpf_common_rxtx.h
-index fe7094d434..914cab0f25 100644
---- a/drivers/net/intel/idpf/idpf_common_rxtx.h
-+++ b/drivers/net/intel/idpf/idpf_common_rxtx.h
-@@ -221,6 +221,9 @@ __rte_internal
- uint16_t idpf_dp_singleq_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
- 				   uint16_t nb_pkts);
- __rte_internal
-+uint16_t idpf_dp_singleq_xmit_pkts_simple(void *tx_queue, struct rte_mbuf **tx_pkts,
-+				   uint16_t nb_pkts);
-+__rte_internal
- uint16_t idpf_dp_prep_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
- 			   uint16_t nb_pkts);
- __rte_internal
-diff --git a/drivers/net/intel/idpf/idpf_rxtx.c b/drivers/net/intel/idpf/idpf_rxtx.c
-index 5c2516f556..a2bb4b766d 100644
---- a/drivers/net/intel/idpf/idpf_rxtx.c
-+++ b/drivers/net/intel/idpf/idpf_rxtx.c
-@@ -497,6 +497,22 @@ idpf_tx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_idx,
- 	txq->q_set = true;
- 	dev->data->tx_queues[queue_idx] = txq;
- 
-+	/* Set tx_simple_allowed flag based on queue configuration.
-+	 * For queue 0: explicitly set the flag based on its configuration.
-+	 * For other queues: only set to false if this queue cannot use simple_tx.
-+	 */
-+	if (vport->txq_model == VIRTCHNL2_QUEUE_MODEL_SPLIT)
-+		goto out;
-+
-+	/* for first queue, default to true, disable later if any queue can't meet conditions */
-+	if (queue_idx == 0)
-+		adapter->tx_simple_allowed = true;
-+
-+	if ((txq->offloads != (txq->offloads & RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE)) ||
-+			txq->tx_rs_thresh < IDPF_VPMD_TX_MAX_BURST)
-+		adapter->tx_simple_allowed = false;
-+
-+out:
- 	return 0;
- 
- err_complq_setup:
-@@ -639,6 +655,7 @@ int
- idpf_tx_queue_start(struct rte_eth_dev *dev, uint16_t tx_queue_id)
+ void
+ iavf_set_no_poll(struct iavf_adapter *adapter, bool link_change)
  {
- 	struct idpf_vport *vport = dev->data->dev_private;
-+	struct idpf_adapter *ad = vport->adapter;
- 	struct ci_tx_queue *txq = dev->data->tx_queues[tx_queue_id];
- 	int err = 0;
+diff --git a/drivers/net/intel/iavf/rte_pmd_iavf.h b/drivers/net/intel/iavf/rte_pmd_iavf.h
+index dea1bd2789..365f8a3e6a 100644
+--- a/drivers/net/intel/iavf/rte_pmd_iavf.h
++++ b/drivers/net/intel/iavf/rte_pmd_iavf.h
+@@ -20,6 +20,8 @@
+ #include <rte_mbuf.h>
+ #include <rte_mbuf_dyn.h>
  
-@@ -655,6 +672,12 @@ idpf_tx_queue_start(struct rte_eth_dev *dev, uint16_t tx_queue_id)
- 		return err;
- 	}
- 
-+	/* Record what kind of descriptor cleanup we need on teardown.
-+	 * For single queue mode, vector or simple tx paths use vec entry format.
-+	 */
-+	if (vport->txq_model == VIRTCHNL2_QUEUE_MODEL_SINGLE)
-+		txq->use_vec_entry = ad->tx_simple_allowed;
++#include "iavf.h"
 +
- 	/* Ready to switch the queue on */
- 	err = idpf_vc_queue_switch(vport, tx_queue_id, false, true,
- 							VIRTCHNL2_QUEUE_TYPE_TX);
-@@ -835,7 +858,8 @@ idpf_set_tx_function(struct rte_eth_dev *dev)
- 	struct ci_tx_path_features req_features = {
- 		.tx_offloads = dev->data->dev_conf.txmode.offloads,
- 		.simd_width = RTE_VECT_SIMD_DISABLED,
--		.single_queue = (vport->txq_model == VIRTCHNL2_QUEUE_MODEL_SINGLE)
-+		.single_queue = (vport->txq_model == VIRTCHNL2_QUEUE_MODEL_SINGLE),
-+		.simple_tx = ad->tx_simple_allowed
- 	};
+ #ifdef __cplusplus
+ extern "C" {
+ #endif
+@@ -109,6 +111,28 @@ extern uint64_t rte_pmd_ifd_dynflag_proto_xtr_ipsec_crypto_said_mask;
+ __rte_experimental
+ int rte_pmd_iavf_reinit(uint16_t port);
  
- 	/* The primary process selects the tx path for all processes. */
++/**
++ * Register or unregister a pre or post reset event callback
++ *
++ * @param port
++ *   The port identifier of the Ethernet device.
++ * @param cb_type
++ *   The callback type, pre-reset (0) or post-reset (1).
++ * @param reset_cb
++ *   The callback function that will be invoked by the driver.
++ *   Pass NULL to unregister an existing callback.
++ * @param reset_arg
++ *   The argument passed to the callback function.
++ *   Can be NULL when unregistering (reset_cb is NULL).
++ * @return
++ *   0 if successful, otherwise if a failure occurs.
++ */
++__rte_experimental
++int rte_pmd_iavf_reset_cb_register(uint16_t port,
++	enum iavf_reset_cb_type cb_type,
++	void (*reset_cb)(struct iavf_reset_cb_arg *arg),
++	struct iavf_reset_cb_arg *reset_arg);
++
+ /**
+  * The mbuf dynamic field pointer for flexible descriptor's extraction metadata.
+  */
 -- 
-2.51.0
+2.43.0
 
