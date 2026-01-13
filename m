@@ -2,67 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F9D4D29DFA
-	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Jan 2026 09:53:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07901C9EC9D
+	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Jan 2026 10:18:32 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1D060402E0;
-	Tue, 13 Jan 2026 10:53:13 +0100 (CET)
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com
- [209.85.210.171])
- by mails.dpdk.org (Postfix) with ESMTP id E073A4028C
- for <dev@dpdk.org>; Tue, 13 Jan 2026 10:53:10 +0100 (CET)
-Received: by mail-pf1-f171.google.com with SMTP id
- d2e1a72fcca58-81c72659e6bso4603793b3a.0
- for <dev@dpdk.org>; Tue, 13 Jan 2026 01:53:10 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 07CAD402D8;
+	Tue, 13 Jan 2026 11:18:32 +0100 (CET)
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com
+ [209.85.214.174])
+ by mails.dpdk.org (Postfix) with ESMTP id 4816640276
+ for <dev@dpdk.org>; Tue, 13 Jan 2026 11:18:30 +0100 (CET)
+Received: by mail-pl1-f174.google.com with SMTP id
+ d9443c01a7336-2a12ebe4b74so70700245ad.0
+ for <dev@dpdk.org>; Tue, 13 Jan 2026 02:18:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1768297990; x=1768902790; darn=dpdk.org;
+ d=gmail.com; s=20230601; t=1768299509; x=1768904309; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:message-id:date:subject:cc
  :to:from:from:to:cc:subject:date:message-id:reply-to;
  bh=DYbwOYc4rWUkXlgx/uyCyZ+qgEIB0JABhPGH8qvtJt0=;
- b=CFCpsF7824QMbaS3LwQYvn7Ll8ICij8qucP7lkXOqgi+ArVAdJLIMaroRLR0EdhtIj
- y2NqQ6uE2Vi31yoju9bYQ0XYnFoDXM9j7OfuPOFQmdyxU3ih0xKEnqwh9kQuRd5SqrVf
- qxNFmBFGrbAz7Zvg5TN/TnkR4s1VQLRbW97R5X/QLEGBbyNEgbh/Th9Gkt+ZwJpQZpww
- 4XwFA7hICzwvHINjkZRWWbUDnppCrFj1nMj2kL2Y3/37pf74ZWtTotIm8GDN16jifUQ1
- Eon5erTDckthKCJX/JYiGwmCvjyKvyTF9D0tCt0oe+VwVRh/FrpXkzh3QQCmDZ/j82un
- 3MQA==
+ b=HSOTBZmTW/W5NvS+X9Njn2SJY2F9pGnumlH54Kb8GtICFQ7EuQNOYQckM/s+R7wt/J
+ qPmW6TO2P4IkUtWgxbturz/R/xI2L77C/mNM19mwiiGxM7EAA+3QeEn301kyBXe807Iq
+ Hl2zQqgpKv+Zfpe9NsHCFzA0HW9ZgcVIDMvJPjfnfirglWRpFK3zr8jB5yKUkBzhKH5P
+ WrXON63/HNQ9QNl6JePhDxiZws7IAq12Diam5DadPF7RTa2JW9kqHu0g/iwQprh7Mw6m
+ LBliHnPJw0YrhIPKzlRZstc9xNsJO3J++SWCZDg5RWBsn35AyuVYTx3x5xlrWFWJCVZ6
+ QxNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768297990; x=1768902790;
+ d=1e100.net; s=20230601; t=1768299509; x=1768904309;
  h=content-transfer-encoding:mime-version:message-id:date:subject:cc
  :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to;
  bh=DYbwOYc4rWUkXlgx/uyCyZ+qgEIB0JABhPGH8qvtJt0=;
- b=LA+cbUnDhp/zFvJZNrFNfbv47OApX/ECm3lSLVoqtWHYosXlepvYlAK++IgufkhYhy
- 3wyOvxPiAl8bd4R4jJGxunZwJE+TCqnUyfTyR/xxBMtg1Wt0nLU89HLsd7Uh4BVnzpp2
- EemyxQC5y5QffLHhRZa54BR5OMF1JBeSzG1ceJzvQJQaxk9NOPveJ0np/tXnMjFVTrcZ
- WoNZKVL/0qmPOfc9CopZJkHwQ6DNBXlf9lO9NRy9xo+ihA6qkIybM8FCgxmpCf+0+xVq
- cPVd9HX3HjW/f5KS6aumiysK2knP1dpJaUodvBiDv7TjKPPi690CBFeXiUdqvUF6evAk
- aThg==
-X-Gm-Message-State: AOJu0YwwSKqCZ92kODYw3mQpst+hTlNIy0qN58m8DUINU8XZpGDy4lU6
- uZ9dTWvz06Ih/hPrRlLhKRrLZqDvMXcE5kh+RshM0DjEzx9U3eDS6JqMcJ4yKw==
-X-Gm-Gg: AY/fxX6BLEbsVrn3qX7mhrfBoSjp1j+sfw7ZjmHXgIbTPFu2xxG0KWNeEWC6pJmo/lc
- QysEcelyGmHmIXrGq+LGt0Mbn6RYEDu01XoJBOqu7MiNtuIJXSuaChb/aI7N01pjFV9coYwurQi
- R+JNoWygfVEyS7ZTlnPxeG5prcCoSLlG3clZ3c2c3jdF8h2DKDHXC77JV0Iyns45RBCzts0Ly4b
- q7rBFRLztcjtCSxbp0T3Zp0zhD3hYKI0TOcUoCUBj2eP7OzAQHzvYWDkNKFBZsxV7Y138895VKw
- gPppqG5SRxjiZwgWoQxPzMGMdy1IxdkT0O2AIh02APiJSlOwnLRlSsSJE0AtQJPrVVsKp76bEGq
- +2OjmgOgtd9kFYKosWcBKj26AznPx640EbdnmwPXhXDwAtp4c+AEwF/dGUfivMe2qC3+FaVGhqe
- zlxltoj3ULHnsmK9a/mK5NvNqxHa75XmF34AnzUjRlPRtBu/YdVrQfxA==
-X-Google-Smtp-Source: AGHT+IGm0W1jbq8SBmzCWvh8Wte8GZ8LczBrc/kz+AHtfL+zddrUr14Js9IjUyVt3kI/26PP+LRHzw==
-X-Received: by 2002:a05:6a00:35c4:b0:81f:4063:f1ef with SMTP id
- d2e1a72fcca58-81f4063f455mr8958454b3a.54.1768297989805; 
- Tue, 13 Jan 2026 01:53:09 -0800 (PST)
+ b=f486/f2btwITBb9yr9ZteHWZIr/dmpeVyH4E1U1kqQwayeEQYMatcZ/iQf3sLDByIK
+ yGfy3lgNdCfXQEEXBvkiour0f5kAwh5z8tx6Gw2LXXyInycgxpw/kGI2ofjnQF7vmh/d
+ U/t/qM24+OcZr2g+cI/fT/CBCYVRLQXyj+ykSo62O/smi7aRkyl/427uPcapIRjGM/1T
+ KdK7YVH6yrA2rUv5W2MY4IoJxpNvZK6gkZfn8rzAiI2PGjV3AYPR5j/4tREo31H6Qufp
+ wyses+bN+zkaRhGI4zhBV2d9pAqsUcpedALWua3jwtsaoCMfbCbPlhED0h/bVP/lkFJx
+ m9hQ==
+X-Gm-Message-State: AOJu0YzOn/u8DPyebs7oz2gvpAGQoopBJAEVbai7o/1sIe+Zqudsx/Of
+ 1wBHxSlwnyb9Nb14bTW35aOY/e4oc8ijMeSAfVXFIb+ecfQ63lQj0WUx
+X-Gm-Gg: AY/fxX5mCiLkNwFF0KA7tFvyeQ6u0q6X5ed9MR3tgaFUWuWqDSBrx1RjhgtAMKaEAql
+ Uvd4SDAyA6cbb2WW0qKEWIfEm4Cbw/YQVGYMYopwNXqVoNSiq9HSd3WMELUWXXToQyNy9UBbsa7
+ uqR7D9aOjsB+KZjbRNyVtanLeX5z6uBLqK9anZeo+ogkAsnFaOxRy9AoD3UTiphOQr9q1B4maCy
+ wSTY9xqfmjSvFF1H3VPx1ARP+i497a5j74t8c5l549UfPqpqj5ynrzlkSwEEosX7MJHe4EjRQx7
+ SNDTJ9cgG11/7gd5O0vq/CbzobL1LSOTijkPYC6XRxx9IjadYE1wHyyvM95cYdKVGv30WyytrPy
+ TFOuUBnGuSnlCAa8oIyZ6gbsIcnMEnHI7l8m4J8Isg/6jyoZPZenz4CSznKLVMuV+FGmbxO+hyX
+ KWOVlszDk4q1vKqUS6JytR0s+6o2NAiOZKt3aKd4E4YFBi4MqKBD2U+A==
+X-Google-Smtp-Source: AGHT+IFFVIpz9F6enGY/vw/Cq/i+ZT4OPry1G2IWULDFMTcOfsSVWwM6ypqCyinCWVJag3Benx2NmQ==
+X-Received: by 2002:a17:903:2348:b0:295:9e4e:4092 with SMTP id
+ d9443c01a7336-2a3ee4b7515mr203660295ad.56.1768299509101; 
+ Tue, 13 Jan 2026 02:18:29 -0800 (PST)
 Received: from localhost.localdomain ([206.126.100.157])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-81e042e75b1sm8045352b3a.21.2026.01.13.01.53.07
+ d9443c01a7336-2a3f3115682sm163067995ad.55.2026.01.13.02.18.26
  (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
- Tue, 13 Jan 2026 01:53:09 -0800 (PST)
+ Tue, 13 Jan 2026 02:18:28 -0800 (PST)
 From: madhukar.mythri@gmail.com
 To: longli@microsoft.com
 Cc: dev@dpdk.org, stephen@networkplumber.org,
  Madhuker Mythri <madhukar.mythri@gmail.com>, stable@dpdk.org
-Subject: [PATCH v2 2/2] net/netvsc: fix race condition in RNDIS command
- execution
-Date: Tue, 13 Jan 2026 15:22:58 +0530
-Message-ID: <20260113095258.54258-1-madhukar.mythri@gmail.com>
+Subject: [PATCH v2] net/netvsc: fix race condition in RNDIS command execution
+Date: Tue, 13 Jan 2026 15:48:20 +0530
+Message-ID: <20260113101820.60611-1-madhukar.mythri@gmail.com>
 X-Mailer: git-send-email 2.50.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
