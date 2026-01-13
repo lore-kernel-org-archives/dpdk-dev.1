@@ -2,75 +2,54 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2554BD2D0EB
-	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Jan 2026 14:46:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9EABD2D0EB
+	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Jan 2026 14:48:22 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0DE964028C;
-	Tue, 13 Jan 2026 15:46:36 +0100 (CET)
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com
- [209.85.221.53]) by mails.dpdk.org (Postfix) with ESMTP id D593E40276
- for <dev@dpdk.org>; Tue, 13 Jan 2026 15:46:34 +0100 (CET)
-Received: by mail-wr1-f53.google.com with SMTP id
- ffacd0b85a97d-42fbc544b09so6101870f8f.1
- for <dev@dpdk.org>; Tue, 13 Jan 2026 06:46:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768315594;
- x=1768920394; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=Bu36e9CX8ompFhnF+8CuXt7nNz4XnzKrf+QqwI7J3Sk=;
- b=hEAgtmy7iZtH7tvZ5fmof/LwcXW0TrgiwWrtGCM9/WB1UJb/0ia+vff+qpoKD6amJJ
- aHMV5/XdTMt55TXRIu+csaR/sBfWd4hkjB56SjBze8kSDu40uZUnbWq5oA5t9SxCKoNE
- e1owsix5yNOcbQbYR29NSbnDuv4HwSxp50+jrnXOO9BgcthlhiUbNN1yszhj/J5XaWV0
- kn9KE/hR+hm3AErM4WF/zDxJ1Gi0lJrYtwK8EfUdAvObFxnvH84gcRhiQmHzr6o5j3Mq
- BUQ4XreXlcdJ64lGPPiuMHrXcJ/M2L9JsCt48zx8NSfqkmuwkDrSy2iZmulClVvHAZ6D
- uARQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768315594; x=1768920394;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=Bu36e9CX8ompFhnF+8CuXt7nNz4XnzKrf+QqwI7J3Sk=;
- b=iul09pUuxWAe4qHdMnJyfOAi59Gv9nZmTT6djoDBbzxq1LjwfKWhMSlx2Uc6XPuVzN
- LbZsEDaz7IlL72d3nCrNmn/rP8Tgy9iC59hrJLyuhJLTvrDK94Lq7ngSHyr62PWhtFeT
- 1uZ4muecXy+vsB3DqPXFLxRbja4WdejK/FgrvOW9Zjvl+vSOlfiDDpRRGkhGnTooR2Sd
- hVNn9htID//zuvAzCjahTonACcr0+XqXiUTmiDE+Ouqt+3noakfnPSQe2nUCwy25ViyU
- i5Q4Tdn/D9J4T/+f4qxEYQBFBsvwNKupyw5mIlKg9wndz2LunRnSCxkEkgmXq1VkBCQf
- lQOA==
-X-Gm-Message-State: AOJu0YwjW4mMxYSvOZzuPMrNC3NoU62XHVUYc0OiWDEtlDej1NYdBzwo
- SqbAMFTwoodRepyhT2zXX4IdSoVQWhsw1kZpV+qiwyumBjUUASWjaEEp91i898SGS5Bp6av4Gi4
- hRoIl
-X-Gm-Gg: AY/fxX6YCNMFlCKab87QJ3gzvoyd8MrFp6WmdDglWL2WdzniedQjrJ8DU3zj3tCng0H
- ztlmKBS1NoPVJZW6FLzt9ibxYNBmjPjR3US1mqTq0nO4Gg7kjrlW9pMbyZkwYlJ7oC9BL7giPly
- piuO+yiH1YDbFAdS3RDUi3nxct8whnmm+3IrlBb2PadHfnB8/m1ZC+lpc+UEtTS4XAmfNCUwD/z
- ElU4juNb1lLRy7fPvkb6hRRIOltzYuf8Ffe0hRDmyyg2bmNaDtZqeVy9+3+uACdoij1XvUR4B2f
- 32+hgQ03YuIPCw7t7CS1zJkpHspY4GYDdZRS9Dw84BwLjzYVrJe0tXvRzmzKoCm5r9Aze6XBo4X
- V5brKWTpm9fA/n9I1CCVxve4Q4qrr9pYCAoN7jGFzGoZ7XawAme3NZZH5g3/5qEH8MvSK5kEoqA
- McvdK0mIJXq+T//gddEy6gGDrXEHa6oe/J787oejrWrq61ZgnHgV/b
-X-Google-Smtp-Source: AGHT+IGe3BFMtw/Kkh6CM7IPKfCTatmERzXM7+irkxCmKhe2EKDpcoh4VTFrylgBh8w0XuhResArkQ==
-X-Received: by 2002:a05:6000:a91:b0:432:da3b:5949 with SMTP id
- ffacd0b85a97d-432da3b5d11mr13061158f8f.21.1768315594282; 
- Tue, 13 Jan 2026 06:46:34 -0800 (PST)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-432bd5ff1e9sm46445428f8f.41.2026.01.13.06.46.32
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 13 Jan 2026 06:46:34 -0800 (PST)
-Date: Tue, 13 Jan 2026 06:46:28 -0800
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Dimon Zhao <dimon.zhao@nebula-matrix.com>
-Cc: dev@dpdk.org, Kyo Liu <kyo.liu@nebula-matrix.com>, Leon Yu
- <leon.yu@nebula-matrix.com>, Sam Chen <sam.chen@nebula-matrix.com>
-Subject: Re: [PATCH v1 1/1] net/nbl: fix issues reported by Coverity
-Message-ID: <20260113064628.114ba10a@phoenix.local>
-In-Reply-To: <20251030033619.3386064-2-dimon.zhao@nebula-matrix.com>
-References: <20250627014022.4019625-1-dimon.zhao@nebula-matrix.com>
- <20251030033619.3386064-1-dimon.zhao@nebula-matrix.com>
- <20251030033619.3386064-2-dimon.zhao@nebula-matrix.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+	by mails.dpdk.org (Postfix) with ESMTP id 2F3F84042C;
+	Tue, 13 Jan 2026 15:48:22 +0100 (CET)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
+ [185.176.79.56])
+ by mails.dpdk.org (Postfix) with ESMTP id 6019340276;
+ Tue, 13 Jan 2026 15:48:21 +0100 (CET)
+Received: from mail.maildlp.com (unknown [172.18.224.150])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4drBtp1j4NzHnGkT;
+ Tue, 13 Jan 2026 22:48:02 +0800 (CST)
+Received: from dubpeml100002.china.huawei.com (unknown [7.214.144.156])
+ by mail.maildlp.com (Postfix) with ESMTPS id 5D9B040539;
+ Tue, 13 Jan 2026 22:48:20 +0800 (CST)
+Received: from dubpeml500001.china.huawei.com (7.214.147.241) by
+ dubpeml100002.china.huawei.com (7.214.144.156) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.36; Tue, 13 Jan 2026 14:48:19 +0000
+Received: from dubpeml500001.china.huawei.com ([7.214.147.241]) by
+ dubpeml500001.china.huawei.com ([7.214.147.241]) with mapi id 15.02.1544.011; 
+ Tue, 13 Jan 2026 14:48:19 +0000
+From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+To: Bruce Richardson <bruce.richardson@intel.com>,
+ =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
+CC: "dev@dpdk.org" <dev@dpdk.org>, "techboard@dpdk.org" <techboard@dpdk.org>
+Subject: RE: mbuf fast-free requirements analysis
+Thread-Topic: mbuf fast-free requirements analysis
+Thread-Index: AdxtsuI54Ph/Or7ES4uJIkNuHGVH/AAHMGowAACuIkAAzd1lUAAd58awAHUVwFAAAtgfgAACVqsAASbdj1A=
+Date: Tue, 13 Jan 2026 14:48:19 +0000
+Message-ID: <69116a74e319436fb4a06fb6efd684d3@huawei.com>
+References: <98CBD80474FA8B44BF855DF32C47DC35F655E0@smartserver.smartshare.dk>
+ <0d1645e1c83f4ec4ad676095b910845c@huawei.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F655E5@smartserver.smartshare.dk>
+ <d290adf103244ff7be53844ee32bb6d0@huawei.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F65601@smartserver.smartshare.dk>
+ <4ef23a6663774a119d3087fb21ede984@huawei.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F65608@smartserver.smartshare.dk>
+ <aUmDTsLxNN-GOGDC@bricha3-mobl1.ger.corp.intel.com>
+In-Reply-To: <aUmDTsLxNN-GOGDC@bricha3-mobl1.ger.corp.intel.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.206.138.220]
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,59 +63,84 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 29 Oct 2025 20:36:19 -0700
-Dimon Zhao <dimon.zhao@nebula-matrix.com> wrote:
-
-> Coverity issue: 490942
-> Coverity issue: 490943
-> Coverity issue: 490946
-> Coverity issue: 490947
-> Coverity issue: 490949
-> Coverity issue: 490950
-> Coverity issue: 490951
-> Coverity issue: 490952
-> Coverity issue: 490953
-> Coverity issue: 490954
-> Coverity issue: 490955
-> Coverity issue: 490957
-> Coverity issue: 490958
-> Coverity issue: 490959
-> Fixes: a1c5ffa13b2c ("net/nbl: add channel layer")
-> Fixes: dc955cd24c8f ("net/nbl: add coexistence mode")
-> Fixes: 93b38df5a2ec ("net/nbl: support basic configuration")
+> > > > > >
+> > > > > > 	__rte_mbuf_raw_sanity_check_mp(m, mp);
+> > > > > > 	rte_mbuf_history_mark(mbuf,
+> > > > > > RTE_MBUF_HISTORY_OP_LIB_PREFREE_RAW);
+> > > > > > }
+> > > > >
+> > > > > Thanks Morten, though should we really panic if condition is not
+> > > met?
+> > > > > Might be just do check first and return an error.
+> > > >
+> > > > __rte_mbuf_raw_sanity_check_mp() is a no-op unless
+> > > > RTE_LIBRTE_MBUF_DEBUG is enabled.
+> > >
+> > > Yep, I noticed.
+> > >
+> > > >
+> > > > Using it everywhere in alloc/free in the mbuf library is the
+> > > convention.
+> > > >
+> > > > And if we don't do it here, the __rte_mbuf_raw_sanity_check_mp() in
+> > > > rte_mbuf_raw_free() will panic later instead.
+> > >
+> > > Why?
+> > > This new routine (rte_mbuf_raw_prefree_seg) can check that mbuf
+> > > satisfies fast-free criteria
+> > > before updating it, and if conditions are not met simply return an
+> > > error.
+> > > Then the driver has several options:
+> > > 1) Drop the packet silently
+> > > 2) Refuse to send it
+> > > 3) Switch to some slower but always working code-path (without fast-
+> > > free)
+> > > 4) Panic
+> >
+> > It boils down to purpose.
+> >
+> > The function is designed for use in the transmit code path designated f=
+or fast-free,
+> where the application has promised/hinted that packets are fast-free comp=
+liant.
+> > Violating preconditions in the fast path (by passing packets not compli=
+ant to fast-
+> free requirements to this function) is a serious type of bug, for which D=
+PDK usually
+> doesn't provide graceful fallback.
+> > I don't want to make an exception (and introduce graceful fallback) for=
+ the
+> designated fast-free code path.
+> >
+> > My answer would be completely different if we were designing an API for=
+ standard
+> packet transmission, whereby some packets living up to certain criteria c=
+ould take a
+> faster code path for being freed.
+> > If that was the case, I would agree with you about returning a value to=
+ indicate
+> how to proceed, like rte_pktmbuf_prefree_seg() does.
+> >
+> I would tend to agree. The extra handling for those cases just expands th=
+e
+> code and adds more potential branches to the resulting binary. Lots of th=
+e
+> fastpath code just assumes you know what you are doing, and violating
+> constraints will lead to panics and segfaults generally. Therefore panici=
+ng
+> in this case doesn't seem a bit deal to me.
 >=20
+I understand your point lads, and somewhat agree: if we plan to keep FAST_F=
+REE flag forever,
+then it is probably the simplest and safest approach.
+My hope was that such function will open a possibility for the PMDs to impl=
+ement similar
+perf improvement completely transparent to the user (without need for speci=
+al flags and/or pre-requirements).
+But might be I am looking forward way too far with it.
+Even what Morten proposed above is a big step, so ok - let's deal with it f=
+irst.
+Konstantin   =20
 
-Automated code review with AI spotted issue with this patch.
-Please address and resubmit.
+ =20
 
-Patch 5/9: net/nbl: fix issues reported by Coverity
-
-Author: Dimon Zhao
-Verdict: =E2=9D=8C Needs revision - bug introduced
-Check	Status
-Subject =E2=89=A460 chars	=E2=9C=85 (40 chars)
-Prefix correct	=E2=9C=85
-Coverity issue tags	=E2=9C=85
-Fixes tags	=E2=9C=85
-Cc: stable@dpdk.org	=E2=9C=85
-Signed-off-by	=E2=9C=85
-
-Issues:
-
-    Error - Dead code introduced (lines 41-47 in nbl_userdev.c):
-
-c
-
-   ret =3D ioctl(common->devfd, NBL_DEV_USER_GET_BAR_SIZE, &bar_size);
-   if (ret) {
-       NBL_LOG(ERR, "nbl userdev get bar size failed");
-       goto close_eventfd;
-   }
-
-   if (!ret) {  // <-- ALWAYS TRUE - dead code!
-
-After adding the error check with goto, the subsequent if (!ret) condition =
-can never be false. The if (!ret) block should be removed or restructured.
-
-    Warning (line 53): int ret =3D 0; - Unnecessary initialization; value i=
-s immediately overwritten on line 60.
