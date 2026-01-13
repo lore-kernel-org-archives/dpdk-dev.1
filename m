@@ -2,46 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A76D6D2F327
-	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Jan 2026 15:19:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8934D2F327
+	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Jan 2026 15:19:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2AE2C40E48;
-	Tue, 13 Jan 2026 16:15:57 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 50AB640E32;
+	Tue, 13 Jan 2026 16:15:58 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
- by mails.dpdk.org (Postfix) with ESMTP id 0BCB340E0F
- for <dev@dpdk.org>; Tue, 13 Jan 2026 16:15:53 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id EB71440E3B
+ for <dev@dpdk.org>; Tue, 13 Jan 2026 16:15:54 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1768317354; x=1799853354;
+ t=1768317355; x=1799853355;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=dfgBBF6GtBPDV45owv0mKWQPf1PAAsBRhRpJZ4E+mmI=;
- b=Mjz7KJctXRYFL1VzPc28Pm/e+miZ6clswLN+dtWSErfMmqcMm05e2saV
- HFWa004XI/AXb+Hk3gG2InJwWcGCaJzHO8ysBLV+O8MMhO8S6o7gdnN7a
- HlsrdrJLdWn6Su8V8w+d7Tt5oohO+vI7fQhnw97NZc4LmsCvgiSwZOFq6
- 4Y9Wn0F0AFhZ55/y/3isf/34TY1V1jlEnms9TwU0fH2ePPb+NvmhL/caB
- ReaGUN1lVq9mPc6MMgK82rJPq2Ftd0tb4Ka1T5C2hQ7xNVdYpQsJUS4wM
- sBI9IHVZGz2EbIJCvM5t1N65hpTRLOrgyntKDzCrYmjniHM37XZj6ePxE Q==;
-X-CSE-ConnectionGUID: vS0q9ZP2SvWWyoVeF8XK3A==
-X-CSE-MsgGUID: yekPE6AuSiaCpCU4Mu2DXQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11670"; a="80969234"
-X-IronPort-AV: E=Sophos;i="6.21,222,1763452800"; d="scan'208";a="80969234"
+ bh=wRgK7wvkAZ7dE6aHCI0F+Z5kaS5m4qK8OIVZmInoNtI=;
+ b=d1Lj4a70nzU9BRYXDSia1Zn5xy4C6C61Ri5zvi6Yt2XC106oeXnsQ3lf
+ VASVTYZ/NGTQRJEZFTSYaOoQgZjop7aEugOnFJXMC7tQxDUIw5uolKPk0
+ kFlyxzTciUJssSvj9cEIeMjPtDb2Qeq4ARufnxuZIVKkm6ufC42LfXcv9
+ 22wc2KgeBharNlip0xBMxO3X/Q+q/pZWv065N6IPY5b91a9viYSVL1vfQ
+ tij2qCI8JUHVQVwem/e8MOMSoLL5Ki1KdgzZoXuCuvnnqU6H1X4C4XA2b
+ t/jU+SUSEUs3YVH3su6ZRuLHvIarc6ZbFpL42+9l8CvWvVi5YEMJEWIKk w==;
+X-CSE-ConnectionGUID: ZF0SP7EDS4uZ28rHMeH3CQ==
+X-CSE-MsgGUID: ymjCsy+aSXOsfsFSB6iPxA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11670"; a="80969235"
+X-IronPort-AV: E=Sophos;i="6.21,222,1763452800"; d="scan'208";a="80969235"
 Received: from orviesa006.jf.intel.com ([10.64.159.146])
  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 13 Jan 2026 07:15:54 -0800
-X-CSE-ConnectionGUID: i1HiiZvZRuiXvyh1rHuvUw==
-X-CSE-MsgGUID: kiUq+g0STEqRUvph9+tS5g==
+ 13 Jan 2026 07:15:55 -0800
+X-CSE-ConnectionGUID: 7vsPlMKiRBSW8qhQttI+yw==
+X-CSE-MsgGUID: YjO8C5DjRDaXi45xoU7QfQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,222,1763452800"; d="scan'208";a="203556672"
+X-IronPort-AV: E=Sophos;i="6.21,222,1763452800"; d="scan'208";a="203556676"
 Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by orviesa006.jf.intel.com with ESMTP; 13 Jan 2026 07:15:53 -0800
+ by orviesa006.jf.intel.com with ESMTP; 13 Jan 2026 07:15:54 -0800
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v2 32/36] net/intel: use non-volatile stores in simple Tx
- function
-Date: Tue, 13 Jan 2026 15:14:56 +0000
-Message-ID: <20260113151505.1871271-33-bruce.richardson@intel.com>
+Subject: [PATCH v2 33/36] net/intel: align scalar simple Tx path with vector
+ logic
+Date: Tue, 13 Jan 2026 15:14:57 +0000
+Message-ID: <20260113151505.1871271-34-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260113151505.1871271-1-bruce.richardson@intel.com>
 References: <20251219172548.2660777-1-bruce.richardson@intel.com>
@@ -61,103 +61,132 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The simple Tx code path can be reworked to use non-volatile stores - as
-is the case with the full-featured Tx path - by reusing the existing
-write_txd function (which just needs to be moved up in the header file).
-This gives a small performance boost.
+The scalar simple Tx path has the same restrictions as the vector Tx
+path, so we can use the same logic flow in both, to try and ensure we
+get best performance from the scalar path.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- drivers/net/intel/common/tx_scalar_fns.h | 55 +++++++-----------------
- 1 file changed, 16 insertions(+), 39 deletions(-)
+ drivers/net/intel/common/tx_scalar_fns.h | 54 +++++++++++++++---------
+ 1 file changed, 34 insertions(+), 20 deletions(-)
 
 diff --git a/drivers/net/intel/common/tx_scalar_fns.h b/drivers/net/intel/common/tx_scalar_fns.h
-index dcdec200ac..16f802e902 100644
+index 16f802e902..f85ca741a9 100644
 --- a/drivers/net/intel/common/tx_scalar_fns.h
 +++ b/drivers/net/intel/common/tx_scalar_fns.h
-@@ -12,35 +12,13 @@
- /* depends on common Tx definitions. */
- #include "tx.h"
- 
--/* Populate 4 descriptors with data from 4 mbufs */
- static inline void
--ci_tx_fill_hw_ring_tx4(volatile struct ci_tx_desc *txdp, struct rte_mbuf **pkts)
-+write_txd(volatile void *txd, uint64_t qw0, uint64_t qw1)
- {
--	uint64_t dma_addr;
--	uint32_t i;
--
--	for (i = 0; i < 4; i++, txdp++, pkts++) {
--		dma_addr = rte_mbuf_data_iova(*pkts);
--		txdp->buffer_addr = rte_cpu_to_le_64(dma_addr);
--		txdp->cmd_type_offset_bsz =
--			rte_cpu_to_le_64(CI_TX_DESC_DTYPE_DATA |
--				((uint64_t)CI_TX_DESC_CMD_DEFAULT << CI_TXD_QW1_CMD_S) |
--				((uint64_t)(*pkts)->data_len << CI_TXD_QW1_TX_BUF_SZ_S));
--	}
--}
-+	uint64_t *txd_qw =  __rte_assume_aligned(RTE_CAST_PTR(void *, txd), 16);
- 
--/* Populate 1 descriptor with data from 1 mbuf */
--static inline void
--ci_tx_fill_hw_ring_tx1(volatile struct ci_tx_desc *txdp, struct rte_mbuf **pkts)
--{
--	uint64_t dma_addr;
--
--	dma_addr = rte_mbuf_data_iova(*pkts);
--	txdp->buffer_addr = rte_cpu_to_le_64(dma_addr);
--	txdp->cmd_type_offset_bsz =
--		rte_cpu_to_le_64(CI_TX_DESC_DTYPE_DATA |
--			((uint64_t)CI_TX_DESC_CMD_DEFAULT << CI_TXD_QW1_CMD_S) |
--			((uint64_t)(*pkts)->data_len << CI_TXD_QW1_TX_BUF_SZ_S));
-+	txd_qw[0] = rte_cpu_to_le_64(qw0);
-+	txd_qw[1] = rte_cpu_to_le_64(qw1);
+@@ -21,13 +21,11 @@ write_txd(volatile void *txd, uint64_t qw0, uint64_t qw1)
+ 	txd_qw[1] = rte_cpu_to_le_64(qw1);
  }
  
- /* Fill hardware descriptor ring with mbuf data */
-@@ -60,14 +38,22 @@ ci_tx_fill_hw_ring(struct ci_tx_queue *txq, struct rte_mbuf **pkts,
+-/* Fill hardware descriptor ring with mbuf data */
++/* Fill hardware descriptor ring with mbuf data (simple path) */
+ static inline void
+-ci_tx_fill_hw_ring(struct ci_tx_queue *txq, struct rte_mbuf **pkts,
+-		   uint16_t nb_pkts)
++ci_tx_fill_hw_ring_simple(volatile struct ci_tx_desc *txdp, struct rte_mbuf **pkts,
++			  uint16_t nb_pkts)
+ {
+-	volatile struct ci_tx_desc *txdp = &txq->ci_tx_ring[txq->tx_tail];
+-	struct ci_tx_entry *txep = &txq->sw_ring[txq->tx_tail];
+ 	const int N_PER_LOOP = 4;
+ 	const int N_PER_LOOP_MASK = N_PER_LOOP - 1;
+ 	int mainpart, leftover;
+@@ -36,8 +34,6 @@ ci_tx_fill_hw_ring(struct ci_tx_queue *txq, struct rte_mbuf **pkts,
+ 	mainpart = nb_pkts & ((uint32_t)~N_PER_LOOP_MASK);
+ 	leftover = nb_pkts & ((uint32_t)N_PER_LOOP_MASK);
  	for (i = 0; i < mainpart; i += N_PER_LOOP) {
+-		for (j = 0; j < N_PER_LOOP; ++j)
+-			(txep + i + j)->mbuf = *(pkts + i + j);
  		for (j = 0; j < N_PER_LOOP; ++j)
- 			(txep + i + j)->mbuf = *(pkts + i + j);
--		ci_tx_fill_hw_ring_tx4(txdp + i, pkts + i);
-+		for (j = 0; j < N_PER_LOOP; ++j)
-+			write_txd(txdp + i + j, rte_mbuf_data_iova(*(pkts + i + j)),
-+				CI_TX_DESC_DTYPE_DATA |
-+				((uint64_t)CI_TX_DESC_CMD_DEFAULT << CI_TXD_QW1_CMD_S) |
-+				((uint64_t)(*(pkts + i + j))->data_len << CI_TXD_QW1_TX_BUF_SZ_S));
- 	}
- 
+ 			write_txd(txdp + i + j, rte_mbuf_data_iova(*(pkts + i + j)),
+ 				CI_TX_DESC_DTYPE_DATA |
+@@ -48,12 +44,10 @@ ci_tx_fill_hw_ring(struct ci_tx_queue *txq, struct rte_mbuf **pkts,
  	if (unlikely(leftover > 0)) {
  		for (i = 0; i < leftover; ++i) {
--			(txep + mainpart + i)->mbuf = *(pkts + mainpart + i);
--			ci_tx_fill_hw_ring_tx1(txdp + mainpart + i,
--					       pkts + mainpart + i);
-+			uint16_t idx = mainpart + i;
-+			(txep + idx)->mbuf = *(pkts + idx);
-+			write_txd(txdp + idx, rte_mbuf_data_iova(*(pkts + idx)),
-+				CI_TX_DESC_DTYPE_DATA |
-+				((uint64_t)CI_TX_DESC_CMD_DEFAULT << CI_TXD_QW1_CMD_S) |
-+				((uint64_t)(*(pkts + idx))->data_len << CI_TXD_QW1_TX_BUF_SZ_S));
-+
+ 			uint16_t idx = mainpart + i;
+-			(txep + idx)->mbuf = *(pkts + idx);
+ 			write_txd(txdp + idx, rte_mbuf_data_iova(*(pkts + idx)),
+ 				CI_TX_DESC_DTYPE_DATA |
+ 				((uint64_t)CI_TX_DESC_CMD_DEFAULT << CI_TXD_QW1_CMD_S) |
+ 				((uint64_t)(*(pkts + idx))->data_len << CI_TXD_QW1_TX_BUF_SZ_S));
+-
  		}
  	}
  }
-@@ -367,15 +353,6 @@ struct ci_timesstamp_queue_fns {
- 	write_ts_tail_t write_ts_tail;
- };
+@@ -127,6 +121,9 @@ ci_xmit_burst_simple(struct ci_tx_queue *txq,
+ 		     uint16_t nb_pkts)
+ {
+ 	volatile struct ci_tx_desc *txr = txq->ci_tx_ring;
++	volatile struct ci_tx_desc *txdp;
++	struct ci_tx_entry *txep;
++	uint16_t tx_id;
+ 	uint16_t n = 0;
  
--static inline void
--write_txd(volatile void *txd, uint64_t qw0, uint64_t qw1)
--{
--	uint64_t *txd_qw = __rte_assume_aligned(RTE_CAST_PTR(void *, txd), 16);
--
--	txd_qw[0] = rte_cpu_to_le_64(qw0);
--	txd_qw[1] = rte_cpu_to_le_64(qw1);
--}
--
- static inline uint16_t
- ci_xmit_pkts(struct ci_tx_queue *txq,
- 	     struct rte_mbuf **tx_pkts,
+ 	/**
+@@ -142,23 +139,41 @@ ci_xmit_burst_simple(struct ci_tx_queue *txq,
+ 	if (unlikely(!nb_pkts))
+ 		return 0;
+ 
++	tx_id = txq->tx_tail;
++	txdp = &txr[tx_id];
++	txep = &txq->sw_ring[tx_id];
++
+ 	txq->nb_tx_free = (uint16_t)(txq->nb_tx_free - nb_pkts);
+-	if ((txq->tx_tail + nb_pkts) > txq->nb_tx_desc) {
+-		n = (uint16_t)(txq->nb_tx_desc - txq->tx_tail);
+-		ci_tx_fill_hw_ring(txq, tx_pkts, n);
++
++	if ((tx_id + nb_pkts) > txq->nb_tx_desc) {
++		n = (uint16_t)(txq->nb_tx_desc - tx_id);
++
++		/* Store mbufs in backlog */
++		ci_tx_backlog_entry(txep, tx_pkts, n);
++
++		/* Write descriptors to HW ring */
++		ci_tx_fill_hw_ring_simple(txdp, tx_pkts, n);
++
+ 		txr[txq->tx_next_rs].cmd_type_offset_bsz |=
+ 			rte_cpu_to_le_64(((uint64_t)CI_TX_DESC_CMD_RS) <<
+ 					  CI_TXD_QW1_CMD_S);
+ 		txq->tx_next_rs = (uint16_t)(txq->tx_rs_thresh - 1);
+-		txq->tx_tail = 0;
++
++		tx_id = 0;
++		txdp = &txr[tx_id];
++		txep = &txq->sw_ring[tx_id];
+ 	}
+ 
+-	/* Fill hardware descriptor ring with mbuf data */
+-	ci_tx_fill_hw_ring(txq, tx_pkts + n, (uint16_t)(nb_pkts - n));
+-	txq->tx_tail = (uint16_t)(txq->tx_tail + (nb_pkts - n));
++	/* Store remaining mbufs in backlog */
++	ci_tx_backlog_entry(txep, tx_pkts + n, (uint16_t)(nb_pkts - n));
++
++	/* Write remaining descriptors to HW ring */
++	ci_tx_fill_hw_ring_simple(txdp, tx_pkts + n, (uint16_t)(nb_pkts - n));
++
++	tx_id = (uint16_t)(tx_id + (nb_pkts - n));
+ 
+ 	/* Determine if RS bit needs to be set */
+-	if (txq->tx_tail > txq->tx_next_rs) {
++	if (tx_id > txq->tx_next_rs) {
+ 		txr[txq->tx_next_rs].cmd_type_offset_bsz |=
+ 			rte_cpu_to_le_64(((uint64_t)CI_TX_DESC_CMD_RS) <<
+ 					  CI_TXD_QW1_CMD_S);
+@@ -168,11 +183,10 @@ ci_xmit_burst_simple(struct ci_tx_queue *txq,
+ 			txq->tx_next_rs = (uint16_t)(txq->tx_rs_thresh - 1);
+ 	}
+ 
+-	if (txq->tx_tail >= txq->nb_tx_desc)
+-		txq->tx_tail = 0;
++	txq->tx_tail = tx_id;
+ 
+ 	/* Update the tx tail register */
+-	rte_write32_wc((uint32_t)txq->tx_tail, txq->qtx_tail);
++	rte_write32_wc((uint32_t)tx_id, txq->qtx_tail);
+ 
+ 	return nb_pkts;
+ }
 -- 
 2.51.0
 
