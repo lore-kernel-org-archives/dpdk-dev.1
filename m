@@ -2,73 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29658D2F338
-	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Jan 2026 15:29:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4A1BD2F338
+	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Jan 2026 15:33:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 093BD402D8;
-	Tue, 13 Jan 2026 16:29:53 +0100 (CET)
-Received: from mail-ej1-f67.google.com (mail-ej1-f67.google.com
- [209.85.218.67]) by mails.dpdk.org (Postfix) with ESMTP id BAB4C40276
- for <dev@dpdk.org>; Tue, 13 Jan 2026 16:29:51 +0100 (CET)
-Received: by mail-ej1-f67.google.com with SMTP id
- a640c23a62f3a-b79f8f7ea43so1615953866b.2
- for <dev@dpdk.org>; Tue, 13 Jan 2026 07:29:51 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id CA619402D8;
+	Tue, 13 Jan 2026 16:33:06 +0100 (CET)
+Received: from mail-ed1-f65.google.com (mail-ed1-f65.google.com
+ [209.85.208.65]) by mails.dpdk.org (Postfix) with ESMTP id 7843640276
+ for <dev@dpdk.org>; Tue, 13 Jan 2026 16:33:05 +0100 (CET)
+Received: by mail-ed1-f65.google.com with SMTP id
+ 4fb4d7f45d1cf-65089cebdb4so10516119a12.0
+ for <dev@dpdk.org>; Tue, 13 Jan 2026 07:33:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768318191;
- x=1768922991; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768318385;
+ x=1768923185; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=sGLF53DGchnEl4W8CbgYTQAzhDZko4oiWEJNMrnTkn8=;
- b=Z1z2tugnbwj15rv0JZJBs6KFla5PcyoaEDSD/o3Mlp+P9nVSW8l4mTGSPb7TqDj9Rq
- MXEdc6l1cEXaytAOCEYFajE4guESOrR9SFfIzfN+d09BJlQdnWQ3D1u/JdKrRwDY2vhy
- cwt0mHzcnOGSw2Bv2isUzJXivYeJ6do1CJMLtbAWkuLWDE3kVcdsoaKP69NBNiPTuKdz
- pFXJO1UuI2/7ny89ianMkU8kVbgKrjf4vTO6kGsPxXD2fqaRj6ji8unV/jHv5jTUdLiD
- icAk/013nw1pnmKn2boomP9xTZ2HdDGM9v1OV6vZsM2X2YSMKhGUmfVLgnrRXFYOATn4
- EpzQ==
+ bh=t68w/E2X3gbMri6ztnFV3mOS9Dh4QVvojTdgEg1EHpU=;
+ b=OUeqCN9SVt4Lo5AlgzqhiJWewsDFiw/z+NRjEpSnz2bpAvDq73EmRWBZzyv6h/5qP6
+ uGz7LRosILTwUbc17By28ZvwHpLQ0izl0rA8RYmj+AlUWv9SK1xjKraeKgLwKcZtYkAv
+ vtLzh5SlLQ1Ffy9bqAjrBO5O/eiwxBoJIkRW/84nA33ryiyrxzmdESB34bZ5PFcf4zNa
+ nKnRI0IQmEZQjUyI8NyvFmBHjcPZy4CRNYZ0kJl+iIX5aLxVWnv26nTHI7ZIyyT6GNQo
+ OmgEJsYYvlFcnW4zBeJAURZYfuNQ+eoJJniWXJ327jFZG2d3foCguE+9TTohexR/xaVf
+ UJvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768318191; x=1768922991;
+ d=1e100.net; s=20230601; t=1768318385; x=1768923185;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=sGLF53DGchnEl4W8CbgYTQAzhDZko4oiWEJNMrnTkn8=;
- b=pdWws3v53ka5BvHqz63AIO6raWwuUtV8Tm74tEOd+qCKxPg6EGCvgu2V6VWxZ39ApE
- 9UDXO4CFHdrNmEUXf8N8/ya1hmFqDHdAfId8sxvYZk+vCJB/fmAg59OWCgKjouhG5S+2
- IlXCvEKbHHhQhm3q49X29XhOSHPPAkswkEFtL+cCk/cuZdq/15y0/lv5l/By+Z98xARG
- 6HesQ1DPMTtwFSwhkI8SQXVdDJ/Ukz2CKHS7RTUXVADTjZUEaApNyP+7KJByxh0fjp+m
- 9aVWt14aQoCDZT9zZlucrLIzt7iGsJHU5Y0fk1JNLi3vlYzsWGdvGnY53fkrl4sBugq4
- VV6A==
-X-Gm-Message-State: AOJu0YwhiIYyyHRzyCJpvRZC9mzFlmvFNaKu2adi2cbRNxiW3h8mFU7p
- Jzt3xBIRbXahO931D317077JnSguSgaVG3dMMz9gJMFsl6bo+noveScUG1djsj0S2SO+O8ZQH4P
- 2+n3H
-X-Gm-Gg: AY/fxX6cSn76pQrMYx74XnDnhbY5RHVh8/I+ePt2HJ4TTKlI4911afvq8OPCU6ExbSa
- JBbtJJy6s7k7/VhyBISV62qIUSYpLh4ipCbsVMLolqzqoBdkoy8oJ75PhEp2c8KzYbTOkA2Fgqv
- bAEgYkaxDSTLgwpDRPtK3qEKZOuBLBLJZVi0BZ9Ubi1TdHZ6cNo0vVrhX5tkNz+lGZfHvXcAHDd
- ZQnFLujMIoYRk3ywYzsLoPOjGBQJ2DhY1orekjANctj1EkV7Av4RaK2p/sHHUBSOSncU7UjLuWW
- Mh8z9xWleK9XAM1aJoBsKSoUeiO69NnrGtgYDFwqUVoDKy8dSZ/s4XZQ5cRD2W4GC0VHLIqxIsm
- URy6VKaQQZ5vKnEzfE85jtZSKX8+7zwlwUB1BRmqJ/2jUkUe1uzyZiLmk+gIap2nAJPQby6hYiL
- 6qAPeescrI5grY45RQi0088lVObIkkT8Sqy4YmoMVGg5J1sYr+XQ==
-X-Google-Smtp-Source: AGHT+IHZ57oqJbZiDpYNkCek9dL76uBR9MVEZvnNTd8KPYppy05bfkng4IMKszd6n/05Anq+gbG2sw==
-X-Received: by 2002:a17:907:26c7:b0:b6d:5a24:f124 with SMTP id
- a640c23a62f3a-b8444c9ab7bmr2042424766b.22.1768318190861; 
- Tue, 13 Jan 2026 07:29:50 -0800 (PST)
-Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
+ bh=t68w/E2X3gbMri6ztnFV3mOS9Dh4QVvojTdgEg1EHpU=;
+ b=VulkmMrnE9SWNw0UzVFGgWwJIDpVPMhYz3So6egn+KSIbQTMpqr/DzYdAwEz19X6VI
+ m3aNuFos4GK6S6FhjAReHFw12zvkZFJghCRoHav1X6aXZ4ide2o3ToyV0sWQ8VFE3n4n
+ fMrmTILbHpajheQZsbgAzuRpJrc9OnC3QCbBp4oKRmudPPtUs3jicg98Fv9yloNArGW7
+ cGO1ESEIvy557u7kTZVse/Qz0cYJQU2OzVDLEGBerua2HzFhfiNBrTd9jLwv6pBPU4sN
+ v4ltImplAItVc7k5B+Vns/OnnwAO48UYtBYJHs87qIvUV080COiKNxZEvzKyRdwYnGeM
+ iGaA==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCU/YmNwGZMoRvEfjpJPrehV4hUGgEpUUvm4lSwzN750mAclyv0kAu01csvy4lsmux4y5/c=@dpdk.org
+X-Gm-Message-State: AOJu0YzhyiBWuqbNSF/W67qtqQkdMj1dXFl1mdprinr5MUR2HfyzrZ8M
+ FkNl0ET5xsqfV9Oz1q0byUIuIt3jRQaHZs03BR80xtQzLEKpdCEFZh4pcGG1+gBVBfY=
+X-Gm-Gg: AY/fxX7oKbyZPYav9zURq1kQg9RLZt3/uCaU9+jwBR+U+DZEFhYy71rMbCfExa1YuFf
+ iDLd0uD64P+x4Wq6KEY49JlA0trg9Sjko/DaxqsJ4uFIBv1PJTXnQH0TYO7gmCD1Ff2ojLVKYfz
+ sgD5bvj0LB49Id2vn/zlVHTGCAY/6E1GM4mrrQ4ANaa0HLQQmQpYEaF1clZANujpciqS1DH/Agi
+ 1TLiwDNadyDPNzNDjN8hPGJt85KnyMgsRqVzEpshUI4RNWUDwtMAQ+5iq/2DZAsJahqqBUv/0iT
+ cImcUENBk2ughTXEFss3BWr7lLt7Pu7rM48ZhudZt5mKITEPTSnFXLi4cZfJgLbAeWeRv4QS4ka
+ mjigKiSsMhypf3c5GJA8+GT5R0bvn9WeJgsudkgeUSCbObVM7ZAJHbs1fLNfkIfaEWI4/stQ7qc
+ xC+JVL7H9RPhBKep/gdEb0keI4m9KtGl77DLpgab51g9Qwc7rlHZQG
+X-Google-Smtp-Source: AGHT+IHfdvA+Ua4FdnEGBClzvBj+Eq2CIlOU5jWKnK9WBkg4/Mx+h1245auZL7ht6U8JxUoW7IJ1Ig==
+X-Received: by 2002:a05:6402:27ca:b0:64c:9e19:9831 with SMTP id
+ 4fb4d7f45d1cf-65097de5b1fmr19934099a12.12.1768318384966; 
+ Tue, 13 Jan 2026 07:33:04 -0800 (PST)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a640c23a62f3a-b842a4d3113sm2231517066b.43.2026.01.13.07.29.49
+ 4fb4d7f45d1cf-6507b8c4479sm20638944a12.1.2026.01.13.07.33.03
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 13 Jan 2026 07:29:50 -0800 (PST)
+ Tue, 13 Jan 2026 07:33:04 -0800 (PST)
+Date: Tue, 13 Jan 2026 07:32:58 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v3] doc: add AGENTS.md for AI-powered code review tools
-Date: Tue, 13 Jan 2026 07:28:48 -0800
-Message-ID: <20260113152944.32408-1-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20260109014106.398156-1-stephen@networkplumber.org>
-References: <20260109014106.398156-1-stephen@networkplumber.org>
+To: Tianhao Zhang <zhang.tianhao2@zte.com.cn>
+Cc: wang.junlong1@zte.com.cn, yang.yonggang@zte.com.cn, dev@dpdk.org
+Subject: Re: [PATCH v1 0/2] fix bug
+Message-ID: <20260113073258.2d67ed02@phoenix.local>
+In-Reply-To: <20251222102535.401064-1-zhang.tianhao2@zte.com.cn>
+References: <20251209021609.3911854-1-zhang.tianhao2@zte.com.cn>
+ <20251222102535.401064-1-zhang.tianhao2@zte.com.cn>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,881 +83,135 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add a structured reference document that enables AI code review tools
-to validate DPDK contributions against project standards. This document
-consolidates requirements from multiple sources into a machine-readable
-format optimized for automated validation workflows.
+On Mon, 22 Dec 2025 18:25:33 +0800
+Tianhao Zhang <zhang.tianhao2@zte.com.cn> wrote:
 
-The AGENTS.md file synthesizes guidelines from:
-- DPDK Contributing Code documentation (patches.rst)
-- DPDK Coding Style guidelines (coding_style.rst)
-- DPDK validation scripts (check-git-log.sh, checkpatches.sh)
-- Linux kernel patch submission process
-- SPDX License Identifier specification
+> V1:
+>   - Add pcie bar channel check after getting dtb space left.
+>   - Delete np soft resource uninstallation from NP online uninit process.
+>=20
+> Tianhao Zhang (2):
+>   net/zxdh: add pcie bar channel check
+>   net/zxdh: delete np soft resource uninstallation
+>=20
+>  drivers/net/zxdh/zxdh_np.c | 11 +++++++----
+>  drivers/net/zxdh/zxdh_np.h |  2 ++
+>  2 files changed, 9 insertions(+), 4 deletions(-)
+>=20
 
-Key sections include:
-- SPDX license and copyright header requirements
-- Commit message format with precise limits (60 char subject,
-  75 char body) and tag ordering rules
-- C coding style including explicit comparison requirements
-- Forbidden tokens table derived from checkpatches.sh
-- API tag placement rules for experimental and internal APIs
-- Patch validation checklists with severity levels
+I started using AI to review code in next-net.
+It spotted some issues in these patches, please revise and resubmit.
 
-The forbidden tokens section documents restrictions on deprecated
-atomics, logging functions, threading APIs, and compiler built-ins
-that are checked by the existing checkpatches.sh infrastructure.
+Now let me read the two patches:---
 
-Severity levels (error/warning/info) align with the exit codes and
-messaging from check-git-log.sh and checkpatches.sh to help automated
-tools prioritize feedback appropriately.
+## DPDK Patch Review: ZXDH PMD Patches
 
-References:
-- https://doc.dpdk.org/guides/contributing/patches.html
-- https://doc.dpdk.org/guides/contributing/coding_style.html
-- devtools/check-git-log.sh
-- devtools/checkpatches.sh
+### Patch 1: `net/zxdh: add PCIe BAR channel check`
 
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+#### Commit Message
+
+| Check | Status | Notes |
+|-------|--------|-------|
+| Subject =E2=89=A460 chars | =E2=9C=93 Pass | 35 characters |
+| Correct prefix | =E2=9C=93 Pass | `net/zxdh:` is correct |
+| Lowercase after colon | =E2=9C=93 Pass | |
+| Imperative mood | =E2=9C=93 Pass | "add" |
+| No trailing period | =E2=9C=93 Pass | |
+| Body =E2=89=A475 chars/line | =E2=9C=93 Pass | |
+| Body doesn't start with "It" | =E2=9C=93 Pass | |
+| Signed-off-by present | =E2=9C=93 Pass | Real name and valid email |
+
+#### Code Review
+
+**Style Issues (Warning)**:
+1. **Mixed changes**: The patch combines alignment/whitespace fixes with fu=
+nctional changes. The parameter alignment changes in `zxdh_np_dtb_queue_unu=
+sed_item_num_get()` could be a separate cleanup patch. This makes the funct=
+ional change harder to review.
+
+2. **Log message style**: The error message `"pcie bar abnormal."` has a tr=
+ailing period. While not strictly forbidden, DPDK log messages typically om=
+it trailing periods for consistency.
+
+**Code Quality (Info)**:
+```c
+if ((*p_item_num & ZXDH_DTB_SPACE_LEFT_MASK) =3D=3D ZXDH_DTB_SPACE_LEFT_MAS=
+K) {
+```
+- The comparison is explicit (good) =E2=9C=93
+- Uses named constant (good) =E2=9C=93
+- Consider: what condition does `0x3F` represent? A brief comment explainin=
+g why this specific bit pattern indicates a BAR abnormality would aid maint=
+ainability.
+
+**Commit Message Content (Warning)**:
+The body text:
+> After obtaining the DTB element register;
+> check if the PCIe link is abnormal.
+
+The semicolon makes this read awkwardly as two sentence fragments. Suggeste=
+d rewrite:
+> Add a check after obtaining the DTB element register to detect
+> abnormal PCIe link conditions.
+
+#### Verdict: **Acceptable with minor suggestions**
+
 ---
 
-v3 - move to devtools
-   - revise based on results of use of this criteria on patches.
-     use AI to revise its prompt to reduce false positives.
+### Patch 2: `net/zxdh: optimize the procedure for NP online uninit`
 
- devtools/AGENTS.md | 823 +++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 823 insertions(+)
- create mode 100644 devtools/AGENTS.md
+#### Commit Message
 
-diff --git a/devtools/AGENTS.md b/devtools/AGENTS.md
-new file mode 100644
-index 0000000000..54051a48e4
---- /dev/null
-+++ b/devtools/AGENTS.md
-@@ -0,0 +1,823 @@
-+# AGENTS.md - DPDK Code Review Guidelines for AI Tools
-+
-+This document provides guidelines for AI-powered code review tools when reviewing contributions to the Data Plane Development Kit (DPDK). It is derived from the official DPDK contributor guidelines and validation scripts.
-+
-+## Overview
-+
-+DPDK follows a development process modeled on the Linux Kernel. All patches are reviewed publicly on the mailing list before being merged. AI review tools should verify compliance with the standards outlined below.
-+
-+---
-+
-+## Source License Requirements
-+
-+### SPDX License Identifiers
-+
-+Every source file must begin with an SPDX license identifier, followed by the copyright notice, then a blank line before other content.
-+
-+- SPDX tag on first line (or second line for `#!` scripts)
-+- Copyright line immediately follows
-+- Blank line after copyright before any code/includes
-+- Core libraries and drivers use `BSD-3-Clause`
-+- Kernel components use `GPL-2.0`
-+- Dual-licensed code uses: `(BSD-3-Clause OR GPL-2.0)`
-+
-+```c
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2024 ExampleCorp
-+ */
-+
-+#include <stdio.h>
-+```
-+
-+For scripts:
-+```python
-+#!/usr/bin/env python3
-+# SPDX-License-Identifier: BSD-3-Clause
-+# Copyright(c) 2024 ExampleCorp
-+
-+import sys
-+```
-+
-+**Do not include boilerplate license text** - the SPDX identifier is sufficient.
-+
-+---
-+
-+## Commit Message Requirements
-+
-+### Subject Line (First Line)
-+
-+| Rule | Limit |
-+|------|-------|
-+| Maximum length | **60 characters** |
-+| Format | `component: lowercase description` |
-+| Case | Lowercase except acronyms |
-+| Mood | Imperative (instructions to codebase) |
-+| Punctuation | **No trailing period** |
-+
-+```
-+# Good examples
-+net/ixgbe: fix offload config option name
-+config: increase max queues per port
-+net/mlx5: add support for flow counters
-+app/testpmd: fix memory leak in flow create
-+
-+# Bad examples
-+Fixed the offload config option.    # past tense, has period, no prefix
-+net/ixgbe: Fix Offload Config       # uppercase after colon
-+ixgbe: fix something                # wrong prefix, should be net/ixgbe
-+lib/ethdev: add new feature         # wrong prefix, should be ethdev:
-+```
-+
-+#### Headline Format Errors (from check-git-log.sh)
-+
-+The following are flagged as errors:
-+- Tab characters in subject
-+- Leading or trailing spaces
-+- Trailing period (`.`)
-+- Punctuation marks: `, ; ! ? & |`
-+- Underscores after the colon (indicates code in subject)
-+- Missing colon separator
-+- No space after colon
-+- Space before colon
-+
-+#### Common Prefix Mistakes
-+
-+| Wrong | Correct |
-+|-------|---------|
-+| `ixgbe:` | `net/ixgbe:` |
-+| `lib/ethdev:` | `ethdev:` |
-+| `example:` | `examples/foo:` |
-+| `apps/` | `app/name:` |
-+| `app/test:` | `test:` |
-+| `testpmd:` | `app/testpmd:` |
-+| `test-pmd:` | `app/testpmd:` |
-+| `bond:` | `net/bonding:` |
-+
-+#### Case-Sensitive Terms
-+
-+These terms must use exact capitalization (from `devtools/words-case.txt`):
-+- `Rx`, `Tx` (not `RX`, `TX`, `rx`, `tx`)
-+- `VF`, `PF` (not `vf`, `pf`)
-+- `MAC`, `VLAN`, `RSS`, `API`
-+- `Linux`, `Windows`, `FreeBSD`
-+- Check `devtools/words-case.txt` for complete list
-+
-+### Commit Body
-+
-+| Rule | Limit |
-+|------|-------|
-+| Line wrap | **75 characters** |
-+| Exception | `Fixes:` lines may exceed 75 chars |
-+
-+Body guidelines:
-+- Describe the issue being fixed or feature being added
-+- Provide enough context for reviewers
-+- **Do not start the commit message body with "It"**
-+- **Must end with** `Signed-off-by:` line (real name, not alias)
-+
-+### Fixes Tag
-+
-+When fixing regressions, use the `Fixes:` tag with a 12-character abbreviated SHA:
-+
-+```
-+Fixes: abcdefgh1234 ("original commit subject")
-+```
-+
-+The hash must reference a commit in the current branch, and the subject must match exactly.
-+
-+**Finding maintainers**: Use `devtools/get-maintainer.sh` to identify the current subsystem maintainer from the `MAINTAINERS` file, rather than CC'ing the original author:
-+
-+```bash
-+git send-email --to-cmd ./devtools/get-maintainer.sh --cc dev@dpdk.org 000*.patch
-+```
-+
-+### Required Tags
-+
-+```
-+# For Coverity issues (required if "coverity" mentioned in body):
-+Coverity issue: 12345
-+
-+# For Bugzilla issues (required if "bugzilla" mentioned in body):
-+Bugzilla ID: 12345
-+
-+# For stable release backport candidates:
-+Cc: stable@dpdk.org
-+
-+# For patch dependencies (in commit notes after ---):
-+Depends-on: series-NNNNN ("Title of the series")
-+```
-+
-+### Tag Order
-+
-+Tags must appear in this order:
-+
-+```
-+Coverity issue:
-+Bugzilla ID:
-+Fixes:
-+Cc:
-+                          <-- blank line required here
-+Reported-by:
-+Suggested-by:
-+Signed-off-by:
-+Acked-by:
-+Reviewed-by:
-+Tested-by:
-+```
-+
-+**Tag format**: `Tag-name: Full Name <email@domain.com>`
-+
-+---
-+
-+## C Coding Style
-+
-+### Line Length
-+
-+| Context | Limit |
-+|---------|-------|
-+| Source code | **100 characters** |
-+| Commit body | **75 characters** |
-+
-+### General Formatting
-+
-+- **Tab width**: 8 characters (hard tabs for indentation, spaces for alignment)
-+- **No trailing whitespace** on lines or at end of files
-+- Files must end with a new line
-+- Code style should be consistent within each file
-+
-+
-+### Comments
-+
-+```c
-+/* Most single-line comments look like this. */
-+
-+/*
-+ * VERY important single-line comments look like this.
-+ */
-+
-+/*
-+ * Multi-line comments look like this. Make them real sentences. Fill
-+ * them so they look like real paragraphs.
-+ */
-+```
-+
-+### Header File Organization
-+
-+Include order (each group separated by blank line):
-+1. System/libc includes
-+2. DPDK EAL includes
-+3. DPDK misc library includes
-+4. Application-specific includes
-+
-+```c
-+#include <stdio.h>
-+#include <stdlib.h>
-+
-+#include <rte_eal.h>
-+
-+#include <rte_ring.h>
-+#include <rte_mempool.h>
-+
-+#include "application.h"
-+```
-+
-+### Header Guards
-+
-+```c
-+#ifndef _FILE_H_
-+#define _FILE_H_
-+
-+/* Code */
-+
-+#endif /* _FILE_H_ */
-+```
-+
-+### Naming Conventions
-+
-+- **All external symbols** must have `RTE_` or `rte_` prefix
-+- **Macros**: ALL_UPPERCASE with `RTE_` prefix
-+- **Functions**: lowercase with underscores only (no CamelCase)
-+- **Variables**: lowercase with underscores only
-+- **Enum values**: ALL_UPPERCASE with `RTE_<ENUM>_` prefix
-+
-+**Exception**: Driver base directories (`drivers/*/base/`) may use different naming conventions when sharing code across platforms or with upstream vendor code.
-+
-+#### Prohibited Terminology
-+
-+Do not use:
-+- `master/slave` → Use: primary/secondary, controller/worker, leader/follower
-+- `blacklist/whitelist` → Use: denylist/allowlist, blocklist/passlist
-+
-+### Comparisons and Boolean Logic
-+
-+```c
-+/* Pointers - compare explicitly with NULL */
-+if (p == NULL)      /* Good */
-+if (p != NULL)      /* Good */
-+if (!p)             /* Bad - don't use ! on pointers */
-+
-+/* Integers - compare explicitly with zero */
-+if (a == 0)         /* Good */
-+if (a != 0)         /* Good */
-+if (!a)             /* Bad - don't use ! on integers */
-+
-+/* Characters - compare with character constant */
-+if (*p == '\0')     /* Good */
-+
-+/* Booleans - direct test is acceptable */
-+if (flag)           /* Good for actual bool types */
-+if (!flag)          /* Good for actual bool types */
-+```
-+
-+### Boolean Usage
-+
-+- Using `bool` type is allowed
-+- Prefer `bool` over `int` when a variable or field is only used as a boolean
-+- For structure fields, consider if the size/alignment impact is acceptable
-+
-+### Indentation and Braces
-+
-+```c
-+/* Control statements - no braces for single statements */
-+if (val != NULL)
-+        val = realloc(val, newsize);
-+
-+/* Braces on same line as else */
-+if (test)
-+        stmt;
-+else if (bar) {
-+        stmt;
-+        stmt;
-+} else
-+        stmt;
-+
-+/* Switch statements - don't indent case */
-+switch (ch) {
-+case 'a':
-+        aflag = 1;
-+        /* FALLTHROUGH */
-+case 'b':
-+        bflag = 1;
-+        break;
-+default:
-+        usage();
-+}
-+
-+/* Long conditions - double indent continuation */
-+if (really_long_variable_name_1 == really_long_variable_name_2 &&
-+                really_long_variable_name_3 == really_long_variable_name_4)
-+        stmt;
-+```
-+
-+### Variable Declarations
-+
-+- Declare variables at the beginning of blocks
-+- Initialize variables only when a meaningful value exists at declaration time
-+- Use C99 designated initializers for structures
-+
-+```c
-+/* Good - separate declaration and assignment */
-+int ret;
-+ret = some_function();
-+
-+/* Bad - unnecessary initialization defeats compiler warnings */
-+int ret = 0;
-+ret = some_function();    /* Compiler won't warn if assignment removed */
-+```
-+
-+### Function Format
-+
-+- Return type on its own line
-+- Opening brace on its own line
-+- Place an empty line between declarations and statements
-+
-+```c
-+static char *
-+function(int a1, int b1)
-+{
-+        char *p;
-+
-+        p = do_something(a1, b1);
-+        return p;
-+}
-+```
-+
-+---
-+
-+## Unnecessary Code Patterns
-+
-+The following patterns add unnecessary code, hide bugs, or reduce performance. Avoid them.
-+
-+### Unnecessary Variable Initialization
-+
-+Do not initialize variables that will be assigned before use. This defeats the compiler's uninitialized variable warnings, hiding potential bugs.
-+
-+```c
-+/* Bad - initialization defeats -Wuninitialized */
-+int ret = 0;
-+if (condition)
-+        ret = func_a();
-+else
-+        ret = func_b();
-+
-+/* Good - compiler will warn if any path misses assignment */
-+int ret;
-+if (condition)
-+        ret = func_a();
-+else
-+        ret = func_b();
-+
-+/* Good - meaningful initial value */
-+int count = 0;
-+for (i = 0; i < n; i++)
-+        if (test(i))
-+                count++;
-+```
-+
-+### Unnecessary Casts of void *
-+
-+In C, `void *` converts implicitly to any pointer type. Casting the result of `malloc()`, `calloc()`, `rte_malloc()`, or similar functions is unnecessary and can hide the error of a missing `#include <stdlib.h>`.
-+
-+```c
-+/* Bad - unnecessary cast */
-+struct foo *p = (struct foo *)malloc(sizeof(*p));
-+struct bar *q = (struct bar *)rte_malloc(NULL, sizeof(*q), 0);
-+
-+/* Good - no cast needed in C */
-+struct foo *p = malloc(sizeof(*p));
-+struct bar *q = rte_malloc(NULL, sizeof(*q), 0);
-+```
-+
-+Note: Casts are required in C++ but DPDK is a C project.
-+
-+### Zero-Length Arrays vs Variable-Length Arrays
-+
-+Zero-length arrays (`int arr[0]`) are a GCC extension. Use C99 flexible array members instead.
-+
-+```c
-+/* Bad - GCC extension */
-+struct msg {
-+        int len;
-+        char data[0];
-+};
-+
-+/* Good - C99 flexible array member */
-+struct msg {
-+        int len;
-+        char data[];
-+};
-+```
-+
-+### Unnecessary NULL Checks Before free()
-+
-+Functions like `free()`, `rte_free()`, and similar deallocation functions accept NULL pointers safely. Do not add redundant NULL checks.
-+
-+```c
-+/* Bad - unnecessary check */
-+if (ptr != NULL)
-+        free(ptr);
-+
-+if (rte_ptr != NULL)
-+        rte_free(rte_ptr);
-+
-+/* Good - free handles NULL */
-+free(ptr);
-+rte_free(rte_ptr);
-+```
-+
-+### memset Before free()
-+
-+Do not call `memset()` to zero memory before freeing it. The compiler may optimize away the `memset()` as a dead store. For security-sensitive data, use `rte_free_sensitive()` which ensures memory is cleared.
-+
-+```c
-+/* Bad - compiler may eliminate memset */
-+memset(secret_key, 0, sizeof(secret_key));
-+free(secret_key);
-+
-+/* Good - for non-sensitive data, just free */
-+free(ptr);
-+
-+/* Good - for sensitive data, use secure free */
-+rte_free_sensitive(secret_key);
-+```
-+
-+### Appropriate Use of rte_malloc()
-+
-+`rte_malloc()` allocates from hugepage memory. Use it only when required:
-+
-+- Memory that will be accessed by DMA (NIC descriptors, packet buffers)
-+- Memory shared between primary and secondary DPDK processes
-+- Memory requiring specific NUMA node placement
-+
-+For general allocations, use standard `malloc()` which is faster and does not consume limited hugepage resources.
-+
-+```c
-+/* Bad - rte_malloc for ordinary data structure */
-+struct config *cfg = rte_malloc(NULL, sizeof(*cfg), 0);
-+
-+/* Good - standard malloc for control structures */
-+struct config *cfg = malloc(sizeof(*cfg));
-+
-+/* Good - rte_malloc for DMA-accessible memory */
-+struct rte_mbuf *mbufs = rte_malloc(NULL, n * sizeof(*mbufs), RTE_CACHE_LINE_SIZE);
-+```
-+
-+### Appropriate Use of rte_memcpy()
-+
-+`rte_memcpy()` is optimized for bulk data transfer in the fast path. For general use, standard `memcpy()` is preferred because:
-+
-+- Modern compilers optimize `memcpy()` effectively
-+- `memcpy()` includes bounds checking with `_FORTIFY_SOURCE`
-+- `memcpy()` handles small fixed-size copies efficiently
-+
-+```c
-+/* Bad - rte_memcpy in control path */
-+rte_memcpy(&config, &default_config, sizeof(config));
-+
-+/* Good - standard memcpy for control path */
-+memcpy(&config, &default_config, sizeof(config));
-+
-+/* Good - rte_memcpy for packet data in fast path */
-+rte_memcpy(rte_pktmbuf_mtod(m, void *), payload, len);
-+```
-+
-+---
-+
-+## Forbidden Tokens
-+
-+### Functions
-+
-+| Forbidden | Preferred | Context |
-+|-----------|-----------|---------|
-+| `rte_panic()` | Return error codes | lib/, drivers/ |
-+| `rte_exit()` | Return error codes | lib/, drivers/ |
-+
-+### Atomics and Memory Barriers
-+
-+| Forbidden | Preferred |
-+|-----------|-----------|
-+| `rte_atomic16/32/64_xxx()` | C11 atomics via `rte_atomic_xxx()` |
-+| `rte_smp_mb()` | `rte_atomic_thread_fence()` |
-+| `rte_smp_rmb()` | `rte_atomic_thread_fence()` |
-+| `rte_smp_wmb()` | `rte_atomic_thread_fence()` |
-+| `__sync_xxx()` | `rte_atomic_xxx()` |
-+| `__atomic_xxx()` | `rte_atomic_xxx()` |
-+| `__ATOMIC_RELAXED` etc. | `rte_memory_order_xxx` |
-+| `__rte_atomic_thread_fence()` | `rte_atomic_thread_fence()` |
-+
-+### Threading
-+
-+| Forbidden | Preferred |
-+|-----------|-----------|
-+| `pthread_create()` | `rte_thread_create()` |
-+| `pthread_join()` | `rte_thread_join()` |
-+| `pthread_detach()` | EAL thread functions |
-+| `pthread_setaffinity_np()` | `rte_thread_set_affinity()` |
-+| `rte_thread_set_name()` | `rte_thread_set_prefixed_name()` |
-+| `rte_thread_create_control()` | `rte_thread_create_internal_control()` |
-+
-+### Compiler Built-ins and Attributes
-+
-+| Forbidden | Preferred | Notes |
-+|-----------|-----------|-------|
-+| `__attribute__` | RTE macros in `rte_common.h` | Except in `lib/eal/include/rte_common.h` |
-+| `__alignof__` | C11 `alignof` | |
-+| `__typeof__` | `typeof` | |
-+| `__builtin_*` | EAL macros | Except in `lib/eal/` and `drivers/*/base/` |
-+| `__reserved` | Different name | Reserved in Windows headers |
-+| `#pragma` / `_Pragma` | Avoid | Except in `rte_common.h` |
-+
-+### Format Specifiers
-+
-+| Forbidden | Preferred |
-+|-----------|-----------|
-+| `%lld`, `%llu`, `%llx` | `%PRId64`, `%PRIu64`, `%PRIx64` |
-+
-+### Headers and Build
-+
-+| Forbidden | Preferred | Context |
-+|-----------|-----------|---------|
-+| `#include <linux/pci_regs.h>` | `#include <rte_pci.h>` | |
-+| `install_headers()` | Meson `headers` variable | meson.build |
-+| `-DALLOW_EXPERIMENTAL_API` | Not in lib/drivers/app | Build flags |
-+| `allow_experimental_apis` | Not in lib/drivers/app | Meson |
-+| `#undef XXX` | `// XXX is not set` | config/rte_config.h |
-+| Driver headers (`*_driver.h`, `*_pmd.h`) | Public API headers | app/, examples/ |
-+
-+### Testing
-+
-+| Forbidden | Preferred |
-+|-----------|-----------|
-+| `REGISTER_TEST_COMMAND` | `REGISTER_<suite_name>_TEST` |
-+
-+### Documentation
-+
-+| Forbidden | Preferred |
-+|-----------|-----------|
-+| `http://...dpdk.org` | `https://...dpdk.org` |
-+| `//doc.dpdk.org/guides/...` | `:ref:` or `:doc:` Sphinx references |
-+| `::  file.svg` | `::  file.*` (wildcard extension) |
-+
-+---
-+
-+## API Tag Requirements
-+
-+### `__rte_experimental`
-+
-+- Must appear **alone on the line** immediately preceding the return type
-+- Only allowed in **header files** (not `.c` files)
-+
-+```c
-+/* Correct */
-+__rte_experimental
-+int
-+rte_new_feature(void);
-+
-+/* Wrong - not alone on line */
-+__rte_experimental int rte_new_feature(void);
-+
-+/* Wrong - in .c file */
-+```
-+
-+### `__rte_internal`
-+
-+- Must appear **alone on the line** immediately preceding the return type
-+- Only allowed in **header files** (not `.c` files)
-+
-+```c
-+/* Correct */
-+__rte_internal
-+int
-+internal_function(void);
-+```
-+
-+### Alignment Attributes
-+
-+`__rte_aligned`, `__rte_cache_aligned`, `__rte_cache_min_aligned` may only be used with `struct` or `union` types:
-+
-+```c
-+/* Correct */
-+struct __rte_cache_aligned my_struct {
-+        /* ... */
-+};
-+
-+/* Wrong */
-+int __rte_cache_aligned my_variable;
-+```
-+
-+### Packed Attributes
-+
-+- `__rte_packed_begin` must follow `struct`, `union`, or alignment attributes
-+- `__rte_packed_begin` and `__rte_packed_end` must be used in pairs
-+- Cannot use `__rte_packed_begin` with `enum`
-+
-+```c
-+/* Correct */
-+struct __rte_packed_begin my_packed_struct {
-+        /* ... */
-+} __rte_packed_end;
-+
-+/* Wrong - with enum */
-+enum __rte_packed_begin my_enum {
-+        /* ... */
-+};
-+```
-+
-+---
-+
-+## Code Quality Requirements
-+
-+### Compilation
-+
-+- Each commit must compile independently (for `git bisect`)
-+- No forward dependencies within a patchset
-+- Test with multiple targets, compilers, and options
-+- Use `devtools/test-meson-builds.sh`
-+
-+### Testing
-+
-+- Add tests to `app/test` unit test framework
-+- New API functions must be used in `/app` test directory
-+- New device APIs require at least one driver implementation
-+
-+### Documentation
-+
-+- Add Doxygen comments for public APIs
-+- Update release notes in `doc/guides/rel_notes/` for important changes
-+- Code and documentation must be updated atomically in same patch
-+- Only update the **current release** notes file
-+- Documentation must match the code
-+- PMD features must match the features matrix in `doc/guides/nics/features/`
-+- Documentation must match device operations (see `doc/guides/nics/features.rst` for the mapping between features, `eth_dev_ops`, and related APIs)
-+
-+### API and Driver Changes
-+
-+- New APIs must be marked as `__rte_experimental`
-+- New APIs must have hooks in `app/testpmd` and tests in the functional test suite
-+- Changes to existing APIs require release notes
-+- New drivers or subsystems must have release notes
-+
-+### ABI Compatibility
-+
-+- New external functions must be exported properly
-+- Follow ABI policy and versioning guidelines
-+- Enable ABI checks with `DPDK_ABI_REF_VERSION` environment variable
-+
-+---
-+
-+## Patch Validation Checklist
-+
-+### Commit Message
-+
-+- [ ] Subject line ≤60 characters
-+- [ ] Subject is lowercase (except acronyms from words-case.txt)
-+- [ ] Correct component prefix (e.g., `net/ixgbe:` not `ixgbe:`)
-+- [ ] No `lib/` prefix for libraries
-+- [ ] Imperative mood, no trailing period
-+- [ ] No tabs, leading/trailing spaces, or punctuation marks
-+- [ ] Body wrapped at 75 characters
-+- [ ] Body does not start with "It"
-+- [ ] `Signed-off-by:` present with real name and valid email
-+- [ ] `Fixes:` tag present for bug fixes with 12-char SHA and exact subject
-+- [ ] `Coverity issue:` tag present if Coverity mentioned
-+- [ ] `Bugzilla ID:` tag present if Bugzilla mentioned
-+- [ ] `Cc: stable@dpdk.org` for stable backport candidates
-+- [ ] Tags in correct order with blank line separator
-+
-+### License
-+
-+- [ ] SPDX identifier on first line (or second for scripts)
-+- [ ] Copyright line follows SPDX
-+- [ ] Blank line after copyright before code
-+- [ ] Appropriate license for file type
-+
-+### Code Style
-+
-+- [ ] Lines ≤100 characters
-+- [ ] Hard tabs for indentation, spaces for alignment
-+- [ ] No trailing whitespace
-+- [ ] Proper include order
-+- [ ] Header guards present
-+- [ ] `rte_`/`RTE_` prefix on external symbols
-+- [ ] No prohibited terminology
-+- [ ] Proper brace style
-+- [ ] Function return type on own line
-+- [ ] Explicit comparisons: `== NULL`, `== 0`, `!= NULL`, `!= 0`
-+- [ ] No forbidden tokens (see table above)
-+- [ ] No unnecessary code patterns (see section above)
-+
-+### API Tags
-+
-+- [ ] `__rte_experimental` alone on line, only in headers
-+- [ ] `__rte_internal` alone on line, only in headers
-+- [ ] Alignment attributes only on struct/union
-+- [ ] Packed attributes properly paired
-+
-+### Structure
-+
-+- [ ] Each commit compiles independently
-+- [ ] Code and docs updated together
-+- [ ] Documentation matches code behavior
-+- [ ] PMD features match `doc/guides/nics/features/` matrix
-+- [ ] Device operations match documentation (per `features.rst` mappings)
-+- [ ] Tests added/updated as needed
-+- [ ] New APIs marked as `__rte_experimental`
-+- [ ] New APIs have testpmd hooks and functional tests
-+- [ ] Current release notes updated for significant changes
-+- [ ] Release notes updated for API changes
-+- [ ] Release notes updated for new drivers or subsystems
-+
-+---
-+
-+## Meson Build Files
-+
-+### Style Requirements
-+
-+- 4-space indentation (no tabs)
-+- Line continuations double-indented
-+- Lists alphabetically ordered
-+- Short lists (≤3 items): single line, no trailing comma
-+- Long lists: one item per line, trailing comma on last item
-+
-+```python
-+# Short list
-+sources = files('file1.c', 'file2.c')
-+
-+# Long list
-+headers = files(
-+        'header1.h',
-+        'header2.h',
-+        'header3.h',
-+)
-+```
-+
-+---
-+
-+## Python Code
-+
-+- Must comply with formatting standards
-+- Use **`black`** for code formatting validation
-+- Line length acceptable up to 100 characters
-+
-+---
-+
-+## Validation Tools
-+
-+Run these before submitting:
-+
-+```bash
-+# Check commit messages
-+devtools/check-git-log.sh -n1
-+
-+# Check patch format and forbidden tokens
-+devtools/checkpatches.sh -n1
-+
-+# Check maintainers coverage
-+devtools/check-maintainers.sh
-+
-+# Build validation
-+devtools/test-meson-builds.sh
-+
-+# Find maintainers for your patch
-+devtools/get-maintainer.sh <patch-file>
-+```
-+
-+---
-+
-+## Severity Levels for AI Review
-+
-+**Error** (must fix):
-+- Missing or malformed SPDX license
-+- Missing Signed-off-by
-+- Subject line over 60 characters
-+- Body lines over 75 characters
-+- Wrong tag order or format
-+- Missing required tags (Fixes, Coverity issue, Bugzilla ID)
-+- Forbidden tokens in code
-+- `__rte_experimental`/`__rte_internal` in .c files or not alone on line
-+- Compilation failures
-+- ABI breaks without proper versioning
-+
-+**Warning** (should fix):
-+- Subject line style issues (case, punctuation)
-+- Wrong component prefix
-+- Missing Cc: stable@dpdk.org for fixes
-+- Documentation gaps
-+- Documentation does not match code behavior
-+- PMD features missing from `doc/guides/nics/features/` matrix
-+- Device operations not documented per `features.rst` mappings
-+- Missing tests
-+- New API not marked as `__rte_experimental`
-+- New API without testpmd hooks or functional tests
-+- API changes without release notes
-+- New drivers or subsystems without release notes
-+- Implicit comparisons (`!ptr` instead of `ptr == NULL`)
-+- Unnecessary variable initialization
-+- Unnecessary casts of `void *`
-+- Unnecessary NULL checks before free
-+- Inappropriate use of `rte_malloc()` or `rte_memcpy()`
-+
-+**Info** (consider):
-+- Minor style preferences
-+- Optimization suggestions
-+- Alternative approaches
--- 
-2.51.0
+| Check | Status | Notes |
+|-------|--------|-------|
+| Subject =E2=89=A460 chars | =E2=9C=93 Pass | 52 characters |
+| Correct prefix | =E2=9C=93 Pass | `net/zxdh:` |
+| Lowercase after colon | =E2=9C=93 Pass | |
+| Imperative mood | =E2=9C=93 Pass | "optimize" |
+| No trailing period | =E2=9C=93 Pass | |
+| Body =E2=89=A475 chars/line | =E2=9C=93 Pass | All lines under 75 |
+| Body doesn't start with "It" | =E2=9C=93 Pass | Starts with "Remove" |
+| Signed-off-by present | =E2=9C=93 Pass | |
 
+#### Issues Identified
+
+**Warning - Misleading subject line**:
+The subject says "optimize" which implies performance improvement, but the =
+body describes removing code to "avoid duplicate resource release." This is=
+ actually a **bug fix** (preventing double-free or duplicate cleanup), not =
+an optimization.
+
+Suggested subject alternatives:
+- `net/zxdh: fix duplicate resource release in NP online uninit`
+- `net/zxdh: remove redundant resource uninstall from online uninit`
+
+**Warning - Potentially missing `Fixes:` tag**:
+If this corrects a bug where resources were being released twice, a `Fixes:=
+` tag should reference the commit that introduced the duplicate release. Th=
+e AGENTS.md guidelines state:
+> `Fixes:` tag present for bug fixes with 12-char SHA and exact subject
+
+**Info - Incomplete context**:
+The commit message says the uninstallation "should be called separately wit=
+hin NP uninit" but doesn't specify where that happens. A reference to the f=
+unction or location where `zxdh_np_soft_res_uninstall()` is properly called=
+ would help reviewers verify correctness.
+
+#### Code Review
+
+The code change itself is clean - a straightforward removal of 4 lines. No =
+style issues.
+
+#### Verdict: **Needs revision**
+
+---
+
+## Summary
+
+| Patch | Status | Required Actions |
+|-------|--------|------------------|
+| 0007 (BAR check) | **Acceptable** | Consider separating alignment fixes; =
+improve commit message clarity |
+| 0008 (uninit optimize) | **Needs revision** | Fix subject line ("fix" not=
+ "optimize"); add `Fixes:` tag if applicable; clarify where resource uninst=
+all is now called |
