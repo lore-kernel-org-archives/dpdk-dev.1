@@ -2,74 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65CAED2D10F
-	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Jan 2026 14:31:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2554BD2D0EB
+	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Jan 2026 14:46:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3512B4028C;
-	Tue, 13 Jan 2026 15:31:48 +0100 (CET)
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com
- [209.85.128.50]) by mails.dpdk.org (Postfix) with ESMTP id 82B4940276
- for <dev@dpdk.org>; Tue, 13 Jan 2026 15:31:46 +0100 (CET)
-Received: by mail-wm1-f50.google.com with SMTP id
- 5b1f17b1804b1-47d63594f7eso46009935e9.0
- for <dev@dpdk.org>; Tue, 13 Jan 2026 06:31:46 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 0DE964028C;
+	Tue, 13 Jan 2026 15:46:36 +0100 (CET)
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com
+ [209.85.221.53]) by mails.dpdk.org (Postfix) with ESMTP id D593E40276
+ for <dev@dpdk.org>; Tue, 13 Jan 2026 15:46:34 +0100 (CET)
+Received: by mail-wr1-f53.google.com with SMTP id
+ ffacd0b85a97d-42fbc544b09so6101870f8f.1
+ for <dev@dpdk.org>; Tue, 13 Jan 2026 06:46:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768314706;
- x=1768919506; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768315594;
+ x=1768920394; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=AmDgjmUJqxE1ouRsCDKB0PCbtHaSYq9jvyYQxSGmXA8=;
- b=WbiSBydaQcoUCv19hg/b1pD/bd2SLanvF34KNuWS0w9StaRpRyhac0bHUcVlfo9T7I
- bXyfU4qurDXZNaIexaUkgp+65uFxDVxslAVILMPzl/fV/PqIJM1cUrHTSwHHt/y09PA3
- W2wGUaHUxPb0hBCq3uyRBD8SodJ0tSdVgq5l8mEOPTK1nZaBOwl16gAL3K+eEPwKLkcj
- XChcfhbYlejF7mQIp4exusU5Wr03QZa3rYwploU3IxYx+8i4cjGFFMoGJ2J0EFCZnWeX
- WLf3mSmLZYHsqfPYOf5z0LqfVCspXCNfQEuGeOcOOhRC6TJQoLZm1VE5WsJUQxHroY/F
- uPdA==
+ bh=Bu36e9CX8ompFhnF+8CuXt7nNz4XnzKrf+QqwI7J3Sk=;
+ b=hEAgtmy7iZtH7tvZ5fmof/LwcXW0TrgiwWrtGCM9/WB1UJb/0ia+vff+qpoKD6amJJ
+ aHMV5/XdTMt55TXRIu+csaR/sBfWd4hkjB56SjBze8kSDu40uZUnbWq5oA5t9SxCKoNE
+ e1owsix5yNOcbQbYR29NSbnDuv4HwSxp50+jrnXOO9BgcthlhiUbNN1yszhj/J5XaWV0
+ kn9KE/hR+hm3AErM4WF/zDxJ1Gi0lJrYtwK8EfUdAvObFxnvH84gcRhiQmHzr6o5j3Mq
+ BUQ4XreXlcdJ64lGPPiuMHrXcJ/M2L9JsCt48zx8NSfqkmuwkDrSy2iZmulClVvHAZ6D
+ uARQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768314706; x=1768919506;
+ d=1e100.net; s=20230601; t=1768315594; x=1768920394;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=AmDgjmUJqxE1ouRsCDKB0PCbtHaSYq9jvyYQxSGmXA8=;
- b=E/EtECOhGu2nZ0hzww7krUgPiRwM7lEXPg19O9+hjl58ZgShAWYzPETFLaBf5sP9EG
- mjSBADx2BXT+w5jkXlH5rg5NiLFAowt7hPm+CN4IttEhi68dag75TPJBkD+E0YvkvIlo
- 7dqu6Ofne0aDrE6IIAz991BAKO3dflzhNdE5a446BsKiZy7fD5OVf17qUc79yua6JXhr
- y4tJyjmS56FDgNiDuv4PJ8b8nHjZ83mDat2cFR8VJ22WrO8YsTAgUKRAO+8Vvg1pYeWf
- v/VeGeCAxc8KWFeORTdFx1Xu8eFj8ls7xADXqwDLIeBLLQWtXoKcDdVXE1vCui+bzbn/
- 4liQ==
-X-Gm-Message-State: AOJu0Yz+u7AXc+OWdF0tVSH4Iwb+zqaIwqkUnvt4iBbg69CECTVoFp51
- m1jcWMVFmuUwdRA0o4404iwtilgKkXI0x7xAEKHRYd1+ukgXWouEHOiTV5bD/+dZBjo=
-X-Gm-Gg: AY/fxX50XrilS6Yy3BkIs5NEsN7qmiPb8CRvCjVzGmT2kr0VjXF7DcAguwrbiM91/NQ
- u+xXpuO8EhafWqSj1rpupb7vAoz3hmN/FgMlF7XJrOZqn8qtm0HShi7SftZHFOhuGMrn6m7iP//
- WQZ1cK/8FiomvVecFXIHPErZQUcD1+Tgrc/MeRPpiJykeS4wccXYtNaj17PksaIvtKvBCOiUiM+
- dvr0Ms7EAYsvhqrAOJOFrv8ceRgWMWfbbXgOf+dDBnYYBuaDN/9lLBRY1wI1skiDNXb5qkPYog+
- RhdRdQhme+yowK50vgdRSthAC1wYpVvoGJfcXJCaARCA12kjNXsxqq1G0PSreu5E5dyifHqtb89
- nAQ2t03+sU79DApY5oOrFDwoiFgDIKFl5NyA/wHLojRuB44jOFZJn3R5jfJyW5JRZnNw7vyto4R
- YZzXZjZp68H4AzIVEz1Uk6kGow3jCd1YWjOqVAX0V5onYJPrG549AH
-X-Google-Smtp-Source: AGHT+IH75ZsDfBYA3LLl5U69WkaYwO8qHe9tLXJDyVehPUCub7IbrG8i+jt4B33Ik/jQinzQO5fKRA==
-X-Received: by 2002:a05:600c:3556:b0:477:63b5:6f76 with SMTP id
- 5b1f17b1804b1-47d84b3b3d7mr253527115e9.25.1768314705365; 
- Tue, 13 Jan 2026 06:31:45 -0800 (PST)
+ bh=Bu36e9CX8ompFhnF+8CuXt7nNz4XnzKrf+QqwI7J3Sk=;
+ b=iul09pUuxWAe4qHdMnJyfOAi59Gv9nZmTT6djoDBbzxq1LjwfKWhMSlx2Uc6XPuVzN
+ LbZsEDaz7IlL72d3nCrNmn/rP8Tgy9iC59hrJLyuhJLTvrDK94Lq7ngSHyr62PWhtFeT
+ 1uZ4muecXy+vsB3DqPXFLxRbja4WdejK/FgrvOW9Zjvl+vSOlfiDDpRRGkhGnTooR2Sd
+ hVNn9htID//zuvAzCjahTonACcr0+XqXiUTmiDE+Ouqt+3noakfnPSQe2nUCwy25ViyU
+ i5Q4Tdn/D9J4T/+f4qxEYQBFBsvwNKupyw5mIlKg9wndz2LunRnSCxkEkgmXq1VkBCQf
+ lQOA==
+X-Gm-Message-State: AOJu0YwjW4mMxYSvOZzuPMrNC3NoU62XHVUYc0OiWDEtlDej1NYdBzwo
+ SqbAMFTwoodRepyhT2zXX4IdSoVQWhsw1kZpV+qiwyumBjUUASWjaEEp91i898SGS5Bp6av4Gi4
+ hRoIl
+X-Gm-Gg: AY/fxX6YCNMFlCKab87QJ3gzvoyd8MrFp6WmdDglWL2WdzniedQjrJ8DU3zj3tCng0H
+ ztlmKBS1NoPVJZW6FLzt9ibxYNBmjPjR3US1mqTq0nO4Gg7kjrlW9pMbyZkwYlJ7oC9BL7giPly
+ piuO+yiH1YDbFAdS3RDUi3nxct8whnmm+3IrlBb2PadHfnB8/m1ZC+lpc+UEtTS4XAmfNCUwD/z
+ ElU4juNb1lLRy7fPvkb6hRRIOltzYuf8Ffe0hRDmyyg2bmNaDtZqeVy9+3+uACdoij1XvUR4B2f
+ 32+hgQ03YuIPCw7t7CS1zJkpHspY4GYDdZRS9Dw84BwLjzYVrJe0tXvRzmzKoCm5r9Aze6XBo4X
+ V5brKWTpm9fA/n9I1CCVxve4Q4qrr9pYCAoN7jGFzGoZ7XawAme3NZZH5g3/5qEH8MvSK5kEoqA
+ McvdK0mIJXq+T//gddEy6gGDrXEHa6oe/J787oejrWrq61ZgnHgV/b
+X-Google-Smtp-Source: AGHT+IGe3BFMtw/Kkh6CM7IPKfCTatmERzXM7+irkxCmKhe2EKDpcoh4VTFrylgBh8w0XuhResArkQ==
+X-Received: by 2002:a05:6000:a91:b0:432:da3b:5949 with SMTP id
+ ffacd0b85a97d-432da3b5d11mr13061158f8f.21.1768315594282; 
+ Tue, 13 Jan 2026 06:46:34 -0800 (PST)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-47eda5784e4sm15303095e9.18.2026.01.13.06.31.42
+ ffacd0b85a97d-432bd5ff1e9sm46445428f8f.41.2026.01.13.06.46.32
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 13 Jan 2026 06:31:45 -0800 (PST)
-Date: Tue, 13 Jan 2026 06:31:38 -0800
+ Tue, 13 Jan 2026 06:46:34 -0800 (PST)
+Date: Tue, 13 Jan 2026 06:46:28 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Konrad Sztyber <konrad.sztyber@gmail.com>
-Cc: dev@dpdk.org, David Marchand <david.marchand@redhat.com>, Chenbo Xia
- <chenbox@nvidia.com>, Konrad Sztyber <konrad.sztyber@intel.com>,
- stable@dpdk.org, Nipun Gupta <nipun.gupta@amd.com>, Anatoly Burakov
- <anatoly.burakov@intel.com>, Peng Zhang <peng.zhang@corigine.com>, Long Wu
- <long.wu@corigine.com>, Zerun Fu <zerun.fu@corigine.com>, Chaoyong He
- <chaoyong.he@corigine.com>
-Subject: Re: [PATCH v4] bus/pci: don't open uio device in secondary process
-Message-ID: <20260113063138.3382281c@phoenix.local>
-In-Reply-To: <20260113123617.1736483-1-ksztyber@nvidia.com>
-References: <20241011111533.20746-1-konrad.sztyber@intel.com>
- <20260113123617.1736483-1-ksztyber@nvidia.com>
+To: Dimon Zhao <dimon.zhao@nebula-matrix.com>
+Cc: dev@dpdk.org, Kyo Liu <kyo.liu@nebula-matrix.com>, Leon Yu
+ <leon.yu@nebula-matrix.com>, Sam Chen <sam.chen@nebula-matrix.com>
+Subject: Re: [PATCH v1 1/1] net/nbl: fix issues reported by Coverity
+Message-ID: <20260113064628.114ba10a@phoenix.local>
+In-Reply-To: <20251030033619.3386064-2-dimon.zhao@nebula-matrix.com>
+References: <20250627014022.4019625-1-dimon.zhao@nebula-matrix.com>
+ <20251030033619.3386064-1-dimon.zhao@nebula-matrix.com>
+ <20251030033619.3386064-2-dimon.zhao@nebula-matrix.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -86,133 +84,59 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 13 Jan 2026 13:35:43 +0100
-Konrad Sztyber <konrad.sztyber@gmail.com> wrote:
+On Wed, 29 Oct 2025 20:36:19 -0700
+Dimon Zhao <dimon.zhao@nebula-matrix.com> wrote:
 
-> From: Konrad Sztyber <konrad.sztyber@intel.com>
+> Coverity issue: 490942
+> Coverity issue: 490943
+> Coverity issue: 490946
+> Coverity issue: 490947
+> Coverity issue: 490949
+> Coverity issue: 490950
+> Coverity issue: 490951
+> Coverity issue: 490952
+> Coverity issue: 490953
+> Coverity issue: 490954
+> Coverity issue: 490955
+> Coverity issue: 490957
+> Coverity issue: 490958
+> Coverity issue: 490959
+> Fixes: a1c5ffa13b2c ("net/nbl: add channel layer")
+> Fixes: dc955cd24c8f ("net/nbl: add coexistence mode")
+> Fixes: 93b38df5a2ec ("net/nbl: support basic configuration")
 >=20
-> The uio_pci_generic driver clears the bus master bit when the device
-> file is closed. So, when the secondary process terminates after probing
-> a device, that device becomes unusable in the primary process.
->=20
-> To avoid that, the device file is now opened only in the primary process
-> and the secondary gets it over UNIX domain socket via SCM_RIGHTS.
->=20
-> Fixes: 847d78fb9530 ("bus/pci: fix FD in secondary process")
-> Cc: stable@dpdk.org
->=20
-> Signed-off-by: Konrad Sztyber <konrad.sztyber@intel.com>
-> ---
 
-AI code review spotted one minor issue
+Automated code review with AI spotted issue with this patch.
+Please address and resubmit.
 
-## DPDK Patch Review: bus/pci: don't open uio device in secondary process
+Patch 5/9: net/nbl: fix issues reported by Coverity
 
-### Summary
-This patch fixes a bug where the `uio_pci_generic` driver clears the bus ma=
-ster bit when the secondary process closes its UIO device file, rendering t=
-he device unusable in the primary process. The fix requests the fd from the=
- primary process via SCM_RIGHTS instead of opening it directly in the secon=
-dary.
+Author: Dimon Zhao
+Verdict: =E2=9D=8C Needs revision - bug introduced
+Check	Status
+Subject =E2=89=A460 chars	=E2=9C=85 (40 chars)
+Prefix correct	=E2=9C=85
+Coverity issue tags	=E2=9C=85
+Fixes tags	=E2=9C=85
+Cc: stable@dpdk.org	=E2=9C=85
+Signed-off-by	=E2=9C=85
 
----
+Issues:
 
-### Commit Message Review
+    Error - Dead code introduced (lines 41-47 in nbl_userdev.c):
 
-| Check | Status | Notes |
-|-------|--------|-------|
-| Subject =E2=89=A460 chars | =E2=9C=85 Pass | 50 characters |
-| Lowercase after colon | =E2=9C=85 Pass | |
-| Correct prefix | =E2=9C=85 Pass | `bus/pci:` is correct for `drivers/bus/=
-pci/` |
-| Imperative mood | =E2=9C=85 Pass | "don't open" |
-| No trailing period | =E2=9C=85 Pass | |
-| No forbidden punctuation | =E2=9C=85 Pass | |
-| Body =E2=89=A475 chars | =E2=9C=85 Pass | All lines within limit |
-| Body doesn't start with "It" | =E2=9C=85 Pass | Starts with "The" |
-| `Fixes:` tag present | =E2=9C=85 Pass | `Fixes: 847d78fb9530 ("bus/pci: f=
-ix FD in secondary process")` |
-| `Fixes:` uses 12-char SHA | =E2=9C=85 Pass | |
-| `Cc: stable@dpdk.org` | =E2=9C=85 Pass | Present for backport |
-| `Signed-off-by:` present | =E2=9C=85 Pass | Real name and valid email |
-| Tag order correct | =E2=9C=85 Pass | Fixes =E2=86=92 Cc =E2=86=92 (blank)=
- =E2=86=92 Signed-off-by |
+c
 
----
+   ret =3D ioctl(common->devfd, NBL_DEV_USER_GET_BAR_SIZE, &bar_size);
+   if (ret) {
+       NBL_LOG(ERR, "nbl userdev get bar size failed");
+       goto close_eventfd;
+   }
 
-### Code Style Review
+   if (!ret) {  // <-- ALWAYS TRUE - dead code!
 
-| Check | Status | Notes |
-|-------|--------|-------|
-| Lines =E2=89=A4100 chars | =E2=9C=85 Pass | |
-| Function return type on own line | =E2=9C=85 Pass | `pci_uio_send_fd`, `p=
-ci_uio_request_fd` |
-| Explicit NULL comparisons | =E2=9C=85 Pass | `dev =3D=3D NULL`, `dev !=3D=
- NULL` |
-| Explicit integer comparisons | =E2=9C=85 Pass | `fd < 0`, `rc !=3D 0`, `p=
-ci_uio_dev_count =3D=3D 0` |
-| Naming conventions | =E2=9C=85 Pass | lowercase with underscores througho=
-ut |
-| Comment style | =E2=9C=85 Pass | Multi-line block comment properly format=
-ted |
-| Include order | =E2=9C=85 Pass | DPDK includes grouped appropriately |
-| No trailing whitespace | =E2=9C=85 Pass | |
+After adding the error check with goto, the subsequent if (!ret) condition =
+can never be false. The if (!ret) block should be removed or restructured.
 
----
-
-### Warnings (should fix)
-
-**1. Use of `assert()` instead of RTE_ASSERT or proper error handling**
-
-```c
-if (rte_eal_process_type() =3D=3D RTE_PROC_PRIMARY) {
-    assert(pci_uio_dev_count > 0);
-```
-
-Standard C `assert()` is disabled when `NDEBUG` is defined and isn't consis=
-tent with DPDK style. Consider:
-- Using `RTE_ASSERT(pci_uio_dev_count > 0);` for debug builds, or
-- Adding explicit error handling if this is a condition that could occur in=
- production
-
----
-
-### Info (consider)
-
-**1. Silent error handling in `pci_uio_send_fd`**
-
-When the device isn't found or the fd is invalid, the function logs an erro=
-r but sends an empty reply (num_fds=3D0). While the secondary process detec=
-ts this, consider whether the reply should include an explicit error code i=
-n the param field for better diagnostics.
-
-**2. Missing header include**
-
-The code uses `assert()` but doesn't show `<assert.h>` being added. If `ass=
-ert()` is retained, ensure the header is included. If switching to `RTE_ASS=
-ERT()`, `<rte_debug.h>` may be needed.
-
----
-
-### Technical Review
-
-The implementation approach is sound:
-
-1. **Primary process**: Opens the UIO device and registers an MP action han=
-dler to send the fd to secondary processes
-2. **Secondary process**: Requests the fd from primary via `rte_mp_request_=
-sync` instead of opening it directly
-3. **Cleanup**: Properly unregisters the MP action when the last UIO device=
- is freed
-
-The use of `rte_mp_*` infrastructure and SCM_RIGHTS for fd passing is the c=
-orrect pattern for DPDK multi-process communication.
-
----
-
-### Verdict
-
-**Acceptable with minor changes** =E2=80=94 The patch is well-structured an=
-d addresses a real bug correctly. The only substantive issue is the use of =
-`assert()` which should be changed to DPDK-style error handling or `RTE_ASS=
-ERT()`.
+    Warning (line 53): int ret =3D 0; - Unnecessary initialization; value i=
+s immediately overwritten on line 60.
