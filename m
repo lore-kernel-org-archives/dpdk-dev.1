@@ -2,47 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BE33D2F327
-	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Jan 2026 15:16:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E9CED2F32A
+	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Jan 2026 15:16:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0BA2940A67;
-	Tue, 13 Jan 2026 16:15:30 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 198C940A6E;
+	Tue, 13 Jan 2026 16:15:31 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
- by mails.dpdk.org (Postfix) with ESMTP id 81D2040696
- for <dev@dpdk.org>; Tue, 13 Jan 2026 16:15:27 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id B796140696
+ for <dev@dpdk.org>; Tue, 13 Jan 2026 16:15:28 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1768317328; x=1799853328;
+ t=1768317329; x=1799853329;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=SJhPcX42rbwjJdh48tebi/4mPXWwrX90wd4VSBX0DNw=;
- b=MLHtOD502JwLuYorf0bgdJ/sD03kHXxUarA9qRGWzqn9Oj+/Gj02pN7N
- adORwJ6HQtANvGf7BN+rIR0cvu83HXyaTuRyGI68SZ+PJPWm91W8iW2+k
- c/ektp3c90HK4SxEQrsMdZ3sPpDFarOc1wRQrlLZyBoqXl19RP0EQSSxn
- OawxAcSx8d7m54cYgm5RNS4LJeoy1JJ0P/EXqDVgcD5NN2VxwEaDCfweZ
- 1Ldy5ZAJ5uj79BVkyK9hKlB5bAwRfNZRVtBwJRmsh1bdIS51pOIJFAdWc
- CgqHEFCPF3yavHWdTd2ppYFKYZ75uTTZo8CHgtXP1YlV9BWpWd6AoZm9T Q==;
-X-CSE-ConnectionGUID: qmX9cqmwSsW3gWRZT7TGkw==
-X-CSE-MsgGUID: 9oecWcBATmWra2cx+7fWQA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11670"; a="80969158"
-X-IronPort-AV: E=Sophos;i="6.21,222,1763452800"; d="scan'208";a="80969158"
+ bh=ebJFACDVcB8c0lcAPg5J8I8/pzo3cO5n/1o3i+0/CxI=;
+ b=IbVVOWt9OTBqrJULJUYkGBXKEtAg49mUO1Q/ws4ua24JneBgJibWmKVa
+ AVNRmDIWKAfKrDbqmhvxpUH2WXQ+TRQ3WYU1UfsTeKOhnYnVXyFZjhfNi
+ Ym0srip+rr9R5l1tkagyoQI/zoRFq8qgT27KfRi59flnOqnT2Wb/4cWsz
+ +b7Bo/oQkoJ4rR+j7t2LkeC+QjZetEG07iEw/gczshekt11oMI2PGOgED
+ BFWWGa9+MAsnah1oI65y5+Za/CT/SpwPXL3NpqccaDhSE6GlLSV1N/eSd
+ fk/WJYr+KFSvT7MGLX1cOHekWPrHsI8eYYELhJciZxEYcxjLV7/qsdIPg w==;
+X-CSE-ConnectionGUID: aoFOBSSmT++hHIQJpcAPJw==
+X-CSE-MsgGUID: 7G0bQsgyRYOLgpE9F2Wk7w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11670"; a="80969165"
+X-IronPort-AV: E=Sophos;i="6.21,222,1763452800"; d="scan'208";a="80969165"
 Received: from orviesa006.jf.intel.com ([10.64.159.146])
  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 13 Jan 2026 07:15:27 -0800
-X-CSE-ConnectionGUID: RnpGmOWgSviYr7CqiB23pA==
-X-CSE-MsgGUID: CArTk7jBS8ueZJCrI/kDSA==
+ 13 Jan 2026 07:15:28 -0800
+X-CSE-ConnectionGUID: FI9srKpuQSC6H2xpkXa9Bw==
+X-CSE-MsgGUID: uC9MoNA7THeu8gXos65EHw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,222,1763452800"; d="scan'208";a="203556575"
+X-IronPort-AV: E=Sophos;i="6.21,222,1763452800"; d="scan'208";a="203556579"
 Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by orviesa006.jf.intel.com with ESMTP; 13 Jan 2026 07:15:26 -0800
+ by orviesa006.jf.intel.com with ESMTP; 13 Jan 2026 07:15:27 -0800
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: Bruce Richardson <bruce.richardson@intel.com>,
+ Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
+ Anatoly Burakov <anatoly.burakov@intel.com>,
  Jingjing Wu <jingjing.wu@intel.com>,
  Praveen Shetty <praveen.shetty@intel.com>
-Subject: [PATCH v2 09/36] net/idpf: refactor context descriptor handling
-Date: Tue, 13 Jan 2026 15:14:33 +0000
-Message-ID: <20260113151505.1871271-10-bruce.richardson@intel.com>
+Subject: [PATCH v2 10/36] net/intel: consolidate checksum mask definition
+Date: Tue, 13 Jan 2026 15:14:34 +0000
+Message-ID: <20260113151505.1871271-11-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260113151505.1871271-1-bruce.richardson@intel.com>
 References: <20251219172548.2660777-1-bruce.richardson@intel.com>
@@ -62,134 +64,162 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-move all context descriptor handling to a single function, as with the
-ice driver.
+Create a common definition for checksum masks across iavf, idpf, i40e
+and ice drivers.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- drivers/net/intel/idpf/idpf_common_rxtx.c | 61 +++++++++++------------
- 1 file changed, 28 insertions(+), 33 deletions(-)
+ drivers/net/intel/common/tx.h             | 7 +++++++
+ drivers/net/intel/i40e/i40e_rxtx.c        | 7 +------
+ drivers/net/intel/iavf/iavf_rxtx.c        | 2 +-
+ drivers/net/intel/iavf/iavf_rxtx.h        | 8 --------
+ drivers/net/intel/ice/ice_rxtx.c          | 8 +-------
+ drivers/net/intel/idpf/idpf_common_rxtx.c | 4 ++--
+ drivers/net/intel/idpf/idpf_common_rxtx.h | 7 +------
+ 7 files changed, 13 insertions(+), 30 deletions(-)
 
-diff --git a/drivers/net/intel/idpf/idpf_common_rxtx.c b/drivers/net/intel/idpf/idpf_common_rxtx.c
-index 11d6848430..9219ad9047 100644
---- a/drivers/net/intel/idpf/idpf_common_rxtx.c
-+++ b/drivers/net/intel/idpf/idpf_common_rxtx.c
-@@ -845,37 +845,36 @@ idpf_calc_context_desc(uint64_t flags)
- 	return 0;
- }
+diff --git a/drivers/net/intel/common/tx.h b/drivers/net/intel/common/tx.h
+index 320ab0b8e0..a71b98f119 100644
+--- a/drivers/net/intel/common/tx.h
++++ b/drivers/net/intel/common/tx.h
+@@ -53,6 +53,13 @@
+ /* Common maximum data per TX descriptor */
+ #define CI_MAX_DATA_PER_TXD     (CI_TXD_QW1_TX_BUF_SZ_M >> CI_TXD_QW1_TX_BUF_SZ_S)
  
--/* set TSO context descriptor
-+/* set TSO context descriptor, returns 0 if no context needed, 1 if context set
-  */
--static inline void
--idpf_set_splitq_tso_ctx(struct rte_mbuf *mbuf,
-+static inline uint16_t
-+idpf_set_tso_ctx(uint64_t ol_flags, struct rte_mbuf *mbuf,
- 			union ci_tx_offload tx_offload,
--			volatile union idpf_flex_tx_ctx_desc *ctx_desc)
-+			uint64_t *qw0, uint64_t *qw1)
- {
--	uint16_t cmd_dtype;
-+	uint16_t cmd_dtype = IDPF_TX_DESC_DTYPE_FLEX_TSO_CTX | IDPF_TX_FLEX_CTX_DESC_CMD_TSO;
-+	uint16_t tso_segsz = mbuf->tso_segsz;
- 	uint32_t tso_len;
- 	uint8_t hdr_len;
- 
-+	if (idpf_calc_context_desc(ol_flags) == 0)
-+		return 0;
++/* Checksum offload mask to identify packets requesting offload */
++#define CI_TX_CKSUM_OFFLOAD_MASK (RTE_MBUF_F_TX_IP_CKSUM |		 \
++				   RTE_MBUF_F_TX_L4_MASK |		 \
++				   RTE_MBUF_F_TX_TCP_SEG |		 \
++				   RTE_MBUF_F_TX_OUTER_IP_CKSUM |	 \
++				   RTE_MBUF_F_TX_OUTER_UDP_CKSUM)
 +
-+	/* TSO context descriptor setup */
- 	if (tx_offload.l4_len == 0) {
- 		TX_LOG(DEBUG, "L4 length set to 0");
--		return;
-+		return 0;
+ /**
+  * Common TX offload union for Intel drivers.
+  * Supports both basic offloads (l2_len, l3_len, l4_len, tso_segsz) and
+diff --git a/drivers/net/intel/i40e/i40e_rxtx.c b/drivers/net/intel/i40e/i40e_rxtx.c
+index 7646ea07aa..db36ec86f7 100644
+--- a/drivers/net/intel/i40e/i40e_rxtx.c
++++ b/drivers/net/intel/i40e/i40e_rxtx.c
+@@ -53,11 +53,6 @@
+ #define I40E_TX_IEEE1588_TMST 0
+ #endif
+ 
+-#define I40E_TX_CKSUM_OFFLOAD_MASK (RTE_MBUF_F_TX_IP_CKSUM |		 \
+-		RTE_MBUF_F_TX_L4_MASK |		 \
+-		RTE_MBUF_F_TX_TCP_SEG |		 \
+-		RTE_MBUF_F_TX_OUTER_IP_CKSUM)
+-
+ #define I40E_TX_OFFLOAD_MASK (RTE_MBUF_F_TX_OUTER_IPV4 |	\
+ 		RTE_MBUF_F_TX_OUTER_IPV6 |	\
+ 		RTE_MBUF_F_TX_IPV4 |		\
+@@ -1176,7 +1171,7 @@ i40e_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
+ 		td_cmd |= CI_TX_DESC_CMD_ICRC;
+ 
+ 		/* Enable checksum offloading */
+-		if (ol_flags & I40E_TX_CKSUM_OFFLOAD_MASK)
++		if (ol_flags & CI_TX_CKSUM_OFFLOAD_MASK)
+ 			i40e_txd_enable_checksum(ol_flags, &td_cmd,
+ 						 &td_offset, tx_offload);
+ 
+diff --git a/drivers/net/intel/iavf/iavf_rxtx.c b/drivers/net/intel/iavf/iavf_rxtx.c
+index dc4c64d169..75f2e143f9 100644
+--- a/drivers/net/intel/iavf/iavf_rxtx.c
++++ b/drivers/net/intel/iavf/iavf_rxtx.c
+@@ -2601,7 +2601,7 @@ iavf_build_data_desc_cmd_offset_fields(volatile uint64_t *qw1,
  	}
  
--	hdr_len = tx_offload.l2_len +
--		tx_offload.l3_len +
--		tx_offload.l4_len;
--	cmd_dtype = IDPF_TX_DESC_DTYPE_FLEX_TSO_CTX |
--		IDPF_TX_FLEX_CTX_DESC_CMD_TSO;
-+	hdr_len = tx_offload.l2_len + tx_offload.l3_len + tx_offload.l4_len;
- 	tso_len = mbuf->pkt_len - hdr_len;
+ 	if ((m->ol_flags &
+-	    (IAVF_TX_CKSUM_OFFLOAD_MASK | RTE_MBUF_F_TX_SEC_OFFLOAD)) == 0)
++	    (CI_TX_CKSUM_OFFLOAD_MASK | RTE_MBUF_F_TX_SEC_OFFLOAD)) == 0)
+ 		goto skip_cksum;
  
--	ctx_desc->tso.qw1.cmd_dtype = rte_cpu_to_le_16(cmd_dtype);
--	ctx_desc->tso.qw0.hdr_len = hdr_len;
--	ctx_desc->tso.qw0.mss_rt =
--		rte_cpu_to_le_16((uint16_t)mbuf->tso_segsz &
--				 IDPF_TXD_FLEX_CTX_MSS_RT_M);
--	ctx_desc->tso.qw0.flex_tlen =
--		rte_cpu_to_le_32(tso_len &
--				 IDPF_TXD_FLEX_CTX_MSS_RT_M);
-+	*qw0 = rte_cpu_to_le_32(tso_len & IDPF_TXD_FLEX_CTX_MSS_RT_M) |
-+	       ((uint64_t)rte_cpu_to_le_16(tso_segsz & IDPF_TXD_FLEX_CTX_MSS_RT_M) << 32) |
-+	       ((uint64_t)hdr_len << 48);
-+	*qw1 = rte_cpu_to_le_16(cmd_dtype);
-+
-+	return 1;
- }
+ 	/* Set MACLEN */
+diff --git a/drivers/net/intel/iavf/iavf_rxtx.h b/drivers/net/intel/iavf/iavf_rxtx.h
+index 395d97b4ee..cca5c25119 100644
+--- a/drivers/net/intel/iavf/iavf_rxtx.h
++++ b/drivers/net/intel/iavf/iavf_rxtx.h
+@@ -136,14 +136,6 @@
  
- RTE_EXPORT_INTERNAL_SYMBOL(idpf_dp_splitq_xmit_pkts)
-@@ -933,7 +932,8 @@ idpf_dp_splitq_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
- 		tx_offload.l4_len = tx_pkt->l4_len;
- 		tx_offload.tso_segsz = tx_pkt->tso_segsz;
- 		/* Calculate the number of context descriptors needed. */
--		nb_ctx = idpf_calc_context_desc(ol_flags);
-+		uint64_t cd_qw0, cd_qw1;
-+		nb_ctx = idpf_set_tso_ctx(ol_flags, tx_pkt, tx_offload, &cd_qw0, &cd_qw1);
+ #define IAVF_TX_MIN_PKT_LEN 17
  
- 		/* Calculate the number of TX descriptors needed for
- 		 * each packet. For TSO packets, use ci_calc_pkt_desc as
-@@ -950,12 +950,10 @@ idpf_dp_splitq_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
+-#define IAVF_TX_CKSUM_OFFLOAD_MASK (		 \
+-		RTE_MBUF_F_TX_IP_CKSUM |		 \
+-		RTE_MBUF_F_TX_L4_MASK |		 \
+-		RTE_MBUF_F_TX_TCP_SEG |          \
+-		RTE_MBUF_F_TX_UDP_SEG |          \
+-		RTE_MBUF_F_TX_OUTER_IP_CKSUM |   \
+-		RTE_MBUF_F_TX_OUTER_UDP_CKSUM)
+-
+ #define IAVF_TX_OFFLOAD_MASK (  \
+ 		RTE_MBUF_F_TX_OUTER_IPV6 |		 \
+ 		RTE_MBUF_F_TX_OUTER_IPV4 |		 \
+diff --git a/drivers/net/intel/ice/ice_rxtx.c b/drivers/net/intel/ice/ice_rxtx.c
+index f9dcc30208..dc21a89ce3 100644
+--- a/drivers/net/intel/ice/ice_rxtx.c
++++ b/drivers/net/intel/ice/ice_rxtx.c
+@@ -13,12 +13,6 @@
+ #include "../common/rx_vec_x86.h"
+ #endif
+ 
+-#define ICE_TX_CKSUM_OFFLOAD_MASK (RTE_MBUF_F_TX_IP_CKSUM |		 \
+-		RTE_MBUF_F_TX_L4_MASK |		 \
+-		RTE_MBUF_F_TX_TCP_SEG |		 \
+-		RTE_MBUF_F_TX_UDP_SEG |		 \
+-		RTE_MBUF_F_TX_OUTER_IP_CKSUM)
+-
+ /**
+  * The mbuf dynamic field pointer for protocol extraction metadata.
+  */
+@@ -3206,7 +3200,7 @@ ice_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
+ 		}
+ 
+ 		/* Enable checksum offloading */
+-		if (ol_flags & ICE_TX_CKSUM_OFFLOAD_MASK)
++		if (ol_flags & CI_TX_CKSUM_OFFLOAD_MASK)
+ 			ice_txd_enable_checksum(ol_flags, &td_cmd,
+ 						&td_offset, tx_offload);
+ 
+diff --git a/drivers/net/intel/idpf/idpf_common_rxtx.c b/drivers/net/intel/idpf/idpf_common_rxtx.c
+index 9219ad9047..b34d545a0a 100644
+--- a/drivers/net/intel/idpf/idpf_common_rxtx.c
++++ b/drivers/net/intel/idpf/idpf_common_rxtx.c
+@@ -945,7 +945,7 @@ idpf_dp_splitq_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
+ 		else
+ 			nb_used = tx_pkt->nb_segs + nb_ctx;
+ 
+-		if (ol_flags & IDPF_TX_CKSUM_OFFLOAD_MASK)
++		if (ol_flags & CI_TX_CKSUM_OFFLOAD_MASK)
+ 			cmd_dtype = IDPF_TXD_FLEX_FLOW_CMD_CS_EN;
  
  		/* context descriptor */
- 		if (nb_ctx != 0) {
--			volatile union idpf_flex_tx_ctx_desc *ctx_desc =
--				(volatile union idpf_flex_tx_ctx_desc *)&txr[tx_id];
-+			uint64_t *ctx_desc = RTE_CAST_PTR(uint64_t *, &txr[tx_id]);
- 
--			if ((ol_flags & RTE_MBUF_F_TX_TCP_SEG) != 0)
--				idpf_set_splitq_tso_ctx(tx_pkt, tx_offload,
--							ctx_desc);
-+			ctx_desc[0] = cd_qw0;
-+			ctx_desc[1] = cd_qw1;
- 
- 			tx_id++;
- 			if (tx_id == txq->nb_tx_desc)
-@@ -1388,7 +1386,8 @@ idpf_dp_singleq_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
- 		tx_offload.l4_len = tx_pkt->l4_len;
- 		tx_offload.tso_segsz = tx_pkt->tso_segsz;
- 		/* Calculate the number of context descriptors needed. */
--		nb_ctx = idpf_calc_context_desc(ol_flags);
-+		uint64_t cd_qw0, cd_qw1;
-+		nb_ctx = idpf_set_tso_ctx(ol_flags, tx_pkt, tx_offload, &cd_qw0, &cd_qw1);
- 
- 		/* The number of descriptors that must be allocated for
- 		 * a packet. For TSO packets, use ci_calc_pkt_desc as
-@@ -1431,9 +1430,7 @@ idpf_dp_singleq_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
- 
- 		if (nb_ctx != 0) {
- 			/* Setup TX context descriptor if required */
--			volatile union idpf_flex_tx_ctx_desc *ctx_txd =
--				(volatile union idpf_flex_tx_ctx_desc *)
--				&txr[tx_id];
-+			uint64_t *ctx_txd = RTE_CAST_PTR(uint64_t *, &txr[tx_id]);
- 
- 			txn = &sw_ring[txe->next_id];
- 			RTE_MBUF_PREFETCH_TO_FREE(txn->mbuf);
-@@ -1442,10 +1439,8 @@ idpf_dp_singleq_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
- 				txe->mbuf = NULL;
+@@ -1425,7 +1425,7 @@ idpf_dp_singleq_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
  			}
+ 		}
  
--			/* TSO enabled */
--			if ((ol_flags & RTE_MBUF_F_TX_TCP_SEG) != 0)
--				idpf_set_splitq_tso_ctx(tx_pkt, tx_offload,
--							ctx_txd);
-+			ctx_txd[0] = cd_qw0;
-+			ctx_txd[1] = cd_qw1;
+-		if (ol_flags & IDPF_TX_CKSUM_OFFLOAD_MASK)
++		if (ol_flags & CI_TX_CKSUM_OFFLOAD_MASK)
+ 			td_cmd |= IDPF_TX_FLEX_DESC_CMD_CS_EN;
  
- 			txe->last_id = tx_last;
- 			tx_id = txe->next_id;
+ 		if (nb_ctx != 0) {
+diff --git a/drivers/net/intel/idpf/idpf_common_rxtx.h b/drivers/net/intel/idpf/idpf_common_rxtx.h
+index b88a87402d..fe7094d434 100644
+--- a/drivers/net/intel/idpf/idpf_common_rxtx.h
++++ b/drivers/net/intel/idpf/idpf_common_rxtx.h
+@@ -39,13 +39,8 @@
+ #define IDPF_RLAN_CTX_DBUF_S	7
+ #define IDPF_RX_MAX_DATA_BUF_SIZE	(16 * 1024 - 128)
+ 
+-#define IDPF_TX_CKSUM_OFFLOAD_MASK (		\
+-		RTE_MBUF_F_TX_IP_CKSUM |	\
+-		RTE_MBUF_F_TX_L4_MASK |		\
+-		RTE_MBUF_F_TX_TCP_SEG)
+-
+ #define IDPF_TX_OFFLOAD_MASK (			\
+-		IDPF_TX_CKSUM_OFFLOAD_MASK |	\
++		CI_TX_CKSUM_OFFLOAD_MASK |	\
+ 		RTE_MBUF_F_TX_IPV4 |		\
+ 		RTE_MBUF_F_TX_IPV6)
+ 
 -- 
 2.51.0
 
