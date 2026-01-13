@@ -2,75 +2,132 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F172CF45C6
-	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Jan 2026 01:20:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18002D29DC3
+	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Jan 2026 02:58:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id ADC74402E8;
-	Tue, 13 Jan 2026 02:20:38 +0100 (CET)
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com
- [209.85.208.46]) by mails.dpdk.org (Postfix) with ESMTP id 3D265402E0
- for <dev@dpdk.org>; Tue, 13 Jan 2026 02:20:37 +0100 (CET)
-Received: by mail-ed1-f46.google.com with SMTP id
- 4fb4d7f45d1cf-64c893f3a94so9577124a12.0
- for <dev@dpdk.org>; Mon, 12 Jan 2026 17:20:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768267237;
- x=1768872037; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=UIVndeVy7ISJbt4mDuxji4YUYJlTYQnXHO5bJ4QaIyk=;
- b=n4c8Y291GFgMwEsNZfxSOk+dLKg08yW2B5as0jsDFilG4G0Uo/nTewnAAt9nbfm7e8
- 9oGcREYt6lSGwGWm1NRTBrX4YUQg+kj/5HwyPULU9lOPY2gmovySB6GODIEoRgskEFlu
- /3UdCPl7NMhsl+IzOgQOWQSrCD29aei+Tsbf84itLKmJWeum1fRHvpUYmdYhqaotjZ3s
- VaBQlBkWEeEY1YNKcxpUvvcNm7bxLX31LiT7nTd6QLqNg3farcrAgTv53G6T4HCd+jFY
- xSorBU8K1zO3qMVHm826N/CokKEk//LhX4wvt0/KcgYxhJfW3yLdcpzTd3nB3xdireZj
- 3jvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768267237; x=1768872037;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=UIVndeVy7ISJbt4mDuxji4YUYJlTYQnXHO5bJ4QaIyk=;
- b=QbKRNbQvQ9ZxXNpcb+f4hmu4HwdrzEqGd6+PrPHzn88WgrGOMFlIxTgLByFzo5ZFRJ
- Qz/4VjE7fZhjufKdzb6pRNd4NPOnWWHSRhaNtFYhgJxNJnN2r5gbroFt0+Qt9//2Vaqx
- KKBTOO9QDSLi0BpSJQ2UtGTlP2ekoczE46s4Orzj1AP402ccmjU4mSO8kq7GlCjPkARZ
- i6EnVjujLSBhLw6iu4l+4NALJ/Kz7xM7l9qgv0yM92w7Ua/pE9b9Uf7X4EcGYXS7/5Oo
- 2IPmKDYdlj6M5SOpyq/8dRE5tqgILWQDYmN1ThPlsOO31wsToIzDykrCV6s1DkRA4JC/
- V3WA==
-X-Gm-Message-State: AOJu0Yy9zXsF1Wu2O0aauEsHfFI4gfNYolv0pu3yYWN4NTRypW+4w5SR
- gV/rw1Y8hv6lSjbHy9J85/+9zggnejdPs0nfui6/gGlAPR0ckno6wSD2BieZxbWEQrI=
-X-Gm-Gg: AY/fxX7xkWm1ExxAXKUQT7lMyzu9JdDpgHe6z+1lSRKulSrP7Iv+KkVqYTufgNas0f/
- jqtT+0Ugnyh2ywe7hG6BD8SPmKLBkyWoux6PVZGorJInTpplYtDPZ9G/bw4XCdEnWenwS/qJ8Li
- jFLYYH1R8PyL22g2+IrbX3v1SnqvVFHyox8K1fzItcUc0P4Sy5bEesOUlnGSD+2zxC/umenByYb
- d9+WSMd8kfnWa9ezMOBC+8f1NYaeYDnzWJ0pXSGZ8R9TuKc6cSGJqUxVXMfU8FE0BEXcpmiGBtT
- HliF1Hz6rTizvsJJbpLWlGzWrkGm4FLoQ+3T4jEOG+UKyt+QvyjTy3ucozY0bBho/ZJvB4//EFl
- 4m2LSXo6dgPOmgIGb4aNQcOfbR+LqcKGIj5jd2h2cBkkg2AQCzFR9o7PqOUIzKPPRrn09iuRGd9
- wyZEtzJ+ycIbhExp92XhXxr5zM4irRWeXHJ3gMyErJYb1tjLdIklM4
-X-Received: by 2002:a17:906:9d2:b0:b86:f9d3:c with SMTP id
- a640c23a62f3a-b87359a09f0mr77974366b.26.1768267236644; 
- Mon, 12 Jan 2026 17:20:36 -0800 (PST)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- a640c23a62f3a-b842a4cfe76sm2044699466b.40.2026.01.12.17.20.34
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 12 Jan 2026 17:20:36 -0800 (PST)
-Date: Mon, 12 Jan 2026 17:20:30 -0800
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Maayan Kashani <mkashani@nvidia.com>
-Cc: <dev@dpdk.org>, <rasland@nvidia.com>, <stable@dpdk.org>, "Dariusz
- Sosnowski" <dsosnowski@nvidia.com>, Viacheslav Ovsiienko
- <viacheslavo@nvidia.com>, Bing Zhao <bingz@nvidia.com>, Ori Kam
- <orika@nvidia.com>, Suanming Mou <suanmingm@nvidia.com>, Matan Azrad
- <matan@nvidia.com>
-Subject: Re: [PATCH 1/4] drivers: fix flow devarg handling for future HW
-Message-ID: <20260112172030.1ecf0a1a@phoenix.local>
-In-Reply-To: <20260112092439.14843-2-mkashani@nvidia.com>
-References: <20260112092439.14843-1-mkashani@nvidia.com>
- <20260112092439.14843-2-mkashani@nvidia.com>
+	by mails.dpdk.org (Postfix) with ESMTP id D7E34402E6;
+	Tue, 13 Jan 2026 03:58:53 +0100 (CET)
+Received: from TYDPR03CU002.outbound.protection.outlook.com
+ (mail-japaneastazon11023085.outbound.protection.outlook.com [52.101.127.85])
+ by mails.dpdk.org (Postfix) with ESMTP id 9199A402E0
+ for <dev@dpdk.org>; Tue, 13 Jan 2026 03:58:52 +0100 (CET)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=mnNv8fQphznVWQOnO/3r7XJfE/7HbqKf2vdzjrSsnreDZq5riUW7L8WHT4h1QWSId5it4NDuXhym+91l/4Qbd25aUIScJI4iE/2cBYhTb/WYjwrv8LeabkRxec57Osmy7iXeICsYCOwb/o/iJ8i14mnuzb6f3lAHDm4w8qklzXCwfzet6A7BSoPH42RvwkLeSTPdk3hszTyq4DFZjvO0VRQKbGsv4Z6IM+EqWZPBPOWtXmK9Czgvc1/CDytTpxVCOSbJKLdf/gnbvfDAz/dPkmn++HSwisGtTrrz7dMszW/vqrkGFxkoW6afkoCAa87FFOSjvhr72sOpc99MTPJOvg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=f/XBb0mWI4J+16WL8FekiI8tIWTbpQpeRDrzPIBMbyw=;
+ b=L5eOVv733RM+WqkfQyM/T2mZJQOcCX9KTIJTSa2+5e2aysUhhb37256a/fEF5jKBh8JrNi4/AG0Rj09h+b22QnF7p+6OJIif3jJlaFaVPJejnKBFZs3QQbuHb7KEBwWEmb6kNH/GsABly6jO4s7RWjFSXnelSMzBi/xD90+K5ArZplZBDhN7U1bfAkwomWxFg76DC3heOyoVVHpnpLAzGvgzryOVaVzAakUCzh6sSCA6gqyWQYEuqR0mgUST6e+95Jtinobo4YvSVrNjM3/1ErZS+A21+yzID2AM7LYSC8qPOItwr71VkA/BQ5B+BkssJs2scmexGOJMa+D5pWYNQg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=jaguarmicro.com; dmarc=pass action=none
+ header.from=jaguarmicro.com; dkim=pass header.d=jaguarmicro.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jaguarmicro.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=f/XBb0mWI4J+16WL8FekiI8tIWTbpQpeRDrzPIBMbyw=;
+ b=XNkjuHtbTKYiE/SUtNwnkeRYAeNr41lefa54MLsuTAI/EeWw3wr6D4zNAIPsaNd9ofghdwRmh+6izusS/t2Wp2qHJiUsM9nCj/ZBPrghfRbAFV5SfVzdPlYuV8jrLxuWgcNVWGRN0H7W7JVsUb1xkI+DaJaRU1dYtNUwWXLlHUutgFGUi7mUPfaHDqCB9NKOZxvkLQcsF1ybZ8MQXK8QgPO9SRppiHy97YTwoeHq5BnWDlbTYnEj5fSETgaLMzXKqtp/WiR2fjUySKa+SkJH8x/WAnd1X43xUhW/9/rb3FisEOThKm/SK8yGQa6pqQgYvs0uAssAYIJtlBfuAqgaEg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=jaguarmicro.com;
+Received: from KL1PR0601MB5567.apcprd06.prod.outlook.com
+ (2603:1096:820:c5::14) by KUZPR06MB8060.apcprd06.prod.outlook.com
+ (2603:1096:d10:44::5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9499.7; Tue, 13 Jan
+ 2026 02:58:48 +0000
+Received: from KL1PR0601MB5567.apcprd06.prod.outlook.com
+ ([fe80::3ad3:b4d9:7e69:85cb]) by KL1PR0601MB5567.apcprd06.prod.outlook.com
+ ([fe80::3ad3:b4d9:7e69:85cb%7]) with mapi id 15.20.9499.005; Tue, 13 Jan 2026
+ 02:58:48 +0000
+From: Sunyang Wu <sunyang.wu@jaguarmicro.com>
+To: dev@dpdk.org
+Cc: stephen@networkplumber.org
+Subject: [PATCH] doc: flow-perf: document the --query-rate option
+Date: Tue, 13 Jan 2026 10:57:38 +0800
+Message-Id: <20260113025738.33944-1-sunyang.wu@jaguarmicro.com>
+X-Mailer: git-send-email 2.19.0.rc0.windows.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR02CA0065.apcprd02.prod.outlook.com
+ (2603:1096:4:54::29) To KL1PR0601MB5567.apcprd06.prod.outlook.com
+ (2603:1096:820:c5::14)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: KL1PR0601MB5567:EE_|KUZPR06MB8060:EE_
+X-MS-Office365-Filtering-Correlation-Id: 478a1433-7ccd-41c0-1943-08de524fac42
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|52116014|376014|1800799024|366016|38350700014; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?VSAezC22BbIOvnon+7ZCtHLWzN6nIBpHmHNpA0+LYfCvgV3D3I5vjtnfISqQ?=
+ =?us-ascii?Q?6G3VhsZTYYwY0pIxCZiVSMk0OOhiDlAr6+l8aTNbWgdpP17VNz7WX4EtZMsX?=
+ =?us-ascii?Q?6ppxIAzNk7mIKYkZpD2SdFPkZn1QXCssG3zABZ5lPE78HyXcMpA/MeKcgVgf?=
+ =?us-ascii?Q?uuCdpMRsZPLrV9Hgz9nJQaNmcuQIgGYO5rg7Su2CXqfNCUgs1+m90cECN0CQ?=
+ =?us-ascii?Q?pN91Sshq5b5GY8DEKwf9uw9PFzNX34qKg4grOkJ9YeyCb0v5q3o4u7EeDRHf?=
+ =?us-ascii?Q?9pt97pP6k+ZBySz4WdrVum6UW8clvO+F+h1IXkQ+oe9hnqw+hCIfOqCzmhAa?=
+ =?us-ascii?Q?UKuqFbNaHFKd+NvnHSouJLY5JrJaUrQhq1CSfl3CLV4N9mbQP1Gimi9DmQWF?=
+ =?us-ascii?Q?aiZXSfMQy2m+lBRWcRn/dCE0C1M+6+gVa0mNbVI30Kd7mZZQdVzK8M1pSIeT?=
+ =?us-ascii?Q?2PVW3MO8ekcW3xCAj9WLwRagQkqmI4k4UpvZOCncykWLcZKxC9+h2r0SYq5E?=
+ =?us-ascii?Q?iPemzQhYbTRMeo9y/Ee+OqO/vj6gQn3eOiad2cfZvz9gSbMR83tqfTjgt98y?=
+ =?us-ascii?Q?KkCOFm/qFTw9g3xck7r/8Dl3rAig0t02p2KUfyPAZpFvIAu/OrH77EKM9mbF?=
+ =?us-ascii?Q?MvQBro7cAG3D7sHJC8Gf+QaJlxak6O7hCNY4nnsyPL9Q0aWbEPts9UxXvec5?=
+ =?us-ascii?Q?adj0SSumaZIoCUlkcwrRK20Vf4w+3Ue2DZZmvOjCDuqlG7sSm/f0nIabczO+?=
+ =?us-ascii?Q?b6h1Ctwlqrsz2Ov7CzkY2pGAZm7ZE2AJP9Na9Cmgk/vjs+2TaUp69NCY4QS6?=
+ =?us-ascii?Q?JTxIpItK4HlZvIRqHgOP6Agtg7kqLI+l7UCiAD/yX7LlIwkFsRorXDW7NWXE?=
+ =?us-ascii?Q?grn6HUXv+O+YkzjqiWPIxCBuPUo/LYOK2MlF/c69Hh6ESCHta6Y+5oxc9wfe?=
+ =?us-ascii?Q?cvZbOJORoXaiUncLHI+YJYwErBlE0x/Pz/KroakFhKrqpFq+gzqslfdVniKp?=
+ =?us-ascii?Q?Qf9/B/uZESWmwP1ef2HV7q+5gK27xxm+MaOsCAB57u5uQ5uS0xvDb7FNBnZH?=
+ =?us-ascii?Q?bVygD8anxXEyipLe+GdD9DKqA4v4YsuYXws5a7SZBewXrwD7h4kp+/qNSzU4?=
+ =?us-ascii?Q?5S2Ref2fPrVw1/FGIKgumK9DgEC3aF54YOw6bh8pA3ADFOPdsiC0arR9S8dp?=
+ =?us-ascii?Q?SSJubIItvFHKBLykWCk9wVUdZX7m3qGQ0BfOFMRCOFniyLtLBfBWRJ7elvie?=
+ =?us-ascii?Q?ghfCvEwc0WUx0S3B5ulFjwaMVYxQNZRUzcTXurtMvPyeE4PX5pIf2FFnFxP6?=
+ =?us-ascii?Q?WOuU5qUL3qUoKQa4L1DC2rUO+tZ2OPeYxo4/79JRhTHiRi9nohZo74iMm2CV?=
+ =?us-ascii?Q?aNbtu+3y09i2msdNfvpWQkug/92HKglSjhv0q/UCiNnZSJ8li9yLob3+X4My?=
+ =?us-ascii?Q?3b23BnXVLOB0RvrHN3guOIuZEemJzrQrdR7XAbKuj2rumZQTpLkG0yL4B6ee?=
+ =?us-ascii?Q?TcBU6NxHAZjjoW/5CJmHL0/rVeDbhBqZuNZt?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:KL1PR0601MB5567.apcprd06.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(52116014)(376014)(1800799024)(366016)(38350700014); DIR:OUT;
+ SFP:1102; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?qgyhVMkw/mwYXjjZSFrSqZpnI/WBn1ybGLtxnqZsuzuxEs9zKI5QCk2XsCty?=
+ =?us-ascii?Q?RULPFwsoE+Urnr8yh0qegb7zEA8MdYjmc66SXeidIL3hVRsCWZFOHf1lUeQF?=
+ =?us-ascii?Q?AnoE8w2oflT/ZpdZGaNIYAoaInMMxFaOnmlC67YufroxrFoF2Y5Juga3+ny6?=
+ =?us-ascii?Q?USOGildjwaQF1UWeIxudDpL6mSr9TvbjzJaAIXDe0JSXKv1KlqhvE0WMjuR0?=
+ =?us-ascii?Q?9jVaILqdfbt/lZxQTIJlGKGdfruVZAeSJ75F9reXkWnikpvkI6YS0YxK0OKb?=
+ =?us-ascii?Q?R6Fmc8UqJZAhq3hd17BxavsChVmPeVdTAz2Jz7IgaOUE06rusl7rkr+195Hi?=
+ =?us-ascii?Q?Pn4BVh646BfcDea5sp1dayz0xw34pc29LV6LhAWplYduSjhdl5rsd+qe+NEM?=
+ =?us-ascii?Q?wL68y7RoTbuDdeGqm/xcANCIXhIIvMFhtAHTcnke8E4272fKuumvsdLao1oJ?=
+ =?us-ascii?Q?GM7a9y17B43ChaT0tsWiwAOCNLx0ltu25RL62p4pGA82eKmGOJCixPaNb1FN?=
+ =?us-ascii?Q?iVZd/TMvp2yjYUxhfbWKoRk2YYoh8HTU6DoXLmKRESCX3N5Xc+Wcl4T35YtB?=
+ =?us-ascii?Q?UCePOoLJ59GIwYiG7vkhxHVKknH4GCMWIb3lhHD+O+LLfgldEYVlyxsEKGF3?=
+ =?us-ascii?Q?iEJApLFWvKNjR45Uyf40g4ivYY3OiWix7b+csyMcFDXDdfvGTRCDvucutJX7?=
+ =?us-ascii?Q?UYBI1dhZfQHp+cpsqAbJ5xMYWCmMNf0vOX4Oi/f9nOLbu+NgOks+CZoI534T?=
+ =?us-ascii?Q?Qf6dscMKVkj8gGdu0MFIHNVkA3yIfgwPsFTaWkkbzE5OfTO3Tj+YcRZcM5jL?=
+ =?us-ascii?Q?qrVHCePauIYC6CnIg4UnWE6Rdw9TUgeGBu6TCv2CV0H39cvhxk+x37g/g5gx?=
+ =?us-ascii?Q?yjctJGp3uxbTf7hCUDMjOKWH85KlYYQx7JLhFjwQ8TD2iequxpCQFWCAy6K1?=
+ =?us-ascii?Q?I6s99Q+n79gG8P27gQitgFUtqB/ZyPUddsAFwKzhRw7L2mL3Ey7mZB37QGaG?=
+ =?us-ascii?Q?0uM5kcLmjdDT0AGV63IITmfaujs4OMJWDNmSQCLzHmr+aTCKAUa4rfNXtNdK?=
+ =?us-ascii?Q?oHAIUv17cpvqeeWTpMD+vylTqWzvtxaE3zs3ioq9Sde8QnGy5w5fwQ/cfzEi?=
+ =?us-ascii?Q?mR2zNIww7nKv6dPt7hMo0sOUZT7qd77IEsVlk1l/rCv0b8ZDPDV9Cd6550us?=
+ =?us-ascii?Q?/6z79CdLY8Ow13bFi5ocJd6MsqdpzNpIe7GDZBe+dNsMdOepn+CvAJBYfNSS?=
+ =?us-ascii?Q?P837JYpkInxVP3KWl+iteT2MB5envNKCZ7DQGenYzpvLCV5mBIBamoN9WCiL?=
+ =?us-ascii?Q?BpQcCsyJKHlpkKPAufQnD+4XF0iP5GtILdREepVMW3vFF+ASv/KTCZs8PgTA?=
+ =?us-ascii?Q?DYQk/hty/7+AloLFgPqs5yR+5wOl71F0j8KPQBNofEBRAAxLqB9mhK6thV0F?=
+ =?us-ascii?Q?ktnyGdJj6S8MzFNYLhsDFrAFmnBDTnWPBtXq6gqQ3TX07fGX+rT3I7koeJD8?=
+ =?us-ascii?Q?fLZbbKAbp7/foPd1az0faPdYI9ho32ch0y4pv+HDmUt3kBpjaW7JFnUWRRqn?=
+ =?us-ascii?Q?3jUhiLEvixPMCLZBVNw9uW8+FfdgIE0PRVjIQYJfCOkmlRnnc2jT0S9aGK+i?=
+ =?us-ascii?Q?2sxLHTraklfHoDE6d84rGoR2QNb+L5moewZnk1EmMPlUm5BaVonmBJ1v5GJx?=
+ =?us-ascii?Q?5kq1ZUGZzhZFjaOLe5uNVciP0rMusHPKp2XYhFs89yxkSUw16W6ND0r3zxgi?=
+ =?us-ascii?Q?CmTY1PFdrJgDfG99NTs1h2UzI73s3AY=3D?=
+X-OriginatorOrg: jaguarmicro.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 478a1433-7ccd-41c0-1943-08de524fac42
+X-MS-Exchange-CrossTenant-AuthSource: KL1PR0601MB5567.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jan 2026 02:58:48.1170 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 1e45a5c2-d3e1-46b3-a0e6-c5ebf6d8ba7b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Fkv5k22+dqyZiu2+6ZqKR5SH3RlK5XiShyOgC7vmCNhMtWtQL0QnyB9o9Qz2XeDzQ0i9f7WUmOZrcc4t4TxDi2TREW2MVN1yw6v9a9pKQT4=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KUZPR06MB8060
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,101 +141,29 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 12 Jan 2026 11:24:35 +0200
-Maayan Kashani <mkashani@nvidia.com> wrote:
+The flow-perf tool already supports the --query-rate option to enable
+query rate calculations, but the option was missing from the
+documentation.
 
-> SWS (software steering) will be disabled on future hardware generations.
-> This fix should check for SWS capability bits and return relevant error.
-> Update the defaults for the dv_flow_en and allow_duplicate_pattern
-> devargs accordingly.
->=20
-> - Default dv_flow_en devarg value will be chosen based on whether
->   NIC supports SW steering and/or HW steering.
-> - If DV flow is not supported and allow_duplicate_pattern is
->   set by the user, forcibly disable it and emit a clear log message.
->=20
-> This change improves reliability by ensuring only valid
-> configurations are applied, and provides clear feedback to
-> the user when fallbacks are triggered.
->=20
-> Fixes: 1b55eeb7b76f ("common/mlx5: add ConnectX-9 SuperNIC")
-> Cc: stable@dpdk.org
->=20
-> Signed-off-by: Maayan Kashani <mkashani@nvidia.com>
-> ---
-
-Experimental AI review was generally happy with this patch.
-
-The only thing it squawked about was:
-
-
-
-## Revised Patch Review: `[PATCH 1/4] drivers: fix flow devarg handling for=
- future HW`
-
-### Commit Message Review
-
-| Check | Status | Notes |
-|-------|--------|-------|
-| Subject =E2=89=A460 chars | =E2=9C=85 Pass | 47 characters |
-| Imperative mood | =E2=9C=85 Pass | "fix" is imperative |
-| No trailing period | =E2=9C=85 Pass | |
-| Lowercase after colon | =E2=9C=85 Pass | |
-| Body line wrap =E2=89=A475 chars | =E2=9C=85 Pass | |
-| Body doesn't start with "It" | =E2=9C=85 Pass | |
-| Signed-off-by present | =E2=9C=85 Pass | |
-| Fixes tag format | =E2=9C=85 Pass | 12-char SHA with quoted subject |
-| Cc: stable@dpdk.org | =E2=9C=85 Pass | |
-| Tag order | =E2=9C=85 Pass | |
-
-#### =E2=9A=A0=EF=B8=8F Warning: Subject Prefix
-`drivers:` is generic. Since this primarily affects `net/mlx5` with support=
-ing changes in `common/mlx5`, consider:
-- **Suggested**: `net/mlx5: fix flow devarg handling for future HW`
-
+Signed-off-by: Sunyang Wu <sunyang.wu@jaguarmicro.com>
 ---
+ doc/guides/tools/flow-perf.rst | 3 +++
+ 1 file changed, 3 insertions(+)
 
-### Code Style Review
-
-| Check | Status |
-|-------|--------|
-| Line length =E2=89=A4100 chars | =E2=9C=85 Pass |
-| Explicit NULL comparisons | =E2=9C=85 Pass |
-| Comment formatting | =E2=9C=85 Pass |
-| Function naming | =E2=9C=85 Pass |
-| Documentation updated atomically | =E2=9C=85 Pass |
-
-#### =E2=9A=A0=EF=B8=8F Warning: Implicit Boolean Tests on Integer Bitfields
-
-In `mlx5_sws_is_any_supported()`:
-```c
-if (hca_attr->rx_sw_owner_v2 || hca_attr->rx_sw_owner)
-    return true;
-```
-
-These are `uint8_t` bitfields, not `bool`. Per AGENTS.md guidelines, prefer=
- explicit comparisons:
-```c
-if (hca_attr->rx_sw_owner_v2 !=3D 0 || hca_attr->rx_sw_owner !=3D 0)
-```
-
-Same pattern appears for `tx_sw_owner*` and `esw_sw_owner*` checks.
-
----
-
-### Summary
-
-| Severity | Issue | Location |
-|----------|-------|----------|
-| **Warning** | Subject prefix `drivers:` could be more specific | Commit m=
-essage |
-| **Warning** | Implicit boolean tests on integer bitfields | `mlx5.c` |
-
----
-
-### Recommendation
-
-**Acceptable for merge** =E2=80=94 No blocking errors. The warnings are min=
-or style preferences. The patch is well-structured with proper documentatio=
-n updates and correct tag formatting.
+diff --git a/doc/guides/tools/flow-perf.rst b/doc/guides/tools/flow-perf.rst
+index c0c7ffe577..a289ba482b 100644
+--- a/doc/guides/tools/flow-perf.rst
++++ b/doc/guides/tools/flow-perf.rst
+@@ -87,6 +87,9 @@ The command line options are:
+ *	``--deletion-rate``
+ 	Enable deletion rate calculations.
+ 
++*	``--query-rate``
++	Enable query rate calculations.
++
+ *	``--dump-socket-mem``
+ 	Dump the memory stats for each socket before the insertion and after.
+ 
+-- 
+2.19.0.rc0.windows.1
 
