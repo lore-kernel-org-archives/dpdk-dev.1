@@ -2,67 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 499C8D30CC2
-	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Jan 2026 20:24:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF4F1D30CC2
+	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Jan 2026 20:24:13 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 61AF540677;
-	Tue, 13 Jan 2026 21:23:45 +0100 (CET)
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com
- [209.85.218.51]) by mails.dpdk.org (Postfix) with ESMTP id 6F1CA40684
- for <dev@dpdk.org>; Tue, 13 Jan 2026 21:23:44 +0100 (CET)
-Received: by mail-ej1-f51.google.com with SMTP id
- a640c23a62f3a-b8722834679so327841766b.0
- for <dev@dpdk.org>; Tue, 13 Jan 2026 12:23:44 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 7594640691;
+	Tue, 13 Jan 2026 21:23:47 +0100 (CET)
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com
+ [209.85.208.42]) by mails.dpdk.org (Postfix) with ESMTP id 3F12940691
+ for <dev@dpdk.org>; Tue, 13 Jan 2026 21:23:46 +0100 (CET)
+Received: by mail-ed1-f42.google.com with SMTP id
+ 4fb4d7f45d1cf-64b9cb94ff5so11704218a12.2
+ for <dev@dpdk.org>; Tue, 13 Jan 2026 12:23:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768335824;
- x=1768940624; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768335826;
+ x=1768940626; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=JJfbI8F1glCy5wu+Ijoi95wQKbQjQ7c5BdaVZ6BOaNc=;
- b=TCGZfletMRZgQqhgnZS9BxamnpRceJtyKMkzSl/NJfzvIjSNXT+TzIa7pbCKCoLijU
- J++sAxsMcVvtyfQlD7+db+3hH9BWuyT4r3wD3Qt6ZciDxWZiWZyjnx8h6MnxNQ0ba8BY
- wfQxOwj5l9rMgS4I0HSBqaNnG1Ne2jlmiw/AoAT26Ka9byf0SqQs2iT0QvrcRAIXmdwp
- l4eL81xNQnB5lJH3l5lrmICtW4WC4Jo4k+wxxROVLfN9x9MItFNzMq3FddKHmi7I8oxp
- n7NknqW8x4c8rlQp6FItPZ/3ssn+AzI+N7nlRFIt+QxOIeVQrU1BbPlMI+hT6lHejZKK
- sP4Q==
+ bh=lt5Fp6oZtCkd3/VDFaFeJGUYOfSjKqfPvtMGuKoEJXs=;
+ b=V6sbCsSbq6ik9qcwTwpLZzztiFf7xXWK4uGkWJBh4COhii2byuATbH9nqbFQJJFSv8
+ KRI6bSeEtNVk+kV5BVWJFJUBicbdm+ZYuGnox5sS/9NILEFqbpFDMUkw21soVrBsnA91
+ /WYSXCp2cFl6WQK1dLi1gKSou/jBKnyyiLqn7KgTQY2I++gE2B60942VKcrTLD2EzWg0
+ h/gzq2/4w01qsJfDakVf7f//RVl6sYCTM/K+nOW/tExM+RCqN1qjiSnI7+rgKpy4o5oa
+ bWqiZFr1ZICuu8ex28FJ5OH3zETUHnCal14dCLt3UgLeza4255UZBfOX2cmB7y0Yt73q
+ 42Gg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768335824; x=1768940624;
+ d=1e100.net; s=20230601; t=1768335826; x=1768940626;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=JJfbI8F1glCy5wu+Ijoi95wQKbQjQ7c5BdaVZ6BOaNc=;
- b=XCEOizEUpsa6JHQapCrGx0iCfLudB08osBECCzCYmd/XmZWPH6k2lKDUVfcU0EOoF6
- Rm6/9DGaDrUWe7FvNQ0EMy8t5Qfm6oQ3EvwcQM6KAx6qMtmNIguQyiqoR3B3Vk5Kl5xh
- ceOW47N2BI2tnqo5IVOlPQShZ5W/nTWX20m1XixCXoj2rMVx6l8qNWczlobNc/3noIU8
- D/3HG3M8iyy7iB1bx3UIPp4Blw4t7H2++bYFSzEJcEOgLw6Ni7awGssWYjDFT+foFjr4
- DmhFXq59eaGstWar/1rnEEPtfwgG9beLIv0gjY4PpMK8ZE33qGfL7k74ZPjd+28PPE9q
- XudA==
-X-Gm-Message-State: AOJu0YzKWie9nNR2R5VDaHX58PosMwoRY/1yJsL6NWQa2cxEzzlF6lDS
- 7eY+ogZcxpTQ1wPELYcHi1+29As+832VnNqSqps+rfizNK34+uwSAI1hMzYUR2asHNuza5GvP9Q
- 3dVxf
-X-Gm-Gg: AY/fxX6ItXhcJ1de71g04lspxfrVZzZI0VLgXFrseEH7JqK03JxG7qKWaUMhRlnKeTq
- bFdFNyWH5a3zH0GYvXv2USmteDUkwk4e/W7eRq63pyCJLP6Tyykxo31qEqWvy40O62gH+fCxIa4
- g4qmFmuZ5hbOEp4H9EJjhr6tDKMPRQfHXMwSsZszk93kBUSk8EUMKXHCjdM5aYz4vbPkAp4dH4N
- UaA9cmNR0evNrlGrxjHjW70VGG9QO4DLi2/ib/vNJAjMLsVR5aQRXRu0/JCDJnblJMBKhJtCEWF
- RRm8SAzZKNiR8vtozYxLAFYlnMuEXgg4B4/E5vEhH+dXOa7kYaHymBzZ/Bks4Hst6WI33rTvHgy
- Q5EMYY0IFYP+12Y/MC7cfFYEASTvYdzS3A4tWuACuI0e/dYY2ElS9v4WxAQPuNyFmHYe3UDFbdE
- 0d3KLumg6xtqS/EIKSCFyY/BtH+aUMHl/dyWqc3WPLPGJxKxcPLA==
-X-Received: by 2002:a17:907:2d0e:b0:b87:2780:1b36 with SMTP id
- a640c23a62f3a-b8760fe5f00mr29528266b.13.1768335823866; 
- Tue, 13 Jan 2026 12:23:43 -0800 (PST)
+ bh=lt5Fp6oZtCkd3/VDFaFeJGUYOfSjKqfPvtMGuKoEJXs=;
+ b=SsjB+Lsk8Jjx1byhGvr5Gu3D3OlprZhYPEcQZAtj7my51eVWqrzFkdUh7p7Cu6G5qC
+ GOA0Og6ZEbORTDw0EFimqVzMuwt1TzbNN/1ysmWGvoQaOzQZnQpM7MZ72PQwy6Cq9qSJ
+ S4FzkB97ZYF9V5EtmDMlKtUJCRXptV/DWGKgnERTPqUf7HMrOQ7HEGTNtZXW7+SJ1dqb
+ n/RVdA4uY6jeMZ22C1/ReAAlYtb1VHKcDCWA0AraLlJF4TbspRvmdGLV3pdq+rxuK7jT
+ 9v54MPY7ABfdlCcUnDoPb5fMt06vlTTJqqx1azc5xagusQXHYMM70yxKmm56Y3bE7qHz
+ sIow==
+X-Gm-Message-State: AOJu0YxJ613TIbZW2bR87uRjETOPZoFKWGz3YotVY99rd/8mH/uaeYlz
+ g7ZGk+NdERp0d6sy54hPTYQG+Hh1rz8oX1X8AO3Cd9Y4Y2sNJMvPJpkUD5D6JJbQ8u9WWNjWMS6
+ C50sn
+X-Gm-Gg: AY/fxX6jLZdOJoDBHmK5diHJu9mIJdxht2hGWZqdkYIVyCh984jK/Z27pemZL4EKp1l
+ 5HF/ZOV/owZkVCKSPtCJCXNNoyRgehvFGkup73yF7tjT6qVs3TIIUcVl45NhN6LF+zFHz6cUFQS
+ SbjAjU9eY+DtEXgOqihtego/hBp5SFDxfHBQgh/E+4pCbyoYziZooKQ/Lj/WmQQK4EWKFKf7RVq
+ 8J85W4kh0MoOxzSe+UCNZD27GEXb1emtCZb3kb+8ibSpk0Ry37jdSTPjqbWfwuemluiNoHfejj2
+ u231Et/OhBZ9k2rUkyOmZoQHAxw6da18nGqRAp24WuVUjZgM2tBitf2/2cPlg4aK2lwBOn6uZuv
+ btLdQ31aEGpQKArdNyg67P40dDtTaj/mYz4XB4LwENPTIlTRYxCFr+cPDaqRiRmm0/RWAm9BKcT
+ GDP1EJYzknH3FQtIueLxTRHlkDD40CnRpkwKCMQ1vuLPj/s/nxNw==
+X-Received: by 2002:a17:906:eecb:b0:b87:1669:de1a with SMTP id
+ a640c23a62f3a-b876129fdbamr27553266b.64.1768335825775; 
+ Tue, 13 Jan 2026 12:23:45 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a640c23a62f3a-b842a23433asm2314992166b.3.2026.01.13.12.23.42
+ a640c23a62f3a-b842a23433asm2314992166b.3.2026.01.13.12.23.44
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 13 Jan 2026 12:23:43 -0800 (PST)
+ Tue, 13 Jan 2026 12:23:45 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v10 05/18] telemetry: check for path overflow
-Date: Tue, 13 Jan 2026 12:21:44 -0800
-Message-ID: <20260113202329.35190-6-stephen@networkplumber.org>
+ Byron Marohn <byron.marohn@intel.com>, Yipeng Wang <yipeng1.wang@intel.com>
+Subject: [PATCH v10 06/18] efd: handle possible name truncation
+Date: Tue, 13 Jan 2026 12:21:45 -0800
+Message-ID: <20260113202329.35190-7-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260113202329.35190-1-stephen@networkplumber.org>
 References: <20251202172626.283094-1-stephen@networkplumber.org>
@@ -82,37 +82,74 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The unix domain socket path is limited, check for overflow.
+If the conversion of efd name to ring name gets truncated, then
+log it. And if the ring name than causes collision, make sure
+that log message includes error reason.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- lib/telemetry/telemetry_legacy.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ doc/guides/rel_notes/release_26_03.rst |  2 +-
+ lib/efd/rte_efd.c                      | 18 ++++++++++++++----
+ 2 files changed, 15 insertions(+), 5 deletions(-)
 
-diff --git a/lib/telemetry/telemetry_legacy.c b/lib/telemetry/telemetry_legacy.c
-index 89ec750c09..1d73282ba8 100644
---- a/lib/telemetry/telemetry_legacy.c
-+++ b/lib/telemetry/telemetry_legacy.c
-@@ -102,14 +102,17 @@ register_client(const char *cmd __rte_unused, const char *params,
- 		return -1;
+diff --git a/doc/guides/rel_notes/release_26_03.rst b/doc/guides/rel_notes/release_26_03.rst
+index b966ce7b49..91b1808455 100644
+--- a/doc/guides/rel_notes/release_26_03.rst
++++ b/doc/guides/rel_notes/release_26_03.rst
+@@ -92,7 +92,7 @@ API Changes
+ 
+   * lpm: name must be less than RTE_LPM_NAMESIZE.
+   * hash: name parameter must be less than RTE_HASH_NAMESIZE.
+-
++  * efd: name must be less than RTE_EFD_NAMESIZE.
+ 
+ 
+ ABI Changes
+diff --git a/lib/efd/rte_efd.c b/lib/efd/rte_efd.c
+index ebf1e0655f..bbd565f404 100644
+--- a/lib/efd/rte_efd.c
++++ b/lib/efd/rte_efd.c
+@@ -517,13 +517,20 @@ rte_efd_create(const char *name, uint32_t max_num_rules, uint32_t key_len,
+ 	efd_list = RTE_TAILQ_CAST(rte_efd_tailq.head, rte_efd_list);
+ 
+ 	if (online_cpu_socket_bitmask == 0) {
+-		EFD_LOG(ERR, "At least one CPU socket must be enabled "
+-				"in the bitmask");
++		EFD_LOG(ERR, "At least one CPU socket must be enabled in the bitmask");
++		rte_errno = EINVAL;
+ 		return NULL;
  	}
- 	*strchr(data, '\"') = 0;
-+	addrs.sun_family = AF_UNIX;
-+	if (strlcpy(addrs.sun_path, data, sizeof(addrs.sun_path)) >= sizeof(addrs.sun_path)) {
-+		fprintf(stderr, "Client path too long\n");
-+		return -1;
+ 
+ 	if (max_num_rules == 0) {
+ 		EFD_LOG(ERR, "Max num rules must be higher than 0");
++		rte_errno = EINVAL;
++		return NULL;
 +	}
- 
- 	fd = socket(AF_UNIX, SOCK_SEQPACKET, 0);
- 	if (fd < 0) {
- 		perror("Failed to open socket");
- 		return -1;
++
++	if (strlen(name) >= RTE_EFD_NAMESIZE) {
++		EFD_LOG(ERR, "Name is too long");
++		rte_errno = ENAMETOOLONG;
+ 		return NULL;
  	}
--	addrs.sun_family = AF_UNIX;
--	strlcpy(addrs.sun_path, data, sizeof(addrs.sun_path));
  
- 	if (connect(fd, (struct sockaddr *)&addrs, sizeof(addrs)) == -1) {
- 		perror("\nClient connection error\n");
+@@ -698,12 +705,15 @@ rte_efd_create(const char *name, uint32_t max_num_rules, uint32_t key_len,
+ 	TAILQ_INSERT_TAIL(efd_list, te, next);
+ 	rte_mcfg_tailq_write_unlock();
+ 
+-	snprintf(ring_name, sizeof(ring_name), "HT_%s", table->name);
++	if (snprintf(ring_name, sizeof(ring_name), "HT_%s", table->name)
++	    >= (int)sizeof(ring_name))
++		EFD_LOG(NOTICE, "EFD ring name truncated to '%s'", ring_name);
++
+ 	/* Create ring (Dummy slot index is not enqueued) */
+ 	r = rte_ring_create(ring_name, rte_align32pow2(table->max_num_rules),
+ 			offline_cpu_socket, 0);
+ 	if (r == NULL) {
+-		EFD_LOG(ERR, "memory allocation failed");
++		EFD_LOG(ERR, "ring creation failed: %s", rte_strerror(rte_errno));
+ 		rte_efd_free(table);
+ 		return NULL;
+ 	}
 -- 
 2.51.0
 
