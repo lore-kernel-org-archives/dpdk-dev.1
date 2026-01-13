@@ -2,69 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8CC3D2F349
-	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Jan 2026 17:37:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02A20D2F347
+	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Jan 2026 17:46:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 20ABD402DE;
-	Tue, 13 Jan 2026 18:37:03 +0100 (CET)
-Received: from mail-wm1-f66.google.com (mail-wm1-f66.google.com
- [209.85.128.66]) by mails.dpdk.org (Postfix) with ESMTP id C3352402D6
- for <dev@dpdk.org>; Tue, 13 Jan 2026 18:37:01 +0100 (CET)
-Received: by mail-wm1-f66.google.com with SMTP id
- 5b1f17b1804b1-47775fb6cb4so43483775e9.0
- for <dev@dpdk.org>; Tue, 13 Jan 2026 09:37:01 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 3F8E7402DE;
+	Tue, 13 Jan 2026 18:46:26 +0100 (CET)
+Received: from mail-wr1-f66.google.com (mail-wr1-f66.google.com
+ [209.85.221.66]) by mails.dpdk.org (Postfix) with ESMTP id 281C2402D6
+ for <dev@dpdk.org>; Tue, 13 Jan 2026 18:46:25 +0100 (CET)
+Received: by mail-wr1-f66.google.com with SMTP id
+ ffacd0b85a97d-42fbc3056afso4548967f8f.2
+ for <dev@dpdk.org>; Tue, 13 Jan 2026 09:46:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768325821;
- x=1768930621; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768326385;
+ x=1768931185; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=vNvQazC44YT1YHlkQkd8h8NBvGh6GDcAv/6N7BfAwqA=;
- b=XTJxB36xdInMAiYd4NZ5NPNHVFW+aRWtz4GN9kDsP6CtUHDq612Ivno2yLoJU26CyB
- sA9F0pvh/Q5DmwUp11UHSYE2um9fGJMH3Xj+zSt/DbLdwtGhUpN9tlUllHPolPmp4QXv
- xUxVUcQ+MQImCpH2tCSKuC29VcxLA6kZ5MXG6lXAsJUQqQhX8aUm3PHOjhDel7XJGupr
- 5Ipd0R4buqe5npafIyrRCx6svZZxF2NgroRIbY74TIhSwMfrKApK6WtCnfIJyrcipNag
- FfK33AaPjPzx9RVu6ivfpz4uFuH7/o0j8uMBc49ym4wRCjbmA2i4IkXpMj1HkWfn8ncc
- 5d/w==
+ bh=LB5E8yk0r0v263JhRoEfOFAOrpAetthgB9l/7ZLB53s=;
+ b=MfnvUUxUzrsJn90b8B1VKeh9W7uFrSgpERqfQebvTiQhCigceDZyP9m9XUciLkTB0H
+ aDhn9F66JZdpyb7uTACxktWXXx4errl51b2aTffN8IQofzcXO+VRfBiMnQwdXBNjL9Dw
+ qBz6HkgszkVWwYi7Rjv1Q2VJl228EGLqHTCzEEXXENf6DpMGzgFbAAxug3rgi+kuwpd0
+ LRvW/jLj2uH/pYHx+52vl9j8C4iQKOG6gTvk97WLXv15iS44nUvyVXHAxpMjAXBcJuW9
+ GK4wnRk4FmjrY7qJDhjWpH9IUNMNK73BWgTL/qSGspK6xcSvlCVz66bI699f57btzhf0
+ p1/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768325821; x=1768930621;
+ d=1e100.net; s=20230601; t=1768326385; x=1768931185;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=vNvQazC44YT1YHlkQkd8h8NBvGh6GDcAv/6N7BfAwqA=;
- b=fod28gwWiiXNUrUy5oPlWCdcGmR0tnLyTtknwW4Xu3wbUJOLWsgb+TNGZvBsUph5vr
- 2jlDyxsz0ggernM98vzDuH2thti9gV3cX2T/xh+swhNAAk0Htlq8XyAnGRVtOhfH4mbQ
- 3lxgpu87+TJV9kckJOgCA2o8oINxtkabGsCILosw8DqvyeFoz1yhoYRPk9OC+6W5Xcom
- YFVEpsUN03kIwmcutz9/j+WA6MKBFR+tezNoEj7eDtC2C1JMHlVUx0G0Ev0ErNmwnI+S
- BXKnP4nRMmgM3AYgdhtH7oFQOh6LTcM1xztnB4IMinz9AHfdlryN0AkL2HoKVSDtGwuS
- 2E1A==
-X-Gm-Message-State: AOJu0YxqXS8NVb/wUbEpKgwcQUBlnZ12rtl5oP5Vi5vM0ahc/1oubqPF
- jzi921v50oKgzN64ZS+8xaVouFwj/eFk69mvbOGCvhjuJLRDBUtNGX73SCfoXkUC1fcDHlekUji
- kSWw5
-X-Gm-Gg: AY/fxX48ErtegCq81zr0yUfj5XRvYsAqxAC2VJv75kUQJQn1uC4+2RjwFXzYoQjvZJt
- w+UbS8SD9cwNUBG2YndZqduWC3cKbxhkSfQpuoAU2dHo3kmdc5hrcbGLK9141dywpjQeC35W049
- HgFN1jJFn5lEFEgb7kM4+0jj7UOUNkHY9xPrmavy7WodRIzy8pvgsYBuMme/BlDY/10l1zy+Iza
- Sh+s77gmg5CA3oqxQv4B7mM0CavPqmSqYn2Phzk4xXC8mL0243sCYseAziPklKwl7Gro93/X6LV
- cXudF1IVqG3c0KEld0EF7jr+Uhp4RvwnDXzi0DfcmfkPYX/f+6Y02wT8y9VuM7xaBlaeTSg3MEz
- rUBkySscrcidBD7hFe0KUOj8qvs/OR03BLAT7QxN1akxjclhqtMsZXIKaul6pnsw7oNqWgqflG4
- G9vcUCKWk4rYP6Fhwoa8FSM/uKI55HiQHAHe2/QbgzCqP+yiJvshEH
-X-Received: by 2002:a05:600c:6989:b0:477:54f9:6ac2 with SMTP id
- 5b1f17b1804b1-47ee306b1d0mr535155e9.0.1768325821129; 
- Tue, 13 Jan 2026 09:37:01 -0800 (PST)
+ bh=LB5E8yk0r0v263JhRoEfOFAOrpAetthgB9l/7ZLB53s=;
+ b=RZCuub7CKC4ZubBdfLXujyrtAp82vwqOoUMX+4PfxchMqHfjc7pbubJJq1kcto8Nd9
+ 6ib45uWJ21XGCi+riGIEQYLymsSoEWJuMTky6DvcUJCjx67RMLwe1lRWoadswcSLOuc4
+ /uLllhX7dNigFwakqrNOSTRN/uheCxf6OLeJr2vwj2Ma0QKanzZa+Q3OwtKD5gyZT6y+
+ 1bfP3mkoBIKIN+3ayO0VXnO3Bhj0PCbVFtnQ4nhWfLnVpAxuCAq5wEbPojnoYtjwn9uC
+ d6/HpDOehNPl1nX0TbRb6z4HROKNHfTFT4o7Rc711jTUqQIwrG1Xumbw9lz/olMohhS2
+ Gv+Q==
+X-Gm-Message-State: AOJu0YzZJNKbGI6il3NlAcMX0+KbgPopimtoApbsEpS4BUBGO8kDEVoL
+ CeOEtTEdiVjaUtEjV8lL408L2nQ0/DhjlbXWp9W70LtikUrrohjCc9NtvW/aXtmU9Fw=
+X-Gm-Gg: AY/fxX6Z1tmDRF+LwzN0NJFv8kRHMx/0NmNx7+5pZKsNkjCAKN9IRd26EvXJzvZGPGP
+ pYObQFQ1fvER6uTaE1C8lR+8VwHfGaGPEmObVgdi981J0GdvaXBh4VLEWgXXsxHafIG5X6WAA1l
+ hfWp+HhaF31NPMmBX2WpFZQCqSh5unQW8W84D0w3nVtg7UT+Ay5QKzI8xM6egEUbaEmhIFQWI8o
+ IpJdP5ar0aspGnrCAoASah40OV2AFmhZoK1zXJcIiRvmTZGc4D2XEbpPAYwp7xjJ0byBYR6PNrq
+ Dn0S6RDLyqGu5CRzqxCqLSkziTQQsdmYQqL1mx7gJ2wOhVyUGWLGQ8nDjqOHG6AOqraOfVn7ZC9
+ h4R3PEYF3MjnVgjYjOoxxfLrtiMQQjIpnxN15YGIXyAb13OrFKnDz6BKFhGL21tpQtDfumVS+Un
+ RDA9SevIWSnBUzKtYYB2GkjDbwGnqCx6DQ4bpPjLdsWQMClA7h1Ulo
+X-Google-Smtp-Source: AGHT+IEmdQZr7m4NO/nqDILqKwogx5erLzJQn6PL7JDg0GrOKgMoCIrkUXkCJ6YHslF1lI/UamuNrA==
+X-Received: by 2002:a05:6000:438a:b0:432:c0e6:cfc0 with SMTP id
+ ffacd0b85a97d-432c3778dd3mr28578840f8f.57.1768326384580; 
+ Tue, 13 Jan 2026 09:46:24 -0800 (PST)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-47ee28144aasm2282595e9.11.2026.01.13.09.36.59
+ ffacd0b85a97d-432bd5ee893sm44998597f8f.37.2026.01.13.09.46.23
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 13 Jan 2026 09:37:00 -0800 (PST)
-Date: Tue, 13 Jan 2026 09:36:55 -0800
+ Tue, 13 Jan 2026 09:46:24 -0800 (PST)
+Date: Tue, 13 Jan 2026 09:46:19 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Gregory Etelson <getelson@nvidia.com>
-Cc: <dev@dpdk.org>, <mkashani@nvidia.com>, <rasland@nvidia.com>, "Elena
- Agostini" <eagostini@nvidia.com>
-Subject: Re: [PATCH 1/9] gpu/cuda: add NVIDIA GPU H100
-Message-ID: <20260113093655.025c8242@phoenix.local>
-In-Reply-To: <20250915144137.54858-1-getelson@nvidia.com>
-References: <20250915144137.54858-1-getelson@nvidia.com>
+To: Lukas Sismis <sismis@dyna-nic.com>
+Cc: dev@dpdk.org
+Subject: Re: [RFC PATCH v2 0/7] flow_parser: add shared parser library
+Message-ID: <20260113094619.14ab23ce@phoenix.local>
+In-Reply-To: <20260106153838.398033-1-sismis@dyna-nic.com>
+References: <20260106153838.398033-1-sismis@dyna-nic.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -81,242 +80,318 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 15 Sep 2025 17:41:28 +0300
-Gregory Etelson <getelson@nvidia.com> wrote:
+On Tue,  6 Jan 2026 16:38:30 +0100
+Lukas Sismis <sismis@dyna-nic.com> wrote:
 
-> From: Elena Agostini <eagostini@nvidia.com>
+> This series extracts the testpmd flow CLI parser into a reusable library,
+> enabling external applications to parse rte_flow rules using testpmd synt=
+ax.
 >=20
-> Add support for new NVIDIA GPU H100.
+> Motivation
+> ----------
+> External applications like Suricata IDS [1] need to express hardware filt=
+ering
+> rules in a consistent, human-readable format. Rather than inventing custom
+> syntax, reusing testpmd's well-tested flow grammar provides immediate
+> compatibility with existing documentation and user knowledge.
 >=20
-> Signed-off-by: Elena Agostini <eagostini@nvidia.com>
-> ---
+> Note: This library provides only one way to create rte_flow structures.
+> Applications can also construct rte_flow_attr, rte_flow_item[], and
+> rte_flow_action[] directly in C code.
+>=20
+> Design
+> ------
+> The library (librte_flow_parser) exposes:
+> - rte_flow_parser_parse(): Parse command strings into structured output
+> - rte_flow_parser_parse_attr_str(): Parse attributes only
+> - rte_flow_parser_parse_pattern_str(): Parse patterns only
+> - rte_flow_parser_parse_actions_str(): Parse actions only
+>=20
+> Testpmd is updated to use the shared library, ensuring a single
+> maintained parser implementation.
+>=20
+> Testing
+> -------
+> - Unit tests: flow_parser_autotest, flow_parser_helpers_autotest
+> - Example application: examples/flow_parsing
+> - All existing testpmd flow commands work unchanged
+>=20
+>=20
+>=20
+> [1] https://github.com/OISF/suricata/pull/13950
+> =20
+> Lukas Sismis (7):
+>   flow_parser: add shared parser library
+>   app/testpmd: integrate shared flow parser library
+>   examples/flow_parsing: add flow parser demo
+>   test: add flow parser unit tests
+>   doc: add flow parser library maintainers
+>   dts: fix invalid f-string syntax in testpmd API
+>   cmdline: include stddef.h before defining offsetof
+>=20
+>  .mailmap                                      |     2 +-
+>  MAINTAINERS                                   |     3 +
+>  app/test-pmd/cmd_flex_item.c                  |    41 +-
+>  app/test-pmd/cmdline.c                        |   254 +-
+>  app/test-pmd/config.c                         |   112 +-
+>  app/test-pmd/flow_parser.c                    |   406 +
+>  app/test-pmd/flow_parser.h                    |     8 +
+>  app/test-pmd/flow_parser_cli.c                |   149 +
+>  app/test-pmd/meson.build                      |     5 +-
+>  app/test-pmd/testpmd.c                        |     4 +
+>  app/test-pmd/testpmd.h                        |   126 +-
+>  app/test/meson.build                          |     1 +
+>  app/test/test_flow_parser.c                   |   226 +
+>  doc/guides/prog_guide/flow_parser_lib.rst     |   140 +
+>  doc/guides/prog_guide/index.rst               |     1 +
+>  doc/guides/rel_notes/release_26_03.rst        |     9 +
+>  dts/api/testpmd/__init__.py                   |     8 +-
+>  examples/flow_parsing/main.c                  |   345 +
+>  examples/flow_parsing/meson.build             |    11 +
+>  examples/meson.build                          |     1 +
+>  lib/cmdline/cmdline_parse.h                   |     2 +
+>  lib/ethdev/rte_ethdev.c                       |   107 +
+>  lib/ethdev/rte_ethdev.h                       |    60 +
+>  lib/flow_parser/meson.build                   |     6 +
+>  .../flow_parser/rte_flow_parser.c             | 10774 ++++++++--------
+>  lib/flow_parser/rte_flow_parser.h             |  1304 ++
+>  lib/meson.build                               |     2 +
+>  27 files changed, 8600 insertions(+), 5507 deletions(-)
+>  create mode 100644 app/test-pmd/flow_parser.c
+>  create mode 100644 app/test-pmd/flow_parser.h
+>  create mode 100644 app/test-pmd/flow_parser_cli.c
+>  create mode 100644 app/test/test_flow_parser.c
+>  create mode 100644 doc/guides/prog_guide/flow_parser_lib.rst
+>  create mode 100644 examples/flow_parsing/main.c
+>  create mode 100644 examples/flow_parsing/meson.build
+>  create mode 100644 lib/flow_parser/meson.build
+>  rename app/test-pmd/cmdline_flow.c =3D> lib/flow_parser/rte_flow_parser.=
+c (57%)
+>  create mode 100644 lib/flow_parser/rte_flow_parser.h
+>=20
 
-In addition to Thomas's comments. AI code review also identified some probl=
-ems.
-Please fix and resubmit.
-(Feels fun using AI to review Nvidia patches)...
+Looks OK to me, so asked AI for second opinion.
+It saw some things that do need to be fixed.
 
 
-## DPDK Patch Review: gpu/cuda NVIDIA GPU Device ID Series
+# DPDK Patch Review: Flow Parser Library (v2)
 
-**Series:** [PATCH 1/9] to [PATCH 9/9] - Adding NVIDIA GPU device IDs to CU=
-DA driver =20
-**Submitter:** Gregory Etelson (on behalf of Elena Agostini) =20
-**Date:** Mon, 15 Sep 2025
-
----
-
-### Overall Assessment
-
-This series adds various NVIDIA GPU device IDs to the CUDA driver. While th=
-e technical changes are straightforward, there are several compliance issue=
-s with DPDK contribution guidelines.
-
----
-
-### Patch-by-Patch Review
-
-#### **Patch 1/9: `gpu/cuda: add NVIDIA GPU H100`**
-
-| Check | Status | Notes |
-|-------|--------|-------|
-| Subject =E2=89=A460 chars | =E2=9C=85 Pass | 31 characters |
-| Lowercase after colon | =E2=9C=85 Pass | |
-| Component prefix | =E2=9C=85 Pass | `gpu/cuda:` correct |
-| Signed-off-by | =E2=9C=85 Pass | Elena Agostini <eagostini@nvidia.com> |
-| Commit body | =E2=9A=A0=EF=B8=8F Warning | Very minimal - "Add support fo=
-r new NVIDIA GPU H100." |
-
-**Verdict:** Acceptable, but body could be more descriptive.
-
----
-
-#### **Patch 2/9: `gpu/cuda: new RoyB A100T GPU ID`**
-
-| Check | Status | Notes |
-|-------|--------|-------|
-| Subject =E2=89=A460 chars | =E2=9C=85 Pass | 33 characters |
-| Subject style | =E2=9A=A0=EF=B8=8F Warning | "RoyB" - internal codename m=
-ay not be meaningful to readers |
-| **Commit body** | =E2=9D=8C **Error** | **Missing description - only Sign=
-ed-off-by present** |
-| Signed-off-by | =E2=9C=85 Pass | |
-
-**Error (must fix):** Per AGENTS.md line 114: "Describe the issue being fix=
-ed or feature being added." This patch has no body text.
-
----
-
-#### **Patch 3/9:** (inferred from context - adds more device IDs)
-
-Similar pattern to other patches.
-
----
-
-#### **Patch 4/9: `gpu/cuda: new Hopper GPU IDs`**
-
-| Check | Status | Notes |
-|-------|--------|-------|
-| Subject | =E2=9C=85 Pass | 27 characters |
-| Commit body | =E2=9A=A0=EF=B8=8F Warning | Grammar: "Add **a** new NVIDIA=
- Hopper GPU **IDs**" - article/noun disagreement |
-| Signed-off-by | =E2=9C=85 Pass | |
-
-**Warning:** Should read either "Add new NVIDIA Hopper GPU IDs" or "Add a n=
-ew NVIDIA Hopper GPU ID."
-
----
-
-#### **Patch 5/9: `gpu/cuda: add new gpu hopper 80gb device id`**
-
-| Check | Status | Notes |
-|-------|--------|-------|
-| Subject length | =E2=9C=85 Pass | 47 characters |
-| **Subject case** | =E2=9A=A0=EF=B8=8F **Warning** | "gpu" and "hopper" sh=
-ould likely be uppercase for consistency: "GPU" and "Hopper" |
-| **Commit body mood** | =E2=9A=A0=EF=B8=8F **Warning** | "Added the new...=
-" uses past tense. Should be imperative: "Add the new..." |
-| Signed-off-by | =E2=9C=85 Pass | |
-
-**Warning (should fix):** Per AGENTS.md line 54: Mood should be "Imperative=
- (instructions to codebase)."
+**Series:** `[PATCH v2 0/7]` flow_parser: add shared parser library =20
+**Author:** Lukas Sismis <sismis@dyna-nic.com> =20
+**Date:** Tue, 6 Jan 2026 =20
+**Reviewer:** AI Code Review Tool
 
 ---
 
-#### **Patch 6/9:** (extends device IDs with A800, H800, L40, L4 series)
+## Series Overview
 
-Major refactoring patch adding many device IDs. Code appears structurally s=
-ound.
+This patch series introduces `librte_flow_parser` as an optional, experimen=
+tal library that exposes the testpmd flow CLI parser as a reusable componen=
+t. The series is well-structured:
 
----
-
-#### **Patch 7/9: `gpu/cuda: extend NVIDIA GPU device ID list`**
-
-| Check | Status | Notes |
-|-------|--------|-------|
-| Subject | =E2=9C=85 Pass | 44 characters |
-| **Signed-off-by** | =E2=9D=8C **Error** | `Signed-off-by: eagostini <eago=
-stini@nvidia.com>` - **uses username, not real name** |
-| From: line | =E2=9D=8C **Error** | `From: eagostini <eagostini@nvidia.com=
->` - same issue |
-
-**Error (must fix):** Per AGENTS.md line 116: "Signed-off-by: present with =
-**real name** and valid email" and line 168: "Tag format: Tag-name: **Full =
-Name** <email@domain.com>."=20
-
-Should be: `Signed-off-by: Elena Agostini <eagostini@nvidia.com>`
+| Patch | Description |
+|-------|-------------|
+| 1/7 | Core library implementation (~15K lines) |
+| 2/7 | testpmd integration - removes embedded parser, uses library |
+| 3/7 | Example application demonstrating library usage |
+| 4/7 | Unit tests for the parser |
+| 5/7 | MAINTAINERS and .mailmap updates |
+| 6/7 | DTS f-string syntax fix (tangential bugfix) |
+| 7/7 | cmdline stddef.h include fix (tangential bugfix) |
 
 ---
 
-#### **Patch 8/9: `gpu/cuda: extend NVIDIA GPU device ID list`**
+## Errors (Must Fix)
 
-| Check | Status | Notes |
-|-------|--------|-------|
-| **Subject** | =E2=9A=A0=EF=B8=8F **Warning** | **Identical to Patch 7/9**=
- - subjects should be unique/descriptive |
-| **Signed-off-by** | =E2=9D=8C **Error** | Same issue: `eagostini` instead=
- of `Elena Agostini` |
-| From: line | =E2=9D=8C **Error** | Same issue |
+### 1. Missing Copyright Lines in New Files
 
-**Warning:** Patches 7 and 8 have identical subjects. Per the spirit of AGE=
-NTS.md guidelines, subjects should meaningfully distinguish patches. Consid=
-er: "gpu/cuda: add Laptop and Embedded GPU IDs" for patch 8.
+**Severity:** Error =20
+**Rule:** SPDX license identifier must be followed by copyright notice =20
+**Location:** Multiple files
 
----
+Per DPDK guidelines, every source file must have SPDX identifier followed b=
+y copyright:
 
-#### **Patch 9/9:** (extends list further with more Laptop/Embedded variant=
-s)
-
-Similar issues to patches 7/8 regarding authorship formatting.
-
----
-
-### Code Style Issues
-
-#### **1. Duplicate Macro Values (Patch 5)**
-
+**`lib/flow_parser/rte_flow_parser.h`** (Patch 1):
 ```c
-#define NVIDIA_GPU_HOPPER_GRACE (0x2342)
-#define NVIDIA_GPU_H100_GH1_DEVICE_ID (0x2342)
+/* SPDX-License-Identifier: BSD-3-Clause */
+#ifndef RTE_FLOW_PARSER_H
+```
+Missing: `Copyright(c) 2026 Dyna-NIC` line after SPDX
+
+**`app/test/test_flow_parser.c`** (Patch 4):
+```c
+/* SPDX-License-Identifier: BSD-3-Clause */
+
+#include <stdint.h>
+```
+Missing: Copyright line after SPDX
+
+**Recommended fix:**
+```c
+/* SPDX-License-Identifier: BSD-3-Clause
+ * Copyright(c) 2026 Dyna-NIC
+ */
 ```
 
-Two different macros defined with the same PCI device ID `0x2342`. This app=
-ears intentional (same device, different names), but the `NVIDIA_GPU_HOPPER=
-_GRACE` macro is later removed. The series should be consolidated to avoid =
-this intermediate state breaking bisectability.
+---
 
-#### **2. Inconsistent Naming Convention**
+### 2. Subject Lines Exceed 60 Characters
 
-The macro naming is inconsistent across the series:
-- Some use `NVIDIA_GPU_*_DEVICE_ID` suffix
-- Some use just `NVIDIA_*` (e.g., `NVIDIA_A40`, `NVIDIA_H100`) =20
-- Some use `NVIDIA_RTX_*`
+**Severity:** Error =20
+**Rule:** Subject line maximum 60 characters =20
+**Location:** Patches 2 and 7
 
-While not strictly an error, this inconsistency makes the code harder to ma=
-intain.
+| Patch | Length | Subject |
+|-------|--------|---------|
+| 2/7 | **64** | `[PATCH v2 2/7] app/testpmd: integrate shared flow parser =
+library` |
+| 7/7 | **65** | `[PATCH v2 7/7] cmdline: include stddef.h before defining =
+offsetof` |
 
-#### **3. Double Blank Lines (Patch 9)**
+**Recommended fixes:**
+- Patch 2: `app/testpmd: use shared flow parser library` (47 chars with pre=
+fix)
+- Patch 7: `cmdline: include stddef.h for offsetof` (54 chars with prefix)
+
+---
+
+## Warnings (Should Fix)
+
+### 3. Implicit Pointer/Integer Comparisons
+
+**Severity:** Warning =20
+**Rule:** Compare pointers explicitly with NULL, integers with zero =20
+**Location:** `lib/flow_parser/rte_flow_parser.c`
+
+Multiple instances use `!ptr` instead of `ptr =3D=3D NULL`:
 
 ```c
-+	},
-+
-+
-+	{
+// Current (non-compliant):
+if (!data)
+if (!ipv4->version_ihl)
+if (!ops || !ops->port_validate)
+if (!conf->select_ipv4)
+
+// Should be:
+if (data =3D=3D NULL)
+if (ipv4->version_ihl =3D=3D 0)
+if (ops =3D=3D NULL || ops->port_validate =3D=3D NULL)
+if (conf->select_ipv4 =3D=3D 0)
 ```
 
-Lines 2130-2131 show two consecutive blank lines, which violates typical fo=
-rmatting expectations.
-
-#### **4. Missing Documentation Update**
-
-Per AGENTS.md lines 646-650 and 658:
-- "New drivers or subsystems must have release notes"
-- "Update release notes in doc/guides/rel_notes/ for important changes"
-
-Adding significant new GPU support (H100, H200, L40 series, etc.) should ar=
-guably have a release notes entry, though this is borderline for device ID =
-additions.
+Affected locations include lines: 767, 783, 943, 999, 1012, 1053, 1091, 110=
+4, 1167, 1381, 1390, 1393, 1658, 1668, 1678, 1688, 1699, 1709, 1720, 1730, =
+and many more.
 
 ---
 
-### Summary of Required Fixes
+### 4. Missing Newline at End of File (Cross-Patch Fix)
 
-| Severity | Issue | Patches Affected |
-|----------|-------|------------------|
-| **Error** | Missing commit body | 2/9 |
-| **Error** | Signed-off-by uses alias, not real name | 7/9, 8/9, 9/9 |
-| **Error** | From: uses alias, not real name | 7/9, 8/9, 9/9 |
-| Warning | Past tense in commit body | 5/9 |
-| Warning | Lowercase in subject where uppercase expected | 5/9 |
-| Warning | Grammar error in body | 4/9 |
-| Warning | Duplicate subject lines | 7/9 vs 8/9 |
-| Warning | Double blank lines in code | 9/9 |
-| Info | Inconsistent macro naming style | Multiple |
-| Info | Consider release notes update | Series |
+**Severity:** Warning =20
+**Rule:** Files must end with a newline =20
+**Location:** `app/test-pmd/flow_parser.h`
+
+Patch 2 creates this file without a trailing newline:
+```
+-#endif /* _TESTPMD_FLOW_PARSER_H_ */
+\ No newline at end of file
+```
+
+Patch 3 fixes it, but each commit should compile independently. The fix sho=
+uld be in Patch 2.
 
 ---
 
-### Recommended Actions
+### 5. MAINTAINERS Entry Missing Explicit Maintainer
 
-1. **Patch 2/9:** Add a description to the commit body explaining what "Roy=
-B A100T" refers to.
+**Severity:** Warning =20
+**Rule:** New subsystems should have release notes and maintainer entries =
+=20
+**Location:** `MAINTAINERS`
 
-2. **Patches 7/9, 8/9, 9/9:** Change author and signoff from:
-   ```
-   From: eagostini <eagostini@nvidia.com>
-   Signed-off-by: eagostini <eagostini@nvidia.com>
-   ```
-   To:
-   ```
-   From: Elena Agostini <eagostini@nvidia.com>
-   Signed-off-by: Elena Agostini <eagostini@nvidia.com>
-   ```
+The update adds files to the Flow API section:
+```
+F: lib/flow_parser/
+F: app/test-pmd/flow_parser.c
+F: doc/guides/prog_guide/flow_parser_lib.rst
+```
 
-3. **Patch 5/9:** Fix subject case and body tense:
-   - Subject: `gpu/cuda: add new GPU Hopper 80GB device ID`
-   - Body: "Add the new Hopper 80GB GPU device ID to the list."
+However, no explicit `M:` (maintainer) entry is added. Consider adding:
+```
+Flow Parser Library
+M: Lukas Sismis <sismis@dyna-nic.com>
+F: lib/flow_parser/
+F: doc/guides/prog_guide/flow_parser_lib.rst
+```
 
-4. **Patches 7 & 8:** Differentiate the subjects (e.g., one for datacenter =
-GPUs, one for Laptop/Embedded).
+---
 
-5. **Patch 9:** Remove the double blank line in cuda.c.
+## Info (Consider)
+
+### 6. Unrelated Fixes Bundled in Series
+
+Patches 6/7 and 7/7 fix issues unrelated to the flow parser:
+- Patch 6: DTS f-string syntax fix
+- Patch 7: cmdline stddef.h include
+
+These should ideally be separate patch submissions with their own `Fixes:` =
+tags if they address regressions. If they're prerequisites for the flow par=
+ser, this should be documented.
+
+---
+
+### 7. Code Structure Positive Notes
+
+The series demonstrates good practices:
+
+=E2=9C=93 New APIs marked as `__rte_experimental` (correctly on separate li=
+nes in headers) =20
+=E2=9C=93 Release notes updated (`doc/guides/rel_notes/release_26_03.rst`) =
+=20
+=E2=9C=93 Documentation added (`doc/guides/prog_guide/flow_parser_lib.rst`)=
+ =20
+=E2=9C=93 Unit tests added (`app/test/test_flow_parser.c`) =20
+=E2=9C=93 Example application provided (`examples/flow_parsing/`) =20
+=E2=9C=93 Proper use of `RTE_EXPORT_EXPERIMENTAL_SYMBOL` =20
+=E2=9C=93 Thread-local storage for helper functions =20
+=E2=9C=93 Commit messages don't start with "It"
+
+---
+
+## Checklist Summary
+
+| Category | Status |
+|----------|--------|
+| SPDX + Copyright | =E2=9D=8C Missing copyright in 2 files |
+| Subject line =E2=89=A460 chars | =E2=9D=8C 2 patches exceed limit |
+| Subject lowercase (except acronyms) | =E2=9C=93 |
+| Correct component prefix | =E2=9C=93 |
+| Body =E2=89=A475 chars | =E2=9C=93 |
+| Signed-off-by present | =E2=9C=93 |
+| __rte_experimental placement | =E2=9C=93 |
+| New APIs experimental | =E2=9C=93 |
+| Release notes | =E2=9C=93 |
+| Documentation | =E2=9C=93 |
+| Tests added | =E2=9C=93 |
+| Explicit comparisons | =E2=9D=8C Multiple implicit comparisons |
+| Each commit compiles | =E2=9A=A0=EF=B8=8F Missing newline issue |
+
+---
+
+## Recommended Actions for v3
+
+1. **Add copyright lines** to `rte_flow_parser.h` and `test_flow_parser.c`
+2. **Shorten subject lines** for patches 2 and 7
+3. **Fix newline** at end of `flow_parser.h` in patch 2 (not patch 3)
+4. **Consider** adding explicit `M:` entry in MAINTAINERS
+5. **Consider** splitting patches 6-7 into separate series or adding depend=
+ency notes
+6. **Consider** converting implicit comparisons to explicit style (lower pr=
+iority, many occurrences)
+
+---
+
+*Review generated based on DPDK AGENTS.md guidelines*
+
+
