@@ -2,86 +2,81 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13445CF45CD
-	for <dpdk-dev@archiver.kernel.org>; Mon, 12 Jan 2026 19:24:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D736BCF45D4
+	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Jan 2026 00:39:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1252F402E1;
-	Mon, 12 Jan 2026 20:24:04 +0100 (CET)
-Received: from mail-pl1-f225.google.com (mail-pl1-f225.google.com
- [209.85.214.225])
- by mails.dpdk.org (Postfix) with ESMTP id 8F17F40041
- for <dev@dpdk.org>; Mon, 12 Jan 2026 20:24:02 +0100 (CET)
-Received: by mail-pl1-f225.google.com with SMTP id
- d9443c01a7336-2a0bae9aca3so43384975ad.3
- for <dev@dpdk.org>; Mon, 12 Jan 2026 11:24:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768245842; x=1768850642;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:dkim-signature:x-gm-gg:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=MM4xLALI/KfSKnk6q/QSgGXu0mrrvS1ALJu+cXyRaw0=;
- b=Vij3xSx4NE8nLW0ofHLQ6fAbF02LZp1zYyZnOs/lCX8vHONHTnYQzKevIt5MAknLnm
- gSlDNJVQR3603N1PFR1edZ6MHZuI//RByF7UgEJqo44szlW6SFBbAUlnXEasC82eFKXr
- nu25VXNCqXSr/nfiSE5PEuogkuLW0G4MXIJoDVLUNXfAgS80nSYJEfcoBnfs+cHRe47C
- 1tfNn5aFleWC2o36Abdnk2dM0FnKl1wdODdo9HCxbcCA73COFy5odIpQy9Jh2kG8ddYA
- CZKhBF6c+0Sl+5B3oqJdMMCuzHujocSlTr9Cv1BzOwVWDn1uqVpSpH9tdsADYY9JQrgk
- 4f0Q==
-X-Gm-Message-State: AOJu0Yw07HrVNH5DdY8zNkotoZm2rGylB54snHxRs4GWhclP67dwiEd3
- 3TTbzTSNXxx5ueQkE/LbUtzYbYrPK6U/F8XXk7JXZiTIV8wmRkotu7rTNGQpl91LZJTU1CjmoMx
- NBSbZWbFOM17YZHVK25p0kj2erAoz6RqhkEhdIp2pILd38MBufFkXVAdyqA2UlOzmIkxYHSUuZS
- 5Ir0sX357Uo3gDuXSlWWbLHb45JnNcQn0gTPSdyd8KU4myxBCg3ilRA5GCzKkXZX6/oGlUk1U1Q
- tRYfA==
-X-Gm-Gg: AY/fxX6uF7NQBwu2xOzPcLQffKjoUhyPR2tntHC2ixvZ4KNamubVvNAzNBx8NP7AeGz
- mp01s+DicKo3RIwFCeqWIPghMbwQI9+Mvo3luOXyJljo43f7/3aXqxEqMni0Uju8KrDLV/o7D8s
- s95maHZ/wWLxqxQgSCZ67WKyJjAnHCBDJJqDJY/tMdaO/X/MfvfsgVsBYVJiYUHgda4WXicxt9i
- RgpQV6HpkUHQOptjSGRjhYFECnt3cIfeJpEqyt5MNiVrbzE1AUGwgh4Yg94dZ44v8g6+43vQzju
- OKW+GqMad22wtchnXnfq405//vUMAPDqNSGHxNEYND05818D8WcmfGaoH01E1DikatwQIhGzkTc
- mhntkWbk52rZcTvJVJZLFA/ORTN/OpnAgCyCb7DJX4kIZe/fbdpxcF/XhBKvEGRQnAysRv3Gbl5
- Bl
-X-Google-Smtp-Source: AGHT+IEMU6qgiVD0asf8Ruoy54034u71eD0ZOxkZ6U97DYe1RwgBbs4/0ZVmPvIrzl5yLCAvxceeUTIonxq7
-X-Received: by 2002:a17:902:cecd:b0:29f:e787:2b9b with SMTP id
- d9443c01a7336-2a3ee4da376mr173048055ad.41.1768245841615; 
- Mon, 12 Jan 2026 11:24:01 -0800 (PST)
-Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
- ([144.49.247.127]) by smtp-relay.gmail.com with ESMTPS id
- d9443c01a7336-2a3e3c4a15bsm21527215ad.25.2026.01.12.11.24.01
- for <dev@dpdk.org>
- (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Mon, 12 Jan 2026 11:24:01 -0800 (PST)
-X-Relaying-Domain: broadcom.com
-X-CFilter-Loop: Reflected
-Received: by mail-dy1-f198.google.com with SMTP id
- 5a478bee46e88-2b048fc1656so19141251eec.1
- for <dev@dpdk.org>; Mon, 12 Jan 2026 11:24:00 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id ABE8D402B0;
+	Tue, 13 Jan 2026 01:39:48 +0100 (CET)
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com
+ [209.85.128.41]) by mails.dpdk.org (Postfix) with ESMTP id A2F1F402A2
+ for <dev@dpdk.org>; Tue, 13 Jan 2026 01:39:46 +0100 (CET)
+Received: by mail-wm1-f41.google.com with SMTP id
+ 5b1f17b1804b1-47d3ffa6720so65229845e9.0
+ for <dev@dpdk.org>; Mon, 12 Jan 2026 16:39:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1768245839; x=1768850639; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=MM4xLALI/KfSKnk6q/QSgGXu0mrrvS1ALJu+cXyRaw0=;
- b=FT6hdAEer7kFLCxzE7imDSMcG8O5lS5YrJ47qiA5pFM69cI+zaDTWDgkouHgVfCg7m
- ecXy6KmgNJOHn8f2RXnjTWr32U3ONNkhZXLbxqVCkfrROUOQ5HqCAY58SNufZFgxQo3p
- VbzSo28geP95NSUBTWQsj0J3tEO4gV+iOqdms=
-X-Received: by 2002:a05:7301:606:b0:2b0:50b1:d963 with SMTP id
- 5a478bee46e88-2b17d200d38mr20768496eec.3.1768245839431; 
- Mon, 12 Jan 2026 11:23:59 -0800 (PST)
-X-Received: by 2002:a05:7301:606:b0:2b0:50b1:d963 with SMTP id
- 5a478bee46e88-2b17d200d38mr20768453eec.3.1768245838666; 
- Mon, 12 Jan 2026 11:23:58 -0800 (PST)
-Received: from accvda5707.acc.broadcom.net ([192.19.144.250])
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768264786;
+ x=1768869586; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=XzLzbWFB5xoPfOEdDks+nkQVIfMppMYYrc62mEySFeQ=;
+ b=1ywamX3evrOf9gLbwFv9eq++GBcN+swG+mMy6aE7FxkxZCh+gcZHfaAUCJLJs8xun9
+ JoetMQlJ/jnVsfkMqSiPk9/xP+dFSGikC2sywpMkogeD1j8FNvdzyejUnp7I/K4/E5/X
+ zXVElzExzf/hmqxQFmwUXJK0S36vShUhOBnqk/4nXaAekRB0Ht5mt/7jF/ZKFh73CNvY
+ aofYD2CXX2U8tQl5UxwaqwGU8deIYLVzF+0Gqa9RhYv6QM+oA9w+AoCHmgdEEkCI4lG9
+ CwbYKb04pBGbnkScyLLJUNUbJKV3fGsPV0M73oJ+JJJB0DufKprvKPGYzEKxQQJiYlMP
+ MaSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1768264786; x=1768869586;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=XzLzbWFB5xoPfOEdDks+nkQVIfMppMYYrc62mEySFeQ=;
+ b=jhFQ50lj0zm6R5RRX/D7fozFxGCuKuBFtq5gYTzs0CUT71Epq5VR10/8Cx/ti8Nf34
+ InHApzgeu7WdElinjYBBEvV8nMUmvyikQ+VVucgiXykn3UOVv7+LgNz1ziX8F0a1Wdil
+ PIVPhzuPO7cwFwZDKYTQZUQuhz+aufv8/9NrWlNG+J9mOsDQ0yx7ZV3C+mRwW9cYkGf1
+ /SdalkVmQ9LWbINMpNwtfqkVrePC5K4R35RK9ZrC1JT7+2CzK/cB+XcXpdu6lDZbSZeW
+ wjfaGwde3ef0g48iVkigopwRufcucZIx/GNeT9gEAON+LB7QNLAXLQmXWp4TSIFHbb6T
+ OsqQ==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCVyp9Qy4jqQxBMMPzAhE8TOeNSD2NSK8mSnZOGvpwEIS0SVUrruupL9p4rt9FHUsKlaAm0=@dpdk.org
+X-Gm-Message-State: AOJu0YxWQeiv4xubBiK0CUpWeNazglN76unvcdBKjFGodgUZdXRw+iii
+ cuO7+mLDkdIaTqtfr6KmYY79x5Ej6YdU7yivNmiAZooNSyiZMd0EvawH5uJpAfwZ8KU=
+X-Gm-Gg: AY/fxX5fqN3xPLYgtk4nGyOwnWL7p4MXdBkB0uDR7sJmxXnkaOeUbuIUtcsHG0gEToP
+ yn088Mgo4pNVmE8Wt36ZBFoyHFESY2hE3Pmqj3oKGAypXUMITcaLTFr4sMPVaOKq/tYUIFNCTfM
+ 8Wzn3I03v+yv2sSDp16jsq7EvudgEyvQZadcwhHRlCbBnm/k0mjDrbwngM0ZWabr28pLEXEUPau
+ JUkHipxN3bf3Gt/S8y8pUO7bLLQPAV19Sz3khY8Mt4NAFAUUbh7Nvx4/iu0TNoeeHWx7Ix2Z6Pi
+ tG7RGB01F25DkWhq3xHSexqc3xQV5NdbychPONwiWYNNaW9cMbhNNwyVljhR9l0PVArGF9iK+zf
+ VAv7y/6rItXGlgLVm4rkGE1L3GTB5r0EBWWKCJnrpdiSButV7Itfk4TGNYgOzzn2g+d4M4rsj0k
+ BE7i70FYrOwXruDTMwtiYDK/nb7cHNiqAnDu5uYTcmk8ryWjhlr/WKpc2pmE+4g+g=
+X-Google-Smtp-Source: AGHT+IFHLeegb6w44RcxiimmjEWHBYmqZxKNvEgbfwqxmX3KyJcNoazNHj55lbH4Saa+vNej2DZsZw==
+X-Received: by 2002:a05:600c:1394:b0:47d:3ffa:5f03 with SMTP id
+ 5b1f17b1804b1-47d84b3467emr237465125e9.21.1768264785921; 
+ Mon, 12 Jan 2026 16:39:45 -0800 (PST)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-2b1775fe27dsm14240962eec.29.2026.01.12.11.23.57
+ 5b1f17b1804b1-47d7f68f4ddsm386804075e9.2.2026.01.12.16.39.43
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 12 Jan 2026 11:23:58 -0800 (PST)
-From: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
-To: dev@dpdk.org
-Cc: stable@dpdk.org
-Subject: [PATCH] net/bnxt: fix the stat collection
-Date: Mon, 12 Jan 2026 14:23:51 -0500
-Message-ID: <20260112192354.3096196-1-kishore.padmanabha@broadcom.com>
-X-Mailer: git-send-email 2.45.4
+ Mon, 12 Jan 2026 16:39:45 -0800 (PST)
+Date: Mon, 12 Jan 2026 16:39:39 -0800
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Scott Mitchell <scott.k.mitch1@gmail.com>
+Cc: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>, Konstantin
+ Ananyev <konstantin.ananyev@huawei.com>, dev@dpdk.org, Bruce Richardson
+ <bruce.richardson@intel.com>, Konstantin Ananyev
+ <konstantin.v.ananyev@yandex.ru>, Vipin Varghese <vipin.varghese@amd.com>
+Subject: Re: [PATCH v5] eal/x86: optimize memcpy of small sizes
+Message-ID: <20260112163939.12c7cf8f@phoenix.local>
+In-Reply-To: <CAFn2buBx3JNXS1pb6w=0S1HOAxmG+HVTkk=_b+1kou5MnAnqpw@mail.gmail.com>
+References: <20251120114554.950287-1-mb@smartsharesystems.com>
+ <20251201155525.1538260-1-mb@smartsharesystems.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F6561B@smartserver.smartshare.dk>
+ <c2bf94e103f64dcaad115e1d3d39d654@huawei.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F6564F@smartserver.smartshare.dk>
+ <CAFn2buBx3JNXS1pb6w=0S1HOAxmG+HVTkk=_b+1kou5MnAnqpw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -95,101 +90,41 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The stats collection was not aggregrating the stats for rings greater
-than RTE_ETHDEV_QUEUE_STAT_CNTRS  if the application did not increase
-the stats counters but supports more than the limit.
-Added checks to increment the aggregated stats from queues
-greater than the limit.
+On Mon, 12 Jan 2026 11:00:36 -0500
+Scott Mitchell <scott.k.mitch1@gmail.com> wrote:
 
-Bugzilla ID: 1836
-Cc: stable@dpdk.org
-Fixes: 57d5e5bc86e4 ("net/bnxt: add statistics")
+> >
+> > The discussion about the optimized checksum function [1] has shown us that memcpy() sometimes prevents Clang from optimizing (loop unrolling and vectorizing) and potentially causes strict aliasing bugs with GCC, so I will work on a new patch version that keeps using the above types, instead of introducing memcpy() inside rte_memcpy().
+> >
+> > [1]: https://inbox.dpdk.org/dev/CAFn2buBzBLFLVN-K=u3MgBEbQ-hqbgJLVpDx3vSXVKJpa0yPNg@mail.gmail.com/
+> >  
+> 
+> Great timing for this thread :)
+> 
+> My observation:
+> - clang is unable to apply optimizations with RTE_PTR_[ADD,SUB]
+> like loop unrolling and vectorization (e.g. cksum)
+> - Even when clang/gcc do apply optimizations the assembly can be non-optimal
+> - direct usage of unaligned_NN_t types can cause incorrect results
+> (due to gcc bugs)
+> 
+> I don't think "rte_NN_alias" structs are safe on architectures that don't allow
+> unaligned access bcz the inner "val" needs to indicate it maybe for
+> unaligned access.
+> 
+> My suggestion:
+> 1. Fix unaligned_NN_t types to ensure compiler doesn't aggressively
+> apply strict-alias
+> optimizations resulting in incorrect results
+> (https://patches.dpdk.org/project/dpdk/patch/20260112120411.27314-2-scott.k.mitch1@gmail.com/).
+> Intermediate structs rte_NN_alias are then unnecessary and we can directly use
+> unaligned_NN_t instead (e.g.
+> https://patches.dpdk.org/project/dpdk/patch/20260112120411.27314-3-scott.k.mitch1@gmail.com/)
+> 
+> 2. Improve RTE_PTR_[ADD,SUB] to be more compiler friendly
+> (https://patches.dpdk.org/project/dpdk/patch/20260112154059.36879-1-scott.k.mitch1@gmail.com/)
 
-Signed-off-by: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
----
- drivers/net/bnxt/bnxt_stats.c | 20 ++++++++++++--------
- 1 file changed, 12 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/net/bnxt/bnxt_stats.c b/drivers/net/bnxt/bnxt_stats.c
-index 3ed1dc8101db..88cfbaf9ff4b 100644
---- a/drivers/net/bnxt/bnxt_stats.c
-+++ b/drivers/net/bnxt/bnxt_stats.c
-@@ -659,7 +659,7 @@ static int bnxt_stats_get_ext(struct rte_eth_dev *eth_dev,
- 	num_q_stats = RTE_MIN(bp->rx_cp_nr_rings,
- 			      (unsigned int)RTE_ETHDEV_QUEUE_STAT_CNTRS);
- 
--	for (i = 0; i < num_q_stats; i++) {
-+	for (i = 0; i < bp->rx_cp_nr_rings; i++) {
- 		struct bnxt_rx_queue *rxq = bp->rx_queues[i];
- 		struct bnxt_cp_ring_info *cpr = rxq->cp_ring;
- 		struct bnxt_ring_stats_ext ring_stats = {0};
-@@ -675,7 +675,8 @@ static int bnxt_stats_get_ext(struct rte_eth_dev *eth_dev,
- 		if (unlikely(rc))
- 			return rc;
- 
--		bnxt_fill_rte_eth_stats_ext(bnxt_stats, &ring_stats, qstats, i, true);
-+		bnxt_fill_rte_eth_stats_ext(bnxt_stats, &ring_stats,
-+					    i < num_q_stats ? qstats : NULL, i, true);
- 		bnxt_stats->rx_nombuf +=
- 				rte_atomic_load_explicit(&rxq->rx_mbuf_alloc_fail,
- 							 rte_memory_order_relaxed);
-@@ -684,7 +685,7 @@ static int bnxt_stats_get_ext(struct rte_eth_dev *eth_dev,
- 	num_q_stats = RTE_MIN(bp->tx_cp_nr_rings,
- 			      (unsigned int)RTE_ETHDEV_QUEUE_STAT_CNTRS);
- 
--	for (i = 0; i < num_q_stats; i++) {
-+	for (i = 0; i < bp->tx_cp_nr_rings; i++) {
- 		struct bnxt_tx_queue *txq = bp->tx_queues[i];
- 		struct bnxt_cp_ring_info *cpr = txq->cp_ring;
- 		struct bnxt_ring_stats_ext ring_stats = {0};
-@@ -697,7 +698,8 @@ static int bnxt_stats_get_ext(struct rte_eth_dev *eth_dev,
- 		if (unlikely(rc))
- 			return rc;
- 
--		bnxt_fill_rte_eth_stats_ext(bnxt_stats, &ring_stats, qstats, i, false);
-+		bnxt_fill_rte_eth_stats_ext(bnxt_stats, &ring_stats,
-+					    i < num_q_stats ? qstats : NULL, i, false);
- 	}
- 
- 	return rc;
-@@ -724,7 +726,7 @@ int bnxt_stats_get_op(struct rte_eth_dev *eth_dev,
- 	num_q_stats = RTE_MIN(bp->rx_cp_nr_rings,
- 			      (unsigned int)RTE_ETHDEV_QUEUE_STAT_CNTRS);
- 
--	for (i = 0; i < num_q_stats; i++) {
-+	for (i = 0; i < bp->rx_cp_nr_rings; i++) {
- 		struct bnxt_rx_queue *rxq = bp->rx_queues[i];
- 		struct bnxt_cp_ring_info *cpr = rxq->cp_ring;
- 		struct bnxt_ring_stats ring_stats = {0};
-@@ -739,7 +741,8 @@ int bnxt_stats_get_op(struct rte_eth_dev *eth_dev,
- 		if (unlikely(rc))
- 			return rc;
- 
--		bnxt_fill_rte_eth_stats(bnxt_stats, &ring_stats, qstats, i, true);
-+		bnxt_fill_rte_eth_stats(bnxt_stats, &ring_stats,
-+					i < num_q_stats ? qstats : NULL, i, true);
- 		bnxt_stats->rx_nombuf +=
- 				rte_atomic_load_explicit(&rxq->rx_mbuf_alloc_fail,
- 							 rte_memory_order_relaxed);
-@@ -748,7 +751,7 @@ int bnxt_stats_get_op(struct rte_eth_dev *eth_dev,
- 	num_q_stats = RTE_MIN(bp->tx_cp_nr_rings,
- 			      (unsigned int)RTE_ETHDEV_QUEUE_STAT_CNTRS);
- 
--	for (i = 0; i < num_q_stats; i++) {
-+	for (i = 0; i < bp->tx_cp_nr_rings; i++) {
- 		struct bnxt_tx_queue *txq = bp->tx_queues[i];
- 		struct bnxt_cp_ring_info *cpr = txq->cp_ring;
- 		struct bnxt_ring_stats ring_stats = {0};
-@@ -761,7 +764,8 @@ int bnxt_stats_get_op(struct rte_eth_dev *eth_dev,
- 		if (unlikely(rc))
- 			return rc;
- 
--		bnxt_fill_rte_eth_stats(bnxt_stats, &ring_stats, qstats, i, false);
-+		bnxt_fill_rte_eth_stats(bnxt_stats, &ring_stats,
-+					i < num_q_stats ? qstats : NULL, i, false);
- 		bnxt_stats->oerrors +=
- 				rte_atomic_load_explicit(&txq->tx_mbuf_drop,
- 							 rte_memory_order_relaxed);
--- 
-2.45.4
-
+FYI the Linux kernel avoids the memcpy silliness.
+Mostly by identifying architectures where unaligned access is non-issue.
+On x86, unaligned access works fine. As I remember it works on ARM as well.
+The only place where unaligned can break badly is when this is an atomic operation.
