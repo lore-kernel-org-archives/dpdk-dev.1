@@ -2,72 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ABEED31A09
-	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Jan 2026 05:25:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B28FD31A09
+	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Jan 2026 05:55:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 208494028F;
-	Wed, 14 Jan 2026 06:25:34 +0100 (CET)
-Received: from mail-wm1-f65.google.com (mail-wm1-f65.google.com
- [209.85.128.65]) by mails.dpdk.org (Postfix) with ESMTP id EB10840289
- for <dev@dpdk.org>; Wed, 14 Jan 2026 06:25:32 +0100 (CET)
-Received: by mail-wm1-f65.google.com with SMTP id
- 5b1f17b1804b1-47775fb6c56so79115115e9.1
- for <dev@dpdk.org>; Tue, 13 Jan 2026 21:25:32 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 0B7314028F;
+	Wed, 14 Jan 2026 06:55:17 +0100 (CET)
+Received: from mail-ed1-f66.google.com (mail-ed1-f66.google.com
+ [209.85.208.66]) by mails.dpdk.org (Postfix) with ESMTP id 7543E40289
+ for <dev@dpdk.org>; Wed, 14 Jan 2026 06:55:15 +0100 (CET)
+Received: by mail-ed1-f66.google.com with SMTP id
+ 4fb4d7f45d1cf-6536e4d25e1so1960199a12.1
+ for <dev@dpdk.org>; Tue, 13 Jan 2026 21:55:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768368332;
- x=1768973132; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768370115;
+ x=1768974915; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=pjk2T34L+OjPtL8CuiyaVVKp0yXT4j4d/CHAi6ns+/g=;
- b=u/GBuKvfismuAEIbLXYdVUftFibv/NVkFO/9JqpoOU710dfZQAPbqBTS3plaBEmS1L
- xsOA+K+dAB8anrnZk78LPCaKjqpyNDLIT9Jhs4j6dUyW58IYZcPjjP527XYg0QggeIk2
- R5zc/DlNLq7gMohUqVufFQAjUUwnwjqMUhcethqsapTO5l/hAlUpZMXKp4y2ruHVzlP4
- 61tboQcYVGMimnamJAKF7wek/c78pJwDlSFVSYKOKLoeNd0m8ZAQPX4T728muFJfLXU0
- DqEXkJ4bMx28aszxB+g0YYdscGZrplldIeWw0d+izMm3Lq7xrjpHKh3i+NvjjZpSNa7w
- RSLA==
+ bh=vKfLe3RXmiplUyq763aCGioW643g7cyeFLBMDe8cPS8=;
+ b=HUWD7jdRCSNlXmL/Kh/rUuNetWTGZ2o6IlRVAfWksFgLZ1BsHK6hI0X1NhCq0oxzSw
+ FbarMmnieOezQV5Dac/ZT96chc5P8LNf8WlKB/dnF2nVZATAz/k8fE5Gj0/lnU4az5uW
+ W4XvJJP555WlV+3qBW04ix1zONBVq54RC4ohqVS/N1i/LlhbmgzUw2k/Y64KJLYXKzyV
+ xFWdqveseTIwtmTesedgFLPxDRXflxLtZT2cGMmtaBlR3ABx9YcdL7DmHk0r+n63+Ctk
+ OewxJwA+9/hKz8SartgbD5F6fH8VsgVcoG8Zz4v3zbT2FEZTsessvv3PLZyYktWxV5Pq
+ Ajxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768368332; x=1768973132;
+ d=1e100.net; s=20230601; t=1768370115; x=1768974915;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=pjk2T34L+OjPtL8CuiyaVVKp0yXT4j4d/CHAi6ns+/g=;
- b=tgT1sjgza8GzpI+vu3U023JZ8fqZ8qqgpwRnftVClJN54LgoIxf+MrdS7GNIIx80S1
- t6OtIYzBBN1q1avKUdRYeACFLd6gEUbHLo9XvnjIUiWaPykfymGV6LLrqqvtzKKHUAw7
- mxENLKZTxPSkpDvFtGyKyNgdRlBV0IntEgSG+yhbKw3HreC7t1nl5zRVBUSzP2Z7AXPV
- jBCPLqFWujvVUvISMBns8I1s7cRqe02m9CZdpr3px681xWt2WxVh6pBas2SKt+wp7en8
- ASTINb+iw9RotgoUQTjiQ4uIdLi9efjYf/A2lRf8joj2Az/D2ckxa5mrTSCCMOwgnFJC
- HASw==
-X-Gm-Message-State: AOJu0Yxq78QabLx+A3doD65s7Yl4c7xE+DiABiTtb8ekJVyKpB0nMMPn
- ROAQHjxd0z1PQjc+hpCyVOeamYBB8Fq3pq0LVEySErrk6MDp9jGIqTOZSccob8XQt8w=
-X-Gm-Gg: AY/fxX6Hxh7Xyd/pMCGYIujBx8RhUiyVkLyDlmfQxL8MevtpgwXHwPDb0PPEFL/wc0L
- bWA6l2ub/QfcHZni2VwL7cRWz4fEgh3aqCKJVJiT6azCzdQagFh62XLSPycEVvqE0alcT4AIW4M
- d13SaMJB0rgGcK15juN+gtfVuDjYSDtDMyVrvf5cNCLK8BqEWti3RBMcIo3hz1sd/IjoiLbepXp
- 27aWoJKrgwh8maUR+Pnq3JZdZV26Q6e9E/VnQaIylTfrMPw0g1gHD/VwvEZCUGOSU85yrwfcj2J
- E8Nwj3vuaqbkPjf6qyQHSPgt8kcRgLQKVj9bQrZXv/uVO1eQYeavyV6b7EFkFYuFS3hnpibkl+5
- z7i36O3KOzO7zsho4KDD3Fy4CQLqyv3zXa7ziNR/F9l8BaH09mFRxy8vPc/V2PE+Ec+8Ojgkktb
- 6Xwun1aUHMFgcX8VnenTJ0JzIgAF+zLA/j2XR0dj1mFQKkgDU/EaNN
-X-Received: by 2002:a05:600c:6218:b0:47d:18b0:bb9a with SMTP id
- 5b1f17b1804b1-47ee33997fcmr13577865e9.33.1768368332519; 
- Tue, 13 Jan 2026 21:25:32 -0800 (PST)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ bh=vKfLe3RXmiplUyq763aCGioW643g7cyeFLBMDe8cPS8=;
+ b=duGBbygpitu+99vgU4RwtZMufZ0LatsQ2gZJsIu6z5OotSaNxNExeB6+UNFkKxqcRi
+ ndvOoWL1G+8zNVUasaZ/sKGnzi9LufPKfprKLZaH8Xpb1rp5aRrmI9Yt0Wr9gANxrGYA
+ 5D6Uxm0dXv/Dootpp/nyiiCyluPnFyUvKUjYksKzKxtsIHGU8TGxDf2TIOaS3USaS6OL
+ sSXOpx+RbJhOEEVxXFBzVpaQiYkDsmBA3y/sgdJX/INI18UrSAR4TpYJHaj+EiyNsZKJ
+ jzC/BJSNSIe12bzR/P+3nihdQcv7laBru836+xvjDIz+wW50Mss+YOjPKumRqLmeMmJP
+ w8cA==
+X-Gm-Message-State: AOJu0Yytx4LHjtFwsA6l4DYxN7KPF+vfiFqZQBgBYWInUhr8/HTcV7ed
+ 7lSjuV8Jj857508c3rhx/zbiCP5VQWMevnRuEzYHk4seCQnHunb0wx03zVwVnax5GSLPC4sMoqX
+ toWc6
+X-Gm-Gg: AY/fxX4TsbI+6pdaij6356naKI2+imSA+rKMFeeI3Llwwhv6Mif6hoDs03V5L18cLC2
+ TKRr0AZD4kB1WxAoV5DOz89bBUmbM33bFWu4v9qkEf958sgw89Z3JhuBnZ8szn46l4EY6+ZBaW2
+ 77LhmOi8MPw0ikJQe1mE+/PLs9YqUR78xaNhPhypcExhpzYXgGECTxN3rdRdwb33GiVv3mkOoQd
+ 8xsY7QfKTaKwSxDcMcvO45sjI0UiCbw7NMc4yZcL3cfJpNMlHdcvTi9GJyNdq6ifnpW00uDmqxc
+ RpfrSJNsvNfAcUal6351lUE+vZh5D5Ym13UtYbCdoF8lItiGCz8Fosp09WvTdQPTN4jtlRd0Jqp
+ KIyFhj/2BH+uHAoMM04ENRxM9Y7Bvf4RXGRrCzT2d317YcQatYRTmFAgQQLaaQCIM7Mp3dEwAky
+ SCo0p9D5QooRgTPpsNvslcGh2skSyo+XjKX5Pur1ZvGI3jRTZUqw==
+X-Received: by 2002:a05:6402:35ca:b0:64d:88c:c2b7 with SMTP id
+ 4fb4d7f45d1cf-653ec312f7dmr1050699a12.14.1768370114842; 
+ Tue, 13 Jan 2026 21:55:14 -0800 (PST)
+Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-47ee578d1b2sm9369045e9.2.2026.01.13.21.25.30
+ 4fb4d7f45d1cf-6507bf6d4acsm22184980a12.30.2026.01.13.21.55.12
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 13 Jan 2026 21:25:31 -0800 (PST)
-Date: Tue, 13 Jan 2026 21:25:26 -0800
+ Tue, 13 Jan 2026 21:55:14 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Congjie Zhou <zcjie0802@qq.com>
-Cc: dev@dpdk.org, anatoly.burakov@intel.com
-Subject: Re: [PATCH v3] eal/linux: fix fbarray name with multiple secondary
- processes
-Message-ID: <20260113212526.0d2a5eae@phoenix.local>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Congjie Zhou <zcjie0802@qq.com>
+Subject: [PATCH v4] Subject: eal/linux: fix fbarray name collision in
+ containers
+Date: Tue, 13 Jan 2026 21:54:01 -0800
+Message-ID: <20260114055508.106779-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.51.0
 In-Reply-To: <tencent_C757C0BA2AC7438F65C6522E700005F53605@qq.com>
-References: <tencent_B09D0FCCA142E4AE5ABFE584E92DCED8CB0A@qq.com>
- <tencent_C757C0BA2AC7438F65C6522E700005F53605@qq.com>
+References: <tencent_C757C0BA2AC7438F65C6522E700005F53605@qq.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,128 +82,78 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Sat, 16 Nov 2024 12:07:41 +0800
-Congjie Zhou <zcjie0802@qq.com> wrote:
+When multiple secondary processes run in different containers that
+share the same hugetlbfs mount, the fbarray names can collide.
+This happens because containers use separate PID namespaces, so
+different processes in different containers can have the same PID.
 
-> add the tsc into the name.
->=20
-> Suggested-by: Stephen Hemminger <stephen@networkplumber.org>
-> Signed-off-by: Congjie Zhou <zcjie0802@qq.com>
-> ---
+Fix by replacing the PID with a timestamp-based value. The TSC
+(timestamp counter) provides sufficient uniqueness since containers
+starting at the same CPU cycle is practically impossible - even 1ms
+of startup time difference means millions of cycles apart at GHz
+frequencies.
 
-This patch seems to have gotten stuck in the unreviewed dead pile.
-Looking at it, it addresses a potential problem but there are issues.
-Please consider what this AI review feedback had to say and resubmit
+Also, reduce the name buffer from PATH_MAX to RTE_FBARRAY_NAME_LEN
+since it is only used for the fbarray name.
 
-Now let me analyze this patch against the AGENTS.md criteria and evaluate t=
-he technical correctness.
-
-## Evaluation Against AGENTS.md
-
-### Commit Message Issues
-
-| Check | Status | Details |
-|-------|--------|---------|
-| Subject =E2=89=A460 chars | =E2=9C=85 | 56 characters |
-| Correct prefix | =E2=9C=85 | `eal/linux:` is correct |
-| Lowercase after colon | =E2=9C=85 | "fix fbarray..." |
-| Imperative mood | =E2=9C=85 | "fix" |
-| No trailing period | =E2=9C=85 | |
-| Signed-off-by present | =E2=9C=85 | |
-| Body lines =E2=89=A475 chars | =E2=9C=85 | |
-
-**Warning**: The commit body is weak - "add the tsc into the name." is very=
- terse and doesn't explain the *problem* being solved. The actual explanati=
-on is after `---` which won't appear in git history. The body should explai=
-n the container PID namespace issue before the Signed-off-by.
-
-### Code Style
-
-| Check | Status | Details |
-|-------|--------|---------|
-| Include order | =E2=9C=85 | `inttypes.h` with system includes, `rte_cycle=
-s.h` with DPDK includes |
-| PRIx64 format | =E2=9C=85 | Correct portable format specifier |
-| Line length | =E2=9C=85 | Within 100 chars |
-
+Signed-off-by: Congjie Zhou <zcjie0802@qq.com>
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
+v4 - update comment and commit message
+   - reduce name buffer from 4K to 64 to save stack space
+     and catch any future format overflow
+ lib/eal/linux/eal_memalloc.c | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
 
-## Technical Correctness Analysis
+diff --git a/lib/eal/linux/eal_memalloc.c b/lib/eal/linux/eal_memalloc.c
+index 1e60e21620..cbe22c98d0 100644
+--- a/lib/eal/linux/eal_memalloc.c
++++ b/lib/eal/linux/eal_memalloc.c
+@@ -7,6 +7,7 @@
+ #include <stdlib.h>
+ #include <stdio.h>
+ #include <stdint.h>
++#include <inttypes.h>
+ #include <string.h>
+ #include <sys/mman.h>
+ #include <sys/stat.h>
+@@ -28,6 +29,7 @@
+ #include <rte_log.h>
+ #include <rte_eal.h>
+ #include <rte_memory.h>
++#include <rte_cycles.h>
+ 
+ #include "eal_filesystem.h"
+ #include "eal_internal_cfg.h"
+@@ -1380,7 +1382,7 @@ secondary_msl_create_walk(const struct rte_memseg_list *msl,
+ {
+ 	struct rte_mem_config *mcfg = rte_eal_get_configuration()->mem_config;
+ 	struct rte_memseg_list *primary_msl, *local_msl;
+-	char name[PATH_MAX];
++	char name[RTE_FBARRAY_NAME_LEN];
+ 	int msl_idx, ret;
+ 
+ 	if (msl->external)
+@@ -1390,9 +1392,16 @@ secondary_msl_create_walk(const struct rte_memseg_list *msl,
+ 	primary_msl = &mcfg->memsegs[msl_idx];
+ 	local_msl = &local_memsegs[msl_idx];
+ 
+-	/* create distinct fbarrays for each secondary */
+-	snprintf(name, RTE_FBARRAY_NAME_LEN, "%s_%i",
+-		primary_msl->memseg_arr.name, getpid());
++	/*
++	 * Create distinct fbarrays for each secondary using TSC for uniqueness,
++	 * since PID is not unique across containers (different PID namespaces).
++	 * The worst case name length is:
++	 * Base name: "memseg-1048576k-99-99" ~21 chars
++	 * Suffix "_<pid>_<16hex>" +24
++	 * Total = 44 < RTE_FBARRAY_NAME_LEN 64
++	 */
++	snprintf(name, sizeof(name), "%s_%"PRIx64,
++		primary_msl->memseg_arr.name, rte_get_tsc_cycles());
+ 
+ 	ret = rte_fbarray_init(&local_msl->memseg_arr, name,
+ 		primary_msl->memseg_arr.len,
+-- 
+2.51.0
 
-### The Problem
-In Linux containers with separate PID namespaces, each container's PID numb=
-ering starts from 1. If multiple secondary DPDK processes in different cont=
-ainers share the same hugetlbfs mount, the fbarray names (which include PID=
-) can collide.
-
-### Issues with the TSC Solution
-
-1. **TSC is not reliably unique**: Two containers starting at nearly the sa=
-me instant on the same CPU could get very close or identical TSC values. Th=
-e TSC counter increments at GHz frequencies, but container startup can be s=
-ynchronized at millisecond granularity.
-
-2. **TSC synchronization issues**: On multi-socket systems, TSC may not be =
-synchronized across sockets/CPUs. While modern CPUs have `constant_tsc` and=
- `nonstop_tsc`, this isn't universal.
-
-3. **Overhead**: `rte_get_tsc_cycles()` is very cheap, but it adds a depend=
-ency on the cycles subsystem being initialized.
-
-4. **Name length**: Adding a 16-character hex value to an already length-li=
-mited name (RTE_FBARRAY_NAME_LEN) could cause truncation issues.
-
----
-
-## Simpler Alternative Solutions
-
-### Option 1: Use `rte_rand()` (Recommended)
-
-```c
-#include <rte_random.h>
-
-snprintf(name, RTE_FBARRAY_NAME_LEN, "%s_%x",
-    primary_msl->memseg_arr.name, rte_rand());
-```
-
-**Advantages**:
-- Cryptographically random, much lower collision probability
-- Already seeded during EAL init
-- No timing dependencies
-- Simpler code (no PID needed at all)
-
-### Option 2: Use the runtime directory uniqueness
-
-The **proper solution** for containers is to use `--file-prefix` which alre=
-ady exists. Each container should specify a unique file prefix, making this=
- problem disappear entirely. This is a documentation/deployment issue, not =
-a code issue.
-
-### Option 3: Combine with monotonic clock nanoseconds
-
-```c
-struct timespec ts;
-clock_gettime(CLOCK_MONOTONIC, &ts);
-snprintf(name, RTE_FBARRAY_NAME_LEN, "%s_%lx",
-    primary_msl->memseg_arr.name,=20
-    (unsigned long)(ts.tv_sec * 1000000000UL + ts.tv_nsec));
-```
-
-This was v1 of the patch and is actually fine - CLOCK_MONOTONIC with nanose=
-cond resolution within a container's lifetime is effectively unique.
-
----
-
-## Verdict
-
-**The patch is technically functional but the solution is suboptimal.**=20
-
-The TSC approach works in practice but has theoretical collision risks. A c=
-leaner approach would be:
-
-1. **Best**: Document that containers sharing hugetlbfs should use `--file-=
-prefix`
-2. **Code fix if needed**: Use `rte_rand()` instead of TSC - it's simpler a=
-nd provides stronger uniqueness guarantees
-
-Would you like me to draft an alternative patch using `rte_rand()`?
