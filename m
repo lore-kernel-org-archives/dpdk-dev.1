@@ -2,68 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1BE4D31A01
-	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Jan 2026 02:00:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08CE6D31A09
+	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Jan 2026 04:59:41 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 92635402A7;
-	Wed, 14 Jan 2026 03:00:53 +0100 (CET)
-Received: from mail-wm1-f66.google.com (mail-wm1-f66.google.com
- [209.85.128.66]) by mails.dpdk.org (Postfix) with ESMTP id 32CDF4029D
- for <dev@dpdk.org>; Wed, 14 Jan 2026 03:00:52 +0100 (CET)
-Received: by mail-wm1-f66.google.com with SMTP id
- 5b1f17b1804b1-47ee0291921so7127945e9.3
- for <dev@dpdk.org>; Tue, 13 Jan 2026 18:00:52 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id DD3F14028F;
+	Wed, 14 Jan 2026 05:59:40 +0100 (CET)
+Received: from mail-wm1-f65.google.com (mail-wm1-f65.google.com
+ [209.85.128.65]) by mails.dpdk.org (Postfix) with ESMTP id 3559C40289
+ for <dev@dpdk.org>; Wed, 14 Jan 2026 05:59:39 +0100 (CET)
+Received: by mail-wm1-f65.google.com with SMTP id
+ 5b1f17b1804b1-477bf34f5f5so66471645e9.0
+ for <dev@dpdk.org>; Tue, 13 Jan 2026 20:59:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768356052;
- x=1768960852; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768366778;
+ x=1768971578; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=taxOpEWBMQXGcfUK21qZLOOqEhuj7I2Lqdh01XefTn0=;
- b=Z444Z3FakHo2BzVBITjRulYi7eIzAk9iC/N7DObJFGK6fziLefcuBIukuvZRjEBSwc
- 1G0xvkZvWZPdXROLLKZrpvxWRXHCKFe7pLgQYfrCYhiOlaMt2m989xadTS+bgFfgoZe3
- hhpiEJMhIQ3Tsmlqs9PN9wPude92QZIBtclITCrHVRXimnHXL4AKa0Onf33pn41mttkl
- GAat2PyYHif5Y/DhXTTDOu8r33iIFQRv7UR5zmuh5bQGNnAqXMHiQEAwakhEdpjIHYfW
- D++xf8NJawLd5XIrhu3srVQK0rBA53jGm1E47AbY9SABEd0qcRegotBDeZ3tkvuD8Kbc
- SLZA==
+ bh=BrN4xZ23pqSjptLNsw8z3KsrYeJrE5Je4wo8bRJk+Js=;
+ b=jLnBPQBD1c37jUMx9zw1N1Zkl8qemeqALCq9WU3UZdO01OkCFcW8x6hEs4UvJtqKq3
+ +vtnBRyR01wfeOgzzf3h+p5cPhBz6BniVivO3Y+ZoewfzNUAy0rP2+nFx2JZ7xa/9yAl
+ VX27XLUciNeuXVrgF1sUCUj3XvEJG/TG0In9wGo4RHDdIVXFySXB8/WvRsY+ynILHdLr
+ yijczJNnH2n0N4mz704LtnIt1semhQh3QRGk6Pga6X808WqNBo2Jm86ZmtqxMzJrVwbE
+ xL7c8pNXX7KKYnc0h+vUJGRGnXYymdZPFEnkdp/5VCBEDs0rPOvhN+rm7iPuYAgpDFd8
+ OTrg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768356052; x=1768960852;
+ d=1e100.net; s=20230601; t=1768366778; x=1768971578;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=taxOpEWBMQXGcfUK21qZLOOqEhuj7I2Lqdh01XefTn0=;
- b=uF3PhtNc1LSrFXkfaerWSFSmDb2Q59SCeb9oAYykJ33QDNRDQJRYg//jMI5a+tN0+i
- WoeQEOnSpg0sov82ovgJhP//1UGyAzBuyCpBzPCcGCiBwURFJpMd4jsRSv7jszIcFvu4
- QqPTkZeaFJbVdNGEhOMJJ+tw0DSlBxCZ10VTzh7xv1d5W+5FiwhN4CD3sws1OSNNmYHW
- ZNRVK/3K7eLHAduAlwDIhn6gngvYJuqxG4LTJ97U0tIv7OswET9od0YnjyqLtq91tBV7
- dnPlNFlI/rfCNz86kYaDF3IjzzMqwp4iNKW5aVfFeCrQmZn/wLWerY0/F1sslT7cy0AO
- 4p8A==
-X-Gm-Message-State: AOJu0YxmvBRrVI1Le3YkVuggCN7uEQzf8wVFqJDXQAxSoDo4fVvSOJEA
- s62HilK4B8PHBWAl3ADJ6PJaw42M2/ocQ8hEdWv6huHIaBbwuCrgVz2ZmyB7zvl82Ps=
-X-Gm-Gg: AY/fxX7Ln93We+tDusXThv6NhK/dxYAq6DBq2EIbtRxoCuovjCBuqj21DDsW22Pun/E
- zRphEf/kLHWBUo/RGB6r4nNpCtnDcrnqO6L/doirpDeNBK/CJ+zZyhoqThaSm95wx7WXRojEogq
- wm47YurFnKotYy01uWI77C3uFKN9mQSmEs03hRffYlf23Z+q/loOslTFJAO2Gte1gspfLgVCvgN
- DtebKuROdVchllngVUPBWJDf+Ffdj2ZwyKY+YOxSU6aMc+qikscpaqZsEnnYE617BHR9GzruTrV
- JoB6qOoF16jYFuuEn12fxhIJ5tqz3UbxwDV4pdeF08amPFD0V46GWA1AMMwu5FJtJuVB/yrAQKv
- pjbyDwnBT3ffXvrkehpO8gWKU2Az2SncuS7Vob9LyT8m6OgB0EtUJWJm9nr/D38zKarWpPYcAj7
- 7ZL2PfnA9AknYyZzEnFVsyKHJJ/kWfPZhfjv0EHPsE6oB/DVJE5hhz
-X-Received: by 2002:a05:600c:35c3:b0:47a:81b7:9a20 with SMTP id
- 5b1f17b1804b1-47ee333b96bmr12946985e9.9.1768356051672; 
- Tue, 13 Jan 2026 18:00:51 -0800 (PST)
+ bh=BrN4xZ23pqSjptLNsw8z3KsrYeJrE5Je4wo8bRJk+Js=;
+ b=ngATJyjyjdiNwWusS6xD9XrZh7U6xMnPhK22Bai7y58L6qGKBtS8IKVbdanue7yeCH
+ s9e95+E2wbWbscYZu+m115/FszonG6PynW3FgS3YUjvcpwUtIfbArmY+ecii71ZIi5ql
+ FPba2U3rR7rAiJtX+jm2U0iYHSAjK5S8UYhW8rXOGrTOoyfJeObTX3WhXUMOM5h10tjB
+ XzTxKZG4MNdR14MmGl0SlRaaxU+tphxMxwtqX6omhY5Lh2N7fuUMFHAFi9GQv+Oadbgr
+ y11mNEefWkvK3si+YYqEWq7jsugWsFkI3YOhA+BpW2fyFqpzGmlZzbJz40jfxVyvwCSZ
+ 4ylQ==
+X-Gm-Message-State: AOJu0Yzun58f6rE3g/LnYmh4kEqOff9b/AXnXYltrdsR1YR1Cq/LhKVX
+ vLWzgdraWgUQUo6t7bE/0y2vZQ1zby6jqHe05WVGDw5P25SZdhEPnqBCkd7cpoOEek0=
+X-Gm-Gg: AY/fxX6FztP5Ge/Z9e6qGf6wq1xkdWk71ksGE75WMmdFFKAwsLo+zp4TzMNSjbJXk92
+ uIp3RyjGJL2N02ElMzoE9aW7kIrN/OXnHg/9TDNJdJkXtecJvTGluJ31zYnfxVFbsMTog6olyK9
+ ZGJLUPNVr0aWILyzto7GHG2EFaes1Lr0vVi5juaEIsHpcJo7lxNGpIgZGkLu8luTTM9pBX+/wCP
+ Si0A1Mx1I8TC0Rnp2eLMhQ1DMEiAvu2XUZpA5gSr8V7HSv25hy8aZEJzFjpqo21hZc3VUqwShdX
+ n6/zxHH4m6Tl8gVj5fPEGoUr9cYRzUJb48Vx9B85V2XwwUgV3AxnikuxZ8AZ9Vm5AS14IaSABEV
+ yzd3uU/l6Ar9lZhMnDs5QgNe4fAQYODKaXvJzwi26URDavZjAQyBCgyHNSA0ARoO40VAToZR/Ls
+ mk9ze8WWgjfOs7E6w2T2knva2v12MDNeCQv8odgNBP48dznx09CSBC
+X-Received: by 2002:a05:600d:6450:10b0:47d:73a4:45a7 with SMTP id
+ 5b1f17b1804b1-47ee3371a2amr10649865e9.24.1768366778178; 
+ Tue, 13 Jan 2026 20:59:38 -0800 (PST)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-47ee563ce3csm3364395e9.14.2026.01.13.18.00.50
+ 5b1f17b1804b1-47ee27ee45bsm12442645e9.7.2026.01.13.20.59.36
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 13 Jan 2026 18:00:51 -0800 (PST)
-Date: Tue, 13 Jan 2026 18:00:46 -0800
+ Tue, 13 Jan 2026 20:59:37 -0800 (PST)
+Date: Tue, 13 Jan 2026 20:59:25 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH v2 0/7] Add script for real-time telemetry monitoring
-Message-ID: <20260113180046.2dab475d@phoenix.local>
-In-Reply-To: <20260105175605.52689-1-bruce.richardson@intel.com>
-References: <20251210165532.103450-1-bruce.richardson@intel.com>
- <20260105175605.52689-1-bruce.richardson@intel.com>
+To: Alex Kiselev <alex@bisonrouter.com>
+Cc: dev@dpdk.org, bruce.richardson@intel.com, vladimir.medvedkin@intel.com
+Subject: Re: [PATCH] lpm: add new LPM v6 implementation (lpm6c)
+Message-ID: <20260113205925.7afb7fc0@phoenix.local>
+In-Reply-To: <20251103132433.38627-1-alex@bisonrouter.com>
+References: <20251103132433.38627-1-alex@bisonrouter.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -80,278 +79,219 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon,  5 Jan 2026 17:55:58 +0000
-Bruce Richardson <bruce.richardson@intel.com> wrote:
+On Mon,  3 Nov 2025 14:24:33 +0100
+Alex Kiselev <alex@bisonrouter.com> wrote:
 
-> TL;DR
-> ------
+> lpm6c is a new implementation of the IPv6 LPM algorithm, based on
+> the existing lpm module. It utilizes a trie path compression technique to
+> optimize lookup operations.
 >=20
-> For a  quick demo, apply patches, run e.g. testpmd and then in a separate
-> terminal run:
+> The implementation offers a performance improvement over the lpm
+> module starting from /64 and longer prefixes. This makes it beneficial
+> for use cases like BNG routers, whose FIB tables contain numerous /64
+> prefixes and primarily handle traffic targeting them.
 >=20
->   ./usertools/dpdk-telemetry-watcher.py -d1T eth.tx
+> Performance comparison results against the original LPM6 for lookups
+> at AMD Ryzen 9 5900XT CPU:
 >=20
-> Output, updated once per second, will be traffic rate per port e.g.:
+> prefix /48 tests:
+> Speedup vs LPM6: LPM6c 0.991x, LPM6c VEC 0.921x, FIB 1.000x, FIB VEC 1.04=
+8x
 >=20
-> Connected to application: "dpdk-testpmd"
-> Time       /ethdev/stats,0.opackets /ethdev/stats,1.opackets        Total
-> 16:29:12                  5,213,119                5,214,304   10,427,423
+> prefix /64 tests:
+> Speedup vs LPM6: LPM6c 1.399x, LPM6c VEC 1.302x, FIB 1.145x, FIB VEC 1.29=
+2x
 >=20
+> prefix /80 tests:
+> Speedup vs LPM6: LPM6c 1.620x, LPM6c VEC 1.558x, FIB 1.096x, FIB VEC 1.22=
+6x
 >=20
-> Fuller details
-> --------------
+> prefix /128 tests:
+> Speedup vs LPM6: LPM6c 2.497x, LPM6c VEC 2.369x, FIB 1.255x, FIB VEC 1.34=
+9x
 >=20
-> While we have the dpdk-telemetry.py CLI app for interactive querying of
-> telemetry on the commandline, and a telemetry exporter script for
-> sending telemetry to external tools for real-time monitoring, we don't
-> have an app that can print real-time stats for DPDK apps on the
-> terminal. This patchset adds such a script, developed with the help of
-> Github copilot to fill a need that I found in my testing. Submitting it
-> here in the hopes that others find it of use.
->=20
-> The script acts as a wrapper around the existing dpdk-telemetry.py
-> script, and pipes the commands to that script and reads the responses,
-> querying it once per second. It takes a number of flag parameters, such
-> as the ones above:
->  - "-d" for delta values, i.e. PPS rather than total packets
->  - "-1" for single-line output, i.e. no scrolling up the screen
->  - "-T" to display a total column
->=20
-> Other flag parameters can be seen by looking at the help output.
->=20
-> Beyond the flags, the script also takes a number of positional
-> parameters, which refer to specific stats to display. These stats must
-> be numeric values, and should take the form of the telemetry command to
-> send, followed by a "." and the stat within the result which is to be
-> tracked. As above, a stat would be e.g. "/ethdev/stats,0.opackets",
-> where we send "/ethdev/stats,0" to telemetry and extract the "opackets"
-> part of the result.
->=20
-> However, specifying individual stats can be awkward, so some shortcuts
-> are provided too for the common case of monitoring ethernet ports. Any
-> positional arg starting with "eth" will be replaced by the set of
-> equivalent values for each port, e.g. "eth.imissed" will track the
-> imissed value on all ports in use in the app. The ipackets and opackets
-> values, as common metrics, are also available as shortened values as
-> just "rx" and "tx", so in the example above, "eth.tx" means to track the
-> opackets stat for every ethdev port.
->=20
-> Finally, the script also has reconnection support so you can leave it
-> running while you start and stop your application in another terminal.
-> The watcher will try and reconnect to a running instance every second.
->=20
-> v2:
-> - improve reconnection handling, eliminating some crashes seen in testing.
->=20
-> Bruce Richardson (7):
->   usertools: add new script to monitor telemetry on terminal
->   usertools/telemetry-watcher: add displaying stats
->   usertools/telemetry-watcher: add delta and timeout opts
->   usertools/telemetry-watcher: add total and one-line opts
->   usertools/telemetry-watcher: add thousands separator
->   usertools/telemetry-watcher: add eth name shortcuts
->   usertools/telemetry-watcher: support reconnection
->=20
->  usertools/dpdk-telemetry-watcher.py | 435 ++++++++++++++++++++++++++++
->  usertools/meson.build               |   1 +
->  2 files changed, 436 insertions(+)
->  create mode 100755 usertools/dpdk-telemetry-watcher.py
->=20
-> --
-> 2.51.0
+> Signed-off-by: Alex Kiselev <alex@bisonrouter.com>
+> ---
 
-Series-Acked-by: Stephen Hemminger <stephen@networkplumber.org>
-
-Automated patch review reports some things that could be added.
+AI code review against AGENTS.md
 
 
+## DPDK Patch Review: lpm: add new LPM v6 implementation (lpm6c)
 
-## DPDK Patch Review: Telemetry Watcher (v2, 7 patches)
-
-**Submitter:** Bruce Richardson <bruce.richardson@intel.com> =20
-**Series:** [PATCH v2 1-7/7] usertools: add telemetry watcher script
+### Summary
+This patch adds a new path-compressed IPv6 LPM implementation with compelli=
+ng performance improvements for /64+ prefixes. However, there are several c=
+ompliance issues that need to be addressed before this can be merged.
 
 ---
 
-### Overall Summary
+### Errors (Must Fix)
 
-This is a well-structured patch series adding a new Python script (`dpdk-te=
-lemetry-watcher.py`) to monitor DPDK telemetry statistics on the command li=
-ne. The series progressively builds up functionality across 7 commits, maki=
-ng the series bisectable.
+**1. SPDX License Format Issues**
 
----
+Multiple files have the SPDX identifier on line 2 instead of line 1:
 
-### Patch-by-Patch Review
-
-#### **Patch 1/7: usertools: add new script to monitor telemetry on termina=
-l**
-
-| Check | Status | Notes |
-|-------|--------|-------|
-| Subject =E2=89=A460 chars | =E2=9C=85 PASS | 53 characters |
-| Lowercase after colon | =E2=9C=85 PASS | |
-| Imperative mood | =E2=9C=85 PASS | "add new script" |
-| No trailing period | =E2=9C=85 PASS | |
-| Signed-off-by | =E2=9C=85 PASS | |
-| Body doesn't start with "It" | =E2=9C=85 PASS | Starts with "The" |
-| SPDX license | =E2=9C=85 PASS | BSD-3-Clause on line 2 (correct for sheba=
-ng script) |
-| Copyright line | =E2=9C=85 PASS | |
-| Blank line after copyright | =E2=9C=85 PASS | |
-
-**Warning (should fix):**
-- **Line 178**: Unnecessary f-string prefix:
-  ```python
-  print(f"Error: Python interpreter or script not found", file=3Dsys.stderr)
-  ```
-  Should be:
-  ```python
-  print("Error: Python interpreter or script not found", file=3Dsys.stderr)
+- `lib/lpm/rte_lpm6c.c` (lines 2498-2501):
+  ```c
+  /*
+   * SPDX-License-Identifier: BSD-3-Clause    =E2=86=90 Wrong: SPDX on line=
+ 2
   ```
 
-#### **Patch 2/7: usertools/telemetry-watcher: add displaying stats**
+- `lib/lpm/rte_lpm6c.h` (lines 3824-3827): Same issue
 
-| Check | Status | Notes |
-|-------|--------|-------|
-| Subject =E2=89=A460 chars | =E2=9C=85 PASS | 47 characters |
-| Signed-off-by | =E2=9C=85 PASS | |
-| Body wrapping | =E2=9C=85 PASS | Wrapped at 75 chars |
+- `app/test/test_lpm6c_perf.c` (lines 1901-1904): Same issue =20
 
-=E2=9C=85 No issues found.
+- `app/test/test_lpm6c_perf_cmp.c` (lines 2068-2071): Same issue
 
-#### **Patch 3/7: usertools/telemetry-watcher: add delta and timeout opts**
-
-| Check | Status | Notes |
-|-------|--------|-------|
-| Subject =E2=89=A460 chars | =E2=9C=85 PASS | 55 characters |
-| Signed-off-by | =E2=9C=85 PASS | |
-
-=E2=9C=85 No issues found.
-
-#### **Patch 4/7: usertools/telemetry-watcher: add total and one-line opts**
-
-| Check | Status | Notes |
-|-------|--------|-------|
-| Subject =E2=89=A460 chars | =E2=9C=85 PASS | 56 characters |
-| Signed-off-by | =E2=9C=85 PASS | |
-
-=E2=9C=85 No issues found.
-
-#### **Patch 5/7: usertools/telemetry-watcher: add thousands separator**
-
-| Check | Status | Notes |
-|-------|--------|-------|
-| Subject =E2=89=A460 chars | =E2=9C=85 PASS | 51 characters |
-| Signed-off-by | =E2=9C=85 PASS | |
-
-=E2=9C=85 No issues found.
-
-#### **Patch 6/7: usertools/telemetry-watcher: add eth name shortcuts**
-
-| Check | Status | Notes |
-|-------|--------|-------|
-| Subject =E2=89=A460 chars | =E2=9C=85 PASS | 50 characters |
-| Signed-off-by | =E2=9C=85 PASS | |
-
-**Info (consider):**
-- Line 1124: f-string without interpolation:
-  ```python
-  print(f"Error: Failed to get ethernet device list", file=3Dsys.stderr)
-  ```
-
-#### **Patch 7/7: usertools/telemetry-watcher: support reconnection**
-
-| Check | Status | Notes |
-|-------|--------|-------|
-| Subject =E2=89=A460 chars | =E2=9C=85 PASS | 48 characters |
-| Signed-off-by | =E2=9C=85 PASS | |
-
-**Info (consider):**
-- Lines 1243-1244: Dynamically adding attributes to `subprocess.Popen` obje=
-ct:
-  ```python
-  process.script =3D telemetry_script
-  process.args =3D args_list
-  ```
-  This works but could be cleaner using a wrapper class or dataclass to hol=
-d the process and its metadata together.
-
----
-
-### Series-Level Issues
-
-#### **Warning: Missing Documentation**
-
-Per AGENTS.md: *"Code and documentation must be updated atomically in same =
-patch"* and *"Documentation must match the code"*
-
-The series adds a new usertool but does not include documentation updates. =
-Consider adding:
-- Usage documentation in `doc/guides/tools/` describing the new script
-- Entry in the tools index
-
-#### **Warning: Missing Release Notes**
-
-Per AGENTS.md: *"New drivers or subsystems must have release notes"* and *"=
-Current release notes updated for significant changes"*
-
-A new usertools script should be mentioned in `doc/guides/rel_notes/release=
-_XX_XX.rst` under a section like "New Features" or similar.
-
-#### **Info: meson.build List Ordering**
-
-In patch 1/7, the addition to `usertools/meson.build`:
-```python
-            'dpdk-hugepages.py',
-            'dpdk-rss-flows.py',
-            'dpdk-telemetry-exporter.py',
-+           'dpdk-telemetry-watcher.py',
+Should be:
+```c
+/* SPDX-License-Identifier: BSD-3-Clause
+ * Copyright(c) 2016-2025 Alex Kiselev, alex at BisonRouter.com
+ */
 ```
 
-Per AGENTS.md: *"Lists alphabetically ordered"*. The insertion is correctly=
- placed alphabetically between `dpdk-telemetry-exporter.py` and the end. =
-=E2=9C=85
+**2. Missing Blank Line After Copyright**
+
+All new files are missing the required blank line between the copyright blo=
+ck and the first `#include`:
+
+Example from `rte_lpm6c.c`:
+```c
+ */
+#include <string.h>   =E2=86=90 Should have blank line before this
+```
+
+**3. Missing `__rte_experimental` Markers**
+
+New APIs must be marked as `__rte_experimental`. None of the public functio=
+ns in `rte_lpm6c.h` have this marker:
+
+```c
+/* Should be: */
+__rte_experimental
+struct rte_lpm6c *
+rte_lpm6c_create(const char *name, int socket_id,
+        const struct rte_lpm6c_config *config);
+```
+
+This applies to all public functions: `rte_lpm6c_create`, `rte_lpm6c_find_e=
+xisting`, `rte_lpm6c_free`, `rte_lpm6c_add`, `rte_lpm6c_delete`, `rte_lpm6c=
+_delete_all`, `rte_lpm6c_lookup`, `rte_lpm6c_lookup_bulk`, etc.
+
+**4. Include Order Violation**
+
+In `rte_lpm6c.c`, system header `<assert.h>` appears after DPDK headers:
+```c
+#include <rte_rwlock.h>
+#include <rte_spinlock.h>
+#include <rte_hash.h>
+#include <assert.h>        =E2=86=90 System header after DPDK headers
+#include <rte_jhash.h>
+```
+
+System headers must come before DPDK headers.
 
 ---
 
-### Code Quality Observations
+### Warnings (Should Fix)
 
-**Positive:**
-- Clean incremental commits that are individually bisectable
-- Good docstrings on functions
-- Proper error handling with messages to stderr
-- Sensible defaults for optional arguments
-- Good use of argparse for CLI handling
+**1. Missing Release Notes**
 
-**Info (minor suggestions):**
-1. The reconnection logic in patch 7/7 could benefit from exponential backo=
-ff instead of fixed 1-second retries
-2. Consider adding `--help` examples in the epilog of argparse
+This is a significant new feature (new LPM6 algorithm) and requires an entr=
+y in `doc/guides/rel_notes/release_XX_XX.rst`. Per guidelines: "New drivers=
+ or subsystems must have release notes."
+
+**2. Missing MAINTAINERS Update**
+
+No update to the `MAINTAINERS` file to add ownership of the new `lpm6c` com=
+ponent.
+
+**3. Missing Doxygen Documentation**
+
+Several public functions lack Doxygen comments:
+- `rte_lpm6c_rules_iterate()` (line 4124)
+- `rte_lpm6c_rules_iterate_cb()` (line 4129) =20
+- `rte_lpm6c_pool_pos()` (line 4376)
+- `rte_lpm6c_used_rules()` (line 4379)
+
+**4. Inconsistent Copyright Format**
+
+`test_lpm6c_perf_cmp.c` has inconsistent copyright:
+```c
+Copyright(c) 2016-2025 Alex Kiselev BisonRouter.com
+```
+vs other files:
+```c
+Copyright(c) 2016-2025 Alex Kiselev, alex at BisonRouter.com
+```
+
+**5. Use of `assert()` Instead of RTE Equivalents**
+
+Multiple uses of standard `assert()` in `rte_lpm6c.c` (lines 3564, 3569, 36=
+01, 3609, 3680, 3694-3698). Consider using `RTE_ASSERT()` or proper error h=
+andling for production code.
+
+**6. Test Registration Style**
+
+The patch uses `REGISTER_FAST_TEST` and `REGISTER_PERF_TEST`. Verify these =
+are the current preferred macros vs. the older `REGISTER_TEST_COMMAND`.
 
 ---
 
-### Summary Table
+### Info (Consider)
 
-| Severity | Count | Items |
-|----------|-------|-------|
-| **Error** | 0 | None |
-| **Warning** | 3 | Missing documentation, missing release notes, unnecessa=
-ry f-string (1/7 line 178) |
-| **Info** | 3 | Unnecessary f-string (6/7), dynamic attribute assignment s=
-tyle (7/7), reconnection backoff |
+**1. Struct Alignment Syntax**
+
+The pattern used:
+```c
+struct rte_lpm6c_tbl8 {
+    ...
+}
+__rte_cache_aligned;
+```
+While this compiles, the more common DPDK style is:
+```c
+struct __rte_cache_aligned rte_lpm6c_tbl8 {
+    ...
+};
+```
+
+**2. Public Structure Exposure**
+
+The full `struct rte_lpm6c` is exposed in the public header (necessary for =
+inline lookup functions). This is a design tradeoff=E2=80=94consider docume=
+nting that the struct layout is not ABI-stable while experimental.
+
+**3. Performance Benchmarks**
+
+The commit message includes good performance data. Consider adding this to =
+documentation as well.
 
 ---
 
-### Recommendation
+### Checklist Summary
 
-**Acked-by candidate** with minor fixes needed:
+| Category | Status |
+|----------|--------|
+| Subject line =E2=89=A460 chars | =E2=9C=93 |
+| Correct component prefix (`lpm:`) | =E2=9C=93 |
+| Signed-off-by present | =E2=9C=93 |
+| SPDX on first line | =E2=9C=97 |
+| Blank line after copyright | =E2=9C=97 |
+| `__rte_experimental` on new APIs | =E2=9C=97 |
+| Include order correct | =E2=9C=97 |
+| Release notes updated | =E2=9C=97 |
+| MAINTAINERS updated | =E2=9C=97 |
+| Tests provided | =E2=9C=93 |
+| Doxygen documentation | Partial |
 
-1. Remove unnecessary f-string prefix in patch 1/7 line 178
-2. Add documentation for the new tool
-3. Add release notes entry
+---
 
-The code itself is well-written and the series structure is good. The issue=
-s are primarily around the documentation requirements rather than technical=
- problems with the implementation.
+### Verdict
 
+**Needs revision.** The algorithm and implementation look solid with good t=
+est coverage and compelling performance numbers. However, there are mandato=
+ry compliance issues (SPDX format, missing experimental markers, include or=
+der) that must be fixed before this can be accepted. A v2 addressing the er=
+rors above would be welcome.
