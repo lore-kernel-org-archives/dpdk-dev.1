@@ -2,73 +2,76 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B28FD31A09
-	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Jan 2026 05:55:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBE20D31A0E
+	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Jan 2026 06:00:31 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0B7314028F;
-	Wed, 14 Jan 2026 06:55:17 +0100 (CET)
-Received: from mail-ed1-f66.google.com (mail-ed1-f66.google.com
- [209.85.208.66]) by mails.dpdk.org (Postfix) with ESMTP id 7543E40289
- for <dev@dpdk.org>; Wed, 14 Jan 2026 06:55:15 +0100 (CET)
-Received: by mail-ed1-f66.google.com with SMTP id
- 4fb4d7f45d1cf-6536e4d25e1so1960199a12.1
- for <dev@dpdk.org>; Tue, 13 Jan 2026 21:55:15 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id E80744028F;
+	Wed, 14 Jan 2026 07:00:30 +0100 (CET)
+Received: from mail-ej1-f68.google.com (mail-ej1-f68.google.com
+ [209.85.218.68]) by mails.dpdk.org (Postfix) with ESMTP id BE2E540289
+ for <dev@dpdk.org>; Wed, 14 Jan 2026 07:00:29 +0100 (CET)
+Received: by mail-ej1-f68.google.com with SMTP id
+ a640c23a62f3a-b876798b97eso33890866b.1
+ for <dev@dpdk.org>; Tue, 13 Jan 2026 22:00:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768370115;
- x=1768974915; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768370429;
+ x=1768975229; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=vKfLe3RXmiplUyq763aCGioW643g7cyeFLBMDe8cPS8=;
- b=HUWD7jdRCSNlXmL/Kh/rUuNetWTGZ2o6IlRVAfWksFgLZ1BsHK6hI0X1NhCq0oxzSw
- FbarMmnieOezQV5Dac/ZT96chc5P8LNf8WlKB/dnF2nVZATAz/k8fE5Gj0/lnU4az5uW
- W4XvJJP555WlV+3qBW04ix1zONBVq54RC4ohqVS/N1i/LlhbmgzUw2k/Y64KJLYXKzyV
- xFWdqveseTIwtmTesedgFLPxDRXflxLtZT2cGMmtaBlR3ABx9YcdL7DmHk0r+n63+Ctk
- OewxJwA+9/hKz8SartgbD5F6fH8VsgVcoG8Zz4v3zbT2FEZTsessvv3PLZyYktWxV5Pq
- Ajxg==
+ bh=05sEELVKkQ9rGxGEcHPg4crWaaIoGGTt+BanKNhpQao=;
+ b=dMAOXyxTYkXPGFy7NLOCkq0/8W/0E3zzD+9At+YGpm9tlk0nuwIN72PFYEi65MWBAo
+ Gubo5ZBwJiyyzSrJCFpPPVjeWXS0bpXJyJdj1u8rF03s88ZD3D79EdiHi+h2wr6XOYyM
+ UurIvlpIZg8YeGvZ/KlJeWOj7oOdY+MlGQTBzgaS7nA/0fLh8Zx4M8w44BUrUuxi8mpC
+ D6M2+MKpOEJCBQNgs1kNAowNkMKeLq7ysGS+aVWunqBEv4YgFeCqg9L3KXGzgU1OgERh
+ T+TRcejU5mWvVlADmhaw/glUjpMK4Y3cPSRZJhcEtCvNGYHIXD3CqFoZXobjEuR/ghHq
+ /ipA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768370115; x=1768974915;
+ d=1e100.net; s=20230601; t=1768370429; x=1768975229;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=vKfLe3RXmiplUyq763aCGioW643g7cyeFLBMDe8cPS8=;
- b=duGBbygpitu+99vgU4RwtZMufZ0LatsQ2gZJsIu6z5OotSaNxNExeB6+UNFkKxqcRi
- ndvOoWL1G+8zNVUasaZ/sKGnzi9LufPKfprKLZaH8Xpb1rp5aRrmI9Yt0Wr9gANxrGYA
- 5D6Uxm0dXv/Dootpp/nyiiCyluPnFyUvKUjYksKzKxtsIHGU8TGxDf2TIOaS3USaS6OL
- sSXOpx+RbJhOEEVxXFBzVpaQiYkDsmBA3y/sgdJX/INI18UrSAR4TpYJHaj+EiyNsZKJ
- jzC/BJSNSIe12bzR/P+3nihdQcv7laBru836+xvjDIz+wW50Mss+YOjPKumRqLmeMmJP
- w8cA==
-X-Gm-Message-State: AOJu0Yytx4LHjtFwsA6l4DYxN7KPF+vfiFqZQBgBYWInUhr8/HTcV7ed
- 7lSjuV8Jj857508c3rhx/zbiCP5VQWMevnRuEzYHk4seCQnHunb0wx03zVwVnax5GSLPC4sMoqX
- toWc6
-X-Gm-Gg: AY/fxX4TsbI+6pdaij6356naKI2+imSA+rKMFeeI3Llwwhv6Mif6hoDs03V5L18cLC2
- TKRr0AZD4kB1WxAoV5DOz89bBUmbM33bFWu4v9qkEf958sgw89Z3JhuBnZ8szn46l4EY6+ZBaW2
- 77LhmOi8MPw0ikJQe1mE+/PLs9YqUR78xaNhPhypcExhpzYXgGECTxN3rdRdwb33GiVv3mkOoQd
- 8xsY7QfKTaKwSxDcMcvO45sjI0UiCbw7NMc4yZcL3cfJpNMlHdcvTi9GJyNdq6ifnpW00uDmqxc
- RpfrSJNsvNfAcUal6351lUE+vZh5D5Ym13UtYbCdoF8lItiGCz8Fosp09WvTdQPTN4jtlRd0Jqp
- KIyFhj/2BH+uHAoMM04ENRxM9Y7Bvf4RXGRrCzT2d317YcQatYRTmFAgQQLaaQCIM7Mp3dEwAky
- SCo0p9D5QooRgTPpsNvslcGh2skSyo+XjKX5Pur1ZvGI3jRTZUqw==
-X-Received: by 2002:a05:6402:35ca:b0:64d:88c:c2b7 with SMTP id
- 4fb4d7f45d1cf-653ec312f7dmr1050699a12.14.1768370114842; 
- Tue, 13 Jan 2026 21:55:14 -0800 (PST)
-Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
+ bh=05sEELVKkQ9rGxGEcHPg4crWaaIoGGTt+BanKNhpQao=;
+ b=CkHeMMJNXCQET+rzVNi4Sub+12wPGVTXBmWn0BHl05BVgsQjiDO4qOEqt1o4opJjPZ
+ +MnBcx+/ine1PXrg2TNah+O7bZj6A5LoYux6BsayjmgrLM2NnDSVbH+AWmbNAkg00rns
+ n+tqKtA9WoQ5/wB5NTE+Iz6kKr16pOctomhWjXteu17fg3MZiDoSi+Du2aRWI18GbmV8
+ Wvhl2sUbn5OqCpUo6mJS+vIY+TyNYkxN9FUJmiQcTvxKqcMJ6HpCzBJzuQIrk9yUSRN/
+ azdsmtPXNO5w/XksinpzOFXSVKDuGm48aH1Yo3L4Q5L2f8z7QeOORt4CYvgueyJKIl6I
+ kaUQ==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCWprfYz79zpqF8VpxzDsKdJE5eRooAAShq9fpPrN+3ABxV3uLrV4ckzgcahdlcv0pu9ntA=@dpdk.org
+X-Gm-Message-State: AOJu0YycFD4HXkTDFWcuz++/72jYR5vnqvtiL/rmQrHbG7hFLVPwsxq8
+ DDTdOQPfYv9vZv9DBIgfOqaalKwVHc0l/7IjbhgVLxWORayE7Qy7owyCeHUPHLqoDlo=
+X-Gm-Gg: AY/fxX7iczub5bQFkpXnpsaEi1pu5tY4HckR+Sk3RUgiLK/ANTAg9XOdTFWnrWQd9Qn
+ E5lKOu5ALp0je9ZkFqXm8H5beUuyEjNE6y92J76NuFd2KXhsIWSs/aYXSTqMSiE4qq1F1b69ZGs
+ kGHxgoWqdq5bgztcaBEfZdsZFCgt2SDSusbVuZQSwbDPLaNmlOOLmA+EtUljaqKO7IJO8Ml8/Bi
+ YtnuflCPF5QeuzlfgI1dKH1nHUh92JYVIbekchvwJICDoI9HGbaUQyO2cwthKrFRDYJk65n7b1x
+ o+fDAsR7roz3QkuV1MOOsBLChZCpXVmDGuRih5K4TLwxjBjp/vELtoj0pbTLQYIfLQS5falBoww
+ wbPzvjMItmhdH/fyh5FbQ/Qwy/kJdwbA3Rf/qM1rtI4kyhhUZeQCOS/+08H0r5weza2HKAws5p0
+ 5towHH+0GeAtLXnx/b4pcO3+UbLvMutHkOHsK1J9+Q6CYiXP/Fm6Hw
+X-Received: by 2002:a17:907:7202:b0:b77:1b05:a081 with SMTP id
+ a640c23a62f3a-b87610438d1mr123126266b.27.1768370429043; 
+ Tue, 13 Jan 2026 22:00:29 -0800 (PST)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 4fb4d7f45d1cf-6507bf6d4acsm22184980a12.30.2026.01.13.21.55.12
+ a640c23a62f3a-b842a56c552sm2413547166b.68.2026.01.13.22.00.27
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 13 Jan 2026 21:55:14 -0800 (PST)
+ Tue, 13 Jan 2026 22:00:28 -0800 (PST)
+Date: Tue, 13 Jan 2026 22:00:22 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Congjie Zhou <zcjie0802@qq.com>
-Subject: [PATCH v4] Subject: eal/linux: fix fbarray name collision in
- containers
-Date: Tue, 13 Jan 2026 21:54:01 -0800
-Message-ID: <20260114055508.106779-1-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <tencent_C757C0BA2AC7438F65C6522E700005F53605@qq.com>
-References: <tencent_C757C0BA2AC7438F65C6522E700005F53605@qq.com>
+To: Thomas Monjalon <thomas@monjalon.net>
+Cc: Bruce Richardson <bruce.richardson@intel.com>, dev@dpdk.org, Hemant
+ Agrawal <hemant.agrawal@nxp.com>, Sachin Saxena <sachin.saxena@nxp.com>
+Subject: Re: [PATCH] license: standardize SPDX tag for 3-Clause BSD
+Message-ID: <20260113220022.65ab97d2@phoenix.local>
+In-Reply-To: <3883425.DVCPrJfaZc@thomas>
+References: <20251112091335.662991-1-thomas@monjalon.net>
+ <7067595.Whz1cUOskA@thomas>
+ <aRRWWdQjWTodkYxG@bricha3-mobl1.ger.corp.intel.com>
+ <3883425.DVCPrJfaZc@thomas>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,78 +85,32 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-When multiple secondary processes run in different containers that
-share the same hugetlbfs mount, the fbarray names can collide.
-This happens because containers use separate PID namespaces, so
-different processes in different containers can have the same PID.
+On Wed, 12 Nov 2025 10:43:16 +0100
+Thomas Monjalon <thomas@monjalon.net> wrote:
 
-Fix by replacing the PID with a timestamp-based value. The TSC
-(timestamp counter) provides sufficient uniqueness since containers
-starting at the same CPU cycle is practically impossible - even 1ms
-of startup time difference means millions of cycles apart at GHz
-frequencies.
+> 12/11/2025 10:41, Bruce Richardson:
+> > On Wed, Nov 12, 2025 at 10:38:44AM +0100, Thomas Monjalon wrote:  
+> > > 12/11/2025 10:31, Bruce Richardson:  
+> > > > On Wed, Nov 12, 2025 at 10:13:35AM +0100, Thomas Monjalon wrote:  
+> > > > > Make sure the SPDX tag is used as defined in license/README.
+> > > > > Reduce separator to single space.
+> > > > > Use parenthesis and uppercased "OR" when a second license is applied.  
+> > > > 
+> > > > Upper-case or is fine, I suppose, but I'm not convinced we need the
+> > > > parentheses. However, I see other drivers tend to have it, so let's
+> > > > standardize on that.  
+> > > 
+> > > I'm not convinced as well.
+> > > 
+> > > Looking at https://spdx.dev/learn/handling-license-info/
+> > > it seems we don't need parentheses in general.
+> > >   
+> > Shall we just avoid fixing the parens until we definitively decide on that.
+> > Just standardize on spacing and upper case "OR"? Whatever approach you
+> > decide for this release, you can keep my ack.  
+> 
+> I plan to rework this patch by standardizing without parentheses,
+> and add more checks.
 
-Also, reduce the name buffer from PATH_MAX to RTE_FBARRAY_NAME_LEN
-since it is only used for the fbarray name.
-
-Signed-off-by: Congjie Zhou <zcjie0802@qq.com>
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
----
-v4 - update comment and commit message
-   - reduce name buffer from 4K to 64 to save stack space
-     and catch any future format overflow
- lib/eal/linux/eal_memalloc.c | 17 +++++++++++++----
- 1 file changed, 13 insertions(+), 4 deletions(-)
-
-diff --git a/lib/eal/linux/eal_memalloc.c b/lib/eal/linux/eal_memalloc.c
-index 1e60e21620..cbe22c98d0 100644
---- a/lib/eal/linux/eal_memalloc.c
-+++ b/lib/eal/linux/eal_memalloc.c
-@@ -7,6 +7,7 @@
- #include <stdlib.h>
- #include <stdio.h>
- #include <stdint.h>
-+#include <inttypes.h>
- #include <string.h>
- #include <sys/mman.h>
- #include <sys/stat.h>
-@@ -28,6 +29,7 @@
- #include <rte_log.h>
- #include <rte_eal.h>
- #include <rte_memory.h>
-+#include <rte_cycles.h>
- 
- #include "eal_filesystem.h"
- #include "eal_internal_cfg.h"
-@@ -1380,7 +1382,7 @@ secondary_msl_create_walk(const struct rte_memseg_list *msl,
- {
- 	struct rte_mem_config *mcfg = rte_eal_get_configuration()->mem_config;
- 	struct rte_memseg_list *primary_msl, *local_msl;
--	char name[PATH_MAX];
-+	char name[RTE_FBARRAY_NAME_LEN];
- 	int msl_idx, ret;
- 
- 	if (msl->external)
-@@ -1390,9 +1392,16 @@ secondary_msl_create_walk(const struct rte_memseg_list *msl,
- 	primary_msl = &mcfg->memsegs[msl_idx];
- 	local_msl = &local_memsegs[msl_idx];
- 
--	/* create distinct fbarrays for each secondary */
--	snprintf(name, RTE_FBARRAY_NAME_LEN, "%s_%i",
--		primary_msl->memseg_arr.name, getpid());
-+	/*
-+	 * Create distinct fbarrays for each secondary using TSC for uniqueness,
-+	 * since PID is not unique across containers (different PID namespaces).
-+	 * The worst case name length is:
-+	 * Base name: "memseg-1048576k-99-99" ~21 chars
-+	 * Suffix "_<pid>_<16hex>" +24
-+	 * Total = 44 < RTE_FBARRAY_NAME_LEN 64
-+	 */
-+	snprintf(name, sizeof(name), "%s_%"PRIx64,
-+		primary_msl->memseg_arr.name, rte_get_tsc_cycles());
- 
- 	ret = rte_fbarray_init(&local_msl->memseg_arr, name,
- 		primary_msl->memseg_arr.len,
--- 
-2.51.0
-
+Ping.
+Yes paren's look wrong.
