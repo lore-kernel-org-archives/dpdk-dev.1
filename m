@@ -2,71 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8416AD3CC86
-	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Jan 2026 22:26:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F16A1D3CC86
+	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Jan 2026 22:26:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 72EF5410DC;
-	Wed, 14 Jan 2026 23:25:23 +0100 (CET)
-Received: from mail-wm1-f66.google.com (mail-wm1-f66.google.com
- [209.85.128.66]) by mails.dpdk.org (Postfix) with ESMTP id 83297410DC
- for <dev@dpdk.org>; Wed, 14 Jan 2026 23:25:22 +0100 (CET)
-Received: by mail-wm1-f66.google.com with SMTP id
- 5b1f17b1804b1-47a95efd2ceso2676635e9.2
- for <dev@dpdk.org>; Wed, 14 Jan 2026 14:25:22 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id EC01C410ED;
+	Wed, 14 Jan 2026 23:25:24 +0100 (CET)
+Received: from mail-wm1-f65.google.com (mail-wm1-f65.google.com
+ [209.85.128.65]) by mails.dpdk.org (Postfix) with ESMTP id 88C11410E3
+ for <dev@dpdk.org>; Wed, 14 Jan 2026 23:25:24 +0100 (CET)
+Received: by mail-wm1-f65.google.com with SMTP id
+ 5b1f17b1804b1-477a2ab455fso3337085e9.3
+ for <dev@dpdk.org>; Wed, 14 Jan 2026 14:25:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768429522;
- x=1769034322; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768429524;
+ x=1769034324; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=Wl7E/xJw9J2ZEAvthqdps963jAYHV7WZE8qWEIjlBoE=;
- b=I1VxFzr9GKKcYLV4Gf72wzPT0oSLrYBq+H8cT7JC1xlksPagCkIF3Up+hAbN+oIdE9
- Yruz6MUeUEiW7lYehseaqChGKYTeYimidUkqRlIgo7JteJqB/6orcoOOtomIKjZsLmtQ
- GZG3gN2/geW2nJpUa1/9ixtSrL+snu0Fo+eYj5m/kfqqEWN0m74FdQ4VNtddnJtTQyug
- CX/6xrEYeiexshg8DgyvY54DCe4cjfOHTMHqBt7Uj8QaWGkGRHAxeT5kAszdQNoiYwW8
- +mjC5J0eRXqr00pSZOPzFwF7QlX9XRFpxB8P/EQP8M5V+SotlUNMStcupew8EZbGhkdm
- Mbdg==
+ bh=wuMGaf32onpR5NITU9g727fZfjyVTeVjrojwaiycK9I=;
+ b=Ca5WAhY9XNT9M6WfpASZHvgdUmB08canh5QqYMzq6ByEGQhkRfHRPTb+8N41e0jRnL
+ 2G2yA7CEkwGp4z8BzJXGBgWHhxDu9kFuXmrOYZAFf0JxVU3eHZ/LW857xlAugga4CrYP
+ RayqRmCGcS6/ybtwdBGzqDvlIFRbpBkgZd+LEfreHhnfLZIRBZ6SPX34PH3akTyrxIDF
+ pHLMcb39cKumyg4pi2pDm38DQlAGwenhMR8jrV+bjam2uzRwc9TZAhxKoGr0XOB3N9lC
+ qgButWURD4XNQPsjxLLHfyrs0y0UC2kOogcvY9vUGbOS4j7tqHGATMOdxcPp9TkyWB6W
+ jQ4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768429522; x=1769034322;
+ d=1e100.net; s=20230601; t=1768429524; x=1769034324;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=Wl7E/xJw9J2ZEAvthqdps963jAYHV7WZE8qWEIjlBoE=;
- b=lLmxxdwEIDNdsXeHzM4A/Ku6O2N6edohVbRlYq74eh0yQBMU55XTIaRLWcBIBsbx0T
- WKyWwT4+ECdsxNiYu8jLeyKZ9ui0hxNe3DKPSEEL/qwf69jR4evpAHWDMDdWHiZExSx4
- k4w/iwrgFTmj60GwjlLKx4CDqsyyudI3/q5FxGBOoQLVLoXgKniA8jrO17n3RJjlLpEG
- sAHi6L+s+kOls2h3CVPacMOPjf0NkuqW17eIwNpiEvJRu6oDegLB41YOKkvFc3nQ11XW
- RQyYpNT+5xirC2/SYI3zSu21jn1FaqiwTk3rmdH9OVkKFCp7E4Im5QTZaTalKZQepO7w
- Q5KA==
-X-Gm-Message-State: AOJu0YzU+2+DvieltoZu8OydvJIYDonjjyQ0GFvfRWdamb7YMp/Z7V+u
- B0eS2K4iZe1O8vdrqnCr7r76sCjMc1QYZ7tch4sTse16g+LaMsBJutuUfZ+W4l5kzt3MMbIgiB+
- j9NjAj9g=
-X-Gm-Gg: AY/fxX5/4Spn0dAnPoyP+xisjiXo74DeVFUX4GZWvnmegKe4qWAqEXg9t/MEwMVAcPh
- QAMN5Q3hcCzOWwcDQEyuJIBiCFs3S9IR5vlg6HyiGM/XCy1uSAW3TqueSoO7uTlrK+nRQ6k1u7c
- esxnJShiLlNM1ePK36zfUM6PGY7agpe26ZtkXdf2vWYTfH+5gM2JjtBm8QpTxxvi5jYblWqAz08
- CUaju58epo37+Mv5MAPbJCx88QZIxNR/a81HfTJx8+fkA+zLwuJOACXYXEPlF2nCtryzJhwJ/PQ
- F2Un1NnzFFzXDzc+peNTIG5/4zXabT2MTgO5hfZS2ypukc5ca4RAt6Ju86BZTYyMGgG4Bbejgtv
- kv3j4XA+JsUzDG+U2oPXxAFiYG8GozAwaGCyZ5T9+huPuAB7uhnLgg74YPxxYeOX3F4Dck+9B4+
- B6kAeKEjWXRoH1OrtIfdVsE46WBVvNcobs9sAW+PK9LC5m/xZOGQ==
-X-Received: by 2002:a05:600c:4e42:b0:47e:c562:a41f with SMTP id
- 5b1f17b1804b1-47ee481a353mr42826275e9.18.1768429521858; 
- Wed, 14 Jan 2026 14:25:21 -0800 (PST)
+ bh=wuMGaf32onpR5NITU9g727fZfjyVTeVjrojwaiycK9I=;
+ b=V6e5ooWANXEa+4mlpCeU0ODHIaWW15SSrEW8iveJ1MCwvt4BX5HbIgY1deza5SVpEB
+ 9/bXxnDhQDoFj7+OvX3uqJnObjwrcI6d5RyqrORAEMSpcqGz14KQCERKmm1Cm73yI4Yf
+ GFjbxmTEyUjMDHWhYYN6iYsf4BRWGBmR+WR6tMpyv/xHxFnWnnZfdcVdKxySzH6Doblj
+ bgrT1KKnhexzfzGCiUgkxz37tES6BGVCF+F1H6+uxM2HqTymAhGmsnEy3FFZL0uax+Qq
+ oIY9pI/ZLzYInkEu8alHJJ8vgeAvvBxtjteC1IcgFntgL9VmeQ/xztO6/7TpHmkCKviq
+ PPwg==
+X-Gm-Message-State: AOJu0YzvtmfQX8Ym64y6u1zFdrg22NM5YUcs/2/uJi9XiZiL7fMF6uZ8
+ MixdrrShIApifVIc6NLbR+Q6i0cxYPofyWkrFYOedIxmOjP3SE2mWmLLDe9khSOGr3T1me6dBkn
+ mm2yddsQ=
+X-Gm-Gg: AY/fxX5SCL+o37PLbIehS3Q4OqK02sHrZf5+5CJWpEEJ3NH2SnG8Gxw6uTmYog+gUm2
+ BrBz7Ex2LtHcxRH0ncixgGuCToCm/qOIM4xZaVNcKfD8IhaEeiYsYQWvpo5RB+xX+HBYEaSZoCS
+ N1qUHq6gVtnn73XEtC0C5VE4vHxvZ1TGFflHESMN5B99HceauuFgCSMB9kwZ1oklpWtkAgR6wWR
+ 1C0jRlbPMWM3pgS/Pk/jcd/TwAQUFlK1y5hC0XCldzljxEvwnix4GSQyQQ2aZt3NcekM6vyd3Er
+ xSNoCQKAyvw/ccVAMRAiriR0vV3FWYCmsNRE6QEdZLp9qJig6Ayir7QFOAc59mtZz/Wnpg+BWLy
+ 2PB/4f8f/EYF1P0nwV04AExYP2nWQUMHFzhKaV6vnJfmWshjpdwwJ6tlJi8+Sc5HURaPkX9IbiW
+ S/9jqae/jwhWaoMQG9CSw41yfUp1yffDDG6ez6BuP2/qWCzY1/pw==
+X-Received: by 2002:a05:600c:a415:b0:47e:e779:36e with SMTP id
+ 5b1f17b1804b1-47ee7790531mr32105805e9.19.1768429523862; 
+ Wed, 14 Jan 2026 14:25:23 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-47f42907141sm12040355e9.9.2026.01.14.14.25.20
+ 5b1f17b1804b1-47f42907141sm12040355e9.9.2026.01.14.14.25.22
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 14 Jan 2026 14:25:21 -0800 (PST)
+ Wed, 14 Jan 2026 14:25:23 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Cristian Dumitrescu <cristian.dumitrescu@intel.com>
-Subject: [PATCH 11/29] examples/qos: improve sample application documentation
-Date: Wed, 14 Jan 2026 14:21:52 -0800
-Message-ID: <20260114222458.87119-12-stephen@networkplumber.org>
+ Maxime Coquelin <maxime.coquelin@redhat.com>,
+ Chenbo Xia <chenbox@nvidia.com>
+Subject: [PATCH 12/29] examples/vhost: improve sample application documentation
+Date: Wed, 14 Jan 2026 14:21:53 -0800
+Message-ID: <20260114222458.87119-13-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260114222458.87119-1-stephen@networkplumber.org>
 References: <20260114222458.87119-1-stephen@networkplumber.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -81,82 +83,453 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Rewrite the QoS metering and QoS scheduler documentation for clarity
-and correctness.
+Rewrite the vhost, vhost_blk, and vhost_crypto documentation for
+consistency, clarity, and correctness.
 
-Changes to qos_metering.rst:
-- Correct duplicate "srTCM" entries to "trTCM" in the mode list
-- Simplify and clarify introductory text
+Common changes across all files:
+- Add Overview sections where missing
+- Standardize section structure (Compiling, Running, Explanation)
+- Standardize "QEMU" capitalization (was inconsistent "Qemu")
+- Add missing commas after introductory clauses
 - Use imperative mood for instructions
-- Add Oxford commas for consistency
-- Remove unnecessary empty rows in tables
+- Improve parameter formatting using RST definition lists
 
-Changes to qos_sched.rst:
-- Rewrite command descriptions for clarity
-- Improve formatting of command syntax using inline literals
-- Streamline bullet point structure
-- Remove unnecessary empty rows in tables
-- Make language more concise throughout
+Changes to vhost.rst:
+- Reorganize Testing Steps as a subsection under Overview
+- Correct "bond" to "bound" for UIO driver binding
+- Improve parameter descriptions with proper indentation
+- Streamline packet injection instructions
+
+Changes to vhost_blk.rst:
+- Restructure QEMU requirements as a proper bulleted list
+- Clarify reconnect and packed ring feature descriptions
+
+Changes to vhost_crypto.rst:
+- Reformat command-line options as definition list
+- Clarify zero-copy experimental status warning
+- Improve device initialization requirements description
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- doc/guides/sample_app_ug/qos_metering.rst  |  95 ++++-----
- doc/guides/sample_app_ug/qos_scheduler.rst | 214 +++++++++++----------
- 2 files changed, 158 insertions(+), 151 deletions(-)
+ doc/guides/sample_app_ug/vhost.rst        | 185 +++++++++++-----------
+ doc/guides/sample_app_ug/vhost_blk.rst    |  58 ++++---
+ doc/guides/sample_app_ug/vhost_crypto.rst |  94 +++++------
+ 3 files changed, 175 insertions(+), 162 deletions(-)
 
-diff --git a/doc/guides/sample_app_ug/qos_metering.rst b/doc/guides/sample_app_ug/qos_metering.rst
-index e7101559aa..c6ab8f78ab 100644
---- a/doc/guides/sample_app_ug/qos_metering.rst
-+++ b/doc/guides/sample_app_ug/qos_metering.rst
-@@ -4,19 +4,22 @@
- QoS Metering Sample Application
+diff --git a/doc/guides/sample_app_ug/vhost.rst b/doc/guides/sample_app_ug/vhost.rst
+index 4c944a844a..40de72be73 100644
+--- a/doc/guides/sample_app_ug/vhost.rst
++++ b/doc/guides/sample_app_ug/vhost.rst
+@@ -4,6 +4,9 @@
+ Vhost Sample Application
+ ========================
+ 
++Overview
++--------
++
+ The vhost sample application demonstrates integration of the Data Plane
+ Development Kit (DPDK) with the Linux* KVM hypervisor by implementing the
+ vhost-net offload API. The sample application performs simple packet
+@@ -13,27 +16,26 @@ traffic from an external switch is performed in hardware by the Virtual
+ Machine Device Queues (VMDQ) and Data Center Bridging (DCB) features of
+ the Intel® 82599 10 Gigabit Ethernet Controller.
+ 
+-Testing steps
+--------------
++Testing Steps
++~~~~~~~~~~~~~
+ 
+-This section shows the steps how to test a typical PVP case with this
+-dpdk-vhost sample, whereas packets are received from the physical NIC
+-port first and enqueued to the VM's Rx queue. Through the guest testpmd's
+-default forwarding mode (io forward), those packets will be put into
+-the Tx queue. The dpdk-vhost example, in turn, gets the packets and
+-puts back to the same physical NIC port.
++This section shows how to test a typical PVP case with the dpdk-vhost sample,
++where packets are received from the physical NIC port first and enqueued to the
++VM's Rx queue. Through the guest testpmd's default forwarding mode (io forward),
++those packets are put into the Tx queue. The dpdk-vhost example, in turn,
++gets the packets and puts them back to the same physical NIC port.
+ 
+-Build
+-~~~~~
++Compiling the Application
++-------------------------
+ 
+-To compile the sample application see :doc:`compiling`.
++To compile the sample application, see :doc:`compiling`.
+ 
+ The application is located in the ``vhost`` sub-directory.
+ 
+ .. note::
+-   In this example, you need build DPDK both on the host and inside guest.
++   In this example, you need to build DPDK both on the host and inside guest.
+ 
+-. _vhost_app_run_vm:
++.. _vhost_app_run_vm:
+ 
+ Start the VM
+ ~~~~~~~~~~~~
+@@ -50,12 +52,12 @@ Start the VM
+         ...
+ 
+ .. note::
+-    For basic vhost-user support, QEMU 2.2 (or above) is required. For
+-    some specific features, a higher version might be need. Such as
+-    QEMU 2.7 (or above) for the reconnect feature.
++    For basic vhost-user support, QEMU 2.2 or later is required. For
++    some specific features, a higher version might be needed. For example,
++    QEMU 2.7 or later is required for the reconnect feature.
+ 
+ 
+-Start the vswitch example
++Start the vswitch Example
+ ~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+ .. code-block:: console
+@@ -64,40 +66,44 @@ Start the vswitch example
+              -- --socket-file /tmp/sock0 --client \
+              ...
+ 
+-Check the `Parameters`_ section for the explanations on what do those
+-parameters mean.
++See the `Parameters`_ section for explanations of the command-line options.
++
++Running the Application
++-----------------------
+ 
+ .. _vhost_app_run_dpdk_inside_guest:
+ 
+-Run testpmd inside guest
++Run testpmd Inside Guest
+ ~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+-Make sure you have DPDK built inside the guest. Also make sure the
+-corresponding virtio-net PCI device is bond to a UIO driver, which
+-could be done by:
++Ensure DPDK is built inside the guest and that the corresponding virtio-net
++PCI device is bound to a UIO driver. This can be done as follows:
+ 
+ .. code-block:: console
+ 
+    modprobe vfio-pci
+    dpdk/usertools/dpdk-devbind.py -b vfio-pci 0000:00:04.0
+ 
+-Then start testpmd for packet forwarding testing.
++Then, start testpmd for packet forwarding testing.
+ 
+ .. code-block:: console
+ 
+     ./<build_dir>/app/dpdk-testpmd -l 0-1 -- -i
+     > start tx_first
+ 
+-For more information about vIOMMU and NO-IOMMU and VFIO please refer to
+-:doc:`/../linux_gsg/linux_drivers` section of the DPDK Getting started guide.
++For more information about vIOMMU, NO-IOMMU, and VFIO, see the
++:doc:`/../linux_gsg/linux_drivers` section of the DPDK Getting Started Guide.
+ 
+-Inject packets
+---------------
++Explanation
++-----------
+ 
+-While a virtio-net is connected to dpdk-vhost, a VLAN tag starts with
+-1000 is assigned to it. So make sure configure your packet generator
+-with the right MAC and VLAN tag, you should be able to see following
+-log from the dpdk-vhost console. It means you get it work::
++Inject Packets
++~~~~~~~~~~~~~~
++
++When a virtio-net device connects to dpdk-vhost, a VLAN tag starting with
++1000 is assigned to it. Configure your packet generator with the appropriate
++MAC and VLAN tag. The following log message should appear on the dpdk-vhost
++console::
+ 
+     VHOST_DATA: (0) mac 52:54:00:00:00:14 and vlan 1000 registered
+ 
+@@ -105,88 +111,86 @@ log from the dpdk-vhost console. It means you get it work::
+ .. _vhost_app_parameters:
+ 
+ Parameters
+-----------
++~~~~~~~~~~
+ 
+ **--socket-file path**
+-Specifies the vhost-user socket file path.
++    Specifies the vhost-user socket file path.
+ 
+ **--client**
+-DPDK vhost-user will act as the client mode when such option is given.
+-In the client mode, QEMU will create the socket file. Otherwise, DPDK
+-will create it. Put simply, it's the server to create the socket file.
+-
++    DPDK vhost-user acts as the client when this option is given.
++    In client mode, QEMU creates the socket file. Otherwise, DPDK
++    creates it. The server always creates the socket file.
+ 
+ **--vm2vm mode**
+-The vm2vm parameter sets the mode of packet switching between guests in
+-the host.
++    Sets the mode of packet switching between guests in the host.
+ 
+-- 0 disables vm2vm, implying that VM's packets will always go to the NIC port.
+-- 1 means a normal mac lookup packet routing.
+-- 2 means hardware mode packet forwarding between guests, it allows packets
+-  go to the NIC port, hardware L2 switch will determine which guest the
+-  packet should forward to or need send to external, which bases on the
+-  packet destination MAC address and VLAN tag.
++    - 0 disables vm2vm, meaning VM packets always go to the NIC port.
++    - 1 enables normal MAC lookup packet routing.
++    - 2 enables hardware mode packet forwarding between guests. Packets
++      can go to the NIC port, and the hardware L2 switch determines which
++      guest the packet should be forwarded to or whether it needs to be
++      sent externally, based on the packet destination MAC address and
++      VLAN tag.
+ 
+ **--mergeable 0|1**
+-Set 0/1 to disable/enable the mergeable Rx feature. It's disabled by default.
++    Set to 0 to disable or 1 to enable the mergeable Rx feature.
++    Disabled by default.
+ 
+ **--stats interval**
+-The stats parameter controls the printing of virtio-net device statistics.
+-The parameter specifies an interval (in unit of seconds) to print statistics,
+-with an interval of 0 seconds disabling statistics.
++    Controls the printing of virtio-net device statistics.
++    The parameter specifies an interval in seconds to print statistics.
++    An interval of 0 disables statistics.
+ 
+ **--rx-retry 0|1**
+-The rx-retry option enables/disables enqueue retries when the guests Rx queue
+-is full. This feature resolves a packet loss that is observed at high data
+-rates, by allowing it to delay and retry in the receive path. This option is
+-enabled by default.
++    Enables or disables enqueue retries when the guest's Rx queue
++    is full. This feature resolves packet loss observed at high data
++    rates by allowing delay and retry in the receive path. Enabled by default.
+ 
+ **--rx-retry-num num**
+-The rx-retry-num option specifies the number of retries on an Rx burst, it
+-takes effect only when rx retry is enabled.  The default value is 4.
++    Specifies the number of retries on an Rx burst. Takes effect only when
++    rx-retry is enabled. The default value is 4.
+ 
+ **--rx-retry-delay msec**
+-The rx-retry-delay option specifies the timeout (in micro seconds) between
+-retries on an RX burst, it takes effect only when rx retry is enabled. The
+-default value is 15.
++    Specifies the timeout in microseconds between retries on an Rx burst.
++    Takes effect only when rx-retry is enabled. The default value is 15.
+ 
+ **--builtin-net-driver**
+-A very simple vhost-user net driver which demonstrates how to use the generic
+-vhost APIs will be used when this option is given. It is disabled by default.
++    Uses a simple vhost-user net driver that demonstrates how to use the
++    generic vhost APIs. Disabled by default.
+ 
+ **--dmas**
+-This parameter is used to specify the assigned DMA device of a vhost device.
+-Async vhost-user net driver will be used if --dmas is set. For example
+---dmas [txd0@00:04.0,txd1@00:04.1,rxd0@00:04.2,rxd1@00:04.3] means use
+-DMA channel 00:04.0/00:04.2 for vhost device 0 enqueue/dequeue operation
+-and use DMA channel 00:04.1/00:04.3 for vhost device 1 enqueue/dequeue
+-operation. The index of the device corresponds to the socket file in order,
+-that means vhost device 0 is created through the first socket file, vhost
+-device 1 is created through the second socket file, and so on.
++    Specifies the assigned DMA device of a vhost device.
++    The async vhost-user net driver is used when --dmas is set. For example,
++    ``--dmas [txd0@00:04.0,txd1@00:04.1,rxd0@00:04.2,rxd1@00:04.3]`` means
++    DMA channel 00:04.0/00:04.2 is used for vhost device 0 enqueue/dequeue
++    operations and DMA channel 00:04.1/00:04.3 is used for vhost device 1
++    enqueue/dequeue operations. The index of the device corresponds to the
++    socket file in order: vhost device 0 is created through the first socket
++    file, vhost device 1 is created through the second socket file, and so on.
+ 
+ **--total-num-mbufs 0-N**
+-This parameter sets the number of mbufs to be allocated in mbuf pools,
+-the default value is 147456. This is can be used if launch of a port fails
+-due to shortage of mbufs.
++    Sets the number of mbufs to be allocated in mbuf pools.
++    The default value is 147456. This option can be used if port launch fails
++    due to shortage of mbufs.
+ 
+ **--tso 0|1**
+-Disables/enables TCP segment offload.
++    Disables or enables TCP segment offload.
+ 
+ **--tx-csum 0|1**
+-Disables/enables TX checksum offload.
++    Disables or enables TX checksum offload.
+ 
+ **-p mask**
+-Port mask which specifies the ports to be used
++    Port mask specifying the ports to be used.
+ 
+ Common Issues
+--------------
++~~~~~~~~~~~~~
+ 
+-* QEMU fails to allocate memory on hugetlbfs, with an error like the
++* QEMU fails to allocate memory on hugetlbfs and shows an error like the
+   following::
+ 
+       file_ram_alloc: can't mmap RAM pages: Cannot allocate memory
+ 
+-  When running QEMU the above error indicates that it has failed to allocate
++  When running QEMU, the above error indicates that it has failed to allocate
+   memory for the Virtual Machine on the hugetlbfs. This is typically due to
+   insufficient hugepages being free to support the allocation request. The
+   number of free hugepages can be checked as follows:
+@@ -200,23 +204,22 @@ Common Issues
+ 
+ * Failed to build DPDK in VM
+ 
+-  Make sure "-cpu host" QEMU option is given.
++  Ensure the ``-cpu host`` QEMU option is given.
+ 
+-* Device start fails if NIC's max queues > the default number of 128
++* Device start fails if NIC's max queues exceeds the default of 128
+ 
+-  mbuf pool size is dependent on the MAX_QUEUES configuration, if NIC's
+-  max queue number is larger than 128, device start will fail due to
+-  insufficient mbuf. This can be adjusted using ``--total-num-mbufs``
+-  parameter.
++  The mbuf pool size depends on the MAX_QUEUES configuration. If the NIC's
++  max queue number is larger than 128, device start fails due to
++  insufficient mbufs. Adjust using the ``--total-num-mbufs`` parameter.
+ 
+-* Option "builtin-net-driver" is incompatible with QEMU
++* Option ``builtin-net-driver`` is incompatible with QEMU
+ 
+-  QEMU vhost net device start will fail if protocol feature is not negotiated.
+-  DPDK virtio-user PMD can be the replacement of QEMU.
++  The QEMU vhost net device start fails if the protocol feature is not
++  negotiated. DPDK virtio-user PMD can be used as a replacement for QEMU.
+ 
+-* Device start fails when enabling "builtin-net-driver" without memory
++* Device start fails when enabling ``builtin-net-driver`` without memory
+   pre-allocation
+ 
+-  The builtin example doesn't support dynamic memory allocation. When vhost
+-  backend enables "builtin-net-driver", "--numa-mem" option should be
+-  added at virtio-user PMD side as a startup item.
++  The builtin example does not support dynamic memory allocation. When the
++  vhost backend enables ``builtin-net-driver``, the ``--numa-mem`` option
++  should be added at the virtio-user PMD side as a startup item.
+diff --git a/doc/guides/sample_app_ug/vhost_blk.rst b/doc/guides/sample_app_ug/vhost_blk.rst
+index 788eef0d5f..aedf146375 100644
+--- a/doc/guides/sample_app_ug/vhost_blk.rst
++++ b/doc/guides/sample_app_ug/vhost_blk.rst
+@@ -2,37 +2,41 @@
+     Copyright(c) 2010-2017 Intel Corporation.
+ 
+ Vhost_blk Sample Application
+-=============================
++============================
+ 
+-The vhost_blk sample application implemented a simple block device,
+-which used as the  backend of Qemu vhost-user-blk device. Users can extend
+-the exist example to use other type of block device(e.g. AIO) besides
+-memory based block device. Similar with vhost-user-net device, the sample
+-application used domain socket to communicate with Qemu, and the virtio
+-ring (split or packed format) was processed by vhost_blk sample application.
++Overview
++--------
+ 
+-The sample application reuse lots codes from SPDK(Storage Performance
+-Development Kit, https://github.com/spdk/spdk) vhost-user-blk target,
+-for DPDK vhost library used in storage area, user can take SPDK as
+-reference as well.
++The vhost_blk sample application implements a simple block device
++used as the backend of a QEMU vhost-user-blk device. Users can extend
++the existing example to use other types of block devices (for example, AIO)
++in addition to memory-based block devices. Similar to the vhost-user-net
++device, the sample application uses a domain socket to communicate with QEMU,
++and the virtio ring (split or packed format) is processed by the vhost_blk
++sample application.
+ 
+-Testing steps
+--------------
++The sample application reuses code from SPDK (Storage Performance
++Development Kit, https://github.com/spdk/spdk) vhost-user-blk target.
++For DPDK vhost library use in storage applications, SPDK can also serve
++as a reference.
+ 
+-This section shows the steps how to start a VM with the block device as
+-fast data path for critical application.
++This section shows how to start a VM with the block device as a
++fast data path for critical applications.
+ 
+ Compiling the Application
+ -------------------------
+ 
+-To compile the sample application see :doc:`compiling`.
++To compile the sample application, see :doc:`compiling`.
+ 
+ The application is located in the ``examples`` sub-directory.
+ 
+-You will also need to build DPDK both on the host and inside the guest
++You need to build DPDK both on the host and inside the guest.
+ 
+-Start the vhost_blk example
+-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++Running the Application
++-----------------------
++
++Start the vhost_blk Example
++~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+ .. code-block:: console
+ 
+@@ -55,11 +59,13 @@ Start the VM
+         ...
+ 
+ .. note::
+-    You must check whether your Qemu can support "vhost-user-blk" or not,
+-    Qemu v4.0 or newer version is required.
+-    reconnect=1 means live recovery support that qemu can reconnect vhost_blk
+-    after we restart vhost_blk example.
+-    packed=on means the device support packed ring but need the guest kernel
+-    version >= 5.0.
+-    Now Qemu commit 9bb73502321d46f4d320fa17aa38201445783fc4 both support the
++    Verify that your QEMU supports ``vhost-user-blk``. QEMU v4.0 or later
++    is required.
++
++    * ``reconnect=1`` enables live recovery support, allowing QEMU to reconnect
++      to vhost_blk after the vhost_blk example is restarted.
++    * ``packed=on`` enables packed ring support, which requires guest kernel
++      version 5.0 or later.
++
++    QEMU commit 9bb73502321d46f4d320fa17aa38201445783fc4 supports both
+     vhost-blk reconnect and packed ring.
+diff --git a/doc/guides/sample_app_ug/vhost_crypto.rst b/doc/guides/sample_app_ug/vhost_crypto.rst
+index 5c4475342c..0c4ee3f25a 100644
+--- a/doc/guides/sample_app_ug/vhost_crypto.rst
++++ b/doc/guides/sample_app_ug/vhost_crypto.rst
+@@ -4,66 +4,70 @@
+ Vhost_Crypto Sample Application
  ===============================
  
--The QoS meter sample application is an example that demonstrates the use of DPDK to provide QoS marking and metering,
--as defined by RFC2697 for Single Rate Three Color Marker (srTCM) and RFC 2698 for Two Rate Three Color Marker (trTCM) algorithm.
-+The QoS meter sample application demonstrates DPDK QoS marking and metering
-+using the Single Rate Three Color Marker (srTCM) algorithm defined in RFC 2697
-+and the Two Rate Three Color Marker (trTCM) algorithm defined in RFC 2698.
+-The vhost_crypto sample application implemented a simple Crypto device,
+-which used as the  backend of Qemu vhost-user-crypto device. Similar with
+-vhost-user-net and vhost-user-scsi device, the sample application used
+-domain socket to communicate with Qemu, and the virtio ring was processed
+-by vhost_crypto sample application.
++Overview
++--------
  
- Overview
- --------
+-Testing steps
+--------------
++The vhost_crypto sample application implements a crypto device used
++as the backend of a QEMU vhost-user-crypto device. Similar to the
++vhost-user-net and vhost-user-scsi devices, the sample application uses a
++domain socket to communicate with QEMU, and the virtio ring is processed
++by the vhost_crypto sample application.
  
--The application uses a single thread for reading the packets from the RX port,
--metering, marking them with the appropriate color (green, yellow or red) and writing them to the TX port.
-+The application uses a single thread to read packets from the RX port,
-+meter them, mark them with the appropriate color (green, yellow, or red),
-+and write them to the TX port.
- 
--A policing scheme can be applied before writing the packets to the TX port by dropping or
--changing the color of the packet in a static manner depending on both the input and output colors of the packets that are processed by the meter.
-+A policing scheme can apply before writing packets to the TX port by dropping
-+or changing the packet color statically. The scheme depends on both the input
-+and output colors of packets processed by the meter.
- 
--The operation mode can be selected as compile time out of the following options:
-+Select the operation mode at compile time from the following options:
- 
- *   Simple forwarding
- 
-@@ -24,60 +27,64 @@ The operation mode can be selected as compile time out of the following options:
- 
- *   srTCM color aware
- 
--*   srTCM color blind
-+*   trTCM color blind
- 
--*   srTCM color aware
-+*   trTCM color aware
- 
--Please refer to RFC2697 and RFC2698 for details about the srTCM and trTCM configurable parameters
--(CIR, CBS and EBS for srTCM; CIR, PIR, CBS and PBS for trTCM).
-+See RFC 2697 and RFC 2698 for details about the srTCM and trTCM configurable
-+parameters (CIR, CBS, and EBS for srTCM; CIR, PIR, CBS, and PBS for trTCM).
- 
--The color blind modes are functionally equivalent with the color-aware modes when
--all the incoming packets are colored as green.
-+The color blind modes function equivalently to the color aware modes when
-+all incoming packets are green.
+-This section shows the steps how to start a VM with the crypto device as
+-fast data path for critical application.
++This section shows how to start a VM with the crypto device as a
++fast data path for critical applications.
  
  Compiling the Application
  -------------------------
@@ -164,484 +537,96 @@ index e7101559aa..c6ab8f78ab 100644
 -To compile the sample application see :doc:`compiling`.
 +To compile the sample application, see :doc:`compiling`.
  
--The application is located in the ``qos_meter`` sub-directory.
-+The application source resides in the ``qos_meter`` sub-directory.
+ The application is located in the ``examples`` sub-directory.
  
- Running the Application
- -----------------------
- 
--The application execution command line is as below:
-+Run the application with the following command line:
+-Start the vhost_crypto example
++Running the Application
++-----------------------
++
++Start the vhost_crypto Example
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  
  .. code-block:: console
  
-     ./dpdk-qos_meter [EAL options] -- -p PORTMASK
- 
--The application is constrained to use a single core in the EAL core mask and 2 ports only in the application port mask
--(first port from the port mask is used for RX and the other port in the core mask is used for TX).
-+The application requires a single core in the EAL core mask and exactly
-+two ports in the application port mask. The first port in the mask handles RX;
-+the second port handles TX.
- 
--Refer to *DPDK Getting Started Guide* for general information on running applications and
--the Environment Abstraction Layer (EAL) options.
-+Refer to the *DPDK Getting Started Guide* for general information on running
-+applications and the Environment Abstraction Layer (EAL) options.
- 
- Explanation
- -----------
- 
--Selecting one of the metering modes is done with these defines:
-+Select the metering mode with these defines:
- 
- .. literalinclude:: ../../../examples/qos_meter/main.c
-         :language: c
-         :start-after: Traffic metering configuration. 8<
-         :end-before: >8 End of traffic metering configuration.
- 
--To simplify debugging (for example, by using the traffic generator RX side MAC address based packet filtering feature),
--the color is defined as the LSB byte of the destination MAC address.
-+To simplify debugging (for example, when using the traffic generator's
-+MAC address-based packet filtering on the RX side), the application encodes
-+the color in the LSB of the destination MAC address.
- 
--The traffic meter parameters are configured in the application source code with following default values:
-+The application source code configures traffic meter parameters with the
-+following default values:
- 
- .. literalinclude:: ../../../examples/qos_meter/main.c
-         :language: c
-         :start-after: Traffic meter parameters are configured in the application. 8<
-         :end-before: >8 End of traffic meter parameters are configured in the application.
- 
--Assuming the input traffic is generated at line rate and all packets are 64 bytes Ethernet frames (IPv4 packet size of 46 bytes)
--and green, the expected output traffic should be marked as shown in the following table:
-+Assuming the input traffic arrives at line rate with all packets as
-+64-byte Ethernet frames (46-byte IPv4 payload) colored green, the meter
-+marks the output traffic as shown in the following table:
- 
- .. _table_qos_metering_1:
- 
-@@ -85,53 +92,49 @@ and green, the expected output traffic should be marked as shown in the followin
- 
-    +-------------+------------------+-------------------+----------------+
-    | **Mode**    | **Green (Mpps)** | **Yellow (Mpps)** | **Red (Mpps)** |
--   |             |                  |                   |                |
-    +=============+==================+===================+================+
-    | srTCM blind | 1                | 1                 | 12.88          |
--   |             |                  |                   |                |
-    +-------------+------------------+-------------------+----------------+
-    | srTCM color | 1                | 1                 | 12.88          |
--   |             |                  |                   |                |
-    +-------------+------------------+-------------------+----------------+
-    | trTCM blind | 1                | 0.5               | 13.38          |
--   |             |                  |                   |                |
-    +-------------+------------------+-------------------+----------------+
-    | trTCM color | 1                | 0.5               | 13.38          |
--   |             |                  |                   |                |
-    +-------------+------------------+-------------------+----------------+
-    | FWD         | 14.88            | 0                 | 0              |
--   |             |                  |                   |                |
-    +-------------+------------------+-------------------+----------------+
- 
--To set up the policing scheme as desired, it is necessary to modify the main.h source file,
--where this policy is implemented as a static structure, as follows:
-+To configure the policing scheme, modify the static structure in the main.h
-+source file:
- 
- .. literalinclude:: ../../../examples/qos_meter/main.h
-         :language: c
-         :start-after: Policy implemented as a static structure. 8<
-         :end-before: >8 End of policy implemented as a static structure.
- 
--Where rows indicate the input color, columns indicate the output color,
--and the value that is stored in the table indicates the action to be taken for that particular case.
-+Rows indicate the input color, columns indicate the output color, and each
-+table entry specifies the action for that combination.
- 
--There are four different actions:
-+The four available actions are:
- 
--*   GREEN: The packet's color is changed to green.
-+*   GREEN: Change the packet color to green.
- 
--*   YELLOW: The packet's color is changed to yellow.
-+*   YELLOW: Change the packet color to yellow.
- 
--*   RED: The packet's color is changed to red.
-+*   RED: Change the packet color to red.
- 
--*   DROP: The packet is dropped.
-+*   DROP: Drop the packet.
- 
- In this particular case:
- 
--*   Every packet which input and output color are the same, keeps the same color.
-+*   When input and output colors match, keep the same color.
- 
--*   Every packet which color has improved is dropped (this particular case can't happen, so these values will not be used).
-+*   When the color improves (output greener than input), drop the packet.
-+    This case cannot occur in practice, so these values go unused.
- 
--*   For the rest of the cases, the color is changed to red.
-+*   For all other cases, change the color to red.
- 
- .. note::
--    * In color blind mode, first row GREEN color is only valid.
--    * To drop the packet, policer_table action has to be set to DROP.
-+
-+   In color blind mode, only the GREEN input row applies.
-+   To drop packets, set the policer_table action to DROP.
-diff --git a/doc/guides/sample_app_ug/qos_scheduler.rst b/doc/guides/sample_app_ug/qos_scheduler.rst
-index cd33beecb0..caa2fb84cb 100644
---- a/doc/guides/sample_app_ug/qos_scheduler.rst
-+++ b/doc/guides/sample_app_ug/qos_scheduler.rst
-@@ -4,12 +4,12 @@
- QoS Scheduler Sample Application
- ================================
- 
--The QoS sample application demonstrates the use of the DPDK to provide QoS scheduling.
-+The QoS sample application demonstrates DPDK QoS scheduling.
- 
- Overview
- --------
- 
--The architecture of the QoS scheduler application is shown in the following figure.
-+The following figure shows the architecture of the QoS scheduler application.
- 
- .. _figure_qos_sched_app_arch:
- 
-@@ -18,110 +18,113 @@ The architecture of the QoS scheduler application is shown in the following figu
-    QoS Scheduler Application Architecture
- 
- 
--There are two flavors of the runtime execution for this application,
--with two or three threads per each packet flow configuration being used.
--The RX thread reads packets from the RX port,
--classifies the packets based on the double VLAN (outer and inner) and
--the lower byte of the IP destination address and puts them into the ring queue.
--The worker thread dequeues the packets from the ring and calls the QoS scheduler enqueue/dequeue functions.
--If a separate TX core is used, these are sent to the TX ring.
--Otherwise, they are sent directly to the TX port.
--The TX thread, if present, reads from the TX ring and write the packets to the TX port.
-+The application supports two runtime configurations: two or three threads
-+per packet flow.
-+
-+The RX thread reads packets from the RX port, classifies them based on
-+double VLAN tags (outer and inner) and the lower byte of the IP destination
-+address, then enqueues them to the ring.
-+
-+The worker thread dequeues packets from the ring and calls the QoS scheduler
-+enqueue/dequeue functions. With a separate TX core, the worker sends packets
-+to the TX ring. Otherwise, it sends them directly to the TX port.
-+The TX thread, when present, reads from the TX ring and writes packets to
-+the TX port.
- 
- Compiling the Application
- -------------------------
- 
--To compile the sample application see :doc:`compiling`.
-+To compile the sample application, see :doc:`compiling`.
- 
--The application is located in the ``qos_sched`` sub-directory.
-+The application source resides in the ``qos_sched`` sub-directory.
- 
--    .. note::
-+.. note::
- 
--        This application is intended as a linux only.
-+   This application supports Linux only.
- 
- .. note::
- 
--    Number of grinders is currently set to 8.
--    This can be modified by specifying RTE_SCHED_PORT_N_GRINDERS=N
--    in CFLAGS, where N is number of grinders.
-+   The number of grinders defaults to 8. Modify this value by specifying
-+   ``RTE_SCHED_PORT_N_GRINDERS=N`` in CFLAGS, where N is the desired count.
- 
- Running the Application
- -----------------------
- 
- .. note::
- 
--    In order to run the application, a total of at least 4
--    G of huge pages must be set up for each of the used sockets (depending on the cores in use).
-+   The application requires at least 4 GB of huge pages per socket
-+   (depending on which cores are in use).
- 
--The application has a number of command line options:
-+The application accepts the following command line options:
- 
- .. code-block:: console
- 
-     ./<build_dir>/examples/dpdk-qos_sched [EAL options] -- <APP PARAMS>
- 
--Mandatory application parameters include:
-+Mandatory application parameters:
- 
--*   --pfc "RX PORT, TX PORT, RX LCORE, WT LCORE, TX CORE": Packet flow configuration.
--    Multiple pfc entities can be configured in the command line,
--    having 4 or 5 items (if TX core defined or not).
-+*   ``--pfc "RX PORT, TX PORT, RX LCORE, WT LCORE, TX CORE"``: Packet flow
-+    configuration. Specify multiple pfc entries on the command line with
-+    4 or 5 items (depending on whether a TX core is defined).
- 
--Optional application parameters include:
-+Optional application parameters:
- 
--*   -i: It makes the application to start in the interactive mode.
--    In this mode, the application shows a command line that can be used for obtaining statistics while
--    scheduling is taking place (see interactive mode below for more information).
-+*   ``-i``: Start the application in interactive mode. This mode displays
-+    a command line for obtaining statistics while scheduling runs
-+    (see `Interactive mode`_ for details).
- 
--*   --mnc n: Main core index (the default value is 1).
-+*   ``--mnc n``: Main core index (default: 1).
- 
--*   --rsz "A, B, C": Ring sizes:
-+*   ``--rsz "A, B, C"``: Ring sizes:
- 
--*   A = Size (in number of buffer descriptors) of each of the NIC RX rings read
--    by the I/O RX lcores (the default value is 128).
-+    *   A = Size (in buffer descriptors) of each NIC RX ring read by I/O RX
-+        lcores (default: 128).
- 
--*   B = Size (in number of elements) of each of the software rings used
--    by the I/O RX lcores to send packets to worker lcores (the default value is 8192).
-+    *   B = Size (in elements) of each software ring that I/O RX lcores use
-+        to send packets to worker lcores (default: 8192).
- 
--*   C = Size (in number of buffer descriptors) of each of the NIC TX rings written
--    by worker lcores (the default value is 256)
-+    *   C = Size (in buffer descriptors) of each NIC TX ring written by
-+        worker lcores (default: 256).
- 
--*   --bsz "A, B, C, D": Burst sizes
-+*   ``--bsz "A, B, C, D"``: Burst sizes:
- 
--*   A = I/O RX lcore read burst size from the NIC RX (the default value is 64)
-+    *   A = I/O RX lcore read burst size from NIC RX (default: 64).
- 
--*   B = I/O RX lcore write burst size to the output software rings,
--    worker lcore read burst size from input software rings,QoS enqueue size (the default value is 64)
-+    *   B = I/O RX lcore write burst size to output software rings, worker
-+        lcore read burst size from input software rings, and QoS enqueue
-+        size (default: 64).
- 
--*   C = QoS dequeue size (the default value is 63)
-+    *   C = QoS dequeue size (default: 63).
- 
--*   D = Worker lcore write burst size to the NIC TX (the default value is 64)
-+    *   D = Worker lcore write burst size to NIC TX (default: 64).
- 
--*   --msz M: Mempool size (in number of mbufs) for each pfc (default 2097152)
-+*   ``--msz M``: Mempool size (in mbufs) for each pfc (default: 2097152).
- 
--*   --rth "A, B, C": The RX queue threshold parameters
-+*   ``--rth "A, B, C"``: RX queue threshold parameters:
- 
--*   A = RX prefetch threshold (the default value is 8)
-+    *   A = RX prefetch threshold (default: 8).
- 
--*   B = RX host threshold (the default value is 8)
-+    *   B = RX host threshold (default: 8).
- 
--*   C = RX write-back threshold (the default value is 4)
-+    *   C = RX write-back threshold (default: 4).
- 
--*   --tth "A, B, C": TX queue threshold parameters
-+*   ``--tth "A, B, C"``: TX queue threshold parameters:
- 
--*   A = TX prefetch threshold (the default value is 36)
-+    *   A = TX prefetch threshold (default: 36).
- 
--*   B = TX host threshold (the default value is 0)
-+    *   B = TX host threshold (default: 0).
- 
--*   C = TX write-back threshold (the default value is 0)
-+    *   C = TX write-back threshold (default: 0).
- 
--*   --cfg FILE: Profile configuration to load
-+*   ``--cfg FILE``: Profile configuration file to load.
- 
--Refer to *DPDK Getting Started Guide* for general information on running applications and
--the Environment Abstraction Layer (EAL) options.
-+Refer to the *DPDK Getting Started Guide* for general information on running
-+applications and the Environment Abstraction Layer (EAL) options.
- 
--The profile configuration file defines all the port/subport/pipe/traffic class/queue parameters
--needed for the QoS scheduler configuration.
-+The profile configuration file defines all port/subport/pipe/traffic class/queue
-+parameters for the QoS scheduler.
- 
--The profile file has the following format:
-+The profile file uses the following format:
- 
- .. literalinclude:: ../../../examples/qos_sched/profile.cfg
-     :start-after: Data Plane Development Kit (DPDK) Programmer's Guide
-@@ -129,89 +132,94 @@ The profile file has the following format:
- Interactive mode
- ~~~~~~~~~~~~~~~~
- 
--These are the commands that are currently working under the command line interface:
+     ./dpdk-vhost_crypto [EAL options] --
+-    		--config (lcore,cdev-id,queue-id)[,(lcore,cdev-id,queue-id)]
+-    		--socket-file lcore,PATH
+-    		[--zero-copy]
+-    		[--guest-polling]
+-    		[--asymmetric-crypto]
 -
--*   Control Commands
-+The interactive mode supports these commands:
+-where,
+-
+-* config (lcore,cdev-id,queue-id): build the lcore-cryptodev id-queue id
+-  connection. Once specified, the specified lcore will only work with
+-  specified cryptodev's queue.
+-
+-* socket-file lcore,PATH: the path of UNIX socket file to be created and
+-  the lcore id that will deal with the all workloads of the socket. Multiple
+-  instances of this config item is supported and one lcore supports processing
+-  multiple sockets.
+-
+-* zero-copy: the presence of this item means the ZERO-COPY feature will be
+-  enabled. Otherwise it is disabled. PLEASE NOTE the ZERO-COPY feature is still
+-  in experimental stage and may cause the problem like segmentation fault. If
+-  the user wants to use LKCF in the guest, this feature shall be turned off.
+-
+-* guest-polling: the presence of this item means the application assumes the
+-  guest works in polling mode, thus will NOT notify the guest completion of
+-  processing.
+-
+-* asymmetric-crypto: the presence of this item means
+-  the application can handle the asymmetric crypto requests.
+-  When this option is used,
+-  symmetric crypto requests can not be handled by the application.
++            --config (lcore,cdev-id,queue-id)[,(lcore,cdev-id,queue-id)]
++            --socket-file lcore,PATH
++            [--zero-copy]
++            [--guest-polling]
++            [--asymmetric-crypto]
++
++where:
++
++**--config (lcore,cdev-id,queue-id)**
++    Builds the lcore-cryptodev-queue connection. When specified, the lcore
++    works only with the specified cryptodev's queue.
++
++**--socket-file lcore,PATH**
++    Specifies the path of the UNIX socket file to be created and the lcore
++    that handles all workloads for the socket. Multiple instances of this
++    option are supported, and one lcore can process multiple sockets.
++
++**--zero-copy**
++    Enables the zero-copy feature when present. Otherwise, zero-copy is
++    disabled. Note that the zero-copy feature is experimental and may cause
++    problems such as segmentation faults. If the user wants to use LKCF in
++    the guest, this feature should be disabled.
++
++**--guest-polling**
++    When present, the application assumes the guest works in polling mode
++    and does not notify the guest of processing completion.
++
++**--asymmetric-crypto**
++    When present, the application can handle asymmetric crypto requests.
++    When this option is used, symmetric crypto requests cannot be handled
++    by the application.
  
--*   --quit: Quits the application.
-+*   Control commands:
+ The application requires that crypto devices capable of performing
+-the specified crypto operation are available on application initialization.
+-This means that HW crypto device/s must be bound to a DPDK driver or
+-a SW crypto device/s (virtual crypto PMD) must be created (using --vdev).
++the specified crypto operation are available at initialization.
++This means that hardware crypto devices must be bound to a DPDK driver or
++software crypto devices (virtual crypto PMD) must be created using --vdev.
  
--*   General Statistics
-+    *   ``quit``: Exit the application.
+ .. _vhost_crypto_app_run_vm:
  
--    *   stats app: Shows a table with in-app calculated statistics.
-+*   General statistics:
+@@ -83,4 +87,4 @@ Start the VM
+         ...
  
--    *   stats port X subport Y: For a specific subport, it shows the number of packets that
--        went through the scheduler properly and the number of packets that were dropped.
--        The same information is shown in bytes.
--        The information is displayed in a table separating it in different traffic classes.
-+    *   ``stats app``: Display a table of in-application statistics.
- 
--    *   stats port X subport Y pipe Z: For a specific pipe, it shows the number of packets that
--        went through the scheduler properly and the number of packets that were dropped.
--        The same information is shown in bytes.
--        This information is displayed in a table separating it in individual queues.
-+    *   ``stats port X subport Y``: For a specific subport, display the number
-+        of packets (and bytes) that passed through the scheduler and the
-+        number dropped. The table separates results by traffic class.
- 
--*   Average queue size
-+    *   ``stats port X subport Y pipe Z``: For a specific pipe, display the
-+        number of packets (and bytes) that passed through the scheduler and
-+        the number dropped. The table separates results by queue.
- 
--All of these commands work the same way, averaging the number of packets throughout a specific subset of queues.
-+*   Average queue size:
- 
--Two parameters can be configured for this prior to calling any of these commands:
-+    These commands average packet counts across a subset of queues.
-+    Configure two parameters before using these commands:
- 
--    *   qavg n X: n is the number of times that the calculation will take place.
--        Bigger numbers provide higher accuracy. The default value is 10.
-+    *   ``qavg n X``: Set the number of calculation iterations. Higher values
-+        improve accuracy (default: 10).
- 
--    *   qavg period X: period is the number of microseconds that will be allowed between each calculation.
--        The default value is 100.
-+    *   ``qavg period X``: Set the interval in microseconds between
-+        calculations (default: 100).
- 
--The commands that can be used for measuring average queue size are:
-+    The queue size measurement commands are:
- 
--*   qavg port X subport Y: Show average queue size per subport.
-+    *   ``qavg port X subport Y``: Display average queue size per subport.
- 
--*   qavg port X subport Y tc Z: Show average queue size per subport for a specific traffic class.
-+    *   ``qavg port X subport Y tc Z``: Display average queue size per subport
-+        for a specific traffic class.
- 
--*   qavg port X subport Y pipe Z: Show average queue size per pipe.
-+    *   ``qavg port X subport Y pipe Z``: Display average queue size per pipe.
- 
--*   qavg port X subport Y pipe Z tc A: Show average queue size per pipe for a specific traffic class.
-+    *   ``qavg port X subport Y pipe Z tc A``: Display average queue size per
-+        pipe for a specific traffic class.
- 
--*   qavg port X subport Y pipe Z tc A q B: Show average queue size of a specific queue.
-+    *   ``qavg port X subport Y pipe Z tc A q B``: Display average queue size
-+        for a specific queue.
- 
- Example
- ~~~~~~~
- 
--The following is an example command with a single packet flow configuration:
-+The following command configures a single packet flow:
- 
- .. code-block:: console
- 
-     ./<build_dir>/examples/dpdk-qos_sched -l 1,5,7 -- --pfc "3,2,5,7" --cfg ./profile.cfg
- 
--This example uses a single packet flow configuration which creates one RX thread on lcore 5 reading
--from port 3 and a worker thread on lcore 7 writing to port 2.
-+This example creates one RX thread on lcore 5 reading from port 3 and a
-+worker thread on lcore 7 writing to port 2.
- 
--Another example with 2 packet flow configurations using different ports but sharing the same core for QoS scheduler is given below:
-+The following command configures two packet flows using different ports but
-+sharing the same QoS scheduler core:
- 
- .. code-block:: console
- 
-    ./<build_dir>/examples/dpdk-qos_sched -l 1,2,6,7 -- --pfc "3,2,2,6,7" --pfc "1,0,2,6,7" --cfg ./profile.cfg
- 
--Note that independent cores for the packet flow configurations for each of the RX, WT and TX thread are also supported,
--providing flexibility to balance the work.
-+The application also supports independent cores for RX, WT, and TX threads
-+in each packet flow configuration, providing flexibility to balance workloads.
- 
--The EAL corelist is constrained to contain the default main core 1 and the RX, WT and TX cores only.
-+The EAL corelist must contain only the default main core 1 plus the RX, WT,
-+and TX cores.
- 
- Explanation
- -----------
- 
--The Port/Subport/Pipe/Traffic Class/Queue are the hierarchical entities in a typical QoS application:
-+The Port/Subport/Pipe/Traffic Class/Queue hierarchy represents entities in
-+a typical QoS application:
- 
- *   A subport represents a predefined group of users.
- 
--*   A pipe represents an individual user/subscriber.
-+*   A pipe represents an individual user or subscriber.
- 
--*   A traffic class is the representation of a different traffic type with a specific loss rate,
--    delay and jitter requirements; such as data voice, video or data transfers.
-+*   A traffic class represents a traffic type with specific loss rate, delay,
-+    and jitter requirements, such as voice, video, or data transfers.
- 
--*   A queue hosts packets from one or multiple connections of the same type belonging to the same user.
-+*   A queue hosts packets from one or more connections of the same type
-+    belonging to the same user.
- 
--The traffic flows that need to be configured are application dependent.
--This application classifies based on the QinQ double VLAN tags and the IP destination address as indicated in the following table.
-+Traffic flow configuration depends on the application. This application
-+classifies packets based on QinQ double VLAN tags and IP destination address
-+as shown in the following table.
- 
- .. _table_qos_scheduler_1:
- 
-@@ -219,22 +227,18 @@ This application classifies based on the QinQ double VLAN tags and the IP destin
- 
-    +----------------+-------------------------+--------------------------------------------------+----------------------------------+
-    | **Level Name** | **Siblings per Parent** | **QoS Functional Description**                   | **Selected By**                  |
--   |                |                         |                                                  |                                  |
-    +================+=========================+==================================================+==================================+
-    | Port           | -                       | Ethernet port                                    | Physical port                    |
--   |                |                         |                                                  |                                  |
-    +----------------+-------------------------+--------------------------------------------------+----------------------------------+
-    | Subport        | Config (8)              | Traffic shaped (token bucket)                    | Outer VLAN tag                   |
--   |                |                         |                                                  |                                  |
-    +----------------+-------------------------+--------------------------------------------------+----------------------------------+
-    | Pipe           | Config (4k)             | Traffic shaped (token bucket)                    | Inner VLAN tag                   |
--   |                |                         |                                                  |                                  |
-    +----------------+-------------------------+--------------------------------------------------+----------------------------------+
-    | Traffic Class  | 13                      | TCs of the same pipe services in strict priority | Destination IP address (0.0.0.X) |
--   |                |                         |                                                  |                                  |
-    +----------------+-------------------------+--------------------------------------------------+----------------------------------+
-    | Queue          | High Priority TC: 1,    | Queue of lowest priority traffic                 | Destination IP address (0.0.0.X) |
-    |                | Lowest Priority TC: 4   | class (Best effort) serviced in WRR              |                                  |
-    +----------------+-------------------------+--------------------------------------------------+----------------------------------+
- 
--Please refer to the "QoS Scheduler" chapter in the *DPDK Programmer's Guide* for more information about these parameters.
-+For more information about these parameters, see the "QoS Scheduler" chapter
-+in the *DPDK Programmer's Guide*.
+ .. note::
+-    You must check whether your Qemu can support "vhost-user-crypto" or not.
++    Verify that your QEMU supports ``vhost-user-crypto``.
 -- 
 2.51.0
 
