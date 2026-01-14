@@ -2,68 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D4A8D39008
-	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Jan 2026 19:24:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AD3BD3900B
+	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Jan 2026 19:33:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DE1F440689;
-	Wed, 14 Jan 2026 20:24:45 +0100 (CET)
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com
- [209.85.218.49]) by mails.dpdk.org (Postfix) with ESMTP id B8B4C4027D
- for <dev@dpdk.org>; Wed, 14 Jan 2026 20:24:43 +0100 (CET)
-Received: by mail-ej1-f49.google.com with SMTP id
- a640c23a62f3a-b870732cce2so32424866b.3
- for <dev@dpdk.org>; Wed, 14 Jan 2026 11:24:43 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id D476F40DF6;
+	Wed, 14 Jan 2026 20:33:37 +0100 (CET)
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com
+ [209.85.128.51]) by mails.dpdk.org (Postfix) with ESMTP id 6BE5240DCA
+ for <dev@dpdk.org>; Wed, 14 Jan 2026 20:33:36 +0100 (CET)
+Received: by mail-wm1-f51.google.com with SMTP id
+ 5b1f17b1804b1-47d1d8a49f5so1258915e9.3
+ for <dev@dpdk.org>; Wed, 14 Jan 2026 11:33:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768418683;
- x=1769023483; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768419216;
+ x=1769024016; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=fyf2a3VfPe5khfLBCmZgi4w6ihkw5UiBoWqi308Hfnw=;
- b=ftPDqK+2ykoQMyx8nYVTe650E8VLFME8o0MDX3pnPwmX6IiN1ANV4QMA/wWawQYJra
- hVy1TBwfK9Stfuz5Qgeo4LwSPxmHtaUcTksu3LqYFm0/pBhBPHL2H42AuyO8JlqVy11k
- jhs2xrYC2FdxmPVFRsMDpu1F7qN3yh9dZah5pdilX1YG9D5fnWlXgetZFwrUUfMcmO6c
- tmoonBXSKVpl5clYoMC+uGBim4aCjCrkAgl2v4qKkt9iGsB7sUwLWHphvPz29LVglfRx
- pbQC+1dGM1GicHUM4sy8JiK0la1pxtWj5dOULll14PR4t2/TDidWRLSHLmPtwCMrqLlJ
- 7Sbg==
+ bh=ULgLWmk2Gjd7O0gx2DYOV8iLvcXyq+/jT5CQ9nmzLDA=;
+ b=H4kfq+19j6aj6iVGBWai5NFYtYo5FRbZoUzM+bTWBSlZn09qxmhj975sQgQmE7BNfH
+ Rfgk3HE6WjitOIhG/22cbHEEAfTaFOMHIMlZBW3maG8/Xz0ThY+KtqlVYEYC+btYPEtX
+ cT7xOJ4DLC7JH8mJ2LOxleNVU8e7ZhZT2zrONCWaUW1gQmmpzMwRCZih0ibzgQevox+J
+ UIoKFPYykvL3xEljl1J/4/yVoW/qd1UOmYhB57N5kUz0so+Lm3PCCSZcpHK34hoHpvFQ
+ yTa5JrJYxg0PT06oAtQnn5XrI2Y9yl8+fiiTYZWB7MI4NoJX4ZJb7HA473gUq0+eiTbE
+ Lnpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768418683; x=1769023483;
+ d=1e100.net; s=20230601; t=1768419216; x=1769024016;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=fyf2a3VfPe5khfLBCmZgi4w6ihkw5UiBoWqi308Hfnw=;
- b=Hz98mzi1EQaluNKzAB5Az6HJLD4QpJ82J75oxUIvzROMM13wI0AjwW39AbrfEhDuh2
- rSu2AN0/QHYOWpoYOXYxPBa4Zaf4l1JOr989E+amVVtt3MrX0Xdpf6p/+k31eHVsorge
- Y+fN0/XRI8pL6/icSn5XVFjkvCu7UKKRIdVy8vy0N1mD97oveDcvxEF47QSCaPhcsQnX
- vC8ci9aBdREVZ0ugJwDGuMQSusrpXNv9saNrTR8nnZCLUGe849itbYwO7vsiBJifSic6
- Fwuf5qAEcvADnqHqiuEldxSWl/8bUVS+7lwd2LGPYlTnPY+UewH75ztKNNP4TJIparI0
- ZwuA==
-X-Gm-Message-State: AOJu0Yzh+riHBzgOe4F+p4TOY5NMY2ybSGB6RMaSzUW9ABfnrodc1fTF
- T4u5Ww6Z5rmp9Qf7yPD9HrOZPACZtbZ2RPmEuv8QpnJU/oA1nOU+9VjmV1wvnB14hr0=
-X-Gm-Gg: AY/fxX72sJ27BoLtR73+Wzy7xYQVtqGfDHtyclsL5zOzjlT71uWUeQxpikN9c31UOX3
- RScfJr1xFBMS/q7dVPoXNaaO3uB2+dMEPWo7jgqNbCEQTXlbWj0W1A0mGvQJq5simBlycSU2uX8
- /AKw5DVO4Xv3TcmvAuiAIab5G0vWGZLxGPie8vZdyATzcUzuMcrOGYJmfuSEh8YB1LoBMYcF9Hn
- jkmce+rQu8/44SmYpdfXfcx0lvyfVQdFtlANR6RP6cPYhE2oPES1LGBSC2Ud/WIdyeFvoiy2bpS
- 88PgJFO0BlIjcmNCa9A281AZV471kbN9kKmAvfo/f4iVgNwCc1VcLlTAWznSR0kHrmxFDjAQoID
- fYpsCkB17O5OlE3D5aJHMbg5UCobOk3vd1eZpEaJSVtARl7eh+ef7qzbXQA6gSnRpiP+g6swlNh
- U9tWLBawMOkrqfWkeymhjoHN4w3zbwqKKoA7UJKtQrHYuCeAFtw3oz
-X-Received: by 2002:a17:907:3f8e:b0:b86:ff83:9e98 with SMTP id
- a640c23a62f3a-b8761073166mr327125566b.28.1768418682873; 
- Wed, 14 Jan 2026 11:24:42 -0800 (PST)
+ bh=ULgLWmk2Gjd7O0gx2DYOV8iLvcXyq+/jT5CQ9nmzLDA=;
+ b=GrdEXmkrVVw+1ZeDyiDlkFOHPhVXUHLiCa5ggnKowEq/T/WG26fX+u04KJzDWlO+ua
+ +VUHzkp71gljJRY1PBL23oxGagoA4NWWLf0wXUNopvV3E6lGbI+hpbFoXdSHDeKsm1Gt
+ fO9jz/Ht2c4806JNfOQnmL6VA02Qa6raHVvCcbHLy7zyc+Ej4spuW3kSltiJticPbYJr
+ AiZYkz9Hiki5YxwXA7yRSz5/Rh8uVpSFZVAnmeHdVmPaLt1YixXvG/RFb0WZs82BHUm9
+ mNGkRp5nY0f2NRZ2afj9YTkVGCOzXlxHfxMWygc7lCTqsNaWEw+Tsp0TyNpPKGN+aKji
+ j/dQ==
+X-Gm-Message-State: AOJu0YxL1BZ82PDjlxElThMokP7/CWgpdkWc5/KbFvh4XabH+v9WjC5l
+ vXrw3G/z41HVFP5BQtJgS7LxtpihpcrKN5qzTXCwkfBeMm8ClR4f0IncFbEA6Vc7/F4=
+X-Gm-Gg: AY/fxX4bd4y4pzLDmsdO7E/5M7wkBeX3fv2Ig2aMyHmSJfYtQSyOhK6cqlB8cvAIa7h
+ ikPeTSN9kSEsFWmRW8oLZ+xQexDHnILUQEjMBAlCtK/RzRiws3ywjX1QwZcouRkcx74he7qi7jD
+ yvmGkNtT6Ecpq3er0WkF6n9fe03nD5sNpnGNz8/jWiQDTf+CncGP8U37v60jPUgodtueNqhg2M+
+ 7zxK0qjMgJpkNM/mUtM9Ok5dZxjkWZQuuRPF1BM2pwsqPWJ2AocQI/l+RXSekf0aPKMJk0hW8Kw
+ CWae2vCYIW8/BDGXsahVr9btAQck+gPeEtu0azq2CD+2l3BafOgZciH7tylq9m0e9jnynU4Fp7N
+ l8BHZItWCst14yWv7fFOv48PSWobwVEGwweITiqPHmDnK6KjduYFTHGGFC/DStUpKXBzp2gbpjd
+ KDJAYm/3Cth9m2FuR1CViZCgH2C6QiZTM5jkO4aLYxt/8Xh+E2KV7N
+X-Received: by 2002:a05:600c:154a:b0:47f:8c05:786b with SMTP id
+ 5b1f17b1804b1-47f8c057a33mr2681185e9.28.1768419215891; 
+ Wed, 14 Jan 2026 11:33:35 -0800 (PST)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a640c23a62f3a-b87023a8a33sm1181048266b.18.2026.01.14.11.24.41
+ ffacd0b85a97d-434af653560sm1164222f8f.10.2026.01.14.11.33.33
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 14 Jan 2026 11:24:42 -0800 (PST)
-Date: Wed, 14 Jan 2026 11:24:37 -0800
+ Wed, 14 Jan 2026 11:33:35 -0800 (PST)
+Date: Wed, 14 Jan 2026 11:33:27 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Anatoly Burakov <anatoly.burakov@intel.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH v3 0/2] Rewrite devbind
-Message-ID: <20260114112437.465ec1e8@phoenix.local>
-In-Reply-To: <cover.1733305654.git.anatoly.burakov@intel.com>
-References: <cover.1733151400.git.anatoly.burakov@intel.com>
- <cover.1733305654.git.anatoly.burakov@intel.com>
+To: Gregory Etelson <getelson@nvidia.com>
+Cc: <dev@dpdk.org>, <mkashani@nvidia.com>, <rasland@nvidia.com>,
+ <thomas@monjalon.net>, <stable@dpdk.org>, Olivier Matz
+ <olivier.matz@6wind.com>, Didier Pallard <didier.pallard@6wind.com>
+Subject: Re: [PATCH] net: fix parsing of frames with arbitrary VLAN stacks
+Message-ID: <20260114113327.3618b433@phoenix.local>
+In-Reply-To: <20251103154128.297748-1-getelson@nvidia.com>
+References: <20251103154128.297748-1-getelson@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -80,256 +81,187 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed,  4 Dec 2024 09:47:36 +0000
-Anatoly Burakov <anatoly.burakov@intel.com> wrote:
+On Mon, 3 Nov 2025 17:41:27 +0200
+Gregory Etelson <getelson@nvidia.com> wrote:
 
-> It has been suggested [1] that a major cleanup/rewrite of devbind would be
-> beneficial in terms of long term maintainability of the code. I was in a
-> coding mood over the weekend, and so I've went ahead and rewritten devbin=
-d.
+> The rte_net_get_ptype() supported only 2 types of VLAN headers frames
+> that are defined in the IEEE standards 802.1Q and 802.1ad:
 >=20
-> Note that this is one giant patch, rather than a series of patches adjust=
-ing
-> existing code. Making it a patch series is possible, however the internal
-> code architecture diverges quite significantly from the original devbind
-> script due to its copious usage of string operations/pattern matching and
-> global variables, so it is unclear whether subdividing this patch would be
-> worth the effort. Instead, as has been suggested [2], the patchset now
-> consists of creating a new file, followed by a removal of old file and
-> rename of the new file. It is expected that this will be squashed on appl=
-y.
+> frames with a single 0x8100 VLAN header:
+>   eth type VLAN / vlan / [IPv4 | IPv6 ]
 >=20
-> The script has become slightly bigger - 1000 lines instead of 800, however
-> I would argue that since most of that increase is infrastructure, comment=
-s,
-> and sacrificing code golf for code readability (such as expanding one-lin=
-ers
-> into multiple lines), the trade-off between being able to read and reason
-> about what happens in the script is worth the added line count.
+> frames with 0x88A8 QinQ header followed by 0x8100 VLAN:
+>  eth type QinQ / vlan type VLAN / vlan / [IPv4 | IPv6 ]
 >=20
-> [1] https://patches.dpdk.org/project/dpdk/patch/c2bf00195c2d43833a831a9cc=
-9346b4606d6ea2e.1723810613.git.anatoly.burakov@intel.com/
-> [2] https://patches.dpdk.org/project/dpdk/cover/cover.1733151400.git.anat=
-oly.burakov@intel.com/
+> The function did not parse frames where VLAN headers were stacked in
+> different configurations.
+> Such frames should also be allowed to provide HW vendor flexibility.
+> As a result, ptype bitmask and header length returned from
+> rte_net_get_ptype() for a custom VLAN frame were wrong.
 >=20
-> Anatoly Burakov (2):
->   usertools/devbind: update coding style
->   usertools/devbind: replace devbind
+> For example, the parser result for the frame
+>   eth type QinQ / vlan type QinQ / vlan type VLAN / vlan / ipv4
+> was:
+> pkt_type:=3D0x120007
+>    RTE_PTYPE_L2_ETHER_QINQ         0x00000007 OK
+>    RTE_PTYPE_INNER_L2_ETHER_VLAN   0x00020000 wrong
+>    RTE_PTYPE_INNER_L3_IPV4         0x00100000 wrong
 >=20
->  doc/guides/tools/devbind.rst |   11 +
->  usertools/dpdk-devbind.py    | 1683 ++++++++++++++++++----------------
->  2 files changed, 924 insertions(+), 770 deletions(-)
+> hdr_lens:=3D{
+>   l2_len       =3D 22 wrong
+>   inner_l2_len =3D  4 wrong
+>   l3_len       =3D  0 wrong
+>   inner_l3_len =3D 20 wrong
+> }
 >=20
+> The patch changes:
+> 1. Allow frames with an arbitrary number of VLAN headers.
+>=20
+> 2. Set each parsed VLAN type in the returned ptype bitmask.
+>    Multiple VLAN headers are referenced by a single
+>    RTE_PTYPE_L2_ETHER_VLAN bit.
+>    Multiple QinQ headers are references by a single
+>    RTE_PTYPE_L2_ETHER_QINQ bit.
+>=20
+> 3. Preserve RTE_PTYPE_L2_ETHER bit if VLAN or QinQ type was detected.
+>=20
+> Fixes: eb173c8def0a ("net: support VLAN in software packet type parser")
+> Fixes: 218a163efd67 ("net: support QinQ in software packet type parser")
+>=20
+> Cc: stable@dpdk.org
+>=20
+> Signed-off-by: Gregory Etelson <getelson@nvidia.com>
 
-This patch seemed to get no reviews. So sent it to AI; especially since my =
-python-fu is rudimentary.
-It identified some small things, could you fix those and resubmit.
+This patch seems to have been unreviewed for some time so forwarded
+to AI for review. Agree in general but my take is that a stacking
+depth limit should be enforced; too many network products have had
+CVE's for malformed nasty packets.
 
-# DPDK Patch Review: usertools/devbind rewrite
+Please address review comments and resubmit
 
-**Series**: [PATCH v3 1/2] usertools/devbind: update coding style =20
-**Author**: Anatoly Burakov <anatoly.burakov@intel.com> =20
-**Reviewer**: Stephen Hemminger <stephen@networkplumber.org>
+# DPDK Patch Review: net: fix parsing of frames with arbitrary VLAN stacks
 
----
-
-## Overview
-
-This is a 2-patch series providing a complete rewrite of `dpdk-devbind.py`:
-
-1. **Patch 1/2**: Introduces the new rewritten script as `dpdk-devbind-new.=
-py`
-2. **Patch 2/2**: Replaces the original script with the rewritten version
-
-The rewrite brings significant improvements including PEP-484 type hints, m=
-odern Python idioms with context managers, structured classes, JSON parsing=
- for `ip route` output, and deprecation of kernel <3.15 support.
-
----
-
-## Errors (Must Fix)
-
-### 1. Tag Formatting Error (Patch 1)
-**Line 96:**
-```
-Reviewed-By: Stephen Hemminger <stephen@networkplumber.org>
-```
-Should be:
-```
-Reviewed-by: Stephen Hemminger <stephen@networkplumber.org>
-```
-The `By` should be lowercase. DPDK tag format is `Reviewed-by:`.
-
-### 2. Typo in Variable Name
-**Line 325:**
-```python
-BASEDBAND_DEVICES =3D [CLASS_ACCELERATION]
-```
-Should be:
-```python
-BASEBAND_DEVICES =3D [CLASS_ACCELERATION]
-```
-This typo is referenced at line 369 as well.
-
-### 3. Typo in Error Message =20
-**Line 820:**
-```python
-raise DevbindError(f"CLeanup failed for {dev}: {e}") from e
-```
-Should be:
-```python
-raise DevbindError(f"Cleanup failed for {dev}: {e}") from e
-```
-
----
-
-## Warnings (Should Fix)
-
-### 4. Docstring Inconsistency
-**Line 452-453:**
-```python
-def read_output(args: T.List[str]) -> str:
-    """Run a subprocess, collect its output, and return it as a list of lin=
-es."""
-```
-The docstring says "list of lines" but the function returns a `str`. Either=
- update the docstring to say "return it as a string" or change the return t=
-ype.
-
-### 5. `--noiommu-mode` Flag Not Checked
-**Lines 876-877:**
-```python
-if use_vfio and not sysfs_iommu_enabled():
-    sysfs_enable_unsafe_noiommu()
-```
-The `ctx.noiommu` flag is parsed (line 1100) but the code unconditionally e=
-nables no-IOMMU mode when IOMMU is disabled, regardless of whether the user=
- specified `--noiommu-mode`. The original devbind required the flag to be e=
-xplicitly set. Consider:
-```python
-if use_vfio and not sysfs_iommu_enabled():
-    if not ctx.noiommu:
-        raise DevbindError(
-            "IOMMU not available. Use --noiommu-mode to enable unsafe no-IO=
-MMU mode."
-        )
-    sysfs_enable_unsafe_noiommu()
-```
-
-### 6. No Unit Tests Added
-A rewrite of this magnitude would benefit from unit tests in `app/test` or =
-at minimum a standalone test script. Consider adding tests for:
-- Device pattern matching
-- lspci line parsing
-- Argument parsing edge cases
-
-### 7. Patch 2/2 Missing Commit Message Body
-**Line 1213:**
-The second patch has only `Signed-off-by:` with no commit message body expl=
-aining what it does. Even simple patches should have a brief description.
-
----
-
-## Info (Suggestions)
-
-### 8. File Mode for Bind Operation
-**Line 807:**
-```python
-with open(bind_path, "a", encoding=3D"utf-8") as f:
-    f.write(dev.slot)
-```
-Using append mode (`"a"`) for writing to sysfs bind file is unusual. While =
-it likely works, write mode (`"w"`) is more conventional and matches what t=
-he kernel expects. Consider changing to `"w"`.
-
-### 9. Null Byte for driver_override Cleanup
-**Line 818:**
-```python
-f.write("\00")
-```
-Writing a null byte works, but an empty string or newline might be more por=
-table/conventional:
-```python
-f.write("")
-```
-
-### 10. Generator Consumed Multiple Times Risk
-**Line 862:**
-```python
-devices =3D (devbind.pci_devices[dbdf] for dbdf in ctx.devices)
-```
-This creates a generator that can only be iterated once. If the code path w=
-ere to iterate it multiple times, this would silently fail. Consider using =
-a list comprehension instead:
-```python
-devices =3D [devbind.pci_devices[dbdf] for dbdf in ctx.devices]
-```
-
-### 11. Consider Using `shutil.which()` Instead of `subprocess`
-**Lines 446-449:**
-```python
-if subprocess.call(
-    ["which", program], stdout=3Dsubprocess.DEVNULL, stderr=3Dsubprocess.DE=
-VNULL
-):
-```
-Python 3.3+ provides `shutil.which()` which is more Pythonic:
-```python
-import shutil
-if shutil.which(program) is None:
-```
-
-### 12. Documentation Formatting
-**Lines 129-138 in doc/guides/tools/devbind.rst:**
-The added documentation has a double blank line after line 128. RST typical=
-ly uses single blank lines.
-
----
-
-## Positive Observations
-
-The rewrite demonstrates excellent software engineering:
-
-- **Type Safety**: Comprehensive PEP-484 type annotations throughout
-- **Modern Python**: Context managers, dataclasses pattern, proper exceptio=
-n hierarchy
-- **Code Organization**: Clean separation with `Device`, `Devbind`, and `De=
-vbindCtx` classes
-- **Error Handling**: Consistent `DevbindError` exception with clear messag=
-es
-- **Resource Management**: All file operations use context managers
-- **JSON Parsing**: Using `ip -j route` for structured output is much bette=
-r than text parsing
-- **Reduced External Calls**: Fewer lspci invocations, unified parsing
-- **Backward Compatibility**: Command-line interface remains compatible
+**Patch:** net-fix-parsing-of-frames-with-arbitrary-VLAN-stacks.patch =20
+**Author:** Gregory Etelson <getelson@nvidia.com> =20
+**Patchwork ID:** 158350 =20
+**Reviewer:** Stephen Hemminger =20
+**Date:** January 14, 2026
 
 ---
 
 ## Summary
 
-| Severity | Count |
-|----------|-------|
-| Error    | 3     |
-| Warning  | 4     |
-| Info     | 5     |
-
-**Recommendation**: Fix the three errors (tag case, two typos) and address =
-the `--noiommu-mode` logic, then this is ready for merge. The rewrite is a =
-significant improvement over the original code.
+This patch fixes `rte_net_get_ptype()` to handle arbitrary VLAN header stac=
+ks instead of only the two standard configurations (single VLAN, QinQ+VLAN)=
+. The fix is correct and well-motivated.
 
 ---
 
-## Checklist
+## Commit Message Checklist
 
-- [x] SPDX license identifier present
-- [x] Copyright line present =20
-- [x] Signed-off-by present
-- [ ] Reviewed-by tag correctly formatted
-- [x] Subject line =E2=89=A460 characters
-- [x] Subject lowercase (except acronyms)
-- [x] Imperative mood
-- [x] No trailing period
-- [x] Lines =E2=89=A4100 characters (Python allows this)
-- [x] Documentation updated
-- [ ] Tests added/updated
+| Check | Status | Notes |
+|-------|--------|-------|
+| Subject =E2=89=A460 chars | =E2=9C=93 | 50 characters |
+| Lowercase after colon | =E2=9C=93 | |
+| Correct prefix | =E2=9C=93 | `net:` correct for `lib/net/` |
+| Imperative mood | =E2=9C=93 | "fix parsing" |
+| No trailing period | =E2=9C=93 | |
+| Body =E2=89=A475 chars | =E2=9C=93 | Lines within limit |
+| Body doesn't start with "It" | =E2=9C=93 | Starts with "The" |
+| Fixes: tags | =E2=9C=93 | Two fixes with 12-char SHA |
+| Cc: stable@dpdk.org | =E2=9C=93 | Present |
+| Signed-off-by | =E2=9C=93 | Real name and email |
+| Tag order | =E2=9C=93 | Fixes =E2=86=92 Cc =E2=86=92 Signed-off-by |
+
+**Commit message is well-written** =E2=80=94 good problem description with =
+concrete examples showing incorrect vs expected behavior.
+
+---
+
+## Code Review
+
+### Correctness: =E2=9C=93 Good
+
+The refactoring is sound:
+
+- Replaces fragile if/else with a `while` loop that iterates through any VL=
+AN/QinQ stack
+- Uses `|=3D` instead of `=3D` to accumulate ptype bits, preserving `RTE_PT=
+YPE_L2_ETHER`
+- Each header is read and validated individually via `rte_pktmbuf_read()`
+- Loop terminates safely when packet data exhausted (NULL return) or non-VL=
+AN ethertype encountered
+
+### Old Behavior Flaw
+
+The QinQ branch assumed exactly one inner VLAN and skipped 2 headers at onc=
+e, reading only the second. This failed for stacks like QinQ/QinQ/VLAN.
+
+### New Behavior
+
+Processes each VLAN/QinQ header individually regardless of nesting depth.
+
+---
+
+## Suggestions
+
+### Warning (should consider)
+
+1. **Unbounded loop concern** =E2=80=94 While the NULL check provides safet=
+y against buffer overrun, a malicious or malformed packet with many consecu=
+tive VLAN tags could cause CPU spin. Consider adding a reasonable iteration=
+ limit:
+
+```c
+#define RTE_NET_VLAN_MAX_DEPTH 8  /* or similar reasonable bound */
+unsigned int vlan_depth =3D 0;
+
+while ((proto =3D=3D rte_cpu_to_be_16(RTE_ETHER_TYPE_VLAN) ||
+        proto =3D=3D rte_cpu_to_be_16(RTE_ETHER_TYPE_QINQ)) &&
+       vlan_depth++ < RTE_NET_VLAN_MAX_DEPTH) {
+```
+
+This is probably overkill for typical use but would make the parser more de=
+fensive.
+
+### Info (minor style)
+
+2. **Ternary formatting** =E2=80=94 The nested ternary inside the `|=3D` is=
+ a bit dense. Consider:
+
+```c
+if (proto =3D=3D rte_cpu_to_be_16(RTE_ETHER_TYPE_VLAN))
+    pkt_type |=3D RTE_PTYPE_L2_ETHER_VLAN;
+else
+    pkt_type |=3D RTE_PTYPE_L2_ETHER_QINQ;
+```
+
+This is clearer and costs nothing. The ternary version works fine though.
+
+---
+
+## Verdict
+
+**Reviewed-by worthy** =E2=80=94 The patch correctly fixes a real parsing l=
+imitation. The code change is minimal, correct, and well-explained.
+
+The only substantive suggestion is considering a loop depth limit for defen=
+sive programming, but this is optional given the existing NULL-check safety=
+. The patch is good as-is.
+
+---
+
+## Suggested Reply
+
+```
+On Mon, 3 Nov 2025 17:41:27 +0200, Gregory Etelson wrote:
+> The rte_net_get_ptype() supported only 2 types of VLAN headers frames
+> that are defined in the IEEE standards 802.1Q and 802.1ad:
+
+The fix looks correct. One minor suggestion: consider adding a loop
+depth limit (e.g., 8) as a defensive measure against malformed packets
+with excessive VLAN tags, though the existing NULL check does provide
+buffer safety.
+
+```
 
