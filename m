@@ -2,67 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 197A4D3CC86
-	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Jan 2026 22:25:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97EB8D3CC86
+	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Jan 2026 22:25:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 21BE040E2A;
-	Wed, 14 Jan 2026 23:25:09 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 0D00540E1F;
+	Wed, 14 Jan 2026 23:25:10 +0100 (CET)
 Received: from mail-wm1-f65.google.com (mail-wm1-f65.google.com
- [209.85.128.65]) by mails.dpdk.org (Postfix) with ESMTP id 207B540E21
- for <dev@dpdk.org>; Wed, 14 Jan 2026 23:25:07 +0100 (CET)
+ [209.85.128.65]) by mails.dpdk.org (Postfix) with ESMTP id C6A5F4027D
+ for <dev@dpdk.org>; Wed, 14 Jan 2026 23:25:08 +0100 (CET)
 Received: by mail-wm1-f65.google.com with SMTP id
- 5b1f17b1804b1-47fedb7c68dso604695e9.2
- for <dev@dpdk.org>; Wed, 14 Jan 2026 14:25:07 -0800 (PST)
+ 5b1f17b1804b1-47a95efd2ceso2675285e9.2
+ for <dev@dpdk.org>; Wed, 14 Jan 2026 14:25:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768429507;
- x=1769034307; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768429508;
+ x=1769034308; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=wTCe801zeteOgrr93+hOzRMmDVZYQLdANAcGue6sNtE=;
- b=HgKF1/iUK6l3OPmLPz7DSQ0nPXnKl2ZzRq+j2mUV5U40npIXY/BujC76NaHaMAQFSo
- rIxUpxV0pqPNkM76u9jUoPzaWqiqKA2J3WdG1usWybxgVz8LHSsnJBnW/ljfLYTvyLO9
- sXaurdS4IVbyV1e78mPtFzlyVPUDtyfsBKdL9ks+iUK0yIi581iCYD3l28XyP37q+AcU
- 4h4FJo4ppdyDygRnNF8+41qKv7RXQZP+yF8ZCWwbyVr4dnvcI6ePMWJ6of7oNHCpHZGm
- TyGUdfm2U+QURb++izRe1SQlLG/Sak8pRCc8nky/r5EHI0E1Paoxs/JhhvlQ1P0abDYb
- I1ow==
+ bh=dYoDLNv+vkvUGsCs4aQd7a41sMOaAhjO2s/Dg6Zr2is=;
+ b=cDk3XxIFCq9zJgzCVza0LyrANZeYQe50tI/wDr/Sy3/ELJJjPmhgSacYGhzMi/Uu5g
+ 0ttTnJtF/rpRYdqZIhUz5lLUACb/enZbmVLUENvvgmDqAPpN88WrwQ6DGB2QnKHMjA53
+ QZBtwup6otmJvzB/H6y1bwUQTfW0aovD/alar3cK0WW1i0JwXAGsZP6H7mHi6m0Ia+Mc
+ weJjY9gVegiKpeROWsZqSHVk02YgpFDYtQRI83V6ugv/AF+WQA/9XWRBRljVdIgnyX00
+ UQkfarS0RNLyppHTPPuWABY9Iuh6DReHpfjbcqe1BvXW7RQUTXGnBYgs5xGy+Qg2elEw
+ Z4Gg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768429507; x=1769034307;
+ d=1e100.net; s=20230601; t=1768429508; x=1769034308;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=wTCe801zeteOgrr93+hOzRMmDVZYQLdANAcGue6sNtE=;
- b=ZKRmRt9DdsAnDtc4izP8Fj8FqDt1wY9pRo0bSizeLjz23h4I6Jtn0bCfX1vF4CQebc
- 9vFMzPXOl7oZVozGlWLXqH+G0YvLC+43WuJNcx0KiYJ11gbZobrLWRfFDJFB+DTb9up9
- k7FLf5knPbTNkFT5xydy6wOmPq3VXoz3lOzGkyihrihFpUOV13rX7nW7Lf58EU/++74m
- iLm8bsiaZ31lZ4p22JOp/Ucu5uXfmvoG59/3Gt9RgpOOB/A8xuyseqNB3FsKP8draIsf
- 7pFgkXFclfr4wftfFZws7sTaxdd4ofYuawK6M+m2FgmJCw3eZSY0X65VRffPvEBdIGag
- EI2w==
-X-Gm-Message-State: AOJu0YyPOeEVo4Q5TTJxAfpdeYLZE6pWj+Zt95YTKxh/qClJyI3K79qw
- /evYE1uQiusbT5/99KlFFbXKEgX93FiDuTh5aoipzW0MaNy1YL+roGH2W40oXZfiQ18kIFoLhXq
- xHnA99J4=
-X-Gm-Gg: AY/fxX4nXaib62AZig6VgB4yWnVRQYZ3BdY0SfXvF7Qngbb4tlBSivMLvLm5icxhJYG
- 8/sUv/IjYni1/eKF4uv2p2zXVZyGbbhPwCztFibynpRGNjRqg4HnK6e0lMbkPsA39ZPsz1ena9U
- f0CYasRgOqdlmcpGDG884bCNsL0zSlGbrFhLHnTsJjFzPaFVDbrbllFkCOPWSK4g3htcuwwV8AT
- 5aiU/xu2z/Kqm2HW9mNa93h46mp3ML0WZmA/t+AxPkKMoI3yIkgUdBZxHx3tlgoX7Ac6uzV2PMW
- RsylN/WC+dKo4QQ4RENXKb5cv0EwuLEu2vOOSMFOykyj71OYo/E2IXOIlB6fEcfDcxq7lm9IGRr
- V5X4O9m/MlEWnXwCB1Q/bLZF0A1G+ZtwkaG4ZZjuQHj5sNLJIeKv3Fyopw3btSSHlS4mExlgQTp
- PZLlF67NVgNw4Hw0n/rRkcj28n5cS8WmqdW8Z+5xjGayy9vrupew==
-X-Received: by 2002:a05:600c:8215:b0:47e:e8c2:905f with SMTP id
- 5b1f17b1804b1-47ee8c29176mr27709115e9.8.1768429506693; 
- Wed, 14 Jan 2026 14:25:06 -0800 (PST)
+ bh=dYoDLNv+vkvUGsCs4aQd7a41sMOaAhjO2s/Dg6Zr2is=;
+ b=X4vsYXn2rBWfSfvOCgu4qwMhJ6h13++G47Krc/akFjeNPb6tA1cuvQMo3dwVScilnB
+ AaeijgOlYD96f5z0+d5I9pp00PW6wUnUOb2jeUcK6+EAkACuRGTgxniN3v67173O8WUz
+ k3Ugzs3u8HFPWjiPxAxPFzEpqXSCdAEVoHQo1ctBvm7iBgF8EVe9RlUgsGPA/1iT6+CY
+ e9mgTNAtmBrKXt+EfwC7U5st0JjKyTsUUfKsrikK7R9X1u1cSXzOU5wbBBYkqRRn/Mop
+ b89tjqM3lClEuKews4dQXLMkwHoW3JAPyS3o+he5OZZeobnNwqx4aTROiqrZG/8BNIDl
+ 7mtA==
+X-Gm-Message-State: AOJu0Yw8f1if76ojAY7RuBCmW3k3EBS7UDqF0kn2NkexAM/fbNH7rZSH
+ qooYwHsXAZOfF0Q25dZ32LR7s+HRtc22nrlB8fwUcpUwDkDQCAZZEHokK2WvcDVy+cebsQWiZZn
+ XCfwWzis=
+X-Gm-Gg: AY/fxX6FbntuZ5xXsC9mSBvrqIteWcGdJkYRBEux+9E0lnKpqFtNj1m9N/HdWdmo48A
+ 38M6qZ44bqAAi5R32eE+1WbaL8kdBBAqn4YNRO32lRc6RX4mikeUY89lugIfTgY5656PIN5DVpL
+ 7pnHH3Toj6kd7AlS7NBNjaUIW34vAxSFcHWspSmkoSaZSyf/OstOp2zqsfWpgZ74UsBMkK9Ano4
+ MAgatJIbtWUFt4ebeEYaoC8pU/1RQ1UMX2IGamcajFV7qcfpP7vBuFBuut88jgDalHO1UR36DaM
+ OoxlxWI6OTwrwi/hwAWDTGgsIBGEH6iHW9afdOCMl/7d9c2x+XiWv0LQbmaWaN2Y25K4PdQLwyT
+ JYfnO6O6F3onMVruCFF+EI6Bpw8HDM+unOY6enmkKEiv5UOno7xMVTtQHbSXAueW0/n+D0z9kQy
+ P2de6Sfd8lSOwSYAir0floR/BqY8FhaT1j//COrpaAN7xQechqJQ==
+X-Received: by 2002:a05:600c:19cb:b0:477:93f7:bbc5 with SMTP id
+ 5b1f17b1804b1-47ee47c91camr37228685e9.10.1768429508236; 
+ Wed, 14 Jan 2026 14:25:08 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-47f42907141sm12040355e9.9.2026.01.14.14.25.05
+ 5b1f17b1804b1-47f42907141sm12040355e9.9.2026.01.14.14.25.06
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 14 Jan 2026 14:25:06 -0800 (PST)
+ Wed, 14 Jan 2026 14:25:07 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Volodymyr Fialko <vfialko@marvell.com>
-Subject: [PATCH 02/29] examples/packet_ordering: correct documentation errors
-Date: Wed, 14 Jan 2026 14:21:43 -0800
-Message-ID: <20260114222458.87119-3-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH 03/29] examples/service_cores: correct documentation errors
+Date: Wed, 14 Jan 2026 14:21:44 -0800
+Message-ID: <20260114222458.87119-4-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260114222458.87119-1-stephen@networkplumber.org>
 References: <20260114222458.87119-1-stephen@networkplumber.org>
@@ -81,48 +80,47 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Address grammar and clarity issues in packet ordering sample documentation:
-- Change "enables output the" to "enables output of the"
-- Clarify port mask description from "either 1 or even enabled port
-  numbers" to "either 1 or an even number of enabled ports"
+Address errors in service cores sample documentation:
+- Change "registering applications" to "registering services"
+- Add missing word: "can CPU cycles to" becomes
+  "can provide CPU cycles to"
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- doc/guides/sample_app_ug/packet_ordering.rst | 23 +++++++++++---------
- 1 file changed, 13 insertions(+), 10 deletions(-)
+ doc/guides/sample_app_ug/service_cores.rst | 41 ++++++++++++----------
+ 1 file changed, 23 insertions(+), 18 deletions(-)
 
-diff --git a/doc/guides/sample_app_ug/packet_ordering.rst b/doc/guides/sample_app_ug/packet_ordering.rst
-index f96c0ad697..057dd932d4 100644
---- a/doc/guides/sample_app_ug/packet_ordering.rst
-+++ b/doc/guides/sample_app_ug/packet_ordering.rst
-@@ -4,29 +4,29 @@
- Packet Ordering Application
- ============================
+diff --git a/doc/guides/sample_app_ug/service_cores.rst b/doc/guides/sample_app_ug/service_cores.rst
+index 307a6c5fbb..cc44857d41 100644
+--- a/doc/guides/sample_app_ug/service_cores.rst
++++ b/doc/guides/sample_app_ug/service_cores.rst
+@@ -4,23 +4,26 @@
+ Service Cores Sample Application
+ ================================
  
--The Packet Ordering sample app simply shows the impact of reordering a stream.
--It's meant to stress the library with different configurations for performance.
-+The Packet Ordering sample application shows the impact of reordering a stream.
-+It is meant to stress the library with different configurations for performance.
+-The service cores sample application demonstrates the service cores capabilities
+-of DPDK. The service cores infrastructure is part of the DPDK EAL, and allows
+-any DPDK component to register a service. A service is a work item or task, that
++Overview
++--------
++
++This sample application demonstrates the service core capabilities
++of DPDK. The service core infrastructure is part of the DPDK EAL and allows
++any DPDK component to register a service. A service is a work item or task that
+ requires CPU time to perform its duty.
  
- Overview
- --------
+-This sample application registers 5 dummy services. These 5 services are used
+-to show how the service_cores API can be used to orchestrate these services to
++This sample application registers 5 dummy services that are used
++to show how the service_cores API can orchestrate these services to
+ run on different service lcores. This orchestration is done by calling the
+-service cores APIs, however the sample application introduces a "profile"
+-concept to contain the service mapping details. Note that the profile concept
+-is application specific, and not a part of the service cores API.
++service cores APIs. However, the sample application introduces a "profile"
++concept to contain service mapping details. Note that the profile concept
++is application-specific, and not a part of the service cores API.
  
- The application uses at least three CPU cores:
- 
--* RX core (main core) receives traffic from the NIC ports and feeds Worker
-+* The RX core (main core) receives traffic from the NIC ports and feeds Worker
-   cores with traffic through SW queues.
- 
--* Worker (worker core) basically do some light work on the packet.
--  Currently it modifies the output port of the packet for configurations with
-+* The Worker (worker core) does some light work on the packet.
-+  Currently, it modifies the output port of the packet for configurations with
-   more than one port enabled.
- 
--* TX Core (worker core) receives traffic from Worker cores through software queues,
-+* The TX Core (worker core) receives traffic from Worker cores through software queues,
-   inserts out-of-order packets into reorder buffer, extracts ordered packets
-   from the reorder buffer and sends them to the NIC ports for transmission.
  
  Compiling the Application
  -------------------------
@@ -130,34 +128,54 @@ index f96c0ad697..057dd932d4 100644
 -To compile the sample application see :doc:`compiling`.
 +To compile the sample application, see :doc:`compiling`.
  
- The application is located in the ``packet_ordering`` sub-directory.
+ The application is located in the ``service_cores`` sub-directory.
  
-@@ -36,6 +36,9 @@ Running the Application
- Refer to *DPDK Getting Started Guide* for general information on running applications
- and the Environment Abstraction Layer (EAL) options.
+@@ -39,8 +42,8 @@ pass a service core-mask as an EAL argument at startup time.
+ Explanation
+ -----------
  
-+Explanation
-+-----------
+-The following sections provide some explanation of code focusing on
+-registering applications from an applications point of view, and modifying the
++The following sections provide explanation of the application code with focus on
++registering services from an application's point of view and modifying the
+ service core counts and mappings at runtime.
+ 
+ 
+@@ -48,7 +51,7 @@ Registering a Service
+ ~~~~~~~~~~~~~~~~~~~~~
+ 
+ The following code section shows how to register a service as an application.
+-Note that the service component header must be included by the application in
++Note: The service component header must be included by the application in
+ order to register services: ``rte_service_component.h``, in addition
+ to the ordinary service cores header ``rte_service.h`` which provides
+ the runtime functions to add, remove and remap service cores.
+@@ -80,7 +83,7 @@ Removing A Service Core
+ ~~~~~~~~~~~~~~~~~~~~~~~
+ 
+ To remove a service core, the steps are similar to adding but in reverse order.
+-Note that it is not allowed to remove a service core if the service is running,
++Note: It is not allowed to remove a service core if the service is running,
+ and the service-core is the only core running that service (see documentation
+ for ``rte_service_lcore_stop`` function for details).
+ 
+@@ -88,9 +91,11 @@ for ``rte_service_lcore_stop`` function for details).
+ Conclusion
+ ~~~~~~~~~~
+ 
+-The service cores infrastructure provides DPDK with two main features. The first
+-is to abstract away hardware differences: the service core can CPU cycles to
++The service cores infrastructure provides DPDK with two main features.
 +
- Application Command Line
- ~~~~~~~~~~~~~~~~~~~~~~~~
- 
-@@ -50,12 +53,12 @@ The -l EAL corelist option has to contain at least 3 CPU cores.
- The first CPU core in the core mask is the main core and would be assigned to
- RX core, the last to TX core and the rest to Worker cores.
- 
--The PORTMASK parameter must contain either 1 or even enabled port numbers.
-+The PORTMASK parameter must contain either 1 or an even number of enabled ports.
- When setting more than 1 port, traffic would be forwarded in pairs.
- For example, if we enable 4 ports, traffic from port 0 to 1 and from 1 to 0,
- then the other pair from 2 to 3 and from 3 to 2, having [0,1] and [2,3] pairs.
- 
--The disable-reorder long option does, as its name implies, disable the reordering
-+The disable-reorder long option, as its name implies, disables the reordering
- of traffic, which should help evaluate reordering performance impact.
- 
--The insight-worker long option enables output the packet statistics of each worker thread.
-+The insight-worker long option enables output of the packet statistics of each worker thread.
++The first is to abstract away hardware differences: the service core can provide CPU cycles to
+ a software fallback implementation, allowing the application to be abstracted
+-from the difference in HW / SW availability. The second feature is a flexible
+-method of registering functions to be run, allowing the running of the
+-functions to be scaled across multiple CPUs.
++from the difference in HW / SW availability.
++
++The second feature is a flexible method of registering functions to be run,
++allowing the running of the functions to be scaled across multiple CPUs.
 -- 
 2.51.0
 
