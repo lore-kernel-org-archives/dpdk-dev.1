@@ -2,67 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A3B4D3CC82
-	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Jan 2026 22:56:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83135D3CC82
+	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Jan 2026 22:56:40 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3E8A5427A4;
-	Wed, 14 Jan 2026 23:56:10 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 2730C427B9;
+	Wed, 14 Jan 2026 23:56:11 +0100 (CET)
 Received: from mail-wm1-f65.google.com (mail-wm1-f65.google.com
- [209.85.128.65]) by mails.dpdk.org (Postfix) with ESMTP id 7077042790
- for <dev@dpdk.org>; Wed, 14 Jan 2026 23:56:08 +0100 (CET)
+ [209.85.128.65]) by mails.dpdk.org (Postfix) with ESMTP id 0B86C4114B
+ for <dev@dpdk.org>; Wed, 14 Jan 2026 23:56:10 +0100 (CET)
 Received: by mail-wm1-f65.google.com with SMTP id
- 5b1f17b1804b1-47d5e021a53so2479295e9.3
- for <dev@dpdk.org>; Wed, 14 Jan 2026 14:56:08 -0800 (PST)
+ 5b1f17b1804b1-47ee301a06aso3157755e9.0
+ for <dev@dpdk.org>; Wed, 14 Jan 2026 14:56:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768431368;
- x=1769036168; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768431370;
+ x=1769036170; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=V4JEKXsJnsuvF4wlCgf6UWFFm7emZn6xqs58faKAvqI=;
- b=fcDyNx5awHoYaCsX6uXU2MYOSc3QxK5V4XJ7bbh9uJNg1SVnB9k/ffb3UhEzD5jcBr
- 77PDcQWBwqF5VneytQD1QmqBJqlB2zd+1iaYBkIn/5JzDi/BRyFcXUJhKUeeJk7YyA42
- vSDWe6tLIMPBiYBWtpjunOJo0SjxgJWb0OCwWKLegA54C/qTcOiVypPfxQBK9QGtrg6W
- 2CO6OqUGfNTHmAI6FJw8BLxPxvPUN5wmsTTxacGA0AIxqnw/n7HYA2pSfMeLf0CECAa4
- AzLoj3ENCzy4V+y9+opABWu7ORni1GKJwzEnmni8/eHH8vuII7clxuOlqQIk+e03Q18C
- Cxsw==
+ bh=dDHwFEqKAUwO0LexrGRol35E2FgPQa7vxmmkv3fiikA=;
+ b=WzeFTYws3PdkO40L3YS5GotldtWpHS3MHexbDyMT8GJo9Gvsb0nJq/eLENMALXrTlP
+ xVYrMOsGktSj2xiTrhhjYO/OJWdScfMIIc5b1rXlVYptyThRZDanXCOJD+k2IyOv1i8V
+ uCWxfqwiTgwvxZP/wNaemsMLXZ8wHpukqpuydxX9jhOZ7qbWmhsLpD7LDYJjV4PGTPe1
+ M/iHQHRn2dXe/WHZ8/ot5k6AeeQaBV/IMRwvDBpyy199GCRpuxEn/0bDoRWgnPrcUuTg
+ VjGK5vz25BXc26dcwGOKM26iuArbvzmyF7vwyhgoWjFv91dy/CRBETeXkzvLb2+1NV56
+ hf8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768431368; x=1769036168;
+ d=1e100.net; s=20230601; t=1768431370; x=1769036170;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=V4JEKXsJnsuvF4wlCgf6UWFFm7emZn6xqs58faKAvqI=;
- b=UDkXlK/vr5ck4NIvhRD6co2l4Ob7VUSoP73vK5eN73xtzr4zm8EIwsjAhiS3RrmqrB
- ov6cGl55UG3EvVCNCjQB/YmkxIX/0/LKHRl/mAOaFsl6TJMhxbWOXk1KNjlArswXmcRF
- Va0l+77D8n3Nz31W+Y5G5fJ2v8fKK6xtuA1JqmzXtpjYMou946umg+8xnyA51jACFca3
- zeLCDfVVFQNA+iCvcVO3JVtvjJ+57rmuuSJZRpap+fYWCZ8toc+QqGJYTvHtSQPVucmr
- hjsZ4wqig9X+QwZbMAjznZBLTPIf0AlWrF87qSrDEcrtFmGeRglPS/4w+yRmyzBIfjJ7
- yqBQ==
-X-Gm-Message-State: AOJu0Yy4iKKRtS4+toCuNFZw0osV7H2BV/juDYb64QErpWwksPz0aE29
- er4aXLKxl0y9KGyDiMoZ4Qgq0PlJsKix5ftKlF8potFDeUQspwu/uSwpElWXmpgpVl3+0vqrHKd
- YbTgSMIw=
-X-Gm-Gg: AY/fxX6ULp8PBH2UkuoNTugRX+9F9OmxMLw5K8yZbBQXey8paG+BcdtT9gLeib8Mflf
- c9g63hmEkpi3iLpR9yJFkYsns9Cga0GEqz+nPLS4WbeLc56cFwZr0X1zPv4+YHyXAQcO6C6e/C0
- AS2H0VPIw0womf50UxvNagEez6U1O9t1U7/fb1jLQzQoyyVlCP6kLs5waPDaDvAGJAPeGI6Ns0g
- dK0Nbl4h3i5twivSchpq19FVljLykwkT3SvCS1EqO3XAmDzTU/fVoyMBrqjtOocJdzPpzjyMk/A
- r68rrLdLOsTwkj2Fad+LJ9CAtNUyoIewKjFANRHJRlA6SIFf5u3cqvNtDG0bf5NlT78hK2DC0XG
- FlTZTZhxWUMaU4fuvtmRO2rBWp/nS9AIDl0bC+cajQXLsWKRqxWYJtCrBPi7JiOH9rQzU2d3O2p
- nc5ztkNYfvNPZeZUKs3nBK2IAezjOiZDCbdRQVVNYFVuxMgY8yhg==
-X-Received: by 2002:a05:600c:8b2f:b0:479:3a86:dc1e with SMTP id
- 5b1f17b1804b1-47ee4840941mr45309385e9.36.1768431368056; 
- Wed, 14 Jan 2026 14:56:08 -0800 (PST)
+ bh=dDHwFEqKAUwO0LexrGRol35E2FgPQa7vxmmkv3fiikA=;
+ b=J9ymmbBsZdewJQQuDmm3ad59LRnxb3GizycK86NhXzRaQqxtU2q0rF0pZBy9U9zfcP
+ jeDvVQkZrrUsFC4/Fy9R3MEs32QKJSHVNcV8c3+wGKJ11r6TwqAb/cv5cqjjtOFAjjkW
+ mV9+xdoF30oNWKSzIZOozQ2BVg7ziYr1JiMqVWCpulQMina+aTts+Mwt93mmJyJljVLf
+ aZOPYsSn4nO/iV9F7WwfKi88p2/rhXta1xY75Doj+zsSzEXpRoWs74VtmdiUJxpexQvv
+ HoHYlFb9IU48InmOhUsk7ARDD9glfy3vAyND2bxT22sM8ORFw4xlIiGDx1Fvbf0jiDmg
+ 1j1w==
+X-Gm-Message-State: AOJu0YzsuntQy5mIbMLxxbwpT6m/rxSg9BN/WwDAsesikWD/9TlK4E2Q
+ Vco7sOhmFYAbwUSix6jN4SPqo4djHEITpaiX0wXBHnsONSJKNY17dINzFbUV6u83KtBz//UD3Zs
+ gtI9U/CM=
+X-Gm-Gg: AY/fxX4HVKemB01zqPnt5ATDjeENiloZdt0DUwnRcYovcKwBvE3X+94uKe318BSGway
+ YSvKehi1nOp6xjQ8lwome6zup6bL/EjAIz9BbPgeqv8G2w02oaPpj1zVUX03Nx0tBXRB3DfdEFx
+ FE0wtS184ZAkPBAvPW3u2wtZHBi2wUfr2Xc6oRMdCEJOF7uSrcDCE2oSs5QvxOmlXcKjTavEfs9
+ phfRXHfyYWKLwGPe1dQ0x1kZpt3TflJLI2HlV7qDrGgG6xSnN6Ph9WxPjgwThRdk94FvR+HILL8
+ fhe3+UToYPbeIIxhd6zhDt1Pl9wkFQ2G/ldPsb3QoLsERkzcrgH8DgQVc62IufYM/+God+BJpQ6
+ cRU+0QXSje8xjK/P43Rnnd2MPmbbW/fwvx9cansZgPe8daaEZllX6v1rpPUHnggeJhlsHRaL6NA
+ 4qlcVuI176xiLlnRMw0EkhtDbelFlslSna8BA7hTcSHa8bun8gvA==
+X-Received: by 2002:a05:600c:a46:b0:47a:975b:e3e6 with SMTP id
+ 5b1f17b1804b1-47ee3371a0amr54321925e9.18.1768431369600; 
+ Wed, 14 Jan 2026 14:56:09 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-47f428af0c7sm12999125e9.4.2026.01.14.14.56.06
+ 5b1f17b1804b1-47f428af0c7sm12999125e9.4.2026.01.14.14.56.08
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 14 Jan 2026 14:56:07 -0800 (PST)
+ Wed, 14 Jan 2026 14:56:09 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Maxime Coquelin <maxime.coquelin@redhat.com>
-Subject: [PATCH 05/11] doc: improve Linux uAPI header documentation
-Date: Wed, 14 Jan 2026 14:54:09 -0800
-Message-ID: <20260114225555.127448-6-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH 06/11] doc: improve new driver guide readability
+Date: Wed, 14 Jan 2026 14:54:10 -0800
+Message-ID: <20260114225555.127448-7-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260114225555.127448-1-stephen@networkplumber.org>
 References: <20260114225555.127448-1-stephen@networkplumber.org>
@@ -81,102 +80,188 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Improve clarity of the Linux uAPI header documentation
+Improve the new driver contribution guide
 - Converting passive voice to active voice
-- Simplifying sentence structure
-- Making instructions more direct
-- Removing redundant wording
+- Using imperative mood for recommendations
+- Removing "We recommend" and similar phrases
+- Simplifying wordy constructions
 
 No technical content changes.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- doc/guides/contributing/linux_uapi.rst | 40 ++++++++++++--------------
- 1 file changed, 19 insertions(+), 21 deletions(-)
+ doc/guides/contributing/new_driver.rst | 62 +++++++++++++-------------
+ 1 file changed, 31 insertions(+), 31 deletions(-)
 
-diff --git a/doc/guides/contributing/linux_uapi.rst b/doc/guides/contributing/linux_uapi.rst
-index a1bc0ba604..b28ebc4663 100644
---- a/doc/guides/contributing/linux_uapi.rst
-+++ b/doc/guides/contributing/linux_uapi.rst
-@@ -7,36 +7,34 @@ Linux uAPI header files
- Rationale
- ---------
+diff --git a/doc/guides/contributing/new_driver.rst b/doc/guides/contributing/new_driver.rst
+index 555e875329..23d986d941 100644
+--- a/doc/guides/contributing/new_driver.rst
++++ b/doc/guides/contributing/new_driver.rst
+@@ -6,10 +6,10 @@ Adding a New Driver
+ ===================
  
--The system a DPDK library or driver is built on is not necessarily running the
--same Kernel version than the system that will run it.
--Importing Linux Kernel uAPI headers enable to build features that are not
--supported yet by the build system.
-+The build system may run a different kernel version than the deployment target.
-+To support features unavailable in the build system's kernel, import Linux kernel uAPI headers.
+ The DPDK project continuously grows its ecosystem by adding support for new devices.
+-This document is designed to assist contributors in creating DPDK drivers,
++This document assists contributors in creating DPDK drivers,
+ also known as Poll Mode Drivers (PMD).
  
--For example, the build system runs upstream Kernel v5.19 and we would like to
--build a VDUSE application that will use VDUSE_IOTLB_GET_INFO ioctl() introduced
--in Linux Kernel v6.0.
-+For example, if the build system runs upstream Kernel v5.19, but you need to build a VDUSE application
-+that uses the VDUSE_IOTLB_GET_INFO ioctl introduced in Kernel v6.0, importing the relevant uAPI headers enables this.
-+
-+The Linux kernel's syscall license exception permits the inclusion of unmodified uAPI header files in such cases.
+-By having public support for a device, we can ensure accessibility across various
++By having public support for a device, we ensure accessibility across various
+ operating systems and guarantee community maintenance in future releases.
+ If a new device is similar to a device already supported by an existing driver,
+ it is more efficient to update the existing driver.
+@@ -20,8 +20,8 @@ Here are our best practice recommendations for creating a new driver.
+ Early Engagement with the Community
+ -----------------------------------
  
- `Linux Kernel licence exception regarding syscalls
- <https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/plain/LICENSES/exceptions/Linux-syscall-note>`_
--enable importing unmodified Linux Kernel uAPI header files.
-+enables importing unmodified Linux Kernel uAPI header files.
+-When creating a new driver, we highly recommend engaging with the DPDK
+-community early instead of waiting the work to mature.
++When creating a new driver, engage with the DPDK community early
++rather than waiting for the work to mature.
  
- Importing or updating an uAPI header file
- -----------------------------------------
+ These public discussions help align development of your driver with DPDK expectations.
+ You may submit a roadmap before the release to inform the community of your plans.
+@@ -29,31 +29,31 @@ Additionally, sending a Request For Comments (RFC) early in the release cycle,
+ or even during the prior release, is advisable.
  
--In order to ensure the imported uAPI headers are both unmodified and from a
--released version of the linux Kernel, a helper script is made available and
--MUST be used.
-+To ensure that imported uAPI headers are unmodified and sourced from an official Linux
-+kernel release, a helper script is provided and must be used.
- Below is an example to import ``linux/vduse.h`` file from Linux ``v6.10``:
+ DPDK is mainly consumed via Long Term Support (LTS) releases.
+-It is common to target a new PMD to a LTS release. For this,
+-it is suggested to start upstreaming at least one release before a LTS release.
++It is common to target a new PMD to an LTS release. For this,
++start upstreaming at least one release before an LTS release.
  
- .. code-block:: console
  
-    devtools/linux-uapi.sh -i linux/vduse.h -u v6.10
+ Progressive Work
+ ----------------
  
--Once imported, the header files should be committed without any other change.
--Note that all the imported headers will be updated to the requested version.
-+Once imported, commit header files without any modifications. Note that all imported
-+headers are updated to match the specified kernel version.
+-To continually progress your work, we recommend planning
++To continually progress your work, plan
+ for incremental upstreaming across multiple patch series or releases.
  
--Updating imported headers to a newer released version should only be done on
--a need basis, it can be achieved using the same script:
-+Perform updates to a newer released version only when necessary, using
-+the same helper script.
+-It's important to prioritize quality of the driver over upstreaming
++Prioritize quality of the driver over upstreaming
+ in a single release or single patch series.
  
- .. code-block:: console
  
-@@ -44,8 +42,8 @@ a need basis, it can be achieved using the same script:
+ Finalizing
+ ----------
  
- The commit message should reflect why updating the headers is necessary.
+-Once the driver has been upstreamed,
+-the author has a responsibility to the community to maintain it.
++Once the driver is upstreamed,
++the author is responsible for maintaining it.
  
--Once committed, user can check headers are valid by using the same Linux
--uAPI script using the check option:
-+Once committed, check that headers are valid using the same Linux
-+uAPI script with the check option:
+ This includes the public test report.
+ Authors must send a public test report after the first upstreaming of the PMD.
+ The same public test procedure may be reproduced regularly per release.
  
- .. code-block:: console
+-After the PMD is upstreamed, the author should send a patch to update
++After the PMD is upstreamed, send a patch to update
+ `the website <https://core.dpdk.org/supported/>`_
+ with the name of the new PMD and supported devices via the
+ `DPDK web mailing list <https://mails.dpdk.org/listinfo/web>`_.
+@@ -64,7 +64,7 @@ For more information about the role of maintainers, see :doc:`patches`.
+ Splitting into Patches
+ ----------------------
  
-@@ -60,13 +58,13 @@ Note that all the linux-uapi.sh script options can be combined. For example:
- Header inclusion into library or driver
- ---------------------------------------
+-We recommend that drivers are split into patches,
++Split drivers into patches
+ so that each patch represents a single feature.
+ If the driver code is already developed, it may be challenging to split.
+ However, there are many benefits to doing so.
+@@ -73,17 +73,17 @@ Splitting patches makes it easier to understand a feature
+ and clarifies the list of components/files that compose that specific feature.
  
--The library or driver willing to make use of imported uAPI headers needs to
--explicitly include the header file with ``uapi/`` prefix in C files.
-+Libraries or drivers that rely on imported uAPI headers must explicitly include
-+the relevant header using the ``uapi/`` prefix in their C source files.
+ It also enables the ability to track
+-from the source code to the feature it is enabled for,
+-and helps users to understand the reasoning and intention of implementation.
++from the source code to the feature it enables,
++and helps users understand the reasoning and intention of implementation.
+ This kind of tracing is regularly required for defect resolution and refactoring.
  
- This inclusion must be done before any header external to DPDK is included,
--to prevent inclusion of this system uAPI header in any of those external headers.
-+to prevent inclusion of the system uAPI header in any of those external headers.
+ Another benefit of splitting the codebase per feature is that
+ it highlights unnecessary or irrelevant code,
+ as any code not belonging to any specific feature becomes obvious.
  
--For example to include VDUSE uAPI:
-+For example, to include VDUSE uAPI:
+-Git bisect is also more useful if patches are split per patch.
++Git bisect is also more useful if patches are split per feature.
  
- .. code-block:: c
+-The split should focus on logical features rather than file-based divisions.
++Focus the split on logical features rather than file-based divisions.
  
+ Each patch in the series must compile without errors
+ and should maintain functionality.
+@@ -92,20 +92,20 @@ Enable the build as early as possible within the series
+ to facilitate continuous integration and testing.
+ This approach ensures a clear and manageable development process.
+ 
+-We suggest splitting patches following this approach:
++Split patches following this approach:
+ 
+-* Each patch should be organized logically as a new feature.
++* Organize each patch logically as a new feature.
+ * Run test tools per patch (See :ref:`tool_list`).
+ * Update relevant documentation and `<driver>.ini` file with each patch.
+ 
+-The following order in the patch series is as suggested below.
++The following order in the patch series is suggested.
+ 
+ The first patch should have the driver's skeleton which should include:
+ 
+ * Maintainers file update
+ * Driver documentation
+ * Document must have links to official product documentation web page
+-* The new document should be added into the index (`index.rst`)
++* Add the new document to the index (`index.rst`)
+ * Initial `<driver>.ini` file
+ * Release notes announcement for the new driver
+ 
+@@ -152,10 +152,10 @@ Time synchronization, PTP
+ Performance documentation
+ ================================  ================================
+ 
+-After all features are enabled,
++After enabling all features,
+ if there is remaining base code that is not upstreamed,
+-they can be upstreamed at the end of the patch series.
+-However, we recommend these patches are still split into logical groups.
++upstream it at the end of the patch series.
++However, still split these patches into logical groups.
+ 
+ 
+ Additional Suggestions
+@@ -185,12 +185,12 @@ Remember to do the following:
+ Dependencies
+ ------------
+ 
+-At times, drivers may have dependencies to external software.
+-For driver dependencies, same DPDK rules for dependencies applies.
+-Dependencies should be publicly and freely available,
+-drivers which depend on non-available components will not be accepted.
++At times, drivers may have dependencies on external software.
++For driver dependencies, the same DPDK rules for dependencies apply.
++Dependencies should be publicly and freely available;
++drivers that depend on unavailable components will not be accepted.
+ If the required dependency is not yet publicly available,
+-then wait to submit the driver until the dependent library is available.
++wait to submit the driver until the dependent library is available.
+ 
+ 
+ .. _tool_list:
+@@ -199,10 +199,10 @@ Test Tools
+ ----------
+ 
+ Build and check the driver's documentation.
+-Make sure there are no warnings,
+-and driver shows up in the relevant index page.
++Ensure there are no warnings
++and the driver shows up in the relevant index page.
+ 
+-Be sure to run the following test tools per patch in a patch series:
++Run the following test tools per patch in a patch series:
+ 
+ * `checkpatches.sh`
+ * `check-git-log.sh`
 -- 
 2.51.0
 
