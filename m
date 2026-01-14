@@ -2,71 +2,41 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF710D39003
-	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Jan 2026 18:00:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 193CDD39003
+	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Jan 2026 18:05:48 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E6C5540B90;
-	Wed, 14 Jan 2026 19:00:19 +0100 (CET)
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com
- [209.85.208.54]) by mails.dpdk.org (Postfix) with ESMTP id 5CEC34027D
- for <dev@dpdk.org>; Wed, 14 Jan 2026 19:00:19 +0100 (CET)
-Received: by mail-ed1-f54.google.com with SMTP id
- 4fb4d7f45d1cf-64dfb22c7e4so2175720a12.1
- for <dev@dpdk.org>; Wed, 14 Jan 2026 10:00:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768413619;
- x=1769018419; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=vILcaUb4DTtxFI1QjQBKJIXtsstUbXrdq1yzO9hX5wk=;
- b=ctewXqDEhPXiKMsjg54Nh1nxu4OvlMIgEGFh3+L+DMljqUwYv8tMxIxg+DJ6sY8V3A
- 3ZkUL4Wwzk/fjSRRlcqPNnG8BiT2WOd3G59f4KNZZe+vQOyv6fhrdc/0S25Ywzm+kA+o
- Y7KNCs2f0VCqiG/2O4MzbYIFUZy4uwNRcBE7Yvi2XL/gDchBOrVElLvWZYfgQlFfL8Bk
- TwPeyMAX9aAzE/nTwOkQ4HBzK5rmuc/jXOlu4dgasgWD8c26bX6Vj7fAucjTyb+WVee4
- O1kDndbuRlKDUPx/QimKG7vJhKDtxWC1pOozyXt4NFO1vscteRBO2uasbIH/tv1UtAsp
- gIuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768413619; x=1769018419;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=vILcaUb4DTtxFI1QjQBKJIXtsstUbXrdq1yzO9hX5wk=;
- b=TDvhbkm8ZqYxPMqRwI1q6Wc9vI+GcDzWDQCKT73srCSfEAyqyepOVO7WKspqIcKGZb
- Ug2vmcD7b/sB8qSLj2MkZX+yzN8vsep37RImrilC6qBvDlkxC1Ppm+1RPgAOZPOgC6cB
- m1zgYXQQnlMiARx+B9I0jSOPcvSgkLDhjS6xKb0nsNlYzXPWRMEY1xNvViLM3fsYrjsh
- LsWEBDwz97bex1pP8a37pLdoGh9TK6AjBj+SSy3Hs8PtYQQHfuIajz2HJ2Qour56HApg
- 9KcH3cd1CJwbvm5j86Wb2kMqGMWmsvJ6mu3QB7Q+YtVmT9y6Bfqp3VVyr1POb6j946a5
- EDnA==
-X-Gm-Message-State: AOJu0YxbmNbJ5RPBzomWA2IePEOWRbMgDtHXXdt4hS6YHWzgl+cdfsiU
- xCjA6b+xwMu9f6KKr6anpF+15ILGxmg/i/fcug3EnglEgnKPKdxIrlO5KSnjjT7wPKO3CLqR9tH
- Ew51k
-X-Gm-Gg: AY/fxX4ASeq6qWwRiHz5mZzW+dyGOMedRSJEkNTcVjc32s/uYAVmI/vfemxS1vvHUSk
- tcJ12N4p1muxeKn79NysuNkii/X0GCF/saAQoU1ZFvZpCCyhjJFv3hWd3wiFgpsXxZkLX3NEY/B
- 3/qaWtbIzaPmP0QPmD8SX2+ITbZ2gyyTNp174vhvN6FMbQbgjZwcVvwRPv8gpfmMGy3Om8e+rZ4
- MfIaA22pMIetAg4w4zq7oD7v+k8b3NBl9m3D+pHm/ZN2AXnHeqNlnPNXpIVlhGmhr43AqMIK2V3
- Nn30K2yMuMx0+nQiQ7KrdyWHf4Y6tsBPs6GwyZM4zlLCUFz78v6xTWkWbf43Vl+BXvszYTsXcX7
- /0wsMSttoN40MMAlNxhw3E52ctmoANHAzWepHJkdXcJonPm9TaA1VwpbizMPkLE9wRfuvaohufH
- aws/6jog8y9m8gTjW+NA3Hst2VKrM62klmgOFjBQJZyCeuCNTupgYW
-X-Received: by 2002:a17:906:8910:b0:b87:63a8:91b4 with SMTP id
- a640c23a62f3a-b8777c5360cmr18712666b.30.1768413618631; 
- Wed, 14 Jan 2026 10:00:18 -0800 (PST)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- a640c23a62f3a-b86ebfd007fsm1382139566b.31.2026.01.14.10.00.17
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 14 Jan 2026 10:00:18 -0800 (PST)
-Date: Wed, 14 Jan 2026 10:00:13 -0800
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Kerem Aksu <kerem.aksu@i2i-systems.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH] cmdline: update clear screen behavior
-Message-ID: <20260114100013.57faee61@phoenix.local>
-In-Reply-To: <20260105113529.65969-1-kerem.aksu@i2i-systems.com>
-References: <20260105113529.65969-1-kerem.aksu@i2i-systems.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 6760840BA2;
+	Wed, 14 Jan 2026 19:05:47 +0100 (CET)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id CC1A54027D;
+ Wed, 14 Jan 2026 19:05:46 +0100 (CET)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id F3185229AD;
+ Wed, 14 Jan 2026 19:05:45 +0100 (CET)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain;
+	charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
+Subject: RE: mbuf fast-free requirements analysis
+Date: Wed, 14 Jan 2026 19:05:44 +0100
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F6565E@smartserver.smartshare.dk>
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+In-Reply-To: <aWfGCglFfkpOAxgh@bricha3-mobl1.ger.corp.intel.com>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: mbuf fast-free requirements analysis
+Thread-Index: AdyFc/iH98766/BeS1GkdpWC00fYNQACPvcg
+References: <98CBD80474FA8B44BF855DF32C47DC35F655E0@smartserver.smartshare.dk>
+ <aT_1J0If92bxkLG0@bricha3-mobl1.ger.corp.intel.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F6565B@smartserver.smartshare.dk>
+ <aWfGCglFfkpOAxgh@bricha3-mobl1.ger.corp.intel.com>
+From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
+To: "Bruce Richardson" <bruce.richardson@intel.com>
+Cc: "Konstantin Ananyev" <konstantin.ananyev@huawei.com>, <techboard@dpdk.org>,
+ <dev@dpdk.org>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -80,111 +50,148 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon,  5 Jan 2026 14:35:29 +0300
-Kerem Aksu <kerem.aksu@i2i-systems.com> wrote:
-
-> Control+L should clear screen and redisplay prompt at the top
-> line. DPDK rdline library will not change anything on the screen when
-> fed with Control+L.  When prompt is lost after too many text written
-> to the terminal, users will press Control+L to clear screen and put
-> the prompt to the top line. This is expected behavior in bash(1) or
-> applications that are using readline(3). Updated to behave as users
-> expected.
+> From: Bruce Richardson [mailto:bruce.richardson@intel.com]
+> Sent: Wednesday, 14 January 2026 17.36
 >=20
-> Signed-off-by: Kerem Aksu <kerem.aksu@i2i-systems.com>
-> ---
+> On Wed, Jan 14, 2026 at 04:31:31PM +0100, Morten Br=F8rup wrote:
+> > > > If I'm not mistaken, the mbuf library is not a barrier for fast-
+> > > freeing
+> > > > segmented packet mbufs, and thus fast-free of jumbo frames is
+> > > possible.
+> > > >
+> > > > We need a driver developer to confirm that my suggested approach
+> -
+> > > > resetting the mbuf fields, incl. 'm->nb_segs' and 'm->next', =
+when
+> > > > preparing the Tx descriptor - is viable.
+> > > >
+> > > Excellent analysis, Morten. If I get a chance some time this
+> release
+> > > cycle,
+> > > I will try implementing this change in our drivers, see if any
+> > > difference
+> > > is made.
+> >
+> > Bruce,
+> >
+> > Have you had a chance to look into the driver change requirements?
+> > If not, could you please try scratching the surface, to build a gut
+> feeling.
+>=20
+> I'll try and take a look this week. Juggling a few things at the
+> moment, so
+> I had forgotten about this. Sorry.
+>=20
+> More comments inline below.
+>=20
+> /Bruce
+>=20
+> >
+> > I wonder if the vector implementations have strong requirements that
+> packets are not segmented...
+> >
+> > The i40 driver only sets "tx_simple_allowed" and "tx_vec_allowed"
+> flags when MBUF_FAST_FREE is set:
+> >
+> =
+https://elixir.bootlin.com/dpdk/v25.11/source/drivers/net/intel/i40e/i4
+> 0e_rxtx.c#L3502
+> >
+>=20
+> Actually, it allows but does not require FAST_FREE. The check is just
+> verifying that the flags with everything *but* FAST_FREE masked out is
+> the
+> same as the original flags, i.e. FAST_FREE is just ignored.
 
-Overall looks correct. AI review had some feedback.
-I would add a release note just for clarity
+That's not how I read the code:
+ad->tx_simple_allowed =3D
+	(txq->offloads =3D=3D
+	 (txq->offloads & RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE) &&
+	 txq->tx_rs_thresh >=3D I40E_TX_MAX_BURST);
 
+Look at it with offloads=3D(MULTI_SEGS|FAST_FREE):
+simple_allowed =3D (MULTI_SEGS|FAST_FREE) =3D=3D (MULTI_SEGS|FAST_FREE) =
+& FAST_FREE
+i.e.:
+simple_allowed =3D (MULTI_SEGS|FAST_FREE) =3D=3D FAST_FREE
+i.e.: false
 
-### Summary
-This patch modifies the Ctrl+L behavior in the cmdline library to clear the=
- entire screen and redisplay the prompt at the top, matching standard bash/=
-readline behavior. Currently, Ctrl+L only redisplays on the current line.
+>=20
+> > And only when these two flags are set, it uses a vector Tx function:
+> >
+> =
+https://elixir.bootlin.com/dpdk/v25.11/source/drivers/net/intel/i40e/i4
+> 0e_rxtx.c#L3550
+> > And a special Tx Prep function:
+> >
+> =
+https://elixir.bootlin.com/dpdk/v25.11/source/drivers/net/intel/i40e/i4
+> 0e_rxtx.c#L3584
+> > Which fails if nb_segs !=3D 1:
+> >
+> =
+https://elixir.bootlin.com/dpdk/v25.11/source/drivers/net/intel/i40e/i4
+> 0e_rxtx.c#L1675
+> >
+> > So currently it does.
+> > But does it need to?... That is the question.
+> > Paraphrasing:
+> > Can the Tx function only be vectorized when the code path doesn't
+> have branches depending on the number of segments?
+> > If so, then this may be the main reason for not supporting segmented
+> packets with FAST_FREE.
+> >
+> > In that case, we cannot remove the single-segment requirement from
+> FAST_FREE without sacrificing the performance boost from vectorizing.
+>=20
+> No, based on what I state above, this should not be a blocker. The
+> vector
+> paths do require us to guarantee only one segment per packet - without
+> additional context descriptors - so only one descriptor per packet
+> (generally, or always one + ctx, in one code-path case). FAST_FREE can
+> be
+> used in conjunction with that but should not be a requirement. See [1]
+> where in vector cleanup we explicitly check for FAST_FREE.
+>=20
+> Similarly for scalar code path, in my latest rework, I am attempting =
+to
+> standardize the use of FAST_FREE optimizations even when we have a
+> slightly
+> slower Tx path [2].
 
----
+Good point:
+The Tx path has two steps:
+1) Pre-transmission Tx descriptor setup.
+2) Post-transmission mbuf free.
 
-### Commit Message =E2=9C=85
+FAST_FREE requirements for optimizing each of these two steps might =
+differ.
 
-| Check | Status | Notes |
-|-------|--------|-------|
-| Subject =E2=89=A460 chars | =E2=9C=85 | 40 characters |
-| Correct prefix | =E2=9C=85 | `cmdline:` is correct for lib/cmdline |
-| Imperative mood | =E2=9C=85 | "update" |
-| No trailing period | =E2=9C=85 | |
-| Lowercase | =E2=9C=85 | |
-| Body wrapped =E2=89=A475 chars | =E2=9C=85 | |
-| Body doesn't start with "It" | =E2=9C=85 | |
-| Signed-off-by | =E2=9C=85 | Present |
-| Acked-by/Tested-by | =E2=9C=85 | Both present |
+As suggested in my other email, hopefully the post-transmission step can =
+be vectorized (also for multi-segment packets) by assisting it in the =
+pre-transmission step - i.e. by preparing the FAST_FREE segments for =
+direct release to the mempool.
 
----
+Then we can consider single-segment requirements for the =
+pre-transmission step.
 
-### Code Review
-
-**Overall Assessment**: The approach is sound. Refactoring `rdline_redispla=
-y` into a parameterized `rdline_reprint` static function maintains API comp=
-atibility while adding the new clear-screen behavior.
-
-#### Errors (must fix)
-
-**1. Extra whitespace after comma** (style violation)
-
-Lines 126-129 in the patch have double spaces:
-```c
-rdline_puts(rdl,  vt100_clear_screen);   /* two spaces after comma */
-rdline_puts(rdl,  vt100_homecursor);     /* two spaces after comma */
-rdline_puts(rdl,  vt100_home);           /* two spaces after comma */
-```
-
-Should be:
-```c
-rdline_puts(rdl, vt100_clear_screen);
-rdline_puts(rdl, vt100_homecursor);
-rdline_puts(rdl, vt100_home);
-```
-
-#### Warnings (should consider)
-
-**2. Consider order of escape sequences**
-
-The current implementation sends `vt100_clear_screen` then `vt100_homecurso=
-r`. Some terminals may already position cursor at home after clear screen (=
-ESC [2J), but the explicit `ESC [H` is safer for portability. This is fine =
-as-is.
-
-**3. Potential documentation update**
-
-Consider whether the programmer's guide (`doc/guides/prog_guide/cmdline.rst=
-`) or API documentation needs updating to reflect the changed Ctrl+L behavi=
-or. Users familiar with the old behavior might notice the change.
-
-#### Info (observations)
-
-**4. Good API preservation**
-
-The `RTE_EXPORT_SYMBOL(rdline_redisplay)` is correctly maintained, and the =
-public function signature is unchanged. This preserves backward compatibili=
-ty for any external callers.
-
-**5. New VT100 constant placement**
-
-The new `vt100_homecursor` is added in a reasonable location in `cmdline_vt=
-100.h`, near related cursor movement sequences.
-
-**6. Existing style quirks preserved**
-
-The file already uses `for (i=3D0 ; i<...` style (spaces around semicolons =
-but not around `=3D` and `<`). The patch follows this existing convention, =
-which is correct.
-
----
-
-### Verdict
-
-**Needs revision** - Fix the double-space style issue, then this is ready.
-
-The change itself is a sensible UX improvement that aligns DPDK's command l=
-ine behavior with user expectations from bash and readline. The implementat=
-ion is clean and maintains API compatibility.
+>=20
+> [1]
+> https://github.com/DPDK/dpdk/blob/main/drivers/net/intel/common/tx.h
+> [2] =
+https://patches.dpdk.org/project/dpdk/patch/20260113151505.1871271-
+> 31-bruce.richardson@intel.com/
+>=20
+> >
+> > But then we can proceed pursuing alternative optimizations, as
+> suggested by Konstantin.
+> >
+> > Here's another idea:
+> > The Tx function could pre-scan each Tx burst for multi-segment
+> packets, to decide if the burst should be processed by the vector code
+> path or a fallback code path (which can also handle multi-segment
+> packets).
+> >
+> >
+> > -Morten
+> >
