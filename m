@@ -2,60 +2,61 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BACBDD31A29
-	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Jan 2026 09:32:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72008D31A29
+	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Jan 2026 09:32:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4755E40656;
-	Wed, 14 Jan 2026 10:32:46 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 4B84A4066A;
+	Wed, 14 Jan 2026 10:32:49 +0100 (CET)
 Received: from mx2.freebsd.org (mx2.freebsd.org [96.47.72.81])
- by mails.dpdk.org (Postfix) with ESMTP id BA8E94064F
- for <dev@dpdk.org>; Wed, 14 Jan 2026 10:32:43 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 208F640667
+ for <dev@dpdk.org>; Wed, 14 Jan 2026 10:32:46 +0100 (CET)
 Received: from mx1.freebsd.org (mx1.freebsd.org [IPv6:2610:1c1:1:606c::19:1])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (4096 bits)
  client-signature RSA-PSS (4096 bits))
  (Client CN "mx1.freebsd.org", Issuer "R12" (verified OK))
- by mx2.freebsd.org (Postfix) with ESMTPS id 4drgrW38dhz3pcD;
- Wed, 14 Jan 2026 09:32:43 +0000 (UTC)
+ by mx2.freebsd.org (Postfix) with ESMTPS id 4drgrZ2gYCz3pxL;
+ Wed, 14 Jan 2026 09:32:46 +0000 (UTC)
  (envelope-from jfree@FreeBSD.org)
-Received: from smtp.freebsd.org (smtp.freebsd.org [96.47.72.83])
+Received: from smtp.freebsd.org (smtp.freebsd.org
+ [IPv6:2610:1c1:1:606c::24b:4])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
  client-signature RSA-PSS (4096 bits) client-digest SHA256)
  (Client CN "smtp.freebsd.org", Issuer "R12" (verified OK))
- by mx1.freebsd.org (Postfix) with ESMTPS id 4drgrW1w14z3YhJ;
- Wed, 14 Jan 2026 09:32:43 +0000 (UTC)
+ by mx1.freebsd.org (Postfix) with ESMTPS id 4drgrZ1JK7z3YhK;
+ Wed, 14 Jan 2026 09:32:46 +0000 (UTC)
  (envelope-from jfree@FreeBSD.org)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=freebsd.org; s=dkim;
- t=1768383163;
+ t=1768383166;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=GoNZfs0Qmcg0CNDuYGSomjKv6jlyFd23JgCTH3Wxmq0=;
- b=ZuK0lG5bzqPfqpWhecyOsl346d9hvfXBb3JmXagm/0nnIhhG7svarWyy7bOmoxbaDvFbCr
- RUp5UDVfk3YS7D8mE/93QZFdKVNx/JG7dQADIbbZXYS/nRmMy3KqJ+pYb86+6rcDwN2zMH
- AaTEfyf91n/tIF8jrN5YyCBi8H6eKYpcT7fyBv5AZ1sTDkb5kUSLMgaN/+18FrnJ3S6qUY
- U2XNLrVJllf1Hp6TSVZla1hv8hW7JEP9LwZuAlIQzzd2v0K3JqHbhnEeExgf4L2YywN1Hg
- VGCSbt8ax08ciUDpv0T9daa59u7NLOL25aHl8ey0cLro8J0mXU18z4J0D6g7Yg==
+ bh=u/LnmQIRWRt2AnNWH1H6vIW10dk4U8COTSf0RWDl9jI=;
+ b=qyayxGQlZ+JoJgDem0eS139E9BVCRJq06mvjFwBxIvZFmzUmPKojaMNv6wVW8UIU6PJF7n
+ 6i4nKxtxPJEoyWgyu/1om6qlJVz7OUUGNAFjfUIn+o90biN9QLNK95ZtdfG6XyoSAmYteH
+ vfonIdnLDdJ0lNmjPr7x9zjSMSbP537EzhVXO+D428YL/GClr6TwHybpXb91K4xUbdyV3d
+ wX27JgafWnFe9rJXH0lWg4KcAZVKn5ieoc5w1s6u17uYicKb/aKXCLnDTXSe+VmfyyGc+Y
+ BA+jEXnp+wMDzWrmcJG8X0EXME5HxQQVQryVCfOni8FXE8aXBMpWbEhatpdovA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=freebsd.org;
- s=dkim; t=1768383163;
+ s=dkim; t=1768383166;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=GoNZfs0Qmcg0CNDuYGSomjKv6jlyFd23JgCTH3Wxmq0=;
- b=MURyfgaDh0h4LMjNinmeXsXxFKWeoNQXeiwV4LR0ed+IC43fMefVy3LOHgNh74OyuILSNQ
- L6bTJP7Mai/FgQVhsouhVks8Ol6MABqcPYk/Usq4wA1ehOaAhOJog8Fz4x4CtqFXjJLg6V
- +Aw9NN74Gq57o9Ffr+7apA36KQUlATm6y+TURehNfx16qk8wBQ6KCe3FLbnh2zmNPL9Fb8
- PAKPtvyOw7t3nCXm1rf3Xc2kye0hIXPeVjtx4cf+u1WbVGjk1fVBw44PN0dFkkDKqZAl3M
- KVaTHl+GCLdoEOgP2PkjFAISn/WFoTiEam59gNu2XEhQJdAyxWH0n3nlPyiQLg==
-ARC-Seal: i=1; s=dkim; d=freebsd.org; t=1768383163; a=rsa-sha256; cv=none;
- b=qy8x1eaKPh0JBIgpa8WS2IQee1q0XVeCVp+PFvJ2ymfV56oLjEXlPg7W/SNjUJI0knAXPG
- vLt/4y7bl4gPBPmxcIf4VEWCVx9fQV5STRQwQgM4T9knDvUfP2Ys/Jt0q5OoomfEfDI65F
- UWFcFHk8FiWBOb6wtzOE4rT+kx0NDucUc0RVxFM4WRGK1ulWqpyfT1P4+na3D6crT/B7tF
- PmtQxTDsfS9iuvYwZxrd53OdWTDPuF+AuVcJxOQzAnGbk8jpaQnTgPBfbX3vrL7ZTnat2N
- h55ocq00VmnUgF9wZWTsD8eyyPNSpjaSYu+bSjAU4U+K3Ov/ENOyrWHBEq2aKA==
+ bh=u/LnmQIRWRt2AnNWH1H6vIW10dk4U8COTSf0RWDl9jI=;
+ b=SFjqGyDLK9O5ennVhyON+sgCfTWXwfHylQfm+cZ8hiUnF9KbxpvpbnCK603wQ7wcsu5G61
+ dK1eOQzEd1x6roGXYK0Mel7RNv5waOkVOIOUyWYQWz6jwz3AFe+N6L0Rxy2HF4MRQDNK29
+ VT+cCkAhooziDnC64nP73gUQ+bCA4fC2s1Dt2QBztq/uhcIrM32LXe5E/4jR81SHx6ncOn
+ 3qIZ7LMX6tWNHPQhXyBIOxALdBB8wAHHKGVxk+xLct5WlxPNlIpwJiHbTW2aPjlKqjkkfU
+ /uZ2QC/ijwteT06lDQ/bNEz//4drks9yLzkjzysJ0iXllZyEEEHqaYPzLClpDw==
+ARC-Seal: i=1; s=dkim; d=freebsd.org; t=1768383166; a=rsa-sha256; cv=none;
+ b=W064+FQi9imbcF/KVr2VSyh2K880SpoNAaf4F/pBwC7tfAWmuO9EiUK4qTfuJnFr6ud4C+
+ iqY0A0StpgKJYU3QujMGwSguNwU9hkOkM+PvJydIRJPEmjJH+R15kLFffODEn9V1xRQnYA
+ 8063o15t3bLwnXQraQRWns/o3ihz8XA80iCHzXBDJbVamlCWULAMTcu0t7QQP/7epVt+iU
+ JJhKyVS/nl3fxAlXJOLvu4jfqD4HmOT7LJOPMpRiGJ+JOagpL9r6PjpDaio/3QNijp9jAw
+ Ns+958zoTPB2S9J8DLBsLvC5bBRNc3Yjwf7QC6CveMJA69xNHU52zBTfIhTnyA==
 ARC-Authentication-Results: i=1;
 	mx1.freebsd.org;
 	none
@@ -63,17 +64,17 @@ Received: from x1c.netflix.com (unknown [IPv6:2607:fb10:2023::1])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
  (Client did not present a certificate) (Authenticated sender: jfree)
- by smtp.freebsd.org (Postfix) with ESMTPSA id 4drgrT1j0Xzs22;
- Wed, 14 Jan 2026 09:32:40 +0000 (UTC)
+ by smtp.freebsd.org (Postfix) with ESMTPSA id 4drgrW5vVqzsfF;
+ Wed, 14 Jan 2026 09:32:43 +0000 (UTC)
  (envelope-from jfree@FreeBSD.org)
 From: Jake Freeland <jfree@FreeBSD.org>
 To: Anatoly Burakov <anatoly.burakov@intel.com>,
  Bruce Richardson <bruce.richardson@intel.com>
 Cc: Jake Freeland <jfree@FreeBSD.org>,
 	dev@dpdk.org
-Subject: [PATCH v3 1/3] eal/freebsd: do not use prev_ms_idx for hole detection
-Date: Wed, 14 Jan 2026 18:31:27 +0900
-Message-ID: <20260114093140.3256584-2-jfree@FreeBSD.org>
+Subject: [PATCH v3 2/3] eal/freebsd: avoid claiming memseg holes
+Date: Wed, 14 Jan 2026 18:31:28 +0900
+Message-ID: <20260114093140.3256584-3-jfree@FreeBSD.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260114093140.3256584-1-jfree@FreeBSD.org>
 References: <20250814213246.4141803-1-jfree@FreeBSD.org>
@@ -93,47 +94,55 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Use rte_fbarray_is_used() to check if the previous fbarray entry is
-already empty.
+When need_hole is false, memseg searches will only be done for a single
+element. If the search starts at beginning of the list, an element that
+was previously reserved as a hole may be wrongly claimed.
 
-Using prev_ms_idx to do this is flawed in cases where we loop through
-multiple memseg lists. Each memseg list has its own count and length,
-so using a prev_ms_idx from one memseg list to check for used entries
-in another non-empty memseg list can lead to incorrect hole placement.
+To avoid this, begin the search following the last used entry. This way,
+we ignore all pre-existing holes.
 
 Signed-off-by: Jake Freeland <jfree@FreeBSD.org>
 ---
- lib/eal/freebsd/eal_memory.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ lib/eal/freebsd/eal_memory.c | 17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
 
 diff --git a/lib/eal/freebsd/eal_memory.c b/lib/eal/freebsd/eal_memory.c
-index 6d3d46a390..8c315d97d5 100644
+index 8c315d97d5..5790f095c9 100644
 --- a/lib/eal/freebsd/eal_memory.c
 +++ b/lib/eal/freebsd/eal_memory.c
-@@ -103,7 +103,6 @@ rte_eal_hugepage_init(void)
- 	for (i = 0; i < internal_conf->num_hugepage_sizes; i++) {
- 		struct hugepage_info *hpi;
- 		rte_iova_t prev_end = 0;
--		int prev_ms_idx = -1;
- 		uint64_t page_sz, mem_needed;
- 		unsigned int n_pages, max_pages;
+@@ -143,6 +143,7 @@ rte_eal_hugepage_init(void)
  
-@@ -167,9 +166,13 @@ rte_eal_hugepage_init(void)
+ 			for (msl_idx = 0; msl_idx < RTE_MAX_MEMSEG_LISTS;
+ 					msl_idx++) {
++				int start_idx, num_elems;
+ 				bool empty, need_hole;
+ 				msl = &mcfg->memsegs[msl_idx];
+ 				arr = &msl->memseg_arr;
+@@ -157,10 +158,22 @@ rte_eal_hugepage_init(void)
+ 				 * adjacent to current one.
+ 				 */
+ 				need_hole = !empty && !is_adjacent;
++				if (need_hole) {
++					start_idx = 0;
++					/* we need 1, plus hole */
++					num_elems = 2;
++				} else {
++					/* begin our search after the last used
++					 * element in the list, skipping over
++					 * any previously placed holes
++					 */
++					start_idx = rte_fbarray_find_prev_n_used(
++							arr, arr->len - 1, 1) + 1;
++					num_elems = 1;
++				}
+ 
+-				/* we need 1, plus hole if not adjacent */
+ 				ms_idx = rte_fbarray_find_next_n_free(arr,
+-						0, 1 + (need_hole ? 1 : 0));
++						start_idx, num_elems);
+ 
+ 				/* memseg list is full? */
  				if (ms_idx < 0)
- 					continue;
- 
--				if (need_hole && prev_ms_idx == ms_idx - 1)
-+				/* ms_idx should never be 0 if we need a hole,
-+				 * but include a check for static analysis.
-+				 */
-+				if (need_hole &&
-+				    ms_idx > 0 &&
-+				    rte_fbarray_is_used(arr, ms_idx - 1))
- 					ms_idx++;
--				prev_ms_idx = ms_idx;
- 
- 				break;
- 			}
 -- 
 2.51.0
 
