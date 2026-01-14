@@ -2,71 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E19A1D31A02
-	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Jan 2026 01:51:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F3E2D31A00
+	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Jan 2026 01:52:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9F1FC402A7;
-	Wed, 14 Jan 2026 02:51:56 +0100 (CET)
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com
- [209.85.128.49]) by mails.dpdk.org (Postfix) with ESMTP id 03C7E4029D
- for <dev@dpdk.org>; Wed, 14 Jan 2026 02:51:54 +0100 (CET)
-Received: by mail-wm1-f49.google.com with SMTP id
- 5b1f17b1804b1-477ba2c1ca2so89536345e9.2
- for <dev@dpdk.org>; Tue, 13 Jan 2026 17:51:54 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id A0FA440658;
+	Wed, 14 Jan 2026 02:51:59 +0100 (CET)
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com
+ [209.85.128.48]) by mails.dpdk.org (Postfix) with ESMTP id 6C87F40658
+ for <dev@dpdk.org>; Wed, 14 Jan 2026 02:51:58 +0100 (CET)
+Received: by mail-wm1-f48.google.com with SMTP id
+ 5b1f17b1804b1-47775fb6c56so78126545e9.1
+ for <dev@dpdk.org>; Tue, 13 Jan 2026 17:51:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768355514;
- x=1768960314; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768355518;
+ x=1768960318; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=8BY5lbjXB7y76DWe02Equ6s+/5DLYn6lzMkqJoIsjWk=;
- b=lrfUsUWyEA73qLvJ9mluf6h52l2n6mIK1FLRB0F4rs17BFy9TnbMxsU5PFkL8k1Z0w
- 3/UVdYBPURycwtuk1B3gOVO1zVfzrSfVnb7RIOI/oCJqn2ocSZmnZdydZzXlcekXt0Bl
- pgvz428bYLk0kB5DcNL+qfXg7GEr/e6yJpyEdBqMwKDdDlaUqp+L+RsTKzK8Tpa9RrhU
- T47CPJylsc7cLQNXdOORLjoyIiXjIcLhX8u0xXO6kmyd2UTjz3Sbei3aGoA83PqFM3WR
- SsOdSfesPEaOfUkDsCaYlqoI8V6djtfHYmx0taCb7Rn3KPM3aC5GDe2HU6hgi2ukxOZi
- zS3A==
+ bh=fGLGalZNdkwhkVUgPXNRi9cK6k6be9bFKc0+vinlPuI=;
+ b=3C6jpU5lbwGvV7UPl/be/WB7m7SEuhSIwpr77Sl8tgFe/O6EInXbcveFdm9loBOOBb
+ 1I8+9t1KOI8DYoqsZhnbRk3cI64hnz859guwqTk87cAokOVjj9kMukhKX6uany7EyFmi
+ 9mFwvzZ0YGvWL/8RT8egNLBw6YPpBlc6uMs/xRArZhIPpdUJRrFvg4APLbJG0jfKAJrd
+ rZYGTwE1RcjuX8VZUIamt3DzNQC97PRSZ1YKx7V/7ahSx48GJsVwcWnEMJ7kDwwUJqWr
+ qaEyI8vaYHDL6YPEgXGBk1kPaLHzgWn0YsizR52PNMLqC+I2DiRr/2qWQzQjZHictmpF
+ H0JA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768355514; x=1768960314;
+ d=1e100.net; s=20230601; t=1768355518; x=1768960318;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=8BY5lbjXB7y76DWe02Equ6s+/5DLYn6lzMkqJoIsjWk=;
- b=h3RhMGKXWLMj3CyuGGTLowQrRq5yHfCvJX1ByzNSQrAwPTnXM18QDU1xXPV1tPmoX5
- sgsQ0tw52wjd2O3/OtWon5OjZjFFoYrjXtf5C7cD+3tJHFn6quTC/vUIracRi0K0riDg
- yJHAj7nJxuKS7m+h4qus10mkOUDf2HHwgGyhbc4qzthnOtxYXgpN9TZIpIxuYihP/Ivf
- zk/orGgtis0bl4zts1d8oCwUR0/uhBrwRhvxwwOoCwhDFp6Q7pYewYDWdQcZJfQZ9zt0
- QSAayyZz8J9RqSBG4YFp4SlKlbgVpZOTQ/0zhIBa6EKGLXdvcOVINKbyd+PEt4BOau7V
- 0Icg==
-X-Gm-Message-State: AOJu0YyJxmdi1j7yJgD6pM62MMJCbKObEyifSg+t+fhsRPqaGw3BBktb
- gwqgGyXjvMK/RqRByFwuvrnDiKog8QSkP2oa8aKa3JZYDaS7STbSPKwGPkoXy/74bv4d/gnmsKD
- /PXvt
-X-Gm-Gg: AY/fxX6mc2TMKHehEL8U/PBQzbkjHog+oVCKu7FGrmuA5Xn5lo4ZmhGaF38vK6d3Rja
- 6oxvmjf0sT/Mm9hgjiDZPtfKv7qZCLSCfbCdvgbVb656ip6+lRmpbUMtTqoUu39I9DkTXrp4I4s
- Nln51ynV5XyX1MDyvx5giDB4A8uEwpb3cv1iQmAv0a/YNk0sH/k4uZWTAYQM8f6oFNyweMuTPxc
- wLxG3M2bRHprxgnXllPALdmURb5u1XP8a0wsjACLfThLo3RvdUCXhRiR4/ILiHMAeyeDg/2bx6S
- SlnE5iq1yVHAb6BwE/K7rgRESoB/4iHh80uoJIb7/mdCn6vqtysXf0J7jsV9ekZ7hfQxIGe3w2h
- aSJLkBHI8k/5z8dZbywy4n6LPPoQszEFIQtwAFQyKzM2urPidgAjw9agXrIjPc0y0eGkS6w/AYq
- Qh+uACPSdD67/P/r/XsUFVr+ppsWBKFMIFgtFpaekyx4XcPkmmwg==
-X-Received: by 2002:a05:600c:314f:b0:47a:80f8:82ab with SMTP id
- 5b1f17b1804b1-47ee335e701mr10646475e9.24.1768355514273; 
- Tue, 13 Jan 2026 17:51:54 -0800 (PST)
+ bh=fGLGalZNdkwhkVUgPXNRi9cK6k6be9bFKc0+vinlPuI=;
+ b=Tcr8Fkzzq8gMxHLJFltPgjllxuekPGRhuKM8WTst2h1ScU8sLe9RC3NaIENZb7ysOC
+ r9gwIgFoljkt1Cj/kRIhVtoqJ/R9DVIrgjCWh5F8I5VogwrOq6HfslDvUNXmSfqNeNgL
+ j5R9QlzMlcQixqZFOvfUjaH8E068vIcA+C8yQPJyhWZmuSlLPkfxy1+WxkKJePwQx5Fk
+ 2afDjt/TPq3y/F6Sng2zmS7lokzEYH6epMSYa+ja9HXEqQ4qtSyInrpQvNpjCdpZ+Igz
+ nI6khHNrn+iHQTQqq4z7yHZy2/Y1z0Kr7sNLPabPn8btmy7w4ZGxmLnhH2L6zhJd5gHp
+ cYtw==
+X-Gm-Message-State: AOJu0Yx9zRKlHGiKFXujyimDbuxY8jnL+hw6iyuNgAsBHZfiPiP3nL9E
+ irNvzTyQ7iFddwS/B1V5bFVLQ+vOAbvFKe86RKzs4Ri+y7wXWCfzCM3/3NZACU7mOGg9LBVrvep
+ rPhcB
+X-Gm-Gg: AY/fxX7NDO0EQpY0k5WnQqWRR+g6CFThKBtf74ZOejD8Cm5ui6HNS7U6UuFektpDBQ0
+ vHUaCrl5AdQ52WnwDslkW2mXh40bC86+7JasTVjdBDGZ1J4zQvEn0Zex0t0Bb9+qq0JhLMF0FhS
+ ZY/OF9JzC7PguGINcxBJGjUxIbYelD7uvUzxbRf49kJI50JerEiYgoOSstPcl3KQa8tD/0pKPSn
+ q9tSz995VR8LftMsxZDk7ln8W3Q//GGFkfRC6JT4qVS0hIV44SabXOKe9kpoXDlUgLyf0Erh8gn
+ fUeJ0ykjsj/Von/xV9b1F3pR65YtGGziKvao4TcGUTmKt25uCO9J6ngOEtIJZipnbTd/i831v+S
+ PCRLiNQf7loEWYu0AvgJ2OtY2OeIs714SkFUSkoYvjeoe0Bktmlr/T6ZwfsQ67hlDQXH+lOmp8P
+ 1tDuR1pIxQ8+UQoy9Nw1hZ2kLFqEePjvdn/AjqoYem/4F0alFNkA==
+X-Received: by 2002:a05:6000:18a6:b0:430:fc5a:40ac with SMTP id
+ ffacd0b85a97d-4342c553815mr768590f8f.54.1768355517548; 
+ Tue, 13 Jan 2026 17:51:57 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-432bd0e1adbsm47619810f8f.17.2026.01.13.17.51.53
+ ffacd0b85a97d-432bd0e1adbsm47619810f8f.17.2026.01.13.17.51.54
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 13 Jan 2026 17:51:53 -0800 (PST)
+ Tue, 13 Jan 2026 17:51:57 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v2 0/3] common/cnxk: remove variable length arrays
-Date: Tue, 13 Jan 2026 17:49:58 -0800
-Message-ID: <20260114015149.70983-1-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Nithin Dabilpuram <ndabilpuram@marvell.com>,
+ Kiran Kumar K <kirankumark@marvell.com>,
+ Sunil Kumar Kori <skori@marvell.com>, Satha Rao <skoteshwar@marvell.com>,
+ Harman Kalra <hkalra@marvell.com>
+Subject: [PATCH v2 1/3] common/cnxk: replace variable length state array
+Date: Tue, 13 Jan 2026 17:49:59 -0800
+Message-ID: <20260114015149.70983-2-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251023194237.197681-1-stephen@networkplumber.org>
+In-Reply-To: <20260114015149.70983-1-stephen@networkplumber.org>
 References: <20251023194237.197681-1-stephen@networkplumber.org>
+ <20260114015149.70983-1-stephen@networkplumber.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -81,40 +85,30 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This series removes the use of variable length arrays (VLAs) from the
-common/cnxk driver, allowing the VLA compiler warnings to be re-enabled.
+The cipher function is always called with in_len = 16
+and there is an existing define for that.
 
-VLAs are problematic for several reasons:
- - They can cause stack overflow with large or malicious inputs
- - They prevent certain compiler optimizations
- - They trigger warnings when compiled with LTO (-Wvla-larger-than=)
- - They are optional in C11 and removed in some C dialects
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+---
+ drivers/common/cnxk/roc_aes.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-The first patch addresses the AES cipher function which always operates
-on 16-byte blocks. The VLA is replaced with a fixed-size array using
-the existing AES_HASH_KEY_LEN define, with an assertion to verify the
-input constraint.
-
-The second patch fixes the MSIX IRQ set buffer allocation. The original
-code used a macro that expanded to a runtime function call, which the
-compiler could not evaluate at compile time. This is replaced with
-PLT_MAX_RXTX_INTR_VEC_ID, which matches the EAL's maximum interrupt
-vector limit (512). This is consistent with how the EAL itself handles
-the same buffer allocation in eal_interrupts.c.
-
-The third patch removes the no_wvla_cflag workaround from meson.build
-now that the VLAs have been eliminated.
-
-Stephen Hemminger (3):
-  common/cnxk: replace variable length state array
-  common/cnxk: replace variable length array
-  common/cnxk: re-enable vla warnings
-
- drivers/common/cnxk/meson.build    | 2 --
- drivers/common/cnxk/roc_aes.c      | 3 ++-
- drivers/common/cnxk/roc_platform.c | 4 ++--
- 3 files changed, 4 insertions(+), 5 deletions(-)
-
+diff --git a/drivers/common/cnxk/roc_aes.c b/drivers/common/cnxk/roc_aes.c
+index d84feb546a..b42c785249 100644
+--- a/drivers/common/cnxk/roc_aes.c
++++ b/drivers/common/cnxk/roc_aes.c
+@@ -157,9 +157,10 @@ static void
+ cipher(uint8_t *in, uint8_t *out, uint32_t *ks, uint32_t key_rounds, uint8_t in_len)
+ {
+ 	uint8_t data_word_len = in_len / sizeof(uint32_t);
+-	uint32_t state[data_word_len];
++	uint32_t state[AES_HASH_KEY_LEN / sizeof(uint32_t)];
+ 	unsigned int i, round;
+ 
++	RTE_ASSERT(in_len <= AES_HASH_KEY_LEN);
+ 	memcpy(state, in, sizeof(state));
+ 
+ 	/* AddRoundKey(state, w[0, Nb-1]) // See Sec. 5.1.4 */
 -- 
 2.51.0
 
