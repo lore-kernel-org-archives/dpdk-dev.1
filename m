@@ -2,60 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24521D3CC82
-	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Jan 2026 22:57:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47437D3CC82
+	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Jan 2026 23:00:47 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 19229427C2;
-	Wed, 14 Jan 2026 23:56:36 +0100 (CET)
-Received: from mail-dl1-f47.google.com (mail-dl1-f47.google.com [74.125.82.47])
- by mails.dpdk.org (Postfix) with ESMTP id 6DB38427CE
- for <dev@dpdk.org>; Wed, 14 Jan 2026 23:56:34 +0100 (CET)
-Received: by mail-dl1-f47.google.com with SMTP id
- a92af1059eb24-12331482b8fso918907c88.1
- for <dev@dpdk.org>; Wed, 14 Jan 2026 14:56:34 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 297A9402C3;
+	Thu, 15 Jan 2026 00:00:46 +0100 (CET)
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com
+ [209.85.221.43]) by mails.dpdk.org (Postfix) with ESMTP id 281B1402A3
+ for <dev@dpdk.org>; Thu, 15 Jan 2026 00:00:44 +0100 (CET)
+Received: by mail-wr1-f43.google.com with SMTP id
+ ffacd0b85a97d-430f2ee2f00so179506f8f.3
+ for <dev@dpdk.org>; Wed, 14 Jan 2026 15:00:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1768431393; x=1769036193; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=1sqjQkFZ14yeyALtc8SKWcBGLE/KkYgzy0bqVD2e+fY=;
- b=DO9rGxTUAbzZGRyOazlOSfALV/4h7Z4qweOsXHGl51aAPKMjB8rPp2eP19RAiJnJN/
- pwH3lACA8oIJ3FlU0ZuN+4A7BsOJJ7sz2sO4Pq3L8tqRHPQJ9FGlcaV3l7dRU32uLZW/
- Tkk7vQaqHV8fKjr8EtuBu3VEMoq9+k2aREjmY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768431393; x=1769036193;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768431644;
+ x=1769036444; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=1sqjQkFZ14yeyALtc8SKWcBGLE/KkYgzy0bqVD2e+fY=;
- b=og7iBXx+aldwVlCTlq8PH2M5Zd7nZLeaYGPasFXyGYBN5qXiko6vWjrZnV8FfUCMJV
- sieCW8iYWcNGx5FIVwawyAODWM/rhMoiVmGSEZxYhUXpTmdjspy0NPi1sqvvIlFsJI76
- hGrkxqvZDJw25X74wOmyAKVU86K0+HmJEcFsLNyt2TcYo6YRc7VatnfvG+7umq9V4EgA
- Ez+CUW4apEQd5HMuMT3+a4n5G8qmGGv6b+p8LJYU+r/d6Gq4DnesM8GND1NUs7VbH7+O
- GFMYYtEPifxlSNEyb3J/Zq0WbTyqXwlq1OzTbR0HYuyKIFT3/My1rDmjmeWjNYp3DwSN
- I+1A==
-X-Gm-Message-State: AOJu0YyLxvz7lCqJfknnrGLMqn2WArZ95Le7Q5yEIjeAlAsUneLppJGE
- H/SFlQdKXvm95U3/gO9k1kl2XWL2TRkHd1Nx1lutwUU443303Ql6Wbc24O45GTzN+4jElJKLcuP
- 4jP7nQ5EZwNHqkiCawoOZh8xOjLxUzS2UuS/CrmJTsQ==
-X-Gm-Gg: AY/fxX5tA04u079uwNe5O7kyTNCuNbE0bFXjrp4M7ywRMhe6qqAISQA2RUnRiu2j8XY
- 23CamcIET5YSw93QjzpbbYxl7vujLli4Z2rmxKV/2Q6Frc+T+Wk6jpTpS7j47/opC/fBfBTJBCq
- i5B3fSGvxSOqsjCeB0SwBxf1gf6aJW5UI+mQeOXo3W8FNPnEZWDmNA3jrRxFD9LxHVAsCd8baij
- o2ENhKe20x7ZjnjA/eEUuXJkUPOBaSLkQvBKJHI9MOoEU8FXSE/MQZyrvxQfRg/Ibz0Ah9csr3v
- +MCBNnhtTayNg8nDxBAmSFJJXY3J9LJyW2ebx5uBu4C5WBV45QJxJDHY3jero/7FOetnySs=
-X-Received: by 2002:a05:7022:983:b0:119:e56b:9596 with SMTP id
- a92af1059eb24-1233775f45dmr3840080c88.27.1768431393563; Wed, 14 Jan 2026
- 14:56:33 -0800 (PST)
+ bh=8aCvP3l4feZOozxHpNx3Zlzto48KirI9YXvkqYW14mw=;
+ b=ktfMiGDzid0/qXhyuXI4jXlggkEO++faVrNRF4+cyg0IoUQYjc2kDR9P6yvyDCVw8g
+ PQADjy9c9uBcz00KztWVZ8qn6ISNdOL85PN3l4EVTJPcVzwHeX4mcmAQIlRWb4bhxa/F
+ brQc3shHSaqQrUPmj7PbH86HEztRujdeJJoiD42ajmVDSz66tedEe4QVelECr7vJWW58
+ vPwsfaLISBxGYGXDaY2Ts4fclZL5XZjaGbbG0YJxsthrrUgtrCz92QZEzE40tyFUXh8K
+ B+G9SEFeMOkpa3pPLS3VD+mE+BdWp8ODB1EsyIpYDQxwx3jx7YuJ2M+hdUJB3GJk+Gxr
+ gYxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1768431644; x=1769036444;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=8aCvP3l4feZOozxHpNx3Zlzto48KirI9YXvkqYW14mw=;
+ b=rECzzdvrUaDZeIHNBLZk2svd5WNAm6SJ32fED1zJ9NeSYMvYN4/YRfY9xGOHn1ruzW
+ C8/HZ3NsjsKRaLMLpBFyRl86xOYB97FnaPdsmjIrkAAMqJ2LrEJNXNqi9wEVIyvmCv57
+ q6t2L6RCCEkIO2jUKuDt9W7Qa1xpWoXdyQuHUMbtlcB9GXh+I/obFNsM6LOW/p1DciM2
+ UKCjMvybFaezfNq72td9ciOg29jrc5IW2NbYb16sXBVQtkXamrivGpEDxMk+lmdQK6CR
+ B/wEZ2P6n8eqP4h7cXXdfOzvcw1Lyr/TiuIawr0e01iqGbmRa2R1CQ/HPUHbnd8mIcHz
+ LDDw==
+X-Gm-Message-State: AOJu0YyrFJPmNyBSggtHsulZ+TknO4/sEWhYz/QBC/TK4LQ45o2StD+0
+ myVfMnlwa2UqTnea4MnJP+/a0VIggz8xO5hJqPINoKkYG72ZS1kSP9okEc4DI8AetiCv9UCFC83
+ 9V4tu
+X-Gm-Gg: AY/fxX4+z5p03Ds7u/t6jO8+Uu2WlfJGu9in/qYhKoaaWBuHVt6ZNHKQ0pkLAVyV85O
+ 96h6VHC11jwisqRSwl3NJxPC1vdmd4ITlUn3HW2y0bWn7ecaSvGlHdsKA0PwALI90EgsXQdVG0P
+ sO0NfDnhA/Roy2ZXZSbjStShEX5TgY/ReYQC0T2328qbrTwIgtuKSDHwUNGKsAGnUI9RFdf1r3V
+ RxiwQwfn2e4UEVYaiHv/Fp2EDXX6KXHxtrp/7dHjiBG/rHwf4Dyu/TDP4LjZcCP7ctFUB8NYEhB
+ ymK27Ng/TMLlYcbvRRiCcYAOSjvEqH+cpybxOEWxex/Pwk2/9EBbPAwpVuUZbdPjFrYznjvq8wd
+ rzkR9BfWWc+cMrcEp2COTk13TS4hZtJgAOipric1K1uk5Stnzv7KG5tseYjR2GZV6WMvnjqtWG7
+ f/3cM6wrwuL8p6FtRDc2pza4vBPESj332f/nUMkgpWPxm/9K6HANNrsxfK81FxA9U=
+X-Received: by 2002:a05:6000:2385:b0:431:3a5:d9ae with SMTP id
+ ffacd0b85a97d-4342c3ed51cmr5157051f8f.4.1768431643776; 
+ Wed, 14 Jan 2026 15:00:43 -0800 (PST)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ ffacd0b85a97d-434af6b29cfsm1865278f8f.27.2026.01.14.15.00.41
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Wed, 14 Jan 2026 15:00:42 -0800 (PST)
+Date: Wed, 14 Jan 2026 15:00:38 -0800
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: dev@dpdk.org
+Cc: Radu Nicolau <radu.nicolau@intel.com>, Akhil Goyal <gakhil@marvell.com>
+Subject: Re: [PATCH 28/29] fix ipsec gw
+Message-ID: <20260114150038.71c05e9d@phoenix.local>
+In-Reply-To: <20260114222458.87119-29-stephen@networkplumber.org>
+References: <20260114222458.87119-1-stephen@networkplumber.org>
+ <20260114222458.87119-29-stephen@networkplumber.org>
 MIME-Version: 1.0
-References: <20251121210650.328804-1-abailey@iol.unh.edu>
- <20251126141650.367633-1-abailey@iol.unh.edu>
-In-Reply-To: <20251126141650.367633-1-abailey@iol.unh.edu>
-From: Patrick Robb <probb@iol.unh.edu>
-Date: Wed, 14 Jan 2026 17:54:21 -0500
-X-Gm-Features: AZwV_Qh2arg1WdzgBAHcXQuIZdCI07rMHpq0m8BzkIjaf8Kt814uJ7KjJq5v6cY
-Message-ID: <CAJvnSUABnGXrKSRmjad0M-+HyA7XPLvxp444q-+TRFLCVgEJbw@mail.gmail.com>
-Subject: Re: [PATCH v2] dts: automate VFIO-PCI modprobe
-To: Andrew Bailey <abailey@iol.unh.edu>
-Cc: dev@dpdk.org, dmarx@iol.unh.edu, luca.vizzarro@arm.com
-Content-Type: multipart/alternative; boundary="00000000000005f579064861058b"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -69,69 +81,12 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---00000000000005f579064861058b
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+On Wed, 14 Jan 2026 14:22:09 -0800
+Stephen Hemminger <stephen@networkplumber.org> wrote:
 
-On Wed, Nov 26, 2025 at 9:16=E2=80=AFAM Andrew Bailey <abailey@iol.unh.edu>=
- wrote:
+> ---
+>  doc/guides/sample_app_ug/ipsec_secgw.rst | 183 ++++++++++++-----------
+>  1 file changed, 94 insertions(+), 89 deletions(-)
 
->
->
-> +        if (
-> +            test_run.ctx.topology.type !=3D LinkTopology.NO_LINK
-> +            and test_run.ctx.sut_node.ports[0].config.os_driver_for_dpdk
-> =3D=3D "vfio-pci"
-> +        ):
-> +            test_run.ctx.sut_node.main_session.send_command("modprobe
-> vfio")
-> +            test_run.ctx.sut_node.main_session.send_command("modprobe
-> vfio-pci")
-> +
->          if test_run.config.use_virtual_functions:
->              test_run.ctx.topology.instantiate_vf_ports()
->
->
->
-Is there a need to check that test_run.ctx.sut_node.ports[0] is not None?
 
-Also, what is your opinion of an os=3D=3Dlinux check? By my recollection th=
-is
-variable should be accessible at this stage. It would be okay to kick the
-can on this aspect of supporting OS other than linux, but let's only do so
-if we have an actual reason. :)
-
---00000000000005f579064861058b
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr"><div dir=3D"ltr"><br></div><br><div class=3D"gmail_quote g=
-mail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Wed, Nov 26,=
- 2025 at 9:16=E2=80=AFAM Andrew Bailey &lt;<a href=3D"mailto:abailey@iol.un=
-h.edu">abailey@iol.unh.edu</a>&gt; wrote:<br></div><blockquote class=3D"gma=
-il_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,2=
-04,204);padding-left:1ex"><br>
-<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 if (<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 test_run.ctx.topology.type !=3D =
-LinkTopology.NO_LINK<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 and test_run.ctx.sut_node.ports[=
-0].config.os_driver_for_dpdk =3D=3D &quot;vfio-pci&quot;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 ):<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 test_run.ctx.sut_node.main_sessi=
-on.send_command(&quot;modprobe vfio&quot;)<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 test_run.ctx.sut_node.main_sessi=
-on.send_command(&quot;modprobe vfio-pci&quot;)<br>
-+<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if test_run.config.use_virtual_functions:=
-<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0test_run.ctx.topology.insta=
-ntiate_vf_ports()<br>
-<br><br></blockquote><div><br></div><div>Is there a need to check that test=
-_run.ctx.sut_node.ports[0] is not None?</div><div><br></div><div>Also, what=
- is your opinion of an os=3D=3Dlinux check? By my recollection this variabl=
-e should=C2=A0be accessible at this stage. It would be okay to kick the can=
- on this aspect of supporting OS other than linux, but let&#39;s only do so=
- if we have an actual reason. :)</div></div></div>
-
---00000000000005f579064861058b--
+This should have been squashed for merge. NVM
