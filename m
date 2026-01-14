@@ -2,66 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE364D3CC82
-	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Jan 2026 22:57:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98C56D3CC82
+	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Jan 2026 22:57:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 26486427CC;
-	Wed, 14 Jan 2026 23:56:17 +0100 (CET)
-Received: from mail-wm1-f68.google.com (mail-wm1-f68.google.com
- [209.85.128.68]) by mails.dpdk.org (Postfix) with ESMTP id 129D040EE3
- for <dev@dpdk.org>; Wed, 14 Jan 2026 23:56:15 +0100 (CET)
-Received: by mail-wm1-f68.google.com with SMTP id
- 5b1f17b1804b1-47f3b7ef761so1820875e9.0
- for <dev@dpdk.org>; Wed, 14 Jan 2026 14:56:15 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 4904C427D8;
+	Wed, 14 Jan 2026 23:56:18 +0100 (CET)
+Received: from mail-wm1-f66.google.com (mail-wm1-f66.google.com
+ [209.85.128.66]) by mails.dpdk.org (Postfix) with ESMTP id A7F63427BF
+ for <dev@dpdk.org>; Wed, 14 Jan 2026 23:56:16 +0100 (CET)
+Received: by mail-wm1-f66.google.com with SMTP id
+ 5b1f17b1804b1-47f3b7ef761so1820935e9.0
+ for <dev@dpdk.org>; Wed, 14 Jan 2026 14:56:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768431375;
- x=1769036175; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768431376;
+ x=1769036176; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=APOune2Pk+qtoEGRZoFLE44PCt+x/rtPb3zyJeW4gW8=;
- b=x3vQdBNmXNVXjfSzDo9cziNttTa2nwGWo7vRsUFXb81t2nfIKpjGWKyXEev0xhU+A5
- 5QEiy/9kJD88/zkUiay24a7FoowE4RxDAvYTX6y79w71fDvUvsOHwf1J75qf9NGxkDWc
- /ON9UKOQt1e6vIgkUsC70hfWnJdhzAKVRRMMxB3M4v7PqUwj75FqTP3kJrVnoAYkiiqg
- g38B1u/nDvJ2NcakIKSB3s+I6kpwMeF72xNCH5IK4y7tN5Ma1c/Wam7J0vPvdjhyU4MU
- 9PdVwmK/U4V13v0YfWIsuQiYZuzelLPnhQFgVCXQpmSY0kKEcxmfvDtvKoex+zXiHyxD
- zKUw==
+ bh=2lmu54IIfq8AY3E6svad+SrT5aRbuAHoGFcRi8Zg1cw=;
+ b=l/WTFUxDChqG2GMgkuNbiTWHRiGp7urAEf1eT9qAgNR7jG7i/HdUR1VpwT1CVZg8al
+ jeaME13Qbz2u26Kgspeh/Swx5lNyMt2O74bnOn30mf780F8T3bxgr2ppsIvQosSydusI
+ WLHJSxJP78Y3o7aGB51Ee3CRFash4HyrQGFmgqpeHSe6fCsF3rW8TNaWLc3/QF1hmMYd
+ S50HoXurAyHa663Y6yN+b4RIvIgOEFjutGUUutlMihZJTaBxYQifKLmPAsuBu0blZGYX
+ l795uOU+v7DIXSM1rkqtVTbhZatPf2Rg18LlR8/NyeASN+B9/Y99LLmd8r8NVwRW292W
+ AmWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768431375; x=1769036175;
+ d=1e100.net; s=20230601; t=1768431376; x=1769036176;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=APOune2Pk+qtoEGRZoFLE44PCt+x/rtPb3zyJeW4gW8=;
- b=I6LBn279iEcBAbRehdqE08YKsmfSt7in2S4wWhaSbLIwV3RgzjpmdelLedja8k9g+g
- VB5Ypa0TOGDKul+FgzDv9sr287j4MVrVOxaSRRPVuGJL9098jEJ67mLrS4zNQXbOXEPz
- YV5+wk92IDolzlT12yeXaGvXSvSS3PxUcrRRjndrP8Nec7qXLeC9BHAJqqbx22xmBLDh
- wegGMnKKxm0Vyuj6RRV/8+lWs/sJicPCHrJB7MIT6Da9u+Yvm9ggEnlaC1RUovHPVmL0
- 2fvk2Uo6/5Ll3pB9WMxHx/6S/2vPKMQE35F0kj4J/tCFRl7sTPpJutndeMfMxFfNKfkG
- 7eAQ==
-X-Gm-Message-State: AOJu0YzBvQDpPLfnz0CciPo/EKLPepnzgU100PXC9qBFL3X5EMt5GEyM
- pyAIz2a3zHeReHq/ZSeKWowHhXi734FGZyEpUngiF/u3lCxl+73rbGYxeLFnSa/QRG+eV6y2dBI
- k6iPI8Ek=
-X-Gm-Gg: AY/fxX5PaZP95rZl5lBnPxmeW974EnzMoUMvR0xqxWYxC80gcTfAkqLTy75PD85/p/O
- jAEqjmIlMgwRvzqxKQdHZPjFLReo/MrTRHP4ILwrXdGaCHMbOE1TRTRIb3BI0tMy1L7sP4gQV4F
- giZzNPwwGhewfYNVMhU/iuf4YBT848CNboKrNYNgM1pU/0vtXEm0Px71H6txnuqBLNNAmqvNWJQ
- msxzJ5afeJLcmdjeb13Qx88/TOT8CHs3f3mggCjBAzjWKYn03YVz2lSGhulS4nD5aYkWHs4CjyH
- YwWnvd2Z1GVCkaiWN2/TEeLWy4gLVL2e4zdisahmSOKpnXTilakmYJpniUwjTZ2S5me2XjEdFVH
- ZZk93RIwn/NXJQldy/627e0K1utoJoyA02VXtKghQ/QSnMMcrTrf3QNRePWqWXBUaU8M8GKXRc2
- yj9aQzgXxlTsZ/53cCIW7+wSSMomyyquoeYt2JV5lCsxs3iiD6uA==
-X-Received: by 2002:a05:600c:3acb:b0:45d:d97c:236c with SMTP id
- 5b1f17b1804b1-47ee3353e2emr59692475e9.21.1768431374593; 
- Wed, 14 Jan 2026 14:56:14 -0800 (PST)
+ bh=2lmu54IIfq8AY3E6svad+SrT5aRbuAHoGFcRi8Zg1cw=;
+ b=UfkMDf/hTyGxJNogQmhmuC3s4zhLtIVNjrAbXubT2zRaabn7HhkX3FeGjWlg8KtIFg
+ EYxSjsj/7nesBZXA/51KTi2v2RDQi1FP9OicQt2KCjbIeqFnYVBmMFPe44AZkarYDKdi
+ e9jcEgK39s0j+ottYnF0pQRSMBxlRJb5N0BZDJa11/3hiyUzUbuWSYk/OfQTx4pBjS7y
+ MGcamgiI+47P9kBSeg0/vJ1D1+Eaa2lt4zNLJU0VCUk8zjVolqYIoFlHweHd1vmhcHRi
+ rsTOD4jOKhiFXp9EJRuFtW8Mn8pOfStK/JMiN2t5JInNsXuSaZnRFiggK0QRlZ19RPIw
+ WWfg==
+X-Gm-Message-State: AOJu0Yx4I6Ftra/aQ68xeKKP4KdhRBIaK0RM75VchTaUbzZe1h+MK6cu
+ Tj3HqK4BJlVZ3Suywhi868AfPPOMQZM+bTvYhEPlyoDMCH7p1zl322cJ3fChuxky8X7hY0FQOyO
+ esFrB
+X-Gm-Gg: AY/fxX6Vk6xyfbMMlC4I2Ok+0r1CpgMt4J6wwZFKYIUUbigSMnrwSiY0vDobthBHhMU
+ VlBDPEdG01Lgo+CQMPGIXTRkOlTi5hQCcnMXDg36dFn5eXk+fcxJpSveqlCytXEHZHRryV3gXvQ
+ Cu973M8e5bP+t/55VUK4CH9QgOt+2ZF5MyCpxb55MPcfl4sxoNnmtMt+6yJMo+hmK2Z79Hl2ujV
+ wfV7I6zPQkoShHanC4jh5h6//0nmSsvQZ0mN39cUeZZ6Cg0SAl13GVOEM4fGoljhlpT1fsTPuiV
+ l7QFxSCJWqiIlhJ5pP3xU72Tla7vU/iCa0NaRxU3xrbjPeAmMpscK9PjdbHv8V7SAqqbGsq3w5F
+ cNN9ATlyvS5GjnxlRz+OyN+AXfRk7Leov7eFpBti1r8WurQuKTgweeOvdVvFbmDGOoA47/BDoIz
+ gGJedgYqOBD/FB80GtAIDUG4+xegUxaOlAJqC0xVsDA7d66r7g1Q==
+X-Received: by 2002:a05:600c:8217:b0:477:641a:1402 with SMTP id
+ 5b1f17b1804b1-47ee32e07d0mr44417945e9.4.1768431376192; 
+ Wed, 14 Jan 2026 14:56:16 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-47f428af0c7sm12999125e9.4.2026.01.14.14.56.13
+ 5b1f17b1804b1-47f428af0c7sm12999125e9.4.2026.01.14.14.56.14
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 14 Jan 2026 14:56:14 -0800 (PST)
+ Wed, 14 Jan 2026 14:56:15 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH 09/11] doc: improve stable releases documentation
-Date: Wed, 14 Jan 2026 14:54:13 -0800
-Message-ID: <20260114225555.127448-10-stephen@networkplumber.org>
+Subject: [PATCH 10/11] doc: improve unit test guide readability
+Date: Wed, 14 Jan 2026 14:54:14 -0800
+Message-ID: <20260114225555.127448-11-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260114225555.127448-1-stephen@networkplumber.org>
 References: <20260114225555.127448-1-stephen@networkplumber.org>
@@ -80,227 +80,317 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Rewrite the stable releases and LTS documentation for clarity
+Improve the unit test documentation
 - Converting passive voice to active voice
-- Restructuring content with bullet points for scannability
-- Simplifying verbose explanations
-- Removing redundant phrasing
-- Making backport criteria more concise
+- Using imperative mood for instructions
+- Simplifying wordy constructions
+- Removing unnecessary include statements from code example
+- Fixing minor grammar and punctuation issues
 
 No technical content changes.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- doc/guides/contributing/stable.rst | 147 ++++++++++++-----------------
- 1 file changed, 60 insertions(+), 87 deletions(-)
+ doc/guides/contributing/unit_test.rst | 113 ++++++++++++--------------
+ 1 file changed, 52 insertions(+), 61 deletions(-)
 
-diff --git a/doc/guides/contributing/stable.rst b/doc/guides/contributing/stable.rst
-index 808e7fa779..6065163e75 100644
---- a/doc/guides/contributing/stable.rst
-+++ b/doc/guides/contributing/stable.rst
-@@ -6,84 +6,69 @@
- DPDK Stable Releases and Long Term Support
- ==========================================
+diff --git a/doc/guides/contributing/unit_test.rst b/doc/guides/contributing/unit_test.rst
+index c0f0d2988f..5b22393e6f 100644
+--- a/doc/guides/contributing/unit_test.rst
++++ b/doc/guides/contributing/unit_test.rst
+@@ -9,7 +9,7 @@ tests to the in-tree DPDK test suites.
  
--This section sets out the guidelines for the DPDK Stable Releases and the DPDK
--Long Term Support releases (LTS).
+ The DPDK test suite model is loosely based on the xUnit model,
+ where tests are grouped into test suites, and suites are run by runners.
+-For a basic overview, see the basic Wikipedia article on `xUnit
++For a basic overview, see the Wikipedia article on `xUnit
+ <https://en.wikipedia.org/wiki/XUnit>`_.
+ 
+ 
+@@ -18,13 +18,13 @@ Background
+ 
+ The in-tree testing infrastructure for DPDK consists of
+ multiple applications and support tools.
+-The primary tools are the `dpdk-test` application,
++The primary tools are the `dpdk-test` application
+ and the ``meson test`` infrastructure.
+-These two are the primary ways through which
+-a user will interact with the DPDK testing infrastructure.
++These two are the primary ways
++users interact with the DPDK testing infrastructure.
+ 
+-There exists a bit of confusion with the test suite and test case separation
+-with respect to `dpdk-test` and ``meson test``.
++Some confusion exists regarding test suite and test case separation
++between `dpdk-test` and ``meson test``.
+ Both have a concept of test suite and test case.
+ In both, the concept is similar.
+ A test suite is a group of test cases,
+@@ -36,14 +36,14 @@ to denote a Meson test suite / case.
+ Running a test
+ --------------
+ 
+-DPDK tests are run via the main test runner, the `dpdk-test` app.
++DPDK tests run via the main test runner, the `dpdk-test` app.
+ The `dpdk-test` app is a command-line interface that facilitates
+ running various tests or test suites.
+ 
+ There are three modes of operation.
+-The first mode is as an interactive command shell
++The first mode is an interactive command shell
+ that allows launching specific test suites.
+-This is the default operating mode of `dpdk-test` and can be done by::
++This is the default operating mode of `dpdk-test` and can be invoked by::
+ 
+    $ ./build/app/test/dpdk-test --dpdk-options-here
+    EAL: Detected 4 lcore(s)
+@@ -58,12 +58,12 @@ This is the default operating mode of `dpdk-test` and can be done by::
+    APP: HPET is not enabled, using TSC as default timer
+    RTE>>
+ 
+-At the prompt, simply type the name of the test suite you wish to run
++At the prompt, type the name of the test suite you wish to run
+ and it will execute.
+ 
+-The second form is useful for a scripting environment,
++The second form is useful for a scripting environment
+ and is used by the DPDK Meson build system.
+-This mode is invoked by
++Invoke this mode by
+ assigning a specific test suite name to the environment variable ``DPDK_TEST``
+ before invoking the `dpdk-test` command, such as::
+ 
+@@ -84,7 +84,7 @@ before invoking the `dpdk-test` command, such as::
+    RTE>>$
+ 
+ The above shows running a specific test case.
+-On success, the return code will be '0',
++On success, the return code will be '0';
+ otherwise it will be set to some error value (such as '255', or a negative value).
+ 
+ The third form is an alternative
+@@ -110,20 +110,20 @@ The unit test app can accept test suite names via command line arguments::
+ The primary benefit here is specifying multiple test names,
+ which is not possible with the ``DPDK_TEST`` environment variable.
+ 
+-Additionally, it is possible to specify additional test parameters
++Additionally, specify additional test parameters
+ via the ``DPDK_TEST_PARAMS`` argument,
+ in case some tests need additional configuration.
+-This isn't currently used in the Meson test suites.
++This is not currently used in the Meson test suites.
+ 
+ 
+ Running test cases via Meson
+ ----------------------------
+ 
+-In order to allow developers to quickly execute all the standard internal tests
++To allow developers to quickly execute all the standard internal tests
+ without needing to remember or look up each test suite name,
+ the build system includes a standard way of executing the Meson test suites.
+ After building via ``ninja``, the ``meson test`` command
+-with no arguments will execute the Meson test suites.
++with no arguments executes the Meson test suites.
+ 
+ There are a number of pre-configured Meson test suites.
+ The first is the **fast** test suite, which is the largest group of test cases.
+@@ -133,9 +133,9 @@ These test suites can take longer to run and do performance evaluations.
+ The third is the **driver** test suite,
+ which is mostly for special hardware related testing (such as `cryptodev`).
+ The fourth, and currently the last, suite is the **debug** suite.
+-These tests mostly are used to dump system information.
++These tests mostly dump system information.
+ 
+-The Meson test suites can be selected by adding the ``--suite`` option
++Select the Meson test suites by adding the ``--suite`` option
+ to the ``meson test`` command.
+ Ex: ``meson test --suite fast-tests``::
+ 
+@@ -159,19 +159,19 @@ via the command line by adding the test names as an argument::
+    1/1 DPDK:fast-tests / version_autotest OK             0.17s
+    ...
+ 
+-Note that these test cases must be known to Meson
++Note that Meson must know these test cases
+ for the ``meson test`` command to run them.
+-Simply adding a new test to the `dpdk-test` application isn't enough.
++Simply adding a new test to the `dpdk-test` application is not enough.
+ See the section `Adding a suite or test case to Meson`_ for more details.
+ 
+ 
+ Adding tests to dpdk-test application
+ -------------------------------------
+ 
+-Unit tests should be added to the system
+-whenever we introduce new functionality to DPDK,
+-as well as whenever a bug is resolved.
+-This helps the DPDK project to catch regressions as they are introduced.
++Add unit tests to the system
++whenever introducing new functionality to DPDK
++or resolving a bug.
++This helps the DPDK project catch regressions as they occur.
+ 
+ The DPDK test application supports two layers of tests:
+    #. *test cases* which are individual tests
+@@ -185,12 +185,12 @@ There are two important functions for interacting with the test harness:
+    ``REGISTER_<MESON_SUITE>_TEST(command_name, function_to_execute)``
+       Registers a test command with the name `command_name`
+       and which runs the function `function_to_execute` when `command_name` is invoked.
+-      The test is automatically added to the Meson test suite `<MESON_SUITE>` by this macro.
+-      Examples would be ``REGISTER_DRIVER_TEST``, or ``REGISTER_PERF_TEST``.
++      This macro automatically adds the test to the Meson test suite `<MESON_SUITE>`.
++      Examples: ``REGISTER_DRIVER_TEST``, or ``REGISTER_PERF_TEST``.
+       **NOTE:** The ``REGISTER_FAST_TEST`` macro is slightly different,
+       in that it takes two additional parameters,
+-      specifying whether the test can be run using ``--no-huge``,
+-      and whether the test can be run using Address Sanitization (ASAN)
++      specifying whether the test can run using ``--no-huge``,
++      and whether the test can run using Address Sanitization (ASAN).
+ 
+    ``unit_test_suite_runner(struct unit_test_suite *)``
+       Returns a runner for a full test suite object,
+@@ -203,28 +203,19 @@ that runs at the beginning and end of the test suite execution.
+ Each unit test has a similar function for test case setup and tear down.
+ 
+ Each test suite may use a nested list of sub-testsuites,
+-which are iterated by the ``unit_test_suite_runner``.
++which the ``unit_test_suite_runner`` iterates.
+ This support allows for better granularity when designing test suites.
+-The sub-testsuites list can also be used in parallel with the vector of test cases,
+-in this case the test cases will be run,
+-and then each sub-testsuite is executed.
++The sub-testsuites list can also be used in parallel with the vector of test cases;
++in this case, the test cases run first,
++then each sub-testsuite executes.
+ To see an example of a test suite using sub-testsuites,
+ see *app/test/test_cryptodev.c*.
+ 
+-Test cases are added to the ``.unit_test_cases`` element
+-of the appropriate unit test suite structure.
+-An example of both a test suite and a case:
++Example of a test suite with a single test case:
+ 
+ .. code-block:: c
+    :linenos:
+ 
+-   #include <time.h>
 -
-+This section outlines the guidelines for DPDK Stable Releases and Long Term Support (LTS) releases.
- 
- Introduction
- ------------
- 
--The purpose of the DPDK Stable Releases is to maintain releases of DPDK with
--backported fixes over an extended period of time. This provides downstream
--consumers of DPDK with a stable target on which to base applications or
--packages.
+-   #include <rte_common.h>
+-   #include <rte_cycles.h>
+-   #include <rte_hexdump.h>
+-   #include <rte_random.h>
 -
--The primary characteristics of stable releases is that they attempt to
--fix issues and not introduce any new regressions while keeping backwards
--compatibility with the initial release of the stable version.
-+The purpose of DPDK Stable Releases is to maintain DPDK versions with backported
-+fixes over an extended period. This allows downstream users to base applications
-+or packages on a stable, well-maintained version of DPDK.
+    #include "test.h"
  
--The Long Term Support release (LTS) is a designation applied to a Stable
--Release to indicate longer term support.
-+The primary goal of stable releases is to fix issues without introducing regressions,
-+while preserving backward compatibility with the original version.
+    static int testsuite_setup(void) { return TEST_SUCCESS; }
+@@ -256,7 +247,7 @@ An example of both a test suite and a case:
+ The above code block is a small example
+ that can be used to create a complete test suite with test case.
  
-+LTS (Long Term Support) is a designation given to specific stable releases to indicate
-+extended support duration.
+-Sub-testsuites can be added to the ``.unit_test_suites`` element
++Add sub-testsuites to the ``.unit_test_suites`` element
+ of the unit test suite structure, for example:
  
- Stable Releases
- ---------------
+ .. code-block:: c
+@@ -335,13 +326,13 @@ The first way to indicate a generic error is
+ by returning a test result failure, using the ``TEST_FAILED`` error code.
+ This is the most basic way of indicating that an error
+ has occurred in a test routine.
+-It isn't very informative to the user, so it should really be used in cases
++It is not very informative to the user, so use it in cases
+ where the test has catastrophically failed.
  
--Any release of DPDK can be designated as a Stable Release if a
--maintainer volunteers to maintain it and there is a commitment from major
--contributors to validate it before releases.
--If a version is to be a "Stable Release", it should be designated as such
--within one month of that version being initially released.
-+Any DPDK release may become a Stable Release if a maintainer volunteers to support it
-+and major contributors commit to validating it before each release.
-+This designation should be made within one month of the version's initial release.
+ The preferred method of indicating an error is
+ via the ``RTE_TEST_ASSERT`` family of macros,
+-which will immediately return ``TEST_FAILED`` error condition,
+-but will also log details about the failure.
++which immediately return ``TEST_FAILED`` error condition,
++but also log details about the failure.
+ The basic form is:
  
--A Stable Release is used to backport fixes from an ``N`` release back to an
-+Stable Releases are typically used to backport fixes from an ``N`` release to an
- ``N-1`` release, for example, from 16.11 to 16.07.
+ .. code-block:: c
+@@ -350,16 +341,16 @@ The basic form is:
  
--The duration of a stable is one complete release cycle (4 months). It can be
--longer, up to 1 year, if a maintainer continues to support the stable branch,
--or if users supply backported fixes, however the explicit commitment should be
--for one release cycle.
--
--The release cadence is determined by the maintainer based on the number of
--bugfixes and the criticality of the bugs. Releases should be coordinated with
--the validation engineers to ensure that a tagged release has been tested.
--
--
--LTS Release
-------------
-+* The standard support duration is one full release cycle (4 months).
-+* This may extend up to one year if the maintainer continues support or if users provide backported fixes.
-+* The maintainer determines the release cadence based on the volume and criticality of fixes.
-+* Coordinate releases with validation engineers to ensure proper testing before tagging.
+ In the above macro, *cond* is the condition to evaluate to **true**.
+ Any generic condition can go here.
+-The *msg* parameter will be a message to display if *cond* evaluates to **false**.
++The *msg* parameter is a message to display if *cond* evaluates to **false**.
+ Some specialized macros already exist.
+ See `lib/librte_eal/include/rte_test.h` for a list of defined test assertions.
  
--A stable release can be designated as an LTS release based on community
--agreement and a commitment from a maintainer. The current policy is that each
--year's November (X.11) release will be maintained as an LTS for 3 years,
--however that is dependent on continued community support for validation.
-+LTS Releases
-+------------
+ Sometimes it is important to indicate that a test needs to be skipped,
+-either because the environment isn't able to support running the test,
+-or because some requisite functionality isn't available.
++either because the environment cannot support running the test,
++or because some requisite functionality is unavailable.
+ The test suite supports returning a result of ``TEST_SKIPPED``
+ during test case setup, or during test case execution
+-to indicate that the preconditions of the test aren't available.
++to indicate that the preconditions of the test are not available.
+ Example::
  
--After the X.11 release, an LTS branch will be created for it at
--https://git.dpdk.org/dpdk-stable where bugfixes will be backported to.
-+A Stable Release can be promoted to an LTS release through community agreement
-+and a maintainer's commitment.
+    $ meson test -C build --suite fast-tests
+@@ -386,10 +377,10 @@ Example::
+    $ meson test -C build --suite fast-tests
+    $ ninja coverage-html -C build
  
--A LTS release may align with the declaration of a new major ABI version,
--please read the :doc:`abi_policy` for more information.
-+* The current policy designates each November release (X.11) as an LTS and maintains it for 3 years,
-+  contingent on community validation support.
-+* After release, an LTS branch is created at https://git.dpdk.org/dpdk-stable
-+  where bugfixes are backported.
-+* An LTS release may align with the declaration of a new major ABI version.
-+  See the :doc:`abi_policy` for more information.
+-The above will generate an HTML report
++The above generates an HTML report
+ in the `build/meson-logs/coveragereport/` directory
+ that can be explored for detailed code covered information.
+-This can be used to assist in test development.
++Use this to assist in test development.
  
--It is anticipated that there will be at least 3 releases per year of the LTS
--or approximately 1 every 4 months. This is done to align with the DPDK main
--branch releases so that fixes have already gone through validation as part of
--the DPDK main branch release validation. However, the cadence can be shorter or
--longer depending on the number and criticality of the backported
--fixes. Releases should be coordinated with the validation engineers to ensure
--that a tagged release has been tested.
-+Release Cadence:
  
--For a list of the currently maintained stable/LTS branches please see
--the latest `stable roadmap <https://core.dpdk.org/roadmap/#stable>`_.
-+* At least three LTS updates per year (roughly one every four months).
-+* Aligned with main DPDK releases to leverage shared validation.
-+* Frequency may vary depending on the urgency and volume of fixes.
-+* Coordinate validation with test engineers.
+ Adding a suite or test case to Meson
+@@ -400,10 +391,10 @@ to register the test in dpdk-test, as described above.
+ For example,
+ defining the test command using ``REGISTER_PERF_TEST`` automatically
+ adds the test to the perf-test meson suite.
+-Once added, the new test will be run
++Once added, the new test runs
+ as part of the appropriate class (fast, perf, driver, etc.).
  
--At the end of the 3 years, a final X.11.N release will be made and at that
--point the LTS branch will no longer be maintained with no further releases.
-+For a list of the currently maintained stable/LTS branches, see
-+the `stable roadmap <https://core.dpdk.org/roadmap/#stable>`_.
+-A user or developer can confirm that a test is known to Meson
++Confirm that a test is known to Meson
+ by using the ``--list`` option::
  
-+At the end of the 3-year period, a final X.11.N release is made,
-+after which the LTS branch is no longer maintained.
+    $ meson test -C build --list
+@@ -411,12 +402,12 @@ by using the ``--list`` option::
+    DPDK:fast-tests / bitops_autotest
+    ...
  
--What changes should be backported
-+What Changes Should Be Backported
- ---------------------------------
+-Some of these test suites are run during continuous integration tests,
++Some of these test suites run during continuous integration tests,
+ making regression checking automatic for new patches submitted to the project.
  
--Backporting should be limited to bug fixes. All patches accepted on the main
--branch with a Fixes: tag should be backported to the relevant stable/LTS
--branches, unless the submitter indicates otherwise. If there are exceptions,
--they will be discussed on the mailing lists.
-+Limit backports to bug fixes.
-+
-+All patches accepted on the main branch with a ``Fixes:`` tag should be backported
-+to the relevant stable/LTS branches, unless the submitter indicates otherwise.
+ .. note::
  
- Fixes suitable for backport should have a ``Cc: stable@dpdk.org`` tag in the
- commit message body as follows::
-@@ -97,49 +82,37 @@ commit message body as follows::
- 
-      Signed-off-by: Alex Smith <alex.smith@example.com>
- 
--
- Fixes not suitable for backport should not include the ``Cc: stable@dpdk.org`` tag.
- 
--To support the goal of stability and not introducing regressions,
--new code being introduced is limited to bug fixes.
- New features should not be backported to stable releases.
--
--In some limited cases, it may be acceptable to backport a new feature
--to a stable release. Some of the factors which impact the decision by
--stable maintainers are as follows:
--
--* Does the feature break API/ABI?
--* Does the feature break backwards compatibility?
--* Is it for the latest LTS release (to avoid LTS upgrade issues)?
--* Is there a commitment from the proposer or affiliation to validate the feature
--  and check for regressions in related functionality?
--* Is there a track record of the proposer or affiliation validating stable releases?
--* Is it obvious that the feature will not impact existing functionality?
--* How intrusive is the code change?
--* What is the scope of the code change?
--* Does it impact common components or vendor specific?
--* Is there a justifiable use case (a clear user need)?
--* Is there a community consensus about the backport?
--
--Performance improvements are generally not considered to be fixes,
--but may be considered in some cases where:
-+In limited cases, a new feature may be acceptable if:
-+
-+* It does not break API or ABI.
-+* It preserves backward compatibility.
-+* It targets the latest LTS release (to help with upgrade paths).
-+* The proposer commits to testing the feature and monitoring regressions.
-+* The proposer or their organization has a track record of validating stable releases.
-+* It clearly does not impact existing functionality.
-+* The change is minimally invasive and scoped.
-+* It affects vendor-specific components rather than common ones.
-+* There is a justifiable use case (a clear user need).
-+* There is community consensus about the backport.
-+
-+Performance improvements are generally not considered fixes,
-+but may be considered in cases where:
- 
- * It is fixing a performance regression that occurred previously.
- * An existing feature in LTS is not usable as intended without it.
- 
- APIs marked as ``experimental`` are not considered part of the ABI version
--and can be changed without prior notice. This is necessary for the API to be
--improved and stabilized and become part of the ABI version in the future.
--
--However, in LTS releases ``experimental`` API should not be changed as there
--will not be a future ABI version on the branch and compatibility with previous
--release of an LTS version is of the highest importance.
-+and can be changed without prior notice in mainline development.
-+However, in LTS releases, ``experimental`` APIs should not be changed,
-+as compatibility with previous releases of an LTS version is paramount.
- 
- The Stable Mailing List
+-   The use of the old ``REGISTER_TEST_COMMAND`` macro
++   The old ``REGISTER_TEST_COMMAND`` macro
+    to add a command without adding it to a meson test suite is deprecated.
+    All new tests must be added to a test suite
+    using the appropriate ``REGISTER_<SUITE>_TEST`` macro.
+@@ -424,8 +415,8 @@ making regression checking automatic for new patches submitted to the project.
+ Running cryptodev tests
  -----------------------
  
--The Stable and LTS release are coordinated on the stable@dpdk.org mailing
--list.
-+Stable and LTS releases are coordinated on the stable@dpdk.org mailing list.
+-When running cryptodev tests, the user must create any required virtual device
+-via EAL arguments, as this is not automatically done by the test::
++When running cryptodev tests, create any required virtual device
++via EAL arguments, as this is not done automatically by the test::
  
- All fix patches to the main branch that are candidates for backporting
- should also be CCed to the `stable@dpdk.org <https://mails.dpdk.org/listinfo/stable>`_
-@@ -149,7 +122,7 @@ mailing list.
- Releasing
- ---------
+    $ ./build/app/test/dpdk-test --vdev crypto_aesni_mb
+    $ meson test -C build --suite driver-tests \
+@@ -433,6 +424,6 @@ via EAL arguments, as this is not automatically done by the test::
  
--A Stable Release will be released by:
-+A Stable Release is made by:
+ .. note::
  
- * Tagging the release with YY.MM.n (year, month, number).
- * Uploading a tarball of the release to dpdk.org.
+-   The ``cryptodev_scheduler_autotest`` is the only exception to this.
+-   This vdev will be created automatically by the test app,
++   The ``cryptodev_scheduler_autotest`` is the only exception.
++   This vdev is created automatically by the test app,
+    as it requires a more complex setup than other vdevs.
 -- 
 2.51.0
 
