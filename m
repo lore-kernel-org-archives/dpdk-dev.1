@@ -2,55 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A60CBD37E44
-	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Jan 2026 15:47:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 634A8D37E56
+	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Jan 2026 15:47:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0C8C240E3F;
-	Wed, 14 Jan 2026 16:45:35 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 21C2B40E25;
+	Wed, 14 Jan 2026 16:45:38 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
- by mails.dpdk.org (Postfix) with ESMTP id 1CCF940E41;
- Wed, 14 Jan 2026 16:45:32 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id E573140BA6;
+ Wed, 14 Jan 2026 16:45:34 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1768405534; x=1799941534;
+ t=1768405536; x=1799941536;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=+51h8nd3nlGKSzJlAhD1lOrCwWB2/tccmT8EmbcWM4o=;
- b=cOYzn70yjYT9vZLNj0yiBzS9vS1u2kfveQqf31ldOl1E0UURrEjVaKQW
- a5mOpY/T68VTNnvoLeCUbM2HWAf0NUsXRKJSlzUjNkXPl3YMQn5/iE/Xw
- c/iNdKKeXSVR2m+3wPTKqX9/IYtBdMryZtPugzrHTztF8nDXO3j7YeHLz
- 8yIaGI0klDuMsBLdpsXooLx0qquaGzbgoQBoKWj0CbvAJgJtxki06wSMk
- SDr6YK1WQw4fWShcivneHEDt6bUQXvmOE01Ku1HMU6XngV/u9BLbybhWE
- Py8M3xbAT6lMbtsdWl8B0IpvA4dA/8wesTSu3Mcrb9jSzLBgP/McdYMBq Q==;
-X-CSE-ConnectionGUID: +fNmoNKpQACVY6PHUjCFJQ==
-X-CSE-MsgGUID: 6BUTis7OTy+JUBDiDbMykw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11671"; a="69870895"
-X-IronPort-AV: E=Sophos;i="6.21,225,1763452800"; d="scan'208";a="69870895"
+ bh=cp7rTmxf41klHOtPq7uE/ueZNbpJNNjJHGrFJwHEB5g=;
+ b=TB4DDEdlxwqoWMptb2+FmfuF1AEk9s4oREvZtc0hcM+5J6ekVEyHRzf5
+ Z0hFhuef1GT7wcuTwNuwYS5j3ldfi+4vyJ6CMz4WDfxQseUMoSkZRBbkw
+ N6hhlsyieo+aRVVLb4C8Np7jP74NXlSiwCoHzN08JtGL+M6Kx95Tw/Ny6
+ 1MJDUNFchwrAPoUWN4SSaA3y6Ik8kH0XQGvL+WRfCAMuIRqHutUy6e+mg
+ ec2PkFfsk6zLLQDl4Y5OUYMDzje75hT4XQMEHPFn6MmdQ/B1bk0+KpU06
+ E0CX4fA+Gx+ktkehWa4Kf4SjXPVP3TyoRBuHmORcRTPcyZM/iQzWpsvSD g==;
+X-CSE-ConnectionGUID: nzU18qEuR/+AMSb7GpcJ/A==
+X-CSE-MsgGUID: DT601PXMR++wEn3sQMCRlg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11671"; a="69870904"
+X-IronPort-AV: E=Sophos;i="6.21,225,1763452800"; d="scan'208";a="69870904"
 Received: from orviesa010.jf.intel.com ([10.64.159.150])
  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 14 Jan 2026 07:45:33 -0800
-X-CSE-ConnectionGUID: 83IUsm0dRNCKXcS8kwAIvg==
-X-CSE-MsgGUID: 4V7lhf99Rv6tncS8qAZ36w==
+ 14 Jan 2026 07:45:35 -0800
+X-CSE-ConnectionGUID: SQh/kxzoSPijk2oGjcPSYw==
+X-CSE-MsgGUID: G1RFECqNQVe65mqq+hu5bw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,225,1763452800"; d="scan'208";a="203925028"
+X-IronPort-AV: E=Sophos;i="6.21,225,1763452800"; d="scan'208";a="203925032"
 Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by orviesa010.jf.intel.com with ESMTP; 14 Jan 2026 07:45:29 -0800
+ by orviesa010.jf.intel.com with ESMTP; 14 Jan 2026 07:45:33 -0800
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: Bruce Richardson <bruce.richardson@intel.com>, stable@dpdk.org,
- Stephen Hemminger <stephen@networkplumber.org>, Ori Kam <orika@nvidia.com>,
- Aman Singh <aman.deep.singh@intel.com>,
- Viacheslav Ovsiienko <viacheslavo@nvidia.com>,
- Sean Zhang <xiazhang@nvidia.com>, Helin Zhang <helin.zhang@intel.com>,
- Cunming Liang <cunming.liang@intel.com>, Jing Chen <jing.d.chen@intel.com>,
- David Marchand <david.marchand@redhat.com>,
- Ferruh Yigit <ferruh.yigit@amd.com>,
- Reshma Pattan <reshma.pattan@intel.com>,
- Harry van Haaren <harry.van.haaren@intel.com>,
- Remy Horton <remy.horton@intel.com>
-Subject: [PATCH v4 18/31] app/testpmd: fix build with shadow warnings enabled
-Date: Wed, 14 Jan 2026 15:44:32 +0000
-Message-ID: <20260114154450.2969716-19-bruce.richardson@intel.com>
+ Stephen Hemminger <stephen@networkplumber.org>,
+ Sunil Kumar Kori <skori@marvell.com>,
+ Rakesh Kudurumalla <rkudurumalla@marvell.com>,
+ Nithin Dabilpuram <ndabilpuram@marvell.com>,
+ Jerin Jacob <jerinj@marvell.com>
+Subject: [PATCH v4 19/31] app/graph: fix build with shadow warnings enabled
+Date: Wed, 14 Jan 2026 15:44:33 +0000
+Message-ID: <20260114154450.2969716-20-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260114154450.2969716-1-bruce.richardson@intel.com>
 References: <20251106140948.2894678-1-bruce.richardson@intel.com>
@@ -70,279 +65,303 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Rename or remove shadowed variables so as to build cleanly with
--Wshadow.
+The global variable "conn" conflicted with the local parameter to each
+function in the graph conn.c file. To prevent shadowing, use "c" as the
+name for the local connection variable throughout the file.
 
-Fixes: 55c074f3ba1d ("app/testpmd: support GENEVE option item")
-Fixes: 9213c50e36fa ("app/testpmd: support GTP PSC option in raw sets")
-Fixes: 26b7259a798d ("app/testpmd: support GRE option flow item")
-Fixes: d2121ceccd29 ("app/testpmd: rework display of Rx descriptors")
-Fixes: 90c263867b00 ("app/testpmd: enhance command-line parsing")
-Fixes: 62d3216d6194 ("app/testpmd: add latency statistics calculation")
+Fixes: 3f90eda5b7fb ("app/graph: add telnet connectivity")
 Cc: stable@dpdk.org
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 Acked-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- app/test-pmd/cmdline_flow.c | 42 ++++++++++++++++++-------------------
- app/test-pmd/config.c       | 15 +++++--------
- app/test-pmd/parameters.c   | 38 ++++++++++++++++-----------------
- app/test-pmd/testpmd.c      |  2 +-
- 4 files changed, 45 insertions(+), 52 deletions(-)
+ app/graph/conn.c | 134 +++++++++++++++++++++++------------------------
+ 1 file changed, 67 insertions(+), 67 deletions(-)
 
-diff --git a/app/test-pmd/cmdline_flow.c b/app/test-pmd/cmdline_flow.c
-index 54b247899d..ebc036b14b 100644
---- a/app/test-pmd/cmdline_flow.c
-+++ b/app/test-pmd/cmdline_flow.c
-@@ -14064,7 +14064,7 @@ cmd_set_raw_parsed(const struct buffer *in)
- 	data_tail = data + ACTION_RAW_ENCAP_MAX_DATA;
- 	for (i = n - 1 ; i >= 0; --i) {
- 		const struct rte_flow_item_gtp *gtp;
--		const struct rte_flow_item_geneve_opt *opt;
-+		const struct rte_flow_item_geneve_opt *geneve_opt;
- 		struct rte_flow_item_ipv6_routing_ext *ext;
+diff --git a/app/graph/conn.c b/app/graph/conn.c
+index 44934602c7..c5e1c1ae1b 100644
+--- a/app/graph/conn.c
++++ b/app/graph/conn.c
+@@ -20,12 +20,12 @@
+ #define MSG_CMD_TOO_LONG "Command too long."
  
- 		item = in->args.vc.pattern + i;
-@@ -14136,16 +14136,16 @@ cmd_set_raw_parsed(const struct buffer *in)
- 			size = sizeof(struct rte_geneve_hdr);
- 			break;
- 		case RTE_FLOW_ITEM_TYPE_GENEVE_OPT:
--			opt = (const struct rte_flow_item_geneve_opt *)
-+			geneve_opt = (const struct rte_flow_item_geneve_opt *)
- 								item->spec;
- 			size = offsetof(struct rte_flow_item_geneve_opt,
- 					option_len) + sizeof(uint8_t);
--			if (opt->option_len && opt->data) {
--				*total_size += opt->option_len *
-+			if (geneve_opt->option_len && geneve_opt->data) {
-+				*total_size += geneve_opt->option_len *
- 					       sizeof(uint32_t);
- 				rte_memcpy(data_tail - (*total_size),
--					   opt->data,
--					   opt->option_len * sizeof(uint32_t));
-+					   geneve_opt->data,
-+					   geneve_opt->option_len * sizeof(uint32_t));
- 			}
- 			break;
- 		case RTE_FLOW_ITEM_TYPE_L2TPV3OIP:
-@@ -14195,7 +14195,7 @@ cmd_set_raw_parsed(const struct buffer *in)
- 				goto error;
- 			} else {
- 				const struct rte_flow_item_gtp_psc
--					*opt = item->spec;
-+					*gtp_opt = item->spec;
- 				struct rte_gtp_psc_generic_hdr *hdr;
- 				size_t hdr_size = RTE_ALIGN(sizeof(*hdr),
- 							 sizeof(int32_t));
-@@ -14203,7 +14203,7 @@ cmd_set_raw_parsed(const struct buffer *in)
- 				*total_size += hdr_size;
- 				hdr = (typeof(hdr))(data_tail - (*total_size));
- 				memset(hdr, 0, hdr_size);
--				*hdr = opt->hdr;
-+				*hdr = gtp_opt->hdr;
- 				hdr->ext_hdr_len = 1;
- 				gtp_psc = i;
- 				size = 0;
-@@ -14225,25 +14225,25 @@ cmd_set_raw_parsed(const struct buffer *in)
- 			size = 0;
- 			if (item->spec) {
- 				const struct rte_flow_item_gre_opt
--					*opt = item->spec;
--				if (opt->checksum_rsvd.checksum) {
-+					*gre_opt = item->spec;
-+				if (gre_opt->checksum_rsvd.checksum) {
- 					*total_size +=
--						sizeof(opt->checksum_rsvd);
-+						sizeof(gre_opt->checksum_rsvd);
- 					rte_memcpy(data_tail - (*total_size),
--						   &opt->checksum_rsvd,
--						   sizeof(opt->checksum_rsvd));
-+						   &gre_opt->checksum_rsvd,
-+						   sizeof(gre_opt->checksum_rsvd));
- 				}
--				if (opt->key.key) {
--					*total_size += sizeof(opt->key.key);
-+				if (gre_opt->key.key) {
-+					*total_size += sizeof(gre_opt->key.key);
- 					rte_memcpy(data_tail - (*total_size),
--						   &opt->key.key,
--						   sizeof(opt->key.key));
-+						   &gre_opt->key.key,
-+						   sizeof(gre_opt->key.key));
- 				}
--				if (opt->sequence.sequence) {
--					*total_size += sizeof(opt->sequence.sequence);
-+				if (gre_opt->sequence.sequence) {
-+					*total_size += sizeof(gre_opt->sequence.sequence);
- 					rte_memcpy(data_tail - (*total_size),
--						   &opt->sequence.sequence,
--						   sizeof(opt->sequence.sequence));
-+						   &gre_opt->sequence.sequence,
-+						   sizeof(gre_opt->sequence.sequence));
- 				}
- 			}
- 			proto = 0x2F;
-diff --git a/app/test-pmd/config.c b/app/test-pmd/config.c
-index 6ea506254b..b6d194340b 100644
---- a/app/test-pmd/config.c
-+++ b/app/test-pmd/config.c
-@@ -4490,15 +4490,9 @@ ring_rxd_display_dword(union igb_ring_dword dword)
- 
- static void
- ring_rx_descriptor_display(const struct rte_memzone *ring_mz,
--#ifndef RTE_NET_INTEL_USE_16BYTE_DESC
- 			   portid_t port_id,
--#else
--			   __rte_unused portid_t port_id,
--#endif
- 			   uint16_t desc_id)
+ static int
+-data_event_handle(struct conn *conn, int fd_client)
++data_event_handle(struct conn *c, int fd_client)
  {
--	struct igb_ring_desc_16_bytes *ring =
--		(struct igb_ring_desc_16_bytes *)ring_mz->addr;
- #ifndef RTE_NET_INTEL_USE_16BYTE_DESC
- 	int ret;
- 	struct rte_eth_dev_info dev_info;
-@@ -4528,12 +4522,15 @@ ring_rx_descriptor_display(const struct rte_memzone *ring_mz,
- 	}
- #endif
- 	/* 16 bytes RX descriptor */
-+	struct igb_ring_desc_16_bytes *ring =
-+		(struct igb_ring_desc_16_bytes *)ring_mz->addr;
- 	ring[desc_id].lo_dword.dword =
- 		rte_le_to_cpu_64(ring[desc_id].lo_dword.dword);
- 	ring_rxd_display_dword(ring[desc_id].lo_dword);
- 	ring[desc_id].hi_dword.dword =
- 		rte_le_to_cpu_64(ring[desc_id].hi_dword.dword);
- 	ring_rxd_display_dword(ring[desc_id].hi_dword);
-+	RTE_SET_USED(port_id);
- }
+ 	ssize_t len, i, rc = 0;
  
- static void
-@@ -4742,7 +4739,6 @@ port_rss_hash_conf_show(portid_t port_id, int show_rss_key, int show_rss_algo)
- {
- 	struct rte_eth_rss_conf rss_conf = {0};
- 	uint8_t rss_key[RSS_HASH_KEY_LENGTH];
--	uint64_t rss_hf;
- 	uint8_t i;
- 	int diag;
- 	struct rte_eth_dev_info dev_info;
-@@ -4783,8 +4779,7 @@ port_rss_hash_conf_show(portid_t port_id, int show_rss_key, int show_rss_algo)
+ 	/* Read input message */
+-	len = read(fd_client, conn->buf, conn->buf_size);
++	len = read(fd_client, c->buf, c->buf_size);
+ 	if (len == -1) {
+ 		if ((errno == EAGAIN) || (errno == EWOULDBLOCK))
+ 			return 0;
+@@ -38,37 +38,37 @@ data_event_handle(struct conn *conn, int fd_client)
+ 
+ 	/* Handle input messages */
+ 	for (i = 0; i < len; i++) {
+-		if (conn->buf[i] == '\n') {
++		if (c->buf[i] == '\n') {
+ 			size_t n;
+ 
+-			conn->msg_in[conn->msg_in_len] = 0;
+-			conn->msg_out[0] = 0;
++			c->msg_in[c->msg_in_len] = 0;
++			c->msg_out[0] = 0;
+ 
+-			conn->msg_handle(conn->msg_in, conn->msg_out, conn->msg_out_len_max,
+-					 conn->msg_handle_arg);
++			c->msg_handle(c->msg_in, c->msg_out, c->msg_out_len_max,
++					 c->msg_handle_arg);
+ 
+-			n = strlen(conn->msg_out);
++			n = strlen(c->msg_out);
+ 			if (n) {
+-				rc = write(fd_client, conn->msg_out, n);
++				rc = write(fd_client, c->msg_out, n);
+ 				if (rc == -1)
+ 					goto exit;
+ 			}
+ 
+-			conn->msg_in_len = 0;
+-		} else if (conn->msg_in_len < conn->msg_in_len_max) {
+-			conn->msg_in[conn->msg_in_len] = conn->buf[i];
+-			conn->msg_in_len++;
++			c->msg_in_len = 0;
++		} else if (c->msg_in_len < c->msg_in_len_max) {
++			c->msg_in[c->msg_in_len] = c->buf[i];
++			c->msg_in_len++;
+ 		} else {
+ 			rc = write(fd_client, MSG_CMD_TOO_LONG, strlen(MSG_CMD_TOO_LONG));
+ 			if (rc == -1)
+ 				goto exit;
+ 
+-			conn->msg_in_len = 0;
++			c->msg_in_len = 0;
  		}
- 		return;
- 	}
--	rss_hf = rss_conf.rss_hf;
--	if (rss_hf == 0) {
-+	if (rss_conf.rss_hf == 0) {
- 		printf("RSS disabled\n");
- 		return;
- 	}
-@@ -4796,7 +4791,7 @@ port_rss_hash_conf_show(portid_t port_id, int show_rss_key, int show_rss_algo)
  	}
  
- 	printf("RSS functions:\n");
--	rss_types_display(rss_hf, TESTPMD_RSS_TYPES_CHAR_NUM_PER_LINE);
-+	rss_types_display(rss_conf.rss_hf, TESTPMD_RSS_TYPES_CHAR_NUM_PER_LINE);
+ 	/* Write prompt */
+-	rc = write(fd_client, conn->prompt, strlen(conn->prompt));
++	rc = write(fd_client, c->prompt, strlen(c->prompt));
+ 	rc = (rc == -1) ? -1 : 0;
  
- 	if (!show_rss_key)
- 		return;
-diff --git a/app/test-pmd/parameters.c b/app/test-pmd/parameters.c
-index 96973906fd..f2037925c2 100644
---- a/app/test-pmd/parameters.c
-+++ b/app/test-pmd/parameters.c
-@@ -777,42 +777,42 @@ parse_ringnuma_config(const char *q_arg)
+ exit:
+@@ -76,11 +76,11 @@ data_event_handle(struct conn *conn, int fd_client)
  }
  
  static int
--parse_event_printing_config(const char *optarg, int enable)
-+parse_event_printing_config(const char *event_arg, int enable)
+-control_event_handle(struct conn *conn, int fd_client)
++control_event_handle(struct conn *c, int fd_client)
  {
- 	uint32_t mask = 0;
+ 	int rc;
  
--	if (!strcmp(optarg, "unknown"))
-+	if (!strcmp(event_arg, "unknown"))
- 		mask = UINT32_C(1) << RTE_ETH_EVENT_UNKNOWN;
--	else if (!strcmp(optarg, "intr_lsc"))
-+	else if (!strcmp(event_arg, "intr_lsc"))
- 		mask = UINT32_C(1) << RTE_ETH_EVENT_INTR_LSC;
--	else if (!strcmp(optarg, "queue_state"))
-+	else if (!strcmp(event_arg, "queue_state"))
- 		mask = UINT32_C(1) << RTE_ETH_EVENT_QUEUE_STATE;
--	else if (!strcmp(optarg, "intr_reset"))
-+	else if (!strcmp(event_arg, "intr_reset"))
- 		mask = UINT32_C(1) << RTE_ETH_EVENT_INTR_RESET;
--	else if (!strcmp(optarg, "vf_mbox"))
-+	else if (!strcmp(event_arg, "vf_mbox"))
- 		mask = UINT32_C(1) << RTE_ETH_EVENT_VF_MBOX;
--	else if (!strcmp(optarg, "ipsec"))
-+	else if (!strcmp(event_arg, "ipsec"))
- 		mask = UINT32_C(1) << RTE_ETH_EVENT_IPSEC;
--	else if (!strcmp(optarg, "macsec"))
-+	else if (!strcmp(event_arg, "macsec"))
- 		mask = UINT32_C(1) << RTE_ETH_EVENT_MACSEC;
--	else if (!strcmp(optarg, "intr_rmv"))
-+	else if (!strcmp(event_arg, "intr_rmv"))
- 		mask = UINT32_C(1) << RTE_ETH_EVENT_INTR_RMV;
--	else if (!strcmp(optarg, "dev_probed"))
-+	else if (!strcmp(event_arg, "dev_probed"))
- 		mask = UINT32_C(1) << RTE_ETH_EVENT_NEW;
--	else if (!strcmp(optarg, "dev_released"))
-+	else if (!strcmp(event_arg, "dev_released"))
- 		mask = UINT32_C(1) << RTE_ETH_EVENT_DESTROY;
--	else if (!strcmp(optarg, "flow_aged"))
-+	else if (!strcmp(event_arg, "flow_aged"))
- 		mask = UINT32_C(1) << RTE_ETH_EVENT_FLOW_AGED;
--	else if (!strcmp(optarg, "err_recovering"))
-+	else if (!strcmp(event_arg, "err_recovering"))
- 		mask = UINT32_C(1) << RTE_ETH_EVENT_ERR_RECOVERING;
--	else if (!strcmp(optarg, "recovery_success"))
-+	else if (!strcmp(event_arg, "recovery_success"))
- 		mask = UINT32_C(1) << RTE_ETH_EVENT_RECOVERY_SUCCESS;
--	else if (!strcmp(optarg, "recovery_failed"))
-+	else if (!strcmp(event_arg, "recovery_failed"))
- 		mask = UINT32_C(1) << RTE_ETH_EVENT_RECOVERY_FAILED;
--	else if (!strcmp(optarg, "all"))
-+	else if (!strcmp(event_arg, "all"))
- 		mask = ~UINT32_C(0);
- 	else {
--		fprintf(stderr, "Invalid event: %s\n", optarg);
-+		fprintf(stderr, "Invalid event: %s\n", event_arg);
- 		return -1;
+-	rc = epoll_ctl(conn->fd_client_group, EPOLL_CTL_DEL, fd_client, NULL);
++	rc = epoll_ctl(c->fd_client_group, EPOLL_CTL_DEL, fd_client, NULL);
+ 	if (rc == -1)
+ 		goto exit;
+ 
+@@ -99,7 +99,7 @@ conn_init(struct conn_params *p)
+ {
+ 	int fd_server, fd_client_group, rc;
+ 	struct sockaddr_in server_address;
+-	struct conn *conn = NULL;
++	struct conn *c = NULL;
+ 	int reuse = 1;
+ 
+ 	memset(&server_address, 0, sizeof(server_address));
+@@ -115,20 +115,20 @@ conn_init(struct conn_params *p)
+ 		goto exit;
+ 
+ 	/* Memory allocation */
+-	conn = calloc(1, sizeof(struct conn));
+-	if (conn == NULL)
++	c = calloc(1, sizeof(struct conn));
++	if (c == NULL)
+ 		goto exit;
+ 
+-	conn->welcome = calloc(1, CONN_WELCOME_LEN_MAX + 1);
+-	conn->prompt = calloc(1, CONN_PROMPT_LEN_MAX + 1);
+-	conn->buf = calloc(1, p->buf_size);
+-	conn->msg_in = calloc(1, p->msg_in_len_max + 1);
+-	conn->msg_out = calloc(1, p->msg_out_len_max + 1);
++	c->welcome = calloc(1, CONN_WELCOME_LEN_MAX + 1);
++	c->prompt = calloc(1, CONN_PROMPT_LEN_MAX + 1);
++	c->buf = calloc(1, p->buf_size);
++	c->msg_in = calloc(1, p->msg_in_len_max + 1);
++	c->msg_out = calloc(1, p->msg_out_len_max + 1);
+ 
+-	if ((conn->welcome == NULL) || (conn->prompt == NULL) || (conn->buf == NULL) ||
+-	    (conn->msg_in == NULL) || (conn->msg_out == NULL)) {
+-		conn_free(conn);
+-		conn = NULL;
++	if ((c->welcome == NULL) || (c->prompt == NULL) || (c->buf == NULL) ||
++	    (c->msg_in == NULL) || (c->msg_out == NULL)) {
++		conn_free(c);
++		c = NULL;
+ 		goto exit;
  	}
- 	if (enable)
-@@ -987,11 +987,10 @@ launch_args_parse(int argc, char** argv)
- 			break;
- 		case TESTPMD_OPT_STATS_PERIOD_NUM: {
- 			char *end = NULL;
--			unsigned int n;
  
- 			n = strtoul(optarg, &end, 10);
- 			if ((optarg[0] == '\0') || (end == NULL) ||
--					(*end != '\0'))
-+					(*end != '\0') || n <= 0 || n >= UINT16_MAX)
- 				rte_exit(EXIT_FAILURE, "Invalid stats-period value\n");
+@@ -138,8 +138,8 @@ conn_init(struct conn_params *p)
  
- 			stats_period = n;
-@@ -1339,7 +1338,6 @@ launch_args_parse(int argc, char** argv)
- 			break;
- 		case TESTPMD_OPT_HAIRPIN_MODE_NUM: {
- 			char *end = NULL;
--			unsigned int n;
+ 	fd_server = socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK, 0);
+ 	if (fd_server == -1) {
+-		conn_free(conn);
+-		conn = NULL;
++		conn_free(c);
++		c = NULL;
+ 		goto exit;
+ 	}
  
- 			errno = 0;
- 			n = strtoul(optarg, &end, 0);
-diff --git a/app/test-pmd/testpmd.c b/app/test-pmd/testpmd.c
-index 1fe41d852a..41695afd42 100644
---- a/app/test-pmd/testpmd.c
-+++ b/app/test-pmd/testpmd.c
-@@ -4660,7 +4660,7 @@ main(int argc, char** argv)
+@@ -161,47 +161,47 @@ conn_init(struct conn_params *p)
+ 		goto free;
  
- #ifdef RTE_LIB_LATENCYSTATS
- 	if (latencystats_enabled != 0) {
--		int ret = rte_latencystats_init(1, NULL);
-+		ret = rte_latencystats_init(1, NULL);
- 		if (ret)
- 			fprintf(stderr,
- 				"Warning: latencystats init() returned error %d\n",
+ 	/* Fill in */
+-	rte_strscpy(conn->welcome, p->welcome, CONN_WELCOME_LEN_MAX);
+-	rte_strscpy(conn->prompt, p->prompt, CONN_PROMPT_LEN_MAX);
+-	conn->buf_size = p->buf_size;
+-	conn->msg_in_len_max = p->msg_in_len_max;
+-	conn->msg_out_len_max = p->msg_out_len_max;
+-	conn->msg_in_len = 0;
+-	conn->fd_server = fd_server;
+-	conn->fd_client_group = fd_client_group;
+-	conn->msg_handle = p->msg_handle;
+-	conn->msg_handle_arg = p->msg_handle_arg;
++	rte_strscpy(c->welcome, p->welcome, CONN_WELCOME_LEN_MAX);
++	rte_strscpy(c->prompt, p->prompt, CONN_PROMPT_LEN_MAX);
++	c->buf_size = p->buf_size;
++	c->msg_in_len_max = p->msg_in_len_max;
++	c->msg_out_len_max = p->msg_out_len_max;
++	c->msg_in_len = 0;
++	c->fd_server = fd_server;
++	c->fd_client_group = fd_client_group;
++	c->msg_handle = p->msg_handle;
++	c->msg_handle_arg = p->msg_handle_arg;
+ 
+ exit:
+-	return conn;
++	return c;
+ free:
+-	conn_free(conn);
++	conn_free(c);
+ 	close(fd_server);
+-	conn = NULL;
+-	return conn;
++	c = NULL;
++	return c;
+ }
+ 
+ void
+-conn_free(struct conn *conn)
++conn_free(struct conn *c)
+ {
+-	if (conn == NULL)
++	if (c == NULL)
+ 		return;
+ 
+-	if (conn->fd_client_group)
+-		close(conn->fd_client_group);
++	if (c->fd_client_group)
++		close(c->fd_client_group);
+ 
+-	if (conn->fd_server)
+-		close(conn->fd_server);
++	if (c->fd_server)
++		close(c->fd_server);
+ 
+-	free(conn->msg_out);
+-	free(conn->msg_in);
+-	free(conn->prompt);
+-	free(conn->welcome);
+-	free(conn);
++	free(c->msg_out);
++	free(c->msg_in);
++	free(c->prompt);
++	free(c->welcome);
++	free(c);
+ }
+ 
+ int
+-conn_req_poll(struct conn *conn)
++conn_req_poll(struct conn *c)
+ {
+ 	struct sockaddr_in client_address;
+ 	socklen_t client_address_length;
+@@ -209,12 +209,12 @@ conn_req_poll(struct conn *conn)
+ 	int fd_client, rc;
+ 
+ 	/* Check input arguments */
+-	if (conn == NULL)
++	if (c == NULL)
+ 		return -1;
+ 
+ 	/* Server socket */
+ 	client_address_length = sizeof(client_address);
+-	fd_client = accept4(conn->fd_server, (struct sockaddr *)&client_address,
++	fd_client = accept4(c->fd_server, (struct sockaddr *)&client_address,
+ 			    &client_address_length, SOCK_NONBLOCK);
+ 	if (fd_client == -1) {
+ 		if ((errno == EAGAIN) || (errno == EWOULDBLOCK))
+@@ -227,20 +227,20 @@ conn_req_poll(struct conn *conn)
+ 	event.events = EPOLLIN | EPOLLRDHUP | EPOLLHUP;
+ 	event.data.fd = fd_client;
+ 
+-	rc = epoll_ctl(conn->fd_client_group, EPOLL_CTL_ADD, fd_client, &event);
++	rc = epoll_ctl(c->fd_client_group, EPOLL_CTL_ADD, fd_client, &event);
+ 	if (rc == -1) {
+ 		close(fd_client);
+ 		goto exit;
+ 	}
+ 
+ 	/* Client */
+-	rc = write(fd_client, conn->welcome, strlen(conn->welcome));
++	rc = write(fd_client, c->welcome, strlen(c->welcome));
+ 	if (rc == -1) {
+ 		close(fd_client);
+ 		goto exit;
+ 	}
+ 
+-	rc = write(fd_client, conn->prompt, strlen(conn->prompt));
++	rc = write(fd_client, c->prompt, strlen(c->prompt));
+ 	if (rc == -1) {
+ 		close(fd_client);
+ 		goto exit;
+@@ -253,17 +253,17 @@ conn_req_poll(struct conn *conn)
+ }
+ 
+ int
+-conn_msg_poll(struct conn *conn)
++conn_msg_poll(struct conn *c)
+ {
+ 	int fd_client, rc, rc_data = 0, rc_control = 0;
+ 	struct epoll_event event;
+ 
+ 	/* Check input arguments */
+-	if (conn == NULL)
++	if (c == NULL)
+ 		return -1;
+ 
+ 	/* Client group */
+-	rc = epoll_wait(conn->fd_client_group, &event, 1, 0);
++	rc = epoll_wait(c->fd_client_group, &event, 1, 0);
+ 	if ((rc == -1) || rc == 0)
+ 		return rc;
+ 
+@@ -271,11 +271,11 @@ conn_msg_poll(struct conn *conn)
+ 
+ 	/* Data available */
+ 	if (event.events & EPOLLIN)
+-		rc_data = data_event_handle(conn, fd_client);
++		rc_data = data_event_handle(c, fd_client);
+ 
+ 	/* Control events */
+ 	if (event.events & (EPOLLRDHUP | EPOLLERR | EPOLLHUP))
+-		rc_control = control_event_handle(conn, fd_client);
++		rc_control = control_event_handle(c, fd_client);
+ 
+ 	if (rc_data || rc_control)
+ 		return -1;
 -- 
 2.51.0
 
