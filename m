@@ -2,68 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8A08D31A0E
-	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Jan 2026 05:13:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ABEED31A09
+	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Jan 2026 05:25:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D5A9D40615;
-	Wed, 14 Jan 2026 06:13:38 +0100 (CET)
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com
- [209.85.128.51]) by mails.dpdk.org (Postfix) with ESMTP id C2F8E40289
- for <dev@dpdk.org>; Wed, 14 Jan 2026 06:13:36 +0100 (CET)
-Received: by mail-wm1-f51.google.com with SMTP id
- 5b1f17b1804b1-477a2ab455fso75613875e9.3
- for <dev@dpdk.org>; Tue, 13 Jan 2026 21:13:36 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 208494028F;
+	Wed, 14 Jan 2026 06:25:34 +0100 (CET)
+Received: from mail-wm1-f65.google.com (mail-wm1-f65.google.com
+ [209.85.128.65]) by mails.dpdk.org (Postfix) with ESMTP id EB10840289
+ for <dev@dpdk.org>; Wed, 14 Jan 2026 06:25:32 +0100 (CET)
+Received: by mail-wm1-f65.google.com with SMTP id
+ 5b1f17b1804b1-47775fb6c56so79115115e9.1
+ for <dev@dpdk.org>; Tue, 13 Jan 2026 21:25:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768367616;
- x=1768972416; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768368332;
+ x=1768973132; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=lTVtNwIUitUyV1vBK1jqgftwLsowY9LX1YUHBYeVoaE=;
- b=L3FjGH+IxvxprHiVCC8kSShmXykj9vSfhlwMXSZ/Rtf1n6o/S9u5BmVgnzOnDBipAp
- IY3gN1AtUI7rS/0AuTVh8ThmdveiROWrfaVC7sbtoiCjNHK6+rcfPQVK2ubMrl2QMevP
- fiBtnXJNhMwA4k0CdAzxO84hHV7sJEP8zt2sIJCESl7cUEOVdNA54ktFpY9GdrowecqD
- jZG6y+wchHES3YucpEkQMBgi9S5/4PN6dQwOHfBTpWagFWSZGYOaVElH97uWi3N6tA5D
- SaTSLcRqlSdtkgZIYSYIzeAh+ruc36isQX2EDNsKFMo2Sx7eLOtIrfM+eg1GJvYk2jy9
- BSoA==
+ bh=pjk2T34L+OjPtL8CuiyaVVKp0yXT4j4d/CHAi6ns+/g=;
+ b=u/GBuKvfismuAEIbLXYdVUftFibv/NVkFO/9JqpoOU710dfZQAPbqBTS3plaBEmS1L
+ xsOA+K+dAB8anrnZk78LPCaKjqpyNDLIT9Jhs4j6dUyW58IYZcPjjP527XYg0QggeIk2
+ R5zc/DlNLq7gMohUqVufFQAjUUwnwjqMUhcethqsapTO5l/hAlUpZMXKp4y2ruHVzlP4
+ 61tboQcYVGMimnamJAKF7wek/c78pJwDlSFVSYKOKLoeNd0m8ZAQPX4T728muFJfLXU0
+ DqEXkJ4bMx28aszxB+g0YYdscGZrplldIeWw0d+izMm3Lq7xrjpHKh3i+NvjjZpSNa7w
+ RSLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768367616; x=1768972416;
+ d=1e100.net; s=20230601; t=1768368332; x=1768973132;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=lTVtNwIUitUyV1vBK1jqgftwLsowY9LX1YUHBYeVoaE=;
- b=HnFlaC6l7pmetF35STL4unBb+syTHA8oSgjHaLNa66ffcyIwxpF9CSUMILuyH7139c
- 8EygsvTCjynAGjwO4te0nFPt1NGhvbAsxqaqIcPeiEJKSVh/7cpAPoyInMx7qBULPWu0
- YDsfhZqAj9vmeISEcrTeaUUO3xdlFIP54E/cwpPCf2VKO4SQUBbFdZu7qA44KPI3XZ+e
- F7hQLfo5aWTz1Glz/WjK5/YBz4xmDmsssbmYCwbG7smV8kj6x7sionsYx5jZ9eKZm2bX
- LeYInYiiqFjAelj1Zv1BndTACSRvef7RB7W3+AMrHfnDA7Mtm81mNQ+SPKuliDYn82CC
- P2XQ==
-X-Gm-Message-State: AOJu0YxCVUBMp2Z2hVerGhIKxYCmq0Pv1jvmdPFhHMc5/eKUuGziquH7
- tsIQ+lQYykI0ONm75fcDfKWz2JgVln/tsI/V8OEFtGNWyOwdKHP2MAtNAfVy1wwLkM8=
-X-Gm-Gg: AY/fxX6IyvOtkKX1AYbBtB18m1FHNBRNYXdrQB6rk+r38OFXVqWKN0CrK+ymdlQIqDr
- F3eSQhe1sle1cnkSdX5E9Xo3YH5pyJMXzNLAMv8/htQdfVFOoSlXFi0pquMTOBUwYmWxe9iWP9K
- dgi0TRrmcecp25JFRSREq8gQ4wpEKibE2wUCzXFyyutIUs9UhdbztYTN9Tx4efbf96OYXbHUld6
- d1hZYXkAdCAFMskCX6YpOcg+cZUxwqQZuWprjXNogsqrA5/EX1k0dLTxX3NepLbtw6puqMfC8Wd
- JuywewiP25gNac13rzV70Vb3bTzj17+z+oob4fLB3s/8roDYDFi/g6IYCZj2qqtQBUV2Dren5Mn
- pSsOhFgKArTOXqxuyl8SD8kuf8C3IHToFlWcBz4Qivsxa7OnTyWKXoKEvv8CsKQMnyJWalU56h5
- p1XP3crYs6eYXN4uiZ8xwCqTv18WOTYSkLhkt4FBfCR/meMhn+GSd8
-X-Received: by 2002:a05:6000:2407:b0:430:fced:90a with SMTP id
- ffacd0b85a97d-4342c4f70ebmr1235682f8f.16.1768367616203; 
- Tue, 13 Jan 2026 21:13:36 -0800 (PST)
+ bh=pjk2T34L+OjPtL8CuiyaVVKp0yXT4j4d/CHAi6ns+/g=;
+ b=tgT1sjgza8GzpI+vu3U023JZ8fqZ8qqgpwRnftVClJN54LgoIxf+MrdS7GNIIx80S1
+ t6OtIYzBBN1q1avKUdRYeACFLd6gEUbHLo9XvnjIUiWaPykfymGV6LLrqqvtzKKHUAw7
+ mxENLKZTxPSkpDvFtGyKyNgdRlBV0IntEgSG+yhbKw3HreC7t1nl5zRVBUSzP2Z7AXPV
+ jBCPLqFWujvVUvISMBns8I1s7cRqe02m9CZdpr3px681xWt2WxVh6pBas2SKt+wp7en8
+ ASTINb+iw9RotgoUQTjiQ4uIdLi9efjYf/A2lRf8joj2Az/D2ckxa5mrTSCCMOwgnFJC
+ HASw==
+X-Gm-Message-State: AOJu0Yxq78QabLx+A3doD65s7Yl4c7xE+DiABiTtb8ekJVyKpB0nMMPn
+ ROAQHjxd0z1PQjc+hpCyVOeamYBB8Fq3pq0LVEySErrk6MDp9jGIqTOZSccob8XQt8w=
+X-Gm-Gg: AY/fxX6Hxh7Xyd/pMCGYIujBx8RhUiyVkLyDlmfQxL8MevtpgwXHwPDb0PPEFL/wc0L
+ bWA6l2ub/QfcHZni2VwL7cRWz4fEgh3aqCKJVJiT6azCzdQagFh62XLSPycEVvqE0alcT4AIW4M
+ d13SaMJB0rgGcK15juN+gtfVuDjYSDtDMyVrvf5cNCLK8BqEWti3RBMcIo3hz1sd/IjoiLbepXp
+ 27aWoJKrgwh8maUR+Pnq3JZdZV26Q6e9E/VnQaIylTfrMPw0g1gHD/VwvEZCUGOSU85yrwfcj2J
+ E8Nwj3vuaqbkPjf6qyQHSPgt8kcRgLQKVj9bQrZXv/uVO1eQYeavyV6b7EFkFYuFS3hnpibkl+5
+ z7i36O3KOzO7zsho4KDD3Fy4CQLqyv3zXa7ziNR/F9l8BaH09mFRxy8vPc/V2PE+Ec+8Ojgkktb
+ 6Xwun1aUHMFgcX8VnenTJ0JzIgAF+zLA/j2XR0dj1mFQKkgDU/EaNN
+X-Received: by 2002:a05:600c:6218:b0:47d:18b0:bb9a with SMTP id
+ 5b1f17b1804b1-47ee33997fcmr13577865e9.33.1768368332519; 
+ Tue, 13 Jan 2026 21:25:32 -0800 (PST)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-432bd5ee5e3sm47682790f8f.35.2026.01.13.21.13.35
+ 5b1f17b1804b1-47ee578d1b2sm9369045e9.2.2026.01.13.21.25.30
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 13 Jan 2026 21:13:35 -0800 (PST)
-Date: Tue, 13 Jan 2026 21:13:30 -0800
+ Tue, 13 Jan 2026 21:25:31 -0800 (PST)
+Date: Tue, 13 Jan 2026 21:25:26 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Abdullah =?UTF-8?B?w5ZtZXIgWWFtYcOn?= <aomeryamac@gmail.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH v6] devtools: add .clang-format file
-Message-ID: <20260113211331.3fb0de98@phoenix.local>
-In-Reply-To: <20241014221545.66810-1-aomeryamac@gmail.com>
-References: <20241007102410.6c68f2c6@hermes.local>
- <20241014221545.66810-1-aomeryamac@gmail.com>
+To: Congjie Zhou <zcjie0802@qq.com>
+Cc: dev@dpdk.org, anatoly.burakov@intel.com
+Subject: Re: [PATCH v3] eal/linux: fix fbarray name with multiple secondary
+ processes
+Message-ID: <20260113212526.0d2a5eae@phoenix.local>
+In-Reply-To: <tencent_C757C0BA2AC7438F65C6522E700005F53605@qq.com>
+References: <tencent_B09D0FCCA142E4AE5ABFE584E92DCED8CB0A@qq.com>
+ <tencent_C757C0BA2AC7438F65C6522E700005F53605@qq.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -80,157 +81,128 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 14 Oct 2024 22:15:45 +0000
-Abdullah =C3=96mer Yama=C3=A7 <aomeryamac@gmail.com> wrote:
+On Sat, 16 Nov 2024 12:07:41 +0800
+Congjie Zhou <zcjie0802@qq.com> wrote:
 
-> clang-format is a tool to format C/C++/Objective-C code. It can be used
-> to reformat code to match a given coding style, or to ensure that code
-> adheres to a specific coding style. It helps to maintain a consistent
-> coding style across the DPDK codebase.
+> add the tsc into the name.
 >=20
-> .clang-format file overrides the default style options provided by
-> clang-format and large set of IDEs and text editors support it.
->=20
-> Signed-off-by: Abdullah =C3=96mer Yama=C3=A7 <aomeryamac@gmail.com>
+> Suggested-by: Stephen Hemminger <stephen@networkplumber.org>
+> Signed-off-by: Congjie Zhou <zcjie0802@qq.com>
 > ---
 
-Adding a clang-format would be good, but the patch never got reviewed.
-I was a little concerned that the new clang-format would have some
-style conflicts with current DPDK usage; so I asked AI.
-Please consider these proposed changes and resubmit.
+This patch seems to have gotten stuck in the unreviewed dead pile.
+Looking at it, it addresses a potential problem but there are issues.
+Please consider what this AI review feedback had to say and resubmit
 
+Now let me analyze this patch against the AGENTS.md criteria and evaluate t=
+he technical correctness.
 
-## Patch Review: devtools: add .clang-format file
+## Evaluation Against AGENTS.md
 
-### Commit Message Analysis
+### Commit Message Issues
 
-| Check | Status | Notes |
-|-------|--------|-------|
-| Subject =E2=89=A460 chars | =E2=9C=85 | 39 characters |
-| Lowercase after colon | =E2=9C=85 | "add .clang-format file" |
-| Imperative mood | =E2=9C=85 | "add" |
+| Check | Status | Details |
+|-------|--------|---------|
+| Subject =E2=89=A460 chars | =E2=9C=85 | 56 characters |
+| Correct prefix | =E2=9C=85 | `eal/linux:` is correct |
+| Lowercase after colon | =E2=9C=85 | "fix fbarray..." |
+| Imperative mood | =E2=9C=85 | "fix" |
 | No trailing period | =E2=9C=85 | |
-| Signed-off-by | =E2=9C=85 | Present with real name and email |
-| Body =E2=89=A475 chars | =E2=9C=85 | Lines are within limit |
+| Signed-off-by present | =E2=9C=85 | |
+| Body lines =E2=89=A475 chars | =E2=9C=85 | |
 
-**Warning**: The prefix `devtools:` is potentially misleading since the `.c=
-lang-format` file is being added to the repository root, not to the `devtoo=
-ls/` directory. Consider using a prefix like `style:` or `build:`, or simpl=
-y omit the prefix for root-level config files.
+**Warning**: The commit body is weak - "add the tsc into the name." is very=
+ terse and doesn't explain the *problem* being solved. The actual explanati=
+on is after `---` which won't appear in git history. The body should explai=
+n the container PID namespace issue before the Signed-off-by.
+
+### Code Style
+
+| Check | Status | Details |
+|-------|--------|---------|
+| Include order | =E2=9C=85 | `inttypes.h` with system includes, `rte_cycle=
+s.h` with DPDK includes |
+| PRIx64 format | =E2=9C=85 | Correct portable format specifier |
+| Line length | =E2=9C=85 | Within 100 chars |
 
 ---
 
-### Clang-Format Settings Review
+## Technical Correctness Analysis
 
-#### =E2=9C=85 Correct Settings
+### The Problem
+In Linux containers with separate PID namespaces, each container's PID numb=
+ering starts from 1. If multiple secondary DPDK processes in different cont=
+ainers share the same hugetlbfs mount, the fbarray names (which include PID=
+) can collide.
 
-| Setting | Value | DPDK Requirement | Status |
-|---------|-------|------------------|--------|
-| `ColumnLimit` | 100 | 100 chars max | =E2=9C=85 |
-| `TabWidth` | 8 | 8 characters | =E2=9C=85 |
-| `IndentWidth` | 8 | 8 characters | =E2=9C=85 |
-| `LineEnding` | LF | Unix line endings | =E2=9C=85 |
-| `InsertNewlineAtEOF` | true | Files end with newline | =E2=9C=85 |
-| `AfterFunction` | true | Brace on new line for functions | =E2=9C=85 |
-| `AfterControlStatement` | false | Brace on same line for if/for/while | =
-=E2=9C=85 |
-| `IncludeBlocks` | Preserve | Don't reorder include groups | =E2=9C=85 |
-| `SortIncludes` | Never | Preserve include order | =E2=9C=85 |
-| `AlwaysBreakAfterReturnType` | TopLevelDefinitions | Return type on own l=
-ine | =E2=9C=85 |
-| `IndentGotoLabels` | false | Labels not indented | =E2=9C=85 |
-| `ForEachMacros` | comprehensive list | Treat as loops | =E2=9C=85 |
+### Issues with the TSC Solution
 
-#### =E2=9A=A0=EF=B8=8F Issues to Address
+1. **TSC is not reliably unique**: Two containers starting at nearly the sa=
+me instant on the same CPU could get very close or identical TSC values. Th=
+e TSC counter increments at GHz frequencies, but container startup can be s=
+ynchronized at millisecond granularity.
 
-**1. UseTab Setting (Warning)**
+2. **TSC synchronization issues**: On multi-socket systems, TSC may not be =
+synchronized across sockets/CPUs. While modern CPUs have `constant_tsc` and=
+ `nonstop_tsc`, this isn't universal.
 
-```yaml
-UseTab: Always
-```
+3. **Overhead**: `rte_get_tsc_cycles()` is very cheap, but it adds a depend=
+ency on the cycles subsystem being initialized.
 
-DPDK style specifies: *"hard tabs for indentation, spaces for alignment"*
+4. **Name length**: Adding a 16-character hex value to an already length-li=
+mited name (RTE_FBARRAY_NAME_LEN) could cause truncation issues.
 
-`UseTab: Always` will use tabs everywhere including for alignment, which ca=
-n cause misalignment when viewed with different tab widths. Consider:
+---
 
-```yaml
-UseTab: ForIndentation
-```
+## Simpler Alternative Solutions
 
-**2. Missing Pointer Alignment (Warning)**
+### Option 1: Use `rte_rand()` (Recommended)
 
-DPDK follows Linux kernel style where the `*` binds to the variable name:
 ```c
-char *ptr;      /* Correct */
-char* ptr;      /* Wrong */
+#include <rte_random.h>
+
+snprintf(name, RTE_FBARRAY_NAME_LEN, "%s_%x",
+    primary_msl->memseg_arr.name, rte_rand());
 ```
 
-Add:
-```yaml
-PointerAlignment: Right
+**Advantages**:
+- Cryptographically random, much lower collision probability
+- Already seeded during EAL init
+- No timing dependencies
+- Simpler code (no PID needed at all)
+
+### Option 2: Use the runtime directory uniqueness
+
+The **proper solution** for containers is to use `--file-prefix` which alre=
+ady exists. Each container should specify a unique file prefix, making this=
+ problem disappear entirely. This is a documentation/deployment issue, not =
+a code issue.
+
+### Option 3: Combine with monotonic clock nanoseconds
+
+```c
+struct timespec ts;
+clock_gettime(CLOCK_MONOTONIC, &ts);
+snprintf(name, RTE_FBARRAY_NAME_LEN, "%s_%lx",
+    primary_msl->memseg_arr.name,=20
+    (unsigned long)(ts.tv_sec * 1000000000UL + ts.tv_nsec));
 ```
 
-**3. Missing Space After Cast (Info)**
-
-DPDK style typically has no space after casts. Consider adding:
-```yaml
-SpaceAfterCStyleCast: false
-```
-
-**4. Missing Short Function Settings (Info)**
-
-To prevent unwanted single-line functions:
-```yaml
-AllowShortFunctionsOnASingleLine: None
-AllowShortBlocksOnASingleLine: Never
-```
-
-**5. Missing Brace Wrapping Settings (Info)**
-
-The `BraceWrapping` section is incomplete. For full DPDK compliance, consid=
-er:
-```yaml
-BraceWrapping:
-        AfterFunction: true
-        AfterControlStatement: false
-        AfterStruct: false
-        AfterEnum: false
-        AfterUnion: false
-        BeforeElse: false
-        BeforeWhile: false
-        SplitEmptyFunction: true
-```
-
-**6. Switch Statement Indentation (Info)**
-
-DPDK style shows `case` labels not indented relative to `switch`. Add:
-```yaml
-IndentCaseLabels: false
-IndentCaseBlocks: false
-```
-
-**7. BasedOnStyle Consideration (Info)**
-
-`BasedOnStyle: LLVM` is a reasonable starting point, but Linux kernel style=
- (`BasedOnStyle: Kernel` if available in your clang-format version) might b=
-e closer to DPDK's actual style since DPDK is modeled on Linux kernel devel=
-opment.
+This was v1 of the patch and is actually fine - CLOCK_MONOTONIC with nanose=
+cond resolution within a container's lifetime is effectively unique.
 
 ---
 
-### Summary
+## Verdict
 
-| Severity | Count | Items |
-|----------|-------|-------|
-| **Error** | 0 | None |
-| **Warning** | 2 | `UseTab: Always` should be `ForIndentation`; Missing `P=
-ointerAlignment: Right` |
-| **Info** | 5 | Subject prefix; Missing short function settings; Incomplet=
-e brace wrapping; Missing switch indent settings; Space after cast |
+**The patch is technically functional but the solution is suboptimal.**=20
 
-**Recommendation**: The patch is a solid foundation but needs the pointer a=
-lignment and tab usage fixes before merge. The current `UseTab: Always` set=
-ting will cause alignment issues in multi-line function arguments and struc=
-t initializers, and the missing `PointerAlignment: Right` will format point=
-ers contrary to DPDK convention.
+The TSC approach works in practice but has theoretical collision risks. A c=
+leaner approach would be:
+
+1. **Best**: Document that containers sharing hugetlbfs should use `--file-=
+prefix`
+2. **Code fix if needed**: Use `rte_rand()` instead of TSC - it's simpler a=
+nd provides stronger uniqueness guarantees
+
+Would you like me to draft an alternative patch using `rte_rand()`?
