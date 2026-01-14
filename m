@@ -2,66 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67513D3CC87
-	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Jan 2026 22:56:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39724D3CC82
+	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Jan 2026 22:56:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 32AB74278A;
-	Wed, 14 Jan 2026 23:56:08 +0100 (CET)
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com
- [209.85.128.44]) by mails.dpdk.org (Postfix) with ESMTP id 3CF46410D2
- for <dev@dpdk.org>; Wed, 14 Jan 2026 23:56:05 +0100 (CET)
-Received: by mail-wm1-f44.google.com with SMTP id
- 5b1f17b1804b1-47ee4539adfso2919535e9.3
- for <dev@dpdk.org>; Wed, 14 Jan 2026 14:56:05 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 30D2142799;
+	Wed, 14 Jan 2026 23:56:09 +0100 (CET)
+Received: from mail-wm1-f67.google.com (mail-wm1-f67.google.com
+ [209.85.128.67]) by mails.dpdk.org (Postfix) with ESMTP id B6443410F2
+ for <dev@dpdk.org>; Wed, 14 Jan 2026 23:56:06 +0100 (CET)
+Received: by mail-wm1-f67.google.com with SMTP id
+ 5b1f17b1804b1-47a95efd2ceso2817095e9.2
+ for <dev@dpdk.org>; Wed, 14 Jan 2026 14:56:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768431365;
- x=1769036165; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768431366;
+ x=1769036166; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=Rn58jYyg+elowINAy1l/kqRiUZnsOKFZKYd+1TXTMq4=;
- b=0bR8h+P8xns3dvb50fz0sbBEkl45uX91J7GJyqywFttUtNGjH3L7YwxKLqYlpD8Bil
- +wddeU8FfjJr9XYzLH5WYVowfGWIUvfNyo+3oS3hIA39gX5ddvODMCCdMOLU6XzANDlG
- dp+Boze7by+6fU1ZEv/Q6nPGQ/Y+n7iKOn+BoqXfDb3sfM46QTT3yyGmttvqaWhL1k1y
- C4NhrOISojquRJssddQ2UWgz9M5YXmnRGhmoEEN+eZzrbbm3mwNXYi5F9rb2SLHspOU2
- u0I2nAzeNJhgVMhbdNhJok67Lq3UNHwYZO4zYNs8RP39zFEO90yp6QEl/cUX6CsG97WQ
- 3BCg==
+ bh=4CNhL0HurC6dvjc2hb1oRxQCOcv2n26+PiXolU8Fvew=;
+ b=cAQdfMO/txsauWy/vDbJcSAt/aeo82pLpVTnRU2a16iMMpfQU8bRdfJh8j7pZ7sL0z
+ +ZvDaUs2T3RJeLsS6F18nBw/QVvZLXXOmZO9k6XyXqOYH9VeeTkzuoWIsgWJssaFNdpo
+ Gq7XFTtL47HoJ5IFq+jWPU6ZMndaa+xTMzKlo+M11eXCeK7zdVpAWdDjLPshTih7quJU
+ XfI3OUsxsEB8t2msEIBz8ud4CpVwOE+IPga7UJKizBWUzlHXVHnUTz6zkD1I39XYeJ5j
+ ewwMOV0oGeIPKuzJ5qgJkHbMHue/s29tYoQuBlwSoxfxmGMSugMjQ74UAtj4bh+k+oFq
+ SzJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768431365; x=1769036165;
+ d=1e100.net; s=20230601; t=1768431366; x=1769036166;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=Rn58jYyg+elowINAy1l/kqRiUZnsOKFZKYd+1TXTMq4=;
- b=THAtvdSiQNVQjiJBaIPxEhhwjWOpSkuT0p1QlCMx8QNh8hNFX7RSfHmPj8QCAqk2io
- ygTy+ZSDcuJB8CLlDIud6k3BtltbfvEk6moAQoaiB6xF+chWgzspes9l8a0h8zkT/vDP
- lxuF3i6v4pKAYDnhy3wDwHFosfxiSU2unS9lr4hZVZCfjFE9cYpCSDIRYWdYZVDQq/mr
- avkEizSMJyBe/qLoTFfeLBlA2S+4LoOQNCulKlGS0aoMICCFOa0YNWHbOP4PWEZ4NuxG
- EasGcAbn0LHt++bkA/OXOZK5hvsgeHP0c6DwI0w0bVeKppjrTu5L5IAa9zDWKINF0R41
- wjqg==
-X-Gm-Message-State: AOJu0YxZDS2+clIFbLgLV9uUe+jyG0zgRkP6F7KvdaTt5Bjy7h9aXmox
- nmDFmhCV+i+XXcINDSKSKxsZLyzgdijZUrBmZa4beMGGrDe1KxUWMY7q47nOCfSNwxpvqZQSokp
- DzLOl
-X-Gm-Gg: AY/fxX5RmxYMsfnucGcrxxkQjNELXwXJ4+aSEh//1T+uIlpp4yGivEFTPRjWjlh7v1A
- RqOdj/H5rHctExfDZ48j+Hb9iSpIKBlUs+cxuKJgtE4+GzXeT/Xw+12Ho7rnpBuBPdYOdE3HTsg
- Ib5e+pqU7apYPvv3hdvnteU937VjEFdIQ5kG716BpLKV1BVqtbdZcbdOl+m5wXATE8eTRVur4rx
- HFvwPfDiYxYRTM7EAQEjEpnRrFrfJVUzAES0Yf+mGoMlc/LDoSKYLgzVYuI3gynRiJymPIp5HqK
- vm4hRnQKb1hMwlaX0KznniQFPc6/LkaCe8hfw8GGUn2XTpNYqkSUPdu27PR8PJ6ypS+sHxmn3qo
- gKZJJE4oUFJnG9D9wtPREGZA/8CQWAO6ApEh4+gixcHc32Rqzxj89h60j6DuvsDlAbrR1lFrHbp
- TqkF+5p64nL32CeQ+NKjpUnRwe/wWppRmvWgG0kIGYJxU5KwCMdg==
-X-Received: by 2002:a05:600c:8b55:b0:47e:d774:80a6 with SMTP id
- 5b1f17b1804b1-47ee339b71fmr48219055e9.34.1768431364751; 
- Wed, 14 Jan 2026 14:56:04 -0800 (PST)
+ bh=4CNhL0HurC6dvjc2hb1oRxQCOcv2n26+PiXolU8Fvew=;
+ b=ShP9k1k5wMSNkU5Oha8Wb51nEDiejYCRl1uULtktQUwsyvmlyHWFPQLOgD3pHn4SNX
+ AR5eH8n2AcmaS7EL7z0Aq8KVC+w0faahDtaLA1rGvVBu6hgpjSyD+eUyO0jwQz/1JYwQ
+ CHCtD5alO+GVxvY6vq6P1dtdPv8eo/cgmga0I+bR+OxPfgBY76Vcm8K/cJzkvL7bfpgZ
+ mT0VXLMXep0poD8V4I80AwvrI13BvAW4LyInewZOsfC7Mme1hiEURUbYQsXQkYABciTN
+ BjoilsHCT/JhTlX0nDDSvzrjZj9TlRvTjkVCLkS1xwAKvwsEIjBmbdwOi+eCmTUHc/h5
+ C6dA==
+X-Gm-Message-State: AOJu0Yyh+r73fSN2TOpQ/m+4SVaT/V3lifRLqlqy4DgTQoL3ekRSQqRY
+ rCo5HZYXdwTcn8bCLYdrPrYVjsc5GP0lEVQxW7X7xFJhWm0oKmvSfxjLDknoUAsAVA2lbyB8as6
+ WFPifsWw=
+X-Gm-Gg: AY/fxX7TbRXxZSQ5zfAHow6IfokQ1Mu3/s4l8AR1j6FD3GphktwqWZW+utykxwoz1g6
+ n9hdNq28R9DHRxnqYFkH5pq/0a7MVOp4x92gzT/0UMBB74oiitCKhQOI1xzFK/tNvrTg3gz9w/V
+ ZqbY0K0y9LGpVY8Zi0tN/YUIGgJpbp1a65vsCSRC+zWZa05anYaUteRk+m7rst0x2EzuQd2HgTu
+ H99ioEiKNbNZy8waduzn9tX1gIi7fvPNQEIjQ/haypJYyGmzH11a7qzQMHUmHMpQDOO8WyPlKLQ
+ i86JH1Qsb9irr/+TA+l4P5q6tnLEdM/it44aJs3/55KrCSNqoIScJ3ZzgBuEH5fqBPVRSCEJZ1r
+ hdOrDcIlMpxjL+FN/1CzmxRzV4SI8ST/OYDatp5RHrSqF0dXJxgCmvULD/ZjBOoPfjw/O21c7lE
+ ydZDcmQ2YXdVGTQ2MJ6Ly9yzbK/5M0c/e8n/dFeTgt8FIR4AHHKRP6zxuJRM8S
+X-Received: by 2002:a05:600c:4e4e:b0:47e:e414:b915 with SMTP id
+ 5b1f17b1804b1-47ee47bbcebmr38383025e9.2.1768431366330; 
+ Wed, 14 Jan 2026 14:56:06 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-47f428af0c7sm12999125e9.4.2026.01.14.14.56.03
+ 5b1f17b1804b1-47f428af0c7sm12999125e9.4.2026.01.14.14.56.05
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 14 Jan 2026 14:56:04 -0800 (PST)
+ Wed, 14 Jan 2026 14:56:06 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH 03/11] doc: improve coding style guide readability
-Date: Wed, 14 Jan 2026 14:54:07 -0800
-Message-ID: <20260114225555.127448-4-stephen@networkplumber.org>
+Subject: [PATCH 04/11] doc: improve documentation guidelines style
+Date: Wed, 14 Jan 2026 14:54:08 -0800
+Message-ID: <20260114225555.127448-5-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260114225555.127448-1-stephen@networkplumber.org>
 References: <20260114225555.127448-1-stephen@networkplumber.org>
@@ -80,97 +80,49 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Improve the coding style documentation
-- Converting passive voice to active voice
-- Using imperative mood for instructions
-- Simplifying redundant phrasing
-- Clarifying guidance on bool usage in structures
+Improve readability of the documentation guidelines
+- Using active voice throughout
+- Converting "should be" constructions to imperative mood
+- Fixing minor grammar issues in Doxygen guidance
 
 No technical content changes.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- doc/guides/contributing/coding_style.rst | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ doc/guides/contributing/documentation.rst | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/doc/guides/contributing/coding_style.rst b/doc/guides/contributing/coding_style.rst
-index 243a3c2959..898c84ceec 100644
---- a/doc/guides/contributing/coding_style.rst
-+++ b/doc/guides/contributing/coding_style.rst
-@@ -9,8 +9,8 @@ DPDK Coding Style
- Description
- -----------
- 
--This document specifies the preferred style for source files in the DPDK source tree.
--It is based on the Linux Kernel coding guidelines and the FreeBSD 7.2 Kernel Developer's Manual (see man style(9)), but was heavily modified for the needs of the DPDK.
-+This document specifies the preferred style for source files in the DPDK source tree,
-+based on the Linux Kernel coding guidelines and the FreeBSD 7.2 Kernel Developer's Manual (see man style(9)), but was heavily modified for the needs of the DPDK.
- 
- General Guidelines
- ------------------
-@@ -95,7 +95,7 @@ Example:
- Header File Guards
- ~~~~~~~~~~~~~~~~~~
- 
--Headers should be protected against multiple inclusion with the usual:
-+Protect headers against multiple inclusion with the usual:
- 
- .. code-block:: c
- 
-@@ -293,7 +293,7 @@ Structure Declarations
- * In general, when declaring variables in new structures, declare them sorted by use, then by size (largest to smallest), and then in alphabetical order.
-   Sorting by use means that commonly used variables are used together and that the structure layout makes logical sense.
-   Ordering by size then ensures that as little padding is added to the structure as possible.
--* For existing structures, additions to structures should be added to the end so for backward compatibility reasons.
-+* For existing structures, add new members to the end for backward compatibility.
- * Each structure element gets its own line.
- * Try to make the structure readable by aligning the member names using spaces as shown below.
- * Names following extremely long types, which therefore cannot be easily aligned with the rest, should be separated by a single space.
-@@ -308,14 +308,14 @@ Structure Declarations
-  };
+diff --git a/doc/guides/contributing/documentation.rst b/doc/guides/contributing/documentation.rst
+index 338254cf30..c6009cbc12 100644
+--- a/doc/guides/contributing/documentation.rst
++++ b/doc/guides/contributing/documentation.rst
+@@ -39,7 +39,7 @@ The main directories that contain files related to documentation are shown below
+        |-- ...
  
  
--* Major structures should be declared at the top of the file in which they are used, or in separate header files if they are used in multiple source files.
-+* Declare major structures at the top of the file where they are used, or in separate header files if they are used in multiple source files.
- * Use of the structures should be by separate variable declarations and those declarations must be extern if they are declared in a header file.
- * Externally visible structure definitions should have the structure name prefixed by ``rte_`` to avoid namespace collisions.
+-The API documentation is built from `Doxygen <http://www.doxygen.nl>`_ comments in the header files.
++Doxygen comments in header files generate the API documentation. These are built from `Doxygen <http://www.doxygen.nl>`_ comments in the header files.
+ These files are mainly in the ``lib/*`` directories although some of the Poll Mode Drivers in ``drivers/net``
+ are also documented with Doxygen.
  
- .. note::
+@@ -84,7 +84,7 @@ added to by the developer.
+   The API documentation explains how to use the public DPDK functions.
+   The `API index page <https://doc.dpdk.org/api/>`_ shows the generated API documentation with related groups of functions.
  
--    Uses of ``bool`` in structures are not preferred as is wastes space and
--    it's also not clear as to what type size the bool is. A preferred use of
-+    Avoid using ``bool`` in structures because it wastes space and
-+    the type size is unclear. A preferred use of
-     ``bool`` is mainly as a return type from functions that return true/false,
-     and maybe local variable functions.
+-  The API documentation should be updated via Doxygen comments when new functions are added.
++  Update API documentation via Doxygen comments when adding new functions.
  
-@@ -584,7 +584,7 @@ C Function Definition, Declaration and Use
- Prototypes
- ~~~~~~~~~~
+ * **Getting Started Guides**
  
--* It is recommended (and generally required by the compiler) that all non-static functions are prototyped somewhere.
-+* Prototype all non-static functions (the compiler generally requires this).
- * Functions local to one source module should be declared static, and should not be prototyped unless absolutely necessary.
- * Functions used from other parts of code (external API) must be prototyped in the relevant include file.
- * Function prototypes should be listed in a logical order, preferably alphabetical unless there is a compelling reason to use a different ordering.
-@@ -747,7 +747,7 @@ Static Variables and Functions
- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@@ -606,7 +606,7 @@ The following are some guidelines for use of Doxygen in the DPDK API documentati
+   It isn't necessary to explicitly name each file since the configuration matches all ``rte_*.h`` files in the directory.
  
- * All functions and variables that are local to a file must be declared as ``static`` because it can often help the compiler to do some optimizations (such as, inlining the code).
--* Functions that should be inlined should to be declared as ``static inline`` and can be defined in a .c or a .h file.
-+* Declare functions that should be inlined as ``static inline`` and can be defined in a .c or a .h file.
+ * Use proper capitalization and punctuation in the Doxygen comments since they will become sentences in the documentation.
+-  This in particular applies to single line comments, which is the case the is most often forgotten.
++  This applies particularly to single-line comments, which developers most often forget.
  
- .. note::
- 	Static functions defined in a header file must be declared as ``static inline`` in order to prevent compiler warnings about the function being unused.
-@@ -755,7 +755,7 @@ Static Variables and Functions
- Const Attribute
- ~~~~~~~~~~~~~~~
+ * Use ``@`` style Doxygen commands instead of ``\`` style commands.
  
--The ``const`` attribute should be used as often as possible when a variable is read-only.
-+Use the ``const`` attribute as often as possible when a variable is read-only.
- 
- Inline ASM in C code
- ~~~~~~~~~~~~~~~~~~~~
 -- 
 2.51.0
 
