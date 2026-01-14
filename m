@@ -2,67 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6D35D3CC82
-	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Jan 2026 22:29:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4A91D3CC86
+	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Jan 2026 22:29:22 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C59DF427AB;
-	Wed, 14 Jan 2026 23:28:43 +0100 (CET)
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com
- [209.85.128.51]) by mails.dpdk.org (Postfix) with ESMTP id 4647E4279A
- for <dev@dpdk.org>; Wed, 14 Jan 2026 23:28:43 +0100 (CET)
-Received: by mail-wm1-f51.google.com with SMTP id
- 5b1f17b1804b1-47ee9817a35so1844885e9.1
- for <dev@dpdk.org>; Wed, 14 Jan 2026 14:28:43 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 38E404279F;
+	Wed, 14 Jan 2026 23:28:47 +0100 (CET)
+Received: from mail-wr1-f66.google.com (mail-wr1-f66.google.com
+ [209.85.221.66]) by mails.dpdk.org (Postfix) with ESMTP id 9BE0240EDC
+ for <dev@dpdk.org>; Wed, 14 Jan 2026 23:28:45 +0100 (CET)
+Received: by mail-wr1-f66.google.com with SMTP id
+ ffacd0b85a97d-4327778df7fso175321f8f.3
+ for <dev@dpdk.org>; Wed, 14 Jan 2026 14:28:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768429723;
- x=1769034523; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768429725;
+ x=1769034525; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=yLqB5saw6G5/3j6ymenr6G/Pt3SQyYJmMvT5SbiFpD0=;
- b=UDnL7TjUfsNLhISoSz0Q3QN8FCe4kYSl/jVU/Td0FylAUnnEUhGVmOJPxZsD8NM0BW
- w4516glKtmTqurfHlqMD8s/NQsWwIXhQ3836xyaE+5ZKlGnYYv7HeIAkd4HOr98/Iiu7
- ZR8uL5wlBCSS4Y0pYZQsL9CF4OdMD4AqEZFbBzoc+0pzYrnaKdy4QQvw7/s6ey5gZ/X+
- 5fEbHohS6APiUYk3BhCD5VNGNx+lsUykDotXyFRc5XcWCnwPSduLaaBEnQqSUdQ0Zwib
- p2jF4UQS7vi4F1JNmDJsiJVrS5to7P5NTfqdon8OU4J4iXLX78Ue96p4rUohG1OL7QLb
- 5JBg==
+ bh=dE2PIMt3Pk8YNzmMMj2QTAM2g5KVJA+fJxn1t5+pmKU=;
+ b=S9sAmDOtWHtdO8zpmx4Xjibu4nnC2KHr0ydGwCMA5qSwJnxW6XNRYwtFE2DqVmsFQe
+ 99JiNgRVeFS25sGMVfFaD8xrtGzTMPRj6Q8dHaQ1buZlR5n3tO5P6DC3UU50qYHWL+1x
+ +LOKiHH+OU1ylkLFzkFH6HDQCCkatTfL2N07kABTsUlFwHdaQZ6iwt+9jnY1ZGkUN+km
+ YIei2VQed7jNbqEjJuGgqfsV+OsfiT51CgGv4+qwnNCUvIcFGkJYTy0B7tG3reALeFnu
+ J0hqCE/OJn9jhHxzUrITW6YZA3WnjjsL93oMZzWVzMHfNcJ/ydhylt1zC4OfhWAYwn9D
+ DwFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768429723; x=1769034523;
+ d=1e100.net; s=20230601; t=1768429725; x=1769034525;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=yLqB5saw6G5/3j6ymenr6G/Pt3SQyYJmMvT5SbiFpD0=;
- b=cLzYUvpUSHhitzvHXn3KO62rNPipoFU+z+X2MvL93ncfoj8UpzvDK7M7BgOd2XK/U8
- 9LkD1B9P1dQMdMkDHxJJaXabNMd/O0rLrzB823UEbs5x6lclqMbu2YE1Fyc1Nd3Psg0+
- BPUwShP+J0wLBcJuzFLlZ8SldLHoE/jmGawt1h8UGbSWu/VdwLimvbid4p9mQHpZxRCt
- RA9w9u/Qs9KRJNh3kVKQraTSEYcdO84/e3ZRT9T2pMX0KIxxsnxOSPTMIOPXGCEFlftf
- XLjb32swqsK3yxRvAOXUlATagyMq5HmgbmKgsQ4eqxl2bHIDayt/q2U1+8dpYeqTIvbr
- kaBg==
-X-Gm-Message-State: AOJu0YwDLSF/1iKCHB0JrYoALw5vUnBBI6rghLWqKdB3buC9AV+Fk9uc
- iLSDsqzT8cH1ckz012jCQfy6ITJ9ncx+bywuT/nhThOswxlq2cZStu4Ax6h5BGg7IjaxCPOGNpV
- WGNkd
-X-Gm-Gg: AY/fxX5q9KsDd90yNfP2H+HgIB70kLWZdw9RdMOGnev+4ka7E4ZNmGlA1xNtBMY66wd
- upiBf/lAKlVGKYe9uGNAKSkjJ4JMmsbsqD/FL+U/hJL2XGXxmocDBpK8Iose/sZj3U3UJmb6VjL
- JQgLx5BC6y1O6GgRLWKxNVL1Z/BnKT+3am+dlCYkNLQ2BhhgHXrE+2eoc0RgnND49IL90tfZV5g
- /QKDrw7G5oPE4HC77j81tylfIrvzXZNPOeJOTrZoXw5PQFzEuCz/CC6sLEsFEZ9inAEA0Zrl/c/
- hSk60Y7G7ErybqH9xiF1BUlDaGM05Dqq0+p6/2CLBpcuTUGF0Arn9iO9p1r2vzs3zFF0pqm77UX
- TZ23eZkA5vNpt4CmWCd5Y1mpNr9Ym184elV8RDK4tN/CLElyZ9pO8O6mDZiCeiztO2VrgTz3XrO
- uEIF1cpsLUUmlg8fBsVI4pYAUv9CdLq74KNqFJWtr+lHJPDXZSLgKIBXlpUpmK
-X-Received: by 2002:a05:600c:3586:b0:470:fe3c:a3b7 with SMTP id
- 5b1f17b1804b1-47ee32e0d5amr51712255e9.5.1768429722779; 
- Wed, 14 Jan 2026 14:28:42 -0800 (PST)
+ bh=dE2PIMt3Pk8YNzmMMj2QTAM2g5KVJA+fJxn1t5+pmKU=;
+ b=m1W2rHRYCDYEPxGT76zpCk1KXxiJMNfNb2YmfIE7XOu+0eIvuJbfJVr6v3HrosbYkf
+ TFCscjZYNQonBU6SLSTDXCbKJqOgbmOLeKsLAuGKw/Cmzg2wPKMphPWZ6vm7zVSl8ckx
+ ti76HXIt+z8as3y1F5dRPxRf+oYsn6q39xznPzleLFr6ifwfZd3AOXRVDcJTBtoUlanN
+ DqU+4N69X/FzgMB9zI64gNTTUfF0rOYKRLGnGHUTB77lnLCy47DI9P7QDqUl+QXZbVpv
+ 5vk621HtcopdM4mQSdTU6Q/WLVfPeEdnQA2pIjPnQvVIAYNPLaLhRX05FPBvYHh+7xNP
+ bsqw==
+X-Gm-Message-State: AOJu0YwVCL9lWh2Sfo/mmtEJWCxnJEcUvu8XtLN5wg38zbtHgaDWln36
+ IJ0QkNN4C5TuvGQ0HcKeekVahqN3jDAGL8N4ik3auU2mCDs+rZsROuL7JG+kJGL0r59JjzXMs8P
+ 8Skzy
+X-Gm-Gg: AY/fxX6DQ+GxddDCIY+559fV3r5OfywOn4ApQJvhN1t1sprTHqkSMYyodaXMckMdbW1
+ TtfNGLikOqkwRl8spqxxLhpGMsFzcFdBtiNPI1dU7Sp5CUL6PQZOwimIH97aGiRhXLcbPMfur3t
+ 34jm02eZvPvYYjOubgoeCT4F6emjRr3PQAH97TbqmcTmEiwjIKMC0eizS0VsYaVptfGUhWfr4hi
+ CgFiCneiQHT6g7ysQj66iNyf8WEDXdvWPDBGD+r8BneaivryKj/FYSjRE3m4xxI/oKoN6GxjDbL
+ +0S1TTmvUvUFWq1vsWOZi2jDjMevKCytaLX8hTnmVWAMZBmF97fUBWjnvNh2G3LoQU42UEhlroc
+ qVF0Gz0Hig9HZsekw5q/RSCqaUUymz2kDgefNwonOgaLqvlmVwKVkAVrZ9qZ7DK+IxWuP/y4xEX
+ Bv5HJKZ0MfeESKIT7Y3k4h2smy1R0ii0otTFDnV/ConxdKKToybA==
+X-Received: by 2002:a05:6000:616:b0:431:a50:6ead with SMTP id
+ ffacd0b85a97d-4342c50040fmr5036425f8f.20.1768429725116; 
+ Wed, 14 Jan 2026 14:28:45 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-434af653632sm1757198f8f.11.2026.01.14.14.28.41
+ ffacd0b85a97d-434af653632sm1757198f8f.11.2026.01.14.14.28.43
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 14 Jan 2026 14:28:42 -0800 (PST)
+ Wed, 14 Jan 2026 14:28:44 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Nandini Persad <nandinipersad361@gmail.com>
-Subject: [PATCH v4 08/11] doc: correct errors in command-line library guide
-Date: Wed, 14 Jan 2026 14:27:00 -0800
-Message-ID: <20260114222821.87920-9-stephen@networkplumber.org>
+ Nandini Persad <nandinipersad361@gmail.com>,
+ Jerin Jacob <jerinj@marvell.com>, Sunil Kumar Kori <skori@marvell.com>
+Subject: [PATCH v4 09/11] doc: correct errors in trace library guide
+Date: Wed, 14 Jan 2026 14:27:01 -0800
+Message-ID: <20260114222821.87920-10-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260114222821.87920-1-stephen@networkplumber.org>
 References: <20240513155911.31872-1-nandinipersad361@gmail.com>
@@ -82,171 +83,245 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Fix several errors in the cmdline library documentation:
-
-- Fix function name typo: cmdline_new_stdin -> cmdline_stdin_new
-- Fix type name: cmdline_parse_t -> cmdline_parse_inst_t
-- Fix grammar: "that others" -> "than others"
-- Fix spelling: "boiler plate" -> "boilerplate"
-- Clarify wording: "multiplex" -> "direct" for command routing
-- Fix misleading phrase: "call a separate function" -> "call a single
-  function" (multiplexing routes multiple commands to one callback)
+Changes:
+- Fix broken sentence in implementation details: "As DPDK trace library
+  is designed..." was a sentence fragment
+- Fix tense inconsistency: "will be useful" -> "is useful",
+  "will be allocated" -> "is allocated",
+  "will be discarded" -> "are discarded"
+- Fix grammatical parallelism: "or use the API" -> "or by using the API"
+- Fix inconsistent capitalization in section headers: "Tracepoint" ->
+  "tracepoint" to match body text usage throughout
+- Fix tool name consistency: "Tracecompass" -> "Trace Compass"
+  (official name, two words)
+- Fix awkward phrasing: "one of a CTF trace's streams" ->
+  "one of the streams in a CTF trace"
+- Fix trace header description for parallelism: "48 bits of timestamp
+  and 16 bits event ID" -> "a 48-bit timestamp and a 16-bit event ID"
+- Add missing article: "to trace library" -> "to the trace library"
+- Remove incorrect article:
+  "the ``my_tracepoint.h``" -> "``my_tracepoint.h``"
+- Add function call parentheses: rte_eal_init -> rte_eal_init(),
+  rte_thread_register -> rte_thread_register()
+- Fix ambiguous pronoun: "It can be overridden" -> "This location can
+  be overridden"
+- Fix line wrap for readability in features list
 
 Signed-off-by: Nandini Persad <nandinipersad361@gmail.com>
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- doc/guides/prog_guide/cmdline.rst | 42 +++++++++++++++----------------
- 1 file changed, 21 insertions(+), 21 deletions(-)
+ doc/guides/prog_guide/trace_lib.rst | 80 ++++++++++++++---------------
+ 1 file changed, 40 insertions(+), 40 deletions(-)
 
-diff --git a/doc/guides/prog_guide/cmdline.rst b/doc/guides/prog_guide/cmdline.rst
-index e20281ceb5..c794ec826f 100644
---- a/doc/guides/prog_guide/cmdline.rst
-+++ b/doc/guides/prog_guide/cmdline.rst
-@@ -4,9 +4,9 @@
- Command-line Library
- ====================
+diff --git a/doc/guides/prog_guide/trace_lib.rst b/doc/guides/prog_guide/trace_lib.rst
+index 829a061074..33b6232ce3 100644
+--- a/doc/guides/prog_guide/trace_lib.rst
++++ b/doc/guides/prog_guide/trace_lib.rst
+@@ -14,7 +14,7 @@ When recording, specific instrumentation points placed in the software source
+ code generate events that are saved on a giant tape: a trace file.
+ The trace file then later can be opened in *trace viewers* to visualize and
+ analyze the trace events with timestamps and multi-core views.
+-This mechanism will be useful for resolving a wide range of problems such as
++This mechanism is useful for resolving a wide range of problems such as
+ multi-core synchronization issues, latency measurements, and finding
+ post analysis information like CPU idle time, etc., that would otherwise be
+ extremely challenging to gather.
+@@ -33,8 +33,8 @@ tracing.
+ DPDK tracing library features
+ -----------------------------
  
--Since its earliest versions, DPDK has included a command-line library -
--primarily for internal use by, for example, ``dpdk-testpmd`` and the ``dpdk-test`` binaries,
--but the library is also exported on install and can be used by any end application.
-+Since its earliest versions, DPDK has included a command-line library,
-+primarily for internal use by, for example, ``dpdk-testpmd`` and the ``dpdk-test`` binaries.
-+However, the library is also exported on install and can be used by any end application.
- This chapter covers the basics of the command-line library and how to use it in an application.
+-- Provides a framework to add tracepoints in control and fast path APIs with minimum
+-  impact on performance.
++- Provides a framework to add tracepoints in control and fast path APIs with
++  minimal impact on performance.
+   Typical trace overhead is ~20 cycles and instrumentation overhead is 1 cycle.
+ - Enable and disable tracepoints at runtime.
+ - Save the trace buffer to the filesystem at any point in time.
+@@ -47,8 +47,8 @@ DPDK tracing library features
+   For detailed information, refer to
+   `Common Trace Format <https://diamon.org/ctf/>`_.
  
- Library Features
-@@ -18,14 +18,14 @@ The DPDK command-line library supports the following features:
+-How to add a Tracepoint
+-------------------------
++How to add a tracepoint
++-----------------------
  
- * Ability to read and process commands taken from an input file, e.g. startup script
+ This section steps you through the details of adding a simple tracepoint.
  
--* Parameterized commands able to take multiple parameters with different datatypes:
-+* Parameterized commands that can take multiple parameters with different datatypes:
+@@ -91,7 +91,7 @@ The consumer of this tracepoint can invoke
+ ``app_trace_string(const char *str)`` to emit the trace event to the trace
+ buffer.
  
-    * Strings
-    * Signed/unsigned 16/32/64-bit integers
-    * IP Addresses
-    * Ethernet Addresses
+-Register the Tracepoint
++Register the tracepoint
+ ~~~~~~~~~~~~~~~~~~~~~~~
  
--* Ability to multiplex multiple commands to a single callback function
-+* Ability to direct multiple commands to a single callback function
+ .. code-block:: c
+@@ -103,7 +103,7 @@ Register the Tracepoint
+  RTE_TRACE_POINT_REGISTER(app_trace_string, app.trace.string)
  
- Adding Command-line to an Application
- -------------------------------------
-@@ -46,7 +46,7 @@ Adding a command-line instance to an application involves a number of coding ste
+ The above code snippet registers the ``app_trace_string`` tracepoint to
+-trace library. Here, the ``my_tracepoint.h`` is the header file
++the trace library. Here, ``my_tracepoint.h`` is the header file
+ that the user created in the first step :ref:`create_tracepoint_header_file`.
  
- Many of these steps can be automated using the script ``dpdk-cmdline-gen.py`` installed by DPDK,
- and found in the ``buildtools`` folder in the source tree.
--This section covers adding a command-line using this script to generate the boiler plate,
-+This section covers adding a command-line using this script to generate the boilerplate,
- while the following section,
- `Worked Example of Adding Command-line to an Application`_ covers the steps to do so manually.
+ The second argument for the ``RTE_TRACE_POINT_REGISTER`` is the name for the
+@@ -129,7 +129,7 @@ convention.
+    For example, ``__app_trace_string`` will be the exported symbol in the
+    above example.
  
-@@ -56,7 +56,7 @@ Creating a Command List File
- The ``dpdk-cmdline-gen.py`` script takes as input a list of commands to be used by the application.
- While these can be piped to it via standard input, using a list file is probably best.
+-Fast Path Tracepoint
++Fast path tracepoint
+ --------------------
  
--The format of the list file must be:
-+The format of the list file must follow these requirements:
+ In order to avoid performance impact in fast path code, the library introduced
+@@ -139,7 +139,7 @@ the user must use ``RTE_TRACE_POINT_FP`` instead of ``RTE_TRACE_POINT``.
+ ``RTE_TRACE_POINT_FP`` is compiled out by default and can be enabled using
+ the ``enable_trace_fp`` option for meson build.
  
- * Comment lines start with '#' as first non-whitespace character
+-Event Record Mode
++Event record mode
+ -----------------
  
-@@ -75,7 +75,7 @@ The format of the list file must be:
-   * ``<IPv6>dst_ip6``
+ Event record mode is an attribute of trace buffers. The trace library exposes the
+@@ -149,26 +149,26 @@ Overwrite
+    When the trace buffer is full, new trace events overwrite the existing
+    captured events in the trace buffer.
+ Discard
+-   When the trace buffer is full, new trace events will be discarded.
++   When the trace buffer is full, new trace events are discarded.
  
- * Variable fields, which take their values from a list of options,
--  have the comma-separated option list placed in braces, rather than a the type name.
-+  have the comma-separated option list placed in braces, rather than by the type name.
-   For example,
+ The mode can be configured either using the EAL command line parameter
+-``--trace-mode`` on application boot up or use the ``rte_trace_mode_set()`` API to
+-configure at runtime.
++``--trace-mode`` on application boot up or by using the ``rte_trace_mode_set()``
++API at runtime.
  
-   * ``<(rx,tx,rxtx)>mode``
-@@ -127,13 +127,13 @@ and the callback stubs will be written to an equivalent ".c" file.
- Providing the Function Callbacks
- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-Trace File Location
++Trace file location
+ -------------------
  
--As discussed above, the script output is a header file, containing structure definitions,
--but the callback functions themselves obviously have to be provided by the user.
--These callback functions must be provided as non-static functions in a C file,
-+As discussed above, the script output is a header file containing structure definitions,
-+but the callback functions must be provided by the user.
-+These callback functions must be provided as non-static functions in a C file
- and named ``cmd_<cmdname>_parsed``.
- The function prototypes can be seen in the generated output header.
+ On ``rte_trace_save()`` or ``rte_eal_cleanup()`` invocation, the library saves
+ the trace buffers to the filesystem. By default, the trace files are stored in
+ ``$HOME/dpdk-traces/rte-yyyy-mm-dd-[AP]M-hh-mm-ss/``.
+-It can be overridden by the ``--trace-dir=<directory path>`` EAL command line
+-option.
++This location can be overridden by the ``--trace-dir=<directory path>`` EAL
++command line option.
  
--The "cmdname" part of the function name is built up by combining the non-variable initial tokens in the command.
-+The "cmdname" part of the function name is built by combining the non-variable initial tokens in the command.
- So, given the commands in our worked example below: ``quit`` and ``show port stats <n>``,
- the callback functions would be:
+ For more information, refer to :doc:`../linux_gsg/linux_eal_parameters` for
+ trace EAL command line options.
  
-@@ -151,11 +151,11 @@ the callback functions would be:
-         ...
-    }
+-View and Analyze Recorded Events
+-------------------------------------
++View and analyze recorded events
++--------------------------------
  
--These functions must be provided by the developer, but, as stated above,
-+These functions must be provided by the developer. However, as stated above,
- stub functions may be generated by the script automatically using the ``--stubs`` parameter.
+ Once the trace directory is available, the user can view/inspect the recorded
+ events.
+@@ -204,28 +204,28 @@ recorded events. The example below counts the number of ``ethdev`` events::
  
- The same "cmdname" stem is used in the naming of the generated structures too.
--To get at the results structure for each command above,
-+To get to the results structure for each command above,
- the ``parsed_result`` parameter should be cast to ``struct cmd_quit_result``
- or ``struct cmd_show_port_stats_result`` respectively.
+     babeltrace /tmp/my-dpdk-trace | grep ethdev | wc --lines
  
-@@ -179,7 +179,7 @@ To integrate the script output with the application,
- we must ``#include`` the generated header into our applications C file,
- and then have the command-line created via either ``cmdline_new`` or ``cmdline_stdin_new``.
- The first parameter to the function call should be the context array in the generated header file,
--``ctx`` by default. (Modifiable via script parameter).
-+``ctx`` by default (Modifiable via script parameter).
+-Use the tracecompass GUI tool
+-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++Use the Trace Compass GUI tool
++~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  
- The callback functions may be in this same file, or in a separate one -
- they just need to be available to the linker at build-time.
-@@ -190,7 +190,7 @@ Limitations of the Script Approach
- The script approach works for most commands that a user may wish to add to an application.
- However, it does not support the full range of functions possible with the DPDK command-line library.
- For example,
--it is not possible using the script to multiplex multiple commands into a single callback function.
-+it is not possible using the script to direct multiple commands to a single callback function.
- To use this functionality, the user should follow the instructions in the next section
- `Worked Example of Adding Command-line to an Application`_ to manually configure a command-line instance.
+-``Tracecompass`` is another tool to view/analyze the DPDK traces which gives
+-a graphical view of events. Like ``babeltrace``, tracecompass also provides
++``Trace Compass`` is another tool to view/analyze the DPDK traces which gives
++a graphical view of events. Like ``babeltrace``, Trace Compass also provides
+ an interface to search for a particular event.
+-To use ``tracecompass``, following are the minimum required steps:
++To use ``Trace Compass``, the following are the minimum required steps:
  
-@@ -416,7 +416,7 @@ Once we have our ``ctx`` variable defined,
- we now just need to call the API to create the new command-line instance in our application.
- The basic API is ``cmdline_new`` which will create an interactive command-line with all commands available.
- However, if additional features for interactive use - such as tab-completion -
--are desired, it is recommended that ``cmdline_new_stdin`` be used instead.
-+are desired, it is recommended that ``cmdline_stdin_new`` be used instead.
+-- Install ``tracecompass`` to the localhost. Variants are available for Linux,
++- Install ``Trace Compass`` to the localhost. Variants are available for Linux,
+   Windows, and OS-X.
+-- Launch ``tracecompass`` which will open a graphical window with trace
++- Launch ``Trace Compass`` which will open a graphical window with trace
+   management interfaces.
+-- Open a trace using ``File->Open Trace`` option and select metadata file which
+-  is to be viewed/analyzed.
++- Open a trace using the ``File->Open Trace`` option and select the metadata file which
++  will be viewed/analyzed.
  
- A pattern that can be used in applications is to use ``cmdline_new`` for processing any startup commands,
- either from file or from the environment (as is done in the "dpdk-test" application),
-@@ -449,8 +449,8 @@ For example, to handle a startup file and then provide an interactive prompt:
- Multiplexing Multiple Commands to a Single Function
- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-For more details, refer
++For more details, refer to
+ `Trace Compass <https://www.eclipse.org/tracecompass/>`_.
  
--To reduce the amount of boiler-plate code needed when creating a command-line for an application,
--it is possible to merge a number of commands together to have them call a separate function.
-+To reduce the amount of boilerplate code needed when creating a command-line for an application,
-+it is possible to merge a number of commands together to have them call a single function.
- This can be done in a number of different ways:
+ Quick start
+ -----------
  
- * A callback function can be used as the target for a number of different commands.
-@@ -463,7 +463,7 @@ This can be done in a number of different ways:
+-This section steps you through the details of generating trace and viewing it.
++This section steps you through the details of generating the trace and viewing it.
  
- As a concrete example,
- these two techniques are used in the DPDK unit test application ``dpdk-test``,
--where a single command ``cmdline_parse_t`` instance is used for all the "dump_<item>" test cases.
-+where a single ``cmdline_parse_inst_t`` instance is used for all the "dump_<item>" test cases.
+ - Start the dpdk-test::
  
- .. literalinclude:: ../../../app/test/commands.c
-     :language: c
-@@ -481,7 +481,7 @@ the following DPDK files can be consulted for examples of command-line use.
+@@ -238,9 +238,9 @@ This section steps you through the details of generating trace and viewing it.
+ Implementation details
+ ----------------------
  
-    This is not an exhaustive list of examples of command-line use in DPDK.
-    It is simply a list of a few files that may be of use to the application developer.
--   Some of these referenced files contain more complex examples of use that others.
-+   Some of these referenced files contain more complex examples of use than others.
+-As DPDK trace library is designed to generate traces that use ``Common Trace
+-Format (CTF)``. ``CTF`` specification consists of the following units to create
+-a trace.
++The DPDK trace library is designed to generate traces that use
++``Common Trace Format (CTF)``. The ``CTF`` specification consists of the
++following units to create a trace.
  
- * ``commands.c/.h`` in ``examples/cmdline``
+ - ``Stream`` Sequence of packets.
+ - ``Packet`` Header and one or more events.
+@@ -249,15 +249,15 @@ a trace.
+ For detailed information, refer to
+ `Common Trace Format <https://diamon.org/ctf/>`_.
  
+-The implementation details are broadly divided into the following areas:
++Implementation details are broadly divided into the following areas:
+ 
+ Trace metadata creation
+ ~~~~~~~~~~~~~~~~~~~~~~~
+ 
+-Based on the ``CTF`` specification, one of a CTF trace's streams is mandatory:
+-the metadata stream. It contains exactly what you would expect: data about the
+-trace itself. The metadata stream contains a textual description of the binary
+-layouts of all the other streams.
++Based on the ``CTF`` specification, one of the streams in a CTF trace is
++mandatory: the metadata stream. It contains exactly what you would expect:
++data about the trace itself. The metadata stream contains a textual description
++of the binary layouts of all the other streams.
+ 
+ This description is written using the Trace Stream Description Language (TSDL),
+ a declarative language that exists only in the realm of CTF.
+@@ -270,8 +270,8 @@ The internal ``trace_metadata_create()`` function generates the metadata.
+ Trace memory
+ ~~~~~~~~~~~~
+ 
+-The trace memory will be allocated through an internal function
+-``__rte_trace_mem_per_thread_alloc()``. The trace memory will be allocated
++The trace memory is allocated through an internal function
++``__rte_trace_mem_per_thread_alloc()``. The trace memory is allocated
+ per thread to enable lockless trace-emit function.
+ 
+ For non-lcore threads, the trace memory is allocated on the first trace
+@@ -279,7 +279,7 @@ emission.
+ 
+ For lcore threads, if trace points are enabled through an EAL option, the trace
+ memory is allocated when the threads are known to DPDK
+-(``rte_eal_init`` for EAL lcores, ``rte_thread_register`` for non-EAL lcores).
++(``rte_eal_init()`` for EAL lcores, ``rte_thread_register()`` for non-EAL lcores).
+ Otherwise, when trace points are enabled later in the life of the application,
+ the behavior is the same as non-lcore threads and the trace memory is allocated
+ on the first trace emission.
+@@ -348,7 +348,7 @@ trace.header
+   | timestamp [47:0]     |
+   +----------------------+
+ 
+-The trace header is 64 bits, it consists of 48 bits of timestamp and 16 bits
++The trace header is 64 bits, consisting of a 48-bit timestamp and a 16-bit
+ event ID.
+ 
+ The ``packet.header`` and ``packet.context`` will be written in the slow path
 -- 
 2.51.0
 
