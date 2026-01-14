@@ -2,67 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B02F7D3CC82
-	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Jan 2026 22:25:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00AC7D3CC86
+	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Jan 2026 22:25:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 219E940E49;
-	Wed, 14 Jan 2026 23:25:14 +0100 (CET)
-Received: from mail-wm1-f68.google.com (mail-wm1-f68.google.com
- [209.85.128.68]) by mails.dpdk.org (Postfix) with ESMTP id 51A2A40E49
- for <dev@dpdk.org>; Wed, 14 Jan 2026 23:25:12 +0100 (CET)
-Received: by mail-wm1-f68.google.com with SMTP id
- 5b1f17b1804b1-4779aa4f928so3165885e9.1
- for <dev@dpdk.org>; Wed, 14 Jan 2026 14:25:12 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 69E2240ED0;
+	Wed, 14 Jan 2026 23:25:15 +0100 (CET)
+Received: from mail-wm1-f67.google.com (mail-wm1-f67.google.com
+ [209.85.128.67]) by mails.dpdk.org (Postfix) with ESMTP id 28E4D40E4F
+ for <dev@dpdk.org>; Wed, 14 Jan 2026 23:25:14 +0100 (CET)
+Received: by mail-wm1-f67.google.com with SMTP id
+ 5b1f17b1804b1-47d5e021a53so2355025e9.3
+ for <dev@dpdk.org>; Wed, 14 Jan 2026 14:25:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768429512;
- x=1769034312; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768429514;
+ x=1769034314; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=+WQXNdx5mgp7Lo4SjFghewpBG5SeorDzlfMW2hxApO4=;
- b=bCN2rrd0iN+fBpcnryYfI6fwQ4qZlBInkGNuLmaYJyEYbRISpW/AKh88dppk+sRdzE
- ap1TRHCaS0oDvM12MzjhN6zIVEBx1Oh0uciAkBZvvqgXZO6jppgsWru2WM6SoEadaZFZ
- 7UGFnnoQWBzlFjVHLMAeBarcal6EgL5SIHawJw0WDCfAUEuY6DhjNHp2mW+LtTsKa8Fm
- lY2+Zp+XJaakuq70Zz3C1MUI5PzxqUv5Go3VuwgAAhCBIkrvPLDaIUgaJirZWiyYrjW2
- 2xKWV6TmWFVdDOAJdGu6/JgRYgvLVctpNyTvaMWbHzumv5AXFdlAr4Bi70Ku9Aq6hteU
- ZLyg==
+ bh=5R11+nBLcUHkxTD36Ny677WyNcXMA2/+22wTc8ZU9Dk=;
+ b=a67UfsLUZJbZuX0WeDK/C2899ImiH6ppo9ctpHkN7+w96PEgbg0UhWr66v0nIIpuGz
+ +vv/0opyaQ+h0oIp/oj3gWDQSDrYiJnC+oOWJqcdSxJhEo1SPK/04MBiaXRD1RwojsWA
+ GBJ9Qd1rqPmxCJ6iA2bQhKwLJzKBVdoVHbIC2fdZoxUPNOYo0jFpGfGNl/6pFXqRa8fc
+ 2gDutBiwCa3QXGIvUu04+07JXIYhIswgAqgbqZrL8UYTT5jUDpFC13i2p7jEAcE7k7V2
+ TM69/QjLlEPEAYqf4dEzt3Lxtdnli+x1c4g3ONAanmjal2HG3puKB8XvUSBnCU6s7iDg
+ c7kg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768429512; x=1769034312;
+ d=1e100.net; s=20230601; t=1768429514; x=1769034314;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=+WQXNdx5mgp7Lo4SjFghewpBG5SeorDzlfMW2hxApO4=;
- b=kUng4mSHJfUwFi+aVkx9Ocyc8i7koP71iWUwQzi6OF1iJ68FF0NZ+Nnb0guT5jyNvP
- dEZ23U284pnyL504OIuhALCwX7IJK7d4zGX/80H3wh7AzHuMfidVRXsBtWa+pdsRmMAS
- t//BgrjGLWQVEuOMgVyD5lj5jePwOY6FbQAJcyO8ayyOxoLM5bYjAj5ieHfkMYINR6AU
- ir/R4uEuZLRl9GKH2XXGsTnGvRsEUHK3Nbo9kzWMMSyP/tVPwBAlLeaZpFIEYj4LU8SB
- WdostCaud8tKExcSy37BkF20ZNo9WGCqra4dxSlcpJSeV3wssb772qExsSq55SPRqTR3
- OfQQ==
-X-Gm-Message-State: AOJu0YxjVDww8BpXvoLMh1STucL5QtncA8CCAJIiykUJpFKc4rqFXEn2
- 3733BED15A6+jcZ0gYTqHuxPIJv+HxMD1oAHViG74CFTJYQFenyb3irYsrpEecPBLT0htzXJPRU
- B1MI37Og=
-X-Gm-Gg: AY/fxX7TlLdXBGXHqfUa5XAD4/bu3eOOV/2oL4DOfzlUWU4Hr/JyW4eEzF4tdgQRVKy
- CVm9oT8VEjF4mQLpWKih1Q7i6NDtfTuq7nBkmbAGS02zYYt6rdp+PGQWQ+uvO9tsBWP7fiqiqAt
- QcBkOhYnoZukNHm3y4hCdbo+DPHuQ2zKVKdELb+iE+UqJkHN1gUKIY4cOjOsNClVoNMTEaMVCSj
- QGyK7TvgD8qaCLUhljSFXTmNGp0cr/fdDAgnyRhTSJw6FPmlc8kpPzUXNN81k1xJSUHRl+FSVOh
- Mqpk+4L1DhqiMaL/xLTIJk28ojAyHtDCcCSJYgXd5PW/LQBMCtIEr0/KX9lXQL7SB5d+Ev9t9Ue
- +G9p5UZSVfXCJD/PmEsj8oCDAE1mjbyr6wwkhwRmlhIyvjIJXb+ViiHkNfL8hzkMKYaUOIZVVPl
- 7WECLMQZ6SjMW9w+POGRSVhns2z2ypfGNvmewwnxX1b5jq6KxgOw==
-X-Received: by 2002:a05:600c:314f:b0:47a:80f8:82ab with SMTP id
- 5b1f17b1804b1-47ee335e701mr45032655e9.24.1768429511877; 
- Wed, 14 Jan 2026 14:25:11 -0800 (PST)
+ bh=5R11+nBLcUHkxTD36Ny677WyNcXMA2/+22wTc8ZU9Dk=;
+ b=LYjMIMZZDBTljIQMmakUDLTh8yah/lLD1XZpEL7wA6VhJXL91Phe8K3EK9RmKiEAmB
+ 7qww5054ZExNRgKT0KxK384EVpoEBrjiod/In9T457feF7yuytcXJbSycrngk2mTrwle
+ DF6NDPcdYb0T3T2dZNymBPFlXDjcLQUWwLQ0tWRTfVxYFnShSPuP65ldFBixlAtnzv7W
+ 4IP6TKp+kjRGc5Um1waJ5qy7bglYaiCKgewYSe2Ivrwu6Ebo4b1kin3+iR7ipnJ0XKhl
+ 1q9EcDaTFhquTSpcrc/+4+nzbuObmiabUPO9Gidm2bBPtzXpfqjgGSDgSX+sUR2cUUKc
+ HVVw==
+X-Gm-Message-State: AOJu0YzmfbkU/+082+i5eysQDQ4xl5uXcsRs+ps7p/+Dz9os9pW5bh21
+ Fpyod8TmngcK9BNSsTnORBgAVfmMg8UsohL9q5Lx3BQmK5gsCUXMBj4pIAyc4EKyoJc/D6repFr
+ ameT3fK8=
+X-Gm-Gg: AY/fxX6FV9YKfcp+/OnAO7BjH8Qu7c+FcfZBxdQieh6dckvHZ5uPiti6XABcSvG6X/U
+ W6bKyYRfxXG9qbAMS/dau20rWkYL1Upv5+Gg5EUi1pRM/l/6kI3ICfZ/VlX3WJL+E/zFuO1wbN9
+ s+Pwr53md8OvMCfUjgnnIwUgdb4t7notbqEWTQRMcqtPJKulqc7ePIMJ/gWYxBvCNYOoRh/aaco
+ CSpUiwgU3/xGArLnoob4iYD9G/Z0OJBvHxgdO4E+mShPUUUqRqM229skIvRkQrJsrjBSQvoL7FD
+ KnmfYR1n+ZzsoUPjp23vjM7OPif90npGCSA9BQC+3l8HX/ccn6QbpvpScuYvMocBr6cJT+GRCns
+ vvTGXIHBSF3cncfKlio9hZhsnSGpz6QBb2ca0DKyJP/60PQ6LXaFAKu7yR5ApGQkz+w54iDC9Yh
+ Qqho0G+7clyYuqCRE9C4tyacZP1aFD00zUN8x/ACLKhnKnB4BcaQ==
+X-Received: by 2002:a05:600c:5248:b0:477:63b5:6f76 with SMTP id
+ 5b1f17b1804b1-47ee4825eb3mr44167145e9.25.1768429513514; 
+ Wed, 14 Jan 2026 14:25:13 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-47f42907141sm12040355e9.9.2026.01.14.14.25.10
+ 5b1f17b1804b1-47f42907141sm12040355e9.9.2026.01.14.14.25.12
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 14 Jan 2026 14:25:11 -0800 (PST)
+ Wed, 14 Jan 2026 14:25:13 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Konstantin Ananyev <konstantin.ananyev@huawei.com>
-Subject: [PATCH 05/29] examples/ip_fragmentation: correct documentation errors
-Date: Wed, 14 Jan 2026 14:21:46 -0800
-Message-ID: <20260114222458.87119-6-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH 06/29] examples/eventdev_pipeline: correct documentation errors
+Date: Wed, 14 Jan 2026 14:21:47 -0800
+Message-ID: <20260114222458.87119-7-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260114222458.87119-1-stephen@networkplumber.org>
 References: <20260114222458.87119-1-stephen@networkplumber.org>
@@ -81,37 +80,93 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Address formatting issues in IP fragmentation sample documentation:
-- Capitalize "linux" to "Linux" in two instances
-- Add missing spaces before port lists in example commands
+Address minor issues in eventdev pipeline sample documentation:
+- Add missing word: "various numbers worker cores" to
+  "various numbers of worker cores"
+- Correct punctuation: "(e.g.;" to "(e.g.,"
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- doc/guides/sample_app_ug/ip_frag.rst | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ .../sample_app_ug/eventdev_pipeline.rst       | 22 +++++++++----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/doc/guides/sample_app_ug/ip_frag.rst b/doc/guides/sample_app_ug/ip_frag.rst
-index d2c66683e3..7dcb0177f6 100644
---- a/doc/guides/sample_app_ug/ip_frag.rst
-+++ b/doc/guides/sample_app_ug/ip_frag.rst
-@@ -62,7 +62,7 @@ where:
+diff --git a/doc/guides/sample_app_ug/eventdev_pipeline.rst b/doc/guides/sample_app_ug/eventdev_pipeline.rst
+index 19ff53803e..c243fa5160 100644
+--- a/doc/guides/sample_app_ug/eventdev_pipeline.rst
++++ b/doc/guides/sample_app_ug/eventdev_pipeline.rst
+@@ -10,7 +10,7 @@ application can configure a pipeline and assign a set of worker cores to
+ perform the processing required.
  
- *   -q NQ: Maximum number of queues per lcore (default is 1)
+ The application has a range of command line arguments allowing it to be
+-configured for various numbers worker cores, stages,queue depths and cycles per
++configured for various numbers of worker cores, stages, queue depths and cycles per
+ stage of work. This is useful for performance testing as well as quickly testing
+ a particular pipeline configuration.
  
--To run the example in linux environment with 2 lcores (2,4) over 2 ports(0,2) with 1 RX queue per lcore:
-+To run the example in a Linux environment with 2 lcores (2,4) over 2 ports (0,2) with 1 RX queue per lcore:
+@@ -18,7 +18,7 @@ a particular pipeline configuration.
+ Compiling the Application
+ -------------------------
+ 
+-To compile the sample application see :doc:`compiling`.
++To compile the sample application, see :doc:`compiling`.
+ 
+ The application is located in the ``examples`` sub-directory.
+ 
+@@ -51,7 +51,7 @@ these settings is shown below:
+     -- -r1 -t1 -e4 -w FF00 -s4 -n0 -c32 -W1000 -D
+ 
+ The application has some sanity checking built-in, so if there is a function
+-(e.g.; the RX core) which doesn't have a cpu core mask assigned, the application
++(e.g., the RX core) which doesn't have a cpu core mask assigned, the application
+ will print an error message:
  
  .. code-block:: console
+@@ -61,21 +61,21 @@ will print an error message:
+           rx: 0
+           tx: 1
  
-@@ -84,7 +84,7 @@ To run the example in linux environment with 2 lcores (2,4) over 2 ports(0,2) wi
-     IP_FRAG: entering main loop on lcore 2
-     IP_FRAG: -- lcoreid=2 portid=0
+-Configuration of the eventdev is covered in detail in the programmers guide,
+-see the Event Device Library section.
++Configuration of the eventdev is covered in detail in the programmers guide.
++See the Event Device Library section.
  
--To run the example in linux environment with 1 lcore (4) over 2 ports(0,2) with 2 RX queues per lcore:
-+To run the example in a Linux environment with 1 lcore (4) over 2 ports (0,2) with 2 RX queues per lcore:
  
- .. code-block:: console
+ Observing the Application
+--------------------------
++~~~~~~~~~~~~~~~~~~~~~~~~~
  
+-At runtime the eventdev pipeline application prints out a summary of the
+-configuration, and some runtime statistics like packets per second. On exit the
++At runtime, the eventdev pipeline application prints out a summary of the
++configuration, and some runtime statistics like packets per second. On exit, the
+ worker statistics are printed, along with a full dump of the PMD statistics if
+ required. The following sections show sample output for each of the output
+ types.
+ 
+ Configuration
+-~~~~~~~~~~~~~
++^^^^^^^^^^^^^
+ 
+ This provides an overview of the pipeline,
+ scheduling type at each stage, and parameters to options such as how many
+@@ -101,7 +101,7 @@ for details:
+         Stage 3, Type Atomic    Priority = 128
+ 
+ Runtime
+-~~~~~~~
++^^^^^^^
+ 
+ At runtime, the statistics of the consumer are printed, stating the number of
+ packets received, runtime in milliseconds, average mpps, and current mpps.
+@@ -111,7 +111,7 @@ packets received, runtime in milliseconds, average mpps, and current mpps.
+   # consumer RX= xxxxxxx, time yyyy ms, avg z.zzz mpps [current w.www mpps]
+ 
+ Shutdown
+-~~~~~~~~
++^^^^^^^^
+ 
+ At shutdown, the application prints the number of packets received and
+ transmitted, and an overview of the distribution of work across worker cores.
 -- 
 2.51.0
 
