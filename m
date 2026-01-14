@@ -2,54 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00CA5D37E44
-	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Jan 2026 15:45:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F4A4D37E44
+	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Jan 2026 15:45:29 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4F58540A79;
-	Wed, 14 Jan 2026 16:45:07 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 375F540A82;
+	Wed, 14 Jan 2026 16:45:09 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
- by mails.dpdk.org (Postfix) with ESMTP id C2E0C40A72;
- Wed, 14 Jan 2026 16:45:04 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id D76A4406A2;
+ Wed, 14 Jan 2026 16:45:06 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1768405506; x=1799941506;
+ t=1768405508; x=1799941508;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=QmhrqqkDXXIJbiUhz63Tyis71OZFAbHGF1MnYEC9kiI=;
- b=Jn7qE1/B8r5RjoAaf/SvOvIw1CCi+Ppt4XO9Tp2DZH3Btu3Q+SnGSXBw
- +qlQOwpXft8WSdWpcj7yUmGn9hood507Ltkhp9X3qkrPJ6W4tbUcHgFJ1
- kLPfwLm13Mdq3JsMCZsnIAyK4UPaYIff2lWGMKtuGiqdMcIQccELGrsEf
- vLexCvTdblFVUrthx+DRvVsO2AeeRuA6GWB9jej6ESPvoLMtd92ZX4+RE
- +u2L0y73PG/oyxVE0iAUuBKZk+NwTJDbjorHGcAS7PUtGvti4tLiRYZzc
- nxCujKmdRrcyb+8N776l68lZ7KOENUO+4APGyS32as2kyQGTQNVd2D4bC A==;
-X-CSE-ConnectionGUID: 7CzXSP6xT3mG1bVa+ESUAQ==
-X-CSE-MsgGUID: UWT6Sr7bTNuijyh+n5iUJw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11671"; a="69870784"
-X-IronPort-AV: E=Sophos;i="6.21,225,1763452800"; d="scan'208";a="69870784"
+ bh=tYHWB0xR3njc0O+7QEQ+ogByuGm8FwxRHoNnvvMJQEg=;
+ b=Z9CjKxkQSExC9+2oipFFhMwNdHN34MbL5BFqxY0wJh824HvF5wNCCqbi
+ JOWGwe0XNXOkT9vpKv61wOX7L5pkqG8lvUfp+T4eY6sSDwBv2gHcS9j07
+ LylbNwI/qbDPgjoYvr+/JXYYJJ8vU9PjOw22YlmxT5UL2ATnbrSS2a8tG
+ yvAJ3d9qlwvO6GclwYNeqOIgwoPn93C8QF3jA7NktIcvqPH/29vgNLs4J
+ jbwqOXufwkWYn7ZqqdMJMnIPa7GMftfW0RnnzrhO1GSl/HC91atztu3Iv
+ mjTX7VJiOL2H5g4bezXCZwrPAKU95eMBURfEnberKpoq8Rm7xa6FMT8vj A==;
+X-CSE-ConnectionGUID: n5u4lmT8SF6jcqFxR+View==
+X-CSE-MsgGUID: GtTAWR3FRkaX4jHgiQ26UA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11671"; a="69870802"
+X-IronPort-AV: E=Sophos;i="6.21,225,1763452800"; d="scan'208";a="69870802"
 Received: from orviesa010.jf.intel.com ([10.64.159.150])
  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 14 Jan 2026 07:45:05 -0800
-X-CSE-ConnectionGUID: 2O2kvHkGRkqIK+zSJJkb8Q==
-X-CSE-MsgGUID: DC165iY0SqaV3KlPVl8d0Q==
+ 14 Jan 2026 07:45:07 -0800
+X-CSE-ConnectionGUID: /Pq2el0mSeaS6hYTjl+aig==
+X-CSE-MsgGUID: rgBTBAXOS3mRxnenjWMjkw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,225,1763452800"; d="scan'208";a="203924911"
+X-IronPort-AV: E=Sophos;i="6.21,225,1763452800"; d="scan'208";a="203924951"
 Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by orviesa010.jf.intel.com with ESMTP; 14 Jan 2026 07:45:02 -0800
+ by orviesa010.jf.intel.com with ESMTP; 14 Jan 2026 07:45:04 -0800
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: Bruce Richardson <bruce.richardson@intel.com>, stable@dpdk.org,
- Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
- Chengwen Feng <fengchengwen@huawei.com>,
  Stephen Hemminger <stephen@networkplumber.org>,
- Thomas Monjalon <thomas@monjalon.net>,
- Declan Doherty <declan.doherty@intel.com>,
- Ferruh Yigit <ferruh.yigit@amd.com>,
- Somnath Kotur <somnath.kotur@broadcom.com>,
- Huisong Li <lihuisong@huawei.com>,
- Ajit Khaparde <ajit.khaparde@broadcom.com>
-Subject: [PATCH v4 03/31] ethdev: fix variable shadowing issues
-Date: Wed, 14 Jan 2026 15:44:17 +0000
-Message-ID: <20260114154450.2969716-4-bruce.richardson@intel.com>
+ Naga Harish K S V <s.v.naga.harish.k@intel.com>,
+ Jerin Jacob <jerinj@marvell.com>, Nikhil Rao <nikhil.rao@intel.com>,
+ Jay Jayatheerthan <jay.jayatheerthan@intel.com>,
+ =?UTF-8?q?Mattias=20R=C3=B6nnblom?= <mattias.ronnblom@ericsson.com>
+Subject: [PATCH v4 04/31] eventdev: fix variable shadowing issues
+Date: Wed, 14 Jan 2026 15:44:18 +0000
+Message-ID: <20260114154450.2969716-5-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260114154450.2969716-1-bruce.richardson@intel.com>
 References: <20251106140948.2894678-1-bruce.richardson@intel.com>
@@ -69,58 +65,72 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Remove unneeded extra variable definitions, and rename variables as
-necessary to ensure clean compile with -Wshadow warnings enabled.
+Rename a macro variable to avoid shadowing conflicts, and reduce the
+scope of another variable for the same reason.
 
-Fixes: e489007a411c ("ethdev: add generic create/destroy ethdev APIs")
-Fixes: 1bb4a528c41f ("ethdev: fix max Rx packet length")
+Fixes: a3bbf2e09756 ("eventdev: add eth Tx adapter implementation")
+Fixes: 7f33abd49b26 ("eventdev/eth_rx: support appropriately report idle")
 Cc: stable@dpdk.org
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
-Acked-by: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
-Acked-by: Chengwen Feng <fengchengwen@huawei.com>
 Acked-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- lib/ethdev/ethdev_driver.c | 6 +++---
- lib/ethdev/rte_ethdev.c    | 1 -
- 2 files changed, 3 insertions(+), 4 deletions(-)
+ lib/eventdev/rte_event_eth_rx_adapter.c | 5 ++---
+ lib/eventdev/rte_event_eth_tx_adapter.c | 8 ++++----
+ 2 files changed, 6 insertions(+), 7 deletions(-)
 
-diff --git a/lib/ethdev/ethdev_driver.c b/lib/ethdev/ethdev_driver.c
-index f89562b237..2ec665be0f 100644
---- a/lib/ethdev/ethdev_driver.c
-+++ b/lib/ethdev/ethdev_driver.c
-@@ -310,7 +310,7 @@ RTE_EXPORT_INTERNAL_SYMBOL(rte_eth_dev_create)
- int
- rte_eth_dev_create(struct rte_device *device, const char *name,
- 	size_t priv_data_size,
--	ethdev_bus_specific_init ethdev_bus_specific_init,
-+	ethdev_bus_specific_init bus_specific_init,
- 	void *bus_init_params,
- 	ethdev_init_t ethdev_init, void *init_params)
+diff --git a/lib/eventdev/rte_event_eth_rx_adapter.c b/lib/eventdev/rte_event_eth_rx_adapter.c
+index 994f256322..d564e14b72 100644
+--- a/lib/eventdev/rte_event_eth_rx_adapter.c
++++ b/lib/eventdev/rte_event_eth_rx_adapter.c
+@@ -1191,7 +1191,6 @@ rxa_intr_thread(void *arg)
+ static inline bool
+ rxa_intr_ring_dequeue(struct event_eth_rx_adapter *rx_adapter)
  {
-@@ -358,8 +358,8 @@ rte_eth_dev_create(struct rte_device *device, const char *name,
+-	uint32_t n;
+ 	uint32_t nb_rx = 0;
+ 	int rxq_empty;
+ 	struct eth_event_enqueue_buffer *buf;
+@@ -1260,9 +1259,9 @@ rxa_intr_ring_dequeue(struct event_eth_rx_adapter *rx_adapter)
+ 		if (rxa_shared_intr(dev_info, queue)) {
+ 			uint16_t i;
+ 			uint16_t nb_queues;
++			uint32_t n = 0;
  
- 	ethdev->device = device;
+ 			nb_queues = dev_info->dev->data->nb_rx_queues;
+-			n = 0;
+ 			for (i = dev_info->next_q_idx; i < nb_queues; i++) {
+ 				uint8_t enq_buffer_full;
  
--	if (ethdev_bus_specific_init) {
--		retval = ethdev_bus_specific_init(ethdev, bus_init_params);
-+	if (bus_specific_init) {
-+		retval = bus_specific_init(ethdev, bus_init_params);
- 		if (retval) {
- 			RTE_ETHDEV_LOG_LINE(ERR,
- 				"ethdev bus specific initialisation failed");
-diff --git a/lib/ethdev/rte_ethdev.c b/lib/ethdev/rte_ethdev.c
-index c6fe0d5165..2659e8d9eb 100644
---- a/lib/ethdev/rte_ethdev.c
-+++ b/lib/ethdev/rte_ethdev.c
-@@ -2471,7 +2471,6 @@ rte_eth_rx_queue_setup(uint16_t port_id, uint16_t rx_queue_id,
- 	if (local_conf.offloads & RTE_ETH_RX_OFFLOAD_TCP_LRO) {
- 		uint32_t overhead_len;
- 		uint32_t max_rx_pktlen;
--		int ret;
+@@ -1289,7 +1288,7 @@ rxa_intr_ring_dequeue(struct event_eth_rx_adapter *rx_adapter)
+ 						RTE_MAX_RXTX_INTR_VEC_ID - 1 :
+ 						0;
+ 		} else {
+-			n = rxa_eth_rx(rx_adapter, port, queue, nb_rx,
++			uint32_t n = rxa_eth_rx(rx_adapter, port, queue, nb_rx,
+ 				rx_adapter->max_nb_rx,
+ 				&rxq_empty, buf, stats);
+ 			rx_adapter->qd_valid = !rxq_empty;
+diff --git a/lib/eventdev/rte_event_eth_tx_adapter.c b/lib/eventdev/rte_event_eth_tx_adapter.c
+index 83b6af0955..91c7be55c7 100644
+--- a/lib/eventdev/rte_event_eth_tx_adapter.c
++++ b/lib/eventdev/rte_event_eth_tx_adapter.c
+@@ -64,11 +64,11 @@ do { \
  
- 		overhead_len = eth_dev_get_overhead_len(dev_info.max_rx_pktlen,
- 				dev_info.max_mtu);
+ #define TXA_CHECK_OR_ERR_RET(id) \
+ do {\
+-	int ret; \
++	int _ret; \
+ 	RTE_EVENT_ETH_TX_ADAPTER_ID_VALID_OR_ERR_RET((id), -EINVAL); \
+-	ret = txa_init(); \
+-	if (ret != 0) \
+-		return ret; \
++	_ret = txa_init(); \
++	if (_ret != 0) \
++		return _ret; \
+ 	if (!txa_adapter_exist((id))) \
+ 		return -EINVAL; \
+ } while (0)
 -- 
 2.51.0
 
