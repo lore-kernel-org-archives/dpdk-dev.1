@@ -2,67 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39D49D3CC86
-	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Jan 2026 22:25:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85C35D3CC86
+	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Jan 2026 22:25:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8A70940E4F;
-	Wed, 14 Jan 2026 23:25:17 +0100 (CET)
-Received: from mail-wm1-f66.google.com (mail-wm1-f66.google.com
- [209.85.128.66]) by mails.dpdk.org (Postfix) with ESMTP id D3D8B40E4F
- for <dev@dpdk.org>; Wed, 14 Jan 2026 23:25:15 +0100 (CET)
-Received: by mail-wm1-f66.google.com with SMTP id
- 5b1f17b1804b1-47ff94b46afso519125e9.1
- for <dev@dpdk.org>; Wed, 14 Jan 2026 14:25:15 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id A833D40E3B;
+	Wed, 14 Jan 2026 23:25:18 +0100 (CET)
+Received: from mail-wm1-f65.google.com (mail-wm1-f65.google.com
+ [209.85.128.65]) by mails.dpdk.org (Postfix) with ESMTP id 45B5A40ED8
+ for <dev@dpdk.org>; Wed, 14 Jan 2026 23:25:17 +0100 (CET)
+Received: by mail-wm1-f65.google.com with SMTP id
+ 5b1f17b1804b1-47fedb7c68dso605345e9.2
+ for <dev@dpdk.org>; Wed, 14 Jan 2026 14:25:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768429515;
- x=1769034315; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768429517;
+ x=1769034317; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=A6Q2Mveh8AdXryZbPjFgvgkigAxl3tgXTtY2E6aiPvQ=;
- b=m3d5tYUkZi+EGQD3tLSxk/JaB/KZgmAdf8mZp2nJDyeEh6/ZlJW86YftYtk+9QdhYn
- v0X8QBLQd+WAUsiWjft9XRMVx+n5rTvCiBlObMqSL+y8R7BQl7TGz4T2pYI2vx5wmwIR
- +6p24b1RNHxw5yb/hPun14+AGa6uZrV+4onXsoZHJXYyII2v/WdKx08woGo7Wb7BLmfe
- Ts09aDmxX/lyTxuvNDPS4fWA6m67Qu8hA5yXywWjTLkmnCldlR/MBHJE8FOpxBozbjVU
- UOE+zwGy+SzAIRDiR68zeF8oMKpvTqh8RZ5WpKOfX9Sl6rcuehNNY5Pg0zudFYh1qwHL
- PRCQ==
+ bh=VJJDuhr4/n/ncUAVgZceeahoXW7gvkdv7nBpkFOyf68=;
+ b=Gq6ii/XNk34zQ96CN4T53GXzxUjWed2HaceNHaKGuzfNvYdBq7LYuN61BSJofw+XBx
+ qD/21utQNnj+n5NmuKR0xXD46Eu2w8N8YokKRTL8b/CEbOJaugpQ/onoP8QLTXLvxj+u
+ iMwlgY/Gvf2KSUxP3Kwd3GeeUw3RSpQqJjy0S5ysRY2MwoLwn387m7U+N9n22i4ngkcM
+ pRvapkOLyVT/9pEccgohFgiRPmb5pSFv1N4ip0q35PZSucqjfxQpGELXdVrTrEemWz2Y
+ +pIPhFQQ6WTpwd8kgjc6MHdYs08n+TkK9S9MdYDEUPdLzcEvWkSObp8HZhXztFDtpNHw
+ maoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768429515; x=1769034315;
+ d=1e100.net; s=20230601; t=1768429517; x=1769034317;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=A6Q2Mveh8AdXryZbPjFgvgkigAxl3tgXTtY2E6aiPvQ=;
- b=TXbQPUwUgfOE2VoFpH3u/zR9OO4u4MOfivCsntr3ipZ8iGNn2O0IxlC4vhuLB1zyBz
- Jfam1qRlJdxhhKXhDsKmwDOlU/U2idzW2EPLVoh+Fo8KEc3rxzRl1zd4FXIwck0xdC1W
- Qp1OzoTMawzWhwAlpZIvS1BSrkjXIiODgnt335IJTmybKhlhIrUIOu14Gk+knYxexywV
- +/6axnX4R4zsNnEDTFiPCaoBsX7TdhssuZYRTelXmBARwW0rTeRPHhLpJuIee6zMGYSz
- WNrcYWJTqzhPbUjDfzwJ5pt5oPkt5m6DtFZbMuR5FmAWZow9+kUOyShtmn0xaTfUXwxQ
- e4sg==
-X-Gm-Message-State: AOJu0Yyg83g0GalQUrq1n+YXvBeUlSWe7hJWAi1y/jWPj7wsd6UDhXrA
- xEFwb8fhjCUCixHkOFPuvHqOo97ptZ1eYJ7RR6wplnI990di/dNmC+sHuHoFry7H3f4jPMizwq8
- 4nzn5igM=
-X-Gm-Gg: AY/fxX7S3fptcoAHosYhiOFAD2MljYXdm0VtVJtmVAAEs9tL8rnt1rmYzqhNqXWPti3
- qt/ltWWbkwAyeJDXBG+jv5qbvXxCbnXxcpMiXMDHikcDmCmP4+ezi9Sbi0tFdcw9qwnlWM4vvw6
- XJh5A438E0sKdhwHng14Q06mML6NFzr/BjOBZKVO/YmNAEXux46qrb51h+3o4gQipoYh6fPqpo4
- Ctx29bESADRnq6BSL2dCsJvo/Ij8oQYJZxRK7oEAptP6DbbwiFuFY4HMp1MK7Bq6d95nooM7dG3
- 0jeJbcURHRrrWNkU4cgTUZEF6IdT1aLzDq4B3hOULDfC6FySGBUKQYICbiHaDH2RlZxHgOMOR8z
- uQW9jFx1oO1hd4JCvmSC+R+LghHq2k8emWjTmCQp9SKzR5idaJ2zD6NLMhP/FT2CSPngR8rnsQX
- 7oLh2bcJM6VXPDLpKeJY/49pw77DzUCMmimoz3xZ6Y6dWrm57rug==
-X-Received: by 2002:a7b:c3d7:0:b0:47d:87ac:73ef with SMTP id
- 5b1f17b1804b1-47f42902e49mr6484285e9.13.1768429515121; 
- Wed, 14 Jan 2026 14:25:15 -0800 (PST)
+ bh=VJJDuhr4/n/ncUAVgZceeahoXW7gvkdv7nBpkFOyf68=;
+ b=i0Dpz+dbLguXDDBn/2QtdONizcTQiM1AD5JQHCxCBvHveM4uD/QiOviQ4s+aN37Zh1
+ p9VJJ1HD9MBJUj12sA7O/yy2rfJBBPmXpGfKv6+XRlMD9ITE15/PWPtHHj+HGRwYS/LC
+ 3JlhaPKzr53Lqei2xGDBxgfSobyNctGzUs9Mjz+pwIHbtD1bIrssK06pYBMi9A533+RG
+ VBGzKkasubRwljrWT1e+A7jX8g+8aP8vnrLrERyVklnw1r+5AVMkNi2/YA1zcv5ALMyn
+ cH5k7LSB9UXylFHQv/IocvxL4by6G20CEJGsYIWSg3pF3C4OdXAc4w2RUI2x0rJljfBw
+ rVHw==
+X-Gm-Message-State: AOJu0YxR1RdQwvxHUZHUX9fT6Dmr+SG//fNlMF7XJh0w5JwyPKCKVVbS
+ S4xSQJN6ILEoYe1fjExUi4uDy+eidn41J2MkAecFvtRDzTSFrpBuG4kntQ28yJB1vY5X6g5FKgl
+ At0OZ1HM=
+X-Gm-Gg: AY/fxX5KmSIJXJwh/5jZ7gcIc7BcYIkwnaGw7o5EZyeU+plpqF6qsZCemvUqjpR11JQ
+ lQwx/pVjwa0bX8nzClHrteDeksrkvsECuJuZHBLKluu4tXkzV83mQjHb224rEr9yXcguPAvyJM4
+ ZNhbRryAkbYnH7QdwhHVVbHjgeSxF/Cbxf1Jm6siA7ZO8zL0mkB3aAl3OqZOzQaVC3Hbb9MLT+N
+ 13KhxGv6f0bt8u1M2F3YCrofjsTfPyQluV52ughO84JDObZtsgAJFtXVP4L2O2TWnOHZmsu6I7k
+ bjjARg2/Ny0OSaeLPPV4IHIAnCjR8QK5ED8NBXx5kmhfVTiaVmB6uIX6hEwmTsbizW/plZAzMRa
+ l4OQNv+q9JTqxP/5+Q46MRsMH1QJHrDqxnePNMGG5nzvmeZuVxQ95aIpBSmLn1Of5XsOPDRwSXA
+ TbJqvtVVNlM+wwiiP9WyMNJaV0BxTNAxtccfaMo3a/x5nRqT7ZXQ==
+X-Received: by 2002:a05:600c:c4a1:b0:477:df7:b020 with SMTP id
+ 5b1f17b1804b1-47ee3391770mr48660105e9.18.1768429516842; 
+ Wed, 14 Jan 2026 14:25:16 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-47f42907141sm12040355e9.9.2026.01.14.14.25.13
+ 5b1f17b1804b1-47f42907141sm12040355e9.9.2026.01.14.14.25.15
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 14 Jan 2026 14:25:14 -0800 (PST)
+ Wed, 14 Jan 2026 14:25:16 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH 07/29] doc/guides: improve VMDq sample application
- documentation
-Date: Wed, 14 Jan 2026 14:21:48 -0800
-Message-ID: <20260114222458.87119-8-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ David Hunt <david.hunt@intel.com>
+Subject: [PATCH 08/29] examples/distributor: correct documentation errors
+Date: Wed, 14 Jan 2026 14:21:49 -0800
+Message-ID: <20260114222458.87119-9-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260114222458.87119-1-stephen@networkplumber.org>
 References: <20260114222458.87119-1-stephen@networkplumber.org>
@@ -82,521 +82,127 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Revise VMDq and VMDq/DCB Forwarding sample documentation for clarity,
-accuracy, and compliance with technical writing standards.
-
-Common changes to both files:
-- Add technology overview sections explaining VMDq hardware packet sorting
-- Fix contradictory statements about command-line options
-- Create dedicated Command-Line Options sections
-- Add Supported Configurations sections for hardware details
-- Improve sentence structure and readability
-- Fix RST formatting issues
-- Convert warnings to RST note directives
-
-vmdq_forwarding.rst:
-- Update application name from vmdq_app to dpdk-vmdq
-
-vmdq_dcb_forwarding.rst:
-- Add DCB/QoS explanation using VLAN user priority fields
-- Correct typo: "VMD queues" -> "VMDq queues"
-- Correct capitalization: "linux" -> "Linux"
-- Add sub-headings for traffic class and MAC address sections
-
-The technology context is based on Intel's VMDq Technology paper and
-helps readers understand hardware-based packet classification benefits
-in virtualized environments.
+Address issues in distributor sample documentation:
+- Capitalize "linux" to "Linux"
+- Add missing space before function name in thread description
+- Add missing article: "is done in same way" to
+  "is done in the same way"
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- .../sample_app_ug/vmdq_dcb_forwarding.rst     | 193 +++++++++++-------
- doc/guides/sample_app_ug/vmdq_forwarding.rst  | 144 +++++++------
- 2 files changed, 207 insertions(+), 130 deletions(-)
+ doc/guides/sample_app_ug/dist_app.rst | 30 +++++++++++++--------------
+ 1 file changed, 15 insertions(+), 15 deletions(-)
 
-diff --git a/doc/guides/sample_app_ug/vmdq_dcb_forwarding.rst b/doc/guides/sample_app_ug/vmdq_dcb_forwarding.rst
-index efb133c11c..9d01901f0c 100644
---- a/doc/guides/sample_app_ug/vmdq_dcb_forwarding.rst
-+++ b/doc/guides/sample_app_ug/vmdq_dcb_forwarding.rst
-@@ -1,150 +1,197 @@
- ..  SPDX-License-Identifier: BSD-3-Clause
-     Copyright(c) 2010-2014 Intel Corporation.
+diff --git a/doc/guides/sample_app_ug/dist_app.rst b/doc/guides/sample_app_ug/dist_app.rst
+index 30b4184d40..f4a2de50d6 100644
+--- a/doc/guides/sample_app_ug/dist_app.rst
++++ b/doc/guides/sample_app_ug/dist_app.rst
+@@ -4,7 +4,7 @@
+ Distributor Sample Application
+ ==============================
  
--VMDQ and DCB Forwarding Sample Application
-+VMDq and DCB Forwarding Sample Application
- ==========================================
- 
--The VMDQ and DCB Forwarding sample application is a simple example of packet processing using the DPDK.
--The application performs L2 forwarding using VMDQ and DCB to divide the incoming traffic into queues.
--The traffic splitting is performed in hardware by the VMDQ and DCB features of the Intel® 82599 and X710/XL710 Ethernet Controllers.
-+The VMDq and DCB Forwarding sample application demonstrates packet processing using the DPDK.
-+The application performs L2 forwarding using Intel VMDq (Virtual Machine Device Queues) combined
-+with DCB (Data Center Bridging) to divide incoming traffic into queues. The traffic splitting
-+is performed in hardware by the VMDq and DCB features of Intel 82599 and X710/XL710
-+Ethernet Controllers.
- 
- Overview
- --------
- 
--This sample application can be used as a starting point for developing a new application that is based on the DPDK and
--uses VMDQ and DCB for traffic partitioning.
-+This sample application can serve as a starting point for developing DPDK applications
-+that use VMDq and DCB for traffic partitioning.
- 
--The VMDQ and DCB filters work on MAC and VLAN traffic to divide the traffic into input queues on the basis of the Destination MAC
--address, VLAN ID and VLAN user priority fields.
--VMDQ filters split the traffic into 16 or 32 groups based on the Destination MAC and VLAN ID.
--Then, DCB places each packet into one of queues within that group, based upon the VLAN user priority field.
-+About VMDq and DCB Technology
-+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- 
--All traffic is read from a single incoming port (port 0) and output on port 1, without any processing being performed.
--With Intel® 82599 NIC, for example, the traffic is split into 128 queues on input, where each thread of the application reads from
--multiple queues. When run with 8 threads, that is, with the -c FF option, each thread receives and forwards packets from 16 queues.
-+VMDq is a silicon-level technology that offloads network I/O packet sorting from the
-+Virtual Machine Monitor (VMM) to the network controller hardware. This reduces CPU
-+overhead in virtualized environments by performing Layer 2 classification in hardware.
- 
--As supplied, the sample application configures the VMDQ feature to have 32 pools with 4 queues each as indicated in :numref:`figure_vmdq_dcb_example`.
--The Intel® 82599 10 Gigabit Ethernet Controller NIC also supports the splitting of traffic into 16 pools of 8 queues. While the
--Intel® X710 or XL710 Ethernet Controller NICs support many configurations of VMDQ pools of 4 or 8 queues each. For simplicity, only 16
--or 32 pools is supported in this sample. And queues numbers for each VMDQ pool can be changed by setting RTE_LIBRTE_I40E_QUEUE_NUM_PER_VM
--in config/rte_config.h file.
--The nb-pools, nb-tcs and enable-rss parameters can be passed on the command line, after the EAL parameters:
-+DCB (Data Center Bridging) extends VMDq by adding Quality of Service (QoS) support.
-+DCB uses the VLAN user priority field (also called Priority Code Point or PCP) to
-+classify packets into different traffic classes, enabling bandwidth allocation and
-+priority-based queuing.
- 
--.. code-block:: console
-+How VMDq and DCB Filtering Works
-+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+
-+The VMDq and DCB filters work together on MAC and VLAN traffic to divide packets into
-+input queues:
-+
-+1. **VMDq filtering**: Splits traffic into 16 or 32 groups based on the destination
-+   MAC address and VLAN ID.
-+
-+2. **DCB classification**: Places each packet into one of the queues within its VMDq
-+   group based on the VLAN user priority field.
- 
--    ./<build_dir>/examples/dpdk-vmdq_dcb [EAL options] -- -p PORTMASK --nb-pools NP --nb-tcs TC --enable-rss
-+All traffic is read from a single incoming port (port 0) and output on port 1 without
-+modification. For the Intel 82599 NIC, traffic is split into 128 queues on input.
-+Each application thread reads from multiple queues. When running with 8 threads
-+(using the ``-c FF`` option), each thread receives and forwards packets from 16 queues.
- 
--where, NP can be 16 or 32, TC can be 4 or 8, rss is disabled by default.
-+:numref:`figure_vmdq_dcb_example` illustrates the packet flow through the application.
- 
- .. _figure_vmdq_dcb_example:
- 
- .. figure:: img/vmdq_dcb_example.*
- 
--   Packet Flow Through the VMDQ and DCB Sample Application
-+   Packet Flow Through the VMDq and DCB Sample Application
- 
-+Supported Configurations
-+~~~~~~~~~~~~~~~~~~~~~~~~
- 
--In Linux* user space, the application can display statistics with the number of packets received on each queue.
--To have the application display the statistics, send a SIGHUP signal to the running application process.
-+The sample application supports the following configurations:
- 
--The VMDQ and DCB Forwarding sample application is in many ways simpler than the L2 Forwarding application
--(see :doc:`l2_forward_real_virtual`)
--as it performs unidirectional L2 forwarding of packets from one port to a second port.
--No command-line options are taken by this application apart from the standard EAL command-line options.
-+- **Intel 82599 10 Gigabit Ethernet Controller**: 32 pools with 4 queues each (default),
-+  or 16 pools with 8 queues each.
-+
-+- **Intel X710/XL710 Ethernet Controllers**: Multiple configurations of VMDq pools
-+  with 4 or 8 queues each. For simplicity, this sample supports only 16 or 32 pools.
-+  The number of queues per VMDq pool can be changed by setting
-+  ``RTE_LIBRTE_I40E_QUEUE_NUM_PER_VM`` in ``config/rte_config.h``.
- 
- .. note::
- 
--    Since VMD queues are being used for VMM, this application works correctly
--    when VTd is disabled in the BIOS or Linux* kernel (intel_iommu=off).
-+    Since VMDq queues are used for virtual machine management, this application works
-+    correctly when VT-d is disabled in the BIOS or Linux kernel (``intel_iommu=off``).
- 
+-The distributor sample application is a simple example of packet distribution
++The distributor sample application is an example of packet distribution
+ to cores using the Data Plane Development Kit (DPDK). It also makes use of
+ Intel Speed Select Technology - Base Frequency (Intel SST-BF) to pin the
+ distributor to the higher frequency core if available.
+@@ -31,7 +31,7 @@ generator as shown in the figure below.
  Compiling the Application
  -------------------------
  
--
--
 -To compile the sample application see :doc:`compiling`.
 +To compile the sample application, see :doc:`compiling`.
  
- The application is located in the ``vmdq_dcb`` sub-directory.
+ The application is located in the ``distributor`` sub-directory.
  
- Running the Application
- -----------------------
+@@ -49,7 +49,7 @@ Running the Application
+    *   -p PORTMASK: Hexadecimal bitmask of ports to configure
+    *   -c: Combines the RX core with distribution core
  
--To run the example in a linux environment:
-+To run the example in a Linux environment:
-+
-+.. code-block:: console
-+
-+    ./<build_dir>/examples/dpdk-vmdq_dcb -l 0-3 -- -p 0x3 --nb-pools 32 --nb-tcs 4
-+
-+Command-Line Options
+-#. To run the application in linux environment with 10 lcores, 4 ports,
++#. To run the application in a Linux environment with 10 lcores, 4 ports,
+    issue the command:
+ 
+    ..  code-block:: console
+@@ -64,9 +64,9 @@ Explanation
+ 
+ The distributor application consists of four types of threads: a receive
+ thread (``lcore_rx()``), a distributor thread (``lcore_dist()``), a set of
+-worker threads (``lcore_worker()``), and a transmit thread(``lcore_tx()``).
++worker threads (``lcore_worker()``), and a transmit thread (``lcore_tx()``).
+ How these threads work together is shown in :numref:`figure_dist_app` below.
+-The ``main()`` function launches  threads of these four types.  Each thread
++The ``main()`` function launches threads of these four types. Each thread
+ has a while loop which will be doing processing and which is terminated
+ only upon SIGINT or ctrl+C.
+ 
+@@ -86,7 +86,7 @@ the distributor, doing a simple XOR operation on the input port mbuf field
+ (to indicate the output port which will be used later for packet transmission)
+ and then finally returning the packets back to the distributor thread.
+ 
+-The distributor thread will then call the distributor api
++The distributor thread will then call the distributor API
+ ``rte_distributor_returned_pkts()`` to get the processed packets, and will enqueue
+ them to another rte_ring for transfer to the TX thread for transmission on the
+ output port. The transmit thread will dequeue the packets from the ring and
+@@ -105,7 +105,7 @@ final statistics to the user.
+ 
+ 
+ Intel SST-BF Support
+---------------------
 +~~~~~~~~~~~~~~~~~~~~
-+
-+The following application-specific options are available after the EAL parameters:
-+
-+``-p PORTMASK``
-+    Hexadecimal bitmask of ports to configure.
-+
-+``--nb-pools NP``
-+    Number of VMDq pools. Valid values are 16 or 32.
-+
-+``--nb-tcs TC``
-+    Number of traffic classes. Valid values are 4 or 8.
-+
-+``--enable-rss``
-+    Enable Receive Side Scaling. RSS is disabled by default.
-+
-+Example:
  
- .. code-block:: console
+ In DPDK 19.05, support was added to the power management library for
+ Intel-SST-BF, a technology that allows some cores to run at a higher
+@@ -114,20 +114,20 @@ and is entitled
+ `Intel Speed Select Technology – Base Frequency - Enhancing Performance <https://builders.intel.com/docs/networkbuilders/intel-speed-select-technology-base-frequency-enhancing-performance.pdf>`_
  
--    user@target:~$ ./<build_dir>/examples/dpdk-vmdq_dcb -l 0-3 -- -p 0x3 --nb-pools 32 --nb-tcs 4
-+    ./<build_dir>/examples/dpdk-vmdq_dcb [EAL options] -- -p 0x3 --nb-pools 32 --nb-tcs 4 --enable-rss
+ The distributor application was also enhanced to be aware of these higher
+-frequency SST-BF cores, and when starting the application, if high frequency
++frequency SST-BF cores. When starting the application, if high frequency
+ SST-BF cores are present in the core mask, the application will identify these
+ cores and pin the workloads appropriately. The distributor core is usually
+ the bottleneck, so this is given first choice of the high frequency SST-BF
+-cores, followed by the rx core and the tx core.
++cores, followed by the Rx core and the Tx core.
  
--Refer to the *DPDK Getting Started Guide* for general information on running applications and
--the Environment Abstraction Layer (EAL) options.
-+Refer to the *DPDK Getting Started Guide* for general information on running applications
-+and the Environment Abstraction Layer (EAL) options.
- 
- Explanation
- -----------
- 
--The following sections provide some explanation of the code.
-+The following sections explain the code structure.
- 
- Initialization
- ~~~~~~~~~~~~~~
- 
--The EAL, driver and PCI configuration is performed largely as in the L2 Forwarding sample application,
--as is the creation of the mbuf pool.
--See :doc:`l2_forward_real_virtual`.
--Where this example application differs is in the configuration of the NIC port for RX.
-+The EAL, driver, and PCI configuration is performed similarly to the L2 Forwarding sample
-+application, as is the creation of the mbuf pool. See :doc:`l2_forward_real_virtual` for details.
-+
-+This example application differs in the configuration of the NIC port for RX. The VMDq and
-+DCB hardware features are configured at port initialization time by setting appropriate values
-+in the ``rte_eth_conf`` structure passed to the ``rte_eth_dev_configure()`` API.
- 
--The VMDQ and DCB hardware feature is configured at port initialization time by setting the appropriate values in the
--rte_eth_conf structure passed to the rte_eth_dev_configure() API.
--Initially in the application,
--a default structure is provided for VMDQ and DCB configuration to be filled in later by the application.
-+Initially, the application provides a default structure for VMDq and DCB configuration:
- 
- .. literalinclude:: ../../../examples/vmdq_dcb/main.c
-     :language: c
-     :start-after: Empty vmdq+dcb configuration structure. Filled in programmatically. 8<
-     :end-before: >8 End of empty vmdq+dcb configuration structure.
- 
--The get_eth_conf() function fills in an rte_eth_conf structure with the appropriate values,
--based on the global vlan_tags array,
--and dividing up the possible user priority values equally among the individual queues
--(also referred to as traffic classes) within each pool. With Intel® 82599 NIC,
--if the number of pools is 32, then the user priority fields are allocated 2 to a queue.
--If 16 pools are used, then each of the 8 user priority fields is allocated to its own queue within the pool.
--With Intel® X710/XL710 NICs, if number of tcs is 4, and number of queues in pool is 8,
--then the user priority fields are allocated 2 to one tc, and a tc has 2 queues mapping to it, then
--RSS will determine the destination queue in 2.
--For the VLAN IDs, each one can be allocated to possibly multiple pools of queues,
--so the pools parameter in the rte_eth_vmdq_dcb_conf structure is specified as a bitmask value.
--For destination MAC, each VMDQ pool will be assigned with a MAC address. In this sample, each VMDQ pool
--is assigned to the MAC like 52:54:00:12:<port_id>:<pool_id>, that is,
--the MAC of VMDQ pool 2 on port 1 is 52:54:00:12:01:02.
-+Traffic Class and Queue Assignment
-+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-+
-+The ``get_eth_conf()`` function fills in the ``rte_eth_conf`` structure with appropriate
-+values based on the global ``vlan_tags`` array. The function divides user priority values
-+among individual queues (traffic classes) within each pool.
-+
-+For Intel 82599 NICs:
-+
-+- With 32 pools: User priority fields are allocated 2 per queue.
-+- With 16 pools: Each of the 8 user priority fields is allocated to its own queue.
-+
-+For Intel X710/XL710 NICs:
-+
-+- With 4 traffic classes and 8 queues per pool: User priority fields are allocated
-+  2 per traffic class, with 2 queues mapped to each traffic class. RSS determines
-+  the destination queue within each traffic class.
-+
-+For VLAN IDs, each ID can be allocated to multiple pools of queues, so the ``pools``
-+parameter in the ``rte_eth_vmdq_dcb_conf`` structure is specified as a bitmask.
- 
- .. literalinclude:: ../../../examples/vmdq_dcb/main.c
-     :language: c
-     :start-after: Dividing up the possible user priority values. 8<
-     :end-before: >8 End of dividing up the possible user priority values.
- 
-+MAC Address Assignment
-+^^^^^^^^^^^^^^^^^^^^^^
-+
-+Each VMDq pool is assigned a MAC address using the format ``52:54:00:12:<port_id>:<pool_id>``.
-+For example, VMDq pool 2 on port 1 uses the MAC address ``52:54:00:12:01:02``.
-+
- .. literalinclude:: ../../../examples/vmdq_dcb/main.c
-     :language: c
-     :start-after: Set mac for each pool. 8<
-     :end-before: >8 End of set mac for each pool.
-     :dedent: 1
- 
--Once the network port has been initialized using the correct VMDQ and DCB values,
--the initialization of the port's RX and TX hardware rings is performed similarly to that
--in the L2 Forwarding sample application.
-+After the network port is initialized with VMDq and DCB values, the port's RX and TX
-+hardware rings are initialized similarly to the L2 Forwarding sample application.
- See :doc:`l2_forward_real_virtual` for more information.
- 
- Statistics Display
- ~~~~~~~~~~~~~~~~~~
- 
--When run in a linux environment,
--the VMDQ and DCB Forwarding sample application can display statistics showing the number of packets read from each RX queue.
--This is provided by way of a signal handler for the SIGHUP signal,
--which simply prints to standard output the packet counts in grid form.
--Each row of the output is a single pool with the columns being the queue number within that pool.
-+When running in a Linux environment, the application can display statistics showing the
-+number of packets read from each RX queue. The application uses a signal handler for the
-+SIGHUP signal that prints packet counts in grid form, with each row representing a single
-+pool and each column representing a queue number within that pool.
- 
--To generate the statistics output, use the following command:
-+To generate the statistics output:
- 
- .. code-block:: console
- 
--    user@host$ sudo killall -HUP vmdq_dcb_app
-+    sudo killall -HUP dpdk-vmdq_dcb
-+
-+.. note::
- 
--Please note that the statistics output will appear on the terminal where the vmdq_dcb_app is running,
--rather than the terminal from which the HUP signal was sent.
-+    The statistics output appears on the terminal where the application is running,
-+    not on the terminal from which the HUP signal was sent.
-diff --git a/doc/guides/sample_app_ug/vmdq_forwarding.rst b/doc/guides/sample_app_ug/vmdq_forwarding.rst
-index c998a5a223..f100d965cd 100644
---- a/doc/guides/sample_app_ug/vmdq_forwarding.rst
-+++ b/doc/guides/sample_app_ug/vmdq_forwarding.rst
-@@ -2,50 +2,60 @@
-     Copyright(c) 2020 Intel Corporation.
- 
- VMDq Forwarding Sample Application
--==========================================
-+==================================
- 
--The VMDq Forwarding sample application is a simple example of packet processing using the DPDK.
--The application performs L2 forwarding using VMDq to divide the incoming traffic into queues.
--The traffic splitting is performed in hardware by the VMDq feature of the Intel® 82599 and X710/XL710 Ethernet Controllers.
-+The VMDq Forwarding sample application demonstrates packet processing using the DPDK.
-+The application performs L2 forwarding using Intel VMDq (Virtual Machine Device Queues)
-+to divide incoming traffic into queues. The traffic splitting is performed in hardware
-+by the VMDq feature of Intel 82599 and X710/XL710 Ethernet Controllers.
- 
- Overview
- --------
- 
--This sample application can be used as a starting point for developing a new application that is based on the DPDK and
--uses VMDq for traffic partitioning.
-+This sample application can serve as a starting point for developing DPDK applications
-+that use VMDq for traffic partitioning.
- 
--VMDq filters split the incoming packets up into different "pools" - each with its own set of RX queues - based upon
--the MAC address and VLAN ID within the VLAN tag of the packet.
-+About VMDq Technology
+ Debug Logging Support
+----------------------
 +~~~~~~~~~~~~~~~~~~~~~
  
--All traffic is read from a single incoming port and output on another port, without any processing being performed.
--With Intel® 82599 NIC, for example, the traffic is split into 128 queues on input, where each thread of the application reads from
--multiple queues. When run with 8 threads, that is, with the -c FF option, each thread receives and forwards packets from 16 queues.
-+VMDq is a silicon-level technology designed to improve network I/O performance in
-+virtualized environments. In traditional virtualized systems, the Virtual Machine Monitor
-+(VMM) must sort incoming packets and route them to the correct virtual machine, consuming
-+significant CPU cycles. VMDq offloads this packet sorting to the network controller hardware,
-+freeing CPU resources for application workloads.
+ Debug logging is provided as part of the application; the user needs to uncomment
+ the line "#define DEBUG" defined in start of the application in main.c to enable debug logs.
  
--As supplied, the sample application configures the VMDq feature to have 32 pools with 4 queues each.
--The Intel® 82599 10 Gigabit Ethernet Controller NIC also supports the splitting of traffic into 16 pools of 2 queues.
--While the Intel® X710 or XL710 Ethernet Controller NICs support many configurations of VMDq pools of 4 or 8 queues each.
--And queues numbers for each VMDq pool can be changed by setting RTE_LIBRTE_I40E_QUEUE_NUM_PER_VM
--in config/rte_config.h file.
--The nb-pools and enable-rss parameters can be passed on the command line, after the EAL parameters:
-+When packets arrive at a VMDq-enabled network adapter, a Layer 2 classifier in the controller
-+sorts packets based on MAC addresses and VLAN tags, then places each packet in the receive
-+queue assigned to the appropriate destination. This hardware-based pre-sorting reduces the
-+overhead of software-based virtual switches.
+ Statistics
+-----------
++~~~~~~~~~~
  
--.. code-block:: console
-+How VMDq Filtering Works
-+~~~~~~~~~~~~~~~~~~~~~~~~
-+
-+VMDq filters split incoming packets into different pools, each with its own set of RX queues,
-+based on the MAC address and VLAN ID within the VLAN tag of the packet.
+ The main function will print statistics on the console every second. These
+ statistics include the number of packets enqueued and dequeued at each stage
+@@ -135,7 +135,7 @@ in the application, and also key statistics per worker, including how many
+ packets of each burst size (1-8) were sent to each worker thread.
  
--    ./<build_dir>/examples/dpdk-vmdq [EAL options] -- -p PORTMASK --nb-pools NP --enable-rss
-+All traffic is read from a single incoming port and output on another port without modification.
-+For the Intel 82599 NIC, traffic is split into 128 queues on input. Each application thread
-+reads from multiple queues. When running with 8 threads (using the ``-c FF`` option), each
-+thread receives and forwards packets from 16 queues.
+ Application Initialization
+---------------------------
++~~~~~~~~~~~~~~~~~~~~~~~~~~
  
--where, NP can be 8, 16 or 32, rss is disabled by default.
-+Supported Configurations
-+~~~~~~~~~~~~~~~~~~~~~~~~
+ Command line parsing is done in the same way as it is done in the L2 Forwarding Sample
+ Application. See :ref:`l2_fwd_app_cmd_arguments`.
+@@ -143,11 +143,11 @@ Application. See :ref:`l2_fwd_app_cmd_arguments`.
+ Mbuf pool initialization is done in the same way as it is done in the L2 Forwarding
+ Sample Application. See :ref:`l2_fwd_app_mbuf_init`.
  
--In Linux* user space, the application can display statistics with the number of packets received on each queue.
--To have the application display the statistics, send a SIGHUP signal to the running application process.
-+The sample application supports the following configurations:
+-Driver Initialization is done in same way as it is done in the L2 Forwarding Sample
++Driver Initialization is done in the same way as it is done in the L2 Forwarding Sample
+ Application. See :ref:`l2_fwd_app_dvr_init`.
  
--The VMDq Forwarding sample application is in many ways simpler than the L2 Forwarding application
--(see :doc:`l2_forward_real_virtual`)
--as it performs unidirectional L2 forwarding of packets from one port to a second port.
--No command-line options are taken by this application apart from the standard EAL command-line options.
-+- **Intel 82599 10 Gigabit Ethernet Controller**: 32 pools with 4 queues each (default),
-+  or 16 pools with 2 queues each.
-+
-+- **Intel X710/XL710 Ethernet Controllers**: Multiple configurations of VMDq pools
-+  with 4 or 8 queues each. The number of queues per VMDq pool can be changed by setting
-+  ``RTE_LIBRTE_I40E_QUEUE_NUM_PER_VM`` in ``config/rte_config.h``.
+-RX queue initialization is done in the same way as it is done in the L2 Forwarding
++Rx queue initialization is done in the same way as it is done in the L2 Forwarding
+ Sample Application. See :ref:`l2_fwd_app_rx_init`.
  
- Compiling the Application
- -------------------------
- 
--To compile the sample application see :doc:`compiling`.
-+To compile the sample application, see :doc:`compiling`.
- 
- The application is located in the ``vmdq`` sub-directory.
- 
-@@ -56,40 +66,60 @@ To run the example in a Linux environment:
- 
- .. code-block:: console
- 
--    user@target:~$ ./<build_dir>/examples/dpdk-vmdq -l 0-3 -- -p 0x3 --nb-pools 16
-+    ./<build_dir>/examples/dpdk-vmdq -l 0-3 -- -p 0x3 --nb-pools 16
-+
-+Command-Line Options
-+~~~~~~~~~~~~~~~~~~~~
-+
-+The following application-specific options are available after the EAL parameters:
-+
-+``-p PORTMASK``
-+    Hexadecimal bitmask of ports to configure.
-+
-+``--nb-pools NP``
-+    Number of VMDq pools. Valid values are 8, 16, or 32.
-+
-+``--enable-rss``
-+    Enable Receive Side Scaling. RSS is disabled by default.
- 
--Refer to the *DPDK Getting Started Guide* for general information on running applications and
--the Environment Abstraction Layer (EAL) options.
-+Example:
-+
-+.. code-block:: console
-+
-+    ./<build_dir>/examples/dpdk-vmdq [EAL options] -- -p 0x3 --nb-pools 32 --enable-rss
-+
-+Refer to the *DPDK Getting Started Guide* for general information on running applications
-+and the Environment Abstraction Layer (EAL) options.
- 
- Explanation
- -----------
- 
--The following sections provide some explanation of the code.
-+The following sections explain the code structure.
- 
- Initialization
- ~~~~~~~~~~~~~~
- 
--The EAL, driver and PCI configuration is performed largely as in the L2 Forwarding sample application,
--as is the creation of the mbuf pool.
--See :doc:`l2_forward_real_virtual`.
--Where this example application differs is in the configuration of the NIC port for RX.
-+The EAL, driver, and PCI configuration is performed similarly to the L2 Forwarding sample
-+application, as is the creation of the mbuf pool. See :doc:`l2_forward_real_virtual` for details.
- 
--The VMDq hardware feature is configured at port initialization time by setting the appropriate values in the
--rte_eth_conf structure passed to the rte_eth_dev_configure() API.
--Initially in the application,
--a default structure is provided for VMDq configuration to be filled in later by the application.
-+This example application differs in the configuration of the NIC port for RX. The VMDq
-+hardware feature is configured at port initialization time by setting appropriate values
-+in the ``rte_eth_conf`` structure passed to the ``rte_eth_dev_configure()`` API.
-+
-+Initially, the application provides a default structure for VMDq configuration:
- 
- .. literalinclude:: ../../../examples/vmdq/main.c
-     :language: c
-     :start-after: Default structure for VMDq. 8<
-     :end-before: >8 End of Empty vdmq configuration structure.
- 
--The get_eth_conf() function fills in an rte_eth_conf structure with the appropriate values,
--based on the global vlan_tags array.
--For the VLAN IDs, each one can be allocated to possibly multiple pools of queues.
--For destination MAC, each VMDq pool will be assigned with a MAC address. In this sample, each VMDq pool
--is assigned to the MAC like 52:54:00:12:<port_id>:<pool_id>, that is,
--the MAC of VMDq pool 2 on port 1 is 52:54:00:12:01:02.
-+The ``get_eth_conf()`` function fills in the ``rte_eth_conf`` structure with appropriate
-+values based on the global ``vlan_tags`` array. Each VLAN ID can be allocated to multiple
-+pools of queues.
-+
-+For destination MAC addresses, each VMDq pool is assigned a MAC address using the format
-+``52:54:00:12:<port_id>:<pool_id>``. For example, VMDq pool 2 on port 1 uses the MAC address
-+``52:54:00:12:01:02``.
- 
- .. literalinclude:: ../../../examples/vmdq/main.c
-     :language: c
-@@ -106,25 +136,25 @@ the MAC of VMDq pool 2 on port 1 is 52:54:00:12:01:02.
-     :start-after: Building correct configuration for vdmq. 8<
-     :end-before: >8 End of get_eth_conf.
- 
--Once the network port has been initialized using the correct VMDq values,
--the initialization of the port's RX and TX hardware rings is performed similarly to that
--in the L2 Forwarding sample application.
-+After the network port is initialized with VMDq values, the port's RX and TX hardware rings
-+are initialized similarly to the L2 Forwarding sample application.
- See :doc:`l2_forward_real_virtual` for more information.
- 
- Statistics Display
- ~~~~~~~~~~~~~~~~~~
- 
--When run in a Linux environment,
--the VMDq Forwarding sample application can display statistics showing the number of packets read from each RX queue.
--This is provided by way of a signal handler for the SIGHUP signal,
--which simply prints to standard output the packet counts in grid form.
--Each row of the output is a single pool with the columns being the queue number within that pool.
-+When running in a Linux environment, the application can display statistics showing the
-+number of packets read from each RX queue. The application uses a signal handler for the
-+SIGHUP signal that prints packet counts in grid form, with each row representing a single
-+pool and each column representing a queue number within that pool.
- 
--To generate the statistics output, use the following command:
-+To generate the statistics output:
- 
- .. code-block:: console
- 
--    user@host$ sudo killall -HUP vmdq_app
-+    sudo killall -HUP dpdk-vmdq
-+
-+.. note::
- 
--Please note that the statistics output will appear on the terminal where the vmdq_app is running,
--rather than the terminal from which the HUP signal was sent.
-+    The statistics output appears on the terminal where the application is running,
-+    not on the terminal from which the HUP signal was sent.
+-TX queue initialization is done in the same way as it is done in the L2 Forwarding
++Tx queue initialization is done in the same way as it is done in the L2 Forwarding
+ Sample Application. See :ref:`l2_fwd_app_tx_init`.
 -- 
 2.51.0
 
