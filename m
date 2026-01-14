@@ -2,67 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0259DD3CC82
-	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Jan 2026 22:29:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71BB4D3CC87
+	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Jan 2026 22:29:34 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2914D427AE;
-	Wed, 14 Jan 2026 23:28:48 +0100 (CET)
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com
- [209.85.128.51]) by mails.dpdk.org (Postfix) with ESMTP id 297244114B
- for <dev@dpdk.org>; Wed, 14 Jan 2026 23:28:47 +0100 (CET)
-Received: by mail-wm1-f51.google.com with SMTP id
- 5b1f17b1804b1-47ee974e230so2755525e9.2
- for <dev@dpdk.org>; Wed, 14 Jan 2026 14:28:47 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 3DA30427B6;
+	Wed, 14 Jan 2026 23:28:50 +0100 (CET)
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com
+ [209.85.128.45]) by mails.dpdk.org (Postfix) with ESMTP id 3014D427B6
+ for <dev@dpdk.org>; Wed, 14 Jan 2026 23:28:49 +0100 (CET)
+Received: by mail-wm1-f45.google.com with SMTP id
+ 5b1f17b1804b1-47ee4338e01so1166735e9.2
+ for <dev@dpdk.org>; Wed, 14 Jan 2026 14:28:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768429727;
- x=1769034527; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768429729;
+ x=1769034529; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=MakR9InelqrDorD+JLLKYj+AXUTchOxsEvX7xO+pBf8=;
- b=dCez+ZA2hHiN/Dd7uD5EW4+AEZxDZFmWQrExG2UGxwtSljVFt4wKpptJuBNqfyUQnK
- mDhYBWq5PzClsl55tNaFI6tVerahBPMaeD4tzsnGbEOtiCcuiifDkxj14H5aQipfZXc6
- jeZtp/piOdUfQ7KxuepEgUveG+84uS7irFyMBy4eVRWkIlWE7svCJ6TlX9sof+VMhoG7
- tR0LFxiBp4SxC1dhx7cq8GE2MlXaYtwIceb3cxM9/3T6htjQPi/u3gxYC1QOLMwC+qBm
- WlI+yuvvVD33/GnHrznH7VwkdrUe8njmS8IjCUPA8fCoF31G+uHMtqJpE8OVU6rF+1pX
- 3iFQ==
+ bh=BTYFvUTOth5TNtgjYFlcmpqGxERKbHqZbnG6TFDaj5s=;
+ b=BuBGLWe9q9OYBtIsPAUJhTwAAI/++RBCym+7V/gCMMgmw1m+VvzbAyN4iCWB4svcVg
+ 9wGy9n9bYm5zoVqGdcNESw7QXn9/v3Gh8d6Xdl/6MXH/GOEulppReyRcRt3C9Mu4ceyl
+ sa3qpXclmvDXTz5B1gc3k3TmHozsAlYyHEYQTvvGy1bOac2r/iZoKF5POWo01av5TI4/
+ VXRpd4zi0fB7lZgyLa7+4qho+84KeMy7JoDRo0L1YeMSxgW1CkzXY1n9xNH2ADdWDTKz
+ xzDIahgO0z0WS3f1cn28dCMuXMtwUqZ/CajAFo5WfaKVO4M+vrG8necuy8tX80i+swYY
+ AR8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768429727; x=1769034527;
+ d=1e100.net; s=20230601; t=1768429729; x=1769034529;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=MakR9InelqrDorD+JLLKYj+AXUTchOxsEvX7xO+pBf8=;
- b=AeLoTGmhPEUpff2FQbChTAoYxAcTurBCEFc0zU/I7PfsQvWzkqIKKlKykS5tx2Xto/
- B49v4OAVKChJtl6BZTIc1Iur0/vjpQjfUZ0hZ3MXPZSlp3Zc+ZHqLZ+hckqBOQgksja1
- De7/8M+6GQ1OpTiK7Ch5nFIfuzZNZBz+psrkq/MQuCM8CXJ4XKsmyikjTeFHNP9WBhas
- h6DHxNPAHP/JxBHhN/rjCaRK/C5np9NYrKOdmDCCbD9M0wuaAwQerdh3D4sWAh8Bzhdk
- uqsVYJvBHccDmqOe6Dd+Mj07ZQ2dnNv0AjFOftQgZ0fu5lGCMXcvEAXQKeKNOldiY3fl
- IHMg==
-X-Gm-Message-State: AOJu0YxlFgu3uaHHe/xBMg7G/b8zUpytX0F7CPHVqMhqWZGorgOj3IPS
- FRBZdLz4ys9gnQHVzg/qDXG4/XMyKvoqjRSgvpyTeRlpcorPNgQidXdrfuSET1RUPJ3POC4KQH3
- V3zsV
-X-Gm-Gg: AY/fxX5mhwitSPWvlYMHYnI2Ff0zlC3KsF7PiIEcwPl6hMVAwGSRvHTS78+hO7XkirJ
- UY69KwSXZdbIiaHtM1tXgRt3VQGdSUwslWi4qwVeLiePmo9De/rfNWJwzzNJLVoNozJlAKaVh4m
- 53RypgNDhldDU7fAiaA9hHn1ym5bv7VCueIeGoxlyILyzeFaNhgT58yt9hR4SsCWCnMIn9urjxQ
- OrK5/2ijWkGQ5lsYqydaKPaiprULfMM11McV3Q7j1yly+jAN38nMVm2860J3HONy/WMcsf6Q8JV
- fSykJGfM5oj7BfbF41Zq1ckAgF33IB7sqDwzSoiXWq51s8MimMmDX1ujakDSFZO0UoCOBgzkou8
- +O8la3GG5LIwNIVphMTaZyVWggLLkxKio6OFoXXwMU860TaRyWv4P21Ls9KcIXfIgAMqs1BsKZK
- 97qAoKdBBgyHTWU0OTp/GKQBCy6sGZgw1LDzVJK2Bdu4gXcJ57mQ==
-X-Received: by 2002:a05:6000:25c8:b0:431:6ba:38bd with SMTP id
- ffacd0b85a97d-4342c3ef27fmr4998872f8f.10.1768429726790; 
- Wed, 14 Jan 2026 14:28:46 -0800 (PST)
+ bh=BTYFvUTOth5TNtgjYFlcmpqGxERKbHqZbnG6TFDaj5s=;
+ b=nyhAs+TrSjP7kPi11EcC0DgBYTbVMCbETYOHNZX1DaOPjBPD3FV9y3401qoLlDw2FH
+ Z8+W80Xd+9deOUaPmQWLrcHaX5zBCJEveX78BHmPLChIJTbi3+jLpdO7BmGyNRAZeJln
+ XqiibWzJrpdENFBanVrQ8hFQbMzA6yjRKuwmFBCtxTK79yz7MCGVLkmDdpAFf8VijuYv
+ RUgfiM+a3zTgp236IHnLOc999sEI28psrb8NzM/hmC8sTZ5aHWFVr7QRbscfZxCWMI8p
+ eklRRG2k/n4fTAD4/E513wA0aYFY4QHal038wCmNFJiNKf9ShVH/dAeyH9T4gOwefQqe
+ V6xA==
+X-Gm-Message-State: AOJu0YzWBdln4Kwq1H3lHkVz4MMprLqgngumpcdERnsXzl9dFvkjVTEg
+ nPYjXeDBs9Xi9EiElcKUdw2hy0mCNbZLgH2J303zBXnFVqFkAcIIMK5YwymHTi+wVWIriq7hQwy
+ rDT+f
+X-Gm-Gg: AY/fxX6a7/enQqahjJ2iLmZ1yHqnl+vYFKmMiF5TYAS9UYuVyyOokSP0mjiFT9xss1j
+ 1ioZPvHR7YTq5BlLJmM25bRCo0fMgUgG5yqDHvaq4wMzjpUdkQm1xKege6Jueop6iMPWT9F8J3Y
+ GSaEGAQYcKvWX9TE4bkvKjH/rXYSaMnuZcYn07INNgHt3M4FBUtE4UWz3TqalY65z4bp4a8bhwA
+ NWJGlzRVDz3UwgFNRLSF/DCEXsuvAFBTOYTItU8W5wJkd02SpWm5INZtuLxkJV1+XGG61Vh99/n
+ lezPDbSNMMDFHxy0CMKSDAppB3PFRmiZUSe1ggK7rm+YryN1+2m4WARw4G8xAm1tMFXGn2EQRXg
+ oFxiRWruP9owyAnBKS8vozIFAnThk8JAKeT1JnwtE5JmdIXqjEYAVL77NIDEoKJEhCWvq2n/E2t
+ 6WPMq8vxZoMc4YMtQpM3MK4amzGM1Rwi3f4PX5Tbzgxgu56IdKLA==
+X-Received: by 2002:a05:600c:3555:b0:47a:8088:439c with SMTP id
+ 5b1f17b1804b1-47ee33957bfmr54846775e9.35.1768429728689; 
+ Wed, 14 Jan 2026 14:28:48 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-434af653632sm1757198f8f.11.2026.01.14.14.28.45
+ ffacd0b85a97d-434af653632sm1757198f8f.11.2026.01.14.14.28.47
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 14 Jan 2026 14:28:46 -0800 (PST)
+ Wed, 14 Jan 2026 14:28:48 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Nandini Persad <nandinipersad361@gmail.com>
-Subject: [PATCH v4 10/11] doc: correct errors in stack library guide
-Date: Wed, 14 Jan 2026 14:27:02 -0800
-Message-ID: <20260114222821.87920-11-stephen@networkplumber.org>
+ Nandini Persad <nandinipersad361@gmail.com>,
+ Honnappa Nagarahalli <honnappa.nagarahalli@arm.com>
+Subject: [PATCH v4 11/11] doc: correct errors in RCU library guide
+Date: Wed, 14 Jan 2026 14:27:03 -0800
+Message-ID: <20260114222821.87920-12-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260114222821.87920-1-stephen@networkplumber.org>
 References: <20240513155911.31872-1-nandinipersad361@gmail.com>
@@ -82,113 +83,284 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Fix several errors in the stack library documentation:
+Fix several errors in the RCU library documentation:
 
-- Fix grammar: "These function are" -> "These functions are"
-- Fix grammar: "incorrect change" -> "incorrectly change"
-- Fix RST section hierarchy: "Implementation" was marked as a
-  subsection (~~~~) but contained sections (----); corrected so
-  Implementation is a section and Lock-based/Lock-free stack are
-  subsections beneath it
-- Fix inconsistent header capitalization: "Lock-based Stack" and
-  "Lock-free Stack" -> lowercase "stack" to match other DPDK docs
-- Fix awkward wording: "this algorithm stack uses" -> "this algorithm
-  uses"
-- Fix inconsistent underline lengths in RST headers
-- Add code formatting to function name: rte_stack_create() with
-  backticks and parentheses
-- Fix hyphenation: "multi-threading safe" -> "multi-thread safe"
-  (matches line 37 usage)
+- Fix wrong word: "exasperate" -> "exacerbate" (exasperate means to
+  annoy; exacerbate means to make worse)
+- Fix typo: "such at rte_hash" -> "such as rte_hash"
+- Fix grammar: "critical sections for D2 is" -> "critical section for
+  D2 is"
+- Fix subject-verb agreement: "length... and number... is proportional"
+  -> "are proportional"
+- Fix inconsistent abbreviation: "RT1" -> "reader thread 1" (RT1 was
+  never defined)
+- Fix missing articles: add "the" before "grace period", "API"
+- Fix double space before "The reader thread must"
+- Add missing function parentheses throughout for consistency
+- Add missing code formatting (backticks) around function names:
+  rte_rcu_qsbr_dq_enqueue, rte_rcu_qsbr_dq_reclaim,
+  rte_rcu_qsbr_dq_delete, rte_hash, rte_lpm
+- Fix unexplained asterisk after "Reclaiming Resources*"
+- Fix inconsistent capitalization in numbered list items
+- Rewrap overly long lines for readability
+- Clarify awkward sentence about memory examples
 
 Signed-off-by: Nandini Persad <nandinipersad361@gmail.com>
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- doc/guides/prog_guide/stack_lib.rst | 32 ++++++++++++++---------------
- 1 file changed, 16 insertions(+), 16 deletions(-)
+ doc/guides/prog_guide/rcu_lib.rst | 143 ++++++++++++++++++------------
+ 1 file changed, 86 insertions(+), 57 deletions(-)
 
-diff --git a/doc/guides/prog_guide/stack_lib.rst b/doc/guides/prog_guide/stack_lib.rst
-index 975d3ad796..1ca9d73bc0 100644
---- a/doc/guides/prog_guide/stack_lib.rst
-+++ b/doc/guides/prog_guide/stack_lib.rst
-@@ -13,8 +13,8 @@ The stack library provides the following basic operations:
-    user-specified socket, with either standard (lock-based) or lock-free
-    behavior.
+diff --git a/doc/guides/prog_guide/rcu_lib.rst b/doc/guides/prog_guide/rcu_lib.rst
+index 9f3654f398..ac573eecbc 100644
+--- a/doc/guides/prog_guide/rcu_lib.rst
++++ b/doc/guides/prog_guide/rcu_lib.rst
+@@ -6,17 +6,17 @@ Read-Copy-Update (RCU) Library
  
--*  Push and pop a burst of one or more stack objects (pointers). These function
--   are multi-threading safe.
-+*  Push and pop a burst of one or more stack objects (pointers). These functions
-+   are multi-thread safe.
+ Lockless data structures provide scalability and determinism.
+ They enable use cases where locking may not be allowed
+-(for example real-time applications).
++(for example, real-time applications).
  
- *  Free a previously created stack.
+ In the following sections, the term "memory" refers to memory allocated
+ by typical APIs like malloc() or anything that is representative of
+-memory, for example an index of a free element array.
++memory, such as an index into a free element array.
  
-@@ -23,15 +23,15 @@ The stack library provides the following basic operations:
- *  Query a stack's current depth and number of free entries.
+ Since these data structures are lockless, the writers and readers
+ are accessing the data structures concurrently. Hence, while removing
+ an element from a data structure, the writers cannot return the memory
+-to the allocator, without knowing that the readers are not
+-referencing that element/memory anymore. Hence, it is required to
++to the allocator without knowing that the readers are not
++referencing that element/memory anymore. Therefore, it is required to
+ separate the operation of removing an element into two steps:
  
- Implementation
--~~~~~~~~~~~~~~
-+--------------
+ #. Delete: in this step, the writer removes the reference to the element from
+@@ -51,7 +51,7 @@ As shown in :numref:`figure_quiescent_state`, reader thread 1 accesses data
+ structures D1 and D2. When it is accessing D1, if the writer has to remove an
+ element from D1, the writer cannot free the memory associated with that
+ element immediately. The writer can return the memory to the allocator only
+-after the reader stops referencing D1. In other words, reader thread RT1 has
++after the reader stops referencing D1. In other words, reader thread 1 has
+ to enter a quiescent state.
  
- The library supports two types of stacks: standard (lock-based) and lock-free.
- Both types use the same set of interfaces, but their implementations differ.
+ Similarly, since reader thread 2 is also accessing D1, the writer has to
+@@ -62,28 +62,28 @@ quiescent state. Reader thread 3 was not accessing D1 when the delete
+ operation happened. So, reader thread 3 will not have a reference to the
+ deleted entry.
  
- .. _Stack_Library_Std_Stack:
+-It can be noted that, the critical sections for D2 is a quiescent state
+-for D1. i.e. for a given data structure Dx, any point in the thread execution
+-that does not reference Dx is a quiescent state.
++Note that the critical section for D2 is a quiescent state
++for D1 (i.e. for a given data structure Dx, any point in the thread execution
++that does not reference Dx is a quiescent state).
  
--Lock-based Stack
------------------
-+Lock-based stack
-+~~~~~~~~~~~~~~~~
+ Since memory is not freed immediately, there might be a need for
+-provisioning of additional memory, depending on the application requirements.
++provisioning additional memory depending on the application requirements.
  
- The lock-based stack consists of a contiguous array of pointers, a current
- index, and a spinlock. Accesses to the stack are made multi-thread safe by the
-@@ -39,13 +39,13 @@ spinlock.
+ Factors affecting the RCU mechanism
+ -----------------------------------
  
- .. _Stack_Library_LF_Stack:
+ It is important to make sure that this library keeps the overhead of
+-identifying the end of grace period and subsequent freeing of memory,
+-to a minimum. The following paras explain how grace period and critical
++identifying the end of the grace period and subsequent freeing of memory
++to a minimum. The following paragraphs explain how grace period and critical
+ section affect this overhead.
  
--Lock-free Stack
--------------------
-+Lock-free stack
-+~~~~~~~~~~~~~~~
+-The writer has to poll the readers to identify the end of grace period.
++The writer has to poll the readers to identify the end of the grace period.
+ Polling introduces memory accesses and wastes CPU cycles. The memory
+ is not available for reuse during the grace period. Longer grace periods
+-exasperate these conditions.
++exacerbate these conditions.
  
- The lock-free stack consists of a linked list of elements, each containing a
- data pointer and a next pointer, and an atomic stack depth counter. The
--lock-free property means that multiple threads can push and pop simultaneously,
--and one thread being preempted/delayed in a push or pop operation will not
-+lock-free property means that multiple threads can push and pop simultaneously.
-+One thread being preempted/delayed in a push or pop operation will not
- impede the forward progress of any other thread.
+ The length of the critical section and the number of reader threads
+-is proportional to the duration of the grace period. Keeping the critical
++are proportional to the duration of the grace period. Keeping the critical
+ sections smaller will keep the grace period smaller. However, keeping the
+ critical sections smaller requires additional CPU cycles (due to additional
+ reporting) in the readers.
+@@ -117,14 +117,14 @@ How to use this library
+ The application must allocate memory and initialize a QS variable.
  
- The lock-free push operation enqueues a linked list of pointers by pointing the
-@@ -65,15 +65,15 @@ allocated before stack pushes and freed after stack pops. Since the stack has a
- fixed maximum depth, these elements do not need to be dynamically created.
+ Applications can call ``rte_rcu_qsbr_get_memsize()`` to calculate the size
+-of memory to allocate. This API takes a maximum number of reader threads,
+-using this variable, as a parameter.
++of memory to allocate. This API takes a maximum number of reader threads
++using this variable as a parameter.
  
- The lock-free behavior is selected by passing the *RTE_STACK_F_LF* flag to
--rte_stack_create().
-+``rte_stack_create()``.
+ Further, the application can initialize a QS variable using the API
+ ``rte_rcu_qsbr_init()``.
  
--Preventing the ABA Problem
-+Preventing the ABA problem
- ^^^^^^^^^^^^^^^^^^^^^^^^^^
+ Each reader thread is assumed to have a unique thread ID. Currently, the
+-management of the thread ID (for example allocation/free) is left to the
++management of the thread ID (for example, allocation/free) is left to the
+ application. The thread ID should be in the range of 0 to
+ maximum number of threads provided while creating the QS variable.
+ The application could also use ``lcore_id`` as the thread ID where applicable.
+@@ -132,14 +132,14 @@ The application could also use ``lcore_id`` as the thread ID where applicable.
+ The ``rte_rcu_qsbr_thread_register()`` API will register a reader thread
+ to report its quiescent state. This can be called from a reader thread.
+ A control plane thread can also call this on behalf of a reader thread.
+-The reader thread must call ``rte_rcu_qsbr_thread_online()`` API to start
++The reader thread must call the ``rte_rcu_qsbr_thread_online()`` API to start
+ reporting its quiescent state.
  
--To prevent the ABA problem, this algorithm stack uses a 128-bit
--compare-and-swap instruction to atomically update both the stack top pointer
--and a modification counter. The ABA problem can occur without a modification
--counter if, for example:
-+To prevent the ABA problem, this algorithm uses a 128-bit compare-and-swap
-+instruction to atomically update both the stack top pointer and a modification
-+counter. The ABA problem can occur without a modification counter if, for
-+example:
+ Some of the use cases might require the reader threads to make blocking API
+-calls (for example while using eventdev APIs). The writer thread should not
+-wait for such reader threads to enter quiescent state.  The reader thread must
+-call ``rte_rcu_qsbr_thread_offline()`` API, before calling blocking APIs. It
+-can call ``rte_rcu_qsbr_thread_online()`` API once the blocking API call
++calls (for example, while using eventdev APIs). The writer thread should not
++wait for such reader threads to enter quiescent state. The reader thread must
++call the ``rte_rcu_qsbr_thread_offline()`` API before calling blocking APIs. It
++can call the ``rte_rcu_qsbr_thread_online()`` API once the blocking API call
+ returns.
  
- #. Thread A reads head pointer X and stores the pointed-to list element.
+ The writer thread can trigger the reader threads to report their quiescent
+@@ -147,13 +147,13 @@ state by calling the API ``rte_rcu_qsbr_start()``. It is possible for multiple
+ writer threads to query the quiescent state status simultaneously. Hence,
+ ``rte_rcu_qsbr_start()`` returns a token to each caller.
  
-@@ -83,7 +83,7 @@ counter if, for example:
- #. Thread A changes the head pointer with a compare-and-swap and succeeds.
+-The writer thread must call ``rte_rcu_qsbr_check()`` API with the token to
+-get the current quiescent state status. Option to block till all the reader
++The writer thread must call the ``rte_rcu_qsbr_check()`` API with the token to
++get the current quiescent state status. The option to block till all the reader
+ threads enter the quiescent state is provided. If this API indicates that
+ all the reader threads have entered the quiescent state, the application
+ can free the deleted entry.
  
- In this case thread A would not detect that the list had changed, and would
--both pop stale data and incorrect change the head pointer. By adding a
-+both pop stale data and incorrectly change the head pointer. By adding a
- modification counter that is updated on every push and pop as part of the
- compare-and-swap, the algorithm can detect when the list changes even if the
- head pointer remains the same.
+-The APIs ``rte_rcu_qsbr_start()`` and ``rte_rcu_qsbr_check()`` are lock free.
++The APIs ``rte_rcu_qsbr_start()`` and ``rte_rcu_qsbr_check()`` are lock-free.
+ Hence, they can be called concurrently from multiple writers even while
+ running as worker threads.
+ 
+@@ -171,7 +171,7 @@ polls till all the readers enter the quiescent state or go offline. This API
+ does not allow the writer to do useful work while waiting and introduces
+ additional memory accesses due to continuous polling. However, the application
+ does not have to store the token or the reference to the deleted resource. The
+-resource can be freed immediately after ``rte_rcu_qsbr_synchronize()`` API
++resource can be freed immediately after the ``rte_rcu_qsbr_synchronize()`` API
+ returns.
+ 
+ The reader thread must call ``rte_rcu_qsbr_thread_offline()`` and
+@@ -179,9 +179,9 @@ The reader thread must call ``rte_rcu_qsbr_thread_offline()`` and
+ quiescent state. The ``rte_rcu_qsbr_check()`` API will not wait for this reader
+ thread to report the quiescent state status anymore.
+ 
+-The reader threads should call ``rte_rcu_qsbr_quiescent()`` API to indicate that
++The reader threads should call the ``rte_rcu_qsbr_quiescent()`` API to indicate that
+ they entered a quiescent state. This API checks if a writer has triggered a
+-quiescent state query and update the state accordingly.
++quiescent state query and updates the state accordingly.
+ 
+ The ``rte_rcu_qsbr_lock()`` and ``rte_rcu_qsbr_unlock()`` are empty functions.
+ However, these APIs can aid in debugging issues. One can mark the access to
+@@ -199,42 +199,71 @@ the application. When a writer deletes an entry from a data structure, the write
+ #. Should check if the readers have completed a grace period and free the resources.
+ 
+ There are several APIs provided to help with this process. The writer
+-can create a FIFO to store the references to deleted resources using ``rte_rcu_qsbr_dq_create()``.
++can create a FIFO to store the references to deleted resources using
++``rte_rcu_qsbr_dq_create()``.
+ The resources can be enqueued to this FIFO using ``rte_rcu_qsbr_dq_enqueue()``.
+-If the FIFO is full, ``rte_rcu_qsbr_dq_enqueue`` will reclaim the resources before enqueuing. It will also reclaim resources on regular basis to keep the FIFO from growing too large. If the writer runs out of resources, the writer can call ``rte_rcu_qsbr_dq_reclaim`` API to reclaim resources. ``rte_rcu_qsbr_dq_delete`` is provided to reclaim any remaining resources and free the FIFO while shutting down.
++If the FIFO is full, ``rte_rcu_qsbr_dq_enqueue()`` will reclaim the resources
++before enqueuing.
++It will also reclaim resources on a regular basis to keep the FIFO from growing
++too large. If the writer runs out of resources, the writer can call
++``rte_rcu_qsbr_dq_reclaim()`` API to reclaim resources.
++``rte_rcu_qsbr_dq_delete()`` is provided to reclaim any remaining resources and
++free the FIFO while shutting down.
+ 
+-However, if this resource reclamation process were to be integrated in lock-free data structure libraries, it
+-hides this complexity from the application and makes it easier for the application to adopt lock-free algorithms. The following paragraphs discuss how the reclamation process can be integrated in DPDK libraries.
++However, if this resource reclamation process were to be integrated in lock-free
++data structure libraries, it hides this complexity from the application and
++makes it easier for the application to adopt lock-free algorithms.
+ 
+-In any DPDK application, the resource reclamation process using QSBR can be split into 4 parts:
++The following paragraphs discuss how the reclamation process can be integrated
++in DPDK libraries.
++
++In any DPDK application, the resource reclamation process using QSBR can be
++split into 4 parts:
+ 
+ #. Initialization
+-#. Quiescent State Reporting
+-#. Reclaiming Resources
++#. Quiescent state reporting
++#. Reclaiming resources
+ #. Shutdown
+ 
+-The design proposed here assigns different parts of this process to client libraries and applications. The term 'client library' refers to lock-free data structure libraries such at rte_hash, rte_lpm etc. in DPDK or similar libraries outside of DPDK. The term 'application' refers to the packet processing application that makes use of DPDK such as L3 Forwarding example application, OVS, VPP etc..
+-
+-The application has to handle 'Initialization' and 'Quiescent State Reporting'. So,
+-
+-* the application has to create the RCU variable and register the reader threads to report their quiescent state.
+-* the application has to register the same RCU variable with the client library.
+-* reader threads in the application have to report the quiescent state. This allows for the application to control the length of the critical section/how frequently the application wants to report the quiescent state.
+-
+-The client library will handle 'Reclaiming Resources' part of the process. The
+-client libraries will make use of the writer thread context to execute the memory
+-reclamation algorithm. So,
+-
+-* client library should provide an API to register a RCU variable that it will use. It should call ``rte_rcu_qsbr_dq_create()`` to create the FIFO to store the references to deleted entries.
+-* client library should use ``rte_rcu_qsbr_dq_enqueue`` to enqueue the deleted resources on the FIFO and start the grace period.
+-* if the library runs out of resources while adding entries, it should call ``rte_rcu_qsbr_dq_reclaim`` to reclaim the resources and try the resource allocation again.
+-
+-The 'Shutdown' process needs to be shared between the application and the
+-client library.
+-
+-* the application should make sure that the reader threads are not using the shared data structure, unregister the reader threads from the QSBR variable before calling the client library's shutdown function.
+-
+-* client library should call ``rte_rcu_qsbr_dq_delete`` to reclaim any remaining resources and free the FIFO.
++The design proposed here assigns different parts of this process to client
++libraries and applications. The term "client library" refers to lock-free data
++structure libraries such as ``rte_hash``, ``rte_lpm`` etc. in DPDK or similar
++libraries outside of DPDK. The term "application" refers to the packet
++processing application that makes use of DPDK such as L3 Forwarding example
++application, OVS, VPP etc.
++
++The application must handle "Initialization" and "Quiescent State Reporting".
++Therefore, the application:
++
++* Must create the RCU variable and register the reader threads to report their
++  quiescent state.
++* Must register the same RCU variable with the client library.
++* Note that reader threads in the application have to report the quiescent
++  state. This allows for the application to control the length of the critical
++  section/how frequently the application wants to report the quiescent state.
++
++The client library will handle the "Reclaiming Resources" part of the process.
++The client libraries will make use of the writer thread context to execute the
++memory reclamation algorithm. So, the client library should:
++
++* Provide an API to register an RCU variable that it will use. It should call
++  ``rte_rcu_qsbr_dq_create()`` to create the FIFO to store the references to
++  deleted entries.
++* Use ``rte_rcu_qsbr_dq_enqueue()`` to enqueue the deleted resources on the FIFO
++  and start the grace period.
++* Note that if the library runs out of resources while adding entries, it should
++  call ``rte_rcu_qsbr_dq_reclaim()`` to reclaim the resources and try the
++  resource allocation again.
++
++The "Shutdown" process needs to be shared between the application and the
++client library. Note that:
++
++* The application should make sure that the reader threads are not using the
++  shared data structure, unregister the reader threads from the QSBR variable
++  before calling the client library's shutdown function.
++
++* The client library should call ``rte_rcu_qsbr_dq_delete()`` to reclaim any
++  remaining resources and free the FIFO.
+ 
+ Integrating the resource reclamation with client libraries removes the burden from
+ the application and makes it easy to use lock-free algorithms.
 -- 
 2.51.0
 
