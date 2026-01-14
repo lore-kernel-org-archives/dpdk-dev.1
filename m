@@ -2,71 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0971D38FF2
-	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Jan 2026 17:14:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F796D38FF3
+	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Jan 2026 17:23:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 45EA640A72;
-	Wed, 14 Jan 2026 18:14:06 +0100 (CET)
-Received: from mail-ej1-f65.google.com (mail-ej1-f65.google.com
- [209.85.218.65]) by mails.dpdk.org (Postfix) with ESMTP id E9DC640A70
- for <dev@dpdk.org>; Wed, 14 Jan 2026 18:14:04 +0100 (CET)
-Received: by mail-ej1-f65.google.com with SMTP id
- a640c23a62f3a-b86f69bbe60so11680066b.1
- for <dev@dpdk.org>; Wed, 14 Jan 2026 09:14:04 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id ED70F406FF;
+	Wed, 14 Jan 2026 18:23:13 +0100 (CET)
+Received: from mail-wm1-f66.google.com (mail-wm1-f66.google.com
+ [209.85.128.66]) by mails.dpdk.org (Postfix) with ESMTP id CAE504027D
+ for <dev@dpdk.org>; Wed, 14 Jan 2026 18:23:12 +0100 (CET)
+Received: by mail-wm1-f66.google.com with SMTP id
+ 5b1f17b1804b1-47ee0291921so565605e9.3
+ for <dev@dpdk.org>; Wed, 14 Jan 2026 09:23:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768410844;
- x=1769015644; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768411392;
+ x=1769016192; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=tpislOFBGg3o0LWmxGUaJxTAfWiOmTCXKo5SuVFeSLE=;
- b=DtN4ecBzhWl6wTV4vnN9KBfFQ1ONobUeU2/IY9ZBxmTJexPBhGgw8UQgs7sxUJrIWs
- WDVBixdlZNjJXi4nq7BKaPWMLNRyJeYcZ4oS4F/mVRPybQFJ9hNIX7X2DkkeiC7PSQb9
- lrxtCUhVV163oXMCwCfXrXakhIWo5A51VC5skRD1cqS6HsFyawRtOsH1nu66oXmmhSh+
- /uPFHaywXVaclFpmo4+gbZ3irFV+wFj4Xhw+hYSurpsAGdS1eBYk64NgaCFd5PmnIUN+
- bI4JKPUOrP6ATE5wmin/oSfwTGDDhwRo4+EoyD3J4SwhrtFYhOrGl1C+a/xhFUus71ZD
- MZtw==
+ bh=/voDz3F6XA/aWKryxp7Xxm6BAFmcpYjgoZAfWSwvSk0=;
+ b=j7m3h30CWsy+dElHuNDhAAd2we5hdL5bjW253k2LSP2uQCeCDeYKV7td7e9W+vMwcH
+ udJ0Xsk6zqr/3CXgx6iqmNQnwa+HBsgsPi8NebnyYmXgQBuCfKAaqQSUagVoxiAkj3Fp
+ 4EDvGC/NJ2Imw6uXWqnAA/SUdEJpaGbI2hsao0g0kuCabrfku4HpZecJ7PuUQAXWR7nR
+ 7sX+hYeeirRh40CHDogr7Lq2ipPmTnqUrGQHPce8aYmaQexACIrjgIOA/z9GDqqmh6Cu
+ XwoTppO5Baj/nzm/KtKRICmvRUGvG6fFKTiJPEcXHaIVXI8PeCYJ0AXDstTAwd/kR5ad
+ Ideg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768410844; x=1769015644;
+ d=1e100.net; s=20230601; t=1768411392; x=1769016192;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=tpislOFBGg3o0LWmxGUaJxTAfWiOmTCXKo5SuVFeSLE=;
- b=S4OPxnadZlO9b0YbzPhUvXiXGJQnxuft3oqLSvzDQyldW+atZ6gpsaSia2Qfb6GcF2
- YC86oAHBNpucpsKOfCY1xZuUs06oS5fou+u9Tj+T/CIrT8Fo+uYXyGG3XoQyzu1X4ve3
- rGK8mZ8UcFK3+17uXhwx1nZ0IH06RjB0IlULb6hQlZ/MhYITKLNutMEhTP31NWJPhWpx
- VwXZwv4DXnkVmqO/q+uSCAZfuQ3FiocILzXbHPPcSFUbjgcRRAwRxjD0IAndAkibwb0c
- OKbNu7JJsmlJejwEHbn4fNwDbvayjBMnBYM2laFmrRtkpPc8Y6Mkh3QSzw75JzCzjdyY
- si9w==
-X-Gm-Message-State: AOJu0Ywre9LfWRRxnrLjilTxJGFZ9hKC8SXjDQYOePa1+xWX5e8LV7bG
- 4eL9iuZE0KMAiIqOuUTHf6ErMXw2q90Qlfx27hSD4vFgXNClasknv+tZy21wTu7E4S2IBBni7sW
- ua+s/
-X-Gm-Gg: AY/fxX4zPkSgEt70csx1EPhOiAyg1zahkHoB9g5lCxAPLwu4OyufVmybVs/qEt6ESLQ
- JJ/7Nv537V2qntBdrgTejtna/28xjdpknzgVIZL7IihxlFJArc262k+dv8u8MRPpSwx/ioOkkWU
- tbssRM5Xh8oPM6RShWzLOETwQ7FOwyExf2mjTvGNu1tbJ6XIAqfDjlmphJmZFyVuuCLAPaqwIQj
- kk342gmgBYY98PVMzo1Gcco9vvyA5A5S+9Ki1PAlqLefFJn4llZn91bd9nAqRYAN62lpKAdYsrX
- 0lz8Zn71Nd+XbIUY05bdXQJXHPN+Mex6qCXtNmpta15lhh1hs/XYZW7J0XamuZwcTNmm/qAMlV2
- OhnC+/SZbwH06+41ZBQ+M4EpScpARCCOhhG9i/gxDJpGmiSsrH1BBYTyinXHHvQyt6s2ZO0TBy/
- GdAYpYu6gPtR76Bm+9F08iGHZJ3xUgdlmmAp0F5Dcve30FMQSjdWY+
-X-Received: by 2002:a17:906:308c:b0:b87:6bea:d48c with SMTP id
- a640c23a62f3a-b876beade99mr155358566b.23.1768410844175; 
- Wed, 14 Jan 2026 09:14:04 -0800 (PST)
+ bh=/voDz3F6XA/aWKryxp7Xxm6BAFmcpYjgoZAfWSwvSk0=;
+ b=Bi97cyuBo+ABm11FsEviBGNsCcYM4EcJIx4dtS4U17awkVc5qXbeRYoMoJMFjCTIco
+ 1Kp1bXVZ9BPWO/xjzK7uRH8xyezxf6hzVD47/rrWoPoKbHGGVoOulG+F0N8rc+UEXBkW
+ /uH7ElbKDN9Zh3OPia1Z4aYNm0JdTzLsfydrGN3TzlzocA0IO4ifGXavNU2NzahIuXhx
+ BIaHuDEkai2F1y2XEgWrXsCPnQp0KkS7685kecuKxN0l4qb/924AZF1G5qANe3lf6B67
+ ICF9gdoIN843CmPXp2tV1ScjXwpQJq2aAI7Jv60C6E686QRSrOxw3lV6Cd4RJU0UMrUR
+ krKQ==
+X-Gm-Message-State: AOJu0YzdVgjnyL7u38xZUQAEGyjPxNXcWC53sDtlaa8ENgqbT3zPGWPI
+ Tk9Q4hHuJqbKMdkvEnssQq6gVKn35mR8Oy7mCy8O6a1ukx5Kg4JMwgT0TFEq0ljGAgSNg3kCtxI
+ IWIko
+X-Gm-Gg: AY/fxX6xQe/cDIxp12OKB8TQ+C5fKisp1yK6Mt2peozxUlz4SRL3sXum2YheNTikit9
+ W9OAxpWNj/UpeWAVDua4AHvl3FS2MgkqzYd3W8KlIWXx965UOJU/zJy0/2I8FlKExWeCTS1FG+a
+ /U6TdiVsSds0ePB+eYckZqDywfy0kF6ReiDigUF3v1+bJK2T7kReQEIfzcHbVyx6XTuTPJMHh+S
+ EFJ8q0IyIgLsrMgS80JfUZFMBiOHjOeFu69/HFVOoQCpgNqk+2x2KzRbQ8Tz0T5t5hiVDFjdEN1
+ aDwAVY0btOW/4THA9bJH6m/TGo76M8iZE9LO60N64pUh7DIkOWJv3b7qMP+VXafff07Ew1tEH4F
+ NZgUTaTcMky0t6vsXk2TXdGWjdmpFuFM4zbeS27UfkbVfeUPDJzBmMZaQgZddM1wkiIbitRtivR
+ dOLSlDqo6maZFggM97kutffNR65TWDyRDSrJgoo4czEaBcmBxO9xlXNRfZvsLNNA0=
+X-Received: by 2002:a05:600c:c0ca:b0:47e:e575:a33e with SMTP id
+ 5b1f17b1804b1-47ee575a747mr22176755e9.33.1768411392295; 
+ Wed, 14 Jan 2026 09:23:12 -0800 (PST)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a640c23a62f3a-b876838f431sm215169366b.9.2026.01.14.09.14.02
+ 5b1f17b1804b1-47f428bc400sm2107075e9.7.2026.01.14.09.23.10
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 14 Jan 2026 09:14:03 -0800 (PST)
-Date: Wed, 14 Jan 2026 09:13:58 -0800
+ Wed, 14 Jan 2026 09:23:11 -0800 (PST)
+Date: Wed, 14 Jan 2026 09:23:01 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: Dimon Zhao <dimon.zhao@nebula-matrix.com>
-Cc: dev@dpdk.org, Kyo Liu <kyo.liu@nebula-matrix.com>, Leon Yu
- <leon.yu@nebula-matrix.com>, Sam Chen <sam.chen@nebula-matrix.com>
-Subject: Re: [PATCH v2 1/1] net/nbl: fix issues reported by Coverity
-Message-ID: <20260114091358.14f4e118@phoenix.local>
-In-Reply-To: <20260114064425.45681-2-dimon.zhao@nebula-matrix.com>
-References: <20251030033619.3386064-1-dimon.zhao@nebula-matrix.com>
- <20260114064425.45681-1-dimon.zhao@nebula-matrix.com>
- <20260114064425.45681-2-dimon.zhao@nebula-matrix.com>
+Cc: dev@dpdk.org, stable@dpdk.org, Kyo Liu <kyo.liu@nebula-matrix.com>, Leon
+ Yu <leon.yu@nebula-matrix.com>, Sam Chen <sam.chen@nebula-matrix.com>
+Subject: Re: [PATCH v1 1/1] net/nbl: fix hardware stats interrupt nesting issue
+Message-ID: <20260114092301.62d942c8@phoenix.local>
+In-Reply-To: <20260114081558.50370-2-dimon.zhao@nebula-matrix.com>
+References: <20260114081558.50370-1-dimon.zhao@nebula-matrix.com>
+ <20260114081558.50370-2-dimon.zhao@nebula-matrix.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -83,289 +82,155 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 13 Jan 2026 22:44:25 -0800
+On Wed, 14 Jan 2026 00:15:58 -0800
 Dimon Zhao <dimon.zhao@nebula-matrix.com> wrote:
 
-> Coverity issue: 490942
-> Coverity issue: 490943
-> Coverity issue: 490946
-> Coverity issue: 490947
-> Coverity issue: 490949
-> Coverity issue: 490950
-> Coverity issue: 490951
-> Coverity issue: 490952
-> Coverity issue: 490953
-> Coverity issue: 490954
-> Coverity issue: 490955
-> Coverity issue: 490957
-> Coverity issue: 490958
-> Coverity issue: 490959
-> Fixes: a1c5ffa13b2c ("net/nbl: add channel layer")
-> Fixes: dc955cd24c8f ("net/nbl: add coexistence mode")
-> Fixes: 93b38df5a2ec ("net/nbl: support basic configuration")
+> The timer interrupt handler periodically queries and updates
+> hw_stats via mailbox.
+> Since mailbox operations rely on interrupts for packet reception,
+> this causes interrupt nesting.
+> To resolve this, trigger a task from the interrupt handler and
+> start a dedicated thread to execute this task,
+> eliminating the nested interrupt scenario.
+>=20
+> Fixes: c9726a719ca1 ("net/nbl: support dropped packets counter")
+> Cc: stable@dpdk.org
 >=20
 > Signed-off-by: Dimon Zhao <dimon.zhao@nebula-matrix.com>
 > ---
 
-Thanks, AI review had some good feedback.
-Would you like me to add a summary to the commit, should
-have a description more than just Coverity ids.
-
----
-net/nbl: fix issues reported by Coverity
-
-Address multiple issues reported by Coverity static analysis:
-
-Check return values of ioctl() calls for NBL_DEV_USER_GET_BAR_SIZE
-and NBL_DEV_USER_CLEAR_EVENTFD. The original code tested the return
-value without capturing it from the ioctl call.
-
-Move debug log statement after NULL pointer validation in
-nbl_dev_configure() to prevent dereference of adapter before the
-check.
-
-Cast u16 operands to u64 before multiplication when calculating
-buffer sizes and offsets to prevent potential integer overflow.
-The num_txq_entries, num_rxq_entries, txq_buf_size, and rxq_buf_size
-fields are all u16 types, and their product could overflow before
-assignment to size_t or u64 destination variables.
-
-Coverity issue: 490942
-Coverity issue: 490943
-Coverity issue: 490946
-Coverity issue: 490947
-Coverity issue: 490949
-Coverity issue: 490950
-Coverity issue: 490951
-Coverity issue: 490952
-Coverity issue: 490953
-Coverity issue: 490954
-Coverity issue: 490955
-Coverity issue: 490957
-Coverity issue: 490958
-Coverity issue: 490959
-Fixes: a1c5ffa13b2c ("net/nbl: add channel layer")
-Fixes: dc955cd24c8f ("net/nbl: add coexistence mode")
-Fixes: 93b38df5a2ec ("net/nbl: support basic configuration")
-Cc: stable@dpdk.org
-
-Signed-off-by: Dimon Zhao <dimon.zhao@nebula-matrix.com>
+Automated patch review has some good observations, please address
+these and resubmit.
 
 
+## Patch Review: net/nbl: fix hardware stats interrupt nesting issue
+
+### Commit Message Analysis
+
+| Criterion | Status | Notes |
+|-----------|--------|-------|
+| Subject =E2=89=A460 chars | =E2=9C=93 PASS | 51 characters |
+| Lowercase after colon | =E2=9C=93 PASS | "fix hardware stats..." |
+| Correct prefix | =E2=9C=93 PASS | `net/nbl:` |
+| Imperative mood | =E2=9C=93 PASS | "fix" |
+| No trailing period | =E2=9C=93 PASS | |
+| Body =E2=89=A475 chars | =E2=9C=93 PASS | All body lines within limit |
+| Body does not start with "It" | =E2=9C=93 PASS | Starts with "The" |
+| Signed-off-by present | =E2=9C=93 PASS | Valid name and email |
+| Fixes tag format | =E2=9C=93 PASS | 12-char SHA `c9726a719ca1` |
+| Cc: stable@dpdk.org | =E2=9C=93 PASS | Appropriate for bug fix |
+| Tag order | =E2=9C=93 PASS | Fixes =E2=86=92 Cc =E2=86=92 blank =E2=86=92=
+ Signed-off-by |
+
+**Commit message: PASS**
 
 ---
 
-# DPDK Patch Review: net/nbl: fix issues reported by Coverity
+### Code Review
 
-## Summary
-This patch addresses multiple Coverity static analysis issues in the NBL dr=
-iver, fixing unchecked return values and potential integer overflow conditi=
-ons.
+#### **WARNING: Unnecessary cast of void pointer**
+
+**Location:** Line 76 in patch (new function `nbl_dev_thread_hw_stats_task`)
+```c
+struct rte_eth_dev *eth_dev =3D (struct rte_eth_dev *)param;
+```
+
+Per AGENTS.md, casting `void *` is unnecessary in C. Should be:
+```c
+struct rte_eth_dev *eth_dev =3D param;
+```
 
 ---
 
-## Commit Message Review
+#### **WARNING: Unnecessary variable initialization**
 
-### Subject Line
-**`net/nbl: fix issues reported by Coverity`** (42 chars)
+**Location:** Line 101 in patch
+```c
+ssize_t nw =3D 0;
+```
 
-| Check | Status | Notes |
-|-------|--------|-------|
-| Length =E2=89=A460 chars | =E2=9C=85 Pass | 42 characters |
-| Lowercase after colon | =E2=9C=85 Pass | |
-| Correct prefix (`net/nbl:`) | =E2=9C=85 Pass | |
-| Imperative mood | =E2=9C=85 Pass | |
-| No trailing period | =E2=9C=85 Pass | |
-| No forbidden punctuation | =E2=9C=85 Pass | |
-
-### Commit Body
-
-| Check | Status | Notes |
-|-------|--------|-------|
-| `Coverity issue:` tags | =E2=9C=85 Pass | 14 Coverity issue tags present |
-| `Fixes:` tags | =E2=9C=85 Pass | 3 Fixes tags with 12-char SHA |
-| `Signed-off-by:` | =E2=9C=85 Pass | Present with real name and email |
-| Tag order | =E2=9C=85 Pass | Coverity =E2=86=92 Fixes =E2=86=92 Signed-of=
-f-by |
-| Body lines =E2=89=A475 chars | =E2=9C=85 Pass | |
-
-**Warning**: The commit body lacks a description explaining *what* the issu=
-es were (e.g., "unchecked return values," "potential integer overflow"). DP=
-DK convention strongly recommends describing the problem being fixed. Consi=
-der adding 1-2 sentences explaining:
-- The ioctl return values were not being checked
-- Integer multiplications could overflow before assignment to `size_t`/`u64`
-- Null pointer dereference before validation
+The variable is immediately assigned on line 104 (`nw =3D write(...)`), mak=
+ing the `=3D 0` initialization unnecessary. Per AGENTS.md guidelines on unn=
+ecessary initialization patterns.
 
 ---
 
-## Code Review
+#### **WARNING: Resource leak on error path**
 
-### 1. nbl_userdev.c: Unchecked ioctl() Return Values
+**Location:** `nbl_dev_hw_stats_start()` around lines 213-224 in patch
 
-**Change 1** (lines 82-103): `NBL_DEV_USER_GET_BAR_SIZE`
+If `pipe()` succeeds but `rte_thread_create_internal_control()` fails, the =
+pipe file descriptors are leaked:
+
 ```c
--	ioctl(common->devfd, NBL_DEV_USER_GET_BAR_SIZE, &bar_size);
--	if (!ret) {
-+	ret =3D ioctl(common->devfd, NBL_DEV_USER_GET_BAR_SIZE, &bar_size);
-+	if (ret) {
-+		NBL_LOG(ERR, "nbl userdev get bar size failed");
-+		goto close_eventfd;
-+	}
+ret =3D pipe(net_dev->fd);
+if (ret) {
+    NBL_LOG(ERR, "hw_stats pipe failed, ret %d", ret);
+    return ret;
+}
+
+ret =3D rte_thread_create_internal_control(&net_dev->tid, "nbl_hw_stats_thr=
+ead",
+                                         nbl_dev_thread_hw_stats_task, eth_=
+dev);
+if (ret) {
+    NBL_LOG(ERR, "create hw_stats thread failed, ret %d", ret);
+    return ret;  // <-- LEAK: net_dev->fd[0] and fd[1] not closed
+}
 ```
 
-| Assessment | Status |
-|------------|--------|
-| Correctness | =E2=9C=85 Good fix - the original code tested `ret` but nev=
-er captured the ioctl return |
-| Error handling | =E2=9C=85 Proper error path with goto cleanup |
-| Logic inversion | =E2=9C=85 Correct - changed from `if (!ret)` success pa=
-th to `if (ret)` error path |
-
-**Change 2** (lines 118-120): `NBL_DEV_USER_CLEAR_EVENTFD`
+**Suggested fix:**
 ```c
--	ioctl(common->devfd, NBL_DEV_USER_CLEAR_EVENTFD, 0);
-+	ret =3D ioctl(common->devfd, NBL_DEV_USER_CLEAR_EVENTFD, 0);
-+	if (ret)
-+		NBL_LOG(ERR, "nbl userdev set clear eventfd failed, ret: %d", ret);
+ret =3D rte_thread_create_internal_control(&net_dev->tid, "nbl_hw_stats_thr=
+ead",
+                                         nbl_dev_thread_hw_stats_task, eth_=
+dev);
+if (ret) {
+    NBL_LOG(ERR, "create hw_stats thread failed, ret %d", ret);
+    close(net_dev->fd[0]);
+    close(net_dev->fd[1]);
+    return ret;
+}
 ```
-
-| Assessment | Status |
-|------------|--------|
-| Correctness | =E2=9C=85 Good - captures return value and logs error |
-| Error handling | =E2=9A=A0=EF=B8=8F Minor - logs but continues cleanup; a=
-cceptable in teardown path |
 
 ---
 
-### 2. nbl_dev.c: Null Pointer Dereference Before Check
+#### **INFO: Thread function return type**
 
-**Change** (lines 132-138):
+**Location:** Line 74
 ```c
--	NBL_LOG(DEBUG, "Begin to configure the device, state: %d", adapter->state=
-);
--
- 	if (dev_data =3D=3D NULL || adapter =3D=3D NULL)
- 		return -EINVAL;
-
-+	NBL_LOG(DEBUG, "Begin to configure the device, state: %d", adapter->state=
-);
+static uint32_t nbl_dev_thread_hw_stats_task(void *param)
 ```
 
-| Assessment | Status |
-|------------|--------|
-| Correctness | =E2=9C=85 Good fix - `adapter->state` was dereferenced befo=
-re NULL check |
-| DPDK style | =E2=9A=A0=EF=B8=8F Warning - Uses `=3D=3D NULL` (correct per=
- AGENTS.md) |
+The `rte_thread_create_internal_control()` callback expects signature `uint=
+32_t (*func)(void *)`, so this is correct. Just noting for completeness.
 
 ---
 
-### 3. nbl_channel.c: Integer Overflow Fixes
+#### **INFO: Consider adding missing include**
 
-These fix potential integer overflow when multiplying `u16` values before w=
-idening.
-
-**Change 1** (line 151): `nbl_chan_init_tx_queue`
-```c
--	size =3D chan_info->mailbox.num_txq_entries * chan_info->mailbox.txq_buf_=
-size;
-+	size =3D (u64)chan_info->mailbox.num_txq_entries * (u64)chan_info->mailbo=
-x.txq_buf_size;
-```
-
-**Change 2** (line 160): `nbl_chan_init_rx_queue`
-```c
--	size =3D chan_info->mailbox.num_rxq_entries * chan_info->mailbox.rxq_buf_=
-size;
-+	size =3D (u64)chan_info->mailbox.num_rxq_entries * (u64)chan_info->mailbo=
-x.rxq_buf_size;
-```
-
-**Change 3** (line 169): `nbl_chan_prepare_rx_bufs` loop
-```c
--	desc[i].buf_addr =3D rxq->buf_mem.pa + i * chan_info->mailbox.rxq_buf_siz=
-e;
-+	desc[i].buf_addr =3D rxq->buf_mem.pa + (u64)i * (u64)chan_info->mailbox.r=
-xq_buf_size;
-```
-
-**Change 4** (lines 178-179): `nbl_chan_advance_rx_ring`
-```c
--	rx_desc->buf_addr =3D rxq->buf_mem.pa + chan_info->mailbox.rxq_buf_size *=
- next_to_use;
-+	rx_desc->buf_addr =3D rxq->buf_mem.pa +
-+				(u64)chan_info->mailbox.rxq_buf_size * (u64)next_to_use;
-```
-
-**Change 5** (lines 189-190): `nbl_chan_update_txqueue`
-```c
--	va =3D (u8 *)txq->buf + next_to_use * chan_info->mailbox.txq_buf_size;
--	pa =3D txq->buf_mem.pa + next_to_use * chan_info->mailbox.txq_buf_size;
-+	va =3D (u8 *)txq->buf + (u64)next_to_use * (u64)chan_info->mailbox.txq_bu=
-f_size;
-+	pa =3D txq->buf_mem.pa + (u64)next_to_use * (u64)chan_info->mailbox.txq_b=
-uf_size;
-```
-
-| Assessment | Status |
-|------------|--------|
-| Correctness | =E2=9C=85 Fixes overflow: `u16 * u16` can exceed 32 bits wi=
-th large values |
-| Consistency | =E2=9A=A0=EF=B8=8F Warning - **Incomplete fix**: Similar pa=
-tterns exist in the same file that were NOT patched |
-
-### **Missing Fixes** (same overflow pattern still present):
-
-1. **Line 350** in `nbl_chan_clean_queue`:
-   ```c
-   data =3D (u8 *)rxq->buf + next_to_clean * chan_info->mailbox.rxq_buf_siz=
-e;
-   ```
-  =20
-2. **Line 361** in same function:
-   ```c
-   data =3D (u8 *)rxq->buf + next_to_clean * chan_info->mailbox.rxq_buf_siz=
-e;
-   ```
-
-These have the same `u16 * u16` multiplication pattern and should also be f=
-ixed for consistency.
+The code uses `pipe()`, `read()`, `write()`, and `close()` which typically =
+require `<unistd.h>`. Ensure this header is included (either directly or tr=
+ansitively through `nbl_dev.h` =E2=86=92 `nbl_common.h`).
 
 ---
 
-## Verdict
+### Summary
 
-### Errors (Must Fix)
-None - patch is acceptable.
+| Severity | Count | Issues |
+|----------|-------|--------|
+| **Error** | 0 | =E2=80=94 |
+| **Warning** | 3 | Unnecessary void* cast, unnecessary initialization, res=
+ource leak |
+| **Info** | 2 | Return type note, include verification |
 
-### Warnings (Should Fix)
+### Verdict: **Needs Minor Revision (v2)**
 
-1. **Incomplete fix**: Lines 350 and 361 in `nbl_channel.c` have the same i=
-nteger overflow pattern but are not addressed. Recommend adding them to thi=
-s patch for completeness.
+The patch logic is sound=E2=80=94moving the mailbox-dependent stats update =
+from interrupt context to a dedicated thread via pipe notification is the c=
+orrect approach to resolve interrupt nesting. However, three warnings shoul=
+d be addressed:
 
-2. **Missing commit body description**: The commit message lists Coverity I=
-Ds but doesn't describe what classes of issues are being fixed. Add a sente=
-nce like:
-   > "Fix unchecked ioctl() return values, null pointer dereference before =
-validation, and potential integer overflow in buffer size calculations."
-
-3. **Consider `Cc: stable@dpdk.org`**: Since these are bug fixes with `Fixe=
-s:` tags, this patch may be a candidate for stable backport.
-
-### Info (Consider)
-
-- The dual cast `(u64)a * (u64)b` pattern is verbose but correct. An altern=
-ative is casting just the first operand: `(u64)a * b` (the result promotes =
-to u64). Both are acceptable.
-
----
-
-## Recommendation
-
-**Acked-with-comments**: The patch is technically correct and addresses the=
- reported Coverity issues. Recommend:
-1. Add the two missing overflow fixes at lines 350/361 for completeness
-2. Add a brief description to the commit body
-3. Consider `Cc: stable@dpdk.org`
+1. Remove the unnecessary `(struct rte_eth_dev *)` cast
+2. Remove `=3D 0` from `ssize_t nw` declaration
+3. Add cleanup of pipe file descriptors if thread creation fails
