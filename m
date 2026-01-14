@@ -2,47 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD56DD37E56
-	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Jan 2026 15:46:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CF31D37E56
+	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Jan 2026 15:46:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1B94340DD2;
-	Wed, 14 Jan 2026 16:45:17 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 0E82A40DDA;
+	Wed, 14 Jan 2026 16:45:20 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
- by mails.dpdk.org (Postfix) with ESMTP id CEDFA40BA3;
- Wed, 14 Jan 2026 16:45:15 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 8992E40DD5;
+ Wed, 14 Jan 2026 16:45:17 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1768405517; x=1799941517;
+ t=1768405518; x=1799941518;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=fYeYCG5mt6l94wJgGOLrcEN3COoaXIlpKp3scsfWXCk=;
- b=oBR3b7+ygzyld/BW3YTZ8VxKl6SrfPwBGrJ0ofeMjvp5b26v6rA/fo0z
- uCAl9PejB+RGty7GmSX2gL5P+D1xmeonT/F7N7DbDq1RNtARhgGBG6fEG
- jk78mZzs7cLTE18MpsjFo1PBnoZI0f7ZkpKJ2a/hWQUTUWQoaCKX+5io6
- zwBmfc9q+Fg5EC7vr0MwDK26jjgY9c+BEEOqOc/aXjvfsQBaki5ScNFqS
- i89D63y71MUDi3nGweOcPt60g9VfMZkxRgfpvN3QdqSj86vC2tijKJNLf
- UNyIRdX9A/9xZmttAnSHfwi4CwLasAjCE+aZla/I5ZorjwqPUYsFKnNwc Q==;
-X-CSE-ConnectionGUID: /TRIPMtjSreK8edQ1KuYzw==
-X-CSE-MsgGUID: lcpPxrLISAO2vomuKoecaQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11671"; a="69870830"
-X-IronPort-AV: E=Sophos;i="6.21,225,1763452800"; d="scan'208";a="69870830"
+ bh=oNag9pMdNuyeC4i8hoNVngDA+1Hf5dEQtTbpPm3P7oQ=;
+ b=Zzumr/p9+tRNILs+50wIiqIv73GBQtDMSz4ia/6YSPXmuAWrKPizNBhy
+ WkPQPEhlL6WrcD4lna9IhnZar8I96DCivT9BZFfmYHQ1XOB9fKn/HrA8+
+ KLgeP/iXDUUAnymq/dUYm+cUOJbLSC4I2XCC9unZisaZd2gVkPOIYR8B7
+ FPprO1MNDTzOC7o3b0IVECI7mgOlmBavez9WL9eBCJUAbsSeVP2XTX/6P
+ iFDYg+IAPlywiKjGTa2aVDuSOm1T0R1fKg4kvUr2gx5q/SE0bdFN2hNhi
+ Xxo9unZF5v6wSKeYvOhRYJ8Ut82vMN39wkoxjCbzZ4tfhgHqqS+BEfo4Q Q==;
+X-CSE-ConnectionGUID: TeDDxcMYRZWyMC+XctZxyQ==
+X-CSE-MsgGUID: x4/oebgPT0OcWsAhdbmb7Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11671"; a="69870837"
+X-IronPort-AV: E=Sophos;i="6.21,225,1763452800"; d="scan'208";a="69870837"
 Received: from orviesa010.jf.intel.com ([10.64.159.150])
  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 14 Jan 2026 07:45:16 -0800
-X-CSE-ConnectionGUID: GrGTeeLWQceckkqgsl9rQw==
-X-CSE-MsgGUID: 3HODrnP8Qm+CR5/jH10IlA==
+ 14 Jan 2026 07:45:18 -0800
+X-CSE-ConnectionGUID: qm6j88TTTWmNvcIwGmf2Fg==
+X-CSE-MsgGUID: kPG1JxcYR8O9zPfVsQVAiw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,225,1763452800"; d="scan'208";a="203924989"
+X-IronPort-AV: E=Sophos;i="6.21,225,1763452800"; d="scan'208";a="203924992"
 Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by orviesa010.jf.intel.com with ESMTP; 14 Jan 2026 07:45:14 -0800
+ by orviesa010.jf.intel.com with ESMTP; 14 Jan 2026 07:45:15 -0800
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: Bruce Richardson <bruce.richardson@intel.com>, stable@dpdk.org,
  Stephen Hemminger <stephen@networkplumber.org>,
- Reshma Pattan <reshma.pattan@intel.com>
-Subject: [PATCH v4 09/31] pcapng: rename variable to fix shadowing
-Date: Wed, 14 Jan 2026 15:44:23 +0000
-Message-ID: <20260114154450.2969716-10-bruce.richardson@intel.com>
+ Nicolas Chautru <nicolas.chautru@intel.com>,
+ Ferruh Yigit <ferruh.yigit@amd.com>, Amr Mokhtar <amr.mokhtar@intel.com>
+Subject: [PATCH v4 10/31] bbdev: fix variable shadowing
+Date: Wed, 14 Jan 2026 15:44:24 +0000
+Message-ID: <20260114154450.2969716-11-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260114154450.2969716-1-bruce.richardson@intel.com>
 References: <20251106140948.2894678-1-bruce.richardson@intel.com>
@@ -62,42 +63,31 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The "len" variable is shadowed within a function, so rename inner use to
-the more descriptive "filter_len" to fix the issue.
+The "ret" variable is declared twice in rte_bbdev_setup_queues function.
+The second declaration is unneeded so remove it.
 
-Fixes: d1da6d0d04c7 ("pcapng: require per-interface information")
+Fixes: 4935e1e9f76e ("bbdev: introduce wireless base band device lib")
 Cc: stable@dpdk.org
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 Acked-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- lib/pcapng/rte_pcapng.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ lib/bbdev/rte_bbdev.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/lib/pcapng/rte_pcapng.c b/lib/pcapng/rte_pcapng.c
-index 21bc94cea1..2cc9e2040d 100644
---- a/lib/pcapng/rte_pcapng.c
-+++ b/lib/pcapng/rte_pcapng.c
-@@ -296,16 +296,15 @@ rte_pcapng_add_interface(rte_pcapng_t *self, uint16_t port, uint16_t link_type,
- 		opt = pcapng_add_option(opt, PCAPNG_IFB_HARDWARE,
- 					 ifhw, strlen(ifhw));
- 	if (filter) {
--		size_t len;
-+		const size_t filter_len = strlen(filter) + 1;
- 
--		len = strlen(filter) + 1;
- 		opt->code = PCAPNG_IFB_FILTER;
--		opt->length = len;
-+		opt->length = filter_len;
- 		/* Encoding is that the first octet indicates string vs BPF */
- 		opt->data[0] = 0;
- 		memcpy(opt->data + 1, filter, strlen(filter));
- 
--		opt = (struct pcapng_option *)((uint8_t *)opt + pcapng_optlen(len));
-+		opt = (struct pcapng_option *)((uint8_t *)opt + pcapng_optlen(filter_len));
- 	}
- 
- 	opt = pcapng_add_option(opt, PCAPNG_OPT_END, NULL, 0);
+diff --git a/lib/bbdev/rte_bbdev.c b/lib/bbdev/rte_bbdev.c
+index 6c98296bdb..ea644c1f9b 100644
+--- a/lib/bbdev/rte_bbdev.c
++++ b/lib/bbdev/rte_bbdev.c
+@@ -357,7 +357,7 @@ rte_bbdev_setup_queues(uint16_t dev_id, uint16_t num_queues, int socket_id)
+ 	if (dev->data->queues != NULL) {
+ 		VALID_FUNC_OR_RET_ERR(dev->dev_ops->queue_release, dev_id);
+ 		for (i = 0; i < dev->data->num_queues; i++) {
+-			int ret = dev->dev_ops->queue_release(dev, i);
++			ret = dev->dev_ops->queue_release(dev, i);
+ 			if (ret < 0) {
+ 				rte_bbdev_log(ERR,
+ 						"Device %u queue %u release failed",
 -- 
 2.51.0
 
