@@ -2,67 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E468D3CC86
-	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Jan 2026 22:27:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C3B3D3CC86
+	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Jan 2026 22:27:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B57C540E3E;
-	Wed, 14 Jan 2026 23:25:35 +0100 (CET)
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com
- [209.85.128.50]) by mails.dpdk.org (Postfix) with ESMTP id C02FB415D7
- for <dev@dpdk.org>; Wed, 14 Jan 2026 23:25:34 +0100 (CET)
-Received: by mail-wm1-f50.google.com with SMTP id
- 5b1f17b1804b1-47edffe5540so3127905e9.0
- for <dev@dpdk.org>; Wed, 14 Jan 2026 14:25:34 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id C81DB42708;
+	Wed, 14 Jan 2026 23:25:37 +0100 (CET)
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com
+ [209.85.128.46]) by mails.dpdk.org (Postfix) with ESMTP id 6AB5842670
+ for <dev@dpdk.org>; Wed, 14 Jan 2026 23:25:36 +0100 (CET)
+Received: by mail-wm1-f46.google.com with SMTP id
+ 5b1f17b1804b1-47ee3a63300so2810425e9.2
+ for <dev@dpdk.org>; Wed, 14 Jan 2026 14:25:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768429534;
- x=1769034334; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768429536;
+ x=1769034336; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=ouuUkfxgZRQo87AFu2oyW4Xq9xbd/SRC0s56rb8/n5U=;
- b=Hkm53mwalrEiVDdD5K44enFHgc+fAdZfNDSE0Rq8wccsDnXP+h9rElxLE9AXVjJUEj
- dYGer0cWAstotMzsCZSin93X0qzqUFwGi8yTaeCjjFvSsBUjGaW2DMtvBzkIZK43G4JV
- HZz9pD3F5JRsPENslN3br+mOODxUT4/8LMZLbv4pnKvz4a6nmWfJZgYVzHcKmo6x8paq
- iqABUnjefJx/l9NTxsofPue+USl+i5EHzukoBiXzP624AuciwcXssiLqs8PbpMY/zaNw
- YjO/fL0AiNsYS0gUHU3MQ9um7j1fnosrkF60N6DGpDu/sGXPsfO+jWHWEdkWGVkU4ARu
- v1cg==
+ bh=1EIU2VfPaBd321rBTKSKqR7sYl/DQ4eUVAAiX1RduK8=;
+ b=v1fHi9yGgIm09+fYrnF86wu5kAZozN3y2P4GVwXPt7ta2BtXKGkkDGZ4cg9oymzTa+
+ oEUptDpFxNz3tTUwfJhpcCPRNBGGKhbbhzYrFcJQSGwMZ1oHX7weGhNcJYWpQMFwb4Wx
+ 811k6ysB0d1gT740B7kI0WsmdrEOOD4W8mk2q4SKu/PG+KLps6Fe15IA/APiM7AcKexe
+ KcqEBNlT1eL0ithm5FRK4vnESc2wNTNHpVgSz079spbDtmPNq6+rDbEALEjpnX4ncawg
+ 1WRPXIbP7rYvEtsU5+VBEM2R7ilB9vXe3LJjRPQOms9ad3k6Y+YAAccNaseH98xWCXa6
+ YnBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768429534; x=1769034334;
+ d=1e100.net; s=20230601; t=1768429536; x=1769034336;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=ouuUkfxgZRQo87AFu2oyW4Xq9xbd/SRC0s56rb8/n5U=;
- b=j8xnZVCRxxUk1TS2/MRTLxdAKDXGx+87tWKRXwy3iQ4hVVaDgWeSonY4gvxHcuOPav
- OrykTDU5kzLvrRwDmHOn8rg+icnjnSnk4lJ6oD+eoy1TXs8RaXQWbzcv0JNw/dKx+rwP
- DG1cKPVh4rVo+B0Y7UXR4aJzRml2MNlwZJ5JzPDSfsSKhibMhJAo/CNya/yeFx0lbn/B
- uzfetEUUr/52VL4+6HLMHSKtcaFYGp4VuJbIzKtVt8j30+X4FjDw8y6hVfJHicZtdlYm
- 6hO9ROXyqoa3tXY3dG616xo6KpuewovU0urDSb7SCY2WFau/++CR6piB3Q87FfoXWzR4
- xlZg==
-X-Gm-Message-State: AOJu0YxC+j6OkfA+QAf2ODAc7q9TJjhzL+Aha3/toRiAS/6qKwPDzWI8
- jCfgMF9yfS/QBtiZpua1Ky30YVmDxsjUpRYeEkQ8S3t2mjTuZaiOsQsybk5o5U8TEHb3/RXEIpq
- yMeQ5
-X-Gm-Gg: AY/fxX7q99PFrPOQq2NNZUEUPnNBgiXw+NyCvH2d4McopE6nR/+e6TCP8iQ/N/evLhC
- Lx6se5ZrjYWNlSpDTW7LV53HielA7IKgWLfBrc1Z7obeJ63nRH5e2gMRQewiEgB3HbEZV0/fD/O
- ldmpWZdWn07+uFpSZJXncY1SE/ctaA8is80WMvfzUHb91JhUy+zmxooUUxFb5RVe0bXZC1yMwpB
- AxIgahsegoXvz2VS1H2ZIFF6w/XUyyXyCtOi89euhNqfi2edqgXkipLZYrlXzcVebNWUU7GUpPx
- X3qmDnoaX2C7+cWcK2fqdanQUpyu6hIkewKmdlVGnwSrbAptECnTAjKfCBF85pWH3OswNbo2VRO
- WKubwgqWRZ7O+n+8eOqXnQk92KXwYuKQhpfX5xFwe2vWyr6fX/hhUgwxjgG2h1sV4vgulYofv35
- 3Jqtpzd6fsmlhbVlDz7qRJfxjd+Hk/juuSvqWwAvQEPGrEhyzyPQ==
-X-Received: by 2002:a05:600c:3f16:b0:479:1b0f:dfff with SMTP id
- 5b1f17b1804b1-47ee32fd19emr50198695e9.10.1768429534361; 
- Wed, 14 Jan 2026 14:25:34 -0800 (PST)
+ bh=1EIU2VfPaBd321rBTKSKqR7sYl/DQ4eUVAAiX1RduK8=;
+ b=FC76fqzXvroo1BIC3FlFSq15FV2oHcMOZbUerMexNaoSwPeT8oMctFvTt8rmEC7GiE
+ IG+afgVf5TXtfCVXF+Tqc7/8Qe/P1mXRTk91iRWIaRvyaMstLXAl/nASg2FHWdhjxSAT
+ AqMDT14MDda/yP7eOkFYINDlcHuQqpyWSRhAHrRZ0SEvq/+KXDQa0t9UszYCWHc4SP2F
+ twlNVf+3Cm2WYbnMk45ls86kAXAn0Wc/ws+Cl0BewJxOM7Ht5AM6a3Tne/5Br+5lnLqz
+ FRe/vhq0tGgeRZrZSgLHC1x8F8PcYTylyVw2TeG03VyklUrzem6S6ReBhlariP+B4PHO
+ 956w==
+X-Gm-Message-State: AOJu0YyF4ZHFzBcoXTCQPxS+jVqYB3YfuN7KEslOIzuQ4imifh9I4eCV
+ qq05p8E0e6M1LMtzGIAgUjMJwbxmfY00WLQOtxtbt/F+7bcjl7pXwvNNnZ1oXmI8kqDKiUjqp4T
+ 88tH3
+X-Gm-Gg: AY/fxX4ZJW4JkvsTJlnE54ODObAJuNXOdUOy96Ar1i2mimGd7CLglg1A7JnCoT3JsN0
+ BoQaqWkzIf/5eumArY4XqMh77lguIoq5cWB/pvbMcKeZV6qdKrYlx4Ny69evDqsXAbTHsD+Snfn
+ quH2pcABIf7k6k4JCcPc+kUC/vDISNWNv4xHJ7UnEtvsslg5qeL+Tve9qjh+fCvbcdn5uJlZKZL
+ 0SYSZzi+H/LiEiK5i2DIx3xv+7CYPTQSwP/0NsmPw3ecNxabjHGzqVPQ109PVdhqiux0FMRNDoF
+ K/rD9qf4zm2FYmhBONJ7xA9M3BKEtB/8fOQk5kEP7XX0NF/s/yco3Nx3eP28big3ZJQA+cuYFb/
+ cjwx9QS56Vu0fC2vrwjB8XclJ7tKx+DNdZr7SjCbFk/z/xZcBMXh9KovDgfjkgw5MapKNg/N6HL
+ S8Br5zeYoG7eM4DXkQSD8VBtWvvVD+1prmjm6rHp/W/xiGa24+nA==
+X-Received: by 2002:a05:600c:c16a:b0:46e:6d5f:f68 with SMTP id
+ 5b1f17b1804b1-47ee3311616mr44689185e9.12.1768429535893; 
+ Wed, 14 Jan 2026 14:25:35 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-47f42907141sm12040355e9.9.2026.01.14.14.25.32
+ 5b1f17b1804b1-47f42907141sm12040355e9.9.2026.01.14.14.25.34
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 14 Jan 2026 14:25:34 -0800 (PST)
+ Wed, 14 Jan 2026 14:25:35 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH 18/29] doc/guides: improve Hello World sample app guide
-Date: Wed, 14 Jan 2026 14:21:59 -0800
-Message-ID: <20260114222458.87119-19-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH 19/29] doc/guides: improve sample applications introduction
+Date: Wed, 14 Jan 2026 14:22:00 -0800
+Message-ID: <20260114222458.87119-20-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260114222458.87119-1-stephen@networkplumber.org>
 References: <20260114222458.87119-1-stephen@networkplumber.org>
@@ -81,59 +80,129 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Improve the Hello World sample application documentation:
-- capitalize Linux consistently
-- fix "helloworld" to "Hello World" in description
-- add missing articles and commas
+Improve the sample applications introduction documentation:
+- use consistent title capitalization in cross-references
+- replace contractions with full forms
+- use I/O instead of IO
+- fix punctuation and grammar
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- doc/guides/sample_app_ug/hello_world.rst | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ doc/guides/sample_app_ug/intro.rst | 54 +++++++++++++++---------------
+ 1 file changed, 27 insertions(+), 27 deletions(-)
 
-diff --git a/doc/guides/sample_app_ug/hello_world.rst b/doc/guides/sample_app_ug/hello_world.rst
-index 5bfd4b3fda..8f22bb2260 100644
---- a/doc/guides/sample_app_ug/hello_world.rst
-+++ b/doc/guides/sample_app_ug/hello_world.rst
-@@ -9,25 +9,25 @@ Overview
- --------
+diff --git a/doc/guides/sample_app_ug/intro.rst b/doc/guides/sample_app_ug/intro.rst
+index a19c0b8c13..25a15966db 100644
+--- a/doc/guides/sample_app_ug/intro.rst
++++ b/doc/guides/sample_app_ug/intro.rst
+@@ -4,8 +4,8 @@
+ Introduction to the DPDK Sample Applications
+ ============================================
  
- The Hello World sample application is an example of the simplest DPDK application that can be written.
--The application simply prints an "helloworld" message on every enabled lcore.
-+The application simply prints a "Hello World" message on every enabled lcore.
+-The DPDK Sample Applications are small standalone applications that
+-demonstrate various features of DPDK. They can be considered as a cookbook of
++The DPDK sample applications are small standalone applications that
++demonstrate various features of DPDK. They can be considered a cookbook of
+ DPDK features. Users interested in getting started with DPDK can take the
+ applications, try out the features, and then extend them to fit their needs.
  
- Compiling the Application
- -------------------------
+@@ -14,8 +14,8 @@ Running Sample Applications
+ ---------------------------
  
--To compile the sample application see :doc:`compiling`.
-+To compile the sample application, see :doc:`compiling`.
+ Some sample applications may have their own command-line parameters described in
+-their respective guides. However, they all also share the same EAL parameters.
+-Please refer to :doc:`EAL parameters (Linux) <../linux_gsg/linux_eal_parameters>`
++their respective guides. However, they also all share the same EAL parameters.
++Refer to :doc:`EAL parameters (Linux) <../linux_gsg/linux_eal_parameters>`
+ or :doc:`EAL parameters (FreeBSD) <../freebsd_gsg/freebsd_eal_parameters>` for
+ a list of available EAL command-line options.
  
- The application is located in the ``helloworld`` sub-directory.
+@@ -32,8 +32,8 @@ examples are highlighted below.
+ * :doc:`Hello World<hello_world>`: As with most introductions to a
+   programming framework, a good place to start is with the Hello World
+   application. The Hello World example sets up the DPDK Environment Abstraction
+-  Layer (EAL), and prints a simple "Hello World" message to each of the DPDK
+-  enabled cores. This application doesn't do any packet forwarding, but it is a
++  Layer (EAL) and prints a simple "Hello World" message to each of the DPDK
++  enabled cores. This application does not do any packet forwarding, but it is a
+   good way to test if the DPDK environment is compiled and set up properly.
  
- Running the Application
- -----------------------
+ * :doc:`Basic Forwarding/Skeleton Application<skeleton>`: The Basic
+@@ -41,25 +41,25 @@ examples are highlighted below.
+   basic packet forwarding with DPDK. This allows you to test if your network
+   interfaces are working with DPDK.
  
--To run the example in a linux environment:
-+To run the example in a Linux environment:
+-* :doc:`Network Layer 2 forwarding<l2_forward_real_virtual>`: The Network Layer 2
+-  forwarding, or ``l2fwd`` application does forwarding based on Ethernet MAC
++* :doc:`Network Layer 2 Forwarding<l2_forward_real_virtual>`: The Network Layer 2
++  forwarding, or ``l2fwd`` application, does forwarding based on Ethernet MAC
+   addresses like a simple switch.
  
- .. code-block:: console
+-* :doc:`Network Layer 2 forwarding<l2_forward_event>`: The Network Layer 2
+-  forwarding, or ``l2fwd-event`` application does forwarding based on Ethernet MAC
+-  addresses like a simple switch. It demonstrates usage of poll and event mode
+-  IO mechanism under a single application.
++* :doc:`Network Layer 2 Forwarding with Event Mode<l2_forward_event>`: The Network
++  Layer 2 forwarding, or ``l2fwd-event`` application, does forwarding based on
++  Ethernet MAC addresses like a simple switch. It demonstrates usage of poll and
++  event mode I/O mechanisms under a single application.
  
-     $ ./<build_dir>/examples/dpdk-helloworld -l 0-3
+-* :doc:`Network Layer 3 forwarding<l3_forward>`: The Network Layer3
+-  forwarding, or ``l3fwd`` application does forwarding based on Internet
+-  Protocol, IPv4 or IPv6 like a simple router.
++* :doc:`Network Layer 3 Forwarding<l3_forward>`: The Network Layer 3
++  forwarding, or ``l3fwd`` application, does forwarding based on Internet
++  Protocol (IPv4 or IPv6) like a simple router.
  
--Refer to *DPDK Getting Started Guide* for general information on running applications
-+Refer to the *DPDK Getting Started Guide* for general information on running applications
- and the Environment Abstraction Layer (EAL) options.
+-* :doc:`Network Layer 3 forwarding Graph<l3_forward_graph>`: The Network Layer3
+-  forwarding Graph, or ``l3fwd_graph`` application does forwarding based on IPv4
+-  like a simple router with DPDK Graph framework.
++* :doc:`Network Layer 3 Forwarding Graph<l3_forward_graph>`: The Network Layer 3
++  forwarding Graph, or ``l3fwd_graph`` application, does forwarding based on IPv4
++  like a simple router using the DPDK Graph framework.
  
- Explanation
-@@ -46,7 +46,7 @@ This is done in the main() function using the following code:
-     :start-after: Initialization of Environment Abstraction Layer (EAL). 8<
-     :end-before: >8 End of initialization of Environment Abstraction Layer
+-* :doc:`Hardware packet copying<dma>`: The Hardware packet copying,
+-  or ``dmafwd`` application demonstrates how to use DMAdev library for
++* :doc:`Hardware Packet Copying<dma>`: The hardware packet copying,
++  or ``dmafwd`` application, demonstrates how to use the DMAdev library for
+   copying packets between two threads.
  
--This call finishes the initialization process that was started before main() is called (in case of a Linux environment).
-+This call finishes the initialization process that was started before main() is called (in the case of a Linux environment).
- The argc and argv arguments are provided to the rte_eal_init() function.
- The value returned is the number of parsed arguments.
+ * :doc:`Packet Distributor<dist_app>`: The Packet Distributor
+@@ -70,27 +70,27 @@ examples are highlighted below.
+   multi-process application shows how two DPDK processes can work together using
+   queues and memory pools to share information.
  
+-* :doc:`RX/TX callbacks Application<rxtx_callbacks>`: The RX/TX
++* :doc:`Rx/Tx Callbacks Application<rxtx_callbacks>`: The Rx/Tx
+   callbacks sample application is a packet forwarding application that
+   demonstrates the use of user-defined callbacks on received and transmitted
+-  packets. The application calculates the latency of a packet between RX
+-  (packet arrival) and TX (packet transmission) by adding callbacks to the RX
+-  and TX packet processing functions.
++  packets. The application calculates the latency of a packet between Rx
++  (packet arrival) and Tx (packet transmission) by adding callbacks to the Rx
++  and Tx packet processing functions.
+ 
+ * :doc:`IPsec Security Gateway<ipsec_secgw>`: The IPsec Security
+   Gateway application is a minimal example of something closer to a real world
+   example. This is also a good example of an application using the DPDK
+   Cryptodev framework.
+ 
+-* :doc:`Precision Time Protocol (PTP) client<ptpclient>`: The PTP
++* :doc:`Precision Time Protocol (PTP) Client<ptpclient>`: The PTP
+   client is another minimal implementation of a real world application.
+   In this case, the application is a PTP client that communicates with a PTP
+   time transmitter to synchronize time on a Network Interface Card (NIC) using the
+-  IEEE1588 protocol.
++  IEEE 1588 protocol.
+ 
+ * :doc:`Quality of Service (QoS) Scheduler<qos_scheduler>`: The QoS
+   Scheduler application demonstrates the use of DPDK to provide QoS scheduling.
+ 
+ There are many more examples shown in the following chapters. Each of the
+-documented sample applications show how to compile, configure and run the
++documented sample applications shows how to compile, configure, and run the
+ application, as well as explaining the main functionality of the code.
 -- 
 2.51.0
 
