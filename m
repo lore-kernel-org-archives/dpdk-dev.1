@@ -2,67 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB418D3CC82
-	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Jan 2026 22:27:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F11AD3CC86
+	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Jan 2026 22:27:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 490AD4278C;
-	Wed, 14 Jan 2026 23:25:45 +0100 (CET)
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com
- [209.85.128.51]) by mails.dpdk.org (Postfix) with ESMTP id F114342788
- for <dev@dpdk.org>; Wed, 14 Jan 2026 23:25:43 +0100 (CET)
-Received: by mail-wm1-f51.google.com with SMTP id
- 5b1f17b1804b1-47d5e021a53so2357105e9.3
- for <dev@dpdk.org>; Wed, 14 Jan 2026 14:25:43 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 9B59442794;
+	Wed, 14 Jan 2026 23:25:47 +0100 (CET)
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com
+ [209.85.128.52]) by mails.dpdk.org (Postfix) with ESMTP id AA2964278D
+ for <dev@dpdk.org>; Wed, 14 Jan 2026 23:25:45 +0100 (CET)
+Received: by mail-wm1-f52.google.com with SMTP id
+ 5b1f17b1804b1-47fedb7c68dso606905e9.2
+ for <dev@dpdk.org>; Wed, 14 Jan 2026 14:25:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768429543;
- x=1769034343; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768429545;
+ x=1769034345; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=sJ/lnkNwLpdlrdVRZ6w783YZgKeBzQ48YRSH6oWps8M=;
- b=EZU41pSBLFG2nniSZPZVVPTeaWeRydXEjsrG18s+jEG7EEG6G2i3mUQhvU8kx5B+DD
- SljYipNW1TgDhCLRTBwPgUpCWiLKhPmK+mdNZ4vJfjVQxiCr28ATcZegkAebql5AEBtv
- DhebxqUhr05fX0n9q31E8apSjYZ5e8aaHzNe+9jDcX+RZW7oY3Hdi33MHjBrGurD+do/
- APBxZb9DOvDWSD90TpsRwZ7vL2f3jkmQi9YWWlIp6hWqafnuTOhQ1oXgTCbFhAhvcryf
- t0IqciG1V/uDYV0XDas9cpAvsoygow3LFJpGdDDEKpzS+rZeRkK0hYQ1LuaOaSSUnW0k
- 1wsw==
+ bh=TAEXcmP9kDYnQ8q2jtln/5LbTwQIGaCVomP10791MRE=;
+ b=TfnuGdfLDTaWgc6IXZwd3pSFO38ePJU4ayqYJbFx1R936FQ7IBiOVVyIFs7tUiTcjS
+ MtEAatvH86bZaNX3uLcyOGl6IDlBACUzrrw7gMjHyUweH7CQHSSCpYEcphUQLoFMK8v2
+ YLMrxBFdmH8wuJTLOdwroesqp+6l6OnmAD1m75CbaJihGI8PliMB1AiHjN0gkA+LO8J6
+ SVUEkZ5pwaILHzkcNF4em09dPn25RHHjFLvp7ksiVbHPJ4SO+n8S2w8mBk+WpVgLeRfc
+ LyLnHSiEv+0zLCZpSb0t6E/XXtEkSRWZL0AlWo+dDrEtSqNhDZdgAMXuvTiZK9eK7fq+
+ QdkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768429543; x=1769034343;
+ d=1e100.net; s=20230601; t=1768429545; x=1769034345;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=sJ/lnkNwLpdlrdVRZ6w783YZgKeBzQ48YRSH6oWps8M=;
- b=wQGN/ThMGxwiBfXvDE/G1NNJ46Ys+ZnGmgtoWnHdw0RPznpRlLUj44nWMK/aT35uuW
- 7KHFW+vJJ7HIDw0tO/0+LEti/b6vSKMXuBmDH0ak96G9x0ucQpYurQ9HPeiGdQ+zMj6v
- FbB/hI4fagl70svNCCxAE2fob46UyaJBzCqxIBmE4y1TWUE/hEyS0vMQqLIgZbhAK9PB
- hf2qw7m0iL1/u/zX6aL4ebmH+3OMFHMDv6/JIuQY78gZfSSsepvu6hbD19cCWgBvYbBU
- Wwxq7tCdAkA9Zeq9PTuX8aAGJaLAjgnSo9KXF1IgoOqvog8ZUrrZoCibOA34y3vBu2qR
- ZO4w==
-X-Gm-Message-State: AOJu0YxUwFr2ojooZsTkl6O26c++c6prBi8EydTB4mjNESFA215tMciI
- U7R0DF3pTcwquRyFEcsBmCKVS9T3qPVNdYVVmZg2i1CZ8ndBgfZZuD2ulCQ8AvyKJqRWJBjuzys
- m7+b7
-X-Gm-Gg: AY/fxX5/ewMlabvalfJvOrk9Ux8vfBmivaPE9oi6L8oEMyMRo9amBbtYV9Fa+bnRte3
- MR+WNscET54c/VaWLC9vcW45jvywaQq7ovS+OQhmBdXrNMSSVcNtQy1jSdem882TfKemXDbuPba
- egoULAKsiHw+QBTjH0cFVZBsg5dyFhrRkQ0aZMs3u67fsjfMxxmEs90ZQa5OzpdE3mdsyqB8jJ8
- jB/C+0zn5L23Xy+PD/tgB9bzhcyx53lCEZCdKI93EJ11dRXK3l2cr4gYIdt+HOKOZATQ1GMg5vF
- vRAWcDO6yXYskVBnKOHdmFWraPBXieL4G6YJ/3RIFNYAIrEuWQ+KfQv06YdI+tFclvirhXmBF5k
- 0Ji2O64ImX5ZUqqdQ0VDOrxZj0ihL4RPY+vOSI14iBn1s/v1ZKP290y48s0J62MGULvsJfeeRrb
- hnRIEv6fk6A+Y9pukr6wgfnxg1QpwCpuGRrYmZi/0+llNd5QcCbg==
-X-Received: by 2002:a05:600c:a088:b0:47e:e20e:bbb4 with SMTP id
- 5b1f17b1804b1-47ee4825ebemr44552065e9.26.1768429543556; 
- Wed, 14 Jan 2026 14:25:43 -0800 (PST)
+ bh=TAEXcmP9kDYnQ8q2jtln/5LbTwQIGaCVomP10791MRE=;
+ b=qJcqQCYII5AtL5yNprzipOcKxbGzNJ/mcsNVsxGeCxbSqchbd/biGek5VOCFvMAs9z
+ lknjUTYgqHS3Ee/KSJEmHZ2faKSpbMYpZ8ehXzMyoMmBnEwsKQAf9y3pg/XmGWr2IIf0
+ W0ETlc6x9zg2RlxqkIiRvxYAgOz/zenCeRVrGVa/NaBGpA3cG0XjGTW+nucrjI69lQoh
+ a+zHs7rypix7sCj1M3JxkOF/vZQFJvgzOZ9jiGCTiLyK+yXuZJ3Mxrh+QM1wIVGW4V9v
+ Z9XlNGB/EfuQ//q32ha8QikH0sW42VW8lRwYZWcw8SekQYm+tRf7e3qb+uzMlP2U/9tV
+ qTFg==
+X-Gm-Message-State: AOJu0YxR5M+g7rXgO/1KJeWphyO6PWJAdZDfxS3J7Yo4fJzO0P5cpacG
+ sGgRReuFph1s1DRl5f6PO2px+oGCdRA/yLw3tJaSW2ubzR88lBg9igiwXOUVn/yNS5d5Gy+HBK2
+ o81++
+X-Gm-Gg: AY/fxX6/U9FWMv0MV5koRt9ic+3Afd3j+kdt0FoePOJy69nBhxk6uXvJy6X1coqvVJG
+ 3sqmmjeU/UJZv/fGiZK3QOJQvdAQq0uo1ZY7DHX41pQqv325VJ+lKYWXQV5O9GuNVGbPBMaUOi5
+ XH5wZS/pF+/b2c3n91KJDLqzFjsoxKhVdpPIIdIRSFzTE5MD/Icudh0k0vYzqH1K04gjw8Dgm3Y
+ 8umIYlMaCtRh4gPYLfF4oW4/i8WDuUxF8pPFUU3FvqZ1/iqBsPrf8tpZBew2OvHJdZLMxMzqp3s
+ Mw7Ix94A/o8xlcX57kyalWnEuvAxZs/VSmBnH0I4cY0vsVI5+Iv0Wmvr1dVHdAsCQJ3gAlDP41T
+ akr8cAnbGX+FUTLl1yIxXu52vXlp62jxNypgwh6geSGTBg8MWWPvAr20txFQS5VD/Sz3nGTp9eb
+ 9zXIxjudhBPoJ7YZE4eeQQsdbFNANMM4XOTcmWRASV7vWlq4e85g==
+X-Received: by 2002:a05:600c:8705:b0:456:1a69:94fa with SMTP id
+ 5b1f17b1804b1-47ee3345cc1mr42227595e9.13.1768429545283; 
+ Wed, 14 Jan 2026 14:25:45 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-47f42907141sm12040355e9.9.2026.01.14.14.25.42
+ 5b1f17b1804b1-47f42907141sm12040355e9.9.2026.01.14.14.25.43
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 14 Jan 2026 14:25:43 -0800 (PST)
+ Wed, 14 Jan 2026 14:25:44 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH 23/29] doc/guides: improve link status interrupt sample app
- guide
-Date: Wed, 14 Jan 2026 14:22:04 -0800
-Message-ID: <20260114222458.87119-24-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Anatoly Burakov <anatoly.burakov@intel.com>
+Subject: [PATCH 24/29] doc/guides: improve multi-process sample app guide
+Date: Wed, 14 Jan 2026 14:22:05 -0800
+Message-ID: <20260114222458.87119-25-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260114222458.87119-1-stephen@networkplumber.org>
 References: <20260114222458.87119-1-stephen@networkplumber.org>
@@ -81,47 +81,111 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Improve the link status interrupt sample application documentation:
-- fix spacing in command line example
-- capitalize Linux consistently
-- fix "that related" to "that relate"
+Improve the multi-process sample application documentation:
+- fix section heading levels for consistency
+- fix hyphenation of "packet-processing"
+- improve grammar and sentence structure
+- fix "gets the port information and exported" grammar
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- doc/guides/sample_app_ug/link_status_intr.rst | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ doc/guides/sample_app_ug/multi_process.rst | 27 +++++++++++-----------
+ 1 file changed, 14 insertions(+), 13 deletions(-)
 
-diff --git a/doc/guides/sample_app_ug/link_status_intr.rst b/doc/guides/sample_app_ug/link_status_intr.rst
-index fd4e32560c..133c8d0b2a 100644
---- a/doc/guides/sample_app_ug/link_status_intr.rst
-+++ b/doc/guides/sample_app_ug/link_status_intr.rst
-@@ -40,7 +40,7 @@ The application requires a number of command line options:
+diff --git a/doc/guides/sample_app_ug/multi_process.rst b/doc/guides/sample_app_ug/multi_process.rst
+index 1bd858bfb5..19e49669ad 100644
+--- a/doc/guides/sample_app_ug/multi_process.rst
++++ b/doc/guides/sample_app_ug/multi_process.rst
+@@ -42,9 +42,10 @@ passing at least two cores in the corelist:
+ 
+     ./<build_dir>/examples/dpdk-simple_mp -l 0-1 --proc-type=primary
+ 
+-For the first DPDK process run, the proc-type flag can be omitted or set to auto,
+-since all DPDK processes will default to being a primary instance,
+-meaning they have control over the hugepage shared memory regions.
++For the first DPDK process run, the proc-type flag can be omitted or set to auto
++since all DPDK processes will default to being a primary instance
++(meaning, they have control over the hugepage shared memory regions).
++
+ The process should start successfully and display a command prompt as follows:
  
  .. code-block:: console
+@@ -99,7 +100,7 @@ At any stage, either process can be terminated using the quit command.
+     The secondary process can be stopped and restarted without affecting the primary process.
  
--    ./<build_dir>/examples/dpdk-link_status_interrupt [EAL options] -- -p PORTMASK [-q NQ][-T PERIOD]
-+    ./<build_dir>/examples/dpdk-link_status_interrupt [EAL options] -- -p PORTMASK [-q NQ] [-T PERIOD]
+ How the Application Works
+-^^^^^^^^^^^^^^^^^^^^^^^^^
++~~~~~~~~~~~~~~~~~~~~~~~~~
  
- where,
+ This application uses two queues and a single memory pool created in the primary process.
+ The secondary process then uses lookup functions to attach to these objects.
+@@ -124,7 +125,7 @@ Symmetric Multi-process Example
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  
-@@ -50,7 +50,7 @@ where,
+ The symmetric multi process example demonstrates how a set of processes can run in parallel,
+-with each process performing the same set of packet- processing operations.
++with each process performing the same set of packet-processing operations.
+ The following diagram shows the data-flow through the application, using two processes.
  
- *   -T PERIOD: statistics will be refreshed each PERIOD seconds (0 to disable, 10 default)
+ .. _figure_sym_multi_proc_app:
+@@ -173,7 +174,7 @@ Example:
+    In the above example, ``auto`` is used so the first instance becomes the primary process.
  
--To run the application in a linux environment with 4 lcores, 16 ports and 8 RX queues per lcore,
-+To run the application in a Linux environment with 4 lcores, 16 ports and 8 RX queues per lcore,
- issue the command:
+ How the Application Works
+-^^^^^^^^^^^^^^^^^^^^^^^^^
++~~~~~~~~~~~~~~~~~~~~~~~~~
  
- .. code-block:: console
-@@ -84,7 +84,7 @@ Driver Initialization
- ~~~~~~~~~~~~~~~~~~~~~
+ The primary instance creates the memory pool and initializes the network ports.
  
- The main part of the code in the main() function relates to the initialization of the driver.
--To fully understand this code, it is recommended to study the chapters that related to the Poll Mode Driver in the
-+To fully understand this code, it is recommended to study the chapters that relate to the Poll Mode Driver in the
- *DPDK Programmer's Guide and the DPDK API Reference*.
+@@ -183,7 +184,7 @@ The primary instance creates the memory pool and initializes the network ports.
+         :end-before: >8 End of primary instance initialization.
+         :dedent: 1
  
- .. literalinclude:: ../../../examples/link_status_interrupt/main.c
+-The secondary instance gets the port information and exported by the primary process.
++The secondary instance gets the port information exported by the primary process.
+ The memory pool is accessed by doing a lookup for it by name:
+ 
+ .. code-block:: c
+@@ -198,7 +199,7 @@ Each process reads from each port using the queue corresponding to its proc-id p
+ and writes to the corresponding transmit queue on the output port.
+ 
+ Client-Server Multi-process Example
+-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++-----------------------------------
+ 
+ The example multi-process application demonstrates a client-server type multi-process design.
+ A single server process receives a set of packets from the ports
+@@ -216,7 +217,7 @@ The following diagram shows the data-flow through the application, using two cli
+ 
+ 
+ Running the Application
+-^^^^^^^^^^^^^^^^^^^^^^^
++~~~~~~~~~~~~~~~~~~~~~~~
+ 
+ The server process must be run as the primary process to set up all memory structures.
+ In addition to the EAL parameters, the application-specific parameters are:
+@@ -229,9 +230,9 @@ In addition to the EAL parameters, the application-specific parameters are:
+ 
+ .. note::
+ 
+-   In the server process, has a single thread using the lowest numbered lcore
+-   in the corelist, performs all packet I/O.
+-   If corelist parameter specifies with more than a single lcore,
++   In the server process, a single thread using the lowest numbered lcore
++   in the corelist performs all packet I/O.
++   If the corelist parameter specifies more than a single lcore,
+    an additional lcore will be used for a thread to print packet count periodically.
+ 
+ The server application stores configuration data in shared memory,
+@@ -254,7 +255,7 @@ the commands are:
+     Any client processes that need restarting can be restarted without affecting the server process.
+ 
+ How the Application Works
+-^^^^^^^^^^^^^^^^^^^^^^^^^
++~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+ The server (primary) process performs the initialization of network port and data structure
+ and stores its port configuration data in a memory zone in hugepage shared memory.
 -- 
 2.51.0
 
