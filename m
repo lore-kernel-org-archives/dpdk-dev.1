@@ -2,29 +2,82 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E16BDD31A22
-	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Jan 2026 08:16:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 592E8D31A29
+	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Jan 2026 09:32:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 51C1F40655;
-	Wed, 14 Jan 2026 09:16:22 +0100 (CET)
-Received: from out28-101.mail.aliyun.com (out28-101.mail.aliyun.com
- [115.124.28.101])
- by mails.dpdk.org (Postfix) with ESMTP id 24EAA40655;
- Wed, 14 Jan 2026 09:16:17 +0100 (CET)
-Received: from ubuntu.localdomain(mailfrom:dimon.zhao@nebula-matrix.com
- fp:SMTPD_---.g6COfXx_1768378573 cluster:ay29) by smtp.aliyun-inc.com;
- Wed, 14 Jan 2026 16:16:14 +0800
-From: Dimon Zhao <dimon.zhao@nebula-matrix.com>
-To: dev@dpdk.org
-Cc: Dimon Zhao <dimon.zhao@nebula-matrix.com>, stable@dpdk.org,
- Kyo Liu <kyo.liu@nebula-matrix.com>, Leon Yu <leon.yu@nebula-matrix.com>,
- Sam Chen <sam.chen@nebula-matrix.com>
-Subject: [PATCH v1 1/1] net/nbl: fix hardware stats interrupt nesting issue
-Date: Wed, 14 Jan 2026 00:15:58 -0800
-Message-Id: <20260114081558.50370-2-dimon.zhao@nebula-matrix.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260114081558.50370-1-dimon.zhao@nebula-matrix.com>
-References: <20260114081558.50370-1-dimon.zhao@nebula-matrix.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 4DBA2402EA;
+	Wed, 14 Jan 2026 10:32:43 +0100 (CET)
+Received: from mx2.freebsd.org (mx2.freebsd.org [96.47.72.81])
+ by mails.dpdk.org (Postfix) with ESMTP id 6183C40289
+ for <dev@dpdk.org>; Wed, 14 Jan 2026 10:32:42 +0100 (CET)
+Received: from mx1.freebsd.org (mx1.freebsd.org [IPv6:2610:1c1:1:606c::19:1])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (4096 bits)
+ client-signature RSA-PSS (4096 bits))
+ (Client CN "mx1.freebsd.org", Issuer "R12" (verified OK))
+ by mx2.freebsd.org (Postfix) with ESMTPS id 4drgrS6KZtz3pxK;
+ Wed, 14 Jan 2026 09:32:40 +0000 (UTC)
+ (envelope-from jfree@FreeBSD.org)
+Received: from smtp.freebsd.org (smtp.freebsd.org
+ [IPv6:2610:1c1:1:606c::24b:4])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+ client-signature RSA-PSS (4096 bits) client-digest SHA256)
+ (Client CN "smtp.freebsd.org", Issuer "R12" (verified OK))
+ by mx1.freebsd.org (Postfix) with ESMTPS id 4drgrS5Ckhz3Ytw;
+ Wed, 14 Jan 2026 09:32:40 +0000 (UTC)
+ (envelope-from jfree@FreeBSD.org)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=freebsd.org; s=dkim;
+ t=1768383160;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=8O+spTpYGcgT11unyciNyGE8qGTd09Juqe1t2bZudoM=;
+ b=mP2UKDmFPeKL7pR8HGKdUsQVJcxFMzQ6ye4udxnCokFCQ3hvqw2Y5DTS1z8HAQxt+SEcre
+ xppKBuGn3WQSMZH5vJO/SW+3oIhD2aPgPsWx1t4ekZfQbwYA5T1t+PN9rNy4iCGfzAvEIK
+ HTEIebAP4JaqOfyYT0AhkKx6TVOs0iDj8loDexdfIHvUxZ/NU1zluBSRBlZAcCWNFgroWb
+ UV0JQOZFnkYrDGqaM7G+h+ZAKzPFquaSs681TTPanum5dauZZ2eNx9zjB60SPOkUnNHezV
+ Fjc7UEd56IYha1F0CJ68bAY9LRTh3tINIQb15HVAcpc3DoZ4CVooQxGdB9JzLQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=freebsd.org;
+ s=dkim; t=1768383160;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=8O+spTpYGcgT11unyciNyGE8qGTd09Juqe1t2bZudoM=;
+ b=EevtQFgVCIP+MLe3EljAlbtlk0UvT6n0964rLyrBgN8DnSzgLUeSGDkGh24MUgg26AzrXV
+ nyCOfvYfRKXxV0FdCpgnv7fPnm7V9zh9L8iWPXfZktW5m8nwhoOg60LpHFGXD3AD9Brf86
+ Jmpl+8mUauSj1O4YGmOXN9qr2jNvsQYRJKOMlomcqOfxNM2EPeSePcVfdR/blVpA1eOfbh
+ Di128fVCeK5VanGAVpC7tEq/sE9lXUc7I0HJQZsujQPsLYVvWZFr/pO2f8JwfNnlIWfad7
+ EyrjbCPxkh8taX5jG6vKTttZO3sXKbybQiLLG+61Nec1uV+FUz8926ziF7roHw==
+ARC-Seal: i=1; s=dkim; d=freebsd.org; t=1768383160; a=rsa-sha256; cv=none;
+ b=J0mnjJWBVLpv9gqRyykSkwjiRxzlo8f6rfA5GPtv/jR0zFB/bFbKYs7vUDO6rVBK3L4U7R
+ gteOOAMNaTqvariHbtqDfAvJ3vQcXXo7jPOIVpjAADNjCu7fUh2fN1gUoQgcJ9YJRrxYyZ
+ 3lXjyyBL1ocCNcY9IySHgr67a+RxXtz1+d+CW0CMzHdeeH+WVAI/qrE/yIhDTJ9dZev0OL
+ zxIEkogNp0cILpsktIPN1XtM5Vk3OiCSLhQbA40km0raBrDVctFXRCM82jzyYE/Kov/OQJ
+ mCaC35x4JFZCWmo8NQ9LFKtLTnr96H+vO8ikbx+zXkOIv5VDT3Ig00+oXvPHXw==
+ARC-Authentication-Results: i=1;
+	mx1.freebsd.org;
+	none
+Received: from x1c.netflix.com (unknown [IPv6:2607:fb10:2023::1])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+ (Client did not present a certificate) (Authenticated sender: jfree)
+ by smtp.freebsd.org (Postfix) with ESMTPSA id 4drgrQ31RSzs4l;
+ Wed, 14 Jan 2026 09:32:38 +0000 (UTC)
+ (envelope-from jfree@FreeBSD.org)
+From: Jake Freeland <jfree@FreeBSD.org>
+To: Anatoly Burakov <anatoly.burakov@intel.com>,
+ Bruce Richardson <bruce.richardson@intel.com>
+Cc: Jake Freeland <jfree@FreeBSD.org>,
+	dev@dpdk.org
+Subject: [PATCH v3 0/3] EAL memory fixes
+Date: Wed, 14 Jan 2026 18:31:26 +0900
+Message-ID: <20260114093140.3256584-1-jfree@FreeBSD.org>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20250814213246.4141803-1-jfree@FreeBSD.org>
+References: <20250814213246.4141803-1-jfree@FreeBSD.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -40,119 +93,30 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The timer interrupt handler periodically queries and updates
-hw_stats via mailbox.
-Since mailbox operations rely on interrupts for packet reception,
-this causes interrupt nesting.
-To resolve this, trigger a task from the interrupt handler and
-start a dedicated thread to execute this task,
-eliminating the nested interrupt scenario.
+This patchset contains a number of EAL-specific memory fixes that I've
+made over the last year. Two pertain to FreeBSD, one pertains to Linux.
 
-Fixes: c9726a719ca1 ("net/nbl: support dropped packets counter")
-Cc: stable@dpdk.org
+v2:
+* Log messages are no longer split across multiple lines.
+* The patch titled "Do not index out of bounds in memseg list" has been
+  removed since there was no indexing out of bounds happening.
+* A new patch has been added per Anatoly's recommendation that starts
+  searching for memseg entries after the last used entry.
 
-Signed-off-by: Dimon Zhao <dimon.zhao@nebula-matrix.com>
----
- drivers/net/nbl/nbl_dev/nbl_dev.c | 52 ++++++++++++++++++++++++++++++-
- drivers/net/nbl/nbl_dev/nbl_dev.h |  2 ++
- 2 files changed, 53 insertions(+), 1 deletion(-)
+v3:
+* Check if ms_idx is zero to accommodate static analysis tools.
+* Remove redundant start_idx check.
+* Reword hugepage skip message.
 
-diff --git a/drivers/net/nbl/nbl_dev/nbl_dev.c b/drivers/net/nbl/nbl_dev/nbl_dev.c
-index 8a56939aa7..f389fa62e4 100644
---- a/drivers/net/nbl/nbl_dev/nbl_dev.c
-+++ b/drivers/net/nbl/nbl_dev/nbl_dev.c
-@@ -168,11 +168,37 @@ static int nbl_dev_update_hw_stats(struct rte_eth_dev *eth_dev)
- 	return ret;
- }
- 
-+static uint32_t nbl_dev_thread_hw_stats_task(void *param)
-+{
-+	struct rte_eth_dev *eth_dev = (struct rte_eth_dev *)param;
-+	struct nbl_adapter *adapter = ETH_DEV_TO_NBL_DEV_PF_PRIV(eth_dev);
-+	struct nbl_dev_mgt *dev_mgt = NBL_ADAPTER_TO_DEV_MGT(adapter);
-+	struct nbl_dev_net_mgt *net_dev = NBL_DEV_MGT_TO_NET_DEV(dev_mgt);
-+	char unused[16];
-+	ssize_t nr = 0;
-+
-+	while (true) {
-+		nr = read(net_dev->fd[0], &unused, sizeof(unused));
-+		if (nr <= 0)
-+			break;
-+
-+		nbl_dev_update_hw_stats(eth_dev);
-+	}
-+
-+	return 0;
-+}
-+
- static void nbl_dev_update_hw_stats_handler(void *param)
- {
- 	struct rte_eth_dev *eth_dev = param;
-+	struct nbl_adapter *adapter = ETH_DEV_TO_NBL_DEV_PF_PRIV(eth_dev);
-+	struct nbl_dev_mgt *dev_mgt = NBL_ADAPTER_TO_DEV_MGT(adapter);
-+	struct nbl_dev_net_mgt *net_dev = NBL_DEV_MGT_TO_NET_DEV(dev_mgt);
-+	char notify_byte = 0;
-+	ssize_t nw = 0;
- 
--	nbl_dev_update_hw_stats(eth_dev);
-+	nw = write(net_dev->fd[1], &notify_byte, 1);
-+	RTE_SET_USED(nw);
- 
- 	rte_eal_alarm_set(NBL_ALARM_INTERNAL, nbl_dev_update_hw_stats_handler, eth_dev);
- }
-@@ -187,6 +213,19 @@ static int nbl_dev_hw_stats_start(struct rte_eth_dev *eth_dev)
- 	struct nbl_ustore_stats ustore_stats = {0};
- 	int ret;
- 
-+	ret = pipe(net_dev->fd);
-+	if (ret) {
-+		NBL_LOG(ERR, "hw_stats pipe failed, ret %d", ret);
-+		return ret;
-+	}
-+
-+	ret = rte_thread_create_internal_control(&net_dev->tid, "nbl_hw_stats_thread",
-+						 nbl_dev_thread_hw_stats_task, eth_dev);
-+	if (ret) {
-+		NBL_LOG(ERR, "create hw_stats thread failed, ret %d", ret);
-+		return ret;
-+	}
-+
- 	if (!common->is_vf) {
- 		ret = disp_ops->get_ustore_total_pkt_drop_stats(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt),
- 						common->eth_id, &ustore_stats);
-@@ -261,8 +300,19 @@ static void nbl_dev_txrx_stop(struct rte_eth_dev *eth_dev)
- 
- static int nbl_dev_hw_stats_stop(struct rte_eth_dev *eth_dev)
- {
-+	struct nbl_adapter *adapter = ETH_DEV_TO_NBL_DEV_PF_PRIV(eth_dev);
-+	struct nbl_dev_mgt *dev_mgt = NBL_ADAPTER_TO_DEV_MGT(adapter);
-+	struct nbl_dev_net_mgt *net_dev = NBL_DEV_MGT_TO_NET_DEV(dev_mgt);
-+
- 	rte_eal_alarm_cancel(nbl_dev_update_hw_stats_handler, eth_dev);
- 
-+	/* closing pipe to cause hw_stats thread to exit */
-+	close(net_dev->fd[0]);
-+	close(net_dev->fd[1]);
-+	net_dev->fd[0] = -1;
-+	net_dev->fd[1] = -1;
-+	rte_thread_join(net_dev->tid, NULL);
-+
- 	return 0;
- }
- 
-diff --git a/drivers/net/nbl/nbl_dev/nbl_dev.h b/drivers/net/nbl/nbl_dev/nbl_dev.h
-index 21d87a372d..bfe2b06deb 100644
---- a/drivers/net/nbl/nbl_dev/nbl_dev.h
-+++ b/drivers/net/nbl/nbl_dev/nbl_dev.h
-@@ -60,6 +60,8 @@ struct nbl_dev_net_mgt {
- 	u8 rsv:6;
- 	struct nbl_hw_stats hw_stats;
- 	bool hw_stats_inited;
-+	rte_thread_t tid;
-+	int fd[2];
- };
- 
- struct nbl_dev_mgt {
+Jake Freeland (3):
+  eal/freebsd: do not use prev_ms_idx for hole detection
+  eal/freebsd: avoid claiming memseg holes
+  eal/linux: check hugepage access permissions
+
+ lib/eal/freebsd/eal_memory.c      | 26 +++++++++++++++++++++-----
+ lib/eal/linux/eal_hugepage_info.c |  7 +++++++
+ 2 files changed, 28 insertions(+), 5 deletions(-)
+
 -- 
-2.34.1
+2.51.0
 
