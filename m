@@ -2,68 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09234D31A0E
-	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Jan 2026 05:07:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8A08D31A0E
+	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Jan 2026 05:13:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4B6DC4028F;
-	Wed, 14 Jan 2026 06:07:36 +0100 (CET)
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com
- [209.85.128.43]) by mails.dpdk.org (Postfix) with ESMTP id 6298C40289
- for <dev@dpdk.org>; Wed, 14 Jan 2026 06:07:34 +0100 (CET)
-Received: by mail-wm1-f43.google.com with SMTP id
- 5b1f17b1804b1-47d6a1f08bbso33626105e9.2
- for <dev@dpdk.org>; Tue, 13 Jan 2026 21:07:34 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id D5A9D40615;
+	Wed, 14 Jan 2026 06:13:38 +0100 (CET)
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com
+ [209.85.128.51]) by mails.dpdk.org (Postfix) with ESMTP id C2F8E40289
+ for <dev@dpdk.org>; Wed, 14 Jan 2026 06:13:36 +0100 (CET)
+Received: by mail-wm1-f51.google.com with SMTP id
+ 5b1f17b1804b1-477a2ab455fso75613875e9.3
+ for <dev@dpdk.org>; Tue, 13 Jan 2026 21:13:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768367254;
- x=1768972054; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768367616;
+ x=1768972416; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=lo+WNA5AqiheVW6xLxj+HqkMQJD0h7jR94ciObmHRBk=;
- b=fvc5gq3FjVog7+zOfL6eUeOSzO9TWtxsUbsNrNTuV87imPVyQImO0yENRNbTSpD9Ct
- hT3voE3HvCBuBCgOVUQ06COvrxhrNuZXLiLDii09OF4xgfryTsCOvvX2+EA6T8zAVlR5
- POUbbULAv3QVuVhb5KW0oaUVEbA41Ovz2LufSNBQqY8W+dtV1JU+hCx9ADsMkCteLCAS
- S1lC8fiBKiPpPQFxqmHjHs8/Kgo8BjmoFzoMEMRJWOeA4b7TvKRWcZnBi0IndlHK6f9a
- 25QpRaj17DBU34ak1w7f1Xi8fYfXU8dcreIvjwmUOIfQx9rlSCusSYHJJSWF8SoADS+T
- xh3g==
+ bh=lTVtNwIUitUyV1vBK1jqgftwLsowY9LX1YUHBYeVoaE=;
+ b=L3FjGH+IxvxprHiVCC8kSShmXykj9vSfhlwMXSZ/Rtf1n6o/S9u5BmVgnzOnDBipAp
+ IY3gN1AtUI7rS/0AuTVh8ThmdveiROWrfaVC7sbtoiCjNHK6+rcfPQVK2ubMrl2QMevP
+ fiBtnXJNhMwA4k0CdAzxO84hHV7sJEP8zt2sIJCESl7cUEOVdNA54ktFpY9GdrowecqD
+ jZG6y+wchHES3YucpEkQMBgi9S5/4PN6dQwOHfBTpWagFWSZGYOaVElH97uWi3N6tA5D
+ SaTSLcRqlSdtkgZIYSYIzeAh+ruc36isQX2EDNsKFMo2Sx7eLOtIrfM+eg1GJvYk2jy9
+ BSoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768367254; x=1768972054;
+ d=1e100.net; s=20230601; t=1768367616; x=1768972416;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=lo+WNA5AqiheVW6xLxj+HqkMQJD0h7jR94ciObmHRBk=;
- b=TTmq+sIkcp+dhpD3Z56XTBdqaiLxoozu9u7QceyFTTbby6sFA9BWYN2Ny1pK/1hAaR
- 2VLyN65hXfe5V/mTfv3L+aA0bpdl5AvC3Yx7dBAFZ7ChRUDLs3kDJlE4FHFmL4ooLWDc
- Xb0WaXQ21x6pkR9TKjaQmWcZSjsP/sNJI+YEe/5hbM/OAkRBrKz7qu9qBVcOF0OXj7QK
- U9Z4EWf3XEboFf5JxDEFabiwae0yQCWpmz2HyysNL/2IKeLABlnbYZnbH9Au4OIHijKm
- GYa115IQRtCtT8JVPY7vZmzhHIih8swRMpDiiPo/gKhWKVSmje6KyS898EL2buTuhMz8
- VsSg==
-X-Gm-Message-State: AOJu0YwtvwQ2FIbK+8FvuHHAdhWeYKOtSjTY5p1rk3IWpgU+g6KSdWz9
- YrEyJSOj0TzMNGpDiMC+kkrFnhbnVlmgM6eJgSdiNo5YRAXgYT7k/YHcYptwobV88AM=
-X-Gm-Gg: AY/fxX54MT2M0ihiI6lh1V2C88AffGq6vQ3KwU43+62Kb0CId6d0h2T2Spawiseoz+g
- 0WYl1zBEdLJzUgGztY6CoEGogiL/YRgHA5iaDPmv++MGSSKFBxfeiJszg1wr8mWpnMmM9FvwkZy
- LybWAOTHCU4koS8eUa785uA+y5GHClFgDHoD0qiUnRpsMP8WsGNwq8fm2CAdOq63jlGtIEnbBS4
- I+UaDWF/dh1pnM88qHab6LIi8srnkWFWv8Gs6Fjdy9MhY5k49oY8SOtm+4c/ByuHhMS6jDwObZI
- 7CA2+PBC7hM2QlwcAF6WSgAWcNw6FSWNO2B7BR5vkkvz6Qpba9SXiZVKeq4laz4R8h+AW5iOzu9
- bqqiCxbuDWUO7ORXBsO1rq7biFsdB0g+oH4H2jijuk4UB+4K2KtU0F7Y/Rp+USyjETzjNgGocB9
- 324F2ZgEXSkLEZLEN5+WgH8Iyr5VqRzIdH01F8RlkNuP+FkaSLJvg5
-X-Received: by 2002:a05:600c:c16f:b0:47e:e20e:bba3 with SMTP id
- 5b1f17b1804b1-47ee3318aaemr11159755e9.7.1768367253964; 
- Tue, 13 Jan 2026 21:07:33 -0800 (PST)
+ bh=lTVtNwIUitUyV1vBK1jqgftwLsowY9LX1YUHBYeVoaE=;
+ b=HnFlaC6l7pmetF35STL4unBb+syTHA8oSgjHaLNa66ffcyIwxpF9CSUMILuyH7139c
+ 8EygsvTCjynAGjwO4te0nFPt1NGhvbAsxqaqIcPeiEJKSVh/7cpAPoyInMx7qBULPWu0
+ YDsfhZqAj9vmeISEcrTeaUUO3xdlFIP54E/cwpPCf2VKO4SQUBbFdZu7qA44KPI3XZ+e
+ F7hQLfo5aWTz1Glz/WjK5/YBz4xmDmsssbmYCwbG7smV8kj6x7sionsYx5jZ9eKZm2bX
+ LeYInYiiqFjAelj1Zv1BndTACSRvef7RB7W3+AMrHfnDA7Mtm81mNQ+SPKuliDYn82CC
+ P2XQ==
+X-Gm-Message-State: AOJu0YxCVUBMp2Z2hVerGhIKxYCmq0Pv1jvmdPFhHMc5/eKUuGziquH7
+ tsIQ+lQYykI0ONm75fcDfKWz2JgVln/tsI/V8OEFtGNWyOwdKHP2MAtNAfVy1wwLkM8=
+X-Gm-Gg: AY/fxX6IyvOtkKX1AYbBtB18m1FHNBRNYXdrQB6rk+r38OFXVqWKN0CrK+ymdlQIqDr
+ F3eSQhe1sle1cnkSdX5E9Xo3YH5pyJMXzNLAMv8/htQdfVFOoSlXFi0pquMTOBUwYmWxe9iWP9K
+ dgi0TRrmcecp25JFRSREq8gQ4wpEKibE2wUCzXFyyutIUs9UhdbztYTN9Tx4efbf96OYXbHUld6
+ d1hZYXkAdCAFMskCX6YpOcg+cZUxwqQZuWprjXNogsqrA5/EX1k0dLTxX3NepLbtw6puqMfC8Wd
+ JuywewiP25gNac13rzV70Vb3bTzj17+z+oob4fLB3s/8roDYDFi/g6IYCZj2qqtQBUV2Dren5Mn
+ pSsOhFgKArTOXqxuyl8SD8kuf8C3IHToFlWcBz4Qivsxa7OnTyWKXoKEvv8CsKQMnyJWalU56h5
+ p1XP3crYs6eYXN4uiZ8xwCqTv18WOTYSkLhkt4FBfCR/meMhn+GSd8
+X-Received: by 2002:a05:6000:2407:b0:430:fced:90a with SMTP id
+ ffacd0b85a97d-4342c4f70ebmr1235682f8f.16.1768367616203; 
+ Tue, 13 Jan 2026 21:13:36 -0800 (PST)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-47ee0baf482sm14028955e9.2.2026.01.13.21.07.32
+ ffacd0b85a97d-432bd5ee5e3sm47682790f8f.35.2026.01.13.21.13.35
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 13 Jan 2026 21:07:33 -0800 (PST)
-Date: Tue, 13 Jan 2026 21:07:27 -0800
+ Tue, 13 Jan 2026 21:13:35 -0800 (PST)
+Date: Tue, 13 Jan 2026 21:13:30 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Artur Paszkiewicz <artur.paszkiewicz@intel.com>
-Cc: dev@dpdk.org, anatoly.burakov@intel.com, david.marchand@redhat.com
-Subject: Re: [PATCH RESEND] malloc: fix allocation for a specific case with
- ASan
-Message-ID: <20260113210727.5a902757@phoenix.local>
-In-Reply-To: <20241017100207.1207-1-artur.paszkiewicz@intel.com>
-References: <20241017100207.1207-1-artur.paszkiewicz@intel.com>
+To: Abdullah =?UTF-8?B?w5ZtZXIgWWFtYcOn?= <aomeryamac@gmail.com>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH v6] devtools: add .clang-format file
+Message-ID: <20260113211331.3fb0de98@phoenix.local>
+In-Reply-To: <20241014221545.66810-1-aomeryamac@gmail.com>
+References: <20241007102410.6c68f2c6@hermes.local>
+ <20241014221545.66810-1-aomeryamac@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -80,146 +80,157 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 17 Oct 2024 12:02:06 +0200
-Artur Paszkiewicz <artur.paszkiewicz@intel.com> wrote:
+On Mon, 14 Oct 2024 22:15:45 +0000
+Abdullah =C3=96mer Yama=C3=A7 <aomeryamac@gmail.com> wrote:
 
-> Allocation would fail with ASan enabled if the size and alignment was
-> equal to half of the page size, e.g.:
+> clang-format is a tool to format C/C++/Objective-C code. It can be used
+> to reformat code to match a given coding style, or to ensure that code
+> adheres to a specific coding style. It helps to maintain a consistent
+> coding style across the DPDK codebase.
 >=20
-> size_t pg_sz =3D 2 * (1 << 20);
-> rte_malloc(NULL, pg_sz / 2, pg_sz / 2);
+> .clang-format file overrides the default style options provided by
+> clang-format and large set of IDEs and text editors support it.
 >=20
-> In such case, try_expand_heap_primary() only allocated one page but it
-> is not enough to fit this allocation with such alignment and
-> MALLOC_ELEM_TRAILER_LEN > 0, as correctly checked by
-> malloc_elem_can_hold().
->=20
-> Signed-off-by: Artur Paszkiewicz <artur.paszkiewicz@intel.com>
+> Signed-off-by: Abdullah =C3=96mer Yama=C3=A7 <aomeryamac@gmail.com>
 > ---
 
-Looks like this patch got stuck in limbo because of the sporadic CI test fa=
-ilures.
+Adding a clang-format would be good, but the patch never got reviewed.
+I was a little concerned that the new clang-format would have some
+style conflicts with current DPDK usage; so I asked AI.
+Please consider these proposed changes and resubmit.
 
-AI code review likes it bu has some suggestions:
 
+## Patch Review: devtools: add .clang-format file
 
-## DPDK Patch Review: malloc: fix allocation for a specific case with ASan
+### Commit Message Analysis
+
+| Check | Status | Notes |
+|-------|--------|-------|
+| Subject =E2=89=A460 chars | =E2=9C=85 | 39 characters |
+| Lowercase after colon | =E2=9C=85 | "add .clang-format file" |
+| Imperative mood | =E2=9C=85 | "add" |
+| No trailing period | =E2=9C=85 | |
+| Signed-off-by | =E2=9C=85 | Present with real name and email |
+| Body =E2=89=A475 chars | =E2=9C=85 | Lines are within limit |
+
+**Warning**: The prefix `devtools:` is potentially misleading since the `.c=
+lang-format` file is being added to the repository root, not to the `devtoo=
+ls/` directory. Consider using a prefix like `style:` or `build:`, or simpl=
+y omit the prefix for root-level config files.
+
+---
+
+### Clang-Format Settings Review
+
+#### =E2=9C=85 Correct Settings
+
+| Setting | Value | DPDK Requirement | Status |
+|---------|-------|------------------|--------|
+| `ColumnLimit` | 100 | 100 chars max | =E2=9C=85 |
+| `TabWidth` | 8 | 8 characters | =E2=9C=85 |
+| `IndentWidth` | 8 | 8 characters | =E2=9C=85 |
+| `LineEnding` | LF | Unix line endings | =E2=9C=85 |
+| `InsertNewlineAtEOF` | true | Files end with newline | =E2=9C=85 |
+| `AfterFunction` | true | Brace on new line for functions | =E2=9C=85 |
+| `AfterControlStatement` | false | Brace on same line for if/for/while | =
+=E2=9C=85 |
+| `IncludeBlocks` | Preserve | Don't reorder include groups | =E2=9C=85 |
+| `SortIncludes` | Never | Preserve include order | =E2=9C=85 |
+| `AlwaysBreakAfterReturnType` | TopLevelDefinitions | Return type on own l=
+ine | =E2=9C=85 |
+| `IndentGotoLabels` | false | Labels not indented | =E2=9C=85 |
+| `ForEachMacros` | comprehensive list | Treat as loops | =E2=9C=85 |
+
+#### =E2=9A=A0=EF=B8=8F Issues to Address
+
+**1. UseTab Setting (Warning)**
+
+```yaml
+UseTab: Always
+```
+
+DPDK style specifies: *"hard tabs for indentation, spaces for alignment"*
+
+`UseTab: Always` will use tabs everywhere including for alignment, which ca=
+n cause misalignment when viewed with different tab widths. Consider:
+
+```yaml
+UseTab: ForIndentation
+```
+
+**2. Missing Pointer Alignment (Warning)**
+
+DPDK follows Linux kernel style where the `*` binds to the variable name:
+```c
+char *ptr;      /* Correct */
+char* ptr;      /* Wrong */
+```
+
+Add:
+```yaml
+PointerAlignment: Right
+```
+
+**3. Missing Space After Cast (Info)**
+
+DPDK style typically has no space after casts. Consider adding:
+```yaml
+SpaceAfterCStyleCast: false
+```
+
+**4. Missing Short Function Settings (Info)**
+
+To prevent unwanted single-line functions:
+```yaml
+AllowShortFunctionsOnASingleLine: None
+AllowShortBlocksOnASingleLine: Never
+```
+
+**5. Missing Brace Wrapping Settings (Info)**
+
+The `BraceWrapping` section is incomplete. For full DPDK compliance, consid=
+er:
+```yaml
+BraceWrapping:
+        AfterFunction: true
+        AfterControlStatement: false
+        AfterStruct: false
+        AfterEnum: false
+        AfterUnion: false
+        BeforeElse: false
+        BeforeWhile: false
+        SplitEmptyFunction: true
+```
+
+**6. Switch Statement Indentation (Info)**
+
+DPDK style shows `case` labels not indented relative to `switch`. Add:
+```yaml
+IndentCaseLabels: false
+IndentCaseBlocks: false
+```
+
+**7. BasedOnStyle Consideration (Info)**
+
+`BasedOnStyle: LLVM` is a reasonable starting point, but Linux kernel style=
+ (`BasedOnStyle: Kernel` if available in your clang-format version) might b=
+e closer to DPDK's actual style since DPDK is modeled on Linux kernel devel=
+opment.
+
+---
 
 ### Summary
-This is a well-crafted bug fix patch that addresses an allocation failure w=
-hen ASan is enabled and the allocation size/alignment equals half the page =
-size. The patch is concise, well-explained, and correctly structured.
 
----
+| Severity | Count | Items |
+|----------|-------|-------|
+| **Error** | 0 | None |
+| **Warning** | 2 | `UseTab: Always` should be `ForIndentation`; Missing `P=
+ointerAlignment: Right` |
+| **Info** | 5 | Subject prefix; Missing short function settings; Incomplet=
+e brace wrapping; Missing switch indent settings; Space after cast |
 
-### Errors (Must Fix)
-
-**None identified.** The patch passes all mandatory checks.
-
----
-
-### Warnings (Should Fix)
-
-**1. Consider Adding `Cc: stable@dpdk.org`**
-
-This fixes a real allocation failure that affects ASan users. If this bug e=
-xists in stable branches, it would be a good candidate for backporting. Per=
- guidelines: "For stable release backport candidates: `Cc: stable@dpdk.org`"
-
-**2. Consider Adding a `Fixes:` Tag**
-
-If this is a regression introduced by a specific commit (for example, when =
-ASan support or `MALLOC_ELEM_TRAILER_LEN` was added), a `Fixes:` tag would =
-help identify which stable branches need the fix:
-
-```
-Fixes: <12-char-sha> ("original commit that introduced the bug")
-Cc: stable@dpdk.org
-```
-
-If this is a latent bug that existed since the original implementation, the=
- `Fixes:` tag may not be necessary, but `Cc: stable@dpdk.org` would still b=
-e appropriate.
-
----
-
-### Info (Consider)
-
-**1. Test Coverage**
-
-Consider whether a unit test could be added to `app/test` to verify this sp=
-ecific allocation pattern works correctly with ASan enabled. This would pre=
-vent regression. Example test case based on the commit message:
-
-```c
-/* Test allocation where size =3D=3D align =3D=3D pg_sz/2 */
-size_t pg_sz =3D 2 * (1 << 20);  /* 2MB */
-void *ptr =3D rte_malloc(NULL, pg_sz / 2, pg_sz / 2);
-TEST_ASSERT_NOT_NULL(ptr, "Allocation failed for size=3Dalign=3Dpg_sz/2");
-rte_free(ptr);
-```
-
-**2. Code Comment**
-
-The fix changes the allocation size calculation logic. A brief inline comme=
-nt explaining the worst-case alignment scenario could help future maintaine=
-rs:
-
-```c
-/* Account for worst-case alignment: header may need to be padded up to 'al=
-ign',
- * plus the element size, plus trailer (non-zero when ASan is enabled).
- */
-alloc_sz =3D RTE_ALIGN_CEIL(RTE_MAX(MALLOC_ELEM_HEADER_LEN, align) +
-        elt_size + MALLOC_ELEM_TRAILER_LEN, pg_sz);
-```
-
----
-
-### Checklist Summary
-
-| Category | Status |
-|----------|--------|
-| Subject line =E2=89=A460 chars | =E2=9C=93 (50 chars) |
-| Correct component prefix (`malloc:`) | =E2=9C=93 |
-| Lowercase after colon | =E2=9C=93 |
-| Imperative mood, no trailing period | =E2=9C=93 |
-| Body wrapped at 75 chars | =E2=9C=93 |
-| Body does not start with "It" | =E2=9C=93 |
-| Signed-off-by present | =E2=9C=93 |
-| `Fixes:` tag (if applicable) | ? (see warning) |
-| `Cc: stable@dpdk.org` (if applicable) | Missing |
-| Code changes are minimal and focused | =E2=9C=93 |
-| Changes are consistent across both files | =E2=9C=93 |
-
----
-
-### Technical Assessment
-
-The fix looks correct. The original calculation:
-```c
-RTE_ALIGN_CEIL(elt_size, align) + MALLOC_ELEM_OVERHEAD
-```
-
-...doesn't properly account for the case where alignment padding before the=
- user data could push the trailer beyond the allocated page boundary. The n=
-ew calculation:
-```c
-RTE_MAX(MALLOC_ELEM_HEADER_LEN, align) + elt_size + MALLOC_ELEM_TRAILER_LEN
-```
-
-...correctly computes the worst-case space needed: the header (or alignment=
-, whichever is larger) plus the actual element size plus the trailer.
-
----
-
-### Verdict
-
-**Ready to merge** with minor suggestions. This is a clean, focused bug fix=
-. The only recommendations are:
-
-1. Add `Cc: stable@dpdk.org` if this should be backported
-2. Optionally add a `Fixes:` tag if the originating commit can be identified
-
-The patch could be accepted as-is, but a v2 with `Cc: stable@dpdk.org` woul=
-d be ideal for ensuring the fix reaches stable branches.
+**Recommendation**: The patch is a solid foundation but needs the pointer a=
+lignment and tab usage fixes before merge. The current `UseTab: Always` set=
+ting will cause alignment issues in multi-line function arguments and struc=
+t initializers, and the missing `PointerAlignment: Right` will format point=
+ers contrary to DPDK convention.
