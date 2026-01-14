@@ -2,50 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C643CD37E56
-	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Jan 2026 15:46:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 178BCD37E56
+	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Jan 2026 15:46:31 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DFF4140E0B;
-	Wed, 14 Jan 2026 16:45:21 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id E645E40E13;
+	Wed, 14 Jan 2026 16:45:22 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
- by mails.dpdk.org (Postfix) with ESMTP id 99C8440B9D;
- Wed, 14 Jan 2026 16:45:19 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id A30A740B8D
+ for <dev@dpdk.org>; Wed, 14 Jan 2026 16:45:20 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
  t=1768405521; x=1799941521;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=kfpK6TqkUDQYXyQfmhRGLzOm9Adm/FkySYjnm98LDVU=;
- b=JAl5b3gMC5wdgbaQhGKxLfMRpKJOGpnWVUsROhIDTo13Zy9hc/u29vFf
- trdGXnBx0eKoUl8l0QXdBSXk6fikpJ+ZtynQUbwTJy06Dw4chUNnibBbi
- fMV2gBYolLNlo0YYzJfgeaL38TARH8ChfkO5W+TuM7OejeTLpOie2p1qP
- GHZ9fbj2CjqF6FJqtpvnAbTbVgmpDGZMLDYyVzwMmCetqbKIY/TXj9pW8
- 2qTTWYnbV2MRMd0XyoX+wwG0lcOtixsqOyGztRwL6krdYw4yZa3/WM8Ce
- 1zxW0IkqDqwlMwZ+ykLzeLiEYwYqgsT5y3ZHPT476w7ECGpti/xJZcfA0 Q==;
-X-CSE-ConnectionGUID: Bk3YSd2WSA+HILGzuzCGCA==
-X-CSE-MsgGUID: 34DHyB1SSZyyuQ8Xr3k6OQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11671"; a="69870842"
-X-IronPort-AV: E=Sophos;i="6.21,225,1763452800"; d="scan'208";a="69870842"
+ bh=BD9AYqJbD6ejB2VFYDXZDZ1fK6gKDRMFlgPS5s7ytoM=;
+ b=HSCbw0LwDKZbcMnDPdv3H+QU3cQJmEVYCfdTaFwUepzFgssHjzFu6i36
+ +Pb5m189ZiPtK2d9w9iTon+YOyA+IJLV+zrXAgwpmvft9tRIxirTj1TFB
+ X2BlGWqQdq/kGap8ADVseB2FSmSzip4q/7OSTYG2qT3UH6njQYxvyyK1W
+ rDoywWMQDr38IMbpw9crerstOcz4kW2OfUAAfK6qGxhpbA+9Spp/sH9+n
+ XC8N44e2ihx0Zaxr1AUkCDkLsZ+6koQlAYLRh/iNbNOqKoXz29g0LURRc
+ nXtKHlcUsCkC8MST21/fsLwC7p+YlUY8IjCgLuu2P4LjIWsE0haN69C2L Q==;
+X-CSE-ConnectionGUID: tJbYvaCOQTesJGX9AMRgdA==
+X-CSE-MsgGUID: C+qA8v5ZQXeqVZjFJ1gOIA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11671"; a="69870851"
+X-IronPort-AV: E=Sophos;i="6.21,225,1763452800"; d="scan'208";a="69870851"
 Received: from orviesa010.jf.intel.com ([10.64.159.150])
  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 14 Jan 2026 07:45:20 -0800
-X-CSE-ConnectionGUID: 47QY8DScSEOShLjoFFe2OQ==
-X-CSE-MsgGUID: Mr3OPT8NSKOagXl/cDnnJw==
+ 14 Jan 2026 07:45:21 -0800
+X-CSE-ConnectionGUID: rxGzHZMrQdKm29Zg5iHdxg==
+X-CSE-MsgGUID: k2Y8aWNPTWC7OXR8HHGQLg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,225,1763452800"; d="scan'208";a="203924999"
+X-IronPort-AV: E=Sophos;i="6.21,225,1763452800"; d="scan'208";a="203925002"
 Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by orviesa010.jf.intel.com with ESMTP; 14 Jan 2026 07:45:17 -0800
+ by orviesa010.jf.intel.com with ESMTP; 14 Jan 2026 07:45:19 -0800
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
-Cc: Bruce Richardson <bruce.richardson@intel.com>, stable@dpdk.org,
- Chengwen Feng <fengchengwen@huawei.com>,
- Stephen Hemminger <stephen@networkplumber.org>,
- Chenbo Xia <chenbox@nvidia.com>, Nipun Gupta <nipun.gupta@amd.com>,
- Anatoly Burakov <anatoly.burakov@intel.com>,
- Tetsuya Mukawa <mtetsuyah@gmail.com>
-Subject: [PATCH v4 11/31] bus/pci: remove shadowed variables
-Date: Wed, 14 Jan 2026 15:44:25 +0000
-Message-ID: <20260114154450.2969716-12-bruce.richardson@intel.com>
+Cc: Bruce Richardson <bruce.richardson@intel.com>,
+ Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v4 12/31] net/intel: rename function param to avoid shadow
+ warnings
+Date: Wed, 14 Jan 2026 15:44:26 +0000
+Message-ID: <20260114154450.2969716-13-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260114154450.2969716-1-bruce.richardson@intel.com>
 References: <20251106140948.2894678-1-bruce.richardson@intel.com>
@@ -65,47 +62,36 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Remove two instances where we had duplicate shadowed local variables
-called "ret". In each case, we could just remove the inner instance,
-since the outer value was not needing to be preserved.
-
-Fixes: 03ba15ca65c1 ("vfio: allow mapping MSI-X BARs if kernel allows it")
-Fixes: c0ce0577e84d ("pci: consolidate address comparisons")
-Cc: stable@dpdk.org
+The rx_free_thresh parameter was conflicting with a global value in
+testpmd when certain driver-specific files were included in the testpmd
+build. Rename the parameter to just "free_thresh" - the "rx" is
+unnecessary since the function itself is for Rx queues.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
-Acked-by: Chengwen Feng <fengchengwen@huawei.com>
 Acked-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/bus/pci/linux/pci.c      | 1 -
- drivers/bus/pci/linux/pci_vfio.c | 2 +-
- 2 files changed, 1 insertion(+), 2 deletions(-)
+ drivers/net/intel/common/rx.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/bus/pci/linux/pci.c b/drivers/bus/pci/linux/pci.c
-index 66d7e09a6e..2ffac82e94 100644
---- a/drivers/bus/pci/linux/pci.c
-+++ b/drivers/bus/pci/linux/pci.c
-@@ -326,7 +326,6 @@ pci_scan_one(const char *dirname, const struct rte_pci_addr *addr)
- 		rte_pci_add_device(dev);
- 	} else {
- 		struct rte_pci_device *dev2;
--		int ret;
+diff --git a/drivers/net/intel/common/rx.h b/drivers/net/intel/common/rx.h
+index ea7fb98b47..463d1eb834 100644
+--- a/drivers/net/intel/common/rx.h
++++ b/drivers/net/intel/common/rx.h
+@@ -228,11 +228,11 @@ ci_rxq_mbuf_initializer(uint16_t port_id)
+  * Individual drivers may have other further tests beyond this.
+  */
+ static inline bool
+-ci_rxq_vec_capable(uint16_t nb_desc, uint16_t rx_free_thresh)
++ci_rxq_vec_capable(uint16_t nb_desc, uint16_t free_thresh)
+ {
+ 	if (!rte_is_power_of_2(nb_desc) ||
+-			rx_free_thresh < CI_RX_MAX_BURST ||
+-			(nb_desc % rx_free_thresh) != 0)
++			free_thresh < CI_RX_MAX_BURST ||
++			(nb_desc % free_thresh) != 0)
+ 		return false;
  
- 		TAILQ_FOREACH(dev2, &rte_pci_bus.device_list, next) {
- 			ret = rte_pci_addr_cmp(&dev->addr, &dev2->addr);
-diff --git a/drivers/bus/pci/linux/pci_vfio.c b/drivers/bus/pci/linux/pci_vfio.c
-index 8562fdcc6b..242f567ed7 100644
---- a/drivers/bus/pci/linux/pci_vfio.c
-+++ b/drivers/bus/pci/linux/pci_vfio.c
-@@ -797,7 +797,7 @@ pci_vfio_map_resource_primary(struct rte_pci_device *dev)
- 	}
- 	/* if we found our MSI-X BAR region, check if we can mmap it */
- 	if (vfio_res->msix_table.bar_index != -1) {
--		int ret = pci_vfio_msix_is_mappable(vfio_dev_fd,
-+		ret = pci_vfio_msix_is_mappable(vfio_dev_fd,
- 				vfio_res->msix_table.bar_index);
- 		if (ret < 0) {
- 			PCI_LOG(ERR, "Couldn't check if MSI-X BAR is mappable");
+ 	return true;
 -- 
 2.51.0
 
