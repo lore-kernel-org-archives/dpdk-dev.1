@@ -2,63 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E686D3CC87
-	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Jan 2026 22:41:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4036D3CC88
+	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Jan 2026 22:56:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2E91740E42;
-	Wed, 14 Jan 2026 23:41:12 +0100 (CET)
-Received: from mail-dl1-f45.google.com (mail-dl1-f45.google.com [74.125.82.45])
- by mails.dpdk.org (Postfix) with ESMTP id 8F9124003C
- for <dev@dpdk.org>; Wed, 14 Jan 2026 23:41:10 +0100 (CET)
-Received: by mail-dl1-f45.google.com with SMTP id
- a92af1059eb24-11f3a10dcbbso288169c88.1
- for <dev@dpdk.org>; Wed, 14 Jan 2026 14:41:10 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id C69A540E1E;
+	Wed, 14 Jan 2026 23:56:01 +0100 (CET)
+Received: from mail-wm1-f68.google.com (mail-wm1-f68.google.com
+ [209.85.128.68]) by mails.dpdk.org (Postfix) with ESMTP id 9E4804003C
+ for <dev@dpdk.org>; Wed, 14 Jan 2026 23:56:00 +0100 (CET)
+Received: by mail-wm1-f68.google.com with SMTP id
+ 5b1f17b1804b1-47ee974e230so2862555e9.2
+ for <dev@dpdk.org>; Wed, 14 Jan 2026 14:56:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1768430469; x=1769035269; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=7HTKz/oXGaUJQW8KgPTsVsPtA879eQwTNmyg7nLxgik=;
- b=Bbe4c0XPwALRYNhBTgnXx8rEpjijbL40gTp80BrSkHTodQZMoqywz9KWSxLx06KIHX
- Odq1hE90Sr4IPcTlD3WLHZZhxPha7d/wNRzsyJJjbBdvDVlBSp7P9kuH4BKjGoXhYjrw
- 2xLTPL7ig4vbfjt0DIL31tmjWUx/RiCtNs7UI=
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768431360;
+ x=1769036160; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=qkAN8vWgusKioRDpMEyqvlbRkDAllUzFHZ+jA6dIFG4=;
+ b=oVrrk6uaACzzVACTMQUgoCc7p7tQu8kBbh72CER+KhDGhgGw9VF3zSGpp0Y8m18hJG
+ rY6CqtbSPmIqleCafIlrXd8FP62L+2m9Ocfts9GdgDI7ipDy2kWHZJQJVPpFEUZ2exw/
+ twP8L1mjzkIvakAjjN2UoioK2ASqlW1SpKOIyvHynGxtkqKTGsLRR4C02ZdKL9dJr3Om
+ Fg6mtWtSJoYqLZQ5Dx3cn4yNphE7P5ZI2ajKX98hqmjBJM35Acxt7teau6GuVTcCpzMu
+ X9H6L6D4T9vL6c1qo5SJVm4WUK7uX5E6I7FmmUObfSJHEMehyG5hmFG3elF+HP5r1XRy
+ oUhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768430469; x=1769035269;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ d=1e100.net; s=20230601; t=1768431360; x=1769036160;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to;
- bh=7HTKz/oXGaUJQW8KgPTsVsPtA879eQwTNmyg7nLxgik=;
- b=LQlkSNfUvbieABjJAapTh27ICu0IrMKaSzWLeabWq6oz3hFxO5SHZpL0rLv8bYiAp6
- BLm9luBGu46U4Y+HincOn6ASOXMYTrKj8ffPFDD7c3B1pY1VRmOzZxok5RcAG5Vp3eHw
- bcmUggzbJFb3Fcf02BalEk2FSnvlvkQjTxA81ikYhL/JnT4lh7rztvYADL95OID/6w7u
- HFjw1oVuUWCUSIgPfyw4vZ3bTTDqwKgEk+bUYW0xXZi3xa/7dFOd8cct/++ju3UySTI4
- +9Ovuz2T8SMiKqZamZz67Gwbba9dLgGhABqy/1j7zJ+KBcWPu1BC5hBQAo9ihu3zH8Ng
- VHPA==
-X-Forwarded-Encrypted: i=1;
- AJvYcCVXIGnA1JrgyhtOzfJkDNVOixj2nf1axYQdxu3YqeBzE/FAWRCgIxjfBzyMsjuyyUUkAIM=@dpdk.org
-X-Gm-Message-State: AOJu0YwurAr8UXXdx8v8/cKpdN+bOpwnHWP4rxzpTBIPlR7ZjDU6ID3t
- zmzMzPw6RQOXzk0u6WgmmpggUy/RJQLWMSp1vnSHeVj44KZqkuASOm00Rx++hJrKCdGbHYAd4YQ
- xunNuHkCKbeUUhNRknSjk9l9T0RwFNBYaYNHMixckrA==
-X-Gm-Gg: AY/fxX7Vu+MmrVzuj40tdXBDxhxjy+IYRNJFSux227c5LeAzsnf03026R5eiFN+pR91
- FCjQawgtK7gbCICWaF5j76LYB84Uf6lykTyMK97yyPCnF2fW2i407cs/V155KxZl8K8luggYH8b
- u6u9SvAJr7p2g9mEggvQTA1eoYpVX8dihaSgVsOqmwuopyiKOE8VNMQA4XxWEHoGxGhrPoVHV8R
- Tn74xmptHcM9By/EIKJQrtAOTFYOQEh/sWJWG1etItEj3V57odlVX6I01p/bvsEjSbARsEHOPmx
- wxNTTNy0TZt2E9mA15V0P0Iyu6Y6xrTLLDr97COLyK6kdZIGovc7bGcoR9o3
-X-Received: by 2002:a05:7022:1a84:b0:11c:b3ae:c9f1 with SMTP id
- a92af1059eb24-12336a2312dmr4990042c88.1.1768430469531; Wed, 14 Jan 2026
- 14:41:09 -0800 (PST)
+ bh=qkAN8vWgusKioRDpMEyqvlbRkDAllUzFHZ+jA6dIFG4=;
+ b=iANsAp0M8oTsN29BZkfn63V8JWfGU7cFkrN500uFyPAzFOFfH6ixJLhYYVPqwlhB7O
+ 52CsHIq0EL2y5ORWjTU8eN2KWambkNOkYezR9mnCF3UewqLMZJ5X9etJbvTKFRKjS4Ff
+ LUpFXfYHglLnaBng40Z5EwlnjSBKmEW5mV8+ja9IQqVU87HsyRQ4LbOjG3lU7RhzLdX9
+ evGDPLBvQPU6SKZzheM0iV6q9CK5FiyPypHNWfw4CYb5BR0/CYHICY7qVCNqzkijxXmh
+ 2gsGzRkQHwokVMeb3IPGZI34IbttJo1wEGBh3AYctOa0cH9KZmScOHk33PV+9cf0eOH6
+ F8Sw==
+X-Gm-Message-State: AOJu0YyT62Y/Hpx9Sfp9ZKMCMjpQRXZJMmZ+82UT96CepzudJnpHz2dO
+ iKUUJGSjIELoDFQ8/5QMM5P6MmjD8uHppG2Q7doA954bKfeYctVrZ94rTNue885c+O5EDSys3Tc
+ PVBbIP7w=
+X-Gm-Gg: AY/fxX5TQDPBq8li/YDN9fV2RuP4O/H19bIxed34mK29Pb6hQeLMBkJAq4maqQfmsLr
+ rHkWOE3ModwaIWLdLTyDRZ4DyLI/WKC7xMoCt1eoPR7RyN3UVFPEYSXVngtpI7Grzslpe0RUk7t
+ sRhZRy0KfX0ry82BzedcMISguiutim75gHyUVlvTGsphepu2YdjiAIMn+t96BJXOfnimK9fe9vt
+ WgWAXDI5PYJgw4pmCBECSJIUA4oiRS64fcLP1HZn9kxO57Wpur5hsbLc/XLWhhLTjIG887Tf2O+
+ Du3x7mh+zhPB/98MqEIAnYYY4XO1KcJn7fEsizlYD291WR5/a9lYLfssIJGWzX5skj2RPGmtVpg
+ 3idbAYLuS6HTJoDhBjN6X8AgZcydyrNrJDQ7VRZ2SeUH8DXI2SCYoSGdau1TePioSNZtAsxnvXD
+ X2xyhxLg9JyaTtmEGawHBmIssr8OKc7pqQirWR7F//7KeH6Sy7Rw==
+X-Received: by 2002:a05:600c:45c8:b0:477:9a28:b0a4 with SMTP id
+ 5b1f17b1804b1-47ee3071491mr52506585e9.0.1768431359898; 
+ Wed, 14 Jan 2026 14:55:59 -0800 (PST)
+Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 5b1f17b1804b1-47f428af0c7sm12999125e9.4.2026.01.14.14.55.58
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Wed, 14 Jan 2026 14:55:59 -0800 (PST)
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH 00/11] doc: improve contributing documentation clarity and
+ style
+Date: Wed, 14 Jan 2026 14:54:04 -0800
+Message-ID: <20260114225555.127448-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.51.0
 MIME-Version: 1.0
-References: <20251212210142.669766-1-abailey@iol.unh.edu>
- <20251215214049.694604-1-abailey@iol.unh.edu>
-In-Reply-To: <20251215214049.694604-1-abailey@iol.unh.edu>
-From: Patrick Robb <probb@iol.unh.edu>
-Date: Wed, 14 Jan 2026 17:38:57 -0500
-X-Gm-Features: AZwV_Qj_-9IlKuo1S0MCJUksAoZkVqGvll9toBy2tfy6qvcvuMDpczncI59AY9M
-Message-ID: <CAJvnSUBjbRZeS-Vy4uuboK_XkGFpuNb_QdsUmBCnSqeBj8vDUg@mail.gmail.com>
-Subject: Re: [PATCH v3] dts: show missing NIC capabilities in DTS logs
-To: Andrew Bailey <abailey@iol.unh.edu>
-Cc: luca.vizzarro@arm.com, paul.szczepanek@arm.com, dmarx@iol.unh.edu, 
- dev@dpdk.org
-Content-Type: multipart/alternative; boundary="000000000000f2594c064860cdc0"
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -72,100 +78,56 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---000000000000f2594c064860cdc0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+This patch series improves the readability and consistency of the DPDK
+contributing documentation. The changes focus on editorial improvements
+without altering any technical content or policies.
 
-Reviewed-by: Patrick Robb <probb@iol.unh.edu>
+Initial work on this was done by the tech writer (Nandini)
+but this is follow up using AI to get broader coverage.
 
-On Mon, Dec 15, 2025 at 4:40=E2=80=AFPM Andrew Bailey <abailey@iol.unh.edu>=
- wrote:
+The primary improvements across this series include:
 
-> When a test was skipped due to a missing NIC capability, the logs should
-> print the name of the missing capability. This has since changed to show
-> only the integer representation of the missing capability. This patch
-> restores the previous behavior of printing the name of the missing
-> capability to the user.
->
-> Bugzilla ID: 1803
-> Fixes: eba657ae3c3c ("dts: move testpmd module from framework to API
-> directory")
->
-> Signed-off-by: Andrew Bailey <abailey@iol.unh.edu>
-> ---
->  dts/api/capabilities.py | 4 ++++
->  1 file changed, 4 insertions(+)
->
-> diff --git a/dts/api/capabilities.py b/dts/api/capabilities.py
-> index 243759668f..2d0cd65854 100644
-> --- a/dts/api/capabilities.py
-> +++ b/dts/api/capabilities.py
-> @@ -219,6 +219,10 @@ class NicCapability(IntEnum):
->      PORT_TX_OFFLOAD_SEND_ON_TIMESTAMP =3D auto()
->      QUEUE_TX_OFFLOAD_SEND_ON_TIMESTAMP =3D auto()
->
-> +    def __str__(self):
-> +        """Override the default string representation to return the name
-> of the capability."""
-> +        return self.name
-> +
->
->  def requires_link_topology(
->      link_topology: LinkTopology,
-> --
-> 2.50.1
->
->
+- Converting passive voice to active voice for clearer, more direct prose
+- Using imperative mood for guidelines and instructions
+- Removing redundant phrases ("Please note that", "It is recommended that", etc.)
+- Simplifying wordy constructions
+- Fixing grammar, punctuation, and typos
+- Improving consistency in terminology
 
---000000000000f2594c064860cdc0
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+The first patch fixes specific issues in the design guide, including
+correcting "executive environment" to "execution environment" throughout.
+The remaining patches systematically improve each contributing guide
+document.
 
-<div dir=3D"ltr">Reviewed-by: Patrick Robb &lt;<a href=3D"mailto:probb@iol.=
-unh.edu">probb@iol.unh.edu</a>&gt;</div><br><div class=3D"gmail_quote gmail=
-_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Mon, Dec 15, 202=
-5 at 4:40=E2=80=AFPM Andrew Bailey &lt;<a href=3D"mailto:abailey@iol.unh.ed=
-u">abailey@iol.unh.edu</a>&gt; wrote:<br></div><blockquote class=3D"gmail_q=
-uote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,2=
-04);padding-left:1ex">When a test was skipped due to a missing NIC capabili=
-ty, the logs should<br>
-print the name of the missing capability. This has since changed to show<br=
->
-only the integer representation of the missing capability. This patch<br>
-restores the previous behavior of printing the name of the missing<br>
-capability to the user.<br>
-<br>
-Bugzilla ID: 1803<br>
-Fixes: eba657ae3c3c (&quot;dts: move testpmd module from framework to API<b=
-r>
-directory&quot;)<br>
-<br>
-Signed-off-by: Andrew Bailey &lt;<a href=3D"mailto:abailey@iol.unh.edu" tar=
-get=3D"_blank">abailey@iol.unh.edu</a>&gt;<br>
----<br>
-=C2=A0dts/api/capabilities.py | 4 ++++<br>
-=C2=A01 file changed, 4 insertions(+)<br>
-<br>
-diff --git a/dts/api/capabilities.py b/dts/api/capabilities.py<br>
-index 243759668f..2d0cd65854 100644<br>
---- a/dts/api/capabilities.py<br>
-+++ b/dts/api/capabilities.py<br>
-@@ -219,6 +219,10 @@ class NicCapability(IntEnum):<br>
-=C2=A0 =C2=A0 =C2=A0PORT_TX_OFFLOAD_SEND_ON_TIMESTAMP =3D auto()<br>
-=C2=A0 =C2=A0 =C2=A0QUEUE_TX_OFFLOAD_SEND_ON_TIMESTAMP =3D auto()<br>
-<br>
-+=C2=A0 =C2=A0 def __str__(self):<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;Override the default string =
-representation to return the name of the capability.&quot;&quot;&quot;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 return <a href=3D"http://self.name" rel=3D"nor=
-eferrer" target=3D"_blank">self.name</a><br>
-+<br>
-<br>
-=C2=A0def requires_link_topology(<br>
-=C2=A0 =C2=A0 =C2=A0link_topology: LinkTopology,<br>
--- <br>
-2.50.1<br>
-<br>
-</blockquote></div>
+These changes make the documentation more accessible to new contributors
+and align with modern technical writing best practices.
 
---000000000000f2594c064860cdc0--
+Stephen Hemminger (11):
+  doc: correct grammar and typos in design guide
+  doc: improve ABI policy documentation style
+  doc: improve coding style guide readability
+  doc: improve documentation guidelines style
+  doc: improve Linux uAPI header documentation
+  doc: improve new driver guide readability
+  doc: improve new library guide style
+  doc: improve patch submission guide readability
+  doc: improve stable releases documentation
+  doc: improve unit test guide readability
+  doc: improve vulnerability process documentation
+
+ doc/guides/contributing/abi_policy.rst    | 194 +++++-----
+ doc/guides/contributing/coding_style.rst  |  20 +-
+ doc/guides/contributing/design.rst        |  71 ++--
+ doc/guides/contributing/documentation.rst |   6 +-
+ doc/guides/contributing/linux_uapi.rst    |  40 +-
+ doc/guides/contributing/new_driver.rst    |  62 ++--
+ doc/guides/contributing/new_library.rst   |  20 +-
+ doc/guides/contributing/patches.rst       | 434 +++++++++++-----------
+ doc/guides/contributing/stable.rst        | 147 +++-----
+ doc/guides/contributing/unit_test.rst     | 113 +++---
+ doc/guides/contributing/vulnerability.rst | 140 ++++---
+ 11 files changed, 609 insertions(+), 638 deletions(-)
+
+-- 
+2.51.0
+
