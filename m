@@ -2,68 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C05F6D31A0E
-	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Jan 2026 06:13:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1C84D31A0E
+	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Jan 2026 06:24:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E9AF94028F;
-	Wed, 14 Jan 2026 07:13:44 +0100 (CET)
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com
- [209.85.128.51]) by mails.dpdk.org (Postfix) with ESMTP id 5A8F440289
- for <dev@dpdk.org>; Wed, 14 Jan 2026 07:13:43 +0100 (CET)
-Received: by mail-wm1-f51.google.com with SMTP id
- 5b1f17b1804b1-47ee2715254so2844875e9.3
- for <dev@dpdk.org>; Tue, 13 Jan 2026 22:13:43 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id C958E4028F;
+	Wed, 14 Jan 2026 07:24:58 +0100 (CET)
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com
+ [209.85.128.46]) by mails.dpdk.org (Postfix) with ESMTP id 570B340289
+ for <dev@dpdk.org>; Wed, 14 Jan 2026 07:24:57 +0100 (CET)
+Received: by mail-wm1-f46.google.com with SMTP id
+ 5b1f17b1804b1-47edffe5540so9428045e9.0
+ for <dev@dpdk.org>; Tue, 13 Jan 2026 22:24:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768371223;
- x=1768976023; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768371897;
+ x=1768976697; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=q1LeXDu55EhWY7JZFXOZoCCqWlUuz1ptB7Cjho77D3k=;
- b=AMcyDJvErBAkcDQZqtDPflYtmbnDz6y+0RpsHCZPsTfUrUewaTl+yQob3ea5uC9s1x
- Oc2wdCz0YSbaa+ekIeolbF27tcMGkLc+AnBsF+Drt+gZwLqNHSX94NZjFM3ZQQnZds32
- m0T+gn09ocYsOxDTWbhACqJ9CXQNjb9Sk62TBrhAs/kjl/OQfaF2Wem02Q+s+WIeFYxM
- INIv97CVOK+xFDOEwNeKc9CFb2rf7aHnP+E2iYtg6GjBe9tDKkgYz2MZxZDgVKcO86xp
- WDB8TTC5LlelZ9JO4njv5fq1CcrWqWmglwKeZuEb0iivrpB5/P7r9av1RsHOqacYARR8
- NGxQ==
+ bh=n3wH1KlY3OkYPc9tNSYCfHlaq4KKtyT3Q9xp6salhlA=;
+ b=BD16ncvjYngE5pt+kvdB9czj+cjeREfU2LQSfhSXK3X/iNtAikV18POTvTe7+rwS4b
+ 7LtNj40jBDFDZjc5w1bOl7upGFWyb/51rQgKKxbMZX3JxEWqgQ+Z40VX+SryTs10s1bN
+ Vq+s7p8e+Wv/lqceOg2h+F8Ktj2aPPxWwFtmK+msk+B8iAdQa51gsfVeJb9UgTSYb/oR
+ NvWE28vJnuRA0H60EQuCAIZKiEp2h/2yGGYSWu6pxtiP2cCfeWQCZ88mun/ZrQyE+ToW
+ e5uG7rfpkHbZvyf20myAleWBihxqFKhC9q4bKLqT+QlB69COD72hpOFxwD2AIWKJpq/4
+ N14A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768371223; x=1768976023;
+ d=1e100.net; s=20230601; t=1768371897; x=1768976697;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=q1LeXDu55EhWY7JZFXOZoCCqWlUuz1ptB7Cjho77D3k=;
- b=QuiphF/sAOEc1CA9NOD6/fmQiKjAM7d2BRjV6AgrKURQbk7YYNllm7JO9ANKmeOHtq
- 0lMVqktllfUJINV/nahtJ6BAgiHJr8eedK1VJBtcdMokYECwDYv7f7sPnm+qcCt7G9kz
- ReNdhvW4cgRaqi2i9VmUEFkHBhI0RymPnCRZqQ6FuC6ncItXibr7Qv1NMB8VN/mWHBFT
- mIj6DmkLsrz7KTpUCVVU9h2CS0h76ergqc7NyZYU3WsKGu2oPfzKSbIa34o/zLZsHQ0v
- Rkfwq0fFnl9IUc0G2hvb6L0/OHdoghzMgKHaJvkO8DrhKZ4vL9+wEPBvngaRnLEl76H0
- QDQw==
-X-Gm-Message-State: AOJu0YxPT398weiTUGtQq5NBNQIgvafr+p3VJYpFjcmnfxRTBRmFcTYp
- 1mzRTez4Jxb07/8ldc0X3O0PDN5MX4wkmkooDa8YEpAbt2HpIHKLVSh/V2afaHeGQdo=
-X-Gm-Gg: AY/fxX5FMS9671mb4hvwwxghz4Q8GScKGjYp/boPKTD7X7nLgZ8Ne3zlRmWk1l1st0w
- qDRCs9l3PRtoAph6eqbyGEkVwksVolHfLKD3AEmqE7gFe+iGCzRNjG3rGmvmDoC+T2ZOf0aWKC7
- lkk+Y7UxJPefo9iEr57eWyB4F+tkxeb+s4/7JcT4Iy3VP1VJbigoFx3y2V2jHIzF63KeavEDlbg
- HLzHTh4r+EsHwF0cEpaIZc7vSL3vvdMc/VsWiYLjUNdJgtpYLKFYkHqXK0dODuCA0nS9s6F5JHX
- dVObcmZfsFSHjfq7iHK2SzLXCawWx6a+1SEv/blwSWIsigRFePO+NzRM8BwhBkPnKrwFflIpU+c
- sgm2Ei3anAMpbkr/Kya+DD1qIRuNBqe7j/v1cWs8iIK8Rc1YsBYkJM8iEtqwT0KshLvkzBvDbG0
- YCD12AmzoEfjSfsyCLFM4KxClU6qlx8jd8CMQzfWS5Ii0Em+Hk6OLS2n6hoGQQMrY=
-X-Received: by 2002:a05:600c:828c:b0:477:aed0:f40a with SMTP id
- 5b1f17b1804b1-47ee33641f3mr17030675e9.19.1768371222833; 
- Tue, 13 Jan 2026 22:13:42 -0800 (PST)
+ bh=n3wH1KlY3OkYPc9tNSYCfHlaq4KKtyT3Q9xp6salhlA=;
+ b=gAvIEaBGtYsSN18rJ+QCOc8BC31cQHgrmQOlF+Q8g4RMptnE88N5lRRUxdEWIbNsZF
+ tU074dcdlu04nnLwsIOnBq/+p4nQyLouXGIl9lLd2W3uE/CEw90YI9K+fft9cW2dDDOT
+ r7DFy79BjJzhPkqljuP04DWTQ0lFUp9QOdPzRMqUooZozOOtQM46wUyIEmyvp8jukfvu
+ 7QzQPh12UFuMO73cHsnLNLO4ZBQsqgsI76Rc6OBkgglmE5/y7CAvEVRaZ2UrxhBqipqA
+ qRpdEzCRx+TIzr/gHLH6+HbA+zdNwh5TMOy/XVdjh4faLHDtlPvb6OrMSK8BM2GLXpzW
+ mWYQ==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCW7CJDInBqfXnNF+u+6Zh1U++4xt0hz1VEbTUnFSTMxkEKeELHaTa3aJJWE0dFBAGf29nQ=@dpdk.org
+X-Gm-Message-State: AOJu0YzdfXc+n6kUJQvfwtGarvAFd1ouVJqnw4ROipTYSd/YIiI39Lj7
+ Q03elF9cp16ROOllvYSabegutodL2X28bPpF1QVz+HiF1hU3gBk0WjWWYkiDQU42l/M=
+X-Gm-Gg: AY/fxX6o3hXXh7RLN9SPoN5DIrbKMw4mao9zAvgnLP77ni7EoJte8HzrvRmncLlOG+F
+ rxQEGK9rkQQYemyJ6sxFwn96puNvtTtUgXZ0Dzx7U7wMqXsrK1wLHoOR2OjBV3kSX9DghE5ZSTV
+ jE4TP5XLriFdrIB10KCjJGuU0iRB8gEilX9vADrY/bYY2KPmEO+Sw9jPn7dwDRgZfLY4N+4mEQN
+ A0WziX08xDed/5CmcPxa73arJ9avZ6eKGZ+qJzVOpgkARM6QSKESWP9vpXh7zUVpfIm7XH2kV44
+ 1O21yiboETWkUkwji3RZOok9G1PyLQ4O0xTEpq0WGqnVMMChBTKw8ArAGGNsG00vxFGz0j/Y9CX
+ kqRjurqfBlIx7mPqfcqOfMEXl3TAymIYBnAIvjQ/JuOPChrg3OpayQkrxPhQPWzv5xDqfXQnEY8
+ g4Y21VSmKMVIdNwPM0mLJSf7eQM91iI7+ocbqUmpD6GZMuXcvTE+wX
+X-Received: by 2002:a05:600c:314f:b0:47a:80f8:82ab with SMTP id
+ 5b1f17b1804b1-47ee335e701mr15299755e9.24.1768371896869; 
+ Tue, 13 Jan 2026 22:24:56 -0800 (PST)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-432bd0dacdcsm47557222f8f.1.2026.01.13.22.13.41
+ 5b1f17b1804b1-47ee5910fc2sm10738515e9.13.2026.01.13.22.24.54
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 13 Jan 2026 22:13:42 -0800 (PST)
-Date: Tue, 13 Jan 2026 22:13:37 -0800
+ Tue, 13 Jan 2026 22:24:56 -0800 (PST)
+Date: Tue, 13 Jan 2026 22:24:50 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: mamcgove@microsoft.com
-Cc: dev@dpdk.org
-Subject: Re: [PATCH v3 1/1] examples/mp_server: warn on promisc enable failure
-Message-ID: <20260113221337.5cbb0d92@phoenix.local>
-In-Reply-To: <d7e617594063d3675636125ec9413ac4cbdc7e51.1758045692.git.mamcgove@microsoft.com>
-References: <1747766224-31511-1-git-send-email-mamcgove@microsoft.com>
- <d7e617594063d3675636125ec9413ac4cbdc7e51.1758045692.git.mamcgove@microsoft.com>
+To: Rakesh Kudurumalla <rkudurumalla@marvell.com>
+Cc: <ferruh.yigit@amd.com>, <andrew.rybchenko@oktetlabs.ru>,
+ <orika@nvidia.com>, <thomas@monjalon.net>, <dev@dpdk.org>,
+ <jerinj@marvell.com>, <ndabilpuram@marvell.com>, <stable@dpdk.org>
+Subject: Re: [PATCH v5 1/1] examples/l2fwd-jobstats: fix lock availability
+Message-ID: <20260113222450.42d0ee18@phoenix.local>
+In-Reply-To: <20240811155957.576645-1-rkudurumalla@marvell.com>
+References: <20240811065819.575759-1-rkudurumalla@marvell.com>
+ <20240811155957.576645-1-rkudurumalla@marvell.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -80,112 +84,115 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 16 Sep 2025 11:51:14 -0700
-mamcgove@microsoft.com wrote:
+On Sun, 11 Aug 2024 21:29:57 +0530
+Rakesh Kudurumalla <rkudurumalla@marvell.com> wrote:
 
-> From: Matthew G McGovern <mamcgove@microsoft.com>
+> Race condition between jobstats and time metrics
+> for forwarding and flushing is maintained using spinlock.
+> Timer metrics are not displayed properly due to the
+> frequent unavailability of the lock.This patch fixes
+> the issue by introducing a delay before acquiring
+> the lock in the loop. This delay allows for betteravailability
+> of the lock, ensuring that show_lcore_stats() can
+> periodically update the statistics even when forwarding
+> jobs are running.
 >=20
-> Problem: Some devices do not allow promiscuous mode.
+> Fixes: 204896f8d66c ("examples/l2fwd-jobstats: add new example")
+> Cc: stable@dpdk.org
 >=20
-> Testpmd handles this by warning and ignoring failures from
-> rte_eth_promiscuous_enable.
->=20
-> Changes: make mp example apps warn if promiscuous mode cannot be
-> enabled, rather than failing.
->=20
-> Signed-off-by: Matthew G McGovern <mamcgove@microsoft.com>
->=20
+> Signed-off-by: Rakesh Kudurumalla <rkudurumalla@marvell.com>
 > ---
 
-AI review spotted a bug in this. Note, examples don't have to use RTE_LOG().
-Only do so if other code in the example does.
+I prodded AI to review this patch and it had some good observations.
+You could go farther with rte_wait_until_equal which has even better power =
+performance.
 
-## DPDK Patch Review: examples/mp_server: warn on promisc enable failure
-
-### Summary
-
-This patch changes promiscuous mode enable failure handling in two multi-pr=
-ocess example applications from a fatal error to a warning, aligning behavi=
-or with testpmd. While the intent is good, there's a **critical bug** in th=
-e implementation.
+Let me see the critical `l2fwd_main_loop` function to understand the full l=
+ocking context:Now I have a complete picture. Let me provide my review.
 
 ---
 
-### Critical Bug (Error - Must Fix)
+## Patch Review: examples/l2fwd-jobstats: fix lock availability
 
-**Wrong argument in fprintf format string** - Both changes print `retval` (=
-the error code) where the port number should be:
+### Commit Message Issues
+
+**Errors:**
+- Line 84: Missing space before "betteravailability" =E2=86=92 should be "b=
+etter availability"
+- Line 82: Missing space after period: "lock.This" =E2=86=92 should be "loc=
+k. This"
+
+**Style (minor):** The commit message is a bit verbose for what it's doing.
+
+### Technical Analysis
+
+The patch addresses a real problem. Looking at the code flow:
 
 ```c
-fprintf(stderr,
-    "Error during enabling promiscuous mode for port %u: %s - ignore\n",
-    retval, rte_strerror(-retval));
-//  ^^^^^^ BUG: should be port_num (init.c) or port (main.c)
+/* Main loop holds lock almost continuously */
+for (;;) {
+    rte_spinlock_lock(&qconf->lock);      // Acquire
+   =20
+    do {
+        /* ... lots of work ... */
+        stats_read_pending =3D rte_atomic_load_explicit(...);
+    } while (likely(stats_read_pending =3D=3D 0));
+   =20
+    rte_spinlock_unlock(&qconf->lock);    // Release
+    rte_pause();                          // <-- This is too short!
+    // Immediately re-acquires lock...
+}
 ```
 
-The `%u` format specifier expects the port number, but receives the negativ=
-e error code. This will print nonsensical port numbers (e.g., "port 4294967=
-287" for `-ENOTSUP`).
-
-**Fix:**
+Meanwhile, `show_lcore_stats()` sets the flag and waits on the lock:
 ```c
-// In init.c:
-fprintf(stderr,
-    "Error during enabling promiscuous mode for port %u: %s - ignore\n",
-    port_num, rte_strerror(-retval));
-
-// In main.c:
-fprintf(stderr,
-    "Error during enabling promiscuous mode for port %u: %s - ignore\n",
-    port, rte_strerror(-retval));
+rte_atomic_store_explicit(&qconf->stats_read_pending, 1, ...);
+rte_spinlock_lock(&qconf->lock);  // Starved - main loop re-acquires too fa=
+st
 ```
 
----
+**The fix works**, but it's suboptimal:
+- The 10=C2=B5s delay is an arbitrary magic number
+- It delays **unconditionally**, even when no stats reader is waiting
+- Wastes cycles when the system is idle
 
-### Commit Message Review
+### Better Option: Wait for stats completion
 
-| Check | Status | Notes |
-|-------|--------|-------|
-| Subject =E2=89=A460 chars | =E2=9C=93 | 49 characters |
-| Lowercase after colon | =E2=9C=93 | |
-| Imperative mood | =E2=9C=93 | "warn" is imperative |
-| No trailing period | =E2=9C=93 | |
-| Body wrapped at 75 chars | =E2=9C=93 | |
-| Body doesn't start with "It" | =E2=9C=93 | |
-| Signed-off-by present | =E2=9C=93 | |
+The `stats_read_pending` flag already exists to coordinate this handshake b=
+ut isn't used fully. The cleaner fix is to make the main loop wait until th=
+e stats reader has finished:
 
-**Warning: Subject prefix mismatch** - The subject says `examples/mp_server=
-:` but the patch also modifies `examples/multi_process/symmetric_mp/main.c`=
-. Consider using `examples/multi_process:` to accurately reflect the scope =
-of changes.
+```c
+rte_spinlock_unlock(&qconf->lock);
+/* Wait for stats reader to complete before reacquiring lock */
+while (rte_atomic_load_explicit(&qconf->stats_read_pending,=20
+                                 rte_memory_order_relaxed) !=3D 0)
+    rte_pause();
+```
 
----
+This approach:
+- Uses the existing synchronization mechanism as intended
+- Only yields when stats are actually being read
+- Has zero overhead when no stats read is pending
+- Doesn't introduce arbitrary magic constants
+- Guarantees the stats reader gets the lock (not probabilistic)
 
-### Code Style Review
+### Alternative: Conditional delay
 
-| Check | Status |
-|-------|--------|
-| Line length =E2=89=A4100 chars | =E2=9C=93 |
-| No trailing whitespace | =E2=9C=93 |
-| Consistent with surrounding code | =E2=9C=93 |
+If you want to keep the delay approach, at least make it conditional:
 
----
+```c
+rte_spinlock_unlock(&qconf->lock);
+if (stats_read_pending)
+    rte_delay_us(10);
+else
+    rte_pause();
+```
 
-### Design Considerations (Info)
-
-1. **Consistency with testpmd**: The approach matches how testpmd handles t=
-his, which is good for consistency across DPDK examples.
-
-2. **Using fprintf vs RTE_LOG**: Example code commonly uses `fprintf(stderr=
-, ...)` rather than `RTE_LOG()`, so this is acceptable style for examples.
-
-3. **Message wording**: The "- ignore" suffix is slightly awkward. Consider=
-: `"...port %u: %s (continuing anyway)\n"` or simply `"Warning: ..."`
-
----
+This avoids the unconditional 10=C2=B5s penalty on every iteration.
 
 ### Verdict
 
-**Changes Requested** - The patch has the right intent but contains a signi=
-ficant bug that would produce incorrect/confusing output. After fixing the =
-format string arguments, this should be straightforward to accept.
+**NAK as-is.** The fix works but the better solution is to properly use the=
+ existing `stats_read_pending` handshake. Would suggest the author revise t=
+o use the wait-for-completion pattern instead of an arbitrary delay.
