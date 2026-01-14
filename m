@@ -2,68 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73408D3CC82
-	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Jan 2026 22:25:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B02F7D3CC82
+	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Jan 2026 22:25:38 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3A2AA40E34;
-	Wed, 14 Jan 2026 23:25:12 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 219E940E49;
+	Wed, 14 Jan 2026 23:25:14 +0100 (CET)
 Received: from mail-wm1-f68.google.com (mail-wm1-f68.google.com
- [209.85.128.68]) by mails.dpdk.org (Postfix) with ESMTP id 8DDF240E36
- for <dev@dpdk.org>; Wed, 14 Jan 2026 23:25:10 +0100 (CET)
+ [209.85.128.68]) by mails.dpdk.org (Postfix) with ESMTP id 51A2A40E49
+ for <dev@dpdk.org>; Wed, 14 Jan 2026 23:25:12 +0100 (CET)
 Received: by mail-wm1-f68.google.com with SMTP id
- 5b1f17b1804b1-47ee76e8656so3628765e9.0
- for <dev@dpdk.org>; Wed, 14 Jan 2026 14:25:10 -0800 (PST)
+ 5b1f17b1804b1-4779aa4f928so3165885e9.1
+ for <dev@dpdk.org>; Wed, 14 Jan 2026 14:25:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768429510;
- x=1769034310; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768429512;
+ x=1769034312; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=6SYW3oT5V/3le+qvyokCi8QNmQIHWKGR/3RbbPOKAZc=;
- b=hxTRYQ6NiJG5YSXfKe9N+ITVFrqARujY59AJIyIG2Xf2pq25VNoAGxbqn8jUoleOb5
- Hbfy7FYGXNJaCyi7UvolXZb/4ScjTyqunr/Os7vEHDm3ILhNVeXHOIrvBfutlgaajCrm
- eFxpgk/FU6f921F6yMvPGOzyW0sTF/KlznXByh8pCvsEzNfhFOjPh+4FEA9h/WcaFuQY
- Dxk/OuozkkdUwDl2Rfjep2kuePPLBTjyumaAmRnINlJ7KGrM39/xvvsfiTIg9NZKwwHB
- oSHcBNTgeu4g2ktaerDvME2n8f1djCI/cPEAgWD+zlzH5GxMjg7CfrmEee4O7fZi01u/
- jSBQ==
+ bh=+WQXNdx5mgp7Lo4SjFghewpBG5SeorDzlfMW2hxApO4=;
+ b=bCN2rrd0iN+fBpcnryYfI6fwQ4qZlBInkGNuLmaYJyEYbRISpW/AKh88dppk+sRdzE
+ ap1TRHCaS0oDvM12MzjhN6zIVEBx1Oh0uciAkBZvvqgXZO6jppgsWru2WM6SoEadaZFZ
+ 7UGFnnoQWBzlFjVHLMAeBarcal6EgL5SIHawJw0WDCfAUEuY6DhjNHp2mW+LtTsKa8Fm
+ lY2+Zp+XJaakuq70Zz3C1MUI5PzxqUv5Go3VuwgAAhCBIkrvPLDaIUgaJirZWiyYrjW2
+ 2xKWV6TmWFVdDOAJdGu6/JgRYgvLVctpNyTvaMWbHzumv5AXFdlAr4Bi70Ku9Aq6hteU
+ ZLyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768429510; x=1769034310;
+ d=1e100.net; s=20230601; t=1768429512; x=1769034312;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=6SYW3oT5V/3le+qvyokCi8QNmQIHWKGR/3RbbPOKAZc=;
- b=Cy5BkHcooTYRCo2aQxGjCq4as+BXmYPrUpyJCY45SRFa9EjLSV6w3qZUxGnqkH0Nvm
- 0ykLn8cGIm3wvv1qulpHFFjjRH4ts89Zar3M/XEUELNj5cOxBBNlec/Aqbkqyzfp1sMX
- WG1skUVPDFb0tqTVoEUzCHvUV9bNFwT+Q2qNn+iTTpK7SqTF2kJgX1pH4DK+pD+o96cu
- sZCqJ7f98VvIEHgQW8JVIas40C4qYux4KgfCwDDl52eISFbePxuSkd8cavCygjyI7T0k
- VGlmKoQfPGt3976foBDIEy0Xpv/1PyBg6v/8xJrCnw8Q0bE2obnRHbuOj0GwLAf0JrQe
- Il4Q==
-X-Gm-Message-State: AOJu0YyRVipviHTA2gmFh7RBuFifykF2htcXtucHoOb2MtFPOxGooQuN
- EJXJP9KZXWpt3jlZ+/2EhvTnPE64vuzU/X+0yaYluGo3ooxZhomtJdwGKUHZxb8JH/IWG9dLJWG
- Yx3nDG4Y=
-X-Gm-Gg: AY/fxX5fhoHwB1KozPLML5A9sAlTG8vxAYWilCVL8sOea5089k6zoO9qF7yhhGSAQ1F
- 6qKvbIFkjGJyfFmTleVC5t4uttN+kivv93OBZ1BZZZ4ErCzohu3ag4ETnGuJQMeYKiJKq6FLF/6
- uICJGFEj1PzyC9iHfN4RVbanCqOblHA1Hq2I5csZN60dHQnpwpvR0L8PFj0xXptP34N6udvav86
- D0DLsBd61IyLUcBhZDMR4+0wGJIED0LNhvCjYBejrz/c7UdILRYpVQPhIio1wp98zOsJh3arTV1
- Zz568rfZngWf/k4Fy+xEE58b5l0ryrmxeP+gKE2QuYf4kTY+NdeSodf2xejy2sE29TI1XIL54Yv
- NcYoDplv6dnZmwnfWDEg8wazrzZ8FRBIlspHVC1foEYE+aiBfk9Q59h0kEbnGDZmdMFjNN+Ar61
- 1RMImbd/tWNjD1V9qNMATtxsyX2cA1REr98RY7hQChSOSwSw77HQ==
-X-Received: by 2002:a05:600d:6450:10b0:47d:73a4:45a7 with SMTP id
- 5b1f17b1804b1-47ee3371a2amr40334695e9.24.1768429510106; 
- Wed, 14 Jan 2026 14:25:10 -0800 (PST)
+ bh=+WQXNdx5mgp7Lo4SjFghewpBG5SeorDzlfMW2hxApO4=;
+ b=kUng4mSHJfUwFi+aVkx9Ocyc8i7koP71iWUwQzi6OF1iJ68FF0NZ+Nnb0guT5jyNvP
+ dEZ23U284pnyL504OIuhALCwX7IJK7d4zGX/80H3wh7AzHuMfidVRXsBtWa+pdsRmMAS
+ t//BgrjGLWQVEuOMgVyD5lj5jePwOY6FbQAJcyO8ayyOxoLM5bYjAj5ieHfkMYINR6AU
+ ir/R4uEuZLRl9GKH2XXGsTnGvRsEUHK3Nbo9kzWMMSyP/tVPwBAlLeaZpFIEYj4LU8SB
+ WdostCaud8tKExcSy37BkF20ZNo9WGCqra4dxSlcpJSeV3wssb772qExsSq55SPRqTR3
+ OfQQ==
+X-Gm-Message-State: AOJu0YxjVDww8BpXvoLMh1STucL5QtncA8CCAJIiykUJpFKc4rqFXEn2
+ 3733BED15A6+jcZ0gYTqHuxPIJv+HxMD1oAHViG74CFTJYQFenyb3irYsrpEecPBLT0htzXJPRU
+ B1MI37Og=
+X-Gm-Gg: AY/fxX7TlLdXBGXHqfUa5XAD4/bu3eOOV/2oL4DOfzlUWU4Hr/JyW4eEzF4tdgQRVKy
+ CVm9oT8VEjF4mQLpWKih1Q7i6NDtfTuq7nBkmbAGS02zYYt6rdp+PGQWQ+uvO9tsBWP7fiqiqAt
+ QcBkOhYnoZukNHm3y4hCdbo+DPHuQ2zKVKdELb+iE+UqJkHN1gUKIY4cOjOsNClVoNMTEaMVCSj
+ QGyK7TvgD8qaCLUhljSFXTmNGp0cr/fdDAgnyRhTSJw6FPmlc8kpPzUXNN81k1xJSUHRl+FSVOh
+ Mqpk+4L1DhqiMaL/xLTIJk28ojAyHtDCcCSJYgXd5PW/LQBMCtIEr0/KX9lXQL7SB5d+Ev9t9Ue
+ +G9p5UZSVfXCJD/PmEsj8oCDAE1mjbyr6wwkhwRmlhIyvjIJXb+ViiHkNfL8hzkMKYaUOIZVVPl
+ 7WECLMQZ6SjMW9w+POGRSVhns2z2ypfGNvmewwnxX1b5jq6KxgOw==
+X-Received: by 2002:a05:600c:314f:b0:47a:80f8:82ab with SMTP id
+ 5b1f17b1804b1-47ee335e701mr45032655e9.24.1768429511877; 
+ Wed, 14 Jan 2026 14:25:11 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-47f42907141sm12040355e9.9.2026.01.14.14.25.08
+ 5b1f17b1804b1-47f42907141sm12040355e9.9.2026.01.14.14.25.10
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 14 Jan 2026 14:25:09 -0800 (PST)
+ Wed, 14 Jan 2026 14:25:11 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Bruce Richardson <bruce.richardson@intel.com>,
- John McNamara <john.mcnamara@intel.com>
-Subject: [PATCH 04/29] examples/rxtx_callbacks: correct documentation errors
-Date: Wed, 14 Jan 2026 14:21:45 -0800
-Message-ID: <20260114222458.87119-5-stephen@networkplumber.org>
+ Konstantin Ananyev <konstantin.ananyev@huawei.com>
+Subject: [PATCH 05/29] examples/ip_fragmentation: correct documentation errors
+Date: Wed, 14 Jan 2026 14:21:46 -0800
+Message-ID: <20260114222458.87119-6-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260114222458.87119-1-stephen@networkplumber.org>
 References: <20260114222458.87119-1-stephen@networkplumber.org>
@@ -82,37 +81,34 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Address issues in RX/TX callbacks sample documentation:
-- Rewrite confusing paragraph about hardware timestamping for clarity
-- Capitalize "linux" to "Linux"
+Address formatting issues in IP fragmentation sample documentation:
+- Capitalize "linux" to "Linux" in two instances
+- Add missing spaces before port lists in example commands
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- doc/guides/sample_app_ug/rxtx_callbacks.rst | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ doc/guides/sample_app_ug/ip_frag.rst | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/doc/guides/sample_app_ug/rxtx_callbacks.rst b/doc/guides/sample_app_ug/rxtx_callbacks.rst
-index cd6512508b..7cee5bbf8c 100644
---- a/doc/guides/sample_app_ug/rxtx_callbacks.rst
-+++ b/doc/guides/sample_app_ug/rxtx_callbacks.rst
-@@ -17,9 +17,8 @@ packets to add a timestamp. A separate callback is applied to all packets
- prior to transmission to calculate the elapsed time in CPU cycles.
+diff --git a/doc/guides/sample_app_ug/ip_frag.rst b/doc/guides/sample_app_ug/ip_frag.rst
+index d2c66683e3..7dcb0177f6 100644
+--- a/doc/guides/sample_app_ug/ip_frag.rst
++++ b/doc/guides/sample_app_ug/ip_frag.rst
+@@ -62,7 +62,7 @@ where:
  
- If hardware timestamping is supported by the NIC, the sample application will
--also display the average latency.
--The packet was timestamped in hardware
--on top of the latency since the packet was received and processed by the RX
-+also display the average latency since the packet was timestamped in hardware,
-+in addition to the latency since the packet was received and processed by the RX
- callback.
+ *   -q NQ: Maximum number of queues per lcore (default is 1)
  
+-To run the example in linux environment with 2 lcores (2,4) over 2 ports(0,2) with 1 RX queue per lcore:
++To run the example in a Linux environment with 2 lcores (2,4) over 2 ports (0,2) with 1 RX queue per lcore:
  
-@@ -34,7 +33,7 @@ The application is located in the ``rxtx_callbacks`` sub-directory.
- Running the Application
- -----------------------
+ .. code-block:: console
  
--To run the example in a ``linux`` environment:
-+To run the example in a ``Linux`` environment:
+@@ -84,7 +84,7 @@ To run the example in linux environment with 2 lcores (2,4) over 2 ports(0,2) wi
+     IP_FRAG: entering main loop on lcore 2
+     IP_FRAG: -- lcoreid=2 portid=0
+ 
+-To run the example in linux environment with 1 lcore (4) over 2 ports(0,2) with 2 RX queues per lcore:
++To run the example in a Linux environment with 1 lcore (4) over 2 ports (0,2) with 2 RX queues per lcore:
  
  .. code-block:: console
  
