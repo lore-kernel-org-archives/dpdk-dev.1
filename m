@@ -2,76 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE382D44C51
-	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Jan 2026 14:33:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44196D44C51
+	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Jan 2026 14:37:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1479640268;
-	Thu, 15 Jan 2026 15:33:31 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id C657B40DFD;
+	Thu, 15 Jan 2026 15:37:06 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 17AD24003C
- for <dev@dpdk.org>; Thu, 15 Jan 2026 15:33:30 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id BC5154003C
+ for <dev@dpdk.org>; Thu, 15 Jan 2026 15:37:04 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1768487609;
+ s=mimecast20190719; t=1768487824;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=NkeeYV2uD3GvfGO43DBgpLfiDrSkmATIWFCzFxa+kcc=;
- b=N+DJBUKkK8WFu/ZjeDZDXdny9iE5/qPQD5HtrzAxGl7rKEobg6ox9GITH/LEyxrmzYTO2Q
- RyQdBxQ3eiEsBZXq031z5pOtAUAY0dBbWYoDoXNkkGWrfvtGTZIOHTL6lro1GsLB1QyDfS
- Zg8SIBsEOoeEKHFi9V02knCTTLNmuwM=
-Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
- [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ bh=2rT/ySO8dFjPdCWq2VA7ZdTMy0NtJcTD7U50frG/lqc=;
+ b=MP9TMPq+llulcfp7cPWLdQLkDsoSEJbZnYBM8M5IvYmJmI2CZDusNA3Eg8GbfAJGLtkMpu
+ Bn1b99h10kRxN2UvhiHfrZlwG3R8eQ5i1xMraIyakM0oF+0MWq2HdmWwIfUyM+Isp8UK3s
+ oIfMHwv0UR7AsaaQNEKfQUzOeFZA6RU=
+Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
+ [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-515-3F1C9xdeOjm7oTYtjmctPg-1; Thu, 15 Jan 2026 09:33:27 -0500
-X-MC-Unique: 3F1C9xdeOjm7oTYtjmctPg-1
-X-Mimecast-MFC-AGG-ID: 3F1C9xdeOjm7oTYtjmctPg_1768487606
-Received: by mail-lf1-f69.google.com with SMTP id
- 2adb3069b0e04-59b3b255ee8so639365e87.3
- for <dev@dpdk.org>; Thu, 15 Jan 2026 06:33:27 -0800 (PST)
+ us-mta-677-vLil1_dbNsa7K2aY_Bf08Q-1; Thu, 15 Jan 2026 09:37:03 -0500
+X-MC-Unique: vLil1_dbNsa7K2aY_Bf08Q-1
+X-Mimecast-MFC-AGG-ID: vLil1_dbNsa7K2aY_Bf08Q_1768487821
+Received: by mail-lj1-f199.google.com with SMTP id
+ 38308e7fff4ca-382f49594c5so4855711fa.0
+ for <dev@dpdk.org>; Thu, 15 Jan 2026 06:37:02 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768487606; x=1769092406;
+ d=1e100.net; s=20230601; t=1768487821; x=1769092621;
  h=content-transfer-encoding:cc:to:subject:message-id:date:from
  :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=NkeeYV2uD3GvfGO43DBgpLfiDrSkmATIWFCzFxa+kcc=;
- b=S0pJOeMbjA8lHOsopUZLkvn+iOhs1L0NcPs13gwFmP7TIrvq46yIZoWXS1eigRTOlH
- SQTuA5gGxKRJkF9t5fbtt4RonTpZ98SIavrO8DXp9gYhf/DyCGTN9XhfxJQUm03OCOn3
- GuXPUmmp2WJP7fx0BfOOXmr6ZbF/vMl1nTw/KY7x9BSfZfbUckhSsw6w+mm0+38jxl+I
- CCvLNAF/9gxAaSgEJv3YWPbV72EfDpcmprUwEBkiTjHtz/obd11ddHwFmCWCpX0ld2zw
- wwjWjA6x8f7Y/5fauZ0C1v4O/LrYq3F8x6egXAMzA3i7jmaeVxhXKfHlwv6BMxTrugW4
- FxUw==
-X-Gm-Message-State: AOJu0YwAmv6u2/8PLE9iIPffff1fjHnnZB+m0ZW8nvzgD1hIYFW+UUNV
- rpf7fRe7hqNt9o3S+jNn0Lb6aBypPXnq3yFt0lkpv0+lXWtr7tI1QqoCFf32jCw//m17QSGQ1Hb
- xBwFvTZXJcgeu2UXwSOEpr4QaghjnO8EwBGTDvKguSt4nKBZIaiQKxou0gKMnrnRd80FnWn/p8t
- LqpFyN/XoDR4qG//wQueQ=
-X-Gm-Gg: AY/fxX7kt4l+UL8C1biTWQYFyHFRT4Oqh21t3dZa+Q5ndGwhcP5IZScTUPvITkgUBuR
- MKEbZjhcjLxIk3FDNKbmfiIRsUDlAqV6D5tw0leS50YdGIxyvvI470Tl1ossAirLALf3sUqToTA
- qacMiJ5qD42dgL5vOxYxNF4K2oWZkjnaVmGUt9VujrUxtkHHQyo+ATMGEwjr37xL07bkJBBIP5/
- Nn/c+py8eFeLCP6WPg5ewq+o1NCP84gIaXWVtx8TqqVwMuQpcR7jA==
-X-Received: by 2002:a05:6512:23a2:b0:594:493b:abd with SMTP id
- 2adb3069b0e04-59ba0f62540mr2365856e87.13.1768487605721; 
- Thu, 15 Jan 2026 06:33:25 -0800 (PST)
-X-Received: by 2002:a05:6512:23a2:b0:594:493b:abd with SMTP id
- 2adb3069b0e04-59ba0f62540mr2365847e87.13.1768487605311; Thu, 15 Jan 2026
- 06:33:25 -0800 (PST)
+ bh=2rT/ySO8dFjPdCWq2VA7ZdTMy0NtJcTD7U50frG/lqc=;
+ b=njcYKQltgpOsUR/nK/icpvB9VKcQVb95cGlSvNGHut+j6CGWXJGVGdjXxu9F52YtEv
+ T1gJZwmYirIygNDcP+3BD5BbbhjdaD0yO+430bcuFjuH/VeIp1/VVShSyDoAK/9iCeK/
+ U/V7q4eqjCpsr3EOO/AHFyV5rN3QPhRbTjX1Z/knRrAEeYKjkwwBM5IyPk9wuLlxPzOJ
+ 70dQE7YPAvpon8hOUsq0NpDqyPIRy2g2caFuKPM2ON7mtaaS8QTzfxNInM9Gb2GzTDIW
+ Oj5G4VjV2pyAI3JU9aVTknR1sGGUML3HWLrd7cvq4LQtr3u3WttqJ3UR36gdrY01okup
+ LVbA==
+X-Gm-Message-State: AOJu0Yx+7dPDCGrfP/3W/qtHaZdQEsAgoEtBrVqcitGzIHEbzFi+nZuR
+ 3BAMvk5NqF49xo8RSG4oSdfOwqKCbeLVBatjPNNr29iSqEdQj27BHNIcOIZaN9UcezcL20edczV
+ KXCLRcLAfYLanD7F/XaoWXwdeb5de2MX0oDWvNkeDswbb8UfgI/z5pioVmyjuOkPkOJ2S/qkiIk
+ KMY90VeiBtNV7nC5yTch0=
+X-Gm-Gg: AY/fxX6PlEOye6ABCjNwqDvLM1tPBPBvYM9BAyaVxuzKqq2M8/yEXmvTuBtqL04g1ht
+ G7tvctA2YE6IAVgiFQWDbiNvHZSyHJTgBiANSmtdAepsLm/rozappErcs/d49tHvNll0bOagMYu
+ eilsujBOQuQD4AitWvaUuTYlnVdoSAKgw3nkhoCmglaXwcpWkvxNqUk5MHPSpuJD7bhAsCQD33h
+ bhCTuVwqQQAp+yBfXYoYUzYRDwUd2UU/ztK5bTZT+6zoQwGTf/Idg==
+X-Received: by 2002:a2e:ad12:0:b0:383:27d9:79f1 with SMTP id
+ 38308e7fff4ca-383630c9543mr17458691fa.37.1768487821369; 
+ Thu, 15 Jan 2026 06:37:01 -0800 (PST)
+X-Received: by 2002:a2e:ad12:0:b0:383:27d9:79f1 with SMTP id
+ 38308e7fff4ca-383630c9543mr17458611fa.37.1768487820915; Thu, 15 Jan 2026
+ 06:37:00 -0800 (PST)
 MIME-Version: 1.0
-References: <20251113124425.2913881-1-pravin.bathija@dell.com>
- <20251113124425.2913881-3-pravin.bathija@dell.com>
- <7de5dd70-45c2-4a76-954d-19beef994e5a@redhat.com>
- <SJ0PR19MB4606C6F61D8BBABEAA37A624F58CA@SJ0PR19MB4606.namprd19.prod.outlook.com>
-In-Reply-To: <SJ0PR19MB4606C6F61D8BBABEAA37A624F58CA@SJ0PR19MB4606.namprd19.prod.outlook.com>
+References: <20251222004446.62076-1-stephen@networkplumber.org>
+In-Reply-To: <20251222004446.62076-1-stephen@networkplumber.org>
 From: Maxime Coquelin <maxime.coquelin@redhat.com>
-Date: Thu, 15 Jan 2026 15:33:14 +0100
-X-Gm-Features: AZwV_QgsklS_lRGPrY3dDyNDhXsK1GKPhC7GW6EuK7vCRh0O9WVVnUExBtEUnWI
-Message-ID: <CAO55cszdKsDx4k7O9B+tPvWrGweCZ9bEPDVRGHaVjPKXVyihZQ@mail.gmail.com>
-Subject: Re: [PATCH v5 2/4] vhost_user: header defines for add/rem mem region
-To: "Bathija, Pravin" <Pravin.Bathija@dell.com>
-Cc: "dev@dpdk.org" <dev@dpdk.org>, 
- "pravin.m.bathija.dev@gmail.com" <pravin.m.bathija.dev@gmail.com>
+Date: Thu, 15 Jan 2026 15:36:48 +0100
+X-Gm-Features: AZwV_Qjn3q9GnlXJY5O_ae38OwzjchcdyCc00P5q4yospHK-t0iCNus-juCdYKw
+Message-ID: <CAO55cswNQTC5szG-aiX+4UL2RzzBWX2oWfOmVcAwgWbjL9r4tw@mail.gmail.com>
+Subject: Re: [RFC] net/virtio: avoid global variable name conflicts
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: dev@dpdk.org, Chenbo Xia <chenbox@nvidia.com>
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 5cW5J5NWBz3Erf4VX6Bie8Z7Iiuze9g4rg6Fs1YrZzw_1768487606
+X-Mimecast-MFC-PROC-ID: pSD2T2FVYd9tuOzN65RZ_ieaHjPFHUxcLobNn3pUGVk_1768487821
 X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
@@ -88,105 +84,26 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hello,
+On Mon, Dec 22, 2025 at 1:45=E2=80=AFAM Stephen Hemminger
+<stephen@networkplumber.org> wrote:
+>
+> If PMD is statically linked, all global variables are visible and
+> can clash with application or other drivers and therefore should
+> have a consistent prefix.
+>
+> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+> ---
+>  drivers/net/virtio/virtio_pci.c                   |  8 ++++----
+>  drivers/net/virtio/virtio_pci.h                   |  4 ++--
+>  drivers/net/virtio/virtio_pci_ethdev.c            |  4 ++--
+>  drivers/net/virtio/virtio_user/vhost_kernel.c     | 14 +++++++-------
+>  drivers/net/virtio/virtio_user/vhost_kernel_tap.c | 10 +++++-----
+>  drivers/net/virtio/virtio_user/vhost_kernel_tap.h | 10 +++++-----
+>  6 files changed, 25 insertions(+), 25 deletions(-)
+>
 
-On Thu, Jan 15, 2026 at 9:02=E2=80=AFAM Bathija, Pravin <Pravin.Bathija@del=
-l.com> wrote:
->
-> Dear Maxime,
->
-> Responses inline.
->
->
-> Internal Use - Confidential
-> > -----Original Message-----
-> > From: Maxime Coquelin <maxime.coquelin@redhat.com>
-> > Sent: Tuesday, January 6, 2026 8:08 AM
-> > To: Bathija, Pravin <Pravin.Bathija@dell.com>; dev@dpdk.org
-> > Cc: pravin.m.bathija.dev@gmail.com
-> > Subject: Re: [PATCH v5 2/4] vhost_user: header defines for add/rem mem
-> > region
-> >
-> >
-> > [EXTERNAL EMAIL]
-> >
-> >
-> >
-> > On 11/13/25 1:44 PM, Pravin M Bathija wrote:
-> > > The changes in this file cover the enum message requests for
-> > > supporting add/remove memory regions. The front-end vhost-user client
-> > > sends messages like get max memory slots, add memory region and remov=
-e
-> > > memory region which are covered in these changes which are on the
-> > > vhost-user back-end. The changes also include data structure
-> > > definition of memory region to be added/removed. The data structure
-> > > VhostUserMsg has been changed to include the memory region.
-> > >
-> > > Signed-off-by: Pravin M Bathija <pravin.bathija@dell.com>
-> > > ---
-> > >   lib/vhost/vhost_user.h | 10 ++++++++++
-> > >   1 file changed, 10 insertions(+)
-> > >
-> > > diff --git a/lib/vhost/vhost_user.h b/lib/vhost/vhost_user.h index
-> > > ef486545ba..5a0e747b58 100644
-> > > --- a/lib/vhost/vhost_user.h
-> > > +++ b/lib/vhost/vhost_user.h
-> > > @@ -32,6 +32,7 @@
-> > >                                      (1ULL <<
-> > VHOST_USER_PROTOCOL_F_BACKEND_SEND_FD) | \
-> > >                                      (1ULL <<
-> > VHOST_USER_PROTOCOL_F_HOST_NOTIFIER) | \
-> > >                                      (1ULL <<
-> > VHOST_USER_PROTOCOL_F_PAGEFAULT) | \
-> > > +                                    (1ULL <<
-> > VHOST_USER_PROTOCOL_F_CONFIGURE_MEM_SLOTS) | \
-> >
-> > It should be enabled only once the feature is actually implemented, oth=
-erwise
-> > bisection may fail.
->
-> So to clarify, you are suggesting, this change ought to be the final patc=
-h in the patch-set ?
+Reviewed-by: Maxime Coquelin <maxime.coquelin@redhat.com>
 
-Yes.
-Because here you are advertising support for a feature that is not yet
-implemented.
-
-> >
-> > >                                      (1ULL <<
-> > VHOST_USER_PROTOCOL_F_STATUS))
-> > >
-> > >   typedef enum VhostUserRequest {
-> > > @@ -67,6 +68,9 @@ typedef enum VhostUserRequest {
-> > >     VHOST_USER_POSTCOPY_END =3D 30,
-> > >     VHOST_USER_GET_INFLIGHT_FD =3D 31,
-> > >     VHOST_USER_SET_INFLIGHT_FD =3D 32,
-> > > +   VHOST_USER_GET_MAX_MEM_SLOTS =3D 36,
-> > > +   VHOST_USER_ADD_MEM_REG =3D 37,
-> > > +   VHOST_USER_REM_MEM_REG =3D 38,
-> > >     VHOST_USER_SET_STATUS =3D 39,
-> > >     VHOST_USER_GET_STATUS =3D 40,
-> > >   } VhostUserRequest;
-> > > @@ -91,6 +95,11 @@ typedef struct VhostUserMemory {
-> > >     VhostUserMemoryRegion
-> > regions[VHOST_MEMORY_MAX_NREGIONS];
-> > >   } VhostUserMemory;
-> > >
-> > > +typedef struct VhostUserSingleMemReg {
-> > > +   uint64_t padding;
-> > > +   VhostUserMemoryRegion region;
-> > > +} VhostUserSingleMemReg;
-> > > +
-> > >   typedef struct VhostUserLog {
-> > >     uint64_t mmap_size;
-> > >     uint64_t mmap_offset;
-> > > @@ -186,6 +195,7 @@ typedef struct __rte_packed_begin VhostUserMsg {
-> > >             struct vhost_vring_state state;
-> > >             struct vhost_vring_addr addr;
-> > >             VhostUserMemory memory;
-> > > +           VhostUserSingleMemReg memory_single;
-> > >             VhostUserLog    log;
-> > >             struct vhost_iotlb_msg iotlb;
-> > >             VhostUserCryptoSessionParam crypto_session;
->
+Thanks,
+Maxime
 
