@@ -2,47 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D25DD46612
-	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Jan 2026 19:03:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB22FD46612
+	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Jan 2026 19:03:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 17DF642789;
-	Thu, 15 Jan 2026 20:03:39 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 09EFD427BF;
+	Thu, 15 Jan 2026 20:03:41 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
- by mails.dpdk.org (Postfix) with ESMTP id 9327C4003C
- for <dev@dpdk.org>; Thu, 15 Jan 2026 20:03:37 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 4D09C40698
+ for <dev@dpdk.org>; Thu, 15 Jan 2026 20:03:38 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
  t=1768503818; x=1800039818;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=bxtn/w+/985+dryftVP2UywUohzGNj9t85CFQJ3W9es=;
- b=i2vN/QJV30mVtspFwQjbLgVkFl7cZeRR3DKJbXUpCtAY4+I/EIvksjiJ
- sNmsEAlexuS4GDuNxFy2nezOxCLGYV8NwkvZ1rkX2lJ68s6AKeRPUzIEk
- LY7kyhXXYsFJJ29fuDNi0oMIj6eVS+ZAkFAoLsA5/qAL6BVd8pgnTuhqC
- QOAiR4zjAizCioCZBOCMGaHxzJnlhqeqCiEZU2giXuIRX3PgIev7wFARW
- Le6odT4usVg4jdiuHCeQEl8paVSkq8K3iRXTZiynRaspgoramGqsgLtJj
- CrhiiRxGKU1FYIWvrHgkR94jfS8eqkextGBjJuk+q56lPDNKLmP3x6rou Q==;
-X-CSE-ConnectionGUID: GgRzA5WqRymKRKh6LA52dA==
-X-CSE-MsgGUID: P17tzDwJTpWNdyrAMQx49Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11672"; a="80461385"
-X-IronPort-AV: E=Sophos;i="6.21,229,1763452800"; d="scan'208";a="80461385"
+ bh=Z9BhXPDpv4zm2TqZ+WIu3KXD3I07wZTRs0g0sYHI0vY=;
+ b=mYpNRk3R9SjaB2LidXWZXqDrKsyecdkBmdayahhX1diC/GmUN6M8IwAa
+ gWjMVc5gpXyMR7e0M/VKk/6t/s9vk8EoRmzsMO3JAnodP1w7FJzSVT6hl
+ uurDi7v8GU6W1cA+UGRh+2iRDKGdsghlzzhl1zwc5DIX5qRLtgf1ui21W
+ vFKcNHiV7tJSvNN/L5pdWk3bug8cL6fUUqUOlOAbAqhhnmuxef1KFpc/C
+ HthbWgbTdilJtORxqCOKejJL/aYI6yMdHt8D/SzgSpYQQyilv5pxLOxDS
+ XrCJrcBrv1ZzbA2sq3GPDNOzMc0s8Mnd0aEZMkgYl7Eaz7tiEBb7LgbGH A==;
+X-CSE-ConnectionGUID: +3N7iGtUQXyDNAOWTXNm+A==
+X-CSE-MsgGUID: XWkkaT/YSlmgVumDWuolHg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11672"; a="80461389"
+X-IronPort-AV: E=Sophos;i="6.21,229,1763452800"; d="scan'208";a="80461389"
 Received: from fmviesa008.fm.intel.com ([10.60.135.148])
  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 15 Jan 2026 11:03:37 -0800
-X-CSE-ConnectionGUID: 6faYgUuhR/i9hs2mpb/hMg==
-X-CSE-MsgGUID: /eHHrkjURoGi/xJdSqazIQ==
+ 15 Jan 2026 11:03:38 -0800
+X-CSE-ConnectionGUID: I8L7U2q7RS2pSEn/FnjuAA==
+X-CSE-MsgGUID: uWDT1X5ATZmmY5KVMx0QlQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,229,1763452800"; d="scan'208";a="205307662"
+X-IronPort-AV: E=Sophos;i="6.21,229,1763452800"; d="scan'208";a="205307669"
 Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by fmviesa008.fm.intel.com with ESMTP; 15 Jan 2026 11:03:35 -0800
+ by fmviesa008.fm.intel.com with ESMTP; 15 Jan 2026 11:03:36 -0800
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: Bruce Richardson <bruce.richardson@intel.com>,
  Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v3 1/7] usertools: add new script to monitor telemetry on
- terminal
-Date: Thu, 15 Jan 2026 19:03:25 +0000
-Message-ID: <20260115190331.3721281-2-bruce.richardson@intel.com>
+Subject: [PATCH v3 2/7] usertools/telemetry-watcher: add displaying stats
+Date: Thu, 15 Jan 2026 19:03:26 +0000
+Message-ID: <20260115190331.3721281-3-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260115190331.3721281-1-bruce.richardson@intel.com>
 References: <20251210165532.103450-1-bruce.richardson@intel.com>
@@ -62,317 +61,218 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The dpdk-telemetry.py script is useful for getting telemetry
-interactively, but sometimes we want to monitor stats over time, so add
-a telemetry-watcher script to do so.
-
-Start off such a script with basic arg processing, and connecting to
-dpdk-telemetry as a subprocess, so that we can send-receive commands
-from it.
+Add support for printing out particular stats once every second. The
+stats to be queried are given on the commandline, in the format of
+<command>.<result-field>, for example /ethdev/stats,0.ipackets.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 Acked-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- doc/guides/tools/index.rst            |   1 +
- doc/guides/tools/telemetrywatcher.rst |  56 ++++++++
- usertools/dpdk-telemetry-watcher.py   | 200 ++++++++++++++++++++++++++
- usertools/meson.build                 |   1 +
- 4 files changed, 258 insertions(+)
- create mode 100644 doc/guides/tools/telemetrywatcher.rst
- create mode 100755 usertools/dpdk-telemetry-watcher.py
+ doc/guides/tools/telemetrywatcher.rst |  51 +++++++++++++
+ usertools/dpdk-telemetry-watcher.py   | 101 +++++++++++++++++++++++++-
+ 2 files changed, 151 insertions(+), 1 deletion(-)
 
-diff --git a/doc/guides/tools/index.rst b/doc/guides/tools/index.rst
-index 8ec429ec53..13f75a5bc6 100644
---- a/doc/guides/tools/index.rst
-+++ b/doc/guides/tools/index.rst
-@@ -14,6 +14,7 @@ DPDK Tools User Guides
-     pmdinfo
-     dumpcap
-     pdump
-+    telemetrywatcher
-     dmaperf
-     flow-perf
-     securityperf
 diff --git a/doc/guides/tools/telemetrywatcher.rst b/doc/guides/tools/telemetrywatcher.rst
-new file mode 100644
-index 0000000000..e813bf0207
---- /dev/null
+index e813bf0207..94f9e31721 100644
+--- a/doc/guides/tools/telemetrywatcher.rst
 +++ b/doc/guides/tools/telemetrywatcher.rst
-@@ -0,0 +1,56 @@
-+..  SPDX-License-Identifier: BSD-3-Clause
-+    Copyright(c) 2026 Intel Corporation
+@@ -45,6 +45,57 @@ Options
+    List all possible file-prefixes and exit.
+    This is useful to discover which DPDK applications are currently running.
+ 
++.. option:: stat
 +
-+dpdk-telemetry-watcher Application
-+===================================
-+
-+The ``dpdk-telemetry-watcher`` tool is a Data Plane Development Kit (DPDK) utility
-+that provides continuous monitoring of DPDK telemetry statistics on the command line.
-+It wraps the ``dpdk-telemetry.py`` script to provide real-time statistics display capabilities.
-+
-+
-+Running the Application
-+-----------------------
-+
-+The tool has a number of command line options:
-+
-+.. code-block:: console
-+
-+   dpdk-telemetry-watcher.py [options] stat1 stat2 ...
++   Statistics to monitor in format ``command.field``.
++   Multiple statistics can be specified and will be displayed in columns.
++   See the `Statistics Format`_ section below for details on specifying statistics.
 +
 +
-+Options
-+-------
++Statistics Format
++-----------------
 +
-+.. program:: dpdk-telemetry-watcher.py
++Statistics are specified in the format ``command.field`` where:
 +
-+.. option:: -h, --help
++* ``command`` is a telemetry command (e.g., ``/ethdev/stats,0``)
++* ``field`` is a field name from the command's JSON response (e.g., ``ipackets``)
 +
-+   Display usage information and quit
++To discover available commands and fields:
 +
-+.. option:: -f FILE_PREFIX, --file-prefix FILE_PREFIX
++1. Use ``dpdk-telemetry.py`` interactively to explore available commands
++2. Use the ``/`` command to list all available telemetry endpoints
++3. Query specific commands to see their response format
 +
-+   Provide file-prefix for DPDK runtime directory.
-+   Passed to ``dpdk-telemetry.py`` to identify the target DPDK application.
-+   Default is ``rte``.
++Example telemetry commands:
 +
-+.. option:: -i INSTANCE, --instance INSTANCE
++* ``/ethdev/list`` - List all ethernet devices
++* ``/ethdev/stats,N`` - Get statistics for ethernet device N
++* ``/ethdev/xstats,N`` - Get extended statistics for ethernet device N
++* ``/eal/mempool_list`` - List all mempools
++* ``/mempool/info,N`` - Get information about mempool N
 +
-+   Provide instance number for DPDK application when multiple applications are running with the same file-prefix.
-+   Passed to ``dpdk-telemetry.py`` to identify the target DPDK application instance.
-+   Default is ``0``.
++See `Examples`_ section for usage examples based on the results of these telemetry commands.
 +
-+.. option:: -l, --list
++Examples
++--------
 +
-+   List all possible file-prefixes and exit.
-+   This is useful to discover which DPDK applications are currently running.
++Monitor received packets on ethernet device 0::
 +
-+Dependencies
-+------------
++   dpdk-telemetry-watcher.py /ethdev/stats,0.ipackets
 +
-+The tool requires:
++Monitor received and transmitted packets on device 0::
 +
-+* Python 3
-+* The ``dpdk-telemetry.py`` script must be available in the same directory
-+  or in the system PATH
-+* A running DPDK application with telemetry enabled
++   dpdk-telemetry-watcher.py /ethdev/stats,0.ipackets /ethdev/stats,0.opackets
++
++Monitor a DPDK application with a custom file-prefix::
++
++   dpdk-telemetry-watcher.py -f myapp /ethdev/stats,0.ipackets
++
++List all running DPDK applications::
++
++   dpdk-telemetry-watcher.py -l
++
++
+ Dependencies
+ ------------
+ 
 diff --git a/usertools/dpdk-telemetry-watcher.py b/usertools/dpdk-telemetry-watcher.py
-new file mode 100755
-index 0000000000..a5ac293d06
---- /dev/null
+index a5ac293d06..dad4e60475 100755
+--- a/usertools/dpdk-telemetry-watcher.py
 +++ b/usertools/dpdk-telemetry-watcher.py
-@@ -0,0 +1,200 @@
-+#!/usr/bin/env python3
-+# SPDX-License-Identifier: BSD-3-Clause
-+# Copyright(c) 2025 Intel Corporation
+@@ -14,6 +14,7 @@
+ import shutil
+ import errno
+ import json
++import time
+ 
+ 
+ def get_app_name(pid):
+@@ -137,6 +138,91 @@ def print_connected_app(process):
+             print(f'Connected to application: "{app_name}"')
+ 
+ 
++def validate_stats(process, stat_specs):
++    """Validate stat specifications and check that fields are numeric.
 +
-+"""
-+Script to monitor DPDK telemetry statistics on the command line.
-+Wraps dpdk-telemetry.py to provide continuous monitoring capabilities.
-+"""
-+
-+import argparse
-+import subprocess
-+import sys
-+import os
-+import shutil
-+import errno
-+import json
-+
-+
-+def get_app_name(pid):
-+    """return the app name for a given PID, for printing"""
-+    proc_cmdline = os.path.join("/proc", str(pid), "cmdline")
-+    try:
-+        with open(proc_cmdline) as f:
-+            argv0 = f.read(1024).split("\0")[0]
-+            return os.path.basename(argv0)
-+    except IOError as e:
-+        # ignore file not found errors
-+        if e.errno != errno.ENOENT:
-+            raise
-+    return None
-+
-+
-+def find_telemetry_script():
-+    """Find the dpdk-telemetry.py script in the script directory or PATH.
++    Args:
++        process: The subprocess.Popen handle to the telemetry process
++        stat_specs: List of stat specifications in format "command.field"
 +
 +    Returns:
-+        str: Path to the dpdk-telemetry.py script
-+
-+    Exits:
-+        If the script cannot be found
++        List of tuples (spec, command, field) for valid specs, or None on error
 +    """
-+    # First, try to find it in the same directory as this script
-+    script_dir = os.path.dirname(os.path.abspath(__file__))
-+    telemetry_script = os.path.join(script_dir, "dpdk-telemetry.py")
-+
-+    # If not found locally, check if it's in PATH
-+    if not os.path.exists(telemetry_script):
-+        telemetry_in_path = shutil.which("dpdk-telemetry.py")
-+        if telemetry_in_path:
-+            telemetry_script = telemetry_in_path
-+        else:
++    parsed_specs = []
++    for spec in stat_specs:
++        # Parse the stat specification
++        if "." not in spec:
++            print(f"Error: Invalid stat specification '{spec}'", file=sys.stderr)
 +            print(
-+                "Error: dpdk-telemetry.py not found in script directory or PATH",
++                "Expected format: 'command.field' (e.g., /ethdev/stats,0.ipackets)",
 +                file=sys.stderr,
 +            )
-+            sys.exit(1)
++            return None
 +
-+    return telemetry_script
++        command, field = spec.rsplit(".", 1)
++        if not command or not field:
++            print(f"Error: Invalid stat specification '{spec}'", file=sys.stderr)
++            print(
++                "Expected format: 'command.field' (e.g., /ethdev/stats,0.ipackets)",
++                file=sys.stderr,
++            )
++            return None
 +
++        # Query the stat once to validate it exists and is numeric
++        data = query_telemetry(process, command)
++        if not isinstance(data, dict):
++            print(f"Error: Command '{command}' did not return a dictionary", file=sys.stderr)
++            return None
++        if field not in data:
++            print(f"Error: Field '{field}' not found in '{command}' response", file=sys.stderr)
++            return None
++        value = data[field]
++        if not isinstance(value, (int, float)):
++            print(
++                f"Error: Field '{field}' in '{command}' is not numeric (got {type(value).__name__})",
++                file=sys.stderr,
++            )
++            return None
 +
-+def create_telemetry_process(telemetry_script, args_list):
-+    """Create a subprocess for dpdk-telemetry.py with pipes.
++        parsed_specs.append((spec, command, field))
 +
-+    Args:
-+        telemetry_script: Path to the dpdk-telemetry.py script
-+        args_list: List of arguments to pass to the script
-+
-+    Returns:
-+        subprocess.Popen: Process handle with stdin/stdout/stderr pipes
-+
-+    Exits:
-+        If the process cannot be created
-+    """
-+    # Build the command
-+    cmd = [sys.executable, telemetry_script] + args_list
-+
-+    try:
-+        process = subprocess.Popen(
-+            cmd,
-+            stdin=subprocess.PIPE,
-+            stdout=subprocess.PIPE,
-+            stderr=subprocess.PIPE,
-+            text=True,
-+            bufsize=1,  # Line buffered
-+        )
-+        return process
-+    except FileNotFoundError:
-+        print("Error: Python interpreter or script not found", file=sys.stderr)
-+        sys.exit(1)
-+    except Exception as e:
-+        print(f"Error running dpdk-telemetry.py: {e}", file=sys.stderr)
-+        sys.exit(1)
++    return parsed_specs
 +
 +
-+def query_telemetry(process, command):
-+    """Send a telemetry command and return the parsed JSON response.
++def monitor_stats(process, stat_specs):
++    """Monitor and display statistics in columns.
 +
 +    Args:
 +        process: The subprocess.Popen handle to the telemetry process
-+        command: The telemetry command to send (e.g., "/info" or "/ethdev/stats,0")
-+
-+    Returns:
-+        dict: The parsed JSON response with the command wrapper stripped,
-+              or None if there was an error
++        stat_specs: List of stat specifications in format "command.field"
 +    """
-+    # Send the command
-+    process.stdin.write(f"{command}\n")
-+    process.stdin.flush()
++    # Validate all stat specifications
++    parsed_specs = validate_stats(process, stat_specs)
++    if not parsed_specs:
++        return
 +
-+    # Read the JSON response
-+    response = process.stdout.readline()
++    # Print header
++    header = "Time".ljust(10)
++    for spec, _, _ in parsed_specs:
++        header += spec.rjust(25)
++    print(header)
++
++    # Monitor loop - once per second
 +    try:
-+        data = json.loads(response)
-+        # When run non-interactively, the response is wrapped with the command
-+        # e.g., {"/info": {"version": ..., "pid": ...}}
-+        # or {"/ethdev/stats,0": {...}}
-+        # The response should have exactly one key which is the command
-+        if len(data) == 1:
-+            # Extract the value, ignoring the key
-+            return next(iter(data.values()))
-+        else:
-+            return data
-+    except (json.JSONDecodeError, KeyError):
-+        return None
++        while True:
++            timestamp = time.strftime("%H:%M:%S")
++            row = timestamp.ljust(10)
++
++            for spec, command, field in parsed_specs:
++                data = query_telemetry(process, command)
++                row += str(data[field]).rjust(25)
++
++            print(row)
++            time.sleep(1)
++    except KeyboardInterrupt:
++        print("\nMonitoring stopped")
 +
 +
-+def print_connected_app(process):
-+    """Query and print the name of the connected DPDK application.
-+
-+    Args:
-+        process: The subprocess.Popen handle to the telemetry process
-+    """
-+    info = query_telemetry(process, "/info")
-+    if info and "pid" in info:
-+        app_name = get_app_name(info["pid"])
-+        if app_name:
-+            print(f'Connected to application: "{app_name}"')
-+
-+
-+def main():
-+    """Main function to parse arguments and run dpdk-telemetry.py with a pipe"""
-+
-+    # Parse command line arguments - matching dpdk-telemetry.py parameters
-+    parser = argparse.ArgumentParser(
-+        description="Monitor DPDK telemetry statistics on the command line"
-+    )
-+    parser.add_argument(
-+        "-f",
-+        "--file-prefix",
-+        default="rte",
-+        help="Provide file-prefix for DPDK runtime directory",
-+    )
-+    parser.add_argument(
-+        "-i",
-+        "--instance",
-+        default=0,
-+        type=int,
-+        help="Provide instance number for DPDK application",
-+    )
-+    parser.add_argument(
-+        "-l",
-+        "--list",
-+        action="store_true",
-+        default=False,
-+        help="List all possible file-prefixes and exit",
-+    )
-+
-+    args = parser.parse_args()
-+
-+    # Find the dpdk-telemetry.py script
-+    telemetry_script = find_telemetry_script()
-+
-+    # Build arguments list
-+    args_list = ["-f", args.file_prefix, "-i", str(args.instance)]
-+
-+    if args.list:
-+        args_list.append("-l")
-+        # For --list, just run the command directly without pipes
-+        cmd = [sys.executable, telemetry_script] + args_list
-+        return subprocess.run(cmd).returncode
-+
-+    # Run dpdk-telemetry.py with pipes for stdin and stdout
-+    process = create_telemetry_process(telemetry_script, args_list)
-+
-+    # Get and display the connected application name
-+    print_connected_app(process)
-+
-+    # TODO: Add monitoring logic here
-+
-+    # Clean up
-+    process.stdin.close()
-+    process.stdout.close()
-+    process.stderr.close()
-+    process.wait()
-+
-+    return 0
-+
-+
-+if __name__ == "__main__":
-+    sys.exit(main())
-diff --git a/usertools/meson.build b/usertools/meson.build
-index eb48e2f440..114d0a65b4 100644
---- a/usertools/meson.build
-+++ b/usertools/meson.build
-@@ -12,6 +12,7 @@ install_data([
-             'dpdk-hugepages.py',
-             'dpdk-rss-flows.py',
-             'dpdk-telemetry-exporter.py',
-+            'dpdk-telemetry-watcher.py',
-         ],
-         install_dir: 'bin')
+ def main():
+     """Main function to parse arguments and run dpdk-telemetry.py with a pipe"""
  
+@@ -164,6 +250,11 @@ def main():
+         default=False,
+         help="List all possible file-prefixes and exit",
+     )
++    parser.add_argument(
++        "stats",
++        nargs="*",
++        help="Statistics to monitor in format 'command.field' (e.g., /ethdev/stats,0.ipackets)",
++    )
+ 
+     args = parser.parse_args()
+ 
+@@ -179,13 +270,21 @@ def main():
+         cmd = [sys.executable, telemetry_script] + args_list
+         return subprocess.run(cmd).returncode
+ 
++    # Check if stats were provided
++    if not args.stats:
++        print("Error: No statistics to monitor specified", file=sys.stderr)
++        print("Usage: dpdk-telemetry-watcher.py [options] stat1 stat2 ...", file=sys.stderr)
++        print("Example: dpdk-telemetry-watcher.py /ethdev/stats,0.ipackets", file=sys.stderr)
++        return 1
++
+     # Run dpdk-telemetry.py with pipes for stdin and stdout
+     process = create_telemetry_process(telemetry_script, args_list)
+ 
+     # Get and display the connected application name
+     print_connected_app(process)
+ 
+-    # TODO: Add monitoring logic here
++    # Monitor the requested statistics
++    monitor_stats(process, args.stats)
+ 
+     # Clean up
+     process.stdin.close()
 -- 
 2.51.0
 
