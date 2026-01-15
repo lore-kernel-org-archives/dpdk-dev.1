@@ -2,39 +2,41 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2A29D44C59
-	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Jan 2026 14:41:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9867BD44C59
+	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Jan 2026 14:41:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0E59B42670;
-	Thu, 15 Jan 2026 15:41:11 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 1BCCD427B7;
+	Thu, 15 Jan 2026 15:41:12 +0100 (CET)
 Received: from office2.cesnet.cz (office2.cesnet.cz [78.128.248.237])
- by mails.dpdk.org (Postfix) with ESMTP id ADF3F410E3
- for <dev@dpdk.org>; Thu, 15 Jan 2026 15:41:09 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id C037C42670;
+ Thu, 15 Jan 2026 15:41:09 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cesnet.cz;
  s=office2-2020; t=1768488069;
- bh=YJKZMT7x+vHaaXjWf+1I5KNoTrtdVfxr4SpnnhNOliU=;
+ bh=mX/sJzFRUMhMBKosSzDEo5jLUIqrmGJOmS7xvp5wBAk=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References;
- b=lfwiU5HSVlTHyxVY7YoF5fLphG2u6AtGsVDDsLSXzBdBGFKk888dmugPpcUlWoDny
- xNP1W79Lmx7prkkGk4cVJvxGluFSDGS8iUhljnIZrrHpIWdvcrUPBRMRQEe4UrNG6k
- RE+9RHkK9gp9qXV/U8pJW+HkuMY2rGT64TbcUR/i66XyI+22GNadu7NH013oPkcEaS
- QESSmXoUswr3UkxvzVTcuBZWJMsuc38Z4a/NLVCInDBP+m/Mti1g2lh5rMP23i39Yb
- neMwDnO9dyVYLWDuxgsyxT+j2Hs8FKXtwKjcx/oijw5dayQYYb/DcRLBbSgkWuwsGQ
- TRyXW96HCG5dw==
+ b=EM5Z7BWcMrBa/bGqsyvM4Uf8ujI6V0FIfg2iX6dkXxB1+/QH9q0DYfPlx9wMFBcog
+ ld3Z5Z9oK1YcqZtRRtp90zT+gA/qLGjeN5x33n4NnSXPiHdGngKuusbDm5ZRhrGqIa
+ cisPjMiua/f3WF71qfCxP4/pEgCjNkg4IlidsaugOXbqtyF7I5wACaUyT3XEf4fspo
+ dZduswX/2xwT0gg732dohWyqGLJTsw9RDwK/2Aa2MATzVUxTCevE6L7/dOPgSCRQ3j
+ bMNOvgRXhaIb2Cou8bjq3R8YDf6dkxFr9jm8DTQfANEdiybT8ULBTRI6LD+81aLI1c
+ u0OLIP6r5VneQ==
 Received: from emil.cesnet.cz (gtx107.cesnet.cz [IPv6:2001:718:812:27::107])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by office2.cesnet.cz (Postfix) with ESMTPSA id 7170B1180078;
+ by office2.cesnet.cz (Postfix) with ESMTPSA id 8B5ED118007E;
  Thu, 15 Jan 2026 15:41:09 +0100 (CET)
 From: spinler@cesnet.cz
 To: dev@dpdk.org
-Cc: Martin Spinler <spinler@cesnet.cz>
-Subject: [PATCH v2 0/6] net/nfb: code cleanup
-Date: Thu, 15 Jan 2026 15:40:34 +0100
-Message-ID: <20260115144040.345873-1-spinler@cesnet.cz>
+Cc: Martin Spinler <spinler@cesnet.cz>,
+	stable@dpdk.org
+Subject: [PATCH v2 1/6] net/nfb: use constant values for max Rx/Tx queues count
+Date: Thu, 15 Jan 2026 15:40:35 +0100
+Message-ID: <20260115144040.345873-2-spinler@cesnet.cz>
 X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20260115140134.235877-1-spinler@cesnet.cz>
+In-Reply-To: <20260115144040.345873-1-spinler@cesnet.cz>
 References: <20260115140134.235877-1-spinler@cesnet.cz>
+ <20260115144040.345873-1-spinler@cesnet.cz>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -52,31 +54,64 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Martin Spinler <spinler@cesnet.cz>
 
-This patchset mainly cleans up the code and prepare it for another
-quite large rework. Also it resolves some unpleasant behavior.
+The nb_xx_queues values in the dev->data structure can be modified
+dynamically by some apps. Use runtime-constant values from hardware
+directly for max_rx_queues/max_tx_queues.
 
+Fixes: 6435f9a0ac22 ("net/nfb: add new netcope driver")
+Cc: stable@dpdk.org
+
+Signed-off-by: Martin Spinler <spinler@cesnet.cz>
 ---
-v2:
-* Fixed coding style issues
+ drivers/net/nfb/nfb.h        |  3 +++
+ drivers/net/nfb/nfb_ethdev.c | 10 ++++++----
+ 2 files changed, 9 insertions(+), 4 deletions(-)
 
-Martin Spinler (6):
-  net/nfb: use constant values for max Rx/Tx queues count
-  net/nfb: fix bad pointer access in queue stats
-  net/nfb: update timestamp calculation to meaningful value
-  net/nfb: use process private variable for internal data
-  net/nfb: release allocated resources correctly
-  net/nfb: stop only started queues in fail path
-
- doc/guides/nics/nfb.rst      |   6 +-
- drivers/net/nfb/nfb.h        |   5 ++
- drivers/net/nfb/nfb_ethdev.c | 165 ++++++++++++++++++++---------------
- drivers/net/nfb/nfb_rx.c     |   2 +-
- drivers/net/nfb/nfb_rx.h     |  13 +--
- drivers/net/nfb/nfb_rxmode.c |  12 +--
- drivers/net/nfb/nfb_stats.c  |  46 +++++-----
- drivers/net/nfb/nfb_tx.c     |   2 +-
- 8 files changed, 142 insertions(+), 109 deletions(-)
-
---
+diff --git a/drivers/net/nfb/nfb.h b/drivers/net/nfb/nfb.h
+index a8b24ff822..8f8577860a 100644
+--- a/drivers/net/nfb/nfb.h
++++ b/drivers/net/nfb/nfb.h
+@@ -48,6 +48,9 @@ struct pmd_internals {
+ 	struct nc_rxmac *rxmac[RTE_MAX_NC_RXMAC];
+ 	struct nc_txmac *txmac[RTE_MAX_NC_TXMAC];
+ 	struct nfb_device *nfb;
++
++	int max_rx_queues;
++	int max_tx_queues;
+ };
+ 
+ #endif /* _NFB_H_ */
+diff --git a/drivers/net/nfb/nfb_ethdev.c b/drivers/net/nfb/nfb_ethdev.c
+index 98119d70fd..7a472a5f1e 100644
+--- a/drivers/net/nfb/nfb_ethdev.c
++++ b/drivers/net/nfb/nfb_ethdev.c
+@@ -237,11 +237,13 @@ static int
+ nfb_eth_dev_info(struct rte_eth_dev *dev,
+ 	struct rte_eth_dev_info *dev_info)
+ {
++	struct pmd_internals *internals = dev->data->dev_private;
++
+ 	dev_info->max_mac_addrs = nfb_eth_get_max_mac_address_count(dev);
+ 
+ 	dev_info->max_rx_pktlen = (uint32_t)-1;
+-	dev_info->max_rx_queues = dev->data->nb_rx_queues;
+-	dev_info->max_tx_queues = dev->data->nb_tx_queues;
++	dev_info->max_rx_queues = internals->max_rx_queues;
++	dev_info->max_tx_queues = internals->max_tx_queues;
+ 	dev_info->speed_capa = RTE_ETH_LINK_SPEED_100G;
+ 	dev_info->rx_offload_capa =
+ 		RTE_ETH_RX_OFFLOAD_TIMESTAMP;
+@@ -538,8 +540,8 @@ nfb_eth_dev_init(struct rte_eth_dev *dev)
+ 		NFB_LOG(ERR, "nfb_open(): failed to open %s", nfb_dev);
+ 		return -EINVAL;
+ 	}
+-	data->nb_rx_queues = ndp_get_rx_queue_available_count(internals->nfb);
+-	data->nb_tx_queues = ndp_get_tx_queue_available_count(internals->nfb);
++	internals->max_rx_queues = ndp_get_rx_queue_available_count(internals->nfb);
++	internals->max_tx_queues = ndp_get_tx_queue_available_count(internals->nfb);
+ 
+ 	NFB_LOG(INFO, "Available NDP queues RX: %u TX: %u",
+ 		data->nb_rx_queues, data->nb_tx_queues);
+-- 
 2.52.0
 
