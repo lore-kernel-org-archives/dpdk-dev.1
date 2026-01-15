@@ -2,49 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6BFFD29FFA
-	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Jan 2026 08:05:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C777D3CC9F
+	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Jan 2026 08:07:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DC5124060C;
-	Thu, 15 Jan 2026 09:05:00 +0100 (CET)
-Received: from mx0a-00154904.pphosted.com (mx0a-00154904.pphosted.com
- [148.163.133.20])
- by mails.dpdk.org (Postfix) with ESMTP id 0BA414003C
- for <dev@dpdk.org>; Thu, 15 Jan 2026 09:04:58 +0100 (CET)
-Received: from pps.filterd (m0170391.ppops.net [127.0.0.1])
- by mx0a-00154904.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 60ELeqIl005067;
- Thu, 15 Jan 2026 03:04:58 -0500
+	by mails.dpdk.org (Postfix) with ESMTP id 2BB8140A6F;
+	Thu, 15 Jan 2026 09:07:00 +0100 (CET)
+Received: from mx0b-00154904.pphosted.com (mx0b-00154904.pphosted.com
+ [148.163.137.20])
+ by mails.dpdk.org (Postfix) with ESMTP id 573104003C
+ for <dev@dpdk.org>; Thu, 15 Jan 2026 09:06:58 +0100 (CET)
+Received: from pps.filterd (m0170394.ppops.net [127.0.0.1])
+ by mx0b-00154904.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 60F6Lo1N020708;
+ Thu, 15 Jan 2026 03:06:57 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dell.com; h=cc
  :content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=smtpout1; bh=l
- l7lqPAI6QRLbdTPimi6cJqt0zR/mNsKlH3P8jac+Gk=; b=TAyshk37J1iMcMui7
- yQQ4hax4NN+WaFauy6k3rrGoKeWEZs7Gi8cQmJ/7HYsekLBlsFPN8yTvOp3KlQ1A
- cqmneD5YYanrrdUyR8EkULElbwWjr+VjaIyTTNZzFnu4WyNaDVV30x/3DVmOzLQS
- nVUbtIFQSk0J3MY1siM11mYDvBEInZGRvgLosZ9rFakIcfb8gVxB4tGQXK2jsP4X
- ZKby+3q9aOEiNu+Uq5aQCJPKqwXfJFkCvLVrLmkMnrT/xDP9SruUTr22tFdSjJiA
- CztuEMx5k7LAHjzMydq05y95RcRC3r1TOe3jLQ+5oi0AE36ETY2lALamjOcr7Ivt
- ZwxoQ==
+ :message-id:mime-version:references:subject:to; s=smtpout1; bh=s
+ 6TOjpLf4KJbFxkbjkiem3VPVHKFhbmufQMvj0r8xV8=; b=vX/3173yZqBm/wGW4
+ B//RTFPB5Wlmn4dX4IAiH61+1gs65p4aBnIAuSQZbyzpg370Iq1iOjwoOeMyZF9A
+ rAQnXnMRW8kKY7KtdbkBPC7GO3U8dB7/uOyBZt22dsgkIdJ6aUxT2k4VF43LwpBA
+ mvfjA05v+vOcmwc6ZGpxIUKOhLVarc39W0B40hrnvcwZqGvGZppcu3RnOTYUP9Qj
+ sE6IJP9Q2cP41+nUe4mb6oWnydufEvxAP/umyLlft11XZQQ57m5V/2Erl8u2pEmb
+ zlhKWqb6e5B7vL3NAh20I7zGqnFGud2vUSf/xph6MOnT0dWjAsqtHjJq0p4//Y1e
+ CC4ww==
 Received: from mx0a-00154901.pphosted.com (mx0a-00154901.pphosted.com
  [67.231.149.39])
- by mx0a-00154904.pphosted.com (PPS) with ESMTPS id 4bkjsv4wc8-1
+ by mx0b-00154904.pphosted.com (PPS) with ESMTPS id 4bkj74mwg7-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Thu, 15 Jan 2026 03:04:58 -0500 (EST)
-Received: from pps.filterd (m0371675.ppops.net [127.0.0.1])
- by mx0a-00154901.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 60F81Xho017374;
- Thu, 15 Jan 2026 03:04:57 -0500
+ Thu, 15 Jan 2026 03:06:57 -0500 (EST)
+Received: from pps.filterd (m0090351.ppops.net [127.0.0.1])
+ by mx0b-00154901.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 60F5ohEj008886;
+ Thu, 15 Jan 2026 03:06:56 -0500
 Received: from ch5pr02cu005.outbound.protection.outlook.com
- (mail-northcentralusazon11012002.outbound.protection.outlook.com
- [40.107.200.2])
- by mx0a-00154901.pphosted.com (PPS) with ESMTPS id 4bp2vra97v-1
+ (mail-northcentralusazon11012038.outbound.protection.outlook.com
+ [40.107.200.38])
+ by mx0b-00154901.pphosted.com (PPS) with ESMTPS id 4bptedsaj7-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
- Thu, 15 Jan 2026 03:04:57 -0500 (EST)
+ Thu, 15 Jan 2026 03:06:55 -0500 (EST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hxxcc4fL9+FRMf1xzzft0a0mxynsYEzpiVgYddHVQPBPujFiYSAzIWtBo409BibccTCx0MZcQQ61WQsb2bca15Od9InYa5tQYB1PHdsa9Yvg0jXgZ8cXn3l3k54idtv0+0g9vsd1Y0+aVyLIBTcs08VKxYuuTnIS6MzxHm2ltHrSUsmDQitX9LNfutAu1d+WmY02qqYCubkuUYqPWcq/22cONpIYsHgGlXLdKkLXAtBS/rCuhgyqkK0q+9FCC6AUGEcg3ZQQVkcNr9UOjeBBtXw10wHP6lCcVvdWq20LWwLJrSuG/R80l/N9TlzaM58pPEmj1zRFlWaho1qpF699lw==
+ b=rTANyZFfAsy6xttbfFEKogFbuNCuh9OhqTwN8eyLMxcymHP+r+Gn3EqJLufUwZoQ33aKCNca0gl6Mb29zXUmEK2qzN4nK0ubjVauhwT1HPGvL7xv/YzdQIguW40ij9U6aV3RlWm2ndrABRjhBa4kGT0NNZduNVvShED9/c0gbSAUpFf2H4ZcwNHee65Ys1XECU0xdDLZfIBfy4e+bmCDLICCHdNerq++1AX3p4Kac2a/oVKcbtqjF+YizYYHrhT205BGu2AjVbEEiV7aeja1036cfQpz/RbAAVfJHhzJPLqLYaLmMtwhRlEt6oWtXFDRuD+gxjC8PTczCzO/t5K7ew==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ll7lqPAI6QRLbdTPimi6cJqt0zR/mNsKlH3P8jac+Gk=;
- b=eyzXtsJrhNuITMMhpsqTkmmf4N2nmiNJUMLwERrUHNAKegxDRcSizv08YhVSS0RNoXzC4iogEpgd/wKPRupDfbvVlo4+HYV+s0EKqKjAbUUY1ynyZW5ZwqiY4SjPW+NgcXCGcs7OrJi4hc2k9b2rbOuHArjR8THv9pPWF61BszssBmjtIo8sUeJZQ4m5FebfFqGId7qLaLjNN84I3irSb4GIqw5n2sQk2hVGp2tQ8n/bapO7zTktdab+Qg9vU09IvhzjCwmbsvn1CAum6XAJxZsARAWM91Ih7cTS2cf1nDrpKjQpriC+lToJQgaSL1BlXZBuhCNv0HTJDBMqwZgAdg==
+ bh=s6TOjpLf4KJbFxkbjkiem3VPVHKFhbmufQMvj0r8xV8=;
+ b=Vhf4iYkRA+dyHnTrA0lR86e8uU2N4j2pXY9X/chM0WuKj7Wxs2KCaTaHRtwZn0lg1piA4vf/RrLLfVbfDUmYLu2vb8ECj75vVEw3EFcfxZxDGw5eVGNxt0osHNus+adB/ISoqU7+lHbErdbDm8J5yNy0XQn9mTc46bb8ytcaojrcWS+Gp54uRQlg1S2okq+59fdNKKlTGMvGSff2kPECLM4lykie4Dzou9hLccFoI1iJpj86U1ZUmnhTxfI86G8kUXDJQvKdemLcnNm1vJiB7BzpocQ1k/FrjXc9xVD4X7mBRjcbsKYHbqpSVhsSdGHlqJKM0huAnxbNPGQ5S3KKdw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=dell.com; dmarc=pass action=none header.from=dell.com;
  dkim=pass header.d=dell.com; arc=none
@@ -52,168 +52,167 @@ Received: from SJ0PR19MB4606.namprd19.prod.outlook.com (2603:10b6:a03:289::22)
  by IA1PR19MB7709.namprd19.prod.outlook.com (2603:10b6:208:3d8::21)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9520.5; Thu, 15 Jan
- 2026 08:04:53 +0000
+ 2026 08:06:52 +0000
 Received: from SJ0PR19MB4606.namprd19.prod.outlook.com
  ([fe80::8938:6218:a89e:ba8e]) by SJ0PR19MB4606.namprd19.prod.outlook.com
  ([fe80::8938:6218:a89e:ba8e%3]) with mapi id 15.20.9520.005; Thu, 15 Jan 2026
- 08:04:53 +0000
+ 08:06:52 +0000
 From: "Bathija, Pravin" <Pravin.Bathija@dell.com>
 To: Maxime Coquelin <maxime.coquelin@redhat.com>, "dev@dpdk.org" <dev@dpdk.org>
 CC: "pravin.m.bathija.dev@gmail.com" <pravin.m.bathija.dev@gmail.com>
-Subject: RE: [PATCH v5 3/4] vhost_user: support function defines for back-end
-Thread-Topic: [PATCH v5 3/4] vhost_user: support function defines for back-end
-Thread-Index: AQHcVJtOUtNVT6ood0inyppL9ekqZbVFqgMAgA2XbfA=
-Date: Thu, 15 Jan 2026 08:04:53 +0000
-Message-ID: <SJ0PR19MB46067C59B8CAA6107F67980FF58CA@SJ0PR19MB4606.namprd19.prod.outlook.com>
+Subject: RE: [PATCH v5 4/4] vhost_user: Function defs for add/rem mem regions
+Thread-Topic: [PATCH v5 4/4] vhost_user: Function defs for add/rem mem regions
+Thread-Index: AQHcVJtQVTOuvjwlfU2rG2sxc6dmhLVFrAgAgA2WElA=
+Date: Thu, 15 Jan 2026 08:06:52 +0000
+Message-ID: <SJ0PR19MB4606CDEB37E0ED2E3D7D0D35F58CA@SJ0PR19MB4606.namprd19.prod.outlook.com>
 References: <20251113124425.2913881-1-pravin.bathija@dell.com>
- <20251113124425.2913881-4-pravin.bathija@dell.com>
- <db79f122-fc59-4c2e-b44f-97de3131c967@redhat.com>
-In-Reply-To: <db79f122-fc59-4c2e-b44f-97de3131c967@redhat.com>
+ <20251113124425.2913881-5-pravin.bathija@dell.com>
+ <0b163dd2-a981-4927-921a-fe4861c2bc13@redhat.com>
+In-Reply-To: <0b163dd2-a981-4927-921a-fe4861c2bc13@redhat.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 msip_labels: MSIP_Label_73dd1fcc-24d7-4f55-9dc2-c1518f171327_Enabled=True;
  MSIP_Label_73dd1fcc-24d7-4f55-9dc2-c1518f171327_SiteId=945c199a-83a2-4e80-9f8c-5a91be5752dd;
- MSIP_Label_73dd1fcc-24d7-4f55-9dc2-c1518f171327_SetDate=2026-01-15T08:02:43.0000000Z;
+ MSIP_Label_73dd1fcc-24d7-4f55-9dc2-c1518f171327_SetDate=2026-01-15T08:05:05.0000000Z;
  MSIP_Label_73dd1fcc-24d7-4f55-9dc2-c1518f171327_Name=No
  Protection (Label Only) - Internal
  Use; MSIP_Label_73dd1fcc-24d7-4f55-9dc2-c1518f171327_ContentBits=3;
  MSIP_Label_73dd1fcc-24d7-4f55-9dc2-c1518f171327_Method=Standard
 x-ms-publictraffictype: Email
 x-ms-traffictypediagnostic: SJ0PR19MB4606:EE_|IA1PR19MB7709:EE_
-x-ms-office365-filtering-correlation-id: 441a6171-deb5-4a04-f22b-08de540cc3e8
+x-ms-office365-filtering-correlation-id: 4b40fb93-8ed6-45f0-2392-08de540d0ac2
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: BCL:0;
  ARA:13230040|376014|786006|366016|1800799024|38070700021; 
-x-microsoft-antispam-message-info: =?utf-7?B?Ky1pQ1ArLUs4bUQ3UnNpOUFaQk1uc25BY2FGMmxEMGE0UkdnaDNtRFNTNURp?=
- =?utf-7?B?OTVxOUZnVTdvTFQ4cGFzSFBjVVEzdysta0RhQnA1N1FiTjJwSTRBME1zWjZu?=
- =?utf-7?B?MW9obEVoSm9BM2UzS2dVeVVmeUNUOVNoMkthNTJ2c1VXaVcyMSstVklvSFVW?=
- =?utf-7?B?ZkJhbUVicXJrck56WmlQWlFRMTVyRDdkYkw4bm5vTjVheXlGSGxCQjFxNHI2?=
- =?utf-7?B?bXEvY25GRFVzb0RZcnlJVHRvV3pkYVZCNFpvVnhTVm1LempLampadzJDc1h2?=
- =?utf-7?B?QVZnMlV1eGo2UjErLXQ0Zkp2NjI2T1d0RjhqdnprNHd1UWo0TTVDcm5hT05l?=
- =?utf-7?B?dnlnY2NTamZWOU9aQWtnc3JWbzI3RzVPZUVvcmFwKy10NjBJSUo5Mm1aVmJx?=
- =?utf-7?B?SzdCVThLKy1zU0EydUNNaS9zZTh4bkVwdGE5bEdFMkJCZmt0N1BkbzdkKy1z?=
- =?utf-7?B?b0t0UWEwUnYzTDBqM3QvV09LdjNVcGg5dFdWUGxZMUtxR1AzZExMWUZTZXhI?=
- =?utf-7?B?eExOSHMyOHg1Ky1BZ2wvVEljMUdtZ2NYaTlUTDhxZFlpbzFLUHpnMko2SGY=?=
- =?utf-7?B?ZSstUG9VMGszQWZYM2g1N1J0enl2TllYZlJMNm1mN2pYQW1ucElvKy1oMTZu?=
- =?utf-7?B?M05nKy1QY21TTystVGY3NkthcVU0VG1UWVkwazhIOHk3aGE2WSstcFNRWHFF?=
- =?utf-7?B?bFR6akd1ZDlKZFBEUVVBWjdlclA0ZkxSQ1lQZDQ2VXh3bFpQTE9EMGN2SGM1?=
- =?utf-7?B?Wld2RzBKYzFSTUw4WE95VTlSUy8xaVFyb3hrQS83a0NpcVVUejlmQ0gzUTdW?=
- =?utf-7?B?WGVqT21tNVFHOHRiUzRjNkJUU0ZWcWhEZmk0dVNGNTlmVU0yYkM5aUI0QzBQ?=
- =?utf-7?B?WUNVejlxb1NjUTFiYVlaUWY4RG5TaWhETE5kYzlodVVJYUdIWlJjbWp2S3Rp?=
- =?utf-7?B?RER4Z2NsV2RJM1V0Znk0dDdyVG8rLTU2WGNQWmVhWXlNMm1TS0FYOWJsRGhu?=
- =?utf-7?B?WjFOSGRrZ0diaFQ3UmtKT2wzdUpEUlVtKy1CcjhNbk1vYTEzR2s2dlBibVBL?=
- =?utf-7?B?YlBMMHQ3OEZEUkZFbUtOTjM3bkFsbkNiYzg5UGJTY2NWUEFZWW9INEg5bVpC?=
- =?utf-7?B?d0VKM1A0V1lrNTJ0cGtHVDllUld5cENGaXRpblduRGNJeHJDaHlmNDlwVG5q?=
- =?utf-7?B?aUVGTzY5WGc4RHBwdThPdVFnZS8xdkJKSG1rNGZUbm5qbnozNGFoUFNqNE84?=
- =?utf-7?B?RzVHT2dXZ2pkVkk3OTI3T3hGbmsxaXlNUWI3dVo0ZzlpdVRFYnA0cHlrMVky?=
- =?utf-7?B?Ky1Ec24rLW1WTmJ0YVRVSnZLVVY3NHluKy1MdXpKS0lLKy14NnZqL0xNdVcv?=
- =?utf-7?B?ZlpLcUxzZTVEQkVWSkhaVlBsQWVLRldPWHZBYndxeDVYUDVmaWN4eVNyQi9U?=
- =?utf-7?B?UWM5ZEx0YUNndXJTNlZBYmo5cWVKNU5IVkdMKy1KY3dZTS9nTUR4ZGJBWkkx?=
- =?utf-7?B?ZSstRDlMNW1hUnVqaXVvNnlhY1EybEtwUDRVSVJkeEViT0R3T3NQYWlZRDZW?=
- =?utf-7?B?cXMzMnQ4aU13RUdnUXo3SVFNNGVVMlJUMm1jWktVSUxGeXdOT2NNVXlBbFdi?=
- =?utf-7?B?RWVlVVFnZzEzZGlabndBblRnMnZObVI3UFc3TGFTbVhhTXZSZHF4Z3BqT1g5?=
- =?utf-7?B?VDhpMDdaOFcwOGVLN1RqTHB5REhEc3BxY3FJNmZvbE9qYXY3OUp0UzVIVmhJ?=
- =?utf-7?B?TEs1Mld6dHV0RGFMNnY1RzNBZVJJVGY2Ky1ZamliYTQ1V2JNYVB4cU82MzJB?=
- =?utf-7?B?dDlEZUNjbkE0Ky1ZWVBORjRETzlRbW4rLUt2Y1RzWkt3elN4TkFlOU9LbDJ4?=
- =?utf-7?B?a3lhSzN3SDhnY1hGTDFLcVVITGs3dUxtUVN2MnJ0Ky0zZXJjRUdkcno0by9F?=
- =?utf-7?B?bmZ2OWVCSGFNaUlVd2hLYystbFhYRTBEZSstZUVUdWRkVistMkpFU2hNNmhy?=
- =?utf-7?B?M2RhRVNkeHRaUTczOE15elp4N3NaeGJRaGQ5NDFmRVdRME0wdE1BNERnQVBs?=
- =?utf-7?B?elg2eXdodkZFUWpOTzY1UWJDZlVXeGZQVGRuR0o5SHZwbWw1VTRHZ3habks5?=
- =?utf-7?B?OExZRWh5WHp4OXNzTFI2UW41V2hQWUtCSnY3TUVkcko5QzUzWEowTGJJcFAz?=
- =?utf-7?B?NC9mOHAyeDZMYXhwL2RDeG91ZnYyNWgyZGZKOWozQUdiTlVrOWQ0R0ZFVkxI?=
- =?utf-7?B?MWI5VC9LemcrQUQwLQ==?=
+x-microsoft-antispam-message-info: =?utf-7?B?Tlk1Ky1KTkNLS1hpRVBBd1ZzejNBdUw4ekRoUWFHMzVYY1NmamdQdXpoeVVr?=
+ =?utf-7?B?S29Gd1h5dU13ZUpDdEZBVSstajA5UzlqYndaWWplV01wN0xLSFE1Y3FyMFNk?=
+ =?utf-7?B?bjNCS3IwNWg5NEVtc2dRdXFma1FLMXZ1Ky1pV0RiNistcmRKR3hCdGxwc2hH?=
+ =?utf-7?B?VDVyNHY0a1pvLzNDcjhzcUIyMlhkZGYrLVc2MHU1aGJORW1Fd1NPSkp5OGdn?=
+ =?utf-7?B?aGN2bkNDM2NndU1XVTlhcnE4YWZaM0JreEVTQ2xLbERnNUtzVS9xNW4xY0N2?=
+ =?utf-7?B?MFVrYzBvQ0pXOXVnWXdOcHhGdjdRV2JDdzZNZHF0ZzRMcFZRcnJzb3pKeFMz?=
+ =?utf-7?B?VFJ2QUgyYW14OTNsa2RSRTdUZjc4dVI0MDZvcXhRWE5UajVKNldQY3ltVmVs?=
+ =?utf-7?B?NGQ1YnY3Y040RHFoLzZuZ3Nxb05yR2NvM1lZQkpkMWd6UXA3T0FDQzRpSlFO?=
+ =?utf-7?B?M1dWa3hKY1JKUlBrQWtPU3BZNjh5cTFjYU1EQWdKckJ0SWN3aFNsU3NyOGR6?=
+ =?utf-7?B?TistN3RuWkZ6QmMwell4YmtYNGxYOGVzS1RLYlpOZFozTWYrLUpDRXI3WUg0?=
+ =?utf-7?B?S2R3NjVUS1RqUXpGZXlGUVJubE44b2lLZ3cwN2l5ay9FNjQ1cGJzRGVQazJQ?=
+ =?utf-7?B?L1MzL2J0WGdrNG9ZaHVOTmZPODNEWlJYUDZiQjByZEJqUkNwajZZUm1UN0ZF?=
+ =?utf-7?B?R2NNYUwwdzNXV0IwZUxSZktnT3hxdFJZbHFuV0cydjhNYzNBWG1xSWNnYVFU?=
+ =?utf-7?B?Qno3V3BLR0doc0JxVGJiS3dMdUtuaTVRZFAxeENqSkV5RGtnQmpOUjVpRXg=?=
+ =?utf-7?B?Ky1JKy1LKy1BcWZLZ2NQSERSa3BaVXFzdXV5aCstSUtEWHo3M1JOTGJxWUVW?=
+ =?utf-7?B?SDgzNTZDRXpUckk2bnFmS3NDYkkzL3ZRelFSV3kzMzA5czlXaDY1V2RvSXl5?=
+ =?utf-7?B?Y2VGbTl5a01BMUdZV1hkZ1UyRGNYbGVNeUsvNlRBMWFZKy05Vjd2cUFTVyst?=
+ =?utf-7?B?Y2tOY0ZLYXVXMzh4Q0hGMXRMeUpoem55OVY4dWpocDBwaVVUNlF5Z04vSml6?=
+ =?utf-7?B?ZWhCTVVHMm9TdVJGZ1RWa29XTlFmUFdlbldkRWJheE1Gc0lzWUZWekNCWWtp?=
+ =?utf-7?B?WldoVnlaaWI4cXpvY1hScFR2cFJucXRUTk1JU2V4RzhDOUdWdDAxWFpQcVRu?=
+ =?utf-7?B?b2hyRE9ZVzFHaXdsd2xBcTlyNlVLSXRkZEhsWENyZDhhL29kRGliU0V1dy80?=
+ =?utf-7?B?Ky1zTGxpWlVRaVBPdTZzSjNldDZwOFF4VVFoaHB6UTJuUkMwTXBjdHFYTFRs?=
+ =?utf-7?B?ejJWUkpBTWYrLURPMnVTbk5ta21EOHpWT1diZkFkNFhqejNWeS9vNXRYZUdB?=
+ =?utf-7?B?TWpUVURmaU1hQXl5QVE5dng2Z2NyMjM4bVhSZ3p3VFo4TkNuY3Q2THhmY1lV?=
+ =?utf-7?B?cDkxcHY3eE1OUm9VRnI5SU9FS1doZWZvSzdMUkc0ZzI3ZE5HZzc0bVhxcUVL?=
+ =?utf-7?B?VnJZMTFLbTBzblc5TVJUMHJRbjVMdVdScmdkSWFxS2k1MHdKNVczRFU2U2lU?=
+ =?utf-7?B?SjVCT3NQV0NJVmJJMGtPcnhTazhnck5VVXpWb3FraEp0aHErLUNJMFpBQi8x?=
+ =?utf-7?B?SVBaVXE0bWtVbTVBKy1BMmRJUXFXNUxialdFblowODJMcTJUdDRlcjlzOTFM?=
+ =?utf-7?B?L0lLOXBnR0ZySXFNaVdhaWwyM2IwSG1NZlM3UWR3M28zaSstMlc5bDNCM2hQ?=
+ =?utf-7?B?YzhrTkRqalRJcmhpcGpXUkF3b3N2YzZHSFFkUmtHZ2NpUWlZZlJ4TWFvUGRp?=
+ =?utf-7?B?MEFHVHdLcFE4cEVEMDVDVDJ0QXpMY1VEMWJUTGJkWWhEeXlZL1lXMDkxMTlB?=
+ =?utf-7?B?dUxRZEN3SGRwSy9sU1ZDRlBoTHJBR2xHc0dNeENBY2xuNzZCU240WWVEU0Mx?=
+ =?utf-7?B?NDVFUmc3M3Q0SFo2SnhGd2hLNEJkbjVybHZpRC83UVp6blRQOUl5REVEZDd5?=
+ =?utf-7?B?WlpiNTE4cG54Y2hERk95bWxOYVI2S29KTFI1ZkRBRnUvaURzN1FIOEtqbGxq?=
+ =?utf-7?B?cUlmaDA4ZE1yZHhrYTVpSW92Y1ZJWUo4clBoclhRZmZ0Z3FJRGJ5eUhhOUpP?=
+ =?utf-7?B?OVhMWThYYkVDSGU4Wk5CNkwwcERFT2Q1RVFsQ2tZQnJiRElHVmUycUdFVmpR?=
+ =?utf-7?B?Z08wT3hwemNYVG9qOHNidkRYOW81YjZPUTRQanFYczRXaUZLck9janhN?=
+ =?utf-7?B?K0FEMC0=?=
 x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:SJ0PR19MB4606.namprd19.prod.outlook.com; PTR:; CAT:NONE;
  SFS:(13230040)(376014)(786006)(366016)(1800799024)(38070700021); DIR:OUT;
  SFP:1101; 
 x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-7?B?b1RCR0F1cE43QjhldzBVTFBHbEVCZ2k4TFdBRUsrLTUxUHZlV1JYeXNqWkk3?=
- =?utf-7?B?OTdSWVp0TG5ZSjI5ckJUWUhGV3RHb3Y0SGdwRkhkYnlCZ2xGOC9CRUN0SkMw?=
- =?utf-7?B?V09sRnhkRmRFOWlhUHRuejVVcHU1TWtmVW0rLTYwNystYU9qdkg1d0RwS2RX?=
- =?utf-7?B?elFocHdubHlWTGFLRkVXYjhGczlWSTdUUDdLcnkyREJVZm5SNlNuVVFiREdm?=
- =?utf-7?B?USstSHhxcFF2UGNYVjN0NVFjWEJCaWNzUGYzUC9TU2J1d1BoQlhWdXJtWFRO?=
- =?utf-7?B?akpIVkFCaDdZdU5PUWRNSWtYL1F6ZHNNcG9GdFcwUnpja1NGbnVDQXBIQWJj?=
- =?utf-7?B?dWdMNWVFS0R6OFpQQXNoREQxam1TWEVPcHNudUlFejFKbGVCL2IzYnV4aEg3?=
- =?utf-7?B?WVltSHdpb3FCRVcvNmFFR3pNRXNCd0VWakVGeU9YemhLZ0VSMVR3NTM3QjFL?=
- =?utf-7?B?TE52bVRGN3ZIL0l3UktTaEc5MkU0cjNPbTNlaFVJZ3lodW02REZqRFVqcVJT?=
- =?utf-7?B?QnpBbVYvNjZMRGZXV0tFKy0zRXhXalUvWldOU3IrLXpvS1J3blZWZGo4TnFK?=
- =?utf-7?B?QURxblNhaE9nWktFUlVlSFpON1h4aTdoRHluVzlLN2NlY290bWs2OHZXNnNO?=
- =?utf-7?B?MjdmazU0ZzB3TFRVRk8yTkdwNDVYMUlkdGpLUWxsUnA0cFdmMHpsYjRiTHhr?=
- =?utf-7?B?RFBjYnVlYmFPTzhrTWpHQ0FCQWllWldIOVJHRWFQVjZ1R0U4VDloWFN2eUFZ?=
- =?utf-7?B?VGpGeUkzTkJaYTJjTistdTRTY2x0NG9hdk82NTJLa2ZEOGJ4VElsbjhLZVVX?=
- =?utf-7?B?NG02a1MrLXZ6dTcwVDFyV0ZXV1NCZE5idHREdC9mQ1FlSUd6b1hIWFdlSkNN?=
- =?utf-7?B?YUVFa3AvVEIwS3gvM2hUUEZEZ2xkaERHTjRPa29PZWZaVUJkQ0JwRENOaGQ3?=
- =?utf-7?B?N1NLbGJ2c2MyQkVTVWhMVzdHM1ZsUlVPNndzcmozcWRKNUMyZUNEUUVTUyst?=
- =?utf-7?B?bUluWWZxelZsVUNKR0xBRkZIWG1LTTVmSVZ0c0MxSUx3cS84bWJmOUZHdmxr?=
- =?utf-7?B?d3ZTWE9xQ216WDRUMHRoU3VWVnhSZm52MVVGSXdSSkpFcEJ3QWpmLystdmQ=?=
- =?utf-7?B?Ky1YZlgzdGlIVlBGZjU0MnA5aEE1dW9IbnpzaFpoQm4vV1ZNcHIzTU5kNTNo?=
- =?utf-7?B?MjFFcXRKbFRYM3FXUlRzaTdoN3ZlNFBneGhncDdYU2lVTm8rLVhia2ZZcGo4?=
- =?utf-7?B?TW03cWJ0RXdKc0FKRGwzcFdqT0pkeEQrLU9wNE50eTJsVGdJaURmeFprKy14?=
- =?utf-7?B?Z2FLdDdqOWk2enlPQ01jTGlNazc5dnF3OTBYZ3FoUVREcEZXV0I5dVZPTkdZ?=
- =?utf-7?B?bUxuajNzN3ErLXZOY1d1S2pMd1JFYjNleSstZWZxZnM5ZTB0M3NzNEtaTHJ1?=
- =?utf-7?B?UndOQ1Z1Y0IrLURJOVNac2VYQXRlcVZOOWdlVERIVXZsMmF3T1hxRi9VZVJL?=
- =?utf-7?B?am1vd3RqKy1GMFdnRXpldWZRbGZ4dEFjOVRQSWk4N1F5eHUwajFoTUM2OE41?=
- =?utf-7?B?MystczBreFovZm1rN2o4T29Ua3JScmN5WS9LTmJPYnF1ankyMDQ5YTlEZHhm?=
- =?utf-7?B?REtWT3FNeHArLVlhOGJXQUtYdm5SdWlEeXQ2Y1lJNFVydlJYbjJtVGlBVHNY?=
- =?utf-7?B?dk4yTVRub3FBbk1Tb1FkZVZsL2FRNngrLUd4UE9HYmd2RVdkN1VqR3prN0JE?=
- =?utf-7?B?eWRaSkxLQmlRZ0lwbjNRaHZ1SmNBQmRJTmhHdERValRiRmkvYS9KeVA0SUo=?=
- =?utf-7?B?Ky00UDBLc0paRTFQelhGTUdUbXpLMystamtYcXJoM1Z0ZzV2aC9FYVhyaENS?=
- =?utf-7?B?WTV5aEtvTXo1eistWHZWeGUrLUpVT1VWc3JMdEtCbUpMUUlCbSstYjdYNExG?=
- =?utf-7?B?VmhUN09EWDBIVnJiU0RXbFdtQVBKbDlsbzBUaUUxWkZ5Zm5qMWp1Sy8xTm1R?=
- =?utf-7?B?VVhKem54RXV4aUNQdUZsRnVST1pyMzBKSUthZ08rLVh3bjlwOVhRNU4ybjJY?=
- =?utf-7?B?MWlaNExOYm96ZmwvN0dIYXA1dUN2MDNjQmt0b1ZPVUhYUkpTTGpkc2N3bVkw?=
- =?utf-7?B?NW5RKy1HTlY1Ky12NUpiQWxleEVNTmhiZXc0N0hiUE9wVXh1WlpRMGRMT3g2?=
- =?utf-7?B?dEZaTTltWVpIKy1pOG1FUHVzc1RJVmJrVkZjTkNLSDY0c3laRzlJYlozdU42?=
- =?utf-7?B?Q0RRckZGaGRtMC9oWUdXKy1lZlJFbEtNbkZ0dGlaV2xpVXNQUHRRdVFQZXZU?=
- =?utf-7?B?eUFnR1Nkc0JqOEk2Rzlac1RQbnBMOHg5TWVrYnNSbnhuV3Nsa0Jwd2d1ZXNh?=
- =?utf-7?B?RnJ1cGVlMS8vN1hidXR3TEN0Qmw0cFNaKy1zVlErQUQwQVBRLQ==?=
+x-ms-exchange-antispam-messagedata-0: =?utf-7?B?dW9DY2ZXWXFsa2MzVlFydVROZWRPblZxVzlybzBWejV5QndQd1RvdlRTOEVV?=
+ =?utf-7?B?RmxwSWpqYWZFSnZadEdWWU16V25WOU9qYSstanB3Y2NGMWpiaFp6bzE1QTVY?=
+ =?utf-7?B?bUhqa2M1Rm9zbEpjUloyQklRcjlOWVJkbWhEQjVyM1FRRjNzWmJ2WklZd1Fp?=
+ =?utf-7?B?ODBrc2wrLXV4dVJGaGhkOGJZdmhqU2x2YlFYR29KM0d5ZjdkV1cxKy16VGJM?=
+ =?utf-7?B?TVhZV3dqVm9QcXhyYm05ZFpFNjFQdWZMRXV6dUsvOEJ3bmtzV0xUbTVndG1E?=
+ =?utf-7?B?NFJDL1c3THBmaTU4T1F2UkNKSVB6dUlRRjBhcmRzaVVQOWJQbFluTVlxelBU?=
+ =?utf-7?B?UkNUOHAxa1lUVE9GWmdoRjNidEo3ZGZqZ2hLZ1BPOWNPQkxMYXZZSUFrUEo1?=
+ =?utf-7?B?VjFTQ2RGTTFaN1hqR2tudTNpdjNCdjZwUFRUVC85VHpsdWd0Zy9FR0swUENa?=
+ =?utf-7?B?N0lsa095SzN1SGUvWHlWS1lvWjlqWWFPdm1lQWw2SE5KRERaUVBZd2pya2x1?=
+ =?utf-7?B?NXJlMDdWQmF5bWt3aXVXMzNza0tmVW50Q1d0UDNPRmgwYUs2dFFGKy1xbmRt?=
+ =?utf-7?B?YUZhejFnTEF1WWVoajJ1b2R0ZTlCeXFNR2dRZmNnTktLVE42VXpMZ0M1OUZX?=
+ =?utf-7?B?VkpWRkpNbHFFeWNZKy1JS3YvYzFPZWloeExJOHhOL2lKM0hJSHpyYVRhSm81?=
+ =?utf-7?B?UWxiVjZPT05IZk4zR3pJVjh2d2NsL3lwMkFhd1RoZnFSMTAxdW90eEJwaTRr?=
+ =?utf-7?B?U3NOMW1UaVRWcEZVT2oyaistQ3g3cmtpeWpPTkdOWGlhVWpPajJFTXhFZTJ5?=
+ =?utf-7?B?S0ZibHgzRWhPM05VOUEyQ3pmZHRlYWxab1JjUFlOZHRJdWNvdVBobThjY1k3?=
+ =?utf-7?B?UVM1L21kMXFOTm90SystYVh4aEhaR3Z3bUdGaGxoL0U0cTgwcWtXVVdtbnIv?=
+ =?utf-7?B?amVNT0dpKy0vKy1SUzQ4L0gyaUVTWGZNRzJGanBhRjJnNWdrbjM0OU4rLWZz?=
+ =?utf-7?B?Qk14aFF4WUhMYWg5V1J5akpDYistYk1MZWQyajA1ZTk3M0laY0ZwY05VVXg2?=
+ =?utf-7?B?MVJXNnBBek5WQmxQU3A4a0k1ZFE1cHNzL2x3c0daaVZDRG5NQTk4b2VVLzRL?=
+ =?utf-7?B?Nm9ZZHBZNEt0Q0ZjOGxBUkdoSTZIcHAzZ2VmRUh2V05Db0JwVDZlY0xYeGw5?=
+ =?utf-7?B?NVR1QlIwd3Nqb0hSNEd4SDBjS2EzRU9rakF2d3pQdENsdXpCYXpDeWY2ZDEy?=
+ =?utf-7?B?Vmh1QjdUMVh1ME12TzI3WTdCVXd2bFVMb3hEaWpydy9RZmV5Ky1wNHh1Qmty?=
+ =?utf-7?B?cUJzVDdPR09vWTVzWGppQWJNZTJJRzQ4b2hKY2xucjVVR2FvQVhiUmhibXZy?=
+ =?utf-7?B?YTMzUnNhdlp2MWFoSHFEbHU4RnpJamxwQ0JxV3p1clY2ZG5yZWxUNnpYdGtp?=
+ =?utf-7?B?MjAzQ3FrMXlvb05QTWpkeUJ6TTZ1bWUzaFdaWGZTWXlaMDAxYVpRaDFYZWZC?=
+ =?utf-7?B?RWFaZXkxZmJEL0NHNjVDNXkxc3djeTY4akhDMlBSNjIvbWt0aHhLOWtBZFFZ?=
+ =?utf-7?B?Mkx2UEhibVFtUnBVamw1YkV0UU1kRkdKM2FZUkhtWHg4RHJ3RXlkUDYrLThQ?=
+ =?utf-7?B?a0ZJSzVnZW1CWVZTS0RWTmpGa1c1TlQyOEJpQi9NSlF4V1lhY1VKR2NnSnJp?=
+ =?utf-7?B?OHg0M3FiWGVwd2JkcDU5eklqZ3l2ZkNOc0NSRUhUc0JLTllsVlREWDJ2TmlY?=
+ =?utf-7?B?eTlxMUZBcHF4VGd5blhjS045OHhsbG5zMmpSbGVIL0pPenZXMDh1bktaWDUv?=
+ =?utf-7?B?WkpDY2VHU3E2S21vdExZTWllbystUFRmYm1yR2F4SXlseGtoTE5yNEpQMU5W?=
+ =?utf-7?B?djZ1SEhpTUh6SWhWZWRzdWVUQ0hJc3ZBOXZoYWpNdW9TN3NUc1lnSXp0Yllx?=
+ =?utf-7?B?NkZlUlZ5bUZ2S1FqeFJaTkpuYTZtbkdpUENKS24vanZnalpxSVhtbG1paHpm?=
+ =?utf-7?B?NnVVZWlBbmFuTjAyRk9OSWRiblBudGJVWVNCb2NYRjRFOENqTGxDYXpsa1Yx?=
+ =?utf-7?B?bXpIczZxSi9pSDhodnk5aTZQVDJVY2FoQ2ljQ1U3bnkzdkZOaHJjRkdDQW4w?=
+ =?utf-7?B?Q2l3VFNPR05FV0R6OXhiTkpMcktwV1pBQnNDNFNkRXVHWUtiWDhoQlhYM1Nr?=
+ =?utf-7?B?LystNlFwTHoySFdNcUhabk1PM2xMTm1rR1NFZFZjb1NFUjdmTnp0NXVtSlZO?=
+ =?utf-7?B?c0pNM1FxQ3NmajN2djhVTGU2T0s5L3Z1VDR6Q1ZmTC9Rc2xQVHJRTWFSb2Fi?=
+ =?utf-7?B?ajF6T3VVVEZHM29ocFZoaSstKy1IZ2w1WWNtc0N3V1BCcWlOa3hkUGhKamxw?=
+ =?utf-7?B?bnNMZ21NTURQZ0tRK0FEMEFQUS0=?=
 Content-Type: text/plain; charset="utf-7"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: Dell.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-AuthSource: SJ0PR19MB4606.namprd19.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 441a6171-deb5-4a04-f22b-08de540cc3e8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Jan 2026 08:04:53.5841 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4b40fb93-8ed6-45f0-2392-08de540d0ac2
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Jan 2026 08:06:52.4955 (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 945c199a-83a2-4e80-9f8c-5a91be5752dd
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 1q+kVAA8+wsavfT5YHVWvHfsZi2hgVVQQ53Gw6jUFE6J0H/rFEL0M8p52GF0QjJjSossUtQ5sKBBEPXoDIJ3NA==
+X-MS-Exchange-CrossTenant-userprincipalname: HnMOfuV7+nSoKKARCTjxFuuf+TGRjeGbNO27SywCkFDDLqczjpPlj5ewyHT5O0put5hyHn0xJrQms2mkY+flVw==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR19MB7709
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
  definitions=2026-01-15_02,2026-01-14_01,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 lowpriorityscore=0 adultscore=0 priorityscore=1501 bulkscore=0
- clxscore=1015 suspectscore=0 impostorscore=0 spamscore=0 phishscore=0
+ phishscore=0 impostorscore=0 spamscore=0 bulkscore=0 priorityscore=1501
+ malwarescore=0 lowpriorityscore=0 suspectscore=0 adultscore=0 clxscore=1015
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
  reason=mlx scancount=1 engine=8.19.0-2512120000 definitions=main-2601150054
-X-Authority-Analysis: v=2.4 cv=HaYZjyE8 c=1 sm=1 tr=0 ts=69689faa cx=c_pps
+X-Proofpoint-GUID: Id5f_514ehsVkrQt_m6_yRvqnNEdsz3T
+X-Authority-Analysis: v=2.4 cv=W5g1lBWk c=1 sm=1 tr=0 ts=6968a021 cx=c_pps
  a=j0++y401J6f/BxNAf5EDow==:117 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
  a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=wzW8d0FwaosA:10
  a=YU3QZWNX-B8A:10 a=vUbySO9Y5rIA:10 a=VkNPw1HP01LnGYTKEx00:22
  a=20KFwNOVAAAA:8 a=iLNU1ar6AAAA:8 a=8rWy6zfcAAAA:8 a=pGLkceISAAAA:8
  a=XlRjxQ70AAAA:8 a=LfxEVeEBAAAA:8 a=eSb-bNSJAAAA:8 a=QEEkIeqjAAAA:8
- a=nuuw-2M0FaGnbzcUkHEA:9 a=avxi3fN6y70A:10 a=gbU3OgOOxF9bX48Letew:22
+ a=yZ0TczAezmHc2_xKRTkA:9 a=avxi3fN6y70A:10 a=gbU3OgOOxF9bX48Letew:22
  a=YjdVzJdQTyZRADMV7wFX:22 a=1uMOUU2w0DxzEe95gQqD:22 a=7k9nRlTqVbDGZ3p5_T00:22
  a=h7YW-pclpbZRD8svLbQ0:22 a=iapMWHAMLVzCBf0btcAb:22
-X-Proofpoint-GUID: J0far8zagSeWPe2zYFkq2ocEBMWeXD_n
-X-Proofpoint-ORIG-GUID: J0far8zagSeWPe2zYFkq2ocEBMWeXD_n
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTE1MDA1NCBTYWx0ZWRfXwWwnA2nnRTem
- GvBfbVR2CE2920A+sO5JsKd6KNzMUlSLqu9Cqej5D0jpwa/+smrCGUmWtjWer83C6KsWMQYpEuy
- 47v6p+fEWD8Vncu8VPoiBuFELqcpcJK1/lkzgXk21pvE0I7JKL1qAXvutOoZ3MiTjtyDpEIpOcj
- QDd5qAat5nbfmcv1/oxMFJFqqz8IaIHCTDNpZi86eURiigLbeuzgu5eGEEN7BVnbOI27+3JlvFn
- KuZRtgK7AAcecC7m60fqUmmJoKX5rFuXCirYMIf6phr6nxswHiBn3b+ofd8DQttHxP3otPVXhhA
- qee1k1BhD7agGQ7fFtVcd9k5uxVotq6MmgCwPWrDwsrwQ6VpRukyxICxN9LjX+41Lypa+7RkBJw
- jrCEINdFSGL1cF5Jyj9VaHuvpr923pWLgHgNKf3PuLEeRh3cIja13XvxQv0X4waugXM/PzYUBV8
- yXjrPwlypZkcK5Dr8ZQ==
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0
- suspectscore=0 clxscore=1015 lowpriorityscore=0
- phishscore=0 bulkscore=0
- priorityscore=1501 spamscore=0 impostorscore=0 adultscore=0
+X-Proofpoint-ORIG-GUID: Id5f_514ehsVkrQt_m6_yRvqnNEdsz3T
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTE1MDA1NCBTYWx0ZWRfX5pWE2Ybaq2eY
+ yhNJTfxugzMb+MAvSsU+cdL78O1h1tmADFHCqUDe+DRJ4iBcHBPSLsXtCvUUSR0N2S90sHmiioW
+ KW9I+n7obFFS9GlCOw3EMVwkrzQASJ+Igoka72PX5bCb9BK8QdJsLnzNyR7rCGwjxLn64UK97di
+ wWiGOTNkSj0UH1EDh6ETvzkQGtC2uBTIuzRk0Fk11Zq53HrEzVtfCWa2fajNRwZGsG95ZZqEVOY
+ YZWaLK9oRtiJvi7IMgNPWC5NOtIt/Q0K+2svKIRihTXQjGNoOPYWonRvDWS63uIwWIMs3A9OGOS
+ ITuL372mBD80Eytwa0KOSfSPJaX66vYo5PXw0OujJl3FZw4Z+bCjg8fSHkZnxGm7VvLNtjOSjCS
+ jFscH+/DWY94ofueGdAJVvZfDVsfIY98Z0G63vRugL3J+P8qpQKK3P/SBj6rkUCT70/iBxkA69g
+ oQTdr7fuqtogJmVU78A==
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0
+ lowpriorityscore=0 spamscore=0 suspectscore=0 malwarescore=0 adultscore=0
+ impostorscore=0 clxscore=1015 bulkscore=0 phishscore=0 priorityscore=1501
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
  reason=mlx scancount=1 engine=8.19.0-2512120000 definitions=main-2601150054
 X-BeenThere: dev@dpdk.org
@@ -237,12 +236,13 @@ Responses inline.
 Internal Use - Confidential
 +AD4- -----Original Message-----
 +AD4- From: Maxime Coquelin +ADw-maxime.coquelin+AEA-redhat.com+AD4-
-+AD4- Sent: Tuesday, January 6, 2026 8:29 AM
++AD4- Sent: Tuesday, January 6, 2026 8:37 AM
 +AD4- To: Bathija, Pravin +ADw-Pravin.Bathija+AEA-dell.com+AD4AOw- dev+AEA-=
 dpdk.org
 +AD4- Cc: pravin.m.bathija.dev+AEA-gmail.com
-+AD4- Subject: Re: +AFs-PATCH v5 3/4+AF0- vhost+AF8-user: support function =
-defines for back-end
++AD4- Subject: Re: +AFs-PATCH v5 4/4+AF0- vhost+AF8-user: Function defs for=
+ add/rem mem
++AD4- regions
 +AD4-
 +AD4-
 +AD4- +AFs-EXTERNAL EMAIL+AF0-
@@ -250,346 +250,533 @@ defines for back-end
 +AD4-
 +AD4-
 +AD4- On 11/13/25 1:44 PM, Pravin M Bathija wrote:
-+AD4- +AD4- Here we define support functions which are called from the vari=
-ous
-+AD4- +AD4- vhost-user back-end message functions like set memory table, ge=
-t
-+AD4- +AD4- memory slots, add memory region, remove memory region.  These a=
-re
-+AD4- +AD4- essentially common functions to initialize memory, unmap a set =
-of
-+AD4- +AD4- memory regions, perform register copy, align memory addresses a=
-nd dma
-+AD4- +AD4- map/unmap a single memory region.
++AD4- +AD4- These changes cover the function definition for add/remove memo=
+ry
++AD4- +AD4- region calls which are invoked on receiving vhost user message =
+from
++AD4- +AD4- vhost user front-end (e.g. Qemu). In our case, in addition to t=
+esting
++AD4- +AD4- with qemu front-end, the testing has also been performed with l=
+ibblkio
++AD4- +AD4- front-end and spdk/dpdk back-end. We did I/O using libblkio bas=
+ed
++AD4- +AD4- device driver, to spdk based drives. There are also changes for
++AD4- +AD4- set+AF8-mem+AF8-table and new definition for get memory slots. =
+Our changes
++AD4- +AD4- optimize the set memory table call to use common support functi=
+ons.
++AD4- +AD4- Message get memory slots is how the vhost-user front-end querie=
+s the
++AD4- +AD4- vhost-user back-end about the number of memory slots available =
+to be
++AD4- +AD4- registered by the back-end. In addition support function to inv=
+alidate
++AD4- +AD4- vring is also defined which is used in add/remove memory region=
+ functions.
 +AD4- +AD4-
 +AD4- +AD4- Signed-off-by: Pravin M Bathija +ADw-pravin.bathija+AEA-dell.co=
 m+AD4-
 +AD4- +AD4- ---
-+AD4- +AD4-   lib/vhost/vhost+AF8-user.c +AHw- 150
-+AD4- +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+=
--+-+-+----
-+AD4- +AD4-   1 file changed, 140 insertions(+-), 10 deletions(-)
++AD4- +AD4-   lib/vhost/vhost+AF8-user.c +AHw- 249 +-+-+-+-+-+-+-+-+-+-+-+-=
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+----
++AD4- ---
++AD4- +AD4-   1 file changed, 217 insertions(+-), 32 deletions(-)
 +AD4- +AD4-
 +AD4- +AD4- diff --git a/lib/vhost/vhost+AF8-user.c b/lib/vhost/vhost+AF8-u=
 ser.c index
-+AD4- +AD4- 4bfb13fb98..7dc21fe42a 100644
++AD4- +AD4- 7dc21fe42a..d9cf967ba2 100644
 +AD4- +AD4- --- a/lib/vhost/vhost+AF8-user.c
 +AD4- +AD4- +-+-+- b/lib/vhost/vhost+AF8-user.c
-+AD4- +AD4- +AEAAQA- -171,6 +-171,80 +AEAAQA- get+AF8-blk+AF8-size(int fd)
-+AD4- +AD4-     return ret +AD0APQ- -1 ? (uint64+AF8-t)-1 : (uint64+AF8-t)s=
-tat.st+AF8-blksize+ADs-
-+AD4- +AD4-   +AH0-
-+AD4- +AD4-
-+AD4- +AD4- +-static void
-+AD4- +AD4- +-async+AF8-dma+AF8-map+AF8-region(struct virtio+AF8-net +ACo-d=
-ev, struct
-+AD4- +AD4- +-rte+AF8-vhost+AF8-mem+AF8-region +ACo-reg, bool do+AF8-map) +=
-AHs-
-+AD4- +AD4- +-   uint32+AF8-t i+ADs-
-+AD4- +AD4- +-   int ret +AD0- 0+ADs-
-+AD4- +AD4- +-   int found +AD0- 0+ADs-
-+AD4- +AD4- +-   struct guest+AF8-page +ACo-page+ADs-
-+AD4- +AD4- +-
-+AD4- +AD4- +-   uint64+AF8-t reg+AF8-size +AD0- reg-+AD4-size+ADs-
-+AD4- +AD4- +-   uint64+AF8-t host+AF8-user+AF8-addr  +AD0- reg-+AD4-host+A=
-F8-user+AF8-addr+ADs-
-+AD4- +AD4- +-
-+AD4- +AD4- +-   for (i +AD0- 0+ADs- i +ADw- dev-+AD4-nr+AF8-guest+AF8-page=
-s+ADs- i+-+-) +AHs-
-+AD4- +AD4- +-           page +AD0- +ACY-dev-+AD4-guest+AF8-pages+AFs-i+AF0=
-AOw-
-+AD4- +AD4- +-           if (host+AF8-user+AF8-addr +AD0APQ- page-+AD4-host=
-+AF8-user+AF8-addr) +AHs-
-+AD4- +AD4- +-                   found +AD0- 1+ADs-
-+AD4- +AD4- +-                   break+ADs-
-+AD4- +AD4- +-           +AH0-
-+AD4- +AD4- +-   +AH0-
-+AD4- +AD4- +-
-+AD4- +AD4- +-   if (+ACE-found) +AHs-
-+AD4- +AD4- +-           VHOST+AF8-CONFIG+AF8-LOG(dev-+AD4-ifname, ERR, +AC=
-I-DMA engine map:
-+AD4- region not found+ACI-)+ADs-
-+AD4- +AD4- +-           return+ADs-
-+AD4- +AD4- +-   +AH0-
-+AD4- +AD4- +-
-+AD4- +AD4- +-   if (do+AF8-map) +AHs-
-+AD4- +AD4- +-           while (reg+AF8-size) +AHs-
-+AD4- +AD4- +-                   page +AD0- +ACY-dev-+AD4-guest+AF8-pages+A=
-Fs-i+AF0AOw-
-+AD4- +AD4- +-                   ret +AD0-
-+AD4- rte+AF8-vfio+AF8-container+AF8-dma+AF8-map(RTE+AF8-VFIO+AF8-DEFAULT+A=
-F8-CONTAINER+AF8-FD,
-+AD4- +AD4- +-                                   page-+AD4-host+AF8-user+AF=
-8-addr,
-+AD4- +AD4- +-                                   page-+AD4-host+AF8-iova,
-+AD4- +AD4- +-                                   page-+AD4-size)+ADs-
-+AD4- +AD4- +-                   if (ret) +AHs-
-+AD4- +AD4- +-                           if (rte+AF8-errno +AD0APQ- ENODEV)
-+AD4- +AD4- +-                                   return+ADs-
-+AD4- +AD4- +-
-+AD4- +AD4- +-                           /+ACo- DMA mapping errors won't st=
-op
-+AD4- VHOST+AF8-USER+AF8-SET+AF8-MEM+AF8-TABLE. +ACo-/
-+AD4- +AD4- +-                           VHOST+AF8-CONFIG+AF8-LOG(dev-+AD4-=
-ifname, ERR,
-+AD4- +ACI-DMA engine map failed+ACI-)+ADs-
-+AD4- +AD4- +-                   +AH0-
-+AD4- +AD4- +-
-+AD4- +AD4- +-                   reg+AF8-size -+AD0- page-+AD4-size+ADs-
-+AD4- +AD4- +-                   +-+-i+ADs-
-+AD4- +AD4- +-                   if (i +AD4APQ- dev-+AD4-nr+AF8-guest+AF8-p=
-ages) +AHs-
-+AD4- +AD4- +-                           /+ACo- shouldn't get here +ACo-/
-+AD4- +AD4- +-                           VHOST+AF8-CONFIG+AF8-LOG(dev-+AD4-=
-ifname, ERR,
-+AD4- +ACI-DMA engine map: No more pages+ACI-)+ADs-
-+AD4- +AD4- +-                           return+ADs-
-+AD4- +AD4- +-                   +AH0-
-+AD4- +AD4- +-           +AH0-
-+AD4- +AD4- +-   +AH0- else +AHs-
-+AD4- +AD4- +-           while (reg+AF8-size) +AHs-
-+AD4- +AD4- +-                   page +AD0- +ACY-dev-+AD4-guest+AF8-pages+A=
-Fs-i+AF0AOw-
-+AD4- +AD4- +-                   ret +AD0-
-+AD4- rte+AF8-vfio+AF8-container+AF8-dma+AF8-unmap(RTE+AF8-VFIO+AF8-DEFAULT=
-+AF8-CONTAINER+AF8-FD,
-+AD4- +AD4- +-                                   page-+AD4-host+AF8-user+AF=
-8-addr,
-+AD4- +AD4- +-                                   page-+AD4-host+AF8-iova,
-+AD4- +AD4- +-                                   page-+AD4-size)+ADs-
-+AD4- +AD4- +-                   if (ret) +AHs-
-+AD4- +AD4- +-                           if (rte+AF8-errno +AD0APQ- EINVAL)
-+AD4- +AD4- +-                                   return+ADs-
-+AD4- +AD4- +-
-+AD4- +AD4- +-                           /+ACo- DMA mapping errors won't st=
-op
-+AD4- VHOST+AF8-USER+AF8-SET+AF8-MEM+AF8-TABLE. +ACo-/
-+AD4- +AD4- +-                           VHOST+AF8-CONFIG+AF8-LOG(dev-+AD4-=
-ifname, ERR,
-+AD4- +ACI-DMA engine unmap failed+ACI-)+ADs-
-+AD4- +AD4- +-                   +AH0-
-+AD4- +AD4- +-
-+AD4- +AD4- +-                   reg+AF8-size -+AD0- page-+AD4-size+ADs-
-+AD4- +AD4- +-                   +-+-i+ADs-
-+AD4- +AD4- +-                   if (i +AD4APQ- dev-+AD4-nr+AF8-guest+AF8-p=
-ages) +AHs-
-+AD4- +AD4- +-                           /+ACo- shouldn't get here +ACo-/
-+AD4- +AD4- +-                           VHOST+AF8-CONFIG+AF8-LOG(dev-+AD4-=
-ifname, ERR,
-+AD4- +ACI-DMA engine unmap: No more pages+ACI-)+ADs-
-+AD4- +AD4- +-                           return+ADs-
-+AD4- +AD4- +-                   +AH0-
-+AD4- +AD4- +-           +AH0-
-+AD4- +AD4- +-   +AH0-
-+AD4- +AD4- +-
-+AD4- +AD4- +-+AH0-
-+AD4- +AD4- +-
-+AD4- +AD4-   static void
-+AD4- +AD4-   async+AF8-dma+AF8-map(struct virtio+AF8-net +ACo-dev, bool do=
-+AF8-map)
-+AD4- +AD4-   +AHs-
-+AD4- +AD4- +AEAAQA- -225,7 +-299,17 +AEAAQA- async+AF8-dma+AF8-map(struct =
-virtio+AF8-net +ACo-dev, bool
-+AD4- do+AF8-map)
-+AD4- +AD4-   +AH0-
-+AD4- +AD4-
-+AD4- +AD4-   static void
-+AD4- +AD4- -free+AF8-mem+AF8-region(struct virtio+AF8-net +ACo-dev)
-+AD4- +AD4- +-free+AF8-mem+AF8-region(struct rte+AF8-vhost+AF8-mem+AF8-regi=
-on +ACo-reg) +AHs-
-+AD4- +AD4- +-   if (reg +ACEAPQ- NULL +ACYAJg- reg-+AD4-host+AF8-user+AF8-=
-addr) +AHs-
-+AD4- +AD4- +-           munmap(reg-+AD4-mmap+AF8-addr, reg-+AD4-mmap+AF8-s=
-ize)+ADs-
-+AD4- +AD4- +-           close(reg-+AD4-fd)+ADs-
-+AD4- +AD4- +-           memset(reg, 0, sizeof(struct rte+AF8-vhost+AF8-mem=
-+AF8-region))+ADs-
-+AD4- +AD4- +-   +AH0-
-+AD4- +AD4- +-+AH0-
-+AD4- +AD4- +-
-+AD4- +AD4- +-static void
-+AD4- +AD4- +-free+AF8-all+AF8-mem+AF8-regions(struct virtio+AF8-net +ACo-d=
-ev)
-+AD4- +AD4-   +AHs-
-+AD4- +AD4-     uint32+AF8-t i+ADs-
++AD4- +AD4- +AEAAQA- -71,6 +-71,9 +AEAAQA-
++AD4- VHOST+AF8-MESSAGE+AF8-HANDLER(VHOST+AF8-USER+AF8-SET+AF8-FEATURES,
++AD4- vhost+AF8-user+AF8-set+AF8-features, false, t
++AD4- +AD4-   VHOST+AF8-MESSAGE+AF8-HANDLER(VHOST+AF8-USER+AF8-SET+AF8-OWNE=
+R,
++AD4- vhost+AF8-user+AF8-set+AF8-owner, false, true) +AFw-
++AD4- +AD4-   VHOST+AF8-MESSAGE+AF8-HANDLER(VHOST+AF8-USER+AF8-RESET+AF8-OW=
+NER,
++AD4- vhost+AF8-user+AF8-reset+AF8-owner, false, false) +AFw-
++AD4- +AD4-   VHOST+AF8-MESSAGE+AF8-HANDLER(VHOST+AF8-USER+AF8-SET+AF8-MEM+=
+AF8-TABLE,
++AD4- +AD4- vhost+AF8-user+AF8-set+AF8-mem+AF8-table, true, true) +AFw-
++AD4- +AD4- +-VHOST+AF8-MESSAGE+AF8-HANDLER(VHOST+AF8-USER+AF8-GET+AF8-MAX+=
+AF8-MEM+AF8-SLOTS,
++AD4- +AD4- +-vhost+AF8-user+AF8-get+AF8-max+AF8-mem+AF8-slots, false, fals=
+e) +AFw-
++AD4- +AD4- +-VHOST+AF8-MESSAGE+AF8-HANDLER(VHOST+AF8-USER+AF8-ADD+AF8-MEM+=
+AF8-REG,
++AD4- vhost+AF8-user+AF8-add+AF8-mem+AF8-reg,
++AD4- +AD4- +-true, true) +AFw- VHOST+AF8-MESSAGE+AF8-HANDLER(VHOST+AF8-USE=
+R+AF8-REM+AF8-MEM+AF8-REG,
++AD4- +AD4- +-vhost+AF8-user+AF8-rem+AF8-mem+AF8-reg, false, true) +AFw-
++AD4- +AD4-   VHOST+AF8-MESSAGE+AF8-HANDLER(VHOST+AF8-USER+AF8-SET+AF8-LOG+=
+AF8-BASE,
++AD4- vhost+AF8-user+AF8-set+AF8-log+AF8-base, true, true) +AFw-
++AD4- +AD4-   VHOST+AF8-MESSAGE+AF8-HANDLER(VHOST+AF8-USER+AF8-SET+AF8-LOG+=
+AF8-FD,
++AD4- vhost+AF8-user+AF8-set+AF8-log+AF8-fd, true, true) +AFw-
++AD4- +AD4-   VHOST+AF8-MESSAGE+AF8-HANDLER(VHOST+AF8-USER+AF8-SET+AF8-VRIN=
+G+AF8-NUM,
++AD4- +AD4- vhost+AF8-user+AF8-set+AF8-vring+AF8-num, false, true) +AFw- +A=
+EAAQA- -1520,7 +-1523,6 +AEAAQA-
++AD4- vhost+AF8-user+AF8-set+AF8-mem+AF8-table(struct virtio+AF8-net +ACoAK=
+g-pdev,
++AD4- +AD4-     struct virtio+AF8-net +ACo-dev +AD0- +ACo-pdev+ADs-
++AD4- +AD4-     struct VhostUserMemory +ACo-memory +AD0- +ACY-ctx-+AD4-msg.=
+payload.memory+ADs-
 +AD4- +AD4-     struct rte+AF8-vhost+AF8-mem+AF8-region +ACo-reg+ADs-
-+AD4- +AD4- +AEAAQA- -236,12 +-320,10 +AEAAQA- free+AF8-mem+AF8-region(stru=
-ct virtio+AF8-net +ACo-dev)
-+AD4- +AD4-     if (dev-+AD4-async+AF8-copy +ACYAJg- rte+AF8-vfio+AF8-is+AF=
-8-enabled(+ACI-vfio+ACI-))
-+AD4- +AD4-             async+AF8-dma+AF8-map(dev, false)+ADs-
++AD4- +AD4- -   int numa+AF8-node +AD0- SOCKET+AF8-ID+AF8-ANY+ADs-
++AD4- +AD4-     uint64+AF8-t mmap+AF8-offset+ADs-
++AD4- +AD4-     uint32+AF8-t i+ADs-
++AD4- +AD4-     bool async+AF8-notify +AD0- false+ADs-
++AD4- +AD4- +AEAAQA- -1565,39 +-1567,13 +AEAAQA- vhost+AF8-user+AF8-set+AF8=
+-mem+AF8-table(struct virtio+AF8-net
++AD4- +ACoAKg-pdev,
++AD4- +AD4-             if (dev-+AD4-features +ACY- (1ULL +ADwAPA- VIRTIO+A=
+F8-F+AF8-IOMMU+AF8-PLATFORM))
++AD4- +AD4-                     vhost+AF8-user+AF8-iotlb+AF8-flush+AF8-all(=
+dev)+ADs-
 +AD4- +AD4-
-+AD4- +AD4- -   for (i +AD0- 0+ADs- i +ADw- dev-+AD4-mem-+AD4-nregions+ADs-=
- i+-+-) +AHs-
-+AD4- +AD4- +-   for (i +AD0- 0+ADs- i +ADw- VHOST+AF8-MEMORY+AF8-MAX+AF8-N=
-REGIONS+ADs- i+-+-) +AHs-
-+AD4- +AD4-             reg +AD0- +ACY-dev-+AD4-mem-+AD4-regions+AFs-i+AF0A=
-Ow-
-+AD4- +AD4- -           if (reg-+AD4-host+AF8-user+AF8-addr) +AHs-
-+AD4- +AD4- -                   munmap(reg-+AD4-mmap+AF8-addr, reg-+AD4-mma=
-p+AF8-size)+ADs-
-+AD4- +AD4- -                   close(reg-+AD4-fd)+ADs-
-+AD4- +AD4- -           +AH0-
-+AD4- +AD4- +-           if (reg-+AD4-mmap+AF8-addr)
-+AD4- +AD4- +-                   free+AF8-mem+AF8-region(reg)+ADs-
-+AD4- +AD4-     +AH0-
-+AD4- +AD4-   +AH0-
-+AD4- +AD4-
-+AD4- +AD4- +AEAAQA- -255,7 +-337,7 +AEAAQA- vhost+AF8-backend+AF8-cleanup(=
-struct virtio+AF8-net +ACo-dev)
-+AD4- +AD4-             vdpa+AF8-dev-+AD4-ops-+AD4-dev+AF8-cleanup(dev-+AD4=
--vid)+ADs-
-+AD4- +AD4-
-+AD4- +AD4-     if (dev-+AD4-mem) +AHs-
 +AD4- +AD4- -           free+AF8-mem+AF8-region(dev)+ADs-
 +AD4- +AD4- +-           free+AF8-all+AF8-mem+AF8-regions(dev)+ADs-
 +AD4- +AD4-             rte+AF8-free(dev-+AD4-mem)+ADs-
 +AD4- +AD4-             dev-+AD4-mem +AD0- NULL+ADs-
 +AD4- +AD4-     +AH0-
-+AD4- +AD4- +AEAAQA- -704,7 +-786,7 +AEAAQA- numa+AF8-realloc(struct virtio=
-+AF8-net +ACoAKg-pdev, struct
-+AD4- vhost+AF8-virtqueue +ACoAKg-pvq)
-+AD4- +AD4-     vhost+AF8-devices+AFs-dev-+AD4-vid+AF0- +AD0- dev+ADs-
 +AD4- +AD4-
-+AD4- +AD4-     mem+AF8-size +AD0- sizeof(struct rte+AF8-vhost+AF8-memory) =
-+-
-+AD4- +AD4- -           sizeof(struct rte+AF8-vhost+AF8-mem+AF8-region) +AC=
-o- dev-+AD4-mem-+AD4-nregions+ADs-
-+AD4- +AD4- +-           sizeof(struct rte+AF8-vhost+AF8-mem+AF8-region) +A=
-Co-
-+AD4- VHOST+AF8-MEMORY+AF8-MAX+AF8-NREGIONS+ADs-
-+AD4- +AD4-     mem +AD0- rte+AF8-realloc+AF8-socket(dev-+AD4-mem, mem+AF8-=
-size, 0, node)+ADs-
-+AD4- +AD4-     if (+ACE-mem) +AHs-
-+AD4- +AD4-             VHOST+AF8-CONFIG+AF8-LOG(dev-+AD4-ifname, ERR, +AEA=
-AQA- -808,8 +-890,10
-+AD4- +AEAAQA-
-+AD4- +AD4- hua+AF8-to+AF8-alignment(struct rte+AF8-vhost+AF8-memory +ACo-m=
-em, void +ACo-ptr)
-+AD4- +AD4-     uint32+AF8-t i+ADs-
-+AD4- +AD4-     uintptr+AF8-t hua +AD0- (uintptr+AF8-t)ptr+ADs-
-+AD4- +AD4-
-+AD4- +AD4- -   for (i +AD0- 0+ADs- i +ADw- mem-+AD4-nregions+ADs- i+-+-) +=
-AHs-
-+AD4- +AD4- +-   for (i +AD0- 0+ADs- i +ADw- VHOST+AF8-MEMORY+AF8-MAX+AF8-N=
-REGIONS+ADs- i+-+-) +AHs-
-+AD4- +AD4-             r +AD0- +ACY-mem-+AD4-regions+AFs-i+AF0AOw-
-+AD4- +AD4- +-           if (r-+AD4-host+AF8-user+AF8-addr +AD0APQ- 0)
-+AD4- +AD4- +-                   continue+ADs-
-+AD4- +AD4-             if (hua +AD4APQ- r-+AD4-host+AF8-user+AF8-addr +ACY=
-AJg-
-+AD4- +AD4-                     hua +ADw- r-+AD4-host+AF8-user+AF8-addr +- =
-r-+AD4-size) +AHs-
-+AD4- +AD4-                     return get+AF8-blk+AF8-size(r-+AD4-fd)+ADs-
-+AD4- +AD4- +AEAAQA- -1248,8 +-1332,12 +AEAAQA- vhost+AF8-user+AF8-postcopy=
-+AF8-register(struct virtio+AF8-net
-+AD4- +ACo-dev, int main+AF8-fd,
-+AD4- +AD4-      +ACo-/
-+AD4- +AD4-     memory +AD0- +ACY-ctx-+AD4-msg.payload.memory+ADs-
-+AD4- +AD4-     for (i +AD0- 0+ADs- i +ADw- memory-+AD4-nregions+ADs- i+-+-=
-) +AHs-
-+AD4- +AD4- +-           int reg+AF8-msg+AF8-index +AD0- 0+ADs-
-+AD4- +AD4-             reg +AD0- +ACY-dev-+AD4-mem-+AD4-regions+AFs-i+AF0A=
-Ow-
-+AD4- +AD4- -           memory-+AD4-regions+AFs-i+AF0-.userspace+AF8-addr +=
-AD0- reg-+AD4-host+AF8-user+AF8-addr+ADs-
-+AD4- +AD4- +-           if (reg-+AD4-host+AF8-user+AF8-addr +AD0APQ- 0)
-+AD4- +AD4- +-                   continue+ADs-
-+AD4- +AD4- +-           memory-+AD4-regions+AFs-reg+AF8-msg+AF8-index+AF0-=
-.userspace+AF8-addr +AD0- reg-
-+AD4- +AD4-host+AF8-user+AF8-addr+ADs-
-+AD4- +AD4- +-           reg+AF8-msg+AF8-index+-+-+ADs-
-+AD4-
-+AD4- How is it supposed to work?
-+AD4- reg+AF8-msg+AF8-index is re-initialized to 0 at each iteration.
-
-You are absolutely right, it is an oversight. reg+AF8-msg+AF8-index should =
-be initialized before the for loop starts. I will make the necessary change=
-s and retest.
-
-+AD4-
-+AD4- +AD4-     +AH0-
-+AD4- +AD4-
-+AD4- +AD4-     /+ACo- Send the addresses back to qemu +ACo-/ +AEAAQA- -127=
-8,6 +-1366,8 +AEAAQA-
-+AD4- +AD4- vhost+AF8-user+AF8-postcopy+AF8-register(struct virtio+AF8-net =
-+ACo-dev, int main+AF8-fd,
-+AD4- +AD4-     /+ACo- Now userfault register and we can use the memory +AC=
-o-/
-+AD4- +AD4-     for (i +AD0- 0+ADs- i +ADw- memory-+AD4-nregions+ADs- i+-+-=
-) +AHs-
-+AD4- +AD4-             reg +AD0- +ACY-dev-+AD4-mem-+AD4-regions+AFs-i+AF0A=
-Ow-
-+AD4- +AD4- +-           if (reg-+AD4-host+AF8-user+AF8-addr +AD0APQ- 0)
-+AD4- +AD4- +-                   continue+ADs-
-+AD4- +AD4-             if (vhost+AF8-user+AF8-postcopy+AF8-region+AF8-regi=
-ster(dev, reg) +ADw- 0)
-+AD4- +AD4-                     return -1+ADs-
-+AD4- +AD4-     +AH0-
-+AD4- +AD4- +AEAAQA- -1382,6 +-1472,46 +AEAAQA- vhost+AF8-user+AF8-mmap+AF8=
--region(struct virtio+AF8-net +ACo-dev,
-+AD4- +AD4-     return 0+ADs-
-+AD4- +AD4-   +AH0-
-+AD4- +AD4-
-+AD4- +AD4- +-static int
-+AD4- +AD4- +-vhost+AF8-user+AF8-initialize+AF8-memory(struct virtio+AF8-ne=
-t +ACoAKg-pdev) +AHs-
-+AD4- +AD4- +-   struct virtio+AF8-net +ACo-dev +AD0- +ACo-pdev+ADs-
-+AD4- +AD4- +-   int numa+AF8-node +AD0- SOCKET+AF8-ID+AF8-ANY+ADs-
-+AD4- +AD4- +-
-+AD4- +AD4- +-   /+ACo-
-+AD4- +AD4- +-    +ACo- If VQ 0 has already been allocated, try to allocate=
- on the same
-+AD4- +AD4- +-    +ACo- NUMA node. It can be reallocated later in numa+AF8-=
-realloc().
-+AD4- +AD4- +-    +ACo-/
-+AD4- +AD4- +-   if (dev-+AD4-nr+AF8-vring +AD4- 0)
-+AD4- +AD4- +-           numa+AF8-node +AD0- dev-+AD4-virtqueue+AFs-0+AF0--=
-+AD4-numa+AF8-node+ADs-
-+AD4- +AD4- +-
-+AD4- +AD4- +-   dev-+AD4-nr+AF8-guest+AF8-pages +AD0- 0+ADs-
-+AD4- +AD4- +-   if (dev-+AD4-guest+AF8-pages +AD0APQ- NULL) +AHs-
-+AD4- +AD4- +-           dev-+AD4-max+AF8-guest+AF8-pages +AD0- VHOST+AF8-M=
-EMORY+AF8-MAX+AF8-NREGIONS+ADs-
-+AD4- +AD4- +-           dev-+AD4-guest+AF8-pages +AD0- rte+AF8-zmalloc+AF8=
--socket(NULL,
-+AD4- +AD4- +-                                   dev-+AD4-max+AF8-guest+AF8=
--pages +ACo-
-+AD4- +AD4- +-                                   sizeof(struct guest+AF8-pa=
-ge),
-+AD4- +AD4- +-                                   RTE+AF8-CACHE+AF8-LINE+AF8=
--SIZE,
-+AD4- +AD4- +-                                   numa+AF8-node)+ADs-
-+AD4- +AD4- +-           if (dev-+AD4-guest+AF8-pages +AD0APQ- NULL) +AHs-
-+AD4- +AD4- +-                   VHOST+AF8-CONFIG+AF8-LOG(dev-+AD4-ifname, =
-ERR,
-+AD4- +AD4- +-                           +ACI-failed to allocate memory for=
- dev-
++AD4- +AD4- -   /+ACo-
++AD4- +AD4- -    +ACo- If VQ 0 has already been allocated, try to allocate =
+on the same
++AD4- +AD4- -    +ACo- NUMA node. It can be reallocated later in numa+AF8-r=
+ealloc().
++AD4- +AD4- -    +ACo-/
++AD4- +AD4- -   if (dev-+AD4-nr+AF8-vring +AD4- 0)
++AD4- +AD4- -           numa+AF8-node +AD0- dev-+AD4-virtqueue+AFs-0+AF0--+=
+AD4-numa+AF8-node+ADs-
++AD4- +AD4- -
++AD4- +AD4- -   dev-+AD4-nr+AF8-guest+AF8-pages +AD0- 0+ADs-
++AD4- +AD4- -   if (dev-+AD4-guest+AF8-pages +AD0APQ- NULL) +AHs-
++AD4- +AD4- -           dev-+AD4-max+AF8-guest+AF8-pages +AD0- 8+ADs-
++AD4- +AD4- -           dev-+AD4-guest+AF8-pages +AD0- rte+AF8-zmalloc+AF8-=
+socket(NULL,
++AD4- +AD4- -                                   dev-+AD4-max+AF8-guest+AF8-=
+pages +ACo-
++AD4- +AD4- -                                   sizeof(struct guest+AF8-pag=
+e),
++AD4- +AD4- -                                   RTE+AF8-CACHE+AF8-LINE+AF8-=
+SIZE,
++AD4- +AD4- -                                   numa+AF8-node)+ADs-
++AD4- +AD4- -           if (dev-+AD4-guest+AF8-pages +AD0APQ- NULL) +AHs-
++AD4- +AD4- -                   VHOST+AF8-CONFIG+AF8-LOG(dev-+AD4-ifname, E=
+RR,
++AD4- +AD4- -                           +ACI-failed to allocate memory for =
+dev-
 +AD4- +AD4-guest+AF8-pages+ACI-)+ADs-
-+AD4- +AD4- +-                   return -1+ADs-
++AD4- +AD4- -                   goto close+AF8-msg+AF8-fds+ADs-
++AD4- +AD4- -           +AH0-
++AD4- +AD4- -   +AH0-
++AD4- +AD4- -
++AD4- +AD4- -   dev-+AD4-mem +AD0- rte+AF8-zmalloc+AF8-socket(+ACI-vhost-me=
+m-table+ACI-, sizeof(struct
++AD4- rte+AF8-vhost+AF8-memory) +-
++AD4- +AD4- -           sizeof(struct rte+AF8-vhost+AF8-mem+AF8-region) +AC=
+o- memory-+AD4-nregions, 0,
++AD4- numa+AF8-node)+ADs-
++AD4- +AD4- -   if (dev-+AD4-mem +AD0APQ- NULL) +AHs-
++AD4- +AD4- -           VHOST+AF8-CONFIG+AF8-LOG(dev-+AD4-ifname, ERR, +ACI=
+-failed to allocate
++AD4- memory for dev-+AD4-mem+ACI-)+ADs-
++AD4- +AD4- -           goto free+AF8-guest+AF8-pages+ADs-
++AD4- +AD4- -   +AH0-
++AD4- +AD4- +-   if (vhost+AF8-user+AF8-initialize+AF8-memory(pdev) +ADw- 0=
+)
++AD4- +AD4- +-           goto close+AF8-msg+AF8-fds+ADs-
++AD4- +AD4-
++AD4- +AD4-     for (i +AD0- 0+ADs- i +ADw- memory-+AD4-nregions+ADs- i+-+-=
+) +AHs-
++AD4- +AD4-             reg +AD0- +ACY-dev-+AD4-mem-+AD4-regions+AFs-i+AF0A=
+Ow-
++AD4- +AD4- +AEAAQA- -1661,11 +-1637,182 +AEAAQA- vhost+AF8-user+AF8-set+AF=
+8-mem+AF8-table(struct virtio+AF8-net
++AD4- +ACoAKg-pdev,
++AD4- +AD4-     return RTE+AF8-VHOST+AF8-MSG+AF8-RESULT+AF8-OK+ADs-
++AD4- +AD4-
++AD4- +AD4-   free+AF8-mem+AF8-table:
++AD4- +AD4- -   free+AF8-mem+AF8-region(dev)+ADs-
++AD4- +AD4- +-   free+AF8-all+AF8-mem+AF8-regions(dev)+ADs-
++AD4- +AD4-     rte+AF8-free(dev-+AD4-mem)+ADs-
++AD4- +AD4-     dev-+AD4-mem +AD0- NULL+ADs-
++AD4- +AD4- +-   rte+AF8-free(dev-+AD4-guest+AF8-pages)+ADs-
++AD4- +AD4- +-   dev-+AD4-guest+AF8-pages +AD0- NULL+ADs-
++AD4- +AD4- +-close+AF8-msg+AF8-fds:
++AD4- +AD4- +-   close+AF8-msg+AF8-fds(ctx)+ADs-
++AD4- +AD4- +-   return RTE+AF8-VHOST+AF8-MSG+AF8-RESULT+AF8-ERR+ADs-
++AD4- +AD4- +-+AH0-
++AD4- +AD4- +-
++AD4- +AD4-
++AD4- +AD4- -free+AF8-guest+AF8-pages:
++AD4- +AD4- +-static int
++AD4- +AD4- +-vhost+AF8-user+AF8-get+AF8-max+AF8-mem+AF8-slots(struct virti=
+o+AF8-net +ACoAKg-pdev +AF8AXw-rte+AF8-unused,
++AD4- +AD4- +-                   struct vhu+AF8-msg+AF8-context +ACo-ctx,
++AD4- +AD4- +-                   int main+AF8-fd +AF8AXw-rte+AF8-unused)
++AD4- +AD4- +-+AHs-
++AD4- +AD4- +-   uint32+AF8-t max+AF8-mem+AF8-slots +AD0- VHOST+AF8-MEMORY+=
+AF8-MAX+AF8-NREGIONS+ADs-
++AD4- +AD4- +-
++AD4- +AD4- +-   ctx-+AD4-msg.payload.u64 +AD0- (uint64+AF8-t)max+AF8-mem+A=
+F8-slots+ADs-
++AD4- +AD4- +-   ctx-+AD4-msg.size +AD0- sizeof(ctx-+AD4-msg.payload.u64)+A=
+Ds-
++AD4- +AD4- +-   ctx-+AD4-fd+AF8-num +AD0- 0+ADs-
++AD4- +AD4- +-
++AD4- +AD4- +-   return RTE+AF8-VHOST+AF8-MSG+AF8-RESULT+AF8-REPLY+ADs-
++AD4- +AD4- +-+AH0-
++AD4- +AD4- +-
++AD4- +AD4- +-static void
++AD4- +AD4- +-dev+AF8-invalidate+AF8-vrings(struct virtio+AF8-net +ACo-dev)=
+ +AHs-
++AD4- +AD4- +-   uint32+AF8-t i+ADs-
++AD4- +AD4- +-
++AD4- +AD4- +-   for (i +AD0- 0+ADs- i +ADw- dev-+AD4-nr+AF8-vring+ADs- i+-=
++-) +AHs-
++AD4- +AD4- +-           struct vhost+AF8-virtqueue +ACo-vq +AD0- dev-+AD4-=
+virtqueue+AFs-i+AF0AOw-
++AD4- +AD4- +-
++AD4- +AD4- +-           if (+ACE-vq)
++AD4- +AD4- +-                   continue+ADs-
++AD4- +AD4- +-
++AD4- +AD4- +-           if (vq-+AD4-desc +AHwAfA- vq-+AD4-avail +AHwAfA- v=
+q-+AD4-used) +AHs-
++AD4- +AD4- +-                   /+ACo- vhost+AF8-user+AF8-lock+AF8-all+AF8=
+-queue+AF8-pairs locked all qps +ACo-/
++AD4- +AD4- +-                   VHOST+AF8-USER+AF8-ASSERT+AF8-LOCK(dev, vq=
+,
++AD4- VHOST+AF8-USER+AF8-ADD+AF8-MEM+AF8-REG)+ADs-
++AD4- +AD4- +-
++AD4- +AD4- +-                   /+ACo-
++AD4- +AD4- +-                    +ACo- If the memory table got updated, th=
+e ring addresses
++AD4- +AD4- +-                    +ACo- need to be translated again as virt=
+ual addresses have
++AD4- +AD4- +-                    +ACo- changed.
++AD4- +AD4- +-                    +ACo-/
++AD4- +AD4- +-                   vring+AF8-invalidate(dev, vq)+ADs-
++AD4- +AD4- +-
++AD4- +AD4- +-                   translate+AF8-ring+AF8-addresses(+ACY-dev,=
+ +ACY-vq)+ADs-
++AD4- +AD4- +-           +AH0-
++AD4- +AD4- +-   +AH0-
++AD4- +AD4- +-+AH0-
++AD4- +AD4- +-
++AD4- +AD4- +-static int
++AD4- +AD4- +-vhost+AF8-user+AF8-add+AF8-mem+AF8-reg(struct virtio+AF8-net =
++ACoAKg-pdev,
++AD4- +AD4- +-                   struct vhu+AF8-msg+AF8-context +ACo-ctx,
++AD4- +AD4- +-                   int main+AF8-fd +AF8AXw-rte+AF8-unused)
++AD4- +AD4- +-+AHs-
++AD4- +AD4- +-   uint32+AF8-t i+ADs-
++AD4- +AD4- +-   struct virtio+AF8-net +ACo-dev +AD0- +ACo-pdev+ADs-
++AD4- +AD4- +-   struct VhostUserMemoryRegion +ACo-region +AD0-
++AD4- +AD4- +-+ACY-ctx-+AD4-msg.payload.memory+AF8-single.region+ADs-
++AD4- +AD4- +-
++AD4- +AD4- +-   /+ACo- convert first region add to normal memory table set=
+ +ACo-/
++AD4- +AD4- +-   if (dev-+AD4-mem +AD0APQ- NULL) +AHs-
++AD4- +AD4- +-           if (vhost+AF8-user+AF8-initialize+AF8-memory(pdev)=
+ +ADw- 0)
++AD4- +AD4- +-                   goto close+AF8-msg+AF8-fds+ADs-
++AD4- +AD4- +-   +AH0-
++AD4- +AD4- +-
++AD4- +AD4- +-   /+ACo- make sure new region will fit +ACo-/
++AD4- +AD4- +-   if (dev-+AD4-mem-+AD4-nregions +AD4APQ- VHOST+AF8-MEMORY+A=
+F8-MAX+AF8-NREGIONS) +AHs-
++AD4- +AD4- +-           VHOST+AF8-CONFIG+AF8-LOG(dev-+AD4-ifname, ERR, +AC=
+I-too many memory
++AD4- regions already (+ACU-u)+ACI-,
++AD4- +AD4- +-                                                             =
+      dev-
++AD4- +AD4-mem-+AD4-nregions)+ADs-
++AD4- +AD4- +-           goto close+AF8-msg+AF8-fds+ADs-
++AD4- +AD4- +-   +AH0-
++AD4- +AD4- +-
++AD4- +AD4- +-   /+ACo- make sure supplied memory fd present +ACo-/
++AD4- +AD4- +-   if (ctx-+AD4-fd+AF8-num +ACEAPQ- 1) +AHs-
++AD4- +AD4- +-           VHOST+AF8-CONFIG+AF8-LOG(dev-+AD4-ifname, ERR, +AC=
+I-fd count makes no
++AD4- sense (+ACU-u)+ACI-, ctx-+AD4-fd+AF8-num)+ADs-
++AD4- +AD4- +-           goto close+AF8-msg+AF8-fds+ADs-
++AD4- +AD4- +-   +AH0-
++AD4- +AD4- +-
++AD4- +AD4- +-   /+ACo- Make sure no overlap in guest virtual address space=
+ +ACo-/
++AD4- +AD4- +-   if (dev-+AD4-mem +ACEAPQ- NULL +ACYAJg- dev-+AD4-mem-+AD4-=
+nregions +AD4- 0) +AHs-
++AD4- +AD4- +-           for (i +AD0- 0+ADs- i +ADw- VHOST+AF8-MEMORY+AF8-M=
+AX+AF8-NREGIONS+ADs- i+-+-) +AHs-
++AD4- +AD4- +-                   struct rte+AF8-vhost+AF8-mem+AF8-region +A=
+Co-current+AF8-region +AD0-
++AD4- +AD4- +-+ACY-dev-+AD4-mem-+AD4-regions+AFs-i+AF0AOw-
++AD4- +AD4- +-
++AD4- +AD4- +-                   if (current+AF8-region-+AD4-mmap+AF8-size =
++AD0APQ- 0)
++AD4- +AD4- +-                           continue+ADs-
++AD4- +AD4- +-
++AD4- +AD4- +-                   uint64+AF8-t current+AF8-region+AF8-guest+=
+AF8-start +AD0- current+AF8-region-
++AD4- +AD4-guest+AF8-user+AF8-addr+ADs-
++AD4- +AD4- +-                   uint64+AF8-t current+AF8-region+AF8-guest+=
+AF8-end +AD0-
++AD4- current+AF8-region+AF8-guest+AF8-start
++AD4- +AD4- +-                                                           +-
++AD4- current+AF8-region-+AD4-mmap+AF8-size - 1+ADs-
++AD4- +AD4- +-                   uint64+AF8-t proposed+AF8-region+AF8-guest=
++AF8-start +AD0- region-
++AD4- +AD4-userspace+AF8-addr+ADs-
++AD4- +AD4- +-                   uint64+AF8-t proposed+AF8-region+AF8-guest=
++AF8-end +AD0-
++AD4- proposed+AF8-region+AF8-guest+AF8-start
++AD4- +AD4- +-                                                           +-=
+ region-
++AD4- +AD4-memory+AF8-size - 1+ADs-
++AD4- +AD4- +-                   bool overlap +AD0- false+ADs-
++AD4- +AD4- +-
++AD4- +AD4- +-                   bool curent+AF8-region+AF8-guest+AF8-start=
++AF8-overlap +AD0-
++AD4-
++AD4- s/curent/current/
++AD4-
++AD4- +AD4- +-                           current+AF8-region+AF8-guest+AF8-s=
+tart +AD4APQ-
++AD4- proposed+AF8-region+AF8-guest+AF8-start +ACYAJg-
++AD4- +AD4- +-                           current+AF8-region+AF8-guest+AF8-s=
+tart +ADwAPQ-
++AD4- proposed+AF8-region+AF8-guest+AF8-end+ADs-
++AD4- +AD4- +-                   bool curent+AF8-region+AF8-guest+AF8-end+A=
+F8-overlap +AD0-
++AD4- +AD4- +-                           current+AF8-region+AF8-guest+AF8-e=
+nd +AD4APQ-
++AD4- proposed+AF8-region+AF8-guest+AF8-start +ACYAJg-
++AD4- +AD4- +-                           current+AF8-region+AF8-guest+AF8-e=
+nd +ADwAPQ-
++AD4- proposed+AF8-region+AF8-guest+AF8-end+ADs-
++AD4-
++AD4- Ditto
++AD4-
++AD4- +AD4- +-                   bool proposed+AF8-region+AF8-guest+AF8-sta=
+rt+AF8-overlap +AD0-
++AD4- +AD4- +-                           proposed+AF8-region+AF8-guest+AF8-=
+start +AD4APQ-
++AD4- current+AF8-region+AF8-guest+AF8-start +ACYAJg-
++AD4- +AD4- +-                           proposed+AF8-region+AF8-guest+AF8-=
+start +ADwAPQ-
++AD4- current+AF8-region+AF8-guest+AF8-end+ADs-
++AD4- +AD4- +-                   bool proposed+AF8-region+AF8-guest+AF8-end=
++AF8-overlap +AD0-
++AD4- +AD4- +-                           proposed+AF8-region+AF8-guest+AF8-=
+end +AD4APQ-
++AD4- current+AF8-region+AF8-guest+AF8-start +ACYAJg-
++AD4- +AD4- +-                           proposed+AF8-region+AF8-guest+AF8-=
+end +ADwAPQ-
++AD4- current+AF8-region+AF8-guest+AF8-end+ADs-
++AD4- +AD4- +-
++AD4- +AD4- +-                   overlap +AD0- curent+AF8-region+AF8-guest+=
+AF8-start+AF8-overlap
++AD4- +AD4- +-                           +AHwAfA- curent+AF8-region+AF8-gue=
+st+AF8-end+AF8-overlap
++AD4- +AD4- +-                           +AHwAfA- proposed+AF8-region+AF8-g=
+uest+AF8-start+AF8-overlap
++AD4- +AD4- +-                           +AHwAfA- proposed+AF8-region+AF8-g=
+uest+AF8-end+AF8-overlap+ADs-
++AD4-
++AD4- Couldn't all the above be simplified with something like below?
++AD4-
++AD4- overlap +AD0- +ACE-(proposed+AF8-region+AF8-guest+AF8-end +ADw- curre=
+nt+AF8-region+AF8-guest+AF8-start +AHwAfA-
++AD4-                 proposed+AF8-region+AF8-guest+AF8-start +AD4- current=
++AF8-region+AF8-guest+AF8-end)+ADs-
++AD4-
+
+You are correct, the above lines of code can be simplified to what you're p=
+roposing. I will make the necessary changes, retest and resubmit the patch.
+
++AD4- +AD4- +-
++AD4- +AD4- +-                   if (overlap) +AHs-
++AD4- +AD4- +-                           VHOST+AF8-CONFIG+AF8-LOG(dev-+AD4-=
+ifname, ERR,
++AD4- +AD4- +-                                   +ACI-requested memory regi=
+on overlaps
++AD4- with another region+ACI-)+ADs-
++AD4- +AD4- +-                           VHOST+AF8-CONFIG+AF8-LOG(dev-+AD4-=
+ifname, ERR,
++AD4- +AD4- +-                                   +ACIAXA-tRequested region =
+address:0x+ACUAIg-
++AD4- PRIx64,
++AD4- +AD4- +-                                   region-+AD4-userspace+AF8-=
+addr)+ADs-
++AD4- +AD4- +-                           VHOST+AF8-CONFIG+AF8-LOG(dev-+AD4-=
+ifname, ERR,
++AD4- +AD4- +-                                   +ACIAXA-tRequested region =
+size:0x+ACUAIg- PRIx64,
++AD4- +AD4- +-                                   region-+AD4-memory+AF8-siz=
+e)+ADs-
++AD4- +AD4- +-                           VHOST+AF8-CONFIG+AF8-LOG(dev-+AD4-=
+ifname, ERR,
++AD4- +AD4- +-                                   +ACIAXA-tOverlapping regio=
+n address:0x+ACUAIg-
++AD4- PRIx64,
++AD4- +AD4- +-                                   current+AF8-region-+AD4-gu=
+est+AF8-user+AF8-addr)+ADs-
++AD4- +AD4- +-                           VHOST+AF8-CONFIG+AF8-LOG(dev-+AD4-=
+ifname, ERR,
++AD4- +AD4- +-                                   +ACIAXA-tOverlapping regio=
+n size:0x+ACUAIg-
++AD4- PRIx64,
++AD4- +AD4- +-                                   current+AF8-region-+AD4-mm=
+ap+AF8-size)+ADs-
++AD4- +AD4- +-                           goto close+AF8-msg+AF8-fds+ADs-
++AD4- +AD4- +-                   +AH0-
++AD4- +AD4- +-
 +AD4- +AD4- +-           +AH0-
 +AD4- +AD4- +-   +AH0-
 +AD4- +AD4- +-
-+AD4- +AD4- +-   dev-+AD4-mem +AD0- rte+AF8-zmalloc+AF8-socket(+ACI-vhost-m=
-em-table+ACI-, sizeof(struct
-+AD4- rte+AF8-vhost+AF8-memory) +-
-+AD4- +AD4- +-           sizeof(struct rte+AF8-vhost+AF8-mem+AF8-region) +A=
-Co-
-+AD4- VHOST+AF8-MEMORY+AF8-MAX+AF8-NREGIONS, 0, numa+AF8-node)+ADs-
-+AD4- +AD4- +-   if (dev-+AD4-mem +AD0APQ- NULL) +AHs-
++AD4- +AD4- +-   /+ACo- find a new region and set it like memory table set =
+does +ACo-/
++AD4- +AD4- +-   struct rte+AF8-vhost+AF8-mem+AF8-region +ACo-reg +AD0- NUL=
+L+ADs-
++AD4- +AD4- +-
++AD4- +AD4- +-   for (i +AD0- 0+ADs- i +ADw- VHOST+AF8-MEMORY+AF8-MAX+AF8-N=
+REGIONS+ADs- i+-+-) +AHs-
++AD4- +AD4- +-           if (dev-+AD4-mem-+AD4-regions+AFs-i+AF0-.guest+AF8=
+-user+AF8-addr +AD0APQ- 0) +AHs-
++AD4- +AD4- +-                   reg +AD0- +ACY-dev-+AD4-mem-+AD4-regions+A=
+Fs-i+AF0AOw-
++AD4- +AD4- +-                   break+ADs-
++AD4- +AD4- +-           +AH0-
++AD4- +AD4- +-   +AH0-
++AD4- +AD4- +-   if (reg +AD0APQ- NULL) +AHs-
 +AD4- +AD4- +-           VHOST+AF8-CONFIG+AF8-LOG(dev-+AD4-ifname, ERR, +AC=
-I-failed to allocate
-+AD4- memory for dev-+AD4-mem+ACI-)+ADs-
-+AD4- +AD4- +-           rte+AF8-free(dev-+AD4-guest+AF8-pages)+ADs-
-+AD4- +AD4- +-           dev-+AD4-guest+AF8-pages +AD0- NULL+ADs-
-+AD4- +AD4- +-           return -1+ADs-
+I-no free memory
++AD4- region+ACI-)+ADs-
++AD4- +AD4- +-           goto close+AF8-msg+AF8-fds+ADs-
 +AD4- +AD4- +-   +AH0-
 +AD4- +AD4- +-
-+AD4- +AD4- +-   return 0+ADs-
++AD4- +AD4- +-   reg-+AD4-guest+AF8-phys+AF8-addr +AD0- region-+AD4-guest+A=
+F8-phys+AF8-addr+ADs-
++AD4- +AD4- +-   reg-+AD4-guest+AF8-user+AF8-addr +AD0- region-+AD4-userspa=
+ce+AF8-addr+ADs-
++AD4- +AD4- +-   reg-+AD4-size            +AD0- region-+AD4-memory+AF8-size=
++ADs-
++AD4- +AD4- +-   reg-+AD4-fd              +AD0- ctx-+AD4-fds+AFs-0+AF0AOw-
++AD4- +AD4- +-
++AD4- +AD4- +-   if (vhost+AF8-user+AF8-mmap+AF8-region(dev, reg, region-+A=
+D4-mmap+AF8-offset) +ADw- 0) +AHs-
++AD4- +AD4- +-           VHOST+AF8-CONFIG+AF8-LOG(dev-+AD4-ifname, ERR, +AC=
+I-failed to mmap
++AD4- region+ACI-)+ADs-
++AD4- +AD4- +-           goto close+AF8-msg+AF8-fds+ADs-
++AD4- +AD4- +-   +AH0-
++AD4- +AD4- +-
++AD4- +AD4- +-   dev-+AD4-mem-+AD4-nregions+-+-+ADs-
++AD4- +AD4- +-
++AD4- +AD4- +-   if (dev-+AD4-async+AF8-copy +ACYAJg- rte+AF8-vfio+AF8-is+A=
+F8-enabled(+ACI-vfio+ACI-))
++AD4- +AD4- +-           async+AF8-dma+AF8-map+AF8-region(dev, reg, true)+A=
+Ds-
++AD4- +AD4- +-
++AD4- +AD4- +-   if (vhost+AF8-user+AF8-postcopy+AF8-register(dev, main+AF8=
+-fd, ctx) +ADw- 0)
++AD4- +AD4- +-           goto free+AF8-mem+AF8-table+ADs-
++AD4- +AD4- +-
++AD4- +AD4- +-   dev+AF8-invalidate+AF8-vrings(dev)+ADs-
++AD4- +AD4- +-   dump+AF8-guest+AF8-pages(dev)+ADs-
++AD4- +AD4- +-
++AD4- +AD4- +-   return RTE+AF8-VHOST+AF8-MSG+AF8-RESULT+AF8-OK+ADs-
++AD4- +AD4- +-
++AD4- +AD4- +-free+AF8-mem+AF8-table:
++AD4- +AD4- +-   free+AF8-all+AF8-mem+AF8-regions(dev)+ADs-
++AD4- +AD4- +-   rte+AF8-free(dev-+AD4-mem)+ADs-
++AD4- +AD4- +-   dev-+AD4-mem +AD0- NULL+ADs-
++AD4- +AD4-     rte+AF8-free(dev-+AD4-guest+AF8-pages)+ADs-
++AD4- +AD4-     dev-+AD4-guest+AF8-pages +AD0- NULL+ADs-
++AD4- +AD4-   close+AF8-msg+AF8-fds:
++AD4- +AD4- +AEAAQA- -1673,6 +-1820,44 +AEAAQA- vhost+AF8-user+AF8-set+AF8-=
+mem+AF8-table(struct virtio+AF8-net
++AD4- +ACoAKg-pdev,
++AD4- +AD4-     return RTE+AF8-VHOST+AF8-MSG+AF8-RESULT+AF8-ERR+ADs-
++AD4- +AD4-   +AH0-
++AD4- +AD4-
++AD4- +AD4- +-static int
++AD4- +AD4- +-vhost+AF8-user+AF8-rem+AF8-mem+AF8-reg(struct virtio+AF8-net =
++ACoAKg-pdev +AF8AXw-rte+AF8-unused,
++AD4- +AD4- +-                   struct vhu+AF8-msg+AF8-context +ACo-ctx +A=
+F8AXw-rte+AF8-unused,
++AD4- +AD4- +-                   int main+AF8-fd +AF8AXw-rte+AF8-unused)
++AD4- +AD4- +-+AHs-
++AD4- +AD4- +-   uint32+AF8-t i+ADs-
++AD4- +AD4- +-   struct virtio+AF8-net +ACo-dev +AD0- +ACo-pdev+ADs-
++AD4-
++AD4- pdev is marked 'unused', it needs to be fixed.
++AD4-
++AD4- +AD4- +-   struct VhostUserMemoryRegion +ACo-region +AD0-
++AD4- +AD4- +-+ACY-ctx-+AD4-msg.payload.memory+AF8-single.region+ADs-
++AD4-
++AD4- Same for ctx.
++AD4-
++AD4- +AD4- +-
++AD4- +AD4- +-   if (dev-+AD4-mem +ACEAPQ- NULL +ACYAJg- dev-+AD4-mem-+AD4-=
+nregions +AD4- 0) +AHs-
++AD4- +AD4- +-           for (i +AD0- 0+ADs- i +ADw- VHOST+AF8-MEMORY+AF8-M=
+AX+AF8-NREGIONS+ADs- i+-+-) +AHs-
++AD4- +AD4- +-                   struct rte+AF8-vhost+AF8-mem+AF8-region +A=
+Co-current+AF8-region +AD0-
++AD4- +AD4- +-+ACY-dev-+AD4-mem-+AD4-regions+AFs-i+AF0AOw-
++AD4- +AD4- +-
++AD4- +AD4- +-                   if (current+AF8-region-+AD4-guest+AF8-user=
++AF8-addr +AD0APQ- 0)
++AD4- +AD4- +-                           continue+ADs-
++AD4- +AD4- +-
++AD4- +AD4- +-                   /+ACo-
++AD4- +AD4- +-                    +ACo- According to the vhost-user specifi=
+cation:
++AD4- +AD4- +-                    +ACo- The memory region to be removed is =
+identified by
++AD4- its guest address,
++AD4- +AD4- +-                    +ACo- user address and size. The mmap off=
+set is ignored.
++AD4- +AD4- +-                    +ACo-/
++AD4- +AD4- +-                   if (region-+AD4-userspace+AF8-addr +AD0APQ=
+- current+AF8-region-
++AD4- +AD4-guest+AF8-user+AF8-addr
++AD4- +AD4- +-                           +ACYAJg- region-+AD4-guest+AF8-phy=
+s+AF8-addr +AD0APQ-
++AD4- current+AF8-region-+AD4-guest+AF8-phys+AF8-addr
++AD4- +AD4- +-                           +ACYAJg- region-+AD4-memory+AF8-si=
+ze +AD0APQ- current+AF8-region-
++AD4- +AD4-size) +AHs-
++AD4- +AD4- +-                           if (dev-+AD4-async+AF8-copy +ACYAJ=
+g-
++AD4- rte+AF8-vfio+AF8-is+AF8-enabled(+ACI-vfio+ACI-))
++AD4- +AD4- +-                                   async+AF8-dma+AF8-map+AF8-=
+region(dev,
++AD4- current+AF8-region, false)+ADs-
++AD4- +AD4- +-                           dev+AF8-invalidate+AF8-vrings(dev)=
++ADs-
++AD4- +AD4- +-                           free+AF8-mem+AF8-region(current+AF=
+8-region)+ADs-
++AD4- +AD4- +-                           dev-+AD4-mem-+AD4-nregions--+ADs-
++AD4- +AD4- +-                           return RTE+AF8-VHOST+AF8-MSG+AF8-R=
+ESULT+AF8-OK+ADs-
++AD4- +AD4- +-                   +AH0-
++AD4- +AD4- +-           +AH0-
++AD4- +AD4- +-   +AH0-
++AD4- +AD4- +-
++AD4- +AD4- +-   VHOST+AF8-CONFIG+AF8-LOG(dev-+AD4-ifname, ERR, +ACI-failed=
+ to find region+ACI-)+ADs-
++AD4- +AD4- +-   return RTE+AF8-VHOST+AF8-MSG+AF8-RESULT+AF8-ERR+ADs-
 +AD4- +AD4- +-+AH0-
 +AD4- +AD4- +-
-+AD4- +AD4-   static int
-+AD4- +AD4-   vhost+AF8-user+AF8-set+AF8-mem+AF8-table(struct virtio+AF8-ne=
-t +ACoAKg-pdev,
-+AD4- +AD4-                     struct vhu+AF8-msg+AF8-context +ACo-ctx,
++AD4- +AD4-   static bool
++AD4- +AD4-   vq+AF8-is+AF8-ready(struct virtio+AF8-net +ACo-dev, struct vh=
+ost+AF8-virtqueue +ACo-vq)
++AD4- +AD4-   +AHs-
 
