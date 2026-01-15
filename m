@@ -2,26 +2,26 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19E5DD3CCA8
-	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Jan 2026 03:28:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F427D3CCB3
+	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Jan 2026 06:18:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 21A4540E50;
-	Thu, 15 Jan 2026 04:28:06 +0100 (CET)
-Received: from out28-3.mail.aliyun.com (out28-3.mail.aliyun.com [115.124.28.3])
- by mails.dpdk.org (Postfix) with ESMTP id 18746402F0
- for <dev@dpdk.org>; Thu, 15 Jan 2026 04:28:03 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 04BD840A7F;
+	Thu, 15 Jan 2026 07:18:30 +0100 (CET)
+Received: from out28-51.mail.aliyun.com (out28-51.mail.aliyun.com
+ [115.124.28.51]) by mails.dpdk.org (Postfix) with ESMTP id A508B402F0
+ for <dev@dpdk.org>; Thu, 15 Jan 2026 07:18:27 +0100 (CET)
 Received: from ubuntu.localdomain(mailfrom:dimon.zhao@nebula-matrix.com
- fp:SMTPD_---.g6rJMNd_1768447666 cluster:ay29) by smtp.aliyun-inc.com;
- Thu, 15 Jan 2026 11:27:49 +0800
+ fp:SMTPD_---.g6s1wp0_1768457898 cluster:ay29) by smtp.aliyun-inc.com;
+ Thu, 15 Jan 2026 14:18:25 +0800
 From: Dimon Zhao <dimon.zhao@nebula-matrix.com>
 To: dev@dpdk.org
 Cc: Dimon Zhao <dimon.zhao@nebula-matrix.com>
-Subject: [PATCH v3 0/1] Address NBL Coverity issues
-Date: Wed, 14 Jan 2026 19:27:43 -0800
-Message-Id: <20260115032744.62449-1-dimon.zhao@nebula-matrix.com>
+Subject: [PATCH v2 0/1] fix hardware stats interrupt nesting issue
+Date: Wed, 14 Jan 2026 22:18:06 -0800
+Message-Id: <20260115061807.65832-1-dimon.zhao@nebula-matrix.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251030033619.3386064-1-dimon.zhao@nebula-matrix.com>
-References: <20251030033619.3386064-1-dimon.zhao@nebula-matrix.com>
+In-Reply-To: <20260114081558.50370-2-dimon.zhao@nebula-matrix.com>
+References: <20260114081558.50370-2-dimon.zhao@nebula-matrix.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -37,15 +37,14 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Address all Coverity issues in the NBL driver from the recent scan.
+fix dropped packets counter issue
 
 Dimon Zhao (1):
-  net/nbl: fix issues reported by Coverity
+  net/nbl: fix hardware stats interrupt nesting issue
 
- drivers/net/nbl/nbl_common/nbl_userdev.c | 25 ++++++++++++++----------
- drivers/net/nbl/nbl_dev/nbl_dev.c        |  4 ++--
- drivers/net/nbl/nbl_hw/nbl_channel.c     | 17 ++++++++--------
- 3 files changed, 26 insertions(+), 20 deletions(-)
+ drivers/net/nbl/nbl_dev/nbl_dev.c | 56 ++++++++++++++++++++++++++++++-
+ drivers/net/nbl/nbl_dev/nbl_dev.h |  2 ++
+ 2 files changed, 57 insertions(+), 1 deletion(-)
 
 -- 
 2.34.1
