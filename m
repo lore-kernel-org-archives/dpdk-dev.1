@@ -2,36 +2,36 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D3C5D44C48
-	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Jan 2026 14:02:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10ADFD44C4F
+	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Jan 2026 14:02:29 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DA8F2427B1;
-	Thu, 15 Jan 2026 15:02:00 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id D20D24275D;
+	Thu, 15 Jan 2026 15:02:01 +0100 (CET)
 Received: from office2.cesnet.cz (office2.cesnet.cz [78.128.248.237])
- by mails.dpdk.org (Postfix) with ESMTP id 71B1C41156
+ by mails.dpdk.org (Postfix) with ESMTP id 8D3E041611
  for <dev@dpdk.org>; Thu, 15 Jan 2026 15:01:57 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cesnet.cz;
  s=office2-2020; t=1768485717;
- bh=UfwXKOwyYrO+QKbb3JF/JWCKG6cT631oH4q8NvMPC14=;
+ bh=qGb9hZRU3ljWCkcKdnUZqMiwQiatidd9IzEMT1cdW7A=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References;
- b=QG4iBVX+psjMRwSuQkBc33KWkxmqLf3jFozWOkLUS/48YqBGJ7FUJ0FxK7rojDEkI
- kM/VgnfA5CkY4ANEI7HvEZCi/aup5IqYjWJVKs+dPztKo1CEqJqViGzSxU5mxAIpXm
- DOuwM7Sq+69kZFC5L5Y4XLjZIoz6S0ZoGnTR37RMTFjNWRdm0i+GNSQxtJHrEWeA7w
- AcS40i4HTFkq68tpuhST8uNPB+XqY078J/EzDK9CHfim0PmIIsdyk/UYsrjgs4yuZA
- h2P9Y3oIAH6ZTXmCDzA1rB8o0HPPGn2dTq/pSj1O0JObD2pdM/y8RvKy2ZjV5Thmtv
- L/5C4nqWWCd4g==
+ b=AavzUPySHEnQWPwbSKtlmvMduveCNLUUz2DWIwR1wLL85XR9Hio3zmlWbyswdYUks
+ /rRbWq8Aez2TF66r8v5wGcnqw+6s4/+8uKTh6vcnBL9tC21AMuF27oCzNAgHYdasBE
+ QzrSmDBrjUAL0I1MfenIAK9ON2Vqy4aObR8ax2ZPhJNYahSJ868O/65HljGtK6BnXZ
+ XHRYpgkeLmA5mYvtYG3Ozg61cHDn7F7UGIYZsJzQSgYxuBrBMDUzZVH6oaIvTRT/Sd
+ iB1mMb7IzYTG0v3kpjV/uZgSTRanHUTHX8JnuBwdRwdGD+rb7tu6lVyIeE0f/TxcO8
+ /hl2dL1XxH4MQ==
 Received: from emil.cesnet.cz (gtx107.cesnet.cz [IPv6:2001:718:812:27::107])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by office2.cesnet.cz (Postfix) with ESMTPSA id 4682A118007F;
+ by office2.cesnet.cz (Postfix) with ESMTPSA id 60F641180078;
  Thu, 15 Jan 2026 15:01:57 +0100 (CET)
 From: spinler@cesnet.cz
 To: spinler@cesnet.cz
 Cc: dev@dpdk.org
-Subject: [PATCH 3/6] net/nfb: update timestamp calculation to meaningful value
-Date: Thu, 15 Jan 2026 15:01:31 +0100
-Message-ID: <20260115140134.235877-4-spinler@cesnet.cz>
+Subject: [PATCH 4/6] net/nfb: use process private variable for internal data
+Date: Thu, 15 Jan 2026 15:01:32 +0100
+Message-ID: <20260115140134.235877-5-spinler@cesnet.cz>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260115140134.235877-1-spinler@cesnet.cz>
 References: <20260115140134.235877-1-spinler@cesnet.cz>
@@ -52,70 +52,354 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Martin Spinler <spinler@cesnet.cz>
 
-The resulting timestamp wasn't monotonically increasing value.
-
-Now the timestamp is value in nanoseconds (Unix epoch).
-
-Unfortunately there's currently no safe mechanism in nfb-framework
-to get ticks from hardware to implement read_clock function.
+Internal structures of libnfb can't be shared between processes.
+Move these structures from dev_private to process_private, which allows
+secondary process to correctly initialize and uninitialize the eth_dev.
 
 Signed-off-by: Martin Spinler <spinler@cesnet.cz>
 ---
- doc/guides/nics/nfb.rst  |  6 ++----
- drivers/net/nfb/nfb_rx.h | 13 +++++++------
- 2 files changed, 9 insertions(+), 10 deletions(-)
+ drivers/net/nfb/nfb.h        |  2 +
+ drivers/net/nfb/nfb_ethdev.c | 95 ++++++++++++++++++++----------------
+ drivers/net/nfb/nfb_rx.c     |  2 +-
+ drivers/net/nfb/nfb_rxmode.c | 12 ++---
+ drivers/net/nfb/nfb_tx.c     |  2 +-
+ 5 files changed, 64 insertions(+), 49 deletions(-)
 
-diff --git a/doc/guides/nics/nfb.rst b/doc/guides/nics/nfb.rst
-index 96aaf64440..a9b4049654 100644
---- a/doc/guides/nics/nfb.rst
-+++ b/doc/guides/nics/nfb.rst
-@@ -64,10 +64,8 @@ products). The standard `RTE_ETH_RX_OFFLOAD_TIMESTAMP` flag can be used for this
- When the timestamps are enabled, a timestamp validity flag is set in the MBUFs
- containing received frames and timestamp is inserted into the `rte_mbuf` struct.
+diff --git a/drivers/net/nfb/nfb.h b/drivers/net/nfb/nfb.h
+index 8f8577860a..d85c5fba62 100644
+--- a/drivers/net/nfb/nfb.h
++++ b/drivers/net/nfb/nfb.h
+@@ -48,7 +48,9 @@ struct pmd_internals {
+ 	struct nc_rxmac *rxmac[RTE_MAX_NC_RXMAC];
+ 	struct nc_txmac *txmac[RTE_MAX_NC_TXMAC];
+ 	struct nfb_device *nfb;
++};
  
--The timestamp is an `uint64_t` field. Its lower 32 bits represent *seconds* portion of the timestamp
--(number of seconds elapsed since 1.1.1970 00:00:00 UTC) and its higher 32 bits represent
--*nanosecond* portion of the timestamp (number of nanoseconds elapsed since the beginning of the
--second in the *seconds* portion.
-+The timestamp is an `uint64_t` field and holds the number of nanoseconds
-+elapsed since 1.1.1970 00:00:00 UTC.
++struct pmd_priv {
+ 	int max_rx_queues;
+ 	int max_tx_queues;
+ };
+diff --git a/drivers/net/nfb/nfb_ethdev.c b/drivers/net/nfb/nfb_ethdev.c
+index 7a472a5f1e..d73a5330ce 100644
+--- a/drivers/net/nfb/nfb_ethdev.c
++++ b/drivers/net/nfb/nfb_ethdev.c
+@@ -184,7 +184,7 @@ static int
+ nfb_eth_dev_configure(struct rte_eth_dev *dev __rte_unused)
+ {
+ 	int ret;
+-	struct pmd_internals *internals = dev->data->dev_private;
++	struct pmd_internals *internals = dev->process_private;
+ 	struct rte_eth_conf *dev_conf = &dev->data->dev_conf;
  
+ 	if (dev_conf->rxmode.offloads & RTE_ETH_RX_OFFLOAD_TIMESTAMP) {
+@@ -207,7 +207,7 @@ nfb_eth_get_max_mac_address_count(struct rte_eth_dev *dev)
+ 	uint16_t i;
+ 	uint32_t c;
+ 	uint32_t ret = (uint32_t)-1;
+-	struct pmd_internals *internals = dev->data->dev_private;
++	struct pmd_internals *internals = dev->process_private;
  
- Using the NFB PMD
-diff --git a/drivers/net/nfb/nfb_rx.h b/drivers/net/nfb/nfb_rx.h
-index 12769841ae..67b3b00e2a 100644
---- a/drivers/net/nfb/nfb_rx.h
-+++ b/drivers/net/nfb/nfb_rx.h
-@@ -13,6 +13,7 @@
- #include <rte_mbuf.h>
- #include <rte_mbuf_dyn.h>
- #include <rte_ethdev.h>
-+#include <rte_time.h>
+ 	/*
+ 	 * Go through all RX MAC components in firmware and find
+@@ -237,13 +237,13 @@ static int
+ nfb_eth_dev_info(struct rte_eth_dev *dev,
+ 	struct rte_eth_dev_info *dev_info)
+ {
+-	struct pmd_internals *internals = dev->data->dev_private;
++	struct pmd_priv *priv = dev->data->dev_private;
  
- #include "nfb.h"
+ 	dev_info->max_mac_addrs = nfb_eth_get_max_mac_address_count(dev);
  
-@@ -202,15 +203,15 @@ nfb_eth_ndp_rx(void *queue,
- 			if (nfb_timestamp_dynfield_offset >= 0) {
- 				rte_mbuf_timestamp_t timestamp;
+ 	dev_info->max_rx_pktlen = (uint32_t)-1;
+-	dev_info->max_rx_queues = internals->max_rx_queues;
+-	dev_info->max_tx_queues = internals->max_tx_queues;
++	dev_info->max_rx_queues = priv->max_rx_queues;
++	dev_info->max_tx_queues = priv->max_tx_queues;
+ 	dev_info->speed_capa = RTE_ETH_LINK_SPEED_100G;
+ 	dev_info->rx_offload_capa =
+ 		RTE_ETH_RX_OFFLOAD_TIMESTAMP;
+@@ -262,20 +262,20 @@ nfb_eth_dev_info(struct rte_eth_dev *dev,
+ static int
+ nfb_eth_dev_close(struct rte_eth_dev *dev)
+ {
+-	struct pmd_internals *internals = dev->data->dev_private;
++	struct pmd_internals *internals = dev->process_private;
+ 	uint16_t i;
+ 	uint16_t nb_rx = dev->data->nb_rx_queues;
+ 	uint16_t nb_tx = dev->data->nb_tx_queues;
+ 	int ret;
  
--				/* nanoseconds */
--				timestamp =
--					rte_le_to_cpu_32(*((uint32_t *)
--					(packets[i].header + 4)));
--				timestamp <<= 32;
- 				/* seconds */
--				timestamp |=
-+				timestamp =
- 					rte_le_to_cpu_32(*((uint32_t *)
- 					(packets[i].header + 8)));
-+				timestamp *= NSEC_PER_SEC;
-+				/* nanoseconds */
-+				timestamp +=
-+					rte_le_to_cpu_32(*((uint32_t *)
-+					(packets[i].header + 4)));
- 				*nfb_timestamp_dynfield(mbuf) = timestamp;
- 				mbuf->ol_flags |= nfb_timestamp_rx_dynflag;
- 			}
++	nfb_nc_rxmac_deinit(internals->rxmac, internals->max_rxmac);
++	nfb_nc_txmac_deinit(internals->txmac, internals->max_txmac);
++
+ 	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
+ 		return 0;
+ 
+ 	ret = nfb_eth_dev_stop(dev);
+ 
+-	nfb_nc_rxmac_deinit(internals->rxmac, internals->max_rxmac);
+-	nfb_nc_txmac_deinit(internals->txmac, internals->max_txmac);
+-
+ 	for (i = 0; i < nb_rx; i++) {
+ 		nfb_eth_rx_queue_release(dev, i);
+ 		dev->data->rx_queues[i] = NULL;
+@@ -310,7 +310,7 @@ nfb_eth_link_update(struct rte_eth_dev *dev,
+ 	struct rte_eth_link link;
+ 	memset(&link, 0, sizeof(link));
+ 
+-	struct pmd_internals *internals = dev->data->dev_private;
++	struct pmd_internals *internals = dev->process_private;
+ 
+ 	status.speed = MAC_SPEED_UNKNOWN;
+ 
+@@ -365,7 +365,7 @@ static int
+ nfb_eth_dev_set_link_up(struct rte_eth_dev *dev)
+ {
+ 	struct pmd_internals *internals = (struct pmd_internals *)
+-		dev->data->dev_private;
++		dev->process_private;
+ 
+ 	uint16_t i;
+ 	for (i = 0; i < internals->max_rxmac; ++i)
+@@ -390,7 +390,7 @@ static int
+ nfb_eth_dev_set_link_down(struct rte_eth_dev *dev)
+ {
+ 	struct pmd_internals *internals = (struct pmd_internals *)
+-		dev->data->dev_private;
++		dev->process_private;
+ 
+ 	uint16_t i;
+ 	for (i = 0; i < internals->max_rxmac; ++i)
+@@ -431,9 +431,8 @@ nfb_eth_mac_addr_set(struct rte_eth_dev *dev,
+ {
+ 	unsigned int i;
+ 	uint64_t mac;
+-	struct rte_eth_dev_data *data = dev->data;
+ 	struct pmd_internals *internals = (struct pmd_internals *)
+-		data->dev_private;
++		dev->process_private;
+ 
+ 	mac = nfb_eth_mac_addr_conv(mac_addr);
+ 	/* Until no real multi-port support, configure all RX MACs the same */
+@@ -449,9 +448,8 @@ nfb_eth_mac_addr_add(struct rte_eth_dev *dev,
+ {
+ 	unsigned int i;
+ 	uint64_t mac;
+-	struct rte_eth_dev_data *data = dev->data;
+ 	struct pmd_internals *internals = (struct pmd_internals *)
+-		data->dev_private;
++		dev->process_private;
+ 
+ 	mac = nfb_eth_mac_addr_conv(mac_addr);
+ 	for (i = 0; i < internals->max_rxmac; ++i)
+@@ -464,9 +462,8 @@ static void
+ nfb_eth_mac_addr_remove(struct rte_eth_dev *dev, uint32_t index)
+ {
+ 	unsigned int i;
+-	struct rte_eth_dev_data *data = dev->data;
+ 	struct pmd_internals *internals = (struct pmd_internals *)
+-		data->dev_private;
++		dev->process_private;
+ 
+ 	for (i = 0; i < internals->max_rxmac; ++i)
+ 		nc_rxmac_set_mac(internals->rxmac[i], index, 0, 0);
+@@ -514,8 +511,8 @@ nfb_eth_dev_init(struct rte_eth_dev *dev)
+ {
+ 	uint32_t mac_count;
+ 	struct rte_eth_dev_data *data = dev->data;
+-	struct pmd_internals *internals = (struct pmd_internals *)
+-		data->dev_private;
++	struct pmd_internals *internals;
++	struct pmd_priv *priv = data->dev_private;
+ 	struct rte_pci_device *pci_dev = RTE_ETH_DEV_TO_PCI(dev);
+ 	struct rte_pci_addr *pci_addr = &pci_dev->addr;
+ 	struct rte_ether_addr eth_addr_init;
+@@ -525,6 +522,15 @@ nfb_eth_dev_init(struct rte_eth_dev *dev)
+ 		pci_addr->domain, pci_addr->bus, pci_addr->devid,
+ 		pci_addr->function);
+ 
++	internals = (struct pmd_internals *) rte_zmalloc_socket("nfb_internals",
++			sizeof(struct pmd_internals), RTE_CACHE_LINE_SIZE,
++			dev->device->numa_node);
++	if (internals == NULL) {
++		return -ENOMEM;
++	}
++
++	dev->process_private = internals;
++
+ 	snprintf(nfb_dev, sizeof(nfb_dev),
+ 		"/dev/nfb/by-pci-slot/" PCI_PRI_FMT,
+ 		pci_addr->domain, pci_addr->bus, pci_addr->devid,
+@@ -538,10 +544,11 @@ nfb_eth_dev_init(struct rte_eth_dev *dev)
+ 	internals->nfb = nfb_open(nfb_dev);
+ 	if (internals->nfb == NULL) {
+ 		NFB_LOG(ERR, "nfb_open(): failed to open %s", nfb_dev);
++		rte_free(internals);
+ 		return -EINVAL;
+ 	}
+-	internals->max_rx_queues = ndp_get_rx_queue_available_count(internals->nfb);
+-	internals->max_tx_queues = ndp_get_tx_queue_available_count(internals->nfb);
++	priv->max_rx_queues = ndp_get_rx_queue_available_count(internals->nfb);
++	priv->max_tx_queues = ndp_get_tx_queue_available_count(internals->nfb);
+ 
+ 	NFB_LOG(INFO, "Available NDP queues RX: %u TX: %u",
+ 		data->nb_rx_queues, data->nb_tx_queues);
+@@ -563,28 +570,31 @@ nfb_eth_dev_init(struct rte_eth_dev *dev)
+ 	/* Get link state */
+ 	nfb_eth_link_update(dev, 0);
+ 
+-	/* Allocate space for MAC addresses */
+-	mac_count = nfb_eth_get_max_mac_address_count(dev);
+-	data->mac_addrs = rte_zmalloc(data->name,
+-		sizeof(struct rte_ether_addr) * mac_count, RTE_CACHE_LINE_SIZE);
+-	if (data->mac_addrs == NULL) {
+-		NFB_LOG(ERR, "Could not alloc space for MAC address");
+-		nfb_close(internals->nfb);
+-		return -EINVAL;
+-	}
++	if (rte_eal_process_type() == RTE_PROC_PRIMARY) {
++		/* Allocate space for MAC addresses */
++		mac_count = nfb_eth_get_max_mac_address_count(dev);
++		data->mac_addrs = rte_zmalloc(data->name,
++			sizeof(struct rte_ether_addr) * mac_count, RTE_CACHE_LINE_SIZE);
++		if (data->mac_addrs == NULL) {
++			NFB_LOG(ERR, "Could not alloc space for MAC address");
++			nfb_close(internals->nfb);
++			rte_free(internals);
++			return -EINVAL;
++		}
+ 
+-	rte_eth_random_addr(eth_addr_init.addr_bytes);
+-	eth_addr_init.addr_bytes[0] = eth_addr.addr_bytes[0];
+-	eth_addr_init.addr_bytes[1] = eth_addr.addr_bytes[1];
+-	eth_addr_init.addr_bytes[2] = eth_addr.addr_bytes[2];
++		rte_eth_random_addr(eth_addr_init.addr_bytes);
++		eth_addr_init.addr_bytes[0] = eth_addr.addr_bytes[0];
++		eth_addr_init.addr_bytes[1] = eth_addr.addr_bytes[1];
++		eth_addr_init.addr_bytes[2] = eth_addr.addr_bytes[2];
+ 
+-	nfb_eth_mac_addr_set(dev, &eth_addr_init);
+-	rte_ether_addr_copy(&eth_addr_init, &dev->data->mac_addrs[0]);
++		nfb_eth_mac_addr_set(dev, &eth_addr_init);
++		rte_ether_addr_copy(&eth_addr_init, &data->mac_addrs[0]);
+ 
+-	data->promiscuous = nfb_eth_promiscuous_get(dev);
+-	data->all_multicast = nfb_eth_allmulticast_get(dev);
++		data->promiscuous = nfb_eth_promiscuous_get(dev);
++		data->all_multicast = nfb_eth_allmulticast_get(dev);
+ 
+-	dev->data->dev_flags |= RTE_ETH_DEV_AUTOFILL_QUEUE_XSTATS;
++		data->dev_flags |= RTE_ETH_DEV_AUTOFILL_QUEUE_XSTATS;
++	}
+ 
+ 	NFB_LOG(INFO, "NFB device (" PCI_PRI_FMT ") successfully initialized",
+ 		pci_addr->domain, pci_addr->bus, pci_addr->devid,
+@@ -607,9 +617,12 @@ nfb_eth_dev_uninit(struct rte_eth_dev *dev)
+ {
+ 	struct rte_pci_device *pci_dev = RTE_ETH_DEV_TO_PCI(dev);
+ 	struct rte_pci_addr *pci_addr = &pci_dev->addr;
++	struct pmd_internals *internals = dev->process_private;
+ 
+ 	nfb_eth_dev_close(dev);
+ 
++	rte_free(internals);
++
+ 	NFB_LOG(INFO, "NFB device (" PCI_PRI_FMT ") successfully uninitialized",
+ 		pci_addr->domain, pci_addr->bus, pci_addr->devid,
+ 		pci_addr->function);
+@@ -644,7 +657,7 @@ nfb_eth_pci_probe(struct rte_pci_driver *pci_drv __rte_unused,
+ 		struct rte_pci_device *pci_dev)
+ {
+ 	return rte_eth_dev_pci_generic_probe(pci_dev,
+-		sizeof(struct pmd_internals), nfb_eth_dev_init);
++		sizeof(struct pmd_priv), nfb_eth_dev_init);
+ }
+ 
+ /**
+diff --git a/drivers/net/nfb/nfb_rx.c b/drivers/net/nfb/nfb_rx.c
+index 462bc3b50d..413d275853 100644
+--- a/drivers/net/nfb/nfb_rx.c
++++ b/drivers/net/nfb/nfb_rx.c
+@@ -60,7 +60,7 @@ nfb_eth_rx_queue_setup(struct rte_eth_dev *dev,
+ 		const struct rte_eth_rxconf *rx_conf __rte_unused,
+ 		struct rte_mempool *mb_pool)
+ {
+-	struct pmd_internals *internals = dev->data->dev_private;
++	struct pmd_internals *internals = dev->process_private;
+ 
+ 	struct ndp_rx_queue *rxq;
+ 	int ret;
+diff --git a/drivers/net/nfb/nfb_rxmode.c b/drivers/net/nfb/nfb_rxmode.c
+index ca6e4d5578..dc560d638b 100644
+--- a/drivers/net/nfb/nfb_rxmode.c
++++ b/drivers/net/nfb/nfb_rxmode.c
+@@ -11,7 +11,7 @@ int
+ nfb_eth_promiscuous_enable(struct rte_eth_dev *dev)
+ {
+ 	struct pmd_internals *internals = (struct pmd_internals *)
+-		dev->data->dev_private;
++		dev->process_private;
+ 	uint16_t i;
+ 
+ 	for (i = 0; i < internals->max_rxmac; ++i) {
+@@ -26,7 +26,7 @@ int
+ nfb_eth_promiscuous_disable(struct rte_eth_dev *dev)
+ {
+ 	struct pmd_internals *internals = (struct pmd_internals *)
+-		dev->data->dev_private;
++		dev->process_private;
+ 	uint16_t i;
+ 	enum nc_rxmac_mac_filter filter = RXMAC_MAC_FILTER_TABLE_BCAST;
+ 
+@@ -44,7 +44,7 @@ int
+ nfb_eth_promiscuous_get(struct rte_eth_dev *dev)
+ {
+ 	struct pmd_internals *internals = (struct pmd_internals *)
+-		dev->data->dev_private;
++		dev->process_private;
+ 
+ 	struct nc_rxmac_status status;
+ 	status.mac_filter = RXMAC_MAC_FILTER_PROMISCUOUS;
+@@ -59,7 +59,7 @@ int
+ nfb_eth_allmulticast_enable(struct rte_eth_dev *dev)
+ {
+ 	struct pmd_internals *internals = (struct pmd_internals *)
+-		dev->data->dev_private;
++		dev->process_private;
+ 
+ 	uint16_t i;
+ 	if (dev->data->promiscuous)
+@@ -76,7 +76,7 @@ int
+ nfb_eth_allmulticast_disable(struct rte_eth_dev *dev)
+ {
+ 	struct pmd_internals *internals = (struct pmd_internals *)
+-		dev->data->dev_private;
++		dev->process_private;
+ 
+ 	uint16_t i;
+ 
+@@ -95,7 +95,7 @@ int
+ nfb_eth_allmulticast_get(struct rte_eth_dev *dev)
+ {
+ 	struct pmd_internals *internals = (struct pmd_internals *)
+-		dev->data->dev_private;
++		dev->process_private;
+ 
+ 	struct nc_rxmac_status status;
+ 	status.mac_filter = RXMAC_MAC_FILTER_PROMISCUOUS;
+diff --git a/drivers/net/nfb/nfb_tx.c b/drivers/net/nfb/nfb_tx.c
+index cf99268c43..1f997ce22f 100644
+--- a/drivers/net/nfb/nfb_tx.c
++++ b/drivers/net/nfb/nfb_tx.c
+@@ -53,7 +53,7 @@ nfb_eth_tx_queue_setup(struct rte_eth_dev *dev,
+ 	unsigned int socket_id,
+ 	const struct rte_eth_txconf *tx_conf __rte_unused)
+ {
+-	struct pmd_internals *internals = dev->data->dev_private;
++	struct pmd_internals *internals = dev->process_private;
+ 	int ret;
+ 	struct ndp_tx_queue *txq;
+ 
 -- 
 2.52.0
 
