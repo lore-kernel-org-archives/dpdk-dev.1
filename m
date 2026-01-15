@@ -2,65 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01BFAD46634
-	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Jan 2026 23:01:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EC51D46634
+	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Jan 2026 23:01:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 85D544025D;
-	Fri, 16 Jan 2026 00:01:33 +0100 (CET)
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com
- [209.85.128.53]) by mails.dpdk.org (Postfix) with ESMTP id 37A954014F
- for <dev@dpdk.org>; Fri, 16 Jan 2026 00:01:31 +0100 (CET)
-Received: by mail-wm1-f53.google.com with SMTP id
- 5b1f17b1804b1-47ee807a4c5so10800955e9.2
- for <dev@dpdk.org>; Thu, 15 Jan 2026 15:01:31 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 006B4427BE;
+	Fri, 16 Jan 2026 00:01:35 +0100 (CET)
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com
+ [209.85.128.45]) by mails.dpdk.org (Postfix) with ESMTP id E5D1D4014F
+ for <dev@dpdk.org>; Fri, 16 Jan 2026 00:01:32 +0100 (CET)
+Received: by mail-wm1-f45.google.com with SMTP id
+ 5b1f17b1804b1-4801d98cf39so3788325e9.1
+ for <dev@dpdk.org>; Thu, 15 Jan 2026 15:01:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=dyna-nic.com; s=google; t=1768518090; x=1769122890; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=8bf7ULBXMP8byxH6iulNJKMxN+AIO+E6qMKChMqABGo=;
- b=LcCeW0SBFquVg4c7pkdrb1kjHKw3AW4aiII9W7JjMbehRS1fWxjyubyzxVshG6pPdv
- iLjydLcJo7dyE3IWP3ZA3vz74a4OEsdVt/Tqb3kR4UwKeHWsAIf+vNQlJYubvosBTtk3
- QADgR4VEocy7LD9k4z6V2Xm+8IhJjsO+L2mg34LEwkb6U7XZziSo4oLlXZo9Mhk96dki
- ngK734R8f0UK2hcMl5qrq6y2YNxqE20KcNw8TIyqvVIiAwez/hdsQGCxYjUNkgevTAu+
- pLBLtmDOqDc6uivLjUsh3GDy5XOuW/wZ4lLlYvTd7RL4LhAo1TBjWBsikX7djwhYs1QG
- DQFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768518090; x=1769122890;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ d=dyna-nic.com; s=google; t=1768518092; x=1769122892; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=8bf7ULBXMP8byxH6iulNJKMxN+AIO+E6qMKChMqABGo=;
- b=snguPdZ/bIL2iuByan3axdYTwP9iUtVbIW2tdyWso4urAiDO1QlY+jygsv7Z0DlDhA
- /hnV9RSWbC+dctCcFvS9Q2Sp+IOYSM3auYYJCLXpp/eRtZxqpIKLC0zcXYkDGX+tMHqq
- ENkZRUaIvaoN5ng4pnfyF3L2ogRQbZf+GuxYAUtlHmFQRm/LehPeBWUHfTJltOZtGZe9
- PudVzualoXrM1jxt+9fjIwePaBJDXYZs65EjuJLXnfY3xT9oPzH+cRBttMjTwOjl64Xi
- YC4Cc8MUjW32SW6/JRTphK6cr1GT+T4x6Ts9Iag7isibDQylO3PcKTFlrLECqpfu0F2H
- 13Qg==
-X-Gm-Message-State: AOJu0YyHP7gTjDY8iDEgl70gdIGRCQhDbBJ/IGrENl4W9C2uSWAnB2de
- s1f9RTQB5GvteEx/9pk1SZnC6v5+f5Z+WxEoHOESmWEC82D/uZ9pcUh0T6BSzdis5PYo9sHfstV
- B4aOE
-X-Gm-Gg: AY/fxX7K1po7us8OL61DOuR8nSrGtEMt2dnffTsInCNZfVcA0Gm3vBFQGkrvYXZ4Rep
- llfluLi3Y8ahWf+xqVmmQVpZwHtBXVaqjXRyJWxofnS1T0Ql3A5FX6kGC+09adf/h0kKssizaS9
- aJA+x/hyC5v1yeT5kZnyLbdfMFFVHuRr5o7lsD5SGnLzXWglehP4dsl55ZqxlYoqOuID6/q/4rm
- 8rTeLMJGwlKXusLV5eeF2fOdb9Vd9nJVkBA13L4PIq5f0wrVm1egYrpauXgPK1idpDI04c+l90Z
- B0+O02lP25hv6/eE3nunQmJqXR4X1aa0AtXR66TGKQjIIKtIhyUjpSSvz/XezCHQYZVTKrqVNjX
- sGSTgyT1RQ3L+K9SvCKMfZeLmtHq/MK75088yCLDStAc11gbFuUJyAiM7cR7EXQZ+hCGX0n06f1
- C4d8ODtTrC46eIqnqRPQrA3VGjw5/hsCHsckme6TNu2ysEcGahSN5I1AQSclCeEA==
-X-Received: by 2002:a05:600c:8685:b0:47a:975b:e3e6 with SMTP id
- 5b1f17b1804b1-4801eb035e1mr4875225e9.18.1768518090201; 
- Thu, 15 Jan 2026 15:01:30 -0800 (PST)
+ bh=Ze9ageluBUa5LL0gOdxGYjPxZevTRcErGk/hvG4DLbw=;
+ b=aCfTtSBI+Xa6fo48N8CBpyLNAIAuUu9ePMYe0dZSN9vBjUxe2iQWLilpJ+N+WQHvgb
+ FdtnKr0XGKlEqrb7TLz0kdOjACzb9G9nQlvrcPYQ3UH2ZCEcBFQU2ix+UViFWWRuqW00
+ BP/fMjm3YntMxtcXrB8Iv1zX0COLoNAv954v/YenPKXPxjqMtk/sQ+TAWo6/9sddLgA0
+ lWX034cGQbiB2rGBUgq8S7MtaLzHWh3sM5KzGzlRTTV2G6PEmYFjSeOImGiwntXRpMa8
+ HDyb9CgOKmfT+ZtSQ9xsCXY4Kb3G8QFIw54O/O5LHZVpxSX6Mkr2Hs9GRXQS8FcgLEOq
+ dPRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1768518092; x=1769122892;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=Ze9ageluBUa5LL0gOdxGYjPxZevTRcErGk/hvG4DLbw=;
+ b=Ll/F87Ab7TNFE8lWOfKucVhzTHdkWwq2ySs8Gn3rr2xCGqZN8r4ckRSMyyIeCW/tLm
+ xW6DKYlpo8Ltpxp5TJXcUs4nGumetUA0KoDOjAInqRf6F7rqMORf9PnLF03rrZO0kd57
+ 41YKDIBGARmEGgFMhGBXquEfiMBXT3vYzebVriR+W5bM3dx9m35jRT8GrnNESH+rK61a
+ uW+6BNb5PL3vhkFbNmBP52/I0JH33ejUSBCamDINYax3GCIUbrrFechQW+mVXLnMOkqk
+ HdRgd6NaJnxnqn5o1z7cgQYjAZhfCyStuC0QaPdC9scb8DcKwO0eREe+8sSUQe8U+6AH
+ eOlQ==
+X-Gm-Message-State: AOJu0YyZimxPJjop4zVWCRU5m/fCRaDC9CPf7xUCqaQizI8a0InSFwxc
+ M0drCQu63pTY/Y9TBUgxsYhvGudRLBYbbBDfNCvZUJmbd/TZ500WmtDE97Ej7uizLg/fRZj/0v3
+ WXJ+3
+X-Gm-Gg: AY/fxX6vpMDab/7smxV0QzYb8gck7QtHWS91sLIdjXu3OdBZNPmhL3Z8QgzvBJF8guv
+ C3L3q9kPFkXccqnYK+zyMiyb6qZDff3z8sqENWpR1H7vwoj4YUM/VAbuNuowqKl0/0/U6Abd9EK
+ rpIYrSs9vcd99mqWfopG4/mxLch7pdk2z0M+gdSlgkVs0U24ZDN6w9E9Ln7PLN9jzcvqJbK5TTL
+ aldwGS1xE+2n+24BzVOgNo994uPwnGZK8GAY7c4Fg2dviEoOopR+ARL90bX0piILc6XA8VfzqQ7
+ 8N+dk7o6tJl90l5yd2mfAC+k0DKNPdxNWoFgEAc/nD2W3nI+L7dFFYJuJdbLP9cnO6a/7ptOoSp
+ YK5vILS+WZgf+JyYV+ck182U97GVLMHwqOXrT9XnJ2cEgQ0ExRWXH6vS2em8xdRAEB0rqUfYkwF
+ 7BGF7T9XgaGs4VaIIldAhzokTgLlAeX9o/Xd4es0uRNv2lGwrZSsU=
+X-Received: by 2002:a05:6000:2307:b0:432:5c43:5f with SMTP id
+ ffacd0b85a97d-4356a053ea4mr1121608f8f.40.1768518092299; 
+ Thu, 15 Jan 2026 15:01:32 -0800 (PST)
 Received: from dpdk-test3.liberouter.org (rt-tmc-kou.liberouter.org.
  [195.113.172.126]) by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-43569921dedsm1572918f8f.9.2026.01.15.15.01.29
+ ffacd0b85a97d-43569921dedsm1572918f8f.9.2026.01.15.15.01.31
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 15 Jan 2026 15:01:29 -0800 (PST)
+ Thu, 15 Jan 2026 15:01:31 -0800 (PST)
 From: Lukas Sismis <sismis@dyna-nic.com>
 To: dev@dpdk.org
 Cc: Lukas Sismis <sismis@dyna-nic.com>
-Subject: [PATCH v3 0/7] flow_parser: add shared parser library
-Date: Fri, 16 Jan 2026 00:01:06 +0100
-Message-ID: <cover.1768518003.git.sismis@dyna-nic.com>
+Subject: [PATCH v3 1/7] cmdline: include stddef.h for offsetof
+Date: Fri, 16 Jan 2026 00:01:07 +0100
+Message-ID: <4fc0de427d2cb295353260fc9c7e09603e1ad638.1768518003.git.sismis@dyna-nic.com>
 X-Mailer: git-send-email 2.43.7
+In-Reply-To: <cover.1768518003.git.sismis@dyna-nic.com>
+References: <cover.1768518003.git.sismis@dyna-nic.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -76,101 +79,33 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This series extracts the testpmd flow CLI parser into a reusable library,
-enabling external applications to parse rte_flow rules using testpmd syntax.
+Include <stddef.h> at the top of cmdline_parse.h before the
+fallback offsetof macro definition. This prevents macro
+redefinition warnings when building with MSVC which uses /WX
+(warnings as errors).
 
-Motivation
-----------
-External applications like Suricata IDS [1] need to express hardware filtering
-rules in a consistent, human-readable format. Rather than inventing custom
-syntax, reusing testpmd's well-tested flow grammar provides immediate
-compatibility with existing documentation and user knowledge.
+The standard header provides offsetof on all platforms, and
+including it first ensures the fallback is only used when truly
+needed.
 
-Note: This library provides only one way to create rte_flow structures.
-Applications can also construct rte_flow_attr, rte_flow_item[], and
-rte_flow_action[] directly in C code.
+Signed-off-by: Lukas Sismis <sismis@dyna-nic.com>
+---
+ lib/cmdline/cmdline_parse.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Design
-------
-The library (librte_flow_parser) exposes, among others, the following APIs:
-- rte_flow_parser_parse(): Parse command strings into structured output
-- rte_flow_parser_parse_attr_str(): Parse attributes only
-- rte_flow_parser_parse_pattern_str(): Parse patterns only
-- rte_flow_parser_parse_actions_str(): Parse actions only
-
-Testpmd is updated to use the shared library, ensuring a single
-maintained parser implementation.
-
-Testing and Demo
--------
-- Functional tests in dpdk-test
-- Example application: examples/flow_parsing
-
-Changes
--------
-
-v3:
-- Add more functional tests
-- More concise MAINTAINERS updates
-- Updated license headers
-- A thing to note: When playing with flow commands, I figured, some may use
-  non-flow commands, such as raw decap/encap, policy meter and others.
-  Flow parser library itself now supports `set` command to set e.g. the decap/
-  encap parameters, as the flow syntax only supports defining the index of the
-  encap/decap configs. The library, however, does not support e.g. `create`
-  command to create policy meters, as that is just an ID and it can be created
-  separately using rte_meter APIs.
-
-[1] https://github.com/OISF/suricata/pull/13950
-
-Lukas Sismis (7):
-  cmdline: include stddef.h for offsetof
-  flow_parser: add shared parser library
-  app/testpmd: use shared flow parser library
-  examples/flow_parsing: add flow parser demo
-  dpdk-test: add flow parser library functional tests
-  mailmap: update a new contributor email
-  dts: fix invalid f-string syntax in testpmd API
-
- .mailmap                                      |     2 +-
- MAINTAINERS                                   |     6 +-
- app/test-pmd/cmd_flex_item.c                  |    41 +-
- app/test-pmd/cmdline.c                        |   254 +-
- app/test-pmd/config.c                         |   112 +-
- app/test-pmd/flow_parser.c                    |   406 +
- app/test-pmd/flow_parser.h                    |     8 +
- app/test-pmd/flow_parser_cli.c                |   149 +
- app/test-pmd/meson.build                      |     5 +-
- app/test-pmd/testpmd.c                        |     4 +
- app/test-pmd/testpmd.h                        |   126 +-
- app/test/meson.build                          |     1 +
- app/test/test_flow_parser.c                   |   698 +
- doc/guides/prog_guide/flow_parser_lib.rst     |   140 +
- doc/guides/prog_guide/index.rst               |     1 +
- doc/guides/rel_notes/release_26_03.rst        |     9 +
- dts/api/testpmd/__init__.py                   |     8 +-
- examples/flow_parsing/main.c                  |   288 +
- examples/flow_parsing/meson.build             |    11 +
- examples/meson.build                          |     1 +
- lib/cmdline/cmdline_parse.h                   |     2 +
- lib/ethdev/rte_ethdev.c                       |   107 +
- lib/ethdev/rte_ethdev.h                       |    60 +
- lib/flow_parser/meson.build                   |     6 +
- .../flow_parser/rte_flow_parser.c             | 11320 ++++++++--------
- lib/flow_parser/rte_flow_parser.h             |  1306 ++
- lib/meson.build                               |     2 +
- 27 files changed, 9300 insertions(+), 5773 deletions(-)
- create mode 100644 app/test-pmd/flow_parser.c
- create mode 100644 app/test-pmd/flow_parser.h
- create mode 100644 app/test-pmd/flow_parser_cli.c
- create mode 100644 app/test/test_flow_parser.c
- create mode 100644 doc/guides/prog_guide/flow_parser_lib.rst
- create mode 100644 examples/flow_parsing/main.c
- create mode 100644 examples/flow_parsing/meson.build
- create mode 100644 lib/flow_parser/meson.build
- rename app/test-pmd/cmdline_flow.c => lib/flow_parser/rte_flow_parser.c (55%)
- create mode 100644 lib/flow_parser/rte_flow_parser.h
-
+diff --git a/lib/cmdline/cmdline_parse.h b/lib/cmdline/cmdline_parse.h
+index d9a7d86256..c4131e4af5 100644
+--- a/lib/cmdline/cmdline_parse.h
++++ b/lib/cmdline/cmdline_parse.h
+@@ -7,6 +7,8 @@
+ #ifndef _CMDLINE_PARSE_H_
+ #define _CMDLINE_PARSE_H_
+ 
++#include <stddef.h>
++
+ #ifdef __cplusplus
+ extern "C" {
+ #endif
 -- 
 2.43.7
 
