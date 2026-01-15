@@ -2,40 +2,37 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AFA3D44C59
-	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Jan 2026 14:41:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94063D44C63
+	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Jan 2026 15:17:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 89BF1427E4;
-	Thu, 15 Jan 2026 15:41:17 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id CB7C240BA6;
+	Thu, 15 Jan 2026 16:17:04 +0100 (CET)
 Received: from office2.cesnet.cz (office2.cesnet.cz [78.128.248.237])
- by mails.dpdk.org (Postfix) with ESMTP id 4B7A1410E3
- for <dev@dpdk.org>; Thu, 15 Jan 2026 15:41:10 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 8836B4003C
+ for <dev@dpdk.org>; Thu, 15 Jan 2026 16:17:03 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cesnet.cz;
- s=office2-2020; t=1768488070;
- bh=+q2nEyUh17YNhQcs3ne7IkPe5AyKHFnT0DOKXwspicU=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References;
- b=dTzVChkhve4+KEyhndPNEKN3SqXb3NhuqJ3cuJjce3Rgeg09i9n349o5LK0YTTV2I
- KWMzzSHnv5U/VS5/hddcahJLD+fuqGPjcd+ul1r5LbXMepOm/wDXjS3/Rue4gPknHL
- R7sCvuvdgNKFvKwpNTj2+HQA9JV7o3ZS4YHnvQzT/7AwcqyYcQXUnLwrsT/K0JHs6+
- TApr3wTXBrvpmFX5tNWzr9mLWWZxgXi9ozjBuBDcGEUDxMhWfru7VdZLGipsdVy692
- HtOUybkTLTpxCDURAMIVtv4upgMzkhayT56W7h7snR0mu5aQtm4LEDHaVbvuq+u8AP
- m9MSidMj37/+A==
+ s=office2-2020; t=1768490223;
+ bh=mc6Nl7yU/I9cabKvkt59HgrjYMYdj18ekWPe4y6iS/0=;
+ h=From:To:Cc:Subject:Date;
+ b=K2DLxiQkFmla0bhsC0B3xHud+EB+zlgnyYxJpngp0iTegKLRw19hR6S52FqTwG744
+ xMVrFh8RRERbBOq37C+Jz2kEaC6/AgZ212k546M59UrmfAFBQEclJO58fC9Ogdj08U
+ 4YDD0QQ59mfetjw2yBgVSBGz4sY96Xehd2HbxXn8o9vH4ydt08u6X5I9LfjYDHnJZF
+ nFRf2TGyKtHwboPZvkgcM3kGJRQF5KVPzUlc8acK4GwGt4igcEmVqE3lokuZeMazEW
+ iSd+fppcRgv/fIK2nHO4cyzhiBqy/mlokoJl/XOcGjuhHdWD0GSJ6he8x6v9Ofi8cV
+ YOciZRXbr+k9Q==
 Received: from emil.cesnet.cz (gtx107.cesnet.cz [IPv6:2001:718:812:27::107])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by office2.cesnet.cz (Postfix) with ESMTPSA id 21ECC1180072;
- Thu, 15 Jan 2026 15:41:10 +0100 (CET)
+ by office2.cesnet.cz (Postfix) with ESMTPSA id 31CBC1180082;
+ Thu, 15 Jan 2026 16:17:03 +0100 (CET)
 From: spinler@cesnet.cz
 To: dev@dpdk.org
 Cc: Martin Spinler <spinler@cesnet.cz>
-Subject: [PATCH v2 6/6] net/nfb: stop only started queues in fail path
-Date: Thu, 15 Jan 2026 15:40:40 +0100
-Message-ID: <20260115144040.345873-7-spinler@cesnet.cz>
+Subject: [PATCH 0/8] net/nfb: rework to real multiport
+Date: Thu, 15 Jan 2026 16:16:48 +0100
+Message-ID: <20260115151656.393106-1-spinler@cesnet.cz>
 X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20260115144040.345873-1-spinler@cesnet.cz>
-References: <20260115140134.235877-1-spinler@cesnet.cz>
- <20260115144040.345873-1-spinler@cesnet.cz>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -53,35 +50,38 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Martin Spinler <spinler@cesnet.cz>
 
-The driver should stop only running queues in case of error
-inside eth_dev_start.
+This series implements real multiport for better user experience.
 
-Signed-off-by: Martin Spinler <spinler@cesnet.cz>
+The existing driver creates one ethdev/port for one PCI device.
+As the CESNET-NDK based cards aren't capable to represent each
+Ethernet port by own PCI device, new driver implementation
+processes real port configuration from firmware/card and switches
+from rte_eth_dev_pci_generic_probe to multiple rte_eth_dev_create calls.
+
 ---
- drivers/net/nfb/nfb_ethdev.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+Depends-on: series-37064 ("net/nfb: code cleanup")
 
-diff --git a/drivers/net/nfb/nfb_ethdev.c b/drivers/net/nfb/nfb_ethdev.c
-index 23f3896c36..74728f91dd 100644
---- a/drivers/net/nfb/nfb_ethdev.c
-+++ b/drivers/net/nfb/nfb_ethdev.c
-@@ -140,11 +140,12 @@ nfb_eth_dev_start(struct rte_eth_dev *dev)
- 	return 0;
- 
- err_tx:
--	for (i = 0; i < nb_tx; i++)
--		nfb_eth_tx_queue_stop(dev, i);
-+	for (; i > 0; i--)
-+		nfb_eth_tx_queue_stop(dev, i - 1);
-+	i = nb_rx;
- err_rx:
--	for (i = 0; i < nb_rx; i++)
--		nfb_eth_rx_queue_stop(dev, i);
-+	for (; i > 0; i--)
-+		nfb_eth_rx_queue_stop(dev, i - 1);
- 	return ret;
- }
- 
--- 
+Martin Spinler (8):
+  net/nfb: prepare for indirect queue mapping scheme
+  net/nfb: create ethdev for every eth port/channel
+  net/nfb: add vdev as alternative device probe method
+  net/nfb: add device argument "port" to limit used ports
+  net/nfb: init only MACs associated with device
+  net/nfb: add compatible cards to driver PCI ID table
+  net/nfb: report firmware version
+  doc/nfb: cleanup and update guide
+
+ doc/guides/nics/features/nfb.ini |   4 +
+ doc/guides/nics/nfb.rst          | 187 +++++++--------
+ drivers/net/nfb/meson.build      |   1 +
+ drivers/net/nfb/nfb.h            |  48 +++-
+ drivers/net/nfb/nfb_ethdev.c     | 399 +++++++++++++++++++++++--------
+ drivers/net/nfb/nfb_rx.c         |  21 +-
+ drivers/net/nfb/nfb_tx.c         |  21 +-
+ drivers/net/nfb/nfb_vdev.c       |  97 ++++++++
+ 8 files changed, 551 insertions(+), 227 deletions(-)
+ create mode 100644 drivers/net/nfb/nfb_vdev.c
+
+--
 2.52.0
 
