@@ -2,50 +2,65 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C83F8D46613
-	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Jan 2026 19:04:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01BFAD46634
+	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Jan 2026 23:01:34 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4D99D42D89;
-	Thu, 15 Jan 2026 20:03:46 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
- by mails.dpdk.org (Postfix) with ESMTP id 94B6A427D3
- for <dev@dpdk.org>; Thu, 15 Jan 2026 20:03:42 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1768503823; x=1800039823;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=85fGW94x7aHBpSapZs56d3UovDukbJbk+nrWoF25Ego=;
- b=iCLE5umZxZOp7T+tkne3EARqIB8NHeZgr0aIJ7NBKydCL8vD8INtWZ3a
- DtXYBQuSCaYOlKZd2DWkcioXdmiNzS3lgtge8oI1R1fGuC6LJjYJuK/c0
- N95vooMMX/WH9ws7W69XlQq95fk9OI9pYw6TJOODIZE/hCqgOcJ514ujE
- td671t3rdPJnRQ79axhQD25RA4cL16wBoZA5Y8V7UKvv42beVNkR32Ggq
- QL2XE/AhlaKodM6kq/Xm5zCC8iWFYDTXrq5yJWjCq7/v97j+DzX3nXqa6
- lJbzXvAnjhUymzZfrPVQBWWMFHV2OHg+gktaivUh0yqurK2rNNAwfLQxX A==;
-X-CSE-ConnectionGUID: dMmBqsiqRgKxObfNxv5maQ==
-X-CSE-MsgGUID: xdNtbj4dQxOz9bwXMPnUvQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11672"; a="80461408"
-X-IronPort-AV: E=Sophos;i="6.21,229,1763452800"; d="scan'208";a="80461408"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
- by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 15 Jan 2026 11:03:42 -0800
-X-CSE-ConnectionGUID: yeMRhcMtTFKP73gambQyQA==
-X-CSE-MsgGUID: z3BE2BQLT1qHlONpxgRhYg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,229,1763452800"; d="scan'208";a="205307702"
-Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by fmviesa008.fm.intel.com with ESMTP; 15 Jan 2026 11:03:41 -0800
-From: Bruce Richardson <bruce.richardson@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 85D544025D;
+	Fri, 16 Jan 2026 00:01:33 +0100 (CET)
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com
+ [209.85.128.53]) by mails.dpdk.org (Postfix) with ESMTP id 37A954014F
+ for <dev@dpdk.org>; Fri, 16 Jan 2026 00:01:31 +0100 (CET)
+Received: by mail-wm1-f53.google.com with SMTP id
+ 5b1f17b1804b1-47ee807a4c5so10800955e9.2
+ for <dev@dpdk.org>; Thu, 15 Jan 2026 15:01:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=dyna-nic.com; s=google; t=1768518090; x=1769122890; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=8bf7ULBXMP8byxH6iulNJKMxN+AIO+E6qMKChMqABGo=;
+ b=LcCeW0SBFquVg4c7pkdrb1kjHKw3AW4aiII9W7JjMbehRS1fWxjyubyzxVshG6pPdv
+ iLjydLcJo7dyE3IWP3ZA3vz74a4OEsdVt/Tqb3kR4UwKeHWsAIf+vNQlJYubvosBTtk3
+ QADgR4VEocy7LD9k4z6V2Xm+8IhJjsO+L2mg34LEwkb6U7XZziSo4oLlXZo9Mhk96dki
+ ngK734R8f0UK2hcMl5qrq6y2YNxqE20KcNw8TIyqvVIiAwez/hdsQGCxYjUNkgevTAu+
+ pLBLtmDOqDc6uivLjUsh3GDy5XOuW/wZ4lLlYvTd7RL4LhAo1TBjWBsikX7djwhYs1QG
+ DQFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1768518090; x=1769122890;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=8bf7ULBXMP8byxH6iulNJKMxN+AIO+E6qMKChMqABGo=;
+ b=snguPdZ/bIL2iuByan3axdYTwP9iUtVbIW2tdyWso4urAiDO1QlY+jygsv7Z0DlDhA
+ /hnV9RSWbC+dctCcFvS9Q2Sp+IOYSM3auYYJCLXpp/eRtZxqpIKLC0zcXYkDGX+tMHqq
+ ENkZRUaIvaoN5ng4pnfyF3L2ogRQbZf+GuxYAUtlHmFQRm/LehPeBWUHfTJltOZtGZe9
+ PudVzualoXrM1jxt+9fjIwePaBJDXYZs65EjuJLXnfY3xT9oPzH+cRBttMjTwOjl64Xi
+ YC4Cc8MUjW32SW6/JRTphK6cr1GT+T4x6Ts9Iag7isibDQylO3PcKTFlrLECqpfu0F2H
+ 13Qg==
+X-Gm-Message-State: AOJu0YyHP7gTjDY8iDEgl70gdIGRCQhDbBJ/IGrENl4W9C2uSWAnB2de
+ s1f9RTQB5GvteEx/9pk1SZnC6v5+f5Z+WxEoHOESmWEC82D/uZ9pcUh0T6BSzdis5PYo9sHfstV
+ B4aOE
+X-Gm-Gg: AY/fxX7K1po7us8OL61DOuR8nSrGtEMt2dnffTsInCNZfVcA0Gm3vBFQGkrvYXZ4Rep
+ llfluLi3Y8ahWf+xqVmmQVpZwHtBXVaqjXRyJWxofnS1T0Ql3A5FX6kGC+09adf/h0kKssizaS9
+ aJA+x/hyC5v1yeT5kZnyLbdfMFFVHuRr5o7lsD5SGnLzXWglehP4dsl55ZqxlYoqOuID6/q/4rm
+ 8rTeLMJGwlKXusLV5eeF2fOdb9Vd9nJVkBA13L4PIq5f0wrVm1egYrpauXgPK1idpDI04c+l90Z
+ B0+O02lP25hv6/eE3nunQmJqXR4X1aa0AtXR66TGKQjIIKtIhyUjpSSvz/XezCHQYZVTKrqVNjX
+ sGSTgyT1RQ3L+K9SvCKMfZeLmtHq/MK75088yCLDStAc11gbFuUJyAiM7cR7EXQZ+hCGX0n06f1
+ C4d8ODtTrC46eIqnqRPQrA3VGjw5/hsCHsckme6TNu2ysEcGahSN5I1AQSclCeEA==
+X-Received: by 2002:a05:600c:8685:b0:47a:975b:e3e6 with SMTP id
+ 5b1f17b1804b1-4801eb035e1mr4875225e9.18.1768518090201; 
+ Thu, 15 Jan 2026 15:01:30 -0800 (PST)
+Received: from dpdk-test3.liberouter.org (rt-tmc-kou.liberouter.org.
+ [195.113.172.126]) by smtp.gmail.com with ESMTPSA id
+ ffacd0b85a97d-43569921dedsm1572918f8f.9.2026.01.15.15.01.29
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Thu, 15 Jan 2026 15:01:29 -0800 (PST)
+From: Lukas Sismis <sismis@dyna-nic.com>
 To: dev@dpdk.org
-Cc: Bruce Richardson <bruce.richardson@intel.com>,
- Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v3 7/7] usertools/telemetry-watcher: support reconnection
-Date: Thu, 15 Jan 2026 19:03:31 +0000
-Message-ID: <20260115190331.3721281-8-bruce.richardson@intel.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20260115190331.3721281-1-bruce.richardson@intel.com>
-References: <20251210165532.103450-1-bruce.richardson@intel.com>
- <20260115190331.3721281-1-bruce.richardson@intel.com>
+Cc: Lukas Sismis <sismis@dyna-nic.com>
+Subject: [PATCH v3 0/7] flow_parser: add shared parser library
+Date: Fri, 16 Jan 2026 00:01:06 +0100
+Message-ID: <cover.1768518003.git.sismis@dyna-nic.com>
+X-Mailer: git-send-email 2.43.7
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -61,179 +76,101 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Allow the watcher binary to run even when there is no DPDK process
-running. In that case, wait for a suitable process to start and begin
-monitoring then. In case of disconnection, keep trying to reconnect and
-resume once reconnection succeeds.
+This series extracts the testpmd flow CLI parser into a reusable library,
+enabling external applications to parse rte_flow rules using testpmd syntax.
 
-Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
-Acked-by: Stephen Hemminger <stephen@networkplumber.org>
----
- doc/guides/rel_notes/release_26_03.rst |  7 ++++
- doc/guides/tools/telemetrywatcher.rst  |  6 +++
- usertools/dpdk-telemetry-watcher.py    | 52 ++++++++++++++++++++------
- 3 files changed, 53 insertions(+), 12 deletions(-)
+Motivation
+----------
+External applications like Suricata IDS [1] need to express hardware filtering
+rules in a consistent, human-readable format. Rather than inventing custom
+syntax, reusing testpmd's well-tested flow grammar provides immediate
+compatibility with existing documentation and user knowledge.
 
-diff --git a/doc/guides/rel_notes/release_26_03.rst b/doc/guides/rel_notes/release_26_03.rst
-index 15dabee7a1..a418491daf 100644
---- a/doc/guides/rel_notes/release_26_03.rst
-+++ b/doc/guides/rel_notes/release_26_03.rst
-@@ -55,6 +55,13 @@ New Features
-      Also, make sure to start the actual text at the margin.
-      =======================================================
- 
-+* **Added Script for Real-time Telemetry Monitoring.**
-+
-+  Introduced the `dpdk-telemetry-watcher.py` script, enabling users to monitor
-+  real-time telemetry statistics from running DPDK applications.
-+  The tool supports customizable display options, including delta values,
-+  total statistics, and single-line output for compact monitoring.
-+
- 
- Removed Items
- -------------
-diff --git a/doc/guides/tools/telemetrywatcher.rst b/doc/guides/tools/telemetrywatcher.rst
-index 99e51881ff..070a93223f 100644
---- a/doc/guides/tools/telemetrywatcher.rst
-+++ b/doc/guides/tools/telemetrywatcher.rst
-@@ -12,6 +12,12 @@ It wraps the ``dpdk-telemetry.py`` script to provide real-time statistics displa
- Running the Application
- -----------------------
- 
-+The watcher tool can be run at any time, whether or not a DPDK application is currently running.
-+When a DPDK application with telemetry enabled starts
-+(assuming correct file-prefix and instance are specified),
-+the watcher will automatically connect and begin displaying the requested statistics.
-+If the DPDK application stops, the watcher will attempt to reconnect when the application restarts.
-+
- The tool has a number of command line options:
- 
- .. code-block:: console
-diff --git a/usertools/dpdk-telemetry-watcher.py b/usertools/dpdk-telemetry-watcher.py
-index 9685ffa01f..bd5dc92fe6 100755
---- a/usertools/dpdk-telemetry-watcher.py
-+++ b/usertools/dpdk-telemetry-watcher.py
-@@ -85,6 +85,12 @@ def create_telemetry_process(telemetry_script, args_list):
-             text=True,
-             bufsize=1,  # Line buffered
-         )
-+
-+        # Get and display the connected application name
-+        if not print_connected_app(process):
-+            return None
-+        process.script = telemetry_script  # Store script path for reference
-+        process.args = args_list  # Store args for reference
-         return process
-     except FileNotFoundError:
-         print("Error: Python interpreter or script not found", file=sys.stderr)
-@@ -102,15 +108,32 @@ def query_telemetry(process, command):
-         command: The telemetry command to send (e.g., "/info" or "/ethdev/stats,0")
- 
-     Returns:
--        dict: The parsed JSON response with the command wrapper stripped,
-+        (process, dict): The process handle, in case of reconnection, and the
-+              parsed JSON response with the command wrapper stripped,
-               or None if there was an error
-     """
-+    # Handle case where process is None
-+    if process is None:
-+        return (None, None)
-+
-     # Send the command
-     process.stdin.write(f"{command}\n")
-     process.stdin.flush()
- 
--    # Read the JSON response
-+    # Read the JSON response, reconnecting if necessary
-     response = process.stdout.readline()
-+    while not response:
-+        script = process.script
-+        args_list = process.args
-+        process = None
-+        print("Application disconnected, retrying...", file=sys.stderr)
-+        while not process:
-+            time.sleep(1)
-+            process = create_telemetry_process(script, args_list)
-+        process.stdin.write(f"{command}\n")
-+        process.stdin.flush()
-+        response = process.stdout.readline()
-+
-     try:
-         data = json.loads(response)
-         # When run non-interactively, the response is wrapped with the command
-@@ -119,11 +142,11 @@ def query_telemetry(process, command):
-         # The response should have exactly one key which is the command
-         if len(data) == 1:
-             # Extract the value, ignoring the key
--            return next(iter(data.values()))
-+            return (process, next(iter(data.values())))
-         else:
--            return data
-+            return (process, data)
-     except (json.JSONDecodeError, KeyError):
--        return None
-+        return (None, None)
- 
- 
- def print_connected_app(process):
-@@ -132,11 +155,12 @@ def print_connected_app(process):
-     Args:
-         process: The subprocess.Popen handle to the telemetry process
-     """
--    info = query_telemetry(process, "/info")
-+    process, info = query_telemetry(process, "/info")
-     if info and "pid" in info:
-         app_name = get_app_name(info["pid"])
-         if app_name:
-             print(f'Connected to application: "{app_name}"')
-+    return process
- 
- 
- def expand_shortcuts(process, stat_specs):
-@@ -169,7 +193,7 @@ def expand_shortcuts(process, stat_specs):
-         field = field_map.get(field, field)
- 
-         # Get list of ethernet devices
--        port_list = query_telemetry(process, "/ethdev/list")
-+        process, port_list = query_telemetry(process, "/ethdev/list")
-         if not isinstance(port_list, list):
-             print(f"Error: Failed to get ethernet device list", file=sys.stderr)
-             return None
-@@ -216,7 +240,7 @@ def validate_stats(process, stat_specs):
-             return None, None
- 
-         # Query the stat once to validate it exists and is numeric
--        data = query_telemetry(process, command)
-+        process, data = query_telemetry(process, command)
-         if not isinstance(data, dict):
-             print(f"Error: Command '{command}' did not return a dictionary", file=sys.stderr)
-             return None, None
-@@ -276,7 +300,9 @@ def monitor_stats(process, args):
-             current_values = []
-             total = 0
-             for i, (spec, command, field) in enumerate(parsed_specs):
--                data = query_telemetry(process, command)
-+                process, data = query_telemetry(process, command)
-+                if not data:
-+                    continue
-                 current_value = data[field]
-                 current_values.append(current_value)
- 
-@@ -387,9 +413,11 @@ def main():
- 
-     # Run dpdk-telemetry.py with pipes for stdin and stdout
-     process = create_telemetry_process(telemetry_script, args_list)
--
--    # Get and display the connected application name
--    print_connected_app(process)
-+    if not process:
-+        print("Waiting for connection to DPDK application...", file=sys.stderr)
-+        while not process:
-+            time.sleep(1)
-+            process = create_telemetry_process(telemetry_script, args_list)
- 
-     # Monitor the requested statistics
-     monitor_stats(process, args)
+Note: This library provides only one way to create rte_flow structures.
+Applications can also construct rte_flow_attr, rte_flow_item[], and
+rte_flow_action[] directly in C code.
+
+Design
+------
+The library (librte_flow_parser) exposes, among others, the following APIs:
+- rte_flow_parser_parse(): Parse command strings into structured output
+- rte_flow_parser_parse_attr_str(): Parse attributes only
+- rte_flow_parser_parse_pattern_str(): Parse patterns only
+- rte_flow_parser_parse_actions_str(): Parse actions only
+
+Testpmd is updated to use the shared library, ensuring a single
+maintained parser implementation.
+
+Testing and Demo
+-------
+- Functional tests in dpdk-test
+- Example application: examples/flow_parsing
+
+Changes
+-------
+
+v3:
+- Add more functional tests
+- More concise MAINTAINERS updates
+- Updated license headers
+- A thing to note: When playing with flow commands, I figured, some may use
+  non-flow commands, such as raw decap/encap, policy meter and others.
+  Flow parser library itself now supports `set` command to set e.g. the decap/
+  encap parameters, as the flow syntax only supports defining the index of the
+  encap/decap configs. The library, however, does not support e.g. `create`
+  command to create policy meters, as that is just an ID and it can be created
+  separately using rte_meter APIs.
+
+[1] https://github.com/OISF/suricata/pull/13950
+
+Lukas Sismis (7):
+  cmdline: include stddef.h for offsetof
+  flow_parser: add shared parser library
+  app/testpmd: use shared flow parser library
+  examples/flow_parsing: add flow parser demo
+  dpdk-test: add flow parser library functional tests
+  mailmap: update a new contributor email
+  dts: fix invalid f-string syntax in testpmd API
+
+ .mailmap                                      |     2 +-
+ MAINTAINERS                                   |     6 +-
+ app/test-pmd/cmd_flex_item.c                  |    41 +-
+ app/test-pmd/cmdline.c                        |   254 +-
+ app/test-pmd/config.c                         |   112 +-
+ app/test-pmd/flow_parser.c                    |   406 +
+ app/test-pmd/flow_parser.h                    |     8 +
+ app/test-pmd/flow_parser_cli.c                |   149 +
+ app/test-pmd/meson.build                      |     5 +-
+ app/test-pmd/testpmd.c                        |     4 +
+ app/test-pmd/testpmd.h                        |   126 +-
+ app/test/meson.build                          |     1 +
+ app/test/test_flow_parser.c                   |   698 +
+ doc/guides/prog_guide/flow_parser_lib.rst     |   140 +
+ doc/guides/prog_guide/index.rst               |     1 +
+ doc/guides/rel_notes/release_26_03.rst        |     9 +
+ dts/api/testpmd/__init__.py                   |     8 +-
+ examples/flow_parsing/main.c                  |   288 +
+ examples/flow_parsing/meson.build             |    11 +
+ examples/meson.build                          |     1 +
+ lib/cmdline/cmdline_parse.h                   |     2 +
+ lib/ethdev/rte_ethdev.c                       |   107 +
+ lib/ethdev/rte_ethdev.h                       |    60 +
+ lib/flow_parser/meson.build                   |     6 +
+ .../flow_parser/rte_flow_parser.c             | 11320 ++++++++--------
+ lib/flow_parser/rte_flow_parser.h             |  1306 ++
+ lib/meson.build                               |     2 +
+ 27 files changed, 9300 insertions(+), 5773 deletions(-)
+ create mode 100644 app/test-pmd/flow_parser.c
+ create mode 100644 app/test-pmd/flow_parser.h
+ create mode 100644 app/test-pmd/flow_parser_cli.c
+ create mode 100644 app/test/test_flow_parser.c
+ create mode 100644 doc/guides/prog_guide/flow_parser_lib.rst
+ create mode 100644 examples/flow_parsing/main.c
+ create mode 100644 examples/flow_parsing/meson.build
+ create mode 100644 lib/flow_parser/meson.build
+ rename app/test-pmd/cmdline_flow.c => lib/flow_parser/rte_flow_parser.c (55%)
+ create mode 100644 lib/flow_parser/rte_flow_parser.h
+
 -- 
-2.51.0
+2.43.7
 
