@@ -2,71 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 131FCD4A603
-	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Jan 2026 06:46:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E7A6D4A605
+	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Jan 2026 06:47:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4AC8D40698;
-	Fri, 16 Jan 2026 07:46:54 +0100 (CET)
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com
- [209.85.208.44]) by mails.dpdk.org (Postfix) with ESMTP id 439014060F
- for <dev@dpdk.org>; Fri, 16 Jan 2026 07:46:52 +0100 (CET)
-Received: by mail-ed1-f44.google.com with SMTP id
- 4fb4d7f45d1cf-64b9cb94ff5so2509064a12.2
- for <dev@dpdk.org>; Thu, 15 Jan 2026 22:46:52 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id A244F42DA3;
+	Fri, 16 Jan 2026 07:46:55 +0100 (CET)
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com
+ [209.85.218.47]) by mails.dpdk.org (Postfix) with ESMTP id 7C246410D2
+ for <dev@dpdk.org>; Fri, 16 Jan 2026 07:46:54 +0100 (CET)
+Received: by mail-ej1-f47.google.com with SMTP id
+ a640c23a62f3a-b86ed375d37so224913366b.3
+ for <dev@dpdk.org>; Thu, 15 Jan 2026 22:46:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768546012;
- x=1769150812; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768546014;
+ x=1769150814; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=xJ+fRqM6EolvrK/rNCrRA30zBlYfOHd9NUQ1C9LLADo=;
- b=Wq3dBlZArKIy7jfHk+695fhfrjMckVNyYvkQ6mwH4Cjm8+8A4Cg1iqjT6U86/HtLbg
- XdqwMN5C5fuwigpi53UUv62LmHZaZPVfs1voLo2hreqKMkcQFiVr8ZUOAsb+kHiBL+TQ
- 5Bhk/0CmI2SEfhSmia0oLxKQXAtvEcoXHyBWOSY5CkYbPyVto6G7Bb5gyth+T0UTIzVm
- /QPwp4Qzn8+KrCnRh9zdlj6ieqDU0Lg2aKYhow+zxSw0e6mFbFN2VH2vtcVOJRj7tqiV
- 3DrbBgUJli1lRvasnjWSXtBHFH3jd5SHVgavNiLB9iOCNRC3yiaZV4waTuNlVHMdqE5m
- i7vQ==
+ bh=boQcwVjYbcBuQRxSEGP777zpG9Oh0PC1VgL38lUXTS4=;
+ b=lL/BRMC0qb0pa/A/ESul1Bod4b2FeTWBa0uf3Et4JbB8a6D1MjzHCjNhaZ06sTOs2i
+ PTrp1/RcRGZIvPUBBA3qAb7hovilhvG4nD5wjo/p7NQcOxW5NZAAmxV2wKfcYN+Oqj/b
+ IXNAhFB+soFf2Cz9GmnQYwouys2lJqS7L0eB9L6zLmdKAWzrornEGVLj53a6cHcz22of
+ Ec/wHOtbBhuyt+5EgUrm/Kt8XA6Fwram11vHuJSQK3vPHIMagKdFz5c+SOcaG6QlJmzw
+ OdeMv2sobb+5Ku1mtxqg7h50aGmK/8/ara1iWUJaBUgAV9avVcUp8wwC0Z4WRrXcMN3V
+ PiGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768546012; x=1769150812;
+ d=1e100.net; s=20230601; t=1768546014; x=1769150814;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=xJ+fRqM6EolvrK/rNCrRA30zBlYfOHd9NUQ1C9LLADo=;
- b=Pah+hYw7WjFG1AnR+S2ODArvncJj+MB4x9vbHgGvA/B/5nL6QvNx88NtdW5Mk3G35g
- ofv+RNpymurAFp24pmeTzh0w9YHRSk3o4ACBnsCMDT8qo+OT8ATyfgCna+MlpRrJvemA
- A7duDhA7IaJhD57BiOwCmCHoF3Z9IdJNJXGIlaUlQOAuc6Uiupt+CMBSQPMzUQ1HzmFE
- 93586kMHYAS8WMPTp+640w2McPDcBA53luL4fTVkWba/GxVvh5b+ED8zAUbNYt6H3XSK
- zzHY8TThjLFTDx1hamiLdmsB91Xl8ghqVmKQI9MIegkoog1u6KeMlY+8a7CaVdq18IgB
- 26Ew==
-X-Gm-Message-State: AOJu0YyiC3C38Rg9kw0r0ZreQAbFOa0KRVLGmEShbym2e5VqXTi9O9jm
- ZvfkEvpQPE7/69DxTiUB+D8YskTzH7nG73jSNVlJNC+M3vprM+jFFRUZZsATsj0QmOIFrSIplQI
- DWm0W
-X-Gm-Gg: AY/fxX6PsxJn/Zh0dneYO62OZVBNfrcl3fFngQebpfXpTWGB2SHcoOf3X8eKDrGbTyO
- 7AWjarhO0IKs+oOa1Pa9WgUfURL5qEbog3aQwWNHyswbnb7dk0bOvnOlo22vSzrCQlswWb0s89s
- 0N3dQQokakpzoWhbVZRdUKL5roeQIdfljZBzdzpUxYe2yngenQznMlPpSoPWnKQyClUbwyLBFxJ
- CwMR+MYaLRl4zzVAZE0q2mVIYhdusMwrbIGZ33AwVVS6K0OniGq5gDRpqt0W+m/dFJSx85XTwY5
- hpq52Z2nvze6k3JyLpXk8qMiDMofeYEEb/t1nroquZCfDJj3bEKSYE727o7rPnM9qxVAzU27LIX
- ohmu6vSjnG1upAlxFsA3/n77bwQv5mr5cO21VulgPVsPU6hxbbU/ku6GZmIVNssvDyHpQ72W3Tq
- lEqPyCPrawWWllnBxiD+WoeGi5/n5wmI9wtXsYy+RZJwKhXR3gVw==
-X-Received: by 2002:a17:907:7201:b0:b87:281b:1453 with SMTP id
- a640c23a62f3a-b879324d5bbmr183583466b.59.1768546011632; 
- Thu, 15 Jan 2026 22:46:51 -0800 (PST)
+ bh=boQcwVjYbcBuQRxSEGP777zpG9Oh0PC1VgL38lUXTS4=;
+ b=INAQTUCLv+zZUJo3YTyy/d7StKr9xb3hYuYVF8g+peUVQkYPqjnJR64cr9fC71HV9E
+ YxhIDGgbdozZzY7BPp3vvFW4kS3nYmXbwpSPq+gBj+LRe0V3xsQiPEj/CSWQ9vswR1NH
+ gZ9dkWmICyFQrXQWfIrsoNOfrgd6MRLtgPivjNMfU7C5HQYL37KJcnXdnXabWs8Zc5l7
+ KvoClhlN2O3j5fczLZArOWLnQy2JoiI3Na/8oGiY/tXhh5l64gHtjZerRuICdCqA1Un0
+ qLC6f0JuHkCMDzm4/ge6JN/G9OuVoEaZ8+SF3rHkAN3R5b1FKruu7ukiBOeWYR1xpIaM
+ VRCA==
+X-Gm-Message-State: AOJu0YwoSdKI7i3bkFLHSkwV/mfa/3psehCJNK6zkf4FK1yKrtLLBOrI
+ hrSubnWNzY2uAcvQmnWOUutQLTbFERTR72QEmzpDjYRBnmo0IOSAwClVIbi4I/kCdSs7ziQxh7g
+ tqYag
+X-Gm-Gg: AY/fxX5rSdqb07D/qwxrP4Lem0xZHPRhWzgX+OccYcoa+Za6+59QvP7g/4P6ocdP+cu
+ T86HDI32mEMPBsuRKUnyNRs9sfRVuyDnMuBqIeXck1rS4dX/cM2a3mBPzIWUq1I5lwAyH1qabl7
+ ikx2j72YnZtgdK9RKDI3HVzHwk32dMfwY6ypuAoV/9Yc1o95dhZwkBqnQ9CkREcJ0YjshmfzhYo
+ eKvSeaonjm5XmTZZDKHxPeOcYaY/5PK6a75hLJ0XC86A4Ob2RNNwt+x7j8rtmJVoeihj97fWAhx
+ kCnDqKPCKy5DUYgsewTeuAjgSZIXj33g8RhKSzpv2pNCozJP2oW2a/Iz3EGg+Q3Lp6R1599/iRA
+ FT/V8888lqnRlw+JWNV20TpmYBfrsVYYbjsKkomgQvGCnKEwayWAvQMe9eugeLe4cCDJXn6dgSF
+ 4GbpiCl5Xkxs+Wlb7m1fDHtdgkkFINxtP2z9n5xIX+94C9pVKrxw==
+X-Received: by 2002:a17:907:960b:b0:b83:15cb:d491 with SMTP id
+ a640c23a62f3a-b879323e471mr165147366b.53.1768546013520; 
+ Thu, 15 Jan 2026 22:46:53 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a640c23a62f3a-b879ae74639sm97172866b.9.2026.01.15.22.46.50
+ a640c23a62f3a-b879ae74639sm97172866b.9.2026.01.15.22.46.51
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 15 Jan 2026 22:46:51 -0800 (PST)
+ Thu, 15 Jan 2026 22:46:53 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v3 0/6] fix GCC warnings when building with LTO
-Date: Thu, 15 Jan 2026 22:46:21 -0800
-Message-ID: <20260116064646.224254-1-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Honnappa Nagarahalli <honnappa.nagarahalli@arm.com>,
+ Konstantin Ananyev <konstantin.ananyev@huawei.com>
+Subject: [PATCH v3 1/6] test/soring: fix buffer overflow warnings with LTO
+Date: Thu, 15 Jan 2026 22:46:22 -0800
+Message-ID: <20260116064646.224254-2-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251023194237.197681-1-stephen@networkplumber.org>
+In-Reply-To: <20260116064646.224254-1-stephen@networkplumber.org>
 References: <20251023194237.197681-1-stephen@networkplumber.org>
+ <20260116064646.224254-1-stephen@networkplumber.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -81,59 +83,85 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This series fixes all warnings produced by GCC when building DPDK with
-Link Time Optimization (LTO) enabled. LTO performs aggressive cross-
-compilation-unit inlining and interprocedural analysis, which exposes
-issues that are not visible during normal compilation.
+When building with LTO (Link Time Optimization), GCC performs
+aggressive cross-compilation-unit inlining. This causes the compiler
+to analyze all code paths in __rte_ring_do_dequeue_elems(), including
+the 16-byte element path (__rte_ring_dequeue_elems_128), even when
+the runtime element size is only 4 bytes.
 
-The problems were diagnosed using AI but the fixes all look
-very reasonable and consistent with other code.
+The static analyzer sees that the 16-byte path would copy
+32 elements * 16 bytes = 512 bytes into a 128-byte buffer (uint32_t[32]),
+triggering -Wstringop-overflow warnings.
 
-The fixes fall into three categories:
+The existing #pragma GCC diagnostic suppression in rte_ring_elem_pvt.h
+doesn't help because with LTO the warning context shifts to the test
+file where the inlined code is instantiated.
 
-1. Buffer sizing for static analysis (patches 1, 6)
+Fix by sizing all buffers passed to soring acquire/dequeue functions
+for the worst-case element size (16 bytes = 4 * sizeof(uint32_t)).
+This satisfies the static analyzer without changing runtime behavior.
 
-   When LTO inlines functions across compilation units, GCC's static
-   analyzer gains visibility into buffer sizes and all code paths.
-   This causes warnings when the analyzer cannot prove that runtime-
-   selected code paths stay within buffer bounds. The fixes provide
-   either larger buffers or explicit bounds checks to satisfy the
-   analyzer.
+Bugzilla ID: 1458
 
-2. Variable Length Array (VLA) elimination (patches 2, 3, 4)
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+---
+ app/test/test_soring.c | 29 ++++++++++++++++++++++-------
+ 1 file changed, 22 insertions(+), 7 deletions(-)
 
-   VLAs cause -Wvla-larger-than warnings with LTO because the compiler
-   cannot determine array bounds at compile time. These patches replace
-   VLAs with fixed-size arrays using existing defines, then remove the
-   warning suppression flag that was masking the issue.
-
-3. Genuine bug fix (patch 5)
-
-   The LTO analysis uncovered an actual buffer overflow bug where a
-   1-byte allocation was being used for an 808-byte structure. This
-   is a real memory corruption issue, not just a false positive.
-
-The patches have been tested with GCC 14 using -flto=auto and produce
-a clean build with no warnings.
-
-v3 - add all the other stuff necessary to fix all the LTO warnings
-
-Stephen Hemminger (6):
-  test/soring: fix buffer overflow warnings with LTO
-  common/cnxk: replace variable length state array
-  common/cnxk: replace variable length array
-  common/cnxk: re-enable vla warnings
-  common/cnxk: fix buffer overflow in reassembly SA setup
-  net/mlx5/hws: fix LTO false positive stringop-overflow warning
-
- app/test/test_soring.c               | 29 +++++++++++++++++++++-------
- drivers/common/cnxk/meson.build      |  2 --
- drivers/common/cnxk/roc_aes.c        |  3 ++-
- drivers/common/cnxk/roc_nix_inl.c    |  2 +-
- drivers/common/cnxk/roc_platform.c   |  4 ++--
- drivers/net/mlx5/hws/mlx5dr_action.c | 14 ++++++++++++++
- 6 files changed, 41 insertions(+), 13 deletions(-)
-
+diff --git a/app/test/test_soring.c b/app/test/test_soring.c
+index 3c1944424e..96be3935d4 100644
+--- a/app/test/test_soring.c
++++ b/app/test/test_soring.c
+@@ -31,6 +31,19 @@
+ 
+ #define MAX_ACQUIRED 20
+ 
++/*
++ * Buffer scaling factor for static analyzer appeasement.
++ *
++ * With LTO, GCC analyzes all code paths in __rte_ring_do_dequeue_elems(),
++ * including the 16-byte element path, even when runtime esize is smaller.
++ * Buffers passed to soring acquire/dequeue must be sized for the worst-case
++ * element size (16 bytes) to avoid -Wstringop-overflow warnings.
++ *
++ * Scale factor of 4 converts uint32_t count to 16-byte element capacity:
++ * N elements * 4 * sizeof(uint32_t) = N * 16 bytes
++ */
++#define SORING_TEST_BUFSIZE(n) ((n) * 4)
++
+ #define SORING_TEST_ASSERT(val, expected) do { \
+ 	RTE_TEST_ASSERT(expected == val, \
+ 			"%s: expected %u got %u\n", #val, expected, val); \
+@@ -58,7 +71,8 @@ move_forward_stage(struct rte_soring *sor,
+ {
+ 	uint32_t acquired;
+ 	uint32_t ftoken;
+-	uint32_t *acquired_objs[MAX_ACQUIRED];
++	/* Sized for 16-byte elements to satisfy LTO static analysis */
++	uint32_t *acquired_objs[SORING_TEST_BUFSIZE(MAX_ACQUIRED)];
+ 
+ 	acquired = rte_soring_acquire_bulk(sor, acquired_objs, stage,
+ 			num_packets, &ftoken, NULL);
+@@ -149,12 +163,13 @@ test_soring_stages(void)
+ {
+ 	struct rte_soring *sor = NULL;
+ 	struct rte_soring_param prm;
+-	uint32_t objs[32];
+-	uint32_t rcs[32];
+-	uint32_t acquired_objs[32];
+-	uint32_t acquired_rcs[32];
+-	uint32_t dequeued_rcs[32];
+-	uint32_t dequeued_objs[32];
++	/* Buffers sized for 16-byte elements to satisfy LTO static analysis */
++	uint32_t objs[SORING_TEST_BUFSIZE(32)];
++	uint32_t rcs[SORING_TEST_BUFSIZE(32)];
++	uint32_t acquired_objs[SORING_TEST_BUFSIZE(32)];
++	uint32_t acquired_rcs[SORING_TEST_BUFSIZE(32)];
++	uint32_t dequeued_rcs[SORING_TEST_BUFSIZE(32)];
++	uint32_t dequeued_objs[SORING_TEST_BUFSIZE(32)];
+ 	size_t ssz;
+ 	uint32_t stage, enqueued, dequeued, acquired;
+ 	uint32_t i, ftoken;
 -- 
 2.51.0
 
