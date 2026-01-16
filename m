@@ -2,39 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 931F0D4A605
-	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Jan 2026 06:12:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 131FCD4A603
+	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Jan 2026 06:46:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id F39C942D2B;
-	Fri, 16 Jan 2026 07:12:44 +0100 (CET)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 7F81C4060F;
- Fri, 16 Jan 2026 07:12:43 +0100 (CET)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 60B672061A;
- Fri, 16 Jan 2026 07:12:42 +0100 (CET)
-Content-class: urn:content-classes:message
+	by mails.dpdk.org (Postfix) with ESMTP id 4AC8D40698;
+	Fri, 16 Jan 2026 07:46:54 +0100 (CET)
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com
+ [209.85.208.44]) by mails.dpdk.org (Postfix) with ESMTP id 439014060F
+ for <dev@dpdk.org>; Fri, 16 Jan 2026 07:46:52 +0100 (CET)
+Received: by mail-ed1-f44.google.com with SMTP id
+ 4fb4d7f45d1cf-64b9cb94ff5so2509064a12.2
+ for <dev@dpdk.org>; Thu, 15 Jan 2026 22:46:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768546012;
+ x=1769150812; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=xJ+fRqM6EolvrK/rNCrRA30zBlYfOHd9NUQ1C9LLADo=;
+ b=Wq3dBlZArKIy7jfHk+695fhfrjMckVNyYvkQ6mwH4Cjm8+8A4Cg1iqjT6U86/HtLbg
+ XdqwMN5C5fuwigpi53UUv62LmHZaZPVfs1voLo2hreqKMkcQFiVr8ZUOAsb+kHiBL+TQ
+ 5Bhk/0CmI2SEfhSmia0oLxKQXAtvEcoXHyBWOSY5CkYbPyVto6G7Bb5gyth+T0UTIzVm
+ /QPwp4Qzn8+KrCnRh9zdlj6ieqDU0Lg2aKYhow+zxSw0e6mFbFN2VH2vtcVOJRj7tqiV
+ 3DrbBgUJli1lRvasnjWSXtBHFH3jd5SHVgavNiLB9iOCNRC3yiaZV4waTuNlVHMdqE5m
+ i7vQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1768546012; x=1769150812;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=xJ+fRqM6EolvrK/rNCrRA30zBlYfOHd9NUQ1C9LLADo=;
+ b=Pah+hYw7WjFG1AnR+S2ODArvncJj+MB4x9vbHgGvA/B/5nL6QvNx88NtdW5Mk3G35g
+ ofv+RNpymurAFp24pmeTzh0w9YHRSk3o4ACBnsCMDT8qo+OT8ATyfgCna+MlpRrJvemA
+ A7duDhA7IaJhD57BiOwCmCHoF3Z9IdJNJXGIlaUlQOAuc6Uiupt+CMBSQPMzUQ1HzmFE
+ 93586kMHYAS8WMPTp+640w2McPDcBA53luL4fTVkWba/GxVvh5b+ED8zAUbNYt6H3XSK
+ zzHY8TThjLFTDx1hamiLdmsB91Xl8ghqVmKQI9MIegkoog1u6KeMlY+8a7CaVdq18IgB
+ 26Ew==
+X-Gm-Message-State: AOJu0YyiC3C38Rg9kw0r0ZreQAbFOa0KRVLGmEShbym2e5VqXTi9O9jm
+ ZvfkEvpQPE7/69DxTiUB+D8YskTzH7nG73jSNVlJNC+M3vprM+jFFRUZZsATsj0QmOIFrSIplQI
+ DWm0W
+X-Gm-Gg: AY/fxX6PsxJn/Zh0dneYO62OZVBNfrcl3fFngQebpfXpTWGB2SHcoOf3X8eKDrGbTyO
+ 7AWjarhO0IKs+oOa1Pa9WgUfURL5qEbog3aQwWNHyswbnb7dk0bOvnOlo22vSzrCQlswWb0s89s
+ 0N3dQQokakpzoWhbVZRdUKL5roeQIdfljZBzdzpUxYe2yngenQznMlPpSoPWnKQyClUbwyLBFxJ
+ CwMR+MYaLRl4zzVAZE0q2mVIYhdusMwrbIGZ33AwVVS6K0OniGq5gDRpqt0W+m/dFJSx85XTwY5
+ hpq52Z2nvze6k3JyLpXk8qMiDMofeYEEb/t1nroquZCfDJj3bEKSYE727o7rPnM9qxVAzU27LIX
+ ohmu6vSjnG1upAlxFsA3/n77bwQv5mr5cO21VulgPVsPU6hxbbU/ku6GZmIVNssvDyHpQ72W3Tq
+ lEqPyCPrawWWllnBxiD+WoeGi5/n5wmI9wtXsYy+RZJwKhXR3gVw==
+X-Received: by 2002:a17:907:7201:b0:b87:281b:1453 with SMTP id
+ a640c23a62f3a-b879324d5bbmr183583466b.59.1768546011632; 
+ Thu, 15 Jan 2026 22:46:51 -0800 (PST)
+Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ a640c23a62f3a-b879ae74639sm97172866b.9.2026.01.15.22.46.50
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Thu, 15 Jan 2026 22:46:51 -0800 (PST)
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v3 0/6] fix GCC warnings when building with LTO
+Date: Thu, 15 Jan 2026 22:46:21 -0800
+Message-ID: <20260116064646.224254-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20251023194237.197681-1-stephen@networkplumber.org>
+References: <20251023194237.197681-1-stephen@networkplumber.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
-Subject: RE: [PATCH] mbuf: fix packet copy
-Date: Fri, 16 Jan 2026 07:12:39 +0100
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65668@smartserver.smartshare.dk>
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-In-Reply-To: <20260115215516.68a1c942@phoenix.local>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH] mbuf: fix packet copy
-Thread-Index: AdyGrLYQUvUfVS1mRFOT2KkOQPiLoAAAKCww
-References: <98CBD80474FA8B44BF855DF32C47DC35F65664@smartserver.smartshare.dk>
- <20260115215516.68a1c942@phoenix.local>
-From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
-To: "Stephen Hemminger" <stephen@networkplumber.org>
-Cc: <dev@dpdk.org>,
-	<stable@dpdk.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -48,62 +81,59 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-PiBGcm9tOiBTdGVwaGVuIEhlbW1pbmdlciBbbWFpbHRvOnN0ZXBoZW5AbmV0d29ya3BsdW1iZXIu
-b3JnXQ0KPiBTZW50OiBGcmlkYXksIDE2IEphbnVhcnkgMjAyNiAwNi41NQ0KPiANCj4gT24gVGh1
-LCAxNSBKYW4gMjAyNiAxMTo1MzoxOSArMDEwMA0KPiBNb3J0ZW4gQnLDuHJ1cCA8bWJAc21hcnRz
-aGFyZXN5c3RlbXMuY29tPiB3cm90ZToNCj4gDQo+ID4gU3RlcGhlbiwNCj4gPg0KPiA+IEFzIHRo
-ZSBhdXRob3Igb2YgcnRlX3BrdG1idWZfY29weSgpLCBjYW4geW91IHBsZWFzZSByZXZpZXcgdGhp
-cw0KPiBwYXRjaD8NCj4gPg0KPiA+IFlvdSBtaWdodCBmaW5kIG15IGFuc3dlcnMgdG8gS29uc3Rh
-bnRpbidzIHJldmlldyBpbmZvcm1hdGl2ZToNCj4gPiBodHRwczovL3BhdGNod29yay5kcGRrLm9y
-Zy9wcm9qZWN0L2RwZGsvcGF0Y2gvMjAyNTExMTkxMjA0MDMuOTA3NTExLQ0KPiAxLW1iQHNtYXJ0
-c2hhcmVzeXN0ZW1zLmNvbS8jMTgxOTE0DQo+ID4NCj4gPg0KPiA+IFZlbmxpZyBoaWxzZW4gLyBL
-aW5kIHJlZ2FyZHMsDQo+ID4gLU1vcnRlbiBCcsO4cnVwDQo+ID4NCj4gPg0KPiA+IEZyb206IE1v
-cnRlbiBCcsO4cnVwIFttYWlsdG86bWJAc21hcnRzaGFyZXN5c3RlbXMuY29tXQ0KPiA+IFNlbnQ6
-IFdlZG5lc2RheSwgMTkgTm92ZW1iZXIgMjAyNSAxMy4wNA0KPiA+DQo+ID4gUmVxdWVzdHMgZm9y
-IGNvcHlpbmcgdGhlIGF0IHRoZSBlbmQgb2YgYSBwYWNrZXQgaW5jb3JyZWN0bHkgcmV0dXJuZWQN
-Cj4gTlVMTCwNCj4gPiBhcyBpZiBjb3B5aW5nIHBhc3QgdGhlIGVuZCBvZiBhIHBhY2tldC4NCj4g
-Pg0KPiA+IFdoZW4gYWxsb2NhdGluZyBjb3BpZXMgZnJvbSBhIG1lbXBvb2wgdXNpbmcgcGlubmVk
-IGV4dGVybmFsIGJ1ZmZlcnMsDQo+IHRoZQ0KPiA+IGV4dGVybmFsIGZsYWcgd2FzIG5vdCBwcmVz
-ZXJ2ZWQgaW4gdGhlc2UgbWJ1ZnMuDQo+ID4NCj4gPiBGaXhlczogYzNhOTBjMzgxZGFhICgibWJ1
-ZjogYWRkIGEgY29weSByb3V0aW5lIikNCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IE1vcnRlbiBC
-csO4cnVwIDxtYkBzbWFydHNoYXJlc3lzdGVtcy5jb20+DQo+ID4gLS0tDQo+ID4gIGxpYi9tYnVm
-L3J0ZV9tYnVmLmMgfCA2ICsrKy0tLQ0KPiA+ICAxIGZpbGUgY2hhbmdlZCwgMyBpbnNlcnRpb25z
-KCspLCAzIGRlbGV0aW9ucygtKQ0KPiA+DQo+ID4gZGlmZiAtLWdpdCBhL2xpYi9tYnVmL3J0ZV9t
-YnVmLmMgYi9saWIvbWJ1Zi9ydGVfbWJ1Zi5jDQo+ID4gaW5kZXggMGQ5MzFjN2ExNS4uZTYzOWFm
-ZjAzZSAxMDA2NDQNCj4gPiAtLS0gYS9saWIvbWJ1Zi9ydGVfbWJ1Zi5jDQo+ID4gKysrIGIvbGli
-L21idWYvcnRlX21idWYuYw0KPiA+IEBAIC02NzUsNyArNjc1LDcgQEAgcnRlX3BrdG1idWZfY29w
-eShjb25zdCBzdHJ1Y3QgcnRlX21idWYgKm0sIHN0cnVjdA0KPiBydGVfbWVtcG9vbCAqbXAsDQo+
-ID4gIAlfX3J0ZV9tYnVmX3Nhbml0eV9jaGVjayhtLCAxKTsNCj4gPg0KPiA+ICAJLyogY2hlY2sg
-Zm9yIHJlcXVlc3QgdG8gY29weSBhdCBvZmZzZXQgcGFzdCBlbmQgb2YgbWJ1ZiAqLw0KPiA+IC0J
-aWYgKHVubGlrZWx5KG9mZiA+PSBtLT5wa3RfbGVuKSkNCj4gPiArCWlmICh1bmxpa2VseShvZmYg
-PiBtLT5wa3RfbGVuKSkNCj4gPiAgCQlyZXR1cm4gTlVMTDsNCj4gDQo+IEl0IG1ha2VzIG1vcmUg
-c2Vuc2UgdG8gcmV0dXJuIE5VTEwgKGFzIGVycm9yKSByYXRoZXIgdGhhbiBjcmVhdGluZyBhIDAN
-Cj4gbGVuZ3RoIG1idWYgaW4gdGhpcyBjb3JuZXIgY2FzZS4NCg0KQXMgcmVwbGllZCB0byBLb250
-YW50aW4sIDAgbGVuZ3RoIGJ1ZmZlcnMgYXJlIHBlcmZlY3RseSB2YWxpZCwgc28gYSBsaWJyYXJ5
-IHNob3VsZCBub3Qgb3B0aW1pemUgdGhlbSBhd2F5LCBvbiBhbiBhc3N1bXB0aW9uIHRoYXQgdGhl
-eSBhcmUgdXNlbGVzcy4NCkUuZy4gY29uc2lkZXIgVENQLCB3aGljaCBjYXJyaWVzIG1hbnkgZW1w
-dHkgcGFja2V0cywgYWRkaW5nIGZlZWRiYWNrIGluZm9ybWF0aW9uIChBQ0ssIFNBQ0spIHRvIHRo
-ZSBUQ1AgaGVhZGVyLiBJIGtub3cgaXQncyBhIHZlcnkgdGhlb3JldGljYWwgZXhhbXBsZSBzdHJp
-cHBpbmcgYWxsIGhlYWRlcnMgYW5kIHRoZW4gYWRkaW5nIGhlYWRlcnMgYWdhaW47IGJ1dCBJIGNh
-biBjcmVhdGl2ZWx5IGltYWdpbmUgc29tZXRoaW5nIGxpa2UgdGhhdC4NCklmIGEgbm9ybWFsIGFw
-cGxpY2F0aW9uIGRvbid0IHdhbnQgdG8gZGVhbCB3aXRoIDAgbGVuZ3RoIGJ1ZmZlcnMsIGl0IGNh
-biBvcHRpbWl6ZSB0aGVtIGF3YXkuDQpCdXQgaWYgYW4gZXhvdGljIGFwcGxpY2F0aW9uIGRvZXMg
-d2FudCB0byBkZWFsIHdpdGggMCBsZW5ndGggYnVmZmVycywgaXQgd291bGQgYmUgYSBidWcgaWYg
-dGhlIGxpYnJhcnkgb3B0aW1pemVkIHRoZW0gYXdheS4NCg0KPiANCj4gPiAgCW1jID0gcnRlX3Br
-dG1idWZfYWxsb2MobXApOw0KPiA+IEBAIC02ODgsOCArNjg4LDggQEAgcnRlX3BrdG1idWZfY29w
-eShjb25zdCBzdHJ1Y3QgcnRlX21idWYgKm0sIHN0cnVjdA0KPiBydGVfbWVtcG9vbCAqbXAsDQo+
-ID4NCj4gPiAgCV9fcnRlX3BrdG1idWZfY29weV9oZHIobWMsIG0pOw0KPiA+DQo+ID4gLQkvKiBj
-b3BpZWQgbWJ1ZiBpcyBub3QgaW5kaXJlY3Qgb3IgZXh0ZXJuYWwgKi8NCj4gPiAtCW1jLT5vbF9m
-bGFncyA9IG0tPm9sX2ZsYWdzICYNCj4gfihSVEVfTUJVRl9GX0lORElSRUNUfFJURV9NQlVGX0Zf
-RVhURVJOQUwpOw0KPiA+ICsJLyogY29weSBmbGFncyBleGNlcHQgaW5kaXJlY3QgYW5kIGV4dGVy
-bmFsLCBhbmQgcHJlc2VydmUgZmxhZ3Mgb2YNCj4gbmV3bHkgYWxsb2NhdGVkIG1idWYgKi8NCj4g
-PiArCW1jLT5vbF9mbGFncyB8PSBtLT5vbF9mbGFncyAmDQo+IH4oUlRFX01CVUZfRl9JTkRJUkVD
-VHxSVEVfTUJVRl9GX0VYVEVSTkFMKTsNCj4gDQo+IFNob3VsZCBoYXZlIHNwYWNlIGluIGV4cHJl
-c3Npb24uDQoNClllcy4gQ29weS1wYXN0ZSBidWcuIDotKQ0KDQo+IEF0IHRoYXQgcG9pbnQgaXQg
-aXMgYSBuZXcgbWJ1ZiAodGhlIGNvcHkpIHNvIG9mZmxvYWQgZmxhZ3Mgc2hvdWxkIGJlDQo+IGNs
-ZWFyLCBub3Qgc3VyZQ0KPiB3aGF0IHRoZSBpc3N1ZSBpcyBoZXJlLg0KPiBCdXQgaGFkbid0IGV4
-cGVjdGVkIHVzYWdlIG9mIHRoaXMgZnVuY3Rpb24gd2l0aCBhbiBleHRlcm5hbCBtYnVmIHBvb2wu
-DQoNCkkgY29uc2lkZXIgcGlubmVkIGV4dGVybmFsIGJ1ZmZlcnMgZXhvdGljIHRvbywgYnV0IHdl
-IG5lZWQgdG8gc3VwcG9ydCB0aGVtIHRocm91Z2hvdXQgRFBESy4NClRoYXQncyB0aGUgZG93bnNp
-ZGUgb2YgZXhvdGljIGZlYXR1cmVzIGluIGNvcmUgbGlicmFyaWVzLg0KDQo+IA0KPiANCj4gPg0K
-PiA+ICAJcHJldiA9ICZtYy0+bmV4dDsNCj4gPiAgCW1fbGFzdCA9IG1jOw0KDQo=
+This series fixes all warnings produced by GCC when building DPDK with
+Link Time Optimization (LTO) enabled. LTO performs aggressive cross-
+compilation-unit inlining and interprocedural analysis, which exposes
+issues that are not visible during normal compilation.
+
+The problems were diagnosed using AI but the fixes all look
+very reasonable and consistent with other code.
+
+The fixes fall into three categories:
+
+1. Buffer sizing for static analysis (patches 1, 6)
+
+   When LTO inlines functions across compilation units, GCC's static
+   analyzer gains visibility into buffer sizes and all code paths.
+   This causes warnings when the analyzer cannot prove that runtime-
+   selected code paths stay within buffer bounds. The fixes provide
+   either larger buffers or explicit bounds checks to satisfy the
+   analyzer.
+
+2. Variable Length Array (VLA) elimination (patches 2, 3, 4)
+
+   VLAs cause -Wvla-larger-than warnings with LTO because the compiler
+   cannot determine array bounds at compile time. These patches replace
+   VLAs with fixed-size arrays using existing defines, then remove the
+   warning suppression flag that was masking the issue.
+
+3. Genuine bug fix (patch 5)
+
+   The LTO analysis uncovered an actual buffer overflow bug where a
+   1-byte allocation was being used for an 808-byte structure. This
+   is a real memory corruption issue, not just a false positive.
+
+The patches have been tested with GCC 14 using -flto=auto and produce
+a clean build with no warnings.
+
+v3 - add all the other stuff necessary to fix all the LTO warnings
+
+Stephen Hemminger (6):
+  test/soring: fix buffer overflow warnings with LTO
+  common/cnxk: replace variable length state array
+  common/cnxk: replace variable length array
+  common/cnxk: re-enable vla warnings
+  common/cnxk: fix buffer overflow in reassembly SA setup
+  net/mlx5/hws: fix LTO false positive stringop-overflow warning
+
+ app/test/test_soring.c               | 29 +++++++++++++++++++++-------
+ drivers/common/cnxk/meson.build      |  2 --
+ drivers/common/cnxk/roc_aes.c        |  3 ++-
+ drivers/common/cnxk/roc_nix_inl.c    |  2 +-
+ drivers/common/cnxk/roc_platform.c   |  4 ++--
+ drivers/net/mlx5/hws/mlx5dr_action.c | 14 ++++++++++++++
+ 6 files changed, 41 insertions(+), 13 deletions(-)
+
+-- 
+2.51.0
+
