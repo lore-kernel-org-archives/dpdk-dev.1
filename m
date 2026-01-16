@@ -2,159 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A44FCD4A5EE
-	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Jan 2026 03:11:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1F19D4A603
+	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Jan 2026 05:48:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DCD4F427A6;
-	Fri, 16 Jan 2026 04:11:52 +0100 (CET)
-Received: from MW6PR02CU001.outbound.protection.outlook.com
- (mail-westus2azon11012018.outbound.protection.outlook.com [52.101.48.18])
- by mails.dpdk.org (Postfix) with ESMTP id 2BD8F4014F;
- Fri, 16 Jan 2026 04:11:51 +0100 (CET)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=phsQK5Gt88t6TkMcn0kN3DurzhkSzTJ80kGtds/LsKxmvHr6sG1qyH5+q5eHaOGwfG+r9os5Icl7JU44yscTGeKV0JcAp1EThtKRdoKQU14M5iTiByVXIfpEekm5tlFt3KN4uzRTJWIHi13bBxvTPc0K9U5JVBBo9b5c4KO8P6lgR1za0QUwQUlN9WeilEic2vdw7k7mmBLUm/wjnEM9o6xNGN1PLpwlNaVdDCepCkMryeq/luymUMzTGkAe6W9n1JTqWBdpKHfpeGvimiIJsK+F5LUxyP8D8cYGyFOdu3FcVYQW7wsJT7ad346cRvA05/FN91fMmi/f2fyD1bWUxg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FRcOCE/Bl+73MGKnM4ky2WbC5cMM2r3MdGmftrd0U50=;
- b=e/fQ/1yxCHs/8dECQR8asqaRwIFyITfcI/C4VFykPC6cNJfBamZ/SFmLV0//TFrfxsth3SB4VT88A/QyI4UvQRYP3v9P9SBW44TNuV7l08xsaHPUuVQJg94/gHLN+N/cwRSkAvwwgzYsXcc/RneF1tQq3SttMShM7Oz89ysdY20cx94nVEhhdFab4f9iZYoqt9DeGBqB3pr6S88CGJw96NtLI5e7V9WkVaSrL2AjlqIfLsOpuNKJM9ABi6mXXTsG3NMAnE4VbDtISKHzC5ihUJpvD0wsphdvca2a0TrkeEeToC9899B2fQshDv3YjbQONzL/YB1UUXwjAQEdkhn8VA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FRcOCE/Bl+73MGKnM4ky2WbC5cMM2r3MdGmftrd0U50=;
- b=lnvUCGhbz2PAi42xD9i9qbx6DXZ3yccqf2O2Zg+MZ2Knhc1x9Y2GJXtMrN3Jkoy/HnG8WfUw4MrFzTh8Wtc0tYajFGLLsS/TlB1J+F96Q5jeqAD8lV811bUIkcXjq9BGgNyToSxdHVM3MyDWt8n9RMIdB2iHOUcPVGC4h3/xXZfGgNjJ9f/wZWFwzR4WlPQ20HcG3JaFaqrE6DvR+LkTGlkNcOTDkNTnDkU3J7/Iwq2JWmPARjtpmF/ZhMYgFX3fA/AxXlnR8tPfSK1o0yJq1wQix13h4kcjXBDUxx0aShojxN4MKNcWMKpTiMpeXvPPdjj0Nuzmc3VZlDi0JefN3g==
-Received: from BN9PR12MB5098.namprd12.prod.outlook.com (2603:10b6:408:137::8)
- by PH7PR12MB8014.namprd12.prod.outlook.com (2603:10b6:510:27c::19)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9520.5; Fri, 16 Jan
- 2026 03:11:48 +0000
-Received: from BN9PR12MB5098.namprd12.prod.outlook.com
- ([fe80::78ba:2665:1445:6730]) by BN9PR12MB5098.namprd12.prod.outlook.com
- ([fe80::78ba:2665:1445:6730%5]) with mapi id 15.20.9520.003; Fri, 16 Jan 2026
- 03:11:48 +0000
-From: Chenbo Xia <chenbox@nvidia.com>
-To: Maxime Coquelin <maxime.coquelin@redhat.com>
-CC: "dev@dpdk.org" <dev@dpdk.org>, "david.marchand@redhat.com"
- <david.marchand@redhat.com>, "stable@dpdk.org" <stable@dpdk.org>
-Subject: Re: [PATCH v2 3/3] vhost: fix mmap error check in VDUSE IOTLB miss
- handler
-Thread-Topic: [PATCH v2 3/3] vhost: fix mmap error check in VDUSE IOTLB miss
- handler
-Thread-Index: AQHchWteYuGwLdwqp0KAscObIBMFqbVUIM4A
-Date: Fri, 16 Jan 2026 03:11:48 +0000
-Message-ID: <1CC432C8-09E9-447F-AC87-078172EC10E1@nvidia.com>
-References: <20260114153445.2751895-1-maxime.coquelin@redhat.com>
- <20260114153445.2751895-4-maxime.coquelin@redhat.com>
-In-Reply-To: <20260114153445.2751895-4-maxime.coquelin@redhat.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BN9PR12MB5098:EE_|PH7PR12MB8014:EE_
-x-ms-office365-filtering-correlation-id: 9e58d814-edf4-483c-d297-08de54acfc8d
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0; ARA:13230040|1800799024|366016|376014|38070700021;
-x-microsoft-antispam-message-info: =?utf-8?B?RFJrd0dZbi9iWUQvQWZDYnNlNTVVcnIwMlQ0aU5NbWV4UWltRnlTdkY3RGhU?=
- =?utf-8?B?Q0tROXBSODJlWG9zVEFQMnhRZVNvSUw0TnhWU3JpZGlCRDFYeE1QUjhEYnNi?=
- =?utf-8?B?ZER2b3JnVGlaNStDVldNRU5nYjA1QXppbTVQRWJPcU5TcnFISmpjZ0MrK2Q0?=
- =?utf-8?B?d1Zla0llRklWVS82MU03SGwzUmJZQ1QrTnJ1YjFGMmxJQUwxeVFOUmNGK1h2?=
- =?utf-8?B?Nk1YMWxPbDJPTGJxVVZKWWladUdLK0svR1hTM1BlbGZVM2lhdGVlWGRZcnBG?=
- =?utf-8?B?N0dhN2VtV2JCUmFkL3VVeTN4dmhFbm1aNnFuQUh0WFMvNW9YSUJMNFJRYVZm?=
- =?utf-8?B?MnBFMEtZOWFrcVhvS3ZIbm5IYXdGZm1qWlZsNEV0b0JteWlMNStoWUFubW9y?=
- =?utf-8?B?eG5QZmNQdW5URjNHeGNlZlVFUkhyRWVDbGlYc3RSRkhWUURjZVZlV0E3NEZm?=
- =?utf-8?B?STlCSk5QUUZjdGdGQ1pFbldWcFpEc1F2MWlzQWVzZHo1RUxUcHAxY1JaWm9N?=
- =?utf-8?B?anRBZzUySjhoNjBYZ2ZGbjZQWGNNYTlOOTdQT3EwM0pXb0wzc2U0Q0k4cHhM?=
- =?utf-8?B?TVBOOXpzRytDQi9iZDlUSlM4amR2ZnMrak43UGJMbmZTTlIvV2hEWW5jM0Zk?=
- =?utf-8?B?d0VMUjlwaTRHWjNWMENDcnA2QnhrUnBmbWJlRHFaTnU5dXU3L3V5OWd4ZU82?=
- =?utf-8?B?OW5vTTEzMTlGeTFpK2VVS1pKelZCcm41NzJLdXErWFpFQ0JLamFYNzMxTTZJ?=
- =?utf-8?B?blhlZ2hLT0Zkd3lyaUlWV2JOMHozd012RUdzeEJ5UWdLdWN5dktyZEZyVE5Y?=
- =?utf-8?B?UnBRTVgrNVZUNmIzTnRnejRFaUVxTmY5cG55UWplM0ZsM3dxcXFxZVU5RzE2?=
- =?utf-8?B?bnQ4Z3RCT2toUXpYcFJqQjg3SldiR3Z5di9qWjFwN29ka0prNkdab2U2bGZQ?=
- =?utf-8?B?cm42WVJzTWYvc2ZsWEpNeUt6b01MN2d2cDhHZFB2Mng0UWlIT09xMTlsUFpx?=
- =?utf-8?B?WE1wZWJBc2oxRU5NOGpIVVd3RmRjU3V3RnUwVXllcC9qUjRra1gzWGJMQnVW?=
- =?utf-8?B?Rm9wQVA4VmZzMkVJeXNJZElKTWRhNW9xMis2dm9VWVRTNGNJdHhQazJFYmh4?=
- =?utf-8?B?WWlpTytGNHRJV0tOSVE4b3lDOVNvWnAzKzRMSmsycGphcFZ2YWtBYnVQNnk2?=
- =?utf-8?B?bVJFOWM0SmdMdWNPTHB3UTV4OFNScXJoMVVqTjZRSnBqbHpEcXdDQTJUNWhO?=
- =?utf-8?B?SGpnemdvVm5tSlV4ckhiN3NvUXU0RHBPUG9CUUhHa3ZEb0ozMnhiMzExNkdX?=
- =?utf-8?B?VjFubGN3OUNwbWl0dXpFK0JWRzFJNHkzUlRjOXBrUG0zRkg5ZjJEQnB2MlBo?=
- =?utf-8?B?SUp1T2IwWkRYdnJnR2ZWSHVQaU5qZVhvZ0FwaFhGNCtlRkl3enhHTW9nM250?=
- =?utf-8?B?SllneU0rcTVUY1RPQURNdUJwZW4zMFJtMFloazVETXpEOHdFRUgyR3BrTUxN?=
- =?utf-8?B?NHN4MWpWaEc5Z1RTdFZjUWZOVUVQbyswUlR3b3VoUWtWL0ZSQmFhVjJEMU1I?=
- =?utf-8?B?cmlJQkJ1OW9NL1NsSFRwZ2liVXhqQUJaTnFzSXBONVhSelVBN3R4NTUzWFVX?=
- =?utf-8?B?THVDeEZ4VSsxNEZZWnZaSWlkOXhWZzh4aXo5NnluSXZXVjFRWmVCOFZhSHNx?=
- =?utf-8?B?SEhHM2thYlhZR082RHpqVW5TSm5kODBya0FETlphQ09HQi9DeHArSGZCQit5?=
- =?utf-8?B?M0hQZS9UVHVrMHBaaHEvQkU1blRlUi9CaVhBTUo5a3IvT3NWZS9MbW1vNmFW?=
- =?utf-8?B?WkRTUDNLdlBNa3JEKzBjckxIOTZoSExkR2daKzhnVnpCMGJpWVQzeHBZSnVo?=
- =?utf-8?B?VDNhYTcydFBlaDU3L0FlVWJYTGVrdEJvcXpQOW03QjhldktvMnFZVk1OSlhK?=
- =?utf-8?B?bGF3bjhLNkd3MThzYUxWRWNwM2VKYlRLMi85UkJVdGwvaEgyYmQvRlBXU2VH?=
- =?utf-8?B?ZDJaTlZLMFc4SkxhNVJNSnVUak56SXNEcDJkZkM4dEUwZzFub3EwYVNHODBs?=
- =?utf-8?B?TUZ6OGlONjJHWkpaSnBTQ0RiTldqOUZHczJlNm0zVFR2aWRFMnRJN1g3RDJ3?=
- =?utf-8?B?bVBzZVQ2ZGpLRGdyellPdXRueXA3VzIrRSsrSzBQVnBUMHRtMktlaDE5RTZX?=
- =?utf-8?Q?zmi7K7HglqJbWdvFoJjTGCA=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:BN9PR12MB5098.namprd12.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(1800799024)(366016)(376014)(38070700021); DIR:OUT; SFP:1101; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?RTNRWVYzNGFqL3FXeUhVL2FNN2tpNEpNWFlXU2VxWFBPaHczajZzeFZuZWcv?=
- =?utf-8?B?a0VoQWxZRG9INEo4TkZsTHBIdDJKbXhqZ2tCMFAxaDhzVnN6Vlpmdit0bWkx?=
- =?utf-8?B?OXhxYU9EQ3JkVHFLS0t0cUY5bC9CK3pFSDBtaUtwd2UyVUYwM25MTS8zWk4v?=
- =?utf-8?B?eHNrQUJJZTRrUmtnUk9PbU1wdnp2RGxXY3l3ODdFclg1elNNbTU0VGJBbmhv?=
- =?utf-8?B?U25SVlRjZ05PbDlQejFLelQ5ckNqZDRCcXFiQWlFUVNVaW9kRTlqeExjMnVj?=
- =?utf-8?B?V2xqR2RycmVHTmoyaXBmVXdYc3lzeDlINnB4Q2pNT2wyWmwvTEUrZm5LeTY0?=
- =?utf-8?B?My9GUitBU1V3ZGx1OHI1WnR5b1gyVThaWEtBbEhqd2QwazlKa0RQV01PZ203?=
- =?utf-8?B?MEI5dlJxQm1TK2x4NWtUVXI0UDBlSkJJMmVuNkdNcUh3RGNTMEUzRW5wNFRE?=
- =?utf-8?B?b0M3SkIxTG4wQm40eDd0TFNldjJuOXlYNmkxVGRKY0FiQVIzbUkvZFhaaXRx?=
- =?utf-8?B?VDB3Sko4bDM4ZWFLa2dySGk3dmliUTRqTlRRQkFhVHFMYmE3RHoyS3pmVlp3?=
- =?utf-8?B?TlJ0NWN6MTNmNUhCaExzaVlpdmtINEkvbGhldHJOKzRiSkJ0VVJDRzAxUTdi?=
- =?utf-8?B?b3pUaWd5Yzh3YUwrV1RDOEJWeFQxR0VMN0hlQ2YyZjBseVd2eVIwQnlac3JR?=
- =?utf-8?B?YWM2Q212RS9DRzNIeHU0WU1Ob2RZaFR2QkdCQ0U5dUkrMS9BcGVUcktrM0tp?=
- =?utf-8?B?aTI2b05OeVBBNnNNaThLK3E3TFRGdzBOckw0dUJqVWZvQzdjSXVvY3pXYzU3?=
- =?utf-8?B?dnNxT3p2Zy9MeEoybkJJSmRpRzVRV2QrSzVlMUFKRnR2SFJVNnQ4ejgrK2dm?=
- =?utf-8?B?cDc1ZDArcmpXRGY5Nko1LzgxL1h4cW16WE1hdHBHcTJzekNYSG5nUG4xWFpn?=
- =?utf-8?B?SDJkcVRzR3oyYmhpb1NCeDBidjRYdGpZZ3dSTjgrRWxmbkcxRHlIaVBBRkQ3?=
- =?utf-8?B?NVhZLy9zRndXWlpUbWg2VE1ZQUxObnByVlF5ZWlYU096VnpscWhybWpYdTZZ?=
- =?utf-8?B?WTNDanRMR1FRZFhLbmE3QzBtd0Y2a2Z5TXU2OUNGWDJTTms5aG9zUnFTM2Jx?=
- =?utf-8?B?Y2toVDE2SHI5dWJXcWpkazQzQWVXT3drdzd1SUxCd0RUUGZkQm9ZdHJKcjZC?=
- =?utf-8?B?eVoxT29BY3NkcDhMdGhwdHZmQ0JjcHF6eS8rYlRXOXV2Z1BuRXdtVVRVYzZ0?=
- =?utf-8?B?VEpBblJHK1VVeXJYT1AzOVgrVC95YzBxbXlvQ3lYaEUrcEl4eVRYRnRoTW0z?=
- =?utf-8?B?RDF3VmljSFZVaDNFNzY1YlcrSmxHeTVmNXVDUnp6OFhNTjArdXZNZnU4UFhm?=
- =?utf-8?B?OE05THhVdytxaVBVV0orU05YaWlsU1IvSWFncnFyMEdHNzdDeldEc0gyQ0RY?=
- =?utf-8?B?cFZaUDJZb1hYbm5uRWc5eENEU2cvNVI2N0JoU211NVRSV2M2aStVSUIzb0sv?=
- =?utf-8?B?SFh5cUozSlVBUkFiZ0h4YlhSbm9MOUlJUS82SDErR0wvd3cxR0o2SCtJcGNY?=
- =?utf-8?B?VldBQUtkd0RCUnYxeUpvZzBDbUNaTS9xSEVLanBYelZIdFZHMGoreVVkeld4?=
- =?utf-8?B?QWRES3hlWkY3R29iS3BnRExrOTJHUVE5V1N5NEd5ZUw4Mk1Qd2JyNmxRTFJj?=
- =?utf-8?B?WXZWWEF4VEc1OUJrVWxlTzhWQ2pZc0QzN0x4SHNIY2k0S0d1OCtBQU1tSWlI?=
- =?utf-8?B?enJFVUlpc2ZrUWRvd0xjOUp3ZjVrTVhRVVY1NFFRSHV4WTVlSzV6UW4reUFK?=
- =?utf-8?B?RS85bURMbzNneWdpMVFsQ2JwcThUOGFGemp3WVdLLys2QTJLTXhCVS9OaUth?=
- =?utf-8?B?Y2Z5NnFhYUorcVlqeEV1eGZWbEpRbWxRTmFLQ0dFcGVHZWoxUUczSDROcWlC?=
- =?utf-8?B?ZHhaUHlTOUZXTTV4YnVOZGdhN0VSRlVocDRqK0wvRktvTmttY3N6UjByT3ZP?=
- =?utf-8?B?WmhsbnhLamJ3Z1luenJDUlU4VHVWZ2pFRDZGZ2hyOTNQMWJOMHpydGcremdI?=
- =?utf-8?B?SmdxNjFDSXFvOFNDOU5KcTU3WTliZFdCQW9qenlxSDVHZDhjR0ZBZVpieUxO?=
- =?utf-8?B?L1huNDVUaFplTTJNMWlCTkduS3R4OUZiakJJdGMxSmxRTUNtZ2lGR2Z1b1ZZ?=
- =?utf-8?B?ajRxUlE4cGJFRDNpSFFFSVRQcHhiQzMwQmZiNlo4eTllUnBvWTVRU2V1Vjlk?=
- =?utf-8?B?WG9JZkNwbFRFL0RvR0EwSy9mem9WNDZxdG1pdTIrendvS0N4c2xuaTFVT3FX?=
- =?utf-8?B?emlXSno2cjhRb05DM2psdXFsenNRRXVtZXBJR0Jzd21OMHd6Wldjdz09?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <7AFB45527C869B459EC42DAC674A143C@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by mails.dpdk.org (Postfix) with ESMTP id E325140664;
+	Fri, 16 Jan 2026 06:48:57 +0100 (CET)
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com
+ [209.85.128.42]) by mails.dpdk.org (Postfix) with ESMTP id 55B774014F
+ for <dev@dpdk.org>; Fri, 16 Jan 2026 06:48:56 +0100 (CET)
+Received: by mail-wm1-f42.google.com with SMTP id
+ 5b1f17b1804b1-47ff94b46afso10866795e9.1
+ for <dev@dpdk.org>; Thu, 15 Jan 2026 21:48:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768542536;
+ x=1769147336; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=J0yv6AUo60qkjQMptjQWwum5oM3qWDIYjfwTLeSIAeQ=;
+ b=PIZPh5f/oFsouxfl6QXGQPeU2AF0ka7CbVHjGBYDKix6d6sjMSTpRIbfUMtSyNCBSy
+ ik1BwfpzuT4OQccl3vYrk76DrPD4pVz6mH3pRyRPznQELgky+Fo+hMz2P5MxHOs0fGMP
+ 3kH6eJFvK5nmBRtq2q5N3mZ1lL4JO939mKWNX+cRLrk4Xg6qLKI2dBC+wk8bYnHqFUI7
+ v2CBYxJNOU+p8unrJko87Ys1In2h1b6p4RhvhL6IXGmJDt8Ui7nUD2SjCYTCpUnO9m/A
+ unWrfxu+Rr+yAm3c6n1ifSZ5NxWSgHKvRqMnkItRDGCtN5sE8khjjuLrtoFdSWhQfp4V
+ n5tw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1768542536; x=1769147336;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=J0yv6AUo60qkjQMptjQWwum5oM3qWDIYjfwTLeSIAeQ=;
+ b=dBHUmdqU45/e4Moq0XJif2sd+WL5oYBOyhoH989T700dwzVhFzGp9G0Qp/FDWIbQm7
+ EOourOoj/N5BvJGYkOKHFVYLIFiNChUBzmJWdZZRpCNpwUsEibzz1N4RuOfcjGWYU816
+ ztgArhVmZHZdwobvsgX4TYS7Q7t0UDbtslhF3U3qVIXMwhuhOOZUjejlbA/Cp/ZOO5UU
+ FjhfGOGCOEavwut7P6nYXag77/N/gt2iDDYDp+F1Mk9p4+NL0yBAHXwrLvKr2Z1zCGID
+ X9F5dHQ8NxLGK3pafnFbQfqwMRGSYcZedIf9UxB5BQTAHedfgqk0LkU/D0rlMJ8rY3Q8
+ 4AiA==
+X-Gm-Message-State: AOJu0YwhMnP7c5c13UofTW6oFM02ZY6jxAPlY752ubGrMd2vwa4S7GQp
+ 2HABvhC9KwFyHVmN1FBY9Vq1XRXp54PfucaVP/+7sq7p2TsHdx1ZO4BSv6bjB2As9cGVJAzN8jN
+ h4jBK
+X-Gm-Gg: AY/fxX4g1fejhO9TzMfqcg5ZmiNuLNdA8J6/NFGOKVBIGNMqSzT1uu0JVNERrW9a9co
+ U0FhN7J7l7xVbJbs0noZKyt+ZXAhl/GFqrPHG8skQF52YGZZvDDht/4fiOyIv/fm0iiF6WKrU96
+ 5sZ6V1SF8lTeJrmmpSnxPqPYG9btH18+R7tBXXAPP8uClyr4Gw3S3Kvh2rA8hMsAadPJLAWp+NR
+ FRmglOVnPYlVgvaGI11fuZ08C5ic49eBW4YtZ4HLQ+KiDRv2BuJYP996xXZjU39tZ3v8sxbLq1o
+ 4HbYr3Kaxuw2q6J8nBX2dDt+I/mDgY75IDgdmMDMBN4UN2id+SvjeY/dPtj0sdPtSP6XK5c1oBw
+ rkHzDykcofvoCMAwOEOWM9FjlhYF32WINGeg+mWfN7QasPuHoF0iciADh5M9to/2pBY16rEFaIY
+ lwlw2OU9itcIkoRxqqNi6SFvcE+3PAG/Q4xxdvQyGsqM5JOJK1iDvh
+X-Received: by 2002:a05:600c:4094:b0:47a:8383:f2b2 with SMTP id
+ 5b1f17b1804b1-47f44d4dfb4mr41611345e9.17.1768542535332; 
+ Thu, 15 Jan 2026 21:48:55 -0800 (PST)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 5b1f17b1804b1-47f428b954esm80347445e9.7.2026.01.15.21.48.53
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Thu, 15 Jan 2026 21:48:54 -0800 (PST)
+Date: Thu, 15 Jan 2026 21:48:49 -0800
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: spinler@cesnet.cz
+Cc: dev@dpdk.org
+Subject: Re: [PATCH v2 0/6] net/nfb: code cleanup
+Message-ID: <20260115214849.623db82c@phoenix.local>
+In-Reply-To: <20260115144040.345873-1-spinler@cesnet.cz>
+References: <20260115140134.235877-1-spinler@cesnet.cz>
+ <20260115144040.345873-1-spinler@cesnet.cz>
 MIME-Version: 1.0
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BN9PR12MB5098.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9e58d814-edf4-483c-d297-08de54acfc8d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Jan 2026 03:11:48.1182 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: A/Wtlb5fGJg5q6par/PhuQUCfGWTiDJsqSE/ikrs1kyS+hJ2nYWJ9BXDx/HVytIvPiXhJWDP+lpNypzZGQ1ggg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB8014
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -168,36 +81,225 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-DQoNCj4gT24gSmFuIDE0LCAyMDI2LCBhdCAyMzozNCwgTWF4aW1lIENvcXVlbGluIDxtYXhpbWUu
-Y29xdWVsaW5AcmVkaGF0LmNvbT4gd3JvdGU6DQo+IA0KPiBFeHRlcm5hbCBlbWFpbDogVXNlIGNh
-dXRpb24gb3BlbmluZyBsaW5rcyBvciBhdHRhY2htZW50cw0KPiANCj4gDQo+IFRoZSBtbWFwKCkg
-ZnVuY3Rpb24gcmV0dXJucyBNQVBfRkFJTEVEIG9uIGZhaWx1cmUsIG5vdCBOVUxMLg0KPiBUaGUg
-Y3VycmVudCBjaGVjayBmb3IgIW1tYXBfYWRkciB3aWxsIG5ldmVyIGRldGVjdCBtbWFwIGZhaWx1
-cmVzLg0KPiANCj4gV2hlbiBtbWFwIGZhaWxzIGJ1dCB0aGUgZXJyb3IgaXMgbm90IGRldGVjdGVk
-LCBhbiBpbnZhbGlkIGFkZHJlc3MgKC0xKQ0KPiBpcyBpbnNlcnRlZCBpbnRvIHRoZSBJT1RMQiBj
-YWNoZSB2aWEgdmhvc3RfdXNlcl9pb3RsYl9jYWNoZV9pbnNlcnQoKS4NCj4gU3Vic2VxdWVudCBh
-dHRlbXB0cyB0byBhY2Nlc3MgdGhpcyBhZGRyZXNzIHdpbGwgY2F1c2UgbWVtb3J5DQo+IGNvcnJ1
-cHRpb24gb3IgY3Jhc2guDQo+IA0KPiBGaXggYnkgY2hlY2tpbmcgZm9yIE1BUF9GQUlMRUQgaW5z
-dGVhZCBvZiBOVUxMLiBBbHNvIGFkZCBzdHJlcnJvciB0bw0KPiB0aGUgZXJyb3IgbWVzc2FnZSBm
-b3IgZWFzaWVyIGRlYnVnZ2luZy4NCj4gDQo+IEZpeGVzOiBmMjdkNTIwNmM1OTggKCJ2aG9zdDog
-YWRkIFZEVVNFIGNhbGxiYWNrIGZvciBJT1RMQiBtaXNzIikNCj4gQ2M6IHN0YWJsZUBkcGRrLm9y
-Zw0KPiANCj4gU2lnbmVkLW9mZi1ieTogTWF4aW1lIENvcXVlbGluIDxtYXhpbWUuY29xdWVsaW5A
-cmVkaGF0LmNvbT4NCj4gUmV2aWV3ZWQtYnk6IERhdmlkIE1hcmNoYW5kIDxkYXZpZC5tYXJjaGFu
-ZEByZWRoYXQuY29tPg0KPiAtLS0NCj4gbGliL3Zob3N0L3ZkdXNlLmMgfCA1ICsrKy0tDQo+IDEg
-ZmlsZSBjaGFuZ2VkLCAzIGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pDQo+IA0KPiBkaWZm
-IC0tZ2l0IGEvbGliL3Zob3N0L3ZkdXNlLmMgYi9saWIvdmhvc3QvdmR1c2UuYw0KPiBpbmRleCA4
-OTdkZWU5ZjFiLi4wYjVkMTU4ZmVlIDEwMDY0NA0KPiAtLS0gYS9saWIvdmhvc3QvdmR1c2UuYw0K
-PiArKysgYi9saWIvdmhvc3QvdmR1c2UuYw0KPiBAQCAtODYsOSArODYsMTAgQEAgdmR1c2VfaW90
-bGJfbWlzcyhzdHJ1Y3QgdmlydGlvX25ldCAqZGV2LCB1aW50NjRfdCBpb3ZhLCB1aW50OF90IHBl
-cm0gX19ydGVfdW51c2UNCj4gDQo+ICAgICAgICBzaXplID0gZW50cnkubGFzdCAtIGVudHJ5LnN0
-YXJ0ICsgMTsNCj4gICAgICAgIG1tYXBfYWRkciA9IG1tYXAoMCwgc2l6ZSArIGVudHJ5Lm9mZnNl
-dCwgZW50cnkucGVybSwgTUFQX1NIQVJFRCwgZmQsIDApOw0KPiAtICAgICAgIGlmICghbW1hcF9h
-ZGRyKSB7DQo+ICsgICAgICAgaWYgKG1tYXBfYWRkciA9PSBNQVBfRkFJTEVEKSB7DQo+ICAgICAg
-ICAgICAgICAgIFZIT1NUX0NPTkZJR19MT0coZGV2LT5pZm5hbWUsIEVSUiwNCj4gLSAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAiRmFpbGVkIHRvIG1tYXAgSU9UTEIgZW50cnkgZm9yIDB4
-JSIgUFJJeDY0LCBpb3ZhKTsNCj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAiRmFp
-bGVkIHRvIG1tYXAgSU9UTEIgZW50cnkgZm9yIDB4JSIgUFJJeDY0ICI6ICVzIiwNCj4gKyAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICBpb3ZhLCBzdHJlcnJvcihlcnJubykpOw0KPiAgICAg
-ICAgICAgICAgICByZXQgPSAtMTsNCj4gICAgICAgICAgICAgICAgZ290byBjbG9zZV9mZDsNCj4g
-ICAgICAgIH0NCj4g4oCUDQo+IDIuNTIuMA0KPiANCg0KUmV2aWV3ZWQtYnk6IENoZW5ibyBYaWEg
-PGNoZW5ib3hAbnZpZGlhLmNvbT4NCg0KDQo=
+On Thu, 15 Jan 2026 15:40:34 +0100
+spinler@cesnet.cz wrote:
+
+> From: Martin Spinler <spinler@cesnet.cz>
+>=20
+> This patchset mainly cleans up the code and prepare it for another
+> quite large rework. Also it resolves some unpleasant behavior.
+>=20
+> ---
+> v2:
+> * Fixed coding style issues
+>=20
+> Martin Spinler (6):
+>   net/nfb: use constant values for max Rx/Tx queues count
+>   net/nfb: fix bad pointer access in queue stats
+>   net/nfb: update timestamp calculation to meaningful value
+>   net/nfb: use process private variable for internal data
+>   net/nfb: release allocated resources correctly
+>   net/nfb: stop only started queues in fail path
+>=20
+>  doc/guides/nics/nfb.rst      |   6 +-
+>  drivers/net/nfb/nfb.h        |   5 ++
+>  drivers/net/nfb/nfb_ethdev.c | 165 ++++++++++++++++++++---------------
+>  drivers/net/nfb/nfb_rx.c     |   2 +-
+>  drivers/net/nfb/nfb_rx.h     |  13 +--
+>  drivers/net/nfb/nfb_rxmode.c |  12 +--
+>  drivers/net/nfb/nfb_stats.c  |  46 +++++-----
+>  drivers/net/nfb/nfb_tx.c     |   2 +-
+>  8 files changed, 142 insertions(+), 109 deletions(-)
+>=20
+> --
+> 2.52.0
+>=20
+
+Looks ok but AI code review spotted somethings that need to be addressed.
+
+
+---
+
+## DPDK NFB Driver Patchset Review
+
+**Series:** net/nfb cleanup (6 patches, v2)
+**Submitter:** Martin Spinler <spinler@cesnet.cz>
+
+---
+
+### Patch 1/6: `net/nfb: use constant values for max Rx/Tx queues count`
+
+| Check | Status | Notes |
+|-------|--------|-------|
+| Subject length | =E2=9C=85 PASS | 51 chars (=E2=89=A460) |
+| Subject format | =E2=9C=85 PASS | Lowercase after colon, no trailing peri=
+od |
+| Component prefix | =E2=9C=85 PASS | `net/nfb:` is correct |
+| Signed-off-by | =E2=9C=85 PASS | Present with valid name/email |
+| Fixes tag | =E2=9C=85 PASS | `Fixes: 6435f9a0ac22` (12-char SHA) |
+| Cc: stable | =E2=9C=85 PASS | Present |
+| Tag order | =E2=9C=85 PASS | Fixes before Cc, blank line before Signed-of=
+f-by |
+| Body doesn't start with "It" | =E2=9C=85 PASS | Starts with "The" |
+
+**Code Review:**
+- Clean addition of `max_rx_queues` and `max_tx_queues` to `pmd_internals` =
+structure
+- Proper initialization from hardware counts instead of mutable `nb_*_queue=
+s`
+
+**Issue (Warning):** The log message at line 543 still references `data->nb=
+_rx_queues` / `data->nb_tx_queues` which will be 0 at that point since they=
+'re no longer initialized. Should log `internals->max_rx_queues` and `inter=
+nals->max_tx_queues` instead.
+
+---
+
+### Patch 2/6: `net/nfb: fix bad pointer access in queue stats`
+
+| Check | Status | Notes |
+|-------|--------|-------|
+| Subject length | =E2=9C=85 PASS | 47 chars |
+| Subject format | =E2=9C=85 PASS | Correct format |
+| Signed-off-by | =E2=9C=85 PASS | Present |
+| Fixes tag | =E2=9C=85 PASS | Present with 12-char SHA |
+| Cc: stable | =E2=9C=85 PASS | Present |
+| Body doesn't start with "It" | =E2=9C=85 PASS | Starts with "The" |
+
+**Code Review:**
+- Correctly fixes the pointer dereference pattern from `rx_queue[i].rx_pkts=
+` to `rx_queue->rx_pkts`
+- The original code treated an array of pointers as an array of structures =
+=E2=80=94 this is a legitimate bug fix
+
+**Issue (Warning):** Still missing NULL pointer checks before dereferencing=
+ `dev->data->rx_queues[i]` and `dev->data->tx_queues[i]`. The commit messag=
+e mentions the pointer can be NULL, but the fix doesn't add the NULL check.
+
+---
+
+### Patch 3/6: `net/nfb: update timestamp calculation to meaningful value`
+
+| Check | Status | Notes |
+|-------|--------|-------|
+| Subject length | =E2=9C=85 PASS | 55 chars |
+| Subject format | =E2=9C=85 PASS | Correct format |
+| Signed-off-by | =E2=9C=85 PASS | Present |
+| Fixes tag | =E2=9A=A0=EF=B8=8F **MISSING** | This is a bug fix (non-monot=
+onic timestamp) |
+| Cc: stable | =E2=9A=A0=EF=B8=8F **MISSING** | Should be present for bug f=
+ixes |
+| Body doesn't start with "It" | =E2=9C=85 PASS | Starts with "The" |
+| Doc + code atomic | =E2=9C=85 PASS | Both `nfb.rst` and `nfb_rx.h` update=
+d together |
+
+**Recommendation:** Add:
+```
+Fixes: 6435f9a0ac22 ("net/nfb: add new netcope driver")
+Cc: stable@dpdk.org
+```
+
+---
+
+### Patch 4/6: `net/nfb: use process private variable for internal data`
+
+| Check | Status | Notes |
+|-------|--------|-------|
+| Subject length | =E2=9C=85 PASS | 56 chars |
+| Subject format | =E2=9C=85 PASS | Correct format |
+| Signed-off-by | =E2=9C=85 PASS | Present |
+| Fixes tag | =E2=9A=A0=EF=B8=8F **MISSING** | This fixes multi-process sup=
+port |
+| Cc: stable | =E2=9A=A0=EF=B8=8F **MISSING** | Should be present for fixes=
+ |
+
+**Code Issues:**
+
+1. **Error (Style):** Line 148 changes a Doxygen comment to broken format:
+   ```c
+   -/**
+   +/* *
+   ```
+   This breaks Doxygen documentation parsing. Should remain `/**` or be cha=
+nged to `/*` (without the space after asterisk).
+
+2. **Warning:** The new `struct pmd_priv` only contains `max_rx_queues` and=
+ `max_tx_queues` as `int` types. These should likely be `uint16_t` to match=
+ the DPDK convention for queue counts.
+
+---
+
+### Patch 5/6: `net/nfb: release allocated resources correctly`
+
+| Check | Status | Notes |
+|-------|--------|-------|
+| Subject length | =E2=9C=85 PASS | 49 chars |
+| Subject format | =E2=9C=85 PASS | Correct format |
+| Signed-off-by | =E2=9C=85 PASS | Present |
+| Fixes tag | =E2=9A=A0=EF=B8=8F **MISSING** | This fixes resource leaks |
+| Cc: stable | =E2=9A=A0=EF=B8=8F **MISSING** | Should be present |
+
+**Code Review:**
+- Good refactoring of cleanup paths using `goto` error handling
+- Properly separates primary vs secondary process cleanup
+
+**Issue (Warning):** Forward declaration added at line 21:
+```c
+static int nfb_eth_dev_uninit(struct rte_eth_dev *dev);
+```
+This is fine, but the blank line before it creates two consecutive blank li=
+nes which is non-standard.
+
+---
+
+### Patch 6/6: `net/nfb: stop only started queues in fail path`
+
+| Check | Status | Notes |
+|-------|--------|-------|
+| Subject length | =E2=9C=85 PASS | 47 chars |
+| Subject format | =E2=9C=85 PASS | Correct format |
+| Signed-off-by | =E2=9C=85 PASS | Present |
+| Fixes tag | =E2=9A=A0=EF=B8=8F **MISSING** | This is a bug fix |
+| Cc: stable | =E2=9A=A0=EF=B8=8F **MISSING** | Should be present |
+
+**Code Review:**
+- Correctly uses reverse iteration to only stop queues that were successful=
+ly started
+- Loop logic is correct: `for (; i > 0; i--)` then `stop(dev, i - 1)`
+
+---
+
+## Summary
+
+### Errors (Must Fix)
+
+| Patch | Issue |
+|-------|-------|
+| 4/6 | Broken Doxygen comment: `/* *` should be `/**` or `/*` |
+
+### Warnings (Should Fix)
+
+| Patch | Issue |
+|-------|-------|
+| 1/6 | Log message references uninitialized `data->nb_*_queues` |
+| 2/6 | Missing NULL checks for queue pointers (mentioned in commit but not=
+ implemented) |
+| 3/6 | Missing `Fixes:` tag and `Cc: stable@dpdk.org` |
+| 4/6 | Missing `Fixes:` tag and `Cc: stable@dpdk.org`; consider `uint16_t`=
+ for queue counts |
+| 5/6 | Missing `Fixes:` tag and `Cc: stable@dpdk.org`; extra blank line be=
+fore forward declaration |
+| 6/6 | Missing `Fixes:` tag and `Cc: stable@dpdk.org` |
+
+### Info (Consider)
+
+- The series is well-structured with logical patch ordering
+- Good that patches 1 and 2 have proper `Fixes:` tags =E2=80=94 patches 3-6=
+ should follow the same pattern
+- Documentation is updated atomically with code in patch 3
+
+### Verdict
+
+**Needs revision.** The main blocker is the broken Doxygen comment in patch=
+ 4/6. Additionally, patches 3-6 should have `Fixes:` tags and `Cc: stable@d=
+pdk.org` since they all fix bugs in the original driver.
