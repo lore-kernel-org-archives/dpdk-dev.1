@@ -2,66 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D82DFC982C0
-	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Jan 2026 21:17:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD707C982FE
+	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Jan 2026 21:17:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0B81942EC9;
-	Fri, 16 Jan 2026 22:17:15 +0100 (CET)
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com
- [209.85.218.54]) by mails.dpdk.org (Postfix) with ESMTP id 88DD742EC6
- for <dev@dpdk.org>; Fri, 16 Jan 2026 22:17:13 +0100 (CET)
-Received: by mail-ej1-f54.google.com with SMTP id
- a640c23a62f3a-b86f81d8051so416452966b.1
- for <dev@dpdk.org>; Fri, 16 Jan 2026 13:17:13 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 132F642ED1;
+	Fri, 16 Jan 2026 22:17:16 +0100 (CET)
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com
+ [209.85.218.45]) by mails.dpdk.org (Postfix) with ESMTP id 26ECC42ED0
+ for <dev@dpdk.org>; Fri, 16 Jan 2026 22:17:15 +0100 (CET)
+Received: by mail-ej1-f45.google.com with SMTP id
+ a640c23a62f3a-b879d5c1526so209397266b.1
+ for <dev@dpdk.org>; Fri, 16 Jan 2026 13:17:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768598233;
- x=1769203033; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768598235;
+ x=1769203035; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=W6rWJ5HnkX1dXcdtwLUbxuQOrkOnb9SbLINhdSmTa1c=;
- b=JA2cLuu4rqlV1pZMe5OeyLPGojH02EtQFvXwA92XmOYj28O16A0j3CZXrf4U2o6zXX
- ijBJMasti/muR3Y41/ObQP297S0Z1UusCPDD5Ni1BamAy6Xf1FFHgwpuEDD/a9olkKI6
- VFLDsHHJu55+tAPCSCxeACfWD6i6IO37CL/vazU/xmhrG113CMRH0espS8lirkF41taG
- mVZA3RNhe1aBJIMZ7LsyP343aT1tgzURp9/+4XiNL7urwIKAsyjcIAPDgos+xYmgimo3
- QkvU93pYq5X64a8k894JnfnKDAd6mqrcMbf9YuKNkgKz6mIctVqSp+YO6qZ6pa+r0Upu
- 3FZw==
+ bh=AeDN80x2mTeNEn78vKRz5JV46OJ/DoK2Dn8E8THx/N4=;
+ b=RMeV4FUpH1NLdBU9pWWV0jVwTs0W/8v2DTWJHlnUyJUarZdE+i41k+vi4J5QxNt5KX
+ fsVM3OAWnVCv6kDZOa/8RtAcnO3RaVgrmrewZyBXx/H3nK+x1mcymO03C2glZH/BDbtk
+ DBtTe+dpB+AU3z6npQKN/5bwGCx3mLNpaN1NP+pKWIalwI+34EKTLS27Kb8nLkfnumEG
+ KkG9fEhxX7to6bx+ju3qExrJHm63vR4nW77ootij8PNgbLd9zX0+JeeqSsgaf1RYfoJi
+ 5P2mSptzR44IoggpLqn8JHPY0rc05UqldU5qGOFmaSykqmxH6DjY24i/Wat9w8A3OuM6
+ 7AmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768598233; x=1769203033;
+ d=1e100.net; s=20230601; t=1768598235; x=1769203035;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=W6rWJ5HnkX1dXcdtwLUbxuQOrkOnb9SbLINhdSmTa1c=;
- b=p7f/+QpGhKSXgHgfRPnb4F/pctwMpQwW3N7T9SOKJx1Iy+JS+phSHe3phQZiOwu141
- H0y2iMT1ruTGal4mH6K99Bc20z4cAtE/o9VthNZmapYDYnjJnw+ChhZOs14Uxfk3ShfP
- u0L0s3T5u2Faf8fmag9Aln/gr8DrWvwQG10Qyqm+ef777O7kysIFHIqdPJSEvU1+zvaJ
- WJqGiaS1BFozMoxS9YWp34X5aX/bV0GvGRp/1Nm9vQ1F9XBmovLFMZxUxWtrZ7r2JrbN
- 7nZ324Ef+7LPHZRvvpEXE6/1a9jRdp7oaxcCgnNWY50ToRo918UfOvxK3ozfgGNnkQYH
- cWmQ==
-X-Gm-Message-State: AOJu0Yxp/Mg/gbZJRczrvuN5Zuf6WVM2stvs/42qmJ5Hwe0mM+DRo/c1
- qtidXt1fZXJyilC/oAvMRl4JrUApk7of7h5JbHrOuaa+hqBWqNcAaRdWGNX940PBcaKXP0lVtJ/
- ScifY
-X-Gm-Gg: AY/fxX7nPkSdAxC5AX2fvssVu0riwxY1EkNlrynVv2dMqj3MLFb+M8B9370jGmBkBbB
- tErLJGgiBxGfl+uTU6/0ULl7R7iNION0KG1q+nRkkwQSgEhTtAKVf7idpT8TQvUFubfG078uHiG
- DJ8TxPl4hi+Y2LB3NeVRsF7ILq3+7obXgmZryOTgD0cP6yRsAAa6y0EjiMK2aWnZcl5rlczLZcs
- poI8R+zHL9azOxzNfsgxsHpVwe7vTMjnCbYxa/jAhtdxRG1AWVX5Q6Rl375ZSlYP2IN/1xhHs3C
- lgOKtX9lVl760MBdYCBtrOUueDtaQBTorgwNe12ZXWUoL2Vv/w9gsBiUiFzTR6thc1fIalbV7aO
- cmDhJU3OebvFqssw/bU+BDTHxtSut8Cznrom714kDnyJloqV41exObN7i9YIL58xzXtCtkeUrJG
- o+BZhMzFB75XdxNF6w6oUoZao7HQEFxloGUFKlKgTQsks4JQEyfg==
-X-Received: by 2002:a17:907:3e9e:b0:b87:763b:3da6 with SMTP id
- a640c23a62f3a-b8793a1eef5mr368770166b.23.1768598233125; 
- Fri, 16 Jan 2026 13:17:13 -0800 (PST)
+ bh=AeDN80x2mTeNEn78vKRz5JV46OJ/DoK2Dn8E8THx/N4=;
+ b=KyB++pRphMz1JnkuYj86fkJrdrMNwMMy2hIQRN0mpghaHqvu+2Mb2M49ZU+JdjcAhQ
+ +PQiOnlM+kAMPJ84Qf6L8EbCiOcaaTaQWdJ7sLy2vzKe1qW2bgTqnplvPbdgNm8dx4PD
+ cIvZr+Xp5O8+W1bqRPlBxtZyjZIkLmYJ3ydJq+d5pfshMv/uWnsSVEs3bj+H/DKkWkGe
+ JZ2V7uoAoEHdZ70IeZaRXTqCuW0sABiGHC7rH22LTCP7iv0IcjXjhelyozqAOqGRk8JZ
+ OYElQiHfsI5bS/xJ2WYwHAHcKviTjTb2cnJmtUhyKUv6n6uMBDgb+Abvn1vBdc6t/IZV
+ QgKw==
+X-Gm-Message-State: AOJu0YwPgP8TpUz7DBsPaQVPLQZXx78AEIY2XxW/tFeG/0yxPyQtoA8g
+ MEaRp7AdC+BpkF3/9Jr7/gaLD8qRUJLrBbxnSW1EbAwU9ydDq4uQbrTw2W74RSi7ImH5T85NI8m
+ I2OC2
+X-Gm-Gg: AY/fxX5xurB6wmKxKOTe+/9RMeGnp8man0J7dK4gYdvt29GIghZUmp3S3wsZAUJhdKk
+ 7Lz4s7KyKogBKM3BNscQfpAty7bLz+KTSNi/UbK9yrdIhNKAVkj8N79DZnqwcCVxTz/NTZ/v9na
+ m5TvEYnLeqRt+UKVF/uFMr8GnocpwdsI02RXKpZPQ5vlhew488VPeSjX20viKwa5YRDabcNipet
+ XBFEbHeRKRzWXCPtFyIvmdQvaHcAIp1XCRAU3gorb1OqimX98bE6Vq6SZA0NaZ0hgFyb5f4eZKC
+ zvcm1toVkStGnDAx016Da8L7QaijwWkdPXenPE9NViwdWz+lekztiNhRe3dFUPxnICSZyW+AD9Z
+ fW25DcsAlFo6GkeNQUFvBi5JFj7NmsqMZ5YwK1gBMC4BXPINjNmTv1PIMmvyOaJJ9y0OA0Nc6Q4
+ Tm6j5FVrY+YdWIQBlbyQPxNmv734u1IgeWwqhDchi4AmlgC2gt1A==
+X-Received: by 2002:a17:907:2d9e:b0:b87:908:9aca with SMTP id
+ a640c23a62f3a-b87968a9870mr348770066b.9.1768598234715; 
+ Fri, 16 Jan 2026 13:17:14 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a640c23a62f3a-b8795168ca9sm336649066b.15.2026.01.16.13.17.11
+ a640c23a62f3a-b8795168ca9sm336649066b.15.2026.01.16.13.17.13
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 16 Jan 2026 13:17:12 -0800 (PST)
+ Fri, 16 Jan 2026 13:17:14 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH 09/11] doc: correct grammar and formatting in EAL arguments
-Date: Fri, 16 Jan 2026 13:06:25 -0800
-Message-ID: <20260116211649.104776-10-stephen@networkplumber.org>
+Subject: [PATCH 10/11] doc: correct typos in enabling functionality guide
+Date: Fri, 16 Jan 2026 13:06:26 -0800
+Message-ID: <20260116211649.104776-11-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260116211649.104776-1-stephen@networkplumber.org>
 References: <20260116211649.104776-1-stephen@networkplumber.org>
@@ -80,76 +80,46 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Lowercase "Within" mid-sentence.
-Use consistent directive case ".. note::" instead of ".. Note::".
-Change "in to" to "into" (one word).
-Add missing "be" in "will be created".
-Use consistent bullet point spacing.
+Remove space before hyphen in "frequency-based".
+Change "can not" to "cannot" (one word).
+Change "my" to "may" (typo).
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- doc/guides/linux_gsg/eal_args.include.rst | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ doc/guides/linux_gsg/enable_func.rst | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/doc/guides/linux_gsg/eal_args.include.rst b/doc/guides/linux_gsg/eal_args.include.rst
-index 4a3c4d9b5f..a0c17da9b9 100644
---- a/doc/guides/linux_gsg/eal_args.include.rst
-+++ b/doc/guides/linux_gsg/eal_args.include.rst
-@@ -17,7 +17,7 @@ Lcore-related options
+diff --git a/doc/guides/linux_gsg/enable_func.rst b/doc/guides/linux_gsg/enable_func.rst
+index a551ddebec..4e1a939f35 100644
+--- a/doc/guides/linux_gsg/enable_func.rst
++++ b/doc/guides/linux_gsg/enable_func.rst
+@@ -104,7 +104,7 @@ Power Management and Power Saving Functionality
+ -----------------------------------------------
  
-        <lcores[@cpus]>[<,lcores[@cpus]>...]
+ Enhanced Intel SpeedStep\ |reg| Technology must be enabled in the platform BIOS if the power management feature of DPDK is to be used.
+-Otherwise, the sys file folder ``/sys/devices/system/cpu/cpu0/cpufreq`` will not exist, and the CPU frequency- based power management cannot be used.
++Otherwise, the sys file folder ``/sys/devices/system/cpu/cpu0/cpufreq`` will not exist, and the CPU frequency-based power management cannot be used.
+ Consult the relevant BIOS documentation to determine how these settings can be accessed.
  
--    Lcore and CPU lists are grouped by ``(`` and ``)`` Within the group.
-+    Lcore and CPU lists are grouped by ``(`` and ``)`` within the group.
-     The ``-`` character is used as a range separator and ``,`` is used as a
-     single number separator.
-     The grouping ``()`` can be omitted for single element group.
-@@ -106,14 +106,14 @@ Device-related options
-     Skip probing a PCI device to prevent EAL from using it.
-     Multiple -b options are allowed.
+ For example, on some Intel reference platform BIOS variants, the path to Enhanced Intel SpeedStep\ |reg| Technology is::
+@@ -134,7 +134,7 @@ to isolate them from the general Linux scheduler tasks.
+ .. note::
  
--.. Note::
-+.. note::
-     Block list cannot be used with the allow list ``-a`` option.
+    It is not recommended to use CPU core 0 for DPDK polling applications
+-   because it can not be truly isolated from other system and kernel activity.
++   because it cannot be truly isolated from other system and kernel activity.
  
- *   ``-a, --allow <[domain:]bus:devid.func>``
+ For example, if a given CPU has 0-7 cores
+ and DPDK applications are to run on logical cores 2, 4 and 6,
+@@ -173,7 +173,7 @@ To enable HPET support in DPDK:
  
--    Add a PCI device in to the list of devices to probe.
-+    Add a PCI device into the list of devices to probe.
- 
--.. Note::
-+.. note::
-     Allow list cannot be used with the block list ``-b`` option.
- 
- *   ``--vdev <device arguments>``
-@@ -223,7 +223,7 @@ Debugging options
- 
-         --trace-dir=/tmp
- 
--    By default, trace output will created at ``home`` directory and parameter
-+    By default, trace output will be created at the ``home`` directory and parameter
-     must be specified once only.
- 
- *   ``--trace-bufsz=<val>``
-@@ -266,15 +266,15 @@ Other options
- 
-     Pool ops name for mbuf to use.
- 
--*    ``--telemetry``:
-+*   ``--telemetry``:
- 
-     Enable telemetry (enabled by default).
- 
--*    ``--no-telemetry``:
-+*   ``--no-telemetry``:
- 
-     Disable telemetry.
- 
--*    ``--force-max-simd-bitwidth=<val>``:
-+*   ``--force-max-simd-bitwidth=<val>``:
- 
-     Specify the maximum SIMD bitwidth size to handle. This limits which vector paths,
-     if any, are taken, as any paths taken must use a bitwidth below the max bitwidth limit.
+ #. Ensure that HPET is enabled in BIOS settings.
+ #. Enable ``HPET_MMAP`` support in kernel configuration.
+-   Note that this my involve doing a kernel rebuild,
++   Note that this may involve doing a kernel rebuild,
+    as many common linux distributions do *not* have this setting
+    enabled by default in their kernel builds.
+ #. Enable DPDK support for HPET by using the build-time meson option ``use_hpet``,
 -- 
 2.51.0
 
