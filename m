@@ -2,66 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ABDEC982C3
-	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Jan 2026 21:31:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F285C982C0
+	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Jan 2026 21:31:29 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 93D9F42EDA;
-	Fri, 16 Jan 2026 22:31:10 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 881C142EC8;
+	Fri, 16 Jan 2026 22:31:12 +0100 (CET)
 Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com
- [209.85.221.46]) by mails.dpdk.org (Postfix) with ESMTP id 713BA42EB7
- for <dev@dpdk.org>; Fri, 16 Jan 2026 22:31:09 +0100 (CET)
+ [209.85.221.46]) by mails.dpdk.org (Postfix) with ESMTP id 3A99B42EE0
+ for <dev@dpdk.org>; Fri, 16 Jan 2026 22:31:11 +0100 (CET)
 Received: by mail-wr1-f46.google.com with SMTP id
- ffacd0b85a97d-430f3ef2d37so1857404f8f.3
- for <dev@dpdk.org>; Fri, 16 Jan 2026 13:31:09 -0800 (PST)
+ ffacd0b85a97d-432d2c7a8b9so2188615f8f.2
+ for <dev@dpdk.org>; Fri, 16 Jan 2026 13:31:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768599069;
- x=1769203869; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768599071;
+ x=1769203871; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=6DLZfJO7a+9BXdWXOB4N+x8tNNMQ1aNaCrNKUkbeclQ=;
- b=VotDkQ3EMbFK4L7fw/XGD47DAE5wufnpZABdN750r9NNG3ExxwZZrDfToI1E/B7Unz
- I0Bzxv3WwsYAHH8TigN9jsM3wKTE+07++Jzf5h4wNI8C3vU/3fQoMA0/65G3BTXaIk5L
- UpLZI/LHQRqDSpiy2angtG+AqGaIzjxY9ZKYy5LR77GPSAw+y9ZgRiJhFD9stM6bSkjr
- 0sHAzManA4ROf+2ntMi1J5/ydQeXk4MV94cUZr0D1tUTyZTmzcGi6xqSh+wwzm1hK5xO
- R/f2P3PXOwX00M4Tce8wrZtZDQJfS6Hdj983bcqjK30JFtmMv+kBzhEBcOjhPSxfCouM
- PBQQ==
+ bh=hrET59uYCMdvTGdl2IjlHONfcDNOpCfVFu9IUXe8BRs=;
+ b=CT9VbEIOzI46JCFBDnOA9u7i8lN23frEXx5TNwubtL1sZLgq7FOzzeqyai4t21Sa3B
+ bXKYpt2obqykmRgCqEZfzm4oWYZcGxiO6S2jEk+V3yRtcEyhacEYFDoNjkLIOUJBYrTF
+ UIHkpqgQWZ++k9K8p8YsvpLUbZNkx++t42a74SS90vpfshqvFBukXgqS6Ldw16OW9KXX
+ A5jNmg9IrBnjZKM19YNjNcRz1S0TtFCCWKlfKAkREg65YKuv/y4qJUTo36eCDZGdq6uj
+ EHd6YaDa8AAYbvRlqFpZsPjtgfneHvseKvFZWv/2jnZRYKz5gZcrA5//+noDGALMOjIN
+ FH9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768599069; x=1769203869;
+ d=1e100.net; s=20230601; t=1768599071; x=1769203871;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=6DLZfJO7a+9BXdWXOB4N+x8tNNMQ1aNaCrNKUkbeclQ=;
- b=FUZVU0AILjldjpYlmcTitzYZms+SaexahmBua0m26gjsBnlA6ducL/PgkEPEYELSHe
- B/Y+G/JD+v5K9fVRYiy66nFpwKri1THm4ZkKn2AZ/bEICcXcivNppTYfTGgysZB64QjB
- xWez6SoeA1wU2ePmhIlmTcMCvYX2J3fJnervb1Qw1AI3LfialfKZblbzhg9WuWgTkoU6
- KWFM2fKW1B03uaM065S7bddFnif2mUHLSlfjqKI+mynAceW0ASa6RpwcIoMY1r+vFIei
- Ka1T9hQxXb7xDq0IpDJsLUCyuY8oc1ZRcdHvmi1hCfTYJNaGbsJY/Q2Fpf7BFL6/CW5+
- 2iGA==
-X-Gm-Message-State: AOJu0YxYbCnFFH1cCQL/iQCuOcyN1ZIvlmR9CF4J8Odi8pT/X6rBQTv6
- MDoAXmBGCwNdbsVewF6YyDo+fCPARqlgxf0wW43ibrMq5HyI2eaJ4jogCU615hh9bX9nkySOyOZ
- hK0NE
-X-Gm-Gg: AY/fxX4Sux8dFHGEeA4v88SOOcch8XqZlFYxYos2ZQwjAAiJqFvyD1/+46LCfljzbVw
- p6Sl/BTCL3AjvXSLV+8MKip5wwSF2xgpF0D/qhV/icMOWF+N5sEQZFJuLtEI6y+Pp7offquMmgC
- 4p362kQJ19GVf/7TP8dB7w2soQsyD8u95BT8LtGm5WxKIYiqI7/lwjbRPUp5kZX6yf9ryDGMv+t
- Y2LAcmx6aTHePPMp9WsMaJ6M8BqMq8Zhdq5u27dO2iTNYIuAo38gjzXvn5W1y5oFgT5fTO38wcp
- ZRDVdEeRk4U834DO0WUAotTSPYK1/n1Zk86TwZuMV2eWi0HGzmEgJTDrzCya2AX7icu7us5NifE
- jH0rTYmLMOIk6jl08EStDSwvqra1e+HbZAWVqmmyctwZaVRxyEXFzSwvIQqR907KxDZByr0c73m
- ARTFG6ZFbgnFqOw+vl/hysB1lJutXkTZtuei7s9hCtZSzJdj/WEA==
-X-Received: by 2002:a05:6000:4021:b0:432:c0e6:cfda with SMTP id
- ffacd0b85a97d-4356996f134mr4324034f8f.7.1768599069036; 
- Fri, 16 Jan 2026 13:31:09 -0800 (PST)
+ bh=hrET59uYCMdvTGdl2IjlHONfcDNOpCfVFu9IUXe8BRs=;
+ b=GPQJZtOtm5sh3df8MCdjCnwvfYEP/BG+En6xn2uLvVdl7RcQ6PUhJGrgibvwsaTVmB
+ sAcT4KSZkI6n869LtSIHeYNYVVPmMDtUdYqKUyPJmQO1puPYL7/aMPMUuNpVwKf4elnJ
+ MJVZg7yiwdi5aCpPkOdevy1Vrc1lW6Iz7N/0NJbXhmsUWkZVOLCMJLKpaDnC5k4DAqIY
+ K4KYbUJoFxO+BK4i2guK6L4BvxvLtXK2/FQcfCFx2zpPYEYiTSZXC4LgGnQOeCwRfmNM
+ Y1pJzQrXjQciMAQRybixOWxg2jEDkL2VfB5JI3yii/YNkXvMP2KAjWPzXjhx2oJ2uQD6
+ rVsQ==
+X-Gm-Message-State: AOJu0Yzy/RAXrJNcwsMlFgib3bguHZnEGX8psHIbpk0ZWX2v8dla4f8c
+ xONPOEQ1rQivy30n8CXFNRla2sHjcGBQyKgYbymdXG1w97W1/BdPBZ73ZGIOybyjBjFruGeml3X
+ rbGEY
+X-Gm-Gg: AY/fxX7bmdKcdcdxYfmqM39H8bWLJ1h322xKcThg7OBb0o2Lkrywo0yu0Z1H+p+IX1I
+ 48siPpUxKmUZ8aztwAm60VXGvbpAGdRfgHd1OMkHwh0SWi72bb222Whxc7Q5rdjfs3v2PYFhAYW
+ tFcR3CcZvfVdgW8UAXLWau+mkJxarhUZb7aH2ljQPHeeJVS4aqNyxkciF6bYuCNJZWRi+r1QweD
+ lLV3mMHqoNGcBrgFcAHFaFMvqGAyJN/7RdxWOPN7ING5baSpPlI3M/1BZJdvcGAvvvd6+ESJDk5
+ EJdjvU2KkLy4UHyJicdE9/DhyMYEu/P/DiEKPPzw4OOBh4HvxScKOxIrBf9nIFE/PsCfEtPsIfm
+ XSkHzEoC1prtErLNGwPET859WYxIVIaz2Bt2NLhXfET8I0lVcR6oVR+9wXk6VpCFp6mtLLmEgK9
+ b0P9ySBzuZ2N8bemDwOZwK2BdqiRxyGlbnjUUw1hioWkrUhRKbPw==
+X-Received: by 2002:a05:6000:1a88:b0:431:9b2:61c4 with SMTP id
+ ffacd0b85a97d-4356a082ee3mr5484615f8f.45.1768599070746; 
+ Fri, 16 Jan 2026 13:31:10 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-4356996e2d8sm7398759f8f.28.2026.01.16.13.31.07
+ ffacd0b85a97d-4356996e2d8sm7398759f8f.28.2026.01.16.13.31.09
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 16 Jan 2026 13:31:08 -0800 (PST)
+ Fri, 16 Jan 2026 13:31:10 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>, Ori Kam <orika@nvidia.com>
-Subject: [PATCH 2/5] doc: correct grammar in rte_flow guide
-Date: Fri, 16 Jan 2026 13:29:33 -0800
-Message-ID: <20260116213100.110419-3-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Cristian Dumitrescu <cristian.dumitrescu@intel.com>
+Subject: [PATCH 3/5] doc: correct grammar in QoS framework guide
+Date: Fri, 16 Jan 2026 13:29:34 -0800
+Message-ID: <20260116213100.110419-4-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260116213100.110419-1-stephen@networkplumber.org>
 References: <20260116213100.110419-1-stephen@networkplumber.org>
@@ -80,26 +81,54 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Remove duplicate article "an" in phrase "a single an item".
+Add missing article "a" in phrase "As result" which should be
+"As a result" in four locations including table cell descriptions.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- doc/guides/prog_guide/ethdev/flow_offload.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ doc/guides/prog_guide/ethdev/qos_framework.rst | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/doc/guides/prog_guide/ethdev/flow_offload.rst b/doc/guides/prog_guide/ethdev/flow_offload.rst
-index 1cd904e1ee..d51926a47c 100644
---- a/doc/guides/prog_guide/ethdev/flow_offload.rst
-+++ b/doc/guides/prog_guide/ethdev/flow_offload.rst
-@@ -109,7 +109,7 @@ However, ``rte_eth_dev_configure()`` may fail if any rules remain,
- so the application must flush them before attempting a reconfiguration.
- Keeping may be unsupported for some types of rule items and actions,
- as well as depending on the value of flow attributes transfer bit.
--A combination of a single an item or action type
-+A combination of a single item or action type
- and a value of the transfer bit is called a rule feature.
- For example: a COUNT action with the transfer bit set.
- To test if rules with a particular feature are kept, the application must try
+diff --git a/doc/guides/prog_guide/ethdev/qos_framework.rst b/doc/guides/prog_guide/ethdev/qos_framework.rst
+index 1144037dfa..53a72ab677 100644
+--- a/doc/guides/prog_guide/ethdev/qos_framework.rst
++++ b/doc/guides/prog_guide/ethdev/qos_framework.rst
+@@ -621,7 +621,7 @@ The token bucket generic parameters and operations are presented in :numref:`tab
+    |   |                        | while the bucket is full are dropped.                                        |
+    |   |                        |                                                                              |
+    +---+------------------------+------------------------------------------------------------------------------+
+-   | 3 | Credit consumption     | As result of packet scheduling, the necessary number of credits is removed   |
++   | 3 | Credit consumption     | As a result of packet scheduling, the necessary number of credits is removed |
+    |   |                        | from the bucket. The packet can only be sent if enough credits are in the    |
+    |   |                        | bucket to send the full packet (packet bytes and framing overhead for the    |
+    |   |                        | packet).                                                                     |
+@@ -716,7 +716,7 @@ where, r = port line rate (in bytes per second).
+    |   |                         | *   tb_time += n_periods * tb_period;                                       |
+    |   |                         |                                                                             |
+    +---+-------------------------+-----------------------------------------------------------------------------+
+-   | 3 | Credit consumption      | As result of packet scheduling, the necessary number of credits is removed  |
++   | 3 | Credit consumption      | As a result of packet scheduling, the necessary number of credits is removed|
+    |   |  (on packet scheduling) | from the bucket. The packet can only be sent if enough credits are in the   |
+    |   |                         | bucket to send the full packet (packet bytes and framing overhead for the   |
+    |   |                         | packet).                                                                    |
+@@ -805,7 +805,7 @@ as described in :numref:`table_qos_10` and :numref:`table_qos_11`.
+    |   |                          | }                                                                          |
+    |   |                          |                                                                            |
+    +---+--------------------------+----------------------------------------------------------------------------+
+-   | 3 | Credit consumption       | As result of packet scheduling, the TC limit is decreased with the         |
++   | 3 | Credit consumption       | As a result of packet scheduling, the TC limit is decreased with the        |
+    |   | (on packet scheduling)   | necessary number of credits. The packet can only be sent if enough credits |
+    |   |                          | are currently available in the TC limit to send the full packet            |
+    |   |                          | (packet bytes and framing overhead for the packet).                        |
+@@ -1720,7 +1720,7 @@ Traffic Metering
+ The traffic metering component implements the Single Rate Three Color Marker (srTCM) and
+ Two Rate Three Color Marker (trTCM) algorithms, as defined by IETF RFC 2697 and 2698 respectively.
+ These algorithms meter the stream of incoming packets based on the allowance defined in advance for each traffic flow.
+-As result, each incoming packet is tagged as green,
++As a result, each incoming packet is tagged as green,
+ yellow or red based on the monitored consumption of the flow the packet belongs to.
+ 
+ Functional Overview
 -- 
 2.51.0
 
