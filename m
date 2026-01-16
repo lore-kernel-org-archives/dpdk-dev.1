@@ -2,69 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A000C982E0
-	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Jan 2026 17:37:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50E3CC982E0
+	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Jan 2026 17:39:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7995F42E7F;
-	Fri, 16 Jan 2026 18:37:10 +0100 (CET)
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com
- [209.85.128.42]) by mails.dpdk.org (Postfix) with ESMTP id DE06A4026A
- for <dev@dpdk.org>; Fri, 16 Jan 2026 18:37:09 +0100 (CET)
-Received: by mail-wm1-f42.google.com with SMTP id
- 5b1f17b1804b1-47ee937ecf2so17955055e9.0
- for <dev@dpdk.org>; Fri, 16 Jan 2026 09:37:09 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id A83F042E7C;
+	Fri, 16 Jan 2026 18:39:32 +0100 (CET)
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com
+ [209.85.221.51]) by mails.dpdk.org (Postfix) with ESMTP id ED0534026A
+ for <dev@dpdk.org>; Fri, 16 Jan 2026 18:39:31 +0100 (CET)
+Received: by mail-wr1-f51.google.com with SMTP id
+ ffacd0b85a97d-4327555464cso1266661f8f.1
+ for <dev@dpdk.org>; Fri, 16 Jan 2026 09:39:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768585029;
- x=1769189829; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768585171;
+ x=1769189971; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=ZTybXhsXthKgQQHCzOao/tK29BNzSs29uQ1VrnpscxM=;
- b=A0OOnt7GX1kng2kZsCmthfAmRALPoLhJFGfdlnnyR+qXJsvQUjgk1fgNW4YJRX42AZ
- v9GIldcYj2ZQKEPU2sZQIbjwk/NrX020A5oMPqJpbeO27YMlXcoGjUOhDPWN5zM7EI+8
- 95QXeK1ji7ZxE+oSym6z+6IpKJKMIdloh03FVFgpBJSiSnn7024rQgW7ni+mvKO15jbo
- SsJJRjxcklTGvRuzNc5/tPB3028nKjGhPOwl5P2rnIcH0hQdoxCx8wSc0j50EXinp5zB
- c2e60lsTvgyOjqyCfkdd4uLtKfIxsXTgehIDxkveUB1l40OHdI4k+DQLVU74j2lkQmaK
- XpEg==
+ bh=2yTFuh3z/rFM+OxJ8AuhPpReFO1U2YSNQg5lscrJOo0=;
+ b=xbCKbmU3Z91t1UD4FdRbW/LRWDYJGNqprAWd46O8SJ58lkfJ55TZ8SCLYmzHq6S6nt
+ r0hF/A/kwZ4/9XEKMHnEWyJ55AqO9bUo4VP2XMpUFE/WOYe94P2UYJGvlpEG8RISKyP7
+ P4JSGkESd9npEUxmPHKZa1J4C6TseGJcBl31l68/XjfYEnRhTVrNNh9dmuP5LNdjFttn
+ 8h2fHo9xMAVpKbvD1apHqdei491WkSO+LWo3pgsV9dx2TOFbPqHxe5joLETxNgNJ3C3n
+ DrLFj0ZSz72hXrn4xXdEqaChqBZjPxrKTBNs9U/h7IyOgm91xgzLEMkoSTw3rXPauFZQ
+ Cojg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768585029; x=1769189829;
+ d=1e100.net; s=20230601; t=1768585171; x=1769189971;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=ZTybXhsXthKgQQHCzOao/tK29BNzSs29uQ1VrnpscxM=;
- b=iYpFVga1mWKMtnZ1qxo95md6zmyYUYMz6rNNVbEdsf21HrrF9eK75WVp0OP+ZWBOvc
- t9hOu6WSYjCT6HF0XF4ZufDJ3GkvBKck4T/XySsZqHt0CvBVPXh/oj9hR/s/2ZxMKOUM
- v+fl7vGJXinvdHtR3IVj9IpuJ0OUYn12BEdQH9ff0zKbOQT3LNbX4uWo34wjVKLCawWO
- 3o2hEtYlMBVgFLQKZuF8zvoSHJg5wLV2Memw2MomORzGxYYMpa9PNWMQ6cjtJKCh/tI4
- WfblOdyH/giLYPdaijiQycp2rZJkoAsuSXSubs1csg/Et8D7BqKWXpR5rYLXXkj4iJxL
- 1Y2g==
-X-Gm-Message-State: AOJu0YwjP4REapQNi+l8e/sj8AFlcA/QJkmnqJ5fiH+3rPsxPLqGKuHC
- UjMm8ShW6qb7NIRnFTGiESxkPmdyyw4BY1AYdSpG4NjvB783CaIDIhnv3Km+fAGVwqQ=
-X-Gm-Gg: AY/fxX7lWYO+oA0j6WBS4AF8RQbYEGMpdTqM9VkVjVqhRxE46F9a3qQh4KykPDXb56d
- 8ni31iIfdcekbM8IZpsGmzyxu7QeDJsAz6A2wBC2QTu7mcslHjDuHjnMv8I1+MSFo0AnRoUcHOx
- wRgCrKPfAdUxlSys6GfaOeKGHEBWQi3BV4rX7ZdQJjoIoyGZoWQLRwpCbLFUbrSncDGqnOv8XqP
- AzcfZVdpjGYTJwtdNQmzBhBpUk7xEBrr+6/ZRYjVjYwyOg7RoX/uPy9LghPzpRZ1z9xUwntdpcb
- 8NGCfAaJIDRtAZikylIRkJeo2nRKcJs8rlyLvbQ+s/7q0KRcHN/XoXpXdqe/T6YwNSgibuzYYul
- v9uEUZIiCuT94jYvSrwkAGnP1CtcbyppFgIjak6r2HFgyC99P4BjXaB4aJOuVU5ZMwonrfu9oUI
- en0lT7hYVshIyXCMTzeis1ekjSJ4IGejjWfZjRF+rBPHdZNbKIeips
-X-Received: by 2002:a05:600c:6749:b0:47d:333d:99c with SMTP id
- 5b1f17b1804b1-4801e68adc6mr40380875e9.18.1768585029523; 
- Fri, 16 Jan 2026 09:37:09 -0800 (PST)
+ bh=2yTFuh3z/rFM+OxJ8AuhPpReFO1U2YSNQg5lscrJOo0=;
+ b=LxyI0QiUU+kSTpTKxb02TsiCeKO4wFp/rGvAsBKBryJsYX+0A2QpCFVNp6OpnS8BvB
+ kxB0ejX30oBkWUXR1uMW0qDsLh2HIBBhOtkhFJ8FsHK0N1tsEWkOIRFHWTwXB0Nl0x/U
+ 6N9hGwXGI73VR+ZhWGNKrpXNHhM3OLaJ9XkE4NZiOU7HIU3p3kCGmaOB93TfjKsBVlAt
+ nhNdJkihjaUjhrvXIqK1mldBJRVRmjM4MnrCBBoi6t/4l2l/fSswdriBDF5q2HDShyjd
+ zCtIUkBYY+oveD/rv55/xM8hQfEFpNRNHh++8yRtRP6XCzJUkZq73cjiULEoHcatwBoi
+ y4PA==
+X-Gm-Message-State: AOJu0YySc3/8hyPDTgsK7KbRsc1f9TMmGWCJwlmyd/6v8XQUduZ5WJeI
+ hceG0EnkV511vQg3Ypav4Lbpt5iaicBpXpmw+NbuebdAyn1DvidhSEOg3dUus0qEusE=
+X-Gm-Gg: AY/fxX55uwxS25+9viBAHrocXVVypVy2WkQwilaEnkiYZ1Sm9RYSDgjJ87DQc1P4+AC
+ VZxQRSW68xUJ5M5/H5gTHKN6/07GdnFbYRHXHWf6q6xa7axCSlkGHmKr/6h4BRMT9Zpj1+hSt32
+ QxgM6k8nNXkGbimcPgI5NkPEtUlf1aVZq2FsIJdjFF7swYpMsOnX4Pjhp/8BFDp5O4QYDwCIP/+
+ OhHSQyg3jYJ9YCjq/5MgexOt+CpDqHuoErVoDDNGk7Tqy2lNypNKzTRw0cqsPievafzd+EQrfHG
+ lHGSbR01cahoUrYDw52W8DjZX7KBxZH+/cLzQATqQPL34Bu2Q68SJrT1+HBEplXvgub7nrMIho/
+ 5tNGKmEfKqS7cRa5Tnm6MIkucKUJSX6myzDppT01xzfVBDKY5PezZQunl+6LWp8INbY0YFeQG6U
+ rGIlzQSqLCZ1Y0uSVXoQqttWXX2vd/fKU9ZRWWng/3lCjtod9z3XMSbACic+7+uSc=
+X-Received: by 2002:a5d:64c5:0:b0:430:f463:b6bb with SMTP id
+ ffacd0b85a97d-4356998acf7mr4354906f8f.16.1768585171470; 
+ Fri, 16 Jan 2026 09:39:31 -0800 (PST)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-4801e8d90b3sm53578055e9.15.2026.01.16.09.37.08
+ ffacd0b85a97d-4356997e664sm5757502f8f.30.2026.01.16.09.39.30
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 16 Jan 2026 09:37:09 -0800 (PST)
-Date: Fri, 16 Jan 2026 09:37:05 -0800
+ Fri, 16 Jan 2026 09:39:31 -0800 (PST)
+Date: Fri, 16 Jan 2026 09:39:25 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: spinler@cesnet.cz
+To: Martin Spinler <spinler@cesnet.cz>
 Cc: dev@dpdk.org
-Subject: Re: [PATCH 4/8] net/nfb: add device argument "port" to limit used
- ports
-Message-ID: <20260116093705.1f90175f@phoenix.local>
-In-Reply-To: <20260115151656.393106-5-spinler@cesnet.cz>
-References: <20260115151656.393106-1-spinler@cesnet.cz>
- <20260115151656.393106-5-spinler@cesnet.cz>
+Subject: Re: [PATCH v2 0/6] net/nfb: code cleanup
+Message-ID: <20260116093925.6e397c33@phoenix.local>
+In-Reply-To: <03920b87aa9203f2e9eae239e2fd1a9811f6bfdd.camel@cesnet.cz>
+References: <20260115140134.235877-1-spinler@cesnet.cz>
+ <20260115144040.345873-1-spinler@cesnet.cz>
+ <20260115214849.623db82c@phoenix.local>
+ <03920b87aa9203f2e9eae239e2fd1a9811f6bfdd.camel@cesnet.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -81,11 +82,30 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 15 Jan 2026 16:16:52 +0100
-spinler@cesnet.cz wrote:
+On Fri, 16 Jan 2026 10:42:20 +0100
+Martin Spinler <spinler@cesnet.cz> wrote:
 
-> +		if ((port_mask & (1ull << i)) == 0)
-> +			continue;
-> +
+> Hi Stephen!
+> 
+> Thanks for quick review, my reaction to issues:
+> 
+> 1/6: The log message at line 543: fixed
+> 2/6: Still missing NULL pointer checks: misleading,
+>      dev->data->nb_rx_queues ensures the queue[i] was inited
+> 4/6: uint16_t: applied, Doxygen comment: fixed
+> 5/6: extra blank line: fixed
+> Those fixes will be in v3.
+> 
+> 3,4,5,6/6: I think don't want to add Cc to stable, if you agree?
+> 
+> 
+> Besides that series and 'net-nfb/rework to real multiport', I have
+> another 3 series of a similar size that depends on those series: Native
+> Queues, Metadata+Offloads, and Ethernet. To make the work easier, would
+> you prefer to have it in one 19-commit series or should I to continue
+> in 3 small series?
+> 
+> Thanks! Martin
 
-I meant RTE_BIT64() would be good.
+Only cc stable if the driver was released in a stable version and
+it is something that could be triggerable by bad input
