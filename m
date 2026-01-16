@@ -2,146 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28114C98306
-	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Jan 2026 23:11:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10303C98306
+	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Jan 2026 23:19:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 62F2E40653;
-	Sat, 17 Jan 2026 00:11:00 +0100 (CET)
-Received: from CY7PR03CU001.outbound.protection.outlook.com
- (mail-westcentralusazon11020085.outbound.protection.outlook.com
- [40.93.198.85]) by mails.dpdk.org (Postfix) with ESMTP id A59C9402CC;
- Sat, 17 Jan 2026 00:10:58 +0100 (CET)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Ev37ng1UChd/t62/ikh1uWrIqtGPWOdofBjEjxofafHA6ripC3o1cx/RbW12yhXSL8D1R7bjLbXDtobCkv8XAYivDYBh2I+GqSb3FOmgY+YIYAHDrafdH2u7FxFXpYz0NJQ32gT0mVf3gadMg9h+dXDV/qNC5raHUzMKCxwaczRPGf14ETI5gNjsnfuf8h10DI8+VRZY2e1YS92bZHiMU+XtUVgNorDBRscXYd9rmQMI0jj2XGlvfeSAnzkRRLImP95u3Bg8HXuMVJNpHxsY+I1hGLJXstHaj4jnBxzCL9aLYSHdRSi7X1FbsJqXfamkig9ntpciXMGPZXgKsS0uhA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kN7T3ft9yICCbp+hZAZK00R/EubvKYdjyZuB2mYR97M=;
- b=a2c1+yGXkXWqEo8NdzouPaEEA8nLSdCI1BecGY/0Th79YbXXuptcnYcfyCY6vqn+ugL8Xh8P+NrYOyR40JtMDnBLLJqGegfqHYPn8YDnDg0afXoK/IWRjSjFU2hwC+6xS+hOa32I07mHeIL0IWu8E9KakOqCp2z4GmqTCyj+zwrGtAlYAwg75kwEnsYGzLoN2d/dMmOzRH4MOnq4PJCClnyVeONQuPzybniswurKlFNCtuIBF30eI4my6d4t0gN01Ae/+rJYNG1NUhDIM8egvD6dt0V3cNcrXC3Xv5KmiDXzdvXk11q9i1rNWiMijQmbwxI2x6GyGdc9YYeIzpIgIA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microsoft.com; dmarc=pass action=none
- header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kN7T3ft9yICCbp+hZAZK00R/EubvKYdjyZuB2mYR97M=;
- b=dXxBLelWqyiQGPf9XGXml7akRvzrBAElcl2WFIgdZMEh2q8UMe7lCHJvqWLr0UY8xuJ5+vNwd84JwPHgJGaQYy2EOAelwwvuaDs/U7/tbXfaRgBkF9e1XVQWh/k8joVdBz2pZ9d7Wx92Tq75S8bQBAkQg/D6VoHoq1GFE0/H62o=
-Received: from DS3PR21MB5735.namprd21.prod.outlook.com (2603:10b6:8:2e0::20)
- by DS2PR21MB5015.namprd21.prod.outlook.com (2603:10b6:8:2bd::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9542.5; Fri, 16 Jan
- 2026 23:10:55 +0000
-Received: from DS3PR21MB5735.namprd21.prod.outlook.com
- ([fe80::a3f4:6107:de7c:5925]) by DS3PR21MB5735.namprd21.prod.outlook.com
- ([fe80::a3f4:6107:de7c:5925%3]) with mapi id 15.20.9542.001; Fri, 16 Jan 2026
- 23:10:55 +0000
-From: Long Li <longli@microsoft.com>
-To: "madhukar.mythri@gmail.com" <madhukar.mythri@gmail.com>
-CC: "dev@dpdk.org" <dev@dpdk.org>, "stephen@networkplumber.org"
- <stephen@networkplumber.org>, "stable@dpdk.org" <stable@dpdk.org>
-Subject: RE: [EXTERNAL] [PATCH v2] net/netvsc: fix race condition in RNDIS
- command execution
-Thread-Topic: [EXTERNAL] [PATCH v2] net/netvsc: fix race condition in RNDIS
- command execution
-Thread-Index: AQHchHX4tOmTJu/oEUmq5rtSBSQ+nrVVacLA
-Date: Fri, 16 Jan 2026 23:10:55 +0000
-Message-ID: <DS3PR21MB57353793968EBA2499F8C5A6CE8DA@DS3PR21MB5735.namprd21.prod.outlook.com>
-References: <20260113101820.60611-1-madhukar.mythri@gmail.com>
-In-Reply-To: <20260113101820.60611-1-madhukar.mythri@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=69698017-399e-43a4-8bd9-5f648a788b8e;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ContentBits=0;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=true;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Method=Standard;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=Internal;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2026-01-16T22:42:05Z;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Tag=10, 3, 0, 1;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microsoft.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DS3PR21MB5735:EE_|DS2PR21MB5015:EE_
-x-ms-office365-filtering-correlation-id: 5d356867-2083-4a69-a087-08de5554809a
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0; ARA:13230040|1800799024|366016|376014|38070700021;
-x-microsoft-antispam-message-info: =?us-ascii?Q?n81mny83bzLaaivhTwywkP1to2OoO9zZVZOrZ7uL0rGYjy3tCeRksnfgfaJO?=
- =?us-ascii?Q?6nTJWSUbdQO84ClOVG+5JjugWlIH9W4POe3HpH1rT75kr7Pc3L/E5lKbYS5Z?=
- =?us-ascii?Q?NzBClN/fdRk8IouBYVzTl/MTGx5SKLoAyBq4SfSx+IhMwZGnSoIrQ8j3lBJq?=
- =?us-ascii?Q?VBdUoJR/YsLhYZ88FWdLWnFaTY+LFvreFgEp1uwfYEyY6QYkEFWSOpGBwOss?=
- =?us-ascii?Q?mA2ekanc5YPBiK33RdwSw67QCR9VyqrduY3GwqrcwrDnSGJCGOpmYBXm5VVn?=
- =?us-ascii?Q?s2qtJ9uOC2IhnQHgLk+OvI7OIMw3rsYlfH8ufU5c6oHf4PYrJHlOt7LRLJmD?=
- =?us-ascii?Q?dEuDrljURZqIm7r1vkkFX48csxgblxM/6Dp+AfWPzVCoqGbt61vduaqd5OC0?=
- =?us-ascii?Q?isfw5TDwfnqFQ17qLIwQknVMvzmqY3Oi86OqhsJOOGsv92oYCY5k4PL0ZOfv?=
- =?us-ascii?Q?QTqibxZH2SVSbtybqPHfSNBw8J8THc34zepONlRlbL8jCtXZY6gOaPaKABJ2?=
- =?us-ascii?Q?GuLVEacemY5siSKakigHZ2Jocrl4PZEKujEAV+/BzPEqiLzMKvf5yqn3vceL?=
- =?us-ascii?Q?dWwIupAsN2yQM/yW7dF0ao+cHbHIdYIUCwscTGVzjEvA0nxTuH9I31Sj4GGt?=
- =?us-ascii?Q?O2GMovuBDvFmuVmHJHdOsxZznt2W70tQvIK0URSVEY1IcmerN3dMcA4T+F6/?=
- =?us-ascii?Q?/WqPcO3/ezGMQ9ttZ8xK2SXZAp6zh2JGbXBcpoHguKZ9Eh94DHXNlS2Ckq1W?=
- =?us-ascii?Q?7/zhUykNmo+eL7nnDMZ0NtqpCps1re2glreE0BBbSwlKVl8/bFjgRwfji70h?=
- =?us-ascii?Q?FnOH1ugl4QtxmPa/pZp1OC/Yq9V1ugO04TLUxRDfVeylEYFOY1xZR0fWzsgv?=
- =?us-ascii?Q?59a1Cde7nLsFe5q54xgiXdFWhi+2N7x8VlS+L758RxZy1MnuChGjfWvbLOm2?=
- =?us-ascii?Q?KpkAy0eqyPc81XRErgOw176oIVnHj4x/X9DFXIDcjDt5Ol0vGcNm1fFM4Y4q?=
- =?us-ascii?Q?Ark7UQblMwqdZOI6zH60v/JYwNKawUZHwuLJmdTUep98X4uXVeaR2wFNXjRl?=
- =?us-ascii?Q?Y7x7Pd6bKggbgLMNKBnFeXUn3zrDq6Pb1EJFXuwMUzuEOaMqyRUZgoHBx1qp?=
- =?us-ascii?Q?3YQPlPPX7WMbCCoKdQhMlTS9TseT8RzqPH5y+39jEzi0OsCmYGN+IzqG9vjg?=
- =?us-ascii?Q?B022T9FS5GZ+aAghgv051nmIMuFKr6GGvICg3BpAO+lgiHGk+tlqC19G3PCJ?=
- =?us-ascii?Q?WXVOoAoDNYUWdT1FE+rxhXGpxD6XZK4u0VnbJ5uXmRz64DCJTkA5cY+DLDkf?=
- =?us-ascii?Q?NLTAvaWO1ejIvFPy1ZSTkRFR175Yku7A9uBfWQZnw/umiD1mKHukvn5KZ/f/?=
- =?us-ascii?Q?5kUyCH5CZkfffkpTv4BsG46mrrsB9oenY5SbemRnwV7bivTJmFJzn3FctKbP?=
- =?us-ascii?Q?iYz8z0IzvP0XbNrDaPI3K7lY8rqDyjiGGYYjLhSQi13N6GaV5j36RWOyVlrB?=
- =?us-ascii?Q?JpZZ8j6W0fTLObp823Vu0WF3rfyOMgAe7SIUZjvzWyQQbxNX54SiQsY6vzbe?=
- =?us-ascii?Q?RTQnnBuvj2ubGc3yyDeIIGvdLU/r1d9k/+bY1OEBG6/t+sVz081+2dq3pzmK?=
- =?us-ascii?Q?/QTR37W87sp4iu7a2YQOnec=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DS3PR21MB5735.namprd21.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(1800799024)(366016)(376014)(38070700021); DIR:OUT; SFP:1102; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?536HHVwP8WSiBYjY8zPraZDalFzRFPI8fgasfg1BJ//+FxaJAOEE6se1Frrf?=
- =?us-ascii?Q?nkbR5OFg+kh/a2/DwENFe9gHpL4N7PNzg+nhcnm8EkCGlvJoy4gjr6NCNvlW?=
- =?us-ascii?Q?ZyW8HRPpa+LXzSzlYU2Pqsm/PQvldmM9jEHXWmjKqzZ8iiA3+MV8bygbAWkI?=
- =?us-ascii?Q?7t8MSH2i1rTNeL1A0lzAHHqukMdt64wW7mZs2Sy6cvAb2pq6dILWESgMjgmI?=
- =?us-ascii?Q?881OBJnwHIB/HGZMeNQWvZRnvuSts1t6KaVEpCKwP4qhAMIJ+kju/dFSTzp7?=
- =?us-ascii?Q?jaANCjfMTRc3TcUfy812MsoL+nxvmh5NlLZK9k7yEdGadDLjGStIaw7KwFvR?=
- =?us-ascii?Q?yZMaFYuIk3Yqmbslp+AClSazo9wOqqfPo27KedZCv15id0wRFIEBk8ZkecI+?=
- =?us-ascii?Q?GKn5JKGJUZBT+0jDUQ+CztVUqe2Nk6hARRbsxTAh1UzO6MlI4/hvut8dEGs0?=
- =?us-ascii?Q?Smz1jACl19/poDo6N0Hq0VgzwSjqBJsSGi49Nx/ZH+CWIbhyUpi3DkwTu52+?=
- =?us-ascii?Q?wr16HHxqC5325VMCXJS7d2fnDt0KVmJsbrUCU1zhuwGQjqEztS/dS/ZIQpxn?=
- =?us-ascii?Q?J6fLRQP2tlbIMN+cb2QsHfulEHuhQ9mQw9bUhWpxfeFJb2jk44VRr+n6rgxw?=
- =?us-ascii?Q?d0yRSoKKA3lvmbm9drNzny9apWDgp7g/j8gcRAiHj2EAFOWyPJc62d1C1UgP?=
- =?us-ascii?Q?GPq/mOxb2WRqpWCDWPn2bdXG30VQnaKefds3bFp9wpADqzRAljLikxgXAkLY?=
- =?us-ascii?Q?HMDC6F7oXIirLG5oEc8OrCaMcSKBkK0jdoe0G88nCtXSPWXNj0sT0MDjUDz6?=
- =?us-ascii?Q?pWDT9Eq7qTDlfROChk1/ZQTtvljkt6rdwaz4P7Ox0KmR3DX1MQpvZwBUSiX/?=
- =?us-ascii?Q?pNZP79h3Bgoj43ctd2fIOD7a+zOaFmaiRQd2JPeSc8mM3doe966k7PpmnOvS?=
- =?us-ascii?Q?SLTaTcSrGuWv0qzAmnTVX2vlNlTh48gir2JC+ZTGnYdlpT88Vv8vhUZ/Zrem?=
- =?us-ascii?Q?Ws78vVxBHo6LhFAlu1SJ6/fp8hne8NUWVkPr5UFVGPjswCJK4b0CAISNty7o?=
- =?us-ascii?Q?WeEBDe83VFqfz7FB1GjqWZ9TVGdQijw8qudapQkdgHs8+m5tc6q8rnbFyXvo?=
- =?us-ascii?Q?cxoMemcHllFhKdCxTuW3h7KTHpB64muvWigQF+ohOJqpIc+p1z+nM0/OhHkv?=
- =?us-ascii?Q?fGNuc/alrbnQreDMyz1RrViQ7LEn3rP3EoxuE4F6AgUbhf+95t5DWeJkaSOI?=
- =?us-ascii?Q?RfuQgMk6r8m3BT/yZZWEhcey1tAD4qQ171TghaljW7y5GP+gdZHfhf6xV/iH?=
- =?us-ascii?Q?S5iHElndkyxd0SVshZteTSlNDq2CI289dy4+0fkZqyp/fp53hje+EsFsjswt?=
- =?us-ascii?Q?Kj7w5B1OuKDfieEoRb1G5VQIgVuCmQAn4fnLRg2LdfTHquKCYjDhJeYjVbiL?=
- =?us-ascii?Q?KaHN3aEAzYQCWtFMD495jzeqAlNbn6MKJrvdtdygFUqqAnH2+fzNHrHSuByR?=
- =?us-ascii?Q?czj3l+zz+sWMVUozQStSFFYN/bnPzcVldBB5JNuCGN0UvR/KqqR9kbj8PJqo?=
- =?us-ascii?Q?uOW0wMQKZIXJjCuCZF4WTWfT1gKA1YstxdyPpuLC4D9PLLlylySJisyHkucf?=
- =?us-ascii?Q?nsVFIqo8ypXsUrgj5UH0csZGZ2m1eko5ObVeP8ejOAxliW8pSo3cDa4XawYX?=
- =?us-ascii?Q?aHMKEIHcUvUalL2O/8LnAHQPE9k8TlC1xspAwrN+gU6Yy8+U?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by mails.dpdk.org (Postfix) with ESMTP id 3349042E95;
+	Sat, 17 Jan 2026 00:19:14 +0100 (CET)
+Received: from mail-dl1-f53.google.com (mail-dl1-f53.google.com [74.125.82.53])
+ by mails.dpdk.org (Postfix) with ESMTP id 5CB68402DA
+ for <dev@dpdk.org>; Sat, 17 Jan 2026 00:19:12 +0100 (CET)
+Received: by mail-dl1-f53.google.com with SMTP id
+ a92af1059eb24-11f36012fb2so3833193c88.1
+ for <dev@dpdk.org>; Fri, 16 Jan 2026 15:19:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20230601; t=1768605551; x=1769210351; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=1zTEOdic9bcKQDYl9HMKFzvzfr9t0S2b0G3p3T/1g5k=;
+ b=OLgNfs3V7gVBU+H+3k7jMHeH1079IG3yDSm2pteorIKFeRV6JCOjrClEiRLg9Fsur1
+ oD6GtZwK+zXkTZ5EKEcAVxb4Lt4EaeVtOtWA+FUgEysKctH4Lz5qhPZErRRlzZln7dZY
+ VZGRjWue2No8OoCwG0R1V8IiztY7Yp4mE4+p9+/VBO+gFdzSGdmEPJjOE4DDpGoiI0+o
+ h1jPLkovlb/N45/j/ZkX3LGO65rfxY5BKI6Pnjauxyi8KpA2/qAjzyfFtkh8cYxFgdmY
+ /QrUSWwKPhSv+A0B1Vp0y+Dq3PK4IVAjeLycFJ/OsqwP9ESn5ZvFitWxPPTSvqHLamwo
+ 50UA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1768605551; x=1769210351;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=1zTEOdic9bcKQDYl9HMKFzvzfr9t0S2b0G3p3T/1g5k=;
+ b=AkjYCGMQQ8iSBhun61CTX6V8T60BCK71tqgiN3MzgaDQ32HKccGUM2hV+FmsKL7kbc
+ 7BvSFblO5reDmWPvMgujxQWfqZRBMXKFfgFs5GHk6rkysWcnhzCi0L0qaQmQ++2nYM18
+ JmNhXeVhAOrj16DQKktxWElYLiOG+HW5qemvHnAJrNTp5x4dMXPnxEGYTG0xht3ZoQhl
+ xP0fRrOictNJUl6JyopX5Xqx6f8mnAL16OjXiznyWwyLUIawtwg+e3vPPHqi3Ri347VK
+ phUED+iMP4CGbB8r798f0WbuQ2AReUdg1Wl3AVDVEgDf+yTRgeg0Akxw2YiGzE+eYQ7M
+ Q78A==
+X-Gm-Message-State: AOJu0Yw+whkOhl/lAx3EEeVoGgB9CYmMWcYyGYETjO+KKWbADwPBsoC9
+ ClGA0wFJzZY2/61FUFb3+Jcfegrv2gYnfS20Y71+15Swt22jURCZLvgJdg3W5g==
+X-Gm-Gg: AY/fxX6x2azKT+XX8QhV2EhWxMXmEnGAdH+yfJAQqT4p2u582YGVl84IWUlUAokBKxn
+ F2dUu1a+rSI2yAUFk1j1bbNhTGl5llx8Ax3vw/17lEyyoyMpJLfvJ5ZNsjgp+uIwctGYMI0H+E3
+ +wjYX5/Wv749nvdCXSq9j+WIX+wgEGZRQZ1cvrBiQqpbu0ULgesZnnFStBoeQWX8Ez8brQ921T1
+ U5SGG5cFzNtN8ZOPdEd3RuPYzF9xvDES6VEG7sSWYTKKmCtH76NAGcQmJMfgJY4h4tCZ6qzA7bt
+ LnsIDXBB4T09oZ7MoOoUq8ubZmCCDkqNCxsfCd7QgHJXqRykNJ2NKJQm9e3DK2ijjaSaNblD6Sk
+ w9ytwKl86K1V+Ob+NsOUwsXvv6A9a+gpcI6vNBXc3bSmtFa8oCFf8rx1e4iAhyUvgqm8ZfFxxt/
+ H5sh93PJ2R/ptF0qv9xlL1mmQCvw+Eh73I
+X-Received: by 2002:a05:7022:928:b0:11b:803c:2cf5 with SMTP id
+ a92af1059eb24-1244b36ef57mr3357093c88.33.1768605551073; 
+ Fri, 16 Jan 2026 15:19:11 -0800 (PST)
+Received: from mac.com ([136.24.82.250]) by smtp.gmail.com with ESMTPSA id
+ a92af1059eb24-1244ac6c2besm4967089c88.5.2026.01.16.15.19.10
+ (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+ Fri, 16 Jan 2026 15:19:10 -0800 (PST)
+From: scott.k.mitch1@gmail.com
+To: dev@dpdk.org
+Cc: mb@smartsharesystems.com, stephen@networkplumber.org,
+ bruce.richardson@intel.com, Scott Mitchell <scott.k.mitch1@gmail.com>
+Subject: [PATCH v8] eal: RTE_PTR_ADD/SUB char* for compiler optimizations
+Date: Fri, 16 Jan 2026 15:19:07 -0800
+Message-Id: <20260116231907.13895-1-scott.k.mitch1@gmail.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+In-Reply-To: <20260114215648.47820-1-scott.k.mitch1@gmail.com>
+References: <20260114215648.47820-1-scott.k.mitch1@gmail.com>
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DS3PR21MB5735.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5d356867-2083-4a69-a087-08de5554809a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Jan 2026 23:10:55.5818 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: fVm/29ZmWR4AYf0OYUH3apVHkzRKb+2vg7/aWmC4i+0Rs+/EXSbSsXH/+2d+B5VAX+K1cU17zB932mfTnaOelA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS2PR21MB5015
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -155,76 +78,300 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+From: Scott Mitchell <scott.k.mitch1@gmail.com>
 
-> From: Madhuker Mythri <madhukar.mythri@gmail.com>
->=20
-> When multiple threads issue RNDIS command requests (such as device info
-> queries and link status checks) simultaneously, command failures can occu=
-r
-> due to concurrent access to shared resources in the RNDIS execution path.
->=20
-> Add a spinlock to serialize RNDIS command execution and prevent data
-> corruption.
+Modify RTE_PTR_ADD and RTE_PTR_SUB to use char* pointer arithmetic
+on Clang instead of uintptr_t casts. Benefits of this approach:
+- API compatibility: works for both integer and pointer inputs
+- Retains simple macros: no pragmas, no _Generic
+- Enables Clang optimizations: Clang can now unroll and vectorize
+  pointer loops. GCC uses uintptr_t to avoid false positive warnings.
 
-This is not the correct approach as you are only protecting RNDIS_QUERY_CMP=
-LT over RNDIS transactions. The call to hn_rndis_execute() can still fail d=
-ue to other possible pending transactions over RNDIS.
+Example use case which benefits is __rte_raw_cksum. Performance
+results from cksum_perf_autotest on Intel Xeon (Cascade Lake,
+AVX-512) built with Clang 18.1 (TSC cycles/byte):
+  Block size    Before    After    Improvement
+         100      0.40     0.24        ~40%
+        1500      0.50     0.06        ~8x
+        9000      0.49     0.06        ~8x
 
-Thanks,
-Long
+Signed-off-by: Scott Mitchell <scott.k.mitch1@gmail.com>
 
->=20
-> Fixes: 4e9c73e96e83 ("net/netvsc: add Hyper-V network device")
-> Cc: stable@dpdk.org
->=20
-> Signed-off-by: Madhuker Mythri <madhukar.mythri@gmail.com>
-> ---
->  drivers/net/netvsc/hn_ethdev.c | 1 +
->  drivers/net/netvsc/hn_rndis.c  | 2 ++
->  drivers/net/netvsc/hn_var.h    | 1 +
->  3 files changed, 4 insertions(+)
->=20
-> diff --git a/drivers/net/netvsc/hn_ethdev.c b/drivers/net/netvsc/hn_ethde=
-v.c
-> index 6584819f4f..b525e287fa 100644
-> --- a/drivers/net/netvsc/hn_ethdev.c
-> +++ b/drivers/net/netvsc/hn_ethdev.c
-> @@ -1310,6 +1310,7 @@ eth_hn_dev_init(struct rte_eth_dev *eth_dev)
->  	PMD_INIT_FUNC_TRACE();
->=20
->  	rte_spinlock_init(&hv->hotadd_lock);
-> +	rte_spinlock_init(&hv->cmd_lock);
->  	LIST_INIT(&hv->hotadd_list);
->=20
->  	vmbus =3D container_of(device, struct rte_vmbus_device, device); diff -=
--
-> git a/drivers/net/netvsc/hn_rndis.c b/drivers/net/netvsc/hn_rndis.c index
-> 7c54eebcef..8a0716df89 100644
-> --- a/drivers/net/netvsc/hn_rndis.c
-> +++ b/drivers/net/netvsc/hn_rndis.c
-> @@ -500,8 +500,10 @@ hn_rndis_query(struct hn_data *hv, uint32_t oid,
->  	/* Input data immediately follows RNDIS query. */
->  	memcpy(req + 1, idata, idlen);
->=20
-> +	rte_spinlock_lock(&hv->cmd_lock);
->  	error =3D hn_rndis_execute(hv, rid, req, reqlen,
->  				 comp, comp_len, RNDIS_QUERY_CMPLT);
-> +	rte_spinlock_unlock(&hv->cmd_lock);
->=20
->  	if (error)
->  		goto done;
-> diff --git a/drivers/net/netvsc/hn_var.h b/drivers/net/netvsc/hn_var.h in=
-dex
-> 17c1d5d07b..66ed186c0a 100644
-> --- a/drivers/net/netvsc/hn_var.h
-> +++ b/drivers/net/netvsc/hn_var.h
-> @@ -179,6 +179,7 @@ struct hn_data {
->  	struct vmbus_channel *channels[HN_MAX_CHANNELS];
->=20
->  	rte_spinlock_t	hotadd_lock;
-> +	rte_spinlock_t	cmd_lock;
->  	LIST_HEAD(hotadd_list, hv_hotadd_context) hotadd_list;  };
->=20
-> --
-> 2.50.1 (Apple Git-155)
+---
+v8:
+- Remove tests for types < 32-bit (bool, char, short, uint8_t, uint16_t)
+- Merge test_ptr_add_sub_typedefs() into test_ptr_add_sub_integer_types()
+- Separate RTE_PTR_ADD and RTE_PTR_SUB documentation
+- Move Clang/GCC implementation note from Doxygen to regular comment
+- Tests verify both intermediate ADD result and SUB round-trip
+- Use uintptr_t cast consistently for all integer-to-pointer conversions
+- Make TEST_RETVAL calculated from TEST_INITVAL + TEST_INCREMENT
+
+v7:
+- Fix tests: use TEST_BUFFER_SIZE macro for buffer allocation
+- Fix tests: ADD then SUB same amount to avoid out-of-bounds pointer arithmetic
+- All RTE_PTR_SUB tests now verify round-trip (ADD+SUB returns to original)
+
+v6:
+- Make char* optimization Clang-only to avoid GCC false positive warnings
+- Improve tests: use named constants instead of magic numbers
+- Improve tests: use void* casts on expected values instead of uintptr_t on results
+
+v5:
+- Initial implementation with char* arithmetic for all compilers
+
+v4:
+- Used _Generic for type-based dispatch with char* casts
+- Had warnings on both Clang and GCC due to _Generic type-checking all branches
+---
+ app/test/meson.build         |   1 +
+ app/test/test_ptr_add_sub.c  | 193 +++++++++++++++++++++++++++++++++++
+ lib/eal/include/rte_common.h |  15 ++-
+ 3 files changed, 208 insertions(+), 1 deletion(-)
+ create mode 100644 app/test/test_ptr_add_sub.c
+
+diff --git a/app/test/meson.build b/app/test/meson.build
+index efec42a6bf..80a19d65ba 100644
+--- a/app/test/meson.build
++++ b/app/test/meson.build
+@@ -152,6 +152,7 @@ source_file_deps = {
+     'test_power_intel_uncore.c': ['power', 'power_intel_uncore'],
+     'test_power_kvm_vm.c': ['power', 'power_kvm_vm'],
+     'test_prefetch.c': [],
++    'test_ptr_add_sub.c': [],
+     'test_ptr_compress.c': ['ptr_compress'],
+     'test_rand_perf.c': [],
+     'test_rawdev.c': ['rawdev', 'bus_vdev', 'raw_skeleton'],
+diff --git a/app/test/test_ptr_add_sub.c b/app/test/test_ptr_add_sub.c
+new file mode 100644
+index 0000000000..9674362d8d
+--- /dev/null
++++ b/app/test/test_ptr_add_sub.c
+@@ -0,0 +1,193 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(c) 2026 Apple Inc.
++ */
++
++#include "test.h"
++#include <stdint.h>
++
++#include <rte_common.h>
++
++/* Test constants for 32-bit and 64-bit integer types */
++#define TEST_INITVAL 0x1000
++#define TEST_INCREMENT 100
++#define TEST_RETVAL ((void *)(TEST_INITVAL + TEST_INCREMENT))
++
++/* Buffer size for pointer tests */
++#define TEST_BUFFER_SIZE (TEST_INCREMENT + 256)
++
++/* Test 32-bit and 64-bit integer types */
++static int
++test_ptr_add_sub_integer_types(void)
++{
++	void *result;
++
++	unsigned long long ull = TEST_INITVAL;
++	result = RTE_PTR_ADD(ull, TEST_INCREMENT);
++	TEST_ASSERT_EQUAL(result, TEST_RETVAL,
++		"RTE_PTR_ADD failed for unsigned long long");
++	result = RTE_PTR_SUB(result, TEST_INCREMENT);
++	TEST_ASSERT_EQUAL(result, (void *)(uintptr_t)ull,
++		"RTE_PTR_SUB round-trip failed for unsigned long long");
++
++	long long ll = TEST_INITVAL;
++	result = RTE_PTR_ADD(ll, TEST_INCREMENT);
++	TEST_ASSERT_EQUAL(result, TEST_RETVAL,
++		"RTE_PTR_ADD failed for long long");
++	result = RTE_PTR_SUB(result, TEST_INCREMENT);
++	TEST_ASSERT_EQUAL(result, (void *)(uintptr_t)ll,
++		"RTE_PTR_SUB round-trip failed for long long");
++
++	unsigned long ul = TEST_INITVAL;
++	result = RTE_PTR_ADD(ul, TEST_INCREMENT);
++	TEST_ASSERT_EQUAL(result, TEST_RETVAL,
++		"RTE_PTR_ADD failed for unsigned long");
++	result = RTE_PTR_SUB(result, TEST_INCREMENT);
++	TEST_ASSERT_EQUAL(result, (void *)(uintptr_t)ul,
++		"RTE_PTR_SUB round-trip failed for unsigned long");
++
++	long l = TEST_INITVAL;
++	result = RTE_PTR_ADD(l, TEST_INCREMENT);
++	TEST_ASSERT_EQUAL(result, TEST_RETVAL,
++		"RTE_PTR_ADD failed for long");
++	result = RTE_PTR_SUB(result, TEST_INCREMENT);
++	TEST_ASSERT_EQUAL(result, (void *)(uintptr_t)l,
++		"RTE_PTR_SUB round-trip failed for long");
++
++	unsigned int ui = TEST_INITVAL;
++	result = RTE_PTR_ADD(ui, TEST_INCREMENT);
++	TEST_ASSERT_EQUAL(result, TEST_RETVAL,
++		"RTE_PTR_ADD failed for unsigned int");
++	result = RTE_PTR_SUB(result, TEST_INCREMENT);
++	TEST_ASSERT_EQUAL(result, (void *)(uintptr_t)ui,
++		"RTE_PTR_SUB round-trip failed for unsigned int");
++
++	int i = TEST_INITVAL;
++	result = RTE_PTR_ADD(i, TEST_INCREMENT);
++	TEST_ASSERT_EQUAL(result, TEST_RETVAL,
++		"RTE_PTR_ADD failed for int");
++	result = RTE_PTR_SUB(result, TEST_INCREMENT);
++	TEST_ASSERT_EQUAL(result, (void *)(uintptr_t)i,
++		"RTE_PTR_SUB round-trip failed for int");
++
++	uint64_t u64 = TEST_INITVAL;
++	result = RTE_PTR_ADD(u64, TEST_INCREMENT);
++	TEST_ASSERT_EQUAL(result, TEST_RETVAL,
++		"RTE_PTR_ADD failed for uint64_t");
++	result = RTE_PTR_SUB(result, TEST_INCREMENT);
++	TEST_ASSERT_EQUAL(result, (void *)(uintptr_t)u64,
++		"RTE_PTR_SUB round-trip failed for uint64_t");
++
++	uint32_t u32 = TEST_INITVAL;
++	result = RTE_PTR_ADD(u32, TEST_INCREMENT);
++	TEST_ASSERT_EQUAL(result, TEST_RETVAL,
++		"RTE_PTR_ADD failed for uint32_t");
++	result = RTE_PTR_SUB(result, TEST_INCREMENT);
++	TEST_ASSERT_EQUAL(result, (void *)(uintptr_t)u32,
++		"RTE_PTR_SUB round-trip failed for uint32_t");
++
++	uintptr_t uptr = TEST_INITVAL;
++	result = RTE_PTR_ADD(uptr, TEST_INCREMENT);
++	TEST_ASSERT_EQUAL(result, TEST_RETVAL,
++		"RTE_PTR_ADD failed for uintptr_t");
++	result = RTE_PTR_SUB(result, TEST_INCREMENT);
++	TEST_ASSERT_EQUAL(result, (void *)uptr,
++		"RTE_PTR_SUB round-trip failed for uintptr_t");
++
++	size_t sz = TEST_INITVAL;
++	result = RTE_PTR_ADD(sz, TEST_INCREMENT);
++	TEST_ASSERT_EQUAL(result, TEST_RETVAL,
++		"RTE_PTR_ADD failed for size_t");
++	result = RTE_PTR_SUB(result, TEST_INCREMENT);
++	TEST_ASSERT_EQUAL(result, (void *)sz,
++		"RTE_PTR_SUB round-trip failed for size_t");
++
++	return 0;
++}
++
++/* Test pointer types including const correctness */
++static int
++test_ptr_add_sub_pointer_types(void)
++{
++	char buffer[TEST_BUFFER_SIZE];
++	void *result;
++
++	/* Test void* and const void* */
++	void *vp = buffer;
++	result = RTE_PTR_ADD(vp, TEST_INCREMENT);
++	TEST_ASSERT_EQUAL(result, (void *)(buffer + TEST_INCREMENT),
++		"RTE_PTR_ADD failed for void*");
++	result = RTE_PTR_SUB(result, TEST_INCREMENT);
++	TEST_ASSERT_EQUAL(result, vp,
++		"RTE_PTR_SUB round-trip failed for void*");
++
++	const void *cvp = buffer;
++	result = RTE_PTR_ADD(cvp, TEST_INCREMENT);
++	TEST_ASSERT_EQUAL(result, (void *)(buffer + TEST_INCREMENT),
++		"RTE_PTR_ADD failed for const void*");
++	result = RTE_PTR_SUB(result, TEST_INCREMENT);
++	TEST_ASSERT_EQUAL(result, (const void *)cvp,
++		"RTE_PTR_SUB round-trip failed for const void*");
++
++	/* Test char* and const char* */
++	char *cp = buffer;
++	result = RTE_PTR_ADD(cp, TEST_INCREMENT);
++	TEST_ASSERT_EQUAL(result, (void *)(buffer + TEST_INCREMENT),
++		"RTE_PTR_ADD failed for char*");
++	result = RTE_PTR_SUB(result, TEST_INCREMENT);
++	TEST_ASSERT_EQUAL(result, (void *)cp,
++		"RTE_PTR_SUB round-trip failed for char*");
++
++	const char *ccp = buffer;
++	result = RTE_PTR_ADD(ccp, TEST_INCREMENT);
++	TEST_ASSERT_EQUAL(result, (void *)(buffer + TEST_INCREMENT),
++		"RTE_PTR_ADD failed for const char*");
++	result = RTE_PTR_SUB(result, TEST_INCREMENT);
++	TEST_ASSERT_EQUAL(result, (const void *)ccp,
++		"RTE_PTR_SUB round-trip failed for const char*");
++
++	/* Test uint32_t* and const uint32_t* */
++	uint32_t *u32p = (uint32_t *)buffer;
++	result = RTE_PTR_ADD(u32p, TEST_INCREMENT);
++	TEST_ASSERT_EQUAL(result, (void *)(buffer + TEST_INCREMENT),
++		"RTE_PTR_ADD failed for uint32_t*");
++	result = RTE_PTR_SUB(result, TEST_INCREMENT);
++	TEST_ASSERT_EQUAL(result, (void *)u32p,
++		"RTE_PTR_SUB round-trip failed for uint32_t*");
++
++	const uint32_t *cu32p = (const uint32_t *)buffer;
++	result = RTE_PTR_ADD(cu32p, TEST_INCREMENT);
++	TEST_ASSERT_EQUAL(result, (void *)(buffer + TEST_INCREMENT),
++		"RTE_PTR_ADD failed for const uint32_t*");
++	result = RTE_PTR_SUB(result, TEST_INCREMENT);
++	TEST_ASSERT_EQUAL(result, (const void *)cu32p,
++		"RTE_PTR_SUB round-trip failed for const uint32_t*");
++
++	/* Verify assigning to const pointer works (adding const is safe) */
++	const void *result_const = RTE_PTR_ADD(cvp, TEST_INCREMENT);
++	TEST_ASSERT_EQUAL(result_const, (const void *)(buffer + TEST_INCREMENT),
++		"RTE_PTR_ADD failed when assigning to const void*");
++	result_const = RTE_PTR_SUB(result_const, TEST_INCREMENT);
++	TEST_ASSERT_EQUAL(result_const, cvp,
++		"RTE_PTR_SUB round-trip failed when assigning to const void*");
++
++	return 0;
++}
++
++/* Main test function that runs all subtests */
++static int
++test_ptr_add_sub(void)
++{
++	int ret;
++
++	ret = test_ptr_add_sub_integer_types();
++	if (ret != 0)
++		return ret;
++
++	ret = test_ptr_add_sub_pointer_types();
++	if (ret != 0)
++		return ret;
++
++	return 0;
++}
++
++REGISTER_FAST_TEST(ptr_add_sub_autotest, true, true, test_ptr_add_sub);
+diff --git a/lib/eal/include/rte_common.h b/lib/eal/include/rte_common.h
+index 9e7d84f929..f2935929f7 100644
+--- a/lib/eal/include/rte_common.h
++++ b/lib/eal/include/rte_common.h
+@@ -551,12 +551,25 @@ static void __attribute__((destructor(RTE_PRIO(prio)), used)) func(void)
+ /**
+  * add a byte-value offset to a pointer
+  */
+-#define RTE_PTR_ADD(ptr, x) ((void*)((uintptr_t)(ptr) + (x)))
++#ifdef RTE_CC_CLANG
++/*
++ * Clang doesn't optimize through uintptr_t, (char*) enables
++ * optimizations and doesn't generate warnings. GCC does optimize
++ * through uintptr_t but throws warnings (e.g. array-bounds) when cast to char*.
++ */
++#define RTE_PTR_ADD(ptr, x) ((void *)((char *)(uintptr_t)(ptr) + (x)))
++#else
++#define RTE_PTR_ADD(ptr, x) ((void *)((uintptr_t)(ptr) + (x)))
++#endif
+ 
+ /**
+  * subtract a byte-value offset from a pointer
+  */
++#ifdef RTE_CC_CLANG
++#define RTE_PTR_SUB(ptr, x) ((void *)((char *)(uintptr_t)(ptr) - (x)))
++#else
+ #define RTE_PTR_SUB(ptr, x) ((void *)((uintptr_t)(ptr) - (x)))
++#endif
+ 
+ /**
+  * get the difference between two pointer values, i.e. how far apart
+-- 
+2.39.5 (Apple Git-154)
 
