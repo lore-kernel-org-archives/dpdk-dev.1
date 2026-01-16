@@ -2,66 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9ABCC982E0
-	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Jan 2026 17:36:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A000C982E0
+	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Jan 2026 17:37:11 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4BA9942E80;
-	Fri, 16 Jan 2026 18:36:42 +0100 (CET)
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com
- [209.85.128.54]) by mails.dpdk.org (Postfix) with ESMTP id BFFDF42E7F
- for <dev@dpdk.org>; Fri, 16 Jan 2026 18:36:40 +0100 (CET)
-Received: by mail-wm1-f54.google.com with SMTP id
- 5b1f17b1804b1-47d1d8a49f5so14361795e9.3
- for <dev@dpdk.org>; Fri, 16 Jan 2026 09:36:40 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 7995F42E7F;
+	Fri, 16 Jan 2026 18:37:10 +0100 (CET)
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com
+ [209.85.128.42]) by mails.dpdk.org (Postfix) with ESMTP id DE06A4026A
+ for <dev@dpdk.org>; Fri, 16 Jan 2026 18:37:09 +0100 (CET)
+Received: by mail-wm1-f42.google.com with SMTP id
+ 5b1f17b1804b1-47ee937ecf2so17955055e9.0
+ for <dev@dpdk.org>; Fri, 16 Jan 2026 09:37:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768585000;
- x=1769189800; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768585029;
+ x=1769189829; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=BC66NbFOC7vq3W0ENWm8fpFynoat/Ug+/VKxdSjXljQ=;
- b=PO+hathtySLnAX6MXvNS/G5C0zKz5XGbN/D2SJNZUL319aVC3vf0gBIdssy6twwqkv
- 1u+YtoOXNDWYH5tyqELIMEZDa8yP7R6rj5d4Khm0FwdlKuc+3/x8e04BSq6+YnNx4E9M
- FV7OQEGz6a98xbrGI3vMqvvFmxmLhpHbIhnwObZjSe6JFP6JMpgpdMT6Dzkj95ndYjhq
- xU16hiVv8Tz5n8MW6ljvjmMV8wtN/09FMi6oHqcRNErw/oGjNeMo/QfLynPA4iIzqdEV
- mfNpEy5WQld74uMUmCMgtLfzsTKmpTdTn1xHshzCf8cNhqFkCxBRPN3vlj61KO54Yfch
- HYMA==
+ bh=ZTybXhsXthKgQQHCzOao/tK29BNzSs29uQ1VrnpscxM=;
+ b=A0OOnt7GX1kng2kZsCmthfAmRALPoLhJFGfdlnnyR+qXJsvQUjgk1fgNW4YJRX42AZ
+ v9GIldcYj2ZQKEPU2sZQIbjwk/NrX020A5oMPqJpbeO27YMlXcoGjUOhDPWN5zM7EI+8
+ 95QXeK1ji7ZxE+oSym6z+6IpKJKMIdloh03FVFgpBJSiSnn7024rQgW7ni+mvKO15jbo
+ SsJJRjxcklTGvRuzNc5/tPB3028nKjGhPOwl5P2rnIcH0hQdoxCx8wSc0j50EXinp5zB
+ c2e60lsTvgyOjqyCfkdd4uLtKfIxsXTgehIDxkveUB1l40OHdI4k+DQLVU74j2lkQmaK
+ XpEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768585000; x=1769189800;
+ d=1e100.net; s=20230601; t=1768585029; x=1769189829;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=BC66NbFOC7vq3W0ENWm8fpFynoat/Ug+/VKxdSjXljQ=;
- b=mj6OwhSxj70Rsy9Ee22M3inVgiXvxbxz8/Yz+8iSPpTFqghMRPaX+//F8Z4MD1kcb4
- W450pCgyuMqYzkJuEL9suQGa3byecafmTejZHm6L3IlqdW5S5qwN2jkrQP1cTbUB3xvc
- gnuawOc9oOiZVWADi13cPx1kVwQs1iGynoNYCTiLHYQ1n9vWBo6hW0OokYDZtdn9EfdA
- C3NYuPrfz20U6CyRo3rBUk3kPj2CW3Z1O2rGr40j4nVBkTJ7o77Syv2fI9RBsOjXWkhh
- xt/8IAZAri0TJpPyuzLdG6oXUsvX4cFjL6Ju1VXmvZj++GgP+eZyTSeSVrmctnRdFpaU
- iwnA==
-X-Gm-Message-State: AOJu0YxeAp54IB4SL0mzzScsbHdVWg+bE9jxxuPtWvXiaY2yScmfqERa
- zbcnsrNoBQOwchpgPz945GxUsEM1r6LeApCjbY/2HNFv5PWeSNPZUxIxNOQjiwiOC8o=
-X-Gm-Gg: AY/fxX4FnajVmTWi4wjO4IBIf2FpgxdszKF0/tgiJxnkwfwEzNwrqabn8VHZrfJoBWm
- nQeqIhKEJ+CN0JWmT96MFraHvuOXGgFM79CYViT8hqj52vgx4+b5pqaXhhSUG1hhQzUMkOnF2rf
- vpOx6i8KIax4bCZ3aCR8BAayyv7trmBgG4ajhnvc0EAOn6HtST6zDAqE92M9sSgiTjszuYSiezC
- 4aG1v/xuQj+L7M08XvZmsSUWjwCY9Orsz+P1oaGjOIbAZB8ODGnRr5pwe8sJHgFjtqTMq50yqni
- 4gY9ZscK88cIIPRnwyxqDNE1C42Pt1nQ7y7oA4XxZEcb1oQHYdIBASaKMOEFURqFucAMBgl0pcH
- KSPSsrjsjOqbg1hr7Dmy1gVmF2sSqYp6Ca5/LSYHPxNdw981BeCq9FIZR0SU/OeQf31PEwwOR+w
- TVkhdnWqfx4OJ3zeoFkTIdq2YtTC1o5dzy76sz+RsgMvq7x5nc/Jb2D9bSmx9/pMs=
-X-Received: by 2002:a05:600c:4ed3:b0:477:a9e:859a with SMTP id
- 5b1f17b1804b1-4801e33c0d4mr45822365e9.22.1768585000346; 
- Fri, 16 Jan 2026 09:36:40 -0800 (PST)
+ bh=ZTybXhsXthKgQQHCzOao/tK29BNzSs29uQ1VrnpscxM=;
+ b=iYpFVga1mWKMtnZ1qxo95md6zmyYUYMz6rNNVbEdsf21HrrF9eK75WVp0OP+ZWBOvc
+ t9hOu6WSYjCT6HF0XF4ZufDJ3GkvBKck4T/XySsZqHt0CvBVPXh/oj9hR/s/2ZxMKOUM
+ v+fl7vGJXinvdHtR3IVj9IpuJ0OUYn12BEdQH9ff0zKbOQT3LNbX4uWo34wjVKLCawWO
+ 3o2hEtYlMBVgFLQKZuF8zvoSHJg5wLV2Memw2MomORzGxYYMpa9PNWMQ6cjtJKCh/tI4
+ WfblOdyH/giLYPdaijiQycp2rZJkoAsuSXSubs1csg/Et8D7BqKWXpR5rYLXXkj4iJxL
+ 1Y2g==
+X-Gm-Message-State: AOJu0YwjP4REapQNi+l8e/sj8AFlcA/QJkmnqJ5fiH+3rPsxPLqGKuHC
+ UjMm8ShW6qb7NIRnFTGiESxkPmdyyw4BY1AYdSpG4NjvB783CaIDIhnv3Km+fAGVwqQ=
+X-Gm-Gg: AY/fxX7lWYO+oA0j6WBS4AF8RQbYEGMpdTqM9VkVjVqhRxE46F9a3qQh4KykPDXb56d
+ 8ni31iIfdcekbM8IZpsGmzyxu7QeDJsAz6A2wBC2QTu7mcslHjDuHjnMv8I1+MSFo0AnRoUcHOx
+ wRgCrKPfAdUxlSys6GfaOeKGHEBWQi3BV4rX7ZdQJjoIoyGZoWQLRwpCbLFUbrSncDGqnOv8XqP
+ AzcfZVdpjGYTJwtdNQmzBhBpUk7xEBrr+6/ZRYjVjYwyOg7RoX/uPy9LghPzpRZ1z9xUwntdpcb
+ 8NGCfAaJIDRtAZikylIRkJeo2nRKcJs8rlyLvbQ+s/7q0KRcHN/XoXpXdqe/T6YwNSgibuzYYul
+ v9uEUZIiCuT94jYvSrwkAGnP1CtcbyppFgIjak6r2HFgyC99P4BjXaB4aJOuVU5ZMwonrfu9oUI
+ en0lT7hYVshIyXCMTzeis1ekjSJ4IGejjWfZjRF+rBPHdZNbKIeips
+X-Received: by 2002:a05:600c:6749:b0:47d:333d:99c with SMTP id
+ 5b1f17b1804b1-4801e68adc6mr40380875e9.18.1768585029523; 
+ Fri, 16 Jan 2026 09:37:09 -0800 (PST)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-47f429071besm107553655e9.10.2026.01.16.09.36.39
+ 5b1f17b1804b1-4801e8d90b3sm53578055e9.15.2026.01.16.09.37.08
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 16 Jan 2026 09:36:40 -0800 (PST)
-Date: Fri, 16 Jan 2026 09:36:35 -0800
+ Fri, 16 Jan 2026 09:37:09 -0800 (PST)
+Date: Fri, 16 Jan 2026 09:37:05 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: spinler@cesnet.cz
 Cc: dev@dpdk.org
 Subject: Re: [PATCH 4/8] net/nfb: add device argument "port" to limit used
  ports
-Message-ID: <20260116093635.5cbd01cc@phoenix.local>
+Message-ID: <20260116093705.1f90175f@phoenix.local>
 In-Reply-To: <20260115151656.393106-5-spinler@cesnet.cz>
 References: <20260115151656.393106-1-spinler@cesnet.cz>
  <20260115151656.393106-5-spinler@cesnet.cz>
@@ -88,4 +88,4 @@ spinler@cesnet.cz wrote:
 > +			continue;
 > +
 
-Use RTE_BIT32() maybe?
+I meant RTE_BIT64() would be good.
