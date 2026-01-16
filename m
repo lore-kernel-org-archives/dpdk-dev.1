@@ -2,66 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 732FDC982C0
-	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Jan 2026 20:18:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC6E0C982FE
+	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Jan 2026 20:18:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 781D042EC2;
-	Fri, 16 Jan 2026 21:18:00 +0100 (CET)
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com
- [209.85.208.53]) by mails.dpdk.org (Postfix) with ESMTP id 2F1EA42EB5
- for <dev@dpdk.org>; Fri, 16 Jan 2026 21:17:58 +0100 (CET)
-Received: by mail-ed1-f53.google.com with SMTP id
- 4fb4d7f45d1cf-64b791b5584so4394013a12.0
- for <dev@dpdk.org>; Fri, 16 Jan 2026 12:17:58 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id E416142ECD;
+	Fri, 16 Jan 2026 21:18:01 +0100 (CET)
+Received: from mail-ej1-f66.google.com (mail-ej1-f66.google.com
+ [209.85.218.66]) by mails.dpdk.org (Postfix) with ESMTP id 53B2842EB6
+ for <dev@dpdk.org>; Fri, 16 Jan 2026 21:17:59 +0100 (CET)
+Received: by mail-ej1-f66.google.com with SMTP id
+ a640c23a62f3a-b7ffbf4284dso328092566b.3
+ for <dev@dpdk.org>; Fri, 16 Jan 2026 12:17:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768594678;
- x=1769199478; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768594679;
+ x=1769199479; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=yUHwqiLnIHaj1UiOlB0dLvN0zHM9x3nlPheurXjZYaY=;
- b=XXTTRyhBdCfsT5y/gL2mS/uTeOqqx9Nkr416wgkkd5mWIKvBD5NJ4sIjccjjq3FNFe
- f7pGgPn5TdvXiS+A9DTfFPT/KCpXWyEVMIBuiUKnRqWiGA6Edre8rROkaLPDyykqkABd
- gijzrd03Y6rUK7005Ht5OJiQ1iS0owVN0r6cqiS4o1Vbj0ZnsT9XWR8Nt73OU5wNSom1
- DCc1+fOj3cPz7Qyvk3v0kb/KdFKm0S5hqztK6E9pYuJGmy4h/EeLdLCTXtG39qSgVfLQ
- HAKAqmW9PzzJisUCQ43DirXrTkUpMVH8c9EYndgliitbzRVRz0tk/vSLFEC8uuDCQksR
- 8kKg==
+ bh=APOune2Pk+qtoEGRZoFLE44PCt+x/rtPb3zyJeW4gW8=;
+ b=sXJOLfQcsJKOe8Ao9fcQ3nL/UETS6rAwMNHOuusDzgb3eel50YX8OzEvoALVlHEtl5
+ SQxBqQhWHDq1leu5DIyuSO2nl0YiGi9UziVji3+fk8+Q3ZN+pFw1AWH37JaJOgnaxsKt
+ VnzLONFK+LXj4KF51crEmtOO3QBYXsvukjkHAR4kmDvrKtNVJab1iNZ7J7x8F3W2vGfK
+ BOsYbgrs+nJ+3LlalOgBsSBYobcAUzefP3QEnggOLefWfottcA9YxSS94qhl8ZfD0bPr
+ aUORAHZnw138LWYNlqiCPjf/f9dD+CN7qzBv9/2YbHw1i6Cu34dbfFmmPxiThteqyKU/
+ NLfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768594678; x=1769199478;
+ d=1e100.net; s=20230601; t=1768594679; x=1769199479;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=yUHwqiLnIHaj1UiOlB0dLvN0zHM9x3nlPheurXjZYaY=;
- b=hKE8L4uP7u4YcGJlCcEaLoWmmaRrt322GXXkcSDrFegLsVHPsjcJ6uPJjVjF5NflzY
- szFw/HUpwpSFMcmXUcg/Qwh+3fsTZzbj86iSM6s/ObRDNcmqfJ/h7/9ixves6V8tVEcQ
- 3KYTKEuRdu5SYuSdopjUoCCmXnY8m5PT1EXQK4FtenKL901upY2a17WMPONniCPVZCP4
- /L8iIx9iM8Wsly3Yl6QL5dMQloqSbIA62cfn1ebBiSm3Cg92EIGV4SivF5lfPRrwA0d3
- 1RdTGi0ZhuKW4HS+e7f76qn1zVSs/FutuccNNbEp8eWNzD+rUjRRAEJg28/2OldKIEde
- gUiQ==
-X-Gm-Message-State: AOJu0Yy6ytGy29q8g8sWZUTvDwiyf5JLbQYiXzHrnm2tAMfiQbfl0M8V
- vwfN0/p0UstTAqimo/PICgWRm4gRfs/sH0LCu05m94X2fIHHswktDj1Lil6TDWpHgX6scqDh4OP
- e5rXj
-X-Gm-Gg: AY/fxX6VjFqmCKdKtZcdkqJMnfWWhpyzjkHuvjxwvg3SzfFee0jbLZJH+sZ4M3CpVE/
- T1BiFjh24HnFJkeQVfrsR3lref7KRYwljeTW2q6oDc1GVgWGfzAHnP0LnPE0MOp4Ml6H3/n5iSn
- eBqLVLxTl9mvvuJB986HvUQ0KR46tf5dJAVxKaqqNRgwk1ZGPM8l8VNNJ8Y1STAcxSJ10DIgIhW
- 3aRQZZ1ms8b5ReFMJp4Wcx2fSwOChNOz9E5ezAzbpGyusjx7UHWBMVa/L64SCGFic2Q7C7eUjpG
- U2wLhC6MjEBhzKMt34M6pqBQZGxl1Pob5YgDYSHEpqgg32Bm6m3MHeKIfM58WWcMcRNHF95h92j
- ncJFpOM/OsdUyK0q/YRI7wZC0c9x//3HtQ6REKoQ8ocBT0O/wzc7kV/A4Cz8Dh2Bv+BFCizJqcl
- CfpghM5Zq6jnrRaxygUcr3ICBgY1usiCttLdNSyftT2q38nMroKw==
-X-Received: by 2002:a17:907:98a:b0:b80:fa9:674 with SMTP id
- a640c23a62f3a-b8796b953demr333715966b.54.1768594677097; 
- Fri, 16 Jan 2026 12:17:57 -0800 (PST)
+ bh=APOune2Pk+qtoEGRZoFLE44PCt+x/rtPb3zyJeW4gW8=;
+ b=AX1uVUQCdS/ThCzb5b1c4UCHr4HWcNQVICRcVEsJHHbiMn3Xd1OmL7gxMgeH5M4ynb
+ WyjUiY3mkesNwQu67mEZOfTqpwbjvBBphOnT3rZk0t7GoiGyAActX2Bv7bWMCer7zBqm
+ 3VVpEkKZ3o+xikrZPnn9QT3s8mFhZqBHQEQkZsV05j8bj3vVlqILSSNRne547IYDSEcu
+ QoYeZ6bGPyOJXkSi95BYQnDBp+uQdCf68bvE9dGqEbhtjM3ZqjJ1d4mg8UYyljfgLQYR
+ 76OEFQjVNFCE2XKne3++beOIJdQPZOrRGMKEDx1ISbLJkpa3cvpTXXmOgyx7alljktHb
+ JA3w==
+X-Gm-Message-State: AOJu0YyL/qWFoJxRhQ8gwWcCDkagagDAEop48muaZuFe3YIEitY+0PpK
+ EQA7JoBy2PMvwTWdDcSCgCsix4TbmClfH/RtzR3Yb3SKUYax5p1UtmHi2wveUULu8denfOGcblc
+ ErQi6dwA=
+X-Gm-Gg: AY/fxX41SbNs+CC2xTpr9wzFUVtBMWYqXxk5YYrb7Drc98Su3xu/E5inWpzA+ypBCKW
+ NbMmYVjJL9mzDF5xlze72fSZ/BmCCxJ/f31L9KqvivMiDvgkZd83RBFMLPek8lErz/EujJRf3JH
+ d22lgeg6TcWuGyXXtdtVCQFzBhsOdCuiaImJXSDnDdpjQrQ3HkHRcJJIwtg0CgRfsfs+yVe0dmm
+ AHuItImT55Xbb/W2+tFGfEk/NSevyeP2cLaRGoqT42/EYhDYms43GR4yVZlmvnVZrnbo218bbjI
+ ykULax/W3c/AqfD6URQNtxtaxk2wPP0z8SE68J7KxMkkJHZLp/odSodYdm2VBh3gjUghM5PBJqB
+ bZC14snlgzh79rjQYpVgY64MBukjSMK8OyORUuL8SbryrpVGxgJPdB67hrvwl5d4olW+cRjNir9
+ gZLkwddaRxSZ+3bD9lPpgtU/ibVyUu6I4ebCuz0nJ1LSjD7FNIoA==
+X-Received: by 2002:a17:907:1b1c:b0:b7c:e3ad:cd17 with SMTP id
+ a640c23a62f3a-b879300953dmr412641866b.32.1768594678790; 
+ Fri, 16 Jan 2026 12:17:58 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a640c23a62f3a-b8795169f10sm338631466b.26.2026.01.16.12.17.55
+ a640c23a62f3a-b8795169f10sm338631466b.26.2026.01.16.12.17.57
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 16 Jan 2026 12:17:56 -0800 (PST)
+ Fri, 16 Jan 2026 12:17:58 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v2 08/12] doc: improve patch submission guide readability
-Date: Fri, 16 Jan 2026 12:14:26 -0800
-Message-ID: <20260116201738.74578-9-stephen@networkplumber.org>
+Subject: [PATCH v2 09/12] doc: improve stable releases documentation
+Date: Fri, 16 Jan 2026 12:14:27 -0800
+Message-ID: <20260116201738.74578-10-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260116201738.74578-1-stephen@networkplumber.org>
 References: <20260114225555.127448-1-stephen@networkplumber.org>
@@ -81,917 +81,227 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Improve the patch submission documentation
-- Converting passive voice to active voice throughout
-- Using imperative mood for instructions
-- Reorganizing content with clearer section headers
-- Simplifying wordy constructions
-- Removing redundant phrases
+Rewrite the stable releases and LTS documentation for clarity
+- Converting passive voice to active voice
+- Restructuring content with bullet points for scannability
+- Simplifying verbose explanations
+- Removing redundant phrasing
+- Making backport criteria more concise
 
 No technical content changes.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- doc/guides/contributing/patches.rst | 434 ++++++++++++++--------------
- 1 file changed, 224 insertions(+), 210 deletions(-)
+ doc/guides/contributing/stable.rst | 147 ++++++++++++-----------------
+ 1 file changed, 60 insertions(+), 87 deletions(-)
 
-diff --git a/doc/guides/contributing/patches.rst b/doc/guides/contributing/patches.rst
-index 069a18e4ec..129952dc76 100644
---- a/doc/guides/contributing/patches.rst
-+++ b/doc/guides/contributing/patches.rst
-@@ -6,55 +6,53 @@
- Contributing Code to DPDK
- =========================
+diff --git a/doc/guides/contributing/stable.rst b/doc/guides/contributing/stable.rst
+index 808e7fa779..6065163e75 100644
+--- a/doc/guides/contributing/stable.rst
++++ b/doc/guides/contributing/stable.rst
+@@ -6,84 +6,69 @@
+ DPDK Stable Releases and Long Term Support
+ ==========================================
  
--This document outlines the guidelines for submitting code to DPDK.
-+This document provides guidelines for submitting code to DPDK.
+-This section sets out the guidelines for the DPDK Stable Releases and the DPDK
+-Long Term Support releases (LTS).
+-
++This section outlines the guidelines for DPDK Stable Releases and Long Term Support (LTS) releases.
  
--The DPDK development process is modeled (loosely) on the Linux Kernel development model so it is worth reading the
--Linux kernel guide on submitting patches:
-+The DPDK development process is loosely based on the Linux Kernel development
-+model. Review the Linux kernel's guide:
- `How to Get Your Change Into the Linux Kernel <https://www.kernel.org/doc/html/latest/process/submitting-patches.html>`_.
--The rationale for many of the DPDK guidelines is explained in greater detail in the kernel guidelines.
-+Many of DPDK's submission guidelines draw from the kernel process,
-+and the rationale behind them is often explained in greater depth there.
+ Introduction
+ ------------
  
+-The purpose of the DPDK Stable Releases is to maintain releases of DPDK with
+-backported fixes over an extended period of time. This provides downstream
+-consumers of DPDK with a stable target on which to base applications or
+-packages.
+-
+-The primary characteristics of stable releases is that they attempt to
+-fix issues and not introduce any new regressions while keeping backwards
+-compatibility with the initial release of the stable version.
++The purpose of DPDK Stable Releases is to maintain DPDK versions with backported
++fixes over an extended period. This allows downstream users to base applications
++or packages on a stable, well-maintained version of DPDK.
  
- The DPDK Development Process
- ----------------------------
+-The Long Term Support release (LTS) is a designation applied to a Stable
+-Release to indicate longer term support.
++The primary goal of stable releases is to fix issues without introducing regressions,
++while preserving backward compatibility with the original version.
  
--The DPDK development process has the following features:
-+The DPDK development process includes the following key elements:
++LTS (Long Term Support) is a designation given to specific stable releases to indicate
++extended support duration.
  
--* The code is hosted in a public git repository.
--* There is a mailing list where developers submit patches.
--* There are maintainers for hierarchical components.
--* Patches are reviewed publicly on the mailing list.
--* Successfully reviewed patches are merged to the repository.
--* Patches should be sent to the target repository or sub-tree, see below.
-+* The project maintains code in a public Git repository.
-+* Developers submit patches via a public mailing list.
-+* A hierarchical structure assigns maintainers to different components.
-+* The community reviews patches publicly on the mailing list.
-+* Maintainers merge reviewed patches into the repository.
-+* Contributors should send patches to the target repository or sub-tree (see below for details).
+ Stable Releases
+ ---------------
  
- The mailing list for DPDK development is `dev@dpdk.org <https://mails.dpdk.org/archives/dev/>`_.
--Contributors will need to `register for the mailing list <https://mails.dpdk.org/listinfo/dev>`_ in order to submit patches.
--It is also worth registering for the DPDK `Patchwork <https://patches.dpdk.org/project/dpdk/list/>`_
-+Contributors must `register for the mailing list <https://mails.dpdk.org/listinfo/dev>`_ to submit patches.
-+Register for DPDK `Patchwork <https://patches.dpdk.org/project/dpdk/list/>`_ as well.
+-Any release of DPDK can be designated as a Stable Release if a
+-maintainer volunteers to maintain it and there is a commitment from major
+-contributors to validate it before releases.
+-If a version is to be a "Stable Release", it should be designated as such
+-within one month of that version being initially released.
++Any DPDK release may become a Stable Release if a maintainer volunteers to support it
++and major contributors commit to validating it before each release.
++This designation should be made within one month of the version's initial release.
  
--If you are using the GitHub service, pushing to a branch will trigger GitHub
--Actions to automatically build your changes and run unit tests and ABI checks.
-+If you use GitHub, pushing to a branch triggers GitHub Actions,
-+which builds your changes and runs unit tests and ABI checks.
+-A Stable Release is used to backport fixes from an ``N`` release back to an
++Stable Releases are typically used to backport fixes from an ``N`` release to an
+ ``N-1`` release, for example, from 16.11 to 16.07.
  
--The development process requires some familiarity with the ``git`` version control system.
--Refer to the `Pro Git Book <http://www.git-scm.com/book/>`_ for further information.
-+Contributing to DPDK requires a basic understanding of the Git version control system.
-+For more information, refer to the `Pro Git Book <http://www.git-scm.com/book/>`_.
+-The duration of a stable is one complete release cycle (4 months). It can be
+-longer, up to 1 year, if a maintainer continues to support the stable branch,
+-or if users supply backported fixes, however the explicit commitment should be
+-for one release cycle.
+-
+-The release cadence is determined by the maintainer based on the number of
+-bugfixes and the criticality of the bugs. Releases should be coordinated with
+-the validation engineers to ensure that a tagged release has been tested.
+-
+-
+-LTS Release
+------------
++* The standard support duration is one full release cycle (4 months).
++* This may extend up to one year if the maintainer continues support or if users provide backported fixes.
++* The maintainer determines the release cadence based on the volume and criticality of fixes.
++* Coordinate releases with validation engineers to ensure proper testing before tagging.
  
- Source License
- --------------
- 
--The DPDK uses the Open Source BSD-3-Clause license for the core libraries and
--drivers. The kernel components are GPL-2.0 licensed. DPDK uses single line
--reference to Unique License Identifiers in source files as defined by the Linux
--Foundation's `SPDX project <http://spdx.org/>`_.
-+DPDK uses the Open Source BSD-3-Clause license for its core libraries and
-+drivers. Kernel components use the GPL-2.0 license.
-+To identify licenses in source files, DPDK follows the SPDX standard
-+developed by the Linux Foundation `SPDX project <http://spdx.org/>`_.
- 
--DPDK uses first line of the file to be SPDX tag. In case of *#!* scripts, SPDX
--tag can be placed in 2nd line of the file.
-+Use the SPDX tag on the first line of the file.
-+For *#!* scripts, place the SPDX tag on the second line.
- 
--For example, to label a file as subject to the BSD-3-Clause license,
--the following text would be used:
-+For BSD-3-Clause:
- 
- ``SPDX-License-Identifier: BSD-3-Clause``
- 
--To label a file as dual-licensed with BSD-3-Clause and GPL-2.0 (e.g., for code
--that is shared between the kernel and userspace), the following text would be
--used:
-+For dual-licensing with BSD-3-Clause and GPL-2.0 (e.g., shared kernel/user-space code):
- 
- ``SPDX-License-Identifier: (BSD-3-Clause OR GPL-2.0)``
- 
-@@ -63,11 +61,11 @@ Refer to ``licenses/README`` for more details.
- Maintainers and Sub-trees
- -------------------------
- 
--The DPDK maintenance hierarchy is divided into a main repository ``dpdk`` and sub-repositories ``dpdk-next-*``.
-+The DPDK maintenance hierarchy divides into a main repository ``dpdk`` and sub-repositories ``dpdk-next-*``.
- 
--There are maintainers for the trees and for components within the tree.
-+Maintainers exist for the trees and for components within the tree.
- 
--Trees and maintainers are listed in the ``MAINTAINERS`` file. For example::
-+The ``MAINTAINERS`` file lists trees and maintainers. For example::
- 
-     Crypto Drivers
-     --------------
-@@ -85,45 +83,49 @@ Where:
- * ``T`` is a repository tree.
- * ``F`` is a maintained file or directory.
- 
--Additional details are given in the ``MAINTAINERS`` file.
-+The ``MAINTAINERS`` file contains additional details.
- 
--The role of the component maintainers is to:
-+Component maintainers are responsible for:
- 
--* Review patches for the component or delegate the review.
--  The review should be done, ideally, within 1 week of submission to the mailing list.
--* Add an ``acked-by`` to patches, or patchsets, that are ready for committing to a tree.
--* Reply to questions asked about the component.
-+* Reviewing patches related to their component or delegating review to others.
-+  Ideally, complete reviews within one week of mailing list submission.
-+* Acknowledging patches by adding an ``acked-by`` tag to those deemed ready for merging.
-+* Responding to questions regarding the component and offering guidance when needed.
- 
--Component maintainers can be added or removed by submitting a patch to the ``MAINTAINERS`` file.
--Maintainers should have demonstrated a reasonable level of contributions or reviews to the component area.
--The maintainer should be confirmed by an ``ack`` from an established contributor.
--There can be more than one component maintainer if desired.
-+Add or remove maintainers by submitting a patch to the ``MAINTAINERS`` file.
-+New maintainers should have demonstrated consistent contributions or reviews to the component area.
-+An established contributor must confirm their addition with an ``ack``.
-+A single component may have multiple maintainers if needed.
- 
--The role of the tree maintainers is to:
-+Tree Maintainer Responsibilities:
- 
--* Maintain the overall quality of their tree.
--  This can entail additional review, compilation checks or other tests deemed necessary by the maintainer.
--* Commit patches that have been reviewed by component maintainers and/or other contributors.
--  The tree maintainer should determine if patches have been reviewed sufficiently.
--* Ensure that patches are reviewed in a timely manner.
--* Prepare the tree for integration.
--* Ensure that there is a designated back-up maintainer and coordinate a handover for periods where the
--  tree maintainer can't perform their role.
-+Tree maintainers ensure the overall quality and integrity of their tree.
-+Their duties include:
- 
--Tree maintainers can be added or removed by submitting a patch to the ``MAINTAINERS`` file.
--The proposer should justify the need for a new sub-tree and should have demonstrated a sufficient level of contributions in the area or to a similar area.
--The maintainer should be confirmed by an ``ack`` from an existing tree maintainer.
--Disagreements on trees or maintainers can be brought to the Technical Board.
-+* Conducting additional reviews, compilation checks, or other tests as needed.
-+* Committing patches that component maintainers or other contributors have sufficiently reviewed.
-+* Ensuring timely review of submitted patches.
-+* Preparing the tree for integration.
-+* Appointing a designated backup maintainer and coordinating handovers when unavailable.
- 
--The backup maintainer for the main tree should be selected
--from the existing sub-tree maintainers of the project.
--The backup maintainer for a sub-tree should be selected from among the component maintainers within that sub-tree.
-+Maintainer Changes:
-+
-+Add or remove tree maintainers by submitting a patch to the MAINTAINERS file.
-+Proposals must justify the creation of a new sub-tree and demonstrate significant contribution
-+to the relevant area. An existing tree maintainer must ack the proposal.
-+
-+Escalate disputes regarding trees or maintainers to the Technical Board.
-+
-+Backup Maintainers:
-+
-+* Choose the main tree's backup maintainer from among existing sub-tree maintainers.
-+* Choose a sub-tree's backup from the component maintainers within that sub-tree.
- 
- 
- Getting the Source Code
- -----------------------
- 
--The source code can be cloned using either of the following:
-+Clone the source code using either of the following:
- 
- main repository::
- 
-@@ -135,63 +137,72 @@ sub-repositories (`list <https://git.dpdk.org/next>`_)::
-     git clone git://dpdk.org/next/dpdk-next-*
-     git clone https://dpdk.org/git/next/dpdk-next-*
- 
--Make your Changes
-------------------
-+Make Changes
+-A stable release can be designated as an LTS release based on community
+-agreement and a commitment from a maintainer. The current policy is that each
+-year's November (X.11) release will be maintained as an LTS for 3 years,
+-however that is dependent on continued community support for validation.
++LTS Releases
 +------------
  
--Make your planned changes in the cloned ``dpdk`` repo. Here are some guidelines and requirements:
-+After cloning the DPDK repository, make your planned changes while following
-+these key guidelines and requirements:
+-After the X.11 release, an LTS branch will be created for it at
+-https://git.dpdk.org/dpdk-stable where bugfixes will be backported to.
++A Stable Release can be promoted to an LTS release through community agreement
++and a maintainer's commitment.
  
- * Follow the :ref:`coding_style` guidelines.
+-A LTS release may align with the declaration of a new major ABI version,
+-please read the :doc:`abi_policy` for more information.
++* The current policy designates each November release (X.11) as an LTS and maintains it for 3 years,
++  contingent on community validation support.
++* After release, an LTS branch is created at https://git.dpdk.org/dpdk-stable
++  where bugfixes are backported.
++* An LTS release may align with the declaration of a new major ABI version.
++  See the :doc:`abi_policy` for more information.
  
- * If you are a new contributor, or if your mail address changed,
-   you may update the ``.mailmap`` file.
--  Otherwise the new name or address will be added by a maintainer.
--  Keeping this file up-to-date will help when someone wants to contact you
--  about the changes you contributed to.
-+  Otherwise a maintainer will add the new name or address.
-+  Keeping this file up-to-date helps when someone wants to contact you
-+  about the changes you contributed.
+-It is anticipated that there will be at least 3 releases per year of the LTS
+-or approximately 1 every 4 months. This is done to align with the DPDK main
+-branch releases so that fixes have already gone through validation as part of
+-the DPDK main branch release validation. However, the cadence can be shorter or
+-longer depending on the number and criticality of the backported
+-fixes. Releases should be coordinated with the validation engineers to ensure
+-that a tagged release has been tested.
++Release Cadence:
+ 
+-For a list of the currently maintained stable/LTS branches please see
+-the latest `stable roadmap <https://core.dpdk.org/roadmap/#stable>`_.
++* At least three LTS updates per year (roughly one every four months).
++* Aligned with main DPDK releases to leverage shared validation.
++* Frequency may vary depending on the urgency and volume of fixes.
++* Coordinate validation with test engineers.
+ 
+-At the end of the 3 years, a final X.11.N release will be made and at that
+-point the LTS branch will no longer be maintained with no further releases.
++For a list of the currently maintained stable/LTS branches, see
++the `stable roadmap <https://core.dpdk.org/roadmap/#stable>`_.
+ 
++At the end of the 3-year period, a final X.11.N release is made,
++after which the LTS branch is no longer maintained.
+ 
+-What changes should be backported
++What Changes Should Be Backported
+ ---------------------------------
+ 
+-Backporting should be limited to bug fixes. All patches accepted on the main
+-branch with a Fixes: tag should be backported to the relevant stable/LTS
+-branches, unless the submitter indicates otherwise. If there are exceptions,
+-they will be discussed on the mailing lists.
++Limit backports to bug fixes.
 +
-+* If you add new files or directories, add your name to the ``MAINTAINERS`` file.
++All patches accepted on the main branch with a ``Fixes:`` tag should be backported
++to the relevant stable/LTS branches, unless the submitter indicates otherwise.
  
--* If you add new files or directories you should add your name to the ``MAINTAINERS`` file.
-+PMD Submissions
-+~~~~~~~~~~~~~~~
- 
--* Initial submission of new PMDs should be prepared against a corresponding repo.
-+* Prepare initial submissions of new PMDs against the corresponding repo.
- 
--  * Thus, for example, initial submission of a new network PMD should be
--    prepared against dpdk-next-net repo.
-+  * For example, prepare initial submission of a new network PMD
-+    against the dpdk-next-net repo.
- 
--  * Likewise, initial submission of a new crypto or compression PMD should be
--    prepared against dpdk-next-crypto repo.
-+  * Likewise, prepare initial submission of a new crypto or compression PMD
-+    against the dpdk-next-crypto repo.
- 
-   * For other PMDs and more info, refer to the ``MAINTAINERS`` file.
- 
--* New external functions should be exported.
-+* Export new external functions.
-   See the :doc:`ABI policy <abi_policy>` and :ref:`ABI versioning <abi_versioning>`
-   guides.
- 
--* Any new API function should be used in ``/app`` test directory.
-+API and ABI Guidelines
-+~~~~~~~~~~~~~~~~~~~~~~
-+
-+* Use any new API function in the ``/app`` test directory.
- 
- * When introducing a new device API, at least one driver should implement it.
- 
--* Important changes will require an addition to the release notes in ``doc/guides/rel_notes/``.
-+Documentation and Release Notes
-+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+
-+* Important changes require an addition to the release notes in ``doc/guides/rel_notes/``.
-   See the :ref:`Release Notes section of the Documentation Guidelines <doc_guidelines>` for details.
- 
--* Test the compilation works with different targets, compilers and options, see :ref:`contrib_check_compilation`.
-+* Test compilation with different targets, compilers, and options; see :ref:`contrib_check_compilation`.
- 
--* Don't break compilation between commits with forward dependencies in a patchset.
--  Each commit should compile on its own to allow for ``git bisect`` and continuous integration testing.
-+* Do not break compilation between commits with forward dependencies in a patch set.
-+  Each commit should compile on its own to allow ``git bisect`` and continuous integration testing.
- 
- * Add tests to the ``app/test`` unit test framework where possible.
- 
- * Add documentation, if relevant, in the form of Doxygen comments or a User Guide in RST format.
-   See the :ref:`Documentation Guidelines <doc_guidelines>`.
- 
--* Code and related documentation must be updated atomically in the same patch.
-+* Update code and related documentation atomically in the same patch.
- 
--Once the changes have been made you should commit them to your local repo.
-+Commit your changes to your local repo after making them.
- 
--For small changes, that do not require specific explanations, it is better to keep things together in the
--same patch.
--Larger changes that require different explanations should be separated into logical patches in a patchset.
--A good way of thinking about whether a patch should be split is to consider whether the change could be
--applied without dependencies as a backport.
-+Keep small changes that do not require specific explanations in a single patch.
-+Separate larger changes that require different explanations into logical patches in a patch set.
-+Consider whether the change could be applied without dependencies as a backport
-+when deciding whether to split a patch.
- 
--As a guide to how patches should be structured run ``git log`` on similar files.
-+Run ``git log`` on similar files as a guide to how patches should be structured.
- 
- 
- Commit Messages: Subject Line
-@@ -206,7 +217,7 @@ Here are some guidelines for the summary line:
- 
- * The summary line should be lowercase apart from acronyms.
- 
--* It should be prefixed with the component name (use git log to check existing components).
-+* Prefix with the component name (use git log to check existing components).
-   For example::
- 
-      ixgbe: fix offload config option name
-@@ -215,54 +226,54 @@ Here are some guidelines for the summary line:
- 
- * Use the imperative of the verb (like instructions to the code base).
- 
--* Don't add a period/full stop to the subject line or you will end up two in the patch name: ``dpdk_description..patch``.
-+* Do not add a period/full stop to the subject line or you will end up with two in the patch name: ``dpdk_description..patch``.
- 
- The actual email subject line should be prefixed by ``[PATCH]`` and the version, if greater than v1,
- for example: ``PATCH v2``.
--The is generally added by ``git send-email`` or ``git format-patch``, see below.
-+``git send-email`` or ``git format-patch`` generally adds this prefix; see below.
- 
--If you are submitting an RFC draft of a feature you can use ``[RFC]`` instead of ``[PATCH]``.
--An RFC patch doesn't have to be complete.
-+If you are submitting an RFC draft of a feature, use ``[RFC]`` instead of ``[PATCH]``.
-+An RFC patch does not have to be complete.
- It is intended as a way of getting early feedback.
- 
- 
- Commit Messages: Body
- ---------------------
- 
--Here are some guidelines for the body of a commit message:
-+Here are guidelines for the body of a commit message:
- 
- * The body of the message should describe the issue being fixed or the feature being added.
--  It is important to provide enough information to allow a reviewer to understand the purpose of the patch.
-+  Provide enough information to allow a reviewer to understand the purpose of the patch.
- 
--* When the change is obvious the body can be blank, apart from the signoff.
-+* When the change is obvious, the body can be blank apart from the signoff.
- 
--* The commit message must end with a ``Signed-off-by:`` line which is added using::
-+* The commit message must end with a ``Signed-off-by:`` line, added using::
- 
-       git commit --signoff # or -s
- 
--  The purpose of the signoff is explained in the
-+  The
-   `Developer's Certificate of Origin <https://www.kernel.org/doc/html/latest/process/submitting-patches.html#developer-s-certificate-of-origin-1-1>`_
--  section of the Linux kernel guidelines.
-+  section of the Linux kernel guidelines explains the purpose of the signoff.
- 
-   .. Note::
- 
--     All developers must ensure that they have read and understood the
-+     All developers must read and understand the
-      Developer's Certificate of Origin section of the documentation prior
-      to applying the signoff and submitting a patch.
- 
- * The signoff must be a real name and not an alias or nickname.
-   More than one signoff is allowed.
- 
--* The text of the commit message should be wrapped at 72 characters.
-+* Wrap the text of the commit message at 72 characters.
- 
--* When fixing a regression, it is required to reference the id of the commit
-+* When fixing a regression, reference the id of the commit
-   which introduced the bug, and put the original author of that commit on CC.
--  You can generate the required lines using the following git alias, which prints
-+  Generate the required lines using the following git alias, which prints
-   the commit SHA and the author of the original code::
- 
-      git config alias.fixline "log -1 --abbrev=12 --format='Fixes: %h (\"%s\")%nCc: %ae'"
- 
--  The output of ``git fixline <SHA>`` must then be added to the commit message::
-+  Add the output of ``git fixline <SHA>`` to the commit message::
- 
-      doc: fix some parameter description
- 
-@@ -274,12 +285,12 @@ Here are some guidelines for the body of a commit message:
-      ---
-      Cc: author@example.com
- 
--* When fixing an error or warning it is useful to add the error message and instructions on how to reproduce it.
-+* When fixing an error or warning, include the error message and instructions on how to reproduce it.
- 
--* Use correct capitalization, punctuation and spelling.
-+* Use correct capitalization, punctuation, and spelling.
- 
--In addition to the ``Signed-off-by:`` name the commit messages can also have
--tags for who reported, suggested, tested and reviewed the patch being
-+In addition to the ``Signed-off-by:`` name, commit messages can also have
-+tags for who reported, suggested, tested, and reviewed the patch being
- posted. Please refer to the `Tested, Acked and Reviewed by`_ section.
- 
- Patch Fix Related Issues
-@@ -287,7 +298,7 @@ Patch Fix Related Issues
- 
- `Coverity <https://scan.coverity.com/projects/dpdk-data-plane-development-kit>`_
- is a tool for static code analysis.
--It is used as a cloud-based service used to scan the DPDK source code,
-+It is used as a cloud-based service to scan the DPDK source code
- and alert developers of any potential defects in the source code.
- When fixing an issue found by Coverity, the patch must contain a Coverity issue ID
- in the body of the commit message. For example::
-@@ -308,7 +319,7 @@ in the body of the commit message. For example::
- `Bugzilla <https://bugs.dpdk.org>`_
- is a bug- or issue-tracking system.
- Bug-tracking systems allow individual or groups of developers
--effectively to keep track of outstanding problems with their product.
-+to effectively track outstanding problems with their product.
- When fixing an issue raised in Bugzilla, the patch must contain
- a Bugzilla issue ID in the body of the commit message.
- For example::
-@@ -327,10 +338,10 @@ For example::
- Patch for Stable Releases
- ~~~~~~~~~~~~~~~~~~~~~~~~~
- 
--All fix patches to the main branch that are candidates for backporting
--should also be CCed to the `stable@dpdk.org <https://mails.dpdk.org/listinfo/stable>`_
-+CC all fix patches to the main branch that are candidates for backporting
-+to the `stable@dpdk.org <https://mails.dpdk.org/listinfo/stable>`_
- mailing list.
--In the commit message body the Cc: stable@dpdk.org should be inserted as follows::
-+In the commit message body, insert ``Cc: stable@dpdk.org`` as follows::
- 
-      doc: fix some parameter description
- 
-@@ -341,19 +352,19 @@ In the commit message body the Cc: stable@dpdk.org should be inserted as follows
+ Fixes suitable for backport should have a ``Cc: stable@dpdk.org`` tag in the
+ commit message body as follows::
+@@ -97,49 +82,37 @@ commit message body as follows::
  
       Signed-off-by: Alex Smith <alex.smith@example.com>
  
--For further information on stable contribution you can go to
-+For further information on stable contribution, see
- :doc:`Stable Contribution Guide <stable>`.
+-
+ Fixes not suitable for backport should not include the ``Cc: stable@dpdk.org`` tag.
  
- Patch Dependencies
- ~~~~~~~~~~~~~~~~~~
- 
--Sometimes a patch or patchset can depend on another one.
--To help the maintainers and automation tasks, please document this dependency in commit log or cover letter
-+Sometimes a patch or patch set depends on another one.
-+To help the maintainers and automation tasks, document this dependency in the commit log or cover letter
- with the following syntax:
- 
- ``Depends-on: series-NNNNN ("Title of the series")`` or ``Depends-on: patch-NNNNN ("Title of the patch")``
- 
--Where ``NNNNN`` is patchwork ID for patch or series::
-+Where ``NNNNN`` is the patchwork ID for the patch or series::
- 
-      doc: fix some parameter description
- 
-@@ -366,7 +377,7 @@ Where ``NNNNN`` is patchwork ID for patch or series::
- Tag order
- ~~~~~~~~~
- 
--There is a pattern indicating how certain tags should relate to each other.
-+A pattern indicates how certain tags should relate to each other.
- 
- Example of proper tag sequence::
- 
-@@ -382,22 +393,22 @@ Example of proper tag sequence::
-      Reviewed-by:
-      Tested-by:
- 
--Between first and second tag section there is and empty line.
-+An empty line separates the first and second tag sections.
- 
--While ``Signed-off-by:`` is an obligatory tag and must exist in each commit,
-+While ``Signed-off-by:`` is obligatory and must exist in each commit,
- all other tags are optional.
--Any tag, as long as it is in proper location to other adjacent tags (if present),
-+Any tag, as long as it is in proper location relative to other adjacent tags (if present),
- may occur multiple times.
- 
--Tags after the first occurrence of ``Signed-off-by:`` shall be laid out
--in a chronological order.
-+Place tags after the first occurrence of ``Signed-off-by:``
-+in chronological order.
- 
- 
- Creating Patches
- ----------------
- 
--It is possible to send patches directly from git but for new contributors it is recommended to generate the
--patches with ``git format-patch`` and then when everything looks okay, and the patches have been checked, to
-+You can send patches directly from git, but for new contributors it is recommended to generate the
-+patches with ``git format-patch`` and then, when everything looks okay and the patches have been checked,
- send them with ``git send-email``.
- 
- Here are some examples of using ``git format-patch`` to generate patches:
-@@ -413,15 +424,15 @@ Here are some examples of using ``git format-patch`` to generate patches:
-    # Generate the patches in a directory.
-    git format-patch -3 -o ~/patch/
- 
--   # Add a cover letter to explain a patchset.
-+   # Add a cover letter to explain a patch set.
-    git format-patch -3 -o ~/patch/ --cover-letter
- 
-    # Add a prefix with a version number.
-    git format-patch -3 -o ~/patch/ -v 2
- 
- 
--Cover letters are useful for explaining a patchset and help to generate a logical threading to the patches.
--Smaller notes can be put inline in the patch after the ``---`` separator, for example::
-+Cover letters are useful for explaining a patch set and help generate logical threading to the patches.
-+Put smaller notes inline in the patch after the ``---`` separator, for example::
- 
-    Subject: [PATCH] fm10k/base: add FM10420 device ids
- 
-@@ -438,8 +449,8 @@ Smaller notes can be put inline in the patch after the ``---`` separator, for ex
-     2 files changed, 12 insertions(+)
-    ...
- 
--Version 2 and later of a patchset should also include a short log of the changes so the reviewer knows what has changed.
--This can be added to the cover letter or the annotations.
-+Version 2 and later of a patch set should also include a short log of the changes so the reviewer knows what has changed.
-+Add this to the cover letter or the annotations.
- For example::
- 
-    ---
-@@ -457,32 +468,32 @@ For example::
- Checking the Patches
- --------------------
- 
--Patches should be checked for formatting and syntax issues using the ``checkpatches.sh`` script in the ``devtools``
-+Check patches for formatting and syntax issues using the ``checkpatches.sh`` script in the ``devtools``
- directory of the DPDK repo.
--This uses the Linux kernel development tool ``checkpatch.pl`` which  can be obtained by cloning, and periodically,
--updating the Linux kernel sources.
-+This uses the Linux kernel development tool ``checkpatch.pl``, which can be obtained by cloning, and periodically
-+updating, the Linux kernel sources.
- 
--The path to the original Linux script must be set in the environment variable ``DPDK_CHECKPATCH_PATH``.
-+Set the path to the original Linux script in the environment variable ``DPDK_CHECKPATCH_PATH``.
- 
- Spell checking of commonly misspelled words is enabled
- by default if installed in ``/usr/share/codespell/dictionary.txt``.
--A different dictionary path can be specified
-+Specify a different dictionary path
- in the environment variable ``DPDK_CHECKPATCH_CODESPELL``.
- 
--There is a DPDK script to build an adjusted dictionary
-+A DPDK script builds an adjusted dictionary
- from the multiple codespell dictionaries::
- 
-    git clone https://github.com/codespell-project/codespell.git
-    devtools/build-dict.sh codespell/ > codespell-dpdk.txt
- 
--Environment variables required by the development tools,
--are loaded from the following files, in order of preference::
-+The development tools load environment variables
-+from the following files, in order of preference::
- 
-    .develconfig
-    ~/.config/dpdk/devel.config
-    /etc/dpdk/devel.config.
- 
--Once the environment variable is set, the script can be run as follows::
-+Once the environment variable is set, run the script as follows::
- 
-    devtools/checkpatches.sh ~/patch/
- 
-@@ -490,34 +501,34 @@ The script usage is::
- 
-    checkpatches.sh [-h] [-q] [-v] [-nX|-r range|patch1 [patch2] ...]
- 
--Then the git logs should be checked using the ``check-git-log.sh`` script.
-+Then check the git logs using the ``check-git-log.sh`` script.
- 
- The script usage is::
- 
-    check-git-log.sh [-h] [-nX|-r range]
- 
--For both of the above scripts, the -n option is used to specify a number of commits from HEAD,
--and the -r option allows the user specify a ``git log`` range.
-+For both scripts, the -n option specifies a number of commits from HEAD,
-+and the -r option specifies a ``git log`` range.
- 
--Additionally, when contributing to the DTS tool, patches should also be checked using
-+Additionally, when contributing to the DTS tool, check patches using
- the ``dts-check-format.sh`` script in the ``devtools`` directory of the DPDK repo.
--To run the script, extra :ref:`Python dependencies <dts_deps>` are needed.
-+Running the script requires extra :ref:`Python dependencies <dts_deps>`.
- 
- .. _contrib_check_compilation:
- 
- Checking Compilation
- --------------------
- 
--Compilation of patches is to be tested with ``devtools/test-meson-builds.sh`` script.
-+Test compilation of patches with the ``devtools/test-meson-builds.sh`` script.
- 
- The script internally checks for dependencies, then builds for several
- combinations of compilation configuration.
--By default, each build will be put in a subfolder of the current working directory.
--However, if it is preferred to place the builds in a different location,
--the environment variable ``DPDK_BUILD_TEST_DIR`` can be set to that desired location.
--For example, setting ``DPDK_BUILD_TEST_DIR=__builds`` will put all builds
-+By default, each build goes in a subfolder of the current working directory.
-+However, to place the builds in a different location,
-+set the environment variable ``DPDK_BUILD_TEST_DIR`` to that desired location.
-+For example, setting ``DPDK_BUILD_TEST_DIR=__builds`` puts all builds
- in a single subfolder called "__builds" created in the current directory.
--Setting ``DPDK_BUILD_TEST_DIR`` to an absolute directory path e.g. ``/tmp`` is also supported.
-+Setting ``DPDK_BUILD_TEST_DIR`` to an absolute directory path (e.g., ``/tmp``) is also supported.
- 
- 
- .. _integrated_abi_check:
-@@ -527,15 +538,15 @@ Checking ABI compatibility
- 
- By default, ABI compatibility checks are disabled.
- 
--To enable them, a reference version must be selected via the environment
-+To enable them, select a reference version via the environment
- variable ``DPDK_ABI_REF_VERSION``. Contributors should ordinarily reference the
- git tag of the most recent release of DPDK in ``DPDK_ABI_REF_VERSION``.
- 
--The ``devtools/test-meson-builds.sh`` script then build this reference version
--in a temporary directory and store the results in a subfolder of the current
-+The ``devtools/test-meson-builds.sh`` script then builds this reference version
-+in a temporary directory and stores the results in a subfolder of the current
- working directory.
--The environment variable ``DPDK_ABI_REF_DIR`` can be set so that the results go
--to a different location.
-+Set the environment variable ``DPDK_ABI_REF_DIR`` to place the results in
-+a different location.
- 
- Sample::
- 
-@@ -545,8 +556,8 @@ Sample::
- Sending Patches
- ---------------
- 
--Patches should be sent to the mailing list using ``git send-email``.
--You can configure an external SMTP with something like the following::
-+Send patches to the mailing list using ``git send-email``.
-+Configure an external SMTP with something like the following::
- 
-    [sendemail]
-        smtpuser = name@domain.com
-@@ -556,27 +567,31 @@ You can configure an external SMTP with something like the following::
- 
- See the `Git send-email <https://git-scm.com/docs/git-send-email>`_ documentation for more details.
- 
--The patches should be sent to ``dev@dpdk.org``.
--If the patches are a change to existing files then you should send them TO the maintainer(s) and CC ``dev@dpdk.org``.
--The appropriate maintainer can be found in the ``MAINTAINERS`` file::
-+Send patches to ``dev@dpdk.org``.
-+If the patches change existing files, send them TO the maintainer(s) and CC ``dev@dpdk.org``.
-+Find the appropriate maintainer in the ``MAINTAINERS`` file::
- 
-    git send-email --to maintainer@some.org --cc dev@dpdk.org 000*.patch
- 
--Script ``get-maintainer.sh`` can be used to select maintainers automatically::
-+The script ``get-maintainer.sh`` can select maintainers automatically::
- 
-   git send-email --to-cmd ./devtools/get-maintainer.sh --cc dev@dpdk.org 000*.patch
- 
--You can test the emails by sending it to yourself or with the ``--dry-run`` option.
-+Send new additions without a maintainer::
+-To support the goal of stability and not introducing regressions,
+-new code being introduced is limited to bug fixes.
+ New features should not be backported to stable releases.
+-
+-In some limited cases, it may be acceptable to backport a new feature
+-to a stable release. Some of the factors which impact the decision by
+-stable maintainers are as follows:
+-
+-* Does the feature break API/ABI?
+-* Does the feature break backwards compatibility?
+-* Is it for the latest LTS release (to avoid LTS upgrade issues)?
+-* Is there a commitment from the proposer or affiliation to validate the feature
+-  and check for regressions in related functionality?
+-* Is there a track record of the proposer or affiliation validating stable releases?
+-* Is it obvious that the feature will not impact existing functionality?
+-* How intrusive is the code change?
+-* What is the scope of the code change?
+-* Does it impact common components or vendor specific?
+-* Is there a justifiable use case (a clear user need)?
+-* Is there a community consensus about the backport?
+-
+-Performance improvements are generally not considered to be fixes,
+-but may be considered in some cases where:
++In limited cases, a new feature may be acceptable if:
 +
-+   git send-email --to dev@dpdk.org 000*.patch
++* It does not break API or ABI.
++* It preserves backward compatibility.
++* It targets the latest LTS release (to help with upgrade paths).
++* The proposer commits to testing the feature and monitoring regressions.
++* The proposer or their organization has a track record of validating stable releases.
++* It clearly does not impact existing functionality.
++* The change is minimally invasive and scoped.
++* It affects vendor-specific components rather than common ones.
++* There is a justifiable use case (a clear user need).
++* There is community consensus about the backport.
 +
-+Test the emails by sending them to yourself or with the ``--dry-run`` option.
++Performance improvements are generally not considered fixes,
++but may be considered in cases where:
  
--If the patch is in relation to a previous email thread you can add it to the same thread using the Message ID::
-+If the patch relates to a previous email thread, add it to the same thread using the Message ID::
+ * It is fixing a performance regression that occurred previously.
+ * An existing feature in LTS is not usable as intended without it.
  
-    git send-email --to dev@dpdk.org --in-reply-to <1234-foo@bar.com> 000*.patch
+ APIs marked as ``experimental`` are not considered part of the ABI version
+-and can be changed without prior notice. This is necessary for the API to be
+-improved and stabilized and become part of the ABI version in the future.
+-
+-However, in LTS releases ``experimental`` API should not be changed as there
+-will not be a future ABI version on the branch and compatibility with previous
+-release of an LTS version is of the highest importance.
++and can be changed without prior notice in mainline development.
++However, in LTS releases, ``experimental`` APIs should not be changed,
++as compatibility with previous releases of an LTS version is paramount.
  
--The Message ID can be found in the raw text of emails or at the top of each Patchwork patch,
-+Find the Message ID in the raw text of emails or at the top of each Patchwork patch,
- `for example <https://patches.dpdk.org/patch/7646/>`_.
- Shallow threading (``--thread --no-chain-reply-to``) is preferred for a patch series.
+ The Stable Mailing List
+ -----------------------
  
--Once submitted your patches will appear on the mailing list and in Patchwork.
-+Once submitted, your patches appear on the mailing list and in Patchwork.
+-The Stable and LTS release are coordinated on the stable@dpdk.org mailing
+-list.
++Stable and LTS releases are coordinated on the stable@dpdk.org mailing list.
  
- Experienced committers may send patches directly with ``git send-email`` without the ``git format-patch`` step.
- The options ``--annotate`` and ``confirm = always`` are recommended for checking patches before sending.
-@@ -587,11 +602,11 @@ Backporting patches for Stable Releases
+ All fix patches to the main branch that are candidates for backporting
+ should also be CCed to the `stable@dpdk.org <https://mails.dpdk.org/listinfo/stable>`_
+@@ -149,7 +122,7 @@ mailing list.
+ Releasing
+ ---------
  
- Sometimes a maintainer or contributor wishes, or can be asked, to send a patch
- for a stable release rather than mainline.
--In this case the patch(es) should be sent to ``stable@dpdk.org``,
-+In this case, send the patch(es) to ``stable@dpdk.org``,
- not to ``dev@dpdk.org``.
+-A Stable Release will be released by:
++A Stable Release is made by:
  
--Given that there are multiple stable releases being maintained at the same time,
--please specify exactly which branch(es) the patch is for
-+Given that multiple stable releases are maintained simultaneously,
-+specify exactly which branch(es) the patch is for
- using ``git send-email --subject-prefix='PATCH 16.11' ...``
- and also optionally in the cover letter or in the annotation.
- 
-@@ -599,7 +614,7 @@ and also optionally in the cover letter or in the annotation.
- The Review Process
- ------------------
- 
--Patches are reviewed by the community, relying on the experience and
-+The community reviews patches, relying on the experience and
- collaboration of the members to double-check each other's work. There are a
- number of ways to indicate that you have checked a patch on the mailing list.
- 
-@@ -607,8 +622,8 @@ number of ways to indicate that you have checked a patch on the mailing list.
- Tested, Acked and Reviewed by
- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- 
--To indicate that you have interacted with a patch on the mailing list you
--should respond to the patch in an email with one of the following tags:
-+To indicate that you have interacted with a patch on the mailing list,
-+respond to the patch in an email with one of the following tags:
- 
-  * Reviewed-by:
-  * Acked-by:
-@@ -626,36 +641,35 @@ tag is given here for reference:
- 
- .. _statement: https://www.kernel.org/doc/html/latest/process/submitting-patches.html#reviewer-s-statement-of-oversight
- 
--``Reviewed-by:`` is a strong statement_ that the patch is an appropriate state
-+``Reviewed-by:`` is a strong statement_ that the patch is in an appropriate state
- for merging without any remaining serious technical issues. Reviews from
--community members who are known to understand the subject area and to perform
--thorough reviews will increase the likelihood of the patch getting merged.
-+community members who understand the subject area and perform
-+thorough reviews increase the likelihood of the patch getting merged.
- 
--``Acked-by:`` is a record that the person named was not directly involved in
--the preparation of the patch but wishes to signify and record their acceptance
-+``Acked-by:`` records that the person named was not directly involved in
-+preparing the patch but wishes to signify and record their acceptance
- and approval of it.
- 
--``Tested-by:`` indicates that the patch has been successfully tested (in some
--environment) by the person named.
-+``Tested-by:`` indicates that the person named has successfully tested the patch
-+(in some environment).
- 
--``Reported-by:`` is used to acknowledge person who found or reported the bug.
-+``Reported-by:`` acknowledges the person who found or reported the bug.
- 
--``Suggested-by:`` indicates that the patch idea was suggested by the named
--person.
-+``Suggested-by:`` indicates that the named person suggested the patch idea.
- 
- 
- Frequency and volume of patches
- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- 
--Please allow at least 24 hours to pass between posting patch revisions.
-+Allow at least 24 hours between posting patch revisions.
- This ensures reviewers from different geographical regions have time to provide feedback.
--Additionally, please do not wait too long (read: weeks) between revisions
-+Additionally, do not wait too long (i.e., weeks) between revisions
- as this makes it harder for reviewers and maintainers
- to recall the context of the previous posting.
- If you have not received any feedback within a week,
- it is appropriate to send a ping to the mailing list.
- 
--Please do not post new revisions without addressing all feedback.
-+Do not post new revisions without addressing all feedback.
- Make sure that all outstanding items have been addressed
- before posting a new revision for review
- (this should involve replying to all the feedback).
-@@ -671,18 +685,18 @@ Your changes are expected to pass on an x86/x86-64 Linux system.
- The infrastructure running the tests is a shared resource among all developers on the project,
- and many frequent reposts will result in delays for all developers.
- We do our best to include CI and self-test infrastructure
--that can be used on an individual developer basis.
-+that developers can use individually.
- 
- For details on running the unit tests, see :doc:`unit_test`.
- It is also recommended to run the :doc:`DTS <../tools/dts>` comprehensive tests.
- Finally, you can also push to a branch on the GitHub service
- to trigger a comprehensive set of compile and unit test runs.
- 
--Please keep all patch sets to a reasonable length.
--Too many or too large patches and series can quickly become very difficult
--for a reasonable review.
--It is recommended to appropriately split patches and series
--to groups of digestible logical changes.
-+Keep all patch sets to a reasonable length.
-+Too many or too large patches and series can quickly become difficult
-+to review reasonably.
-+Appropriately split patches and series
-+into groups of digestible logical changes.
- 
- 
- Steps to getting your patch merged
-@@ -695,39 +709,39 @@ patch accepted. The general cycle for patch review and acceptance is:
- 
- #. Check the automatic test reports in the coming hours.
- 
--#. Wait for review comments. While you are waiting review some other patches.
-+#. Wait for review comments. While you are waiting, review some other patches.
- 
--#. Fix the review comments and submit a ``v n+1`` patchset::
-+#. Fix the review comments and submit a ``v n+1`` patch set::
- 
-       git format-patch -3 -v 2
- 
- #. Update Patchwork to mark your previous patches as "Superseded".
- 
--#. If the patch is deemed suitable for merging by the relevant maintainer(s) or other developers they will ``ack``
-+#. If the relevant maintainer(s) or other developers deem the patch suitable for merging, they will ``ack``
-    the patch with an email that includes something like::
- 
-       Acked-by: Alex Smith <alex.smith@example.com>
- 
--   **Note**: When acking patches please remove as much of the text of the patch email as possible.
-+   **Note**: When acking patches, remove as much of the text of the patch email as possible.
-    It is generally best to delete everything after the ``Signed-off-by:`` line.
- 
- #. Having the patch ``Reviewed-by:`` and/or ``Tested-by:`` will also help the patch to be accepted.
- 
--#. If the patch isn't deemed suitable based on being out of scope or conflicting with existing functionality
-+#. If the patch is deemed unsuitable based on being out of scope or conflicting with existing functionality,
-    it may receive a ``nack``.
-    In this case you will need to make a more convincing technical argument in favor of your patches.
- 
--#. In addition a patch will not be accepted if it doesn't address comments from a previous version with fixes or
-+#. In addition, a patch will not be accepted if it does not address comments from a previous version with fixes or
-    valid arguments.
- 
--#. It is the responsibility of a maintainer to ensure that patches are reviewed and to provide an ``ack`` or
-+#. Maintainers are responsible for ensuring that patches are reviewed and for providing an ``ack`` or
-    ``nack`` of those patches as appropriate.
- 
--#. Once a patch has been acked by the relevant maintainer, reviewers may still comment on it for a further
-+#. Once the relevant maintainer has acked a patch, reviewers may still comment on it for a further
-    two weeks. After that time, the patch should be merged into the relevant git tree for the next release.
-    Additional notes and restrictions:
- 
--   * Patches should be acked by a maintainer at least two days before the release merge
-+   * Maintainers should ack patches at least two days before the release merge
-      deadline, in order to make that release.
-    * For patches acked with less than two weeks to go to the merge deadline, all additional
-      comments should be made no later than two days before the merge deadline.
-@@ -742,11 +756,11 @@ patch accepted. The general cycle for patch review and acceptance is:
- Milestones definition
- ---------------------
- 
--Each DPDK release has milestones that help everyone to converge to the release date.
-+Each DPDK release has milestones that help everyone converge to the release date.
- The following is a list of these milestones together with
- concrete definitions and expectations for a typical release cycle.
--An average cycle lasts 3 months and have 4 release candidates in the last month.
--Test reports are expected to be received after each release candidate.
-+An average cycle lasts 3 months and has 4 release candidates in the last month.
-+Test reports are expected after each release candidate.
- The number and expectations of release candidates might vary slightly.
- The schedule is updated in the `roadmap <https://core.dpdk.org/roadmap/#dates>`_.
- 
-@@ -759,14 +773,14 @@ Roadmap
- ~~~~~~~
- 
- * Announce new features in libraries, drivers, applications, and examples.
--* To be published before the previous release.
-+* Publish before the previous release.
- 
- Proposal Deadline
- ~~~~~~~~~~~~~~~~~
- 
--* Must send an RFC (Request For Comments) or a complete patch of new features.
-+* Send an RFC (Request For Comments) or a complete patch of new features.
- * Early RFC gives time for design review before complete implementation.
--* Should include at least the API changes in libraries and applications.
-+* Include at least the API changes in libraries and applications.
- * Library code should be quite complete at the deadline.
- * Nice to have: driver implementation, example code, and documentation.
- 
-@@ -774,15 +788,15 @@ rc1
- ~~~
- 
- * Priority: libraries. No library feature should be accepted after -rc1.
--* API changes or additions must be implemented in libraries.
-+* Implement API changes or additions in libraries.
- * The API must include Doxygen documentation
-   and be part of the relevant .rst files (library-specific and release notes).
--* API should be used in a test application (``/app``).
-+* Use the API in a test application (``/app``).
- * At least one PMD should implement the API.
-   It may be a draft sent in a separate series.
--* The above should be sent to the mailing list at least 2 weeks before -rc1
--  to give time for review and maintainers approval.
--* If no review after 10 days, a reminder should be sent.
-+* Send the above to the mailing list at least 2 weeks before -rc1
-+  to give time for review and maintainer approval.
-+* If no review after 10 days, send a reminder.
- * Nice to have: example code (``/examples``)
- 
- rc2
-@@ -791,17 +805,17 @@ rc2
- * Priority: drivers. No driver feature should be accepted after -rc2.
- * A driver change must include documentation
-   in the relevant .rst files (driver-specific and release notes).
--* Driver changes should be sent to the mailing list before -rc1 is released.
-+* Send driver changes to the mailing list before -rc1 is released.
- 
- rc3
- ~~~
- 
- * Priority: applications. No application feature should be accepted after -rc3.
--* New functionality that does not depend on libraries update
-+* New functionality that does not depend on library updates
-   can be integrated as part of -rc3.
- * The application change must include documentation in the relevant .rst files
-   (application-specific and release notes if significant).
--* Libraries and drivers cleanup are allowed.
-+* Library and driver cleanup is allowed.
- * Small driver reworks.
- 
- rc4
-@@ -811,4 +825,4 @@ rc4
- * Critical bug fixes only.
- 
- .. note::
--   Bug fixes are integrated as early as possible at any stage.
-+   Integrate bug fixes as early as possible at any stage.
+ * Tagging the release with YY.MM.n (year, month, number).
+ * Uploading a tarball of the release to dpdk.org.
 -- 
 2.51.0
 
