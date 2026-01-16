@@ -2,71 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99E16C982E3
-	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Jan 2026 17:54:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B6F9C982FE
+	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Jan 2026 20:17:46 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9311F42E88;
-	Fri, 16 Jan 2026 18:54:04 +0100 (CET)
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com
- [209.85.128.41]) by mails.dpdk.org (Postfix) with ESMTP id 31B6D4026A
- for <dev@dpdk.org>; Fri, 16 Jan 2026 18:54:03 +0100 (CET)
-Received: by mail-wm1-f41.google.com with SMTP id
- 5b1f17b1804b1-4801c1ad878so14567835e9.1
- for <dev@dpdk.org>; Fri, 16 Jan 2026 09:54:03 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id ECB4440678;
+	Fri, 16 Jan 2026 21:17:45 +0100 (CET)
+Received: from mail-ej1-f67.google.com (mail-ej1-f67.google.com
+ [209.85.218.67]) by mails.dpdk.org (Postfix) with ESMTP id 5DB904025F
+ for <dev@dpdk.org>; Fri, 16 Jan 2026 21:17:44 +0100 (CET)
+Received: by mail-ej1-f67.google.com with SMTP id
+ a640c23a62f3a-b876f3f603eso428434166b.0
+ for <dev@dpdk.org>; Fri, 16 Jan 2026 12:17:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768586042;
- x=1769190842; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768594664;
+ x=1769199464; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=iWu1O58imbSA2WOqnepPZNa1c+GSEKFr1wpz98jnCWA=;
- b=sFrWXMNmAObHlHShGQ/mF5Y0LX78UWUuwnIuX/7/n59lsn56+7eABMk/EgqMx0PyL3
- OoMykZxT9w4T0iQOMYdl+SUh+ae9A9wmFE8Mc2xJ3maVPstgPbJABhCRnDs4v9wA7/d/
- vT9c+qBL814hsVsW2uWFU5HgIlEX5PtJqeJn/+b5gpvjU2YC0sNhuZS32bAmRZkXnZF/
- vFIbYJO9VMWDM1uwHHEKxG39BM7TKKzpMFfmMTw232ZEXZgBGSx6mKQFQHoJy3DW0BiJ
- pXPwaH0AXsahryMSqQqeV1aqWsvkhQf5FlN5BjVkRlXg+YeplL5JHcmWOTD3eLFlJR1S
- 1kiw==
+ bh=tMwAa5p0IwlcaQqgfD/fKJ1mFEg12th58QyCYXcbO+A=;
+ b=sVIdfhePcWv5HuG1GBWo0Glr3qKIKX6YVvurNPVMkF0TPcs1GZD/ya2MyF8nIyS7Sj
+ nZ7eqVNoigGBS6FIgjyan+smmVXrP3c3UxgASnac5yQ996ILKDNmCtjBITHHQ/Gnzs09
+ VRVSwQHcHWaEGQZAOZ3nV7dJtjCzZ7BdBsC83xAqyQNZ/Q2lldvPqv23p+PVwJvJnEhH
+ gWXR0NESoSi44JYQKRWmHtiK0yHGyDggJkcIQ7SE9EQNICR+s0Z9kX1b9Q1itMODVXzz
+ +hr+5XEmz2aspebSE8wfyrOwWC/qgTJhiIcQTMYhmAlE1SMEATfv2gRekpQfeWvztMmd
+ g0aQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768586043; x=1769190843;
+ d=1e100.net; s=20230601; t=1768594664; x=1769199464;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=iWu1O58imbSA2WOqnepPZNa1c+GSEKFr1wpz98jnCWA=;
- b=enhHy6v9VZPPZErupArHqI1AVIZS3brKzK6DvfZffa5BeFGNuHxZQqp/02abzUlR4h
- J4sa/nTqH4DUjsSy6sxrR6a3CCCOXfvKyTavNDafzTbEM9UVMFD3DsxTjZ22AsfKfmH7
- YKf/c0DRzehITRsXlhybS9SdOn/xabwJCzmmRgc8NGSZysv/kqFzGIsAy1RfIzlDOmqs
- mr8CsN/bNBvGiuPcukdjRMvJS0E2rC/v+CM3uJmZAVLjYWDx4XQeVQp1GTdeIgLiuzC7
- hglJb91MDS52sk9E4fJ9NJH/NDlBxcrV+32Al8haQgD4Jz85LXc3GqCLSN/lwmGYPzw0
- qc0g==
-X-Gm-Message-State: AOJu0YywlCFWq015GZrYLYC1VzZibV1uCpWnrOcY0kp6HDShYUmjwTxd
- nunS27lhg2whfjKV0YIq9E3DFqVigpTTkEzDn5RYPTh/OT4cuft9RLH09rIPnJfbwcxrbAM93ex
- 3SyER
-X-Gm-Gg: AY/fxX7nmPTSuKnLWdivFWWDz/WjfEOMrjppg96nhvd9puJADNThCuxl762SBFcKBRK
- aIMv9jZE3zECLcHqNRxhAXzq0nrBiNpFOKnzZ/HWHr3hW0L9xRlPy7iW9XzZ/UqcSEzVDcGtHBx
- yxLIN+efUZszavFxMr+gxhZ8rHwsoACpk3i+qCuyCIrW72UPDqACEQXtlCNCQdDKebUBs9G2NTn
- o4GdfF9c5FMhYlKvq/8kw5GNEKJJEq9fGeT4npaq2+XJVCpCHp5CDRpRhMnIdvP1Xcm/YIq/Bry
- gnDPsQMU1k8k9hhIdhw+sK7p5hhv/KkKLYqV3MLF1dZde5r5nXT3uwLgPz3Atv7Wk/l886th3qX
- fEoMRWSWaPr2XqcVmlNvlMV7Rxzu891mNOCGEFiw8kE+1ylhu8/jM04i1YVM3EXgIWhB8fID454
- DsuiVoaD6RsFwkzpWVPuDB7guNjkney/c6yJpufQFgQbGc0JjZDLjj
-X-Received: by 2002:a05:600c:6309:b0:477:9cdb:e32e with SMTP id
- 5b1f17b1804b1-4801e30d64dmr43530875e9.9.1768586042532; 
- Fri, 16 Jan 2026 09:54:02 -0800 (PST)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ bh=tMwAa5p0IwlcaQqgfD/fKJ1mFEg12th58QyCYXcbO+A=;
+ b=iaIPuqwT+OeYseJgPWZAWOFdR87cg0A2a9j1YTTyQqvd+RwMPSw5YbfXvEAVLL4hlS
+ 968d9RZYzzM/dmXb3/CDV//BIMCVxab88H7sd7Ck/ujftQI5smuZtIAiUSCglVyI43Hm
+ KDkSG3vVhfUh2NaXwPaN55cZ6VNCOaDN3DODcZDW02Vdg+qnJhDNDCy4d9amf5EfY/ZR
+ gXgWcNhdGG5wz1GY7HvT3mUcdoNvhwyb7DpLtXkPCm5x0UJ5jacJVi96CQ/0As9/6nvQ
+ NSHiSCO5ZSb7DLgp+Cyt1P+Glgh+2GU5DyIqkdMOjdNcPq5SXWytBgPmk2Qjx/08Q55F
+ vd6A==
+X-Gm-Message-State: AOJu0Yyw4nMdkfSu/ZtdyB3RjLGgp8DUBlYCttbk8Q+cZ6qd2NlgsYSi
+ eX7gF0X0IRl49YoLY2/HjSOVNefXfBPtVlPkn1TXe6q1nyFJpoag9RQoyjcPVUoqcPIjOo+d/Bu
+ LU/Iht6I=
+X-Gm-Gg: AY/fxX58YYLjx4C0qXhuN5PQuW3+GhOO2I+5aIcN7EFNs+r5wPBRq0NHwMBXQ7U0YXP
+ awPbHLK9jtujCm/UiCprv4u3B8dCUsYO50brksY1Mc31BZZY5aVhJr9SZyyBlccuX56kro1n+Vy
+ 4yZAgN7e9o6sTidceKUK7UCMr+VUef3f8BNeiBjoh/MpQK4i63klblfAbAKb/kQnmIROowHGgZY
+ n2nXje8gP+jHjz83pcJibCz1NPnT3rubyZ5PodX6D5bexW3iAiTcCe8UV2cJe9qhASdY8auaU/q
+ b5VZxoD7KbN0X1YZi5SUpgfOUM19/+ji3iZi5DNoyPvZyGnxM02V4rXpSVaHeyWqkuMEhfGEYT0
+ NgLN6VA3L1IWaGTUg/xn30U0ZOobmTR9AuBb+jMauZbBXWii9OkX2zW8SgZlqf6q65NOhqApdcr
+ pZ2ZmW9kfibPuVLMu07ptVW6uAFowlaYXA6klI1dnyLx9NPo+U8Ig8GjH9gPGv
+X-Received: by 2002:a17:906:6a11:b0:b7a:1bde:a01b with SMTP id
+ a640c23a62f3a-b8796bf618cmr298792566b.63.1768594663715; 
+ Fri, 16 Jan 2026 12:17:43 -0800 (PST)
+Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-47f4b2755absm138320745e9.15.2026.01.16.09.54.01
+ a640c23a62f3a-b8795169f10sm338631466b.26.2026.01.16.12.17.42
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 16 Jan 2026 09:54:02 -0800 (PST)
-Date: Fri, 16 Jan 2026 09:53:57 -0800
+ Fri, 16 Jan 2026 12:17:43 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: coolwilled <coolwilled@gmail.com>
-Cc: dev@dpdk.org, users@dpdk.org
-Subject: Re: Bug: crypto_snow3g failed in Auth snow3g + Cipher snow3g
-Message-ID: <20260116095357.73f2705b@phoenix.local>
-In-Reply-To: <CAL2ZP-A=cnXozqacMbDUKd15KgHifSmBjqNDN+o340yJ+3t99w@mail.gmail.com>
-References: <CAL2ZP-A=cnXozqacMbDUKd15KgHifSmBjqNDN+o340yJ+3t99w@mail.gmail.com>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v2 00/12] doc: improve contributing documentation clarity and
+ style
+Date: Fri, 16 Jan 2026 12:14:18 -0800
+Message-ID: <20260116201738.74578-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20260114225555.127448-1-stephen@networkplumber.org>
+References: <20260114225555.127448-1-stephen@networkplumber.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -80,123 +81,74 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, 16 Jan 2026 18:45:15 +0800
-coolwilled <coolwilled@gmail.com> wrote:
+This patch series improves the readability and consistency of the DPDK
+contributing documentation. The changes focus on editorial improvements
+without altering any technical content or policies.
 
-> Hi,
-> I run "pdcp_autotest"  with --vdev=crypto_snow3g in app/dpdk-test in dpdk
-> v25.11.
-> When i = 42 in run_test_for_one_know_vec() in test_pdcp.c,
-> It is PDCP control plane Auth snow3g gen + Cipher sonw3g enc,
-> the case failed because the last 4 bytes is cleared in
-> last for() loop in line 167 in  process_snow3g_cipher_op() in pmd_snow3g.c .
-> 
-> It can be fixed with following change:
-> 
-> diff --git a/drivers/crypto/ipsec_mb/pmd_snow3g.c
-> b/drivers/crypto/ipsec_mb/pmd_snow3g.c
-> index b3c3b05a8a..45a8be5fc8 100644
-> --- a/drivers/crypto/ipsec_mb/pmd_snow3g.c
-> +++ b/drivers/crypto/ipsec_mb/pmd_snow3g.c
-> @@ -157,7 +157,7 @@ process_snow3g_cipher_op(struct ipsec_mb_qp *qp, struct
-> rte_crypto_op **ops,
->         for (i = 0; i < num_ops; i++) {
->                 if ((session->op == IPSEC_MB_OP_HASH_VERIFY_THEN_DECRYPT ||
->                         session->op == IPSEC_MB_OP_HASH_GEN_THEN_ENCRYPT) &&
-> -                               ops[i]->sym->m_dst != NULL) {
-> +                               ops[i]->sym->m_dst != NULL &&
-> ops[i]->sym->m_dst != ops[i]->sym->m_src) {
->                         digest_appended[i] =
->                                 snow3g_digest_appended_in_src(ops[i]);
->                         /* Clear unencrypted digest from
+Initial work on this was done by Nandini Persad. This follow-up series
+uses AI assistance for broader coverage across all contributing guides.
 
-For a more complete idea of what is missing for a DPDK patch submission.
-Here is the semi-automated AI patch review:
+The primary improvements across this series include:
 
-## Patch Review: crypto_snow3g Bug Report
+- Converting passive voice to active voice for clearer, more direct prose
+- Using imperative mood for guidelines and instructions
+- Removing redundant phrases ("Please note that", "It is recommended that")
+- Simplifying wordy constructions
+- Fixing grammar, punctuation, and typos
+- Improving consistency in terminology
 
-This submission is **not a proper patch** - it's a bug report email with an embedded code suggestion. If the author wants this fix merged, they need to submit a formal patch. Here's my assessment against the AGENTS.md criteria:
+Summary of changes by document:
 
----
+  design.rst          - Fix "executive environment" typo, improve clarity
+  abi_policy.rst      - Active voice, simplify ABI change descriptions
+  coding_style.rst    - Imperative mood for style guidance
+  documentation.rst   - Active voice for Doxygen documentation instructions
+  linux_uapi.rst      - Simplify uAPI header import instructions
+  new_driver.rst      - Direct language for driver contribution process
+  new_library.rst     - Simplify library approval process description
+  patches.rst         - Comprehensive style improvements throughout
+  stable.rst          - Restructure for scannability, concise backport criteria
+  vulnerability.rst   - Active voice for security process steps
+  unit_test.rst       - Fix grammar issues, consistent command formatting
+  abi_versioning.rst  - Fix typos and grammar errors
 
-### **ERRORS (Must Fix)**
+These changes make the documentation more accessible to new contributors
+and align with modern technical writing best practices.
 
-| Issue | Details |
-|-------|---------|
-| **Missing Signed-off-by** | No `Signed-off-by:` tag present. Required for all patches. |
-| **Invalid Subject Line Format** | `Bug: crypto_snow3g failed...` is a bug report title, not a commit subject. Should be: `crypto/snow3g: fix digest clear for in-place operations` or similar |
-| **Wrong Component Prefix** | Uses `Bug:` instead of proper prefix like `crypto/snow3g:` |
-| **Subject Line Too Long** | At 55 characters visible, but the full title would exceed 60 characters |
-| **Incomplete Patch** | The diff is truncated - missing the context and the complete change |
-| **Line Wrapping in Diff** | Lines 115-116 and 121-122 show improper line wrapping in the diff output itself |
+v2:
+- Rebased on latest main
+- Incorporated additional grammar fixes in unit_test.rst and abi_versioning.rst
+- Fixed inconsistent backtick usage for command references
 
----
+Nandini Persad (1):
+  doc: correct grammar and typos in design guide
 
-### **WARNINGS (Should Fix)**
+Stephen Hemminger (11):
+  doc: improve ABI policy documentation style
+  doc: improve coding style guide readability
+  doc: improve documentation guidelines style
+  doc: improve Linux uAPI header documentation
+  doc: improve new driver guide readability
+  doc: improve new library guide style
+  doc: improve patch submission guide readability
+  doc: improve stable releases documentation
+  doc: improve vulnerability process documentation
+  doc: improve unit test guide readability
+  doc: fix grammar and style in ABI versioning guide
 
-| Issue | Details |
-|-------|---------|
-| **Missing Fixes Tag** | If this fixes a regression, it should include `Fixes: <sha> ("original commit")` |
-| **Missing Cc: stable@dpdk.org** | Bug fixes should typically be CC'd to stable |
-| **No Bugzilla ID** | If there's a bugzilla entry, include `Bugzilla ID: NNNNN` |
-| **Body starts informally** | Commit body should not read like an email; should describe the bug/fix concisely |
+ doc/guides/contributing/abi_policy.rst      | 194 +++++++-------
+ doc/guides/contributing/abi_versioning.rst  |  32 +--
+ doc/guides/contributing/coding_style.rst    |  20 +-
+ doc/guides/contributing/design.rst          |  71 +++---
+ doc/guides/contributing/documentation.rst   |   6 +-
+ doc/guides/contributing/linux_uapi.rst      |  40 +--
+ doc/guides/contributing/new_driver.rst      |  62 ++---
+ doc/guides/contributing/new_library.rst     |  20 +-
+ doc/guides/contributing/patches.rst         | 434 ++++++++++++++--------------
+ doc/guides/contributing/stable.rst          | 147 +++++-----
+ doc/guides/contributing/unit_test.rst       | 129 ++++-----
+ doc/guides/contributing/vulnerability.rst   | 140 ++++-----
+ 12 files changed, 637 insertions(+), 658 deletions(-)
 
----
-
-### **The Actual Code Change**
-
-Looking at the suggested fix:
-```c
--                               ops[i]->sym->m_dst != NULL) {
-+                               ops[i]->sym->m_dst != NULL &&
-+                               ops[i]->sym->m_dst != ops[i]->sym->m_src) {
-```
-
-The logic looks **correct** - it adds a check to avoid clearing the digest when the operation is in-place (src == dst). However:
-
-1. **Line length**: Need to verify the continuation doesn't exceed 100 characters
-2. **Explicit comparison style**: Using `!= NULL` is correct per DPDK style
-
----
-
-### **Recommended Resubmission Format**
-
-```
-crypto/snow3g: fix digest clear for in-place cipher ops
-
-When performing combined hash-then-encrypt operations with
-in-place buffers (m_dst == m_src), the digest was incorrectly
-being cleared. Add a check to skip clearing when source and
-destination buffers are the same.
-
-Fixes: <12-char-sha> ("original commit that introduced bug")
-Cc: stable@dpdk.org
-
-Signed-off-by: Real Name <email@domain.com>
----
- drivers/crypto/ipsec_mb/pmd_snow3g.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/crypto/ipsec_mb/pmd_snow3g.c b/drivers/crypto/ipsec_mb/pmd_snow3g.c
-index b3c3b05a8a..45a8be5fc8 100644
---- a/drivers/crypto/ipsec_mb/pmd_snow3g.c
-+++ b/drivers/crypto/ipsec_mb/pmd_snow3g.c
-@@ -157,7 +157,8 @@ process_snow3g_cipher_op(...)
- 	for (i = 0; i < num_ops; i++) {
- 		if ((session->op == IPSEC_MB_OP_HASH_VERIFY_THEN_DECRYPT ||
- 		     session->op == IPSEC_MB_OP_HASH_GEN_THEN_ENCRYPT) &&
--		    ops[i]->sym->m_dst != NULL) {
-+		    ops[i]->sym->m_dst != NULL &&
-+		    ops[i]->sym->m_dst != ops[i]->sym->m_src) {
-```
-
----
-
-### **Summary**
-
-| Severity | Count |
-|----------|-------|
-| **Error** | 6 |
-| **Warning** | 4 |
-
-**Verdict**: This is a valid bug report but not a submittable patch. The author should use `git format-patch` to create a proper patch with correct commit message format, sign-off, and complete diff context.
+-- 
+2.51.0
