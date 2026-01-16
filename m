@@ -2,65 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F5A6D4A605
-	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Jan 2026 06:54:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8368D4A607
+	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Jan 2026 06:57:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7CADA410D2;
-	Fri, 16 Jan 2026 07:54:02 +0100 (CET)
-Received: from mail-ej1-f65.google.com (mail-ej1-f65.google.com
- [209.85.218.65]) by mails.dpdk.org (Postfix) with ESMTP id D64BD4060F
- for <dev@dpdk.org>; Fri, 16 Jan 2026 07:54:01 +0100 (CET)
-Received: by mail-ej1-f65.google.com with SMTP id
- a640c23a62f3a-b8765b7f4c0so284177066b.0
- for <dev@dpdk.org>; Thu, 15 Jan 2026 22:54:01 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id C00E342D87;
+	Fri, 16 Jan 2026 07:57:57 +0100 (CET)
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com
+ [209.85.208.45]) by mails.dpdk.org (Postfix) with ESMTP id 3B1B94060F
+ for <dev@dpdk.org>; Fri, 16 Jan 2026 07:57:56 +0100 (CET)
+Received: by mail-ed1-f45.google.com with SMTP id
+ 4fb4d7f45d1cf-655afbca977so360420a12.2
+ for <dev@dpdk.org>; Thu, 15 Jan 2026 22:57:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768546441;
- x=1769151241; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768546676;
+ x=1769151476; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=jmyWBAvmqaT48v/fIGEe76XxnQJtPSd7J3feDkH7SOI=;
- b=RFrZkWfG778t6HhtdHZVxQrXTjYYNpnYodDxkS2ANOsh07wbyu+ymFKhipDbDzenC8
- FMYE6Xj27Oi6NnG8TiCKQOu8i+PQ5sVO4rK75zUGOZtcJiU1Wqfr8oXs8v3MGE/lPbDh
- k9Fk1xpfmlmZZg/aE0M/hrBi1kXODR8UhALG05hcsI1oElQVkwQI4ZJf4Opa0970dVnw
- C5O9syXBRYdlpCu6BM1CVT9Awqoldj7TPn4deRZaRYpidV6PTQD+C/yOXPNNCWTRKryE
- R2fZ8izf1isD0qn50uXTgGNhOpO9XRiFqSNCnXT1/dIyyXLLw1eBY966IICVzEwPovTh
- z7BQ==
+ bh=VyyNHBwDsN0Jeap6UKjqQFe6BImwF1H3L4ZILxbCnA8=;
+ b=wgAGojPoBebhmZzYdoWXh3QUt03PEI4ZMX2+BKlLENK3Ff3N8aO3oWUTwppCjageXn
+ zDWzjNgtYGK2RGdTmgCZssl670uOYaTZ1ES52SoJU+rtn8Oiqz9OrRpvo0+OZOiNEQlk
+ 2bUrnOIhFGtFd1WFbJ1f6Oz/uWVWBWrK7IqCELK3n6kLtlIAfWK0ZWKW6ZG4LzvNCND+
+ zlBrWMHE4SvZwzl39sXBcHtCRoHeNdkDWbvmBcSJD1Pi1jXn4rIBirF52YIljns5FpwS
+ PZcWepTFmJOMj3kzi0rnJsxyqQB6dlcQCCa+yHLQ+EygoteLy9qszBzoz5N/SLm8O/oH
+ o6rw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768546441; x=1769151241;
+ d=1e100.net; s=20230601; t=1768546676; x=1769151476;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=jmyWBAvmqaT48v/fIGEe76XxnQJtPSd7J3feDkH7SOI=;
- b=RquPUo6Gc+tY6qbizVgOCvZ+ummqumsHZUrwv3WPxngv6T6/5pZqge8I6ZqXBsjvkL
- NUr//dPId2Mi+Ng4qk/F+itbkw6qGp4eMHClQJNTMWIr0pW7GAaP3re1zTvCdDHZ5zm0
- ha/2XkQAjQe+KWWYhQMrRQLDwxmLdyg+3f9Az5/gNQEPyzZZy1TO7vQNxVFgVUOHlQOo
- /27CFpZHXlsGAdS37naQlHvHekvmuPoYFYI7wB2tEtUhMo6XIw9tuheBdcLpU4GTvTa6
- BJauIzoZkbyMghdQtyK232WJz9hFLtM6/3TIUyZwT3XtpBLmgos9jpekANUu7va14oRa
- wasQ==
-X-Gm-Message-State: AOJu0YzrQO7rhqq2qcauslP1EZo7kIWXVJ5zFGSboPYkFeBd/y5v6Xf0
- EfZATiPrLx83xtLM6/uhpSYSRnQIuUiIZJKC2HcE6Q7aSgIrSY8fiDZQNnB5uwznj1s=
-X-Gm-Gg: AY/fxX7ZUo/9l3sez/QWSWfpD+Axk8dyC6Pg9cTmliFkkpWy+JG0I+OZ+/iaupfI6/2
- NiI3PWIZmi9xRZWeSkq0zR0RbXqgIN6ywKhz2AASC61v4fz0neism17tb4naLrDDj1mMss1DEKZ
- IWlAJIhHPqIqdrXefqJ9lUlEpUjY3QTP2zEP4DkxPLerPgA5xMe/vxezjSLfM0grHJ2VXZynxiI
- BGB8/At+evRhE27UiOMHyeWXu1WUZSTHGa1a7bvoEGuWjnVTvnhf+VURfjPz9EPzGltHPzv4MOB
- c5adTFHNwSXCAUcSOHwFNP6BTiBXS88AO/T1/WjrGEOYMTqQOk5D8J6+CzmgRlC3EvPj7RORC5F
- JqB1MDoO0Y860mA1af84mxNXvUPpKvtXxsQm5Pq5iTnVmTn8Lv2KBJ0/fVCiPB155lBSPDQ6ANG
- jXM5dyytLyatuujda/JtcYcjZlukzcS2913Dv4EVL9aedI4OQuFO/0uKeLhLtllW0=
-X-Received: by 2002:a17:907:8e96:b0:b87:33f3:605b with SMTP id
- a640c23a62f3a-b8792f3b19cmr177737466b.27.1768546441314; 
- Thu, 15 Jan 2026 22:54:01 -0800 (PST)
+ bh=VyyNHBwDsN0Jeap6UKjqQFe6BImwF1H3L4ZILxbCnA8=;
+ b=ECp/7sozxaCGhIY6EmyLlklUM6zvGcMmox2Z9xxCa3Gw8wzQ1NF+lp/6F7eve9/OgS
+ 2oWRlcSpCFLVnWgjfccvKHAYEP5g4PmaqXtJXMiu8XnisHW64ulR61T665RZxL4XXgzk
+ uXZeQhj2x/Ujhq2kfgD76XuPFDAmO1bzRZuofzJwm52J9CbetkUNOdpuN3pkGRBtf8cg
+ cYCRug897oyCK9T8we9LWkgdHxMEzVQyAjhBXG86CQRjNsFS8gVzxU/kldSjte72SuvE
+ z39KpKLMpXajy1YRmMXsYj+5F3bFQW7TWSqWodHzkXwOpn8NUw/p9wJpOG60U+IiU01G
+ wjFA==
+X-Gm-Message-State: AOJu0YwZhGMzkEnK1cg+BogUo+YzZnsMyTvC8GNtX0Dh3z+3uEcusw1F
+ bSF1LnI+TXl2SWkNfS+nhXghinlKr1NjhZw9g5U/AIn//zH0GKBRvYM52OMtjR0CiY3dDvNNF2o
+ aBTNm
+X-Gm-Gg: AY/fxX5MIi5OOM9f3n13Y2daD08g1yHV4K+dC6+OXVvh5OZWcUJ63DzHgX798FEYxTZ
+ nEHO6I0eDBSrtRUv/dfmhwybOimgGWDODm6zsSciN7ByGheQLD/qkPfj4zO7ij6o6awyJNeHZjo
+ AsXyQACxHxLcYaMjK56611nZrsKr+UXD06+sMYpRc7Z1yWFovxc3Mzi73Qd7atJvT1eYh0THmWq
+ sV/wCo8aR+Q94dn0xd6dEK0ZF8iN9mC7+yUPd6GA4U8fRCkBOeDiwIqYDRqAIK5igbmAgLTBcWl
+ OsPbwzs++hVSG1UbO2BPbhvtpbQy6FY1HFHnG3ojjLLLz22gVHFkeqRIXkjjJlBQv+jwgB08K9/
+ KBA12pGRLDD3kQR/fMVcEmvkgGkG4bjP+ex/dtw20OIsqCOWwIJ28gmWJroQ+Z8UsyQwHjDlOd1
+ EwrvZPFfMxjc/qAt/GRYU29iFIfAQ9yJACCq7NBdtV2p6TnpjATVNl
+X-Received: by 2002:a05:6402:518b:b0:650:5d7e:8a29 with SMTP id
+ 4fb4d7f45d1cf-65452cd9871mr1444439a12.32.1768546675659; 
+ Thu, 15 Jan 2026 22:57:55 -0800 (PST)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a640c23a62f3a-b87959c9f8dsm142089466b.36.2026.01.15.22.54.00
+ 4fb4d7f45d1cf-65452ddfb76sm1587792a12.15.2026.01.15.22.57.53
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 15 Jan 2026 22:54:01 -0800 (PST)
-Date: Thu, 15 Jan 2026 22:53:54 -0800
+ Thu, 15 Jan 2026 22:57:54 -0800 (PST)
+Date: Thu, 15 Jan 2026 22:57:50 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: Bruce Richardson <bruce.richardson@intel.com>
 Cc: dev@dpdk.org
 Subject: Re: [PATCH v3 0/7] Add script for real-time telemetry monitoring
-Message-ID: <20260115225354.4963d25f@phoenix.local>
+Message-ID: <20260115225750.3a7fe9a3@phoenix.local>
 In-Reply-To: <20260115190331.3721281-1-bruce.richardson@intel.com>
 References: <20251210165532.103450-1-bruce.richardson@intel.com>
  <20260115190331.3721281-1-bruce.richardson@intel.com>
@@ -167,209 +168,165 @@ Bruce Richardson <bruce.richardson@intel.com> wrote:
 >  5 files changed, 628 insertions(+)
 >  create mode 100644 doc/guides/tools/telemetrywatcher.rst
 >  create mode 100755 usertools/dpdk-telemetry-watcher.py
+>=20
+> --
+> 2.51.0
 
-Automated AI review of this patch series.
-Yes AI seems to be pickier about python code (wonder what it is trained on?)
+AI also had some good feedback on the documentation here.
 
+
+
+### Spelling Issues
+
+=E2=9C=93 No spelling errors found.
 
 ---
 
-## DPDK Patch Review: Telemetry Watcher (v3, 7 patches)
+### Grammar Issues
 
-**Series**: `[PATCH v3 1/7]` through `[PATCH v3 7/7]` =20
-**Author**: Bruce Richardson <bruce.richardson@intel.com> =20
-**Reviewed against**: AGENTS.md review criteria
+| Line/Section | Issue | Suggestion |
+|--------------|-------|------------|
+| Options: `-i` | "...when multiple applications are running with the same =
+file-prefix." | Consider: "...when multiple applications **share** the same=
+ file-prefix." (more concise) |
+| Options: `-t` | "Number of iterations to run before stopping." | Should b=
+e: "Number of iterations to run before **exiting**." (matches the behavior=
+=E2=80=94tool exits, not just stops) |
+| Statistics Format | "To discover available commands and fields:" followed=
+ by numbered list | The colon introduces an incomplete sentence. Better: "T=
+o discover available commands and fields, use the following methods:" or re=
+move the colon and use "you can:" |
+
+---
+
+### Technical Writing Style Issues
+
+| Location | Issue | Recommendation |
+|----------|-------|----------------|
+| Title | "dpdk-telemetry-watcher Application" | Consider: "dpdk-telemetry-=
+watcher Tool" =E2=80=94 the word "application" might confuse readers since =
+DPDK applications are the *targets* being monitored |
+| Opening paragraph | "Data Plane Development Kit (DPDK)" | Unnecessary exp=
+ansion=E2=80=94DPDK docs assume readers know what DPDK is. Simplify to just=
+ "DPDK" |
+| Options: `-d` | "Display delta (incremental) values" | Redundant parenthe=
+tical. Use either "delta values" or "incremental values", not both |
+| Options: `-d` | "which is useful for monitoring rates of change" | Vague.=
+ Better: "which is useful for monitoring per-second rates" |
+| Shortcuts section | "These shortcuts automatically detect all available e=
+thernet devices" | Should be "Ethernet" (capital E) per DPDK style, or bett=
+er: "ethdev ports" to match DPDK terminology |
+| Output Format | "Values are formatted with locale-specific number formatt=
+ing (e.g., comma separators)." | Awkward repetition of "formatting". Rewrit=
+e: "Values use locale-specific formatting (e.g., comma as thousands separat=
+or)." |
+| Dependencies | "A running DPDK application with telemetry enabled" | Cont=
+radicts the "Running the Application" section which says the tool "can be r=
+un at any time, whether or not a DPDK application is currently running." Re=
+move this item or clarify it's needed for actual monitoring. |
+
+---
+
+### Passive Voice (per DPDK documentation standards)
+
+| Location | Passive Construction | Active Alternative |
+|----------|---------------------|-------------------|
+| Opening | "Statistics are specified in the format..." | "Specify statisti=
+cs in the format..." |
+| Output Format | "Values are formatted with..." | "The tool formats values=
+ with..." |
+| Output Format | "the tool displays the change in each statistic" | =E2=9C=
+=93 Already active (good) |
+
+---
+
+### Consistency Issues
+
+| Issue | Details |
+|-------|---------|
+| "ethernet" vs "Ethernet" | Line uses lowercase "ethernet devices" =E2=80=
+=94 DPDK typically uses "Ethernet" or avoids it entirely in favor of "ethde=
+v" |
+| "file-prefix" hyphenation | Used consistently (good), but DPDK code often=
+ uses "file_prefix" =E2=80=94 verify against dpdk-telemetry.py docs |
+| Option argument style | Mix of `FILE_PREFIX` (all caps) and `TIMEOUT` (al=
+l caps) =E2=80=94 consistent (good) |
+| Example commands | Some use full paths (`/ethdev/stats,0.ipackets`), shor=
+tcuts (`eth.rx`) =E2=80=94 good variety showing both |
+
+---
+
+### RST Formatting Issues
+
+| Location | Issue | Fix |
+|----------|-------|-----|
+| Line 1 | `..  SPDX` has two spaces after `..` | Should be single space: `=
+.. SPDX` |
+| Cross-references | `` `Statistics Format`_ `` and `` `Examples`_ `` | The=
+se RST references work but would be more robust as `:ref:` targets for cros=
+s-document linking |
+
+---
+
+### Missing Information
+
+| Gap | Suggestion |
+|-----|------------|
+| No mention of Ctrl+C | Add note that Ctrl+C cleanly exits the monitoring =
+loop (already in code) |
+| No sample output | Consider adding a brief example of what the output loo=
+ks like |
+| No error handling description | What happens if a stat doesn't exist? Doc=
+ument the error messages |
+
+---
+
+### Suggested Rewrites
+
+**Opening paragraph** (current):
+> The ``dpdk-telemetry-watcher`` tool is a Data Plane Development Kit (DPDK=
+) utility that provides continuous monitoring of DPDK telemetry statistics =
+on the command line. It wraps the ``dpdk-telemetry.py`` script to provide r=
+eal-time statistics display capabilities.
+
+**Suggested**:
+> The ``dpdk-telemetry-watcher`` tool monitors DPDK telemetry statistics co=
+ntinuously on the command line. It wraps ``dpdk-telemetry.py`` to provide r=
+eal-time display of selected statistics.
+
+---
+
+**Dependencies section** (current):
+> The tool requires:
+> * Python 3
+> * The ``dpdk-telemetry.py`` script must be available in the same director=
+y or in the system PATH
+> * A running DPDK application with telemetry enabled
+
+**Suggested**:
+> The tool requires:
+>=20
+> * Python 3
+> * The ``dpdk-telemetry.py`` script (in the same directory or in PATH)
+>=20
+> For monitoring, a DPDK application with telemetry enabled must be running=
+, though the watcher can start before the application and will connect auto=
+matically.
 
 ---
 
 ### Summary
 
-| Category | Status |
-|----------|--------|
-| Commit Messages | =E2=9C=93 Pass |
-| SPDX/License | =E2=9A=A0 Warning (minor) |
-| Code Style | =E2=9A=A0 Warning (minor) |
-| Documentation | =E2=9C=93 Pass |
-| Release Notes | =E2=9C=93 Pass |
-| Build Integration | =E2=9C=93 Pass |
+| Category | Count |
+|----------|-------|
+| Grammar issues | 3 |
+| Style issues | 7 |
+| Passive voice | 2 |
+| Consistency issues | 1 |
+| RST formatting | 1 |
+| Missing information | 3 |
 
----
-
-### Commit Message Review
-
-**All 7 patches pass commit message requirements:**
-
-| Patch | Subject | Length | Format |
-|-------|---------|--------|--------|
-| 1/7 | `usertools: add new script to monitor telemetry on terminal` | 52 c=
-hars | =E2=9C=93 |
-| 2/7 | `usertools/telemetry-watcher: add displaying stats` | 47 chars | =
-=E2=9C=93 |
-| 3/7 | `usertools/telemetry-watcher: add delta and timeout opts` | 53 char=
-s | =E2=9C=93 |
-| 4/7 | `usertools/telemetry-watcher: add total and one-line opts` | 55 cha=
-rs | =E2=9C=93 |
-| 5/7 | `usertools/telemetry-watcher: add thousands separator` | 51 chars |=
- =E2=9C=93 |
-| 6/7 | `usertools/telemetry-watcher: add eth name shortcuts` | 51 chars | =
-=E2=9C=93 |
-| 7/7 | `usertools/telemetry-watcher: support reconnection` | 49 chars | =
-=E2=9C=93 |
-
-- =E2=9C=93 All subjects =E2=89=A460 characters
-- =E2=9C=93 Lowercase after colon (except acronyms)
-- =E2=9C=93 Imperative mood
-- =E2=9C=93 No trailing periods
-- =E2=9C=93 `Signed-off-by:` present with valid name/email
-- =E2=9C=93 `Acked-by:` present (your ack is included)
-- =E2=9C=93 Body lines appear wrapped at 75 characters
-- =E2=9C=93 Body does not start with "It"
-
----
-
-### License/SPDX Review
-
-**Python script** (`dpdk-telemetry-watcher.py`):
-```python
-#!/usr/bin/env python3
-# SPDX-License-Identifier: BSD-3-Clause
-# Copyright(c) 2025 Intel Corporation
-```
-=E2=9C=93 SPDX on line 2 (correct for shebang scripts) =20
-=E2=9C=93 Copyright follows immediately =20
-=E2=9C=93 Blank line before code =20
-=E2=9C=93 BSD-3-Clause (appropriate for usertools)
-
-**Documentation** (`telemetrywatcher.rst`):
-```rst
-..  SPDX-License-Identifier: BSD-3-Clause
-    Copyright(c) 2026 Intel Corporation
-```
-=E2=9C=93 SPDX on first line =20
-=E2=9C=93 Copyright follows =20
-
-=E2=9A=A0 **Warning**: Copyright year mismatch =E2=80=94 Python script says=
- **2025**, documentation says **2026**. Should be consistent (likely both s=
-hould be 2025 or 2026 depending on when work started).
-
----
-
-### Code Style Review
-
-**Patch 5** (thousands separator):
-
-=E2=9A=A0 **Warning**: The patch adds `import locale` and uses `f"{display_=
-value:n}"` for locale-aware number formatting, but **does not call `locale.=
-setlocale(locale.LC_ALL, '')`** to activate locale-aware formatting. Withou=
-t this call, the `:n` format specifier may not produce thousands separators=
- on all systems.
-
-**Suggested fix** =E2=80=94 add to `main()`:
-```python
-import locale
-locale.setlocale(locale.LC_ALL, '')
-```
-
-**Patch 6** (eth shortcuts):
-
-=E2=9A=A0 **Info** (minor): Unnecessary f-string at line 1401:
-```python
-print(f"Error: Failed to get ethernet device list", file=3Dsys.stderr)
-```
-Should be:
-```python
-print("Error: Failed to get ethernet device list", file=3Dsys.stderr)
-```
-
-**General Python style**:
-- =E2=9C=93 Good docstrings throughout
-- =E2=9C=93 Consistent formatting (appears black-compliant)
-- =E2=9C=93 Line lengths within 100 characters
-- =E2=9C=93 Good error handling with informative messages
-
----
-
-### Documentation Review
-
-=E2=9C=93 **Comprehensive documentation** in `telemetrywatcher.rst`:
-- Application description
-- Command-line options documented
-- Statistics format explained
-- Shortcuts documented
-- Multiple usage examples
-- Dependencies listed
-- Output format described
-
-=E2=9C=93 **Documentation matches code behavior**
-
-=E2=9C=93 **Index updated** in `doc/guides/tools/index.rst`
-
----
-
-### Release Notes Review
-
-=E2=9C=93 **Release notes added** in patch 7/7 (`doc/guides/rel_notes/relea=
-se_26_03.rst`):
-```rst
-* **Added Script for Real-time Telemetry Monitoring.**
-
-  Introduced the `dpdk-telemetry-watcher.py` script, enabling users to moni=
-tor
-  real-time telemetry statistics from running DPDK applications.
-  The tool supports customizable display options, including delta values,
-  total statistics, and single-line output for compact monitoring.
-```
-
-=E2=9C=93 Appropriate placement =E2=80=94 release notes in final patch when=
- feature is complete
-
----
-
-### Build Integration Review
-
-=E2=9C=93 **meson.build updated** (patch 1/7):
-```python
-install_data([
-    ...
-    'dpdk-telemetry-watcher.py',
-],
-install_dir: 'bin')
-```
-
----
-
-### Structural Review
-
-=E2=9C=93 Each patch appears independently functional (incremental developm=
-ent) =20
-=E2=9C=93 Code and documentation updated together in relevant patches =20
-=E2=9C=93 No forward dependencies within patchset =20
-
-**Note**: No automated tests added for this usertools script. This is commo=
-n practice for Python usertools in DPDK, though the `black` formatter shoul=
-d be run on the code.
-
----
-
-### Issues Summary
-
-| Severity | Issue | Location |
-|----------|-------|----------|
-| **Warning** | Copyright year mismatch (2025 vs 2026) | Python script vs R=
-ST doc |
-| **Warning** | Missing `locale.setlocale()` call for `:n` format | Patch 5=
-/7 |
-| **Info** | Unnecessary f-string | Patch 6/7, line with "Failed to get eth=
-ernet device list" |
-
----
-
-### Recommendation
-
-**Acceptable with minor fixes**. The patch series is well-structured, prope=
-rly documented, and follows DPDK conventions. The two warnings should be ad=
-dressed:
-
-1. Harmonize copyright years
-2. Add `locale.setlocale(locale.LC_ALL, '')` to ensure thousands separators=
- work correctly
+**Overall**: The documentation is functional and reasonably clear. The issu=
+es are minor and mostly stylistic. The most important fix is resolving the =
+contradiction in the Dependencies section about whether a running DPDK appl=
+ication is required.
