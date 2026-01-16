@@ -2,66 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20AE8C982FE
-	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Jan 2026 20:18:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A6EAC982FE
+	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Jan 2026 20:19:03 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BE3D642ED3;
-	Fri, 16 Jan 2026 21:18:02 +0100 (CET)
-Received: from mail-ej1-f65.google.com (mail-ej1-f65.google.com
- [209.85.218.65]) by mails.dpdk.org (Postfix) with ESMTP id 065A842EC5
- for <dev@dpdk.org>; Fri, 16 Jan 2026 21:18:01 +0100 (CET)
-Received: by mail-ej1-f65.google.com with SMTP id
- a640c23a62f3a-b8707005183so402931466b.0
- for <dev@dpdk.org>; Fri, 16 Jan 2026 12:18:01 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id C156442ED7;
+	Fri, 16 Jan 2026 21:18:03 +0100 (CET)
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com
+ [209.85.208.41]) by mails.dpdk.org (Postfix) with ESMTP id B3A2642ED1
+ for <dev@dpdk.org>; Fri, 16 Jan 2026 21:18:02 +0100 (CET)
+Received: by mail-ed1-f41.google.com with SMTP id
+ 4fb4d7f45d1cf-64d0d41404cso4208225a12.0
+ for <dev@dpdk.org>; Fri, 16 Jan 2026 12:18:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768594680;
- x=1769199480; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768594682;
+ x=1769199482; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=7hz7qEy1i817Tdg+7LCR02/1TsN5/g0+f0i0HPsD+R0=;
- b=qhEge29tVdCNmBpi740md5lvEEyZkyjmdLXRX5IJIty8zEDXVcAo0fCVSi8BtKeVge
- Gn4F1l+/a7K4IAer2i9N0+TNiSHge48NlSeBUxwGXDWoKwHC0j6Vx3D7IWCwiy9smJ29
- LQgjorgdUKVlSn027NDBTvO93L9817igAvakN/a/g9aLfEzI794NwdpyutcL+0lksayD
- a2H35zD8k/2PXJbEfpChE3Sw9g9kp4VaxhX/fWt6+slRtXkcJZ44FOK0cTWRODKo7qiF
- Yq5oaq2oQr2IQWOYOud9feIruaII7CZTx5CooP+B0MTlZtm4Gybbujwj6fzKzalgPp14
- hcyg==
+ bh=34a0NjS1nWDSrOi9uQkxkjqazGHDVJswLHmZ5JXRPTU=;
+ b=Jtx9v2F2D9sJfD5YWtMlspdmWzrs8SqD4sDX6nzdvPksQ0LzKRxQevtbeoWran64e7
+ 8JxqdTyByXu1PfADsV4N3po26GKGyOv1bLTr+iSSihvye0o6IcFHL/EMuMHOzMYap/4F
+ JUKZDWy+eCpRcR3a8zCvJFcWWRzsBY0s141hCSD+oWlxGdIZ4E3CYQHuSe1ET5nOr2+q
+ p6IAO5vV6zDOVCpLNPGtMjakm+cKJhtvAeckDWlc27G8Abs9uVyhoM1VJNhsMEXUEcj6
+ PwYH3qXJrjUqSCKMYyZEgsJ+fvIPulFRi4FvWGLOyOAmgzzW/kSfQYZm+Eb1KxABfDRa
+ wvmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768594680; x=1769199480;
+ d=1e100.net; s=20230601; t=1768594682; x=1769199482;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=7hz7qEy1i817Tdg+7LCR02/1TsN5/g0+f0i0HPsD+R0=;
- b=pGU1McVKUuPL47xOyC1HkCrVrxO0HI2w9sJYpgixw1MMKzmHVEqDKasesJ8mGxum5/
- 0A3w7DOwZ3ddMgXAY9/QyXm1FRCzJHyU92Ksa1Do9kcR0MuDlCiQ6CAKylIjTCkmTrus
- 54CjV3L2sY0jj48Oj/6pZJtCjqeMdcODVEvDdhC0PjmuAN/FrV+zjaJK6RY40gAG8VeP
- 8/8c8a93FWSYRmbTHxc3UgRZfquZjE5UJofS4VIXTN5gisoCmsKDYtROtwnYJFZZFw1O
- Rc97f43BZBoknNq6WA6zUprn+kAlhBoczWdOzb5yqXnUoxOK6tX5hcbYVq1XW9A/QK5L
- BOwQ==
-X-Gm-Message-State: AOJu0Yx2RnieIiYfmC69/FPRm09DDZ4+KLUNxMWlSLmmmr9dqDw9yg6W
- gJ4wdJpHL6y3qAMXvbj0L7H4tlh4vVatjOT4Zs62QKNuYzDbhWUqwsSjtuPSd1zJfFYIXlr4rl6
- MPbnFIH4=
-X-Gm-Gg: AY/fxX6coixcTUSGZXn3fPrPhL4bE9WGOU8KUwrjJcrUjvfXxf23f8aYrODNKJpLzIO
- WZxHOkX/oDKgMKaMCrfmE9TyChG7HcRjg1GO7hlGC2KdyFL6XysVtxqlhKGCR1K1oWAmwG6GXXo
- 5DTmQkVOruvViKcov5OfYvMIYGEioWepI3xufBcvwwlZ0f9d0OTIP6yiC+ws7yKo7aHzl65Ecn8
- gLs/eaBbLXQpaqxqOnsW0U3vUM4B6Aupt5Nn3aJsWcujZIJHLlpsUYOS4NyWhCeaCgvtbzdUsIp
- 80X/bQ/81j0VUP7z40yk80ACvpFkX+M2j955dutFIU+G3OfrWIqeofRygxH9QdeX+wTg1cgUkr+
- 2acjrz+iUkW6R1229aBpWVrP0sRbbcfFcULcHTiBZIfkcrIgP91PHjw1oD9b59X1hzEvBau5Eyd
- IaGS1qfsDR+b3pwmsgAqYxccVhfBekG6SZfAxOjGlBH0Drh2IvZQ==
-X-Received: by 2002:a17:906:2099:b0:b87:b0ba:5d2d with SMTP id
- a640c23a62f3a-b87b0ba6e99mr12876866b.57.1768594680399; 
- Fri, 16 Jan 2026 12:18:00 -0800 (PST)
+ bh=34a0NjS1nWDSrOi9uQkxkjqazGHDVJswLHmZ5JXRPTU=;
+ b=SWdvalNh44FBgtGpJC01TP30DqQhrUuc4a955IlEXNVOSq5Ab9zNWUxG1jKhcHu7rX
+ AEXjkti3DfpvtjP0RlPtv/XOhJw26y3vSVK7rufSUWrcp1HlEQUuYui9dkFb0FUlgLo6
+ 84sKAzw92p5vtSdMoBuwI7d+L+vKbk/4xVr16dgR/PsT/Y3yTOiRw4AFxh6CV1MatuH3
+ NcMpvlqSvqdcL3uXDkzharrrPYyHnxkkjTdRfSZt9g/ihPG5+WeaF1WTcBIOq+/BTy/M
+ JHhczeZ4XVP4dnx46Ru2QxPNqNZoSmYxK8exq+BlOcjjuiP+EfIWJh+uN9DI57wc+8aH
+ 7AXQ==
+X-Gm-Message-State: AOJu0YzqVpHpxFIhk3wAfu0kXWccOIOWPVWGZZ/KF6FqFdCi+96V4npi
+ m2rDgGN+9ZCM2gk3GbXCgFW23Ovi4szx9pEFGT7c6GK9iu8JKkoJa5pntaB6UZTuDvjHjOtdA6O
+ FPIiW
+X-Gm-Gg: AY/fxX4a5BZb5usCgVY8q+7iZO3kQ3gLQUoH2n4l3VPh7IJWlKuFf5L18qbWMNWTyjT
+ +Z0SOcy1ux2IJPXl6bCR2bXb6dS1s0nhVhaQZhsYSYu1LGT92meS++p0yF0o/VSnniZdMh3oWNO
+ 61DKl6xSwgXCw5JqFSxUkKMZMCe+UWeZAw5McJaIIheUpxQBSr9m+HU2SHTxVUeMzinfq2XYDYN
+ zq/XugNyILqRB3PVA3HD+MTS/BXzRTLKAi+QRk7KXU86JteA7vGI+OO6X/IGalKtX3o7eKMzqDW
+ Nf9jHsjUkNvuPWZhMTY0STzsx9BLZnL9DW5thsgz94dQSp7qCmL8viKad+UnQ5JE0TwlXI5vhPh
+ C9TRbxGTDZ+eN/OSpjKamzPl3WEKc8Pacu7b+R/eCzw1r3OMuKetMqCvuPgTx2aOoKVFAOJk90N
+ 0cLg3vkQhk2XzerLVBFM6reVckbhz2IqUgKKILEFzUPdegpkpqUQ==
+X-Received: by 2002:a17:907:a05:b0:b86:fed0:2b with SMTP id
+ a640c23a62f3a-b8792f79c4dmr375682166b.32.1768594682036; 
+ Fri, 16 Jan 2026 12:18:02 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a640c23a62f3a-b8795169f10sm338631466b.26.2026.01.16.12.17.59
+ a640c23a62f3a-b8795169f10sm338631466b.26.2026.01.16.12.18.00
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 16 Jan 2026 12:17:59 -0800 (PST)
+ Fri, 16 Jan 2026 12:18:01 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v2 10/12] doc: improve vulnerability process documentation
-Date: Fri, 16 Jan 2026 12:14:28 -0800
-Message-ID: <20260116201738.74578-11-stephen@networkplumber.org>
+Subject: [PATCH v2 11/12] doc: improve unit test guide readability
+Date: Fri, 16 Jan 2026 12:14:29 -0800
+Message-ID: <20260116201738.74578-12-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260116201738.74578-1-stephen@networkplumber.org>
 References: <20260114225555.127448-1-stephen@networkplumber.org>
@@ -81,283 +81,343 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Improve the vulnerability management documentation
+Improve the unit test documentation
 - Converting passive voice to active voice
-- Using clearer section headings
-- Simplifying verbose explanations
-- Making reporting instructions more direct
-- Fixing broken RST link syntax for mailing lists
-
-No technical content changes.
+- Using imperative mood for instructions
+- Simplifying wordy constructions
+- Removing unnecessary include statements from code example
+- Fixing minor grammar and punctuation issues
+- Add missing subject in sentence about DPDK_TEST_PARAMS
+- Add missing article "a" before "test case"
+- Fix missing closing backtick in meson test example
+- Use consistent double backticks for dpdk-test command references
+- Use double backticks for file path reference
+- Correct "test case" to "test suite" in DPDK_TEST example description
+- Clarify "cryptodev" reference to "crypto devices"
+- Remove unnecessary quotes around return code values
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- doc/guides/contributing/vulnerability.rst | 140 ++++++++++------------
- 1 file changed, 65 insertions(+), 75 deletions(-)
+ doc/guides/contributing/unit_test.rst | 129 ++++++++++++--------------
+ 1 file changed, 60 insertions(+), 69 deletions(-)
 
-diff --git a/doc/guides/contributing/vulnerability.rst b/doc/guides/contributing/vulnerability.rst
-index fc60e02e37..1d616d203a 100644
---- a/doc/guides/contributing/vulnerability.rst
-+++ b/doc/guides/contributing/vulnerability.rst
-@@ -7,10 +7,9 @@ DPDK Vulnerability Management Process
- Scope
- -----
+diff --git a/doc/guides/contributing/unit_test.rst b/doc/guides/contributing/unit_test.rst
+index 0c76921299..a92953eab1 100644
+--- a/doc/guides/contributing/unit_test.rst
++++ b/doc/guides/contributing/unit_test.rst
+@@ -9,7 +9,7 @@ tests to the in-tree DPDK test suites.
  
--Only the main repositories (dpdk and dpdk-stable) of the core project
--are in the scope of this security process (including experimental APIs).
--If a stable branch is declared unmaintained (end of life),
--no fix will be applied.
-+This security process covers only the main repositories (dpdk and dpdk-stable)
-+of the core project (including experimental APIs).
-+The team will not apply fixes to stable branches declared unmaintained (end of life).
- 
- All vulnerabilities are bugs, but not every bug is a vulnerability.
- Vulnerabilities compromise one or more of:
-@@ -19,79 +18,71 @@ Vulnerabilities compromise one or more of:
- * Integrity (trustworthiness and correctness).
- * Availability (uptime and service).
- 
--If in doubt, please consider the vulnerability as security sensitive.
-+If in doubt, consider the vulnerability as security sensitive.
- At worst, the response will be to report the bug through the usual channels.
+ The DPDK test suite model is loosely based on the xUnit model,
+ where tests are grouped into test suites, and suites are run by runners.
+-For a basic overview, see the basic Wikipedia article on `xUnit
++For a basic overview, see the Wikipedia article on `xUnit
+ <https://en.wikipedia.org/wiki/XUnit>`_.
  
  
--Finding
---------
-+Finding Security Issues
-+-----------------------
+@@ -18,32 +18,32 @@ Background
  
- There is no pro-active security engineering effort at the moment.
+ The in-tree testing infrastructure for DPDK consists of
+ multiple applications and support tools.
+-The primary tools are the `dpdk-test` application,
++The primary tools are the ``dpdk-test`` application
+ and the ``meson test`` infrastructure.
+-These two are the primary ways through which
+-a user will interact with the DPDK testing infrastructure.
++These two are the primary ways
++users interact with the DPDK testing infrastructure.
  
--Please report any security issue you find in DPDK as described below.
-+Report any security issue you find in DPDK as described below.
- 
- 
--Report
--------
-+Reporting Security Issues
-+-------------------------
- 
--Do not use Bugzilla (unsecured).
--Instead, send GPG-encrypted emails
--to `security@dpdk.org <https://core.dpdk.org/security#contact>`_.
--Anyone can post to this list.
--In order to reduce the disclosure of a vulnerability in the early stages,
--membership of this list is intentionally limited to a `small number of people
--<https://mails.dpdk.org/roster/security>`_.
-+Do not use Bugzilla to report security vulnerabilities, as it is not secured for such communication.
-+Instead, send a GPG-encrypted email to `security@dpdk.org <https://core.dpdk.org/security#contact>`_.
-+This address is open to all, but access to its inbox is intentionally limited to a small group
-+to minimize the risk of early disclosure.
- 
--It is additionally encouraged to GPG-sign one-on-one conversations
--as part of the security process.
-+GPG-sign any one-on-one correspondence related to the vulnerability
-+report as part of maintaining a secure communication process.
- 
--As it is with any bug, the more information provided,
--the easier it will be to diagnose and fix.
--If you already have a fix, please include it with your report,
--as that can speed up the process considerably.
-+As with any bug report, detailed information greatly aids in diagnosing and resolving the issue.
-+If you have already developed a fix, include it in your submission to help accelerate resolution.
- 
--In the report, please note how you would like to be credited
--for discovering the issue
--and the details of any embargo you would like to impose.
-+In your report, specify how you would like to be credited for the discovery and mention any embargo
-+period you wish to impose.
- 
--If the vulnerability is not public yet,
--no patch or information should be disclosed publicly.
--If a fix is already published,
--the reporting process must be followed anyway, as described below.
-+If the vulnerability has not yet been made public, do not disclose patches or related information
-+publicly. Even if a fix has already been published, you must still follow the proper reporting process outlined here.
+-There exists a bit of confusion with the test suite and test case separation
+-with respect to `dpdk-test` and ``meson test``.
++Some confusion exists regarding test suite and test case separation
++between ``dpdk-test`` and ``meson test``.
+ Both have a concept of test suite and test case.
+ In both, the concept is similar.
+ A test suite is a group of test cases,
+ and a test case represents the steps needed to test a particular set of code.
+-Where needed, they will be disambiguated by the word `Meson`
++Where needed, they will be disambiguated by the word Meson
+ to denote a Meson test suite / case.
  
  
- Confirmation
- ------------
+ Running a test
+ --------------
  
--Upon reception of the report, a security team member should reply
--to the reporter acknowledging that the report has been received.
-+Upon receiving the report, a security team member should reply
-+to the reporter acknowledging receipt.
+-DPDK tests are run via the main test runner, the `dpdk-test` app.
+-The `dpdk-test` app is a command-line interface that facilitates
++DPDK tests run via the main test runner, the ``dpdk-test`` app.
++The ``dpdk-test`` app is a command-line interface that facilitates
+ running various tests or test suites.
  
- The DPDK security team reviews the security vulnerability reported.
--Area experts not members of the security team may be involved in the process.
--In case the reported issue is not qualified as a security vulnerability,
-+Area experts who are not members of the security team may be involved in the process.
-+If the reported issue does not qualify as a security vulnerability,
- the security team will request the submitter to report it
- using the usual channel (Bugzilla).
--If qualified, the security team will assess which DPDK version are affected.
--A bugzilla ID (allocated in a `reserved pool
-+If qualified, the security team assesses which DPDK versions are affected.
-+A bugzilla ID (allocated from a `reserved pool
- <https://bugs.dpdk.org/buglist.cgi?f1=bug_group&o1=equals&v1=security>`_)
- is assigned to the vulnerability, and kept empty until public disclosure.
+ There are three modes of operation.
+-The first mode is as an interactive command shell
++The first mode is an interactive command shell
+ that allows launching specific test suites.
+-This is the default operating mode of `dpdk-test` and can be done by::
++This is the default operating mode of ``dpdk-test`` and can be invoked by::
  
--The security team calculates the severity score with
-+The security team calculates the severity score with the
- `CVSS calculator <https://www.first.org/cvss/calculator/3.0>`_
- based on inputs from the reporter and its own assessment of the vulnerability,
- and agrees on the score with the reporter.
+    $ ./build/app/test/dpdk-test --dpdk-options-here
+    EAL: Detected 4 lcore(s)
+@@ -58,14 +58,14 @@ This is the default operating mode of `dpdk-test` and can be done by::
+    APP: HPET is not enabled, using TSC as default timer
+    RTE>>
  
- An embargo may be put in place depending on the severity of the vulnerability.
--If an embargo is decided, its duration should be suggested by the security team
--and negotiated with the reporter.
-+If an embargo is decided, the security team should suggest the duration
-+and negotiate with the reporter.
- Embargo duration between vulnerability confirmation and public disclosure
- should be between **one and ten weeks**.
- If an embargo is not required, the vulnerability may be fixed
- using the standard patch process, once a CVE number has been assigned.
+-At the prompt, simply type the name of the test suite you wish to run
++At the prompt, type the name of the test suite you wish to run
+ and it will execute.
  
--The confirmation mail should be sent within **3 business days**.
-+Send the confirmation mail within **3 business days**.
+-The second form is useful for a scripting environment,
++The second form is useful for a scripting environment
+ and is used by the DPDK Meson build system.
+-This mode is invoked by
++Invoke this mode by
+ assigning a specific test suite name to the environment variable ``DPDK_TEST``
+-before invoking the `dpdk-test` command, such as::
++before invoking the ``dpdk-test`` command, such as::
  
--Following information must be included in the mail:
-+Include the following information in the mail:
+    $ DPDK_TEST=version_autotest ./build/app/test/dpdk-test --dpdk-options-here
+    EAL: Detected 4 lcore(s)
+@@ -83,9 +83,9 @@ before invoking the `dpdk-test` command, such as::
+    Test OK
+    RTE>>$
  
- * Confirmation
- * CVSS severity and score
-@@ -110,7 +101,7 @@ from the reporter before finalizing the document.
- When the document is final, the security team needs to
- request a CVE identifier from a CNA.
+-The above shows running a specific test case.
+-On success, the return code will be '0',
+-otherwise it will be set to some error value (such as '255', or a negative value).
++The above shows running a specific test suite.
++On success, the return code will be 0;
++otherwise it will be set to some error value (such as 255).
  
--The CVE request should be sent
-+Send the CVE request
- to `secalert@redhat.com <mailto:secalert@redhat.com>`_
- using GPG encrypted email
- (see `contact details <https://access.redhat.com/security/team/contact>`_).
-@@ -161,19 +152,18 @@ CVE Request Template without Embargo
- Fix Development and Review
- --------------------------
+ The third form is an alternative
+ to providing the test suite name in an environment variable.
+@@ -110,20 +110,20 @@ The unit test app can accept test suite names via command line arguments::
+ The primary benefit here is specifying multiple test names,
+ which is not possible with the ``DPDK_TEST`` environment variable.
  
--If the fix is already published, this step is skipped,
--and the pre-release disclosure is replaced with the private disclosure,
--as described below. It must not be considered as the standard process.
-+If the fix is already published, skip this step,
-+and replace the pre-release disclosure with the private disclosure,
-+as described below. This should not be considered the standard process.
- 
--This step may be started in parallel with CVE creation.
--The patches fixing the vulnerability are developed and reviewed
--by the security team and
--by elected area experts that agree to maintain confidentiality.
-+This step may start in parallel with CVE creation.
-+The security team and elected area experts who agree to maintain confidentiality
-+develop and review patches fixing the vulnerability.
- 
--The CVE id and the bug id must be referenced in the patch if there is no
--embargo, or if there is an embargo, but it will be lifted when the release
--including the patch is published. If the embargo is going to be lifted after the
--release, then the CVE and bug ids must be omitted from the commit message.
-+Reference the CVE id and the bug id in the patch if there is no
-+embargo, or if the embargo will be lifted when the release
-+including the patch is published. If the embargo will be lifted after the
-+release, omit the CVE and bug ids from the commit message.
- 
- Backports to the identified affected versions are done once the fix is ready.
- 
-@@ -181,32 +171,32 @@ Backports to the identified affected versions are done once the fix is ready.
- Pre-Release Disclosure
- ----------------------
- 
--When the fix is ready, the security advisory and patches are sent
-+When the fix is ready, send the security advisory and patches
- to downstream stakeholders
- (`security-prerelease@dpdk.org <mailto:security-prerelease@dpdk.org>`_),
- specifying the date and time of the end of the embargo.
--The communicated public disclosure date should be **less than one week**
-+The communicated public disclosure date should be **less than one week**.
- 
- Downstream stakeholders are expected not to deploy or disclose patches
--until the embargo is passed, otherwise they will be removed from the list.
-+until the embargo passes; otherwise they will be removed from the list.
- 
- Downstream stakeholders (in `security-prerelease list
--<https://mails.dpdk.org/roster/security-prerelease>`_), are:
-+<https://mails.dpdk.org/roster/security-prerelease>`_) are:
- 
- * Operating system vendors known to package DPDK
- * Major DPDK users, considered trustworthy by the technical board, who
-   have made the request to `techboard@dpdk.org <mailto:techboard@dpdk.org>`_
- 
--The `OSS security private mailing list mailto:distros@vs.openwall.org>` will
-+The `OSS security private mailing list <mailto:distros@vs.openwall.org>`_ will
- also be contacted one week before the end of the embargo, as indicated by `the
--OSS-security process <https://oss-security.openwall.org/wiki/mailing-lists/distros>`
-+OSS-security process <https://oss-security.openwall.org/wiki/mailing-lists/distros>`_
- and using the PGP key listed on the same page, describing the details of the
- vulnerability and sharing the patch[es]. Distributions and major vendors follow
- this private mailing list, and it functions as a single point of contact for
- embargoed advance notices for open source projects.
- 
--The security advisory will be based on below template,
--and will be sent signed with a security team's member GPG key.
-+The security advisory will be based on the template below,
-+and will be sent signed with a security team member's GPG key.
+-Additionally, it is possible to specify additional test parameters
++Additionally, you can specify additional test parameters
+ via the ``DPDK_TEST_PARAMS`` argument,
+ in case some tests need additional configuration.
+-This isn't currently used in the Meson test suites.
++This is not currently used in the Meson test suites.
  
  
- Pre-Release Mail Template
-@@ -234,7 +224,7 @@ Pre-Release Mail Template
-   Please do not make the issue public (or release public patches)
-   before this coordinated embargo date.
+ Running test cases via Meson
+ ----------------------------
  
--If the issue is leaked during the embargo, the same procedure is followed
-+If the issue is leaked during the embargo, follow the same procedure
- with only a few days delay between the pre-release and the public disclosure.
+-In order to allow developers to quickly execute all the standard internal tests
++To allow developers to quickly execute all the standard internal tests
+ without needing to remember or look up each test suite name,
+ the build system includes a standard way of executing the Meson test suites.
+ After building via ``ninja``, the ``meson test`` command
+-with no arguments will execute the Meson test suites.
++with no arguments executes the Meson test suites.
  
+ There are a number of pre-configured Meson test suites.
+ The first is the **fast** test suite, which is the largest group of test cases.
+@@ -131,11 +131,11 @@ These are the bulk of the unit tests to validate functional blocks.
+ The second is the **perf** tests.
+ These test suites can take longer to run and do performance evaluations.
+ The third is the **driver** test suite,
+-which is mostly for special hardware related testing (such as `cryptodev`).
++which is mostly for special hardware related testing (such as crypto devices).
+ The fourth, and currently the last, suite is the **debug** suite.
+-These tests mostly are used to dump system information.
++These tests mostly dump system information.
  
-@@ -242,9 +232,9 @@ Private Disclosure
- ------------------
+-The Meson test suites can be selected by adding the ``--suite`` option
++Select the Meson test suites by adding the ``--suite`` option
+ to the ``meson test`` command.
+ Ex: ``meson test --suite fast-tests``::
  
- If a vulnerability is unintentionally already fixed in the public repository,
--a security advisory is sent to downstream stakeholders
-+send a security advisory to downstream stakeholders
- (`security-prerelease@dpdk.org <mailto:security-prerelease@dpdk.org>`_),
--giving few days to prepare for updating before the public disclosure.
-+giving a few days to prepare for updating before the public disclosure.
+@@ -159,19 +159,19 @@ via the command line by adding the test names as an argument::
+    1/1 DPDK:fast-tests / version_autotest OK             0.17s
+    ...
  
- 
- Private Disclosure Mail Template
-@@ -275,23 +265,23 @@ Private Disclosure Mail Template
- Public Disclosure
- -----------------
- 
--On embargo expiration, following tasks will be done simultaneously:
-+When the embargo expires, carry out the following actions simultaneously:
- 
--* The assigned bug is filled by a member of the security team,
--  with all relevant information, and it is made public.
--* The patches are pushed to the appropriate branches.
--* For long and short term stable branches fixed,
--  new versions should be released.
-+* A security team member files the assigned bug with all relevant details and makes it publicly accessible.
- 
--Releases on Monday to Wednesday are preferred, so that system administrators
--do not have to deal with security updates over the weekend.
-+* Push the associated patches to the appropriate branches.
- 
--The security advisory is posted
-+* Release updated versions for all affected stable branches, both short-term and long-term.
-+
-+To ease adoption by system administrators, preferably schedule security releases
-+between Monday and Wednesday, avoiding weekends.
-+
-+Post the security advisory
- to `announce@dpdk.org <mailto:announce@dpdk.org>`_ and to `the public OSS-security
--mailing list <mailto:oss-security@lists.openwall.com>` as soon as the patches
-+mailing list <mailto:oss-security@lists.openwall.com>`_ as soon as the patches
- are pushed to the appropriate branches.
- 
--Patches are then sent to `dev@dpdk.org <mailto:dev@dpdk.org>`_
-+Send patches to `dev@dpdk.org <mailto:dev@dpdk.org>`_
- and `stable@dpdk.org <mailto:stable@dpdk.org>`_ accordingly.
+-Note that these test cases must be known to Meson
++Note that Meson must know these test cases
+ for the ``meson test`` command to run them.
+-Simply adding a new test to the `dpdk-test` application isn't enough.
++Simply adding a new test to the ``dpdk-test`` application is not enough.
+ See the section `Adding a suite or test case to Meson`_ for more details.
  
  
+ Adding tests to dpdk-test application
+ -------------------------------------
+ 
+-Unit tests should be added to the system
+-whenever we introduce new functionality to DPDK,
+-as well as whenever a bug is resolved.
+-This helps the DPDK project to catch regressions as they are introduced.
++Add unit tests to the system
++whenever introducing new functionality to DPDK
++or resolving a bug.
++This helps the DPDK project catch regressions as they occur.
+ 
+ The DPDK test application supports two layers of tests:
+    #. *test cases* which are individual tests
+@@ -185,8 +185,8 @@ There are two important functions for interacting with the test harness:
+    ``REGISTER_<MESON_SUITE>_TEST(command_name, function_to_execute)``
+       Registers a test command with the name `command_name`
+       and which runs the function `function_to_execute` when `command_name` is invoked.
+-      The test is automatically added to the Meson test suite `<MESON_SUITE>` by this macro.
+-      Examples would be ``REGISTER_DRIVER_TEST``, or ``REGISTER_PERF_TEST``.
++      This macro automatically adds the test to the Meson test suite `<MESON_SUITE>`.
++      Examples: ``REGISTER_DRIVER_TEST``, or ``REGISTER_PERF_TEST``.
+       **NOTE:** The ``REGISTER_FAST_TEST`` macro is slightly different,
+       in that it takes two additional parameters before the function name:
+       the hugepage requirement (``NOHUGE_OK`` if the test can run without hugepages,
+@@ -205,28 +205,19 @@ that runs at the beginning and end of the test suite execution.
+ Each unit test has a similar function for test case setup and tear down.
+ 
+ Each test suite may use a nested list of sub-testsuites,
+-which are iterated by the ``unit_test_suite_runner``.
++which the ``unit_test_suite_runner`` iterates.
+ This support allows for better granularity when designing test suites.
+-The sub-testsuites list can also be used in parallel with the vector of test cases,
+-in this case the test cases will be run,
+-and then each sub-testsuite is executed.
++The sub-testsuites list can also be used in parallel with the vector of test cases;
++in this case, the test cases run first,
++then each sub-testsuite executes.
+ To see an example of a test suite using sub-testsuites,
+ see *app/test/test_cryptodev.c*.
+ 
+-Test cases are added to the ``.unit_test_cases`` element
+-of the appropriate unit test suite structure.
+-An example of both a test suite and a case:
++Example of a test suite with a single test case:
+ 
+ .. code-block:: c
+    :linenos:
+ 
+-   #include <time.h>
+-
+-   #include <rte_common.h>
+-   #include <rte_cycles.h>
+-   #include <rte_hexdump.h>
+-   #include <rte_random.h>
+-
+    #include "test.h"
+ 
+    static int testsuite_setup(void) { return TEST_SUCCESS; }
+@@ -256,9 +247,9 @@ An example of both a test suite and a case:
+    REGISTER_PERF_TEST(example_autotest, example_tests);
+ 
+ The above code block is a small example
+-that can be used to create a complete test suite with test case.
++that can be used to create a complete test suite with a test case.
+ 
+-Sub-testsuites can be added to the ``.unit_test_suites`` element
++Add sub-testsuites to the ``.unit_test_suites`` element
+ of the unit test suite structure, for example:
+ 
+ .. code-block:: c
+@@ -337,13 +328,13 @@ The first way to indicate a generic error is
+ by returning a test result failure, using the ``TEST_FAILED`` error code.
+ This is the most basic way of indicating that an error
+ has occurred in a test routine.
+-It isn't very informative to the user, so it should really be used in cases
++It is not very informative to the user, so use it in cases
+ where the test has catastrophically failed.
+ 
+ The preferred method of indicating an error is
+ via the ``RTE_TEST_ASSERT`` family of macros,
+-which will immediately return ``TEST_FAILED`` error condition,
+-but will also log details about the failure.
++which immediately return ``TEST_FAILED`` error condition,
++but also log details about the failure.
+ The basic form is:
+ 
+ .. code-block:: c
+@@ -352,20 +343,20 @@ The basic form is:
+ 
+ In the above macro, *cond* is the condition to evaluate to **true**.
+ Any generic condition can go here.
+-The *msg* parameter will be a message to display if *cond* evaluates to **false**.
++The *msg* parameter is a message to display if *cond* evaluates to **false**.
+ Some specialized macros already exist.
+-See `lib/librte_eal/include/rte_test.h` for a list of defined test assertions.
++See ``lib/librte_eal/include/rte_test.h`` for a list of defined test assertions.
+ 
+ Sometimes it is important to indicate that a test needs to be skipped,
+-either because the environment isn't able to support running the test,
+-or because some requisite functionality isn't available.
++either because the environment cannot support running the test,
++or because some requisite functionality is unavailable.
+ The test suite supports returning a result of ``TEST_SKIPPED``
+ during test case setup, or during test case execution
+-to indicate that the preconditions of the test aren't available.
++to indicate that the preconditions of the test are not available.
+ Example::
+ 
+    $ meson test -C build --suite fast-tests
+-   ninja: Entering directory `/home/aconole/git/dpdk/build
++   ninja: Entering directory `/home/aconole/git/dpdk/build'
+    [2543/2543] Linking target app/test/dpdk-test.
+    1/60 DPDK:fast-tests / acl_autotest          OK       3.17 s
+    2/60 DPDK:fast-tests / bitops_autotest       OK       0.22 s
+@@ -388,10 +379,10 @@ Example::
+    $ meson test -C build --suite fast-tests
+    $ ninja coverage-html -C build
+ 
+-The above will generate an HTML report
+-in the `build/meson-logs/coveragereport/` directory
++The above generates an HTML report
++in the ``build/meson-logs/coveragereport/`` directory
+ that can be explored for detailed code covered information.
+-This can be used to assist in test development.
++Use this to assist in test development.
+ 
+ 
+ Adding a suite or test case to Meson
+@@ -402,10 +393,10 @@ to register the test in dpdk-test, as described above.
+ For example,
+ defining the test command using ``REGISTER_PERF_TEST`` automatically
+ adds the test to the perf-test meson suite.
+-Once added, the new test will be run
++Once added, the new test runs
+ as part of the appropriate class (fast, perf, driver, etc.).
+ 
+-A user or developer can confirm that a test is known to Meson
++Confirm that a test is known to Meson
+ by using the ``--list`` option::
+ 
+    $ meson test -C build --list
+@@ -413,12 +404,12 @@ by using the ``--list`` option::
+    DPDK:fast-tests / bitops_autotest
+    ...
+ 
+-Some of these test suites are run during continuous integration tests,
++Some of these test suites run during continuous integration tests,
+ making regression checking automatic for new patches submitted to the project.
+ 
+ .. note::
+ 
+-   The use of the old ``REGISTER_TEST_COMMAND`` macro
++   The old ``REGISTER_TEST_COMMAND`` macro
+    to add a command without adding it to a meson test suite is deprecated.
+    All new tests must be added to a test suite
+    using the appropriate ``REGISTER_<SUITE>_TEST`` macro.
+@@ -426,8 +417,8 @@ making regression checking automatic for new patches submitted to the project.
+ Running cryptodev tests
+ -----------------------
+ 
+-When running cryptodev tests, the user must create any required virtual device
+-via EAL arguments, as this is not automatically done by the test::
++When running cryptodev tests, create any required virtual device
++via EAL arguments, as this is not done automatically by the test::
+ 
+    $ ./build/app/test/dpdk-test --vdev crypto_aesni_mb
+    $ meson test -C build --suite driver-tests \
+@@ -435,6 +426,6 @@ via EAL arguments, as this is not automatically done by the test::
+ 
+ .. note::
+ 
+-   The ``cryptodev_scheduler_autotest`` is the only exception to this.
+-   This vdev will be created automatically by the test app,
++   The ``cryptodev_scheduler_autotest`` is the only exception.
++   This vdev is created automatically by the test app,
+    as it requires a more complex setup than other vdevs.
 -- 
 2.51.0
 
