@@ -2,37 +2,37 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CFFBC982CD
-	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Jan 2026 15:21:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66FABC982C7
+	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Jan 2026 15:21:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9360242E12;
-	Fri, 16 Jan 2026 16:21:02 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id A7B7542E4C;
+	Fri, 16 Jan 2026 16:21:03 +0100 (CET)
 Received: from office2.cesnet.cz (office2.cesnet.cz [78.128.248.237])
- by mails.dpdk.org (Postfix) with ESMTP id E7A1440611;
- Fri, 16 Jan 2026 16:20:59 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 0E5584114B;
+ Fri, 16 Jan 2026 16:21:00 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cesnet.cz;
  s=office2-2020; t=1768576859;
- bh=hok4qJzBk6LZLrfGBn7lgvs3FevBhccRhIWSviYL3hI=;
+ bh=X2SlewtWkMDpwjd6at9DeLq15VdcP4ZDaoigxuZlV3c=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References;
- b=OnI4h9aJXrvIcGbnghk67bzRtOFCGyjp5VW7Zf1ZTQ6HMjL6O4i+l4r0mry6sQ2wa
- Nomp2BO0spCCvCRMWdCzrBT26Jo+gvEaXCD48hMH4C+PMmsLI+8pCTuHPbTBm4FHjO
- PeDo1r33RPU4XtgGgpNwlsyPihFUQ2hKL5hQPvvLx4KGLAen2mWMsB6RMfK4vqszSr
- kfNg3+sv9kCtFnGl5fsKork42STqOyN3EiO3WAZp5nISANmplXF4VaH8Fj+ZhmkxM4
- +aJxFJwkSEU0YKnAba1Yrdry8k4suU/kxLbbA8YBQGmPqxG7KNeKGi45O1HcG+3TPy
- T4CoN1EbwS5uA==
+ b=gYg9WTx2W/lYkx/BUp/fBbHqBOlKAS5WsfUInZBCl4uC2VZrcCRxhqjdxxRu2smSy
+ Ee9bBcI8DqkzZ5mzDpeBkxANN2Nb9Y5G/xmzCY6w3kuWOlFhoj75aF49wv1d0gl5o0
+ EkM+subq++tTk8Njw5sCB6obYYhi8qTVcjUCPYriHVqYys8/iAwppvraEERjFfCFtT
+ rG3yjr49Id6VZZs6OuP43+zVn8obaqAXL0+J9aNYvF5BWv8O2/UMy/7sawxBRLle98
+ kbLuXSwP7nGWfIG5MRm8zap8GMQFzrQy14J7YF79U22ou1Bzqvk7dAp/wZeGwzO/Rp
+ ofGOnN6i9eTnw==
 Received: from emil.cesnet.cz (gtx107.cesnet.cz [IPv6:2001:718:812:27::107])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by office2.cesnet.cz (Postfix) with ESMTPSA id B107F118007E;
+ by office2.cesnet.cz (Postfix) with ESMTPSA id D00DF118007F;
  Fri, 16 Jan 2026 16:20:59 +0100 (CET)
 From: spinler@cesnet.cz
 To: dev@dpdk.org
 Cc: Martin Spinler <spinler@cesnet.cz>,
 	stable@dpdk.org
-Subject: [PATCH v3 1/6] net/nfb: use constant values for max Rx/Tx queues count
-Date: Fri, 16 Jan 2026 16:20:52 +0100
-Message-ID: <20260116152057.1456380-2-spinler@cesnet.cz>
+Subject: [PATCH v3 2/6] net/nfb: fix bad pointer access in queue stats
+Date: Fri, 16 Jan 2026 16:20:53 +0100
+Message-ID: <20260116152057.1456380-3-spinler@cesnet.cz>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260116152057.1456380-1-spinler@cesnet.cz>
 References: <20260115140134.235877-1-spinler@cesnet.cz>
@@ -54,68 +54,99 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Martin Spinler <spinler@cesnet.cz>
 
-The nb_xx_queues values in the dev->data structure can be modified
-dynamically by some apps. Use runtime-constant values from hardware
-directly for max_rx_queues/max_tx_queues.
+The driver code has dereferenced the dev->data->rx_queues pointer
+without checking for its validity.
+Pointer invalidation can occur when the eth_dev_rx_queue_config
+is called with set to 0, for example.
+
+Moreover, an array of pointers (to a structure) was used like array
+of structures (which worked with early dereference just for one queue).
 
 Fixes: 6435f9a0ac22 ("net/nfb: add new netcope driver")
 Cc: stable@dpdk.org
 
 Signed-off-by: Martin Spinler <spinler@cesnet.cz>
 ---
- drivers/net/nfb/nfb.h        |  3 +++
- drivers/net/nfb/nfb_ethdev.c | 12 +++++++-----
- 2 files changed, 10 insertions(+), 5 deletions(-)
+ drivers/net/nfb/nfb_stats.c | 46 ++++++++++++++++++-------------------
+ 1 file changed, 23 insertions(+), 23 deletions(-)
 
-diff --git a/drivers/net/nfb/nfb.h b/drivers/net/nfb/nfb.h
-index a8b24ff822..917b830283 100644
---- a/drivers/net/nfb/nfb.h
-+++ b/drivers/net/nfb/nfb.h
-@@ -48,6 +48,9 @@ struct pmd_internals {
- 	struct nc_rxmac *rxmac[RTE_MAX_NC_RXMAC];
- 	struct nc_txmac *txmac[RTE_MAX_NC_TXMAC];
- 	struct nfb_device *nfb;
-+
-+	uint16_t max_rx_queues;
-+	uint16_t max_tx_queues;
- };
+diff --git a/drivers/net/nfb/nfb_stats.c b/drivers/net/nfb/nfb_stats.c
+index 4ea6b7be21..27a01c3160 100644
+--- a/drivers/net/nfb/nfb_stats.c
++++ b/drivers/net/nfb/nfb_stats.c
+@@ -20,28 +20,28 @@ nfb_eth_stats_get(struct rte_eth_dev *dev, struct rte_eth_stats *stats,
+ 	uint64_t rx_total_bytes = 0;
+ 	uint64_t tx_total_bytes = 0;
  
- #endif /* _NFB_H_ */
-diff --git a/drivers/net/nfb/nfb_ethdev.c b/drivers/net/nfb/nfb_ethdev.c
-index 98119d70fd..5b1df83b7f 100644
---- a/drivers/net/nfb/nfb_ethdev.c
-+++ b/drivers/net/nfb/nfb_ethdev.c
-@@ -237,11 +237,13 @@ static int
- nfb_eth_dev_info(struct rte_eth_dev *dev,
- 	struct rte_eth_dev_info *dev_info)
- {
-+	struct pmd_internals *internals = dev->data->dev_private;
-+
- 	dev_info->max_mac_addrs = nfb_eth_get_max_mac_address_count(dev);
+-	struct ndp_rx_queue *rx_queue = *((struct ndp_rx_queue **)
+-		dev->data->rx_queues);
+-	struct ndp_tx_queue *tx_queue = *((struct ndp_tx_queue **)
+-		dev->data->tx_queues);
++	struct ndp_rx_queue *rx_queue;
++	struct ndp_tx_queue *tx_queue;
  
- 	dev_info->max_rx_pktlen = (uint32_t)-1;
--	dev_info->max_rx_queues = dev->data->nb_rx_queues;
--	dev_info->max_tx_queues = dev->data->nb_tx_queues;
-+	dev_info->max_rx_queues = internals->max_rx_queues;
-+	dev_info->max_tx_queues = internals->max_tx_queues;
- 	dev_info->speed_capa = RTE_ETH_LINK_SPEED_100G;
- 	dev_info->rx_offload_capa =
- 		RTE_ETH_RX_OFFLOAD_TIMESTAMP;
-@@ -538,11 +540,11 @@ nfb_eth_dev_init(struct rte_eth_dev *dev)
- 		NFB_LOG(ERR, "nfb_open(): failed to open %s", nfb_dev);
- 		return -EINVAL;
+ 	for (i = 0; i < nb_rx; i++) {
++		rx_queue = dev->data->rx_queues[i];
+ 		if (qstats && i < RTE_ETHDEV_QUEUE_STAT_CNTRS) {
+-			qstats->q_ipackets[i] = rx_queue[i].rx_pkts;
+-			qstats->q_ibytes[i] = rx_queue[i].rx_bytes;
++			qstats->q_ipackets[i] = rx_queue->rx_pkts;
++			qstats->q_ibytes[i] = rx_queue->rx_bytes;
+ 		}
+-		rx_total += rx_queue[i].rx_pkts;
+-		rx_total_bytes += rx_queue[i].rx_bytes;
++		rx_total += rx_queue->rx_pkts;
++		rx_total_bytes += rx_queue->rx_bytes;
  	}
--	data->nb_rx_queues = ndp_get_rx_queue_available_count(internals->nfb);
--	data->nb_tx_queues = ndp_get_tx_queue_available_count(internals->nfb);
-+	internals->max_rx_queues = ndp_get_rx_queue_available_count(internals->nfb);
-+	internals->max_tx_queues = ndp_get_tx_queue_available_count(internals->nfb);
  
- 	NFB_LOG(INFO, "Available NDP queues RX: %u TX: %u",
--		data->nb_rx_queues, data->nb_tx_queues);
-+		internals->max_rx_queues, internals->max_tx_queues);
+ 	for (i = 0; i < nb_tx; i++) {
++		tx_queue = dev->data->tx_queues[i];
+ 		if (qstats && i < RTE_ETHDEV_QUEUE_STAT_CNTRS) {
+-			qstats->q_opackets[i] = tx_queue[i].tx_pkts;
+-			qstats->q_obytes[i] = tx_queue[i].tx_bytes;
++			qstats->q_opackets[i] = tx_queue->tx_pkts;
++			qstats->q_obytes[i] = tx_queue->tx_bytes;
+ 		}
+-		tx_total += tx_queue[i].tx_pkts;
+-		tx_total_bytes += tx_queue[i].tx_bytes;
+-		tx_err_total += tx_queue[i].err_pkts;
++		tx_total += tx_queue->tx_pkts;
++		tx_total_bytes += tx_queue->tx_bytes;
++		tx_err_total += tx_queue->err_pkts;
+ 	}
  
- 	nfb_nc_rxmac_init(internals->nfb,
- 		internals->rxmac,
+ 	stats->ipackets = rx_total;
+@@ -59,20 +59,20 @@ nfb_eth_stats_reset(struct rte_eth_dev *dev)
+ 	uint16_t nb_rx = dev->data->nb_rx_queues;
+ 	uint16_t nb_tx = dev->data->nb_tx_queues;
+ 
+-	struct ndp_rx_queue *rx_queue = *((struct ndp_rx_queue **)
+-		dev->data->rx_queues);
+-	struct ndp_tx_queue *tx_queue = *((struct ndp_tx_queue **)
+-		dev->data->tx_queues);
++	struct ndp_rx_queue *rx_queue;
++	struct ndp_tx_queue *tx_queue;
+ 
+ 	for (i = 0; i < nb_rx; i++) {
+-		rx_queue[i].rx_pkts = 0;
+-		rx_queue[i].rx_bytes = 0;
+-		rx_queue[i].err_pkts = 0;
++		rx_queue = dev->data->rx_queues[i];
++		rx_queue->rx_pkts = 0;
++		rx_queue->rx_bytes = 0;
++		rx_queue->err_pkts = 0;
+ 	}
+ 	for (i = 0; i < nb_tx; i++) {
+-		tx_queue[i].tx_pkts = 0;
+-		tx_queue[i].tx_bytes = 0;
+-		tx_queue[i].err_pkts = 0;
++		tx_queue = dev->data->tx_queues[i];
++		tx_queue->tx_pkts = 0;
++		tx_queue->tx_bytes = 0;
++		tx_queue->err_pkts = 0;
+ 	}
+ 
+ 	return 0;
 -- 
 2.52.0
 
