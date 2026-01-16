@@ -2,66 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC6E0C982FE
-	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Jan 2026 20:18:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20AE8C982FE
+	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Jan 2026 20:18:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E416142ECD;
-	Fri, 16 Jan 2026 21:18:01 +0100 (CET)
-Received: from mail-ej1-f66.google.com (mail-ej1-f66.google.com
- [209.85.218.66]) by mails.dpdk.org (Postfix) with ESMTP id 53B2842EB6
- for <dev@dpdk.org>; Fri, 16 Jan 2026 21:17:59 +0100 (CET)
-Received: by mail-ej1-f66.google.com with SMTP id
- a640c23a62f3a-b7ffbf4284dso328092566b.3
- for <dev@dpdk.org>; Fri, 16 Jan 2026 12:17:59 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id BE3D642ED3;
+	Fri, 16 Jan 2026 21:18:02 +0100 (CET)
+Received: from mail-ej1-f65.google.com (mail-ej1-f65.google.com
+ [209.85.218.65]) by mails.dpdk.org (Postfix) with ESMTP id 065A842EC5
+ for <dev@dpdk.org>; Fri, 16 Jan 2026 21:18:01 +0100 (CET)
+Received: by mail-ej1-f65.google.com with SMTP id
+ a640c23a62f3a-b8707005183so402931466b.0
+ for <dev@dpdk.org>; Fri, 16 Jan 2026 12:18:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768594679;
- x=1769199479; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768594680;
+ x=1769199480; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=APOune2Pk+qtoEGRZoFLE44PCt+x/rtPb3zyJeW4gW8=;
- b=sXJOLfQcsJKOe8Ao9fcQ3nL/UETS6rAwMNHOuusDzgb3eel50YX8OzEvoALVlHEtl5
- SQxBqQhWHDq1leu5DIyuSO2nl0YiGi9UziVji3+fk8+Q3ZN+pFw1AWH37JaJOgnaxsKt
- VnzLONFK+LXj4KF51crEmtOO3QBYXsvukjkHAR4kmDvrKtNVJab1iNZ7J7x8F3W2vGfK
- BOsYbgrs+nJ+3LlalOgBsSBYobcAUzefP3QEnggOLefWfottcA9YxSS94qhl8ZfD0bPr
- aUORAHZnw138LWYNlqiCPjf/f9dD+CN7qzBv9/2YbHw1i6Cu34dbfFmmPxiThteqyKU/
- NLfQ==
+ bh=7hz7qEy1i817Tdg+7LCR02/1TsN5/g0+f0i0HPsD+R0=;
+ b=qhEge29tVdCNmBpi740md5lvEEyZkyjmdLXRX5IJIty8zEDXVcAo0fCVSi8BtKeVge
+ Gn4F1l+/a7K4IAer2i9N0+TNiSHge48NlSeBUxwGXDWoKwHC0j6Vx3D7IWCwiy9smJ29
+ LQgjorgdUKVlSn027NDBTvO93L9817igAvakN/a/g9aLfEzI794NwdpyutcL+0lksayD
+ a2H35zD8k/2PXJbEfpChE3Sw9g9kp4VaxhX/fWt6+slRtXkcJZ44FOK0cTWRODKo7qiF
+ Yq5oaq2oQr2IQWOYOud9feIruaII7CZTx5CooP+B0MTlZtm4Gybbujwj6fzKzalgPp14
+ hcyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768594679; x=1769199479;
+ d=1e100.net; s=20230601; t=1768594680; x=1769199480;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=APOune2Pk+qtoEGRZoFLE44PCt+x/rtPb3zyJeW4gW8=;
- b=AX1uVUQCdS/ThCzb5b1c4UCHr4HWcNQVICRcVEsJHHbiMn3Xd1OmL7gxMgeH5M4ynb
- WyjUiY3mkesNwQu67mEZOfTqpwbjvBBphOnT3rZk0t7GoiGyAActX2Bv7bWMCer7zBqm
- 3VVpEkKZ3o+xikrZPnn9QT3s8mFhZqBHQEQkZsV05j8bj3vVlqILSSNRne547IYDSEcu
- QoYeZ6bGPyOJXkSi95BYQnDBp+uQdCf68bvE9dGqEbhtjM3ZqjJ1d4mg8UYyljfgLQYR
- 76OEFQjVNFCE2XKne3++beOIJdQPZOrRGMKEDx1ISbLJkpa3cvpTXXmOgyx7alljktHb
- JA3w==
-X-Gm-Message-State: AOJu0YyL/qWFoJxRhQ8gwWcCDkagagDAEop48muaZuFe3YIEitY+0PpK
- EQA7JoBy2PMvwTWdDcSCgCsix4TbmClfH/RtzR3Yb3SKUYax5p1UtmHi2wveUULu8denfOGcblc
- ErQi6dwA=
-X-Gm-Gg: AY/fxX41SbNs+CC2xTpr9wzFUVtBMWYqXxk5YYrb7Drc98Su3xu/E5inWpzA+ypBCKW
- NbMmYVjJL9mzDF5xlze72fSZ/BmCCxJ/f31L9KqvivMiDvgkZd83RBFMLPek8lErz/EujJRf3JH
- d22lgeg6TcWuGyXXtdtVCQFzBhsOdCuiaImJXSDnDdpjQrQ3HkHRcJJIwtg0CgRfsfs+yVe0dmm
- AHuItImT55Xbb/W2+tFGfEk/NSevyeP2cLaRGoqT42/EYhDYms43GR4yVZlmvnVZrnbo218bbjI
- ykULax/W3c/AqfD6URQNtxtaxk2wPP0z8SE68J7KxMkkJHZLp/odSodYdm2VBh3gjUghM5PBJqB
- bZC14snlgzh79rjQYpVgY64MBukjSMK8OyORUuL8SbryrpVGxgJPdB67hrvwl5d4olW+cRjNir9
- gZLkwddaRxSZ+3bD9lPpgtU/ibVyUu6I4ebCuz0nJ1LSjD7FNIoA==
-X-Received: by 2002:a17:907:1b1c:b0:b7c:e3ad:cd17 with SMTP id
- a640c23a62f3a-b879300953dmr412641866b.32.1768594678790; 
- Fri, 16 Jan 2026 12:17:58 -0800 (PST)
+ bh=7hz7qEy1i817Tdg+7LCR02/1TsN5/g0+f0i0HPsD+R0=;
+ b=pGU1McVKUuPL47xOyC1HkCrVrxO0HI2w9sJYpgixw1MMKzmHVEqDKasesJ8mGxum5/
+ 0A3w7DOwZ3ddMgXAY9/QyXm1FRCzJHyU92Ksa1Do9kcR0MuDlCiQ6CAKylIjTCkmTrus
+ 54CjV3L2sY0jj48Oj/6pZJtCjqeMdcODVEvDdhC0PjmuAN/FrV+zjaJK6RY40gAG8VeP
+ 8/8c8a93FWSYRmbTHxc3UgRZfquZjE5UJofS4VIXTN5gisoCmsKDYtROtwnYJFZZFw1O
+ Rc97f43BZBoknNq6WA6zUprn+kAlhBoczWdOzb5yqXnUoxOK6tX5hcbYVq1XW9A/QK5L
+ BOwQ==
+X-Gm-Message-State: AOJu0Yx2RnieIiYfmC69/FPRm09DDZ4+KLUNxMWlSLmmmr9dqDw9yg6W
+ gJ4wdJpHL6y3qAMXvbj0L7H4tlh4vVatjOT4Zs62QKNuYzDbhWUqwsSjtuPSd1zJfFYIXlr4rl6
+ MPbnFIH4=
+X-Gm-Gg: AY/fxX6coixcTUSGZXn3fPrPhL4bE9WGOU8KUwrjJcrUjvfXxf23f8aYrODNKJpLzIO
+ WZxHOkX/oDKgMKaMCrfmE9TyChG7HcRjg1GO7hlGC2KdyFL6XysVtxqlhKGCR1K1oWAmwG6GXXo
+ 5DTmQkVOruvViKcov5OfYvMIYGEioWepI3xufBcvwwlZ0f9d0OTIP6yiC+ws7yKo7aHzl65Ecn8
+ gLs/eaBbLXQpaqxqOnsW0U3vUM4B6Aupt5Nn3aJsWcujZIJHLlpsUYOS4NyWhCeaCgvtbzdUsIp
+ 80X/bQ/81j0VUP7z40yk80ACvpFkX+M2j955dutFIU+G3OfrWIqeofRygxH9QdeX+wTg1cgUkr+
+ 2acjrz+iUkW6R1229aBpWVrP0sRbbcfFcULcHTiBZIfkcrIgP91PHjw1oD9b59X1hzEvBau5Eyd
+ IaGS1qfsDR+b3pwmsgAqYxccVhfBekG6SZfAxOjGlBH0Drh2IvZQ==
+X-Received: by 2002:a17:906:2099:b0:b87:b0ba:5d2d with SMTP id
+ a640c23a62f3a-b87b0ba6e99mr12876866b.57.1768594680399; 
+ Fri, 16 Jan 2026 12:18:00 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a640c23a62f3a-b8795169f10sm338631466b.26.2026.01.16.12.17.57
+ a640c23a62f3a-b8795169f10sm338631466b.26.2026.01.16.12.17.59
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 16 Jan 2026 12:17:58 -0800 (PST)
+ Fri, 16 Jan 2026 12:17:59 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v2 09/12] doc: improve stable releases documentation
-Date: Fri, 16 Jan 2026 12:14:27 -0800
-Message-ID: <20260116201738.74578-10-stephen@networkplumber.org>
+Subject: [PATCH v2 10/12] doc: improve vulnerability process documentation
+Date: Fri, 16 Jan 2026 12:14:28 -0800
+Message-ID: <20260116201738.74578-11-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260116201738.74578-1-stephen@networkplumber.org>
 References: <20260114225555.127448-1-stephen@networkplumber.org>
@@ -81,227 +81,283 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Rewrite the stable releases and LTS documentation for clarity
+Improve the vulnerability management documentation
 - Converting passive voice to active voice
-- Restructuring content with bullet points for scannability
+- Using clearer section headings
 - Simplifying verbose explanations
-- Removing redundant phrasing
-- Making backport criteria more concise
+- Making reporting instructions more direct
+- Fixing broken RST link syntax for mailing lists
 
 No technical content changes.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- doc/guides/contributing/stable.rst | 147 ++++++++++++-----------------
- 1 file changed, 60 insertions(+), 87 deletions(-)
+ doc/guides/contributing/vulnerability.rst | 140 ++++++++++------------
+ 1 file changed, 65 insertions(+), 75 deletions(-)
 
-diff --git a/doc/guides/contributing/stable.rst b/doc/guides/contributing/stable.rst
-index 808e7fa779..6065163e75 100644
---- a/doc/guides/contributing/stable.rst
-+++ b/doc/guides/contributing/stable.rst
-@@ -6,84 +6,69 @@
- DPDK Stable Releases and Long Term Support
- ==========================================
+diff --git a/doc/guides/contributing/vulnerability.rst b/doc/guides/contributing/vulnerability.rst
+index fc60e02e37..1d616d203a 100644
+--- a/doc/guides/contributing/vulnerability.rst
++++ b/doc/guides/contributing/vulnerability.rst
+@@ -7,10 +7,9 @@ DPDK Vulnerability Management Process
+ Scope
+ -----
  
--This section sets out the guidelines for the DPDK Stable Releases and the DPDK
--Long Term Support releases (LTS).
--
-+This section outlines the guidelines for DPDK Stable Releases and Long Term Support (LTS) releases.
+-Only the main repositories (dpdk and dpdk-stable) of the core project
+-are in the scope of this security process (including experimental APIs).
+-If a stable branch is declared unmaintained (end of life),
+-no fix will be applied.
++This security process covers only the main repositories (dpdk and dpdk-stable)
++of the core project (including experimental APIs).
++The team will not apply fixes to stable branches declared unmaintained (end of life).
  
- Introduction
+ All vulnerabilities are bugs, but not every bug is a vulnerability.
+ Vulnerabilities compromise one or more of:
+@@ -19,79 +18,71 @@ Vulnerabilities compromise one or more of:
+ * Integrity (trustworthiness and correctness).
+ * Availability (uptime and service).
+ 
+-If in doubt, please consider the vulnerability as security sensitive.
++If in doubt, consider the vulnerability as security sensitive.
+ At worst, the response will be to report the bug through the usual channels.
+ 
+ 
+-Finding
+--------
++Finding Security Issues
++-----------------------
+ 
+ There is no pro-active security engineering effort at the moment.
+ 
+-Please report any security issue you find in DPDK as described below.
++Report any security issue you find in DPDK as described below.
+ 
+ 
+-Report
+-------
++Reporting Security Issues
++-------------------------
+ 
+-Do not use Bugzilla (unsecured).
+-Instead, send GPG-encrypted emails
+-to `security@dpdk.org <https://core.dpdk.org/security#contact>`_.
+-Anyone can post to this list.
+-In order to reduce the disclosure of a vulnerability in the early stages,
+-membership of this list is intentionally limited to a `small number of people
+-<https://mails.dpdk.org/roster/security>`_.
++Do not use Bugzilla to report security vulnerabilities, as it is not secured for such communication.
++Instead, send a GPG-encrypted email to `security@dpdk.org <https://core.dpdk.org/security#contact>`_.
++This address is open to all, but access to its inbox is intentionally limited to a small group
++to minimize the risk of early disclosure.
+ 
+-It is additionally encouraged to GPG-sign one-on-one conversations
+-as part of the security process.
++GPG-sign any one-on-one correspondence related to the vulnerability
++report as part of maintaining a secure communication process.
+ 
+-As it is with any bug, the more information provided,
+-the easier it will be to diagnose and fix.
+-If you already have a fix, please include it with your report,
+-as that can speed up the process considerably.
++As with any bug report, detailed information greatly aids in diagnosing and resolving the issue.
++If you have already developed a fix, include it in your submission to help accelerate resolution.
+ 
+-In the report, please note how you would like to be credited
+-for discovering the issue
+-and the details of any embargo you would like to impose.
++In your report, specify how you would like to be credited for the discovery and mention any embargo
++period you wish to impose.
+ 
+-If the vulnerability is not public yet,
+-no patch or information should be disclosed publicly.
+-If a fix is already published,
+-the reporting process must be followed anyway, as described below.
++If the vulnerability has not yet been made public, do not disclose patches or related information
++publicly. Even if a fix has already been published, you must still follow the proper reporting process outlined here.
+ 
+ 
+ Confirmation
  ------------
  
--The purpose of the DPDK Stable Releases is to maintain releases of DPDK with
--backported fixes over an extended period of time. This provides downstream
--consumers of DPDK with a stable target on which to base applications or
--packages.
--
--The primary characteristics of stable releases is that they attempt to
--fix issues and not introduce any new regressions while keeping backwards
--compatibility with the initial release of the stable version.
-+The purpose of DPDK Stable Releases is to maintain DPDK versions with backported
-+fixes over an extended period. This allows downstream users to base applications
-+or packages on a stable, well-maintained version of DPDK.
+-Upon reception of the report, a security team member should reply
+-to the reporter acknowledging that the report has been received.
++Upon receiving the report, a security team member should reply
++to the reporter acknowledging receipt.
  
--The Long Term Support release (LTS) is a designation applied to a Stable
--Release to indicate longer term support.
-+The primary goal of stable releases is to fix issues without introducing regressions,
-+while preserving backward compatibility with the original version.
+ The DPDK security team reviews the security vulnerability reported.
+-Area experts not members of the security team may be involved in the process.
+-In case the reported issue is not qualified as a security vulnerability,
++Area experts who are not members of the security team may be involved in the process.
++If the reported issue does not qualify as a security vulnerability,
+ the security team will request the submitter to report it
+ using the usual channel (Bugzilla).
+-If qualified, the security team will assess which DPDK version are affected.
+-A bugzilla ID (allocated in a `reserved pool
++If qualified, the security team assesses which DPDK versions are affected.
++A bugzilla ID (allocated from a `reserved pool
+ <https://bugs.dpdk.org/buglist.cgi?f1=bug_group&o1=equals&v1=security>`_)
+ is assigned to the vulnerability, and kept empty until public disclosure.
  
-+LTS (Long Term Support) is a designation given to specific stable releases to indicate
-+extended support duration.
+-The security team calculates the severity score with
++The security team calculates the severity score with the
+ `CVSS calculator <https://www.first.org/cvss/calculator/3.0>`_
+ based on inputs from the reporter and its own assessment of the vulnerability,
+ and agrees on the score with the reporter.
  
- Stable Releases
- ---------------
+ An embargo may be put in place depending on the severity of the vulnerability.
+-If an embargo is decided, its duration should be suggested by the security team
+-and negotiated with the reporter.
++If an embargo is decided, the security team should suggest the duration
++and negotiate with the reporter.
+ Embargo duration between vulnerability confirmation and public disclosure
+ should be between **one and ten weeks**.
+ If an embargo is not required, the vulnerability may be fixed
+ using the standard patch process, once a CVE number has been assigned.
  
--Any release of DPDK can be designated as a Stable Release if a
--maintainer volunteers to maintain it and there is a commitment from major
--contributors to validate it before releases.
--If a version is to be a "Stable Release", it should be designated as such
--within one month of that version being initially released.
-+Any DPDK release may become a Stable Release if a maintainer volunteers to support it
-+and major contributors commit to validating it before each release.
-+This designation should be made within one month of the version's initial release.
+-The confirmation mail should be sent within **3 business days**.
++Send the confirmation mail within **3 business days**.
  
--A Stable Release is used to backport fixes from an ``N`` release back to an
-+Stable Releases are typically used to backport fixes from an ``N`` release to an
- ``N-1`` release, for example, from 16.11 to 16.07.
+-Following information must be included in the mail:
++Include the following information in the mail:
  
--The duration of a stable is one complete release cycle (4 months). It can be
--longer, up to 1 year, if a maintainer continues to support the stable branch,
--or if users supply backported fixes, however the explicit commitment should be
--for one release cycle.
--
--The release cadence is determined by the maintainer based on the number of
--bugfixes and the criticality of the bugs. Releases should be coordinated with
--the validation engineers to ensure that a tagged release has been tested.
--
--
--LTS Release
-------------
-+* The standard support duration is one full release cycle (4 months).
-+* This may extend up to one year if the maintainer continues support or if users provide backported fixes.
-+* The maintainer determines the release cadence based on the volume and criticality of fixes.
-+* Coordinate releases with validation engineers to ensure proper testing before tagging.
+ * Confirmation
+ * CVSS severity and score
+@@ -110,7 +101,7 @@ from the reporter before finalizing the document.
+ When the document is final, the security team needs to
+ request a CVE identifier from a CNA.
  
--A stable release can be designated as an LTS release based on community
--agreement and a commitment from a maintainer. The current policy is that each
--year's November (X.11) release will be maintained as an LTS for 3 years,
--however that is dependent on continued community support for validation.
-+LTS Releases
-+------------
+-The CVE request should be sent
++Send the CVE request
+ to `secalert@redhat.com <mailto:secalert@redhat.com>`_
+ using GPG encrypted email
+ (see `contact details <https://access.redhat.com/security/team/contact>`_).
+@@ -161,19 +152,18 @@ CVE Request Template without Embargo
+ Fix Development and Review
+ --------------------------
  
--After the X.11 release, an LTS branch will be created for it at
--https://git.dpdk.org/dpdk-stable where bugfixes will be backported to.
-+A Stable Release can be promoted to an LTS release through community agreement
-+and a maintainer's commitment.
+-If the fix is already published, this step is skipped,
+-and the pre-release disclosure is replaced with the private disclosure,
+-as described below. It must not be considered as the standard process.
++If the fix is already published, skip this step,
++and replace the pre-release disclosure with the private disclosure,
++as described below. This should not be considered the standard process.
  
--A LTS release may align with the declaration of a new major ABI version,
--please read the :doc:`abi_policy` for more information.
-+* The current policy designates each November release (X.11) as an LTS and maintains it for 3 years,
-+  contingent on community validation support.
-+* After release, an LTS branch is created at https://git.dpdk.org/dpdk-stable
-+  where bugfixes are backported.
-+* An LTS release may align with the declaration of a new major ABI version.
-+  See the :doc:`abi_policy` for more information.
+-This step may be started in parallel with CVE creation.
+-The patches fixing the vulnerability are developed and reviewed
+-by the security team and
+-by elected area experts that agree to maintain confidentiality.
++This step may start in parallel with CVE creation.
++The security team and elected area experts who agree to maintain confidentiality
++develop and review patches fixing the vulnerability.
  
--It is anticipated that there will be at least 3 releases per year of the LTS
--or approximately 1 every 4 months. This is done to align with the DPDK main
--branch releases so that fixes have already gone through validation as part of
--the DPDK main branch release validation. However, the cadence can be shorter or
--longer depending on the number and criticality of the backported
--fixes. Releases should be coordinated with the validation engineers to ensure
--that a tagged release has been tested.
-+Release Cadence:
+-The CVE id and the bug id must be referenced in the patch if there is no
+-embargo, or if there is an embargo, but it will be lifted when the release
+-including the patch is published. If the embargo is going to be lifted after the
+-release, then the CVE and bug ids must be omitted from the commit message.
++Reference the CVE id and the bug id in the patch if there is no
++embargo, or if the embargo will be lifted when the release
++including the patch is published. If the embargo will be lifted after the
++release, omit the CVE and bug ids from the commit message.
  
--For a list of the currently maintained stable/LTS branches please see
--the latest `stable roadmap <https://core.dpdk.org/roadmap/#stable>`_.
-+* At least three LTS updates per year (roughly one every four months).
-+* Aligned with main DPDK releases to leverage shared validation.
-+* Frequency may vary depending on the urgency and volume of fixes.
-+* Coordinate validation with test engineers.
+ Backports to the identified affected versions are done once the fix is ready.
  
--At the end of the 3 years, a final X.11.N release will be made and at that
--point the LTS branch will no longer be maintained with no further releases.
-+For a list of the currently maintained stable/LTS branches, see
-+the `stable roadmap <https://core.dpdk.org/roadmap/#stable>`_.
+@@ -181,32 +171,32 @@ Backports to the identified affected versions are done once the fix is ready.
+ Pre-Release Disclosure
+ ----------------------
  
-+At the end of the 3-year period, a final X.11.N release is made,
-+after which the LTS branch is no longer maintained.
+-When the fix is ready, the security advisory and patches are sent
++When the fix is ready, send the security advisory and patches
+ to downstream stakeholders
+ (`security-prerelease@dpdk.org <mailto:security-prerelease@dpdk.org>`_),
+ specifying the date and time of the end of the embargo.
+-The communicated public disclosure date should be **less than one week**
++The communicated public disclosure date should be **less than one week**.
  
--What changes should be backported
-+What Changes Should Be Backported
- ---------------------------------
+ Downstream stakeholders are expected not to deploy or disclose patches
+-until the embargo is passed, otherwise they will be removed from the list.
++until the embargo passes; otherwise they will be removed from the list.
  
--Backporting should be limited to bug fixes. All patches accepted on the main
--branch with a Fixes: tag should be backported to the relevant stable/LTS
--branches, unless the submitter indicates otherwise. If there are exceptions,
--they will be discussed on the mailing lists.
-+Limit backports to bug fixes.
+ Downstream stakeholders (in `security-prerelease list
+-<https://mails.dpdk.org/roster/security-prerelease>`_), are:
++<https://mails.dpdk.org/roster/security-prerelease>`_) are:
+ 
+ * Operating system vendors known to package DPDK
+ * Major DPDK users, considered trustworthy by the technical board, who
+   have made the request to `techboard@dpdk.org <mailto:techboard@dpdk.org>`_
+ 
+-The `OSS security private mailing list mailto:distros@vs.openwall.org>` will
++The `OSS security private mailing list <mailto:distros@vs.openwall.org>`_ will
+ also be contacted one week before the end of the embargo, as indicated by `the
+-OSS-security process <https://oss-security.openwall.org/wiki/mailing-lists/distros>`
++OSS-security process <https://oss-security.openwall.org/wiki/mailing-lists/distros>`_
+ and using the PGP key listed on the same page, describing the details of the
+ vulnerability and sharing the patch[es]. Distributions and major vendors follow
+ this private mailing list, and it functions as a single point of contact for
+ embargoed advance notices for open source projects.
+ 
+-The security advisory will be based on below template,
+-and will be sent signed with a security team's member GPG key.
++The security advisory will be based on the template below,
++and will be sent signed with a security team member's GPG key.
+ 
+ 
+ Pre-Release Mail Template
+@@ -234,7 +224,7 @@ Pre-Release Mail Template
+   Please do not make the issue public (or release public patches)
+   before this coordinated embargo date.
+ 
+-If the issue is leaked during the embargo, the same procedure is followed
++If the issue is leaked during the embargo, follow the same procedure
+ with only a few days delay between the pre-release and the public disclosure.
+ 
+ 
+@@ -242,9 +232,9 @@ Private Disclosure
+ ------------------
+ 
+ If a vulnerability is unintentionally already fixed in the public repository,
+-a security advisory is sent to downstream stakeholders
++send a security advisory to downstream stakeholders
+ (`security-prerelease@dpdk.org <mailto:security-prerelease@dpdk.org>`_),
+-giving few days to prepare for updating before the public disclosure.
++giving a few days to prepare for updating before the public disclosure.
+ 
+ 
+ Private Disclosure Mail Template
+@@ -275,23 +265,23 @@ Private Disclosure Mail Template
+ Public Disclosure
+ -----------------
+ 
+-On embargo expiration, following tasks will be done simultaneously:
++When the embargo expires, carry out the following actions simultaneously:
+ 
+-* The assigned bug is filled by a member of the security team,
+-  with all relevant information, and it is made public.
+-* The patches are pushed to the appropriate branches.
+-* For long and short term stable branches fixed,
+-  new versions should be released.
++* A security team member files the assigned bug with all relevant details and makes it publicly accessible.
+ 
+-Releases on Monday to Wednesday are preferred, so that system administrators
+-do not have to deal with security updates over the weekend.
++* Push the associated patches to the appropriate branches.
+ 
+-The security advisory is posted
++* Release updated versions for all affected stable branches, both short-term and long-term.
 +
-+All patches accepted on the main branch with a ``Fixes:`` tag should be backported
-+to the relevant stable/LTS branches, unless the submitter indicates otherwise.
- 
- Fixes suitable for backport should have a ``Cc: stable@dpdk.org`` tag in the
- commit message body as follows::
-@@ -97,49 +82,37 @@ commit message body as follows::
- 
-      Signed-off-by: Alex Smith <alex.smith@example.com>
- 
--
- Fixes not suitable for backport should not include the ``Cc: stable@dpdk.org`` tag.
- 
--To support the goal of stability and not introducing regressions,
--new code being introduced is limited to bug fixes.
- New features should not be backported to stable releases.
--
--In some limited cases, it may be acceptable to backport a new feature
--to a stable release. Some of the factors which impact the decision by
--stable maintainers are as follows:
--
--* Does the feature break API/ABI?
--* Does the feature break backwards compatibility?
--* Is it for the latest LTS release (to avoid LTS upgrade issues)?
--* Is there a commitment from the proposer or affiliation to validate the feature
--  and check for regressions in related functionality?
--* Is there a track record of the proposer or affiliation validating stable releases?
--* Is it obvious that the feature will not impact existing functionality?
--* How intrusive is the code change?
--* What is the scope of the code change?
--* Does it impact common components or vendor specific?
--* Is there a justifiable use case (a clear user need)?
--* Is there a community consensus about the backport?
--
--Performance improvements are generally not considered to be fixes,
--but may be considered in some cases where:
-+In limited cases, a new feature may be acceptable if:
++To ease adoption by system administrators, preferably schedule security releases
++between Monday and Wednesday, avoiding weekends.
 +
-+* It does not break API or ABI.
-+* It preserves backward compatibility.
-+* It targets the latest LTS release (to help with upgrade paths).
-+* The proposer commits to testing the feature and monitoring regressions.
-+* The proposer or their organization has a track record of validating stable releases.
-+* It clearly does not impact existing functionality.
-+* The change is minimally invasive and scoped.
-+* It affects vendor-specific components rather than common ones.
-+* There is a justifiable use case (a clear user need).
-+* There is community consensus about the backport.
-+
-+Performance improvements are generally not considered fixes,
-+but may be considered in cases where:
++Post the security advisory
+ to `announce@dpdk.org <mailto:announce@dpdk.org>`_ and to `the public OSS-security
+-mailing list <mailto:oss-security@lists.openwall.com>` as soon as the patches
++mailing list <mailto:oss-security@lists.openwall.com>`_ as soon as the patches
+ are pushed to the appropriate branches.
  
- * It is fixing a performance regression that occurred previously.
- * An existing feature in LTS is not usable as intended without it.
+-Patches are then sent to `dev@dpdk.org <mailto:dev@dpdk.org>`_
++Send patches to `dev@dpdk.org <mailto:dev@dpdk.org>`_
+ and `stable@dpdk.org <mailto:stable@dpdk.org>`_ accordingly.
  
- APIs marked as ``experimental`` are not considered part of the ABI version
--and can be changed without prior notice. This is necessary for the API to be
--improved and stabilized and become part of the ABI version in the future.
--
--However, in LTS releases ``experimental`` API should not be changed as there
--will not be a future ABI version on the branch and compatibility with previous
--release of an LTS version is of the highest importance.
-+and can be changed without prior notice in mainline development.
-+However, in LTS releases, ``experimental`` APIs should not be changed,
-+as compatibility with previous releases of an LTS version is paramount.
  
- The Stable Mailing List
- -----------------------
- 
--The Stable and LTS release are coordinated on the stable@dpdk.org mailing
--list.
-+Stable and LTS releases are coordinated on the stable@dpdk.org mailing list.
- 
- All fix patches to the main branch that are candidates for backporting
- should also be CCed to the `stable@dpdk.org <https://mails.dpdk.org/listinfo/stable>`_
-@@ -149,7 +122,7 @@ mailing list.
- Releasing
- ---------
- 
--A Stable Release will be released by:
-+A Stable Release is made by:
- 
- * Tagging the release with YY.MM.n (year, month, number).
- * Uploading a tarball of the release to dpdk.org.
 -- 
 2.51.0
 
