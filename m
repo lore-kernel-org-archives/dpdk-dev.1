@@ -2,70 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CB0BD4A605
-	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Jan 2026 06:47:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D81FD4A605
+	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Jan 2026 06:47:32 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EDFC742DD3;
-	Fri, 16 Jan 2026 07:47:04 +0100 (CET)
-Received: from mail-ej1-f66.google.com (mail-ej1-f66.google.com
- [209.85.218.66]) by mails.dpdk.org (Postfix) with ESMTP id 23B2042DD1
- for <dev@dpdk.org>; Fri, 16 Jan 2026 07:47:04 +0100 (CET)
-Received: by mail-ej1-f66.google.com with SMTP id
- a640c23a62f3a-b8719aeebc8so310136966b.3
- for <dev@dpdk.org>; Thu, 15 Jan 2026 22:47:04 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 326EF42DD1;
+	Fri, 16 Jan 2026 07:47:08 +0100 (CET)
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com
+ [209.85.208.51]) by mails.dpdk.org (Postfix) with ESMTP id 8602942DFA
+ for <dev@dpdk.org>; Fri, 16 Jan 2026 07:47:06 +0100 (CET)
+Received: by mail-ed1-f51.google.com with SMTP id
+ 4fb4d7f45d1cf-64b791b5584so3026330a12.0
+ for <dev@dpdk.org>; Thu, 15 Jan 2026 22:47:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768546024;
- x=1769150824; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768546026;
+ x=1769150826; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=aFTCgao5yj0XCFm0nApcd5Uxw9YJxVQR9XnXrRYnOQ0=;
- b=DirEwWSxmONKncpsaGZnwmz+O58wQy0pMe4aeHfmMRQ+I0Z6wjgN5bwbsaNfJQgrov
- EeWz9gls7Dd6Cypxqd8Rjbrug9gMEwYl+AhykJM/HHPaRZLqvdAdoYs/BNqOHymB5yZA
- Wr/GE7N0lHbtTDSe5NliCu0LbnTvWToznV9zvDYXfFSrClO552B0aSQ9CSXNgnrPhRLk
- wjXxQQjDxMom+YvKg4c5V8dToSrUe/U3IJPrAjpBV1UvJEoEnkxbLoE7oR+jYutun3kz
- Gc4a0FPKZWFkHNw6NmOpCzqe7QesbE2GapHejtr40FZdzahcQK7BPHykuG2pD6Jf//f7
- LPUA==
+ bh=TEBpuz0XMWgjRIY+0XwVB4PTikmtUzjKOyAXpCG39hs=;
+ b=hHHTqev82YETY7LpZ50wxVHf7f+QXvNrhq8SpzSlRkDupXU356BZh6ClxGHPzwXl7I
+ nKNVM28MFfN6NAvlFOgCHFYzA0xXOeIOEXYBVTU4/3zmU7Wxq/QZVgzjR83eqn+j6LNX
+ NgWvRZVV3bYD4Vzd6jhnQorXY37BFZMx0+SmY+UTbYq+ISNovHqtwjjv6icqW5g220V1
+ U6pVpXFTkGVYcv0qdRwvKjCqn/4NIIP57cHPd8lJ6EksS/uurdHis+XpoK/cLfCsqugn
+ YtvQ8dArSfi6m7WcjqzU7/4MqVHbThegfEbnZa6X9+FphA+/QMotj+/Pj5p8eXAoWkaA
+ akug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768546024; x=1769150824;
+ d=1e100.net; s=20230601; t=1768546026; x=1769150826;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=aFTCgao5yj0XCFm0nApcd5Uxw9YJxVQR9XnXrRYnOQ0=;
- b=psyTzBhcoQnDmVQ0qn4rB8aMiy1EURI5FcLBKhH+3hmMs10lXEIUfcbo1+sC5QxkqA
- sfo9L9cAdsRCUnWQE4wD76t8He/IzMJvPd+h/8XCAKwdaoED79d33+FnSNiARofY7bfm
- 3E6KELgBXCKnHdqUt8QFPuJ47ze10UG3/ka+dlf+mlpzfc4SKurP0nvPU7JJHdEzDhcM
- YA2JH/YoU20/inKFCAaTteyPvVUAcpztCxLyetLATnOPaT3/5MIvB+SbZAf2rY92imE7
- 4XLE22/CyTybTQDAiCDhJhZF0P6uwRBUIUu2gZtHQ4at5hXWMJbvf/WDdum4O2RiMJOt
- 1pXw==
-X-Gm-Message-State: AOJu0YxE53dxuvboytPfuzCeuFmZEBbowXW4nDFHB8e7axKzm8nIQhjk
- equyiowjQZEBTMzMX9nbFIKqBEftvLvIyxDvGoGhlXUTaFITPLCWB9lqvMp5q9pbzVngd5rJMZ8
- an3w4xlg=
-X-Gm-Gg: AY/fxX7fd2rnY9o1YJDDaZv6ojn3GnlFIAG/UUhnfm1Rm4Sn2omtjgp8HBCuek+Jhz/
- LcSKwHt3ub9kFOj42TQx5Yz2IXOD4OX1RUR4Z5Cr0x7oob3ABC/wq8C1FX5ywxPpOIUpIERcvz3
- 1CSGi9ilQX9BQ/bsyVOO+kBE19ricKe4roBGToHfqfjDOTCEQAu6anbuiko+H4bAGKvkqvk+Qn1
- meXr7K/MkksHi3/J/6dvX/w76myqbG9K1reDU7/1RZEg7bdKisUWK9BbZCRbJrAS4sdKzkoMtzq
- XJg/Frdq/2PFssZ0nz+omgrh3lxP8XtvUmGfV+rMqZO/cxOAQ/hKjkPVTxIW67cL9HHG80s4QHZ
- k1rjPQeP9VP6z7QyOy3tx8YCE/3Mf7HkqqWIswMb5pX5iscimkuek+w+oOHqtlOy3j+W2Tec6vW
- a3Cvp+sBX1FH/PsmyGQMIUw8K1glapmSU6dqVlyzNSvExWZP3oxg==
-X-Received: by 2002:a17:907:7b9b:b0:b87:173f:630 with SMTP id
- a640c23a62f3a-b8792f85a10mr178260866b.40.1768546023544; 
- Thu, 15 Jan 2026 22:47:03 -0800 (PST)
+ bh=TEBpuz0XMWgjRIY+0XwVB4PTikmtUzjKOyAXpCG39hs=;
+ b=X0s+KIQ5DtJG3eakFt7kmj106XudRzNZ8s8Mdo/9fGz46l4fp/4rU7/shGGze2Xu1B
+ v5uVE6g0LOI2jqYF8+T+pqhMRmwCFD8YKfTWow9d7s8Hutvb6hK20/2M7tNus0svUYXI
+ C4cY+TZSUSbIpOAHrvgCGBMpPgaa2aFGPUbCrkmzOTLkmnPIhSEvD4cZYRaMAlJGnHVu
+ lcin0c6wYwOyLf4ekjUDsjwRXS9jMdmZfbGE2Ha/4mLpJJGUqKuz8U58/Clxha8gwqK2
+ 4iheIoA75VozeO1AP36ONbsSWbvwN6vSQjEfoPPAVNntgdnsshFK+Z2jBK6crx63mgp0
+ 7lIA==
+X-Gm-Message-State: AOJu0YzTYMtVmmeB3OZPlf+pc2Ji5MCLiZl0K1v51HMA7s6qHPAm13qL
+ PXl1DU17PlfgwIpoqoxF2XRJBHBafwXeSva4KCXS7zUbAEdpHAqGwwdZfU3Paz1BvJw5waRO9Dy
+ fSS3f
+X-Gm-Gg: AY/fxX7jRmWFx7k1YVfMXYmkKyTayOkLK5e5Q7JvgP2rnh97cys5bEtx13h8gbqQGFh
+ U7UbDtlChZnn25fyNzet5nDmtxIGr1z31QA3P4os1bShP+h/Va2Nlcj9NUhW0zXl4Z1xGFmi/5Q
+ pxd3O/QeBgEYHst8P77Yy7R4hj5mxi/W81iqv5eMKg/9NU9jAK9QUcmXLAcl51kRNh13FWbPPoQ
+ ix+f/ftvodqS2Zq5dV9JZxGuWEsEXkSoNbsXBZYULp2t9xyB7faAEHySjz5Vhb1zxlFkHaZf8wP
+ G6VvC/C5pPSvJzNNQ/z3AtiYkqS/djsNpMELvo2FpQ5GBRsJcaUId6gmJAu7E72m5mrhg+zBvJk
+ icQb9n1pjWzIdQvgQlm0uFLcShgCFx6MIAE+r8hCLeaQaDh9U7xBb+DWaUukGlD1JYb1mXC8zfI
+ yxgt12UttqkX99Q40nMMaCLQeTcOhtNdx38rW3hFDJyHtvlJHvGA==
+X-Received: by 2002:a17:907:d0d:b0:b87:c13:f334 with SMTP id
+ a640c23a62f3a-b8796b85d4dmr136382866b.53.1768546026048; 
+ Thu, 15 Jan 2026 22:47:06 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a640c23a62f3a-b879ae74639sm97172866b.9.2026.01.15.22.47.01
+ a640c23a62f3a-b879ae74639sm97172866b.9.2026.01.15.22.47.03
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 15 Jan 2026 22:47:03 -0800 (PST)
+ Thu, 15 Jan 2026 22:47:05 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
- Nithin Dabilpuram <ndabilpuram@marvell.com>,
- Kiran Kumar K <kirankumark@marvell.com>,
- Sunil Kumar Kori <skori@marvell.com>, Satha Rao <skoteshwar@marvell.com>,
- Harman Kalra <hkalra@marvell.com>
-Subject: [PATCH v3 5/6] common/cnxk: fix buffer overflow in reassembly SA setup
-Date: Thu, 15 Jan 2026 22:46:26 -0800
-Message-ID: <20260116064646.224254-6-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Dariusz Sosnowski <dsosnowski@nvidia.com>,
+ Viacheslav Ovsiienko <viacheslavo@nvidia.com>,
+ Bing Zhao <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>,
+ Suanming Mou <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>
+Subject: [PATCH v3 6/6] net/mlx5/hws: fix LTO false positive stringop-overflow
+ warning
+Date: Thu, 15 Jan 2026 22:46:27 -0800
+Message-ID: <20260116064646.224254-7-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260116064646.224254-1-stephen@networkplumber.org>
 References: <20251023194237.197681-1-stephen@networkplumber.org>
@@ -85,44 +86,65 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The nix_inl_reass_inb_sa_tbl_setup() function initializes inb_sa_sz
-to 1 byte, then allocates a buffer of that size. However, the buffer
-is subsequently passed to roc_ow_reass_inb_sa_init() which performs:
+When compiling with LTO (Link Time Optimization) enabled, GCC's
+interprocedural analysis produces false positive warnings about
+potential buffer overflow in mlx5dr_action_prepare_decap_l3_data():
 
-    memset(sa, 0, sizeof(struct roc_ow_ipsec_inb_sa));
+  In function 'mlx5dr_action_prepare_decap_l3_data',
+      inlined from 'mlx5dr_action_handle_tunnel_l3_to_l2',
+      inlined from 'mlx5dr_action_create_reformat_hws':
+  warning: writing 4 bytes into a region of size 0 [-Wstringop-overflow=]
+    memcpy(dst, e_src, MLX5DR_ACTION_INLINE_DATA_SIZE);
+  note: at offset [140, 524248] into destination object 'mh_data' of size 64
 
-This writes 808 bytes into a 1-byte allocation, causing heap corruption.
+With LTO, the function chain is fully inlined, giving GCC visibility
+into the 64-byte stack buffer 'mh_data'. However, GCC's static analysis
+cannot determine that num_of_actions is constrained to either
+DECAP_L3_NUM_ACTIONS_W_NO_VLAN (6) or DECAP_L3_NUM_ACTIONS_W_VLAN (7)
+by the callers. It assumes worst-case bounds that greatly exceed the
+buffer size.
 
-This bug was detected by GCC's -Wstringop-overflow warning when
-building with LTO, which enables cross-compilation-unit inlining
-and allows the compiler to track the allocation size through to
-the memset call.
+Fix this by adding an explicit bounds check at function entry. The
+valid values for num_of_actions are 6 (no VLAN) or 7 (with VLAN),
+which produce maximum buffer usage well under 64 bytes:
+  - offset 12 + (num_of_actions-3) * 8 + 2 = max 46 bytes for 7 actions
 
-Fix by initializing inb_sa_sz to ROC_NIX_INL_OW_IPSEC_INB_SA_SZ,
-which is the standard macro used elsewhere in this file for OW
-(Sobek) inbound SA allocations.
+This provides GCC with the proof it needs that subsequent memcpy
+operations are safe.
 
-Fixes: 75e073242acb ("common/cnxk: support reassembly with inline IPsec")
-Cc: stable@dpdk.org
+This is not a data path function - it executes only during flow rule
+creation, so the additional check has no performance impact.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/common/cnxk/roc_nix_inl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/mlx5/hws/mlx5dr_action.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/drivers/common/cnxk/roc_nix_inl.c b/drivers/common/cnxk/roc_nix_inl.c
-index f8be98efd5..1766f68c17 100644
---- a/drivers/common/cnxk/roc_nix_inl.c
-+++ b/drivers/common/cnxk/roc_nix_inl.c
-@@ -583,7 +583,7 @@ nix_inl_reass_inb_sa_tbl_setup(struct roc_nix *roc_nix)
- 	uint64_t sa_idx_w, lenm1_max;
- 	uint64_t res_addr_offset = 0;
- 	uint64_t def_cptq = 0;
--	size_t inb_sa_sz = 1;
-+	size_t inb_sa_sz = ROC_NIX_INL_OW_IPSEC_INB_SA_SZ;
- 	uint8_t profile_id;
- 	struct mbox *mbox;
- 	void *sa;
+diff --git a/drivers/net/mlx5/hws/mlx5dr_action.c b/drivers/net/mlx5/hws/mlx5dr_action.c
+index b35bf07c3c..3b12506577 100644
+--- a/drivers/net/mlx5/hws/mlx5dr_action.c
++++ b/drivers/net/mlx5/hws/mlx5dr_action.c
+@@ -3620,6 +3620,20 @@ mlx5dr_action_prepare_decap_l3_data(uint8_t *src, uint8_t *dst,
+ 	uint8_t *e_src;
+ 	int i;
+ 
++	/*
++	 * Bounds check to help GCC LTO static analysis.
++	 *
++	 * When LTO inlines this into mlx5dr_action_handle_tunnel_l3_to_l2(),
++	 * GCC sees the 64-byte mh_data buffer but cannot prove num_of_actions
++	 * is bounded, causing false -Wstringop-overflow warnings.
++	 *
++	 * Valid num_of_actions values are DECAP_L3_NUM_ACTIONS_W_NO_VLAN (6)
++	 * or DECAP_L3_NUM_ACTIONS_W_VLAN (7). This check gives GCC the proof
++	 * it needs that the loop iterations stay within buffer bounds.
++	 */
++	if (unlikely(num_of_actions > DECAP_L3_NUM_ACTIONS_W_VLAN))
++		return;
++
+ 	/* num_of_actions = remove l3l2 + 4/5 inserts + remove extra 2 bytes
+ 	 * copy from end of src to the start of dst.
+ 	 * move to the end, 2 is the leftover from 14B or 18B
 -- 
 2.51.0
 
