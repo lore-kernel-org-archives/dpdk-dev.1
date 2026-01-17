@@ -2,64 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 103B9C98338
-	for <dpdk-dev@archiver.kernel.org>; Sat, 17 Jan 2026 21:07:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 128E6C9832B
+	for <dpdk-dev@archiver.kernel.org>; Sat, 17 Jan 2026 21:21:20 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D09D342DE9;
-	Sat, 17 Jan 2026 22:07:29 +0100 (CET)
-Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com
- [209.85.221.177])
- by mails.dpdk.org (Postfix) with ESMTP id B76854025E
- for <dev@dpdk.org>; Sat, 17 Jan 2026 22:07:28 +0100 (CET)
-Received: by mail-vk1-f177.google.com with SMTP id
- 71dfb90a1353d-56367b39e3eso2939448e0c.1
- for <dev@dpdk.org>; Sat, 17 Jan 2026 13:07:28 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 06ED342EAA;
+	Sat, 17 Jan 2026 22:21:20 +0100 (CET)
+Received: from mail-dl1-f53.google.com (mail-dl1-f53.google.com [74.125.82.53])
+ by mails.dpdk.org (Postfix) with ESMTP id 5F3754025E
+ for <dev@dpdk.org>; Sat, 17 Jan 2026 22:21:18 +0100 (CET)
+Received: by mail-dl1-f53.google.com with SMTP id
+ a92af1059eb24-121a0bcd376so761634c88.0
+ for <dev@dpdk.org>; Sat, 17 Jan 2026 13:21:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1768684048; x=1769288848; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=Vh0fKLeNv4Y12gHCejCvgEuhuEhHGCF3OjAIZA7+ZS0=;
- b=lZqoRZpcUSU0it2qSiT+NIvASqsWSNykMik2iukXjUH2t7+eTl1hGL65gUxwpNvDIM
- x7Mdy+j5SAIqQci7dQ58IvP/HRyNAYNbWeleY2Bb0wjJl1kElYq1TaEL3jqAbqoFOM5J
- /hApV4OfxIEVrSn2oicu3vE4RUefhN/wjgNatDofyivMKbqorwGGwMLJ082NmjQnJVnt
- Kt9AJwDWaDvqJsodzuBIbiBF40Rd3ns59F7qlPwPkf2Pr2BNIEyG4zxtk680/ALwxvgl
- Y0vNJCXbtOmISo8KLdVIevUbpTkFkEKydAyyEq0KqOzf9NXGrvejkqyNP1jL1RDwAw3n
- xOWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768684048; x=1769288848;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ d=gmail.com; s=20230601; t=1768684877; x=1769289677; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=Vh0fKLeNv4Y12gHCejCvgEuhuEhHGCF3OjAIZA7+ZS0=;
- b=SyEHbrI1BMPR2DQ3vXPO5aeEJBRKHyxkxg6zfTv5n6fAZ1vxThRBCAUx83R1irI+QZ
- fVUKRkhMv+9MRuNFEvOdsarrhl3Ch8nC24DVf7YXQ1R4RrFQy0diuV3Hkm0ZlpwOlaTp
- r/pHyMKqcv1W9mg8CkC77BbnMcVcQwI9Ybu8XU5AOBzssbv/hans0q6yBGaIPcHAqNyo
- loJ6qk5X913k230XNvgtfeNfx+sOMsf73QnukFl1KTjMRTrXvrrG6xETCTht/NKg4IF/
- 0PZOk6Ga/HfsRLu9D7FjDJDV4EV116aWYw9RnkqZuliFsN6eUkb66TepqY94IuFNu9L2
- piYg==
-X-Gm-Message-State: AOJu0Ywus0af1ATZmQQxMfS/Li6QkbkM/wHwSf0hC7SeRA7Mg7EEhYU7
- lS+GSGyvm2J0nZTo38RnyUCf/ZioZ4OnYc6Sia0gmgguJ58Syh1gtIChIqsbGca5S8kJvGOfsht
- PY9i+vbAci6QyqVnloyOHF5SMThNJ13EbFZpbeAs=
-X-Gm-Gg: AY/fxX72nQ8fGqn8On8KvZD8JzwsuU3575NaJY51WmeZ+R5Jv24zW+l7hEgPqIYoHK7
- OYe/eI2xE++irDkaeWvH67IFGryF6thEGiaIg9R/FIJhdsngZAXAP8g9em3yyMeLfvVl38+EO2+
- aZ0FJlXIIPAQRjmGqsGZa3prSf3DOHqBLZckd625Ar3CxOQsdFvqRmxkDZSLJ5wecmS5mbbIt40
- mv0L6+dj66MWPBDyAvUy2fkz9SkgG+Uv2B49An/VgwQlXy0ndvI/nIGWDwfjASzegWPNwU=
-X-Received: by 2002:a05:6122:1a8f:b0:563:74af:9cb1 with SMTP id
- 71dfb90a1353d-563aa8be3b4mr2409198e0c.2.1768684047704; Sat, 17 Jan 2026
- 13:07:27 -0800 (PST)
+ bh=yQZRAffUv9Sh3LF0K+TnkUOjPvYKMxA9+UgLkHSb4+M=;
+ b=lmPN66AWeJ+ne6TgfQmGZhnr4t4msYU8keKJ3D4ySsiwsS+RyrbJXZQD4LxGy7LcfV
+ RcYTMUUBDA9IWK5XWWc6zE/skocJ3kQvR+t6XBSRBA4AGJRdMZAPYSo+jCrJVLt38qnn
+ Eidr/DxnDfsIv1M+Ax2ty+EVMuOkI3Up36yMGXHHA1+cCTApPMVr9HKidojBck8S/sCO
+ ptpfCifvyj3SwkULE+pbJt2VwLZToODP5EgWTYFuMWMWVQ08SrW9xewTLayUNrG2nwZi
+ AdjeobdvAQZcyMlXEtJ2DyDRKcrR8bGiwgiuAoI+dYipQ+gSI9ZeIFwqyoEpDmbSMHL8
+ B9Fg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1768684877; x=1769289677;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=yQZRAffUv9Sh3LF0K+TnkUOjPvYKMxA9+UgLkHSb4+M=;
+ b=B84TIEP+9zA/nTKilYsci3zZU1JD/6Fh9oEiulUscLLMOCguwE9KAv3csZKSk/3VW1
+ S1o9xznFWK6ovQkFo7XpHqQwTIkM5oeYtkpnMHrWZjSrCakr+9I7bzH/nyQV0ZO5OZCS
+ QWaTTAsOgyc2r3n2YXHzOcdoob4syVMJMp5gG3ht/ZkkU2DzAIx5/uaZMqSd55X/Dk5N
+ 0H+vX4lh3CvbnpcXZ+ilkdLXatev21h9d4BtIgZCCqLwI0ye4H91K4TdsAQU1RjjzvFs
+ 44BIC1SGdSG0nAHgSj+3xkD+uuqkN6aYXkZBRwlzo4T+pP4a0UTxHtvK6xFuwn5eQTzv
+ rqOA==
+X-Gm-Message-State: AOJu0YwySyfl/EvX8mMOxgVmqGgDkCncYi+IxBXwRs++nfmAunuLHvAm
+ xV0XUUDrrIZjN1z7dPj6znzMtyTAYpuoo3hxYUy6McLmyiSC5fuUFg0KwP9Zyw==
+X-Gm-Gg: AY/fxX7hJWTvdTKgC+liuyPbay424yAZ9yACKKvHVWaEmdLJxipaon4/AHadrg07cjT
+ CK25wN/Wo0QefOhRlvoRvusTz4WrRCWRknuy/W5dCH4NldeuUcjq+KMf7kVlPpyKwwOg+IDmVt1
+ zf8Js2Yt6/JDk5KuDwmraTBEZBGcY5D4cFKgv5tBPhAwAzGmVqrNiN0wyuhsGy4Ve/IHu1grM2T
+ 65UTS5LGUNXxUF+oJ/xGf6uuw0jVmKPmcQs6dTbnckcrvFjp7Sx2av03SDWb93se+jwlAt5KGdP
+ laArc32HvOFqqPFhHKeO9P5cyjU0rfPSmTFCFDTeanhIZehedYS18KzzeZFiGrYJ4DuO442nlZS
+ lVE5EqzcQWw6HpKyKUIRHJz7TnUk6WCpnfZK/wqitPY3RjmyhwZGXSCua/LURe6yxiuftJ7cdKn
+ 8BXUv6Meukm1DdtGNIMekiBw==
+X-Received: by 2002:a05:7022:f91:b0:119:e56b:c753 with SMTP id
+ a92af1059eb24-1244a73e230mr5528454c88.24.1768684877060; 
+ Sat, 17 Jan 2026 13:21:17 -0800 (PST)
+Received: from mac.com ([136.24.82.250]) by smtp.gmail.com with ESMTPSA id
+ a92af1059eb24-1244af10736sm8480076c88.14.2026.01.17.13.21.16
+ (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+ Sat, 17 Jan 2026 13:21:16 -0800 (PST)
+From: scott.k.mitch1@gmail.com
+To: dev@dpdk.org
+Cc: mb@smartsharesystems.com, stephen@networkplumber.org,
+ Scott Mitchell <scott.k.mitch1@gmail.com>
+Subject: [PATCH v15 0/2] net: optimize __rte_raw_cksum
+Date: Sat, 17 Jan 2026 13:21:12 -0800
+Message-Id: <20260117212114.10466-1-scott.k.mitch1@gmail.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+In-Reply-To: <20260112120411.27314-1-scott.k.mitch1@gmail.com>
+References: <20260112120411.27314-1-scott.k.mitch1@gmail.com>
 MIME-Version: 1.0
-References: <20260114215648.47820-1-scott.k.mitch1@gmail.com>
- <20260116231907.13895-1-scott.k.mitch1@gmail.com>
- <20260116184428.49e45dd4@phoenix.local>
-In-Reply-To: <20260116184428.49e45dd4@phoenix.local>
-From: Scott Mitchell <scott.k.mitch1@gmail.com>
-Date: Sat, 17 Jan 2026 13:07:16 -0800
-X-Gm-Features: AZwV_Qh_8SvDtQP4Om_te-87HVwc3aAWiqyMxwYuKHcAt3hFUDdJGUHaVj7YGWQ
-Message-ID: <CAFn2buDBCOLaues6J5Gx+SZ4CPgcGLzbbv0qSqpHoyOyJd07dg@mail.gmail.com>
-Subject: Re: [PATCH v8] eal: RTE_PTR_ADD/SUB char* for compiler optimizations
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: dev@dpdk.org, mb@smartsharesystems.com, bruce.richardson@intel.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -73,15 +78,41 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> Looks good to me and not too complex.
->
-> AI code review had some additional comments.
+From: Scott Mitchell <scott.k.mitch1@gmail.com>
 
-I fixed the import order, the build failure (due to recent changes in
-REGISTER_FAST_TEST), and submitted v9. Please let me know if you feel
-any of the other items are blocking and must be resolved. I held off
-on release notes for now as I would also like to get
-https://patches.dpdk.org/project/dpdk/patch/20260112120411.27314-3-scott.k.mitch1@gmail.com/
-merged which makes unaligned typedefs safe for general use and direct
-pointer arithmetic (less risk of PTR ADD/SUB macros confusing
-compilers as Morten also found).
+This series optimizes __rte_raw_cksum by replacing memcpy with direct
+pointer access, enabling compiler vectorization on both GCC and Clang.
+
+Patch 1 adds __rte_may_alias to unaligned typedefs to prevent a GCC
+strict-aliasing bug where struct initialization is incorrectly elided.
+
+Patch 2 uses the improved unaligned_uint16_t type in __rte_raw_cksum
+to enable compiler optimizations while maintaining correctness across
+all architectures (including strict-alignment platforms).
+
+Performance results show significant improvements (40% for small buffers,
+up to 8x for larger buffers) on Intel Xeon with Clang 18.1.
+
+Changes in v15:
+- Use NOHUGE_OK and ASAN_OK constants in REGISTER_FAST_TEST
+
+Changes in v14:
+- Split into two patches: EAL typedef fix and checksum optimization
+- Use unaligned_uint16_t directly instead of wrapper struct
+- Added __rte_may_alias to unaligned typedefs to prevent GCC bug
+
+Scott Mitchell (2):
+  eal: add __rte_may_alias to unaligned typedefs
+  net: __rte_raw_cksum pointers enable compiler optimizations
+
+ app/test/meson.build         |   1 +
+ app/test/test_cksum_fuzz.c   | 240 +++++++++++++++++++++++++++++++++++
+ app/test/test_cksum_perf.c   |   2 +-
+ lib/eal/include/rte_common.h |  34 ++---
+ lib/net/rte_cksum.h          |  14 +-
+ 5 files changed, 266 insertions(+), 25 deletions(-)
+ create mode 100644 app/test/test_cksum_fuzz.c
+
+--
+2.39.5 (Apple Git-154)
+
