@@ -2,67 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31C12C9830C
-	for <dpdk-dev@archiver.kernel.org>; Sun, 18 Jan 2026 19:14:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F03FBC9832F
+	for <dpdk-dev@archiver.kernel.org>; Sun, 18 Jan 2026 19:14:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0F4B540E01;
-	Sun, 18 Jan 2026 20:13:41 +0100 (CET)
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com
- [209.85.208.50]) by mails.dpdk.org (Postfix) with ESMTP id 4EDA040A67
- for <dev@dpdk.org>; Sun, 18 Jan 2026 20:13:39 +0100 (CET)
-Received: by mail-ed1-f50.google.com with SMTP id
- 4fb4d7f45d1cf-64b9b0b4d5dso7548545a12.1
- for <dev@dpdk.org>; Sun, 18 Jan 2026 11:13:39 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 2C10740E0A;
+	Sun, 18 Jan 2026 20:13:42 +0100 (CET)
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com
+ [209.85.218.47]) by mails.dpdk.org (Postfix) with ESMTP id E288340DD8
+ for <dev@dpdk.org>; Sun, 18 Jan 2026 20:13:40 +0100 (CET)
+Received: by mail-ej1-f47.google.com with SMTP id
+ a640c23a62f3a-b8768225837so497614566b.2
+ for <dev@dpdk.org>; Sun, 18 Jan 2026 11:13:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768763619;
- x=1769368419; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768763620;
+ x=1769368420; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=hs15bjqNon/Lc8U3hmFsbkGTHz3Jd+4+DWWgtlpgMrA=;
- b=qpPnt2nk9SW5OMiYmRlUCYXgpSKq5pFF+QwSTUUbUHgA2TEbp0af7+m7Bnt+GO1M22
- Drz0xruscqpWaPcYyRo0EVsZ/jHz/0SVZLn7/I6mnHj6T19LNQOZPCjNagb2NG1B3WXP
- Za5TckdnhiidWp4RHIo40LGSrx3UdARLDZqRu7THKEa2KSzzhux2m6mgj2KsWugAK/O8
- RoviI4zq6KruzGZ1rFM946kXQzhb5m1EOQrOQnMynd9B9Ho2aqmMupMTDdzn9rwXRNv6
- rCKgkP7ysfhWKRX746CsNUXYrRGPIkjC9BiBGw0+/itG0cveX/WOup1wQUTq32QTZgg0
- AFnw==
+ bh=Bu12+8AJls07NbcaACdFjX2Gxn/91E9ijgO3U0VVin8=;
+ b=VPv8/+3gRHlEEbkDxz/k1crhcxvrUUxDaPXsXw32NX4axiF8fWBXxPWg6NVIOfne/M
+ wrN877z7gD8ksm0XEJIMutTjEZrUJKGheavsYBfortkZfBG6tscCDDvMeTn/7gE4AnNz
+ 63tBQELae7h8dN1bfu7pWLXI63oSUTosfuvO+mtLolcqVdHLoB8iQ5e2RMdlOv6ZlJtb
+ mGUQt8vDJCmnchQWw8prv4fZMmQGUPvAGtuJZ1VO4Tb5RP16okFBUlFyAE+GchTBlrC9
+ D6EU34CFYKJBvgf1UFgy1pM1bhRFrGO8stLCovuBwWg9WiwGaxcoj0iMzCkM3swKCiJR
+ VnAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768763619; x=1769368419;
+ d=1e100.net; s=20230601; t=1768763620; x=1769368420;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=hs15bjqNon/Lc8U3hmFsbkGTHz3Jd+4+DWWgtlpgMrA=;
- b=KXSiZhiV13r2FoTCNKeCPkP8siBLUYk7DbLtK8RXmQkqWMWp1AziwYFg57/TosOlhv
- S5hSiNaIKhYG1yEhC1XLX5pDbi/GB1QUd5zLUcubqhAN1b2z6thw4Hxc4yEkhV/wS+e4
- 5dpEQK4CzsPPjWoEvA0PQR5l5WSBFC894nYugW+z54mMdQorXypZmoiPYTcbGlGflV1v
- pnw2jLW2SMy1bQK1hlh39HG3zE/J+rt1hZxtIBtQwIgCMBtJqHAQiqYujbwyTkmG6Yrc
- z9+JueFHqc9CJ5Jr4CNzdUEmlEyN9ZYe09XxqRPHMZV3XNXANCwuVkE6fiF+T8K75u+8
- 5f6g==
-X-Gm-Message-State: AOJu0YzxzBLJrWJHvPnqRKHo4+0olULPK7CoMpOa3N4GxdT5ec0z3bAU
- 9mHdo8FK8+G6U1U7YqAwTRnHjRmJxkkaUWrKuIIpAuWPHh1iUQShHOMaJone/0madl6yB3Pxcsq
- bW9AN
-X-Gm-Gg: AY/fxX6n/69Hj+Pwxb20zn/yBHA9lg0kiM32HJLWnrzG20VzXEhbhBKMzTirDY2S/A5
- BCJxa95noYThskcOpWGCBLasUBHcktrVhTW+F417BrgoL0u5ewJvD6dcGjr1tKN0amYSipP6+uC
- d+aLjOxB7oDXBRU5A+Xoa+GcCBV55vzRfU7j1SH687dI/fUOi2PffXKcaLnfqbVEv3cOYa0+pXi
- MK5CjYJro/YWC+GktGbbNYshJXaeR/qVnJ0HBuaa5W3q3nkY0k5S0wK2XVygIMqA9YErqKJPFlD
- EC4g7GFCHPJD/NOUKuIpcfnp0AQhD8ILW2jAqVmhednOSZ9SJ6FfCj7lwApdUO+Uk3vtALjYxvK
- WET6vok2WAQxi1MFRlw8ds1SMhtSeEqyAiWSXPu1rGGOHpoRM5EEz+Jt5JRvtxRqDADhXCmEpXq
- ka7i9UaXAM4ugNyEi6JgPaXH+0JOTg9ihx455Eu1N5/X+A4dmBVYfe3Yi+xQMd
-X-Received: by 2002:a17:906:c147:b0:b87:2c88:ce40 with SMTP id
- a640c23a62f3a-b8796a55942mr823702266b.27.1768763618701; 
- Sun, 18 Jan 2026 11:13:38 -0800 (PST)
+ bh=Bu12+8AJls07NbcaACdFjX2Gxn/91E9ijgO3U0VVin8=;
+ b=qLaQ4dd8PojBtJ22ad316ym0mE+SY8M3utCGaoONl+co978SnSY5Fny6kUarVDySms
+ 4hQQYgCUNLWuiAeXoXEgKTMIPfoTYfbrmkEYKi0UNEi3h0yhw0AB7DzpJCoewK3YPuS3
+ oyIHXGVk9+Aivg8Mx8EtLwdcEFHZ/FEkQP+g2492bSn6D68jxrv/+AdJe+yY4DmG2axM
+ yOb23Jz+7It4KcZxd8jD4fLg7lmRgf2vbtajFbJ3pSz8KAYMKcKxkmG/WG7pzUdUsUrT
+ n0mTWdGvb26aeRf0IlmzrQ8aRYeQyCvQp26ffeMcNeFW3NeP4nYE/kjMaRjTvDkH0JR/
+ LmhQ==
+X-Gm-Message-State: AOJu0YzQ3DeVAhsBSL1S6OViB97zxM9Jze9hBH50g/OZE4+uW22V1AnW
+ 5nO1ru1d/dXkK1wOP0zL+7rKSgcrzm+b4PDSPefzlhYaciODN5iD+ONLcd1lf2DnDZLg/UW9VR4
+ Leuwp
+X-Gm-Gg: AY/fxX5cehaFEY8qftaXMXFO+airH1CjmfuhQjnu+TfGfosRbF235WSXL8k/tp/reuy
+ 4967Z25yyB9r4TyUPHfPSLMSRVnboWHdVpWMw3APM0bcrW2/4N1/63adSJOUCczfQMOlqqSkgqz
+ F4kwZFjb8fR5H44YXeX9NDozEmHZDnMl+/RynR+e8TzH/G94hsMNueRB7uepRNP63WdxxOci8G1
+ cnqb/W4JsrsRoeT0BixWr/F44bcpL8/VCmSNWrfLLWzIN+Tt9vG5ot0hmJTK8cPgOYPY9CKXUL7
+ jfEidhFlkunJJ+ZrKM8+O6SkeXDiWCYtN89oPQwjT/PhfjrQCSfEsMsVCfZAPP1DYZB3xYoDxNN
+ bn4cshLECBGfUu5788kKlREPnkhEF9QMyXL22TfUAUirbKUC1HwhQd4IvqtydfNMakmElY2+2jv
+ nbstf8mhFFP43JtTOFZbuh0XmKhTMeh277t8Fesf2K2b9hu/VEWw==
+X-Received: by 2002:a17:906:4793:b0:b87:1fb:8369 with SMTP id
+ a640c23a62f3a-b879324c8aamr779174466b.57.1768763620412; 
+ Sun, 18 Jan 2026 11:13:40 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a640c23a62f3a-b87959c9f8dsm886287166b.36.2026.01.18.11.13.37
+ a640c23a62f3a-b87959c9f8dsm886287166b.36.2026.01.18.11.13.38
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 18 Jan 2026 11:13:38 -0800 (PST)
+ Sun, 18 Jan 2026 11:13:40 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
  Nandini Persad <nandinipersad361@gmail.com>
-Subject: [PATCH v5 06/54] doc: correct errors in trace library guide
-Date: Sun, 18 Jan 2026 11:10:09 -0800
-Message-ID: <20260118191323.241013-7-stephen@networkplumber.org>
+Subject: [PATCH v5 07/54] doc: correct errors in stack library guide
+Date: Sun, 18 Jan 2026 11:10:10 -0800
+Message-ID: <20260118191323.241013-8-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260118191323.241013-1-stephen@networkplumber.org>
 References: <20240513155911.31872-1-nandinipersad361@gmail.com>
@@ -82,245 +82,113 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Changes:
-- Change broken sentence in implementation details: "As DPDK trace library
-  is designed..." was a sentence fragment
-- Change tense inconsistency: "will be useful" -> "is useful",
-  "will be allocated" -> "is allocated",
-  "will be discarded" -> "are discarded"
-- Change grammatical parallelism: "or use the API" -> "or by using the API"
-- Change inconsistent capitalization in section headers: "Tracepoint" ->
-  "tracepoint" to match body text usage throughout
-- Change tool name consistency: "Tracecompass" -> "Trace Compass"
-  (official name, two words)
-- Change awkward phrasing: "one of a CTF trace's streams" ->
-  "one of the streams in a CTF trace"
-- Change trace header description for parallelism: "48 bits of timestamp
-  and 16 bits event ID" -> "a 48-bit timestamp and a 16-bit event ID"
-- Add missing article: "to trace library" -> "to the trace library"
-- Remove incorrect article:
-  "the ``my_tracepoint.h``" -> "``my_tracepoint.h``"
-- Add function call parentheses: rte_eal_init -> rte_eal_init(),
-  rte_thread_register -> rte_thread_register()
-- Change ambiguous pronoun: "It can be overridden" -> "This location can
-  be overridden"
-- Change line wrap for readability in features list
+Change several errors in the stack library documentation:
+
+- Change grammar: "These function are" -> "These functions are"
+- Change grammar: "incorrect change" -> "incorrectly change"
+- Change RST section hierarchy: "Implementation" was marked as a
+  subsection (~~~~) but contained sections (----); corrected so
+  Implementation is a section and Lock-based/Lock-free stack are
+  subsections beneath it
+- Change inconsistent header capitalization: "Lock-based Stack" and
+  "Lock-free Stack" -> lowercase "stack" to match other DPDK docs
+- Change awkward wording: "this algorithm stack uses" -> "this algorithm
+  uses"
+- Change inconsistent underline lengths in RST headers
+- Add code formatting to function name: rte_stack_create() with
+  backticks and parentheses
+- Change hyphenation: "multi-threading safe" -> "multi-thread safe"
+  (matches line 37 usage)
 
 Signed-off-by: Nandini Persad <nandinipersad361@gmail.com>
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- doc/guides/prog_guide/trace_lib.rst | 80 ++++++++++++++---------------
- 1 file changed, 40 insertions(+), 40 deletions(-)
+ doc/guides/prog_guide/stack_lib.rst | 32 ++++++++++++++---------------
+ 1 file changed, 16 insertions(+), 16 deletions(-)
 
-diff --git a/doc/guides/prog_guide/trace_lib.rst b/doc/guides/prog_guide/trace_lib.rst
-index 829a061074..33b6232ce3 100644
---- a/doc/guides/prog_guide/trace_lib.rst
-+++ b/doc/guides/prog_guide/trace_lib.rst
-@@ -14,7 +14,7 @@ When recording, specific instrumentation points placed in the software source
- code generate events that are saved on a giant tape: a trace file.
- The trace file then later can be opened in *trace viewers* to visualize and
- analyze the trace events with timestamps and multi-core views.
--This mechanism will be useful for resolving a wide range of problems such as
-+This mechanism is useful for resolving a wide range of problems such as
- multi-core synchronization issues, latency measurements, and finding
- post analysis information like CPU idle time, etc., that would otherwise be
- extremely challenging to gather.
-@@ -33,8 +33,8 @@ tracing.
- DPDK tracing library features
- -----------------------------
+diff --git a/doc/guides/prog_guide/stack_lib.rst b/doc/guides/prog_guide/stack_lib.rst
+index 975d3ad796..1ca9d73bc0 100644
+--- a/doc/guides/prog_guide/stack_lib.rst
++++ b/doc/guides/prog_guide/stack_lib.rst
+@@ -13,8 +13,8 @@ The stack library provides the following basic operations:
+    user-specified socket, with either standard (lock-based) or lock-free
+    behavior.
  
--- Provides a framework to add tracepoints in control and fast path APIs with minimum
--  impact on performance.
-+- Provides a framework to add tracepoints in control and fast path APIs with
-+  minimal impact on performance.
-   Typical trace overhead is ~20 cycles and instrumentation overhead is 1 cycle.
- - Enable and disable tracepoints at runtime.
- - Save the trace buffer to the filesystem at any point in time.
-@@ -47,8 +47,8 @@ DPDK tracing library features
-   For detailed information, refer to
-   `Common Trace Format <https://diamon.org/ctf/>`_.
+-*  Push and pop a burst of one or more stack objects (pointers). These function
+-   are multi-threading safe.
++*  Push and pop a burst of one or more stack objects (pointers). These functions
++   are multi-thread safe.
  
--How to add a Tracepoint
--------------------------
-+How to add a tracepoint
-+-----------------------
+ *  Free a previously created stack.
  
- This section steps you through the details of adding a simple tracepoint.
+@@ -23,15 +23,15 @@ The stack library provides the following basic operations:
+ *  Query a stack's current depth and number of free entries.
  
-@@ -91,7 +91,7 @@ The consumer of this tracepoint can invoke
- ``app_trace_string(const char *str)`` to emit the trace event to the trace
- buffer.
+ Implementation
+-~~~~~~~~~~~~~~
++--------------
  
--Register the Tracepoint
-+Register the tracepoint
- ~~~~~~~~~~~~~~~~~~~~~~~
+ The library supports two types of stacks: standard (lock-based) and lock-free.
+ Both types use the same set of interfaces, but their implementations differ.
  
- .. code-block:: c
-@@ -103,7 +103,7 @@ Register the Tracepoint
-  RTE_TRACE_POINT_REGISTER(app_trace_string, app.trace.string)
+ .. _Stack_Library_Std_Stack:
  
- The above code snippet registers the ``app_trace_string`` tracepoint to
--trace library. Here, the ``my_tracepoint.h`` is the header file
-+the trace library. Here, ``my_tracepoint.h`` is the header file
- that the user created in the first step :ref:`create_tracepoint_header_file`.
+-Lock-based Stack
+-----------------
++Lock-based stack
++~~~~~~~~~~~~~~~~
  
- The second argument for the ``RTE_TRACE_POINT_REGISTER`` is the name for the
-@@ -129,7 +129,7 @@ convention.
-    For example, ``__app_trace_string`` will be the exported symbol in the
-    above example.
+ The lock-based stack consists of a contiguous array of pointers, a current
+ index, and a spinlock. Accesses to the stack are made multi-thread safe by the
+@@ -39,13 +39,13 @@ spinlock.
  
--Fast Path Tracepoint
-+Fast path tracepoint
- --------------------
+ .. _Stack_Library_LF_Stack:
  
- In order to avoid performance impact in fast path code, the library introduced
-@@ -139,7 +139,7 @@ the user must use ``RTE_TRACE_POINT_FP`` instead of ``RTE_TRACE_POINT``.
- ``RTE_TRACE_POINT_FP`` is compiled out by default and can be enabled using
- the ``enable_trace_fp`` option for meson build.
+-Lock-free Stack
+-------------------
++Lock-free stack
++~~~~~~~~~~~~~~~
  
--Event Record Mode
-+Event record mode
- -----------------
+ The lock-free stack consists of a linked list of elements, each containing a
+ data pointer and a next pointer, and an atomic stack depth counter. The
+-lock-free property means that multiple threads can push and pop simultaneously,
+-and one thread being preempted/delayed in a push or pop operation will not
++lock-free property means that multiple threads can push and pop simultaneously.
++One thread being preempted/delayed in a push or pop operation will not
+ impede the forward progress of any other thread.
  
- Event record mode is an attribute of trace buffers. The trace library exposes the
-@@ -149,26 +149,26 @@ Overwrite
-    When the trace buffer is full, new trace events overwrite the existing
-    captured events in the trace buffer.
- Discard
--   When the trace buffer is full, new trace events will be discarded.
-+   When the trace buffer is full, new trace events are discarded.
+ The lock-free push operation enqueues a linked list of pointers by pointing the
+@@ -65,15 +65,15 @@ allocated before stack pushes and freed after stack pops. Since the stack has a
+ fixed maximum depth, these elements do not need to be dynamically created.
  
- The mode can be configured either using the EAL command line parameter
--``--trace-mode`` on application boot up or use the ``rte_trace_mode_set()`` API to
--configure at runtime.
-+``--trace-mode`` on application boot up or by using the ``rte_trace_mode_set()``
-+API at runtime.
+ The lock-free behavior is selected by passing the *RTE_STACK_F_LF* flag to
+-rte_stack_create().
++``rte_stack_create()``.
  
--Trace File Location
-+Trace file location
- -------------------
+-Preventing the ABA Problem
++Preventing the ABA problem
+ ^^^^^^^^^^^^^^^^^^^^^^^^^^
  
- On ``rte_trace_save()`` or ``rte_eal_cleanup()`` invocation, the library saves
- the trace buffers to the filesystem. By default, the trace files are stored in
- ``$HOME/dpdk-traces/rte-yyyy-mm-dd-[AP]M-hh-mm-ss/``.
--It can be overridden by the ``--trace-dir=<directory path>`` EAL command line
--option.
-+This location can be overridden by the ``--trace-dir=<directory path>`` EAL
-+command line option.
+-To prevent the ABA problem, this algorithm stack uses a 128-bit
+-compare-and-swap instruction to atomically update both the stack top pointer
+-and a modification counter. The ABA problem can occur without a modification
+-counter if, for example:
++To prevent the ABA problem, this algorithm uses a 128-bit compare-and-swap
++instruction to atomically update both the stack top pointer and a modification
++counter. The ABA problem can occur without a modification counter if, for
++example:
  
- For more information, refer to :doc:`../linux_gsg/linux_eal_parameters` for
- trace EAL command line options.
+ #. Thread A reads head pointer X and stores the pointed-to list element.
  
--View and Analyze Recorded Events
--------------------------------------
-+View and analyze recorded events
-+--------------------------------
+@@ -83,7 +83,7 @@ counter if, for example:
+ #. Thread A changes the head pointer with a compare-and-swap and succeeds.
  
- Once the trace directory is available, the user can view/inspect the recorded
- events.
-@@ -204,28 +204,28 @@ recorded events. The example below counts the number of ``ethdev`` events::
- 
-     babeltrace /tmp/my-dpdk-trace | grep ethdev | wc --lines
- 
--Use the tracecompass GUI tool
--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+Use the Trace Compass GUI tool
-+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- 
--``Tracecompass`` is another tool to view/analyze the DPDK traces which gives
--a graphical view of events. Like ``babeltrace``, tracecompass also provides
-+``Trace Compass`` is another tool to view/analyze the DPDK traces which gives
-+a graphical view of events. Like ``babeltrace``, Trace Compass also provides
- an interface to search for a particular event.
--To use ``tracecompass``, following are the minimum required steps:
-+To use ``Trace Compass``, the following are the minimum required steps:
- 
--- Install ``tracecompass`` to the localhost. Variants are available for Linux,
-+- Install ``Trace Compass`` to the localhost. Variants are available for Linux,
-   Windows, and OS-X.
--- Launch ``tracecompass`` which will open a graphical window with trace
-+- Launch ``Trace Compass`` which will open a graphical window with trace
-   management interfaces.
--- Open a trace using ``File->Open Trace`` option and select metadata file which
--  is to be viewed/analyzed.
-+- Open a trace using the ``File->Open Trace`` option and select the metadata file which
-+  will be viewed/analyzed.
- 
--For more details, refer
-+For more details, refer to
- `Trace Compass <https://www.eclipse.org/tracecompass/>`_.
- 
- Quick start
- -----------
- 
--This section steps you through the details of generating trace and viewing it.
-+This section steps you through the details of generating the trace and viewing it.
- 
- - Start the dpdk-test::
- 
-@@ -238,9 +238,9 @@ This section steps you through the details of generating trace and viewing it.
- Implementation details
- ----------------------
- 
--As DPDK trace library is designed to generate traces that use ``Common Trace
--Format (CTF)``. ``CTF`` specification consists of the following units to create
--a trace.
-+The DPDK trace library is designed to generate traces that use
-+``Common Trace Format (CTF)``. The ``CTF`` specification consists of the
-+following units to create a trace.
- 
- - ``Stream`` Sequence of packets.
- - ``Packet`` Header and one or more events.
-@@ -249,15 +249,15 @@ a trace.
- For detailed information, refer to
- `Common Trace Format <https://diamon.org/ctf/>`_.
- 
--The implementation details are broadly divided into the following areas:
-+Implementation details are broadly divided into the following areas:
- 
- Trace metadata creation
- ~~~~~~~~~~~~~~~~~~~~~~~
- 
--Based on the ``CTF`` specification, one of a CTF trace's streams is mandatory:
--the metadata stream. It contains exactly what you would expect: data about the
--trace itself. The metadata stream contains a textual description of the binary
--layouts of all the other streams.
-+Based on the ``CTF`` specification, one of the streams in a CTF trace is
-+mandatory: the metadata stream. It contains exactly what you would expect:
-+data about the trace itself. The metadata stream contains a textual description
-+of the binary layouts of all the other streams.
- 
- This description is written using the Trace Stream Description Language (TSDL),
- a declarative language that exists only in the realm of CTF.
-@@ -270,8 +270,8 @@ The internal ``trace_metadata_create()`` function generates the metadata.
- Trace memory
- ~~~~~~~~~~~~
- 
--The trace memory will be allocated through an internal function
--``__rte_trace_mem_per_thread_alloc()``. The trace memory will be allocated
-+The trace memory is allocated through an internal function
-+``__rte_trace_mem_per_thread_alloc()``. The trace memory is allocated
- per thread to enable lockless trace-emit function.
- 
- For non-lcore threads, the trace memory is allocated on the first trace
-@@ -279,7 +279,7 @@ emission.
- 
- For lcore threads, if trace points are enabled through an EAL option, the trace
- memory is allocated when the threads are known to DPDK
--(``rte_eal_init`` for EAL lcores, ``rte_thread_register`` for non-EAL lcores).
-+(``rte_eal_init()`` for EAL lcores, ``rte_thread_register()`` for non-EAL lcores).
- Otherwise, when trace points are enabled later in the life of the application,
- the behavior is the same as non-lcore threads and the trace memory is allocated
- on the first trace emission.
-@@ -348,7 +348,7 @@ trace.header
-   | timestamp [47:0]     |
-   +----------------------+
- 
--The trace header is 64 bits, it consists of 48 bits of timestamp and 16 bits
-+The trace header is 64 bits, consisting of a 48-bit timestamp and a 16-bit
- event ID.
- 
- The ``packet.header`` and ``packet.context`` will be written in the slow path
+ In this case thread A would not detect that the list had changed, and would
+-both pop stale data and incorrect change the head pointer. By adding a
++both pop stale data and incorrectly change the head pointer. By adding a
+ modification counter that is updated on every push and pop as part of the
+ compare-and-swap, the algorithm can detect when the list changes even if the
+ head pointer remains the same.
 -- 
 2.51.0
 
