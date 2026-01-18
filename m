@@ -2,66 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2878EC9830C
-	for <dpdk-dev@archiver.kernel.org>; Sun, 18 Jan 2026 19:17:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAE83C9832F
+	for <dpdk-dev@archiver.kernel.org>; Sun, 18 Jan 2026 19:17:27 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 79EF542DF0;
-	Sun, 18 Jan 2026 20:14:34 +0100 (CET)
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com
- [209.85.218.49]) by mails.dpdk.org (Postfix) with ESMTP id E4FF340E26
- for <dev@dpdk.org>; Sun, 18 Jan 2026 20:14:30 +0100 (CET)
-Received: by mail-ej1-f49.google.com with SMTP id
- a640c23a62f3a-b7ffbf4284dso473563566b.3
- for <dev@dpdk.org>; Sun, 18 Jan 2026 11:14:30 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id A37E742E24;
+	Sun, 18 Jan 2026 20:14:35 +0100 (CET)
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com
+ [209.85.218.53]) by mails.dpdk.org (Postfix) with ESMTP id 6AF6A42DCE
+ for <dev@dpdk.org>; Sun, 18 Jan 2026 20:14:32 +0100 (CET)
+Received: by mail-ej1-f53.google.com with SMTP id
+ a640c23a62f3a-b79f8f7ea43so852478266b.2
+ for <dev@dpdk.org>; Sun, 18 Jan 2026 11:14:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768763670;
- x=1769368470; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768763672;
+ x=1769368472; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=XvOaFVvGzjTAR/ZyHvRS+lz3PeeL5NYwRjltJi/Tq0E=;
- b=aHhHql4O9mwGl1Nz2pYHehtZWYqLHLqdxTnYkmF57MMuIY+JS5pIPLblHBwuW8qgZD
- rmtxVdPJtKD17XXBprBSvRFfRXly1D20d3klMCwlCyT49qrucYRzh4JvvGf6Tym0WG/h
- YEVZQejRU1hBMsKXwwT0AcY0KC+7R02iJdxsNmCQGvtYWh2gRXVu99BsYUnRJdvHSSNK
- 2cyp8/zPhSTeKAfYd97ZEePOO5U6IVFRFykiitBDtn6mwC2AS4JRixbq/1MApRBBZLH9
- nPj6CK+WXynUQq8jBCq8ey6AfcvHvu3CZg/aflLJ80OqHVFprMvcn0ExmNMCAYBMvjaa
- yjgw==
+ bh=mEZNgmk7wI4jmUyAYoJpR+uD7GPqBxCmtubdibLnCrU=;
+ b=XA86n8f/VHytsyx5+hoJLX0gA1OmlSmhjOl8u8C6GGA22pLk7v8eoXv3V9v3UBnv5U
+ 4LCrksLLQvUWYX2YNs3XGvpq1SXy9Oj9vCfiSIoCm5MdG/TK96TZ7S/JDl1FbrkZlaob
+ q699iIr2rHIAxhXTzVdnnhuK2ruChH1nBHNIDfPTH0bFsNe+rjVvUNVpL98JF7UwkLxy
+ m6cXYz+4iv5szdfcACIMHb2QCNzdm+Dk5QZ3EzrQ5EIsfEcjwWDHTblRzD9seaJtgNAZ
+ Bs1umIO72WdxUyDUnrD3Ou4qC+iHOB2lwDOpApDApRwIfkjUUfj94Kbzqgb06c5UkAZd
+ 1Lqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768763670; x=1769368470;
+ d=1e100.net; s=20230601; t=1768763672; x=1769368472;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=XvOaFVvGzjTAR/ZyHvRS+lz3PeeL5NYwRjltJi/Tq0E=;
- b=fu+Ra2EuSqG7j1Y9ug/IthlchIKVJvk9OoCvQ3Hwlc52QYqrHhD/uKpYJM2jfX/jFs
- jfEKmZXjwMkKy6fF2US7hMZDX1gLQ02H9ixOIli0hSoRyALnJbBMegitBaKbjJnyjKqY
- CtanqZ4JvZ4Xmc7AOaxRuFRGt5qNYVj2HSzez2wiTGyqG0c73W+4oUbFG/9k3fxtfWfX
- woiTxxQw+g/Ut8dtn17idmY6THueWG/J+Y64qupkVRb7u6iF9SfHSN2LVPAasMyEBzYN
- s/nGyQUJaEzgAjrdwIn4OHzBeXhmCKpiKf3PsRICVbNu1pi3yKXcJUmMt9fTLucw9Rw1
- iyQQ==
-X-Gm-Message-State: AOJu0YwoL3k6UDz2O28Z/0I+gnU67vt8R/k6jj8QwfW6r2SH8FaPUQ5R
- UqcBCL3amqtVe80W352j9FFMY+0BUtGm3emPK8qw/360z2GS1mXRTXS7HwRO3NXZ++X+OBPUQ6f
- pOh3r
-X-Gm-Gg: AY/fxX5LRnKTi0lrqkSu27L7XeUzS7DPG+qc5ziZCdiWXNHR91J/8Hicwozhk2HIjBB
- HKKh3BvD2ryE0U2pVycFybd510xlltJ3HSWx+ePay2sZqMX+wK4vbd/2ZdKmy49aF4WUNm3Y0d6
- 64gJyA3XQrkc548j8X9q0T/zeqPmTJYxaNqWdGj+fb8ds9Jz0qdEApAEkGClq3U92d8azf4flby
- r0P9pz+mPvZ3oS650LXRKvupz1j/2b6cvOAAaQkI0pl/lPeG5WPdgxWINg/zN7nlj//zYOdun+v
- cY/yFx8++O0tmDQKgttSSeJ7glICduMp6gn5irJHW14WvkC4Opg9bzyFriWSe+Spfytfeaw8pWP
- DrsXtraRoRLahd7PTMrgkDUahI8sw/RUl1uYcqWTTsruMO30e0BaVnKdshSlXhvYSke+V1zcFvR
- Enp4yl7FeXhA27xdZPYtA6iIRP0GGASuf2YhW+66qSTU7rvRsrWqfz8JdB4mJu
-X-Received: by 2002:a17:907:2d0e:b0:b81:ec75:d649 with SMTP id
- a640c23a62f3a-b8792e3a484mr709012066b.27.1768763670450; 
- Sun, 18 Jan 2026 11:14:30 -0800 (PST)
+ bh=mEZNgmk7wI4jmUyAYoJpR+uD7GPqBxCmtubdibLnCrU=;
+ b=CsCFIeKA9Z4TxJS2nJALkiAPu9hAv0dl+kQFP2/TC8EPSsWMhXvKXJEk/bWvJK1bNB
+ QOOLpo1cwsW6C8iQlGVaPtnYjYXx3lTLQkgJ8pwigp+rG38tqgdupwLjvnYG18jhi+r1
+ +by1yNIOqHsh2nYR985yqJWb7ffSHStDAd6g6oDZ7KcMv/XiqeD1lvqkYZwREqQ400y6
+ vDcRSiFuQYvLjSIq/kV3iFA4sCpau5Pch9tFfqMdpFusC7nzBQa0E4ZLiTggaWDqM60h
+ N21AEwfYxqfYrTbiKkpeUzDB7jUrwmTqqeJHsXGZTD5QMryTJoCvHKc51+9OsKbZ9IE6
+ IWXw==
+X-Gm-Message-State: AOJu0YwTV9Qa97AfYYHwPS30JWy8k8q3/lHcc9NVvjyGQouB0xb8vTE4
+ nvn3RiOevWYmCFElXePzed0EpUuBKI6iXZBt07s2tGxxQtoyVXaFK5vA050MkH8H2Xly/rDG+96
+ 5+jM0
+X-Gm-Gg: AY/fxX7ygkkv4y/7hoHIGSoL7CHZqMnZ7A5Du9hhM2vjq6QNKEwr6rXC8dc8cS3oC8u
+ 7xF00ui25DLCDpVedH0Hw6B1Bsz0IwB+d2Vusu22/xilRCQeR2wBZUXWBkt6EolAVfL+5JrQCki
+ bLaRiVxBGLcSqZINRoCbif02emFbfDIK7msedA4E78Z2V6PgZNNraO1/NCdH7ffu932mwKRWKio
+ oudEtybJG7cyAUTXewRIbYcuoR9bKxywTGwGQgXENFlRj7haG3UUegIOOJGy92oynW5+WjPbINj
+ shLCYz+PxQQ29061NpBLvserSJM04UC+lclYgxJEKQTzgn4PJZn2PAorQ6KObwRAfeDQSELlsFE
+ v6gHQjnURfcERDV24oQfd1xfJioU3qlx8+oJYv/DANvMEDKX/kYqU+cEQ2/gD1UQtGu2CJ2BBaO
+ kt2At+kR5ZrVvbzln0aSClxTW4ij1W+4JTCNtbNJu7NfeTw7b6H53HRzU/gfOn
+X-Received: by 2002:a17:907:26c7:b0:b87:124c:5f65 with SMTP id
+ a640c23a62f3a-b87930408e9mr840037266b.51.1768763671962; 
+ Sun, 18 Jan 2026 11:14:31 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a640c23a62f3a-b87959c9f8dsm886287166b.36.2026.01.18.11.14.29
+ a640c23a62f3a-b87959c9f8dsm886287166b.36.2026.01.18.11.14.30
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 18 Jan 2026 11:14:30 -0800 (PST)
+ Sun, 18 Jan 2026 11:14:31 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v5 40/54] doc: correct typos in packet distributor guide
-Date: Sun, 18 Jan 2026 11:10:43 -0800
-Message-ID: <20260118191323.241013-41-stephen@networkplumber.org>
+Subject: [PATCH v5 41/54] doc: correct grammar in packet framework guide
+Date: Sun, 18 Jan 2026 11:10:44 -0800
+Message-ID: <20260118191323.241013-42-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260118191323.241013-1-stephen@networkplumber.org>
 References: <20240513155911.31872-1-nandinipersad361@gmail.com>
@@ -81,45 +81,49 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Correct various issues in the packet distributor documentation:
+Correct various issues in the packet framework documentation:
 
-- remove extra space after "each"
-- fix typo "work" to "worker" in queue description
-- fix "of less use that" to "of less use than"
-- fix inconsistent capitalization "APIS" to "APIs"
+- add missing article "a" in "As a result of lookup"
+- fix incomplete sentence "described in." to "described below."
+- fix confusing mirror/main copy swap description that had
+  duplicate text and fix subject-verb agreement
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- doc/guides/prog_guide/packet_distrib_lib.rst | 6 +++---
+ doc/guides/prog_guide/packet_framework.rst | 6 +++---
  1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/doc/guides/prog_guide/packet_distrib_lib.rst b/doc/guides/prog_guide/packet_distrib_lib.rst
-index 3c3b746aca..10e187be04 100644
---- a/doc/guides/prog_guide/packet_distrib_lib.rst
-+++ b/doc/guides/prog_guide/packet_distrib_lib.rst
-@@ -33,11 +33,11 @@ The operation of the distributor is as follows:
+diff --git a/doc/guides/prog_guide/packet_framework.rst b/doc/guides/prog_guide/packet_framework.rst
+index 17010b07dc..cacda9add2 100644
+--- a/doc/guides/prog_guide/packet_framework.rst
++++ b/doc/guides/prog_guide/packet_framework.rst
+@@ -34,7 +34,7 @@ as well as providing libraries of reusable templates for the commonly used pipel
  
- #.  As workers request packets, the distributor takes packets from the set of packets passed in and distributes them to the workers.
-     As it does so, it examines the "tag" -- stored in the RSS hash field in the mbuf -- for each packet
--    and records what tags are being processed by each  worker.
-+    and records what tags are being processed by each worker.
+ The pipeline is constructed by connecting the set of input ports with the set of output ports
+ through the set of tables in a tree-like topology.
+-As result of lookup operation for the current packet in the current table,
++As a result of lookup operation for the current packet in the current table,
+ one of the table entries (on lookup hit) or the default table entry (on lookup miss)
+ provides the set of actions to be applied on the current packet,
+ as well as the next hop for the packet, which can be either another table, an output port or packet drop.
+@@ -106,7 +106,7 @@ Port Interface
+ Each port is unidirectional, i.e. either input port or output port.
+ Each input/output port is required to implement an abstract interface that
+ defines the initialization and run-time operation of the port.
+-The port abstract interface is described in.
++The port abstract interface is described below.
  
- #.  If the next packet in the input set has a tag which is already being processed by a worker,
-     then that packet will be queued up for processing by that worker
--    and given to it in preference to other packets when that work next makes a request for work.
-+    and given to it in preference to other packets when that worker next makes a request for work.
-     This ensures that no two packets with the same tag are processed in parallel,
-     and that all packets with the same tag are processed in input order.
+ .. _table_qos_20:
  
-@@ -78,7 +78,7 @@ while allowing packet order within a packet flow -- identified by a tag -- to be
+@@ -1128,7 +1128,7 @@ Mechanisms to share the same table between multiple threads:
  
+ #.  **Single writer thread performing table entry add/delete operations and multiple reader threads that perform table lookup operations with read-only access to the table entries.**
+     The reader threads use the main table copy while the writer is updating the mirror copy.
+-    Once the writer update is done, the writer can signal to the readers and busy wait until all readers swaps between the mirror copy (which now becomes the main copy) and
++    Once the writer update is done, the writer can signal to the readers and busy wait until all readers swap between the main copy (which now becomes the mirror copy) and
+     the mirror copy (which now becomes the main copy).
  
- The flush and clear_returns API calls, mentioned previously,
--are likely of less use that the process and returned_pkts APIS, and are principally provided to aid in unit testing of the library.
-+are likely of less use than the process and returned_pkts APIs, and are principally provided to aid in unit testing of the library.
- Descriptions of these functions and their use can be found in the DPDK API Reference document.
- 
- Worker Operation
+ Interfacing with Accelerators
 -- 
 2.51.0
 
