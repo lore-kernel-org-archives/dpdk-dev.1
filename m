@@ -2,66 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC834C9832F
-	for <dpdk-dev@archiver.kernel.org>; Sun, 18 Jan 2026 19:15:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2840C9832F
+	for <dpdk-dev@archiver.kernel.org>; Sun, 18 Jan 2026 19:15:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C2D2841149;
-	Sun, 18 Jan 2026 20:14:03 +0100 (CET)
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com
- [209.85.208.46]) by mails.dpdk.org (Postfix) with ESMTP id 0445C41141
- for <dev@dpdk.org>; Sun, 18 Jan 2026 20:14:02 +0100 (CET)
-Received: by mail-ed1-f46.google.com with SMTP id
- 4fb4d7f45d1cf-655af782859so4675755a12.2
- for <dev@dpdk.org>; Sun, 18 Jan 2026 11:14:02 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id A8289410FD;
+	Sun, 18 Jan 2026 20:14:04 +0100 (CET)
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com
+ [209.85.218.51]) by mails.dpdk.org (Postfix) with ESMTP id 8DC9C40E4B
+ for <dev@dpdk.org>; Sun, 18 Jan 2026 20:14:03 +0100 (CET)
+Received: by mail-ej1-f51.google.com with SMTP id
+ a640c23a62f3a-b8719aeebc8so645316666b.3
+ for <dev@dpdk.org>; Sun, 18 Jan 2026 11:14:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768763641;
- x=1769368441; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768763643;
+ x=1769368443; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=drv2hF5A+YV6ze+T5jRd2Y1KZPU8+IW8jnITVCwPja8=;
- b=CWHx1b6XhwGeQKykwa2TM/k1CjNJzoliZz79/YG/7TxPJ3f6B7CLwSgj0tKOPi6dOt
- EBB3PtQ4jGfcTHAGFUM9RgbwSqNvJXbNMbB1Nt/mDTRKsGgH0UKIHY8Eys/jGxNEaZf/
- xUWwqC8FLlUHUx+eVofgCGfA19ga8ciQLWaYw20t7FlwjVEx7nR9gsJu4CGQETRty9aV
- vNCMHhHbCWBL2htxrEErUW62YUdvRrR1e/sLrqikQIDHBNlh7VEGyUiLQ1PHFlx3+PUu
- TGTeDukL986+0DlL/m0NfgcxhqaP3MssHsuX/Xq71NQPDhZOZDYBlTEWrsZo7MaXKcOr
- 5exA==
+ bh=EcnDLw0bSLeZa2qDEm1oBx7c05vuFm/357sI6gsfRcY=;
+ b=oESBZLH6+jYBdZ8uQy6Y673rD54FCfyMp1iZI5m4FQYmcVEWfLUNVzm9JWMCpIKM+K
+ uL8N8pom34NuCyA2HLDSXKh9XBRbjXbIYiZuJxJ3GpoHhnILJQcMRQICqnlOA3xJCeQQ
+ 1/cQ28/SaQIIaMeKI1jCVtvAL1rDJCgjziT0FyxJd9Xi+Qo8ZvtRytTjUP7K/URR7gVa
+ V+ifcOLNGP0zEygzN0GthO04Q8WQylBR5wQ4j2FLymEjzEoFFVD7nekWX73ppIKhHLyY
+ ETSeOttmxAU9qm3Q2dPGxB67ZGYDg4U1otYauj1Ki6LDM/DPWyGoSo/Q1ZODasfsKcAB
+ ZFLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768763641; x=1769368441;
+ d=1e100.net; s=20230601; t=1768763643; x=1769368443;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=drv2hF5A+YV6ze+T5jRd2Y1KZPU8+IW8jnITVCwPja8=;
- b=I6g0WW0WoUzHXpxMQ2KSorX/ZBp1WYOJoEJ4mPNZ9c402veh5S3JwrNAj6JMU8oavy
- U8DL6hyedqGNAxwZ51r4boSy0cnKslmNcwUmIUl7lMlHwR7X8sE/MtnGnK242rp9DZPN
- 3KoQ28ODJFZvSaCNYY+OcifGWn6BZOFsgH5bD6q4CHx5XgNE6tdJaRVYj+kZh1A12VxY
- WWtHxu3xYEAnamgRZibpaGx3QtNg9UdCi+7cg+7jFvu9FzKrLspKGlCyOk2LVuvilnN5
- 32kuro+t+hfdf37yOD6/hoZRv5h8I45SAnvHesMkr7zIHZjPcQC0Vtfv6boYMuR4b5N0
- /kNg==
-X-Gm-Message-State: AOJu0YxDyMUpikJNsxJgPJ+IrqVE0yEzlAwATvEC19HekfocPoZpuvEb
- aI+qGHlRTOqEB2cfJNalRN4hacnb0Rapp/J2DUKv5KUNiUyeqdp4YJDJHgRsXrOOtlW0mPds+n+
- AFGbv
-X-Gm-Gg: AY/fxX7GfS7gNrZP8CN6/2qJz1kt3WBbRSauCM6mqsHIsNAHArWX51jVg/1bm0yBZqe
- ljqH6GbxOraXGVOdQCdsnIUxYwaj2Ps/DUKJX/KiXil+soIJppGMNPIU7WoczdUb1rjwXLX7pnQ
- Kx1yWEmar6KWLasK5WPBvv3x3dQ4GR/9VfgaeCii1kkvNjXF/BxYbkczbONAO/cV9p6jQhrcrlT
- 3m+Rvyd2oxXlQosFAiR0swFwmIgmqsHdb3JtkWS/K2mSaw/iywnJdeo9hqa1T/zefzQgmiK6IG5
- Qu+hX/0Icfn6kdxDeZoX9kelLGBqA7LhJHRsO7sxZUv8IdBKTwYXlm3DCBz3rHGb/jEECFY9wlz
- 69WiG7uaG27J5SOuDlFXtV0APj7I4VHd1tQXe8xwgTEiJS6VSuxLad8SlkK86gMC4xevvJPYCN8
- Sbo6KuJj8+duofjCQj7/6EOeGHcmX92MOZlUBv40kgx+T9UqUwSSzPKm8o9Y59
-X-Received: by 2002:a17:906:4fd2:b0:b43:b7ec:b8a1 with SMTP id
- a640c23a62f3a-b8792f94f24mr762902366b.24.1768763641539; 
- Sun, 18 Jan 2026 11:14:01 -0800 (PST)
+ bh=EcnDLw0bSLeZa2qDEm1oBx7c05vuFm/357sI6gsfRcY=;
+ b=Z8rfT/t0XrEOo2TsUcSK4CiOooYY9T0TciOeHmZLbPqEnQfOorVWE7OLgEYtcJnBlk
+ sGTbKpqGvOmX9JgpbQ03tqk0u3mVPPjQJ89WZ+3jNeZmmSwnhV8pTadKApawgf0yLggb
+ j91Eyg5ibYaQPpjnI+ENg8ri2hT6f2CiMtqq+b595sqaQVc0gQ9YbobgVZrFbQknRHk3
+ sNEw4a85nllUsvmODJB6ZwTY0s7UrN8bfQYfpUtOqkfOQ636UsOF1RK/dEhnvgsVFmYA
+ Dhq3QNWPyhyy5vKEUBGf5q28HLNMWJ4/6HOI0AoqcHdPQPjYX3x/KodxPto6WWVDNMfh
+ CYZQ==
+X-Gm-Message-State: AOJu0YzzeCMQyYIaULQQCyLxBD2OqtUtdVMT4VkcaG7R3BUa3f/ce0Oq
+ 9qQTkW1hN/4sJX+6KsNZg2PnYuxiP8JSX4sAy7kNJuioUaWzzHghCbfIDpRSKRr5T/KlkWuMdos
+ oGVvL
+X-Gm-Gg: AY/fxX53pC+cTGE6trqVNWmffFJJQQpvZZfGy7MAqcsiA5tgn9sPPnzN2qwZsX9CT/r
+ j2MsARrOnFwrgnPZOn1voHqCszy+/+aNKX6UK0GZTBVWc4LB72W1iT3wnbnjhDIozIiZIE9DbX+
+ r9p61wBwfZDz/wFAkrUkhq6Ktfoduoy7bJrGgKvOdrsd7e+ovG5LyoaXLymcwqAn4U4AHeqrVNP
+ 3BzHB/JPTTyV09hn/hr8+hh926FkPWUOSosuRH8iqlx/JZwWBEGBQXOPCe5udJT+0Ltr1LG8coi
+ cT/CmbkHA8Gu+ZN2dqSRQWRImOCCNp1yXI3k4m1uHQSgM2zYwQnk0FMQo5Y5z3pPVg5UdfwH1RG
+ DYOa/xS8EQm/MjW60n7nLVL3+qDj2Gs/Bgct1AVTB8v3KoAvrZ+kpc7xkq1Yw8/QxYpmes2AZxV
+ Moslgk4uJYqBxjk+SN1nGAW8vl0V/VS8Py2R8sKzqMHFNRVX+IyA==
+X-Received: by 2002:a17:907:2d8c:b0:b87:365d:26b8 with SMTP id
+ a640c23a62f3a-b8792f783e1mr724115766b.35.1768763643039; 
+ Sun, 18 Jan 2026 11:14:03 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a640c23a62f3a-b87959c9f8dsm886287166b.36.2026.01.18.11.14.00
+ a640c23a62f3a-b87959c9f8dsm886287166b.36.2026.01.18.11.14.01
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 18 Jan 2026 11:14:01 -0800 (PST)
+ Sun, 18 Jan 2026 11:14:02 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v5 21/54] doc: correct typos and grammar in graph guide
-Date: Sun, 18 Jan 2026 11:10:24 -0800
-Message-ID: <20260118191323.241013-22-stephen@networkplumber.org>
+Subject: [PATCH v5 22/54] doc: correct grammar in hash guide
+Date: Sun, 18 Jan 2026 11:10:25 -0800
+Message-ID: <20260118191323.241013-23-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260118191323.241013-1-stephen@networkplumber.org>
 References: <20240513155911.31872-1-nandinipersad361@gmail.com>
@@ -82,64 +82,36 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 Errors-To: dev-bounces@dpdk.org
 
 Correct several documentation issues:
-- Remove trailing hyphen from bullet point
-- Change "detached to a graph" to "detached from a graph"
-- Change typo "edege" to "edge" (two occurrences)
-- Change typo "feilds" to "fields"
-- Change "attach" to "attaches" and "create" to "creates"
-- Change "with custom port with and" to "with custom port and"
+- Change "a 8-byte integer" to "an 8-byte integer"
+- Change "the later will increase" to "the latter will increase"
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- doc/guides/prog_guide/graph_lib.rst | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ doc/guides/prog_guide/hash_lib.rst | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/doc/guides/prog_guide/graph_lib.rst b/doc/guides/prog_guide/graph_lib.rst
-index 8409e7666e..8e3fd227d3 100644
---- a/doc/guides/prog_guide/graph_lib.rst
-+++ b/doc/guides/prog_guide/graph_lib.rst
-@@ -37,7 +37,7 @@ Advantages of Graph architecture
-   caches misses.
- - Exploits the probability that most packets will follow the same nodes in the
-   graph.
--- Allow SIMD instructions for packet processing of the node.-
-+- Allow SIMD instructions for packet processing of the node.
- - The modular scheme allows having reusable nodes for the consumers.
- - The modular scheme allows us to abstract the vendor HW specific
-   optimizations as a node.
-@@ -92,7 +92,7 @@ fini():
- ^^^^^^^
+diff --git a/doc/guides/prog_guide/hash_lib.rst b/doc/guides/prog_guide/hash_lib.rst
+index fdbb99fd5e..bc257b4ffb 100644
+--- a/doc/guides/prog_guide/hash_lib.rst
++++ b/doc/guides/prog_guide/hash_lib.rst
+@@ -43,7 +43,7 @@ Apart from the basic methods explained above, the Hash Library API provides a fe
+     the user to perform these operations faster, as the hash value is already computed.
  
- The callback function will be invoked by ``rte_graph_destroy()`` on when a
--node gets detached to a graph.
-+node gets detached from a graph.
+ *   Add / lookup entry with key and data: A data is provided as input for add. Add allows the user to store
+-    not only the key, but also the data which may be either a 8-byte integer or a pointer to external data (if data size is more than 8 bytes).
++    not only the key, but also the data which may be either an 8-byte integer or a pointer to external data (if data size is more than 8 bytes).
  
- Node name:
- ^^^^^^^^^^
-@@ -1095,17 +1095,17 @@ This node is an intermediate node that does udp destination port lookup for
- the received ipv4 packets and the result determines each packets next node.
+ *   Combination of the two options above: User can provide key, precomputed hash, and data.
  
- User registers a new node ``udp4_input`` into graph library during initialization
--and attach user specified node as edege to this node using
--``rte_node_udp4_usr_node_add()``, and create empty hash table with destination
--port and node id as its feilds.
-+and attaches user specified node as edge to this node using
-+``rte_node_udp4_usr_node_add()``, and creates empty hash table with destination
-+port and node id as its fields.
+@@ -201,7 +201,7 @@ if there is a new entry to be added which primary location coincides with their
+ being pushed to their alternative location.
+ Therefore, as user adds more entries to the hash table, distribution of the hash values
+ in the buckets will change, being most of them in their primary location and a few in
+-their secondary location, which the later will increase, as table gets busier.
++their secondary location, which the latter will increase, as table gets busier.
+ This information is quite useful, as performance may be lower as more entries
+ are evicted to their secondary location.
  
--After successful addition of user node as edege, edge id is returned to the user.
-+After successful addition of user node as edge, edge id is returned to the user.
- 
- User would register ``ip4_lookup`` table with specified ip address and 32 bit as mask
- for ip filtration using api ``rte_node_ip4_route_add()``.
- 
--After graph is created user would update hash table with custom port with
--and previously obtained edge id using API ``rte_node_udp4_dst_port_add()``.
-+After graph is created user would update hash table with custom port and
-+previously obtained edge id using API ``rte_node_udp4_dst_port_add()``.
- 
- When packet is received lpm look up is performed if ip is matched the packet
- is handed over to ip4_local node, then packet is verified for udp proto and
 -- 
 2.51.0
 
