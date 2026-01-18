@@ -2,66 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBEF3C9832F
-	for <dpdk-dev@archiver.kernel.org>; Sun, 18 Jan 2026 19:17:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8219C9830C
+	for <dpdk-dev@archiver.kernel.org>; Sun, 18 Jan 2026 19:17:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5327442D9D;
-	Sun, 18 Jan 2026 20:14:27 +0100 (CET)
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com
- [209.85.208.44]) by mails.dpdk.org (Postfix) with ESMTP id EF82342D26
- for <dev@dpdk.org>; Sun, 18 Jan 2026 20:14:24 +0100 (CET)
-Received: by mail-ed1-f44.google.com with SMTP id
- 4fb4d7f45d1cf-64b9cb94ff5so5296265a12.2
- for <dev@dpdk.org>; Sun, 18 Jan 2026 11:14:24 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 87A8742DB0;
+	Sun, 18 Jan 2026 20:14:29 +0100 (CET)
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com
+ [209.85.208.49]) by mails.dpdk.org (Postfix) with ESMTP id 86C2C42D7A
+ for <dev@dpdk.org>; Sun, 18 Jan 2026 20:14:26 +0100 (CET)
+Received: by mail-ed1-f49.google.com with SMTP id
+ 4fb4d7f45d1cf-64dfb22c7e4so8118431a12.1
+ for <dev@dpdk.org>; Sun, 18 Jan 2026 11:14:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768763664;
- x=1769368464; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768763666;
+ x=1769368466; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=fPIb96oVwaZt3kLEdSG6WT1jK0ZdmENEbD6xiJzZ8gE=;
- b=xAnNVv9TCY+mTEVWqkT7KeuWQxyr9xGvX5CDdaojBSftndQOKIpKmgcQ8Mi4FmSQbh
- 1vfB/YZLcG/D1VMNYZBw6OB9hFiqK4OTv7DaH+1ry0RXLrlLDIfyvDsv3SKygadvHkd3
- YkotchY4s7b+nN6zpJUdZJKq1BxtVT5KCg6xQe5tlObtpvN6g19oq+ZQyjhiAMo95awD
- K4cTCkoK+D6AtFJMWVDIRgrRyEJRySS+u2W9rFrr84YGHNSfFh+nfblwGisoinzx61t4
- zn4BE+lcjd+IyGER1v8ao6L+wmNPAgR/cnWKoCrKhwi9c30XU3ncAPuz6j87eps97KIq
- Rjlw==
+ bh=tMYt2u2HMPrrXfzQCiHJBNxhCq1lRa+Qv4diDos9R+I=;
+ b=Ef83QTKTYL8DJEQNESjandjasaq+QOsKmqESxUMLjyJ/V1RZOuX1ssGzMDuSiPMzBK
+ H6jlTYZ4Sy+HnnmUDn54ty7aafz0+fzzCDml2T8nqcUSEcK2/Mh1MU9ogw9WQy4SqTso
+ OXP9ieJXxdm2BL1EiG3WpR/4gM98LtX9cv8oC85kfdqVrZtDmvA6WJKtadez2TwMYvZY
+ jfYFuNhGxaZnBZ0pAqk/0vgEdZCjqeS6yvbRsx3U8ga9kCcKUuF/nas8rSYf3t0tZECl
+ 0Y2InSLe4uyRQXzeEK/icx1/5FmHU7/E4FzzzgyWOdy5rQl29tXGYTY4+NkR0cLn623s
+ RvQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768763664; x=1769368464;
+ d=1e100.net; s=20230601; t=1768763666; x=1769368466;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=fPIb96oVwaZt3kLEdSG6WT1jK0ZdmENEbD6xiJzZ8gE=;
- b=SmQHlIbnf4ZxkU4HHVcxpHSP3FHrdZO3lwtjH3pzOQR+pWshEBQOZOwlB6bLwl8tEu
- RD8+EZjlwvb1CKdlIHr3lvCrAFrOV9xBlGdoFGAsPUqVDAjfk9s6U4n6bv0xt+vUnBFn
- OuPEeru7Zv/9jHKAD88D69D2wvMwSzztDHBddWlkAcM+RtRZ8X1hWmZc1I2UUApJR7Ym
- WYzqc4tg2TSmrW5+YbZE9Qr+7sP6X5OOj1XfLOlEAvQf8osQM4CBrNHoXKUCmVEiSNmZ
- F6LfnRl7PKHyMAQ+z/TbQwI10umBXXgCcUtkb0EKIkQ+vGGDPtrAZ7G42PUcTtThgE9R
- PtMg==
-X-Gm-Message-State: AOJu0YymRga4azp3l2uIy45Cy3SLwgj6uq4pKgQvnFuBHo0yf4u7AF3P
- d4k1O9uXe5GAeUtzCObx7yrA+uBLsvfNsYHcSuyw7gY4NT8njwVFhJCDu6V1O1ex34fl8mqzdDb
- obi22
-X-Gm-Gg: AY/fxX4KVnuQLBxeaqjR/5o65oNg8zoa78LFvwftjwt521Xdop68YK++WluEDsP1biZ
- V7x6fj5tWVkftXmTLdG9hUIXU/xXmB8kByYnNIzHBa2SEN+qcKJqiz3i5Payy8wQDCWhstGOC8B
- AInwVIvTYkfKWiy2uMNgDbbCYjvbl/jAd2RNnM+rAnq1mmNyZcmRm4r7dQoMtE2cR+yeiPYXELK
- eshFsCJFnZExwsswrgcXdlGPb+ILOxKqXh09K/havo7p12A2z3vXnpAmbQbQ6Q9Z+fYvcaK/G0A
- HKWISPYvcnByc+pZqjyl+oKdf5ACIGawGOSniuQUzVMmNj2e9RF0KU7cmRLWRsLeAi70rL9Do6r
- cHNl2CC0S4Zy+F4cDtsPJK3LH5/UUjmUf5AdNITj0glLt4v9SODqIg0kVbUNT2o2GYOSrk7p6TI
- ugfmgoU9CHNcBTo5iGVITao6+YovafzBLRHPKEDfp8fasSMnx/eA==
-X-Received: by 2002:a17:907:743:b0:b83:8fc:c64b with SMTP id
- a640c23a62f3a-b879300a356mr753923466b.38.1768763664440; 
- Sun, 18 Jan 2026 11:14:24 -0800 (PST)
+ bh=tMYt2u2HMPrrXfzQCiHJBNxhCq1lRa+Qv4diDos9R+I=;
+ b=bBE2W4z5+p7fa4KdK94Qaob+qmuCK3OQDJO3mV+O6ABMWlhc7xNDNyBQ0xNFH7B+V+
+ 28cQwrYkrXl0F+vndeOMN9ZscRcOoZnvQIELzUOA9FoGkgf81nEv0RcV7aubIS4V+Xo1
+ fGTcG1q7FdDApSaZgXTbIq51+p0rBLIkd7RTIIy1/D/xNaKBEdxmMnnh6iV7iE+b4I2v
+ AFlHitOL/aGq6ST1gdxFwqKDyoe/NIj+tYOzRvT87hi+slqge0R+u7N3Ur63Fa+iTTkB
+ lDKytJsInj1BA0T67CopZCwwShv2kw4u6kXctxbNaBLsoAWNbKj8JlnopgC+H87IHiWw
+ N//g==
+X-Gm-Message-State: AOJu0Ywnh4lmfaiXctaFLJ10J/fIkPgFleIWht4hASnxNcUYDCeHyV2h
+ 9oWoKHZq5JEQmOC8s6AFAhFAexofbH326oUz31AyscQs89HXLSJBDaIWDSmf5VJ/VHRDd5jw7X2
+ T+xWj
+X-Gm-Gg: AY/fxX41DIS++mdHBMioWBzerRpl+biUStvBcg3EAfqgZOucQyIYglYjaJsim9IpxR/
+ dCmulCriabWfk6T0F6Uozl/XqYVEhI9aR9WFS2Nf/xWAufX2UDeREwMC3z1JtVE4YNSJKmPBSv+
+ Y9YERXaiTHRXurwjZqxB7EcbzxCDTF5MgPnmPV/7XF3lP48Di6YUjL4qZ9VimQqnmWSrx61PADg
+ lE7Dzu2h5GbVkkxvpXKQKzuguz+3/CinYxKfAYToCQVFgtZLhlLhxXB/9lFC7SceRF/Hf2odIh3
+ iFVDSq9DehvfdDQagalvf70hERwVW3jHWxqw6Q80fKVRizHQiDtlW0bMzwm6tk9HHIsTj6gsLSw
+ L46HsErLPuFXs/U7fMrZ0HmX33hxxFH9pm2OiotJPJaA3VAEP4eWc7TId57LSnfzqJMzHEDoYgf
+ fY/hhdVNrEfn3sNxtEOvCgCWMCK/Y1Gvi2TOyyQZ2J3rQmiUcqKw==
+X-Received: by 2002:a17:907:7b89:b0:b84:3fab:4251 with SMTP id
+ a640c23a62f3a-b87939d9b4emr1038683966b.15.1768763665965; 
+ Sun, 18 Jan 2026 11:14:25 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a640c23a62f3a-b87959c9f8dsm886287166b.36.2026.01.18.11.14.23
+ a640c23a62f3a-b87959c9f8dsm886287166b.36.2026.01.18.11.14.24
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 18 Jan 2026 11:14:24 -0800 (PST)
+ Sun, 18 Jan 2026 11:14:25 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v5 36/54] doc: correct grammar in mldev library guide
-Date: Sun, 18 Jan 2026 11:10:39 -0800
-Message-ID: <20260118191323.241013-37-stephen@networkplumber.org>
+Subject: [PATCH v5 37/54] doc: correct grammar in multi-process guide
+Date: Sun, 18 Jan 2026 11:10:40 -0800
+Message-ID: <20260118191323.241013-38-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260118191323.241013-1-stephen@networkplumber.org>
 References: <20240513155911.31872-1-nandinipersad361@gmail.com>
@@ -81,98 +81,134 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Correct various grammar and style issues in the ML device library
+Correct various grammar and style issues in the multi-process support
 documentation:
 
-- fix subject-verb agreement for "API which supports"
-- use compound word "Workflow" instead of "Work flow"
-- fix parallel construction for model load and start
-- use plural "feature sets"
-- rewrite grammatically broken sentence about rte_ml_dev_info_get
-- add missing article before "number of queue pairs"
-- use consistent terminology "operations" not "packets"
-- fix malformed sentence about dequeue API format
-- add missing word "with" in quantize section
+- remove spurious spaces in hyphenated words (pre-initialized,
+  Multi-process, side-by-side)
+- add missing article "the" before "same DPDK version"
+- fix subject-verb agreement in multiple places
+- correct book title from "Application's" to "Applications"
+- remove duplicate word "process" in startup description
+- fix typo "pass long" to "pass along"
+- add missing past participle "triggered"
+- expand abbreviation "Misc" to "Miscellaneous"
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- doc/guides/prog_guide/mldev.rst | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ doc/guides/prog_guide/multi_proc_support.rst | 28 ++++++++++----------
+ 1 file changed, 14 insertions(+), 14 deletions(-)
 
-diff --git a/doc/guides/prog_guide/mldev.rst b/doc/guides/prog_guide/mldev.rst
-index 61661b998b..094a67cbdb 100644
---- a/doc/guides/prog_guide/mldev.rst
-+++ b/doc/guides/prog_guide/mldev.rst
-@@ -6,7 +6,7 @@ Machine Learning (ML) Device Library
+diff --git a/doc/guides/prog_guide/multi_proc_support.rst b/doc/guides/prog_guide/multi_proc_support.rst
+index a73918a5da..722506e385 100644
+--- a/doc/guides/prog_guide/multi_proc_support.rst
++++ b/doc/guides/prog_guide/multi_proc_support.rst
+@@ -17,7 +17,7 @@ For now, there are two types of process specified:
+ *   primary processes, which can initialize and which have full permissions on shared memory
  
- The Machine Learning (ML) Device library provides a Machine Learning device framework for the management and
- provisioning of hardware and software ML poll mode drivers,
--defining an API which support a number of ML operations
-+defining an API which supports a number of ML operations
- including device handling and inference processing.
- The ML model creation and training is outside of the scope of this library.
+ *   secondary processes, which cannot initialize shared memory,
+-    but can attach to pre- initialized shared memory and create objects in it.
++    but can attach to pre-initialized shared memory and create objects in it.
  
-@@ -16,7 +16,7 @@ The ML framework is built on the following model:
+ Standalone DPDK processes are primary processes,
+ while secondary processes can only run alongside a primary process or
+@@ -25,9 +25,9 @@ after a primary process has already configured the hugepage shared memory for th
  
- .. figure:: img/mldev_flow.*
+ .. note::
  
--   Work flow of inference on MLDEV
-+   Workflow of inference on MLDEV
+-    Secondary processes should run alongside primary process with same DPDK version.
++    Secondary processes should run alongside primary process with the same DPDK version.
  
- ML Device
-    A hardware or software-based implementation of ML device API
-@@ -28,7 +28,7 @@ ML Model
-    required to make predictions on live data.
-    Once the model is created and trained outside of the DPDK scope,
-    the model can be loaded via ``rte_ml_model_load()``
--   and then start it using ``rte_ml_model_start()`` API function.
-+   and then started using ``rte_ml_model_start()`` API function.
-    The ``rte_ml_model_params_update()`` can be used to update the model parameters
-    such as weights and bias without unloading the model using ``rte_ml_model_unload()``.
+-    Secondary processes which requires access to physical devices in Primary process, must
++    Secondary processes which require access to physical devices in Primary process, must
+     be passed with the same allow and block options.
  
-@@ -79,9 +79,9 @@ Each device, whether virtual or physical is uniquely designated by two identifie
- Device Features and Capabilities
- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ To support these two process types, and other multi-process setups described later,
+@@ -38,8 +38,8 @@ two additional command-line parameters are available to the EAL:
+ *   ``--file-prefix:`` to allow processes that do not want to co-operate to have different memory regions
  
--ML devices may support different feature set.
--In order to get the supported PMD feature ``rte_ml_dev_info_get()`` API
--which return the info of the device and its supported features.
-+ML devices may support different feature sets.
-+To get the supported PMD features, use the ``rte_ml_dev_info_get()`` API,
-+which returns the info of the device and its supported features.
+ A number of example applications are provided that demonstrate how multiple DPDK processes can be used together.
+-These are more fully documented in the "Multi- process Sample Application" chapter
+-in the *DPDK Sample Application's User Guide*.
++These are more fully documented in the "Multi-process Sample Application" chapter
++in the *DPDK Sample Applications User Guide*.
  
+ Memory Sharing
+ --------------
+@@ -47,7 +47,7 @@ Memory Sharing
+ The key element in getting a multi-process application working using the DPDK is to ensure that
+ memory resources are properly shared among the processes making up the multi-process application.
+ Once there are blocks of shared memory available that can be accessed by multiple processes,
+-then issues such as inter-process communication (IPC) becomes much simpler.
++then issues such as inter-process communication (IPC) become much simpler.
  
- Device Configuration
-@@ -106,7 +106,7 @@ maximum size of model and so on.
- Configuration of Queue Pairs
- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ On application start-up in a primary or standalone process,
+ the DPDK records to memory-mapped files the details of the memory configuration it is using - hugepages in use,
+@@ -88,7 +88,7 @@ In this model, the first of the processes spawned should be spawned using the ``
+ while all subsequent instances should be spawned using the ``--proc-type=secondary`` flag.
  
--Each ML device can be configured with number of queue pairs.
-+Each ML device can be configured with a number of queue pairs.
- Each queue pair is configured using ``rte_ml_dev_queue_pair_setup()``
+ The simple_mp and symmetric_mp sample applications demonstrate this usage model.
+-They are described in the "Multi-process Sample Application" chapter in the *DPDK Sample Application's User Guide*.
++They are described in the "Multi-process Sample Application" chapter in the *DPDK Sample Applications User Guide*.
  
+ Asymmetric/Non-Peer Processes
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@@ -99,7 +99,7 @@ server distributing received packets among worker or client threads, which are r
+ In this case, extensive use of rte_ring objects is made, which are located in shared hugepage memory.
  
-@@ -162,9 +162,9 @@ to specify the device queue pair to schedule the processing on.
- The ``nb_ops`` parameter is the number of operations to process
- which are supplied in the ``ops`` array of ``rte_ml_op`` structures.
- The enqueue function returns the number of operations it enqueued for processing,
--a return value equal to ``nb_ops`` means that all packets have been enqueued.
-+a return value equal to ``nb_ops`` means that all operations have been enqueued.
+ The client_server_mp sample application shows this usage model.
+-It is described in the "Multi-process Sample Application" chapter in the *DPDK Sample Application's User Guide*.
++It is described in the "Multi-process Sample Application" chapter in the *DPDK Sample Applications User Guide*.
  
--The dequeue API uses the same format as the enqueue API of processed
-+The dequeue API uses the same format as the enqueue API,
- but the ``nb_ops`` and ``ops`` parameters are now used to specify
- the max processed operations the user wishes to retrieve
- and the location in which to store them.
-@@ -193,7 +193,7 @@ from a higher precision type to a lower precision type and vice-versa.
- ML library provides the functions ``rte_ml_io_quantize()`` and ``rte_ml_io_dequantize()``
- to enable data type conversions.
- User needs to provide the address of the quantized and dequantized data buffers
--to the functions, along the number of the batches in the buffers.
-+to the functions, along with the number of batches in the buffers.
+ Running Multiple Independent DPDK Applications
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@@ -138,7 +138,7 @@ can use).
+ Running Multiple Independent Groups of DPDK Applications
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  
- For quantization, the dequantized data is assumed to be
- of the type ``dtype`` provided by the ``rte_ml_model_info::input``
+-In the same way that it is possible to run independent DPDK applications side- by-side on a single system,
++In the same way that it is possible to run independent DPDK applications side-by-side on a single system,
+ this can be trivially extended to multi-process groups of DPDK applications running side-by-side.
+ In this case, the secondary processes must use the same ``--file-prefix`` parameter
+ as the primary process whose shared memory they are connecting to.
+@@ -155,7 +155,7 @@ There are a number of limitations to what can be done when running DPDK multi-pr
+ Some of these are documented below:
+ 
+ *   The multi-process feature requires that the exact same hugepage memory mappings be present in all applications.
+-    This makes secondary process startup process generally unreliable. Disabling
++    This makes secondary process startup generally unreliable. Disabling
+     Linux security feature - Address-Space Layout Randomization (ASLR) may
+     help getting more consistent mappings, but not necessarily more reliable -
+     if the mappings are wrong, they will be consistently wrong!
+@@ -247,7 +247,7 @@ of fields to be populated are as follows:
+ * ``name`` - message name. This name must match receivers' callback name.
+ * ``param`` - message data (up to 256 bytes).
+ * ``len_param`` - length of message data.
+-* ``fds`` - file descriptors to pass long with the data (up to 8 fd's).
++* ``fds`` - file descriptors to pass along with the data (up to 8 fd's).
+ * ``num_fds`` - number of file descriptors to send.
+ 
+ Once the structure is populated, calling ``rte_mp_sendmsg()`` will send the
+@@ -301,7 +301,7 @@ Receiving and responding to messages
+ To receive a message, a name callback must be registered using the
+ ``rte_mp_action_register()`` function. The name of the callback must match the
+ ``name`` field in sender's ``rte_mp_msg`` message descriptor in order for this
+-message to be delivered and for the callback to be trigger.
++message to be delivered and for the callback to be triggered.
+ 
+ The callback's definition is ``rte_mp_t``, and consists of the incoming message
+ pointer ``msg``, and an opaque pointer ``peer``. Contents of ``msg`` will be
+@@ -318,8 +318,8 @@ pointer. The resulting response will then be delivered to the correct requestor.
+     there is no built-in way to indicate success or error for a request. Failing
+     to do so will cause the requestor to time out while waiting on a response.
+ 
+-Misc considerations
+-~~~~~~~~~~~~~~~~~~~~~~~~
++Miscellaneous considerations
++~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+ Due to the underlying IPC implementation being single-threaded, recursive
+ requests (i.e. sending a request while responding to another request) is not
 -- 
 2.51.0
 
