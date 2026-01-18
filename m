@@ -2,66 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25D84C9832F
-	for <dpdk-dev@archiver.kernel.org>; Sun, 18 Jan 2026 19:16:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD62CC9832F
+	for <dpdk-dev@archiver.kernel.org>; Sun, 18 Jan 2026 19:16:29 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C96F2427BD;
-	Sun, 18 Jan 2026 20:14:16 +0100 (CET)
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com
- [209.85.218.48]) by mails.dpdk.org (Postfix) with ESMTP id 2AF22427BA
- for <dev@dpdk.org>; Sun, 18 Jan 2026 20:14:14 +0100 (CET)
-Received: by mail-ej1-f48.google.com with SMTP id
- a640c23a62f3a-b8718187eb6so553485166b.2
- for <dev@dpdk.org>; Sun, 18 Jan 2026 11:14:14 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id E44AC427CD;
+	Sun, 18 Jan 2026 20:14:17 +0100 (CET)
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com
+ [209.85.218.49]) by mails.dpdk.org (Postfix) with ESMTP id C281B402F1
+ for <dev@dpdk.org>; Sun, 18 Jan 2026 20:14:15 +0100 (CET)
+Received: by mail-ej1-f49.google.com with SMTP id
+ a640c23a62f3a-b8765be29d6so525886166b.0
+ for <dev@dpdk.org>; Sun, 18 Jan 2026 11:14:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768763654;
- x=1769368454; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768763655;
+ x=1769368455; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=GB/jRFr2ZxwLjNLTQEZmQyjPSWybFXwC6iX/zxR7jNU=;
- b=nYIQ9Jf8xjeYvoOXLBih1NryYvrObTpnSY4K1HnnQmWMRMQ1E7759EGS67mQwazI9m
- aMIrOe36VollmKnCtHUOcWYRRPhL74Ns+TnDhGPIRjxUoaP+a61CYyvWSUKMURZckD2K
- M69MfI4K+OWUxD9st07qSChfbFCclVELMXBa8u9R1d8SzDdfZOgo4GYkjv94CR5BGHYj
- hPROwAblYsfP763eEY6M5l02Mis8ZoUjFFtVMR/TWjngw4w45RvcBNAPrpYnToXhW7Rs
- rHAd9R909EGP/ES2z7Zku6A5VcD5vvCNRnkaGRX5wvbeNkHzFzFSzTRGlbnNmADhOrhy
- Xx8Q==
+ bh=KTI/f4G6e+d6SFTAHH4Pd9K2luUo5vsEWc6ehkHNWiY=;
+ b=ROKk9lx3dwlO4S89hd63dh0hqUVMnCwFsXfeVTFMO+ZHU7WgmyGdhXQ7oGEwmmHgZj
+ EzHu8xtC2PlZR8q9si78E6RBUnmfycHuDZ65lMGXRb00pNVyW0k2osVZO4MhzibMCdnW
+ QsXTqA+l+6No0britOPb+CRkmVZ55eqthxK6tAL6+zA7o78QWKRLT7ss06b4d+F/3T7v
+ SZ4WJZ5RevoApkyGnlk+wTLAV6mVrCYZrU+InLP1Asnq/dGHHQSbuj7TraohVeSd0USM
+ Gs/ObscrlPwJeDUlzdRbXeu0mSyita4stNm2Ia8fdgVTsXPG7BRYxUxyO8vKrPGcVYno
+ zBAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768763654; x=1769368454;
+ d=1e100.net; s=20230601; t=1768763655; x=1769368455;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=GB/jRFr2ZxwLjNLTQEZmQyjPSWybFXwC6iX/zxR7jNU=;
- b=tpefJTzlNNRpCKOQ7l/y6AzV8DTLT2Rqa+dDpMd1phWsVEDj7zI02diypbaryq2+aC
- hDHdH9NJjW2xirjhSzb06F1mfCHqckKTEMwefm0ks5GLz6nl1lMbWvSgwdpjg5Pf0l0X
- 4Qf0tY2aRrBcIMU6dU+m7YJlxWhp0yPluE2RIUDuRXHHhxfKcLvrsrviUdAtcu0BN1MQ
- QbRuWA8L9tswgABirqM/Vgf6xpvr0tGB9M8UjopDFC2UPoIGxaRhWMnZvlbMPkEYfInx
- HfwTF3h1ekdYGfSvJyIHlowpYDj6STOV1/GrndLP435oS3YZ9CczatgugKlGq3CAaXL9
- 3cgw==
-X-Gm-Message-State: AOJu0Yx7b1szE+CLk0+ccn6tWznHEnLnBfalp8ZbmyznNqq7IaCMafOe
- Uvz8x8RJ+MO/HwonTepIybVQQuBNxpptAke1r7mbHed/D8G0vhest8I+HiJ6cnTqOrgN5tMNnHQ
- YmAND
-X-Gm-Gg: AY/fxX6w5Tp7xOiYQrLBrjl0zJ69MoUHkfQDpopK/8sRHukp2pGXKHKXhby+lTfSdh5
- M9QGsYgeSCgVgBA84GVWZXeM3959cQAK73umqCF1TVXvTLa7ynodWyCOiPqZAuNlKMlcbRcSWhn
- XKJVL/kHlOO1InuJCd+45quxr2CWYtTX2ceciOKVuIz6/KRV9sjls6EYGdJJFpVAfcBgV6EE242
- L2AZ4JGu5iof7kFn1W++lXmWCecuoqAhaYHXLf+JbmA4yZbmKYQtu+cBJVzOJi/417kp271prfx
- 7TnSHJnMnm2XeUHOAPoDTPles9cH0PncOvU4KGk0bKhsTJQYIW7jynn1DwoJHMbqRwYw/f7tXLV
- 51pUxwxp2aDEv/jhsu4d6VjN7lPrbaj8RZ3ErWfVkims14kJ/HVE3BoAtX3Q/QBunm3YGPpTqrQ
- YPR+KSvsE3GVM/2MoWz2kHTVMu2CBFs5FHHz1rdijOksT4ZQ0mOg==
-X-Received: by 2002:a17:906:fe03:b0:b87:d839:ae8 with SMTP id
- a640c23a62f3a-b87d8396e16mr65943266b.54.1768763653712; 
- Sun, 18 Jan 2026 11:14:13 -0800 (PST)
+ bh=KTI/f4G6e+d6SFTAHH4Pd9K2luUo5vsEWc6ehkHNWiY=;
+ b=fEsyCn1FgTaxoPY+BuBpoJ40ibskmmiG58HqkJjcKEtwSjlmBJsJxA++SBqvxxLR9S
+ ibHCratsrqagbxsr73kMEoMH19s3N/styX57ZN9onOBfuUgtIKeMiANnpmVX2iYTIQMN
+ CidTbtEG2GrdA6CTEazs8qJnzqKC/dqYPBnEgPeiu3FY8Ke9FDm2c8zvXsZa/2TU8tAM
+ ksLMoNVap0wA5r2ma4xOxnV3VwRyXbTmDkF0l6DySvF7a8wu750pGaMlnAXjJXhnRsFR
+ lh51MxRweMiwgDPahxmWk19CBxPujauRipvO8LRsOsmCMOFeGFUTaDLV4GCGJ6cid4Dj
+ 8H/Q==
+X-Gm-Message-State: AOJu0Yz7TbiPrgqGQ8Eprck6yOOORq8LSPhE/ppCpWlHUJFXcGCmDJIL
+ YFXBJjICAWhhJYLvytTzcK2Uvr4Ml4BCH7DSne6ZUEbkqBszs/g0c0PuvPF1TXnbOVanIt20Bdz
+ UB1HK
+X-Gm-Gg: AY/fxX4kZ2kEaWr1HEou+nBCQHh9NcBEvv4S0Yi+eARUNSRB6/lQLZUvpqmv+AXGwt+
+ 6p1zXtfI/bjppoGeYY/YWmPwbdJzTdTFVxTqoSqCCGd0G4nL7YW2QQ7QpKCAIIQG/BggHqmFT5p
+ aCAfi/xIvKEKB7s8CQsJXAAsbqF03ErcKFlq/5alk9GZkeMxZNH7xJA/cv7UvuUxTuZgQG9Im7E
+ ztmitdrDoNA+DV1HoW/Eql9Tit7lcVHCsct/Oy5bl38oj2ImhLA1YIs0zv8VLvGk8aSid/PTOHV
+ iu28UaQgCwygFOxKnLT6maG5NboQohQgzkc+e1pNwND8banB29QsHBqfuQAR1HtEWkggqqR7oDT
+ DYKU14fhaw5RANGgCgh7t6DhVvgkAVW9mf2jXraFlGkFd2iVWHe5hEUbjWXubbVTnc0rRq5TvK7
+ OZ7Xi8KRbGGCp/RjHw/06ayveC5hk1Jn0O6T7LM2TveAYAN8ktFQ==
+X-Received: by 2002:a17:906:4793:b0:b87:1fb:8369 with SMTP id
+ a640c23a62f3a-b879324c8aamr779262866b.57.1768763655231; 
+ Sun, 18 Jan 2026 11:14:15 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a640c23a62f3a-b87959c9f8dsm886287166b.36.2026.01.18.11.14.12
+ a640c23a62f3a-b87959c9f8dsm886287166b.36.2026.01.18.11.14.13
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 18 Jan 2026 11:14:13 -0800 (PST)
+ Sun, 18 Jan 2026 11:14:14 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v5 29/54] doc: correct grammar and typo in LPM6 guide
-Date: Sun, 18 Jan 2026 11:10:32 -0800
-Message-ID: <20260118191323.241013-30-stephen@networkplumber.org>
+Subject: [PATCH v5 30/54] doc: correct grammar in introduction
+Date: Sun, 18 Jan 2026 11:10:33 -0800
+Message-ID: <20260118191323.241013-31-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260118191323.241013-1-stephen@networkplumber.org>
 References: <20240513155911.31872-1-nandinipersad361@gmail.com>
@@ -81,37 +81,37 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Correct several documentation issues:
-- Change "IP address be looked up" to "IP address to be looked up"
-- Change "search process have finished" to "search process has finished"
+Correct missing subject in sentence describing release notes content.
+Correct inconsistent capitalization of Linux in the documentation
+roadmap section.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- doc/guides/prog_guide/lpm6_lib.rst | 4 ++--
+ doc/guides/prog_guide/intro.rst | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/doc/guides/prog_guide/lpm6_lib.rst b/doc/guides/prog_guide/lpm6_lib.rst
-index 2c3eb10857..41b9d8a837 100644
---- a/doc/guides/prog_guide/lpm6_lib.rst
-+++ b/doc/guides/prog_guide/lpm6_lib.rst
-@@ -68,7 +68,7 @@ The main data structure is built using the following elements:
+diff --git a/doc/guides/prog_guide/intro.rst b/doc/guides/prog_guide/intro.rst
+index 44877bd3e3..5055574206 100644
+--- a/doc/guides/prog_guide/intro.rst
++++ b/doc/guides/prog_guide/intro.rst
+@@ -19,7 +19,7 @@ The following is a list of DPDK documents in the suggested reading order:
  
- *   A number of tables, configurable by the user through the API, with 2^8 entries
+ *   **Release Notes** : Provides release-specific information, including supported features,
+     limitations, fixed issues, known issues and so on.
+-    Also, provides the answers to frequently asked questions in FAQ format.
++    It also provides the answers to frequently asked questions in FAQ format.
  
--The first table, called tbl24, is indexed using the first 24 bits of the IP address be looked up,
-+The first table, called tbl24, is indexed using the first 24 bits of the IP address to be looked up,
- while the rest of the tables, called tbl8s,
- are indexed using the rest of the bytes of the IP address, in chunks of 8 bits.
- This means that depending on the outcome of trying to match the IP address of an incoming packet to the rule stored in the tbl24
-@@ -103,7 +103,7 @@ The first field can either contain a number indicating the tbl8 in which the loo
- or the next hop itself if the longest prefix match has already been found.
- The depth or length of the rule is the number of bits of the rule that is stored in a specific entry.
- The flags are used to determine whether the entry/table is valid or not
--and whether the search process have finished or not respectively.
-+and whether the search process has finished or not respectively.
+ *   **Getting Started Guide** : Describes how to install and configure the DPDK software;
+     designed to get users up and running quickly with the software.
+@@ -31,7 +31,7 @@ The following is a list of DPDK documents in the suggested reading order:
+ *   **Programmer's Guide** (this document): Describes:
  
- Both types of tables share the same structure.
+     *   The software architecture and how to use it (through examples),
+-        specifically in a Linux* application (linux) environment
++        specifically in a Linux* application (Linux) environment
  
+     *   The content of the DPDK, the build system
+         (including the commands that can be used in the root DPDK to build the development kit and an application)
 -- 
 2.51.0
 
