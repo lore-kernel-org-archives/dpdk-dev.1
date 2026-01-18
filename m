@@ -2,66 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 691B8C9830C
-	for <dpdk-dev@archiver.kernel.org>; Sun, 18 Jan 2026 19:16:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7ACCC9832F
+	for <dpdk-dev@archiver.kernel.org>; Sun, 18 Jan 2026 19:16:40 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 02949427D5;
-	Sun, 18 Jan 2026 20:14:19 +0100 (CET)
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com
- [209.85.218.54]) by mails.dpdk.org (Postfix) with ESMTP id 42B76427C1
- for <dev@dpdk.org>; Sun, 18 Jan 2026 20:14:17 +0100 (CET)
-Received: by mail-ej1-f54.google.com with SMTP id
- a640c23a62f3a-b8708930695so565269366b.3
- for <dev@dpdk.org>; Sun, 18 Jan 2026 11:14:17 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 86617427DE;
+	Sun, 18 Jan 2026 20:14:22 +0100 (CET)
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com
+ [209.85.208.50]) by mails.dpdk.org (Postfix) with ESMTP id DCD23427CA
+ for <dev@dpdk.org>; Sun, 18 Jan 2026 20:14:18 +0100 (CET)
+Received: by mail-ed1-f50.google.com with SMTP id
+ 4fb4d7f45d1cf-64b608ffca7so5542175a12.3
+ for <dev@dpdk.org>; Sun, 18 Jan 2026 11:14:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768763657;
- x=1769368457; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768763658;
+ x=1769368458; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=b2o/QgmBE1Ax5E8Ubi93comn/3IKkkli8qNkhas9mkw=;
- b=nKwBr1LYUm7NlJUF2kCDNFUBV2nq7ezWJfKXpWvSIPdVvodbi0/382Ipdf+dEjMbqq
- glZj9ScNPzC+htuFPSKQoeQkLs4V05BvI2r0FfBDDvVKgskOZGSi+YhaRKoYcvihxtlF
- 4QskJaFt0zyuWWBFbltkJAmmH1XZsSrDy6vmH3Y6XM0q7c3uQMa6B8IoyMpwByylOi7/
- 0bTxKB6EsQ0jV1o7FMLCC3M/AsZO+hg/v03vvqbHrscR+9gD7R8WY2moJoU62zeeXvBZ
- t41SIkESyyuSjZRJxOvP4x4u0gMXEPhUmBNVdDj/RA4M/EWz1F4TROLuZCSoT5gxrgaR
- bSqw==
+ bh=q49wA+VwnpdWyQ1WG1ozKxcFuIUvHqphroZNI+2NijU=;
+ b=xhuVr2w9aCh7YlXfUwN1NpmLWAbu7E1LO7+sdRrB1ELnl9Av6Zyen/tZqB4oY0gC9f
+ qUnkMc++Q8RlhPC4rJIRJD3eu8fHbU7LaI0BBYEIXG1vZTIY1iByt4TZNELgukYRPrHH
+ Jx/j6tqOppqv/Zq5BDKx34MGIbsz5sfzdLgyFP+qErmBJwawUMsb4dxH9dpWQWUyCVH7
+ ElZPUlfFji/7h3jNmT6kwjq4ylUFA/kCD1qIBf3H5uoYIMTDdROV04AG3aG7bz+Yr51l
+ bFD4z9QbYMD8JxZGQRaKz4kQsMWDh6j0LvZXqXPPPVqSgmsMu9bme+XcT+hjcRawUCQX
+ q2Ow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768763657; x=1769368457;
+ d=1e100.net; s=20230601; t=1768763658; x=1769368458;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=b2o/QgmBE1Ax5E8Ubi93comn/3IKkkli8qNkhas9mkw=;
- b=lmYxhP8UNRX9bLRfOiwEu+HQpzJ7neP886cG5kNBLP+AV7168uB5BAooNKo9iCZY34
- Xa+gtQr4vLrnSchbECZwC8AfBmcKrWgT5enj+nJGiFAtjemnJb+kQKQKIIU+MsDvEvEi
- fZViBwDHSFXOzcw3Nk2KPUNnyZDYQKzN0n+uROYNmOT3t9V4sACCoSf3OlmEvQmOsEX5
- bSYSc3PUn4nbUIfY0Ambpcs+qu3RyFhO398soLUuGlGR+C07ZDKioDscnv67gINvuv+N
- Yxcs7FWT1eqhnyuzSNsOV5JWi0g9IpwVsBJ2CTQ21YaVJl9rCkV9IlY8CISKR+pSbUhc
- U83w==
-X-Gm-Message-State: AOJu0YxY3G5O12jmxE3bVixHf3tuvprR/zaLWnSQ6pUzn2XXNglk2+X4
- vhM5bRWInOEfgrZETK5eM2C7TGTOD5P+XlaGRxwa4Nx9cWngN7JdpOnJQyqK3DkZxUvV7W/HPo7
- 1hCQi
-X-Gm-Gg: AY/fxX6oP09jJVqI37YQuYyHnSh0D9gRIve3TyLPkd+BHJeTswsUb85KrcLDhAoTnoZ
- HpFLJQONR0SKw4wZ6OmXvgdUQgNSb+nF0lGlMBOcFe7eCjl+Ij22HCuRy/OkXAZJ4tkh1P0p7IC
- sjpSgpOtsIPA/x7JEkicKPHLXMtyyY8z0qNjZLk9kGPPVFFmF0g2eADnmYrnae+kyO0m187vYRw
- JM4+DYzcRaSh/rB550a9I/xqQ/fwGX5mc1YoaUjQI852BqQw4Y8ZH3MYh2y+c4lHkVxUXCz/iFR
- 6LCmm+RAB7ZGneUJu8i+oi99bCVc4FXOyB3CqPWQE5cycMS0HtTnb4rXuNC6Bya+0pPEoVKNRGT
- FsXfj9SvDTrlH5iHv8/CHwgvFFS2HE6klzroX9jM+1xUVMJmvQC5lTWLuHdVHGD2GR5MzaWdTUc
- NXzBG4BWgdRcLS/Evs+vlgUMv4RB0M068nQLvds1tBwhuJe5qhMw==
-X-Received: by 2002:a17:907:9711:b0:b87:672c:410e with SMTP id
- a640c23a62f3a-b8796af0cf0mr702974766b.42.1768763656820; 
- Sun, 18 Jan 2026 11:14:16 -0800 (PST)
+ bh=q49wA+VwnpdWyQ1WG1ozKxcFuIUvHqphroZNI+2NijU=;
+ b=W/5YOZUAn+J2yBYbPhfEeajjWsQJt1CeMP7JlTHc+V12cA/9My4B8ifE2rp8Tm23R3
+ Jb1vsUxxB0MLmJbg0GFi+MfL1/uBQREJxmCBRvFnpVDsUy4AwWIOcGAlLjBKyyJiDUaD
+ U4V/7gFRsaVbfBwedyPxcjWAEyM5m3v6X6Xwifz/D0hJ5JHeHnMQ+c7+Kf7qoeoEDqR7
+ MKTZYkZtqYUoBtRKbO27IMLyXZtG4INmzM4le/al3VsaX1nJXVGGrAKwSvlDYKOCPFXJ
+ XVJb+0EEYlb6ZjO4ttJw5c6Llto7q0+lZHFodnqMdqYCjin3Dc7WJJRQUll/XhwbE+qg
+ oHOA==
+X-Gm-Message-State: AOJu0YylJWYJB8ZUx1t9tKbatR0Qvstq1HVXOw/Z7AGCzH4yQrrDGoTF
+ LktNFXiqWDCvjMTw0pHyUOgeIMYMTfMfK8AShFetQ3fYpIRJUrOvN0d8rZSQNEW5GZMEhcGhovl
+ ryAzv
+X-Gm-Gg: AY/fxX4pJVnJWNWONi66oMBVSq3yaP9iluXhtO27T3rHEhS2bwcOkW/y8oACCEuHXQQ
+ 8VQKHP6lLioTHlMRzewPM4Qy2fNJhnfd+klHLJG+GZMoLVL8C+zqC0wrUb5LldDIPSJQUPBI4jZ
+ 5UoX5zHjswdwUcipti8tWeIP19+18qbnEb9oQrraPp7XKLCRjmE//jFTIwjolKzfpCaFvWa9trV
+ b529U87Md9cJmv5moXwcDo8oYzVCZqDdEtTB4r2aldxDBayKefQFi3eGEVuuEF3foAGLgkvOwaC
+ gbLE1ljx79gxi6yJKcPRpcwxWX6VXY76YHxsKgvUqr40Gik52hvWVdqazf9Jc1GJ/c3SEbug1f1
+ wN1tgN8fQzxybTHx+29R094L6BlBkJhSFVCDlS6LuLcg7UeOvYQBtTgEPhK6EgPrvc/kf/zhnX2
+ YA5ruEfxPCqPr3Z3uBTQqtW6/a/6cLwsDrre5ThFvLqrURsp+1861+qoLmuasC
+X-Received: by 2002:a17:906:9f92:b0:b87:6f7c:6094 with SMTP id
+ a640c23a62f3a-b8796afd600mr754990466b.41.1768763658352; 
+ Sun, 18 Jan 2026 11:14:18 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a640c23a62f3a-b87959c9f8dsm886287166b.36.2026.01.18.11.14.15
+ a640c23a62f3a-b87959c9f8dsm886287166b.36.2026.01.18.11.14.17
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 18 Jan 2026 11:14:16 -0800 (PST)
+ Sun, 18 Jan 2026 11:14:17 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v5 31/54] doc: correct grammar in mbuf library guide
-Date: Sun, 18 Jan 2026 11:10:34 -0800
-Message-ID: <20260118191323.241013-32-stephen@networkplumber.org>
+Subject: [PATCH v5 32/54] doc: correct grammar in membership library guide
+Date: Sun, 18 Jan 2026 11:10:35 -0800
+Message-ID: <20260118191323.241013-33-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260118191323.241013-1-stephen@networkplumber.org>
 References: <20240513155911.31872-1-nandinipersad361@gmail.com>
@@ -81,108 +81,129 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Correct various grammar and style issues in the mbuf library
+Correct various grammar and style issues in the membership library
 documentation:
 
-- make Mbuf capitalization consistent with title
-- fix garbled sentence about embedding metadata in buffers
-- correct awkward phrasing for newly-allocated mbuf description
-- use correct article "an mbuf" before vowel sound
-- fix redundant "prepend data before data" phrasing
-- add missing punctuation and normalize list formatting
-- correct idiom "allows to offload" to "allows offloading"
-- fix subject-verb agreement for "information finds"
-- fix plural "applications" in use cases section
+- use "that" instead of "who" for applications
+- fix subject-verb agreement in multiple places
+- use consistent capitalization for Sub-figure references
+- add missing articles before nouns
+- correct grammar for element insertion description
+- add missing relative pronouns for clarity
+- fix "two time" to "two times the"
+- correct function names to use rte_member_* pattern consistently
+  (rte_membership_lookup_multi_bulk -> rte_member_lookup_multi_bulk,
+   rte_membership_delete -> rte_member_delete)
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- doc/guides/prog_guide/mbuf_lib.rst | 26 ++++++++++++++------------
- 1 file changed, 14 insertions(+), 12 deletions(-)
+ doc/guides/prog_guide/member_lib.rst | 26 +++++++++++++-------------
+ 1 file changed, 13 insertions(+), 13 deletions(-)
 
-diff --git a/doc/guides/prog_guide/mbuf_lib.rst b/doc/guides/prog_guide/mbuf_lib.rst
-index 382bfbdca4..ee88b13766 100644
---- a/doc/guides/prog_guide/mbuf_lib.rst
-+++ b/doc/guides/prog_guide/mbuf_lib.rst
-@@ -4,7 +4,7 @@
- Packet (Mbuf) Library
- =====================
+diff --git a/doc/guides/prog_guide/member_lib.rst b/doc/guides/prog_guide/member_lib.rst
+index d2f76de35c..fde7204ad4 100644
+--- a/doc/guides/prog_guide/member_lib.rst
++++ b/doc/guides/prog_guide/member_lib.rst
+@@ -31,7 +31,7 @@ is a fundamental data aggregation component that can be used in many network
+ (and other) applications. It is a crucial structure to address performance and
+ scalability issues of diverse network applications including overlay networks,
+ data-centric networks, flow table summaries, network statistics and
+-traffic monitoring. A set-summary is useful for applications who need to
++traffic monitoring. A set-summary is useful for applications that need to
+ include a list of elements while a complete list requires too much space
+ and/or too much processing cost. In these situations, the set-summary works as
+ a lossy hash-based representation of a set of members. It can dramatically
+@@ -47,7 +47,7 @@ probability.
+ There are various usages for a Membership Library in a very
+ large set of applications and workloads. Interested readers can refer to
+ [Member-survey] for a survey of possible networking usages. The above figure
+-provide a small set of examples of using the Membership Library:
++provides a small set of examples of using the Membership Library:
  
--The Packet (MBuf) library provides the ability to allocate and free buffers (mbufs)
-+The Packet (Mbuf) library provides the ability to allocate and free buffers (mbufs)
- that may be used by the DPDK application to store message buffers.
- The message buffers are stored in a mempool, using the :doc:`mempool_lib`.
+ * Sub-figure (a)
+   depicts a distributed web cache architecture where a collection of proxies
+@@ -66,7 +66,7 @@ provide a small set of examples of using the Membership Library:
+   whether its id is a member of the set of visited nodes, and if it is, then a
+   routing loop is detected.
  
-@@ -19,7 +19,7 @@ Design of Packet Buffers
+-* Sub-Figure (c) presents another usage of the Membership
++* Sub-figure (c) presents another usage of the Membership
+   Library to load-balance flows to worker threads with in-order guarantee where a
+   set-summary is used to query if a packet belongs to an existing flow or a new
+   flow. Packets belonging to a new flow are forwarded to the current least loaded
+@@ -79,7 +79,7 @@ provide a small set of examples of using the Membership Library:
+   element of a set against the other elements in a different set, a join is done
+   on the summaries since they can efficiently encode members of a given set.
  
- For the storage of the packet data (including protocol headers), two approaches were considered:
+-Membership Library is a configurable library that is optimized to cover set
++The Membership Library is a configurable library that is optimized to cover set
+ membership functionality for both a single set and multi-set scenarios. Two set-summary
+ schemes are presented including (a) vector of Bloom Filters and (b) Hash-Table based
+ set-summary schemes with and without false negative probability.
+@@ -99,8 +99,8 @@ The BF is a method for representing a set of ``n`` elements (for example flow ke
+ in network applications domain) to support membership queries. The idea of BF is
+ to allocate a bit-vector ``v`` with ``m`` bits, which are initially all set to 0. Then
+ it chooses ``k`` independent hash functions ``h1``, ``h2``, ... ``hk`` with hash values range from
+-``0`` to ``m-1`` to perform hashing calculations on each element to be inserted. Every time when an
+-element ``X`` being inserted into the set, the bits at positions ``h1(X)``, ``h2(X)``, ...
++``0`` to ``m-1`` to perform hashing calculations on each element to be inserted. Every time an
++element ``X`` is inserted into the set, the bits at positions ``h1(X)``, ``h2(X)``, ...
+ ``hk(X)`` in ``v`` are set to 1 (any particular bit might be set to 1 multiple times
+ for multiple different inserted elements). Given a query for any element ``Y``, the
+ bits at positions ``h1(Y)``, ``h2(Y)``, ... ``hk(Y)`` are checked. If any of them is 0,
+@@ -126,9 +126,9 @@ lookup with element comparison.
  
--#.  Embed metadata within a single memory buffer the structure followed by a fixed size area for the packet data.
-+#.  Embed metadata within a single memory buffer, with the structure followed by a fixed-size area for the packet data.
+   Detecting Routing Loops Using BF
  
- #.  Use separate memory buffers for the metadata structure and for the packet data.
+-BF is used for applications that need only one set, and the
++A BF is used for applications that need only one set, and the
+ membership of elements is checked against the BF. The example discussed
+-in the above figure is one example of potential applications that uses only one
++in the above figure is one example of potential applications that use only one
+ set to capture the node IDs that have been visited so far by the packet. Each
+ node will then check this embedded BF in the packet header for its own id, and
+ if the BF indicates that the current node is definitely not in the set then a
+@@ -280,7 +280,7 @@ The general input arguments used when creating the set-summary should include ``
+ which is the name of the created set-summary, *type* which is one of the types
+ supported by the library (e.g. ``RTE_MEMBER_TYPE_HT`` for HTSS or ``RTE_MEMBER_TYPE_VBF`` for vBF), and ``key_len``
+ which is the length of the element/key. There are other parameters
+-are only used for certain type of set-summary, or which have a slightly different meaning for different types of set-summary.
++that are only used for a certain type of set-summary, or that have a slightly different meaning for different types of set-summary.
+ For example, ``num_keys`` parameter means the maximum number of entries for Hash table based set-summary.
+ However, for bloom filter, this value means the expected number of keys that could be
+ inserted into the bloom filter(s). The value is used to calculate the size of each
+@@ -293,7 +293,7 @@ set-summary. For HTSS, another parameter ``is_cache`` is used to indicate
+ if this set-summary is a cache (i.e. with false negative probability) or not.
+ For vBF, extra parameters are needed. For example, ``num_set`` is the number of
+ sets needed to initialize the vector bloom filters. This number is equal to the
+-number of bloom filters will be created.
++number of bloom filters that will be created.
+ ``false_pos_rate`` is the false positive rate. num_keys and false_pos_rate will be used to determine
+ the number of hash functions and the bloom filter size.
  
-@@ -79,10 +79,10 @@ Allocating and Freeing mbufs
- ----------------------------
+@@ -346,11 +346,11 @@ element/key that needs to be looked up, ``max_match_per_key`` which is to indica
+ the user expects to find for each key, and ``set_id`` which is used to return all
+ target set ids where the key has matched, if any. The ``set_id`` array should be sized
+ according to ``max_match_per_key``. For vBF, the maximum number of matches per key is equal
+-to the number of sets. For HTSS, the maximum number of matches per key is equal to two time
++to the number of sets. For HTSS, the maximum number of matches per key is equal to two times the
+ entry count per bucket. ``max_match_per_key`` should be equal or smaller than the maximum number of
+ possible matches.
  
- Allocating a new mbuf requires the user to specify the mempool from which the mbuf should be taken.
--For any newly-allocated mbuf, it contains one segment, with a length of 0.
-+Any newly-allocated mbuf contains one segment, with a length of 0.
- The offset to data is initialized to have some bytes of headroom in the buffer (RTE_PKTMBUF_HEADROOM).
+-The ``rte_membership_lookup_multi_bulk()`` function looks up a bulk of keys/elements in the
++The ``rte_member_lookup_multi_bulk()`` function looks up a bulk of keys/elements in the
+ set-summary structure for multiple matches, each key lookup returns ALL the matches (possibly more
+ than one) found for this key when it is matched against all target sets (cache mode HTSS
+ matches at most one target set). The
+@@ -370,7 +370,7 @@ possible matches, similar to ``rte_member_lookup_multi``.
+ Set-summary Element Delete
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~
  
--Freeing a mbuf means returning it into its original mempool.
-+Freeing an mbuf means returning it into its original mempool.
- The content of an mbuf is not modified when it is stored in a pool (as a free mbuf).
- Fields initialized by the constructor do not need to be re-initialized at mbuf allocation.
- 
-@@ -93,17 +93,19 @@ Manipulating mbufs
- 
- This library provides some functions for manipulating the data in a packet mbuf. For instance:
- 
--    *  Get data length
-+    *   Get data length
- 
--    *  Get a pointer to the start of data
-+    *   Get a pointer to the start of data
- 
--    *  Prepend data before data
-+    *   Prepend data before the payload
- 
--    *   Append data after data
-+    *   Append data after the payload
- 
-     *   Remove data at the beginning of the buffer (rte_pktmbuf_adj())
- 
--    *   Remove data at the end of the buffer (rte_pktmbuf_trim()) Refer to the *DPDK API Reference* for details.
-+    *   Remove data at the end of the buffer (rte_pktmbuf_trim())
-+
-+Refer to the *DPDK API Reference* for details.
- 
- .. _mbuf_meta:
- 
-@@ -123,7 +125,7 @@ timestamp mechanism, the VLAN tagging and the IP checksum computation.
- 
- On TX side, it is also possible for an application to delegate some
- processing to the hardware if it supports it. For instance, the
--RTE_MBUF_F_TX_IP_CKSUM flag allows to offload the computation of the IPv4
-+RTE_MBUF_F_TX_IP_CKSUM flag allows offloading the computation of the IPv4
- checksum.
- 
- The following examples explain how to configure different TX offloads on
-@@ -212,7 +214,7 @@ Dynamic fields and flags
- 
- The size of the mbuf is constrained and limited;
- while the amount of metadata to save for each packet is quite unlimited.
--The most basic networking information already find their place
-+The most basic networking information already finds its place
- in the existing mbuf fields and flags.
- 
- If new features need to be added, the new fields and flags should fit
-@@ -286,4 +288,4 @@ by the script ``dpdk-mbuf-history-parser.py``.
- Use Cases
- ---------
- 
--All networking application should use mbufs to transport network packets.
-+All networking applications should use mbufs to transport network packets.
+-The ``rte_membership_delete()`` function deletes an element/key from a set-summary structure, if it fails
++The ``rte_member_delete()`` function deletes an element/key from a set-summary structure, if it fails
+ an error is returned. The input arguments should include ``key`` which is a pointer to the
+ element/key that needs to be deleted from the set-summary, and ``set_id``
+ which is the set id associated with the key to delete. It is worth noting that current
 -- 
 2.51.0
 
