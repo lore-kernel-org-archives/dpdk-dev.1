@@ -2,68 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81ACDC9832F
-	for <dpdk-dev@archiver.kernel.org>; Sun, 18 Jan 2026 19:13:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D39E8C9832F
+	for <dpdk-dev@archiver.kernel.org>; Sun, 18 Jan 2026 19:13:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 98F35406B7;
-	Sun, 18 Jan 2026 20:13:35 +0100 (CET)
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com
- [209.85.218.54]) by mails.dpdk.org (Postfix) with ESMTP id 30D6040670
- for <dev@dpdk.org>; Sun, 18 Jan 2026 20:13:34 +0100 (CET)
-Received: by mail-ej1-f54.google.com with SMTP id
- a640c23a62f3a-b876f3f603eso620248166b.0
- for <dev@dpdk.org>; Sun, 18 Jan 2026 11:13:34 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id AAD8940684;
+	Sun, 18 Jan 2026 20:13:38 +0100 (CET)
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com
+ [209.85.218.47]) by mails.dpdk.org (Postfix) with ESMTP id E4040406BA
+ for <dev@dpdk.org>; Sun, 18 Jan 2026 20:13:35 +0100 (CET)
+Received: by mail-ej1-f47.google.com with SMTP id
+ a640c23a62f3a-b870732cce2so554591266b.3
+ for <dev@dpdk.org>; Sun, 18 Jan 2026 11:13:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768763614;
- x=1769368414; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768763615;
+ x=1769368415; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=cfaJkMsXihpd5P2tKcophJ+bZhX0Wcy54FLKEnuo92s=;
- b=N22Ax6MIxyK6eGFfhH8I1scjvNSiDQEXg8j56bBtl57Rm2djW/vsmSQw5GhahHk7p7
- Wc16fnPYRxmuobmesAUFjxcZ7RD3MOvydpRwrbKpkRldc75tocLwDgvUYxwVjGnHw86+
- EvHEbcGQ+FxHhdm8uVtNqg/AgUiPhIDNKkYmSEAZf6ZzKQjw8UaOizQAR4wdSz8qL0zL
- Lo9N61T7tdbj3KaOqgyt5W/gxB6k+yZyS3RgYHbc1PfuLAQ//WQq35ELvO2nhUl2RHuE
- 8j2O7o4bA8cPBzn/IUO+AFTJxRbRTgfVEgCqbIQqimkSZ2lXlMWk4TqgaK+6kN4D3fT/
- 2wvw==
+ bh=WNyUkCMe9MZzwrstbShxbdJ4CyXmJCX9c8DBPjb/O84=;
+ b=hwPzaBxRO06lEhPCIDTVmB/h6rIeeXgz8oi909uUXDL6IgqpCmnBBzLQRlOV7Ooyv1
+ sJikCmupEqksr3bQl/iwOTVw0bvho7zJrx4mf6PHs/W+wWWcmCY18vDav8cTl9GymM2Y
+ 1tLS7TYIOMSzwaPOisiqFvHB8bD/IHs5znichJg/A2Z7mLTEGkzaStreizxDF1iBf0ZD
+ GVzyMRQT/UjFC1VEojD+AEXOKjPKTRlfwlB/jmNkMZseLMX1gljePJTVMoQaiWabcVV5
+ ftZsVo+t6Yucxu7hl3nmShuXX9G428KBLXHdwsMBjhf3cMsyP2Qfa1eynED/2yCjzUrL
+ aX0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768763614; x=1769368414;
+ d=1e100.net; s=20230601; t=1768763615; x=1769368415;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=cfaJkMsXihpd5P2tKcophJ+bZhX0Wcy54FLKEnuo92s=;
- b=sHGnTyj4HnZb9Fs6sB/99nZYj3yBGuNncpPr7Dpl8MVpabSAETQkoFuGyX3dzxj3YX
- REwmlI/nukXFlmlZQ/jrZtBx0ywvea5S6qNsRUcY1h0gzwLtu79+/xR3SRul+nlwwP3m
- 4lMMi1eixOtl6jC+5bWQ1qEJiGHmAfIN+1Jkk8IPmyuPZKkRS5kT4slRj+3XqgG+FIYy
- /cZ/e6WZT9RJEELVI6ZFlNCe6Gf1g+tHZBMt4hTW4Nt8PYfBJ313ZW5y4pgqyxYOmS3p
- aXno3XPQ6jK7yCKPppxK2d2X0ib4TymokSZoaYhwweqQIU3XvP118lulXipAgBCROIeI
- iqBw==
-X-Gm-Message-State: AOJu0YyAPrkyFI9vKNSCsA1ovhx9/XCi3wQMs5HHYb6kC+a61Vo4U44F
- 9xkAKRXUoswDB4w1K/CkOaA21E/4v6GEMjx8WMS2rbsi83C+xeaQAld5eQLeoJw+yFBkH2WFOWc
- mL6zS
-X-Gm-Gg: AY/fxX5+4vUJw2AuHE2cV+SKqzveSl3Nedh5RhvUvD2Rco00eNocZuLxLwepQPPGP5o
- j51ygk6n9dE9z6Kj5LHkMtfSZspzzocky1xLo7ZDggiC5k01XJ2hUQXbdjYL1BQoK14/0RGVnjn
- Of5RveAaR/HYxJIEZZ7iiXJrtHtAbOV4u/NT1vEmN8L+nWVxPJR/Ap1HsWVqnK2yKPZlySKAdvl
- WRqeKi5KCo1gUj67tlO/0K68Ul5XHKTjZjec0f4dZ3HAfOGfrt63OzxDkqb6fEFaddTaUGzBkGM
- 8dswKdbt4tvfu0B0bpjveP/vow96d55owCxW+rAmMBFtoNvIywXWcldDC7/NzAXYVshpBNz3Izf
- HFRnyrruAPFPbvxFl7dZ1dXpZb2J7BTu2iQkphFpUAM4V7POneI3AprjtEK47pKORv728lWrQxK
- qy0rLMdDHrqMsVppxlVwqRyKkXngW5+kye8B1C4HOleaukllYn7g==
-X-Received: by 2002:a17:907:9410:b0:b73:7fc8:a9c9 with SMTP id
- a640c23a62f3a-b8796a5bce3mr737522166b.29.1768763613614; 
- Sun, 18 Jan 2026 11:13:33 -0800 (PST)
+ bh=WNyUkCMe9MZzwrstbShxbdJ4CyXmJCX9c8DBPjb/O84=;
+ b=F1MlP9uCRzPAew54OWQQVj3/UecXcrZecXdh9QZZKo0VyCAvnStuYyT3UASj4fvGQg
+ QrknG/IcQLUbYViMgosnaB0bPlpjpZNTS9MqO02sdbcYvTBbfnXSieTcgl5iGaB8ERR6
+ 1tI0AMKEVlDK/V3Rw21PuOavtZx/7WOuJfXHzXv10r6OBMHlu1DFZlw6IhLmFsXpSLJM
+ aIW4Je1ifBEQOyQ6N3ltb5ep8IFM+dpkN/9dkPWY6R+t2gFMyaU3ARjOQo6WXvzIAp+j
+ PZ9fTqBCuahRYIQbQBt5Ujd5BVywRSseAom+7U6iJtzWN22Maz23aHJS3m7jiSPA3wJ8
+ rsGQ==
+X-Gm-Message-State: AOJu0YwPfX9Otd8mzY+4o0Jxtu9nmgf2fiT9qIFS/i/x3zwj6AI7i7AR
+ LTNJ9wYZYj3N1gfi5HKdr9csoqJYos2wYIJ4JgQE2igQEXdlL9+JG31RZa89IDzI0HfjbqmfsTU
+ GjHVg
+X-Gm-Gg: AY/fxX5MfQHjiOVoYvenWZO2/VY7UbeYQ+Jmbgj5WMfY+oX8u94oe3WHbOG9WCBrGKM
+ otvpDRc7XWYOdbydiKDRD6gzEpoVKT2zDhO05/cfmjiNIA3AMuQ849kLVYvftyARFEiGGXOVAVc
+ kpjdwt2chuC3+h+K/oFhL8HY4nW1+FgrhB+KyuFJWMHEHNT8p50hObGFo8X9AA3v56JbvxzxO9v
+ ain7v72aj9sXUi8yvEdtiyO0OahjcgXtWNYd4edxAQioTH24lAMagEZSdxzl3mCvuWTvvHbaAb1
+ pa6rJ171Hq5qCLi3yzUuOR+d9EJmeOoyGHGX8k5JH9pZiPSvmsVXuuLP7r0K55M4u9irhwyS6n3
+ p7XxJB2fVagsavASt+45DirjU8CqKCwUY9t3pQ09WGXwcBFQNOKrgO7/blFQjRr5wPmOvPraRVu
+ w3TI0+5DTHLIvXOHMhlamoSiKqz+Arvvv1VTaJfkzXM2yfSOCcfQ==
+X-Received: by 2002:a17:907:868f:b0:b76:8164:88b5 with SMTP id
+ a640c23a62f3a-b8796b40ddbmr658985466b.46.1768763615287; 
+ Sun, 18 Jan 2026 11:13:35 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a640c23a62f3a-b87959c9f8dsm886287166b.36.2026.01.18.11.13.32
+ a640c23a62f3a-b87959c9f8dsm886287166b.36.2026.01.18.11.13.33
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 18 Jan 2026 11:13:33 -0800 (PST)
+ Sun, 18 Jan 2026 11:13:34 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
  Nandini Persad <nandinipersad361@gmail.com>
-Subject: [PATCH v5 03/54] doc: correct grammar and errors in trace library
- guide
-Date: Sun, 18 Jan 2026 11:10:06 -0800
-Message-ID: <20260118191323.241013-4-stephen@networkplumber.org>
+Subject: [PATCH v5 04/54] doc: correct typos in log library guide
+Date: Sun, 18 Jan 2026 11:10:07 -0800
+Message-ID: <20260118191323.241013-5-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260118191323.241013-1-stephen@networkplumber.org>
 References: <20240513155911.31872-1-nandinipersad361@gmail.com>
@@ -84,222 +83,119 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 Errors-To: dev-bounces@dpdk.org
 
 Changes:
-- CRITICAL: restore missing "out" in "compiled out by default"
-  (RTE_TRACE_POINT_FP is disabled by default, not enabled)
-- Add missing article and verb ("a framework", "are broadly divided")
-- Change subject-verb agreement ("traces that use", "example greps/counts")
-- Change article before vowel sound ("an EAL")
-- Change preposition ("known to DPDK" not "known of DPDK")
-- Use standard spelling "lockless" and "non-lcore"
+- Change spelling errors (stystem -> system, acheived -> achieved)
+- Change sentence structure for rte_log() parameter description
+- Use consistent spelling "timestamp" (one word)
 
 Signed-off-by: Nandini Persad <nandinipersad361@gmail.com>
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- doc/guides/prog_guide/trace_lib.rst | 68 ++++++++++++++---------------
- 1 file changed, 34 insertions(+), 34 deletions(-)
+ doc/guides/prog_guide/log_lib.rst | 32 +++++++++++++++----------------
+ 1 file changed, 16 insertions(+), 16 deletions(-)
 
-diff --git a/doc/guides/prog_guide/trace_lib.rst b/doc/guides/prog_guide/trace_lib.rst
-index d9b17abe90..829a061074 100644
---- a/doc/guides/prog_guide/trace_lib.rst
-+++ b/doc/guides/prog_guide/trace_lib.rst
-@@ -14,29 +14,29 @@ When recording, specific instrumentation points placed in the software source
- code generate events that are saved on a giant tape: a trace file.
- The trace file then later can be opened in *trace viewers* to visualize and
- analyze the trace events with timestamps and multi-core views.
--Such a mechanism will be useful for resolving a wide range of problems such as
--multi-core synchronization issues, latency measurements, finding out the
--post analysis information like CPU idle time, etc that would otherwise be
--extremely challenging to get.
-+This mechanism will be useful for resolving a wide range of problems such as
-+multi-core synchronization issues, latency measurements, and finding
-+post analysis information like CPU idle time, etc., that would otherwise be
-+extremely challenging to gather.
+diff --git a/doc/guides/prog_guide/log_lib.rst b/doc/guides/prog_guide/log_lib.rst
+index 3e888b8965..a3d6104e72 100644
+--- a/doc/guides/prog_guide/log_lib.rst
++++ b/doc/guides/prog_guide/log_lib.rst
+@@ -6,7 +6,7 @@ Log Library
  
- Tracing is often compared to *logging*. However, tracers and loggers are two
--different tools, serving two different purposes.
--Tracers are designed to record much lower-level events that occur much more
-+different tools serving two different purposes.
-+Tracers are designed to record much lower-level events that occur more
- frequently than log messages, often in the range of thousands per second, with
- very little execution overhead.
- Logging is more appropriate for a very high-level analysis of less frequent
- events: user accesses, exceptional conditions (errors and warnings, for
--example), database transactions, instant messaging communications, and such.
-+example), database transactions, instant messaging communications, etc.
- Simply put, logging is one of the many use cases that can be satisfied with
- tracing.
+ The DPDK Log library provides the logging functionality for other DPDK libraries and drivers.
+ By default, logs are sent only to standard error output of the process.
+-The syslog EAL option can be used to redirect to the stystem logger on Linux and FreeBSD.
++The syslog EAL option can be used to redirect to the system logger on Linux and FreeBSD.
+ In addition, the log can be redirected to a different stdio file stream.
  
- DPDK tracing library features
- -----------------------------
+ Log Levels
+@@ -26,14 +26,14 @@ These levels, specified in ``rte_log.h`` are (from most to least important):
  
--- A framework to add tracepoints in control and fast path APIs with minimum
-+- Provides a framework to add tracepoints in control and fast path APIs with minimum
-   impact on performance.
-   Typical trace overhead is ~20 cycles and instrumentation overhead is 1 cycle.
--- Enable and disable the tracepoints at runtime.
-+- Enable and disable tracepoints at runtime.
- - Save the trace buffer to the filesystem at any point in time.
- - Support ``overwrite`` and ``discard`` trace mode operations.
- - String-based tracepoint object lookup.
-@@ -47,7 +47,7 @@ DPDK tracing library features
-   For detailed information, refer to
-   `Common Trace Format <https://diamon.org/ctf/>`_.
+ At runtime, only messages of a configured level or above (i.e. of higher importance)
+ will be emitted by the application to the log output.
+-That level can be configured either by the application calling the relevant APIs from the logging library,
++That level can be configured either by the application calling relevant APIs from the logging library,
+ or by the user passing the ``--log-level`` parameter to the EAL via the application.
  
--How to add a tracepoint?
-+How to add a Tracepoint
- ------------------------
+ Setting Global Log Level
+ ~~~~~~~~~~~~~~~~~~~~~~~~
  
- This section steps you through the details of adding a simple tracepoint.
-@@ -67,14 +67,14 @@ Create the tracepoint header file
-         rte_trace_point_emit_string(str);
-  )
+ To adjust the global log level for an application,
+-just pass a numeric level or a level name to the ``--log-level`` EAL parameter.
++pass a numeric level or a level name to the ``--log-level`` EAL parameter.
+ For example::
  
--The above macro creates ``app_trace_string`` tracepoint.
-+The above macro creates the ``app_trace_string`` tracepoint.
- The user can choose any name for the tracepoint.
- However, when adding a tracepoint in the DPDK library, the
- ``rte_<library_name>_trace_[<domain>_]<name>`` naming convention must be
- followed.
- The examples are ``rte_eal_trace_generic_str``, ``rte_mempool_trace_create``.
+ 	/path/to/app --log-level=error
+@@ -47,9 +47,9 @@ Within an application, the log level can be similarly set using the ``rte_log_se
+ Setting Log Level for a Component
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  
--The ``RTE_TRACE_POINT`` macro expands from above definition as the following
-+The ``RTE_TRACE_POINT`` macro expands from the above definition as the following
- function template:
+-In some cases, for example, for debugging purposes,
+-it may be desirable to increase or decrease the log level for only a specific component, or set of components.
+-To facilitate this, the ``--log-level`` argument also accepts an, optionally wildcarded, component name,
++In some cases (such as debugging purposes),
++you may want to increase or decrease the log level for only a specific component or set of components.
++To facilitate this, the ``--log-level`` argument also accepts an optionally wildcarded component name,
+ along with the desired level for that component.
+ For example::
  
- .. code-block:: c
-@@ -91,7 +91,7 @@ The consumer of this tracepoint can invoke
- ``app_trace_string(const char *str)`` to emit the trace event to the trace
- buffer.
+@@ -57,13 +57,13 @@ For example::
  
--Register the tracepoint
-+Register the Tracepoint
- ~~~~~~~~~~~~~~~~~~~~~~~
+ 	/path/to/app --log-level=lib.*:warning
  
- .. code-block:: c
-@@ -122,40 +122,40 @@ convention.
+-Within an application, the same result can be got using the ``rte_log_set_level_pattern()`` or ``rte_log_set_level_regex()`` APIs.
++Within an application, the same result can be achieved by using the ``rte_log_set_level_pattern()`` or ``rte_log_set_level_regex()`` APIs.
  
-    The ``RTE_TRACE_POINT_REGISTER`` defines the placeholder for the
-    ``rte_trace_point_t`` tracepoint object.
--   For generic tracepoint or for tracepoint used in public header files,
-+   For a generic tracepoint or for the tracepoint used in public header files,
-    the user must export a ``__<trace_function_name>`` symbol
-    in the library ``.map`` file for this tracepoint
--   to be used out of the library, in shared builds.
-+   to be used out of the library in shared builds.
-    For example, ``__app_trace_string`` will be the exported symbol in the
-    above example.
  
--Fast path tracepoint
-+Fast Path Tracepoint
- --------------------
+ Using Logging APIs to Generate Log Messages
+ -------------------------------------------
  
- In order to avoid performance impact in fast path code, the library introduced
- ``RTE_TRACE_POINT_FP``. When adding the tracepoint in fast path code,
- the user must use ``RTE_TRACE_POINT_FP`` instead of ``RTE_TRACE_POINT``.
+-To output log messages, ``rte_log()`` API function should be used.
++To output log messages, the ``rte_log()`` API function should be used.
+ As well as the log message, ``rte_log()`` takes two additional parameters:
  
--``RTE_TRACE_POINT_FP`` is compiled out by default and it can be enabled using
-+``RTE_TRACE_POINT_FP`` is compiled out by default and can be enabled using
- the ``enable_trace_fp`` option for meson build.
+ * The log level
+@@ -74,16 +74,16 @@ The component type is a unique id that identifies the particular DPDK component
+ To get this id, each component needs to register itself at startup,
+ using the macro ``RTE_LOG_REGISTER_DEFAULT``.
+ This macro takes two parameters, with the second being the default log level for the component.
+-The first parameter, called "type", the name of the "logtype", or "component type" variable used in the component.
+-This variable will be defined by the macro, and should be passed as the second parameter in calls to ``rte_log()``.
++The first parameter, called "type", is the name of the "logtype", or "component type" variable used in the component.
++This variable will be defined by the macro and should be passed as the second parameter in calls to ``rte_log()``.
+ In general, most DPDK components define their own logging macros to simplify the calls to the log APIs.
+ They do this by:
  
--Event record mode
-+Event Record Mode
- -----------------
+ * Hiding the component type parameter inside the macro so it never needs to be passed explicitly.
+ * Using the log-level definitions given in ``rte_log.h`` to allow short textual names to be used in
+-  place of the numeric log levels.
++  place of numeric log levels.
  
--Event record mode is an attribute of trace buffers. Trace library exposes the
-+Event record mode is an attribute of trace buffers. The trace library exposes the
- following modes:
+-The following code is taken from ``rte_cfgfile.c`` and shows the log registration,
++The following code is taken from ``rte_cfgfile.c`` and shows the log registration
+ and subsequent definition of a shortcut logging macro.
+ It can be used as a template for any new components using DPDK logging.
  
- Overwrite
--   When the trace buffer is full, new trace events overwrites the existing
-+   When the trace buffer is full, new trace events overwrite the existing
-    captured events in the trace buffer.
- Discard
-    When the trace buffer is full, new trace events will be discarded.
+@@ -98,10 +98,10 @@ It can be used as a template for any new components using DPDK logging.
+ 	it should be placed near the top of the C file using it.
+ 	If not, the logtype variable should be defined as an "extern int" near the top of the file.
  
--The mode can be configured either using EAL command line parameter
--``--trace-mode`` on application boot up or use ``rte_trace_mode_set()`` API to
-+The mode can be configured either using the EAL command line parameter
-+``--trace-mode`` on application boot up or use the ``rte_trace_mode_set()`` API to
- configure at runtime.
+-	Similarly, if logging is to be done by multiple files in a component,
+-	only one file should register the logtype via the macro,
++	Similarly, if logging will be done by multiple files in a component,
++	only one file should register the logtype via the macro
+ 	and the logtype should be defined as an "extern int" in a common header file.
+-	Any component-specific logging macro should similarly be defined in that header.
++	Any component-specific logging macro should be similarly defined in that header.
  
--Trace file location
-+Trace File Location
- -------------------
+ Throughout the cfgfile library, all logging calls are therefore of the form:
  
- On ``rte_trace_save()`` or ``rte_eal_cleanup()`` invocation, the library saves
-@@ -167,7 +167,7 @@ option.
- For more information, refer to :doc:`../linux_gsg/linux_eal_parameters` for
- trace EAL command line options.
+@@ -122,7 +122,7 @@ For example::
  
--View and analyze the recorded events
-+View and Analyze Recorded Events
- ------------------------------------
+ Multiple alternative timestamp formats are available:
  
- Once the trace directory is available, the user can view/inspect the recorded
-@@ -176,7 +176,7 @@ events.
- There are many tools you can use to read DPDK traces:
+-.. csv-table:: Log time stamp format
++.. csv-table:: Log timestamp format
+    :header: "Format", "Description", "Example"
+    :widths: 6, 30, 32
  
- #. ``babeltrace`` is a command-line utility that converts trace formats; it
--   supports the format that DPDK trace library produces, CTF, as well as a
-+   supports the format that the DPDK trace library produces, CTF, as well as a
-    basic text output that can be grep'ed.
-    The babeltrace command is part of the Open Source Babeltrace project.
- 
-@@ -195,12 +195,12 @@ to babeltrace with no options::
- all their events, merging them in chronological order.
- 
- You can pipe the output of the babeltrace into a tool like grep(1) for further
--filtering. Below example grep the events for ``ethdev`` only::
-+filtering. The example below greps the events for ``ethdev`` only::
- 
-     babeltrace /tmp/my-dpdk-trace | grep ethdev
- 
- You can pipe the output of babeltrace into a tool like wc(1) to count the
--recorded events. Below example count the number of ``ethdev`` events::
-+recorded events. The example below counts the number of ``ethdev`` events::
- 
-     babeltrace /tmp/my-dpdk-trace | grep ethdev | wc --lines
- 
-@@ -238,7 +238,7 @@ This section steps you through the details of generating trace and viewing it.
- Implementation details
- ----------------------
- 
--As DPDK trace library is designed to generate traces that uses ``Common Trace
-+As DPDK trace library is designed to generate traces that use ``Common Trace
- Format (CTF)``. ``CTF`` specification consists of the following units to create
- a trace.
- 
-@@ -249,7 +249,7 @@ a trace.
- For detailed information, refer to
- `Common Trace Format <https://diamon.org/ctf/>`_.
- 
--The implementation details broadly divided into the following areas:
-+The implementation details are broadly divided into the following areas:
- 
- Trace metadata creation
- ~~~~~~~~~~~~~~~~~~~~~~~
-@@ -272,16 +272,16 @@ Trace memory
- 
- The trace memory will be allocated through an internal function
- ``__rte_trace_mem_per_thread_alloc()``. The trace memory will be allocated
--per thread to enable lock less trace-emit function.
-+per thread to enable lockless trace-emit function.
- 
--For non lcore threads, the trace memory is allocated on the first trace
-+For non-lcore threads, the trace memory is allocated on the first trace
- emission.
- 
--For lcore threads, if trace points are enabled through a EAL option, the trace
--memory is allocated when the threads are known of DPDK
-+For lcore threads, if trace points are enabled through an EAL option, the trace
-+memory is allocated when the threads are known to DPDK
- (``rte_eal_init`` for EAL lcores, ``rte_thread_register`` for non-EAL lcores).
- Otherwise, when trace points are enabled later in the life of the application,
--the behavior is the same as non lcore threads and the trace memory is allocated
-+the behavior is the same as non-lcore threads and the trace memory is allocated
- on the first trace emission.
- 
- Trace memory layout
 -- 
 2.51.0
 
