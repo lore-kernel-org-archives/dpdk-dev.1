@@ -2,66 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C816AC9830C
-	for <dpdk-dev@archiver.kernel.org>; Sun, 18 Jan 2026 19:14:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8FCEC9832F
+	for <dpdk-dev@archiver.kernel.org>; Sun, 18 Jan 2026 19:14:48 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DE1A740E20;
-	Sun, 18 Jan 2026 20:13:49 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id F04DE40E3A;
+	Sun, 18 Jan 2026 20:13:50 +0100 (CET)
 Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com
- [209.85.218.52]) by mails.dpdk.org (Postfix) with ESMTP id 16AA340E1B
- for <dev@dpdk.org>; Sun, 18 Jan 2026 20:13:47 +0100 (CET)
+ [209.85.218.52]) by mails.dpdk.org (Postfix) with ESMTP id 9776640E3A
+ for <dev@dpdk.org>; Sun, 18 Jan 2026 20:13:48 +0100 (CET)
 Received: by mail-ej1-f52.google.com with SMTP id
- a640c23a62f3a-b87693c981fso627321666b.1
- for <dev@dpdk.org>; Sun, 18 Jan 2026 11:13:47 -0800 (PST)
+ a640c23a62f3a-b8765b80a52so589231366b.2
+ for <dev@dpdk.org>; Sun, 18 Jan 2026 11:13:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768763627;
- x=1769368427; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768763628;
+ x=1769368428; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=Oe6m41MQfvhx2I35+hVcB1u03JJo4ZtX3qHibXb4X3U=;
- b=nnjH6PwovTUMmHH1k/XL4kc6wLvuYs5LHeBQlYHX0jjX8ZcQE3rWVkHlWYl/BoQlt4
- bs0DxKCQUmOICnvQGg3T0DGgXmJ3wZ20tGi7vpFm4XCRmwdIBUEJ5SzoYYtQt9p3hcVb
- c23nMEUI/RAarHSB3sqi5B18lo4XtyKu9OPWE339J9kJsYkzT4ARITtEE4LrmeEA4vcn
- ZFvgqzqMjzZSyN34bRj60ZxD2ZWpCqf2U4637Pwu4UyTAnjyXLOdn2g9vPv8GKQDRtMn
- fj1jmuVOl/1yEwnSdJJq+8wT41DrjiClh1+d9gnGI2lAXHRb+z4EMY7dHyBvvbzMWWrU
- xUJQ==
+ bh=jvMssISqIq5HGciqPwtMlHw1gJ81rr2wH/v9bHS3mvI=;
+ b=oH9McXHnEpAddhy4UADpuMZbyjvnDdpWtE85X4sSpJIAzDsD1tR82Wc6G7S82G8Um3
+ /doPwFjLdWB8T5prgNTNoGuNIkmteBmGo109aztKaxnE/CMJ8cVFXryeqOcDgMm3bmsD
+ YIHhJ7QKRyDsBozaz8KQMPdHk5ZQ3hugvt2wAtH93YgI+BXlJFAKpR0SrPmUn6KMpVW/
+ ss/UtXiieevxIyF5Oa/IaFpA6EvxzQOLtM/9F/80pJCq7ay5JwXxOXOZzKoHQjNty1gW
+ UpP7BQskl7abYg7c6A0F0XCJy3OwvnX1IDXpDzb1ycQg1XrSMytYxiz3BRlgl5rnWS4I
+ 9ZVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768763627; x=1769368427;
+ d=1e100.net; s=20230601; t=1768763628; x=1769368428;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=Oe6m41MQfvhx2I35+hVcB1u03JJo4ZtX3qHibXb4X3U=;
- b=NTCrPZR3Fz+CNIvceVkQvCzfaODnaGIWSZ+TVn/i0eOcLExWDF+Yga1+3Au211s1hX
- MVVwH2KBawLJ6pCogvgNetKapRVCZcB3f1PG8Vw3Vxdc7kKONXNyqcZ6aGv4IgNUGVRi
- NMoOSJ71qVdYz8ZutuVjqt5p94h7k/DNgCMHwUI5vn25Iz7hwGVm8J5cL50Dcn+mkdz3
- ih3xsCcjk68RY4ee12+1PivtSIcAHlqdid+aLJBnG+cczPZ25UN6OivmfcQzuHubSpUy
- Q+ZxuX6dM+2teCjrQFo3U2YuUyvcc/e/jHniJU/iYK3rpGE22Zsx86j697yEIV+kil8g
- iFWg==
-X-Gm-Message-State: AOJu0Yy907NpYDgyjBrTwTniIsGtQfVmrOX6stlIXQzAEWnC90XlGHD+
- t3FYZ0neEOz7hUyfgoYnfNUhZmEmm73XVuSf/fR4aWhqrvO3LAgU2lMzjR6DPvbVH8Yec9sZVXK
- B8JyA
-X-Gm-Gg: AY/fxX70Xo1MiXLQ3KTJqpU3qJQ9taBaR0Q5rBTuDbtp07SZqfbKWohqn36HIdI8d9r
- kGlYxxWCBdkZSwboC9be1vKA09DrJxaD07ROgM4+6Nuk+K2Vet5Af7oFQJP5sBwGPKoKeBhmrYJ
- SEbJs6hGHme0F292bzLqmDm7aBbfCR7GWx9gvoOy9PEE8uJi3ZUA8WEwbXL7/6SKfmKGR+fOClm
- ClUI92z5dP6JQMorTHZBlgK0FAS5Wobl8fXb+Qy2d2Gn0TgoXtbPFDEjk9JZPp9zOViCjIArc8e
- +04OWXnVDqq2IbITXVxtecYd2YyVNC23QKL9aGy5kPl2ka+e+0ceOBZc0eoOdB2LWvh6plLbOnu
- 6HHFVCEI9tObJcYhIygpWqxsJrzK3B5Hfko1GJpnDgW5xFeB5/erynM6RF3ZEa+23xXTpPMc2aN
- Tsx4CFEBrD0LEmeh7ChUp4/tbddaSuo/1IF1YTFEMbJ3Bhbm9p51dq6PtVAJAG
-X-Received: by 2002:a17:906:f5a0:b0:b73:a2ce:540f with SMTP id
- a640c23a62f3a-b8792d5904bmr787403266b.17.1768763626607; 
- Sun, 18 Jan 2026 11:13:46 -0800 (PST)
+ bh=jvMssISqIq5HGciqPwtMlHw1gJ81rr2wH/v9bHS3mvI=;
+ b=B0uWHJRmF8cD13iEATXwn56cpEvhcytsw/bELcEd/vhI/UlTw49e7nPjG575zDo6nB
+ 9ryWlvkJ9HolSh8Jz2C3LSOcam4oeTMdKeAkVjXVbAbZVKrNhqMl9xQ2FIKfm6uOaYwz
+ BtpyCFsZuxzILTx0z+lrNLTQiC8Ri553Xk0Q+aYKuGy8xS8RxJmFMGIbBJFB2K98t0/o
+ QoFzTqt9YmbPsSzng5fgQ2GDfS9+36CvJZc7LgZoqkxZ6CppudqMsGp90jcwWa9Lj8KT
+ K+le2ypdyKlWu0c4l75pnsc5RrpEsecBNkNy3A/8bYiW8Z90e2YYcEUG9Y3fj6aIbnAj
+ yzxA==
+X-Gm-Message-State: AOJu0Ywx6ggIt0SeAFz7ntp7ahun3X5H/LFtKgGoB+Gvr6QYa8Xsl3Z1
+ 2PDrnWIY0e43An9XTFQHhwM9r1xnMpQ2t2zwP2cFBbL8nX2s/5QzWvl0P5daU5iJ/aqFwsg05DW
+ yxC7M
+X-Gm-Gg: AY/fxX4/ZoraruZXWi0bpYGQtwrBLQOgEMREQvBSOB/ADvISG3i6+Pwg2BLI06c1GL/
+ 5DU6dhWrDBc3frejFXOHeIAGktZnyYaxGuUCInYaW6uQF7yM2evSZDgYdKJ3yN+e5GG6bYNZADu
+ b/dzJBAGt/i6tRARmHY7wKsF1/IWi7Wn7gaAsmKOrU+ULBdRUhcNappZb0L7aEy5m0MYhy4o8hk
+ 1cwKhnc9VkoLBC2nWjsu4gR6bFrT1brTIGK4cUl33m3zCV+R+cS3EWQ/TzozKbsJ18stx8HLDP5
+ J75YjZnjoIrNlD4R1arXhNwLU+/3E8XSKuEuf/d3IcEp1SgIMU/Q7zsULkg46bdV6LPzHy8OIvo
+ pDrn5uj/qhOF5Y7GtmkglMDshyD6Qu28lOeChCMeiFtJAnw2zq87T55Toaith7n1VavAZmRXfdK
+ P8V1LB1K/ZTncXZy7yOM+XeYL67wpf5y7DEkWck3rU2EEwkOq/7Q==
+X-Received: by 2002:a17:907:7256:b0:b87:2eb8:2b78 with SMTP id
+ a640c23a62f3a-b8792d5a73bmr844038566b.18.1768763628085; 
+ Sun, 18 Jan 2026 11:13:48 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a640c23a62f3a-b87959c9f8dsm886287166b.36.2026.01.18.11.13.45
+ a640c23a62f3a-b87959c9f8dsm886287166b.36.2026.01.18.11.13.46
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 18 Jan 2026 11:13:46 -0800 (PST)
+ Sun, 18 Jan 2026 11:13:47 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v5 11/54] doc: correct grammar and formatting in bpf lib guide
-Date: Sun, 18 Jan 2026 11:10:14 -0800
-Message-ID: <20260118191323.241013-12-stephen@networkplumber.org>
+Subject: [PATCH v5 12/54] doc: correct grammar and typos in meson build guide
+Date: Sun, 18 Jan 2026 11:10:15 -0800
+Message-ID: <20260118191323.241013-13-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260118191323.241013-1-stephen@networkplumber.org>
 References: <20240513155911.31872-1-nandinipersad361@gmail.com>
@@ -82,90 +82,56 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 Errors-To: dev-bounces@dpdk.org
 
 Correct several documentation issues:
-- Change "an BPF" to "a BPF" (correct article usage)
-- Capitalize "dpdk" to "DPDK"
-- Change inconsistent bullet point spacing
-
-The BPF library only supports v1 and v2 instructions.
-Add a more complete description of that restriction.
+- Remove extra space after "libdpdk.pc"
+- Replace awkward "can be got" with clearer alternatives
+- Change typo "are passed used" to "are passed using"
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- doc/guides/prog_guide/bpf_lib.rst | 46 +++++++++++++++++++++++++++----
- 1 file changed, 40 insertions(+), 6 deletions(-)
+ doc/guides/prog_guide/build-sdk-meson.rst | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/doc/guides/prog_guide/bpf_lib.rst b/doc/guides/prog_guide/bpf_lib.rst
-index 8c820328b9..b915ed31b8 100644
---- a/doc/guides/prog_guide/bpf_lib.rst
-+++ b/doc/guides/prog_guide/bpf_lib.rst
-@@ -4,9 +4,9 @@
- Berkeley Packet Filter (BPF) Library
- ====================================
+diff --git a/doc/guides/prog_guide/build-sdk-meson.rst b/doc/guides/prog_guide/build-sdk-meson.rst
+index fdb5d484fa..84ad64494a 100644
+--- a/doc/guides/prog_guide/build-sdk-meson.rst
++++ b/doc/guides/prog_guide/build-sdk-meson.rst
+@@ -16,23 +16,23 @@ following set of commands::
  
--The DPDK provides an BPF library that gives the ability
-+The DPDK provides a BPF library that gives the ability
- to load and execute Enhanced Berkeley Packet Filter (eBPF) bytecode within
--user-space dpdk application.
-+user-space DPDK application.
+ This will compile DPDK in the ``build`` subdirectory, and then install the
+ resulting libraries, drivers and header files onto the system - generally
+-in /usr/local. A package-config file, ``libdpdk.pc``,  for DPDK will also
++in /usr/local. A package-config file, ``libdpdk.pc``, for DPDK will also
+ be installed to allow ease of compiling and linking with applications.
  
- It supports basic set of features from eBPF spec.
- Please refer to the
-@@ -19,13 +19,13 @@ The library API provides the following basic operations:
+ After installation, to use DPDK, the necessary CFLAG and LDFLAG variables
+-can be got from pkg-config::
++can be obtained from pkg-config::
  
- *  Create a new BPF execution context and load user provided eBPF code into it.
+ 	pkg-config --cflags libdpdk
+ 	pkg-config --libs libdpdk
  
--*   Destroy an BPF execution context and its runtime structures and free the associated memory.
-+*  Destroy a BPF execution context and its runtime structures and free the associated memory.
+-More detail on each of these steps can be got from the following sections.
++More detail on each of these steps can be found in the following sections.
  
--*   Execute eBPF bytecode associated with provided input parameter.
-+*  Execute eBPF bytecode associated with provided input parameter.
  
--*   Provide information about natively compiled code for given BPF context.
-+*  Provide information about natively compiled code for given BPF context.
+ Getting the Tools
+ ------------------
  
--*   Load BPF program from the ELF file and install callback to execute it on given ethdev port/queue.
-+*  Load BPF program from the ELF file and install callback to execute it on given ethdev port/queue.
+ The ``meson`` tool is used to configure a DPDK build. On most Linux
+-distributions this can be got using the local package management system,
++distributions this can be installed using the local package management system,
+ e.g. ``dnf install meson`` or ``apt-get install meson``. If meson is not
+ available as a suitable package, it can also be installed using the Python
+ 3 ``pip`` tool, e.g. ``pip3 install meson``. Version 0.57 or later of meson is
+@@ -78,7 +78,7 @@ examples to build, are DPDK-specific. To have a list of all options
+ available run ``meson configure`` in the build directory.
  
- Packet data load instructions
- -----------------------------
-@@ -64,3 +64,37 @@ Not currently supported eBPF features
-  - tail-pointer call
-  - eBPF MAP
-  - external function calls for 32-bit platforms
-+
-+Supported BPF instruction set
-+-----------------------------
-+
-+The DPDK BPF library supports eBPF instruction set versions **v1** and **v2**.
-+Instructions introduced in v3 and later (such as JMP32, extended atomics,
-+signed division, and sign-extending loads) are **not supported**.
-+
-+When compiling BPF programs with clang, use ``-mcpu=v2`` or earlier to ensure
-+compatibility:
-+
-+.. code-block:: console
-+
-+   clang -target bpf -mcpu=v2 -O2 -c filter.c -o filter.o
-+
-+.. warning::
-+
-+   LLVM 20 and later default to ``-mcpu=v3``, which generates JMP32
-+   instructions that DPDK cannot execute. Always specify ``-mcpu=v2``
-+   explicitly when compiling BPF programs for use with DPDK.
-+
-+The following instruction classes are **not supported**:
-+
-+ - ``BPF_JMP32`` (class 0x06) - 32-bit conditional jumps (v3)
-+ - ``BPF_ATOMIC`` with ``BPF_FETCH`` - atomic fetch-and-op, XCHG, CMPXCHG (v3)
-+ - ``BPF_SDIV`` / ``BPF_SMOD`` - signed division and modulo (v4)
-+ - ``BPF_MOVSX`` - sign-extending register moves (v4)
-+ - ``BPF_MEMSX`` - sign-extending memory loads (v4)
-+ - ``BPF_JA`` with 32-bit offset (GOTOL) (v4)
-+ - ``BPF_BSWAP`` - new byte-swap encoding (v4)
-+
-+If you encounter validation errors such as ``invalid opcode at pc: N``,
-+verify that your BPF program was compiled with a compatible instruction
-+set version.
+ Examples of adjusting the defaults when doing initial meson configuration.
+-Project-specific options are passed used -Doption=value::
++Project-specific options are passed using -Doption=value::
+ 
+ 	# build with warnings as errors
+ 	meson setup --werror werrorbuild
 -- 
 2.51.0
 
