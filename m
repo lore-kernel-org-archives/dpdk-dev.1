@@ -2,66 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8219C9830C
-	for <dpdk-dev@archiver.kernel.org>; Sun, 18 Jan 2026 19:17:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78745C9830C
+	for <dpdk-dev@archiver.kernel.org>; Sun, 18 Jan 2026 19:17:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 87A8742DB0;
-	Sun, 18 Jan 2026 20:14:29 +0100 (CET)
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com
- [209.85.208.49]) by mails.dpdk.org (Postfix) with ESMTP id 86C2C42D7A
- for <dev@dpdk.org>; Sun, 18 Jan 2026 20:14:26 +0100 (CET)
-Received: by mail-ed1-f49.google.com with SMTP id
- 4fb4d7f45d1cf-64dfb22c7e4so8118431a12.1
- for <dev@dpdk.org>; Sun, 18 Jan 2026 11:14:26 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id B750A40E64;
+	Sun, 18 Jan 2026 20:14:30 +0100 (CET)
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com
+ [209.85.218.52]) by mails.dpdk.org (Postfix) with ESMTP id 0138340EE1
+ for <dev@dpdk.org>; Sun, 18 Jan 2026 20:14:28 +0100 (CET)
+Received: by mail-ej1-f52.google.com with SMTP id
+ a640c23a62f3a-b8708930695so565278066b.3
+ for <dev@dpdk.org>; Sun, 18 Jan 2026 11:14:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768763666;
- x=1769368466; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768763667;
+ x=1769368467; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=tMYt2u2HMPrrXfzQCiHJBNxhCq1lRa+Qv4diDos9R+I=;
- b=Ef83QTKTYL8DJEQNESjandjasaq+QOsKmqESxUMLjyJ/V1RZOuX1ssGzMDuSiPMzBK
- H6jlTYZ4Sy+HnnmUDn54ty7aafz0+fzzCDml2T8nqcUSEcK2/Mh1MU9ogw9WQy4SqTso
- OXP9ieJXxdm2BL1EiG3WpR/4gM98LtX9cv8oC85kfdqVrZtDmvA6WJKtadez2TwMYvZY
- jfYFuNhGxaZnBZ0pAqk/0vgEdZCjqeS6yvbRsx3U8ga9kCcKUuF/nas8rSYf3t0tZECl
- 0Y2InSLe4uyRQXzeEK/icx1/5FmHU7/E4FzzzgyWOdy5rQl29tXGYTY4+NkR0cLn623s
- RvQg==
+ bh=9GHJWMvwMXtNDA/r/FJ/QR9opUIo6yMYrw0zYbq2G2g=;
+ b=hCQV+xDZe8iaUusp1KF5eijrMZyzH5nqxc8HMuqQFRgj3Y6l0bM4+MCYlzuuWzxvO7
+ xanmtWIp5IkbxqIjmrlWbGzR/RIkXo0Pj23cHwZco/meiEXW5411IB6LvvSlhFmkyviL
+ htoWxpMS7gLSoQN/pss7qg5QllfHEM5D1rNojalL87Z0qHXDUht9H+/1SpiNhQZPARWI
+ +Bvcfs22DH0yqN/jf31xDs17QNQhFOn/Eh1L7ZS3LoaY6zOLlLUpIOY+gpqFoRbsof/R
+ GSQOkT8T9YK9ah9ILQdQUCnMM9+REfQC0ImoIqAmajyb4pZpiGR2f1D0cbsWfpiSgUxV
+ 2MPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768763666; x=1769368466;
+ d=1e100.net; s=20230601; t=1768763667; x=1769368467;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=tMYt2u2HMPrrXfzQCiHJBNxhCq1lRa+Qv4diDos9R+I=;
- b=bBE2W4z5+p7fa4KdK94Qaob+qmuCK3OQDJO3mV+O6ABMWlhc7xNDNyBQ0xNFH7B+V+
- 28cQwrYkrXl0F+vndeOMN9ZscRcOoZnvQIELzUOA9FoGkgf81nEv0RcV7aubIS4V+Xo1
- fGTcG1q7FdDApSaZgXTbIq51+p0rBLIkd7RTIIy1/D/xNaKBEdxmMnnh6iV7iE+b4I2v
- AFlHitOL/aGq6ST1gdxFwqKDyoe/NIj+tYOzRvT87hi+slqge0R+u7N3Ur63Fa+iTTkB
- lDKytJsInj1BA0T67CopZCwwShv2kw4u6kXctxbNaBLsoAWNbKj8JlnopgC+H87IHiWw
- N//g==
-X-Gm-Message-State: AOJu0Ywnh4lmfaiXctaFLJ10J/fIkPgFleIWht4hASnxNcUYDCeHyV2h
- 9oWoKHZq5JEQmOC8s6AFAhFAexofbH326oUz31AyscQs89HXLSJBDaIWDSmf5VJ/VHRDd5jw7X2
- T+xWj
-X-Gm-Gg: AY/fxX41DIS++mdHBMioWBzerRpl+biUStvBcg3EAfqgZOucQyIYglYjaJsim9IpxR/
- dCmulCriabWfk6T0F6Uozl/XqYVEhI9aR9WFS2Nf/xWAufX2UDeREwMC3z1JtVE4YNSJKmPBSv+
- Y9YERXaiTHRXurwjZqxB7EcbzxCDTF5MgPnmPV/7XF3lP48Di6YUjL4qZ9VimQqnmWSrx61PADg
- lE7Dzu2h5GbVkkxvpXKQKzuguz+3/CinYxKfAYToCQVFgtZLhlLhxXB/9lFC7SceRF/Hf2odIh3
- iFVDSq9DehvfdDQagalvf70hERwVW3jHWxqw6Q80fKVRizHQiDtlW0bMzwm6tk9HHIsTj6gsLSw
- L46HsErLPuFXs/U7fMrZ0HmX33hxxFH9pm2OiotJPJaA3VAEP4eWc7TId57LSnfzqJMzHEDoYgf
- fY/hhdVNrEfn3sNxtEOvCgCWMCK/Y1Gvi2TOyyQZ2J3rQmiUcqKw==
-X-Received: by 2002:a17:907:7b89:b0:b84:3fab:4251 with SMTP id
- a640c23a62f3a-b87939d9b4emr1038683966b.15.1768763665965; 
- Sun, 18 Jan 2026 11:14:25 -0800 (PST)
+ bh=9GHJWMvwMXtNDA/r/FJ/QR9opUIo6yMYrw0zYbq2G2g=;
+ b=GGT6dn6ZNPewnDyHB/ZXjuVnwmPQIuHmetM3KkaVOq/sSbWSbMRJErbvd8i4jSbyYs
+ HW1wpEZupmDJy1AXDHsXv7bpPN6Vca0Yx7Jiih30PsmceZ5qck7JyqPPFFTZdq/G9uFE
+ VS9GXYNdrr+ilWNPblDnTwI2wfKKHZKBuJD7FD9TktVUMMo6m8TLnV172XTnSz1sB9Gp
+ P68fxsB1n/hl5JdAZ3GBZzfmqZG3Dcmh7N9nKn37DfJweZvGYSIhPXJWDE6dkDXDo4zc
+ T5afBGbhxWarQh0bAzB3zaLifgabOL5odNZt5xJW91/tlCMzOeTV+E1s6aM4WNucGtj+
+ 1Ivw==
+X-Gm-Message-State: AOJu0Yxv46DPe8dX0aNUOwoVzDEOJsmr6fwuG2loenL8tq44RbZChuW8
+ xJf1+VALZvBz5RNgz4bGpGd+OrGg2ERw3eYk0it+Eerpz5PcKjYG97DLppGMc/9Dxo9WHbTPcLF
+ HQBYE
+X-Gm-Gg: AY/fxX7YgSKirl19HOlKXGghAn4GL/kGvfA6MpHBZt3YDzE7bIKPYMo46x2irapc+w0
+ p5TJyP+UDdl7o6/DRXI2ARNDU+q3c2YpOmLKhU31WTPNcgM2Gt7sw596ODusri7dxzFUutN0CO/
+ UfCTIum8fToK2FUEH4O7K5gg8KjVfVzwMmkVTtlLIT4mviQDLHOcnLsueHCmQCgJaO2kncDG+Wk
+ cCBfDWgWzjlmwhJssBaiLrOnaZVlUdhUj0h+sRQeXgiGr/L1PgAaxFwuHHR/greCWl2vgZNFcqe
+ eAYrogdiJosVNI37iLUC2QzkBMz/r9IacogecEGEnqMO035LL0UOlz55pf98fJWryB0MKkw+oAr
+ +/aMODqZx8hrXDm1sZv4XVSx5haY+Nw0H0GjQNHx/tM6l08Bt0jOSEFGe9qiUl1K3SjaMQKtpqV
+ oVYSL//Cm51VD4q818k5DLbWOJ+bDgYSSL2Jkhyj3zWHNQ4nzM5w==
+X-Received: by 2002:a17:907:d17:b0:b86:f926:fbc4 with SMTP id
+ a640c23a62f3a-b8796bb1d74mr790314166b.58.1768763667553; 
+ Sun, 18 Jan 2026 11:14:27 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a640c23a62f3a-b87959c9f8dsm886287166b.36.2026.01.18.11.14.24
+ a640c23a62f3a-b87959c9f8dsm886287166b.36.2026.01.18.11.14.26
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 18 Jan 2026 11:14:25 -0800 (PST)
+ Sun, 18 Jan 2026 11:14:27 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v5 37/54] doc: correct grammar in multi-process guide
-Date: Sun, 18 Jan 2026 11:10:40 -0800
-Message-ID: <20260118191323.241013-38-stephen@networkplumber.org>
+Subject: [PATCH v5 38/54] doc: correct grammar in overview
+Date: Sun, 18 Jan 2026 11:10:41 -0800
+Message-ID: <20260118191323.241013-39-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260118191323.241013-1-stephen@networkplumber.org>
 References: <20240513155911.31872-1-nandinipersad361@gmail.com>
@@ -81,134 +81,54 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Correct various grammar and style issues in the multi-process support
-documentation:
+Correct various issues in the overview documentation:
 
-- remove spurious spaces in hyphenated words (pre-initialized,
-  Multi-process, side-by-side)
-- add missing article "the" before "same DPDK version"
-- fix subject-verb agreement in multiple places
-- correct book title from "Application's" to "Applications"
-- remove duplicate word "process" in startup description
-- fix typo "pass long" to "pass along"
-- add missing past participle "triggered"
-- expand abbreviation "Misc" to "Miscellaneous"
+- fix typo "Mos" to "Most"
+- fix grammatically broken sentence about interrupt driven model
+- use consistent spacing in "40 GbE" to match "1 GbE" and "10 GbE"
+- add missing space after comma in LPM library reference
+- remove extra space before doc reference
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- doc/guides/prog_guide/multi_proc_support.rst | 28 ++++++++++----------
- 1 file changed, 14 insertions(+), 14 deletions(-)
+ doc/guides/prog_guide/overview.rst | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/doc/guides/prog_guide/multi_proc_support.rst b/doc/guides/prog_guide/multi_proc_support.rst
-index a73918a5da..722506e385 100644
---- a/doc/guides/prog_guide/multi_proc_support.rst
-+++ b/doc/guides/prog_guide/multi_proc_support.rst
-@@ -17,7 +17,7 @@ For now, there are two types of process specified:
- *   primary processes, which can initialize and which have full permissions on shared memory
+diff --git a/doc/guides/prog_guide/overview.rst b/doc/guides/prog_guide/overview.rst
+index c70023e8a1..a22f51e8ca 100644
+--- a/doc/guides/prog_guide/overview.rst
++++ b/doc/guides/prog_guide/overview.rst
+@@ -23,8 +23,8 @@ Longest Prefix Match (LPM) and rings libraries are also provided.
+ Sample applications are provided to help show the user how to use various features of the DPDK.
  
- *   secondary processes, which cannot initialize shared memory,
--    but can attach to pre- initialized shared memory and create objects in it.
-+    but can attach to pre-initialized shared memory and create objects in it.
+ The DPDK supports multiple programming models for packet processing.
+-Mos of the sample applications use a polling mode for performance but
+-some of the samples use interrupt driven model is useful for saving power
++Most of the sample applications use a polling mode for performance but
++some of the samples use an interrupt driven model that is useful for saving power
+ but has additional performance overhead. If available, it is possible
+ to use the DPDK with event based hardware support.
  
- Standalone DPDK processes are primary processes,
- while secondary processes can only run alongside a primary process or
-@@ -25,9 +25,9 @@ after a primary process has already configured the hugepage shared memory for th
+@@ -140,16 +140,16 @@ The library documentation is available in :doc:`timer_lib`.
+ Ethernet* Poll Mode Driver Architecture
+ ---------------------------------------
  
- .. note::
+-The DPDK includes Poll Mode Drivers (PMDs) for 1 GbE, 10 GbE and 40GbE, and para virtualized virtio
++The DPDK includes Poll Mode Drivers (PMDs) for 1 GbE, 10 GbE and 40 GbE, and para virtualized virtio
+ Ethernet controllers which are designed to work without asynchronous, interrupt-based signaling mechanisms.
  
--    Secondary processes should run alongside primary process with same DPDK version.
-+    Secondary processes should run alongside primary process with the same DPDK version.
+ Packet Forwarding Algorithm Support
+ -----------------------------------
  
--    Secondary processes which requires access to physical devices in Primary process, must
-+    Secondary processes which require access to physical devices in Primary process, must
-     be passed with the same allow and block options.
+-The DPDK includes Hash (librte_hash) and Longest Prefix Match (LPM,librte_lpm)
++The DPDK includes Hash (librte_hash) and Longest Prefix Match (LPM, librte_lpm)
+ libraries to support the corresponding packet forwarding algorithms.
  
- To support these two process types, and other multi-process setups described later,
-@@ -38,8 +38,8 @@ two additional command-line parameters are available to the EAL:
- *   ``--file-prefix:`` to allow processes that do not want to co-operate to have different memory regions
+-See :doc:`hash_lib` and  :doc:`lpm_lib` for more information.
++See :doc:`hash_lib` and :doc:`lpm_lib` for more information.
  
- A number of example applications are provided that demonstrate how multiple DPDK processes can be used together.
--These are more fully documented in the "Multi- process Sample Application" chapter
--in the *DPDK Sample Application's User Guide*.
-+These are more fully documented in the "Multi-process Sample Application" chapter
-+in the *DPDK Sample Applications User Guide*.
- 
- Memory Sharing
- --------------
-@@ -47,7 +47,7 @@ Memory Sharing
- The key element in getting a multi-process application working using the DPDK is to ensure that
- memory resources are properly shared among the processes making up the multi-process application.
- Once there are blocks of shared memory available that can be accessed by multiple processes,
--then issues such as inter-process communication (IPC) becomes much simpler.
-+then issues such as inter-process communication (IPC) become much simpler.
- 
- On application start-up in a primary or standalone process,
- the DPDK records to memory-mapped files the details of the memory configuration it is using - hugepages in use,
-@@ -88,7 +88,7 @@ In this model, the first of the processes spawned should be spawned using the ``
- while all subsequent instances should be spawned using the ``--proc-type=secondary`` flag.
- 
- The simple_mp and symmetric_mp sample applications demonstrate this usage model.
--They are described in the "Multi-process Sample Application" chapter in the *DPDK Sample Application's User Guide*.
-+They are described in the "Multi-process Sample Application" chapter in the *DPDK Sample Applications User Guide*.
- 
- Asymmetric/Non-Peer Processes
- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-@@ -99,7 +99,7 @@ server distributing received packets among worker or client threads, which are r
- In this case, extensive use of rte_ring objects is made, which are located in shared hugepage memory.
- 
- The client_server_mp sample application shows this usage model.
--It is described in the "Multi-process Sample Application" chapter in the *DPDK Sample Application's User Guide*.
-+It is described in the "Multi-process Sample Application" chapter in the *DPDK Sample Applications User Guide*.
- 
- Running Multiple Independent DPDK Applications
- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-@@ -138,7 +138,7 @@ can use).
- Running Multiple Independent Groups of DPDK Applications
- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- 
--In the same way that it is possible to run independent DPDK applications side- by-side on a single system,
-+In the same way that it is possible to run independent DPDK applications side-by-side on a single system,
- this can be trivially extended to multi-process groups of DPDK applications running side-by-side.
- In this case, the secondary processes must use the same ``--file-prefix`` parameter
- as the primary process whose shared memory they are connecting to.
-@@ -155,7 +155,7 @@ There are a number of limitations to what can be done when running DPDK multi-pr
- Some of these are documented below:
- 
- *   The multi-process feature requires that the exact same hugepage memory mappings be present in all applications.
--    This makes secondary process startup process generally unreliable. Disabling
-+    This makes secondary process startup generally unreliable. Disabling
-     Linux security feature - Address-Space Layout Randomization (ASLR) may
-     help getting more consistent mappings, but not necessarily more reliable -
-     if the mappings are wrong, they will be consistently wrong!
-@@ -247,7 +247,7 @@ of fields to be populated are as follows:
- * ``name`` - message name. This name must match receivers' callback name.
- * ``param`` - message data (up to 256 bytes).
- * ``len_param`` - length of message data.
--* ``fds`` - file descriptors to pass long with the data (up to 8 fd's).
-+* ``fds`` - file descriptors to pass along with the data (up to 8 fd's).
- * ``num_fds`` - number of file descriptors to send.
- 
- Once the structure is populated, calling ``rte_mp_sendmsg()`` will send the
-@@ -301,7 +301,7 @@ Receiving and responding to messages
- To receive a message, a name callback must be registered using the
- ``rte_mp_action_register()`` function. The name of the callback must match the
- ``name`` field in sender's ``rte_mp_msg`` message descriptor in order for this
--message to be delivered and for the callback to be trigger.
-+message to be delivered and for the callback to be triggered.
- 
- The callback's definition is ``rte_mp_t``, and consists of the incoming message
- pointer ``msg``, and an opaque pointer ``peer``. Contents of ``msg`` will be
-@@ -318,8 +318,8 @@ pointer. The resulting response will then be delivered to the correct requestor.
-     there is no built-in way to indicate success or error for a request. Failing
-     to do so will cause the requestor to time out while waiting on a response.
- 
--Misc considerations
--~~~~~~~~~~~~~~~~~~~~~~~~
-+Miscellaneous considerations
-+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- 
- Due to the underlying IPC implementation being single-threaded, recursive
- requests (i.e. sending a request while responding to another request) is not
+ librte_net
+ ----------
 -- 
 2.51.0
 
