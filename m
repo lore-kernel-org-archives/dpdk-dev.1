@@ -2,67 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E41E5C9830C
-	for <dpdk-dev@archiver.kernel.org>; Sun, 18 Jan 2026 19:15:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0DC5C9832F
+	for <dpdk-dev@archiver.kernel.org>; Sun, 18 Jan 2026 19:15:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 87F4D40ED6;
-	Sun, 18 Jan 2026 20:13:53 +0100 (CET)
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com
- [209.85.218.50]) by mails.dpdk.org (Postfix) with ESMTP id 88DFE40E48
- for <dev@dpdk.org>; Sun, 18 Jan 2026 20:13:51 +0100 (CET)
-Received: by mail-ej1-f50.google.com with SMTP id
- a640c23a62f3a-b872cf905d3so600079666b.2
- for <dev@dpdk.org>; Sun, 18 Jan 2026 11:13:51 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id A81FD40EE4;
+	Sun, 18 Jan 2026 20:13:54 +0100 (CET)
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com
+ [209.85.218.54]) by mails.dpdk.org (Postfix) with ESMTP id F2F9D40E64
+ for <dev@dpdk.org>; Sun, 18 Jan 2026 20:13:52 +0100 (CET)
+Received: by mail-ej1-f54.google.com with SMTP id
+ a640c23a62f3a-b874c00a39fso642677366b.0
+ for <dev@dpdk.org>; Sun, 18 Jan 2026 11:13:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768763631;
- x=1769368431; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768763632;
+ x=1769368432; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=rkrgl8HEB7x0gd08apNK01AEyGvKpFuSIGwRYrAhj2c=;
- b=U7DPe7FAxGXi8B0gm2zB4sRGv4SPU7JMAY8PkWVBg1cAJuqbKCDctTwbDtND8hHdTN
- e5LO8w25vtRlU1sqqn90P4pXemV3ujmbS6MTGdhhq07+Oau4vAFTbH+PHhIdQ2x43Ejj
- HpKTnLkDhzPnHo0tgzES1mrNS4N+qABXfgJZYVUenySc3FRyJPawQ2HGrKt7H5u01msx
- CyknlgFPUS8q5AXpZd4Sx4bACdFbjWwkNnx0zo7nX78kOkXUoVZ/y7qEASsNBn9emtIY
- TyLP60n8P5gN2r/SFAucnsGkBbAES95eKxaLC1BJNX5Fu6mnWZ2pxYpF6nj/sgjeS4pv
- w9WA==
+ bh=wzeMGUWT2sH9uJj21BW2ouNXrZRjZZTpaB8D/vPE7VY=;
+ b=nHItD5/UadAc5OjjjLfvTO2m1rglukfqSRfKi6wBWQqPvfUDDfLxvRmw7DPBAH3lmw
+ Vf8ev1nZDPhE+tPO6Adw5c5K9O9ScSGzkTbKmL/5ihd46TdGmmkGDeNBDo1feqnu1Xvz
+ 9mq3+hEDKR6KjAE+nMuGWjXkr4cLRzarN5s6PtEyJ6ZA/p+WUYdCCpkLcCY8wNFL9cLh
+ n9HJS+rEb+EurY5kaUZOIEjfBDqw6ojYQ5xcPh5g/p2bXIqu2IUUzg5wX8Ashj0fpAKQ
+ +gWk5zICNynW7cg4vYYALBNkHlPr4PxY2gp+FiteB8ixo6Bxm3Tj0OY2qknM5xhztEdu
+ hhMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768763631; x=1769368431;
+ d=1e100.net; s=20230601; t=1768763632; x=1769368432;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=rkrgl8HEB7x0gd08apNK01AEyGvKpFuSIGwRYrAhj2c=;
- b=Reg95HN+XXwtWROs+e5jnFOkSFN1Z8tECWUms1TzhJGa39hUKNGjixyhJdxYnfi5R2
- Rqwk8Ru+X7GMHw9RNrcMZSCFkZtwHy+p4ss8fpiCuZIgpmWwtcRRj4jAyQh0lCGkGoDV
- Dhm3lCtV/nkgJaOLj3j091QqcElEfsRvD4xoTGLLvl2BTAvDPc6/pmrRfog8PS6Lj4Zt
- AxuGcgERicQ9Kn2xVfLbtBFXlaw7TMCnTad7Rmawl97Tsx7EMi5mex2ui38hyc1Fs0ec
- 3AebkR6ctXQA1ExrC16WV6l3uQF+jVfDhSdLMZFWkReutzipD5EVwq+U+YI0J1Y++TmH
- do9g==
-X-Gm-Message-State: AOJu0YyxVBoDyT7cf5k28CT0x0dCo59M2RV9rbPt6piIdGUeu8FCYfgx
- uJJcJvh7KQJL8FgIkF4vGF27v2bs1/HLWZX5jPMAQ5gM+apPgYtzkY+34Ld2HQojhMrKmN56oaK
- iI7C9
-X-Gm-Gg: AY/fxX5jnid0R1a4otNDsv26TvViD4PiggXn/YUMALDlbALHr5B4GbppH3boSTTaI2P
- NRDEAe+WLChHRJTw+LHTG6OSKTeSaVMQY4D0/iFc+XBB1MwosX9Es6XrGpJ3+qNPddc8bJMFGGY
- fbDUuXAJSew+76/iLh0CVY9w8M//uAwDwBThBEdfSapnFOHBdQZbPakLqzF9abXkQEOMqRZoIL8
- debtiFJi3Q4bih1yTmKc45VPA7YAdH7SAXweq/yo1vzFu/LdxTvWk5wb8kTTSGOcWnfU83P4EuA
- Ct61Lo+2c+uXc/vRkV9LhVcjeuwe9tqadOysOrMeuFzkFlunCL4rmfxXokf31AoQd3Tz6kgL8UA
- H3lN3kJw5UYaKZwc5VN2uwjbHPbQGiiWyqHU7+YLfsgK+2Zr94avtSTCwI3RbrNSDcTukISVAYF
- IcicQ+KUGVBc6EZqccNeYf70n4bnh+G9qgnA2eCLLLkB5ihlgCDQ==
-X-Received: by 2002:a17:907:c1d:b0:b87:12d2:fa1a with SMTP id
- a640c23a62f3a-b87968a972cmr730952766b.12.1768763631027; 
- Sun, 18 Jan 2026 11:13:51 -0800 (PST)
+ bh=wzeMGUWT2sH9uJj21BW2ouNXrZRjZZTpaB8D/vPE7VY=;
+ b=sd9OoGiWDMaw5AQS+8Ld/GcVfSHHFfMJMdpPxCsEX9vfi72rLRTzc8vMiRajOhEEtJ
+ /zyHtvzWHOOW283+F1sk9MSdMXs7jKrgbik0VKuWXIviGWTRhnsVL8qvUHPZAjqmxVda
+ EqrPPQwO3ZyOlGww/x6NBUAUCZkKvY/cW+yIXjWuLwOfY3yM9HAlX6Cu5/3GH0JLBISF
+ 74zf2GdSw0GroFlsnqf0Pu8IfvD7rLKxdKIVPVHbgn3XTwPMh46RHBEX8K7bV3PevWY/
+ jkt4t1HRFb59IbcT1sl9mwWt0dNmc7w4OSTWD8mBGAb74ptDKqgBuWpu67Umi8PbqgdL
+ NcGQ==
+X-Gm-Message-State: AOJu0Yy83U7099W4WtfIU14t87gy3d6YGfOdN8L97hiR3b9/XXqJr+XE
+ a1rHVc0h1urd6FyQG9sLJ4nM0tZdRy780EDlXtNI5IY4TiOrSVTPEAtB9Ag3Hw9D3dt1PKTCQX3
+ +9XLT
+X-Gm-Gg: AY/fxX4C3sQ5Ig7GConi4FK448gkBX+nCcLLRORf7ZB5cp5ArTboWfRYxiIB7dG4t2T
+ nyuoN+L6pW6ZxVcZznwW6t9Q+QQ4BE+mXNQPgINuru9k0/8QgLb66gfcKHOAJhj9ebER0xarwH2
+ Yekvqj5NCHf1T1HQHxg81cIMrUyG9KZnwNOtrtDF85KiIprR9oGXyLDYtXh17b9SfTtgDjAdh1v
+ YMIvv+Yndbey46UwR9S9NiRczEN0lkZXm4N1c/9F/qSENw3nbhjZR8y5C6X0kfTzT6E3kM61PTL
+ 2ABBDOSyFPm0KbeQ202Xi81Pr/whQU7Th6lPQchr8s8AW48u5NWZ8os1E4jdjGJokY+4nT5r31x
+ fK+s1b5ZcAYileCdvS5lVDR9ZMklZqSHsIT41zERo12GQH8tl2O1Li05jUaXCv0jskn8j45KVJC
+ aPRyrjwbqNI5dx7eQ+2Rt7KslVXRVgiCynMpZFxceHLiWDpe5WFw==
+X-Received: by 2002:a17:907:724e:b0:b87:1fe2:55f8 with SMTP id
+ a640c23a62f3a-b8777c537aamr1213427866b.29.1768763632549; 
+ Sun, 18 Jan 2026 11:13:52 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a640c23a62f3a-b87959c9f8dsm886287166b.36.2026.01.18.11.13.49
+ a640c23a62f3a-b87959c9f8dsm886287166b.36.2026.01.18.11.13.51
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 18 Jan 2026 11:13:50 -0800 (PST)
+ Sun, 18 Jan 2026 11:13:52 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v5 14/54] doc: correct grammar and formatting in compressdev
- guide
-Date: Sun, 18 Jan 2026 11:10:17 -0800
-Message-ID: <20260118191323.241013-15-stephen@networkplumber.org>
+Subject: [PATCH v5 15/54] doc: correct grammar in dmadev guide
+Date: Sun, 18 Jan 2026 11:10:18 -0800
+Message-ID: <20260118191323.241013-16-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260118191323.241013-1-stephen@networkplumber.org>
 References: <20240513155911.31872-1-nandinipersad361@gmail.com>
@@ -83,66 +82,47 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 Errors-To: dev-bounces@dpdk.org
 
 Correct several documentation issues:
-- Add missing spaces in "physical (hardware)" and "virtual (software)"
-- Change "For e.g." to "For example,"
-- Change "checksums operation" to "checksum operations"
-- Remove double space in code comment
-- Change possessive form "device's processed queue"
+- Change "defining generic API which support" to "defining generic APIs
+  which support"
+- Change "can be got via" to "can be obtained via"
+- Change "the necessary API are" to "the necessary APIs are"
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- doc/guides/prog_guide/compressdev.rst | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ doc/guides/prog_guide/dmadev.rst | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/doc/guides/prog_guide/compressdev.rst b/doc/guides/prog_guide/compressdev.rst
-index 2a59c434c1..a878010c4c 100644
---- a/doc/guides/prog_guide/compressdev.rst
-+++ b/doc/guides/prog_guide/compressdev.rst
-@@ -5,7 +5,7 @@ Compression Device Library
- ==========================
+diff --git a/doc/guides/prog_guide/dmadev.rst b/doc/guides/prog_guide/dmadev.rst
+index df25b52461..ad0598a8c0 100644
+--- a/doc/guides/prog_guide/dmadev.rst
++++ b/doc/guides/prog_guide/dmadev.rst
+@@ -5,7 +5,7 @@ Direct Memory Access (DMA) Device Library
+ =========================================
  
- The compression framework provides a generic set of APIs to perform compression services
--as well as to query and configure compression devices both physical(hardware) and virtual(software)
-+as well as to query and configure compression devices both physical (hardware) and virtual (software)
- to perform those services. The framework currently only supports lossless compression schemes:
- Deflate and LZS.
+ The DMA library provides a DMA device framework for management and provisioning
+-of hardware and software DMA poll mode drivers, defining generic API which
++of hardware and software DMA poll mode drivers, defining generic APIs which
+ support a number of different DMA operations.
  
-@@ -17,7 +17,7 @@ Device Creation
  
- Physical compression devices are discovered during the bus probe of the EAL function
- which is executed at DPDK initialization, based on their unique device identifier.
--For e.g. PCI devices can be identified using PCI BDF (bus/bridge, device, function).
-+For example, PCI devices can be identified using PCI BDF (bus/bridge, device, function).
- Specific physical compression devices, like other physical devices in DPDK can be
- listed using the EAL command line options.
+@@ -144,7 +144,7 @@ The following example demonstrates the usage of enqueue and dequeue operations:
+ Querying Device Statistics
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~
  
-@@ -113,7 +113,7 @@ acceleration and CPU features. List of compression device features can be seen i
- RTE_COMPDEV_FF_XXX macros.
+-The statistics from a dmadev device can be got via the statistics functions,
++The statistics from a dmadev device can be obtained via the statistics functions,
+ i.e. ``rte_dma_stats_get()``. The statistics returned for each device instance are:
  
- The algorithm features are features which the device supports per-algorithm,
--such as a stateful compression/decompression, checksums operation etc.
-+such as a stateful compression/decompression, checksum operations etc.
- The list of algorithm features can be seen in the RTE_COMP_FF_XXX macros.
+ * ``submitted``: The number of operations submitted to the device.
+@@ -192,7 +192,7 @@ DMA devices used for inter-domain data transfer can be categorized as follows:
+ - Class B: Only one endpoint requires a DMA device; the other does not.
+ - Class C: Other device types not currently classified.
  
- Capabilities
-@@ -488,7 +488,7 @@ with each chunk size of CHUNK_LEN, would look like:
- 
-     uint8_t cdev_id = rte_compressdev_get_dev_id(<PMD name>);
- 
--    /* configure the  device. */
-+    /* configure the device. */
-     if (rte_compressdev_configure(cdev_id, &conf) < 0)
-         rte_exit(EXIT_FAILURE, "Failed to configure compressdev %u", cdev_id);
- 
-@@ -592,7 +592,7 @@ on the device's hardware input queue, for virtual devices the processing of the
- operations is usually completed during the enqueue call to the compression
- device. The dequeue burst API will retrieve any processed operations available
- from the queue pair on the compression device, from physical devices this is usually
--directly from the devices processed queue, and for virtual device's from an
-+directly from the device's processed queue, and for virtual devices from an
- ``rte_ring`` where processed operations are placed after being processed on the
- enqueue call.
- 
+-Currently the necessary API for Class A DMA devices are available
++Currently the necessary APIs for Class A DMA devices are available
+ for exchanging the handler details.
+ Devices can create or join access groups using token-based authentication,
+ ensuring that only authorized devices within the same group
 -- 
 2.51.0
 
