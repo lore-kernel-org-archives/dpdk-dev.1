@@ -2,66 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD62CC9832F
-	for <dpdk-dev@archiver.kernel.org>; Sun, 18 Jan 2026 19:16:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 691B8C9830C
+	for <dpdk-dev@archiver.kernel.org>; Sun, 18 Jan 2026 19:16:34 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E44AC427CD;
-	Sun, 18 Jan 2026 20:14:17 +0100 (CET)
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com
- [209.85.218.49]) by mails.dpdk.org (Postfix) with ESMTP id C281B402F1
- for <dev@dpdk.org>; Sun, 18 Jan 2026 20:14:15 +0100 (CET)
-Received: by mail-ej1-f49.google.com with SMTP id
- a640c23a62f3a-b8765be29d6so525886166b.0
- for <dev@dpdk.org>; Sun, 18 Jan 2026 11:14:15 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 02949427D5;
+	Sun, 18 Jan 2026 20:14:19 +0100 (CET)
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com
+ [209.85.218.54]) by mails.dpdk.org (Postfix) with ESMTP id 42B76427C1
+ for <dev@dpdk.org>; Sun, 18 Jan 2026 20:14:17 +0100 (CET)
+Received: by mail-ej1-f54.google.com with SMTP id
+ a640c23a62f3a-b8708930695so565269366b.3
+ for <dev@dpdk.org>; Sun, 18 Jan 2026 11:14:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768763655;
- x=1769368455; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768763657;
+ x=1769368457; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=KTI/f4G6e+d6SFTAHH4Pd9K2luUo5vsEWc6ehkHNWiY=;
- b=ROKk9lx3dwlO4S89hd63dh0hqUVMnCwFsXfeVTFMO+ZHU7WgmyGdhXQ7oGEwmmHgZj
- EzHu8xtC2PlZR8q9si78E6RBUnmfycHuDZ65lMGXRb00pNVyW0k2osVZO4MhzibMCdnW
- QsXTqA+l+6No0britOPb+CRkmVZ55eqthxK6tAL6+zA7o78QWKRLT7ss06b4d+F/3T7v
- SZ4WJZ5RevoApkyGnlk+wTLAV6mVrCYZrU+InLP1Asnq/dGHHQSbuj7TraohVeSd0USM
- Gs/ObscrlPwJeDUlzdRbXeu0mSyita4stNm2Ia8fdgVTsXPG7BRYxUxyO8vKrPGcVYno
- zBAA==
+ bh=b2o/QgmBE1Ax5E8Ubi93comn/3IKkkli8qNkhas9mkw=;
+ b=nKwBr1LYUm7NlJUF2kCDNFUBV2nq7ezWJfKXpWvSIPdVvodbi0/382Ipdf+dEjMbqq
+ glZj9ScNPzC+htuFPSKQoeQkLs4V05BvI2r0FfBDDvVKgskOZGSi+YhaRKoYcvihxtlF
+ 4QskJaFt0zyuWWBFbltkJAmmH1XZsSrDy6vmH3Y6XM0q7c3uQMa6B8IoyMpwByylOi7/
+ 0bTxKB6EsQ0jV1o7FMLCC3M/AsZO+hg/v03vvqbHrscR+9gD7R8WY2moJoU62zeeXvBZ
+ t41SIkESyyuSjZRJxOvP4x4u0gMXEPhUmBNVdDj/RA4M/EWz1F4TROLuZCSoT5gxrgaR
+ bSqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768763655; x=1769368455;
+ d=1e100.net; s=20230601; t=1768763657; x=1769368457;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=KTI/f4G6e+d6SFTAHH4Pd9K2luUo5vsEWc6ehkHNWiY=;
- b=fEsyCn1FgTaxoPY+BuBpoJ40ibskmmiG58HqkJjcKEtwSjlmBJsJxA++SBqvxxLR9S
- ibHCratsrqagbxsr73kMEoMH19s3N/styX57ZN9onOBfuUgtIKeMiANnpmVX2iYTIQMN
- CidTbtEG2GrdA6CTEazs8qJnzqKC/dqYPBnEgPeiu3FY8Ke9FDm2c8zvXsZa/2TU8tAM
- ksLMoNVap0wA5r2ma4xOxnV3VwRyXbTmDkF0l6DySvF7a8wu750pGaMlnAXjJXhnRsFR
- lh51MxRweMiwgDPahxmWk19CBxPujauRipvO8LRsOsmCMOFeGFUTaDLV4GCGJ6cid4Dj
- 8H/Q==
-X-Gm-Message-State: AOJu0Yz7TbiPrgqGQ8Eprck6yOOORq8LSPhE/ppCpWlHUJFXcGCmDJIL
- YFXBJjICAWhhJYLvytTzcK2Uvr4Ml4BCH7DSne6ZUEbkqBszs/g0c0PuvPF1TXnbOVanIt20Bdz
- UB1HK
-X-Gm-Gg: AY/fxX4kZ2kEaWr1HEou+nBCQHh9NcBEvv4S0Yi+eARUNSRB6/lQLZUvpqmv+AXGwt+
- 6p1zXtfI/bjppoGeYY/YWmPwbdJzTdTFVxTqoSqCCGd0G4nL7YW2QQ7QpKCAIIQG/BggHqmFT5p
- aCAfi/xIvKEKB7s8CQsJXAAsbqF03ErcKFlq/5alk9GZkeMxZNH7xJA/cv7UvuUxTuZgQG9Im7E
- ztmitdrDoNA+DV1HoW/Eql9Tit7lcVHCsct/Oy5bl38oj2ImhLA1YIs0zv8VLvGk8aSid/PTOHV
- iu28UaQgCwygFOxKnLT6maG5NboQohQgzkc+e1pNwND8banB29QsHBqfuQAR1HtEWkggqqR7oDT
- DYKU14fhaw5RANGgCgh7t6DhVvgkAVW9mf2jXraFlGkFd2iVWHe5hEUbjWXubbVTnc0rRq5TvK7
- OZ7Xi8KRbGGCp/RjHw/06ayveC5hk1Jn0O6T7LM2TveAYAN8ktFQ==
-X-Received: by 2002:a17:906:4793:b0:b87:1fb:8369 with SMTP id
- a640c23a62f3a-b879324c8aamr779262866b.57.1768763655231; 
- Sun, 18 Jan 2026 11:14:15 -0800 (PST)
+ bh=b2o/QgmBE1Ax5E8Ubi93comn/3IKkkli8qNkhas9mkw=;
+ b=lmYxhP8UNRX9bLRfOiwEu+HQpzJ7neP886cG5kNBLP+AV7168uB5BAooNKo9iCZY34
+ Xa+gtQr4vLrnSchbECZwC8AfBmcKrWgT5enj+nJGiFAtjemnJb+kQKQKIIU+MsDvEvEi
+ fZViBwDHSFXOzcw3Nk2KPUNnyZDYQKzN0n+uROYNmOT3t9V4sACCoSf3OlmEvQmOsEX5
+ bSYSc3PUn4nbUIfY0Ambpcs+qu3RyFhO398soLUuGlGR+C07ZDKioDscnv67gINvuv+N
+ Yxcs7FWT1eqhnyuzSNsOV5JWi0g9IpwVsBJ2CTQ21YaVJl9rCkV9IlY8CISKR+pSbUhc
+ U83w==
+X-Gm-Message-State: AOJu0YxY3G5O12jmxE3bVixHf3tuvprR/zaLWnSQ6pUzn2XXNglk2+X4
+ vhM5bRWInOEfgrZETK5eM2C7TGTOD5P+XlaGRxwa4Nx9cWngN7JdpOnJQyqK3DkZxUvV7W/HPo7
+ 1hCQi
+X-Gm-Gg: AY/fxX6oP09jJVqI37YQuYyHnSh0D9gRIve3TyLPkd+BHJeTswsUb85KrcLDhAoTnoZ
+ HpFLJQONR0SKw4wZ6OmXvgdUQgNSb+nF0lGlMBOcFe7eCjl+Ij22HCuRy/OkXAZJ4tkh1P0p7IC
+ sjpSgpOtsIPA/x7JEkicKPHLXMtyyY8z0qNjZLk9kGPPVFFmF0g2eADnmYrnae+kyO0m187vYRw
+ JM4+DYzcRaSh/rB550a9I/xqQ/fwGX5mc1YoaUjQI852BqQw4Y8ZH3MYh2y+c4lHkVxUXCz/iFR
+ 6LCmm+RAB7ZGneUJu8i+oi99bCVc4FXOyB3CqPWQE5cycMS0HtTnb4rXuNC6Bya+0pPEoVKNRGT
+ FsXfj9SvDTrlH5iHv8/CHwgvFFS2HE6klzroX9jM+1xUVMJmvQC5lTWLuHdVHGD2GR5MzaWdTUc
+ NXzBG4BWgdRcLS/Evs+vlgUMv4RB0M068nQLvds1tBwhuJe5qhMw==
+X-Received: by 2002:a17:907:9711:b0:b87:672c:410e with SMTP id
+ a640c23a62f3a-b8796af0cf0mr702974766b.42.1768763656820; 
+ Sun, 18 Jan 2026 11:14:16 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a640c23a62f3a-b87959c9f8dsm886287166b.36.2026.01.18.11.14.13
+ a640c23a62f3a-b87959c9f8dsm886287166b.36.2026.01.18.11.14.15
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 18 Jan 2026 11:14:14 -0800 (PST)
+ Sun, 18 Jan 2026 11:14:16 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v5 30/54] doc: correct grammar in introduction
-Date: Sun, 18 Jan 2026 11:10:33 -0800
-Message-ID: <20260118191323.241013-31-stephen@networkplumber.org>
+Subject: [PATCH v5 31/54] doc: correct grammar in mbuf library guide
+Date: Sun, 18 Jan 2026 11:10:34 -0800
+Message-ID: <20260118191323.241013-32-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260118191323.241013-1-stephen@networkplumber.org>
 References: <20240513155911.31872-1-nandinipersad361@gmail.com>
@@ -81,37 +81,108 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Correct missing subject in sentence describing release notes content.
-Correct inconsistent capitalization of Linux in the documentation
-roadmap section.
+Correct various grammar and style issues in the mbuf library
+documentation:
+
+- make Mbuf capitalization consistent with title
+- fix garbled sentence about embedding metadata in buffers
+- correct awkward phrasing for newly-allocated mbuf description
+- use correct article "an mbuf" before vowel sound
+- fix redundant "prepend data before data" phrasing
+- add missing punctuation and normalize list formatting
+- correct idiom "allows to offload" to "allows offloading"
+- fix subject-verb agreement for "information finds"
+- fix plural "applications" in use cases section
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- doc/guides/prog_guide/intro.rst | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ doc/guides/prog_guide/mbuf_lib.rst | 26 ++++++++++++++------------
+ 1 file changed, 14 insertions(+), 12 deletions(-)
 
-diff --git a/doc/guides/prog_guide/intro.rst b/doc/guides/prog_guide/intro.rst
-index 44877bd3e3..5055574206 100644
---- a/doc/guides/prog_guide/intro.rst
-+++ b/doc/guides/prog_guide/intro.rst
-@@ -19,7 +19,7 @@ The following is a list of DPDK documents in the suggested reading order:
+diff --git a/doc/guides/prog_guide/mbuf_lib.rst b/doc/guides/prog_guide/mbuf_lib.rst
+index 382bfbdca4..ee88b13766 100644
+--- a/doc/guides/prog_guide/mbuf_lib.rst
++++ b/doc/guides/prog_guide/mbuf_lib.rst
+@@ -4,7 +4,7 @@
+ Packet (Mbuf) Library
+ =====================
  
- *   **Release Notes** : Provides release-specific information, including supported features,
-     limitations, fixed issues, known issues and so on.
--    Also, provides the answers to frequently asked questions in FAQ format.
-+    It also provides the answers to frequently asked questions in FAQ format.
+-The Packet (MBuf) library provides the ability to allocate and free buffers (mbufs)
++The Packet (Mbuf) library provides the ability to allocate and free buffers (mbufs)
+ that may be used by the DPDK application to store message buffers.
+ The message buffers are stored in a mempool, using the :doc:`mempool_lib`.
  
- *   **Getting Started Guide** : Describes how to install and configure the DPDK software;
-     designed to get users up and running quickly with the software.
-@@ -31,7 +31,7 @@ The following is a list of DPDK documents in the suggested reading order:
- *   **Programmer's Guide** (this document): Describes:
+@@ -19,7 +19,7 @@ Design of Packet Buffers
  
-     *   The software architecture and how to use it (through examples),
--        specifically in a Linux* application (linux) environment
-+        specifically in a Linux* application (Linux) environment
+ For the storage of the packet data (including protocol headers), two approaches were considered:
  
-     *   The content of the DPDK, the build system
-         (including the commands that can be used in the root DPDK to build the development kit and an application)
+-#.  Embed metadata within a single memory buffer the structure followed by a fixed size area for the packet data.
++#.  Embed metadata within a single memory buffer, with the structure followed by a fixed-size area for the packet data.
+ 
+ #.  Use separate memory buffers for the metadata structure and for the packet data.
+ 
+@@ -79,10 +79,10 @@ Allocating and Freeing mbufs
+ ----------------------------
+ 
+ Allocating a new mbuf requires the user to specify the mempool from which the mbuf should be taken.
+-For any newly-allocated mbuf, it contains one segment, with a length of 0.
++Any newly-allocated mbuf contains one segment, with a length of 0.
+ The offset to data is initialized to have some bytes of headroom in the buffer (RTE_PKTMBUF_HEADROOM).
+ 
+-Freeing a mbuf means returning it into its original mempool.
++Freeing an mbuf means returning it into its original mempool.
+ The content of an mbuf is not modified when it is stored in a pool (as a free mbuf).
+ Fields initialized by the constructor do not need to be re-initialized at mbuf allocation.
+ 
+@@ -93,17 +93,19 @@ Manipulating mbufs
+ 
+ This library provides some functions for manipulating the data in a packet mbuf. For instance:
+ 
+-    *  Get data length
++    *   Get data length
+ 
+-    *  Get a pointer to the start of data
++    *   Get a pointer to the start of data
+ 
+-    *  Prepend data before data
++    *   Prepend data before the payload
+ 
+-    *   Append data after data
++    *   Append data after the payload
+ 
+     *   Remove data at the beginning of the buffer (rte_pktmbuf_adj())
+ 
+-    *   Remove data at the end of the buffer (rte_pktmbuf_trim()) Refer to the *DPDK API Reference* for details.
++    *   Remove data at the end of the buffer (rte_pktmbuf_trim())
++
++Refer to the *DPDK API Reference* for details.
+ 
+ .. _mbuf_meta:
+ 
+@@ -123,7 +125,7 @@ timestamp mechanism, the VLAN tagging and the IP checksum computation.
+ 
+ On TX side, it is also possible for an application to delegate some
+ processing to the hardware if it supports it. For instance, the
+-RTE_MBUF_F_TX_IP_CKSUM flag allows to offload the computation of the IPv4
++RTE_MBUF_F_TX_IP_CKSUM flag allows offloading the computation of the IPv4
+ checksum.
+ 
+ The following examples explain how to configure different TX offloads on
+@@ -212,7 +214,7 @@ Dynamic fields and flags
+ 
+ The size of the mbuf is constrained and limited;
+ while the amount of metadata to save for each packet is quite unlimited.
+-The most basic networking information already find their place
++The most basic networking information already finds its place
+ in the existing mbuf fields and flags.
+ 
+ If new features need to be added, the new fields and flags should fit
+@@ -286,4 +288,4 @@ by the script ``dpdk-mbuf-history-parser.py``.
+ Use Cases
+ ---------
+ 
+-All networking application should use mbufs to transport network packets.
++All networking applications should use mbufs to transport network packets.
 -- 
 2.51.0
 
