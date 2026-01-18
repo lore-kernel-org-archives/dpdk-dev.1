@@ -2,66 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F117AC9832F
-	for <dpdk-dev@archiver.kernel.org>; Sun, 18 Jan 2026 19:14:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7243AC9830C
+	for <dpdk-dev@archiver.kernel.org>; Sun, 18 Jan 2026 19:14:36 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5C30B40E12;
-	Sun, 18 Jan 2026 20:13:45 +0100 (CET)
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com
- [209.85.208.53]) by mails.dpdk.org (Postfix) with ESMTP id 249CD40A7A
- for <dev@dpdk.org>; Sun, 18 Jan 2026 20:13:44 +0100 (CET)
-Received: by mail-ed1-f53.google.com with SMTP id
- 4fb4d7f45d1cf-64b7a38f07eso4855968a12.0
- for <dev@dpdk.org>; Sun, 18 Jan 2026 11:13:44 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 6E7DF40E2B;
+	Sun, 18 Jan 2026 20:13:47 +0100 (CET)
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com
+ [209.85.208.52]) by mails.dpdk.org (Postfix) with ESMTP id 90ADC40E18
+ for <dev@dpdk.org>; Sun, 18 Jan 2026 20:13:45 +0100 (CET)
+Received: by mail-ed1-f52.google.com with SMTP id
+ 4fb4d7f45d1cf-65378ba2ff7so6247416a12.2
+ for <dev@dpdk.org>; Sun, 18 Jan 2026 11:13:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768763624;
- x=1769368424; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768763625;
+ x=1769368425; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=tDdy21LvI+IjhLnrt57USPj1gtHei5RsDhaF6CTivFs=;
- b=PTJGjLVU2UfGV2cptnzPKjUOIVXZSxH2D4VzvjZEHSz1IfKHgroAYh+l4GT54ou0Qb
- 5cj37APfLESFdfSUr/1+u3EVuTAX/nosIXXmTCtnXhJs2B8JiF1hZorrKO2eN41aE0IX
- JzZKNs2zMn1N8e9lAoR+ioSks1HJaRa001omFz1Yw8VLBhT4X9QneTjwR7xgxm0mnd26
- /+0ByeQEJUh1HE+aNHVHXdy4WP7xemsnkmMc8XWc0gC6iWnSEI/P3TH7IQQoypiRBIlE
- V78Wm54+4BsJMPe1+JimlaAqGqqVnZn8Mp650K2K9py1GzDGynTRpNaYPwmX1YpWc+fn
- /bhw==
+ bh=gA5SpZ8sHy9vOIYD24+jv6NVlOkHKopN6BQZTjRQ7jw=;
+ b=ldma2ofTF4E6cUJ3nJCSxazo+vwVjKvR7uvmgHDPXmK48ky0T4C05QZIHDB5HHkX50
+ wlKJjLv2rOuMqd1BIsySamz+JHNLwPv/Xy+LF7z+WR8KILkkJCAXfPQmebAYbWRFUXRU
+ OEoEd5Pz+NOdOchOsJqmj5daJiC8YTxyviGjPokxmiMRRazEZ5T/DxLLIngxFTb8rWDJ
+ sgiTzIw7qAZtd65fJVmtmIG2EbJHReGQz+t0MSkz1LBfUBt+EknPyin4Knp0JVWZdfpb
+ drZ0qOxXb28rwai5XTjnUvGZ2ftbOG6ytNiKzK7BAdCx2Eo9MgXUcLJpY6rGrlTXYHBi
+ 9C5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768763624; x=1769368424;
+ d=1e100.net; s=20230601; t=1768763625; x=1769368425;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=tDdy21LvI+IjhLnrt57USPj1gtHei5RsDhaF6CTivFs=;
- b=PJVAf/DdgAbdZ+tA9ClRQkmAi4e8TAsDU5hyf68CNoprvLtvQfntNTLxiG5atIn2I4
- s6TcUbEPaOgo46sWRSYaXcpdg3c9LXvtK0vBoJMHNVu0v4jxR9nPtXU/ZPKbDiy6hOnf
- weE7ofWQ2xITWrOwwmwJHUcE/3POX2LkUa8pet/gmzDM4azr/nU2uBptkUfI1MRLWyZz
- Hle5LKHObAtSel2dskg6yYqk2z4d+EhlZnvzIJk9s1FIilrTbqrghJL1YWYSd49Eda/h
- HqnGAk6x5oN16Oeq7Bcsgvbop5QFqAe5W+IsmUevHTTSOb8jAKv8OXZpkwHsNa0IA7ga
- v8jA==
-X-Gm-Message-State: AOJu0YybLbbO63KXH9qRhhCrNYScidn0U1RjY2NlReG6gblynBZY5Cdu
- 95WeG6etH2QXJW8S5wCkRjDkX1aYqkCzk1QujkcdJNSC/pUKBEanW3JmZ0kUM7TTGvfiWNnfkWZ
- eaa5J
-X-Gm-Gg: AY/fxX7hkrkJOmZxcQ6cPXu8kth+S1JI+0e9k/+68pRgh70604MPQM/n3N2lJfYr6UC
- iSvW6bsfvthGbe6mJ5DQNPjZhzw5m98mnuvKXaLmZOHfrErU0f8kYQteyCTIN1wXxDAngHy5JHR
- f1AENw98rFicsswydPLQRqqA2NUe7GMv0oz4aU6ZgaPvDYxi41O6P22RDfV9SmlbmxubRq1ZJKi
- Dv25Ivb6+0XxIIeq4I9XMkQlfr5Ox4Wl2mivrZSFuMXTjUUka3TvztRTtq27BMU0FIr7kAUwxFF
- GxfiJdJw05jaAbtBAdxgVH1eM6iSpvyxXrDaeHG/4Njcze7MVb1ymFO8UfAm5fcCKOipsmdjqEw
- b2xqfjSQSACi8uSd2TzwOtSuAmGpr/JQHT87RiPnaw6pOQXUmHCvaWxd9Re9ImHycB9m5gqDzMZ
- wrMRoyd2eW3A8IKVVyfiHkBXkCt6dEe0iqyFip4DdIByTIZjJW/Q==
-X-Received: by 2002:a17:907:94ce:b0:b87:1b2b:3312 with SMTP id
- a640c23a62f3a-b8792d65770mr703058166b.16.1768763623624; 
- Sun, 18 Jan 2026 11:13:43 -0800 (PST)
+ bh=gA5SpZ8sHy9vOIYD24+jv6NVlOkHKopN6BQZTjRQ7jw=;
+ b=Dt2S42hmSiyCMkKycGn1pzVimirkx8vpODvYSWws2U1BwLuCWeV77DYXJsDzpzN/g3
+ i04q44Ij749Qdy6YcEU7RRyxaDQxB/S/hZJelvoHpqdrj6tadGlCmFIc0gcWaT/2dz6O
+ AyEL9URLK5FmQcga5RV6sKd9GBEtSQMDuUHJ44b9YWyguSQZcyTbRpyUWBD1MfTvLCPz
+ ZUAZBj+g4LpT6YXtsqtZ/yckhFTkPCvv9KJtAiZN33IEUiuZR93kgITkd8CMhGjNnIa5
+ eR2INQDPwLNBbT2WFB7LNzsGJ6yHntMFHNaLYEuscmmypFDrhxrluozj9eNu/JCUi4Rz
+ k1Og==
+X-Gm-Message-State: AOJu0YyEYp2FzjegyUbtJr9+bJQS1WZyLz5HYZBJk8y4/bfsY859hI6B
+ 8ub2swqAPNNNkavsGJhEnVgwkin5D54s6Y/PjBOemgcMMvSblVWHc5Xv62AjohElUoqXLmbtwcI
+ U3BLs
+X-Gm-Gg: AY/fxX5zlTShgf1QH3IwgepHGqPg2GGtq6XSJJKEv6bNh9OOGoovWisuF59vnIu4J0B
+ O7flIq1bR4y/rH4SnHoQ2sljqvh3fYLYPWxde/2Cgx7uuTrn2D0eJZAdeaRnBW+9C0gN8b+dk23
+ Dh4Wd5If1/XFgoglYDJn8fRUUqA18GeI23keW6Hz2Zi714l1pq0UHmXRWc5HRDNoXO5vOhbb3ms
+ xzNTrkAQNp07vjwIWZGRIoMnSCIoY++dyrZ9ElcSCJYspPmYcPhAMtApDfnOz1Xrd5a0tAVlpO8
+ sb4DPSzIfoT7gid4n+saYcGS9kk9T2XCUj8L7JeatfddcsX8t3CEQmIdw1xskbBC64TlE+GkPc5
+ 264fBa+upmK20jlAW4CK/LLPqTy9ClJScni3c/1q4pFUo32zIvvuI8lJk0vRjKLNQa6hmRorDQm
+ eQVkr2sEhfYKRYn0qtCPpVdLA0p9sSHxLhSePiBlXHN4IDF6A/Ww==
+X-Received: by 2002:a17:907:940a:b0:b84:206f:c0c5 with SMTP id
+ a640c23a62f3a-b8796aee53emr758345366b.34.1768763625126; 
+ Sun, 18 Jan 2026 11:13:45 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a640c23a62f3a-b87959c9f8dsm886287166b.36.2026.01.18.11.13.42
+ a640c23a62f3a-b87959c9f8dsm886287166b.36.2026.01.18.11.13.43
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 18 Jan 2026 11:13:43 -0800 (PST)
+ Sun, 18 Jan 2026 11:13:44 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v5 09/54] doc: correct grammar and formatting in ASan guide
-Date: Sun, 18 Jan 2026 11:10:12 -0800
-Message-ID: <20260118191323.241013-10-stephen@networkplumber.org>
+Subject: [PATCH v5 10/54] doc: correct grammar and typos in bbdev guide
+Date: Sun, 18 Jan 2026 11:10:13 -0800
+Message-ID: <20260118191323.241013-11-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260118191323.241013-1-stephen@networkplumber.org>
 References: <20240513155911.31872-1-nandinipersad361@gmail.com>
@@ -82,68 +82,46 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 Errors-To: dev-bounces@dpdk.org
 
 Correct several documentation issues:
-- Change "Add below unit test code" to "Add the following unit test code"
-- Change grammar in error descriptions to use proper subject-verb agreement
-- Correct RST directive syntax from "Note::" to ".. Note::"
+- Change "Each bbdev devices queue" to "Each bbdev device's queue"
+- Change "it's" to "its" for possessive form
+- Correct typo "ressampling" to "resampling"
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- doc/guides/prog_guide/asan.rst | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+ doc/guides/prog_guide/bbdev.rst | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/doc/guides/prog_guide/asan.rst b/doc/guides/prog_guide/asan.rst
-index 9a6c5a7e4b..b770ac9029 100644
---- a/doc/guides/prog_guide/asan.rst
-+++ b/doc/guides/prog_guide/asan.rst
-@@ -39,7 +39,7 @@ to define ASAN_SHADOW_OFFSET.
- Example heap-buffer-overflow error
- ----------------------------------
+diff --git a/doc/guides/prog_guide/bbdev.rst b/doc/guides/prog_guide/bbdev.rst
+index 8abb0e9c88..4edcdb967b 100644
+--- a/doc/guides/prog_guide/bbdev.rst
++++ b/doc/guides/prog_guide/bbdev.rst
+@@ -125,7 +125,7 @@ device, if supported by the driver. Should be called before starting the device.
+ Queues Configuration
+ ~~~~~~~~~~~~~~~~~~~~
  
--Add below unit test code in examples/helloworld/main.c::
-+Add the following unit test code to examples/helloworld/main.c::
+-Each bbdev devices queue is individually configured through the
++Each bbdev device's queue is individually configured through the
+ ``rte_bbdev_queue_configure()`` API.
+ Each queue resources may be allocated on a specified socket.
  
-     Add code to helloworld:
-     char *p = rte_zmalloc(NULL, 9, 0);
-@@ -49,7 +49,9 @@ Add below unit test code in examples/helloworld/main.c::
-     }
-     p[9] = 'a';
+@@ -168,7 +168,7 @@ Logical Cores, Memory and Queues Relationships
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  
--Above code will result in heap-buffer-overflow error if ASan is enabled, because apply 9 bytes of memory but access the tenth byte, detailed error log as below::
-+This code will result in a heap-buffer-overflow error if ASan is enabled,
-+because it allocates 9 bytes of memory but accesses the tenth byte.
-+Detailed error log::
- 
-     ==369953==ERROR: AddressSanitizer: heap-buffer-overflow on address 0x7fb17f465809 at pc 0x5652e6707b84 bp 0x7ffea70eea20 sp 0x7ffea70eea10 WRITE of size 1 at 0x7fb17f465809 thread T0
-     #0 0x5652e6707b83 in main ../examples/helloworld/main.c:47
-@@ -59,7 +61,7 @@ Above code will result in heap-buffer-overflow error if ASan is enabled, because
-     Address 0x7fb17f465809 is a wild pointer.
-     SUMMARY: AddressSanitizer: heap-buffer-overflow ../examples/helloworld/main.c:47 in main
- 
--Note::
-+.. Note::
- 
-   - Some of the features of ASan (for example, 'Display memory application location, currently
-     displayed as a wild pointer') are not currently supported with DPDK allocations.
-@@ -67,7 +69,7 @@ Note::
- Example use-after-free error
- ----------------------------
- 
--Add below unit test code in examples/helloworld/main.c::
-+Add the following unit test code to examples/helloworld/main.c::
- 
-     Add code to helloworld:
-     char *p = rte_zmalloc(NULL, 9, 0);
-@@ -78,7 +80,9 @@ Add below unit test code in examples/helloworld/main.c::
-     rte_free(p);
-     *p = 'a';
- 
--Above code will result in use-after-free error if ASan is enabled, because apply 9 bytes of memory but access the first byte after release, detailed error log as below::
-+This code will result in a use-after-free error if ASan is enabled,
-+because it accesses the first byte of memory after it has been freed.
-+Detailed error log::
- 
-     ==417048==ERROR: AddressSanitizer: heap-use-after-free on address 0x7fc83f465800 at pc 0x564308a39b89 bp 0x7ffc8c85bf50 sp 0x7ffc8c85bf40 WRITE of size 1 at 0x7fc83f465800 thread T0
-     #0 0x564308a39b88 in main ../examples/helloworld/main.c:48
+ The bbdev poll mode device driver library supports NUMA architecture, in which
+-a processor's logical cores and interfaces utilize it's local memory. Therefore
++a processor's logical cores and interfaces utilize its local memory. Therefore
+ with baseband operations, the mbuf being operated on should be allocated from memory
+ pools created in the local memory. The buffers should, if possible, remain on
+ the local processor to obtain the best performance results and buffer
+@@ -1232,7 +1232,7 @@ The FFT parameters are set out in the table below.
+ +-------------------------+--------------------------------------------------------------+
+ |fp16_exp_adjust          |value added to FP16 exponent at conversion from INT16         |
+ +-------------------------+--------------------------------------------------------------+
+-|freq_resample_mode       |frequency ressampling mode (0:transparent, 1-2: resample)     |
++|freq_resample_mode       |frequency resampling mode (0:transparent, 1-2: resample)      |
+ +-------------------------+--------------------------------------------------------------+
+ | output_depadded_size    |output depadded size prior to frequency resampling            |
+ +-------------------------+--------------------------------------------------------------+
 -- 
 2.51.0
 
