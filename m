@@ -2,67 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D39E8C9832F
-	for <dpdk-dev@archiver.kernel.org>; Sun, 18 Jan 2026 19:13:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15D57C9832F
+	for <dpdk-dev@archiver.kernel.org>; Sun, 18 Jan 2026 19:14:04 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AAD8940684;
-	Sun, 18 Jan 2026 20:13:38 +0100 (CET)
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com
- [209.85.218.47]) by mails.dpdk.org (Postfix) with ESMTP id E4040406BA
- for <dev@dpdk.org>; Sun, 18 Jan 2026 20:13:35 +0100 (CET)
-Received: by mail-ej1-f47.google.com with SMTP id
- a640c23a62f3a-b870732cce2so554591266b.3
- for <dev@dpdk.org>; Sun, 18 Jan 2026 11:13:35 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id B5A3840A6E;
+	Sun, 18 Jan 2026 20:13:39 +0100 (CET)
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com
+ [209.85.208.53]) by mails.dpdk.org (Postfix) with ESMTP id 7F30840673
+ for <dev@dpdk.org>; Sun, 18 Jan 2026 20:13:37 +0100 (CET)
+Received: by mail-ed1-f53.google.com with SMTP id
+ 4fb4d7f45d1cf-64b7318f1b0so5514754a12.2
+ for <dev@dpdk.org>; Sun, 18 Jan 2026 11:13:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768763615;
- x=1769368415; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768763617;
+ x=1769368417; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=WNyUkCMe9MZzwrstbShxbdJ4CyXmJCX9c8DBPjb/O84=;
- b=hwPzaBxRO06lEhPCIDTVmB/h6rIeeXgz8oi909uUXDL6IgqpCmnBBzLQRlOV7Ooyv1
- sJikCmupEqksr3bQl/iwOTVw0bvho7zJrx4mf6PHs/W+wWWcmCY18vDav8cTl9GymM2Y
- 1tLS7TYIOMSzwaPOisiqFvHB8bD/IHs5znichJg/A2Z7mLTEGkzaStreizxDF1iBf0ZD
- GVzyMRQT/UjFC1VEojD+AEXOKjPKTRlfwlB/jmNkMZseLMX1gljePJTVMoQaiWabcVV5
- ftZsVo+t6Yucxu7hl3nmShuXX9G428KBLXHdwsMBjhf3cMsyP2Qfa1eynED/2yCjzUrL
- aX0g==
+ bh=YhwsAym118Z50j373nLJHxbO/t+7/JkSGBVItsu22HE=;
+ b=0f690gpRSb46bxICVw0NsLVRZQL7Jf7nEgbX9arKdxZw07bpT6lF5Ki9JCRIK1njNi
+ L8+yA7us5D6oGkm+MP0IF4F2CgIydRCQ6JIb0xRMe+iSkTnO+qV8ZnIeX9e7Cj36OK7E
+ yaps4B0CFOum1Mqe68Q24ECUgW7kS8ak0EB/rY5ahC7FDL9Pn9JoCFl1Xv1ziMeom1wb
+ E3XlM3mYxJeX5SIsFXz1oWDV7q4QfVKo1NwFV7b8KtJRN0RNu72qSYTJFF76NympydwO
+ iFb7f2Mzg593LYFK7Ir4ikPMNdjKqTNG56W+Gei8Fc1WbwWl6u7FR12yzyCLSmQeY3n4
+ t10g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768763615; x=1769368415;
+ d=1e100.net; s=20230601; t=1768763617; x=1769368417;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=WNyUkCMe9MZzwrstbShxbdJ4CyXmJCX9c8DBPjb/O84=;
- b=F1MlP9uCRzPAew54OWQQVj3/UecXcrZecXdh9QZZKo0VyCAvnStuYyT3UASj4fvGQg
- QrknG/IcQLUbYViMgosnaB0bPlpjpZNTS9MqO02sdbcYvTBbfnXSieTcgl5iGaB8ERR6
- 1tI0AMKEVlDK/V3Rw21PuOavtZx/7WOuJfXHzXv10r6OBMHlu1DFZlw6IhLmFsXpSLJM
- aIW4Je1ifBEQOyQ6N3ltb5ep8IFM+dpkN/9dkPWY6R+t2gFMyaU3ARjOQo6WXvzIAp+j
- PZ9fTqBCuahRYIQbQBt5Ujd5BVywRSseAom+7U6iJtzWN22Maz23aHJS3m7jiSPA3wJ8
- rsGQ==
-X-Gm-Message-State: AOJu0YwPfX9Otd8mzY+4o0Jxtu9nmgf2fiT9qIFS/i/x3zwj6AI7i7AR
- LTNJ9wYZYj3N1gfi5HKdr9csoqJYos2wYIJ4JgQE2igQEXdlL9+JG31RZa89IDzI0HfjbqmfsTU
- GjHVg
-X-Gm-Gg: AY/fxX5MfQHjiOVoYvenWZO2/VY7UbeYQ+Jmbgj5WMfY+oX8u94oe3WHbOG9WCBrGKM
- otvpDRc7XWYOdbydiKDRD6gzEpoVKT2zDhO05/cfmjiNIA3AMuQ849kLVYvftyARFEiGGXOVAVc
- kpjdwt2chuC3+h+K/oFhL8HY4nW1+FgrhB+KyuFJWMHEHNT8p50hObGFo8X9AA3v56JbvxzxO9v
- ain7v72aj9sXUi8yvEdtiyO0OahjcgXtWNYd4edxAQioTH24lAMagEZSdxzl3mCvuWTvvHbaAb1
- pa6rJ171Hq5qCLi3yzUuOR+d9EJmeOoyGHGX8k5JH9pZiPSvmsVXuuLP7r0K55M4u9irhwyS6n3
- p7XxJB2fVagsavASt+45DirjU8CqKCwUY9t3pQ09WGXwcBFQNOKrgO7/blFQjRr5wPmOvPraRVu
- w3TI0+5DTHLIvXOHMhlamoSiKqz+Arvvv1VTaJfkzXM2yfSOCcfQ==
-X-Received: by 2002:a17:907:868f:b0:b76:8164:88b5 with SMTP id
- a640c23a62f3a-b8796b40ddbmr658985466b.46.1768763615287; 
- Sun, 18 Jan 2026 11:13:35 -0800 (PST)
+ bh=YhwsAym118Z50j373nLJHxbO/t+7/JkSGBVItsu22HE=;
+ b=nX1dyrd0lhcuyl+yMWXwPPNYP/JkroQT+y+edafxu8QCzZUJ21Cvd3X2Nq8fkkdPs/
+ Ylvq0Krd+1aJUZmrKKsOu945oUMw8pVD5/1eFXaDkLmLEB5dVJ7iTclQtKta/35rzBTG
+ +1GcjSwqdZ1pKsqjS3VTYmcaikWuvCZK1F2usRE8iLN57yL+jViU2mqZAXYUOdgeFroW
+ 7w3jb6QJbyr5LeXWxt9QOEkrx5LANuHEO8AQHGyvX+PfHSfJ6kHrECf+mG1NE58NBBft
+ Dyf8SGcXv7rURlDTsYEvmADGv4E2HTBoABGBL8N+YEGucmxRrr6jrgM2himy72I4gVaU
+ NFpQ==
+X-Gm-Message-State: AOJu0YxUIUsGRerLG7UmoFYS/9yU/IJgLX/nXvuEJ3g+tTy9J0UH6dtm
+ sxtHBWpmubVr7UqgRBHU0QkKO7mux4EKNS90OSTY9zSY+R3spPnN/l9DPclmsFDltE1fk2OQxCp
+ MnSs0
+X-Gm-Gg: AY/fxX7KJrbF9DgPjBidMx8BPIDJhah1tmEex+8aZk7L0qS3NkzvQk91R6AoSAsGuJP
+ C2k2YE2rDsH/9loSQkERB5F0RczNr78qXyyftRJ/89WsVyBessxAi23GTYYB3YbYjCWCUqEOr15
+ GTj0c6XCZyOel2oXvTcfCiXICGU5fWYPFl/16Qm5ey5Hj44J6qqoYI/jVe36GO/v3IFC5u/T25L
+ LONJy3Wfxg+UMdeLPKG1CdqhQBxxwnJMGrzw5CC39Nclm+av2Y8GkQrbyFSL73xrBQg6u0L0lpJ
+ 33ihBQZ9KrLCZgrMWDEP+mLzm+WnPBKTiRdvDo3cyy92S5GFtRPqRseBrvPjjYNbIUyT/GzWb7u
+ V3MCr1cOe5MgC65mOAESN2HTxJ9LxijbEitns5JItaKmOHBoA0lIKwJLA8W5Aa8rzcivYe1Apx6
+ Pc0OoG4Pgfr6vDI53ocQKWu2CrV+kg7bQfOgw94s1BZChgMnk9Pg==
+X-Received: by 2002:a17:907:d0b:b0:b6d:73f8:3168 with SMTP id
+ a640c23a62f3a-b87968b6a8dmr773001166b.3.1768763616985; 
+ Sun, 18 Jan 2026 11:13:36 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a640c23a62f3a-b87959c9f8dsm886287166b.36.2026.01.18.11.13.33
+ a640c23a62f3a-b87959c9f8dsm886287166b.36.2026.01.18.11.13.35
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 18 Jan 2026 11:13:34 -0800 (PST)
+ Sun, 18 Jan 2026 11:13:36 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
  Nandini Persad <nandinipersad361@gmail.com>
-Subject: [PATCH v5 04/54] doc: correct typos in log library guide
-Date: Sun, 18 Jan 2026 11:10:07 -0800
-Message-ID: <20260118191323.241013-5-stephen@networkplumber.org>
+Subject: [PATCH v5 05/54] doc: correct errors in command-line library guide
+Date: Sun, 18 Jan 2026 11:10:08 -0800
+Message-ID: <20260118191323.241013-6-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260118191323.241013-1-stephen@networkplumber.org>
 References: <20240513155911.31872-1-nandinipersad361@gmail.com>
@@ -82,119 +82,170 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Changes:
-- Change spelling errors (stystem -> system, acheived -> achieved)
-- Change sentence structure for rte_log() parameter description
-- Use consistent spelling "timestamp" (one word)
+Change several errors in the cmdline library documentation:
+
+- Change function name typo: cmdline_new_stdin -> cmdline_stdin_new
+- Change type name: cmdline_parse_t -> cmdline_parse_inst_t
+- Change grammar: "that others" -> "than others"
+- Change spelling: "boiler plate" -> "boilerplate"
+- Clarify wording: "multiplex" -> "direct" for command routing
+- Change misleading phrase: "call a separate function" -> "call a single
+  function" (multiplexing routes multiple commands to one callback)
 
 Signed-off-by: Nandini Persad <nandinipersad361@gmail.com>
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- doc/guides/prog_guide/log_lib.rst | 32 +++++++++++++++----------------
- 1 file changed, 16 insertions(+), 16 deletions(-)
+ doc/guides/prog_guide/cmdline.rst | 42 +++++++++++++++----------------
+ 1 file changed, 21 insertions(+), 21 deletions(-)
 
-diff --git a/doc/guides/prog_guide/log_lib.rst b/doc/guides/prog_guide/log_lib.rst
-index 3e888b8965..a3d6104e72 100644
---- a/doc/guides/prog_guide/log_lib.rst
-+++ b/doc/guides/prog_guide/log_lib.rst
-@@ -6,7 +6,7 @@ Log Library
+diff --git a/doc/guides/prog_guide/cmdline.rst b/doc/guides/prog_guide/cmdline.rst
+index e20281ceb5..c794ec826f 100644
+--- a/doc/guides/prog_guide/cmdline.rst
++++ b/doc/guides/prog_guide/cmdline.rst
+@@ -4,9 +4,9 @@
+ Command-line Library
+ ====================
  
- The DPDK Log library provides the logging functionality for other DPDK libraries and drivers.
- By default, logs are sent only to standard error output of the process.
--The syslog EAL option can be used to redirect to the stystem logger on Linux and FreeBSD.
-+The syslog EAL option can be used to redirect to the system logger on Linux and FreeBSD.
- In addition, the log can be redirected to a different stdio file stream.
+-Since its earliest versions, DPDK has included a command-line library -
+-primarily for internal use by, for example, ``dpdk-testpmd`` and the ``dpdk-test`` binaries,
+-but the library is also exported on install and can be used by any end application.
++Since its earliest versions, DPDK has included a command-line library,
++primarily for internal use by, for example, ``dpdk-testpmd`` and the ``dpdk-test`` binaries.
++However, the library is also exported on install and can be used by any end application.
+ This chapter covers the basics of the command-line library and how to use it in an application.
  
- Log Levels
-@@ -26,14 +26,14 @@ These levels, specified in ``rte_log.h`` are (from most to least important):
+ Library Features
+@@ -18,14 +18,14 @@ The DPDK command-line library supports the following features:
  
- At runtime, only messages of a configured level or above (i.e. of higher importance)
- will be emitted by the application to the log output.
--That level can be configured either by the application calling the relevant APIs from the logging library,
-+That level can be configured either by the application calling relevant APIs from the logging library,
- or by the user passing the ``--log-level`` parameter to the EAL via the application.
+ * Ability to read and process commands taken from an input file, e.g. startup script
  
- Setting Global Log Level
- ~~~~~~~~~~~~~~~~~~~~~~~~
+-* Parameterized commands able to take multiple parameters with different datatypes:
++* Parameterized commands that can take multiple parameters with different datatypes:
  
- To adjust the global log level for an application,
--just pass a numeric level or a level name to the ``--log-level`` EAL parameter.
-+pass a numeric level or a level name to the ``--log-level`` EAL parameter.
- For example::
+    * Strings
+    * Signed/unsigned 16/32/64-bit integers
+    * IP Addresses
+    * Ethernet Addresses
  
- 	/path/to/app --log-level=error
-@@ -47,9 +47,9 @@ Within an application, the log level can be similarly set using the ``rte_log_se
- Setting Log Level for a Component
- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-* Ability to multiplex multiple commands to a single callback function
++* Ability to direct multiple commands to a single callback function
  
--In some cases, for example, for debugging purposes,
--it may be desirable to increase or decrease the log level for only a specific component, or set of components.
--To facilitate this, the ``--log-level`` argument also accepts an, optionally wildcarded, component name,
-+In some cases (such as debugging purposes),
-+you may want to increase or decrease the log level for only a specific component or set of components.
-+To facilitate this, the ``--log-level`` argument also accepts an optionally wildcarded component name,
- along with the desired level for that component.
- For example::
+ Adding Command-line to an Application
+ -------------------------------------
+@@ -46,7 +46,7 @@ Adding a command-line instance to an application involves a number of coding ste
  
-@@ -57,13 +57,13 @@ For example::
+ Many of these steps can be automated using the script ``dpdk-cmdline-gen.py`` installed by DPDK,
+ and found in the ``buildtools`` folder in the source tree.
+-This section covers adding a command-line using this script to generate the boiler plate,
++This section covers adding a command-line using this script to generate the boilerplate,
+ while the following section,
+ `Worked Example of Adding Command-line to an Application`_ covers the steps to do so manually.
  
- 	/path/to/app --log-level=lib.*:warning
+@@ -56,7 +56,7 @@ Creating a Command List File
+ The ``dpdk-cmdline-gen.py`` script takes as input a list of commands to be used by the application.
+ While these can be piped to it via standard input, using a list file is probably best.
  
--Within an application, the same result can be got using the ``rte_log_set_level_pattern()`` or ``rte_log_set_level_regex()`` APIs.
-+Within an application, the same result can be achieved by using the ``rte_log_set_level_pattern()`` or ``rte_log_set_level_regex()`` APIs.
+-The format of the list file must be:
++The format of the list file must follow these requirements:
  
+ * Comment lines start with '#' as first non-whitespace character
  
- Using Logging APIs to Generate Log Messages
- -------------------------------------------
+@@ -75,7 +75,7 @@ The format of the list file must be:
+   * ``<IPv6>dst_ip6``
  
--To output log messages, ``rte_log()`` API function should be used.
-+To output log messages, the ``rte_log()`` API function should be used.
- As well as the log message, ``rte_log()`` takes two additional parameters:
+ * Variable fields, which take their values from a list of options,
+-  have the comma-separated option list placed in braces, rather than a the type name.
++  have the comma-separated option list placed in braces, rather than by the type name.
+   For example,
  
- * The log level
-@@ -74,16 +74,16 @@ The component type is a unique id that identifies the particular DPDK component
- To get this id, each component needs to register itself at startup,
- using the macro ``RTE_LOG_REGISTER_DEFAULT``.
- This macro takes two parameters, with the second being the default log level for the component.
--The first parameter, called "type", the name of the "logtype", or "component type" variable used in the component.
--This variable will be defined by the macro, and should be passed as the second parameter in calls to ``rte_log()``.
-+The first parameter, called "type", is the name of the "logtype", or "component type" variable used in the component.
-+This variable will be defined by the macro and should be passed as the second parameter in calls to ``rte_log()``.
- In general, most DPDK components define their own logging macros to simplify the calls to the log APIs.
- They do this by:
+   * ``<(rx,tx,rxtx)>mode``
+@@ -127,13 +127,13 @@ and the callback stubs will be written to an equivalent ".c" file.
+ Providing the Function Callbacks
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  
- * Hiding the component type parameter inside the macro so it never needs to be passed explicitly.
- * Using the log-level definitions given in ``rte_log.h`` to allow short textual names to be used in
--  place of the numeric log levels.
-+  place of numeric log levels.
+-As discussed above, the script output is a header file, containing structure definitions,
+-but the callback functions themselves obviously have to be provided by the user.
+-These callback functions must be provided as non-static functions in a C file,
++As discussed above, the script output is a header file containing structure definitions,
++but the callback functions must be provided by the user.
++These callback functions must be provided as non-static functions in a C file
+ and named ``cmd_<cmdname>_parsed``.
+ The function prototypes can be seen in the generated output header.
  
--The following code is taken from ``rte_cfgfile.c`` and shows the log registration,
-+The following code is taken from ``rte_cfgfile.c`` and shows the log registration
- and subsequent definition of a shortcut logging macro.
- It can be used as a template for any new components using DPDK logging.
+-The "cmdname" part of the function name is built up by combining the non-variable initial tokens in the command.
++The "cmdname" part of the function name is built by combining the non-variable initial tokens in the command.
+ So, given the commands in our worked example below: ``quit`` and ``show port stats <n>``,
+ the callback functions would be:
  
-@@ -98,10 +98,10 @@ It can be used as a template for any new components using DPDK logging.
- 	it should be placed near the top of the C file using it.
- 	If not, the logtype variable should be defined as an "extern int" near the top of the file.
+@@ -151,11 +151,11 @@ the callback functions would be:
+         ...
+    }
  
--	Similarly, if logging is to be done by multiple files in a component,
--	only one file should register the logtype via the macro,
-+	Similarly, if logging will be done by multiple files in a component,
-+	only one file should register the logtype via the macro
- 	and the logtype should be defined as an "extern int" in a common header file.
--	Any component-specific logging macro should similarly be defined in that header.
-+	Any component-specific logging macro should be similarly defined in that header.
+-These functions must be provided by the developer, but, as stated above,
++These functions must be provided by the developer. However, as stated above,
+ stub functions may be generated by the script automatically using the ``--stubs`` parameter.
  
- Throughout the cfgfile library, all logging calls are therefore of the form:
+ The same "cmdname" stem is used in the naming of the generated structures too.
+-To get at the results structure for each command above,
++To get to the results structure for each command above,
+ the ``parsed_result`` parameter should be cast to ``struct cmd_quit_result``
+ or ``struct cmd_show_port_stats_result`` respectively.
  
-@@ -122,7 +122,7 @@ For example::
+@@ -179,7 +179,7 @@ To integrate the script output with the application,
+ we must ``#include`` the generated header into our applications C file,
+ and then have the command-line created via either ``cmdline_new`` or ``cmdline_stdin_new``.
+ The first parameter to the function call should be the context array in the generated header file,
+-``ctx`` by default. (Modifiable via script parameter).
++``ctx`` by default (Modifiable via script parameter).
  
- Multiple alternative timestamp formats are available:
+ The callback functions may be in this same file, or in a separate one -
+ they just need to be available to the linker at build-time.
+@@ -190,7 +190,7 @@ Limitations of the Script Approach
+ The script approach works for most commands that a user may wish to add to an application.
+ However, it does not support the full range of functions possible with the DPDK command-line library.
+ For example,
+-it is not possible using the script to multiplex multiple commands into a single callback function.
++it is not possible using the script to direct multiple commands to a single callback function.
+ To use this functionality, the user should follow the instructions in the next section
+ `Worked Example of Adding Command-line to an Application`_ to manually configure a command-line instance.
  
--.. csv-table:: Log time stamp format
-+.. csv-table:: Log timestamp format
-    :header: "Format", "Description", "Example"
-    :widths: 6, 30, 32
+@@ -416,7 +416,7 @@ Once we have our ``ctx`` variable defined,
+ we now just need to call the API to create the new command-line instance in our application.
+ The basic API is ``cmdline_new`` which will create an interactive command-line with all commands available.
+ However, if additional features for interactive use - such as tab-completion -
+-are desired, it is recommended that ``cmdline_new_stdin`` be used instead.
++are desired, it is recommended that ``cmdline_stdin_new`` be used instead.
+ 
+ A pattern that can be used in applications is to use ``cmdline_new`` for processing any startup commands,
+ either from file or from the environment (as is done in the "dpdk-test" application),
+@@ -449,8 +449,8 @@ For example, to handle a startup file and then provide an interactive prompt:
+ Multiplexing Multiple Commands to a Single Function
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+-To reduce the amount of boiler-plate code needed when creating a command-line for an application,
+-it is possible to merge a number of commands together to have them call a separate function.
++To reduce the amount of boilerplate code needed when creating a command-line for an application,
++it is possible to merge a number of commands together to have them call a single function.
+ This can be done in a number of different ways:
+ 
+ * A callback function can be used as the target for a number of different commands.
+@@ -463,7 +463,7 @@ This can be done in a number of different ways:
+ 
+ As a concrete example,
+ these two techniques are used in the DPDK unit test application ``dpdk-test``,
+-where a single command ``cmdline_parse_t`` instance is used for all the "dump_<item>" test cases.
++where a single ``cmdline_parse_inst_t`` instance is used for all the "dump_<item>" test cases.
+ 
+ .. literalinclude:: ../../../app/test/commands.c
+     :language: c
+@@ -481,7 +481,7 @@ the following DPDK files can be consulted for examples of command-line use.
+ 
+    This is not an exhaustive list of examples of command-line use in DPDK.
+    It is simply a list of a few files that may be of use to the application developer.
+-   Some of these referenced files contain more complex examples of use that others.
++   Some of these referenced files contain more complex examples of use than others.
+ 
+ * ``commands.c/.h`` in ``examples/cmdline``
  
 -- 
 2.51.0
