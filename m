@@ -2,72 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2008C9830C
-	for <dpdk-dev@archiver.kernel.org>; Sun, 18 Jan 2026 19:16:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1196BC9830C
+	for <dpdk-dev@archiver.kernel.org>; Sun, 18 Jan 2026 19:16:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A902140EAB;
-	Sun, 18 Jan 2026 20:14:23 +0100 (CET)
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com
- [209.85.218.41]) by mails.dpdk.org (Postfix) with ESMTP id 6563A427E0
- for <dev@dpdk.org>; Sun, 18 Jan 2026 20:14:20 +0100 (CET)
-Received: by mail-ej1-f41.google.com with SMTP id
- a640c23a62f3a-b872cf905d3so600104366b.2
- for <dev@dpdk.org>; Sun, 18 Jan 2026 11:14:20 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id CB211427E8;
+	Sun, 18 Jan 2026 20:14:24 +0100 (CET)
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com
+ [209.85.208.53]) by mails.dpdk.org (Postfix) with ESMTP id D255740ED3
+ for <dev@dpdk.org>; Sun, 18 Jan 2026 20:14:21 +0100 (CET)
+Received: by mail-ed1-f53.google.com with SMTP id
+ 4fb4d7f45d1cf-64b9b0b4d5dso7549167a12.1
+ for <dev@dpdk.org>; Sun, 18 Jan 2026 11:14:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768763660;
- x=1769368460; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768763661;
+ x=1769368461; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=eKNGuzb/D3yGLjZo/XdfGBhWOy8fTIjrT3VY62eBssI=;
- b=iVH4zjTW+7ARqbeKRjPcGjqAQpyxrgzQOCR7Y6ZMaJQw1sE9S5kXtmMVFut6wxfjs3
- gxE4IKMfOU5Yc9UL5Cfhe3RAFnZbFyPFwXELWgfBvToGQVLntXj0u1YXMw9pNRTaEpCO
- iGb7hKK8VYyqCeTPe/mvgfh4T/ohNRTs8ZENWPJoDgpNtC1YJwaU1J14+r3TmfsIZCTN
- yb1kAagIs0Lq8R2RAlRQ/XvqqH+ZCEALZ7o003GLqu+GJpvSAi6ipNTs5hxwqqIQ8O4P
- mh+iGrwhKJBY5KBtHzVfTfOBqhsKZs76jZLehOCDJwY5DVjBDApQuiXMP1YXVk4mxw1q
- 0O9w==
+ bh=H/6wFr2Sgc7uFJeNEdk6mf4ZdAva6iumyB9MC50+o2s=;
+ b=IvXrjKAbNXCOwcZ5rTWk1cDZm/WdgfKUwIIvujVZaCICHGyOZKbniOk7Q4UmmCnNdd
+ WTxa5pYIvphzrwhmsdF962rgarRp4HGjKDSrMakGAgL1jfrkVccbzfnuh4j3uauRh1E9
+ hJglJxlxMm6SZC5BeC1VIA84b9KxySO6gAh7BuLxcsK8g7Pk8edUeLSA3iCw97YPDqOa
+ picA7dLdiBjK3PU9R6wvaf4uPHMFnCWTmOSoeyR0y5rPUKDUdLzo1/IxkfuD7Qwo3Vpf
+ A87qHr2Q4imkSAN2GV85G3gYcSp3rtw5iA2lLboTlpNoCqdRAtXgwt6SyLwALcEOgwx6
+ iP0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768763660; x=1769368460;
+ d=1e100.net; s=20230601; t=1768763661; x=1769368461;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=eKNGuzb/D3yGLjZo/XdfGBhWOy8fTIjrT3VY62eBssI=;
- b=le0itlX0Y/vxnBiBc/UGas+/mqAULaff8hxJLt5VqeNjXmbgkom/Z9MWNML6uw4Y9o
- SMTPHz31Jm39K51PJirlTBZ25flpLTxnzR0pDlvcqPMMeIxqT5gjtdFqm+EWHVYKlHDl
- u53qIAPDKYNkWAk0dKwdL/pcbIc+LUXXDVd89SbQ35zRGdxeXk2SGcYjuJb6/Ad1lfE+
- 7G4dwr4AAc+MZl1BuErFNDW9coMFD7gyFU7pLP0/PFwzPG2nZxCsW9rT44Nw/fCEgM+G
- r7lVDC+KQ3+Bpy8AsXTirfEMZijAJLzh8E1BUcaa3ifNRE24u2+JZmLzy1jQQLcymjkZ
- SYgw==
-X-Gm-Message-State: AOJu0YzAjEY5eAwtArG1H7W5kIC8CX0JCmwYTyEgEc+gKM1BHmNNrzwz
- 2xpItAt10+JPZFmMUR6tm58EYVavhaLE9WZxdjBkYeMgkWKvujYk9azC3Guoaa994J9CzT5ENVl
- bL7SQ
-X-Gm-Gg: AY/fxX6Srqehuc9S320eeV6vxTFMbRDa2bBjoiRe8TfmmgvD5nlgrJN4YNfCZwLtUrr
- PlxblXv8XXVC+iaN49Ncrtc9g8TDzLoElqkvjaGtlv0rbIY/O9cJoZQP5s86wv+oOr80TCtdciZ
- i0x1jhz/y7gWPilhHll33UTwiaxj+yJUQyB6lP838Fi7qA/nXHQydjqoITUwnftMdJs6XVRDGt2
- cwNYW2AywAWqr/gSoOsAKommXEQupftDK4A6HlcwoQrYMAy4QLPfJ0WLSSOhZanAHOXZs6IttfV
- AuoEWplQYx3MoEjhVAJ7S1i0QcT7JAy3ad2ImzSoM0PMr0W4kjFqNkEJBSpnBT9cplxe9/naqy+
- TgWj+e0C8V0N2tR9MIUuz7RlfRFgsF1+yhjhEzpjR1AVMa9hFpC0woWxOcqCOfO1vBw2TM4IKpZ
- J8wlTmOnhdbHB4pyi6Jkx6HOBKXWGgo326ZSTJ0ELIoTCdKmnKpQ==
-X-Received: by 2002:a17:906:f5a3:b0:b87:1ffc:bf9b with SMTP id
- a640c23a62f3a-b87968aa44bmr771253466b.3.1768763659855; 
- Sun, 18 Jan 2026 11:14:19 -0800 (PST)
+ bh=H/6wFr2Sgc7uFJeNEdk6mf4ZdAva6iumyB9MC50+o2s=;
+ b=Y5lwaFMQAwHK+ga3t0dvnrsAM8M6SiNpmcLGMX9nHKiAoWMj/UN1S1F3MqA3oVy/e0
+ hzKa6KAPgvZFP3JPIPvrsU5Tm3Dxnjb9Z/eyDDk7lMTn/qm9oj73bCYZIgCmWiflMzpl
+ be/pD5V9q0oFnpICDncDi9/JNrHpyqffhJUvY7gt9gVaD4ojAe/UI98mtdJWbmcFPRcG
+ 1MRbvMhW2sdQBDT5P2LeIEUW2pXKnwReEq0iKj/2rYMDusE4tuBl8Ts2Z/vooWW0IqMe
+ Ga3mtv7LGUiX69T5fNzITq+R+0xCcEBooVDvvofxhrCfWbAkBV633UYnQsNA2l7eKIi4
+ pfDQ==
+X-Gm-Message-State: AOJu0Yzol+sLG5SFV2shiNoKPdvcVn1SIOucLJ3N6guZBjOTnhfw80qm
+ 9Or4jMohcJ6pYYQTImRDa4d2GllTBnR+DOsl5uPMn99DhQ8GwXdPUzioFLx+DxbGhUWxGkeB4Oa
+ YiKzq
+X-Gm-Gg: AY/fxX56YmzNCPPJlLquH01smTLw1YLvvUkN57NJ2k/lZieg7W71ejVESRTtsPseLav
+ BBz36FE5p2tszBnAgL4gT9o4o9YrdSfM5aRkrQGro0hPi+4+gLaGdBhpxhqj1PBcs3KQaRrkgR4
+ OlZXAjdv+ThSDigRhZpjxjPLN/6byS8xFFJoD+VSsQr0sOUOFYogHA2lYHgob7Ok58GAhVP3cz/
+ svUKluALXX3Btn6k9WPLJTPc8ij2K3yUpRYegZqCkDgr0TxAgBPkllsCF/TvhusvGZuSRJTRtm+
+ UcMF8f55WMSd0jkj1BwidO6mnjldElDfdXU0AGtemqyicA0LdpG2m/7ved7v4jDzlzjWkemP2Oy
+ vxKGxc+c0yL/aDVUsuL9ncUp2MuKQK4Arfy6HVS9G0mp9tnX2N+IC+zH023htUGIpDk/Z6/1BgH
+ gJVPP0Wx4zzMbBH8HfK+x4lszcN+KyyzrwBwCzMwAwMQTLd0vC0Q==
+X-Received: by 2002:a17:907:6e94:b0:b87:6f58:a847 with SMTP id
+ a640c23a62f3a-b8796b7a3c2mr730411266b.45.1768763661405; 
+ Sun, 18 Jan 2026 11:14:21 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a640c23a62f3a-b87959c9f8dsm886287166b.36.2026.01.18.11.14.18
+ a640c23a62f3a-b87959c9f8dsm886287166b.36.2026.01.18.11.14.20
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 18 Jan 2026 11:14:19 -0800 (PST)
+ Sun, 18 Jan 2026 11:14:21 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v5 33/54] doc: correct errors in mempool library guide
-Date: Sun, 18 Jan 2026 11:10:36 -0800
-Message-ID: <20260118191323.241013-34-stephen@networkplumber.org>
+Subject: [PATCH v5 34/54] doc: correct style in meson unit tests guide
+Date: Sun, 18 Jan 2026 11:10:37 -0800
+Message-ID: <20260118191323.241013-35-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260118191323.241013-1-stephen@networkplumber.org>
 References: <20240513155911.31872-1-nandinipersad361@gmail.com>
  <20260118191323.241013-1-stephen@networkplumber.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -82,59 +81,46 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Correct various issues in the mempool library documentation:
+Correct style issues in the meson unit tests documentation:
 
-- use consistent lowercase "x86" architecture naming
-- fix subject-verb agreement for "size is" not "size are"
-- correct "(with locks)" to "(without locks)" since the benefit of
-  per-core caches is avoiding locks on the shared ring
-- fix function name rte_pktmbuf_create to rte_pktmbuf_pool_create
+- improve awkward passive construction for build steps reference
+- normalize list punctuation by removing unnecessary periods
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- doc/guides/prog_guide/mempool_lib.rst | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ doc/guides/prog_guide/meson_ut.rst | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/doc/guides/prog_guide/mempool_lib.rst b/doc/guides/prog_guide/mempool_lib.rst
-index 8b4793afff..c10bc7bb43 100644
---- a/doc/guides/prog_guide/mempool_lib.rst
-+++ b/doc/guides/prog_guide/mempool_lib.rst
-@@ -33,7 +33,7 @@ but can be enabled by setting ``RTE_LIBRTE_MEMPOOL_STATS`` in ``config/rte_confi
- Memory Alignment Constraints on x86 architecture
- ------------------------------------------------
+diff --git a/doc/guides/prog_guide/meson_ut.rst b/doc/guides/prog_guide/meson_ut.rst
+index 9bc52a30fc..2740184cde 100644
+--- a/doc/guides/prog_guide/meson_ut.rst
++++ b/doc/guides/prog_guide/meson_ut.rst
+@@ -6,19 +6,19 @@ Running DPDK Unit Tests with Meson
  
--Depending on hardware memory configuration on X86 architecture, performance can be greatly improved by adding a specific padding between objects.
-+Depending on hardware memory configuration on x86 architecture, performance can be greatly improved by adding a specific padding between objects.
- The objective is to ensure that the beginning of each object starts on a different channel and rank in memory so that all channels are equally loaded.
+ This section describes how to run test cases with the DPDK meson build system.
  
- This is particularly true for packet buffers when doing L3 forwarding or flow classification.
-@@ -59,7 +59,7 @@ Examples of alignment for different DIMM architectures are shown in
- In this case, the assumption is that a packet is 16 blocks of 64 bytes, which is not true.
+-Steps to build and install DPDK using meson can be referred
+-in :doc:`build-sdk-meson`
++For steps to build and install DPDK using meson, refer to
++:doc:`build-sdk-meson`.
  
- The Intel® 5520 chipset has three channels, so in most cases,
--no padding is required between objects (except for objects whose size are n x 3 x 64 bytes blocks).
-+no padding is required between objects (except for objects whose size is n x 3 x 64 bytes blocks).
+ Grouping of test cases
+ ----------------------
  
- .. _figure_memory-management2:
+ Test cases have been classified into four different groups.
  
-@@ -89,7 +89,7 @@ since each access requires a compare-and-set (CAS) operation.
- To avoid having too many access requests to the memory pool's ring,
- the memory pool allocator can maintain a per-core cache and do bulk requests to the memory pool's ring,
- via the cache with many fewer locks on the actual memory pool structure.
--In this way, each core has full access to its own cache (with locks) of free objects and
-+In this way, each core has full access to its own cache (without locks) of free objects and
- only when the cache fills does the core need to shuffle some of the free objects back to the pools ring or
- obtain more objects when the cache is empty.
+-* Fast tests.
+-* Performance tests.
+-* Driver tests.
++* Fast tests
++* Performance tests
++* Driver tests
+ * Tests which produce lists of objects as output, and therefore that need
+-  manual checking.
++  manual checking
  
-@@ -140,7 +140,7 @@ Legacy applications may continue to use the old ``rte_mempool_create()`` API
- call, which uses a ring based mempool handler by default. These applications
- will need to be modified to use a new mempool handler.
- 
--For applications that use ``rte_pktmbuf_create()``, there is a config setting
-+For applications that use ``rte_pktmbuf_pool_create()``, there is a config setting
- (``RTE_MBUF_DEFAULT_MEMPOOL_OPS``) that allows the application to make use of
- an alternative mempool handler.
- 
+ These tests can be run using the argument to ``meson test`` as
+ ``--suite project_name:label``.
 -- 
 2.51.0
 
