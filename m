@@ -2,66 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0847C9832F
-	for <dpdk-dev@archiver.kernel.org>; Sun, 18 Jan 2026 19:17:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99A82C9832F
+	for <dpdk-dev@archiver.kernel.org>; Sun, 18 Jan 2026 19:18:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5DFFF42E69;
-	Sun, 18 Jan 2026 20:14:43 +0100 (CET)
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com
- [209.85.218.44]) by mails.dpdk.org (Postfix) with ESMTP id 6977442E5A
- for <dev@dpdk.org>; Sun, 18 Jan 2026 20:14:41 +0100 (CET)
-Received: by mail-ej1-f44.google.com with SMTP id
- a640c23a62f3a-b876798b97eso576195866b.1
- for <dev@dpdk.org>; Sun, 18 Jan 2026 11:14:41 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 6D41642E6D;
+	Sun, 18 Jan 2026 20:14:44 +0100 (CET)
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com
+ [209.85.218.49]) by mails.dpdk.org (Postfix) with ESMTP id CA48642E5D
+ for <dev@dpdk.org>; Sun, 18 Jan 2026 20:14:42 +0100 (CET)
+Received: by mail-ej1-f49.google.com with SMTP id
+ a640c23a62f3a-b8712507269so511247666b.3
+ for <dev@dpdk.org>; Sun, 18 Jan 2026 11:14:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768763681;
- x=1769368481; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768763682;
+ x=1769368482; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=q5j/RJ0xNqSivM6/J4HN++1L8ELtt2ixx2GFxyxvGO4=;
- b=kgzAA5WGDwxp58obX9lUxkvs+adpxEPApqnfHzncUQQUyTIdP8SonuHwsXEwSZOEAJ
- EDgd3U2GGTQD9j62sGUXZoWK9BZKJe80cXY58oVDHU7XCG1ExMRAqoK2RL7rBWoDYM/u
- UV26QxAeR/YOtdU0OiUlDLCX7FUbRSoPN/AH3WspwKbodNLyhyJMBofzEr++Ul2ezVgx
- lvdND8bOigJEejks/DNNoye1kkjxamGQ7MTi3Dcg7FNke+Gim/qiOJoNy48tW0Yiwu+G
- drdbj3NI+1KyNxLPTgBKYg3KFh/EtehtCl3DmWeQBzps6acN4hSZ6fzYqk9WlkDf24vw
- K/pw==
+ bh=1KZbEW1oYgGyyRkaRyVI3KXYv1WERe5XvQTUaTpc18I=;
+ b=ac1b54D6bSgDHuoTEBSWR3ZfWN4E8wDl4IPdPRsiHR11UlEAKkg4+8L/fLgVORafRe
+ nyZVE/WK7tlLm8y7TAbW27WjqXoHjXNVsAUEeCwoCDGynLCYoNA9I9vzAqxh6kVe/3wg
+ s2PzKsiqiDUEaIWdKEZBtX/vQEmKXQ9MQhc6oci0V7ANYiZHKHmvj+cEtqZawPFJz9uQ
+ qtMuM6MHJX78zmoMcUtXQSjdTRRKno5OvyKv9Jcx0kHR61i0UL9iSKilkq2SPOBE3933
+ y8arre1cC7eO+6QHxQ0JO3XPsQ3BMqGQa5SssABhMmqXz09GeyLV4DDxXKDRvy3C4fQR
+ 4nDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768763681; x=1769368481;
+ d=1e100.net; s=20230601; t=1768763682; x=1769368482;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=q5j/RJ0xNqSivM6/J4HN++1L8ELtt2ixx2GFxyxvGO4=;
- b=He3p1PcwMm5ZqWS1Wvgv1p1byK2L6o97fPMkaUpuivHgxkElmKsbmo1H+peCI9szs4
- 4gyzuyCaatMNSgftMhsEMq2kyeUNvB1IU+JmRFjVSAVgLp7GO56zkaPlhxf/y6m64OHJ
- I7isrCCabuuIn7ACt5Klz4OwH6Er+M0kdTW1++U680IJKHkBHdiAdkYRrYx5wj8iIXmA
- ovyTaUdXRcTGJYwPehgqBoVM8++iHP72C3oNP2Gu8tbbEofxDo5y0Tot+TL4zooUE2yz
- nXT9rRlX9NwzoZWwxW6DTpv+3C7h6+xGZlgQ1/vWoP49CbGfCm1QHMqBlIJ9ggUs4Z0/
- OiZA==
-X-Gm-Message-State: AOJu0YxVUhgga7XP3ybqpsAUtPCFxRwcbQfN/MjAvTIkxfHZXVTBzd6J
- aPtYFAR/r5ApZqH+SNy2AR7TZ6ArTge4indWrrk8bRtaswmIHk6Zedz6+Q225Q/06FtrnCdCOSH
- GIqKi
-X-Gm-Gg: AY/fxX5qDXJfMLhTvnl5yUIIA+MvtnvbW3fWKHp3zhWLHLJbTx95T3EP5DGec4PLGgf
- sBJtvXcMJH+VJJjdN9U1dmkfmp6ukmeIj+2gdwhkLX271dwxJv7XRKbQPRN8zZ6zCAaWAt++m3l
- RPgedRITLw78wNHVCI/yuc7WFNYwW/LPtWP/Z4P2UMIp+94FfFfarrCN6wNqfLQe0o2+MFm+X2I
- M/6BoC5SCP9y/mKoS4Xt7a9c4joZD8ng/KrbyXFTuWtZArlAxMbGfab4LtoUota+ALb/61g5vr/
- qER4T1pkyG1iAaxsw7jy1ReLSiKd6FAaLE50rMFnaLSsArmd1Ad/HzhazeKOysNvS6xkm3x4akQ
- 0WfeKOCzasngM4zVqRVFaw/vnWtr9DT4hLgy/fCx1jcEQX1ZQVKYxCw1fmftTdUE3sshqBwOseb
- 14++xm/ol6qKbCKfU9t5jfo6077KY4b/JEXi9Ay7bC4zMAgFkasEGtCNO++zaK
-X-Received: by 2002:a17:907:26c8:b0:b83:6e2b:890d with SMTP id
- a640c23a62f3a-b8792e156bbmr833995666b.25.1768763680883; 
- Sun, 18 Jan 2026 11:14:40 -0800 (PST)
+ bh=1KZbEW1oYgGyyRkaRyVI3KXYv1WERe5XvQTUaTpc18I=;
+ b=D4yxerZ8xcwArYZ5rhk89DMByP3qa0KszgEoUCRDSyQiEmeE/wKoGIa4T8SI5LhjyJ
+ CRd0JskE75w6ic6Bdw+wIQX3Xct5zu7PYeH1gXtyWsgvmSrg6QtppMnJwRKXIuW490v4
+ h7IbcqaAUlQHpJdR3OF3dALUagiHhVaSze2NgKSQRwM8PepzdFiiIhfkzw9rd/MDOrOo
+ y2j4/354x2dPMcKDi4omYuDnmqFKLbU2PKSSgNyhSBN0ZuGJQfKInb1fWtxsEgrbAdeJ
+ wog+91dtfvwS9aO8GZ5VTBYr+tLgANnFC4w1AptUXSlx+BPhZS2Yp8zAkRmI36db37nA
+ 9i3w==
+X-Gm-Message-State: AOJu0YwEuimtstFy5+ub/CAu7v5YR/THBLHY2KDJjkIfn0QKSa5hH59g
+ 9a9hI30xUIRsyA6OeYqf4lft/gEsb1L9PBSgR4E2asLjlJVs4jmgxC2zNPc+9VB7pyLGa42Oo1K
+ tOJSQ
+X-Gm-Gg: AY/fxX5jKFbtkaxBwYRJ6TP4olIeyAfwyWlGTuw6Rwby9AeJsttyxy0A0CEPIIJd0ml
+ PJ28lytoi89yOOIbld2BGdaMqfZAH5ApkXhHInBJNi4aAmBVeMk1gg1ZehRSHsYGDGjpfVoKZK8
+ BlQDSQ8KcuzYScSt9CL7zOoSO+XBmSQUsyr/BKoVL3OxWrxELGDmpKyf94KsDK5oB+15XWul/Hw
+ d2tDO9oJ8qXUzA//PmZhjEbCG8XD5beRv7swwojxoDnzzKZbgKnoHXtHuVLvBxQzp9hCj0MxqO5
+ a34pbkoDFkJhlASYA17sd1yarFqUhUR3p7EL0mTVrDh7uw2peSiwsMT6Mdw4hKHn6DsmMPyZMlw
+ /VmnnvTr3vyhQFO1TTDidQAXqVw5ItarFNA+KbXTC1rNUYun1Ojvx15ajLIGSMq1D0B6nKTn+bR
+ MpGk3KQocwo5Q7/6s45y99jAjhri5drxRZmDi71YpEF/WZo8iTQhlTye77KfvvCMd48NOGfF4=
+X-Received: by 2002:a17:907:3cc4:b0:b87:2b1a:3c55 with SMTP id
+ a640c23a62f3a-b8792fc438cmr859028466b.39.1768763682379; 
+ Sun, 18 Jan 2026 11:14:42 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a640c23a62f3a-b87959c9f8dsm886287166b.36.2026.01.18.11.14.39
+ a640c23a62f3a-b87959c9f8dsm886287166b.36.2026.01.18.11.14.41
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 18 Jan 2026 11:14:40 -0800 (PST)
+ Sun, 18 Jan 2026 11:14:42 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v5 47/54] doc: correct grammar in reorder library guide
-Date: Sun, 18 Jan 2026 11:10:50 -0800
-Message-ID: <20260118191323.241013-48-stephen@networkplumber.org>
+Subject: [PATCH v5 48/54] doc: correct whitespace in RIB library guide
+Date: Sun, 18 Jan 2026 11:10:51 -0800
+Message-ID: <20260118191323.241013-49-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260118191323.241013-1-stephen@networkplumber.org>
 References: <20240513155911.31872-1-nandinipersad361@gmail.com>
@@ -81,38 +81,26 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Correct minor grammar issues in the reorder library documentation:
-
-- add missing "are" in "which are referred to as"
-- remove extra space before "mbufs"
+Remove extra space before "the" in API applicability note.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- doc/guides/prog_guide/reorder_lib.rst | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ doc/guides/prog_guide/rib_lib.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/doc/guides/prog_guide/reorder_lib.rst b/doc/guides/prog_guide/reorder_lib.rst
-index 3fb5df5570..a5f529145d 100644
---- a/doc/guides/prog_guide/reorder_lib.rst
-+++ b/doc/guides/prog_guide/reorder_lib.rst
-@@ -36,7 +36,7 @@ mbufs.
- Implementation Details
- -------------------------
+diff --git a/doc/guides/prog_guide/rib_lib.rst b/doc/guides/prog_guide/rib_lib.rst
+index 40b7de3f1d..e95d85b2d1 100644
+--- a/doc/guides/prog_guide/rib_lib.rst
++++ b/doc/guides/prog_guide/rib_lib.rst
+@@ -24,7 +24,7 @@ Next hop IDs are represented by ``uint64_t`` values.
  
--The reorder library is implemented as a pair of buffers, which referred to as
-+The reorder library is implemented as a pair of buffers, which are referred to as
- the *Order* buffer and the *Ready* buffer.
+    The API and implementation are very similar for IPv4 ``rte_rib`` API and IPv6 ``rte_rib6``
+    API, therefore only the ``rte_rib`` API will be discussed here.
+-   Everything within this document except for the size of the prefixes is applicable to  the
++   Everything within this document except for the size of the prefixes is applicable to the
+    ``rte_rib6`` API.
  
- On an insert call, valid mbufs are inserted directly into the Order buffer and
-@@ -62,7 +62,7 @@ be reported as late packets when they arrive. The process of moving packets
- to the Ready buffer continues beyond the minimum required until a gap,
- i.e. missing mbuf, in the Order buffer is encountered.
- 
--When draining mbufs, the reorder buffer would return  mbufs in the Ready
-+When draining mbufs, the reorder buffer would return mbufs in the Ready
- buffer first and then from the Order buffer until a gap is found (mbufs that
- have not arrived yet).
- 
+ Internally RIB is represented as a binary tree as shown in :numref:`figure_rib_internals`:
 -- 
 2.51.0
 
