@@ -2,66 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08010C9832F
-	for <dpdk-dev@archiver.kernel.org>; Sun, 18 Jan 2026 19:16:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBEF3C9832F
+	for <dpdk-dev@archiver.kernel.org>; Sun, 18 Jan 2026 19:17:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E5C7B42D68;
-	Sun, 18 Jan 2026 20:14:25 +0100 (CET)
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com
- [209.85.208.45]) by mails.dpdk.org (Postfix) with ESMTP id 6A52340EAB
- for <dev@dpdk.org>; Sun, 18 Jan 2026 20:14:23 +0100 (CET)
-Received: by mail-ed1-f45.google.com with SMTP id
- 4fb4d7f45d1cf-64b9d01e473so6113446a12.2
- for <dev@dpdk.org>; Sun, 18 Jan 2026 11:14:23 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 5327442D9D;
+	Sun, 18 Jan 2026 20:14:27 +0100 (CET)
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com
+ [209.85.208.44]) by mails.dpdk.org (Postfix) with ESMTP id EF82342D26
+ for <dev@dpdk.org>; Sun, 18 Jan 2026 20:14:24 +0100 (CET)
+Received: by mail-ed1-f44.google.com with SMTP id
+ 4fb4d7f45d1cf-64b9cb94ff5so5296265a12.2
+ for <dev@dpdk.org>; Sun, 18 Jan 2026 11:14:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768763663;
- x=1769368463; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768763664;
+ x=1769368464; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=m0na/Y/P2BemP+gr/YLn9ymES6Nw3OA/GCwDa/ueRyM=;
- b=tNNA9rs4Ev/yVjh6tn6puouorBIBHv5W7EIc2lKsbzhk7hDWPnIUdjzVhUTIxoFehV
- fHAcpNlNn2uzjG0WayDpHQHMDP6guJnHVVHDPmm5xnLAdFFWOf/pKPpgIDVVgRi1SA98
- iIKUk+Nw+eaVBQJWJSuDzqApSHxVrRIX60dLWPQyZL8IavUU65ehMP86VHbxCHtCurqL
- hLyjVbSvj2KHTz+Cw9qTiw3fBT7r9EIRrbfga1DpCAYJxgIW7xXX7220tyrl1HLfPAiw
- mJ7NGnfBc2WySFjBX+TajZquIssByhrwcIFv6gCUKIvn8sP8HAuL+2kxC0fL96A/fYq/
- pvZw==
+ bh=fPIb96oVwaZt3kLEdSG6WT1jK0ZdmENEbD6xiJzZ8gE=;
+ b=xAnNVv9TCY+mTEVWqkT7KeuWQxyr9xGvX5CDdaojBSftndQOKIpKmgcQ8Mi4FmSQbh
+ 1vfB/YZLcG/D1VMNYZBw6OB9hFiqK4OTv7DaH+1ry0RXLrlLDIfyvDsv3SKygadvHkd3
+ YkotchY4s7b+nN6zpJUdZJKq1BxtVT5KCg6xQe5tlObtpvN6g19oq+ZQyjhiAMo95awD
+ K4cTCkoK+D6AtFJMWVDIRgrRyEJRySS+u2W9rFrr84YGHNSfFh+nfblwGisoinzx61t4
+ zn4BE+lcjd+IyGER1v8ao6L+wmNPAgR/cnWKoCrKhwi9c30XU3ncAPuz6j87eps97KIq
+ Rjlw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768763663; x=1769368463;
+ d=1e100.net; s=20230601; t=1768763664; x=1769368464;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=m0na/Y/P2BemP+gr/YLn9ymES6Nw3OA/GCwDa/ueRyM=;
- b=eRAmrgoDT9Uwh8EEH8daomjtD2kJORnoimWMA0OLYcXRMNe6H9GYRBKDc5zMzY8GeZ
- w4d+vlHaTPfHIwheUl08ChYhcOs2ZS7k2xDqKuLTxQmHVG0Xsv7GhiJgWc310381lOxW
- p2HNNE2iOdMdziTyZuqbQCYAsSKtjhdbjbrslzGk70AZTONHn7q+jkDs0rnfu0a8zE7n
- J0Q+FxMWsmVYOuqr7+TIt8MiCPVPNWPoTrrxasSiEPFzFBuNkhEAh0lzS5FIX9kyf+1r
- fpyAJ2y9IJc+GfAxEPtZ+eVPCnlFVYAq4VEp7jlUULxzUiTxQPltsPpydykkHuwqzJkU
- VXSw==
-X-Gm-Message-State: AOJu0YyxCy+EYc5qNAnGS+C1Pllpjs1wkZTtR6thuaJdKH6d8Tbf1Q3f
- 8EmUVx3A5rBGa2YlCuOJfuc60hcm9KP9ZDpyPXYWP7LhuslZ7fURKSrCCWTLpqunbfsHgDIJu51
- /TWEm
-X-Gm-Gg: AY/fxX74b/taKE7YfHLUBE9xovP+SPZb/nhvNeH+6v8vialFUl3J/CSgdR5xsfJkkf5
- a/aXnjkxgRuIRDxXgFChecg9kXsZWQMJseRNVWsMzfU0c+BM0slMfYVZZ2C6wB6JCzLxTVxpL9u
- n8xO5VwyNNZwmB10xhijUn8HMs4Ai+ybAGMLSZK+cEARnEPGvPnPZs+1aFx0GbTVHioYbZZcR6q
- n+PbBH4KXTqdsfyVoP7vkDm5Ew8MLEjWIpeOEWu9AMtJEJ6gADQV4V6X1X9Xq/eIj7o+q7iuhxa
- N5A799bLNtnLVL49+hsAlMUBdQdqv6TaENC3WSLLuMMWWnz1OzG/7qtsK5A/LbDyj9c3oEyEap2
- 1BRkQPPrYBw8l805r5K76DJXhXLKq1/h+XwpDf7AkxsiGmhdIe5oSiD225POo5iahrDM6JsKqUV
- iWL3WqwQ2T2TbBJYbMaLfX68gmHx4mHH+xz+YdiX2C6Yip3ESdcwnV8SAUDd8a
-X-Received: by 2002:a17:907:7256:b0:b87:2eb8:2b78 with SMTP id
- a640c23a62f3a-b8792d5a73bmr844151066b.18.1768763662964; 
- Sun, 18 Jan 2026 11:14:22 -0800 (PST)
+ bh=fPIb96oVwaZt3kLEdSG6WT1jK0ZdmENEbD6xiJzZ8gE=;
+ b=SmQHlIbnf4ZxkU4HHVcxpHSP3FHrdZO3lwtjH3pzOQR+pWshEBQOZOwlB6bLwl8tEu
+ RD8+EZjlwvb1CKdlIHr3lvCrAFrOV9xBlGdoFGAsPUqVDAjfk9s6U4n6bv0xt+vUnBFn
+ OuPEeru7Zv/9jHKAD88D69D2wvMwSzztDHBddWlkAcM+RtRZ8X1hWmZc1I2UUApJR7Ym
+ WYzqc4tg2TSmrW5+YbZE9Qr+7sP6X5OOj1XfLOlEAvQf8osQM4CBrNHoXKUCmVEiSNmZ
+ F6LfnRl7PKHyMAQ+z/TbQwI10umBXXgCcUtkb0EKIkQ+vGGDPtrAZ7G42PUcTtThgE9R
+ PtMg==
+X-Gm-Message-State: AOJu0YymRga4azp3l2uIy45Cy3SLwgj6uq4pKgQvnFuBHo0yf4u7AF3P
+ d4k1O9uXe5GAeUtzCObx7yrA+uBLsvfNsYHcSuyw7gY4NT8njwVFhJCDu6V1O1ex34fl8mqzdDb
+ obi22
+X-Gm-Gg: AY/fxX4KVnuQLBxeaqjR/5o65oNg8zoa78LFvwftjwt521Xdop68YK++WluEDsP1biZ
+ V7x6fj5tWVkftXmTLdG9hUIXU/xXmB8kByYnNIzHBa2SEN+qcKJqiz3i5Payy8wQDCWhstGOC8B
+ AInwVIvTYkfKWiy2uMNgDbbCYjvbl/jAd2RNnM+rAnq1mmNyZcmRm4r7dQoMtE2cR+yeiPYXELK
+ eshFsCJFnZExwsswrgcXdlGPb+ILOxKqXh09K/havo7p12A2z3vXnpAmbQbQ6Q9Z+fYvcaK/G0A
+ HKWISPYvcnByc+pZqjyl+oKdf5ACIGawGOSniuQUzVMmNj2e9RF0KU7cmRLWRsLeAi70rL9Do6r
+ cHNl2CC0S4Zy+F4cDtsPJK3LH5/UUjmUf5AdNITj0glLt4v9SODqIg0kVbUNT2o2GYOSrk7p6TI
+ ugfmgoU9CHNcBTo5iGVITao6+YovafzBLRHPKEDfp8fasSMnx/eA==
+X-Received: by 2002:a17:907:743:b0:b83:8fc:c64b with SMTP id
+ a640c23a62f3a-b879300a356mr753923466b.38.1768763664440; 
+ Sun, 18 Jan 2026 11:14:24 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a640c23a62f3a-b87959c9f8dsm886287166b.36.2026.01.18.11.14.21
+ a640c23a62f3a-b87959c9f8dsm886287166b.36.2026.01.18.11.14.23
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 18 Jan 2026 11:14:22 -0800 (PST)
+ Sun, 18 Jan 2026 11:14:24 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v5 35/54] doc: correct errors in metrics library guide
-Date: Sun, 18 Jan 2026 11:10:38 -0800
-Message-ID: <20260118191323.241013-36-stephen@networkplumber.org>
+Subject: [PATCH v5 36/54] doc: correct grammar in mldev library guide
+Date: Sun, 18 Jan 2026 11:10:39 -0800
+Message-ID: <20260118191323.241013-37-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260118191323.241013-1-stephen@networkplumber.org>
 References: <20240513155911.31872-1-nandinipersad361@gmail.com>
@@ -81,117 +81,98 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Correct various issues in the metrics library documentation:
+Correct various grammar and style issues in the ML device library
+documentation:
 
-- capitalize sentence start
-- fix subject-verb agreement for "function that returns"
-- add missing variable declarations (ret, i) in code example
-- remove extra space in malloc line
-- use consistent American spelling "Deinitializing"
-- invalid C syntax: rte_metrics_deinit(void) -> ()
-- normalize spacing in metric name lists
-- fix typo mac_latency_ns to max_latency_ns
-- remove unused variable declaration from example
+- fix subject-verb agreement for "API which supports"
+- use compound word "Workflow" instead of "Work flow"
+- fix parallel construction for model load and start
+- use plural "feature sets"
+- rewrite grammatically broken sentence about rte_ml_dev_info_get
+- add missing article before "number of queue pairs"
+- use consistent terminology "operations" not "packets"
+- fix malformed sentence about dequeue API format
+- add missing word "with" in quantize section
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- doc/guides/prog_guide/metrics_lib.rst | 26 +++++++++++++-------------
- 1 file changed, 13 insertions(+), 13 deletions(-)
+ doc/guides/prog_guide/mldev.rst | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/doc/guides/prog_guide/metrics_lib.rst b/doc/guides/prog_guide/metrics_lib.rst
-index 98fc8947c6..6f534534c0 100644
---- a/doc/guides/prog_guide/metrics_lib.rst
-+++ b/doc/guides/prog_guide/metrics_lib.rst
-@@ -84,7 +84,7 @@ using ``rte_metrics_get_names()``.
-     rte_metrics_update_value(port_id, id_3, values[2]);
-     rte_metrics_update_value(port_id, id_4, values[3]);
+diff --git a/doc/guides/prog_guide/mldev.rst b/doc/guides/prog_guide/mldev.rst
+index 61661b998b..094a67cbdb 100644
+--- a/doc/guides/prog_guide/mldev.rst
++++ b/doc/guides/prog_guide/mldev.rst
+@@ -6,7 +6,7 @@ Machine Learning (ML) Device Library
  
--if metrics were registered as a single set, they can either be updated
-+If metrics were registered as a single set, they can either be updated
- individually using ``rte_metrics_update_value()``, or updated together
- using the ``rte_metrics_update_values()`` function:
+ The Machine Learning (ML) Device library provides a Machine Learning device framework for the management and
+ provisioning of hardware and software ML poll mode drivers,
+-defining an API which support a number of ML operations
++defining an API which supports a number of ML operations
+ including device handling and inference processing.
+ The ML model creation and training is outside of the scope of this library.
  
-@@ -105,7 +105,7 @@ Querying metrics
- ----------------
+@@ -16,7 +16,7 @@ The ML framework is built on the following model:
  
- Consumers can obtain metric values by querying the metrics library using
--the ``rte_metrics_get_values()`` function that return an array of
-+the ``rte_metrics_get_values()`` function that returns an array of
- ``struct rte_metric_value``. Each entry within this array contains a metric
- value and its associated key. A key-name mapping can be obtained using the
- ``rte_metrics_get_names()`` function that returns an array of
-@@ -118,6 +118,8 @@ print out all metrics for a given port:
-         struct rte_metric_value *metrics;
-         struct rte_metric_name *names;
-         int len;
-+        int ret;
-+        int i;
+ .. figure:: img/mldev_flow.*
  
-         len = rte_metrics_get_names(NULL, 0);
-         if (len < 0) {
-@@ -129,7 +131,7 @@ print out all metrics for a given port:
-             return;
-         }
-         metrics = malloc(sizeof(struct rte_metric_value) * len);
--        names =  malloc(sizeof(struct rte_metric_name) * len);
-+        names = malloc(sizeof(struct rte_metric_name) * len);
-         if (metrics == NULL || names == NULL) {
-             printf("Cannot allocate memory\n");
-             free(metrics);
-@@ -152,7 +154,7 @@ print out all metrics for a given port:
-     }
+-   Work flow of inference on MLDEV
++   Workflow of inference on MLDEV
+ 
+ ML Device
+    A hardware or software-based implementation of ML device API
+@@ -28,7 +28,7 @@ ML Model
+    required to make predictions on live data.
+    Once the model is created and trained outside of the DPDK scope,
+    the model can be loaded via ``rte_ml_model_load()``
+-   and then start it using ``rte_ml_model_start()`` API function.
++   and then started using ``rte_ml_model_start()`` API function.
+    The ``rte_ml_model_params_update()`` can be used to update the model parameters
+    such as weights and bias without unloading the model using ``rte_ml_model_unload()``.
+ 
+@@ -79,9 +79,9 @@ Each device, whether virtual or physical is uniquely designated by two identifie
+ Device Features and Capabilities
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+-ML devices may support different feature set.
+-In order to get the supported PMD feature ``rte_ml_dev_info_get()`` API
+-which return the info of the device and its supported features.
++ML devices may support different feature sets.
++To get the supported PMD features, use the ``rte_ml_dev_info_get()`` API,
++which returns the info of the device and its supported features.
  
  
--Deinitialising the library
-+Deinitializing the library
- --------------------------
+ Device Configuration
+@@ -106,7 +106,7 @@ maximum size of model and so on.
+ Configuration of Queue Pairs
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  
- Once the library usage is done, it must be deinitialized by calling
-@@ -161,7 +163,7 @@ during initialization.
+-Each ML device can be configured with number of queue pairs.
++Each ML device can be configured with a number of queue pairs.
+ Each queue pair is configured using ``rte_ml_dev_queue_pair_setup()``
  
- .. code-block:: c
  
--    err = rte_metrics_deinit(void);
-+    err = rte_metrics_deinit();
+@@ -162,9 +162,9 @@ to specify the device queue pair to schedule the processing on.
+ The ``nb_ops`` parameter is the number of operations to process
+ which are supplied in the ``ops`` array of ``rte_ml_op`` structures.
+ The enqueue function returns the number of operations it enqueued for processing,
+-a return value equal to ``nb_ops`` means that all packets have been enqueued.
++a return value equal to ``nb_ops`` means that all operations have been enqueued.
  
- If the return value is negative, it means deinitialization failed.
- This function **must** be called from a primary process.
-@@ -175,11 +177,11 @@ These statistics are reported via the metrics library using the
- following names:
+-The dequeue API uses the same format as the enqueue API of processed
++The dequeue API uses the same format as the enqueue API,
+ but the ``nb_ops`` and ``ops`` parameters are now used to specify
+ the max processed operations the user wishes to retrieve
+ and the location in which to store them.
+@@ -193,7 +193,7 @@ from a higher precision type to a lower precision type and vice-versa.
+ ML library provides the functions ``rte_ml_io_quantize()`` and ``rte_ml_io_dequantize()``
+ to enable data type conversions.
+ User needs to provide the address of the quantized and dequantized data buffers
+-to the functions, along the number of the batches in the buffers.
++to the functions, along with the number of batches in the buffers.
  
-     - ``mean_bits_in``: Average inbound bit-rate
--    - ``mean_bits_out``:  Average outbound bit-rate
-+    - ``mean_bits_out``: Average outbound bit-rate
-     - ``ewma_bits_in``: Average inbound bit-rate (EWMA smoothed)
--    - ``ewma_bits_out``:  Average outbound bit-rate (EWMA smoothed)
--    - ``peak_bits_in``:  Peak inbound bit-rate
--    - ``peak_bits_out``:  Peak outbound bit-rate
-+    - ``ewma_bits_out``: Average outbound bit-rate (EWMA smoothed)
-+    - ``peak_bits_in``: Peak inbound bit-rate
-+    - ``peak_bits_out``: Peak outbound bit-rate
- 
- Once initialised and clocked at the appropriate frequency, these
- statistics can be obtained by querying the metrics library.
-@@ -241,8 +243,8 @@ the jitter in processing delay. These statistics are then reported
- via the metrics library using the following names:
- 
-     - ``min_latency_ns``: Minimum processing latency (nano-seconds)
--    - ``avg_latency_ns``:  Average  processing latency (nano-seconds)
--    - ``mac_latency_ns``:  Maximum  processing latency (nano-seconds)
-+    - ``avg_latency_ns``: Average processing latency (nano-seconds)
-+    - ``max_latency_ns``: Maximum processing latency (nano-seconds)
-     - ``jitter_ns``: Variance in processing latency (nano-seconds)
- 
- Once initialised and clocked at the appropriate frequency, these
-@@ -256,8 +258,6 @@ Before the library can be used, it has to be initialised by calling
- 
- .. code-block:: c
- 
--    lcoreid_t latencystats_lcore_id = -1;
--
-     int ret = rte_latencystats_init(1, NULL);
-     if (ret)
-         rte_exit(EXIT_FAILURE, "Could not allocate latency data.\n");
+ For quantization, the dequantized data is assumed to be
+ of the type ``dtype`` provided by the ``rte_ml_model_info::input``
 -- 
 2.51.0
 
