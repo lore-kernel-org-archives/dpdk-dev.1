@@ -2,66 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C0DFC9832F
-	for <dpdk-dev@archiver.kernel.org>; Sun, 18 Jan 2026 19:16:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A147C9832F
+	for <dpdk-dev@archiver.kernel.org>; Sun, 18 Jan 2026 19:16:20 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C866E42793;
-	Sun, 18 Jan 2026 20:14:12 +0100 (CET)
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com
- [209.85.218.52]) by mails.dpdk.org (Postfix) with ESMTP id 47E1B40E1B
- for <dev@dpdk.org>; Sun, 18 Jan 2026 20:14:11 +0100 (CET)
-Received: by mail-ej1-f52.google.com with SMTP id
- a640c23a62f3a-b87003e998bso790413466b.1
- for <dev@dpdk.org>; Sun, 18 Jan 2026 11:14:11 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id D0E45410E6;
+	Sun, 18 Jan 2026 20:14:15 +0100 (CET)
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com
+ [209.85.218.43]) by mails.dpdk.org (Postfix) with ESMTP id BFDE740E1B
+ for <dev@dpdk.org>; Sun, 18 Jan 2026 20:14:12 +0100 (CET)
+Received: by mail-ej1-f43.google.com with SMTP id
+ a640c23a62f3a-b87677a8abeso614969666b.1
+ for <dev@dpdk.org>; Sun, 18 Jan 2026 11:14:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768763651;
- x=1769368451; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768763652;
+ x=1769368452; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=Z2jaVMF/Lfw9WfCTjCX/ivdZVpVvh3YwisLh0JDNGL4=;
- b=qKmFgoDjgR+6c/GLA56cf8bfoNgS/VX/OBNnCdQFFaBOUEIsz9o51oj8T3he7nBgQo
- kglr+FqWeDA3g7kW0CBYAwzpgMzd36jL2PU3+cfIeq4YUAuB3fyAH/oyfOGkTSQCQlpS
- aa6gND8xkEF35eJhmt6duwbH+K5R9UZvnxImqFF9Y1C47Tqhdv+LhPOiN+4C0le/AA4W
- YU0UbpPXyIg4K14hqWHO3AwNk87NfI8a/oQt1JBUzn4bwc5kO7f/ELjrntABiZ9lFVSm
- YDCAbhL9AL8yEBoqP0XUyVrrjr//5D3w/0tO8k3g+QyoktzyqdXWm5DqLo+d2hImNebc
- 2CdA==
+ bh=Yw0e42BdM7bdhgU3FNiJqMPK5L7XaauCnHpeIJDRYOQ=;
+ b=gitXnF+HDBYcV1VJlG25etW2LHXuZD2xoYg9RF6xJdTBZi4GHfz1otvm76TxIBW9Wy
+ J07FEVLhMDsH+Suh1/6SUng279F/GjWIZg7HqgJ39z9QX9k7FWy8Ahvy6JiHJqh+xbLl
+ MsF6gXT7kpEKdOOkGdDEMaNyxbIxG6pJkw6yGMDJMpGrLeLpBwslqqjO/ztaR5jw0FDp
+ YXAw4Xvx5ya9tb3ihazUwyGWj9UdR9G32/O1rH4sTsDZ0FshbaJyb36tXsCCp5EgAzZt
+ OZovg/ta4Z/iz36cKxcTAqeo/TPRFNV5eaKzNa6knNkIYnGBgZoZgD8Zb7pS+5wz7x3x
+ O2dg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768763651; x=1769368451;
+ d=1e100.net; s=20230601; t=1768763652; x=1769368452;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=Z2jaVMF/Lfw9WfCTjCX/ivdZVpVvh3YwisLh0JDNGL4=;
- b=hxcYZxOSLHP9OHjdyImiIi1wG7Vnwc8rD1lQ821l2ZlBJOF9Q7eOz/xLPgqyhRcAlw
- f9qVnDP2Di2cAgfANURLNJU3bAsHb15BHrd/xy64qEb8GgBjKbNyUAQ7b7eWKd8Vqxf4
- FOnt8q4Ik2TGM7qsTmuBMhX4Q+SnsUlqVbZWSp2OJw5ZKLrPMjQzGL4zKzHTa8mwLShk
- WCPQpgoa0pPbMnFKDvTIJiM5DHKUZTiS83Snx7qOFnTW+XoBFeyfOorHhhHjNH2B+MaQ
- mqRNcNDtrPsKvignug/tGF7MUtNlF4fsH+1JgUnWoRfuFqbLBzosXZ9ZPh2FnkBvoTYc
- uhzw==
-X-Gm-Message-State: AOJu0YyapsIMNy8nbho6NaG94A6s2ukRejXXxBEtCKpwsAmsxjQzMjqf
- WAKfbLgHzlmdScxzkWkSq/YWaYg+LvUTA1N54K/AYbg7Tf4G9K8O9GVJh6LCJHnYBhY1sk5iOBS
- oa43L
-X-Gm-Gg: AY/fxX6kDJtDwLpgHSq5LwE0y4Q/D1nrIT4KtsiaioTBAzjL5HlsnjF3zz+xeefdz4E
- SmE+8/bflWrtsq/GQ44U9pfUPJaGAyVjTPsJW4qFPhq6xOa1WKRyVF1/jx+3gSWxJiPfB9NG7p9
- 7mwI8zFQxmjiGq97bN6obUw/BpMjMYh802XgZ8R7W5phc0AF9pgNBjZBc0xUtGJt+b4yB3Yb5W/
- nr3XZ2UHhW/fFLgUu2kvEEbuy62L/OYha1vplHp5bS1q6cSLkPZgNuek+sxfD7mEvVOHesbTHef
- tPPCauX8blf+LEK8MKHWI0JzIFUyAYg0mHODve5SmPi2irLSObBfDZrzjNrbXuLSFE/AqeVYM2f
- C9EED8H4w1YAcbTyuHEzYsaPGpGvKbR0wlffmPBv+rAYkvkXHJi25zNjJmXQ6viiDo3VIviUH+O
- XgOY9ypLZL5pDa9DTvMHxklLXO444XVEs2wXoADZGgPsTdi0oE9A==
-X-Received: by 2002:a17:907:c22:b0:b72:d577:11cc with SMTP id
- a640c23a62f3a-b879388dabfmr894912766b.12.1768763650809; 
- Sun, 18 Jan 2026 11:14:10 -0800 (PST)
+ bh=Yw0e42BdM7bdhgU3FNiJqMPK5L7XaauCnHpeIJDRYOQ=;
+ b=XmtiIkCTWwlytz6hm6q6vrYpkffbRFa4S/V841e2Q9Kp7W3VcdzWItH1SfiVnotjrk
+ a8UNyhEvW1tEzdaDuRgyApekRyso6hWpvELVclSwvUrsh4POpoiNZWzDHZsEHam/R4JB
+ ER1d+3izPsfozNT7F9ihjVi2/hQM0CtrZwmD8kIbMqqjHK6c8+wbNqAHYvTIZ6c+hFEj
+ 1uC2hv8F5ups2nfHThntpx7R+wLC3JITlF1lGt5/UDahXf3vqLbxBXSrjWRw+lBqkeAr
+ D2Fr2WxIyhFa26Pks8q82HrVyTLrxmSG8T+mfK7WeTnGULiumUSWe5kqBzBMhqJPwqzN
+ jhbg==
+X-Gm-Message-State: AOJu0YxQw4mxbT58t/iUotag7y3AOMHjIz0+xzwgBqsryFD/ZX2HRLtk
+ EHEhP8gqdFX71RHoVx/ZDEhsBsujS6esSTaFrlu2m8aVi3p8U+2dAIw3v6fx+LvrSnZkm3tHAGs
+ QB275
+X-Gm-Gg: AY/fxX58nvWDXPX3RJzMQRDw2QTOMP4YuvPOb9FoJ3utG8gNZ6PwNJdjDTMgADZlZsh
+ 73cpVlz0hoMS/aQ3YPEqJeUH8w6YEAyAZQhFlsPbZVXQS9o24zBcvpnrlbQkhBl/gev2kQNVP+Y
+ 6t6ZtMtPE5H9+u2r2uS6gayLROZoQVkE1Pyi6yxG7PdLIA0HE8fK8TURHxODD/xt43NNAIfoMuJ
+ Mj8dXjnS6s+bqsGT5xX5+uTDY1xD8r+x6rzfX83CHMKNuN3n4uoJbXXUPWlxjHGJmzS5HZDKzHe
+ bQv/Lyq0wzAwUHypSwRH8qDpqAeyU1aC7c06rtJaZBE1BosKs7+oVo/BrUaGdK74eNe28R/xRAg
+ anBExIPb6SbqLcXV/n+kfuvQTvFo+lu4ARz2oLQhnH0qHvFJHMQ/Iv5clPS0wGPY7Aj/o5+gOKf
+ NoLYHxmy4miSZbriFiZSFSJ5T9tVs3dSnqwYSddOABMhyV1u1W9w==
+X-Received: by 2002:a17:907:7b9a:b0:b87:115:a724 with SMTP id
+ a640c23a62f3a-b879324398bmr791380566b.34.1768763652263; 
+ Sun, 18 Jan 2026 11:14:12 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a640c23a62f3a-b87959c9f8dsm886287166b.36.2026.01.18.11.14.09
+ a640c23a62f3a-b87959c9f8dsm886287166b.36.2026.01.18.11.14.11
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 18 Jan 2026 11:14:10 -0800 (PST)
+ Sun, 18 Jan 2026 11:14:11 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v5 27/54] doc: correct grammar in LTO guide
-Date: Sun, 18 Jan 2026 11:10:30 -0800
-Message-ID: <20260118191323.241013-28-stephen@networkplumber.org>
+Subject: [PATCH v5 28/54] doc: correct grammar in LPM guide
+Date: Sun, 18 Jan 2026 11:10:31 -0800
+Message-ID: <20260118191323.241013-29-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260118191323.241013-1-stephen@networkplumber.org>
 References: <20240513155911.31872-1-nandinipersad361@gmail.com>
@@ -81,26 +81,26 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Correct "compiler have to support" to "compiler has to support".
+Correct "search process have finished" to "search process has finished".
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- doc/guides/prog_guide/lto.rst | 2 +-
+ doc/guides/prog_guide/lpm_lib.rst | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/doc/guides/prog_guide/lto.rst b/doc/guides/prog_guide/lto.rst
-index 5791e35494..e6628b11a8 100644
---- a/doc/guides/prog_guide/lto.rst
-+++ b/doc/guides/prog_guide/lto.rst
-@@ -8,7 +8,7 @@ The DPDK supports compilation with link time optimization turned on.
- This depends obviously on the ability of the compiler to do "whole
- program" optimization at link time and is available only for compilers
- that support that feature.
--To be more specific, compiler (in addition to performing LTO) have to
-+To be more specific, compiler (in addition to performing LTO) has to
- support creation of ELF objects containing both normal code and internal
- representation (called fat-lto-objects in gcc).
- This is required since during build some code is generated by parsing
+diff --git a/doc/guides/prog_guide/lpm_lib.rst b/doc/guides/prog_guide/lpm_lib.rst
+index 316ac835a4..483173f5cd 100644
+--- a/doc/guides/prog_guide/lpm_lib.rst
++++ b/doc/guides/prog_guide/lpm_lib.rst
+@@ -82,7 +82,7 @@ An entry in tbl24 contains the following fields:
+ The first field can either contain a number indicating the tbl8 in which the lookup process should continue
+ or the next hop itself if the longest prefix match has already been found.
+ The two flags are used to determine whether the entry is valid or not and
+-whether the search process have finished or not respectively.
++whether the search process has finished or not respectively.
+ The depth or length of the rule is the number of bits of the rule that is stored in a specific entry.
+ 
+ An entry in a tbl8 contains the following fields:
 -- 
 2.51.0
 
