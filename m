@@ -2,66 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98270C9832F
-	for <dpdk-dev@archiver.kernel.org>; Sun, 18 Jan 2026 17:00:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19A9FC9832F
+	for <dpdk-dev@archiver.kernel.org>; Sun, 18 Jan 2026 17:00:38 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9AA6140A73;
-	Sun, 18 Jan 2026 18:00:08 +0100 (CET)
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com
- [209.85.128.44]) by mails.dpdk.org (Postfix) with ESMTP id ED758406B7
- for <dev@dpdk.org>; Sun, 18 Jan 2026 18:00:03 +0100 (CET)
-Received: by mail-wm1-f44.google.com with SMTP id
- 5b1f17b1804b1-47d63594f7eso23950305e9.0
- for <dev@dpdk.org>; Sun, 18 Jan 2026 09:00:03 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id BA86340B97;
+	Sun, 18 Jan 2026 18:00:09 +0100 (CET)
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com
+ [209.85.128.43]) by mails.dpdk.org (Postfix) with ESMTP id C815D40676
+ for <dev@dpdk.org>; Sun, 18 Jan 2026 18:00:05 +0100 (CET)
+Received: by mail-wm1-f43.google.com with SMTP id
+ 5b1f17b1804b1-47edffe5540so32041895e9.0
+ for <dev@dpdk.org>; Sun, 18 Jan 2026 09:00:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768755603;
- x=1769360403; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768755605;
+ x=1769360405; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=fLooO43cfsLZWxPtAs35ojRkiq0s1dRHWOPOoKdFFHQ=;
- b=WjM6LDf5vrYWsgY/QqU1IbuzDXW+Rnolh24+n1LNyfXgzGcbuL/pQSQd8BfngbpIJD
- ELSnuPWN2pwXSM9eUR2B3G9pcQnDvk3ClpRWZGerTN22VBkZqEt3EH4YZofXAvdf29VR
- N8NFpZ8P101bAQcHFz2caRZKvB9PSF6sY9XQuGKEmrxrxC3vdooZ9aAcY0gi8xv3bRw+
- gu/3vcx+kOWdW71LOa3yWHUpx3SQKgeP79SMT+W/GH3+9I/4pji2K8RRNaV9+p3ktza3
- DmSPne1v6lt1M2O//0xF7gPJIekLn1ut/5Uh4QyItV85np6XNBKqBRwXsmm/0Eh5UNV2
- kVbg==
+ bh=E6sj/KCXk7T6l0AlIh7TozkEsmfAOnowZ2ydeTnz7Io=;
+ b=x04bsS12yngj1EHqTogSczcFMIjCVdA0yp/L3X0rNtD/ZcONiZ7w2P7zZjvhuRFBLQ
+ twobnoOSvY/j40mIYGFRZ93jRpsphu8J9KBoJv9FlCyVEfSJU3yQqdm1XdVbu7SJ/QpX
+ YBLryAFD/trC0N91w1bjYID6N5DdiCjNHWi0i1maE+h/CI7UOdtcAjBvNq6uN/e1eBm9
+ 2rQnUKSGlysL1f59XCrTEj3zcXVSoS00ILfRupakWR+Nl/jt8II8wbD1rhSo5T3/eKRC
+ 7FtiAHUEszlzsiaXApf6FV6UDZEZox8Sj8IBpPGlFAaSZOY/C4LqMBGu/NRMjxR2mKp8
+ KFPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768755603; x=1769360403;
+ d=1e100.net; s=20230601; t=1768755605; x=1769360405;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=fLooO43cfsLZWxPtAs35ojRkiq0s1dRHWOPOoKdFFHQ=;
- b=uDnq00AGP2jaa+Yi7v+VzYBOFLoOoWsvhLrxWQdczjRvXU0tH4cRzwNlF208HCis9N
- h0t5GgdMnCvIHVr3Hw2CxSH7JMXCZQjY+dK0yg5oTZfu6of7m1eCB6fvFE8W2SsPdeA5
- AzYPaLyqzOVHha85i6UfBpGUyPKsByp3UNrcZ6gjeI/Ln9pA/EycfeWNmaBrBCnuD8yL
- nY3dn0vqMQrKHbjl/vQTeo40LI45cD0mroBBR0dlCvSaYva/sCfmo/ZeVQo1JWzjklZy
- 0A53o5eNippzCsK+Q7I8ywnLRFC47IEFmUrWtAlSEnXUt1v6VwZxYanUvHFkoF4iajUN
- OwKw==
-X-Gm-Message-State: AOJu0YzB6+kyOf0e52tU1mKz/Y4xpPVPxWd40WQDDrba2KEFL/ha5sv5
- mzBCn9W3u+4STFjmtNEWwKKkF6y00u3J6eeZfkUREosPflAMSsl8U/wlVD5gOjKTf90M0VQTus9
- LkQvW
-X-Gm-Gg: AY/fxX4ICja/0jT20GvbWiFIZ8uvmiW0yMtlJpeSPkqvOJfj4tvqEMm8ydKB/hXJn4m
- GxDkaQSI38HZ3HsHPSXrQs9bddqYCNAKMN57UeU1+pXSAPbkNJXFH8EfgfG4ogDyuC9JutVr2rQ
- xF8hiYZYP9ZlCM+kLveiH6jTRSVTdHZDVF53cwuwrrs50IEcNGvuisdUI8xGYXkKCxOVUPycFQJ
- 9Q/OqsV+tBDHEuAtBsaTHbs8Jnmo3vTpUxqsM81pdBz5G649U9NC0bm1OGfdLtOG94jakawRtzQ
- CifICILLgdpZCpGOsLD6vIGK1s/2koDJbnockMUqr3ximUiza1414A+mx435NiAsoAJYjyzy1/j
- HwmqKQzZMcarEBF5gsjh8URpmU5o1xaHFOLxWcxuh32Te+4hQCO/8dX3AHXZ5770eGIMpFj28Hr
- 7ne9HKhEVrxNkQ7gho8eB0/1rsuVJpVbDVGJ7sLO4nn2ggoBASu+yFj8EwBZh0
-X-Received: by 2002:a05:600c:8b55:b0:477:9f34:17b8 with SMTP id
- 5b1f17b1804b1-4801e2fbd61mr113315575e9.1.1768755603480; 
- Sun, 18 Jan 2026 09:00:03 -0800 (PST)
+ bh=E6sj/KCXk7T6l0AlIh7TozkEsmfAOnowZ2ydeTnz7Io=;
+ b=gXjw5FeQC2LBo9iXeEDysAKi/jHAV43zq4XmIRQXc4Ue3l7bxAKPBjKZTtghUcChYu
+ +Ek0qCv5VAfU8QJPJjrWcKHIH3K11OiDXMbdARQTnrunbdBoG0C23iTZPYplJDXYsGnv
+ ZUp5yduBA5N63BD/spnFeXqrShIoUzs9DISL21haRCgOm9Z3d20fvvWOI8J8muuDrYaf
+ gs0PfIdtwLZAeUgYSWbVQ3kVBkaIr3+04AMCmh76P4IfY6GqpahJTegw+HL7Lccwwk7I
+ 0S5BANhhVlum2inru8oYb5zEKH28rgxoQsx5mnQlpWgTWdG/I7ZWbKIq3flUlVVS04Ey
+ aN2A==
+X-Gm-Message-State: AOJu0YyJnJ5XeU7p1jGihGW42s3fQdU1Nhj9Vc9stCH04WU2SzX+Osw5
+ kC1Xl9zXd23d82tAXe8VBAbWZrBC5FdAy/ix95hVqMyJ6Oh/MET8vRUpV1pR4XW89TtJZHc6YBy
+ +qrDm
+X-Gm-Gg: AY/fxX5g0MfbZx0bm0KAGwNXSBaEyhHoIAOXXE07XLjM/3DU3KP6qtSKKjcfsKHvssk
+ eeUgtasfbK7NctUgBg0K1QJjW4TY6ZHKOILTRl/93VTgNuXZSOABTqaO3RnQA0CwdInRW0O2DqW
+ Y3RMzih34OpT75BSXcM5O6xJ1voYjE9ShA1saDJD6NYi9khPrp4Q+uyJk2obO+htgpRX73pIshe
+ Hpk9H+9be0WbvFSZdPpXHDv/K3gwBQdh0ILkkK8Yx2i5X07P5clffal+/h62KXbOBoMJS0qVkV0
+ Wic6OJatcHkmmB+An1RGeenNa4fF4cVijL1G8cdRLhKM/D7S8EATFD2U3kyok0StOy7FLmzPRbg
+ QqTna21iLt0G9EYOrIPnhqFQuP7h4YX/5tHvgnSkmywuLupmvVK0QoLoQhVYFGkxHUUar90S8w2
+ mp/WoIaPiK8PsjKizw1Nq2KZZRGNbpwqgn7lu6fAWBp9EbdDtOMA==
+X-Received: by 2002:a05:600c:45d4:b0:45d:d8d6:7fcc with SMTP id
+ 5b1f17b1804b1-4801e347c1fmr122547525e9.27.1768755605331; 
+ Sun, 18 Jan 2026 09:00:05 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-4801e86c1b2sm146849365e9.3.2026.01.18.09.00.02
+ 5b1f17b1804b1-4801e86c1b2sm146849365e9.3.2026.01.18.09.00.03
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 18 Jan 2026 09:00:03 -0800 (PST)
+ Sun, 18 Jan 2026 09:00:04 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v5 07/11] net/pcap: support nanosecond timestamp precision
-Date: Sun, 18 Jan 2026 08:58:42 -0800
-Message-ID: <20260118165944.41374-8-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Marat Khalili <marat.khalili@huawei.com>
+Subject: [PATCH v5 08/11] net/pcap: remove global variables
+Date: Sun, 18 Jan 2026 08:58:43 -0800
+Message-ID: <20260118165944.41374-9-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260118165944.41374-1-stephen@networkplumber.org>
 References: <20260106182823.192350-1-stephen@networkplumber.org>
@@ -81,296 +82,56 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Consistently support nanosecond timestamps across all the
-variations of pcap PMD receive.
+Localize variables where possible.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+Acked-by: Marat Khalili <marat.khalili@huawei.com>
 ---
- drivers/net/pcap/pcap_ethdev.c | 136 +++++++++++++++++++++++++--------
- 1 file changed, 106 insertions(+), 30 deletions(-)
+ drivers/net/pcap/pcap_ethdev.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/net/pcap/pcap_ethdev.c b/drivers/net/pcap/pcap_ethdev.c
-index 0018e03c06..76bb546673 100644
+index 76bb546673..bc31b526a4 100644
 --- a/drivers/net/pcap/pcap_ethdev.c
 +++ b/drivers/net/pcap/pcap_ethdev.c
-@@ -19,13 +19,13 @@
- #include <rte_mbuf_dyn.h>
- #include <bus_vdev_driver.h>
- #include <rte_os_shim.h>
-+#include <rte_time.h>
-+#include <rte_reciprocal.h>
+@@ -40,12 +40,10 @@
  
- #include "pcap_osdep.h"
+ #define RTE_PMD_PCAP_MAX_QUEUES 16
  
- #define RTE_ETH_PCAP_SNAPSHOT_LEN 65535
- #define RTE_ETH_PCAP_SNAPLEN (RTE_ETHER_MAX_JUMBO_FRAME_LEN - RTE_ETHER_CRC_LEN)
--#define RTE_ETH_PCAP_PROMISC 1
--#define RTE_ETH_PCAP_TIMEOUT -1
- 
- #define ETH_PCAP_RX_PCAP_ARG  "rx_pcap"
- #define ETH_PCAP_TX_PCAP_ARG  "tx_pcap"
-@@ -44,6 +44,7 @@ static char errbuf[PCAP_ERRBUF_SIZE];
+-static char errbuf[PCAP_ERRBUF_SIZE];
  static struct timespec start_time;
  static uint64_t start_cycles;
  static uint64_t hz;
-+static struct rte_reciprocal_u64 hz_inv;
- static uint8_t iface_idx;
+ static struct rte_reciprocal_u64 hz_inv;
+-static uint8_t iface_idx;
  
  static uint64_t timestamp_rx_dynflag;
-@@ -69,6 +70,7 @@ struct pcap_rx_queue {
- 	uint16_t port_id;
- 	uint16_t queue_id;
- 	bool vlan_strip;
-+	bool timestamp_offloading;
- 	struct rte_mempool *mb_pool;
- 	struct queue_stat rx_stat;
- 	struct queue_missed_stat missed_stat;
-@@ -97,6 +99,7 @@ struct pmd_internals {
- 	bool phy_mac;
- 	bool infinite_rx;
- 	bool vlan_strip;
-+	bool timestamp_offloading;
- };
- 
- struct pmd_process_private {
-@@ -331,10 +334,19 @@ eth_pcap_rx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- 		if (pcap_q->vlan_strip)
- 			rte_vlan_strip(mbuf);
- 
--		uint64_t us = (uint64_t)header->ts.tv_sec * US_PER_S + header->ts.tv_usec;
-+		if (pcap_q->timestamp_offloading) {
-+			/*
-+			 * Although time stamp in struct pcap_pkthdr is defined as struct timeval,
-+			 * it really is a timespec with nanosecond resolution.
-+			 */
-+			const struct timespec *ts = (struct timespec *)&header->ts;
-+
-+			*RTE_MBUF_DYNFIELD(mbuf, timestamp_dynfield_offset,
-+					   rte_mbuf_timestamp_t *) = rte_timespec_to_ns(ts);
-+
-+			mbuf->ol_flags |= timestamp_rx_dynflag;
-+		}
- 
--		*RTE_MBUF_DYNFIELD(mbuf, timestamp_dynfield_offset, rte_mbuf_timestamp_t *) = us;
--		mbuf->ol_flags |= timestamp_rx_dynflag;
- 		mbuf->port = pcap_q->port_id;
- 		bufs[num_rx] = mbuf;
- 		num_rx++;
-@@ -354,20 +366,21 @@ eth_null_rx(void *queue __rte_unused,
- 	return 0;
- }
- 
--#define NSEC_PER_SEC	1000000000L
--
- /*
-  * This function stores nanoseconds in `tv_usec` field of `struct timeval`,
-  * because `ts` goes directly to nanosecond-precision dump.
-  */
- static inline void
--calculate_timestamp(struct timeval *ts) {
-+calculate_timestamp(struct timeval *ts)
-+{
- 	uint64_t cycles;
- 	struct timespec cur_time;
- 
- 	cycles = rte_get_timer_cycles() - start_cycles;
--	cur_time.tv_sec = cycles / hz;
--	cur_time.tv_nsec = (cycles % hz) * NSEC_PER_SEC / hz;
-+	cur_time.tv_sec = rte_reciprocal_divide_u64(cycles, &hz_inv);
-+	/* compute remainder */
-+	cycles -= cur_time.tv_sec * hz;
-+	cur_time.tv_nsec = rte_reciprocal_divide_u64(cycles * NS_PER_S, &hz_inv);
- 
- 	ts->tv_sec = start_time.tv_sec + cur_time.tv_sec;
- 	ts->tv_usec = start_time.tv_nsec + cur_time.tv_nsec;
-@@ -412,6 +425,9 @@ eth_pcap_tx_dumper(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- 	if (unlikely(dumper == NULL || nb_pkts == 0))
- 		return 0;
- 
-+	/* all packets in burst have same timestamp */
-+	calculate_timestamp(&header.ts);
-+
- 	/* writes the nb_pkts packets to the previously opened pcap file dumper */
- 	for (i = 0; i < nb_pkts; i++) {
- 		struct rte_mbuf *mbuf = bufs[i];
-@@ -426,7 +442,6 @@ eth_pcap_tx_dumper(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- 			}
- 		}
- 
--		calculate_timestamp(&header.ts);
- 		header.len = len;
- 		header.caplen = len;
- 
-@@ -538,22 +553,60 @@ eth_pcap_tx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
-  * pcap_open_live wrapper function
-  */
+ static int timestamp_dynfield_offset = -1;
+@@ -555,6 +553,7 @@ eth_pcap_tx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
  static inline int
--open_iface_live(const char *iface, pcap_t **pcap) {
--	*pcap = pcap_open_live(iface, RTE_ETH_PCAP_SNAPLEN,
--			RTE_ETH_PCAP_PROMISC, RTE_ETH_PCAP_TIMEOUT, errbuf);
-+open_iface_live(const char *iface, pcap_t **pcap)
-+{
-+	pcap_t *pc;
-+	int status;
+ open_iface_live(const char *iface, pcap_t **pcap)
+ {
++	char errbuf[PCAP_ERRBUF_SIZE];
+ 	pcap_t *pc;
+ 	int status;
  
--	if (*pcap == NULL) {
--		PMD_LOG(ERR, "Couldn't open %s: %s", iface, errbuf);
--		return -1;
-+	pc = pcap_create(iface, errbuf);
-+	if (pc == NULL) {
-+		PMD_LOG(ERR, "Couldn't create %s: %s", iface, errbuf);
-+		goto error;
-+	}
-+
-+	status = pcap_set_tstamp_precision(pc, PCAP_TSTAMP_PRECISION_NANO);
-+	if (status != 0)
-+		PMD_LOG(WARNING, "%s: Could not set to ns precision: %s",
-+			iface, pcap_statustostr(status));
-+
-+	status = pcap_set_immediate_mode(pc, 1);
-+	if (status != 0)
-+		PMD_LOG(WARNING, "%s: Could not set to immediate mode: %s",
-+			iface, pcap_statustostr(status));
-+
-+	status = pcap_set_promisc(pc, 1);
-+	if (status != 0)
-+		PMD_LOG(WARNING, "%s: Could not set to promiscuous: %s",
-+			iface, pcap_statustostr(status));
-+
-+	status = pcap_set_snaplen(pc, RTE_ETH_PCAP_SNAPSHOT_LEN);
-+	if (status != 0)
-+		PMD_LOG(WARNING, "%s: Could not set snapshot length: %s",
-+			iface, pcap_statustostr(status));
-+
-+	status = pcap_activate(pc);
-+	if (status < 0) {
-+		char *cp = pcap_geterr(pc);
-+
-+		if (status == PCAP_ERROR)
-+			PMD_LOG(ERR, "%s: could not activate: %s", iface, cp);
-+		else
-+			PMD_LOG(ERR, "%s: %s (%s)", iface, pcap_statustostr(status), cp);
-+		goto error;
- 	}
- 
--	if (pcap_setnonblock(*pcap, 1, errbuf)) {
-+	if (pcap_setnonblock(pc, 1, errbuf)) {
- 		PMD_LOG(ERR, "Couldn't set non-blocking on %s: %s", iface, errbuf);
--		pcap_close(*pcap);
--		return -1;
-+		goto error;
- 	}
- 
-+	*pcap = pc;
- 	return 0;
-+
-+error:
-+	if (pc != NULL)
-+		pcap_close(pc);
-+	return -1;
- }
- 
- static int
-@@ -600,7 +653,8 @@ open_single_tx_pcap(const char *pcap_filename, pcap_dumper_t **dumper)
+@@ -653,6 +652,8 @@ open_single_tx_pcap(const char *pcap_filename, pcap_dumper_t **dumper)
  static int
  open_single_rx_pcap(const char *pcap_filename, pcap_t **pcap)
  {
--	*pcap = pcap_open_offline(pcap_filename, errbuf);
-+	*pcap = pcap_open_offline_with_tstamp_precision(pcap_filename,
-+							PCAP_TSTAMP_PRECISION_NANO, errbuf);
++	char errbuf[PCAP_ERRBUF_SIZE];
++
+ 	*pcap = pcap_open_offline_with_tstamp_precision(pcap_filename,
+ 							PCAP_TSTAMP_PRECISION_NANO, errbuf);
  	if (*pcap == NULL) {
- 		PMD_LOG(ERR, "Couldn't open %s: %s", pcap_filename,
- 			errbuf);
-@@ -637,6 +691,15 @@ eth_dev_start(struct rte_eth_dev *dev)
- 	struct pcap_tx_queue *tx;
- 	struct pcap_rx_queue *rx;
- 
-+	if (internals->timestamp_offloading) {
-+		int ret = rte_mbuf_dyn_rx_timestamp_register(&timestamp_dynfield_offset,
-+							     &timestamp_rx_dynflag);
-+		if (ret != 0) {
-+			PMD_LOG(ERR, "Failed to register Rx timestamp field/flag");
-+			return ret;
-+		}
-+	}
-+
- 	/* Special iface case. Single pcap is open and shared between tx/rx. */
- 	if (internals->single_iface) {
- 		tx = &internals->tx_queue[0];
-@@ -759,6 +822,7 @@ eth_dev_configure(struct rte_eth_dev *dev)
- 	const struct rte_eth_rxmode *rxmode = &dev_conf->rxmode;
- 
- 	internals->vlan_strip = !!(rxmode->offloads & RTE_ETH_RX_OFFLOAD_VLAN_STRIP);
-+	internals->timestamp_offloading = !!(rxmode->offloads & RTE_ETH_RX_OFFLOAD_TIMESTAMP);
- 	return 0;
- }
- 
-@@ -778,7 +842,8 @@ eth_dev_info(struct rte_eth_dev *dev,
- 	dev_info->max_mtu = RTE_ETH_PCAP_SNAPLEN;
- 	dev_info->tx_offload_capa = RTE_ETH_TX_OFFLOAD_MULTI_SEGS |
- 		RTE_ETH_TX_OFFLOAD_VLAN_INSERT;
--	dev_info->rx_offload_capa = RTE_ETH_RX_OFFLOAD_VLAN_STRIP;
-+	dev_info->rx_offload_capa = RTE_ETH_RX_OFFLOAD_VLAN_STRIP |
-+		RTE_ETH_RX_OFFLOAD_TIMESTAMP;
- 
- 	return 0;
- }
-@@ -927,6 +992,7 @@ eth_rx_queue_setup(struct rte_eth_dev *dev,
- 	pcap_q->queue_id = rx_queue_id;
- 	pcap_q->vlan_strip = internals->vlan_strip;
- 	dev->data->rx_queues[rx_queue_id] = pcap_q;
-+	pcap_q->timestamp_offloading = internals->timestamp_offloading;
- 
- 	if (internals->infinite_rx) {
- 		struct pmd_process_private *pp;
-@@ -1048,6 +1114,17 @@ eth_mtu_set(struct rte_eth_dev *dev, uint16_t mtu)
- 	return 0;
- }
- 
-+/* Timestamp values in receive packets from libpcap are in UTC */
-+static int
-+eth_rx_clock(struct rte_eth_dev *dev __rte_unused, uint64_t *timestamp)
-+{
-+	struct timespec cur_time;
-+
-+	timespec_get(&cur_time, TIME_UTC);
-+	*timestamp = rte_timespec_to_ns(&cur_time);
-+	return 0;
-+}
-+
- static const struct eth_dev_ops ops = {
- 	.dev_start = eth_dev_start,
- 	.dev_stop = eth_dev_stop,
-@@ -1064,6 +1141,7 @@ static const struct eth_dev_ops ops = {
- 	.mtu_set = eth_mtu_set,
- 	.stats_get = eth_stats_get,
- 	.stats_reset = eth_stats_reset,
-+	.read_clock = eth_rx_clock,
- };
- 
- static int
-@@ -1464,15 +1542,13 @@ pmd_pcap_probe(struct rte_vdev_device *dev)
- 	name = rte_vdev_device_name(dev);
- 	PMD_LOG(INFO, "Initializing pmd_pcap for %s", name);
- 
--	timespec_get(&start_time, TIME_UTC);
--	start_cycles = rte_get_timer_cycles();
--	hz = rte_get_timer_hz();
-+	/* Record info for timestamps on first probe */
-+	if (hz == 0) {
-+		timespec_get(&start_time, TIME_UTC);
-+		start_cycles = rte_get_timer_cycles();
- 
--	ret = rte_mbuf_dyn_rx_timestamp_register(&timestamp_dynfield_offset,
--			&timestamp_rx_dynflag);
--	if (ret != 0) {
--		PMD_LOG(ERR, "Failed to register Rx timestamp field/flag");
--		return -1;
-+		hz = rte_get_timer_hz();
-+		hz_inv = rte_reciprocal_value_u64(hz);
- 	}
- 
- 	if (rte_eal_process_type() == RTE_PROC_SECONDARY) {
+@@ -1357,6 +1358,7 @@ pmd_init_internals(struct rte_vdev_device *vdev,
+ 	 * derived from: 'locally administered':'p':'c':'a':'p':'iface_idx'
+ 	 * where the middle 4 characters are converted to hex.
+ 	 */
++	static uint8_t iface_idx;
+ 	(*internals)->eth_addr = (struct rte_ether_addr) {
+ 		.addr_bytes = { 0x02, 0x70, 0x63, 0x61, 0x70, iface_idx++ }
+ 	};
 -- 
 2.51.0
 
