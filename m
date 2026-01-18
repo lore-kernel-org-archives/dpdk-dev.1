@@ -2,66 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B6B8C9830C
-	for <dpdk-dev@archiver.kernel.org>; Sun, 18 Jan 2026 19:17:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E55CC9830C
+	for <dpdk-dev@archiver.kernel.org>; Sun, 18 Jan 2026 19:17:42 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B4F0D42DD4;
-	Sun, 18 Jan 2026 20:14:37 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id C7B1A42E46;
+	Sun, 18 Jan 2026 20:14:39 +0100 (CET)
 Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com
- [209.85.218.52]) by mails.dpdk.org (Postfix) with ESMTP id 5E4EA42DDE
- for <dev@dpdk.org>; Sun, 18 Jan 2026 20:14:35 +0100 (CET)
+ [209.85.218.52]) by mails.dpdk.org (Postfix) with ESMTP id D012742DD4
+ for <dev@dpdk.org>; Sun, 18 Jan 2026 20:14:36 +0100 (CET)
 Received: by mail-ej1-f52.google.com with SMTP id
- a640c23a62f3a-b8708930695so565287366b.3
- for <dev@dpdk.org>; Sun, 18 Jan 2026 11:14:35 -0800 (PST)
+ a640c23a62f3a-b7cf4a975d2so630286366b.2
+ for <dev@dpdk.org>; Sun, 18 Jan 2026 11:14:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768763675;
- x=1769368475; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768763676;
+ x=1769368476; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=1GxEIclen1uXijooDnRkNzpg3hA8SNv/szoHy0uUJco=;
- b=k+7Big3qbU4Bc4aHYCYxxosEo64ue/7kOngMauz5QtHIfbZ1RdriLPDuD56CxSOHKL
- 32Liaf+yLxIGhK1EWCFrg66tM/EDehj05cDmRisrbIP3Ht2d5c4mDrhvuMKbr1N+waAH
- sMJ3WWnaiMWmgopER72VTo90vhvOat6Fy9ExrA8arPttVkJMD26nm95urkrptD+DNEyf
- QpyCEPjEcJaeGlycMZHdxwb+eqlX6/iK2yrzhBLa9SyMrOtJojCZ7iZMCuFp/qf45do7
- F3Rjm8hRrjndqmgxxS6SBvdTl0Tr9c7bH97IGKgeg9xLTNrNNxmTgP67lC5z2GhGxyau
- UFYw==
+ bh=4KkY8DgUFTHFE7oBHjVGy1nvZTIFX+Me6KKGyxD0PPM=;
+ b=VqtOMffUAKovmuyLMXixtkI5bZQuif5qEqn/cM6Ohj3kB/dizCcqOCRW0XzsGpf2qS
+ QHbwbsxAGhKjcz+FCTDBROxpwWAqc7MFo5+F+TPRO6pbOJ+Wg5iue3ZSSdGvN56ggKBd
+ ynlofQook6nnZSneAr7U+caZyQywLJaYeXCIRLd+thh0pdLVrIKVTcK8sl3A4iVLWjXx
+ Axr30/c3uOMLyoYWjt7zFH+eaaPtCHfFNK/azShTgvQfQWjT6sLBI/KLIpiLBPKSZFYT
+ sIzzlF+WrbBIKYZtiuJ5bPSGE/W723G7pBvVMDKluA1ihfy4nQhhenf8rbQzJzPbxLVJ
+ qTOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768763675; x=1769368475;
+ d=1e100.net; s=20230601; t=1768763676; x=1769368476;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=1GxEIclen1uXijooDnRkNzpg3hA8SNv/szoHy0uUJco=;
- b=dXayTNplEP6W0tzpDKUTl8utXPfxW9wLKdXBLbUmzmh/OGiiZkCHTlXvx42PScOlN8
- /pqiogOH1KvRxCoiSgvUPRUJQU3WzeBoewN3DcL4Ati1rVTEJ+2nyQbWL5dFyrvS+NdO
- LJ3/yAM/Fz1RYhGAGpI6IMvSsShBooxfVS31fHbLfthE7rt7EBIQltjCqiu4j0ppmusW
- 0XnXM2zog37ZfHDENkNEeiee+f5QKwdPEse/eqdS0MdT9n57bbNGSAn49pNge0pXWn3G
- k+/NObJ18VEwRelpcKmBd+yQfDs1qTi1YgQOlmj2sSb2yPMdx7TZ/iq8LbBhNVw83H3n
- abtA==
-X-Gm-Message-State: AOJu0Yx+tKG6XIf8id4pMvzS+8IfYlmxNY4Icza7aQnb1h3wdnB8+HrP
- 9BElrijHXKZ5/vZ4uKuVCr/2QNNAOPI4nFYE1kqQXdtAPXQ/mYFPFLROLuUFWcE+9kfIMlhzrCc
- wqQ3v
-X-Gm-Gg: AY/fxX4tO+CurhCyI0QAmeGvPPhYi4rTF/JcboFWRSY2kltWKBIe+5na+tYGYgqY7Be
- 6Ac+WcW1SuMjgvT56VVN1WbpzU7OCv7LBK7F66L6ZL9abH0yxDJk9Fr8cqdCHBms6c7TfvrI30r
- aqQE2c3xzIQqoFn654VsRdYMsbNsYsrKIH1YJD2g3z2Tjhnw7Ne+GQp54Vz03Zp4HmDz+gR2NWL
- dP7llzqxo6oQz7aG0eZLMF7YJpNkiiDAnx8GcMfr9z4n/d7l7xvKRHf4yuulmho9l/meLL19Sth
- zQ3piT1DxkGQKxnqIPUuXMClkHl2+ur0+X9SgSTOSdhn4SywF0iOn6aAGiBQ36fc8UDNJiW2uex
- q9YwC/xJSkdIQhk6wyd1M6vcoRsVWgaK1pSkNLJSPiBC7cbHfynxeOJ/x1PbfCKGqsR3v3UB+Rw
- h5WTIqlECNVsPtBx7aTY7onuD5Xg0Jil27ppweUNm3LXLNh9PzRA==
-X-Received: by 2002:a17:907:cd0d:b0:b83:a32f:8106 with SMTP id
- a640c23a62f3a-b8796b3746amr829172566b.46.1768763674936; 
- Sun, 18 Jan 2026 11:14:34 -0800 (PST)
+ bh=4KkY8DgUFTHFE7oBHjVGy1nvZTIFX+Me6KKGyxD0PPM=;
+ b=Ha7PhNO0YqxENMEVbNYIjgCQT7pVQ300t227GxiaC212OR6V4vH/5bm9h+ohWxLe68
+ DrMxiIcni5H3RvvqM3dFj5ocZ/Pha/CY30UrgWGmXcu5MKEhzdctPjAl2uEExTZWZ4U+
+ TICY+iWTJNmYyOCKSUAZHucM6gzJk4ll4trszUU5RWJchtoxVrav+uCFwKp5/QyA4xyb
+ v74bDHfzGU/sjogAlwoJ6KvcgEd98yxlYjANbST+QZYEKSmiIsnuKaV4UHsq0MeXDCJl
+ nd3QI+TSWtiMvQbkJX9NAT8iLSXyVNzEdg86BcDaPoYw4P72Kjz2yBdSfSCblTgS2Mqp
+ 67PA==
+X-Gm-Message-State: AOJu0YxjoxlChHeqSHXPr/Evs+VwK+wwESuQtpb/hkVM1oadg/4t5Nia
+ 4MfsNGgApJJ7wiCig60B9jBJ62umzzZKzDG/Zw3VDh1KhLhmr3RcqinWRM+lcyjd2mbYfiZVamV
+ /uHYD
+X-Gm-Gg: AY/fxX7k7TsCBH0oeFOrY0Ov8Y2Xs+v1P2m9XeBL5prGATKaCTuJBZ9C1GbnaqX8KiJ
+ +o7fjIMrF7KqxOSPrYpMNA7qrDDeKmZOilToMYqi8rhzBsbnNaBNlbbLpPf6n1LxEU3rGas0qzU
+ BNbxB0EqizQzOht1pQcvZk0n7HuxIASMFwP9xeal+IxDCyDYgjNFzRpb7zTVgTFmu4ncyyVHVyp
+ SYXttxpxrbY6x5FKjeaV3sL2nYjWCaVN6/fQaM5j6CvqRsi07BaZJLjD+yagP4NeHQGCVH1IFv6
+ cN2dbLU8lBLWL0Bu86arv3e6iNbsC2VXkPZDiUbjfSw+la/04NlCmlezodfZAsy1C4v19HoQQln
+ /EUEy7bf18b6YSHXViuStiXo/oK1ApSMHfzPGVO/INgBOWv9VQG8Qzuobw2zrnta/hIoxC4fgR2
+ RRn9gbS88X05VpGmMZ5BRW+DrA2c+WMGng17SVNiu+5Ume/G1GZbrRFjgR27I4
+X-Received: by 2002:a17:907:3e10:b0:b87:d09c:1825 with SMTP id
+ a640c23a62f3a-b87d09c1ab0mr137189566b.13.1768763676389; 
+ Sun, 18 Jan 2026 11:14:36 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a640c23a62f3a-b87959c9f8dsm886287166b.36.2026.01.18.11.14.33
+ a640c23a62f3a-b87959c9f8dsm886287166b.36.2026.01.18.11.14.35
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 18 Jan 2026 11:14:34 -0800 (PST)
+ Sun, 18 Jan 2026 11:14:36 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v5 43/54] doc: correct grammar in pdump library guide
-Date: Sun, 18 Jan 2026 11:10:46 -0800
-Message-ID: <20260118191323.241013-44-stephen@networkplumber.org>
+Subject: [PATCH v5 44/54] doc: correct typos in power management guide
+Date: Sun, 18 Jan 2026 11:10:47 -0800
+Message-ID: <20260118191323.241013-45-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260118191323.241013-1-stephen@networkplumber.org>
 References: <20240513155911.31872-1-nandinipersad361@gmail.com>
@@ -81,48 +81,58 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Correct various grammar issues in the pdump library documentation:
+Correct various typos in the power management documentation:
 
-- fix "both...or" to "both...and"
-- fix "maybe" to "may be" (two separate words)
-- add missing article "the" before "application"
+- fix "users space" to "user space"
+- fix "according the" to "according to the"
+- fix section title "User Cases" to "Use Cases"
+- fix "die's" to "dies" (no apostrophe for plural)
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- doc/guides/prog_guide/pdump_lib.rst | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ doc/guides/prog_guide/power_man.rst | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/doc/guides/prog_guide/pdump_lib.rst b/doc/guides/prog_guide/pdump_lib.rst
-index 5bacb49ffc..d27385fef1 100644
---- a/doc/guides/prog_guide/pdump_lib.rst
-+++ b/doc/guides/prog_guide/pdump_lib.rst
-@@ -7,7 +7,7 @@ Packet Capture Library
- The DPDK ``pdump`` library provides a framework
- for capturing packets within DPDK applications.
- It enables a **secondary process** to monitor packets
--being processed by both **primary** or **secondary** processes.
-+being processed by both **primary** and **secondary** processes.
+diff --git a/doc/guides/prog_guide/power_man.rst b/doc/guides/prog_guide/power_man.rst
+index 74039e5786..b4c9271e0b 100644
+--- a/doc/guides/prog_guide/power_man.rst
++++ b/doc/guides/prog_guide/power_man.rst
+@@ -4,7 +4,7 @@
+ Power Management
+ ================
  
+-The DPDK Power Management feature allows users space applications to save power
++The DPDK Power Management feature allows user space applications to save power
+ by dynamically adjusting CPU frequency or entering into different C-States.
  
- Overview
-@@ -76,7 +76,7 @@ The library exposes API for:
- .. function:: int rte_pdump_stats(uint16_t port_id, struct rte_dump_stats *stats)
+ *   Adjusting the CPU frequency dynamically according to the utilization of RX queue.
+@@ -60,7 +60,7 @@ Core-load Throttling through C-States
  
-    Reports the number of packets captured, filtered, and missed.
--   Packets maybe missed due to mbuf pool being exhausted or the ring being full.
-+   Packets may be missed due to mbuf pool being exhausted or the ring being full.
+ Core state can be altered by speculative sleeps whenever the specified lcore has nothing to do.
+ In the DPDK, if no packet is received after polling,
+-speculative sleeps can be triggered according the strategies defined by the user space application.
++speculative sleeps can be triggered according to the strategies defined by the user space application.
  
+ Per-core Turbo Boost
+ --------------------
+@@ -101,7 +101,7 @@ The main methods exported by power library are for CPU frequency scaling and inc
  
- Operation
-@@ -128,7 +128,7 @@ What is the performance impact of pdump?
+ *   **Disable turbo**: Prompt the kernel to disable Turbo Boost for the specific lcore.
  
- What happens if process does not call pdump init?
+-User Cases
++Use Cases
+ ----------
  
--   If application does not call ``rte_pdump_init``
-+   If the application does not call ``rte_pdump_init``
-    then the request to enable (in the capture command)
-    will timeout and an error is returned.
+ The power management mechanism is used to save power when performing L3 forwarding.
+@@ -285,7 +285,7 @@ Get Num Pkgs
+   Get the number of packages (CPU's) on the system.
  
+ Get Num Dies
+-  Get the number of die's on a given package.
++  Get the number of dies on a given package.
+ 
+ References
+ ----------
 -- 
 2.51.0
 
