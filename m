@@ -2,71 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8FCEC9832F
-	for <dpdk-dev@archiver.kernel.org>; Sun, 18 Jan 2026 19:14:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64CC4C9832F
+	for <dpdk-dev@archiver.kernel.org>; Sun, 18 Jan 2026 19:14:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id F04DE40E3A;
-	Sun, 18 Jan 2026 20:13:50 +0100 (CET)
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com
- [209.85.218.52]) by mails.dpdk.org (Postfix) with ESMTP id 9776640E3A
- for <dev@dpdk.org>; Sun, 18 Jan 2026 20:13:48 +0100 (CET)
-Received: by mail-ej1-f52.google.com with SMTP id
- a640c23a62f3a-b8765b80a52so589231366b.2
- for <dev@dpdk.org>; Sun, 18 Jan 2026 11:13:48 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 135A140E4D;
+	Sun, 18 Jan 2026 20:13:52 +0100 (CET)
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com
+ [209.85.208.53]) by mails.dpdk.org (Postfix) with ESMTP id 06E9940DC9
+ for <dev@dpdk.org>; Sun, 18 Jan 2026 20:13:50 +0100 (CET)
+Received: by mail-ed1-f53.google.com with SMTP id
+ 4fb4d7f45d1cf-652fec696c9so6406660a12.3
+ for <dev@dpdk.org>; Sun, 18 Jan 2026 11:13:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768763628;
- x=1769368428; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768763629;
+ x=1769368429; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=jvMssISqIq5HGciqPwtMlHw1gJ81rr2wH/v9bHS3mvI=;
- b=oH9McXHnEpAddhy4UADpuMZbyjvnDdpWtE85X4sSpJIAzDsD1tR82Wc6G7S82G8Um3
- /doPwFjLdWB8T5prgNTNoGuNIkmteBmGo109aztKaxnE/CMJ8cVFXryeqOcDgMm3bmsD
- YIHhJ7QKRyDsBozaz8KQMPdHk5ZQ3hugvt2wAtH93YgI+BXlJFAKpR0SrPmUn6KMpVW/
- ss/UtXiieevxIyF5Oa/IaFpA6EvxzQOLtM/9F/80pJCq7ay5JwXxOXOZzKoHQjNty1gW
- UpP7BQskl7abYg7c6A0F0XCJy3OwvnX1IDXpDzb1ycQg1XrSMytYxiz3BRlgl5rnWS4I
- 9ZVA==
+ bh=HKqtwFd9FRY9qHbu+78H+jfKAnv3rUfL7B0UEvvop70=;
+ b=yeSn8APKIN/7lYSLbYKhhjwLNyCO8lhEsCLQYUk78hZsSLGAj7+6yAYR5OvXR/OenE
+ OIxl81RKgUYgJ50uhEjHFEb44kgBZT83idhxa2JENHEdPadmg0qdFfKP7srOP3YmthMF
+ tPNP7NronQGd64vxEomTMW7e/iuaAlIG3/Mkd0L20FI+7uZq5uo7wNlcLIhOE9vNySHH
+ nwDVSPUY8abwEjGE2808zkY5/UWUTL5P4StFN43yoIqAOoZqFAzk6tprhBSyx7UxLGGI
+ DX5VXEYK2GhH5adBpWO9ESKpW1PC1Yvp3Cspzd84XlkJLOTynK97aRRVlTpk1TjD5veX
+ 9QoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768763628; x=1769368428;
+ d=1e100.net; s=20230601; t=1768763629; x=1769368429;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=jvMssISqIq5HGciqPwtMlHw1gJ81rr2wH/v9bHS3mvI=;
- b=B0uWHJRmF8cD13iEATXwn56cpEvhcytsw/bELcEd/vhI/UlTw49e7nPjG575zDo6nB
- 9ryWlvkJ9HolSh8Jz2C3LSOcam4oeTMdKeAkVjXVbAbZVKrNhqMl9xQ2FIKfm6uOaYwz
- BtpyCFsZuxzILTx0z+lrNLTQiC8Ri553Xk0Q+aYKuGy8xS8RxJmFMGIbBJFB2K98t0/o
- QoFzTqt9YmbPsSzng5fgQ2GDfS9+36CvJZc7LgZoqkxZ6CppudqMsGp90jcwWa9Lj8KT
- K+le2ypdyKlWu0c4l75pnsc5RrpEsecBNkNy3A/8bYiW8Z90e2YYcEUG9Y3fj6aIbnAj
- yzxA==
-X-Gm-Message-State: AOJu0Ywx6ggIt0SeAFz7ntp7ahun3X5H/LFtKgGoB+Gvr6QYa8Xsl3Z1
- 2PDrnWIY0e43An9XTFQHhwM9r1xnMpQ2t2zwP2cFBbL8nX2s/5QzWvl0P5daU5iJ/aqFwsg05DW
- yxC7M
-X-Gm-Gg: AY/fxX4/ZoraruZXWi0bpYGQtwrBLQOgEMREQvBSOB/ADvISG3i6+Pwg2BLI06c1GL/
- 5DU6dhWrDBc3frejFXOHeIAGktZnyYaxGuUCInYaW6uQF7yM2evSZDgYdKJ3yN+e5GG6bYNZADu
- b/dzJBAGt/i6tRARmHY7wKsF1/IWi7Wn7gaAsmKOrU+ULBdRUhcNappZb0L7aEy5m0MYhy4o8hk
- 1cwKhnc9VkoLBC2nWjsu4gR6bFrT1brTIGK4cUl33m3zCV+R+cS3EWQ/TzozKbsJ18stx8HLDP5
- J75YjZnjoIrNlD4R1arXhNwLU+/3E8XSKuEuf/d3IcEp1SgIMU/Q7zsULkg46bdV6LPzHy8OIvo
- pDrn5uj/qhOF5Y7GtmkglMDshyD6Qu28lOeChCMeiFtJAnw2zq87T55Toaith7n1VavAZmRXfdK
- P8V1LB1K/ZTncXZy7yOM+XeYL67wpf5y7DEkWck3rU2EEwkOq/7Q==
-X-Received: by 2002:a17:907:7256:b0:b87:2eb8:2b78 with SMTP id
- a640c23a62f3a-b8792d5a73bmr844038566b.18.1768763628085; 
- Sun, 18 Jan 2026 11:13:48 -0800 (PST)
+ bh=HKqtwFd9FRY9qHbu+78H+jfKAnv3rUfL7B0UEvvop70=;
+ b=i/45TDbV7Gg7LgTOmCXOi6GQTwPARkaFf3Xbk1QGIP5Uy/FVszFnC1nuuRjpFLB5MD
+ W3HyzxNEWxZ+RpvzPnteGxzlOBAcAfECEAW0e7azBH2eF1TtlfiWs/T+raOrYRs0941D
+ MHl1Ex8rFFaRUEnix9DrIGqE3lmx+LqWDyu/ti60l/fRFRp0ViAxis6gED2hNDD11mJt
+ DEYAy43sQgdhFc1LYodHyenJoDsEBhMIrrSE83zCG+x4j2yDCGcm5HlvJX6kuGpnljKy
+ J77gch+Cb4Cvb4GrUsojFiSa3aTQc35MMV5Owr3C6sirNAjEcfX96gViaBTjQA/fLafs
+ svrw==
+X-Gm-Message-State: AOJu0YwVt8H0MYPezuo7fZdgKw574WBtNv1+U3zwQOr+RQl9zWSlhQIK
+ TRqgcM8gTAXS+kEg8452QfovFVa6+aXRy7Of1bTq2uo0K/YsXJiXIKpszzj0HJOwUsQSY5rj6C4
+ mvB0v
+X-Gm-Gg: AY/fxX7k42HbUjKifUF4dOyFMGot8x50Rk6I1YVpXryK+yULlNhGtfrdN+WN1cRvt9w
+ 9LrIXO2S8etf2q79iXwrkst4QjDmTa94D3gDo34LnYxLE1A2ulLyohnYPHr/TifFsWnB4KDijd5
+ xhiTIciVFQy19/uFIX03h/DP3xa2qkdggy8AKXXkPulmakErVfmHHTm61mGBST2FY0Tl+acB58R
+ YiUlkuxec0MWX5r2R7EJANdWLNQrepmmifXxGR+pF6Q/imuDXwG+066bP5PzL9oxcGvtFFO9kv2
+ QeI7iYVEd3Xqm5YyTII/p0ynqKWrYFT4DrRpzbt2dbGnVuCh5l3jhWm9ZAx1q8BN0e4PV6TGzVa
+ N5SqDaCDA3VEY0zMPMSKlW6/8TeWxF5VpsodEc0O4mRgWjVoccvFaDRVOyT4FYuSFwhMXBo2wzY
+ WJlcj4Y8BE5cuLpZ2WbINOiZ9Xu+Z9BLdd4wcvubcWBClRA7QhnkJQPHir+65g
+X-Received: by 2002:a17:907:961d:b0:b87:3174:9bdd with SMTP id
+ a640c23a62f3a-b8792dc8011mr833837266b.28.1768763629558; 
+ Sun, 18 Jan 2026 11:13:49 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a640c23a62f3a-b87959c9f8dsm886287166b.36.2026.01.18.11.13.46
+ a640c23a62f3a-b87959c9f8dsm886287166b.36.2026.01.18.11.13.48
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 18 Jan 2026 11:13:47 -0800 (PST)
+ Sun, 18 Jan 2026 11:13:49 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v5 12/54] doc: correct grammar and typos in meson build guide
-Date: Sun, 18 Jan 2026 11:10:15 -0800
-Message-ID: <20260118191323.241013-13-stephen@networkplumber.org>
+Subject: [PATCH v5 13/54] doc: correct grammar and typos in cryptodev guide
+Date: Sun, 18 Jan 2026 11:10:16 -0800
+Message-ID: <20260118191323.241013-14-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260118191323.241013-1-stephen@networkplumber.org>
 References: <20240513155911.31872-1-nandinipersad361@gmail.com>
  <20260118191323.241013-1-stephen@networkplumber.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -82,56 +83,95 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 Errors-To: dev-bounces@dpdk.org
 
 Correct several documentation issues:
-- Remove extra space after "libdpdk.pc"
-- Replace awkward "can be got" with clearer alternatives
-- Change typo "are passed used" to "are passed using"
+- Change possessive forms: "device's queue pair", "queue pair's resources"
+- Change typo "the same other different" to "the same or different"
+- Change "PMDs supports" to "PMDs support"
+- Change "Queues Pair" to "Queue Pair" in section title
+- Change "library support NUMA" to "library supports NUMA"
+- Change "Global devices features" to "Global device features"
+- Remove extra space in "are defined"
+- Change "Sessions typically stores" to "Sessions typically store"
+- Change "a optimal" to "an optimal"
+- Add required blank line before bullet list
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- doc/guides/prog_guide/build-sdk-meson.rst | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ doc/guides/prog_guide/cryptodev_lib.rst | 21 +++++++++++----------
+ 1 file changed, 11 insertions(+), 10 deletions(-)
 
-diff --git a/doc/guides/prog_guide/build-sdk-meson.rst b/doc/guides/prog_guide/build-sdk-meson.rst
-index fdb5d484fa..84ad64494a 100644
---- a/doc/guides/prog_guide/build-sdk-meson.rst
-+++ b/doc/guides/prog_guide/build-sdk-meson.rst
-@@ -16,23 +16,23 @@ following set of commands::
+diff --git a/doc/guides/prog_guide/cryptodev_lib.rst b/doc/guides/prog_guide/cryptodev_lib.rst
+index f0ee44eb54..dcf3323c9e 100644
+--- a/doc/guides/prog_guide/cryptodev_lib.rst
++++ b/doc/guides/prog_guide/cryptodev_lib.rst
+@@ -108,9 +108,9 @@ parameters for socket selection and number of queue pairs.
+ Configuration of Queue Pairs
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  
- This will compile DPDK in the ``build`` subdirectory, and then install the
- resulting libraries, drivers and header files onto the system - generally
--in /usr/local. A package-config file, ``libdpdk.pc``,  for DPDK will also
-+in /usr/local. A package-config file, ``libdpdk.pc``, for DPDK will also
- be installed to allow ease of compiling and linking with applications.
+-Each Crypto devices queue pair is individually configured through the
++Each Crypto device's queue pair is individually configured through the
+ ``rte_cryptodev_queue_pair_setup`` API.
+-Each queue pairs resources may be allocated on a specified socket.
++Each queue pair's resources may be allocated on a specified socket.
  
- After installation, to use DPDK, the necessary CFLAG and LDFLAG variables
--can be got from pkg-config::
-+can be obtained from pkg-config::
+ .. code-block:: c
  
- 	pkg-config --cflags libdpdk
- 	pkg-config --libs libdpdk
+@@ -127,14 +127,14 @@ Each queue pairs resources may be allocated on a specified socket.
  
--More detail on each of these steps can be got from the following sections.
-+More detail on each of these steps can be found in the following sections.
+ The field ``mp_session`` is used for creating temporary session to process
+ the crypto operations in the session-less mode.
+-They can be the same other different mempools. Please note not all Cryptodev
+-PMDs supports session-less mode.
++They can be the same or different mempools. Please note not all Cryptodev
++PMDs support session-less mode.
  
  
- Getting the Tools
- ------------------
+-Logical Cores, Memory and Queues Pair Relationships
++Logical Cores, Memory and Queue Pair Relationships
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  
- The ``meson`` tool is used to configure a DPDK build. On most Linux
--distributions this can be got using the local package management system,
-+distributions this can be installed using the local package management system,
- e.g. ``dnf install meson`` or ``apt-get install meson``. If meson is not
- available as a suitable package, it can also be installed using the Python
- 3 ``pip`` tool, e.g. ``pip3 install meson``. Version 0.57 or later of meson is
-@@ -78,7 +78,7 @@ examples to build, are DPDK-specific. To have a list of all options
- available run ``meson configure`` in the build directory.
+-The Crypto device Library as the Poll Mode Driver library support NUMA for when
++The Crypto device Library as the Poll Mode Driver library supports NUMA for when
+ a processor’s logical cores and interfaces utilize its local memory. Therefore
+ Crypto operations, and in the case of symmetric Crypto operations, the session
+ and the mbuf being operated on, should be allocated from memory pools created
+@@ -161,7 +161,7 @@ Device Features and Capabilities
+ ---------------------------------
  
- Examples of adjusting the defaults when doing initial meson configuration.
--Project-specific options are passed used -Doption=value::
-+Project-specific options are passed using -Doption=value::
+ Crypto devices define their functionality through two mechanisms, global device
+-features and algorithm capabilities. Global devices features identify device
++features and algorithm capabilities. Global device features identify device
+ wide level features which are applicable to the whole device such as
+ the device having hardware acceleration or supporting symmetric and/or asymmetric
+ Crypto operations.
+@@ -191,7 +191,7 @@ Device Operation Capabilities
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  
- 	# build with warnings as errors
- 	meson setup --werror werrorbuild
+ Crypto capabilities which identify particular algorithm which the Crypto PMD
+-supports are  defined by the operation type, the operation transform, the
++supports are defined by the operation type, the operation transform, the
+ transform identifier and then the particulars of the transform. For the full
+ scope of the Crypto capability see the definition of the structure in the
+ *DPDK API Reference*.
+@@ -936,9 +936,9 @@ Session and Session Management
+ 
+ Sessions are used in asymmetric cryptographic processing to store the immutable
+ data defined in asymmetric cryptographic transform which is further used in the
+-operation processing. Sessions typically stores information, such as, public
++operation processing. Sessions typically store information, such as, public
+ and private key information or domain params or prime modulus data i.e. immutable
+-across data sets. Crypto sessions cache this immutable data in a optimal way for the
++across data sets. Crypto sessions cache this immutable data in an optimal way for the
+ underlying PMD and this allows further acceleration of the offload of Crypto workloads.
+ 
+ Like symmetric, the Crypto device framework provides APIs to allocate and initialize
+@@ -993,6 +993,7 @@ public generation. Also, currently API does not support chaining of symmetric an
+ asymmetric crypto xforms.
+ 
+ Each xform defines specific asymmetric crypto algo. Currently supported are:
++
+ * RSA
+ * Modular operations (Exponentiation and Inverse)
+ * Diffie-Hellman
 -- 
 2.51.0
 
