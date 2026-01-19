@@ -2,73 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC046C9830C
-	for <dpdk-dev@archiver.kernel.org>; Sun, 18 Jan 2026 20:13:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A478C98315
+	for <dpdk-dev@archiver.kernel.org>; Mon, 19 Jan 2026 00:47:22 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5A64A427AD;
-	Sun, 18 Jan 2026 21:12:44 +0100 (CET)
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com
- [209.85.128.41]) by mails.dpdk.org (Postfix) with ESMTP id 41D8B427AD
- for <dev@dpdk.org>; Sun, 18 Jan 2026 21:12:42 +0100 (CET)
-Received: by mail-wm1-f41.google.com with SMTP id
- 5b1f17b1804b1-47ee4338e01so14641985e9.2
- for <dev@dpdk.org>; Sun, 18 Jan 2026 12:12:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768767162;
- x=1769371962; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=IOTD7rHnQdwM8FTC0sJ8IF5bxmOo1i1qWBcjYH4Y6jc=;
- b=vUck7OuxWVr1PDSPY+ibVg9tp4s/YQ3JlcRcVRq+6g+1+a6/YlVimizbhoTk2GMhce
- VhzEXjLMYNecKBY1pyGh1GupIhj5YLbkB4zvt4IIMzEG5h5gT6tlyYjGAQjAri8PXHTj
- l6isaKDONjZsnYZOqQn2TOs1frDLPEWxP06MxvNk/0Ux/bgGm8wTBkz2O2GBLS7rG7Za
- +u8FCLBZ8gMRwW7obpKrn/nEnP8pkSFlc83UMYa9cVo8AhAK6htpBUD8/EW6nSd8BaAt
- GscWHpMPGzAUJZYvUNja1QOTio+7MYidsrFTJvzHYhl8Eb1K3CstG7P2eUgYLdZw/5II
- bS2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768767162; x=1769371962;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=IOTD7rHnQdwM8FTC0sJ8IF5bxmOo1i1qWBcjYH4Y6jc=;
- b=ag8oV8jKE8P2qjMrfn8R6xzANKHcA4LN+CAnvjzYJubMfldmRTwbA7EzYfpE/3hyzI
- +30a9bSu6Cku1oxjlk5PGMg4QHkof2IpGC0yRdOdzas4x+6rikdo4wRSLOMAk16/VgZx
- UkMf7/t0/cOqtbrGpo3yq2B1ixOo+fuwYjtsu/QExqhVIAe1DMV3TB3XpP7gzyYSO96a
- nXzVYskSnWls1fqsiGAXEX0SroLVZG9caZXjuIrNfp49qnrDwxz7ya9P2BQU4L36w+/2
- gRTKqXtYRuNt7DOK4lVh1j8aMkTPXvI4tlu8pW9WQ3zRuDVCG9iAPcdFeu5586YgusEL
- bKEw==
-X-Gm-Message-State: AOJu0Yx3xy5e7waOBR3I13tMiwATK2C2/DZIH/FoTCAl/7npoZUal4XR
- 0w7BIMgB/uatWfl9iV6SW81OtfvL77fRYIzxdajd8xqUzwlO1sc+X/vm7Laflhkyv4x2MeGiroA
- Kpni8
-X-Gm-Gg: AY/fxX5rAlCAK+iQ5rOSRzHg186e8E+1UOTY1wx79mVvMP7O6NYvcH13TR/8z4AAFnb
- 6Y0Lrwa9RNho2OMwZ96XdhvwjKLVI2ncL1HcxxXp+clcOlHnNt9XuxQF5e1B6NfWosYe7wUXHt9
- Q7KKZkiJkH4PPFcZb5KVFJYOnXOoWX9GeFJ+Sl1dHrTJqXwWMCBdXNw2YCNGcS80VmmBg4pve2g
- GUAFvnx1Qvwg0m/ot7xrDjTMo/emyrs3uMcgrslG4xfzTkjrCeI03OKTBKAyX51v52GObqUY7ig
- o78GiRmbaazM5kct2aEGj02YhuhmUy285y+9uqGwkFWd5tQg9JtOOjzCe44YKQttJpfxrCSsreg
- s+hsidEc4FcdRxrQX4hls8boOQy2GD1wNTee6ZxIGPIvCBC1MkXsfR+AG68lQQ8aVZzV0LNW/MQ
- eQlr/mzx3ROjnVPB5i2dyZX05Q15Zq4W+oTCo2k35O3OyF31B9mQ==
-X-Received: by 2002:a05:600c:870c:b0:47d:25ac:3a94 with SMTP id
- 5b1f17b1804b1-4801eb092demr116784865e9.17.1768767161804; 
- Sun, 18 Jan 2026 12:12:41 -0800 (PST)
-Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-4801fe6d9a7sm66364795e9.17.2026.01.18.12.12.40
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 18 Jan 2026 12:12:41 -0800 (PST)
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
- =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>,
- Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH 6/6] test: fix trace_autotest_with_traces parallel execution
-Date: Sun, 18 Jan 2026 12:09:13 -0800
-Message-ID: <20260118201223.323024-7-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20260118201223.323024-1-stephen@networkplumber.org>
-References: <20260118201223.323024-1-stephen@networkplumber.org>
+	by mails.dpdk.org (Postfix) with ESMTP id 53290402AF;
+	Mon, 19 Jan 2026 01:47:21 +0100 (CET)
+Received: from canpmsgout07.his.huawei.com (canpmsgout07.his.huawei.com
+ [113.46.200.222])
+ by mails.dpdk.org (Postfix) with ESMTP id 7C3FE402AA
+ for <dev@dpdk.org>; Mon, 19 Jan 2026 01:47:19 +0100 (CET)
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+ c=relaxed/relaxed; q=dns/txt; h=From;
+ bh=zXnfkNGL8MtpB2U+ua5jaOTgCfu4mJ0cV4s74/FWG1M=;
+ b=S5j22SOAn3ctmMdsEfEt7DszouPCpJfYoIiIXLzNIFApxClWjisGhpn6c0CKsGVRYdvuctuDA
+ QOFTxLoelU0xFV6jHbVR9bl90Vk1UnLLzPVhvCxMZGqS7EYOzKIXWflbRu8a8hzMmb0x7ZplFTl
+ wTdOmPR97tysbNUxcnUUepo=
+Received: from mail.maildlp.com (unknown [172.19.163.200])
+ by canpmsgout07.his.huawei.com (SkyGuard) with ESMTPS id 4dvWt30TMqzLlT4;
+ Mon, 19 Jan 2026 08:43:55 +0800 (CST)
+Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
+ by mail.maildlp.com (Postfix) with ESMTPS id C248E40563;
+ Mon, 19 Jan 2026 08:47:16 +0800 (CST)
+Received: from [10.67.121.161] (10.67.121.161) by
+ kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 19 Jan 2026 08:47:16 +0800
+Message-ID: <2c017afc-bde3-4f48-97bf-fa6bf7a17386@huawei.com>
+Date: Mon, 19 Jan 2026 08:47:15 +0800
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 16/29] doc/guides: improve DMA sample app guide
+To: Stephen Hemminger <stephen@networkplumber.org>, <dev@dpdk.org>
+CC: Kevin Laatz <kevin.laatz@intel.com>, Bruce Richardson
+ <bruce.richardson@intel.com>
+References: <20260114222458.87119-1-stephen@networkplumber.org>
+ <20260114222458.87119-17-stephen@networkplumber.org>
+Content-Language: en-US
+From: fengchengwen <fengchengwen@huawei.com>
+In-Reply-To: <20260114222458.87119-17-stephen@networkplumber.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.67.121.161]
+X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+ kwepemk500009.china.huawei.com (7.202.194.94)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,46 +58,41 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The trace_autotest_with_traces test was reusing the test_args array
-from trace_autotest, which already contained --file-prefix=trace_autotest.
+On 1/15/2026 6:21 AM, Stephen Hemminger wrote:
+> Improve the DMA sample application documentation:
+> - use Tx/Rx instead of TX/RX per DPDK style
+> - use "software" and "hardware" instead of SW/HW abbreviations
+> - add missing articles and fix punctuation
+> - use consistent option formatting with leading dash
+> - fix grammatical errors throughout
+> 
+> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+> ---
+>  doc/guides/sample_app_ug/dma.rst | 104 +++++++++++++++----------------
+>  1 file changed, 52 insertions(+), 52 deletions(-)
+> 
 
-Fix by building trace_args from scratch for the _with_traces test
-variant instead of appending to the existing test_args array.
+...
 
-Fixes: 0aeaf75df879 ("test: define unit tests suites based on test types")
-Cc: stable@dpdk.org
+>  .. literalinclude:: ../../../examples/dma/dmafwd.c
+> @@ -210,8 +210,8 @@ When using hardware copy each Rx queue of the port is assigned a DMA device
+>  
+>  The initialization of hardware device is done by ``rte_dma_configure()`` and
+>  ``rte_dma_vchan_setup()`` functions using the ``rte_dma_conf`` and
+> -``rte_dma_vchan_conf`` structs. After configuration the device is started
+> -using ``rte_dma_start()`` function. Each of the above operations is done in
+> +``rte_dma_vchan_conf`` structs. After configuration, the device is started
 
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
----
- app/test/suites/meson.build | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
+The rte_dma_vchan_conf is used with rte_dma_vchan_setup()
+So maybe we could only descript functions, e.g.
+  ``rte_dma_vchan_setup()`` functions. After configuration, the device is started
 
-diff --git a/app/test/suites/meson.build b/app/test/suites/meson.build
-index 38df1cfec2..e62170bebf 100644
---- a/app/test/suites/meson.build
-+++ b/app/test/suites/meson.build
-@@ -106,10 +106,18 @@ foreach suite:test_suites
-                 is_parallel : false,
-                 suite : 'fast-tests')
-             if not is_windows and test_name == 'trace_autotest'
--                test_args += ['--trace=.*']
--                test_args += ['--trace-dir=@0@'.format(meson.current_build_dir())]
-+                # build separate args list to avoid duplicate --file-prefix
-+                trace_args = test_no_huge_args
-+                trace_args += ['--trace=.*']
-+                trace_args += ['--trace-dir=@0@'.format(meson.current_build_dir())]
-+                if is_linux
-+                    trace_args += ['--file-prefix=trace_autotest_with_traces']
-+                endif
-+                if get_option('default_library') == 'shared'
-+                    trace_args += ['-d', dpdk_drivers_build_dir]
-+                endif
-                 test(test_name + '_with_traces', dpdk_test,
--                    args : test_args,
-+                    args : trace_args,
-                     env: ['DPDK_TEST=' + test_name],
-                     timeout : timeout_seconds_fast,
-                     is_parallel : false,
--- 
-2.51.0
+with this fixed, please:
+Acked-by: Chengwen Feng <fengchengwen@huawei.com>
+
+> +using the ``rte_dma_start()`` function. Each of the above operations is done in
+>  ``configure_dmadev_queue()``.
+>  
+
+...
 
