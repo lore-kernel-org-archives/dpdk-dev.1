@@ -2,27 +2,26 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C673D29C5A
-	for <dpdk-dev@archiver.kernel.org>; Mon, 19 Jan 2026 18:33:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E123D29C50
+	for <dpdk-dev@archiver.kernel.org>; Mon, 19 Jan 2026 18:35:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 30663402AF;
-	Mon, 19 Jan 2026 19:33:56 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 56F31402AF;
+	Mon, 19 Jan 2026 19:35:13 +0100 (CET)
 Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id DB22840299
- for <dev@dpdk.org>; Mon, 19 Jan 2026 19:33:54 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id E904940299
+ for <dev@dpdk.org>; Mon, 19 Jan 2026 19:35:12 +0100 (CET)
 Received: by inbox.dpdk.org (Postfix, from userid 33)
- id ABA384A286; Mon, 19 Jan 2026 19:33:54 +0100 (CET)
+ id DF3464A285; Mon, 19 Jan 2026 19:35:12 +0100 (CET)
 From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Subject: [DPDK/core Bug 1509] Build failure on Ubuntu 24.04 with Link Time
- Optimization (LTO)
-Date: Mon, 19 Jan 2026 18:33:54 +0000
+Subject: [DPDK/other Bug 1727] arparse LTO warnings
+Date: Mon, 19 Jan 2026 18:35:13 +0000
 X-Bugzilla-Reason: AssignedTo
 X-Bugzilla-Type: changed
 X-Bugzilla-Watch-Reason: None
 X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: core
-X-Bugzilla-Version: 24.07
+X-Bugzilla-Component: other
+X-Bugzilla-Version: unspecified
 X-Bugzilla-Keywords: 
 X-Bugzilla-Severity: normal
 X-Bugzilla-Who: stephen@networkplumber.org
@@ -32,10 +31,10 @@ X-Bugzilla-Priority: Normal
 X-Bugzilla-Assigned-To: dev@dpdk.org
 X-Bugzilla-Target-Milestone: ---
 X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: bug_status resolution cc
-Message-ID: <bug-1509-3-kp2fpZdEHT@http.bugs.dpdk.org/>
-In-Reply-To: <bug-1509-3@http.bugs.dpdk.org/>
-References: <bug-1509-3@http.bugs.dpdk.org/>
+X-Bugzilla-Changed-Fields: bug_status resolution
+Message-ID: <bug-1727-3-tIRBFacv56@http.bugs.dpdk.org/>
+In-Reply-To: <bug-1727-3@http.bugs.dpdk.org/>
+References: <bug-1727-3@http.bugs.dpdk.org/>
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
 X-Bugzilla-URL: http://bugs.dpdk.org/
@@ -55,7 +54,7 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-http://bugs.dpdk.org/show_bug.cgi?id=3D1509
+http://bugs.dpdk.org/show_bug.cgi?id=3D1727
 
 Stephen Hemminger (stephen@networkplumber.org) changed:
 
@@ -63,18 +62,9 @@ Stephen Hemminger (stephen@networkplumber.org) changed:
 ----------------------------------------------------------------------------
              Status|UNCONFIRMED                 |RESOLVED
          Resolution|---                         |FIXED
-                 CC|                            |stephen@networkplumber.org
 
 --- Comment #2 from Stephen Hemminger (stephen@networkplumber.org) ---
-commit 3fc246e883c412f3c285bcabdb402b7d66e78526
-Author: Stephen Hemminger <stephen@networkplumber.org>
-Date:   Tue Sep 9 06:49:52 2025 -0700
-
-    test/argparse: change initialization to workaround LTO
-
-    When compiled with Link Time Optimization, the existing code
-    generated an error, because the compiler was unable to intuit
-    that there was space in the flexible array.
+Fixed in 25.11
 
 --=20
 You are receiving this mail because:
