@@ -2,67 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D2DCD29C56
-	for <dpdk-dev@archiver.kernel.org>; Mon, 19 Jan 2026 18:20:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49F6DD29C58
+	for <dpdk-dev@archiver.kernel.org>; Mon, 19 Jan 2026 18:20:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2CA6B4060C;
-	Mon, 19 Jan 2026 19:20:27 +0100 (CET)
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com
- [209.85.208.44]) by mails.dpdk.org (Postfix) with ESMTP id A1DAE4042E
- for <dev@dpdk.org>; Mon, 19 Jan 2026 19:20:25 +0100 (CET)
-Received: by mail-ed1-f44.google.com with SMTP id
- 4fb4d7f45d1cf-64b83949fdaso7093063a12.2
- for <dev@dpdk.org>; Mon, 19 Jan 2026 10:20:25 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 4BB3440608;
+	Mon, 19 Jan 2026 19:20:30 +0100 (CET)
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com
+ [209.85.208.41]) by mails.dpdk.org (Postfix) with ESMTP id 6FB1A4064E
+ for <dev@dpdk.org>; Mon, 19 Jan 2026 19:20:28 +0100 (CET)
+Received: by mail-ed1-f41.google.com with SMTP id
+ 4fb4d7f45d1cf-64baaa754c6so7033077a12.3
+ for <dev@dpdk.org>; Mon, 19 Jan 2026 10:20:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768846825;
- x=1769451625; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768846828;
+ x=1769451628; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=5PcBQe1Ebz30G+0RtsYyBCbMoS7gu/sxoIIu/wDIFgQ=;
- b=u0c3z+7SIwJkfaY1AzYVVtY0yPTbrZkn+lLtLki2G9rDY/oF8cFW4rKEIWxRB1b3W+
- VgFNb98o9pFEjyshDB4dIei7KBhJGQsaPTL2uzeXs42Az0l3S7zAN00v/4i2WefAttOa
- /+T9m8Xq+HwJRYpVO1o9Nzx7yHYoYL488IAPq+WdihfOGlpXJE6G22w2+sV+uJZO3+hI
- APpqUPan8aYMliizHie1v/YB/N9NjDksaE7b6S+ij/Ff2Ei0nwRwajFGbhPrEcDlLOgf
- yWY1fLUQcAcakz1oJ6Qo9tSKK/yIGRVjF1kpuKcISmuakC7Suq1yk3FJsmu2IPCmMfYa
- E1pg==
+ bh=oJwA0E8+xiifU7wcHnofH+IlMZCJScZxFP8jq/rYjDs=;
+ b=O150dT2dOabZye37mSTyvocl5BK8pdPGd/1HJ8eyoGsa3oFALMksPdCayhhRG007ft
+ A5d4DcPHYMotlwq8G+AnJMryzkx/ubG1ebMpm79VtFTzoIG6Q5nG7lZ7TF0HU8Z1G5fV
+ ZEWHc1wZA7nbm6DJq2x27yWcZk23wIb8NjPKqaRXoTChxDj8rQEXhOrBB/SBESVi9Ca6
+ hKpV2AXDOsvDe7RYGa6bX8xuApBYzlyYeD/q3XLUu+XG7vy1drKcGYl+JYmRlHnmtF1D
+ ddyNqiR1DJElAOAEGxVIPS5Y1eAY6xB8vwpwz/oZPU7D8NjXf5omQXY0m3IbjrK1HB5a
+ NlzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768846825; x=1769451625;
+ d=1e100.net; s=20230601; t=1768846828; x=1769451628;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=5PcBQe1Ebz30G+0RtsYyBCbMoS7gu/sxoIIu/wDIFgQ=;
- b=KJnjeNAkN5vXi9bFUOcWkcg9ZgF3rg6eejNiIP0H74RPo0GOgmHDzBR+gwhLMlrVCI
- b1wlMM4dMy2rlDaAxGzLKlg/NFfzQeSb3ngAknPHz3mJ2ATKmM2KcbZfeMuOpeagBzcp
- BeeRn6sb/aUaZlecKRyE8fdJwYQYldve+PIFGNx4Tht/2BwaE3IAHLnVBwgiRBOAr0xU
- uhfT5f8ITzyAFDYcoiZU3SDGtLJjaJz8Zfa3vdUqOGCLXNuXmbAbIkcdPssAsOQMZA0g
- ZC+8OIv4Ae1JqmnRokGVFstaNAlp1z2kQorgdx/oM7o9RyZfVQTasTZZ0WhWfThoqvsq
- 9nkw==
-X-Gm-Message-State: AOJu0Yx0MebvLE9RGPzbKJLybZiuF8zKSxZ2hXQDYSanEpaiNc1RyVLR
- Ma+CpckLUQV9TA7sunqXiJMQxF0WJSPqg38qHuW2cgzuzeQbGcQcVhm2ktPw+oiGm1g1BxL/gKE
- fPGb0
-X-Gm-Gg: AZuq6aJnuTUNxg2ZvATOiYYK4GlePa9U3aOtahNuy17VmB1vn+N/C+E4cU6XVSMWwjo
- 1rtpw8NeHILgjdv5RRmb8uYEzpQdCnzitixQaP5xTH/kS1jny399f2eE6yeGPeSnt+dThqsM0mG
- v331KK58YPtQ97vv74/uEq30wsmrg2chmvEA339/koC6B3il82TaVmmkdbUAt/3MmSw2FUdaX2t
- Kqmy3PDCJgyhwDKsij95bGOfgCeKyNIu3x8o9dqW9uuBdanjMp6jdwvUclWM+j5Dk8SQVL6e9QB
- JeRK81XK3PQgqpVfY1bLAJmxGbuqS7a1GaceY18JZc/i4aPGwe4qtbci3cCIjnsWMbukohr78D7
- gg9hBd+a6/IKeW4edMDnq165HHfJw4m/M6KOd9cuImA/pDX0K+msDUrkFhb84SblZoDy/HCkPRO
- nnovsdqT8GsTUIqRHjm1P2aljIToxC6mPb+ocN7B3kUsPhDs21pA==
-X-Received: by 2002:a05:6402:23c4:b0:655:ad4d:66a2 with SMTP id
- 4fb4d7f45d1cf-655ad4d67eemr7381514a12.1.1768846825215; 
- Mon, 19 Jan 2026 10:20:25 -0800 (PST)
+ bh=oJwA0E8+xiifU7wcHnofH+IlMZCJScZxFP8jq/rYjDs=;
+ b=TTIEzEDdBAnXXbe0H6/gPKDboQoqkEAxIJjoRiOVa4Cimza8/Eo092M8KmRU1t4G7Z
+ WrNgoc3HxLx/h5MGORndRbev9cqwDw8HJy5K6FAU9pc5ito1JIxKgPiYsBkqTz+e/PDu
+ 7214rDXShBH8z+LQ4KxAKwvKIWreZthhXJLls+594wP0tLeltZ+mp8VaBnqTTfzEIpFV
+ 2xFOkyhGWhB6yGON5oZmluGuWmhYIxskJDO7Nq9vDdtpoVbCR34RQeH3XHYHfRwX7GBF
+ QcQg9JPPAqtEhAUY+afmM1sAACBCRKZDYrD8W7uGJwL1BXpGVaJHVh0BWE1dCbc4gcjq
+ LONQ==
+X-Gm-Message-State: AOJu0YzLD8z9NesC+1s9i5LlIHBAGczI2mjqjb3b4lR6f/pAIhk6/PdT
+ rpUznDGHz/Ge9Fvnh/gOoSfBi7yYqzr31978N+qXRN3wFJJIb6pCVDqndK99XMoLZkzh98mfvZC
+ w4ldh
+X-Gm-Gg: AZuq6aJL33ShLZmuBSaYKgjYT2qI4vVN0q/5M1x3GEBqC2UXcSK6EumkxfegQeYnyrU
+ Z1I8OEZ+WfgqMqxs60iZdbELcRb0z7hwQb084hWCVHElfdHKngji2bi4hLJVBCS+lOSnvMa8Cx9
+ ej3VzglfoB9jNy+wEibb33CQIYPwH52MAf45etqUjVbXVL1Yy4KZ7ces5k9V8fOKNMlx/t2Wx9N
+ 6kSYls0SkMSUlMCnONAckYh9Z1IYgLz9/lCMCGpXZHZLcLmRkcARhanF+XFsCChHWCakQmf3LjF
+ Bt/qh+9c+6dk6mdwJwsebrO9V0FXaqBuG3HmJGs2bXiC5zo02ft/8V4YHArIi53Dec2kEXqx7oX
+ y6HJ8pmFVdPKOHrhnU5xxKMjfeDKRGuabH+cW9dCbS2dBTq3lvKLe1aZaE0vZmTl0OFa3qFr2eg
+ 87vWGIhRAHMrqJQD1Z0KHtRZVrF64VaYFopDzuqLc7T74KfeH63Q==
+X-Received: by 2002:a05:6402:210a:b0:64b:6e44:2c6c with SMTP id
+ 4fb4d7f45d1cf-65452ad0a38mr9881745a12.16.1768846827980; 
+ Mon, 19 Jan 2026 10:20:27 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 4fb4d7f45d1cf-65452cdab55sm10878829a12.10.2026.01.19.10.20.23
+ 4fb4d7f45d1cf-65452cdab55sm10878829a12.10.2026.01.19.10.20.25
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 19 Jan 2026 10:20:24 -0800 (PST)
+ Mon, 19 Jan 2026 10:20:26 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
- Reshma Pattan <reshma.pattan@intel.com>, Ray Kinsella <mdr@ashroe.eu>
-Subject: [PATCH v5 2/5] pcapng: use malloc instead of fixed buffer size
-Date: Mon, 19 Jan 2026 10:19:00 -0800
-Message-ID: <20260119182016.44769-3-stephen@networkplumber.org>
+ Reshma Pattan <reshma.pattan@intel.com>,
+ Amit Prakash Shukla <amitprakashs@marvell.com>
+Subject: [PATCH v5 3/5] pcapng: add additional mbuf if space required on copy
+Date: Mon, 19 Jan 2026 10:19:01 -0800
+Message-ID: <20260119182016.44769-4-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260119182016.44769-1-stephen@networkplumber.org>
 References: <20251126051218.50568-1-stephen@networkplumber.org>
@@ -82,134 +83,50 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The administrative APIs accept comments and other meta data
-as strings. This leads to possibility of very large strings
-which can overrun the use of fixed size buffers.
+If comment is passed to rte_pcapng_copy(), additional space
+may be needed at the end of the mbuf. To handle this case generate
+a segmented mbuf with additional space for the options.
 
-Instead, use malloc to allocate a buffer of the necessary
-size and handle potential allocation failures.
-
-Bugzilla ID: 1820
-Fixes: 8d23ce8f5ee9 ("pcapng: add new library for writing pcapng files")
+Fixes: c1abd1e93dbd ("pcapng: support comment in enhanced packet block")
 Cc: stable@dpdk.org
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- lib/pcapng/rte_pcapng.c | 36 +++++++++++++++++++++++-------------
- 1 file changed, 23 insertions(+), 13 deletions(-)
+ lib/pcapng/rte_pcapng.c | 19 ++++++++++++++++---
+ 1 file changed, 16 insertions(+), 3 deletions(-)
 
 diff --git a/lib/pcapng/rte_pcapng.c b/lib/pcapng/rte_pcapng.c
-index ac46e43b38..49fac60a3d 100644
+index 49fac60a3d..7deef7639f 100644
 --- a/lib/pcapng/rte_pcapng.c
 +++ b/lib/pcapng/rte_pcapng.c
-@@ -37,9 +37,6 @@
- /* upper bound for strings in pcapng option data */
- #define PCAPNG_STR_MAX	UINT16_MAX
+@@ -566,11 +566,24 @@ rte_pcapng_copy(uint16_t port_id, uint32_t queue,
+ 	if (comment)
+ 		optlen += pcapng_optlen(strlen(comment));
  
--/* upper bound for section, stats and interface blocks (in uint32_t) */
--#define PCAPNG_BLKSIZ	(2048 / sizeof(uint32_t))
--
- /* Format of the capture file handle */
- struct rte_pcapng {
- 	int  outfd;		/* output file */
-@@ -148,7 +145,7 @@ pcapng_section_block(rte_pcapng_t *self,
- {
- 	struct pcapng_section_header *hdr;
- 	struct pcapng_option *opt;
--	uint32_t buf[PCAPNG_BLKSIZ];
-+	uint32_t *buf;
- 	uint32_t len;
- 
- 	len = sizeof(*hdr);
-@@ -165,8 +162,11 @@ pcapng_section_block(rte_pcapng_t *self,
- 	len += pcapng_optlen(0);
- 	len += sizeof(uint32_t);
- 
--	if (len > sizeof(buf))
-+	buf = malloc(len);
-+	if (buf == NULL) {
-+		errno = ENOMEM;
- 		return -1;
+-	/* reserve trailing options and block length */
++	/*
++	 * Try to put options at the end of this mbuf.
++	 * If not use an mbuf chain.
++	 */
+ 	opt = (struct pcapng_option *)
+ 		rte_pktmbuf_append(mc, optlen + sizeof(uint32_t));
+-	if (unlikely(opt == NULL))
+-		goto fail;
++	if (unlikely(opt == NULL)) {
++		struct rte_mbuf *ml = rte_pktmbuf_alloc(mp);
++
++		if (unlikely(ml == NULL))
++			goto fail;
++
++		opt = (struct pcapng_option *)rte_pktmbuf_append(ml, optlen + sizeof(uint32_t));
++		if (unlikely(opt == NULL || rte_pktmbuf_chain(mc, ml) != 0)) {
++			rte_pktmbuf_free(ml);
++			goto fail;
++		}
 +	}
  
- 	hdr = (struct pcapng_section_header *)buf;
- 	*hdr = (struct pcapng_section_header) {
-@@ -199,7 +199,9 @@ pcapng_section_block(rte_pcapng_t *self,
- 	/* clone block_length after option */
- 	memcpy(opt, &hdr->block_length, sizeof(uint32_t));
- 
--	return write(self->outfd, buf, len);
-+	ssize_t ret = write(self->outfd, buf, len);
-+	free(buf);
-+	return ret;
- }
- 
- /* Write an interface block for a DPDK port */
-@@ -217,7 +219,7 @@ rte_pcapng_add_interface(rte_pcapng_t *self, uint16_t port, uint16_t link_type,
- 	struct pcapng_option *opt;
- 	const uint8_t tsresol = 9;	/* nanosecond resolution */
- 	uint32_t len;
--	uint32_t buf[PCAPNG_BLKSIZ];
-+	uint32_t *buf;
- 	char ifname_buf[IF_NAMESIZE];
- 	char ifhw[256];
- 	uint64_t speed = 0;
-@@ -279,8 +281,9 @@ rte_pcapng_add_interface(rte_pcapng_t *self, uint16_t port, uint16_t link_type,
- 	len += pcapng_optlen(0);
- 	len += sizeof(uint32_t);
- 
--	if (len > sizeof(buf))
--		return -EINVAL;
-+	buf = malloc(len);
-+	if (buf == NULL)
-+		return -ENOMEM;
- 
- 	hdr = (struct pcapng_interface_block *)buf;
- 	*hdr = (struct pcapng_interface_block) {
-@@ -327,7 +330,9 @@ rte_pcapng_add_interface(rte_pcapng_t *self, uint16_t port, uint16_t link_type,
- 	/* remember the file index */
- 	self->port_index[port] = self->ports++;
- 
--	return write(self->outfd, buf, len);
-+	ret = write(self->outfd, buf, len);
-+	free(buf);
-+	return ret;
- }
- 
- /*
-@@ -344,7 +349,7 @@ rte_pcapng_write_stats(rte_pcapng_t *self, uint16_t port_id,
- 	uint64_t start_time = self->offset_ns;
- 	uint64_t sample_time;
- 	uint32_t optlen, len;
--	uint32_t buf[PCAPNG_BLKSIZ];
-+	uint32_t *buf;
- 
- 	RTE_ETH_VALID_PORTID_OR_ERR_RET(port_id, -EINVAL);
- 
-@@ -367,8 +372,11 @@ rte_pcapng_write_stats(rte_pcapng_t *self, uint16_t port_id,
- 		optlen += pcapng_optlen(0);
- 
- 	len = sizeof(*hdr) + optlen + sizeof(uint32_t);
--	if (len > sizeof(buf))
-+	buf = malloc(len);
-+	if (buf == NULL) {
-+		errno = ENOMEM;
- 		return -1;
-+	}
- 
- 	hdr = (struct pcapng_statistics *)buf;
- 	opt = (struct pcapng_option *)(hdr + 1);
-@@ -399,7 +407,9 @@ rte_pcapng_write_stats(rte_pcapng_t *self, uint16_t port_id,
- 	/* clone block_length after option */
- 	memcpy(opt, &len, sizeof(uint32_t));
- 
--	return write(self->outfd, buf, len);
-+	ssize_t ret = write(self->outfd, buf, len);
-+	free(buf);
-+	return ret;
- }
- 
- RTE_EXPORT_SYMBOL(rte_pcapng_mbuf_size)
+ 	switch (direction) {
+ 	case RTE_PCAPNG_DIRECTION_IN:
 -- 
 2.51.0
 
