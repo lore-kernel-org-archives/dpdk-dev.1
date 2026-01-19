@@ -2,49 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82EB1C9830C
-	for <dpdk-dev@archiver.kernel.org>; Mon, 19 Jan 2026 00:50:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4193C9830C
+	for <dpdk-dev@archiver.kernel.org>; Mon, 19 Jan 2026 01:04:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AD894402DB;
-	Mon, 19 Jan 2026 01:50:30 +0100 (CET)
-Received: from canpmsgout03.his.huawei.com (canpmsgout03.his.huawei.com
- [113.46.200.218])
- by mails.dpdk.org (Postfix) with ESMTP id 80A20402AA
- for <dev@dpdk.org>; Mon, 19 Jan 2026 01:50:28 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id EFEF740673;
+	Mon, 19 Jan 2026 02:04:36 +0100 (CET)
+Received: from canpmsgout02.his.huawei.com (canpmsgout02.his.huawei.com
+ [113.46.200.217])
+ by mails.dpdk.org (Postfix) with ESMTP id C1F3D4025A
+ for <dev@dpdk.org>; Mon, 19 Jan 2026 02:04:34 +0100 (CET)
 dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
  c=relaxed/relaxed; q=dns/txt; h=From;
- bh=mGyCapMgWbRW7mVpa/LqI68o+P2dPM52ujU/JopKDfk=;
- b=oL/SLSOHxT8E7oJY9BPPgp9zMu0loEn9wyauj0FgUVU9mD1+nuVvnRwP2WsivxsBhvfLYdasu
- xuMkqMTCc4OirmOVey8kIOTUf8kjYFgQgdbil+E+nXwoRyRZCaFH2sx1t32w0V29u0QPlfJ0Fki
- WwaDXfeW1H7Jl6s6rammWno=
-Received: from mail.maildlp.com (unknown [172.19.163.0])
- by canpmsgout03.his.huawei.com (SkyGuard) with ESMTPS id 4dvWxJ5j0fzpT0c;
- Mon, 19 Jan 2026 08:46:44 +0800 (CST)
+ bh=z2impV++G+naPoC5ReDB8+drpXVHK2BtspxbB1U9MV0=;
+ b=mNNp6QPPJ9CXyyfQYjiFbu9b66MR5J+7ihqMBTdpeJ9ZboWAJeugi2rm9zfYI5tKpXCXCDsH+
+ uwrKU/L03Z6Z79iQ/HyzBFXZ2BLRlVuXHXrKXXYrqhzerDMIX3ifbKWY0T6Q2TqmCqDDAIOr+Fw
+ ES80R9Ajy+8MMEdfam5+nmQ=
+Received: from mail.maildlp.com (unknown [172.19.162.223])
+ by canpmsgout02.his.huawei.com (SkyGuard) with ESMTPS id 4dvXFM4r8dzcZyx;
+ Mon, 19 Jan 2026 09:00:39 +0800 (CST)
 Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
- by mail.maildlp.com (Postfix) with ESMTPS id 82B0E405A7;
- Mon, 19 Jan 2026 08:50:26 +0800 (CST)
+ by mail.maildlp.com (Postfix) with ESMTPS id A346240539;
+ Mon, 19 Jan 2026 09:04:32 +0800 (CST)
 Received: from [10.67.121.161] (10.67.121.161) by
  kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 19 Jan 2026 08:50:26 +0800
-Message-ID: <56e4c4ca-3c4d-4577-aa5d-6f736d638c9f@huawei.com>
-Date: Mon, 19 Jan 2026 08:50:25 +0800
+ 15.2.1544.11; Mon, 19 Jan 2026 09:04:32 +0800
+Message-ID: <12514141-a489-4995-a8a7-e6d0fc28f841@huawei.com>
+Date: Mon, 19 Jan 2026 09:04:31 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 02/11] doc: correct grammar and typos in argparse
- library guide
-To: Stephen Hemminger <stephen@networkplumber.org>, <dev@dpdk.org>
-CC: Nandini Persad <nandinipersad361@gmail.com>
-References: <20240513155911.31872-1-nandinipersad361@gmail.com>
- <20260114222821.87920-1-stephen@networkplumber.org>
- <20260114222821.87920-3-stephen@networkplumber.org>
+Subject: Re: [RFC PATCH v3] ethdev: support selective Rx data
+To: Gregory Etelson <getelson@nvidia.com>
+CC: <andrew.rybchenko@oktetlabs.ru>, <dev@dpdk.org>, <mkashani@nvidia.com>,
+ <thomas@monjalon.net>, <viacheslavo@nvidia.com>, <matan@nvidia.com>,
+ <stephen@networkplumber.org>
+References: <20260104131301.196350-1-getelson@nvidia.com>
+ <20260106154554.40556-1-getelson@nvidia.com>
 Content-Language: en-US
 From: fengchengwen <fengchengwen@huawei.com>
-In-Reply-To: <20260114222821.87920-3-stephen@networkplumber.org>
+In-Reply-To: <20260106154554.40556-1-getelson@nvidia.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [10.67.121.161]
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
  kwepemk500009.china.huawei.com (7.202.194.94)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -59,17 +59,82 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Acked-by: Chengwen Feng <fengchengwen@huawei.com>
+On 1/6/2026 11:45 PM, Gregory Etelson wrote:
+> In some cases application does not need to receive entire packet
+> from port hardware.
 
-On 1/15/2026 6:26 AM, Stephen Hemminger wrote:
-> Changes:
-> - Add missing articles ("a user-friendly", "a long_name field")
-> - Fix awkward phrasing ("take with" -> "have")
-> - Correct verb forms ("automatic generate" -> "automatic generation of",
->   "are parsing" -> "are parsed", "don't" -> "doesn't")
-> - Fix typo in field name (val_save -> val_saver)
-> - Fix stray backtick in code example
+Which scenarios need to be used? What is the behavior when
+LRO(TCP packet aggregation is performed by hardware) is enabled?
+
+> If application could receive required Rx data only and safely discard
+> the rest of Rx packet data, that could improve port performance by
+> reducing PCI bandwidth and application memory consumption.
 > 
-> Signed-off-by: Nandini Persad <nandinipersad361@gmail.com>
-> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+> Selective Rx data allows application to receive
+> only pre-configured packet segments and discard the rest.
+> For example:
+> - Deliver the first N bytes only.
+> - Deliver the last N bytes only.
+> - Deliver N1 bytes from offset Off1 and N2 bytes from offset Off2.
+> 
+> Selective Rx data is implemented on-top of the existing Rx
+> BUFFER_SPLIT functionality:
+> - The rte_eth_rxseg_split will use the NULL mempool for data segments
+> that should be discarded.
+> - PMD will not create MBUF segments if no data was read.
+> 
+> For example: Deliver Ethernet header only
+> 
+> Rx queue segments configuration:
+> struct rte_eth_rxseg_split split[2] = {
+>     {
+>         .mp = <some mempool>,
+>         .length = sizeof(struct rte_ether_hdr)
+>     },
+>     {
+>         .mp = NULL, /* discard data */
+>         .length = <MTU>
+>     }
+> };
+> 
+> Received MBUF configuration:
+> mbuf[0].pkt_len = <original packet length>;
+> mbuf[0].data_len = sizeof(struct rte_ether_hdr);
+> mbuf[0].next = NULL; /* The next segment did not deliver data */
+> 
+> A PMD activates the selective Rx data capability by setting the
+> rte_eth_rxseg_capa.selective_read bit.
+> 
+> Signed-off-by: Gregory Etelson <getelson@nvidia.com>
+> ---
+> v3: Change the selective_read bit location.
+> ---
+>  lib/ethdev/rte_ethdev.h | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/lib/ethdev/rte_ethdev.h b/lib/ethdev/rte_ethdev.h
+> index a66c2abbdb..84769d3d26 100644
+> --- a/lib/ethdev/rte_ethdev.h
+> +++ b/lib/ethdev/rte_ethdev.h
+> @@ -1121,7 +1121,11 @@ struct rte_eth_txmode {
+>   *   The rest will be put into the last valid pool.
+>   */
+>  struct rte_eth_rxseg_split {
+> -	struct rte_mempool *mp; /**< Memory pool to allocate segment from. */
+> +	/**
+> +	 * Memory pool to allocate segment from.
+> +	 * NULL means skipped segment in selective Rx data. @see selective_read.
+> +	 */
+> +	struct rte_mempool *mp;
+>  	uint16_t length; /**< Segment data length, configures split point. */
+>  	uint16_t offset; /**< Data offset from beginning of mbuf data buffer. */
+>  	/**
+> @@ -1758,6 +1762,7 @@ struct rte_eth_rxseg_capa {
+>  	uint32_t multi_pools:1; /**< Supports receiving to multiple pools.*/
+>  	uint32_t offset_allowed:1; /**< Supports buffer offsets. */
+>  	uint32_t offset_align_log2:4; /**< Required offset alignment. */
+> +	uint32_t selective_read:1; /**< Supports selective read. */
+>  	uint16_t max_nseg; /**< Maximum amount of segments to split. */
+>  	uint16_t reserved; /**< Reserved field. */
+>  };
 
