@@ -2,164 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18862D4A5EB
-	for <dpdk-dev@archiver.kernel.org>; Mon, 19 Jan 2026 05:59:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 671BECA6005
+	for <dpdk-dev@archiver.kernel.org>; Mon, 19 Jan 2026 08:09:29 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EAEA04025D;
-	Mon, 19 Jan 2026 06:59:15 +0100 (CET)
-Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
- [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id 884784025A
- for <dev@dpdk.org>; Mon, 19 Jan 2026 06:59:14 +0100 (CET)
-Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
- 60INEkCv1417386; Sun, 18 Jan 2026 21:59:13 -0800
-Received: from dm5pr21cu001.outbound.protection.outlook.com
- (mail-centralusazon11021128.outbound.protection.outlook.com [52.101.62.128])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 4bryjc949g-1
- (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
- Sun, 18 Jan 2026 21:59:13 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=B2MtfpwlX+qVkUYNEj+wPZ2s8CxwM7qMYaZu9sYZPGcFb0Xz5deqC33eaM0equ4aSs/y4J1OQD3fsQF2oJwZYot2J/GbykNj5kjxXTX6Ku/ZHfYypTMrDyQVUeesdboYBq7pYXYxD4vqRbG8A46/S1coHheEm/jlBGK9XYDEGlLwMHKM0vTOwa8kOjPY7Xr/JKrVINKID1Us+ops2C80l1A1S/VPrAltYPgLBHK3a1VxRLyYq5KSwBPDN+rYgfDZv0Tho9mmEG7NCHgHTaBhRaFFPACl0sB0QuXC77ORIA4Lr8lPUFN2bzlayRIPvX5k9tUhWjNJTkLScT0BmeZucQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GI89EEw0mHazfunhr87MQDqM9h3Kn49Eeq8Slg8zYqc=;
- b=ZRI5tLrVsCnKDR4b8fAu6VBvQ3PRxc4UONLsRIaa+yznCykVf1ipKezziOMZeHZ1Y4b0IZeUbSoQo7D3J4s5WNzma7ISL6hAlCUR/ZOs1/jqWR/q+KTL8w+7a+sDCN4aQ4wwncpKrWNuA697GvYWqkctscNwkWlakcl3PiGqo7Z2UJursWQLe+21q5TKQ7XnsxERKZb/e1DNFekpI+JItKeV6dC665ZyY0OzMQoE9u8EhOK77F59gt+NVuwXccUDcz+FAwjMwDX3WqBNUWt9WGfoxlO4h3MUXdC4RLH5Du0EF/XQMMuqZFWToyOdQIqBc/1sX2jbSmShgK63TmG70w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
- dkim=pass header.d=marvell.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GI89EEw0mHazfunhr87MQDqM9h3Kn49Eeq8Slg8zYqc=;
- b=aFQZi1cNcfS8JA9E658f01fb5sEv8KbK3zre1oJGYT/omU2ejc0ZLwDOnGk2ZIxA6chcFS/SebdF81qii407nRQM9Cxp5qyE6ukbrNODoil4k8bPMKMkdru1WcAVHAgzYPL85N+2WBDtEwtzFN3qlxDR3FBPRDedMoUfvkk+2y8=
-Received: from CO1PR18MB4714.namprd18.prod.outlook.com (2603:10b6:303:e9::18)
- by BY1PR18MB6092.namprd18.prod.outlook.com (2603:10b6:a03:4b9::5)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9542.8; Mon, 19 Jan
- 2026 05:59:10 +0000
-Received: from CO1PR18MB4714.namprd18.prod.outlook.com
- ([fe80::4e2:8a80:85b:4920]) by CO1PR18MB4714.namprd18.prod.outlook.com
- ([fe80::4e2:8a80:85b:4920%6]) with mapi id 15.20.9542.006; Mon, 19 Jan 2026
- 05:59:10 +0000
-From: Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>
-To: Stephen Hemminger <stephen@networkplumber.org>, "dev@dpdk.org"
- <dev@dpdk.org>
-Subject: RE: [EXTERNAL] [PATCH 17/29] doc/guides: improve FIPS validation
- sample app guide
-Thread-Topic: [EXTERNAL] [PATCH 17/29] doc/guides: improve FIPS validation
- sample app guide
-Thread-Index: AQHchaS4e+ZEWI2IEkuu6r3UwsmEpbVZBeVg
-Date: Mon, 19 Jan 2026 05:59:09 +0000
-Message-ID: <CO1PR18MB4714C4B04A486DBDD424C9EFCB88A@CO1PR18MB4714.namprd18.prod.outlook.com>
-References: <20260114222458.87119-1-stephen@networkplumber.org>
- <20260114222458.87119-18-stephen@networkplumber.org>
-In-Reply-To: <20260114222458.87119-18-stephen@networkplumber.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CO1PR18MB4714:EE_|BY1PR18MB6092:EE_
-x-ms-office365-filtering-correlation-id: 4bf2045b-68eb-457b-0ae1-08de571fdd27
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0; ARA:13230040|376014|366016|1800799024|38070700021;
-x-microsoft-antispam-message-info: =?us-ascii?Q?QBIEPXbcdwWKzwUfOZz/KC7Faqs6hVKyqbLlilmADNRdPfjpauLMBD14mx6+?=
- =?us-ascii?Q?U16uJ/pFLBCif7kHWKGa3BgGrOihwg6v97JDFKlczM5Ma+s2LeWDJMBjUhlH?=
- =?us-ascii?Q?05XrgOq4354iiJLlRCK3PoyULiqKlvODI2ulhWYWsXrQ+bE1aN0C6BPY2czL?=
- =?us-ascii?Q?7in0E/BlNBPLB01JJ3YFZIXpZRUG0tSc7XRc0uavOr6ix3ZQ4T/haj8Yj5qA?=
- =?us-ascii?Q?Zuw9osd0Q0FmfIqxa/7pV65BQ1FW1pTybojEv32jSA1M7eyVat+62abLXQT8?=
- =?us-ascii?Q?79i/PwJXNKcPV5Jt4CHZW3mFSL+4e5aBE3/z6viMX0qNXHqPcYykr1pKl0kO?=
- =?us-ascii?Q?Y637FY3pEgXBHkVSO9TuillPqhg+oemgZ5tKo001sfnYp2krPuXlFEURogAW?=
- =?us-ascii?Q?jrPUF6dnGZ+dEiOyhpdTISj9lAPtIt0xZTj4PoX0TDN868w0/uP8RdK2JwWu?=
- =?us-ascii?Q?A3pPc4C/EvtA79EdMp450K5gEGOIlxpLB95j7xrZsu5Wt6zXlU345uYvgC7m?=
- =?us-ascii?Q?WE+Onvtkxpd7jynjQ7ElUSIb6vARSe9vjcMPYzNUVntQlM+bKDtx7JO5jKKg?=
- =?us-ascii?Q?i3/w5DOlQiRgP5a/J5D/dRM5owJsGCN3Rmlv8mAN6i9uNQ3foM9WG2WMuCvW?=
- =?us-ascii?Q?4fuabQ6wMZWk6TMjxt2wBiQBBsO1oUMvfrPH8y2lJHWQTyf+9qb7wIvaqVQd?=
- =?us-ascii?Q?dhjVlaKQ9pPGXwqeT+NYwbfCvUnBZLI4h6Tn/FbdjfN65klkPNmXWo0rukMp?=
- =?us-ascii?Q?6qWX0XJpHlHn+doncTG+LfEJ4A0uBoZuio5opdgK6a0M7VqPWpxocAaFwnqX?=
- =?us-ascii?Q?Mk1wt3jUXvv1V1mx0dkm7djHBXCOhXAtF2fgV69gWrDriXt6FUN4u1Q79ira?=
- =?us-ascii?Q?Ui1RhQB/SLJe41Uezi+acOnyM3iq8kdLQoLHs+6NjEustmpE7rIajWYKfRFk?=
- =?us-ascii?Q?hx0RmqGjS91vGkZYwT0FMPe9jYi6m+1jkdINP/42731uHC6B0HcDyZkdPSg2?=
- =?us-ascii?Q?YDnubE3a/fbkYbqxH0A7mwnVLc2pZahjeRd1cLAwqzo/Ken0Lym8Y4eAT4dK?=
- =?us-ascii?Q?2fhrqxILHaJm9h3irmucrCAlOIrVaxOvRv9ISjKNpgHlEZtgcdg8xF2z3wI8?=
- =?us-ascii?Q?LWQWFvWTDpmqP4Zol1V0axGMMykFL4n/7ATuqhtkCERPpDo28MhhBTTLDMq8?=
- =?us-ascii?Q?Sd/YHbPdKDn3ShaGPTWLFx0HZ80IgZW+RyJoX5003tLDe5qMdtBmuIw+e66r?=
- =?us-ascii?Q?vyl5sT5aAHnFZKjQkeNz/5JFD32S9i64GigvtsZHcz5DezcyMD6UTQAg20t8?=
- =?us-ascii?Q?44ad6lB3aydhk0q7bV5wkqpEqhnkTg2xl5PtdK5tia24OcQZFnjOIGtqrZWE?=
- =?us-ascii?Q?qdkExKOw6sVNIFgXIrwB/s/YfGFq86KsuYmqjqg0vCvxzGYxeicuYk+gU588?=
- =?us-ascii?Q?UYvhuwDc4roHGtOcZNC8XlYzwHDJeHCvcObKnDssqaLvqfe8216e2M87D3Mj?=
- =?us-ascii?Q?lr0ffpCBov4x3nOxdCJXCsI37AKAThXM6KiRIY+KZr9t5fWERjgRs2gcTUFi?=
- =?us-ascii?Q?EdyfTIBgygTx6VVQdngySTKA6YXGVTAA+bjmFdojcjMT9w9vRHGagpOBnaW9?=
- =?us-ascii?Q?8TELGj53D4zmhZFU6GTTKsQ=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:CO1PR18MB4714.namprd18.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(366016)(1800799024)(38070700021); DIR:OUT; SFP:1102; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?EwJgEit9WICXE49NfRvU9cWLg3aU/sMfqC+1ROdyme/BoH2ydTdrNC99tUEx?=
- =?us-ascii?Q?JS8+dFYcVdatu0O7+bilSOHQsmZXzVkgHWAmnj3cOpY5+s2n883pX0uMcXAV?=
- =?us-ascii?Q?cwn3TPWbRktYhQbB/VoMsM08CTr/BYEWMSEKajSr3Y6iVS5Zs8E17gG4tpW0?=
- =?us-ascii?Q?1Ar87Jb/Dj5bdkHvhIAzlYp+ZxAnuwxLe1mmS5zzfoGldhInw6aLa2zj6wpC?=
- =?us-ascii?Q?gGQ6TCLwMBg8hKYRG1Ihcvg7pqOTZn7s6GdhjJzkfCXKqMtETTANXUXTbumK?=
- =?us-ascii?Q?XO3N9wxK4VxcE5Eas0tOo7J9kmhxwJJUTviG4E3a2cNqJ8drBi68QHIT1zrS?=
- =?us-ascii?Q?sWErddBPEsSl76SE5BCwqtpaUDOV0+4xGDMy/9leYaC5iQPK22pGM6pI4akt?=
- =?us-ascii?Q?AlsGeFBmcNZ4fnECPIBVmr+26MAeS0RykT9P3Nm0ZIFnc+TA+KjXhX6U+TUQ?=
- =?us-ascii?Q?eXpS/RsS6kdlAdxkfyXsG0LI3OvMh57RPPGBTGNd9m6btGg9Z8oreZ7G/6PW?=
- =?us-ascii?Q?d+WgOPSmGa2nBtQoFb1ZaCnwdn3Y0Cm7Pkd0Nhabg9wG1fvIF88RzkxtSqa+?=
- =?us-ascii?Q?871HtaGBYFCPKv2Y5H2TMdrEZ/Eqz0LX/3n/10ROJkMgIvmk2sJMSieEgwBP?=
- =?us-ascii?Q?tOZET9n+go9Atqv1BEAn3tiK+DlEh5VrxGAS1BSaORTLmmVAkq7xz6P6sCqQ?=
- =?us-ascii?Q?dllcZu+vcK2zkCOpC7ljZaJavmS1zIqCYErrA3E+JEZ3YTmI2wp1ytUG+XuG?=
- =?us-ascii?Q?4/C27K00alEpvBnGL70QZY199jBo5QxDUSj4XLDLayA0E0B5cYz2saH0uSj8?=
- =?us-ascii?Q?FPUOlkE47IWWka+y8vR11LY6CkopHQnO2jjt746LT/DBc+5Mwd2yF/XqkQdW?=
- =?us-ascii?Q?L540myd0L0qeRKs16vOkQUe++lOCJiE3iuutl2L6tCt+9jlUItXf2myRVg1M?=
- =?us-ascii?Q?suWNZysWqvIEaQ8PPVP5AvFoE4V6tqxLUH4LLiQpVZggEZxbualab/Mk1f8T?=
- =?us-ascii?Q?fWbeBKBhHxqjui5RHWazRbKB7S1zXOd2hb9i8lMRd/kt+rK/Yrk0AjBGm1VT?=
- =?us-ascii?Q?5gVKWgY7xE4BOWRtfPjo0KvxBcxiQZncX3+rL3rxmOJznMfgy6/Nb7xNeH05?=
- =?us-ascii?Q?aKvOKdNmFRIl6d5jcRubo5LWg6K5QNuXEYGtP5YFTom8HdEC5QkkoMvqmHXj?=
- =?us-ascii?Q?FFGCR8JY3f0ZxvRdpbPkTSXwpdL8RPkYpSgoiWJ0nby3gFnjglvMxqOPwgQN?=
- =?us-ascii?Q?5YbU+XBxXGIj6zZ37l0R+wvFk4FO+A3R32Vhf9iYRiyUGJx/tvqTFXiZ+3yq?=
- =?us-ascii?Q?ml2uoeNQVvhjQcX8uTrqlq84EjqXCXZJB3zIS8wd3RhJYS9ce2MhCAHjSrf6?=
- =?us-ascii?Q?sYJLIq/uRTLbMTbyUG2Ic5zGNpkV4Uw1KCqTBlHtU5WapibkscUKyh1hNTLc?=
- =?us-ascii?Q?CZe40I6qKR5O3HSvxGsi0dIiazOA4WWmQ4vmZ0rBIqG5rmkhOBI02V9rIdgx?=
- =?us-ascii?Q?0uzdXerQzsxc4DCG3AZzyYMTKvViy4gTZODeeHH4xMw3MraiR4TIhIMF+lvD?=
- =?us-ascii?Q?+0ey5HgnAPi6RG6fv+kLefM1R4YGg6sCD17tgyxyyiL9kYo0GNlRER5TtHTV?=
- =?us-ascii?Q?un/s648q8y7U7XONysBSXQZT0A+w5552r8CQE7jahWULOuMApeVHc7SDHf6J?=
- =?us-ascii?Q?4azbsdmurhluWx/rSGehqevzmBTxTX10RJgXzjwx16ayg0BGPttIUmxPxkA9?=
- =?us-ascii?Q?o6IINepPWQ=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by mails.dpdk.org (Postfix) with ESMTP id 28A8C4025D;
+	Mon, 19 Jan 2026 09:09:28 +0100 (CET)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 2AF404025A
+ for <dev@dpdk.org>; Mon, 19 Jan 2026 09:09:27 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1768810166;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=nX+LECvoBlFclMki4Lh53CcLR9Cq2FxwYe7H6MP/OyE=;
+ b=WtGCaBnT3JKlYimGdAPSyQF+4HGfAhBH72B9GxkZsCkKbT0mC3U9Dp9gPiDO9jrXVeZ/Sk
+ aQFwOAB2SEsaMaMtdT1FVeJZXAEaUjk4mpOIARPu24XTEGMt5Z74tRfIbNmBoFC+W1m4KW
+ 9+5RPRzQaXhcmiutc7ET7bHiu2h4w1k=
+Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
+ [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-654-jZ-pwBk3O3i3iuQ4iURrBA-1; Mon, 19 Jan 2026 03:09:24 -0500
+X-MC-Unique: jZ-pwBk3O3i3iuQ4iURrBA-1
+X-Mimecast-MFC-AGG-ID: jZ-pwBk3O3i3iuQ4iURrBA_1768810163
+Received: by mail-lf1-f71.google.com with SMTP id
+ 2adb3069b0e04-59b686eafcfso2739032e87.2
+ for <dev@dpdk.org>; Mon, 19 Jan 2026 00:09:24 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1768810163; x=1769414963;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=nX+LECvoBlFclMki4Lh53CcLR9Cq2FxwYe7H6MP/OyE=;
+ b=jscqwzhkSYnqRN8/mNznUI3573e7rd5jzjCKzfie5AaDlFVBI53nVu6y4UNi6S+vof
+ JRMvNMoBFVt0ejdTe7VIw9cDnimduPua/hEg89CRIzbRt2QC8gix3Ge1XajXO8dBtdRm
+ Sz0Hr3z+7FhsZphh/DMg8O4HEB4HndonI1hUCFMOsPb3rFY2kVw3kRmaVSGTI5Vrqi3f
+ 3oec5EYTYbRH3jVd/ls87yP7YN4753bMTKTJ+P52ckp3RVeK0Hf4rp3tlZCAH7UQ3CKD
+ NPpjxMaDi/CfUbTOUNs4s+kRHtSIo2AAPXNw0IgPEhms9Hb9aRoMC9Id1gQI+9FTPk7B
+ VgMw==
+X-Gm-Message-State: AOJu0Ywg8zJPNzgcPPuXAevmlLP23/yiUU1ISRT+9tGAUhBfLixzOiZE
+ mSWZOFFuVzV6TQb027hFc3RZL5P73FeRY1G/TFAsXEfOVBcgBiJZAlJMdwr2LyV24F91iHy0ODZ
+ ItcVZMLDrBwxOUHJfkX1oNaU/L6olwxxGrlIBVjcYWPt1KUx4y+WINESFBdtZJvQohMPrs34QNP
+ lomt4nCehkQ8sY+DNHGhA=
+X-Gm-Gg: AY/fxX5byy3Oa5gyOqmqlAt35f7vJnzMyOdbVO6ZXELxEJ/emeLnM62w+QHlaxWPP9W
+ upEOHWtTChUB0lR+oAxt24dhpvpTxmzNrCTpvp5cFFq9NNXF5ATZOhMH9854H0UjbMcK9QXXBEo
+ GQM3cs/D6jqI6WvCSP19wstXLvyBE2E2Qdpn7GjHGHhC1Z5ybvTgT4gNqx+5LhpB/PZrXY
+X-Received: by 2002:a05:6512:124e:b0:59b:78ad:fb9e with SMTP id
+ 2adb3069b0e04-59bafdb6400mr3476343e87.10.1768810162625; 
+ Mon, 19 Jan 2026 00:09:22 -0800 (PST)
+X-Received: by 2002:a05:6512:124e:b0:59b:78ad:fb9e with SMTP id
+ 2adb3069b0e04-59bafdb6400mr3476339e87.10.1768810162081; Mon, 19 Jan 2026
+ 00:09:22 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: marvell.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CO1PR18MB4714.namprd18.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4bf2045b-68eb-457b-0ae1-08de571fdd27
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Jan 2026 05:59:09.8918 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Ecc6uh6tbj1HWiNyV30doBQqHa+9M0+CQEGHlmnaqNDzRj6q2Y23gtA4YJwHYU3NM50erCNFw0yL/Cot5E/l8Mv5MHOwzT3bTYADiztuDXA=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY1PR18MB6092
-X-Proofpoint-GUID: pEGJl-ws4LqYvfVa5MxYrWRCZC5UF6t5
-X-Proofpoint-ORIG-GUID: pEGJl-ws4LqYvfVa5MxYrWRCZC5UF6t5
-X-Authority-Analysis: v=2.4 cv=RuDI7SmK c=1 sm=1 tr=0 ts=696dc831 cx=c_pps
- a=ONq/xaQmkJr++vtO36SE+g==:117 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=vUbySO9Y5rIA:10 a=-AAbraWEqlQA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=jZVsG21pAAAA:8 a=M5GUcnROAAAA:8 a=QPE-niTOZ6c2HdfDz9IA:9 a=CjuIK1q_8ugA:10
- a=3Sh2lD0sZASs_lUdrUhf:22 a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTE5MDA0NSBTYWx0ZWRfX5AEjTD9DO5bA
- g6MHhLPLcq3OFjIJNaZvbqvnzRGfRl8Y04zY8/oqHZkJa+gzmQvyxospoPJumzlWvu73FLccml2
- cYTUYWsiXTa4T9o+1uwcYb6T/6ZW0FRjdWXJDoTvFRuQxECJMcPsY755eNVO6k+SwDu4zMOY5Z0
- vekGy8H8ET0E+1TRI3imKPUZiDVCRz0d5xg0hVQZtc8TniOjPBu8qPMLEpdYd/6H4+S1UNIyDSX
- SOcYQxx/V0oDjFsZcnFKPMTawELwO4JUQ5yKZVfG3kieW7PQULXUjEOEXdlxUzK4REYDOUqtlDV
- L2Ze0rsd7r1+jOPim3mQ6odPKEqpZU2MCuOeSLNRcPiEytjcbtgMwWzq3Ap9Wx3r/pwbBzvJ1gw
- EdufNIcOaQf6YNJ7ZKwY0URphmULcYOqg+/a96RlJJt58ZUFG1tSqoa+X2Rc4CMVLqRCgQtCVTh
- IdpQiLIMSo4Q25eulpQ==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2026-01-19_01,2026-01-18_02,2025-10-01_01
+References: <20251202154948.1757169-1-bruce.richardson@intel.com>
+ <20251211171709.714229-1-bruce.richardson@intel.com>
+ <CAJFAV8xQL=w1rA30jfgp1oAxancAA5jESFO8GRmko6am7Te6DQ@mail.gmail.com>
+In-Reply-To: <CAJFAV8xQL=w1rA30jfgp1oAxancAA5jESFO8GRmko6am7Te6DQ@mail.gmail.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Mon, 19 Jan 2026 09:09:10 +0100
+X-Gm-Features: AZwV_QjUiQWRGOqR9yDxNRi4VV8FVrsh-gDB1ofSatPrXXzxR7m1K6-XsYFToBQ
+Message-ID: <CAJFAV8y8rObNjwotr0FDCD50pZZfXvekA0m-fZeXMxGJKcLweg@mail.gmail.com>
+Subject: Re: [PATCH v4 00/11] Assign all unit tests to suites
+To: Bruce Richardson <bruce.richardson@intel.com>
+Cc: dev@dpdk.org, Marat Khalili <marat.khalili@huawei.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: eifpGqUDWo2LH5f02WjKA6m85mUcOSjQ3Z4zFxHltaw_1768810163
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -173,12 +83,185 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> Improve the FIPS validation sample application documentation:
-> - restructure CAVP and ACVP as subsections under Limitations
-> - fix indentation of code blocks and bullet lists
-> - improve grammar and clarify explanations
-> - use consistent formatting for options
->=20
-> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+Hello Bruce,
 
-Acked-by: Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>
+On Fri, 16 Jan 2026 at 14:24, David Marchand <david.marchand@redhat.com> wrote:
+>
+> On Thu, 11 Dec 2025 at 18:17, Bruce Richardson
+> <bruce.richardson@intel.com> wrote:
+> >
+> > Categorize all unit tests into one of the test suites: generally driver
+> > tests or fast-tests. In order to add some of the tests to fast tests,
+> > some additional work was required, hence the additional patches in this
+> > set. Also, make the parameters for asan and hugepages clearer in each
+> > test's definition.
+> >
+> > V4:
+> > - export new internal functions using proper EXPORT_INTERNAL macros (patch 5)
+> >
+> > V3:
+> >  - correct comment in patch 1
+> >  - define "attic" suite for unstable tests and add red_autotest to it.
+> >
+> > V2:
+> > - rename the parameters for fast-test
+> > - fix issues with the tests to be added to fast-tests:
+> >   * allow loading drivers from secondary processes
+> >   * fix undefined behaviour flagged by asan in red test
+> >   * skip unrunnable power tests, rather than failing
+> > - add tests to driver-test suite also
+> > - add patch fixing output in case we have no unattached tests
+> >
+> >
+> > Bruce Richardson (11):
+> >   app/test: make parameters clearer when adding fast tests
+> >   app/test: fix undefined behaviour in red autotest
+> >   app/test: reduce duration of secondary timer test
+> >   app/test: fix timer loop hang on secondary process failure
+> >   eal: add internal APIs to query loaded driver paths
+> >   app/test: pass loaded driver info to secondary procs
+> >   app/test: skip power capabilities test if unsupported
+> >   app/test: add some unattached tests to fast-test suite
+> >   app/test: add tests to driver test suite
+> >   buildtools/get-test-suites: suppress empty output
+> >   app/test: move red autotest to attic
+> >
+> >  app/test/process.h                     | 28 ++++++++++++-
+> >  app/test/suites/meson.build            | 14 ++++++-
+> >  app/test/test.h                        | 13 ++++++-
+> >  app/test/test_acl.c                    |  2 +-
+> >  app/test/test_alarm.c                  |  2 +-
+> >  app/test/test_argparse.c               |  2 +-
+> >  app/test/test_atomic.c                 |  2 +-
+> >  app/test/test_bitcount.c               |  2 +-
+> >  app/test/test_bitmap.c                 |  2 +-
+> >  app/test/test_bitops.c                 |  2 +-
+> >  app/test/test_bitratestats.c           |  2 +-
+> >  app/test/test_bitset.c                 |  2 +-
+> >  app/test/test_bpf.c                    |  6 +--
+> >  app/test/test_byteorder.c              |  2 +-
+> >  app/test/test_cfgfile.c                |  2 +-
+> >  app/test/test_cksum.c                  |  2 +-
+> >  app/test/test_cmdline.c                |  2 +-
+> >  app/test/test_common.c                 |  2 +-
+> >  app/test/test_compressdev.c            |  2 +-
+> >  app/test/test_cpuflags.c               |  2 +-
+> >  app/test/test_crc.c                    |  2 +-
+> >  app/test/test_cryptodev_crosscheck.c   |  2 +-
+> >  app/test/test_cycles.c                 |  2 +-
+> >  app/test/test_debug.c                  |  2 +-
+> >  app/test/test_devargs.c                |  2 +-
+> >  app/test/test_dispatcher.c             |  2 +-
+> >  app/test/test_distributor.c            |  2 +-
+> >  app/test/test_eal_flags.c              | 24 ++++++------
+> >  app/test/test_eal_fs.c                 |  2 +-
+> >  app/test/test_errno.c                  |  2 +-
+> >  app/test/test_ethdev_api.c             |  2 +-
+> >  app/test/test_ethdev_link.c            |  2 +-
+> >  app/test/test_event_crypto_adapter.c   |  2 +-
+> >  app/test/test_event_eth_rx_adapter.c   |  4 +-
+> >  app/test/test_event_eth_tx_adapter.c   |  2 +-
+> >  app/test/test_event_ring.c             |  2 +-
+> >  app/test/test_event_timer_adapter.c    |  2 +-
+> >  app/test/test_event_vector_adapter.c   |  2 +-
+> >  app/test/test_eventdev.c               |  4 +-
+> >  app/test/test_external_mem.c           |  2 +-
+> >  app/test/test_fbarray.c                |  2 +-
+> >  app/test/test_fib.c                    |  2 +-
+> >  app/test/test_fib6.c                   |  2 +-
+> >  app/test/test_func_reentrancy.c        |  2 +-
+> >  app/test/test_graph.c                  |  4 +-
+> >  app/test/test_graph_feature_arc.c      |  2 +-
+> >  app/test/test_hash.c                   |  2 +-
+> >  app/test/test_hash_readwrite.c         |  2 +-
+> >  app/test/test_interrupts.c             |  2 +-
+> >  app/test/test_ipfrag.c                 |  2 +-
+> >  app/test/test_ipsec.c                  |  2 +-
+> >  app/test/test_ipsec_sad.c              |  2 +-
+> >  app/test/test_kvargs.c                 |  2 +-
+> >  app/test/test_latencystats.c           |  2 +-
+> >  app/test/test_lcore_var.c              |  2 +-
+> >  app/test/test_lcores.c                 |  2 +-
+> >  app/test/test_logs.c                   |  2 +-
+> >  app/test/test_lpm.c                    |  2 +-
+> >  app/test/test_lpm6.c                   |  2 +-
+> >  app/test/test_malloc.c                 |  2 +-
+> >  app/test/test_mbuf.c                   |  2 +-
+> >  app/test/test_mcslock.c                |  2 +-
+> >  app/test/test_member.c                 |  2 +-
+> >  app/test/test_memcpy.c                 |  2 +-
+> >  app/test/test_memory.c                 |  2 +-
+> >  app/test/test_mempool.c                |  2 +-
+> >  app/test/test_memzone.c                |  2 +-
+> >  app/test/test_meter.c                  |  2 +-
+> >  app/test/test_metrics.c                |  2 +-
+> >  app/test/test_mp_secondary.c           |  2 +-
+> >  app/test/test_net_ether.c              |  2 +-
+> >  app/test/test_net_ip6.c                |  2 +-
+> >  app/test/test_pcapng.c                 |  2 +-
+> >  app/test/test_pdcp.c                   |  2 +-
+> >  app/test/test_pdump.c                  |  2 +-
+> >  app/test/test_per_lcore.c              |  2 +-
+> >  app/test/test_pflock.c                 |  2 +-
+> >  app/test/test_pie.c                    |  2 +-
+> >  app/test/test_pmd_ring.c               |  2 +-
+> >  app/test/test_pmu.c                    |  2 +-
+> >  app/test/test_power.c                  |  2 +-
+> >  app/test/test_power_cpufreq.c          |  6 +--
+> >  app/test/test_power_intel_uncore.c     |  2 +-
+> >  app/test/test_power_kvm_vm.c           |  2 +-
+> >  app/test/test_prefetch.c               |  2 +-
+> >  app/test/test_ptr_compress.c           |  2 +-
+> >  app/test/test_rawdev.c                 |  2 +-
+> >  app/test/test_rcu_qsbr.c               |  2 +-
+> >  app/test/test_red.c                    |  2 +-
+> >  app/test/test_reorder.c                |  2 +-
+> >  app/test/test_rib.c                    |  2 +-
+> >  app/test/test_rib6.c                   |  2 +-
+> >  app/test/test_ring.c                   |  2 +-
+> >  app/test/test_rwlock.c                 |  8 ++--
+> >  app/test/test_sched.c                  |  2 +-
+> >  app/test/test_security.c               |  2 +-
+> >  app/test/test_security_inline_macsec.c |  2 +-
+> >  app/test/test_security_inline_proto.c  |  6 +--
+> >  app/test/test_seqlock.c                |  2 +-
+> >  app/test/test_service_cores.c          |  2 +-
+> >  app/test/test_soring.c                 |  2 +-
+> >  app/test/test_spinlock.c               |  2 +-
+> >  app/test/test_stack.c                  |  4 +-
+> >  app/test/test_string_fns.c             |  2 +-
+> >  app/test/test_table.c                  |  2 +-
+> >  app/test/test_tailq.c                  |  2 +-
+> >  app/test/test_telemetry_data.c         |  2 +-
+> >  app/test/test_telemetry_json.c         |  2 +-
+> >  app/test/test_thash.c                  |  2 +-
+> >  app/test/test_threads.c                |  2 +-
+> >  app/test/test_ticketlock.c             |  2 +-
+> >  app/test/test_timer.c                  |  2 +-
+> >  app/test/test_timer_secondary.c        | 13 ++++---
+> >  app/test/test_trace.c                  |  2 +-
+> >  app/test/test_vdev.c                   |  2 +-
+> >  app/test/test_version.c                |  2 +-
+> >  buildtools/get-test-suites.py          |  5 ++-
+> >  doc/guides/contributing/unit_test.rst  | 10 +++--
+> >  lib/eal/common/eal_common_options.c    | 54 ++++++++++++++++++++++++--
+> >  lib/eal/include/rte_eal.h              | 54 ++++++++++++++++++++++++++
+> >  lib/sched/rte_red.h                    |  9 ++++-
+> >  121 files changed, 315 insertions(+), 157 deletions(-)
+>
+> Series applied, thanks.
+
+I can see a few failures, namely, for the daily tests on the main
+branch in GHA, and it seems reproducible.
+
+Attempt 1:
+https://github.com/DPDK/dpdk/actions/runs/21121155333/job/60734135604
+Attempt 2:
+https://github.com/DPDK/dpdk/actions/runs/21121155333/job/60756716459
+
+Could you have a look please?
+
+
+-- 
+David Marchand
+
