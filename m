@@ -2,75 +2,42 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31FA4D2ECF7
-	for <dpdk-dev@archiver.kernel.org>; Tue, 20 Jan 2026 08:32:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06FD4D2ED0F
+	for <dpdk-dev@archiver.kernel.org>; Tue, 20 Jan 2026 08:49:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6B35540BA6;
-	Tue, 20 Jan 2026 09:32:08 +0100 (CET)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 645C140273
- for <dev@dpdk.org>; Tue, 20 Jan 2026 09:32:07 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1768897926;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=2jBFokm/wTFMgnMWhaEooyUHi1RIes71QtZz1l76CA8=;
- b=Ingk+S2Wk2i8iiCt7cKV898TqHNSvj6FIUmTsGugc4hDVKLRpI4xwDgk2ZsnpLZO8xQwKr
- U/KogjeLSq8+DPmEFqetn3ZchF7SEmi27kgpa0xcDNPYIPHu/bZhsKSEoz9/XllRNg4fvK
- WpMEB583qE2rSghbp69GXyiikZA2wTQ=
-Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
- [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-541-uCPOQ6g6Oz24Feubib3WtQ-1; Tue, 20 Jan 2026 03:32:04 -0500
-X-MC-Unique: uCPOQ6g6Oz24Feubib3WtQ-1
-X-Mimecast-MFC-AGG-ID: uCPOQ6g6Oz24Feubib3WtQ_1768897923
-Received: by mail-lf1-f70.google.com with SMTP id
- 2adb3069b0e04-59b70088327so4479306e87.1
- for <dev@dpdk.org>; Tue, 20 Jan 2026 00:32:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768897923; x=1769502723;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=2jBFokm/wTFMgnMWhaEooyUHi1RIes71QtZz1l76CA8=;
- b=eIY6oelEy73V8e8NWra0V5EbfO1XchVTX6xD46nQYJVGVnQq3cXeip2lTHMNYhDXjZ
- FN3sQYvB3q+ejEODY/AaGcex2yjW9PWLh0UisKWTvQN4Y19PoKyQDnAKm3+ZAmsMb/k9
- T7Zyk+EaUcNCT4J7WrMSl0F8XjMC+fe1AQLRYTcGvJeHFyhObKCU/QdWi9HJaloX0U9j
- t50425FgJSW6U9koZkzvJzGhNk0LgOqLzVCukmABa/6N+5WEj6VbcoYyOZpaqPpng3CY
- kvMmyNeXfuNgh2og5BgiSCnD3cDwUg5+NKOudsWWbbekXzd/kUGrJcY/L/0B/j21DlSn
- 0j4Q==
-X-Gm-Message-State: AOJu0YwBh+jMin+PjKX3AVaNcsB+NjErdBirmmlIOeNQvIJa9AUVZ7jJ
- UrtDn4Ad/yCSF60VlZUiQoZ+NWZZEGAGX8gY77/8Dl5tSWclCTbign/wqbaSKVnsHBK+jDEuHq4
- 7aiRqA5A+xUJ2b6yadC7KCg1j54SU5SzlC+P1M023Y1TE/Hq2XmMtjA8d/jDFmu+iBcyv9qa7+X
- 5y0nwgK1MzNLos0pkOpBA=
-X-Gm-Gg: AZuq6aLfmkuafiP+yNoPm0uzXW30k0WfpI/Ij3LraQzYCPDtErXPTvcr6tlyB4Gl/25
- s2J9E9EQ9W7TuHATi07SOpif/Lw+i0qbY7xeKNTFRRJCdxlPg4NlczJNTRKB9CZUqzBsa+BB7pp
- 0FtnCBKzV9zfWbyoovAFGg77ormwr3I57uIi8MjqdZTwP4k4loEBNf9P3TdghSwxiHw63x
-X-Received: by 2002:a05:6512:2390:b0:594:5545:b743 with SMTP id
- 2adb3069b0e04-59baeef7b2bmr5056707e87.27.1768897922804; 
- Tue, 20 Jan 2026 00:32:02 -0800 (PST)
-X-Received: by 2002:a05:6512:2390:b0:594:5545:b743 with SMTP id
- 2adb3069b0e04-59baeef7b2bmr5056691e87.27.1768897922356; Tue, 20 Jan 2026
- 00:32:02 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 1FAA540156;
+	Tue, 20 Jan 2026 09:49:49 +0100 (CET)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 6D17D4013F
+ for <dev@dpdk.org>; Tue, 20 Jan 2026 09:49:48 +0100 (CET)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 863B620D99;
+ Tue, 20 Jan 2026 09:49:47 +0100 (CET)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-References: <20251205121301.3443561-1-bruce.richardson@intel.com>
- <aTLP4TBHLtqm0kpR@bricha3-mobl1.ger.corp.intel.com>
-In-Reply-To: <aTLP4TBHLtqm0kpR@bricha3-mobl1.ger.corp.intel.com>
-From: David Marchand <david.marchand@redhat.com>
-Date: Tue, 20 Jan 2026 09:31:49 +0100
-X-Gm-Features: AZwV_Qj1i4BbhKcoGMa4qS5Mdwi-LLy1X_iJ6TWVEzf5p3ynhdPUhs3FzKLZqS4
-Message-ID: <CAJFAV8yEy9Oz3u0ZqyA4RHQPUjmvEFSLH1cAnfMZccehd0+Z5w@mail.gmail.com>
-Subject: Re: [PATCH] build: bump meson version to remove warnings
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: dev@dpdk.org, ci@dpdk.org, Thomas Monjalon <thomas@monjalon.net>, 
- Aaron Conole <aconole@redhat.com>, Luca Boccassi <luca.boccassi@gmail.com>, 
- Timothy Redaelli <tredaelli@redhat.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: VQmMdkdGWA2Rt_eH5cC-U5eHDtPZg7gUmSCvEfIOKr4_1768897923
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+Subject: RE: [PATCH v3 1/6] test/soring: fix buffer overflow warnings with LTO
+Date: Tue, 20 Jan 2026 09:49:44 +0100
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65674@smartserver.smartshare.dk>
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+In-Reply-To: <20260119144821.70e2ff35@phoenix.local>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH v3 1/6] test/soring: fix buffer overflow warnings with LTO
+Thread-Index: AdyJlbuf+a/t2PARS3WWf/b38rYWkAAUOzpA
+References: <20251023194237.197681-1-stephen@networkplumber.org>
+ <20260116064646.224254-1-stephen@networkplumber.org>
+ <20260116064646.224254-2-stephen@networkplumber.org>
+ <98CBD80474FA8B44BF855DF32C47DC35F65669@smartserver.smartshare.dk>
+ <20260119144821.70e2ff35@phoenix.local>
+From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
+To: "Stephen Hemminger" <stephen@networkplumber.org>
+Cc: <dev@dpdk.org>, "Honnappa Nagarahalli" <honnappa.nagarahalli@arm.com>,
+ "Konstantin Ananyev" <konstantin.ananyev@huawei.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,42 +51,58 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hello,
-
-On Fri, 5 Dec 2025 at 13:28, Bruce Richardson
-<bruce.richardson@intel.com> wrote:
->
-> On Fri, Dec 05, 2025 at 12:13:01PM +0000, Bruce Richardson wrote:
-> > The build of DPDK now uses features from version 0.6 of meson, which is
-> > greater than the current minimum of 0.57.2. Although these features are
-> > non-critical, they do cause warnings to be emitted on build. Increase
-> > minimum meson version to 0.61 (== version in Ubuntu 22.04 LTS) to remove
-> > these warnings.
-> >
-> > Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
-> > ---
-> >  meson.build | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> With this patch, and the previously submitted patchset for assigning test
-> cases to the various categories/suites, all warnings in the meson
-> configuration stage should now be gone.
->
-> In terms of the specific version, as noted above I chose the version of
-> meson present in Ubuntu 22.04 as a reasonable baseline. Both debian stable,
-> and debian old-stable have newer versions than that in them. For the RHEL
-> line, I'm not sure what the baseline is, but I believe that RHEL 8 shipped
-> originally with a meson version even older than 0.57, so moving to a later
-> one I hope doesn't matter. [I wasn't easily able to find out from Google
-> what the current meson version in RHEL 8/9/10 is]
-
-Cc: Timothy for .rpm distributions, Luca for .deb.
-
-I prefer we get some acks from distributions people.
-Also, this patch requires coordination with the CI guys (as can be
-seen in patchwork, many envs are using old versions of meson).
-
-
--- 
-David Marchand
-
+PiBGcm9tOiBTdGVwaGVuIEhlbW1pbmdlciBbbWFpbHRvOnN0ZXBoZW5AbmV0d29ya3BsdW1iZXIu
+b3JnXQ0KPiBTZW50OiBNb25kYXksIDE5IEphbnVhcnkgMjAyNiAyMy40OA0KPiANCj4gT24gRnJp
+LCAxNiBKYW4gMjAyNiAxMDozMjo1MiArMDEwMA0KPiBNb3J0ZW4gQnLDuHJ1cCA8bWJAc21hcnRz
+aGFyZXN5c3RlbXMuY29tPiB3cm90ZToNCj4gDQo+ID4gPiBGcm9tOiBTdGVwaGVuIEhlbW1pbmdl
+ciBbbWFpbHRvOnN0ZXBoZW5AbmV0d29ya3BsdW1iZXIub3JnXQ0KPiA+ID4gU2VudDogRnJpZGF5
+LCAxNiBKYW51YXJ5IDIwMjYgMDcuNDYNCj4gPiA+DQo+ID4gPiBXaGVuIGJ1aWxkaW5nIHdpdGgg
+TFRPIChMaW5rIFRpbWUgT3B0aW1pemF0aW9uKSwgR0NDIHBlcmZvcm1zDQo+ID4gPiBhZ2dyZXNz
+aXZlIGNyb3NzLWNvbXBpbGF0aW9uLXVuaXQgaW5saW5pbmcuIFRoaXMgY2F1c2VzIHRoZQ0KPiBj
+b21waWxlcg0KPiA+ID4gdG8gYW5hbHl6ZSBhbGwgY29kZSBwYXRocyBpbiBfX3J0ZV9yaW5nX2Rv
+X2RlcXVldWVfZWxlbXMoKSwNCj4gaW5jbHVkaW5nDQo+ID4gPiB0aGUgMTYtYnl0ZSBlbGVtZW50
+IHBhdGggKF9fcnRlX3JpbmdfZGVxdWV1ZV9lbGVtc18xMjgpLCBldmVuIHdoZW4NCj4gPiA+IHRo
+ZSBydW50aW1lIGVsZW1lbnQgc2l6ZSBpcyBvbmx5IDQgYnl0ZXMuDQo+ID4gPg0KPiA+ID4gVGhl
+IHN0YXRpYyBhbmFseXplciBzZWVzIHRoYXQgdGhlIDE2LWJ5dGUgcGF0aCB3b3VsZCBjb3B5DQo+
+ID4gPiAzMiBlbGVtZW50cyAqIDE2IGJ5dGVzID0gNTEyIGJ5dGVzIGludG8gYSAxMjgtYnl0ZSBi
+dWZmZXINCj4gPiA+ICh1aW50MzJfdFszMl0pLA0KPiA+ID4gdHJpZ2dlcmluZyAtV3N0cmluZ29w
+LW92ZXJmbG93IHdhcm5pbmdzLg0KDQpUaGUgZWxlbWVudCBzaXplIGlzIG5vdCBhbiBpbmxpbmUg
+ZnVuY3Rpb24gcGFyYW1ldGVyLCBidXQgZmV0Y2hlZCBmcm9tIHRoZSAiZXNpemUiIGZpZWxkIGlu
+IHRoZSBydGVfc29yaW5nIHN0cnVjdHVyZSwgc28gdGhlIGNvbXBpbGVyIGNhbm5vdCBzZWUgdGhh
+dCB0aGUgZWxlbWVudCBzaXplIGlzIDQgYnl0ZXMuIEFuZCB0aHVzIGl0IG5lZWRzIHRvIGNvbnNp
+ZGVyIGFsbCBwb3NzaWJsZSBlbGVtZW50IHNpemVzLg0KDQo+ID4gPg0KPiA+ID4gVGhlIGV4aXN0
+aW5nICNwcmFnbWEgR0NDIGRpYWdub3N0aWMgc3VwcHJlc3Npb24gaW4NCj4gcnRlX3JpbmdfZWxl
+bV9wdnQuaA0KPiA+ID4gZG9lc24ndCBoZWxwIGJlY2F1c2Ugd2l0aCBMVE8gdGhlIHdhcm5pbmcg
+Y29udGV4dCBzaGlmdHMgdG8gdGhlDQo+IHRlc3QNCj4gPiA+IGZpbGUgd2hlcmUgdGhlIGlubGlu
+ZWQgY29kZSBpcyBpbnN0YW50aWF0ZWQuDQo+ID4gPg0KPiA+ID4gRml4IGJ5IHNpemluZyBhbGwg
+YnVmZmVycyBwYXNzZWQgdG8gc29yaW5nIGFjcXVpcmUvZGVxdWV1ZQ0KPiBmdW5jdGlvbnMNCj4g
+PiA+IGZvciB0aGUgd29yc3QtY2FzZSBlbGVtZW50IHNpemUgKDE2IGJ5dGVzID0gNCAqIHNpemVv
+Zih1aW50MzJfdCkpLg0KPiA+ID4gVGhpcyBzYXRpc2ZpZXMgdGhlIHN0YXRpYyBhbmFseXplciB3
+aXRob3V0IGNoYW5naW5nIHJ1bnRpbWUNCj4gYmVoYXZpb3IuDQo+ID4NCj4gPiBVc2luZyB3aWxk
+bHkgb3ZlcnNpemVkIGJ1ZmZlcnMgZG9lc24ndCBzZWVtIGxpa2UgYSByZWNvbW1lbmRhYmxlDQo+
+IHNvbHV0aW9uLg0KPiA+IElmIHRoZSByaW5nIGxpYnJhcnkgaXMgZXZlciB1cGRhdGVkIHRvIHN1
+cHBvcnQgY2FjaGUgc2l6ZSBlbGVtZW50cw0KPiAoNjQgYnl0ZSksIHRoZSBidWZmZXJzIHdvdWxk
+IGhhdmUgdG8gYmUgb3ZlcnNpemUgYnkgZmFjdG9yIDE2Lg0KPiANCj4gVGhlIGFuYWx5c2lzIChm
+cm9tIEFJKSBpcyB0aGF0IGNvbXBpbGVyIGlzIGdldHRpbmcgY29uZnVzZWQuDQoNClRoYXQgd291
+bGQgYmUgbXkgYW5hbHlzaXMgdG9vLg0KDQo+IFNpbmNlIHRoZXJlIGlzIG5vIGdvb2QNCj4gd2F5
+IG90aGVyIHRoYW4gdHVybmluZyBvZiBMVE8gZm9yIHRoZSB0ZXN0IHRvIHRlbGwgdGhlIGNvbXBp
+bGVyDQoNClRoZXJlIGlzIGFub3RoZXIgd2F5IHRvIHRlbGwgdGhlIGNvbXBpbGVyOiBfX3J0ZV9h
+c3N1bWUoKQ0KDQo+IA0KPiA+DQo+ID4gTWF5YmUgYWRkaW5nIF9fcnRlX2Fzc3VtZShzb3ItPmVz
+aXplID09IHNpemVvZih1aW50MzJfdCkpOw0KPiBpbW1lZGlhdGVseSBiZWZvcmUgY2FsbGluZyBl
+YWNoIG9mIHRoZSBhZmZlY3RlZCBzb3JpbmcgZnVuY3Rpb25zIHdvdWxkDQo+IGZpeCB0aGUgcHJv
+YmxlbSBpbnN0ZWFkPw0KDQpUaGUgc29yaW5nIGZ1bmN0aW9ucyBhcmUgaW5saW5lLCBzbyBhZGRp
+bmcgX19ydGVfYXNzdW1lKHNvci0+ZXNpemUgPT0gc2l6ZW9mKHVpbnQzMl90KSkgYmVmb3JlIGNh
+bGxpbmcgdGhlbSB0ZWxscyB0aGUgY29tcGlsZXIgdGhhdCBvbmx5IHRoZSBjb2RlIHBhdGggZm9y
+IDQgYnl0ZSBlbGVtZW50IHNpemUgaXMgcmVsZXZhbnQsIHNvIHRoZSBjb21waWxlciBjYW4gZWxp
+bWluYXRlIHRoZSBjb2RlIHBhdGhzIGZvciBvdGhlciBlbGVtZW50IHNpemVzLg0KDQpVc2luZyBf
+X3J0ZV9hc3N1bWUoKSBoYXMgd29ya2VkIGZvciBtZSBpbiBvdGhlciBjYXNlcywgbm90IGp1c3Qg
+Zm9yIG9wdGltaXphdGlvbiBwdXJwb3NlcywgYnV0IGFsc28gd2hlbiB0aGUgY29tcGlsZXIgZ2V0
+cyBjb25mdXNlZCBhYm91dCBwb3RlbnRpYWwgYnVmZmVyIG92ZXJydW5zICh0aGF0IHdlIGtub3cg
+Y2Fubm90IG9jY3VyLCBpLmUuIGZhbHNlIHBvc2l0aXZlcykuDQoNCkl0IG1pZ2h0IHNvbHZlIHRo
+aXMgcHJvYmxlbSB0b28uDQpJTU8sIGl0IGlzIGdlbmVyYWxseSBwcmVmZXJhYmxlIHRvIGhlbHAg
+dGhlIGNvbXBpbGVyIChieSBwcm92aWRpbmcgaGludHMpIHJhdGhlciB0aGFuIGltcGxlbWVudGlu
+ZyB3b3JrYXJvdW5kcyAodXNpbmcgb3ZlcnNpemVkIGJ1ZmZlcnMgaW4gdGhpcyBjYXNlKS4NCg0K
+PiA+DQo+ID4gSXQncyBvbmx5IGEgdGVzdCBhcHBsaWNhdGlvbiwgc28gb3ZlcnNpemVkIGJ1ZmZl
+cnMgYXMgYSB3b3JrYXJvdW5kIGlzDQo+IGFjY2VwdGFibGUuDQo+ID4NCj4gPiBCdXQgaWYgaXQg
+c2VydmVzIGFzIGd1aWRhbmNlIGZvciByZWFsIGFwcGxpY2F0aW9ucywgYSBiZXR0ZXINCj4gc29s
+dXRpb24vd29ya2Fyb3VuZCB3b3VsZCBiZSBwcmVmZXJhYmxlLg0K
