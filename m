@@ -2,39 +2,54 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAB34D2ED1B
-	for <dpdk-dev@archiver.kernel.org>; Tue, 20 Jan 2026 15:23:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B789C9830C
+	for <dpdk-dev@archiver.kernel.org>; Tue, 20 Jan 2026 15:40:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2EC6A40E50;
-	Tue, 20 Jan 2026 16:23:14 +0100 (CET)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 4515340E4F;
- Tue, 20 Jan 2026 16:23:12 +0100 (CET)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 257CD20910;
- Tue, 20 Jan 2026 16:23:12 +0100 (CET)
-Content-class: urn:content-classes:message
-MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Subject: RE: [PATCH v15 1/2] eal: add __rte_may_alias to unaligned typedefs
-Date: Tue, 20 Jan 2026 16:23:07 +0100
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65680@smartserver.smartshare.dk>
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-In-Reply-To: <20260117212114.10466-2-scott.k.mitch1@gmail.com>
+	by mails.dpdk.org (Postfix) with ESMTP id A3ADD40E0C;
+	Tue, 20 Jan 2026 16:40:25 +0100 (CET)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id AD56A4026F
+ for <dev@dpdk.org>; Tue, 20 Jan 2026 16:40:24 +0100 (CET)
+Received: from mail.maildlp.com (unknown [172.18.224.150])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4dwWjT3vcLzJ46Cq;
+ Tue, 20 Jan 2026 23:39:57 +0800 (CST)
+Received: from dubpeml100002.china.huawei.com (unknown [7.214.144.156])
+ by mail.maildlp.com (Postfix) with ESMTPS id 3368340539;
+ Tue, 20 Jan 2026 23:40:22 +0800 (CST)
+Received: from dubpeml500001.china.huawei.com (7.214.147.241) by
+ dubpeml100002.china.huawei.com (7.214.144.156) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.36; Tue, 20 Jan 2026 15:40:21 +0000
+Received: from dubpeml500001.china.huawei.com ([7.214.147.241]) by
+ dubpeml500001.china.huawei.com ([7.214.147.241]) with mapi id 15.02.1544.011; 
+ Tue, 20 Jan 2026 15:40:21 +0000
+From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+To: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>, "Stephen
+ Hemminger" <stephen@networkplumber.org>
+CC: "dev@dpdk.org" <dev@dpdk.org>, Honnappa Nagarahalli
+ <honnappa.nagarahalli@arm.com>
+Subject: RE: [PATCH v3 1/6] test/soring: fix buffer overflow warnings with LTO
+Thread-Topic: [PATCH v3 1/6] test/soring: fix buffer overflow warnings with LTO
+Thread-Index: AQHchrPsHHTVtFNIz06gtz3G6GMnp7VUiMQAgAWVQICAAKgGAIAAYD+AgAAHlYCAAAnHMA==
+Date: Tue, 20 Jan 2026 15:40:21 +0000
+Message-ID: <d9a4cead8c8e473e907f604b98370013@huawei.com>
+References: <20251023194237.197681-1-stephen@networkplumber.org>
+ <20260116064646.224254-1-stephen@networkplumber.org>
+ <20260116064646.224254-2-stephen@networkplumber.org>
+ <98CBD80474FA8B44BF855DF32C47DC35F65669@smartserver.smartshare.dk>
+ <20260119144821.70e2ff35@phoenix.local>
+ <98CBD80474FA8B44BF855DF32C47DC35F65674@smartserver.smartshare.dk>
+ <20260120063413.72e0d725@phoenix.local>
+ <98CBD80474FA8B44BF855DF32C47DC35F6567F@smartserver.smartshare.dk>
+In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F6567F@smartserver.smartshare.dk>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH v15 1/2] eal: add __rte_may_alias to unaligned typedefs
-Thread-Index: AdyH9zn3aFgYjD3TRsSPqgqVSXo5kACJ8xDw
-References: <20260112120411.27314-1-scott.k.mitch1@gmail.com>
- <20260117212114.10466-1-scott.k.mitch1@gmail.com>
- <20260117212114.10466-2-scott.k.mitch1@gmail.com>
-From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
-To: <stable@dpdk.org>
-Cc: <scott.k.mitch1@gmail.com>, <dev@dpdk.org>, <stephen@networkplumber.org>
+x-originating-ip: [10.206.138.220]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -48,97 +63,64 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> From: scott.k.mitch1@gmail.com [mailto:scott.k.mitch1@gmail.com]
-> Sent: Saturday, 17 January 2026 22.21
-> To: dev@dpdk.org
-> Cc: Morten Br=F8rup; stephen@networkplumber.org; Scott Mitchell
-> Subject: [PATCH v15 1/2] eal: add __rte_may_alias to unaligned =
-typedefs
->=20
-> From: Scott Mitchell <scott.k.mitch1@gmail.com>
->=20
-> Add __rte_may_alias attribute to unaligned_uint{16,32,64}_t typedefs
-> to prevent GCC strict-aliasing optimization bugs. GCC has a bug where
-> it incorrectly elides struct initialization when strict aliasing is
-> enabled, causing reads from uninitialized memory.
->=20
-> The __rte_may_alias attribute signals to the compiler that these types
-> can alias other types, preventing the incorrect optimization.
-
-Although this is a workaround to fix bugs in GCC, and not DPDK itself,
-I think it should be backported.
-It may fix (GCC induced) bugs in applications using these types.
-That's my opinion; let's get more opinions.
-
-If so, add:
-
-Fixes: 7621d6a8d0bd ("eal: add and use unaligned integer types")
-
->=20
-> Signed-off-by: Scott Mitchell <scott.k.mitch1@gmail.com>
-> ---
->  lib/eal/include/rte_common.h | 34 +++++++++++++++++++---------------
->  1 file changed, 19 insertions(+), 15 deletions(-)
->=20
-> diff --git a/lib/eal/include/rte_common.h
-> b/lib/eal/include/rte_common.h
-> index 9e7d84f929..ac70270cfb 100644
-> --- a/lib/eal/include/rte_common.h
-> +++ b/lib/eal/include/rte_common.h
-> @@ -121,14 +121,27 @@ extern "C" {
->  #define __rte_aligned(a) __attribute__((__aligned__(a)))
->  #endif
->=20
-> +/**
-> + * Macro to mark a type that is not subject to type-based aliasing
-> rules
-> + */
-> +#ifdef RTE_TOOLCHAIN_MSVC
-> +#define __rte_may_alias
-> +#else
-> +#define __rte_may_alias __attribute__((__may_alias__))
-> +#endif
-> +
-> +/**
-> + * __rte_may_alias avoids compiler bugs (GCC) that elide
-> initialization
-> + * of memory when strict-aliasing is enabled.
-> + */
->  #ifdef RTE_ARCH_STRICT_ALIGN
-> -typedef uint64_t unaligned_uint64_t __rte_aligned(1);
-> -typedef uint32_t unaligned_uint32_t __rte_aligned(1);
-> -typedef uint16_t unaligned_uint16_t __rte_aligned(1);
-> +typedef uint64_t unaligned_uint64_t __rte_may_alias __rte_aligned(1);
-> +typedef uint32_t unaligned_uint32_t __rte_may_alias __rte_aligned(1);
-> +typedef uint16_t unaligned_uint16_t __rte_may_alias __rte_aligned(1);
->  #else
-> -typedef uint64_t unaligned_uint64_t;
-> -typedef uint32_t unaligned_uint32_t;
-> -typedef uint16_t unaligned_uint16_t;
-> +typedef uint64_t unaligned_uint64_t __rte_may_alias;
-> +typedef uint32_t unaligned_uint32_t __rte_may_alias;
-> +typedef uint16_t unaligned_uint16_t __rte_may_alias;
->  #endif
->=20
->  /**
-> @@ -159,15 +172,6 @@ typedef uint16_t unaligned_uint16_t;
->  #define __rte_packed_end __attribute__((__packed__))
->  #endif
->=20
-> -/**
-> - * Macro to mark a type that is not subject to type-based aliasing
-> rules
-> - */
-> -#ifdef RTE_TOOLCHAIN_MSVC
-> -#define __rte_may_alias
-> -#else
-> -#define __rte_may_alias __attribute__((__may_alias__))
-> -#endif
-> -
->  /******* Macro to mark functions and fields scheduled for removal
-> *****/
->  #ifdef RTE_TOOLCHAIN_MSVC
->  #define __rte_deprecated
-> --
-> 2.39.5 (Apple Git-154)
-
+DQoNCj4gPiBGcm9tOiBTdGVwaGVuIEhlbW1pbmdlciBbbWFpbHRvOnN0ZXBoZW5AbmV0d29ya3Bs
+dW1iZXIub3JnXQ0KPiA+IFNlbnQ6IFR1ZXNkYXksIDIwIEphbnVhcnkgMjAyNiAxNS4zNA0KPiA+
+DQo+ID4gT24gVHVlLCAyMCBKYW4gMjAyNiAwOTo0OTo0NCArMDEwMA0KPiA+IE1vcnRlbiBCcsO4
+cnVwIDxtYkBzbWFydHNoYXJlc3lzdGVtcy5jb20+IHdyb3RlOg0KPiA+DQo+ID4gPiA+IEZyb206
+IFN0ZXBoZW4gSGVtbWluZ2VyIFttYWlsdG86c3RlcGhlbkBuZXR3b3JrcGx1bWJlci5vcmddDQo+
+ID4gPiA+IFNlbnQ6IE1vbmRheSwgMTkgSmFudWFyeSAyMDI2IDIzLjQ4DQo+ID4gPiA+DQo+ID4g
+PiA+IE9uIEZyaSwgMTYgSmFuIDIwMjYgMTA6MzI6NTIgKzAxMDANCj4gPiA+ID4gTW9ydGVuIEJy
+w7hydXAgPG1iQHNtYXJ0c2hhcmVzeXN0ZW1zLmNvbT4gd3JvdGU6DQo+ID4gPiA+DQo+ID4gPiA+
+ID4gPiBGcm9tOiBTdGVwaGVuIEhlbW1pbmdlciBbbWFpbHRvOnN0ZXBoZW5AbmV0d29ya3BsdW1i
+ZXIub3JnXQ0KPiA+ID4gPiA+ID4gU2VudDogRnJpZGF5LCAxNiBKYW51YXJ5IDIwMjYgMDcuNDYN
+Cj4gPiA+ID4gPiA+DQo+ID4gPiA+ID4gPiBXaGVuIGJ1aWxkaW5nIHdpdGggTFRPIChMaW5rIFRp
+bWUgT3B0aW1pemF0aW9uKSwgR0NDIHBlcmZvcm1zDQo+ID4gPiA+ID4gPiBhZ2dyZXNzaXZlIGNy
+b3NzLWNvbXBpbGF0aW9uLXVuaXQgaW5saW5pbmcuIFRoaXMgY2F1c2VzIHRoZQ0KPiA+ID4gPiBj
+b21waWxlcg0KPiA+ID4gPiA+ID4gdG8gYW5hbHl6ZSBhbGwgY29kZSBwYXRocyBpbiBfX3J0ZV9y
+aW5nX2RvX2RlcXVldWVfZWxlbXMoKSwNCj4gPiA+ID4gaW5jbHVkaW5nDQo+ID4gPiA+ID4gPiB0
+aGUgMTYtYnl0ZSBlbGVtZW50IHBhdGggKF9fcnRlX3JpbmdfZGVxdWV1ZV9lbGVtc18xMjgpLCBl
+dmVuDQo+ID4gd2hlbg0KPiA+ID4gPiA+ID4gdGhlIHJ1bnRpbWUgZWxlbWVudCBzaXplIGlzIG9u
+bHkgNCBieXRlcy4NCj4gPiA+ID4gPiA+DQo+ID4gPiA+ID4gPiBUaGUgc3RhdGljIGFuYWx5emVy
+IHNlZXMgdGhhdCB0aGUgMTYtYnl0ZSBwYXRoIHdvdWxkIGNvcHkNCj4gPiA+ID4gPiA+IDMyIGVs
+ZW1lbnRzICogMTYgYnl0ZXMgPSA1MTIgYnl0ZXMgaW50byBhIDEyOC1ieXRlIGJ1ZmZlcg0KPiA+
+ID4gPiA+ID4gKHVpbnQzMl90WzMyXSksDQo+ID4gPiA+ID4gPiB0cmlnZ2VyaW5nIC1Xc3RyaW5n
+b3Atb3ZlcmZsb3cgd2FybmluZ3MuDQo+ID4gPg0KPiA+ID4gVGhlIGVsZW1lbnQgc2l6ZSBpcyBu
+b3QgYW4gaW5saW5lIGZ1bmN0aW9uIHBhcmFtZXRlciwgYnV0IGZldGNoZWQNCj4gPiBmcm9tIHRo
+ZSAiZXNpemUiIGZpZWxkIGluIHRoZSBydGVfc29yaW5nIHN0cnVjdHVyZSwgc28gdGhlIGNvbXBp
+bGVyDQo+ID4gY2Fubm90IHNlZSB0aGF0IHRoZSBlbGVtZW50IHNpemUgaXMgNCBieXRlcy4gQW5k
+IHRodXMgaXQgbmVlZHMgdG8NCj4gPiBjb25zaWRlciBhbGwgcG9zc2libGUgZWxlbWVudCBzaXpl
+cy4NCj4gPiA+DQo+ID4gPiA+ID4gPg0KPiA+ID4gPiA+ID4gVGhlIGV4aXN0aW5nICNwcmFnbWEg
+R0NDIGRpYWdub3N0aWMgc3VwcHJlc3Npb24gaW4NCj4gPiA+ID4gcnRlX3JpbmdfZWxlbV9wdnQu
+aA0KPiA+ID4gPiA+ID4gZG9lc24ndCBoZWxwIGJlY2F1c2Ugd2l0aCBMVE8gdGhlIHdhcm5pbmcg
+Y29udGV4dCBzaGlmdHMgdG8gdGhlDQo+ID4gPiA+IHRlc3QNCj4gPiA+ID4gPiA+IGZpbGUgd2hl
+cmUgdGhlIGlubGluZWQgY29kZSBpcyBpbnN0YW50aWF0ZWQuDQo+ID4gPiA+ID4gPg0KPiA+ID4g
+PiA+ID4gRml4IGJ5IHNpemluZyBhbGwgYnVmZmVycyBwYXNzZWQgdG8gc29yaW5nIGFjcXVpcmUv
+ZGVxdWV1ZQ0KPiA+ID4gPiBmdW5jdGlvbnMNCj4gPiA+ID4gPiA+IGZvciB0aGUgd29yc3QtY2Fz
+ZSBlbGVtZW50IHNpemUgKDE2IGJ5dGVzID0gNCAqDQo+ID4gc2l6ZW9mKHVpbnQzMl90KSkuDQo+
+ID4gPiA+ID4gPiBUaGlzIHNhdGlzZmllcyB0aGUgc3RhdGljIGFuYWx5emVyIHdpdGhvdXQgY2hh
+bmdpbmcgcnVudGltZQ0KPiA+ID4gPiBiZWhhdmlvci4NCj4gPiA+ID4gPg0KPiA+ID4gPiA+IFVz
+aW5nIHdpbGRseSBvdmVyc2l6ZWQgYnVmZmVycyBkb2Vzbid0IHNlZW0gbGlrZSBhIHJlY29tbWVu
+ZGFibGUNCj4gPiA+ID4gc29sdXRpb24uDQo+ID4gPiA+ID4gSWYgdGhlIHJpbmcgbGlicmFyeSBp
+cyBldmVyIHVwZGF0ZWQgdG8gc3VwcG9ydCBjYWNoZSBzaXplDQo+ID4gZWxlbWVudHMNCj4gPiA+
+ID4gKDY0IGJ5dGUpLCB0aGUgYnVmZmVycyB3b3VsZCBoYXZlIHRvIGJlIG92ZXJzaXplIGJ5IGZh
+Y3RvciAxNi4NCj4gPiA+ID4NCj4gPiA+ID4gVGhlIGFuYWx5c2lzIChmcm9tIEFJKSBpcyB0aGF0
+IGNvbXBpbGVyIGlzIGdldHRpbmcgY29uZnVzZWQuDQo+ID4gPg0KPiA+ID4gVGhhdCB3b3VsZCBi
+ZSBteSBhbmFseXNpcyB0b28uDQo+ID4gPg0KPiA+ID4gPiBTaW5jZSB0aGVyZSBpcyBubyBnb29k
+DQo+ID4gPiA+IHdheSBvdGhlciB0aGFuIHR1cm5pbmcgb2YgTFRPIGZvciB0aGUgdGVzdCB0byB0
+ZWxsIHRoZSBjb21waWxlcg0KPiA+ID4NCj4gPiA+IFRoZXJlIGlzIGFub3RoZXIgd2F5IHRvIHRl
+bGwgdGhlIGNvbXBpbGVyOiBfX3J0ZV9hc3N1bWUoKQ0KPiA+DQo+ID4gVHJpZWQgdGhhdCBidXQg
+aXQgZG9lc24ndCB3b3JrIGJlY2F1c2UgZG9lc24ndCBnZXQgcHJvcGFnYXRlZCBkZWVwDQo+ID4g
+ZW5vdWdoIHRvIGltcGFjdCBoZXJlLg0KPiANCj4gRG9lcyB0aGlzIGZpeCBnZW5lcmFsbHkgaW1w
+bHkgdGhhdCB3aGVuIHVzaW5nIExUTywgdXNpbmcgYW4gU09SSU5HIHdpdGggZWxlbWVudHMNCj4g
+c21hbGxlciB0aGFuIDE2IGJ5dGVzIHJlcXVpcmVzIG92ZXJzaXplIGJ1ZmZlcnM/DQo+IFRoYXQn
+cyBub3QgZ29vZC4gOi0oDQo+IA0KPiBUaGUgU09SSU5HIGlzIHN0aWxsIGV4cGVyaW1lbnRhbC4N
+Cj4gTWF5YmUgdGhlIGVsZW1lbnQgc2l6ZSBhbmQgbWV0YWRhdGEgc2l6ZSBuZWVkIHRvIGJlIHBh
+c3NlZCBhcyBwYXJhbWV0ZXJzIHRvDQo+IHRoZSBTT1JJTkcgZnVuY3Rpb25zLCBsaWtlIHRoZSBS
+SU5HIGZ1bmN0aW9ucyB0YWtlIGVsZW1lbnQgc2l6ZSBhcyBwYXJhbWV0ZXINCj4gKGV4Y2VwdCB0
+aGUgZnVuY3Rpb25zIHRoYXQgYXJlIGhhcmRjb2RlZCBmb3IgdXNpbmcgcG9pbnRlcnMgYXMgZWxl
+bWVudCBzaXplKS4NCg0KUGVyc29uYWxseSwgSSBhbSBub3QgYSBiaWcgZmFuIG9mIHN1Y2ggaWRl
+YS4uLg0KV29uZGVyIGlzIHRoYXQgcG9zc2libGUganVzdCB0byBkaXNhYmxlIExUTyBmb3Igc29y
+aW5nLm8/DQpBbm90aGVyIHRob3VnaHQgLSBpZiBhbGwgdGhlIHByb2JsZW1zIGNvbWUgZnJvbSAx
+MjggYml0IHZlcnNpb24gb2YgZW5xdWUvZGVxdWV1ZSwNCndvdWxkIHVzaW5nIG1lbWNweSgpIGlu
+c3RlYWQgIG9mIHNwZWNpZmljIGZ1bmN0aW9ucyBoZWxwIHRvIG1pdGlnYXRlIHRoZSBwcm9ibGVt
+PyAgDQoNCg0K
