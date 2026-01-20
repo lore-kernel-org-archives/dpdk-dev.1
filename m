@@ -2,77 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCD5FD2ECF7
-	for <dpdk-dev@archiver.kernel.org>; Tue, 20 Jan 2026 13:55:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20620D2ECF7
+	for <dpdk-dev@archiver.kernel.org>; Tue, 20 Jan 2026 14:14:01 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 968F840156;
-	Tue, 20 Jan 2026 14:55:52 +0100 (CET)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id D58764013F
- for <dev@dpdk.org>; Tue, 20 Jan 2026 14:55:51 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1768917351;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=nsGhrAnSdjuAK9b4G4C1N/IjJYavTfuzb2pJMKJe6bA=;
- b=Hf93D5NKXw+fMN1uGgGTj9BxO40geSMHr1wnEeKProPeyWN3/lkEQMtaw8iN+GiNNFDX5U
- mSw0pccLgHlEUl2neCPBiH4d8SoScHd6J/zZIdlAuJ4ak8FS6NdVX+Puxdiu2+LwOBB2Eu
- BE2ldMjfm9P+r+B+FFxly0slxr2mgvk=
-Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
- [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-597-mo0lKa-NORe9m58W4hADxg-1; Tue, 20 Jan 2026 08:55:50 -0500
-X-MC-Unique: mo0lKa-NORe9m58W4hADxg-1
-X-Mimecast-MFC-AGG-ID: mo0lKa-NORe9m58W4hADxg_1768917348
-Received: by mail-lf1-f72.google.com with SMTP id
- 2adb3069b0e04-59b6849824dso4199409e87.1
- for <dev@dpdk.org>; Tue, 20 Jan 2026 05:55:49 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768917348; x=1769522148;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=nsGhrAnSdjuAK9b4G4C1N/IjJYavTfuzb2pJMKJe6bA=;
- b=NdjOd0hoEWkfw+GHphWmxF6KMUBbKb/c+rd+1G8qR4lgZKMnytlpCpKwnKkBAQXzEf
- NEAjYmC3cxWOSD+cpxWtjOkdvh6lZVxcATLeyjEll6XYNT/vSea5szy0oGIBurs3TXX1
- wnhFafQgYS45anOjb9D/oqQXEBhnnuhw7Uo1dZYnbT197rQM4SibLg/UwICEuPQMD+ql
- oKDeCes01CE8F8PuPezqRmdH/5mbvFEgbTFIFln0Q1IUHY/Z6t1suzetRrjD/K/kZ92m
- Fe70+00Tw6CNX8m7AZl68hjFwAaw8EpXX2pTTtmiU7M3tW6FRm+lKX/h+tPfcIroAGmR
- x1XQ==
-X-Gm-Message-State: AOJu0YznkC4V4+nzqFY/1oIlyR2vImSWL9OzS14N8j2cfGbC4tgfz4th
- LVSE9Bu6fllEvrSg9SaS64iC+8EcUfw93IOXJhczD2AWJi+BhEgi3nclIVe1D6wFFjAH1aIkF2C
- GU9yc2LFZEF/xiDzpGhu7eEmfI488yglA9UoWcblEWAWDu4kOqjg1mfy0DXakmd3IiJjD1j52Ua
- GdUzQ4PiNcXzJoY0AfTL8=
-X-Gm-Gg: AZuq6aIIE/WWBkZaQnb6xBHGa3hsinga2KQqSdS8BXeap5NhOjKoOX7+XzXcQlf5o1S
- UhhYgKqya0EVDQBUm/REOXKdVdYCCAGLYea+OZgknmiBABUrzT4IEQn2fDm9pwcTgsw6UvhMMnL
- WztBhk0dENstF1pUGTxuAsiV96dWdbxkCkNED3iRmWq7tlMd4dXDy6bl3xzAYVUt7Nk+RXvAogN
- pz5ZFNF5leeNthjcScOwASE09sLwRq8xZE4iPnWtv1kOa8QoHtKiQ==
-X-Received: by 2002:ac2:4bcf:0:b0:59d:cd2b:9733 with SMTP id
- 2adb3069b0e04-59dcd2b9799mr267868e87.13.1768917348103; 
- Tue, 20 Jan 2026 05:55:48 -0800 (PST)
-X-Received: by 2002:ac2:4bcf:0:b0:59d:cd2b:9733 with SMTP id
- 2adb3069b0e04-59dcd2b9799mr267855e87.13.1768917347418; Tue, 20 Jan 2026
- 05:55:47 -0800 (PST)
-MIME-Version: 1.0
-References: <20251104080931.8102-1-shperetz@nvidia.com>
- <20251109142636.225031-1-shperetz@nvidia.com>
-In-Reply-To: <20251109142636.225031-1-shperetz@nvidia.com>
-From: Maxime Coquelin <maxime.coquelin@redhat.com>
-Date: Tue, 20 Jan 2026 14:55:36 +0100
-X-Gm-Features: AZwV_QgQCXlkLL8ANzNTasZg8lRME0m3ML9AwpGdZ5bNv56owxhe527jDzH_WAo
-Message-ID: <CAO55cszLU=D4oybHCXYYoAsZC32shk-vr9oCyiqAo3fH3vNTrQ@mail.gmail.com>
-Subject: Re: [PATCH v2] vhost: fix use-after-free race during cleanup
-To: Shani Peretz <shperetz@nvidia.com>
-Cc: dev@dpdk.org, stable@dpdk.org, Chenbo Xia <chenbox@nvidia.com>, 
- David Marchand <david.marchand@redhat.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: mjTyjkplTfMCZUdsSpy4Ob6miPXV82kjdT1RZiXEsV0_1768917348
-X-Mimecast-Originator: redhat.com
+	by mails.dpdk.org (Postfix) with ESMTP id 6C34A40156;
+	Tue, 20 Jan 2026 15:14:00 +0100 (CET)
+Received: from office2.cesnet.cz (office2.cesnet.cz [78.128.248.237])
+ by mails.dpdk.org (Postfix) with ESMTP id 2212E4013F
+ for <dev@dpdk.org>; Tue, 20 Jan 2026 15:13:59 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cesnet.cz;
+ s=office2-2020; t=1768918438;
+ bh=Gy67hmPfcZodvivTWAv8N2d8yQQmBx//PmlnSfKvQlM=;
+ h=Subject:From:To:Cc:Date:In-Reply-To:References;
+ b=ekSo/OpDmJtGvr1WSaXupJwR5ACIUfkX5kI5sM6ANhmrAy+UZhOMV9cC9hFZKZU3s
+ +bgiHVHqtTy3TCdWQgCkWJTQO7kpDIYXN2TnDtw/ILNZEe5gsjnE0vO7uOLcrDon4c
+ c0tcqLPSLo7W3JZ8cRttkB+xOG6gl3ZNwPvVW0xN+xQRuqvG7Ap5tOOdf7EutwDjJq
+ EoFTRuiSPPGuLf3pCBaboUQ3FkJliblM5+P999/VSt+ynGjNk85lVNwJHEhT5sptmo
+ xG+4j8BpPUXddrskPhff1z7bRzLZOYM5VSbLskzaQXPwm8grElfmcDjKafsuvj8tUi
+ 25MwJJByMxNPw==
+Received: from [IPv6:2001:718:812:27::107] (gtx107.cesnet.cz
+ [IPv6:2001:718:812:27::107])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits)
+ server-digest SHA256) (No client certificate requested)
+ by office2.cesnet.cz (Postfix) with ESMTPSA id CF8851180072;
+ Tue, 20 Jan 2026 15:13:58 +0100 (CET)
+Message-ID: <79b62ea1ceadf3c0d5c6e124715e12f429cb8f35.camel@cesnet.cz>
+Subject: Re: [PATCH v3 4/6] net/nfb: use process private variable for
+ internal data
+From: Martin Spinler <spinler@cesnet.cz>
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: dev@dpdk.org
+Date: Tue, 20 Jan 2026 15:13:58 +0100
+In-Reply-To: <20260119161351.20d06a34@phoenix.local>
+References: <20260115140134.235877-1-spinler@cesnet.cz>
+ <20260116152057.1456380-1-spinler@cesnet.cz>
+ <20260116152057.1456380-5-spinler@cesnet.cz>
+ <20260119161351.20d06a34@phoenix.local>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.2 
+MIME-Version: 1.0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -86,290 +56,47 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Sun, Nov 9, 2025 at 3:27=E2=80=AFPM Shani Peretz <shperetz@nvidia.com> w=
-rote:
->
-> This commit fixes a use-after-free that causes the application to crash
-> on shutdown (detected by ASAN).
->
-> The vhost library uses a background event dispatch thread that monitors
-> fds with epoll. It runs in an infinite loop, waiting for I/O events
-> and calling callbacks when they occur.
->
-> During cleanup, a race condition existed:
->
->   Main Thread:                    Event Dispatch Thread:
->   1. Remove fds from fdset        while (1) {
->   2. Close file descriptors           epoll_wait() [gets interrupted]
->   3. Free fdset memory                [continues loop]
->   4. Continue...                      Accesses fdset...   CRASH
->                                   }
->
-> There isn't explicit cleanup of the fdset structure.
-> The fdset structue is allocated with rte_zmalloc() and the memory would
+On Mon, 2026-01-19 at 16:13 -0800, Stephen Hemminger wrote:
+> > Internal structures of libnfb can't be shared between processes.
+> > Move these structures from dev_private to process_private, which allows
+> > secondary process to correctly initialize and uninitialize the eth_dev.
+> >=20
+> >=20
+> > diff --git a/drivers/net/nfb/nfb.h b/drivers/net/nfb/nfb.h
+> > index 917b830283..09d4b7da5f 100644
+> > --- a/drivers/net/nfb/nfb.h
+> > +++ b/drivers/net/nfb/nfb.h
+> > @@ -48,7 +48,9 @@ struct pmd_internals {
+> >  	struct nc_rxmac *rxmac[RTE_MAX_NC_RXMAC];
+> >  	struct nc_txmac *txmac[RTE_MAX_NC_TXMAC];
+> >  	struct nfb_device *nfb;
+> > +};
+> > =20
+> > +struct pmd_priv {
+> >  	uint16_t max_rx_queues;
+> >  	uint16_t max_tx_queues;
+> >  };
+>=20
+> Where does max_rx_queues get populated in the secondary process?
+> What if either process calls configure to change number of queues?
+>=20
+> Don't see other drivers splitting structure here.
 
-structure
+The NFB PMD must use separate handles for each process (each process
+has its own FILE* and mmap handles from libnfb). However, some data,
+such as max_rx_queues, is constant and can still be stored in shared
+memory (and inited by RTE_PROC_PRIMARY).
 
-> only be reclaimed at application shutdown when rte_eal_cleanup() is calle=
-d,
-> which invokes rte_eal_memory_detach() to unmap all the hugepage memory.
-> Meanwhile, the event dispatch thread could still be running and accessing
-> the fdset.
->
-> The code had a `destroy` flag that the event dispatch thread checked,
-> but it was never set during cleanup, and the code never waited for
-> the thread to actually exit before freeing memory.
->
-> To fix this, the commit implements `fdset_destroy()` that will set the
-> destroy flag, wait for thread termination, and clean up all resources.
->
-> The socket.c and vduse.c are updated to call fdset_destroy() when
-> the last socket/device is unregistered.
->
-> For vduse, reference counting was added to track the number of devices
-> using the fdset. The fdset is destroyed when the last device is removed.
+The pmd_priv is stored in data->dev_private, so it is shared between
+processes. However, your comment pointed at the opposite issue, that
+the nfb_eth_dev_init() assigns to the (pmd_)priv->max_rx_queues in both
+process types (duplicate assignment).
+I will fix this by moving those assignments to the RTE_PROC_PRIMARY-
+only block.
 
-I believe the vduse change is unrelated.
-Currently, once a vduse device has been created, we never destroy the fdset=
-.
+By the way, this partial diff shows the struct pmd_internals being
+split into the new struct pmd_priv. Semantically, however, the struct
+pmd_internals is the new one, is newly alocated and holds the
+process_private data.
 
-We can support destroying the vduse fdset once, but it should be in a
-dedicated patch.
-And it might not need to be a fix, even though I don't have a strong opinio=
-n.
-
-> Fixes: 0e38b42bf61c ("vhost: manage FD with epoll")
-> Cc: stable@dpdk.org
->
-> Signed-off-by: Shani Peretz <shperetz@nvidia.com>
->
->
->
-> ----------
-> v2:
-> - Extended the fix to vduse.c, added reference counting and mutex to vdus=
-e
->   structure to track the number of devices using the fdset
-> - Call fdset_destroy() when last device is removed in vduse_device_destro=
-y()
->   and in error paths of vduse_device_create()
-> - Added mutex protection when checking/setting the destroy flag to preven=
-t
->   race conditions in both fdset_event_dispatch() and fdset_destroy()
->
-> ---
->  lib/vhost/fd_man.c | 45 ++++++++++++++++++++++++++++++++++++-
->  lib/vhost/fd_man.h |  1 +
->  lib/vhost/socket.c |  7 ++++++
->  lib/vhost/vduse.c  | 56 +++++++++++++++++++++++++++++++++++++---------
->  4 files changed, 98 insertions(+), 11 deletions(-)
->
-> diff --git a/lib/vhost/fd_man.c b/lib/vhost/fd_man.c
-> index f9147edee7..b4597dec75 100644
-> --- a/lib/vhost/fd_man.c
-> +++ b/lib/vhost/fd_man.c
-> @@ -387,9 +387,52 @@ fdset_event_dispatch(void *arg)
->                         }
->                 }
->
-> -               if (pfdset->destroy)
-> +               pthread_mutex_lock(&pfdset->fd_mutex);
-> +               bool should_destroy =3D pfdset->destroy;
-> +               pthread_mutex_unlock(&pfdset->fd_mutex);
-> +               if (should_destroy)
->                         break;
->         }
->
->         return 0;
->  }
-> +
-> +/**
-> + * Destroy the fdset and stop its event dispatch thread.
-> + */
-> +void
-> +fdset_destroy(struct fdset *pfdset)
-> +{
-> +       uint32_t val;
-> +       int i;
-> +
-> +       if (pfdset =3D=3D NULL)
-> +               return;
-> +
-> +       /* Signal the event dispatch thread to stop */
-> +       pthread_mutex_lock(&pfdset->fd_mutex);
-> +       pfdset->destroy =3D true;
-> +       pthread_mutex_unlock(&pfdset->fd_mutex);
-> +
-> +       /* Wait for the event dispatch thread to finish */
-> +       rte_thread_join(pfdset->tid, &val);
-> +
-> +       /* Close the epoll file descriptor */
-> +       close(pfdset->epfd);
-> +
-> +       /* Destroy the mutex */
-> +       pthread_mutex_destroy(&pfdset->fd_mutex);
-> +
-> +       /* Remove from global registry */
-> +       pthread_mutex_lock(&fdsets_mutex);
-> +       for (i =3D 0; i < MAX_FDSETS; i++) {
-> +               if (fdsets[i] =3D=3D pfdset) {
-> +                       fdsets[i] =3D NULL;
-> +                       break;
-> +               }
-> +       }
-> +       pthread_mutex_unlock(&fdsets_mutex);
-> +
-> +       /* Free the fdset structure */
-> +       rte_free(pfdset);
-> +}
-> diff --git a/lib/vhost/fd_man.h b/lib/vhost/fd_man.h
-> index eadcc6fb42..ed2109f3c8 100644
-> --- a/lib/vhost/fd_man.h
-> +++ b/lib/vhost/fd_man.h
-> @@ -21,5 +21,6 @@ int fdset_add(struct fdset *pfdset, int fd,
->
->  void fdset_del(struct fdset *pfdset, int fd);
->  int fdset_try_del(struct fdset *pfdset, int fd);
-> +void fdset_destroy(struct fdset *pfdset);
->
->  #endif
-> diff --git a/lib/vhost/socket.c b/lib/vhost/socket.c
-> index 9b4f332f94..0240da8ff0 100644
-> --- a/lib/vhost/socket.c
-> +++ b/lib/vhost/socket.c
-> @@ -1141,6 +1141,13 @@ rte_vhost_driver_unregister(const char *path)
->                 count =3D --vhost_user.vsocket_cnt;
->                 vhost_user.vsockets[i] =3D vhost_user.vsockets[count];
->                 vhost_user.vsockets[count] =3D NULL;
-> +
-> +               /* Check if we need to destroy the vhost fdset */
-> +               if (vhost_user.vsocket_cnt =3D=3D 0 && vhost_user.fdset !=
-=3D NULL) {
-> +                       fdset_destroy(vhost_user.fdset);
-> +                       vhost_user.fdset =3D NULL;
-> +               }
-> +
->                 pthread_mutex_unlock(&vhost_user.mutex);
->                 return 0;
->         }
-> diff --git a/lib/vhost/vduse.c b/lib/vhost/vduse.c
-> index 68e56843fd..f255f717ab 100644
-> --- a/lib/vhost/vduse.c
-> +++ b/lib/vhost/vduse.c
-> @@ -30,9 +30,15 @@
->
->  struct vduse {
->         struct fdset *fdset;
-> +       int device_cnt;
-> +       pthread_mutex_t mutex;
->  };
->
-> -static struct vduse vduse;
-> +static struct vduse vduse =3D {
-> +       .fdset =3D NULL,
-> +       .device_cnt =3D 0,
-> +       .mutex =3D PTHREAD_MUTEX_INITIALIZER,
-> +};
->
->  static const char * const vduse_reqs_str[] =3D {
->         "VDUSE_GET_VQ_STATE",
-> @@ -683,19 +689,16 @@ vduse_device_create(const char *path, bool complian=
-t_ol_flags)
->         const char *name =3D path + strlen("/dev/vduse/");
->         bool reconnect =3D false;
->
-> -       if (vduse.fdset =3D=3D NULL) {
-> -               vduse.fdset =3D fdset_init("vduse-evt");
-> -               if (vduse.fdset =3D=3D NULL) {
-> -                       VHOST_CONFIG_LOG(path, ERR, "failed to init VDUSE=
- fdset");
-> -                       return -1;
-> -               }
-> -       }
-> +       pthread_mutex_lock(&vduse.mutex);
-> +       vduse.device_cnt++;
-> +       pthread_mutex_unlock(&vduse.mutex);
->
->         control_fd =3D open(VDUSE_CTRL_PATH, O_RDWR);
->         if (control_fd < 0) {
->                 VHOST_CONFIG_LOG(name, ERR, "Failed to open %s: %s",
->                                 VDUSE_CTRL_PATH, strerror(errno));
-> -               return -1;
-> +               ret =3D -1;
-> +               goto out_dec_cnt;
->         }
->
->         if (ioctl(control_fd, VDUSE_SET_API_VERSION, &ver)) {
-> @@ -845,6 +848,19 @@ vduse_device_create(const char *path, bool compliant=
-_ol_flags)
->
->         dev->cvq =3D dev->virtqueue[max_queue_pairs * 2];
->
-> +       /* Only allocate when we know device creation will succeed */
-> +       pthread_mutex_lock(&vduse.mutex);
-> +       if (vduse.fdset =3D=3D NULL) {
-> +               vduse.fdset =3D fdset_init("vduse-evt");
-> +               if (vduse.fdset =3D=3D NULL) {
-> +                       VHOST_CONFIG_LOG(path, ERR, "failed to init VDUSE=
- fdset");
-> +                       pthread_mutex_unlock(&vduse.mutex);
-> +                       ret =3D -1;
-> +                       goto out_log_unmap;
-> +               }
-> +       }
-> +       pthread_mutex_unlock(&vduse.mutex);
-> +
->         ret =3D fdset_add(vduse.fdset, dev->vduse_dev_fd, vduse_events_ha=
-ndler, NULL, dev);
->         if (ret) {
->                 VHOST_CONFIG_LOG(name, ERR, "Failed to add fd %d to vduse=
- fdset",
-> @@ -861,6 +877,8 @@ vduse_device_create(const char *path, bool compliant_=
-ol_flags)
->         return 0;
->
->  out_log_unmap:
-> +       if (vduse.fdset !=3D NULL)
-> +               fdset_del(vduse.fdset, dev->vduse_dev_fd);
->         munmap(dev->reconnect_log, sizeof(*dev->reconnect_log));
->  out_dev_destroy:
->         vhost_destroy_device(vid);
-> @@ -870,6 +888,14 @@ vduse_device_create(const char *path, bool compliant=
-_ol_flags)
->         ioctl(control_fd, VDUSE_DESTROY_DEV, name);
->  out_ctrl_close:
->         close(control_fd);
-> +out_dec_cnt:
-> +       pthread_mutex_lock(&vduse.mutex);
-> +       vduse.device_cnt--;
-> +       if (vduse.device_cnt =3D=3D 0 && vduse.fdset !=3D NULL) {
-> +               fdset_destroy(vduse.fdset);
-> +               vduse.fdset =3D NULL;
-> +       }
-> +       pthread_mutex_unlock(&vduse.mutex);
->
->         return ret;
->  }
-> @@ -899,7 +925,17 @@ vduse_device_destroy(const char *path)
->
->         vduse_device_stop(dev);
->
-> -       fdset_del(vduse.fdset, dev->vduse_dev_fd);
-> +       if (vduse.fdset !=3D NULL)
-> +               fdset_del(vduse.fdset, dev->vduse_dev_fd);
-> +
-> +       /* Check if we need to destroy the vduse fdset */
-> +       pthread_mutex_lock(&vduse.mutex);
-> +       vduse.device_cnt--;
-> +       if (vduse.device_cnt =3D=3D 0 && vduse.fdset !=3D NULL) {
-> +               fdset_destroy(vduse.fdset);
-> +               vduse.fdset =3D NULL;
-> +       }
-> +       pthread_mutex_unlock(&vduse.mutex);
->
->         if (dev->vduse_dev_fd >=3D 0) {
->                 close(dev->vduse_dev_fd);
-> --
-> 2.34.1
->
-
+Does that make it better sense now?
