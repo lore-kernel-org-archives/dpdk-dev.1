@@ -2,70 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC4C6D2629C
-	for <dpdk-dev@archiver.kernel.org>; Tue, 20 Jan 2026 19:54:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30DF0D2629A
+	for <dpdk-dev@archiver.kernel.org>; Tue, 20 Jan 2026 19:54:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DFC3641132;
-	Tue, 20 Jan 2026 20:54:36 +0100 (CET)
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com
- [209.85.221.48]) by mails.dpdk.org (Postfix) with ESMTP id D76A54026C
- for <dev@dpdk.org>; Tue, 20 Jan 2026 20:54:30 +0100 (CET)
-Received: by mail-wr1-f48.google.com with SMTP id
- ffacd0b85a97d-432d2c7dd52so5275743f8f.2
- for <dev@dpdk.org>; Tue, 20 Jan 2026 11:54:30 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 722794114B;
+	Tue, 20 Jan 2026 20:54:38 +0100 (CET)
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com
+ [209.85.221.42]) by mails.dpdk.org (Postfix) with ESMTP id B380F410F6
+ for <dev@dpdk.org>; Tue, 20 Jan 2026 20:54:33 +0100 (CET)
+Received: by mail-wr1-f42.google.com with SMTP id
+ ffacd0b85a97d-42fb2314f52so3253624f8f.0
+ for <dev@dpdk.org>; Tue, 20 Jan 2026 11:54:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768938870;
- x=1769543670; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768938873;
+ x=1769543673; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=tG3Xqs7sJ99JZUo3PX/5mVr2yzPLwBSuqCbr16ww8N0=;
- b=ZVGbeoL8ciA6IgxNC9cams+tv/DkUctrFW0gHlHWIShKR5xlJloXOqXyEz0eN6DQe/
- kElPhTzG1vTafghR9lVTQNpVz9XH4xC3+6hl2Stk62ZXWB8zruHTEfoGzw/Xc7LlBUZ9
- SPeTIRZPIllWLRBYOIAWqBSzRFtMGc/XF7FzhWrVxsqqbrbstrFyIzS8aF+RO9EdNknR
- PHX337fAI1U6ogcF38LnGLkOrfgD/DxNWaxUa1GS/jz7FMtPQnlK5nrG1EJlCD/oSPH8
- kqEZv6o2WS89AtLcq2fUF2AGJDi6JVKqQ4pcLBQGzYdkNFfGZs81nEjxcjQo2Kt6k8s0
- Ui/g==
+ bh=Siav5wb58so5O2h51qbRcyHKEETKf+HS7ZDF+vCjbxg=;
+ b=u07yIli7VgZoUGrHHwCkHCmAcufanBBDIiz33keE6fJFxl8M4tBq2d3sW2ls8HE2P/
+ AR299JslsAJwJdQZh3wY75jF37hpHS3XAOmwF71kcmQrGn/QnH/6ByWt3O/kUt47fcQu
+ RFtXoIv737bBuwtmkxMJ16LPR/hQZCn8E6Gncv4aMnI2Y9a3a+mvmfOBEqMVz5FoHWzF
+ UJz86NDjHqgMaPcU0wsuBFrRPwKDFTp7wVuj9OjZMIf+xIM8wMpQlx7F6jCQ8bfAoUPd
+ 3Oxt6LYNLcY6PYGcpYS0twy1u6Z87AvdxsghGz5hOw+l+FykcOiayf+brPv9Do/I2FmN
+ MttA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768938870; x=1769543670;
+ d=1e100.net; s=20230601; t=1768938873; x=1769543673;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=tG3Xqs7sJ99JZUo3PX/5mVr2yzPLwBSuqCbr16ww8N0=;
- b=HB9BM+O/vSFKZI++Wo5tgZcfMew2MBzu9iEpOoRsASw8dC+GCYPqWQsLYrSQjyFBRq
- CeSmUX68hHY9t8kDc3A3/U2wa0gH9v200tJ0RWajGNs6mouH+W7CWvdE4k9YyVlJuOSQ
- +LMwwyLMQ6RlOxkMHF9NYuEQCB4IV1H1LrwpYilTAXzZ+4H/C1rxgesMBUvlJyDMSL81
- 7fA7L77o+XK0vNgKWfvKoqQw5ZOzLRyVaUEUP9nY+vNzff7ZAdGTTJjIB5vKwf1dzm2b
- 6pa6JeTQPwPLaM1FeEByxTUC+YUL5DgJeJ2muWVZCN6kCjlEDa0jGYN8DNhYUxD1QBji
- /g6A==
-X-Gm-Message-State: AOJu0Yy4DajOtcmrcgWxDkSe5B0SRui3m+2OM+O9gzhFi/5CoyXrbgjX
- Adaal0JQ/cr305q2KRnPVt3DeKkMkVaNas9I8Zz3Jug/hHifQdz+SPxsjjt7/68RtIW3ZDukaU8
- FPufw
-X-Gm-Gg: AZuq6aIn9httwQYOHozJpCZrc2ZWOm75iC6cx2VjE6n1hFeMaEt1Mt3Sn33RUBYx7PT
- 0Mn0J05sBI45Gu5+ZyHU30rATCgUQDTZWTkFdvSTTE496QegX8VkwsRaTjpmqkfaomxQ2RdR/Wv
- nONMtPK7hRABI9RCskQ6nQy/Owf+onAxwMrTKvJx0nqwIgQ3W8la4mBr4RmAX3pQixH7P0CnHjP
- VZ8eiqV1kgki1bs6OxwlIDFLkNHaYdFr2lIRpFG65cW8SEhfAHrXxJK54iRk0FH/rcu+tRZC6AQ
- HqdTdO7UC0mHz8g79N13Dit9FNqGzMFWQNpoM02d1prGHtbsHko4NfH3NzmkLeI6u0d2ZhEe/Md
- Uu6D6ubXg/ckOq4S1Mokf3RrUniv2O4Ls0LiEkGJpjwU1K1H8GwMd+19+cFCpqvZV/dJhOA9hKM
- qBh2RCHZHU2E1054S0FjhfJ5rkudbnfhJ+8aVinN9a3lvMljt3IlYIlhW7llzb
-X-Received: by 2002:a05:6000:2dc5:b0:432:c0b8:ee58 with SMTP id
- ffacd0b85a97d-4358fe6f0f0mr4233381f8f.0.1768938870473; 
- Tue, 20 Jan 2026 11:54:30 -0800 (PST)
+ bh=Siav5wb58so5O2h51qbRcyHKEETKf+HS7ZDF+vCjbxg=;
+ b=jdUYjEEcy0QRgNn++IOUNJNFHc55lVVeiUTt961wAXWNGKUofuh7WOy39gDtauodbI
+ oT+JbQFXnKc5CKTKrD3OfmugGsOBwtMCtKuA/NkiY08NK9o/Jyh7T/vB8p7HMX31G93n
+ /4JEzGK9J+Mm9qABFFZU8sAwPRdqEOGesTHFFB1LjpVQJ7KW/2lrrfaN46fVYPFETRXg
+ FIF7SENRkTfHiabsz+9N2AHGmPNUy/cRlnE/+wuqg7ucFL21VJMgY2os4kZa2SZnL690
+ PfphxjDOOaZPpNEnLXSAw1+kljdVJZHNpQhUCXeZZ3lD9poY1G0ph/EjuRbl2i+qdHN6
+ qt8g==
+X-Gm-Message-State: AOJu0YwMdtyjhjB8/xJSIHHgqAnjGen7cJOlRw3q9n+yLndgTyfLnnUm
+ F3rydPd2Iae+Iq7nxuFCHX6BFFFk91/HSQ5sWtGKqyEbuK6JugI/2XS0+hewBGHpk3U9uGm9Xk7
+ 0qwnU
+X-Gm-Gg: AZuq6aL9A9sOSv8tO31heT1WlFr8wi0hT5CtuYFLfjnw2GgiVZYsLXNW8dwpiwnv6sB
+ zh+eqqK29qb3FyzS27QfYumSn/Js6Sr7VofZ84Ib80j7HaAI+B3tZfzV9JI78l+Mwnw5QSsY0Gn
+ yl9wDMFFJ8pQoHCpZykAwHp6/QgQDnBvwMMjzsXCdBpkFY6cvYJn2b1JL7oFFosIQlohO0NuDJ2
+ ZkXHd/TpQpDJkFGCRSfZqF591wzkz+9P6sXlWRzmukVLuGo4Teo1lSqOod291Mx6n0TaeHNzj3a
+ 9S4BPfWpINJgwNaYeoIsXlxlIq+Y2z/99FSu5zQO5RTF4GcZKV9H/XcfAQ2cW579Eg4APWsFg9l
+ aPwy0+5iopzg3TCn9MPi1RRMjbBDGLzIZhQ5Ics3G9HU7DQpCPqeYhpKHZAHE6Xa+IRcZ5GDD1o
+ XkpVwcfW6zXAgp9xFegpOQAU65eIiYezu3Rjre4I2EkFOzSU6bXA==
+X-Received: by 2002:a5d:4a92:0:b0:435:94dc:8c78 with SMTP id
+ ffacd0b85a97d-43594dc8d0emr3090353f8f.40.1768938873291; 
+ Tue, 20 Jan 2026 11:54:33 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-43597bda41esm1354644f8f.28.2026.01.20.11.54.28
+ ffacd0b85a97d-43597bda41esm1354644f8f.28.2026.01.20.11.54.30
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 20 Jan 2026 11:54:30 -0800 (PST)
+ Tue, 20 Jan 2026 11:54:32 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Nithin Dabilpuram <ndabilpuram@marvell.com>,
+Cc: Stephen Hemminger <stephen@networkplumber.org>, rbhansali@marvell.com,
+ stable@dpdk.org, Nithin Dabilpuram <ndabilpuram@marvell.com>,
  Kiran Kumar K <kirankumark@marvell.com>,
  Sunil Kumar Kori <skori@marvell.com>, Satha Rao <skoteshwar@marvell.com>,
  Harman Kalra <hkalra@marvell.com>
-Subject: [PATCH v5 3/6] common/cnxk: re-enable vla warnings
-Date: Tue, 20 Jan 2026 11:52:08 -0800
-Message-ID: <20260120195418.466318-4-stephen@networkplumber.org>
+Subject: [PATCH v5 4/6] common/cnxk: fix buffer overflow in SA setup
+Date: Tue, 20 Jan 2026 11:52:09 -0800
+Message-ID: <20260120195418.466318-5-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260120195418.466318-1-stephen@networkplumber.org>
 References: <20251023194237.197681-1-stephen@networkplumber.org>
@@ -85,25 +85,46 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The code in common/cnxk no longer uses VLAs.
+The nix_inl_reass_inb_sa_tbl_setup() function initializes inb_sa_sz
+to 1 byte, then allocates a buffer of that size. However, the buffer
+is subsequently passed to roc_ow_reass_inb_sa_init() which performs:
+
+    memset(sa, 0, sizeof(struct roc_ow_ipsec_inb_sa));
+
+This writes 808 bytes into a 1-byte allocation, causing heap corruption.
+
+This bug was detected by GCC's -Wstringop-overflow warning when
+building with LTO, which enables cross-compilation-unit inlining
+and allows the compiler to track the allocation size through to
+the memset call.
+
+Fix by initializing inb_sa_sz to ROC_NIX_INL_OW_IPSEC_INB_SA_SZ,
+which is the standard macro used elsewhere in this file for OW
+(Sobek) inbound SA allocations.
+
+Bugzilla ID: 1513
+Fixes: fc9a711b5c8f ("common/cnxk: add NIX inline reassembly profile config")
+Cc: rbhansali@marvell.com
+Cc: stable@dpdk.org
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/common/cnxk/meson.build | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/common/cnxk/roc_nix_inl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/common/cnxk/meson.build b/drivers/common/cnxk/meson.build
-index 2b33022eb7..9db77a9702 100644
---- a/drivers/common/cnxk/meson.build
-+++ b/drivers/common/cnxk/meson.build
-@@ -94,7 +94,6 @@ sources += files('cnxk_telemetry_bphy.c',
-                  'cnxk_telemetry_sso.c',
- )
- 
--cflags += no_wvla_cflag
- cflags += no_shadow_cflag
- 
- if meson.is_cross_build()
+diff --git a/drivers/common/cnxk/roc_nix_inl.c b/drivers/common/cnxk/roc_nix_inl.c
+index f8be98efd5..1766f68c17 100644
+--- a/drivers/common/cnxk/roc_nix_inl.c
++++ b/drivers/common/cnxk/roc_nix_inl.c
+@@ -583,7 +583,7 @@ nix_inl_reass_inb_sa_tbl_setup(struct roc_nix *roc_nix)
+ 	uint64_t sa_idx_w, lenm1_max;
+ 	uint64_t res_addr_offset = 0;
+ 	uint64_t def_cptq = 0;
+-	size_t inb_sa_sz = 1;
++	size_t inb_sa_sz = ROC_NIX_INL_OW_IPSEC_INB_SA_SZ;
+ 	uint8_t profile_id;
+ 	struct mbox *mbox;
+ 	void *sa;
 -- 
 2.51.0
 
