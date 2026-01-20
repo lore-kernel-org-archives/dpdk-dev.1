@@ -2,67 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76D5AD2ECFE
-	for <dpdk-dev@archiver.kernel.org>; Tue, 20 Jan 2026 01:58:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96420D2ECFE
+	for <dpdk-dev@archiver.kernel.org>; Tue, 20 Jan 2026 01:58:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5506240A80;
-	Tue, 20 Jan 2026 02:58:17 +0100 (CET)
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com
- [209.85.208.54]) by mails.dpdk.org (Postfix) with ESMTP id 8A9F14069F
- for <dev@dpdk.org>; Tue, 20 Jan 2026 02:58:15 +0100 (CET)
-Received: by mail-ed1-f54.google.com with SMTP id
- 4fb4d7f45d1cf-64d4d8b3ad7so7866285a12.2
- for <dev@dpdk.org>; Mon, 19 Jan 2026 17:58:15 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 8767D406FF;
+	Tue, 20 Jan 2026 02:58:19 +0100 (CET)
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com
+ [209.85.218.43]) by mails.dpdk.org (Postfix) with ESMTP id D1D3740A79
+ for <dev@dpdk.org>; Tue, 20 Jan 2026 02:58:16 +0100 (CET)
+Received: by mail-ej1-f43.google.com with SMTP id
+ a640c23a62f3a-b7cf4a975d2so856850966b.2
+ for <dev@dpdk.org>; Mon, 19 Jan 2026 17:58:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768874295;
- x=1769479095; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768874296;
+ x=1769479096; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=B4kWzGBNTgoP7T5IFzmBjcLBHaYX6QcKf+v/APkDAYM=;
- b=Yf2whl2NLTCUuFG9Y5OCokTCNOkXgOuZXbOMR5daQjaEkIHSuEpz++O+Vf4Vnk1xH8
- Ra1kfvprPP8k9UgnkqG0GXi5wbfBswn+CPMgkUZOfs3OvNICpsGNukthds4g2e05VObO
- 2xYuqXmz49zH6qjarJQMx/niF3JXEEPzBf8vbnta1sr5unFmVm9yUAqrmQD6Kly6lteW
- 4IVL9E3nGKQgM0DWKpCyBYbcchDQlkJVGuQyk+g8Mnv0Xql3ULEa9v4xrb8PFdaGzSL4
- YOt86GyKeEWcoM+thK/xUoCtIJLBtXUzyo3mo2fCaPfrSfICn0hyO2e/il0wMcGftU2T
- Q0WA==
+ bh=bFarVFCJtpVCqNhUp4fI9ST6+8eVDFU9hQjDX9WPSVM=;
+ b=SWbJ7TZPX9ziyyUAR8Yf1YKliFVFaFX/5QBCd7lL8/+9NvP9Nfqts3wSDMGZc/tovi
+ 6Jpz6TRdTZ1jA7LHDQWNMIThTNDmYVUC2oBteqpyudjwlDxDLMyIhR+Jd7KFYXoMOAw1
+ nrU8+/3qpKm9enr4pcg1YrZd5v3HxezP0RjeQGLZETDNdS1s0FdhVkcsLG3QXP+MmMgR
+ r4eKBk0lf3MmpOah4MLJNon94OTueNvX1+1CYaw2ITnD4YyLX9IZ82JNIXgZ33QWe3Rx
+ ryEN+Q75GrABfeu8eYlCUtRn6MGrK0gr3vjEW9C7Lttq6h/wPuZoIKNsjZp6UXm1Qyu+
+ dMIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768874295; x=1769479095;
+ d=1e100.net; s=20230601; t=1768874296; x=1769479096;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=B4kWzGBNTgoP7T5IFzmBjcLBHaYX6QcKf+v/APkDAYM=;
- b=MWe96FDbciH3ephG7vX/5eMnCus2asaZeBYxiCRviIucnqqwkgYW5Yq0FhAxUGXrZU
- Hs0UxML7a/pyJCYUkOeDBPqi8FvpOZiA1UAn7BIP0b6e6eeougZjIwhN/keGuTThzdzP
- 73zi9jJDHMgZ37tnpYoQ8/bLtS4I0+KR8rGjA+mGVs6+1nQYj4ETgpu47DcqksnXzTpW
- E4AYT1al06nIVfQn1rSOSRdwz9nIALs2k9Z1I2t0ooWVqK70So0gyWBxZMAmgLA6yC95
- BGxlQ1YHc2SPtEVXugFtKG4RT6bHmIo//xJx9uISjQ07iwu+8JdVQvQixhkHCEeYCId4
- Fixw==
-X-Gm-Message-State: AOJu0Yw3vnuoSMi2CzTZ42bmhK067NNjDY0F/b7uVsWecq4o/Dd2H3gX
- 61xeYe7R8bTcTvA1Moy/3wD/7Cp9WRLWtgb0ZxPSqnAMzCLsOYNpPksbFxVtJJIci9ukZyQdRH1
- 3T5j6
-X-Gm-Gg: AY/fxX78M5sSx/xTwT4T3uPkD8pj9kC+vDTg+yNXkQ2pt03r/l/m4LKg0w3GaW/gMrk
- /5qIsZHZpD4EVgRPrqKCfWh7TxpezvHZWFx7ZrfYTf2VO1aSrKxHr0I6+/pT8Uu6z77hwQvz3RZ
- 4D91MYfAuhKnYVpdyRbCXNVVc8AnM16uWQlSJNdoTQhVph0fnGOZSdJsbOo/RK4r2qDXfCk+8X+
- Id4lUArfs7UkU5yyuaKDzuI829a/VVu9PUJAOJwyZa1Jkvit/gz5gNec/v+2tqSisPhZpLv5hLu
- 5pKt8ItDmSTunGcwJ5ky4qT7atBaU7qK/Gv4GnJNeHWuX773dlSfPtA4dCXRFMgrBQyVeT9grbo
- 39QLrvw6w2EKpKWzGZC7xGNuXMqcyT7yOnGbA2ZYv0IDyHKJ9QCDE2HlqG0ena7CTIwKMjXMslv
- bp/OoT5ssMQXYRfmY4bxaFS4ESoKVefr0Q8/FzUF4OJMG+B3Lceg==
-X-Received: by 2002:a17:907:8e96:b0:b87:716:8b15 with SMTP id
- a640c23a62f3a-b8796bc8082mr1050879766b.60.1768874294689; 
- Mon, 19 Jan 2026 17:58:14 -0800 (PST)
+ bh=bFarVFCJtpVCqNhUp4fI9ST6+8eVDFU9hQjDX9WPSVM=;
+ b=fTyW9yyb7DZCxsBk7MrZ7/V2wgiuRB8Dv12facoFJH00ChQRxyHC4rYcUCydyMxic6
+ mAEHh84K5b99B/Y5UtohxS79Wy6j2dgoYxn+Q449qZlDzGDKEYYu5r+G6yyQNx2eSlgv
+ f3J1eMzGuusrxhQXntaMxxgyYiD9LqovXLZVDwiC3NFOXrzbBVuOC3rHzJQCJyJNQlUB
+ R7g6vDXvv0Zga0p2XjH6VP4cARKA32SjBuekDnB1vm2mM5NamOTaSA7rCDJoagLbk1BN
+ hRCf5h5jgk2/HjNYJjc0dPJRthIrG/KNxGTqLNH1BE0ojc0+/uoumYFMlByNZ1PbGgkZ
+ ewJg==
+X-Gm-Message-State: AOJu0YzXDhTwmi0QlhScIGG3hm7OuwIEF6hQrWa8tvzOsNbEUwTothqQ
+ MbW8CgQOkYMX6bjH1CtkohbdrTvotw2KY1jF/4N2SV5AfoZU8VcGpPdVjCYWOI87xNTmxrTPWVG
+ x15gs
+X-Gm-Gg: AY/fxX4ad3mU7yL1OxyjocN3yeLHHFKw+0GDyv9glCAliyVRL48JBy2N0t6/1gTLqom
+ vwx7Fqnyyh8l5CbOWEaNTSBf2dOuF9+05suU71FPiWb40iM6N8RPiT9rf3MvrRapxkjZxr0TYCN
+ t2j+pRKndsdHVvG7hQjc6GqC4zx9iMQDvNVqu9qziWPwJC8DvFDhsdBnfucDB2HW/O2mpLkNVho
+ K6gLGtpGHE5CvN0U1Yc7ENflyPHGE1u89FOFqAOHefeFta+3X44GLuYDgn8YKAM1V8P6kYFqVN1
+ lbpbbIY2Zhleta8Ln7c5wizc+Vpmvy6drViEyCxy2rDiCz27CNP+cEUAFPndGdfBguT3yTrXmOr
+ g2SSBaCoRNNcf0dT+j7cKo7kaKp8iRmk9f55Y58BkhslAZB64QdX3uxXnflHN1VSwEaG+54kx7f
+ ps5DLrJ0GsnjgNR3HdiUL5z/2X/sf1/WCXPWBWu3TMfOCuHpZ+kA==
+X-Received: by 2002:a17:907:d23:b0:b76:d734:d459 with SMTP id
+ a640c23a62f3a-b8800392265mr22897166b.57.1768874296277; 
+ Mon, 19 Jan 2026 17:58:16 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a640c23a62f3a-b879516900csm1342225366b.23.2026.01.19.17.58.13
+ a640c23a62f3a-b879516900csm1342225366b.23.2026.01.19.17.58.14
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 19 Jan 2026 17:58:14 -0800 (PST)
+ Mon, 19 Jan 2026 17:58:15 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
- Marat Khalili <marat.khalili@huawei.com>
-Subject: [PATCH v2 5/6] test: add file-prefix for all fast-tests on Linux
-Date: Mon, 19 Jan 2026 17:55:08 -0800
-Message-ID: <20260120015759.301155-6-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+	stable@dpdk.org
+Subject: [PATCH v2 6/6] test: fix trace_autotest_with_traces parallel execution
+Date: Mon, 19 Jan 2026 17:55:09 -0800
+Message-ID: <20260120015759.301155-7-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260120015759.301155-1-stephen@networkplumber.org>
 References: <0260118201223.323024-1-stephen@networkplumber.org>
@@ -82,60 +82,69 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-When running tests in parallel on systems with many cores, multiple test
-processes collide on the default "rte" file-prefix, causing EAL
-initialization failures:
+The trace_autotest_with_traces test needs a unique file-prefix to avoid
+collisions when running in parallel with other tests.
 
-  EAL: Cannot allocate memzone list: Device or resource busy
-  EAL: Cannot init memzone
+Rather than duplicating test argument construction, restructure to add
+file-prefix as the last step. This allows reusing test_args for the
+trace variant by concatenating the trace-specific arguments and a
+different file-prefix at the end.
 
-This occurs because all DPDK tests (including --no-huge tests) use
-file-backed arrays for memzone tracking. These files are created at
-/var/run/dpdk/<prefix>/fbarray_memzone and require exclusive locking
-during initialization. When multiple tests run in parallel with the
-same file-prefix, they compete for this lock.
-
-The original implementation included --file-prefix for Linux to
-prevent this collision. This was later removed during test
-infrastructure refactoring.
-
-Restore the --file-prefix argument for all fast-tests on Linux,
-regardless of whether they use hugepages. Tests that exercise
-file-prefix functionality (like eal_flags_file_prefix_autotest)
-spawn child processes with their own hardcoded prefixes and use
-get_current_prefix() to verify the parent's resources, so they work
-correctly regardless of what prefix the parent process uses.
-
-Fixes: 50823f30f0c8 ("test: build using per-file dependencies")
+Fixes: 0aeaf75df879 ("test: define unit tests suites based on test types")
 Cc: stable@dpdk.org
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-Acked-by: Marat Khalili <marat.khalili@huawei.com>
 ---
- app/test/suites/meson.build | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ app/test/suites/meson.build | 25 ++++++++++++++++---------
+ 1 file changed, 16 insertions(+), 9 deletions(-)
 
 diff --git a/app/test/suites/meson.build b/app/test/suites/meson.build
-index 1010150eee..4c815ea097 100644
+index 4c815ea097..fdc0b77149 100644
 --- a/app/test/suites/meson.build
 +++ b/app/test/suites/meson.build
-@@ -85,11 +85,15 @@ foreach suite:test_suites
-             if nohuge
-                 test_args += test_no_huge_args
-             elif not has_hugepage
--                continue  #skip this tests
-+                continue  # skip this test
-             endif
+@@ -90,26 +90,33 @@ foreach suite:test_suites
              if not asan and get_option('b_sanitize').contains('address')
                  continue  # skip this test
              endif
-+            if is_linux
-+                # use unique file-prefix to allow parallel runs
-+                test_args += ['--file-prefix=' + test_name.underscorify()]
-+            endif
- 
+-            if is_linux
+-                # use unique file-prefix to allow parallel runs
+-                test_args += ['--file-prefix=' + test_name.underscorify()]
+-            endif
+-
              if get_option('default_library') == 'shared'
                  test_args += ['-d', dpdk_drivers_build_dir]
+             endif
+ 
++            # use unique file-prefix to allow parallel runs
++            if is_linux
++                file_prefix = ['--file-prefix=' + test_name.underscorify()]
++            else
++                file_prefix = []
++            endif
++
+             test(test_name, dpdk_test,
+-                args : test_args,
++                args : test_args + file_prefix,
+                 env: ['DPDK_TEST=' + test_name],
+                 timeout : timeout_seconds_fast,
+                 is_parallel : false,
+                 suite : 'fast-tests')
+             if not is_windows and test_name == 'trace_autotest'
+-                test_args += ['--trace=.*']
+-                test_args += ['--trace-dir=@0@'.format(meson.current_build_dir())]
++                trace_extra = ['--trace=.*',
++                               '--trace-dir=@0@'.format(meson.current_build_dir())]
++                if is_linux
++                    trace_prefix = ['--file-prefix=trace_autotest_with_traces']
++                else
++                    trace_prefix = []
++                endif
+                 test(test_name + '_with_traces', dpdk_test,
+-                    args : test_args,
++                    args : test_args + trace_extra + trace_prefix,
+                     env: ['DPDK_TEST=' + test_name],
+                     timeout : timeout_seconds_fast,
+                     is_parallel : false,
 -- 
 2.51.0
 
