@@ -2,71 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49EF5D2629C
-	for <dpdk-dev@archiver.kernel.org>; Tue, 20 Jan 2026 19:54:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E395D2629C
+	for <dpdk-dev@archiver.kernel.org>; Tue, 20 Jan 2026 19:54:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 54434410EE;
-	Tue, 20 Jan 2026 20:54:33 +0100 (CET)
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com
- [209.85.128.48]) by mails.dpdk.org (Postfix) with ESMTP id A0F124026C
- for <dev@dpdk.org>; Tue, 20 Jan 2026 20:54:23 +0100 (CET)
-Received: by mail-wm1-f48.google.com with SMTP id
- 5b1f17b1804b1-4801d7c72a5so31676545e9.0
- for <dev@dpdk.org>; Tue, 20 Jan 2026 11:54:23 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 6EBC6410E4;
+	Tue, 20 Jan 2026 20:54:34 +0100 (CET)
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com
+ [209.85.221.44]) by mails.dpdk.org (Postfix) with ESMTP id DA07B4026C
+ for <dev@dpdk.org>; Tue, 20 Jan 2026 20:54:25 +0100 (CET)
+Received: by mail-wr1-f44.google.com with SMTP id
+ ffacd0b85a97d-42fbc305914so4695790f8f.0
+ for <dev@dpdk.org>; Tue, 20 Jan 2026 11:54:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768938863;
- x=1769543663; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768938865;
+ x=1769543665; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=jNXCPIFznQtnuBhQO+JaVSbl+7nNV8Wm2tPKiKMe2xM=;
- b=tiT339qbkcI2YhyeFxx207sNbv+PfyfV9mhvySXXVE8mH+TnB4jbZVQr9hAGYzDIYn
- +Z+3DTW0IiZ/wBPuR7xsAkFZ8VwU5xF6+tXK+GisAUiodCoCEKjn1x1uZXdHqqXM2Ks7
- JZX87JEE9M2OogrDMd+G/izUbWJwK0JJNZfyNAmK2r57/jrmQqEbyIaD6QfH1YAHeOmt
- T74jf52OL4Ez5SZrM02sp3y4cBNuqPBdfF4IaZUpdNMAtDpa7bPGt+GsaWOGRaBOYa2Y
- T60wJeRox2cHZpi/h1y73ToUtkaeiygRATXeOHfN1q80DpIIMYMgBvq6OleoQxys8u2D
- 6fkw==
+ bh=QGNuRblYumtwqpN+9gqA2URFkAOSBLjfXWBeuth59Rc=;
+ b=ckRT6fDqoHH6dDTku93yHXYdtbJOGaBx2EvYfQfwTIeV7dG4RbfxjOh4yuaDWvvHcI
+ C2leeQQp+M/rgiB+mxk1kS8heeCZlDBu8xH1JI9BxWCimjV/PFregHXAPgcXs49NKKlW
+ /TNZF9wnea5KM8kYM9TMSG9YxQi2RfggO7IUvIZq6hcPL6pbgMcG5CYbG07z1INDrSdY
+ enuQxKVs1Jwgij8no+k3EPsOUxVf8tZwjsIw92ytzgHnTR7XKQHgXAR+E9YYZAZtN5Bz
+ Uus3sRTdqI81gu7+iwK8/RqpynIZ5CtmVowHWMtN2x3ViIteqVuaZSlFfNVMkOYxnWvp
+ YcOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768938863; x=1769543663;
+ d=1e100.net; s=20230601; t=1768938865; x=1769543665;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=jNXCPIFznQtnuBhQO+JaVSbl+7nNV8Wm2tPKiKMe2xM=;
- b=q/YSYw5dwmkMpE+TquCSRk0uRqO4824ePqZbjxeupV2uHlgPVuRbokua4lzsaNjX/7
- NnpHDjswaNXxPe8KgUj+0EQI44Ld/pnRJ+fOwrUHWAjkeoHW7xiC5VUXtjJCKWTqRHno
- l3cG/CpSl3JbquqWNR2aXRzfEIHmHpPypc6dH5M1saygiZYLpPp100wDvYqDQz/WbqER
- psu25r5xlwoAblKa/a1FTCX4tZji2Bets/pK1S1ys9CNrrBIrKBqrNT4pP9IV/CRiB4T
- OzNfSumLKqoW2LeiC+eKrEG5iBvcvzHo8LPZAXwtsDfw8LTwc/OqC4DPBg/D003i0wZM
- p+QA==
-X-Gm-Message-State: AOJu0YyVYniOU39oMkJrasY9xN/L+L6PMfgvqzd0RjX54CcQVQB+UeWp
- fzmrHsQYlAAQZN19uq0/xlcPTP7Dk5ug70YQ3W41lMYFRResk7pyWNJHc1G08ngZo+ouuN06aW1
- a+q4n
-X-Gm-Gg: AY/fxX6h1nnxKEkkMdxKFEkIkSVrQQaEcf1VBXOSF3uR8MBndsguTW+zDxivce8QxRT
- 8B7DqVd1W1W8ND6/JZobU46KRVyfeCDJ89ji+DsCS6A8mE/OctF86rHFCopgYMmq/HivKr5rskE
- fCxwNWoFrDBRHj1Y8pnOotlRkoYtJPiFlN9WF5MMlAS40wACU3MBRd2AURUjSGWAvHP/yvV1WW+
- rbamDpC0Q1vDYzzFic+uDqJW1bocXyFQkmrimkRCa1beXEUtNcU9YA453U5ys4LUK/ZKhpg9P19
- bkWK+pV9Eu2HjR19CqIoRzAZkIVh3sC7ZxUFcW3IxqH4UvVujqWefXPTG6hpxTYvm0WPhfsr+9l
- 2Vip9woeJLDUBbIRTgxnITaYQ8du1UmgZLgcg4R+Pw3nO/wrZqZrOB8yxZkg8cERxgoT+OD6OeH
- 0yvy9s8Fp1Cp5aWB6qmLpvgY69MPgDOZvwSq8981+8K01xqkwX7Q==
-X-Received: by 2002:a05:600c:450e:b0:46e:49fb:4776 with SMTP id
- 5b1f17b1804b1-4801eac0721mr175594325e9.11.1768938863033; 
- Tue, 20 Jan 2026 11:54:23 -0800 (PST)
+ bh=QGNuRblYumtwqpN+9gqA2URFkAOSBLjfXWBeuth59Rc=;
+ b=mZKXyk5FiXJdtZeY4UyGsKzFBjGNeSMtdYdWUCwROPsXbn5rjptWqz10MfxWGMgRyA
+ WOSElVe1u06vCmqywAZ54yKmRgJ00/CmeB6Irpilx/gKMPE9aXKfudYA4WLpcDZ0DY7X
+ ih4aQnvCYDFippTtaPmaRQWJBW+thk0p6a3aObGoAHpmFDYUunzjMlZ8OWm/N9iM/KG5
+ RuTdHz9zPPnOazcNo4ZiPv63B8C5xQvXP3vuYdfiXSMhG70lEDpFOS0Xlg0PeMeIjhMw
+ yTEPoFpeaxZEsWV8h068Rws/AeVf3IIug/d2752Zr+D3tOvZgAb9C6Ps+XxaZF1ITcvY
+ HfwQ==
+X-Gm-Message-State: AOJu0YyHgUcAbUkh0z5/zHEv4MeqGtiv+Ig2Dvejjyvp+TO0y26b+a3g
+ S3hKtDEkkwpPMa4T3EKblFWQB6ZcmB2/xLiIbktx5AYbmAQ0zNcDtkA8RoVmBh5LbQwIhwbJPdo
+ fN4aK
+X-Gm-Gg: AZuq6aInmi3mGoiSoC9qq+YAXGumIN+Mh9xaAuPfamsX1a2YVz9nRtvEZS1jBR73/92
+ nRbW4Id2fj2yGcWZmFnXeh9/CNXE7JU0BlGMYrwtrRChoAUmiWsNY4SGdjspwFWv6OvTy6X1HNk
+ fW9cxetNApeEkpM6mMVBmLCa9KUxVr4MTZM7Y73YoWRXrQ6pgAFtOVXjzyx0ehg5s1hTuPMohjG
+ fv3hTlk88XVosGs5wBa7caEoZuLHA/IdxaunCJsqmTch0HgO2xs1NOearcgS9Z4m/4pI+ekz+6P
+ nqqySTRqX+efqV5PZo6pQ8COvvlE4hIioHbqBh6ya1qd2D5CuRrJimlaJTssnmYU4F3y0Fx81NI
+ PI6qQzkAAxgnjhd5Qm9RlkCspgsViYQNXRNmIUGkNtbl91XFiNmLadMqKpCSOft8Sv7VwNjSAEn
+ Na/XRg8KaCpTxXfBRcENe9RK8gACa6fMHGBEa7aQPS2Nq3wAR6ZQ==
+X-Received: by 2002:a05:6000:25c6:b0:430:fdb8:8516 with SMTP id
+ ffacd0b85a97d-4358ff269c7mr4937112f8f.35.1768938865445; 
+ Tue, 20 Jan 2026 11:54:25 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-43597bda41esm1354644f8f.28.2026.01.20.11.54.21
+ ffacd0b85a97d-43597bda41esm1354644f8f.28.2026.01.20.11.54.23
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 20 Jan 2026 11:54:22 -0800 (PST)
+ Tue, 20 Jan 2026 11:54:25 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH 0/6] Fix LTO compilation warnings
-Date: Tue, 20 Jan 2026 11:52:05 -0800
-Message-ID: <20260120195418.466318-1-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Nithin Dabilpuram <ndabilpuram@marvell.com>,
+ Kiran Kumar K <kirankumark@marvell.com>,
+ Sunil Kumar Kori <skori@marvell.com>, Satha Rao <skoteshwar@marvell.com>,
+ Harman Kalra <hkalra@marvell.com>
+Subject: [PATCH v5 1/6] common/cnxk: replace variable length state array
+Date: Tue, 20 Jan 2026 11:52:06 -0800
+Message-ID: <20260120195418.466318-2-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251023194237.197681-1-stephen@networkplumber.org>
+In-Reply-To: <20260120195418.466318-1-stephen@networkplumber.org>
 References: <20251023194237.197681-1-stephen@networkplumber.org>
+ <20260120195418.466318-1-stephen@networkplumber.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -81,48 +85,30 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-TLDR; fixes LTO build
+The cipher function is always called with in_len = 16
+and there is an existing define for that.
 
-Full explaination from AI...
-This patch series addresses multiple compilation warnings and one buffer
-overflow bug that are revealed when with Link Time Optimization (LTO)
-enabled.
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+---
+ drivers/common/cnxk/roc_aes.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-LTO enables cross-compilation-unit analysis and inlining, which allows
-GCC to detect issues that would otherwise be hidden. The patches fall
-into three categories:
-
-1. Variable Length Array (VLA) fixes in common/cnxk [patches 1-3]
-   - Replace VLAs with fixed-size arrays and appropriate bounds checking
-   - Re-enable VLA warnings after fixes are complete
-
-2. Actual bug fix in common/cnxk [patch 4]
-   - Fixes buffer overflow in IPsec inbound SA initialization
-   - Detected by GCC's -Wstringop-overflow with LTO enabled
-
-3. False positive warning fixes [patches 5-6]
-   - Add explicit bounds checks to help GCC's static analysis
-   - Adjust inline attributes to prevent spurious warnings
-
-All patches have been tested with LTO enabled and resolve the respective
-compilation warnings.
-
-Stephen Hemminger (6):
-  common/cnxk: replace variable length state array
-  common/cnxk: replace variable length array
-  common/cnxk: re-enable vla warnings
-  common/cnxk: fix buffer overflow in SA setup
-  net/mlx5: fix LTO stringop-overflow warning
-  ring: use inline instead of always inline in soring
-
- drivers/common/cnxk/meson.build      |  1 -
- drivers/common/cnxk/roc_aes.c        |  3 ++-
- drivers/common/cnxk/roc_nix_inl.c    |  2 +-
- drivers/common/cnxk/roc_platform.c   |  4 ++--
- drivers/net/mlx5/hws/mlx5dr_action.c | 14 ++++++++++++++
- lib/ring/soring.c                    |  4 ++--
- 6 files changed, 21 insertions(+), 7 deletions(-)
-
+diff --git a/drivers/common/cnxk/roc_aes.c b/drivers/common/cnxk/roc_aes.c
+index d84feb546a..babf149ccf 100644
+--- a/drivers/common/cnxk/roc_aes.c
++++ b/drivers/common/cnxk/roc_aes.c
+@@ -157,9 +157,10 @@ static void
+ cipher(uint8_t *in, uint8_t *out, uint32_t *ks, uint32_t key_rounds, uint8_t in_len)
+ {
+ 	uint8_t data_word_len = in_len / sizeof(uint32_t);
+-	uint32_t state[data_word_len];
++	uint32_t state[AES_HASH_KEY_LEN / sizeof(uint32_t)];
+ 	unsigned int i, round;
+ 
++	PLT_ASSERT(in_len <= AES_HASH_KEY_LEN);
+ 	memcpy(state, in, sizeof(state));
+ 
+ 	/* AddRoundKey(state, w[0, Nb-1]) // See Sec. 5.1.4 */
 -- 
 2.51.0
 
