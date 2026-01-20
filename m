@@ -2,85 +2,87 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 088D5CA5FA7
-	for <dpdk-dev@archiver.kernel.org>; Tue, 20 Jan 2026 16:26:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 265DECA5FAD
+	for <dpdk-dev@archiver.kernel.org>; Tue, 20 Jan 2026 16:40:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E470640E0C;
-	Tue, 20 Jan 2026 17:26:56 +0100 (CET)
-Received: from mail-dl1-f47.google.com (mail-dl1-f47.google.com [74.125.82.47])
- by mails.dpdk.org (Postfix) with ESMTP id 14C8D4026F
- for <dev@dpdk.org>; Tue, 20 Jan 2026 17:26:56 +0100 (CET)
-Received: by mail-dl1-f47.google.com with SMTP id
- a92af1059eb24-124566b6693so7809007c88.0
- for <dev@dpdk.org>; Tue, 20 Jan 2026 08:26:55 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1768926415; cv=none;
+	by mails.dpdk.org (Postfix) with ESMTP id 0305240ED9;
+	Tue, 20 Jan 2026 17:40:35 +0100 (CET)
+Received: from mail-yx1-f47.google.com (mail-yx1-f47.google.com
+ [74.125.224.47]) by mails.dpdk.org (Postfix) with ESMTP id AB46340E0C
+ for <dev@dpdk.org>; Tue, 20 Jan 2026 17:40:33 +0100 (CET)
+Received: by mail-yx1-f47.google.com with SMTP id
+ 956f58d0204a3-6446704997cso4775710d50.2
+ for <dev@dpdk.org>; Tue, 20 Jan 2026 08:40:33 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1768927233; cv=none;
  d=google.com; s=arc-20240605;
- b=jqzlmmwMd0+NLvoNCK7lKOwdXroI1LaG7UJjrliqEKpCqcOiLedPt1el97xtg0ZyL4
- PX2fZZQEruaRGUHdJim/+pVHBDKrfetsz/VFKa//aoLFHbDUiWvSiQxUOrIDUvoY0Mdn
- dLgkg8lXAU4dMPXVVyt+If9D6iYiVy8iRcbeI86+YpJYfA+vz7kuA0srzQd2MvnEsnC/
- RCpFfJTYSOR8iX/yBw9mMJT34Di3kEALkW+WbheZvwnNAQlf0AePMZnI7htSNANwsz22
- NIwX5Ab+X/dICqgC7EpkCsqcxD4yhjwdV1EdjZ6Z9YsCanYtjVKaiWLfNpWOFf41C0Sy
- MM7Q==
+ b=fi9w4sKhP2SeK1+12gqIakI5HaK3rjXAa2ayPNLd2bYmArsywyeG3/uLrZGYq9PC9N
+ z4D0CjopJ2vbAqJe0aOu9Gsb79hd9qJVASohFAi+6vLOMMyBMxcaQGlD75HpH176FdEO
+ 5VDe4qkNtXL0E0lbErANEdJJuM6jYgjTg7BYAUXXTJYLlw8VNaBzy2K/lYpz0GHX8ruD
+ 64+1waI134Bc15mJaNFjZI0V2sTPg00ZX6X9BQfq7hU6jdl3pFj/fZIPgQ4+zQE2w/Ys
+ hvEyyx+zuHPQgM/wJsMD9DjdTuBoKfgR2HT4acyNPsvUw3ve+zn8meX/baJpmpoiBhod
+ emkQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
  s=arc-20240605; 
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:dkim-signature;
- bh=bVb0v2tYJraTH8Vj//2sKzXqx167EHtJID3bTGxG06E=;
- fh=i3/DvSCn0z+PdnmPUleGuFt/9DHlL8B0vL1zy1wKVfs=;
- b=e+0OcoG5bSjn7DpUVln2B+xjnYOrl0gWvGwkr9XxMNs3xeQoh1rqhlaxj/My3AyqZv
- ro0smYVFRwjbdt7PpUA4PuJQ45tNrAST0cPeLpyyA4zvxzNnOAFGt4nR6XbVmSx5UrkC
- hlc0DcCEhaYD35xS1DKIc4K2w3Xfk/RmZpVZ6xwumxbhXbSuxEX+uesjQFM70NFyRG6D
- OT+q4+1Dt/9EXKK7/h4jaTzjGkQOM4a7X6q9vbXVtKyHocYbc9MhRQ2hvm3gQvNWEuFm
- a7ofyvq+5e8K3tgS9em5s7HlBx4DA7tscpqHpPoE+VWcp/MCzl5Zozr4avHWpUCxp+Pg
- MnCA==; darn=dpdk.org
+ bh=IgNe+sxMlfaQr6zlvEAlH0Lqz06wAPLUw4iJ0pl2jRA=;
+ fh=XaAs2mHT30LNI11mN0t0DZwpA+BQtuO3YRtEFYhFIQo=;
+ b=B0fjvQWpWmsVQzWqNzVR8mA2rZa1g5rPwoWfvB1fruWI9TZr6JI3iHQ/C2XxM2h3ao
+ fXl1m182Pu9wWhVhJ+dKfEaBIAZ1ugXI9TrsUf5SCs1b2VefnawLCSyhJJIk32AGZSSQ
+ vg/sgciU0TrQRqinzbjq6JOYv6wU5lUfYD9Ek6/5W40wwdnZuZbwkWuMm5P92ND44CSP
+ +hiPLndkGaWALFO0u1pNEZr38x9Ve9cBpu6TsCk3jR7kw3Nut5AL7evQ/V+cW2ybzjg2
+ OqShwa7Nq17e3Z9So4bsftqVL88m+z51ml5lJ8vtn5y3WVCsadP9qJZQjcNW9RVfSCCq
+ N/NA==; darn=dpdk.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1768926415; x=1769531215; darn=dpdk.org;
+ d=iol.unh.edu; s=unh-iol; t=1768927233; x=1769532033; darn=dpdk.org;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=bVb0v2tYJraTH8Vj//2sKzXqx167EHtJID3bTGxG06E=;
- b=GE+MqnaqDsni3vn+T6/y3tJaJ8kycuL8W+Nq+zO3ssqgnTcvm9fjT76idCdwd5l/XK
- MZ/Cx8/sjcnxuJoAtzyl54+g3WWjKz+2uWz4Qd9rNt0MI3vUzHO7JhgrCZ1ORu9NzNqK
- oBZeW8JEIZ4Q6HDO7GAuJxSDuu3d32ik5nhWs=
+ bh=IgNe+sxMlfaQr6zlvEAlH0Lqz06wAPLUw4iJ0pl2jRA=;
+ b=H9eP6euv2ZHTj0l5XuHUDGNkDjZsdBThCgIY78KC5xz/S6W3ua/NRl/T5mLmgpl7wC
+ Q+U3+jnLeunqaraZUV5OQDEiYmz/AAJy2EqSYKgc+SuReDhps6gpcvl6NTTf3EyBsx9e
+ hTSuuoRXaZDEvfyz83ICmfKQUfJeI7AtXZcso=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768926415; x=1769531215;
+ d=1e100.net; s=20230601; t=1768927233; x=1769532033;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to;
- bh=bVb0v2tYJraTH8Vj//2sKzXqx167EHtJID3bTGxG06E=;
- b=eM3DGLxH36n+TsByqnlM168nYSL1X/6I69Maj7sR96XLVRbFfDorWGcinNyq6ss0FG
- rKDYhVUP9wwILKln21ToJFkyY4ie137aW8RDEgXpMw+h2BicnvFno996+rA8PcFUaawg
- DVz2p662TNWHV1G5Atv0Jo2A1+/NagSP/4wIWHuEVmw65AFEpPl6PWRiHpJphBFncGAQ
- 5YmzqnW5f6kTDLtzGd13FNqj3Kk/ANevG5iqE5hNYAihbQLm+kfsmE2zNyOJQEPk0vo5
- t6wVdm4xGYutCzwQSRCh877kjNLCFzR+H+Iphyzx2hM3W61FDfxbMSWawLloWjEXynZc
- b86w==
+ bh=IgNe+sxMlfaQr6zlvEAlH0Lqz06wAPLUw4iJ0pl2jRA=;
+ b=DoRQlzTvJ1EkDyJO1A0zJK4/Kl6mM6QkOa84zsuuHVvyhMA0v1Q06CElc/4wo3uytJ
+ 7wIcZUdU1i0AsH9pf+mNS7FMlh5A631mrroEQpJ7BcuflbRT1QWNijPvjYDBgTbbSSI0
+ zaWumuMTf0aMOPnG/5vdurDV2hROblw79YqDYQEA6NLmDYaLDrChgeTqwOssGhqqQJmM
+ C6t79Ocgh47B/QmN8QA4Sc99MkMDe/hclRD9ZZ8AHpcjsDwRoZ75ro6n+lSsIXlABdeq
+ mtWqoO1Ofky3ohM1c6Hl0HaCqp+dWGA4yBJzmYYwYLqHkFnhL4lIgX2VFYAzTldBjXjU
+ MP6A==
 X-Forwarded-Encrypted: i=1;
- AJvYcCVBgoL7T8ZcXGDpTAedglOvKIBeCsz3aBZ+w0Zt3xiO5aKnjTLCYs20L6N27zVP3L7q09o=@dpdk.org
-X-Gm-Message-State: AOJu0YxBuDqgmrO6T6Uh2AtbywOsMrf+YDjVgn5m03bKazNc8lfw05FQ
- Ye819ckvPb3Qp8eN5AU6pDOO4omXT0dCRc+B2M6DHlyDjxitya6ul+qYfvuknrXKiqyj/Q9Si+a
- 5vUTMqMEU36WEwlGe0nJRJq1OvHniv8Dc4z1wkJPEwQ==
-X-Gm-Gg: AY/fxX4mE5nPHI/HSvTolJJEzJJEI/6oyxHA1nrSMxDdru5qhsh6PJ+uUQTeChrUlvu
- IK/Ot8TgbnC4BObpra/+fF3XdelZqToKGwaUa5QXZ8K/s3jVbez3jr2sqKMbmr9bjSbHhupMwh/
- 0ZAYwcGS5Wt4ktt0Nx8lYYoIg6lyR5y+RLAFUHyGhYF2aWdmsQqU4ZppFbb9dbr8grYDMJ27bCB
- J3zytQNZvtY6jX2K+NYCuHRpZ3bD0cC5Kw5qW+g/WwIzkQJI3+Ba+qj5VD2/sNCIfVRj90jg0po
- IezfmSdP/CpeMr8w2q23TGvfw3gWGJ0yXDIw38dzTDSgmG1aVonO
-X-Received: by 2002:a05:7022:b8f:b0:11a:4016:44a5 with SMTP id
- a92af1059eb24-1244b3706e1mr10157297c88.24.1768926414951; Tue, 20 Jan 2026
- 08:26:54 -0800 (PST)
+ AJvYcCWnR0Imq9JGlg9A9hjgJoYHn6bsX8K9AhLCizFKYgyozPK/HQus4zaXhgOcowtqSMn/CBI=@dpdk.org
+X-Gm-Message-State: AOJu0Yyh5N9jP4uJlaRWDqxU8t77VxWddBLdf+M8PTI+b8P1SVOZfcF9
+ i5qBd7yxIfdftixBcNbvWfoA9zROX7th8yc2W8V6IkCi5borVhVFwwU5BYP3PWW9LsGim9Azb0z
+ a7mN7BBzNBk803zp0ZEbWYbAgtzngMSi7D47IO0abYg==
+X-Gm-Gg: AZuq6aLllx99kN0HAd4seFq0VdU1wAr69CLJ9iQ6faO5HQO3z19kV0v8hZTZ3QncxCS
+ tLjKfxtSdEmZd6ijUwR0/bNT93oXqgSe8abYZUTJKjNlArHCgZDNQ58ni6Q4OR4IVd3Ut0O/geV
+ K1Fb4kJ/dJLiswjCxosbvghofuBA95hwTYMVtZfhN/wJulh/kfHsHGyuAw1u7aW5o2pKrsSFB4K
+ ZAgDj6fccFE2XEbyNuMKi/W3JohJpZ1cio9L2ArCbtFSlK7ucjags3/hl4pwkONirINYeovGoZo
+ BBthJc9Bbw==
+X-Received: by 2002:a05:690c:c4fa:b0:787:ca6b:385e with SMTP id
+ 00721157ae682-7940a21c1e7mr16251387b3.39.1768927232905; Tue, 20 Jan 2026
+ 08:40:32 -0800 (PST)
 MIME-Version: 1.0
-References: <20260119104147.219027-1-bruce.richardson@intel.com>
- <20260119115607.225929-1-bruce.richardson@intel.com>
- <f7ttswgxvzi.fsf@redhat.com>
-In-Reply-To: <f7ttswgxvzi.fsf@redhat.com>
-From: Patrick Robb <probb@iol.unh.edu>
-Date: Tue, 20 Jan 2026 11:24:38 -0500
-X-Gm-Features: AZwV_Qj68_7DT0Kgs-f2mBQvfeSfDBVvEkPt3kF0tVZxyAJIHLBu7-ToTZXZF8A
-Message-ID: <CAJvnSUCyNA2UmS_tYzC=Y6+w107e0V=cbsvzzyb+gPyAZ1Cqog@mail.gmail.com>
-Subject: Re: [PATCH v2] ci: improve logging of unit tests runs
-To: Aaron Conole <aconole@redhat.com>
-Cc: Bruce Richardson <bruce.richardson@intel.com>, dev@dpdk.org, ci@dpdk.org, 
- Matthew Labrecque <mlabrecque@iol.unh.edu>
-Content-Type: multipart/alternative; boundary="00000000000098e55b0648d446d3"
+References: <20251024185056.607160-3-dmarx@iol.unh.edu>
+ <20251107215020.255182-1-dmarx@iol.unh.edu>
+ <CAJFAV8x4g4yy3LO7bfKh-UzFZ=fA5Y0Q3hAvOamw2o4rFMbeKA@mail.gmail.com>
+ <CAJFAV8w0kGw4Dxjr1xhuvhbcEK4WAw-G6Yy9iBQ1d5sKkQm-Qg@mail.gmail.com>
+In-Reply-To: <CAJFAV8w0kGw4Dxjr1xhuvhbcEK4WAw-G6Yy9iBQ1d5sKkQm-Qg@mail.gmail.com>
+From: Dean Marx <dmarx@iol.unh.edu>
+Date: Tue, 20 Jan 2026 11:40:21 -0500
+X-Gm-Features: AZwV_QhTf0coTVFf5KwWk7fNaT6hCBx5NvrhZo5SHwMh-yFTzi9yr-Q_NgjRtBE
+Message-ID: <CABD7UXNBy0AkhuK-SN1C=BXXGq9Z--BM1Df8mNDkJjTrueJgpA@mail.gmail.com>
+Subject: Re: [PATCH v5 1/4] dts: add start Tx first method to testpmd shell
+To: David Marchand <david.marchand@redhat.com>
+Cc: probb@iol.unh.edu, luca.vizzarro@arm.com, yoan.picchi@foss.arm.com, 
+ Honnappa.Nagarahalli@arm.com, paul.szczepanek@arm.com, dev@dpdk.org, 
+ Thomas Monjalon <thomas@monjalon.net>, sismis@dyna-nic.com
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -94,111 +96,6 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---00000000000098e55b0648d446d3
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Hi David,
 
-Thanks Aaron, Bruce,
-
-Yes, we have our own build and unit test scripts in Jenkins that we should
-update to align with the above.
-
-Matt, please go ahead and add these flags and send a jenkins PR. The one
-exception to this will be the special pipeline for running unit tests on
-aarch32, since that needs to be run from dpdk-test directly, instead of
-using meson test. So, you don't need to modify that aarch32 pipeline.
-
-On Tue, Jan 20, 2026 at 8:19=E2=80=AFAM Aaron Conole <aconole@redhat.com> w=
-rote:
-
-> Bruce Richardson <bruce.richardson@intel.com> writes:
->
-> > To help track down issues reported by CI test runs, add some additional
-> > meson flags to the run of the fast-tests:
-> >
-> > --no-stdsplit:
-> >   keep the stdout and stderr output interleaved, rather
-> >   than separated in the logs, to make following what is happening durin=
-g
-> >   a test run easier.
-> > --print-errorlogs:
-> >   when an error with a unit test does occur, output to the terminal the
-> >   last N lines of output. This allows us to see inline what may have
-> >   failed without always needing to check log files.
-> >
-> > Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
-> > ---
-> > V2: Drop max-lines flag, since it's only introduced in very recent meso=
-n
-> >     versions.
-> > ---
->
-> Thanks for working on this.  I guess when we bump our meson support
-> version we could re-introduce the max-lines flag (looks like it was
-> added in 1.5.0 based on reading the notes).
->
-> Acked-by: Aaron Conole <aconole@redhat.com>
->
-> CC'ing Patrick and the CI list - just in case any of the labs have any
-> special processing when they pull error logs.
->
->
-
---00000000000098e55b0648d446d3
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr">Thanks Aaron, Bruce,=C2=A0<div><br></div><div>Yes, we have=
- our own build and unit test scripts=C2=A0in Jenkins that we should update =
-to align with the above.</div><div><br></div><div>Matt, please go ahead and=
- add these flags and send a jenkins PR. The one exception to this will be t=
-he special pipeline for running unit tests on aarch32, since that needs to =
-be run from dpdk-test directly, instead of using meson test. So, you don&#3=
-9;t need to modify that aarch32 pipeline.</div></div><br><div class=3D"gmai=
-l_quote gmail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Tue=
-, Jan 20, 2026 at 8:19=E2=80=AFAM Aaron Conole &lt;<a href=3D"mailto:aconol=
-e@redhat.com">aconole@redhat.com</a>&gt; wrote:<br></div><blockquote class=
-=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rg=
-b(204,204,204);padding-left:1ex">Bruce Richardson &lt;<a href=3D"mailto:bru=
-ce.richardson@intel.com" target=3D"_blank">bruce.richardson@intel.com</a>&g=
-t; writes:<br>
-<br>
-&gt; To help track down issues reported by CI test runs, add some additiona=
-l<br>
-&gt; meson flags to the run of the fast-tests:<br>
-&gt;<br>
-&gt; --no-stdsplit:<br>
-&gt;=C2=A0 =C2=A0keep the stdout and stderr output interleaved, rather<br>
-&gt;=C2=A0 =C2=A0than separated in the logs, to make following what is happ=
-ening during<br>
-&gt;=C2=A0 =C2=A0a test run easier.<br>
-&gt; --print-errorlogs:<br>
-&gt;=C2=A0 =C2=A0when an error with a unit test does occur, output to the t=
-erminal the<br>
-&gt;=C2=A0 =C2=A0last N lines of output. This allows us to see inline what =
-may have<br>
-&gt;=C2=A0 =C2=A0failed without always needing to check log files.<br>
-&gt;<br>
-&gt; Signed-off-by: Bruce Richardson &lt;<a href=3D"mailto:bruce.richardson=
-@intel.com" target=3D"_blank">bruce.richardson@intel.com</a>&gt;<br>
-&gt; ---<br>
-&gt; V2: Drop max-lines flag, since it&#39;s only introduced in very recent=
- meson<br>
-&gt;=C2=A0 =C2=A0 =C2=A0versions.<br>
-&gt; ---<br>
-<br>
-Thanks for working on this.=C2=A0 I guess when we bump our meson support<br=
->
-version we could re-introduce the max-lines flag (looks like it was<br>
-added in 1.5.0 based on reading the notes).<br>
-<br>
-Acked-by: Aaron Conole &lt;<a href=3D"mailto:aconole@redhat.com" target=3D"=
-_blank">aconole@redhat.com</a>&gt;<br>
-<br>
-CC&#39;ing Patrick and the CI list - just in case any of the labs have any<=
-br>
-special processing when they pull error logs.<br>
-<br>
-</blockquote></div>
-
---00000000000098e55b0648d446d3--
+Thank you for pointing this out, Patrick and I will review
