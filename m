@@ -2,82 +2,82 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AB03CA5FB2
-	for <dpdk-dev@archiver.kernel.org>; Tue, 20 Jan 2026 16:52:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DB13CA5FB3
+	for <dpdk-dev@archiver.kernel.org>; Tue, 20 Jan 2026 16:55:48 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 88B0240ED9;
-	Tue, 20 Jan 2026 17:52:15 +0100 (CET)
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com
- [209.85.218.54]) by mails.dpdk.org (Postfix) with ESMTP id 7357A40E0C
- for <dev@dpdk.org>; Tue, 20 Jan 2026 17:52:14 +0100 (CET)
-Received: by mail-ej1-f54.google.com with SMTP id
- a640c23a62f3a-b8715a4d9fdso775886166b.0
- for <dev@dpdk.org>; Tue, 20 Jan 2026 08:52:14 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id E1EDD40EF1;
+	Tue, 20 Jan 2026 17:55:46 +0100 (CET)
+Received: from mail-dl1-f54.google.com (mail-dl1-f54.google.com [74.125.82.54])
+ by mails.dpdk.org (Postfix) with ESMTP id 6E44440ED9
+ for <dev@dpdk.org>; Tue, 20 Jan 2026 17:55:45 +0100 (CET)
+Received: by mail-dl1-f54.google.com with SMTP id
+ a92af1059eb24-121a0bcd364so7092906c88.0
+ for <dev@dpdk.org>; Tue, 20 Jan 2026 08:55:45 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1768928144; cv=none;
+ d=google.com; s=arc-20240605;
+ b=RfUXhIfIUt1n3BNdRxVMNTrPBaDrrZj6jURsVP16//IGD8OS/+2Q1iynAVt3vSQiQS
+ oWq0e5cyXVySx1kXqphHVWC7kxXt/PxoRhADRu6hBj4NQDQLY4+odhix2MKwzGzhz3gi
+ ugXRdp+aQeGPAgNla+lP9nd45tlhxpBRBR7ALhD6MkKQGigapTuZgf9lvB1AmsF0L5R2
+ zm0Otf6FirIO+soXasu8h2ZWQWznOPuyDrWV/3UQT5IcdV5UlhEWgdyH/rM0C/eKSMDj
+ UeCHb+b83E0HuECAJMhgQB37ervDtrCzPOJXnxM2RPSfckjN8t4xpRwvi7+6KVwrFnQ8
+ k+0w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20240605; 
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:dkim-signature;
+ bh=v5bHUJXbUlXnv/oQJyFgDusLXKihmBKN485YpWU20vE=;
+ fh=5d8S47tGpkCnq6aHLKh9Rcm2IE3pdQVI6gXFIjVuT3s=;
+ b=Nb5mnAgIKzmgew6ySI2RsOiMp452pGNzms0k4Qz5rfLynbOh7+bwuU82/72U1c5fva
+ pkd5NoxTmbmfFJztZGdXbqKRWgpWVW+f8nODZr0LMtS09Lh3ROFfdplyxsGmve9/IlE0
+ h1DGjOkDyfeUcbJEJ+u4HZRhBTkb5G4EwX8NCdsP4gRhX9xZv+eOc0xWnwvgWTWNFdk4
+ nxRCZURTF7wx9OwmdlTgn+4SR5teVgniPNCVUUggtuxSSsFn+g79kyAQr+BkDZFXFuKy
+ cj7mWi5pSW5cz+IeU9T+sRvnrx6Rj+LbNPJtw5mzvgTIoX0JeGANYFeJamWpesHOW5zK
+ adlA==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768927934;
- x=1769532734; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=Lcof0tCQHPokIAAyPRwXrJzkYKmcd1a7lF+iWDHiHOo=;
- b=dLw7n7K0nNkoSN7Sj0E4w8UbGRSYyqws7C3cBHDRPe4vmaj3Eul9/XbOKTPLOc7lpi
- brKuP33DPJFyHJRFw87kNsMB4QO4Qu9I4xl3FbzAhezDxLWFzQ/R0jffuISn4Wdh/G+7
- 61jxzT2llFbunX7H6Unw7Rr40jfbHHcMenJKGWvp61o67fpDfhCs8Z6S8TbS2cy/vx4R
- 8i9+LqrrH4bpm5XJrS+zg3B2p0T8UeYDJBc9g3XIM5cmcoIqx0hBNIP8OA7ahzwBdxKH
- qwZK5qxtR8etGGbFcTHj3SCWBjXmTxk5/CgakTnzkQs313QJpEv0/kAtLhLhlEw4EqHd
- 93tg==
+ d=iol.unh.edu; s=unh-iol; t=1768928144; x=1769532944; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=v5bHUJXbUlXnv/oQJyFgDusLXKihmBKN485YpWU20vE=;
+ b=TvqEG/gr0TfBsCF+QNB/d+PWBUKaqAI1JZEtYoSIhMlXp3vmrDS2U50KHv/cs2pzFr
+ 5vIn8uOOJ8k6NGFGl8SThn6t6hxcY0Dqgynaw1yqdsJbrlYqwzScSiaT64LwJnbOFbRu
+ +MwRBWLwxG9V/KTGg9ulRpB4ngGAjdSyhRUu0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768927934; x=1769532734;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=Lcof0tCQHPokIAAyPRwXrJzkYKmcd1a7lF+iWDHiHOo=;
- b=AQkfRpiApUJbuFfwJxIYfRnlIvA+4ECPKaCaemSislTAtcGmPfoxNeG1msmB3hTOSI
- 32qyFcfdzf8KrBNb/fH5B1cGhPc4xv4zt/fU9+m7WaEGlkw0SIV94cqyiTBWu8uuPqTB
- YzHEJ5P33/TDAySPY6OB9rKFc5CfHHfaVJCx7xEwGl0H4ZsILuomPQqqdLmN9r6zf9Ut
- xvphr9Z306IwDddTkpo4WSEGa7s41YjIwdTYCdBbaBWbMVUJequCZstYv8V+2uIeG/5K
- 9jXY3PeXqlZY211C1AnDHNrVixH9y4cC7bQjlcYe0161MfF5WxWkKde+0S8biM6E+O8k
- MkBA==
-X-Forwarded-Encrypted: i=1;
- AJvYcCUuNAHII45ilT9aErUgMkKfri57hdd8xd1dpQ/cClAXCdSPwKecBeJ+8eJKwedATDAtZA8=@dpdk.org
-X-Gm-Message-State: AOJu0Yw9NIB20atEC+DvWB+qmBxLdRwj+yqbIMboFpGmARYkdiXMLsX9
- 7RhPb65PC71WSJ2WR8f9c2yQm4euXdKhz9B6Ewp121im03LJjb8zV4t0tAQZK5+6MJ0=
-X-Gm-Gg: AZuq6aJH5f+ZDTmfGp/NMJPY2vrv4OeyQ8F0AtDuIQwRZhOdziGFSZj219SrXTdBGA6
- 1Xw5T1MGfNmW5undHMIHfk/3l0KKacAHnrWjHnKsHkYIIRNrWane98soc6QusIsBsUtIxq6bT+k
- bgV3Thr8f6Z6aZ9r5GW0rhWS/V6bNI/0HClZOZq+o81iKU58GOrI1/tTTd8fdgFc6Yx7wcLVSR3
- Xbkay8yHoG40L4VghNJhPOzW/uLvLhp/LBpiixp+Tlgy8GEMZ0NkUUUiO+ggSTqM0cPI61Y/Ipu
- y/1fnUG9qwnfCfCWg7Oat5Trse7yUVGMoHCA4CTfQpBy2wkab99ENqK1OAwyfLueVeZGZoqHlwi
- L6vmKqNeliQXD/rz6M9bRoHnh51VLFtdribw5BVGZWWD5oFiRbK40HK2koPI50VNrop2yo+vMJ4
- 1iZh2MDmp4xY7vaxxhza7KsKt4QB9/036uqMZyJBZHe1ZLs0Opz4ED
-X-Received: by 2002:a17:906:c112:b0:b74:9833:306c with SMTP id
- a640c23a62f3a-b8796b40f87mr1153214066b.47.1768927933650; 
- Tue, 20 Jan 2026 08:52:13 -0800 (PST)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- a640c23a62f3a-b8795a192b6sm1439947866b.59.2026.01.20.08.52.12
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 20 Jan 2026 08:52:13 -0800 (PST)
-Date: Tue, 20 Jan 2026 08:52:07 -0800
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-Cc: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>,
- "dev@dpdk.org" <dev@dpdk.org>, Honnappa Nagarahalli
- <honnappa.nagarahalli@arm.com>
-Subject: Re: [PATCH v3 1/6] test/soring: fix buffer overflow warnings with LTO
-Message-ID: <20260120085207.722bebe3@phoenix.local>
-In-Reply-To: <d9a4cead8c8e473e907f604b98370013@huawei.com>
-References: <20251023194237.197681-1-stephen@networkplumber.org>
- <20260116064646.224254-1-stephen@networkplumber.org>
- <20260116064646.224254-2-stephen@networkplumber.org>
- <98CBD80474FA8B44BF855DF32C47DC35F65669@smartserver.smartshare.dk>
- <20260119144821.70e2ff35@phoenix.local>
- <98CBD80474FA8B44BF855DF32C47DC35F65674@smartserver.smartshare.dk>
- <20260120063413.72e0d725@phoenix.local>
- <98CBD80474FA8B44BF855DF32C47DC35F6567F@smartserver.smartshare.dk>
- <d9a4cead8c8e473e907f604b98370013@huawei.com>
+ d=1e100.net; s=20230601; t=1768928144; x=1769532944;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=v5bHUJXbUlXnv/oQJyFgDusLXKihmBKN485YpWU20vE=;
+ b=wCksgiO4SVHAoJh8IiPU3C/Upq7/UwrcUhxqC5qrZCAUD09FKgrw9VGvoJJOMCG5+1
+ N0b4/3jGWnahRIcmqYJcqkopESkUA3sBDLROQR3FpvBwb6qwRwJm+AIZdtkSFXIytYe4
+ zFWcU7jGz6AODJJoG75YDQX6ZVBSKOWjp2n9/fgCHmWz6Z2NncHiXtOdE/eI1FNQPTfk
+ gYJv3RaChk6f5ckG3yNeuW6R6odWigSsG7Ukv1COKF+pmVeuWB52HhbdWcoS5pKUduYo
+ LLTqERX6tqGsDlC9NZ6MoJcC49mVD++thzHTjLhaxWHwHFlUh8Qi13tIafpnu245GIxF
+ CvIw==
+X-Gm-Message-State: AOJu0Ywp52MCjNVbkOqBnjf1NK8/WoJxzOFtLWeHe7je4A1R54gE7dLV
+ IFW1O1CzMvlccaWaesSwLPuOZxysR6LeXsNJq/D5YeiuTwBykAEYDGIlsfzLz+KkL2fEId6tjvd
+ HEvc8uwIiZgSz0jytPBew1afzA3ZuFNxr1V+V76YhqA==
+X-Gm-Gg: AY/fxX6qVdzewpqM/RvUr5h/JXkuKkowW7BLeRgtn13eSer8EZEG/FSndulOH+Nl7Un
+ Lw41lAzGIoMM8CRYVAlytxLI5VI5Nn0TMCFyT1pacoPNGpVstSsjLBUfZTBVLN1AkvcbRyBzWDF
+ yUAM6kVmehegcdGrizXZGiUP0Nh5ASaN+HBkON3docvZGpqOPRkcGfPk80/KlnNZH8d8zeuaXmH
+ 6n2/4ZUmrNUHHVN2OvlmHUM7IcnKk5QZzfFtjuFXdhQXGxKc2fnz6sK87k/B2QzcY3utLR+4+lZ
+ UFLT1SA8cOFIRyxCIQUkQBF9jrzgx5nIjnP+eKNw/A==
+X-Received: by 2002:a05:7022:6291:b0:11b:b2f5:a1f4 with SMTP id
+ a92af1059eb24-1244a77ad52mr10671150c88.39.1768928144228; Tue, 20 Jan 2026
+ 08:55:44 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+References: <cover.1768518003.git.sismis@dyna-nic.com>
+ <366f384e90cce0867652231494d8c873066b5fe6.1768518003.git.sismis@dyna-nic.com>
+In-Reply-To: <366f384e90cce0867652231494d8c873066b5fe6.1768518003.git.sismis@dyna-nic.com>
+From: Patrick Robb <probb@iol.unh.edu>
+Date: Tue, 20 Jan 2026 11:53:28 -0500
+X-Gm-Features: AZwV_QhINFDbhoS6hnLwgLZpsEIjVc6FZIRfhFPgUYQSxgcxxMq0cznyKJiO0aY
+Message-ID: <CAJvnSUAdWtn4vo_8mGU1T59U4ryVm18nnwPy-V6hYNmb0rdeyw@mail.gmail.com>
+Subject: Re: [PATCH v3 7/7] dts: fix invalid f-string syntax in testpmd API
+To: Lukas Sismis <sismis@dyna-nic.com>
+Cc: dev@dpdk.org, stable@dpdk.org, 
+ "NBU-Contact-Thomas Monjalon (EXTERNAL)" <thomas@monjalon.net>
+Content-Type: multipart/alternative; boundary="000000000000ab93ee0648d4ad3f"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -91,113 +91,193 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 20 Jan 2026 15:40:21 +0000
-Konstantin Ananyev <konstantin.ananyev@huawei.com> wrote:
+--000000000000ab93ee0648d4ad3f
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> > > From: Stephen Hemminger [mailto:stephen@networkplumber.org]
-> > > Sent: Tuesday, 20 January 2026 15.34
-> > >
-> > > On Tue, 20 Jan 2026 09:49:44 +0100
-> > > Morten Br=C3=B8rup <mb@smartsharesystems.com> wrote:
-> > > =20
-> > > > > From: Stephen Hemminger [mailto:stephen@networkplumber.org]
-> > > > > Sent: Monday, 19 January 2026 23.48
-> > > > >
-> > > > > On Fri, 16 Jan 2026 10:32:52 +0100
-> > > > > Morten Br=C3=B8rup <mb@smartsharesystems.com> wrote:
-> > > > > =20
-> > > > > > > From: Stephen Hemminger [mailto:stephen@networkplumber.org]
-> > > > > > > Sent: Friday, 16 January 2026 07.46
-> > > > > > >
-> > > > > > > When building with LTO (Link Time Optimization), GCC performs
-> > > > > > > aggressive cross-compilation-unit inlining. This causes the =
-=20
-> > > > > compiler =20
-> > > > > > > to analyze all code paths in __rte_ring_do_dequeue_elems(), =
-=20
-> > > > > including =20
-> > > > > > > the 16-byte element path (__rte_ring_dequeue_elems_128), even=
- =20
-> > > when =20
-> > > > > > > the runtime element size is only 4 bytes.
-> > > > > > >
-> > > > > > > The static analyzer sees that the 16-byte path would copy
-> > > > > > > 32 elements * 16 bytes =3D 512 bytes into a 128-byte buffer
-> > > > > > > (uint32_t[32]),
-> > > > > > > triggering -Wstringop-overflow warnings. =20
-> > > >
-> > > > The element size is not an inline function parameter, but fetched =
-=20
-> > > from the "esize" field in the rte_soring structure, so the compiler
-> > > cannot see that the element size is 4 bytes. And thus it needs to
-> > > consider all possible element sizes. =20
-> > > > =20
-> > > > > > >
-> > > > > > > The existing #pragma GCC diagnostic suppression in =20
-> > > > > rte_ring_elem_pvt.h =20
-> > > > > > > doesn't help because with LTO the warning context shifts to t=
-he =20
-> > > > > test =20
-> > > > > > > file where the inlined code is instantiated.
-> > > > > > >
-> > > > > > > Fix by sizing all buffers passed to soring acquire/dequeue =20
-> > > > > functions =20
-> > > > > > > for the worst-case element size (16 bytes =3D 4 * =20
-> > > sizeof(uint32_t)). =20
-> > > > > > > This satisfies the static analyzer without changing runtime =
-=20
-> > > > > behavior. =20
-> > > > > >
-> > > > > > Using wildly oversized buffers doesn't seem like a recommendabl=
-e =20
-> > > > > solution. =20
-> > > > > > If the ring library is ever updated to support cache size =20
-> > > elements =20
-> > > > > (64 byte), the buffers would have to be oversize by factor 16.
-> > > > >
-> > > > > The analysis (from AI) is that compiler is getting confused. =20
-> > > >
-> > > > That would be my analysis too.
-> > > > =20
-> > > > > Since there is no good
-> > > > > way other than turning of LTO for the test to tell the compiler =
-=20
-> > > >
-> > > > There is another way to tell the compiler: __rte_assume() =20
-> > >
-> > > Tried that but it doesn't work because doesn't get propagated deep
-> > > enough to impact here. =20
-> >=20
-> > Does this fix generally imply that when using LTO, using an SORING with=
- elements
-> > smaller than 16 bytes requires oversize buffers?
-> > That's not good. :-(
-> >=20
-> > The SORING is still experimental.
-> > Maybe the element size and metadata size need to be passed as parameter=
-s to
-> > the SORING functions, like the RING functions take element size as para=
-meter
-> > (except the functions that are hardcoded for using pointers as element =
-size). =20
->=20
-> Personally, I am not a big fan of such idea...
-> Wonder is that possible just to disable LTO for soring.o?
-> Another thought - if all the problems come from 128 bit version of enque/=
-dequeue,
-> would using memcpy() instead  of specific functions help to mitigate the =
-problem? =20
->=20
->=20
+Looks good to me, thanks for finding this issue. And, since we do need the
+'enable' strings to be templated in right, I am asking Dean to re-run this
+testsuite with your patch applied.
 
-I did some more experiments using pragmas, and attributes.
-The good news is it works for some versions of Gcc,
-the bad news is that pragmas and optimization changes on function basis
-seem to crash old compilers, and be disabled in Gcc 16 and get:
+Thomas, I gather this series will not be applied/go through next-dts since
+it is not primarily a DTS series, but please let me know if it should. I am
+asking you since I see it is delegated to you on Patchwork.
 
-../app/test/test_soring.c:154:1: warning: bad option =E2=80=98-fno-lto=E2=
-=80=99 to attribute =E2=80=98optimize=E2=80=99 [-Wattributes]
+Reviewed-by: Patrick Robb <probb@iol.unh.edu>
 
+On Thu, Jan 15, 2026 at 6:02=E2=80=AFPM Lukas Sismis <sismis@dyna-nic.com> =
+wrote:
 
+> The f-string syntax was missing the 'f' prefix, causing
+> string interpolation to fail.
+>
+> Fixes: cfd851f264 ("dts: add QinQ strip and VLAN extend to testpmd shell"=
+)
+> Cc: stable@dpdk.org
+>
+> Signed-off-by: Lukas Sismis <sismis@dyna-nic.com>
+> ---
+>  dts/api/testpmd/__init__.py | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+>
+> diff --git a/dts/api/testpmd/__init__.py b/dts/api/testpmd/__init__.py
+> index a20dedc25a..703cae487e 100644
+> --- a/dts/api/testpmd/__init__.py
+> +++ b/dts/api/testpmd/__init__.py
+> @@ -227,7 +227,7 @@ def start_tx_first(self, burst_num: int, verify: bool
+> =3D True) -> None:
+>              InteractiveCommandExecutionError: If `verify` is :data:`True=
+`
+> and forwarding fails to
+>                  start or ports fail to come up.
+>          """
+> -        self.send_command(f"start tx_first {burst_num if burst_num is no=
+t
+> None else ""}")
+> +        self.send_command(f"start tx_first {burst_num if burst_num is no=
+t
+> None else ''}")
+>          if verify:
+>              # If forwarding was already started, sending "start" again
+> should tell us
+>              start_cmd_output =3D self.send_command("start")
+> @@ -898,11 +898,11 @@ def set_qinq_strip(self, port: int, enable: bool,
+> verify: bool =3D True) -> None:
+>              vlan_settings =3D self.show_port_info(port_id=3Dport).vlan_o=
+ffload
+>              if enable ^ (vlan_settings is not None and
+> VLANOffloadFlag.QINQ_STRIP in vlan_settings):
+>                  self._logger.debug(
+> -                    f"Failed to {"enable" if enable else "disable"}"
+> +                    f"Failed to {'enable' if enable else 'disable'}"
+>                      f"QinQ strip on port {port}: \n{qinq_cmd_output}"
+>                  )
+>                  raise InteractiveCommandExecutionError(
+> -                    f"Failed to {"enable" if enable else "disable"} QinQ
+> strip on port {port}"
+> +                    f"Failed to {'enable' if enable else 'disable'} QinQ
+> strip on port {port}"
+>                  )
+>
+>      def set_mac_address(self, port: int, mac_address: str, verify: bool =
+=3D
+> True) -> None:
+> @@ -1535,7 +1535,7 @@ def set_port_mbuf_fast_free(
+>              InteractiveCommandExecutionError: If mbuf_fast_free could no=
+t
+> be set successfully.
+>          """
+>          mbuf_output =3D self.send_command(
+> -            f"port config {port_id} tx_offload mbuf_fast_free {"on" if o=
+n
+> else "off"}"
+> +            f"port config {port_id} tx_offload mbuf_fast_free {'on' if o=
+n
+> else 'off'}"
+>          )
+>
+>          if verify and "Error" in mbuf_output:
+> --
+> 2.43.7
+>
+>
 
+--000000000000ab93ee0648d4ad3f
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+<div dir=3D"ltr">Looks good to me, thanks for finding this issue. And, sinc=
+e we do need the &#39;enable&#39; strings to be templated in right, I am as=
+king Dean to re-run this testsuite with your patch applied.=C2=A0<div><br><=
+/div><div>Thomas, I gather this series will not be applied/go through next-=
+dts since it is not primarily a DTS series, but please let me know if it sh=
+ould. I am asking you since I see it is delegated to you on Patchwork.</div=
+><div><br></div><div>Reviewed-by: Patrick Robb &lt;<a href=3D"mailto:probb@=
+iol.unh.edu">probb@iol.unh.edu</a>&gt;</div></div><br><div class=3D"gmail_q=
+uote gmail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Thu, J=
+an 15, 2026 at 6:02=E2=80=AFPM Lukas Sismis &lt;<a href=3D"mailto:sismis@dy=
+na-nic.com">sismis@dyna-nic.com</a>&gt; wrote:<br></div><blockquote class=
+=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rg=
+b(204,204,204);padding-left:1ex">The f-string syntax was missing the &#39;f=
+&#39; prefix, causing<br>
+string interpolation to fail.<br>
+<br>
+Fixes: cfd851f264 (&quot;dts: add QinQ strip and VLAN extend to testpmd she=
+ll&quot;)<br>
+Cc: <a href=3D"mailto:stable@dpdk.org" target=3D"_blank">stable@dpdk.org</a=
+><br>
+<br>
+Signed-off-by: Lukas Sismis &lt;<a href=3D"mailto:sismis@dyna-nic.com" targ=
+et=3D"_blank">sismis@dyna-nic.com</a>&gt;<br>
+---<br>
+=C2=A0dts/api/testpmd/__init__.py | 8 ++++----<br>
+=C2=A01 file changed, 4 insertions(+), 4 deletions(-)<br>
+<br>
+diff --git a/dts/api/testpmd/__init__.py b/dts/api/testpmd/__init__.py<br>
+index a20dedc25a..703cae487e 100644<br>
+--- a/dts/api/testpmd/__init__.py<br>
++++ b/dts/api/testpmd/__init__.py<br>
+@@ -227,7 +227,7 @@ def start_tx_first(self, burst_num: int, verify: bool =
+=3D True) -&gt; None:<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0InteractiveCommandExecution=
+Error: If `verify` is :data:`True` and forwarding fails to<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0start or port=
+s fail to come up.<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0&quot;&quot;&quot;<br>
+-=C2=A0 =C2=A0 =C2=A0 =C2=A0 self.send_command(f&quot;start tx_first {burst=
+_num if burst_num is not None else &quot;&quot;}&quot;)<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 self.send_command(f&quot;start tx_first {burst=
+_num if burst_num is not None else &#39;&#39;}&quot;)<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if verify:<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0# If forwarding was already=
+ started, sending &quot;start&quot; again should tell us<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0start_cmd_output =3D self.s=
+end_command(&quot;start&quot;)<br>
+@@ -898,11 +898,11 @@ def set_qinq_strip(self, port: int, enable: bool, ver=
+ify: bool =3D True) -&gt; None:<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0vlan_settings =3D self.show=
+_port_info(port_id=3Dport).vlan_offload<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if enable ^ (vlan_settings =
+is not None and VLANOffloadFlag.QINQ_STRIP in vlan_settings):<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0self._logger.=
+debug(<br>
+-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 f&qu=
+ot;Failed to {&quot;enable&quot; if enable else &quot;disable&quot;}&quot;<=
+br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 f&qu=
+ot;Failed to {&#39;enable&#39; if enable else &#39;disable&#39;}&quot;<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0f&quot;QinQ strip on port {port}: \n{qinq_cmd_output}&quot;<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0)<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0raise Interac=
+tiveCommandExecutionError(<br>
+-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 f&qu=
+ot;Failed to {&quot;enable&quot; if enable else &quot;disable&quot;} QinQ s=
+trip on port {port}&quot;<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 f&qu=
+ot;Failed to {&#39;enable&#39; if enable else &#39;disable&#39;} QinQ strip=
+ on port {port}&quot;<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0)<br>
+<br>
+=C2=A0 =C2=A0 =C2=A0def set_mac_address(self, port: int, mac_address: str, =
+verify: bool =3D True) -&gt; None:<br>
+@@ -1535,7 +1535,7 @@ def set_port_mbuf_fast_free(<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0InteractiveCommandExecution=
+Error: If mbuf_fast_free could not be set successfully.<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0&quot;&quot;&quot;<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0mbuf_output =3D self.send_command(<br>
+-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 f&quot;port config {port_id} tx_=
+offload mbuf_fast_free {&quot;on&quot; if on else &quot;off&quot;}&quot;<br=
+>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 f&quot;port config {port_id} tx_=
+offload mbuf_fast_free {&#39;on&#39; if on else &#39;off&#39;}&quot;<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0)<br>
+<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if verify and &quot;Error&quot; in mbuf_o=
+utput:<br>
+-- <br>
+2.43.7<br>
+<br>
+</blockquote></div>
+
+--000000000000ab93ee0648d4ad3f--
