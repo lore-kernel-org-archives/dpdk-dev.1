@@ -2,37 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B789C9830C
-	for <dpdk-dev@archiver.kernel.org>; Tue, 20 Jan 2026 15:40:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BE95D2ED17
+	for <dpdk-dev@archiver.kernel.org>; Tue, 20 Jan 2026 15:49:01 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A3ADD40E0C;
-	Tue, 20 Jan 2026 16:40:25 +0100 (CET)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id AD56A4026F
- for <dev@dpdk.org>; Tue, 20 Jan 2026 16:40:24 +0100 (CET)
-Received: from mail.maildlp.com (unknown [172.18.224.150])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4dwWjT3vcLzJ46Cq;
- Tue, 20 Jan 2026 23:39:57 +0800 (CST)
-Received: from dubpeml100002.china.huawei.com (unknown [7.214.144.156])
- by mail.maildlp.com (Postfix) with ESMTPS id 3368340539;
- Tue, 20 Jan 2026 23:40:22 +0800 (CST)
-Received: from dubpeml500001.china.huawei.com (7.214.147.241) by
- dubpeml100002.china.huawei.com (7.214.144.156) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.36; Tue, 20 Jan 2026 15:40:21 +0000
-Received: from dubpeml500001.china.huawei.com ([7.214.147.241]) by
- dubpeml500001.china.huawei.com ([7.214.147.241]) with mapi id 15.02.1544.011; 
- Tue, 20 Jan 2026 15:40:21 +0000
-From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-To: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>, "Stephen
- Hemminger" <stephen@networkplumber.org>
-CC: "dev@dpdk.org" <dev@dpdk.org>, Honnappa Nagarahalli
+	by mails.dpdk.org (Postfix) with ESMTP id 9EC3A40E0C;
+	Tue, 20 Jan 2026 16:49:00 +0100 (CET)
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com
+ [209.85.208.43]) by mails.dpdk.org (Postfix) with ESMTP id 1D0A44026F
+ for <dev@dpdk.org>; Tue, 20 Jan 2026 16:48:58 +0100 (CET)
+Received: by mail-ed1-f43.google.com with SMTP id
+ 4fb4d7f45d1cf-64b92abe63aso10952976a12.0
+ for <dev@dpdk.org>; Tue, 20 Jan 2026 07:48:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768924138;
+ x=1769528938; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=Savl1S39MeZQqbN4TwzKdNJH1W0D6XcQM44rJFqY0mE=;
+ b=PfyOJULshtG/Tb1xPRJd9DXcLq5nHBkwOuWUMiiTfeDtBU2VmGVfnPYat4yynRvAMa
+ N9nb8JSdhM1kkzo422U904x+F4l3L1VM9QCz6pS8cNFhhttABWgR1srWhtauIJMaCPiD
+ T573PIOIZ+DssmLHXJQRnrVSANFzbGeO48cFj/1ynlSxGF8LV3POhcxXlolSDWCCtawO
+ Lub7iMrQfs3UuQzX7NXQ7qoWkgTo0kcARsHpE/d6UoSA9QC589ehmanQ47Y9psMJGgRf
+ N8VN30nUjlirQEEreJQRNmDbIPprY0+Ob48nl1UpBuUvGqO5FlJ6/uz+sF+hdFB9YI7+
+ 06UA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1768924138; x=1769528938;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=Savl1S39MeZQqbN4TwzKdNJH1W0D6XcQM44rJFqY0mE=;
+ b=UmHVdZFd8XUAupLF3RL2Z88PiuW447ZjGVMO/ohmpcoZbdevPomoyNLQw7IMZjbNp+
+ b3lEnIQOzmZ/40oQWFViR94dsjjn8vzuh5pC/ny7Hh10b3Ikas2M5QSqXN1msCDifiK6
+ +XCtxLFt6SBl+rUYPfBSMv3ZfB2qUiP0cQAvqM5BDz77mVBs8WL9SbFAh9JOiy9Bskeq
+ zhHlGKX9q3yg2jB/2N0ZcOsNN+UtXYJEtWhyoqEDDCK9TEt5zbZVNu5V22nKPNoQ1CEJ
+ FABqEWGut9aGcW3D+SpnLz4AeUtm0W+bWQ1Bqh8cBZ3kxGs7eJA7kcejWZLTeiZGId1q
+ Jxiw==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCVshC4OnkK6jQBjYXuVFLlqt5bbGAwGfvs6ZgfD9zeSOq4WyMEp62bvMi7kvJ77vlr1lrE=@dpdk.org
+X-Gm-Message-State: AOJu0YxC5NnCUiI1aEfO258YUH9sjKAda9VtbwDPU3k/xtqNTYbns/f1
+ zdE5NDOqxZjYRwrnDEFin/tRfdTHEyNXMUwEJ3lMYRAPFyQ1tpw3j4Sw6xAdQzP8lMuKuVyVqqL
+ SpOEO
+X-Gm-Gg: AZuq6aKj7mEIeolLfmjX/w95xHws8zn0IVKLZsEipW7g+FWXPWwyoeTer+hZ3Qy2fJY
+ VANcysBJZ47EM2rnUyxE7FV2+hlo18Szce/9+x0kurOz7tGUuS98y6PmItQL4q3NZiRtZl+vcGp
+ n0XIgoXMq52upe+U4Hpq3TD+SnPGY6Pkje7nwtEozFSrAuG58VdMFc8gTTsCzsePrsCoy7I6H3Q
+ BMCmg7PIuu8d65hAZ045LsvULLnluaw/KetP9OaKBZ8gee9TKkVubDPsoLYxIh6OINNo/p5NW1/
+ i4iDmSv4nnyWPsWu2wZX693QiPNfYU1k7cDG7XDA35UnVZDsHc1Jw44UK4D+NXUPwXPAEFb5BIU
+ qbUW6eN6uAUmEYeiLDoGUWXhGKPFfPnLzG0qC1UBFEEhPUr6o1mGnMo4XRhJRfY8mwMTlPFdRBG
+ 17/F8g4aB/+E5yRxCx5BRzgk4+jOkOZpGgbVQ9oqmFhfSkawv0cGbX
+X-Received: by 2002:a17:907:c807:b0:b87:173f:61b with SMTP id
+ a640c23a62f3a-b8792e099b4mr1194714066b.9.1768924138371; 
+ Tue, 20 Jan 2026 07:48:58 -0800 (PST)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 4fb4d7f45d1cf-65452cdb0e4sm13460284a12.13.2026.01.20.07.48.56
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 20 Jan 2026 07:48:58 -0800 (PST)
+Date: Tue, 20 Jan 2026 07:48:51 -0800
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+Cc: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>,
+ "dev@dpdk.org" <dev@dpdk.org>, Honnappa Nagarahalli
  <honnappa.nagarahalli@arm.com>
-Subject: RE: [PATCH v3 1/6] test/soring: fix buffer overflow warnings with LTO
-Thread-Topic: [PATCH v3 1/6] test/soring: fix buffer overflow warnings with LTO
-Thread-Index: AQHchrPsHHTVtFNIz06gtz3G6GMnp7VUiMQAgAWVQICAAKgGAIAAYD+AgAAHlYCAAAnHMA==
-Date: Tue, 20 Jan 2026 15:40:21 +0000
-Message-ID: <d9a4cead8c8e473e907f604b98370013@huawei.com>
+Subject: Re: [PATCH v3 1/6] test/soring: fix buffer overflow warnings with LTO
+Message-ID: <20260120074851.7d091304@phoenix.local>
+In-Reply-To: <d9a4cead8c8e473e907f604b98370013@huawei.com>
 References: <20251023194237.197681-1-stephen@networkplumber.org>
  <20260116064646.224254-1-stephen@networkplumber.org>
  <20260116064646.224254-2-stephen@networkplumber.org>
@@ -41,15 +75,10 @@ References: <20251023194237.197681-1-stephen@networkplumber.org>
  <98CBD80474FA8B44BF855DF32C47DC35F65674@smartserver.smartshare.dk>
  <20260120063413.72e0d725@phoenix.local>
  <98CBD80474FA8B44BF855DF32C47DC35F6567F@smartserver.smartshare.dk>
-In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F6567F@smartserver.smartshare.dk>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.206.138.220]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+ <d9a4cead8c8e473e907f604b98370013@huawei.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -63,64 +92,106 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-DQoNCj4gPiBGcm9tOiBTdGVwaGVuIEhlbW1pbmdlciBbbWFpbHRvOnN0ZXBoZW5AbmV0d29ya3Bs
-dW1iZXIub3JnXQ0KPiA+IFNlbnQ6IFR1ZXNkYXksIDIwIEphbnVhcnkgMjAyNiAxNS4zNA0KPiA+
-DQo+ID4gT24gVHVlLCAyMCBKYW4gMjAyNiAwOTo0OTo0NCArMDEwMA0KPiA+IE1vcnRlbiBCcsO4
-cnVwIDxtYkBzbWFydHNoYXJlc3lzdGVtcy5jb20+IHdyb3RlOg0KPiA+DQo+ID4gPiA+IEZyb206
-IFN0ZXBoZW4gSGVtbWluZ2VyIFttYWlsdG86c3RlcGhlbkBuZXR3b3JrcGx1bWJlci5vcmddDQo+
-ID4gPiA+IFNlbnQ6IE1vbmRheSwgMTkgSmFudWFyeSAyMDI2IDIzLjQ4DQo+ID4gPiA+DQo+ID4g
-PiA+IE9uIEZyaSwgMTYgSmFuIDIwMjYgMTA6MzI6NTIgKzAxMDANCj4gPiA+ID4gTW9ydGVuIEJy
-w7hydXAgPG1iQHNtYXJ0c2hhcmVzeXN0ZW1zLmNvbT4gd3JvdGU6DQo+ID4gPiA+DQo+ID4gPiA+
-ID4gPiBGcm9tOiBTdGVwaGVuIEhlbW1pbmdlciBbbWFpbHRvOnN0ZXBoZW5AbmV0d29ya3BsdW1i
-ZXIub3JnXQ0KPiA+ID4gPiA+ID4gU2VudDogRnJpZGF5LCAxNiBKYW51YXJ5IDIwMjYgMDcuNDYN
-Cj4gPiA+ID4gPiA+DQo+ID4gPiA+ID4gPiBXaGVuIGJ1aWxkaW5nIHdpdGggTFRPIChMaW5rIFRp
-bWUgT3B0aW1pemF0aW9uKSwgR0NDIHBlcmZvcm1zDQo+ID4gPiA+ID4gPiBhZ2dyZXNzaXZlIGNy
-b3NzLWNvbXBpbGF0aW9uLXVuaXQgaW5saW5pbmcuIFRoaXMgY2F1c2VzIHRoZQ0KPiA+ID4gPiBj
-b21waWxlcg0KPiA+ID4gPiA+ID4gdG8gYW5hbHl6ZSBhbGwgY29kZSBwYXRocyBpbiBfX3J0ZV9y
-aW5nX2RvX2RlcXVldWVfZWxlbXMoKSwNCj4gPiA+ID4gaW5jbHVkaW5nDQo+ID4gPiA+ID4gPiB0
-aGUgMTYtYnl0ZSBlbGVtZW50IHBhdGggKF9fcnRlX3JpbmdfZGVxdWV1ZV9lbGVtc18xMjgpLCBl
-dmVuDQo+ID4gd2hlbg0KPiA+ID4gPiA+ID4gdGhlIHJ1bnRpbWUgZWxlbWVudCBzaXplIGlzIG9u
-bHkgNCBieXRlcy4NCj4gPiA+ID4gPiA+DQo+ID4gPiA+ID4gPiBUaGUgc3RhdGljIGFuYWx5emVy
-IHNlZXMgdGhhdCB0aGUgMTYtYnl0ZSBwYXRoIHdvdWxkIGNvcHkNCj4gPiA+ID4gPiA+IDMyIGVs
-ZW1lbnRzICogMTYgYnl0ZXMgPSA1MTIgYnl0ZXMgaW50byBhIDEyOC1ieXRlIGJ1ZmZlcg0KPiA+
-ID4gPiA+ID4gKHVpbnQzMl90WzMyXSksDQo+ID4gPiA+ID4gPiB0cmlnZ2VyaW5nIC1Xc3RyaW5n
-b3Atb3ZlcmZsb3cgd2FybmluZ3MuDQo+ID4gPg0KPiA+ID4gVGhlIGVsZW1lbnQgc2l6ZSBpcyBu
-b3QgYW4gaW5saW5lIGZ1bmN0aW9uIHBhcmFtZXRlciwgYnV0IGZldGNoZWQNCj4gPiBmcm9tIHRo
-ZSAiZXNpemUiIGZpZWxkIGluIHRoZSBydGVfc29yaW5nIHN0cnVjdHVyZSwgc28gdGhlIGNvbXBp
-bGVyDQo+ID4gY2Fubm90IHNlZSB0aGF0IHRoZSBlbGVtZW50IHNpemUgaXMgNCBieXRlcy4gQW5k
-IHRodXMgaXQgbmVlZHMgdG8NCj4gPiBjb25zaWRlciBhbGwgcG9zc2libGUgZWxlbWVudCBzaXpl
-cy4NCj4gPiA+DQo+ID4gPiA+ID4gPg0KPiA+ID4gPiA+ID4gVGhlIGV4aXN0aW5nICNwcmFnbWEg
-R0NDIGRpYWdub3N0aWMgc3VwcHJlc3Npb24gaW4NCj4gPiA+ID4gcnRlX3JpbmdfZWxlbV9wdnQu
-aA0KPiA+ID4gPiA+ID4gZG9lc24ndCBoZWxwIGJlY2F1c2Ugd2l0aCBMVE8gdGhlIHdhcm5pbmcg
-Y29udGV4dCBzaGlmdHMgdG8gdGhlDQo+ID4gPiA+IHRlc3QNCj4gPiA+ID4gPiA+IGZpbGUgd2hl
-cmUgdGhlIGlubGluZWQgY29kZSBpcyBpbnN0YW50aWF0ZWQuDQo+ID4gPiA+ID4gPg0KPiA+ID4g
-PiA+ID4gRml4IGJ5IHNpemluZyBhbGwgYnVmZmVycyBwYXNzZWQgdG8gc29yaW5nIGFjcXVpcmUv
-ZGVxdWV1ZQ0KPiA+ID4gPiBmdW5jdGlvbnMNCj4gPiA+ID4gPiA+IGZvciB0aGUgd29yc3QtY2Fz
-ZSBlbGVtZW50IHNpemUgKDE2IGJ5dGVzID0gNCAqDQo+ID4gc2l6ZW9mKHVpbnQzMl90KSkuDQo+
-ID4gPiA+ID4gPiBUaGlzIHNhdGlzZmllcyB0aGUgc3RhdGljIGFuYWx5emVyIHdpdGhvdXQgY2hh
-bmdpbmcgcnVudGltZQ0KPiA+ID4gPiBiZWhhdmlvci4NCj4gPiA+ID4gPg0KPiA+ID4gPiA+IFVz
-aW5nIHdpbGRseSBvdmVyc2l6ZWQgYnVmZmVycyBkb2Vzbid0IHNlZW0gbGlrZSBhIHJlY29tbWVu
-ZGFibGUNCj4gPiA+ID4gc29sdXRpb24uDQo+ID4gPiA+ID4gSWYgdGhlIHJpbmcgbGlicmFyeSBp
-cyBldmVyIHVwZGF0ZWQgdG8gc3VwcG9ydCBjYWNoZSBzaXplDQo+ID4gZWxlbWVudHMNCj4gPiA+
-ID4gKDY0IGJ5dGUpLCB0aGUgYnVmZmVycyB3b3VsZCBoYXZlIHRvIGJlIG92ZXJzaXplIGJ5IGZh
-Y3RvciAxNi4NCj4gPiA+ID4NCj4gPiA+ID4gVGhlIGFuYWx5c2lzIChmcm9tIEFJKSBpcyB0aGF0
-IGNvbXBpbGVyIGlzIGdldHRpbmcgY29uZnVzZWQuDQo+ID4gPg0KPiA+ID4gVGhhdCB3b3VsZCBi
-ZSBteSBhbmFseXNpcyB0b28uDQo+ID4gPg0KPiA+ID4gPiBTaW5jZSB0aGVyZSBpcyBubyBnb29k
-DQo+ID4gPiA+IHdheSBvdGhlciB0aGFuIHR1cm5pbmcgb2YgTFRPIGZvciB0aGUgdGVzdCB0byB0
-ZWxsIHRoZSBjb21waWxlcg0KPiA+ID4NCj4gPiA+IFRoZXJlIGlzIGFub3RoZXIgd2F5IHRvIHRl
-bGwgdGhlIGNvbXBpbGVyOiBfX3J0ZV9hc3N1bWUoKQ0KPiA+DQo+ID4gVHJpZWQgdGhhdCBidXQg
-aXQgZG9lc24ndCB3b3JrIGJlY2F1c2UgZG9lc24ndCBnZXQgcHJvcGFnYXRlZCBkZWVwDQo+ID4g
-ZW5vdWdoIHRvIGltcGFjdCBoZXJlLg0KPiANCj4gRG9lcyB0aGlzIGZpeCBnZW5lcmFsbHkgaW1w
-bHkgdGhhdCB3aGVuIHVzaW5nIExUTywgdXNpbmcgYW4gU09SSU5HIHdpdGggZWxlbWVudHMNCj4g
-c21hbGxlciB0aGFuIDE2IGJ5dGVzIHJlcXVpcmVzIG92ZXJzaXplIGJ1ZmZlcnM/DQo+IFRoYXQn
-cyBub3QgZ29vZC4gOi0oDQo+IA0KPiBUaGUgU09SSU5HIGlzIHN0aWxsIGV4cGVyaW1lbnRhbC4N
-Cj4gTWF5YmUgdGhlIGVsZW1lbnQgc2l6ZSBhbmQgbWV0YWRhdGEgc2l6ZSBuZWVkIHRvIGJlIHBh
-c3NlZCBhcyBwYXJhbWV0ZXJzIHRvDQo+IHRoZSBTT1JJTkcgZnVuY3Rpb25zLCBsaWtlIHRoZSBS
-SU5HIGZ1bmN0aW9ucyB0YWtlIGVsZW1lbnQgc2l6ZSBhcyBwYXJhbWV0ZXINCj4gKGV4Y2VwdCB0
-aGUgZnVuY3Rpb25zIHRoYXQgYXJlIGhhcmRjb2RlZCBmb3IgdXNpbmcgcG9pbnRlcnMgYXMgZWxl
-bWVudCBzaXplKS4NCg0KUGVyc29uYWxseSwgSSBhbSBub3QgYSBiaWcgZmFuIG9mIHN1Y2ggaWRl
-YS4uLg0KV29uZGVyIGlzIHRoYXQgcG9zc2libGUganVzdCB0byBkaXNhYmxlIExUTyBmb3Igc29y
-aW5nLm8/DQpBbm90aGVyIHRob3VnaHQgLSBpZiBhbGwgdGhlIHByb2JsZW1zIGNvbWUgZnJvbSAx
-MjggYml0IHZlcnNpb24gb2YgZW5xdWUvZGVxdWV1ZSwNCndvdWxkIHVzaW5nIG1lbWNweSgpIGlu
-c3RlYWQgIG9mIHNwZWNpZmljIGZ1bmN0aW9ucyBoZWxwIHRvIG1pdGlnYXRlIHRoZSBwcm9ibGVt
-PyAgDQoNCg0K
+On Tue, 20 Jan 2026 15:40:21 +0000
+Konstantin Ananyev <konstantin.ananyev@huawei.com> wrote:
+
+> > > From: Stephen Hemminger [mailto:stephen@networkplumber.org]
+> > > Sent: Tuesday, 20 January 2026 15.34
+> > >
+> > > On Tue, 20 Jan 2026 09:49:44 +0100
+> > > Morten Br=C3=B8rup <mb@smartsharesystems.com> wrote:
+> > > =20
+> > > > > From: Stephen Hemminger [mailto:stephen@networkplumber.org]
+> > > > > Sent: Monday, 19 January 2026 23.48
+> > > > >
+> > > > > On Fri, 16 Jan 2026 10:32:52 +0100
+> > > > > Morten Br=C3=B8rup <mb@smartsharesystems.com> wrote:
+> > > > > =20
+> > > > > > > From: Stephen Hemminger [mailto:stephen@networkplumber.org]
+> > > > > > > Sent: Friday, 16 January 2026 07.46
+> > > > > > >
+> > > > > > > When building with LTO (Link Time Optimization), GCC performs
+> > > > > > > aggressive cross-compilation-unit inlining. This causes the =
+=20
+> > > > > compiler =20
+> > > > > > > to analyze all code paths in __rte_ring_do_dequeue_elems(), =
+=20
+> > > > > including =20
+> > > > > > > the 16-byte element path (__rte_ring_dequeue_elems_128), even=
+ =20
+> > > when =20
+> > > > > > > the runtime element size is only 4 bytes.
+> > > > > > >
+> > > > > > > The static analyzer sees that the 16-byte path would copy
+> > > > > > > 32 elements * 16 bytes =3D 512 bytes into a 128-byte buffer
+> > > > > > > (uint32_t[32]),
+> > > > > > > triggering -Wstringop-overflow warnings. =20
+> > > >
+> > > > The element size is not an inline function parameter, but fetched =
+=20
+> > > from the "esize" field in the rte_soring structure, so the compiler
+> > > cannot see that the element size is 4 bytes. And thus it needs to
+> > > consider all possible element sizes. =20
+> > > > =20
+> > > > > > >
+> > > > > > > The existing #pragma GCC diagnostic suppression in =20
+> > > > > rte_ring_elem_pvt.h =20
+> > > > > > > doesn't help because with LTO the warning context shifts to t=
+he =20
+> > > > > test =20
+> > > > > > > file where the inlined code is instantiated.
+> > > > > > >
+> > > > > > > Fix by sizing all buffers passed to soring acquire/dequeue =20
+> > > > > functions =20
+> > > > > > > for the worst-case element size (16 bytes =3D 4 * =20
+> > > sizeof(uint32_t)). =20
+> > > > > > > This satisfies the static analyzer without changing runtime =
+=20
+> > > > > behavior. =20
+> > > > > >
+> > > > > > Using wildly oversized buffers doesn't seem like a recommendabl=
+e =20
+> > > > > solution. =20
+> > > > > > If the ring library is ever updated to support cache size =20
+> > > elements =20
+> > > > > (64 byte), the buffers would have to be oversize by factor 16.
+> > > > >
+> > > > > The analysis (from AI) is that compiler is getting confused. =20
+> > > >
+> > > > That would be my analysis too.
+> > > > =20
+> > > > > Since there is no good
+> > > > > way other than turning of LTO for the test to tell the compiler =
+=20
+> > > >
+> > > > There is another way to tell the compiler: __rte_assume() =20
+> > >
+> > > Tried that but it doesn't work because doesn't get propagated deep
+> > > enough to impact here. =20
+> >=20
+> > Does this fix generally imply that when using LTO, using an SORING with=
+ elements
+> > smaller than 16 bytes requires oversize buffers?
+> > That's not good. :-(
+> >=20
+> > The SORING is still experimental.
+> > Maybe the element size and metadata size need to be passed as parameter=
+s to
+> > the SORING functions, like the RING functions take element size as para=
+meter
+> > (except the functions that are hardcoded for using pointers as element =
+size). =20
+>=20
+> Personally, I am not a big fan of such idea...
+> Wonder is that possible just to disable LTO for soring.o?
+> Another thought - if all the problems come from 128 bit version of enque/=
+dequeue,
+> would using memcpy() instead  of specific functions help to mitigate the =
+problem? =20
+>=20
+>=20
+
+Not sure if disabling for single file works.
+
+My goal is just to make LTO build work without any warnings.
+LTO has proved useful in finding bugs where arrays are overwritten.
