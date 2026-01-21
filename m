@@ -2,46 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BE79C44503
-	for <dpdk-dev@archiver.kernel.org>; Wed, 21 Jan 2026 11:03:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6617C44503
+	for <dpdk-dev@archiver.kernel.org>; Wed, 21 Jan 2026 11:08:06 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5E84C400EF;
-	Wed, 21 Jan 2026 12:03:15 +0100 (CET)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 7AFF1400D7
- for <dev@dpdk.org>; Wed, 21 Jan 2026 12:03:14 +0100 (CET)
-Received: from mail.maildlp.com (unknown [172.18.224.83])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4dx1WB72vTzJ46pw;
- Wed, 21 Jan 2026 19:02:46 +0800 (CST)
-Received: from frapema100003.china.huawei.com (unknown [7.182.19.100])
- by mail.maildlp.com (Postfix) with ESMTPS id 003CF40572;
- Wed, 21 Jan 2026 19:03:13 +0800 (CST)
-Received: from frapema500003.china.huawei.com (7.182.19.114) by
- frapema100003.china.huawei.com (7.182.19.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.36; Wed, 21 Jan 2026 12:03:12 +0100
-Received: from frapema500003.china.huawei.com ([7.182.19.114]) by
- frapema500003.china.huawei.com ([7.182.19.114]) with mapi id 15.02.1544.011;
- Wed, 21 Jan 2026 12:03:12 +0100
-From: Marat Khalili <marat.khalili@huawei.com>
-To: David Marchand <david.marchand@redhat.com>, "dev@dpdk.org" <dev@dpdk.org>
-CC: "probb@iol.unh.edu" <probb@iol.unh.edu>, "bruce.richardson@intel.com"
- <bruce.richardson@intel.com>, "thomas@monjalon.net" <thomas@monjalon.net>
-Subject: RE: [PATCH] doc: raise an error on warnings for dts
-Thread-Topic: [PATCH] doc: raise an error on warnings for dts
-Thread-Index: AQHcirz5gVQxVZwYTk+Ue5c4Yq7RX7VcbCQg
-Date: Wed, 21 Jan 2026 11:03:12 +0000
-Message-ID: <5d62d1a653c641ac9395d66ac6e1b19a@huawei.com>
-References: <20260121100127.1701459-1-david.marchand@redhat.com>
-In-Reply-To: <20260121100127.1701459-1-david.marchand@redhat.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.206.137.70]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by mails.dpdk.org (Postfix) with ESMTP id D9F94400EF;
+	Wed, 21 Jan 2026 12:08:05 +0100 (CET)
+Received: from fhigh-a3-smtp.messagingengine.com
+ (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
+ by mails.dpdk.org (Postfix) with ESMTP id 8344E400D7
+ for <dev@dpdk.org>; Wed, 21 Jan 2026 12:08:04 +0100 (CET)
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id A3244140017C;
+ Wed, 21 Jan 2026 06:08:03 -0500 (EST)
+Received: from phl-frontend-04 ([10.202.2.163])
+ by phl-compute-05.internal (MEProxy); Wed, 21 Jan 2026 06:08:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:date:date:from:from
+ :in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+ :to; s=fm2; t=1768993683; x=1769080083; bh=mbA1oCzuyWgW/SjDDY1bV
+ IaXObVays7AMph6yOJT3ZA=; b=iXKYu59ZzIUDOL++ySjLmXQsYVIZW2LkjE2Eh
+ rW1xfh02B0mNXskGXz8uzXLh9LVIqm/iTQ3MWdZzHY9IR8rgnx9LXYuTGdOEiHzC
+ ntS6NqgapI319NjpQxjL+UPcKWlKPfdLwVlnkY1mvsYxm+DHz1KxwwEJZYl3PbRr
+ 3UG2C4a2OLzVjdAULznnOUVeEnH1c+PP4MgImc71ILx3WnUG7flYqSn+l0e95+pQ
+ eaNgcXW+nwupf2LymSo+AHX7Nr102Dm8UOV8kQ952YetE8SDckL0hEkau1kkzBt9
+ natTA/hyjukYCntxtEEFshgSPao3XnQPRSNvZ+8HuyAIBN+Ug==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:date:date:feedback-id:feedback-id:from:from
+ :in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+ :to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+ 1768993683; x=1769080083; bh=mbA1oCzuyWgW/SjDDY1bVIaXObVays7AMph
+ 6yOJT3ZA=; b=lpH/3KrIqEUjOaGlgzHZP4fNk2/SJvIe4zLwRIHJ6rJ29rMmSD1
+ NkhGKCyfG+jO6m9m6g1YiKhHb/rW69cXVZcyosXqg0cn/T3lQXf6ERe4cKL1o002
+ zEP5dK+HRIw99O7fyiO76ghT9CWel2haxUgiBeGRv1nY/6xQv7fSLKIqI+EP7lXj
+ C5LLWiolxaz94dSrbEfSEqgCzusMOZxpnK82rlHq6jH46y6JT41tipV6PzrWZtCV
+ jSYpufZ8KAt0oxAy8+bw0WTTDlQRK2dphlG9pHgNU0r+kpS3ByTdSR8Ma8UG7ide
+ okqv1STmyhi35uYmf7cU4Z57BP+qGbTb2Dg==
+X-ME-Sender: <xms:k7NwaQd-4yIOadC3-I7taMzoaVX3xqlPqpLyG5HReG8HM1T-XRi4hA>
+ <xme:k7NwaWjeIhwythqrAbCLD8t8i2o1LejLaXlsPGIWzBV9IUh3uOpq2h9f_OPd08zh8
+ LxOW8d14Y6zHNFUuqa__5KdJ-OVyAXyxaOKjD0j10y-iu49frc_>
+X-ME-Received: <xmr:k7NwaQrVHmKbQN8obj81tReFv6T9Z0JZ4ypAAXEvnS5hfDXUlt6Q-AkVd_7GLo4C0XxUXP97ArjzBaGjIXxZlETl--kHFsE>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddugeefuddvucetufdoteggodetrf
+ dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+ rghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkffoggfgsedtkeertdertd
+ dtnecuhfhrohhmpefvhhhomhgrshcuofhonhhjrghlohhnuceothhhohhmrghssehmohhn
+ jhgrlhhonhdrnhgvtheqnecuggftrfgrthhtvghrnhepveevfeevieeihfetudekgeekle
+ eigeffueekveduteeuffeiudevteeiudekfeelnecuvehluhhsthgvrhfuihiivgeptden
+ ucfrrghrrghmpehmrghilhhfrhhomhepthhhohhmrghssehmohhnjhgrlhhonhdrnhgvth
+ dpnhgspghrtghpthhtohepfedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepuggv
+ vhesughpughkrdhorhhgpdhrtghpthhtohepsghruhgtvgdrrhhitghhrghrughsohhnse
+ hinhhtvghlrdgtohhmpdhrtghpthhtohepuggrvhhiugdrmhgrrhgthhgrnhgusehrvggu
+ hhgrthdrtghomh
+X-ME-Proxy: <xmx:k7NwaeGokT1FPHpsf6akOllnlvM9vgULW8FTe8BHOCpLfk-61ansmw>
+ <xmx:k7NwaSkWqRYDjBf0fGmNOtQTTqkacY6NDnKr8GL0hxfBVf61DegzBg>
+ <xmx:k7NwaRnJfXQ_rK92el1ep3TkgmIEfOvzgLD81MaLmtWRY89GYfSOuQ>
+ <xmx:k7NwaTuRqBcs6jBB39SiqAOk9WjPnz_ce2YXpZ09ByK9NemQzSnXEw>
+ <xmx:k7NwaQfTgtolzUC3I7lNznGsSU8QtrGrGFC0IhlTztHVQXQiIBF6enNy>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 21 Jan 2026 06:08:02 -0500 (EST)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: dev@dpdk.org
+Cc: bruce.richardson@intel.com,
+	david.marchand@redhat.com
+Subject: [PATCH 0/2] More fixes after enabling -Wshadow
+Date: Wed, 21 Jan 2026 12:05:59 +0100
+Message-ID: <20260121110757.1948723-1-thomas@monjalon.net>
+X-Mailer: git-send-email 2.52.0
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -55,38 +84,18 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> -----Original Message-----
-> From: David Marchand <david.marchand@redhat.com>
-> Sent: Wednesday 21 January 2026 10:01
-> To: dev@dpdk.org
-> Cc: probb@iol.unh.edu; bruce.richardson@intel.com; thomas@monjalon.net
-> Subject: [PATCH] doc: raise an error on warnings for dts
->=20
-> Similarly to commit 6572fc926037 ("doc: make sphinx comply with ..."),
-> pass -W to sphinx to catch warnings.
->=20
-> Signed-off-by: David Marchand <david.marchand@redhat.com>
-> ---
->  doc/api/dts/meson.build | 3 +++
->  1 file changed, 3 insertions(+)
->=20
-> diff --git a/doc/api/dts/meson.build b/doc/api/dts/meson.build
-> index 8a6d061879..fc147f13f3 100644
-> --- a/doc/api/dts/meson.build
-> +++ b/doc/api/dts/meson.build
-> @@ -12,6 +12,9 @@ if python_ver_satisfied !=3D 0
->  endif
->=20
->  extra_sphinx_args =3D ['-E', '-c', join_paths(doc_source_dir, 'guides')]
-> +if get_option('werror')
-> +    extra_sphinx_args +=3D '-W'
-> +endif
->=20
->  # DTS docs are generated inside main Doxygen docs build directory
->  # DTS docs relies on main docs to install it so does not define install =
-dir
-> --
-> 2.52.0
+The drivers mvpp2 and mlx5 for Windows
+were not checked when enabling -Wshadow.
+Here are the missing small fixes.
 
-Acked-by: Marat Khalili <marat.khalili@huawei.com>
-Tested-by: Marat Khalili <marat.khalili@huawei.com>
+Thomas Monjalon (2):
+  common/mlx5: fix variable shadowing
+  net/mvpp2: fix variable shadowing
+
+ drivers/common/mlx5/windows/mlx5_glue.h | 2 +-
+ drivers/net/mvpp2/mrvl_ethdev.c         | 1 -
+ 2 files changed, 1 insertion(+), 2 deletions(-)
+
+-- 
+2.52.0
+
