@@ -2,48 +2,56 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52D5AC44502
-	for <dpdk-dev@archiver.kernel.org>; Wed, 21 Jan 2026 09:46:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E1A1C44507
+	for <dpdk-dev@archiver.kernel.org>; Wed, 21 Jan 2026 10:01:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1F3224026C;
-	Wed, 21 Jan 2026 10:46:18 +0100 (CET)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56])
- by mails.dpdk.org (Postfix) with ESMTP id 84A86400D7;
- Wed, 21 Jan 2026 10:46:16 +0100 (CET)
-Received: from mail.maildlp.com (unknown [172.18.224.83])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4dwzpP2nrtzJ469d;
- Wed, 21 Jan 2026 17:45:49 +0800 (CST)
-Received: from frapema500004.china.huawei.com (unknown [7.182.19.21])
- by mail.maildlp.com (Postfix) with ESMTPS id 4DDA240569;
- Wed, 21 Jan 2026 17:46:15 +0800 (CST)
-Received: from frapema500003.china.huawei.com (7.182.19.114) by
- frapema500004.china.huawei.com (7.182.19.21) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 21 Jan 2026 10:46:15 +0100
-Received: from frapema500003.china.huawei.com ([7.182.19.114]) by
- frapema500003.china.huawei.com ([7.182.19.114]) with mapi id 15.02.1544.011;
- Wed, 21 Jan 2026 10:46:15 +0100
-From: Marat Khalili <marat.khalili@huawei.com>
-To: Lukas Sismis <sismis@dyna-nic.com>, "dts@dpdk.org" <dts@dpdk.org>
-CC: "dev@dpdk.org" <dev@dpdk.org>, "dmarx@iol.unh.edu" <dmarx@iol.unh.edu>,
- "abailey@iol.unh.edu" <abailey@iol.unh.edu>
-Subject: RE: [PATCH v1 1/1] dts: fix invalid f-string syntax in testpmd API
-Thread-Topic: [PATCH v1 1/1] dts: fix invalid f-string syntax in testpmd API
-Thread-Index: AQHcimG90CMIbYUeGkytw6knKhE0IbVcX6+Q
-Date: Wed, 21 Jan 2026 09:46:15 +0000
-Message-ID: <edeabad0cfe7460d82be2d9673b7ad9b@huawei.com>
-References: <20260120230806.192421-1-sismis@dyna-nic.com>
- <20260120230806.192421-2-sismis@dyna-nic.com>
-In-Reply-To: <20260120230806.192421-2-sismis@dyna-nic.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.206.137.70]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by mails.dpdk.org (Postfix) with ESMTP id A5E594026C;
+	Wed, 21 Jan 2026 11:01:42 +0100 (CET)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 27502400D7
+ for <dev@dpdk.org>; Wed, 21 Jan 2026 11:01:41 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1768989700;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding;
+ bh=dwyXVeVI5ukDwTPIs2USeTXbcjNtJhHf5H6Zb7ljCbk=;
+ b=Mj3EyFONUqT9b/pn/KeIDPp+37+KALjXsvzTRZqYZCzrL05jnN8W1i2YPMHju+MGJ1ldCQ
+ hO3e1qMgzJb0RRv2hJbRW8njYeP+ICZV8pqR5FtYHnGuWDQ/dL7EjxveFGcX35aHX0Pt32
+ dkI0DlhY4jVZkd7wT0TxFkW20YWjH3Q=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-528-a90FOt_4OAiU42zwgyfkYA-1; Wed,
+ 21 Jan 2026 05:01:38 -0500
+X-MC-Unique: a90FOt_4OAiU42zwgyfkYA-1
+X-Mimecast-MFC-AGG-ID: a90FOt_4OAiU42zwgyfkYA_1768989697
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 2CF351955DD5; Wed, 21 Jan 2026 10:01:36 +0000 (UTC)
+Received: from dmarchan.lan (unknown [10.44.32.231])
+ by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id 24C48180049F; Wed, 21 Jan 2026 10:01:33 +0000 (UTC)
+From: David Marchand <david.marchand@redhat.com>
+To: dev@dpdk.org
+Cc: probb@iol.unh.edu,
+	bruce.richardson@intel.com,
+	thomas@monjalon.net
+Subject: [PATCH] doc: raise an error on warnings for dts
+Date: Wed, 21 Jan 2026 11:01:27 +0100
+Message-ID: <20260121100127.1701459-1-david.marchand@redhat.com>
 MIME-Version: 1.0
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: taB5FxYNGvYu82iFNKL6pJ-J_Qk-SLz_irqzX5K4tOA_1768989697
+X-Mimecast-Originator: redhat.com
+Content-Transfer-Encoding: 8bit
+content-type: text/plain; charset="US-ASCII"; x-default=true
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -57,75 +65,28 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> -----Original Message-----
-> From: Lukas Sismis <sismis@dyna-nic.com>
-> Sent: Tuesday 20 January 2026 23:08
-> To: dts@dpdk.org
-> Cc: dev@dpdk.org; dmarx@iol.unh.edu; abailey@iol.unh.edu; Lukas Sismis <s=
-ismis@dyna-nic.com>
-> Subject: [PATCH v1 1/1] dts: fix invalid f-string syntax in testpmd API
->=20
-> Fix f-string syntax errors where double quotes were nested inside
-> f-strings that also use double quotes as delimiters.
-> ---
->  dts/api/testpmd/__init__.py | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->=20
-> diff --git a/dts/api/testpmd/__init__.py b/dts/api/testpmd/__init__.py
-> index a20dedc25a..703cae487e 100644
-> --- a/dts/api/testpmd/__init__.py
-> +++ b/dts/api/testpmd/__init__.py
-> @@ -227,7 +227,7 @@ def start_tx_first(self, burst_num: int, verify: bool=
- =3D True) -> None:
->              InteractiveCommandExecutionError: If `verify` is :data:`True=
-` and forwarding fails to
->                  start or ports fail to come up.
->          """
-> -        self.send_command(f"start tx_first {burst_num if burst_num is no=
-t None else ""}")
-> +        self.send_command(f"start tx_first {burst_num if burst_num is no=
-t None else ''}")
->          if verify:
->              # If forwarding was already started, sending "start" again s=
-hould tell us
->              start_cmd_output =3D self.send_command("start")
-> @@ -898,11 +898,11 @@ def set_qinq_strip(self, port: int, enable: bool, v=
-erify: bool =3D True) -> None:
->              vlan_settings =3D self.show_port_info(port_id=3Dport).vlan_o=
-ffload
->              if enable ^ (vlan_settings is not None and VLANOffloadFlag.Q=
-INQ_STRIP in vlan_settings):
->                  self._logger.debug(
-> -                    f"Failed to {"enable" if enable else "disable"}"
-> +                    f"Failed to {'enable' if enable else 'disable'}"
->                      f"QinQ strip on port {port}: \n{qinq_cmd_output}"
->                  )
->                  raise InteractiveCommandExecutionError(
-> -                    f"Failed to {"enable" if enable else "disable"} QinQ=
- strip on port {port}"
-> +                    f"Failed to {'enable' if enable else 'disable'} QinQ=
- strip on port {port}"
->                  )
->=20
->      def set_mac_address(self, port: int, mac_address: str, verify: bool =
-=3D True) -> None:
-> @@ -1535,7 +1535,7 @@ def set_port_mbuf_fast_free(
->              InteractiveCommandExecutionError: If mbuf_fast_free could no=
-t be set successfully.
->          """
->          mbuf_output =3D self.send_command(
-> -            f"port config {port_id} tx_offload mbuf_fast_free {"on" if o=
-n else "off"}"
-> +            f"port config {port_id} tx_offload mbuf_fast_free {'on' if o=
-n else 'off'}"
->          )
->=20
->          if verify and "Error" in mbuf_output:
-> --
-> 2.43.7
+Similarly to commit 6572fc926037 ("doc: make sphinx comply with ..."),
+pass -W to sphinx to catch warnings.
 
-Acked-by: Marat Khalili <marat.khalili@huawei.com>
+Signed-off-by: David Marchand <david.marchand@redhat.com>
+---
+ doc/api/dts/meson.build | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Thank you, this noise in the compile logs was a bit annoying. I have to ask=
-=20
-however, how did it pass? Are we ignoring some errors?
+diff --git a/doc/api/dts/meson.build b/doc/api/dts/meson.build
+index 8a6d061879..fc147f13f3 100644
+--- a/doc/api/dts/meson.build
++++ b/doc/api/dts/meson.build
+@@ -12,6 +12,9 @@ if python_ver_satisfied != 0
+ endif
+ 
+ extra_sphinx_args = ['-E', '-c', join_paths(doc_source_dir, 'guides')]
++if get_option('werror')
++    extra_sphinx_args += '-W'
++endif
+ 
+ # DTS docs are generated inside main Doxygen docs build directory
+ # DTS docs relies on main docs to install it so does not define install dir
+-- 
+2.52.0
+
