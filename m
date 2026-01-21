@@ -2,36 +2,36 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E57D2C44508
-	for <dpdk-dev@archiver.kernel.org>; Wed, 21 Jan 2026 17:04:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1836EC44508
+	for <dpdk-dev@archiver.kernel.org>; Wed, 21 Jan 2026 17:04:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2F05D42E1D;
-	Wed, 21 Jan 2026 18:03:45 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 3CFE142E49;
+	Wed, 21 Jan 2026 18:03:46 +0100 (CET)
 Received: from office2.cesnet.cz (office2.cesnet.cz [78.128.248.237])
- by mails.dpdk.org (Postfix) with ESMTP id C420D42DA3
+ by mails.dpdk.org (Postfix) with ESMTP id DD654427C5
  for <dev@dpdk.org>; Wed, 21 Jan 2026 18:03:38 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cesnet.cz;
  s=office2-2020; t=1769015018;
- bh=TVxbcwRfmaDV5fx6yX6inXDToD9nvKuVAiq4wRHQ1mc=;
+ bh=wU1wPhM/okexBGywyhOnjhZZ+HW0wNWngS9f5XZ+kr0=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References;
- b=khGdLhPGr/eTiXJNW4hBETuaW+0vf7wPcbChWDqtLSELH/2cHV5uZVu3VKKpoxOYZ
- 11wDXnEE4jCsAvxRz4Lfq6ykS77cnwnbycyKtDoe7oTuwDUyCOoI67aeEmzJ7txzSP
- GQ5dlcNAjwicwU0zX396MlJmLtbp4kY26rfIKv9qcBoPW7PWSpZcnorHoaoLWwMiGy
- QVh5vSZX/3B3xnyN4JC22bu38lVkmojOUK7QjBHO24nOREHnfv89cp4LFO4QNCJrzO
- 7Lh8ogmMrWJFewQMq2cj3D09jWWCkw/X+lm4rpsIWqMJzJOh+f6V3135u9xGNZ2p8g
- IJ2ST+YdlULvQ==
+ b=enWYt597+2rHDf8ch0EfCjHhdNp5ZWe73yGHqthD7V44hUKuVFVGr4aI67RUf5z37
+ XyihwlZtf6TzY6YqaSRzWpuAK4rQDTeufyPKIYQdRNmiI5YBSd5tWPtubIBmrQOw9K
+ yXW7BLRKksKNe9RmOASXrNHZDclSKtSvrgCiIyvJ7ZWwRPwb2lIKY4ndFwj0CcNiOT
+ PxJiUxafKFOXT7U5e5cqtA5mbPsuraZg/ARCbXVcpNpc9pngryAB5UuoIJy+J1n+92
+ 18nATZ9IvCXbVXSlh7TgLIUHOvd8xGbbJ3rtWIlLp86k5xknguayQjkLbGHXPx/rYf
+ vRGkPpdMUxkYw==
 Received: from emil.cesnet.cz (gtx107.cesnet.cz [IPv6:2001:718:812:27::107])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by office2.cesnet.cz (Postfix) with ESMTPSA id 9B8D21180083;
+ by office2.cesnet.cz (Postfix) with ESMTPSA id B4EDA1180084;
  Wed, 21 Jan 2026 18:03:38 +0100 (CET)
 From: spinler@cesnet.cz
 To: dev@dpdk.org
 Cc: Martin Spinler <spinler@cesnet.cz>
-Subject: [PATCH v3 5/8] net/nfb: init only MACs associated with device
-Date: Wed, 21 Jan 2026 18:03:30 +0100
-Message-ID: <20260121170333.272985-6-spinler@cesnet.cz>
+Subject: [PATCH v3 6/8] net/nfb: add compatible cards to driver PCI ID table
+Date: Wed, 21 Jan 2026 18:03:31 +0100
+Message-ID: <20260121170333.272985-7-spinler@cesnet.cz>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260121170333.272985-1-spinler@cesnet.cz>
 References: <20260115151656.393106-1-spinler@cesnet.cz>
@@ -53,246 +53,58 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Martin Spinler <spinler@cesnet.cz>
 
-Use information obtained from the new manner of creating NFB ethdevs
-and initialize only RxMACs / TxMACs associated with actual ethdev.
-
-This enables separated management and configuration of interface ports.
+The nfb driver is compatible with:
+- NFB-200G2QL card secondary PCI device
+- FB2CGHH card
+- COMBO-400G1 card
+- Common CESNET-NDK cards
 
 Signed-off-by: Martin Spinler <spinler@cesnet.cz>
 ---
- drivers/net/nfb/nfb.h        |   8 +-
- drivers/net/nfb/nfb_ethdev.c | 141 +++++++++++++++++++----------------
- 2 files changed, 80 insertions(+), 69 deletions(-)
+ drivers/net/nfb/nfb.h        | 5 +++++
+ drivers/net/nfb/nfb_ethdev.c | 4 ++++
+ 2 files changed, 9 insertions(+)
 
 diff --git a/drivers/net/nfb/nfb.h b/drivers/net/nfb/nfb.h
-index 605ea8e875..cfbc50251f 100644
+index cfbc50251f..0e35e00d2e 100644
 --- a/drivers/net/nfb/nfb.h
 +++ b/drivers/net/nfb/nfb.h
-@@ -36,10 +36,6 @@ extern int nfb_logtype;
+@@ -24,13 +24,18 @@ extern int nfb_logtype;
+ /* PCI Vendor ID */
+ #define PCI_VENDOR_ID_NETCOPE 0x1b26
+ #define PCI_VENDOR_ID_SILICOM 0x1c2c
++#define PCI_VENDOR_ID_CESNET  0x18ec
+ 
+ /* PCI Device IDs */
+ #define PCI_DEVICE_ID_NFB_40G2  0xcb80
+ #define PCI_DEVICE_ID_NFB_100G2 0xc2c1
+ #define PCI_DEVICE_ID_NFB_200G2QL 0xc250
++#define PCI_DEVICE_ID_NFB_200G2QL_E1 0xc251
+ #define PCI_DEVICE_ID_FB2CGG3   0x00d0
++#define PCI_DEVICE_ID_FB2CGHH   0x00d2
+ #define PCI_DEVICE_ID_FB2CGG3D  0xc240
++#define PCI_DEVICE_ID_COMBO400G1 0xc400
++#define PCI_DEVICE_ID_CESNET_NDK_COMMON 0xc000
+ 
+ /* Max index of ndp rx/tx queues */
  #define RTE_ETH_NDP_MAX_RX_QUEUES 32
- #define RTE_ETH_NDP_MAX_TX_QUEUES 32
- 
--/* Max index of rx/tx dmas */
--#define RTE_MAX_NC_RXMAC 256
--#define RTE_MAX_NC_TXMAC 256
--
- #define RTE_NFB_DRIVER_NAME net_nfb
- 
- /* Device arguments */
-@@ -56,8 +52,8 @@ extern int nfb_logtype;
- struct pmd_internals {
- 	uint16_t         max_rxmac;
- 	uint16_t         max_txmac;
--	struct nc_rxmac *rxmac[RTE_MAX_NC_RXMAC];
--	struct nc_txmac *txmac[RTE_MAX_NC_TXMAC];
-+	struct nc_rxmac **rxmac;
-+	struct nc_txmac **txmac;
- 	struct nfb_device *nfb;
- 
- 	TAILQ_ENTRY(pmd_internals) eth_dev_list;
 diff --git a/drivers/net/nfb/nfb_ethdev.c b/drivers/net/nfb/nfb_ethdev.c
-index f7c50ea3c4..59e5a51b58 100644
+index 59e5a51b58..e2959c3a04 100644
 --- a/drivers/net/nfb/nfb_ethdev.c
 +++ b/drivers/net/nfb/nfb_ethdev.c
-@@ -44,81 +44,94 @@ static const struct rte_ether_addr eth_addr = {
+@@ -788,8 +788,12 @@ static const struct rte_pci_id nfb_pci_id_table[] = {
+ 	{ RTE_PCI_DEVICE(PCI_VENDOR_ID_NETCOPE, PCI_DEVICE_ID_NFB_40G2) },
+ 	{ RTE_PCI_DEVICE(PCI_VENDOR_ID_NETCOPE, PCI_DEVICE_ID_NFB_100G2) },
+ 	{ RTE_PCI_DEVICE(PCI_VENDOR_ID_NETCOPE, PCI_DEVICE_ID_NFB_200G2QL) },
++	{ RTE_PCI_DEVICE(PCI_VENDOR_ID_NETCOPE, PCI_DEVICE_ID_NFB_200G2QL_E1) },
+ 	{ RTE_PCI_DEVICE(PCI_VENDOR_ID_SILICOM, PCI_DEVICE_ID_FB2CGG3) },
++	{ RTE_PCI_DEVICE(PCI_VENDOR_ID_SILICOM, PCI_DEVICE_ID_FB2CGHH) },
+ 	{ RTE_PCI_DEVICE(PCI_VENDOR_ID_SILICOM, PCI_DEVICE_ID_FB2CGG3D) },
++	{ RTE_PCI_DEVICE(PCI_VENDOR_ID_CESNET, PCI_DEVICE_ID_COMBO400G1) },
++	{ RTE_PCI_DEVICE(PCI_VENDOR_ID_CESNET, PCI_DEVICE_ID_CESNET_NDK_COMMON) },
+ 	{ .vendor_id = 0, }
  };
  
- /**
-- * Open all RX DMA queues
-+ * Open RX MAC components associated with current ifc
-  *
-- * @param dev
-- *   Pointer to nfb device.
-- * @param[out] rxmac
-- *   Pointer to output array of nc_rxmac
-- * @param[out] max_rxmac
-- *   Pointer to output max index of rxmac
-+ * @param priv
-+ *   Pointer to driver private structure
-+ * @param params
-+ *   Pointer to init parameters structure
-  */
--static void
--nfb_nc_rxmac_init(struct nfb_device *nfb,
--	struct nc_rxmac *rxmac[RTE_MAX_NC_RXMAC],
--	uint16_t *max_rxmac)
-+static int
-+nfb_nc_rxmac_init(struct pmd_internals *priv, struct nfb_init_params *params)
- {
--	*max_rxmac = 0;
--	while ((rxmac[*max_rxmac] = nc_rxmac_open_index(nfb, *max_rxmac)))
--		++(*max_rxmac);
-+	int i, j;
-+	struct nc_ifc_info *ifc = params->ifc_info;
-+	struct nc_ifc_map_info *mi = &params->map_info;
-+
-+	priv->rxmac = rte_calloc("NFB RxMAC", ifc->eth_cnt, sizeof(*priv->rxmac), 0);
-+	if (ifc->eth_cnt && priv->rxmac == NULL)
-+		return -ENOMEM;
-+
-+	for (i = 0, j = 0; i < mi->eth_cnt && j < ifc->eth_cnt; i++) {
-+		if (mi->eth[i].ifc != ifc->id)
-+			continue;
-+		priv->rxmac[j] = nc_rxmac_open(priv->nfb, mi->eth[i].node_rxmac);
-+		if (priv->rxmac[j])
-+			j++;
-+	}
-+
-+	priv->max_rxmac = j;
-+	return 0;
- }
- 
- /**
-- * Open all TX DMA queues
-+ * Open TX MAC components associated with current ifc
-  *
-- * @param dev
-- *   Pointer to nfb device.
-- * @param[out] txmac
-- *   Pointer to output array of nc_txmac
-- * @param[out] max_rxmac
-- *   Pointer to output max index of txmac
-+ * @param priv
-+ *   Pointer to driver private structure
-+ * @param params
-+ *   Pointer to init parameters structure
-  */
--static void
--nfb_nc_txmac_init(struct nfb_device *nfb,
--	struct nc_txmac *txmac[RTE_MAX_NC_TXMAC],
--	uint16_t *max_txmac)
-+static int
-+nfb_nc_txmac_init(struct pmd_internals *priv, struct nfb_init_params *params)
- {
--	*max_txmac = 0;
--	while ((txmac[*max_txmac] = nc_txmac_open_index(nfb, *max_txmac)))
--		++(*max_txmac);
-+	int i, j;
-+	struct nc_ifc_info *ifc = params->ifc_info;
-+	struct nc_ifc_map_info *mi = &params->map_info;
-+
-+	priv->txmac = rte_calloc("NFB TxMAC", ifc->eth_cnt, sizeof(*priv->txmac), 0);
-+	if (ifc->eth_cnt && priv->txmac == NULL)
-+		return -ENOMEM;
-+
-+	for (i = 0, j = 0; i < mi->eth_cnt && j < ifc->eth_cnt; i++) {
-+		if (mi->eth[i].ifc != ifc->id)
-+			continue;
-+		priv->txmac[j] = nc_txmac_open(priv->nfb, mi->eth[i].node_txmac);
-+		if (priv->txmac[j])
-+			j++;
-+	}
-+
-+	priv->max_txmac = j;
-+	return 0;
- }
- 
- /**
-- * Close all RX DMA queues
-- *
-- * @param rxmac
-- *   Pointer to array of nc_rxmac
-- * @param max_rxmac
-- *   Maximum index of rxmac
-+ * Close all RX MAC components
-+ * @param priv
-+ *   Pointer to driver private structure
-  */
- static void
--nfb_nc_rxmac_deinit(struct nc_rxmac *rxmac[RTE_MAX_NC_RXMAC],
--	uint16_t max_rxmac)
-+nfb_nc_rxmac_deinit(struct pmd_internals *priv)
- {
- 	uint16_t i;
--	for (i = 0; i < max_rxmac; i++) {
--		nc_rxmac_close(rxmac[i]);
--		rxmac[i] = NULL;
--	}
-+	for (i = 0; i < priv->max_rxmac; i++)
-+		nc_rxmac_close(priv->rxmac[i]);
-+
-+	rte_free(priv->rxmac);
- }
- 
- /**
-- * Close all TX DMA queues
-- *
-- * @param txmac
-- *   Pointer to array of nc_txmac
-- * @param max_txmac
-- *   Maximum index of txmac
-+ * Close all TX MAC components
-+ * @param priv
-+ *   Pointer to driver private structure
-  */
- static void
--nfb_nc_txmac_deinit(struct nc_txmac *txmac[RTE_MAX_NC_TXMAC],
--	uint16_t max_txmac)
-+nfb_nc_txmac_deinit(struct pmd_internals *priv)
- {
- 	uint16_t i;
--	for (i = 0; i < max_txmac; i++) {
--		nc_txmac_close(txmac[i]);
--		txmac[i] = NULL;
--	}
-+	for (i = 0; i < priv->max_txmac; i++)
-+		nc_txmac_close(priv->txmac[i]);
-+	rte_free(priv->txmac);
- }
- 
- /**
-@@ -335,7 +348,7 @@ nfb_eth_link_update(struct rte_eth_dev *dev,
- 	link.link_duplex = RTE_ETH_LINK_FULL_DUPLEX;
- 	link.link_autoneg = RTE_ETH_LINK_SPEED_FIXED;
- 
--	if (internals->rxmac[0] != NULL) {
-+	if (internals->max_rxmac) {
- 		nc_rxmac_read_status(internals->rxmac[0], &status);
- 
- 		switch (status.speed) {
-@@ -559,12 +572,12 @@ nfb_eth_dev_init(struct rte_eth_dev *dev, void *init_data)
- 	max_rx_queues = ifc->rxq_cnt;
- 	max_tx_queues = ifc->txq_cnt;
- 
--	nfb_nc_rxmac_init(internals->nfb,
--		internals->rxmac,
--		&internals->max_rxmac);
--	nfb_nc_txmac_init(internals->nfb,
--		internals->txmac,
--		&internals->max_txmac);
-+	ret = nfb_nc_rxmac_init(internals, params);
-+	if (ret)
-+		goto err_rxmac_init;
-+	ret = nfb_nc_txmac_init(internals, params);
-+	if (ret)
-+		goto err_txmac_init;
- 
- 	/* Set rx, tx burst functions */
- 	dev->rx_pkt_burst = nfb_eth_ndp_rx;
-@@ -630,8 +643,10 @@ nfb_eth_dev_init(struct rte_eth_dev *dev, void *init_data)
- err_malloc_mac_addrs:
- 	rte_free(priv->queue_map_rx);
- err_alloc_queue_map:
--	nfb_nc_rxmac_deinit(internals->rxmac, internals->max_rxmac);
--	nfb_nc_txmac_deinit(internals->txmac, internals->max_txmac);
-+	nfb_nc_txmac_deinit(internals);
-+err_txmac_init:
-+	nfb_nc_rxmac_deinit(internals);
-+err_rxmac_init:
- 	nfb_close(internals->nfb);
- 
- err_nfb_open:
-@@ -660,8 +675,8 @@ nfb_eth_dev_uninit(struct rte_eth_dev *dev)
- 
- 	TAILQ_REMOVE(&nfb_eth_dev_list, internals, eth_dev_list);
- 
--	nfb_nc_rxmac_deinit(internals->rxmac, internals->max_rxmac);
--	nfb_nc_txmac_deinit(internals->txmac, internals->max_txmac);
-+	nfb_nc_rxmac_deinit(internals);
-+	nfb_nc_txmac_deinit(internals);
- 	nfb_close(internals->nfb);
- 
- 	rte_free(internals);
 -- 
 2.52.0
 
