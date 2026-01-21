@@ -2,36 +2,36 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79A6EC44506
-	for <dpdk-dev@archiver.kernel.org>; Wed, 21 Jan 2026 17:03:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45B05C44508
+	for <dpdk-dev@archiver.kernel.org>; Wed, 21 Jan 2026 17:04:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 094A342DDC;
-	Wed, 21 Jan 2026 18:03:43 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 1B04142DE9;
+	Wed, 21 Jan 2026 18:03:44 +0100 (CET)
 Received: from office2.cesnet.cz (office2.cesnet.cz [78.128.248.237])
- by mails.dpdk.org (Postfix) with ESMTP id 9130C427C5
+ by mails.dpdk.org (Postfix) with ESMTP id 9E78242DB0
  for <dev@dpdk.org>; Wed, 21 Jan 2026 18:03:38 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cesnet.cz;
  s=office2-2020; t=1769015018;
- bh=gxH7z4B+Kfejsaoqh3eGfHxidHDEay5S1b5NLTpjDfs=;
+ bh=t0bJSiRO1r/tM9CYnCDaO1BK9AePWDMX5JA4TzEX138=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References;
- b=gJT/sB5lYf9Bdmm/RRRXp61RPE2zJmOvaCV7+A9wxsoQX/k2vr7pZtul02UlkADH+
- +d41jCviyJjIrvvaVrM//Yuu9Bml3cPwVtPNszQTSYhNb6pvHaYJ/ovtiu3wQZYPrZ
- VtqYqdVSPblVMNx1PyroY19BJQxH62xdtWDOIDtPTHA0JXVEW64FEqPzj1FdMwBagY
- M79+oGHzZo+aRTH8hrvI44rEgJqUYxxtzlzH/mJsfwOd0IDPKHal5qDN9bAQZPtwPG
- QfrRcQkCuKQ3eL/8sXS1M6uMyQ/Tr4hh+trqiXr8YRHyJRQB72NGkbSgMl+evjeg1t
- BQ7tVCDNNpEjQ==
+ b=bZ6pc66Ll+68iqiA7dj0oU3otShYTEy57qhRtLHAtlvZkuCFbg3da8m7TV3nNvr6B
+ 4IKcE9kqqAXWS53BS6sCE4epnnd5rVcZWhQzM17vgSZNe6vpLod6v+/JPEBkodnCcA
+ wAyTi1GDUm2LLdAgrfkl8nRl9nWx3D2AGAtfLjIREEwraVDnG+ZzKZIMaplJg2TJr2
+ Gu/ySNdPyEHeh3dfFWmJm0ApsLKHyyB/E4gVREYYqCSVFb/NLCNpqioqDOGKBXvMyp
+ GWVLaJQAKsBTihHYifbm6qhM7G1Z/neoJUsLMDoux+lGiyPLpLv8qaHwfY1Nj5O/rd
+ Kz4MyFOMe7/fw==
 Received: from emil.cesnet.cz (gtx107.cesnet.cz [IPv6:2001:718:812:27::107])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by office2.cesnet.cz (Postfix) with ESMTPSA id 68A6D1180081;
+ by office2.cesnet.cz (Postfix) with ESMTPSA id 81DB51180082;
  Wed, 21 Jan 2026 18:03:38 +0100 (CET)
 From: spinler@cesnet.cz
 To: dev@dpdk.org
 Cc: Martin Spinler <spinler@cesnet.cz>
-Subject: [PATCH v3 3/8] net/nfb: add vdev as alternative device probe method
-Date: Wed, 21 Jan 2026 18:03:28 +0100
-Message-ID: <20260121170333.272985-4-spinler@cesnet.cz>
+Subject: [PATCH v3 4/8] net/nfb: add device argument "port" to limit used ports
+Date: Wed, 21 Jan 2026 18:03:29 +0100
+Message-ID: <20260121170333.272985-5-spinler@cesnet.cz>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260121170333.272985-1-spinler@cesnet.cz>
 References: <20260115151656.393106-1-spinler@cesnet.cz>
@@ -53,134 +53,155 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Martin Spinler <spinler@cesnet.cz>
 
-VDEV are useful for NFB devices not represented by PCI device,
-e.g. virtual or simulated devices.
+NFB devices do not use separate PCI device for each port; one PCI device
+contains handles for all ports instead. For some application this approach
+can be limiting.
+
+The "port" argument can be used to select only desired ports.
+It can be used multiple times. When is not used at all, the driver
+selects all ports.
 
 Signed-off-by: Martin Spinler <spinler@cesnet.cz>
 ---
- drivers/net/nfb/meson.build |   1 +
- drivers/net/nfb/nfb_vdev.c  | 100 ++++++++++++++++++++++++++++++++++++
- 2 files changed, 101 insertions(+)
- create mode 100644 drivers/net/nfb/nfb_vdev.c
+ drivers/net/nfb/nfb.h        |  7 +++++
+ drivers/net/nfb/nfb_ethdev.c | 54 +++++++++++++++++++++++++++++++++++-
+ drivers/net/nfb/nfb_vdev.c   |  3 +-
+ 3 files changed, 62 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/nfb/meson.build b/drivers/net/nfb/meson.build
-index d7a255c928..9e458dfb4a 100644
---- a/drivers/net/nfb/meson.build
-+++ b/drivers/net/nfb/meson.build
-@@ -16,6 +16,7 @@ ext_deps += dep
+diff --git a/drivers/net/nfb/nfb.h b/drivers/net/nfb/nfb.h
+index d0d46f4a38..605ea8e875 100644
+--- a/drivers/net/nfb/nfb.h
++++ b/drivers/net/nfb/nfb.h
+@@ -42,6 +42,13 @@ extern int nfb_logtype;
  
- sources = files(
-         'nfb_ethdev.c',
-+        'nfb_vdev.c',
-         'nfb_rx.c',
-         'nfb_rxmode.c',
-         'nfb_stats.c',
-diff --git a/drivers/net/nfb/nfb_vdev.c b/drivers/net/nfb/nfb_vdev.c
-new file mode 100644
-index 0000000000..adda148056
---- /dev/null
-+++ b/drivers/net/nfb/nfb_vdev.c
-@@ -0,0 +1,100 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2026 Cesnet
-+ */
+ #define RTE_NFB_DRIVER_NAME net_nfb
+ 
++/* Device arguments */
++#define NFB_ARG_PORT "port"
 +
-+#include <rte_kvargs.h>
-+#include <ethdev_vdev.h>
++#define NFB_COMMON_ARGS \
++	NFB_ARG_PORT "=<number>" \
++	""
 +
-+#include "nfb.h"
+ /*
+  * Handles obtained from the libnfb: each process must use own instance.
+  * Stored inside dev->process_private.
+diff --git a/drivers/net/nfb/nfb_ethdev.c b/drivers/net/nfb/nfb_ethdev.c
+index 3c009fc1a4..f7c50ea3c4 100644
+--- a/drivers/net/nfb/nfb_ethdev.c
++++ b/drivers/net/nfb/nfb_ethdev.c
+@@ -22,6 +22,11 @@
+ #include "nfb_rxmode.h"
+ #include "nfb.h"
+ 
++static const char * const VALID_KEYS[] = {
++	NFB_ARG_PORT,
++	NULL
++};
 +
-+#define VDEV_NFB_DRIVER net_vdev_nfb
-+#define VDEV_NFB_ARG_DEV "dev"
-+
-+static int
-+vdev_nfb_vdev_probe(struct rte_vdev_device *dev)
+ /* The TAILQ entries are used for cleanup of allocated resources
+  * in situations, where dev_close is not called.
+  */
+@@ -664,6 +669,23 @@ nfb_eth_dev_uninit(struct rte_eth_dev *dev)
+ 	return 0;
+ }
+ 
++static int fill_port_mask(const char *key __rte_unused, const char *value, void *opaque)
 +{
-+	unsigned int count;
++	char *end;
++	uint64_t *port_mask = opaque;
++	unsigned long port;
++
++	if (value == NULL || strlen(value) == 0 || !isdigit(*value))
++		return -1;
++
++	port = strtoul(value, &end, 0);
++	if (*end != '\0' || port >= ULONG_WIDTH)
++		return -1;
++
++	*port_mask |= RTE_BIT64(port);
++	return 0;
++}
++
+ RTE_EXPORT_INTERNAL_SYMBOL(nfb_eth_common_probe)
+ int
+ nfb_eth_common_probe(struct rte_device *device,
+@@ -671,7 +693,7 @@ nfb_eth_common_probe(struct rte_device *device,
+ 		struct nfb_init_params *params, int ep_index)
+ {
+ 	int i;
+-	int ret;
 +	int ret = 0;
+ 	int basename_len;
+ 
+ 	struct nc_ifc_info *ifc;
+@@ -679,6 +701,9 @@ nfb_eth_common_probe(struct rte_device *device,
+ 	struct rte_eth_dev *eth_dev;
+ 	struct pmd_internals *p;
+ 
++	struct rte_kvargs *kvlist;
++	uint64_t port_mask = UINT64_MAX;
 +
-+	struct nfb_init_params params;
-+
-+	const char *vdev_name = rte_vdev_device_name(dev);
-+	const char *vdev_args = rte_vdev_device_args(dev);
-+	char *dev_params, *dev_params_mod;
-+	struct rte_kvargs *kvargs;
-+
-+	kvargs = rte_kvargs_parse(vdev_args, NULL);
-+	if (kvargs == NULL) {
-+		NFB_LOG(ERR, "Failed to parse device arguments %s", vdev_args);
-+		ret = -EINVAL;
-+		goto err_parse_args;
-+	}
-+
-+	dev_params = strdup(vdev_args);
-+	if (dev_params == NULL) {
-+		ret = -ENOMEM;
-+		goto err_strdup_params;
-+	}
-+
-+	params.args = dev_params;
-+	params.path = nfb_default_dev_path();
-+	params.nfb_id = 0;
-+
-+	dev_params_mod = dev_params;
-+
-+	dev_params_mod[0] = 0;
-+
-+	/* Parse parameters for virtual device */
-+	for (count = 0; count != kvargs->count; ++count) {
-+		const struct rte_kvargs_pair *pair = &kvargs->pairs[count];
-+
-+		if (!strcmp(pair->key, VDEV_NFB_ARG_DEV)) {
-+			params.path = pair->value;
-+		} else {
-+			/* Clone non-vdev arguments, result is shorter or equal length */
-+			ret = sprintf(dev_params_mod, "%s%s=%s",
-+					dev_params_mod == dev_params ? "" : ",",
-+					pair->key, pair->value);
-+			if (ret < 0)
-+				goto err_clone_args;
-+			dev_params_mod += ret;
+ 	basename_len = strlen(params->name);
+ 
+ 	nfb_dev = nfb_open(params->path);
+@@ -689,6 +714,27 @@ nfb_eth_common_probe(struct rte_device *device,
+ 
+ 	nc_ifc_map_info_create_ordinary(nfb_dev, &params->map_info);
+ 
++	if (params->args != NULL && strlen(params->args) > 0) {
++		kvlist = rte_kvargs_parse(params->args, VALID_KEYS);
++		if (kvlist == NULL) {
++			NFB_LOG(ERR, "Failed to parse device arguments %s", params->args);
++			return -EINVAL;
++		}
++		if (rte_kvargs_count(kvlist, NFB_ARG_PORT)) {
++			port_mask = 0;
++			if (rte_kvargs_process(kvlist, NFB_ARG_PORT, fill_port_mask,
++					(void *)&port_mask))
++				ret = -1;
++			if (ret || port_mask >= RTE_BIT64(params->map_info.ifc_cnt))
++				port_mask = 0;
++		}
++		rte_kvargs_free(kvlist);
++		if (port_mask == 0) {
++			NFB_LOG(ERR, "Failed to parse device port argument");
++			return -EINVAL;
 +		}
 +	}
 +
-+	strlcpy(params.name, vdev_name, sizeof(params.name));
+ 	for (i = 0; i < params->map_info.ifc_cnt; i++) {
+ 		ifc = &params->map_info.ifc[i];
+ 		params->ifc_info = ifc;
+@@ -698,6 +744,9 @@ nfb_eth_common_probe(struct rte_device *device,
+ 				(ifc->flags & NC_IFC_INFO_FLAG_ACTIVE) == 0)
+ 			continue;
+ 
++		if ((port_mask & RTE_BIT64(i)) == 0)
++			continue;
 +
-+	ret = nfb_eth_common_probe(&dev->device, NULL, NULL, &params, -1);
-+	if (ret)
-+		goto err_nfb_common_probe;
-+
-+	free(dev_params);
-+	rte_kvargs_free(kvargs);
-+
-+	return ret;
-+
-+err_nfb_common_probe:
-+err_clone_args:
-+	free(dev_params);
-+err_strdup_params:
-+	rte_kvargs_free(kvargs);
-+err_parse_args:
-+	return ret;
-+}
-+
-+static int
-+vdev_nfb_vdev_remove(struct rte_vdev_device *dev)
-+{
-+	return nfb_eth_common_remove(&dev->device);
-+}
-+
-+/** Virtual device descriptor. */
-+static struct rte_vdev_driver vdev_nfb_vdev = {
-+	.probe = vdev_nfb_vdev_probe,
-+	.remove = vdev_nfb_vdev_remove,
-+};
-+
-+RTE_PMD_REGISTER_VDEV(VDEV_NFB_DRIVER, vdev_nfb_vdev);
-+RTE_PMD_REGISTER_ALIAS(VDEV_NFB_DRIVER, eth_vdev_nfb);
-+RTE_PMD_REGISTER_PARAM_STRING(net_vdev_nfb,
-+		VDEV_NFB_ARG_DEV "=<string>"
+ 		snprintf(params->name + basename_len, sizeof(params->name) - basename_len,
+ 				"_eth%d", params->ifc_info->id);
+ 
+@@ -818,3 +867,6 @@ RTE_PMD_REGISTER_PCI(RTE_NFB_DRIVER_NAME, nfb_eth_driver);
+ RTE_PMD_REGISTER_PCI_TABLE(RTE_NFB_DRIVER_NAME, nfb_pci_id_table);
+ RTE_PMD_REGISTER_KMOD_DEP(RTE_NFB_DRIVER_NAME, "* nfb");
+ RTE_LOG_REGISTER_DEFAULT(nfb_logtype, NOTICE);
++RTE_PMD_REGISTER_PARAM_STRING(RTE_NFB_DRIVER_NAME,
++		NFB_COMMON_ARGS
 +		);
+diff --git a/drivers/net/nfb/nfb_vdev.c b/drivers/net/nfb/nfb_vdev.c
+index adda148056..8947d5c9bc 100644
+--- a/drivers/net/nfb/nfb_vdev.c
++++ b/drivers/net/nfb/nfb_vdev.c
+@@ -96,5 +96,6 @@ static struct rte_vdev_driver vdev_nfb_vdev = {
+ RTE_PMD_REGISTER_VDEV(VDEV_NFB_DRIVER, vdev_nfb_vdev);
+ RTE_PMD_REGISTER_ALIAS(VDEV_NFB_DRIVER, eth_vdev_nfb);
+ RTE_PMD_REGISTER_PARAM_STRING(net_vdev_nfb,
+-		VDEV_NFB_ARG_DEV "=<string>"
++		VDEV_NFB_ARG_DEV "=<string> "
++		NFB_COMMON_ARGS
+ 		);
 -- 
 2.52.0
 
