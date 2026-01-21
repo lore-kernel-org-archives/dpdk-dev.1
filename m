@@ -2,67 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C177C44506
-	for <dpdk-dev@archiver.kernel.org>; Wed, 21 Jan 2026 21:08:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBF67C44506
+	for <dpdk-dev@archiver.kernel.org>; Wed, 21 Jan 2026 21:08:41 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9DC9442E82;
-	Wed, 21 Jan 2026 22:08:22 +0100 (CET)
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com
- [209.85.128.51]) by mails.dpdk.org (Postfix) with ESMTP id 2676B42E7F
- for <dev@dpdk.org>; Wed, 21 Jan 2026 22:08:21 +0100 (CET)
-Received: by mail-wm1-f51.google.com with SMTP id
- 5b1f17b1804b1-4801c2fae63so2423175e9.2
- for <dev@dpdk.org>; Wed, 21 Jan 2026 13:08:21 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 9FE0742E80;
+	Wed, 21 Jan 2026 22:08:24 +0100 (CET)
+Received: from mail-wm1-f66.google.com (mail-wm1-f66.google.com
+ [209.85.128.66]) by mails.dpdk.org (Postfix) with ESMTP id 8E74D42E87
+ for <dev@dpdk.org>; Wed, 21 Jan 2026 22:08:23 +0100 (CET)
+Received: by mail-wm1-f66.google.com with SMTP id
+ 5b1f17b1804b1-47ee301a06aso3382025e9.0
+ for <dev@dpdk.org>; Wed, 21 Jan 2026 13:08:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769029701;
- x=1769634501; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769029703;
+ x=1769634503; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=QbOodkItnZ9ME9dwbzmbTtpmm+JRL0mSKjsi2Y4aIXg=;
- b=SAY0V/2NtrC681ia9R9vHkYODBa0Bx6LbFZgf6S2oGESip8tBPwjMmf7EDAOxm0V8E
- UzyJh7BoceRdvGwgqSFWL7YDeT/Ft4IqOe7c9XLlOPwpwnmFt0TVFkgPaKVimjWsEqNZ
- +Xjvy4yTdoswsrFb2DLCvtmx8vZLtRamBov9bqDZ5fFWlr4c9/a3bXKhUs55zb7/ejk2
- SvYaWeli+7Xna0d8/9VHd7YPcp1waISp/rcTz8xnuKCcicxo60N0QlIy/0AeIErWwquK
- 6+Zo0F7W4HsRYygyIn93TH/ENsY5VQyh8iRQ0XzjArPIOkt5DZp6TekJrgbucOaXa0T9
- GAVQ==
+ bh=bbs4p8Zf5fG0wh5pZQmnyKip7RhZ0QufmWBpfOo4Rko=;
+ b=CFzKjo2tXitf+CEAP1tqBpaln7j9rEZ5OfH3d7bw4uWm2SnIejlwuvQHk0eWqBSroQ
+ doMlPHRuynxcc8bPpWbISau8HlHtwZeiTZXjfzxqrj90P5Mgk3XyZpQJ/uUDJEqVbvqB
+ PIutbzuhPcQvZkzvNT5bwLD1ZNeL1XbRB/c/VKhr3peqhmMw9XUXFEkFepxEmStUzt+y
+ BEGnrDdyHlRKvM4RYQuf/LOrRkAMm1u3ti2kxS0gbeYlzSdSJeqtpWCHPxBme8A1qZ8e
+ 0Ae/VnY5r1NzQ6ZZagdevxmXx9ktZJWa/59mlIRcl+B7TClRlDVjoPCLRNO9gWm26XrF
+ F/FA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1769029701; x=1769634501;
+ d=1e100.net; s=20230601; t=1769029703; x=1769634503;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=QbOodkItnZ9ME9dwbzmbTtpmm+JRL0mSKjsi2Y4aIXg=;
- b=WZx6IG8r0KXdNj/1u2FwDrXGBX6Jqjn9ZApp+F0DYBnmXOmOn/zAHKHpqtpz7UmUeX
- kPnBrE1ZW8PeKDBNaBCpvmlErGfHePCFLnnXCezW2TEpt3GU7T292iw0KwqM+Vj33qME
- KHHDBL/8DPV1ecCKKxRss2w3FOY2Gdzt+ITE7I7Nvj2E2nvQ3u7PJkTcXwOoTd6NUdsz
- t1zC73yrr0WS1j+awtkAyYq1VW5F73LcrZsA4OE/H9nEVpc7nBBgGczCcCR1ogGvpGUG
- k0KX8JF0b2msOH2SFR7PEyKkNXGAwhl9H5nL3/x/43RclA4iVmIIwtrm84z+T2Y92hEA
- QqTA==
-X-Gm-Message-State: AOJu0YzWg3F5xDPEIOXLz7Wfs+z2fzHC8J5qOq8c+IIxT8yF6+FJPo1I
- zcgouvuW3TkkkN0OsKIp/lqcKFrSZ0XfVPrspoDuA3ZLNsr0wKi7X8LTM7od+FgShHuCAEb7eTN
- wwUof
-X-Gm-Gg: AZuq6aJhlCJdE3bwiw4zya9mAoZuDihZEuF+T//KAxSMurYvLgFwMoV3GzA37GonGHi
- xf41meluUi5GxBJthEAINJvTy4q0gp6RoPP/dR6LdH6/RuVHPUqd5Dm2K9YhOVzD7m9QXXl98Cr
- 0t7It2IRiq/q4ZpwnuCNojH5M1/lQn5CMbgBil8slTneAIvu8U9jd2Z/FrQz7rV9ljQPWes0EVR
- EqPbu5jOmkEFYiH6pI3y7SQpJf272Qm/2R3zm5kNBccm5R81uK+VCmZmmEh8eTynundUhceeFsd
- CdFV4L+eSD9HAPYTZz+w5hwLicY9wc5mt90hsV5m/TMKJaWsEkIsNr02wm7NSZjJdr8U0fE5zSr
- sfgjxcb77AIUnKJzaEzbM2PVScWxyvweT/Jjte4XpGbBOZ5S0Mzhd/Rw2WV+msS66XCAUrEXEJP
- zonByJQV1RoK05LN81TzhoDQ/WzTCTtD6ptMzi+muc2GCq1ar7Yw==
-X-Received: by 2002:a05:600c:3d8b:b0:479:2a09:9262 with SMTP id
- 5b1f17b1804b1-4801e30b49emr222735785e9.9.1769029700664; 
- Wed, 21 Jan 2026 13:08:20 -0800 (PST)
+ bh=bbs4p8Zf5fG0wh5pZQmnyKip7RhZ0QufmWBpfOo4Rko=;
+ b=b39a9wsBEEDv/HwSJ663Gd6IlkpOuCJaKpAN6Dl/RNDlA/8T4m2B+qvEuk0bH4HjDR
+ f0sepqWqEEmlqghGBPPw33sn3SVeXBlDsc1iFY25RRFKIeSr9v0/rsyzi78CCirWTUIr
+ 7YZrH+CHH1zE5lLj/YHno6o7H67j1KGcZ2TzQu6ZsVrrFbcUqXtxYU6+L/qNDmqmvhhH
+ laxH4sP9/NJfVTpcLnNPoH1/aRvXShjsCOQlxznuQAbjsktjG3IoTTons7dG4MDy2Tgj
+ ns99QhJPxBrFQNHmUT/oNofDlh/txM0y/8QT3oX0MQnD+U6xi4nxh3b0jV6klRzrjiT5
+ xfAw==
+X-Gm-Message-State: AOJu0YzJ5B8NOeeUS/GTZZrlnES4LnRfNGwrajwSkGaLNXbpGPo0ALp2
+ V0Lq1iXDHT1wXWkAgb1ZuXdZXLVK+VqbXsmzsboXyoAn2QilTRYjX6S7OgSe6eP/WZA2BshBUjz
+ F/5SP
+X-Gm-Gg: AZuq6aKK54uPUoD4WvmVCQRnPa2HnKscSVmWrFqlq1spt0rF/+QcsGmS5d7MbhLhHKh
+ fr1ScvjBy0ehYSoT0LCbtDq9pNkq6Mp065omiSoWeH/yVbd5DPhn2OCvS69uwRRKFLMFNILS0Hh
+ jkz1P9iySaDn5wGhEVrVy3w5EXqESDsfD6nPKc+eE9UnY1oK7NcQtIT5tUl/614ZU9KE5rZEi3g
+ aK+i3DJLFFZr1m/+Sr+KkGRLwOM0J9AswmyH6AP1UnoxQcGKZVEn1wdoyEhZPlZMyVu6rCyYjdP
+ LKjrWNwOpFViZOmxsF1wIWlSMkvc349yy/Sy7lRL6A1tITgRRobD9NrGIg+XcHcJfZeNfhMvWda
+ ifQTXRMcE/M18BBUpwCbgpXTPrkKoffY3UJ2hZLbxdR04nrzt1UBykNa7+IHhdPPpz8P1VI6cPJ
+ axZl+4ZUsklZgCElM/Z6ES/JWYjJel6npDsWT+vAPctHK/OLliLA==
+X-Received: by 2002:a05:600c:3495:b0:477:639d:bca2 with SMTP id
+ 5b1f17b1804b1-4801eaadbd9mr245690245e9.4.1769029703063; 
+ Wed, 21 Jan 2026 13:08:23 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-48047028928sm27539845e9.2.2026.01.21.13.08.19
+ 5b1f17b1804b1-48047028928sm27539845e9.2.2026.01.21.13.08.21
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 21 Jan 2026 13:08:20 -0800 (PST)
+ Wed, 21 Jan 2026 13:08:22 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Marat Khalili <marat.khalili@huawei.com>
-Subject: [PATCH v12 3/8] test: avoid overflowing huge directory path
-Date: Wed, 21 Jan 2026 13:06:23 -0800
-Message-ID: <20260121210810.1044276-4-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
+ Anatoly Burakov <anatoly.burakov@intel.com>,
+ Cristian Dumitrescu <cristian.dumitrescu@intel.com>,
+ Pablo de Lara <pablo.de.lara.guarch@intel.com>
+Subject: [PATCH v12 4/8] test: fix format overflow warning in ACL test
+Date: Wed, 21 Jan 2026 13:06:24 -0800
+Message-ID: <20260121210810.1044276-5-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260121210810.1044276-1-stephen@networkplumber.org>
 References: <20251110182209.104087-1-stephen@networkplumber.org>
@@ -82,324 +84,68 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Modify the part of the test that is scanning for hugepages
-mount point to use existing getmntent library calls.
+This test has an array of input lines, but the two dimensional
+array confuses compiler length checks. Convert to an array
+of pointers to fixed strings which avoids the problem.
+Make both variables static since not shared with other code.
 
-As a result, the maximum mount path is smaller which is ok
-since this is all handled by the standard library.
-And the resulting huge path arguments don't overflow.
-
-Hugepages aren't used on Window or FreeBSD so this is
-skipped there.
+Fixes: 5205954791cb ("app/test: packet framework unit tests")
+Cc: stable@dpdk.org
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-Acked-by: Marat Khalili <marat.khalili@huawei.com>
+Acked-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- app/test/test_eal_flags.c | 146 ++++++++++++++++----------------------
- 1 file changed, 61 insertions(+), 85 deletions(-)
+ app/test/test_table_acl.c | 30 ++++++++++++++----------------
+ 1 file changed, 14 insertions(+), 16 deletions(-)
 
-diff --git a/app/test/test_eal_flags.c b/app/test/test_eal_flags.c
-index b369326dbf..65c63befe2 100644
---- a/app/test/test_eal_flags.c
-+++ b/app/test/test_eal_flags.c
-@@ -121,7 +121,8 @@ test_misc_flags(void)
- #define no_shconf "--no-shconf"
- #define allow "--allow"
- #define vdev "--vdev"
--#define file_prefix "--file-prefix"
-+
-+#define FS_HUGETLB "hugetlbfs"
- 
- #define memtest "memtest"
- #define memtest1 "memtest1"
-@@ -129,6 +130,9 @@ test_misc_flags(void)
- #define SOCKET_MEM_STRLEN (RTE_MAX_NUMA_NODES * 20)
- #define launch_proc(ARGV) process_dup(ARGV, RTE_DIM(ARGV), __func__)
- 
-+#ifdef RTE_EXEC_ENV_LINUX
-+#include <mntent.h>
-+
- enum hugepage_action {
- 	HUGEPAGE_CHECK_EXISTS = 0,
- 	HUGEPAGE_CHECK_LOCKED,
-@@ -136,24 +140,6 @@ enum hugepage_action {
- 	HUGEPAGE_INVALID
- };
- 
--/* if string contains a hugepage path */
--static int
--get_hugepage_path(char * src, int src_len, char * dst, int dst_len)
--{
--#define NUM_TOKENS 4
--	char *tokens[NUM_TOKENS];
--
--	/* if we couldn't properly split the string */
--	if (rte_strsplit(src, src_len, tokens, NUM_TOKENS, ' ') < NUM_TOKENS)
--		return 0;
--
--	if (strncmp(tokens[2], "hugetlbfs", sizeof("hugetlbfs")) == 0) {
--		strlcpy(dst, tokens[1], dst_len);
--		return 1;
--	}
--	return 0;
--}
--
- /*
-  * Cycles through hugepage directories and looks for hugepage
-  * files associated with a given prefix. Depending on value of
-@@ -165,46 +151,40 @@ get_hugepage_path(char * src, int src_len, char * dst, int dst_len)
-  * Returns -1 if it encounters an error
-  */
- static int
--process_hugefiles(const char * prefix, enum hugepage_action action)
-+process_hugefiles(const char *prefix, enum hugepage_action action)
- {
--	FILE * hugedir_handle = NULL;
--	DIR * hugepage_dir = NULL;
--	struct dirent *dirent = NULL;
--
--	char hugefile_prefix[PATH_MAX] = {0};
--	char hugedir[PATH_MAX] = {0};
--	char line[PATH_MAX] = {0};
--
--	int fd, lck_result, result = 0;
-+	const struct mntent *entry;
-+	char hugefile_prefix[PATH_MAX];
-+	int result = 0;
- 
--	const int prefix_len = snprintf(hugefile_prefix,
--			sizeof(hugefile_prefix), "%smap_", prefix);
--	if (prefix_len <= 0 || prefix_len >= (int)sizeof(hugefile_prefix)
--			|| prefix_len >= (int)sizeof(dirent->d_name)) {
-+	const int prefix_len = snprintf(hugefile_prefix, sizeof(hugefile_prefix), "%smap_", prefix);
-+	if (prefix_len <= 0 || prefix_len >= NAME_MAX) {
- 		printf("Error (line %d) - cannot create hugefile filename prefix\n", __LINE__);
- 		return -1;
- 	}
- 
- 	/* get hugetlbfs mountpoints from /proc/mounts */
--	hugedir_handle = fopen("/proc/mounts", "r");
--
--	if (hugedir_handle == NULL) {
-+	FILE *mounts = setmntent("/proc/mounts", "r");
-+	if (mounts == NULL) {
- 		printf("Error (line %d) - cannot parse /proc/mounts!\n", __LINE__);
- 		return -1;
- 	}
- 
--	/* read and parse script output */
--	while (fgets(line, sizeof(line), hugedir_handle) != NULL) {
-+	/* foreach mountpoint */
-+	while ((entry = getmntent(mounts)) != NULL) {
-+		DIR *hugepage_dir;
-+		struct dirent *dirent;
- 
--		/* check if we have a hugepage filesystem path */
--		if (!get_hugepage_path(line, sizeof(line), hugedir, sizeof(hugedir)))
-+		/* only want hugetlbfs filesystems */
-+		if (strcmp(entry->mnt_type, FS_HUGETLB) != 0)
- 			continue;
- 
- 		/* check if directory exists */
--		if ((hugepage_dir = opendir(hugedir)) == NULL) {
--			fclose(hugedir_handle);
-+		hugepage_dir = opendir(entry->mnt_dir);
-+		if (hugepage_dir == NULL) {
-+			endmntent(mounts);
- 			printf("Error (line %d) - cannot open %s: %s\n",
--				__LINE__, hugedir, strerror(errno));
-+				__LINE__, entry->mnt_dir, strerror(errno));
- 			return -1;
- 		}
- 
-@@ -217,7 +197,7 @@ process_hugefiles(const char * prefix, enum hugepage_action action)
- 				{
- 					/* file exists, return */
- 					printf("Hugepage file %s/%s exists, matching prefix %s\n",
--						hugedir, dirent->d_name, hugefile_prefix);
-+						entry->mnt_dir, dirent->d_name, hugefile_prefix);
- 					closedir(hugepage_dir);
- 					result = 1;
- 					goto end;
-@@ -225,10 +205,10 @@ process_hugefiles(const char * prefix, enum hugepage_action action)
- 				break;
- 			case HUGEPAGE_DELETE:
- 				{
--					char file_path[PATH_MAX] = {0};
-+					char file_path[PATH_MAX];
- 
- 					snprintf(file_path, sizeof(file_path),
--						"%s/%s", hugedir, dirent->d_name);
-+						"%s/%s", entry->mnt_dir, dirent->d_name);
- 
- 					/* remove file */
- 					if (remove(file_path) < 0) {
-@@ -244,6 +224,8 @@ process_hugefiles(const char * prefix, enum hugepage_action action)
- 				break;
- 			case HUGEPAGE_CHECK_LOCKED:
- 				{
-+					int fd;
-+
- 					/* try and lock the file */
- 					fd = openat(dirfd(hugepage_dir), dirent->d_name, O_RDONLY);
- 
-@@ -257,10 +239,7 @@ process_hugefiles(const char * prefix, enum hugepage_action action)
- 					}
- 
- 					/* non-blocking lock */
--					lck_result = flock(fd, LOCK_EX | LOCK_NB);
--
--					/* if lock succeeds, there's something wrong */
--					if (lck_result != -1) {
-+					if (flock(fd, LOCK_EX | LOCK_NB) != -1) {
- 						result = 0;
- 
- 						/* unlock the resulting lock */
-@@ -271,7 +250,7 @@ process_hugefiles(const char * prefix, enum hugepage_action action)
- 					}
- 					result = 1;
- 					printf("Hugepage file %s/%s is locked\n",
--						hugedir, dirent->d_name);
-+					       entry->mnt_dir, dirent->d_name);
- 					close(fd);
- 				}
- 				break;
-@@ -284,11 +263,10 @@ process_hugefiles(const char * prefix, enum hugepage_action action)
- 		closedir(hugepage_dir);
- 	} /* read /proc/mounts */
- end:
--	fclose(hugedir_handle);
-+	endmntent(mounts);
- 	return result;
- }
- 
--#ifdef RTE_EXEC_ENV_LINUX
- /*
-  * count the number of "node*" files in /sys/devices/system/node/
-  */
-@@ -828,10 +806,7 @@ test_no_huge_flag(void)
- 		printf("Error - process did not run ok with --no-huge and -m flags\n");
- 		return -1;
- 	}
--#ifdef RTE_EXEC_ENV_FREEBSD
--	/* no other tests are applicable to FreeBSD */
--	return 0;
--#else
-+#ifndef RTE_EXEC_ENV_FREEBSD
- 	/* With --no-huge and --socket-mem */
- 	const char *argv3[] = {prgname, prefix, no_huge,
- 			"--socket-mem=" DEFAULT_MEM_SIZE};
-@@ -873,10 +848,10 @@ test_no_huge_flag(void)
- static int
- test_misc_flags(void)
- {
--	char hugepath[PATH_MAX] = {0};
--	char hugepath_dir[PATH_MAX] = {0};
--	char hugepath_dir2[PATH_MAX] = {0};
--	char hugepath_dir3[PATH_MAX] = {0};
-+	const char *hugepath = "";
-+	char hugepath_dir[PATH_MAX];
-+	char hugepath_dir2[PATH_MAX];
-+	char hugepath_dir3[PATH_MAX];
- #ifdef RTE_EXEC_ENV_FREEBSD
- 	/* BSD target doesn't support prefixes at this point */
- 	const char * prefix = "";
-@@ -884,9 +859,7 @@ test_misc_flags(void)
- #else
- 	const char *prefix = file_prefix_arg();
- 	const char * nosh_prefix = "--file-prefix=noshconf";
--	FILE * hugedir_handle = NULL;
--	char line[PATH_MAX] = {0};
--	unsigned i, isempty = 1;
-+	struct mntent *entry;
- 
- 	if (prefix == NULL) {
- 		printf("Error (line %d) - unable to get current prefix!\n", __LINE__);
-@@ -898,29 +871,24 @@ test_misc_flags(void)
- 	 */
- 
- 	/* get hugetlbfs mountpoints from /proc/mounts */
--	hugedir_handle = fopen("/proc/mounts", "r");
--
--	if (hugedir_handle == NULL) {
-+	FILE *mounts = setmntent("/proc/mounts", "r");
-+	if (mounts == NULL) {
- 		printf("Error (line %d) - cannot open /proc/mounts!\n", __LINE__);
- 		return -1;
- 	}
- 
--	/* read /proc/mounts */
--	while (fgets(line, sizeof(line), hugedir_handle) != NULL) {
--
--		/* find first valid hugepath */
--		if (get_hugepage_path(line, sizeof(line), hugepath, sizeof(hugepath)))
-+	/* foreach mount point */
-+	hugepath = NULL;
-+	while ((entry = getmntent(mounts)) != NULL) {
-+		/* only want hugetlbfs filesystems */
-+		if (strcmp(entry->mnt_type, FS_HUGETLB) == 0) {
-+			hugepath = strdupa(entry->mnt_dir);
- 			break;
-+		}
- 	}
-+	endmntent(mounts);
- 
--	fclose(hugedir_handle);
--
--	/* check if path is not empty */
--	for (i = 0; i < sizeof(hugepath); i++)
--		if (hugepath[i] != '\0')
--			isempty = 0;
--
--	if (isempty) {
-+	if (hugepath == NULL) {
- 		printf("No mounted hugepage dir found!\n");
- 		return -1;
- 	}
-@@ -1204,6 +1172,17 @@ test_misc_flags(void)
- 	return -1;
- }
- 
-+#ifdef RTE_EXEC_ENV_FREEBSD
-+
-+static int
-+test_file_prefix(void)
-+{
-+	printf("file_prefix not supported on FreeBSD, skipping test\n");
-+	return TEST_SKIPPED;
-+}
-+
-+#else
-+
- static int
- test_file_prefix(void)
- {
-@@ -1222,16 +1201,12 @@ test_file_prefix(void)
- 	 *    run in legacy mode, and not present at all after run in default
- 	 *    mem mode
- 	 */
--	char prefix[PATH_MAX] = "";
-+	char prefix[PATH_MAX];
- 
--#ifdef RTE_EXEC_ENV_FREEBSD
--	return 0;
--#else
- 	if (get_current_prefix(prefix, sizeof(prefix)) == NULL) {
- 		printf("Error (line %d) - unable to get current prefix!\n", __LINE__);
- 		return -1;
- 	}
--#endif
- 
- 	/* this should fail unless the test itself is run with "memtest" prefix */
- 	const char *argv0[] = {prgname, mp_flag, "-m",
-@@ -1476,6 +1451,7 @@ test_file_prefix(void)
- 
+diff --git a/app/test/test_table_acl.c b/app/test/test_table_acl.c
+index dff9bddfb9..7b6ea16cfd 100644
+--- a/app/test/test_table_acl.c
++++ b/app/test/test_table_acl.c
+@@ -312,22 +312,6 @@ parse_cb_ipv4_rule_del(char *str, struct rte_table_acl_rule_delete_params *v)
  	return 0;
  }
-+#endif
  
- /* This function writes in passed buf pointer a valid --socket-mem= option
-  * for num_sockets then concatenates the provided suffix string.
+-/*
+- * The format for these rules DO NOT need the port ranges to be
+- * separated by ' : ', just ':'. It's a lot more readable and
+- * cleaner, IMO.
+- */
+-char lines[][128] = {
+-	"@0.0.0.0/0 0.0.0.0/0 0:65535 0:65535 2/0xff", /* Protocol check */
+-	"@192.168.3.1/32 0.0.0.0/0 0:65535 0:65535 0/0", /* Src IP checl */
+-	"@0.0.0.0/0 10.4.4.1/32 0:65535 0:65535 0/0", /* dst IP check */
+-	"@0.0.0.0/0 0.0.0.0/0 105:105 0:65535 0/0", /* src port check */
+-	"@0.0.0.0/0 0.0.0.0/0 0:65535 206:206 0/0", /* dst port check */
+-};
+-
+-char line[128];
+-
+-
+ static int
+ setup_acl_pipeline(void)
+ {
+@@ -343,6 +327,20 @@ setup_acl_pipeline(void)
+ 	parse_5tuple parser;
+ 	char acl_name[64];
+ 
++	/*
++	 * The format for these rules DO NOT need the port ranges to be
++	 * separated by ' : ', just ':'. It's a lot more readable and
++	 * cleaner, IMO.
++	 */
++	static const char * const lines[] = {
++		"@0.0.0.0/0 0.0.0.0/0 0:65535 0:65535 2/0xff", /* Protocol check */
++		"@192.168.3.1/32 0.0.0.0/0 0:65535 0:65535 0/0", /* Src IP checl */
++		"@0.0.0.0/0 10.4.4.1/32 0:65535 0:65535 0/0", /* dst IP check */
++		"@0.0.0.0/0 0.0.0.0/0 105:105 0:65535 0/0", /* src port check */
++		"@0.0.0.0/0 0.0.0.0/0 0:65535 206:206 0/0", /* dst port check */
++	};
++	char line[LINE_MAX];
++
+ 	/* Pipeline configuration */
+ 	p = rte_pipeline_create(&pipeline_params);
+ 	if (p == NULL) {
 -- 
 2.51.0
 
