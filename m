@@ -2,68 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ADCCD2629F
-	for <dpdk-dev@archiver.kernel.org>; Wed, 21 Jan 2026 01:00:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B39B5CA5FBA
+	for <dpdk-dev@archiver.kernel.org>; Wed, 21 Jan 2026 04:36:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5C2F741132;
-	Wed, 21 Jan 2026 02:00:09 +0100 (CET)
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com
- [209.85.128.45]) by mails.dpdk.org (Postfix) with ESMTP id D153E402BD
- for <dev@dpdk.org>; Wed, 21 Jan 2026 02:00:07 +0100 (CET)
-Received: by mail-wm1-f45.google.com with SMTP id
- 5b1f17b1804b1-47ee9817a35so34948815e9.1
- for <dev@dpdk.org>; Tue, 20 Jan 2026 17:00:07 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id B34D141132;
+	Wed, 21 Jan 2026 05:36:22 +0100 (CET)
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com
+ [209.85.128.49]) by mails.dpdk.org (Postfix) with ESMTP id 3F48B4026C
+ for <dev@dpdk.org>; Wed, 21 Jan 2026 05:36:21 +0100 (CET)
+Received: by mail-wm1-f49.google.com with SMTP id
+ 5b1f17b1804b1-47ff94b46afso3888225e9.1
+ for <dev@dpdk.org>; Tue, 20 Jan 2026 20:36:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768957207;
- x=1769562007; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1768970181;
+ x=1769574981; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=mt4wHn/B/Uh47RVH/PXrZGWtnIKIt1iGhgyzhSV9wok=;
- b=OODhOsu1E7jzmvsaPTAJ2bxnLX4erwK2E4dMkaTUjkxD27yiQPxGBhs59YKGP1gFH1
- wo95AxPwtooKfErrc95FbIdBYPtLG86DcAoFb9a/Y0x+u9yCPZDAmTRHEMqLscIuvf/e
- vk10tnMKzhd9QXSuS7UMaEqfDiLVjfXbWZRXqdJ+MtDLFsQPMc0uXATcvLM8lXx6Yu0I
- PLzsPBTnLg5RCr+ixuf63wsvK5bh7/41su9pyj7CC5rxN1Z1ygudn74ggMXPTnKp8qi9
- whUfbY/FZ1yYUt+1zuVt2z5JI1Ext7dGm2uw1KogaoJGWlO3qq0Xt9yqKcF+dvwyAHth
- S0XQ==
+ bh=VVuE3Rt8t361kwFZe7vxe424ahJbozZx9Qmq7yCBU94=;
+ b=v9RDGFlP5M9TKVRaIpKNPDQiUYdyvMuoAKEz0mp5PyNjwO3u5Gij2e5swhM2kqGS1s
+ LyzOpFtIcy20t7rrgDMnw+9/+K0n44cK74jjeqtTaGcoGoCThki4zdCXwwf63jxaViKF
+ pkd5PkZFFFJemBdaryOG4yAGLxZqcf9E6/1s7zljrVOpwvc9kFCKzZAeuNyItoy5J88F
+ /KufAZiiB/ReSMjxe257qqh7O/tmbNgCGiXzQ50h1DMzsI0H0NTcEqHj4gMynNj1SBiP
+ ik74xmxJV24DqUW3UNWKKsXb4KK2XxG/CmF1I8tpXyRnCmnQqyddpiwUUTNjUWa3V4WZ
+ 1Sag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768957207; x=1769562007;
+ d=1e100.net; s=20230601; t=1768970181; x=1769574981;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=mt4wHn/B/Uh47RVH/PXrZGWtnIKIt1iGhgyzhSV9wok=;
- b=Y/BVaQFBbLkVmEF7ul4n64Dx481Jv/EjDW1SG4D7w1gFOwLuigmx74bJ2b+f1td3Pw
- JVb16TmmcPIaLucMNLAAs+4kHdoSpsNE67Jw1+kW5YoFJ+daXjdJVeF4mb8uXa4dMDTC
- 2xz0h1GZE74+ryJaIOO6xYrnwgz5SwHSrP5+chvwGQkzvsC6pFDcz0fBu9yMQkw/wXkp
- SA/5SKTufTBNqgNz9zJlt8kFtco4YwHhF0Rpwuj2pEXDTOaRFF8FhwSK9dScZASUzqNx
- dRDNL7BGyp5acd2qfqxFeelg00tXDdcqOtH1+3u8ZYSG2Kgt2yReXbTn9cgyh1DrkoNV
- twqA==
-X-Gm-Message-State: AOJu0Yx7tDINLWFMAA2r7GplqNPf67pPt6EWwMyoJOoKksvAUCROhIda
- iV7tWwZkh6nD+kHTrXXAmf7WMz73Z4+Qg//JmiGZsJg45UCS7+4Z9oTS9fyqxb42+0Tp+UvUulz
- HvvOl
-X-Gm-Gg: AZuq6aJgMJI0URK9k6VeQEYK8KRkk5mv2fblepn+8C87RTQFpua9T9QMpCE30m++Qpb
- cKt5DPlJFE/bccVBOr3XXW4PTEKjPM4w1/qxv1mNn1vX6g5lYS20qLrK69c2jdl/MFgX/jQWlKN
- FlnqDNBy5gHQ1NY3zHyjmZweE9YCPqoybcSxAdYa9BsTxDe5hTxxnc3o3MX+Ahnbzla6Q9qs37v
- 8c1X2leRywH2l1oSUx/X5Z+NyEXsqRVcEOosc9HoJXR5LgBo6yE1TJNxG4ah96EfNeJ+9zgvEau
- 9GRLoZMDqvqvfS3Sn47VVB7W0fIRvtn3UjcJqWvuWfDWPGMFtA/Jo66TTjzWDRpE20vE9fYmZ1y
- JEtQhHLDPDQhR8why/AF1ykcM6kORZ7XXbg8Pbnhn7rizkDIurMpgII/iZgFa8KYhQ1MKAjYQCH
- 5AiMjNcdgY7tcS2UY3tz1zlbGDbz6FRtj5gXVJ029f19XsoBZg30ao
-X-Received: by 2002:a05:600c:45d1:b0:477:73e9:dc17 with SMTP id
- 5b1f17b1804b1-4803e80438amr47356175e9.35.1768957206741; 
- Tue, 20 Jan 2026 17:00:06 -0800 (PST)
+ bh=VVuE3Rt8t361kwFZe7vxe424ahJbozZx9Qmq7yCBU94=;
+ b=ptF4CJaXUH+JC15S2T2d3ZxV7z0n9ynvlW5iOj9kIC7BwmvLrTUNY0MtA/QCG68XL8
+ z+vUVV0YA+/8ZOJ/+FUj5mA/9Q1yKPdMOPv4ExCPtYGcP2sBc5pkkWcJe3gGplSAvA0h
+ O79Cgh2ZyEL9oerFClCHnmi30+UGUrrla90gc/FoaGWu9bzILvfZt0KOvVK7lOeM0Usm
+ svxYjHMzl6VEBEsEvm/oLE04M2rUQ9Yl2kdaY4u23XX9QUlSpfmr643295Cak8FbOfcC
+ BhOyaWmG5cfa9ePTWtpGjxqPdvIYGAvT1fk3eWSnjfD7luFx3u5/PZzpMnZ1j7ZRNbLF
+ PP0w==
+X-Gm-Message-State: AOJu0Yz+HuropW4RudJ2UTVeWp5zZ0yr7K+cCYWQTmYBdIzW5ymWb8bR
+ 2wxnpofgBFJshdftzPMaI1GQqrJQha7faWsJtkffLQ3Ynkf3KoLlxRTewm7dM08AQI0=
+X-Gm-Gg: AZuq6aJhRQfcviFcgjQkngj/PLywh8brw83koy5GOvJ66dYYF/fx6jfJKoz5nlWqpOH
+ NVakDq2/37EZ1gbNyGzeB6skrjwjQKlDtKkDqAV1zvLtVQMWO0LCHVt9Ftfw1Xz+bU5yMVPmbfB
+ Q8F1w7l3yAtdXEDpGxgU/RTje/X3wmQyI+E91+acdmgCqczeR8Sqy9pwmnOv1+u+OSl5a7YMxrQ
+ Q7QQHXUwZNE7b/RPlTq9Kk1NkOqadAoS2jeWO//q6G7dLH0MKF11aStNIYwo0SBl9zGgpmngW+w
+ CPeGkTjYjnL19oYfKcVJm46nUBm1Cqad8rm1a+5OJ0DKpmIkvmgL/hwkYFtdELRqruKeG4136eU
+ trBcQEbRuJn/xlBKBwv2mbcTL1dpYI/0s33lGn7we1zSXeG51y26OjxQC/BO4xKGSHRNG0BbjBi
+ 57QSOn7Yac0O3J8uwOnPc1ms4k+hwIjCppSyd9xJ6oKSmYkBYNJRCzTs2aZLX+yIQ=
+X-Received: by 2002:a05:600c:5593:b0:477:a71c:d200 with SMTP id
+ 5b1f17b1804b1-47f428f5e8fmr173334995e9.11.1768970180243; 
+ Tue, 20 Jan 2026 20:36:20 -0800 (PST)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-47f42907141sm331914785e9.9.2026.01.20.17.00.05
+ 5b1f17b1804b1-48042bffa0bsm10001805e9.4.2026.01.20.20.36.17
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 20 Jan 2026 17:00:06 -0800 (PST)
-Date: Tue, 20 Jan 2026 17:00:00 -0800
+ Tue, 20 Jan 2026 20:36:20 -0800 (PST)
+Date: Tue, 20 Jan 2026 20:36:13 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Lukas Sismis <sismis@dyna-nic.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH v4 0/7] flow_parser: add shared parser library
-Message-ID: <20260120170000.7823a453@phoenix.local>
-In-Reply-To: <20260120232424.195059-1-sismis@dyna-nic.com>
-References: <20260120232424.195059-1-sismis@dyna-nic.com>
+To: Dimon Zhao <dimon.zhao@nebula-matrix.com>
+Cc: dev@dpdk.org, stable@dpdk.org, Kyo Liu <kyo.liu@nebula-matrix.com>, Leon
+ Yu <leon.yu@nebula-matrix.com>, Sam Chen <sam.chen@nebula-matrix.com>
+Subject: Re: [PATCH v3 1/1] net/nbl: fix issues reported by Coverity
+Message-ID: <20260120203613.6f292ccf@phoenix.local>
+In-Reply-To: <20260115032744.62449-2-dimon.zhao@nebula-matrix.com>
+References: <20251030033619.3386064-1-dimon.zhao@nebula-matrix.com>
+ <20260115032744.62449-1-dimon.zhao@nebula-matrix.com>
+ <20260115032744.62449-2-dimon.zhao@nebula-matrix.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -80,56 +82,45 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 21 Jan 2026 00:24:17 +0100
-Lukas Sismis <sismis@dyna-nic.com> wrote:
+On Wed, 14 Jan 2026 19:27:44 -0800
+Dimon Zhao <dimon.zhao@nebula-matrix.com> wrote:
 
-> External applications like Suricata IDS [1] need to express hardware filtering
-> rules in a consistent, human-readable format. Rather than inventing custom
-> syntax, reusing testpmd's well-tested flow grammar provides immediate
-> compatibility with existing documentation and user knowledge.
+> Address multiple issues reported by Coverity static analysis:
 > 
-> Note: This library provides only one way to create rte_flow structures.
-> Applications can also construct rte_flow_attr, rte_flow_item[], and
-> rte_flow_action[] directly in C code.
+> Check return values of ioctl() calls for NBL_DEV_USER_GET_BAR_SIZE
+> and NBL_DEV_USER_CLEAR_EVENTFD. The original code tested the return
+> value without capturing it from the ioctl call.
 > 
-> Design
-> ------
-> The library (librte_flow_parser) exposes the following APIs:
-> - rte_flow_parser_parse_attr_str(): Parse attributes only
-> - rte_flow_parser_parse_pattern_str(): Parse patterns only
-> - rte_flow_parser_parse_actions_str(): Parse actions only
+> Move debug log statement after NULL pointer validation in
+> nbl_dev_configure() to prevent dereference of adapter before the
+> check.
 > 
-> Testpmd is updated to use the library, ensuring a single
-> maintained parser implementation.
+> Cast u16 operands to u64 before multiplication when calculating
+> buffer sizes and offsets to prevent potential integer overflow.
+> The num_txq_entries, num_rxq_entries, txq_buf_size, and rxq_buf_size
+> fields are all u16 types, and their product could overflow before
+> assignment to size_t or u64 destination variables.
 > 
-> Testing and Demo
-> -------
-> - Functional tests in dpdk-test
-> - Example application: examples/flow_parsing
+> Coverity issue: 490942
+> Coverity issue: 490943
+> Coverity issue: 490946
+> Coverity issue: 490947
+> Coverity issue: 490949
+> Coverity issue: 490950
+> Coverity issue: 490951
+> Coverity issue: 490952
+> Coverity issue: 490953
+> Coverity issue: 490954
+> Coverity issue: 490955
+> Coverity issue: 490957
+> Coverity issue: 490958
+> Coverity issue: 490959
+> Fixes: a1c5ffa13b2c ("net/nbl: add channel layer")
+> Fixes: dc955cd24c8f ("net/nbl: add coexistence mode")
+> Fixes: 93b38df5a2ec ("net/nbl: support basic configuration")
+> Cc: stable@dpdk.org
 > 
-> Changes
-> -------
-> 
-> v4:
-> - ethdev changes in separate commit
-> - library's public API only exposes attribute, pattern and action parsing,
->   while the full command parsing is kept internal for testpmd usage only.
-> - Addressed Stephen's comments from V3
-> - dpdk-test now have tests focused on public and internal library functions
-> 
-> v3:
-> - Add more functional tests
-> - More concise MAINTAINERS updates
-> - Updated license headers
-> - A thing to note: When playing with flow commands, I figured, some may use
->   non-flow commands, such as raw decap/encap, policy meter and others.
->   Flow parser library itself now supports `set` command to set e.g. the decap/
->   encap parameters, as the flow syntax only supports defining the index of the
->   encap/decap configs. The library, however, does not support e.g. `create`
->   command to create policy meters, as that is just an ID and it can be created
->   separately using rte_meter APIs.
-> 
-> [1] https://github.com/OISF/suricata/pull/13950
-> 
+> Signed-off-by: Dimon Zhao <dimon.zhao@nebula-matrix.com>
+>
 
-There seem to be  lot of build failures in CI for this version.
+Queued to next-net
