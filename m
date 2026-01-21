@@ -2,41 +2,52 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B178C44501
-	for <dpdk-dev@archiver.kernel.org>; Wed, 21 Jan 2026 10:18:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D9C3C44502
+	for <dpdk-dev@archiver.kernel.org>; Wed, 21 Jan 2026 10:20:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8E157427BA;
-	Wed, 21 Jan 2026 11:18:31 +0100 (CET)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56])
- by mails.dpdk.org (Postfix) with ESMTP id 727EF400D7;
- Wed, 21 Jan 2026 11:18:30 +0100 (CET)
-Received: from mail.maildlp.com (unknown [172.18.224.83])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4dx0WR5nZfzHnGjt;
- Wed, 21 Jan 2026 18:17:55 +0800 (CST)
-Received: from frapema500003.china.huawei.com (unknown [7.182.19.114])
- by mail.maildlp.com (Postfix) with ESMTPS id 5AB2A40569;
- Wed, 21 Jan 2026 18:18:29 +0800 (CST)
-Received: from localhost.localdomain (10.220.239.45) by
- frapema500003.china.huawei.com (7.182.19.114) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 21 Jan 2026 11:18:28 +0100
-From: Marat Khalili <marat.khalili@huawei.com>
-To: <dev@dpdk.org>, <stephen@networkplumber.org>, Konstantin Ananyev
- <konstantin.ananyev@huawei.com>, Ferruh Yigit <ferruh.yigit@amd.com>
-CC: <stable@dpdk.org>
-Subject: [PATCH v3] bpf: fix x86 call stack alignment for external calls
-Date: Wed, 21 Jan 2026 10:16:53 +0000
-Message-ID: <20260121101653.66438-1-marat.khalili@huawei.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260105160958.80443-1-marat.khalili@huawei.com>
-References: <20260105160958.80443-1-marat.khalili@huawei.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 64FA7427B5;
+	Wed, 21 Jan 2026 11:20:22 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+ by mails.dpdk.org (Postfix) with ESMTP id 24EBF4026C
+ for <dev@dpdk.org>; Wed, 21 Jan 2026 11:20:21 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1768990821; x=1800526821;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=bZP1oa8ITbE6rRQse5Icnmngo6+ozzFcKcAvXquCVCw=;
+ b=GsEyieeKdtu/uc+TSqk7JR43PReYeaouTNiwC8PusQq2Rrfm3MCiorF+
+ 1bgeL5EsgaCKeUb7GbTdnw5FKZUE7Zj9dl8h+LB3/FWxDjCL6YtaZmwGF
+ uT4gYfmNHy8YFpJpQAwrMS80eqpHte7VMPqz7tzxBHKF0MLuIU4LG8Srt
+ 4Fug/xAIR5XVgvs3O2TMQYxzuvWbbm703oSoxdyqQ7D4rp09wrJIpYLLZ
+ Io/YM4c489dCgfqHsoVnF0rmkmW96KMKihiWtG7pIoRS9c1oR6895H/f4
+ Ifpr/tUIQ1B2XENhgCj/TYnjrKLZkPgl7M1KOIIctIirq94U9V1RnkUA0 A==;
+X-CSE-ConnectionGUID: ULih7Jb8QiCldD+T72dvWQ==
+X-CSE-MsgGUID: lfy3QsKpTFqR6w1Ewk1XWQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11677"; a="74067429"
+X-IronPort-AV: E=Sophos;i="6.21,242,1763452800"; d="scan'208";a="74067429"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+ by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 21 Jan 2026 02:20:20 -0800
+X-CSE-ConnectionGUID: SkgGyJfUSySXBCpmou6FbA==
+X-CSE-MsgGUID: jUPhFaGTTruBMOJ+8JgGxw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,242,1763452800"; d="scan'208";a="206472991"
+Received: from silpixa00401749.ir.intel.com ([10.20.224.233])
+ by orviesa008.jf.intel.com with ESMTP; 21 Jan 2026 02:20:19 -0800
+From: Radu Nicolau <radu.nicolau@intel.com>
+To: dev@dpdk.org
+Cc: nkaithakadan@marvell.com, kai.ji@intel.com, anoobj@marvell.com,
+ stephen@networkplumber.org, Radu Nicolau <radu.nicolau@intel.com>,
+ Akhil Goyal <gakhil@marvell.com>, Fan Zhang <fanzhang.oss@gmail.com>
+Subject: [PATCH v3 1/2] cryptodev: add support for 256-NxA4/5/6 algorithms
+Date: Wed, 21 Jan 2026 10:18:36 +0000
+Message-ID: <20260121102016.2481449-1-radu.nicolau@intel.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20260107105649.1708347-1-radu.nicolau@intel.com>
+References: <20260107105649.1708347-1-radu.nicolau@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.220.239.45]
-X-ClientProxiedBy: frapema100006.china.huawei.com (7.182.19.111) To
- frapema500003.china.huawei.com (7.182.19.114)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -50,493 +61,197 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Correctly align stack pointer on x86 JIT if external calls are present.
+Add support for
 
-According to x86-64 ABI (https://gitlab.com/x86-psABIs/x86-64-ABI,
-section 3.2.2 The Stack Frame) stack needs to be 16 (or more) bytes
-aligned immediately before the call instruction is executed. Once
-control has been transferred to the function entry point it is always
-off by 8 bytes. It means that JIT-compiled BPF function will always have
-its stack misaligned for any nested call unless it performs operations
-with the stack; even if it does use stack there is still 50% chance of
-stack being misaligned since it uses it in multiples of 8.
+NEA4, NIA4, NCA4: Snow 5G confidentiality, integrity and AEAD modes
+NEA5, NIA5, NCA5: AES 256 confidentiality, integrity and AEAD modes
+NEA6, NIA6, NCA6: ZUC 256 confidentiality, integrity and AEAD modes
 
-To solve the issue mark RBP as used whenever we have external function
-calls, and align RSP using AND instruction at the end of the prolog.
-Marking RBP as used triggers stack pointer saving in prolog and
-restoration in epilog.
-
-Add tests for external calls from BPF program demonstrating the problem:
-* direct verification of a local variable alignment;
-* operations with 128-bit integers;
-* aligned and unaligned SSE2 instructions;
-* memcpy and rte_memcpy (may use vector instructions in their code).
-
-(Such variety is needed because not all of these tests are available or
-reproduce the problem on all targets even when the problem exists.)
-
-Fixes: cc752e43e079 ("bpf: add JIT compilation for x86_64 ISA")
-Cc: stable@dpdk.org
-
-Signed-off-by: Marat Khalili <marat.khalili@huawei.com>
-Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-Tested-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+Signed-off-by: Radu Nicolau <radu.nicolau@intel.com>
 ---
-v3:
-* Remove forbidden punctuation (comma) from subject line.
-* Ensure a blank line before Signed-off-by tag group.
-* Restore unrelated blank line in lib/bpf/bpf_jit_x86.c.
-* Fix variable shadowing in app/test/test_bpf.c.
-* Add NULL checks for malloc() in app/test/test_bpf.c (ensuring no memory
-  leak if one allocation fails).
-* Update REGISTER_FAST_TEST() calls in app/test/test_bpf.c to use new
-  constants (NOHUGE_OK, ASAN_OK) instead of old boolean values.
+ doc/guides/cryptodevs/features/default.ini |  9 ++++
+ lib/cryptodev/rte_crypto_sym.h             | 52 ++++++++++++++++++----
+ lib/cryptodev/rte_cryptodev.c              | 13 +++++-
+ 3 files changed, 64 insertions(+), 10 deletions(-)
 
-v2:
-* Updated commit message with background info and API reference.
-
- app/test/test_bpf.c   | 389 ++++++++++++++++++++++++++++++++++++++++++
- lib/bpf/bpf_jit_x86.c |  14 ++
- 2 files changed, 403 insertions(+)
-
-diff --git a/app/test/test_bpf.c b/app/test/test_bpf.c
-index a7d56f8d86..a85b241638 100644
---- a/app/test/test_bpf.c
-+++ b/app/test/test_bpf.c
-@@ -3280,6 +3280,395 @@ test_bpf(void)
+diff --git a/doc/guides/cryptodevs/features/default.ini b/doc/guides/cryptodevs/features/default.ini
+index 64198f013a..d8026c3750 100644
+--- a/doc/guides/cryptodevs/features/default.ini
++++ b/doc/guides/cryptodevs/features/default.ini
+@@ -68,6 +68,9 @@ SM4 CTR        =
+ SM4 CFB        =
+ SM4 OFB        =
+ SM4 XTS        =
++SNOW5G NEA4    =
++AES NEA5       =
++ZUC-256 NEA6   =
  
- REGISTER_FAST_TEST(bpf_autotest, NOHUGE_OK, ASAN_OK, test_bpf);
+ ;
+ ; Supported authentication algorithms of a default crypto driver.
+@@ -106,6 +109,9 @@ SM3             =
+ SM3 HMAC        =
+ SHAKE_128       =
+ SHAKE_256       =
++SNOW5G NIA4     =
++AES NIA5        =
++ZUC-256 NIA6    =
  
-+/* Tests of BPF JIT stack alignment when calling external functions (xfuncs). */
-+
-+/* Function called from the BPF program in a test. */
-+typedef uint64_t (*text_xfunc_t)(uint64_t argument);
-+
-+/* Call function from BPF program, verify that it incremented its argument. */
-+static int
-+call_from_bpf_test(text_xfunc_t xfunc)
-+{
-+	static const struct ebpf_insn ins[] = {
-+		{
-+			.code = (BPF_JMP | EBPF_CALL),
-+			.imm = 0,  /* xsym #0 */
-+		},
-+		{
-+			.code = (BPF_JMP | EBPF_EXIT),
-+		},
-+	};
-+	const struct rte_bpf_xsym xsym[] = {
-+		{
-+			.name = "xfunc",
-+			.type = RTE_BPF_XTYPE_FUNC,
-+			.func = {
-+				.val = (void *)xfunc,
-+				.nb_args = 1,
-+				.args = {
-+					{
-+						.type = RTE_BPF_ARG_RAW,
-+						.size = sizeof(uint64_t),
-+					},
-+				},
-+				.ret = {
-+					.type = RTE_BPF_ARG_RAW,
-+					.size = sizeof(uint64_t),
-+				},
-+			},
-+		},
-+	};
-+	const struct rte_bpf_prm prm = {
-+		.ins = ins,
-+		.nb_ins = RTE_DIM(ins),
-+		.xsym = xsym,
-+		.nb_xsym = RTE_DIM(xsym),
-+		.prog_arg = {
-+			.type = RTE_BPF_ARG_RAW,
-+			.size = sizeof(uint64_t),
-+		},
-+	};
-+
-+	struct rte_bpf_jit jit;
-+
-+	struct rte_bpf *const bpf = rte_bpf_load(&prm);
-+	RTE_TEST_ASSERT_NOT_EQUAL(bpf, NULL,
-+		"expect rte_bpf_load() != NULL");
-+
-+	RTE_TEST_ASSERT_SUCCESS(rte_bpf_get_jit(bpf, &jit),
-+		"expect rte_bpf_get_jit() to succeed");
-+
-+	const text_xfunc_t jit_function = (void *)jit.func;
-+	if (jit_function == NULL) {
-+		rte_bpf_destroy(bpf);
-+		return TEST_SKIPPED;
-+	}
-+
-+	const uint64_t argument = 42;
-+	const uint64_t result = jit_function(argument);
-+	rte_bpf_destroy(bpf);
-+
-+	RTE_TEST_ASSERT_EQUAL(result, argument + 1,
-+		"expect result == %ju, found %ju",
-+		(uintmax_t)(argument + 1), (uintmax_t)result);
-+
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test alignment of a local variable.
-+ *
-+ * NOTE: May produce false negatives with sanitizers if they replace the stack.
-+ */
-+
-+/* Copy of the pointer to max_align stack variable, volatile to thwart optimization. */
-+static volatile uintptr_t stack_alignment_test_pointer;
-+
-+static uint64_t
-+stack_alignment_xfunc(uint64_t argument)
-+{
-+	max_align_t max_align;
-+	stack_alignment_test_pointer = (uintptr_t)&max_align;
-+	return argument + 1;
-+}
-+
-+static int
-+test_stack_alignment(void)
-+{
-+	const int test_rc = call_from_bpf_test(stack_alignment_xfunc);
-+	if (test_rc == TEST_SKIPPED)
-+		return TEST_SKIPPED;
-+
-+	RTE_TEST_ASSERT_SUCCESS(test_rc,
-+		"expect call_from_bpf_test(stack_alignment_xfunc) to succeed");
-+
-+	const uintptr_t test_offset = stack_alignment_test_pointer;
-+	RTE_TEST_ASSERT_NOT_EQUAL(test_offset, 0, "expect test_pointer != 0");
-+
-+	const size_t test_alignment = test_offset % alignof(max_align_t);
-+	RTE_TEST_ASSERT_EQUAL(test_alignment, 0,
-+		"expect test_alignment == 0, found %zu", test_alignment);
-+
-+	return TEST_SUCCESS;
-+}
-+
-+REGISTER_FAST_TEST(bpf_stack_alignment_autotest, NOHUGE_OK, ASAN_OK, test_stack_alignment);
-+
-+/*
-+ * Test copying `__uint128_t`.
-+ *
-+ * This operation is used by some variations of `rte_memcpy`;
-+ * it can also be produced by vectorizer in the compiler.
-+ */
-+
-+#if defined(__SIZEOF_INT128__)
-+
-+static uint64_t
-+stack_copy_uint128_xfunc(uint64_t argument)
-+{
-+	/* Pass addresses through volatiles to prevent compiler from optimizing it all out. */
-+	char alignas(16) src_buffer[16];
-+	char alignas(16) dst_buffer[16];
-+	void *const src = (char *volatile)src_buffer;
-+	void *const dst = (char *volatile)dst_buffer;
-+	const size_t size = 16;
-+
-+	memset(src, 0x2a, size);
-+	memset(dst, 0x55, size);
-+	const int initial_memcmp_rc = memcmp(dst, src, size);
-+
-+	const __uint128_t *const src128 = (const __uint128_t *)src;
-+	__uint128_t *const dst128 = (__uint128_t *)dst;
-+	*dst128 = *src128;
-+	const int memcmp_rc = memcmp(dst, src, size);
-+
-+	return argument + 1 + !initial_memcmp_rc + memcmp_rc;
-+}
-+
-+static int
-+test_stack_copy_uint128(void)
-+{
-+	const int test_rc = call_from_bpf_test(stack_copy_uint128_xfunc);
-+	if (test_rc == TEST_SKIPPED)
-+		return TEST_SKIPPED;
-+
-+	RTE_TEST_ASSERT_SUCCESS(test_rc,
-+		"expect call_from_bpf_test(stack_copy_uint128_xfunc) to succeed");
-+
-+	return TEST_SUCCESS;
-+}
-+
-+#else
-+
-+static int
-+test_stack_copy_uint128(void)
-+{
-+	return TEST_SKIPPED;
-+}
-+
-+#endif
-+
-+REGISTER_FAST_TEST(bpf_stack_copy_uint128_autotest, NOHUGE_OK, ASAN_OK, test_stack_copy_uint128);
-+
-+/*
-+ * Test SSE2 load and store intrinsics.
-+ *
-+ * These intrinsics are used by e.g. lib/hash.
-+ *
-+ * Test both aligned and unaligned versions. Unaligned intrinsics may still fail
-+ * when the stack is misaligned, since they only treat memory address as
-+ * unaligned, not stack.
-+ */
-+
-+#if defined(__SSE2__)
-+
-+static uint64_t
-+stack_sse2_aligned_xfunc(uint64_t argument)
-+{
-+	/* Pass addresses through volatiles to prevent compiler from optimizing it all out. */
-+	char alignas(16) src_buffer[16];
-+	char alignas(16) dst_buffer[16];
-+	void *const src = (char *volatile)src_buffer;
-+	void *const dst = (char *volatile)dst_buffer;
-+	const size_t size = 16;
-+
-+	memset(src, 0x2a, size);
-+	memset(dst, 0x55, size);
-+	const int initial_memcmp_rc = memcmp(dst, src, size);
-+
-+	const __m128i tmp = _mm_load_si128((const __m128i *)src);
-+	_mm_store_si128((__m128i *)dst, tmp);
-+	const int memcmp_rc = memcmp(dst, src, size);
-+
-+	return argument + 1 + !initial_memcmp_rc + memcmp_rc;
-+}
-+
-+static uint64_t
-+stack_sse2_unaligned_xfunc(uint64_t argument)
-+{
-+	/* Pass addresses through volatiles to prevent compiler from optimizing it all out. */
-+	char alignas(16) src_buffer[17];
-+	char alignas(16) dst_buffer[17];
-+	void *const src = (char *volatile)src_buffer + 1;
-+	void *const dst = (char *volatile)dst_buffer + 1;
-+	const size_t size = 16;
-+
-+	memset(src, 0x2a, size);
-+	memset(dst, 0x55, size);
-+	const int initial_memcmp_rc = memcmp(dst, src, size);
-+
-+	const __m128i tmp = _mm_loadu_si128((const __m128i *)src);
-+	_mm_storeu_si128((__m128i *)dst, tmp);
-+	const int memcmp_rc = memcmp(dst, src, size);
-+
-+	return argument + 1 + !initial_memcmp_rc + memcmp_rc;
-+}
-+
-+static int
-+test_stack_sse2(void)
-+{
-+	int test_rc;
-+
-+	test_rc = call_from_bpf_test(stack_sse2_aligned_xfunc);
-+	if (test_rc == TEST_SKIPPED)
-+		return test_rc;
-+	RTE_TEST_ASSERT_SUCCESS(test_rc,
-+		"expect call_from_bpf_test(stack_sse2_aligned_xfunc) to succeed");
-+
-+	test_rc = call_from_bpf_test(stack_sse2_unaligned_xfunc);
-+	if (test_rc == TEST_SKIPPED)
-+		return test_rc;
-+	RTE_TEST_ASSERT_SUCCESS(test_rc,
-+		"expect call_from_bpf_test(stack_sse2_unaligned_xfunc) to succeed");
-+
-+	return TEST_SUCCESS;
-+}
-+
-+#else
-+
-+static int
-+test_stack_sse2(void)
-+{
-+	return TEST_SKIPPED;
-+}
-+
-+#endif
-+
-+REGISTER_FAST_TEST(bpf_stack_sse2_autotest, NOHUGE_OK, ASAN_OK, test_stack_sse2);
-+
-+/*
-+ * Run memcpy and rte_memcpy with various data sizes and offsets (unaligned and aligned).
-+ *
-+ * May produce false negatives even if BPF breaks stack alignment since
-+ * compilers may realign the stack in the beginning of the function to use
-+ * vector instructions with width larger than the default stack alignment.
-+ * However, represents very important use case that was broken in practice.
-+ *
-+ * For the reason specified above test 16-byte fixed-width memcpy explicitly.
-+ */
-+
-+static void *volatile stack_memcpy_dst;
-+static const void *volatile stack_memcpy_src;
-+static size_t volatile stack_memcpy_size;
-+
-+static uint64_t
-+stack_memcpy16_xfunc(uint64_t argument)
-+{
-+	RTE_ASSERT(stack_memcpy_size == 16);
-+	memcpy(stack_memcpy_dst, stack_memcpy_src, 16);
-+	return argument + 1;
-+}
-+
-+static uint64_t
-+stack_rte_memcpy16_xfunc(uint64_t argument)
-+{
-+	RTE_ASSERT(stack_memcpy_size == 16);
-+	rte_memcpy(stack_memcpy_dst, stack_memcpy_src, 16);
-+	return argument + 1;
-+}
-+
-+static uint64_t
-+stack_memcpy_xfunc(uint64_t argument)
-+{
-+	memcpy(stack_memcpy_dst, stack_memcpy_src, stack_memcpy_size);
-+	return argument + 1;
-+}
-+
-+static uint64_t
-+stack_rte_memcpy_xfunc(uint64_t argument)
-+{
-+	rte_memcpy(stack_memcpy_dst, stack_memcpy_src, stack_memcpy_size);
-+	return argument + 1;
-+}
-+
-+static int
-+stack_memcpy_subtest(text_xfunc_t xfunc, size_t size, size_t src_offset, size_t dst_offset)
-+{
-+	stack_memcpy_size = size;
-+
-+	char *const src_buffer = malloc(size + src_offset);
-+	char *const dst_buffer = malloc(size + dst_offset);
-+
-+	if (src_buffer == NULL || dst_buffer == NULL) {
-+		free(dst_buffer);
-+		free(src_buffer);
-+		return TEST_FAILED;
-+	}
-+
-+	memset(src_buffer + src_offset, 0x2a, size);
-+	stack_memcpy_src = src_buffer + src_offset;
-+
-+	memset(dst_buffer + dst_offset, 0x55, size);
-+	stack_memcpy_dst = dst_buffer + dst_offset;
-+
-+	const int initial_memcmp_rc = memcmp(stack_memcpy_dst, stack_memcpy_src, size);
-+	const int test_rc = call_from_bpf_test(xfunc);
-+	const int memcmp_rc = memcmp(stack_memcpy_dst, stack_memcpy_src, size);
-+
-+	free(dst_buffer);
-+	free(src_buffer);
-+
-+	if (test_rc == TEST_SKIPPED)
-+		return TEST_SKIPPED;
-+
-+	RTE_TEST_ASSERT_FAIL(initial_memcmp_rc, "expect memcmp() to fail initially");
-+	RTE_TEST_ASSERT_SUCCESS(test_rc, "expect call_from_bpf_test(xfunc) to succeed");
-+	RTE_TEST_ASSERT_SUCCESS(memcmp_rc, "expect memcmp() to succeed");
-+
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_stack_memcpy(void)
-+{
-+	for (int offsets = 0; offsets < 4; ++offsets) {
-+		const bool src_offset = offsets & 1;
-+		const bool dst_offset = offsets & 2;
-+		int test_rc;
-+
-+		test_rc = stack_memcpy_subtest(stack_memcpy16_xfunc,
-+			16, src_offset, dst_offset);
-+		if (test_rc == TEST_SKIPPED)
-+			return test_rc;
-+		RTE_TEST_ASSERT_SUCCESS(test_rc,
-+			"expect stack_memcpy_subtest(stack_memcpy16_xfunc, "
-+				"16, %i, %i) to succeed",
-+			src_offset, dst_offset);
-+
-+		test_rc = stack_memcpy_subtest(stack_rte_memcpy16_xfunc,
-+			16, src_offset, dst_offset);
-+		if (test_rc == TEST_SKIPPED)
-+			return test_rc;
-+		RTE_TEST_ASSERT_SUCCESS(test_rc,
-+			"expect stack_memcpy_subtest(stack_rte_memcpy16_xfunc, "
-+				"16, %i, %i) to succeed",
-+			src_offset, dst_offset);
-+
-+		for (size_t size = 1; size <= 1024; size <<= 1) {
-+			test_rc = stack_memcpy_subtest(stack_memcpy_xfunc,
-+				size, src_offset, dst_offset);
-+			if (test_rc == TEST_SKIPPED)
-+				return test_rc;
-+			RTE_TEST_ASSERT_SUCCESS(test_rc,
-+				"expect stack_memcpy_subtest(stack_memcpy_xfunc, "
-+					"%zu, %i, %i) to succeed",
-+				size, src_offset, dst_offset);
-+
-+			test_rc = stack_memcpy_subtest(stack_rte_memcpy_xfunc,
-+				size, src_offset, dst_offset);
-+			if (test_rc == TEST_SKIPPED)
-+				return test_rc;
-+			RTE_TEST_ASSERT_SUCCESS(test_rc,
-+				"expect stack_memcpy_subtest(stack_rte_memcpy_xfunc, "
-+					"%zu, %i, %i) to succeed",
-+				size, src_offset, dst_offset);
-+		}
-+	}
-+	return TEST_SUCCESS;
-+}
-+
-+REGISTER_FAST_TEST(bpf_stack_memcpy_autotest, NOHUGE_OK, ASAN_OK, test_stack_memcpy);
-+
- #ifdef TEST_BPF_ELF_LOAD
+ ;
+ ; Supported AEAD algorithms of a default crypto driver.
+@@ -119,6 +125,9 @@ AES CCM (192)     =
+ AES CCM (256)     =
+ CHACHA20-POLY1305 =
+ SM4 GCM           =
++SNOW5G NCA4       =
++AES NCA5          =
++ZUC-256 NCA6      =
  
- /*
-diff --git a/lib/bpf/bpf_jit_x86.c b/lib/bpf/bpf_jit_x86.c
-index 4d74e418f8..e05fd38b0e 100644
---- a/lib/bpf/bpf_jit_x86.c
-+++ b/lib/bpf/bpf_jit_x86.c
-@@ -93,6 +93,8 @@ enum {
- /*
-  * callee saved registers list.
-  * keep RBP as the last one.
-+ * RBP is marked as used every time we have external calls
-+ * since we need it to save RSP before stack realignment.
-  */
- static const uint32_t save_regs[] = {RBX, R12, R13, R14, R15, RBP};
- 
-@@ -685,6 +687,8 @@ emit_call(struct bpf_jit_state *st, uintptr_t trg)
- 	const uint8_t ops = 0xFF;
- 	const uint8_t mods = 2;
- 
-+	/* Mark RBP as used to trigger stack realignment in prolog. */
-+	USED(st->reguse, RBP);
- 	emit_ld_imm64(st, RAX, trg, trg >> 32);
- 	emit_bytes(st, &ops, sizeof(ops));
- 	emit_modregrm(st, MOD_DIRECT, mods, RAX);
-@@ -1220,6 +1224,16 @@ emit_prolog(struct bpf_jit_state *st, int32_t stack_size)
- 	if (INUSE(st->reguse, RBP) != 0) {
- 		emit_mov_reg(st, EBPF_ALU64 | EBPF_MOV | BPF_X, RSP, RBP);
- 		emit_alu_imm(st, EBPF_ALU64 | BPF_SUB | BPF_K, RSP, stack_size);
+ ;
+ ; Supported Asymmetric algorithms of a default crypto driver.
+diff --git a/lib/cryptodev/rte_crypto_sym.h b/lib/cryptodev/rte_crypto_sym.h
+index 6268bab327..b8e3b22842 100644
+--- a/lib/cryptodev/rte_crypto_sym.h
++++ b/lib/cryptodev/rte_crypto_sym.h
+@@ -178,8 +178,15 @@ enum rte_crypto_cipher_algorithm {
+ 	/**< ShangMi 4 (SM4) algorithm in OFB mode */
+ 	RTE_CRYPTO_CIPHER_SM4_CFB,
+ 	/**< ShangMi 4 (SM4) algorithm in CFB mode */
+-	RTE_CRYPTO_CIPHER_SM4_XTS
++	RTE_CRYPTO_CIPHER_SM4_XTS,
+ 	/**< ShangMi 4 (SM4) algorithm in XTS mode */
 +
-+		/*
-+		 * Align stack pointer appropriately for function calls.
-+		 * We do not have direct access to function stack alignment
-+		 * value (like gcc internal macro INCOMING_STACK_BOUNDARY),
-+		 * but hopefully `alignof(max_align_t)` will always be greater.
-+		 * Original stack pointer will be restored from rbp.
-+		 */
-+		emit_alu_imm(st, EBPF_ALU64 | BPF_AND | BPF_K, RSP,
-+			-(uint32_t)alignof(max_align_t));
- 	}
- }
++	RTE_CRYPTO_CIPHER_SNOW5G_NEA4,
++	/**< Snow 5G algorithm in NEA4 mode */
++	RTE_CRYPTO_CIPHER_AES_NEA5,
++	/**< AES algorithm in NEA4 mode */
++	RTE_CRYPTO_CIPHER_ZUC_NEA6,
++	/**< ZUC-256 algorithm in NEA4 mode */
+ };
+ 
+ /** Symmetric Cipher Direction */
+@@ -384,6 +391,14 @@ enum rte_crypto_auth_algorithm {
+ 	/**< 256 bit SHAKE algorithm. */
+ 	RTE_CRYPTO_AUTH_SM3_HMAC,
+ 	/** < HMAC using ShangMi 3 (SM3) algorithm */
++
++	RTE_CRYPTO_AUTH_SNOW5G_NIA4,
++	/**< Snow 5G algorithm in NIA4 mode */
++	RTE_CRYPTO_AUTH_AES_NIA5,
++	/**< AES algorithm in NIA4 mode */
++	RTE_CRYPTO_AUTH_ZUC_NIA6,
++	/**< ZUC-256 algorithm in NIA4 mode */
++
+ };
+ 
+ /** Symmetric Authentication / Hash Operations */
+@@ -486,6 +501,13 @@ enum rte_crypto_aead_algorithm {
+ 	/**< Chacha20 cipher with poly1305 authenticator */
+ 	RTE_CRYPTO_AEAD_SM4_GCM,
+ 	/**< SM4 cipher in GCM mode */
++
++	RTE_CRYPTO_AEAD_SNOW5G_NCA4,
++	/**< Snow 5G algorithm in NCA4 mode */
++	RTE_CRYPTO_AEAD_AES_NCA5,
++	/**< AES algorithm in NCA4 mode */
++	RTE_CRYPTO_AEAD_ZUC_NCA6,
++	/**< ZUC-256 algorithm in NCA4 mode */
+ };
+ 
+ /** Symmetric AEAD Operations */
+@@ -714,8 +736,11 @@ struct rte_crypto_sym_op {
+ 					  *
+ 					  * @note
+ 					  * For SNOW 3G @ RTE_CRYPTO_CIPHER_SNOW3G_UEA2,
+-					  * KASUMI @ RTE_CRYPTO_CIPHER_KASUMI_F8
+-					  * and ZUC @ RTE_CRYPTO_CIPHER_ZUC_EEA3,
++					  * KASUMI @ RTE_CRYPTO_CIPHER_KASUMI_F8,
++					  * ZUC @ RTE_CRYPTO_CIPHER_ZUC_EEA3,
++					  * SNOW 5G @ RTE_CRYPTO_CIPHER_SNOW5G_NEA4,
++					  * AES @ RTE_CRYPTO_CIPHER_AES_NEA5
++					  * and ZUC @ RTE_CRYPTO_CIPHER_ZUC_NEA6
+ 					  * this field should be in bits. For
+ 					  * digest-encrypted cases this must be
+ 					  * an 8-bit multiple.
+@@ -732,8 +757,11 @@ struct rte_crypto_sym_op {
+ 					  *
+ 					  * @note
+ 					  * For SNOW 3G @ RTE_CRYPTO_AUTH_SNOW3G_UEA2,
+-					  * KASUMI @ RTE_CRYPTO_CIPHER_KASUMI_F8
+-					  * and ZUC @ RTE_CRYPTO_CIPHER_ZUC_EEA3,
++					  * KASUMI @ RTE_CRYPTO_CIPHER_KASUMI_F8,
++					  * ZUC @ RTE_CRYPTO_CIPHER_ZUC_EEA3,
++					  * SNOW 5G @ RTE_CRYPTO_CIPHER_SNOW5G_NEA4,
++					  * AES @ RTE_CRYPTO_CIPHER_AES_NEA5
++					  * and ZUC @ RTE_CRYPTO_CIPHER_ZUC_NEA6
+ 					  * this field should be in bits. For
+ 					  * digest-encrypted cases this must be
+ 					  * an 8-bit multiple.
+@@ -750,8 +778,11 @@ struct rte_crypto_sym_op {
+ 					  *
+ 					  * @note
+ 					  * For SNOW 3G @ RTE_CRYPTO_AUTH_SNOW3G_UIA2,
+-					  * KASUMI @ RTE_CRYPTO_AUTH_KASUMI_F9
+-					  * and ZUC @ RTE_CRYPTO_AUTH_ZUC_EIA3,
++					  * KASUMI @ RTE_CRYPTO_AUTH_KASUMI_F9,
++					  * ZUC @ RTE_CRYPTO_AUTH_ZUC_EIA3,
++					  * SNOW 5G @ RTE_CRYPTO_AUTH_SNOW5G_NIA4,
++					  * AES @ RTE_CRYPTO_AUTH_AES_NIA5
++					  * and ZUC @ RTE_CRYPTO_AUTH_ZUC_NIA6
+ 					  * this field should be in bits. For
+ 					  * digest-encrypted cases this must be
+ 					  * an 8-bit multiple.
+@@ -775,8 +806,11 @@ struct rte_crypto_sym_op {
+ 					  *
+ 					  * @note
+ 					  * For SNOW 3G @ RTE_CRYPTO_AUTH_SNOW3G_UIA2,
+-					  * KASUMI @ RTE_CRYPTO_AUTH_KASUMI_F9
+-					  * and ZUC @ RTE_CRYPTO_AUTH_ZUC_EIA3,
++					  * KASUMI @ RTE_CRYPTO_AUTH_KASUMI_F9,
++					  * ZUC @ RTE_CRYPTO_AUTH_ZUC_EIA3,
++					  * SNOW 5G @ RTE_CRYPTO_AUTH_SNOW5G_NIA4,
++					  * AES @ RTE_CRYPTO_AUTH_AES_NIA5
++					  * and ZUC @ RTE_CRYPTO_AUTH_ZUC_NIA6
+ 					  * this field should be in bits. For
+ 					  * digest-encrypted cases this must be
+ 					  * an 8-bit multiple.
+diff --git a/lib/cryptodev/rte_cryptodev.c b/lib/cryptodev/rte_cryptodev.c
+index f4c6f692f0..7bddb154c2 100644
+--- a/lib/cryptodev/rte_cryptodev.c
++++ b/lib/cryptodev/rte_cryptodev.c
+@@ -102,7 +102,10 @@ crypto_cipher_algorithm_strings[] = {
+ 	[RTE_CRYPTO_CIPHER_SM4_CTR]	= "sm4-ctr",
+ 	[RTE_CRYPTO_CIPHER_SM4_CFB]	= "sm4-cfb",
+ 	[RTE_CRYPTO_CIPHER_SM4_OFB]	= "sm4-ofb",
+-	[RTE_CRYPTO_CIPHER_SM4_XTS]	= "sm4-xts"
++	[RTE_CRYPTO_CIPHER_SM4_XTS]	= "sm4-xts",
++	[RTE_CRYPTO_CIPHER_SNOW5G_NEA4]	= "snow5g-nea4",
++	[RTE_CRYPTO_CIPHER_AES_NEA5]	= "aes-nea5",
++	[RTE_CRYPTO_CIPHER_ZUC_NEA6]	= "zuc-nea6",
+ };
+ 
+ /**
+@@ -162,6 +165,10 @@ crypto_auth_algorithm_strings[] = {
+ 
+ 	[RTE_CRYPTO_AUTH_SHAKE_128]	 = "shake-128",
+ 	[RTE_CRYPTO_AUTH_SHAKE_256]	 = "shake-256",
++
++	[RTE_CRYPTO_AUTH_SNOW5G_NIA4] = "snow5g-nia4",
++	[RTE_CRYPTO_AUTH_AES_NIA5]	 = "aes-nia5",
++	[RTE_CRYPTO_AUTH_ZUC_NIA6]	 = "zuc-nia6",
+ };
+ 
+ /**
+@@ -175,6 +182,10 @@ crypto_aead_algorithm_strings[] = {
+ 	[RTE_CRYPTO_AEAD_AES_GCM]	= "aes-gcm",
+ 	[RTE_CRYPTO_AEAD_CHACHA20_POLY1305] = "chacha20-poly1305",
+ 	[RTE_CRYPTO_AEAD_SM4_GCM]   = "sm4-gcm",
++
++	[RTE_CRYPTO_AEAD_SNOW5G_NCA4] = "snow5g-nca4",
++	[RTE_CRYPTO_AEAD_AES_NCA5]    = "aes-nca5",
++	[RTE_CRYPTO_AEAD_ZUC_NCA6]    = "zuc-nca6",
+ };
+ 
  
 -- 
-2.34.1
+2.50.1
+
