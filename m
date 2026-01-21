@@ -2,83 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8487DC44502
-	for <dpdk-dev@archiver.kernel.org>; Wed, 21 Jan 2026 09:40:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52D5AC44502
+	for <dpdk-dev@archiver.kernel.org>; Wed, 21 Jan 2026 09:46:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5D16F4026C;
-	Wed, 21 Jan 2026 10:40:12 +0100 (CET)
-Received: from fhigh-a2-smtp.messagingengine.com
- (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
- by mails.dpdk.org (Postfix) with ESMTP id 30A3F400D7
- for <dev@dpdk.org>; Wed, 21 Jan 2026 10:40:11 +0100 (CET)
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
- by mailfhigh.phl.internal (Postfix) with ESMTP id 83B1F1400161;
- Wed, 21 Jan 2026 04:40:10 -0500 (EST)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-04.internal (MEProxy); Wed, 21 Jan 2026 04:40:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1768988410;
- x=1769074810; bh=zTX4DHye910sTeaSDZhUXYemSNl/WoEeibf02sZIEEs=; b=
- KYRYGWGKTvH57kVULwj7v92RIl1uyTIyvOC/IuZlYFuI7iQUqamL9cA/0Z0izjcb
- VANG44nzdMYcLtee3LGwdDq4YoF70GRheBkD6ukKfmapPg0qqhkyjI2VbkhnZdHn
- bdtZucdlK7IjNMvTyiZ6pHBww69own8lqjqTEPF38gJnJ+EzK8LRXlWZpvHnr17E
- sIxE2+aJZFEPExb+6f8dy7xStuEz/IYsCBsw3u2vm4NroQjUkUnlFePFKoUh2zVK
- O/iH07/mjF23zxHxAOySItu4knb74XS6VPpr9J/QTJ3QLzVaUaPOHwdAssLnxthu
- 9EWf+HZiVX+q0sU0+vQ+Yw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1768988410; x=
- 1769074810; bh=zTX4DHye910sTeaSDZhUXYemSNl/WoEeibf02sZIEEs=; b=S
- ox9VwNYKeIy+Sj7pnun6/JEw47kexZr2DvUT2xi4+343Kg3Ab7APEMhLYIYCmpuu
- 0CM/iKvnPzcQSlHcdYLJjB9TAF2dWalx7VCqnQngwXFtQndS1pkq31sCaReKhSzM
- eqVeEHoS4N6b2jH+h1/nywASK9RqHRpTsdNJT6bMFqyxekSHuN5/qFyiN5fcEZj3
- 53uqSZqufjLOvi4OHgA4r+uYjpW5Fdx5tSZO7X5839w7e48+M4X7VPxna10dgjSV
- nebsebkwAG6MzPhLPtANr9x2iI7tsisAx3Nu4mJYqYVlonvlwFemC9andZsjP+QG
- AejE7Q/fapvaeI4mf+BIg==
-X-ME-Sender: <xms:-Z5waYqH4FXUnzFLnP7P5YnrKQ6vLAQN1mRcdBpiwZJGB4XsAotXWg>
- <xme:-Z5waewyKfT11lmI0Yz35DCJk4vVVyCQs6wjjmmGtiaNtlMyeqiXR2xTnkxOVlFBl
- bwZIeiEsNnUr42BSbMumAHwCpnzVKgWOvZyG_j-Z1JPDhsadCbWtg>
-X-ME-Received: <xmr:-Z5waVLArQCWvN6MkxYVwC5FpXKZAP8rrOiGOXL0L6xhbXpLyJtf5eTvmBV8qf5i-VsUjhbZEuwLY7BGaPhOgMxIdA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddugedvleegucetufdoteggodetrf
- dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
- rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
- gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
- ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
- frrghtthgvrhhnpeekfeehfedtgedtjeehueeutdfgleefieevkeeikeelkefflefgtdev
- ieehheffudenucffohhmrghinhepughpughkrdhorhhgnecuvehluhhsthgvrhfuihiivg
- eptdenucfrrghrrghmpehmrghilhhfrhhomhepthhhohhmrghssehmohhnjhgrlhhonhdr
- nhgvthdpnhgspghrtghpthhtohepgedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoh
- epfigrnhhglhhirghnghigihhngheshhihghhonhdrtghnpdhrtghpthhtohepshhtvghp
- hhgvnhesnhgvthifohhrkhhplhhumhgsvghrrdhorhhgpdhrtghpthhtohepfhgvnhhgtg
- hhvghnghifvghnsehhuhgrfigvihdrtghomhdprhgtphhtthhopeguvghvseguphgukhdr
- ohhrgh
-X-ME-Proxy: <xmx:-Z5waYJPiy9SWaIYQDDS-2ZjM6CDC6_lLmJpF-WI5iMzelFIjYTo6g>
- <xmx:-Z5waSu0gd23tC9-mR6ItIrGYQyeGYJWyu39D-DiCRlUj-ZxhDLd8Q>
- <xmx:-Z5waVRm3BJ4kfzPdFdL9OYVEWlaapMywpb2ho6V15qv6E2apzi9RQ>
- <xmx:-Z5waYM_eOYsob4Vn-eVlaQLcTOSCOrWMyBHMPNqpWBxDXFscJBGaQ>
- <xmx:-p5waYEHvaybNJfgfJQPotTBhtAv2w8Yu08jbqmLrD6HhixXwU-vjJ_G>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 21 Jan 2026 04:40:08 -0500 (EST)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Liangxing Wang <wangliangxing@hygon.cn>
-Cc: "stephen@networkplumber.org" <stephen@networkplumber.org>,
- "fengchengwen@huawei.com" <fengchengwen@huawei.com>,
- "dev@dpdk.org" <dev@dpdk.org>
-Subject: Re: [PATCH v2 1/3] examples/l3fwd: extend NUMA nodes limit beyond 8
-Date: Wed, 21 Jan 2026 10:40:06 +0100
-Message-ID: <15656361.tv2OnDr8pf@thomas>
-In-Reply-To: <c0fde19abc9e4b44b2d21a9cf22553e8@hygon.cn>
-References: <20260108072919.1279731-1-wangliangxing@hygon.cn>
- <c0fde19abc9e4b44b2d21a9cf22553e8@hygon.cn>
+	by mails.dpdk.org (Postfix) with ESMTP id 1F3224026C;
+	Wed, 21 Jan 2026 10:46:18 +0100 (CET)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
+ [185.176.79.56])
+ by mails.dpdk.org (Postfix) with ESMTP id 84A86400D7;
+ Wed, 21 Jan 2026 10:46:16 +0100 (CET)
+Received: from mail.maildlp.com (unknown [172.18.224.83])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4dwzpP2nrtzJ469d;
+ Wed, 21 Jan 2026 17:45:49 +0800 (CST)
+Received: from frapema500004.china.huawei.com (unknown [7.182.19.21])
+ by mail.maildlp.com (Postfix) with ESMTPS id 4DDA240569;
+ Wed, 21 Jan 2026 17:46:15 +0800 (CST)
+Received: from frapema500003.china.huawei.com (7.182.19.114) by
+ frapema500004.china.huawei.com (7.182.19.21) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 21 Jan 2026 10:46:15 +0100
+Received: from frapema500003.china.huawei.com ([7.182.19.114]) by
+ frapema500003.china.huawei.com ([7.182.19.114]) with mapi id 15.02.1544.011;
+ Wed, 21 Jan 2026 10:46:15 +0100
+From: Marat Khalili <marat.khalili@huawei.com>
+To: Lukas Sismis <sismis@dyna-nic.com>, "dts@dpdk.org" <dts@dpdk.org>
+CC: "dev@dpdk.org" <dev@dpdk.org>, "dmarx@iol.unh.edu" <dmarx@iol.unh.edu>,
+ "abailey@iol.unh.edu" <abailey@iol.unh.edu>
+Subject: RE: [PATCH v1 1/1] dts: fix invalid f-string syntax in testpmd API
+Thread-Topic: [PATCH v1 1/1] dts: fix invalid f-string syntax in testpmd API
+Thread-Index: AQHcimG90CMIbYUeGkytw6knKhE0IbVcX6+Q
+Date: Wed, 21 Jan 2026 09:46:15 +0000
+Message-ID: <edeabad0cfe7460d82be2d9673b7ad9b@huawei.com>
+References: <20260120230806.192421-1-sismis@dyna-nic.com>
+ <20260120230806.192421-2-sismis@dyna-nic.com>
+In-Reply-To: <20260120230806.192421-2-sismis@dyna-nic.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.206.137.70]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -92,12 +57,75 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-19/01/2026 10:19, Liangxing Wang:
-> Hi,
-> 
-> Not sure for what reason, there wasn't any test check triggered by this patch. Do I have to submit a new patch version to trigger the tests? Thanks.
+> -----Original Message-----
+> From: Lukas Sismis <sismis@dyna-nic.com>
+> Sent: Tuesday 20 January 2026 23:08
+> To: dts@dpdk.org
+> Cc: dev@dpdk.org; dmarx@iol.unh.edu; abailey@iol.unh.edu; Lukas Sismis <s=
+ismis@dyna-nic.com>
+> Subject: [PATCH v1 1/1] dts: fix invalid f-string syntax in testpmd API
+>=20
+> Fix f-string syntax errors where double quotes were nested inside
+> f-strings that also use double quotes as delimiters.
+> ---
+>  dts/api/testpmd/__init__.py | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/dts/api/testpmd/__init__.py b/dts/api/testpmd/__init__.py
+> index a20dedc25a..703cae487e 100644
+> --- a/dts/api/testpmd/__init__.py
+> +++ b/dts/api/testpmd/__init__.py
+> @@ -227,7 +227,7 @@ def start_tx_first(self, burst_num: int, verify: bool=
+ =3D True) -> None:
+>              InteractiveCommandExecutionError: If `verify` is :data:`True=
+` and forwarding fails to
+>                  start or ports fail to come up.
+>          """
+> -        self.send_command(f"start tx_first {burst_num if burst_num is no=
+t None else ""}")
+> +        self.send_command(f"start tx_first {burst_num if burst_num is no=
+t None else ''}")
+>          if verify:
+>              # If forwarding was already started, sending "start" again s=
+hould tell us
+>              start_cmd_output =3D self.send_command("start")
+> @@ -898,11 +898,11 @@ def set_qinq_strip(self, port: int, enable: bool, v=
+erify: bool =3D True) -> None:
+>              vlan_settings =3D self.show_port_info(port_id=3Dport).vlan_o=
+ffload
+>              if enable ^ (vlan_settings is not None and VLANOffloadFlag.Q=
+INQ_STRIP in vlan_settings):
+>                  self._logger.debug(
+> -                    f"Failed to {"enable" if enable else "disable"}"
+> +                    f"Failed to {'enable' if enable else 'disable'}"
+>                      f"QinQ strip on port {port}: \n{qinq_cmd_output}"
+>                  )
+>                  raise InteractiveCommandExecutionError(
+> -                    f"Failed to {"enable" if enable else "disable"} QinQ=
+ strip on port {port}"
+> +                    f"Failed to {'enable' if enable else 'disable'} QinQ=
+ strip on port {port}"
+>                  )
+>=20
+>      def set_mac_address(self, port: int, mac_address: str, verify: bool =
+=3D True) -> None:
+> @@ -1535,7 +1535,7 @@ def set_port_mbuf_fast_free(
+>              InteractiveCommandExecutionError: If mbuf_fast_free could no=
+t be set successfully.
+>          """
+>          mbuf_output =3D self.send_command(
+> -            f"port config {port_id} tx_offload mbuf_fast_free {"on" if o=
+n else "off"}"
+> +            f"port config {port_id} tx_offload mbuf_fast_free {'on' if o=
+n else 'off'}"
+>          )
+>=20
+>          if verify and "Error" in mbuf_output:
+> --
+> 2.43.7
 
-The whole series got tested and reported on the last patch:
-https://patches.dpdk.org/project/dpdk/patch/20260108073135.1279814-1-wangliangxing@hygon.cn/
+Acked-by: Marat Khalili <marat.khalili@huawei.com>
 
-
+Thank you, this noise in the compile logs was a bit annoying. I have to ask=
+=20
+however, how did it pass? Are we ignoring some errors?
