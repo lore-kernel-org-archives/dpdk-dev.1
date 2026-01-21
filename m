@@ -2,66 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 163CBC44508
-	for <dpdk-dev@archiver.kernel.org>; Wed, 21 Jan 2026 18:08:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCB74C44506
+	for <dpdk-dev@archiver.kernel.org>; Wed, 21 Jan 2026 18:08:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 23CF2427E1;
-	Wed, 21 Jan 2026 19:08:52 +0100 (CET)
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com
- [209.85.128.52]) by mails.dpdk.org (Postfix) with ESMTP id 3DB6C4027A
- for <dev@dpdk.org>; Wed, 21 Jan 2026 19:08:50 +0100 (CET)
-Received: by mail-wm1-f52.google.com with SMTP id
- 5b1f17b1804b1-47ee3a63300so1384605e9.2
- for <dev@dpdk.org>; Wed, 21 Jan 2026 10:08:50 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 2CA2042E58;
+	Wed, 21 Jan 2026 19:08:54 +0100 (CET)
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com
+ [209.85.128.45]) by mails.dpdk.org (Postfix) with ESMTP id 8ED0742E52
+ for <dev@dpdk.org>; Wed, 21 Jan 2026 19:08:52 +0100 (CET)
+Received: by mail-wm1-f45.google.com with SMTP id
+ 5b1f17b1804b1-47ee0291921so1222845e9.3
+ for <dev@dpdk.org>; Wed, 21 Jan 2026 10:08:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769018930;
- x=1769623730; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=DjSjj91+GjiCjEWDADl3HaHH8NkhM8DAQuHRC5PI/J8=;
- b=gOJKpnt46ZmLVfrTQGye4TgByGrxsTCz12NnFPrrBWfYW7Pogt08EALldSoFFR9DcP
- Y+mqwXpsfdapRnRqH36Hkgzb+CLAwN9TG3lOLAqtAVPDzhwPQ+EUCqRqEYdasr3KjRiZ
- HVmj7abbomtg/gxg9Bi/sekPrPTEdp6+yKekrdnkOIQJxBBh+CbAK9z1MQZBQc32z8Gm
- 6VAxXpYy0Mn7ZDG7mHoPO1YJEnr0WUgNIEf+ONqIHjOz1SwK60dWWWVBiEyuYd8fLPFg
- 7t4tVxmQ0zKKVELZOULsSjhZZ7OnFAAnCxk27dMkceVqkS3o/TROsOjvDd2Fugl0cYzj
- QCWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1769018930; x=1769623730;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769018932;
+ x=1769623732; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=DjSjj91+GjiCjEWDADl3HaHH8NkhM8DAQuHRC5PI/J8=;
- b=Lp5bE1UN3rx8+x7hzowyK1FhOxxkVmQKH2pys8J+wKnloVGoMtUhGKBhfqeP8HGk08
- gBwrZ0vNu/I8qcamZb6LuCYwExbJXRo05SrnoiddcZ3FpEHJ3eEv8+KJMkk5pLRwcn0T
- 3Ch+ctkP9JI9EHKO2QH4CqC8n1T3y6+4NA/g1hIGjHmktuNEug0yhEDrFVFQgy16XOfU
- UGabNxp4vWgDVJ6krvX+kfG2C98RajClvcCyKPy02760X2hbgiMTetiiXcMfSsIoemwR
- FkkmPcfm8bV/Y6AZlSGwFyIoaPHvY8r+ilhm0LjnL7AcHLZjsIAYW4UcOt/2mG6Tz+qa
- W4mQ==
-X-Gm-Message-State: AOJu0YygAuyiomscrNoGuL4wKT0417QEvumAfH6Q9yw5SChKnf4y7Cxi
- 7fzEgx/k8kbyzmt3qfs1Yw6TqtJAFoeQzacj9zq3fF5DqIWIHiugVYONqEW6UagG79vvPM46uPW
- Zqbea
-X-Gm-Gg: AZuq6aIaOfBHheX4S5mPVUBMpSwzpKzbyJD9Y5lzfTTazItv82iVPkFTygaE92Bk5oM
- Gjopdb+lh31xDuZdpMN4Kfbyn81f2v3segdi3zgQ+Lyju4BSFi4/OQD6tWTDHkC4FxVrgFFGjBj
- LWF20TQgj5K3cgKGN5fQkOCkwuOU20I0+tPxgiW1Y0RaMrKKCNVI8ATYj1x28qI9NcuxXDEmoFD
- 4YU4wQtDMeHpil/yFC1nlrdy4xexqbIwZxBxPMS2GN2pqlu1YeU94nKKrlfHXmBLbM12YrvtiUq
- E4MLt76kCHQhREofNkvtaYnK9vk7n+JtckN9rZ6HjoOX2iYZvJbbMAZIAFudm5DR37l0MKr/uzU
- VtQLIDlxxWeekhf6wFf+D89jC2y51pM9Uef7Zavlf3GbAip7EHShBMFjE9isIyWVT1gAZc3TS5/
- +TIQfYBGDy4l+FsZLc33dxdiYc0voHBIa48vbv3aMstdiYojFcqg==
-X-Received: by 2002:a05:600c:a09:b0:47e:e57d:404 with SMTP id
- 5b1f17b1804b1-48045f7c2f2mr29853415e9.16.1769018929639; 
- Wed, 21 Jan 2026 10:08:49 -0800 (PST)
+ bh=ZJA55MY/C0inyLr4Di3+te5Hi0pPKdLYQCgxURcYGt4=;
+ b=Pqp+Rwemte8MmsgvdvgqkoRVkoo4W5NZH0QEKdKFY6eJMNyRNJWfLA6P3W4A2yzSoS
+ YuNPwQ92Hp4aWtclf0S38u02GHGQan5KH8KcvnOyQknQ3WvZHMZCkOYbR8ks+pQf8gfX
+ eGmsXdwa3XF+F096bg8ZbOu1pvdZzMN+cegSW/mlUnxrYDNcKT3mAEMFpZTHvvSLNuV7
+ TMguFDKBULeCH9PvDE+63UaV/Nav/L5vL5aBERUGkfXAkGk5ymHFORQf78BOUEgEfQd5
+ X1BWel1CG9GbmNdJJ/kuAPZLAYqBEHWCZn7PniVcqTHw1DFcrc4272oRADsVr0MGpzl4
+ Zwyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1769018932; x=1769623732;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=ZJA55MY/C0inyLr4Di3+te5Hi0pPKdLYQCgxURcYGt4=;
+ b=GZ1/n82BH843S2d/dk0rvQ05dkzAYZMtoV5+v5OC+iNKHhvThKUMyKDrm0NxL+bz6H
+ fhTgG8oPIQU1EZ8OfVGf6cnzvcFTPk43aOBkbKStVjEVk0mBckXDmxXfRl+MBBOGWDne
+ lXlpzVvA86zmnCbSexgm3orW1K1/rBmAHYOc2VAxbvUdnJHsydIH30dlbZNPiE6aqibx
+ S1tOMgWQUE9pKwpco52O074o/XH8yEKHJPkVaTyVffO2tjMu0Pu/YMXNfOZBi7k/UAM5
+ /TDX1Dyx5MfSSmzoVDSRMvSOSKIBMvjEVm+604OWHGqHhO9cMvafrE9+0b3K7DEcJPzk
+ 96YQ==
+X-Gm-Message-State: AOJu0YwN/ndE/Oa29z6KDFCsSxGJlGXRtYldkj9i44TmvTv6+TvHaUE4
+ HC+GwFrVn340suAMR+to/e/jUZiF+b2rbRkAVdT2RCe87LjeugfHI4HUFz3vBaPtXOkL9XOYLoL
+ no7GO
+X-Gm-Gg: AZuq6aKPdzni4LoI/odrs1aBX4xvl3IXeJ+LwD5nrUBWzTg+NVkEBvBuXEPAgcX1G93
+ nCoWFnhJ55JrZ5ZCfPfCdmN9jG67Q+y5wWrGQhU7jhUYg2If+ciKJKM31k3LXoP4siMRkBvtqMm
+ ftR8mJjZ+ReeJmpYOB8qhC6bQsEKqVJjavAkkK2evzCq9D8YWZPhvF3066o/sV8grwCUTE/AYoM
+ 3FkHAhPdmEMvhC+QEF1PFNTdQkcqk09p/6MixSSyYQUvacBqQP9fyDRz20uXFclrbh+LArh8O9n
+ sW3/D1wvwAI+zzDmK9/7agYtcIQUZeOSlun2+OVuRIs1wzei/H8wRewar1+3nzhlbs3o96OvUWq
+ z9cjUvPjGpB8GnAWyBQR6s4/ZuTOa/IM5PlxEXoCwhcSEvdXrVzKC5mTTXbsf+0Et6p2tiv9p3m
+ LSqKeoCG88hCQpfxVZOfly0IbIGP27oMsQrzD9HSzHCg6AtAb1bw==
+X-Received: by 2002:a05:600c:c0ce:b0:47e:e78a:c834 with SMTP id
+ 5b1f17b1804b1-4801eb14ffbmr187947695e9.34.1769018932063; 
+ Wed, 21 Jan 2026 10:08:52 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-48042c2ed5fsm29093565e9.8.2026.01.21.10.08.48
+ 5b1f17b1804b1-48042c2ed5fsm29093565e9.8.2026.01.21.10.08.49
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 21 Jan 2026 10:08:49 -0800 (PST)
+ Wed, 21 Jan 2026 10:08:51 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [RFC 0/3] Add pause to empty spinloops
-Date: Wed, 21 Jan 2026 10:05:41 -0800
-Message-ID: <20260121180845.889190-1-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Nithin Dabilpuram <ndabilpuram@marvell.com>,
+ Kiran Kumar K <kirankumark@marvell.com>,
+ Sunil Kumar Kori <skori@marvell.com>, Satha Rao <skoteshwar@marvell.com>,
+ Harman Kalra <hkalra@marvell.com>
+Subject: [RFC 1/3] net/cnxk: add pause to spinloops
+Date: Wed, 21 Jan 2026 10:05:42 -0800
+Message-ID: <20260121180845.889190-2-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20260121180845.889190-1-stephen@networkplumber.org>
+References: <20260121180845.889190-1-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -77,43 +84,62 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On SMT systems, empty spinloops can cause excessive latency due to
-the spinning core consuming resources that could be used by other
-hardware threads. This series addresses this by adding rte_pause()
-calls to busy-wait loops in the cnxk drivers.
+On SMT systems when a spinloop is done without a pause
+it may cause excessive latency. This problem was found
+by the fix_empty_spinloops coccinelle script.
 
-The first two patches fix existing empty spinloops in the net/cnxk
-and event/cnxk drivers. These were identified using a new coccinelle
-script that finds variations of the pattern:
+This is compile tested only! I don't have this hardware.
 
-    while (!atomic(&flag));
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+---
+ drivers/net/cnxk/cn10k_tx.h | 4 ++--
+ drivers/net/cnxk/cn20k_tx.h | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-This is compile tested only! I don't have that hardware.
-
-The third patch adds this coccinelle script to devtools/ so that
-similar issues can be detected and fixed automatically across the
-codebase.
-
-The script handles multiple atomic API variants:
-- Legacy rte_atomic*_read() functions
-- C11 atomics via rte_atomic_load_explicit()
-- GCC builtins via __atomic_load_n()
-- Simple volatile variable checks
-
-Stephen Hemminger (3):
-  net/cnxk: add pause to spinloops
-  event/cnxk: add pause to spinloops
-  devtools/cocci: add script to find empty spinloops
-
- devtools/cocci/fix_empty_spinloops.cocci | 165 +++++++++++++++++++++++
- drivers/event/cnxk/cn10k_worker.c        |   2 +-
- drivers/event/cnxk/cn20k_worker.c        |   2 +-
- drivers/event/cnxk/cnxk_tim_worker.h     |   4 +-
- drivers/net/cnxk/cn10k_tx.h              |   4 +-
- drivers/net/cnxk/cn20k_tx.h              |   4 +-
- 6 files changed, 173 insertions(+), 8 deletions(-)
- create mode 100644 devtools/cocci/fix_empty_spinloops.cocci
-
+diff --git a/drivers/net/cnxk/cn10k_tx.h b/drivers/net/cnxk/cn10k_tx.h
+index be9e020ac5..3f4cad168c 100644
+--- a/drivers/net/cnxk/cn10k_tx.h
++++ b/drivers/net/cnxk/cn10k_tx.h
+@@ -167,7 +167,7 @@ cn10k_nix_vwqe_wait_fc(struct cn10k_eth_txq *txq, uint16_t req)
+ #else
+ 	RTE_SET_USED(pkts);
+ 	while (rte_atomic_load_explicit(&txq->fc_cache_pkts, rte_memory_order_relaxed) < 0)
+-		;
++		rte_pause();
+ #endif
+ 	cached = rte_atomic_fetch_sub_explicit(&txq->fc_cache_pkts, req, rte_memory_order_acquire) -
+ 		 req;
+@@ -402,7 +402,7 @@ cn10k_nix_sec_fc_wait(struct cn10k_eth_txq *txq, uint16_t nb_pkts)
+ #else
+ 	/* Wait for primary core to refill FC. */
+ 	while (rte_atomic_load_explicit(fc_sw, rte_memory_order_relaxed) < 0)
+-		;
++		rte_pause();
+ #endif
+ 
+ 	val = rte_atomic_fetch_sub_explicit(fc_sw, nb_pkts, rte_memory_order_acquire) - nb_pkts;
+diff --git a/drivers/net/cnxk/cn20k_tx.h b/drivers/net/cnxk/cn20k_tx.h
+index 9e48744831..3dfad5fd5a 100644
+--- a/drivers/net/cnxk/cn20k_tx.h
++++ b/drivers/net/cnxk/cn20k_tx.h
+@@ -165,7 +165,7 @@ cn20k_nix_vwqe_wait_fc(struct cn20k_eth_txq *txq, uint16_t req)
+ #else
+ 	RTE_SET_USED(pkts);
+ 	while (rte_atomic_load_explicit(&txq->fc_cache_pkts, rte_memory_order_relaxed) < 0)
+-		;
++		rte_pause();
+ #endif
+ 	cached = rte_atomic_fetch_sub_explicit(&txq->fc_cache_pkts, req, rte_memory_order_acquire) -
+ 		 req;
+@@ -392,7 +392,7 @@ cn20k_nix_sec_fc_wait(struct cn20k_eth_txq *txq, uint16_t nb_pkts)
+ #else
+ 	/* Wait for primary core to refill FC. */
+ 	while (rte_atomic_load_explicit(fc_sw, rte_memory_order_relaxed) < 0)
+-		;
++		rte_pause();
+ #endif
+ 
+ 	val = rte_atomic_fetch_sub_explicit(fc_sw, nb_pkts, rte_memory_order_acquire) - nb_pkts;
 -- 
 2.51.0
 
