@@ -2,71 +2,37 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCD8BC44506
-	for <dpdk-dev@archiver.kernel.org>; Wed, 21 Jan 2026 18:09:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9592EC44508
+	for <dpdk-dev@archiver.kernel.org>; Wed, 21 Jan 2026 18:55:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8CC1342E63;
-	Wed, 21 Jan 2026 19:08:58 +0100 (CET)
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com
- [209.85.128.44]) by mails.dpdk.org (Postfix) with ESMTP id 6AEBA42E60
- for <dev@dpdk.org>; Wed, 21 Jan 2026 19:08:56 +0100 (CET)
-Received: by mail-wm1-f44.google.com with SMTP id
- 5b1f17b1804b1-4801ea9bafdso547975e9.3
- for <dev@dpdk.org>; Wed, 21 Jan 2026 10:08:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769018936;
- x=1769623736; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=TaqS7HaNyOHbkmSDh+mleUjkX9tHSWAgKHQ+nAZMsYw=;
- b=Qi0mp56lOHqI94x+7GssV0odU9yWZXR77KDpXVE2xlUXKlljf0HMm++Bd/DoChrzub
- OutoTgNSI1CpIQOzQUiJBK/U/FRwHA6NkOU7F4CE2JmSzU0burnVvBK5x6dr6/adQWho
- eTx1FYHpIcV3KdWq+gA6ZFF7GAQsUZgtBbPyOeDDZt35hLVq2Afulem6NocSHs+VOZY7
- PTFU0xnTg7dM7KGSpMKelqeCqG3/tkXGVRwmUy4JJLhyvijTkwDPPgKcM0Y3HUbfyE2u
- Do+ypwA5mjbt6i5n41ryHX4jAJ2jhQkBpnM0JpdDWxY6w6DTwMNT3WhXPHmyx+iSQGdn
- WOkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1769018936; x=1769623736;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=TaqS7HaNyOHbkmSDh+mleUjkX9tHSWAgKHQ+nAZMsYw=;
- b=NeA2Ek/R+PiWU/xez6+nh5HoHZAPNYa0HmrqmVlkEtSJsjTqFRZYzDgjD9Pzk7ePeU
- nE51R0ov1A0Kts0HT0vIHlhYfe/INc83F697Ouf4qszAUBE4w2tF2x47CltNzIiD2pOQ
- DezWmtVgkVC9VKTvYhp1zNdQfpNBRfEc5SukjOZAixpzz2tAfHl891EBkuZ9QScCtBuq
- HrcHin7jBTrtu/wn4D7sKf/Ww89AvHdrjVAiRk4SyJS03RRKqntiOG01eYWbIDmNmMZc
- JJtX5oHUPHEIoskraIvqx+ZyzO2TVobjMsdbhDz0e5vV+qlWdAYA1seacqm/JAyf1hnT
- 3EGg==
-X-Gm-Message-State: AOJu0YxrTB3bHRkOvESBVIsDYWTayxgTaRtByd3Qj5xds8ncDBTlJDDX
- iii1H0m66p1oh7sABMAS+ezb0gppHMX8OJL4bxddS2uWvxucJ2C5ZgTd+zue6IDrqXnY1pjZ+x9
- +9g/K
-X-Gm-Gg: AZuq6aKQyAb7ov6MAHMd6J5O1r64FLztKE2PEuDB65MyCLuCLd6rlR1L0vtt+shU7cO
- yUaB/M8Srq6RhgtwSWjEyu7lvLPHV5ua0IdkeyjqWTyp8RrTxOsqYlv11Nx0o9vOLO9wdqE9/QI
- 7deI3IAtlTTAtuNIAPsyEyhcOntKCbfJjfbtz5tHQb4eto3ar136vcpfZvPzXsoBfYsVgE4H7rF
- eAGNv7ewIwXK/2S0xsabc5i/zIiT7HDBYUlFXkanPR8jBkbHtZiUvX8TE1zIfsk2vUOo4ebVMNn
- HNIivYuMflFKi3mOnk2u3WXwduh3RSFwAFh/Eb2wZq2c3C/tcenoFI74ItpSBLrh9lVP2Sxw5qr
- gQoch/ymM1rbMZ56rhg23aIfnGHAtHYqgM97DvoQ39TnZa379QmR/0ao96oRqKmKcgdb6JjREot
- 7h9mRn+SC0hwoNkDCtrYMjtm8lG/fdNXe5LFqpeSa6eU0Uxs3d4Q==
-X-Received: by 2002:a05:600c:8286:b0:480:259b:3705 with SMTP id
- 5b1f17b1804b1-480259b3772mr205010495e9.13.1769018935792; 
- Wed, 21 Jan 2026 10:08:55 -0800 (PST)
-Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-48042c2ed5fsm29093565e9.8.2026.01.21.10.08.54
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 21 Jan 2026 10:08:55 -0800 (PST)
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [RFC 3/3] devtools/cocci: add script to find empty spinloops
-Date: Wed, 21 Jan 2026 10:05:44 -0800
-Message-ID: <20260121180845.889190-4-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20260121180845.889190-1-stephen@networkplumber.org>
-References: <20260121180845.889190-1-stephen@networkplumber.org>
+	by mails.dpdk.org (Postfix) with ESMTP id 88DB84279D;
+	Wed, 21 Jan 2026 19:55:14 +0100 (CET)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id CE5804027A
+ for <dev@dpdk.org>; Wed, 21 Jan 2026 19:55:12 +0100 (CET)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 1D59220AD6;
+ Wed, 21 Jan 2026 19:55:12 +0100 (CET)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Subject: RE: [PATCH 0/4] examples: memcpy cleanups
+Date: Wed, 21 Jan 2026 19:55:03 +0100
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65689@smartserver.smartshare.dk>
+In-Reply-To: <20260121170540.785735-1-stephen@networkplumber.org>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH 0/4] examples: memcpy cleanups
+Thread-Index: AdyK+DIK2NdDaHknQ0CUY5sdfwno9gADsJoA
+References: <20260121170540.785735-1-stephen@networkplumber.org>
+From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
+To: "Stephen Hemminger" <stephen@networkplumber.org>,
+	<dev@dpdk.org>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -80,196 +46,24 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This script finds and fixes many variations of the pattern:
+> From: Stephen Hemminger [mailto:stephen@networkplumber.org]
+> Sent: Wednesday, 21 January 2026 18.05
+>=20
+> Looking at examples and noticed stuff around use
+> of rte_memcpy. Probably mostly copy/pasted.
+>=20
+> Stephen Hemminger (4):
+>   examples/vhost: replace memcpy with assignment
+>   examples/vmdq: replace memcpy with structure assignment
+>   examples/vmdq_dcb: replace memcpy with assignment
+>   examples: remove unnecessary include
+>=20
 
-   while (!atomic(&flag));
+Structure assignment is better than [rte_]memcpy().
+And this is slow path only, so no need to discuss performance.
 
-to add a rte_pause() to the loop.
+For the series,
+Reviewed-by: Morten Br=F8rup <mb@smartsharesystems.com>
 
-This type of loop was causing failures in the standalone atomic
-tests on high core system. The script generalizes that to find other
-places with the same problem.
-
-Script was autogenerated by AI and works but may cover
-more cases than really necessary.
-
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
----
- devtools/cocci/fix_empty_spinloops.cocci | 165 +++++++++++++++++++++++
- 1 file changed, 165 insertions(+)
- create mode 100644 devtools/cocci/fix_empty_spinloops.cocci
-
-diff --git a/devtools/cocci/fix_empty_spinloops.cocci b/devtools/cocci/fix_empty_spinloops.cocci
-new file mode 100644
-index 0000000000..ff64b30eac
---- /dev/null
-+++ b/devtools/cocci/fix_empty_spinloops.cocci
-@@ -0,0 +1,165 @@
-+// SPDX-License-Identifier: BSD-3-Clause
-+// Find and fix empty spin loops that should call rte_pause()
-+//
-+// Empty spin loops waste CPU cycles and can cause performance issues.
-+// This script finds various forms of busy-wait loops and adds rte_pause()
-+// to give hints to the CPU and reduce power consumption.
-+
-+// Rule 1: Handle rte_atomic*_read() variants
-+@fix_atomic_read@
-+expression ptr, val;
-+@@
-+
-+(
-+- while (rte_atomic16_read(ptr) == val);
-++ while (rte_atomic16_read(ptr) == val)
-++     rte_pause();
-+|
-+- while (rte_atomic16_read(ptr) != val);
-++ while (rte_atomic16_read(ptr) != val)
-++     rte_pause();
-+|
-+- while (rte_atomic32_read(ptr) == val);
-++ while (rte_atomic32_read(ptr) == val)
-++     rte_pause();
-+|
-+- while (rte_atomic32_read(ptr) != val);
-++ while (rte_atomic32_read(ptr) != val)
-++     rte_pause();
-+|
-+- while (rte_atomic64_read(ptr) == val);
-++ while (rte_atomic64_read(ptr) == val)
-++     rte_pause();
-+|
-+- while (rte_atomic64_read(ptr) != val);
-++ while (rte_atomic64_read(ptr) != val)
-++     rte_pause();
-+)
-+
-+// Rule 2: Handle rte_atomic*_read() with comparison operators
-+@fix_atomic_cmp@
-+expression ptr, val;
-+@@
-+
-+(
-+- while (rte_atomic16_read(ptr) < val);
-++ while (rte_atomic16_read(ptr) < val)
-++     rte_pause();
-+|
-+- while (rte_atomic16_read(ptr) > val);
-++ while (rte_atomic16_read(ptr) > val)
-++     rte_pause();
-+|
-+- while (rte_atomic32_read(ptr) < val);
-++ while (rte_atomic32_read(ptr) < val)
-++     rte_pause();
-+|
-+- while (rte_atomic32_read(ptr) > val);
-++ while (rte_atomic32_read(ptr) > val)
-++     rte_pause();
-+|
-+- while (rte_atomic64_read(ptr) < val);
-++ while (rte_atomic64_read(ptr) < val)
-++     rte_pause();
-+|
-+- while (rte_atomic64_read(ptr) > val);
-++ while (rte_atomic64_read(ptr) > val)
-++     rte_pause();
-+)
-+
-+// Rule 3: Handle C11 atomics with rte_atomic_load_explicit()
-+@fix_c11_atomic@
-+expression ptr, order, val;
-+@@
-+
-+(
-+- while (rte_atomic_load_explicit(ptr, order) == val);
-++ while (rte_atomic_load_explicit(ptr, order) == val)
-++     rte_pause();
-+|
-+- while (rte_atomic_load_explicit(ptr, order) != val);
-++ while (rte_atomic_load_explicit(ptr, order) != val)
-++     rte_pause();
-+|
-+- while (rte_atomic_load_explicit(ptr, order) < val);
-++ while (rte_atomic_load_explicit(ptr, order) < val)
-++     rte_pause();
-+|
-+- while (rte_atomic_load_explicit(ptr, order) > val);
-++ while (rte_atomic_load_explicit(ptr, order) > val)
-++     rte_pause();
-+)
-+
-+// Rule 4: Handle __atomic_load_n() directly
-+@fix_gcc_atomic@
-+expression ptr, order, val;
-+@@
-+
-+(
-+- while (__atomic_load_n(ptr, order) == val);
-++ while (__atomic_load_n(ptr, order) == val)
-++     rte_pause();
-+|
-+- while (__atomic_load_n(ptr, order) != val);
-++ while (__atomic_load_n(ptr, order) != val)
-++     rte_pause();
-+|
-+- while (__atomic_load_n(ptr, order) < val);
-++ while (__atomic_load_n(ptr, order) < val)
-++     rte_pause();
-+|
-+- while (__atomic_load_n(ptr, order) > val);
-++ while (__atomic_load_n(ptr, order) > val)
-++     rte_pause();
-+)
-+
-+// Rule 5: Handle volatile variable reads (simple dereference)
-+@fix_volatile@
-+expression E;
-+identifier v;
-+@@
-+
-+(
-+- while (*v == E);
-++ while (*v == E)
-++     rte_pause();
-+|
-+- while (*v != E);
-++ while (*v != E)
-++     rte_pause();
-+|
-+- while (*v < E);
-++ while (*v < E)
-++     rte_pause();
-+|
-+- while (*v > E);
-++ while (*v > E)
-++     rte_pause();
-+|
-+- while (v == E);
-++ while (v == E)
-++     rte_pause();
-+|
-+- while (v != E);
-++ while (v != E)
-++     rte_pause();
-+)
-+
-+// Rule 6: Handle negated conditions
-+@fix_negated@
-+expression ptr, val;
-+@@
-+
-+(
-+- while (!rte_atomic32_read(ptr));
-++ while (!rte_atomic32_read(ptr))
-++     rte_pause();
-+|
-+- while (!rte_atomic64_read(ptr));
-++ while (!rte_atomic64_read(ptr))
-++     rte_pause();
-+|
-+- while (!rte_atomic_load_explicit(ptr, val));
-++ while (!rte_atomic_load_explicit(ptr, val))
-++     rte_pause();
-+)
--- 
-2.51.0
+Thank you for cleaning this up.
 
