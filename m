@@ -2,78 +2,41 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EC1DC44502
-	for <dpdk-dev@archiver.kernel.org>; Wed, 21 Jan 2026 10:16:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B178C44501
+	for <dpdk-dev@archiver.kernel.org>; Wed, 21 Jan 2026 10:18:32 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4AE1E427B8;
-	Wed, 21 Jan 2026 11:16:45 +0100 (CET)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id E947A400D7
- for <dev@dpdk.org>; Wed, 21 Jan 2026 11:16:43 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1768990603;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=oOcQR0Db8zM2lL+Op0Xe9auSFt1gwF8dnTBQcS2Qbv4=;
- b=PTrBCr1EUxotqfkwG3db/bfc85eTd4BdIEv3FE13j29uITYstOxMmrTJCNPGxtOUM7FY4Y
- o2Xh5SzAfauqrWfBfPjw1/iwcZxJA1RLoE0Gbj7NEeCa2K/BxMq8fHMyvdn2KTF/HyYWoo
- HCacOrC4eZcdyXpY7/25YYU7mZh+0m4=
-Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
- [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-622-AOb58o8SMPCHgAAE-HD_7g-1; Wed, 21 Jan 2026 05:16:40 -0500
-X-MC-Unique: AOb58o8SMPCHgAAE-HD_7g-1
-X-Mimecast-MFC-AGG-ID: AOb58o8SMPCHgAAE-HD_7g_1768990599
-Received: by mail-lj1-f197.google.com with SMTP id
- 38308e7fff4ca-383558ea1b7so33335941fa.0
- for <dev@dpdk.org>; Wed, 21 Jan 2026 02:16:39 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768990598; x=1769595398;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=oOcQR0Db8zM2lL+Op0Xe9auSFt1gwF8dnTBQcS2Qbv4=;
- b=V8RSCqEBIGzwJxa4WdegeYbrLkoYm62FHjtLwC1olQWhgMNv3acwFd8t1Z7ggS15k9
- NDkX71HR+oyEf9mzMlgukUbwCCxkiTTY63V6BsB2/aP2CYwVwR82NeXZD3OrgOFRiMLN
- VzoC6B+BZZnZt74erJ5JIGwgJQ8s6YXf3fXh+lR2fnxTH4SNNljnRKoEh2tCnhKaPfGL
- XSgF/wYlwftxYnfJ8rwM7V5g9Q1aSn449Pu+H54QUB+/esBSXAn8yHyMKk4jaVSQD9U1
- cUvn0wrnRiR8xtOLOO5Su+A4yJrpuVzaSK7pgdr/Fecj8a1F4jh/DTwi++YOgAjUT9zt
- 4QNA==
-X-Forwarded-Encrypted: i=1;
- AJvYcCXH0k4Q1BwQ+baS17NEEpmEWZH/A6aBrJW1fsaZyvAGoGU/F+1LIyWd8vZbyt6D/7rcw+c=@dpdk.org
-X-Gm-Message-State: AOJu0YzSRNR4rZ6aWHIxNXyx9nii9K+C2z5a6iuxrbpZs19AWIOjOGru
- Hp4mFsjQV8Ia3izjwbuP9//0KHKY2KCkwQebmmK0UKLmOOmOLVZnBvdJxj1WrkFIgrgtLB1kKAP
- JOR6iZlNLGwWRRX1Ng/OV6hCi9yvkD+XDdSnV2nrTxm7aNiKFTPKmKVQAebrxE4PrEyVOfdKH6H
- dbpW7aw3jIySyuK5zjPs0=
-X-Gm-Gg: AZuq6aLn/FYMrZOXSLF1wnEBVZ7nn/9zMnkQGRUxdVKDJgLeUbRcWOnxNjgyQ5rTG7D
- cF84q0m2lwSzTNF2YjMIvhZBd4InsIVYfPQt5BESLG+Imq03XxpJeBFnm/fGgerC/ZNlYem/LXO
- ZjHsd4HTzelCdLnNQ9lU7yPnvGth9raCLYJbIEgSm8cPxDg/vRZWgHoG0I78yVdfowPxmZ
-X-Received: by 2002:a2e:bc1c:0:b0:383:26ac:4fca with SMTP id
- 38308e7fff4ca-38384147807mr63274161fa.4.1768990598485; 
- Wed, 21 Jan 2026 02:16:38 -0800 (PST)
-X-Received: by 2002:a2e:bc1c:0:b0:383:26ac:4fca with SMTP id
- 38308e7fff4ca-38384147807mr63274141fa.4.1768990598005; Wed, 21 Jan 2026
- 02:16:38 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 8E157427BA;
+	Wed, 21 Jan 2026 11:18:31 +0100 (CET)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
+ [185.176.79.56])
+ by mails.dpdk.org (Postfix) with ESMTP id 727EF400D7;
+ Wed, 21 Jan 2026 11:18:30 +0100 (CET)
+Received: from mail.maildlp.com (unknown [172.18.224.83])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4dx0WR5nZfzHnGjt;
+ Wed, 21 Jan 2026 18:17:55 +0800 (CST)
+Received: from frapema500003.china.huawei.com (unknown [7.182.19.114])
+ by mail.maildlp.com (Postfix) with ESMTPS id 5AB2A40569;
+ Wed, 21 Jan 2026 18:18:29 +0800 (CST)
+Received: from localhost.localdomain (10.220.239.45) by
+ frapema500003.china.huawei.com (7.182.19.114) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 21 Jan 2026 11:18:28 +0100
+From: Marat Khalili <marat.khalili@huawei.com>
+To: <dev@dpdk.org>, <stephen@networkplumber.org>, Konstantin Ananyev
+ <konstantin.ananyev@huawei.com>, Ferruh Yigit <ferruh.yigit@amd.com>
+CC: <stable@dpdk.org>
+Subject: [PATCH v3] bpf: fix x86 call stack alignment for external calls
+Date: Wed, 21 Jan 2026 10:16:53 +0000
+Message-ID: <20260121101653.66438-1-marat.khalili@huawei.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260105160958.80443-1-marat.khalili@huawei.com>
+References: <20260105160958.80443-1-marat.khalili@huawei.com>
 MIME-Version: 1.0
-References: <20260120230806.192421-1-sismis@dyna-nic.com>
- <20260120230806.192421-2-sismis@dyna-nic.com>
- <edeabad0cfe7460d82be2d9673b7ad9b@huawei.com>
-In-Reply-To: <edeabad0cfe7460d82be2d9673b7ad9b@huawei.com>
-From: David Marchand <david.marchand@redhat.com>
-Date: Wed, 21 Jan 2026 11:16:26 +0100
-X-Gm-Features: AZwV_QijSriuyqswgkczQ6JJohGB-3hSfK8OJVKYEzMo80UhiXwDcqGoq2Gypso
-Message-ID: <CAJFAV8w7o_GB=e8401Ot6An6bwdT+ihLPZ7nfRieTGP+VDZuyQ@mail.gmail.com>
-Subject: Re: [PATCH v1 1/1] dts: fix invalid f-string syntax in testpmd API
-To: Marat Khalili <marat.khalili@huawei.com>
-Cc: Lukas Sismis <sismis@dyna-nic.com>, "dts@dpdk.org" <dts@dpdk.org>,
- "dev@dpdk.org" <dev@dpdk.org>, "dmarx@iol.unh.edu" <dmarx@iol.unh.edu>,
- "abailey@iol.unh.edu" <abailey@iol.unh.edu>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: UI4n4tlGe6CJKo6rpdZr-gXT9a6m1byRhaYh73lAuSk_1768990599
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.220.239.45]
+X-ClientProxiedBy: frapema100006.china.huawei.com (7.182.19.111) To
+ frapema500003.china.huawei.com (7.182.19.114)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -87,64 +50,493 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hello,
+Correctly align stack pointer on x86 JIT if external calls are present.
 
-On Wed, 21 Jan 2026 at 10:46, Marat Khalili <marat.khalili@huawei.com> wrote:
-> >
-> > Fix f-string syntax errors where double quotes were nested inside
-> > f-strings that also use double quotes as delimiters.
-> > ---
-> >  dts/api/testpmd/__init__.py | 8 ++++----
-> >  1 file changed, 4 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/dts/api/testpmd/__init__.py b/dts/api/testpmd/__init__.py
-> > index a20dedc25a..703cae487e 100644
-> > --- a/dts/api/testpmd/__init__.py
-> > +++ b/dts/api/testpmd/__init__.py
-> > @@ -227,7 +227,7 @@ def start_tx_first(self, burst_num: int, verify: bool = True) -> None:
-> >              InteractiveCommandExecutionError: If `verify` is :data:`True` and forwarding fails to
-> >                  start or ports fail to come up.
-> >          """
-> > -        self.send_command(f"start tx_first {burst_num if burst_num is not None else ""}")
-> > +        self.send_command(f"start tx_first {burst_num if burst_num is not None else ''}")
-> >          if verify:
-> >              # If forwarding was already started, sending "start" again should tell us
-> >              start_cmd_output = self.send_command("start")
-> > @@ -898,11 +898,11 @@ def set_qinq_strip(self, port: int, enable: bool, verify: bool = True) -> None:
-> >              vlan_settings = self.show_port_info(port_id=port).vlan_offload
-> >              if enable ^ (vlan_settings is not None and VLANOffloadFlag.QINQ_STRIP in vlan_settings):
-> >                  self._logger.debug(
-> > -                    f"Failed to {"enable" if enable else "disable"}"
-> > +                    f"Failed to {'enable' if enable else 'disable'}"
-> >                      f"QinQ strip on port {port}: \n{qinq_cmd_output}"
-> >                  )
-> >                  raise InteractiveCommandExecutionError(
-> > -                    f"Failed to {"enable" if enable else "disable"} QinQ strip on port {port}"
-> > +                    f"Failed to {'enable' if enable else 'disable'} QinQ strip on port {port}"
-> >                  )
-> >
-> >      def set_mac_address(self, port: int, mac_address: str, verify: bool = True) -> None:
-> > @@ -1535,7 +1535,7 @@ def set_port_mbuf_fast_free(
-> >              InteractiveCommandExecutionError: If mbuf_fast_free could not be set successfully.
-> >          """
-> >          mbuf_output = self.send_command(
-> > -            f"port config {port_id} tx_offload mbuf_fast_free {"on" if on else "off"}"
-> > +            f"port config {port_id} tx_offload mbuf_fast_free {'on' if on else 'off'}"
-> >          )
-> >
-> >          if verify and "Error" in mbuf_output:
-> > --
-> > 2.43.7
->
-> Acked-by: Marat Khalili <marat.khalili@huawei.com>
->
-> Thank you, this noise in the compile logs was a bit annoying. I have to ask
-> however, how did it pass? Are we ignoring some errors?
+According to x86-64 ABI (https://gitlab.com/x86-psABIs/x86-64-ABI,
+section 3.2.2 The Stack Frame) stack needs to be 16 (or more) bytes
+aligned immediately before the call instruction is executed. Once
+control has been transferred to the function entry point it is always
+off by 8 bytes. It means that JIT-compiled BPF function will always have
+its stack misaligned for any nested call unless it performs operations
+with the stack; even if it does use stack there is still 50% chance of
+stack being misaligned since it uses it in multiples of 8.
 
-Yes, I ended with the same conclusion and sent a fix earlier.
-https://patchwork.dpdk.org/project/dpdk/patch/20260121100127.1701459-1-david.marchand@redhat.com/
+To solve the issue mark RBP as used whenever we have external function
+calls, and align RSP using AND instruction at the end of the prolog.
+Marking RBP as used triggers stack pointer saving in prolog and
+restoration in epilog.
 
+Add tests for external calls from BPF program demonstrating the problem:
+* direct verification of a local variable alignment;
+* operations with 128-bit integers;
+* aligned and unaligned SSE2 instructions;
+* memcpy and rte_memcpy (may use vector instructions in their code).
 
+(Such variety is needed because not all of these tests are available or
+reproduce the problem on all targets even when the problem exists.)
+
+Fixes: cc752e43e079 ("bpf: add JIT compilation for x86_64 ISA")
+Cc: stable@dpdk.org
+
+Signed-off-by: Marat Khalili <marat.khalili@huawei.com>
+Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+Tested-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+---
+v3:
+* Remove forbidden punctuation (comma) from subject line.
+* Ensure a blank line before Signed-off-by tag group.
+* Restore unrelated blank line in lib/bpf/bpf_jit_x86.c.
+* Fix variable shadowing in app/test/test_bpf.c.
+* Add NULL checks for malloc() in app/test/test_bpf.c (ensuring no memory
+  leak if one allocation fails).
+* Update REGISTER_FAST_TEST() calls in app/test/test_bpf.c to use new
+  constants (NOHUGE_OK, ASAN_OK) instead of old boolean values.
+
+v2:
+* Updated commit message with background info and API reference.
+
+ app/test/test_bpf.c   | 389 ++++++++++++++++++++++++++++++++++++++++++
+ lib/bpf/bpf_jit_x86.c |  14 ++
+ 2 files changed, 403 insertions(+)
+
+diff --git a/app/test/test_bpf.c b/app/test/test_bpf.c
+index a7d56f8d86..a85b241638 100644
+--- a/app/test/test_bpf.c
++++ b/app/test/test_bpf.c
+@@ -3280,6 +3280,395 @@ test_bpf(void)
+ 
+ REGISTER_FAST_TEST(bpf_autotest, NOHUGE_OK, ASAN_OK, test_bpf);
+ 
++/* Tests of BPF JIT stack alignment when calling external functions (xfuncs). */
++
++/* Function called from the BPF program in a test. */
++typedef uint64_t (*text_xfunc_t)(uint64_t argument);
++
++/* Call function from BPF program, verify that it incremented its argument. */
++static int
++call_from_bpf_test(text_xfunc_t xfunc)
++{
++	static const struct ebpf_insn ins[] = {
++		{
++			.code = (BPF_JMP | EBPF_CALL),
++			.imm = 0,  /* xsym #0 */
++		},
++		{
++			.code = (BPF_JMP | EBPF_EXIT),
++		},
++	};
++	const struct rte_bpf_xsym xsym[] = {
++		{
++			.name = "xfunc",
++			.type = RTE_BPF_XTYPE_FUNC,
++			.func = {
++				.val = (void *)xfunc,
++				.nb_args = 1,
++				.args = {
++					{
++						.type = RTE_BPF_ARG_RAW,
++						.size = sizeof(uint64_t),
++					},
++				},
++				.ret = {
++					.type = RTE_BPF_ARG_RAW,
++					.size = sizeof(uint64_t),
++				},
++			},
++		},
++	};
++	const struct rte_bpf_prm prm = {
++		.ins = ins,
++		.nb_ins = RTE_DIM(ins),
++		.xsym = xsym,
++		.nb_xsym = RTE_DIM(xsym),
++		.prog_arg = {
++			.type = RTE_BPF_ARG_RAW,
++			.size = sizeof(uint64_t),
++		},
++	};
++
++	struct rte_bpf_jit jit;
++
++	struct rte_bpf *const bpf = rte_bpf_load(&prm);
++	RTE_TEST_ASSERT_NOT_EQUAL(bpf, NULL,
++		"expect rte_bpf_load() != NULL");
++
++	RTE_TEST_ASSERT_SUCCESS(rte_bpf_get_jit(bpf, &jit),
++		"expect rte_bpf_get_jit() to succeed");
++
++	const text_xfunc_t jit_function = (void *)jit.func;
++	if (jit_function == NULL) {
++		rte_bpf_destroy(bpf);
++		return TEST_SKIPPED;
++	}
++
++	const uint64_t argument = 42;
++	const uint64_t result = jit_function(argument);
++	rte_bpf_destroy(bpf);
++
++	RTE_TEST_ASSERT_EQUAL(result, argument + 1,
++		"expect result == %ju, found %ju",
++		(uintmax_t)(argument + 1), (uintmax_t)result);
++
++	return TEST_SUCCESS;
++}
++
++/*
++ * Test alignment of a local variable.
++ *
++ * NOTE: May produce false negatives with sanitizers if they replace the stack.
++ */
++
++/* Copy of the pointer to max_align stack variable, volatile to thwart optimization. */
++static volatile uintptr_t stack_alignment_test_pointer;
++
++static uint64_t
++stack_alignment_xfunc(uint64_t argument)
++{
++	max_align_t max_align;
++	stack_alignment_test_pointer = (uintptr_t)&max_align;
++	return argument + 1;
++}
++
++static int
++test_stack_alignment(void)
++{
++	const int test_rc = call_from_bpf_test(stack_alignment_xfunc);
++	if (test_rc == TEST_SKIPPED)
++		return TEST_SKIPPED;
++
++	RTE_TEST_ASSERT_SUCCESS(test_rc,
++		"expect call_from_bpf_test(stack_alignment_xfunc) to succeed");
++
++	const uintptr_t test_offset = stack_alignment_test_pointer;
++	RTE_TEST_ASSERT_NOT_EQUAL(test_offset, 0, "expect test_pointer != 0");
++
++	const size_t test_alignment = test_offset % alignof(max_align_t);
++	RTE_TEST_ASSERT_EQUAL(test_alignment, 0,
++		"expect test_alignment == 0, found %zu", test_alignment);
++
++	return TEST_SUCCESS;
++}
++
++REGISTER_FAST_TEST(bpf_stack_alignment_autotest, NOHUGE_OK, ASAN_OK, test_stack_alignment);
++
++/*
++ * Test copying `__uint128_t`.
++ *
++ * This operation is used by some variations of `rte_memcpy`;
++ * it can also be produced by vectorizer in the compiler.
++ */
++
++#if defined(__SIZEOF_INT128__)
++
++static uint64_t
++stack_copy_uint128_xfunc(uint64_t argument)
++{
++	/* Pass addresses through volatiles to prevent compiler from optimizing it all out. */
++	char alignas(16) src_buffer[16];
++	char alignas(16) dst_buffer[16];
++	void *const src = (char *volatile)src_buffer;
++	void *const dst = (char *volatile)dst_buffer;
++	const size_t size = 16;
++
++	memset(src, 0x2a, size);
++	memset(dst, 0x55, size);
++	const int initial_memcmp_rc = memcmp(dst, src, size);
++
++	const __uint128_t *const src128 = (const __uint128_t *)src;
++	__uint128_t *const dst128 = (__uint128_t *)dst;
++	*dst128 = *src128;
++	const int memcmp_rc = memcmp(dst, src, size);
++
++	return argument + 1 + !initial_memcmp_rc + memcmp_rc;
++}
++
++static int
++test_stack_copy_uint128(void)
++{
++	const int test_rc = call_from_bpf_test(stack_copy_uint128_xfunc);
++	if (test_rc == TEST_SKIPPED)
++		return TEST_SKIPPED;
++
++	RTE_TEST_ASSERT_SUCCESS(test_rc,
++		"expect call_from_bpf_test(stack_copy_uint128_xfunc) to succeed");
++
++	return TEST_SUCCESS;
++}
++
++#else
++
++static int
++test_stack_copy_uint128(void)
++{
++	return TEST_SKIPPED;
++}
++
++#endif
++
++REGISTER_FAST_TEST(bpf_stack_copy_uint128_autotest, NOHUGE_OK, ASAN_OK, test_stack_copy_uint128);
++
++/*
++ * Test SSE2 load and store intrinsics.
++ *
++ * These intrinsics are used by e.g. lib/hash.
++ *
++ * Test both aligned and unaligned versions. Unaligned intrinsics may still fail
++ * when the stack is misaligned, since they only treat memory address as
++ * unaligned, not stack.
++ */
++
++#if defined(__SSE2__)
++
++static uint64_t
++stack_sse2_aligned_xfunc(uint64_t argument)
++{
++	/* Pass addresses through volatiles to prevent compiler from optimizing it all out. */
++	char alignas(16) src_buffer[16];
++	char alignas(16) dst_buffer[16];
++	void *const src = (char *volatile)src_buffer;
++	void *const dst = (char *volatile)dst_buffer;
++	const size_t size = 16;
++
++	memset(src, 0x2a, size);
++	memset(dst, 0x55, size);
++	const int initial_memcmp_rc = memcmp(dst, src, size);
++
++	const __m128i tmp = _mm_load_si128((const __m128i *)src);
++	_mm_store_si128((__m128i *)dst, tmp);
++	const int memcmp_rc = memcmp(dst, src, size);
++
++	return argument + 1 + !initial_memcmp_rc + memcmp_rc;
++}
++
++static uint64_t
++stack_sse2_unaligned_xfunc(uint64_t argument)
++{
++	/* Pass addresses through volatiles to prevent compiler from optimizing it all out. */
++	char alignas(16) src_buffer[17];
++	char alignas(16) dst_buffer[17];
++	void *const src = (char *volatile)src_buffer + 1;
++	void *const dst = (char *volatile)dst_buffer + 1;
++	const size_t size = 16;
++
++	memset(src, 0x2a, size);
++	memset(dst, 0x55, size);
++	const int initial_memcmp_rc = memcmp(dst, src, size);
++
++	const __m128i tmp = _mm_loadu_si128((const __m128i *)src);
++	_mm_storeu_si128((__m128i *)dst, tmp);
++	const int memcmp_rc = memcmp(dst, src, size);
++
++	return argument + 1 + !initial_memcmp_rc + memcmp_rc;
++}
++
++static int
++test_stack_sse2(void)
++{
++	int test_rc;
++
++	test_rc = call_from_bpf_test(stack_sse2_aligned_xfunc);
++	if (test_rc == TEST_SKIPPED)
++		return test_rc;
++	RTE_TEST_ASSERT_SUCCESS(test_rc,
++		"expect call_from_bpf_test(stack_sse2_aligned_xfunc) to succeed");
++
++	test_rc = call_from_bpf_test(stack_sse2_unaligned_xfunc);
++	if (test_rc == TEST_SKIPPED)
++		return test_rc;
++	RTE_TEST_ASSERT_SUCCESS(test_rc,
++		"expect call_from_bpf_test(stack_sse2_unaligned_xfunc) to succeed");
++
++	return TEST_SUCCESS;
++}
++
++#else
++
++static int
++test_stack_sse2(void)
++{
++	return TEST_SKIPPED;
++}
++
++#endif
++
++REGISTER_FAST_TEST(bpf_stack_sse2_autotest, NOHUGE_OK, ASAN_OK, test_stack_sse2);
++
++/*
++ * Run memcpy and rte_memcpy with various data sizes and offsets (unaligned and aligned).
++ *
++ * May produce false negatives even if BPF breaks stack alignment since
++ * compilers may realign the stack in the beginning of the function to use
++ * vector instructions with width larger than the default stack alignment.
++ * However, represents very important use case that was broken in practice.
++ *
++ * For the reason specified above test 16-byte fixed-width memcpy explicitly.
++ */
++
++static void *volatile stack_memcpy_dst;
++static const void *volatile stack_memcpy_src;
++static size_t volatile stack_memcpy_size;
++
++static uint64_t
++stack_memcpy16_xfunc(uint64_t argument)
++{
++	RTE_ASSERT(stack_memcpy_size == 16);
++	memcpy(stack_memcpy_dst, stack_memcpy_src, 16);
++	return argument + 1;
++}
++
++static uint64_t
++stack_rte_memcpy16_xfunc(uint64_t argument)
++{
++	RTE_ASSERT(stack_memcpy_size == 16);
++	rte_memcpy(stack_memcpy_dst, stack_memcpy_src, 16);
++	return argument + 1;
++}
++
++static uint64_t
++stack_memcpy_xfunc(uint64_t argument)
++{
++	memcpy(stack_memcpy_dst, stack_memcpy_src, stack_memcpy_size);
++	return argument + 1;
++}
++
++static uint64_t
++stack_rte_memcpy_xfunc(uint64_t argument)
++{
++	rte_memcpy(stack_memcpy_dst, stack_memcpy_src, stack_memcpy_size);
++	return argument + 1;
++}
++
++static int
++stack_memcpy_subtest(text_xfunc_t xfunc, size_t size, size_t src_offset, size_t dst_offset)
++{
++	stack_memcpy_size = size;
++
++	char *const src_buffer = malloc(size + src_offset);
++	char *const dst_buffer = malloc(size + dst_offset);
++
++	if (src_buffer == NULL || dst_buffer == NULL) {
++		free(dst_buffer);
++		free(src_buffer);
++		return TEST_FAILED;
++	}
++
++	memset(src_buffer + src_offset, 0x2a, size);
++	stack_memcpy_src = src_buffer + src_offset;
++
++	memset(dst_buffer + dst_offset, 0x55, size);
++	stack_memcpy_dst = dst_buffer + dst_offset;
++
++	const int initial_memcmp_rc = memcmp(stack_memcpy_dst, stack_memcpy_src, size);
++	const int test_rc = call_from_bpf_test(xfunc);
++	const int memcmp_rc = memcmp(stack_memcpy_dst, stack_memcpy_src, size);
++
++	free(dst_buffer);
++	free(src_buffer);
++
++	if (test_rc == TEST_SKIPPED)
++		return TEST_SKIPPED;
++
++	RTE_TEST_ASSERT_FAIL(initial_memcmp_rc, "expect memcmp() to fail initially");
++	RTE_TEST_ASSERT_SUCCESS(test_rc, "expect call_from_bpf_test(xfunc) to succeed");
++	RTE_TEST_ASSERT_SUCCESS(memcmp_rc, "expect memcmp() to succeed");
++
++	return TEST_SUCCESS;
++}
++
++static int
++test_stack_memcpy(void)
++{
++	for (int offsets = 0; offsets < 4; ++offsets) {
++		const bool src_offset = offsets & 1;
++		const bool dst_offset = offsets & 2;
++		int test_rc;
++
++		test_rc = stack_memcpy_subtest(stack_memcpy16_xfunc,
++			16, src_offset, dst_offset);
++		if (test_rc == TEST_SKIPPED)
++			return test_rc;
++		RTE_TEST_ASSERT_SUCCESS(test_rc,
++			"expect stack_memcpy_subtest(stack_memcpy16_xfunc, "
++				"16, %i, %i) to succeed",
++			src_offset, dst_offset);
++
++		test_rc = stack_memcpy_subtest(stack_rte_memcpy16_xfunc,
++			16, src_offset, dst_offset);
++		if (test_rc == TEST_SKIPPED)
++			return test_rc;
++		RTE_TEST_ASSERT_SUCCESS(test_rc,
++			"expect stack_memcpy_subtest(stack_rte_memcpy16_xfunc, "
++				"16, %i, %i) to succeed",
++			src_offset, dst_offset);
++
++		for (size_t size = 1; size <= 1024; size <<= 1) {
++			test_rc = stack_memcpy_subtest(stack_memcpy_xfunc,
++				size, src_offset, dst_offset);
++			if (test_rc == TEST_SKIPPED)
++				return test_rc;
++			RTE_TEST_ASSERT_SUCCESS(test_rc,
++				"expect stack_memcpy_subtest(stack_memcpy_xfunc, "
++					"%zu, %i, %i) to succeed",
++				size, src_offset, dst_offset);
++
++			test_rc = stack_memcpy_subtest(stack_rte_memcpy_xfunc,
++				size, src_offset, dst_offset);
++			if (test_rc == TEST_SKIPPED)
++				return test_rc;
++			RTE_TEST_ASSERT_SUCCESS(test_rc,
++				"expect stack_memcpy_subtest(stack_rte_memcpy_xfunc, "
++					"%zu, %i, %i) to succeed",
++				size, src_offset, dst_offset);
++		}
++	}
++	return TEST_SUCCESS;
++}
++
++REGISTER_FAST_TEST(bpf_stack_memcpy_autotest, NOHUGE_OK, ASAN_OK, test_stack_memcpy);
++
+ #ifdef TEST_BPF_ELF_LOAD
+ 
+ /*
+diff --git a/lib/bpf/bpf_jit_x86.c b/lib/bpf/bpf_jit_x86.c
+index 4d74e418f8..e05fd38b0e 100644
+--- a/lib/bpf/bpf_jit_x86.c
++++ b/lib/bpf/bpf_jit_x86.c
+@@ -93,6 +93,8 @@ enum {
+ /*
+  * callee saved registers list.
+  * keep RBP as the last one.
++ * RBP is marked as used every time we have external calls
++ * since we need it to save RSP before stack realignment.
+  */
+ static const uint32_t save_regs[] = {RBX, R12, R13, R14, R15, RBP};
+ 
+@@ -685,6 +687,8 @@ emit_call(struct bpf_jit_state *st, uintptr_t trg)
+ 	const uint8_t ops = 0xFF;
+ 	const uint8_t mods = 2;
+ 
++	/* Mark RBP as used to trigger stack realignment in prolog. */
++	USED(st->reguse, RBP);
+ 	emit_ld_imm64(st, RAX, trg, trg >> 32);
+ 	emit_bytes(st, &ops, sizeof(ops));
+ 	emit_modregrm(st, MOD_DIRECT, mods, RAX);
+@@ -1220,6 +1224,16 @@ emit_prolog(struct bpf_jit_state *st, int32_t stack_size)
+ 	if (INUSE(st->reguse, RBP) != 0) {
+ 		emit_mov_reg(st, EBPF_ALU64 | EBPF_MOV | BPF_X, RSP, RBP);
+ 		emit_alu_imm(st, EBPF_ALU64 | BPF_SUB | BPF_K, RSP, stack_size);
++
++		/*
++		 * Align stack pointer appropriately for function calls.
++		 * We do not have direct access to function stack alignment
++		 * value (like gcc internal macro INCOMING_STACK_BOUNDARY),
++		 * but hopefully `alignof(max_align_t)` will always be greater.
++		 * Original stack pointer will be restored from rbp.
++		 */
++		emit_alu_imm(st, EBPF_ALU64 | BPF_AND | BPF_K, RSP,
++			-(uint32_t)alignof(max_align_t));
+ 	}
+ }
+ 
 -- 
-David Marchand
-
+2.34.1
