@@ -2,71 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F619C44502
-	for <dpdk-dev@archiver.kernel.org>; Wed, 21 Jan 2026 09:02:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 711A4C44501
+	for <dpdk-dev@archiver.kernel.org>; Wed, 21 Jan 2026 09:14:32 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5C2F54026C;
-	Wed, 21 Jan 2026 10:02:34 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 9766C4026C;
+	Wed, 21 Jan 2026 10:14:31 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id E8CA6400D7
- for <dev@dpdk.org>; Wed, 21 Jan 2026 10:02:32 +0100 (CET)
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 5260E400D7
+ for <dev@dpdk.org>; Wed, 21 Jan 2026 10:14:29 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1768986152;
+ s=mimecast20190719; t=1768986868;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  in-reply-to:in-reply-to:references:references;
- bh=cjWf6SzFjNlkIhpc2lhjQM2yT2d/dT5M6ifVpxHspqU=;
- b=bUrTK72RzaLMHxNrZOo3r1zuNPGWxGDT9BHGrFyA8ayp2lQykR2Z319w2kSf+qt1bevMMO
- btRCqiVg44vwdGFq9zRE17e0/z+qank+d4pp/G7vM0w2rOPD9AECrK5ypWPYWvgCwKVk6W
- 4vUzosTqQwa4laOgGwohMIjg6e/L9+c=
-Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
- [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ bh=0OcdcvGx1w6EjmNlgBa89FH0CGjQz1ey86STiJ0a9m4=;
+ b=i2B/QuIY755EVw8zaGVWGluRQB/xYxQFX7L6a1BHgH8NJ3CjO64zSwwEY9d1iZ0LDVHVON
+ 35OTTcLExrn/x1tpkDx+oT1bvx848iQ7YTailIqZQWTYnQ6iw0W01yzY42MlRDeaSbWXkr
+ 6GU7L6Xi/PTp2LLQDLqS7QU+Iz3z0O0=
+Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
+ [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-688-qtraGPZ6N_y7_wWlbrgmww-1; Wed, 21 Jan 2026 04:02:30 -0500
-X-MC-Unique: qtraGPZ6N_y7_wWlbrgmww-1
-X-Mimecast-MFC-AGG-ID: qtraGPZ6N_y7_wWlbrgmww_1768986149
-Received: by mail-lj1-f198.google.com with SMTP id
- 38308e7fff4ca-383140d385aso37779531fa.1
- for <dev@dpdk.org>; Wed, 21 Jan 2026 01:02:30 -0800 (PST)
+ us-mta-413-gzaspe9HOVi_s9j5ho8Yjg-1; Wed, 21 Jan 2026 04:14:27 -0500
+X-MC-Unique: gzaspe9HOVi_s9j5ho8Yjg-1
+X-Mimecast-MFC-AGG-ID: gzaspe9HOVi_s9j5ho8Yjg_1768986866
+Received: by mail-lj1-f199.google.com with SMTP id
+ 38308e7fff4ca-385b736d4f7so1623501fa.0
+ for <dev@dpdk.org>; Wed, 21 Jan 2026 01:14:27 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768986149; x=1769590949;
+ d=1e100.net; s=20230601; t=1768986866; x=1769591666;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to;
- bh=cjWf6SzFjNlkIhpc2lhjQM2yT2d/dT5M6ifVpxHspqU=;
- b=fwFQBiyrMxlct4Rs1IOU+8T7wqWX9+IxZ1g7iVWidet0eJqXS2h4RGDpqczR070p2q
- NUKy1B48UZ/65cuUvCpXYmcoJg/8AZSdKqoJHy+RLdwqm+OIaczGNU3Dcb1OMKA9EiWT
- dN9BduNqvV1i3A0OZRERECJXbSnbdhfziACwgnMkZSohUHpzO4BkEPqTsB+cBA6Y7SIb
- A5tIWBx1zUgVys26V0XqL6+EsfRbswtJlCKTECKgH5f3u/W3pzGit5q7WR5QgR7nSVFy
- RazlCsST78UZr/YjsXdDSXKQR1PtWU7PKYhaj4Ce985b8L8DkgwIzd3wz0tE0S8nIjcZ
- +o5A==
-X-Gm-Message-State: AOJu0Yz6pbZ/lsggq2+yGcPm0h7Vd9i7q1loikx3sRVJajY+Gscx4HcI
- mWdMcFS57F2OpulIxxFQhTrM9XWRb7rluwbFOQiL+FW1imOqsBkdmDtqu6Jf+rrthGl7zzvJay2
- lK599xDfBnZoeRsy/f1fiTdmdjRgEhxs4ILa1rUy7T02T2heilKC8tTNoq/WIkYNjVemVGALD50
- Ga3qSQCmr5xF6st+A0jp8=
-X-Gm-Gg: AZuq6aLCLKyTJ7tJCwITWlagGxu0s6RVYvQ3ZwJj23jXJkoKY/6NOWJxeTGOy4t2gQr
- MfliJm1+m4HJWN1RzkyZL0PlMIsxNO89i3R35sHtiBrS6ejmJ5umSN/2ZVsdHwGXtoB46YjUPf/
- oa2QPIEsw7KznQfW0UX7sYaa69iqOyezKE/E1ojMEea8NqKG9/KQpYsKutbWu/BRd1M42H
-X-Received: by 2002:a05:651c:18c6:b0:383:161e:af32 with SMTP id
- 38308e7fff4ca-3838430e673mr55894651fa.35.1768986149064; 
- Wed, 21 Jan 2026 01:02:29 -0800 (PST)
-X-Received: by 2002:a05:651c:18c6:b0:383:161e:af32 with SMTP id
- 38308e7fff4ca-3838430e673mr55894571fa.35.1768986148537; Wed, 21 Jan 2026
- 01:02:28 -0800 (PST)
+ bh=0OcdcvGx1w6EjmNlgBa89FH0CGjQz1ey86STiJ0a9m4=;
+ b=gnDR/UXc/suat/LgYj64Cd31AXf3RD3+qSgLunOaVZyK59wPwOCLmXi0GTtr0Rb/1r
+ 8vFY+ZrrfAehRTQyWM9hkQfc2tKumuH0VVzmYuQbXCb7XJmAmc/J9P/d6FPqB61w8rj1
+ v1Oosr7NPAj8f/RMgfWF+G9duU5+nSOowBdRYWgpPEnjgkq4xfi7hKPW7UYJ9J6IGjgI
+ W3F0YqIui/5GE4J68WHQdHEeCbMpXnjazGBauES4ACaG1119AflkvFE26g9vKdGufT9t
+ 5IFqFI5pBoJyqCDXk78QuWgH0SKrb9QtrkN5FYqZo7j6XapcWbLULZkf8pIvFWl2Qufp
+ MasA==
+X-Gm-Message-State: AOJu0Yy0YZ2uuwyCAmwcpWfWme6FWQQpNB7vu1qvAH7OJ38Eaetkz4hY
+ lTlU0AQWoX8ZNwcHsSOnMihvs4ognySp4ov5nydskru7ci0Q8+4cayF0NlyIfr+FyQAOAgAaGTq
+ t5Oatnzy+pi5aIshcAzNihlgDCwid0W8YGr0Yd57872w/1uwv+ZwlFLnSSrbm8yGOqzCxfUsoq0
+ PWsrvi13aqlbRFKMOMfzw=
+X-Gm-Gg: AZuq6aK23xr/5cIzQpm2CCJvYsFHctheePQJDZdbTPnIryjnzX4Dl67oVmOkaO0BFPY
+ iratHpJn/nG34AHYiOzP7cwB9UbAPgnyflhAjXryay9qu6hpXymsF/MF3Rh1q0oG+npqRqLH5T+
+ KPG1PkvvGtZVo44lPz2MDXwh5j1qKVr2aFZV/6drbJ4QTOjkCz7mKErjCHfPUmLNLuIa4g
+X-Received: by 2002:a05:651c:220c:b0:383:24fe:4ea0 with SMTP id
+ 38308e7fff4ca-385a5402275mr18311111fa.2.1768986865788; 
+ Wed, 21 Jan 2026 01:14:25 -0800 (PST)
+X-Received: by 2002:a05:651c:220c:b0:383:24fe:4ea0 with SMTP id
+ 38308e7fff4ca-385a5402275mr18311011fa.2.1768986865359; Wed, 21 Jan 2026
+ 01:14:25 -0800 (PST)
 MIME-Version: 1.0
-References: <20260120231638.194471-1-sismis@dyna-nic.com>
- <20260120231638.194471-2-sismis@dyna-nic.com>
-In-Reply-To: <20260120231638.194471-2-sismis@dyna-nic.com>
+References: <20260119104147.219027-1-bruce.richardson@intel.com>
+ <20260119115607.225929-1-bruce.richardson@intel.com>
+In-Reply-To: <20260119115607.225929-1-bruce.richardson@intel.com>
 From: David Marchand <david.marchand@redhat.com>
-Date: Wed, 21 Jan 2026 10:02:17 +0100
-X-Gm-Features: AZwV_QiaPVrDsna2L-c4AR6VEle0x3888wR4r4mShk1EOirgKInA4lkNWSEtH6w
-Message-ID: <CAJFAV8wPT5fTZaOVhMXLHHa0J66kBUaPJX6a-8+-d-hdvNcYiw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] dts: fix invalid f-string syntax in testpmd API
-To: Lukas Sismis <sismis@dyna-nic.com>, Luca Vizzarro <luca.vizzarro@arm.com>
-Cc: dev@dpdk.org, dmarx@iol.unh.edu, probb@iol.unh.edu, thomas@monjalon.net
+Date: Wed, 21 Jan 2026 10:14:11 +0100
+X-Gm-Features: AZwV_QglDxB2BNXps5E4lPSiQml8LKzqrovb8N1lqu4BwPGAf570ugBfK6E3nzU
+Message-ID: <CAJFAV8z06POx--jY3AvxGYPmfZZaDFJgFcNuvJ4=s_tbDBKEhg@mail.gmail.com>
+Subject: Re: [PATCH v2] ci: improve logging of unit tests runs
+To: Bruce Richardson <bruce.richardson@intel.com>
+Cc: dev@dpdk.org, Aaron Conole <aconole@redhat.com>
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: D5uyLqhrzlXQPLYxt158uv3ufRhKUdk8kz-YdhRcZl4_1768986149
+X-Mimecast-MFC-PROC-ID: Z2vGq8nf9hDBuVl2k6nefAnissM7vq2dRKy3pvHJERA_1768986866
 X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
@@ -82,33 +82,26 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hello Lukas and Luca,
-
-On Wed, 21 Jan 2026 at 00:17, Lukas Sismis <sismis@dyna-nic.com> wrote:
+On Mon, 19 Jan 2026 at 12:56, Bruce Richardson
+<bruce.richardson@intel.com> wrote:
 >
-> Fix f-string syntax errors where double quotes were nested inside
-> f-strings that also use double quotes as delimiters.
-
-This is backport material, since it affects 25.11.
-
-Fixes: 9db52910a8aa ("dts: add mbuf fast free in testpmd shell")
-Fixes: 554192dbe9e9 ("dts: add start Tx first method to testpmd
-shell")
-Fixes: cfd851f264d8 ("dts: add QinQ strip and VLAN extend to testpmd
-shell")
-Cc: stable@dpdk.org
-
+> To help track down issues reported by CI test runs, add some additional
+> meson flags to the run of the fast-tests:
 >
-> Signed-off-by: Lukas Sismis <sismis@dyna-nic.com>
+> --no-stdsplit:
+>   keep the stdout and stderr output interleaved, rather
+>   than separated in the logs, to make following what is happening during
+>   a test run easier.
+> --print-errorlogs:
+>   when an error with a unit test does occur, output to the terminal the
+>   last N lines of output. This allows us to see inline what may have
+>   failed without always needing to check log files.
+>
+> Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 
-Tested-by: David Marchand <david.marchand@redhat.com>
+Thanks, logs are easier to read like this.
 
-Thanks, this fixes the warnings I noticed yesterday
-(https://inbox.dpdk.org/dev/CAJvnSUDdXrq+=KzXdMU_2oyPQwtHUbpbR6KhV3GOOThcd1G8DA@mail.gmail.com/T/#m28370a7a7dbced0a166da1b364cec0fa8385c24b).
-
-Unless someone has comments, I can merge this patch directly in main
-(adjusting .mailmap at the same time).
-Luca, wdyt?
+Applied.
 
 
 -- 
