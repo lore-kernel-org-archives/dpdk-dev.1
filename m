@@ -2,84 +2,52 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D265C44536
-	for <dpdk-dev@archiver.kernel.org>; Wed, 21 Jan 2026 14:57:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 884DCD46948
+	for <dpdk-dev@archiver.kernel.org>; Wed, 21 Jan 2026 15:17:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7A33D427E1;
-	Wed, 21 Jan 2026 15:57:28 +0100 (CET)
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com
- [209.85.128.52]) by mails.dpdk.org (Postfix) with ESMTP id D78C0400EF
- for <dev@dpdk.org>; Wed, 21 Jan 2026 15:57:27 +0100 (CET)
-Received: by mail-wm1-f52.google.com with SMTP id
- 5b1f17b1804b1-47ee0291921so48105335e9.3
- for <dev@dpdk.org>; Wed, 21 Jan 2026 06:57:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769007447;
- x=1769612247; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=InxBiMUJ1/kIeEPP/+8uXUuoE1hCAwrrRmqXBamGXrg=;
- b=jwfTEjciA1zE15isEjQwidvym9DBE64NkQ+50ENzWw3XemZtiCZosLbNwXWOoNhE7n
- m6dfDHOEm6v4EBEgiotO6QvQ68/YqAZ5v0R8jKzyTrTS17IhRMT147H3q28dfA9mgEV8
- B0DG+N6xfyr37iRY3PaJ4sXOdHvbd1xI+T65XKYJ12XrEkKrdZnq48wXA7MnJ2dWwBqv
- cR35arBf841UI+PEopapL+dfNIZIGNHdFj2C6dCZtvWc0sqAYtH+sWhOdMJBPCC6CY8r
- ti3Y4f54ZDLk1dEyrnW/P7xmsdWoqqfkdSw4KA+kOVt/y9JuFpshMVmVw+dRPBpNJ6mp
- VYjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1769007447; x=1769612247;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=InxBiMUJ1/kIeEPP/+8uXUuoE1hCAwrrRmqXBamGXrg=;
- b=UgLijHdCkUelTxTGvRdT7mAqel9ELfPCWz1idDlsk/ygf7dZXnmQGZ0YwArIpGfU36
- BrlR2wRrYMojcPgUhw55b3pknvG+KGJg4/l83WbFVo8OJnOQsNkrPvUsbuvtrEU5KeV5
- ZlJTZcdQkTu9yORNs9HAeIUewo9sJziFQWUFG11Kqdz5iml0UaXcTh1ZrWNKhefZimJd
- Pg/QiYGnfh3i/E2iyex2TmB1DC8VyFxsASRQ+toNSGDv4zkWwn+dCJxtLDkPmjnYWkg0
- uEff1IHBWNHn2A+LKMG6bOBjOWNRhuWgTaI79Ljwr35MBj4Qo4euMYExUt/I4Q2gKGm2
- upxQ==
-X-Forwarded-Encrypted: i=1;
- AJvYcCXW7XumZRP/WJEI/FB3g9g2dS8WcGk9K2l9FJU6Vx74umyLZVz64DNVupnLhVBIimjRpF8=@dpdk.org
-X-Gm-Message-State: AOJu0YxRrmDTm6YbRGCWf8py9+85QiDC4LIkYkcy5HD7HedI6X8VKHDH
- iRCCHen0lqoWcmbGDeRkpVon1RPW9I8NdgfXZvFPuP5Q7MIjcFPeLJgEEDMbrjYDKxo=
-X-Gm-Gg: AZuq6aJBD/R0kj4jsgdjpChHbqbvFbqv7lWA4vJB/jYwV3fNLBKqPKwb+IuBFv4fRaR
- 2LiHKVtThLtDxS3ORmA27BPUC5yD15pwur47evhHAgcnrCTQ9uFk0j4ru6A7qU9rePs1B0c9/25
- fUCo1htiO8hKUYsY9tz7MHSUfBt0BshPpASSzupN/nw1dgLXYujyTWI//u1VtQE3F/tOrInVrXG
- 81YlyluuPLoiCWsvDy6AWIr5w/zbQw1i1iHgbKg0xheQ7sZeyQL0NO/6W+mNpxZ87ihcpP+f/qP
- aPLaTYRKIQyQkZxLjn2ANKydfoIepXvV49PIPcRZ37TpFaUQUNbiT3tJqVCdfSC8EL1hRhagzAj
- IxlCYH2QqauhO7pTMUiuJ8h5oraTTt3FxBh/eeZ/DafNCSDlX1F86jW5zoF604N/FHLocZ4artQ
- dS0vMV4BBg/MeOlgBdfLBWB5/OyTQEBTkBl0Bh0e9YOslzGX3GpCq6
-X-Received: by 2002:a05:600c:138c:b0:47e:e949:37e8 with SMTP id
- 5b1f17b1804b1-48039d19076mr124067525e9.30.1769007446395; 
- Wed, 21 Jan 2026 06:57:26 -0800 (PST)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-4801e8c05c3sm308873495e9.11.2026.01.21.06.57.24
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 21 Jan 2026 06:57:26 -0800 (PST)
-Date: Wed, 21 Jan 2026 06:57:20 -0800
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-Cc: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>,
- "dev@dpdk.org" <dev@dpdk.org>, Honnappa Nagarahalli
- <honnappa.nagarahalli@arm.com>
-Subject: Re: [PATCH v3 1/6] test/soring: fix buffer overflow warnings with LTO
-Message-ID: <20260121065720.0a497b2d@phoenix.local>
-In-Reply-To: <bbda56963fa74b86be402911610daf75@huawei.com>
-References: <20251023194237.197681-1-stephen@networkplumber.org>
- <20260116064646.224254-1-stephen@networkplumber.org>
- <20260116064646.224254-2-stephen@networkplumber.org>
- <98CBD80474FA8B44BF855DF32C47DC35F65669@smartserver.smartshare.dk>
- <20260119144821.70e2ff35@phoenix.local>
- <98CBD80474FA8B44BF855DF32C47DC35F65674@smartserver.smartshare.dk>
- <20260120063413.72e0d725@phoenix.local>
- <98CBD80474FA8B44BF855DF32C47DC35F6567F@smartserver.smartshare.dk>
- <d9a4cead8c8e473e907f604b98370013@huawei.com>
- <20260120112728.146e63b4@phoenix.local>
- <bbda56963fa74b86be402911610daf75@huawei.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 96E2E42D3F;
+	Wed, 21 Jan 2026 16:17:11 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+ by mails.dpdk.org (Postfix) with ESMTP id 4F1BD400EF
+ for <dev@dpdk.org>; Wed, 21 Jan 2026 16:17:09 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1769008629; x=1800544629;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=osgiZZ6k5jH2MbvJjemloTRKwgB+ENjOE7yQu4Wo8C4=;
+ b=ccmm/0md8SIWQAnWoRCVG1McFNeuICKY4UsFHl/FoN4nvCTq2kE40r8P
+ UYbSt/4D7/vzxWRer0B9wRXkHaYtnN5Pk/Zds5qmK0FA8yNMmxvrCAS4G
+ AHWodjGRrdh0naU+0K4aWUsipd7R1Nu9PD0mwWvoOpiyfV2PnpA3UpERE
+ XP7bWDghS046lL2pscNIWVMo9AnrYguZTqq/+P1x6f9u1LPbvrtXkrifo
+ acQn7qGMn/EJxwpi1tIDyXWFp7fJvyZz6q3GegfxyeSiE8Wa8HePM2mV1
+ 6+1Nq0qUtMsDI2EayE+WE3OtpjtLHUWB8YC6NbwFcIuBLswHubMpsjs2p A==;
+X-CSE-ConnectionGUID: hlOldmKwTpGrQg91H6AGGA==
+X-CSE-MsgGUID: oLFBYCpkR4SlW0i1zPOoJQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11678"; a="80956362"
+X-IronPort-AV: E=Sophos;i="6.21,242,1763452800"; d="scan'208";a="80956362"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+ by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 21 Jan 2026 07:17:08 -0800
+X-CSE-ConnectionGUID: g2NzdG0WSx2q4BG/t5TUYA==
+X-CSE-MsgGUID: 5vGk/uJcQTyRnhE63yMbRg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,242,1763452800"; d="scan'208";a="210974978"
+Received: from silpixa00401749.ir.intel.com ([10.20.224.233])
+ by orviesa004.jf.intel.com with ESMTP; 21 Jan 2026 07:17:06 -0800
+From: Radu Nicolau <radu.nicolau@intel.com>
+To: dev@dpdk.org
+Cc: nkaithakadan@marvell.com, kai.ji@intel.com, anoobj@marvell.com,
+ stephen@networkplumber.org, Radu Nicolau <radu.nicolau@intel.com>,
+ Akhil Goyal <gakhil@marvell.com>, Fan Zhang <fanzhang.oss@gmail.com>
+Subject: [PATCH v4 1/2] cryptodev: add support for 256-NxA4/5/6 algorithms
+Date: Wed, 21 Jan 2026 15:15:39 +0000
+Message-ID: <20260121151703.2501018-1-radu.nicolau@intel.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20260107105649.1708347-1-radu.nicolau@intel.com>
+References: <20260107105649.1708347-1-radu.nicolau@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -93,19 +61,200 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 21 Jan 2026 12:56:25 +0000
-Konstantin Ananyev <konstantin.ananyev@huawei.com> wrote:
+Add support for
 
-> > A much simpler and clear solution is to just get rid of __rte_always_inline
-> > and use inline instead. The compiler still inlines a lot but it can make its
-> > own decision.
-> > The attribute always_inline is not always faster, in fact in real world
-> > applications it can make things slower because real applications get i-cache
-> > misses and lots of inline expansion makes it worse.  
-> 
-> Sounds like a clean and safe fix.
-> I also don't expect any perf degradations with such approach, 
-> but will run some perf tests with it to confirm.
-> Thanks
+NEA4, NIA4, NCA4: Snow 5G confidentiality, integrity and AEAD modes
+NEA5, NIA5, NCA5: AES 256 confidentiality, integrity and AEAD modes
+NEA6, NIA6, NCA6: ZUC 256 confidentiality, integrity and AEAD modes
 
-Only enqueue/dequeue functions needed the change.
+Signed-off-by: Radu Nicolau <radu.nicolau@intel.com>
+---
+v4: fix wrong algorithm names in comments
+
+
+ doc/guides/cryptodevs/features/default.ini |  9 ++++
+ lib/cryptodev/rte_crypto_sym.h             | 52 ++++++++++++++++++----
+ lib/cryptodev/rte_cryptodev.c              | 13 +++++-
+ 3 files changed, 64 insertions(+), 10 deletions(-)
+
+diff --git a/doc/guides/cryptodevs/features/default.ini b/doc/guides/cryptodevs/features/default.ini
+index 64198f013a..d8026c3750 100644
+--- a/doc/guides/cryptodevs/features/default.ini
++++ b/doc/guides/cryptodevs/features/default.ini
+@@ -68,6 +68,9 @@ SM4 CTR        =
+ SM4 CFB        =
+ SM4 OFB        =
+ SM4 XTS        =
++SNOW5G NEA4    =
++AES NEA5       =
++ZUC-256 NEA6   =
+ 
+ ;
+ ; Supported authentication algorithms of a default crypto driver.
+@@ -106,6 +109,9 @@ SM3             =
+ SM3 HMAC        =
+ SHAKE_128       =
+ SHAKE_256       =
++SNOW5G NIA4     =
++AES NIA5        =
++ZUC-256 NIA6    =
+ 
+ ;
+ ; Supported AEAD algorithms of a default crypto driver.
+@@ -119,6 +125,9 @@ AES CCM (192)     =
+ AES CCM (256)     =
+ CHACHA20-POLY1305 =
+ SM4 GCM           =
++SNOW5G NCA4       =
++AES NCA5          =
++ZUC-256 NCA6      =
+ 
+ ;
+ ; Supported Asymmetric algorithms of a default crypto driver.
+diff --git a/lib/cryptodev/rte_crypto_sym.h b/lib/cryptodev/rte_crypto_sym.h
+index 6268bab327..630fd153bd 100644
+--- a/lib/cryptodev/rte_crypto_sym.h
++++ b/lib/cryptodev/rte_crypto_sym.h
+@@ -178,8 +178,15 @@ enum rte_crypto_cipher_algorithm {
+ 	/**< ShangMi 4 (SM4) algorithm in OFB mode */
+ 	RTE_CRYPTO_CIPHER_SM4_CFB,
+ 	/**< ShangMi 4 (SM4) algorithm in CFB mode */
+-	RTE_CRYPTO_CIPHER_SM4_XTS
++	RTE_CRYPTO_CIPHER_SM4_XTS,
+ 	/**< ShangMi 4 (SM4) algorithm in XTS mode */
++
++	RTE_CRYPTO_CIPHER_SNOW5G_NEA4,
++	/**< Snow 5G algorithm in NEA4 mode */
++	RTE_CRYPTO_CIPHER_AES_NEA5,
++	/**< AES algorithm in NEA5 mode */
++	RTE_CRYPTO_CIPHER_ZUC_NEA6,
++	/**< ZUC-256 algorithm in NEA6 mode */
+ };
+ 
+ /** Symmetric Cipher Direction */
+@@ -384,6 +391,14 @@ enum rte_crypto_auth_algorithm {
+ 	/**< 256 bit SHAKE algorithm. */
+ 	RTE_CRYPTO_AUTH_SM3_HMAC,
+ 	/** < HMAC using ShangMi 3 (SM3) algorithm */
++
++	RTE_CRYPTO_AUTH_SNOW5G_NIA4,
++	/**< Snow 5G algorithm in NIA4 mode */
++	RTE_CRYPTO_AUTH_AES_NIA5,
++	/**< AES algorithm in NIA5 mode */
++	RTE_CRYPTO_AUTH_ZUC_NIA6,
++	/**< ZUC-256 algorithm in NIA6 mode */
++
+ };
+ 
+ /** Symmetric Authentication / Hash Operations */
+@@ -486,6 +501,13 @@ enum rte_crypto_aead_algorithm {
+ 	/**< Chacha20 cipher with poly1305 authenticator */
+ 	RTE_CRYPTO_AEAD_SM4_GCM,
+ 	/**< SM4 cipher in GCM mode */
++
++	RTE_CRYPTO_AEAD_SNOW5G_NCA4,
++	/**< Snow 5G algorithm in NCA4 mode */
++	RTE_CRYPTO_AEAD_AES_NCA5,
++	/**< AES algorithm in NCA5 mode */
++	RTE_CRYPTO_AEAD_ZUC_NCA6,
++	/**< ZUC-256 algorithm in NCA6 mode */
+ };
+ 
+ /** Symmetric AEAD Operations */
+@@ -714,8 +736,11 @@ struct rte_crypto_sym_op {
+ 					  *
+ 					  * @note
+ 					  * For SNOW 3G @ RTE_CRYPTO_CIPHER_SNOW3G_UEA2,
+-					  * KASUMI @ RTE_CRYPTO_CIPHER_KASUMI_F8
+-					  * and ZUC @ RTE_CRYPTO_CIPHER_ZUC_EEA3,
++					  * KASUMI @ RTE_CRYPTO_CIPHER_KASUMI_F8,
++					  * ZUC @ RTE_CRYPTO_CIPHER_ZUC_EEA3,
++					  * SNOW 5G @ RTE_CRYPTO_CIPHER_SNOW5G_NEA4,
++					  * AES @ RTE_CRYPTO_CIPHER_AES_NEA5
++					  * and ZUC @ RTE_CRYPTO_CIPHER_ZUC_NEA6
+ 					  * this field should be in bits. For
+ 					  * digest-encrypted cases this must be
+ 					  * an 8-bit multiple.
+@@ -732,8 +757,11 @@ struct rte_crypto_sym_op {
+ 					  *
+ 					  * @note
+ 					  * For SNOW 3G @ RTE_CRYPTO_AUTH_SNOW3G_UEA2,
+-					  * KASUMI @ RTE_CRYPTO_CIPHER_KASUMI_F8
+-					  * and ZUC @ RTE_CRYPTO_CIPHER_ZUC_EEA3,
++					  * KASUMI @ RTE_CRYPTO_CIPHER_KASUMI_F8,
++					  * ZUC @ RTE_CRYPTO_CIPHER_ZUC_EEA3,
++					  * SNOW 5G @ RTE_CRYPTO_CIPHER_SNOW5G_NEA4,
++					  * AES @ RTE_CRYPTO_CIPHER_AES_NEA5
++					  * and ZUC @ RTE_CRYPTO_CIPHER_ZUC_NEA6
+ 					  * this field should be in bits. For
+ 					  * digest-encrypted cases this must be
+ 					  * an 8-bit multiple.
+@@ -750,8 +778,11 @@ struct rte_crypto_sym_op {
+ 					  *
+ 					  * @note
+ 					  * For SNOW 3G @ RTE_CRYPTO_AUTH_SNOW3G_UIA2,
+-					  * KASUMI @ RTE_CRYPTO_AUTH_KASUMI_F9
+-					  * and ZUC @ RTE_CRYPTO_AUTH_ZUC_EIA3,
++					  * KASUMI @ RTE_CRYPTO_AUTH_KASUMI_F9,
++					  * ZUC @ RTE_CRYPTO_AUTH_ZUC_EIA3,
++					  * SNOW 5G @ RTE_CRYPTO_AUTH_SNOW5G_NIA4,
++					  * AES @ RTE_CRYPTO_AUTH_AES_NIA5
++					  * and ZUC @ RTE_CRYPTO_AUTH_ZUC_NIA6
+ 					  * this field should be in bits. For
+ 					  * digest-encrypted cases this must be
+ 					  * an 8-bit multiple.
+@@ -775,8 +806,11 @@ struct rte_crypto_sym_op {
+ 					  *
+ 					  * @note
+ 					  * For SNOW 3G @ RTE_CRYPTO_AUTH_SNOW3G_UIA2,
+-					  * KASUMI @ RTE_CRYPTO_AUTH_KASUMI_F9
+-					  * and ZUC @ RTE_CRYPTO_AUTH_ZUC_EIA3,
++					  * KASUMI @ RTE_CRYPTO_AUTH_KASUMI_F9,
++					  * ZUC @ RTE_CRYPTO_AUTH_ZUC_EIA3,
++					  * SNOW 5G @ RTE_CRYPTO_AUTH_SNOW5G_NIA4,
++					  * AES @ RTE_CRYPTO_AUTH_AES_NIA5
++					  * and ZUC @ RTE_CRYPTO_AUTH_ZUC_NIA6
+ 					  * this field should be in bits. For
+ 					  * digest-encrypted cases this must be
+ 					  * an 8-bit multiple.
+diff --git a/lib/cryptodev/rte_cryptodev.c b/lib/cryptodev/rte_cryptodev.c
+index f4c6f692f0..7bddb154c2 100644
+--- a/lib/cryptodev/rte_cryptodev.c
++++ b/lib/cryptodev/rte_cryptodev.c
+@@ -102,7 +102,10 @@ crypto_cipher_algorithm_strings[] = {
+ 	[RTE_CRYPTO_CIPHER_SM4_CTR]	= "sm4-ctr",
+ 	[RTE_CRYPTO_CIPHER_SM4_CFB]	= "sm4-cfb",
+ 	[RTE_CRYPTO_CIPHER_SM4_OFB]	= "sm4-ofb",
+-	[RTE_CRYPTO_CIPHER_SM4_XTS]	= "sm4-xts"
++	[RTE_CRYPTO_CIPHER_SM4_XTS]	= "sm4-xts",
++	[RTE_CRYPTO_CIPHER_SNOW5G_NEA4]	= "snow5g-nea4",
++	[RTE_CRYPTO_CIPHER_AES_NEA5]	= "aes-nea5",
++	[RTE_CRYPTO_CIPHER_ZUC_NEA6]	= "zuc-nea6",
+ };
+ 
+ /**
+@@ -162,6 +165,10 @@ crypto_auth_algorithm_strings[] = {
+ 
+ 	[RTE_CRYPTO_AUTH_SHAKE_128]	 = "shake-128",
+ 	[RTE_CRYPTO_AUTH_SHAKE_256]	 = "shake-256",
++
++	[RTE_CRYPTO_AUTH_SNOW5G_NIA4] = "snow5g-nia4",
++	[RTE_CRYPTO_AUTH_AES_NIA5]	 = "aes-nia5",
++	[RTE_CRYPTO_AUTH_ZUC_NIA6]	 = "zuc-nia6",
+ };
+ 
+ /**
+@@ -175,6 +182,10 @@ crypto_aead_algorithm_strings[] = {
+ 	[RTE_CRYPTO_AEAD_AES_GCM]	= "aes-gcm",
+ 	[RTE_CRYPTO_AEAD_CHACHA20_POLY1305] = "chacha20-poly1305",
+ 	[RTE_CRYPTO_AEAD_SM4_GCM]   = "sm4-gcm",
++
++	[RTE_CRYPTO_AEAD_SNOW5G_NCA4] = "snow5g-nca4",
++	[RTE_CRYPTO_AEAD_AES_NCA5]    = "aes-nca5",
++	[RTE_CRYPTO_AEAD_ZUC_NCA6]    = "zuc-nca6",
+ };
+ 
+ 
+-- 
+2.50.1
+
