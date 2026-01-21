@@ -2,41 +2,39 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB5EEC44508
-	for <dpdk-dev@archiver.kernel.org>; Wed, 21 Jan 2026 17:02:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD160C44508
+	for <dpdk-dev@archiver.kernel.org>; Wed, 21 Jan 2026 17:03:40 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E817742E0C;
-	Wed, 21 Jan 2026 18:02:05 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 0BC7242DA3;
+	Wed, 21 Jan 2026 18:03:40 +0100 (CET)
 Received: from office2.cesnet.cz (office2.cesnet.cz [78.128.248.237])
- by mails.dpdk.org (Postfix) with ESMTP id A5E9940261;
- Wed, 21 Jan 2026 18:01:58 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 51508427C5
+ for <dev@dpdk.org>; Wed, 21 Jan 2026 18:03:38 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cesnet.cz;
- s=office2-2020; t=1769014918;
- bh=mVt7TgdcigCRP30DlP5naU5h/wOBpV83CCuw6ymeDeI=;
+ s=office2-2020; t=1769015018;
+ bh=fctKRWsVA4604eoNtbGU11fgLf4HZBgrxRAEt+lLyL4=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References;
- b=AKXO9fV8j6SC38CApQb7GC/beS5Fb4XTnBR5bYKQHVnrJN6FdIy9phZCbid4EI40H
- zpFb2+IG96Tgy28h4KePaMQ6aTakCcs9eRtvyekatzdTVr4eVLBD9bNyIaNY8ZodoM
- 0g0Ek/zYQPnhpi2reCt/VUWsGof4KaUkqtXNHVQLJX3ixOp4vmn5O9zLwdWY5DA3AW
- qP+H0qa/PQAuEzPtqTkOs1toW7dd/eA3zIfrmYQYowChyBZ0PrwLfShbE9pSmLh5mO
- KNMAp6yzwrcs1VnI2o+aAHWqu8VS1r8puU76LyUmJBAcjdVKwdC0LLAnOgMRunvgtK
- P7ozRgHiAj8YQ==
+ b=hXvZE+KT51CYQqTL5gFtO9w1OxfTEMTqjmwVFn0GVtF2yhev/7HOLpp971Vrv7i1e
+ C9KoTddOccIijQKAv0bFVOZaDcL9xwWZnFznwossWT/HH8UWNjonaSHgpTFz6NvPN6
+ H2NCqZ6AHN1Au8HXGI6Fm2PwXpnFpBXw505rbmZTHNknzpLZOUOlpsbZSKXjA7ML6i
+ 478Ei3s353o6B06dpn9xwQgPC4OnaLL6Qzaekm5h51WyXsglFuNwycMVJzy2l+anpd
+ r9eeihhJqFdi88Gfof33ZIUI9uMhkpSzrvav6FtwC0aClCZMSZL9RntoEYb4omSEtj
+ HcfQIev/gN/Hg==
 Received: from emil.cesnet.cz (gtx107.cesnet.cz [IPv6:2001:718:812:27::107])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by office2.cesnet.cz (Postfix) with ESMTPSA id 846C3118007E;
- Wed, 21 Jan 2026 18:01:58 +0100 (CET)
+ by office2.cesnet.cz (Postfix) with ESMTPSA id 1BA35118007E;
+ Wed, 21 Jan 2026 18:03:38 +0100 (CET)
 From: spinler@cesnet.cz
 To: dev@dpdk.org
-Cc: Martin Spinler <spinler@cesnet.cz>,
-	stable@dpdk.org
-Subject: [PATCH v4 6/6] net/nfb: stop only started queues in fail path
-Date: Wed, 21 Jan 2026 18:01:20 +0100
-Message-ID: <20260121170120.268553-7-spinler@cesnet.cz>
+Cc: Martin Spinler <spinler@cesnet.cz>
+Subject: [PATCH v3 0/8] net/nfb: rework to real multiport
+Date: Wed, 21 Jan 2026 18:03:25 +0100
+Message-ID: <20260121170333.272985-1-spinler@cesnet.cz>
 X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20260121170120.268553-1-spinler@cesnet.cz>
-References: <20260115140134.235877-1-spinler@cesnet.cz>
- <20260121170120.268553-1-spinler@cesnet.cz>
+In-Reply-To: <20260115151656.393106-1-spinler@cesnet.cz>
+References: <20260115151656.393106-1-spinler@cesnet.cz>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -54,38 +52,50 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Martin Spinler <spinler@cesnet.cz>
 
-The driver should stop only running queues in case of error
-inside eth_dev_start.
+This series implements real multiport for better user experience.
 
-Fixes: 6435f9a0ac22 ("net/nfb: add new netcope driver")
-Cc: stable@dpdk.org
+The existing driver creates one ethdev/port for one PCI device.
+As the CESNET-NDK based cards aren't capable to represent each
+Ethernet port by own PCI device, new driver implementation
+processes real port configuration from firmware/card and switches
+from rte_eth_dev_pci_generic_probe to multiple rte_eth_dev_create calls.
 
-Signed-off-by: Martin Spinler <spinler@cesnet.cz>
 ---
- drivers/net/nfb/nfb_ethdev.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+v3:
+* Polished int type usage of QueueID for libnfb API.
+* Used rte_calloc instead of rte_malloc.
+* Moved queue_map_*x from pmd_internals to pmd_priv.
+* Removed RTE_ASSERT for error checking.
+* Used RTE_BIT for mask and interger limit constants.
+* Added check of return value of nfb_nc_*xmac_init.
+* Added release notes entry.
 
-diff --git a/drivers/net/nfb/nfb_ethdev.c b/drivers/net/nfb/nfb_ethdev.c
-index abc5c12b1e..947ee9e21d 100644
---- a/drivers/net/nfb/nfb_ethdev.c
-+++ b/drivers/net/nfb/nfb_ethdev.c
-@@ -139,11 +139,12 @@ nfb_eth_dev_start(struct rte_eth_dev *dev)
- 	return 0;
- 
- err_tx:
--	for (i = 0; i < nb_tx; i++)
--		nfb_eth_tx_queue_stop(dev, i);
-+	for (; i > 0; i--)
-+		nfb_eth_tx_queue_stop(dev, i - 1);
-+	i = nb_rx;
- err_rx:
--	for (i = 0; i < nb_rx; i++)
--		nfb_eth_rx_queue_stop(dev, i);
-+	for (; i > 0; i--)
-+		nfb_eth_rx_queue_stop(dev, i - 1);
- 	return ret;
- }
- 
--- 
+Depends-on: series-37064 ("net/nfb: code cleanup")
+
+Martin Spinler (8):
+  net/nfb: prepare for indirect queue mapping scheme
+  net/nfb: create ethdev for every eth port/channel
+  net/nfb: add vdev as alternative device probe method
+  net/nfb: add device argument "port" to limit used ports
+  net/nfb: init only MACs associated with device
+  net/nfb: add compatible cards to driver PCI ID table
+  net/nfb: report firmware version
+  doc/nfb: cleanup and update guide
+
+ doc/guides/nics/features/nfb.ini       |   4 +
+ doc/guides/nics/nfb.rst                | 187 +++++------
+ doc/guides/rel_notes/release_26_03.rst |   9 +
+ drivers/net/nfb/meson.build            |   1 +
+ drivers/net/nfb/nfb.h                  |  46 ++-
+ drivers/net/nfb/nfb_ethdev.c           | 415 +++++++++++++++++++------
+ drivers/net/nfb/nfb_rx.c               |  30 +-
+ drivers/net/nfb/nfb_rx.h               |   9 +-
+ drivers/net/nfb/nfb_tx.c               |  27 +-
+ drivers/net/nfb/nfb_tx.h               |   7 +-
+ drivers/net/nfb/nfb_vdev.c             | 101 ++++++
+ 11 files changed, 590 insertions(+), 246 deletions(-)
+ create mode 100644 drivers/net/nfb/nfb_vdev.c
+
+--
 2.52.0
 
