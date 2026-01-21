@@ -2,72 +2,79 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F22BCC44501
-	for <dpdk-dev@archiver.kernel.org>; Wed, 21 Jan 2026 10:21:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D098C44503
+	for <dpdk-dev@archiver.kernel.org>; Wed, 21 Jan 2026 10:31:20 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 58147427BD;
-	Wed, 21 Jan 2026 11:21:31 +0100 (CET)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 5249F427B5
- for <dev@dpdk.org>; Wed, 21 Jan 2026 11:21:29 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1768990888;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=3K7MArpmlKZvn9y7lh/KRJlqL8K7ix0AKB8rFQVU86Y=;
- b=Tzo7Z/1WxJBRJ/+/aEcB5fYw/sndR5fDCleOwAqus9rvPCkXmEF1bSCoGctZ4AvDmw8msy
- BsEuyGVvJCAsU5/JXfi9CGS+9y+582YaBqT/vK6Dr2bcV6vurhdeLXR8UVFGhEwmWmMBgX
- JSyM18Dh2zZ/gP0EwftHxBwfwUPS9RI=
-Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
- [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-689-qc7bl_sFN5-cnPt6uiLSiw-1; Wed, 21 Jan 2026 05:21:26 -0500
-X-MC-Unique: qc7bl_sFN5-cnPt6uiLSiw-1
-X-Mimecast-MFC-AGG-ID: qc7bl_sFN5-cnPt6uiLSiw_1768990885
-Received: by mail-lf1-f72.google.com with SMTP id
- 2adb3069b0e04-59b7b7a46a5so4434369e87.3
- for <dev@dpdk.org>; Wed, 21 Jan 2026 02:21:26 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768990885; x=1769595685;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=3K7MArpmlKZvn9y7lh/KRJlqL8K7ix0AKB8rFQVU86Y=;
- b=T017W0YON3NNbYl3Afqyuc2arCBFsn9xskQpvSJSKfIDcN1XFCaen3TuZi0nDN1wcF
- FlnfuDg0W4DWSIUantWWRG8fqxU0hIr4yN4cPoD7lJ/+moR2VCOvxo1gpSI31NftG+G+
- t1KGiYLtFKbzxPOCHjXlJMddvbEwCNiTU3/W/B5LD/VHCtW7+zGJaAEcDE687dIlxY9a
- Lhec5rLJr3iuDgeVJqAAyeqtjZgnNBNg7IUNwVmjeUHNOvToTYoDYh9HyID8ECrpMf+s
- GTMAuctj0K54GSWxrY8hOTzqUOLg6dXU499BgMzC49GdVvgLALgLkFMxmByjb6f7EBxp
- fNiw==
-X-Gm-Message-State: AOJu0YxlPa3P3ysz4bVxWydDiHPQdccxn5th5NwpF5K4BqsvMRQ9gWhu
- pywbgnDNQysh5M3/otB8REH2w53tXthoWCEcrYLRNDLvcTXOQPNjPgUbCeL6oUXZXOpsXdnOl/+
- UMr1OEd33LeqvbUy84IVIaCnKhwLa30uAW0FYyJ9TSH+hQ033mFL6VDgeM7vBZBR+EDSfJIpW9P
- mwrbX/exb46UERbsjWJRc=
-X-Gm-Gg: AZuq6aKucrPb4gbxWOhWpcHBXBkGZqC3YnICZ+Ikw9xnlvDmufKAftcllnoWSfgQcF7
- sK58KztA//hVAXvo7ijS+NPzPqbf92ElaLeKGFVJufoWv6ap5j+PglAkk9/5YzcYupEP7xi8kha
- AA6aplzlemQz74uMewljoylVEbdyUcXJ8zYTr2Z42EVk/5xwDgozrVqOIBt9PO/JWf1C2r
-X-Received: by 2002:a05:6512:1592:b0:59b:7185:7596 with SMTP id
- 2adb3069b0e04-59baef0b9c4mr5470213e87.47.1768990884989; 
- Wed, 21 Jan 2026 02:21:24 -0800 (PST)
-X-Received: by 2002:a05:6512:1592:b0:59b:7185:7596 with SMTP id
- 2adb3069b0e04-59baef0b9c4mr5470203e87.47.1768990884582; Wed, 21 Jan 2026
- 02:21:24 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 5BDD34026C;
+	Wed, 21 Jan 2026 11:31:19 +0100 (CET)
+Received: from fhigh-a2-smtp.messagingengine.com
+ (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
+ by mails.dpdk.org (Postfix) with ESMTP id 2A2E64026C
+ for <dev@dpdk.org>; Wed, 21 Jan 2026 11:31:17 +0100 (CET)
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id 909941400182;
+ Wed, 21 Jan 2026 05:31:16 -0500 (EST)
+Received: from phl-frontend-03 ([10.202.2.162])
+ by phl-compute-02.internal (MEProxy); Wed, 21 Jan 2026 05:31:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1768991476;
+ x=1769077876; bh=Jn7wLKOdmX+3tLBMvC3J42v2VMmZRb/58GWd51aUTbA=; b=
+ rn0plx8zZ0qFOCN4RKuD89+MBRyqvi5Kt4Ry+Ge/td/QZc+0ZruCcyntqVh5DCVi
+ Rr12DI1GuzcyCftFkEeCpIXV6HGDnbIOugHp0txpJe8nXBgWp0SkYb7g8SJwPE28
+ 5UZa6/7QbUYvD0L7XbgYAowtP/b1mV6hpM/HpedKilwgacMaTw+LHb3fXCPe0Byz
+ TXJZeDRHcE0CqiTOE3WZHZbO+o3AmvtHu3rK03CyoGdBKiHZYw7gw6YUx/36IbHO
+ kuFZWv0j0Eb/Oc9Ulqurs1dgoGbItDUFsgDAOOhqsodAZ3tpCmHmQimqOoacQ3s4
+ b09NLd4n/tgem4VBXDdZ4A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1768991476; x=
+ 1769077876; bh=Jn7wLKOdmX+3tLBMvC3J42v2VMmZRb/58GWd51aUTbA=; b=E
+ zhhqXET2IidEUWrf1l1ZAroyQPJCQOkCoD4v9O5/ncFaK/fPKjIDyq0bd4eqE0FK
+ sSyFfqcuNAmeHNTrUvAsiHuKKdcoBCT/z60paSpXZdbLLL6r6R6lYUYy2NVYK7VK
+ 5ZiWqaJ17n+Lc8e2ZSKwYTPkhUeGrcDIbghUZhJ7eR+HwI4+jtuTD4AB5u1mULNE
+ yCEoiUs3DsFVGru49LMQ3hudvU2yY2xvSJLpt53J+JT8qRD1Z7p9MpwmkdNau4aq
+ tAofApIZwmBxrqh0Cqc8ASnRt4wTU3C3CJxVJQZRbeVpCrGOUtvPYAsAtgAXvaN/
+ DkOx3eG2cJ+SuiXnd33RQ==
+X-ME-Sender: <xms:86pwaRDxqWbW5eY-5096vJL5fazHOFdA4ZpedG5WGx_1OJ0N2O6ipA>
+ <xme:86pwaWjE3uK7tLTDxw8s1lI0TM6OnbgX25RU0hnSznap7TvY6y4rbRySR0z_x-4MY
+ 4mz1dUh-wmHH5Z9GucJDJSceyRea3bJEbkXttz8E8lDAwf0mRTE>
+X-ME-Received: <xmr:86pwaRkeGWv_7OziZFKepdeA9bo_3AWJBRQ7XRobmL7cP_fyZLN1ygIObcDw4NQGmyDQ2wAnnyGjLgekAyRgrGEMpQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddugeeftdegucetufdoteggodetrf
+ dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+ rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+ gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
+ ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
+ frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
+ uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeegpdhm
+ ohguvgepshhmthhpohhuthdprhgtphhtthhopegurghvihgurdhmrghrtghhrghnugesrh
+ gvughhrghtrdgtohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghpthht
+ ohepphhrohgssgesihholhdruhhnhhdrvgguuhdprhgtphhtthhopegsrhhutggvrdhrih
+ gthhgrrhgushhonhesihhnthgvlhdrtghomh
+X-ME-Proxy: <xmx:86pwaapU6HBLnF1KjzJSeBU5JnpX7yV0JsDFe7ixfDtv5S4Sg4Laew>
+ <xmx:86pwaSH-9fSAP2c5tKT8mJglrkL_dkuSi-KTCpysTpxD7Vr9_GJdKQ>
+ <xmx:86pwaewnEYIxmFb_rOa-ASH--flWP_Gsobjy0ex-HaHvc4Y-QADFnA>
+ <xmx:86pwafoap8hWSkjTcWKHKqu2K5Opgsv9RBSp55IFjQoGLCdsBXRjcg>
+ <xmx:9Kpwac0kRyMyaYJpVRVPtYDgCnIcr-5-jV8jAmJF2DgQp6ADn1g8SoO0>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 21 Jan 2026 05:31:14 -0500 (EST)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: David Marchand <david.marchand@redhat.com>
+Cc: dev@dpdk.org, probb@iol.unh.edu, bruce.richardson@intel.com
+Subject: Re: [PATCH] doc: raise an error on warnings for dts
+Date: Wed, 21 Jan 2026 11:31:13 +0100
+Message-ID: <1865655.TLkxdtWsSY@thomas>
+In-Reply-To: <20260121100127.1701459-1-david.marchand@redhat.com>
+References: <20260121100127.1701459-1-david.marchand@redhat.com>
 MIME-Version: 1.0
-References: <20260120231638.194471-1-sismis@dyna-nic.com>
-In-Reply-To: <20260120231638.194471-1-sismis@dyna-nic.com>
-From: David Marchand <david.marchand@redhat.com>
-Date: Wed, 21 Jan 2026 11:21:12 +0100
-X-Gm-Features: AZwV_QgLqh2ogyZS_XReI5E39m0ckMXSkwo1OJ02RUQxyMQpt9C6SsKsPBOFqug
-Message-ID: <CAJFAV8zF3iae8gqXmfgPVNuCaUzHHsUyxk4xY8U5JQPcJG14NQ@mail.gmail.com>
-Subject: Re: [PATCH v2 0/1] dts: fix invalid f-string syntax
-To: Lukas Sismis <sismis@dyna-nic.com>
-Cc: dev@dpdk.org, dmarx@iol.unh.edu, probb@iol.unh.edu, thomas@monjalon.net
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: u1GLgohrZqBG3Sx3NIrcLKnBR4J03iVSftzSJsuYQT8_1768990885
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,24 +88,14 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 21 Jan 2026 at 00:16, Lukas Sismis <sismis@dyna-nic.com> wrote:
->
-> Extracted from https://www.mail-archive.com/dev@dpdk.org/msg326745.html
-> to hopefully help move things faster.
->
-> Sorry for the resubmission noise, adding the signed-off-by line I forgot
-> previously.
-> If this patch set is not needed, it can be ignored.
+21/01/2026 11:01, David Marchand:
+> Similarly to commit 6572fc926037 ("doc: make sphinx comply with ..."),
+> pass -W to sphinx to catch warnings.
+> 
+> Signed-off-by: David Marchand <david.marchand@redhat.com>
 
-There was no need for separating this patch in the first place.
+Acked-by: Thomas Monjalon <thomas@monjalon.net>
 
-We now have 4 different threads, which is a bit messy (I am to blame too..).
-Please avoid sending the same patch again unless asked explicitly:
-this is usually not helpful and put a strain on the CI.
+Note: "dts" could be uppercased in the title
 
-I'll apply this fix soon.
-
-
--- 
-David Marchand
 
