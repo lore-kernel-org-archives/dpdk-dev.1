@@ -2,70 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 702BDC44502
-	for <dpdk-dev@archiver.kernel.org>; Wed, 21 Jan 2026 09:15:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BBA5C44501
+	for <dpdk-dev@archiver.kernel.org>; Wed, 21 Jan 2026 09:29:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A6DED4026C;
-	Wed, 21 Jan 2026 10:15:04 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 2EA9C4026C;
+	Wed, 21 Jan 2026 10:29:36 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 4AAA8400D7
- for <dev@dpdk.org>; Wed, 21 Jan 2026 10:15:03 +0100 (CET)
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 079FA400D7
+ for <dev@dpdk.org>; Wed, 21 Jan 2026 10:29:33 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1768986902;
+ s=mimecast20190719; t=1768987773;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  in-reply-to:in-reply-to:references:references;
- bh=CWUQlElcdV0tPnJ+/myoGhsQpr0z8VKYppRYPwjxoNg=;
- b=XoNSCg7n45gAs1VxXQglox769EFXMIYXo5+GpoW02YXZQh/B1dbWTrJ84YgSBs+u+BqUq+
- A6zO9RiTG0e7OdagZ9DStlFzjdr/A5ZAKmn0hOniYnB4X5U6P3H+m8rpdKH/DZ+BP34ZPT
- F46Af2SETT9bldn5BOzbYDqcdgiGpH4=
-Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
- [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ bh=Zfm7NtvXCeH19vOgzh7T4xrW+8NCFSniT7oY/Rgp750=;
+ b=HJGAkkR1eJtw5DXBRr2FeFWKGfFkZqxLFJ8x+BPkbiZ7CM2wQ0BxuY8l9JIOZZgyMLgYJ8
+ Fn7WVjnoZPTKoxRVu9/29AeOpQk/ejMdDngVxZ04Tr3hQzGhgbirVBWU8vhfsJRJoO+S5k
+ DejW2WJ/S1Wo+N3VjZoTZjCEhagvUQU=
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
+ [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-641-Cw87OGkYOKWrHs5fn09Utw-1; Wed, 21 Jan 2026 04:15:01 -0500
-X-MC-Unique: Cw87OGkYOKWrHs5fn09Utw-1
-X-Mimecast-MFC-AGG-ID: Cw87OGkYOKWrHs5fn09Utw_1768986900
-Received: by mail-lj1-f199.google.com with SMTP id
- 38308e7fff4ca-383005da622so50893661fa.2
- for <dev@dpdk.org>; Wed, 21 Jan 2026 01:15:00 -0800 (PST)
+ us-mta-594-B15q7HHcO-CsWGq2I9AlgQ-1; Wed, 21 Jan 2026 04:29:31 -0500
+X-MC-Unique: B15q7HHcO-CsWGq2I9AlgQ-1
+X-Mimecast-MFC-AGG-ID: B15q7HHcO-CsWGq2I9AlgQ_1768987770
+Received: by mail-lf1-f70.google.com with SMTP id
+ 2adb3069b0e04-59b6cbd5493so3665144e87.0
+ for <dev@dpdk.org>; Wed, 21 Jan 2026 01:29:31 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768986900; x=1769591700;
+ d=1e100.net; s=20230601; t=1768987770; x=1769592570;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to;
- bh=CWUQlElcdV0tPnJ+/myoGhsQpr0z8VKYppRYPwjxoNg=;
- b=inJDVpE7j3THpRTXND+ycv31FJRVfRsgK9MJSOw9xwBtSnLBF0rwm4qmeENkgxvNfM
- 1nzyu/F/IcQBvEBcM5jhtGuTQ+5DpN4Y1+b+vN3i7FL921BPn8iNtdw6TuK60oVfmDxu
- GApHWxvOxomIjZpM9/ZPekP2W3PGGzSBBMWvP3gzpF0EGj/0xg0QVmQoKc1UXp171HnR
- qiRaAK8xXr0s992bHo2MeH5xU+7UKKgxVC0sEBl549po8C/rZyqYYciwwWwkv9k02laO
- 6GLqU9DOs3ojB8IC+ln/ELjU97xaVAvqiHSYLq0ibJSZSxsFlkEFnbOGZAf4yxNDAzuC
- /Nhg==
-X-Gm-Message-State: AOJu0YxIno8f4qZ1RRMEeCMjcZDxFMOVEJ9aRhUV8oyEZNJOZirOgw/7
- 86CMoU0pnwIcrKqwrLdoLxMpX/FropoGxkUcYMtSujrgn/K7CLmVHy1VxYdjy1IewpYJvZkJ+2W
- azq+VgH5pbWChqOSFkLZe+vxrm/gM118HU+xLGdDYWZ6MAFEag/08yuCb5i1uElpbvGbEqOMmse
- UJUTecoJhQEpuSHXfR6Ig=
-X-Gm-Gg: AZuq6aIHmcNWAUrHMyU4TIPcN3Md6ZfwfyQLIjGExAwpwdu7JWs3wU1L8VohP2KY7oP
- QyfNx/r6DB9Z/FpOOTYzlzsCN37MSizxLr59X7o7VTeVROxHXrRRi+ZriuDNmr4pjySJrWrNotd
- qw5VZykiR/vftltENRnG0gEqbfBPIYzuNRGoux7Vx1sM9w7pYAjMaazirQvjaECk8rKS2h
-X-Received: by 2002:a05:6512:3406:b0:59b:b2f3:7d46 with SMTP id
- 2adb3069b0e04-59bb2f37f02mr5951161e87.27.1768986899660; 
- Wed, 21 Jan 2026 01:14:59 -0800 (PST)
-X-Received: by 2002:a05:6512:3406:b0:59b:b2f3:7d46 with SMTP id
- 2adb3069b0e04-59bb2f37f02mr5951155e87.27.1768986899244; Wed, 21 Jan 2026
- 01:14:59 -0800 (PST)
+ bh=Zfm7NtvXCeH19vOgzh7T4xrW+8NCFSniT7oY/Rgp750=;
+ b=gvKGrlruFCp3ycyI1osjjRKHuRIjk1T03TXEo6tI9HCsQPxIPkVgZzLAR+vcSG+lOt
+ zAmbObArCQrXwGZbkkiMugXoXHHkkpFw/kSF1Au9ZdkQQrrZxZNPBZdqNM+I/jTKG6y+
+ ClPzVZ6V0BiH/FqvtnuloH9+bgvgh2uZ4HkX2NPROxzGhgvgKdr49YG5Rp4zsRMk5n4S
+ w2V/ts0/bPceITQDZGb0AyUacXlT5nwOJ2cTBbi6gnMQPRkZjLhPaZz7MR67pe89lUyO
+ ZoaQzLzBmztrcjX0YponghZNlccix47scLh3fKCZMzHMxIkClGEp3nPJrl6DI/haco1F
+ 4R6w==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCUl2h08WCpguvF6QyduPR2qxQWJnyPnQdlGkQJVEfR2NafTsw0I+SSg3AMTHlsHMi6/h4Q=@dpdk.org
+X-Gm-Message-State: AOJu0YzcmdgxhCqaN/xrkpAwwr6YueOXFVY4Uy8kUoKIBtfXmTv8IsaP
+ BLq/oBWj3YJXNOF8M1YQemg/QcPkCUyZhQIcXs0yAc/ZMWTrHyrzEgOqVfza6C1Zmn7BLk7hgHL
+ J+5u9JOVjEjKkwHX9ZMBvvuPDdScvzQQqJ4N7MzQhyXlIqJeRO9NSB+w+++0/0y1P+mdhADv2uG
+ Qumsb0hhpTSkHMeWueY9Q=
+X-Gm-Gg: AZuq6aKa+nWfVC2bDxGLo2gfB25CmrgLSPlbTSK12LDoqvO1PhWWjjlLaVfObsdvR6h
+ KYvFppiGTBEYZH0FVIiUGAJQtnd1dAK9KLr/fgbOCAN1MWr9KJxVagBI/8kcX3rYfRIAzSsBm86
+ MISORrbT6lYnEbO+lDV7EKpVPKbMmdt7U7MEBuC5Qf3SftOJhbg97kCl2VAEmUO9uh/wkT
+X-Received: by 2002:a05:6512:b0d:b0:59b:b037:161c with SMTP id
+ 2adb3069b0e04-59dc8f11d3dmr1808032e87.5.1768987769996; 
+ Wed, 21 Jan 2026 01:29:29 -0800 (PST)
+X-Received: by 2002:a05:6512:b0d:b0:59b:b037:161c with SMTP id
+ 2adb3069b0e04-59dc8f11d3dmr1808020e87.5.1768987769544; Wed, 21 Jan 2026
+ 01:29:29 -0800 (PST)
 MIME-Version: 1.0
-References: <20260120112552.921243-1-bruce.richardson@intel.com>
-In-Reply-To: <20260120112552.921243-1-bruce.richardson@intel.com>
+References: <20260113151757.567234-1-ciara.loftus@intel.com>
+ <20260114132159.644359-1-ciara.loftus@intel.com>
+ <aW_DA9TtPD5cSc_u@bricha3-mobl1.ger.corp.intel.com>
+In-Reply-To: <aW_DA9TtPD5cSc_u@bricha3-mobl1.ger.corp.intel.com>
 From: David Marchand <david.marchand@redhat.com>
-Date: Wed, 21 Jan 2026 10:14:47 +0100
-X-Gm-Features: AZwV_QjOweTEMAd6i6i78Q0DhztDp7bYIQ3HguMY6bc4VvrJK4V620tCcUhSBFA
-Message-ID: <CAJFAV8waN3mZeSd=KX7C_N-DR_SpnR3afo=UwcOUeZy1+bP5hQ@mail.gmail.com>
-Subject: Re: [PATCH 0/3] improve debug output for EAL flags unit tests
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: dev@dpdk.org, anatoly.burakov@intel.com
+Date: Wed, 21 Jan 2026 10:29:18 +0100
+X-Gm-Features: AZwV_QhYeVFUF10sVjhs8UNXjmbAzIoGcL1h2L_tn53CMDds3EG0dZF8WMh-fcc
+Message-ID: <CAJFAV8x7mozVaFw0y6n45SRw7PD3Wh9gBV-oXizj4YkWBZPO8Q@mail.gmail.com>
+Subject: Re: [PATCH v2] net/iavf: support pre and post reset callbacks
+To: Bruce Richardson <bruce.richardson@intel.com>,
+ Aaron Conole <aconole@redhat.com>
+Cc: Ciara Loftus <ciara.loftus@intel.com>, dev@dpdk.org
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: XnI5MQ4exfs9RevlS4SUSPkstIk4lM46sSFw46MUyZ4_1768986900
+X-Mimecast-MFC-PROC-ID: sCBluh7K2R3dNulE2hKVL15Xq5GJLt_AJ4Kv5VSoHms_1768987770
 X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
@@ -81,31 +86,33 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 20 Jan 2026 at 12:26, Bruce Richardson
+On Tue, 20 Jan 2026 at 19:02, Bruce Richardson
 <bruce.richardson@intel.com> wrote:
->
-> If issues arise in the EAL flags unit tests they can be trick to debug
-> due to the lack of debugging output when running recursive instances of
-> the test binary with different EAL flags. Try to improve this situation
-> by adding extra debug output for recursive dpdk-test calls in general,
-> and to some of the EAL flags tests in particular that are proving
-> problematic.
->
-> NOTE: there are intermittent failures seen in github actions with the
-> file-prefix EAL unit tests. The problems seem less frequent, or possibly
-> "gone", with this set applied, but even if it masks the problem, this
-> set does give us greater visibility to debug if they do re-occur.
->
-> Bruce Richardson (3):
->   app/test: add extra logging for recursive calls
->   test/eal_flags: add line numbers to error messages
->   test/eal_flags: add extra logging for file prefix tests
->
->  app/test/test.c           |  14 +-
->  app/test/test_eal_flags.c | 373 ++++++++++++++++++++++----------------
->  2 files changed, 224 insertions(+), 163 deletions(-)
+> >  void
+> >  iavf_set_no_poll(struct iavf_adapter *adapter, bool link_change)
+> >  {
+> > diff --git a/drivers/net/intel/iavf/rte_pmd_iavf.h b/drivers/net/intel/iavf/rte_pmd_iavf.h
+> > index dea1bd2789..d13417eb08 100644
+> > --- a/drivers/net/intel/iavf/rte_pmd_iavf.h
+> > +++ b/drivers/net/intel/iavf/rte_pmd_iavf.h
+> > @@ -20,6 +20,8 @@
+> >  #include <rte_mbuf.h>
+> >  #include <rte_mbuf_dyn.h>
+> >
+> > +#include "iavf.h"
+> > +
+> This include is an issue, because it's an exported i.e. installed, header
+> including a private header that will not be installed as part of DPDK. This
+> gets picked up by running chkincs from test-meson-builds.sh script. [I'm
+> surprised this wasn't caught in the CI].
 
-Series applied, thanks Bruce for looking into this.
+Something looks wrong in the robot branch itself.
+I don't see the patch in the associated branch.
+https://github.com/ovsrobot/dpdk/commits/refs/heads/series_37048/
+
+
+Otoh, pushing this patch in my own repo does raise a chkincs failure.
+https://github.com/david-marchand/dpdk/actions/runs/21203869950/job/60995562483#step:19:5413
 
 
 -- 
