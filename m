@@ -2,78 +2,76 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDFB5C44501
-	for <dpdk-dev@archiver.kernel.org>; Wed, 21 Jan 2026 10:04:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EC1DC44502
+	for <dpdk-dev@archiver.kernel.org>; Wed, 21 Jan 2026 10:16:46 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 13C9F4026C;
-	Wed, 21 Jan 2026 11:04:26 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 4AE1E427B8;
+	Wed, 21 Jan 2026 11:16:45 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 60C48400D7
- for <dev@dpdk.org>; Wed, 21 Jan 2026 11:04:24 +0100 (CET)
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id E947A400D7
+ for <dev@dpdk.org>; Wed, 21 Jan 2026 11:16:43 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1768989863;
+ s=mimecast20190719; t=1768990603;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  in-reply-to:in-reply-to:references:references;
- bh=o92vd0DILwSkHYrwarVV69pMvAp/pA12Vsvve7GNMNw=;
- b=PMM5QxZY3aty8U+/hk2YtahFyimjIs7NjECXRPOOeif7i4HiWjkbJQkzfW/5EVixqlY+OF
- Uhn4Iiee5Tt39deJKsRKpX/9CEmgugLBx7LdHgFC5BiM/fgl0AjJCKnjc+2fbC/HsLBAbq
- p7gE1JceZOgzYwY9NepHQ9LVVJGs10s=
-Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
- [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ bh=oOcQR0Db8zM2lL+Op0Xe9auSFt1gwF8dnTBQcS2Qbv4=;
+ b=PTrBCr1EUxotqfkwG3db/bfc85eTd4BdIEv3FE13j29uITYstOxMmrTJCNPGxtOUM7FY4Y
+ o2Xh5SzAfauqrWfBfPjw1/iwcZxJA1RLoE0Gbj7NEeCa2K/BxMq8fHMyvdn2KTF/HyYWoo
+ HCacOrC4eZcdyXpY7/25YYU7mZh+0m4=
+Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
+ [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-237-buhooteOOQOrbbzRBGoTnA-1; Wed, 21 Jan 2026 05:04:21 -0500
-X-MC-Unique: buhooteOOQOrbbzRBGoTnA-1
-X-Mimecast-MFC-AGG-ID: buhooteOOQOrbbzRBGoTnA_1768989860
-Received: by mail-lf1-f71.google.com with SMTP id
- 2adb3069b0e04-59b6cf50eb2so2930974e87.2
- for <dev@dpdk.org>; Wed, 21 Jan 2026 02:04:21 -0800 (PST)
+ us-mta-622-AOb58o8SMPCHgAAE-HD_7g-1; Wed, 21 Jan 2026 05:16:40 -0500
+X-MC-Unique: AOb58o8SMPCHgAAE-HD_7g-1
+X-Mimecast-MFC-AGG-ID: AOb58o8SMPCHgAAE-HD_7g_1768990599
+Received: by mail-lj1-f197.google.com with SMTP id
+ 38308e7fff4ca-383558ea1b7so33335941fa.0
+ for <dev@dpdk.org>; Wed, 21 Jan 2026 02:16:39 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768989860; x=1769594660;
+ d=1e100.net; s=20230601; t=1768990598; x=1769595398;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to;
- bh=o92vd0DILwSkHYrwarVV69pMvAp/pA12Vsvve7GNMNw=;
- b=iIbjHQ7OE6Hd21VUSiNNur7plSR67UQhbYGaJMiGTZm1ysHuEom3M2qhgunk6/+TQs
- yMvBdmsJuGai06RR8ipUaBQ3zlIjOZtoFhngBdY6e20jVw8YYPxH+1ecwoo4qulqaCzW
- kk6r8N6ut3MmL3txkK11c8zeuFyt1mCv83oYuk4KcCAFxyDhKqHWW5F3s3NpxV1F7JGG
- yKRzQ5Ye0Du9a4BdM34SKPyQ+xlhHP4OToq4zNTUwiHgq5iOIQW9cF41512RSgGLRzY1
- 8BMV3enyPkePN3qpQ173vAut03p5JALhSWADvB43UAQJnZ+h50dkMQ7VAY269GFj0K18
- lWvw==
+ bh=oOcQR0Db8zM2lL+Op0Xe9auSFt1gwF8dnTBQcS2Qbv4=;
+ b=V8RSCqEBIGzwJxa4WdegeYbrLkoYm62FHjtLwC1olQWhgMNv3acwFd8t1Z7ggS15k9
+ NDkX71HR+oyEf9mzMlgukUbwCCxkiTTY63V6BsB2/aP2CYwVwR82NeXZD3OrgOFRiMLN
+ VzoC6B+BZZnZt74erJ5JIGwgJQ8s6YXf3fXh+lR2fnxTH4SNNljnRKoEh2tCnhKaPfGL
+ XSgF/wYlwftxYnfJ8rwM7V5g9Q1aSn449Pu+H54QUB+/esBSXAn8yHyMKk4jaVSQD9U1
+ cUvn0wrnRiR8xtOLOO5Su+A4yJrpuVzaSK7pgdr/Fecj8a1F4jh/DTwi++YOgAjUT9zt
+ 4QNA==
 X-Forwarded-Encrypted: i=1;
- AJvYcCV4DR7I5Hu5S+ger4EGTsHfMg10/TNGo+eCXQ0dwWLByFDT1FYbAk2GhMKvks8AlfmmFhE=@dpdk.org
-X-Gm-Message-State: AOJu0YwS1xNSHqCnE/rDZ6PjBXlmjmFBPX2jUHmIhx34otRch5tZWDUL
- n05yaDvpC46IMhAzQVBoVdW0c9uCv5+Ne0RnnBp2/eevHWL5rE9IVGUStpuOyKSqQOyS5cm/55h
- edThVAmofYVwLwWx3MN0U2PJTomQf8nzYEPSEGNwVmrNPaGVT09Vvb7zaTP0LpxG5DP/rgrvnUf
- KkSyIiHOprT+X0ytj6rSVmMieCw3KDaA==
-X-Gm-Gg: AZuq6aLHstIR2ZQb92Gr6mAfKLew2cP8tMrlE7SwLXJJzmu8QJP+ix2vuIaG8z4A3j1
- ztIG4OQNr41CcbDCnZN5F30uHSFhN5sGaSswnqz7RYRPSaJtsuZ25hbMwOSivDiWpVVG6TtXo7c
- kEk/RXfJZ+gabKo3Gl4Rxt4zM8zMCtsjeInZwh/5hS6ZdiWqSuhPgN5wcX2AsMzClydhDw
-X-Received: by 2002:a05:6512:3f1c:b0:594:2f72:2f7f with SMTP id
- 2adb3069b0e04-59dc8f0d830mr1662207e87.6.1768989859708; 
- Wed, 21 Jan 2026 02:04:19 -0800 (PST)
-X-Received: by 2002:a05:6512:3f1c:b0:594:2f72:2f7f with SMTP id
- 2adb3069b0e04-59dc8f0d830mr1662192e87.6.1768989859226; Wed, 21 Jan 2026
- 02:04:19 -0800 (PST)
+ AJvYcCXH0k4Q1BwQ+baS17NEEpmEWZH/A6aBrJW1fsaZyvAGoGU/F+1LIyWd8vZbyt6D/7rcw+c=@dpdk.org
+X-Gm-Message-State: AOJu0YzSRNR4rZ6aWHIxNXyx9nii9K+C2z5a6iuxrbpZs19AWIOjOGru
+ Hp4mFsjQV8Ia3izjwbuP9//0KHKY2KCkwQebmmK0UKLmOOmOLVZnBvdJxj1WrkFIgrgtLB1kKAP
+ JOR6iZlNLGwWRRX1Ng/OV6hCi9yvkD+XDdSnV2nrTxm7aNiKFTPKmKVQAebrxE4PrEyVOfdKH6H
+ dbpW7aw3jIySyuK5zjPs0=
+X-Gm-Gg: AZuq6aLn/FYMrZOXSLF1wnEBVZ7nn/9zMnkQGRUxdVKDJgLeUbRcWOnxNjgyQ5rTG7D
+ cF84q0m2lwSzTNF2YjMIvhZBd4InsIVYfPQt5BESLG+Imq03XxpJeBFnm/fGgerC/ZNlYem/LXO
+ ZjHsd4HTzelCdLnNQ9lU7yPnvGth9raCLYJbIEgSm8cPxDg/vRZWgHoG0I78yVdfowPxmZ
+X-Received: by 2002:a2e:bc1c:0:b0:383:26ac:4fca with SMTP id
+ 38308e7fff4ca-38384147807mr63274161fa.4.1768990598485; 
+ Wed, 21 Jan 2026 02:16:38 -0800 (PST)
+X-Received: by 2002:a2e:bc1c:0:b0:383:26ac:4fca with SMTP id
+ 38308e7fff4ca-38384147807mr63274141fa.4.1768990598005; Wed, 21 Jan 2026
+ 02:16:38 -0800 (PST)
 MIME-Version: 1.0
-References: <20251024185056.607160-3-dmarx@iol.unh.edu>
- <20251107215020.255182-1-dmarx@iol.unh.edu>
- <CAJFAV8x4g4yy3LO7bfKh-UzFZ=fA5Y0Q3hAvOamw2o4rFMbeKA@mail.gmail.com>
- <CAJvnSUDdXrq+=KzXdMU_2oyPQwtHUbpbR6KhV3GOOThcd1G8DA@mail.gmail.com>
-In-Reply-To: <CAJvnSUDdXrq+=KzXdMU_2oyPQwtHUbpbR6KhV3GOOThcd1G8DA@mail.gmail.com>
+References: <20260120230806.192421-1-sismis@dyna-nic.com>
+ <20260120230806.192421-2-sismis@dyna-nic.com>
+ <edeabad0cfe7460d82be2d9673b7ad9b@huawei.com>
+In-Reply-To: <edeabad0cfe7460d82be2d9673b7ad9b@huawei.com>
 From: David Marchand <david.marchand@redhat.com>
-Date: Wed, 21 Jan 2026 11:04:07 +0100
-X-Gm-Features: AZwV_Qgw9D4oTLNWwjrSxxDF2mNv9s0BD56qdV9WmJg9pjfmMj878NL1MDFlbgs
-Message-ID: <CAJFAV8zGwdbzks4efBg_Yh=Fs4QBHbhgPCcBiuhPfkaX5-Yhaw@mail.gmail.com>
-Subject: Re: [PATCH v5 1/4] dts: add start Tx first method to testpmd shell
-To: Patrick Robb <probb@iol.unh.edu>
-Cc: Dean Marx <dmarx@iol.unh.edu>, luca.vizzarro@arm.com,
- yoan.picchi@foss.arm.com, 
- Honnappa.Nagarahalli@arm.com, paul.szczepanek@arm.com, dev@dpdk.org, 
- Thomas Monjalon <thomas@monjalon.net>
+Date: Wed, 21 Jan 2026 11:16:26 +0100
+X-Gm-Features: AZwV_QijSriuyqswgkczQ6JJohGB-3hSfK8OJVKYEzMo80UhiXwDcqGoq2Gypso
+Message-ID: <CAJFAV8w7o_GB=e8401Ot6An6bwdT+ihLPZ7nfRieTGP+VDZuyQ@mail.gmail.com>
+Subject: Re: [PATCH v1 1/1] dts: fix invalid f-string syntax in testpmd API
+To: Marat Khalili <marat.khalili@huawei.com>
+Cc: Lukas Sismis <sismis@dyna-nic.com>, "dts@dpdk.org" <dts@dpdk.org>,
+ "dev@dpdk.org" <dev@dpdk.org>, "dmarx@iol.unh.edu" <dmarx@iol.unh.edu>,
+ "abailey@iol.unh.edu" <abailey@iol.unh.edu>
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 3R9WK0UTSBCdDhxyqiede7PqdwY-gUqnkf_c1ZrQkRc_1768989860
+X-Mimecast-MFC-PROC-ID: UI4n4tlGe6CJKo6rpdZr-gXT9a6m1byRhaYh73lAuSk_1768990599
 X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
@@ -89,40 +87,61 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hello Patrick,
+Hello,
 
-On Tue, 20 Jan 2026 at 17:46, Patrick Robb <probb@iol.unh.edu> wrote:
+On Wed, 21 Jan 2026 at 10:46, Marat Khalili <marat.khalili@huawei.com> wrote:
+> >
+> > Fix f-string syntax errors where double quotes were nested inside
+> > f-strings that also use double quotes as delimiters.
+> > ---
+> >  dts/api/testpmd/__init__.py | 8 ++++----
+> >  1 file changed, 4 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/dts/api/testpmd/__init__.py b/dts/api/testpmd/__init__.py
+> > index a20dedc25a..703cae487e 100644
+> > --- a/dts/api/testpmd/__init__.py
+> > +++ b/dts/api/testpmd/__init__.py
+> > @@ -227,7 +227,7 @@ def start_tx_first(self, burst_num: int, verify: bool = True) -> None:
+> >              InteractiveCommandExecutionError: If `verify` is :data:`True` and forwarding fails to
+> >                  start or ports fail to come up.
+> >          """
+> > -        self.send_command(f"start tx_first {burst_num if burst_num is not None else ""}")
+> > +        self.send_command(f"start tx_first {burst_num if burst_num is not None else ''}")
+> >          if verify:
+> >              # If forwarding was already started, sending "start" again should tell us
+> >              start_cmd_output = self.send_command("start")
+> > @@ -898,11 +898,11 @@ def set_qinq_strip(self, port: int, enable: bool, verify: bool = True) -> None:
+> >              vlan_settings = self.show_port_info(port_id=port).vlan_offload
+> >              if enable ^ (vlan_settings is not None and VLANOffloadFlag.QINQ_STRIP in vlan_settings):
+> >                  self._logger.debug(
+> > -                    f"Failed to {"enable" if enable else "disable"}"
+> > +                    f"Failed to {'enable' if enable else 'disable'}"
+> >                      f"QinQ strip on port {port}: \n{qinq_cmd_output}"
+> >                  )
+> >                  raise InteractiveCommandExecutionError(
+> > -                    f"Failed to {"enable" if enable else "disable"} QinQ strip on port {port}"
+> > +                    f"Failed to {'enable' if enable else 'disable'} QinQ strip on port {port}"
+> >                  )
+> >
+> >      def set_mac_address(self, port: int, mac_address: str, verify: bool = True) -> None:
+> > @@ -1535,7 +1535,7 @@ def set_port_mbuf_fast_free(
+> >              InteractiveCommandExecutionError: If mbuf_fast_free could not be set successfully.
+> >          """
+> >          mbuf_output = self.send_command(
+> > -            f"port config {port_id} tx_offload mbuf_fast_free {"on" if on else "off"}"
+> > +            f"port config {port_id} tx_offload mbuf_fast_free {'on' if on else 'off'}"
+> >          )
+> >
+> >          if verify and "Error" in mbuf_output:
+> > --
+> > 2.43.7
 >
-> Hi David,
+> Acked-by: Marat Khalili <marat.khalili@huawei.com>
 >
-> Dean and I both looked at the patch from Lukas, yes it looks good and I will add a comment and tag there.
->
-> Otherwise, I'm not sure how the patch could have been breaking docs given our process. Can you please sanity check my process below? Maybe I am making a silly mistake with validating the docs build.
->
-> For the next dts branch, when I'm adding new patches, for each patch:
->
-> 1. Apply patchseries
-> 2. Run normal checks (checkpatches.sh, check-git-log.sh, dts-check-format.sh)
-> 3. Perform a doc build like below:
->
-> meson setup my-doc-build
-> ninja -C my-doc-build doc
->
-> Then, It quickly does a doc build, and (although I don't always look unless I'm making a docs change) it is possible to navigate into the build dir docs dir, and open up the html docs files.
->
-> 4. Then at the end I push my local branch with the new patches added to the remote next-dts repo.
->
-> So, is my above docs check sufficient, or am I missing a part of the process?
+> Thank you, this noise in the compile logs was a bit annoying. I have to ask
+> however, how did it pass? Are we ignoring some errors?
 
-As part of this process, I assume that you look at reports for the
-series in patchwork.
-This looks correct then.
-
-To be honest, I can not see the warnings myself locally (running Fedora 42 atm).
-I guess there is a difference in Ubuntu 22.04 sphinx, that is used in GHA.
-
-However, we let doc warnings for dts go unnoticed, and this should be changed.
-I sent a patch for this:
+Yes, I ended with the same conclusion and sent a fix earlier.
 https://patchwork.dpdk.org/project/dpdk/patch/20260121100127.1701459-1-david.marchand@redhat.com/
 
 
