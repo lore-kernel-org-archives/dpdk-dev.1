@@ -2,74 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 835AEC44508
-	for <dpdk-dev@archiver.kernel.org>; Thu, 22 Jan 2026 00:55:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30641C44508
+	for <dpdk-dev@archiver.kernel.org>; Thu, 22 Jan 2026 00:58:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 069044278F;
-	Thu, 22 Jan 2026 01:54:36 +0100 (CET)
-Received: from mail-wm1-f66.google.com (mail-wm1-f66.google.com
- [209.85.128.66]) by mails.dpdk.org (Postfix) with ESMTP id 5A78D42D2B
- for <dev@dpdk.org>; Thu, 22 Jan 2026 01:54:34 +0100 (CET)
-Received: by mail-wm1-f66.google.com with SMTP id
- 5b1f17b1804b1-47edffe5540so4411085e9.0
- for <dev@dpdk.org>; Wed, 21 Jan 2026 16:54:34 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 6B9A64021E;
+	Thu, 22 Jan 2026 01:58:44 +0100 (CET)
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com
+ [209.85.221.42]) by mails.dpdk.org (Postfix) with ESMTP id 79745400D5
+ for <dev@dpdk.org>; Thu, 22 Jan 2026 01:58:42 +0100 (CET)
+Received: by mail-wr1-f42.google.com with SMTP id
+ ffacd0b85a97d-42fbc305914so314257f8f.0
+ for <dev@dpdk.org>; Wed, 21 Jan 2026 16:58:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769043274;
- x=1769648074; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769043522;
+ x=1769648322; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=pWobI9ftNgr1zEzTN06TVY9GUuBpvF7DEVE0FZUndfc=;
- b=GqZ7uXldvTc8YVfN+SJE4Qho4pMc+sUOyfzSXX+/IyYkR3UkjjjgydsVNsA0/FZHRo
- 02MDvgIF3n4U0CeHfjTWUMG5Ta9JrlG5e263jvxJx5DIGXU7cjLWnP/bLZdgH8H5wB9i
- xQzNaCgPQZeMGXS2hnTasxOq0UV+VFX0W19hotLplIzGrxXl70wgTDpGVs4EbVcydOGF
- PFb3S2nLWgr+vMaed/2+qUfbvZnTLbOHy6wWJMfId/u8JDM7o67RHh1qjS9xGvALaMna
- snkL5/Tr2t/wzUYduhN9RD6uItW+3dBpP6Lnkrbnb8HpUf0+jwAcZc60vy84QQ6hZAEI
- QGGA==
+ bh=ChN5eOCV05YmIzwNChLIOvsEEI8t01wlu8l6s9u9PeA=;
+ b=jHhOsRO1i8lG8KxwetPP16Q2ZUdbyInvvpGoUVNZo9rxqCkeLMa/p5x0WdRK4BdEQv
+ EtoCeBlg5s3jM0Z99bFyFp+1pXv+4U7gjH+DcJwveL0sVjU5k5ImZbban00NG5yVFZEj
+ om87GdA6LwbGnZE+w/Jz/he575sGhEz6w43kJzSP6L5nVHbxZxg6Rp83s0ezJl6sNgzR
+ l1VSytjjTB47ZSiCjg9hUVQNLo7lbiPCJNqo6Qu1Vhh/gjQevVsfMkZSN041ivPVeGwM
+ Pu5gfcOIFcRA8387YWjvd5hmPIoDfYARMzDe4AkZEugzwvWGJeCi9yvhci4CSH8m5Tsy
+ DvrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1769043274; x=1769648074;
+ d=1e100.net; s=20230601; t=1769043522; x=1769648322;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=pWobI9ftNgr1zEzTN06TVY9GUuBpvF7DEVE0FZUndfc=;
- b=m+fLGRl1+Wg8rD7PP+hl6XkY+0ydN4J9WZM0bGsB0Di4Gbp1syq7RFgqVXAyNHPyA5
- aN6AnB8pamhBSRulv8AgeCRCzV1U2wocTCLZQbPmniTIDHKkpjs2GPN5hEqKrdHr79mf
- qWRh8H68CBJL2NH99oa4BjrxhGKn27QlbcSM5AGkOL4t4b2tDZeBBc3odqqbh64lzFIq
- FhhduGmg16euGdiU6mvNRkBCkayWqogBjccadTh2L+iZuojRCOMFnEhCjlhvNUQTigvC
- lbsHpEzO4akWEHqsufasjlfsOOvcCtd27D9XRn92iSmdtzBRqVxk7T3doBrf7EwdyYkE
- 3HCw==
-X-Gm-Message-State: AOJu0YyPM9HdL80A3A+/IdAtU061u8uZyPZEY9V5OeDcIF3llvgrMmyZ
- bkYVQsW5bIkmfdC5qEdkl1vYfB2mUATA8Egr6aXEXgwOqDayRHaq61FuWxoybTGfYmNokIqCKw0
- Y0jAcqp4=
-X-Gm-Gg: AZuq6aK8Lop4wW/fKunvSG43WMBbkrDtcuOJH5OAs/+DMbjY9TcH+VtIpxHU56fSvI7
- Xc9TzIdB1GgklGkttWRVMFinuwP5LTZ4c5+TLjoXl4a4WidcHDUrtaxk8kyws6t6N/xETb+HOMC
- AB9NxItwdSC3ja471n2XG4yc8bffJYeS3UdTfiKzQ4fnL6aSMkH16PUiMwUMkx5SytJ6ZItKTwc
- oFhENLjAmj7UcaJTbc+IMm+M/ZsP1RjQBVdSbyTYIAKyb5lQ3fhuzjtyfP68I+BMoq9R9L9aE5D
- dowAibK1cCLrkk30Zw7nm1VHOD8vOrOgfdyg+hPpcD5TlFzDumdI+HfkADKvdnhYemSHzDQCyd1
- 385mhIebgSloQ4KlHlZi2Bg23Q1AOHDFkavxPpqZSQ/keqPj+a1Qc31sPBAzzFf6CYir5X7jc3p
- YceQDAajWQRZZywL6FoMmUaUUrKMLNy18tsFYLP7Cq3zaw4zdpoQ==
-X-Received: by 2002:a05:6000:22ca:b0:430:fd84:315a with SMTP id
- ffacd0b85a97d-4358ff26c83mr12367255f8f.39.1769043273819; 
- Wed, 21 Jan 2026 16:54:33 -0800 (PST)
-Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
+ bh=ChN5eOCV05YmIzwNChLIOvsEEI8t01wlu8l6s9u9PeA=;
+ b=JGCPb6H0BSgxSY4DQFWl6g2V9UPupP9lrmjzbuXwj3ZYJ4GoOFw7Ib4ZZ67LPIIHCx
+ J9fDewT/kEMiawNF2CPMoTFq5Ie0dKX6TEtir9itVvzIBLjkTMQAO56f2gB5GtwB19ym
+ cm5joUAyK6K0Jvy0Vhzyd/IHW/syWNgNEaybtvkNY87L5DvkYQnoi4C58uNjnOSQjVWA
+ EbYB5yufv7B2JMJdJoIijFs5qW1P6b2eKTMr436IYJyPjCu6hGzyyeZS0ABG1zQ7jTz2
+ eb/zGTbt2ISvGG0luEUhK2aJyE7bFuxRcgjI5Dp3eLV5PZckWLjW2ZDkK/Eh4yGBU/Su
+ ddWA==
+X-Gm-Message-State: AOJu0YxXZiR1Zljl56KvGOFUPSRuxr33vsGCfAh5kBAuKNvDfHGOFWjr
+ vTjABblZHAK5eTtcoO9tDH+vlURUKjRu13RJB2rqm2/42RqJJgG6Qe9DIBiO2amGey4=
+X-Gm-Gg: AZuq6aL2zrBQ19BlPx9f2XH2ggLSmdIDFMTUVtDTxyLfe7PXKu+tI7QTLeYoF6piDkF
+ MIpiy1YPFi4Ua9XZb9y+RZf9GvmJ/xtMs2RwUg4uBY3OaV0yIhamUwdLbRnNOTYKAxtD42GHvEh
+ AyYefMhvQPmI5G5wfIu4DR5aMUTeaafNwuUmaq8yZDsiTAoku4RmynAUUftTTeK32j1XicR37XS
+ WgUUd8PIzfyk1ScA0QEImUjSpZzzH2mHd+MynPK4d/NOs8mBOQa6Y8XccWem1aUwWMyAdcMOkNB
+ NVF5PippeDj8XiiT/J2CUFvqBBP0cbwLSi+In5q5jScxXy2p0wAOdCQB1mrBwRoYTKc59b4YGNB
+ EyAowQN1S0WCDyIupZKB35l3ffrwPL0dO1wqyVBLbMqXRiqCMS+Lxd023tLOMKbzUtAXJeqaDIz
+ jQHzMz7y9DvdmFZDYrVDyd26N9t7FXpjYFvs1W8WwDHXWnwSKiY7pq
+X-Received: by 2002:a05:6000:2012:b0:42f:bad7:af76 with SMTP id
+ ffacd0b85a97d-4358fed8000mr12688931f8f.15.1769043521961; 
+ Wed, 21 Jan 2026 16:58:41 -0800 (PST)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-4356997e6dasm41695104f8f.32.2026.01.21.16.54.32
+ ffacd0b85a97d-43595609c8asm13012541f8f.34.2026.01.21.16.58.39
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 21 Jan 2026 16:54:33 -0800 (PST)
+ Wed, 21 Jan 2026 16:58:41 -0800 (PST)
+Date: Wed, 21 Jan 2026 16:58:34 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
- Marat Khalili <marat.khalili@huawei.com>,
- Konstantin Ananyev <konstantin.ananyev@huawei.com>
-Subject: [PATCH v3 14/14] test/bpf: pass correct size for Rx/Tx load tests
-Date: Wed, 21 Jan 2026 16:50:30 -0800
-Message-ID: <20260122005356.1168221-15-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20260122005356.1168221-1-stephen@networkplumber.org>
-References: <20260118201223.323024-1-stephen@networkplumber.org>
- <20260122005356.1168221-1-stephen@networkplumber.org>
+To: "Jasper Tran O'Leary" <jtranoleary@google.com>
+Cc: dev@dpdk.org, Joshua Washington <joshwash@google.com>
+Subject: Re: [PATCH v3] net/gve: add reset path
+Message-ID: <20260121165834.24854376@phoenix.local>
+In-Reply-To: <20260121220035.3090402-1-jtranoleary@google.com>
+References: <20260121193018.2728602-1-jtranoleary@google.com>
+ <20260121220035.3090402-1-jtranoleary@google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,39 +80,19 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Use the correct size in bpf_prm to help with validation.
+On Wed, 21 Jan 2026 22:00:35 +0000
+"Jasper Tran O'Leary" <jtranoleary@google.com> wrote:
 
-Fixes: 81038845c90b ("test/bpf: add Rx and Tx filtering")
-Cc: stable@dpdk.org
+> Currently, the driver does not include any reset functionality and hence
+> cannot be reset by the application. This patch introduces a driver
+> callback for the `rte_eth_dev_reset` function will which reset the
+> device.
+> 
+> Also, as a precaution, null out device pointers to rx and tx queue
+> arrays when we release the queues during a reset.
+> 
+> Signed-off-by: Jasper Tran O'Leary <jtranoleary@google.com>
+> Reviewed-by: Joshua Washington <joshwash@google.com>
+> ---
 
-Suggested-by: Marat Khalili <marat.khalili@huawei.com>
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
----
- app/test/test_bpf.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/app/test/test_bpf.c b/app/test/test_bpf.c
-index 8bf783c00c..bf92bc545c 100644
---- a/app/test/test_bpf.c
-+++ b/app/test/test_bpf.c
-@@ -3533,7 +3533,7 @@ static int bpf_tx_test(uint16_t port, const char *tmpfile, struct rte_mempool *p
- 	const struct rte_bpf_prm prm = {
- 		.prog_arg = {
- 			.type = RTE_BPF_ARG_PTR,
--			.size = sizeof(struct rte_mbuf),
-+			.size = sizeof(struct dummy_net),
- 		},
- 	};
- 	int ret;
-@@ -3632,7 +3632,7 @@ static int bpf_rx_test(uint16_t port, const char *tmpfile, struct rte_mempool *p
- 	const struct rte_bpf_prm prm = {
- 		.prog_arg = {
- 			.type = RTE_BPF_ARG_PTR,
--			.size = sizeof(struct rte_mbuf),
-+			.size = sizeof(struct dummy_net),
- 		},
- 	};
- 	int ret;
--- 
-2.51.0
-
+Thanks, updated to this version in next-net
