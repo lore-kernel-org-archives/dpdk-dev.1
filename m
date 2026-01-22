@@ -2,56 +2,55 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5A57D6CFA7
-	for <dpdk-dev@archiver.kernel.org>; Thu, 22 Jan 2026 21:44:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B5AFD6CFA7
+	for <dpdk-dev@archiver.kernel.org>; Thu, 22 Jan 2026 21:44:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 847E340698;
-	Thu, 22 Jan 2026 22:44:37 +0100 (CET)
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com
- [209.85.222.169])
- by mails.dpdk.org (Postfix) with ESMTP id 97F4B4067B
- for <dev@dpdk.org>; Thu, 22 Jan 2026 22:44:33 +0100 (CET)
-Received: by mail-qk1-f169.google.com with SMTP id
- af79cd13be357-8c0f13e4424so140883685a.1
- for <dev@dpdk.org>; Thu, 22 Jan 2026 13:44:33 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id A6A38406B4;
+	Thu, 22 Jan 2026 22:44:38 +0100 (CET)
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com
+ [209.85.219.48]) by mails.dpdk.org (Postfix) with ESMTP id E347040684
+ for <dev@dpdk.org>; Thu, 22 Jan 2026 22:44:34 +0100 (CET)
+Received: by mail-qv1-f48.google.com with SMTP id
+ 6a1803df08f44-888bd3bd639so19515066d6.1
+ for <dev@dpdk.org>; Thu, 22 Jan 2026 13:44:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1769118273; x=1769723073; darn=dpdk.org;
+ d=iol.unh.edu; s=unh-iol; t=1769118274; x=1769723074; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=oP9dZ69849irdNd821FMqYnTgkL+jWx+MWZy5vVnEUw=;
- b=TZLp1HwhTfzSYOEX7BR9ZHMbzRrR+/+DfLlgIKyJcamLIBMjm44eN4YDj4pWcyK7ot
- 2cLzUJlRldNalC7xS6ZX8wqtwGWY2kuaWtlc3/WpyBc3Sj63BJu4A2sfLdHHkt/OVjDn
- p1ONlQjWv6wuY+uTNkW2qoYFJrdb5HXsoQpSY=
+ bh=h76Y3IPrDinV+dIDjngfQXlzjZqTinNjkun/nC2KCS8=;
+ b=NjkFZtvxKY2XJqjeAbdxcGq/cNtEjaAiIt7CWzIusJ3sYTmemW0QfYV5hnxRrscEXq
+ shg2M7uLGjo0e96VRF1IZeFa2byCCNpG8Mv2+ZT2Y78G2qbhgpf0fc4bzKQ+3MQuBHbr
+ rhXoc4byof8OQ2Topv2MiNz0N8Q/MKukIfz1c=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1769118273; x=1769723073;
+ d=1e100.net; s=20230601; t=1769118274; x=1769723074;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=oP9dZ69849irdNd821FMqYnTgkL+jWx+MWZy5vVnEUw=;
- b=fcy9qHknDZ49viOfxMXh+gBIPu6FtaYc8YOJKFnkw9Ey+01BORrP9s7uXSDrcLfoTq
- yk5HJ+Sv1XalXH8tBTJnOb4sMLC4rYoaFSmPK1t9gBDpph2N+0LKeyC52MjPLnVrOqjg
- 4L8E5cErUsIPxfuJjBy8JIFthPNCdzWU5BLGeMewdZZdWqSty/GtMxyzUj17UcRQRMfF
- PsJw5qthaDtT71kyHWYjfzkV/87GUVeFGeuqswY5kJZsKtU+DPMhYyJXflAqcBvFSHtF
- 4AejiZYXu+CpsSv6VB/Vse8STpEjKo/+AOB3Fih4c5OGAqvgVFSXecXX4uq64nAVaR5h
- Q1QQ==
-X-Gm-Message-State: AOJu0YyOpyi5smvB38AUJQr3sl8a2Yo9HU55rfsdS8NUvBX/p82rsiNd
- aPQcUJBC3CKjGxgBMYQ9UTy0/v0AdOwtLr8SNlWL3xoCqsMi3N+6XKBLnfvwXAgHm3w=
-X-Gm-Gg: AZuq6aKwq84vLeGMcdKRl6u9uL4P+z0ONhZqLMtkfIh+9Cii+HCOICnmUCqXgukf/82
- zxbniWKD+DPLbAZzZAC9Q8oCjXszTyqlfHPEoRqOzv/wGW/Xqg1Iu56ekvVMtrLZT71EDlyBtm3
- UmqlCLKL67QLcIdAzcpSUcVk63m1xWdxg4c42GuhX7roajBk8sdNogX0I0K6ZvN/RSY/2i0KXaD
- w/YGPo2FgeYabwOQbOk2+vgDtTfDUqQo2zE7ti6SzYwlkcBPKcz6qVMPV+1prI2KAuip4Oe3Tl7
- /H6T49RnYPsE0ighwA8BaOSeEdXP8s0cZfCHDFIKpvtGMdv74g5hguPLM+CZKXmB53oicmemPRg
- 7OmHj5UQwAORF/Ba7BGA+/rg1kXC/1vvGHymmNGqmhg+c7z0VMJBVw1pyADCos3ZyGV0ifKVLIw
- FwXUUCzuMdqj8NR5YfBwe/b0rEBiMSoF6O4wBiU9b/AkHv78RYI6RK/n4+B0QcfFc=
-X-Received: by 2002:a05:620a:1725:b0:8b2:6ac5:bcb1 with SMTP id
- af79cd13be357-8c6e2da9bd0mr125824885a.31.1769118272829; 
- Thu, 22 Jan 2026 13:44:32 -0800 (PST)
+ bh=h76Y3IPrDinV+dIDjngfQXlzjZqTinNjkun/nC2KCS8=;
+ b=sGtxgYJfzN/MwUesBPwcQszuSQcaE0xrS/bEboZt3/nukF/j4Cjjxi3tzROnaOPGjP
+ nMXwTFsUI+9XIiVzMbtdnTb8YvozoYknV4NnuXhoAs10pxxZKIpMsyKpNcQVzCWmtCH7
+ 3w7wxFmawaOmmHRfh543gL58k9TIwXxQbJckr8Fbngxoz+IRZWGiQyHyZ1ReICPmirlW
+ hVFf77sGnAtDN0HuhAsL7BB2Aaxm6QLjJaQMMcY+fon650WZSkT2Kp66LlmXDOCO9xPq
+ Dkpa/qajBYY3yr2KQ1GNW1aeUSofVaA5/ZykqTgI9GqijrZPEUiNJKKV4sPt3rgrQgrg
+ PIIg==
+X-Gm-Message-State: AOJu0Yy7Yxj1I9xyOQixd2k9dUqfxPqROSLPVS3yVKgwKjnVws+FeSvU
+ Z8W5CDFbzMPwesHVagf0OSWRk0/P/vaWqVR4pNrmPWnKLZxywZars2aSCCI8D8eW1NY=
+X-Gm-Gg: AZuq6aIjaw3umzuGNAYiGFJTLZ+DlnFVooqCfp6DdPhq7rVzx1AmmsdSfmnnuIJvxqx
+ UryE2XzpZETmnvnUF75eA4pbH3XuMAUP/m5yTXn7urf8WMj9B/OmBUijgqoSW+Tsx2fzH55iw+U
+ gZIWaQv3r1aHVe8Z4PXmMdKoHW1bCgx+PzUDEeWNnjONtLGCOhphzw8awUyPMbUsU92andWfFZK
+ UDt5DGDgOh+5MCA+OxtQs/bUo5hTv+gB8EF3J2Keu4eNMVyiLPTGnde485hh0vbcLxnQBk2qyVW
+ 2o1KKtiqCaLgJMv6iYiTW3JYrK1rtm4AeI5g850NP9BuK5s5WCOIbcYu1GjG3TtXLqu25R4FaLR
+ PRVI24KYb0UbyVbcyuSHvTYVm3c3u3AbnbKuOa+d+nswYhDiGADAj08n2mOAFgSTm3OFXDpKvr4
+ RquSxaBMfq57/TjAdw+CfLV8T986pWE7v5qRNGGg8Zl2nY8xtJhIsiqAXPAsm/VHs=
+X-Received: by 2002:a05:6214:29e9:b0:880:51c6:bee8 with SMTP id
+ 6a1803df08f44-894904b4184mr11983366d6.20.1769118274204; 
+ Thu, 22 Jan 2026 13:44:34 -0800 (PST)
 Received: from d122205.iol.unh.edu ([2606:4100:3880:1220:4f6d:e2af:7f5f:4df])
  by smtp.gmail.com with ESMTPSA id
- af79cd13be357-8c6e3870c48sm28720785a.51.2026.01.22.13.44.31
+ af79cd13be357-8c6e3870c48sm28720785a.51.2026.01.22.13.44.32
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 22 Jan 2026 13:44:32 -0800 (PST)
+ Thu, 22 Jan 2026 13:44:33 -0800 (PST)
 From: Andrew Bailey <abailey@iol.unh.edu>
 To: luca.vizzarro@arm.com,
 	probb@iol.unh.edu,
@@ -59,9 +58,9 @@ To: luca.vizzarro@arm.com,
 Cc: dev@dpdk.org,
 	gakhil@marvell.com,
 	Andrew Bailey <abailey@iol.unh.edu>
-Subject: [PATCH v1 3/5] dts: add cryptodev throughput test suite
-Date: Thu, 22 Jan 2026 16:44:22 -0500
-Message-ID: <20260122214424.322422-4-abailey@iol.unh.edu>
+Subject: [PATCH v1 4/5] dts: add crypto test decorator
+Date: Thu, 22 Jan 2026 16:44:23 -0500
+Message-ID: <20260122214424.322422-5-abailey@iol.unh.edu>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20260122214424.322422-1-abailey@iol.unh.edu>
 References: <20260122214424.322422-1-abailey@iol.unh.edu>
@@ -80,426 +79,198 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add cryptodev performance test suite. This test covers throughput
-performance metrics of various crypto devices using the
-dpdk-test-crypto-perf application. The results of this application will
-be compared against user supplied performance metrics and fail if signs
-of regression are apparent.
+Currently, a test case is decorated to signify whether to use Scapy or
+TREX. This change allows test suites that do not use a traffic generator
+to avoid the overhead of initializing either one.
 
 Signed-off-by: Andrew Bailey <abailey@iol.unh.edu>
 ---
- .../tests.TestSuite_cryptodev_throughput.rst  |   8 +
- dts/tests/TestSuite_cryptodev_throughput.py   | 386 ++++++++++++++++++
- 2 files changed, 394 insertions(+)
- create mode 100644 doc/api/dts/tests.TestSuite_cryptodev_throughput.rst
- create mode 100644 dts/tests/TestSuite_cryptodev_throughput.py
+ dts/framework/config/test_run.py             |  3 +++
+ dts/framework/test_suite.py                  |  4 +++
+ dts/framework/testbed_model/linux_session.py | 27 +-------------------
+ dts/framework/testbed_model/os_session.py    |  4 ---
+ dts/tests/TestSuite_cryptodev_throughput.py  | 16 ++++++------
+ 5 files changed, 16 insertions(+), 38 deletions(-)
 
-diff --git a/doc/api/dts/tests.TestSuite_cryptodev_throughput.rst b/doc/api/dts/tests.TestSuite_cryptodev_throughput.rst
-new file mode 100644
-index 0000000000..5df5e7547e
---- /dev/null
-+++ b/doc/api/dts/tests.TestSuite_cryptodev_throughput.rst
-@@ -0,0 +1,8 @@
-+.. SPDX-License-Identifier: BSD-3-Clause
-+
-+cryptodev_throughput Test Suite
-+===============================
-+
-+.. automodule:: tests.TestSuite_cryptodev_throughput
-+   :members:
-+   :show-inheritance:
+diff --git a/dts/framework/config/test_run.py b/dts/framework/config/test_run.py
+index 6c292a3675..39f2c7cdf6 100644
+--- a/dts/framework/config/test_run.py
++++ b/dts/framework/config/test_run.py
+@@ -481,6 +481,8 @@ class TestRunConfiguration(FrozenModel):
+     perf: bool
+     #: Whether to run functional tests.
+     func: bool
++    #: Whether to run cryptography tests.
++    crypto: bool
+     #: Whether to run the testing with virtual functions instead of physical functions
+     use_virtual_functions: bool
+     #: Whether to skip smoke tests.
+@@ -522,6 +524,7 @@ def filter_tests(
+                     for tt in t.test_cases
+                     if (tt.test_type is TestCaseType.FUNCTIONAL and self.func)
+                     or (tt.test_type is TestCaseType.PERFORMANCE and self.perf)
++                    or (tt.test_type is TestCaseType.CRYPTO and self.crypto)
+                 ),
+             )
+             for t in test_suites
+diff --git a/dts/framework/test_suite.py b/dts/framework/test_suite.py
+index 856dae0a85..e86096cefe 100644
+--- a/dts/framework/test_suite.py
++++ b/dts/framework/test_suite.py
+@@ -281,6 +281,8 @@ class TestCaseType(Enum):
+     FUNCTIONAL = auto()
+     #:
+     PERFORMANCE = auto()
++    #:
++    CRYPTO = auto()
+ 
+ 
+ class TestCase(TestProtocol, Protocol[TestSuiteMethodType]):
+@@ -333,6 +335,8 @@ def _decorator(func: TestSuiteMethodType) -> type[TestCase]:
+ func_test: Callable = TestCase.make_decorator(TestCaseType.FUNCTIONAL)
+ #: The decorator for performance test cases.
+ perf_test: Callable = TestCase.make_decorator(TestCaseType.PERFORMANCE)
++#: The decorator for cryptography test cases.
++crypto_test: Callable = TestCase.make_decorator(TestCaseType.CRYPTO)
+ 
+ 
+ @dataclass
+diff --git a/dts/framework/testbed_model/linux_session.py b/dts/framework/testbed_model/linux_session.py
+index fb6081ab37..8d678c5b5d 100644
+--- a/dts/framework/testbed_model/linux_session.py
++++ b/dts/framework/testbed_model/linux_session.py
+@@ -194,8 +194,7 @@ def bind_ports_to_driver(self, ports: list[Port], driver_name: str) -> None:
+             verify=True,
+         )
+ 
+-        if self._lshw_net_info:
+-            del self._lshw_net_info
++        del self._lshw_net_info
+ 
+     def bring_up_link(self, ports: Iterable[Port]) -> None:
+         """Overrides :meth:`~.os_session.OSSession.bring_up_link`."""
+@@ -225,30 +224,6 @@ def devbind_script_path(self) -> PurePath:
+         """
+         raise InternalError("Accessed devbind script path before setup.")
+ 
+-    def load_vfio(self, pf_port: Port) -> None:
+-        """Overrides :meth:'~os_session.OSSession,load_vfio`."""
+-        cmd_result = self.send_command(f"lspci -nn -s {pf_port.pci}")
+-        device = re.search(r":([0-9a-fA-F]{4})\]", cmd_result.stdout)
+-        if device and device.group(1) in ["37c8", "0435", "19e2"]:
+-            self.send_command(
+-                "modprobe -r vfio_iommu_type1; modprobe -r vfio_pci",
+-                privileged=True,
+-            )
+-            self.send_command(
+-                "modprobe -r vfio_virqfd; modprobe -r vfio",
+-                privileged=True,
+-            )
+-            self.send_command(
+-                "modprobe vfio-pci disable_denylist=1 enable_sriov=1", privileged=True
+-            )
+-            self.send_command(
+-                "echo 1 | tee /sys/module/vfio/parameters/enable_unsafe_noiommu_mode",
+-                privileged=True,
+-            )
+-        else:
+-            self.send_command("modprobe vfio-pci")
+-        self.refresh_lshw()
+-
+     def create_crypto_vfs(self, pf_port: list[Port]) -> None:
+         """Overrides :meth:`~os_session.OSSession.create_crypto_vfs`.
+ 
+diff --git a/dts/framework/testbed_model/os_session.py b/dts/framework/testbed_model/os_session.py
+index 4a4fc1f34a..2eeeea6967 100644
+--- a/dts/framework/testbed_model/os_session.py
++++ b/dts/framework/testbed_model/os_session.py
+@@ -615,10 +615,6 @@ def configure_port_mtu(self, mtu: int, port: Port) -> None:
+             port: Port to set `mtu` on.
+         """
+ 
+-    @abstractmethod
+-    def load_vfio(self, pf_port: Port) -> None:
+-        """Load the vfio module according to the device type of the given port."""
+-
+     @abstractmethod
+     def create_crypto_vfs(self, pf_ports: list[Port]) -> None:
+         """Creatues virtual functions for each port in 'pf_ports'.
 diff --git a/dts/tests/TestSuite_cryptodev_throughput.py b/dts/tests/TestSuite_cryptodev_throughput.py
-new file mode 100644
-index 0000000000..b75b41e532
---- /dev/null
+index b75b41e532..f18a051299 100644
+--- a/dts/tests/TestSuite_cryptodev_throughput.py
 +++ b/dts/tests/TestSuite_cryptodev_throughput.py
-@@ -0,0 +1,386 @@
-+# SPDX-License-Identifier: BSD-3-Clause
-+# Copyright(c) 2025 University of New Hampshire
-+
-+"""DPDK cryptodev performance test suite.
-+
-+The main goal of this testsuite is to utilize the dpdk-test-cryptodev application to gather
-+performance metrics for various cryptographic operations supported by DPDK cryptodev-pmd.
-+It will then compare the results against predefined baseline defined in the test_config file to
-+ensure performance standards are met.
-+"""
-+
-+from api.capabilities import (
-+    LinkTopology,
-+    requires_link_topology,
-+)
-+from api.cryptodev import Cryptodev
-+from api.cryptodev.config import (
-+    AeadAlgName,
-+    AuthenticationAlgorithm,
-+    AuthenticationOpMode,
-+    CipherAlgorithm,
-+    DeviceType,
-+    EncryptDecryptSwitch,
-+    ListWrapper,
-+    OperationType,
-+    TestType,
-+)
-+from api.cryptodev.types import (
-+    CryptodevResults,
-+)
-+from api.test import verify
-+from framework.test_suite import BaseConfig, TestSuite, func_test
-+
-+
-+class Config(BaseConfig):
-+    """Performance test metrics."""
-+
-+    common_params: dict[str, int | float] = {
-+        "Gbps Delta": 0.05,
-+    }
-+    throughput_test_parameters: list[dict[str, int | float | str]] = [
-+        {
-+            **common_params,
-+            "buff_size": 64,
-+            "mops": 9.85,
-+            "gbps": 2.49,
-+        },
-+        {
-+            **common_params,
-+            "buff_size": 128,
-+            "mops": 4.83,
-+            "gbps": 4.95,
-+        },
-+        {
-+            **common_params,
-+            "buff_size": 256,
-+            "mops": 4.77,
-+            "gbps": 9.76,
-+        },
-+        {
-+            **common_params,
-+            "buff_size": 512,
-+            "mops": 4.52,
-+            "gbps": 18.52,
-+        },
-+        {
-+            **common_params,
-+            "buff_size": 1048,
-+            "mops": 3.77,
-+            "gbps": 30.87,
-+        },
-+        {
-+            **common_params,
-+            "buff_size": 2048,
-+            "mops": 2.49,
-+            "gbps": 40.86,
-+        },
-+    ]
-+
-+
-+@requires_link_topology(LinkTopology.NO_LINK)
-+class TestCryptodevThroughput(TestSuite):
-+    """DPDK Crypto Device Testing Suite."""
-+
-+    config: Config
-+    unsupported_cryptodevs: list[DeviceType] = []
-+
-+    def set_up_suite(self) -> None:
-+        """Set up the test suite.
-+
-+        Setup: Retrieve application parameters from the configuration.
-+        """
-+        self.throughput_test_parameters: list[dict[str, int | float | str]] = (
-+            self.config.throughput_test_parameters
-+        )
-+        self.buffer_sizes = ListWrapper(
-+            [int(run["buff_size"]) for run in self.throughput_test_parameters]
-+        )
-+
-+    def _print_stats(self, test_vals) -> None:
-+        element_len = len("Gbps Target")
-+        border_len = (element_len + 1) * (len(test_vals[0].items()))
-+        print(f"{'Throughput Results'.center(border_len)}")
-+        print("=" * border_len)
-+        for k, v in test_vals[0].items():
-+            print(f"|{k.title():<{element_len}}", end="")
-+        print(f"|\n{'='*border_len}")
-+        for test_val in test_vals:
-+            for k, v in test_val.items():
-+                print(f"|{v:<{element_len}}", end="")
-+            print(f"|\n{'='*border_len}")
-+
-+    def _verify_throughput(
-+        self, results: list[CryptodevResults]
-+    ) -> list[dict[str, int | float | str]]:
-+        result_list = []
-+        for result in results:
-+            result_dict = {}
-+            parameters = list(
-+                filter(
-+                    lambda x: x["buff_size"] == result.buffer_size,
-+                    self.throughput_test_parameters,
-+                )
-+            )[0]
-+            test_result = True
-+            for key, target_val in parameters.items():
-+                if key == "buff_size" or key == "delta":
-+                    result_dict[key] = target_val
-+                    continue
-+                if target_val > getattr(result, key):
-+                    delta = round((1 - (getattr(result, key) / target_val)), 5)
-+                    if delta > parameters["delta"]:
-+                        test_result = False
-+                else:
-+                    delta = round((1 - target_val / getattr(result, key)), 5)
-+                result_dict[key] = getattr(result, key)
-+                result_dict[f"{key} target"] = target_val
-+                result_dict[f"{key} delta"] = delta
-+            result_dict["passed"] = "PASS" if test_result else "FAIL"
-+            result_list.append(result_dict)
-+        return result_list
-+
-+    @func_test
-+    def qat_cipher_then_auth_aes_cbc_encrypt(self) -> None:
-+        """Test throughput on crypto_qat device type with aes-cbc and sha2-256-hmac algorithms.
-+
-+        Steps:
-+            * Create a Cryptodev application instance with crypto_qat devtype
-+                and cipher_then_auth operation with aes-cbc and sha2-256-hmac algorithms
-+            * Run the application and gather throughput statistics
-+
-+        Verify:
-+            * Throughput results meet predefined baseline
-+        """
-+        app = Cryptodev(
-+            ptest=TestType.throughput,
-+            devtype=DeviceType.crypto_qat,
-+            optype=OperationType.cipher_then_auth,
-+            cipher_algo=CipherAlgorithm.aes_cbc,
-+            cipher_op=EncryptDecryptSwitch.encrypt,
-+            cipher_key_sz=16,
-+            cipher_iv_sz=16,
-+            auth_algo=AuthenticationAlgorithm.sha2_256_hmac,
-+            auth_op=AuthenticationOpMode.generate,
-+            auth_key_sz=64,
-+            digest_sz=32,
-+            total_ops=30_000_000,
-+            burst_sz=32,
-+            buffer_sz=self.buffer_sizes,
-+        )
-+        results = self._verify_throughput(app.run_app(numvfs=0))
-+        self._print_stats(results)
-+        for result in results:
-+            verify(
-+                result["passed"] == "PASS",
-+                f"""Gbps was {result["gbps delta"]} below baseline
-+                \nMOps was {result["mops delta"]} below baseline""",
-+            )
-+
-+    @func_test
-+    def qat_aead_aes_gcm_encrypt(self) -> None:
-+        """Test throughput on a crypto_qat device type with aes-gcm algorithm.
-+
-+        Steps:
-+            * Create a Cryptodev application instance with QAT device
-+                and aead operation with aes-gcm algorithm
-+            * Run the application and gather throughput statistics
-+
-+        Verify:
-+            * Throughput results meet predefined baseline
-+        """
-+        app = Cryptodev(
-+            ptest=TestType.throughput,
-+            devtype=DeviceType.crypto_qat,
-+            optype=OperationType.aead,
-+            aead_aad_sz=16,
-+            aead_key_sz=16,
-+            aead_iv_sz=12,
-+            aead_op=EncryptDecryptSwitch.encrypt,
-+            aead_algo=AeadAlgName.aes_gcm,
-+            digest_sz=16,
-+            total_ops=30_000_000,
-+            burst_sz=32,
-+            buffer_sz=self.buffer_sizes,
-+        )
-+        results = self._verify_throughput(app.run_app(numvfs=1))
-+        self._print_stats(results)
-+        for result in results:
-+            verify(
-+                result["passed"] == "PASS",
-+                f"Gbps and MOps were {result["gbps delta"]} below baseline",
-+            )
-+
-+    @func_test
-+    def qat_cipher_aes_docsisbpi_decrypt(self) -> None:
-+        """Test throughput on a crypto_qat devtype with aes-docsibpi algorithm.
-+
-+        Steps:
-+            * Create a Cryptodev application instance with QAT device
-+                and cipher_only operation with aes-docsibpi algorithm
-+            * Run the application and gather throughput statistics
-+
-+        Verify:
-+            * Throughput results meet predefined baseline
-+        """
-+        app = Cryptodev(
-+            ptest=TestType.throughput,
-+            devtype=DeviceType.crypto_qat,
-+            optype=OperationType.cipher_only,
-+            cipher_algo=CipherAlgorithm.aes_docsisbpi,
-+            cipher_op=EncryptDecryptSwitch.decrypt,
-+            cipher_key_sz=32,
-+            cipher_iv_sz=16,
-+            burst_sz=32,
-+            buffer_sz=self.buffer_sizes,
-+            total_ops=30_000_000,
-+        )
-+        results = self._verify_throughput(app.run_app(numvfs=1))
-+        self._print_stats(results)
-+        for result in results:
-+            verify(
-+                result["passed"] == "PASS",
-+                f"Gbps and MOps were {result["gbps delta"]} below baseline",
-+            )
-+
-+    @func_test
-+    def qat_cipher_aes_docsisbpi_encrypt(self) -> None:
-+        """Test throughput on a crypto_qat device type with aes-docsibpi algorithm.
-+
-+        Steps:
-+            * Create a Cryptodev application instance with crypto_qat device
-+                and cipher_only operation with aes-docsibpi algorithm
-+            * Run the application and gather throughput statistics
-+
-+        Verify:
-+            * Throughput results meet predefined baseline
-+        """
-+        app = Cryptodev(
-+            ptest=TestType.throughput,
-+            devtype=DeviceType.crypto_qat,
-+            optype=OperationType.cipher_only,
-+            cipher_algo=CipherAlgorithm.aes_docsisbpi,
-+            cipher_op=EncryptDecryptSwitch.encrypt,
-+            cipher_key_sz=32,
-+            cipher_iv_sz=16,
-+            burst_sz=32,
-+            buffer_sz=self.buffer_sizes,
-+            total_ops=30_000_000,
-+        )
-+        results = self._verify_throughput(app.run_app(numvfs=3))
-+        self._print_stats(results)
-+        for result in results:
-+            verify(
-+                result["passed"] == "PASS",
-+                f"Gbps and MOps were {result["gbps delta"]} below baseline",
-+            )
-+
-+    @func_test
-+    def qat_cipher_then_auth_kasumi_f8_encrypt(self) -> None:
-+        """Test throughput on a crypto_qat device type with kasumi-f8 and kasumi-f9 algorithms.
-+
-+        Steps:
-+            * Create a Cryptodev application instance with crypto_qat device
-+                and cipher_then_auth operation with kasumi-f8 and kasumi-f9 algorithms
-+            * Run the application and gather throughput statistics
-+
-+        Verify:
-+            * Throughput results meet predefined baseline
-+        """
-+        app = Cryptodev(
-+            ptest=TestType.throughput,
-+            devtype=DeviceType.crypto_qat,
-+            optype=OperationType.cipher_then_auth,
-+            cipher_algo=CipherAlgorithm.kasumi_f8,
-+            cipher_op=EncryptDecryptSwitch.encrypt,
-+            cipher_key_sz=16,
-+            cipher_iv_sz=8,
-+            auth_algo=AuthenticationAlgorithm.kasumi_f9,
-+            auth_op=AuthenticationOpMode.generate,
-+            auth_key_sz=16,
-+            digest_sz=4,
-+            total_ops=30_000_000,
-+            burst_sz=32,
-+            buffer_sz=self.buffer_sizes,
-+        )
-+        results = self._verify_throughput(app.run_app(numvfs=6))
-+        self._print_stats(results)
-+        for result in results:
-+            verify(
-+                result["passed"] == "PASS",
-+                f"Gbps and MOps were {result["gbps delta"]} below baseline",
-+            )
-+
-+    @func_test
-+    def qat_cipher_then_auth_snow3g_uea2_encrpyt(self) -> None:
-+        """Test throughput on a crypto_qat device type with snow3g-uea2 and snow3g-uia2 algorithms.
-+
-+        Steps:
-+            * Create a Cryptodev application instance with crypto_qat device
-+                and cipher_then_auth operation with snow3g-uea2 and snow3g-uia2 algorithms
-+            * Run the application and gather throughput statistics
-+
-+        Verify:
-+            * Throughput results meet predefined baseline
-+        """
-+        app = Cryptodev(
-+            ptest=TestType.throughput,
-+            devtype=DeviceType.crypto_qat,
-+            optype=OperationType.cipher_then_auth,
-+            cipher_algo=CipherAlgorithm.snow3g_uea2,
-+            cipher_op=EncryptDecryptSwitch.encrypt,
-+            cipher_key_sz=16,
-+            cipher_iv_sz=16,
-+            auth_algo=AuthenticationAlgorithm.snow3g_uia2,
-+            auth_op=AuthenticationOpMode.generate,
-+            auth_key_sz=16,
-+            auth_iv_sz=16,
-+            digest_sz=4,
-+            total_ops=30_000_000,
-+            burst_sz=32,
-+            buffer_sz=self.buffer_sizes,
-+        )
-+        results = self._verify_throughput(app.run_app(numvfs=12))
-+        self._print_stats(results)
-+        for result in results:
-+            verify(
-+                result["passed"] == "PASS",
-+                f"Gbps and MOps were {result["gbps delta"]} below baseline",
-+            )
-+
-+    @func_test
-+    def qat_cipher_then_auth_zuc_eea3_encrypt(self) -> None:
-+        """Test throughput on a crypto_qat device type with zuc-eea3 and zuc-eia3 algorithms.
-+
-+        Steps:
-+            * Create a Cryptodev application instance with crypto_qat device
-+                and cipher_then_auth operation with zuc-eea3 and zuc-eia3 algorithms
-+            * Run the application and gather throughput statistics
-+
-+        Verify:
-+            * Throughput results meet predefined baseline
-+        """
-+        app = Cryptodev(
-+            ptest=TestType.throughput,
-+            devtype=DeviceType.crypto_qat,
-+            optype=OperationType.cipher_then_auth,
-+            cipher_algo=CipherAlgorithm.zuc_eea3,
-+            cipher_op=EncryptDecryptSwitch.encrypt,
-+            cipher_key_sz=16,
-+            cipher_iv_sz=16,
-+            auth_algo=AuthenticationAlgorithm.zuc_eia3,
-+            auth_op=AuthenticationOpMode.generate,
-+            auth_key_sz=16,
-+            auth_iv_sz=16,
-+            digest_sz=4,
-+            total_ops=30_000_000,
-+            burst_sz=32,
-+            buffer_sz=self.buffer_sizes,
-+        )
-+        results = self._verify_throughput(app.run_app(numvfs=12))
-+        self._print_stats(results)
-+        for result in results:
-+            verify(
-+                result["passed"] == "PASS",
-+                f"Gbps and MOps were {result["gbps delta"]} below baseline",
-+            )
+@@ -29,7 +29,7 @@
+     CryptodevResults,
+ )
+ from api.test import verify
+-from framework.test_suite import BaseConfig, TestSuite, func_test
++from framework.test_suite import BaseConfig, TestSuite, crypto_test
+ 
+ 
+ class Config(BaseConfig):
+@@ -140,7 +140,7 @@ def _verify_throughput(
+             result_list.append(result_dict)
+         return result_list
+ 
+-    @func_test
++    @crypto_test
+     def qat_cipher_then_auth_aes_cbc_encrypt(self) -> None:
+         """Test throughput on crypto_qat device type with aes-cbc and sha2-256-hmac algorithms.
+ 
+@@ -177,7 +177,7 @@ def qat_cipher_then_auth_aes_cbc_encrypt(self) -> None:
+                 \nMOps was {result["mops delta"]} below baseline""",
+             )
+ 
+-    @func_test
++    @crypto_test
+     def qat_aead_aes_gcm_encrypt(self) -> None:
+         """Test throughput on a crypto_qat device type with aes-gcm algorithm.
+ 
+@@ -211,7 +211,7 @@ def qat_aead_aes_gcm_encrypt(self) -> None:
+                 f"Gbps and MOps were {result["gbps delta"]} below baseline",
+             )
+ 
+-    @func_test
++    @crypto_test
+     def qat_cipher_aes_docsisbpi_decrypt(self) -> None:
+         """Test throughput on a crypto_qat devtype with aes-docsibpi algorithm.
+ 
+@@ -243,7 +243,7 @@ def qat_cipher_aes_docsisbpi_decrypt(self) -> None:
+                 f"Gbps and MOps were {result["gbps delta"]} below baseline",
+             )
+ 
+-    @func_test
++    @crypto_test
+     def qat_cipher_aes_docsisbpi_encrypt(self) -> None:
+         """Test throughput on a crypto_qat device type with aes-docsibpi algorithm.
+ 
+@@ -275,7 +275,7 @@ def qat_cipher_aes_docsisbpi_encrypt(self) -> None:
+                 f"Gbps and MOps were {result["gbps delta"]} below baseline",
+             )
+ 
+-    @func_test
++    @crypto_test
+     def qat_cipher_then_auth_kasumi_f8_encrypt(self) -> None:
+         """Test throughput on a crypto_qat device type with kasumi-f8 and kasumi-f9 algorithms.
+ 
+@@ -311,7 +311,7 @@ def qat_cipher_then_auth_kasumi_f8_encrypt(self) -> None:
+                 f"Gbps and MOps were {result["gbps delta"]} below baseline",
+             )
+ 
+-    @func_test
++    @crypto_test
+     def qat_cipher_then_auth_snow3g_uea2_encrpyt(self) -> None:
+         """Test throughput on a crypto_qat device type with snow3g-uea2 and snow3g-uia2 algorithms.
+ 
+@@ -348,7 +348,7 @@ def qat_cipher_then_auth_snow3g_uea2_encrpyt(self) -> None:
+                 f"Gbps and MOps were {result["gbps delta"]} below baseline",
+             )
+ 
+-    @func_test
++    @crypto_test
+     def qat_cipher_then_auth_zuc_eea3_encrypt(self) -> None:
+         """Test throughput on a crypto_qat device type with zuc-eea3 and zuc-eia3 algorithms.
+ 
 -- 
 2.50.1
 
