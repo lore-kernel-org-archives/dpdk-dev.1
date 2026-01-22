@@ -2,50 +2,34 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D320AC44500
-	for <dpdk-dev@archiver.kernel.org>; Thu, 22 Jan 2026 12:24:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B924AD3EE60
+	for <dpdk-dev@archiver.kernel.org>; Thu, 22 Jan 2026 13:01:20 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B3E374060F;
-	Thu, 22 Jan 2026 13:24:24 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
- by mails.dpdk.org (Postfix) with ESMTP id C4D734060F
- for <dev@dpdk.org>; Thu, 22 Jan 2026 13:24:22 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1769084663; x=1800620663;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=c+4tA7fnaOddpmYymeAQ+R9mrRjS3lufXEUFW8huloU=;
- b=TQZKq1C1Ty4MyA99VOnR5UbvFpe+ty5RkhQ/HfX87XQycP9t8szh873Z
- r8zZSVxSHGoSn79Vdl8u9uEt65pRMBo4klndY2aNQV2zvalM3POcrjXwK
- Kqvi9BYcKIgeBepaBlx1LXhk3Z2cX7+XYyiACbEFd7NLoJgA3OGl4ROu5
- 02prltDYSStIUqXA7TflCr2ZdS6cggP5vZO7aMJvHQQVUBEAZNPkH5bX0
- z7QPwqSK6967fVcdSjhBLA7JwQFImVyVXdawHKdODqBgNNHy4KHssBi19
- AyxmMFoX+vHUyEY44vK88RcWv2OwrH43wL6cCHRBRdu7pVXlvW00dq7/8 w==;
-X-CSE-ConnectionGUID: MpcvsueeROiEaaB+Nr8y3w==
-X-CSE-MsgGUID: sAnr3RPuTVeO5aQEB0d51Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11678"; a="81436285"
-X-IronPort-AV: E=Sophos;i="6.21,246,1763452800"; d="scan'208";a="81436285"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
- by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 22 Jan 2026 04:24:22 -0800
-X-CSE-ConnectionGUID: YMBvruY+S2+CyZaYCeuspw==
-X-CSE-MsgGUID: cDNdtTdHS7Knp/GgDSpEqg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,246,1763452800"; d="scan'208";a="205971754"
-Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by orviesa010.jf.intel.com with ESMTP; 22 Jan 2026 04:24:22 -0800
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: dev@dpdk.org
-Cc: stephen@networkplumber.org, Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH 3/3] drivers: always enable the null net driver [RFC]
-Date: Thu, 22 Jan 2026 12:23:53 +0000
-Message-ID: <20260122122354.1820368-4-bruce.richardson@intel.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20260122122354.1820368-1-bruce.richardson@intel.com>
-References: <20260122122354.1820368-1-bruce.richardson@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 1AF514027A;
+	Thu, 22 Jan 2026 14:01:19 +0100 (CET)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+ by mails.dpdk.org (Postfix) with ESMTP id BF9264021F
+ for <dev@dpdk.org>; Thu, 22 Jan 2026 14:01:17 +0100 (CET)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+ by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 039F51476;
+ Thu, 22 Jan 2026 05:01:10 -0800 (PST)
+Received: from [10.57.94.77] (unknown [10.57.94.77])
+ by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DFAC83F632;
+ Thu, 22 Jan 2026 05:01:15 -0800 (PST)
+Message-ID: <9f292ee0-1b20-4d10-8fb6-1efc277de97b@arm.com>
+Date: Thu, 22 Jan 2026 13:01:14 +0000
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] dts: automate VFIO-PCI modprobe
+Content-Language: en-GB
+To: Andrew Bailey <abailey@iol.unh.edu>, probb@iol.unh.edu
+Cc: dev@dpdk.org, dmarx@iol.unh.edu
+References: <20251121210650.328804-1-abailey@iol.unh.edu>
+ <20251126141650.367633-1-abailey@iol.unh.edu>
+From: Luca Vizzarro <Luca.Vizzarro@arm.com>
+In-Reply-To: <20251126141650.367633-1-abailey@iol.unh.edu>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -59,35 +43,53 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Having the net_null driver always available can be convenient and allows
-use by unit tests, so add this trivial driver to the always-enable list.
+Hi Andrew,
 
-Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+this is a good shout. But be mindful of the implementation.
 
----
-I'm not sure if we want this to be always enabled or not, so sending
-this as an RFC. I can see definite advantages to doing so, but I also
-dislike having too many components on the always-enable list.
+On 26/11/2025 14:16, Andrew Bailey wrote:
+> Currently, users must modprobe vfio-pci before running DTS when using a
+> non-mellanox NIC. This patch automates the process on test run start up.
+> 
+> Signed-off-by: Andrew Bailey <abailey@iol.unh.edu>
+> ---
+>   dts/framework/test_run.py | 8 ++++++++
+>   1 file changed, 8 insertions(+)
+> 
+> diff --git a/dts/framework/test_run.py b/dts/framework/test_run.py
+> index ff0a12c9ce..9d7b6271c7 100644
+> --- a/dts/framework/test_run.py
+> +++ b/dts/framework/test_run.py
+> @@ -106,6 +106,7 @@
+>   from types import MethodType
+>   from typing import ClassVar, Protocol, Union
+>   
+> +from api.capabilities import LinkTopology
+>   from framework.config.test_run import TestRunConfiguration
+>   from framework.context import Context, init_ctx
+>   from framework.exception import InternalError, SkippedTestException, TestCaseVerifyError
+> @@ -347,6 +348,13 @@ def next(self) -> State | None:
+>           test_run.ctx.dpdk.setup()
+>           test_run.ctx.topology.setup()
+>   
+> +        if (
+> +            test_run.ctx.topology.type != LinkTopology.NO_LINK
+> +            and test_run.ctx.sut_node.ports[0].config.os_driver_for_dpdk == "vfio-pci"
+> +        ):
+> +            test_run.ctx.sut_node.main_session.send_command("modprobe vfio")
+> +            test_run.ctx.sut_node.main_session.send_command("modprobe vfio-pci")
+> +
+>           if test_run.config.use_virtual_functions:
+>               test_run.ctx.topology.instantiate_vf_ports()
+>   
 
-Since I'm ambivilent myself, including this patch so the community can
-decide.
----
- drivers/meson.build | 2 ++
- 1 file changed, 2 insertions(+)
+Loading vfio-pci is perfectly fine in my opinion, but like Patrick 
+already mentioned, this part of the framework should be OS-agnostic, 
+therefore you should place the logic accordingly in Node (load_drivers) 
+and LinuxSession for the actual command.
 
-diff --git a/drivers/meson.build b/drivers/meson.build
-index 3fe3be48fb..9ed0dba786 100644
---- a/drivers/meson.build
-+++ b/drivers/meson.build
-@@ -80,6 +80,8 @@ endif
- always_enable = ['bus/pci', 'bus/vdev']
- # we always need a mempool driver, and ring is default, so make it mandatory
- always_enable += ['mempool/ring']
-+# unit tests take advantage of net/null driver, so always enable it
-+always_enable += ['net/null']
- enable_drivers += always_enable
- 
- default_cflags = machine_args
--- 
-2.51.0
+Since this is part of the Node setup, it should be part of Node.setup 
+and not in test_run.py
 
+Best,
+Luca
