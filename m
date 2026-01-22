@@ -2,42 +2,60 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B339EC44500
-	for <dpdk-dev@archiver.kernel.org>; Thu, 22 Jan 2026 07:28:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D250C44500
+	for <dpdk-dev@archiver.kernel.org>; Thu, 22 Jan 2026 07:29:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 77A004042F;
-	Thu, 22 Jan 2026 08:27:40 +0100 (CET)
-Received: from office2.cesnet.cz (office2.cesnet.cz [78.128.248.237])
- by mails.dpdk.org (Postfix) with ESMTP id 0C5814013F
- for <dev@dpdk.org>; Thu, 22 Jan 2026 08:27:30 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cesnet.cz;
- s=office2-2020; t=1769066849;
- bh=IxOkk2bFag4LcSSehMEealm1qzGDXk2Dl3yGzX5FxSQ=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References;
- b=XRHGIA90/Q4GM0aLd/o/tcBq+dWuu1J6WmUTP4LDlKYRkgQ7GjtehPARtyCQniJhw
- IF6t2/S+Y/jeQHkCLtQxfpv/ReW2Kx6iNO1vhXPngxB3zUdHt4tctX4tEtPIXNqm6c
- gk9hB+aPqyA0FFB2WCJj6jx6t9rGG25inyxPLabAvSUZv4ZIl4AG7L0cX/4mPOgpOf
- 0FtTtAamvpzO7M8/1TvQ6EG6i17UKZ+9W8ppK2j/yMBDfSLBPxEJgeuDS5IB5rpfiQ
- QkE27BOFKm1WvWCeeBGL+GlQUQraMAeKmVI3AS3EErJ82mpnJ5Hq3hhhcntMiwMKAW
- 73/XJUhVThakA==
-Received: from emil.cesnet.cz (gtx107.cesnet.cz [IPv6:2001:718:812:27::107])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by office2.cesnet.cz (Postfix) with ESMTPSA id D78221180080;
- Thu, 22 Jan 2026 08:27:29 +0100 (CET)
-From: spinler@cesnet.cz
-To: dev@dpdk.org
-Cc: Martin Spinler <spinler@cesnet.cz>
-Subject: [PATCH v4 8/8] doc/nfb: cleanup and update guide
-Date: Thu, 22 Jan 2026 08:27:19 +0100
-Message-ID: <20260122072719.505185-9-spinler@cesnet.cz>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20260122072719.505185-1-spinler@cesnet.cz>
-References: <20260115151656.393106-1-spinler@cesnet.cz>
- <20260122072719.505185-1-spinler@cesnet.cz>
+	by mails.dpdk.org (Postfix) with ESMTP id 929274013F;
+	Thu, 22 Jan 2026 08:28:59 +0100 (CET)
+Received: from mailgw1.hygon.cn (unknown [101.204.27.37])
+ by mails.dpdk.org (Postfix) with ESMTP id 662EB400D5
+ for <dev@dpdk.org>; Thu, 22 Jan 2026 08:28:58 +0100 (CET)
+Received: from maildlp1.hygon.cn (unknown [127.0.0.1])
+ by mailgw1.hygon.cn (Postfix) with ESMTP id 4dxXjy2hnPzrWlM;
+ Thu, 22 Jan 2026 15:28:54 +0800 (CST)
+Received: from maildlp1.hygon.cn (unknown [172.23.18.60])
+ by mailgw1.hygon.cn (Postfix) with ESMTP id 4dxXjv651dzrWlM;
+ Thu, 22 Jan 2026 15:28:51 +0800 (CST)
+Received: from cncheex06.Hygon.cn (unknown [172.23.18.116])
+ by maildlp1.hygon.cn (Postfix) with ESMTPS id 6F18C1655;
+ Thu, 22 Jan 2026 15:28:45 +0800 (CST)
+Received: from cncheex04.Hygon.cn (172.23.18.114) by cncheex06.Hygon.cn
+ (172.23.18.116) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.36; Thu, 22 Jan
+ 2026 15:28:52 +0800
+Received: from cncheex04.Hygon.cn ([fe80::1b6f:6c58:58a4:430d]) by
+ cncheex04.Hygon.cn ([fe80::1b6f:6c58:58a4:430d%10]) with mapi id
+ 15.02.1544.036; Thu, 22 Jan 2026 15:28:52 +0800
+From: Liangxing Wang <wangliangxing@hygon.cn>
+To: "Varghese, Vipin" <Vipin.Varghese@amd.com>,
+ =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>, "Stephen
+ Hemminger" <stephen@networkplumber.org>, "P, Thiyagarajan"
+ <Thiyagarajan.P@amd.com>, "Murali Krishna, Bala" <Bala.MuraliKrishna@amd.com>
+CC: "dev@dpdk.org" <dev@dpdk.org>, Bruce Richardson
+ <bruce.richardson@intel.com>, Konstantin Ananyev
+ <konstantin.v.ananyev@yandex.ru>
+Subject: RE: [PATCH v6] eal/x86: optimize memcpy of small sizes
+Thread-Topic: [PATCH v6] eal/x86: optimize memcpy of small sizes
+Thread-Index: AQHcg7uGUjc6AXmKc0GK4d70t8GeYrVQOJ+AgAox3gCAAAU3AIAAAOmAgAGZnACAAUGUgIAAjA2w
+Date: Thu, 22 Jan 2026 07:28:52 +0000
+Message-ID: <9ac18b2e8f684bb5a9fa91815bf46a49@hygon.cn>
+References: <20251120114554.950287-1-mb@smartsharesystems.com>
+ <20260112120337.277331-1-mb@smartsharesystems.com>
+ <20260113151943.31c58217@phoenix.local>
+ <PH7PR12MB8596A21E5892BABF88665C5B8289A@PH7PR12MB8596.namprd12.prod.outlook.com>
+ <PH7PR12MB8596F1FE29BA757F8884E7A98289A@PH7PR12MB8596.namprd12.prod.outlook.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F65677@smartserver.smartshare.dk>
+ <PH7PR12MB8596838852258FB94342042A8296A@PH7PR12MB8596.namprd12.prod.outlook.com>
+ <PH7PR12MB85961D3A7388DF0C0445915A8297A@PH7PR12MB8596.namprd12.prod.outlook.com>
+In-Reply-To: <PH7PR12MB85961D3A7388DF0C0445915A8297A@PH7PR12MB8596.namprd12.prod.outlook.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.19.25.208]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -51,284 +69,54 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Martin Spinler <spinler@cesnet.cz>
-
-Clean up documentation and update the guide with:
-- Current card list with firmware download links
-- Updated port argument description
-
-Signed-off-by: Martin Spinler <spinler@cesnet.cz>
----
- doc/guides/nics/features/nfb.ini       |   4 +
- doc/guides/nics/nfb.rst                | 187 +++++++++++--------------
- doc/guides/rel_notes/release_26_03.rst |   9 ++
- 3 files changed, 98 insertions(+), 102 deletions(-)
-
-diff --git a/doc/guides/nics/features/nfb.ini b/doc/guides/nics/features/nfb.ini
-index c77b592789..7ac89fc15f 100644
---- a/doc/guides/nics/features/nfb.ini
-+++ b/doc/guides/nics/features/nfb.ini
-@@ -9,9 +9,13 @@ Link status          = Y
- Queue start/stop     = Y
- Promiscuous mode     = Y
- Allmulticast mode    = Y
-+Unicast MAC filter   = Y
-+Timestamp offload    = P
- Basic stats          = Y
- Extended stats       = Y
- Stats per queue      = Y
-+FW version           = Y
-+Multiprocess aware   = Y
- Linux                = Y
- x86-64               = Y
- Usage doc            = Y
-diff --git a/doc/guides/nics/nfb.rst b/doc/guides/nics/nfb.rst
-index a9b4049654..55a635d8d4 100644
---- a/doc/guides/nics/nfb.rst
-+++ b/doc/guides/nics/nfb.rst
-@@ -2,64 +2,101 @@
-     Copyright 2019 Cesnet
-     Copyright 2019 Netcope Technologies
- 
--NFB poll mode driver library
--=================================
-+NFB Poll Mode Driver
-+====================
-+
-+The NFB PMD implements support for the FPGA-based
-+programmable NICs running `CESNET-NDK <https://www.liberouter.org/ndk/>`_
-+based firmware (formerly known as the NetCOPE platform). The CESNET Network Development Kit offers
-+wide spectrum of supported cards, for example:
-+N6010, FB2CGG3 (Silicom Denmark),
-+IA-420F, IA-440i (BittWare),
-+AGI-FH400G (ReflexCES),
-+and `many more <https://github.com/CESNET/ndk-fpga/tree/devel/cards>`_.
-+
-+The CESNET-NDK framework is open source and
-+can be found on `CESNET-NDK <https://github.com/CESNET/ndk-fpga>`_.
-+Ready-to-use demo firmwares can be found on the `DYNANIC page <https://dyna-nic.com/try-now/>`_.
-+
-+Software compatibility and firmware for
-+`historical cards <https://www.liberouter.org/technologies/cards/>`_
-+are left unmaintained.
-+
-+Software prerequisites
-+----------------------
- 
--The NFB poll mode driver library implements support for the Netcope
--FPGA Boards (**NFB-40G2, NFB-100G2, NFB-200G2QL**) and Silicom **FB2CGG3** card,
--FPGA-based programmable NICs. The NFB PMD uses interface provided by the libnfb
--library to communicate with these cards over the nfb layer.
-+This PMD requires a Linux kernel module, which is responsible for initialization and
-+allocation of resources needed for the nfb layer function.
-+Communication between PMD and kernel modules is mediated by the libnfb library.
-+The kernel module and library are not part of DPDK and must be installed
-+separately. Dependencies can be found on GitHub:
-+`nfb-framework <https://github.com/CESNET/ndk-sw>`_ as source code,
-+or for RPM-based distributions, the prebuilt `nfb-framework` package on
-+`Fedora Copr <https://copr.fedorainfracloud.org/coprs/g/CESNET/nfb-framework/>`_.
- 
--More information about the
--`NFB cards <https://www.liberouter.org/technologies/cards/>`_
--and used technology
--(`Network Development Kit <https://www.liberouter.org/ndk/>`_)
--can be found on the `Liberouter website <http://www.liberouter.org/>`_.
-+Before starting the DPDK, make sure that the kernel module is loaded (`sudo modprobe nfb`)
-+and the card is running the CESNET-NDK based firmware (`nfb-info -l`).
- 
- .. note::
- 
--   Currently the driver is supported only on x86_64 architectures.
--   Only x86_64 versions of the external libraries are provided.
-+   Currently, the driver is supported only on x86_64 architectures.
-+
-+NFB card architecture
-+---------------------
-+
-+Ethernet Ports
-+~~~~~~~~~~~~~~
-+
-+The NFB cards are multi-port multi-queue cards, where (generally) data from any
-+Ethernet port may be sent by the firmware to any queue.
- 
--Prerequisites
---------------
-+The cards were historically represented in DPDK as a single port.
-+Currently each Ethernet channel is represented as one DPDK port.
- 
--This PMD requires kernel modules which are responsible for initialization and
--allocation of resources needed for nfb layer function.
--Communication between PMD and kernel modules is mediated by libnfb library.
--These kernel modules and library are not part of DPDK and must be installed
--separately:
-+.. note::
- 
--*  **libnfb library**
-+   Normally, one port corresponds to one channel, but ports can often be configured in a separate
-+   manner. For example one 100G port can be used as 4x25G or 4x10G independent Ethernet channels.
- 
--   The library provides API for initialization of nfb transfers, receiving and
--   transmitting data segments.
-+By default, all ports are initialized and used for the allowed PCI device.
-+When this behaviour is limiting (e.g., for multiple instances of DPDK app on different ports
-+of the same PCI device), ports can be specified by the `port` item in the `allow` argument:
- 
--*  **Kernel modules**
-+.. code-block:: console
- 
--   * nfb
-+   -a 0000:01:00.0,port=0,port=3
- 
--   Kernel modules manage initialization of hardware, allocation and
--   sharing of resources for user space applications.
-+PCIe slots
-+~~~~~~~~~~
- 
--Dependencies can be found here:
--`Netcope common <https://github.com/CESNET/ndk-sw>`_.
-+Some cards employ more than one PCIe device for better data throughput. This can be achieved by
-+slot bifurcation (only a minor improvement) or by an add-on cable connected to another PCIe slot.
-+Both improvements can work together, as is, for example, in the case of the AGI-FH400G card.
- 
--Versions of the packages
--~~~~~~~~~~~~~~~~~~~~~~~~
-+Because primary and secondary slot(s) can be attached to different NUMA nodes
-+(also applies for bifurcation on some HW), the data structures need to be correctly allocated.
-+(Device-aware allocation matters also on IOMMU-enabled systems.)
-+The firmware already provides DMA queue to PCI device mapping. The DPDK application just needs to
-+use all PCI devices, otherwise some queues will not be available; provide all PCI endpoints
-+listed in the `nfb-info -v` in the `allow` argument.
- 
--The minimum version of the provided packages:
-+.. note::
- 
--* for DPDK from 19.05
-+   For cards where the number of Ethernet ports is less than the number of PCI devices
-+   (e.g., AGI-FH400G: 1 port, up to 4 PCI devices), the virtual DPDK ports are
-+   created to achieve the best NUMA-aware throughput
-+   (virtual ports lack a lot of configuration features).
- 
--Configuration
---------------
-+Features
-+--------
- 
- Timestamps
-+~~~~~~~~~~
- 
--The PMD supports hardware timestamps of frame receipt on physical network interface. In order to use
--the timestamps, the hardware timestamping unit must be enabled (follow the documentation of the NFB
--products). The standard `RTE_ETH_RX_OFFLOAD_TIMESTAMP` flag can be used for this feature.
-+The PMD supports hardware timestamps of frame receipt on physical network interface.
-+In order to use the timestamps, the hardware timestamping unit must be enabled
-+(follow the documentation of the NFB products).
-+The standard `RTE_ETH_RX_OFFLOAD_TIMESTAMP` flag can be used for this feature.
- 
- When the timestamps are enabled, a timestamp validity flag is set in the MBUFs
- containing received frames and timestamp is inserted into the `rte_mbuf` struct.
-@@ -67,72 +104,18 @@ containing received frames and timestamp is inserted into the `rte_mbuf` struct.
- The timestamp is an `uint64_t` field and holds the number of nanoseconds
- elapsed since 1.1.1970 00:00:00 UTC.
- 
-+Simulation
-+~~~~~~~~~~
- 
--Using the NFB PMD
------------------------
--
--Kernel modules have to be loaded before running the DPDK application.
--
--NFB card architecture
-----------------------
--
--The NFB cards are multi-port multi-queue cards, where (generally) data from any
--Ethernet port may be sent to any queue.
--They are represented in DPDK as a single port.
--
--NFB-200G2QL card employs an add-on cable which allows to connect it to two
--physical PCI-E slots at the same time (see the diagram below).
--This is done to allow 200 Gbps of traffic to be transferred through the PCI-E
--bus (note that a single PCI-E 3.0 x16 slot provides only 125 Gbps theoretical
--throughput).
--
--Although each slot may be connected to a different CPU and therefore to a different
--NUMA node, the card is represented as a single port in DPDK. To work with data
--from the individual queues on the right NUMA node, connection of NUMA nodes on
--first and last queue (each NUMA node has half of the queues) need to be checked.
--
--Limitations
-------------
--
--Driver is usable only on Linux architecture, namely on CentOS.
--
--Since a card is always represented as a single port, but can be connected to two
--NUMA nodes, there is need for manual check where master/slave is connected.
--
--Example of usage
------------------
--
--Read packets from 0. and 1. receive queue and write them to 0. and 1.
--transmit queue:
-+The CESNET-NDK framework offers the possibility of simulating the firmware together with DPDK.
-+This allows for easy debugging of a packet flow behaviour with a specific firmware configuration.
-+The DPDK NFB driver can be connected to the simulator (Questa/ModelSim/nvc) via a virtual device:
- 
- .. code-block:: console
- 
--   ./<build_dir>/app/dpdk-testpmd -l 0-3 -n 2 \
--   -- --port-topology=chained --rxq=2 --txq=2 --nb-cores=2 -i -a
--
--Example output:
--
--.. code-block:: console
-+   dpdk-testpmd
-+      --vdev=eth_vdev_nfb,dev=libnfb-ext-grpc.so:grpc+dma_vas:localhost:50051,queue_driver=native
-+      --iova-mode=va -- -i
- 
--   [...]
--   EAL: PCI device 0000:06:00.0 on NUMA socket -1
--   EAL:   probe driver: 1b26:c1c1 net_nfb
--   PMD: Initializing NFB device (0000:06:00.0)
--   PMD: Available DMA queues RX: 8 TX: 8
--   PMD: NFB device (0000:06:00.0) successfully initialized
--   Interactive-mode selected
--   Auto-start selected
--   Configuring Port 0 (socket 0)
--   Port 0: 00:11:17:00:00:00
--   Checking link statuses...
--   Port 0 Link Up - speed 10000 Mbps - full-duplex
--   Done
--   Start automatic packet forwarding
--     io packet forwarding - CRC stripping disabled - packets/burst=32
--     nb forwarding cores=2 - nb forwarding ports=1
--     RX queues=2 - RX desc=128 - RX free threshold=0
--     RX threshold registers: pthresh=0 hthresh=0 wthresh=0
--     TX queues=2 - TX desc=512 - TX free threshold=0
--     TX threshold registers: pthresh=0 hthresh=0 wthresh=0
--     TX RS bit threshold=0 - TXQ flags=0x0
--   testpmd>
-+More info about the simulation can be found int the CESNET-NDK `documentation
-+<https://cesnet.github.io/ndk-fpga/devel/ndk_apps/minimal/tests/cocotb/readme.html>`_.
-diff --git a/doc/guides/rel_notes/release_26_03.rst b/doc/guides/rel_notes/release_26_03.rst
-index 52663580e3..d484ca98d2 100644
---- a/doc/guides/rel_notes/release_26_03.rst
-+++ b/doc/guides/rel_notes/release_26_03.rst
-@@ -55,6 +55,15 @@ New Features
-      Also, make sure to start the actual text at the margin.
-      =======================================================
- 
-+* **Updated CESNET NFB ethernet driver.**
-+
-+  * The timestamp value has been updated to make it usable.
-+  * The DPDK port now represents just one Ethernet port instead of all Ethernet ports on the NIC.
-+  * All ports are used by default, but a subset can be selected using the ``port`` argument.
-+  * Report firmware version.
-+  * Common CESNET-NDK-based adapters have been added,
-+    including the FB2CGHH (Silicom Denmark) and XpressSX AGI-FH400G (Reflex CES).
-+
- 
- Removed Items
- -------------
--- 
-2.52.0
+SGkgQCBWYXJnaGVzZSwgVmlwaW4sDQoNCkkgYW0gaW50ZXJlc3RlZCBpbiB0aGlzIHJ0ZV9tZW1j
+cHkgcGF0Y2ggcGVyZm9ybWFuY2Ugb24gb3VyIHg4NiBwbGF0Zm9ybSB0b28uIE1heSB5b3UgcGxl
+YXNlIHNoYXJlIHRoZSBjb25maWd1cmF0aW9uIGZpbGUgYW5kIHN0ZXBzIGZvciB5b3VyIGRtYS1w
+ZXJmIHRlc3QgdGhlbiBJIGNhbiBydW4gdGhlIHNhbWUgb24gb3VyIHBsYXRmb3JtPyBUaGFua3Mu
+DQoNClJlZ2FyZHMsDQpMaWFuZ3hpbmcNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4g
+RnJvbTogVmFyZ2hlc2UsIFZpcGluIDxWaXBpbi5WYXJnaGVzZUBhbWQuY29tPg0KPiBTZW50OiAy
+MDI25bm0MeaciDIy5pelIDE1OjAwDQo+IFRvOiBWYXJnaGVzZSwgVmlwaW4gPFZpcGluLlZhcmdo
+ZXNlQGFtZC5jb20+OyBNb3J0ZW4gQnLDuHJ1cA0KPiA8bWJAc21hcnRzaGFyZXN5c3RlbXMuY29t
+PjsgU3RlcGhlbiBIZW1taW5nZXINCj4gPHN0ZXBoZW5AbmV0d29ya3BsdW1iZXIub3JnPjsgUCwg
+VGhpeWFnYXJhamFuIDxUaGl5YWdhcmFqYW4uUEBhbWQuY29tPjsNCj4gTXVyYWxpIEtyaXNobmEs
+IEJhbGEgPEJhbGEuTXVyYWxpS3Jpc2huYUBhbWQuY29tPg0KPiBDYzogZGV2QGRwZGsub3JnOyBC
+cnVjZSBSaWNoYXJkc29uIDxicnVjZS5yaWNoYXJkc29uQGludGVsLmNvbT47DQo+IEtvbnN0YW50
+aW4gQW5hbnlldiA8a29uc3RhbnRpbi52LmFuYW55ZXZAeWFuZGV4LnJ1Pg0KPiBTdWJqZWN0OiBS
+RTogW1BBVENIIHY2XSBlYWwveDg2OiBvcHRpbWl6ZSBtZW1jcHkgb2Ygc21hbGwgc2l6ZXMNCj4g
+DQo+IFtQdWJsaWNdDQo+IA0KPiBIaSBATW9ydGVuIEJyw7hydXAsDQo+IA0KPiBXZSAoQFAsIFRo
+aXlhZ2FyYWphbiBATXVyYWxpIEtyaXNobmEsIEJhbGEgYW5kIG15c2VsZikgaGF2ZSB1c2VkIGRt
+YS1wZXJmDQo+IHRvIHZhbGlkYXRlIHRoZSBwZXJmb3JtYW5jZSBmcm9tIDFCIHRvIDE3QiBwYXls
+b2FkLg0KPiBGb2xsb3dpbmcgYXJlIG91ciBvYnNlcnZhdGlvbnMNCj4gDQo+IFdpdGggY19hcmdz
+IGAtRFJURV9NRU1DUFlfQVZYNTEyYCBlbmFibGVkIG9uIHplbjQsIHdlIG9ic2VydmUgYXJvdW5k
+DQo+IDI1JSBwZXJmb3JtYW5jZSByZWdyZXNzaW9uIGZvciBwYXlsb2FkIHNpemUgMUIgdG8gMTVC
+IGFuZCAxN0IuDQo+IFdoaWxlIGluIGNhc2Ugb2YgMTZCIHdlIHNlZSBpbXByb3ZlbWVudCBpbiBN
+b3BzIGJ5IDQwJS4NCj4gDQo+IFdpdGhvdXQgY19hcmdzIGAtRFJURV9NRU1DUFlfQVZYNTEyYCBl
+bmFibGVkIG9uIHplbjQsIHdlIG9ic2VydmUgKy00JQ0KPiB2YXJpYXRpb24gZnJvbSAxQiB0byAx
+N0IuDQo+IA0KPiBgV2UgYXJlIGludmVzdGlnYXRpbmcgdGhlIHZhcmlhdGlvbiBpcyBtb3JlIHBy
+b21pbmVudCB3aXRoIGF2eDUxMiBtZW1jcHkuYA0KPiANCj4gTm90ZToNCj4gMS4gaW4gemVuNCBs
+ZHxzdHIgaXMgYnJva2VuIHRvIDMyQi4gV2hpbGUgaW4gemVuNSBsZHxzdHIgaXMgNjRCLg0KPiAy
+LiB3ZSB0ZXN0ZWQgbWVtaWYgY29weSBvbiB6ZW41IHdpdGggcGF0Y2ggKHdpdGhvdXQgLURSVEVf
+TUVNQ1BZX0FWWDUxMikNCj4gb24gNjRCIGFuZCA2NUIgcGF5bG9hZC4gSXQgaXMgc2FtZSBhcyB6
+ZW40IG9ic2VydmF0aW9uIChzaGFyZWQgaW4gcHJldmlvdXMNCj4gZW1haWwpLg0KPiANCj4gDQo+
+IA0KPiA+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+ID4gRnJvbTogVmFyZ2hlc2UsIFZp
+cGluIDxWaXBpbi5WYXJnaGVzZUBhbWQuY29tPg0KPiA+IFNlbnQ6IFdlZG5lc2RheSwgSmFudWFy
+eSAyMSwgMjAyNiA1OjE5IFBNDQo+ID4gVG86IE1vcnRlbiBCcsO4cnVwIDxtYkBzbWFydHNoYXJl
+c3lzdGVtcy5jb20+OyBTdGVwaGVuIEhlbW1pbmdlcg0KPiA+IDxzdGVwaGVuQG5ldHdvcmtwbHVt
+YmVyLm9yZz4NCj4gPiBDYzogZGV2QGRwZGsub3JnOyBCcnVjZSBSaWNoYXJkc29uIDxicnVjZS5y
+aWNoYXJkc29uQGludGVsLmNvbT47DQo+ID4gS29uc3RhbnRpbiBBbmFueWV2IDxrb25zdGFudGlu
+LnYuYW5hbnlldkB5YW5kZXgucnU+DQo+ID4gU3ViamVjdDogUkU6IFtQQVRDSCB2Nl0gZWFsL3g4
+Njogb3B0aW1pemUgbWVtY3B5IG9mIHNtYWxsIHNpemVzDQo+ID4NCj4gPiBDYXV0aW9uOiBUaGlz
+IG1lc3NhZ2Ugb3JpZ2luYXRlZCBmcm9tIGFuIEV4dGVybmFsIFNvdXJjZS4gVXNlIHByb3Blcg0K
+PiA+IGNhdXRpb24gd2hlbiBvcGVuaW5nIGF0dGFjaG1lbnRzLCBjbGlja2luZyBsaW5rcywgb3Ig
+cmVzcG9uZGluZy4NCj4gPg0KPiA+DQo+ID4gW1B1YmxpY10NCj4gPg0KPiA+IEhpIEBNb3J0ZW4g
+QnLDuHJ1cCwgcGxlYXNlIGZpbmQgb3VyIG9ic2VydmF0aW9uIHJ1bm5pbmcgdGVzdHBtZCB3aXRo
+DQo+ID4gbWVtaWYgaW4gemVyby1jb3B5IG1vZGUgZGlzYWJsZWQgKHJ0ZV9tZW1jcHkgZW5hYmxl
+ZCkuDQo+ID4NCj4gPiAxLiBEUERLIGJhc2VsaW5lIHZlcnNpb246IDI1LjExIHdlIHRlc3RlZCB3
+aXRoIHRlc3RwbWQgaW4gaW8gJiBmbG93Z2VuDQo+IG1vZGUgMi4NCj4gPiB1c2luZyBubyBjYXJn
+cyBmb3IgbWVtY3B5IChydGVtb3YzMikgYW5kIHdpdGggcGF0Y2ggNjRCICYgNjVCIHdlIGdldA0K
+PiA+IGAxNS41TXBwc2AgMy4gdXNpbmcgY2FyZ3MgYCAtRFJURV9NRU1DUFlfQVZYNTEyYCBmb3Ig
+bWVtY3B5DQo+IChydGVtb3Y2NCkNCj4gPiBhbmQgd2l0aCBwYXRjaCA2NEIgJiA2NUIgd2UgZ2V0
+IGAxNC44TXBwc2ANCj4gPg0KPiA+IFdlIHdpbGwgcnVuIHdpdGggZG1hLXBlcmYgYXBwbGljYXRp
+b24gZm9yIHBheWxvYWQgc2l6ZXMgb2YNCj4gPiAxLDIsMyw0LDUsLi4uZXRjDQo+ID4NCj4gPiBS
+ZWdhcmRzDQo+ID4gVmlwaW4gVmFyZ2hlc2UNCg==
 
