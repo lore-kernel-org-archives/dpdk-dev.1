@@ -2,44 +2,77 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31186D3EE7C
-	for <dpdk-dev@archiver.kernel.org>; Thu, 22 Jan 2026 15:37:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 618A8D3EE89
+	for <dpdk-dev@archiver.kernel.org>; Thu, 22 Jan 2026 16:09:29 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5F8364021F;
-	Thu, 22 Jan 2026 16:37:28 +0100 (CET)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id C5BC74021E
- for <dev@dpdk.org>; Thu, 22 Jan 2026 16:37:27 +0100 (CET)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id BBB9120910;
- Thu, 22 Jan 2026 16:37:26 +0100 (CET)
-Content-class: urn:content-classes:message
-MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Subject: RE: [PATCH 3/3] drivers: always enable the null net driver [RFC]
-Date: Thu, 22 Jan 2026 16:37:24 +0100
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65691@smartserver.smartshare.dk>
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-In-Reply-To: <aXI6yQwW6GAXBacO@bricha3-mobl1.ger.corp.intel.com>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH 3/3] drivers: always enable the null net driver [RFC]
-Thread-Index: AdyLr25HaGr/idaoTea1Eo894OJmGAAA7whQ
+	by mails.dpdk.org (Postfix) with ESMTP id E6BEC4027A;
+	Thu, 22 Jan 2026 17:09:28 +0100 (CET)
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com
+ [209.85.128.44]) by mails.dpdk.org (Postfix) with ESMTP id 8519C4026F
+ for <dev@dpdk.org>; Thu, 22 Jan 2026 17:09:27 +0100 (CET)
+Received: by mail-wm1-f44.google.com with SMTP id
+ 5b1f17b1804b1-47edd6111b4so13007785e9.1
+ for <dev@dpdk.org>; Thu, 22 Jan 2026 08:09:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769098167;
+ x=1769702967; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=HAdSQLyAI2x6B/ZqrUQBe0G5boUNWurrF13dt7P6wGk=;
+ b=rmpfXJR06cnQYPZBrznvS2x/J91u+v03Q37cyT0gey6bQWffFsCtlhtmjOdnAN7gbi
+ IxrbC2+3YY58u0qSt+Otd96Qp3ZBOon+9LxxHno6NUDLSg9dcgp4jmcz8Cq7oH/pK8Qu
+ f3boRfSISZ97J//18RNkDN0+VFPxfi/c/6baoJV/A3Hd08v2FytyWYOa7fOludmceOLn
+ EqACFb6KkDK+ZsUcyirDy33u01r08rjJ5ABRikXwfFMXn7lt6gz7j1M8hC0Ob9YVD1Fl
+ 1fZCvwJiOhOJt51XcpQZL2mxielaH5EhbtiTkEqjXJzj0Vp3MBgBjKP5SDYMu0j3XtTK
+ enPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1769098167; x=1769702967;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=HAdSQLyAI2x6B/ZqrUQBe0G5boUNWurrF13dt7P6wGk=;
+ b=eZFVVB6yHJjk9EquZULylDluoKl7oPCdrJYGOA4AVfgP/7vwFyg1/n+4oR52S2X1Yv
+ eOa+MBFBJAUyi9tSF/V/r3i/Ahez+v51FwcWsQKbopVJmVZD9dcAYFeLR0FQrvmgHgkO
+ D29YexpXYnEIsIDBqP5g57wTgl3JZ4vEz8lCSsA9+QUswmjTrBTOcEGnmMwADn6rK5qZ
+ bTIotOYqIhihmMgLQjNJVOzcAdauF5rTy+lG8YfMCtINT/SXE/R3g9igg6/u8JqAcb7C
+ GHUz5ufGTuZQQML358yOR4k+nrFtc+wWgXkWcF5EAF6CJTFjFnHTTvxSq3yiasLhELge
+ rw1A==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCWz95XWDwRAA/vSjKP3IYXyRhh+urzITyR+ylTW9Su1BRTLP3j8ONkyLuI2+72qSPi0iG4=@dpdk.org
+X-Gm-Message-State: AOJu0YzV3zqIKk6Iqtss87HVo2M0Ig2kYQXWD3OOG69Ul/Olnccyp2H4
+ QxVWfECT4oiY58Tnd4/RltjAhc2o9wAhVlSX8kMjQNj5eAhE1crFa0iFcBufpm0JjVY=
+X-Gm-Gg: AZuq6aL+s69MfYOYOLWD1YnHx46ElbYBDXMYA2ubgTncR8xszyGAYmEDOIyaLWltW8Q
+ Avux5obsXNA7bLjGuo9Zg5++E81AaNvLZ06vDGZ02jSm+aDI2fEXEWSpHa9DesB+8NBe1A1Svqg
+ 1zPxv1ZxshKy0EVgq3Gz3U4Yp3EAER/GopdU1uOkDqk6xg52JqoWkjZG0PrQXDzcKWNj8l9o1FV
+ Encx2j36IuuFq2ZPezY/e+cntI7yvpbqHj4QWZqQKYLfhqX/rRgacFv9AqUvAxY01qSJTSNa9Os
+ I6JwMu9M3JKQs7gZxgs4muI0SlcVNFgRwuc7wyMyh1bYiCqF1QkaTLbBLEMZukHW5UnTHWMEZQ9
+ GyvH1sbZzuGCUHzA0hizu+ktKWIv3ohUNQtBPPgN3ZAUl0hhSTeFTARXRZPzdQfdbInCdQxPPN2
+ kwxZAqPANzHXmpQ4GgZvLfzi0yCQuyKlPDv/Vm4dmsEaXQTUMByOEP
+X-Received: by 2002:a05:600c:37c7:b0:477:a54a:acba with SMTP id
+ 5b1f17b1804b1-4804c9bc5d3mr2077485e9.17.1769098166702; 
+ Thu, 22 Jan 2026 08:09:26 -0800 (PST)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ ffacd0b85a97d-435ab458d85sm5953907f8f.26.2026.01.22.08.09.25
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Thu, 22 Jan 2026 08:09:26 -0800 (PST)
+Date: Thu, 22 Jan 2026 08:09:21 -0800
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Bruce Richardson <bruce.richardson@intel.com>
+Cc: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>, <dev@dpdk.org>
+Subject: Re: [PATCH 3/3] drivers: always enable the null net driver [RFC]
+Message-ID: <20260122080921.1f06d6af@phoenix.local>
+In-Reply-To: <aXI7STpuEtMWQloB@bricha3-mobl1.ger.corp.intel.com>
 References: <20260122122354.1820368-1-bruce.richardson@intel.com>
  <20260122122354.1820368-4-bruce.richardson@intel.com>
  <98CBD80474FA8B44BF855DF32C47DC35F6568E@smartserver.smartshare.dk>
  <aXImy8tDAqFygz_T@bricha3-mobl1.ger.corp.intel.com>
- <CAJFAV8zyEbVUOJsw4ZwN8Zdcrb-C+=tF6gYn0SYm-zOc9Aoy8g@mail.gmail.com>
- <aXI6yQwW6GAXBacO@bricha3-mobl1.ger.corp.intel.com>
-From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
-To: "Bruce Richardson" <bruce.richardson@intel.com>,
- "David Marchand" <david.marchand@redhat.com>
-Cc: <dev@dpdk.org>,
-	<stephen@networkplumber.org>
+ <98CBD80474FA8B44BF855DF32C47DC35F6568F@smartserver.smartshare.dk>
+ <aXI7STpuEtMWQloB@bricha3-mobl1.ger.corp.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -53,108 +86,25 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> From: Bruce Richardson [mailto:bruce.richardson@intel.com]
-> Sent: Thursday, 22 January 2026 15.57
->=20
-> On Thu, Jan 22, 2026 at 02:47:47PM +0100, David Marchand wrote:
-> > On Thu, 22 Jan 2026 at 14:32, Bruce Richardson
-> > <bruce.richardson@intel.com> wrote:
-> > >
-> > > On Thu, Jan 22, 2026 at 02:13:06PM +0100, Morten Br=F8rup wrote:
-> > > > > From: Bruce Richardson [mailto:bruce.richardson@intel.com]
-> > > > > Sent: Thursday, 22 January 2026 13.24
-> > > > >
-> > > > > Having the net_null driver always available can be convenient
-> and
-> > > > > allows
-> > > > > use by unit tests, so add this trivial driver to the always-
-> enable
-> > > > > list.
-> > > > >
-> > > > > Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
-> > > > >
-> > > > > ---
-> > > > > I'm not sure if we want this to be always enabled or not, so
-> sending
-> > > > > this as an RFC. I can see definite advantages to doing so, but
-> I also
-> > > > > dislike having too many components on the always-enable list.
-> > > > >
-> > > > > Since I'm ambivilent myself, including this patch so the
-> community can
-> > > > > decide.
-> > > >
-> > > > I don't think real applications use this.
-> > > > If they do, they can include it manually.
-> > > >
-> > > > My main objection is:
-> > > > We are setting the wrong precedence if we make stuff like this
-> mandatory for convenience.
-> > > >
-> > > > But I agree with the reason you are suggesting it.
-> > > >
-> > > > Is there some other way it can be enabled for unit tests?
-> > > > Maybe the null driver can depend on the unit tests being built?
-> > > >
-> > > > I don't mind that the driver is being built.
-> > > > I just don't want it included by default when statically linking
-> a monolithic application.
-> >
-> > Same, I don't want a driver with almost no maintenance on it (even =
-if
-> > it is trivial code) to be linked in a final application.
-> > (it would be a pity to get a CVE because of net/null ;-))
-> >
-> >
-> > > >
-> > > > I'm flexible on this RFC, so it's a very soft NAK from me.
-> > > > If it can be disabled at build time, I'm OK with it. (But still
-> concerned about setting the wrong precedence.)
-> > > >
-> > > Yes, I agree.
-> > >
-> > > Why I'm proposing this is because, in order to give me faster
-> rebuilds and
-> > > because of the hardware I have available to me, I generally set up
-> my
-> > > builds with "-Denable_drivers=3Dnet/intel/*", since that really
-> speeds up my
-> > > dev-build-test cycle. In doing so, though, I do miss out on having
-> some
-> > > unit tests available when I run the fast-test suite, which is why =
-I
-> > > suggested this addition in case there are others who limit the
-> builds to
-> > > just the hardware they are using.
-> >
-> > Unit tests are mainly run by the CI or DPDK developers, so how about
-> > putting this addition in the always enabled list under the
-> > developer_mode check?
-> >
+On Thu, 22 Jan 2026 14:59:21 +0000
+Bruce Richardson <bruce.richardson@intel.com> wrote:
 
-I like this idea, but there's a similar risk of adding unnecessary =
-stuff; now it's only limited to developer_mode.
+>  
+> > Then I'll suggest an alternative to this patch:
+> > Change the fast-test application, so it emits an informational message about which tests are being skipped because the net/null driver is missing.
+> >  
+> That is sadly non-trivial, and if we do so for net-null, we should also do
+> so for a bunch of other components where we disable tests if they are
+> missing. But the idea of just informing the user rather than force-enabling
+> the driver is a good one.
 
-E.g. what else should be added in developer_mode to extend testing =
-beyond what the developer explicitly configures?
 
-And what if the developer doesn't want these added tests (considering =
-them a waste of time and resources)?
+I am ok with either of three solutions:
+  - require it to be always enabled
+  - in meson.build, add dependency on net_null for tests that need it.
+    (that is what my patches did)
+  - add per test checks for vdev_init failing and return TEST_SKIPPED
+    There also is unsupported status, but that doesn't appear to be used
+    or work right
 
->=20
-> Yep could work. Possibly also taking a modified version of Morten's
-> suggestion about warning about skipped tests, what about just emitting
-> a
-> warning from meson if we are in developer mode and we haven't the net-
-> null
-> driver enabled?
-
-I like this idea.
-But it requires some sort of coordination/synchronization between =
-development of the test applications and the meson build script.
-I.e. when developing a new test case, dependencies need to be considered =
-and possibly worked into the meson build script.
-This coordination will probably be forgotten.
-But even if forgotten, it will be remembered again next time a real need =
-occurs.
-
+Doing dependency at build time is my preference.
