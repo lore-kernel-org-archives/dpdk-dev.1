@@ -2,34 +2,39 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B924AD3EE60
-	for <dpdk-dev@archiver.kernel.org>; Thu, 22 Jan 2026 13:01:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E19DD3EE64
+	for <dpdk-dev@archiver.kernel.org>; Thu, 22 Jan 2026 13:13:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1AF514027A;
-	Thu, 22 Jan 2026 14:01:19 +0100 (CET)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
- by mails.dpdk.org (Postfix) with ESMTP id BF9264021F
- for <dev@dpdk.org>; Thu, 22 Jan 2026 14:01:17 +0100 (CET)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
- by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 039F51476;
- Thu, 22 Jan 2026 05:01:10 -0800 (PST)
-Received: from [10.57.94.77] (unknown [10.57.94.77])
- by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DFAC83F632;
- Thu, 22 Jan 2026 05:01:15 -0800 (PST)
-Message-ID: <9f292ee0-1b20-4d10-8fb6-1efc277de97b@arm.com>
-Date: Thu, 22 Jan 2026 13:01:14 +0000
+	by mails.dpdk.org (Postfix) with ESMTP id 4721B4027A;
+	Thu, 22 Jan 2026 14:13:12 +0100 (CET)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id CF4684021F
+ for <dev@dpdk.org>; Thu, 22 Jan 2026 14:13:10 +0100 (CET)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 253B320AD6;
+ Thu, 22 Jan 2026 14:13:10 +0100 (CET)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] dts: automate VFIO-PCI modprobe
-Content-Language: en-GB
-To: Andrew Bailey <abailey@iol.unh.edu>, probb@iol.unh.edu
-Cc: dev@dpdk.org, dmarx@iol.unh.edu
-References: <20251121210650.328804-1-abailey@iol.unh.edu>
- <20251126141650.367633-1-abailey@iol.unh.edu>
-From: Luca Vizzarro <Luca.Vizzarro@arm.com>
-In-Reply-To: <20251126141650.367633-1-abailey@iol.unh.edu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Subject: RE: [PATCH 3/3] drivers: always enable the null net driver [RFC]
+Date: Thu, 22 Jan 2026 14:13:06 +0100
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F6568E@smartserver.smartshare.dk>
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+In-Reply-To: <20260122122354.1820368-4-bruce.richardson@intel.com>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH 3/3] drivers: always enable the null net driver [RFC]
+Thread-Index: AdyLmg9X1LBKBy1mS/OJFobyY7rhhAABFlqw
+References: <20260122122354.1820368-1-bruce.richardson@intel.com>
+ <20260122122354.1820368-4-bruce.richardson@intel.com>
+From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
+To: "Bruce Richardson" <bruce.richardson@intel.com>,
+	<dev@dpdk.org>
+Cc: <stephen@networkplumber.org>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -43,53 +48,62 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi Andrew,
-
-this is a good shout. But be mindful of the implementation.
-
-On 26/11/2025 14:16, Andrew Bailey wrote:
-> Currently, users must modprobe vfio-pci before running DTS when using a
-> non-mellanox NIC. This patch automates the process on test run start up.
-> 
-> Signed-off-by: Andrew Bailey <abailey@iol.unh.edu>
+> From: Bruce Richardson [mailto:bruce.richardson@intel.com]
+> Sent: Thursday, 22 January 2026 13.24
+>=20
+> Having the net_null driver always available can be convenient and
+> allows
+> use by unit tests, so add this trivial driver to the always-enable
+> list.
+>=20
+> Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+>=20
 > ---
->   dts/framework/test_run.py | 8 ++++++++
->   1 file changed, 8 insertions(+)
-> 
-> diff --git a/dts/framework/test_run.py b/dts/framework/test_run.py
-> index ff0a12c9ce..9d7b6271c7 100644
-> --- a/dts/framework/test_run.py
-> +++ b/dts/framework/test_run.py
-> @@ -106,6 +106,7 @@
->   from types import MethodType
->   from typing import ClassVar, Protocol, Union
->   
-> +from api.capabilities import LinkTopology
->   from framework.config.test_run import TestRunConfiguration
->   from framework.context import Context, init_ctx
->   from framework.exception import InternalError, SkippedTestException, TestCaseVerifyError
-> @@ -347,6 +348,13 @@ def next(self) -> State | None:
->           test_run.ctx.dpdk.setup()
->           test_run.ctx.topology.setup()
->   
-> +        if (
-> +            test_run.ctx.topology.type != LinkTopology.NO_LINK
-> +            and test_run.ctx.sut_node.ports[0].config.os_driver_for_dpdk == "vfio-pci"
-> +        ):
-> +            test_run.ctx.sut_node.main_session.send_command("modprobe vfio")
-> +            test_run.ctx.sut_node.main_session.send_command("modprobe vfio-pci")
-> +
->           if test_run.config.use_virtual_functions:
->               test_run.ctx.topology.instantiate_vf_ports()
->   
+> I'm not sure if we want this to be always enabled or not, so sending
+> this as an RFC. I can see definite advantages to doing so, but I also
+> dislike having too many components on the always-enable list.
+>=20
+> Since I'm ambivilent myself, including this patch so the community can
+> decide.
 
-Loading vfio-pci is perfectly fine in my opinion, but like Patrick 
-already mentioned, this part of the framework should be OS-agnostic, 
-therefore you should place the logic accordingly in Node (load_drivers) 
-and LinuxSession for the actual command.
+I don't think real applications use this.
+If they do, they can include it manually.
 
-Since this is part of the Node setup, it should be part of Node.setup 
-and not in test_run.py
+My main objection is:
+We are setting the wrong precedence if we make stuff like this mandatory =
+for convenience.
 
-Best,
-Luca
+But I agree with the reason you are suggesting it.
+
+Is there some other way it can be enabled for unit tests?
+Maybe the null driver can depend on the unit tests being built?
+
+I don't mind that the driver is being built.
+I just don't want it included by default when statically linking a =
+monolithic application.
+
+I'm flexible on this RFC, so it's a very soft NAK from me.
+If it can be disabled at build time, I'm OK with it. (But still =
+concerned about setting the wrong precedence.)
+
+> ---
+>  drivers/meson.build | 2 ++
+>  1 file changed, 2 insertions(+)
+>=20
+> diff --git a/drivers/meson.build b/drivers/meson.build
+> index 3fe3be48fb..9ed0dba786 100644
+> --- a/drivers/meson.build
+> +++ b/drivers/meson.build
+> @@ -80,6 +80,8 @@ endif
+>  always_enable =3D ['bus/pci', 'bus/vdev']
+>  # we always need a mempool driver, and ring is default, so make it
+> mandatory
+>  always_enable +=3D ['mempool/ring']
+> +# unit tests take advantage of net/null driver, so always enable it
+> +always_enable +=3D ['net/null']
+>  enable_drivers +=3D always_enable
+>=20
+>  default_cflags =3D machine_args
+> --
+> 2.51.0
+
