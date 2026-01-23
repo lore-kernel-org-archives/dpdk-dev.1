@@ -2,73 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D8B0D6CFBD
-	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Jan 2026 06:01:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5A63D6CFDB
+	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Jan 2026 06:08:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AADE44021F;
-	Fri, 23 Jan 2026 07:01:50 +0100 (CET)
-Received: from mail-wm1-f66.google.com (mail-wm1-f66.google.com
- [209.85.128.66]) by mails.dpdk.org (Postfix) with ESMTP id A64F9400D5
- for <dev@dpdk.org>; Fri, 23 Jan 2026 07:01:49 +0100 (CET)
-Received: by mail-wm1-f66.google.com with SMTP id
- 5b1f17b1804b1-47ee76e8656so24861935e9.0
- for <dev@dpdk.org>; Thu, 22 Jan 2026 22:01:49 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 9625C4021F;
+	Fri, 23 Jan 2026 07:08:18 +0100 (CET)
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com
+ [209.85.128.42]) by mails.dpdk.org (Postfix) with ESMTP id 362DC400D5
+ for <dev@dpdk.org>; Fri, 23 Jan 2026 07:08:17 +0100 (CET)
+Received: by mail-wm1-f42.google.com with SMTP id
+ 5b1f17b1804b1-4801bc328easo20771765e9.3
+ for <dev@dpdk.org>; Thu, 22 Jan 2026 22:08:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769148109;
- x=1769752909; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769148497;
+ x=1769753297; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=J5CJENW5Vu0a5U3csPsTdF731V5IQGIIJR8zSqNP7dg=;
- b=esiVXGDsT8sS9x/97OtcLMJ8dT59JtnNsy9YIXZiSjUhfX4LbFYLDUMpax5u+FiyXP
- SDSA5cCxSPvOXeC0tiPrgrBaFudgDRM55ZIkm5g1lL647ulgOOarP9DSqJMFu5TQ4ZIZ
- TGGXyKt+ZYpIPPVunpklbRYaY2rQK/HwcTOPjEmLwwQrLfaZrGrFaRfn4Tcw0cXhwGL2
- z70DggJr4VXUyCgj2e7FHtsf4GYTUNhcKUU1POS2YrbqBQ+H9HZ2WBZXniFAuca/vUs0
- DE9WoTlkvw7VidW0CQsDotO+MxYefspx9FwSRF9zIohYVetJjw46aXVMfYfW2b0+ArtS
- 6UfQ==
+ bh=B74eIdxLkzj2cgtU6o5HKqPutaFfWdxBEQkF+VHNXp4=;
+ b=d7hgK7tqLiKbKMxwuZx8VJPHKyetIXi5IBYEa4Z5L6Bd9x4ttqDFuyk5CHgm9IhK9N
+ jrVbl3ntENCyGus5fO+6+C0tijGJ6NuQzALYchm/uzmMkP1dah4Jh8xl5nhdw6CB4Dk8
+ bJSUqiyUB0CdH65Q2gqezF/lDCV193WJGdHsFtWRnwRu6eIjqUk7ommLbI2ByqVYkq3u
+ cNF4gpUu9F3XNF9VqNDG/HBH36bJCUO+aHxkNUJAEofgnqneDjuc0syT09OrDTCKYYty
+ tYJsQvbY1Y/98Jp8IPhVu7goxUel0T4sHAV97gdLkkl3i8wT2LSEdOm1KNZUWpuF4MEm
+ AL+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1769148109; x=1769752909;
+ d=1e100.net; s=20230601; t=1769148497; x=1769753297;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=J5CJENW5Vu0a5U3csPsTdF731V5IQGIIJR8zSqNP7dg=;
- b=lhCFyuBa3M8eFuDb4Qu2SVSrOyooDtOe4QY/U+zGdBWkX5Ew1byf6B4aVVTGq6e4zJ
- RHRBpx6jz+87F4A11FfpS2cALBnBVeTVTLf0xZ6wyGFeBYlRrbal6ku2Nc10MuIzVjw7
- jxpvlaZPeeThawzBLXdCCmZTsH6vvYb6D3LazMUTQYcd0jU1PCI8rZHyKvTGXuyYrbf1
- To7SRq0fJv7gZWHwObDUKENYGg/PSnS2A8YbikXroIKJT3ZV4YgeP+KsFyQIimfv1yZc
- a2xY7ApBZ/ydExvL9rXm9su7SwPhlxLLsHexnZWLkkSJ9y4EfCXzqwaIK5IFxrmqzFdO
- EKOQ==
-X-Gm-Message-State: AOJu0Yx4BQNkrSqQSq3zoPCgZuOj0wfiNTZqGSlZsu4JqwwyWT3URXgj
- 2sdFKi4WwoLks7GxSJAhuUcxVsJjddfZAKkHO7P3pOgJVrFMoJu2ABbdLIdBHBbc4tE=
-X-Gm-Gg: AZuq6aJEJBU6We80zyIGXt/kLr7d7gX87ixDEI8kGCtFPwRtN+kuaJgEBN+v27fjq2E
- mEK4jgxuTT/ut0K0tTbgaM+e8eQ0D5dRkPmV5QpXrp0QROlFdSogxpWf7mYuQy5WzbZ812zgR3t
- zhTwXqjkublX8X+cxsOqU6eEk0I0ovjHSH97KwMCC3LWqagl6FGy9AeHT1bzib1/Zmicb2cVXyO
- lWk4bF+brsaXUFRBWmfW99oNvvzY4ahUspkk8H9nqVO0nr1ek6JBykwI2saTpMxxdoLbojvJwxZ
- plxic7H0UKqlcQIoJfjNruSLXN4MxEASZolyfpJ064HiCzNNykozluZdJhujrRj/3AxSRd8A3W2
- 4hqeEXgtyC2l8lEQbuaFhNCE3zCGcYpm07lo3fX0PhwSU7b47dASiCcYzw3RXsBEkF6eBf4Na2W
- tspy5u83hSqiImTZzMc+9p68R+1q7auqAJfxtJkp2iV070wcjhEU+/
-X-Received: by 2002:a05:600c:8b04:b0:480:4a90:1af2 with SMTP id
- 5b1f17b1804b1-4804c9d0102mr36296595e9.35.1769148108527; 
- Thu, 22 Jan 2026 22:01:48 -0800 (PST)
+ bh=B74eIdxLkzj2cgtU6o5HKqPutaFfWdxBEQkF+VHNXp4=;
+ b=qpZ3eARqDciTD0rdRnUGiiEIr70qPCCFQ6DHuXDvashMDylsutNaooehXAqgc5Gsrf
+ a5Ux9Bds2D+CtiV2XVuwTGOTKbu+2FsesiewwfkFCdOvjf15aJ9/T7HVTIKdNHT+mX+P
+ ypqZgLEBcjH9PRQtZnToTNkX3QKxaUe/M4qHrI92JVWoCmgaUw0+SnRyIiwJ1jVWEJHZ
+ Da8/F0+8i5mf9r754/g2NHKt37X7mrO4dqkNx5woP/uH3fm0PFSph1fyl3A4IRnTNITH
+ eOfkSJvjaPFhqVOb3PV7cr1Q1rvt9yv0ZJ26w0su+wS4902irN2/dlk4q+igC6sw5hh0
+ O88g==
+X-Gm-Message-State: AOJu0Ywjp93v6lyt9riPhFj/cMF5YiR+H8pwaOuS/KMqFj7GPj39PNeH
+ 5/Jb0WNQWJ5CDDw6K4eIjOer0O0vbGaA8Zn5hOU5onRkfE4kSQ2TVjSGfYYeJHAxLyA=
+X-Gm-Gg: AZuq6aKCYiy40vVXqJkg+6mVH1RDoCBnJhZ6cULSEonCsAmZAg/PqL1yxEAEFNBjeK/
+ 7f0UoFBV+Hdk4KCsmO+DHNsPP7hqBMUKpUciVTvI0s07N2aB4dhnN8xtVh6g+/oCqF3YzCPNNlJ
+ DDQJfPQXnJW2geJwLZ+dfEkSOLmlMYmeby3iBLbqgEZgO4QoFBK7wwbiyDGhcv4/hmgesC7OXR8
+ scwA/Dz5eedsFr9+hYUCGJSc9bzjGUFyAfn8wC156CDnFNX0X+gXkOa3cyixkaMPJXToFs9mCJC
+ kiATqGh7mZKI9rUsWfwII3b+5h8t3upPB/Tb7XoX4Beth3WDqb2UjGeobzMCZriMx+sXdVaiX3W
+ LNY/h1be8uGrdmi7VfEwWw7sQwIFzP0Kta8Jzjh8yHMoG9kWYuQ08YRDcfptWjAHQTot+JHcgD1
+ payAui04qqWYSHVRixrnCLH7opk/AgvUq575jCMYiQWvb1vTByf1KbTOkCnaB1fqk=
+X-Received: by 2002:a05:600c:8b6e:b0:480:462e:d640 with SMTP id
+ 5b1f17b1804b1-4804c9cfef1mr30537125e9.36.1769148496575; 
+ Thu, 22 Jan 2026 22:08:16 -0800 (PST)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-480470cf1acsm117034695e9.14.2026.01.22.22.01.46
+ ffacd0b85a97d-435b1f745e6sm3989328f8f.33.2026.01.22.22.08.14
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 22 Jan 2026 22:01:48 -0800 (PST)
-Date: Thu, 22 Jan 2026 22:01:42 -0800
+ Thu, 22 Jan 2026 22:08:16 -0800 (PST)
+Date: Thu, 22 Jan 2026 22:08:10 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: Mattias =?UTF-8?B?UsO2bm5ibG9t?= <mattias.ronnblom@ericsson.com>
-Cc: <dev@dpdk.org>, Mattias =?UTF-8?B?UsO2bm5ibG9t?=
- <hofors@lysator.liu.se>, Morten =?UTF-8?B?QnLDuHJ1cA==?=
- <mb@smartsharesystems.com>, David Marchand <david.marchand@redhat.com>,
- Pavan Nikhilesh <pbhagavatula@marvell.com>, Bruce Richardson
- <bruce.richardson@intel.com>
-Subject: Re: [PATCH v6 0/7] Optionally have rte_memcpy delegate to compiler
- memcpy
-Message-ID: <20260122220142.21bda930@phoenix.local>
-In-Reply-To: <20240920102716.738940-1-mattias.ronnblom@ericsson.com>
-References: <20240724075357.546248-2-mattias.ronnblom@ericsson.com>
- <20240920102716.738940-1-mattias.ronnblom@ericsson.com>
+Cc: <dev@dpdk.org>, Jerin Jacob <jerinj@marvell.com>, Mattias
+ =?UTF-8?B?UsO2bm5ibG9t?= <hofors@lysator.liu.se>, "Maria Lingemark"
+ <maria.lingemark@ericsson.com>, Luka Jankovic <luka.jankovic@ericsson.com>,
+ Sriram Yagnaraman <sriram.yagnaraman@ericsson.com>
+Subject: Re: [RFC 0/4] Add support for event credit preallocation
+Message-ID: <20260122220810.2a9b67dd@phoenix.local>
+In-Reply-To: <20250629165214.3468-1-mattias.ronnblom@ericsson.com>
+References: <20250629165214.3468-1-mattias.ronnblom@ericsson.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -85,280 +82,331 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, 20 Sep 2024 12:27:09 +0200
+On Sun, 29 Jun 2025 18:52:10 +0200
 Mattias R=C3=B6nnblom <mattias.ronnblom@ericsson.com> wrote:
 
-> This patch set make DPDK library, driver, and application code
-> optionally use the compiler/libc memcpy() when functions in
-> <rte_memcpy.h> are invoked.
+> Events of type RTE_EVENT_OP_NEW are often generated as a result of
+> some stimuli from the world outside the event machine. Examples of
+> such input can be a timeout in an application-managed timer wheel, a
+> control plane message on a lockless ring, an incoming packet
+> triggering the release of buffered packets, or a descriptor arriving
+> on some hardware queue.
 >=20
-> The new compiler memcpy-based rte_memcpy() implementations may be
-> enabled by means of a build-time option.
+> In non-event-triggered cases, the external-trigger-to-eventdev-event
+> mechanism serves the same role as various Eventdev adapters, but for
+> input that does not have native Eventdev support.
 >=20
-> This patch set only make a difference on x86, PPC and ARM. Loongarch
-> and RISCV already used compiler/libc memcpy().
+> The actual RTE_EVENT_OP_NEW event enqueue is often preceded by a
+> processing. Such processing may be both expensive or effectively
+> irreversible. In addition, in case the enqueue is likely to fail,
+> there is not even a point in polling the external source for new
+> input.
 >=20
-> This patch set includes a number of fixes in drivers and libraries
-> which errornously relied on <rte_memcpy.h> including header files
-> (i.e., <rte_vect.h>) required by its implementation.
+> In such a scenario, efficiency could potentially be improved and code
+> complexity reduced in case the application could know ahead of time,
+> with some certainty, that the enqueue operation will succeed.
 >=20
-> Mattias R=C3=B6nnblom (7):
->   event/dlb2: include headers for vector and memory copy APIs
->   net/octeon_ep: add missing vector API header include
->   distributor: add missing vector API header include
->   fib: add missing vector API header include
->   eal: provide option to use compiler memcpy instead of RTE
->   ci: test compiler memcpy
->   vhost: optimize memcpy routines when cc memcpy is used
+> Event devices have a mechanism that puts an upper bound to the number
+> of in-flight (buffered) events. In many cases (e.g., DLB, DSW, and SW)
+> there is a credit system putting an upper bound on the number of
+> in-flight events. A new event consumes a credit, which is returned
+> to the credit pool when the event is released. In the current
+> Eventdev API, all this happens "under the hood" and is not visible
+> to the application.
 >=20
->  .ci/linux-build.sh                     |  5 +++
->  .github/workflows/build.yml            |  7 +++
->  config/meson.build                     |  1 +
->  devtools/test-meson-builds.sh          |  4 +-
->  doc/guides/rel_notes/release_24_11.rst | 20 +++++++++
->  drivers/event/dlb2/dlb2.c              |  2 +
->  drivers/net/octeon_ep/otx_ep_ethdev.c  |  2 +
->  lib/distributor/rte_distributor.c      |  1 +
->  lib/eal/arm/include/rte_memcpy.h       |  9 ++++
->  lib/eal/include/generic/rte_memcpy.h   | 61 +++++++++++++++++++++++---
->  lib/eal/loongarch/include/rte_memcpy.h | 54 +----------------------
->  lib/eal/ppc/include/rte_memcpy.h       |  9 ++++
->  lib/eal/riscv/include/rte_memcpy.h     | 54 +----------------------
->  lib/eal/x86/include/meson.build        |  1 +
->  lib/eal/x86/include/rte_memcpy.h       |  9 ++++
->  lib/fib/trie.c                         |  1 +
->  lib/vhost/virtio_net.c                 | 37 +++++++++++++++-
->  meson_options.txt                      |  2 +
->  18 files changed, 165 insertions(+), 114 deletions(-)
+> This patchset optionally splits the enqueue operation into two steps:
+> 1) rte_event_credit_alloc() to allocate "slots" for the events, in the
+>    form of credits. One credit grants the application the right to
+>    enqueue one event of the type RTE_EVENT_OP_NEW_PREALLOCED.
+> 2) The actual enqueue operation, with the rte_event.op set to
+>    RTE_EVENT_OP_NEW_PREALLOCED.
+>=20
+> The new operation type RTE_EVENT_OP_NEW_PREALLOCED is identical to
+> RTE_EVENT_OP_NEW, with the only exception that credit allocation
+> (either conceptually or literally) has already been successfully
+> completed.
+>=20
+> Whether or not a credit allocation will succeed depends on the
+> new_event_threshold of the request. In the current Eventdev API,
+> new_event_threshold is strictly a port-level configuration. Beyond
+> simply allocating a credit, this patchset also address flexibility in
+> terms of making the new_event_threshold a per-allocation property.
+>=20
+> Control over new_event_threshold is very important to tune system
+> behavior at overload.
+>=20
+> In the general case, failure to allocate a credit is only one reason
+> an enqueue operation may fail. API semantics-wise, the possession of a
+> credit does not guarantee that the subsequent enqueue operation will
+> succeed. Certain event device implementations may come with stronger
+> guarantees.
+>=20
+> In case the application decides not to (or fails to) spend its credits
+> enqueuing RTE_EVENT_OP_NEW_PREALLOCED events, it may return them using
+> the new rte_event_credit_free() function.
+>=20
+> For performance and API consistency reasons, a new preallocation-optimized
+> enqueue function rte_event_enqueue_prealloced_burst() is added.
+>=20
+> To allow the application to query if the credit management and the new
+> enqueue function are available on a particular event device, a new
+> capability RTE_EVENT_DEV_CAP_CREDIT_PREALLOCATION is added.
+>=20
+> Mattias R=C3=B6nnblom (4):
+>   eventdev: add support for credit preallocation
+>   event/dsw: add support for credit preallocation
+>   eventdev: add enqueue optimized for prealloced events
+>   event/dsw: implement enqueue optimized for prealloced events
+>=20
+>  drivers/event/dsw/dsw_evdev.c        |   6 +-
+>  drivers/event/dsw/dsw_evdev.h        |   9 ++
+>  drivers/event/dsw/dsw_event.c        |  86 ++++++++++--
+>  drivers/event/dsw/dsw_xstats.c       |   3 +
+>  lib/eventdev/eventdev_pmd.h          |   6 +
+>  lib/eventdev/eventdev_private.c      |  24 ++++
+>  lib/eventdev/eventdev_trace_points.c |   8 ++
+>  lib/eventdev/rte_eventdev.h          | 193 +++++++++++++++++++++++++++
+>  lib/eventdev/rte_eventdev_core.h     |  12 ++
+>  lib/eventdev/rte_eventdev_trace_fp.h |  19 +++
+>  10 files changed, 354 insertions(+), 12 deletions(-)
 >=20
 
-AI code review had useful feedback on this. Please address.
+This didn't get any feedback. Likely because there aren't that many develop=
+ers
+actively looking at eventdev.
 
-                                                                           =
-                         =20
-## Overall Assessment                                                      =
-                         =20
-                                                                           =
-                         =20
-### Errors (Must Fix)                                                      =
-                         =20
-1. **Patch 6/7**: Copy-paste error in `.ci/linux-build.sh` - both if branch=
-es set `use_cc_memcpy=3Dtrue`
-                                                                           =
-                         =20
-### Warnings (Should Fix)                                                  =
-                         =20
-1. **Patch 2/7**: Include order could be improved for consistency          =
-                         =20
-2. **Patch 5/7**: Long line in meson_options.txt description               =
-                         =20
-3. **Patch 5/7**: Extra blank line in release notes before "Removed Items" =
-                         =20
-                                                                           =
-                         =20
-### Info (Consider)                                                        =
-                         =20
-- All patches have proper Signed-off-by tags                               =
-                         =20
-- Subject lines are within 60 character limit                              =
-                         =20
-- Commit messages are well-written and explain the rationale               =
-                         =20
-- Proper use of Acked-by tags from reviewers                               =
-                         =20
-                                                                           =
-                         =20
-The critical bug in Patch 6/7 should be fixed before merging - the else bra=
-nch should set `-Duse_cc_memcpy=3Dfalse` instead of `true`.
+The AI patch review did see some issues that need to be addressed.
+(And some false positives like your name).
 
---- Full Report ---
-=3D=3D=3D Patch Review: bundle-1682-opt-memcpy.mbox (via Claude) =3D=3D=3D
-# DPDK Patch Review: bundle-1682-opt-memcpy.mbox
+=3D=3D=3D Patch Review: bundle-1684-event-credit.mbox (via Claude) =3D=3D=3D
+# DPDK Patch Review: Event Credit Preallocation RFC Series
 
-This patch series adds an option to use compiler memcpy instead of DPDK's c=
-ustom implementation, along with several prerequisite fixes for missing hea=
-der includes.
+## Overview
+This RFC series adds credit preallocation support to the eventdev subsystem=
+, allowing applications to pre-reserve "slots" for new events before enqueu=
+eing them. The series consists of 4 patches adding the API, DSW driver impl=
+ementation, and optimized enqueue functions.
+
+---
+
+## Patch 1/4: eventdev: add support for credit preallocation
+
+### Errors
+
+1. **Missing `__rte_experimental` tag on new API functions**
+   - `rte_event_credit_alloc()` and `rte_event_credit_free()` are new publi=
+c API functions but lack the required `__rte_experimental` annotation.
+   - Per guidelines: "New APIs must be marked as `__rte_experimental`"
+   ```c
+   // Should be:
+   __rte_experimental
+   static inline int
+   rte_event_credit_alloc(uint8_t dev_id, uint8_t port_id, ...);
+   ```
+
+2. **Missing Signed-off-by with ASCII name**
+   - The Signed-off-by line uses non-ASCII character: `Mattias R=C3=B6nnblo=
+m`
+   - This is acceptable per DPDK guidelines for author's actual name, but v=
+erify the email is valid.
+
+### Warnings
+
+1. **Line exceeds 100 characters** (rte_eventdev_core.h:28)
+   ```c
+   typedef int (*event_credit_alloc_t)(void *port, unsigned int new_event_t=
+hreshold, unsigned int num_credits);
+   ```
+   This line is ~107 characters. Should be wrapped.
+
+2. **Trace point symbol naming inconsistency** (eventdev_trace_points.c)
+   ```c
+   RTE_EXPORT_SYMBOL(__rte_eventdev_credit_alloc)  // Missing _trace_ in na=
+me
+   RTE_EXPORT_SYMBOL(__rte_eventdev_credit_free)   // Missing _trace_ in na=
+me
+   ```
+   Should be `__rte_eventdev_trace_credit_alloc` and `__rte_eventdev_trace_=
+credit_free` to match the pattern used by other trace points in the file.
+
+3. **Trace emits using wrong type for unsigned int parameters** (rte_eventd=
+ev_trace_fp.h)
+   ```c
+   rte_trace_point_emit_int(new_event_threshold);
+   rte_trace_point_emit_int(num_credits);
+   ```
+   These should use `rte_trace_point_emit_u32()` since the parameters are `=
+unsigned int`.
+
+4. **Missing documentation update**
+   - New API capability `RTE_EVENT_DEV_CAP_CREDIT_PREALLOCATION` and new fu=
+nctions need to be documented in the programmer's guide.
+   - Release notes should be updated for this new feature.
+
+5. **Missing testpmd hooks and functional tests**
+   - Per guidelines: "New APIs must have hooks in `app/testpmd` and tests i=
+n the functional test suite"
+
+### Info
+
+1. **Typo in documentation** (rte_eventdev.h)
+   ```c
+   * Besides using up credits by enqueuing @ref RTE_EVENT_OP_NEW_PREALLOCAD
+   ```
+   Should be `RTE_EVENT_OP_NEW_PREALLOCED` (fixed in patch 3, but inconsist=
+ent).
+
+2. **Consider using `RTE_EVENT_OP_NEW_PREALLOCED` value**
+   ```c
+   #define RTE_EVENT_OP_NEW_PREALLOCED     3
+   ```
+   This is defined after `RTE_EVENT_OP_FORWARD` (1) and `RTE_EVENT_OP_RELEA=
+SE` (2), which maintains ordering, but value 3 appears between them in the =
+header. Consider reordering definitions for clarity.
+
+---
+
+## Patch 2/4: event/dsw: add support for credit preallocation
+
+### Errors
+
+None.
+
+### Warnings
+
+1. **Potential integer overflow in credit counting**
+   ```c
+   port->new_prealloced_enqueued +=3D num_new_prealloced;
+   ```
+   The counter is `uint64_t` which should be fine, but there's no overflow =
+protection.
+
+2. **Missing documentation for new xstats counter**
+   - `port_%u_new_prealloced_enqueued` is added but not documented.
+
+### Info
+
+1. **Good practice**: The implementation correctly reuses existing infrastr=
+ucture and follows the DSW driver patterns.
+
+---
+
+## Patch 3/4: eventdev: add enqueue optimized for prealloced events
+
+### Errors
+
+1. **Missing `__rte_experimental` tag**
+   - `rte_event_enqueue_new_prealloced_burst()` is a new API function but l=
+acks `__rte_experimental`.
+
+2. **Typo in documentation comment** (rte_eventdev.h)
+   ```c
+   n * @param port_id
+   ```
+   Should be:
+   ```c
+    * @param port_id
+   ```
+   There's an extra 'n' character at the beginning of the line.
+
+### Warnings
+
+1. **Inconsistent comment** (rte_eventdev_core.h:66-67)
+   ```c
+   event_enqueue_burst_t enqueue_new_prealloced_burst;
+   /**< PMD enqueue burst new function. */
+   ```
+   Comment says "new function" but should say "new prealloced function" to =
+distinguish from `enqueue_new_burst`.
+
+2. **Missing dummy function initialization** (eventdev_private.c)
+   - While `enqueue_new_prealloced_burst` is set in `event_dev_fp_ops_set()=
+`, there's no corresponding dummy function initialization in `event_dev_fp_=
+ops_reset()`.
+
+### Info
+
+1. **Documentation clarity**: The function documentation is good and follow=
+s existing patterns.
+
+---
+
+## Patch 4/4: event/dsw: implement enqueue optimized for prealloced events
+
+### Errors
+
+None.
+
+### Warnings
+
+1. **Missing default `new_event_threshold` handling in main path**
+   - In patch 2, `dsw_event_credit_alloc()` doesn't handle `new_event_thres=
+hold =3D=3D 0` initially; this is only added in patch 4. This creates a com=
+pile-time inconsistency between patches.
+   - The check should be in patch 2 where `dsw_event_credit_alloc()` is int=
+roduced:
+   ```c
+   if (new_event_threshold =3D=3D 0)
+       new_event_threshold =3D source_port->new_event_threshold;
+   ```
+
+### Info
+
+1. **Good practice**: The implementation follows existing DSW patterns and =
+correctly reuses the generic enqueue function.
+
+---
+
+## General Issues Across All Patches
+
+### Errors
+
+1. **ABI/API symbols not exported**
+   - New functions `rte_event_credit_alloc()`, `rte_event_credit_free()`, a=
+nd `rte_event_enqueue_new_prealloced_burst()` are inline functions, but the=
+ trace points need proper symbol versioning.
+
+### Warnings
+
+1. **Missing version.map updates**
+   - If any non-inline functions are added, they need to be exported in `li=
+b/eventdev/version.map`.
+
+2. **No unit tests provided**
+   - The series should include tests in `app/test/` for the new functionali=
+ty.
+
+3. **Release notes not updated**
+   - Per guidelines: "Release notes updated for new drivers or subsystems" =
+and "API changes require release notes".
+
+4. **Commit message body formatting**
+   - Patch 1 commit body is well-written but could benefit from mentioning =
+this is an RFC with incomplete features (missing tests, docs).
+
+### Info
+
+1. **RFC Status**: As an RFC, missing tests and documentation are expected,=
+ but they should be added before the series moves to non-RFC status.
+
+2. **Capability flag placement**: `RTE_EVENT_DEV_CAP_CREDIT_PREALLOCATION (=
+1ULL << 21)` - verify this doesn't conflict with any other capability flags.
 
 ---
 
 ## Summary
 
-The patch series contains 7 patches:
-1. event/dlb2: include headers for vector and memory copy APIs
-2. net/octeon_ep: add missing vector API header include
-3. distributor: add missing vector API header include
-4. fib: add missing vector API header include
-5. eal: provide option to use compiler memcpy instead of RTE
-6. ci: test compiler memcpy
-7. vhost: optimize memcpy routines when cc memcpy is used
+| Severity | Count |
+|----------|-------|
+| Error | 4 |
+| Warning | 12 |
+| Info | 6 |
 
----
-
-## Patch 1/7: event/dlb2: include headers for vector and memory copy APIs
-
-### Info
-- Well-structured commit message explaining the issue and fix
-- Proper Signed-off-by and Acked-by tags
-- Correctly formatted subject line
-
-### No Issues Found
-This patch is clean and follows guidelines.
-
----
-
-## Patch 2/7: net/octeon_ep: add missing vector API header include
-
-### Warning
-**Include order issue**: The `<rte_vect.h>` include is placed after `<ethde=
-v_pci.h>`, but according to AGENTS.md guidelines, DPDK EAL includes should =
-come before DPDK misc library includes, and there should be a blank line se=
-parating groups.
-
-```c
-#include <inttypes.h>
-#include <ethdev_pci.h>
-
-#include <rte_vect.h>
-```
-
-Consider placing `<rte_vect.h>` in the proper order relative to other DPDK =
-includes.
-
-### No Other Issues Found
-Otherwise clean patch.
-
----
-
-## Patch 3/7: distributor: add missing vector API header include
-
-### Info
-- Clean patch with proper formatting
-
-### No Issues Found
-This patch is clean and follows guidelines.
-
----
-
-## Patch 4/7: fib: add missing vector API header include
-
-### Info
-- Clean patch with proper formatting
-
-### No Issues Found
-This patch is clean and follows guidelines.
-
----
-
-## Patch 5/7: eal: provide option to use compiler memcpy instead of RTE
-
-### Error
-**Release notes formatting issue**: The release notes have an extra blank l=
-ine after the "destination buffers)." line:
-
-```rst
-  destination buffers).
-                        <-- extra blank line here
-Removed Items
-```
-
-The blank line should be removed or the section should end properly before =
-"Removed Items".
-
-### Warning
-**Line length in meson_options.txt**: The description line for `use_cc_memc=
-py` may exceed typical line length conventions:
-
-```python
-option('use_cc_memcpy', type: 'boolean', value: false, description:
-       'Have the functions of <rte_memcpy.h> delegate to compiler/libc memc=
-py() instead of using custom implementation.')
-```
-
-This is a long line (approximately 119 characters). Consider breaking it.
-
-### Info
-- Good use of `#ifdef __cplusplus` guards in generic/rte_memcpy.h
-- Proper SPDX identifiers maintained
-- Good documentation in release notes
-
----
-
-## Patch 6/7: ci: test compiler memcpy
-
-### Error
-**Copy-paste error in linux-build.sh**: Both branches of the if statement s=
-et the same value:
-
-```bash
-if [ "$CCMEMCPY" =3D "true" ]; then
-	OPTS=3D"$OPTS -Duse_cc_memcpy=3Dtrue"
-else
-	OPTS=3D"$OPTS -Duse_cc_memcpy=3Dtrue"  # <-- Should be false
-fi
-```
-
-The `else` branch should set `-Duse_cc_memcpy=3Dfalse`.
-
-### Info
-- Good addition of CI coverage for the new feature
-
----
-
-## Patch 7/7: vhost: optimize memcpy routines when cc memcpy is used
-
-### Warning
-**Brace style inconsistency**: The `if-else` statement uses braces for the =
-`if` block but not for the `else` block:
-
-```c
-	if (len <=3D 256) {
-		size_t left;
-
-		for (left =3D len; left >=3D 32; left -=3D 32) {
-			memcpy(dst, src, 32);
-			dst =3D RTE_PTR_ADD(dst, 32);
-			src =3D RTE_PTR_ADD(src, 32);
-		}
-
-		memcpy(dst, src, left);
-	} else
-		memcpy(dst, src, len);
-```
-
-According to DPDK coding style, when one branch has braces, consistency sug=
-gests the other should too, or both should be without braces if they're sin=
-gle statements. However, the DPDK guidelines show examples where this mixed=
- style is acceptable.
-
-### Info
-- Good performance documentation in the commit message
-- Proper use of `__rte_always_inline`
-- Good use of `restrict` keyword
-- Appropriate use of `__builtin_assume_aligned`
-- Well-documented rationale for the optimization
-
-### No Other Issues Found
-This patch is otherwise clean.
-
----
-
-## Overall Assessment
-
-### Errors (Must Fix)
-1. **Patch 6/7**: Copy-paste error in `.ci/linux-build.sh` - both if branch=
-es set `use_cc_memcpy=3Dtrue`
-
-### Warnings (Should Fix)
-1. **Patch 2/7**: Include order could be improved for consistency
-2. **Patch 5/7**: Long line in meson_options.txt description
-3. **Patch 5/7**: Extra blank line in release notes before "Removed Items"
-
-### Info (Consider)
-- All patches have proper Signed-off-by tags
-- Subject lines are within 60 character limit
-- Commit messages are well-written and explain the rationale
-- Proper use of Acked-by tags from reviewers
-
-The critical bug in Patch 6/7 should be fixed before merging - the else bra=
-nch should set `-Duse_cc_memcpy=3Dfalse` instead of `true`.
-
+**Key items to address before moving from RFC:**
+1. Add `__rte_experimental` tags to all new API functions
+2. Fix the line length violation in `rte_eventdev_core.h`
+3. Fix the typo in patch 3 documentation (`n * @param`)
+4. Fix trace point symbol naming
+5. Add unit tests and testpmd hooks
+6. Update release notes and programmer's guide
+7. Fix trace emit types for unsigned parameters
