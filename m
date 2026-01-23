@@ -2,67 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3AA1D6CFC1
-	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Jan 2026 04:31:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A433BD6CFBB
+	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Jan 2026 04:31:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 36FD2402E9;
-	Fri, 23 Jan 2026 05:30:21 +0100 (CET)
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com
- [209.85.128.53]) by mails.dpdk.org (Postfix) with ESMTP id 6CC5A4066D
- for <dev@dpdk.org>; Fri, 23 Jan 2026 05:30:19 +0100 (CET)
-Received: by mail-wm1-f53.google.com with SMTP id
- 5b1f17b1804b1-4801c731d0aso13477925e9.1
- for <dev@dpdk.org>; Thu, 22 Jan 2026 20:30:19 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id C699640671;
+	Fri, 23 Jan 2026 05:30:22 +0100 (CET)
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com
+ [209.85.221.48]) by mails.dpdk.org (Postfix) with ESMTP id 238114027C
+ for <dev@dpdk.org>; Fri, 23 Jan 2026 05:30:21 +0100 (CET)
+Received: by mail-wr1-f48.google.com with SMTP id
+ ffacd0b85a97d-4359249bbacso1803446f8f.0
+ for <dev@dpdk.org>; Thu, 22 Jan 2026 20:30:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769142619;
- x=1769747419; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769142621;
+ x=1769747421; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=QR518gAxrqo1bNDOHcPrbbKhUVaqwgMNV0ePc47R5oA=;
- b=ZQcofD/J/eIhmyTNoiq/eyGN0K47f4WM4VQa/fPT4E1cDA++MpSl4iWUHldzuYIaZd
- DJQJ1dRKj0O94zCgPk/tmDYMUpsX0ufDRW61ioNSNMmMm8GMlIWJFezgJDVsChFyLbpp
- iXUaAV2gSh3QlExulXqUV6s1qABAobN1/CvRsbpF/GfpJftQG5XYv1jl3HqsiUWa+SKu
- uV6ftmThsgjn+AwLtzroKuvvk6qB7v0gvMMFKC+P8zK/v8po0rVniqr1Vbv31UQ3qGk3
- cTUfwOzfGCdCtzXLaij0i9R4EfF2cogXVw4HngAoFiBl1CSnuYKGGHoqbuM7L62IEbEk
- vEYw==
+ bh=abw719rhYkgH1OwePPZEJ0D3gjIN0vOEFGcXODNTTE4=;
+ b=eABwpf1gU+yLTDY6caFPy3/0KIfUdWVxF/i+dmgSb0/T/UssinvFm+xL0sfGeOZ5t7
+ y33fQT7xoIO6pvlUeFNKFIAFB1F6lHkaGR1fjgjiV5wqWxhwTeUKbKT9WL/0sNxOMoEY
+ 9q4R+PLYNpdL9tSeZcC20cqRgvxqQknTYNBGc+eM4Aa2BqzhPaqWy+jX92JYUqOF/Uor
+ +7clIXZbiNKLwn26V4fATvylbYVAVVSxWPJ4/ztETG0sFuT+jwd6P3QNpUYA4IhwOTXc
+ rDb0E9gtH6avdLRvB71qdRBo+THBeqlsXpBkqHBFXlULOQ5N5h//7Gg1CqMYQjvGHX4A
+ Q+XQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1769142619; x=1769747419;
+ d=1e100.net; s=20230601; t=1769142621; x=1769747421;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=QR518gAxrqo1bNDOHcPrbbKhUVaqwgMNV0ePc47R5oA=;
- b=bmAreFrkWFa/XeNnObasXcypT6ktrVtUSMvgBhwukU7rPNRolrwj4N3a1GhmUAsFlx
- HXmk2elF4WJ1UK9ishlZ0Fpa+pbEWI0OvKFjwtDf8pZtBp0Inae+Cr3o49KDnr1kq6WB
- myUH/6H3OZH6wIjM6Sne+k+gp0gfNJyRuaooHfReMQlY1itzZnQNDv/ufXvYYyCGYbnq
- K7dRjxhbS0Hzhf6ue4cX6qc3YCTTkUN7xo/0LUrHjFtV2D5Z9y40iQpCGjSuFHEr1sM2
- WQhTT/wXhH2W9TwasP0hiefPX1mIw3qGDTJTR4uZsJQdRYPFfropZsN+pKFWoQJjvwUs
- UqbA==
-X-Gm-Message-State: AOJu0Yx+30SP6oIJKpF84x3AnqzVAPSgdaPPpv1IkimEGAiTJq4uqfPO
- bAkWHTdC/Vs0DUPrpMpcM4ivjRTWfbveikHN69Yj2dKHcRD6TakXQWk53Sdx4u7yyGKzNls+qNY
- cUgNJ
-X-Gm-Gg: AZuq6aIDo2r4qG0vIcc5x0mQ2x7amCwOwIGOV7eBmrqRewt/alS9oSfTP14M5/biisj
- +M6TNgCoq99CLDDOS/RDR+3H9/8Lc96egi6VVMQdUZQ3hurUBTg8C2ySI/beyY+xdHvX1kuErG8
- /u0xmYnvYJiVuxpzUQWZUssr8iQ0X+dpTwe/gCgfRZHvUa6JoylrFXRQZydpYNbnOlKWgzT0COP
- LPfvMBiXDNDmW4UaKMyPbZI/SiMTJSY4kTS9UgCaWof0POGCX/tpcC/s+PMAL7Rf4vFdmcl1y6f
- bEKwleWnKWMZD2oGR96dGoGDIYBEc5AlUsrcq7FxWpJ/sBTp7rnsyfVYjcos5R/BjAbd6fzvwP3
- jcsO9r02bCD4D2ssGgCDeW9An9PgtkjjYdpdsm/NKxOYWa4Bz14wq20A/XS9yxURjWbeWrpO53B
- 6hLGc53Q6+QLRLetRwNMAtPQ6ju7jM/OYoQWneMFuB331zpV5tSQ==
-X-Received: by 2002:a05:600c:34ca:b0:480:4a4f:c366 with SMTP id
- 5b1f17b1804b1-48051249cdcmr1101495e9.20.1769142618993; 
- Thu, 22 Jan 2026 20:30:18 -0800 (PST)
+ bh=abw719rhYkgH1OwePPZEJ0D3gjIN0vOEFGcXODNTTE4=;
+ b=aIMmUWmBGdMn3BM0QkgGvhJald8dvGRjinDLKptIsQm26f5kJB86VfTrmdqf6hWehO
+ Y3N4Ul/zBGXFyBxZBAZBxJbE5xQBztT5S+ZvMb0UkVRgrrbWgd0+9kmVfl90ikMePhhm
+ bk06NAoNgh32qYh/e62LdnIaORHf3d4heLIZsjYFjKZOExp8oSBaasKLV7gA4A5wuxCA
+ hlvHND8glHwb3axaAbqQ80mjF0DOABA7EmBCq1FIhyUx9FmjzngSyhTpBGEbI7mfe4RQ
+ IzW5Egq6A7+XvyIAuTExapxnQTLwi6HPoS+c+9HCyI52oGVeR5kEOOBlKnv4mjtrUMKb
+ wJcw==
+X-Gm-Message-State: AOJu0Yzae7g/rUGX/+BNu09a9LdKHPuX6SmapzqNoH1L0yqS8QUtJJSS
+ 3lHKCoEcwEgFJw0UDxlKEcO9WEgSGbFK7eQIhcgnMOpl4bqiOg1s5EUR8IzCRayzz2fp8HHDvwn
+ j7qa+
+X-Gm-Gg: AZuq6aId1IuoDoGRv0HKIDCkX3ku7d9EEfMwj8/ulhypD/DKNyEDWZ9NCJG0tn4Fwbd
+ BcAI4Fq14LFpSXUoJ8BDHKd38VPSXedBk6NRlNUl0yr7cDK+/yRCLfJyB1bUNI0sPVpBJgDriHp
+ UTh403zv1zPPdSN4hHuQKeHQaazSWjlTrCz2IgYneKL/gOFSwnXq1SYqdKb7msdt/mx6t4o8N6c
+ RNRAndOAYI4UNQ+TPn0cRPv8EKVfRktYmV9g9TZLdbt/HigCZ7CkoE328OeBASc2aIbZHRglhKQ
+ 4k0MblZ35ShrlB/OnQuHo/qI0uQy6KqdFL8gZyjKAX/ylFENPhyoRPny2A6m8NrDnIQE6ru9KGi
+ 5mHKYU+UXKUWsbnWADcsYQdIyqMwCLe4SDIunoGq4JWsNHb5tcizAk5U+YuhhIYip2PKZGdTA8M
+ rEcrzMNrTM5Q64FSppQ6gkJ9nZiYM6w+RANYK07V5xpN12kFEixA==
+X-Received: by 2002:a5d:584b:0:b0:431:66a:cbda with SMTP id
+ ffacd0b85a97d-435a5b7a944mr9973934f8f.0.1769142620734; 
+ Thu, 22 Jan 2026 20:30:20 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-435b1f7b41asm3603771f8f.39.2026.01.22.20.30.16
+ ffacd0b85a97d-435b1f7b41asm3603771f8f.39.2026.01.22.20.30.19
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 22 Jan 2026 20:30:17 -0800 (PST)
+ Thu, 22 Jan 2026 20:30:20 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Anatoly Burakov <anatoly.burakov@intel.com>
-Subject: [PATCH v11 12/18] eal: check for hugefile path overflow
-Date: Thu, 22 Jan 2026 20:28:10 -0800
-Message-ID: <20260123042945.159075-13-stephen@networkplumber.org>
+ Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH v11 13/18] eal: check tailq length
+Date: Thu, 22 Jan 2026 20:28:11 -0800
+Message-ID: <20260123042945.159075-14-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260123042945.159075-1-stephen@networkplumber.org>
 References: <20251202172626.283094-1-stephen@networkplumber.org>
@@ -82,169 +82,80 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-When constructing huge filename path, check for possible
-overflow of PATH_MAX.
+The tailq name should not be allowed to exceed limits.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- lib/eal/common/eal_filesystem.h   | 10 +++++----
- lib/eal/linux/eal_hugepage_info.c | 34 +++++++++++++++++++------------
- lib/eal/linux/eal_memalloc.c      | 11 ++++++++--
- lib/eal/linux/eal_memory.c        |  9 ++++++--
- 4 files changed, 43 insertions(+), 21 deletions(-)
+ doc/guides/rel_notes/release_26_03.rst |  1 +
+ lib/eal/common/eal_common_tailqs.c     | 13 ++++++++++++-
+ 2 files changed, 13 insertions(+), 1 deletion(-)
 
-diff --git a/lib/eal/common/eal_filesystem.h b/lib/eal/common/eal_filesystem.h
-index 70ae21b078..c2f2856e27 100644
---- a/lib/eal/common/eal_filesystem.h
-+++ b/lib/eal/common/eal_filesystem.h
-@@ -104,12 +104,14 @@ eal_hugepage_data_path(void)
+diff --git a/doc/guides/rel_notes/release_26_03.rst b/doc/guides/rel_notes/release_26_03.rst
+index 91b1808455..d643206167 100644
+--- a/doc/guides/rel_notes/release_26_03.rst
++++ b/doc/guides/rel_notes/release_26_03.rst
+@@ -93,6 +93,7 @@ API Changes
+   * lpm: name must be less than RTE_LPM_NAMESIZE.
+   * hash: name parameter must be less than RTE_HASH_NAMESIZE.
+   * efd: name must be less than RTE_EFD_NAMESIZE.
++  * tailq: name must be less than RTE_TAILQ_NAMESIZE.
  
- /** String format for hugepage map files. */
- #define HUGEFILE_FMT "%s/%smap_%d"
--static inline const char *
-+static inline __rte_warn_unused_result const char *
- eal_get_hugefile_path(char *buffer, size_t buflen, const char *hugedir, int f_id)
+ 
+ ABI Changes
+diff --git a/lib/eal/common/eal_common_tailqs.c b/lib/eal/common/eal_common_tailqs.c
+index 47080d75ac..c581f43b6f 100644
+--- a/lib/eal/common/eal_common_tailqs.c
++++ b/lib/eal/common/eal_common_tailqs.c
+@@ -8,6 +8,7 @@
+ 
+ #include <rte_eal.h>
+ #include <rte_eal_memconfig.h>
++#include <rte_errno.h>
+ #include <rte_log.h>
+ #include <rte_string_fns.h>
+ 
+@@ -30,8 +31,10 @@ rte_eal_tailq_lookup(const char *name)
+ 	unsigned i;
+ 	struct rte_mem_config *mcfg = rte_eal_get_configuration()->mem_config;
+ 
+-	if (name == NULL)
++	if (name == NULL) {
++		rte_errno = EINVAL;
+ 		return NULL;
++	}
+ 
+ 	for (i = 0; i < RTE_MAX_TAILQ; i++) {
+ 		if (!strncmp(name, mcfg->tailq_head[i].name,
+@@ -39,6 +42,7 @@ rte_eal_tailq_lookup(const char *name)
+ 			return &mcfg->tailq_head[i];
+ 	}
+ 
++	rte_errno = ENOENT;
+ 	return NULL;
+ }
+ 
+@@ -67,6 +71,12 @@ rte_eal_tailq_create(const char *name)
  {
--	snprintf(buffer, buflen, HUGEFILE_FMT, hugedir,
--			eal_get_hugefile_prefix(), f_id);
--	return buffer;
-+	if (snprintf(buffer, buflen, HUGEFILE_FMT, hugedir,
-+		     eal_get_hugefile_prefix(), f_id) >= (int)buflen)
+ 	struct rte_tailq_head *head = NULL;
+ 
++	if (strlen(name) >= sizeof(head->name)) {
++		EAL_LOG(ERR, "tailq name '%s' is too long", name);
++		rte_errno = ENAMETOOLONG;
 +		return NULL;
-+	else
-+		return buffer;
- }
- 
- /** define the default filename prefix for the %s values above */
-diff --git a/lib/eal/linux/eal_hugepage_info.c b/lib/eal/linux/eal_hugepage_info.c
-index fe3351259e..7954bc1415 100644
---- a/lib/eal/linux/eal_hugepage_info.c
-+++ b/lib/eal/linux/eal_hugepage_info.c
-@@ -68,11 +68,14 @@ create_shared_memory(const char *filename, const size_t mem_size)
- 
- static int get_hp_sysfs_value(const char *subdir, const char *file, unsigned long *val)
- {
--	char path[PATH_MAX];
-+	char *path = NULL;
-+	int ret;
- 
--	snprintf(path, sizeof(path), "%s/%s/%s",
--			sys_dir_path, subdir, file);
--	return eal_parse_sysfs_value(path, val);
-+	if (asprintf(&path, "%s/%s/%s", sys_dir_path, subdir, file) < 0)
-+		return -1;
-+	ret = eal_parse_sysfs_value(path, val);
-+	free(path);
-+	return ret;
- }
- 
- /* this function is only called from eal_hugepage_info_init which itself
-@@ -133,13 +136,15 @@ get_num_hugepages(const char *subdir, size_t sz, unsigned int reusable_pages)
- static uint32_t
- get_num_hugepages_on_node(const char *subdir, unsigned int socket, size_t sz)
- {
--	char path[PATH_MAX], socketpath[PATH_MAX];
-+	char *path = NULL, *socketpath = NULL;
- 	DIR *socketdir;
- 	unsigned long num_pages = 0;
- 	const char *nr_hp_file = "free_hugepages";
- 
--	snprintf(socketpath, sizeof(socketpath), "%s/node%u/hugepages",
--		sys_pages_numa_dir_path, socket);
-+	if (asprintf(&socketpath, "%s/node%u/hugepages", sys_pages_numa_dir_path, socket) < 0) {
-+		EAL_LOG(ERR, "Can not format node huge page path");
-+		goto nopages;
-+	}
- 
- 	socketdir = opendir(socketpath);
- 	if (socketdir) {
-@@ -147,17 +152,16 @@ get_num_hugepages_on_node(const char *subdir, unsigned int socket, size_t sz)
- 		closedir(socketdir);
- 	} else {
- 		/* Can't find socket dir, so ignore it */
--		return 0;
-+		goto nopages;
- 	}
- 
--	if (snprintf(path, sizeof(path), "%s/%s/%s", socketpath, subdir, nr_hp_file) >= PATH_MAX) {
--		EAL_LOG(NOTICE, "Socket path %s/%s/%s is truncated",
--			socketpath, subdir, nr_hp_file);
--		return 0;
-+	if (asprintf(&path, "%s/%s/%s", socketpath, subdir, nr_hp_file) < 0) {
-+		EAL_LOG(ERR, "Can not format free hugepages path");
-+		goto nopages;
- 	}
- 
- 	if (eal_parse_sysfs_value(path, &num_pages) < 0)
--		return 0;
-+		goto nopages;
- 
- 	if (num_pages == 0)
- 		EAL_LOG(WARNING, "No free %zu kB hugepages reported on node %u",
-@@ -170,6 +174,10 @@ get_num_hugepages_on_node(const char *subdir, unsigned int socket, size_t sz)
- 	if (num_pages > UINT32_MAX)
- 		num_pages = UINT32_MAX;
- 
-+nopages:
-+	free(path);
-+	free(socketpath);
-+
- 	return num_pages;
- }
- 
-diff --git a/lib/eal/linux/eal_memalloc.c b/lib/eal/linux/eal_memalloc.c
-index 1e60e21620..d9e8ea76b9 100644
---- a/lib/eal/linux/eal_memalloc.c
-+++ b/lib/eal/linux/eal_memalloc.c
-@@ -260,6 +260,7 @@ get_seg_fd(char *path, int buflen, struct hugepage_info *hi,
- {
- 	int fd;
- 	int *out_fd;
-+	const char *huge_path;
- 	struct stat st;
- 	int ret;
- 	const struct internal_config *internal_conf =
-@@ -276,12 +277,18 @@ get_seg_fd(char *path, int buflen, struct hugepage_info *hi,
- 
- 	if (internal_conf->single_file_segments) {
- 		out_fd = &fd_list[list_idx].memseg_list_fd;
--		eal_get_hugefile_path(path, buflen, hi->hugedir, list_idx);
-+		huge_path = eal_get_hugefile_path(path, buflen, hi->hugedir, list_idx);
- 	} else {
- 		out_fd = &fd_list[list_idx].fds[seg_idx];
--		eal_get_hugefile_path(path, buflen, hi->hugedir,
-+		huge_path = eal_get_hugefile_path(path, buflen, hi->hugedir,
- 				list_idx * RTE_MAX_MEMSEG_PER_LIST + seg_idx);
- 	}
-+	if (huge_path == NULL) {
-+		EAL_LOG(DEBUG, "%s(): hugefile path truncated: '%s'",
-+			__func__, path);
-+		return -1;
 +	}
 +
- 	fd = *out_fd;
- 	if (fd >= 0)
- 		return fd;
-diff --git a/lib/eal/linux/eal_memory.c b/lib/eal/linux/eal_memory.c
-index 8e1763e890..2a0a441398 100644
---- a/lib/eal/linux/eal_memory.c
-+++ b/lib/eal/linux/eal_memory.c
-@@ -337,8 +337,13 @@ map_all_hugepages(struct hugepage_file *hugepg_tbl, struct hugepage_info *hpi,
+ 	if (!rte_eal_tailq_lookup(name) &&
+ 	    (rte_tailqs_count + 1 < RTE_MAX_TAILQ)) {
+ 		struct rte_mem_config *mcfg;
+@@ -115,6 +125,7 @@ rte_eal_tailq_register(struct rte_tailq_elem *t)
+ 	if (rte_eal_tailq_local_register(t) < 0) {
+ 		EAL_LOG(ERR,
+ 			"%s tailq is already registered", t->name);
++		rte_errno = EEXIST;
+ 		goto error;
+ 	}
  
- 		hf->file_id = i;
- 		hf->size = hugepage_sz;
--		eal_get_hugefile_path(hf->filepath, sizeof(hf->filepath),
--				hpi->hugedir, hf->file_id);
-+		if (eal_get_hugefile_path(hf->filepath, sizeof(hf->filepath),
-+					  hpi->hugedir, hf->file_id) == NULL) {
-+			EAL_LOG(DEBUG, "%s(): huge file path '%s' truncated",
-+				__func__, hf->filepath);
-+			goto out;
-+		}
-+
- 		hf->filepath[sizeof(hf->filepath) - 1] = '\0';
- 
- 		/* try to create hugepage file */
 -- 
 2.51.0
 
