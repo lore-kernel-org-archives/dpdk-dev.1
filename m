@@ -2,71 +2,195 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53AF5D74EF3
-	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Jan 2026 16:03:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCBA9D74EF8
+	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Jan 2026 16:11:46 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BCED04060C;
-	Fri, 23 Jan 2026 17:03:20 +0100 (CET)
-Received: from mail-dy1-f180.google.com (mail-dy1-f180.google.com
- [74.125.82.180]) by mails.dpdk.org (Postfix) with ESMTP id BF3BC402E9
- for <dev@dpdk.org>; Fri, 23 Jan 2026 17:03:18 +0100 (CET)
-Received: by mail-dy1-f180.google.com with SMTP id
- 5a478bee46e88-2b714f30461so2195451eec.0
- for <dev@dpdk.org>; Fri, 23 Jan 2026 08:03:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1769184198; x=1769788998; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=QTM59IGJsqJUlb24DH6dC7HEXPaCnDre/44ew72i6MI=;
- b=RFZ9vP6WIzJVsSJrk0FBQQXiXuq0tVmbsrK1O5H6QoDLPm713DL66YpJKL5Lj6nVY1
- X5UBIKpAHvqfFjV6tLfYKu4w2ixSyYz04QunC/E3KPiBlSRhQoNSFeE3OlxEPvz6tIbY
- pHeQz0NZmsWd0Eq3QFTz1tG0z5ylVyFeKwZw6kn4X4tKstx+jAi97CMdwQkWxKZ/+EuK
- qQhgYB+srZWFhF0OPGvYpcU2ititrv6lvTJWrpByDU22wSdwWDu15Zr8XBaaBdPnuH80
- +IUnK8qRJOeFcTv+eW5JcPWd2aGwX/BBjmj1EZHuVBRzqSXMt0Rv9xK2R/0boP9cGqOY
- tWLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1769184198; x=1769788998;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=QTM59IGJsqJUlb24DH6dC7HEXPaCnDre/44ew72i6MI=;
- b=L1lsA7aKhTffe9rv4K4V5epdIAOrE9QxHzFb0w7YX/gaRtXxjzpyicb4TJ/dRuJyFZ
- lyHGJCx2CmeHcU9blUZdwp8KgiFjT2IAbY34pEhdQnIKTTfnnoFeolgSYZKu6QSQgxVu
- +b60MMASYWrbOvlDe0O42nlWgJiG510JWIbaGztbtNhJVh0jCiP9X5UWFYEUNd+aP6Ok
- JvDDj8JjoJIVa3TeUASmRLc7wPVnp0CKy/9CxeC64PIY/QhYur3iE+P8A5tjvis4HyhJ
- Hx1TyVnx5exdv83PCZBjEfD6FcZmYxfCWrcLg/DHwaNMqzv+QaFMnpUDY2IwnbMg4V+Z
- IDmA==
-X-Gm-Message-State: AOJu0YwXKgLbM21bQTtZ79WSdns7/6rwzJm++/FJfRpYePkwslD5ftV6
- gAFEb1PYUP/1OU6BaVPhi8ke9AaBUeXi06rSVDtiioh0ZCdZoD7ekefjN1K9Fw==
-X-Gm-Gg: AZuq6aKK1Y4CoFIDKAx/zbZL476AP0mhDk5tje87YoEBu4jBZSPoCuhEa/lte/Ontye
- dsp6SN2UIFvozTyc3hnwwE+QUM2rufFPQ6ruAaYZ9wWBDS+wibaIJ8JBBcR7ZTtgSo7b/0EeweH
- glg0GwnG5lPmoulMreDbJ42uIXXITCDJZuWZtMoB/vjGchKycbHNhLPIzq8ACre08i2L+WyiR4K
- FZzbQHD+Ul1oRvFiCNxMkapt+JNhoKyZ4gJWZVHwHvyW2k6cuI9KnrMxnDUK2fE+z51/a/nXKIg
- HA/eyR8+EM4l/COFmYt85sHTCUQKa9e10F76/8+k06QN+JZW3EzrsyCNobEJk6h0hOU+kfYXCik
- BMpZ2ufvyOPnQnbeOPZIPFQqatRlqfrGQOP+PExdF8l478nkh2foHMKZGhRNeXs7C2U+t0xYmD1
- VOc9vMIhDaLh6HLXvrOy3nLhYuDWZEitNY
-X-Received: by 2002:a05:7300:dc95:b0:2b6:fe9b:49fa with SMTP id
- 5a478bee46e88-2b7399946ecmr1950922eec.18.1769184197340; 
- Fri, 23 Jan 2026 08:03:17 -0800 (PST)
-Received: from mac.com ([136.24.82.250]) by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-2b73a6f5d2asm3514158eec.14.2026.01.23.08.03.16
- (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
- Fri, 23 Jan 2026 08:03:16 -0800 (PST)
-From: scott.k.mitch1@gmail.com
-To: dev@dpdk.org
-Cc: mb@smartsharesystems.com, stephen@networkplumber.org,
- Scott Mitchell <scott.k.mitch1@gmail.com>
-Subject: [PATCH v16 2/2] net: __rte_raw_cksum pointers enable compiler
- optimizations
-Date: Fri, 23 Jan 2026 08:02:44 -0800
-Message-Id: <20260123160244.57335-3-scott.k.mitch1@gmail.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20260123160244.57335-1-scott.k.mitch1@gmail.com>
-References: <20260117212114.10466-1-scott.k.mitch1@gmail.com>
- <20260123160244.57335-1-scott.k.mitch1@gmail.com>
-MIME-Version: 1.0
+	by mails.dpdk.org (Postfix) with ESMTP id D57AA402D5;
+	Fri, 23 Jan 2026 17:11:45 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+ by mails.dpdk.org (Postfix) with ESMTP id 9CE9F4021F;
+ Fri, 23 Jan 2026 17:11:44 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1769184705; x=1800720705;
+ h=date:from:to:cc:subject:message-id:references:
+ content-transfer-encoding:in-reply-to:mime-version;
+ bh=gRNctEyDmP017B2MS8xOjgAAM+Io2qrcS6JiqSUOzuQ=;
+ b=VKF83Pps3U9Ccqxa6SRAIP3SjT+uHvL3TkPq0t8yZd5rdZIJe5M0MW6e
+ 6hTB4/NtNBVcrpIb3DttXIL2eTk9dDfXQbR6JT3oQ6TeZFbxOgbXgN0Qm
+ JsnX9YzMwGtqtdbmhkM0nkHDjAB0m1aD/yQl0wYz78ZOINJKuBcnfERAv
+ BuZVXlX52JMOEHUN4HW8FpHdMDN+zmV4GPwxIHTRDLoGvvBNQA5PIGMml
+ g5vs0TJIFDj6p7VDRNtJ76eXim30nyRI0bqu2uYyIoy7F5lePWm/+bh68
+ /Ry/s36haZOxy2QqjueBJDH+gXNJZDmWShR4lon/k4XSPe7JQ6UMvKoAR w==;
+X-CSE-ConnectionGUID: YMGxlgq5Qn2HsqX/D3k+AQ==
+X-CSE-MsgGUID: eaR6F5X8TWWKtal2KdBR7w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11680"; a="81550706"
+X-IronPort-AV: E=Sophos;i="6.21,248,1763452800"; d="scan'208";a="81550706"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+ by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 23 Jan 2026 08:11:43 -0800
+X-CSE-ConnectionGUID: m+3Q73XCS9m6w59ri6ivFw==
+X-CSE-MsgGUID: JTWaJbczRoiivUa3JIrzUg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,248,1763452800"; d="scan'208";a="207086136"
+Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
+ by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 23 Jan 2026 08:11:44 -0800
+Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
+ fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.35; Fri, 23 Jan 2026 08:11:42 -0800
+Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
+ FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.35 via Frontend Transport; Fri, 23 Jan 2026 08:11:42 -0800
+Received: from SJ2PR03CU001.outbound.protection.outlook.com (52.101.43.0) by
+ edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.35; Fri, 23 Jan 2026 08:11:42 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=T/Epi5EfohuUAwIgrrxabiOxUjLcxQI+rFXSqHENci/880b/GLBkqUEF5JpcKYMWrUaHM9Ys+OEXtC5m/oa30rQZnYSoeznLPQR+CRD9eKQCxER62NZ/Fb6K7o4yFeR4X3C8WO6uHgvtJ5RzcYKViTJy9NTJQZFPaY+BovjLH7UPzuOosGLtaIgqbH29v5Aot5rxmQbWSWoodfv/lYSE7voEsSzSN+5cl+4WcbRcDtfBVXPK3DLKzeNvQojP1oNqRN9KbsevW9Fbc0Swp0N+mqWho2yMWm9/xIC2ifEPoZ1Zz/38EjP7PwltVRLxnwnJ4QfNMP+qzcE/WXiEzQl9Kw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=UMMl4YqLvuYbyGrjH7i8o7jA54g9N37BbCZtl/g+NCk=;
+ b=fLl4SvIOTdAZ+l/5ONiPoclx1JELBhVkQFHn4DWo4dbN45+/+6D5C748vKiT+i8Bxysd1lGWUseiPG7wk33+7D+svHSPgzzhsgqx3JFh6BQVGieIuR3rzpYE4YZPNVi0D/nL9oddcyQeqNMuD8oUjajzDYw2I2CWSRn2z5R9rmAj7WPNeS5ReCSs17PhbRlxKrLTbJEQ8/ZuG9fWKUaoml8WeuxtWWf8t6pWmScCpiT+0Gleh0IECbe0EZjfvW8E2ip1LEzlsMCtaOvxdXQJ0V346o8h+9e/8jWriUXw+cxFm8tGIvKcyhv50NreXNajN4lvKnPdHYIjltiz4HLEvg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
+ by PH7PR11MB6649.namprd11.prod.outlook.com (2603:10b6:510:1a7::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9542.11; Fri, 23 Jan
+ 2026 16:11:40 +0000
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b%4]) with mapi id 15.20.9542.010; Fri, 23 Jan 2026
+ 16:11:39 +0000
+Date: Fri, 23 Jan 2026 16:11:33 +0000
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: Patrick Robb <probb@iol.unh.edu>
+CC: David Marchand <david.marchand@redhat.com>, <dev@dpdk.org>, <ci@dpdk.org>, 
+ Thomas Monjalon <thomas@monjalon.net>, Aaron Conole <aconole@redhat.com>, 
+ Luca Boccassi <luca.boccassi@gmail.com>, Timothy Redaelli
+ <tredaelli@redhat.com>, Matthew Labrecque <mlabrecque@iol.unh.edu>
+Subject: Re: [PATCH] build: bump meson version to remove warnings
+Message-ID: <aXOdtd5SjD08kkBv@bricha3-mobl1.ger.corp.intel.com>
+References: <20251205121301.3443561-1-bruce.richardson@intel.com>
+ <aTLP4TBHLtqm0kpR@bricha3-mobl1.ger.corp.intel.com>
+ <CAJFAV8yEy9Oz3u0ZqyA4RHQPUjmvEFSLH1cAnfMZccehd0+Z5w@mail.gmail.com>
+ <CAJvnSUC3ze51WFHx=cRMGKezrwXvo7fCXH8o64qJsbWf9SXsZg@mail.gmail.com>
+ <aXM5LAcV6EC6L9VS@bricha3-mobl1.ger.corp.intel.com>
+ <CAJvnSUCd3MpiHbTuv17bXdQK+rfeXwiacW3=sJqpJgMxO3YkFQ@mail.gmail.com>
+ <aXOXIJerY0lZz9VA@bricha3-mobl1.ger.corp.intel.com>
+ <CAJvnSUBOU7QTb6kp2RypHnk7rF5QjSjk5G8WtsEEgT23VmW-vw@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJvnSUBOU7QTb6kp2RypHnk7rF5QjSjk5G8WtsEEgT23VmW-vw@mail.gmail.com>
+X-ClientProxiedBy: DB9PR06CA0002.eurprd06.prod.outlook.com
+ (2603:10a6:10:1db::7) To DS0PR11MB7309.namprd11.prod.outlook.com
+ (2603:10b6:8:13e::17)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|PH7PR11MB6649:EE_
+X-MS-Office365-Filtering-Correlation-Id: f457f203-9e69-41ff-7f64-08de5a9a1758
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?VjAyUnFoMVE4bUV4RTNSSnhSOUs3N2xqMHRPdmgrK01VMnNiMWNiYXhyNlEv?=
+ =?utf-8?B?RkNuc0lnbU1DaC9qK20vN1ZhQ1F0Vmo2TitHNU5xOE5odkZSV1RVbXdFZ1U3?=
+ =?utf-8?B?UzVDZmVkcGtMR3NKdU11SHcwUlFkQjVsTURpeHc1TnA0cTJpSzNUcGl6bjhN?=
+ =?utf-8?B?KzFyQkdRNWh6cVFaa1pMWmdYeHJFcUhLZms1VUlJYnQwQ0VXNGNmdHV2N25w?=
+ =?utf-8?B?aVJQQU1LVk5iZDZhOFJ5V0xpQTBQOHY2cFFwWC8rTDFsK21WdjV5bGdydzRU?=
+ =?utf-8?B?SzR6L2dnK1BmWjJSU0MxQjd4ODFBZmdpekZBczYyMU5kWUw4aGQzWUIwTXNz?=
+ =?utf-8?B?TFhhcGtwdjNTYnR0SzV5RXpTaDBpekZIVDh4V2RxalhlQ1NvVHRxaExnTHJR?=
+ =?utf-8?B?NXhTN2lyU3lQeTlzRmplM0dEM0hiZmNMT2NnbTluSks3bFMrWmpObnk5YWw1?=
+ =?utf-8?B?RHg0Ry9ZdWxKMnBjWkpPMlhkNHF2OHRvc2tYWW1wQTJqenM1Zi81eEV0R0xZ?=
+ =?utf-8?B?ZmV2cFh5QkE1NTZjUktuT3NMcGVHNEZIZE04blg1U3VCTE1EWWl6VWM0R2Y5?=
+ =?utf-8?B?UkNybW1IM0hxdWd2c2NPNWczbDVtWEV5RTk0VXozV0xBSFRKV3pJbStmcXoz?=
+ =?utf-8?B?bW82TXc3U3hJNzU0VFFpcmR5ZWFYUSs3TVl1WndPLzZwSEhhRzB0MmNqa0hU?=
+ =?utf-8?B?N2taVjRya3N4cCtQQmY1YnRvdkpieGZ2ZkVLT3VrLzZLWlhBNVN2cHY0V3lr?=
+ =?utf-8?B?ZWFWdXJGMDNYdXk2Vk9oMmRFekMvYnUrNGU4ZjYrb2VPdElqWTdGa3BzeEpi?=
+ =?utf-8?B?MFVyc0t3V3NBNVBiUDdkY2FTN1JockZsMStJNFV2SFIyMlozM2hmRUZwRFVw?=
+ =?utf-8?B?UmtWN3A3Yi9PN0NCNTd0YTI0dGRrN24rOGVlNStYNjA4aGJuYU4yMkl2WTFK?=
+ =?utf-8?B?WWpLSkRwUUtaU1dPamRvUjlaZFpKanRLZThPR1ZrNDB0Uzl3S09helBDdXRh?=
+ =?utf-8?B?WjhNbms5MTNVbndEZWlrKzJzUmVyd1NmSldkc3I4eFp5ckQ3T0RmelIwdHY5?=
+ =?utf-8?B?bW9tU1VMcXpOalplVTF3dkxlSG1QUkkvaW4xNDhQTGVPOU1PM3F0RFd4L2V5?=
+ =?utf-8?B?bkpZK21jVUdVK3VwZmVhbHhOMnFJTHN3cldrZktFeGJCZHdlOTRJdndpNml3?=
+ =?utf-8?B?N3hRanZFSGl2ai81c2k2MkdKQVNadzdBRi9YdTIzeFJmaVl1QXArQ1Y4YWxk?=
+ =?utf-8?B?dDdXdy9yT1l1dEJLMmRScEJzelc1NDBlZWdjTU0vNmt6NFVLYnBZRmw4WENy?=
+ =?utf-8?B?QjV2amFIOXNaZ2hTRjB1Q0NqZThoc3J2Mllkc0JQWlRyM1NJemhDV0VCRFNU?=
+ =?utf-8?B?eGk5VXlBSGxmWnA1dTQ5TTlHOWdLWVIwNU90S08rY3dqM2ZUaHdMRGhGaEh4?=
+ =?utf-8?B?VE1HTGdCRGxqWXNlZXVxV2NUSGt3RGxQRyt0TEU4WmRBUXc5ZTZzb3Rud09n?=
+ =?utf-8?B?ZzlIZnZuWGlPWHpSZHFVOE9YZStwYndKSTdEemJ2NUpsSDZBZGttME1DcTZx?=
+ =?utf-8?B?My9pUVRZSXY4Q3owaitpdEFvcmJFYWduMW1GYnNEaGE1UE9wdGtpV3gxZnpU?=
+ =?utf-8?B?TDNta0g2QmRaMzdYelcrdjRmbzNrTkNVR0VaTFpsNWg2L3pGbjNNVzdVWkJP?=
+ =?utf-8?B?NlpmV1Voa1dOREVWVFE3U3c1ZWxONDQrbFo1UmxRV3ZCdm9yWXkvVVdnY3Zi?=
+ =?utf-8?B?N3h5VlVyS2dsVzRXY1E1WW9RKzFaRGYrVEd6bHlnUW00S3pJQnJWSzVHRXRC?=
+ =?utf-8?B?aG1VRlpOeXpzT3ZxOHNZeW0wUCtqaW9xbmdmTldIY0pLNXBrQUdUN3dTYWFQ?=
+ =?utf-8?B?WWM0SzFDSE5WcG4vTGZtRHNpOE5zbWE4QmNSbUVJQXg5MUVRSWwrUDNzcEZq?=
+ =?utf-8?B?VlBXZDdxZnRLMU5pQWxBdXlrN1FQYXA0UldOZ1c5V0hSNmhkNkN0OVlKNVd1?=
+ =?utf-8?B?anUvaklSaVQyOStnUFN1U0NjZXNPSVkrNHZnZVYxaUxKQnhwcE5EQ3BlYTdC?=
+ =?utf-8?B?TVJSTWRJcno4U1lnZ0szcWRLZGUvTEdueWFQcE1UeXg3K21lbWZjSlR0SWVq?=
+ =?utf-8?Q?+uwA=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(1800799024)(376014)(366016); DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?blZUQ09KUjN1YW0wQ2hoTE96aVJzQm55WEpGK2llL3RWR3JLYy81WnRRdjlR?=
+ =?utf-8?B?d1lqSk5hY0xnaTFGdzE1WUlyL1pvUDhONHlJblI4emkzam51T0dxaVY5TTAz?=
+ =?utf-8?B?YklSWWJkV0o2S0F5Z1NYMExnTzBOUXE1SmVVK1FwL3pkTVZTN1RlUHJMa2lM?=
+ =?utf-8?B?RWZnSUl1ekUxa2E2UmpoSHd3TVRwbU5DUjN1Y2Vpak5ZTVJvczlsY2k1aUtt?=
+ =?utf-8?B?QmtWWDFKcjV3eGZzczJhb00vYzIrdzEyeUl3cUMvUTB3WGlUQVhkSlVPRDE3?=
+ =?utf-8?B?QTdUazFpQnFaeXBpSThKdUd2bktwbjU2d3VnVjB1eTkzL1YxYWpXTVN2VWFT?=
+ =?utf-8?B?VllnK3dHbFNyYlhNbmdaMTdoWFBHWjlCMSs1d1N0RHBiOVpjdGh6WkRYdXNG?=
+ =?utf-8?B?VjJkYTRxV2JQdXBlZFROZFk1QmtCSHdaeDRZVDFqNlRaekExcGJCMnYyV1A2?=
+ =?utf-8?B?MmtOdWJRNm4vb2NLemhhT1hWaVpDK0VtQlkzblQ3MEtIakRYV0EwWmRQSExY?=
+ =?utf-8?B?S0RmOFMzalR3YllyWGFab2pMZ2ZFZUFoYkVNMmJQM1U4QWd0Tk9EVkJTTkEz?=
+ =?utf-8?B?b0JjQTJIMjBYd1kwTWU1Wk5sWU1KNlFKeE85YVdBYlNUY2JPMER1VWtxMElM?=
+ =?utf-8?B?bGI1WnY0dm16ays5V004aUdBMzhhT0RmZlVBcUs1RWVDUFdWc01KcE5TZ000?=
+ =?utf-8?B?bFRjOHZhMml5Tzlac3d3N2N4RUhOYk8xUlFVN1R4am1oNDVndUlQWDJOWCtI?=
+ =?utf-8?B?aDBKUkZYQzZicm1sVHpnZFpQRXk5dXBxeHZzUS8zWXVQanBaaGx4L2FDUGJx?=
+ =?utf-8?B?T0FpK1FYU0lwNVdFemp6YWZDMy95bjlnb0lacFBOVXkvZjFTLzdIa3lYaVVU?=
+ =?utf-8?B?RmNrWmZnYmVPQThjWWhKNmt6Y3hKZjk0SzRZMktWdE9aL2NXZ1doOGkvaVRF?=
+ =?utf-8?B?MDZMclB6Q3htS21vWng5bCtIZVJiUUNmUzBNWTFQdU9tRHYvOC8wOTBQWHky?=
+ =?utf-8?B?NHU5aW1lTW9hUThVNElkMWZ3aW5OU2Y1ejVjUDhmUkk5b0FFNmxzMlZZRVc2?=
+ =?utf-8?B?ZUFFSFVMaDJkN2JoZkM0cGxVaisxNXVsWFhhZmRUYmVtMzFvd1NCZWdTdXFl?=
+ =?utf-8?B?Q0VDdTVzOXpqU1U4YnIxOGcvd1diSEs3SVdJMHpia2trbHFIMUxLL0VoZ0ts?=
+ =?utf-8?B?b0hqZ3UycHJhSXVwbjJqVGVwQ29rcnUrQjM5aG9iSHBxTFVpanNJb1QxVUhx?=
+ =?utf-8?B?amhOV05yTElJOUU0eUxIZ0lkK1ZHemNXam9Vc2Exei83d3JQdFh2VjlDRyta?=
+ =?utf-8?B?UWFpYjJIend6QU03RTBFNjRrWW9rYWU1Q3JhMFRsazZseVRiM3VGcEZNL3V6?=
+ =?utf-8?B?OWNWd2ZRb214YTZBTEp3OXkyN3B4bGt0WmZtQWoycG1OTlpLUHN5V1ZLem8y?=
+ =?utf-8?B?c0Y0RTViMHpmdEF3Sm1Wdi9vOXRJSTFOejM5VnRqT1pJZ3hWblZhQTRPTjFS?=
+ =?utf-8?B?ZVhoUTZQSC84ZjVmYWdidkN5WXJxekNJbTBjQXBZQWtRZUZ2Z0lpb3RTYXB1?=
+ =?utf-8?B?N05WcFVCTUxzZVBCMEdnNDArY2JzempRZTVtL3phZDZNSmppWHFtOEppakFU?=
+ =?utf-8?B?Z1o4Qm1OLzJDdHQ2NU9hNEtBNGJCQldjSFZHaHoyV3BrK2xCcERHUWpqVTkv?=
+ =?utf-8?B?YTFxelloR24wK2Z4MzI3aDNFcytRY0hFVk9PTmNxSWx1MHc2SEZ1RE1XVTlj?=
+ =?utf-8?B?S0dnUERwVzVBUm5sK3lZNjB6b3FOcEo5eWJhV1R4RzJYbGZkUGpQRlh1aTFV?=
+ =?utf-8?B?bWRWU3J6MUlLNmFhT3B2aTlEOU56TUc2dW1WUHFaMEtPWUlraWpRSGVSL1RG?=
+ =?utf-8?B?NkRUdktKV0JibTNNTWw0Wk9aSzhXdkh1YmRtQWhiQzBNZWVaSDY0cWc1QTlJ?=
+ =?utf-8?B?MEx1VjNRSGxMVTg4MEhwUjF1TS9acWgvMlRxd1d3TDdBV1c5eEJkNWcwdnRR?=
+ =?utf-8?B?ZFNZM1RjVEoveWg0cjAzNVFTOEJXY2piWGZLdDVVTHNlK1Ayb1ZoamJSR3Fj?=
+ =?utf-8?B?ZnlXRDNrQTBrTHJOajFwTkFvUlJpeVI2eTQzeXVtK25aK21VbUEwT2N1Q2th?=
+ =?utf-8?B?dDVYcElqUyt5c1Fka1VUVWR5Zm9BK2x0UjRFWjAyUnlpYkNialNFczFhMU5p?=
+ =?utf-8?B?ekdKS0t0VGxoUlNVUE5ISkVvazE5aGJzL2VwVjRTREVxeVFNSUFlOHJtOVND?=
+ =?utf-8?B?NTlrU2tRam1hOG01UVFUakVIYmk5OGd5UUJ2UEIrUk5Wa2FWZDE5ZzFISE54?=
+ =?utf-8?B?dktGQ1VTUEgrN3FmbFpYVUtoRjJTQXdIRHEyV255VGpER2JrOVUrLy8xbGY3?=
+ =?utf-8?Q?6WgN9IEWJvRnVvlg=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: f457f203-9e69-41ff-7f64-08de5a9a1758
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jan 2026 16:11:39.8620 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: yi4+QRfRfpm+e14RhXWuR8LHCvC0U8OPvUTplvrhjnUrn8h1Il4BRPcPBzNItG5haNak9lZ/Og4yPPVue7BO3JfxUIPE4KZSjGs1SeYa8c0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB6649
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -80,328 +204,64 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Scott Mitchell <scott.k.mitch1@gmail.com>
+On Fri, Jan 23, 2026 at 10:59:23AM -0500, Patrick Robb wrote:
+>    On Fri, Jan 23, 2026 at 10:43 AM Bruce Richardson
+>    <[1]bruce.richardson@intel.com> wrote:
+> 
+>      On Fri, Jan 23, 2026 at 10:35:53AM -0500, Patrick Robb wrote:
+>      >    On Fri, Jan 23, 2026 at 4:02 AM Bruce Richardson
+>      >    <[1][2]bruce.richardson@intel.com> wrote:
+>      >
+>      >      On Thu, Jan 22, 2026 at 01:59:19PM -0500, Patrick Robb wrote:
+>      >      >    Thanks David for the CC. We need to rebuild all of our
+>      DPDK
+>      >      >    container images for the distro build testing etc. which
+>      takes
+>      >      some
+>      >      >    time. We should be ready early next week.
+>      >      >
+>      >      Is rebuilding all container images something that needs to be
+>      done
+>      >      every
+>      >      time we do a minimum meson version bump? If so, we probably
+>      need to
+>      >      look to
+>      >      take steps to make things easier to do.
+>      >
+>      >    Right now we do build new images any time any DPDK dependencies
+>      are
+>      >    updated, including meson. That's done with the dpdk-ci template
+>      engine
+>      >    (an application that templates out Dockerfiles for DPDK CI
+>      >    testing):
+>      [2][3]https://git.dpdk.org/tools/dpdk-ci/tree/containers
+>      >    However, to simplify we can just move to installing meson at
+>      runtime in
+>      >    all cases. We already have to do this sometimes (like when
+>      testing with
+>      >    an LTS that requires a different meson) so doing it in all
+>      cases
+>      >    wouldn't be too disruptive. And, of course the main point is
+>      that that
+>      >    would allow us to accomodate a version bump like this  without
+>      >    rebuilding the CI images. Let me know if you have an opinion.
+>      In any
+>      >    case I will chat with the CI Lab students about it.
+>      >
+>      Having it installed at runtime would be definitely good.
+>      The other thing I was considering is whether we actually need to use
+>      the
+>      minimum meson version for all build testing. If one or two
+>      containers have
+>      the minimum version that should be fine, and others can use the
+>      distro
+>      supplied version so long as its >= minimum.
+> 
+>    Okay, both of the options above sound good. From my end if I had to
+>    choose I would just do the first solution (install meson at runtime in
+>    all cases) because it keeps our process uniform across distro testing
+>    and there is no "special" container. But, the second option sounds good
+>    too so please let me know what you think is best.
+> 
 
-__rte_raw_cksum uses a loop with memcpy on each iteration.
-GCC 15+ is able to vectorize the loop but Clang 18.1 is not.
-
-Replace memcpy with direct pointer access using unaligned_uint16_t.
-This enables both GCC and Clang to vectorize the loop while handling
-unaligned access safely on all architectures.
-
-Performance results from cksum_perf_autotest on Intel Xeon
-(Cascade Lake, AVX-512) built with Clang 18.1 (TSC cycles/byte):
-
-  Block size    Before    After    Improvement
-         100      0.40     0.24        ~40%
-        1500      0.50     0.06        ~8x
-        9000      0.49     0.06        ~8x
-
-Signed-off-by: Scott Mitchell <scott.k.mitch1@gmail.com>
----
- app/test/meson.build       |   1 +
- app/test/test_cksum_fuzz.c | 240 +++++++++++++++++++++++++++++++++++++
- app/test/test_cksum_perf.c |   2 +-
- lib/net/rte_cksum.h        |  14 +--
- 4 files changed, 247 insertions(+), 10 deletions(-)
- create mode 100644 app/test/test_cksum_fuzz.c
-
-diff --git a/app/test/meson.build b/app/test/meson.build
-index f4d04a6e42..2ca17716b9 100644
---- a/app/test/meson.build
-+++ b/app/test/meson.build
-@@ -38,6 +38,7 @@ source_file_deps = {
-     'test_byteorder.c': [],
-     'test_cfgfile.c': ['cfgfile'],
-     'test_cksum.c': ['net'],
-+    'test_cksum_fuzz.c': ['net'],
-     'test_cksum_perf.c': ['net'],
-     'test_cmdline.c': [],
-     'test_cmdline_cirbuf.c': [],
-diff --git a/app/test/test_cksum_fuzz.c b/app/test/test_cksum_fuzz.c
-new file mode 100644
-index 0000000000..3df11e3dc2
---- /dev/null
-+++ b/app/test/test_cksum_fuzz.c
-@@ -0,0 +1,240 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2026 Apple Inc.
-+ */
-+
-+#include <stdio.h>
-+#include <string.h>
-+
-+#include <rte_common.h>
-+#include <rte_cycles.h>
-+#include <rte_hexdump.h>
-+#include <rte_cksum.h>
-+#include <rte_malloc.h>
-+#include <rte_random.h>
-+
-+#include "test.h"
-+
-+/*
-+ * Fuzz test for __rte_raw_cksum optimization.
-+ * Compares the optimized implementation against the original reference
-+ * implementation across random data of various lengths.
-+ */
-+
-+#define DEFAULT_ITERATIONS 1000
-+#define MAX_TEST_LEN 65536  /* 64K to match GRO frame sizes */
-+
-+/*
-+ * Original (reference) implementation of __rte_raw_cksum from DPDK v23.11.
-+ * This is retained here for comparison testing against the optimized version.
-+ */
-+static inline uint32_t
-+__rte_raw_cksum_reference(const void *buf, size_t len, uint32_t sum)
-+{
-+	const void *end;
-+
-+	for (end = RTE_PTR_ADD(buf, RTE_ALIGN_FLOOR(len, sizeof(uint16_t)));
-+	     buf != end; buf = RTE_PTR_ADD(buf, sizeof(uint16_t))) {
-+		uint16_t v;
-+
-+		memcpy(&v, buf, sizeof(uint16_t));
-+		sum += v;
-+	}
-+
-+	/* if length is odd, keeping it byte order independent */
-+	if (unlikely(len % 2)) {
-+		uint16_t left = 0;
-+
-+		memcpy(&left, end, 1);
-+		sum += left;
-+	}
-+
-+	return sum;
-+}
-+
-+static void
-+init_random_buffer(uint8_t *buf, size_t len)
-+{
-+	size_t i;
-+
-+	for (i = 0; i < len; i++)
-+		buf[i] = (uint8_t)rte_rand();
-+}
-+
-+static inline uint32_t
-+get_initial_sum(bool random_initial_sum)
-+{
-+	return random_initial_sum ? (rte_rand() & 0xFFFFFFFF) : 0;
-+}
-+
-+/*
-+ * Test a single buffer length with specific alignment and initial sum
-+ */
-+static int
-+test_cksum_fuzz_length_aligned(size_t len, bool aligned, uint32_t initial_sum)
-+{
-+	uint8_t *data;
-+	uint8_t *buf;
-+	size_t alloc_size;
-+	uint32_t sum_ref, sum_opt;
-+
-+	if (len == 0 && !aligned) {
-+		/* Skip unaligned test for zero length - nothing to test */
-+		return TEST_SUCCESS;
-+	}
-+
-+	/* Allocate exact size for aligned, +1 for unaligned offset */
-+	alloc_size = aligned ? len : len + 1;
-+	if (alloc_size == 0)
-+		alloc_size = 1;  /* rte_malloc doesn't like 0 */
-+
-+	data = rte_malloc(NULL, alloc_size, 64);
-+	if (data == NULL) {
-+		printf("Failed to allocate %zu bytes\n", alloc_size);
-+		return TEST_FAILED;
-+	}
-+
-+	buf = aligned ? data : (data + 1);
-+
-+	init_random_buffer(buf, len);
-+
-+	sum_ref = __rte_raw_cksum_reference(buf, len, initial_sum);
-+	sum_opt = __rte_raw_cksum(buf, len, initial_sum);
-+
-+	if (sum_ref != sum_opt) {
-+		printf("MISMATCH at len=%zu aligned='%s' initial_sum=0x%08x ref=0x%08x opt=0x%08x\n",
-+		       len, aligned ? "aligned" : "unaligned",
-+		       initial_sum, sum_ref, sum_opt);
-+		rte_hexdump(stdout, "failing buffer", buf, len);
-+		rte_free(data);
-+		return TEST_FAILED;
-+	}
-+
-+	rte_free(data);
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test a length with both alignments
-+ */
-+static int
-+test_cksum_fuzz_length(size_t len, uint32_t initial_sum)
-+{
-+	int rc;
-+
-+	/* Test aligned */
-+	rc = test_cksum_fuzz_length_aligned(len, true, initial_sum);
-+	if (rc != TEST_SUCCESS)
-+		return rc;
-+
-+	/* Test unaligned */
-+	rc = test_cksum_fuzz_length_aligned(len, false, initial_sum);
-+
-+	return rc;
-+}
-+
-+/*
-+ * Test specific edge case lengths
-+ */
-+static int
-+test_cksum_fuzz_edge_cases(void)
-+{
-+	/* Edge case lengths that might trigger bugs */
-+	static const size_t edge_lengths[] = {
-+		0, 1, 2, 3, 4, 5, 6, 7, 8,
-+		15, 16, 17,
-+		31, 32, 33,
-+		63, 64, 65,
-+		127, 128, 129,
-+		255, 256, 257,
-+		511, 512, 513,
-+		1023, 1024, 1025,
-+		1500, 1501,  /* MTU boundaries */
-+		2047, 2048, 2049,
-+		4095, 4096, 4097,
-+		8191, 8192, 8193,
-+		16383, 16384, 16385,
-+		32767, 32768, 32769,
-+		65534, 65535, 65536  /* 64K GRO boundaries */
-+	};
-+	unsigned int i;
-+	int rc;
-+
-+	printf("Testing edge case lengths...\n");
-+
-+	for (i = 0; i < RTE_DIM(edge_lengths); i++) {
-+		/* Test with zero initial sum */
-+		rc = test_cksum_fuzz_length(edge_lengths[i], 0);
-+		if (rc != TEST_SUCCESS)
-+			return rc;
-+
-+		/* Test with random initial sum */
-+		rc = test_cksum_fuzz_length(edge_lengths[i], get_initial_sum(true));
-+		if (rc != TEST_SUCCESS)
-+			return rc;
-+	}
-+
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test random lengths with optional random initial sums
-+ */
-+static int
-+test_cksum_fuzz_random(unsigned int iterations, bool random_initial_sum)
-+{
-+	unsigned int i;
-+	int rc;
-+
-+	printf("Testing random lengths (0-%d)%s...\n", MAX_TEST_LEN,
-+	       random_initial_sum ? " with random initial sums" : "");
-+
-+	for (i = 0; i < iterations; i++) {
-+		size_t len = rte_rand() % (MAX_TEST_LEN + 1);
-+
-+		rc = test_cksum_fuzz_length(len, get_initial_sum(random_initial_sum));
-+		if (rc != TEST_SUCCESS) {
-+			printf("Failed at len=%zu\n", len);
-+			return rc;
-+		}
-+	}
-+
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_cksum_fuzz(void)
-+{
-+	int rc;
-+	unsigned int iterations = DEFAULT_ITERATIONS;
-+	printf("### __rte_raw_cksum optimization fuzz test ###\n");
-+	printf("Iterations per test: %u\n\n", iterations);
-+
-+	/* Test edge cases */
-+	rc = test_cksum_fuzz_edge_cases();
-+	if (rc != TEST_SUCCESS) {
-+		printf("Edge case test FAILED\n");
-+		return rc;
-+	}
-+	printf("Edge case test PASSED\n\n");
-+
-+	/* Test random lengths with zero initial sum */
-+	rc = test_cksum_fuzz_random(iterations, false);
-+	if (rc != TEST_SUCCESS) {
-+		printf("Random length test FAILED\n");
-+		return rc;
-+	}
-+	printf("Random length test PASSED\n\n");
-+
-+	/* Test random lengths with random initial sums */
-+	rc = test_cksum_fuzz_random(iterations, true);
-+	if (rc != TEST_SUCCESS) {
-+		printf("Random initial sum test FAILED\n");
-+		return rc;
-+	}
-+	printf("Random initial sum test PASSED\n\n");
-+
-+	printf("All fuzz tests PASSED!\n");
-+	return TEST_SUCCESS;
-+}
-+
-+REGISTER_FAST_TEST(cksum_fuzz_autotest, NOHUGE_OK, ASAN_OK, test_cksum_fuzz);
-diff --git a/app/test/test_cksum_perf.c b/app/test/test_cksum_perf.c
-index 0b919cd59f..6b1d4589e0 100644
---- a/app/test/test_cksum_perf.c
-+++ b/app/test/test_cksum_perf.c
-@@ -15,7 +15,7 @@
- #define NUM_BLOCKS 10
- #define ITERATIONS 1000000
- 
--static const size_t data_sizes[] = { 20, 21, 100, 101, 1500, 1501 };
-+static const size_t data_sizes[] = { 20, 21, 100, 101, 1500, 1501, 9000, 9001, 65536, 65537 };
- 
- static __rte_noinline uint16_t
- do_rte_raw_cksum(const void *buf, size_t len)
-diff --git a/lib/net/rte_cksum.h b/lib/net/rte_cksum.h
-index a8e8927952..f04b46a6c3 100644
---- a/lib/net/rte_cksum.h
-+++ b/lib/net/rte_cksum.h
-@@ -42,15 +42,11 @@ extern "C" {
- static inline uint32_t
- __rte_raw_cksum(const void *buf, size_t len, uint32_t sum)
- {
--	const void *end;
--
--	for (end = RTE_PTR_ADD(buf, RTE_ALIGN_FLOOR(len, sizeof(uint16_t)));
--	     buf != end; buf = RTE_PTR_ADD(buf, sizeof(uint16_t))) {
--		uint16_t v;
--
--		memcpy(&v, buf, sizeof(uint16_t));
--		sum += v;
--	}
-+	/* Process uint16 chunks to preserve overflow/carry math. GCC/Clang vectorize the loop. */
-+	const unaligned_uint16_t *buf16 = (const unaligned_uint16_t *)buf;
-+	const unaligned_uint16_t *end = buf16 + (len / sizeof(*buf16));
-+	for (; buf16 != end; buf16++)
-+		sum += *buf16;
- 
- 	/* if length is odd, keeping it byte order independent */
- 	if (unlikely(len % 2)) {
--- 
-2.39.5 (Apple Git-154)
-
+Go with your runtime solution, it's fine - and possibly better.
