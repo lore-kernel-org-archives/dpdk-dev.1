@@ -2,86 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E383D77882
-	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Jan 2026 16:57:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E44D0D77882
+	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Jan 2026 16:57:47 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9FC0F402F0;
-	Fri, 23 Jan 2026 17:57:42 +0100 (CET)
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com
- [209.85.128.176])
- by mails.dpdk.org (Postfix) with ESMTP id EA4664021F
- for <dev@dpdk.org>; Fri, 23 Jan 2026 17:57:40 +0100 (CET)
-Received: by mail-yw1-f176.google.com with SMTP id
- 00721157ae682-78fdb90b670so23021917b3.2
- for <dev@dpdk.org>; Fri, 23 Jan 2026 08:57:40 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1769187460; cv=none;
- d=google.com; s=arc-20240605;
- b=bAf067dSwNB3LRIOs7FiRnDJCXqcNTc0alNjsNGzQZY+tQACSbA7ocjpq6XNgtJGbk
- n17JnzjFAlzuYnW/O7Hy0mjlE8bCThZTLeMTGX4x5nuNbRc/zGqPjLuZFAuHw0jTID3H
- Ab+HFlIsdWbGGqabvGUIXUkIhUzlmaa3hcqUPvDE+Fh7tITMz8nrj8/LBFtyBXc/dW1O
- GzrLF2/s47yHndo6VX+n0xK+w9P5cGsA7ipxyNA4RWpzhMyuVbOwtwTypeetc32Q0E0+
- 94CUywLd8S8mslfoTaMRoLqs/26LfNwBgnD8pJHq1Zefi/aOT9DmfuOjHfpdu8ruqd4Q
- vOvw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20240605; 
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:dkim-signature;
- bh=DAAGX7E50UrwL4CgikRfg80+Cb6EnD49xnhvQP3z90o=;
- fh=WeETf7GvmMgAvsMokBteLbd5L8jDyQ4Cq9m2s817608=;
- b=O/D9Xy9Ocg/xtijIaXr8grpAFE0V7DC8GgzbF9iDf8JjI81GF9cBQU3JRfKe14CjLt
- 0EscIlOTRexRQyh13pZEAq52v8WDULGjFYHHYa219eWrWwhBB8jC53f5GSsnGzSTD3qa
- mkaiGxAYNv3V1ojEbwaKupp4Osv7n7BDiDlJT2oVIixUhL01AJq7h8moUGdoRqBNmOou
- v6+HMXJ6O8lJnNxqGGK9YMxE/ZMKb2c+hdA7CaCUkkS98x4uCtIfaVRMpOE1YrK7aV/T
- 1lFhRMnNrN58816fyBUsuZAlZvFUhN3BdG8eKJE/c0jXYdPGm6xOG6LCp2nVFI+6xF1D
- 330w==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	by mails.dpdk.org (Postfix) with ESMTP id AFC0240651;
+	Fri, 23 Jan 2026 17:57:44 +0100 (CET)
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com
+ [209.85.221.52]) by mails.dpdk.org (Postfix) with ESMTP id EACBB40649
+ for <dev@dpdk.org>; Fri, 23 Jan 2026 17:57:42 +0100 (CET)
+Received: by mail-wr1-f52.google.com with SMTP id
+ ffacd0b85a97d-42fb5810d39so1544676f8f.2
+ for <dev@dpdk.org>; Fri, 23 Jan 2026 08:57:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1769187460; x=1769792260; darn=dpdk.org;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:from:to:cc:subject:date
- :message-id:reply-to;
- bh=DAAGX7E50UrwL4CgikRfg80+Cb6EnD49xnhvQP3z90o=;
- b=KCQr8d24VUJEBKmwoIQEn54ynmzSfVZ8YCIBDTRln4YBLc7FOBLN534cDcQZWo9XZo
- R2C9QjjYdtyqYJYw56Uls6UEXxJBccCX98AHLeLLQBpP0LjltaUUNq3jOhImz17mhto7
- sftu8MAJ43LMpgdDeJA1stq7fmGcB8ZKMDOAY=
+ d=6wind.com; s=google; t=1769187462; x=1769792262; darn=dpdk.org;
+ h=content-transfer-encoding:in-reply-to:from:content-language
+ :references:cc:to:subject:user-agent:mime-version:date:message-id
+ :from:to:cc:subject:date:message-id:reply-to;
+ bh=ae2JqFE2CXpJOF83wlRjlcogv8U8gfLu969nuhb8hLA=;
+ b=ai3kYSTZHbtluvQo1idL7jhcKwGV/w9G2YGun7h78pXPBKAFq3c56o3o5auHZllT5X
+ u0GraI6shMlkzDDHf5irTsXGXT0P2oTLX+c/2vh/VL3oy4HZJrBcwr3QeMmDZBLPQN4/
+ 3wYdBcU+sZ8Ld9sqavfYA05Qx43Y4RZbooalI0v3awrBfAchRsQwLeZRNRnT390cg3By
+ FYt/EPjV6UcJ39QbS3fflx7vxHQutaNA5a3y0CXHIs+r2ho9iTl5qUpw1iGZlbyixh5P
+ Toy6AJqtjVxvtSOvBO90uHiix9zVXROYNoAE5pAoCwnKbP2mRWKVOnYZ5pIII9+jRU94
+ QvCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1769187460; x=1769792260;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=DAAGX7E50UrwL4CgikRfg80+Cb6EnD49xnhvQP3z90o=;
- b=uDO29ZB4wI7bM3q+BYCg2JgKgUkREf9zqx5jCBy5oZcOOAFNbq4jH5nPSZBNUtnK1D
- L9N/ISDlD4aPLaBtXtcJmvSe/hdCa5p5yCTv1Uuurkm+PgWpRB55SpJDSxvnDZssUCZy
- koZQX9809wg6duzOqNeqTujuGjlBnCyn0RPGR64iB6UR6n4EVNjGobSe/0OYUEZwmcpd
- ICqXUwKINq1VtFED6QtaZbT+1UsCX9HYZR8S+iNgwWOsb1ergkBXJx+0CoXLRmFrE0uu
- 5+PebI2eET1pZXbtCsUzIy9qBw5jMVbkir63ANGY5rMYr67jmgSmskzkHiUY0lqteaRe
- kK5w==
-X-Forwarded-Encrypted: i=1;
- AJvYcCVtqo70ZMMH0PH9CEZcOIht3Z57gB7KR5TChOWLcCkzmxq2x3PbKRJuKBR0veGE+TyhMB4=@dpdk.org
-X-Gm-Message-State: AOJu0Yyuwb1ZDTbYOifNIuL1uSx0EpCOhXw0eUoQMs/jR+Wwk1arQVYf
- mCQ6UdPxBliovAEIQW/q7gAT0Mpl9ysfAqeVYNq3KpHZjrXSKPC1NQspx6aB2dH5bIgekuuxC91
- qhGxPChsdmGtzvvOnjtnolqUmnjlLG7xSNX1L4MwsZw==
-X-Gm-Gg: AZuq6aIJfOEq+K28UNdmeMufymB0n34pX0xf2gGghtBQ8HWE1/Afsr/qXfbd8/AW/eX
- 9MxBoC3i0hSXw65ZP2hujR82BQ4JFGHm0kkDLjUO0Kc6rTgMFTP39rhMZZMfG31EJZMZOW4VYS2
- C889A2DH3YAA0wXSmcmbLWeiPeYGWDp7J3lGIIaWmLyZc8PGf40RXC7jnGry7WfAn4jYy6rKgOy
- jD1htY9zQdhG0vlem9xyt0a1BU+7pJ0gZHKtmxI8nmeYQkzxqRkmjXu8OBGN2BBHOmjEdYRLYI4
- ommEf/jMvQ==
-X-Received: by 2002:a05:690c:f03:b0:786:4860:21fd with SMTP id
- 00721157ae682-794399db5ecmr27944327b3.39.1769187460213; Fri, 23 Jan 2026
- 08:57:40 -0800 (PST)
+ d=1e100.net; s=20230601; t=1769187462; x=1769792262;
+ h=content-transfer-encoding:in-reply-to:from:content-language
+ :references:cc:to:subject:user-agent:mime-version:date:message-id
+ :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=ae2JqFE2CXpJOF83wlRjlcogv8U8gfLu969nuhb8hLA=;
+ b=cshJ0UJGM5F9IfceTEQ7pdlgUZNSzhQ6omjHYNbFmSPOCXcQ5Dgn0hT8AodFhYucsT
+ mh/gsvgMkgIrgD83ZiTNhFifhDzfNRvpwZ0WeNTV4SEkRO6dV5FNEKf+17GsaQVaH1Bn
+ 32abg89EhY4t8UYSUcgvZAJN08LI4xITp7y1dH7LrHGXIfaCTB5/wGT6AezGuRCDaK3O
+ lkvTHn5M1CkbvwsauXsWSvPdGlpfQ10WVwKwh6QeRFtcPLZSf7INKB63q75NchjxTNCC
+ bCb1JO/v6VrZFpn1DzoJJavCSNmCTRLkUGPU850NGt6kzCTgkdlkEeQ1MV0ecIIieEFj
+ gcOw==
+X-Gm-Message-State: AOJu0YxwxdnWkQW/PtrSFNtKeDNlyhEfqbeso1FqX7yNDsCty1dqBuhV
+ deegILHIG3HvgpA7/WqgxNg7MFOhxpJ1FGRJ8ngAaPe5jsLFQtB5SG2FpAGUx89pTw==
+X-Gm-Gg: AZuq6aKZxiBtNiU/M6PM20N8sunbFOfrIWznH+UOSI6SgucB5cgOTRR67pUimRdpn29
+ JCtKzfsxafYu7Yt1OLnOx1TuuURUdSFI1LBQVxr01Z90QOJYYA0oo63OVD5Qrmcru2ntXHTMcK7
+ 2r+qwXkJjboahUvaO0pBBnH1OW5NpT0IwxGbZm4/Yp7x73DUYStr70o74vwNPi0wgKsSplGqEP6
+ e/CQh7lsCO0mJzZxfi/5+D4aSIVt1EIZswR2idlra76bSWHtaiN/9prkucEqUq78Fj2/7/q6uyT
+ c+uJNIEcWstRlECR1tNNe8rHyqc9Fy1EgJz49dp3iexn/tgXP7Q1J2b/5ngDn2Q+vNHtjdFczcv
+ Yfgp0vbsMhEclYJWJI0AOSQJ9y80J7YF0KwumviIbZ/doiBdtUX6XNxsUBJAGKeAcH6PeP6ZeA/
+ mTMyUa4F6m39Rmqqx5eShJHrEivg==
+X-Received: by 2002:a05:6000:250a:b0:430:fd84:317a with SMTP id
+ ffacd0b85a97d-435b1604eeemr6673059f8f.38.1769187461952; 
+ Fri, 23 Jan 2026 08:57:41 -0800 (PST)
+Received: from [10.17.1.39] ([185.13.181.2]) by smtp.gmail.com with ESMTPSA id
+ ffacd0b85a97d-435b1c24f15sm8235937f8f.18.2026.01.23.08.57.41
+ (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+ Fri, 23 Jan 2026 08:57:41 -0800 (PST)
+Message-ID: <82710dcc-d2f9-4e69-9f5f-ac70135e2333@6wind.com>
+Date: Fri, 23 Jan 2026 17:57:41 +0100
 MIME-Version: 1.0
-References: <20260122214424.322422-1-abailey@iol.unh.edu>
- <20260122214424.322422-6-abailey@iol.unh.edu>
-In-Reply-To: <20260122214424.322422-6-abailey@iol.unh.edu>
-From: Dean Marx <dmarx@iol.unh.edu>
-Date: Fri, 23 Jan 2026 11:57:29 -0500
-X-Gm-Features: AZwV_QgTNSNEBDwyGkjy42ww3NnYSgblRAk1zcytVArcffLoekV-rLReeg80zhc
-Message-ID: <CABD7UXNqaWDd2HVV96icqYgkUdfWs6GTo0xhYRZ2gdTr_40K1A@mail.gmail.com>
-Subject: Re: [PATCH v1 5/5] dts: automate VFIO-PCI modprobe in node setup
-To: Andrew Bailey <abailey@iol.unh.edu>
-Cc: luca.vizzarro@arm.com, probb@iol.unh.edu, dev@dpdk.org, gakhil@marvell.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [V2] drivers/net: reorder Intel drivers list in meson script
+To: Bruce Richardson <bruce.richardson@intel.com>
+Cc: dev@dpdk.org, Thomas Monjalon <thomas@monjalon.net>,
+ Anatoly Burakov <anatoly.burakov@intel.com>, stable@dpdk.org,
+ Olivier Matz <olivier.matz@6wind.com>
+References: <20260123162104.1854187-1-thierry.herbelot@6wind.com>
+ <20260123162707.1854505-1-thierry.herbelot@6wind.com>
+ <aXOm1Xep0eINPO3y@bricha3-mobl1.ger.corp.intel.com>
+Content-Language: en-US
+From: Thierry Herbelot <thierry.herbelot@6wind.com>
+In-Reply-To: <aXOm1Xep0eINPO3y@bricha3-mobl1.ger.corp.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -95,17 +84,70 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, Jan 22, 2026 at 4:44=E2=80=AFPM Andrew Bailey <abailey@iol.unh.edu>=
- wrote:
->
-> Currently, users must modprobe VFIO-PCI before running DTS when using a
-> non-mellanox NIC. This patch automates the process on test run start up.
-> In addition, if the SUT is expected to use a subset of a few QAT devices,
-> VFIO-PCI must be loaded in a separate manner. This patch adds this
-> distinction.
->
-> Signed-off-by: Andrew Bailey <abailey@iol.unh.edu>
+On 1/23/26 17:50, Bruce Richardson wrote:
+> On Fri, Jan 23, 2026 at 05:27:07PM +0100, Thierry Herbelot wrote:
+>> After an upstream patch (see Fixes), net_ixgbe_vf is no longer
+>> declared in testpmd PMD info, when compiling under Redhat-9:
+>>
+>>> $ meson setup build && ninja -C build
+>>> $ ./usertools/dpdk-pmdinfo.py build/app/dpdk-testpmd|grep ixgbe
+>>>      "name": "net_ixgbe",
+>>
+>> Name 'net_ixgbe_vf' should also be reported.
+>>
+>> One workaround is to move 'intel/ixgbe' as last in the list of Intel
+>> drivers. This restores net_ixgbe_vf under Redhat-9:
+>>
+>>> $ meson setup build && ninja -C build
+>>> $ ./usertools/dpdk-pmdinfo.py build/app/dpdk-testpmd|grep ixgbe
+>>>      "name": "net_ixgbe_vf",
+>>>      "name": "net_ixgbe",
+>>
+>> Fixes: 04f1b16c54f3 ("drivers: merge common and net idpf drivers")
+>> Signed-off-by: Thierry Herbelot <thierry.herbelot@6wind.com>
+>> ---
+>> V2: use shorter lines in commit log.
+>> ---
+>>   drivers/net/meson.build | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/net/meson.build b/drivers/net/meson.build
+>> index c7dae4ad273c..8d96244cdbb0 100644
+>> --- a/drivers/net/meson.build
+>> +++ b/drivers/net/meson.build
+>> @@ -32,8 +32,8 @@ drivers = [
+>>           'intel/ice',
+>>           'intel/idpf',
+>>           'intel/ipn3ke',
+>> -        'intel/ixgbe',
+>>           'intel/cpfl',  # depends on idpf, so must come after it
+>> +        'intel/ixgbe',
+>>           'ionic',
+>>           'mana',
+>>           'memif',
+> 
+> This is a strange one - did you do any investgation into why or how this
+> fixes things? You describe it as a workaround so any hints towards a proper
+> root cause and fix are welcome :-)
 
-Other than the comments I left on the previous patch, looks good
+Hello Bruce,
 
-Reviewed-by: Dean Marx <dmarx@iol.unh.edu>
+This is indeed a bit puzzling: it seems that the expected ELF section is 
+present, a 'strings' dump shows no difference between a 'full' testpmd 
+and one missing ixgbe_vf. Still pmdinfo is missing one PMD.
+
+The issue was not seen when using Ubuntu-24.04.
+
+	Best regards
+
+	Thierry
+
+-- 
+Thierry Herbelot
+http://www.6wind.com/
+
+Follow us:
+https://www.linkedin.com/company/6wind/
+https://twitter.com/6WINDsoftware
+https://www.youtube.com/user/6windsoftware
+
