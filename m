@@ -2,68 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 760AED6CFC1
-	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Jan 2026 04:30:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DC12D6CFC1
+	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Jan 2026 04:30:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 05ACF4065A;
-	Fri, 23 Jan 2026 05:30:12 +0100 (CET)
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com
- [209.85.221.50]) by mails.dpdk.org (Postfix) with ESMTP id 35BC24064C
- for <dev@dpdk.org>; Fri, 23 Jan 2026 05:30:10 +0100 (CET)
-Received: by mail-wr1-f50.google.com with SMTP id
- ffacd0b85a97d-42fbbc3df8fso1105928f8f.2
- for <dev@dpdk.org>; Thu, 22 Jan 2026 20:30:10 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 0333C4042E;
+	Fri, 23 Jan 2026 05:30:14 +0100 (CET)
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com
+ [209.85.128.51]) by mails.dpdk.org (Postfix) with ESMTP id A48B54065D
+ for <dev@dpdk.org>; Fri, 23 Jan 2026 05:30:12 +0100 (CET)
+Received: by mail-wm1-f51.google.com with SMTP id
+ 5b1f17b1804b1-47f3b7ef761so12138555e9.0
+ for <dev@dpdk.org>; Thu, 22 Jan 2026 20:30:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769142610;
- x=1769747410; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769142612;
+ x=1769747412; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=+kqCFItk0itE0KpgFMM192XBzrhr28QRY35s8pDKsiw=;
- b=13ZkFqhjcpQZ8kBiOzqAof7AzIsKif5gOHo5TUDQ7r/xV6FICMPGDudgTi1MvWEfEs
- UUPB4iuZeBhk5pVo33UZSVxU4WX8fnUUsgA7ikNX0wjeLnohGsfkNJwzDRCZv0vqEmfl
- ainf9DPo9XpEHJog4f+ucp1zCqX2ScIZs1JTdHOfmUcvNHxok+BpYk9AUz4q10aHC84+
- Wl3Oxd6BbiVNp32GuxYsRp7N89AcGhGrPwfKco44yoGu/PSY4+VLdzOyGu85hbrrcRQe
- 8Z7a3dSRiP0C1crlhFOlMmTtTUFT4pHvEU6u27iJnFUSa/aiLkJ8CBERf4ItEA/qf/E6
- BIOA==
+ bh=Avhl9YgiSxxdK9mVnQKAOQQ+ilaSko/avISOyDtECRA=;
+ b=0hdMQikrsoFS6/VFQ0UUXlYT8HxL9tyMXr444mnIxIAG3P9aynWiqZiSqTjJxvi7vL
+ E/tzuyLAvAAfYIrwmgXHalA5aEZZ9azNCJHjakMhmL+EN4qUq15XwuveHjLyb1sS/k17
+ X2l1N6iU4UJW45B8X9apNZSXwfSR5eLoKmE3fooyOONe+oIAb98i3CQhVKWXrNs3439G
+ kXIxR32m2kV/08GUtcqm3UzttaAFbYDdkeyNKeum6kREtbveF15fKNOwgZgGBb4ZGk1M
+ Vb+V8m4orPbYdkJA+mSE7lKdqbryfdIA4vFyeVJBMp9IeOZuNRRxIx+zQ1uEmbkpTZTB
+ Hbfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1769142610; x=1769747410;
+ d=1e100.net; s=20230601; t=1769142612; x=1769747412;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=+kqCFItk0itE0KpgFMM192XBzrhr28QRY35s8pDKsiw=;
- b=VWmWt0KkJLpKZ/SNyR8sEYRJdNLeDP26YCQAqxMLrf9q8ElCNHYphut6jwmkVHf7Sc
- JeCx2Ozt5IaH6l0qSO7LhCjt5mvOv7Qo5F/pRSonBlVXiSxO8SahiegU0FZKBXzaaExo
- yLUeMA/6chdkLjg5SiMqZyVeyoLq0+1QUkp+r6JaNNpCaRSuclsQwndwQVS2zd0aoypN
- eVO/zDBBKpr6WJ8cK5/HC2z5aOSIVpTsn2JmDXLemXnF/cip51cgD+6/isGHtXnu6WA8
- nAzeuK91ou+l/pGD3pIqQfF4eM2DeU/vO8jcK7JA3pGMWb5T5s8RGNGYgfUC2weVjQZ8
- xE0g==
-X-Gm-Message-State: AOJu0Ywc6yGePWuO7tqQHBmV6tdzrmiMwPwVRJ3M33cVklwQuvZzH4LF
- mob1AvxMJsVr+9HN3t12ZS3JeqO25jWqITK49UDZNLYPDsXy4Dpfl7LaBqGDtOYWq17NS06MSG7
- zH1VR
-X-Gm-Gg: AZuq6aJK3vvBmot5Wbzs8qGWrsnBH9hElrkzhySrN4CqOOQwbiFd1oSZYQGiJXMd8IS
- m6fSw//lL0WldD50S1AKSZv1SHfwQOGswR8VatvDln4QJ1MGssL99P7yGn4816WiRQkMMqPgW/C
- kRxI+AAC2J32f2NvxmaFEuqYiUoRcOgv3MyyK/xMmiGuzNH2VBOFpMwJ9C9srparv7KnULu9iAW
- if/FCJt0BZgo0lcqsKVUdL0vVLjf9XcFlN4QsZ+hNYw2YqkcQXowcxiyqJpHSsGnkPgTWUnd2w2
- DOrGu5e7bC5pXhAR+yK0I+Jn8mqzTrOmAIGNetXwhIQ1O2z+shktcq7vxAV1g4HLR59U8km4vt0
- JdHWbMFzgSsNDCBvUTIyIS+voUTWAQ4D3P6ew3uAkxeGEOOIyTy54xnnZAxyeTY+giGIpbcazH/
- X4M/K6CKXycsPDfjfahRoKvZXjsITgXGUtrJGh4tjfN3YyUvuQXQ==
-X-Received: by 2002:a05:6000:1847:b0:435:9756:d4c4 with SMTP id
- ffacd0b85a97d-435b15d6927mr2752911f8f.17.1769142609745; 
- Thu, 22 Jan 2026 20:30:09 -0800 (PST)
+ bh=Avhl9YgiSxxdK9mVnQKAOQQ+ilaSko/avISOyDtECRA=;
+ b=wgow54tsBhj1OhIgzZu3LrKErYMx36swPXEbEgVDknLhnkTevN3Qz1xK1Cs7DmOihR
+ lHiOx3tEt+nyuRwit+JCCXndRPHZly6Ep82X0EsOhNg5v9UdGvzCaQaUeM1TMJaH5ypu
+ 7U5haWZybsn0W12rcJ4jafjWBMTZCn8Wsk2XHwnZLpl3c/D+Voj/TPtIWLamqCd07u3n
+ xA773T9Dlvyuq335a5gndGrdccSIw9+CWY02m2HtiacaPxe9M/Onm3Ovm4JyO7bJ8rMW
+ qfeAl0qWBsmc/BxPBwbnyRDMkxRwK75EhL3F8tgm6RTPFaPZ4pkSYWKE5naW0eRMpo/7
+ WhBg==
+X-Gm-Message-State: AOJu0YxMzPCTnnmmwfqpPuksO0qfacuhFxXOGNYSAAHmlXOch+TuaAh/
+ f3JKIMuoFOsrU/ojsU2VHPEigIuSPghAP6QUy21FMsrRIcOeH9Lf8nj/hWVDMQ3Ay/OsXEOXNCS
+ aUUog
+X-Gm-Gg: AZuq6aLOOlaDa1DuQNuu8cQLC7HnYxFGug2BAWSLKKuEY7tcsh9VYBQ00m5kmH+WxVp
+ LYHHRuslk1RUrQRlgOz/zU/5OjUNJT7rLvD4XcPjAl3ddmkczx0An01AiiuzIZLdJN9A0Gzvpw/
+ 0uEx9iccobz0VlVXumZUgqmEvJd5yDWcbUrz+8LwjN/ZcvVl5Yk6IqpCIISd4sO9q82H4zNAOxc
+ zraPLhXYaFVhpQqXD/XmdpKgMwWILQegJiM4FA1lx6rYDGCNKFxwtAtKkICLSsG8xv4BIBjNLD1
+ b7cTg9sVZnIW4ku7UNE2cz/K2qO4NFoUDXNZMZOwKiz8C/xZFcqYyxVlmKIOWnPPWBnFf5eqiKn
+ 3nr13LSd8K4A23xcIzxCSa4FH+kXl5zD30px87Fvqk+9MPLuVq2SvbbF0X3aY806ZIESGeJVcpR
+ kr/NVVKubpwnpLX7i479tWCw518NqVXlfa7XPhtDoAofwDzeXGDLIj/SCT3MG+
+X-Received: by 2002:a05:600c:8b02:b0:477:9a28:b0a4 with SMTP id
+ 5b1f17b1804b1-4804c8e758dmr24593555e9.0.1769142612211; 
+ Thu, 22 Jan 2026 20:30:12 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-435b1f7b41asm3603771f8f.39.2026.01.22.20.30.07
+ ffacd0b85a97d-435b1f7b41asm3603771f8f.39.2026.01.22.20.30.10
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 22 Jan 2026 20:30:09 -0800 (PST)
+ Thu, 22 Jan 2026 20:30:11 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Bruce Richardson <bruce.richardson@intel.com>,
- Dmitry Kozlyuk <dmitry.kozliuk@gmail.com>
-Subject: [PATCH v11 08/18] eal: warn if thread name is truncated
-Date: Thu, 22 Jan 2026 20:28:06 -0800
-Message-ID: <20260123042945.159075-9-stephen@networkplumber.org>
+ Anatoly Burakov <anatoly.burakov@intel.com>
+Subject: [PATCH v11 09/18] eal: avoid format overflow when handling addresses
+Date: Thu, 22 Jan 2026 20:28:07 -0800
+Message-ID: <20260123042945.159075-10-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260123042945.159075-1-stephen@networkplumber.org>
 References: <20251202172626.283094-1-stephen@networkplumber.org>
@@ -83,69 +82,30 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Thread name is very short 16 characters and therefore the name
-dpdk-worker-%d will overflow with more than 9999 worker cores.
-Error should be non-fatal since name only matters for debug.
+The largest possible string in this code 0xFFFFFFFFFFFFFFFF
+which will overflow with only 15 character buffer.
+Increase to 20.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- lib/eal/freebsd/eal.c | 6 ++++--
- lib/eal/linux/eal.c   | 6 ++++--
- lib/eal/windows/eal.c | 6 ++++--
- 3 files changed, 12 insertions(+), 6 deletions(-)
+ lib/eal/common/eal_common_memory.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/lib/eal/freebsd/eal.c b/lib/eal/freebsd/eal.c
-index 6215245ad5..60f5e676a8 100644
---- a/lib/eal/freebsd/eal.c
-+++ b/lib/eal/freebsd/eal.c
-@@ -690,8 +690,10 @@ rte_eal_init(int argc, char **argv)
- 			rte_panic("Cannot create thread\n");
+diff --git a/lib/eal/common/eal_common_memory.c b/lib/eal/common/eal_common_memory.c
+index c62edf5e55..dccf9406c5 100644
+--- a/lib/eal/common/eal_common_memory.c
++++ b/lib/eal/common/eal_common_memory.c
+@@ -1153,8 +1153,9 @@ rte_eal_memory_init(void)
+ #define EAL_MEMSEG_INFO_REQ		"/eal/memseg_info"
+ #define EAL_ELEMENT_LIST_REQ		"/eal/mem_element_list"
+ #define EAL_ELEMENT_INFO_REQ		"/eal/mem_element_info"
+-#define ADDR_STR			15
  
- 		/* Set thread_name for aid in debugging. */
--		snprintf(thread_name, sizeof(thread_name),
--				"dpdk-worker%d", i);
-+		ret = snprintf(thread_name, sizeof(thread_name), "dpdk-worker%d", i);
-+		if (ret >= RTE_THREAD_NAME_SIZE)
-+			EAL_LOG(INFO, "Worker thread name %s truncated", thread_name);
-+
- 		rte_thread_set_name(lcore_config[i].thread_id, thread_name);
++/* Address string is "0x" prefix + 16 hex digits + null */
++#define ADDR_STR			20
  
- 		ret = rte_thread_set_affinity_by_id(lcore_config[i].thread_id,
-diff --git a/lib/eal/linux/eal.c b/lib/eal/linux/eal.c
-index b12f325ddd..d848de03d8 100644
---- a/lib/eal/linux/eal.c
-+++ b/lib/eal/linux/eal.c
-@@ -863,8 +863,10 @@ rte_eal_init(int argc, char **argv)
- 			rte_panic("Cannot create thread\n");
- 
- 		/* Set thread_name for aid in debugging. */
--		snprintf(thread_name, sizeof(thread_name),
--			"dpdk-worker%d", i);
-+		ret = snprintf(thread_name, sizeof(thread_name), "dpdk-worker%d", i);
-+		if (ret >= RTE_THREAD_NAME_SIZE)
-+			EAL_LOG(INFO, "Worker thread name %s truncated", thread_name);
-+
- 		rte_thread_set_name(lcore_config[i].thread_id, thread_name);
- 
- 		ret = rte_thread_set_affinity_by_id(lcore_config[i].thread_id,
-diff --git a/lib/eal/windows/eal.c b/lib/eal/windows/eal.c
-index 21fe7cb1d9..f06375a624 100644
---- a/lib/eal/windows/eal.c
-+++ b/lib/eal/windows/eal.c
-@@ -378,8 +378,10 @@ rte_eal_init(int argc, char **argv)
- 			rte_panic("Cannot create thread\n");
- 
- 		/* Set thread name for aid in debugging. */
--		snprintf(thread_name, sizeof(thread_name),
--			"dpdk-worker%d", i);
-+		ret = snprintf(thread_name, sizeof(thread_name), "dpdk-worker%d", i);
-+		if (ret >= RTE_THREAD_NAME_SIZE)
-+			EAL_LOG(INFO, "Worker thread name %s truncated", thread_name);
-+
- 		rte_thread_set_name(lcore_config[i].thread_id, thread_name);
- 
- 		ret = rte_thread_set_affinity_by_id(lcore_config[i].thread_id,
+ /* Telemetry callback handler to return heap stats for requested heap id. */
+ static int
 -- 
 2.51.0
 
