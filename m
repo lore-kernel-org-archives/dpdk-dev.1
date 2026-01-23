@@ -2,74 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 247D7D6CFAB
-	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Jan 2026 00:45:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9441D6CFAC
+	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Jan 2026 01:00:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9A6B340666;
-	Fri, 23 Jan 2026 01:44:47 +0100 (CET)
-Received: from mail-wm1-f66.google.com (mail-wm1-f66.google.com
- [209.85.128.66]) by mails.dpdk.org (Postfix) with ESMTP id AFBC7402F0
- for <dev@dpdk.org>; Fri, 23 Jan 2026 01:44:44 +0100 (CET)
-Received: by mail-wm1-f66.google.com with SMTP id
- 5b1f17b1804b1-47edffe5540so19174775e9.0
- for <dev@dpdk.org>; Thu, 22 Jan 2026 16:44:44 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id D91D44021F;
+	Fri, 23 Jan 2026 02:00:38 +0100 (CET)
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com
+ [209.85.221.48]) by mails.dpdk.org (Postfix) with ESMTP id A8FE4400D5
+ for <dev@dpdk.org>; Fri, 23 Jan 2026 02:00:37 +0100 (CET)
+Received: by mail-wr1-f48.google.com with SMTP id
+ ffacd0b85a97d-43596062728so1790693f8f.1
+ for <dev@dpdk.org>; Thu, 22 Jan 2026 17:00:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769129084;
- x=1769733884; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769130037;
+ x=1769734837; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=VdOfMelAH3lPf8MX5DWaDzak5eOPXtlx2KWLSvAbBF0=;
- b=sdtCzO9n6F4d5axJgD/MX12AHqxJFtvi2gFmDuGJnbhVfLb8RZPE89W+ressl99sg/
- yi9qnJ9RONFyiqjdL90FDGrgaU7R8Y5XiNaGbuu9x4XZHKb5q4P+qNzQ2tNPfokoM2ZT
- iZRgYIpoIUBLCu2TP1MDBZ3PnnZG7At0+z6IDPytYNZ4kbEo81sU8UlIbPmtpJSbvI1d
- NMZswyzIP3QfaM3//l6qGT7bGgtnumJOhAK4O5t7jO1M6Nfbzx1fOQF5QqepP7l/yPNE
- zayxbTP2elQ7Ly7riRahPW4KUHqeciLSQhP0S34epQywdRGau1Q0HT9Dy672auZPq8hJ
- DY1Q==
+ bh=HksoeIVet3FaINOvLJND41P4wNNSSmxBQGTfzLEhUDY=;
+ b=OcJ+r8IWHcFOodM+sjWv3+4csHH4ut+G9YcnZeIkPHlCEvMVEmjPx6IwIOao7IH3D/
+ dy2hR7NND8O7pLWMrRupFA4iNgIJTwfY8eTZHNXM5SJH0uVHHlX6hOYtnUitG5hw9fZf
+ E5p0rbY8gdAlXCiXPacub3fXkyoaPa9iqjLLnwcPAPGialZnHHHHWNdLU+ZkPnkMgaWX
+ ihI2txgqAxJlaiEoeulpDGcf1KeaASZVFFY6pFtIaa86SkRMxO4DFyhUCdc6MO+pLviS
+ 9vDgClMmWBjstRykCgieS+HNuURRjWjHTn6s4ieW5cxVlDFCh3TS0s4Z3zhHN17HxX8k
+ g12Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1769129084; x=1769733884;
+ d=1e100.net; s=20230601; t=1769130037; x=1769734837;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=VdOfMelAH3lPf8MX5DWaDzak5eOPXtlx2KWLSvAbBF0=;
- b=vzvZ9IPYTzVi59PB+9lKhj80n1uls//+O6idt9A8iT9tsKNeZ29o93BSLPlysQV5Fk
- NUP334uz6iW+/cryLnYntb5EiXCSt/lcNLTuk7O+mCd7X/ozISXXTa4fbU4q6QTUMpUf
- JLzZCDLfR9F1CBDnHMXx00VR5xfAfHOfdzpUC4U8XmfHvjy/Z2Q+IPRII5TDV4pcq3L6
- hcRLIp8nQBa6JLxFL8xOtSRqhSCSNEKR+17vyPa2KPxNAsdlOLeZFmwcXx4Xo6lzI2s/
- i2RAT9kDAJbFpSYOQ1t6I2BW2hBKUNtELdOhdHCtIHL7Mb+8ncC5m1oLPeitvZB4on5D
- HgdA==
-X-Gm-Message-State: AOJu0YwEZGajpWClO1HTelVoi6Xm4ZYojCmzGBWDWuQ9BhY8m6SMTfT8
- nlVkIx9f5KajjjzclUl5b9AKRD0fVgy4nPQgv+WYQMP4l9CBaxIY6mPuTfhBem9cl6p11+JbM8G
- lic2fMrw=
-X-Gm-Gg: AZuq6aLzo0HuPhczUBQl8ajAUZgMCzkAY3TSzdCjojXOeFTkPZxzvw0FPbTmBFBpyiP
- wk+ulSIPzykFqURmNTFaWJ0a3qDKZJ8mAJq4eGD1tQyrgJIwD/Zh9CFg0P2sWjYYvXKxz+iM3mW
- BVUtyXLHFAMgSCFpB0cY8aBYQjm3LArDggbvPzit00UrTBN0Y6/OJGSfRI85h/n5VfauAG8lDie
- DzdA3g1UR0QSQuHDVvBIZ682QVjGbPB3sPphWjcpjnkN87fRJ6pcNILW0VXSVu/rTKG3lo9+EMb
- TviK0EN/jMihfF9S+cjxTs5L5pMEoCO6GSOFe6zeFJ22ZOm9w98urYFSI8a84fRhz39lzhnS5ED
- aZbVpnILL24vZf5pBhDqPRchxTbnyV/jgy3Y3GsAIhxr9uvr+16iFtH+BGnVon0/vlUAXPf9apd
- 6D8VqF0lX/UR74FRi/5RswtsA7D3bUHXApLI/omU84T/qnb89Dyg==
-X-Received: by 2002:a05:600c:628c:b0:471:13dd:bae7 with SMTP id
- 5b1f17b1804b1-4804c9ca8bemr21576885e9.30.1769129084168; 
- Thu, 22 Jan 2026 16:44:44 -0800 (PST)
-Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
+ bh=HksoeIVet3FaINOvLJND41P4wNNSSmxBQGTfzLEhUDY=;
+ b=Xv5NCkBYwfaSONY41oKcexldoNOorh6f5SdrcRQptpX5hV3yeOsMB5DhR4jk2o3AOk
+ 9TEZGoCfn5Ed7w02wskOCLzrliQnVdU7iaWiFkRBxA8+gKtuoCBHjsmY7sXnEeGGfNg5
+ 1r45lhRWmIqzO6X0QHmX0urqeJaXPsIVOaLqTXl5v7gespZ5rRF1apP+GDE9aKGNGZTk
+ v4lIhsidyzF8lVw3wUlCdqC3wVQB4eDcHCFJWwd7juc9q3MS5ZuuPlesCwzFG18yhoTn
+ P4lSj5yEt3TdBZwb6BOOovRc75nAKTV48jF7kMGyovj7H6D8bPrkm8cUi/krWGYfVq1o
+ Wavw==
+X-Gm-Message-State: AOJu0Yy1YAj8no9QStF8SejzsL0FV01vNIyV1MFulaPBG2+aqG7lDSWJ
+ 78fEVuvjQTXqq3uMF505JpgmSrgNrsQYO8v6s33DEapER5/h9/h13SkX5Bdbv31eJ2L3sVRMwQq
+ QocND
+X-Gm-Gg: AZuq6aJMH85O/zYcryzsOYAl/Wdq6YoWfonw4mcN8T6FoWrvEXfdEV15VJKaDkIYXy5
+ cFbke58Wk5MFLaZwQCKL6qWfbSwxCxQiDOiQ/JqBA/1opAwfw0dscdSSJvKF1QF35Og191PDYzt
+ q78DcaI9Xk5njTva0Mku1AYArBKoNqlDiC+KA8AlOFnZid0av/27rdE2wk1DF9r/MGdHQMCMVpO
+ y//Ucr4AeAKTjdSVXbLBwFfTRv6elMxzFGs2DO1Tpd05mzQa8pCGXZf4NyW+jI4aeSRsVieFIBO
+ sMHXdAhO/AxVrz5URRuoqWZPZQMoMNs07ugGLRWSMPAw4UW4K/Hye6vPrhvQ+xGAm1acBFNL8dg
+ ovreXS9JhQ7kzEykMBpt9Y0/4T4vS+oCau9ptUgvxwGRNDS8de5LY+P5406W8lm6DG5sR3PZERm
+ B1qRdkhIZVnfbuPdnQAYNms1U/LE9TV/W76/2nObUCmSeyq3snKnIW
+X-Received: by 2002:adf:f788:0:b0:435:aaba:b904 with SMTP id
+ ffacd0b85a97d-435aababa42mr5423552f8f.8.1769130036874; 
+ Thu, 22 Jan 2026 17:00:36 -0800 (PST)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-4804dbda9edsm5668955e9.19.2026.01.22.16.44.42
+ ffacd0b85a97d-435b1c02c91sm2609032f8f.9.2026.01.22.17.00.35
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 22 Jan 2026 16:44:43 -0800 (PST)
+ Thu, 22 Jan 2026 17:00:36 -0800 (PST)
+Date: Thu, 22 Jan 2026 17:00:31 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v5 4/4] devtools: add multi-provider AI documentation review
- script
-Date: Thu, 22 Jan 2026 16:42:22 -0800
-Message-ID: <20260123004430.10951-5-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20260123004430.10951-1-stephen@networkplumber.org>
-References: <20260109014106.398156-1-stephen@networkplumber.org>
- <20260123004430.10951-1-stephen@networkplumber.org>
+To: spinler@cesnet.cz
+Cc: dev@dpdk.org
+Subject: Re: [PATCH v4 0/8] net/nfb: rework to real multiport
+Message-ID: <20260122170031.1301d16f@phoenix.local>
+In-Reply-To: <20260122072719.505185-1-spinler@cesnet.cz>
+References: <20260115151656.393106-1-spinler@cesnet.cz>
+ <20260122072719.505185-1-spinler@cesnet.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,787 +81,468 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add review-doc.sh script that reviews DPDK documentation files for
-spelling, grammar, technical correctness, and clarity using AI
-language models.
+On Thu, 22 Jan 2026 08:27:11 +0100
+spinler@cesnet.cz wrote:
 
-Supported AI providers:
-  - Anthropic Claude (default)
-  - OpenAI ChatGPT
-  - xAI Grok
-  - Google Gemini
+> From: Martin Spinler <spinler@cesnet.cz>
+>=20
+> This series implements real multiport for better user experience.
+>=20
+> The existing driver creates one ethdev/port for one PCI device.
+> As the CESNET-NDK based cards aren't capable to represent each
+> Ethernet port by own PCI device, new driver implementation
+> processes real port configuration from firmware/card and switches
+> from rte_eth_dev_pci_generic_probe to multiple rte_eth_dev_create calls.
+>=20
+> ---
+> v4:
+> * Cleaned usage of sprintf
+> * Updated commit message for doc cleanup
 
-The script produces two output files:
-  - A unified diff with suggested changes
-  - A commit message following DPDK standards
+=3D=3D=3D Patch Review: bundle-1675-nfb-multiport.mbox (via Claude) =3D=3D=
+=3D
+# DPDK Patch Review: NFB Multi-port Support
 
-The commit message prefix is automatically determined from the
-file path (e.g., doc/guides/prog_guide: for programmer's guide
-files).
+## ERRORS
 
-Features:
-  - Provider selection via -p/--provider option
-  - Custom model selection via -m/--model option
-  - Configurable output directory via -o/--output option
-  - Verbose mode shows token usage statistics
-  - Uses temporary files for API requests to handle large documents
-  - Prompt caching support for Anthropic to reduce costs
+### 1. Commit Message - Missing Fixes Tag (Patch 1/8)
+**File:** Patch 1/8 - "net/nfb: prepare for indirect queue mapping scheme" =
+=20
+**Issue:** The commit body states "This prepares queue mapping for port-awa=
+re driver implementation" which suggests this is fixing or preparing for so=
+mething, but there's no explanation of what problem this solves. While not =
+strictly a bug fix requiring a `Fixes:` tag, the commit message should bett=
+er explain the rationale.
 
-Usage:
-  ./devtools/review-doc.sh doc/guides/prog_guide/mempool_lib.rst
-  ./devtools/review-doc.sh -p xai doc/guides/nics/ixgbe.rst
-  git apply mempool_lib.diff && git commit -sF mempool_lib.msg
+**Recommendation:** Expand the commit body to explain why the indirect mapp=
+ing is needed before implementing multi-port support.
 
-Requires the appropriate API key environment variable to be set
-for the chosen provider (ANTHROPIC_API_KEY, OPENAI_API_KEY,
-XAI_API_KEY, or GOOGLE_API_KEY).
-
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- devtools/review-doc.sh | 734 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 734 insertions(+)
- create mode 100755 devtools/review-doc.sh
 
-diff --git a/devtools/review-doc.sh b/devtools/review-doc.sh
-new file mode 100755
-index 0000000000..c3b7cefca6
---- /dev/null
-+++ b/devtools/review-doc.sh
-@@ -0,0 +1,734 @@
-+#!/bin/bash
-+# SPDX-License-Identifier: BSD-3-Clause
-+# Copyright(c) 2026 Stephen Hemminger
-+
-+# Review DPDK documentation files using AI providers with prompt caching
-+# Outputs a diff file and commit message compliant with DPDK standards
-+# Supported providers: anthropic (Claude), openai (ChatGPT), xai (Grok), google (Gemini)
-+
-+set -e
-+
-+# Default paths and settings
-+AGENTS_FILE="AGENTS.md"
-+MAX_TOKENS=8192
-+OUTPUT_DIR="."
-+PROVIDER="anthropic"
-+
-+# Temporary file for API requests (cleaned up on exit)
-+REQUEST_FILE=""
-+cleanup() {
-+    [[ -n "$REQUEST_FILE" && -f "$REQUEST_FILE" ]] && rm -f "$REQUEST_FILE"
-+}
-+trap cleanup EXIT
-+
-+# Default models per provider
-+declare -A DEFAULT_MODELS=(
-+    ["anthropic"]="claude-sonnet-4-5-20250929"
-+    ["openai"]="gpt-4o"
-+    ["xai"]="grok-3"
-+    ["google"]="gemini-2.0-flash"
-+)
-+
-+# API endpoints per provider
-+declare -A API_ENDPOINTS=(
-+    ["anthropic"]="https://api.anthropic.com/v1/messages"
-+    ["openai"]="https://api.openai.com/v1/chat/completions"
-+    ["xai"]="https://api.x.ai/v1/chat/completions"
-+    ["google"]="https://generativelanguage.googleapis.com/v1beta/models"
-+)
-+
-+# Environment variable names for API keys
-+declare -A API_KEY_VARS=(
-+    ["anthropic"]="ANTHROPIC_API_KEY"
-+    ["openai"]="OPENAI_API_KEY"
-+    ["xai"]="XAI_API_KEY"
-+    ["google"]="GOOGLE_API_KEY"
-+)
-+
-+usage() {
-+    cat <<- END_OF_HELP
-+	usage: $(basename "$0") [OPTIONS] <doc-file>
-+
-+	Review a DPDK documentation file for spelling, grammar, correctness and clarity.
-+	Produces a diff file and commit message compliant with DPDK standards.
-+
-+	Options:
-+	    -p, --provider NAME  AI provider: anthropic, openai, xai, google
-+	                         (default: anthropic)
-+	    -a, --agents FILE    Path to AGENTS.md file (default: AGENTS.md)
-+	    -m, --model MODEL    Model to use (provider-specific, see defaults below)
-+	    -t, --tokens NUM     Max tokens for response (default: $MAX_TOKENS)
-+	    -o, --output DIR     Output directory for diff and commit msg (default: .)
-+	    -v, --verbose        Show API request details
-+	    -l, --list-providers List available providers and their defaults
-+	    -h, --help           Show this help message
-+
-+	Providers and Default Models:
-+	    anthropic    Claude (claude-sonnet-4-5-20250929)
-+	    openai       ChatGPT (gpt-4o)
-+	    xai          Grok (grok-3)
-+	    google       Gemini (gemini-2.0-flash)
-+
-+	Environment Variables (set the one for your chosen provider):
-+	    ANTHROPIC_API_KEY    For Anthropic Claude
-+	    OPENAI_API_KEY       For OpenAI ChatGPT
-+	    XAI_API_KEY          For xAI Grok
-+	    GOOGLE_API_KEY       For Google Gemini
-+
-+	Output files:
-+	    <basename>.diff      Unified diff with suggested changes
-+	    <basename>.msg       Commit message (without Signed-off-by)
-+
-+	Examples:
-+	    $(basename "$0") doc/guides/prog_guide/mempool_lib.rst
-+	    $(basename "$0") -p openai -o /tmp doc/guides/nics/ixgbe.rst
-+	    $(basename "$0") -p xai doc/guides/cryptodevs/qat.rst
-+	    git apply <basename>.diff && git commit -sF <basename>.msg
-+	END_OF_HELP
-+    exit "${1:-0}"
-+}
-+
-+list_providers() {
-+    echo "Available AI Providers:"
-+    echo ""
-+    printf "%-12s %-35s %s\n" "Provider" "Default Model" "API Key Variable"
-+    printf "%-12s %-35s %s\n" "--------" "-------------" "----------------"
-+    for provider in anthropic openai xai google; do
-+        printf "%-12s %-35s %s\n" "$provider" "${DEFAULT_MODELS[$provider]}" "${API_KEY_VARS[$provider]}"
-+    done
-+    exit 0
-+}
-+
-+error() {
-+    echo "Error: $1" >&2
-+    exit 1
-+}
-+
-+# Read file contents, escaping for JSON
-+read_json_escaped() {
-+    local file="$1"
-+    python3 -c "
-+import json
-+with open('$file', 'r') as f:
-+    print(json.dumps(f.read()))
-+"
-+}
-+
-+# Determine commit message prefix from file path
-+get_commit_prefix() {
-+    local filepath="$1"
-+    case "$filepath" in
-+        doc/guides/prog_guide/*)
-+            echo "doc/guides/prog_guide:" ;;
-+        doc/guides/sample_app_ug/*)
-+            echo "doc/guides/sample_app:" ;;
-+        doc/guides/nics/*)
-+            echo "doc/guides/nics:" ;;
-+        doc/guides/cryptodevs/*)
-+            echo "doc/guides/cryptodevs:" ;;
-+        doc/guides/compressdevs/*)
-+            echo "doc/guides/compressdevs:" ;;
-+        doc/guides/eventdevs/*)
-+            echo "doc/guides/eventdevs:" ;;
-+        doc/guides/rawdevs/*)
-+            echo "doc/guides/rawdevs:" ;;
-+        doc/guides/bbdevs/*)
-+            echo "doc/guides/bbdevs:" ;;
-+        doc/guides/gpus/*)
-+            echo "doc/guides/gpus:" ;;
-+        doc/guides/dmadevs/*)
-+            echo "doc/guides/dmadevs:" ;;
-+        doc/guides/regexdevs/*)
-+            echo "doc/guides/regexdevs:" ;;
-+        doc/guides/mldevs/*)
-+            echo "doc/guides/mldevs:" ;;
-+        doc/guides/rel_notes/*)
-+            echo "doc/guides/rel_notes:" ;;
-+        doc/guides/linux_gsg/*)
-+            echo "doc/guides/linux_gsg:" ;;
-+        doc/guides/freebsd_gsg/*)
-+            echo "doc/guides/freebsd_gsg:" ;;
-+        doc/guides/windows_gsg/*)
-+            echo "doc/guides/windows_gsg:" ;;
-+        doc/guides/tools/*)
-+            echo "doc/guides/tools:" ;;
-+        doc/guides/testpmd_app_ug/*)
-+            echo "doc/guides/testpmd:" ;;
-+        doc/guides/howto/*)
-+            echo "doc/guides/howto:" ;;
-+        doc/guides/contributing/*)
-+            echo "doc/guides/contributing:" ;;
-+        doc/guides/platform/*)
-+            echo "doc/guides/platform:" ;;
-+        doc/guides/*)
-+            echo "doc:" ;;
-+        doc/api/*)
-+            echo "doc/api:" ;;
-+        doc/*)
-+            echo "doc:" ;;
-+        *)
-+            echo "doc:" ;;
-+    esac
-+}
-+
-+# System prompt for documentation review
-+SYSTEM_PROMPT='You are an expert technical documentation reviewer for DPDK (Data Plane Development Kit).
-+Your task is to review documentation files and suggest improvements for:
-+- Spelling errors
-+- Grammar issues
-+- Technical correctness
-+- Clarity and readability
-+- Consistency with DPDK terminology
-+
-+IMPORTANT COMMIT MESSAGE RULES (from check-git-log.sh):
-+- Subject line MUST be ≤60 characters
-+- Format: "prefix: lowercase description"
-+- First word after colon must be lowercase (except acronyms like Rx, Tx, VF, MAC, API)
-+- Use imperative mood (e.g., "fix typo" not "fixed typo" or "fixes typo")
-+- NO trailing period on subject line
-+- NO punctuation marks: , ; ! ? & |
-+- NO underscores in subject after colon
-+- Body lines wrapped at 75 characters
-+- Body must NOT start with "It"
-+- Do NOT include Signed-off-by (user adds via git commit --sign)
-+- Only use "Fixes:" tag for actual errors in documentation, not style improvements
-+
-+Case-sensitive terms (must use exact case):
-+- Rx, Tx (not RX, TX, rx, tx)
-+- VF, PF (not vf, pf)
-+- MAC, VLAN, RSS, API
-+- Linux, Windows, FreeBSD
-+
-+For style/clarity improvements, do NOT use Fixes tag.
-+For actual errors (wrong information, broken examples), include Fixes tag if you can identify the commit.
-+
-+OUTPUT FORMAT:
-+You must output exactly two sections:
-+
-+1. COMMIT_MESSAGE section containing the complete commit message
-+2. UNIFIED_DIFF section containing the unified diff
-+
-+Use these exact markers:
-+---COMMIT_MESSAGE_START---
-+(commit message here)
-+---COMMIT_MESSAGE_END---
-+
-+---UNIFIED_DIFF_START---
-+(unified diff here)
-+---UNIFIED_DIFF_END---
-+
-+The diff should be in unified format that can be applied with "git apply".
-+If no changes are needed, output empty sections with a note.'
-+
-+# Build request for Anthropic Claude API
-+build_anthropic_request() {
-+    local model="$1"
-+    local max_tokens="$2"
-+    local agents_content="$3"
-+    local doc_content="$4"
-+    local doc_file="$5"
-+    local commit_prefix="$6"
-+    local system_prompt_escaped
-+    system_prompt_escaped=$(echo "$SYSTEM_PROMPT" | python3 -c "import json,sys; print(json.dumps(sys.stdin.read()))")
-+
-+    cat <<EOF
-+{
-+    "model": "$model",
-+    "max_tokens": $max_tokens,
-+    "system": [
-+        {
-+            "type": "text",
-+            "text": $system_prompt_escaped
-+        },
-+        {
-+            "type": "text",
-+            "text": $agents_content,
-+            "cache_control": {"type": "ephemeral"}
-+        }
-+    ],
-+    "messages": [
-+        {
-+            "role": "user",
-+            "content": "Review the following DPDK documentation file and provide improvements.\n\nFile path: $doc_file\nCommit message prefix to use: $commit_prefix\n\nProvide a unified diff and commit message following DPDK standards.\n\n---DOCUMENT CONTENT---"
-+        },
-+        {
-+            "role": "user",
-+            "content": $doc_content
-+        }
-+    ]
-+}
-+EOF
-+}
-+
-+# Build request for OpenAI-compatible APIs (OpenAI, xAI)
-+build_openai_request() {
-+    local model="$1"
-+    local max_tokens="$2"
-+    local agents_content="$3"
-+    local doc_content="$4"
-+    local doc_file="$5"
-+    local commit_prefix="$6"
-+    local system_prompt_escaped
-+    system_prompt_escaped=$(echo "$SYSTEM_PROMPT" | python3 -c "import json,sys; print(json.dumps(sys.stdin.read()))")
-+
-+    cat <<EOF
-+{
-+    "model": "$model",
-+    "max_tokens": $max_tokens,
-+    "messages": [
-+        {
-+            "role": "system",
-+            "content": $system_prompt_escaped
-+        },
-+        {
-+            "role": "system",
-+            "content": $agents_content
-+        },
-+        {
-+            "role": "user",
-+            "content": "Review the following DPDK documentation file and provide improvements.\n\nFile path: $doc_file\nCommit message prefix to use: $commit_prefix\n\nProvide a unified diff and commit message following DPDK standards.\n\n---DOCUMENT CONTENT---"
-+        },
-+        {
-+            "role": "user",
-+            "content": $doc_content
-+        }
-+    ]
-+}
-+EOF
-+}
-+
-+# Build request for Google Gemini API
-+build_google_request() {
-+    local max_tokens="$1"
-+    local agents_content="$2"
-+    local doc_content="$3"
-+    local doc_file="$4"
-+    local commit_prefix="$5"
-+    local system_prompt_escaped
-+    system_prompt_escaped=$(echo "$SYSTEM_PROMPT" | python3 -c "import json,sys; print(json.dumps(sys.stdin.read()))")
-+
-+    cat <<EOF
-+{
-+    "contents": [
-+        {
-+            "role": "user",
-+            "parts": [
-+                {
-+                    "text": $system_prompt_escaped
-+                }
-+            ]
-+        },
-+        {
-+            "role": "user",
-+            "parts": [
-+                {
-+                    "text": $agents_content
-+                }
-+            ]
-+        },
-+        {
-+            "role": "user",
-+            "parts": [
-+                {
-+                    "text": "Review the following DPDK documentation file and provide improvements.\n\nFile path: $doc_file\nCommit message prefix to use: $commit_prefix\n\nProvide a unified diff and commit message following DPDK standards.\n\n---DOCUMENT CONTENT---"
-+                }
-+            ]
-+        },
-+        {
-+            "role": "user",
-+            "parts": [
-+                {
-+                    "text": $doc_content
-+                }
-+            ]
-+        }
-+    ],
-+    "generationConfig": {
-+        "maxOutputTokens": $max_tokens
-+    }
-+}
-+EOF
-+}
-+
-+# Make API request for Anthropic
-+call_anthropic_api() {
-+    local request="$1"
-+    local api_key="$2"
-+
-+    REQUEST_FILE=$(mktemp)
-+    echo "$request" > "$REQUEST_FILE"
-+
-+    curl -s "${API_ENDPOINTS[anthropic]}" \
-+        -H "content-type: application/json" \
-+        -H "x-api-key: $api_key" \
-+        -H "anthropic-version: 2023-06-01" \
-+        -d "@$REQUEST_FILE"
-+}
-+
-+# Make API request for OpenAI
-+call_openai_api() {
-+    local request="$1"
-+    local api_key="$2"
-+
-+    REQUEST_FILE=$(mktemp)
-+    echo "$request" > "$REQUEST_FILE"
-+
-+    curl -s "${API_ENDPOINTS[openai]}" \
-+        -H "Content-Type: application/json" \
-+        -H "Authorization: Bearer $api_key" \
-+        -d "@$REQUEST_FILE"
-+}
-+
-+# Make API request for xAI (Grok)
-+call_xai_api() {
-+    local request="$1"
-+    local api_key="$2"
-+
-+    REQUEST_FILE=$(mktemp)
-+    echo "$request" > "$REQUEST_FILE"
-+
-+    curl -s "${API_ENDPOINTS[xai]}" \
-+        -H "Content-Type: application/json" \
-+        -H "Authorization: Bearer $api_key" \
-+        -d "@$REQUEST_FILE"
-+}
-+
-+# Make API request for Google Gemini
-+call_google_api() {
-+    local request="$1"
-+    local api_key="$2"
-+    local model="$3"
-+
-+    REQUEST_FILE=$(mktemp)
-+    echo "$request" > "$REQUEST_FILE"
-+
-+    curl -s "${API_ENDPOINTS[google]}/${model}:generateContent?key=${api_key}" \
-+        -H "Content-Type: application/json" \
-+        -d "@$REQUEST_FILE"
-+}
-+
-+# Extract response text from Anthropic response
-+extract_anthropic_response() {
-+    python3 -c "
-+import json
-+import sys
-+data = json.load(sys.stdin)
-+if 'error' in data:
-+    err = data['error']
-+    print(f\"Error type: {err.get('type', 'unknown')}\", file=sys.stderr)
-+    print(f\"Error message: {err.get('message', 'unknown')}\", file=sys.stderr)
-+    sys.exit(1)
-+text = ''
-+for block in data.get('content', []):
-+    if block.get('type') == 'text':
-+        text += block.get('text', '')
-+print(text)
-+"
-+}
-+
-+# Extract response text from OpenAI/xAI response
-+extract_openai_response() {
-+    python3 -c "
-+import json
-+import sys
-+data = json.load(sys.stdin)
-+if 'error' in data:
-+    err = data['error']
-+    print(f\"Error type: {err.get('type', 'unknown')}\", file=sys.stderr)
-+    print(f\"Error message: {err.get('message', 'unknown')}\", file=sys.stderr)
-+    print(f\"Error code: {err.get('code', 'unknown')}\", file=sys.stderr)
-+    sys.exit(1)
-+choices = data.get('choices', [])
-+if choices:
-+    message = choices[0].get('message', {})
-+    print(message.get('content', ''))
-+else:
-+    print('No response content received', file=sys.stderr)
-+"
-+}
-+
-+# Extract response text from Google Gemini response
-+extract_google_response() {
-+    python3 -c "
-+import json
-+import sys
-+data = json.load(sys.stdin)
-+if 'error' in data:
-+    err = data['error']
-+    print(f\"Error code: {err.get('code', 'unknown')}\", file=sys.stderr)
-+    print(f\"Error message: {err.get('message', 'unknown')}\", file=sys.stderr)
-+    print(f\"Error status: {err.get('status', 'unknown')}\", file=sys.stderr)
-+    sys.exit(1)
-+candidates = data.get('candidates', [])
-+if candidates:
-+    content = candidates[0].get('content', {})
-+    parts = content.get('parts', [])
-+    for part in parts:
-+        print(part.get('text', ''))
-+else:
-+    print('No response candidates received', file=sys.stderr)
-+"
-+}
-+
-+# Show verbose info for Anthropic
-+show_anthropic_verbose() {
-+    python3 -c "
-+import json
-+import sys
-+data = json.load(sys.stdin)
-+usage = data.get('usage', {})
-+print(f\"Input tokens: {usage.get('input_tokens', 'N/A')}\")
-+print(f\"Cache creation: {usage.get('cache_creation_input_tokens', 0)}\")
-+print(f\"Cache read: {usage.get('cache_read_input_tokens', 0)}\")
-+print(f\"Output tokens: {usage.get('output_tokens', 'N/A')}\")
-+"
-+}
-+
-+# Show verbose info for OpenAI/xAI
-+show_openai_verbose() {
-+    python3 -c "
-+import json
-+import sys
-+data = json.load(sys.stdin)
-+usage = data.get('usage', {})
-+print(f\"Prompt tokens: {usage.get('prompt_tokens', 'N/A')}\")
-+print(f\"Completion tokens: {usage.get('completion_tokens', 'N/A')}\")
-+print(f\"Total tokens: {usage.get('total_tokens', 'N/A')}\")
-+"
-+}
-+
-+# Show verbose info for Google
-+show_google_verbose() {
-+    python3 -c "
-+import json
-+import sys
-+data = json.load(sys.stdin)
-+usage = data.get('usageMetadata', {})
-+print(f\"Prompt tokens: {usage.get('promptTokenCount', 'N/A')}\")
-+print(f\"Output tokens: {usage.get('candidatesTokenCount', 'N/A')}\")
-+print(f\"Total tokens: {usage.get('totalTokenCount', 'N/A')}\")
-+"
-+}
-+
-+# Parse the response and write output files
-+parse_and_write_output() {
-+    local text="$1"
-+    local msg_file="$2"
-+    local diff_file="$3"
-+
-+    python3 -c "
-+import re
-+import sys
-+
-+text = '''$text'''
-+
-+# Extract commit message
-+msg_match = re.search(r'---COMMIT_MESSAGE_START---\s*\n(.*?)\n---COMMIT_MESSAGE_END---', text, re.DOTALL)
-+if msg_match:
-+    msg = msg_match.group(1).strip()
-+    with open('$msg_file', 'w') as f:
-+        f.write(msg + '\n')
-+    print(f'Commit message written to: $msg_file', file=sys.stderr)
-+else:
-+    print('Warning: Could not extract commit message', file=sys.stderr)
-+    with open('$msg_file', 'w') as f:
-+        f.write('# No commit message generated\n')
-+
-+# Extract unified diff
-+diff_match = re.search(r'---UNIFIED_DIFF_START---\s*\n(.*?)\n---UNIFIED_DIFF_END---', text, re.DOTALL)
-+if diff_match:
-+    diff = diff_match.group(1).strip()
-+    # Clean up any markdown code fence if present
-+    diff = re.sub(r'^\`\`\`diff\s*\n?', '', diff)
-+    diff = re.sub(r'\n?\`\`\`\s*$', '', diff)
-+    with open('$diff_file', 'w') as f:
-+        f.write(diff + '\n')
-+    print(f'Diff written to: $diff_file', file=sys.stderr)
-+else:
-+    print('Warning: Could not extract diff', file=sys.stderr)
-+    with open('$diff_file', 'w') as f:
-+        f.write('# No changes suggested\n')
-+
-+# Also print full response for review
-+print('\n=== Full Review ===')
-+print(text)
-+"
-+}
-+
-+# Parse command line options
-+VERBOSE=0
-+MODEL=""
-+
-+while [[ $# -gt 0 ]]; do
-+    case "$1" in
-+        -p|--provider)
-+            PROVIDER="$2"
-+            shift 2
-+            ;;
-+        -a|--agents)
-+            AGENTS_FILE="$2"
-+            shift 2
-+            ;;
-+        -m|--model)
-+            MODEL="$2"
-+            shift 2
-+            ;;
-+        -t|--tokens)
-+            MAX_TOKENS="$2"
-+            shift 2
-+            ;;
-+        -o|--output)
-+            OUTPUT_DIR="$2"
-+            shift 2
-+            ;;
-+        -v|--verbose)
-+            VERBOSE=1
-+            shift
-+            ;;
-+        -l|--list-providers)
-+            list_providers
-+            ;;
-+        -h|--help)
-+            usage 0
-+            ;;
-+        -*)
-+            error "Unknown option: $1"
-+            ;;
-+        *)
-+            break
-+            ;;
-+    esac
-+done
-+
-+# Validate provider
-+if [[ ! -v "DEFAULT_MODELS[$PROVIDER]" ]]; then
-+    error "Unknown provider: $PROVIDER. Use -l to list available providers."
-+fi
-+
-+# Set default model if not specified
-+if [[ -z "$MODEL" ]]; then
-+    MODEL="${DEFAULT_MODELS[$PROVIDER]}"
-+fi
-+
-+# Check for required arguments
-+if [[ $# -lt 1 ]]; then
-+    echo "Error: No documentation file specified" >&2
-+    usage 1
-+fi
-+
-+DOC_FILE="$1"
-+
-+# Get the API key variable name and check it's set
-+API_KEY_VAR="${API_KEY_VARS[$PROVIDER]}"
-+API_KEY="${!API_KEY_VAR}"
-+
-+if [[ -z "$API_KEY" ]]; then
-+    error "$API_KEY_VAR environment variable not set"
-+fi
-+
-+# Validate files exist
-+if [[ ! -f "$AGENTS_FILE" ]]; then
-+    error "AGENTS.md not found: $AGENTS_FILE"
-+fi
-+
-+if [[ ! -f "$DOC_FILE" ]]; then
-+    error "Documentation file not found: $DOC_FILE"
-+fi
-+
-+# Create output directory if needed
-+mkdir -p "$OUTPUT_DIR"
-+
-+# Derive output filenames
-+DOC_BASENAME=$(basename "$DOC_FILE" | sed 's/\.[^.]*$//')
-+DIFF_FILE="$OUTPUT_DIR/${DOC_BASENAME}.diff"
-+MSG_FILE="$OUTPUT_DIR/${DOC_BASENAME}.msg"
-+
-+# Get commit prefix
-+COMMIT_PREFIX=$(get_commit_prefix "$DOC_FILE")
-+
-+# Read file contents
-+AGENTS_CONTENT=$(read_json_escaped "$AGENTS_FILE")
-+DOC_CONTENT=$(read_json_escaped "$DOC_FILE")
-+
-+if [[ $VERBOSE -eq 1 ]]; then
-+    echo "=== Request ===" >&2
-+    echo "Provider: $PROVIDER" >&2
-+    echo "Model: $MODEL" >&2
-+    echo "AGENTS file: $AGENTS_FILE" >&2
-+    echo "Doc file: $DOC_FILE" >&2
-+    echo "Commit prefix: $COMMIT_PREFIX" >&2
-+    echo "Output dir: $OUTPUT_DIR" >&2
-+    echo "===============" >&2
-+fi
-+
-+# Build and send request based on provider
-+case "$PROVIDER" in
-+    anthropic)
-+        REQUEST=$(build_anthropic_request "$MODEL" "$MAX_TOKENS" "$AGENTS_CONTENT" "$DOC_CONTENT" "$DOC_FILE" "$COMMIT_PREFIX")
-+        RESPONSE=$(call_anthropic_api "$REQUEST" "$API_KEY")
-+
-+        if [[ $VERBOSE -eq 1 ]]; then
-+            echo "=== Token Usage ===" >&2
-+            echo "$RESPONSE" | show_anthropic_verbose >&2
-+            echo "===================" >&2
-+        fi
-+
-+        RESPONSE_TEXT=$(echo "$RESPONSE" | extract_anthropic_response)
-+        ;;
-+
-+    openai)
-+        REQUEST=$(build_openai_request "$MODEL" "$MAX_TOKENS" "$AGENTS_CONTENT" "$DOC_CONTENT" "$DOC_FILE" "$COMMIT_PREFIX")
-+        RESPONSE=$(call_openai_api "$REQUEST" "$API_KEY")
-+
-+        if [[ $VERBOSE -eq 1 ]]; then
-+            echo "=== Token Usage ===" >&2
-+            echo "$RESPONSE" | show_openai_verbose >&2
-+            echo "===================" >&2
-+        fi
-+
-+        RESPONSE_TEXT=$(echo "$RESPONSE" | extract_openai_response)
-+        ;;
-+
-+    xai)
-+        REQUEST=$(build_openai_request "$MODEL" "$MAX_TOKENS" "$AGENTS_CONTENT" "$DOC_CONTENT" "$DOC_FILE" "$COMMIT_PREFIX")
-+        RESPONSE=$(call_xai_api "$REQUEST" "$API_KEY")
-+
-+        if [[ $VERBOSE -eq 1 ]]; then
-+            echo "=== Token Usage ===" >&2
-+            echo "$RESPONSE" | show_openai_verbose >&2
-+            echo "===================" >&2
-+        fi
-+
-+        RESPONSE_TEXT=$(echo "$RESPONSE" | extract_openai_response)
-+        ;;
-+
-+    google)
-+        REQUEST=$(build_google_request "$MAX_TOKENS" "$AGENTS_CONTENT" "$DOC_CONTENT" "$DOC_FILE" "$COMMIT_PREFIX")
-+        RESPONSE=$(call_google_api "$REQUEST" "$API_KEY" "$MODEL")
-+
-+        if [[ $VERBOSE -eq 1 ]]; then
-+            echo "=== Token Usage ===" >&2
-+            echo "$RESPONSE" | show_google_verbose >&2
-+            echo "===================" >&2
-+        fi
-+
-+        RESPONSE_TEXT=$(echo "$RESPONSE" | extract_google_response)
-+        ;;
-+esac
-+
-+# Check if we got a response
-+if [[ -z "$RESPONSE_TEXT" ]]; then
-+    error "No response received from $PROVIDER"
-+fi
-+
-+# Parse response and write output files
-+parse_and_write_output "$RESPONSE_TEXT" "$MSG_FILE" "$DIFF_FILE"
-+
-+echo ""
-+echo "=== Output Files ==="
-+echo "Commit message: $MSG_FILE"
-+echo "Diff file:      $DIFF_FILE"
-+echo ""
-+echo "To apply changes:"
-+echo "  git apply $DIFF_FILE"
-+echo "  git commit -sF $MSG_FILE"
--- 
-2.51.0
+### 2. Forbidden Token - RTE_EXPORT_INTERNAL_SYMBOL (Patch 2/8)
+**File:** drivers/net/nfb/nfb_ethdev.c (Line after nfb_eth_common_probe def=
+inition) =20
+**Location:** Lines 667, 780
 
+```c
+RTE_EXPORT_INTERNAL_SYMBOL(nfb_eth_common_probe)
+int
+nfb_eth_common_probe(struct rte_device *device,
+...
+
+RTE_EXPORT_INTERNAL_SYMBOL(nfb_eth_common_remove)
+int
+nfb_eth_common_remove(struct rte_device *dev)
+```
+
+**Issue:** According to AGENTS.md, `__rte_internal` must appear **alone on =
+the line** immediately preceding the return type, and only in header files.=
+ `RTE_EXPORT_INTERNAL_SYMBOL` is the wrong way to mark internal APIs.
+
+**Required Fix:** Move the `__rte_internal` attribute to the function decla=
+rations in `nfb.h`:
+
+```c
+// In nfb.h
+__rte_internal
+int nfb_eth_common_probe(struct rte_device *device,
+		ethdev_bus_specific_init specific_init, void *specific_device,
+		struct nfb_init_params *params, int ep_index);
+
+__rte_internal
+int nfb_eth_common_remove(struct rte_device *dev);
+```
+
+And remove the `RTE_EXPORT_INTERNAL_SYMBOL` macros from the .c file.
+
+---
+
+### 3. Memory Leak on Error Path (Patch 2/8)
+**File:** drivers/net/nfb/nfb_ethdev.c =20
+**Function:** nfb_eth_common_probe =20
+**Location:** Lines 713-735
+
+```c
+nc_ifc_map_info_create_ordinary(nfb_dev, &params->map_info);
+
+if (params->args !=3D NULL && strlen(params->args) > 0) {
+    kvlist =3D rte_kvargs_parse(params->args, VALID_KEYS);
+    if (kvlist =3D=3D NULL) {
+        NFB_LOG(ERR, "Failed to parse device arguments %s", params->args);
+        return -EINVAL;  // =E2=86=90 Leaks map_info and nfb_dev
+    }
+    // ... more code ...
+    if (port_mask =3D=3D 0) {
+        NFB_LOG(ERR, "Failed to parse device port argument");
+        return -EINVAL;  // =E2=86=90 Leaks map_info and nfb_dev
+    }
+}
+```
+
+**Issue:** Early returns leak `params->map_info` (allocated by `nc_ifc_map_=
+info_create_ordinary`) and don't close `nfb_dev`.
+
+**Required Fix:**
+```c
+if (kvlist =3D=3D NULL) {
+    NFB_LOG(ERR, "Failed to parse device arguments %s", params->args);
+    ret =3D -EINVAL;
+    goto err_parse_args;
+}
+// ...=20
+if (port_mask =3D=3D 0) {
+    NFB_LOG(ERR, "Failed to parse device port argument");
+    ret =3D -EINVAL;
+    goto err_parse_args;
+}
+
+// At end of function, before existing cleanup:
+err_parse_args:
+    nc_map_info_destroy(&params->map_info);
+    nfb_close(nfb_dev);
+    return ret;
+```
+
+---
+
+### 4. Incorrect Line Length (Patch 2/8)
+**File:** drivers/net/nfb/nfb_ethdev.c =20
+**Location:** Line 802
+
+```c
+			return nfb_eth_common_probe(&pci_dev->device, eth_dev_pci_specific_init,=
+ pci_dev, &params,
+```
+
+**Issue:** This line exceeds 100 characters (appears to be ~105 characters =
+based on context). C code lines must not exceed 100 characters.
+
+**Required Fix:** Break the line appropriately:
+```c
+	return nfb_eth_common_probe(&pci_dev->device,
+			eth_dev_pci_specific_init, pci_dev, &params,
+			comp_dev_info.ep_index);
+```
+
+---
+
+### 5. Missing Release Notes for API Changes (Patches 2-8)
+**File:** doc/guides/rel_notes/release_26_03.rst =20
+**Location:** Only appears in Patch 8/8
+
+**Issue:** Per AGENTS.md: "Changes to existing APIs require release notes" =
+and "New drivers or subsystems must have release notes." The release notes =
+are added in patch 8/8, but significant driver behavior changes occur in pa=
+tches 2-5. According to AGENTS.md, "Code and documentation must be updated =
+atomically in same patch."
+
+**Required Fix:** Move relevant portions of the release notes update to the=
+ patches where the changes actually occur:
+- Patch 2/8: Note about one ethdev per port
+- Patch 4/8: Note about the `port` argument
+- Patch 7/8: Note about firmware version reporting
+
+---
+
+## WARNINGS
+
+### 1. Commit Message Body - Starts with "It" (Patch 1/8)
+**Issue:** Per AGENTS.md, commit message bodies must not start with "It". W=
+hile this patch doesn't explicitly start with "It", the body is minimal and=
+ doesn't provide sufficient context.
+
+**Current:**
+```
+This prepares queue mapping for port-aware driver implementation.
+```
+
+**Recommendation:**
+```
+Introduce indirect queue mapping to support multiple ethdev ports.
+
+The NFB driver is being enhanced to create one ethdev per physical
+Ethernet port instead of one ethdev per PCI device. This requires
+an indirect mapping layer because DPDK queue indices no longer
+directly correspond to firmware queue indices.
+
+This change adds queue_map_rx and queue_map_tx arrays to track the
+mapping between DPDK queue indices and firmware queue IDs, preparing
+for the multi-port implementation in subsequent patches.
+```
+
+---
+
+### 2. Subject Line Length (Patch 2/8)
+**File:** Patch 2/8 subject =20
+**Current:** "net/nfb: create ethdev for every eth port/channel" (50 chars)
+
+**Issue:** While under the 60-character limit, the subject could be more de=
+scriptive about the impact.
+
+**Recommendation:** Consider:
+```
+net/nfb: create one ethdev per ethernet port
+```
+(More clear about the 1:1 relationship)
+
+---
+
+### 3. Inappropriate Use of rte_zmalloc (Patch 2/8)
+**File:** drivers/net/nfb/nfb_ethdev.c =20
+**Location:** Line 585
+
+```c
+priv->queue_map_rx =3D rte_calloc("NFB queue map", (max_rx_queues + max_tx_=
+queues),
+        sizeof(*priv->queue_map_rx), 0);
+```
+
+**Issue:** Per AGENTS.md "Appropriate Use of rte_malloc()": Use `rte_malloc=
+()` only for DMA-accessible memory or memory shared between processes. Cont=
+rol structures should use standard `malloc()`.
+
+**Reasoning:** Queue mapping arrays are control plane data structures that =
+don't require hugepage memory. Using `rte_calloc` wastes limited hugepage r=
+esources.
+
+**Recommendation:**
+```c
+priv->queue_map_rx =3D calloc((max_rx_queues + max_tx_queues),
+        sizeof(*priv->queue_map_rx));
+```
+
+And use `free()` in cleanup path instead of `rte_free()`.
+
+---
+
+### 4. Unnecessary NULL Check Before free (Patches 1/8, 5/8)
+**File:** drivers/net/nfb/nfb_ethdev.c =20
+**Location:** Multiple locations
+
+**Patch 1/8, Line 655:**
+```c
+if (rte_eal_process_type() =3D=3D RTE_PROC_PRIMARY)
+    rte_free(priv->queue_map_rx);
+```
+
+**Issue:** The `rte_eal_process_type()` check is appropriate (different pro=
+cess model), but similar patterns elsewhere may be checking for NULL unnece=
+ssarily.
+
+**Patch 5/8, Lines 118-122:**
+```c
+for (i =3D 0; i < priv->max_rxmac; i++)
+    nc_rxmac_close(priv->rxmac[i]);
+rte_free(priv->rxmac);
+```
+
+**Potential Issue:** If any `priv->rxmac[i]` could be NULL, the code should=
+ check before calling `nc_rxmac_close`, but this depends on `nc_rxmac_close=
+` behavior (not visible in patch).
+
+**Recommendation:** Verify that `nc_rxmac_close` and `nc_txmac_close` handl=
+e NULL pointers safely, or add NULL checks:
+```c
+for (i =3D 0; i < priv->max_rxmac; i++) {
+    if (priv->rxmac[i] !=3D NULL)
+        nc_rxmac_close(priv->rxmac[i]);
+}
+```
+
+---
+
+### 5. Missing Documentation for New Struct Member (Patch 1/8)
+**File:** drivers/net/nfb/nfb.h =20
+**Location:** Lines 68-69
+
+```c
+struct pmd_priv {
+	uint16_t max_rx_queues;
+	uint16_t max_tx_queues;
+
+	int             *queue_map_rx;
+	int             *queue_map_tx;
+};
+```
+
+**Issue:** New fields lack Doxygen-style comments explaining their purpose,=
+ while the file shows other structures are documented.
+
+**Recommendation:**
+```c
+struct pmd_priv {
+	uint16_t max_rx_queues;
+	uint16_t max_tx_queues;
+
+	/** Mapping from DPDK RX queue index to firmware queue ID */
+	int             *queue_map_rx;
+	/** Mapping from DPDK TX queue index to firmware queue ID */
+	int             *queue_map_tx;
+};
+```
+
+---
+
+### 6. Global Variable Without Unique Prefix (Patch 2/8)
+**File:** drivers/net/nfb/nfb_ethdev.c =20
+**Location:** Lines 28-29
+
+```c
+TAILQ_HEAD(pmd_internals_head, pmd_internals);
+static struct pmd_internals_head nfb_eth_dev_list =3D
+	TAILQ_HEAD_INITIALIZER(nfb_eth_dev_list);
+```
+
+**Issue:** Per AGENTS.md "Symbol Naming for Static Linking": While this is =
+a `static` variable (file scope) and doesn't strictly violate the guideline=
+, the type name `pmd_internals_head` is generic and could clash if the stat=
+ic is removed in the future.
+
+**Recommendation:** Use more specific names:
+```c
+TAILQ_HEAD(nfb_pmd_internals_head, pmd_internals);
+static struct nfb_pmd_internals_head nfb_eth_dev_list =3D
+	TAILQ_HEAD_INITIALIZER(nfb_eth_dev_list);
+```
+
+---
+
+### 7. Inconsistent Error Handling Pattern (Patch 4/8)
+**File:** drivers/net/nfb/nfb_ethdev.c =20
+**Function:** fill_port_mask =20
+**Location:** Lines 672-686
+
+```c
+static int fill_port_mask(const char *key __rte_unused, const char *value, =
+void *opaque)
+{
+	char *end;
+	uint64_t *port_mask =3D opaque;
+	unsigned long port;
+
+	if (value =3D=3D NULL || strlen(value) =3D=3D 0 || !isdigit(*value))
+		return -1;
+
+	port =3D strtoul(value, &end, 0);
+	if (*end !=3D '\0' || port >=3D ULONG_WIDTH)
+		return -1;
+```
+
+**Issue:** Function returns generic `-1` instead of standard error codes li=
+ke `-EINVAL`. This is inconsistent with DPDK style where functions typicall=
+y return `-errno` values.
+
+**Recommendation:**
+```c
+if (value =3D=3D NULL || strlen(value) =3D=3D 0 || !isdigit(*value))
+    return -EINVAL;
+
+port =3D strtoul(value, &end, 0);
+if (*end !=3D '\0' || port >=3D ULONG_WIDTH)
+    return -EINVAL;
+```
+
+---
+
+### 8. Potential Integer Overflow (Patch 4/8)
+**File:** drivers/net/nfb/nfb_ethdev.c =20
+**Location:** Line 728
+
+```c
+if (ret || port_mask >=3D RTE_BIT64(params->map_info.ifc_cnt))
+    port_mask =3D 0;
+```
+
+**Issue:** If `params->map_info.ifc_cnt >=3D 64`, then `RTE_BIT64(params->m=
+ap_info.ifc_cnt)` will overflow (undefined behavior for shift >=3D 64).
+
+**Recommendation:**
+```c
+if (ret || params->map_info.ifc_cnt > 64 ||
+        (params->map_info.ifc_cnt < 64 && port_mask >=3D RTE_BIT64(params->=
+map_info.ifc_cnt)))
+    port_mask =3D 0;
+```
+
+Or add a check earlier:
+```c
+if (params->map_info.ifc_cnt > 64) {
+    NFB_LOG(ERR, "Too many interfaces: %u", params->map_info.ifc_cnt);
+    return -EINVAL;
+}
+```
+
+---
+
+### 9. Documentation Not Matching Code (Patch 8/8)
+**File:** doc/guides/nics/nfb.rst =20
+**Location:** Lines 58-60
+
+```rst
+.. note::
+
+   Normally, one port corresponds to one channel, but ports can often be co=
+nfigured in a separate
+   manner. For example one 100G port can be used as 4x25G or 4x10G independ=
+ent Ethernet channels.
+```
+
+**Issue:** The documentation states "Normally, one port corresponds to one =
+channel" but doesn't explain what a "channel" is in the context of the firm=
+ware vs DPDK ports, which could confuse users.
+
+**Recommendation:** Clarify the terminology:
+```rst
+.. note::
+
+   The driver creates one DPDK port for each firmware Ethernet interface. S=
+ome cards support
+   port breakout, where a physical port can be reconfigured (e.g., 1x100G t=
+o 4x25G). Each
+   resulting channel appears as a separate DPDK port.
+```
+
+---
+
+### 10. Missing NULL Checks After rte_zmalloc (Patch 2/8)
+**File:** drivers/net/nfb/nfb_ethdev.c =20
+**Location:** Line 537
+
+```c
+internals =3D rte_zmalloc_socket("nfb_internals",
+        sizeof(struct pmd_internals), RTE_CACHE_LINE_SIZE,
+        rte_socket_id());
+
+if (internals =3D=3D NULL) {
+    NFB_LOG(ERR, "Failed to allocate private data");
+    ret =3D -ENOMEM;
+    goto err_nfb_open;
+}
+```
+
+**Issue:** The error path `err_nfb_open` doesn't check if `internals` is NU=
+LL before potentially dereferencing it in cleanup. While this specific code=
+ path is safe, it's worth noting for consistency.
+
+**Status:** Currently safe, but should be verified if cleanup code changes.
+
+---
+
+## INFO
+
+### 1. Code Style - Variable Declaration at Point of Use (Multiple Patches)
+**Observation:** The patches use both C89-style (declarations at start of b=
+lock) and C99-style (declarations at point of use) variable declarations.
+
+**Example (Patch 1/8):**
+```c
+int ret;
+int qid;
+struct ndp_rx_queue *rxq;
+```
+
+vs.
+
+**Example (Patch 5/8):**
+```c
+for (i =3D 0, j =3D 0
