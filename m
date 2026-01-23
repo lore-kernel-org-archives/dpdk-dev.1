@@ -2,73 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4951AD6CFBB
-	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Jan 2026 05:09:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48595D6CFBB
+	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Jan 2026 05:14:42 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6FED54021F;
-	Fri, 23 Jan 2026 06:09:40 +0100 (CET)
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com
- [209.85.128.51]) by mails.dpdk.org (Postfix) with ESMTP id 67E2F400D5
- for <dev@dpdk.org>; Fri, 23 Jan 2026 06:09:38 +0100 (CET)
-Received: by mail-wm1-f51.google.com with SMTP id
- 5b1f17b1804b1-47ee9817a35so13915815e9.1
- for <dev@dpdk.org>; Thu, 22 Jan 2026 21:09:38 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 7AF2D4021F;
+	Fri, 23 Jan 2026 06:14:41 +0100 (CET)
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com
+ [209.85.221.49]) by mails.dpdk.org (Postfix) with ESMTP id D0362400D5
+ for <dev@dpdk.org>; Fri, 23 Jan 2026 06:14:40 +0100 (CET)
+Received: by mail-wr1-f49.google.com with SMTP id
+ ffacd0b85a97d-4327555464cso1103811f8f.1
+ for <dev@dpdk.org>; Thu, 22 Jan 2026 21:14:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769144978;
- x=1769749778; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769145280;
+ x=1769750080; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=1gslb3hCrTvwqC6ltudNnbQ55BKMfX2MF7A1kZ/BIrQ=;
- b=Edz72edGCs73pZN8C1lBRm41ISnpHENNrfXOtc/bkwBMMR3/vo9jdxFmPLOjJzVjIp
- yp0Y5Dnm2yInxQDuZL9vQidXvRF0upruip6Fb+gY0o+1vLsKOKPOjqa7x2hveubzBq64
- maRC3r4X3vAuuJm/DspLnUE/s+ttqYoRsG2CFylU/FpBwLaJ3HXutataPrlmaeNJWwWz
- Y3VMyJBhruW0MfrG1Hb7WsIW4135fSRLEITwAmQfmvBIVAbxTVHwBDTu62poCvahYNen
- uS2rKXUxAfsW2QpAIU30htUxjT0wuh67DxoczF9R2IGPaU5iCxuHx+bXAB1cCXDiDwtv
- VxTw==
+ bh=uzdqnWTo0xmGe1RcOvDBNhXX8S76GVVwhr6iIVd1VMY=;
+ b=0Xo9GBbO5MYrJC5kjxdzuWKQyh7txbyI7qu197DHaziiKwyZ1gv4e3oEdTB7p2B3Sq
+ vdaQ2GTkWmMIvCqQlUrQ+l7lWh4eOfTDuuZqIu6Lw+CfdHgelhNaMAkC+0jGudgrQFqA
+ ANEeJLfIHP2794cz7+L5aTRlTy1WqjmEotCvmFiczaeN/T+SRKdkhynV0mZwwKCzOG2q
+ 89e85jfunvLGoK7wcl+rOzQdRaw2h3az8dQ+kH+lhqeaanReNImBJdmIpFx4LBnfKfdA
+ OYho/hNxWm5wcpuwM6rnJqLCr82nvzfvcs8o2iR5KvGwTL9t1QgQjTdlrExbGJN7vCSJ
+ 5jhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1769144978; x=1769749778;
+ d=1e100.net; s=20230601; t=1769145280; x=1769750080;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=1gslb3hCrTvwqC6ltudNnbQ55BKMfX2MF7A1kZ/BIrQ=;
- b=P3Y/xDVC/jKmoJ9s00UXMiHMlYHkL/Y09WreOFF2+NIb6UuYoCBAApkJitrA3tMMHU
- MMpUowIYf/hmCs4MW0Vc8Yc4TY1LQFnW7dqJ7TqrX1C+BA0EEtCQzDLIfLjdMfwtWTdC
- Aho9zT6OADiX3uwQX25BWU34abtPvspntGLacpxsJD6ZDXGez4C28luIzOHYM1p6HtTv
- wPLvt5Zl0Mt/4BSmdjBSUrWxcX1t9H4N6EcMY64NGgC2STFKMa1pocT5p2wZSPZeC3y7
- AJlNg1UkKtNuf9ZVd0KxfF1i4rALjCsQ3veJdswRpGRxHK8rRSlOuPDT0Y3ERTRznwdM
- Y2EQ==
-X-Forwarded-Encrypted: i=1;
- AJvYcCWDfREusjAHm7vKwLN5OHRbrzSu48zQlElp0JjqFrvqkMZ/czto9DwmtMk0nYAhyl0+ZTw=@dpdk.org
-X-Gm-Message-State: AOJu0YxsXHdGRYTX8l7wxks/gB2dPYYy1iu6FH5QvOXGJSlOy+LtVCvy
- qMKEAOihVXdMrP7++gHQZm6sboQ0T5OZW8obRK82OMxm3wIqJ69FmWdeoEGA0jA69Rc=
-X-Gm-Gg: AZuq6aLg8DbrIZRIGJqm470KFW9IQZsOyRHdLLCEeEld2MP/CvGmEC49lEYFnqKs+O0
- 4SBBzCiL+q5WS47TnYJUrvpAB1/3S3WfAAJztyBXVaFnDM4SqYAr1T+9wMsm7cKvYeEq7EW+HOJ
- QTrzvqoq1617FSu5XCMXarP1L1iCbnBto84xNOvHEiUfZIZ+2XF0QuVL00ZIo+DZUn9sD5tekh3
- MF9bYfZ8tzrnMrJ6JMTdCDV6lhUDo9gfyLDWjhCwKLVcJ2YtrGkJ44wHqmSmX+5yvnMHxXoLGGr
- lh43LjqP5PD4bheC2mq78KpzO5sn9HMg3McTAAVPWhXrYrmMEL+BD1Tvi0pp0GqFInucVllGlwm
- OYSgXM6OBedDLnYsgyuj8vAcTHQndUkDKJZKxbpL1oAAwStXM+c8XOsxH8LKaljfbTnUi/Fey5u
- fTE1AsZbXQdKufjb0G7il3uV9V+sakpTMCjQ146MgJm3lzkjl9OHCz
-X-Received: by 2002:a05:600c:820e:b0:47e:e076:c7a5 with SMTP id
- 5b1f17b1804b1-4804c94fd6amr26406405e9.11.1769144977983; 
- Thu, 22 Jan 2026 21:09:37 -0800 (PST)
+ bh=uzdqnWTo0xmGe1RcOvDBNhXX8S76GVVwhr6iIVd1VMY=;
+ b=TLGGgjNatBEWCaglgG/rgABLKRw3aJkXZsxx8IoOnXZIBRM+BYGtyx0yuBVcKzs5qY
+ R4/Wj4u/oC+mpzTfHhWubQ0KiuA5KvLNeSjNeTgKkLif8Qy3oeh2UhqR4IhukcZpfnYS
+ Ic5l4Ve2FkVIRrzx6pJ4CdzBttvLrPwRmZJX4yUlI09UjaFwGSc50V1OZ74oURiuLCLO
+ 1BCPTRyME4quCnC33CT2swbcAF6VMWOyS+xr5Fmi+B7W5Yqdq/E9c5xWBMvguVO5p+ei
+ CP23/zpKADfULhnG3bAlERtthEP9buFmCdkavDsqYRxpV2qIh/yBcxem+HsmqriYXZ4b
+ SL+A==
+X-Gm-Message-State: AOJu0Yzr70240ZY+YGHzTNiMmABhk6HsbpRlsgY6f/RSupk+B00coBMD
+ jZzQCjuoWlfTFdsKa0V+bH+zuE60SN3flW+pFTRphhcbqoqVyXGSjVbEVx5d8aFWG48=
+X-Gm-Gg: AZuq6aIauZ0kWmJeN+jX5kx1kCgKR7TnUggV289m7K9bCT1DxLFSu0algx4hv8T4b0i
+ aJp66fH5WoB+G5hdmGUlcJLtrySam9icK66KRyF2GX97y1pdUcH99vIC4eWiOyvMqJXoyhk5OFe
+ lq0X1VZuT4LM6VPJHXyBKV5Wtc77+MuyZd18u+z2BQGoaxwRVfT8PhhmUkhN946wVf6oYueQkXB
+ hpM9I5fs+OiiPBv1PkQcogsZVNw1krIm+sgFci5baOfnO2MK3X1HK3OHHKtlON7lfg8/bgoS/li
+ fwn0ipPc1yOKjxMSUnSFY/ZdhV/q11amqwsp1MMc1ifJ3sSi8/KqUbWjZXL6+/bJnuHZsQDP2wM
+ PnYOZ3DezdKCi/T6jlKYxaiPqO0ye6NnBhCN/x/Q+M3eg4scVOZthw7qjXT/QbCD36t0qvhEah9
+ 8wcz41eEtdtVn9op8CHQZVRLSGpBpbJkQTngtCjKGBbuGSVyv7z2WJ
+X-Received: by 2002:a5d:64c5:0:b0:430:fd84:3175 with SMTP id
+ ffacd0b85a97d-435b162c7b4mr2982537f8f.38.1769145280378; 
+ Thu, 22 Jan 2026 21:14:40 -0800 (PST)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-4804dbc0d84sm10590305e9.6.2026.01.22.21.09.35
+ ffacd0b85a97d-435b1f745dbsm3900998f8f.34.2026.01.22.21.14.38
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 22 Jan 2026 21:09:37 -0800 (PST)
-Date: Thu, 22 Jan 2026 21:09:31 -0800
+ Thu, 22 Jan 2026 21:14:40 -0800 (PST)
+Date: Thu, 22 Jan 2026 21:14:34 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Jake Freeland <jfree@FreeBSD.org>
-Cc: Anatoly Burakov <anatoly.burakov@intel.com>, Bruce Richardson
- <bruce.richardson@intel.com>, dev@dpdk.org
-Subject: Re: [PATCH v2 0/3] EAL memory fixes
-Message-ID: <20260122210931.05d3ed8b@phoenix.local>
-In-Reply-To: <20250814213246.4141803-1-jfree@FreeBSD.org>
-References: <20250814213246.4141803-1-jfree@FreeBSD.org>
+To: Mattias =?UTF-8?B?UsO2bm5ibG9t?= <mattias.ronnblom@ericsson.com>
+Cc: <dev@dpdk.org>, Mattias =?UTF-8?B?UsO2bm5ibG9t?=
+ <hofors@lysator.liu.se>, "David Marchand" <david.marchand@redhat.com>,
+ Thomas Monjalon <thomas@monjalon.net>, Morten =?UTF-8?B?QnLDuHJ1cA==?=
+ <mb@smartsharesystems.com>
+Subject: Re: [PATCH 1/3] bitops: promote bit manipulation API to stable
+Message-ID: <20260122211434.07e7449c@phoenix.local>
+In-Reply-To: <20250518080556.675092-1-mattias.ronnblom@ericsson.com>
+References: <20250518080556.675092-1-mattias.ronnblom@ericsson.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,166 +82,12 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 14 Aug 2025 16:32:42 -0500
-Jake Freeland <jfree@FreeBSD.org> wrote:
+On Sun, 18 May 2025 10:05:54 +0200
+Mattias R=C3=B6nnblom <mattias.ronnblom@ericsson.com> wrote:
 
-> Hi there,
-> 
-> This patchset contains a number of EAL-specific memory fixes that I've
-> made over the last year. Two pertain to FreeBSD, one pertains to Linux.
-> 
-> v2:
-> * Log messages are no longer split across multiple lines.
-> * The patch titled "Do not index out of bounds in memseg list" has been
->   removed since there was no indexing out of bounds happening.
-> * A new patch has been added per Anatoly's recommendation that starts
->   searching for memseg entries after the last used entry.
-> 
-> Jake Freeland (3):
->   eal/freebsd: Do not use prev_ms_idx for hole detection
->   eal/freebsd: Avoid claiming memseg holes
->   eal/linux: Check hugepage access permissions
-> 
->  lib/eal/freebsd/eal_memory.c      | 24 +++++++++++++++++++-----
->  lib/eal/linux/eal_hugepage_info.c |  7 +++++++
->  2 files changed, 26 insertions(+), 5 deletions(-)
-> 
-> --
-> 2.47.2
-> 
+> Remove experimental tag from generic selection-based APIs to test and
+> modify individual bits in 32- or 64-bit words.
+>=20
+> Signed-off-by: Mattias R=C3=B6nnblom <mattias.ronnblom@ericsson.com>
 
-AI review of this series is mostly positive
-
-=== Patch Review: bundle-1679-eal-freebsd.mbox (via Claude) ===
-# DPDK Patch Review: eal/freebsd Memory Management Fixes
-
-## Summary
-This patch series contains 3 commits addressing memory management issues in FreeBSD EAL and adding permission checks for Linux hugepage directories.
-
----
-
-## Patch 1/3: eal/freebsd: Do not use prev_ms_idx for hole detection
-
-### Errors
-None found.
-
-### Warnings
-
-1. **Subject line capitalization issue**
-   - Subject: `eal/freebsd: Do not use prev_ms_idx for hole detection`
-   - "Do" should be lowercase after the colon per guidelines
-   - Should be: `eal/freebsd: do not use prev_ms_idx for hole detection`
-
-### Info
-- Commit message is clear and explains the problem well
-- `Signed-off-by` and `Acked-by` tags present and in correct order
-- Code change is minimal and focused
-- Line lengths are within limits
-
----
-
-## Patch 2/3: eal/freebsd: Avoid claiming memseg holes
-
-### Errors
-None found.
-
-### Warnings
-
-1. **Subject line capitalization issue**
-   - Subject: `eal/freebsd: Avoid claiming memseg holes`
-   - "Avoid" should be lowercase after the colon
-   - Should be: `eal/freebsd: avoid claiming memseg holes`
-
-2. **Variable declaration style inconsistency**
-   ```c
-   for (msl_idx = 0; msl_idx < RTE_MAX_MEMSEG_LISTS;
-   				msl_idx++) {
-   	int start_idx, num_elems;
-   	bool empty, need_hole;
-   ```
-   - The new variables `start_idx` and `num_elems` are declared at the start of the block, which is acceptable. However, they could be declared closer to their point of use or initialized when meaningful values exist.
-
-3. **Potential logic issue with start_idx check**
-   ```c
-   start_idx = rte_fbarray_find_prev_n_used(
-   		arr, arr->len - 1, 1) + 1;
-   if (start_idx < 0)
-   	start_idx = 0;
-   ```
-   - Since `rte_fbarray_find_prev_n_used()` returns -1 on failure, and then +1 is added, `start_idx` would be 0 when the function fails, making the `if (start_idx < 0)` check unreachable. This appears to be dead code. Consider:
-   ```c
-   start_idx = rte_fbarray_find_prev_n_used(arr, arr->len - 1, 1);
-   if (start_idx < 0)
-   	start_idx = 0;
-   else
-   	start_idx++;
-   ```
-
-### Info
-- Commit message explains the fix adequately
-- Tags are present and in correct order
-
----
-
-## Patch 3/3: eal/linux: Check hugepage access permissions
-
-### Errors
-None found.
-
-### Warnings
-
-1. **Subject line capitalization issue**
-   - Subject: `eal/linux: Check hugepage access permissions`
-   - "Check" should be lowercase after the colon
-   - Should be: `eal/linux: check hugepage access permissions`
-
-2. **Use of lowercase log message**
-   - The log message uses lowercase which is inconsistent with some other EAL log messages, though this is a minor style preference.
-
-### Info
-
-1. **Consider using `faccessat()` for race-free checks**
-   - The `access()` function has TOCTOU (time-of-check-time-of-use) race conditions. While this is likely acceptable for this use case (startup configuration), it's worth noting.
-
-2. **Good defensive programming**
-   - Adding permission checks before attempting to use mountpoints improves error handling and user feedback.
-
-3. **Commit message is clear and concise**
-
----
-
-## General Observations
-
-### All Patches
-- All patches have proper `Signed-off-by` tags with real names and valid email addresses
-- All patches have `Acked-by` from the maintainer
-- Tag order is correct (Signed-off-by before Acked-by)
-- No trailing whitespace detected
-- Line lengths appear to be within 100 character limit for code
-- Commit body lines are within 75 character limit
-- Files have appropriate licenses (existing files being modified)
-
-### Missing Items (Info level)
-- No `Fixes:` tag on patches 1 and 2, which appear to be bug fixes. If these fix regressions from specific commits, a `Fixes:` tag should be added.
-- No `Cc: stable@dpdk.org` tag if these are candidates for backporting to stable releases.
-
----
-
-## Summary of Required Changes
-
-| Severity | Count | Items |
-|----------|-------|-------|
-| Error | 0 | - |
-| Warning | 4 | 3x subject line capitalization, 1x potential dead code |
-| Info | 4 | Missing Fixes tags, TOCTOU note, style preferences |
-
-### Recommended Actions
-
-1. **Fix subject lines** (all 3 patches): Change to lowercase after colon
-   - `eal/freebsd: do not use prev_ms_idx for hole detection`
-   - `eal/freebsd: avoid claiming memseg holes`
-   - `eal/linux: check hugepage access permissions`
-
-2. **Review the start_idx logic** in patch 2 to ensure the `< 0` check is reachable
-
-3. **Consider adding `Fixes:` tags** if these address specific regressions
+Acked-by: Stephen Hemminger <stephen@networkplumber.org>
