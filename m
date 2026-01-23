@@ -2,36 +2,36 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFB4ED77881
-	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Jan 2026 17:23:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A29CD77881
+	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Jan 2026 17:23:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B5C1D4066A;
-	Fri, 23 Jan 2026 18:22:51 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 27B8040670;
+	Fri, 23 Jan 2026 18:22:53 +0100 (CET)
 Received: from office2.cesnet.cz (office2.cesnet.cz [78.128.248.237])
- by mails.dpdk.org (Postfix) with ESMTP id 1F70F4021F
+ by mails.dpdk.org (Postfix) with ESMTP id 27A054042E
  for <dev@dpdk.org>; Fri, 23 Jan 2026 18:22:46 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cesnet.cz;
- s=office2-2020; t=1769188965;
- bh=DC4UPegtO00kVdv5NkNm/MmZDe6XoO4uWWkstsZb52A=;
+ s=office2-2020; t=1769188966;
+ bh=FXKpZkhJlLHWC5DqlADDUPfs2nHtCEcNjvzvWR28OPs=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References;
- b=JEEl6vEB6fHv8qhZTxHk8BkfJEILtSo9EonWgNBI1QtSpL8XrbXpiiV2iP7QqJnIX
- gBCb1VBRge8AP8s2A0wXjcXO+ltcCLUJfIEuFaVGtebFC0YP7/rDSZc+m+U3laqp7Y
- ObOyeP2z2MNZbFwslzDFgm41rB6OzFV2yKqaVgkhrxgCgqzPGfHJ8050/raKuJ5gsb
- PArbfakgCHQiHoOzCcXiTIh/L7E50H2/aFEDCKezDdpFaTgklXG8LERwAB4bs35kBr
- AuGilI6ELOrm/tszgTHdKnJo8kwHAAswMS4Nz93kvzEHOYC0ov9Yfb12IKOSTbzrOZ
- mwNmbMpLu8YPw==
+ b=RpJDssGftZr8L1vj4LrH8MZMsDqdVaStwY5efwAsygEeXCJD/YYHefruqTKfnHDPd
+ WFnB3Z4xTGgjLspA9LpfEEKm/ABH2Ocpps75DdlsCzHUym+ra4wiKaABmXJ+rgeVrz
+ i8s3p3Nxu6BlQUXS1qOLyyyaLEXGkVsz9q8UjJ89YW2S/nIaxHIt/MJmcF7H65GmX2
+ czyKH3Ifb8Cow4h2FXpDFlXubWr6qKxKoBgc3Oc+6ouRnVGSbli2EzuVfBfum5QvKy
+ yCLh4/NApuUjhLUP4mkWASxmDqiY5q4FSgr0lCyt3yr3rqE3v4U6kKXz60sZsw0VAb
+ F/M34tKT4SI6w==
 Received: from emil.cesnet.cz (gtx107.cesnet.cz [IPv6:2001:718:812:27::107])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by office2.cesnet.cz (Postfix) with ESMTPSA id E5C251180078;
- Fri, 23 Jan 2026 18:22:45 +0100 (CET)
+ by office2.cesnet.cz (Postfix) with ESMTPSA id 0AC691180072;
+ Fri, 23 Jan 2026 18:22:46 +0100 (CET)
 From: spinler@cesnet.cz
 To: dev@dpdk.org
 Cc: Martin Spinler <spinler@cesnet.cz>
-Subject: [PATCH v5 4/8] net/nfb: add device argument "port" to limit used ports
-Date: Fri, 23 Jan 2026 18:22:20 +0100
-Message-ID: <20260123172224.1567362-5-spinler@cesnet.cz>
+Subject: [PATCH v5 5/8] net/nfb: init only MACs associated with device
+Date: Fri, 23 Jan 2026 18:22:21 +0100
+Message-ID: <20260123172224.1567362-6-spinler@cesnet.cz>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260123172224.1567362-1-spinler@cesnet.cz>
 References: <20260115151656.393106-1-spinler@cesnet.cz>
@@ -53,155 +53,237 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Martin Spinler <spinler@cesnet.cz>
 
-NFB devices do not use separate PCI device for each port; one PCI device
-contains handles for all ports instead. For some application this approach
-can be limiting.
+Use information obtained from the new manner of creating NFB ethdevs
+and initialize only RxMACs / TxMACs associated with actual ethdev.
 
-The "port" argument can be used to select only desired ports.
-It can be used multiple times. When is not used at all, the driver
-selects all ports.
+This enables separated management and configuration of interface ports.
 
 Signed-off-by: Martin Spinler <spinler@cesnet.cz>
 ---
- drivers/net/nfb/nfb.h        |  7 +++++
- drivers/net/nfb/nfb_ethdev.c | 54 ++++++++++++++++++++++++++++++++++--
- drivers/net/nfb/nfb_vdev.c   |  3 +-
- 3 files changed, 60 insertions(+), 4 deletions(-)
+ drivers/net/nfb/nfb.h        |  12 +--
+ drivers/net/nfb/nfb_ethdev.c | 137 ++++++++++++++++-------------------
+ 2 files changed, 67 insertions(+), 82 deletions(-)
 
 diff --git a/drivers/net/nfb/nfb.h b/drivers/net/nfb/nfb.h
-index a1134d7786..10d74eb49c 100644
+index 10d74eb49c..01241860b1 100644
 --- a/drivers/net/nfb/nfb.h
 +++ b/drivers/net/nfb/nfb.h
-@@ -42,6 +42,13 @@ extern int nfb_logtype;
+@@ -36,10 +36,6 @@ extern int nfb_logtype;
+ #define RTE_ETH_NDP_MAX_RX_QUEUES 32
+ #define RTE_ETH_NDP_MAX_TX_QUEUES 32
  
+-/* Max index of rx/tx dmas */
+-#define RTE_MAX_NC_RXMAC 256
+-#define RTE_MAX_NC_TXMAC 256
+-
  #define RTE_NFB_DRIVER_NAME net_nfb
  
-+/* Device arguments */
-+#define NFB_ARG_PORT "port"
-+
-+#define NFB_COMMON_ARGS \
-+	NFB_ARG_PORT "=<number>" \
-+	""
-+
- /*
-  * Handles obtained from the libnfb: each process must use own instance.
+ /* Device arguments */
+@@ -54,10 +50,10 @@ extern int nfb_logtype;
   * Stored inside dev->process_private.
+  */
+ struct pmd_internals {
+-	uint16_t         max_rxmac;
+-	uint16_t         max_txmac;
+-	struct nc_rxmac *rxmac[RTE_MAX_NC_RXMAC];
+-	struct nc_txmac *txmac[RTE_MAX_NC_TXMAC];
++	uint16_t         max_rxmac;     /**< Count of valid rxmac items */
++	uint16_t         max_txmac;     /**< Count of valid txmac items */
++	struct nc_rxmac  **rxmac;       /**< Array of Rx MAC handles */
++	struct nc_txmac  **txmac;       /**< Array of Tx MAC handles */
+ 	struct nfb_device *nfb;
+ 
+ 	TAILQ_ENTRY(pmd_internals) eth_dev_list;  /**< Item in list of all devices */
 diff --git a/drivers/net/nfb/nfb_ethdev.c b/drivers/net/nfb/nfb_ethdev.c
-index 6eb0cd08fd..3961f82a3d 100644
+index 3961f82a3d..5c489fcb74 100644
 --- a/drivers/net/nfb/nfb_ethdev.c
 +++ b/drivers/net/nfb/nfb_ethdev.c
-@@ -22,6 +22,11 @@
- #include "nfb_rxmode.h"
- #include "nfb.h"
+@@ -52,81 +52,75 @@ static const struct rte_ether_addr eth_addr = {
+ };
  
-+static const char * const VALID_KEYS[] = {
-+	NFB_ARG_PORT,
-+	NULL
-+};
+ /**
+- * Open all RX DMA queues
++ * Open Rx and Tx MAC components associated with current ifc
+  *
+- * @param dev
+- *   Pointer to nfb device.
+- * @param[out] rxmac
+- *   Pointer to output array of nc_rxmac
+- * @param[out] max_rxmac
+- *   Pointer to output max index of rxmac
++ * @param intl
++ *   Pointer to driver internal structure
++ * @param params
++ *   Pointer to init parameters structure
+  */
+-static void
+-nfb_nc_rxmac_init(struct nfb_device *nfb,
+-	struct nc_rxmac *rxmac[RTE_MAX_NC_RXMAC],
+-	uint16_t *max_rxmac)
++static int
++nfb_nc_eth_init(struct pmd_internals *intl, struct nfb_ifc_create_params *params)
+ {
+-	*max_rxmac = 0;
+-	while ((rxmac[*max_rxmac] = nc_rxmac_open_index(nfb, *max_rxmac)))
+-		++(*max_rxmac);
+-}
++	int ret;
++	int i, rxm, txm;
++	struct nc_ifc_info *ifc = params->ifc_info;
++	struct nc_ifc_map_info *mi = &params->map_info;
+ 
+-/**
+- * Open all TX DMA queues
+- *
+- * @param dev
+- *   Pointer to nfb device.
+- * @param[out] txmac
+- *   Pointer to output array of nc_txmac
+- * @param[out] max_rxmac
+- *   Pointer to output max index of txmac
+- */
+-static void
+-nfb_nc_txmac_init(struct nfb_device *nfb,
+-	struct nc_txmac *txmac[RTE_MAX_NC_TXMAC],
+-	uint16_t *max_txmac)
+-{
+-	*max_txmac = 0;
+-	while ((txmac[*max_txmac] = nc_txmac_open_index(nfb, *max_txmac)))
+-		++(*max_txmac);
+-}
++	ret = -ENOMEM;
++	if (ifc->eth_cnt == 0)
++		return 0;
+ 
+-/**
+- * Close all RX DMA queues
+- *
+- * @param rxmac
+- *   Pointer to array of nc_rxmac
+- * @param max_rxmac
+- *   Maximum index of rxmac
+- */
+-static void
+-nfb_nc_rxmac_deinit(struct nc_rxmac *rxmac[RTE_MAX_NC_RXMAC],
+-	uint16_t max_rxmac)
+-{
+-	uint16_t i;
+-	for (i = 0; i < max_rxmac; i++) {
+-		nc_rxmac_close(rxmac[i]);
+-		rxmac[i] = NULL;
++	intl->rxmac = calloc(ifc->eth_cnt, sizeof(*intl->rxmac));
++	if (intl->rxmac == NULL)
++		goto err_alloc_rxmac;
 +
- struct nfb_ifc_create_params {
- 	struct nfb_probe_params *probe_params;
- 	struct nc_ifc_map_info map_info;
-@@ -713,6 +718,24 @@ nfb_eth_dev_create_for_ifc(struct nfb_ifc_create_params *cp)
- 	return ret;
++	intl->txmac = calloc(ifc->eth_cnt, sizeof(*intl->txmac));
++	if (intl->txmac == NULL)
++		goto err_alloc_txmac;
++
++	/* Some eths may not have assigned MAC nodes, hence use separate var for indexing */
++	rxm = 0;
++	txm = 0;
++	for (i = 0; i < mi->eth_cnt; i++) {
++		if (mi->eth[i].ifc != ifc->id)
++			continue;
++
++		intl->rxmac[rxm] = nc_rxmac_open(intl->nfb, mi->eth[i].node_rxmac);
++		if (intl->rxmac[rxm])
++			rxm++;
++
++		intl->txmac[txm] = nc_txmac_open(intl->nfb, mi->eth[i].node_txmac);
++		if (intl->txmac[txm])
++			txm++;
+ 	}
++
++	intl->max_rxmac = rxm;
++	intl->max_txmac = txm;
++	return 0;
++
++err_alloc_txmac:
++	free(intl->rxmac);
++err_alloc_rxmac:
++	return ret;
  }
  
-+static int nfb_eth_dev_create_for_ifc_by_port(const char *key __rte_unused,
-+		const char *value, void *opaque)
-+{
-+	char *end;
-+	unsigned long port;
-+	struct nfb_ifc_create_params *ifc_params = opaque;
+ /**
+- * Close all TX DMA queues
+- *
+- * @param txmac
+- *   Pointer to array of nc_txmac
+- * @param max_txmac
+- *   Maximum index of txmac
++ * Close all Rx+Tx MAC components
++ * @param intl
++ *   Pointer to internal driver structure
+  */
+ static void
+-nfb_nc_txmac_deinit(struct nc_txmac *txmac[RTE_MAX_NC_TXMAC],
+-	uint16_t max_txmac)
++nfb_nc_eth_deinit(struct pmd_internals *intl)
+ {
+ 	uint16_t i;
+-	for (i = 0; i < max_txmac; i++) {
+-		nc_txmac_close(txmac[i]);
+-		txmac[i] = NULL;
+-	}
++	for (i = 0; i < intl->max_txmac; i++)
++		nc_txmac_close(intl->txmac[i]);
++	for (i = 0; i < intl->max_rxmac; i++)
++		nc_rxmac_close(intl->rxmac[i]);
 +
-+	if (value == NULL || strlen(value) == 0 || !isdigit(*value))
-+		return -EINVAL;
-+
-+	port = strtoul(value, &end, 0);
-+	if (*end != '\0' || port >= (unsigned long)ifc_params->map_info.ifc_cnt)
-+		return -EINVAL;
-+
-+	ifc_params->ifc_info = &ifc_params->map_info.ifc[port];
-+	return nfb_eth_dev_create_for_ifc(ifc_params);
-+}
-+
- RTE_EXPORT_INTERNAL_SYMBOL(nfb_eth_common_probe)
- int
- nfb_eth_common_probe(struct nfb_probe_params *params)
-@@ -722,6 +745,7 @@ nfb_eth_common_probe(struct nfb_probe_params *params)
++	free(intl->txmac);
++	free(intl->rxmac);
+ }
  
- 	struct nfb_device *nfb_dev;
- 	struct nfb_ifc_create_params ifc_params;
-+	struct rte_kvargs *kvlist = NULL;
+ /**
+@@ -343,7 +337,7 @@ nfb_eth_link_update(struct rte_eth_dev *dev,
+ 	link.link_duplex = RTE_ETH_LINK_FULL_DUPLEX;
+ 	link.link_autoneg = RTE_ETH_LINK_SPEED_FIXED;
  
- 	nfb_dev = nfb_open(params->path);
- 	if (nfb_dev == NULL) {
-@@ -733,16 +757,35 @@ nfb_eth_common_probe(struct nfb_probe_params *params)
- 	if (ret)
- 		goto err_map_info_create;
+-	if (internals->rxmac[0] != NULL) {
++	if (internals->max_rxmac) {
+ 		nc_rxmac_read_status(internals->rxmac[0], &status);
  
-+	if (params->args != NULL && strlen(params->args) > 0) {
-+		kvlist = rte_kvargs_parse(params->args, VALID_KEYS);
-+		if (kvlist == NULL) {
-+			NFB_LOG(ERR, "Failed to parse device arguments %s", params->args);
-+			ret = -EINVAL;
-+			goto err_parse_args;
-+		}
-+	}
-+
- 	ifc_params.probe_params = params;
- 	ifc_params.basename_len = strlen(params->name);
+ 		switch (status.speed) {
+@@ -568,12 +562,9 @@ nfb_eth_dev_init(struct rte_eth_dev *dev, void *init_data)
+ 	max_rx_queues = ifc->rxq_cnt;
+ 	max_tx_queues = ifc->txq_cnt;
  
--	for (i = 0; i < ifc_params.map_info.ifc_cnt; i++) {
--		ifc_params.ifc_info = &ifc_params.map_info.ifc[i];
--		ret = nfb_eth_dev_create_for_ifc(&ifc_params);
-+	/* When at least one port argument is specified, create only selected ports */
-+	if (kvlist && rte_kvargs_count(kvlist, NFB_ARG_PORT)) {
-+		ret = rte_kvargs_process(kvlist, NFB_ARG_PORT,
-+				nfb_eth_dev_create_for_ifc_by_port, (void *)&ifc_params);
- 		if (ret)
- 			goto err_dev_create;
-+	} else {
-+		for (i = 0; i < ifc_params.map_info.ifc_cnt; i++) {
-+			ifc_params.ifc_info = &ifc_params.map_info.ifc[i];
-+			ret = nfb_eth_dev_create_for_ifc(&ifc_params);
-+			if (ret)
-+				goto err_dev_create;
-+		}
- 	}
+-	nfb_nc_rxmac_init(internals->nfb,
+-		internals->rxmac,
+-		&internals->max_rxmac);
+-	nfb_nc_txmac_init(internals->nfb,
+-		internals->txmac,
+-		&internals->max_txmac);
++	ret = nfb_nc_eth_init(internals, params);
++	if (ret)
++		goto err_nc_eth_init;
  
-+	rte_kvargs_free(kvlist);
-+
- 	nc_map_info_destroy(&ifc_params.map_info);
- 	nfb_close(nfb_dev);
+ 	/* Set rx, tx burst functions */
+ 	dev->rx_pkt_burst = nfb_eth_ndp_rx;
+@@ -639,10 +630,9 @@ nfb_eth_dev_init(struct rte_eth_dev *dev, void *init_data)
+ err_malloc_mac_addrs:
+ 	rte_free(priv->queue_map_rx);
+ err_alloc_queue_map:
+-	nfb_nc_rxmac_deinit(internals->rxmac, internals->max_rxmac);
+-	nfb_nc_txmac_deinit(internals->txmac, internals->max_txmac);
++	nfb_nc_eth_deinit(internals);
++err_nc_eth_init:
+ 	nfb_close(internals->nfb);
+-
+ err_nfb_open:
+ 	rte_free(internals);
+ err_alloc_internals:
+@@ -669,8 +659,7 @@ nfb_eth_dev_uninit(struct rte_eth_dev *dev)
  
-@@ -750,6 +793,8 @@ nfb_eth_common_probe(struct nfb_probe_params *params)
+ 	TAILQ_REMOVE(&nfb_eth_dev_list, internals, eth_dev_list);
  
- err_dev_create:
- 	nfb_eth_common_remove(params->device);
-+	rte_kvargs_free(kvlist);
-+err_parse_args:
- 	nc_map_info_destroy(&ifc_params.map_info);
- err_map_info_create:
- 	nfb_close(nfb_dev);
-@@ -858,3 +903,6 @@ RTE_PMD_REGISTER_PCI(RTE_NFB_DRIVER_NAME, nfb_eth_driver);
- RTE_PMD_REGISTER_PCI_TABLE(RTE_NFB_DRIVER_NAME, nfb_pci_id_table);
- RTE_PMD_REGISTER_KMOD_DEP(RTE_NFB_DRIVER_NAME, "* nfb");
- RTE_LOG_REGISTER_DEFAULT(nfb_logtype, NOTICE);
-+RTE_PMD_REGISTER_PARAM_STRING(RTE_NFB_DRIVER_NAME,
-+		NFB_COMMON_ARGS
-+		);
-diff --git a/drivers/net/nfb/nfb_vdev.c b/drivers/net/nfb/nfb_vdev.c
-index b79f7ac416..57f10d2068 100644
---- a/drivers/net/nfb/nfb_vdev.c
-+++ b/drivers/net/nfb/nfb_vdev.c
-@@ -102,5 +102,6 @@ static struct rte_vdev_driver vdev_nfb_vdev = {
- RTE_PMD_REGISTER_VDEV(VDEV_NFB_DRIVER, vdev_nfb_vdev);
- RTE_PMD_REGISTER_ALIAS(VDEV_NFB_DRIVER, eth_vdev_nfb);
- RTE_PMD_REGISTER_PARAM_STRING(net_vdev_nfb,
--		VDEV_NFB_ARG_DEV "=<string>"
-+		VDEV_NFB_ARG_DEV "=<string> "
-+		NFB_COMMON_ARGS
- 		);
+-	nfb_nc_rxmac_deinit(internals->rxmac, internals->max_rxmac);
+-	nfb_nc_txmac_deinit(internals->txmac, internals->max_txmac);
++	nfb_nc_eth_deinit(internals);
+ 	nfb_close(internals->nfb);
+ 
+ 	rte_free(internals);
 -- 
 2.52.0
 
