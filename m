@@ -2,72 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58702D6CFAC
-	for <dpdk-dev@archiver.kernel.org>; Thu, 22 Jan 2026 23:40:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B61BDD6CFAA
+	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Jan 2026 00:23:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 27FA9402C0;
-	Fri, 23 Jan 2026 00:40:23 +0100 (CET)
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com
- [209.85.221.44]) by mails.dpdk.org (Postfix) with ESMTP id BAFE94027C
- for <dev@dpdk.org>; Fri, 23 Jan 2026 00:40:21 +0100 (CET)
-Received: by mail-wr1-f44.google.com with SMTP id
- ffacd0b85a97d-43590777e22so965336f8f.3
- for <dev@dpdk.org>; Thu, 22 Jan 2026 15:40:21 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 713CA402AF;
+	Fri, 23 Jan 2026 01:23:20 +0100 (CET)
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com
+ [209.85.128.49]) by mails.dpdk.org (Postfix) with ESMTP id 8FF76400D5
+ for <dev@dpdk.org>; Fri, 23 Jan 2026 01:23:18 +0100 (CET)
+Received: by mail-wm1-f49.google.com with SMTP id
+ 5b1f17b1804b1-47ee76e8656so22518255e9.0
+ for <dev@dpdk.org>; Thu, 22 Jan 2026 16:23:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769125221;
- x=1769730021; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769127798;
+ x=1769732598; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=JnypBfBakx2FngErqe3xbFc1ra3cFi1AYznmDYcm/IA=;
- b=SjjvwHdNfbOa8PUW9cOPMB9rdwxxKmJfo6t/F2MrCir4c2Aq3lQlBX15xS7QFXK84w
- JdTDYQaefm8Pvp/YR+ie0Wvggz8YMPOH7movzaEE26XPm7DsCp345NKFiDDJXKke7KSz
- +e9BWT8rvzwzGrSDw3uMW/UdVCZ6fKdHOst1X8/POxiG7gqDQ2sn/eQKVsFI3Ku6ZQGC
- fQfZMlf+H0MutHYWxOQYLkNDnpWLKgKg3ptxenY1XueNRJde+e+fuE861JmqSusWhK9W
- MqmcfeHZ5ZgarcTMfbpCsF4dBYitJWrZkExozTmIW673S4bVaN/Y56b88KBcs4AGPLPY
- +46A==
+ bh=CEp1gNp2HaEEr6sSgQe3oQGQOK5tYuItvxD930vaM3I=;
+ b=DXOyGg7JC4nxSA4ZYUi9RAg3X0yOjCsmLzxO3Xela61RzaikkucuL2KkDHcwJJDXi+
+ 5GpBc9mvvZSLaUuwcPUe9sF7L2As8ER1okcQvardHQPwUtMVHY9S3MVZeZ4+Bk6Zb2rO
+ Dtn8mOLjJYhKMoC4+ot/Hr4flTRoptaiWydf3vUSmK87fGffcPIq9WSOlwX5fcomtCOt
+ i0fK/BGklTrgSDaBa8RJjYu3ha7lhNqrVrKvRtw1ayVBIMEdLZSk6r1z8OVD93oxFCs0
+ EEAVuJtlmQctETDPIy7wc259QuFAjH5g1KmGsLbNPirIWJO1nBngHV2ZOEUgPc/fwQXk
+ SwaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1769125221; x=1769730021;
+ d=1e100.net; s=20230601; t=1769127798; x=1769732598;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=JnypBfBakx2FngErqe3xbFc1ra3cFi1AYznmDYcm/IA=;
- b=uW/PTX/CpRt71mdSnxiINH4s7jpkqaFay+7tG5IIXhWBgmoP7H1ZsdHw1fuYfAgopG
- kDfap5XMxhcpRMatUaQy2Ah10XAPIU4mXgRw7/Hcl7bbtm+oEXrNsmMjfaDwlzrLE17q
- nssXktIxgFBsEps5ZXv7oIl1JavKLuqfAFUmtsbIY8J3k8787wyPz7Hy/CPPmwvmhz1r
- JzBGy4FJPZzRNsduSna70aTNgi/NMfVGaBMznilVBBme0f5ChcRpgpoeAuV58EQAGWW+
- 7PmnI+/GMSPe/cVp87H1bB+ga+tRF2PuzK0vMED/C5PAd0UPsFAxCirBULsNgixVKmNE
- kZVw==
-X-Gm-Message-State: AOJu0Yw9MoZBi/hCIoZTodfSdYtiDFYSqrED6bK8trqJWtw0YTyfW2LE
- Qjcw7WjoWORs1fiIo+zEynD2GBxoZ39kHziZVQtv0yfPELrGKHHS6Q+LdhyZMOl9aiU=
-X-Gm-Gg: AZuq6aJuchh2zTxrfuOXrL+HrNaE0rBBn5wzUqgi9wUM5LIlnv1oQ9b+2RmaL5Cs/Rt
- CAXD86Itp5tkftT5mAG+Zs6V23x6kFzhxdnK0odMq9gRbm0c389uO6yI3al1ZZp4S+kLieiBBgt
- dYi2Bg/WZ0tbI6sW+HW28fAK4Z8sDyksMc42PIhoOWBblh+40K7Rg0qSp9vxkFLVMScx/pYjPlp
- FH99yVfR4DajCAPA3clkvroGWYgL3cgn6G/WVc00yUxoKdTIUyUI4PCVjrKmIhqfAKdUcut63hN
- KZhQ29pKYCD8UQI8GzydA1OoXhvd8ESAwLjYgE40vGOGY6fSeBma14QMG1JQc+0NL1S7gPJuIG7
- tYLflMWCVvxhkkbyDAJ3JnfiDDFRTQWDa7bppfRCvBMyD9faR2GmRWQfDgWQGhKGE0oRhLKLxBQ
- pDUdh6i6fLDFmoE/6ttKTGUVBSXrXlsAds8TffyDjDGPXoUniSE0ep
-X-Received: by 2002:a05:6000:2f82:b0:431:32f:3159 with SMTP id
- ffacd0b85a97d-435b158c1f7mr1870801f8f.7.1769125220713; 
- Thu, 22 Jan 2026 15:40:20 -0800 (PST)
+ bh=CEp1gNp2HaEEr6sSgQe3oQGQOK5tYuItvxD930vaM3I=;
+ b=NHdkKMvGYspeYQha86QBsJnDRHaGjF3r2a4c0N2a+OBRVMGPbz7q0BloizWOQSAEIq
+ AAhrLhmnALXlhDJxsXw7yXpn8VVmVAUSpPbGn3SXqWKdFsNMjBW73w5QUsKUCC9In3wk
+ RsqE5WadRfTjaI55G6ldmz3UdajRMdNcJ+ssNaYR9mp4PG9srKuzCiqB85R6EDLN6RVf
+ MU4dmIFD1V7o29gPSbTL/633PpAJ7ziv0BhtVrqN9lXGnLvJ0U+bgQBiV2YBjOmLhbNu
+ 2jJJ1bcsrY4iJNV2y7bmVIcuRT4vUe+KnNZMgnWhrdxHGj4GcFbImhsj7y2zpbSx1dxw
+ stmg==
+X-Gm-Message-State: AOJu0Yz9eKaV0PEggr6PJYAZw9M5tC6Z+wIyL+cGugCJJDJG0T0Yg101
+ TVYYpmIEUryNNlhhbYA83kBER/+1liId1QreUn8AfChDrnRp60fXDeXJ5PwnwSSSGYs=
+X-Gm-Gg: AZuq6aI1lZzDSdKH0plh1gH4h1X9a7AlbnH7efPLtZ6k8eCzJEl+I73D2sN8clXDaYA
+ Wz2TLgCHlLiemA9xf8HRpSl+asH0Qj7osM1nF/Tb3qLrWQMQQO/BxDExMF05XWeB5osBBKslL/a
+ 18/DWAHRtf9+bPhxXOAsTgRH690d5+U7O60G0JaWGZr/oaBeDtPMj/XocZHc9Y61NtivJYvvTi3
+ +8tw025U5u5C7IKNZLCou0/VzM1IMQspXm8nbDGbPaAdUsinWSO7YEIPDEYVn/N0L2Dg5NxQ7qp
+ 3R589qp8DfixjdKr1SR305pNIgEoJMhUATc8ca2VPhSdgem1XaMQd+Cc4Kvdxwyr9o8XSL6zHj2
+ qUJKaAEeIRmEXZN6trNK291wzQQbFmBGjGD4Rom8cteC4yHjYGHxVh4BCAwvF347ms35GucmyZR
+ nZ4FYBjrK3UZafcX5g+VmDkW22AQAEjPfhP2Yo1No3rWdr8fkfkqsh
+X-Received: by 2002:a05:600c:5298:b0:47e:e57d:404 with SMTP id
+ 5b1f17b1804b1-4804c96513cmr23412425e9.16.1769127797609; 
+ Thu, 22 Jan 2026 16:23:17 -0800 (PST)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-435b1e71730sm2324220f8f.26.2026.01.22.15.40.18
+ 5b1f17b1804b1-4804d8a5b67sm14394975e9.10.2026.01.22.16.23.14
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 22 Jan 2026 15:40:20 -0800 (PST)
-Date: Thu, 22 Jan 2026 15:40:14 -0800
+ Thu, 22 Jan 2026 16:23:16 -0800 (PST)
+Date: Thu, 22 Jan 2026 16:23:10 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Soumyadeep Hore <soumyadeep.hore@intel.com>
-Cc: dev@dpdk.org, bruce.richardson@intel.com, rajesh3.kumar@intel.com,
- aman.deep.singh@intel.com, manoj.kumar.subbarao@intel.com
-Subject: Re: [PATCH v5 0/4] Enable PTP feature for MEV
-Message-ID: <20260122154014.5af4f38d@phoenix.local>
-In-Reply-To: <20260123000449.188008-1-soumyadeep.hore@intel.com>
-References: <20260120191120.137078-4-soumyadeep.hore@intel.com>
- <20260123000449.188008-1-soumyadeep.hore@intel.com>
+To: Radu Nicolau <radu.nicolau@intel.com>
+Cc: dev@dpdk.org, nkaithakadan@marvell.com, kai.ji@intel.com,
+ anoobj@marvell.com, Akhil Goyal <gakhil@marvell.com>, Fan Zhang
+ <fanzhang.oss@gmail.com>
+Subject: Re: [PATCH v5 1/2] cryptodev: add support for 256-NxA4/5/6 algorithms
+Message-ID: <20260122162310.5a1e1320@phoenix.local>
+In-Reply-To: <20260122102606.2531599-1-radu.nicolau@intel.com>
+References: <20260107105649.1708347-1-radu.nicolau@intel.com>
+ <20260122102606.2531599-1-radu.nicolau@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,197 +82,397 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 22 Jan 2026 19:04:45 -0500
-Soumyadeep Hore <soumyadeep.hore@intel.com> wrote:
+On Thu, 22 Jan 2026 10:25:33 +0000
+Radu Nicolau <radu.nicolau@intel.com> wrote:
 
-> Enabling basic PTP feature in IDPF PMD using virtchnl messages.
-> 
-> ---
-> v5:
-> - Addressed AI comments
-> ---
-> v4:
-> - Addressed Bruce's comments
-> ---
-> v3:
-> - Fixed checkpatch warnings
-> - Addressed Bruce's comments
-> ---
-> v2:
-> - Fixed essential checkpatch warnings
-> ---
-> 
-> Milena Olech (1):
->   net/idpf: add a new API for PTP support
-> 
-> Soumyadeep Hore (3):
->   net/idpf: add PTP virtchnl2 support
->   net/intel: add support for PTP
->   doc: add PTP IDPF documentation
-> 
->  doc/guides/nics/features/idpf.ini             |   1 +
->  doc/guides/nics/idpf.rst                      |  15 +
->  doc/guides/rel_notes/release_26_03.rst        |   4 +
->  drivers/net/intel/common/tx.h                 |   1 +
->  drivers/net/intel/idpf/base/virtchnl2.h       | 324 ++++++---
->  drivers/net/intel/idpf/idpf_common_device.h   |   4 +
->  drivers/net/intel/idpf/idpf_common_rxtx.c     | 186 +++--
->  drivers/net/intel/idpf/idpf_common_rxtx.h     |  10 +
->  drivers/net/intel/idpf/idpf_common_virtchnl.c |  34 +-
->  drivers/net/intel/idpf/idpf_ethdev.c          | 270 ++++++++
->  drivers/net/intel/idpf/idpf_ptp.c             | 639 ++++++++++++++++++
->  drivers/net/intel/idpf/idpf_ptp.h             | 227 +++++++
->  drivers/net/intel/idpf/meson.build            |   1 +
->  13 files changed, 1554 insertions(+), 162 deletions(-)
->  create mode 100644 drivers/net/intel/idpf/idpf_ptp.c
->  create mode 100644 drivers/net/intel/idpf/idpf_ptp.h
-> 
+> Add support for
+>=20
+> NEA4, NIA4, NCA4: Snow 5G confidentiality, integrity and AEAD modes
+> NEA5, NIA5, NCA5: AES 256 confidentiality, integrity and AEAD modes
+> NEA6, NIA6, NCA6: ZUC 256 confidentiality, integrity and AEAD modes
+>=20
+> Signed-off-by: Radu Nicolau <radu.nicolau@intel.com>
 
-I used this for a trial balloon for automated patch review automation.
+Working on AI based patch review and used this pair as a test case.
+The results showed some things (mostly documentation) that could be
+fixed and also some false positives like recommending adding __rte_experime=
+ntal
+to enum.
 
-$ ./devtools/analyze-patch.sh -v -p xai ~/Downloads/bundle-1673-mev-v5.mbox 
-=== Request ===
-Provider: xai
-Model: grok-3
-AGENTS file: AGENTS.md
-Patch file: /home/shemminger/Downloads/bundle-1673-mev-v5.mbox
-===============
-=== Token Usage ===
-Prompt tokens: 34732
-Completion tokens: 2545
-Total tokens: 37277
-===================
-=== Patch Review: bundle-1673-mev-v5.mbox (via Grok) ===
-Below is a detailed review of the provided DPDK patch series ('bundle-1673-mev-v5.mbox') based on the AGENTS.md guidelines. The feedback is organized by severity level (Error, Warning, Info) as defined in the guidelines. I have reviewed all four patches in the series for compliance with commit message format, license/copyright, C coding style, API and documentation requirements, and other guideline violations.
+=3D=3D=3D Patch Review: bundle-1674-crypto-v5.mbox (via Claude) =3D=3D=3D
+# DPDK Patch Review - bundle-1674-crypto-v5.mbox
+
+## Summary
+This patch series adds support for 256-bit NxA4/5/6 algorithms (SNOW 5G, AE=
+S-256, and ZUC-256 confidentiality, integrity, and AEAD modes) to the DPDK =
+cryptodev library.
 
 ---
 
-### **Patch Series Overview**
-- **Series Title**: [PATCH v5 1-4/4] net/idpf: Add PTP support for IDPF driver
-- **Patches Reviewed**:
-  1. net/idpf: add a new API for PTP support
-  2. net/idpf: add PTP virtchnl2 support
-  3. net/intel: add support for PTP
-  4. doc: add PTP IDPF documentation
+## ERROR Level Issues
+
+### 1. Missing Release Notes Update
+**Location:** Entire patchset =20
+**Issue:** No updates to release notes in `doc/guides/rel_notes/` =20
+**Guideline Violation:** Documentation requirements - "Update release notes=
+ in `doc/guides/rel_notes/` for important changes"
+
+**Required Action:**
+```
+Must add a release notes entry for the current release documenting:
+- New cipher algorithms: RTE_CRYPTO_CIPHER_SNOW5G_NEA4, RTE_CRYPTO_CIPHER_A=
+ES_NEA5, RTE_CRYPTO_CIPHER_ZUC_NEA6
+- New auth algorithms: RTE_CRYPTO_AUTH_SNOW5G_NIA4, RTE_CRYPTO_AUTH_AES_NIA=
+5, RTE_CRYPTO_AUTH_ZUC_NIA6
+- New AEAD algorithms: RTE_CRYPTO_AEAD_SNOW5G_NCA4, RTE_CRYPTO_AEAD_AES_NCA=
+5, RTE_CRYPTO_AEAD_ZUC_NCA6
+```
+
+### 2. Missing `__rte_experimental` Tags
+**Location:** `lib/cryptodev/rte_crypto_sym.h` =20
+**Issue:** New enum values added to public API without experimental marking=
+ =20
+**Guideline Violation:** "New APIs must be marked as `__rte_experimental`"
+
+**Details:**
+- Lines 185-188 (cipher algorithms)
+- Lines 394-402 (auth algorithms) =20
+- Lines 504-509 (AEAD algorithms)
+
+**Required Action:**
+While enum values typically don't receive `__rte_experimental` directly, th=
+e lack of any experimental marking or API versioning for this significant f=
+eature addition is concerning. Consider:
+1. Adding a deprecation notice period
+2. Or documenting the API stability commitment in release notes
+
+### 3. Commit Message Body Length Violations
+**Location:** Patch 1/2 commit message =20
+**Issue:** Body is only 3 lines but doesn't meet guideline expectations =20
+**Guideline Violation:** Body should provide context and justification
+
+**Required Content:**
+```
+Should include:
+- Why these algorithms are being added
+- Standards/specifications being implemented
+- Use case description
+```
 
 ---
 
-### **Feedback by Severity Level**
+## WARNING Level Issues
 
-#### **Errors (Must Fix)**
+### 1. Subject Line Style Issues
+**Location:** Both patches =20
+**Issue:** Subject lines are good but could be more descriptive
 
-1. **Commit Message Prefix Inconsistency (All Patches)**
-   - **Issue**: The commit message prefixes are inconsistent or incorrect in some patches.
-     - Patch 1: `net/idpf:` is correct.
-     - Patch 2: `net/idpf:` is correct.
-     - Patch 3: `net/intel:` is incorrect. According to AGENTS.md, the prefix should be `net/idpf:` since this is specific to the IDPF driver.
-     - Patch 4: `doc:` is incorrect. It should be `doc/guides:` or similar to reflect the documentation update context.
-   - **Guideline**: AGENTS.md specifies that the correct component prefix must be used (e.g., `net/idpf:` for IDPF driver changes).
-   - **Action**: Update Patch 3 prefix to `net/idpf:` and Patch 4 prefix to `doc/guides:` or an appropriate documentation prefix.
+**Current:**
+```
+[PATCH v5 1/2] cryptodev: add support for 256-NxA4/5/6 algorithms
+[PATCH v5 2/2] test/crypto: add tests for 256-NxA4/5/6 algorithms
+```
 
-2. **Missing Co-author in Signed-off-by (Patch 1)**
-   - **Issue**: Patch 1 commit message body mentions authorship by Milena Olech (`From: Milena Olech <milena.olech@intel.com>`), and her `Signed-off-by` is included. However, the email header shows Soumyadeep Hore as the submitter, and both are in the `Signed-off-by` lines. This is fine, but ensure that all contributors are correctly acknowledged.
-   - **Guideline**: AGENTS.md requires `Signed-off-by:` with real names and valid emails for all contributors.
-   - **Action**: No immediate action needed as both are signed off, but confirm with maintainers if the `From:` field in the commit message should match the submitter or if this is acceptable as is.
+**Recommendation:**
+```
+cryptodev: add SNOW 5G/AES-256/ZUC-256 NEA/NIA/NCA support
+test/crypto: add tests for SNOW 5G/AES-256/ZUC-256 NEA/NIA/NCA
+```
 
-3. **Missing Release Notes for API Changes (Patch 1 and Patch 2)**
-   - **Issue**: Patch 1 introduces new APIs for PTP in `virtchnl2.h`, and Patch 2 adds implementation support in `idpf_ptp.c`. While Patch 4 updates release notes, the notes only mention "Timesync features" under Patch 3's context. There is no specific mention of the new APIs introduced in Patch 1 and 2.
-   - **Guideline**: AGENTS.md requires release notes for API changes and new driver subsystems.
-   - **Action**: Update `doc/guides/rel_notes/release_26_03.rst` in Patch 4 to explicitly mention the new PTP APIs and virtchnl2 support introduced in Patches 1 and 2.
+### 2. Inconsistent Algorithm Naming in Documentation
+**Location:** Patch 1, `lib/cryptodev/rte_crypto_sym.h` =20
+**Issue:** Comments use inconsistent naming conventions
+
+**Examples:**
+- Line 186: `/**< Snow 5G algorithm in NEA4 mode */`
+- Line 508: `/**< ZUC-256 algorithm in NCA6 mode */`
+
+**Recommendation:**
+Be consistent with hyphenation and capitalization:
+- "SNOW 5G" or "Snow 5G" (not "Snow 5G" mixed with "SNOW5G")
+- "ZUC-256" or "ZUC 256" consistently
+
+### 3. Missing API Documentation
+**Location:** Patch 1, `lib/cryptodev/rte_crypto_sym.h` =20
+**Issue:** Minimal documentation for new enum values
+
+**Required:**
+Add detailed Doxygen comments explaining:
+- Algorithm specifications/standards
+- Key size requirements (256-bit)
+- IV/nonce size requirements (16 bytes)
+- Expected tag sizes for AEAD modes
+- Bit vs byte length semantics
+
+### 4. Test Helper Function Error Handling
+**Location:** Patch 2, `app/test/test_cryptodev.c` =20
+**Issue:** Inconsistent error handling in helper functions
+
+**Lines 19923-19987 (`test_NEA_helper`):**
+```c
+if (retval !=3D 0)
+    return retval;
+```
+But then at line 19969:
+```c
+TEST_ASSERT_NOT_NULL(ut_params->op, "failed to retrieve obuf");
+```
+
+**Issue:** Mixing return codes with TEST_ASSERT macros. Should be consisten=
+t.
+
+**Recommendation:**
+```c
+if (retval !=3D 0)
+    return TEST_FAILED;
+
+TEST_ASSERT_NOT_NULL(ut_params->op, "failed to retrieve obuf");
+```
+
+### 5. Magic Number Usage
+**Location:** Throughout test code =20
+**Issue:** Hard-coded values without clear explanation
+
+**Examples:**
+- Line 19930: `32` (key length)
+- Line 19931: `16` (IV length)
+- Line 19933: `RTE_ALIGN_CEIL(tdata->msg_size, 8)` (why 8?)
+
+**Recommendation:**
+Define constants:
+```c
+#define NEA_KEY_LEN 32
+#define NEA_IV_LEN 16
+#define NEA_BLOCK_SIZE 8
+```
+
+### 6. Incomplete Test Suite Setup Error Handling
+**Location:** Lines 19915-19948 (`nxan_testsuite_setup`) =20
+**Issue:** `check_cipher_capabilities_supported` return values not checked =
+properly
+
+**Current:**
+```c
+if (check_cipher_capabilities_supported(...) !=3D 0 ||
+    check_auth_capabilities_supported(...) !=3D 0 ||
+    check_aead_capabilities_supported(...) !=3D 0) {
+    RTE_LOG(INFO, USER1, "Capability requirements...");
+    return TEST_SKIPPED;
+}
+```
+
+**Issue:** Assumes all non-zero returns mean "not supported". Some return v=
+alues might indicate errors.
+
+### 7. Test Vector File Header Guard
+**Location:** `test_cryptodev_nxan_test_vectors.h`, line 5 =20
+**Issue:** Header guard ends with `_H_` which is unconventional
+
+**Current:**
+```c
+#ifndef TEST_CRYPTODEV_NXAN_TEST_VECTORS_H_
+```
+
+**Recommendation:**
+```c
+#ifndef _TEST_CRYPTODEV_NXAN_TEST_VECTORS_H
+```
+
+### 8. Potential Memory Leak in Test Helpers
+**Location:** `test_NIA_helper`, `test_NEA_helper`, `test_NCA_helper` =20
+**Issue:** No cleanup on error paths
+
+**Example (line 19923-19987):**
+```c
+ut_params->ibuf =3D rte_pktmbuf_alloc(ts_params->mbuf_pool);
+/* ... operations ... */
+if (retval !=3D 0)
+    return retval;  // Leaks ut_params->ibuf
+```
+
+**Required:** Add proper cleanup:
+```c
+if (retval !=3D 0) {
+    if (ut_params->ibuf)
+        rte_pktmbuf_free(ut_params->ibuf);
+    return TEST_FAILED;
+}
+```
 
 ---
 
-#### **Warnings (Should Fix)**
+## INFO Level Issues
 
-1. **Missing `__rte_experimental` Tag for New APIs (Patch 1)**
-   - **Issue**: Patch 1 introduces new APIs for PTP support in `virtchnl2.h` (e.g., structures and opcodes for PTP operations). These are not marked with `__rte_experimental` in the header file.
-   - **Guideline**: AGENTS.md mandates that new APIs must be marked as `__rte_experimental` and must be alone on the line immediately preceding the return type in header files.
-   - **Action**: Add `__rte_experimental` tags to all new API declarations in `virtchnl2.h` (e.g., before function prototypes or structure definitions if they are part of the public API).
+### 1. Test Vector Organization
+**Location:** `test_cryptodev_nxan_test_vectors.h` =20
+**Observation:** Very large file (2029 lines) with similar structure
 
-2. **Missing Test Coverage for New APIs (Patch 1 and Patch 2)**
-   - **Issue**: The patches introduce new PTP APIs and implementation, but there is no mention of corresponding tests in `app/test` or hooks in `app/testpmd`.
-   - **Guideline**: AGENTS.md requires new APIs to have hooks in `app/testpmd` and tests in the functional test suite using `TEST_ASSERT` macros and `unit_test_suite_runner`.
-   - **Action**: Add test coverage in a subsequent patch or update the series to include test cases for the new PTP APIs. Mention plans for test addition if not included in this series.
+**Suggestion:**
+Consider generating test vectors programmatically or using a more compact f=
+ormat for maintainability.
 
-3. **Missing Documentation for New APIs (Patch 1)**
-   - **Issue**: Patch 1 adds new structures and opcodes in `virtchnl2.h` for PTP support, but there are no Doxygen comments or detailed documentation for these new APIs in the header file. Patch 4 only documents high-level PTP support in the driver, not the specific APIs.
-   - **Guideline**: AGENTS.md requires Doxygen comments for public APIs.
-   - **Action**: Add Doxygen comments for new structures and enums in `virtchnl2.h` to explain their purpose and usage.
+### 2. Duplicate Test Structure Code
+**Location:** Lines 20370-20989 =20
+**Issue:** Highly repetitive test case definitions
 
-4. **Driver Global Variables Without Unique Prefixes (Patch 2 and Patch 3)**
-   - **Issue**: Patch 2 introduces global structures like `idpf_ptp` in `idpf_ptp.c`, and Patch 3 integrates them into `idpf_adapter`. These do not use a unique prefix (e.g., `idpf_`) for all global variables to prevent namespace clashes during static linking.
-   - **Guideline**: AGENTS.md requires driver-specific prefixes for global variables to avoid clashes.
-   - **Action**: Ensure all global variables and structures have a unique prefix like `idpf_` to avoid potential conflicts.
+**Example Pattern:**
+```c
+static int
+test_NEA4_case_1_encrypt(void)
+{
+    return test_NEA_helper(&nea4_test_1, RTE_CRYPTO_CIPHER_OP_ENCRYPT);
+}
+static int
+test_NEA4_case_1_decrypt(void)
+{
+    return test_NEA_helper(&nea4_test_1, RTE_CRYPTO_CIPHER_OP_DECRYPT);
+}
+```
 
-5. **Inappropriate Use of `rte_zmalloc` Without Justification (Patch 2)**
-   - **Issue**: Patch 2 uses `rte_zmalloc` for memory allocation in functions like `idpf_ptp_get_vport_tstamps_caps` and `idpf_ptp_get_tx_tstamp`. There is no justification provided for using `rte_zmalloc` over standard `malloc`, especially since this does not appear to be for DMA-accessible or hugepage memory.
-   - **Guideline**: AGENTS.md specifies that `rte_malloc` should only be used for specific cases like DMA or hugepage memory. For general allocations, `malloc` is preferred.
-   - **Action**: Replace `rte_zmalloc` with `malloc` unless there is a specific need for hugepage memory, and justify the choice if `rte_zmalloc` is retained.
+**Suggestion:**
+Consider using a macro to reduce repetition:
+```c
+#define TEST_NEA_CASE(suite, num) \
+    static int test_##suite##_case_##num##_encrypt(void) { \
+        return test_NEA_helper(&suite##_test_##num, RTE_CRYPTO_CIPHER_OP_EN=
+CRYPT); \
+    } \
+    static int test_##suite##_case_##num##_decrypt(void) { \
+        return test_NEA_helper(&suite##_test_##num, RTE_CRYPTO_CIPHER_OP_DE=
+CRYPT); \
+    }
+```
 
-6. **Missing `Cc: stable@dpdk.org` for Potential Backport (All Patches)**
-   - **Issue**: The patches introduce new features for PTP support, which might be candidates for stable backporting. However, none of the commit messages include `Cc: stable@dpdk.org`.
-   - **Guideline**: AGENTS.md requires `Cc: stable@dpdk.org` for patches that are candidates for stable backport.
-   - **Action**: Add `Cc: stable@dpdk.org` to the commit messages if these changes are intended for backporting to stable branches.
+### 3. Comment Formatting in Test Vectors
+**Location:** Throughout test vector definitions =20
+**Observation:** Hex data formatting could be improved for readability
 
-7. **Documentation Does Not Match Code Behavior (Patch 4)**
-   - **Issue**: Patch 4 adds documentation for PTP support in `idpf.rst`, mentioning that the PTP client needs to run on PF in ACC. However, the code in Patch 3 (`idpf_ethdev.c`) does not explicitly restrict or document this behavior in the implementation.
-   - **Guideline**: AGENTS.md requires documentation to match code behavior.
-   - **Action**: Ensure the documentation reflects the exact behavior implemented in the code, or add a code-level check/comment to enforce this requirement.
+**Current:**
+```c
+.key =3D {
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+```
 
-8. **Commit Message Body Content (Patch 1 and Patch 3)**
-   - **Issue**: The commit message bodies for Patch 1 and Patch 3 are brief and lack detailed context about the changes or the problem being solved.
-   - **Guideline**: AGENTS.md requires commit message bodies to describe the issue being fixed or feature being added with sufficient context for reviewers.
-   - **Action**: Expand the commit message bodies to provide more context about why PTP support is being added and what specific problems it addresses.
+**Suggestion:** Add comments indicating byte positions:
+```c
+.key =3D {
+    /* Bytes 0-7 */
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    /* Bytes 8-15 */
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+```
+
+### 4. Test Suite Naming Consistency
+**Location:** Lines 20698-20984 =20
+**Observation:** Suite names use different formats
+
+**Examples:**
+```c
+.suite_name =3D "256 NEA4 (SNOW 5G) Test Suite",
+.suite_name =3D "256 NEA5 (AES 256) Test Suite",
+.suite_name =3D "256 NEA6 (ZUC 256) Test Suite",
+```
+
+**Suggestion:** Consider more concise names:
+```c
+.suite_name =3D "SNOW 5G NEA4 Test Suite",
+.suite_name =3D "AES-256 NEA5 Test Suite",
+.suite_name =3D "ZUC-256 NEA6 Test Suite",
+```
+
+### 5. Unused Test Data Variable
+**Location:** Line 20101 (`nea6_test_9`) =20
+**Observation:** `nea6_test_9` is defined but never used
+
+```c
+static const
+struct nxa_256_test_data nea6_test_9 =3D {
+    // ... identical to nea6_test_7 ...
+};
+```
+
+**Action:** Either remove or add to test suite.
+
+### 6. Missing Error Message Details
+**Location:** Various `TEST_ASSERT_*` calls =20
+**Issue:** Generic error messages
+
+**Example (line 19969):**
+```c
+TEST_ASSERT_NOT_NULL(ut_params->op, "failed to retrieve obuf");
+```
+
+**Suggestion:**
+```c
+TEST_ASSERT_NOT_NULL(ut_params->op,=20
+    "Failed to process crypto operation for %s",=20
+    tdata->test_name);
+```
+
+### 7. Code Style: Line Length
+**Location:** Multiple locations =20
+**Observation:** Some lines approach or exceed 100 characters
+
+**Example (line 19933):**
+```c
+retval =3D create_wireless_algo_cipher_operation(tdata->iv,
+            16, RTE_ALIGN_CEIL(tdata->msg_size, 8), 0);
+```
+
+**Within limits but could be clearer with:**
+```c
+uint32_t aligned_msg_size =3D RTE_ALIGN_CEIL(tdata->msg_size, 8);
+retval =3D create_wireless_algo_cipher_operation(tdata->iv, 16,
+                                                aligned_msg_size, 0);
+```
 
 ---
 
-#### **Info (Consider)**
+## COMPLIANCE SUMMARY
 
-1. **Commit Message Style Consistency (All Patches)**
-   - **Issue**: The commit message subjects are generally compliant, but Patch 3's subject (`net/intel: add support for PTP`) could be more specific, e.g., `net/idpf: add PTP timesync support`.
-   - **Guideline**: AGENTS.md prefers descriptive and specific subject lines.
-   - **Suggestion**: Refine subject lines for better clarity and consistency across the series (e.g., use `net/idpf:` consistently and add more specificity).
+### =E2=9C=85 Correct
 
-2. **Code Style Minor Preferences (Patch 2 and Patch 3)**
-   - **Issue**: Some functions in `idpf_ptp.c` and `idpf_ethdev.c` have long lines or inconsistent indentation in comments (e.g., mixed use of tabs/spaces in alignment). While not a major issue, consistency is preferred.
-   - **Guideline**: AGENTS.md suggests consistent style within files (hard tabs for indentation, spaces for alignment).
-   - **Suggestion**: Run `checkpatches.sh` to ensure style consistency and fix any minor formatting issues.
+1. **License Headers:** All new files have proper SPDX license identifiers
+2. **Copyright:** Intel copyright notices present and properly formatted
+3. **C Style:** Code follows DPDK style guidelines (indentation, braces, na=
+ming)
+4. **Commit Format:** Signed-off-by present, reasonable subject line length
+5. **Test Infrastructure:** Proper use of `unit_test_suite_runner` framework
+6. **Code Patterns:** No forbidden tokens, no unnecessary casts
 
-3. **Optimization Suggestion for Timestamp Handling (Patch 3)**
-   - **Issue**: The timestamp handling in `idpf_common_rxtx.c` uses a software timer to update hardware timestamps periodically. This could potentially be optimized by reducing unnecessary checks or using hardware events if supported.
-   - **Guideline**: AGENTS.md encourages optimization suggestions as "Info" level feedback.
-   - **Suggestion**: Consider optimizing the timestamp update logic if hardware events or interrupts can be used to reduce software overhead.
+### =E2=9D=8C Must Fix (Errors)
 
-4. **Alternative Approach for PTP Mailbox Handling (Patch 2)**
-   - **Issue**: Patch 2 introduces a secondary mailbox for PTP communication. An alternative could be to handle this within the primary mailbox with specific opcodes to reduce complexity.
-   - **Guideline**: AGENTS.md allows "Info" level feedback for alternative approaches.
-   - **Suggestion**: Evaluate if using a single mailbox with tagged messages could simplify the design, and document the rationale for using a secondary mailbox if it is retained.
+1. Missing release notes update
+2. Missing API stability documentation
+3. Insufficient commit message detail
 
----
+### =E2=9A=A0=EF=B8=8F Should Fix (Warnings)
 
-### **Summary of Actions Required**
+1. Inconsistent algorithm naming
+2. Incomplete API documentation
+3. Test helper error handling issues
+4. Missing cleanup on error paths
+5. Magic numbers without constants
+6. Memory leak potential in tests
 
-- **Errors**:
-  - Fix commit message prefixes in Patch 3 and Patch 4.
-  - Update release notes in Patch 4 to cover API changes from Patches 1 and 2.
-- **Warnings**:
-  - Add `__rte_experimental` tags for new APIs in Patch 1.
-  - Add test coverage for new APIs or document plans for testing.
-  - Add Doxygen comments for new APIs in `virtchnl2.h`.
-  - Use unique prefixes for driver global variables.
-  - Replace `rte_zmalloc` with `malloc` unless justified.
-  - Consider adding `Cc: stable@dpdk.org` for backport candidates.
-  - Ensure documentation matches code behavior.
-  - Expand commit message bodies for better context.
-- **Info**:
-  - Refine commit message subjects for clarity.
-  - Address minor code style issues.
-  - Consider optimizations and alternative approaches as suggested.
+### =F0=9F=92=A1 Consider (Info)
+
+1. Reducing code repetition with macros
+2. Improving test vector organization
+3. Adding more descriptive error messages
+4. Using constants for magic numbers
 
 ---
 
-### **Conclusion**
-This patch series introduces significant functionality for PTP support in the IDPF driver, but it requires several fixes to comply with DPDK guidelines, particularly around API tagging, documentation, and testing. Addressing the "Errors" and "Warnings" will ensure the patches are ready for upstream submission. The "Info" items are optional but could improve the overall quality of the submission.
+## RECOMMENDATION
 
-Please revise the patches based on the feedback provided and resubmit for further review. If you have questions or need clarification on any point, feel free to ask.
+**Status:** CHANGES REQUESTED
 
+The patch implements the core functionality correctly and follows most DPDK=
+ conventions. However, it requires:
+
+1. **Mandatory:** Add release notes entry
+2. **Mandatory:** Expand commit message with context
+3. **Strongly Recommended:** Fix memory leak potential in test helpers
+4. **Recommended:** Add comprehensive API documentation
