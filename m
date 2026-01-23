@@ -2,75 +2,42 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E44D0D77882
-	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Jan 2026 16:57:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86077D7788E
+	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Jan 2026 17:22:48 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AFC0240651;
-	Fri, 23 Jan 2026 17:57:44 +0100 (CET)
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com
- [209.85.221.52]) by mails.dpdk.org (Postfix) with ESMTP id EACBB40649
- for <dev@dpdk.org>; Fri, 23 Jan 2026 17:57:42 +0100 (CET)
-Received: by mail-wr1-f52.google.com with SMTP id
- ffacd0b85a97d-42fb5810d39so1544676f8f.2
- for <dev@dpdk.org>; Fri, 23 Jan 2026 08:57:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=6wind.com; s=google; t=1769187462; x=1769792262; darn=dpdk.org;
- h=content-transfer-encoding:in-reply-to:from:content-language
- :references:cc:to:subject:user-agent:mime-version:date:message-id
- :from:to:cc:subject:date:message-id:reply-to;
- bh=ae2JqFE2CXpJOF83wlRjlcogv8U8gfLu969nuhb8hLA=;
- b=ai3kYSTZHbtluvQo1idL7jhcKwGV/w9G2YGun7h78pXPBKAFq3c56o3o5auHZllT5X
- u0GraI6shMlkzDDHf5irTsXGXT0P2oTLX+c/2vh/VL3oy4HZJrBcwr3QeMmDZBLPQN4/
- 3wYdBcU+sZ8Ld9sqavfYA05Qx43Y4RZbooalI0v3awrBfAchRsQwLeZRNRnT390cg3By
- FYt/EPjV6UcJ39QbS3fflx7vxHQutaNA5a3y0CXHIs+r2ho9iTl5qUpw1iGZlbyixh5P
- Toy6AJqtjVxvtSOvBO90uHiix9zVXROYNoAE5pAoCwnKbP2mRWKVOnYZ5pIII9+jRU94
- QvCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1769187462; x=1769792262;
- h=content-transfer-encoding:in-reply-to:from:content-language
- :references:cc:to:subject:user-agent:mime-version:date:message-id
- :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=ae2JqFE2CXpJOF83wlRjlcogv8U8gfLu969nuhb8hLA=;
- b=cshJ0UJGM5F9IfceTEQ7pdlgUZNSzhQ6omjHYNbFmSPOCXcQ5Dgn0hT8AodFhYucsT
- mh/gsvgMkgIrgD83ZiTNhFifhDzfNRvpwZ0WeNTV4SEkRO6dV5FNEKf+17GsaQVaH1Bn
- 32abg89EhY4t8UYSUcgvZAJN08LI4xITp7y1dH7LrHGXIfaCTB5/wGT6AezGuRCDaK3O
- lkvTHn5M1CkbvwsauXsWSvPdGlpfQ10WVwKwh6QeRFtcPLZSf7INKB63q75NchjxTNCC
- bCb1JO/v6VrZFpn1DzoJJavCSNmCTRLkUGPU850NGt6kzCTgkdlkEeQ1MV0ecIIieEFj
- gcOw==
-X-Gm-Message-State: AOJu0YxwxdnWkQW/PtrSFNtKeDNlyhEfqbeso1FqX7yNDsCty1dqBuhV
- deegILHIG3HvgpA7/WqgxNg7MFOhxpJ1FGRJ8ngAaPe5jsLFQtB5SG2FpAGUx89pTw==
-X-Gm-Gg: AZuq6aKZxiBtNiU/M6PM20N8sunbFOfrIWznH+UOSI6SgucB5cgOTRR67pUimRdpn29
- JCtKzfsxafYu7Yt1OLnOx1TuuURUdSFI1LBQVxr01Z90QOJYYA0oo63OVD5Qrmcru2ntXHTMcK7
- 2r+qwXkJjboahUvaO0pBBnH1OW5NpT0IwxGbZm4/Yp7x73DUYStr70o74vwNPi0wgKsSplGqEP6
- e/CQh7lsCO0mJzZxfi/5+D4aSIVt1EIZswR2idlra76bSWHtaiN/9prkucEqUq78Fj2/7/q6uyT
- c+uJNIEcWstRlECR1tNNe8rHyqc9Fy1EgJz49dp3iexn/tgXP7Q1J2b/5ngDn2Q+vNHtjdFczcv
- Yfgp0vbsMhEclYJWJI0AOSQJ9y80J7YF0KwumviIbZ/doiBdtUX6XNxsUBJAGKeAcH6PeP6ZeA/
- mTMyUa4F6m39Rmqqx5eShJHrEivg==
-X-Received: by 2002:a05:6000:250a:b0:430:fd84:317a with SMTP id
- ffacd0b85a97d-435b1604eeemr6673059f8f.38.1769187461952; 
- Fri, 23 Jan 2026 08:57:41 -0800 (PST)
-Received: from [10.17.1.39] ([185.13.181.2]) by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-435b1c24f15sm8235937f8f.18.2026.01.23.08.57.41
- (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
- Fri, 23 Jan 2026 08:57:41 -0800 (PST)
-Message-ID: <82710dcc-d2f9-4e69-9f5f-ac70135e2333@6wind.com>
-Date: Fri, 23 Jan 2026 17:57:41 +0100
+	by mails.dpdk.org (Postfix) with ESMTP id 54C5040269;
+	Fri, 23 Jan 2026 18:22:47 +0100 (CET)
+Received: from office2.cesnet.cz (office2.cesnet.cz [78.128.248.237])
+ by mails.dpdk.org (Postfix) with ESMTP id D65324021F
+ for <dev@dpdk.org>; Fri, 23 Jan 2026 18:22:45 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cesnet.cz;
+ s=office2-2020; t=1769188965;
+ bh=xSBCG6qHZTWJaxDcFfD4XlxOhivG5hQR2Q5l4p5b/oI=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References;
+ b=h9zhIfFvWRtnXMdeAzlAp2JSdsSX8A8dy+3+fWC7iBSVoz0XQWPt3hanL7dRFOCjt
+ isbdZd9BlhkGFVTtyK4QdrrG7N5vQw5RXvjfwUNGRUILuLAmul9H9XUHjvDn39770Y
+ dtU22pvVmKuhmZCGXLZxxVErBPAZARDiDR+TqDEzeQEt+VlBw6wb4/P72CAUHymdri
+ cT4tHQZ37G5xUbTBVzxDSZbhqURGB7VXBg5/PzmCntOvLJhFi6VTDXafL4bCY32tTd
+ SkEUkgmxiI9tQP7q+jFDkwvSiHrBp2FUT7VZAFK7pfq0NmuIkzcbSV8CsfWmbtGPW7
+ ic0VaebwbIV9A==
+Received: from emil.cesnet.cz (gtx107.cesnet.cz [IPv6:2001:718:812:27::107])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by office2.cesnet.cz (Postfix) with ESMTPSA id 95FD01180078;
+ Fri, 23 Jan 2026 18:22:45 +0100 (CET)
+From: spinler@cesnet.cz
+To: dev@dpdk.org
+Cc: Martin Spinler <spinler@cesnet.cz>
+Subject: [PATCH v5 1/8] net/nfb: prepare for indirect queue mapping scheme
+Date: Fri, 23 Jan 2026 18:22:17 +0100
+Message-ID: <20260123172224.1567362-2-spinler@cesnet.cz>
+X-Mailer: git-send-email 2.52.0
+In-Reply-To: <20260123172224.1567362-1-spinler@cesnet.cz>
+References: <20260115151656.393106-1-spinler@cesnet.cz>
+ <20260123172224.1567362-1-spinler@cesnet.cz>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [V2] drivers/net: reorder Intel drivers list in meson script
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: dev@dpdk.org, Thomas Monjalon <thomas@monjalon.net>,
- Anatoly Burakov <anatoly.burakov@intel.com>, stable@dpdk.org,
- Olivier Matz <olivier.matz@6wind.com>
-References: <20260123162104.1854187-1-thierry.herbelot@6wind.com>
- <20260123162707.1854505-1-thierry.herbelot@6wind.com>
- <aXOm1Xep0eINPO3y@bricha3-mobl1.ger.corp.intel.com>
-Content-Language: en-US
-From: Thierry Herbelot <thierry.herbelot@6wind.com>
-In-Reply-To: <aXOm1Xep0eINPO3y@bricha3-mobl1.ger.corp.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,70 +51,302 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On 1/23/26 17:50, Bruce Richardson wrote:
-> On Fri, Jan 23, 2026 at 05:27:07PM +0100, Thierry Herbelot wrote:
->> After an upstream patch (see Fixes), net_ixgbe_vf is no longer
->> declared in testpmd PMD info, when compiling under Redhat-9:
->>
->>> $ meson setup build && ninja -C build
->>> $ ./usertools/dpdk-pmdinfo.py build/app/dpdk-testpmd|grep ixgbe
->>>      "name": "net_ixgbe",
->>
->> Name 'net_ixgbe_vf' should also be reported.
->>
->> One workaround is to move 'intel/ixgbe' as last in the list of Intel
->> drivers. This restores net_ixgbe_vf under Redhat-9:
->>
->>> $ meson setup build && ninja -C build
->>> $ ./usertools/dpdk-pmdinfo.py build/app/dpdk-testpmd|grep ixgbe
->>>      "name": "net_ixgbe_vf",
->>>      "name": "net_ixgbe",
->>
->> Fixes: 04f1b16c54f3 ("drivers: merge common and net idpf drivers")
->> Signed-off-by: Thierry Herbelot <thierry.herbelot@6wind.com>
->> ---
->> V2: use shorter lines in commit log.
->> ---
->>   drivers/net/meson.build | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/net/meson.build b/drivers/net/meson.build
->> index c7dae4ad273c..8d96244cdbb0 100644
->> --- a/drivers/net/meson.build
->> +++ b/drivers/net/meson.build
->> @@ -32,8 +32,8 @@ drivers = [
->>           'intel/ice',
->>           'intel/idpf',
->>           'intel/ipn3ke',
->> -        'intel/ixgbe',
->>           'intel/cpfl',  # depends on idpf, so must come after it
->> +        'intel/ixgbe',
->>           'ionic',
->>           'mana',
->>           'memif',
-> 
-> This is a strange one - did you do any investgation into why or how this
-> fixes things? You describe it as a workaround so any hints towards a proper
-> root cause and fix are welcome :-)
+From: Martin Spinler <spinler@cesnet.cz>
 
-Hello Bruce,
+The NFB driver is being enhanced to create one ethdev per physical
+Ethernet port instead of one ethdev per PCI device. This requires
+an indirect mapping layer because DPDK queue indices no longer
+directly correspond to firmware queue indices.
 
-This is indeed a bit puzzling: it seems that the expected ELF section is 
-present, a 'strings' dump shows no difference between a 'full' testpmd 
-and one missing ixgbe_vf. Still pmdinfo is missing one PMD.
+This change adds queue_map_rx and queue_map_tx arrays to track the
+mapping between DPDK queue indices and firmware queue IDs, preparing
+for the multi-port implementation in subsequent patches.
 
-The issue was not seen when using Ubuntu-24.04.
+Signed-off-by: Martin Spinler <spinler@cesnet.cz>
+---
+ drivers/net/nfb/nfb.h        |  5 +++++
+ drivers/net/nfb/nfb_ethdev.c | 21 +++++++++++++++++++++
+ drivers/net/nfb/nfb_rx.c     | 30 +++++++++++++++---------------
+ drivers/net/nfb/nfb_rx.h     |  9 ++++-----
+ drivers/net/nfb/nfb_tx.c     | 27 +++++++++++++++------------
+ drivers/net/nfb/nfb_tx.h     |  7 +++----
+ 6 files changed, 63 insertions(+), 36 deletions(-)
 
-	Best regards
-
-	Thierry
-
+diff --git a/drivers/net/nfb/nfb.h b/drivers/net/nfb/nfb.h
+index 90b04c6151..6b74b3e6ec 100644
+--- a/drivers/net/nfb/nfb.h
++++ b/drivers/net/nfb/nfb.h
+@@ -60,6 +60,11 @@ struct pmd_internals {
+ struct pmd_priv {
+ 	uint16_t max_rx_queues;
+ 	uint16_t max_tx_queues;
++
++	/** Mapping from DPDK RX queue index to firmware queue ID */
++	int             *queue_map_rx;
++	/** Mapping from DPDK TX queue index to firmware queue ID */
++	int             *queue_map_tx;
+ };
+ 
+ #endif /* _NFB_H_ */
+diff --git a/drivers/net/nfb/nfb_ethdev.c b/drivers/net/nfb/nfb_ethdev.c
+index 947ee9e21d..803815138c 100644
+--- a/drivers/net/nfb/nfb_ethdev.c
++++ b/drivers/net/nfb/nfb_ethdev.c
+@@ -509,6 +509,7 @@ static const struct eth_dev_ops ops = {
+ static int
+ nfb_eth_dev_init(struct rte_eth_dev *dev)
+ {
++	int i;
+ 	int ret;
+ 	uint32_t mac_count;
+ 	struct rte_eth_dev_data *data = dev->data;
+@@ -577,6 +578,20 @@ nfb_eth_dev_init(struct rte_eth_dev *dev)
+ 		priv->max_rx_queues = max_rx_queues;
+ 		priv->max_tx_queues = max_tx_queues;
+ 
++		priv->queue_map_rx = rte_calloc("NFB queue map", (max_rx_queues + max_tx_queues),
++				sizeof(*priv->queue_map_rx), 0);
++		if (priv->queue_map_rx == NULL) {
++			ret = -ENOMEM;
++			goto err_alloc_queue_map;
++		}
++		priv->queue_map_tx = priv->queue_map_rx + max_rx_queues;
++
++		/* default queue mapping is 1:1 */
++		for (i = 0; i < max_rx_queues; i++)
++			priv->queue_map_rx[i] = i;
++		for (i = 0; i < max_tx_queues; i++)
++			priv->queue_map_tx[i] = i;
++
+ 		/* Allocate space for MAC addresses */
+ 		mac_count = nfb_eth_get_max_mac_address_count(dev);
+ 		data->mac_addrs = rte_zmalloc(data->name,
+@@ -608,6 +623,8 @@ nfb_eth_dev_init(struct rte_eth_dev *dev)
+ 	return 0;
+ 
+ err_malloc_mac_addrs:
++	rte_free(priv->queue_map_rx);
++err_alloc_queue_map:
+ 	nfb_nc_rxmac_deinit(internals->rxmac, internals->max_rxmac);
+ 	nfb_nc_txmac_deinit(internals->txmac, internals->max_txmac);
+ 	nfb_close(internals->nfb);
+@@ -633,6 +650,10 @@ nfb_eth_dev_uninit(struct rte_eth_dev *dev)
+ 	struct rte_pci_device *pci_dev = RTE_ETH_DEV_TO_PCI(dev);
+ 	struct rte_pci_addr *pci_addr = &pci_dev->addr;
+ 	struct pmd_internals *internals = dev->process_private;
++	struct pmd_priv *priv = dev->data->dev_private;
++
++	if (rte_eal_process_type() == RTE_PROC_PRIMARY)
++		rte_free(priv->queue_map_rx);
+ 
+ 	nfb_nc_rxmac_deinit(internals->rxmac, internals->max_rxmac);
+ 	nfb_nc_txmac_deinit(internals->txmac, internals->max_txmac);
+diff --git a/drivers/net/nfb/nfb_rx.c b/drivers/net/nfb/nfb_rx.c
+index 413d275853..ff630f32f4 100644
+--- a/drivers/net/nfb/nfb_rx.c
++++ b/drivers/net/nfb/nfb_rx.c
+@@ -61,12 +61,13 @@ nfb_eth_rx_queue_setup(struct rte_eth_dev *dev,
+ 		struct rte_mempool *mb_pool)
+ {
+ 	struct pmd_internals *internals = dev->process_private;
++	struct pmd_priv *priv = dev->data->dev_private;
+ 
+-	struct ndp_rx_queue *rxq;
+ 	int ret;
++	int qid;
++	struct ndp_rx_queue *rxq;
+ 
+-	rxq = rte_zmalloc_socket("ndp rx queue",
+-			sizeof(struct ndp_rx_queue),
++	rxq = rte_zmalloc_socket("ndp rx queue", sizeof(struct ndp_rx_queue),
+ 			RTE_CACHE_LINE_SIZE, socket_id);
+ 
+ 	if (rxq == NULL) {
+@@ -77,23 +78,23 @@ nfb_eth_rx_queue_setup(struct rte_eth_dev *dev,
+ 
+ 	rxq->flags = 0;
+ 
+-	ret = nfb_eth_rx_queue_init(internals->nfb,
+-		rx_queue_id,
+-		dev->data->port_id,
+-		mb_pool,
+-		rxq);
++	qid = priv->queue_map_rx[rx_queue_id];
+ 
+-	if (ret == 0)
+-		dev->data->rx_queues[rx_queue_id] = rxq;
+-	else
+-		rte_free(rxq);
++	ret = nfb_eth_rx_queue_init(internals->nfb, qid, dev->data->port_id, mb_pool, rxq);
++	if (ret)
++		goto err_queue_init;
+ 
++	dev->data->rx_queues[rx_queue_id] = rxq;
++	return 0;
++
++err_queue_init:
++	rte_free(rxq);
+ 	return ret;
+ }
+ 
+ int
+ nfb_eth_rx_queue_init(struct nfb_device *nfb,
+-		uint16_t rx_queue_id,
++		int qid,
+ 		uint16_t port_id,
+ 		struct rte_mempool *mb_pool,
+ 		struct ndp_rx_queue *rxq)
+@@ -104,12 +105,11 @@ nfb_eth_rx_queue_init(struct nfb_device *nfb,
+ 	if (nfb == NULL)
+ 		return -EINVAL;
+ 
+-	rxq->queue = ndp_open_rx_queue(nfb, rx_queue_id);
++	rxq->queue = ndp_open_rx_queue(nfb, qid);
+ 	if (rxq->queue == NULL)
+ 		return -EINVAL;
+ 
+ 	rxq->nfb = nfb;
+-	rxq->rx_queue_id = rx_queue_id;
+ 	rxq->in_port = port_id;
+ 	rxq->mb_pool = mb_pool;
+ 	rxq->buf_size = (uint16_t)(mbp_priv->mbuf_data_room_size -
+diff --git a/drivers/net/nfb/nfb_rx.h b/drivers/net/nfb/nfb_rx.h
+index 67b3b00e2a..831945c577 100644
+--- a/drivers/net/nfb/nfb_rx.h
++++ b/drivers/net/nfb/nfb_rx.h
+@@ -30,7 +30,6 @@ nfb_timestamp_dynfield(struct rte_mbuf *mbuf)
+ struct ndp_rx_queue {
+ 	struct nfb_device *nfb;	     /* nfb dev structure */
+ 	struct ndp_queue *queue;     /* rx queue */
+-	uint16_t rx_queue_id;	     /* index */
+ 	uint8_t in_port;	     /* port */
+ 	uint8_t flags;               /* setup flags */
+ 
+@@ -47,8 +46,8 @@ struct ndp_rx_queue {
+  *
+  * @param nfb
+  *   Pointer to nfb device structure.
+- * @param rx_queue_id
+- *   RX queue index.
++ * @param qid
++ *   RX queue ID.
+  * @param port_id
+  *   Device [external] port identifier.
+  * @param mb_pool
+@@ -60,7 +59,7 @@ struct ndp_rx_queue {
+  */
+ int
+ nfb_eth_rx_queue_init(struct nfb_device *nfb,
+-	uint16_t rx_queue_id,
++	int qid,
+ 	uint16_t port_id,
+ 	struct rte_mempool *mb_pool,
+ 	struct ndp_rx_queue *rxq);
+@@ -70,7 +69,7 @@ nfb_eth_rx_queue_init(struct nfb_device *nfb,
+  *
+  * @param dev
+  *   Pointer to Ethernet device structure.
+- * @param idx
++ * @param rx_queue_id
+  *   RX queue index.
+  * @param desc
+  *   Number of descriptors to configure in queue.
+diff --git a/drivers/net/nfb/nfb_tx.c b/drivers/net/nfb/nfb_tx.c
+index 1f997ce22f..b5cbedeaf6 100644
+--- a/drivers/net/nfb/nfb_tx.c
++++ b/drivers/net/nfb/nfb_tx.c
+@@ -54,11 +54,13 @@ nfb_eth_tx_queue_setup(struct rte_eth_dev *dev,
+ 	const struct rte_eth_txconf *tx_conf __rte_unused)
+ {
+ 	struct pmd_internals *internals = dev->process_private;
++	struct pmd_priv *priv = dev->data->dev_private;
++
+ 	int ret;
++	int qid;
+ 	struct ndp_tx_queue *txq;
+ 
+-	txq = rte_zmalloc_socket("ndp tx queue",
+-		sizeof(struct ndp_tx_queue),
++	txq = rte_zmalloc_socket("ndp tx queue", sizeof(struct ndp_tx_queue),
+ 		RTE_CACHE_LINE_SIZE, socket_id);
+ 
+ 	if (txq == NULL) {
+@@ -67,32 +69,33 @@ nfb_eth_tx_queue_setup(struct rte_eth_dev *dev,
+ 		return -ENOMEM;
+ 	}
+ 
+-	ret = nfb_eth_tx_queue_init(internals->nfb,
+-		tx_queue_id,
+-		txq);
++	qid = priv->queue_map_tx[tx_queue_id];
+ 
+-	if (ret == 0)
+-		dev->data->tx_queues[tx_queue_id] = txq;
+-	else
+-		rte_free(txq);
++	ret = nfb_eth_tx_queue_init(internals->nfb, qid, txq);
++	if (ret)
++		goto err_queue_init;
+ 
++	dev->data->tx_queues[tx_queue_id] = txq;
++	return 0;
++
++err_queue_init:
++	rte_free(txq);
+ 	return ret;
+ }
+ 
+ int
+ nfb_eth_tx_queue_init(struct nfb_device *nfb,
+-	uint16_t tx_queue_id,
++	int qid,
+ 	struct ndp_tx_queue *txq)
+ {
+ 	if (nfb == NULL)
+ 		return -EINVAL;
+ 
+-	txq->queue = ndp_open_tx_queue(nfb, tx_queue_id);
++	txq->queue = ndp_open_tx_queue(nfb, qid);
+ 	if (txq->queue == NULL)
+ 		return -EINVAL;
+ 
+ 	txq->nfb = nfb;
+-	txq->tx_queue_id = tx_queue_id;
+ 
+ 	txq->tx_pkts = 0;
+ 	txq->tx_bytes = 0;
+diff --git a/drivers/net/nfb/nfb_tx.h b/drivers/net/nfb/nfb_tx.h
+index f107cf914b..c253af1a86 100644
+--- a/drivers/net/nfb/nfb_tx.h
++++ b/drivers/net/nfb/nfb_tx.h
+@@ -17,7 +17,6 @@
+ struct ndp_tx_queue {
+ 	struct nfb_device *nfb;     /* nfb dev structure */
+ 	struct ndp_queue *queue;    /* tx queue */
+-	uint16_t          tx_queue_id;       /* index */
+ 	volatile uint64_t tx_pkts;  /* packets transmitted */
+ 	volatile uint64_t tx_bytes; /* bytes transmitted */
+ 	volatile uint64_t err_pkts; /* erroneous packets */
+@@ -54,8 +53,8 @@ nfb_eth_tx_queue_setup(struct rte_eth_dev *dev,
+  *
+  * @param nfb
+  *   Pointer to nfb device structure.
+- * @param tx_queue_id
+- *   TX queue index.
++ * @param qid
++ *   TX queue ID.
+  * @param[out] txq
+  *   Pointer to ndp_tx_queue output structure
+  *
+@@ -64,7 +63,7 @@ nfb_eth_tx_queue_setup(struct rte_eth_dev *dev,
+  */
+ int
+ nfb_eth_tx_queue_init(struct nfb_device *nfb,
+-	uint16_t tx_queue_id,
++	int qid,
+ 	struct ndp_tx_queue *txq);
+ 
+ /**
 -- 
-Thierry Herbelot
-http://www.6wind.com/
-
-Follow us:
-https://www.linkedin.com/company/6wind/
-https://twitter.com/6WINDsoftware
-https://www.youtube.com/user/6windsoftware
+2.52.0
 
