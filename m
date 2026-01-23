@@ -2,67 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7720D74EF5
-	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Jan 2026 16:03:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DB5BD74EF5
+	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Jan 2026 16:03:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9F52A4026F;
-	Fri, 23 Jan 2026 17:03:05 +0100 (CET)
-Received: from mail-dy1-f182.google.com (mail-dy1-f182.google.com
- [74.125.82.182]) by mails.dpdk.org (Postfix) with ESMTP id 411EE4021F
- for <dev@dpdk.org>; Fri, 23 Jan 2026 17:03:04 +0100 (CET)
-Received: by mail-dy1-f182.google.com with SMTP id
- 5a478bee46e88-2b6b0500e06so3069575eec.1
- for <dev@dpdk.org>; Fri, 23 Jan 2026 08:03:04 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id A97B440395;
+	Fri, 23 Jan 2026 17:03:16 +0100 (CET)
+Received: from mail-dy1-f179.google.com (mail-dy1-f179.google.com
+ [74.125.82.179]) by mails.dpdk.org (Postfix) with ESMTP id 44BF1402E1
+ for <dev@dpdk.org>; Fri, 23 Jan 2026 17:03:15 +0100 (CET)
+Received: by mail-dy1-f179.google.com with SMTP id
+ 5a478bee46e88-2b1981ca515so2708937eec.1
+ for <dev@dpdk.org>; Fri, 23 Jan 2026 08:03:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1769184183; x=1769788983; darn=dpdk.org;
+ d=gmail.com; s=20230601; t=1769184194; x=1769788994; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=cdsujPA3al0itvw8vdSyJ+S7ZXfhkhhLTVitXubjyIc=;
- b=Z7aBsTfTu/tkA96tWYRkwpq+UuSfrf/5rcz0tMOVil3PUkqW7MDS8P03j17xxEtemm
- lBXcc5+DTG4f36UD3vtRY/VrTIYYjECzB9pt3bAMnZJPdDR8Y0o87P8IoTXOAIbi2GCN
- 5kay4W+PL9MCOiQHLOYAzyt1gbFKoNHLEbTANQrwOpV8qoimbbRrh2dVXwCnw6/TE7Zq
- /ze8Gq0vuLUwgvIYlAdWjp7nGxL3I7r5nMgXYb4zWm6Qkyg0SqhXbonIGONZ8FXkUgFS
- NCojtIxycrH5jCnFJxL0nAgC/oOlNxiRWz26QTW12J4dxSFTqFskFQxpMyMCntEPrtHN
- djLg==
+ bh=hzRQp61yAvAB9gmU8ZlF71n1Vaz/zQwLcc6k3ojQuFg=;
+ b=EzaCKlR9jqO4N4sbz1a4IiohUo6f+nJAnlC6+3+oz5qxB53TdebRjkrGvZIF4XEzng
+ g2mKy3faOE/6eRgudjibTJVaUSMeVWCv8G1nKiDB2PEOy1olms56My3oMOU0O1S/K4Se
+ jgzuAZKZHUy2e9I4LiX3Ark25SlL5+tQC0ZmY/ieCzMmgOMyWghb48MW60J5y7LtsjkD
+ wp98hIQ4oBTJmkAsfvxX/essgV0GcB5N1EkqKiARkgdGncKj5l20c9f4rykX9lcUa1H0
+ fgWkTjFipJMpnrO9cbQgWIKoSTRLfYivcID9hDzE2a0olGF9Rvh6z5Z8KrQZ3UcYw+jb
+ BdgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1769184183; x=1769788983;
+ d=1e100.net; s=20230601; t=1769184194; x=1769788994;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=cdsujPA3al0itvw8vdSyJ+S7ZXfhkhhLTVitXubjyIc=;
- b=nxqO6jvKWXyy8dJxB5wVo+LHz75ep8c9jIGkL+d98NnPwo3y65UCj19bA02cb6uic7
- r6qRu/wCSacooGuMlJg46R+sTrpKWTVHujFvcZwVHGua7wEq5HWQWWakXN0bDMJeTUbk
- uBxutjL2z74vTRPxdF38j5nOKCK409mtYDFW+3fOMLsPTkPwEOYEEUmPo5QJC0KdaSJv
- 80sXLbn8Idi80fTrXH4Cb9MywTqZTCjqEfIsLYwjr5qcLAxMZ8R8AER3Eb0FA9Flc/gw
- y+4Y37f161TI46rwIAgWtr6YYEJYqfRDEWglZeK6wcssqUxCNmHmCMB0Bap52DYuIjUo
- rAxg==
-X-Gm-Message-State: AOJu0Yyg1e0bdiqTjYYczxBULL4V6b0R2oCM+DDgpQQ87j+D2D4Bd/4L
- hxBH47hez4SdsjGvAu7RZ5dsSDa+rZQHhM9QbBJj5Tg7ehVTJ7S7dH4Hu+PVqw==
-X-Gm-Gg: AZuq6aIt5g2tm57DqTEW+fwDgOsC/5vURuwlmXD+32h9Qi/+LTMaIQVvJrKSV0W0FuB
- tNlimHspajzOqKmdGqlYVZCEMiufsACcnZUXfE2Y5UlcEAcu6nrzeUhgP33DrxOmxZAgba7rYLI
- j6iV4AIB/oZaIwC/01njug9mkawt71AFbmrj2hOo3wSsgNJd0uq5u0Z9PGgjOeFpFOQOLWi01nM
- EHr2lJDEg1Q2we1V7sjrXSZAvrFcLbymyp+2Ddo5WWpe4f3eeYXzYWSgyr83SVWrDoqLQTo6XWr
- rhjt7KU9FKiyO3cofHUQllmn5YGE0LPzztkVXUFAyJCq/sHnPTALMzGW6+sPS5uRbt1d6uYznh3
- l1l/VcCPB0ahBicKcRvTaPaPM3GdD3tvoAmwyN0FFH3IyhNdosGxiIB0WQwljLbxKuxiVkOjSfo
- 32NXH3T6YqHOH99i6gtdYJVA==
-X-Received: by 2002:a05:7300:cacf:b0:2ae:581f:ce5 with SMTP id
- 5a478bee46e88-2b739956f8fmr1636760eec.7.1769184182818; 
- Fri, 23 Jan 2026 08:03:02 -0800 (PST)
+ bh=hzRQp61yAvAB9gmU8ZlF71n1Vaz/zQwLcc6k3ojQuFg=;
+ b=GbEX+NJLYzSPwmZ6u1R32i/LISfxF6g+NWcTykGKonzcKXHc9D6TX17SNq2644f5/2
+ m/tyDiPYwZ3MrHVBIfiCwSKdoWQdfh2iy2S63x/7FLS2JEe1efzdheABFMXO+EpelBZx
+ GO5sJzFTbLGsHBcZnslWYKOJFjSC97Olv5Xof+wuM0YCLlJbbm0t0kSM6cRSlOmiMm7M
+ BgKY8kWWXSx9QAeQ1aUjYjlJLLRm5nEFKbq0vWP7D4n5pV6pnHuvMi2SQn4NFxQ227yb
+ HB37cLnhMYRtNkvYCEG2fduvrUXjYncufPzTHnCQziJWXvWw5BAbtiMayVd6bHY7L1Es
+ GlNA==
+X-Gm-Message-State: AOJu0Yye4ruqM9FlOP9t/wbJROlWJ7ArWWob0OacRWOffHGcE18WAItO
+ UJfebr7rNjTaty95v4oPgJ425mUe+KRjk8Wy2aXYGT8D+gy7SMskROcxuvuxjQ==
+X-Gm-Gg: AZuq6aI0mNaYUSocoOE/SHIZ3LsScSRYtsfzKfZq0na/6p5HKkqrd7YrJhHdnmDsQ5J
+ 6HYDuegeTf+CkxNYX52ue9h+Mp1sn93VsVG42NJr0LSPBtmBe74iHxlyaRCvxoD2FXr5VRaBinT
+ FxQQ0iz40deACOtNVQW/LsDVhliSdBOWS1sfPgqKE3mF5o8zDiHQmHCw2qRHck/0WYlgmVgrJI+
+ nHaQfJleFFU1KO2y82rFiBTWKY9YWbTWvozFjQBItCisZdWL2GKH2uDRvgnBWYsciUuMAt5FL2d
+ rGXBa8falX7bfaehjhb5cU7UZa6h5e6BDnZFiTWpP4aJDIrQBvtyXtsakTmzKM1xgxzgcVs/zJC
+ 3UD+VikJvMW/ys45EqfgqkwJNZuXALcaLNigQo8ytkYtwSI7ouQEw4KtMidlbiIJfUII3f6mF54
+ KxXWBxEhiLu9iCcT2LaXzXRw==
+X-Received: by 2002:a05:7300:ed0e:b0:2ae:5e93:b69 with SMTP id
+ 5a478bee46e88-2b739b94bf7mr1543522eec.29.1769184193946; 
+ Fri, 23 Jan 2026 08:03:13 -0800 (PST)
 Received: from mac.com ([136.24.82.250]) by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-2b73a6f5d2asm3514158eec.14.2026.01.23.08.03.02
+ 5a478bee46e88-2b73a6f5d2asm3514158eec.14.2026.01.23.08.03.13
  (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
- Fri, 23 Jan 2026 08:03:02 -0800 (PST)
+ Fri, 23 Jan 2026 08:03:13 -0800 (PST)
 From: scott.k.mitch1@gmail.com
 To: dev@dpdk.org
 Cc: mb@smartsharesystems.com, stephen@networkplumber.org,
- Scott <scott_mitchell@apple.com>
-Subject: [PATCH v16 0/2] net: optimize __rte_raw_cksum
-Date: Fri, 23 Jan 2026 08:02:42 -0800
-Message-Id: <20260123160244.57335-1-scott.k.mitch1@gmail.com>
+ Scott Mitchell <scott.k.mitch1@gmail.com>,
+ Cyril Chemparathy <cchemparathy@ezchip.com>, stable@dpdk.org
+Subject: [PATCH v16 1/2] eal: add __rte_may_alias to unaligned typedefs
+Date: Fri, 23 Jan 2026 08:02:43 -0800
+Message-Id: <20260123160244.57335-2-scott.k.mitch1@gmail.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20260117212114.10466-1-scott.k.mitch1@gmail.com>
+In-Reply-To: <20260123160244.57335-1-scott.k.mitch1@gmail.com>
 References: <20260117212114.10466-1-scott.k.mitch1@gmail.com>
+ <20260123160244.57335-1-scott.k.mitch1@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -78,44 +80,78 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Scott <scott_mitchell@apple.com>
+From: Scott Mitchell <scott.k.mitch1@gmail.com>
 
-This series optimizes __rte_raw_cksum by replacing memcpy with direct
-pointer access, enabling compiler vectorization on both GCC and Clang.
+Add __rte_may_alias attribute to unaligned_uint{16,32,64}_t typedefs
+to prevent GCC strict-aliasing optimization bugs. GCC has a bug where
+it incorrectly elides struct initialization when strict aliasing is
+enabled, causing reads from uninitialized memory.
 
-Patch 1 adds __rte_may_alias to unaligned typedefs to prevent a GCC
-strict-aliasing bug where struct initialization is incorrectly elided.
+The __rte_may_alias attribute signals to the compiler that these types
+can alias other types, preventing the incorrect optimization.
 
-Patch 2 uses the improved unaligned_uint16_t type in __rte_raw_cksum
-to enable compiler optimizations while maintaining correctness across
-all architectures (including strict-alignment platforms).
+Fixes: 7621d6a8d0bd ("eal: add and use unaligned integer types")
+Cc: Cyril Chemparathy <cchemparathy@ezchip.com>
+Cc: stable@dpdk.org
+Signed-off-by: Scott Mitchell <scott.k.mitch1@gmail.com>
+---
+ lib/eal/include/rte_common.h | 34 +++++++++++++++++++---------------
+ 1 file changed, 19 insertions(+), 15 deletions(-)
 
-Performance results show significant improvements (40% for small buffers,
-up to 8x for larger buffers) on Intel Xeon with Clang 18.1.
-
-Changes in v16:
-- Add Fixes tag and Cc stable/author for backporting (patch 1)
-
-Changes in v15:
-- Use NOHUGE_OK and ASAN_OK constants in REGISTER_FAST_TEST
-
-Changes in v14:
-- Split into two patches: EAL typedef fix and checksum optimization
-- Use unaligned_uint16_t directly instead of wrapper struct
-- Added __rte_may_alias to unaligned typedefs to prevent GCC bug
-
-Scott Mitchell (2):
-  eal: add __rte_may_alias to unaligned typedefs
-  net: __rte_raw_cksum pointers enable compiler optimizations
-
- app/test/meson.build         |   1 +
- app/test/test_cksum_fuzz.c   | 240 +++++++++++++++++++++++++++++++++++
- app/test/test_cksum_perf.c   |   2 +-
- lib/eal/include/rte_common.h |  34 ++---
- lib/net/rte_cksum.h          |  14 +-
- 5 files changed, 266 insertions(+), 25 deletions(-)
- create mode 100644 app/test/test_cksum_fuzz.c
-
+diff --git a/lib/eal/include/rte_common.h b/lib/eal/include/rte_common.h
+index 573bf4f2ce..8a9623ea74 100644
+--- a/lib/eal/include/rte_common.h
++++ b/lib/eal/include/rte_common.h
+@@ -121,14 +121,27 @@ extern "C" {
+ #define __rte_aligned(a) __attribute__((__aligned__(a)))
+ #endif
+ 
++/**
++ * Macro to mark a type that is not subject to type-based aliasing rules
++ */
++#ifdef RTE_TOOLCHAIN_MSVC
++#define __rte_may_alias
++#else
++#define __rte_may_alias __attribute__((__may_alias__))
++#endif
++
++/**
++ * __rte_may_alias avoids compiler bugs (GCC) that elide initialization
++ * of memory when strict-aliasing is enabled.
++ */
+ #ifdef RTE_ARCH_STRICT_ALIGN
+-typedef uint64_t unaligned_uint64_t __rte_aligned(1);
+-typedef uint32_t unaligned_uint32_t __rte_aligned(1);
+-typedef uint16_t unaligned_uint16_t __rte_aligned(1);
++typedef uint64_t unaligned_uint64_t __rte_may_alias __rte_aligned(1);
++typedef uint32_t unaligned_uint32_t __rte_may_alias __rte_aligned(1);
++typedef uint16_t unaligned_uint16_t __rte_may_alias __rte_aligned(1);
+ #else
+-typedef uint64_t unaligned_uint64_t;
+-typedef uint32_t unaligned_uint32_t;
+-typedef uint16_t unaligned_uint16_t;
++typedef uint64_t unaligned_uint64_t __rte_may_alias;
++typedef uint32_t unaligned_uint32_t __rte_may_alias;
++typedef uint16_t unaligned_uint16_t __rte_may_alias;
+ #endif
+ 
+ /**
+@@ -159,15 +172,6 @@ typedef uint16_t unaligned_uint16_t;
+ #define __rte_packed_end __attribute__((__packed__))
+ #endif
+ 
+-/**
+- * Macro to mark a type that is not subject to type-based aliasing rules
+- */
+-#ifdef RTE_TOOLCHAIN_MSVC
+-#define __rte_may_alias
+-#else
+-#define __rte_may_alias __attribute__((__may_alias__))
+-#endif
+-
+ /******* Macro to mark functions and fields scheduled for removal *****/
+ #ifdef RTE_TOOLCHAIN_MSVC
+ #define __rte_deprecated
 -- 
 2.39.5 (Apple Git-154)
 
