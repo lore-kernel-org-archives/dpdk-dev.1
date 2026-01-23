@@ -2,75 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C309D72372
-	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Jan 2026 11:08:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86D32D72377
+	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Jan 2026 11:20:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 71C544026F;
-	Fri, 23 Jan 2026 12:08:32 +0100 (CET)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id EEB9340269
- for <dev@dpdk.org>; Fri, 23 Jan 2026 12:08:30 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1769166510;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=eS1Cbf/xSZ3eKGpbnAIX597QmlgGT6djp0EntBYpeAM=;
- b=QMrmkDoVO/XNTmtznl+n7bvZCf1Abwc0Pq3zFFAfO0ZGP0cnkvzkErrb0Q4rFlkiMmLfUZ
- Qsa/YPdpzJApQxLzIM4HPNxWYxzca8CsxLL9yltO4yhVsSvpV9QkFSX2HOoQQc+74DVw0x
- 1MHiPvdr7LUuT5XI/ur/RFHI0nII01Y=
-Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
- [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-590-h0_tj6OxNQyw-QZxqervmg-1; Fri, 23 Jan 2026 06:08:29 -0500
-X-MC-Unique: h0_tj6OxNQyw-QZxqervmg-1
-X-Mimecast-MFC-AGG-ID: h0_tj6OxNQyw-QZxqervmg_1769166508
-Received: by mail-lf1-f70.google.com with SMTP id
- 2adb3069b0e04-59b6dfc0cbaso65556e87.3
- for <dev@dpdk.org>; Fri, 23 Jan 2026 03:08:29 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1769166508; x=1769771308;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=eS1Cbf/xSZ3eKGpbnAIX597QmlgGT6djp0EntBYpeAM=;
- b=Lz4y2Rfirljqg4JXjsLutr/GnPmjkHJMxMv9taZ0gTsYBF6MsmJiqW9lkCnCfb6ESu
- KTXgOMmr6aHZ+W0e62hlZXfZOf2Xg2X5JhE2S6+X4Y92y+kia+gG1M2BP6MZM6SpGTZg
- +dJCRhtwCKroZkxFE5Sv1ib6o6eXvHEBZDfxOm8LC+kuVGiRMqsfwNp4A3lGQBw8G/ka
- ZkN9Y1LvkaKec08BC9YtSYk2fn0zS3G3hfM3jpmIzsfXyFY98LZMHxrpGGJrYD6Qzn+a
- i9Dg0E+N2StQYVQSP2SalOWirVZbePLpYjugaV+T5KAAdbEVubLkK7QuwGoQ6KxTlBSa
- 0/mA==
-X-Gm-Message-State: AOJu0YywqXII3uVHWZHmuAb1mA/A87mkNGV7tyTcF4YMCG/SkEKX3i19
- 9ZY59EnbvyBcZQ9JwEFhFWtfzszOANUzprfdsBq3IRP8gleD2ErV/roXDQ087oqT8ouaBXT19yX
- SEildokz8JbxrEpHnnqTF2bw0KBW+6C/6FNlK6lp5iykeuFa6xJ4lWLv+ORVtVGpqN0gVfgOCT6
- A712F58HA7iea9BHbiTL4=
-X-Gm-Gg: AZuq6aIcsLcMG6fNk2mRiii0CdfCmqgHYhBalZVhCbffUUx4rY2tIDeLzXWeN9c0Zn3
- utnIkuQu/FpRupEqCx6lexPpunZYJNJ2CHmwNe3k62zGF6WDHhkUKqv0InTt01K9XB/Va7pHnEY
- 0dgUIZw8/SOQQ899hL/Eg2pn2iWkQITjTBvplb92WWlpXN4dgjYpLfzG2xpSPSjtRhao+e
-X-Received: by 2002:a05:6512:b23:b0:599:cdb8:58b6 with SMTP id
- 2adb3069b0e04-59de4a2fec6mr949054e87.47.1769166507491; 
- Fri, 23 Jan 2026 03:08:27 -0800 (PST)
-X-Received: by 2002:a05:6512:b23:b0:599:cdb8:58b6 with SMTP id
- 2adb3069b0e04-59de4a2fec6mr949040e87.47.1769166506932; Fri, 23 Jan 2026
- 03:08:26 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id BC5174026F;
+	Fri, 23 Jan 2026 12:20:43 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+ by mails.dpdk.org (Postfix) with ESMTP id 7FE6C40269
+ for <dev@dpdk.org>; Fri, 23 Jan 2026 12:20:42 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1769167243; x=1800703243;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=mw6TFgWi5pSbxvrzcghQkhXuTkHcQb7yFgREIyqCCh8=;
+ b=Y5G0GEwJqWFno/c15lYs0/4kLvdhOAYkI+aGHNpVK2AMAdq5/+wewWde
+ SRG18tzs9AcYFk32j4VSNp8pR8SGnj0Ux6PWxl5lF3cRQLLg7bbHUQoxD
+ pBj4XrkYntXAKs5JqZ0yE3d2VjQyZezaYJaFGzijeCAcUpUq4Y2a6t/gX
+ c1rVvnkwA2Gb/3FWJ3893KG41nVz5DpawbB7W/JgNaaLWmf7RBT6OzunG
+ b26vhRsakY7waHMitfHMLrpLeRc7RMEs6VUVBjDSVSfFL1A7yHY7OzWWw
+ KtwMfLARvbLQVeWT46UvviW0+WsPQbHMUOG7QmBs607Z/9Sz43ZuFNPjI g==;
+X-CSE-ConnectionGUID: +i+f/OrfRq6QbGn1HK/6Iw==
+X-CSE-MsgGUID: sD4CZokwS/GAeqz1zQohtw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11679"; a="81049530"
+X-IronPort-AV: E=Sophos;i="6.21,248,1763452800"; d="scan'208";a="81049530"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+ by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 23 Jan 2026 03:20:42 -0800
+X-CSE-ConnectionGUID: dc5xJZp8T+aUOC3mSayJhQ==
+X-CSE-MsgGUID: 4D6/K4ziRDi4AtDCuZKxiQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,248,1763452800"; d="scan'208";a="207344856"
+Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
+ by fmviesa010.fm.intel.com with ESMTP; 23 Jan 2026 03:20:40 -0800
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: dev@dpdk.org
+Cc: mb@smartsharesystems.com,
+	Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH] net/intel: optimize for fast-free hint
+Date: Fri, 23 Jan 2026 11:20:31 +0000
+Message-ID: <20260123112032.2174361-1-bruce.richardson@intel.com>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F6565B@smartserver.smartshare.dk>
+References: <98CBD80474FA8B44BF855DF32C47DC35F6565B@smartserver.smartshare.dk>
 MIME-Version: 1.0
-References: <20260120112552.921243-1-bruce.richardson@intel.com>
- <CAJFAV8waN3mZeSd=KX7C_N-DR_SpnR3afo=UwcOUeZy1+bP5hQ@mail.gmail.com>
-In-Reply-To: <CAJFAV8waN3mZeSd=KX7C_N-DR_SpnR3afo=UwcOUeZy1+bP5hQ@mail.gmail.com>
-From: David Marchand <david.marchand@redhat.com>
-Date: Fri, 23 Jan 2026 12:08:15 +0100
-X-Gm-Features: AZwV_QhJBXsMTRhSgs_CxNOERhGV9VN-6-LC-sj4RqwWRncQQFtqMcdIHltHlGQ
-Message-ID: <CAJFAV8woYXc-UC6UZYjpYZRSV5_mruXZfxYUBhXui2TcLSNLiw@mail.gmail.com>
-Subject: Re: [PATCH 0/3] improve debug output for EAL flags unit tests
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: dev@dpdk.org, anatoly.burakov@intel.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: pB4Fs2bSL5Q86CaaFaGsrdxnhj1a0vpDje6N5VdMucc_1769166508
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,280 +60,193 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hello Bruce,
+When the fast-free hint is provided to the driver we know that the mbufs
+have refcnt of 1 and are from the same mempool. Therefore, we can
+optimize a bit for this case by:
 
-On Wed, 21 Jan 2026 at 10:14, David Marchand <david.marchand@redhat.com> wr=
-ote:
->
-> On Tue, 20 Jan 2026 at 12:26, Bruce Richardson
-> <bruce.richardson@intel.com> wrote:
-> >
-> > If issues arise in the EAL flags unit tests they can be trick to debug
-> > due to the lack of debugging output when running recursive instances of
-> > the test binary with different EAL flags. Try to improve this situation
-> > by adding extra debug output for recursive dpdk-test calls in general,
-> > and to some of the EAL flags tests in particular that are proving
-> > problematic.
-> >
-> > NOTE: there are intermittent failures seen in github actions with the
-> > file-prefix EAL unit tests. The problems seem less frequent, or possibl=
-y
-> > "gone", with this set applied, but even if it masks the problem, this
-> > set does give us greater visibility to debug if they do re-occur.
-> >
-> > Bruce Richardson (3):
-> >   app/test: add extra logging for recursive calls
-> >   test/eal_flags: add line numbers to error messages
-> >   test/eal_flags: add extra logging for file prefix tests
-> >
-> >  app/test/test.c           |  14 +-
-> >  app/test/test_eal_flags.c | 373 ++++++++++++++++++++++----------------
-> >  2 files changed, 224 insertions(+), 163 deletions(-)
->
-> Series applied, thanks Bruce for looking into this.
+* resetting the necessary mbuf fields, ie. nb_seg and next pointer when
+  we are accessing the mbuf on writing the descriptor.
+* on cleanup of buffers after transmit, we can just write those buffers
+  straight to the mempool without accessing them.
 
-We got one occurence in the CI.
-https://github.com/DPDK/dpdk/actions/runs/21214407393/job/61031333760
+Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+---
+ drivers/net/intel/common/tx.h            | 16 +++--
+ drivers/net/intel/common/tx_scalar_fns.h | 81 +++++++++++++++++++-----
+ 2 files changed, 76 insertions(+), 21 deletions(-)
 
-Here are the logs:
-
-2026-01-21T15:18:20.4304709Z  33/125 DPDK:fast-tests /
-eal_flags_vdev_opt_autotest    FAIL            0.92s   (exit status
-255 or signal 127 SIGinvalid)
-2026-01-21T15:18:20.4307907Z >>> DPDK_TEST=3Deal_flags_vdev_opt_autotest
-MALLOC_PERTURB_=3D42 /home/runner/work/dpdk/dpdk/build/app/dpdk-test -d
-/home/runner/work/dpdk/dpdk/build/drivers
-2026-01-21T15:18:20.4309736Z =E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=
-=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=
-=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=
-=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=
-=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95 =E2=9C=80
-=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=
-=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=
-=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=
-=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=
-=80=95=E2=80=95=E2=80=95=E2=80=95
-2026-01-21T15:18:20.4310450Z EAL: Detected CPU lcores: 4
-2026-01-21T15:18:20.4310882Z EAL: Detected NUMA nodes: 1
-2026-01-21T15:18:20.4311249Z EAL: Detected shared linkage of DPDK
-2026-01-21T15:18:20.4311730Z EAL: Multi-process socket
-/var/run/dpdk/rte/mp_socket
-2026-01-21T15:18:20.4312208Z EAL: Selected IOVA mode 'PA'
-2026-01-21T15:18:20.4312639Z APP: HPET is not enabled, using TSC as
-default timer
-2026-01-21T15:18:20.4313094Z RTE>>eal_flags_vdev_opt_autotest
-2026-01-21T15:18:20.4314397Z Running binary with
-argv[]:'/home/runner/work/dpdk/dpdk/build/app/dpdk-test'
-'--file-prefix=3Dvdev' '--no-huge' '--vdev' 'eth_dummy'
-'--driver-path=3D/home/runner/work/dpdk/dpdk/build/drivers'
-2026-01-21T15:18:20.4315613Z EAL: Detected CPU lcores: 4
-2026-01-21T15:18:20.4316012Z EAL: Detected NUMA nodes: 1
-2026-01-21T15:18:20.4316432Z EAL: Detected shared linkage of DPDK
-2026-01-21T15:18:20.4316872Z EAL: failed to parse device "eth_dummy"
-2026-01-21T15:18:20.4317298Z EAL: Unable to parse device 'eth_dummy'
-2026-01-21T15:18:20.4317770Z EAL: Unregistering with invalid input paramete=
-r
-2026-01-21T15:18:20.4318225Z Error with EAL initialization, ret =3D -1
-2026-01-21T15:18:20.4319381Z Running binary with
-argv[]:'/home/runner/work/dpdk/dpdk/build/app/dpdk-test'
-'--file-prefix=3Dvdev' '--no-huge' '--vdev' 'net_ring0'
-'--driver-path=3D/home/runner/work/dpdk/dpdk/build/drivers'
-2026-01-21T15:18:20.4320519Z EAL: Detected CPU lcores: 4
-2026-01-21T15:18:20.4320904Z EAL: Detected NUMA nodes: 1
-2026-01-21T15:18:20.4321312Z EAL: Detected shared linkage of DPDK
-2026-01-21T15:18:20.4321831Z EAL: Multi-process socket
-/var/run/dpdk/vdev/mp_socket
-2026-01-21T15:18:20.4322354Z EAL: Selected IOVA mode 'VA'
-2026-01-21T15:18:20.4322817Z Calling recursive action for test_invalid_vdev=
-_flag
-2026-01-21T15:18:20.4323483Z Returned from recursive action for
-test_invalid_vdev_flag with 0
-2026-01-21T15:18:20.4324455Z Cleaning up
-/home/runner/work/dpdk/dpdk/build/app/dpdk-test recursive instance
-2026-01-21T15:18:20.4325093Z
-/home/runner/work/dpdk/dpdk/build/app/dpdk-test recursive instance
-returning 0
-2026-01-21T15:18:20.4326091Z Running binary with
-argv[]:'/home/runner/work/dpdk/dpdk/build/app/dpdk-test'
-'--file-prefix=3Dvdev' '--no-huge' '--vdev' 'net_ring0,args=3Dtest'
-'--driver-path=3D/home/runner/work/dpdk/dpdk/build/drivers'
-2026-01-21T15:18:20.4326783Z EAL: Detected CPU lcores: 4
-2026-01-21T15:18:20.4327017Z EAL: Detected NUMA nodes: 1
-2026-01-21T15:18:20.4327252Z EAL: Detected shared linkage of DPDK
-2026-01-21T15:18:20.4327550Z EAL: Multi-process socket
-/var/run/dpdk/vdev/mp_socket
-2026-01-21T15:18:20.4327845Z EAL: Selected IOVA mode 'VA'
-2026-01-21T15:18:20.4328110Z Calling recursive action for test_invalid_vdev=
-_flag
-2026-01-21T15:18:20.4328475Z Returned from recursive action for
-test_invalid_vdev_flag with 0
-2026-01-21T15:18:20.4328998Z Cleaning up
-/home/runner/work/dpdk/dpdk/build/app/dpdk-test recursive instance
-2026-01-21T15:18:20.4329492Z
-/home/runner/work/dpdk/dpdk/build/app/dpdk-test recursive instance
-returning 0
-2026-01-21T15:18:20.4330341Z Running binary with
-argv[]:'/home/runner/work/dpdk/dpdk/build/app/dpdk-test'
-'--file-prefix=3Dvdev' '--no-huge' '--vdev'
-'net_ring0,nodeaction=3Dr1:0:CREATE'
-'--driver-path=3D/home/runner/work/dpdk/dpdk/build/drivers'
-2026-01-21T15:18:20.4331077Z EAL: Detected CPU lcores: 4
-2026-01-21T15:18:20.4331303Z EAL: Detected NUMA nodes: 1
-2026-01-21T15:18:20.4331530Z EAL: Detected shared linkage of DPDK
-2026-01-21T15:18:20.4331832Z EAL: Multi-process socket
-/var/run/dpdk/vdev/mp_socket
-2026-01-21T15:18:20.4332134Z EAL: Selected IOVA mode 'VA'
-2026-01-21T15:18:20.4332468Z Error (line 490) - process did not run ok
-with valid vdev value with valid args
-2026-01-21T15:18:20.4332815Z Test Failed
-2026-01-21T15:18:20.4333029Z RTE>>
-2026-01-21T15:18:20.4333385Z
-=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=
-=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=
-=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=
-=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=
-=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=
-=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=
-=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=
-=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=
-=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=
-=E2=80=95=E2=80=95=E2=80=95
-2026-01-21T15:18:20.4333623Z
-
-And:
-
-2026-01-21T15:18:22.3440177Z  36/125 DPDK:fast-tests /
-eal_flags_file_prefix_autotest FAIL            0.50s   (exit status
-255 or signal 127 SIGinvalid)
-2026-01-21T15:18:22.3442376Z >>>
-DPDK_TEST=3Deal_flags_file_prefix_autotest MALLOC_PERTURB_=3D162
-/home/runner/work/dpdk/dpdk/build/app/dpdk-test -d
-/home/runner/work/dpdk/dpdk/build/drivers
-2026-01-21T15:18:22.3443273Z =E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=
-=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=
-=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=
-=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=
-=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95 =E2=9C=80
-=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=
-=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=
-=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=
-=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=
-=80=95=E2=80=95=E2=80=95=E2=80=95
-2026-01-21T15:18:22.3443617Z EAL: Detected CPU lcores: 4
-2026-01-21T15:18:22.3443875Z EAL: Detected NUMA nodes: 1
-2026-01-21T15:18:22.3444115Z EAL: Detected shared linkage of DPDK
-2026-01-21T15:18:22.3444453Z EAL: Multi-process socket
-/var/run/dpdk/rte/mp_socket
-2026-01-21T15:18:22.3444751Z EAL: Selected IOVA mode 'PA'
-2026-01-21T15:18:22.3445036Z APP: HPET is not enabled, using TSC as
-default timer
-2026-01-21T15:18:22.3445333Z RTE>>eal_flags_file_prefix_autotest
-2026-01-21T15:18:22.3445927Z Hugepage file /dev/hugepages/rtemap_2
-exists, matching prefix rtemap_
-2026-01-21T15:18:22.3446300Z Hugepage file /dev/hugepages/rtemap_2 is locke=
-d
-2026-01-21T15:18:22.3446599Z Hugepage file /dev/hugepages/rtemap_1 is locke=
-d
-2026-01-21T15:18:22.3446897Z Hugepage file /dev/hugepages/rtemap_0 is locke=
-d
-2026-01-21T15:18:22.3447615Z Running binary with
-argv[]:'/home/runner/work/dpdk/dpdk/build/app/dpdk-test'
-'--proc-type=3Dsecondary' '-m' '18' '--file-prefix=3Dmemtest'
-'--driver-path=3D/home/runner/work/dpdk/dpdk/build/drivers'
-2026-01-21T15:18:22.3448304Z EAL: Detected CPU lcores: 4
-2026-01-21T15:18:22.3448532Z EAL: Detected NUMA nodes: 1
-2026-01-21T15:18:22.3448758Z EAL: Detected shared linkage of DPDK
-2026-01-21T15:18:22.3449106Z EAL: Multi-process socket
-/var/run/dpdk/memtest/mp_socket_59707_2a8a22b91bd
-2026-01-21T15:18:22.3449778Z EAL: failed to send to
-(/var/run/dpdk/memtest/mp_socket) due to No such file or directory
-2026-01-21T15:18:22.3450297Z EAL: Fail to send request
-/var/run/dpdk/memtest/mp_socket:bus_vdev_mp
-2026-01-21T15:18:22.3450673Z VDEV_BUS: vdev_scan(): Failed to request
-vdev from primary
-2026-01-21T15:18:22.3450972Z EAL: Selected IOVA mode 'PA'
-2026-01-21T15:18:22.3451326Z EAL: failed to send to
-(/var/run/dpdk/memtest/mp_socket) due to No such file or directory
-2026-01-21T15:18:22.3451706Z EAL: Cannot send message to primary
-2026-01-21T15:18:22.3451967Z EAL: error allocating rte services array
-2026-01-21T15:18:22.3452224Z EAL: rte_service_init() failed
-2026-01-21T15:18:22.3452473Z Error with EAL initialization, ret =3D -1
-2026-01-21T15:18:22.3452809Z Hugepage file /dev/hugepages/rtemap_2
-exists, matching prefix rtemap_
-2026-01-21T15:18:22.3453173Z Hugepage file /dev/hugepages/rtemap_2 is locke=
-d
-2026-01-21T15:18:22.3453470Z Hugepage file /dev/hugepages/rtemap_1 is locke=
-d
-2026-01-21T15:18:22.3453764Z Hugepage file /dev/hugepages/rtemap_0 is locke=
-d
-2026-01-21T15:18:22.3454168Z Hugepage file /dev/hugepages/rtemap_2
-exists, matching prefix rtemap_
-2026-01-21T15:18:22.3454524Z Hugepage file /dev/hugepages/rtemap_2 is locke=
-d
-2026-01-21T15:18:22.3454816Z Hugepage file /dev/hugepages/rtemap_1 is locke=
-d
-2026-01-21T15:18:22.3455110Z Hugepage file /dev/hugepages/rtemap_0 is locke=
-d
-2026-01-21T15:18:22.3455938Z Running binary with
-argv[]:'/home/runner/work/dpdk/dpdk/build/app/dpdk-test' '-m' '18'
-'--file-prefix=3Dmemtest1'
-'--driver-path=3D/home/runner/work/dpdk/dpdk/build/drivers'
-2026-01-21T15:18:22.3456554Z EAL: Detected CPU lcores: 4
-2026-01-21T15:18:22.3456775Z EAL: Detected NUMA nodes: 1
-2026-01-21T15:18:22.3457003Z EAL: Detected shared linkage of DPDK
-2026-01-21T15:18:22.3457319Z EAL: Multi-process socket
-/var/run/dpdk/memtest1/mp_socket
-2026-01-21T15:18:22.3457625Z EAL: Selected IOVA mode 'PA'
-2026-01-21T15:18:22.3457959Z Calling recursive action for test_file_prefix
-2026-01-21T15:18:22.3458291Z Returned from recursive action for
-test_file_prefix with 0
-2026-01-21T15:18:22.3458715Z Cleaning up
-/home/runner/work/dpdk/dpdk/build/app/dpdk-test recursive instance
-2026-01-21T15:18:22.3459202Z
-/home/runner/work/dpdk/dpdk/build/app/dpdk-test recursive instance
-returning 0
-2026-01-21T15:18:22.3459656Z Hugepage file /dev/hugepages/rtemap_2
-exists, matching prefix rtemap_
-2026-01-21T15:18:22.3460017Z Hugepage file /dev/hugepages/rtemap_2 is locke=
-d
-2026-01-21T15:18:22.3460310Z Hugepage file /dev/hugepages/rtemap_1 is locke=
-d
-2026-01-21T15:18:22.3460608Z Hugepage file /dev/hugepages/rtemap_0 is locke=
-d
-2026-01-21T15:18:22.3460975Z Hugepage file /dev/hugepages/rtemap_2
-exists, matching prefix rtemap_
-2026-01-21T15:18:22.3461339Z Hugepage file /dev/hugepages/rtemap_2 is locke=
-d
-2026-01-21T15:18:22.3461640Z Hugepage file /dev/hugepages/rtemap_1 is locke=
-d
-2026-01-21T15:18:22.3461933Z Hugepage file /dev/hugepages/rtemap_0 is locke=
-d
-2026-01-21T15:18:22.3462316Z Hugepage file
-/dev/hugepages/memtest1map_8 exists, matching prefix memtest1map_
-2026-01-21T15:18:22.3462788Z Error (line 1396) - hugepage files for
-memtest1 were not deleted!
-2026-01-21T15:18:22.3463100Z Test Failed
-2026-01-21T15:18:22.3463268Z RTE>>
-2026-01-21T15:18:22.3463597Z
-=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=
-=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=
-=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=
-=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=
-=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=
-=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=
-=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=
-=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=
-=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=E2=80=95=
-=E2=80=95=E2=80=95=E2=80=95
-2026-01-21T15:18:22.3463824Z
-
-For the latter, I suspect that now passing --driver-path exposes some
-driver leak.
-But strange that it is not systematic...
-
---log-level=3D*:debug could help...
-
-
---=20
-David Marchand
+diff --git a/drivers/net/intel/common/tx.h b/drivers/net/intel/common/tx.h
+index 7fe4022f35..9bda2c8f59 100644
+--- a/drivers/net/intel/common/tx.h
++++ b/drivers/net/intel/common/tx.h
+@@ -345,12 +345,20 @@ ci_txq_release_all_mbufs(struct ci_tx_queue *txq, bool use_ctx)
+ 		return;
+ 
+ 	if (!txq->vector_tx) {
+-		for (uint16_t i = 0; i < txq->nb_tx_desc; i++) {
+-			if (txq->sw_ring[i].mbuf != NULL) {
++		/* Free mbufs from (last_desc_cleaned + 1) to (tx_tail - 1). */
++		const uint16_t start = (txq->last_desc_cleaned + 1) % txq->nb_tx_desc;
++		const uint16_t nb_desc = txq->nb_tx_desc;
++		const uint16_t end = txq->tx_tail;
++
++		uint16_t i = start;
++		if (end < i) {
++			for (; i < nb_desc; i++)
+ 				rte_pktmbuf_free_seg(txq->sw_ring[i].mbuf);
+-				txq->sw_ring[i].mbuf = NULL;
+-			}
++			i = 0;
+ 		}
++		for (; i < end; i++)
++			rte_pktmbuf_free_seg(txq->sw_ring[i].mbuf);
++		memset(txq->sw_ring, 0, sizeof(txq->sw_ring[0]) * nb_desc);
+ 		return;
+ 	}
+ 
+diff --git a/drivers/net/intel/common/tx_scalar_fns.h b/drivers/net/intel/common/tx_scalar_fns.h
+index 82dc54438f..47ddcf411b 100644
+--- a/drivers/net/intel/common/tx_scalar_fns.h
++++ b/drivers/net/intel/common/tx_scalar_fns.h
+@@ -30,16 +30,60 @@ ci_tx_xmit_cleanup(struct ci_tx_queue *txq)
+ 	const uint16_t rs_idx = (last_desc_cleaned == nb_tx_desc - 1) ?
+ 			0 :
+ 			(last_desc_cleaned + 1) >> txq->log2_rs_thresh;
+-	uint16_t desc_to_clean_to = (rs_idx << txq->log2_rs_thresh) + (txq->tx_rs_thresh - 1);
++	const uint16_t dd_idx = txq->rs_last_id[rs_idx];
++	const uint16_t first_to_clean = rs_idx << txq->log2_rs_thresh;
+ 
+ 	/* Check if descriptor is done - all drivers use 0xF as done value in bits 3:0 */
+-	if ((txd[txq->rs_last_id[rs_idx]].cmd_type_offset_bsz & rte_cpu_to_le_64(CI_TXD_QW1_DTYPE_M)) !=
++	if ((txd[dd_idx].cmd_type_offset_bsz & rte_cpu_to_le_64(CI_TXD_QW1_DTYPE_M)) !=
+ 			rte_cpu_to_le_64(CI_TX_DESC_DTYPE_DESC_DONE))
+ 		/* Descriptor not yet processed by hardware */
+ 		return -1;
+ 
++	/* DD bit is set, descriptors are done. Now free the mbufs. */
++	/* Note: nb_tx_desc is guaranteed to be a multiple of tx_rs_thresh,
++	 * validated during queue setup. This means cleanup never wraps around
++	 * the ring within a single burst (e.g., ring=256, rs_thresh=32 gives
++	 * bursts of 0-31, 32-63, ..., 224-255).
++	 */
++	const uint16_t nb_to_clean = txq->tx_rs_thresh;
++	struct ci_tx_entry *sw_ring = txq->sw_ring;
++
++	if (txq->offloads & RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE) {
++		/* FAST_FREE path: mbufs are already reset, just return to pool */
++		uint16_t nb_free = 0;
++
++		/* Get cached mempool pointer, or cache it on first use */
++		struct rte_mempool *mp =
++			likely(txq->fast_free_mp != (void *)UINTPTR_MAX) ?
++			txq->fast_free_mp :
++			(txq->fast_free_mp = sw_ring[dd_idx].mbuf->pool);
++
++		/* Pack non-NULL mbufs in-place at start of sw_ring range.
++		 * No modulo needed in loop since we're guaranteed not to wrap.
++		 */
++		for (uint16_t i = 0; i < nb_to_clean; i++) {
++			struct rte_mbuf *m = sw_ring[first_to_clean + i].mbuf;
++			if (m != NULL) {
++				/* Pack into sw_ring at packed position */
++				sw_ring[first_to_clean + nb_free].mbuf = m;
++				nb_free++;
++			}
++		}
++
++		/* Bulk return to mempool using packed sw_ring entries directly */
++		if (nb_free > 0)
++			rte_mempool_put_bulk(mp, (void **)&sw_ring[first_to_clean].mbuf, nb_free);
++	} else {
++		/* Non-FAST_FREE path: use prefree_seg for refcount checks */
++		for (uint16_t i = 0; i < nb_to_clean; i++) {
++			struct rte_mbuf *m = sw_ring[first_to_clean + i].mbuf;
++			if (m != NULL)
++				rte_pktmbuf_free_seg(m);
++		}
++	}
++
+ 	/* Update the txq to reflect the last descriptor that was cleaned */
+-	txq->last_desc_cleaned = desc_to_clean_to;
++	txq->last_desc_cleaned = first_to_clean + txq->tx_rs_thresh - 1;
+ 	txq->nb_tx_free += txq->tx_rs_thresh;
+ 
+ 	return 0;
+@@ -300,8 +344,6 @@ ci_xmit_pkts(struct ci_tx_queue *txq,
+ 			txd = &ci_tx_ring[tx_id];
+ 			tx_id = txe->next_id;
+ 
+-			if (txe->mbuf)
+-				rte_pktmbuf_free_seg(txe->mbuf);
+ 			txe->mbuf = tx_pkt;
+ 			/* Setup TX Descriptor */
+ 			td_cmd |= CI_TX_DESC_CMD_EOP;
+@@ -322,10 +364,7 @@ ci_xmit_pkts(struct ci_tx_queue *txq,
+ 
+ 			txn = &sw_ring[txe->next_id];
+ 			RTE_MBUF_PREFETCH_TO_FREE(txn->mbuf);
+-			if (txe->mbuf) {
+-				rte_pktmbuf_free_seg(txe->mbuf);
+-				txe->mbuf = NULL;
+-			}
++			txe->mbuf = NULL;
+ 
+ 			write_txd(ctx_txd, cd_qw0, cd_qw1);
+ 
+@@ -339,10 +378,7 @@ ci_xmit_pkts(struct ci_tx_queue *txq,
+ 
+ 			txn = &sw_ring[txe->next_id];
+ 			RTE_MBUF_PREFETCH_TO_FREE(txn->mbuf);
+-			if (txe->mbuf) {
+-				rte_pktmbuf_free_seg(txe->mbuf);
+-				txe->mbuf = NULL;
+-			}
++			txe->mbuf = NULL;
+ 
+ 			ipsec_txd[0] = ipsec_qw0;
+ 			ipsec_txd[1] = ipsec_qw1;
+@@ -357,10 +393,21 @@ ci_xmit_pkts(struct ci_tx_queue *txq,
+ 			txd = &ci_tx_ring[tx_id];
+ 			txn = &sw_ring[txe->next_id];
+ 
+-			if (txe->mbuf)
+-				rte_pktmbuf_free_seg(txe->mbuf);
+ 			txe->mbuf = m_seg;
+ 
++			/* For FAST_FREE: reset mbuf fields while we have it in cache.
++			 * FAST_FREE guarantees refcnt=1 and direct mbufs, so we only
++			 * need to reset nb_segs and next pointer as per rte_pktmbuf_prefree_seg.
++			 * Save next pointer before resetting since we need it for loop iteration.
++			 */
++			struct rte_mbuf *next_seg = m_seg->next;
++			if (txq->offloads & RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE) {
++				if (m_seg->nb_segs != 1)
++					m_seg->nb_segs = 1;
++				if (next_seg != NULL)
++					m_seg->next = NULL;
++			}
++
+ 			/* Setup TX Descriptor */
+ 			/* Calculate segment length, using IPsec callback if provided */
+ 			if (ipsec_ops != NULL)
+@@ -389,7 +436,7 @@ ci_xmit_pkts(struct ci_tx_queue *txq,
+ 			}
+ 
+ 			/* fill the last descriptor with End of Packet (EOP) bit */
+-			if (m_seg->next == NULL)
++			if (next_seg == NULL)
+ 				td_cmd |= CI_TX_DESC_CMD_EOP;
+ 
+ 			const uint64_t cmd_type_offset_bsz = CI_TX_DESC_DTYPE_DATA |
+@@ -401,7 +448,7 @@ ci_xmit_pkts(struct ci_tx_queue *txq,
+ 
+ 			tx_id = txe->next_id;
+ 			txe = txn;
+-			m_seg = m_seg->next;
++			m_seg = next_seg;
+ 		} while (m_seg);
+ end_pkt:
+ 		txq->nb_tx_free = (uint16_t)(txq->nb_tx_free - nb_used);
+-- 
+2.51.0
 
