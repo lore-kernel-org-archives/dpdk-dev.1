@@ -2,81 +2,82 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88322D77880
-	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Jan 2026 16:36:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8016D77880
+	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Jan 2026 16:46:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DAD364065E;
-	Fri, 23 Jan 2026 17:36:48 +0100 (CET)
-Received: from mail-yx1-f46.google.com (mail-yx1-f46.google.com
- [74.125.224.46]) by mails.dpdk.org (Postfix) with ESMTP id A6FDC40615
- for <dev@dpdk.org>; Fri, 23 Jan 2026 17:36:46 +0100 (CET)
-Received: by mail-yx1-f46.google.com with SMTP id
- 956f58d0204a3-64942ebf1a3so2422309d50.3
- for <dev@dpdk.org>; Fri, 23 Jan 2026 08:36:46 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1769186206; cv=none;
+	by mails.dpdk.org (Postfix) with ESMTP id D13B940269;
+	Fri, 23 Jan 2026 17:46:38 +0100 (CET)
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com
+ [209.85.128.181])
+ by mails.dpdk.org (Postfix) with ESMTP id 7A48F4021F
+ for <dev@dpdk.org>; Fri, 23 Jan 2026 17:46:37 +0100 (CET)
+Received: by mail-yw1-f181.google.com with SMTP id
+ 00721157ae682-78c66bdf675so23228107b3.2
+ for <dev@dpdk.org>; Fri, 23 Jan 2026 08:46:37 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1769186797; cv=none;
  d=google.com; s=arc-20240605;
- b=bZDHXUDK4y96yFs0uM84XHc07FDzAiuc1AtTMYiwaxBJ25OKNDS/HxklprY/ILNMJw
- t2usBvNTfRf90vGbY0fEapnfzosZBr+fal0natmdOfuHYytFF+CdJ8r7Jf+rfufG6Ojc
- kh2376irKWwKRgDTEqwknvD+Icko7jfsiXIsRq8kfnRckWZ8cEv4u6T1BduHGT5bZM7b
- W7UZog3F/+u6v57D8nG5Qj/07AUtveeCseiNGG/ZzMGlFQD8J91Rpo/9EMWkLC/k5cXx
- l6ErymrjJFM5YXqzSpA+Khm2eiVPnt40W0E5lITqOgBTTkSMrGT3V+wKB/w6H3KinX4q
- kdBw==
+ b=jmzMvfv19ltY1RuqHDMweG0ggGBSvAcyhUNAJDiyI49u/xwl0UOQ2CqvjgrTEywXzf
+ k4F+LNyOhibyfdtxCyEPEsbQzBpNkH9d90NqA9cMhJ3XNZhvB05UFbfWev+NoVl2L9Rc
+ D5YdhdzWctlv4mlf/yFdo8Upo3LdWDnTmvzdXGwf3cfCeuSXdcFyJkVLmuaMCkVgvUll
+ xgyqhh6dECmfzF5031VttQcnWU/tlyI7CU08gpm6rNorXWVuQJqjRcBJWNkzKzZreQAy
+ 7LGzqVaK8p3AHlp9upzSqyRoFtXIzyjsosRFYdtPA967OW7ganc0iLVUNQFo+VaRPPIx
+ XE9g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
  s=arc-20240605; 
  h=content-transfer-encoding:cc:to:subject:message-id:date:from
  :in-reply-to:references:mime-version:dkim-signature;
- bh=em+G4UQblJ/0q3m0v2gNfnIHPtVSwiW44SAH048ZTDg=;
- fh=Ja5zCWKe7sSzC5FxZQZbE93J+nulY7SP5B4cmJm5fE4=;
- b=L/bbARMYEcmwK2G9uuQsrydH/B953LvPgMlYL82sHjVGAUILzBRo/EuavbW+ZqDT1n
- OFJ3yF3MKBtHCmHCHNUQQBh13cqCNls2pvv1cL/JsNwAXca9Ly4wofj/DjpndFZXfWVF
- ZrbEASclbRXXlrCVbWGrz2INfNzc7fc6x84j3qhWCVQ4Vt8w5MmaeGQSVIgmHZ0yOGHR
- CwWiO7ZytHSzdenXJf0yM8m+lPATTIm0FulU+58zp2nOyVrSGvNwuMw4hgpzgPbstl+5
- DIpVwG1B8179wsP+kryVC1wY7vp+ZF1ZYlfxa1/nSxY0vmCrqb9cvA0KelYCV78CRfk8
- Bn7w==; darn=dpdk.org
+ bh=XE97ZZoefiY7OZ6gf01cZxdrll1lYAo3X+D4b4bKNUk=;
+ fh=H8dAKSwJHGW6eAHCLmKbQcZhGWygM/zA2abO1LhT/FU=;
+ b=UDW7wWQqB23qRPjfh5qQhrGCyF4KGTs9eIxlqlugN3Yq7W+UQ6HBOV4jaMLgAoDfjJ
+ Vo2xxm9Ry0eLUm94FKzLywx7Yz3fttA+8WyvmEnlwtvOy83+dTWT4siLNSeMs24KkJis
+ pVA3B+wmvkvEfVu8Ur1He9OoldyxJ/ocIedKOCxOyVupKg+qGfdEIOlGPSRtJrPjY4PF
+ CLIKwv/VbXoCm8Ni9aLbmFTtmPiIsuoogUmfnCRbvs+g9FjhXyLVnYptG1jnOnvWZsss
+ pGQHNZQsrYY4GCdVpFWu2VehWfyEx5BroCk0HY7J1NbxvwDDrpIsSxzYdccN/Fc7PXYb
+ gw7w==; darn=dpdk.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1769186206; x=1769791006; darn=dpdk.org;
+ d=iol.unh.edu; s=unh-iol; t=1769186797; x=1769791597; darn=dpdk.org;
  h=content-transfer-encoding:cc:to:subject:message-id:date:from
  :in-reply-to:references:mime-version:from:to:cc:subject:date
  :message-id:reply-to;
- bh=em+G4UQblJ/0q3m0v2gNfnIHPtVSwiW44SAH048ZTDg=;
- b=gqSaLODlgluOEaqQIsvg+TpY5pbzTHDjUkXhmmWi7zWH8CAnbY7Ser6lDVT9uAUJhK
- OZhrDIJsTLEN/R8O8XlGl3ut8D0Geude6i0cKTr7u/uAj5Ofymre4bDZxc24F0mXz+WA
- Rle+GP7AWZJUauZuAtvnvTnADd3xwZzEpJNQs=
+ bh=XE97ZZoefiY7OZ6gf01cZxdrll1lYAo3X+D4b4bKNUk=;
+ b=NFUYcWpcp0jaS8lUZffC2KHKj2L1drvrZDWfgTDzITK1qVtYkmQ7fz2mk6H4UWeMM7
+ GwBmi5l8ppFlKaK0QYTeyNMIIHhI3TDtC9NuCkzSp0KBmrNyr6wHi6vVdK049Zgy6vT/
+ CmLupdPyilIKavrcc7Nb3jvGOoRl7gJlvxCyw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1769186206; x=1769791006;
+ d=1e100.net; s=20230601; t=1769186797; x=1769791597;
  h=content-transfer-encoding:cc:to:subject:message-id:date:from
  :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=em+G4UQblJ/0q3m0v2gNfnIHPtVSwiW44SAH048ZTDg=;
- b=pVCZigW3RPxU3UzILsiPRaKtY7mcmOCPg13RBgPLwl/5VmuqriuVr/eojBbloYD0Qr
- y8fnwDWwCmUSqgvNr+wOOkPKjUBjnaOuHhLlDTAD+vBVUrobdeAsNyCZS6g6RIneBzyC
- 0iW+q1wIIW7TMbS99xIx2iCqnbbuCrvPOh/yPcleTg1NQ82Wg1liPQkLcuX3x+2+bz+g
- c2eEqMsb1At2WfLSrLHn6hhEb+0GP5jai72xIMlIh0T94mc6TPa3VvZTV/mfT8oIjw4G
- 1vzE+xOgEQbF2kCqqBgA/3/Wjbwf8IEAFcPVdRSueJsQm1N3g8kJZnp7MOEV6+xfXOlq
- 5FmA==
+ bh=XE97ZZoefiY7OZ6gf01cZxdrll1lYAo3X+D4b4bKNUk=;
+ b=dVTefTtNIHc9g1YkibB2QdD/9trXdm4KKaw3DgH0j3QQNVU2MEwzMm8lePRJiarZmo
+ 764jZ+WB6zHdBnXjbW6Vbr//V9Xqb00oJF0TB4W9sAn2JoNaTlAAmClTBG4YkzYfuXDF
+ C9X8V75Fq8OlrtCf9yV/J9huT7YQzMoczf5zzXBbCLG6IOyVbqKTaY6km9lORlLugwkR
+ BDjvJC097vEkSqS2/hwVcDGohiKPVkvykli/Ctbyyv7IFKIXU4Mhcjh6+a1yTLql2a+d
+ +lN55IzwftAeQcqD51qbq51BYlKQoNzK0LFJ9WI/pWEmMMpMwvnuqos7yEjxBtyXnAZD
+ h7zw==
 X-Forwarded-Encrypted: i=1;
- AJvYcCW7usYL3Te3XlPFTe6i4xoKUcANP/Kh8wo+HRKOmDN9lEKbJz9aN8j8nPuaSdnSMr8G9sk=@dpdk.org
-X-Gm-Message-State: AOJu0YxnS5MJ8wtHdru4imvHtIOMTsIZ1kT2axCUfgl4aDcwy25KNV/A
- dzNVMhlSN9g5q0DYIYjs6W+RLlJ+sUNihdTFOuPs31ShclgcgJlgB6UeJTUWgOTRR+0I6yLQCtL
- T2ZlpSIcZOehpZltcdSd06xdJlgNKo15JzOC8UulCEa2trXxYKZ/n
-X-Gm-Gg: AZuq6aLRARMvWjW5nEIqWrjM9OXySrGDysovZM3xtcu7Roivlif62zz17xSBqYMejtb
- iuB5BBiOjnBfd0sTP/28doiwgTQWJjpeBYWuPy00/jwiMB9qpdgJlCFAJi/SQ+ZgzL9d7KhYc9P
- hkCKujw/CmrG9W4y2OcabY3CKcIiMt2axoar9EP3GiQxsyAmwARBKrqVEAQZZKyHgPe3CpS4NSN
- E72Mf8cXuKEbed0op2M1GUQF95YH9fXC0NaqziGTqCOdT8Sdfr8ZAyxVYha+1Lkm5trGApqE/nr
- IvqxDXnnug==
-X-Received: by 2002:a05:690e:249b:b0:649:3897:ba25 with SMTP id
- 956f58d0204a3-6495bfe1eb3mr2033260d50.65.1769186205988; Fri, 23 Jan 2026
- 08:36:45 -0800 (PST)
+ AJvYcCXysK8NNZ19bYUrRknzeWUB45bbEYa7OUb0XE/ZHTJ6kMRvc4rWbPpaaf60QKgl/ct0eGM=@dpdk.org
+X-Gm-Message-State: AOJu0YyfBmvNBj/Ss8Vc/XlxLZ8dL/wcolgOZf1tOQ1H83p2Ogazm65L
+ 6ucQ2k3J1xLvCkrTrimh/l87zOLE/sR9L/tPMXTKnLSUje1FWpuNdzO6lQ/pYWgR/5MW0yW4/8B
+ Wheal6AV3zP5UegkAvQhFY4YMnvlX2SkaY5MFL9KbmA==
+X-Gm-Gg: AZuq6aKG5zf2Yg367AuFiSZsME6j/ubl1d1BkHyfZtXucZeEiDETPmPHZA0Nv5j8d3z
+ l+zuOTwgoKOdklk0/7j11USdRoOCcdAuI0tKlyl0WjRFPCLfEb8MqzmyWCT+AvAZdeUbtBCLOZW
+ wKox8QEaAEhNsvmM1AnYNqyO7Rz5WPshQ9Rzr+K//tRbiUZsdO5a88cZndtY8omeE+pgFL67vJ4
+ BFqWNL4Kfw/hbC4w6spbaCs57io6m5jGA+ZuZ+Oe/LMY1dTMWyp1YCcZLP7X5TSMEHRy9OapzXz
+ qRb/VWa7+OvkWC1VMkhI
+X-Received: by 2002:a05:690c:6709:b0:793:b460:f07a with SMTP id
+ 00721157ae682-794399aa412mr26427687b3.39.1769186795302; Fri, 23 Jan 2026
+ 08:46:35 -0800 (PST)
 MIME-Version: 1.0
 References: <20260122214424.322422-1-abailey@iol.unh.edu>
- <20260122214424.322422-3-abailey@iol.unh.edu>
-In-Reply-To: <20260122214424.322422-3-abailey@iol.unh.edu>
+ <20260122214424.322422-4-abailey@iol.unh.edu>
+In-Reply-To: <20260122214424.322422-4-abailey@iol.unh.edu>
 From: Dean Marx <dmarx@iol.unh.edu>
-Date: Fri, 23 Jan 2026 11:36:35 -0500
-X-Gm-Features: AZwV_QjdA_luA97imrXdooeXL6XbUWyB9jmg6ZFYSjthlfhNAZrTnjTZs4SA57w
-Message-ID: <CABD7UXOmBRWqNvhO5VnyrNmnfiEOE0Mm-Hp-W4HYQrojsbb==w@mail.gmail.com>
-Subject: Re: [PATCH v1 2/5] dts: add cryptodev package to DTS
+Date: Fri, 23 Jan 2026 11:46:22 -0500
+X-Gm-Features: AZwV_QjIdfUF5i4MQtuo_rQ83TUxqnUfkGOxstx1HxSl6P28Uz_8d2D1G5BF59M
+Message-ID: <CABD7UXOj5zDHc8e8L+7qCxjAL1zEun4hRPvbuOdnRTKGTfbCgw@mail.gmail.com>
+Subject: Re: [PATCH v1 3/5] dts: add cryptodev throughput test suite
 To: Andrew Bailey <abailey@iol.unh.edu>
 Cc: luca.vizzarro@arm.com, probb@iol.unh.edu, dev@dpdk.org, gakhil@marvell.com
 Content-Type: text/plain; charset="UTF-8"
@@ -97,13 +98,65 @@ Errors-To: dev-bounces@dpdk.org
 On Thu, Jan 22, 2026 at 4:44=E2=80=AFPM Andrew Bailey <abailey@iol.unh.edu>=
  wrote:
 >
-> Running the DPDK test crypto performance application is essential for
-> testing cryptodev performance in DTS. This application takes numerous
-> arguments and can be run in four modes; Throughput, Latency,
-> PMD-cyclecount, and Verify. The package to add in this commit allows for
-> this application to be run in any of these modes with user supplied
-> arguments.
+> Add cryptodev performance test suite. This test covers throughput
+> performance metrics of various crypto devices using the
+> dpdk-test-crypto-perf application. The results of this application will
+> be compared against user supplied performance metrics and fail if signs
+> of regression are apparent.
 >
 > Signed-off-by: Andrew Bailey <abailey@iol.unh.edu>
+<snip>
+
+> +class Config(BaseConfig):
+> +    """Performance test metrics."""
+> +
+> +    common_params: dict[str, int | float] =3D {
+> +        "Gbps Delta": 0.05,
+> +    }
+> +    throughput_test_parameters: list[dict[str, int | float | str]] =3D [
+> +        {
+> +            **common_params,
+> +            "buff_size": 64,
+> +            "mops": 9.85,
+> +            "gbps": 2.49,
+> +        },
+> +        {
+> +            **common_params,
+> +            "buff_size": 128,
+> +            "mops": 4.83,
+> +            "gbps": 4.95,
+> +        },
+> +        {
+> +            **common_params,
+> +            "buff_size": 256,
+> +            "mops": 4.77,
+> +            "gbps": 9.76,
+> +        },
+> +        {
+> +            **common_params,
+> +            "buff_size": 512,
+> +            "mops": 4.52,
+> +            "gbps": 18.52,
+> +        },
+> +        {
+> +            **common_params,
+> +            "buff_size": 1048,
+> +            "mops": 3.77,
+> +            "gbps": 30.87,
+> +        },
+> +        {
+> +            **common_params,
+> +            "buff_size": 2048,
+> +            "mops": 2.49,
+> +            "gbps": 40.86,
+> +        },
+> +    ]
+
+Would it be worth creating a separate cryptodev config file in the
+configurations directory, or adding a cryptodev section to the
+tests_config.yaml file (similar to the single_core_forward_perf
+suite)? I feel like this would be more consistent with the current
+design of DTS, although if there's a good reason for the config class
+being in the suite then disregard this.
 
 Reviewed-by: Dean Marx <dmarx@iol.unh.edu>
