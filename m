@@ -2,71 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B7F4D6CFC6
-	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Jan 2026 05:22:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D8B0D6CFBD
+	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Jan 2026 06:01:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5A2DE4021F;
-	Fri, 23 Jan 2026 06:22:52 +0100 (CET)
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com
- [209.85.128.41]) by mails.dpdk.org (Postfix) with ESMTP id 4FD4F400D5
- for <dev@dpdk.org>; Fri, 23 Jan 2026 06:22:51 +0100 (CET)
-Received: by mail-wm1-f41.google.com with SMTP id
- 5b1f17b1804b1-47ee76e8656so24589825e9.0
- for <dev@dpdk.org>; Thu, 22 Jan 2026 21:22:51 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id AADE44021F;
+	Fri, 23 Jan 2026 07:01:50 +0100 (CET)
+Received: from mail-wm1-f66.google.com (mail-wm1-f66.google.com
+ [209.85.128.66]) by mails.dpdk.org (Postfix) with ESMTP id A64F9400D5
+ for <dev@dpdk.org>; Fri, 23 Jan 2026 07:01:49 +0100 (CET)
+Received: by mail-wm1-f66.google.com with SMTP id
+ 5b1f17b1804b1-47ee76e8656so24861935e9.0
+ for <dev@dpdk.org>; Thu, 22 Jan 2026 22:01:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769145771;
- x=1769750571; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769148109;
+ x=1769752909; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=YT+VDyfi/RprxuGowJQ/PAXo+Kd5ieXoPdjkdoDbFKQ=;
- b=qJurtGjMY9XrmX75RdRdku1DF35EHQfZQR+OtDaLMkQAk76GDe5PJ8dHmgCzKCsqGD
- Lar3U11jST79XcUjgp0avsfqZ72K+JRMFFsGJ2iHmZFOIrDWp513//MpR9z1wLmROb3E
- g0vCfkoxGekh9w1vIbWbmQt9kzs/lUbi4wVMt9/ss5nEeytapHO6O7omYZhzTopfmfAd
- Id/uAuXJ6Y5nfZONf90G8ihXl5MO4C05fRD2B0kw5KgSvA0MuuDTXiPRx9miFlLVj7Dh
- fViwaABYEXV9UvkgVw5PhAGlinCGyShN2YY44IVLKUJT36meSQC03lzhsewV4NaXXTAT
- Eh/Q==
+ bh=J5CJENW5Vu0a5U3csPsTdF731V5IQGIIJR8zSqNP7dg=;
+ b=esiVXGDsT8sS9x/97OtcLMJ8dT59JtnNsy9YIXZiSjUhfX4LbFYLDUMpax5u+FiyXP
+ SDSA5cCxSPvOXeC0tiPrgrBaFudgDRM55ZIkm5g1lL647ulgOOarP9DSqJMFu5TQ4ZIZ
+ TGGXyKt+ZYpIPPVunpklbRYaY2rQK/HwcTOPjEmLwwQrLfaZrGrFaRfn4Tcw0cXhwGL2
+ z70DggJr4VXUyCgj2e7FHtsf4GYTUNhcKUU1POS2YrbqBQ+H9HZ2WBZXniFAuca/vUs0
+ DE9WoTlkvw7VidW0CQsDotO+MxYefspx9FwSRF9zIohYVetJjw46aXVMfYfW2b0+ArtS
+ 6UfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1769145771; x=1769750571;
+ d=1e100.net; s=20230601; t=1769148109; x=1769752909;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=YT+VDyfi/RprxuGowJQ/PAXo+Kd5ieXoPdjkdoDbFKQ=;
- b=KJSm+zRR2TSLa6Eh3o5sOLW2KXo7W0mnP8DXnfGcrea/plA2kVTPo/sUcxVD7cxVDj
- Z5DZfnF2cBZFL31nEHUayZW2FpPNR43stgSUYFs7P1WzEPIyk08ZdUL8MceNZPAoxns1
- Gbdy7sSgt1Mys598wyF480uUZKsZlHQV5okYTxoby0hTWpBa+hlgM3VZR6y7oO8pR9Qh
- 6sz4/QoxovB5hB8Wm3cYB/a1fm2Ij/OQG+aILn+rTTHc7LkYust/ubzyP6hVvqwnkc8K
- Y6Frpc8z5RASj4AHyINj/8Q9ClnQNDy2rD+VpIujmd4jmkQH6k+btfZF4DuqGdAOMu8u
- +HCQ==
-X-Forwarded-Encrypted: i=1;
- AJvYcCV+77LhKmMStb58VFSrbzgZFS4kuxgFeVpjc0S3TV2n+XtwYyW3kilvfJ63XLGBsiPLnlo=@dpdk.org
-X-Gm-Message-State: AOJu0YyJGyo+F4Mlz1VsnmWnQ8eF1Mtn/ZPZhPoOCRHX91AhY19NCDsj
- zC1elXKviU+ZgUTnQzw+7dh2UWsUP8BfCSN/tkQ9qUCvA+ZvPnQM3rgmz1CxtadMr3o=
-X-Gm-Gg: AZuq6aITTPOFcizMIjisn+qXKLQmz9cWBc4HF5yq/gt9nl26zqSd/oJvxdd3hH8dtaS
- XvJR+Nscrr6SUgtT9zEvNfLIVWCp49P6zZQRnMfId61Qsb6FkZN/BhxlvOKlSb8fHpRZ0HhWX85
- xb7SE4ByhFqvmocoAsxiJOh5pJyfgE5ciuQ+4HyYifl7Lk3pZ9LEaYrGN1P71sVuk8ERVJeNA5v
- SX8uQK4R7WKfd6wNLPXnWJzHJVRh01VQVY5DXluhPZ7gFOA1+iq6hIq2w3iHTtR4iRqbZ7+ie99
- Z3aDcg1Etg5OZsy+cRqUzu84RC2rVQEN92GdXSo0VfLY/UzwqFX2aS7ywDt3HEvx5JKo39lRJOi
- k5Xth5V1TUDpDKTZ/UM+8AD+ILu27tQojnwneFNUS4qhd/rucYlMvBpN687sojF6TbaFo23CSfR
- WkhSESUQ/UkzLFDtJA1O0XfUbsNz51HeiJziSJudetAwsJX9A4vR2/
-X-Received: by 2002:a05:600c:c174:b0:477:5c58:3d42 with SMTP id
- 5b1f17b1804b1-4804c95872emr30863645e9.10.1769145770806; 
- Thu, 22 Jan 2026 21:22:50 -0800 (PST)
+ bh=J5CJENW5Vu0a5U3csPsTdF731V5IQGIIJR8zSqNP7dg=;
+ b=lhCFyuBa3M8eFuDb4Qu2SVSrOyooDtOe4QY/U+zGdBWkX5Ew1byf6B4aVVTGq6e4zJ
+ RHRBpx6jz+87F4A11FfpS2cALBnBVeTVTLf0xZ6wyGFeBYlRrbal6ku2Nc10MuIzVjw7
+ jxpvlaZPeeThawzBLXdCCmZTsH6vvYb6D3LazMUTQYcd0jU1PCI8rZHyKvTGXuyYrbf1
+ To7SRq0fJv7gZWHwObDUKENYGg/PSnS2A8YbikXroIKJT3ZV4YgeP+KsFyQIimfv1yZc
+ a2xY7ApBZ/ydExvL9rXm9su7SwPhlxLLsHexnZWLkkSJ9y4EfCXzqwaIK5IFxrmqzFdO
+ EKOQ==
+X-Gm-Message-State: AOJu0Yx4BQNkrSqQSq3zoPCgZuOj0wfiNTZqGSlZsu4JqwwyWT3URXgj
+ 2sdFKi4WwoLks7GxSJAhuUcxVsJjddfZAKkHO7P3pOgJVrFMoJu2ABbdLIdBHBbc4tE=
+X-Gm-Gg: AZuq6aJEJBU6We80zyIGXt/kLr7d7gX87ixDEI8kGCtFPwRtN+kuaJgEBN+v27fjq2E
+ mEK4jgxuTT/ut0K0tTbgaM+e8eQ0D5dRkPmV5QpXrp0QROlFdSogxpWf7mYuQy5WzbZ812zgR3t
+ zhTwXqjkublX8X+cxsOqU6eEk0I0ovjHSH97KwMCC3LWqagl6FGy9AeHT1bzib1/Zmicb2cVXyO
+ lWk4bF+brsaXUFRBWmfW99oNvvzY4ahUspkk8H9nqVO0nr1ek6JBykwI2saTpMxxdoLbojvJwxZ
+ plxic7H0UKqlcQIoJfjNruSLXN4MxEASZolyfpJ064HiCzNNykozluZdJhujrRj/3AxSRd8A3W2
+ 4hqeEXgtyC2l8lEQbuaFhNCE3zCGcYpm07lo3fX0PhwSU7b47dASiCcYzw3RXsBEkF6eBf4Na2W
+ tspy5u83hSqiImTZzMc+9p68R+1q7auqAJfxtJkp2iV070wcjhEU+/
+X-Received: by 2002:a05:600c:8b04:b0:480:4a90:1af2 with SMTP id
+ 5b1f17b1804b1-4804c9d0102mr36296595e9.35.1769148108527; 
+ Thu, 22 Jan 2026 22:01:48 -0800 (PST)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-435b1c246ecsm3951700f8f.10.2026.01.22.21.22.48
+ 5b1f17b1804b1-480470cf1acsm117034695e9.14.2026.01.22.22.01.46
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 22 Jan 2026 21:22:50 -0800 (PST)
-Date: Thu, 22 Jan 2026 21:22:40 -0800
+ Thu, 22 Jan 2026 22:01:48 -0800 (PST)
+Date: Thu, 22 Jan 2026 22:01:42 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Marat Khalili <marat.khalili@huawei.com>
-Cc: <jerinjacobk@gmail.com>, <mb@smartsharesystems.com>, <dev@dpdk.org>,
- <stable@dpdk.org>, <konstantin.ananyev@huawei.com>
-Subject: Re: [PATCH v3 0/6] bpf: simple tests and fixes
-Message-ID: <20260122212240.3ad5344d@phoenix.local>
-In-Reply-To: <20251217180141.60227-1-marat.khalili@huawei.com>
-References: <20251216182036.77869-1-marat.khalili@huawei.com>
- <20251217180141.60227-1-marat.khalili@huawei.com>
+To: Mattias =?UTF-8?B?UsO2bm5ibG9t?= <mattias.ronnblom@ericsson.com>
+Cc: <dev@dpdk.org>, Mattias =?UTF-8?B?UsO2bm5ibG9t?=
+ <hofors@lysator.liu.se>, Morten =?UTF-8?B?QnLDuHJ1cA==?=
+ <mb@smartsharesystems.com>, David Marchand <david.marchand@redhat.com>,
+ Pavan Nikhilesh <pbhagavatula@marvell.com>, Bruce Richardson
+ <bruce.richardson@intel.com>
+Subject: Re: [PATCH v6 0/7] Optionally have rte_memcpy delegate to compiler
+ memcpy
+Message-ID: <20260122220142.21bda930@phoenix.local>
+In-Reply-To: <20240920102716.738940-1-mattias.ronnblom@ericsson.com>
+References: <20240724075357.546248-2-mattias.ronnblom@ericsson.com>
+ <20240920102716.738940-1-mattias.ronnblom@ericsson.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -83,261 +85,280 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 17 Dec 2025 18:01:33 +0000
-Marat Khalili <marat.khalili@huawei.com> wrote:
+On Fri, 20 Sep 2024 12:27:09 +0200
+Mattias R=C3=B6nnblom <mattias.ronnblom@ericsson.com> wrote:
 
-> Add simple unit-style tests for rte_bpf_load, and fix some minor
-> discovered bugs.
+> This patch set make DPDK library, driver, and application code
+> optionally use the compiler/libc memcpy() when functions in
+> <rte_memcpy.h> are invoked.
 >=20
-> v3:
-> * Fixed unfortunate typos in the last patch commit message.
-> * Marked all ARM opcodes with UINT32_C for clarity as suggested by
->   Morten Br=C3=B8rup, in a separate commit.
+> The new compiler memcpy-based rte_memcpy() implementations may be
+> enabled by means of a build-time option.
 >=20
-> v2:
-> * Moved new tests back into test_bpf.c
-> * Changed library macros RTE_SHIFT_VALxx to handle variable first
->   arguments instead of introducing new macros.
-> * Added another test and fix, for conditional jump as first instruction.
+> This patch set only make a difference on x86, PPC and ARM. Loongarch
+> and RISCV already used compiler/libc memcpy().
 >=20
-> Marat Khalili (6):
->   eal: variable first arguments of RTE_SHIFT_VALxx
->   bpf: fix signed shift overflows in ARM JIT
->   bpf: mark ARM opcodes with UINT32_C
->   bpf: disallow empty program
->   bpf: make add/subtract one program validate
->   bpf: fix BPF validation w/ conditional jump first
+> This patch set includes a number of fixes in drivers and libraries
+> which errornously relied on <rte_memcpy.h> including header files
+> (i.e., <rte_vect.h>) required by its implementation.
 >=20
->  app/test/test_bpf.c          | 254 +++++++++++++++++++++++++++++++++++
->  lib/bpf/bpf_jit_arm64.c      | 184 ++++++++++++-------------
->  lib/bpf/bpf_load.c           |   2 +-
->  lib/bpf/bpf_validate.c       |  48 ++++---
->  lib/eal/include/rte_bitops.h |   4 +-
->  5 files changed, 375 insertions(+), 117 deletions(-)
+> Mattias R=C3=B6nnblom (7):
+>   event/dlb2: include headers for vector and memory copy APIs
+>   net/octeon_ep: add missing vector API header include
+>   distributor: add missing vector API header include
+>   fib: add missing vector API header include
+>   eal: provide option to use compiler memcpy instead of RTE
+>   ci: test compiler memcpy
+>   vhost: optimize memcpy routines when cc memcpy is used
+>=20
+>  .ci/linux-build.sh                     |  5 +++
+>  .github/workflows/build.yml            |  7 +++
+>  config/meson.build                     |  1 +
+>  devtools/test-meson-builds.sh          |  4 +-
+>  doc/guides/rel_notes/release_24_11.rst | 20 +++++++++
+>  drivers/event/dlb2/dlb2.c              |  2 +
+>  drivers/net/octeon_ep/otx_ep_ethdev.c  |  2 +
+>  lib/distributor/rte_distributor.c      |  1 +
+>  lib/eal/arm/include/rte_memcpy.h       |  9 ++++
+>  lib/eal/include/generic/rte_memcpy.h   | 61 +++++++++++++++++++++++---
+>  lib/eal/loongarch/include/rte_memcpy.h | 54 +----------------------
+>  lib/eal/ppc/include/rte_memcpy.h       |  9 ++++
+>  lib/eal/riscv/include/rte_memcpy.h     | 54 +----------------------
+>  lib/eal/x86/include/meson.build        |  1 +
+>  lib/eal/x86/include/rte_memcpy.h       |  9 ++++
+>  lib/fib/trie.c                         |  1 +
+>  lib/vhost/virtio_net.c                 | 37 +++++++++++++++-
+>  meson_options.txt                      |  2 +
+>  18 files changed, 165 insertions(+), 114 deletions(-)
+>=20
 
+AI code review had useful feedback on this. Please address.
 
-AI patch review saw some really minor things.
-These can be fixed by new version or by maintainer during merge.
-It would be good to be consistent about Fixes and Cc: stable.
+                                                                           =
+                         =20
+## Overall Assessment                                                      =
+                         =20
+                                                                           =
+                         =20
+### Errors (Must Fix)                                                      =
+                         =20
+1. **Patch 6/7**: Copy-paste error in `.ci/linux-build.sh` - both if branch=
+es set `use_cc_memcpy=3Dtrue`
+                                                                           =
+                         =20
+### Warnings (Should Fix)                                                  =
+                         =20
+1. **Patch 2/7**: Include order could be improved for consistency          =
+                         =20
+2. **Patch 5/7**: Long line in meson_options.txt description               =
+                         =20
+3. **Patch 5/7**: Extra blank line in release notes before "Removed Items" =
+                         =20
+                                                                           =
+                         =20
+### Info (Consider)                                                        =
+                         =20
+- All patches have proper Signed-off-by tags                               =
+                         =20
+- Subject lines are within 60 character limit                              =
+                         =20
+- Commit messages are well-written and explain the rationale               =
+                         =20
+- Proper use of Acked-by tags from reviewers                               =
+                         =20
+                                                                           =
+                         =20
+The critical bug in Patch 6/7 should be fixed before merging - the else bra=
+nch should set `-Duse_cc_memcpy=3Dfalse` instead of `true`.
 
-Series-Acked-by: Stephen Hemminger <stephen@networkplumber.org>
+--- Full Report ---
+=3D=3D=3D Patch Review: bundle-1682-opt-memcpy.mbox (via Claude) =3D=3D=3D
+# DPDK Patch Review: bundle-1682-opt-memcpy.mbox
 
-=3D=3D=3D Patch Review: bundle-1681-bpf-fixes.mbox (via Claude) =3D=3D=3D
-# DPDK Patch Review: bundle-1681-bpf-fixes.mbox
-
-## Overview
-This patch series (6 patches) addresses BPF-related fixes including signed =
-shift overflows in ARM JIT, validation improvements, and related EAL macro =
-changes.
-
----
-
-## Patch 1/6: eal: variable first arguments of RTE_SHIFT_VALxx
-
-### Errors
-None identified.
-
-### Warnings
-
-1. **Missing Cc: stable@dpdk.org in commit message body**
-   - The patch CC's `stable@dpdk.org` in email headers but should include `=
-Cc: stable@dpdk.org` in the commit message body if this is intended for sta=
-ble backport.
-
-### Info
-
-1. **Good practice**: The parenthetical note about `uint_least64_t` vs `uin=
-t64_t` is helpful context for reviewers.
-
-2. **Change is appropriate**: Replacing `UINT32_C`/`UINT64_C` with casts al=
-lows variable arguments while maintaining the intended type behavior.
-
----
-
-## Patch 2/6: bpf: fix signed shift overflows in ARM JIT
-
-### Errors
-None identified.
-
-### Warnings
-
-1. **Missing Fixes: tag** - This patch fixes a bug (signed shift overflow c=
-ausing undefined behavior). It should have a `Fixes:` tag with the 12-chara=
-cter SHA of the commit that introduced the problematic code.
-   ```
-   Fixes: abcdef123456 ("bpf: add JIT support for arm64")
-   ```
-
-2. **Missing Cc: stable@dpdk.org in commit body** - If this is a bug fix in=
-tended for stable releases, it should have `Cc: stable@dpdk.org` in the com=
-mit message.
-
-3. **Trailing whitespace in Acked-by tag** (line with `Acked-by: Konstantin=
- Ananyev`):
-   ```
-   Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>=20
-   ```
-   There appears to be a trailing space after the closing `>`.
-
-### Info
-
-1. **Good use of RTE macros**: Using `RTE_BIT32()` and `RTE_SHIFT_VAL32()` =
-is the correct approach to avoid signed integer overflow UB.
-
-2. **Dependency**: This patch depends on Patch 1/6 for `RTE_SHIFT_VAL32` to=
- accept non-constant arguments.
-
----
-
-## Patch 3/6: bpf: mark ARM opcodes with UINT32_C
-
-### Errors
-None identified.
-
-### Warnings
-
-1. **Missing Cc: stable@dpdk.org** - Similar to patch 2, if this is fixing =
-potential issues, it may warrant stable backport consideration.
-
-### Info
-
-1. **Good practice**: Explicitly marking opcode constants with `UINT32_C()`=
- clarifies intent and ensures consistent unsigned 32-bit operations.
-
-2. **Minor style observation**: The parentheses around macro definitions li=
-ke `#define A64_CMP (UINT32_C(0x6b00000f))` are good defensive practice.
-
----
-
-## Patch 4/6: bpf: disallow empty program
-
-### Errors
-None identified.
-
-### Warnings
-
-1. **Missing Fixes: tag** - The commit message mentions fixing bugs:
-   > Fix found bugs:
-   > * a program with no instructions was accepted;
-   > * a program with no EXIT instruction read outside the buffer.
-  =20
-   These should have corresponding `Fixes:` tags.
-
-2. **Missing Cc: stable@dpdk.org** - Bug fixes should typically be consider=
-ed for stable backport.
-
-3. **Brace style inconsistency** (app/test/test_bpf.c, line 90-93):
-   ```c
-   if (expected_errno !=3D 0) {
-           ...
-   } else
-           RTE_TEST_ASSERT_NOT_EQUAL(...);
-   ```
-   While this follows DPDK style for single-statement else, the asymmetry w=
-ith the braced if-block could be considered less readable.
-
-### Info
-
-1. **Good test coverage**: Adding tests for edge cases (empty program, EXIT=
--only, no-EXIT, minimal valid) is excellent practice.
-
-2. **Use of RTE_TEST_ASSERT macros**: Good use of the test framework macros.
-
-3. **Comment style**: The function-level comments are well-written and foll=
-ow proper multi-line comment format.
-
----
-
-## Patch 5/6: bpf: make add/subtract one program validate
-
-### Errors
-None identified.
-
-### Warnings
-
-1. **Missing Fixes: tag** - This fixes signed integer overflow UB in `bpf_v=
-alidate.c`. Should include:
-   ```
-   Fixes: <sha> ("original commit that introduced the bug")
-   ```
-
-2. **Missing Cc: stable@dpdk.org** - Bug fix should be considered for stabl=
-e.
-
-### Info
-
-1. **Correct fix approach**: Casting to `uint64_t` before arithmetic is the=
- right way to handle potential signed overflow when the result will be mask=
-ed anyway.
-
-2. **Good test additions**: Tests for add/subtract operations validate the =
-fix works correctly.
-
----
-
-## Patch 6/6: bpf: fix BPF validation w/ conditional jump first
-
-### Errors
-None identified.
-
-### Warnings
-
-1. **Trailing whitespace in Tested-by tag**:
-   ```
-   Tested-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>=20
-   ```
-   There appears to be trailing space after `>`.
-
-2. **Subject line could be clearer** - "fix BPF validation w/ conditional j=
-ump first" is somewhat abbreviated. Consider:
-   ```
-   bpf: fix validation when conditional jump is first instruction
-   ```
-
-### Info
-
-1. **Good Fixes: tag present**: `Fixes: 6e12ec4c4d6d ("bpf: add more checks=
-")` - properly formatted.
-
-2. **Excellent commit message**: Clear explanation of the bug (zero index u=
-sed as sentinel), the root cause, and the fix approach.
-
-3. **Good test coverage**: Two tests demonstrating the issue - one with jum=
-p as first instruction, one with jump as non-first instruction to prevent r=
-egression.
-
-4. **Code change is sound**: Switching from index-based to pointer-based tr=
-acking for `prev_node` is cleaner and avoids the zero-sentinel problem.
+This patch series adds an option to use compiler memcpy instead of DPDK's c=
+ustom implementation, along with several prerequisite fixes for missing hea=
+der includes.
 
 ---
 
 ## Summary
 
-| Patch | Errors | Warnings | Info |
-|-------|--------|----------|------|
-| 1/6 (eal) | 0 | 1 | 2 |
-| 2/6 (bpf ARM) | 0 | 3 | 2 |
-| 3/6 (bpf opcodes) | 0 | 1 | 2 |
-| 4/6 (bpf empty) | 0 | 3 | 3 |
-| 5/6 (bpf add/sub) | 0 | 2 | 2 |
-| 6/6 (bpf jump) | 0 | 2 | 4 |
+The patch series contains 7 patches:
+1. event/dlb2: include headers for vector and memory copy APIs
+2. net/octeon_ep: add missing vector API header include
+3. distributor: add missing vector API header include
+4. fib: add missing vector API header include
+5. eal: provide option to use compiler memcpy instead of RTE
+6. ci: test compiler memcpy
+7. vhost: optimize memcpy routines when cc memcpy is used
 
-### Key Issues to Address
+---
 
-1. **Missing Fixes: tags** on patches 2, 3, 4, and 5 - these are bug fixes =
-and should reference the original commits.
+## Patch 1/7: event/dlb2: include headers for vector and memory copy APIs
 
-2. **Missing Cc: stable@dpdk.org** in commit message bodies for bug fix pat=
-ches.
+### Info
+- Well-structured commit message explaining the issue and fix
+- Proper Signed-off-by and Acked-by tags
+- Correctly formatted subject line
 
-3. **Trailing whitespace** in Acked-by/Tested-by lines on patches 2 and 6.
+### No Issues Found
+This patch is clean and follows guidelines.
 
-### Positive Aspects
+---
 
-- Good use of DPDK macros (`RTE_BIT32`, `RTE_SHIFT_VAL32`, `UINT32_C`)
-- Comprehensive test additions using proper test framework
-- Clear commit messages explaining the issues and fixes
-- Proper patch ordering (dependencies handled correctly)
-- License/copyright compliance (no changes needed)
-- Code follows DPDK style guidelines
+## Patch 2/7: net/octeon_ep: add missing vector API header include
+
+### Warning
+**Include order issue**: The `<rte_vect.h>` include is placed after `<ethde=
+v_pci.h>`, but according to AGENTS.md guidelines, DPDK EAL includes should =
+come before DPDK misc library includes, and there should be a blank line se=
+parating groups.
+
+```c
+#include <inttypes.h>
+#include <ethdev_pci.h>
+
+#include <rte_vect.h>
+```
+
+Consider placing `<rte_vect.h>` in the proper order relative to other DPDK =
+includes.
+
+### No Other Issues Found
+Otherwise clean patch.
+
+---
+
+## Patch 3/7: distributor: add missing vector API header include
+
+### Info
+- Clean patch with proper formatting
+
+### No Issues Found
+This patch is clean and follows guidelines.
+
+---
+
+## Patch 4/7: fib: add missing vector API header include
+
+### Info
+- Clean patch with proper formatting
+
+### No Issues Found
+This patch is clean and follows guidelines.
+
+---
+
+## Patch 5/7: eal: provide option to use compiler memcpy instead of RTE
+
+### Error
+**Release notes formatting issue**: The release notes have an extra blank l=
+ine after the "destination buffers)." line:
+
+```rst
+  destination buffers).
+                        <-- extra blank line here
+Removed Items
+```
+
+The blank line should be removed or the section should end properly before =
+"Removed Items".
+
+### Warning
+**Line length in meson_options.txt**: The description line for `use_cc_memc=
+py` may exceed typical line length conventions:
+
+```python
+option('use_cc_memcpy', type: 'boolean', value: false, description:
+       'Have the functions of <rte_memcpy.h> delegate to compiler/libc memc=
+py() instead of using custom implementation.')
+```
+
+This is a long line (approximately 119 characters). Consider breaking it.
+
+### Info
+- Good use of `#ifdef __cplusplus` guards in generic/rte_memcpy.h
+- Proper SPDX identifiers maintained
+- Good documentation in release notes
+
+---
+
+## Patch 6/7: ci: test compiler memcpy
+
+### Error
+**Copy-paste error in linux-build.sh**: Both branches of the if statement s=
+et the same value:
+
+```bash
+if [ "$CCMEMCPY" =3D "true" ]; then
+	OPTS=3D"$OPTS -Duse_cc_memcpy=3Dtrue"
+else
+	OPTS=3D"$OPTS -Duse_cc_memcpy=3Dtrue"  # <-- Should be false
+fi
+```
+
+The `else` branch should set `-Duse_cc_memcpy=3Dfalse`.
+
+### Info
+- Good addition of CI coverage for the new feature
+
+---
+
+## Patch 7/7: vhost: optimize memcpy routines when cc memcpy is used
+
+### Warning
+**Brace style inconsistency**: The `if-else` statement uses braces for the =
+`if` block but not for the `else` block:
+
+```c
+	if (len <=3D 256) {
+		size_t left;
+
+		for (left =3D len; left >=3D 32; left -=3D 32) {
+			memcpy(dst, src, 32);
+			dst =3D RTE_PTR_ADD(dst, 32);
+			src =3D RTE_PTR_ADD(src, 32);
+		}
+
+		memcpy(dst, src, left);
+	} else
+		memcpy(dst, src, len);
+```
+
+According to DPDK coding style, when one branch has braces, consistency sug=
+gests the other should too, or both should be without braces if they're sin=
+gle statements. However, the DPDK guidelines show examples where this mixed=
+ style is acceptable.
+
+### Info
+- Good performance documentation in the commit message
+- Proper use of `__rte_always_inline`
+- Good use of `restrict` keyword
+- Appropriate use of `__builtin_assume_aligned`
+- Well-documented rationale for the optimization
+
+### No Other Issues Found
+This patch is otherwise clean.
+
+---
+
+## Overall Assessment
+
+### Errors (Must Fix)
+1. **Patch 6/7**: Copy-paste error in `.ci/linux-build.sh` - both if branch=
+es set `use_cc_memcpy=3Dtrue`
+
+### Warnings (Should Fix)
+1. **Patch 2/7**: Include order could be improved for consistency
+2. **Patch 5/7**: Long line in meson_options.txt description
+3. **Patch 5/7**: Extra blank line in release notes before "Removed Items"
+
+### Info (Consider)
+- All patches have proper Signed-off-by tags
+- Subject lines are within 60 character limit
+- Commit messages are well-written and explain the rationale
+- Proper use of Acked-by tags from reviewers
+
+The critical bug in Patch 6/7 should be fixed before merging - the else bra=
+nch should set `-Duse_cc_memcpy=3Dfalse` instead of `true`.
 
