@@ -2,29 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0941D6CFBB
-	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Jan 2026 03:17:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7813D6CFBB
+	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Jan 2026 04:29:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 71E3240609;
-	Fri, 23 Jan 2026 04:16:56 +0100 (CET)
-Received: from out28-193.mail.aliyun.com (out28-193.mail.aliyun.com
- [115.124.28.193])
- by mails.dpdk.org (Postfix) with ESMTP id 3DFCA4021F;
- Fri, 23 Jan 2026 04:16:49 +0100 (CET)
-Received: from ubuntu.localdomain(mailfrom:dimon.zhao@nebula-matrix.com
- fp:SMTPD_---.gDV2mtG_1769138206 cluster:ay29) by smtp.aliyun-inc.com;
- Fri, 23 Jan 2026 11:16:46 +0800
-From: Dimon Zhao <dimon.zhao@nebula-matrix.com>
+	by mails.dpdk.org (Postfix) with ESMTP id E621F40262;
+	Fri, 23 Jan 2026 05:29:52 +0100 (CET)
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com
+ [209.85.221.54]) by mails.dpdk.org (Postfix) with ESMTP id E66E8400D5
+ for <dev@dpdk.org>; Fri, 23 Jan 2026 05:29:50 +0100 (CET)
+Received: by mail-wr1-f54.google.com with SMTP id
+ ffacd0b85a97d-432d2c96215so1508197f8f.3
+ for <dev@dpdk.org>; Thu, 22 Jan 2026 20:29:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769142590;
+ x=1769747390; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=adUn7yv5rvnY5Rd6Y2vFoOo8HW70UenxmZvq4FtLCjU=;
+ b=jZLFTkmgDi6y1OXqdWQd5QO1jkTAyO0QLIu0qzDRbGI1oSaob/arp/CoiBBGZointd
+ ELR8mi1xKJJ0IIic6zO5FIlsU+O+JEgWthy7jYpxs8+m4uYlx/9UBMpaurCISpW4bFfq
+ 6Ment7IvD6Mr0fIDP6u/1S9QKuhMCE/wnEPGQ1pa6kc5gjod1ri3TmHBsO79han5XNja
+ qMxUhZp3AQJfSVZBYTzGoy45XajGblZ/fQMEER6BK0FqH7L9Kdc23lG9nJSmx3nGIIyB
+ iAcv+bsRqn7ZOFU6zULGZpxlUsgOqBTyPuDMZfDtqTC6L8BxNUOQKo+nZ870LplOgAY6
+ rFwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1769142590; x=1769747390;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=adUn7yv5rvnY5Rd6Y2vFoOo8HW70UenxmZvq4FtLCjU=;
+ b=MQT9GHPALwnhJrFmH51HDGPXnbRzDPVPepemOJIFuwB+gjfar1F1/BmqFa1A3vWkB7
+ MdOFr8r5eSyPzEx1/+N4Gy5C37X0JCI5WPboiXEPJMWHtIk7Fdy0T5eqerkBOjgcLpWq
+ V0tpByQc5p0oTxPZ/Z3Orj4OK1FmC+FJisBmCQjGkfFXeg7VlBhYOa/0M7H/sA0gQnzm
+ 6nQbfAW0TUUSPy4zTN4PCo8n3i9eYg8N0NmVLPhFTQKs4bTDKrXGla9rlF8ApqMl/nUr
+ 19BeityRcZhozCX7WYe09IztJG+5lNxKrrkW4c14VcR65u3GyF3DDP7ZuhPrbzgu4CA1
+ KqJg==
+X-Gm-Message-State: AOJu0YyltR6kFZjXgwFGZb9dbchLbspns7lmKRk07YS0NUDMDo3FJUly
+ ybVrggB92W+TnCr1AIKDmfuaJBBvT/yOnfBkNP5YEUtpOLCxu/ZbLELJPbSWn2qOhclzF9WtLhI
+ +z4rt
+X-Gm-Gg: AZuq6aKSeNAEgAK5EAnPLeVKxf3GTp+ZPnfD01zBeczcQoky3t56tMZe9UYV3vayb6n
+ YBnPWt+Ot7Z30bhP5pUlvg/TyLsPBtzqzcpDWZF7gz6RYj9eGeNYxGMBGfNXe3B2jts17jZzOJi
+ l33RAZmEInrS4R3t1s7ltuTKBircXIiiIWpdDADafDC5BBCUxWeTvJKrRkFvsz3+mjmtlvetHDq
+ AXDEtEn5aKQNh70EA4olmLGHuofJQjoOKqQtZYaFfKKC47dDSRkJtgDdJgjjKSlrWZGr6CSsXZU
+ Gu98/JO59AbkJm0+eFjfsUUwr3xZ/OZgLOfavmKaHrywMPSZsQR5gD/TilRIEKYPEIETrZEjR3y
+ Fp4i3sGk55GBbLypnTkNhh3KXP/mS8hKDPd9i95G8jgzs+FSWhUfFuKPUhQOoCq3HLIGwN88+eE
+ xBuPDWoYQRamoF5Zcj89o3ulJurefbzb4dfV2+pOZjjYiDFuJUdg==
+X-Received: by 2002:a05:6000:2211:b0:435:8f88:7236 with SMTP id
+ ffacd0b85a97d-435b15fa222mr2686125f8f.36.1769142590185; 
+ Thu, 22 Jan 2026 20:29:50 -0800 (PST)
+Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ ffacd0b85a97d-435b1f7b41asm3603771f8f.39.2026.01.22.20.29.48
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Thu, 22 Jan 2026 20:29:49 -0800 (PST)
+From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Dimon Zhao <dimon.zhao@nebula-matrix.com>, stable@dpdk.org,
- Kyo Liu <kyo.liu@nebula-matrix.com>, Leon Yu <leon.yu@nebula-matrix.com>,
- Sam Chen <sam.chen@nebula-matrix.com>
-Subject: [PATCH v1 4/4] net/nbl: improve exception handling for the mailbox
-Date: Thu, 22 Jan 2026 19:16:27 -0800
-Message-Id: <20260123031627.151341-5-dimon.zhao@nebula-matrix.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260123031627.151341-1-dimon.zhao@nebula-matrix.com>
-References: <20260123031627.151341-1-dimon.zhao@nebula-matrix.com>
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v11 00/18] lib: improve string overflow safety
+Date: Thu, 22 Jan 2026 20:27:58 -0800
+Message-ID: <20260123042945.159075-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20251202172626.283094-1-stephen@networkplumber.org>
+References: <20251202172626.283094-1-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -40,238 +80,118 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Key changes:
-1. Replace simple 'acked' flag with a state machine to improve mailbox
-   reliability. New states: IDLE, WAITING, ACKING, ACKED, TIMEOUT.
-2. Validate message ID and type before processing acknowledgments to
-   prevent incorrect ACK matching.
-3. Handle timeout scenarios: discard ACKs received after timeout to
-   prevent use of already released buffers.
-4. Check mailbox status before sending: if the send mailbox descriptor
-   is found to be in use or waiting for an ACK during transmission,
-   the message will not be sent.
+This series improves defensive programming by adding proper string length
+validation and overflow checking throughout DPDK libraries. The goal is
+to eliminate silent truncation of names and paths, provide meaningful
+error feedback, and enable compiler format overflow warnings.
 
-Fixes: a1c5ffa13b2c ("net/nbl: add channel layer")
-Cc: stable@dpdk.org
+Motivation
+----------
+Many DPDK APIs accept name parameters with defined maximum lengths
+(e.g., RTE_LPM_NAMESIZE, RTE_HASH_NAMESIZE). Previously, names exceeding
+these limits were silently truncated via snprintf/strlcpy, potentially
+causing subtle bugs like duplicate names or unexpected behavior. This
+series addresses these issues systematically.
 
-Signed-off-by: Dimon Zhao <dimon.zhao@nebula-matrix.com>
----
- drivers/net/nbl/nbl_hw/nbl_channel.c | 94 ++++++++++++++++++++++------
- drivers/net/nbl/nbl_hw/nbl_channel.h | 11 +++-
- 2 files changed, 85 insertions(+), 20 deletions(-)
+Changes Overview
+----------------
+The patches fall into several categories:
 
-diff --git a/drivers/net/nbl/nbl_hw/nbl_channel.c b/drivers/net/nbl/nbl_hw/nbl_channel.c
-index f81c4c8591..75e4354e18 100644
---- a/drivers/net/nbl/nbl_hw/nbl_channel.c
-+++ b/drivers/net/nbl/nbl_hw/nbl_channel.c
-@@ -22,6 +22,7 @@ static int nbl_chan_init_tx_queue(union nbl_chan_info *chan_info)
- {
- 	struct nbl_chan_ring *txq = &chan_info->mailbox.txq;
- 	size_t size = chan_info->mailbox.num_txq_entries * sizeof(struct nbl_chan_tx_desc);
-+	int i;
- 
- 	txq->desc = nbl_alloc_dma_mem(&txq->desc_mem, size);
- 	if (!txq->desc) {
-@@ -36,6 +37,10 @@ static int nbl_chan_init_tx_queue(union nbl_chan_info *chan_info)
- 		goto req_wait_queue_failed;
- 	}
- 
-+	for (i = 0; i < chan_info->mailbox.num_txq_entries; i++)
-+		rte_atomic_store_explicit(&chan_info->mailbox.wait[i].status, NBL_MBX_STATUS_IDLE,
-+					  rte_memory_order_relaxed);
-+
- 	size = (u64)chan_info->mailbox.num_txq_entries * (u64)chan_info->mailbox.txq_buf_size;
- 	txq->buf = nbl_alloc_dma_mem(&txq->buf_mem, size);
- 	if (!txq->buf) {
-@@ -253,24 +258,55 @@ static void nbl_chan_recv_ack_msg(void *priv, uint16_t srcid, uint16_t msgid,
- 	uint32_t ack_msgid;
- 	uint32_t ack_msgtype;
- 	uint32_t copy_len;
-+	int status = NBL_MBX_STATUS_WAITING;
- 
- 	chan_info = NBL_CHAN_MGT_TO_CHAN_INFO(chan_mgt);
- 	ack_msgtype = *payload;
- 	ack_msgid = *(payload + 1);
-+
-+	if (ack_msgid >= chan_mgt->chan_info->mailbox.num_txq_entries) {
-+		NBL_LOG(ERR, "Invalid msg id %u, msg type %u", ack_msgid, ack_msgtype);
-+		return;
-+	}
-+
- 	wait_head = &chan_info->mailbox.wait[ack_msgid];
-+	if (wait_head->msg_type != ack_msgtype) {
-+		NBL_LOG(ERR, "Invalid msg id %u, msg type %u, wait msg type %u",
-+			ack_msgid, ack_msgtype, wait_head->msg_type);
-+		return;
-+	}
-+
-+	if (!rte_atomic_compare_exchange_strong_explicit(&wait_head->status, &status,
-+							 NBL_MBX_STATUS_ACKING,
-+							 rte_memory_order_acq_rel,
-+							 rte_memory_order_relaxed)) {
-+		NBL_LOG(ERR, "Invalid wait status %d msg id %u, msg type %u",
-+			wait_head->status, ack_msgid, ack_msgtype);
-+		return;
-+	}
-+
- 	wait_head->ack_err = *(payload + 2);
- 
- 	NBL_LOG(DEBUG, "recv ack, srcid:%u, msgtype:%u, msgid:%u, ack_msgid:%u,"
--		" data_len:%u, ack_data_len:%u",
--		srcid, ack_msgtype, msgid, ack_msgid, data_len, wait_head->ack_data_len);
-+		" data_len:%u, ack_data_len:%u, ack_err:%d",
-+		srcid, ack_msgtype, msgid, ack_msgid, data_len,
-+		wait_head->ack_data_len, wait_head->ack_err);
- 
- 	if (wait_head->ack_err >= 0 && (data_len > 3 * sizeof(uint32_t))) {
- 		/* the mailbox msg parameter structure may change */
-+		if (data_len - 3 * sizeof(uint32_t) != wait_head->ack_data_len)
-+			NBL_LOG(INFO, "payload_len do not match ack_len!,"
-+				" srcid:%u, msgtype:%u, msgid:%u, ack_msgid %u,"
-+				" data_len:%u, ack_data_len:%u",
-+				srcid, ack_msgtype, msgid,
-+				ack_msgid, data_len, wait_head->ack_data_len);
- 		copy_len = RTE_MIN(wait_head->ack_data_len, data_len - 3 * sizeof(uint32_t));
--		memcpy(wait_head->ack_data, payload + 3, copy_len);
-+		if (copy_len)
-+			memcpy(wait_head->ack_data, payload + 3, copy_len);
- 	}
- 
--	rte_atomic_store_explicit(&wait_head->acked, 1, rte_memory_order_release);
-+	rte_atomic_store_explicit(&wait_head->status, NBL_MBX_STATUS_ACKED,
-+				  rte_memory_order_release);
- }
- 
- static void nbl_chan_recv_msg(struct nbl_channel_mgt *chan_mgt, void *data)
-@@ -371,12 +407,27 @@ static uint16_t nbl_chan_update_txqueue(union nbl_chan_info *chan_info,
- {
- 	struct nbl_chan_ring *txq;
- 	struct nbl_chan_tx_desc *tx_desc;
-+	struct nbl_chan_waitqueue_head *wait_head;
- 	uint64_t pa;
- 	void *va;
- 	uint16_t next_to_use;
-+	int status;
-+
-+	if (arg_len > NBL_CHAN_BUF_LEN - sizeof(*tx_desc)) {
-+		NBL_LOG(ERR, "arg_len: %zu, too long!", arg_len);
-+		return 0xFFFF;
-+	}
- 
- 	txq = &chan_info->mailbox.txq;
- 	next_to_use = txq->next_to_use;
-+
-+	wait_head = &chan_info->mailbox.wait[next_to_use];
-+	status = rte_atomic_load_explicit(&wait_head->status, rte_memory_order_acquire);
-+	if (status != NBL_MBX_STATUS_IDLE && status != NBL_MBX_STATUS_TIMEOUT) {
-+		NBL_LOG(ERR, "too much inflight mailbox msg, msg id %u", next_to_use);
-+		return 0xFFFF;
-+	}
-+
- 	va = (u8 *)txq->buf + (u64)next_to_use * (u64)chan_info->mailbox.txq_buf_size;
- 	pa = txq->buf_mem.pa + (u64)next_to_use * (u64)chan_info->mailbox.txq_buf_size;
- 	tx_desc = NBL_CHAN_TX_DESC(txq, next_to_use);
-@@ -384,10 +435,6 @@ static uint16_t nbl_chan_update_txqueue(union nbl_chan_info *chan_info,
- 	tx_desc->dstid = dstid;
- 	tx_desc->msg_type = msg_type;
- 	tx_desc->msgid = next_to_use;
--	if (arg_len > NBL_CHAN_BUF_LEN - sizeof(*tx_desc)) {
--		NBL_LOG(ERR, "arg_len: %zu, too long!", arg_len);
--		return -1;
--	}
- 
- 	if (arg_len > NBL_CHAN_TX_DESC_EMBEDDED_DATA_LEN) {
- 		memcpy(va, arg, arg_len);
-@@ -418,6 +465,7 @@ static int nbl_chan_send_msg(void *priv, struct nbl_chan_send_info *chan_send)
- 	uint16_t msgid;
- 	int ret;
- 	int retry_time = 0;
-+	int status = NBL_MBX_STATUS_WAITING;
- 
- 	if (chan_mgt->state)
- 		return -EIO;
-@@ -431,8 +479,7 @@ static int nbl_chan_send_msg(void *priv, struct nbl_chan_send_info *chan_send)
- 
- 	if (msgid == 0xFFFF) {
- 		rte_spinlock_unlock(&chan_info->mailbox.txq_lock);
--		NBL_LOG(ERR, "chan tx queue full, send msgtype:%u"
--			" to dstid:%u failed",
-+		NBL_LOG(ERR, "chan tx queue full, send msgtype:%u to dstid:%u failed",
- 			chan_send->msg_type, chan_send->dstid);
- 		return -ECOMM;
- 	}
-@@ -446,23 +493,34 @@ static int nbl_chan_send_msg(void *priv, struct nbl_chan_send_info *chan_send)
- 	wait_head = &chan_info->mailbox.wait[msgid];
- 	wait_head->ack_data = chan_send->resp;
- 	wait_head->ack_data_len = chan_send->resp_len;
--	rte_atomic_store_explicit(&wait_head->acked, 0, rte_memory_order_relaxed);
- 	wait_head->msg_type = chan_send->msg_type;
--	rte_wmb();
-+	rte_atomic_store_explicit(&wait_head->status, NBL_MBX_STATUS_WAITING,
-+				  rte_memory_order_release);
- 	nbl_chan_kick_tx_ring(chan_mgt, chan_info);
- 	rte_spinlock_unlock(&chan_info->mailbox.txq_lock);
- 
- 	while (1) {
--		if (rte_atomic_load_explicit(&wait_head->acked, rte_memory_order_acquire))
--			return wait_head->ack_err;
-+		if (rte_atomic_load_explicit(&wait_head->status, rte_memory_order_acquire) ==
-+		    NBL_MBX_STATUS_ACKED) {
-+			ret = wait_head->ack_err;
-+			rte_atomic_store_explicit(&wait_head->status, NBL_MBX_STATUS_IDLE,
-+						  rte_memory_order_release);
-+			return ret;
-+		}
- 
- 		rte_delay_us(50);
- 		retry_time++;
--		if (retry_time > NBL_CHAN_RETRY_TIMES)
--			return -EIO;
-+		if (retry_time > NBL_CHAN_RETRY_TIMES &&
-+		    rte_atomic_compare_exchange_strong_explicit(&wait_head->status,
-+								&status, NBL_MBX_STATUS_TIMEOUT,
-+								rte_memory_order_acq_rel,
-+								rte_memory_order_relaxed)) {
-+			NBL_LOG(ERR, "send msgtype:%u msgid %u to dstid:%u timeout",
-+				chan_send->msg_type, msgid, chan_send->dstid);
-+			break;
-+		}
- 	}
--
--	return 0;
-+	return -EIO;
- }
- 
- static int nbl_chan_send_ack(void *priv, struct nbl_chan_ack_info *chan_ack)
-diff --git a/drivers/net/nbl/nbl_hw/nbl_channel.h b/drivers/net/nbl/nbl_hw/nbl_channel.h
-index f8fa89af51..21fce7478d 100644
---- a/drivers/net/nbl/nbl_hw/nbl_channel.h
-+++ b/drivers/net/nbl/nbl_hw/nbl_channel.h
-@@ -41,6 +41,14 @@ enum {
- 	NBL_MB_TX_QID = 1,
- };
- 
-+enum {
-+	NBL_MBX_STATUS_IDLE = 0,
-+	NBL_MBX_STATUS_WAITING,
-+	NBL_MBX_STATUS_ACKING,
-+	NBL_MBX_STATUS_ACKED,
-+	NBL_MBX_STATUS_TIMEOUT,
-+};
-+
- struct __rte_packed_begin nbl_chan_tx_desc {
- 	uint16_t flags;
- 	uint16_t srcid;
-@@ -74,8 +82,7 @@ struct nbl_chan_ring {
- 
- struct nbl_chan_waitqueue_head {
- 	char *ack_data;
--	RTE_ATOMIC(int)
--		acked;
-+	RTE_ATOMIC(int) status;
- 	int ack_err;
- 	uint16_t ack_data_len;
- 	uint16_t msg_type;
+1. API input validation (patches 1-2, 6, 13, 17):
+   - Add explicit length checks for name parameters in lpm, hash, efd,
+     tailq, and cfgfile APIs
+   - Return ENAMETOOLONG when names exceed limits
+   - Document new error conditions in API headers
+   - Add corresponding unit tests
+
+2. Internal buffer overflow detection (patches 3-5, 8-10, 12, 15-16):
+   - Check snprintf/strlcpy return values for truncation
+   - Log warnings when internal string operations truncate
+   - Increase buffer sizes where they were too small
+   - Use dynamic allocation (asprintf) where appropriate
+
+3. Path handling improvements (patches 7, 11, 14):
+   - Use standard C library routines (getmntent) for parsing /proc/mounts
+   - Enforce UNIX_PATH_MAX for socket paths to fail early
+   - Handle arbitrarily long shared library paths
+
+4. Error message improvements (patches 1-2, 6):
+   - Include rte_strerror() in failure messages
+   - Provide more context when operations fail
+
+5. Enable compiler warnings (patch 18):
+   - Remove -Wno-format-truncation flag
+   - All preceding patches fix the warnings this would trigger
+
+API Changes
+-----------
+The following APIs now return ENAMETOOLONG for oversized names:
+  - rte_lpm_create()
+  - rte_hash_create()
+  - rte_fbk_hash_create()
+  - rte_efd_create()
+  - rte_eal_tailq_create()
+  - rte_cfgfile_add_section()
+  - rte_cfgfile_add_entry()
+
+These are documented in the release notes and header files.
+
+Testing
+-------
+- Existing unit tests pass
+- New test cases added for hash name length validation
+- Build tested with format overflow warnings enabled
+
+Stephen Hemminger (18):
+  lpm: restrict name size
+  hash: add checks for hash name length
+  graph: avoid overflowing comment buffer
+  latencystats: add check for string overflow
+  telemetry: check for path overflow
+  efd: handle possible name truncation
+  eal: use C library to parse filesystem table
+  eal: warn if thread name is truncated
+  eal: avoid format overflow when handling addresses
+  eal: add check for sysfs path overflow
+  eal: limit maximum runtime directory and socket paths
+  eal: check for hugefile path overflow
+  eal: check tailq length
+  eal: handle long shared library path
+  ethdev: avoid possible overflow in xstat names
+  vhost: check for overflow in xstat name
+  cfgfile: add length checks and increase line buffer
+  lib: enable format overflow warnings
+
+ app/test/test_hash.c                   | 21 ++++++
+ doc/guides/rel_notes/release_26_03.rst | 13 ++++
+ lib/cfgfile/rte_cfgfile.c              | 43 +++++++++---
+ lib/cfgfile/rte_cfgfile.h              |  6 +-
+ lib/eal/common/eal_common_config.c     |  6 +-
+ lib/eal/common/eal_common_memory.c     |  3 +-
+ lib/eal/common/eal_common_options.c    | 17 +++--
+ lib/eal/common/eal_common_proc.c       | 85 +++++++++++++++---------
+ lib/eal/common/eal_common_tailqs.c     | 13 +++-
+ lib/eal/common/eal_filesystem.h        | 27 ++++++--
+ lib/eal/freebsd/eal.c                  |  6 +-
+ lib/eal/linux/eal.c                    |  6 +-
+ lib/eal/linux/eal_hugepage_info.c      | 92 ++++++++++++--------------
+ lib/eal/linux/eal_memalloc.c           | 11 ++-
+ lib/eal/linux/eal_memory.c             |  9 ++-
+ lib/eal/windows/eal.c                  |  6 +-
+ lib/efd/rte_efd.c                      | 18 +++--
+ lib/ethdev/rte_ethdev.c                | 35 +++++++---
+ lib/graph/graph_pcap.c                 |  9 ++-
+ lib/hash/rte_cuckoo_hash.c             | 41 ++++++++----
+ lib/hash/rte_fbk_hash.c                | 12 +++-
+ lib/hash/rte_fbk_hash.h                |  1 +
+ lib/latencystats/rte_latencystats.c    |  9 ++-
+ lib/lpm/rte_lpm.c                      | 16 +++--
+ lib/lpm/rte_lpm.h                      |  1 +
+ lib/meson.build                        |  4 --
+ lib/telemetry/telemetry_legacy.c       |  7 +-
+ lib/vhost/vhost.c                      | 14 ++--
+ 28 files changed, 366 insertions(+), 165 deletions(-)
+
 -- 
-2.34.1
+2.51.0
 
