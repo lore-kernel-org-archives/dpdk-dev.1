@@ -2,45 +2,40 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4A19D7789D
-	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Jan 2026 17:47:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91114D715C7
+	for <dpdk-dev@archiver.kernel.org>; Sat, 24 Jan 2026 07:58:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 71ABB40269;
-	Fri, 23 Jan 2026 18:47:44 +0100 (CET)
-Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id 1BB344021F
- for <dev@dpdk.org>; Fri, 23 Jan 2026 18:47:43 +0100 (CET)
-Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 0B9754A2BE; Fri, 23 Jan 2026 18:47:43 +0100 (CET)
-From: bugzilla@dpdk.org
-To: dev@dpdk.org
-Subject: [DPDK/DTS Bug 1870] dts: add support for no-link topology
-Date: Fri, 23 Jan 2026 17:47:42 +0000
-X-Bugzilla-Reason: AssignedTo
-X-Bugzilla-Type: new
-X-Bugzilla-Watch-Reason: None
-X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: DTS
-X-Bugzilla-Version: unspecified
-X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: normal
-X-Bugzilla-Who: abailey@iol.unh.edu
-X-Bugzilla-Status: UNCONFIRMED
-X-Bugzilla-Resolution: 
-X-Bugzilla-Priority: Normal
-X-Bugzilla-Assigned-To: dev@dpdk.org
-X-Bugzilla-Target-Milestone: ---
-X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
- op_sys bug_status bug_severity priority component assigned_to reporter cc
- target_milestone
-Message-ID: <bug-1870-3@http.bugs.dpdk.org/>
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-X-Bugzilla-URL: http://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
+	by mails.dpdk.org (Postfix) with ESMTP id 72ECF40293;
+	Sat, 24 Jan 2026 08:58:56 +0100 (CET)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 69E7D4026F
+ for <dev@dpdk.org>; Sat, 24 Jan 2026 08:58:55 +0100 (CET)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 830462071A;
+ Sat, 24 Jan 2026 08:58:54 +0100 (CET)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Subject: RE: [PATCH v10] eal: RTE_PTR_ADD/SUB char* for compiler optimizations
+Date: Sat, 24 Jan 2026 08:58:52 +0100
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F656B1@smartserver.smartshare.dk>
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+In-Reply-To: <20260123162742.69675-1-scott.k.mitch1@gmail.com>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH v10] eal: RTE_PTR_ADD/SUB char* for compiler optimizations
+Thread-Index: AdyMhTZO5b3PMC1AQAOBrqnsxQRR9AAgeMbg
+References: <20260117210322.5419-1-scott.k.mitch1@gmail.com>
+ <20260123162742.69675-1-scott.k.mitch1@gmail.com>
+From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
+To: <scott.k.mitch1@gmail.com>,
+	<dev@dpdk.org>
+Cc: <stephen@networkplumber.org>,
+	<bruce.richardson@intel.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -54,27 +49,24 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-http://bugs.dpdk.org/show_bug.cgi?id=3D1870
+> From: Scott Mitchell <scott.k.mitch1@gmail.com>
+>=20
+> Modify RTE_PTR_ADD and RTE_PTR_SUB to use char* pointer arithmetic
+> on Clang instead of uintptr_t casts. Benefits of this approach:
+> - API compatibility: works for both integer and pointer inputs
+> - Retains simple macros: no pragmas, no _Generic
+> - Enables Clang optimizations: Clang can now unroll and vectorize
+>   pointer loops. GCC uses uintptr_t to avoid false positive warnings.
+>=20
+> Example use case which benefits is __rte_raw_cksum. Performance
+> results from cksum_perf_autotest on Intel Xeon (Cascade Lake,
+> AVX-512) built with Clang 18.1 (TSC cycles/byte):
+>   Block size    Before    After    Improvement
+>          100      0.40     0.24        ~40%
+>         1500      0.50     0.06        ~8x
+>         9000      0.49     0.06        ~8x
+>=20
+> Signed-off-by: Scott Mitchell <scott.k.mitch1@gmail.com>
 
-            Bug ID: 1870
-           Summary: dts: add support for no-link topology
-           Product: DPDK
-           Version: unspecified
-          Hardware: All
-                OS: All
-            Status: UNCONFIRMED
-          Severity: normal
-          Priority: Normal
-         Component: DTS
-          Assignee: dev@dpdk.org
-          Reporter: abailey@iol.unh.edu
-                CC: juraj.linkes@pantheon.tech, probb@iol.unh.edu
-  Target Milestone: ---
+Acked-by: Morten Br=F8rup <mb@smartsharesystems.com>
 
-Currently, there exists logic in DTS that refers to a NO_LINK topology. This
-topology cannot exist in the current state of DTS, as at least one port is
-required to be supplied in nodes.yaml.
-
---=20
-You are receiving this mail because:
-You are the assignee for the bug.=
