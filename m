@@ -2,68 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED35CD715EE
-	for <dpdk-dev@archiver.kernel.org>; Sat, 24 Jan 2026 17:12:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3044D715EE
+	for <dpdk-dev@archiver.kernel.org>; Sat, 24 Jan 2026 17:15:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D689F40289;
-	Sat, 24 Jan 2026 18:12:45 +0100 (CET)
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com
- [209.85.221.53]) by mails.dpdk.org (Postfix) with ESMTP id 4680640274
- for <dev@dpdk.org>; Sat, 24 Jan 2026 18:12:44 +0100 (CET)
-Received: by mail-wr1-f53.google.com with SMTP id
- ffacd0b85a97d-42fb6ce71c7so3001057f8f.1
- for <dev@dpdk.org>; Sat, 24 Jan 2026 09:12:44 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id EF35940289;
+	Sat, 24 Jan 2026 18:15:13 +0100 (CET)
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com
+ [209.85.128.50]) by mails.dpdk.org (Postfix) with ESMTP id 024FB40274
+ for <dev@dpdk.org>; Sat, 24 Jan 2026 18:15:12 +0100 (CET)
+Received: by mail-wm1-f50.google.com with SMTP id
+ 5b1f17b1804b1-47fedb7c68dso32191055e9.2
+ for <dev@dpdk.org>; Sat, 24 Jan 2026 09:15:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769274764;
- x=1769879564; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769274912;
+ x=1769879712; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=CvO4XocPMhc/KJC2GromDfAofqNT6USIbd2n4Iu1sYY=;
- b=MZSROBTyvb0x/udZWCdRaxe+md1H9n0AYmfQS2p9PpbbuN+1Vvw7BFoRtZgwE4casz
- MTLEAewcVAR8jvTTB04rdQf0RxRS1o9TkJqWpqWJoaURdDW30fl5nxK1gNPT0jEWWvvR
- vrPQFj1iPZ0LO7VhYRb4WlvO7/fGnl+pmWwYJPKGh/YV/ZZbzYjCUOKE/VlLKALQTAFr
- HEk6ty6zPcfBrkLFbiCWotV8vsNd5VDxr9hGYyFnKZg5y2fAfYRBcPXV0U8d6mfXrGcU
- n6i9xdkfw/4k++TegSxxtLbNlgXpUjH/gPMiXEWuv5ljJ2gNbaNckgr3PnrwWyZGMJGZ
- iRWQ==
+ bh=+OeDvvdBI2+oQcjohIoC4sWAZBfrLHZy31V/nBYdVBc=;
+ b=hHXD86HiZr3o7epXm8yx+tXz16EXncvDNLlQKEgVK+Nu57nJ0oYqey6MQurNyfH3k3
+ nNoVyeBthXxXmU5JXcM6bqvZg7xHkWwN8IFnBFRMVy6Ro5DMXdeEN8ysSl7J7KGMfcWw
+ XtBltKRYAc/mmGRH/WiADOINEaPkLxn5XNVWJjTwZEFzw8qdWEuub7IenVxf0kb7xqje
+ F+PX/gdOh7r6ixEvw8Ed545yUVIPTgavkPygQY4Ub70kpuh3VwiXhpNzpsZR9b6kGU7P
+ i1XwI+6oFuB5lipv54ytFFOqeqoXkPZ7Rg7arneda8bn5JKn3MCw8P5M+NAQm+omQoQU
+ k98A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1769274764; x=1769879564;
+ d=1e100.net; s=20230601; t=1769274912; x=1769879712;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=CvO4XocPMhc/KJC2GromDfAofqNT6USIbd2n4Iu1sYY=;
- b=K4cvwDGAD1WAa1dPDAIkmVYjYZb/puI2X2Y3VhBfBIwJB9vezkrz6ltJiS1rC2NVPo
- /3NLhfF3kX1gOCHVOLjAPOAG4Qpnplfo4ogrEjKD6uw2qeK8+otma/WOdRcnNEPg3cyO
- l4eCfAUbX9uE9eXcSlN6otKZT5cDZlDTSofgNb2WorLhWngHhti2GNJtk4lMNQDB+WM5
- 9jfdeNOYGN295EzJS393Do+/RPwBJjv65mic7HUd8MrlVMmI3lKTi6BZJ8v7x+3Z1ery
- NzBQ1sp7SOcPOtHInmq9UTXTEtrlu/xQtwrqnawroMcMbNe1eIj0/Dmk6NM/dz+Fx/qs
- PYiQ==
-X-Gm-Message-State: AOJu0Yzp7PwXsE9YQa7he83W3pPIfyk5DXF2Qy+fpPngujPvYwpDxN0d
- /swTbnG5DM3RGcns4egwrS0jM9RNWQ6IDI5Z7oIjimXCWeTZJcta+u3HGlaL7Ot/ss4=
-X-Gm-Gg: AZuq6aLwQOSsYVzuIjKyGSrRYX1NYbMG9DmISpC540VPVpyM1kYuHM60W61qtjLkkIH
- 1/d0afZ7siwh4yFvYHV4WwGpgsV6NwOUTHpu/4BzZgaZKx9OnKigWGld3+DHJ4ekq3s1baOIZUh
- S5+ou4mjhSNJLeLx4/U8fAxNlYaEHSUOyaugBoKPwnZYHXlTrtMrQzPIknG1H1SMebPyP8i8TF3
- FtEjK+7gegEenNRvgpYo5T5fSOalXTwcey299QHmL7xcIlD08a7g7plc8Ek8ESnbxJJwsSqUPmM
- DY61U2Xkbdy4rLyTy2G7XZe4PCDsE2coe0FKS4PucrZvb3O3IQ5Vq5VsNRkzfwDvXKYyKRNVj09
- VRx/y3J0zdbxm3TEyzwDhkD+dUE/ZXetp5gA5//j9916FWWC+H5JKy0FPTwqVVE5yWaUk/3Igvq
- sxk3MYIPafD7miztFyPlGjGtllYuXoGGlm1GkCnwzFSYIe7Y/+zXKh
-X-Received: by 2002:a05:6000:2212:b0:435:95c9:687a with SMTP id
- ffacd0b85a97d-435b158774emr10751746f8f.4.1769274763814; 
- Sat, 24 Jan 2026 09:12:43 -0800 (PST)
+ bh=+OeDvvdBI2+oQcjohIoC4sWAZBfrLHZy31V/nBYdVBc=;
+ b=nHCdhn34OJ0XzjTacQjRshdxINK6hCUPSDrFB6StS/UPRbDh1m3tVn8xr1p+9KN2qA
+ gU/cnjCRVjjr/KIBOPjwLJE/1iGoPQoUFOSpEpvouYqDOeNr7riUNGhEru8xSVrRBRgZ
+ IyVgtNmHd3x5mk944q66tyg1ZX70OxXdzkh6uKMJE7X+DpbXuOaED5RoP+i6r7BBp2GT
+ YSnEQJ73Qu01SqOsJEcoKDgXiPDbPGbnwhA8FA7+BhMBjhZp28j8lnDlfS1Dy7e7lE6C
+ DcD9BavGE8t6Qz3aOx3uNddW44Ft/+n0S5mmyfkoSLcw5LTjQzqOydxLhJ2St4XcrIow
+ RW/A==
+X-Gm-Message-State: AOJu0Yzgl+HiY8DKq6fKJKc2pibO5jTMPtSDSzOgRP1SWTMD9jI4szF2
+ +03K/2nuodqdD07AskaxQ1yNkIleF+FWqbmLzKITXf0E6o48hHrnJ4yfm3fKyfpBzOg=
+X-Gm-Gg: AZuq6aL7/TEO7S4wbqmXPq4rhHPwk4hprVLcuzgHCYRcdesQQxyOewCJ4l3DSBSD2oO
+ Zc83bJiOcEHU/CK5pQJcWbVFDKfsmzAJgfFlIBzxVTSHwPLxx7piAkQkEG1PsE7S/D2w8Nbn+Bs
+ qrsDXlX0+cxPUwq1qQn6nBm9IilpuP7Ty+tQo1nJFWEFwjgUvGZx1n7PJirJjks4Gmo+WWfRJS/
+ yigFo+fuzWzmP6S7k/LWgb3LRmhHUhb1nwLjML/1N5LY7rY3F21kI1whLj8xz+QLYESmIsy+P3l
+ v6ENMz1nj4uy8MAErDoltZHNb2FoRS2Y6sWxhKNNg6IvSZwlo9rWt8ujEWAjnzJHgS7siCpvERv
+ TPoiYKzMp0YEtYbWb0uizlWppXi2XXy153EgiIShlZNQzCuvr3HacrL1sD6juK4SAs+krFnzlcG
+ BAa/zhgGLE7fze1IznIdV2WAxICsRjL2do2jWw4X1L4psv1sYq6oKN
+X-Received: by 2002:a05:600c:8596:b0:480:4c20:6a06 with SMTP id
+ 5b1f17b1804b1-48052340c42mr67219385e9.17.1769274912375; 
+ Sat, 24 Jan 2026 09:15:12 -0800 (PST)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-435b1b6e2besm15888538f8f.0.2026.01.24.09.12.42
+ ffacd0b85a97d-435b1e715bfsm16598324f8f.22.2026.01.24.09.15.11
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sat, 24 Jan 2026 09:12:43 -0800 (PST)
-Date: Sat, 24 Jan 2026 09:12:38 -0800
+ Sat, 24 Jan 2026 09:15:12 -0800 (PST)
+Date: Sat, 24 Jan 2026 09:15:07 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: Marat Khalili <marat.khalili@huawei.com>
 Cc: "dev@dpdk.org" <dev@dpdk.org>
-Subject: Re: [RFC] test: split up BPF tests
-Message-ID: <20260124091238.72c1aa33@phoenix.local>
-In-Reply-To: <7207dfbe4aa74311aee79389af885703@huawei.com>
-References: <20260122193923.49253-1-stephen@networkplumber.org>
- <7207dfbe4aa74311aee79389af885703@huawei.com>
+Subject: Re: [PATCH v5 0/4] devtools: add AI-powered code review tools
+Message-ID: <20260124091507.62a7a60b@phoenix.local>
+In-Reply-To: <6e26cc4dd86545a18b7e7b7c9aec87d6@huawei.com>
+References: <20260109014106.398156-1-stephen@networkplumber.org>
+ <20260123004430.10951-1-stephen@networkplumber.org>
+ <6e26cc4dd86545a18b7e7b7c9aec87d6@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -80,29 +81,20 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, 23 Jan 2026 10:44:19 +0000
+On Fri, 23 Jan 2026 10:55:25 +0000
 Marat Khalili <marat.khalili@huawei.com> wrote:
 
-> > The BPF tests have two sections. One is doing tests of the
-> > BPF interpreter and the other is for testing the ELF load part.
-> > The latter requires the null PMD to work, so only build it
-> > present.  
-> 
-> Splitting BPF tests into multiple files makes sense, and not just because of
-> dependencies.
-> 
-> Coupling ELF tests with the presence of null PMD is strange, there might be a
-> lot of BPF ELF tests that do not depend on null or any PMD, and there might be
-> other BPF tests depending on PMD. Maybe we should call the new file
-> test_bpf_ethdev.c instead (following the header name rte_bpf_ethdev.h ,
-> regardless of what one thinks of the name), or something like this.
+> Apologies if not the right venue for it, but I have an RFE. Can mostly
+> AI-generated emails be clearly marked in some way detectable by standard email
+> filters? They create quite a lot of traffic in the mailing list recently, and
+> it would really help to manage this traffic (tricks such as detecting emojis
+> are not 100% bulletproof).
 
-I did more experiments and a simplistic split up (via AI)
-did not work because the filter test is using similar test to call DPDK function.
-There actually is a bunch of overlap, and duplicating code is worse.
+There are a couple of things about the current AI tools.
+First, they generate markdown format, so you might detect that.
 
-But it is possible to just skip the filtering tests if null PMD
-is not compiled in.  The filtering tests do need a device to hang
-their filters off of and null was used elsewhere already.
-
-Working on a revision to do that.
+My plan is to update the analyze and review scripts to have an
+option to send mail (like git send-email) and use something like "[REVIEW]"
+as a subject prefix. Also looking into whether there is a working
+content type for markdown since it would look better in most mail
+agents then.
