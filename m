@@ -2,67 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B901E63CBF
-	for <dpdk-dev@archiver.kernel.org>; Sun, 25 Jan 2026 20:24:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1C79E63CBF
+	for <dpdk-dev@archiver.kernel.org>; Sun, 25 Jan 2026 20:24:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6E4DC402C3;
-	Sun, 25 Jan 2026 21:24:39 +0100 (CET)
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com
- [209.85.128.49]) by mails.dpdk.org (Postfix) with ESMTP id ABF1B40269
- for <dev@dpdk.org>; Sun, 25 Jan 2026 21:24:32 +0100 (CET)
-Received: by mail-wm1-f49.google.com with SMTP id
- 5b1f17b1804b1-47ee0291921so32655735e9.3
- for <dev@dpdk.org>; Sun, 25 Jan 2026 12:24:32 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 8FC63402DB;
+	Sun, 25 Jan 2026 21:24:40 +0100 (CET)
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com
+ [209.85.128.51]) by mails.dpdk.org (Postfix) with ESMTP id 3677E402BE
+ for <dev@dpdk.org>; Sun, 25 Jan 2026 21:24:34 +0100 (CET)
+Received: by mail-wm1-f51.google.com with SMTP id
+ 5b1f17b1804b1-4801c731d0aso30148395e9.1
+ for <dev@dpdk.org>; Sun, 25 Jan 2026 12:24:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769372672;
- x=1769977472; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769372674;
+ x=1769977474; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=14kTjmK8Zzlgc4PJeXfqEAeQp+VHNEc9mnWkpk8fJbw=;
- b=TNkaGO8i3QQfobST6canAyVj2LTyfFWKvnMeKrv394TU5f5+qOlYnVZAI83Jld0zIY
- w/IibjylkIHFAChTEna6X18EAoNFcDmYOAZuUPDO1bnn7yV+fNz45XxF2qQYSbKzR5lJ
- efSxFGVdVWVSJyGO9HZ3vFooSBYf3dxpJmiFVgoGUWYRgFAjZhZTNwHTj8WDpWos13qo
- yxWuwcu9MjFvLCSy/AAr+Kbor3d7zvJVMMRdgjvyWRRwPB3RcwL4blvjZRAz2Zm72hO8
- EgzPPbH7u6zm9scdbEPJ6wIw/pgc+A2TBb7W3P7UOBVpGWh2VtKZfuhA7nI5VoNv/nNL
- IWNQ==
+ bh=oVMhg3VPWc7Uo8dzr6jNg+mERUcssrdosb/erU4qS1g=;
+ b=dFihK2K/ttEey7ZiSf+QDh2aJiD7klUjdagca50Sc1LdV0c0LAmIK2XZKTA9haE+Hx
+ u71kHjA8F+aLtVj4jAM4oTK9xu1rvidT6KB1Mb6kQ3mlQmJEXif7ZJDGCwYSxVtd43zg
+ jLoaIKX2Cp9JpUp2aSpguEanV/I3N6h+7+5X53wjGDS/ujTv03PueZAW4f+5Rqccd2MT
+ j3BZ4NqJm0QIO5AnhbzW6hD++6MuYhofYEAEaHMGC49DhfEyu6y467FRy8x89gbuKkho
+ fEo00/kLaGr73ER3kF2dykVi+Zp9fzFAnMArPyMNOEYntrL7pJyW6vGaEe4r3w/LCoxk
+ 0zFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1769372672; x=1769977472;
+ d=1e100.net; s=20230601; t=1769372674; x=1769977474;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=14kTjmK8Zzlgc4PJeXfqEAeQp+VHNEc9mnWkpk8fJbw=;
- b=mQqDBTCijjG3ywqhKpBR2tAqkPxJ56MbpMVG2UhNdTPFTnS2pOjfueLO1yWnrhqxnl
- VvymUcuWdVp6a57LjabgMhIYgacPbZfyC6+FFj6nLywadrW+J5ybMW5ujeN5jzEkAkKG
- 6CbMTc8zsuZ5LXTZAix7rg14HlH5dzDvqUJXLY0BM0jIMpX1FwA3by1tB2i1z7uLwsa0
- s3kOv2NRyf68cnzSkzME3qt+m7TX7owzNK1qUXEeT0TN9qL+YQ/wGWhfTKpqrnw9v0k/
- JqalHRDeO26CIBpvTuCTtpOogur4G8C1KPGIfXe7VFYMVuZ2h013rTahYaKBaMCPCSkG
- bsZg==
-X-Gm-Message-State: AOJu0Yx6iF49w1lFgf30efYT7QbaHq9bPD2UW94G0vWD1PgHq5xwbnft
- +xfFkQwRJYfiiFMnRfnzAavhdcSdADeldCUsboPxhUACKx8aqIdT0o7lQKpTR456pNKMHK45uku
- 53cu6
-X-Gm-Gg: AZuq6aIYB+NTmo+9aYXErF+Jx4j4gf7b2oApUx9ewj0Al3WhohqKmCW0IlcY1gVL7g3
- +rbgbWFWXqHGi02thex8dGo5BhhMMxLFjEkq+5yZ61vgagJR98+P1+AGiD6eQ/96DD0OxT9u2sh
- aZ7ARLMmTKxJ8VB2g2cen3ZiKQuQQPT0PqhLKslLd8mqzeQOWzpy3FDIGf9cS3YOZqp/kLIvbup
- FaaecJU7IeGm9BsPQeKvoE/sWSg1BpYCWBzTDuiif41vrpaTtV0tAMe+8XQQTu971g340EJtJgk
- WTDweqzV1Nug3v48wlGsWuVcD92DP3XdlJAvoaHlQSM9lHKgg5TiBu3OszlLZYWkYn/aTOlxHFf
- Jz3k0GIbFm0F/G1OE/VrTREVUU+lcQ/dGjMaQTzH/+wY9oOyNbjta5NsVNnr0CWVlvzZ5oast3k
- RBi2H0j8HChnFXAmhBMAEpP9kVL9VRgphJ3tKW5/CniL6DJOsfxif/RloPYOEy
-X-Received: by 2002:a05:600c:34cc:b0:480:1b65:b741 with SMTP id
- 5b1f17b1804b1-4806111cb9bmr8998185e9.15.1769372672118; 
- Sun, 25 Jan 2026 12:24:32 -0800 (PST)
+ bh=oVMhg3VPWc7Uo8dzr6jNg+mERUcssrdosb/erU4qS1g=;
+ b=Ozmvy3Q9nysG1hAQH9VPAtMNRyRSL759C5jirlw6JPU0jtOYU33UASJo1TFy7N9rB7
+ dLU7pR9ze14VCk6qssIjaU44DSQFwS6F0vC0VlcPDUhrLPPpmsw+GMkM2DYMsaC4pId3
+ NkOKPDSvk1nadL3xrjT23ujHD0dn2Je244aNrDncrt4GtT1jllvhKf2xLukc+Kz8r1H1
+ UIQpc/opZhqXFB00oBUrRsiA84cjdapy/V2Z9JSf3Y/PY8sPWZcvcPDBB4h6Fpv9r/tN
+ kUy4Gr1WrXb7zC7QGFolIGGRHo7cAaAay7rNpDWAJSi7omj3zRBD1KxOt6iWmIIlU9+x
+ vfXw==
+X-Gm-Message-State: AOJu0Yz52tgu2uJFtSe5dBUJxQ0d0lxWP43etQAEGxnBjxycFblldefK
+ HmKaG/W+GNOfg/k4pdmXM6Z4fOKMgHxV6X8VgVwbzjyR/9UsOyFTdxIa3iiN4DRzlXyr0XxbT/L
+ LVLYJ
+X-Gm-Gg: AZuq6aI5j/ZePjDC1lB9tpEqcAdk3o9qYjlUjbJotnyzh08iVREw1JhQhnhxh66xN62
+ IJ4Dz7eSERNHfpgnfEXzePdHlZRAd7ks1FKfyIaE7TUi/gw4GH8kyqRRRvJ7pZHfTU37jgerI3Q
+ 88ra91A8d+dLVYGax6e3rc1mNdYcY52cs8GjKR/f07kY2LB9Ev/LOYh1IgASkyxunHWW/MG6/Pw
+ Q26BDTCuLQ+AfjeVTFQXWt5AviVsk5BR+b7/9smsluHf1+v6bzaPq00QRnaoffQpxBzqxFx7Lq8
+ UdBK9avfkTX95NOnrVrH+lq9FwmXwtWkSX36nWw3M/4JCSy8aBduKQxD8fG++kts29qSm6optH+
+ fJV3D+XsIvsHPiFyquTK5Ma+Qu0dL25HS0TV35Z0SfJl8RRQ0Ig0jx4HWqtfWXYQJnTesm3zCff
+ nRlAGaLdt4m10Y7x52PvpPBH/t+N2ZtLNCbTOEKI/dc4EP8oQx+g==
+X-Received: by 2002:a05:600c:548d:b0:480:1e40:3d2 with SMTP id
+ 5b1f17b1804b1-4805cf673b0mr39148685e9.29.1769372673739; 
+ Sun, 25 Jan 2026 12:24:33 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-435b1c24bedsm23682024f8f.17.2026.01.25.12.24.30
+ ffacd0b85a97d-435b1c24bedsm23682024f8f.17.2026.01.25.12.24.32
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 25 Jan 2026 12:24:31 -0800 (PST)
+ Sun, 25 Jan 2026 12:24:33 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Tetsuya Mukawa <mtetsuyah@gmail.com>
-Subject: [PATCH v7 1/5] net/null: cleanup info response
-Date: Sun, 25 Jan 2026 12:23:01 -0800
-Message-ID: <20260125202425.532542-2-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v7 2/5] test: generate larger packet bursts
+Date: Sun, 25 Jan 2026 12:23:02 -0800
+Message-ID: <20260125202425.532542-3-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260125202425.532542-1-stephen@networkplumber.org>
 References: <20260104222523.329760-1-stephen@networkplumber.org>
@@ -82,57 +81,105 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The info_get callback doesn't need to check its args
-since already done by ethdev.
+The packet length in packet burst generator was uint8_t which
+limited usefulness for testing larger packet sizes.
 
-The maximum receive packet length is limited by the mbuf
-packet length argument which is 32 bits.
+The number of packets segments per packet is currently limited
+by mbuf nb_segs which is 16 bits. The comment is incorrect.
+
+Change nb_pkt_per_burst to uint16_t since that is the limit
+for tx_burst.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- doc/guides/rel_notes/release_26_03.rst | 4 ++++
- drivers/net/null/rte_eth_null.c        | 9 ++-------
- 2 files changed, 6 insertions(+), 7 deletions(-)
+ app/test/packet_burst_generator.c | 34 ++++++++++++++++++-------------
+ app/test/packet_burst_generator.h |  4 ++--
+ 2 files changed, 22 insertions(+), 16 deletions(-)
 
-diff --git a/doc/guides/rel_notes/release_26_03.rst b/doc/guides/rel_notes/release_26_03.rst
-index 15dabee7a1..9f2f2ff58f 100644
---- a/doc/guides/rel_notes/release_26_03.rst
-+++ b/doc/guides/rel_notes/release_26_03.rst
-@@ -55,6 +55,10 @@ New Features
-      Also, make sure to start the actual text at the margin.
-      =======================================================
+diff --git a/app/test/packet_burst_generator.c b/app/test/packet_burst_generator.c
+index 4c17737739..346c69e6ce 100644
+--- a/app/test/packet_burst_generator.c
++++ b/app/test/packet_burst_generator.c
+@@ -205,24 +205,24 @@ initialize_ipv4_header_proto(struct rte_ipv4_hdr *ip_hdr, uint32_t src_addr,
+ 	return pkt_len;
+ }
  
-+* **Updated NULL ethernet driver.**
-+
-+  * Changed info response to match mbuf limits.
-+
- 
- Removed Items
- -------------
-diff --git a/drivers/net/null/rte_eth_null.c b/drivers/net/null/rte_eth_null.c
-index 46e7e7bd8c..3e743a23a9 100644
---- a/drivers/net/null/rte_eth_null.c
-+++ b/drivers/net/null/rte_eth_null.c
-@@ -298,17 +298,12 @@ static int
- eth_dev_info(struct rte_eth_dev *dev,
- 		struct rte_eth_dev_info *dev_info)
- {
--	struct pmd_internals *internals;
+-/*
+- * The maximum number of segments per packet is used when creating
+- * scattered transmit packets composed of a list of mbufs.
+- */
+-#define RTE_MAX_SEGS_PER_PKT 255 /**< pkt.nb_segs is a 8-bit unsigned char. */
 -
--	if ((dev == NULL) || (dev_info == NULL))
--		return -EINVAL;
-+	struct pmd_internals *internals = dev->data->dev_private;
  
--	internals = dev->data->dev_private;
- 	dev_info->max_mac_addrs = 1;
--	dev_info->max_rx_pktlen = (uint32_t)-1;
-+	dev_info->max_rx_pktlen = UINT32_MAX;
- 	dev_info->max_rx_queues = RTE_DIM(internals->rx_null_queues);
- 	dev_info->max_tx_queues = RTE_DIM(internals->tx_null_queues);
--	dev_info->min_rx_bufsize = 0;
- 	dev_info->tx_offload_capa = RTE_ETH_TX_OFFLOAD_MULTI_SEGS | RTE_ETH_TX_OFFLOAD_MT_LOCKFREE;
+ int
+ generate_packet_burst(struct rte_mempool *mp, struct rte_mbuf **pkts_burst,
+ 		struct rte_ether_hdr *eth_hdr, uint8_t vlan_enabled,
+ 		void *ip_hdr, uint8_t ipv4, struct rte_udp_hdr *udp_hdr,
+-		int nb_pkt_per_burst, uint8_t pkt_len, uint8_t nb_pkt_segs)
++		uint16_t nb_pkt_per_burst, uint16_t pkt_len, uint16_t nb_pkt_segs)
+ {
+-	const uint8_t pkt_seg_data_len = pkt_len / nb_pkt_segs;
++	int i, nb_pkt = 0;
++	size_t eth_hdr_size;
+ 	struct rte_mbuf *pkt_seg;
+ 	struct rte_mbuf *pkt;
+-	size_t eth_hdr_size;
+-	int i, nb_pkt = 0;
++	uint16_t pkt_seg_data_len;
++
++	if (nb_pkt_segs == 0)
++		return -1;
++
++	/* Calculate per-segment data length */
++	pkt_seg_data_len = pkt_len / nb_pkt_segs;
  
- 	dev_info->reta_size = internals->reta_size;
+ 	for (nb_pkt = 0; nb_pkt < nb_pkt_per_burst; nb_pkt++) {
+ 		pkt = rte_pktmbuf_alloc(mp);
+@@ -300,13 +300,19 @@ generate_packet_burst_proto(struct rte_mempool *mp,
+ 		struct rte_mbuf **pkts_burst, struct rte_ether_hdr *eth_hdr,
+ 		uint8_t vlan_enabled, void *ip_hdr,
+ 		uint8_t ipv4, uint8_t proto, void *proto_hdr,
+-		int nb_pkt_per_burst, uint8_t pkt_len, uint8_t nb_pkt_segs)
++		uint16_t nb_pkt_per_burst, uint16_t pkt_len, uint16_t nb_pkt_segs)
+ {
+-	const uint8_t pkt_seg_data_len = pkt_len / nb_pkt_segs;
++	int i, nb_pkt = 0;
++	size_t eth_hdr_size;
+ 	struct rte_mbuf *pkt_seg;
+ 	struct rte_mbuf *pkt;
+-	size_t eth_hdr_size;
+-	int i, nb_pkt = 0;
++	uint16_t pkt_seg_data_len;
++
++	if (nb_pkt_segs == 0)
++		return -1;
++
++	/* Calculate per-segment data length */
++	pkt_seg_data_len = pkt_len / nb_pkt_segs;
+ 
+ 	for (nb_pkt = 0; nb_pkt < nb_pkt_per_burst; nb_pkt++) {
+ 		pkt = rte_pktmbuf_alloc(mp);
+diff --git a/app/test/packet_burst_generator.h b/app/test/packet_burst_generator.h
+index cce41bcd0f..bc16764e77 100644
+--- a/app/test/packet_burst_generator.h
++++ b/app/test/packet_burst_generator.h
+@@ -62,14 +62,14 @@ int
+ generate_packet_burst(struct rte_mempool *mp, struct rte_mbuf **pkts_burst,
+ 		struct rte_ether_hdr *eth_hdr, uint8_t vlan_enabled,
+ 		void *ip_hdr, uint8_t ipv4, struct rte_udp_hdr *udp_hdr,
+-		int nb_pkt_per_burst, uint8_t pkt_len, uint8_t nb_pkt_segs);
++		uint16_t nb_pkt_per_burst, uint16_t pkt_len, uint16_t nb_pkt_segs);
+ 
+ int
+ generate_packet_burst_proto(struct rte_mempool *mp,
+ 		struct rte_mbuf **pkts_burst, struct rte_ether_hdr *eth_hdr,
+ 		uint8_t vlan_enabled, void *ip_hdr,
+ 		uint8_t ipv4, uint8_t proto, void *proto_hdr,
+-		int nb_pkt_per_burst, uint8_t pkt_len, uint8_t nb_pkt_segs);
++		uint16_t nb_pkt_per_burst, uint16_t pkt_len, uint16_t nb_pkt_segs);
+ 
+ #ifdef __cplusplus
+ }
 -- 
 2.51.0
 
