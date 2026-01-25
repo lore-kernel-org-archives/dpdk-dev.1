@@ -2,68 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03285E63CBF
-	for <dpdk-dev@archiver.kernel.org>; Sun, 25 Jan 2026 20:24:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85A1FE63CBF
+	for <dpdk-dev@archiver.kernel.org>; Sun, 25 Jan 2026 20:25:03 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E14A14042C;
-	Sun, 25 Jan 2026 21:24:42 +0100 (CET)
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com
- [209.85.221.53]) by mails.dpdk.org (Postfix) with ESMTP id 09489402C3
- for <dev@dpdk.org>; Sun, 25 Jan 2026 21:24:38 +0100 (CET)
-Received: by mail-wr1-f53.google.com with SMTP id
- ffacd0b85a97d-43591b55727so3734261f8f.3
- for <dev@dpdk.org>; Sun, 25 Jan 2026 12:24:38 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id A58A540647;
+	Sun, 25 Jan 2026 21:24:44 +0100 (CET)
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com
+ [209.85.128.47]) by mails.dpdk.org (Postfix) with ESMTP id 1616F402D8
+ for <dev@dpdk.org>; Sun, 25 Jan 2026 21:24:40 +0100 (CET)
+Received: by mail-wm1-f47.google.com with SMTP id
+ 5b1f17b1804b1-4801d1daf53so42847455e9.2
+ for <dev@dpdk.org>; Sun, 25 Jan 2026 12:24:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769372677;
- x=1769977477; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769372679;
+ x=1769977479; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=jrKqg0XwhQiUchrk0B8KPngnbOB/G2Vtpeis05cr+BA=;
- b=ISuyFyqOSoXB6OjSUARTUpzY8n7qYOvYSOWXJClQZK6s86yMopBrG77uskdvS+VpFA
- zL2QrYbZU9Enw1kSmvZOxPE6a28Z+Z2tKNLpbKUQvXTRjqfTRnodZosver0plfeKpQv0
- t1H/yLXSHCXH1qQQtUZHOUHY/cz436e3h3ai3iEwXBaARvtHNqWR/MqhgoJ3goUPcoDi
- qgVsp+L65zYRy4KVG8D8167ccJVF6I4SpTULJ56g1QEN4BMSEOtO9Y/1LB8vl//hya/U
- +pUzyCysVB9EoFPlzb53JCrv9FTNbn2ROfcvTIfl8KzoJ6DpcDEOUx48hYOrnhFmXw3L
- Zquw==
+ bh=azWx3Lxj8XOF422TJqOLA8qWkgEFQGUNUOtnoXMwa2M=;
+ b=J3pi3qMvxbRr3EaFBoXCtJ2zJll2nErw4R/WD4DKqGMqqBhaoTaZhZPlt5kpwPoMRz
+ NqnbbmZa5JkMaYRC3l7xD9WSQAimJOpKZzvvWukvR+obtz61HhtjH+9XsG6V6JCCuaJv
+ +YWaDOOaBToTDcuq5BC6MFkBQOIEsvdSYpXhBPFY9fJTRi/PaQPhCUisyWnsKbuSTRa0
+ zF804vRIBlTUOWRVkVTxJhuPWfpf9+rgfwKMf06BAfhc+MqagS085gWX3jZ11FgnuzyW
+ VpCr9YDW+XQ2D5NEICvysRsO4vS5673zn6kBXaDrnVMFKBjyiJ30nnmY0qPLAm+KXMut
+ XHtQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1769372677; x=1769977477;
+ d=1e100.net; s=20230601; t=1769372679; x=1769977479;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=jrKqg0XwhQiUchrk0B8KPngnbOB/G2Vtpeis05cr+BA=;
- b=HuAJJ0FKU7wiqVf2dIpbqwplNFIJG0z/QZrteDmLqRIGEsblPux63oOSsxAPVD9ieq
- nTTTU+2stjepuM9AAPM+uSZhnYkyGq87+bjpHpOiIxkZujDzxvjdPZnyRUXpbm3eUkaA
- 0LYeDOckeNbRCIiaZanh2C1BVX/kAIGRq4tY+TxhkFFQL7I+7IM9DTY2DHLaWiZ7uGeb
- 9BP4Ct5vXHJyuaQnG3WP94cM7Zale8L7OehG8rrOCap1koUcBkfVwjVvEGpG+mttrEU5
- QmwWBNZz6lRP8CCWb7VbO2SrJAZmkOUujTf0WzrngO6nLoQ7zoN/AcY04MG9CZpA/YOb
- 10qw==
-X-Gm-Message-State: AOJu0YzVfw5GAlrjFjgb9iKFxSr2WOJX56Hos5xzvUrmU4wIKGq38CdL
- HyPdOo7uWSj0qBz/1dY4quhAjq4Naeyas/sLQvSFwKHJCNbsx8Qj1HBOBXdNthMdysd50nnpiUw
- Ww0lJ
-X-Gm-Gg: AZuq6aIL51QuSz/KAwAh15R3x1hyn1mYMjZ1bemFSdfMrUnT12Tq5fzvP6P4laMMKNu
- C8JFsVbnH/kmSCPjmshSEF7tCevH608Tyd8OX8adKqOIP36OtlUbv4AI9ErUvQ+GmYhbHDqsNlI
- G50yc0ybwjrViYkplkVKDDir9RTr8FtGGpvBwKbu5Bb/rOpT3n6OMSSmYlGncl3qAHRL/QikVV/
- nC3fnwzrbufXa5FRpKRzsS7isMMtx5y5+YBKVCV8qu284JaLDngVFCIs6iZPfPVkE7cwGahEVD2
- Cdql21yKAmPHpETHGhFZObS4yemZv2qAMC4CqEdlCcwNopvY/nH6nbs8+3jP6FyktcosmwCFHvW
- /hMnuAwnLN9dn0miDLn8aL7OElkutOgekRdRCZ2KuEI/ziHpmlwK6qNeVKPdaoAfgMntVlkCjZm
- FDfMJVLUeRtufrr6tP/ymQPtGA8hCJGOSEEIfcsbkd/U25ibfvtA==
-X-Received: by 2002:a05:6000:18a6:b0:430:f255:14b3 with SMTP id
- ffacd0b85a97d-435ca39adc3mr4447785f8f.43.1769372677608; 
- Sun, 25 Jan 2026 12:24:37 -0800 (PST)
+ bh=azWx3Lxj8XOF422TJqOLA8qWkgEFQGUNUOtnoXMwa2M=;
+ b=ecgOynUIHG2Vr+/9ajyQOGxGP1mNQ6mK+FBA2tNcwTNRBqSV2sggDC/bgmv70Lt2NY
+ /9VCMfMOEyMcT3n/NTG6QFVMiSfN3rIhwwgjVJXiAJ9BxktwA8h/wEdSZe8cswdsmyEj
+ Ywk67COQaM1dy86LdrIqvf+lIs3DhH0a+8d+y2sIS/0tTydvUgFW/P5e6+M6DoljYSs7
+ U3W9DVT6cB55GUl94oy1I690TZm2G9aXnTLOvsw9OggCVIE7fiJhdzH2Ilh4bJQhrXjE
+ OMXtfm7TwHPdxm24+voaE9km4Z/9ANF8v7C6Bq8Bdu9g882nuY8vPmenIOouLe4w9P+N
+ 6GxQ==
+X-Gm-Message-State: AOJu0Yxq0IR8YzecECmaHMTA7FsB07T/1fpFaMPGNMFsLBSsbcp5v5ao
+ XPMstvdicWNPqp+DuRg5/k/xFM8lQCeVn+kgpOwVCCuhm48qNiTzH1Mm7D0qXPFHrLeDbHAGK1P
+ LYWfZ
+X-Gm-Gg: AZuq6aKNQssYnjV6SEcbPkZNq9f5qxqqUiTuTVDn8tGE/a9NQ+ntpxCd0lsCdZPVdTW
+ PHjfz9hCqsM4rtfB0LLYBfHRW69+drnK0xbqNzGKoyFT9kSzqVnD3YNdESRGDAbgrA7vngn9JMt
+ 7TGCNYnCDXOpQxx09BF9HZ4hAfdz/NilQCK55knS3zBONmVY7BgZXWyqUYoKKm7PYav+nDLRutW
+ N59JvjDDUCt03pnnRAFoguUHyzHZRH2Khxp1nK/jFxvZWDnFNysQDZcJGlGjVHDYTRMladhPVzW
+ Wvp6tFQ1wH/QiyPCVWje//hIkBcbOlGnBBspDIGHjwJ5hiZXKi2yyjo2052xm/EFUUupB56Roup
+ IgIoezcdEGe/sGaUYK+1kGNaBy0LHCAlbt0HuztEcGPRnoj0qfEeDQRYqt9a/BT9OCT2QkXDohQ
+ tQXXeD+vaG/1SzDXi5UjZ8SxM20XwU/EazS4Z9RzQ78+AnbnyXyg==
+X-Received: by 2002:a05:600c:5395:b0:46f:c55a:5a8d with SMTP id
+ 5b1f17b1804b1-4805cd40bcdmr41678905e9.4.1769372679628; 
+ Sun, 25 Jan 2026 12:24:39 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-435b1c24bedsm23682024f8f.17.2026.01.25.12.24.35
+ ffacd0b85a97d-435b1c24bedsm23682024f8f.17.2026.01.25.12.24.37
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 25 Jan 2026 12:24:37 -0800 (PST)
+ Sun, 25 Jan 2026 12:24:39 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
- Tetsuya Mukawa <mtetsuyah@gmail.com>,
- Bernard Iremonger <bernard.iremonger@intel.com>
-Subject: [PATCH v7 4/5] net/null: add check for pool vs packet size
-Date: Sun, 25 Jan 2026 12:23:04 -0800
-Message-ID: <20260125202425.532542-5-stephen@networkplumber.org>
+ Tetsuya Mukawa <mtetsuyah@gmail.com>, Ferruh Yigit <ferruh.yigit@amd.com>
+Subject: [PATCH v7 5/5] net/null: check packet size argument
+Date: Sun, 25 Jan 2026 12:23:05 -0800
+Message-ID: <20260125202425.532542-6-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260125202425.532542-1-stephen@networkplumber.org>
 References: <20260104222523.329760-1-stephen@networkplumber.org>
@@ -83,191 +82,57 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The mbuf pool passed when setting up queue must have space
-in the mbuf to hold the requested packet size; otherwise the
-code in eth_null_copy_rx() would generate invalid mbuf.
+The size argument to the PMD can not be larger than the largest
+per-mbuf data segment size; otherwise the logic in eth_null_rx()
+would generate an invalid mbuf.
 
-Fixes: c743e50c475f ("null: new poll mode driver")
+Fixes: 4df90194f2a2 ("net/null: prefer unsigned int")
 Cc: stable@dpdk.org
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- app/test/test_pmd_null.c               | 48 ++++++--------------------
- doc/guides/rel_notes/release_26_03.rst |  2 ++
- drivers/net/null/rte_eth_null.c        |  3 ++
- 3 files changed, 16 insertions(+), 37 deletions(-)
+ doc/guides/rel_notes/release_26_03.rst | 2 ++
+ drivers/net/null/rte_eth_null.c        | 9 ++++++---
+ 2 files changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/app/test/test_pmd_null.c b/app/test/test_pmd_null.c
-index 3104f1ced0..72503d64c7 100644
---- a/app/test/test_pmd_null.c
-+++ b/app/test/test_pmd_null.c
-@@ -221,9 +221,7 @@ test_null_tx_basic(void)
- 	return TEST_SUCCESS;
- }
- 
--/*
-- * Test: Statistics verification
-- */
-+/* Test: Statistics verification */
- static int
- test_null_stats(void)
- {
-@@ -271,9 +269,7 @@ test_null_stats(void)
- 	return TEST_SUCCESS;
- }
- 
--/*
-- * Test: Custom packet size
-- */
-+/* Test: Custom packet size */
- static int
- test_null_custom_size(void)
- {
-@@ -314,9 +310,7 @@ test_null_custom_size(void)
- 	return TEST_SUCCESS;
- }
- 
--/*
-- * Test: Copy mode
-- */
-+/* Test: Copy mode */
- static int
- test_null_copy_mode(void)
- {
-@@ -346,9 +340,7 @@ test_null_copy_mode(void)
- 	return TEST_SUCCESS;
- }
- 
--/*
-- * Test: No-RX mode
-- */
-+/* Test: No-RX mode */
- static int
- test_null_no_rx_mode(void)
- {
-@@ -384,9 +376,7 @@ test_null_no_rx_mode(void)
- 	return TEST_SUCCESS;
- }
- 
--/*
-- * Test: Link status
-- */
-+/* Test: Link status */
- static int
- test_null_link_status(void)
- {
-@@ -422,9 +412,7 @@ test_null_link_status(void)
- 	return TEST_SUCCESS;
- }
- 
--/*
-- * Test: Device info
-- */
-+/* Test: Device info */
- static int
- test_null_dev_info(void)
- {
-@@ -462,9 +450,7 @@ test_null_dev_info(void)
- 	return TEST_SUCCESS;
- }
- 
--/*
-- * Test: Multiple RX/TX bursts
-- */
-+/* Test: Multiple RX/TX bursts */
- static int
- test_null_multiple_bursts(void)
- {
-@@ -685,9 +671,7 @@ test_null_reta_config(void)
- 	return TEST_SUCCESS;
- }
- 
--/*
-- * Test: Stats reset
-- */
-+/* Test: Stats reset */
- static int
- test_null_stats_reset(void)
- {
-@@ -730,9 +714,7 @@ test_null_stats_reset(void)
- 	return TEST_SUCCESS;
- }
- 
--/*
-- * Test: MAC address operations
-- */
-+/* Test: MAC address operations */
- static int
- test_null_mac_addr(void)
- {
-@@ -772,9 +754,7 @@ test_null_promisc_allmulti(void)
- 	return TEST_SUCCESS;
- }
- 
--/*
-- * Multi-threaded TX test structures and worker function
-- */
-+/* Multi-threaded TX test structures and worker function */
- #define MT_TX_BURSTS_PER_LCORE 100
- #define MT_TX_BURST_SIZE 8
- 
-@@ -794,9 +774,6 @@ mt_tx_worker(void *arg)
- 	unsigned int burst;
- 	uint16_t nb_tx;
- 
--	args->tx_count = 0;
--	args->error = 0;
--
- 	for (burst = 0; burst < MT_TX_BURSTS_PER_LCORE; burst++) {
- 		/* Allocate mbufs */
- 		if (rte_pktmbuf_alloc_bulk(args->pool, bufs, MT_TX_BURST_SIZE) != 0) {
-@@ -834,7 +811,7 @@ test_null_mt_tx(void)
- {
- 	struct rte_eth_dev_info dev_info;
- 	struct rte_mempool *mt_pool;
--	struct mt_tx_args worker_args[RTE_MAX_LCORE];
-+	struct mt_tx_args worker_args[RTE_MAX_LCORE] = { 0 };
- 	struct rte_eth_stats stats;
- 	unsigned int lcore_id;
- 	unsigned int num_workers = 0;
-@@ -885,10 +862,7 @@ test_null_mt_tx(void)
- 			break;
- 
- 		worker_args[num_workers].port = port_id;
--		worker_args[num_workers].queue = 0;  /* All use same queue */
- 		worker_args[num_workers].pool = mt_pool;
--		worker_args[num_workers].tx_count = 0;
--		worker_args[num_workers].error = 0;
- 
- 		ret = rte_eal_remote_launch(mt_tx_worker,
- 					    &worker_args[num_workers],
 diff --git a/doc/guides/rel_notes/release_26_03.rst b/doc/guides/rel_notes/release_26_03.rst
-index 9f2f2ff58f..e59d839164 100644
+index e59d839164..04d2cfee8a 100644
 --- a/doc/guides/rel_notes/release_26_03.rst
 +++ b/doc/guides/rel_notes/release_26_03.rst
-@@ -58,6 +58,8 @@ New Features
- * **Updated NULL ethernet driver.**
- 
+@@ -60,6 +60,8 @@ New Features
    * Changed info response to match mbuf limits.
-+  * Added validation that mbuf pool data size is large enough for
-+    packet size argument.
+   * Added validation that mbuf pool data size is large enough for
+     packet size argument.
++  * Added check that packet size argument is not larger than largest
++    possible mbuf data segment.
  
  
  Removed Items
 diff --git a/drivers/net/null/rte_eth_null.c b/drivers/net/null/rte_eth_null.c
-index 3e743a23a9..81001d9326 100644
+index 81001d9326..b5b83f1cf0 100644
 --- a/drivers/net/null/rte_eth_null.c
 +++ b/drivers/net/null/rte_eth_null.c
-@@ -241,6 +241,9 @@ eth_rx_queue_setup(struct rte_eth_dev *dev, uint16_t rx_queue_id,
+@@ -610,14 +610,17 @@ get_packet_size_arg(const char *key __rte_unused,
+ {
+ 	const char *a = value;
+ 	unsigned int *packet_size = extra_args;
++	unsigned long sz;
  
- 	packet_size = internals->packet_size;
+ 	if ((value == NULL) || (extra_args == NULL))
+ 		return -EINVAL;
  
-+	if (rte_pktmbuf_data_room_size(mb_pool) < packet_size)
-+		return -ENOSPC;
-+
- 	internals->rx_null_queues[rx_queue_id].mb_pool = mb_pool;
- 	dev->data->rx_queues[rx_queue_id] =
- 		&internals->rx_null_queues[rx_queue_id];
+-	*packet_size = (unsigned int)strtoul(a, NULL, 0);
+-	if (*packet_size == UINT_MAX)
+-		return -1;
++	errno = 0;
++	sz = strtoul(a, NULL, 0);
++	if (sz > UINT16_MAX || errno != 0)
++		return -EINVAL;
+ 
++	*packet_size = sz;
+ 	return 0;
+ }
+ 
 -- 
 2.51.0
 
