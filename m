@@ -2,64 +2,64 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF377E63C9C
-	for <dpdk-dev@archiver.kernel.org>; Sun, 25 Jan 2026 11:11:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E765E63C9F
+	for <dpdk-dev@archiver.kernel.org>; Sun, 25 Jan 2026 11:13:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8C904402D6;
-	Sun, 25 Jan 2026 12:11:32 +0100 (CET)
-Received: from mail-dl1-f53.google.com (mail-dl1-f53.google.com [74.125.82.53])
- by mails.dpdk.org (Postfix) with ESMTP id 7211B402BC
- for <dev@dpdk.org>; Sun, 25 Jan 2026 12:11:07 +0100 (CET)
-Received: by mail-dl1-f53.google.com with SMTP id
- a92af1059eb24-1233c155a42so5054894c88.1
- for <dev@dpdk.org>; Sun, 25 Jan 2026 03:11:07 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 76539402D6;
+	Sun, 25 Jan 2026 12:13:04 +0100 (CET)
+Received: from mail-dy1-f179.google.com (mail-dy1-f179.google.com
+ [74.125.82.179]) by mails.dpdk.org (Postfix) with ESMTP id BA786402BC
+ for <dev@dpdk.org>; Sun, 25 Jan 2026 12:12:17 +0100 (CET)
+Received: by mail-dy1-f179.google.com with SMTP id
+ 5a478bee46e88-2b714f30461so3182512eec.0
+ for <dev@dpdk.org>; Sun, 25 Jan 2026 03:12:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1769339466; x=1769944266; darn=dpdk.org;
+ d=gmail.com; s=20230601; t=1769339536; x=1769944336; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=gZJhRPqIJPRRGkMi/6qlPhWuwTFHaeU8Sex0KT1Wpx4=;
- b=altB5m8SSaz4d9mrxKTT3tv2armVVRbsQC2waNtXxl1XGAmWPyE9wWRD3vEPFRiLnr
- e/A+6p15JtGJUNyi8HDrPxIDzDJiuil11fHpoGw0lbruMB0V2C4N5nU6JIWIDOprdtiX
- 59hW6E8dYv8tYOgmCcKlGrfROG4D2eeb932VCaICr32uK5i6fyTJjTn+04v4WdCIZ55Y
- B6lAysRb510n6Df94vyX4NScCxB2iIO6nnH8vBQVnMaUO2t2peyKnh6c4Zh3Z6lDZL62
- CZ7xP6UR24N7zY4WgGHG4Wu2+NZ3NQ3HgVhjPQGUV2YZn3B6eZZ+h6hYK3Hz9ENfN65m
- g/Ew==
+ bh=0Q6DZLdJvK554wrKXWXEUCyWlyciPLw3O8v8p7zHn5c=;
+ b=LawIa5O7nuAhSscNlLOB9wYBangjLS88taLOHQSlIlybgbzN6W/M2N0gM7xwMEL1U9
+ pcFp6MPqa/ZEUBZS2bRtB1D9AI8r5stosXniEn8QAtehpBJZx3Puftg5HsSGDNFft43+
+ Smwdc+GlXGM1BFSItwpe5r1jLbYpvzhwgCyluurzlBGk5X9hAqYpe+bvnEZKOt2jTXVv
+ 6DB0+PhWyILcnMq4tnjrtSV53b6tJdlxV0cagbURc5jk0IGehD477jWcp5Fl4plxYQMS
+ bLaJ89beVeWdyhuCHpC1h8mFiPO6p7ICBGiOu2VR+8lUHZl532dxpIA7nARGF5k6wAsG
+ rOuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1769339466; x=1769944266;
+ d=1e100.net; s=20230601; t=1769339536; x=1769944336;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=gZJhRPqIJPRRGkMi/6qlPhWuwTFHaeU8Sex0KT1Wpx4=;
- b=X/a02zJzF3+ug2JUIypi9KaY9Me/nxNqtY0h75nWattFZkn1uBXGN3L0YUNH84q37g
- 936LFqQAQayFvUPDsQKfZ6yIIz9K6SaOXJ4ZjhBn6zSdFJpOyqdmQKsMC9QLBFaT+Igv
- 78FOd9yU72kBUa5pknxkJIERYh1CH0wGzWF3daXLrYkj9MhQm98wL3/BxKZB4YCT8nGH
- 0OVq4x6njmu32KJ4U0WRD4ZrJkaxOUoKP2OOaSDx3MHUBZvCgyVExkSJi9IbMr7YDfMn
- DGuvKsQcWCLIFD/nyeoxd6n8OpeHHoPvcRYPdqUZ7FsqEA52iU3o3oaJ/N0DcuZCWSoA
- k4EA==
-X-Gm-Message-State: AOJu0Yy1SKehaX1oYwHNJypBuuMUmcLOpWAUtKsUmhGNVziRNsmrtWDc
- xNI8fxKWl0kOE9qmYe/TdGVg4FLouMqOfL5Cvrmo76LWGVdxny5FsaTR8HXV0Q==
-X-Gm-Gg: AZuq6aIpPtfKESs/A/1PhBUyX/o2YcEdu7XSc5/bnrUSYv0UeLyajs3Jrz/PwsXWWUF
- iR+661vLGWjrrfY+uGkC3SzlXlkFHnQZ/liJ4NQPwWpkWbffultnkbZvcwOsTyaVcqZioU8iaE9
- kqqi50BHfe//1zw1EnAw6aC0luZx8XQLYe/cs1TXeT6Ek1FEKFH0sh/Vz4vdQCwhTcrEqYsZTEP
- OeqflCCdLeWhG1K7yVFceTeDxvxlq4HC+lcDL2Mh1h3ywIh72OyAPb5FG64l7fKN0wzhScp0fn5
- yYDcqiDRJ2Gj6acAH1+jPRnP/tQudH2a0w6kgKGL1ZYv8/1VGGKY/ZlDuhfxjJc5un3hjfoQzqv
- GdI+8tsrRgXh11Taekiv8chYtCpQguikbKgSZr+biqSNUrruLbLp1+TVcWyBVJh8os0Xa/Px73+
- CbMYkxGfW0rQtTo40+mfnCgA==
-X-Received: by 2002:a05:7022:4182:b0:11d:bea3:c93d with SMTP id
- a92af1059eb24-1248ec61495mr601251c88.29.1769339465218; 
- Sun, 25 Jan 2026 03:11:05 -0800 (PST)
+ bh=0Q6DZLdJvK554wrKXWXEUCyWlyciPLw3O8v8p7zHn5c=;
+ b=Ml93glJWFxCv3ymvvcIqQLvIE/O39stGagpoEphkElIsiw+d8W4qZ5dtPdXtNbVckX
+ vxi7NVu3fSglkBKPkLS25M2piazFSCZGVzH69IOf4CfXG4rQ4NfehRY4Eoi1o+YrSL++
+ pij3MIHGIDhuLH4fVIIkMtro54QX5HwBYFfKZLdRRP+VwpyMRo+1xwqUI3fBVhBpuO9s
+ aGccm486fzOdMRNEArosdmc/azF5Fjegn3dMka5nUL3fPb3Xen1j9h+VhHiCYNefibI1
+ b1Ys7T2375p76aVZ7FBuE6DwaN6I5ecCBH+9W/kfymWUG/PO0ti8BzXWl9X8DSVXyMSV
+ gSew==
+X-Gm-Message-State: AOJu0YyxjOwqHtwY5Vz/O6CvSwq2O1aKyenjuOUG1oCmocqcK+2iKUqr
+ MaMh2DzRhdzbkYiqNnfGP9eWsRGgmFzqqbMQeP5GhitPcenuJg1xwdffMJoHHQ==
+X-Gm-Gg: AZuq6aJyjRh+tidBnMlhYFBNxlQvxSC38MJkC+OFVCbfZGi5tqR9hhdy0Qz9P4RGfOL
+ 1inpZRw2p4oxcF3x6Xf6OcMFhTrW0sMghQQsmwtx8DBcyEqK/9zmfaeU6KnDt54Ovq1Z4nD/D37
+ b4EmFl/bNCpcYYVKVyatM1rN15vwaHPRJOe8p23ty6IUWJRnZDztlbsu97MXkO4uLOc7tUa0Ipd
+ hlYL8p+QMBEsWkrV+SDRVJgdOPJIZxVIYWjLqszd20ks7Wqo0O4ZsBpc0vZS6eKockD32zLMqsO
+ qBg2aBzw5/4/fXhlQVcSOF/aZw/HbKU2XPn83gI1oc3cTej2U1h3fqE6GYj57yvIBTIiElSvR9K
+ fnoQFQGRzupnEcXR0nKXvurEcPOi3a5YApnzRrE5pBJQx7gDwSpvblRKmtDduI3UN+DnOv+S8mg
+ 4FHafzRP6Tx55YwirNDgdAyA==
+X-Received: by 2002:a05:7301:1691:b0:2b7:2bf3:cdf0 with SMTP id
+ 5a478bee46e88-2b7645188damr490722eec.30.1769339535898; 
+ Sun, 25 Jan 2026 03:12:15 -0800 (PST)
 Received: from mac.com ([136.24.82.250]) by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-1247d9a4698sm12851651c88.16.2026.01.25.03.11.04
+ 5a478bee46e88-2b73a9e1c17sm10322665eec.20.2026.01.25.03.12.15
  (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
- Sun, 25 Jan 2026 03:11:04 -0800 (PST)
+ Sun, 25 Jan 2026 03:12:15 -0800 (PST)
 From: scott.k.mitch1@gmail.com
 To: dev@dpdk.org
 Cc: mb@smartsharesystems.com, stephen@networkplumber.org,
  bruce.richardson@intel.com, Scott Mitchell <scott.k.mitch1@gmail.com>
-Subject: [PATCH v11] eal: RTE_PTR_ADD/SUB API improvements
-Date: Sun, 25 Jan 2026 03:11:02 -0800
-Message-Id: <20260125111102.34773-1-scott.k.mitch1@gmail.com>
+Subject: [PATCH v12] eal: RTE_PTR_ADD/SUB API improvements
+Date: Sun, 25 Jan 2026 03:12:11 -0800
+Message-Id: <20260125111211.34800-1-scott.k.mitch1@gmail.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 In-Reply-To: <20260124091121.4042-1-scott.k.mitch1@gmail.com>
 References: <20260124091121.4042-1-scott.k.mitch1@gmail.com>
@@ -83,8 +83,8 @@ From: Scott Mitchell <scott.k.mitch1@gmail.com>
 RTE_PTR_ADD and RTE_PTR_SUB APIs have a few limitations:
 1. ptr cast to uintptr_t drops pointer provenance and
 prevents compiler optimizations
-2. return cast to void* removes type safety and
-discards qualifiers (const, volatile)
+2. return cast discards qualifiers (const, volatile)
+which may hide correctness/concurrency issues.
 3. Accepts both "pointers" and "integers as pointers" which
 overloads the use case and constrains the implementation
 to address other challenges.
@@ -100,10 +100,14 @@ Examples:
 (which uses RTE_PTR_ADD) by ~40% (100 bytes) to ~8x (1.5k bytes)
 TSC cycles/byte.
 2. Refactoring discovered cases that dropped qualifiers (volatile)
-which are likely bugs and warrant more explicit cast/handling.
+which that the new API exposes.
 
 Signed-off-by: Scott Mitchell <scott.k.mitch1@gmail.com>
 ---
+v12:
+- void* return type to avoid optimizations assuming
+aligned access which isn't generally safe/true.
+
 v11:
 - Split API into PTR and INT_PTR variants, update all usage
 of PTR API for new APIs.
@@ -142,98 +146,54 @@ v4:
 - Had warnings on both Clang and GCC due to _Generic type-checking all branches
 
 ---
- app/test-eventdev/test_perf_common.h        |   7 +-
- app/test-pmd/cmdline_flow.c                 |   6 +-
- app/test-pmd/csumonly.c                     |   2 +-
+ app/test-pmd/cmdline_flow.c                 |   4 +-
  app/test/meson.build                        |   1 +
  app/test/test_common.c                      |  20 +-
- app/test/test_ptr_add_sub.c                 | 197 ++++++++++++++++++++
- drivers/bus/pci/linux/pci_vfio.c            |   2 +-
- drivers/common/cnxk/cnxk_security.c         |   2 +-
+ app/test/test_ptr_add_sub.c                 | 197 +++++++++++++++++++
+ drivers/bus/cdx/cdx_vfio.c                  |   6 +-
+ drivers/bus/pci/linux/pci.c                 |   6 +-
+ drivers/bus/vmbus/linux/vmbus_uio.c         |   6 +-
  drivers/common/cnxk/roc_cpt_debug.c         |   4 +-
  drivers/common/cnxk/roc_nix_bpf.c           |   2 +-
  drivers/common/cnxk/roc_nix_inl.h           |   4 +-
  drivers/common/cnxk/roc_nix_inl_dp.h        |   8 +-
- drivers/common/cnxk/roc_platform.h          |   6 +-
- drivers/common/cnxk/roc_se.c                |   2 +-
- drivers/common/cpt/cpt_ucode_asym.h         |  12 +-
- drivers/common/mlx5/linux/mlx5_nl.c         |  14 +-
- drivers/compress/mlx5/mlx5_compress.c       |   2 +-
- drivers/crypto/cnxk/cn9k_cryptodev_ops.c    |   2 +-
- drivers/crypto/cnxk/cnxk_cryptodev_ops.c    |   2 +-
- drivers/crypto/mlx5/mlx5_crypto_gcm.c       |   6 +-
- drivers/crypto/mlx5/mlx5_crypto_xts.c       |   2 +-
- drivers/crypto/octeontx/otx_cryptodev_ops.c |   2 +-
- drivers/dma/idxd/idxd_internal.h            |   1 +
- drivers/dma/idxd/idxd_pci.c                 |  11 +-
+ drivers/common/cnxk/roc_platform.h          |   7 +-
+ drivers/common/mlx5/mlx5_common_mr.c        |   2 +-
+ drivers/dma/idxd/idxd_pci.c                 |   9 +-
  drivers/dma/odm/odm_dmadev.c                |   4 +-
+ drivers/event/cnxk/cn10k_worker.c           |   2 +-
+ drivers/event/cnxk/cn20k_worker.c           |   2 +-
  drivers/mempool/bucket/rte_mempool_bucket.c |   7 +-
- drivers/ml/cnxk/cn10k_ml_model.c            |   2 +-
- drivers/ml/cnxk/cn10k_ml_ops.c              |   2 +-
- drivers/ml/cnxk/cnxk_ml_ops.c               |   2 +-
- drivers/net/ark/ark_ethdev.c                |   4 +-
- drivers/net/cxgbe/cxgbe_ethdev.c            |   6 +-
- drivers/net/gve/base/gve_adminq.c           |  12 +-
- drivers/net/intel/ice/ice_tm.c              |   4 +-
- drivers/net/intel/ixgbe/ixgbe_rxtx.c        |   2 +-
- drivers/net/mlx5/mlx5_flow.c                |   4 +-
- drivers/net/mlx5/mlx5_flow_hw.c             |   4 +-
- drivers/net/mlx5/mlx5_tx.h                  |   4 +-
- drivers/net/mlx5/mlx5_txpp.c                |   4 +-
- drivers/net/sfc/sfc_mae.c                   |  10 +-
- drivers/net/virtio/virtio_rxtx.c            |   2 +-
- lib/eal/common/eal_common_memory.c          |  19 +-
+ drivers/mempool/dpaa/dpaa_mempool.c         |   2 +-
+ drivers/net/cxgbe/sge.c                     |   4 +-
+ drivers/net/ena/ena_ethdev.c                |   9 +-
+ drivers/net/intel/fm10k/fm10k.h             |   6 +-
+ drivers/net/intel/fm10k/fm10k_rxtx_vec.c    |  12 +-
+ drivers/net/mlx4/mlx4_txq.c                 |   3 +-
+ lib/eal/common/eal_common_fbarray.c         |   2 +
+ lib/eal/common/eal_common_memory.c          |  31 +--
  lib/eal/common/eal_common_options.c         |   2 +-
- lib/eal/common/malloc_elem.h                |   4 +-
- lib/eal/common/malloc_heap.c                |   6 +-
- lib/eal/include/rte_common.h                | 174 ++++++++++++++++-
- lib/ethdev/rte_ethdev.c                     |   6 +-
- lib/graph/graph_populate.c                  |   4 +-
- lib/graph/graph_stats.c                     |   2 +-
+ lib/eal/common/malloc_elem.h                |   8 +-
+ lib/eal/freebsd/eal_memory.c                |   4 +
+ lib/eal/include/rte_common.h                | 206 ++++++++++++++++++--
+ lib/eal/linux/eal_memalloc.c                |   6 +
+ lib/eal/linux/eal_memory.c                  |   7 +
+ lib/eal/windows/eal_memalloc.c              |   6 +
  lib/graph/rte_graph.h                       |   4 +-
- lib/graph/rte_graph_model_mcore_dispatch.c  |   2 +-
- lib/latencystats/rte_latencystats.c         |   2 +-
- lib/mbuf/rte_mbuf.c                         |   2 +-
+ lib/latencystats/rte_latencystats.c         |   3 +
+ lib/mbuf/rte_mbuf.c                         |   1 +
+ lib/mbuf/rte_mbuf.h                         |   2 +
  lib/member/rte_xxh64_avx512.h               |   6 +-
+ lib/mempool/rte_mempool.c                   |   8 +-
+ lib/mempool/rte_mempool.h                   |   3 +
+ lib/mempool/rte_mempool_ops_default.c       |   2 +-
  lib/pdcp/pdcp_entity.h                      |   8 +-
- lib/reorder/rte_reorder.c                   |   2 +-
- 55 files changed, 502 insertions(+), 131 deletions(-)
+ lib/vhost/vhost_user.c                      |  13 +-
+ 43 files changed, 550 insertions(+), 99 deletions(-)
  create mode 100644 app/test/test_ptr_add_sub.c
 
-diff --git a/app/test-eventdev/test_perf_common.h b/app/test-eventdev/test_perf_common.h
-index 365464f269..2b0434b844 100644
---- a/app/test-eventdev/test_perf_common.h
-+++ b/app/test-eventdev/test_perf_common.h
-@@ -141,7 +141,7 @@ perf_mark_fwd_latency(enum evt_prod_type prod_type, struct rte_event *const ev)
- 
- 			pe = rte_pktmbuf_mtod(m, struct perf_elt *);
- 		} else {
--			pe = RTE_PTR_ADD(op->asym->modex.result.data,
-+			pe = RTE_PTR_ADD((void *)op->asym->modex.result.data,
- 					 op->asym->modex.result.length);
- 		}
- 		pe->timestamp = rte_get_timer_cycles();
-@@ -179,7 +179,8 @@ perf_elt_from_vec_get(struct rte_event_vector *vec)
- 		m = cop->sym->m_dst == NULL ? cop->sym->m_src : cop->sym->m_dst;
- 		return rte_pktmbuf_mtod(m, struct perf_elt *);
- 	} else {
--		return RTE_PTR_ADD(cop->asym->modex.result.data, cop->asym->modex.result.length);
-+		return RTE_PTR_ADD((void *)cop->asym->modex.result.data,
-+				   cop->asym->modex.result.length);
- 	}
- }
- 
-@@ -297,7 +298,7 @@ perf_process_last_stage_latency(struct rte_mempool *const pool, enum evt_prod_ty
- 			to_free_in_bulk = m;
- 			pe = rte_pktmbuf_mtod(m, struct perf_elt *);
- 		} else {
--			pe = RTE_PTR_ADD(op->asym->modex.result.data,
-+			pe = RTE_PTR_ADD((void *)op->asym->modex.result.data,
- 					 op->asym->modex.result.length);
- 			to_free_in_bulk = op->asym->modex.result.data;
- 		}
 diff --git a/app/test-pmd/cmdline_flow.c b/app/test-pmd/cmdline_flow.c
-index ebc036b14b..01a45fb807 100644
+index ebc036b14b..8c2fc6c7b6 100644
 --- a/app/test-pmd/cmdline_flow.c
 +++ b/app/test-pmd/cmdline_flow.c
 @@ -12468,7 +12468,7 @@ parse_meter_color(struct context *ctx, const struct token *token,
@@ -241,41 +201,19 @@ index ebc036b14b..01a45fb807 100644
  		if (!arg)
  			return -1;
 -		*(int *)RTE_PTR_ADD(action->conf, arg->offset) = i;
-+		*(int *)RTE_PTR_ADD((void *)action->conf, arg->offset) = i;
++		*(int *)RTE_PTR_ADD(RTE_PTR_UNQUAL(action->conf), arg->offset) = i;
  	} else {
  		((struct rte_flow_item_meter_color *)
  			ctx->object)->color = (enum rte_color)i;
-@@ -13343,7 +13343,7 @@ indirect_action_flow_conf_create(const struct buffer *in)
- 		goto end;
- 	indlst_conf->id = in->args.vc.attr.group;
- 	indlst_conf->conf_num = in->args.vc.actions_n - 1;
--	indlst_conf->actions = RTE_PTR_ADD(indlst_conf, base);
-+	indlst_conf->actions = RTE_PTR_ADD((void *)indlst_conf, base);
- 	ret = rte_flow_conv(RTE_FLOW_CONV_OP_ACTIONS, indlst_conf->actions,
- 			    len, src, NULL);
- 	if (ret <= 0) {
 @@ -13351,7 +13351,7 @@ indirect_action_flow_conf_create(const struct buffer *in)
  		indlst_conf = NULL;
  		goto end;
  	}
 -	indlst_conf->conf = RTE_PTR_ADD(indlst_conf, base + len);
-+	indlst_conf->conf = (const void **)RTE_PTR_ADD((void *)indlst_conf, base + len);
++	indlst_conf->conf = (const void **)RTE_PTR_ADD(indlst_conf, base + len);
  	for (i = 0; i < indlst_conf->conf_num; i++)
  		indlst_conf->conf[i] = indlst_conf->actions[i].conf;
  	SLIST_INSERT_HEAD(&indlst_conf_head, indlst_conf, next);
-diff --git a/app/test-pmd/csumonly.c b/app/test-pmd/csumonly.c
-index c841651756..24866e563f 100644
---- a/app/test-pmd/csumonly.c
-+++ b/app/test-pmd/csumonly.c
-@@ -488,7 +488,7 @@ get_ethertype_by_ptype(struct rte_ether_hdr *eth_hdr, uint32_t ptype)
- 		return _htons(RTE_ETHER_TYPE_IPV6);
- 	default:
- 		ethertype = eth_hdr->ether_type;
--		vlan_hdr = RTE_PTR_ADD(eth_hdr, offsetof(struct rte_ether_hdr, ether_type));
-+		vlan_hdr = RTE_PTR_ADD((void *)eth_hdr, offsetof(struct rte_ether_hdr, ether_type));
- 		max_vlans = vlan_hdr + MAX_VLAN_HEADERS;
- 		while ((ethertype == _htons(RTE_ETHER_TYPE_VLAN) ||
- 				ethertype == _htons(RTE_ETHER_TYPE_QINQ)) &&
 diff --git a/app/test/meson.build b/app/test/meson.build
 index f4d04a6e42..aa56fc4297 100644
 --- a/app/test/meson.build
@@ -289,7 +227,7 @@ index f4d04a6e42..aa56fc4297 100644
      'test_rand_perf.c': [],
      'test_rawdev.c': ['rawdev', 'bus_vdev', 'raw_skeleton'],
 diff --git a/app/test/test_common.c b/app/test/test_common.c
-index 3e1c7df0c1..cc0ce50bbc 100644
+index 3e1c7df0c1..83a689155f 100644
 --- a/app/test/test_common.c
 +++ b/app/test/test_common.c
 @@ -37,10 +37,10 @@ test_macros(int __rte_unused unused_parm)
@@ -300,9 +238,9 @@ index 3e1c7df0c1..cc0ce50bbc 100644
 -		"RTE_PTR_ADD");
 -	RTE_TEST_ASSERT_EQUAL((uintptr_t)RTE_PTR_SUB(BIGGER, PTR_DIFF), SMALLER,
 -		"RTE_PTR_SUB");
-+	RTE_TEST_ASSERT_EQUAL(RTE_INT_PTR_ADD(SMALLER, PTR_DIFF), BIGGER,
++	RTE_TEST_ASSERT_EQUAL(RTE_INT_PTR_ADD(SMALLER, PTR_DIFF), (void *) BIGGER,
 +		"RTE_INT_PTR_ADD");
-+	RTE_TEST_ASSERT_EQUAL(RTE_INT_PTR_SUB(BIGGER, PTR_DIFF), SMALLER,
++	RTE_TEST_ASSERT_EQUAL(RTE_INT_PTR_SUB(BIGGER, PTR_DIFF), (void *) SMALLER,
 +		"RTE_INT_PTR_SUB");
  	RTE_TEST_ASSERT_EQUAL(RTE_PTR_DIFF(BIGGER, SMALLER), PTR_DIFF,
  		"RTE_PTR_DIFF");
@@ -312,7 +250,7 @@ index 3e1c7df0c1..cc0ce50bbc 100644
  				FAIL_ALIGN("RTE_ALIGN_FLOOR", i, p);
  
 -			val = RTE_PTR_ALIGN_FLOOR((uintptr_t) i, p);
-+			val = RTE_INT_PTR_ALIGN_FLOOR((uintptr_t) i, p);
++			val = (uint32_t)(uintptr_t)RTE_INT_PTR_ALIGN_FLOOR((uintptr_t) i, p);
  			if (ERROR_FLOOR(val, i, p))
 -				FAIL_ALIGN("RTE_PTR_ALIGN_FLOOR", i, p);
 +				FAIL_ALIGN("RTE_INT_PTR_ALIGN_FLOOR", i, p);
@@ -323,7 +261,7 @@ index 3e1c7df0c1..cc0ce50bbc 100644
  
  			/* align ceiling */
 -			val = RTE_PTR_ALIGN((uintptr_t) i, p);
-+			val = RTE_INT_PTR_ALIGN((uintptr_t) i, p);
++			val = (uint32_t)(uintptr_t)RTE_INT_PTR_ALIGN((uintptr_t) i, p);
  			if (ERROR_CEIL(val, i, p))
 -				FAIL_ALIGN("RTE_PTR_ALIGN", i, p);
 +				FAIL_ALIGN("RTE_INT_PTR_ALIGN", i, p);
@@ -335,7 +273,7 @@ index 3e1c7df0c1..cc0ce50bbc 100644
  				FAIL_ALIGN("RTE_ALIGN_CEIL", i, p);
  
 -			val = RTE_PTR_ALIGN_CEIL((uintptr_t)i, p);
-+			val = RTE_INT_PTR_ALIGN_CEIL((uintptr_t)i, p);
++			val = (uint32_t)(uintptr_t)RTE_INT_PTR_ALIGN_CEIL((uintptr_t)i, p);
  			if (ERROR_CEIL(val, i, p))
 -				FAIL_ALIGN("RTE_PTR_ALIGN_CEIL", i, p);
 +				FAIL_ALIGN("RTE_INT_PTR_ALIGN_CEIL", i, p);
@@ -344,7 +282,7 @@ index 3e1c7df0c1..cc0ce50bbc 100644
  			if (!rte_is_aligned((void*)(uintptr_t) val, p))
 diff --git a/app/test/test_ptr_add_sub.c b/app/test/test_ptr_add_sub.c
 new file mode 100644
-index 0000000000..d7ed36e40e
+index 0000000000..01bf9b9785
 --- /dev/null
 +++ b/app/test/test_ptr_add_sub.c
 @@ -0,0 +1,197 @@
@@ -371,92 +309,92 @@ index 0000000000..d7ed36e40e
 +test_int_ptr_add_sub(void)
 +{
 +	/* Test NULL + offset (primary use case for RTE_INT_PTR_*) */
-+	uintptr_t uptr_result = RTE_INT_PTR_ADD((uintptr_t)NULL, TEST_INCREMENT);
++	uintptr_t uptr_result = (uintptr_t)RTE_INT_PTR_ADD((uintptr_t)NULL, TEST_INCREMENT);
 +	TEST_ASSERT_EQUAL(uptr_result, (uintptr_t)TEST_INCREMENT,
 +		"RTE_INT_PTR_ADD failed for NULL");
 +
-+	uptr_result = RTE_INT_PTR_SUB((uintptr_t)NULL, TEST_INCREMENT);
++	uptr_result = (uintptr_t)RTE_INT_PTR_SUB((uintptr_t)NULL, TEST_INCREMENT);
 +	TEST_ASSERT_EQUAL(uptr_result, (uintptr_t)(-TEST_INCREMENT),
 +		"RTE_INT_PTR_SUB failed for NULL");
 +
 +	/* Test with various integer types that could represent pointers */
 +	unsigned long long ull = TEST_INITVAL;
-+	unsigned long long ull_result = RTE_INT_PTR_ADD(ull, TEST_INCREMENT);
++	unsigned long long ull_result = (unsigned long long)RTE_INT_PTR_ADD(ull, TEST_INCREMENT);
 +	TEST_ASSERT_EQUAL(ull_result, (unsigned long long)(TEST_INITVAL + TEST_INCREMENT),
 +		"RTE_INT_PTR_ADD failed for unsigned long long");
-+	ull_result = RTE_INT_PTR_SUB(ull_result, TEST_INCREMENT);
++	ull_result = (unsigned long long)RTE_INT_PTR_SUB(ull_result, TEST_INCREMENT);
 +	TEST_ASSERT_EQUAL(ull_result, ull,
 +		"RTE_INT_PTR_SUB round-trip failed for unsigned long long");
 +
 +	long long ll = TEST_INITVAL;
-+	long long ll_result = RTE_INT_PTR_ADD(ll, TEST_INCREMENT);
++	long long ll_result = (long long)RTE_INT_PTR_ADD(ll, TEST_INCREMENT);
 +	TEST_ASSERT_EQUAL(ll_result, (long long)(TEST_INITVAL + TEST_INCREMENT),
 +		"RTE_INT_PTR_ADD failed for long long");
-+	ll_result = RTE_INT_PTR_SUB(ll_result, TEST_INCREMENT);
++	ll_result = (long long)RTE_INT_PTR_SUB(ll_result, TEST_INCREMENT);
 +	TEST_ASSERT_EQUAL(ll_result, ll,
 +		"RTE_INT_PTR_SUB round-trip failed for long long");
 +
 +	unsigned long ul = TEST_INITVAL;
-+	unsigned long ul_result = RTE_INT_PTR_ADD(ul, TEST_INCREMENT);
++	unsigned long ul_result = (unsigned long)RTE_INT_PTR_ADD(ul, TEST_INCREMENT);
 +	TEST_ASSERT_EQUAL(ul_result, (unsigned long)(TEST_INITVAL + TEST_INCREMENT),
 +		"RTE_INT_PTR_ADD failed for unsigned long");
-+	ul_result = RTE_INT_PTR_SUB(ul_result, TEST_INCREMENT);
++	ul_result = (unsigned long)RTE_INT_PTR_SUB(ul_result, TEST_INCREMENT);
 +	TEST_ASSERT_EQUAL(ul_result, ul,
 +		"RTE_INT_PTR_SUB round-trip failed for unsigned long");
 +
 +	long l = TEST_INITVAL;
-+	long l_result = RTE_INT_PTR_ADD(l, TEST_INCREMENT);
++	long l_result = (long)RTE_INT_PTR_ADD(l, TEST_INCREMENT);
 +	TEST_ASSERT_EQUAL(l_result, (long)(TEST_INITVAL + TEST_INCREMENT),
 +		"RTE_INT_PTR_ADD failed for long");
-+	l_result = RTE_INT_PTR_SUB(l_result, TEST_INCREMENT);
++	l_result = (long)RTE_INT_PTR_SUB(l_result, TEST_INCREMENT);
 +	TEST_ASSERT_EQUAL(l_result, l,
 +		"RTE_INT_PTR_SUB round-trip failed for long");
 +
 +	unsigned int ui = TEST_INITVAL;
-+	unsigned int ui_result = RTE_INT_PTR_ADD(ui, TEST_INCREMENT);
++	unsigned int ui_result = (unsigned int)(uintptr_t)RTE_INT_PTR_ADD(ui, TEST_INCREMENT);
 +	TEST_ASSERT_EQUAL(ui_result, (unsigned int)(TEST_INITVAL + TEST_INCREMENT),
 +		"RTE_INT_PTR_ADD failed for unsigned int");
-+	ui_result = RTE_INT_PTR_SUB(ui_result, TEST_INCREMENT);
++	ui_result = (unsigned int)(uintptr_t)RTE_INT_PTR_SUB(ui_result, TEST_INCREMENT);
 +	TEST_ASSERT_EQUAL(ui_result, ui,
 +		"RTE_INT_PTR_SUB round-trip failed for unsigned int");
 +
 +	int i = TEST_INITVAL;
-+	int i_result = RTE_INT_PTR_ADD(i, TEST_INCREMENT);
++	int i_result = (int)(uintptr_t)RTE_INT_PTR_ADD(i, TEST_INCREMENT);
 +	TEST_ASSERT_EQUAL(i_result, (int)(TEST_INITVAL + TEST_INCREMENT),
 +		"RTE_INT_PTR_ADD failed for int");
-+	i_result = RTE_INT_PTR_SUB(i_result, TEST_INCREMENT);
++	i_result = (int)(uintptr_t)RTE_INT_PTR_SUB(i_result, TEST_INCREMENT);
 +	TEST_ASSERT_EQUAL(i_result, i,
 +		"RTE_INT_PTR_SUB round-trip failed for int");
 +
 +	uint64_t u64 = TEST_INITVAL;
-+	uint64_t u64_result = RTE_INT_PTR_ADD(u64, TEST_INCREMENT);
++	uint64_t u64_result = (uint64_t)RTE_INT_PTR_ADD(u64, TEST_INCREMENT);
 +	TEST_ASSERT_EQUAL(u64_result, (uint64_t)(TEST_INITVAL + TEST_INCREMENT),
 +		"RTE_INT_PTR_ADD failed for uint64_t");
-+	u64_result = RTE_INT_PTR_SUB(u64_result, TEST_INCREMENT);
++	u64_result = (uint64_t)RTE_INT_PTR_SUB(u64_result, TEST_INCREMENT);
 +	TEST_ASSERT_EQUAL(u64_result, u64,
 +		"RTE_INT_PTR_SUB round-trip failed for uint64_t");
 +
 +	uint32_t u32 = TEST_INITVAL;
-+	uint32_t u32_result = RTE_INT_PTR_ADD(u32, TEST_INCREMENT);
++	uint32_t u32_result = (uint32_t)(uintptr_t)RTE_INT_PTR_ADD(u32, TEST_INCREMENT);
 +	TEST_ASSERT_EQUAL(u32_result, (uint32_t)(TEST_INITVAL + TEST_INCREMENT),
 +		"RTE_INT_PTR_ADD failed for uint32_t");
-+	u32_result = RTE_INT_PTR_SUB(u32_result, TEST_INCREMENT);
++	u32_result = (uint32_t)(uintptr_t)RTE_INT_PTR_SUB(u32_result, TEST_INCREMENT);
 +	TEST_ASSERT_EQUAL(u32_result, u32,
 +		"RTE_INT_PTR_SUB round-trip failed for uint32_t");
 +
 +	uintptr_t uptr = TEST_INITVAL;
-+	uptr_result = RTE_INT_PTR_ADD(uptr, TEST_INCREMENT);
++	uptr_result = (uintptr_t)RTE_INT_PTR_ADD(uptr, TEST_INCREMENT);
 +	TEST_ASSERT_EQUAL(uptr_result, (uintptr_t)(TEST_INITVAL + TEST_INCREMENT),
 +		"RTE_INT_PTR_ADD failed for uintptr_t");
-+	uptr_result = RTE_INT_PTR_SUB(uptr, TEST_INCREMENT);
++	uptr_result = (uintptr_t)RTE_INT_PTR_SUB(uptr, TEST_INCREMENT);
 +	TEST_ASSERT_EQUAL(uptr_result, uptr - TEST_INCREMENT,
 +		"RTE_INT_PTR_SUB failed for uintptr_t");
 +
 +	size_t sz = TEST_INITVAL;
-+	size_t sz_result = RTE_INT_PTR_ADD(sz, TEST_INCREMENT);
++	size_t sz_result = (size_t)RTE_INT_PTR_ADD(sz, TEST_INCREMENT);
 +	TEST_ASSERT_EQUAL(sz_result, (size_t)(TEST_INITVAL + TEST_INCREMENT),
 +		"RTE_INT_PTR_ADD failed for size_t");
-+	sz_result = RTE_INT_PTR_SUB(sz_result, TEST_INCREMENT);
++	sz_result = (size_t)RTE_INT_PTR_SUB(sz_result, TEST_INCREMENT);
 +	TEST_ASSERT_EQUAL(sz_result, sz,
 +		"RTE_INT_PTR_SUB round-trip failed for size_t");
 +
@@ -545,34 +483,65 @@ index 0000000000..d7ed36e40e
 +}
 +
 +REGISTER_FAST_TEST(ptr_add_sub_autotest, NOHUGE_OK, ASAN_OK, test_ptr_add_sub_suite);
-diff --git a/drivers/bus/pci/linux/pci_vfio.c b/drivers/bus/pci/linux/pci_vfio.c
-index 242f567ed7..004cb3cf91 100644
---- a/drivers/bus/pci/linux/pci_vfio.c
-+++ b/drivers/bus/pci/linux/pci_vfio.c
-@@ -672,7 +672,7 @@ pci_vfio_info_cap(struct vfio_region_info *info, int cap)
+diff --git a/drivers/bus/cdx/cdx_vfio.c b/drivers/bus/cdx/cdx_vfio.c
+index 11fe3265d2..5db9de3aaa 100644
+--- a/drivers/bus/cdx/cdx_vfio.c
++++ b/drivers/bus/cdx/cdx_vfio.c
+@@ -368,9 +368,13 @@ static int
+ find_max_end_va(const struct rte_memseg_list *msl, void *arg)
+ {
+ 	size_t sz = msl->len;
+-	void *end_va = RTE_PTR_ADD(msl->base_va, sz);
++	void *end_va;
+ 	void **max_va = arg;
  
- 	offset = info->cap_offset;
- 	while (offset != 0) {
--		h = RTE_PTR_ADD(info, offset);
-+		h = RTE_PTR_ADD((void *)info, offset);
- 		if (h->id == cap)
- 			return h;
- 		offset = h->next;
-diff --git a/drivers/common/cnxk/cnxk_security.c b/drivers/common/cnxk/cnxk_security.c
-index 600098ae1c..4e2105aaa6 100644
---- a/drivers/common/cnxk/cnxk_security.c
-+++ b/drivers/common/cnxk/cnxk_security.c
-@@ -965,7 +965,7 @@ on_fill_ipsec_common_sa(struct rte_security_ipsec_xform *ipsec,
- 		else if (crypto_xform->aead.algo == RTE_CRYPTO_AEAD_AES_CCM) {
- 			ccm_flag = 0x07 & ~ROC_CPT_AES_CCM_CTR_LEN;
- 			*common_sa->iv.gcm.nonce = ccm_flag;
--			memcpy(PLT_PTR_ADD(common_sa->iv.gcm.nonce, 1), &ipsec->salt, 3);
-+			memcpy(PLT_PTR_ADD(&common_sa->iv.gcm.nonce[0], 1), &ipsec->salt, 3);
- 		}
- 		cipher_key = crypto_xform->aead.key.data;
- 		cipher_key_len = crypto_xform->aead.key.length;
++	if (msl->base_va == NULL)
++		return 0;
++
++	end_va = RTE_PTR_ADD(msl->base_va, sz);
+ 	if (*max_va < end_va)
+ 		*max_va = end_va;
+ 	return 0;
+diff --git a/drivers/bus/pci/linux/pci.c b/drivers/bus/pci/linux/pci.c
+index 2ffac82e94..455db2cdec 100644
+--- a/drivers/bus/pci/linux/pci.c
++++ b/drivers/bus/pci/linux/pci.c
+@@ -109,9 +109,13 @@ static int
+ find_max_end_va(const struct rte_memseg_list *msl, void *arg)
+ {
+ 	size_t sz = msl->len;
+-	void *end_va = RTE_PTR_ADD(msl->base_va, sz);
++	void *end_va;
+ 	void **max_va = arg;
+ 
++	if (msl->base_va == NULL)
++		return 0;
++
++	end_va = RTE_PTR_ADD(msl->base_va, sz);
+ 	if (*max_va < end_va)
+ 		*max_va = end_va;
+ 	return 0;
+diff --git a/drivers/bus/vmbus/linux/vmbus_uio.c b/drivers/bus/vmbus/linux/vmbus_uio.c
+index fbafc5027d..0ef05c0096 100644
+--- a/drivers/bus/vmbus/linux/vmbus_uio.c
++++ b/drivers/bus/vmbus/linux/vmbus_uio.c
+@@ -122,9 +122,13 @@ static int
+ find_max_end_va(const struct rte_memseg_list *msl, void *arg)
+ {
+ 	size_t sz = msl->memseg_arr.len * msl->page_sz;
+-	void *end_va = RTE_PTR_ADD(msl->base_va, sz);
++	void *end_va;
+ 	void **max_va = arg;
+ 
++	if (msl->base_va == NULL)
++		return 0;
++
++	end_va = RTE_PTR_ADD(msl->base_va, sz);
+ 	if (*max_va < end_va)
+ 		*max_va = end_va;
+ 	return 0;
 diff --git a/drivers/common/cnxk/roc_cpt_debug.c b/drivers/common/cnxk/roc_cpt_debug.c
-index 28aedf088e..ff27a2ede9 100644
+index 28aedf088e..252658a83f 100644
 --- a/drivers/common/cnxk/roc_cpt_debug.c
 +++ b/drivers/common/cnxk/roc_cpt_debug.c
 @@ -56,7 +56,7 @@ cpt_cnxk_parse_hdr_dump(FILE *file, const struct cpt_parse_hdr_s *cpth)
@@ -580,7 +549,7 @@ index 28aedf088e..ff27a2ede9 100644
  	offset = cpth->w2.ptr_offset;
  	offset = (((offset - 1) & 0x7) + 1) * 32;
 -	frag_info = PLT_PTR_ADD(cpth, offset);
-+	frag_info = PLT_PTR_ADD((void *)cpth, offset);
++	frag_info = PLT_PTR_ADD(PLT_PTR_UNQUAL(cpth), offset);
  
  	if (cpth->w0.num_frags > 0) {
  		cpt_dump(file, "CPT Fraginfo_0 \t%p:", frag_info);
@@ -589,12 +558,12 @@ index 28aedf088e..ff27a2ede9 100644
  	offset = cpth->w2.fi_offset;
  	offset = (((offset - 1) & 0x1f) + 1) * 8;
 -	frag_info = PLT_PTR_ADD(cpth, offset);
-+	frag_info = PLT_PTR_ADD((void *)cpth, offset);
++	frag_info = PLT_PTR_ADD(PLT_PTR_UNQUAL(cpth), offset);
  
  	cpt_dump(file, "CPT Fraginfo \t0x%p:", frag_info);
  
 diff --git a/drivers/common/cnxk/roc_nix_bpf.c b/drivers/common/cnxk/roc_nix_bpf.c
-index 98c9855a5b..985b318fdd 100644
+index 98c9855a5b..05fad44581 100644
 --- a/drivers/common/cnxk/roc_nix_bpf.c
 +++ b/drivers/common/cnxk/roc_nix_bpf.c
 @@ -160,7 +160,7 @@ nix_precolor_conv_table_write(struct roc_nix *roc_nix, uint64_t val,
@@ -602,12 +571,12 @@ index 98c9855a5b..985b318fdd 100644
  	int64_t *addr;
  
 -	addr = PLT_PTR_ADD(nix->base, off);
-+	addr = PLT_PTR_ADD((void *)nix->base, off);
++	addr = PLT_INT_PTR_ADD(nix->base, off);
  	plt_write64(val, addr);
  }
  
 diff --git a/drivers/common/cnxk/roc_nix_inl.h b/drivers/common/cnxk/roc_nix_inl.h
-index 7970ac2258..9fe1417756 100644
+index 7970ac2258..90d6aa5025 100644
 --- a/drivers/common/cnxk/roc_nix_inl.h
 +++ b/drivers/common/cnxk/roc_nix_inl.h
 @@ -59,7 +59,7 @@ roc_nix_inl_on_ipsec_inb_sa(uintptr_t base, uint64_t idx)
@@ -615,7 +584,7 @@ index 7970ac2258..9fe1417756 100644
  	uint64_t off = idx << ROC_NIX_INL_ON_IPSEC_INB_SA_SZ_LOG2;
  
 -	return PLT_PTR_ADD(base, off);
-+	return PLT_PTR_ADD((void *)base, off);
++	return PLT_INT_PTR_ADD(base, off);
  }
  
  static inline struct roc_ie_on_outb_sa *
@@ -624,12 +593,12 @@ index 7970ac2258..9fe1417756 100644
  	uint64_t off = idx << ROC_NIX_INL_ON_IPSEC_OUTB_SA_SZ_LOG2;
  
 -	return PLT_PTR_ADD(base, off);
-+	return PLT_PTR_ADD((void *)base, off);
++	return PLT_INT_PTR_ADD(base, off);
  }
  
  static inline void *
 diff --git a/drivers/common/cnxk/roc_nix_inl_dp.h b/drivers/common/cnxk/roc_nix_inl_dp.h
-index eb101db179..d7737cb7ca 100644
+index eb101db179..7061cd39ac 100644
 --- a/drivers/common/cnxk/roc_nix_inl_dp.h
 +++ b/drivers/common/cnxk/roc_nix_inl_dp.h
 @@ -49,7 +49,7 @@ roc_nix_inl_ot_ipsec_inb_sa(uintptr_t base, uint64_t idx)
@@ -637,7 +606,7 @@ index eb101db179..d7737cb7ca 100644
  	uint64_t off = idx << ROC_NIX_INL_OT_IPSEC_INB_SA_SZ_LOG2;
  
 -	return PLT_PTR_ADD(base, off);
-+	return PLT_PTR_ADD((void *)base, off);
++	return PLT_INT_PTR_ADD(base, off);
  }
  
  static inline struct roc_ot_ipsec_outb_sa *
@@ -646,7 +615,7 @@ index eb101db179..d7737cb7ca 100644
  	uint64_t off = idx << ROC_NIX_INL_OT_IPSEC_OUTB_SA_SZ_LOG2;
  
 -	return PLT_PTR_ADD(base, off);
-+	return PLT_PTR_ADD((void *)base, off);
++	return PLT_INT_PTR_ADD(base, off);
  }
  
  static inline void *
@@ -655,7 +624,7 @@ index eb101db179..d7737cb7ca 100644
  	uint64_t off = idx << ROC_NIX_INL_OW_IPSEC_INB_SA_SZ_LOG2;
  
 -	return PLT_PTR_ADD(base, off);
-+	return PLT_PTR_ADD((void *)base, off);
++	return PLT_INT_PTR_ADD(base, off);
  }
  
  static inline struct roc_ow_ipsec_outb_sa *
@@ -664,24 +633,25 @@ index eb101db179..d7737cb7ca 100644
  	uint64_t off = idx << ROC_NIX_INL_OW_IPSEC_OUTB_SA_SZ_LOG2;
  
 -	return PLT_PTR_ADD(base, off);
-+	return PLT_PTR_ADD((void *)base, off);
++	return PLT_INT_PTR_ADD(base, off);
  }
  
  static inline void *
 diff --git a/drivers/common/cnxk/roc_platform.h b/drivers/common/cnxk/roc_platform.h
-index e22a50d47a..1bee272dde 100644
+index e22a50d47a..9261d26175 100644
 --- a/drivers/common/cnxk/roc_platform.h
 +++ b/drivers/common/cnxk/roc_platform.h
-@@ -47,6 +47,8 @@
+@@ -47,6 +47,9 @@
  #define PLT_PTR_ADD		 RTE_PTR_ADD
  #define PLT_PTR_SUB		 RTE_PTR_SUB
  #define PLT_PTR_DIFF		 RTE_PTR_DIFF
++#define PLT_PTR_UNQUAL		 RTE_PTR_UNQUAL
 +#define PLT_INT_PTR_ADD		 RTE_INT_PTR_ADD
 +#define PLT_INT_PTR_SUB		 RTE_INT_PTR_SUB
  #define PLT_MAX_RXTX_INTR_VEC_ID RTE_MAX_RXTX_INTR_VEC_ID
  #define PLT_INTR_VEC_RXTX_OFFSET RTE_INTR_VEC_RXTX_OFFSET
  #define PLT_MIN			 RTE_MIN
-@@ -84,8 +86,8 @@
+@@ -84,8 +87,8 @@
  #define PLT_U16_CAST(val) ((uint16_t)(val))
  
  /* Add / Sub pointer with scalar and cast to uint64_t */
@@ -692,226 +662,21 @@ index e22a50d47a..1bee272dde 100644
  
  /** Divide ceil */
  #define PLT_DIV_CEIL(x, y)			\
-diff --git a/drivers/common/cnxk/roc_se.c b/drivers/common/cnxk/roc_se.c
-index f71832ff3a..445e2a66dc 100644
---- a/drivers/common/cnxk/roc_se.c
-+++ b/drivers/common/cnxk/roc_se.c
-@@ -635,7 +635,7 @@ roc_se_ctx_init(struct roc_se_ctx *roc_se_ctx)
- 	ctx_len = PLT_ALIGN_CEIL(ctx_len, 8);
- 
- 	/* Skip w0 for swap */
--	uc_ctx = PLT_PTR_ADD(ctx, sizeof(ctx->w0));
-+	uc_ctx = PLT_PTR_ADD((void *)ctx, sizeof(ctx->w0));
- 	for (i = 0; i < (ctx_len / 8); i++)
- 		uc_ctx[i] = plt_cpu_to_be_64(((uint64_t *)uc_ctx)[i]);
- 
-diff --git a/drivers/common/cpt/cpt_ucode_asym.h b/drivers/common/cpt/cpt_ucode_asym.h
-index 5122378ec7..85654600c8 100644
---- a/drivers/common/cpt/cpt_ucode_asym.h
-+++ b/drivers/common/cpt/cpt_ucode_asym.h
-@@ -251,7 +251,7 @@ cpt_modex_prep(struct asym_op_params *modex_params,
- 	total_key_len = mod_len + exp_len;
- 
- 	/* Input buffer */
--	dptr = RTE_PTR_ADD(req, sizeof(struct cpt_request_info));
-+	dptr = RTE_PTR_ADD((void *)req, sizeof(struct cpt_request_info));
- 	memcpy(dptr, mod->modulus.data, total_key_len);
- 	dptr += total_key_len;
- 	memcpy(dptr, mod_op.base.data, base_len);
-@@ -314,7 +314,7 @@ cpt_rsa_prep(struct asym_op_params *rsa_params,
- 	total_key_len  = mod_len + exp_len;
- 
- 	/* Input buffer */
--	dptr = RTE_PTR_ADD(req, sizeof(struct cpt_request_info));
-+	dptr = RTE_PTR_ADD((void *)req, sizeof(struct cpt_request_info));
- 	memcpy(dptr, rsa->n.data, total_key_len);
- 	dptr += total_key_len;
- 
-@@ -399,7 +399,7 @@ cpt_rsa_crt_prep(struct asym_op_params *rsa_params,
- 	total_key_len = p_len + q_len + dP_len + dQ_len + qInv_len;
- 
- 	/* Input buffer */
--	dptr = RTE_PTR_ADD(req, sizeof(struct cpt_request_info));
-+	dptr = RTE_PTR_ADD((void *)req, sizeof(struct cpt_request_info));
- 	memcpy(dptr, rsa->qt.q.data, total_key_len);
- 	dptr += total_key_len;
- 
-@@ -665,7 +665,7 @@ cpt_ecdsa_sign_prep(struct rte_crypto_ecdsa_op_param *ecdsa,
- 	pk_offset = prime_len - pkey_len;
- 
- 	/* Input buffer */
--	dptr = RTE_PTR_ADD(req, sizeof(struct cpt_request_info));
-+	dptr = RTE_PTR_ADD((void *)req, sizeof(struct cpt_request_info));
- 
- 	/*
- 	 * Set dlen = sum(sizeof(fpm address), ROUNDUP8(scalar len, input len),
-@@ -773,7 +773,7 @@ cpt_ecdsa_verify_prep(struct rte_crypto_ecdsa_op_param *ecdsa,
- 	s_offset = prime_len - s_len;
- 
- 	/* Input buffer */
--	dptr = RTE_PTR_ADD(req, sizeof(struct cpt_request_info));
-+	dptr = RTE_PTR_ADD((void *)req, sizeof(struct cpt_request_info));
- 
- 	/*
- 	 * Set dlen = sum(sizeof(fpm address), ROUNDUP8(message len),
-@@ -884,7 +884,7 @@ cpt_ecpm_prep(struct rte_crypto_ecpm_op_param *ecpm,
- 	prime_len = ec_grp[curveid].prime.length;
- 
- 	/* Input buffer */
--	dptr = RTE_PTR_ADD(req, sizeof(struct cpt_request_info));
-+	dptr = RTE_PTR_ADD((void *)req, sizeof(struct cpt_request_info));
- 
- 	p_align = RTE_ALIGN_CEIL(prime_len, 8);
- 	scalar_align = RTE_ALIGN_CEIL(ecpm->scalar.length, 8);
-diff --git a/drivers/common/mlx5/linux/mlx5_nl.c b/drivers/common/mlx5/linux/mlx5_nl.c
-index d53543a113..65f553c20b 100644
---- a/drivers/common/mlx5/linux/mlx5_nl.c
-+++ b/drivers/common/mlx5/linux/mlx5_nl.c
-@@ -1654,8 +1654,8 @@ static int
- mlx5_nl_family_id_cb(struct nlmsghdr *nh, void *arg)
- {
- 
--	struct nlattr *tail = RTE_PTR_ADD(nh, nh->nlmsg_len);
--	struct nlattr *nla = RTE_PTR_ADD(nh, NLMSG_ALIGN(sizeof(*nh)) +
-+	struct nlattr *tail = RTE_PTR_ADD((void *)nh, nh->nlmsg_len);
-+	struct nlattr *nla = RTE_PTR_ADD((void *)nh, NLMSG_ALIGN(sizeof(*nh)) +
- 					NLMSG_ALIGN(sizeof(struct genlmsghdr)));
- 
- 	for (; nla->nla_len && nla < tail;
-@@ -1752,8 +1752,8 @@ mlx5_nl_roce_cb(struct nlmsghdr *nh, void *arg)
- 
- 	int ret = -EINVAL;
- 	int *enable = arg;
--	struct nlattr *tail = RTE_PTR_ADD(nh, nh->nlmsg_len);
--	struct nlattr *nla = RTE_PTR_ADD(nh, NLMSG_ALIGN(sizeof(*nh)) +
-+	struct nlattr *tail = RTE_PTR_ADD((void *)nh, nh->nlmsg_len);
-+	struct nlattr *nla = RTE_PTR_ADD((void *)nh, NLMSG_ALIGN(sizeof(*nh)) +
- 					NLMSG_ALIGN(sizeof(struct genlmsghdr)));
- 
- 	while (nla->nla_len && nla < tail) {
-@@ -2049,8 +2049,8 @@ mlx5_nl_esw_multiport_cb(struct nlmsghdr *nh, void *arg)
- 
- 	int ret = -EINVAL;
- 	int *enable = arg;
--	struct nlattr *tail = RTE_PTR_ADD(nh, nh->nlmsg_len);
--	struct nlattr *nla = RTE_PTR_ADD(nh, NLMSG_ALIGN(sizeof(*nh)) +
-+	struct nlattr *tail = RTE_PTR_ADD((void *)nh, nh->nlmsg_len);
-+	struct nlattr *nla = RTE_PTR_ADD((void *)nh, NLMSG_ALIGN(sizeof(*nh)) +
- 					NLMSG_ALIGN(sizeof(struct genlmsghdr)));
- 
- 	while (nla->nla_len && nla < tail) {
-@@ -2261,7 +2261,7 @@ mlx5_nl_get_mtu_bounds_cb(struct nlmsghdr *nh, void *arg)
- 	struct mlx5_mtu *out = arg;
- 
- 	while (off < nh->nlmsg_len) {
--		struct rtattr *ra = RTE_PTR_ADD(nh, off);
-+		struct rtattr *ra = RTE_PTR_ADD((void *)nh, off);
- 		uint32_t *payload;
- 
- 		switch (ra->rta_type) {
-diff --git a/drivers/compress/mlx5/mlx5_compress.c b/drivers/compress/mlx5/mlx5_compress.c
-index e5325c6150..cfac5dc6c1 100644
---- a/drivers/compress/mlx5/mlx5_compress.c
-+++ b/drivers/compress/mlx5/mlx5_compress.c
-@@ -626,7 +626,7 @@ mlx5_compress_cqe_err_handle(struct mlx5_compress_qp *qp,
- 								    qp->qp.wqes;
- 	volatile union mlx5_gga_compress_opaque *opaq = qp->opaque_mr.addr;
- 
--	volatile uint32_t *synd_word = RTE_PTR_ADD(cqe, MLX5_ERROR_CQE_SYNDROME_OFFSET);
-+	volatile uint32_t *synd_word = RTE_PTR_ADD((void *)cqe, MLX5_ERROR_CQE_SYNDROME_OFFSET);
- 	switch (*synd_word) {
- 	case MLX5_GGA_COMP_OUT_OF_SPACE_SYNDROME_BE:
- 		op->status = RTE_COMP_OP_STATUS_OUT_OF_SPACE_TERMINATED;
-diff --git a/drivers/crypto/cnxk/cn9k_cryptodev_ops.c b/drivers/crypto/cnxk/cn9k_cryptodev_ops.c
-index 5551e40cb0..d1c68436ac 100644
---- a/drivers/crypto/cnxk/cn9k_cryptodev_ops.c
-+++ b/drivers/crypto/cnxk/cn9k_cryptodev_ops.c
-@@ -528,7 +528,7 @@ cn9k_cpt_sec_post_process(struct rte_crypto_op *cop,
- 		hdr = rte_pktmbuf_mtod(m, struct roc_ie_on_inb_hdr *);
- 
- 		if (likely(m->next == NULL)) {
--			ip = PLT_PTR_ADD(hdr, ROC_IE_ON_INB_RPTR_HDR);
-+			ip = PLT_PTR_ADD((void *)hdr, ROC_IE_ON_INB_RPTR_HDR);
- 		} else {
- 			ip = (struct rte_ipv4_hdr *)hdr;
- 			hdr = infl_req->mdata;
-diff --git a/drivers/crypto/cnxk/cnxk_cryptodev_ops.c b/drivers/crypto/cnxk/cnxk_cryptodev_ops.c
-index 370f311dd3..07abeb5a52 100644
---- a/drivers/crypto/cnxk/cnxk_cryptodev_ops.c
-+++ b/drivers/crypto/cnxk/cnxk_cryptodev_ops.c
-@@ -523,7 +523,7 @@ cnxk_cpt_queue_pair_setup(struct rte_cryptodev *dev, uint16_t qp_id,
- 			goto exit;
- 		}
- 
--		qp->pend_q.req_queue = PLT_PTR_ADD(
-+		qp->pend_q.req_queue = PLT_PTR_ADD((void *)
- 			qp->lf.cq_vaddr, ROC_CPT_CQ_ENTRY_SIZE_UNIT << qp->lf.cq_entry_size);
- 	}
- 
-diff --git a/drivers/crypto/mlx5/mlx5_crypto_gcm.c b/drivers/crypto/mlx5/mlx5_crypto_gcm.c
-index 89f32c7722..2c06183416 100644
---- a/drivers/crypto/mlx5/mlx5_crypto_gcm.c
-+++ b/drivers/crypto/mlx5/mlx5_crypto_gcm.c
-@@ -370,7 +370,7 @@ mlx5_crypto_gcm_qp_setup(struct rte_cryptodev *dev, uint16_t qp_id,
- 		goto err;
- 	}
- 	qp->opaque_addr = qp->mr.addr;
--	qp->klm_array = RTE_PTR_ADD(qp->opaque_addr, opaq_size);
-+	qp->klm_array = RTE_PTR_ADD((void *)qp->opaque_addr, opaq_size);
- 	/*
- 	 * Triple the CQ size as UMR QP which contains UMR and SEND_EN WQE
- 	 * will share this CQ .
-@@ -733,8 +733,8 @@ static __rte_always_inline void
- mlx5_crypto_gcm_build_send_en(struct mlx5_crypto_qp *qp)
- {
- 	uint32_t wqe_offset = (qp->umr_pi & (qp->umr_wqbbs - 1)) * MLX5_SEND_WQE_BB;
--	struct mlx5_wqe_cseg *cs = RTE_PTR_ADD(qp->umr_qp_obj.wqes, wqe_offset);
--	struct mlx5_wqe_qseg *qs = RTE_PTR_ADD(cs, sizeof(struct mlx5_wqe_cseg));
-+	struct mlx5_wqe_cseg *cs = RTE_PTR_ADD((void *)qp->umr_qp_obj.wqes, wqe_offset);
-+	struct mlx5_wqe_qseg *qs = RTE_PTR_ADD((void *)cs, sizeof(struct mlx5_wqe_cseg));
- 
- 	cs->opcode = rte_cpu_to_be_32(MLX5_OPCODE_SEND_EN | ((uint32_t)qp->umr_pi << 8));
- 	cs->sq_ds = rte_cpu_to_be_32((qp->umr_qp_obj.qp->id << 8) | 2);
-diff --git a/drivers/crypto/mlx5/mlx5_crypto_xts.c b/drivers/crypto/mlx5/mlx5_crypto_xts.c
-index 1c914caa85..a9f8ab2e4d 100644
---- a/drivers/crypto/mlx5/mlx5_crypto_xts.c
-+++ b/drivers/crypto/mlx5/mlx5_crypto_xts.c
-@@ -291,7 +291,7 @@ mlx5_crypto_xts_wqe_set(struct mlx5_crypto_priv *priv,
- 	qp->db_pi += priv->umr_wqe_stride;
- 	/* Set RDMA_WRITE WQE. */
- 	cseg = RTE_PTR_ADD(cseg, priv->umr_wqe_size);
--	klms = RTE_PTR_ADD(cseg, sizeof(struct mlx5_rdma_write_wqe));
-+	klms = RTE_PTR_ADD((void *)cseg, sizeof(struct mlx5_rdma_write_wqe));
- 	if (!ipl) {
- 		klm_n = mlx5_crypto_xts_klms_set(qp, op, op->sym->m_src, klms);
- 		if (unlikely(klm_n == 0))
-diff --git a/drivers/crypto/octeontx/otx_cryptodev_ops.c b/drivers/crypto/octeontx/otx_cryptodev_ops.c
-index 88657f49cc..dde216787f 100644
---- a/drivers/crypto/octeontx/otx_cryptodev_ops.c
-+++ b/drivers/crypto/octeontx/otx_cryptodev_ops.c
-@@ -446,7 +446,7 @@ otx_cpt_enq_single_asym(struct cpt_instance *instance,
- 	cop[1] = (uintptr_t)op;
- 	cop[2] = cop[3] = 0ULL;
- 
--	params.req = RTE_PTR_ADD(cop, 4 * sizeof(uintptr_t));
-+	params.req = RTE_PTR_ADD((void *)cop, 4 * sizeof(uintptr_t));
- 	params.req->op = cop;
- 
- 	/* Adjust meta_buf by crypto_op data  and request_info struct */
-diff --git a/drivers/dma/idxd/idxd_internal.h b/drivers/dma/idxd/idxd_internal.h
-index b80a113455..064aeb45f3 100644
---- a/drivers/dma/idxd/idxd_internal.h
-+++ b/drivers/dma/idxd/idxd_internal.h
-@@ -56,6 +56,7 @@ struct idxd_dmadev {
- 	unsigned short batch_start; /* start+size == write pointer for hdls/desc */
- 	unsigned short batch_size;
- 
-+	/* FIXME: cast drops volatile propagation that should happen to idxd_dmadev.portal */
- 	void *portal; /* address to write the batch descriptor */
- 
- 	struct idxd_completion *batch_comp_ring;
+diff --git a/drivers/common/mlx5/mlx5_common_mr.c b/drivers/common/mlx5/mlx5_common_mr.c
+index 8ed988dec9..aae39fdb6e 100644
+--- a/drivers/common/mlx5/mlx5_common_mr.c
++++ b/drivers/common/mlx5/mlx5_common_mr.c
+@@ -1447,7 +1447,7 @@ mlx5_mempool_get_extmem_cb(struct rte_mempool *mp, void *opaque,
+ 	seg = &heap[data->heap_size - 1];
+ 	msl = rte_mem_virt2memseg_list((void *)addr);
+ 	page_size = msl != NULL ? msl->page_sz : rte_mem_page_size();
+-	page_start = RTE_PTR_ALIGN_FLOOR(addr, page_size);
++	page_start = RTE_ALIGN_FLOOR(addr, page_size);
+ 	seg->start = page_start;
+ 	seg->end = page_start + page_size;
+ 	/* Maintain the heap order. */
 diff --git a/drivers/dma/idxd/idxd_pci.c b/drivers/dma/idxd/idxd_pci.c
-index 214f6f22d5..8109ac14b2 100644
+index 214f6f22d5..0a35a687e8 100644
 --- a/drivers/dma/idxd/idxd_pci.c
 +++ b/drivers/dma/idxd/idxd_pci.c
 @@ -59,7 +59,7 @@ idxd_pci_dev_command(struct idxd_dmadev *idxd, enum rte_idxd_cmds command)
@@ -923,15 +688,6 @@ index 214f6f22d5..8109ac14b2 100644
  idxd_get_wq_cfg(struct idxd_pci_common *pci, uint8_t wq_idx)
  {
  	return RTE_PTR_ADD(pci->wq_regs_base,
-@@ -69,7 +69,7 @@ idxd_get_wq_cfg(struct idxd_pci_common *pci, uint8_t wq_idx)
- static int
- idxd_is_wq_enabled(struct idxd_dmadev *idxd)
- {
--	uint32_t state = idxd_get_wq_cfg(idxd->u.pci, idxd->qid)[wq_state_idx];
-+	volatile uint32_t state = idxd_get_wq_cfg(idxd->u.pci, idxd->qid)[wq_state_idx];
- 	return ((state >> WQ_STATE_SHIFT) & WQ_STATE_MASK) == 0x1;
- }
- 
 @@ -205,9 +205,9 @@ init_pci_device(struct rte_pci_device *dev, struct idxd_dmadev *idxd,
  	pci->regs = dev->mem_resource[0].addr;
  	version = pci->regs->version;
@@ -950,32 +706,58 @@ index 214f6f22d5..8109ac14b2 100644
  		idxd.qid = qid;
 -		idxd.portal = RTE_PTR_ADD(idxd.u.pci->portals,
 +		/* FIXME: cast drops volatile propagation to idxd_dmadev.portal */
-+		idxd.portal = RTE_PTR_ADD((void *)idxd.u.pci->portals,
++		idxd.portal = RTE_PTR_ADD(RTE_PTR_UNQUAL(idxd.u.pci->portals),
  				qid * IDXD_PORTAL_SIZE);
  		if (idxd_is_wq_enabled(&idxd))
  			IDXD_PMD_ERR("Error, WQ %u seems enabled", qid);
 diff --git a/drivers/dma/odm/odm_dmadev.c b/drivers/dma/odm/odm_dmadev.c
-index a2f4ed9a8e..6e64998230 100644
+index a2f4ed9a8e..3b4b058427 100644
 --- a/drivers/dma/odm/odm_dmadev.c
 +++ b/drivers/dma/odm/odm_dmadev.c
-@@ -434,7 +434,7 @@ odm_dmadev_completed(void *dev_private, uint16_t vchan, const uint16_t nb_cpls,
- 	}
+@@ -422,7 +422,7 @@ odm_dmadev_completed(void *dev_private, uint16_t vchan, const uint16_t nb_cpls,
+ 	int cnt;
  
- 	for (cnt = 0; cnt < nb_cpls; cnt++) {
--		cmpl_ptr = RTE_PTR_ADD(base_addr, cring_head * sizeof(cmpl));
-+		cmpl_ptr = RTE_PTR_ADD((void *)base_addr, cring_head * sizeof(cmpl));
- 		cmpl.u = rte_atomic_load_explicit((RTE_ATOMIC(uint32_t) *)cmpl_ptr,
- 						  rte_memory_order_relaxed);
- 		if (!cmpl.s.valid)
-@@ -501,7 +501,7 @@ odm_dmadev_completed_status(void *dev_private, uint16_t vchan, const uint16_t nb
+ 	vq = &odm->vq[vchan];
+-	const uint32_t *base_addr = vq->cring_mz->addr;
++	uint32_t *base_addr = vq->cring_mz->addr;
+ 	const uint16_t cring_max_entry = vq->cring_max_entry;
+ 
+ 	cring_head = vq->cring_head;
+@@ -482,7 +482,7 @@ odm_dmadev_completed_status(void *dev_private, uint16_t vchan, const uint16_t nb
+ 	int cnt;
+ 
+ 	vq = &odm->vq[vchan];
+-	const uint32_t *base_addr = vq->cring_mz->addr;
++	uint32_t *base_addr = vq->cring_mz->addr;
+ 	const uint16_t cring_max_entry = vq->cring_max_entry;
+ 
+ 	cring_head = vq->cring_head;
+diff --git a/drivers/event/cnxk/cn10k_worker.c b/drivers/event/cnxk/cn10k_worker.c
+index 80077ec8a1..b596cb8702 100644
+--- a/drivers/event/cnxk/cn10k_worker.c
++++ b/drivers/event/cnxk/cn10k_worker.c
+@@ -338,7 +338,7 @@ cn10k_sso_hws_new_event_lmtst(struct cn10k_sso_hws *ws, uint8_t queue_id,
+ 		aw0 |= ev[0].event & (BIT_ULL(32) - 1);
+ 		aw0 |= (uint64_t)ev[0].sched_type << 32;
+ 		*((__uint128_t *)lmt_addr) = aw0;
+-		lmt_addr = (uintptr_t)PLT_PTR_ADD(lmt_addr, 16);
++		lmt_addr += 16;
+ 	}
  #endif
  
- 	for (cnt = 0; cnt < nb_cpls; cnt++) {
--		cmpl_ptr = RTE_PTR_ADD(base_addr, cring_head * sizeof(cmpl));
-+		cmpl_ptr = RTE_PTR_ADD((void *)base_addr, cring_head * sizeof(cmpl));
- 		cmpl.u = rte_atomic_load_explicit((RTE_ATOMIC(uint32_t) *)cmpl_ptr,
- 						  rte_memory_order_relaxed);
- 		if (!cmpl.s.valid)
+diff --git a/drivers/event/cnxk/cn20k_worker.c b/drivers/event/cnxk/cn20k_worker.c
+index 53daf3b4b0..e8e60d727c 100644
+--- a/drivers/event/cnxk/cn20k_worker.c
++++ b/drivers/event/cnxk/cn20k_worker.c
+@@ -296,7 +296,7 @@ cn20k_sso_hws_new_event_lmtst(struct cn20k_sso_hws *ws, uint8_t queue_id,
+ 		aw0 |= ev[0].event & (BIT_ULL(32) - 1);
+ 		aw0 |= (uint64_t)ev[0].sched_type << 32;
+ 		*((__uint128_t *)lmt_addr) = aw0;
+-		lmt_addr = (uintptr_t)PLT_PTR_ADD(lmt_addr, 16);
++		lmt_addr += 16;
+ 	}
+ #endif
+ 
 diff --git a/drivers/mempool/bucket/rte_mempool_bucket.c b/drivers/mempool/bucket/rte_mempool_bucket.c
 index c0b480bfc7..6fee10176b 100644
 --- a/drivers/mempool/bucket/rte_mempool_bucket.c
@@ -1001,328 +783,150 @@ index c0b480bfc7..6fee10176b 100644
  
  	bucket_header_sz = bd->header_size - mp->header_size;
  	if (iova != RTE_BAD_IOVA)
-diff --git a/drivers/ml/cnxk/cn10k_ml_model.c b/drivers/ml/cnxk/cn10k_ml_model.c
-index 12a2dda800..cb47027ee6 100644
---- a/drivers/ml/cnxk/cn10k_ml_model.c
-+++ b/drivers/ml/cnxk/cn10k_ml_model.c
-@@ -555,7 +555,7 @@ cn10k_ml_model_info_set(struct cnxk_ml_dev *cnxk_mldev, struct cnxk_ml_model *mo
+diff --git a/drivers/mempool/dpaa/dpaa_mempool.c b/drivers/mempool/dpaa/dpaa_mempool.c
+index 2f9395b3f4..85e1c01017 100644
+--- a/drivers/mempool/dpaa/dpaa_mempool.c
++++ b/drivers/mempool/dpaa/dpaa_mempool.c
+@@ -321,7 +321,7 @@ dpaa_adjust_obj_bounds(char *va, size_t *offset,
+ 	size_t off = *offset;
  
- 	metadata = &model->glow.metadata;
- 	info = PLT_PTR_CAST(model->info);
--	input = PLT_PTR_ADD(info, sizeof(struct rte_ml_model_info));
-+	input = PLT_PTR_ADD((void *)info, sizeof(struct rte_ml_model_info));
- 	output = PLT_PTR_ADD(input, ML_CNXK_MODEL_MAX_INPUT_OUTPUT * sizeof(struct rte_ml_io_info));
+ 	if (dpaa_check_obj_bounds(va + off, pg_sz, total) == false) {
+-		off += RTE_PTR_ALIGN_CEIL(va + off, pg_sz) - (va + off);
++		off += RTE_PTR_DIFF(RTE_PTR_ALIGN_CEIL(va + off, pg_sz), va + off);
+ 		if (flags & RTE_MEMPOOL_POPULATE_F_ALIGN_OBJ)
+ 			off += total - ((((size_t)va + off - 1) % total) + 1);
+ 	}
+diff --git a/drivers/net/cxgbe/sge.c b/drivers/net/cxgbe/sge.c
+index e9d45f24c4..a5d112d52d 100644
+--- a/drivers/net/cxgbe/sge.c
++++ b/drivers/net/cxgbe/sge.c
+@@ -591,7 +591,7 @@ static void write_sgl(struct rte_mbuf *mbuf, struct sge_txq *q,
+ 			memcpy(sgl->sge, buf, part0);
+ 		part1 = RTE_PTR_DIFF((u8 *)end, (u8 *)q->stat);
+ 		rte_memcpy(q->desc, RTE_PTR_ADD((u8 *)buf, part0), part1);
+-		end = RTE_PTR_ADD((void *)q->desc, part1);
++		end = RTE_PTR_ADD(q->desc, part1);
+ 	}
+ 	if ((uintptr_t)end & 8)           /* 0-pad to multiple of 16 */
+ 		*(u64 *)end = 0;
+@@ -1297,7 +1297,7 @@ static void inline_tx_mbuf(const struct sge_txq *q, caddr_t from, caddr_t *to,
+ 		from = RTE_PTR_ADD(from, left);
+ 		left = len - left;
+ 		rte_memcpy((void *)q->desc, from, left);
+-		*to = RTE_PTR_ADD((void *)q->desc, left);
++		*to = RTE_PTR_ADD(q->desc, left);
+ 	}
+ }
  
- 	/* Set model info */
-diff --git a/drivers/ml/cnxk/cn10k_ml_ops.c b/drivers/ml/cnxk/cn10k_ml_ops.c
-index b30af7c7a4..8a3fcf78eb 100644
---- a/drivers/ml/cnxk/cn10k_ml_ops.c
-+++ b/drivers/ml/cnxk/cn10k_ml_ops.c
-@@ -702,7 +702,7 @@ cn10k_ml_layer_load(void *device, uint16_t model_id, const char *layer_name, uin
- 	layer->glow.req = PLT_PTR_ADD(mz->addr, layer_object_size + layer_scratch_size);
- 
- 	/* Reset burst and sync stats */
--	layer->glow.burst_xstats = PLT_PTR_ADD(
-+	layer->glow.burst_xstats = PLT_PTR_ADD((void *)
- 		layer->glow.req, PLT_ALIGN_CEIL(sizeof(struct cnxk_ml_req), ML_CN10K_ALIGN_SIZE));
- 	for (qp_id = 0; qp_id < cnxk_mldev->mldev->data->nb_queue_pairs + 1; qp_id++) {
- 		layer->glow.burst_xstats[qp_id].hw_latency_tot = 0;
-diff --git a/drivers/ml/cnxk/cnxk_ml_ops.c b/drivers/ml/cnxk/cnxk_ml_ops.c
-index 9958945670..ba2c4909f9 100644
---- a/drivers/ml/cnxk/cnxk_ml_ops.c
-+++ b/drivers/ml/cnxk/cnxk_ml_ops.c
-@@ -1211,7 +1211,7 @@ cnxk_ml_model_load(struct rte_ml_dev *dev, struct rte_ml_model_params *params, u
- 	model->cnxk_mldev = cnxk_mldev;
- 	model->type = type;
- 	model->model_id = lcl_model_id;
--	model->info = PLT_PTR_ADD(
-+	model->info = PLT_PTR_ADD((void *)
- 		model, PLT_ALIGN_CEIL(sizeof(struct cnxk_ml_model), dev_info.align_size));
- 	dev->data->models[lcl_model_id] = model;
- 
-diff --git a/drivers/net/ark/ark_ethdev.c b/drivers/net/ark/ark_ethdev.c
-index 8b25ed948f..9c34597c81 100644
---- a/drivers/net/ark/ark_ethdev.c
-+++ b/drivers/net/ark/ark_ethdev.c
-@@ -713,8 +713,8 @@ ark_dev_info_get(struct rte_eth_dev *dev,
- 		     struct rte_eth_dev_info *dev_info)
+diff --git a/drivers/net/ena/ena_ethdev.c b/drivers/net/ena/ena_ethdev.c
+index ea4afbc75d..da23b271d5 100644
+--- a/drivers/net/ena/ena_ethdev.c
++++ b/drivers/net/ena/ena_ethdev.c
+@@ -2379,7 +2379,14 @@ static void *pci_bar_addr(struct rte_pci_device *dev, uint32_t bar)
  {
- 	struct ark_adapter *ark = dev->data->dev_private;
--	struct ark_mpu_t *tx_mpu = RTE_PTR_ADD(ark->bar0, ARK_MPU_TX_BASE);
--	struct ark_mpu_t *rx_mpu = RTE_PTR_ADD(ark->bar0, ARK_MPU_RX_BASE);
-+	struct ark_mpu_t *tx_mpu = RTE_PTR_ADD((void *)ark->bar0, ARK_MPU_TX_BASE);
-+	struct ark_mpu_t *rx_mpu = RTE_PTR_ADD((void *)ark->bar0, ARK_MPU_RX_BASE);
- 	uint16_t ports = ark->num_ports;
+ 	const struct rte_mem_resource *res = &dev->mem_resource[bar];
+ 	size_t offset = res->phys_addr % rte_mem_page_size();
+-	void *vaddr = RTE_PTR_ADD(res->addr, offset);
++	void *vaddr;
++
++	if (res->addr == NULL) {
++		PMD_INIT_LOG_LINE(ERR, "PCI BAR [%u] address is NULL", bar);
++		return NULL;
++	}
++
++	vaddr = RTE_PTR_ADD(res->addr, offset);
  
- 	dev_info->max_rx_pktlen = ARK_RX_MAX_PKT_LEN;
-diff --git a/drivers/net/cxgbe/cxgbe_ethdev.c b/drivers/net/cxgbe/cxgbe_ethdev.c
-index 0c337a6cc8..f405d60449 100644
---- a/drivers/net/cxgbe/cxgbe_ethdev.c
-+++ b/drivers/net/cxgbe/cxgbe_ethdev.c
-@@ -940,7 +940,7 @@ static int cxgbe_dev_xstats(struct rte_eth_dev *dev,
- 				 sizeof(xstats_names[count].name),
- 				 "%s", xstats_str[i].name);
- 		if (xstats != NULL) {
--			stats_ptr = RTE_PTR_ADD(&ps,
-+			stats_ptr = RTE_PTR_ADD((void *)&ps,
- 						xstats_str[i].offset);
- 			xstats[count].value = *stats_ptr;
- 			xstats[count].id = count;
-@@ -959,7 +959,7 @@ static int cxgbe_dev_xstats(struct rte_eth_dev *dev,
- 					 "tx_q%u_%s",
- 					 qid, xstats_str[i].name);
- 			if (xstats != NULL) {
--				stats_ptr = RTE_PTR_ADD(&txq->stats,
-+				stats_ptr = RTE_PTR_ADD((void *)&txq->stats,
- 							xstats_str[i].offset);
- 				xstats[count].value = *stats_ptr;
- 				xstats[count].id = count;
-@@ -979,7 +979,7 @@ static int cxgbe_dev_xstats(struct rte_eth_dev *dev,
- 					 "rx_q%u_%s",
- 					 qid, xstats_str[i].name);
- 			if (xstats != NULL) {
--				stats_ptr = RTE_PTR_ADD(&rxq->stats,
-+				stats_ptr = RTE_PTR_ADD((void *)&rxq->stats,
- 							xstats_str[i].offset);
- 				xstats[count].value = *stats_ptr;
- 				xstats[count].id = count;
-diff --git a/drivers/net/gve/base/gve_adminq.c b/drivers/net/gve/base/gve_adminq.c
-index bc1759f006..0180baefc2 100644
---- a/drivers/net/gve/base/gve_adminq.c
-+++ b/drivers/net/gve/base/gve_adminq.c
-@@ -75,7 +75,7 @@ void gve_parse_device_option(struct gve_priv *priv,
- 			PMD_DRV_LOG(WARNING,
- 				    GVE_DEVICE_OPTION_TOO_BIG_FMT, "GQI RDA");
- 		}
--		*dev_op_gqi_rda = RTE_PTR_ADD(option, sizeof(*option));
-+		*dev_op_gqi_rda = RTE_PTR_ADD((void *)option, sizeof(*option));
- 		break;
- 	case GVE_DEV_OPT_ID_GQI_QPL:
- 		if (option_length < sizeof(**dev_op_gqi_qpl) ||
-@@ -91,7 +91,7 @@ void gve_parse_device_option(struct gve_priv *priv,
- 			PMD_DRV_LOG(WARNING,
- 				    GVE_DEVICE_OPTION_TOO_BIG_FMT, "GQI QPL");
- 		}
--		*dev_op_gqi_qpl = RTE_PTR_ADD(option, sizeof(*option));
-+		*dev_op_gqi_qpl = RTE_PTR_ADD((void *)option, sizeof(*option));
- 		break;
- 	case GVE_DEV_OPT_ID_DQO_RDA:
- 		if (option_length < sizeof(**dev_op_dqo_rda) ||
-@@ -107,7 +107,7 @@ void gve_parse_device_option(struct gve_priv *priv,
- 			PMD_DRV_LOG(WARNING,
- 				    GVE_DEVICE_OPTION_TOO_BIG_FMT, "DQO RDA");
- 		}
--		*dev_op_dqo_rda = RTE_PTR_ADD(option, sizeof(*option));
-+		*dev_op_dqo_rda = RTE_PTR_ADD((void *)option, sizeof(*option));
- 		break;
- 	case GVE_DEV_OPT_ID_MODIFY_RING:
- 		/* Min ring size bound is optional. */
-@@ -127,7 +127,7 @@ void gve_parse_device_option(struct gve_priv *priv,
- 				    GVE_DEVICE_OPTION_TOO_BIG_FMT,
- 				    "Modify Ring");
- 		}
--		*dev_op_modify_ring = RTE_PTR_ADD(option, sizeof(*option));
-+		*dev_op_modify_ring = RTE_PTR_ADD((void *)option, sizeof(*option));
+ 	PMD_INIT_LOG_LINE(INFO, "PCI BAR [%u]: phys_addr=0x%" PRIx64 ", addr=%p, offset=0x%zx, adjusted_addr=%p",
+ 		bar, res->phys_addr, res->addr, offset, vaddr);
+diff --git a/drivers/net/intel/fm10k/fm10k.h b/drivers/net/intel/fm10k/fm10k.h
+index 0eb32ac0d0..4e3081785f 100644
+--- a/drivers/net/intel/fm10k/fm10k.h
++++ b/drivers/net/intel/fm10k/fm10k.h
+@@ -264,9 +264,9 @@ fm10k_pktmbuf_reset(struct rte_mbuf *mb, uint16_t in_port)
+ 	mb->nb_segs = 1;
  
- 		/* Min ring size included; set the minimum ring size. */
- 		if (option_length == sizeof(**dev_op_modify_ring))
-@@ -149,7 +149,7 @@ void gve_parse_device_option(struct gve_priv *priv,
- 				    GVE_DEVICE_OPTION_TOO_BIG_FMT,
- 				    "Jumbo Frames");
- 		}
--		*dev_op_jumbo_frames = RTE_PTR_ADD(option, sizeof(*option));
-+		*dev_op_jumbo_frames = RTE_PTR_ADD((void *)option, sizeof(*option));
- 		break;
- 	default:
- 		/* If we don't recognize the option just continue
-@@ -175,7 +175,7 @@ gve_process_device_options(struct gve_priv *priv,
- 	int i;
+ 	/* enforce 512B alignment on default Rx virtual addresses */
+-	mb->data_off = (uint16_t)(RTE_PTR_ALIGN((char *)mb->buf_addr +
+-			RTE_PKTMBUF_HEADROOM, FM10K_RX_DATABUF_ALIGN)
+-			- (char *)mb->buf_addr);
++	mb->data_off = (uint16_t)RTE_PTR_DIFF(RTE_PTR_ALIGN((char *)mb->buf_addr +
++			RTE_PKTMBUF_HEADROOM, FM10K_RX_DATABUF_ALIGN),
++			(char *)mb->buf_addr);
+ 	mb->port = in_port;
+ }
  
- 	/* The options struct directly follows the device descriptor. */
--	dev_opt = RTE_PTR_ADD(descriptor, sizeof(*descriptor));
-+	dev_opt = RTE_PTR_ADD((void *)descriptor, sizeof(*descriptor));
- 	for (i = 0; i < num_options; i++) {
- 		struct gve_device_option *next_opt;
+diff --git a/drivers/net/intel/fm10k/fm10k_rxtx_vec.c b/drivers/net/intel/fm10k/fm10k_rxtx_vec.c
+index 0eada7275e..a08af75bc7 100644
+--- a/drivers/net/intel/fm10k/fm10k_rxtx_vec.c
++++ b/drivers/net/intel/fm10k/fm10k_rxtx_vec.c
+@@ -315,12 +315,12 @@ fm10k_rxq_rearm(struct fm10k_rx_queue *rxq)
+ 		_mm_store_si128(RTE_CAST_PTR(__m128i *, &rxdp++->q), dma_addr1);
  
-diff --git a/drivers/net/intel/ice/ice_tm.c b/drivers/net/intel/ice/ice_tm.c
-index f2d8e12181..f9d86ab800 100644
---- a/drivers/net/intel/ice/ice_tm.c
-+++ b/drivers/net/intel/ice/ice_tm.c
-@@ -456,7 +456,7 @@ ice_tm_node_add(struct rte_eth_dev *dev, uint32_t node_id,
- 		tm_node->parent = NULL;
- 		tm_node->reference_count = 0;
- 		tm_node->shaper_profile = shaper_profile;
--		tm_node->children = RTE_PTR_ADD(tm_node, sizeof(struct ice_tm_node));
-+		tm_node->children = RTE_PTR_ADD((void *)tm_node, sizeof(struct ice_tm_node));
- 		tm_node->params = *params;
- 		pf->tm_conf.root = tm_node;
- 		return 0;
-@@ -518,7 +518,7 @@ ice_tm_node_add(struct rte_eth_dev *dev, uint32_t node_id,
- 	tm_node->parent = parent_node;
- 	tm_node->level = level_id;
- 	tm_node->shaper_profile = shaper_profile;
--	tm_node->children = RTE_PTR_ADD(tm_node, sizeof(struct ice_tm_node));
-+	tm_node->children = RTE_PTR_ADD((void *)tm_node, sizeof(struct ice_tm_node));
- 	tm_node->parent->children[tm_node->parent->reference_count++] = tm_node;
- 	tm_node->params = *params;
+ 		/* enforce 512B alignment on default Rx virtual addresses */
+-		mb0->data_off = (uint16_t)(RTE_PTR_ALIGN((char *)mb0->buf_addr
+-				+ RTE_PKTMBUF_HEADROOM, FM10K_RX_DATABUF_ALIGN)
+-				- (char *)mb0->buf_addr);
+-		mb1->data_off = (uint16_t)(RTE_PTR_ALIGN((char *)mb1->buf_addr
+-				+ RTE_PKTMBUF_HEADROOM, FM10K_RX_DATABUF_ALIGN)
+-				- (char *)mb1->buf_addr);
++		mb0->data_off = (uint16_t)RTE_PTR_DIFF(RTE_PTR_ALIGN((char *)mb0->buf_addr
++				+ RTE_PKTMBUF_HEADROOM, FM10K_RX_DATABUF_ALIGN),
++				(char *)mb0->buf_addr);
++		mb1->data_off = (uint16_t)RTE_PTR_DIFF(RTE_PTR_ALIGN((char *)mb1->buf_addr
++				+ RTE_PKTMBUF_HEADROOM, FM10K_RX_DATABUF_ALIGN),
++				(char *)mb1->buf_addr);
+ 	}
  
-diff --git a/drivers/net/intel/ixgbe/ixgbe_rxtx.c b/drivers/net/intel/ixgbe/ixgbe_rxtx.c
-index a7583c178a..92fa9ddd96 100644
---- a/drivers/net/intel/ixgbe/ixgbe_rxtx.c
-+++ b/drivers/net/intel/ixgbe/ixgbe_rxtx.c
-@@ -2852,7 +2852,7 @@ ixgbe_dev_tx_queue_setup(struct rte_eth_dev *dev,
- 				 RTE_CACHE_LINE_SIZE, socket_id);
- 	if (txq == NULL)
- 		return -ENOMEM;
--	txq->ctx_cache = RTE_PTR_ADD(txq, sizeof(struct ci_tx_queue));
-+	txq->ctx_cache = RTE_PTR_ADD((void *)txq, sizeof(struct ci_tx_queue));
+ 	rxq->rxrearm_start += RTE_FM10K_RXQ_REARM_THRESH;
+diff --git a/drivers/net/mlx4/mlx4_txq.c b/drivers/net/mlx4/mlx4_txq.c
+index 0db2e55bef..348040c1b9 100644
+--- a/drivers/net/mlx4/mlx4_txq.c
++++ b/drivers/net/mlx4/mlx4_txq.c
+@@ -114,7 +114,8 @@ txq_uar_uninit_secondary(struct txq *txq)
+ 	void *addr;
  
- 	/*
- 	 * Allocate TX ring hardware descriptors. A memzone large enough to
-diff --git a/drivers/net/mlx5/mlx5_flow.c b/drivers/net/mlx5/mlx5_flow.c
-index 2c48f1b01b..a40f5ef47a 100644
---- a/drivers/net/mlx5/mlx5_flow.c
-+++ b/drivers/net/mlx5/mlx5_flow.c
-@@ -8326,9 +8326,9 @@ flow_alloc_thread_workspace(void)
- 		DRV_LOG(ERR, "Failed to allocate flow workspace memory.");
+ 	addr = ppriv->uar_table[txq->stats.idx];
+-	munmap(RTE_PTR_ALIGN_FLOOR(addr, page_size), page_size);
++	if (addr)
++		munmap(RTE_PTR_ALIGN_FLOOR(addr, page_size), page_size);
+ }
+ 
+ /**
+diff --git a/lib/eal/common/eal_common_fbarray.c b/lib/eal/common/eal_common_fbarray.c
+index 8bdcefb717..c4e03f45f7 100644
+--- a/lib/eal/common/eal_common_fbarray.c
++++ b/lib/eal/common/eal_common_fbarray.c
+@@ -10,6 +10,7 @@
+ #include <unistd.h>
+ 
+ #include <rte_common.h>
++#include <rte_debug.h>
+ #include <rte_eal_paging.h>
+ #include <rte_errno.h>
+ #include <rte_log.h>
+@@ -1058,6 +1059,7 @@ rte_fbarray_get(const struct rte_fbarray *arr, unsigned int idx)
  		return NULL;
  	}
--	data->rss_desc.queue = RTE_PTR_ADD(data, data_size);
-+	data->rss_desc.queue = RTE_PTR_ADD((void *)data, data_size);
- #ifdef HAVE_MLX5_HWS_SUPPORT
--	data->table = RTE_PTR_ADD(data->rss_desc.queue, rss_queue_array_size);
-+	data->table = RTE_PTR_ADD((void *)data->rss_desc.queue, rss_queue_array_size);
- #endif
- 	return data;
- }
-diff --git a/drivers/net/mlx5/mlx5_flow_hw.c b/drivers/net/mlx5/mlx5_flow_hw.c
-index c41b99746f..15599f47e3 100644
---- a/drivers/net/mlx5/mlx5_flow_hw.c
-+++ b/drivers/net/mlx5/mlx5_flow_hw.c
-@@ -126,7 +126,7 @@ mlx5_flow_hw_aux(uint16_t port_id, struct rte_flow_hw *flow)
- 		if (rte_flow_template_table_resizable(port_id, &table->cfg.attr)) {
- 			size_t offset = sizeof(struct rte_flow_hw) + mlx5dr_rule_get_handle_size();
  
--			return RTE_PTR_ADD(flow, offset);
-+			return RTE_PTR_ADD((void *)flow, offset);
- 		} else {
- 			return &table->flow_aux[flow->idx - 1];
- 		}
-@@ -8123,7 +8123,7 @@ __flow_hw_actions_template_create(struct rte_eth_dev *dev,
- 	at->src_off = RTE_PTR_ADD(at->dr_off,
- 				  RTE_ALIGN(act_num * sizeof(*at->dr_off), 16));
- 	memcpy(at->src_off, src_off, act_num * sizeof(at->src_off[0]));
--	at->orig_actions = RTE_PTR_ADD(at->src_off,
-+	at->orig_actions = RTE_PTR_ADD((void *)at->src_off,
- 				       RTE_ALIGN(act_num * sizeof(*at->src_off), 16));
- 	orig_act_len = rte_flow_conv(RTE_FLOW_CONV_OP_ACTIONS, at->orig_actions, orig_act_len,
- 				     actions, error);
-diff --git a/drivers/net/mlx5/mlx5_tx.h b/drivers/net/mlx5/mlx5_tx.h
-index 16307206e2..3f7bc3c607 100644
---- a/drivers/net/mlx5/mlx5_tx.h
-+++ b/drivers/net/mlx5/mlx5_tx.h
-@@ -897,7 +897,7 @@ mlx5_tx_qseg_init(struct mlx5_txq_data *restrict txq,
- {
- 	struct mlx5_wqe_qseg *qs;
++	RTE_ASSERT(arr->data);
+ 	ret = RTE_PTR_ADD(arr->data, idx * arr->elt_sz);
  
--	qs = RTE_PTR_ADD(wqe, MLX5_WSEG_SIZE);
-+	qs = RTE_PTR_ADD((void *)wqe, MLX5_WSEG_SIZE);
- 	qs->max_index = rte_cpu_to_be_32(wci);
- 	qs->qpn_cqn = rte_cpu_to_be_32(txq->sh->txpp.clock_queue.cq_obj.cq->id);
- 	qs->reserved0 = RTE_BE32(0);
-@@ -928,7 +928,7 @@ mlx5_tx_wseg_init(struct mlx5_txq_data *restrict txq,
- {
- 	struct mlx5_wqe_wseg *ws;
- 
--	ws = RTE_PTR_ADD(wqe, MLX5_WSEG_SIZE);
-+	ws = RTE_PTR_ADD((void *)wqe, MLX5_WSEG_SIZE);
- 	ws->operation = rte_cpu_to_be_32(MLX5_WAIT_COND_CYCLIC_SMALLER);
- 	ws->lkey = RTE_BE32(0);
- 	ws->va_high = RTE_BE32(0);
-diff --git a/drivers/net/mlx5/mlx5_txpp.c b/drivers/net/mlx5/mlx5_txpp.c
-index 0e99b58bde..ac1a17476c 100644
---- a/drivers/net/mlx5/mlx5_txpp.c
-+++ b/drivers/net/mlx5/mlx5_txpp.c
-@@ -194,7 +194,7 @@ mlx5_txpp_fill_wqe_rearm_queue(struct mlx5_dev_ctx_shared *sh)
- 		cs->flags = RTE_BE32(MLX5_COMP_ALWAYS <<
- 				     MLX5_COMP_MODE_OFFSET);
- 		cs->misc = RTE_BE32(0);
--		qs = RTE_PTR_ADD(cs, sizeof(struct mlx5_wqe_cseg));
-+		qs = RTE_PTR_ADD((void *)cs, sizeof(struct mlx5_wqe_cseg));
- 		index = (i * MLX5_TXPP_REARM / 2 + MLX5_TXPP_REARM) &
- 			((1 << MLX5_WQ_INDEX_WIDTH) - 1);
- 		qs->max_index = rte_cpu_to_be_32(index);
-@@ -207,7 +207,7 @@ mlx5_txpp_fill_wqe_rearm_queue(struct mlx5_dev_ctx_shared *sh)
- 		cs->flags = RTE_BE32(MLX5_COMP_ONLY_ERR <<
- 				     MLX5_COMP_MODE_OFFSET);
- 		cs->misc = RTE_BE32(0);
--		qs = RTE_PTR_ADD(cs, sizeof(struct mlx5_wqe_cseg));
-+		qs = RTE_PTR_ADD((void *)cs, sizeof(struct mlx5_wqe_cseg));
- 		index = (i * MLX5_TXPP_REARM / 2 + MLX5_TXPP_REARM / 2) &
- 			((1 << MLX5_CQ_INDEX_WIDTH) - 1);
- 		qs->max_index = rte_cpu_to_be_32(index);
-diff --git a/drivers/net/sfc/sfc_mae.c b/drivers/net/sfc/sfc_mae.c
-index b0e8b02b41..f31e406fb2 100644
---- a/drivers/net/sfc/sfc_mae.c
-+++ b/drivers/net/sfc/sfc_mae.c
-@@ -4097,7 +4097,7 @@ sfc_mae_header_force_item_masks(uint8_t *header_buf,
- 
- 		for (ofst = 0; ofst < proto_header_size;
- 		     ofst += sizeof(rte_be16_t)) {
--			rte_be16_t *wp = RTE_PTR_ADD(header_buf, ofst);
-+			rte_be16_t *wp = RTE_PTR_ADD((void *)header_buf, ofst);
- 			const rte_be16_t *w_maskp;
- 			const rte_be16_t *w_specp;
- 
-@@ -4231,10 +4231,10 @@ sfc_mae_rule_parse_action_vxlan_encap(
- 
- 			proto_header_size = sizeof(struct rte_vlan_hdr);
- 
--			ethertypep = RTE_PTR_ADD(buf, eth_ethertype_ofst);
-+			ethertypep = RTE_PTR_ADD((void *)buf, eth_ethertype_ofst);
- 			*ethertypep = RTE_BE16(RTE_ETHER_TYPE_QINQ);
- 
--			ethertypep = RTE_PTR_ADD(buf, ethertype_ofst);
-+			ethertypep = RTE_PTR_ADD((void *)buf, ethertype_ofst);
- 			*ethertypep = RTE_BE16(RTE_ETHER_TYPE_VLAN);
- 
- 			ethertype_ofst =
-@@ -4255,7 +4255,7 @@ sfc_mae_rule_parse_action_vxlan_encap(
- 
- 			proto_header_size = sizeof(struct rte_ipv4_hdr);
- 
--			ethertypep = RTE_PTR_ADD(buf, ethertype_ofst);
-+			ethertypep = RTE_PTR_ADD((void *)buf, ethertype_ofst);
- 			*ethertypep = RTE_BE16(RTE_ETHER_TYPE_IPV4);
- 
- 			next_proto_ofst =
-@@ -4274,7 +4274,7 @@ sfc_mae_rule_parse_action_vxlan_encap(
- 
- 			proto_header_size = sizeof(struct rte_ipv6_hdr);
- 
--			ethertypep = RTE_PTR_ADD(buf, ethertype_ofst);
-+			ethertypep = RTE_PTR_ADD((void *)buf, ethertype_ofst);
- 			*ethertypep = RTE_BE16(RTE_ETHER_TYPE_IPV6);
- 
- 			next_proto_ofst = bounce_eh->size +
-diff --git a/drivers/net/virtio/virtio_rxtx.c b/drivers/net/virtio/virtio_rxtx.c
-index edecd2011f..089811160b 100644
---- a/drivers/net/virtio/virtio_rxtx.c
-+++ b/drivers/net/virtio/virtio_rxtx.c
-@@ -414,7 +414,7 @@ virtio_tso_fix_cksum(struct rte_mbuf *m)
- 
- 		iph = rte_pktmbuf_mtod_offset(m,
- 					struct rte_ipv4_hdr *, m->l2_len);
--		th = RTE_PTR_ADD(iph, m->l3_len);
-+		th = RTE_PTR_ADD((void *)iph, m->l3_len);
- 
- 		/*
- 		 * Calculate IPv4 header checksum with current total length value
+ 	return ret;
 diff --git a/lib/eal/common/eal_common_memory.c b/lib/eal/common/eal_common_memory.c
-index c62edf5e55..a1414e790c 100644
+index c62edf5e55..ee7054ec14 100644
 --- a/lib/eal/common/eal_common_memory.c
 +++ b/lib/eal/common/eal_common_memory.c
-@@ -332,6 +332,8 @@ virt2memseg_list(const void *addr)
+@@ -309,6 +309,9 @@ virt2memseg(const void *addr, const struct rte_memseg_list *msl)
+ 
+ 	/* a memseg list was specified, check if it's the right one */
+ 	start = msl->base_va;
++	if (start == NULL)
++		return NULL;
++
+ 	end = RTE_PTR_ADD(start, msl->len);
+ 
+ 	if (addr < start || addr >= end)
+@@ -332,6 +335,8 @@ virt2memseg_list(const void *addr)
  		msl = &mcfg->memsegs[msl_idx];
  
  		start = msl->base_va;
@@ -1331,7 +935,7 @@ index c62edf5e55..a1414e790c 100644
  		end = RTE_PTR_ADD(start, msl->len);
  		if (addr >= start && addr < end)
  			break;
-@@ -680,10 +682,9 @@ RTE_EXPORT_SYMBOL(rte_mem_lock_page)
+@@ -680,10 +685,16 @@ RTE_EXPORT_SYMBOL(rte_mem_lock_page)
  int
  rte_mem_lock_page(const void *virt)
  {
@@ -1339,60 +943,76 @@ index c62edf5e55..a1414e790c 100644
  	size_t page_size = rte_mem_page_size();
 -	uintptr_t aligned = RTE_PTR_ALIGN_FLOOR(virtual, page_size);
 -	return rte_mem_lock((void *)aligned, page_size);
-+	const void *aligned = RTE_PTR_ALIGN_FLOOR(virt, page_size);
++	const void *aligned;
++
++	if (virt == NULL) {
++		rte_errno = EINVAL;
++		return -1;
++	}
++
++	aligned = RTE_PTR_ALIGN_FLOOR(virt, page_size);
 +	return rte_mem_lock(aligned, page_size);
  }
  
  RTE_EXPORT_SYMBOL(rte_memseg_contig_walk_thread_unsafe)
-@@ -1447,7 +1448,7 @@ handle_eal_memseg_info_request(const char *cmd __rte_unused,
+@@ -1447,7 +1458,7 @@ handle_eal_memseg_info_request(const char *cmd __rte_unused,
  
  	ms_iova = ms->iova;
  	ms_start_addr = ms->addr_64;
 -	ms_end_addr = (uint64_t)RTE_PTR_ADD(ms_start_addr, ms->len);
-+	ms_end_addr = RTE_INT_PTR_ADD(ms_start_addr, ms->len);
++	ms_end_addr = ms_start_addr + ms->len;
  	ms_size = ms->len;
  	hugepage_size = ms->hugepage_sz;
  	ms_socket_id = ms->socket_id;
-@@ -1519,7 +1520,7 @@ handle_eal_element_list_request(const char *cmd __rte_unused,
+@@ -1519,7 +1530,7 @@ handle_eal_element_list_request(const char *cmd __rte_unused,
  	}
  
  	ms_start_addr = ms->addr_64;
 -	ms_end_addr = (uint64_t)RTE_PTR_ADD(ms_start_addr, ms->len);
-+	ms_end_addr = RTE_INT_PTR_ADD(ms_start_addr, ms->len);
++	ms_end_addr = ms_start_addr + ms->len;
  	rte_mcfg_mem_read_unlock();
  
  	rte_tel_data_start_dict(d);
-@@ -1530,8 +1531,7 @@ handle_eal_element_list_request(const char *cmd __rte_unused,
+@@ -1530,8 +1541,7 @@ handle_eal_element_list_request(const char *cmd __rte_unused,
  	elem = heap->first;
  	while (elem) {
  		elem_start_addr = (uint64_t)elem;
 -		elem_end_addr =
 -			(uint64_t)RTE_PTR_ADD(elem_start_addr, elem->size);
-+		elem_end_addr = RTE_INT_PTR_ADD(elem_start_addr, elem->size);
++		elem_end_addr = elem_start_addr + elem->size;
  
  		if ((uint64_t)elem_start_addr >= ms_start_addr &&
  		    (uint64_t)elem_end_addr <= ms_end_addr)
-@@ -1597,7 +1597,7 @@ handle_eal_element_info_request(const char *cmd __rte_unused,
+@@ -1553,7 +1563,7 @@ handle_eal_element_info_request(const char *cmd __rte_unused,
+ 	struct rte_mem_config *mcfg;
+ 	struct rte_memseg_list *msl;
+ 	const struct rte_memseg *ms;
+-	struct malloc_elem *elem;
++	struct malloc_elem *volatile elem;
+ 	struct malloc_heap *heap;
+ 	struct rte_tel_data *c;
+ 	uint64_t ms_start_addr, ms_end_addr;
+@@ -1597,7 +1607,7 @@ handle_eal_element_info_request(const char *cmd __rte_unused,
  	}
  
  	ms_start_addr = ms->addr_64;
 -	ms_end_addr = (uint64_t)RTE_PTR_ADD(ms_start_addr, ms->len);
-+	ms_end_addr = RTE_INT_PTR_ADD(ms_start_addr, ms->len);
++	ms_end_addr = ms_start_addr + ms->len;
  
  	rte_mcfg_mem_read_unlock();
  
-@@ -1609,8 +1609,7 @@ handle_eal_element_info_request(const char *cmd __rte_unused,
+@@ -1609,8 +1619,7 @@ handle_eal_element_info_request(const char *cmd __rte_unused,
  	elem = heap->first;
  	while (elem) {
  		elem_start_addr = (uint64_t)elem;
 -		elem_end_addr =
 -			(uint64_t)RTE_PTR_ADD(elem_start_addr, elem->size);
-+		elem_end_addr = RTE_INT_PTR_ADD(elem_start_addr, elem->size);
++		elem_end_addr = elem_start_addr + elem->size;
  
  		if (elem_start_addr < ms_start_addr ||
  				elem_end_addr > ms_end_addr) {
 diff --git a/lib/eal/common/eal_common_options.c b/lib/eal/common/eal_common_options.c
-index 485655865d..d62011b037 100644
+index 485655865d..0e05683a67 100644
 --- a/lib/eal/common/eal_common_options.c
 +++ b/lib/eal/common/eal_common_options.c
 @@ -1656,7 +1656,7 @@ eal_parse_base_virtaddr(const char *arg)
@@ -1400,178 +1020,216 @@ index 485655865d..d62011b037 100644
  	 */
  	internal_conf->base_virtaddr =
 -		RTE_PTR_ALIGN_CEIL((uintptr_t)addr, (size_t)RTE_PGSIZE_16M);
-+		RTE_INT_PTR_ALIGN_CEIL((uintptr_t)addr, (size_t)RTE_PGSIZE_16M);
++		(uintptr_t) RTE_INT_PTR_ALIGN_CEIL(addr, (size_t)RTE_PGSIZE_16M);
  
  	return 0;
  }
 diff --git a/lib/eal/common/malloc_elem.h b/lib/eal/common/malloc_elem.h
-index c7ff6718f8..22bfe96883 100644
+index c7ff6718f8..304a1fdce6 100644
 --- a/lib/eal/common/malloc_elem.h
 +++ b/lib/eal/common/malloc_elem.h
+@@ -79,8 +79,8 @@ static const unsigned int MALLOC_ELEM_TRAILER_LEN = RTE_CACHE_LINE_SIZE;
+ #define MALLOC_TRAILER_COOKIE  0xadd2e55badbadbadULL /**< Trailer cookie.*/
+ 
+ /* define macros to make referencing the header and trailer cookies easier */
+-#define MALLOC_ELEM_TRAILER(elem) (*((uint64_t*)RTE_PTR_ADD(elem, \
+-		elem->size - MALLOC_ELEM_TRAILER_LEN)))
++#define MALLOC_ELEM_TRAILER(elem) \
++	(*((const uint64_t *)RTE_PTR_ADD(elem, elem->size - MALLOC_ELEM_TRAILER_LEN)))
+ #define MALLOC_ELEM_HEADER(elem) (elem->header_cookie)
+ 
+ static inline void
 @@ -309,10 +309,10 @@ malloc_elem_from_data(const void *data)
  	if (data == NULL)
  		return NULL;
  
 -	struct malloc_elem *elem = RTE_PTR_SUB(data, MALLOC_ELEM_HEADER_LEN);
-+	struct malloc_elem *elem = RTE_PTR_SUB((void *)data, MALLOC_ELEM_HEADER_LEN);
++	struct malloc_elem *elem = RTE_PTR_SUB(RTE_PTR_UNQUAL(data), MALLOC_ELEM_HEADER_LEN);
  	if (!malloc_elem_cookies_ok(elem))
  		return NULL;
 -	return elem->state != ELEM_PAD ? elem:  RTE_PTR_SUB(elem, elem->pad);
-+	return elem->state != ELEM_PAD ? elem : RTE_PTR_SUB((void *)elem, elem->pad);
++	return elem->state != ELEM_PAD ? elem : RTE_PTR_SUB(elem, elem->pad);
  }
  
  /*
-diff --git a/lib/eal/common/malloc_heap.c b/lib/eal/common/malloc_heap.c
-index 39240c261c..bae6de58c4 100644
---- a/lib/eal/common/malloc_heap.c
-+++ b/lib/eal/common/malloc_heap.c
-@@ -1390,7 +1390,11 @@ malloc_heap_destroy(struct malloc_heap *heap)
+diff --git a/lib/eal/freebsd/eal_memory.c b/lib/eal/freebsd/eal_memory.c
+index 6d3d46a390..49a89fe2fb 100644
+--- a/lib/eal/freebsd/eal_memory.c
++++ b/lib/eal/freebsd/eal_memory.c
+@@ -178,6 +178,10 @@ rte_eal_hugepage_init(void)
+ 					"RTE_MAX_MEMSEG_PER_TYPE and/or RTE_MAX_MEM_MB_PER_TYPE in configuration.");
+ 				return -1;
+ 			}
++			if (msl->base_va == NULL) {
++				EAL_LOG(ERR, "Base VA is NULL for memseg list %d", msl_idx);
++				return -1;
++			}
+ 			arr = &msl->memseg_arr;
+ 			seg = rte_fbarray_get(arr, ms_idx);
  
- 	/* Reset all of the heap but the (hold) lock so caller can release it. */
- 	RTE_BUILD_BUG_ON(offsetof(struct malloc_heap, lock) != 0);
--	memset(RTE_PTR_ADD(heap, sizeof(heap->lock)), 0,
-+	/* Cast to void* to avoid compiler alignment assumptions from typed pointer.
-+	 * RTE_PTR_ADD preserves type, but heap+sizeof(lock) is misaligned for
-+	 * struct malloc_heap, which can cause crashes with vectorized memset.
-+	 */
-+	memset((void *)RTE_PTR_ADD(heap, sizeof(heap->lock)), 0,
- 		sizeof(*heap) - sizeof(heap->lock));
- 
- 	return 0;
 diff --git a/lib/eal/include/rte_common.h b/lib/eal/include/rte_common.h
-index 573bf4f2ce..d09704035c 100644
+index 573bf4f2ce..fbfa0580e9 100644
 --- a/lib/eal/include/rte_common.h
 +++ b/lib/eal/include/rte_common.h
-@@ -549,14 +549,104 @@ static void __attribute__((destructor(RTE_PRIO(prio)), used)) func(void)
+@@ -103,6 +103,13 @@ extern "C" {
+ 		__GNUC_PATCHLEVEL__)
+ #endif
+ 
++/* C++ uses auto, C uses __auto_type for type inference */
++#ifdef __cplusplus
++#define __rte_auto_type auto
++#elif defined(RTE_CC_GCC) || defined(RTE_CC_CLANG)
++#define __rte_auto_type __auto_type
++#endif
++
+ /**
+  * Force type alignment
+  *
+@@ -549,14 +556,96 @@ static void __attribute__((destructor(RTE_PRIO(prio)), used)) func(void)
  /*********** Macros for pointer arithmetic ********/
  
  /**
 - * add a byte-value offset to a pointer
 + * Add a byte-value offset to an integer representing a pointer address.
-+ * Use this when working with pointer values as integers (e.g., uintptr_t),
-+ * or when the pointer value may be NULL.
 + *
 + * @param intptr
 + *   Integer representation of a pointer address
 + * @param x
 + *   Byte offset to add
 + * @return
-+ *   Result as the same type as intptr
-  */
--#define RTE_PTR_ADD(ptr, x) ((void*)((uintptr_t)(ptr) + (x)))
++ *   void* pointer (result of integer arithmetic cast to pointer)
++ */
 +#define RTE_INT_PTR_ADD(intptr, x) \
-+	((typeof(intptr))((uintptr_t)(intptr) + (x)))
- 
- /**
-- * subtract a byte-value offset from a pointer
++	((void *)((uintptr_t)(intptr) + (x)))
++
++/**
 + * Subtract a byte-value offset from an integer representing a pointer address.
-+ * Use this when working with pointer values as integers (e.g., uintptr_t),
-+ * or when the pointer value may be NULL.
 + *
 + * @param intptr
 + *   Integer representation of a pointer address
 + * @param x
 + *   Byte offset to subtract
 + * @return
-+ *   Result as the same type as intptr
++ *   void* pointer (result of integer arithmetic cast to pointer)
   */
--#define RTE_PTR_SUB(ptr, x) ((void *)((uintptr_t)(ptr) - (x)))
+-#define RTE_PTR_ADD(ptr, x) ((void*)((uintptr_t)(ptr) + (x)))
 +#define RTE_INT_PTR_SUB(intptr, x) \
-+	((typeof(intptr))((uintptr_t)(intptr) - (x)))
-+
-+/**
++	((void *)((uintptr_t)(intptr) - (x)))
+ 
+ /**
+- * subtract a byte-value offset from a pointer
 + * Add a byte-value offset to a pointer.
-+ * Returns a pointer of the same type and const-qualification as the input.
-+ *
-+ * The pointer must be non-NULL for defined behavior. For NULL-safe operations
-+ * or integer pointer arithmetic, use RTE_INT_PTR_ADD instead.
-+ *
-+ * @warning
-+ * Type preservation means the compiler may assume alignment based on the
-+ * returned pointer type. When doing raw memory operations (memset, memcpy)
-+ * or pointer arithmetic across struct boundaries, cast the result to (void *)
-+ * to prevent the compiler from making incorrect alignment assumptions that
-+ * could cause crashes with vectorized instructions.
 + *
 + * @param ptr
 + *   The pointer (must be non-NULL)
 + * @param x
 + *   Byte offset to add
 + * @return
-+ *   Pointer with offset applied, preserving input type and qualifiers
-+ */
-+#ifndef RTE_TOOLCHAIN_MSVC
++ *   void* (or const void* / volatile void* / const volatile void* preserving qualifiers).
++ *   Returning void* prevents the compiler from making alignment assumptions based
++ *   on the pointer type, which is important when doing byte-offset arithmetic that
++ *   may cross struct boundaries or result in unaligned pointers.
+  */
+-#define RTE_PTR_SUB(ptr, x) ((void *)((uintptr_t)(ptr) - (x)))
++#if defined(RTE_CC_GCC) || defined(RTE_CC_CLANG)
 +#define RTE_PTR_ADD(ptr, x) \
 +(__extension__ ({ \
++	/* (1) Force array decay and ensure single evaluation */ \
++	__rte_auto_type __rte_ptr_add_ptr = (ptr) + 0; \
 +	__rte_diagnostic_push \
 +	__rte_diagnostic_ignored_wcast_qual \
-+	typeof(ptr) __rte_ptr_add_result = \
-+		(typeof(ptr))((char *)(ptr) + (x)); \
++	/* (2) Calculate result, preserving const/volatile via ternary */ \
++	__rte_auto_type __rte_ptr_add_res = \
++		(1 ? (void *)((char *)__rte_ptr_add_ptr + (x)) : __rte_ptr_add_ptr); \
 +	__rte_diagnostic_pop \
-+	__rte_ptr_add_result; \
++	/* (3) Return the result */ \
++	__rte_ptr_add_res; \
 +}))
 +#else
-+#define RTE_PTR_ADD(ptr, x) ((typeof(ptr))((uintptr_t)(ptr) + (x)))
++/* MSVC fallback (ternary preserves const, no statement exprs) */
++#define RTE_PTR_ADD(ptr, x) \
++	(1 ? (void *)((char *)((ptr) + 0) + (x)) : ((ptr) + 0))
 +#endif
 +
 +/**
 + * Subtract a byte-value offset from a pointer.
-+ * Returns a pointer of the same type and const-qualification as the input.
-+ *
-+ * The pointer must be non-NULL for defined behavior. For NULL-safe operations
-+ * or integer pointer arithmetic, use RTE_INT_PTR_SUB instead.
-+ *
-+ * @warning
-+ * Type preservation means the compiler may assume alignment based on the
-+ * returned pointer type. When doing raw memory operations (memset, memcpy)
-+ * or pointer arithmetic across struct boundaries, cast the result to (void *)
-+ * to prevent the compiler from making incorrect alignment assumptions that
-+ * could cause crashes with vectorized instructions.
 + *
 + * @param ptr
 + *   The pointer (must be non-NULL)
 + * @param x
 + *   Byte offset to subtract
 + * @return
-+ *   Pointer with offset applied, preserving input type and qualifiers
++ *   void* (or const void* / volatile void* / const volatile void* preserving qualifiers).
++ *   Returning void* prevents the compiler from making alignment assumptions based
++ *   on the pointer type, which is important when doing byte-offset arithmetic that
++ *   may cross struct boundaries or result in unaligned pointers.
 + */
-+#ifndef RTE_TOOLCHAIN_MSVC
++#if defined(RTE_CC_GCC) || defined(RTE_CC_CLANG)
 +#define RTE_PTR_SUB(ptr, x) \
 +(__extension__ ({ \
++	/* (1) Force array decay and ensure single evaluation */ \
++	__rte_auto_type __rte_ptr_sub_ptr = (ptr) + 0; \
 +	__rte_diagnostic_push \
 +	__rte_diagnostic_ignored_wcast_qual \
-+	typeof(ptr) __rte_ptr_sub_result = \
-+		(typeof(ptr))((char *)(ptr) - (x)); \
++	/* (2) Calculate result, preserving const/volatile via ternary */ \
++	__rte_auto_type __rte_ptr_sub_res = \
++		(1 ? (void *)((char *)__rte_ptr_sub_ptr - (x)) : __rte_ptr_sub_ptr); \
 +	__rte_diagnostic_pop \
-+	__rte_ptr_sub_result; \
++	/* (3) Return the result */ \
++	__rte_ptr_sub_res; \
 +}))
 +#else
-+#define RTE_PTR_SUB(ptr, x) ((typeof(ptr))((uintptr_t)(ptr) - (x)))
++/* MSVC fallback (ternary preserves const, no statement exprs) */
++#define RTE_PTR_SUB(ptr, x) \
++	(1 ? (void *)((char *)((ptr) + 0) - (x)) : ((ptr) + 0))
 +#endif
  
  /**
   * get the difference between two pointer values, i.e. how far apart
-@@ -607,8 +697,37 @@ static void __attribute__((destructor(RTE_PRIO(prio)), used)) func(void)
-  * point to an address no higher than the first parameter. Second parameter
-  * must be a power-of-two value.
+@@ -602,13 +691,55 @@ static void __attribute__((destructor(RTE_PRIO(prio)), used)) func(void)
+ 
+ 
+ /**
+- * Macro to align a pointer to a given power-of-two. The resultant
+- * pointer will be a pointer of the same type as the first parameter, and
+- * point to an address no higher than the first parameter. Second parameter
+- * must be a power-of-two value.
++ * Macro to align a pointer to a given power-of-two.
++ *
++ * Aligns the pointer down to the specified alignment boundary.
++ *
++ * @param ptr
++ *   The pointer (must be non-NULL)
++ * @param align
++ *   Alignment boundary (must be a power-of-two value)
++ * @return
++ *   Aligned pointer of the same type as ptr, pointing to an address no higher than ptr.
++ *   Returns pointer of same type as input, preserving const/volatile qualifiers.
++ *   Since alignment operations guarantee proper alignment, the return type matches
++ *   the input type.
   */
-+#ifndef RTE_TOOLCHAIN_MSVC
-+#define RTE_PTR_ALIGN_FLOOR(ptr, align) \
++#if defined(RTE_CC_GCC) || defined(RTE_CC_CLANG)
+ #define RTE_PTR_ALIGN_FLOOR(ptr, align) \
+-	((typeof(ptr))RTE_ALIGN_FLOOR((uintptr_t)(ptr), align))
 +(__extension__ ({ \
-+	__auto_type __rte_ptr_align_floor_tmp = (ptr); \
-+	typeof(__rte_ptr_align_floor_tmp) __rte_ptr_align_floor_result = \
-+		(typeof(__rte_ptr_align_floor_tmp)) \
-+		RTE_ALIGN_FLOOR((uintptr_t)(__rte_ptr_align_floor_tmp), align); \
-+	__rte_ptr_align_floor_result; \
++	/* (1) Force array decay and ensure single evaluation */ \
++	__rte_auto_type __rte_ptr_align_floor_tmp = (ptr) + 0; \
++	/* (2) Compute misalignment as integer, but adjust pointer using pointer arithmetic */ \
++	/* to preserve pointer provenance for compiler optimizations */ \
++	size_t __rte_misalign = (uintptr_t)__rte_ptr_align_floor_tmp & ((align) - 1); \
++	/* (3) Return the aligned result, cast to preserve input type */ \
++	(typeof(__rte_ptr_align_floor_tmp))RTE_PTR_SUB(__rte_ptr_align_floor_tmp, __rte_misalign); \
 +}))
 +#else
- #define RTE_PTR_ALIGN_FLOOR(ptr, align) \
- 	((typeof(ptr))RTE_ALIGN_FLOOR((uintptr_t)(ptr), align))
++#define RTE_PTR_ALIGN_FLOOR(ptr, align) \
++	((typeof(ptr))RTE_ALIGN_FLOOR((uintptr_t)((ptr) + 0), align))
 +#endif
 +
 +/**
 + * Align an integer address down to a given power-of-two.
-+ * The resultant value will be no higher than the first parameter.
++ * Returns void* pointer suitable for dereferencing.
++ *
++ * The resultant address will be no higher than the first parameter.
 + * Second parameter must be a power-of-two value.
 + *
 + * Use this when working with numeric addresses (e.g., uintptr_t, uint64_t),
@@ -1582,34 +1240,44 @@ index 573bf4f2ce..d09704035c 100644
 + * @param align
 + *   Power-of-two alignment value
 + * @return
-+ *   Integer address aligned down to the specified boundary
++ *   void* pointer (aligned address cast from integer)
 + */
 +#define RTE_INT_PTR_ALIGN_FLOOR(intptr, align) \
-+	((typeof(intptr))RTE_ALIGN_FLOOR((uintptr_t)(intptr), align))
++	((void *)RTE_ALIGN_FLOOR((uintptr_t)(intptr), align))
  
  /**
   * Macro to align a value to a given power-of-two. The resultant value
-@@ -625,8 +744,36 @@ static void __attribute__((destructor(RTE_PRIO(prio)), used)) func(void)
-  * point to an address no lower than the first parameter. Second parameter
-  * must be a power-of-two value.
+@@ -620,13 +751,42 @@ static void __attribute__((destructor(RTE_PRIO(prio)), used)) func(void)
+ 	(typeof(val))((val) & (~((typeof(val))((align) - 1))))
+ 
+ /**
+- * Macro to align a pointer to a given power-of-two. The resultant
+- * pointer will be a pointer of the same type as the first parameter, and
+- * point to an address no lower than the first parameter. Second parameter
+- * must be a power-of-two value.
++ * Macro to align a pointer to a given power-of-two.
++ *
++ * Aligns the pointer up to the specified alignment boundary.
++ *
++ * @param ptr
++ *   The pointer (must be non-NULL)
++ * @param align
++ *   Alignment boundary (must be a power-of-two value)
++ * @return
++ *   Aligned pointer of the same type as ptr, pointing to an address no lower than ptr.
++ *   Returns pointer of same type as input, preserving const/volatile qualifiers.
++ *   Since alignment operations guarantee proper alignment, the return type matches
++ *   the input type.
   */
-+#ifndef RTE_TOOLCHAIN_MSVC
  #define RTE_PTR_ALIGN_CEIL(ptr, align) \
 -	RTE_PTR_ALIGN_FLOOR((typeof(ptr))RTE_PTR_ADD(ptr, (align) - 1), align)
-+(__extension__ ({ \
-+	__auto_type __rte_ptr_align_ceil_tmp = (ptr); \
-+	__auto_type __rte_ptr_align_tmp = RTE_PTR_ADD( \
-+		__rte_ptr_align_ceil_tmp, (align) - 1); \
-+	RTE_PTR_ALIGN_FLOOR(__rte_ptr_align_tmp, align); \
-+}))
-+#else
-+#define RTE_PTR_ALIGN_CEIL(ptr, align) \
 +	RTE_PTR_ALIGN_FLOOR(RTE_PTR_ADD(ptr, (align) - 1), align)
-+#endif
 +
 +/**
 + * Align an integer address up to a given power-of-two.
-+ * The resultant value will be no lower than the first parameter.
++ * Returns void* pointer suitable for dereferencing.
++ *
++ * The resultant address will be no lower than the first parameter.
 + * Second parameter must be a power-of-two value.
 + *
 + * Use this when working with numeric addresses (e.g., uintptr_t, uint64_t),
@@ -1620,19 +1288,20 @@ index 573bf4f2ce..d09704035c 100644
 + * @param align
 + *   Power-of-two alignment value
 + * @return
-+ *   Integer address aligned up to the specified boundary
++ *   void* pointer (aligned address cast from integer)
 + */
 +#define RTE_INT_PTR_ALIGN_CEIL(intptr, align) \
-+	((typeof(intptr))RTE_ALIGN_CEIL((uintptr_t)(intptr), align))
++	((void *)RTE_ALIGN_CEIL((uintptr_t)(intptr), align))
  
  /**
   * Macro to align a value to a given power-of-two. The resultant value
-@@ -646,6 +793,23 @@ static void __attribute__((destructor(RTE_PRIO(prio)), used)) func(void)
+@@ -646,6 +806,24 @@ static void __attribute__((destructor(RTE_PRIO(prio)), used)) func(void)
   */
  #define RTE_PTR_ALIGN(ptr, align) RTE_PTR_ALIGN_CEIL(ptr, align)
  
 +/**
 + * Align an integer address to a given power-of-two (rounds up).
++ * Returns void* pointer suitable for dereferencing.
 + * This is an alias for RTE_INT_PTR_ALIGN_CEIL.
 + *
 + * Use this when working with numeric addresses (e.g., uintptr_t, uint64_t),
@@ -1643,7 +1312,7 @@ index 573bf4f2ce..d09704035c 100644
 + * @param align
 + *   Power-of-two alignment value
 + * @return
-+ *   Integer address aligned up to the specified boundary
++ *   void* pointer (aligned address cast from integer)
 + */
 +#define RTE_INT_PTR_ALIGN(intptr, align) \
 +	RTE_INT_PTR_ALIGN_CEIL(intptr, align)
@@ -1651,74 +1320,60 @@ index 573bf4f2ce..d09704035c 100644
  /**
   * Macro to align a value to a given power-of-two. The resultant
   * value will be of the same type as the first parameter, and
-diff --git a/lib/ethdev/rte_ethdev.c b/lib/ethdev/rte_ethdev.c
-index 2659e8d9eb..05d5b52faa 100644
---- a/lib/ethdev/rte_ethdev.c
-+++ b/lib/ethdev/rte_ethdev.c
-@@ -3711,7 +3711,7 @@ eth_basic_stats_get(uint16_t port_id, struct rte_eth_xstat *xstats)
+diff --git a/lib/eal/linux/eal_memalloc.c b/lib/eal/linux/eal_memalloc.c
+index 1e60e21620..f770826a43 100644
+--- a/lib/eal/linux/eal_memalloc.c
++++ b/lib/eal/linux/eal_memalloc.c
+@@ -835,6 +835,12 @@ alloc_seg_walk(const struct rte_memseg_list *msl, void *arg)
+ 		void *map_addr;
  
- 	/* global stats */
- 	for (i = 0; i < RTE_NB_STATS; i++) {
--		stats_ptr = RTE_PTR_ADD(&eth_stats,
-+		stats_ptr = RTE_PTR_ADD((void *)&eth_stats,
- 					eth_dev_stats_strings[i].offset);
- 		val = *stats_ptr;
- 		xstats[count++].value = val;
-@@ -3723,7 +3723,7 @@ eth_basic_stats_get(uint16_t port_id, struct rte_eth_xstat *xstats)
- 	/* per-rxq stats */
- 	for (q = 0; q < nb_rxqs; q++) {
- 		for (i = 0; i < RTE_NB_RXQ_STATS; i++) {
--			stats_ptr = RTE_PTR_ADD(&queue_stats,
-+			stats_ptr = RTE_PTR_ADD((void *)&queue_stats,
- 					eth_dev_rxq_stats_strings[i].offset +
- 					q * sizeof(uint64_t));
- 			val = *stats_ptr;
-@@ -3734,7 +3734,7 @@ eth_basic_stats_get(uint16_t port_id, struct rte_eth_xstat *xstats)
- 	/* per-txq stats */
- 	for (q = 0; q < nb_txqs; q++) {
- 		for (i = 0; i < RTE_NB_TXQ_STATS; i++) {
--			stats_ptr = RTE_PTR_ADD(&queue_stats,
-+			stats_ptr = RTE_PTR_ADD((void *)&queue_stats,
- 					eth_dev_txq_stats_strings[i].offset +
- 					q * sizeof(uint64_t));
- 			val = *stats_ptr;
-diff --git a/lib/graph/graph_populate.c b/lib/graph/graph_populate.c
-index 026daecb21..4ec20c26b1 100644
---- a/lib/graph/graph_populate.c
-+++ b/lib/graph/graph_populate.c
-@@ -62,7 +62,7 @@ graph_header_popluate(struct graph *_graph)
- 	graph->head = (int32_t)-_graph->src_node_count;
- 	graph->cir_mask = _graph->cir_mask;
- 	graph->nb_nodes = _graph->node_count;
--	graph->cir_start = RTE_PTR_ADD(graph, _graph->cir_start);
-+	graph->cir_start = RTE_PTR_ADD((void *)graph, _graph->cir_start);
- 	graph->nodes_start = _graph->nodes_start;
- 	graph->socket = _graph->socket;
- 	graph->id = _graph->id;
-@@ -81,7 +81,7 @@ graph_nodes_populate(struct graph *_graph)
- 	rte_node_t pid;
+ 		cur = rte_fbarray_get(&cur_msl->memseg_arr, cur_idx);
++
++		if (cur_msl->base_va == NULL) {
++			EAL_LOG(ERR, "Base VA is NULL for memseg list");
++			goto out;
++		}
++
+ 		map_addr = RTE_PTR_ADD(cur_msl->base_va,
+ 				cur_idx * page_sz);
  
- 	STAILQ_FOREACH(graph_node, &_graph->node_list, next) {
--		struct rte_node *node = RTE_PTR_ADD(graph, off);
-+		struct rte_node *node = RTE_PTR_ADD((void *)graph, off);
- 		memset(node, 0, sizeof(*node));
- 		node->fence = RTE_GRAPH_FENCE;
- 		node->off = off;
-diff --git a/lib/graph/graph_stats.c b/lib/graph/graph_stats.c
-index b87b5707f7..e7b56966eb 100644
---- a/lib/graph/graph_stats.c
-+++ b/lib/graph/graph_stats.c
-@@ -501,7 +501,7 @@ cluster_node_arregate_stats(struct cluster_node *cluster, bool dispatch)
+diff --git a/lib/eal/linux/eal_memory.c b/lib/eal/linux/eal_memory.c
+index 8e1763e890..3830bd5d7f 100644
+--- a/lib/eal/linux/eal_memory.c
++++ b/lib/eal/linux/eal_memory.c
+@@ -759,6 +759,13 @@ remap_segment(struct hugepage_file *hugepages, int seg_start, int seg_end)
+ 			return -1;
+ 		}
+ 		memseg_len = (size_t)page_sz;
++
++		if (msl->base_va == NULL) {
++			EAL_LOG(ERR, "Base VA is NULL for memseg list");
++			close(fd);
++			return -1;
++		}
++
+ 		addr = RTE_PTR_ADD(msl->base_va, ms_idx * memseg_len);
  
- 		if (node->xstat_off == 0)
- 			continue;
--		xstat = RTE_PTR_ADD(node, node->xstat_off);
-+		xstat = RTE_PTR_ADD((void *)node, node->xstat_off);
- 		for (i = 0; i < stat->xstat_cntrs; i++)
- 			stat->xstat_count[i] += xstat[i];
- 	}
+ 		/* we know this address is already mmapped by memseg list, so
+diff --git a/lib/eal/windows/eal_memalloc.c b/lib/eal/windows/eal_memalloc.c
+index 5db5a474cc..6432caccd3 100644
+--- a/lib/eal/windows/eal_memalloc.c
++++ b/lib/eal/windows/eal_memalloc.c
+@@ -230,6 +230,12 @@ alloc_seg_walk(const struct rte_memseg_list *msl, void *arg)
+ 		void *map_addr;
+ 
+ 		cur = rte_fbarray_get(&cur_msl->memseg_arr, cur_idx);
++
++		if (cur_msl->base_va == NULL) {
++			EAL_LOG(ERR, "Base VA is NULL for memseg list");
++			goto out;
++		}
++
+ 		map_addr = RTE_PTR_ADD(cur_msl->base_va, cur_idx * page_sz);
+ 
+ 		if (alloc_seg(cur, map_addr, wa->socket, wa->hi)) {
 diff --git a/lib/graph/rte_graph.h b/lib/graph/rte_graph.h
-index 7e433f4661..7eb7495eae 100644
+index 7e433f4661..d8ac0011e4 100644
 --- a/lib/graph/rte_graph.h
 +++ b/lib/graph/rte_graph.h
 @@ -407,9 +407,9 @@ void rte_graph_obj_dump(FILE *f, struct rte_graph *graph, bool all);
@@ -1726,52 +1381,59 @@ index 7e433f4661..7eb7495eae 100644
  #define rte_graph_foreach_node(count, off, graph, node)                        \
  	for (count = 0, off = graph->nodes_start,                              \
 -	     node = RTE_PTR_ADD(graph, off);                                   \
-+	     node = RTE_PTR_ADD((void *)graph, off);                           \
++	     node = RTE_PTR_ADD(RTE_PTR_UNQUAL(graph), off);                           \
  	     count < graph->nb_nodes;                                          \
 -	     off = node->next, node = RTE_PTR_ADD(graph, off), count++)
-+	     off = node->next, node = RTE_PTR_ADD((void *)graph, off), count++)
++	     off = node->next, node = RTE_PTR_ADD(RTE_PTR_UNQUAL(graph), off), count++)
  
  /**
   * Get node object with in graph from id.
-diff --git a/lib/graph/rte_graph_model_mcore_dispatch.c b/lib/graph/rte_graph_model_mcore_dispatch.c
-index 706b5469f0..cd3fc130d3 100644
---- a/lib/graph/rte_graph_model_mcore_dispatch.c
-+++ b/lib/graph/rte_graph_model_mcore_dispatch.c
-@@ -154,7 +154,7 @@ __rte_graph_mcore_dispatch_sched_wq_process(struct rte_graph *graph)
- 
- 	for (i = 0; i < n; i++) {
- 		wq_node = wq_nodes[i];
--		node = RTE_PTR_ADD(graph, wq_node->node_off);
-+		node = RTE_PTR_ADD((void *)graph, wq_node->node_off);
- 		RTE_ASSERT(node->fence == RTE_GRAPH_FENCE);
- 		idx = node->idx;
- 		free_space = node->size - idx;
 diff --git a/lib/latencystats/rte_latencystats.c b/lib/latencystats/rte_latencystats.c
-index f61d5a273f..cc27205500 100644
+index f61d5a273f..f2cd0db4b7 100644
 --- a/lib/latencystats/rte_latencystats.c
 +++ b/lib/latencystats/rte_latencystats.c
-@@ -105,7 +105,7 @@ latencystats_collect(uint64_t values[])
+@@ -104,6 +104,9 @@ latencystats_collect(uint64_t values[])
+ 	unsigned int i, scale;
  	const uint64_t *stats;
  
++	if (glob_stats == NULL)
++		return;
++
  	for (i = 0; i < NUM_LATENCY_STATS; i++) {
--		stats = RTE_PTR_ADD(glob_stats, lat_stats_strings[i].offset);
-+		stats = RTE_PTR_ADD((void *)glob_stats, lat_stats_strings[i].offset);
+ 		stats = RTE_PTR_ADD(glob_stats, lat_stats_strings[i].offset);
  		scale = lat_stats_strings[i].scale;
- 
- 		/* used to mark samples which are not a time interval */
 diff --git a/lib/mbuf/rte_mbuf.c b/lib/mbuf/rte_mbuf.c
-index 0d931c7a15..61d174cba3 100644
+index 0d931c7a15..557954d45e 100644
 --- a/lib/mbuf/rte_mbuf.c
 +++ b/lib/mbuf/rte_mbuf.c
-@@ -215,7 +215,7 @@ __rte_pktmbuf_init_extmem(struct rte_mempool *mp,
- 	m->next = NULL;
+@@ -193,6 +193,7 @@ __rte_pktmbuf_init_extmem(struct rte_mempool *mp,
  
- 	/* init external buffer shared info items */
--	shinfo = RTE_PTR_ADD(m, mbuf_size);
-+	shinfo = RTE_PTR_ADD((void *)m, mbuf_size);
- 	m->shinfo = shinfo;
- 	shinfo->free_cb = rte_pktmbuf_free_pinned_extmem;
- 	shinfo->fcb_opaque = m;
+ 	RTE_ASSERT(ctx->ext < ctx->ext_num);
+ 	RTE_ASSERT(ctx->off + ext_mem->elt_size <= ext_mem->buf_len);
++	RTE_ASSERT(ext_mem->buf_ptr);
+ 
+ 	m->buf_addr = RTE_PTR_ADD(ext_mem->buf_ptr, ctx->off);
+ 	rte_mbuf_iova_set(m, ext_mem->buf_iova == RTE_BAD_IOVA ? RTE_BAD_IOVA :
+diff --git a/lib/mbuf/rte_mbuf.h b/lib/mbuf/rte_mbuf.h
+index 2004391f57..3100feb740 100644
+--- a/lib/mbuf/rte_mbuf.h
++++ b/lib/mbuf/rte_mbuf.h
+@@ -217,6 +217,7 @@ rte_mbuf_data_iova_default(const struct rte_mbuf *mb)
+ static inline struct rte_mbuf *
+ rte_mbuf_from_indirect(struct rte_mbuf *mi)
+ {
++	RTE_ASSERT(mi);
+ 	return (struct rte_mbuf *)RTE_PTR_SUB(mi->buf_addr, sizeof(*mi) + mi->priv_size);
+ }
+ 
+@@ -289,6 +290,7 @@ rte_mbuf_to_baddr(struct rte_mbuf *md)
+ static inline void *
+ rte_mbuf_to_priv(struct rte_mbuf *m)
+ {
++	RTE_ASSERT(m);
+ 	return RTE_PTR_ADD(m, sizeof(struct rte_mbuf));
+ }
+ 
 diff --git a/lib/member/rte_xxh64_avx512.h b/lib/member/rte_xxh64_avx512.h
 index 58f896ebb8..774b26d8df 100644
 --- a/lib/member/rte_xxh64_avx512.h
@@ -1803,8 +1465,76 @@ index 58f896ebb8..774b26d8df 100644
  		v_hash = _mm512_xor_epi64(v_hash,
  			_mm512_mullo_epi64(input,
  				_mm512_set1_epi64(PRIME64_5)));
+diff --git a/lib/mempool/rte_mempool.c b/lib/mempool/rte_mempool.c
+index 3042d94c14..f1ff668205 100644
+--- a/lib/mempool/rte_mempool.c
++++ b/lib/mempool/rte_mempool.c
+@@ -349,9 +349,9 @@ rte_mempool_populate_iova(struct rte_mempool *mp, char *vaddr,
+ 	memhdr->opaque = opaque;
+ 
+ 	if (mp->flags & RTE_MEMPOOL_F_NO_CACHE_ALIGN)
+-		off = RTE_PTR_ALIGN_CEIL(vaddr, 8) - vaddr;
++		off = RTE_PTR_DIFF(RTE_PTR_ALIGN_CEIL(vaddr, 8), vaddr);
+ 	else
+-		off = RTE_PTR_ALIGN_CEIL(vaddr, RTE_MEMPOOL_ALIGN) - vaddr;
++		off = RTE_PTR_DIFF(RTE_PTR_ALIGN_CEIL(vaddr, RTE_MEMPOOL_ALIGN), vaddr);
+ 
+ 	if (off > len) {
+ 		ret = 0;
+@@ -425,8 +425,8 @@ rte_mempool_populate_virt(struct rte_mempool *mp, char *addr,
+ 
+ 		/* populate with the largest group of contiguous pages */
+ 		for (phys_len = RTE_MIN(
+-			(size_t)(RTE_PTR_ALIGN_CEIL(addr + off + 1, pg_sz) -
+-				(addr + off)),
++			(size_t)RTE_PTR_DIFF(RTE_PTR_ALIGN_CEIL(addr + off + 1, pg_sz),
++				addr + off),
+ 			len - off);
+ 		     off + phys_len < len;
+ 		     phys_len = RTE_MIN(phys_len + pg_sz, len - off)) {
+diff --git a/lib/mempool/rte_mempool.h b/lib/mempool/rte_mempool.h
+index aedc100964..091976574a 100644
+--- a/lib/mempool/rte_mempool.h
++++ b/lib/mempool/rte_mempool.h
+@@ -376,6 +376,7 @@ struct __rte_cache_aligned rte_mempool {
+ static inline struct rte_mempool_objhdr *
+ rte_mempool_get_header(void *obj)
+ {
++	RTE_ASSERT(obj);
+ 	return (struct rte_mempool_objhdr *)RTE_PTR_SUB(obj,
+ 		sizeof(struct rte_mempool_objhdr));
+ }
+@@ -399,6 +400,7 @@ static inline struct rte_mempool *rte_mempool_from_obj(void *obj)
+ static inline struct rte_mempool_objtlr *rte_mempool_get_trailer(void *obj)
+ {
+ 	struct rte_mempool *mp = rte_mempool_from_obj(obj);
++	RTE_ASSERT(mp);
+ 	return (struct rte_mempool_objtlr *)RTE_PTR_ADD(obj, mp->elt_size);
+ }
+ 
+@@ -1844,6 +1846,7 @@ rte_mempool_empty(const struct rte_mempool *mp)
+ static inline rte_iova_t
+ rte_mempool_virt2iova(const void *elt)
+ {
++	RTE_ASSERT(elt);
+ 	const struct rte_mempool_objhdr *hdr;
+ 	hdr = (const struct rte_mempool_objhdr *)RTE_PTR_SUB(elt,
+ 		sizeof(*hdr));
+diff --git a/lib/mempool/rte_mempool_ops_default.c b/lib/mempool/rte_mempool_ops_default.c
+index d27d6fc473..e28a288b91 100644
+--- a/lib/mempool/rte_mempool_ops_default.c
++++ b/lib/mempool/rte_mempool_ops_default.c
+@@ -117,7 +117,7 @@ rte_mempool_op_populate_helper(struct rte_mempool *mp, unsigned int flags,
+ 	for (i = 0; i < max_objs; i++) {
+ 		/* avoid objects to cross page boundaries */
+ 		if (check_obj_bounds(va + off, pg_sz, total_elt_sz) < 0) {
+-			off += RTE_PTR_ALIGN_CEIL(va + off, pg_sz) - (va + off);
++			off += RTE_PTR_DIFF(RTE_PTR_ALIGN_CEIL(va + off, pg_sz), va + off);
+ 			if (flags & RTE_MEMPOOL_POPULATE_F_ALIGN_OBJ)
+ 				off += total_elt_sz -
+ 					(((uintptr_t)(va + off - 1) %
 diff --git a/lib/pdcp/pdcp_entity.h b/lib/pdcp/pdcp_entity.h
-index f854192e98..e8251cbdbc 100644
+index f854192e98..7a2c41dd56 100644
 --- a/lib/pdcp/pdcp_entity.h
 +++ b/lib/pdcp/pdcp_entity.h
 @@ -198,17 +198,19 @@ struct entity_priv_ul_part {
@@ -1812,37 +1542,48 @@ index f854192e98..e8251cbdbc 100644
  static inline struct entity_priv *
  entity_priv_get(const struct rte_pdcp_entity *entity) {
 -	return RTE_PTR_ADD(entity, sizeof(struct rte_pdcp_entity));
-+	return RTE_PTR_ADD((void *)entity, sizeof(struct rte_pdcp_entity));
++	return RTE_PTR_ADD(RTE_PTR_UNQUAL(entity), sizeof(struct rte_pdcp_entity));
  }
  
  static inline struct entity_priv_dl_part *
  entity_dl_part_get(const struct rte_pdcp_entity *entity) {
 -	return RTE_PTR_ADD(entity, sizeof(struct rte_pdcp_entity) + sizeof(struct entity_priv));
-+	return RTE_PTR_ADD((void *)entity,
++	return RTE_PTR_ADD(RTE_PTR_UNQUAL(entity),
 +			   sizeof(struct rte_pdcp_entity) + sizeof(struct entity_priv));
  }
  
  static inline struct entity_priv_ul_part *
  entity_ul_part_get(const struct rte_pdcp_entity *entity) {
 -	return RTE_PTR_ADD(entity, sizeof(struct rte_pdcp_entity) + sizeof(struct entity_priv));
-+	return RTE_PTR_ADD((void *)entity,
++	return RTE_PTR_ADD(RTE_PTR_UNQUAL(entity),
 +			   sizeof(struct rte_pdcp_entity) + sizeof(struct entity_priv));
  }
  
  static inline int
-diff --git a/lib/reorder/rte_reorder.c b/lib/reorder/rte_reorder.c
-index be06530860..5caebf20d4 100644
---- a/lib/reorder/rte_reorder.c
-+++ b/lib/reorder/rte_reorder.c
-@@ -120,7 +120,7 @@ rte_reorder_init(struct rte_reorder_buffer *b, unsigned int bufsize,
- 	b->order_buf.size = b->ready_buf.size = size;
- 	b->order_buf.mask = b->ready_buf.mask = size - 1;
- 	b->ready_buf.entries = (void *)&b[1];
--	b->order_buf.entries = RTE_PTR_ADD(&b[1],
-+	b->order_buf.entries = RTE_PTR_ADD((void *)&b[1],
- 			size * sizeof(b->ready_buf.entries[0]));
+diff --git a/lib/vhost/vhost_user.c b/lib/vhost/vhost_user.c
+index 4bfb13fb98..a9ab6487f2 100644
+--- a/lib/vhost/vhost_user.c
++++ b/lib/vhost/vhost_user.c
+@@ -824,9 +824,16 @@ void
+ mem_set_dump(struct virtio_net *dev, void *ptr, size_t size, bool enable, uint64_t pagesz)
+ {
+ #ifdef MADV_DONTDUMP
+-	void *start = RTE_PTR_ALIGN_FLOOR(ptr, pagesz);
+-	uintptr_t end = RTE_ALIGN_CEIL((uintptr_t)ptr + size, pagesz);
+-	size_t len = end - (uintptr_t)start;
++	void *start;
++	uintptr_t end;
++	size_t len;
++
++	if (ptr == NULL)
++		return;
++
++	start = RTE_PTR_ALIGN_FLOOR(ptr, pagesz);
++	end = RTE_ALIGN_CEIL((uintptr_t)ptr + size, pagesz);
++	len = end - (uintptr_t)start;
  
- 	return b;
+ 	if (madvise(start, len, enable ? MADV_DODUMP : MADV_DONTDUMP) == -1) {
+ 		VHOST_CONFIG_LOG(dev->ifname, INFO,
 -- 
 2.39.5 (Apple Git-154)
 
