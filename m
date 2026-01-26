@@ -2,85 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C115D1951B
-	for <dpdk-dev@archiver.kernel.org>; Mon, 26 Jan 2026 21:29:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85EFDD1951B
+	for <dpdk-dev@archiver.kernel.org>; Mon, 26 Jan 2026 23:24:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 82A25402A0;
-	Mon, 26 Jan 2026 22:29:42 +0100 (CET)
-Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com
- [209.85.221.178])
- by mails.dpdk.org (Postfix) with ESMTP id 78C6C40289
- for <dev@dpdk.org>; Mon, 26 Jan 2026 22:29:41 +0100 (CET)
-Received: by mail-vk1-f178.google.com with SMTP id
- 71dfb90a1353d-56638fca064so1201241e0c.3
- for <dev@dpdk.org>; Mon, 26 Jan 2026 13:29:41 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1769462981; cv=none;
- d=google.com; s=arc-20240605;
- b=MFg+skyzpWtlbLIZlVyCkUcZWkbNH9f4+h/FGVhtMNSn2FxJ6TH5wnaLTjFA9UFuci
- gX90+eImDuFuc2W/5zZjv4qOek3Yf3gRgMxRtKdGB0rtrrF6EBo4EO7Kna6+zDW3AZbN
- OBfQFfZl2me3taJLPH6TQ1V49Fw1ilbnG1yvpwnvRdDliXr+MFxzSMhxt+ThIH9qwg2y
- 1ffJ7gotxfFhiBSfW3MgHq+7R5rVoSS+xuPLhbe3pODZ0jlpF9l6H7rXILod4ZRi8Y9c
- zcw7VOO0iyO1jGBMgmTgMFlRO5GXJcDElDku9JQfWa3XLf3r0CUJfT/106taXpmDvhK5
- r+ow==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20240605; 
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:dkim-signature;
- bh=n7emWZaVZHwFncFDTuCqserCakzy7Anr6LN6ohfvV/k=;
- fh=7hGAxMJ0ahU9WdmcbH8esh2qqgZqbutD5AFuMCFFoQY=;
- b=j28WzNCG8UfSW/UtTb4woxXDkhHm6XP6X/foN8l9JDWmz7wSScNVGpq2+MzlB3h+Z6
- GefaUq1Bi4VIx+KIO67lHaSYU5bALedtHQNLTgbWn/1NlmGPURIJf+whe/29Vkc5RCX3
- YaLErYaZLhbGlDvm+NH5igkZcwC6a85tQ6UF42EUc30lL+n0oHIhUpX7PBBwAtpq/mxy
- qr6ThREBwkiAXbHdOL9B7k7VB2TibXlUovMw64zjvv9MkozBzQDdnna7Xv6QKtlDPkvz
- Rj6tYXSZGeQSScC9DC2Pftbb1XlBVsz6WG8zIIqqa6pAzh32ZC/IncYyHJgrS1z8Z4Oc
- N5Sg==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	by mails.dpdk.org (Postfix) with ESMTP id 0D996402DE;
+	Tue, 27 Jan 2026 00:24:36 +0100 (CET)
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com
+ [209.85.221.50]) by mails.dpdk.org (Postfix) with ESMTP id 2DBE2402A9
+ for <dev@dpdk.org>; Tue, 27 Jan 2026 00:24:35 +0100 (CET)
+Received: by mail-wr1-f50.google.com with SMTP id
+ ffacd0b85a97d-4359019da8cso4337570f8f.1
+ for <dev@dpdk.org>; Mon, 26 Jan 2026 15:24:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1769462981; x=1770067781; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=n7emWZaVZHwFncFDTuCqserCakzy7Anr6LN6ohfvV/k=;
- b=VxpPXLvzaDviv7aCPLzO3PVthREUcUdPRXhMLY9AIEi8JHw3mdRXN6agKjBjYRdLqx
- fSk9R1AAXtXQ1R8Bmqzmu6ShBrL3KQai6kUXqO5stPUJTbYy/lVzEyalnKn5h5AjOAL0
- KAQESHMpOuY8z6jR5JXUylHs6lYNstMqynwCkRcPEpp2Bu22znlchCxGItZudfsDPOh1
- HmMZrDFYekrtWyaGu9ccL4RHJi0pSs/tItZscvh97k4FoKi/xJUj4/RMsGOFmvN5vAWX
- zrhIMegFy+eGmqj0Eekr3ziYTMFxhNmiboz6tp6VFQIlZdFFz8lASIv6+Roe06vnIqEx
- ++Qg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1769462981; x=1770067781;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769469874;
+ x=1770074674; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=n7emWZaVZHwFncFDTuCqserCakzy7Anr6LN6ohfvV/k=;
- b=ewzS7jF0t2NOnc6eFBO5gt1ZmCuIQF0BVlk1+voQ41j0Fug7X2GkQ/WSmJchDZBOCz
- nBRk322nOHVtZ4phQ9oWS8knyILqzjVC/Ej2PlNIIIZIBcrmBeZHWxerZ8qbiGvW1kiy
- TvA/luOhpNXwMkBBL0MUI0uevYTL3PSiL85lPPsGKR98xa0jchIqbQlSr/aLobC2f1xr
- n3/cec4l/H9I5WrLvrw/EU3VPEt0gBkJ0dJXlzmK407tetCnWB908hCOnHHTrvk5VvTC
- qNaQXVSBy5JkIxn0BJ6Q/S58HWYJCHwtcKPufjIG8Lo4xFWZ3+urTBAlb25TpNuWwrpY
- 8QWg==
-X-Gm-Message-State: AOJu0YwLRgN6ikqdFRFQBgTwUnI00cbbeh4HrBZBAS+5QoP1IwVmh7DV
- UBzxr1bOMNVoLbPypZtwRZsMqi5RJVLsuTkLX/POO9EJvOHFFcIvHrB4gH0UkTVS0r7JbF2ATSE
- PSxB+gYh9nV4zfNIrEc4hKVWjn2PmL4I=
-X-Gm-Gg: AZuq6aLen75vIQDw1WXgd7rdam56Ytsj8qpK3Mt1H1862eiO/CG9wnKLUQlVTsSeUNS
- kgho6zftQkA7yZebHLfIXc5TiZFRhrtK4pojVPO2mu3fS4lyaKdYKU48KD0eaQXJ+IULsngjJzX
- rkaqObJGvs8rK6x41TsaruiZy6eHzy16FIVqktCbrxCW2kCYF+CiO7Edj+i58dxU66z/WLyL8sJ
- eWE4NU4nqnwmbSP4iiBhAH3NG9YI8er5TfMEH3ZudBqqJyZ7HQAtSqhOZVfSzcDyrDMeXA=
-X-Received: by 2002:a05:6102:390e:b0:5f1:c4d3:5b37 with SMTP id
- ada2fe7eead31-5f72365c140mr163355137.16.1769462980582; Mon, 26 Jan 2026
- 13:29:40 -0800 (PST)
+ bh=WeOm0Uzn5kOZDLZRoPQcXpE2fbEKconhnaz84w6aCDI=;
+ b=Ub2I5a8MMKCRsb2EoNvDeye6hKcv5j8ymu4S521rvlgWAsTu7hJxlP2mgmDT48pPdT
+ dwcMJiqOVsycxVcV6yM+0Tk/IP3aZNggeUHWfe1ufUSE8mYh0yx78LcLrG3LCTT1HJY6
+ yZeXh2AV0LhxjSKYYrLd1/SB4eTgFsRMt9PPs+Rc2SmVCubMH1xkWDZsN/lkv/iutkMm
+ TH4axUZAP0DXCYt18UbpTPq2YmhFw9lGrUbQ9RRJXenXcagOBNsq6abtZpOZMeiUXQWc
+ DEo+bK3QKstGuNWkoB6qaeIeHK1llOrZ+/Uf86Gb90bUZ35MZmneu9ViBalgbSEHGI2a
+ WtFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1769469874; x=1770074674;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=WeOm0Uzn5kOZDLZRoPQcXpE2fbEKconhnaz84w6aCDI=;
+ b=DegeYP3IRwRrVQJftfbOjpgLkExbu8I+h0CwhD5gGGN3KV7StQnE2+nXPUkS1WU1/D
+ 1/x6DRpI6czQzqQI3z+Gqy/CWpokKjlwo/6ayHD2MIroqmXHWp56HYUhMr+xm0ncHgxs
+ sNzMS0xJtRhD0z5R8qnK4GRKjeH3M9ScN8U1kkzu/NiapMvy++hhNtK24K9jJ28QDYAF
+ XbqDsiVolntyznQJkjO6ZyweNiYq4Tj0WITSe2SBKFHk24ETlw4asehmxKAl76aVvu0X
+ k74NSnWZDiSTsEHlF1UUZCcWqBfMGTxXNaz9hTp+WGk9qSu7BF4fxpEMr/iKL+alYhsS
+ uBTw==
+X-Gm-Message-State: AOJu0YzK45AIo+DUli16T7eCr34bg27K+xAfbRVqnLdnqi2+QarEPrW1
+ ghWjyGz+sUX4D8+uMKi1lY9Q9BIISF5UUzNq9Owl+5k7+wah0jCXvVbu0Y0v8OaHAs8dfXvfJy+
+ mdZJv
+X-Gm-Gg: AZuq6aKcjtOzPAGpDgbCJMmzYazJ6QlPI0dGylOYu/JM6Aaw29eBssUEWvfkTQUPPxN
+ ymwzpegEi8wVK++FzpWfXSmZFx3NmTj6gBw/DE+nP+uAtp9lYUZxDloHThVG+7iMyuI2+L04ZAP
+ CXecBdKsu7SmDlpONwqiH6x4dF/23fA5u1k8mTNVyQSJS8zvF7bKaWA3H4vcopIUquwmpR02q2I
+ MvFERUJmxuTJqC6+9m37g72EUNLxDqgWPZoWpHwW+s2aTi/3n4lS87LNw/IjzSVHET+BHwQQn29
+ ORyYnmmF2eTH6Z6mbne/dOyj1TgAX2lGjWmIdugyU/7bwbSQjk5EC7ZBEsAPipy+iTqyEf9GnFQ
+ O4I/rpxudsBmd/B0RO39eAosjlbMmNT5nw38gYRlPKZZbTw3RxzLutKrLv2UI0wrNojosKgKrUT
+ xx8CX8zn+Xv8AYS5vFS2gH+nz8FER4PoEK049Irg/J3SsMQxTV1J6L0vEkiCd5
+X-Received: by 2002:a5d:5d0a:0:b0:435:90a7:8db with SMTP id
+ ffacd0b85a97d-435ca1475a7mr10683153f8f.15.1769469873999; 
+ Mon, 26 Jan 2026 15:24:33 -0800 (PST)
+Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ ffacd0b85a97d-435b1c24a6fsm33711846f8f.16.2026.01.26.15.24.31
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Mon, 26 Jan 2026 15:24:32 -0800 (PST)
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v12 00/17] lib: improve string overflow safety
+Date: Mon, 26 Jan 2026 15:22:08 -0800
+Message-ID: <20260126232428.276534-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20251202172626.283094-1-stephen@networkplumber.org>
+References: <20251202172626.283094-1-stephen@networkplumber.org>
 MIME-Version: 1.0
-References: <20260125223015.69190-1-scott.k.mitch1@gmail.com>
- <20260126080328.11567-1-scott.k.mitch1@gmail.com>
- <98CBD80474FA8B44BF855DF32C47DC35F656B9@smartserver.smartshare.dk>
-In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F656B9@smartserver.smartshare.dk>
-From: Scott Mitchell <scott.k.mitch1@gmail.com>
-Date: Mon, 26 Jan 2026 13:29:29 -0800
-X-Gm-Features: AZwV_QhH56U4IPkqMkxgZ1UfqlweJ9Qnw_1iLfOgnH8p10rdM9uBbv-9H15D8zM
-Message-ID: <CAFn2buAgv+cFBwDbZDZ2xJ+hGVxd0PTeH_qxRv9gJfk_QO9-7w@mail.gmail.com>
-Subject: Re: [PATCH v14] eal: RTE_PTR_ADD/SUB API improvements
-To: =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>
-Cc: dev@dpdk.org, stephen@networkplumber.org, bruce.richardson@intel.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -94,46 +80,183 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> First of all, I think it's a huge improvement of the RTE_PTR_ADD/SUB macros to not discard qualifiers anymore.
-> Silently discarding qualifiers will cause bugs (discarding volatile) and potentially degrade performance (discarding const).
+This series improves defensive programming by adding proper string length
+validation and overflow checking throughout DPDK libraries. The goal is
+to eliminate silent truncation of names and paths, provide meaningful
+error feedback, and enable compiler format overflow warnings.
 
-Yay! It's been an iterative process but I agree it is converging to a
-better result.
+Motivation
+----------
+Many DPDK APIs accept name parameters with defined maximum lengths
+(e.g., RTE_LPM_NAMESIZE, RTE_HASH_NAMESIZE). Previously, names exceeding
+these limits were silently truncated via snprintf/strlcpy, potentially
+causing subtle bugs like duplicate names or unexpected behavior. This
+series addresses these issues systematically.
 
-> And I agree with your approach of generally fixing instances where this qualifier-discarding property is abused across existing code.
-> Qualifiers should only be explicitly discarded.
->
-> Unfortunately, fixing the macros changes their behavior, which may be considered API breakage.
-> Personally, I consider the qualifier-discarding property of the current macros a bug, which makes your patch a bug fix.
-> I would like the opinion of other community members on this!
-> It seems a patch can be both a bug fix and an API break. ;-)
+Changes Overview
+----------------
+The patches fall into several categories:
 
-I agree this is a breaking change for these APIs. Just to clarify that
-is OK for inclusion in main (for next LTS) and just debating how/if we
-backport, correct? If so, another option is to deprecate the existing
-APIs, stop using them in DPDK, and introduce implementations in this
-patch as a new API (e.g. RTE_PTR_ADD_TYPED) that is used instead.
+1. API input validation (patches 1-2, 6, 12, 16):
+   - Add explicit length checks for name parameters in lpm, hash, efd,
+     tailq, and cfgfile APIs
+   - Return ENAMETOOLONG when names exceed limits
+   - Document new error conditions in API headers
+   - Add corresponding unit tests
 
-> Second, I think RTE_INT_PTR_ADD/SUB macros are superfluous.
-> Just use standard + and - operations when operating on integers, including "integers as pointers".
->
-> I guess existing instances of RTE_PTR_ADD/SUB operating on "integers as pointers" can be fixed across existing code to either use standard +/- operators or - probably more correct - use actual pointer types instead of integer types.
+2. Internal buffer overflow detection (patches 3-5, 8-9, 14-15):
+   - Check snprintf/strlcpy return values for truncation
+   - Log warnings when internal string operations truncate
+   - Increase buffer sizes where they were too small
+   - Use dynamic allocation (asprintf) where appropriate
 
-Good topic. The current RTE_INT_PTR_ADD macros are doing 2 things:
-1. Offsetting by an amount
-2. Safely converting to void* to prevent bugs where compilers assume
-aligned memory, which isn't guaranteed generally, and may crash at
-runtime (which I did in my first attempt which preserved pointer
-return type).
+3. Path handling improvements (patches 7, 10-11, 13):
+   - Use standard C library routines (getmntent) for parsing /proc/mounts
+   - Enforce UNIX_PATH_MAX for socket paths to fail early
+   - Handle arbitrarily long shared library paths
 
-For (1), agreed for strict integer operation: use native operators
-(e.g. + or -). I tried to take that approach in this PR for
-clear-cut-cases.
+4. Error message improvements (patches 1-2, 6):
+   - Include rte_strerror() in failure messages
+   - Provide more context when operations fail
 
-For (2) I think there is still merit in having a macro to convert
-between domains safley (e.g. int -> pointer). This macro
-implementation would be the same as RTE_PTR_UNQUAL, but I think it's
-worth adding an explicit macro bcz the semantics/motivation may be
-different (and maybe we find a better way to do the conversion in the
-future). I can add RTE_PTR_FROM_INT(..) or similar to see what people
-think.
+5. Enable compiler warnings (patch 17):
+   - Remove -Wno-format-truncation flag
+   - All preceding patches fix the warnings this would trigger
+
+API Changes
+-----------
+The following APIs now return ENAMETOOLONG for oversized names:
+  - rte_lpm_create()
+  - rte_hash_create()
+  - rte_fbk_hash_create()
+  - rte_efd_create()
+  - rte_eal_tailq_create()
+  - rte_cfgfile_add_section()
+  - rte_cfgfile_add_entry()
+
+These are documented in the release notes and header files.
+
+Testing
+-------
+- Existing unit tests pass
+- New test cases added for hash name length validation
+- Build tested with format overflow warnings enabled
+
+v12:
+  - Fix build if strlcpy is mapped to snprintf (no libbsd)
+  - Drop redundant "eal: add check for sysfs path overflow" patch;
+    the sysfs path handling is now consolidated in the hugefile
+    path overflow patch using asprintf
+  - Fix hash unit test to use SOCKET_ID_ANY instead of invalid
+    socket ID when testing name length validation
+  - Remove extraneous blank line in cfgfile patch
+
+v11:
+  - Rebase and address review feedback
+
+Stephen Hemminger (17):
+  lpm: restrict name size
+  hash: add checks for hash name length
+  graph: avoid overflowing comment buffer
+  latencystats: add check for string overflow
+  telemetry: check for path overflow
+  efd: handle possible name truncation
+  eal: use C library to parse filesystem table
+  eal: warn if thread name is truncated
+  eal: avoid format overflow when handling addresses
+  eal: limit maximum runtime directory and socket paths
+  eal: check for hugefile path overflow
+  eal: check tailq length
+  eal: handle long shared library path
+  ethdev: avoid possible overflow in xstat names
+  vhost: check for overflow in xstat name
+  cfgfile: add length checks and increase line buffer
+  lib: enable format overflow warnings
+
+ app/test/test_hash.c                   | 21 ++++++
+ doc/guides/rel_notes/release_26_03.rst | 13 ++++
+ lib/cfgfile/rte_cfgfile.c              | 42 +++++++++---
+ lib/cfgfile/rte_cfgfile.h              |  6 +-
+ lib/eal/common/eal_common_config.c     |  6 +-
+ lib/eal/common/eal_common_memory.c     |  3 +-
+ lib/eal/common/eal_common_options.c    | 17 +++--
+ lib/eal/common/eal_common_proc.c       | 85 +++++++++++++++---------
+ lib/eal/common/eal_common_tailqs.c     | 13 +++-
+ lib/eal/common/eal_filesystem.h        | 27 ++++++--
+ lib/eal/freebsd/eal.c                  |  6 +-
+ lib/eal/linux/eal.c                    |  6 +-
+ lib/eal/linux/eal_hugepage_info.c      | 90 ++++++++++++--------------
+ lib/eal/linux/eal_memalloc.c           | 11 ++-
+ lib/eal/linux/eal_memory.c             |  9 ++-
+ lib/eal/windows/eal.c                  |  6 +-
+ lib/efd/rte_efd.c                      | 18 +++--
+ lib/ethdev/rte_ethdev.c                | 35 +++++++---
+ lib/graph/graph_pcap.c                 |  9 ++-
+ lib/hash/rte_cuckoo_hash.c             | 41 ++++++++----
+ lib/hash/rte_fbk_hash.c                | 12 +++-
+ lib/hash/rte_fbk_hash.h                |  1 +
+ lib/latencystats/rte_latencystats.c    |  9 ++-
+ lib/lpm/rte_lpm.c                      | 16 +++--
+ lib/lpm/rte_lpm.h                      |  1 +
+ lib/meson.build                        |  4 --
+ lib/telemetry/telemetry_legacy.c       |  7 +-
+ lib/vhost/vhost.c                      | 14 ++--
+ 28 files changed, 352 insertions(+), 166 deletions(-)
+
+-- 
+2.51.0
+
+
+
+Stephen Hemminger (17):
+  lpm: restrict name size
+  hash: add checks for hash name length
+  graph: avoid overflowing comment buffer
+  latencystats: add check for string overflow
+  telemetry: check for path overflow
+  efd: handle possible name truncation
+  eal: use C library to parse filesystem table
+  eal: warn if thread name is truncated
+  eal: avoid format overflow when handling addresses
+  eal: limit maximum runtime directory and socket paths
+  eal: check for hugefile path overflow
+  eal: check tailq length
+  eal: handle long shared library path
+  ethdev: avoid possible overflow in xstat names
+  vhost: check for overflow in xstat name
+  cfgfile: add length checks and increase line buffer
+  lib: enable format overflow warnings
+
+ app/test/test_hash.c                   |  21 +++++
+ doc/guides/rel_notes/release_26_03.rst |  13 +++
+ lib/cfgfile/rte_cfgfile.c              |  42 ++++++++--
+ lib/cfgfile/rte_cfgfile.h              |   6 +-
+ lib/eal/common/eal_common_config.c     |   6 +-
+ lib/eal/common/eal_common_memory.c     |   3 +-
+ lib/eal/common/eal_common_options.c    |  17 +++-
+ lib/eal/common/eal_common_proc.c       |  85 ++++++++++++-------
+ lib/eal/common/eal_common_tailqs.c     |  13 ++-
+ lib/eal/common/eal_filesystem.h        |  27 ++++--
+ lib/eal/freebsd/eal.c                  |   6 +-
+ lib/eal/linux/eal.c                    |   6 +-
+ lib/eal/linux/eal_hugepage_info.c      | 112 ++++++++++++-------------
+ lib/eal/linux/eal_memalloc.c           |  11 ++-
+ lib/eal/linux/eal_memory.c             |   9 +-
+ lib/eal/windows/eal.c                  |   6 +-
+ lib/efd/rte_efd.c                      |  18 +++-
+ lib/ethdev/rte_ethdev.c                |  35 +++++---
+ lib/graph/graph_pcap.c                 |   9 +-
+ lib/hash/rte_cuckoo_hash.c             |  41 ++++++---
+ lib/hash/rte_fbk_hash.c                |  12 ++-
+ lib/hash/rte_fbk_hash.h                |   1 +
+ lib/latencystats/rte_latencystats.c    |   9 +-
+ lib/lpm/rte_lpm.c                      |  16 +++-
+ lib/lpm/rte_lpm.h                      |   1 +
+ lib/meson.build                        |   4 -
+ lib/telemetry/telemetry_legacy.c       |   7 +-
+ lib/vhost/vhost.c                      |  14 +++-
+ 28 files changed, 380 insertions(+), 170 deletions(-)
+
+-- 
+2.51.0
+
