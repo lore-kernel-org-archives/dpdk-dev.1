@@ -2,67 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A692D1951B
-	for <dpdk-dev@archiver.kernel.org>; Mon, 26 Jan 2026 23:25:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A220D19523
+	for <dpdk-dev@archiver.kernel.org>; Mon, 26 Jan 2026 23:25:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 156E240A84;
-	Tue, 27 Jan 2026 00:24:49 +0100 (CET)
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com
- [209.85.128.49]) by mails.dpdk.org (Postfix) with ESMTP id 6B9A840B90
- for <dev@dpdk.org>; Tue, 27 Jan 2026 00:24:47 +0100 (CET)
-Received: by mail-wm1-f49.google.com with SMTP id
- 5b1f17b1804b1-4801d98cf39so37178405e9.1
- for <dev@dpdk.org>; Mon, 26 Jan 2026 15:24:47 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 21D3140B92;
+	Tue, 27 Jan 2026 00:24:51 +0100 (CET)
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com
+ [209.85.221.46]) by mails.dpdk.org (Postfix) with ESMTP id A241640B97
+ for <dev@dpdk.org>; Tue, 27 Jan 2026 00:24:49 +0100 (CET)
+Received: by mail-wr1-f46.google.com with SMTP id
+ ffacd0b85a97d-42fbc305552so4379358f8f.0
+ for <dev@dpdk.org>; Mon, 26 Jan 2026 15:24:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769469887;
- x=1770074687; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769469889;
+ x=1770074689; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=lt5Fp6oZtCkd3/VDFaFeJGUYOfSjKqfPvtMGuKoEJXs=;
- b=AL/KQhcoF2B7YkWTGqry2oq52xW2DyXz706eFEY7aEGZ69QElh3C0MMFxYOdBn4IY/
- eq7cKcByQY8M9N7HEp4tx2YWsf6RT1taLJH9N2L9eE4Rc3sBof7d6jvKY68jRIxuJtNK
- RdQZiUHZ4HX5ThVX15kANkafnk0mWhwQFl/Upgk2GyKwm+26BJuoabTtnUiE2cRk224P
- h1UU+AqTcSndRFv0w/rJ5+4NmerZgLOEI2PDUV3miI37guMLoTF083Oe6W8y2B16QAdn
- leHK/MRFtIfAW/ccSiD/59RDVGSxhtD5MfBtlYLCIoIKnYkxh0xv3PS6ceyloOmkr6tt
- ailg==
+ bh=HIloIverS70aBstGR7QJyCROQFZSsSB4E6JDeF0+MKM=;
+ b=gCbbbbUzV4CnK/r/3rcT8yiqq2hYFpPpy7RSd4jL+br5nuuSrAvS26VFiEYnA7ukYM
+ 98Zr3ZX00Be3275aWiieaGBB9QVnYfBR3fDDHiAc2X3ZwtuXPreIfqrR/snc4uigWgII
+ jb4TGJFdUOYD1onwpUu7YOpn8bC3z7Z7g9GsBNLwB3otqhi5kiHeGkhBNIEkNl9qaKCt
+ gQErau67vrYRIICvhKkCAu8ecD8+SVF0MkILniMbQYY63MAt8EGFr1NDjy1HthQhkORk
+ ue9fGTqnbv3sVliHDOUWae9ebLehVtqYdErD1Rsa48aBIqo3RxC1BOQ6/pqv7266suMH
+ 1jYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1769469887; x=1770074687;
+ d=1e100.net; s=20230601; t=1769469889; x=1770074689;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=lt5Fp6oZtCkd3/VDFaFeJGUYOfSjKqfPvtMGuKoEJXs=;
- b=EqXpYWoiVuPwvqhluBfQYdw64m6oyu8p52D7pqvyk1Hp9u2wubCxTS4d1qU61A0fqE
- KYbCEgdtiSeNErT++mfDpja1G/Qxu8T5dYRtwPcl7I3ypKTSStymYMwNWIyVumXdXluq
- KN7gvoOLzN/AvdZkfAEWm2sRBcDZKjv6WzHihxqAf8eSa/cDnCEddW1PDMWhkipX5VMe
- tR2N1/mCpcQam+AqVBLsIAvz4F73kX7HDPf6SZMrS0RC1Ozh33wbzthWZImRUwpAtigC
- kl/QnT+ig1sY7l2Fn0HYde/QV0pLPW5gYHp/OD5PXnhb08x3swWHUpaSNdwA2I3kMTZQ
- cKFw==
-X-Gm-Message-State: AOJu0YzUCoyX+7iJYV2rre9t56LtNKH6IY2c1cgiTVupFbiQoORsGc7k
- ezRFzcgtrrtaXyw/e437Gj96/P2GHwNe4zt51iDM6a6i7uQQ5QBzXmTuRuowQUrpEC0iU7FAvWs
- UIBq0
-X-Gm-Gg: AZuq6aLmAZ1dmicbKGjjGpwCn08QCDmr7f+ABRy1yAUGi4YGD1tXqhS+6RiRQnpCVqs
- raoa8P8v12q4WHNRj5UylB/k5EPpT96LKj5Skyg3T9DfUpPSUlrbKyKLsCs83o09KXffbtWu7XP
- elF5m0h9Fxar2DUycE7j9fIYoNOTOHfW4ZExCinBp8w4AvAjwyp02Ra/wVHAhmi4lfFuAcf4vkf
- ZRgGfkWafYv4vJ2OMvs3B41V0e//w4BoPAbrZuiYlYsJOf7WfyXzMZyaJY1jrEogXGg06Lb0brE
- HCmSUrgfy2/CbfBF4ryah1J4uACGPLL0tPri7f68YodauWm5oJ7vqYE1ny1YdiNil2M5yAAJpII
- fvOk9HPwXa5CIFBvsVU0yq1d3bYEQQU5oMFyrT40g/FsYfQgvczGhkdq1Q8LFGBKQKXTNgIbLBT
- yaFXhGpjy0gi2WQYeisLzzuEFkjIuJvGcHb0HuiyeRSDZLDoIq1A==
-X-Received: by 2002:a05:600c:4e0d:b0:47e:e71a:e13a with SMTP id
- 5b1f17b1804b1-4805d066730mr83542905e9.32.1769469887029; 
- Mon, 26 Jan 2026 15:24:47 -0800 (PST)
+ bh=HIloIverS70aBstGR7QJyCROQFZSsSB4E6JDeF0+MKM=;
+ b=Sw3FIJulZdWIH+GZW253Ai4cYDkiprlC+/vs9OHd6VhWooom9L2cXZQFooqoUFLZ/v
+ 5Zo6/svf24tved1oeECrhyN4TjPGUbjhwvm2+wPNoHIRMhkhZkmy+sXHVFiKzJKUVbDK
+ k+qNBYo+lgFbjUMDhKjX5ik9KND+ymG94Sgwovemyp+lWrT+HqoTv0p2m6LL9T8kd7QW
+ MLdy5HVlAEqNN3Ap9Fa43g2BV9uKP8tf0YhhXmOsYNqL2Ut6BaFNtfcduCtzx9Mjd00b
+ R8Zdi7j9UF0HP+NHESx3aVKylKnVJOkW3UCetsv741xgVRfArxP42noBEVK2HFuB65xq
+ zYQA==
+X-Gm-Message-State: AOJu0Yyl+wXyUrlhdHVSIWZsZCBSYJwULfrwq7FT0sKYnYvRj9p5Rsvn
+ I7TvvgGLL4xBJNURHlE7YoNciqyyjk6RevQ4GJlR5IWA1hB4m5xRbQMvdx8+IsIRedW4nAeqklQ
+ R2Y7K
+X-Gm-Gg: AZuq6aJL4V18YzdEw3iB+vorG27mMySltf+1mHWUjY1K8pizrc1vDOKPw+DWC5dssOS
+ tLYoalNoYiPcoQHoyXN3zoCtNlSYUhn/7P5NaytKYYI9W6l1fzFyFRNYoBRs0yoQJhOHU7YOYcK
+ N9H6VKO7INsec8Z35aa7N4wnZQmMQfjyVaq0ug4ibY+El2ly/xd22i/hnM5o8K/N8XDDjb0Jwro
+ Up0ribLNO4jdSH6atDj0VverruFKZvTQnPxXws6HMXDr+cdAacksKTGlwTfJ6fDYFB4ysEi1Hpu
+ UbI2DlKeVrLGNFSRYBSyWcTU5iBXZJ8+CLd5mWpUbZqNSOF4FEmmi8a+fW4VcNVje+GGddGjUxT
+ r2zITVz6zW6wS/fi5xmFzX5nMsGalZYwm7K3PbKqgjzSBa0fj6iuXHNfUyzvFj/gizBiIN/0z9n
+ NpmHtYcoWah02IhlbRMQZ/CVjV3wZVTcp23bnQJscznRtnzLY6EQ==
+X-Received: by 2002:a05:6000:2312:b0:431:9b2:61c4 with SMTP id
+ ffacd0b85a97d-435ca39ad53mr9414904f8f.45.1769469889144; 
+ Mon, 26 Jan 2026 15:24:49 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-435b1c24a6fsm33711846f8f.16.2026.01.26.15.24.45
+ ffacd0b85a97d-435b1c24a6fsm33711846f8f.16.2026.01.26.15.24.47
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 26 Jan 2026 15:24:46 -0800 (PST)
+ Mon, 26 Jan 2026 15:24:48 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Byron Marohn <byron.marohn@intel.com>, Yipeng Wang <yipeng1.wang@intel.com>
-Subject: [PATCH v12 06/17] efd: handle possible name truncation
-Date: Mon, 26 Jan 2026 15:22:14 -0800
-Message-ID: <20260126232428.276534-7-stephen@networkplumber.org>
+ Bruce Richardson <bruce.richardson@intel.com>,
+ Konstantin Ananyev <konstantin.ananyev@huawei.com>
+Subject: [PATCH v12 07/17] eal: use C library to parse filesystem table
+Date: Mon, 26 Jan 2026 15:22:15 -0800
+Message-ID: <20260126232428.276534-8-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260126232428.276534-1-stephen@networkplumber.org>
 References: <20251202172626.283094-1-stephen@networkplumber.org>
@@ -82,74 +83,162 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-If the conversion of efd name to ring name gets truncated, then
-log it. And if the ring name than causes collision, make sure
-that log message includes error reason.
+Rather than doing parsing of /proc/mounts with open coded string
+handling, use the standard C library routines.
+These exist in BSD and Linux.
+
+It also avoids any possible issues with escaped strings etc
+which the library handles. See getmntent(3) man page.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
 ---
- doc/guides/rel_notes/release_26_03.rst |  2 +-
- lib/efd/rte_efd.c                      | 18 ++++++++++++++----
- 2 files changed, 15 insertions(+), 5 deletions(-)
+ lib/eal/linux/eal_hugepage_info.c | 78 +++++++++++++------------------
+ 1 file changed, 33 insertions(+), 45 deletions(-)
 
-diff --git a/doc/guides/rel_notes/release_26_03.rst b/doc/guides/rel_notes/release_26_03.rst
-index b966ce7b49..91b1808455 100644
---- a/doc/guides/rel_notes/release_26_03.rst
-+++ b/doc/guides/rel_notes/release_26_03.rst
-@@ -92,7 +92,7 @@ API Changes
+diff --git a/lib/eal/linux/eal_hugepage_info.c b/lib/eal/linux/eal_hugepage_info.c
+index d47a19c56a..f4c03b7ce5 100644
+--- a/lib/eal/linux/eal_hugepage_info.c
++++ b/lib/eal/linux/eal_hugepage_info.c
+@@ -13,6 +13,7 @@
+ #include <inttypes.h>
+ #include <unistd.h>
+ #include <errno.h>
++#include <mntent.h>
+ #include <sys/mman.h>
+ #include <sys/stat.h>
  
-   * lpm: name must be less than RTE_LPM_NAMESIZE.
-   * hash: name parameter must be less than RTE_HASH_NAMESIZE.
+@@ -195,23 +196,13 @@ get_default_hp_size(void)
+ static int
+ get_hugepage_dir(uint64_t hugepage_sz, char *hugedir, int len)
+ {
+-	enum proc_mount_fieldnames {
+-		DEVICE = 0,
+-		MOUNTPT,
+-		FSTYPE,
+-		OPTIONS,
+-		_FIELDNAME_MAX
+-	};
+ 	static uint64_t default_size = 0;
+ 	const char proc_mounts[] = "/proc/mounts";
+-	const char hugetlbfs_str[] = "hugetlbfs";
+-	const size_t htlbfs_str_len = sizeof(hugetlbfs_str) - 1;
+ 	const char pagesize_opt[] = "pagesize=";
+ 	const size_t pagesize_opt_len = sizeof(pagesize_opt) - 1;
+-	const char split_tok = ' ';
+-	char *splitstr[_FIELDNAME_MAX];
+-	char found[PATH_MAX] = "";
++	char *found = NULL;
+ 	char buf[BUFSIZ];
++	struct mntent entry;
+ 	const struct internal_config *internal_conf =
+ 		eal_get_internal_configuration();
+ 	const size_t hugepage_dir_len = (internal_conf->hugepage_dir != NULL) ?
+@@ -226,56 +217,45 @@ get_hugepage_dir(uint64_t hugepage_sz, char *hugedir, int len)
+ 		return -1;
+ 	}
+ 
+-	FILE *fd = fopen(proc_mounts, "r");
+-	if (fd == NULL)
++	FILE *mounts = setmntent(proc_mounts, "r");
++	if (mounts == NULL)
+ 		rte_panic("Cannot open %s\n", proc_mounts);
+ 
+ 	if (default_size == 0)
+ 		default_size = get_default_hp_size();
+ 
+-	while (fgets(buf, sizeof(buf), fd)){
++	while (getmntent_r(mounts, &entry, buf, sizeof(buf))) {
+ 		const char *pagesz_str;
+-		size_t mountpt_len = 0;
 -
-+  * efd: name must be less than RTE_EFD_NAMESIZE.
+-		if (rte_strsplit(buf, sizeof(buf), splitstr, _FIELDNAME_MAX,
+-				split_tok) != _FIELDNAME_MAX) {
+-			EAL_LOG(ERR, "Error parsing %s", proc_mounts);
+-			break; /* return NULL */
+-		}
++		uint64_t pagesz = default_size;
++		size_t mountpt_len;
  
+-		if (strncmp(splitstr[FSTYPE], hugetlbfs_str, htlbfs_str_len) != 0)
++		if (strcmp(entry.mnt_type, "hugetlbfs") != 0)
+ 			continue;
  
- ABI Changes
-diff --git a/lib/efd/rte_efd.c b/lib/efd/rte_efd.c
-index ebf1e0655f..bbd565f404 100644
---- a/lib/efd/rte_efd.c
-+++ b/lib/efd/rte_efd.c
-@@ -517,13 +517,20 @@ rte_efd_create(const char *name, uint32_t max_num_rules, uint32_t key_len,
- 	efd_list = RTE_TAILQ_CAST(rte_efd_tailq.head, rte_efd_list);
+-		pagesz_str = strstr(splitstr[OPTIONS], pagesize_opt);
++		pagesz_str = strstr(entry.mnt_opts, pagesize_opt);
++		if (pagesz_str)
++			pagesz = rte_str_to_size(&pagesz_str[pagesize_opt_len]);
  
- 	if (online_cpu_socket_bitmask == 0) {
--		EFD_LOG(ERR, "At least one CPU socket must be enabled "
--				"in the bitmask");
-+		EFD_LOG(ERR, "At least one CPU socket must be enabled in the bitmask");
-+		rte_errno = EINVAL;
- 		return NULL;
- 	}
+-		/* if no explicit page size, the default page size is compared */
+-		if (pagesz_str == NULL) {
+-			if (hugepage_sz != default_size)
+-				continue;
+-		}
+-		/* there is an explicit page size, so check it */
+-		else {
+-			uint64_t pagesz = rte_str_to_size(&pagesz_str[pagesize_opt_len]);
+-			if (pagesz != hugepage_sz)
+-				continue;
+-		}
++		if (pagesz != hugepage_sz)
++			continue;
  
- 	if (max_num_rules == 0) {
- 		EFD_LOG(ERR, "Max num rules must be higher than 0");
-+		rte_errno = EINVAL;
-+		return NULL;
-+	}
+ 		/*
+ 		 * If no --huge-dir option has been given, we're done.
+ 		 */
+ 		if (internal_conf->hugepage_dir == NULL) {
+-			strlcpy(found, splitstr[MOUNTPT], len);
++			found = strdup(entry.mnt_dir);
++			if (found == NULL)
++				rte_panic("Cannot dup %s", entry.mnt_dir);
+ 			break;
+ 		}
+ 
+-		mountpt_len = strlen(splitstr[MOUNTPT]);
++		mountpt_len = strlen(entry.mnt_dir);
+ 
+ 		/*
+ 		 * Ignore any mount that doesn't contain the --huge-dir directory
+ 		 * or where mount point is not a parent path of --huge-dir
+ 		 */
+-		if (strncmp(internal_conf->hugepage_dir, splitstr[MOUNTPT],
+-				mountpt_len) != 0 ||
++		if (strncmp(internal_conf->hugepage_dir, entry.mnt_dir, mountpt_len) != 0 ||
+ 			(hugepage_dir_len > mountpt_len &&
+ 				internal_conf->hugepage_dir[mountpt_len] != '/')) {
+ 			continue;
+@@ -285,16 +265,24 @@ get_hugepage_dir(uint64_t hugepage_sz, char *hugedir, int len)
+ 		 * We found a match, but only prefer it if it's a longer match
+ 		 * (so /mnt/1 is preferred over /mnt for matching /mnt/1/2)).
+ 		 */
+-		if (mountpt_len > strlen(found))
+-			strlcpy(found, splitstr[MOUNTPT], len);
++		if (mountpt_len > strlen(found)) {
++			found = realloc(found, mountpt_len + 1);
++			if (found == NULL)
++				rte_panic("Cannot realloc for %s", entry.mnt_dir);
++			memcpy(found, entry.mnt_dir, mountpt_len + 1);
++		}
 +
-+	if (strlen(name) >= RTE_EFD_NAMESIZE) {
-+		EFD_LOG(ERR, "Name is too long");
-+		rte_errno = ENAMETOOLONG;
- 		return NULL;
+ 	} /* end while fgets */
+ 
+-	fclose(fd);
++	endmntent(mounts);
+ 
+-	if (found[0] != '\0') {
++	if (found != NULL) {
+ 		/* If needed, return the requested dir, not the mount point. */
+-		strlcpy(hugedir, internal_conf->hugepage_dir != NULL ?
+-			internal_conf->hugepage_dir : found, len);
++		if (internal_conf->hugepage_dir != NULL)
++			strlcpy(hugedir, internal_conf->hugepage_dir, len);
++		else
++			strlcpy(hugedir, found, len);
++		free(found);
+ 		return 0;
  	}
  
-@@ -698,12 +705,15 @@ rte_efd_create(const char *name, uint32_t max_num_rules, uint32_t key_len,
- 	TAILQ_INSERT_TAIL(efd_list, te, next);
- 	rte_mcfg_tailq_write_unlock();
- 
--	snprintf(ring_name, sizeof(ring_name), "HT_%s", table->name);
-+	if (snprintf(ring_name, sizeof(ring_name), "HT_%s", table->name)
-+	    >= (int)sizeof(ring_name))
-+		EFD_LOG(NOTICE, "EFD ring name truncated to '%s'", ring_name);
-+
- 	/* Create ring (Dummy slot index is not enqueued) */
- 	r = rte_ring_create(ring_name, rte_align32pow2(table->max_num_rules),
- 			offline_cpu_socket, 0);
- 	if (r == NULL) {
--		EFD_LOG(ERR, "memory allocation failed");
-+		EFD_LOG(ERR, "ring creation failed: %s", rte_strerror(rte_errno));
- 		rte_efd_free(table);
- 		return NULL;
- 	}
 -- 
 2.51.0
 
