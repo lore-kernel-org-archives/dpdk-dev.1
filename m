@@ -2,71 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBF9BD19510
-	for <dpdk-dev@archiver.kernel.org>; Mon, 26 Jan 2026 18:28:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA43AD1950F
+	for <dpdk-dev@archiver.kernel.org>; Mon, 26 Jan 2026 18:42:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C4431402AB;
-	Mon, 26 Jan 2026 19:28:51 +0100 (CET)
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com
- [209.85.128.46]) by mails.dpdk.org (Postfix) with ESMTP id 25B46402A0
- for <dev@dpdk.org>; Mon, 26 Jan 2026 19:28:51 +0100 (CET)
-Received: by mail-wm1-f46.google.com with SMTP id
- 5b1f17b1804b1-47ee974e230so44524315e9.2
- for <dev@dpdk.org>; Mon, 26 Jan 2026 10:28:51 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 051B5402AB;
+	Mon, 26 Jan 2026 19:42:12 +0100 (CET)
+Received: from mail-wr1-f68.google.com (mail-wr1-f68.google.com
+ [209.85.221.68]) by mails.dpdk.org (Postfix) with ESMTP id B2F9E402A0
+ for <dev@dpdk.org>; Mon, 26 Jan 2026 19:42:10 +0100 (CET)
+Received: by mail-wr1-f68.google.com with SMTP id
+ ffacd0b85a97d-42fbc305914so4168630f8f.0
+ for <dev@dpdk.org>; Mon, 26 Jan 2026 10:42:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769452131;
- x=1770056931; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769452930;
+ x=1770057730; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:to:from:date:from:to:cc:subject:date:message-id
- :reply-to; bh=QyOZtBooF4Os9sbRjjdt3dfVf6E3CESrlPqFXDqtZEk=;
- b=dNM7v5XQX2k2a6+r4JqMa7s7CrQaTs0yvxXE771Qg6VTRFvI9yLtoC7DoGIHcQZ6bz
- d1g/TBajCxEopvJ/NSVYxrG5p4nxgHA4W9AUjtAdKxJqF0dXOZosxnLwzEyEts/becuU
- xkqFHiLRnn8X+9VWDWL1zdf0HPD5LgtcaoBVhPg5EoZwKtiMkWucFkIHbaNQbiAsDfEU
- qdWnwKLoPCFuRY8aM7hGWbT7IELXr+DEapU/kKzWusVKrYm2JwcDWU0/pTZG9zD86XdJ
- 6o6tSFgiWJ9q/uakcyyjR7JRACiKKOKyfhF1NyDqaXt7xWXvff6TST6TTf25YX6xymGg
- dz6A==
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=6SVbfe6crFvbYEaV7FKkRoviskhV1ah8enquZGXC2PI=;
+ b=pHzNEa7QlD0Z+yGipd8d+z1ZFRoo2gGyCQVV7RhOJmRiouTREMWW/ZSFq2J8nnli/n
+ 4SfDtSWynkge1XVSnz/1KJKxJMbOFLLn3PCTWQqbUuJovnRDFLyGc9oED6JwnZmTPlJi
+ DCRzm+Az6l2Z2Kb0JlxvXoHvlh2Gl/Bj6f+GKXgglWH3h27ciDIEtD2k1m3rbqaaVrL7
+ 5q40jOYc7AraZQ80H7Y09ieuMxg7yfzNEcSxdscxZmV18+hafOSuwgkyWFc/HxQxC0pi
+ sGNOzgBb+k/FrLnMO09drIo3cu9Zx1WzPuwtpvT1sDcqHhYwvWmWYeVVNhRa6fYAg8ac
+ 4JcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1769452131; x=1770056931;
+ d=1e100.net; s=20230601; t=1769452930; x=1770057730;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:to:from:date:x-gm-gg:x-gm-message-state:from:to
- :cc:subject:date:message-id:reply-to;
- bh=QyOZtBooF4Os9sbRjjdt3dfVf6E3CESrlPqFXDqtZEk=;
- b=GsTM52t6yI/V8Zf0/OicCQCJJBUcQ1d1kO6q9JuFp0h03Wfu+JX+IvvgM2Qw+Bze1p
- LJ2/G41caM2ygRJQqh8e0kQkWw5sd5Frcw0kFyCyvUkrdYG9Wbe3HfhAQMgbZVuSY2e0
- BlbUAxMBHk7J688RuShDeMcD3bz0BhjvkAGSxhxs6Ijcqo14NbcdbtZBpoGsmISg5Ntm
- 6ke9cqlpK+rUzSH11nA3f+lEtXvGf8CRvwIR1jl6Wv1fQEP24Yu3SQA0tXTAEksHMRdt
- t8d9MKtdbe14KgiYB0VraQg8ODtw7EBuEeNyaBjJuW/KSb3ZTGoQcwBx79b2RuKDB2e4
- tFbw==
-X-Gm-Message-State: AOJu0YyphCpaLcPM3CfhT9py9hzoDvMvjBFfADxnooQkWPbtylfn/W3d
- H2p4PtM1JoRQDTC+t/ZwPEBJuYqAPpThezcyiUz9VnjnIHIoiwgVygIYusxHZTHbd/2eqQIX5pc
- gYUED
-X-Gm-Gg: AZuq6aKBz1upbbh7ojPFSYMLx7VC+6F43GTSJIjHN5a6lMeF+Gz+7CpIcZPkemysJm/
- BVOaPPMnSSLhX+MeQgMB3D2Z5/fe8jBELwaRIdCt2ke35Uu8gBzY3SvY6/ESM51yEMJfdYJRCbe
- 8ilP37atAlt0KMGErNR1pMsVaVHF6gqHtFXhY4dRl1okvPP88A6JTxKg7J/QvfHLBXRScvKtd6c
- ekpE/2EG3N4FaUtzPJgML/tQSZ7BOMJs19NZJd2ujbQdA9FupgytlesXvlX4+As85BtETzT20tw
- 5Ro8IBANJni6aBk8Z1ULBXaWhp9kHve9dZyH435823tAX26eo/GHkafDCUf1pd/rsLXExpIGeeV
- MT4Mb1rI6e3c5Sg12ZRcI9CKUjDumAawykcu4Bo2IS7INHJwb/2WIqSqm1bZYcSIPD7a/1rnwFV
- KCRo1xUHN+enkX8Hx6h51n6dYl3REHNUTqFgd8HpoAB7T+J+vJ4xZ0
-X-Received: by 2002:a05:600c:348f:b0:480:3ad0:93c0 with SMTP id
- 5b1f17b1804b1-4805cf668fcmr92504885e9.23.1769452130755; 
- Mon, 26 Jan 2026 10:28:50 -0800 (PST)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=6SVbfe6crFvbYEaV7FKkRoviskhV1ah8enquZGXC2PI=;
+ b=m+S7vQoomD+UogH+RJtZUbQNED70Lt2dyEbtD2RuKiszmPM58uLMkX5pNedCY/DIRx
+ 3Z+y/DisbdVtpetu+rL7vWQfkbQwDB2f+EShHro+kZzugkuk5FkG/E2P0qxHYHBplvRL
+ c6+WrLsm+BOkQSw5a6rYYIPVj3rohreIRURLQpfLOpqLhQBdw+/homrHeCJTOE6Rph66
+ 1UEwuR/btRh8FEYqQyxo9qbk0W/FauK4rjKfov3zopF3tLo4Z+oeBhNxvivlfOggdY4f
+ iRkxbfdQA3SdvlAt6PRVkCaSvTYMkl1Yo2jb3N3tz+6semBxkuuHjDiXdz5O3KwWKdU0
+ 50DA==
+X-Gm-Message-State: AOJu0YxkN75FrJo3w5xGKI5HGhKB9KsqkavSIkMixH0c1umYa2MZg3ET
+ PEMTYBv+l2GcJOydTus8dAz5XEJ2qIGxDKnwu/Ns36mrszggRuRJU8iHAM8QWT5rnossi0yhT9k
+ FstNvwBo=
+X-Gm-Gg: AZuq6aLt6heRgkI27gYjlSfBs9g0ThBgK4N5qix8MXAC7TuLV0kV1wU5l9QeBi6RsxV
+ JQFgRzEJNOuZ8uXOClXUCiVGIVlFHvBSahPA/tGKjqshXgpNflKXM5n8q1/IhkO6N8L3AZSHik/
+ cmOz+uf9zBzByrPsfwE4v3Ge3Gy4pJzoFq2f0HgERG31tEn4ONhEX//etLhUjhkfyTjzhSR2oAc
+ /bO58DCLeIXE4/Ntr+OEflRI+xlYFMFSpLS9WXSFm7+IjcjXAncO+gQo8vOVWVLXxw4jls3qUYh
+ eUc8DogP4r3ffNTd2uaENSiVTgn5exrt/ZEZvzo/VXG/rI65AJOGPlAJ2HkmHlqHQjroiZ8k29S
+ uq/TyiHOM50Wh7EIkNtz+rHxOmDCyjqB7gQzo8Q2fwZ4Yu6pQap4JMHu30Q/TYv2A0xgTSYtqWL
+ ofh9lC2uGhbDvpQGeDLPadbM04aE7EQ6ohFrQwpVjKVke9Da34Ew==
+X-Received: by 2002:a05:6000:2888:b0:435:94fe:76bb with SMTP id
+ ffacd0b85a97d-435ca1b0aaemr8559786f8f.43.1769452930121; 
+ Mon, 26 Jan 2026 10:42:10 -0800 (PST)
+Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-48066c0f3f7sm9739905e9.13.2026.01.26.10.28.49
- for <dev@dpdk.org>
+ ffacd0b85a97d-435b1c24acdsm33210429f8f.13.2026.01.26.10.42.08
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 26 Jan 2026 10:28:50 -0800 (PST)
-Date: Mon, 26 Jan 2026 10:28:46 -0800
+ Mon, 26 Jan 2026 10:42:09 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Subject: Re: [REVIEW] net/nbl: improve exception handling for the mailbox
-Message-ID: <20260126102846.47c7f651@phoenix.local>
-In-Reply-To: <20260126181838.102532-1-stephen@networkplumber.org>
-References: <20260126075815.178216-5-dimon.zhao@nebula-matrix.com>
- <20260126181838.102532-1-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v7 0/4] devtools: add AI-assisted code review tools
+Date: Mon, 26 Jan 2026 10:40:17 -0800
+Message-ID: <20260126184205.104629-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <0260109014106.398156-1-stephen@networkplumber.org>
+References: <0260109014106.398156-1-stephen@networkplumber.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -80,16 +80,69 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 26 Jan 2026 10:18:38 -0800
-Stephen Hemminger <stephen@networkplumber.org> wrote:
+This series adds infrastructure for AI-assisted code review of DPDK
+patches and documentation. It provides guidelines for AI tools and
+scripts to interface with multiple AI providers.
 
-> ### Code Review
-> **Warning**: Missing NULL checks before rte_memzone_free()
-> ```c
-> rte_free(tx_ring->tx_entry);
-> rte_memzone_free(tx_ring->net_hdr_mz);  // Could be NULL if setup failed
-> rte_memzone_free(tx_ring->desc_mz);     // Could be NULL if setup failed
-> ```
-> While rte_memzone_free() handles NULL, this is not documented behavior. Better to check explicitly or document assumption.
+The AGENTS.md file consolidates DPDK coding standards, commit message
+requirements, and common review feedback into a format optimized for
+AI code review tools. The accompanying scripts enable automated patch
+analysis using Claude, ChatGPT, Grok, or Gemini.
 
-Ignore this feedback. It indicates missing comments in rte_memzone, not your problem
+Patches:
+  1. AGENTS.md - Guidelines document for AI review tools
+  2. analyze-patch.py - Multi-provider patch review script
+  3. compare-reviews.sh - Compare reviews across providers
+  4. review-doc.py - Documentation review with diff output
+
+Changes in v7:
+  - Add "Review Philosophy" section to AGENTS.md with guidance on
+    confidence levels and concise feedback
+  - Add "Priority Areas" section covering security, correctness,
+    and architecture concerns that reviewers should focus on
+  - Minor code cleanups in analyze-patch.py
+
+Changes in v6:
+  - Expanded AGENTS.md with "Unnecessary Code Patterns" section
+  - Added guidance on rte_malloc() and rte_memcpy() appropriate use
+  - Added symbol naming guidelines for static linking
+  - Improved email sending in review-doc.py with native SMTP support
+
+Changes in v5:
+  - Added review-doc.py for documentation review
+  - Added email sending capability to scripts
+  - Expanded forbidden tokens documentation
+
+Changes in v4:
+  - Added compare-reviews.sh script
+  - Multiple output formats (text, markdown, html, json)
+  - Improved error handling
+
+Changes in v3:
+  - Added support for OpenAI, xAI Grok, and Google Gemini
+  - Added prompt caching for Anthropic to reduce costs
+  - Restructured AGENTS.md for better machine parsing
+
+Changes in v2:
+  - Split into separate patches
+  - Added verbose mode with token usage statistics
+
+Stephen Hemminger (4):
+  doc: add AGENTS.md for AI-powered code review tools
+  devtools: add multi-provider AI patch review script
+  devtools: add compare-reviews.sh for multi-provider analysis
+  devtools: add multi-provider AI documentation review script
+
+ AGENTS.md                   | 1000 +++++++++++++++++++++++++++++++++++
+ devtools/analyze-patch.py   |  731 +++++++++++++++++++++++++
+ devtools/compare-reviews.sh |  192 +++++++
+ devtools/review-doc.py      |  974 ++++++++++++++++++++++++++++++++++
+ 4 files changed, 2897 insertions(+)
+ create mode 100644 AGENTS.md
+ create mode 100755 devtools/analyze-patch.py
+ create mode 100644 devtools/compare-reviews.sh
+ create mode 100755 devtools/review-doc.py
+
+-- 
+2.51.0
+
