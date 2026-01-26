@@ -2,69 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6623D1951A
-	for <dpdk-dev@archiver.kernel.org>; Mon, 26 Jan 2026 21:06:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D6CFD1951A
+	for <dpdk-dev@archiver.kernel.org>; Mon, 26 Jan 2026 21:06:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9C4B3406FF;
-	Mon, 26 Jan 2026 22:06:30 +0100 (CET)
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com
- [209.85.128.50]) by mails.dpdk.org (Postfix) with ESMTP id 10A3A40671
- for <dev@dpdk.org>; Mon, 26 Jan 2026 22:06:28 +0100 (CET)
-Received: by mail-wm1-f50.google.com with SMTP id
- 5b1f17b1804b1-4805ef35864so12896025e9.0
- for <dev@dpdk.org>; Mon, 26 Jan 2026 13:06:28 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id AB90A40A6D;
+	Mon, 26 Jan 2026 22:06:32 +0100 (CET)
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com
+ [209.85.128.41]) by mails.dpdk.org (Postfix) with ESMTP id 1CE5D406BB
+ for <dev@dpdk.org>; Mon, 26 Jan 2026 22:06:30 +0100 (CET)
+Received: by mail-wm1-f41.google.com with SMTP id
+ 5b1f17b1804b1-4801d98cf39so36561075e9.1
+ for <dev@dpdk.org>; Mon, 26 Jan 2026 13:06:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769461588;
- x=1770066388; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769461590;
+ x=1770066390; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=mGyFr+fUfor+dRVOIPMTfGCw/u8YKQYw6sXchM8MU4Q=;
- b=NcMNSluSih+tpQdtqQ1nYgzjZg3HLa/GOQ+1wfQ9SvgyQLEVRNSeXjo+TDODvbgzSk
- 1zVgxuDi7f5bHIQTb7GfoFGj6r4utG7tVGu34lFzzu7b0HB/oY1Vzi7oygVqcKMTeDj0
- W1ncQEUE/J4wTOYTjDWIEwed+CtGQOMoY9P09Z7/ByAT3W0gvS8WPbOXwjAtgu6akPvH
- tnjfzK20kq4XRDM7LyjoBWm509mzlRHmkkSSwMY6imGmGvd7CcsvG4nP8Mvj3ZUd9neE
- hgMV4/v+AHB65FpkNe6cMGNNC/A0hUpPpZ5EJLBUSJvbw5Qqn45Q3po01/CNTmc4ddGc
- ieuw==
+ bh=0W+iuY5pkcGPzbQ1tBm6Y58aYsiLmWuGFrBqDowXXd8=;
+ b=bQ0yyeIFtzI9SHHFCSaWQop+I4r26BGOGCJHGimEw5FvM8aAirmW/jAxWqvGCUq9Si
+ WoqH9DdXz3BSgar+2eXziA+Ahn5wwAvVDRAEdA0XlMFEcEzuNplplxdTT+++yq971MMz
+ HBoK1rJxp6knyNc2G1ObQBjTBtfIOmPBUQh9c4xP3XFjHh78poMwZV6qpvbNH7U3K7g+
+ kyjXEYImHzZ4ootZU9GlqxaNmzcd2hjMByNgRZQEmvSmOY9Hxfvq/QwjZHevvJFnWpFH
+ WGhUkfIxs8hMg7Lz2rOvl6nWkbSKAAK0v6kOaQtKMNlWSDlUHYgC1i1mOUEz2fNLyTdl
+ ReAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1769461588; x=1770066388;
+ d=1e100.net; s=20230601; t=1769461590; x=1770066390;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=mGyFr+fUfor+dRVOIPMTfGCw/u8YKQYw6sXchM8MU4Q=;
- b=Rs2Y5oXhVDtkPk7Buf8Z+S8EYAXO/+AzH4WfeTrJkPn+GwP9zNQDSDXuvIJqQ8C+p/
- 4ry/ZRejNLRAgv2RAajqHjIZYl0Ox6dCLWtecgrhN2xwoF7hKEqKHSw4RI+9+O/e/8NI
- 583oA5yy8EBVQsgKO5Wzu+mb8NhfW4c2gpgpsjqPJ2jjRwLkuYQa6/izNkIGR/qBfguH
- /C2/ta6Fh3dsyDfA7pruNokodKlcjP14eokUVgwUI6UHC6CYS8RgonoH0uxn/uhNFu/u
- fi/aICQsdoVNPHi0lb994MTcL4xyBiO2S9i9mqGZYlsXHrKkEn14FrU3RIQJydUFcrfS
- A1+g==
-X-Gm-Message-State: AOJu0YwWIMhfjrk8CldcC6l5JtDZ7k1OHjgtnPSwqFxCndj2xoyxa+tH
- 3bN4+vVDB/dHYG23yBtcvqY9hdfEU/TTtwaQCsrtafF48CmpYJu1dEGSEJfCCFdNyb1A+Y6IdzJ
- Z5L/1
-X-Gm-Gg: AZuq6aKXOQmKSMGMinWuLFAgzThq5iuEO7JBGpxwNm72ft0FCSijdjacMYkLxRwTt21
- XYMy1eY1Z8pyosVe7i2M348NSOcGYwpltGHNr435w2VgP7t8LY3BUpIISrwc8Vokb1yeMkijwL5
- ARLAJDFdevpX8J2nH10wV5gLMTiAkxBn+cpheovFHBWmOiUYjmQgfJ0ZICD8wnM4xdkoYg66i7f
- eFtrtfLE9yQWD1chCUV3CaQOp7C6GpeUeQ5V+8GLB0zPoXwPvLtb890CMH4Lva580a8se+Fvv6h
- c77GZxS8UaEwr9lWuDLg4O9AmX65hTp0WRP6Gnp5mBI2yXvsoASDk3rMQirA3KlqRD0bWLkJOOE
- ItEKZkn5vjno6rU7iycYmGxzAec4PWwt6JttaDiDrUuOR/apVn1lGC+lJDUf7bUtGtS9JB9tur2
- jf+Oi7zMsyHmYsSvjy797zNiuVHt4PO0Rxxx6zfIuQnHdu1aTvCQ==
-X-Received: by 2002:a05:600c:190c:b0:477:9dc1:b706 with SMTP id
- 5b1f17b1804b1-4805ce67eb4mr89825985e9.19.1769461587835; 
- Mon, 26 Jan 2026 13:06:27 -0800 (PST)
+ bh=0W+iuY5pkcGPzbQ1tBm6Y58aYsiLmWuGFrBqDowXXd8=;
+ b=ooC629YBFKmzfMViY5nA1PLhJJDp4CTJQi0tn9hTM2xPzGkuXZh5w6P4fiy1V0LjFU
+ xCBK/6leX4xPc4F4hSDVj06LUWVnVi6BC5vzsF3+v6LsURoE4Gqwo0btuChz35WvYmFE
+ KlFSukpZ4oxkuedYEfmFoH9bWjwiDr/EcAWFVRMtLw0ruJZJMGKepIZmRRPT4asPjf85
+ LRX8YEZ4dv6FnZ+BevOyqMSv02oO/po2C3K164aToTlnrXsPwCtk+AWFBzybM/JaNpbD
+ LTZfBp1Lvp+TZu1CFASwI7Eo7fD3V/fCryY09DEspq1O63jhyM/LWNvl/ratljjwz5Ya
+ R8Cg==
+X-Gm-Message-State: AOJu0YwTsRtMGZEu5Ge7bmDoA7J8zXF8YF60m5W/w6d62wwZPOZsoIGj
+ JsphFU/X0He1WK9Q11euQV2E84WN8lu79XKR+iKHPBBNPC3cdsCOKegcJAHy9DPvZFv2gI49FTv
+ OQ/8l
+X-Gm-Gg: AZuq6aL720B2T6gXInsCfKtoVRxzY797cFTW9NbooDE3sry/uVEV8GXwjZgolFncXU2
+ hHI8ST+V1bR0wMvpVOb2xXKGrLtmCyN5Tu80rDHzTrc8GF/98jH8YLHiGTViiGyNtn1FJlmP4Fe
+ mx2piSv/bxAkYf/itOOFqjtca1BuFX4kZWVgTXeV433RmDno15HVZ06pqZDd8f8IWC0ckkf7pma
+ T9/3k3vlSRD+xtf7um308fn+F+36oIswvUB/W+Af0hagHNw5+lpBZieH4VbJ/2vZcH+a+/qMkw5
+ WvWZlY6RsM5utsIFczBLcEt9PqVntpbSHrb/vKwU9Eo/brfMoCLWR+pP/iRKNkyetITvNxG4moX
+ vpDYsHvoSFfOhK36+ZBvSaKvFDxVqX70B4PlCO7NkHUdkGf4W5TpFVDsQqLC5lVqUETZ71heNYs
+ gKBoB1xWfNqZgTID7Lo46e3ebIgqzUn5e50LLTLXKNnxTZ3+h0kjCmQruZTUU4
+X-Received: by 2002:a05:600c:64cf:b0:480:1c69:9d36 with SMTP id
+ 5b1f17b1804b1-4805cf5f4aemr94569065e9.17.1769461589629; 
+ Mon, 26 Jan 2026 13:06:29 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-48066be7704sm15166915e9.1.2026.01.26.13.06.25
+ 5b1f17b1804b1-48066be7704sm15166915e9.1.2026.01.26.13.06.28
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 26 Jan 2026 13:06:27 -0800 (PST)
+ Mon, 26 Jan 2026 13:06:29 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
- Reshma Pattan <reshma.pattan@intel.com>,
- Amit Prakash Shukla <amitprakashs@marvell.com>
-Subject: [PATCH v6 3/5] pcapng: chain additional mbuf when comment exceeds
- tailroom
-Date: Mon, 26 Jan 2026 13:04:36 -0800
-Message-ID: <20260126210615.175816-4-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Reshma Pattan <reshma.pattan@intel.com>
+Subject: [PATCH v6 4/5] pcapng: improve performance of timestamping
+Date: Mon, 26 Jan 2026 13:04:37 -0800
+Message-ID: <20260126210615.175816-5-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260126210615.175816-1-stephen@networkplumber.org>
 References: <20251126051218.50568-1-stephen@networkplumber.org>
@@ -84,58 +82,135 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-When rte_pcapng_copy() is called with a comment, the option data
-may not fit in the mbuf's remaining tailroom, causing the append
-to fail and the packet to be dropped.
-
-Fix this by allocating and chaining an additional mbuf segment
-when rte_pktmbuf_append() fails. This allows comments of any
-length (up to UINT16_MAX) to be attached to captured packets.
-
-Fixes: c1abd1e93dbd ("pcapng: support comment in enhanced packet block")
-Cc: stable@dpdk.org
+Avoid doing expensive divide operations when converting
+timestamps from cycles (TSC) to pcapng scaled value (ns).
+This logic was derived from the math used by Linux kernel
+virtual system call with help from AI.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- lib/pcapng/rte_pcapng.c | 25 ++++++++++++++++++++-----
- 1 file changed, 20 insertions(+), 5 deletions(-)
+ lib/pcapng/rte_pcapng.c | 61 ++++++++++++++++++++++++++---------------
+ 1 file changed, 39 insertions(+), 22 deletions(-)
 
 diff --git a/lib/pcapng/rte_pcapng.c b/lib/pcapng/rte_pcapng.c
-index d5b3a0cd29..b9de51849b 100644
+index b9de51849b..27ae5e1fd6 100644
 --- a/lib/pcapng/rte_pcapng.c
 +++ b/lib/pcapng/rte_pcapng.c
-@@ -570,11 +570,26 @@ rte_pcapng_copy(uint16_t port_id, uint32_t queue,
- 	if (comment)
- 		optlen += pcapng_optlen(strlen(comment));
+@@ -41,8 +41,14 @@
+ struct rte_pcapng {
+ 	int  outfd;		/* output file */
+ 	unsigned int ports;	/* number of interfaces added */
+-	uint64_t offset_ns;	/* ns since 1/1/1970 when initialized */
+-	uint64_t tsc_base;	/* TSC when started */
++
++	struct pcapng_time_conv {
++		uint64_t tsc_base;	/* TSC when started */
++		uint64_t ns_base;	/* ns since 1/1/1970 when initialized */
++		uint64_t mult;		/* scaling factor relative to TSC hz */
++		uint32_t shift;		/* shift for scaling (24) */
++		uint64_t mask;		/* mask of bits used (56) */
++	} tc;
  
--	/* reserve trailing options and block length */
--	opt = (struct pcapng_option *)
--		rte_pktmbuf_append(mc, optlen + sizeof(uint32_t));
--	if (unlikely(opt == NULL))
--		goto fail;
-+	/*
-+	 * Try to put options at the end of this mbuf.
-+	 * If not extend the mbuf by adding another segment.
-+	 */
-+	opt = (struct pcapng_option *)rte_pktmbuf_append(mc, optlen + sizeof(uint32_t));
-+	if (unlikely(opt == NULL)) {
-+		struct rte_mbuf *ml = rte_pktmbuf_alloc(mp);
-+
-+		if (unlikely(ml == NULL))
-+			goto fail;	/* mbuf pool is empty */
-+
-+		if (unlikely(rte_pktmbuf_chain(mc, ml) != 0)) {
-+			rte_pktmbuf_free(ml);
-+			goto fail;	/* too many segments in the mbuf */
-+		}
-+
-+		opt = (struct pcapng_option *)rte_pktmbuf_append(mc, optlen + sizeof(uint32_t));
-+		if (unlikely(opt == NULL))
-+			goto fail;	/* additional segment and still no space */
-+	}
+ 	/* DPDK port id to interface index in file */
+ 	uint32_t port_index[RTE_MAX_ETHPORTS];
+@@ -98,21 +104,38 @@ static ssize_t writev(int fd, const struct iovec *iov, int iovcnt)
+ #define if_indextoname(ifindex, ifname) NULL
+ #endif
  
- 	switch (direction) {
- 	case RTE_PCAPNG_DIRECTION_IN:
++/* Initialize time conversion based on logic similar to rte_cyclecounter */
++static void
++pcapng_timestamp_init(struct pcapng_time_conv *tc)
++{
++	struct timespec ts;
++	uint64_t cycles = rte_get_tsc_cycles();
++
++	/* record start time in ns since 1/1/1970 */
++	clock_gettime(CLOCK_REALTIME, &ts);
++
++	/* Compute baseline TSC which occurred during clock_gettime */
++	tc->tsc_base = (cycles + rte_get_tsc_cycles()) / 2;
++	tc->ns_base = (uint64_t)ts.tv_sec * 1000000000ULL + ts.tv_nsec;
++
++	/* Set conversion factors for reasonable precision with no overflow */
++	uint64_t tsc_hz = rte_get_tsc_hz();
++	tc->shift = 24;
++	tc->mult = ((uint64_t)1000000000ULL << tc->shift) / tsc_hz;
++	tc->mask = RTE_BIT64(56) - 1;
++}
++
+ /* Convert from TSC (CPU cycles) to nanoseconds */
+ static uint64_t
+-pcapng_timestamp(const rte_pcapng_t *self, uint64_t cycles)
++pcapng_timestamp(const struct pcapng_time_conv *tc, uint64_t cycles)
+ {
+-	uint64_t delta, rem, secs, ns;
+-	const uint64_t hz = rte_get_tsc_hz();
+-
+-	delta = cycles - self->tsc_base;
++	/* Compute TSC delta with mask to avoid wraparound */
++	uint64_t delta = (cycles - tc->tsc_base) & tc->mask;
+ 
+-	/* Avoid numeric wraparound by computing seconds first */
+-	secs = delta / hz;
+-	rem = delta % hz;
+-	ns = (rem * NS_PER_S) / hz;
++	/* Convert TSC delta to nanoseconds (no division) */
++	uint64_t ns_delta = (delta * tc->mult) >> tc->shift;
+ 
+-	return secs * NS_PER_S + ns + self->offset_ns;
++	return tc->ns_base + ns_delta;
+ }
+ 
+ /* length of option including padding */
+@@ -346,7 +369,7 @@ rte_pcapng_write_stats(rte_pcapng_t *self, uint16_t port_id,
+ {
+ 	struct pcapng_statistics *hdr;
+ 	struct pcapng_option *opt;
+-	uint64_t start_time = self->offset_ns;
++	uint64_t start_time = self->tc.ns_base;
+ 	uint64_t sample_time;
+ 	uint32_t optlen, len;
+ 	uint32_t *buf;
+@@ -399,7 +422,7 @@ rte_pcapng_write_stats(rte_pcapng_t *self, uint16_t port_id,
+ 	hdr->block_length = len;
+ 	hdr->interface_id = self->port_index[port_id];
+ 
+-	sample_time = pcapng_timestamp(self, rte_get_tsc_cycles());
++	sample_time = pcapng_timestamp(&self->tc, rte_get_tsc_cycles());
+ 	hdr->timestamp_hi = sample_time >> 32;
+ 	hdr->timestamp_lo = (uint32_t)sample_time;
+ 
+@@ -690,7 +713,7 @@ rte_pcapng_write_packets(rte_pcapng_t *self,
+ 		/* adjust timestamp recorded in packet */
+ 		cycles = (uint64_t)epb->timestamp_hi << 32;
+ 		cycles += epb->timestamp_lo;
+-		timestamp = pcapng_timestamp(self, cycles);
++		timestamp = pcapng_timestamp(&self->tc, cycles);
+ 		epb->timestamp_hi = timestamp >> 32;
+ 		epb->timestamp_lo = (uint32_t)timestamp;
+ 
+@@ -736,8 +759,6 @@ rte_pcapng_fdopen(int fd,
+ {
+ 	unsigned int i;
+ 	rte_pcapng_t *self;
+-	struct timespec ts;
+-	uint64_t cycles;
+ 
+ 	if ((osname && strlen(osname) > PCAPNG_STR_MAX) ||
+ 	    (hardware && strlen(hardware) > PCAPNG_STR_MAX) ||
+@@ -756,11 +777,7 @@ rte_pcapng_fdopen(int fd,
+ 	self->outfd = fd;
+ 	self->ports = 0;
+ 
+-	/* record start time in ns since 1/1/1970 */
+-	cycles = rte_get_tsc_cycles();
+-	clock_gettime(CLOCK_REALTIME, &ts);
+-	self->tsc_base = (cycles + rte_get_tsc_cycles()) / 2;
+-	self->offset_ns = rte_timespec_to_ns(&ts);
++	pcapng_timestamp_init(&self->tc);
+ 
+ 	for (i = 0; i < RTE_MAX_ETHPORTS; i++)
+ 		self->port_index[i] = UINT32_MAX;
 -- 
 2.51.0
 
