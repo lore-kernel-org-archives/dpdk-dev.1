@@ -2,52 +2,40 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1288CCF65CF
-	for <dpdk-dev@archiver.kernel.org>; Mon, 26 Jan 2026 10:14:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E666AD13C1E
+	for <dpdk-dev@archiver.kernel.org>; Mon, 26 Jan 2026 14:35:42 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1332A402D1;
-	Mon, 26 Jan 2026 11:14:06 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
- by mails.dpdk.org (Postfix) with ESMTP id BEC1F402B6;
- Mon, 26 Jan 2026 11:14:03 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1769422444; x=1800958444;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=nuWgwRikEMN5/DPomHq/IOz6WmPuua5nruZ0CSyD4ME=;
- b=bUOoV/cYvkWHjaHRbJChKLlVWqqwazc68BPyaNHG0yNm3mJdpLs+Lxjq
- V39G+fNZptA+je5BzZKGpdzHvGPtL7gnL8Ckzyr/teYfiomj7N9a9sLD0
- YF+UpwjHyrYKtKbv0zFtrd+YeUoPD8VyS5n6v9ZCHH+AmCi1YnV8G2uQB
- NCXcXJrtUChnlrDRfl1XTj9WmqTMMr49xkrs18ezGHcxSq4saXA5bcwQ8
- k8MKvqT3PeFteJYCMjJAWDVcc+RDulVFiC0Q1VnrIq3E6HqTIEuAfP7Cr
- CtoBEyT+JQmROfDi+VfAqVveQSxzfuFu26mTzjkI9HiUkDeE4zXo78ZKG A==;
-X-CSE-ConnectionGUID: moZ+VkW1TSWD5e69cIWjow==
-X-CSE-MsgGUID: 7+OaWk2GTpGcrvgNfiaisQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11682"; a="74439652"
-X-IronPort-AV: E=Sophos;i="6.21,254,1763452800"; d="scan'208";a="74439652"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
- by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 26 Jan 2026 02:14:02 -0800
-X-CSE-ConnectionGUID: fX8NUpcHRyK3TqpYlYcsqA==
-X-CSE-MsgGUID: 7oI2vC7JTL+ZsOGTZFe7RA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,254,1763452800"; d="scan'208";a="207893047"
-Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by fmviesa008.fm.intel.com with ESMTP; 26 Jan 2026 02:14:01 -0800
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: dev@dpdk.org
-Cc: scott.k.mitch1@gmail.com, Bruce Richardson <bruce.richardson@intel.com>,
- stable@dpdk.org, Kevin Laatz <kevin.laatz@intel.com>,
- Conor Walsh <conor.walsh@intel.com>
-Subject: [PATCH] dma/idxd: mark portal pointer as volatile
-Date: Mon, 26 Jan 2026 10:13:56 +0000
-Message-ID: <20260126101357.2770431-1-bruce.richardson@intel.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <bug-1871-3@http.bugs.dpdk.org>
-References: <bug-1871-3@http.bugs.dpdk.org>
+	by mails.dpdk.org (Postfix) with ESMTP id B32E2402B6;
+	Mon, 26 Jan 2026 15:35:41 +0100 (CET)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 02AEA400D7
+ for <dev@dpdk.org>; Mon, 26 Jan 2026 15:35:39 +0100 (CET)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 182E82061A;
+ Mon, 26 Jan 2026 15:35:39 +0100 (CET)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Subject: RE: [PATCH v14] eal: RTE_PTR_ADD/SUB API improvements
+Date: Mon, 26 Jan 2026 15:35:36 +0100
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F656B9@smartserver.smartshare.dk>
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+In-Reply-To: <20260126080328.11567-1-scott.k.mitch1@gmail.com>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH v14] eal: RTE_PTR_ADD/SUB API improvements
+Thread-Index: AdyOmkaEJApHFbMCQWGX0wYHseaDcQAMqmtw
+References: <20260125223015.69190-1-scott.k.mitch1@gmail.com>
+ <20260126080328.11567-1-scott.k.mitch1@gmail.com>
+From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
+To: <scott.k.mitch1@gmail.com>,
+	<dev@dpdk.org>
+Cc: <stephen@networkplumber.org>,
+	<bruce.richardson@intel.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -61,46 +49,54 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The portal pointer for writing descriptors to the idxd device should be
-volatile for consistency with how it is used. Only time we need to cast
-away the volatility is when unmapping it.
+> From: Scott Mitchell <scott.k.mitch1@gmail.com>
+>=20
+> RTE_PTR_ADD and RTE_PTR_SUB APIs have a few limitations:
+> 1. ptr cast to uintptr_t drops pointer provenance and
+> prevents compiler optimizations
+> 2. return cast discards qualifiers (const, volatile)
+> which may hide correctness/concurrency issues.
+> 3. Accepts both "pointers" and "integers as pointers" which
+> overloads the use case and constrains the implementation
+> to address other challenges.
+>=20
+> This patch splits the API on two dimensions:
+> 1. pointer types
+> 2. integer types that represent pointers
+>=20
+> This split allows addressing each of the challenges above
+> and provides distinct APIs for the distinct use cases.
 
-Bugzilla ID: 1871
-Fixes: e888bb1278c6 ("dma/idxd: add bus device probing")
-Cc: stable@dpdk.org
+First of all, I think it's a huge improvement of the RTE_PTR_ADD/SUB =
+macros to not discard qualifiers anymore.
+Silently discarding qualifiers will cause bugs (discarding volatile) and =
+potentially degrade performance (discarding const).
 
-Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
----
- drivers/dma/idxd/idxd_bus.c      | 2 +-
- drivers/dma/idxd/idxd_internal.h | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+And I agree with your approach of generally fixing instances where this =
+qualifier-discarding property is abused across existing code.
+Qualifiers should only be explicitly discarded.
 
-diff --git a/drivers/dma/idxd/idxd_bus.c b/drivers/dma/idxd/idxd_bus.c
-index 5ae42151e6..9a8213bbbe 100644
---- a/drivers/dma/idxd/idxd_bus.c
-+++ b/drivers/dma/idxd/idxd_bus.c
-@@ -93,7 +93,7 @@ static int
- idxd_dev_close(struct rte_dma_dev *dev)
- {
- 	struct idxd_dmadev *idxd = dev->data->dev_private;
--	munmap(idxd->portal, 0x1000);
-+	munmap(RTE_CAST_PTR(void *, idxd->portal), 0x1000);
- 	return 0;
- }
- 
-diff --git a/drivers/dma/idxd/idxd_internal.h b/drivers/dma/idxd/idxd_internal.h
-index b80a113455..d409213148 100644
---- a/drivers/dma/idxd/idxd_internal.h
-+++ b/drivers/dma/idxd/idxd_internal.h
-@@ -56,7 +56,7 @@ struct idxd_dmadev {
- 	unsigned short batch_start; /* start+size == write pointer for hdls/desc */
- 	unsigned short batch_size;
- 
--	void *portal; /* address to write the batch descriptor */
-+	volatile void *portal; /* address to write the batch descriptor */
- 
- 	struct idxd_completion *batch_comp_ring;
- 	unsigned short *batch_idx_ring; /* store where each batch ends */
--- 
-2.51.0
+Unfortunately, fixing the macros changes their behavior, which may be =
+considered API breakage.
+Personally, I consider the qualifier-discarding property of the current =
+macros a bug, which makes your patch a bug fix.
+I would like the opinion of other community members on this!
+It seems a patch can be both a bug fix and an API break. ;-)
+
+Second, I think RTE_INT_PTR_ADD/SUB macros are superfluous.
+Just use standard + and - operations when operating on integers, =
+including "integers as pointers".
+
+I guess existing instances of RTE_PTR_ADD/SUB operating on "integers as =
+pointers" can be fixed across existing code to either use standard +/- =
+operators or - probably more correct - use actual pointer types instead =
+of integer types.
+
+<feature creep>
+If we decide to proceed with the RTE_PTR_ADD/SUB macros not discarding =
+qualifiers, similar RTE_PTR_ macros should be updated similarly.
+But let's cross that bridge if we go there.
+</feature creep>
+
+-Morten
 
