@@ -2,68 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A220D19523
-	for <dpdk-dev@archiver.kernel.org>; Mon, 26 Jan 2026 23:25:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D691D19523
+	for <dpdk-dev@archiver.kernel.org>; Mon, 26 Jan 2026 23:25:29 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 21D3140B92;
-	Tue, 27 Jan 2026 00:24:51 +0100 (CET)
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com
- [209.85.221.46]) by mails.dpdk.org (Postfix) with ESMTP id A241640B97
- for <dev@dpdk.org>; Tue, 27 Jan 2026 00:24:49 +0100 (CET)
-Received: by mail-wr1-f46.google.com with SMTP id
- ffacd0b85a97d-42fbc305552so4379358f8f.0
- for <dev@dpdk.org>; Mon, 26 Jan 2026 15:24:49 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 2EE4A40B9A;
+	Tue, 27 Jan 2026 00:24:53 +0100 (CET)
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com
+ [209.85.221.54]) by mails.dpdk.org (Postfix) with ESMTP id 81C8C40B97
+ for <dev@dpdk.org>; Tue, 27 Jan 2026 00:24:51 +0100 (CET)
+Received: by mail-wr1-f54.google.com with SMTP id
+ ffacd0b85a97d-435a11957f6so4157331f8f.0
+ for <dev@dpdk.org>; Mon, 26 Jan 2026 15:24:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769469889;
- x=1770074689; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769469891;
+ x=1770074691; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=HIloIverS70aBstGR7QJyCROQFZSsSB4E6JDeF0+MKM=;
- b=gCbbbbUzV4CnK/r/3rcT8yiqq2hYFpPpy7RSd4jL+br5nuuSrAvS26VFiEYnA7ukYM
- 98Zr3ZX00Be3275aWiieaGBB9QVnYfBR3fDDHiAc2X3ZwtuXPreIfqrR/snc4uigWgII
- jb4TGJFdUOYD1onwpUu7YOpn8bC3z7Z7g9GsBNLwB3otqhi5kiHeGkhBNIEkNl9qaKCt
- gQErau67vrYRIICvhKkCAu8ecD8+SVF0MkILniMbQYY63MAt8EGFr1NDjy1HthQhkORk
- ue9fGTqnbv3sVliHDOUWae9ebLehVtqYdErD1Rsa48aBIqo3RxC1BOQ6/pqv7266suMH
- 1jYw==
+ bh=+kqCFItk0itE0KpgFMM192XBzrhr28QRY35s8pDKsiw=;
+ b=RASIBGadO2wNYOMsUlDi5EmI/HLSa7eZaYZ45SAY1lSDzdrrJqZAbXeYrR57m81Q+J
+ F9fs9xhkwO+DbTBI91TAVQ3KW7Epq6GIPHERC6qIvFM+1MNzJwPb3T1ZCf5jhoeSAZTb
+ QpZRg0vXUiPae29fk0SGLmaYKvrsz6+cV7qeUwXyqHDeW7YCzFCc5bJBuH7IeljMLT24
+ eyxBBs50X1F9WWt9TItK0+2s2N1kfl/59DZ2gj9cSjrGeZQvmEI0qgSV1JcHspCq3Pf+
+ vs1QIOa5v3uj7mZqI/7aMzmXiXGFZGs3iV5QXlCpOOBfWetzlD6qWDVciO9txy65eGFu
+ +MMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1769469889; x=1770074689;
+ d=1e100.net; s=20230601; t=1769469891; x=1770074691;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=HIloIverS70aBstGR7QJyCROQFZSsSB4E6JDeF0+MKM=;
- b=Sw3FIJulZdWIH+GZW253Ai4cYDkiprlC+/vs9OHd6VhWooom9L2cXZQFooqoUFLZ/v
- 5Zo6/svf24tved1oeECrhyN4TjPGUbjhwvm2+wPNoHIRMhkhZkmy+sXHVFiKzJKUVbDK
- k+qNBYo+lgFbjUMDhKjX5ik9KND+ymG94Sgwovemyp+lWrT+HqoTv0p2m6LL9T8kd7QW
- MLdy5HVlAEqNN3Ap9Fa43g2BV9uKP8tf0YhhXmOsYNqL2Ut6BaFNtfcduCtzx9Mjd00b
- R8Zdi7j9UF0HP+NHESx3aVKylKnVJOkW3UCetsv741xgVRfArxP42noBEVK2HFuB65xq
- zYQA==
-X-Gm-Message-State: AOJu0Yyl+wXyUrlhdHVSIWZsZCBSYJwULfrwq7FT0sKYnYvRj9p5Rsvn
- I7TvvgGLL4xBJNURHlE7YoNciqyyjk6RevQ4GJlR5IWA1hB4m5xRbQMvdx8+IsIRedW4nAeqklQ
- R2Y7K
-X-Gm-Gg: AZuq6aJL4V18YzdEw3iB+vorG27mMySltf+1mHWUjY1K8pizrc1vDOKPw+DWC5dssOS
- tLYoalNoYiPcoQHoyXN3zoCtNlSYUhn/7P5NaytKYYI9W6l1fzFyFRNYoBRs0yoQJhOHU7YOYcK
- N9H6VKO7INsec8Z35aa7N4wnZQmMQfjyVaq0ug4ibY+El2ly/xd22i/hnM5o8K/N8XDDjb0Jwro
- Up0ribLNO4jdSH6atDj0VverruFKZvTQnPxXws6HMXDr+cdAacksKTGlwTfJ6fDYFB4ysEi1Hpu
- UbI2DlKeVrLGNFSRYBSyWcTU5iBXZJ8+CLd5mWpUbZqNSOF4FEmmi8a+fW4VcNVje+GGddGjUxT
- r2zITVz6zW6wS/fi5xmFzX5nMsGalZYwm7K3PbKqgjzSBa0fj6iuXHNfUyzvFj/gizBiIN/0z9n
- NpmHtYcoWah02IhlbRMQZ/CVjV3wZVTcp23bnQJscznRtnzLY6EQ==
-X-Received: by 2002:a05:6000:2312:b0:431:9b2:61c4 with SMTP id
- ffacd0b85a97d-435ca39ad53mr9414904f8f.45.1769469889144; 
- Mon, 26 Jan 2026 15:24:49 -0800 (PST)
+ bh=+kqCFItk0itE0KpgFMM192XBzrhr28QRY35s8pDKsiw=;
+ b=Y2ZZYJbIvTWxR5LnCOV64D73pKg7Q4ifPuqAV/P5qFTU0kHp0qz0k0HDVaMO9ftN9+
+ iuK59FZkprnTWo1anhywmixCCV8llcaUF7I/qavNQDXsaAzOU6SWCrKaKOk85+vBo3Nn
+ eJClVRrApI5f3nwOVEHfvBtQ9A4tGLheFNcOsGCPmMB06naTXSk00Qa8TFsGp7gKEzxF
+ DBY2l/oD0gixewnQCMpMtiGqhC7Jbw+fg2ffVu1Io4ZmsWCRMensdPdgXGvgbrzVNjvS
+ 5J9bXE79cGy1qCl3XrUSM7TGxJ3k3W2w+imztRRwj01n+PZUFvHW2AqWfCmIie6MFLVC
+ duIA==
+X-Gm-Message-State: AOJu0YwEYD4oLiqd9vFZIkFKKbem/8fbb1IU39EJUO6v958C0ckVVJfF
+ kZX8bHP7SA2zSlOCGUP6Sgh1ZST8LgjwNsci3HsNPweatAVYARg6TzbcApyUhGxcTfeAPwnJHac
+ rfibX
+X-Gm-Gg: AZuq6aJr3xAyFxTqqAP9LDZ7Oc8p0MASlGyZ7VFylGavYbfzK6Ew/U3c5ZVokKvlJ5s
+ A1WRkxGEu5iZ4NVwW7yh/9WuvrfGz3U5nIukbTSoJ//TVIZzW1zSKBGEosCZP3z45+xfTTF+dFc
+ e6FUyPs2BArIkDiK71CWt80wzrZTmDzX9LT7IW2c2cPM8W4iORU/JOPEG9+JPaV+lyfu6QY7rAJ
+ W2SiYUk2TWGN+5mD3Rtmt9DfeUA4VOjeXZTO6DdtqGNzgEDSRJN8wPdYLyLGrRUXbB1CDU5cibY
+ Rl0IKxPFfBJ0POT7XHUtAH1i1aEQW+4ceYJiAtZ0tdJfT227CmIUuixZMZaqnNbiI7bBcXTpc1S
+ gsSV+5Nx3SxL3nYkrfE8mJzuRTR9vRye1ysYEupdVVTQ+wk6OZcy8sUcBxe4JKo7wFSB0A2ZQae
+ G6v4zjvTc2HKGCyhuMs9JXG5wwa16SWEFl6ggAGqAUIk9SDq8QPw==
+X-Received: by 2002:a5d:588d:0:b0:430:fbe1:382a with SMTP id
+ ffacd0b85a97d-435ca1aaddemr11613973f8f.54.1769469891126; 
+ Mon, 26 Jan 2026 15:24:51 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-435b1c24a6fsm33711846f8f.16.2026.01.26.15.24.47
+ ffacd0b85a97d-435b1c24a6fsm33711846f8f.16.2026.01.26.15.24.49
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 26 Jan 2026 15:24:48 -0800 (PST)
+ Mon, 26 Jan 2026 15:24:50 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
  Bruce Richardson <bruce.richardson@intel.com>,
- Konstantin Ananyev <konstantin.ananyev@huawei.com>
-Subject: [PATCH v12 07/17] eal: use C library to parse filesystem table
-Date: Mon, 26 Jan 2026 15:22:15 -0800
-Message-ID: <20260126232428.276534-8-stephen@networkplumber.org>
+ Dmitry Kozlyuk <dmitry.kozliuk@gmail.com>
+Subject: [PATCH v12 08/17] eal: warn if thread name is truncated
+Date: Mon, 26 Jan 2026 15:22:16 -0800
+Message-ID: <20260126232428.276534-9-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260126232428.276534-1-stephen@networkplumber.org>
 References: <20251202172626.283094-1-stephen@networkplumber.org>
@@ -83,162 +83,69 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Rather than doing parsing of /proc/mounts with open coded string
-handling, use the standard C library routines.
-These exist in BSD and Linux.
-
-It also avoids any possible issues with escaped strings etc
-which the library handles. See getmntent(3) man page.
+Thread name is very short 16 characters and therefore the name
+dpdk-worker-%d will overflow with more than 9999 worker cores.
+Error should be non-fatal since name only matters for debug.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 Acked-by: Bruce Richardson <bruce.richardson@intel.com>
-Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
 ---
- lib/eal/linux/eal_hugepage_info.c | 78 +++++++++++++------------------
- 1 file changed, 33 insertions(+), 45 deletions(-)
+ lib/eal/freebsd/eal.c | 6 ++++--
+ lib/eal/linux/eal.c   | 6 ++++--
+ lib/eal/windows/eal.c | 6 ++++--
+ 3 files changed, 12 insertions(+), 6 deletions(-)
 
-diff --git a/lib/eal/linux/eal_hugepage_info.c b/lib/eal/linux/eal_hugepage_info.c
-index d47a19c56a..f4c03b7ce5 100644
---- a/lib/eal/linux/eal_hugepage_info.c
-+++ b/lib/eal/linux/eal_hugepage_info.c
-@@ -13,6 +13,7 @@
- #include <inttypes.h>
- #include <unistd.h>
- #include <errno.h>
-+#include <mntent.h>
- #include <sys/mman.h>
- #include <sys/stat.h>
+diff --git a/lib/eal/freebsd/eal.c b/lib/eal/freebsd/eal.c
+index 6215245ad5..60f5e676a8 100644
+--- a/lib/eal/freebsd/eal.c
++++ b/lib/eal/freebsd/eal.c
+@@ -690,8 +690,10 @@ rte_eal_init(int argc, char **argv)
+ 			rte_panic("Cannot create thread\n");
  
-@@ -195,23 +196,13 @@ get_default_hp_size(void)
- static int
- get_hugepage_dir(uint64_t hugepage_sz, char *hugedir, int len)
- {
--	enum proc_mount_fieldnames {
--		DEVICE = 0,
--		MOUNTPT,
--		FSTYPE,
--		OPTIONS,
--		_FIELDNAME_MAX
--	};
- 	static uint64_t default_size = 0;
- 	const char proc_mounts[] = "/proc/mounts";
--	const char hugetlbfs_str[] = "hugetlbfs";
--	const size_t htlbfs_str_len = sizeof(hugetlbfs_str) - 1;
- 	const char pagesize_opt[] = "pagesize=";
- 	const size_t pagesize_opt_len = sizeof(pagesize_opt) - 1;
--	const char split_tok = ' ';
--	char *splitstr[_FIELDNAME_MAX];
--	char found[PATH_MAX] = "";
-+	char *found = NULL;
- 	char buf[BUFSIZ];
-+	struct mntent entry;
- 	const struct internal_config *internal_conf =
- 		eal_get_internal_configuration();
- 	const size_t hugepage_dir_len = (internal_conf->hugepage_dir != NULL) ?
-@@ -226,56 +217,45 @@ get_hugepage_dir(uint64_t hugepage_sz, char *hugedir, int len)
- 		return -1;
- 	}
- 
--	FILE *fd = fopen(proc_mounts, "r");
--	if (fd == NULL)
-+	FILE *mounts = setmntent(proc_mounts, "r");
-+	if (mounts == NULL)
- 		rte_panic("Cannot open %s\n", proc_mounts);
- 
- 	if (default_size == 0)
- 		default_size = get_default_hp_size();
- 
--	while (fgets(buf, sizeof(buf), fd)){
-+	while (getmntent_r(mounts, &entry, buf, sizeof(buf))) {
- 		const char *pagesz_str;
--		size_t mountpt_len = 0;
--
--		if (rte_strsplit(buf, sizeof(buf), splitstr, _FIELDNAME_MAX,
--				split_tok) != _FIELDNAME_MAX) {
--			EAL_LOG(ERR, "Error parsing %s", proc_mounts);
--			break; /* return NULL */
--		}
-+		uint64_t pagesz = default_size;
-+		size_t mountpt_len;
- 
--		if (strncmp(splitstr[FSTYPE], hugetlbfs_str, htlbfs_str_len) != 0)
-+		if (strcmp(entry.mnt_type, "hugetlbfs") != 0)
- 			continue;
- 
--		pagesz_str = strstr(splitstr[OPTIONS], pagesize_opt);
-+		pagesz_str = strstr(entry.mnt_opts, pagesize_opt);
-+		if (pagesz_str)
-+			pagesz = rte_str_to_size(&pagesz_str[pagesize_opt_len]);
- 
--		/* if no explicit page size, the default page size is compared */
--		if (pagesz_str == NULL) {
--			if (hugepage_sz != default_size)
--				continue;
--		}
--		/* there is an explicit page size, so check it */
--		else {
--			uint64_t pagesz = rte_str_to_size(&pagesz_str[pagesize_opt_len]);
--			if (pagesz != hugepage_sz)
--				continue;
--		}
-+		if (pagesz != hugepage_sz)
-+			continue;
- 
- 		/*
- 		 * If no --huge-dir option has been given, we're done.
- 		 */
- 		if (internal_conf->hugepage_dir == NULL) {
--			strlcpy(found, splitstr[MOUNTPT], len);
-+			found = strdup(entry.mnt_dir);
-+			if (found == NULL)
-+				rte_panic("Cannot dup %s", entry.mnt_dir);
- 			break;
- 		}
- 
--		mountpt_len = strlen(splitstr[MOUNTPT]);
-+		mountpt_len = strlen(entry.mnt_dir);
- 
- 		/*
- 		 * Ignore any mount that doesn't contain the --huge-dir directory
- 		 * or where mount point is not a parent path of --huge-dir
- 		 */
--		if (strncmp(internal_conf->hugepage_dir, splitstr[MOUNTPT],
--				mountpt_len) != 0 ||
-+		if (strncmp(internal_conf->hugepage_dir, entry.mnt_dir, mountpt_len) != 0 ||
- 			(hugepage_dir_len > mountpt_len &&
- 				internal_conf->hugepage_dir[mountpt_len] != '/')) {
- 			continue;
-@@ -285,16 +265,24 @@ get_hugepage_dir(uint64_t hugepage_sz, char *hugedir, int len)
- 		 * We found a match, but only prefer it if it's a longer match
- 		 * (so /mnt/1 is preferred over /mnt for matching /mnt/1/2)).
- 		 */
--		if (mountpt_len > strlen(found))
--			strlcpy(found, splitstr[MOUNTPT], len);
-+		if (mountpt_len > strlen(found)) {
-+			found = realloc(found, mountpt_len + 1);
-+			if (found == NULL)
-+				rte_panic("Cannot realloc for %s", entry.mnt_dir);
-+			memcpy(found, entry.mnt_dir, mountpt_len + 1);
-+		}
+ 		/* Set thread_name for aid in debugging. */
+-		snprintf(thread_name, sizeof(thread_name),
+-				"dpdk-worker%d", i);
++		ret = snprintf(thread_name, sizeof(thread_name), "dpdk-worker%d", i);
++		if (ret >= RTE_THREAD_NAME_SIZE)
++			EAL_LOG(INFO, "Worker thread name %s truncated", thread_name);
 +
- 	} /* end while fgets */
+ 		rte_thread_set_name(lcore_config[i].thread_id, thread_name);
  
--	fclose(fd);
-+	endmntent(mounts);
+ 		ret = rte_thread_set_affinity_by_id(lcore_config[i].thread_id,
+diff --git a/lib/eal/linux/eal.c b/lib/eal/linux/eal.c
+index b12f325ddd..d848de03d8 100644
+--- a/lib/eal/linux/eal.c
++++ b/lib/eal/linux/eal.c
+@@ -863,8 +863,10 @@ rte_eal_init(int argc, char **argv)
+ 			rte_panic("Cannot create thread\n");
  
--	if (found[0] != '\0') {
-+	if (found != NULL) {
- 		/* If needed, return the requested dir, not the mount point. */
--		strlcpy(hugedir, internal_conf->hugepage_dir != NULL ?
--			internal_conf->hugepage_dir : found, len);
-+		if (internal_conf->hugepage_dir != NULL)
-+			strlcpy(hugedir, internal_conf->hugepage_dir, len);
-+		else
-+			strlcpy(hugedir, found, len);
-+		free(found);
- 		return 0;
- 	}
+ 		/* Set thread_name for aid in debugging. */
+-		snprintf(thread_name, sizeof(thread_name),
+-			"dpdk-worker%d", i);
++		ret = snprintf(thread_name, sizeof(thread_name), "dpdk-worker%d", i);
++		if (ret >= RTE_THREAD_NAME_SIZE)
++			EAL_LOG(INFO, "Worker thread name %s truncated", thread_name);
++
+ 		rte_thread_set_name(lcore_config[i].thread_id, thread_name);
  
+ 		ret = rte_thread_set_affinity_by_id(lcore_config[i].thread_id,
+diff --git a/lib/eal/windows/eal.c b/lib/eal/windows/eal.c
+index 21fe7cb1d9..f06375a624 100644
+--- a/lib/eal/windows/eal.c
++++ b/lib/eal/windows/eal.c
+@@ -378,8 +378,10 @@ rte_eal_init(int argc, char **argv)
+ 			rte_panic("Cannot create thread\n");
+ 
+ 		/* Set thread name for aid in debugging. */
+-		snprintf(thread_name, sizeof(thread_name),
+-			"dpdk-worker%d", i);
++		ret = snprintf(thread_name, sizeof(thread_name), "dpdk-worker%d", i);
++		if (ret >= RTE_THREAD_NAME_SIZE)
++			EAL_LOG(INFO, "Worker thread name %s truncated", thread_name);
++
+ 		rte_thread_set_name(lcore_config[i].thread_id, thread_name);
+ 
+ 		ret = rte_thread_set_affinity_by_id(lcore_config[i].thread_id,
 -- 
 2.51.0
 
