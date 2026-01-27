@@ -2,22 +2,22 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64D65D2FEC0
-	for <dpdk-dev@archiver.kernel.org>; Tue, 27 Jan 2026 17:45:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DA65D2FEC0
+	for <dpdk-dev@archiver.kernel.org>; Tue, 27 Jan 2026 17:45:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 59B92410D0;
-	Tue, 27 Jan 2026 18:45:26 +0100 (CET)
-Received: from DM5PR21CU001.outbound.protection.outlook.com
- (mail-centralusazon11011023.outbound.protection.outlook.com [52.101.62.23])
- by mails.dpdk.org (Postfix) with ESMTP id 9EC3D410DF
- for <dev@dpdk.org>; Tue, 27 Jan 2026 18:45:24 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id B0E08411F3;
+	Tue, 27 Jan 2026 18:45:28 +0100 (CET)
+Received: from PH7PR06CU001.outbound.protection.outlook.com
+ (mail-westus3azon11010061.outbound.protection.outlook.com [52.101.201.61])
+ by mails.dpdk.org (Postfix) with ESMTP id CFAEA4161A
+ for <dev@dpdk.org>; Tue, 27 Jan 2026 18:45:27 +0100 (CET)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=PCBW0bKprIisUFvzptM4Rr5nT5mvBaaQjHOxZdObkwMlEaLclhmVMX/xXNr+PTA3IxBDkMSeel/IztQErk5rDjnO5GLYFqLEhnvjbGptM8yOyQTrjxwQz2UmC5mXeygbOsNwb0REHgTS1NkavWf5xk8K9pp8u++XrPqjoTCVQq/9uR7Q90JT6X1XthRaM4NotRQ51lL8WlRfsc6XrCEXLBLn2F1mzqiuiMGZ84OsuwjqLaHcjGFx7Ar6NKr1pCoD6THa9m68pkJcbLt5021zACFGaDapIb02EPEkCgASUgIPQhjjJFpU95lMGwEPHecmYwQqKKnhV1ZtgXGjYR+csQ==
+ b=Eb9W4FN+YiNtti3abetXf/8y313KkKQeMrydQlBX/854SICrZ3Gi07aSJ/LeBaQK4VcWDhS0Km38h9fHtZKQ83f5Ojjt6EjgZ/00AONL3gyidpJ27cuqf6EkYOqzQhSdEiQROnbNFiQ8f+Dwr85INPIqYNQyKxqklgh06h+vYJfwUzo8JGp+1NdjzUbfyTk4w0mc0pmaTzSqm7udLjvifOwJ14EwAfuSqA5Pd7kzoBMrII2t+uDn+x+PvTFB1YLNvxFCZMibS0ByEcgTcptTGjlYdHyMjOgn9Z3HbiMPeP52koJL+8+4QrEHqDnRjgJ9hBGD8IUxkuniu54QRPvxPw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GGNZ1MmEMTZKeHhSEKFGbUqUO/mEBSnCWZOBp9jPIFs=;
- b=Gv9crkvfm7JKgORRO1S3OjtzN9YGr3pgl7RmgplNGH+ubKPyA6+XXEwWWGdE//VMiVkfVw4e3U/ILqbrggqh9miFXIgHtrHXFoDFJzwtddAmBgQsuZWKcM46CnILn45dsKeIWYicrKfEW/KUSPEyT8PC+hDaPDbWSIMNfVWW9wdavUVA1RWREnROszlCxDq7mt/LpopxIDaBMrtldSrp9lOUkZVIw4I7VP7DFIvyhiSH/HtbwSTfcSwzLrLb1oy2be8aTHB2Hx+2Sd+f48yl1L1ETEpiN+xi1OftpsV79reGhFNybffFKoyYbc8t2yj3JuA9Jb6GOzTQJfydbAsIAg==
+ bh=W9wVNYjDc+zQ3XVQrNK7QYfmnn4aGZOtX6m3DtQrE/Q=;
+ b=e3e6PfwnhN42WvDtERDHtJXSTzOugdMZFwV0VwdLhgE3KOKtBuRKyCdN8bGHFJrJsXq1kv3c3cTEY4UharGhgxyKOu4bI4cyi5Izi6/JUy8nuK3ZfKOf3ui4pNncbrhr6URan/4CzmJLDoaV9e/XuzYSjCRtffN+wzNHmnuv7+MBJuNGKAHxEZeWIwN+fZGWMMdS7ox5nmEs1r+5UFbXEmZAuBsZqUQNvHEiq2GvdzjTPQHEvWtbhYX4f15Z3dav5OvlJ8vduff6+r1hwVtFyheVmjOpFJc5K6L3SlOnx5FImU5+IgLVaD70U0C+dyfziScfwGTrAVNlEVtRX4oRhw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  216.228.117.161) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
@@ -25,18 +25,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GGNZ1MmEMTZKeHhSEKFGbUqUO/mEBSnCWZOBp9jPIFs=;
- b=CA9mIZROJBq6g45mQd6q99261cxdBWUFswASmMfOe9Oit1qBpNFPN98NXcgV2bNRqHrkYgHvPItU0IWuFg1hZi+Fzr1n2ia6+zrMVyjawEBsnu17PzGe1IucW8enNxnnICd2H7DFtveO4F9H7B++mqJotCiYZKhmXUClUaVT/bisRyFinSshqJPQfmVM61vT5ixHZwDLuYpiGSXwSFT/RB4b9ZPzUSiZKzaafUNfmALnk/vl3PxIsPsu7wPvz5TOInyNjlOcNGqdSEuD5OhXNPC6Ql7eGw8aZVnWhiE9XBWzTxDRPDzNVBl+uCzDIl+z2rvDKjl3zzxcelJMc1hyLw==
-Received: from DS7PR03CA0326.namprd03.prod.outlook.com (2603:10b6:8:2b::28) by
- SA1PR12MB6871.namprd12.prod.outlook.com (2603:10b6:806:25f::22) with
+ bh=W9wVNYjDc+zQ3XVQrNK7QYfmnn4aGZOtX6m3DtQrE/Q=;
+ b=amrzxbmJcVbQBwcE8pG6oJtS7uljThqrghZapffISv2Hrv3BTopUCJSLIpBepAvuO5aBs+RVmmwpyv5PsIeJh1In7bzZAS6ZjDRqLFH4rvyNwfrfcJ8dQfvJnCbCn8CfKqR9asdux9pdzb0SlG/iEHK9h1gFdBiaz12xAaqzWPTCczhB2wSCy1pGB+iGA0wcbQXxhH3Fq0KyFJnftCQ+WCa2YKu7NG0NLmIVHfZbBPzyxHRXDBfw0kiH4PCi5+K8kASQx9zVCNgxcY6a/O7hvWxn66YTqzn8TY2DORaAYi7t4lzzy82uc4K3IM9qEXq+N2oMGg9YPfqGegmDS8FZbw==
+Received: from DS7P220CA0066.NAMP220.PROD.OUTLOOK.COM (2603:10b6:8:224::17) by
+ BY5PR12MB4130.namprd12.prod.outlook.com (2603:10b6:a03:20b::16) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9542.15; Tue, 27 Jan
- 2026 17:45:14 +0000
-Received: from DS3PEPF0000C37B.namprd04.prod.outlook.com
- (2603:10b6:8:2b:cafe::c2) by DS7PR03CA0326.outlook.office365.com
- (2603:10b6:8:2b::28) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9542.16; Tue, 27 Jan
+ 2026 17:45:22 +0000
+Received: from DS3PEPF0000C37C.namprd04.prod.outlook.com
+ (2603:10b6:8:224:cafe::5e) by DS7P220CA0066.outlook.office365.com
+ (2603:10b6:8:224::17) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.20.9564.7 via Frontend Transport; Tue,
- 27 Jan 2026 17:45:09 +0000
+ 27 Jan 2026 17:45:19 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
  smtp.mailfrom=nvidia.com;
  dkim=none (message not signed)
@@ -45,23 +45,26 @@ Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
  216.228.117.161 as permitted sender) receiver=protection.outlook.com;
  client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
 Received: from mail.nvidia.com (216.228.117.161) by
- DS3PEPF0000C37B.mail.protection.outlook.com (10.167.23.5) with Microsoft SMTP
+ DS3PEPF0000C37C.mail.protection.outlook.com (10.167.23.6) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9564.3 via Frontend Transport; Tue, 27 Jan 2026 17:45:13 +0000
+ 15.20.9564.3 via Frontend Transport; Tue, 27 Jan 2026 17:45:19 +0000
 Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
  (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 27 Jan
- 2026 09:44:54 -0800
+ 2026 09:44:59 -0800
 Received: from aerial-hp-5g-02.nvidia.com (10.126.230.35) by
  rnnvmail201.nvidia.com (10.129.68.8) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.20; Tue, 27 Jan 2026 09:44:53 -0800
+ 15.2.2562.20; Tue, 27 Jan 2026 09:44:58 -0800
 From: Cliff Burdick <cburdick@nvidia.com>
 To: <dev@dpdk.org>
-CC: <anatoly.burakov@intel.com>, Thomas Monjalon <thomas@monjalon.net>
-Subject: [PATCH 1/2] eal: support dmabuf
-Date: Tue, 27 Jan 2026 17:44:08 +0000
-Message-ID: <20260127174429.1504288-2-cburdick@nvidia.com>
+CC: <anatoly.burakov@intel.com>, Dariusz Sosnowski <dsosnowski@nvidia.com>,
+ Viacheslav Ovsiienko <viacheslavo@nvidia.com>, Bing Zhao <bingz@nvidia.com>,
+ Ori Kam <orika@nvidia.com>, Suanming Mou <suanmingm@nvidia.com>, Matan Azrad
+ <matan@nvidia.com>
+Subject: [PATCH 2/2] common/mlx5: support dmabuf
+Date: Tue, 27 Jan 2026 17:44:09 +0000
+Message-ID: <20260127174429.1504288-3-cburdick@nvidia.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260127174429.1504288-1-cburdick@nvidia.com>
 References: <20260127174429.1504288-1-cburdick@nvidia.com>
@@ -73,56 +76,55 @@ X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
  rnnvmail201.nvidia.com (10.129.68.8)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS3PEPF0000C37B:EE_|SA1PR12MB6871:EE_
-X-MS-Office365-Filtering-Correlation-Id: 75796cd1-04b9-4c15-db5a-08de5dcbd329
-X-LD-Processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
+X-MS-TrafficTypeDiagnostic: DS3PEPF0000C37C:EE_|BY5PR12MB4130:EE_
+X-MS-Office365-Filtering-Correlation-Id: 12c2d799-c68b-4138-53b5-08de5dcbd6d3
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|82310400026|376014|1800799024|36860700013; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?xca+rVZtuhPXJaxbhZt/pWan3mVPiAz33jSP4aOLzO96jtHbvJIzrwSfCHww?=
- =?us-ascii?Q?OjpxR+zPP7mWDrKJxvWPLcgzHzbsuSmdUbzSoq4ePvmjJ+H31ObDDdqQjaRY?=
- =?us-ascii?Q?p0Gwqcl+YYVxXtCyg0zVgi2T0DAlHYHG+4TAZjgMkoM0x4Thjkn3B+ZdbnM8?=
- =?us-ascii?Q?Q4pVqbws/bkCw+OgZVZcX2E+RwJnluRAljWfYUewqWbrW6BxbMxR6ysqYaMP?=
- =?us-ascii?Q?ozrqo77vj12+6Yj/ifJ0mLzzx92ZfdxhuswbypooRnXlMD6nhlom8jjZvTsr?=
- =?us-ascii?Q?cGLJ4VkerIPGkJBtjtwUQmZMWFC00aDAxLDcx5f0CqGO5NRmYYhJxR/4DL3w?=
- =?us-ascii?Q?1kLbpyn7OZ27byPfXarHyAR8Lyfr6RsYWJN3yEvw/RZGOVcdlNJIM2R5EdjJ?=
- =?us-ascii?Q?DcONG6jIPSnm+Vtd+nFQG5BJ/PHDx1xMsZeZYWcS7IE5Dmf+VDvKupd4Bu9M?=
- =?us-ascii?Q?UydC+Vye04+3gRE3uYTkF2rz7FoEfNeenbEbJxb72EZNWAgX+g4AX6kAEmmw?=
- =?us-ascii?Q?5IhJThiVnvmeLsGj+Ftm7yyrihoUn8xBED0Y9MgxM1u6DJy7aUDXhr3BxLUf?=
- =?us-ascii?Q?WRyapn+32DMgl2pihe6bJwGVgQAX9TTCa/XMiaNCQEJ9xRzizyjBqTdtCvOn?=
- =?us-ascii?Q?1t62rwe/kJpMI/yL6C81Kol8P9ePp1L8l3dqwgaaY1sanGsH+wa3EHW8tiAz?=
- =?us-ascii?Q?GTWonquHZq32lxmueA2Jsx7qkifMegM+sK9lLPBzDn8U2hQrtkPyuHMAEaHu?=
- =?us-ascii?Q?shxcBYPc7pHshK45QMPQ0KQ8ts+5cwhvKO05TD/twkGKuSmWssSgeRwxDnQV?=
- =?us-ascii?Q?v+jkjKWkCf/2fcJDZpLiKtwT7jamhESc28njUjojHCJLVt4WRDXzJrUOFuV3?=
- =?us-ascii?Q?29k9zdCLuDxokz613qiSXJV4ZZHcD3jrX890IsyQSI5LaReHDEmnpnxrlY4T?=
- =?us-ascii?Q?x0n064XoCws/je/BJDa/x6waDCyevm+kL2CG3Gv6H2SBEtetHaKxVghE/i7O?=
- =?us-ascii?Q?X5jHTfMPsiYbMU7x9pqPD5Rr6g12hjMAy2gusvJoJSAB4+W6ArvTcU7ZhC2b?=
- =?us-ascii?Q?GIIic0/vABbb+FwJFZhoszkETrpurcmaJfi9lnRhHBPbM2GG0oYxflFyiVgR?=
- =?us-ascii?Q?UDw23QYvrHji5cjEQnyP+kpLSKm5LlVqn63ouJVSlhD7IAm5Czo6c1W6kWh1?=
- =?us-ascii?Q?tUIj6mGX34tn/czCe7miExuJed0vOx8Hfmvvka733t4CPuv3wJm0Dlx+gVVl?=
- =?us-ascii?Q?gEzyVC6pr2zBT3kvGDcWSxf0qIzrdOqkPpfhbWKpSscUI3C/7LoFBVJud51X?=
- =?us-ascii?Q?WAQQf2VoA/jn+aiQZfpk3OnS1IUSGKvwRuJ7PguwX6dVXQj1+HqsXFYmNcWl?=
- =?us-ascii?Q?geXJF3Q9z5Mpp53/mYeV7e/ZNFQVq0jAicMxfOnEmyCn2FKxfEQiTBuVGELo?=
- =?us-ascii?Q?wnm4r8NcbWybZ4EQCGyUyhLpCFCZWZheu7fNxYyQZayMb+d6kBo2ASej9k1g?=
- =?us-ascii?Q?cySfKHCm0Vh9D/SBTp1C5UvRl9Z6SVVC0nv0qw/cHiiNHaaJHZ+74MPh74tH?=
- =?us-ascii?Q?rWBM6DYf8NbyneCiE4GCtdPcHys2grWANrIrFWA01AyE1zH/IP6s8062nyJV?=
- =?us-ascii?Q?oIUIB3J1f3c44CoIZRDWgFMviLhQkPNcGzmQnN5i2uCaY0iY3mqGmGXbbHZA?=
- =?us-ascii?Q?PdokNg=3D=3D?=
+ ARA:13230040|1800799024|376014|36860700013|82310400026; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?MCdhsWPIubwZxJpo3oQLTsQDx9gx6jtswwUq2UX6whkzTRPzCSs3wvkLsauc?=
+ =?us-ascii?Q?fv1nEN5u2TbqT48KHkiBemgZ26IbRGzQoR8PSGyP1Py5O+bcDFcSUnV/EHf+?=
+ =?us-ascii?Q?O9wJjnpXXh1h6gz5dqGh3mT0X3DsJtNYyPnfDjLHP84KJioc3z6IGOp9eG0s?=
+ =?us-ascii?Q?rkmLie9IN+0vPq4HUDdCz+l5U4WJlcjGAvkfHEWp2HzugDutigX1MGtG6H7p?=
+ =?us-ascii?Q?nzDF95g7Y82wot3eD9TEs6d9q9C/s54sx1kPKvKCVEPdT1CwPxQhGt/jAeYs?=
+ =?us-ascii?Q?eFdlsBa7rsk7FR20rmYd2deYA2iFrBck7CYBJDFnG2W0/KC6KR64AXRx56Uj?=
+ =?us-ascii?Q?Ts9r3XMVnQ6OOyiz7NocG43PEuzm9L4ehwZ7rTR0s+/ToyTfZltowg/XVgMu?=
+ =?us-ascii?Q?d1sUO5EaxrwiTanGhDWhH54paYCPzJeZLSAFTgA4/Nh6KwnqFOxajIidIkQ0?=
+ =?us-ascii?Q?0mLzug8KhOm4iXmlXk7hDF1Fsd8r0IYW9WRcJHfo4p/gmdKaA13kkWhYN9p2?=
+ =?us-ascii?Q?qjSCVYC8LyY4z4unNHO6J870F3XLdqd4ej0Pw1NCKKkLJu+H4p06duSKAhMX?=
+ =?us-ascii?Q?77k137i2xXNnWdzbDeuTIFm5xHREP+zmiX3fhN9CBDN00+qcnNGzXLTqKP+l?=
+ =?us-ascii?Q?nPx/KgdYZybZ5LXNhVik1RsHgbsrGrtLptUMnJupbFoaoPq68wUNSKzuDp7S?=
+ =?us-ascii?Q?7kUyQkVcxO2PnKrb2UnVNfRG/AguvYw5Ag+khJWG/6MLHYdsMzcDpWMC6WhY?=
+ =?us-ascii?Q?Zb3MGGf/no98I/4meDidltRfxrTN09X1d8X2b5098XXcX1JD3G5hUh3bCM1R?=
+ =?us-ascii?Q?K+aW8wRjIKtJG+z2alsoRRHYM2UWTz7WrxCCogD7gYfpkLqSxu7MuwF9eoH6?=
+ =?us-ascii?Q?tjiuFBDGHa//CFrDfopapJES8vWYcZbbOcZGwM+QvCNEHKtA+Ek3zzh+2ht2?=
+ =?us-ascii?Q?gfO/fzZHuqsCXc/YrKUVw+TnMxQGOucy78fuUDUIk+r8t+emA+Flsd4RNK+R?=
+ =?us-ascii?Q?faY2+IzU7y7kW31slLTpJ9RMhzhgIGWPglu/Yr3IaGD4clGaMbBsvXP+1w2e?=
+ =?us-ascii?Q?67qrxdzKMCVTY5NG/d5qmF7VXIhRicftrj9em72tFzDUQrR0Eh+Q2uRc8DjR?=
+ =?us-ascii?Q?XM2X9RoAiI3QLZMCdJVDJQ2aGoGAjOVx33aXdkuQ0o6kUDTLbHOdo22vUBQu?=
+ =?us-ascii?Q?RKbgAgTwLoE/bwf8pGAb021S3Ky2ltUJZG2UpLSNRYPyO7qWGmFC7vY/cZqU?=
+ =?us-ascii?Q?10wwwGf6Cu/74tv/6Z/BncE3DVcJxxup1iLfdYSlm92kdQ11RBJFcq+wTuLh?=
+ =?us-ascii?Q?xZ1W2NrIXT9312084J0yRpYpz/5SwyKoDCuaiAyeUuYpHpSWRwCixj/ks4rZ?=
+ =?us-ascii?Q?4rasb9arZTk+Wx9QT514xOT/sp+hnxj3722Ye4HiXZWY4wFdljnuF0DwqU2b?=
+ =?us-ascii?Q?wGVMBa4rznT46P7Ug0J4ZOBhIPPhaGUKKfIVc0hKIFiv1Yhk/qOhtakzqity?=
+ =?us-ascii?Q?sg7hp+xi1JHW+ow6onzPmM7CWqnI6h0bLNGv9Y9OIQdDp2aWmZ8zJ5j7zvwK?=
+ =?us-ascii?Q?Rn8r/TqnMUt5TIt7te+BNF5lHUn49xLBx829hr6AOi/pf0S6ZaDgx5CTqXWV?=
+ =?us-ascii?Q?EGcfvThC7MNBSQKmTxgrYH8UZNcInA0U+olfYT3vBeShChkwstZmZQ4rvnaV?=
+ =?us-ascii?Q?vOaUdA=3D=3D?=
 X-Forefront-Antispam-Report: CIP:216.228.117.161; CTRY:US; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge2.nvidia.com; CAT:NONE;
- SFS:(13230040)(82310400026)(376014)(1800799024)(36860700013); DIR:OUT;
+ SFS:(13230040)(1800799024)(376014)(36860700013)(82310400026); DIR:OUT;
  SFP:1101; 
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Jan 2026 17:45:13.4283 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 75796cd1-04b9-4c15-db5a-08de5dcbd329
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Jan 2026 17:45:19.4383 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 12c2d799-c68b-4138-53b5-08de5dcbd6d3
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.161];
  Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DS3PEPF0000C37B.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: DS3PEPF0000C37C.namprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB6871
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4130
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -142,469 +144,464 @@ NIC to GPU transfers. Prior to dmabuf users had to load proprietary
 drivers to expose the DMA mappings. With dmabuf the proprietary drivers
 are no longer required.
 
-A new api function rte_extmem_register_dmabuf is introduced to create
-the mapping from a dmabuf file descriptor. dmabuf uses a file descriptor
-and an offset that has been pre-opened with the kernel. The kernel uses
-the file descriptor to map to a VA pointer. To avoid ABI changes, a
-static struct is used inside of eal_common_memory.c, and lookups are
-done on this struct rather than from the rte_memseg_list.
-
-Ideally we would like to add both the dmabuf file descriptor and offset
-to rte_memseg_list, but it's not clear if we can reuse existing fields
-when using the dmabuf API.
-
-We could rename the external flag to a more generic "properties" flag where
-"external" is the lowest bit, then we can use the second bit to indicate the
-presence of dmabuf. In the presence of the flag for dmabuf we could
-reuse the base_va address field for the dmabuf offset, and the socket_id
-for the file descriptor.
-
-Which option is preferred?
-
 Signed-off-by: Cliff Burdick <cburdick@nvidia.com>
 ---
- .mailmap                           |   1 +
- lib/eal/common/eal_common_memory.c | 168 +++++++++++++++++++++++++++++
- lib/eal/common/eal_memalloc.h      |  21 ++++
- lib/eal/common/malloc_heap.c       |  27 +++++
- lib/eal/common/malloc_heap.h       |   5 +
- lib/eal/include/rte_memory.h       | 125 +++++++++++++++++++++
- 6 files changed, 347 insertions(+)
+ drivers/common/mlx5/linux/meson.build         |   2 +
+ drivers/common/mlx5/linux/mlx5_common_verbs.c |  48 +++++++-
+ drivers/common/mlx5/linux/mlx5_glue.c         |  19 +++
+ drivers/common/mlx5/linux/mlx5_glue.h         |   3 +
+ drivers/common/mlx5/mlx5_common.c             |  28 ++++-
+ drivers/common/mlx5/mlx5_common_mr.c          | 108 +++++++++++++++++-
+ drivers/common/mlx5/mlx5_common_mr.h          |  17 ++-
+ drivers/common/mlx5/windows/mlx5_common_os.c  |   8 +-
+ drivers/crypto/mlx5/mlx5_crypto.h             |   1 +
+ drivers/crypto/mlx5/mlx5_crypto_gcm.c         |   3 +-
+ 10 files changed, 229 insertions(+), 8 deletions(-)
 
-diff --git a/.mailmap b/.mailmap
-index 2f089326ff..4c2b2f921d 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -291,6 +291,7 @@ Cian Ferriter <cian.ferriter@intel.com>
- Ciara Loftus <ciara.loftus@intel.com>
- Ciara Power <ciara.power@intel.com>
- Claire Murphy <claire.k.murphy@intel.com>
-+Cliff Burdick <cburdick@nvidia.com>
- Clemens Famulla-Conrad <cfamullaconrad@suse.com>
- Cody Doucette <doucette@bu.edu>
- Congwen Zhang <zhang.congwen@zte.com.cn>
-diff --git a/lib/eal/common/eal_common_memory.c b/lib/eal/common/eal_common_memory.c
-index c62edf5e55..304ed18396 100644
---- a/lib/eal/common/eal_common_memory.c
-+++ b/lib/eal/common/eal_common_memory.c
-@@ -45,6 +45,18 @@
- static void *next_baseaddr;
- static uint64_t system_page_sz;
- 
-+/* Internal storage for dmabuf info, indexed by memseg list index.
-+ * This keeps dmabuf metadata out of the public rte_memseg_list structure
-+ * to preserve ABI compatibility.
-+ */
-+static struct {
-+		int fd;          /**< dmabuf fd, -1 if not dmabuf backed */
-+		uint64_t offset; /**< offset within dmabuf */
-+	} dmabuf_info[RTE_MAX_MEMSEG_LISTS] = {
-+	[0 ... RTE_MAX_MEMSEG_LISTS - 1] = { .fd = -1, .offset = 0 }
-+};
-+
-+
- #define MAX_MMAP_WITH_DEFINED_ADDR_TRIES 5
- void *
- eal_get_virtual_area(void *requested_addr, size_t *size,
-@@ -930,6 +942,109 @@ rte_memseg_get_fd_offset(const struct rte_memseg *ms, size_t *offset)
- 	return ret;
+diff --git a/drivers/common/mlx5/linux/meson.build b/drivers/common/mlx5/linux/meson.build
+index 3767e7a69b..8e83104165 100644
+--- a/drivers/common/mlx5/linux/meson.build
++++ b/drivers/common/mlx5/linux/meson.build
+@@ -203,6 +203,8 @@ has_sym_args = [
+             'mlx5dv_dr_domain_allow_duplicate_rules' ],
+         [ 'HAVE_MLX5_IBV_REG_MR_IOVA', 'infiniband/verbs.h',
+             'ibv_reg_mr_iova' ],
++        [ 'HAVE_IBV_REG_DMABUF_MR', 'infiniband/verbs.h',
++            'ibv_reg_dmabuf_mr' ],
+         [ 'HAVE_MLX5_IBV_IMPORT_CTX_PD_AND_MR', 'infiniband/verbs.h',
+             'ibv_import_device' ],
+         [ 'HAVE_MLX5DV_DR_ACTION_CREATE_DEST_ROOT_TABLE', 'infiniband/mlx5dv.h',
+diff --git a/drivers/common/mlx5/linux/mlx5_common_verbs.c b/drivers/common/mlx5/linux/mlx5_common_verbs.c
+index 98260df470..f6d18fd5df 100644
+--- a/drivers/common/mlx5/linux/mlx5_common_verbs.c
++++ b/drivers/common/mlx5/linux/mlx5_common_verbs.c
+@@ -129,6 +129,47 @@ mlx5_common_verbs_reg_mr(void *pd, void *addr, size_t length,
+ 	return 0;
  }
  
-+/* Internal dmabuf info functions */
++/**
++ * Register mr for dma-buf backed memory. Given protection domain pointer,
++ * dma-buf fd, offset and length, register the memory region.
++ *
++ * @param[in] pd
++ *   Pointer to protection domain context.
++ * @param[in] offset
++ *   Offset within the dma-buf.
++ * @param[in] length
++ *   Length of the memory to register.
++ * @param[in] fd
++ *   File descriptor of the dma-buf.
++ * @param[out] pmd_mr
++ *   pmd_mr struct set with lkey, address, length and pointer to mr object
++ *
++ * @return
++ *   0 on successful registration, -1 otherwise
++ */
++RTE_EXPORT_INTERNAL_SYMBOL(mlx5_common_verbs_reg_dmabuf_mr)
 +int
-+eal_memseg_list_set_dmabuf_info(int list_idx, int fd, uint64_t offset)
++mlx5_common_verbs_reg_dmabuf_mr(void *pd, uint64_t offset, size_t length,
++				uint64_t iova, int fd,
++				struct mlx5_pmd_mr *pmd_mr)
 +{
-+	if (list_idx < 0 || list_idx >= RTE_MAX_MEMSEG_LISTS)
-+		return -EINVAL;
++	struct ibv_mr *ibv_mr;
++	ibv_mr = mlx5_glue->reg_dmabuf_mr(pd, offset, length, iova, fd,
++					  IBV_ACCESS_LOCAL_WRITE |
++					  (haswell_broadwell_cpu ? 0 :
++					  IBV_ACCESS_RELAXED_ORDERING));
++	if (!ibv_mr)
++		return -1;
 +
-+	dmabuf_info[list_idx].fd = fd;
-+	dmabuf_info[list_idx].offset = offset;
++	*pmd_mr = (struct mlx5_pmd_mr){
++		.lkey = ibv_mr->lkey,
++		.addr = ibv_mr->addr,
++		.len = ibv_mr->length,
++		.obj = (void *)ibv_mr,
++	};
 +	return 0;
 +}
-+
-+int
-+eal_memseg_list_get_dmabuf_fd(int list_idx)
-+{
-+	if (list_idx < 0 || list_idx >= RTE_MAX_MEMSEG_LISTS)
-+		return -EINVAL;
-+
-+	return dmabuf_info[list_idx].fd;
-+}
-+
-+int
-+eal_memseg_list_get_dmabuf_offset(int list_idx, uint64_t *offset)
-+{
-+	if (list_idx < 0 || list_idx >= RTE_MAX_MEMSEG_LISTS || offset == NULL)
-+		return -EINVAL;
-+
-+	*offset = dmabuf_info[list_idx].offset;
-+	return 0;
-+}
-+
-+/* Public dmabuf info API functions */
-+RTE_EXPORT_SYMBOL(rte_memseg_list_get_dmabuf_fd_thread_unsafe)
-+int
-+rte_memseg_list_get_dmabuf_fd_thread_unsafe(const struct rte_memseg_list *msl)
-+{
-+	struct rte_mem_config *mcfg = rte_eal_get_configuration()->mem_config;
-+	int msl_idx;
-+
-+	if (msl == NULL) {
-+		rte_errno = EINVAL;
-+		return -1;
-+	}
-+
-+	msl_idx = msl - mcfg->memsegs;
-+	if (msl_idx < 0 || msl_idx >= RTE_MAX_MEMSEG_LISTS) {
-+		rte_errno = EINVAL;
-+		return -1;
-+	}
-+
-+	return dmabuf_info[msl_idx].fd;
-+}
-+
-+RTE_EXPORT_SYMBOL(rte_memseg_list_get_dmabuf_fd)
-+int
-+rte_memseg_list_get_dmabuf_fd(const struct rte_memseg_list *msl)
-+{
-+	int ret;
-+
-+	rte_mcfg_mem_read_lock();
-+	ret = rte_memseg_list_get_dmabuf_fd_thread_unsafe(msl);
-+	rte_mcfg_mem_read_unlock();
-+
-+	return ret;
-+}
-+
-+RTE_EXPORT_SYMBOL(rte_memseg_list_get_dmabuf_offset_thread_unsafe)
-+int
-+rte_memseg_list_get_dmabuf_offset_thread_unsafe(const struct rte_memseg_list *msl,
-+		uint64_t *offset)
-+{
-+	struct rte_mem_config *mcfg = rte_eal_get_configuration()->mem_config;
-+	int msl_idx;
-+
-+	if (msl == NULL || offset == NULL) {
-+		rte_errno = EINVAL;
-+		return -1;
-+	}
-+
-+	msl_idx = msl - mcfg->memsegs;
-+	if (msl_idx < 0 || msl_idx >= RTE_MAX_MEMSEG_LISTS) {
-+		rte_errno = EINVAL;
-+		return -1;
-+	}
-+
-+	*offset = dmabuf_info[msl_idx].offset;
-+	return 0;
-+}
-+
-+RTE_EXPORT_SYMBOL(rte_memseg_list_get_dmabuf_offset)
-+int
-+rte_memseg_list_get_dmabuf_offset(const struct rte_memseg_list *msl,
-+		uint64_t *offset)
-+{
-+	int ret;
-+
-+	rte_mcfg_mem_read_lock();
-+	ret = rte_memseg_list_get_dmabuf_offset_thread_unsafe(msl, offset);
-+	rte_mcfg_mem_read_unlock();
-+
-+	return ret;
-+}
-+
- RTE_EXPORT_SYMBOL(rte_extmem_register)
- int
- rte_extmem_register(void *va_addr, size_t len, rte_iova_t iova_addrs[],
-@@ -980,6 +1095,59 @@ rte_extmem_register(void *va_addr, size_t len, rte_iova_t iova_addrs[],
- 	return ret;
- }
- 
-+RTE_EXPORT_SYMBOL(rte_extmem_register_dmabuf)
-+int
-+rte_extmem_register_dmabuf(void *va_addr, size_t len,
-+		int dmabuf_fd, uint64_t dmabuf_offset,
-+		rte_iova_t iova_addrs[], unsigned int n_pages, size_t page_sz)
-+{
-+	struct rte_mem_config *mcfg = rte_eal_get_configuration()->mem_config;
-+	unsigned int socket_id, n;
-+	int ret = 0;
-+
-+	if (va_addr == NULL || page_sz == 0 || len == 0 ||
-+			!rte_is_power_of_2(page_sz) ||
-+			RTE_ALIGN(len, page_sz) != len ||
-+			((len / page_sz) != n_pages && iova_addrs != NULL) ||
-+			!rte_is_aligned(va_addr, page_sz) ||
-+			dmabuf_fd < 0) {
-+		rte_errno = EINVAL;
-+		return -1;
-+	}
-+	rte_mcfg_mem_write_lock();
-+
-+	/* make sure the segment doesn't already exist */
-+	if (malloc_heap_find_external_seg(va_addr, len) != NULL) {
-+		rte_errno = EEXIST;
-+		ret = -1;
-+		goto unlock;
-+	}
-+
-+	/* get next available socket ID */
-+	socket_id = mcfg->next_socket_id;
-+	if (socket_id > INT32_MAX) {
-+		EAL_LOG(ERR, "Cannot assign new socket ID's");
-+		rte_errno = ENOSPC;
-+		ret = -1;
-+		goto unlock;
-+	}
-+
-+	/* we can create a new memseg with dma-buf info */
-+	n = len / page_sz;
-+	if (malloc_heap_create_external_seg_dmabuf(va_addr, iova_addrs, n,
-+			page_sz, "extmem_dmabuf", socket_id,
-+			dmabuf_fd, dmabuf_offset) == NULL) {
-+		ret = -1;
-+		goto unlock;
-+	}
-+
-+	/* memseg list successfully created - increment next socket ID */
-+	mcfg->next_socket_id++;
-+unlock:
-+	rte_mcfg_mem_write_unlock();
-+	return ret;
-+}
-+
- RTE_EXPORT_SYMBOL(rte_extmem_unregister)
- int
- rte_extmem_unregister(void *va_addr, size_t len)
-diff --git a/lib/eal/common/eal_memalloc.h b/lib/eal/common/eal_memalloc.h
-index 0c267066d9..bb2cfa0717 100644
---- a/lib/eal/common/eal_memalloc.h
-+++ b/lib/eal/common/eal_memalloc.h
-@@ -90,6 +90,27 @@ eal_memalloc_set_seg_list_fd(int list_idx, int fd);
- int
- eal_memalloc_get_seg_fd_offset(int list_idx, int seg_idx, size_t *offset);
- 
-+/*
-+ * Set dmabuf info for a memseg list.
-+ * Returns 0 on success, -errno on failure.
-+ */
-+int
-+eal_memseg_list_set_dmabuf_info(int list_idx, int fd, uint64_t offset);
-+
-+/*
-+ * Get dmabuf fd for a memseg list.
-+ * Returns fd (>= 0) on success, -1 if not dmabuf backed, -errno on error.
-+ */
-+int
-+eal_memseg_list_get_dmabuf_fd(int list_idx);
-+
-+/*
-+ * Get dmabuf offset for a memseg list.
-+ * Returns 0 on success, -errno on failure.
-+ */
-+int
-+eal_memseg_list_get_dmabuf_offset(int list_idx, uint64_t *offset);
-+
- int
- eal_memalloc_init(void)
- 	__rte_requires_shared_capability(rte_mcfg_mem_get_lock());
-diff --git a/lib/eal/common/malloc_heap.c b/lib/eal/common/malloc_heap.c
-index 39240c261c..fd0376d13b 100644
---- a/lib/eal/common/malloc_heap.c
-+++ b/lib/eal/common/malloc_heap.c
-@@ -1232,6 +1232,33 @@ malloc_heap_create_external_seg(void *va_addr, rte_iova_t iova_addrs[],
- 	msl->version = 0;
- 	msl->external = 1;
- 
-+	/* initialize dmabuf info to "not dmabuf backed" */
-+	eal_memseg_list_set_dmabuf_info(i, -1, 0);
-+
-+	return msl;
-+}
-+
-+struct rte_memseg_list *
-+malloc_heap_create_external_seg_dmabuf(void *va_addr, rte_iova_t iova_addrs[],
-+		unsigned int n_pages, size_t page_sz, const char *seg_name,
-+		unsigned int socket_id, int dmabuf_fd, uint64_t dmabuf_offset)
-+{
-+	struct rte_mem_config *mcfg = rte_eal_get_configuration()->mem_config;
-+	struct rte_memseg_list *msl;
-+	int msl_idx;
-+
-+	/* Create the base external segment */
-+	msl = malloc_heap_create_external_seg(va_addr, iova_addrs, n_pages,
-+			page_sz, seg_name, socket_id);
-+	if (msl == NULL)
-+		return NULL;
-+
-+	/* Get memseg list index */
-+	msl_idx = msl - mcfg->memsegs;
-+
-+	/* Set dma-buf info in the internal side-table */
-+	eal_memseg_list_set_dmabuf_info(msl_idx, dmabuf_fd, dmabuf_offset);
-+
- 	return msl;
- }
- 
-diff --git a/lib/eal/common/malloc_heap.h b/lib/eal/common/malloc_heap.h
-index dfc56d4ae3..87525d1a68 100644
---- a/lib/eal/common/malloc_heap.h
-+++ b/lib/eal/common/malloc_heap.h
-@@ -51,6 +51,11 @@ malloc_heap_create_external_seg(void *va_addr, rte_iova_t iova_addrs[],
- 		unsigned int n_pages, size_t page_sz, const char *seg_name,
- 		unsigned int socket_id);
- 
-+struct rte_memseg_list *
-+malloc_heap_create_external_seg_dmabuf(void *va_addr, rte_iova_t iova_addrs[],
-+		unsigned int n_pages, size_t page_sz, const char *seg_name,
-+		unsigned int socket_id, int dmabuf_fd, uint64_t dmabuf_offset);
-+
- struct rte_memseg_list *
- malloc_heap_find_external_seg(void *va_addr, size_t len);
- 
-diff --git a/lib/eal/include/rte_memory.h b/lib/eal/include/rte_memory.h
-index b6e97ad695..d1c2fc8aa5 100644
---- a/lib/eal/include/rte_memory.h
-+++ b/lib/eal/include/rte_memory.h
-@@ -405,6 +405,82 @@ int
- rte_memseg_get_fd_offset_thread_unsafe(const struct rte_memseg *ms,
- 		size_t *offset);
- 
-+/**
-+ * Get dma-buf file descriptor associated with a memseg list.
-+ *
-+ * @note This function read-locks the memory hotplug subsystem, and thus cannot
-+ *       be used within memory-related callback functions.
-+ *
-+ * @param msl
-+ *   A pointer to memseg list for which to get dma-buf fd.
-+ *
-+ * @return
-+ *   Valid dma-buf file descriptor (>= 0) in case of success.
-+ *   -1 if not dma-buf backed or in case of error, with ``rte_errno`` set to:
-+ *     - EINVAL  - ``msl`` pointer was NULL or did not point to a valid memseg list
-+ */
-+int
-+rte_memseg_list_get_dmabuf_fd(const struct rte_memseg_list *msl);
-+
-+/**
-+ * Get dma-buf file descriptor associated with a memseg list.
-+ *
-+ * @note This function does not perform any locking, and is only safe to call
-+ *       from within memory-related callback functions.
-+ *
-+ * @param msl
-+ *   A pointer to memseg list for which to get dma-buf fd.
-+ *
-+ * @return
-+ *   Valid dma-buf file descriptor (>= 0) in case of success.
-+ *   -1 if not dma-buf backed or in case of error, with ``rte_errno`` set to:
-+ *     - EINVAL  - ``msl`` pointer was NULL or did not point to a valid memseg list
-+ */
-+int
-+rte_memseg_list_get_dmabuf_fd_thread_unsafe(const struct rte_memseg_list *msl);
-+
-+/**
-+ * Get dma-buf offset associated with a memseg list.
-+ *
-+ * @note This function read-locks the memory hotplug subsystem, and thus cannot
-+ *       be used within memory-related callback functions.
-+ *
-+ * @param msl
-+ *   A pointer to memseg list for which to get dma-buf offset.
-+ * @param offset
-+ *   A pointer to offset value where the result will be stored.
-+ *
-+ * @return
-+ *   0 on success.
-+ *   -1 in case of error, with ``rte_errno`` set to:
-+ *     - EINVAL  - ``msl`` pointer was NULL or did not point to a valid memseg list
-+ *     - EINVAL  - ``offset`` pointer was NULL
-+ */
-+int
-+rte_memseg_list_get_dmabuf_offset(const struct rte_memseg_list *msl,
-+		uint64_t *offset);
-+
-+/**
-+ * Get dma-buf offset associated with a memseg list.
-+ *
-+ * @note This function does not perform any locking, and is only safe to call
-+ *       from within memory-related callback functions.
-+ *
-+ * @param msl
-+ *   A pointer to memseg list for which to get dma-buf offset.
-+ * @param offset
-+ *   A pointer to offset value where the result will be stored.
-+ *
-+ * @return
-+ *   0 on success.
-+ *   -1 in case of error, with ``rte_errno`` set to:
-+ *     - EINVAL  - ``msl`` pointer was NULL or did not point to a valid memseg list
-+ *     - EINVAL  - ``offset`` pointer was NULL
-+ */
-+int
-+rte_memseg_list_get_dmabuf_offset_thread_unsafe(const struct rte_memseg_list *msl,
-+		uint64_t *offset);
 +
  /**
-  * Register external memory chunk with DPDK.
+  * Deregister mr. Given the mlx5 pmd MR - deregister the MR
   *
-@@ -443,6 +519,55 @@ int
- rte_extmem_register(void *va_addr, size_t len, rte_iova_t iova_addrs[],
- 		unsigned int n_pages, size_t page_sz);
+@@ -151,13 +192,18 @@ mlx5_common_verbs_dereg_mr(struct mlx5_pmd_mr *pmd_mr)
+  *
+  * @param[out] reg_mr_cb
+  *   Pointer to reg_mr func
++ * @param[out] reg_dmabuf_mr_cb
++ *   Pointer to reg_dmabuf_mr func
+  * @param[out] dereg_mr_cb
+  *   Pointer to dereg_mr func
+  */
+ RTE_EXPORT_INTERNAL_SYMBOL(mlx5_os_set_reg_mr_cb)
+ void
+-mlx5_os_set_reg_mr_cb(mlx5_reg_mr_t *reg_mr_cb, mlx5_dereg_mr_t *dereg_mr_cb)
++mlx5_os_set_reg_mr_cb(mlx5_reg_mr_t *reg_mr_cb,
++		      mlx5_reg_dmabuf_mr_t *reg_dmabuf_mr_cb,
++		      mlx5_dereg_mr_t *dereg_mr_cb)
+ {
+ 	*reg_mr_cb = mlx5_common_verbs_reg_mr;
++	*reg_dmabuf_mr_cb = mlx5_common_verbs_reg_dmabuf_mr;
+ 	*dereg_mr_cb = mlx5_common_verbs_dereg_mr;
+ }
+diff --git a/drivers/common/mlx5/linux/mlx5_glue.c b/drivers/common/mlx5/linux/mlx5_glue.c
+index a91eaa429d..6fac7f2bcd 100644
+--- a/drivers/common/mlx5/linux/mlx5_glue.c
++++ b/drivers/common/mlx5/linux/mlx5_glue.c
+@@ -291,6 +291,24 @@ mlx5_glue_reg_mr_iova(struct ibv_pd *pd, void *addr, size_t length,
+ #endif
+ }
+ 
++static struct ibv_mr *
++mlx5_glue_reg_dmabuf_mr(struct ibv_pd *pd, uint64_t offset, size_t length,
++			uint64_t iova, int fd, int access)
++{
++#ifdef HAVE_IBV_REG_DMABUF_MR
++	return ibv_reg_dmabuf_mr(pd, offset, length, iova, fd, access);
++#else
++	(void)pd;
++	(void)offset;
++	(void)length;
++	(void)iova;
++	(void)fd;
++	(void)access;
++	errno = ENOTSUP;
++	return NULL;
++#endif
++}
++
+ static struct ibv_mr *
+ mlx5_glue_alloc_null_mr(struct ibv_pd *pd)
+ {
+@@ -1619,6 +1637,7 @@ const struct mlx5_glue *mlx5_glue = &(const struct mlx5_glue) {
+ 	.modify_qp = mlx5_glue_modify_qp,
+ 	.reg_mr = mlx5_glue_reg_mr,
+ 	.reg_mr_iova = mlx5_glue_reg_mr_iova,
++	.reg_dmabuf_mr = mlx5_glue_reg_dmabuf_mr,
+ 	.alloc_null_mr = mlx5_glue_alloc_null_mr,
+ 	.dereg_mr = mlx5_glue_dereg_mr,
+ 	.create_counter_set = mlx5_glue_create_counter_set,
+diff --git a/drivers/common/mlx5/linux/mlx5_glue.h b/drivers/common/mlx5/linux/mlx5_glue.h
+index 81d6b0aaf9..66216d1194 100644
+--- a/drivers/common/mlx5/linux/mlx5_glue.h
++++ b/drivers/common/mlx5/linux/mlx5_glue.h
+@@ -219,6 +219,9 @@ struct mlx5_glue {
+ 	struct ibv_mr *(*reg_mr_iova)(struct ibv_pd *pd, void *addr,
+ 				      size_t length, uint64_t iova,
+ 				      int access);
++	struct ibv_mr *(*reg_dmabuf_mr)(struct ibv_pd *pd, uint64_t offset,
++					size_t length, uint64_t iova,
++					int fd, int access);
+ 	struct ibv_mr *(*alloc_null_mr)(struct ibv_pd *pd);
+ 	int (*dereg_mr)(struct ibv_mr *mr);
+ 	struct ibv_counter_set *(*create_counter_set)
+diff --git a/drivers/common/mlx5/mlx5_common.c b/drivers/common/mlx5/mlx5_common.c
+index 84a93e7dbd..0ec59b0122 100644
+--- a/drivers/common/mlx5/mlx5_common.c
++++ b/drivers/common/mlx5/mlx5_common.c
+@@ -13,6 +13,7 @@
+ #include <rte_class.h>
+ #include <rte_malloc.h>
+ #include <rte_eal_paging.h>
++#include <rte_memory.h>
+ 
+ #include "mlx5_common.h"
+ #include "mlx5_common_os.h"
+@@ -1125,6 +1126,7 @@ mlx5_common_dev_dma_map(struct rte_device *rte_dev, void *addr,
+ 	struct mlx5_common_device *dev;
+ 	struct mlx5_mr_btree *bt;
+ 	struct mlx5_mr *mr;
++	struct rte_memseg_list *msl;
+ 
+ 	dev = to_mlx5_device(rte_dev);
+ 	if (!dev) {
+@@ -1134,8 +1136,30 @@ mlx5_common_dev_dma_map(struct rte_device *rte_dev, void *addr,
+ 		rte_errno = ENODEV;
+ 		return -1;
+ 	}
+-	mr = mlx5_create_mr_ext(dev->pd, (uintptr_t)addr, len,
+-				SOCKET_ID_ANY, dev->mr_scache.reg_mr_cb);
++	/* Check if this is dma-buf backed external memory */
++	msl = rte_mem_virt2memseg_list(addr);
++	if (msl != NULL && msl->external) {
++		int dmabuf_fd = rte_memseg_list_get_dmabuf_fd_thread_unsafe(msl);
++		if (dmabuf_fd >= 0) {
++			uint64_t dmabuf_off;
++			/* Get base offset from memseg list */
++			rte_memseg_list_get_dmabuf_offset_thread_unsafe(msl, &dmabuf_off);
++			/* Calculate offset within dmabuf for this specific address */
++			dmabuf_off += ((uintptr_t)addr - (uintptr_t)msl->base_va);
++			/* Use dma-buf MR registration */
++			mr = mlx5_create_mr_ext_dmabuf(dev->pd, (uintptr_t)addr, len,
++						SOCKET_ID_ANY, dmabuf_fd, dmabuf_off,
++						dev->mr_scache.reg_dmabuf_mr_cb);
++		} else {
++			/* Use regular MR registration */
++			mr = mlx5_create_mr_ext(dev->pd, (uintptr_t)addr, len,
++						SOCKET_ID_ANY, dev->mr_scache.reg_mr_cb);
++		}
++	} else {
++		/* Use regular MR registration */
++		mr = mlx5_create_mr_ext(dev->pd, (uintptr_t)addr, len,
++					SOCKET_ID_ANY, dev->mr_scache.reg_mr_cb);
++	}
+ 	if (!mr) {
+ 		DRV_LOG(WARNING, "Device %s unable to DMA map", rte_dev->name);
+ 		rte_errno = EINVAL;
+diff --git a/drivers/common/mlx5/mlx5_common_mr.c b/drivers/common/mlx5/mlx5_common_mr.c
+index 8ed988dec9..18b8a6eaa5 100644
+--- a/drivers/common/mlx5/mlx5_common_mr.c
++++ b/drivers/common/mlx5/mlx5_common_mr.c
+@@ -8,6 +8,7 @@
+ #include <rte_eal_memconfig.h>
+ #include <rte_eal_paging.h>
+ #include <rte_errno.h>
++#include <rte_memory.h>
+ #include <rte_mempool.h>
+ #include <rte_malloc.h>
+ #include <rte_rwlock.h>
+@@ -1141,6 +1142,7 @@ mlx5_mr_create_cache(struct mlx5_mr_share_cache *share_cache, int socket)
+ {
+ 	/* Set the reg_mr and dereg_mr callback functions */
+ 	mlx5_os_set_reg_mr_cb(&share_cache->reg_mr_cb,
++			      &share_cache->reg_dmabuf_mr_cb,
+ 			      &share_cache->dereg_mr_cb);
+ 	rte_rwlock_init(&share_cache->rwlock);
+ 	rte_rwlock_init(&share_cache->mprwlock);
+@@ -1221,6 +1223,74 @@ mlx5_create_mr_ext(void *pd, uintptr_t addr, size_t len, int socket_id,
+ 	return mr;
+ }
  
 +/**
-+ * Register external memory chunk backed by a dma-buf with DPDK.
++ * Creates a memory region for dma-buf backed external memory.
 + *
-+ * This is similar to rte_extmem_register() but additionally stores dma-buf
-+ * file descriptor information, allowing drivers to use dma-buf based
-+ * memory registration (e.g., ibv_reg_dmabuf_mr for RDMA devices).
-+ *
-+ * @note Using this API is mutually exclusive with ``rte_malloc`` family of
-+ *   API's.
-+ *
-+ * @note This API will not perform any DMA mapping. It is expected that user
-+ *   will do that themselves via rte_dev_dma_map().
-+ *
-+ * @note Before accessing this memory in other processes, it needs to be
-+ *   attached in each of those processes by calling ``rte_extmem_attach`` in
-+ *   each other process.
-+ *
-+ * @param va_addr
-+ *   Start of virtual area to register (mmap'd address of the dma-buf).
-+ *   Must be aligned by ``page_sz``.
++ * @param pd
++ *   Pointer to pd of a device (net, regex, vdpa,...).
++ * @param addr
++ *   Starting virtual address of memory (mmap'd address).
 + * @param len
-+ *   Length of virtual area to register. Must be aligned by ``page_sz``.
-+ *   This is independent of dmabuf_offset.
++ *   Length of memory segment being mapped.
++ * @param socket_id
++ *   Socket to allocate heap memory for the control structures.
 + * @param dmabuf_fd
 + *   File descriptor of the dma-buf.
 + * @param dmabuf_offset
-+ *   Offset within the dma-buf where the registered region starts.
-+ * @param iova_addrs
-+ *   Array of page IOVA addresses corresponding to each page in this memory
-+ *   area. Can be NULL, in which case page IOVA addresses will be set to
-+ *   RTE_BAD_IOVA.
-+ * @param n_pages
-+ *   Number of elements in the iova_addrs array. Ignored if ``iova_addrs``
-+ *   is NULL.
-+ * @param page_sz
-+ *   Page size of the underlying memory
++ *   Offset within the dma-buf.
++ * @param reg_dmabuf_mr_cb
++ *   Callback function for dma-buf MR registration.
 + *
 + * @return
-+ *   - 0 on success
-+ *   - -1 in case of error, with rte_errno set to one of the following:
-+ *     EINVAL - one of the parameters was invalid
-+ *     EEXIST - memory chunk is already registered
-+ *     ENOSPC - no more space in internal config to store a new memory chunk
++ *   Pointer to MR structure on success, NULL otherwise.
 + */
-+int
-+rte_extmem_register_dmabuf(void *va_addr, size_t len,
-+		int dmabuf_fd, uint64_t dmabuf_offset,
-+		rte_iova_t iova_addrs[], unsigned int n_pages, size_t page_sz);
++struct mlx5_mr *
++mlx5_create_mr_ext_dmabuf(void *pd, uintptr_t addr, size_t len, int socket_id,
++			  int dmabuf_fd, uint64_t dmabuf_offset,
++			  mlx5_reg_dmabuf_mr_t reg_dmabuf_mr_cb)
++{
++	struct mlx5_mr *mr = NULL;
++
++	if (reg_dmabuf_mr_cb == NULL) {
++		DRV_LOG(WARNING, "dma-buf MR registration not supported");
++		rte_errno = ENOTSUP;
++		return NULL;
++	}
++	mr = mlx5_malloc(MLX5_MEM_RTE | MLX5_MEM_ZERO,
++			 RTE_ALIGN_CEIL(sizeof(*mr), RTE_CACHE_LINE_SIZE),
++			 RTE_CACHE_LINE_SIZE, socket_id);
++	if (mr == NULL)
++		return NULL;
++	if (reg_dmabuf_mr_cb(pd, dmabuf_offset, len, addr, dmabuf_fd,
++			     &mr->pmd_mr) < 0) {
++		DRV_LOG(WARNING,
++			"Fail to create dma-buf MR for address (%p) fd=%d",
++			(void *)addr, dmabuf_fd);
++		mlx5_free(mr);
++		return NULL;
++	}
++	mr->msl = NULL; /* Mark it is external memory. */
++	mr->ms_bmp = NULL;
++	mr->ms_n = 1;
++	mr->ms_bmp_n = 1;
++	/*
++	 * For dma-buf MR, the returned addr may be NULL since there's no VA
++	 * in the registration. Store the user-provided addr for cache lookup.
++	 */
++	if (mr->pmd_mr.addr == NULL)
++		mr->pmd_mr.addr = (void *)addr;
++	if (mr->pmd_mr.len == 0)
++		mr->pmd_mr.len = len;
++	DRV_LOG(DEBUG,
++		"MR CREATED (%p) for dma-buf external memory %p (fd=%d):\n"
++		"  [0x%" PRIxPTR ", 0x%" PRIxPTR "),"
++		" lkey=0x%x base_idx=%u ms_n=%u, ms_bmp_n=%u",
++		(void *)mr, (void *)addr, dmabuf_fd,
++		addr, addr + len, rte_cpu_to_be_32(mr->pmd_mr.lkey),
++		mr->ms_base_idx, mr->ms_n, mr->ms_bmp_n);
++	return mr;
++}
 +
  /**
-  * Unregister external memory chunk with DPDK.
+  * Callback for memory free event. Iterate freed memsegs and check whether it
+  * belongs to an existing MR. If found, clear the bit from bitmap of MR. As a
+@@ -1747,9 +1817,43 @@ mlx5_mr_mempool_register_primary(struct mlx5_mr_share_cache *share_cache,
+ 		struct mlx5_mempool_mr *mr = &new_mpr->mrs[i];
+ 		const struct mlx5_range *range = &ranges[i];
+ 		size_t len = range->end - range->start;
++		struct rte_memseg_list *msl;
++		int reg_result;
++
++		/* Check if this is dma-buf backed external memory */
++		msl = rte_mem_virt2memseg_list((void *)range->start);
++		if (msl != NULL && msl->external &&
++		    share_cache->reg_dmabuf_mr_cb != NULL) {
++			int dmabuf_fd = rte_memseg_list_get_dmabuf_fd_thread_unsafe(msl);
++			if (dmabuf_fd >= 0) {
++				uint64_t dmabuf_off;
++				/* Get base offset from memseg list */
++				rte_memseg_list_get_dmabuf_offset_thread_unsafe(msl, &dmabuf_off);
++				/* Calculate offset within dmabuf for this specific range */
++				dmabuf_off += (range->start - (uintptr_t)msl->base_va);
++				/* Use dma-buf MR registration */
++				reg_result = share_cache->reg_dmabuf_mr_cb(pd,
++					dmabuf_off, len, range->start, dmabuf_fd,
++					&mr->pmd_mr);
++				if (reg_result == 0) {
++					/* For dma-buf MR, set addr if not set by driver */
++					if (mr->pmd_mr.addr == NULL)
++						mr->pmd_mr.addr = (void *)range->start;
++					if (mr->pmd_mr.len == 0)
++						mr->pmd_mr.len = len;
++				}
++			} else {
++				/* Use regular MR registration */
++				reg_result = share_cache->reg_mr_cb(pd,
++					(void *)range->start, len, &mr->pmd_mr);
++			}
++		} else {
++			/* Use regular MR registration */
++			reg_result = share_cache->reg_mr_cb(pd,
++				(void *)range->start, len, &mr->pmd_mr);
++		}
+ 
+-		if (share_cache->reg_mr_cb(pd, (void *)range->start, len,
+-		    &mr->pmd_mr) < 0) {
++		if (reg_result < 0) {
+ 			DRV_LOG(ERR,
+ 				"Failed to create an MR in PD %p for address range "
+ 				"[0x%" PRIxPTR ", 0x%" PRIxPTR "] (%zu bytes) for mempool %s",
+diff --git a/drivers/common/mlx5/mlx5_common_mr.h b/drivers/common/mlx5/mlx5_common_mr.h
+index cf7c685e9b..3b967b1323 100644
+--- a/drivers/common/mlx5/mlx5_common_mr.h
++++ b/drivers/common/mlx5/mlx5_common_mr.h
+@@ -35,6 +35,9 @@ struct mlx5_pmd_mr {
+  */
+ typedef int (*mlx5_reg_mr_t)(void *pd, void *addr, size_t length,
+ 			     struct mlx5_pmd_mr *pmd_mr);
++typedef int (*mlx5_reg_dmabuf_mr_t)(void *pd, uint64_t offset, size_t length,
++				    uint64_t iova, int fd,
++				    struct mlx5_pmd_mr *pmd_mr);
+ typedef void (*mlx5_dereg_mr_t)(struct mlx5_pmd_mr *pmd_mr);
+ 
+ /* Memory Region object. */
+@@ -87,6 +90,7 @@ struct __rte_packed_begin mlx5_mr_share_cache {
+ 	struct mlx5_mr_list mr_free_list; /* Freed MR list. */
+ 	struct mlx5_mempool_reg_list mempool_reg_list; /* Mempool database. */
+ 	mlx5_reg_mr_t reg_mr_cb; /* Callback to reg_mr func */
++	mlx5_reg_dmabuf_mr_t reg_dmabuf_mr_cb; /* Callback to reg_dmabuf_mr func */
+ 	mlx5_dereg_mr_t dereg_mr_cb; /* Callback to dereg_mr func */
+ } __rte_packed_end;
+ 
+@@ -233,6 +237,10 @@ mlx5_mr_lookup_list(struct mlx5_mr_share_cache *share_cache,
+ struct mlx5_mr *
+ mlx5_create_mr_ext(void *pd, uintptr_t addr, size_t len, int socket_id,
+ 		   mlx5_reg_mr_t reg_mr_cb);
++struct mlx5_mr *
++mlx5_create_mr_ext_dmabuf(void *pd, uintptr_t addr, size_t len, int socket_id,
++			  int dmabuf_fd, uint64_t dmabuf_offset,
++			  mlx5_reg_dmabuf_mr_t reg_dmabuf_mr_cb);
+ void mlx5_mr_free(struct mlx5_mr *mr, mlx5_dereg_mr_t dereg_mr_cb);
+ __rte_internal
+ uint32_t
+@@ -251,12 +259,19 @@ int
+ mlx5_common_verbs_reg_mr(void *pd, void *addr, size_t length,
+ 			 struct mlx5_pmd_mr *pmd_mr);
+ __rte_internal
++int
++mlx5_common_verbs_reg_dmabuf_mr(void *pd, uint64_t offset, size_t length,
++				uint64_t iova, int fd,
++				struct mlx5_pmd_mr *pmd_mr);
++__rte_internal
+ void
+ mlx5_common_verbs_dereg_mr(struct mlx5_pmd_mr *pmd_mr);
+ 
+ __rte_internal
+ void
+-mlx5_os_set_reg_mr_cb(mlx5_reg_mr_t *reg_mr_cb, mlx5_dereg_mr_t *dereg_mr_cb);
++mlx5_os_set_reg_mr_cb(mlx5_reg_mr_t *reg_mr_cb,
++		      mlx5_reg_dmabuf_mr_t *reg_dmabuf_mr_cb,
++		      mlx5_dereg_mr_t *dereg_mr_cb);
+ 
+ __rte_internal
+ int
+diff --git a/drivers/common/mlx5/windows/mlx5_common_os.c b/drivers/common/mlx5/windows/mlx5_common_os.c
+index 7fac361460..5e284742ab 100644
+--- a/drivers/common/mlx5/windows/mlx5_common_os.c
++++ b/drivers/common/mlx5/windows/mlx5_common_os.c
+@@ -17,6 +17,7 @@
+ #include "mlx5_common.h"
+ #include "mlx5_common_os.h"
+ #include "mlx5_malloc.h"
++#include "mlx5_common_mr.h"
+ 
+ /**
+  * Initialization routine for run-time dependency on external lib.
+@@ -442,15 +443,20 @@ mlx5_os_dereg_mr(struct mlx5_pmd_mr *pmd_mr)
   *
+  * @param[out] reg_mr_cb
+  *   Pointer to reg_mr func
++ * @param[out] reg_dmabuf_mr_cb
++ *   Pointer to reg_dmabuf_mr func (NULL on Windows - not supported)
+  * @param[out] dereg_mr_cb
+  *   Pointer to dereg_mr func
+  *
+  */
+ RTE_EXPORT_INTERNAL_SYMBOL(mlx5_os_set_reg_mr_cb)
+ void
+-mlx5_os_set_reg_mr_cb(mlx5_reg_mr_t *reg_mr_cb, mlx5_dereg_mr_t *dereg_mr_cb)
++mlx5_os_set_reg_mr_cb(mlx5_reg_mr_t *reg_mr_cb,
++		      mlx5_reg_dmabuf_mr_t *reg_dmabuf_mr_cb,
++		      mlx5_dereg_mr_t *dereg_mr_cb)
+ {
+ 	*reg_mr_cb = mlx5_os_reg_mr;
++	*reg_dmabuf_mr_cb = NULL; /* dma-buf not supported on Windows */
+ 	*dereg_mr_cb = mlx5_os_dereg_mr;
+ }
+ 
+diff --git a/drivers/crypto/mlx5/mlx5_crypto.h b/drivers/crypto/mlx5/mlx5_crypto.h
+index f9f127e9e6..b2712c9a8d 100644
+--- a/drivers/crypto/mlx5/mlx5_crypto.h
++++ b/drivers/crypto/mlx5/mlx5_crypto.h
+@@ -41,6 +41,7 @@ struct mlx5_crypto_priv {
+ 	struct mlx5_common_device *cdev; /* Backend mlx5 device. */
+ 	struct rte_cryptodev *crypto_dev;
+ 	mlx5_reg_mr_t reg_mr_cb; /* Callback to reg_mr func */
++	mlx5_reg_dmabuf_mr_t reg_dmabuf_mr_cb; /* Callback to reg_dmabuf_mr func */
+ 	mlx5_dereg_mr_t dereg_mr_cb; /* Callback to dereg_mr func */
+ 	struct mlx5_uar uar; /* User Access Region. */
+ 	uint32_t max_segs_num; /* Maximum supported data segs. */
+diff --git a/drivers/crypto/mlx5/mlx5_crypto_gcm.c b/drivers/crypto/mlx5/mlx5_crypto_gcm.c
+index 89f32c7722..380689cfeb 100644
+--- a/drivers/crypto/mlx5/mlx5_crypto_gcm.c
++++ b/drivers/crypto/mlx5/mlx5_crypto_gcm.c
+@@ -1186,7 +1186,8 @@ mlx5_crypto_gcm_init(struct mlx5_crypto_priv *priv)
+ 
+ 	/* Override AES-GCM specified ops. */
+ 	dev_ops->sym_session_configure = mlx5_crypto_sym_gcm_session_configure;
+-	mlx5_os_set_reg_mr_cb(&priv->reg_mr_cb, &priv->dereg_mr_cb);
++	mlx5_os_set_reg_mr_cb(&priv->reg_mr_cb,  &priv->reg_dmabuf_mr_cb,
++			&priv->dereg_mr_cb);
+ 	dev_ops->queue_pair_setup = mlx5_crypto_gcm_qp_setup;
+ 	dev_ops->queue_pair_release = mlx5_crypto_gcm_qp_release;
+ 	if (mlx5_crypto_is_ipsec_opt(priv)) {
 -- 
 2.52.0
 
