@@ -2,66 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8F6CD2FEC4
-	for <dpdk-dev@archiver.kernel.org>; Tue, 27 Jan 2026 17:21:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76B72D2FEC4
+	for <dpdk-dev@archiver.kernel.org>; Tue, 27 Jan 2026 17:21:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E0FC540E6E;
-	Tue, 27 Jan 2026 18:21:46 +0100 (CET)
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com
- [209.85.128.44]) by mails.dpdk.org (Postfix) with ESMTP id 31A1240E50
- for <dev@dpdk.org>; Tue, 27 Jan 2026 18:21:41 +0100 (CET)
-Received: by mail-wm1-f44.google.com with SMTP id
- 5b1f17b1804b1-4806bf03573so3467745e9.2
- for <dev@dpdk.org>; Tue, 27 Jan 2026 09:21:41 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 11C9240EA5;
+	Tue, 27 Jan 2026 18:21:48 +0100 (CET)
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com
+ [209.85.128.50]) by mails.dpdk.org (Postfix) with ESMTP id 9278240E6E
+ for <dev@dpdk.org>; Tue, 27 Jan 2026 18:21:42 +0100 (CET)
+Received: by mail-wm1-f50.google.com with SMTP id
+ 5b1f17b1804b1-4801bc32725so46422595e9.0
+ for <dev@dpdk.org>; Tue, 27 Jan 2026 09:21:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769534500;
- x=1770139300; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769534502;
+ x=1770139302; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=LIwjPUyDgRiD0DHepvJP9myvd6PpuecppEf0i8Ru5EU=;
- b=VLVJoQu3jkADpR5eyberbSjNaiqNHnBkM7Ky7gTlPOwrkjps9ZCgl0YFWOlI7+eKHJ
- CMhxtbE+Tm+8dgBYorwgz02YyWwNUSYquH37cWdgJupClowMC5aPy+wo+cqH65RLvF1n
- fmIDd700wr7cJXYUdD1O/leoHbjpzww2GArlhdzM2fv1LbpokTZm6vsiE8EWTkoNsddl
- dQ13l36+VTrfvgEfrTK25tA/EAhHxhLGJgTu4sWxecLw2wbD5NIEewMJ6yhQ47jo2JJY
- YlS7ZaK1e3TxZ3Lifkm8dZLED3lMI8N0vnnasV1FFdOK13Jo5Pj2jFLVQHKSWM4jJFDu
- aOBA==
+ bh=Hc0SNxtM+QDH8mSJW5Fgu6sn+ZqCgG/hn6noA082iQ0=;
+ b=oki88B243qnbXDfn7OqGTBRURw5Su1xW1YgDfMbvsFDlfycHvDg5dF+vEzinh/7JUX
+ E0p/M6jaKwWNsF0JWNHmjTGNKvGaat4cGbnuF2aV3A4N6WsiiHdkqMlTkrfapLTmhEds
+ aQphsuqnPPtVNC1a8dGnJ9iThTKlOHR6Hy6BZuePfMRU1NMoKrIi8oZ6pjM/3oKBDLRh
+ lLDfJi2s9h9i16OLwZSYG7AtXPQnamIO8NxH2M8uxllt4VtJi8uO0Qm66emb49AIHDFA
+ 2dYQ4uK3Cy8sQAINMrK5d/th+1NohOMgbONXM2IEQEzvF9uA387i+95t/I3PQR4v9w5G
+ cubA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1769534500; x=1770139300;
+ d=1e100.net; s=20230601; t=1769534502; x=1770139302;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=LIwjPUyDgRiD0DHepvJP9myvd6PpuecppEf0i8Ru5EU=;
- b=DM2C0yG7jRgNpxBVKOCVHx6oDI5OpvJkPDLC8xvM/yBGRBjU5+ufqj/aJJMJJEs146
- tEZcWfpafsYgP93xdACrcC85cbIiYDRyoaz83lZ+XYc6fh1JWn20xYIxFtAfYM5gR4aI
- j+wrUVhDjIeuZaHDZTAvH1gzglVqbunK5j0J7rf1qlmCoK6nqxAja5c/I5ZbPwPnl1M8
- Dpc6eD19voDwXs8paBOSTLrWR1vKp4Vqk+1j7A4Va96HcNyx67yPMs65PV5IUr53idX3
- N9pP4L5vaEpMEXuFvDEBga6pCqDjot9LlD5VMzmqJW19G4UzjcS29hr4xdwtlyownKrY
- 5ceA==
-X-Gm-Message-State: AOJu0YzowgMGRdjxU4LiSpiatMhJSQdyvpV3iLuzFXOtdoKbyaUpQff3
- K7KvRSP6VvPyALu/QpoCYo12xYI/DATn2gxRnPHn6YvtRZjobxTLfAi58Lxibvd3o4YAxnvP4LF
- OlUmu
-X-Gm-Gg: AZuq6aK5Lxk8WL8hGkzLXNuH4bMsgj5rUlxQ51Mk51eyZs2948cpyXUMGC+6iYkWOto
- 3RSKclqeE0x2ksE6dryiIenIRrm0n58OqWlV3o+MWsOoA46nrEO8fPHA1F1MimvnwJFBUJ59x60
- b3KFqG3QDc4FzKFeO06goRFYnOt2RrW/U76eTX/QsQPb1P0CC5OcAN6OHjkxtUXEk6oKFv3SdRr
- 34e0L/aI55TkXlzYHz8ET8jGlEZPdB0P2/4KrDKzBAKN4uUxuboluhg9RtoAhpIsdyD8WUHEy5m
- pdBg2MeUO9ZeWODA6kDY26Q9g+ZcZuJ8/u359s4jNL++1LCSZme6VZ9LGtGJ+KGr1fBrwbgS+dD
- dscO8k5HsHGuZlWs/36hCkdzxXA2xnYzr+3FP+r3/uC9Zxai4nXh+ZIT9CtnBnZcBO/zCrJI6+b
- unxlRKk0iQXMnI7PTq8YfR4Ba3D4USeb8Y7RlUwf0YqmS0ojy3SA==
-X-Received: by 2002:a05:600c:1e0d:b0:47e:e20e:bbb7 with SMTP id
- 5b1f17b1804b1-48069c86b30mr31234895e9.25.1769534500617; 
- Tue, 27 Jan 2026 09:21:40 -0800 (PST)
+ bh=Hc0SNxtM+QDH8mSJW5Fgu6sn+ZqCgG/hn6noA082iQ0=;
+ b=MItAIz7btXC1EwqHkaxgPgmXrftF/ZDxpMGzyGwKh+8T0ey3sSwADs0nu4cCa/ik3F
+ wwPK2rt9c6/kUU1/yrdDpLrqcRbfpx5gVZbBKleJgauIQ9855hzUrBFYMWMnuQkLqonn
+ X+eomangPf80LwH/AD0Il6ihOtBjaM5lZ3Xt84M4IuELwUYC+jde0goy/09C2gA7723n
+ BIv4scaAFnB/VqfIlJDHQpGsNgiKQF3jag5xEsxR+f3KrY8bQt2EXwb8cqqBqzJjV09Q
+ 4PNtuBTR6MRXL8aOpDa6WIdg6rUyRFHm39qMM78XO012j1AXmEhdWkJABSruVn3CgK2h
+ ODKA==
+X-Gm-Message-State: AOJu0YweI6mSfBzyYCPkvQIU3dN11Afi9NFtHC01N/yK1SWva0HErAGk
+ 3YLDqXk9WJ5CZF6vVI99XB1VoVtfVER5he2NI5WfW28XH0AZSqHMFr6KUHd4rZia0v8sktyEx3/
+ RAaV2
+X-Gm-Gg: AZuq6aKbTAu41yBlNYYOHNC7fGlhQvOuFD/wyXJisbttC7EPhPkFXHZMO9iaXaWgQES
+ y0aQFCFp2WCkrXOxuM2kPCnlPA+9BJbXx7tnnLSSSjoaGSs0XSzS0ZWKT/ddt5P43+kABoaYxLO
+ jcnViaCLMQSyUK7q41ACEDXIlHIAAOooEHaDJR9iw2ld3bBBvOUoxX4yX8MGvgt8Dxr12WGxMEZ
+ fZrnXh3vuQlBR+mH7O2NSx3PpkUQaSJxBafxo05JXiw7hP0pleKJw1LMQJgbgrctt4gyCF41I8s
+ Ux5jM/+w8pSJ6uFE1wjoH8DrQTC9ox8E5D69MswTrCvFErbjw23TAsr9U8tvIFWngebtORVAbts
+ NpuQ6+mzQ2d6djP+kSW1omAkF7MYLFFoeMi4Z813g6KDbAOr4QYGRKLV5IAWhVisScm9XUXJdK4
+ D6dQOTnb6fItMsmb+UiY5XmwkdWlLy0Ymb7s3mvX4kqYyGPmHpIQ==
+X-Received: by 2002:a05:600c:34c4:b0:480:1c85:88bf with SMTP id
+ 5b1f17b1804b1-48069c86cedmr29521105e9.27.1769534502167; 
+ Tue, 27 Jan 2026 09:21:42 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-4806ce56490sm4769395e9.12.2026.01.27.09.21.39
+ 5b1f17b1804b1-4806ce56490sm4769395e9.12.2026.01.27.09.21.40
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 27 Jan 2026 09:21:40 -0800 (PST)
+ Tue, 27 Jan 2026 09:21:41 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v8 01/14] maintainers: update for pcap driver
-Date: Tue, 27 Jan 2026 09:18:42 -0800
-Message-ID: <20260127172128.124473-2-stephen@networkplumber.org>
+Subject: [PATCH v8 02/14] doc: update features for PCAP PMD
+Date: Tue, 27 Jan 2026 09:18:43 -0800
+Message-ID: <20260127172128.124473-3-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260127172128.124473-1-stephen@networkplumber.org>
 References: <20260106182823.192350-1-stephen@networkplumber.org>
@@ -81,26 +81,34 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Nominate myself to take care of this since already doing pcapng
-and pdump code.
+The PCAP PMD supports more features that were not flagged
+in the feature matrix.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+ doc/guides/nics/features/pcap.ini | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 3e90cb8c28..62da2be759 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1118,6 +1118,7 @@ F: doc/guides/nics/zxdh.rst
- F: doc/guides/nics/features/zxdh.ini
- 
- PCAP PMD
-+M: Stephen Hemminger <stephen@networkplumber.org>
- F: drivers/net/pcap/
- F: doc/guides/nics/pcap_ring.rst
- F: doc/guides/nics/features/pcap.ini
+diff --git a/doc/guides/nics/features/pcap.ini b/doc/guides/nics/features/pcap.ini
+index 7fd22b190e..b0dac3cca7 100644
+--- a/doc/guides/nics/features/pcap.ini
++++ b/doc/guides/nics/features/pcap.ini
+@@ -4,8 +4,15 @@
+ ; Refer to default.ini for the full list of available PMD features.
+ ;
+ [Features]
++Link status          = Y
++Queue start/stop     = Y
++Scattered Rx         = Y
++Timestamp offload    = Y
+ Basic stats          = Y
++Stats per queue      = Y
+ Multiprocess aware   = Y
++FreeBSD              = Y
++Linux                = Y
+ ARMv7                = Y
+ ARMv8                = Y
+ Power8               = Y
 -- 
 2.51.0
 
