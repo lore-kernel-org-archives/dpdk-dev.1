@@ -2,26 +2,26 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA517D25923
-	for <dpdk-dev@archiver.kernel.org>; Tue, 27 Jan 2026 02:52:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0793D25923
+	for <dpdk-dev@archiver.kernel.org>; Tue, 27 Jan 2026 02:52:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BBC7140DF8;
-	Tue, 27 Jan 2026 03:52:34 +0100 (CET)
-Received: from out28-50.mail.aliyun.com (out28-50.mail.aliyun.com
- [115.124.28.50])
- by mails.dpdk.org (Postfix) with ESMTP id E35D440A84;
- Tue, 27 Jan 2026 03:52:29 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 12AEA40E13;
+	Tue, 27 Jan 2026 03:52:37 +0100 (CET)
+Received: from out28-123.mail.aliyun.com (out28-123.mail.aliyun.com
+ [115.124.28.123])
+ by mails.dpdk.org (Postfix) with ESMTP id BECBF4026F;
+ Tue, 27 Jan 2026 03:52:30 +0100 (CET)
 Received: from ubuntu.localdomain(mailfrom:dimon.zhao@nebula-matrix.com
- fp:SMTPD_---.gGwKEoI_1769482347 cluster:ay29) by smtp.aliyun-inc.com;
- Tue, 27 Jan 2026 10:52:27 +0800
+ fp:SMTPD_---.gGwKEpF_1769482347 cluster:ay29) by smtp.aliyun-inc.com;
+ Tue, 27 Jan 2026 10:52:28 +0800
 From: Dimon Zhao <dimon.zhao@nebula-matrix.com>
 To: dev@dpdk.org
 Cc: Dimon Zhao <dimon.zhao@nebula-matrix.com>, stable@dpdk.org,
  Kyo Liu <kyo.liu@nebula-matrix.com>, Leon Yu <leon.yu@nebula-matrix.com>,
  Sam Chen <sam.chen@nebula-matrix.com>
-Subject: [PATCH v3 3/4] net/nbl: fix mbuf double-free in queue cleanup
-Date: Mon, 26 Jan 2026 18:52:19 -0800
-Message-Id: <20260127025220.190944-4-dimon.zhao@nebula-matrix.com>
+Subject: [PATCH v3 4/4] net/nbl: improve mailbox exception handling
+Date: Mon, 26 Jan 2026 18:52:20 -0800
+Message-Id: <20260127025220.190944-5-dimon.zhao@nebula-matrix.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20260127025220.190944-1-dimon.zhao@nebula-matrix.com>
 References: <20260123031627.151341-1-dimon.zhao@nebula-matrix.com>
@@ -41,161 +41,238 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Only free hardware-owned mbufs to avoid double-free
-corruption of application-owned buffers.
+Key changes:
+1. Replace simple 'acked' flag with a state machine to improve mailbox
+   reliability. New states: IDLE, WAITING, ACKING, ACKED, TIMEOUT.
+2. Validate message ID and type before processing acknowledgments to
+   prevent incorrect ACK matching.
+3. Handle timeout scenarios: discard ACKs received after timeout to
+   prevent use of already released buffers.
+4. Check mailbox status before sending: if the send mailbox descriptor
+   is found to be in use or waiting for an ACK during Tx,
+   the message will not be sent.
 
-TX ring: free only transmitted mbufs (next_to_clean to next_to_use).
-RX ring: free only allocated receive buffers
-	 (next_to_clean to next_to_use),
-	 mbufs already delivered to the application (before next_to_clean)
-	 must not be touched.
-
-Fixes: 5d910b2789da ("net/nbl: support queue setup and release")
+Fixes: a1c5ffa13b2c ("net/nbl: add channel layer")
 Cc: stable@dpdk.org
 
 Signed-off-by: Dimon Zhao <dimon.zhao@nebula-matrix.com>
 ---
- drivers/net/nbl/nbl_dev/nbl_dev.c     |  2 +-
- drivers/net/nbl/nbl_hw/nbl_txrx.c     | 73 ++++++++++++++++++++++-----
- drivers/net/nbl/nbl_hw/nbl_txrx_ops.h |  2 +-
- 3 files changed, 61 insertions(+), 16 deletions(-)
+ drivers/net/nbl/nbl_hw/nbl_channel.c | 94 ++++++++++++++++++++++------
+ drivers/net/nbl/nbl_hw/nbl_channel.h | 11 +++-
+ 2 files changed, 85 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/net/nbl/nbl_dev/nbl_dev.c b/drivers/net/nbl/nbl_dev/nbl_dev.c
-index edff61e52e..2b0413fb7c 100644
---- a/drivers/net/nbl/nbl_dev/nbl_dev.c
-+++ b/drivers/net/nbl/nbl_dev/nbl_dev.c
-@@ -328,8 +328,8 @@ int nbl_dev_port_stop(struct rte_eth_dev *eth_dev)
- 	rte_delay_ms(NBL_SAFE_THREADS_WAIT_TIME);
- 
- 	nbl_dev_hw_stats_stop(eth_dev);
--	nbl_clear_queues(eth_dev);
- 	nbl_dev_txrx_stop(eth_dev);
-+	nbl_clear_queues(eth_dev);
- 	nbl_userdev_port_config(adapter, NBL_KERNEL_NETWORK);
- 	return 0;
- }
-diff --git a/drivers/net/nbl/nbl_hw/nbl_txrx.c b/drivers/net/nbl/nbl_hw/nbl_txrx.c
-index 93d9f0f7de..48f20e4f4c 100644
---- a/drivers/net/nbl/nbl_hw/nbl_txrx.c
-+++ b/drivers/net/nbl/nbl_hw/nbl_txrx.c
-@@ -44,19 +44,43 @@ static void nbl_res_txrx_stop_tx_ring(void *priv, u16 queue_idx)
+diff --git a/drivers/net/nbl/nbl_hw/nbl_channel.c b/drivers/net/nbl/nbl_hw/nbl_channel.c
+index f81c4c8591..52ad71c833 100644
+--- a/drivers/net/nbl/nbl_hw/nbl_channel.c
++++ b/drivers/net/nbl/nbl_hw/nbl_channel.c
+@@ -22,6 +22,7 @@ static int nbl_chan_init_tx_queue(union nbl_chan_info *chan_info)
  {
- 	struct nbl_resource_mgt *res_mgt = (struct nbl_resource_mgt *)priv;
- 	struct nbl_res_tx_ring *tx_ring = NBL_RES_MGT_TO_TX_RING(res_mgt, queue_idx);
--	int i;
-+	struct nbl_tx_entry *tx_entry;
-+	u16 i, free_cnt, free_mbuf_cnt;
+ 	struct nbl_chan_ring *txq = &chan_info->mailbox.txq;
+ 	size_t size = chan_info->mailbox.num_txq_entries * sizeof(struct nbl_chan_tx_desc);
++	int i;
  
- 	if (!tx_ring)
- 		return;
+ 	txq->desc = nbl_alloc_dma_mem(&txq->desc_mem, size);
+ 	if (!txq->desc) {
+@@ -36,6 +37,10 @@ static int nbl_chan_init_tx_queue(union nbl_chan_info *chan_info)
+ 		goto req_wait_queue_failed;
+ 	}
  
--	for (i = 0; i < tx_ring->nb_desc; i++) {
--		if (tx_ring->tx_entry[i].mbuf != NULL) {
--			rte_pktmbuf_free_seg(tx_ring->tx_entry[i].mbuf);
--			memset(&tx_ring->tx_entry[i], 0, sizeof(*tx_ring->tx_entry));
-+	i = tx_ring->next_to_clean + 1 - NBL_TX_RS_THRESH;
-+	free_cnt = tx_ring->vq_free_cnt;
-+	tx_entry = &tx_ring->tx_entry[i];
-+	free_mbuf_cnt = 0;
++	for (i = 0; i < chan_info->mailbox.num_txq_entries; i++)
++		rte_atomic_store_explicit(&chan_info->mailbox.wait[i].status, NBL_MBX_STATUS_IDLE,
++					  rte_memory_order_relaxed);
 +
-+	while (free_cnt < tx_ring->nb_desc) {
-+		if (tx_entry->mbuf) {
-+			free_mbuf_cnt++;
-+			rte_pktmbuf_free_seg(tx_entry->mbuf);
-+		}
+ 	size = (u64)chan_info->mailbox.num_txq_entries * (u64)chan_info->mailbox.txq_buf_size;
+ 	txq->buf = nbl_alloc_dma_mem(&txq->buf_mem, size);
+ 	if (!txq->buf) {
+@@ -253,24 +258,55 @@ static void nbl_chan_recv_ack_msg(void *priv, uint16_t srcid, uint16_t msgid,
+ 	uint32_t ack_msgid;
+ 	uint32_t ack_msgtype;
+ 	uint32_t copy_len;
++	int status = NBL_MBX_STATUS_WAITING;
+ 
+ 	chan_info = NBL_CHAN_MGT_TO_CHAN_INFO(chan_mgt);
+ 	ack_msgtype = *payload;
+ 	ack_msgid = *(payload + 1);
 +
-+		i++;
-+		tx_entry++;
-+		free_cnt++;
-+		if (i == tx_ring->nb_desc) {
-+			i = 0;
-+			tx_entry = &tx_ring->tx_entry[i];
- 		}
++	if (ack_msgid >= chan_mgt->chan_info->mailbox.num_txq_entries) {
++		NBL_LOG(ERR, "Invalid msg id %u, msg type %u", ack_msgid, ack_msgtype);
++		return;
 +	}
 +
-+	NBL_LOG(DEBUG, "stop tx ring ntc %u, ntu %u, vq_free_cnt %u, mbuf free_cnt %u",
-+		tx_ring->next_to_clean, tx_ring->next_to_use, tx_ring->vq_free_cnt, free_mbuf_cnt);
+ 	wait_head = &chan_info->mailbox.wait[ack_msgid];
++	if (wait_head->msg_type != ack_msgtype) {
++		NBL_LOG(ERR, "Invalid msg id %u, msg type %u, wait msg type %u",
++			ack_msgid, ack_msgtype, wait_head->msg_type);
++		return;
++	}
 +
-+	for (i = 0; i < tx_ring->nb_desc; i++) {
-+		tx_ring->desc[i].addr = 0;
-+		tx_ring->desc[i].len = 0;
-+		tx_ring->desc[i].id = 0;
- 		tx_ring->desc[i].flags = 0;
++	if (!rte_atomic_compare_exchange_strong_explicit(&wait_head->status, &status,
++							 NBL_MBX_STATUS_ACKING,
++							 rte_memory_order_acq_rel,
++							 rte_memory_order_relaxed)) {
++		NBL_LOG(ERR, "Invalid wait status %d msg id %u, msg type %u",
++			wait_head->status, ack_msgid, ack_msgtype);
++		return;
++	}
++
+ 	wait_head->ack_err = *(payload + 2);
+ 
+ 	NBL_LOG(DEBUG, "recv ack, srcid:%u, msgtype:%u, msgid:%u, ack_msgid:%u,"
+-		" data_len:%u, ack_data_len:%u",
+-		srcid, ack_msgtype, msgid, ack_msgid, data_len, wait_head->ack_data_len);
++		" data_len:%u, ack_data_len:%u, ack_err:%d",
++		srcid, ack_msgtype, msgid, ack_msgid, data_len,
++		wait_head->ack_data_len, wait_head->ack_err);
+ 
+ 	if (wait_head->ack_err >= 0 && (data_len > 3 * sizeof(uint32_t))) {
+ 		/* the mailbox msg parameter structure may change */
++		if (data_len - 3 * sizeof(uint32_t) != wait_head->ack_data_len)
++			NBL_LOG(INFO, "payload_len does not match ack_len!,"
++				" srcid:%u, msgtype:%u, msgid:%u, ack_msgid %u,"
++				" data_len:%u, ack_data_len:%u",
++				srcid, ack_msgtype, msgid,
++				ack_msgid, data_len, wait_head->ack_data_len);
+ 		copy_len = RTE_MIN(wait_head->ack_data_len, data_len - 3 * sizeof(uint32_t));
+-		memcpy(wait_head->ack_data, payload + 3, copy_len);
++		if (copy_len)
++			memcpy(wait_head->ack_data, payload + 3, copy_len);
  	}
  
-+	memset(tx_ring->tx_entry, 0, sizeof(*tx_entry) * tx_ring->nb_desc);
- 	tx_ring->avail_used_flags = NBL_PACKED_DESC_F_AVAIL_BIT;
- 	tx_ring->used_wrap_counter = 1;
- 	tx_ring->next_to_clean = NBL_TX_RS_THRESH - 1;
-@@ -208,25 +232,46 @@ static int nbl_res_txrx_start_tx_ring(void *priv,
- static void nbl_res_txrx_stop_rx_ring(void *priv, u16 queue_idx)
+-	rte_atomic_store_explicit(&wait_head->acked, 1, rte_memory_order_release);
++	rte_atomic_store_explicit(&wait_head->status, NBL_MBX_STATUS_ACKED,
++				  rte_memory_order_release);
+ }
+ 
+ static void nbl_chan_recv_msg(struct nbl_channel_mgt *chan_mgt, void *data)
+@@ -371,12 +407,27 @@ static uint16_t nbl_chan_update_txqueue(union nbl_chan_info *chan_info,
  {
- 	struct nbl_resource_mgt *res_mgt = (struct nbl_resource_mgt *)priv;
--	struct nbl_res_rx_ring *rx_ring =
--			NBL_RES_MGT_TO_RX_RING(res_mgt, queue_idx);
--	u16 i;
-+	struct nbl_res_rx_ring *rx_ring = NBL_RES_MGT_TO_RX_RING(res_mgt, queue_idx);
-+	struct nbl_rx_entry *rx_buf;
-+	u16 i, free_cnt, free_mbuf_cnt;
+ 	struct nbl_chan_ring *txq;
+ 	struct nbl_chan_tx_desc *tx_desc;
++	struct nbl_chan_waitqueue_head *wait_head;
+ 	uint64_t pa;
+ 	void *va;
+ 	uint16_t next_to_use;
++	int status;
++
++	if (arg_len > NBL_CHAN_BUF_LEN - sizeof(*tx_desc)) {
++		NBL_LOG(ERR, "arg_len: %zu, too long!", arg_len);
++		return 0xFFFF;
++	}
  
- 	if (!rx_ring)
- 		return;
+ 	txq = &chan_info->mailbox.txq;
+ 	next_to_use = txq->next_to_use;
 +
-+	i = rx_ring->next_to_clean;
-+	free_cnt = rx_ring->vq_free_cnt;
-+	free_mbuf_cnt = 0;
++	wait_head = &chan_info->mailbox.wait[next_to_use];
++	status = rte_atomic_load_explicit(&wait_head->status, rte_memory_order_acquire);
++	if (status != NBL_MBX_STATUS_IDLE && status != NBL_MBX_STATUS_TIMEOUT) {
++		NBL_LOG(ERR, "too much inflight mailbox msg, msg id %u", next_to_use);
++		return 0xFFFF;
++	}
 +
- 	if (rx_ring->rx_entry != NULL) {
--		for (i = 0; i < rx_ring->nb_desc; i++) {
--			if (rx_ring->rx_entry[i].mbuf != NULL) {
--				rte_pktmbuf_free_seg(rx_ring->rx_entry[i].mbuf);
--				rx_ring->rx_entry[i].mbuf = NULL;
-+		rx_buf = &rx_ring->rx_entry[i];
-+		while (free_cnt < rx_ring->nb_desc) {
-+			if (rx_buf->mbuf) {
-+				free_mbuf_cnt++;
-+				rte_pktmbuf_free_seg(rx_buf->mbuf);
-+			}
-+
-+			i++;
-+			rx_buf++;
-+			free_cnt++;
-+			if (i == rx_ring->nb_desc) {
-+				i = 0;
-+				rx_buf = &rx_ring->rx_entry[i];
- 			}
--			rx_ring->desc[i].flags = 0;
- 		}
+ 	va = (u8 *)txq->buf + (u64)next_to_use * (u64)chan_info->mailbox.txq_buf_size;
+ 	pa = txq->buf_mem.pa + (u64)next_to_use * (u64)chan_info->mailbox.txq_buf_size;
+ 	tx_desc = NBL_CHAN_TX_DESC(txq, next_to_use);
+@@ -384,10 +435,6 @@ static uint16_t nbl_chan_update_txqueue(union nbl_chan_info *chan_info,
+ 	tx_desc->dstid = dstid;
+ 	tx_desc->msg_type = msg_type;
+ 	tx_desc->msgid = next_to_use;
+-	if (arg_len > NBL_CHAN_BUF_LEN - sizeof(*tx_desc)) {
+-		NBL_LOG(ERR, "arg_len: %zu, too long!", arg_len);
+-		return -1;
+-	}
  
--		for (i = rx_ring->nb_desc; i < rx_ring->nb_desc + NBL_DESC_PER_LOOP_VEC_MAX; i++)
-+		memset(rx_ring->rx_entry, 0, sizeof(struct nbl_rx_entry) * rx_ring->nb_desc);
-+
-+		for (i = 0; i < rx_ring->nb_desc + NBL_DESC_PER_LOOP_VEC_MAX; i++) {
-+			rx_ring->desc[i].addr = 0;
-+			rx_ring->desc[i].len = 0;
-+			rx_ring->desc[i].id = 0;
- 			rx_ring->desc[i].flags = 0;
+ 	if (arg_len > NBL_CHAN_TX_DESC_EMBEDDED_DATA_LEN) {
+ 		memcpy(va, arg, arg_len);
+@@ -418,6 +465,7 @@ static int nbl_chan_send_msg(void *priv, struct nbl_chan_send_info *chan_send)
+ 	uint16_t msgid;
+ 	int ret;
+ 	int retry_time = 0;
++	int status = NBL_MBX_STATUS_WAITING;
+ 
+ 	if (chan_mgt->state)
+ 		return -EIO;
+@@ -431,8 +479,7 @@ static int nbl_chan_send_msg(void *priv, struct nbl_chan_send_info *chan_send)
+ 
+ 	if (msgid == 0xFFFF) {
+ 		rte_spinlock_unlock(&chan_info->mailbox.txq_lock);
+-		NBL_LOG(ERR, "chan tx queue full, send msgtype:%u"
+-			" to dstid:%u failed",
++		NBL_LOG(ERR, "chan tx queue full, send msgtype:%u to dstid:%u failed",
+ 			chan_send->msg_type, chan_send->dstid);
+ 		return -ECOMM;
+ 	}
+@@ -446,23 +493,34 @@ static int nbl_chan_send_msg(void *priv, struct nbl_chan_send_info *chan_send)
+ 	wait_head = &chan_info->mailbox.wait[msgid];
+ 	wait_head->ack_data = chan_send->resp;
+ 	wait_head->ack_data_len = chan_send->resp_len;
+-	rte_atomic_store_explicit(&wait_head->acked, 0, rte_memory_order_relaxed);
+ 	wait_head->msg_type = chan_send->msg_type;
+-	rte_wmb();
++	rte_atomic_store_explicit(&wait_head->status, NBL_MBX_STATUS_WAITING,
++				  rte_memory_order_release);
+ 	nbl_chan_kick_tx_ring(chan_mgt, chan_info);
+ 	rte_spinlock_unlock(&chan_info->mailbox.txq_lock);
+ 
+ 	while (1) {
+-		if (rte_atomic_load_explicit(&wait_head->acked, rte_memory_order_acquire))
+-			return wait_head->ack_err;
++		if (rte_atomic_load_explicit(&wait_head->status, rte_memory_order_acquire) ==
++		    NBL_MBX_STATUS_ACKED) {
++			ret = wait_head->ack_err;
++			rte_atomic_store_explicit(&wait_head->status, NBL_MBX_STATUS_IDLE,
++						  rte_memory_order_release);
++			return ret;
++		}
+ 
+ 		rte_delay_us(50);
+ 		retry_time++;
+-		if (retry_time > NBL_CHAN_RETRY_TIMES)
+-			return -EIO;
++		if (retry_time > NBL_CHAN_RETRY_TIMES &&
++		    rte_atomic_compare_exchange_strong_explicit(&wait_head->status,
++								&status, NBL_MBX_STATUS_TIMEOUT,
++								rte_memory_order_acq_rel,
++								rte_memory_order_relaxed)) {
++			NBL_LOG(ERR, "send msgtype:%u msgid %u to dstid:%u timeout",
++				chan_send->msg_type, msgid, chan_send->dstid);
++			break;
 +		}
  	}
- 
-+	NBL_LOG(DEBUG, "stop rx ring ntc %u, ntu %u, vq_free_cnt %u, free_mbuf_cnt %u",
-+		rx_ring->next_to_clean, rx_ring->next_to_use, rx_ring->vq_free_cnt, free_mbuf_cnt);
- 	rx_ring->next_to_clean = 0;
- 	rx_ring->next_to_use = 0;
+-
+-	return 0;
++	return -EIO;
  }
-diff --git a/drivers/net/nbl/nbl_hw/nbl_txrx_ops.h b/drivers/net/nbl/nbl_hw/nbl_txrx_ops.h
-index 2ab4b09683..dc0bab2b7b 100644
---- a/drivers/net/nbl/nbl_hw/nbl_txrx_ops.h
-+++ b/drivers/net/nbl/nbl_hw/nbl_txrx_ops.h
-@@ -43,7 +43,7 @@ nbl_tx_free_bufs(struct nbl_res_tx_ring *txq)
- 	if (!desc_is_used(&txq->desc[next_to_clean], txq->used_wrap_counter))
- 		return 0;
  
--	n = 32;
-+	n = NBL_TX_RS_THRESH;
+ static int nbl_chan_send_ack(void *priv, struct nbl_chan_ack_info *chan_ack)
+diff --git a/drivers/net/nbl/nbl_hw/nbl_channel.h b/drivers/net/nbl/nbl_hw/nbl_channel.h
+index f8fa89af51..21fce7478d 100644
+--- a/drivers/net/nbl/nbl_hw/nbl_channel.h
++++ b/drivers/net/nbl/nbl_hw/nbl_channel.h
+@@ -41,6 +41,14 @@ enum {
+ 	NBL_MB_TX_QID = 1,
+ };
  
- 	 /* first buffer to free from S/W ring is at index
- 	  * tx_next_dd - (tx_rs_thresh-1)
++enum {
++	NBL_MBX_STATUS_IDLE = 0,
++	NBL_MBX_STATUS_WAITING,
++	NBL_MBX_STATUS_ACKING,
++	NBL_MBX_STATUS_ACKED,
++	NBL_MBX_STATUS_TIMEOUT,
++};
++
+ struct __rte_packed_begin nbl_chan_tx_desc {
+ 	uint16_t flags;
+ 	uint16_t srcid;
+@@ -74,8 +82,7 @@ struct nbl_chan_ring {
+ 
+ struct nbl_chan_waitqueue_head {
+ 	char *ack_data;
+-	RTE_ATOMIC(int)
+-		acked;
++	RTE_ATOMIC(int) status;
+ 	int ack_err;
+ 	uint16_t ack_data_len;
+ 	uint16_t msg_type;
 -- 
 2.34.1
 
