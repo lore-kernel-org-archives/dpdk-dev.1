@@ -2,27 +2,30 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A67E1D25920
-	for <dpdk-dev@archiver.kernel.org>; Tue, 27 Jan 2026 02:52:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1501D25923
+	for <dpdk-dev@archiver.kernel.org>; Tue, 27 Jan 2026 02:52:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 30FA540A77;
-	Tue, 27 Jan 2026 03:52:31 +0100 (CET)
-Received: from out28-194.mail.aliyun.com (out28-194.mail.aliyun.com
- [115.124.28.194])
- by mails.dpdk.org (Postfix) with ESMTP id 617F940A77
- for <dev@dpdk.org>; Tue, 27 Jan 2026 03:52:28 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 33E2740B9F;
+	Tue, 27 Jan 2026 03:52:32 +0100 (CET)
+Received: from out28-169.mail.aliyun.com (out28-169.mail.aliyun.com
+ [115.124.28.169])
+ by mails.dpdk.org (Postfix) with ESMTP id 29EF84026F;
+ Tue, 27 Jan 2026 03:52:28 +0100 (CET)
 Received: from ubuntu.localdomain(mailfrom:dimon.zhao@nebula-matrix.com
- fp:SMTPD_---.gGwKEiP_1769482343 cluster:ay29) by smtp.aliyun-inc.com;
- Tue, 27 Jan 2026 10:52:25 +0800
+ fp:SMTPD_---.gGwKEnI_1769482346 cluster:ay29) by smtp.aliyun-inc.com;
+ Tue, 27 Jan 2026 10:52:26 +0800
 From: Dimon Zhao <dimon.zhao@nebula-matrix.com>
 To: dev@dpdk.org
-Cc: Dimon Zhao <dimon.zhao@nebula-matrix.com>
-Subject: [PATCH v3 0/4] improve NBL memory safety and mailbox reliability
-Date: Mon, 26 Jan 2026 18:52:16 -0800
-Message-Id: <20260127025220.190944-1-dimon.zhao@nebula-matrix.com>
+Cc: Dimon Zhao <dimon.zhao@nebula-matrix.com>, stable@dpdk.org,
+ Kyo Liu <kyo.liu@nebula-matrix.com>, Leon Yu <leon.yu@nebula-matrix.com>,
+ Sam Chen <sam.chen@nebula-matrix.com>
+Subject: [PATCH v3 2/4] net/nbl: fix mbuf headroom usage in packet Tx
+Date: Mon, 26 Jan 2026 18:52:18 -0800
+Message-Id: <20260127025220.190944-3-dimon.zhao@nebula-matrix.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260123031627.151341-1-dimon.zhao@nebula-matrix.com>
+In-Reply-To: <20260127025220.190944-1-dimon.zhao@nebula-matrix.com>
 References: <20260123031627.151341-1-dimon.zhao@nebula-matrix.com>
+ <20260127025220.190944-1-dimon.zhao@nebula-matrix.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -38,22 +41,42 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Includes fixes for mbuf/memzone leaks and mailbox state handling.
+Only use mbuf headroom when mbuf->refcnt == 1,
+indicating exclusive ownership. For shared mbufs (refcnt > 1),
+use next desc instead to avoid data corruption.
 
-Dimon Zhao (4):
-  net/nbl: fix memzone leak on queue release
-  net/nbl: fix mbuf headroom usage in packet Tx
-  net/nbl: fix mbuf double-free in queue cleanup
-  net/nbl: improve mailbox exception handling
+This prevents modifying shared buffers that may be used by other
+processing contexts.
 
- drivers/net/nbl/nbl_dev/nbl_dev.c     |   2 +-
- drivers/net/nbl/nbl_hw/nbl_channel.c  |  94 +++++++++++++++++----
- drivers/net/nbl/nbl_hw/nbl_channel.h  |  11 ++-
- drivers/net/nbl/nbl_hw/nbl_resource.h |   2 +
- drivers/net/nbl/nbl_hw/nbl_txrx.c     | 117 +++++++++++++++++++-------
- drivers/net/nbl/nbl_hw/nbl_txrx_ops.h |   2 +-
- 6 files changed, 175 insertions(+), 53 deletions(-)
+Implementation details:
+- Check mbuf->refcnt before using headroom
+- For refcnt == 1: use existing headroom (performance optimal)
+- For refcnt > 1: use next desc
 
+Fixes: e5fc1f78c78c ("net/nbl: support Tx and Rx burst")
+Cc: stable@dpdk.org
+
+Signed-off-by: Dimon Zhao <dimon.zhao@nebula-matrix.com>
+---
+ drivers/net/nbl/nbl_hw/nbl_txrx.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/nbl/nbl_hw/nbl_txrx.c b/drivers/net/nbl/nbl_hw/nbl_txrx.c
+index 9d92ab9992..93d9f0f7de 100644
+--- a/drivers/net/nbl/nbl_hw/nbl_txrx.c
++++ b/drivers/net/nbl/nbl_hw/nbl_txrx.c
+@@ -511,7 +511,10 @@ nbl_res_txrx_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, u16 nb_pkts, u
+ 			tx_extend_len = required_headroom + sizeof(struct rte_ether_hdr);
+ 		}
+ 
+-		if (rte_pktmbuf_headroom(tx_pkt) >= required_headroom) {
++		if (rte_mbuf_refcnt_read(tx_pkt) == 1 &&
++		    RTE_MBUF_DIRECT(tx_pkt) &&
++		    tx_pkt->nb_segs == 1 &&
++		    rte_pktmbuf_headroom(tx_pkt) >= required_headroom) {
+ 			can_push = 1;
+ 			u = rte_pktmbuf_mtod_offset(tx_pkt, union nbl_tx_extend_head *,
+ 						    -required_headroom);
 -- 
 2.34.1
 
