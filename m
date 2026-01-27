@@ -2,43 +2,40 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 849B7D2D8F9
-	for <dpdk-dev@archiver.kernel.org>; Tue, 27 Jan 2026 11:16:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31CF0D2F000
+	for <dpdk-dev@archiver.kernel.org>; Tue, 27 Jan 2026 11:50:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 35290402CE;
-	Tue, 27 Jan 2026 12:16:56 +0100 (CET)
-Received: from mail.lysator.liu.se (mail.lysator.liu.se [130.236.254.3])
- by mails.dpdk.org (Postfix) with ESMTP id 960FC400D6;
- Tue, 27 Jan 2026 12:16:54 +0100 (CET)
-Received: from mail.lysator.liu.se (localhost [127.0.0.1])
- by mail.lysator.liu.se (Postfix) with ESMTP id 0196516253;
- Tue, 27 Jan 2026 12:16:54 +0100 (CET)
-Received: by mail.lysator.liu.se (Postfix, from userid 1004)
- id E8715161CC; Tue, 27 Jan 2026 12:16:53 +0100 (CET)
-Received: from [192.168.1.85] (h-62-63-215-114.A163.priv.bahnhof.se
- [62.63.215.114])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
- (No client certificate requested)
- by mail.lysator.liu.se (Postfix) with ESMTPSA id 8FD0616321;
- Tue, 27 Jan 2026 12:16:51 +0100 (CET)
-Message-ID: <b4b00e90-e300-4457-aaf6-0c43a430384e@lysator.liu.se>
-Date: Tue, 27 Jan 2026 12:16:51 +0100
+	by mails.dpdk.org (Postfix) with ESMTP id 24D29402CE;
+	Tue, 27 Jan 2026 12:50:22 +0100 (CET)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id BAC17400D6
+ for <dev@dpdk.org>; Tue, 27 Jan 2026 12:50:20 +0100 (CET)
+Received: from mail.maildlp.com (unknown [172.18.224.107])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4f0kGb4XBNzJ46Yf;
+ Tue, 27 Jan 2026 19:49:43 +0800 (CST)
+Received: from frapema500003.china.huawei.com (unknown [7.182.19.114])
+ by mail.maildlp.com (Postfix) with ESMTPS id 807B540584;
+ Tue, 27 Jan 2026 19:50:19 +0800 (CST)
+Received: from localhost.localdomain (10.220.239.45) by
+ frapema500003.china.huawei.com (7.182.19.114) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 27 Jan 2026 12:50:19 +0100
+From: Marat Khalili <marat.khalili@huawei.com>
+To: <dev@dpdk.org>
+CC: <jerinjacobk@gmail.com>, <konstantin.ananyev@huawei.com>,
+ <mb@smartsharesystems.com>, <stephen@networkplumber.org>
+Subject: [PATCH v4 0/6] bpf: simple tests and fixes
+Date: Tue, 27 Jan 2026 11:49:36 +0000
+Message-ID: <20260127114944.35993-1-marat.khalili@huawei.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20251217180141.60227-1-marat.khalili@huawei.com>
+References: <20251217180141.60227-1-marat.khalili@huawei.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v16 1/2] eal: remove alloc_size from rte_lcore_var_alloc
-To: scott.k.mitch1@gmail.com, dev@dpdk.org
-Cc: mb@smartsharesystems.com, stephen@networkplumber.org,
- bruce.richardson@intel.com, mattias.ronnblom@ericsson.com, stable@dpdk.org
-References: <20260127020246.53057-1-scott.k.mitch1@gmail.com>
- <20260127052900.68045-1-scott.k.mitch1@gmail.com>
- <20260127052900.68045-2-scott.k.mitch1@gmail.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Mattias_R=C3=B6nnblom?= <hofors@lysator.liu.se>
-In-Reply-To: <20260127052900.68045-2-scott.k.mitch1@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: ClamAV using ClamSMTP
+X-Originating-IP: [10.220.239.45]
+X-ClientProxiedBy: frapema500005.china.huawei.com (7.182.19.99) To
+ frapema500003.china.huawei.com (7.182.19.114)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -52,54 +49,42 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On 1/27/26 06:28, scott.k.mitch1@gmail.com wrote:
-> From: Scott Mitchell <scott.k.mitch1@gmail.com>
-> 
-> The __rte_alloc_size(1) attribute on rte_lcore_var_alloc() is
-> semantically incorrect and causes false positives with FORTIFY_SOURCE
-> runtime checks.
-> 
-> The attribute tells the compiler that the function returns a pointer
-> to 'size' bytes of usable memory. However, rte_lcore_var_alloc()
-> actually returns a handle to a per-lcore variable scheme. The
-> allocator internally allocates 'size' bytes per lcore
-> (size * RTE_MAX_LCORE total), partitioned into per-lcore sections.
-> The handle points to lcore 0's copy, and accessed via
-> RTE_LCORE_VAR_LCORE(lcore_id, handle) which computes:
-> handle + (lcore_id * RTE_MAX_LCORE_VAR). Access is expected
-> beyond 'size' bytes beyond the returned pointer when 'lcore_id != 0'
-> but FORTIFY_SOURCE may terminate the program due to out of bounds
-> access.
-> 
-> This can be observed on CI with gcc 13.3.0 in lcore_var_autotest with
-> '*** buffer overflow detected ***: terminated' if pointer provenance
-> is preserved (e.g. if offsets avoid casting to uintptr_t).
-> 
-> Fixes: 5bce9bed67ad ("eal: add static per-lcore memory allocation facility")
-> Cc: mattias.ronnblom@ericsson.com
-> Cc: stable@dpdk.org
-> 
-> Signed-off-by: Scott Mitchell <scott.k.mitch1@gmail.com>
-> ---
+Add simple unit-style tests for rte_bpf_load, and fix some minor
+discovered bugs.
 
-Acked-by: Mattias Rönnblom <mattias.ronnblom@ericsson.com>
+v4:
+* Add Fixes: and Cc: stable@dpdk.org tags to all patches except 3. Try
+  to make sure stable@dpdk.org does not receive patch 3.
+* Ensure no (possibly hallucinated) trailing whitespace after Acked-by.
+* Improve subject line for the "conditional jump first" patch.
+* Update REGISTER_FAST_TEST() calls in app/test/test_bpf.c to use new
+  constants (NOHUGE_OK, ASAN_OK) instead of old boolean values.
 
-Thanks!
+v3:
+* Fixed unfortunate typos in the last patch commit message.
+* Marked all ARM opcodes with UINT32_C for clarity as suggested by
+  Morten Brørup, in a separate commit.
 
->   lib/eal/include/rte_lcore_var.h | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/lib/eal/include/rte_lcore_var.h b/lib/eal/include/rte_lcore_var.h
-> index ca31dff6fd..48b022e84e 100644
-> --- a/lib/eal/include/rte_lcore_var.h
-> +++ b/lib/eal/include/rte_lcore_var.h
-> @@ -202,7 +202,7 @@ rte_lcore_var_lcore(unsigned int lcore_id, void *handle)
->   __rte_experimental
->   void *
->   rte_lcore_var_alloc(size_t size, size_t align)
-> -	__rte_alloc_size(1) __rte_alloc_align(2);
-> +	__rte_alloc_align(2);
->   
->   #ifdef __cplusplus
->   }
+v2:
+* Moved new tests back into test_bpf.c
+* Changed library macros RTE_SHIFT_VALxx to handle variable first
+  arguments instead of introducing new macros.
+* Added another test and fix, for conditional jump as first instruction.
 
+Marat Khalili (6):
+  eal: variable first arguments of RTE_SHIFT_VALxx
+  bpf: fix signed shift overflows in ARM JIT
+  bpf: mark ARM opcodes with UINT32_C
+  bpf: disallow empty program
+  bpf: make add/subtract one program validate
+  bpf: fix validation when conditional jump is first instruction
+
+ app/test/test_bpf.c          | 254 +++++++++++++++++++++++++++++++++++
+ lib/bpf/bpf_jit_arm64.c      | 184 ++++++++++++-------------
+ lib/bpf/bpf_load.c           |   2 +-
+ lib/bpf/bpf_validate.c       |  48 ++++---
+ lib/eal/include/rte_bitops.h |   4 +-
+ 5 files changed, 375 insertions(+), 117 deletions(-)
+
+-- 
+2.34.1
