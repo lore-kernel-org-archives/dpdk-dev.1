@@ -2,43 +2,42 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2377DD2595D
-	for <dpdk-dev@archiver.kernel.org>; Tue, 27 Jan 2026 08:12:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6864ED2595D
+	for <dpdk-dev@archiver.kernel.org>; Tue, 27 Jan 2026 08:12:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 00FB940B9F;
-	Tue, 27 Jan 2026 09:12:15 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 92C7340E2A;
+	Tue, 27 Jan 2026 09:12:23 +0100 (CET)
 Received: from office2.cesnet.cz (office2.cesnet.cz [78.128.248.237])
- by mails.dpdk.org (Postfix) with ESMTP id CF08B40A77
- for <dev@dpdk.org>; Tue, 27 Jan 2026 09:12:13 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 1675F40A77
+ for <dev@dpdk.org>; Tue, 27 Jan 2026 09:12:22 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cesnet.cz;
- s=office2-2020; t=1769501533;
- bh=XCGaEjXa1+gVI7qrY2jgvE5GabeDaL+JihssQhQyWrY=;
+ s=office2-2020; t=1769501541;
+ bh=2TgIKgz9UtYsFmkn5FwKoQT+wfzdNkHfBg4m+jG8zXw=;
  h=Subject:From:To:Cc:Date:In-Reply-To:References;
- b=V0Wgak3UjdFsf3kyorVtKBhjBlR6SPdxLhaoLXvQp1jiE1yO9/C9wkKofACL0xUSs
- 9ru2rRjHEnp+4MaREuGpl6pUT2nBW+wkevk44mmZsVYYCxiOzmdqkkIrcFHWYlyHgi
- tUMG3WP2jqfavOIDbXgi1j0HxW0efm6z94A6VrPpPvzWirI7rHnYvXiPoRuuDKmema
- ZUuJpOLiAUDP1EW6U0vSefa9k0ijU6b9brfuC0Pvu23bWdpdMfAz5bRo62nNynDml8
- g6w1oYOchg3aldcvXqBG0mIBISu7c8a7E/wB8/w31BKrPKfIgAVjHz+4fKHiF1UJq7
- pzhLRj7b010Xw==
+ b=KHixiotmoLGMoNp02hsoxg5Zwi7ClKOWYmsZtPkO5iD/GnvuLTXR8vg35sxRQe1FW
+ qLce/go8e4ahgty5C58uHsrMGCoxjFXfRFFjjhtNdt9y/JEDVD/Q1qU/By1tK5zFdG
+ U3Hqu9ehQq3U7JbR1bbQxAmTNmGyPe4fA3kd7EqRDzlNfxb9sf5ahSPezdVifyfKD8
+ q46edUBr3f0M+j6ek0x9DZ9iZPOIna1j9EL2NpPKUHKQ5Pya/BO8zIkwTiXOJ0M0hN
+ ADT9Umybe641bqOFFUarXV9swJU6v9Lrd1ThK2p3QyRLXQOkdy24UvubcMM2l1LaGB
+ Jyf2koy8PmHgA==
 Received: from [IPv6:2001:718:812:27::107] (gtx107.cesnet.cz
  [IPv6:2001:718:812:27::107])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits)
- server-digest SHA256) (No client certificate requested)
- by office2.cesnet.cz (Postfix) with ESMTPSA id 72A59118008B;
- Tue, 27 Jan 2026 09:12:13 +0100 (CET)
-Message-ID: <1256ecfe661fd3ddf7e8913bd82b02cb16085486.camel@cesnet.cz>
-Subject: Re: [PATCH v4 3/6] net/nfb: update timestamp calculation to
- meaningful value
+ key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits))
+ (No client certificate requested)
+ by office2.cesnet.cz (Postfix) with ESMTPSA id D703B118008C;
+ Tue, 27 Jan 2026 09:12:21 +0100 (CET)
+Message-ID: <c290d24b4985d46730bc4f45919128193bb91bc2.camel@cesnet.cz>
+Subject: Re: [PATCH v5 2/8] net/nfb: create one ethdev per ethernet port
 From: Martin Spinler <spinler@cesnet.cz>
 To: Stephen Hemminger <stephen@networkplumber.org>
 Cc: dev@dpdk.org
-Date: Tue, 27 Jan 2026 09:12:13 +0100
-In-Reply-To: <20260121093307.299c84f0@phoenix.local>
-References: <20260115140134.235877-1-spinler@cesnet.cz>
- <20260121170120.268553-1-spinler@cesnet.cz>
- <20260121170120.268553-4-spinler@cesnet.cz>
- <20260121093307.299c84f0@phoenix.local>
+Date: Tue, 27 Jan 2026 09:12:21 +0100
+In-Reply-To: <20260126163710.5bf8a275@phoenix.local>
+References: <20260115151656.393106-1-spinler@cesnet.cz>
+ <20260123172224.1567362-1-spinler@cesnet.cz>
+ <20260123172224.1567362-3-spinler@cesnet.cz>
+ <20260126163710.5bf8a275@phoenix.local>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.58.2 
@@ -56,28 +55,26 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 2026-01-21 at 09:33 -0800, Stephen Hemminger wrote:
-> The patch is ok as far as it goes.
+On Mon, 2026-01-26 at 16:37 -0800, Stephen Hemminger wrote:
+> > +TAILQ_HEAD(nfb_pmd_internals_head, pmd_internals);
 >=20
-> But the best practice in DPDK for drivers doing timestamps is for
-> the driver to only put a timestamp on if timestamp offload flag
-> was set when configuring that device. For the case of multiple devices
-> that means that one device may have timestamp and other not.
+> You should put static in front of TAILQ_HEAD so that the head is not
+> global if you don't need it to be.
+>=20
+> > +static struct nfb_pmd_internals_head nfb_eth_dev_list =3D
+> > +	TAILQ_HEAD_INITIALIZER(nfb_eth_dev_list);
+> > +
 
-Ack. I'll work it in.
-
-> Also any driver that supports receive timestamp must provide
-> a read_clock operation. Otherwise the application has no way of knowing
-> what units the timestamp is in. I added that to the AI review
-> script so new drivers will get rejected with out it.
-
-Ack.
-
-> I suspect that in this drivers case it is only used in systems where:
->  - only single instance of device is possible
->  - your application is just assuming a common unit like nanosecond.
-
-You're right.
+I don't understand this. The static is already in front of the
+nfb_eth_dev_list global variable.
 
 
-More responses in another email thread.
+The TAILQ_HEAD() just defines a struct (not a variable), which is
+visible just in the one .c file.
+
+When I use static, as you suggest (or as I think you suggest):
+static TAILQ_HEAD(nfb_pmd_internals_head, pmd_internals);
+$ ninja
+[2/30] Compiling C object ... net_nfb_nfb_ethdev.c.o
+...nfb_ethdev.c:49:1: warning: useless storage class specifier in empty
+declaration
