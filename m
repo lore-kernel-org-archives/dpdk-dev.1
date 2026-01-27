@@ -2,77 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 656F5D2F02C
-	for <dpdk-dev@archiver.kernel.org>; Tue, 27 Jan 2026 14:24:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEB71D1953D
+	for <dpdk-dev@archiver.kernel.org>; Tue, 27 Jan 2026 15:10:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 32C8240E0C;
-	Tue, 27 Jan 2026 15:24:09 +0100 (CET)
-Received: from rn-mx02.apple.com (rn-mx02.apple.com [17.132.108.1])
- by mails.dpdk.org (Postfix) with ESMTP id DAEC64021F
- for <dev@dpdk.org>; Fri, 23 Jan 2026 19:35:50 +0100 (CET)
-Received: from mr55p01nt-mtap01.apple.com
- (mr55p01nt-mtap01.ise.apple.com [10.170.185.217]) by mr55p01nt-mxp02.apple.com
- (Oracle Communications Messaging Server 8.1.0.28.20250821 64bit (built Aug 21
- 2025)) with ESMTPS id <0T9B1M34PYBQ5W30@mr55p01nt-mxp02.apple.com> for
- dev@dpdk.org; Fri, 23 Jan 2026 18:35:50 +0000 (GMT)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.20,FMLib:17.12.100.49
- definitions=2026-01-23_03,2026-01-22_02,2025-10-01_01
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=apple.com; h=cc :
- content-transfer-encoding : content-type : date : from : in-reply-to :
- message-id : mime-version : references : subject : to; s=20180706;
- bh=aVCU/FXijPJsOcNMSfnVHAgCPio/6lfKnpZyFUuvBZE=;
- b=YDnxcMgHYL+NQBVhBWgoGyIpq4eZDPDA9u2v52IDehEJmkXZDEfXV9Ohtuoyc4qOs+31
- D32C3dgdVgqDE9Y2MxFp9e9hn4FHeRPrQLnm/EZsOx9KQogqzzGihsIVZamIv8vUu4s2
- 666iWBizMdlQ54BR0vcWtQKr/tKJErEWt5ru1F9HxOW811rcIWVk8bzUoDRyrRdRr0ZS
- C9nF9wY1hPUUhFk0oj0WgJ1jA1a4KS29dpnNULSiwHLk5o07NnqmP8JlINKeQYWk+MsO
- teCNFIIO+PjhOOspX6CCqOfBsYq+kOU89J3JWr5SGGTqQG6vvK1LOGGu0l7dTSdozYqR pw==
-Received: from mr55p01nt-mmpp05.apple.com
- (mr55p01nt-mmpp05.ise.apple.com [10.170.185.201])
- by mr55p01nt-mtap01.apple.com
- (Oracle Communications Messaging Server 8.1.0.28.20250821 64bit (built Aug 21
- 2025)) with ESMTPS id <0T9B2DTB9YBNAIY0@mr55p01nt-mtap01.apple.com>; Fri,
- 23 Jan 2026 18:35:47 +0000 (GMT)
-Received: from process_milters-daemon.mr55p01nt-mmpp05.apple.com by
- mr55p01nt-mmpp05.apple.com
- (Oracle Communications Messaging Server 8.1.0.28.20250821 64bit (built Aug 21
- 2025)) id <0T9B07X00Y6KEJ00@mr55p01nt-mmpp05.apple.com>; Fri,
- 23 Jan 2026 18:35:47 +0000 (GMT)
-X-Va-A: 
-X-Va-T-CD: 5a2a44f13f28f5879804f360a3795a01
-X-Va-E-CD: f40acba1b1377b2ca109670d1f0feaf5
-X-Va-R-CD: 89f4ffde9da73bb2a30c3df471ee8654
-X-Va-ID: b99086a4-ed6e-492a-823e-9aceb9930032
-X-Va-CD: 0
-X-V-A: 
-X-V-T-CD: 5a2a44f13f28f5879804f360a3795a01
-X-V-E-CD: f40acba1b1377b2ca109670d1f0feaf5
-X-V-R-CD: 89f4ffde9da73bb2a30c3df471ee8654
-X-V-ID: 54e36034-1b4c-42df-8314-abd4fa42dbed
-X-V-CD: 0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.20,FMLib:17.12.100.49
- definitions=2026-01-23_03,2026-01-22_02,2025-10-01_01
-Received: from smtpclient.apple ([17.234.19.51]) by mr55p01nt-mmpp05.apple.com
- (Oracle Communications Messaging Server 8.1.0.28.20250821 64bit
- (built Aug 21
- 2025)) with ESMTPSA id <0T9B07E6XYBM4300@mr55p01nt-mmpp05.apple.com>; Fri,
- 23 Jan 2026 18:35:47 +0000 (GMT)
-Content-type: text/plain; charset=utf-8
-MIME-version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [PATCH v3 v3 2/2] mailmap: add Scott Mitchell
-From: Scott Mitchell <scott_mitchell@apple.com>
-In-reply-to: <98CBD80474FA8B44BF855DF32C47DC35F6568A@smartserver.smartshare.dk>
-Date: Fri, 23 Jan 2026 10:35:36 -0800
-Cc: dev@dpdk.org, scott.k.mitch1@gmail.com
-Content-transfer-encoding: quoted-printable
-Message-id: <0524677A-D643-491D-8E9C-A062AF1DB7DA@apple.com>
-References: <20260111160059.293-1-scott.k.mitch1@gmail.com>
- <20260111160059.293-3-scott.k.mitch1@gmail.com>
- <98CBD80474FA8B44BF855DF32C47DC35F6568A@smartserver.smartshare.dk>
-To: =?utf-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>
-X-Mailer: Apple Mail (2.3826.700.81)
-X-Mailman-Approved-At: Tue, 27 Jan 2026 15:24:07 +0100
+	by mails.dpdk.org (Postfix) with ESMTP id 8E0B640E0C;
+	Tue, 27 Jan 2026 16:10:22 +0100 (CET)
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com
+ [209.85.221.48]) by mails.dpdk.org (Postfix) with ESMTP id 918F340297
+ for <dev@dpdk.org>; Tue, 27 Jan 2026 16:10:21 +0100 (CET)
+Received: by mail-wr1-f48.google.com with SMTP id
+ ffacd0b85a97d-435903c4040so3568434f8f.3
+ for <dev@dpdk.org>; Tue, 27 Jan 2026 07:10:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769526621;
+ x=1770131421; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=B5uV5qBlV8oxvLUdQpaTRHEQ5lXmRByc1/is4t5dJks=;
+ b=0+Nix0waIiYHCwJsxGSS9DpNCJyfbAKRnk2BLaGuwgR8Ic9po4S4IZqRLfniv/xlff
+ 9e8+y21fCbSvKuBkgiWVhR+1s+9qmfuh+zPJm/K/9ENdV6c6Of/NMZKHpFxzaCiMHeU1
+ eD2OlrQbLarbOV7KTuvQhQ+ODtaBmHuxhAma/h3uZMqd7g8hlDBNF6qk9uwMUKhJnhaA
+ KE42KAH2lupIBqhVPEXZNmg+cr4y5rhJ/hAlPipO21rwO8jcrDSkadaPTQfjePm/39ii
+ Fbgr+1dwGMehprw+MupD6PXhlQGZyfsrbDMcXXpBrpCIUlJSwRtstXAaxZfonbeoPE37
+ 04kQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1769526621; x=1770131421;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=B5uV5qBlV8oxvLUdQpaTRHEQ5lXmRByc1/is4t5dJks=;
+ b=V+B+HsVjeUQMJWiB37jG9WuUzogN4SVoE9c/3CgSqBNsyByGnh4f/qQ0Lyi9VjRKSW
+ xaF3z2/pA6kOjzrr52UgcFMZcdlXrWUJmma/IVBlctRUjBqz/oj8nvIc4eDsXenrLDhp
+ NpnSm7FjqUvIuF0EReW2FS4bek0pPrtrbRMR7rHD9rKylyXzPmiwQIZi0WBAJjOrAH5X
+ 9lX378FmWv78dX90Uvh1rpgKqiB3xj+OOt9TcMcWyttkvXS3/P5thiceFW0snS9E5/Ci
+ NHA8AVru6Vbf16k3fy7kDdBbV7dMTcrKJx2hakIZZVCF0TxJFWool6oEr0w3H8CC2cWI
+ SsBQ==
+X-Gm-Message-State: AOJu0YwKoFXQMrIqOkTqEq1CIDiWkj2dCf5Y2gRzhkqh8JlyLZaLvBYw
+ hlGkfWLnYEnzmCnYK/CxLZSXpHmMj1fuuQ1WWO9tXAheEGDMVe7q7vZeDMr1KurUodUdOyrTMtK
+ P6yJW
+X-Gm-Gg: AZuq6aJeVt7w/0raIkmaj0NsPJWpqeNZxOGuHiW8zuQLYF6UumxKdvlAqGh/67Qqs3t
+ aIkeVoFw2kAmkWxb/pQMvKG8h+MipmValhMC8ew1lAMssvossjsqbSh/7joGkhWqA2ueP/VFGuP
+ 3595+UxlqiU6CamCaTuCm21d6K3d13WWPjSBKXiGKgpKU3fUYOwCtV/C6pB6S2sekeZy89ll61y
+ aFP9J210/AEAmd4VYxOm/fq3A7NflE5nCYC1vKrXJZL9rKutaRRXXONFpetUDv/+EMkoMIhYQFw
+ KcOEN46OUHB52mKkeB+lOuf8mEhgwAW6xbbDQfvt8n7F2CuladojriuUkHmUrTYscAEJ09ioDLL
+ LMTgCSYUtDTnE2FwEGZI/xT/6cqTz0uexpXePghGtVfX0SV1S5HqrrgZVJi2FO2csrW38NTNV3w
+ 68mt2PmHykt3Uva47bE2YS7ePD1tQcR09hIeD/2tneeDoEiPaRSarG
+X-Received: by 2002:a05:6000:178e:b0:430:fd60:940f with SMTP id
+ ffacd0b85a97d-435dd04c33amr2799745f8f.14.1769526620905; 
+ Tue, 27 Jan 2026 07:10:20 -0800 (PST)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ ffacd0b85a97d-435b1c24acdsm39853104f8f.13.2026.01.27.07.10.19
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 27 Jan 2026 07:10:20 -0800 (PST)
+Date: Tue, 27 Jan 2026 07:10:15 -0800
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Dimon Zhao <dimon.zhao@nebula-matrix.com>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH v3 0/4] improve NBL memory safety and mailbox reliability
+Message-ID: <20260127064751.4e830d99@phoenix.local>
+In-Reply-To: <20260127025220.190944-1-dimon.zhao@nebula-matrix.com>
+References: <20260123031627.151341-1-dimon.zhao@nebula-matrix.com>
+ <20260127025220.190944-1-dimon.zhao@nebula-matrix.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -86,49 +81,30 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Thanks Morten!
+On Mon, 26 Jan 2026 18:52:16 -0800
+Dimon Zhao <dimon.zhao@nebula-matrix.com> wrote:
 
-> On Jan 21, 2026, at 10:27=E2=80=AFPM, Morten Br=C3=B8rup =
-<mb@smartsharesystems.com> wrote:
->=20
-> I have verified that Scott replies to the Apple email address.
->=20
-> Tested-by: Morten Br=C3=B8rup <mb@smartsharesystems.com>
-> Reviewed-by: Morten Br=C3=B8rup <mb@smartsharesystems.com>
->=20
->=20
-> Venlig hilsen / Kind regards,
-> -Morten Br=C3=B8rup
->=20
->> -----Original Message-----
->> From: scott.k.mitch1@gmail.com [mailto:scott.k.mitch1@gmail.com]
->> Sent: Sunday, 11 January 2026 17.01
->> To: dev@dpdk.org
->> Cc: Morten Br=C3=B8rup; stephen@networkplumber.org; Scott Mitchell
->> Subject: [PATCH v3 v3 2/2] mailmap: add Scott Mitchell
->>=20
->> From: Scott Mitchell <scott.k.mitch1@gmail.com>
->>=20
->> Add email mapping for consistent git attribution.
->>=20
->> Signed-off-by: Scott Mitchell <scott.k.mitch1@gmail.com>
->> ---
->> .mailmap | 1 +
->> 1 file changed, 1 insertion(+)
->>=20
->> diff --git a/.mailmap b/.mailmap
->> index 2f089326ff..a0987fc3c7 100644
->> --- a/.mailmap
->> +++ b/.mailmap
->> @@ -1437,6 +1437,7 @@ Saurabh Singhal <saurabhs@arista.com>
->> Savinay Dharmappa <savinay.dharmappa@intel.com>
->> Scott Branden <scott.branden@broadcom.com>
->> Scott Daniels <daniels@research.att.com>
->> +Scott Mitchell <scott.k.mitch1@gmail.com> <scott_mitchell@apple.com>
->> Scott W Taylor <scott.w.taylor@intel.com>
->> Scott Wasson <scott_wasson@affirmednetworks.com>
->> Se=C3=A1n Harte <seanbh@gmail.com>
->> --
->> 2.39.5 (Apple Git-154)
->=20
+> Includes fixes for mbuf/memzone leaks and mailbox state handling.
+> 
+> Dimon Zhao (4):
+>   net/nbl: fix memzone leak on queue release
+>   net/nbl: fix mbuf headroom usage in packet Tx
+>   net/nbl: fix mbuf double-free in queue cleanup
+>   net/nbl: improve mailbox exception handling
+> 
+>  drivers/net/nbl/nbl_dev/nbl_dev.c     |   2 +-
+>  drivers/net/nbl/nbl_hw/nbl_channel.c  |  94 +++++++++++++++++----
+>  drivers/net/nbl/nbl_hw/nbl_channel.h  |  11 ++-
+>  drivers/net/nbl/nbl_hw/nbl_resource.h |   2 +
+>  drivers/net/nbl/nbl_hw/nbl_txrx.c     | 117 +++++++++++++++++++-------
+>  drivers/net/nbl/nbl_hw/nbl_txrx_ops.h |   2 +-
+>  6 files changed, 175 insertions(+), 53 deletions(-)
+> 
 
+Queued to next-net with minor rewording of the commit message in patch 4.
+
+Improve mailbox reliability by replacing the simple 'acked' flag with
+a state machine for tracking message status.
+
+Key changes:
+1. Replace simple 'acked' flag with a state machine...
