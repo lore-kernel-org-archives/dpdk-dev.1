@@ -2,69 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D348AD2FEDB
-	for <dpdk-dev@archiver.kernel.org>; Tue, 27 Jan 2026 19:21:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE1A8D2FED9
+	for <dpdk-dev@archiver.kernel.org>; Tue, 27 Jan 2026 20:28:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0DFF040F1A;
-	Tue, 27 Jan 2026 20:21:52 +0100 (CET)
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com
- [209.85.128.41]) by mails.dpdk.org (Postfix) with ESMTP id 6C68740E21
- for <dev@dpdk.org>; Tue, 27 Jan 2026 20:21:50 +0100 (CET)
-Received: by mail-wm1-f41.google.com with SMTP id
- 5b1f17b1804b1-4806ce0f97bso1953055e9.0
- for <dev@dpdk.org>; Tue, 27 Jan 2026 11:21:50 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 9911840F1A;
+	Tue, 27 Jan 2026 21:28:48 +0100 (CET)
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com
+ [209.85.128.54]) by mails.dpdk.org (Postfix) with ESMTP id 61C8940E21
+ for <dev@dpdk.org>; Tue, 27 Jan 2026 21:28:47 +0100 (CET)
+Received: by mail-wm1-f54.google.com with SMTP id
+ 5b1f17b1804b1-47edffe5540so70368585e9.0
+ for <dev@dpdk.org>; Tue, 27 Jan 2026 12:28:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769541710;
- x=1770146510; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769545727;
+ x=1770150527; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=OPAinidqnLzTK6vNOAK2AdkijO7D5R6RMDqjWjz8tJw=;
- b=U5V/bQq/LHVe1IptKzad+H/Qhrml0H8aNFz7pb7Wl5M8ZpBdobDD+tVz8TPZ6j9SJm
- 7Nx9zDS8fHeAllmTiIRN1E4NPGnshw1PjOQ6B9qKToLR5mqO248Z2Q7GQNXecY8nMSAF
- CWVNuBQsqSMrof59n+zncn2FUXgJKrocTi8XUpxGDRhccx7RP62GyZel86vpGEH4rhLI
- g/f4cZ3AVM9RqywX9aIMpnYEfdII0qBD2Gnn3pTTa+ZAUvAGUYW0pS3xMkdgegYf6U5p
- dq2qOgCAtVMmz9NsFq1VycZ/Onnl4SUdu9TaR7+6fR3kuSbLFXanpY1IjCdeQSqhodVF
- RNFQ==
+ bh=Gm2HcbEsUxWYadQInnf3tCWYtDpCW2vqgz8dlCHzxmI=;
+ b=o7NhL5ynAP67igPeES1UDgh52ai8cCjTvxS49f3p/KsiGY89qZuYDTFjIcAVEcF0Jh
+ YNTaeSg12kwcGLZ/9sazBS0okFKRQ+KMOUkIH9MW7Oy+tmzzXVZ49k3/vGHActnPoiLh
+ MThmcLE4dX/zck344CUx0WS1VYEQNut623hXWT5J6y2UgD81PbluQ3sm9HJqmZaOPJtR
+ FSLMDs8xM3G4Pit5CWgxQCaHF+Afmv41PhkByfDbZQGv0ciUlaKH/oOCpneECNG5P4wW
+ 0gW96ecB9JvKrosexE2ZpTTUEU+l5wuSndjrvqWmDDp8GWMKLt9M/g4fqYAc1NmDges9
+ KKUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1769541710; x=1770146510;
+ d=1e100.net; s=20230601; t=1769545727; x=1770150527;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=OPAinidqnLzTK6vNOAK2AdkijO7D5R6RMDqjWjz8tJw=;
- b=FLebZYD9uoSqgUuOnONSNjMkKxqw9/ESeUHi5i18vHxHLDEBbSQKTqySul2WiCMII6
- JUkpHXusfGQYg9c/NgVkae7WXf+kZOVBJfKs757352++1V4j/sBvM0BWQ4Kh6ECwpahL
- upz6RuMZlPbZ0yW+xWRO9t1AFHw/twQ6ZI/5wS8o9IJ0zPEsE0jBnhWs5wuwY6NpbFqR
- xrZy20dfZxIiuOyE7N3y1WWxDGL9a3Z+0whkK+Y0/hlIBPP02yJ2GHlOXZnevN5AFEbP
- 28tTqi5fZYAHLluLF34DpT8LBVwXNhBmiOU5LBWSdpVjrLFRPI8KUVwkDwlapQjqqPpw
- jkBw==
-X-Gm-Message-State: AOJu0Yw/K4Ltzrsex0XqDr0X0RO9EEF/nR5feFTuDAbt/zFagumQ7ORC
- BspLUxSMEaqnrYPXOzX0L81PA/RdAV5zQYLj1APK8WTkqcvztzzcqDn0V6C/SkBu8/8X0yh7Cxv
- 59poE
-X-Gm-Gg: AZuq6aKCNYIYOG+11MOSUPqGTuxVhkqeuYTgUwx+GlVMN7o8SK4wbjUxZntq3XXwosY
- zsvFf0LUJ1wQ3HMe/S3y3PC2jz7/zlvydUct3+FbnGPMDH8nCTFN5cSsstEteg6ieatfXjDOKID
- 9My5olbvY5Ab8nkCrEzdPbyTeNTAstlgSPHpwzMqB4lfUgJP6qsM8BozZ7DsqO6aMUxPUdYM4Ee
- M7KBPVQBJ7eyBESjImpy4c6XrrhQUpXcfros47tIQx87js6hrM25EeZH2GikegEL/pDv5qLZgC7
- UmJuWbzh5jiJ9OAcwWKD9qLHYWAE1xO54Enhtyxa+MiShJ/0xrUIt0CpKI5cyxVknO1uTYy/Abq
- aoi1FhlN7Vg3s4iXH38wAYGNdQKSSEQP8Fb5u0JNURSmSpe5beSta5AkC30qkhtNUABOuhmv33F
- t80oXWOx0bK+jp0FxRKvrckJnyPWNuTneavsPFc1tNnszdEhDrhQ==
-X-Received: by 2002:a05:600c:34d0:b0:480:683f:76e8 with SMTP id
- 5b1f17b1804b1-48069c7c265mr31849845e9.26.1769541709739; 
- Tue, 27 Jan 2026 11:21:49 -0800 (PST)
+ bh=Gm2HcbEsUxWYadQInnf3tCWYtDpCW2vqgz8dlCHzxmI=;
+ b=BG2NjMKng7P3QL2b9YsBpqPUMV7k9dLtcXvk6Q9ngNqr1bDOmB2IIaKkrcqrEVmeZt
+ I2T3eIe0KAR+ulDk1JCHnvXh6sfhmzKlJ2Ee8vfoTaFaKmqfIRzL9CxFdwyqLsRobZT5
+ 3zdR+27Clt32zbhIxTlO33rtJt0/DlgkfOaRJkzKn0w5Yy8ovhqZF8LIyJrH1QZBXGxJ
+ hN121xbG3sk3lI0SiJi7ltqvdIJ5jnEZtA5EQ8eGUAOV0Ma7MgSY6PjWjwM1AaDowILO
+ F/SRTi2/jLyBl3n4zpcudf+VB8MuQ+DE2UUG2ZKPNyNTN/JrrfPIevY9vNsIo6rkTk+e
+ dwmw==
+X-Gm-Message-State: AOJu0Yy95AT9t+Dw+gJw0n9tzd9OsnqGpHImNwvGc1Nd+H/gyWF/rzll
+ /Wc0vhWjivAfpJnZD3PZtOz4GFMSD08lX58jto2Gnf/BXh5yZelLuUeLG4YmHUeVqn2iUSSRLbQ
+ JxBUZ
+X-Gm-Gg: AZuq6aK6Cpvzsb/Nfx/hpCuLKaFxNgjva3KfgtToIKLZr0htDxRatZ9Ct4TuKHOsZrX
+ Xv7JEFG/fj6zQs+QCu3Vxe78GA221fAGmCwxEhr88buhrKrY5myWm4oJpJCZGnhSvokmWEWkKnb
+ /P5kKncoVdhWXG5EqsPFrySPHek5ta9/6NKtsCZrEhaxnDZsxm72kWIosfmVc2YD0c1ZvcL+KIF
+ YLl+3AyY9Gweswm1qko2a6ZdkXaKfNRH1FFUIEAR3LRZKADcUJNKFmZ8BhCoIvkZomS7NNL41bW
+ CP6S3/Ym7K3uEG/yDwQnnxV1ZFQswiE0UNKe9v9UaRW0/qLHbVI0+QSJTdyqXuEoGmRylmQE3dX
+ xBAI792iigoW9cJzP/slTV6/dl2UsKZJwtWANxrvVEfFC874GXKeSB8kXgK3uCr2s/oxSR2PLL0
+ Vx2iilS1idRmLeNmhE3AztdVx5MRp+B5u4o9fpE6yfUUIkJYjb5w==
+X-Received: by 2002:a05:600c:800f:b0:45d:d8d6:7fcc with SMTP id
+ 5b1f17b1804b1-48069c6762cmr33651095e9.27.1769545726730; 
+ Tue, 27 Jan 2026 12:28:46 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-4806cddffc0sm14584515e9.5.2026.01.27.11.21.48
+ 5b1f17b1804b1-48066c42895sm85437225e9.14.2026.01.27.12.28.45
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 27 Jan 2026 11:21:49 -0800 (PST)
+ Tue, 27 Jan 2026 12:28:46 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [REVIEW] common/mlx5: support dmabuf
-Date: Tue, 27 Jan 2026 11:21:46 -0800
-Message-ID: <20260127192146.169967-1-stephen@networkplumber.org>
+Subject: [REVIEW] eal: RTE_PTR_ADD/SUB API improvements
+Date: Tue, 27 Jan 2026 12:28:42 -0800
+Message-ID: <20260127202843.20273-1-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20260127174429.1504288-3-cburdick@nvidia.com>
-References: <20260127174429.1504288-3-cburdick@nvidia.com>
+In-Reply-To: <20260125223015.69190-1-scott.k.mitch1@gmail.com>
+References: <20260125223015.69190-1-scott.k.mitch1@gmail.com>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -81,204 +81,158 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-AI-generated review of bundle-1701-dmabuf.mbox
+AI-generated review of ptr-add.mbox
 Reviewed using Claude (claude-opus-4-5-20251101)
 
 This is an automated review. Please verify all suggestions.
 
 ---
 
-# DPDK Patch Review: dmabuf Support
+## DPDK Patch Review: `[PATCH v13] eal: RTE_PTR_ADD/SUB API improvements`
 
-## Summary
-This patch series adds dmabuf (DMA buffer) support to DPDK EAL and the MLX5 driver, enabling DMA transfers between drivers without proprietary kernel modules.
-
----
-
-## Patch 1/2: eal: support dmabuf
-
-### Commit Message Issues
-
-**Warning: Subject line format**
-- Subject "eal: support dmabuf" is acceptable but could be more descriptive
-- Consider: "eal: add dmabuf external memory registration support"
-
-**Warning: Body contains questions to reviewers**
-The commit message contains design questions that should be resolved before submission:
-```
-Which option is preferred?
-```
-Remove these questions and state the chosen design approach clearly.
-
-**Info: Body line length**
-Some lines in the body exceed 75 characters but are within acceptable range.
-
-### Code Issues
-
-**Error: Double blank line**
-```c
-} dmabuf_info[RTE_MAX_MEMSEG_LISTS] = {
-	[0 ... RTE_MAX_MEMSEG_LISTS - 1] = { .fd = -1, .offset = 0 }
-};
-
-
-#define MAX_MMAP_WITH_DEFINED_ADDR_TRIES 5
-```
-Remove the extra blank line after the struct initialization.
-
-**Warning: Inconsistent indentation in struct**
-```c
-static struct {
-		int fd;          /**< dmabuf fd, -1 if not dmabuf backed */
-		uint64_t offset; /**< offset within dmabuf */
-	} dmabuf_info[RTE_MAX_MEMSEG_LISTS] = {
-```
-The struct members are double-indented with tabs. Should use single tab for consistency:
-```c
-static struct {
-	int fd;          /**< dmabuf fd, -1 if not dmabuf backed */
-	uint64_t offset; /**< offset within dmabuf */
-} dmabuf_info[RTE_MAX_MEMSEG_LISTS] = {
-```
-
-**Error: New public APIs missing `__rte_experimental`**
-All new public API functions in `rte_memory.h` must be marked as experimental:
-- `rte_memseg_list_get_dmabuf_fd()`
-- `rte_memseg_list_get_dmabuf_fd_thread_unsafe()`
-- `rte_memseg_list_get_dmabuf_offset()`
-- `rte_memseg_list_get_dmabuf_offset_thread_unsafe()`
-- `rte_extmem_register_dmabuf()`
-
-Add `__rte_experimental` on the line before each function declaration in the header:
-```c
-__rte_experimental
-int
-rte_memseg_list_get_dmabuf_fd(const struct rte_memseg_list *msl);
-```
-
-**Warning: Missing release notes**
-New API functions require documentation in `doc/guides/rel_notes/release_XX_YY.rst`.
-
-**Warning: Missing version.map updates**
-New exported symbols need to be added to `lib/eal/version.map` under the `EXPERIMENTAL` section.
-
-**Warning: Missing testpmd hooks and functional tests**
-New APIs should have tests in `app/test/` and hooks in `app/testpmd` per guidelines.
-
-**Info: Doxygen style**
-The Doxygen comments use `dma-buf` inconsistently (sometimes `dmabuf`, sometimes `dma-buf`). Consider standardizing to one form throughout.
-
-**Warning: Variable `n` unused context**
-```c
-	n = len / page_sz;
-	if (malloc_heap_create_external_seg_dmabuf(va_addr, iova_addrs, n,
-```
-The variable `n` is computed but the result from `len / page_sz` could be used directly since it's only used once.
+### Summary
+This patch refactors the `RTE_PTR_ADD` and `RTE_PTR_SUB` macros to preserve pointer provenance and type qualifiers, adds new `RTE_INT_PTR_*` variants for integer-as-pointer arithmetic, and updates all callers across the codebase.
 
 ---
 
-## Patch 2/2: common/mlx5: support dmabuf
+### Errors
 
-### Commit Message Issues
+1. **Subject line exceeds 60 characters**
+   - Current: `eal: RTE_PTR_ADD/SUB API improvements` (39 chars) - Actually OK
+   - No error here.
 
-**Info: Subject is acceptable**
-"common/mlx5: support dmabuf" follows the format guidelines.
+2. **Missing `Cc: stable@dpdk.org`**
+   - This patch changes API behavior (NULL to `RTE_PTR_ADD`/`RTE_PTR_SUB` is now undefined). If this is considered a fix for existing issues, it should include `Cc: stable@dpdk.org`.
 
-### Code Issues
-
-**Warning: Long lines exceed 100 characters**
-Several lines in `mlx5_common.c` and `mlx5_common_mr.c` exceed the 100-character limit:
-
-```c
-			mr = mlx5_create_mr_ext_dmabuf(dev->pd, (uintptr_t)addr, len,
-						SOCKET_ID_ANY, dmabuf_fd, dmabuf_off,
-						dev->mr_scache.reg_dmabuf_mr_cb);
-```
-Line 1149: `mr = mlx5_create_mr_ext_dmabuf(dev->pd, (uintptr_t)addr, len,` - OK
-But the continuation could be better formatted.
-
-In `mlx5_common_mr.c`:
-```c
-				int dmabuf_fd = rte_memseg_list_get_dmabuf_fd_thread_unsafe(msl);
-```
-This line likely exceeds 100 characters. Break it up:
-```c
-				int dmabuf_fd;
-				dmabuf_fd = rte_memseg_list_get_dmabuf_fd_thread_unsafe(msl);
-```
-
-**Warning: Missing `__rte_internal` attribute**
-The function `mlx5_create_mr_ext_dmabuf()` is declared in `mlx5_common_mr.h` but lacks `__rte_internal`:
-```c
-struct mlx5_mr *
-mlx5_create_mr_ext_dmabuf(void *pd, uintptr_t addr, size_t len, int socket_id,
-			  int dmabuf_fd, uint64_t dmabuf_offset,
-			  mlx5_reg_dmabuf_mr_t reg_dmabuf_mr_cb);
-```
-If this is internal to the driver, add `__rte_internal` on the line before.
-
-**Error: Missing RTE_EXPORT_INTERNAL_SYMBOL for mlx5_create_mr_ext_dmabuf**
-The function `mlx5_create_mr_ext_dmabuf()` in `mlx5_common_mr.c` is missing the export macro if it's meant to be used by other mlx5 components.
-
-**Warning: Brace style inconsistency**
-```c
-		if (dmabuf_fd >= 0) {
-			uint64_t dmabuf_off;
-```
-This is fine, but ensure consistency throughout.
-
-**Info: Code duplication**
-The dmabuf detection and registration logic is duplicated between `mlx5_common_dev_dma_map()` and `mlx5_mr_mempool_register_primary()`. Consider extracting to a helper function.
-
-**Warning: Potential NULL dereference**
-In `mlx5_common.c`:
-```c
-	msl = rte_mem_virt2memseg_list(addr);
-	if (msl != NULL && msl->external) {
-		int dmabuf_fd = rte_memseg_list_get_dmabuf_fd_thread_unsafe(msl);
-```
-The `rte_memseg_list_get_dmabuf_fd_thread_unsafe()` call happens without holding the memory lock, but the comment in the header says it's only safe within memory-related callbacks. This may be a race condition if memory configuration changes.
-
-**Warning: Missing error check**
-```c
-				rte_memseg_list_get_dmabuf_offset_thread_unsafe(msl, &dmabuf_off);
-```
-The return value is not checked. If the function fails, `dmabuf_off` may be uninitialized.
-
-**Info: Windows stub**
-```c
-	*reg_dmabuf_mr_cb = NULL; /* dma-buf not supported on Windows */
-```
-Good practice to document platform limitations.
+3. **Commit body starts with "RTE_PTR_ADD"**
+   - The body should provide context before diving into technical details. Consider starting with "The" or describing the problem first.
 
 ---
 
-## General Issues
+### Warnings
 
-**Warning: Missing documentation**
-- No updates to programmer's guide documentation explaining dmabuf usage
-- No updates to release notes
+1. **Implicit comparison with NULL in several places**
+   ```c
+   // drivers/bus/cdx/cdx_vfio.c:374
+   if (msl->base_va == NULL)
+   ```
+   This is correct style. Good.
 
-**Warning: ABI considerations**
-The patch mentions avoiding ABI changes by using a side-table for dmabuf info. This design decision should be documented more clearly, and the commit message questions should be resolved.
+2. **`__rte_auto_type` documentation could be clearer**
+   - Line ~108 in `rte_common.h`: The comment should clarify this is a DPDK internal macro, not for general use.
 
-**Info: Linux-only feature**
-The dmabuf feature is Linux-specific. Consider adding explicit documentation about platform support.
+3. **Missing explicit NULL checks before some `RTE_PTR_ADD` calls**
+   - `lib/eal/common/eal_common_fbarray.c:1062`: Added `RTE_ASSERT(arr->data)` - good, but this is a debug-only check. Consider returning error in release builds.
+
+4. **Diagnostic pragma usage in `malloc_elem.h`**
+   ```c
+   __rte_diagnostic_push
+   __rte_diagnostic_ignored_array_bounds
+   struct malloc_elem *elem = RTE_PTR_SUB(RTE_PTR_UNQUAL(data), MALLOC_ELEM_HEADER_LEN);
+   ...
+   return elem->state != ELEM_PAD ? elem : RTE_PTR_SUB(elem, elem->pad);
+   __rte_diagnostic_pop
+   ```
+   The `__rte_diagnostic_pop` should be on its own statement or the return should be before it. As written, the pop is unreachable after return.
+
+5. **`volatile` qualifier handling in `idxd_pci.c`**
+   ```c
+   // Line 62
+   static volatile uint32_t *
+   idxd_get_wq_cfg(struct idxd_pci_common *pci, uint8_t wq_idx)
+   ```
+   Good fix, but the FIXME comment at line 398-400 indicates incomplete resolution:
+   ```c
+   /* FIXME: cast drops volatile propagation to idxd_dmadev.portal
+    * See: https://bugs.dpdk.org/show_bug.cgi?id=1871
+    */
+   idxd.portal = RTE_PTR_ADD(RTE_PTR_UNQUAL(idxd.u.pci->portals),
+   ```
+   This should be tracked in the commit message or release notes.
+
+6. **`RTE_PTR_UNQUAL` macro is used but not defined in this patch**
+   - The patch uses `RTE_PTR_UNQUAL` in multiple places but the macro definition is not visible in the diff. Ensure it exists or is added.
+
+7. **Test file uses `alignas` from `<stdalign.h>`**
+   ```c
+   #include <stdalign.h>
+   ...
+   alignas(uint32_t) char buffer[TEST_BUFFER_SIZE];
+   ```
+   This is C11 but DPDK targets C11, so acceptable. However, verify MSVC compatibility.
+
+8. **`drivers/dma/odm/odm_dmadev.c` changes remove `const`**
+   ```c
+   // Before: const uint32_t *base_addr = vq->cring_mz->addr;
+   // After:  uint32_t *base_addr = vq->cring_mz->addr;
+   ```
+   This removes a useful const qualifier. If the intent is to allow writes, document why. If not, preserve const.
+
+9. **Release notes format**
+   - The API Changes section uses bullet points correctly but should reference the specific macros more prominently for searchability.
 
 ---
 
-## Checklist Summary
+### Info
 
-| Item | Status |
-|------|--------|
-| SPDX license | ✓ OK (existing files) |
-| Signed-off-by | ✓ Present |
-| Subject line length | ✓ OK |
-| Subject format | ✓ OK |
-| Body line wrap | ⚠ Some lines long |
-| `__rte_experimental` on new APIs | ✗ Missing |
-| Release notes | ✗ Missing |
-| version.map updates | ✗ Missing |
-| Tests | ✗ Missing |
-| Documentation | ✗ Missing |
-| Code style | ⚠ Minor issues |
+1. **Good practices observed:**
+   - Proper use of `unit_test_suite_runner` in test file
+   - `TEST_ASSERT` macros used correctly
+   - Release notes included for API changes
+   - NULL checks added where `RTE_PTR_ADD` is used with potentially NULL pointers
+   - Comprehensive test coverage for both pointer and integer types
+
+2. **Code organization in `rte_common.h`:**
+   - The new macros are well-documented with Doxygen comments
+   - The `__rte_auto_type` abstraction is clean for cross-compiler support
+
+3. **Changelog in commit message:**
+   - Detailed version history (v1-v13) is helpful for reviewers
+
+4. **Consider adding to documentation:**
+   - The behavioral change (NULL is now undefined for `RTE_PTR_ADD`/`RTE_PTR_SUB`) should be prominently noted in the programmer's guide, not just release notes.
+
+---
+
+### Specific Code Issues
+
+**`lib/eal/common/malloc_elem.h:312-322`:**
+```c
+__rte_diagnostic_push
+__rte_diagnostic_ignored_array_bounds
+struct malloc_elem *elem = RTE_PTR_SUB(RTE_PTR_UNQUAL(data), MALLOC_ELEM_HEADER_LEN);
+
+if (!malloc_elem_cookies_ok(elem))
+    return NULL;
+
+return elem->state != ELEM_PAD ? elem : RTE_PTR_SUB(elem, elem->pad);
+__rte_diagnostic_pop
+```
+The `__rte_diagnostic_pop` is placed after return statements and will never execute. Move the pop before the final return or restructure:
+```c
+__rte_diagnostic_push
+__rte_diagnostic_ignored_array_bounds
+struct malloc_elem *elem = RTE_PTR_SUB(RTE_PTR_UNQUAL(data), MALLOC_ELEM_HEADER_LEN);
+__rte_diagnostic_pop
+
+if (!malloc_elem_cookies_ok(elem))
+    return NULL;
+
+return elem->state != ELEM_PAD ? elem : RTE_PTR_SUB(elem, elem->pad);
+```
+
+**`lib/eal/common/eal_common_memory.c:1563`:**
+```c
+struct malloc_elem *volatile elem;
+```
+The `volatile` on a local pointer variable is unusual. This appears to be preventing optimization, but the rationale should be documented.
+
+---
+
+### Verdict
+This is a well-structured patch with good documentation and test coverage. The main issues are:
+1. The diagnostic pragma placement bug in `malloc_elem.h`
+2. Missing definition of `RTE_PTR_UNQUAL` in the visible diff
+3. The ODM driver const removal needs justification
+
+Recommend addressing the pragma placement issue before merge.
