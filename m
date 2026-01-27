@@ -2,75 +2,92 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 754B7D2FEDF
-	for <dpdk-dev@archiver.kernel.org>; Tue, 27 Jan 2026 20:31:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF8FED2FEE0
+	for <dpdk-dev@archiver.kernel.org>; Tue, 27 Jan 2026 20:37:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 077A0427AD;
-	Tue, 27 Jan 2026 21:31:31 +0100 (CET)
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com
- [209.85.128.43]) by mails.dpdk.org (Postfix) with ESMTP id BFDDF40F1A
- for <dev@dpdk.org>; Tue, 27 Jan 2026 21:31:29 +0100 (CET)
-Received: by mail-wm1-f43.google.com with SMTP id
- 5b1f17b1804b1-47ee807a4c5so63913995e9.2
- for <dev@dpdk.org>; Tue, 27 Jan 2026 12:31:29 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id A84FF40F1A;
+	Tue, 27 Jan 2026 21:37:51 +0100 (CET)
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com
+ [209.85.208.51]) by mails.dpdk.org (Postfix) with ESMTP id 2120640E21
+ for <dev@dpdk.org>; Tue, 27 Jan 2026 21:37:49 +0100 (CET)
+Received: by mail-ed1-f51.google.com with SMTP id
+ 4fb4d7f45d1cf-64d1ef53cf3so7796359a12.0
+ for <dev@dpdk.org>; Tue, 27 Jan 2026 12:37:49 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1769546269; cv=none;
+ d=google.com; s=arc-20240605;
+ b=BfGnHzFSUGhl99mwHdX9IErOZS5VeWE0NNcomLxPC/lk9L4RNCrcSxwAojgVHsdTtM
+ lelKC68vC+lv2oRJ3t06B1ckLZiMbfgsd6yryeJNna2TrcY/mTAL1DJCg1qHmppAgGhm
+ qFb2Ogo4TH0qcDzZrycqhFLGmDGBCOx0qE3KN74uMkOh6DSkyysuOfI3MlSLlL+V9QWR
+ SPUJR8qSrBfo3epjcik/Voi2+vztdoQoFZeh2yWJtA+8FBADq15RvfGYLLJtfcfoQbGd
+ YTFlzZD3WQbgjd9FqUEyMaiuCKupPt3GaOErz4XR4jW3Qm2vfVMsm8mWtCDxZ76ymFZr
+ MPqw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20240605; 
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:dkim-signature;
+ bh=Ni9PCKmAwqXupSSodWVPRbM37JImszU3LwjOvl9SWOc=;
+ fh=o0+cb97Tr4blSBI0WK5uaLUecqRqaP7ngByp48W1ZlM=;
+ b=Hs+IlWIxVdalgW8HrQCe8lzgQyrFG8ikd+134iUGhTE8H4AV0Y7GM6mBwO6UxLk6cN
+ sF6wZSurewNFbKKzq5xqId30ka2QoToLWrl45obuDDEjWFOAuftPmJ/0VsFRGy52GVwu
+ bUf3BVEsckhh3FeFBaHwqWc7rGm7YqYi0vBRq47iRZ20CS94oxNgKOqbFmgFHCxbCgKy
+ kDelAZbrwSqIeYqUXRDWhZMzq4ZrgA5rLr0g8f6Vj03NnesV1cPuGotKzQDG6fE6gKD8
+ /YQcOpOZalmWhjNM4mJCGi1z3QgJDxI0jurL8ORxPAoLGEEuzUlr+DjrCcsD0nlbMilB
+ I6og==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769545889;
- x=1770150689; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=hHN4iyG7isJLXdcHzeTo2jFMVAfUpyLinczQlNG2Rmk=;
- b=n8DtO+0qgYChXH/MI3kUTzS0OJyOCRGGKcefXqq9BQ/lHrioIuUg169jo8xeBaz9gC
- TGDR+viHFuhPOYsVmO9nLINu4zC4kuCuAUrBCWhPtU8U5GXGBuMN1jvQNJiF354kbGVH
- ttzJTnuAavFfF55j87YkLOinilURr/LWZBI2sMfA/krtrkS4DO/3E534xngQll53O3bC
- BM5ExIOJnembKOWyh87zmFQ5elgcOvimgCd9mn69mQ/LPIg1LH8MWoVO2H/DJ1hQN2WH
- XvV4rIOn5hpKEoysgVL9SDsoqdfAqQeFu68m3/uVLSHzWlkMNgmZ3SndovwG9P82TxdN
- BpgA==
+ d=iol.unh.edu; s=unh-iol; t=1769546269; x=1770151069; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=Ni9PCKmAwqXupSSodWVPRbM37JImszU3LwjOvl9SWOc=;
+ b=K4BN7W65AKA071vtFlPWK8TIJMbXJSIj7VkjFl585fgedtl2yJpkzTHEuQ82eSbiuO
+ fsTHQIwfC8MhmO8ERPaExacRdEDHb6/7ljMbS9wZHpjj/8ulAfrAce2qenRH9bpNRwAP
+ ssK5lH1AmcPPQYw704ir+oRjwwJDIWK73AbN8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1769545889; x=1770150689;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=hHN4iyG7isJLXdcHzeTo2jFMVAfUpyLinczQlNG2Rmk=;
- b=b2ntxI7xv1tp8b7E5BkF6vGDi2jt/jxfMb8GHqoC0I+lNDrXQQg7Gy9ZZU1mtvDUxs
- 4N8InqsvfpiETSjV4wZA2LytjsZDI74VwAobcH5d0Ct+u1A1Yh9VMo9ZNsHpDDljYvLw
- lckQdxJdvqHRxlQQoXk5qX6GRF2uq7U1Hmfe7w8R5cy3MdzkExtSKH4EjSeMDODejqYG
- GMXSroHZlyBf0thilgEHfjCs48YqYtNPVPfnAoLnOGNfqlgIQGGOe2MyJ1qRRmBUoOyv
- PmlAyKLB4RhuQkBc827oZ1FmGjqxXQk9lEF2mVai/AJHNwIlgyyVpZODA1H3LeyMfc2e
- DikA==
-X-Gm-Message-State: AOJu0YwwGRqxsIrjggSpv7Crmt6zxzw1e/zMdwoaVjXEA1KQ4xRp7L5D
- f4Nvlmt0h1mkgzwTPPSLC1EVyoX9ZrlUXaT9qPZtPBBY38qbw+FaliZgfIaG9KCNtAo=
-X-Gm-Gg: AZuq6aKm4Htl5NHhflOo46MPQxwIk01UNZ9OQYJGPqt1WkX5S+nlDU/3JSLGxLJJfOq
- DbyNc9eVg4QuGaeZ6hlIExnn/1Ay/qBR3IDk7NaCvT2sPwly6xVJPhzGL3UgIfWyNZG6sMNAotL
- UvcuxnTcZnSAN6QoLirHDm8Qgp/KO2/YegZCsyTVZJik2U97YZokCKLGWQMXBmgTH8pdOviPbGQ
- c4/dyxBxhy6RlOiD1858dzLffVEWhoiMbuevAf4TOxlxEnGVmNNg0vBErezg7f8WvuaOLs+XzN5
- HzRiNSsVAAQZiA5bx3dc9aPs73EHVmFjmN0PB0fj9wowF/yHH766emDp3cuiA+Ve+TbByKDwpUV
- +wKjdf8Wl1mA2r1geDAsnqGxhsbZ3lYg/x+HHQeQUvHK9MMpcFo7W1JRSqlTDcJzD3uHZtfJlca
- VSu5lsncl8KAJFgGk6JURo/0SozIsB32h5OetSY+w/zXSCDIA/WEJ5
-X-Received: by 2002:a05:600c:35d1:b0:477:af07:dd21 with SMTP id
- 5b1f17b1804b1-48069c5fe57mr45859725e9.25.1769545888955; 
- Tue, 27 Jan 2026 12:31:28 -0800 (PST)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-48066c428basm86369295e9.12.2026.01.27.12.31.27
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 27 Jan 2026 12:31:28 -0800 (PST)
-Date: Tue, 27 Jan 2026 12:31:20 -0800
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-Cc: "dev@dpdk.org" <dev@dpdk.org>, "stable@dpdk.org" <stable@dpdk.org>,
- Honnappa Nagarahalli <honnappa.nagarahalli@arm.com>, Phil Yang
- <phil.yang@arm.com>, Gavin Hu <gahu@nvidia.com>
-Subject: Re: [PATCH v3 03/14] test/mcslock: scale test based on number of cores
-Message-ID: <20260127123120.1d636ac9@phoenix.local>
-In-Reply-To: <a2a269c7f13043d0b948fa67769d88d2@huawei.com>
-References: <20260118201223.323024-1-stephen@networkplumber.org>
- <20260122005356.1168221-1-stephen@networkplumber.org>
- <20260122005356.1168221-4-stephen@networkplumber.org>
- <a2a269c7f13043d0b948fa67769d88d2@huawei.com>
+ d=1e100.net; s=20230601; t=1769546269; x=1770151069;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=Ni9PCKmAwqXupSSodWVPRbM37JImszU3LwjOvl9SWOc=;
+ b=s2UwVytGgWE5n6yOQepZg5bpLlzr+OqgWGx2+EoSIMVTigUH2qjxtzlcBTcjhSAZsv
+ rdcsdMrGsYMxj8n8N3zJ2Jr4y+4WZqRupQwf3dqtFXygL3YYXAfM1bYBm74qilzvoLgu
+ 0YbHaA/PakVxkdYSOTx4AOSqDB5Ed0IZK2L7RFmBREIcwqguToS6A3Tb8OWP6LwHf00e
+ cEvHaZPWobM3uW22GR7kRUO3Orqi2KhfJ3VF/SXMDFlWpXPTY40zr6QRBy/PUcl1YhoB
+ 7bNf9LFaZWvnDa1FnathIVpxhULKrBNENKZ1RJ+Lg/prITHxHlolb5eenfV+T8Najm+U
+ 6KyA==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCVDFK4aeyb6Nm5S7XPp9SC21+osPrWVu8hLIy8kLf7xj5cbQvrAri+rcACtJr0R4/qFLjQ=@dpdk.org
+X-Gm-Message-State: AOJu0YyjIQpJC8Nc0p3TMP+wHigIOkebXI/NiIUGTj7SeXr8rSO0Sj/j
+ 0x3XexicJZIdZh2ZjNLumRkdA+dcLIG+rSXiZwvp7ZqOA1N30cIsGHdxp8E4BhztMHXJhvghPmM
+ lpeB/zrXSvOrUFqUYXdRQoNh8DjyX/v/+mgcr37+5JA==
+X-Gm-Gg: AZuq6aKULt9o4T4fNmMwR0ODJhq/1wGRrhucpA0bNhjwMnkiKiTmROCMQ2sF0yGeHp0
+ Nsy5Hu1KH6zTOcokxkxd3yIC50xcLHQFf9q2M1KTX+2VwXBBCD7BgBnJsRRwy1+L99FWVFqFWD5
+ 8MaagNiGVQhuN7LnZxeEkBej0/nN4gFisBti8T0qQpK0jPrClQRGofVhw6Bi2R0SgbHF3Rrx6Je
+ kq/drcpmQ2PA9w+5DIMZddcNwwFTAOPDINkt61QBrLNMUTnDM+yPr/XMq2Mc3kHNflyEp+ydGLI
+ bWW7GOKHGB9o1wdvUmpFrLPRRqAA
+X-Received: by 2002:a17:907:6d19:b0:b87:2c3d:ef08 with SMTP id
+ a640c23a62f3a-b8dab346cc6mr242325366b.33.1769546268621; Tue, 27 Jan 2026
+ 12:37:48 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20260105190647.63244-1-abailey@iol.unh.edu>
+ <20260105190647.63244-3-abailey@iol.unh.edu>
+ <CAJvnSUBTtGyQ7WtE9GF-gawS=A8rHAqcaqTSo8eWYa+GBkhRwg@mail.gmail.com>
+ <CABJ3N2W6QXQ1Aae4QWaZhSMrwMfmDa6oYjHby1YDQJdK2FknvA@mail.gmail.com>
+ <CABJ3N2VTZc-73hP=0KG8EPbdrCexYZXToLzhJPAhkN+Eo77DWg@mail.gmail.com>
+ <CO6PR18MB4484327639EC118ACFFF3810D881A@CO6PR18MB4484.namprd18.prod.outlook.com>
+ <CABJ3N2Vf=guy5qJmmbTHY76Bnnn-5PTEkmB+FewahHqDzxJLiw@mail.gmail.com>
+ <CO6PR18MB4484D1EF6B0BDF1205164276D896A@CO6PR18MB4484.namprd18.prod.outlook.com>
+In-Reply-To: <CO6PR18MB4484D1EF6B0BDF1205164276D896A@CO6PR18MB4484.namprd18.prod.outlook.com>
+From: Andrew Bailey <abailey@iol.unh.edu>
+Date: Tue, 27 Jan 2026 15:37:36 -0500
+X-Gm-Features: AZwV_QieX8Y0NSGU9N2sSflA3IHu4Jpo-jw4rxIDZrY-2W4C4A9jCNLr36Y35xQ
+Message-ID: <CABJ3N2UzbranA3ZTjm42Vf2UU8ajYh8uNVvttzm_D7z+oqH5uQ@mail.gmail.com>
+Subject: Re: [EXTERNAL] Re: [RFC PATCH 3/3] dts: add cryptodev testsuite
+To: Akhil Goyal <gakhil@marvell.com>
+Cc: Kai Ji <kai.ji@intel.com>, Patrick Robb <probb@iol.unh.edu>, 
+ "fanzhang.oss@gmail.com" <fanzhang.oss@gmail.com>,
+ "luca.vizzarro@arm.com" <luca.vizzarro@arm.com>, 
+ "dmarx@iol.unh.edu" <dmarx@iol.unh.edu>, "dev@dpdk.org" <dev@dpdk.org>
+Content-Type: multipart/alternative; boundary="000000000000c149aa06496498f5"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,70 +101,72 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 22 Jan 2026 10:41:04 +0000
-Konstantin Ananyev <konstantin.ananyev@huawei.com> wrote:
+--000000000000c149aa06496498f5
+Content-Type: text/plain; charset="UTF-8"
 
-> > This test uses loops to synchronize but has problems on systems
-> > with high number of cores. Scale iterations to the number of
-> > cores.
-> > 
-> > Fixes: 32dcb9fd2a22 ("test/mcslock: add MCS queued lock unit test")
-> > Cc: stable@dpdk.org
-> > 
-> > Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-> > ---
-> >  app/test/test_mcslock.c | 10 +++++++---
-> >  1 file changed, 7 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/app/test/test_mcslock.c b/app/test/test_mcslock.c
-> > index 245df99a5d..b182da72f1 100644
-> > --- a/app/test/test_mcslock.c
-> > +++ b/app/test/test_mcslock.c
-> > @@ -42,6 +42,10 @@ RTE_ATOMIC(rte_mcslock_t *) p_ml_perf;
-> > 
-> >  static unsigned int count;
-> > 
-> > +#define MAX_LOOP_BASE  1000000u
-> > +#define MAX_LOOP_MIN   10000u
-> > +static unsigned int max_loop;
-> > +
-> >  static RTE_ATOMIC(uint32_t) synchro;
-> > 
-> >  static int
-> > @@ -60,8 +64,6 @@ test_mcslock_per_core(__rte_unused void *arg)
-> > 
-> >  static uint64_t time_count[RTE_MAX_LCORE] = {0};
-> > 
-> > -#define MAX_LOOP 1000000
-> > -
-> >  static int
-> >  load_loop_fn(void *func_param)
-> >  {
-> > @@ -78,7 +80,7 @@ load_loop_fn(void *func_param)
-> >  	rte_wait_until_equal_32((uint32_t *)(uintptr_t)&synchro, 1,
-> > rte_memory_order_relaxed);
-> > 
-> >  	begin = rte_get_timer_cycles();
-> > -	while (lcount < MAX_LOOP) {
-> > +	while (lcount < max_loop) {
-> >  		if (use_lock)
-> >  			rte_mcslock_lock(&p_ml_perf, &ml_perf_me);
-> > 
-> > @@ -175,6 +177,8 @@ test_mcslock(void)
-> >  	rte_mcslock_t ml_me;
-> >  	rte_mcslock_t ml_try_me;
-> > 
-> > +	max_loop = test_scale_iterations(MAX_LOOP_BASE, MAX_LOOP_MIN);
-> > +  
-> 
-> Here, and in other similar cases, would it make sense to terminate by timeout
-> (i.e. number of cycles passed since start of the test)?
->  
+Hello again Akhil,
 
-Thought about that but there are couple of issues:
- 1. The act of reading the TSC value would change CPU behavior and reduce
-    the amount of contention. Potentially hiding bugs.
- 2. If the test suddenly had much worse performance, the number of iterations
-    would be much less but if test was based on timeout it wouldn't see it.
+I have a couple more questions regarding performance and functional testing
+for crypto-devices using the DPDK crypto application.
+The crypto application supports both cipher-only mode and cipher-then-auth
+mode. I would like to clarify the following points for optimal test
+coverage:
 
-Conclusion: keep original iteration based limits
+1. Test case reusability: If a cipher algorithm passes validation in
+cipher-only mode, can we reuse that cipher algorithm across all
+cipher-then-auth test runs while varying only the authentication algorithm?
+
+2. Operations threshold: What is the recommended number of total operations
+per test to generate statistically meaningful performance metrics? We are
+starting with 30,000,000 total operations per run of the app.  since test
+execution time is always a concern and we may run dpdk-crypto-perf many
+times with a broad matrix of ciphers/algorithms based on your response to
+question #1, we are curious if there are tests where the total-operations
+argument can be reduced
+
+>
+
+--000000000000c149aa06496498f5
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><div dir=3D"ltr">Hello again Akhil,<br><br>I have a couple=
+ more questions regarding performance and functional testing for crypto-dev=
+ices using the DPDK crypto application.<br>The crypto application supports =
+both cipher-only mode and cipher-then-auth mode. I would like to clarify th=
+e following points for optimal test coverage:<br><br>1. Test case reusabili=
+ty: If a cipher algorithm passes validation in cipher-only mode, can we reu=
+se that cipher algorithm across all cipher-then-auth test runs while varyin=
+g only the authentication algorithm?<br><br>2. Operations threshold: What i=
+s the recommended number of total operations per test to generate statistic=
+ally meaningful performance metrics? We are starting with 30,000,000 total =
+operations per run of the app. =C2=A0since test execution time is always a =
+concern and we may run dpdk-crypto-perf many times with a broad matrix of c=
+iphers/algorithms based on your response to question #1, we are curious if =
+there are tests where the total-operations argument can be reduced<br></div=
+><div class=3D"gmail_quote gmail_quote_container"><blockquote class=3D"gmai=
+l_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,20=
+4,204);padding-left:1ex"><div class=3D"msg-5841279856823272795"><div lang=
+=3D"EN-US" style=3D"overflow-wrap: break-word;"><div class=3D"m_-5841279856=
+823272795WordSection1"><div style=3D"border-top:none;border-right:none;bord=
+er-bottom:none;border-left:1.5pt solid blue;padding:0in 0in 0in 4pt"><div><=
+blockquote style=3D"border-top:none;border-right:none;border-bottom:none;bo=
+rder-left:1pt solid rgb(204,204,204);padding:0in 0in 0in 6pt;margin-left:4.=
+8pt;margin-right:0in"><div><div><div><div style=3D"border-top:none;border-r=
+ight:none;border-bottom:none;border-left:1.5pt solid blue;padding:0in 0in 0=
+in 4pt"><div><div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</blockquote>
+</div>
+</div>
+</div>
+</div>
+
+</div></blockquote></div></div>
+
+--000000000000c149aa06496498f5--
