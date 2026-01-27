@@ -2,32 +2,34 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CB06D2F003
-	for <dpdk-dev@archiver.kernel.org>; Tue, 27 Jan 2026 11:50:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E302DD2F000
+	for <dpdk-dev@archiver.kernel.org>; Tue, 27 Jan 2026 11:51:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AE6B240E5E;
-	Tue, 27 Jan 2026 12:50:40 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 86C7F40ED2;
+	Tue, 27 Jan 2026 12:50:42 +0100 (CET)
 Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
  [185.176.79.56])
- by mails.dpdk.org (Postfix) with ESMTP id 8633940E43;
- Tue, 27 Jan 2026 12:50:36 +0100 (CET)
-Received: from mail.maildlp.com (unknown [172.18.224.150])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4f0kGk6M0lzHnGhl;
- Tue, 27 Jan 2026 19:49:50 +0800 (CST)
+ by mails.dpdk.org (Postfix) with ESMTP id 7153340E49;
+ Tue, 27 Jan 2026 12:50:39 +0100 (CET)
+Received: from mail.maildlp.com (unknown [172.18.224.83])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4f0kGz2xlBzJ469b;
+ Tue, 27 Jan 2026 19:50:03 +0800 (CST)
 Received: from frapema500003.china.huawei.com (unknown [7.182.19.114])
- by mail.maildlp.com (Postfix) with ESMTPS id 636BB4056C;
- Tue, 27 Jan 2026 19:50:36 +0800 (CST)
+ by mail.maildlp.com (Postfix) with ESMTPS id 4A2D040086;
+ Tue, 27 Jan 2026 19:50:39 +0800 (CST)
 Received: from localhost.localdomain (10.220.239.45) by
  frapema500003.china.huawei.com (7.182.19.114) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 27 Jan 2026 12:50:35 +0100
+ 15.2.1544.11; Tue, 27 Jan 2026 12:50:38 +0100
 From: Marat Khalili <marat.khalili@huawei.com>
-To: <dev@dpdk.org>, Konstantin Ananyev <konstantin.ananyev@huawei.com>
+To: <dev@dpdk.org>, Konstantin Ananyev <konstantin.ananyev@huawei.com>, Ferruh
+ Yigit <ferruh.yigit@amd.com>
 CC: <jerinjacobk@gmail.com>, <mb@smartsharesystems.com>,
  <stephen@networkplumber.org>, <stable@dpdk.org>
-Subject: [PATCH v4 5/6] bpf: make add/subtract one program validate
-Date: Tue, 27 Jan 2026 11:49:41 +0000
-Message-ID: <20260127114944.35993-6-marat.khalili@huawei.com>
+Subject: [PATCH v4 6/6] bpf: fix validation when conditional jump is first
+ instruction
+Date: Tue, 27 Jan 2026 11:49:42 +0000
+Message-ID: <20260127114944.35993-7-marat.khalili@huawei.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260127114944.35993-1-marat.khalili@huawei.com>
 References: <20251217180141.60227-1-marat.khalili@huawei.com>
@@ -51,82 +53,67 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add tests loading simple BPF programs adding or subtracting one to its
-argument and fix triggered signed integer overflow undefined behaviours:
+When the BPF program was starting with a conditional jump only one
+(true) execution branch of the program was evaluated. Any instructions
+jumped over were not evaluated and could contain invalid operations.
+The root cause was using zero instruction index as a signal for ending
+evaluation when backtracking.
 
-    lib/bpf/bpf_validate.c:324:24: runtime error: signed integer
-    overflow: 1 + 9223372036854775807 cannot be represented in type
-    'long int'
+Switch from using previous instruction index for tracking execution
+history to a previous instruction pointer. First instruction will not
+have it set, and therefore backtracking _from_ it will end evaluation,
+not backtracking _to_ it like before.
 
-    lib/bpf/bpf_validate.c:352:24: runtime error: signed integer
-    overflow: -9223372036854775808 - 1 cannot be represented in type
-    'long int'
+Add two tests demonstrating the problem:
+* test_jump_over_invalid_first: loads BPF program with
+  conditional jump over the invalid operation, should not succeed;
+* test_jump_over_invalid_non_first: same program with one extra
+  instruction at the start to demonstrate that it is indeed invalid
+  (and also guard against another kind of regression);
 
-As a minimal possible fix perform operation on unsigned integers where
-overflow is well-defined, which was probably the original intent.
-
-Fixes: 8021917293d0 ("bpf: add extra validation for input BPF program")
+Fixes: 6e12ec4c4d6d ("bpf: add more checks")
 Cc: stable@dpdk.org
 
 Signed-off-by: Marat Khalili <marat.khalili@huawei.com>
 Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+Tested-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
 Acked-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- app/test/test_bpf.c    | 56 ++++++++++++++++++++++++++++++++++++++++++
- lib/bpf/bpf_validate.c |  8 +++---
- 2 files changed, 60 insertions(+), 4 deletions(-)
+ app/test/test_bpf.c    | 80 ++++++++++++++++++++++++++++++++++++++++++
+ lib/bpf/bpf_validate.c | 20 ++++-------
+ 2 files changed, 86 insertions(+), 14 deletions(-)
 
 diff --git a/app/test/test_bpf.c b/app/test/test_bpf.c
-index 1012265ad0..54603c7c30 100644
+index 54603c7c30..9cb4761bd0 100644
 --- a/app/test/test_bpf.c
 +++ b/app/test/test_bpf.c
-@@ -152,6 +152,62 @@ test_minimal_working(void)
+@@ -208,6 +208,86 @@ test_subtract_one(void)
  
- REGISTER_FAST_TEST(bpf_minimal_working_autotest, NOHUGE_OK, ASAN_OK, test_minimal_working);
+ REGISTER_FAST_TEST(bpf_subtract_one_autotest, NOHUGE_OK, ASAN_OK, test_subtract_one);
  
 +/*
-+ * Try and load valid BPF program adding one to the argument.
++ * Conditionally jump over invalid operation as first instruction.
 + */
 +static int
-+test_add_one(void)
++test_jump_over_invalid_first(void)
 +{
 +	static const struct ebpf_insn ins[] = {
 +		{
-+			/* Set return value to one. */
-+			.code = (EBPF_ALU64 | EBPF_MOV | BPF_K),
-+			.dst_reg = EBPF_REG_0,
-+			.imm = 1,
-+		},
-+		{
-+			/* Add program argument to the return value. */
-+			.code = (EBPF_ALU64 | BPF_ADD | BPF_X),
-+			.src_reg = EBPF_REG_1,
-+			.dst_reg = EBPF_REG_0,
-+		},
-+		{
-+			.code = (BPF_JMP | EBPF_EXIT),
-+		},
-+	};
-+	return bpf_load_test(RTE_DIM(ins), ins, 0);
-+}
-+
-+REGISTER_FAST_TEST(bpf_add_one_autotest, NOHUGE_OK, ASAN_OK, test_add_one);
-+
-+/*
-+ * Try and load valid BPF program subtracting one from the argument.
-+ */
-+static int
-+test_subtract_one(void)
-+{
-+	static const struct ebpf_insn ins[] = {
-+		{
-+			/* Subtract one from the program argument. */
-+			.code = (EBPF_ALU64 | BPF_SUB | BPF_K),
++			/* Jump over the next instruction for some r1. */
++			.code = (BPF_JMP | BPF_JEQ | BPF_K),
 +			.dst_reg = EBPF_REG_1,
-+			.imm = 1,
++			.imm = 42,
++			.off = 1,
 +		},
 +		{
-+			/* Set return value to the result. */
++			/* Write 0xDEADBEEF to [r1 + INT16_MIN]. */
++			.code = (BPF_ST | BPF_MEM | EBPF_DW),
++			.dst_reg = EBPF_REG_1,
++			.off = INT16_MIN,
++			.imm = 0xDEADBEEF,
++		},
++		{
++			/* Set return value to the program argument. */
 +			.code = (EBPF_ALU64 | EBPF_MOV | BPF_X),
 +			.src_reg = EBPF_REG_1,
 +			.dst_reg = EBPF_REG_0,
@@ -135,40 +122,125 @@ index 1012265ad0..54603c7c30 100644
 +			.code = (BPF_JMP | EBPF_EXIT),
 +		},
 +	};
-+	return bpf_load_test(RTE_DIM(ins), ins, 0);
++	return bpf_load_test(RTE_DIM(ins), ins, EINVAL);
 +}
 +
-+REGISTER_FAST_TEST(bpf_subtract_one_autotest, NOHUGE_OK, ASAN_OK, test_subtract_one);
++REGISTER_FAST_TEST(bpf_jump_over_invalid_first_autotest, NOHUGE_OK, ASAN_OK,
++	test_jump_over_invalid_first);
++
++/*
++ * Conditionally jump over invalid operation as non-first instruction.
++ */
++static int
++test_jump_over_invalid_non_first(void)
++{
++	static const struct ebpf_insn ins[] = {
++		{
++			/* Set return value to the program argument. */
++			.code = (EBPF_ALU64 | EBPF_MOV | BPF_X),
++			.src_reg = EBPF_REG_1,
++			.dst_reg = EBPF_REG_0,
++		},
++		{
++			/* Jump over the next instruction for some r1. */
++			.code = (BPF_JMP | BPF_JEQ | BPF_K),
++			.dst_reg = EBPF_REG_1,
++			.imm = 42,
++			.off = 1,
++		},
++		{
++			/* Write 0xDEADBEEF to [r1 + INT16_MIN]. */
++			.code = (BPF_ST | BPF_MEM | EBPF_DW),
++			.dst_reg = EBPF_REG_1,
++			.off = INT16_MIN,
++			.imm = 0xDEADBEEF,
++		},
++		{
++			/* Set return value to the program argument. */
++			.code = (EBPF_ALU64 | EBPF_MOV | BPF_X),
++			.src_reg = EBPF_REG_1,
++			.dst_reg = EBPF_REG_0,
++		},
++		{
++			.code = (BPF_JMP | EBPF_EXIT),
++		},
++	};
++	return bpf_load_test(RTE_DIM(ins), ins, EINVAL);
++}
++
++REGISTER_FAST_TEST(bpf_jump_over_invalid_non_first_autotest, NOHUGE_OK, ASAN_OK,
++	test_jump_over_invalid_non_first);
 +
  /*
   * Basic functional tests for librte_bpf.
   * The main procedure - load eBPF program, execute it and
 diff --git a/lib/bpf/bpf_validate.c b/lib/bpf/bpf_validate.c
-index 23444b3eaa..47ad6fef0f 100644
+index 47ad6fef0f..64a8f227a3 100644
 --- a/lib/bpf/bpf_validate.c
 +++ b/lib/bpf/bpf_validate.c
-@@ -243,8 +243,8 @@ eval_add(struct bpf_reg_val *rd, const struct bpf_reg_val *rs, uint64_t msk)
+@@ -64,7 +64,7 @@ struct inst_node {
+ 	uint8_t cur_edge:4;
+ 	uint8_t edge_type[MAX_EDGES];
+ 	uint32_t edge_dest[MAX_EDGES];
+-	uint32_t prev_node;
++	struct inst_node *prev_node;
+ 	struct {
+ 		struct bpf_eval_state *cur;   /* save/restore for jcc targets */
+ 		struct bpf_eval_state *start;
+@@ -1875,12 +1875,6 @@ set_edge_type(struct bpf_verifier *bvf, struct inst_node *node,
+ 	bvf->edge_type[type]++;
+ }
  
- 	rv.u.min = (rd->u.min + rs->u.min) & msk;
- 	rv.u.max = (rd->u.max + rs->u.max) & msk;
--	rv.s.min = (rd->s.min + rs->s.min) & msk;
--	rv.s.max = (rd->s.max + rs->s.max) & msk;
-+	rv.s.min = ((uint64_t)rd->s.min + (uint64_t)rs->s.min) & msk;
-+	rv.s.max = ((uint64_t)rd->s.max + (uint64_t)rs->s.max) & msk;
+-static struct inst_node *
+-get_prev_node(struct bpf_verifier *bvf, struct inst_node *node)
+-{
+-	return  bvf->in + node->prev_node;
+-}
+-
+ /*
+  * Depth-First Search (DFS) through previously constructed
+  * Control Flow Graph (CFG).
+@@ -1916,7 +1910,7 @@ dfs(struct bpf_verifier *bvf)
  
- 	/*
- 	 * if at least one of the operands is not constant,
-@@ -272,8 +272,8 @@ eval_sub(struct bpf_reg_val *rd, const struct bpf_reg_val *rs, uint64_t msk)
+ 			if (next != NULL) {
+ 				/* proceed with next child */
+-				next->prev_node = get_node_idx(bvf, node);
++				next->prev_node = node;
+ 				node = next;
+ 			} else {
+ 				/*
+@@ -1925,7 +1919,7 @@ dfs(struct bpf_verifier *bvf)
+ 				 */
+ 				set_node_colour(bvf, node, BLACK);
+ 				node->cur_edge = 0;
+-				node = get_prev_node(bvf, node);
++				node = node->prev_node;
+ 			}
+ 		} else
+ 			node = NULL;
+@@ -2490,7 +2484,7 @@ evaluate(struct bpf_verifier *bvf)
+ 				next = NULL;
+ 				stats.nb_prune++;
+ 			} else {
+-				next->prev_node = get_node_idx(bvf, node);
++				next->prev_node = node;
+ 				node = next;
+ 			}
+ 		} else {
+@@ -2501,11 +2495,9 @@ evaluate(struct bpf_verifier *bvf)
+ 			 */
+ 			node->cur_edge = 0;
+ 			save_safe_eval_state(bvf, node);
+-			node = get_prev_node(bvf, node);
++			node = node->prev_node;
  
- 	rv.u.min = (rd->u.min - rs->u.max) & msk;
- 	rv.u.max = (rd->u.max - rs->u.min) & msk;
--	rv.s.min = (rd->s.min - rs->s.max) & msk;
--	rv.s.max = (rd->s.max - rs->s.min) & msk;
-+	rv.s.min = ((uint64_t)rd->s.min - (uint64_t)rs->s.max) & msk;
-+	rv.s.max = ((uint64_t)rd->s.max - (uint64_t)rs->s.min) & msk;
+-			/* finished */
+-			if (node == bvf->in)
+-				node = NULL;
++			/* first node will not have prev, signalling finish */
+ 		}
+ 	}
  
- 	/*
- 	 * if at least one of the operands is not constant,
 -- 
 2.34.1
 
