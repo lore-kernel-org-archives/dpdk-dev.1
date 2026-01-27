@@ -2,72 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEB71D1953D
-	for <dpdk-dev@archiver.kernel.org>; Tue, 27 Jan 2026 15:10:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8921AD340A2
+	for <dpdk-dev@archiver.kernel.org>; Tue, 27 Jan 2026 16:33:06 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8E0B640E0C;
-	Tue, 27 Jan 2026 16:10:22 +0100 (CET)
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com
- [209.85.221.48]) by mails.dpdk.org (Postfix) with ESMTP id 918F340297
- for <dev@dpdk.org>; Tue, 27 Jan 2026 16:10:21 +0100 (CET)
-Received: by mail-wr1-f48.google.com with SMTP id
- ffacd0b85a97d-435903c4040so3568434f8f.3
- for <dev@dpdk.org>; Tue, 27 Jan 2026 07:10:21 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 7E0F140E0C;
+	Tue, 27 Jan 2026 17:33:05 +0100 (CET)
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com
+ [209.85.221.53]) by mails.dpdk.org (Postfix) with ESMTP id 624B340297
+ for <dev@dpdk.org>; Tue, 27 Jan 2026 17:33:04 +0100 (CET)
+Received: by mail-wr1-f53.google.com with SMTP id
+ ffacd0b85a97d-4327790c4e9so3841629f8f.2
+ for <dev@dpdk.org>; Tue, 27 Jan 2026 08:33:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769526621;
- x=1770131421; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769531584;
+ x=1770136384; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=B5uV5qBlV8oxvLUdQpaTRHEQ5lXmRByc1/is4t5dJks=;
- b=0+Nix0waIiYHCwJsxGSS9DpNCJyfbAKRnk2BLaGuwgR8Ic9po4S4IZqRLfniv/xlff
- 9e8+y21fCbSvKuBkgiWVhR+1s+9qmfuh+zPJm/K/9ENdV6c6Of/NMZKHpFxzaCiMHeU1
- eD2OlrQbLarbOV7KTuvQhQ+ODtaBmHuxhAma/h3uZMqd7g8hlDBNF6qk9uwMUKhJnhaA
- KE42KAH2lupIBqhVPEXZNmg+cr4y5rhJ/hAlPipO21rwO8jcrDSkadaPTQfjePm/39ii
- Fbgr+1dwGMehprw+MupD6PXhlQGZyfsrbDMcXXpBrpCIUlJSwRtstXAaxZfonbeoPE37
- 04kQ==
+ bh=CtLku+I4vJN78GzmUN2LOoRP4MgtH4lEo3n3wJIq9l4=;
+ b=F+iSRP7YlB6lxjehwuVDmZOwotveWXTVbRiOrSZhPq4oBtVWN6glgNEsQyuIk1ycyZ
+ jPS8PyPYD+MixLJCET2looVJTlSlYjum8unqNrCDvKDhITMSndmfjLAJALSL13ZstePP
+ boJCPYtAICEKDM/hLf3aX7n+9KrSAey2Dt3LQMZmdf2NODM4hXVLQIcm8A95zwb6W54b
+ zmv5mQnB6jP26RvzndbgS/hV+InYy6LzfWYT4TgcFMajF8YHjKGe163I50wb4cwADEai
+ oyELpoq9xE9P6RRArR2nosQWtSIqhfyuJXSB0dlHhkJgTh8RX3orlK20p0UkWILjYJi9
+ VoXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1769526621; x=1770131421;
+ d=1e100.net; s=20230601; t=1769531584; x=1770136384;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=B5uV5qBlV8oxvLUdQpaTRHEQ5lXmRByc1/is4t5dJks=;
- b=V+B+HsVjeUQMJWiB37jG9WuUzogN4SVoE9c/3CgSqBNsyByGnh4f/qQ0Lyi9VjRKSW
- xaF3z2/pA6kOjzrr52UgcFMZcdlXrWUJmma/IVBlctRUjBqz/oj8nvIc4eDsXenrLDhp
- NpnSm7FjqUvIuF0EReW2FS4bek0pPrtrbRMR7rHD9rKylyXzPmiwQIZi0WBAJjOrAH5X
- 9lX378FmWv78dX90Uvh1rpgKqiB3xj+OOt9TcMcWyttkvXS3/P5thiceFW0snS9E5/Ci
- NHA8AVru6Vbf16k3fy7kDdBbV7dMTcrKJx2hakIZZVCF0TxJFWool6oEr0w3H8CC2cWI
- SsBQ==
-X-Gm-Message-State: AOJu0YwKoFXQMrIqOkTqEq1CIDiWkj2dCf5Y2gRzhkqh8JlyLZaLvBYw
- hlGkfWLnYEnzmCnYK/CxLZSXpHmMj1fuuQ1WWO9tXAheEGDMVe7q7vZeDMr1KurUodUdOyrTMtK
- P6yJW
-X-Gm-Gg: AZuq6aJeVt7w/0raIkmaj0NsPJWpqeNZxOGuHiW8zuQLYF6UumxKdvlAqGh/67Qqs3t
- aIkeVoFw2kAmkWxb/pQMvKG8h+MipmValhMC8ew1lAMssvossjsqbSh/7joGkhWqA2ueP/VFGuP
- 3595+UxlqiU6CamCaTuCm21d6K3d13WWPjSBKXiGKgpKU3fUYOwCtV/C6pB6S2sekeZy89ll61y
- aFP9J210/AEAmd4VYxOm/fq3A7NflE5nCYC1vKrXJZL9rKutaRRXXONFpetUDv/+EMkoMIhYQFw
- KcOEN46OUHB52mKkeB+lOuf8mEhgwAW6xbbDQfvt8n7F2CuladojriuUkHmUrTYscAEJ09ioDLL
- LMTgCSYUtDTnE2FwEGZI/xT/6cqTz0uexpXePghGtVfX0SV1S5HqrrgZVJi2FO2csrW38NTNV3w
- 68mt2PmHykt3Uva47bE2YS7ePD1tQcR09hIeD/2tneeDoEiPaRSarG
-X-Received: by 2002:a05:6000:178e:b0:430:fd60:940f with SMTP id
- ffacd0b85a97d-435dd04c33amr2799745f8f.14.1769526620905; 
- Tue, 27 Jan 2026 07:10:20 -0800 (PST)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ bh=CtLku+I4vJN78GzmUN2LOoRP4MgtH4lEo3n3wJIq9l4=;
+ b=e+KiDBMtLP+7U+xsujrpu/YkpmJYJMqoT8vKRscppd3O7JIX3RYkois6Ok91rSB/V9
+ Y1/a97krbuNCXHS4dqYvzj3aoiPoITvmNGXmn1Q02UoZDVDZqt3f2bkmnEJnbKt2o+7o
+ 3qGHib20VwWGe3rN85yeyEdKELkR6EyNIANvy9/zx08p2l7SngCtHJtjqbMpbNIGROgw
+ X4ZGfezsZBUCgeEsn5oZpCpBt8Vcwa3IlE0j1nFlInkNjNyhI0Y6U+UsnGzIbEaFLd/t
+ ExgPvcj7MIYN8Cym5NxmA8qDhkkwv4VFtIuDN80sf25lqNlBocE0NupgfTFwr3YAk/IY
+ efSw==
+X-Gm-Message-State: AOJu0YzzJWAN0IFMbYhdBZvSfrc0YtIqgeYDUqesX48oFpDGtWMnhxqi
+ sOqwZhhuFKNn1069b8s7MNLQBeqnPD1nguOTKa070dHEmqzT+vbYB0dL84Ef5Icx72dJNlFOdKw
+ DaTfq
+X-Gm-Gg: AZuq6aJLStZGNup15qnRBLdNlFN6DvfviDYAYJC497S0jDyEeFrpgthanEZkSro6FhG
+ UBaJT3lp/FWhsxgMChE10PPShHOeQ7JVl1+YYbfWbqUfL5DjTyG/JNN4NpMAL7D25hVWCsXAxMi
+ NikER4kxAaVeXtjA4x02I2rGe6Nee/wCd1zKsgs6WED52S/ZsntOpvYzAGELhD8S90r26ciuY8w
+ narz03GamONgIoxr47KJXaeR1521qs+Y50cs7Ajz8mFXQq0s7EpHI8u++0xvTqPk06cWt7aZYQq
+ lCGYH8oE/Pkt3Q4oPI+FMcb13qQ/yWlKePP1ZluBuvY7utyhE4oDndZzVaGSWkFTURytOwr4nH+
+ /ypZtVkJbs4U0N22NHm686HyEqf9Qjp4pgC+tje5jAPq/egw6FHu2HIOVoPB4HFRZJjY2dDNR84
+ qlVw0KCxx39FuvgsyQNrVfgKhs/vi5MGmcu9FVfeWMrhbkpqbvaQ==
+X-Received: by 2002:a05:6000:430d:b0:435:8f1b:bb32 with SMTP id
+ ffacd0b85a97d-435dd1c0c5fmr3376359f8f.32.1769531583457; 
+ Tue, 27 Jan 2026 08:33:03 -0800 (PST)
+Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-435b1c24acdsm39853104f8f.13.2026.01.27.07.10.19
+ ffacd0b85a97d-435b1f745dbsm39978513f8f.34.2026.01.27.08.33.02
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 27 Jan 2026 07:10:20 -0800 (PST)
-Date: Tue, 27 Jan 2026 07:10:15 -0800
+ Tue, 27 Jan 2026 08:33:03 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Dimon Zhao <dimon.zhao@nebula-matrix.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH v3 0/4] improve NBL memory safety and mailbox reliability
-Message-ID: <20260127064751.4e830d99@phoenix.local>
-In-Reply-To: <20260127025220.190944-1-dimon.zhao@nebula-matrix.com>
-References: <20260123031627.151341-1-dimon.zhao@nebula-matrix.com>
- <20260127025220.190944-1-dimon.zhao@nebula-matrix.com>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v13 00/17] lib: improve string overflow safety
+Date: Tue, 27 Jan 2026 08:30:14 -0800
+Message-ID: <20260127163258.75566-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20251202172626.283094-1-stephen@networkplumber.org>
+References: <20251202172626.283094-1-stephen@networkplumber.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,30 +80,123 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 26 Jan 2026 18:52:16 -0800
-Dimon Zhao <dimon.zhao@nebula-matrix.com> wrote:
+This series improves defensive programming by adding proper string length
+validation and overflow checking throughout DPDK libraries. The goal is
+to eliminate silent truncation of names and paths, provide meaningful
+error feedback, and enable compiler format overflow warnings.
 
-> Includes fixes for mbuf/memzone leaks and mailbox state handling.
-> 
-> Dimon Zhao (4):
->   net/nbl: fix memzone leak on queue release
->   net/nbl: fix mbuf headroom usage in packet Tx
->   net/nbl: fix mbuf double-free in queue cleanup
->   net/nbl: improve mailbox exception handling
-> 
->  drivers/net/nbl/nbl_dev/nbl_dev.c     |   2 +-
->  drivers/net/nbl/nbl_hw/nbl_channel.c  |  94 +++++++++++++++++----
->  drivers/net/nbl/nbl_hw/nbl_channel.h  |  11 ++-
->  drivers/net/nbl/nbl_hw/nbl_resource.h |   2 +
->  drivers/net/nbl/nbl_hw/nbl_txrx.c     | 117 +++++++++++++++++++-------
->  drivers/net/nbl/nbl_hw/nbl_txrx_ops.h |   2 +-
->  6 files changed, 175 insertions(+), 53 deletions(-)
-> 
+Motivation
+----------
+Many DPDK APIs accept name parameters with defined maximum lengths
+(e.g., RTE_LPM_NAMESIZE, RTE_HASH_NAMESIZE). Previously, names exceeding
+these limits were silently truncated via snprintf/strlcpy, potentially
+causing subtle bugs like duplicate names or unexpected behavior. This
+series addresses these issues systematically.
 
-Queued to next-net with minor rewording of the commit message in patch 4.
+Changes Overview
+----------------
+The patches fall into several categories:
 
-Improve mailbox reliability by replacing the simple 'acked' flag with
-a state machine for tracking message status.
+1. API input validation (patches 1-2, 6, 12, 16):
+   - Add explicit length checks for name parameters in lpm, hash, efd,
+     tailq, and cfgfile APIs
+   - Return ENAMETOOLONG when names exceed limits
+   - Document new error conditions in API headers
+   - Add corresponding unit tests
 
-Key changes:
-1. Replace simple 'acked' flag with a state machine...
+2. Internal buffer overflow detection (patches 3-5, 8-9, 14-15):
+   - Check snprintf/strlcpy return values for truncation
+   - Log warnings when internal string operations truncate
+   - Increase buffer sizes where they were too small
+   - Use dynamic allocation (asprintf) where appropriate
+
+3. Path handling improvements (patches 7, 10-11, 13):
+   - Use standard C library routines (getmntent) for parsing /proc/mounts
+   - Enforce UNIX_PATH_MAX for socket paths to fail early
+   - Handle arbitrarily long shared library paths
+
+4. Error message improvements (patches 1-2, 6):
+   - Include rte_strerror() in failure messages
+   - Provide more context when operations fail
+
+5. Enable compiler warnings (patch 17):
+   - Remove -Wno-format-truncation flag
+   - All preceding patches fix the warnings this would trigger
+
+API Changes
+-----------
+The following APIs now return ENAMETOOLONG for oversized names:
+  - rte_lpm_create()
+  - rte_hash_create()
+  - rte_fbk_hash_create()
+  - rte_efd_create()
+  - rte_eal_tailq_create()
+  - rte_cfgfile_add_section()
+  - rte_cfgfile_add_entry()
+
+These are documented in the release notes and header files.
+
+Testing
+-------
+- Existing unit tests pass
+- New test cases added for hash name length validation
+- Build tested with format overflow warnings enabled
+
+
+v13 - fix and cleanup get_hugefile code
+      optimize using statfs() and no string handling needed.
+      reword commit messages
+
+
+Stephen Hemminger (17):
+  lpm: reject names that exceed maximum length
+  hash: reject names that exceed maximum length
+  graph: avoid overflowing comment buffer
+  latencystats: add check for string overflow
+  telemetry: check for path overflow
+  efd: handle possible name truncation
+  eal: use C library to parse filesystem table
+  eal: warn if thread name is truncated
+  eal: avoid format overflow when handling addresses
+  eal: limit maximum runtime directory and socket paths
+  eal: check for hugefile path overflow
+  eal: check tailq length
+  eal: handle long shared library path
+  ethdev: avoid possible overflow in xstat names
+  vhost: check for overflow in xstat name
+  cfgfile: add length checks and increase line buffer
+  lib: enable format overflow warnings
+
+ app/test/test_hash.c                   |  21 ++++
+ doc/guides/rel_notes/release_26_03.rst |  13 +++
+ lib/cfgfile/rte_cfgfile.c              |  42 ++++++--
+ lib/cfgfile/rte_cfgfile.h              |   6 +-
+ lib/eal/common/eal_common_config.c     |   6 +-
+ lib/eal/common/eal_common_memory.c     |   3 +-
+ lib/eal/common/eal_common_options.c    |  17 ++-
+ lib/eal/common/eal_common_proc.c       |  85 +++++++++------
+ lib/eal/common/eal_common_tailqs.c     |  13 ++-
+ lib/eal/common/eal_filesystem.h        |  27 ++++-
+ lib/eal/freebsd/eal.c                  |   6 +-
+ lib/eal/linux/eal.c                    |   6 +-
+ lib/eal/linux/eal_hugepage_info.c      | 138 ++++++++++---------------
+ lib/eal/linux/eal_memalloc.c           |  11 +-
+ lib/eal/linux/eal_memory.c             |   9 +-
+ lib/eal/windows/eal.c                  |   6 +-
+ lib/efd/rte_efd.c                      |  18 +++-
+ lib/ethdev/rte_ethdev.c                |  35 +++++--
+ lib/graph/graph_pcap.c                 |   9 +-
+ lib/hash/rte_cuckoo_hash.c             |  41 +++++---
+ lib/hash/rte_fbk_hash.c                |  12 ++-
+ lib/hash/rte_fbk_hash.h                |   1 +
+ lib/latencystats/rte_latencystats.c    |   9 +-
+ lib/lpm/rte_lpm.c                      |  17 ++-
+ lib/lpm/rte_lpm.h                      |   1 +
+ lib/meson.build                        |   4 -
+ lib/telemetry/telemetry_legacy.c       |   7 +-
+ lib/vhost/vhost.c                      |  14 ++-
+ 28 files changed, 377 insertions(+), 200 deletions(-)
+
+-- 
+2.51.0
+
