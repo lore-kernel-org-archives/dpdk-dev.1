@@ -2,70 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AA5AD2FED2
-	for <dpdk-dev@archiver.kernel.org>; Tue, 27 Jan 2026 18:54:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5AEBD2FED9
+	for <dpdk-dev@archiver.kernel.org>; Tue, 27 Jan 2026 18:57:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 930F640F1A;
-	Tue, 27 Jan 2026 19:54:50 +0100 (CET)
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com
- [209.85.128.52]) by mails.dpdk.org (Postfix) with ESMTP id 1DEAC40E21
- for <dev@dpdk.org>; Tue, 27 Jan 2026 19:54:49 +0100 (CET)
-Received: by mail-wm1-f52.google.com with SMTP id
- 5b1f17b1804b1-4805ef35864so22926095e9.0
- for <dev@dpdk.org>; Tue, 27 Jan 2026 10:54:48 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id CEB0240F1A;
+	Tue, 27 Jan 2026 19:57:56 +0100 (CET)
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com
+ [209.85.221.51]) by mails.dpdk.org (Postfix) with ESMTP id D662940E21
+ for <dev@dpdk.org>; Tue, 27 Jan 2026 19:57:54 +0100 (CET)
+Received: by mail-wr1-f51.google.com with SMTP id
+ ffacd0b85a97d-43284ed32a0so3621760f8f.3
+ for <dev@dpdk.org>; Tue, 27 Jan 2026 10:57:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769540088;
- x=1770144888; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769540274;
+ x=1770145074; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=fLZlyK/gShdwrYqHyqk0/S7shuTGyPXFliuJNFy96sU=;
- b=TRV0k/6x9JED0BKzh9/bnDenoptkALJ0+H7xCxDBES93ZPnv9AxPX9LA8+PRjZBpQk
- /pgzEzeibRlnJoZxZFelkBRCiyRDBkwG8ja3d55Ib5LsCgM+HnmZt10XozevK6WnRqNk
- muUowYklfWKLKGBj464FRaWLjt2NlxzumygQRxBM8CHvvGLDM4+RAANnMGt5y+nO7QFX
- 8tYgmb3FvILLZjm2T/RKV88W0lA90SeQ0suDajGuH8z+jlprlgosRyVOfINOfzevEuS3
- zvSn3NFI2mPOtlILQL6IxCTfnzHh25x1ptaENDcAUmFnYPFVbe0prmOq8wXbd9bnwf/Y
- bnHA==
+ bh=nyPBnBomG3Cq0vx6nrYh3txFo9mqyhKl2/Vdsh/zB5Q=;
+ b=UxmDIH8bGzUG2MxSsy0yiInZrPNgGnPh5E8mhuxwjjoNdqz5wfu//86r2sp6hs0SIe
+ TpcbmRd38WZUKUGO76Ai2w0JzhfkTgtRbcwg/k5rYpuML7cPNQSiswtjFBk95H7+oEOj
+ PgiE/M/9c7SN8KofKAhB5Dpj9y2uevL0ixKq0L4H5rCDLeYHntI/0KRiuzzgToRFrkDC
+ Me3Fe1ozEQ1W2qb5lfmR0VO4AOu7Rno+Ym4bTUpZdNmSOOWdyO+hHD2gqp+xQ30+8ib8
+ 5zJpyaH3Sz5vGkL9P0YiVjox1JOXBCERZQoPU9VMsSpM4BFHXSVLjeVZXT9Z6VBT42oZ
+ NB+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1769540088; x=1770144888;
+ d=1e100.net; s=20230601; t=1769540274; x=1770145074;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=fLZlyK/gShdwrYqHyqk0/S7shuTGyPXFliuJNFy96sU=;
- b=Dmo6t5b9PY4Tvb5bHWLA3B++q/FBNZoZmSx+a4DzVr9mYTaOr9cwEgEecacffTWMCu
- mkokaVzIa4MIk+ULhtk0lV9NlB6qJqARWlaRHMYxMffFpBYRgOwUT2xvKbQ72RGjQOC3
- mfe2WpEQ84o1YMVn0VM+CqcX9ej7tqHOvyA24cd/fBXRV/MBKlLVwZWGiPc9pqAep2ip
- QNrzPEkwJi7Sfv3fV+30//cHZrJULcUaHSEbvZdUnv1aZHESH7uxKZVrijPAYHayLMc7
- A+kX+tZrfYbjaB1YYW88DecpItoLT659VszOmzcmothEeBhAylLUjWOc/fVTJ7de9rTx
- QygQ==
-X-Gm-Message-State: AOJu0YxXoiELM3TLZxytJ8zpRTPwvABl+i0+7j5QpcZv2FMkkxz5bLVl
- FynoBACs4yipLVNKuQeobJ+/FIxHU7BAqCmWUvfvLqDvlAB9WXZve4yOf1rOuk+eV9Wi8WAAKBP
- DdP73
-X-Gm-Gg: AZuq6aIZkrHemZxUG1kwIXhpJAX3IxmnXjuDHXaEiERXawANWf3FFJSB1FdC586oNW/
- N28hz4SuTEbnndsj0wYiMAizKQrjgFffwZtVAluEbi8xVbbwYUmcJ3N79Rx+yxuMMhI2lxlfUkX
- 8G2Ar2bZwUTY2PbObL5XiigcZ/oE30gXkp90dc52Sk92FdOl9q1nMAnZOz4WLUsO4fNS2d5OWg2
- PJD9EbyP0jbGFk8j64FV8kgjX3QCM5g7RcqDX9c95UlIP4RTf6I+DraPSEBgODOOQe9sOdt/DtE
- 1PmZFzKvdics9OLiNLjOKA4qLmy16aX7KQPr7h5fTEqzAd91SZLaba2Sa/4nYwhIBqWVw/tZL95
- jwiKHWyf+4toH4nvy9enpMjJuiFhms7zd3w3unefCAFtmjPCJ/VWHz3RTFpAxkBKTRItdcXMFx3
- KBaaLWyMWw2KEk4n1rVa5Qthjs/phdOROfTjINENB+yXmBD5FkBnqn
-X-Received: by 2002:a05:600c:4507:b0:477:9dc1:b706 with SMTP id
- 5b1f17b1804b1-48069c47cabmr32543715e9.19.1769540088441; 
- Tue, 27 Jan 2026 10:54:48 -0800 (PST)
+ bh=nyPBnBomG3Cq0vx6nrYh3txFo9mqyhKl2/Vdsh/zB5Q=;
+ b=lH6mj+ahyLb1pxfMQjPW0+H/jl8BUT968WWhJX4g6yG4pyAACPH6y8KsNGqAFJ6JtS
+ qEa2cF97Ie1IwJsxH3qKW8sLRLT1iWCm5ZeINEdGieuh+dZ4wPcc0365jTucvNF/v770
+ pV1STLui/MwI+CjXHNflm1mmCLv8o1Auk1yX9OEfT6bC/85163obkuD3OTMii4gotXhS
+ 33Q4sU/rMb039K42F+WLQ8WxzpC+SWOAOM0atYLQ1pq/0QHBXf3Pi+iWu54/knrLHMb8
+ /18JRrMm+aYTXge4WjcWBLwZtuC+ZBWG98Yky2WiZhvly9l4b+Ijk6+V2RlZ693j2DgF
+ rZ6w==
+X-Gm-Message-State: AOJu0YzhZYZhRS9UckeQfirGJdT7leDti2LYrfyX3kYQHh+UcBXTotVU
+ TPpF9UfHioDqkJiARqofwiwQ8vvPxeZuRWYahHUBgiK3QoWz2DPJfVdNKxl/3fU0oeWYO874ElY
+ UnWQ/
+X-Gm-Gg: AZuq6aLqZK2GSe7zyM4I+BrF31GdvZ0QtiC7hahqGXq21DK0w774Hr8s+AZUQT7XaS7
+ 3b9AOQNy97AM3sszQ8+GcaaHXFKk5bwryE26epHuaFRhCwDEAvEc8KuqSA8phN+1muN2ANZ50P6
+ zgP+Hz1Ns6kBKhvb2/+8Lnnwlq3Mt2PphuxBXtjb5BK+Ue9Ui2XoM8H2LqqNTYrH+HsZ6wsusXv
+ inuw0b5T6v74TXOJ3CTfo5sc9+hzhTnpFPiRI08bH+bo2Gc+1CTAr/5Me49De44XWG+UT25m28T
+ mndq7fjkgYwjXsc2MY+Bj8XPp0MG5nJzveB83CIAkuYb40EWLb9hB0Frm7M6steHatthhLv8AAn
+ AhGtIjwhWki10828vVuGN06m7xzdLADs3B7pJBnJJT8ZZo6a3CdpST4jkgodxf8fjmG9stT1OZg
+ gDXQUF0B/vs4KFt/dslvRcQNz9AT12ZM8UtnfjjxgChsAEdvjbMR3c
+X-Received: by 2002:a05:6000:2885:b0:432:86e1:bd34 with SMTP id
+ ffacd0b85a97d-435dd1c0c54mr4243408f8f.39.1769540274411; 
+ Tue, 27 Jan 2026 10:57:54 -0800 (PST)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-48066c40e04sm76403625e9.13.2026.01.27.10.54.47
+ ffacd0b85a97d-435e10ee057sm969372f8f.15.2026.01.27.10.57.52
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 27 Jan 2026 10:54:48 -0800 (PST)
-Date: Tue, 27 Jan 2026 10:54:40 -0800
+ Tue, 27 Jan 2026 10:57:53 -0800 (PST)
+Date: Tue, 27 Jan 2026 10:57:49 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: scott.k.mitch1@gmail.com
 Cc: dev@dpdk.org
-Subject: Re: [PATCH v1 2/3] net/af_packet: RX/TX rte_memcpy, bulk free,
- prefetch
-Message-ID: <20260127105440.267abdec@phoenix.local>
-In-Reply-To: <20260127181355.98437-3-scott.k.mitch1@gmail.com>
+Subject: Re: [PATCH v1 3/3] net/af_packet: software checksum and tx poll
+ control
+Message-ID: <20260127105749.2e2059a2@phoenix.local>
+In-Reply-To: <20260127181355.98437-4-scott.k.mitch1@gmail.com>
 References: <20260127181355.98437-1-scott.k.mitch1@gmail.com>
- <20260127181355.98437-3-scott.k.mitch1@gmail.com>
+ <20260127181355.98437-4-scott.k.mitch1@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -82,37 +82,34 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 27 Jan 2026 10:13:54 -0800
+On Tue, 27 Jan 2026 10:13:55 -0800
 scott.k.mitch1@gmail.com wrote:
 
 > From: Scott Mitchell <scott.k.mitch1@gmail.com>
 > 
-> - Add rte_prefetch0() to prefetch next frame/mbuf while processing
->   current packet, reducing cache miss latency
+> Add software checksum offload support and configurable TX poll
+> behavior to improve flexibility and performance.
+> 
+> Implement af_packet_sw_cksum() helper to compute IPv4/UDP/TCP
+> checksums in software when hardware offload is not available.
+> This enables checksum offload on interfaces without HW support.
 
-Makes sense, if you really want to dive deeper there are more
-unrolled loops patterns possible; there was a multi-step unrolled
-loop pattern that fd.io does. The reason is that the first pre-fetch
-is usually useless and doesn't help but skipping ahead farther
-helps.
+I don't think each driver should be doing its own checksum helper.
+It should be done at application or through libraries.
+All modern hardware does checksum offload, so if it doesn't probably
+a driver bug.
 
-> - Replace memcpy() with rte_memcpy() for optimized copy operations
-There is no good reason that rte_memcpy() should be faster than memcpy().
-There were some cases observed with virtio but my hunch is that this is
-because the two routines are making different alignment assumptions.
+> 
+> Add txpollnotrdy devarg (default=true) to control whether poll()
+> is called when the TX ring is not ready. This allows users to
+> avoid blocking behavior if application threads are in asynchronous
+> poll mode where blocking the thread has negative side effects and
+> backpressure is applied via different means.
+>
 
-> - Use rte_pktmbuf_free_bulk() in TX path instead of individual
->   rte_pktmbuf_free() calls for better batch efficiency
-Makes sense.
+Needs to be a separate patch. Don't do two things in one patch.
+Not sure if some variant of the existing configure thresholds
+could be used for this.
 
-> - Add unlikely() hints for error paths (oversized packets, VLAN
->   insertion failures, sendto errors) to optimize branch prediction
-Also makes sense.
-
-> - Remove unnecessary early nb_pkts == 0 when loop handles this
->   and app may never call with 0 frames.
-
-Yes calling with nb_pkts == 0 on tx/rx burst only needs to work
-does not need short circuit.
 
 > Signed-off-by: Scott Mitchell <scott.k.mitch1@gmail.com>
