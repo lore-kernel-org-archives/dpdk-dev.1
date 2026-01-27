@@ -2,72 +2,185 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E564D2FEE1
-	for <dpdk-dev@archiver.kernel.org>; Tue, 27 Jan 2026 20:45:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39762D2FED9
+	for <dpdk-dev@archiver.kernel.org>; Tue, 27 Jan 2026 20:58:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6E5BD40F1A;
-	Tue, 27 Jan 2026 21:45:27 +0100 (CET)
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com
- [209.85.221.48]) by mails.dpdk.org (Postfix) with ESMTP id 41EFB40E21
- for <dev@dpdk.org>; Tue, 27 Jan 2026 21:45:25 +0100 (CET)
-Received: by mail-wr1-f48.google.com with SMTP id
- ffacd0b85a97d-43246af170aso150113f8f.0
- for <dev@dpdk.org>; Tue, 27 Jan 2026 12:45:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769546725;
- x=1770151525; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=u/qCCKuWHCaflmmrNdfj/1emNur5+rdaUFsOT4AOd1Q=;
- b=XXhmVwBKmn0Xi6bDqM3he+PKxGdX211BcK6OGDeRldLE6kywVptzgj6kWfdrMj8qrq
- wuX1t6vjpFY7eqM9sa9nZzVx2WWqjKZIL4ib8DdXZ7041fm08utK9Y8wIwNfzijJnDnR
- 67QwG3VbR4CcnD0vDSjiLtpTtrjFrivffD8EjD3Uh3Q5V2fCi82j1NUr/yBP+B8ZDVQ3
- ic1CgbR243CuMarjKQ5OHzoAbpG4xH97RkcJHmybtxuvSHHiQeSHNps6XGjxG48gzH4B
- 90ZfGufzaYXmneqlWGJ/f8m3+hBskDfL5P9j3b/6Qe7g4kXUVMECbzP81PvV0FWmsV83
- 9rlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1769546725; x=1770151525;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=u/qCCKuWHCaflmmrNdfj/1emNur5+rdaUFsOT4AOd1Q=;
- b=t2wXahLStgBFX5LjVEE59ga7pbwCxeE9FsOIu6nIpnYyMVFiBlzNT3s1n3fXHiTJEf
- erNHVFzIYhXk/0VdzmIp8Nl2irHIP4OFo3GTZCL0OXZJc53sty5BAXF3ELoLjGIIYX4T
- 3UfvIDEz6/l17EKUZ/liDZX+pUGQfxGevCIpE6pB4nKoYaWpK3PvWOAdjrnFas0fA+qS
- FnV6T83+15uHZtt4n+MFMWg35/rn0+7GD92t+as4Qn7XM0lE4muWNPqrORkqEX0URJ4i
- iT5+Fmw1EeP8Wa/srvFiieQ1OlXCjqal+ro9GHQx/vUZLSo4fRQqyVLMwjm/B7/gnlYw
- T6zg==
-X-Gm-Message-State: AOJu0Yytue6JXXIkLQ7tK3L8B8544aBfTmRB6N8UU/UZx0zylshp6CjH
- BjU/2qQMCsNzUqSXhinVMDng7q75T+h1hSiuxxsSPkqcY/AWMw1bTyMwN66VEbclQr98sLXh8M1
- OJatG
-X-Gm-Gg: AZuq6aJRIcxcZjFCXZFziiFyQCin7wTZaUsaBgs3XjvWQqFNddvkXw9chmc9UyodMWs
- BsSCg7AO9BQ94Z236zgsc4X02IYi4HqG7aTD7ZhkiUuErf40eNjdSLeUOsMj+BlFfaes6AVkCsm
- j5WkJ6wsBeE7NCkHeMdiOFdvpsTre7hRTJI8CR8zkrwJCjKd+5AUfrO32hVwxWE7JS5hGQRsigA
- MdLHCVTEovo1HypDPnberICGFZr+AK+AtEq/KEFu5/XE58CIJU0tAJljprnR7n3wF8s5u5QbICL
- kQJ0qsOdP7kVLxpXxlwj0rl1nxFVJ7D2lymehyXHsDmrIFKlOcQBpr+DHuRKbnfx44JkBfH1rid
- egyI/8cBLlNVgNvq/fNWBLzTsGLUns8R7TyV2BQELFcd1ff1EVNEdOgDiUb/bHGe2GOS+7R7lkP
- UnAqZ5bwzdFF3wKr/BofLN1ZGJTrkO8MzQ7dRXUpXaoK7xxkYmDQ==
-X-Received: by 2002:a5d:42cc:0:b0:435:e07d:47ac with SMTP id
- ffacd0b85a97d-435e07d47c5mr1665997f8f.28.1769546724248; 
- Tue, 27 Jan 2026 12:45:24 -0800 (PST)
-Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-4806d25838csm3565345e9.0.2026.01.27.12.45.22
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 27 Jan 2026 12:45:23 -0800 (PST)
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [REVIEW] net/af_packet: software checksum and tx poll control
-Date: Tue, 27 Jan 2026 12:45:20 -0800
-Message-ID: <20260127204520.21426-1-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20260127181355.98437-4-scott.k.mitch1@gmail.com>
-References: <20260127181355.98437-4-scott.k.mitch1@gmail.com>
-Content-Type: text/plain; charset="utf-8"
+	by mails.dpdk.org (Postfix) with ESMTP id 35CC140F1A;
+	Tue, 27 Jan 2026 21:58:48 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+ by mails.dpdk.org (Postfix) with ESMTP id ED73740E21
+ for <dev@dpdk.org>; Tue, 27 Jan 2026 21:58:46 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1769547527; x=1801083527;
+ h=message-id:date:subject:to:references:from:in-reply-to:
+ content-transfer-encoding:mime-version;
+ bh=IKnWpyfFuEJGI4n6VMMHYrcBkSDm3THZijjqXfZxfu0=;
+ b=NvvhZEJ8J+TC+7ihgoh8arRy0kMue7UQWKe9o+HafO6/UK8wwpgoyFUR
+ IXdzXLtYoLcjTLFgC6fbh8hI2ibVWZYDI0L5vYYBXRBEIqaBw+S5vSubW
+ XJ9fmDnRgmR1B8AYvz0MfepixJg65rktYXFrjD+f5WdymaHJOZdKpahDm
+ 26BmYVWZUSZzUZ4KJbaE3MKhFxs87qOGjeVj+gEVJg/R4bmtAZFuda6p3
+ KHfq4Mt4BiRyv5QFEevth8avC0BmydHQApcoYgY/Q8kZilhp3bor/exdG
+ hFXhv1H338XcGF9gSkc+tYp+iHHbY3Uk84f4Ly2aEBgrFLcFuIOyPmGEk w==;
+X-CSE-ConnectionGUID: Lpb9ebC8TnahT6zBPCuZuQ==
+X-CSE-MsgGUID: fGhCISYqS8yv9iObiEkcgg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11684"; a="93412496"
+X-IronPort-AV: E=Sophos;i="6.21,257,1763452800"; d="scan'208";a="93412496"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+ by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 27 Jan 2026 12:58:46 -0800
+X-CSE-ConnectionGUID: 2n64Fb6oQgu+VB3k0z5skg==
+X-CSE-MsgGUID: mUlX+xQlRMiXPjcabqVFyA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,257,1763452800"; d="scan'208";a="207214957"
+Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
+ by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 27 Jan 2026 12:58:45 -0800
+Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.35; Tue, 27 Jan 2026 12:58:45 -0800
+Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
+ FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.35 via Frontend Transport; Tue, 27 Jan 2026 12:58:45 -0800
+Received: from MW6PR02CU001.outbound.protection.outlook.com (52.101.48.38) by
+ edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.35; Tue, 27 Jan 2026 12:58:44 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=rAICteZqmtl4bbtMVY7/h3XMBZUOOslAubvqrdrsH3t+wqKwSszDqTQJbGAWc4k3EeCjNFrhwiuzzcvlixGBDVWmYlN8d9EAAs8U9r1Q1olmXiV/TSikoNrmg/YfQFb/nPvIn8EKWCF7I2u39Tgoyc/bWPUfxZOKan1KjJ6ZlXaWyTvEuCZO2DsFJVa9WsldKp4ptmw/vaSPElEOXZEIX1n/mmGGpPziNCgHB7pj3GKyShP+3I7vwrW42ZL6MfsqL/LhsxhSQofgdykVN8KTcewKxIrVEoAZe6xGX2zGY8II+ON/RgvdNDPpxf5xAboysFUmRLz9+8ooBsTl6AJ++g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=8gXA+7PyCL9I72APhWwUB/5XY48uYMICXZDCOoHP2Aw=;
+ b=FTU0uUZKqoRA1PgeXSrI2BPxbO/p6IoyPSMWXntYqiyoWBf8XZDx7WdD2ZwJO5bkPI54/EBLfGWlssgMyBIEBSuJCsiK6NrgWk3/Ll3U4hBdL1Qzk7uB5Ho8KOWKSTr3zUgrZEWS38iVyIcpOedzMX1k4bKo6Q4/Diyu9CPEuGDvJ2yj6A+h7G6E7V/TNQI1QPQWgx1Ynx1y4cb51vq2fIVQHcXaPutx21mcSEMAzV5JDBHNMBJMHzfDZPLPoSll0RWiuKpzrjirlYkJKkmUKPFu0+ePZzGxM4Q2b560QwCOczqdD0Vbwbj31noHOUhgIoju48ZN5aCPVWQZJWGmeA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from IA4PR11MB9204.namprd11.prod.outlook.com (2603:10b6:208:56d::16)
+ by DM4PR11MB6017.namprd11.prod.outlook.com (2603:10b6:8:5c::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9542.16; Tue, 27 Jan
+ 2026 20:58:42 +0000
+Received: from IA4PR11MB9204.namprd11.prod.outlook.com
+ ([fe80::509:acc9:5dba:5963]) by IA4PR11MB9204.namprd11.prod.outlook.com
+ ([fe80::509:acc9:5dba:5963%3]) with mapi id 15.20.9542.010; Tue, 27 Jan 2026
+ 20:58:42 +0000
+Message-ID: <eaeaeb1b-16b1-42ed-9bba-69357833c9a4@intel.com>
+Date: Tue, 27 Jan 2026 20:58:39 +0000
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] net/intel: improve Rx descriptor ring size checks
+To: Bruce Richardson <bruce.richardson@intel.com>, <dev@dpdk.org>
+References: <20251215173543.1707960-1-bruce.richardson@intel.com>
+ <20251215184342.1722960-1-bruce.richardson@intel.com>
+Content-Language: en-US
+From: "Medvedkin, Vladimir" <vladimir.medvedkin@intel.com>
+In-Reply-To: <20251215184342.1722960-1-bruce.richardson@intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: DB9PR02CA0028.eurprd02.prod.outlook.com
+ (2603:10a6:10:1d9::33) To IA4PR11MB9204.namprd11.prod.outlook.com
+ (2603:10b6:208:56d::16)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: IA4PR11MB9204:EE_|DM4PR11MB6017:EE_
+X-MS-Office365-Filtering-Correlation-Id: 233b96d0-7a53-44ee-cc03-08de5de6da58
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?cFdobjltSzhkcnVWdEhJemViOE5EYVI0VHJIb2FkdU9jZEZNSThlUnNMbEJV?=
+ =?utf-8?B?VHVITC9ZTk50VkJYUWQ1MDgwcHNiYVJFcHZFaFFVVDU2QjlqbjQrNlk4WFVm?=
+ =?utf-8?B?VW5kTGRsemJ1UnZPdjRTY2crc1pMN09KVEF0dEZUUWNrVlVKV2kyZUZ6a0I0?=
+ =?utf-8?B?MlVNMXNHV2Z1aE0vcmVNN05UQ2E1RjB1MmJVVW1RUUZiZ2JUd3QrZER1WW9V?=
+ =?utf-8?B?WjZnMUxKSThRU2RJZ2Zhanp3anExN3Noc0RmbjA4WGpnbEVmZ2M1MEpEM3Vq?=
+ =?utf-8?B?QWxTb0VUSHE5UzNYUnJpbTI3T2hHNjM0QzlYUGFHcWkyWDZlS1djcDJGTFJj?=
+ =?utf-8?B?OEc0b0FBQk5PRU85Vk1iS2FZeUNmSUZ5YWI5V2ZhaUp6bG1nSFlHV0V1Q05H?=
+ =?utf-8?B?c054NGRQUSt3Y1krdlNER2l3b1dnd0RYcG1wVXRnOWE0L2FrVDNFeHU4MVVR?=
+ =?utf-8?B?S2JvZWZzdVpUc3ZkQ2FBdnBTUXE0VlNsdm55QkhJSjJJZXVHZnpDT0VDWVRv?=
+ =?utf-8?B?NDczejJIclhPVzJ0Z1g0cEVlSTJaeGZOaFdmbVl3SU9EZWxMVEYzbFZVSUEz?=
+ =?utf-8?B?a3ZiZGxpbStJQ1Fpc080UkNFV2xETC9Dc3FWRlB3TktSWC9zaHRnWUduSnVi?=
+ =?utf-8?B?ZWdHMTlabVp5Z1dYZTBzNWJIV3kvaXNMeVZyWUwvekExVTh6VjdTd0lJcGV1?=
+ =?utf-8?B?eXdENkdyaHdXdjY5RGIxaWZPVTA5RFJIVEpMRkc5em1rejhHRnBWR0pSQWpY?=
+ =?utf-8?B?VzN5bkx0R3hVemZ1SzdibTJVNTAyTlFSdjlUQS9Fc3hBcGlabTN5Z2N4dG1k?=
+ =?utf-8?B?bFFyUW9lU0hKZm5CbHJkK3FPSjg5elRzOW9qYWlvMm9Ram9OZ0E0K1l3K0VF?=
+ =?utf-8?B?WVZwaUlYTjVsMlhoS0phT2JCa05Vb2pYM2VGZVZCU1pDaTJWV0JqbEs2SVpm?=
+ =?utf-8?B?TU5LcTF2akVuTjY2TkdNemhzMmFvdlJ6ZWdhWEFBZ2ZzUWVvbU92T1VOckJG?=
+ =?utf-8?B?Z0MzamNIazdrTENlUko0YUkwQ2VvTkRuZk1Hb3hKQitvWEd2ckNnWlFQUjRS?=
+ =?utf-8?B?c0xZanF2S2p0cHRMUjJuTzluaVJHVWFhbG5nWW5Xa0pnbzFBeWMybzg4L1Nn?=
+ =?utf-8?B?cmdPY2V1Nm1UQ1FNaWlKTndEaElPMTV6eU5ZVlBCYmUwaHhtVkxzOXVrbzBw?=
+ =?utf-8?B?K3JVa0FpR3lzblo4SWtvbGhSaHJ1aTVLejJBWVU1T3B4TEdoRUptY25zRkkr?=
+ =?utf-8?B?LytMQlpLNnBaK1NQWVdoYzk0b3RzMDYwdnVtYXBkU1cwQk11algrNmlnUVFi?=
+ =?utf-8?B?Y1JCaHRObGlBaEpWZHdvMGNvNFVrMlZpVFFVaXVVbFBXQnoybFpKM3hsNzNa?=
+ =?utf-8?B?M1lZMmMyTUx1Kzh5NnZsbFUxRElPMWtpSXRsd0lRTEJxN0k0dFFKbGhBaWRC?=
+ =?utf-8?B?aWJDTVR3Y25VaU5ZY1g1b2dKcW1kUW9pYVcxVWdwazZLVk1YUWFjYTV3TWh4?=
+ =?utf-8?B?eTlrcS8wdmpMVkpNcXBSZ1FmSFNPZDVaKy90OWVLYWRzQkVYVDUxcUh3dEJ4?=
+ =?utf-8?B?QkhWRlF4aDVrVzZNQ0pycUZYRVgxY25mQjdIYmhaS3ltTnV5L2h2dGo3UHA2?=
+ =?utf-8?B?R3ZhejZId3QzeVBIYW5KSzZ5MDdmZjM1bEh1dDAyTVVjdFhUclhiT0V0czVD?=
+ =?utf-8?B?amd3SFdOdXQyVldwMWNGaURNbi9id1V5ZnBxVUhzaHNTaC9ONHJsQjBycUtZ?=
+ =?utf-8?B?bjV3U3dtQW8wTTJ5cHlQcjZVbXA2bU14dU1hNENPR3NMbFpEZGhWOXB6TFN4?=
+ =?utf-8?B?QnVOYkl0eXlEMDQ2SlpjOFArRCtuRjlsTUNXeEY3MUYzZ2VDenc2TzVHdFJS?=
+ =?utf-8?B?TGFVRzdQVWxlZ2R2RGpoY2V6ZG04cHdtVFRBU2FMTysyVldxdkVtM2JpRmQw?=
+ =?utf-8?B?Q1FKVDl3Y3h2T252WDA2VnlSQlVXM2dJTWdVLzN3SDJ3QTY0eXd6cmQrT081?=
+ =?utf-8?B?WmFDd2xzT3pKcmtVZmJLL0ZEQVpSUHpBSVdzaWMyU1RZMDY5eWgvQTdTTDdo?=
+ =?utf-8?B?V1pCcnFkTmdPRFpYdWk4eEJUV3JMQ2xhT0luZytZcUJ3cEwxOHhLRnZKRGJ0?=
+ =?utf-8?Q?7W/Y=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:IA4PR11MB9204.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(366016)(1800799024); DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?dnJWWGdjSkQ5U0dRY2ZRSHp1bDJXOUx4TzExQklVUUMvMFVEZ2RMSWN1ZERH?=
+ =?utf-8?B?OElZOExhb2pKREpLUWpiZTFuTVdqTExFcWNmb1NPNjBoS2JXTFRRWjRON2xK?=
+ =?utf-8?B?cVljaHJIcFF1V1JYemZIRkpja3FzVkJGYmY0WEptRVpMQ2Y4c1g5cHkxOUJZ?=
+ =?utf-8?B?VUg5dGZQRnNWQ0xVdG1NZHRKZFFoQ2xZQnhobU1QcklQN2UvUktJUkJFMEtH?=
+ =?utf-8?B?K2FxK0xBeHA1ci90dk1sd0hUMTNSVGU2NlpENHRKQzJ1ejZpMldpeEZhV3V4?=
+ =?utf-8?B?MFVweVNnNU9IcEMwTWNMYlliQWE5allVZS82a09weTkxbHZGOVpKbGhld1Bv?=
+ =?utf-8?B?eHA1VUpyWTZZYnZJOVdIUmdPa3lZY20xSnBYNEp6eTRmNkdvRFJ2Y25VQTgx?=
+ =?utf-8?B?Y2FFSDBPRWJESjNJRHNwK1U3dWNmUmRldkJGSjNEcU03emFmVGt3aGFQQ2xT?=
+ =?utf-8?B?Rlg1SDgxcWlqOXNsRUhwUDRTSWhESXFzck9pZlpWOVRtSVd3Z1BZVS9Xa3Rt?=
+ =?utf-8?B?WVptSW9TNWF3NmRucnViTUY2cmlaTEY0bTk4LzVBREl0OEhCV1RlUVZZOUJI?=
+ =?utf-8?B?Y2NjNmx0SERPQTdLRThXTnhoU0NnU05ucHZ1dVhxbmhJTkRJdDN4UHd6QWJH?=
+ =?utf-8?B?YkFSUnpERXh3b05ZdHB6bVY1SmJ6T0pvUWxNeVVIU2tHMGs5M3hqSHFmZThW?=
+ =?utf-8?B?WVEvcTlZOHNialZSZVhxQmRRZytVc0ZlRytEdUlTQ0hqZFVmcTVlcjNtVFRH?=
+ =?utf-8?B?Y1BmYlZrV0QxM0RseTlBajJRRFVNL1RPQTdQYVRRN0cxUm1KbWxyc2UrNWpN?=
+ =?utf-8?B?SkdwaEQvcHhDNXl0RCsvSDZMamsvYlpQdHJOaGFhUkxOc1pEL1NmTDhWenN3?=
+ =?utf-8?B?RHVjTkxWQmtvYmtBWW5yV0YzcVhqbDFTeDkwYlhHSFVwTG1xVUJUNzBDSzUy?=
+ =?utf-8?B?QXQvWFhxYWIzVE92ZjcrQUJWeUN0VGN3dWNZK25ad2QzZHBINEF2UVhaUlFX?=
+ =?utf-8?B?TUdMdmVwRTNUL2VYdWxPSE9jZldqRGlvWVRGbXg1YVdrRWlsSWc0T0tPVkFL?=
+ =?utf-8?B?UkRQTnZPUVB5WkdOMWJRRUYyZUl1OFlIWVlLTm12UkxpWmxkT2RFV0tXaWdD?=
+ =?utf-8?B?RWRCNHRMdGxOaEltS3hpckhDY0ZuTVBoNUtOOFdzZStvdHI2VmRQZjlCUFN3?=
+ =?utf-8?B?VmNVbU5kblFvTWN2YzJnY0JFMjNOOFVpbGIwSmhpclYvNkJHVkJYMUhXbytY?=
+ =?utf-8?B?YXFGQm53aVpWclVnQ3ZsbDRzQ3U2NEJwYXRXUXhpZ2NaaUo2S1RveFJ1Zjlk?=
+ =?utf-8?B?Z1FtcldnVDBDNmZJSFZnYkxvcUx4bzBvMVU2N0ZLVFNYemU3UDJsMVg5RVRY?=
+ =?utf-8?B?Y216ejhJdkJ1MHlFWWs3TUdvRTRRQUlJTk9OY0NpS2UxL1RzN0l1QlYreVZw?=
+ =?utf-8?B?ZEc4WGtCODdnaWsyd2R6UlU5bE5QdXdGSFJWTkEybklPdWxNMDdPL0FpNU1V?=
+ =?utf-8?B?NElvbHFqa2ltM0lZMld6M091Q0xHRm5KU2VNcStQVFZKVTI3alZzQU1zY0RK?=
+ =?utf-8?B?Q2N2b2xVKytpUlAxYitZWFNhNExBSXpwZ2M0S1lsOERia0lHQjY3THZuTHU5?=
+ =?utf-8?B?bzgwWk8ybFFPRytZajdXWDFlVE9YUVMwNG1MazB3SndxV1lLYmIwOGt2VG9t?=
+ =?utf-8?B?MWNJZ3hkNi9Xc0dsdkhXZHdobW9mSEdpZFVxcWV4TnhYQjc3VGZXMVlncmxy?=
+ =?utf-8?B?N2dhQytuMjdDTUxhNmJJelRvTW9tUWhyVDAvb1hlWmcvT0FLdWg3WUV1SWRk?=
+ =?utf-8?B?YXM2aVVwMDFwOWI2Lytpb0tmOStFd0xoQkVUU1RjZmhJZDRIcDhaMXdmWFdo?=
+ =?utf-8?B?WER4cEpRWmdmeldRd1lDbTcyNlFGRHNQY3o0MTFCeVdhRFo5bkRaU3d1dEZj?=
+ =?utf-8?B?RFo0b0NnaHVrYnJaTVZxelBaMCt2VHplRTlHSmpoVHpSdmF3aEJhR1EzUURk?=
+ =?utf-8?B?NlpzZnVYWG56aG54MGtDZ2JkNms0Q2RSc2lCdlRxNWV5QWVpOTRUOHl3MHUw?=
+ =?utf-8?B?UEIxUVdFTFdIcVBJdUNDZnd5L0NlQXdETzdDRWNVTlliK0tlQmxVbTVxZGE1?=
+ =?utf-8?B?YVZxb1ppTTBqdU81dENvdTdOQi8vMFBlZEVOaFFjU3NqbHBHK3RMbDJQaVNY?=
+ =?utf-8?B?a2o5ZkVtUVJaUUpRZEVhb2VvNk96dTY2UkwvbVhockh6dmR3ZXNYQ2l6T2FD?=
+ =?utf-8?B?eTlESmFxRU5zYUROQ1E2anpRSVJsbUZXM3NzTDJ2d0U3SFgwL1d5YUlsSXha?=
+ =?utf-8?B?SXJnOGtyampwNHhGRTJ0cjJWWGJBSjEzcXVnT09CM3FDL1NRM0pONEVNZ0JE?=
+ =?utf-8?Q?KSVHXHrsq/UpbFS4=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 233b96d0-7a53-44ee-cc03-08de5de6da58
+X-MS-Exchange-CrossTenant-AuthSource: IA4PR11MB9204.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Jan 2026 20:58:42.2367 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: DfGUF+zhm13Pa6ME1tjZzzzMwpkOjCBQEeOn9wriU75nnbXizlqtu5E3F+kSBCH4fUyrbHrYAEUwpTlKwGOXxnouIaxUuPIJpJL/H01fCqk=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB6017
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,189 +194,32 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-AI-generated review of bundle-1702-af-packet.mbox
-Reviewed using Claude (claude-opus-4-5-20251101)
+Acked-by: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
 
-This is an automated review. Please verify all suggestions.
+On 12/15/2025 6:43 PM, Bruce Richardson wrote:
+> The default Rx ring size checks did not account for the fact that the
+> port would not work correctly if the Rx ring size was only twice the
+> free threshold size or less, so add in a new check for this. This would
+> generally only apply in cases where very small rings sizes are being
+> used, for example, with default Rx free thresh of 32, only ring size of
+> 64 would cause issues.
+>
+> Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+> ---
+> v2: add in extra error message for the small queue size case, to help
+>      make users aware of what setting they need to use to fix things.
+> ---
+>   drivers/net/intel/cpfl/cpfl_rxtx.c   | 10 ++++++++++
+>   drivers/net/intel/i40e/i40e_rxtx.c   | 10 ++++++++++
+>   drivers/net/intel/iavf/iavf_rxtx.c   | 23 ++++++++---------------
+>   drivers/net/intel/ice/ice_rxtx.c     | 10 ++++++++++
+>   drivers/net/intel/idpf/idpf_rxtx.c   | 10 ++++++++++
+>   drivers/net/intel/ixgbe/ixgbe_rxtx.c | 10 ++++++++++
+>   6 files changed, 58 insertions(+), 15 deletions(-)
+>
+<snip>
 
----
+-- 
+Regards,
+Vladimir
 
-# DPDK Patch Review: AF_PACKET Thread Safety and Frame Calculations
-
-## Patch 1/3: net/af_packet: fix thread safety and frame calculations
-
-### Commit Message Issues
-
-**Error: Subject line exceeds 60 characters**
-- Current: `net/af_packet: fix thread safety and frame calculations` (59 characters)
-- This is actually within the limit, my mistake on initial count.
-
-**Info: Subject is acceptable**
-- Format is correct: `net/af_packet:` prefix with lowercase description
-- No trailing period, imperative mood
-
-**Info: Body is well-structured**
-- Good explanation of the problems and solutions
-- Proper wrapping within 75 characters for most lines
-- Required tags present (Fixes, Cc: stable@dpdk.org, Signed-off-by)
-
-### Code Review
-
-**Warning: Missing space after comma in void* cast**
-```c
-rte_memcpy(pbuf, rte_pktmbuf_mtod(tmp_mbuf, void*), data_len);
-```
-Should be:
-```c
-rte_memcpy(pbuf, rte_pktmbuf_mtod(tmp_mbuf, void *), data_len);
-```
-This appears in multiple locations.
-
-**Warning: Variable declaration in middle of block (C99 style)**
-```c
-for (i = 0; i < nb_pkts; i++) {
-    /* point at the next incoming frame */
-    ppd = (struct tpacket2_hdr *) pkt_q->rd[framenum].iov_base;
-    uint32_t tp_status = rte_atomic_load_explicit(&ppd->tp_status,
-```
-While C99 style is acceptable per AGENTS.md, consistency within the function is preferred. The original code declares variables at the start of the block.
-
-**Warning: Double blank line in eth_stats_get()**
-```c
-		uint64_t rx_nombuf = rte_atomic_load_explicit(&internal->rx_queue[i].rx_nombuf,
-					rte_memory_order_relaxed);
-
-
-		uint64_t tx_pkts = rte_atomic_load_explicit(&internal->tx_queue[i].tx_pkts,
-```
-Remove one blank line.
-
-**Info: Atomic operations usage is correct**
-- Proper use of `rte_atomic_load_explicit()` with `rte_memory_order_acquire` for tp_status reads
-- Proper use of `rte_atomic_store_explicit()` with `rte_memory_order_release` for tp_status writes
-- Relaxed ordering for statistics is appropriate
-
-**Warning: Static const at file scope should use uppercase naming**
-```c
-static const uint16_t ETH_AF_PACKET_FRAME_SIZE_MAX = RTE_IPV4_MAX_PKT_LEN;
-```
-This is correct - uppercase for constants. However, the type is `uint16_t` but `RTE_IPV4_MAX_PKT_LEN` is typically larger. Verify this doesn't truncate.
-
-**Info: Frame calculation fix appears correct**
-The block-based addressing fix aligns with kernel's `packet_lookup_frame()` behavior.
-
----
-
-## Patch 2/3: net/af_packet: RX/TX rte_memcpy, bulk free, prefetch
-
-### Commit Message Issues
-
-**Warning: Subject uses terms that should be expanded**
-- `RX/TX` should be `Rx/Tx` per DPDK naming conventions in words-case.txt
-
-**Error: Missing Cc: stable@dpdk.org if this is a bug fix**
-If this patch contains performance fixes that should be backported, add `Cc: stable@dpdk.org`.
-
-### Code Review
-
-**Warning: rte_memcpy() may not be appropriate here**
-Per AGENTS.md: "rte_memcpy() is optimized for bulk data transfer in the fast path. For general use, standard memcpy() is preferred."
-
-The packet data copy is indeed in the fast path, so `rte_memcpy()` usage is justified here. However, the commit message should clarify this is intentional for fast-path optimization.
-
-**Warning: rte_pktmbuf_free_bulk() called on potentially modified array**
-```c
-rte_pktmbuf_free_bulk(&bufs[0], i);
-```
-The VLAN insertion path calls `rte_vlan_insert(&mbuf)` which may reallocate the mbuf. If the original mbuf pointer in `bufs[i]` is not updated, this could free the wrong mbuf or double-free. The current code uses a local `mbuf` variable but doesn't update `bufs[i]`.
-
-**Error: Potential memory leak on skipped packets**
-```c
-if (unlikely(mbuf->pkt_len > pkt_q->frame_data_size ||
-            ((mbuf->ol_flags & RTE_MBUF_F_TX_VLAN) != 0 &&
-             rte_vlan_insert(&mbuf) != 0))) {
-    continue;
-}
-```
-When a packet is skipped (oversized or VLAN insert fails), it's not freed. The bulk free at the end uses `i` which includes skipped packets, but those packets were never processed. This needs careful review - the original code freed packets individually including on error paths.
-
-**Warning: Missing space after comma**
-```c
-rte_memcpy(pbuf, rte_pktmbuf_mtod(tmp_mbuf, void*), data_len);
-```
-
-**Info: Prefetch optimization looks reasonable**
-The prefetch of next frame/mbuf while processing current packet is a valid optimization.
-
----
-
-## Patch 3/3: net/af_packet: software checksum and tx poll control
-
-### Commit Message Issues
-
-**Warning: Subject could be more specific**
-Consider: `net/af_packet: add software checksum and tx poll control`
-
-### Code Review
-
-**Error: Missing header include**
-The code uses `struct rte_udp_hdr` and `struct rte_tcp_hdr` but only includes `<rte_ip.h>`. Need:
-```c
-#include <rte_udp.h>
-#include <rte_tcp.h>
-```
-
-**Warning: Including `<stdbool.h>` is unnecessary**
-DPDK's `rte_common.h` (included via other headers) provides `bool` type. However, explicit inclusion isn't harmful.
-
-**Warning: New devarg not documented**
-The new `txpollnotrdy` argument should be documented in the driver documentation (`doc/guides/nics/af_packet.rst`).
-
-**Warning: Inline function in .c file should use `static inline`**
-```c
-static inline void
-af_packet_sw_cksum(struct rte_mbuf *mbuf)
-```
-This is correct.
-
-**Warning: Magic check for minimum header sizes**
-```c
-if (unlikely(mbuf_len < l4_offset))
-    return;
-```
-This silently returns without computing checksum. Consider logging a debug message for diagnosability.
-
-**Info: Software checksum implementation looks correct**
-- Properly handles IPv4/IPv6
-- Properly handles UDP/TCP
-- Uses mbuf-aware checksum functions for multi-segment packets
-
-**Warning: Boolean parameter parsing could be clearer**
-```c
-txpollnotrdy = atoi(pair->value) != 0;
-```
-Consider using a more explicit boolean parsing that accepts "true"/"false" or "yes"/"no" in addition to 0/1.
-
-**Warning: New capability advertised but may not match hardware**
-Adding `RTE_ETH_TX_OFFLOAD_IPV4_CKSUM | RTE_ETH_TX_OFFLOAD_UDP_CKSUM | RTE_ETH_TX_OFFLOAD_TCP_CKSUM` to capabilities is correct for software implementation, but documentation should clarify this is software-based.
-
----
-
-## Summary
-
-### Errors (Must Fix)
-1. Patch 2: Potential memory leak on skipped packets - packets that fail size check or VLAN insert are not freed
-2. Patch 3: Missing includes for `rte_udp.h` and `rte_tcp.h`
-
-### Warnings (Should Fix)
-1. All patches: Missing space after comma in `void*` casts
-2. Patch 1: Double blank line in `eth_stats_get()`
-3. Patch 2: Subject should use `Rx/Tx` not `RX/TX`
-4. Patch 2: Verify `rte_pktmbuf_free_bulk()` handles VLAN-modified mbufs correctly
-5. Patch 3: New devarg `txpollnotrdy` needs documentation update
-
-### Info (Consider)
-1. The atomic operations and memory ordering appear correct for the kernel synchronization protocol
-2. Frame calculation fix aligns with kernel behavior
-3. Prefetch optimizations are reasonable
-4. Software checksum implementation is correct
