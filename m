@@ -2,66 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19D75D2FEC4
-	for <dpdk-dev@archiver.kernel.org>; Tue, 27 Jan 2026 17:22:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF6AAD2FEC4
+	for <dpdk-dev@archiver.kernel.org>; Tue, 27 Jan 2026 17:22:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 90F0140FB5;
-	Tue, 27 Jan 2026 18:22:10 +0100 (CET)
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com
- [209.85.128.44]) by mails.dpdk.org (Postfix) with ESMTP id ED57941140
- for <dev@dpdk.org>; Tue, 27 Jan 2026 18:21:57 +0100 (CET)
-Received: by mail-wm1-f44.google.com with SMTP id
- 5b1f17b1804b1-47edd9024b1so49881815e9.3
- for <dev@dpdk.org>; Tue, 27 Jan 2026 09:21:57 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id B8ECE42793;
+	Tue, 27 Jan 2026 18:22:11 +0100 (CET)
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com
+ [209.85.128.45]) by mails.dpdk.org (Postfix) with ESMTP id 77E6F41144
+ for <dev@dpdk.org>; Tue, 27 Jan 2026 18:21:59 +0100 (CET)
+Received: by mail-wm1-f45.google.com with SMTP id
+ 5b1f17b1804b1-47ff94b46afso388645e9.1
+ for <dev@dpdk.org>; Tue, 27 Jan 2026 09:21:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769534517;
- x=1770139317; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769534519;
+ x=1770139319; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=q1e7yQ1CVDaoar8XhDJ6IGdY7IDYnJZsR97nHOuXg9M=;
- b=CRQA6gFj5Lcj3DO5G4SK32QREOGLW6PKDEQI1+DnvnEspDTNw4Ve70IXPkviNb3gTB
- m7CSxz3gVi8jEEohhF9CNovcfmb4BIrEEUi+UtQQ/lIIiyX0Bmwu+k//9HocSf6dwxAb
- WKvdawth23KZzB+x/sksuwIMC4h/i0BWbHooCZfcK6CLHoY2i6JqVzAz1rK86kDXAnmQ
- 5g1xpyX7XUzCtBiOeNUA6w3Zp2SP8pxI7i/7CbL1ndZKrJmqAbGX7Hk+jB+MJD82jqnn
- 85rCZgGeKXnakXeowDy91ACZ940xzdBcWP/n/Z/HT8kTu8Misp/dkuX6G9DvI1m4M54E
- UAvQ==
+ bh=Ts/vdTcC9KoV/xjiSpJf7Iy3eDbR6JU3InLRRr5kG1A=;
+ b=eleXm6wFKAhqPDmc3V0bvs6C52ZP4xT558tZqn3jmhHPwUo4LR+XHuN4pjhNDSDkt8
+ gzLc2EeDG6yfZVCngFeHSsaNeJb41EkbMnl//xPQxLJrr4DeQ4t/vdSDgggVkhL67fT5
+ zvgMnRrM4YViRJ4azZO0aiNehbFlDTSQNAuSPhZO5ngeX7gBdkqyW/5lYL5Z+LTREZR0
+ 0F9yuYQPjBiPetLeSrAztYKHpiF1/+KUZrU0moKXmWDXnXWV3GVZ6LKIs2rkdUgkCnYT
+ iI0E8xwHbga5hIukFa1pjucyLlnSb0U0R65bOw8UlVSVO+4KOOqml4/ALHHAwHR8lYWs
+ 5z1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1769534517; x=1770139317;
+ d=1e100.net; s=20230601; t=1769534519; x=1770139319;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=q1e7yQ1CVDaoar8XhDJ6IGdY7IDYnJZsR97nHOuXg9M=;
- b=oYORedtxCne6iR4PEGK8PtpnLBMsMU87/RmomU7mUrPF+0M4KUfHaLSPIOp62l+OtW
- r7OlAqHmNVMFZphyvScLr/TeNK0BBrHJIS71YlE6F4NH2L2+PGYGQ+Ri8aZU5AZDVn4F
- eQeEi6BUeSLjpN1SZheovEncn3dPto4i+V02m6q0g+8qnPTMUcioCQkP8OTuzQ/FC+R9
- h9vEynpn+X9bgmRYjrva20PsgXaNtttfBaBJbVvyEFKFNSWnwdq5Idi9PJfhUz5KrpJj
- OmnYyfiIfxNNstZG0OuUVs3FOnh+ykvCVmGUi56mGifOCrWlZvOo+qZsjUiYFcTAiinS
- yCNQ==
-X-Gm-Message-State: AOJu0YzPBWQue2AOJWROuQD0impgI+TYRMhYs6L5k+6Rk0Zo0sIV1J7f
- Me+s6rnuFwqHlOceZ9164gdvnKM3wPXlnsrDoEOwginae/vE8i8Cwb++YQ+1wlVyrWS/ouK+txN
- V1vaT
-X-Gm-Gg: AZuq6aL7vrxtCwKZbAE+6XXuhmEGd+XbCaIjbKmveJai7YzWCbmO2mpmPDViqh+xQD4
- yPApc0FKnnQTLq2Bb0ViR+GaC4yErnzmUsNuX3GTYIWedJUi2Rqz1yzuhQvIRGSIZfKCiE8JvPI
- aYW+RxOiFTYnhWKTzBzBH6037yntR87qWneS+CAguldYCSoIC473aU+t9+N7nMi1l2++zzJw4TI
- lmaUsLkM0quCz4axDd3VBbsf1TFOjcKa5mBIGDQfcD60XdT6NlbrwEUO/KuMV17kmS8zoknqSEa
- S5jh+L8FEHl8UG7QERyKzhPWZ+dIo72znK0L/P0q8N/2PEioqvpcNBYvvVex8rcLVXw6CHYmNIb
- X6vBwfbmBE18mcQI4XoFlXYfPdM6+62Nrm0OV446japj62nXqThzvHw6n9rlLoNviN2/EhFHXzl
- i3Wb7Q8xhiPpM+VFqA8QEYaRIk8mvtvOlqNtEj1S2wTFLcGxDIcQ==
-X-Received: by 2002:a05:600c:3b96:b0:475:dcbb:7903 with SMTP id
- 5b1f17b1804b1-48069c37e2dmr36463965e9.9.1769534517512; 
- Tue, 27 Jan 2026 09:21:57 -0800 (PST)
+ bh=Ts/vdTcC9KoV/xjiSpJf7Iy3eDbR6JU3InLRRr5kG1A=;
+ b=jtaMO3XowJ56+wefZ4+P43NMWca4a3GMODqKVONp5jkOyr5kcNSKesRuEDshh4UzAn
+ pSkFc5ZrEGdLm0dvmEAvZF3VphonxLT+j996r8eTSmFQxgRLvzaJTr2Y/GoIhqK/daft
+ s79MmZWablW1icmtB3TKTeig37aDwRW9po4eLkblHWAv1ssEq7t1Komvokbltivw+VBO
+ OdF92Wf7kgy36eiaDEYdvQsKa6k9tH8KtVoWTn+940xURN9a4FQ9LnMgtgY2kkwZBD1z
+ tRohNbzq0Sn1gL2/axeKhLB73BoUdy+tyqVjWi7SjPmLr9S+44rA0EUx4fXndpNYLr1j
+ 5bjg==
+X-Gm-Message-State: AOJu0YxRHlxEdU5MbioJpyrQ7WB39AfJ7MsDcrs181xrKHcb4apSAALw
+ 53Y0JPzzjDxe0+pNb3F0UJFn5h/0yv2FiMj2XpbbmpK1yd7GLngkHl8mTGkO5eSDGGT8Tpnh8+H
+ 2cwaj
+X-Gm-Gg: AZuq6aLWCh+i4CT4sEkcbEL7ZKPAV8uJxvW2ZkqEvm3zLwPRvFELy2m7JJuUQsg0mKp
+ wdALi0/mLp0YgJ3ACJwmSh6A+ipTrqdePd1uytDeIsdrTfc5Azx5zZ55RyYU6qs9J8lqqCl//9d
+ M9QGZcRwWywduJZc4SBrYKHWMy9imlwiuslXG3mbtmmlFh2uXbhO0zglTBOCBzzzaRJFdbfSylu
+ y35riOKqnVKeqXBDaayPVUruzYrhytYt6MAVxWck7pGTbTMOIDGcUBFLlJ/TrTT0yYljGzSdAat
+ oFVasaxJ/HCmrRgavNEQd9PtN1fhJ1PzjihJkmJlXgBu75GI06jBZDndBJpVF72Eggn123l99Ey
+ nz6e9JyHqCwUSIL7uJOD+3hsT+ke2UeYkDKV1EkWmxZm7FdM4jdU5VSpSXGpjdGXjbWnqEF9Rfs
+ T3ssy1A/vyTHyd3OPn6/bttCBAO6/9PeyvuH4TJJO8F1ABBdsmtMZ7LZs5lc9t
+X-Received: by 2002:a05:600c:5297:b0:477:a289:d854 with SMTP id
+ 5b1f17b1804b1-48069e33b00mr32604715e9.5.1769534519030; 
+ Tue, 27 Jan 2026 09:21:59 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-4806ce56490sm4769395e9.12.2026.01.27.09.21.56
+ 5b1f17b1804b1-4806ce56490sm4769395e9.12.2026.01.27.09.21.57
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 27 Jan 2026 09:21:57 -0800 (PST)
+ Tue, 27 Jan 2026 09:21:58 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v8 12/14] net/pcap: avoid use of volatile
-Date: Tue, 27 Jan 2026 09:18:53 -0800
-Message-ID: <20260127172128.124473-13-stephen@networkplumber.org>
+Subject: [PATCH v8 13/14] net/pcap: clarify maximum received packet
+Date: Tue, 27 Jan 2026 09:18:54 -0800
+Message-ID: <20260127172128.124473-14-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260127172128.124473-1-stephen@networkplumber.org>
 References: <20260106182823.192350-1-stephen@networkplumber.org>
@@ -81,50 +81,28 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Using volatile for statistics is not necessary since only one
-thread is allowed to operate on a queue at a time.
+The driver has constant RTE_ETH_PCAP_SNAPSHOT_LEN with is set
+to the largest value the pcap library will return, so that should
+also be the largest receive buffer.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/pcap/pcap_ethdev.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ drivers/net/pcap/pcap_ethdev.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/net/pcap/pcap_ethdev.c b/drivers/net/pcap/pcap_ethdev.c
-index 8eb6356794..6380d76110 100644
+index 6380d76110..a8e8a3e241 100644
 --- a/drivers/net/pcap/pcap_ethdev.c
 +++ b/drivers/net/pcap/pcap_ethdev.c
-@@ -54,10 +54,10 @@ static uint64_t timestamp_rx_dynflag;
- static int timestamp_dynfield_offset = -1;
+@@ -821,7 +821,7 @@ eth_dev_info(struct rte_eth_dev *dev,
  
- struct queue_stat {
--	volatile unsigned long pkts;
--	volatile unsigned long bytes;
--	volatile unsigned long err_pkts;
--	volatile unsigned long rx_nombuf;
-+	uint64_t pkts;
-+	uint64_t bytes;
-+	uint64_t err_pkts;
-+	uint64_t rx_nombuf;
- };
- 
- struct queue_missed_stat {
-@@ -838,11 +838,11 @@ eth_stats_get(struct rte_eth_dev *dev, struct rte_eth_stats *stats,
- 	      struct eth_queue_stats *qstats)
- {
- 	unsigned int i;
--	unsigned long rx_packets_total = 0, rx_bytes_total = 0;
--	unsigned long rx_missed_total = 0;
--	unsigned long rx_nombuf_total = 0, rx_err_total = 0;
--	unsigned long tx_packets_total = 0, tx_bytes_total = 0;
--	unsigned long tx_packets_err_total = 0;
-+	uint64_t rx_packets_total = 0, rx_bytes_total = 0;
-+	uint64_t rx_missed_total = 0;
-+	uint64_t rx_nombuf_total = 0, rx_err_total = 0;
-+	uint64_t tx_packets_total = 0, tx_bytes_total = 0;
-+	uint64_t tx_packets_err_total = 0;
- 	const struct pmd_internals *internal = dev->data->dev_private;
- 
- 	for (i = 0; i < RTE_ETHDEV_QUEUE_STAT_CNTRS &&
+ 	dev_info->if_index = internals->if_index;
+ 	dev_info->max_mac_addrs = 1;
+-	dev_info->max_rx_pktlen = (uint32_t) -1;
++	dev_info->max_rx_pktlen = RTE_ETH_PCAP_SNAPSHOT_LEN;
+ 	dev_info->max_rx_queues = dev->data->nb_rx_queues;
+ 	dev_info->max_tx_queues = dev->data->nb_tx_queues;
+ 	dev_info->min_rx_bufsize = 0;
 -- 
 2.51.0
 
