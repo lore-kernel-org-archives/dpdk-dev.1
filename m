@@ -2,70 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 503BAD3567F
-	for <dpdk-dev@archiver.kernel.org>; Wed, 28 Jan 2026 06:05:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA329D3567B
+	for <dpdk-dev@archiver.kernel.org>; Wed, 28 Jan 2026 06:05:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 83BEF40665;
-	Wed, 28 Jan 2026 07:04:46 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id A223D40608;
+	Wed, 28 Jan 2026 07:05:08 +0100 (CET)
 Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
  [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id 856E040665
- for <dev@dpdk.org>; Wed, 28 Jan 2026 07:04:44 +0100 (CET)
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+ by mails.dpdk.org (Postfix) with ESMTP id 903EC40608
+ for <dev@dpdk.org>; Wed, 28 Jan 2026 07:05:04 +0100 (CET)
+Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
  by mx0b-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
- 60RNTYtN379905 for <dev@dpdk.org>; Tue, 27 Jan 2026 22:04:43 -0800
+ 60S1N3hA3583494 for <dev@dpdk.org>; Tue, 27 Jan 2026 22:05:04 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
  cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=L
- wto0WFpd7ZIhiUp9jjNcnx6ysqv+l4PU5MvO3hbhlk=; b=gp9v6Ux05hobXDRt0
- 9CikunFSXmA173G8kWh2cffzze1HPfPleeTAUxxEZ99flHIpFqd7B3HV78fCDDP3
- OCuNmNNir/MX6+8rpWvwrhDwqxdi3Y4Ej4Kn+RQw4miKLbGevI1trbYxrpmKNkhh
- 5FJmeU8MNVTNHl5Vxmq4SkRIxy2psDmiCqUIl+z3J2MO8/rlSkr+5WeqTtjJ4eSQ
- eLnS+9u76ZxvtZ8YIcSIeyg58iHloPNt0KIhEq9RxlZUGm5apinzTjGPhTfYHQ1b
- UxzElBKfeGk4aOewR3xyYRM/xkurNSFdxAB0U+TYro/xdOoR6ofPAFDIA8WmJLWp
- uTXQg==
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=p
+ RTwYqVgThHn+EbmJJrEc4CGhHnGkVmAtmK1KaI9KZc=; b=IckyAtHkryg1Ap60X
+ xxTAzUHRSBp/05iP8T4zO8B7CdZX495AiHNjAyHZZjRMQPsURQUCR3MUvsfgy1il
+ bZI1cngEFIqOTywOcz9cpzcJy5giLpUFfPz0/VG/PtZZ5USNnmwitdE7F79NTTyS
+ Ti7R1UeFCInYo2hPcSii/x3Fcz832dgpJKroe5fgFjus/TTbcQjcHbe5VGfK3YNS
+ vvp20N2f3PTfK/9LXREM8cUXn1Z5S3agRJZ+0G5QDg88OEtSvXa/rHcBoGCJoLrT
+ DXWTVyl3A9IK11331N5mFuavl5G5lJnB7tqmeG9f8wWreyafSF38blZjGNi9lIqh
+ penJQ==
 Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4bvxfjqsjn-1
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4by8r68f63-2
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Tue, 27 Jan 2026 22:04:43 -0800 (PST)
+ for <dev@dpdk.org>; Tue, 27 Jan 2026 22:05:03 -0800 (PST)
 Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
  DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Tue, 27 Jan 2026 22:04:42 -0800
+ 15.2.1544.25; Tue, 27 Jan 2026 22:05:02 -0800
 Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
  (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Tue, 27 Jan 2026 22:04:42 -0800
+ Transport; Tue, 27 Jan 2026 22:05:02 -0800
 Received: from cavium-RAHUL-BM.. (unknown [10.28.36.48])
- by maili.marvell.com (Postfix) with ESMTP id 4C36C3F707C;
- Tue, 27 Jan 2026 22:04:40 -0800 (PST)
+ by maili.marvell.com (Postfix) with ESMTP id 906783F7072;
+ Tue, 27 Jan 2026 22:04:58 -0800 (PST)
 From: Rahul Bhansali <rbhansali@marvell.com>
 To: <dev@dpdk.org>, Nithin Dabilpuram <ndabilpuram@marvell.com>, Kiran Kumar K
  <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, Satha Rao
- <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>
-CC: <jerinj@marvell.com>, Rahul Bhansali <rbhansali@marvell.com>
-Subject: [PATCH 14/18] common/cnxk: flow rule config for non-inplace
-Date: Wed, 28 Jan 2026 11:33:12 +0530
-Message-ID: <20260128060316.3967610-14-rbhansali@marvell.com>
+ <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>, Rahul Bhansali
+ <rbhansali@marvell.com>, Archana Muniganti <marchana@marvell.com>, "Akhil
+ Goyal" <gakhil@marvell.com>, Anoob Joseph <anoobj@marvell.com>,
+ "Vidya Sagar Velumuri" <vvelumuri@marvell.com>
+CC: <jerinj@marvell.com>
+Subject: [PATCH 18/18] common/cnxk: fix duplicate branch compiler warning
+Date: Wed, 28 Jan 2026 11:33:16 +0530
+Message-ID: <20260128060316.3967610-18-rbhansali@marvell.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20260128060316.3967610-1-rbhansali@marvell.com>
 References: <20260128060316.3967610-1-rbhansali@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-GUID: HUvG1o58dGGoZccbbYo5isGPG6mfprr6
-X-Proofpoint-ORIG-GUID: HUvG1o58dGGoZccbbYo5isGPG6mfprr6
-X-Authority-Analysis: v=2.4 cv=S9LUAYsP c=1 sm=1 tr=0 ts=6979a6fb cx=c_pps
+X-Authority-Analysis: v=2.4 cv=Ka/fcAYD c=1 sm=1 tr=0 ts=6979a70f cx=c_pps
  a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
  a=vUbySO9Y5rIA:10 a=VkNPw1HP01LnGYTKEx00:22 a=M5GUcnROAAAA:8
- a=K_8k4m82OxwhjqIea58A:9 a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTI4MDA0NiBTYWx0ZWRfX12zqpFg6MQKQ
- feW69ymkx93UqwEkIw/QC05xTOjmHvYS6SgscUUfRhhWLrak5SKzYsqSlnNEIuRqpx6oT5HbKG2
- pQUxGkTypcsz7bgekXfJzLma7tOlTZ+DUHVXnVx+POZAybWTwgQD4Asb4S5gHfl+RWUynBR+ERw
- oxitgKHj0ptslUuTyX4Duc/ZRB4AZE/gg4WsKY+09zeTmm8/wWnknVW9rco+1+8Eb0xcvn191lK
- ZIWhfZGsgIOBr5Kf4RwoINVvMMi8tc8VYJFKnXnPMei2ceU/ZAWS0RCnaArNHel6VWjLNgIrwVd
- cFI+9KzmKhHocCR6SlfOQtlOFm6V29C4fq04yZAvWrl2DiGIx9VH9Jimux6g520SfO5FDxR9Ois
- POeHChaiPKe6v6GFpsA/4sBDgz0RMWCXrdinzvDtgmoPXPOoOL0VZeay+AJBkU60d3WsS4h2kcn
- r/PzulqtmEJ0mhwvaNw==
+ a=DUEc-3SzhJHA_FY6JqIA:9 a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTI4MDA0NyBTYWx0ZWRfX3P9EOb9H+J68
+ zeytfN94owT1x4RTnrmY3VME+613bQ6iWiUZtaOL3hh0RjBPCAWwbI7veA7c/I7ilv1VdWUG8Ww
+ 7E4qEAR8Ulwa418+mrvN8kkTDrXDGmawCLiQ2FxKQSXET9W3WsDbz3S4RSDVsMaFQbJIcQI98D+
+ e99wamY0hfRdTEZImyD9rtN1Q7bE0UxkbASKQt+XCJTrrNuIwaX8Pc6FeWiYtPoeXM3ydvjGWIn
+ tZyvHOPDNO5xZ05Vg3ZiMpNlfsKYTU2LYKF3hp2pLqtiZuBC94S/dQcdAqUAkbolVb0AwKQeDpT
+ GQp0DspLR7kO7Lv7i0j7J7sEg0xCW0uvg4juiA/l84PXYTD9u7I8AHaw7px7K8nskfqcqhYh2j3
+ /g5dWxQTHuyq1zSsD88TVX8b/xlxxfUbErF4V4P7aH4ncRnjMghlsVPS/h/xeg9ViIDk0lvhbSl
+ ArZhNp/FV6Pyuw4VQFQ==
+X-Proofpoint-GUID: Y7fD42Nt2-sTSFfsVTL0u_hSVReMZuoL
+X-Proofpoint-ORIG-GUID: Y7fD42Nt2-sTSFfsVTL0u_hSVReMZuoL
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
  definitions=2026-01-27_05,2026-01-27_03,2025-10-01_01
@@ -82,85 +85,163 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Adds flow rule for non-inplace security action
-configuration
+With compiler option '-Wduplicated-branches', getting few
+warnings such as "this condition has identical branches".
+
+Macros are updated to address these warnings.
+
+Bugzilla ID: 1811
+Fixes: 0d9e323bacf0 ("common/cnxk: support for CN20K inline IPsec")
+Fixes: c045d2e5cbbc ("common/cnxk: add CPT configuration")
 
 Signed-off-by: Rahul Bhansali <rbhansali@marvell.com>
 ---
- drivers/common/cnxk/roc_npc.c | 13 ++++++++++++-
- drivers/common/cnxk/roc_npc.h |  3 +++
- 2 files changed, 15 insertions(+), 1 deletion(-)
+ drivers/common/cnxk/hw/rvu.h          |  2 ++
+ drivers/common/cnxk/roc_cpt.c         |  7 +++----
+ drivers/common/cnxk/roc_nix_inl.c     | 25 +++++++++----------------
+ drivers/common/cnxk/roc_nix_inl_dev.c |  6 +-----
+ drivers/common/cnxk/roc_nix_inl_dp.h  |  3 +++
+ drivers/common/cnxk/roc_nix_priv.h    |  4 ++--
+ 6 files changed, 20 insertions(+), 27 deletions(-)
 
-diff --git a/drivers/common/cnxk/roc_npc.c b/drivers/common/cnxk/roc_npc.c
-index 7846913417..acf0007e05 100644
---- a/drivers/common/cnxk/roc_npc.c
-+++ b/drivers/common/cnxk/roc_npc.c
-@@ -613,10 +613,12 @@ npc_parse_actions(struct roc_npc *roc_npc, const struct roc_npc_attr *attr,
- 	const struct roc_npc_action_mark *act_mark;
- 	const struct roc_npc_action_meter *act_mtr;
- 	const struct roc_npc_action_queue *act_q;
-+	const struct roc_npc_sec_action *sec_act;
- 	const struct roc_npc_action_vf *vf_act;
- 	uint8_t has_spi_to_sa_act = 0;
- 	int sel_act, req_act = 0;
- 	uint16_t pf_func, vf_id;
-+	bool is_non_inp = false;
- 	int errcode = 0;
- 	int mark = 0;
- 	int rq = 0;
-@@ -704,6 +706,15 @@ npc_parse_actions(struct roc_npc *roc_npc, const struct roc_npc_attr *attr,
- 			 *  session_protocol ==
- 			 *    NPC_SECURITY_PROTOCOL_IPSEC
- 			 */
-+
-+			if (!actions->no_sec_action) {
-+				sec_act = (const struct roc_npc_sec_action *)actions->conf;
-+				sec_action = actions;
-+				is_non_inp = sec_act ? sec_act->is_non_inp : false;
-+			} else {
-+				is_non_inp = actions->is_non_inp;
-+			}
-+
- 			req_act |= ROC_NPC_ACTION_TYPE_SEC;
- 			rq = 0;
- 			roc_nix = roc_npc->roc_nix;
-@@ -724,7 +735,6 @@ npc_parse_actions(struct roc_npc *roc_npc, const struct roc_npc_attr *attr,
+diff --git a/drivers/common/cnxk/hw/rvu.h b/drivers/common/cnxk/hw/rvu.h
+index ed2ba996e0..6f02d1e3d2 100644
+--- a/drivers/common/cnxk/hw/rvu.h
++++ b/drivers/common/cnxk/hw/rvu.h
+@@ -105,6 +105,8 @@
+ #define RVU_VF_MBOX_REGION		 (0xc0000ull) /* [CN10K, .) */
+ #define RVU_VF_MSIX_PBAX(a)		 (0xf0000ull | (uint64_t)(a) << 3)
  
- 			if (roc_nix_inl_dev_is_probed())
- 				flow->is_inline_dev = 1;
--			sec_action = actions;
- 			break;
- 		case ROC_NPC_ACTION_TYPE_VLAN_STRIP:
- 			req_act |= ROC_NPC_ACTION_TYPE_VLAN_STRIP;
-@@ -931,6 +941,7 @@ npc_parse_actions(struct roc_npc *roc_npc, const struct roc_npc_attr *attr,
- 			flow->npc_action |= (uint64_t)rq << 20;
- 			flow->npc_action2 =
- 				roc_nix_inl_inb_ipsec_profile_id_get(roc_nix, true) << 8;
-+			flow->npc_action2 |= is_non_inp ? (1ULL << 15) : 0;
- 		} else {
- 			flow->npc_action = NIX_RX_ACTIONOP_UCAST_IPSEC;
- 			flow->npc_action |= (uint64_t)rq << 20;
-diff --git a/drivers/common/cnxk/roc_npc.h b/drivers/common/cnxk/roc_npc.h
-index b7565806c0..62385e4481 100644
---- a/drivers/common/cnxk/roc_npc.h
-+++ b/drivers/common/cnxk/roc_npc.h
-@@ -204,6 +204,8 @@ struct roc_npc_action {
- 	enum roc_npc_action_type type; /**< Action type. */
- 	const void *conf;	       /**< Pointer to action configuration object. */
- 	uint16_t rss_repte_pf_func;    /**< Per flow tmp var for rss representee pffunc */
-+	bool is_non_inp;	       /**< Non inplace config */
-+	bool no_sec_action;	       /**< No security action */
- };
- 
- struct roc_npc_action_sample {
-@@ -282,6 +284,7 @@ struct roc_npc_sec_action {
- 	 * XOR
++#define RVU_BLOCK_ADDRX_DISC(a) RVU_PF_BLOCK_ADDRX_DISC(a)
++
+ /* CN20k RVU mbox registers */
+ #define RVU_MBOX_AF_AFPFX_TRIGX(a)    (0x9000 | (a) << 3)
+ #define RVU_MBOX_PF_PFAF_TRIGX(a)     RVU_PF_PFAF_MBOXX(a)
+diff --git a/drivers/common/cnxk/roc_cpt.c b/drivers/common/cnxk/roc_cpt.c
+index 63419884ac..13eb9d3767 100644
+--- a/drivers/common/cnxk/roc_cpt.c
++++ b/drivers/common/cnxk/roc_cpt.c
+@@ -677,10 +677,9 @@ cpt_get_blkaddr(struct dev *dev)
+ 	 * attached to. Assume CPT LF's of only one block are attached
+ 	 * to a pffunc.
  	 */
- 	enum roc_npc_sec_action_alg alg;
-+	bool is_non_inp;
- };
+-	if (dev_is_vf(dev))
+-		off = RVU_VF_BLOCK_ADDRX_DISC(RVU_BLOCK_ADDR_CPT1);
+-	else
+-		off = RVU_PF_BLOCK_ADDRX_DISC(RVU_BLOCK_ADDR_CPT1);
++
++	/* PF and VF block address offset is same, hence using common offset */
++	off = RVU_BLOCK_ADDRX_DISC(RVU_BLOCK_ADDR_CPT1);
  
- struct roc_npc_attr {
+ 	reg = plt_read64(dev->bar2 + off);
+ 
+diff --git a/drivers/common/cnxk/roc_nix_inl.c b/drivers/common/cnxk/roc_nix_inl.c
+index aad2631673..a21c40acf1 100644
+--- a/drivers/common/cnxk/roc_nix_inl.c
++++ b/drivers/common/cnxk/roc_nix_inl.c
+@@ -19,6 +19,10 @@ PLT_STATIC_ASSERT(ROC_NIX_INL_OT_IPSEC_INB_SA_SZ ==
+ PLT_STATIC_ASSERT(ROC_NIX_INL_OT_IPSEC_INB_SA_SZ == 1024);
+ PLT_STATIC_ASSERT(ROC_NIX_INL_OT_IPSEC_OUTB_SA_SZ ==
+ 		  1UL << ROC_NIX_INL_OT_IPSEC_OUTB_SA_SZ_LOG2);
++PLT_STATIC_ASSERT(ROC_NIX_INL_OT_IPSEC_INB_SA_SZ == ROC_NIX_INL_OW_IPSEC_INB_SA_SZ);
++PLT_STATIC_ASSERT(ROC_NIX_INL_OT_IPSEC_INB_SA_SZ == ROC_NIX_INL_ON_IPSEC_INB_SA_SZ);
++PLT_STATIC_ASSERT(ROC_NIX_INL_OT_IPSEC_OUTB_SA_SZ == ROC_NIX_INL_OW_IPSEC_OUTB_SA_SZ);
++PLT_STATIC_ASSERT(ROC_NIX_INL_OT_IPSEC_OUTB_SA_SZ == ROC_NIX_INL_ON_IPSEC_OUTB_SA_SZ);
+ 
+ static int
+ nix_inl_meta_aura_destroy(struct roc_nix *roc_nix)
+@@ -427,12 +431,8 @@ nix_inl_inb_ipsec_sa_tbl_setup(struct roc_nix *roc_nix)
+ 	/* CN9K SA size is different */
+ 	if (roc_nix->custom_inb_sa)
+ 		inb_sa_sz = ROC_NIX_INL_INB_CUSTOM_SA_SZ;
+-	else if (roc_model_is_cn9k())
+-		inb_sa_sz = ROC_NIX_INL_ON_IPSEC_INB_SA_SZ;
+-	else if (roc_model_is_cn10k())
+-		inb_sa_sz = ROC_NIX_INL_OT_IPSEC_INB_SA_SZ;
+ 	else
+-		inb_sa_sz = ROC_NIX_INL_OW_IPSEC_INB_SA_SZ;
++		inb_sa_sz = ROC_NIX_INL_IPSEC_INB_SA_SZ;
+ 
+ 	/* Alloc contiguous memory for Inbound SA's */
+ 	nix->inb_sa_sz[profile_id] = inb_sa_sz;
+@@ -1198,10 +1198,9 @@ nix_inl_eng_caps_get(struct nix *nix)
+ 	inst.rptr = (uint64_t)rptr;
+ 	inst.w4.s.opcode_major = ROC_LOADFVC_MAJOR_OP;
+ 	inst.w4.s.opcode_minor = ROC_LOADFVC_MINOR_OP;
+-	if (roc_model_is_cn9k() || roc_model_is_cn10k())
+-		inst.w7.s.egrp = ROC_LEGACY_CPT_DFLT_ENG_GRP_SE;
+-	else
+-		inst.w7.s.egrp = ROC_CPT_DFLT_ENG_GRP_SE;
++
++	/* SE engine group ID is same for all platform */
++	inst.w7.s.egrp = ROC_CPT_DFLT_ENG_GRP_SE;
+ 
+ 	/* Use 1 min timeout for the poll */
+ 	const uint64_t timeout = plt_tsc_cycles() + 60 * plt_tsc_hz();
+@@ -1614,13 +1613,7 @@ roc_nix_inl_outb_init(struct roc_nix *roc_nix)
+ 	if (!roc_nix->ipsec_out_max_sa)
+ 		goto skip_sa_alloc;
+ 
+-	/* CN9K SA size is different */
+-	if (roc_model_is_cn9k())
+-		sa_sz = ROC_NIX_INL_ON_IPSEC_OUTB_SA_SZ;
+-	else if (roc_model_is_cn10k())
+-		sa_sz = ROC_NIX_INL_OT_IPSEC_OUTB_SA_SZ;
+-	else
+-		sa_sz = ROC_NIX_INL_OW_IPSEC_OUTB_SA_SZ;
++	sa_sz = ROC_NIX_INL_IPSEC_OUTB_SA_SZ;
+ 
+ 	/* Alloc contiguous memory of outbound SA */
+ 	sa_base = plt_zmalloc(sa_sz * roc_nix->ipsec_out_max_sa,
+diff --git a/drivers/common/cnxk/roc_nix_inl_dev.c b/drivers/common/cnxk/roc_nix_inl_dev.c
+index fcbe9314a1..8414b9edc6 100644
+--- a/drivers/common/cnxk/roc_nix_inl_dev.c
++++ b/drivers/common/cnxk/roc_nix_inl_dev.c
+@@ -837,12 +837,8 @@ nix_inl_nix_setup(struct nix_inl_dev *inl_dev)
+ 	/* CN9K SA is different */
+ 	if (inl_dev->custom_inb_sa)
+ 		inb_sa_sz = ROC_NIX_INL_INB_CUSTOM_SA_SZ;
+-	else if (roc_model_is_cn9k())
+-		inb_sa_sz = ROC_NIX_INL_ON_IPSEC_INB_SA_SZ;
+-	else if (roc_model_is_cn10k())
+-		inb_sa_sz = ROC_NIX_INL_OT_IPSEC_INB_SA_SZ;
+ 	else
+-		inb_sa_sz = ROC_NIX_INL_OW_IPSEC_INB_SA_SZ;
++		inb_sa_sz = ROC_NIX_INL_OT_IPSEC_INB_SA_SZ;
+ 
+ 	/* Alloc contiguous memory for Inbound SA's */
+ 	inl_dev->inb_sa_sz[profile_id] = inb_sa_sz;
+diff --git a/drivers/common/cnxk/roc_nix_inl_dp.h b/drivers/common/cnxk/roc_nix_inl_dp.h
+index eb101db179..6443770871 100644
+--- a/drivers/common/cnxk/roc_nix_inl_dp.h
++++ b/drivers/common/cnxk/roc_nix_inl_dp.h
+@@ -41,6 +41,9 @@
+ 	(ROC_NIX_INL_OW_IPSEC_OUTB_HW_SZ + ROC_NIX_INL_OW_IPSEC_OUTB_SW_RSVD)
+ #define ROC_NIX_INL_OW_IPSEC_OUTB_SA_SZ_LOG2 9
+ 
++#define ROC_NIX_INL_IPSEC_INB_SA_SZ  ROC_NIX_INL_OT_IPSEC_INB_SA_SZ
++#define ROC_NIX_INL_IPSEC_OUTB_SA_SZ ROC_NIX_INL_OT_IPSEC_OUTB_SA_SZ
++
+ /* Alignment of SA Base */
+ #define ROC_NIX_INL_SA_BASE_ALIGN BIT_ULL(16)
+ 
+diff --git a/drivers/common/cnxk/roc_nix_priv.h b/drivers/common/cnxk/roc_nix_priv.h
+index 308a62a70e..d4b3c7c1af 100644
+--- a/drivers/common/cnxk/roc_nix_priv.h
++++ b/drivers/common/cnxk/roc_nix_priv.h
+@@ -23,10 +23,10 @@
+ #define NIX_CQ_SEC_THRESH_LEVEL_REF1	(20 * 256 / 100)
+ #define NIX_CQ_BP_THRESH_LEVEL_REF1	(60 * 256 / 100)
+ #define NIX_CQ_SEC_BP_THRESH_LEVEL_REF1 (50 * 256 / 100)
+-#define NIX_CQ_LBP_THRESH_FRAC_REF1	(80 * 16 / 100)
++#define NIX_CQ_LBP_THRESH_FRAC_REF1	(80 * 16 / 100.0)
+ 
+ /* Apply LBP at 75% of actual BP */
+-#define NIX_CQ_LBP_THRESH_FRAC	(75 * 16 / 100)
++#define NIX_CQ_LBP_THRESH_FRAC	(75 * 16 / 100.0)
+ #define NIX_CQ_FULL_ERRATA_SKID (1024ull * 256)
+ #define NIX_RQ_AURA_BP_THRESH(percent, limit, shift) ((((limit) * (percent)) / 100) >> (shift))
+ 
 -- 
 2.34.1
 
