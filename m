@@ -2,48 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD935D25B47
-	for <dpdk-dev@archiver.kernel.org>; Wed, 28 Jan 2026 12:00:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A68B3D25B47
+	for <dpdk-dev@archiver.kernel.org>; Wed, 28 Jan 2026 12:00:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3780F40670;
-	Wed, 28 Jan 2026 13:00:26 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 5A24640671;
+	Wed, 28 Jan 2026 13:00:32 +0100 (CET)
 Received: from fhigh-a7-smtp.messagingengine.com
  (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
- by mails.dpdk.org (Postfix) with ESMTP id 0111640661
- for <dev@dpdk.org>; Wed, 28 Jan 2026 13:00:25 +0100 (CET)
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
- by mailfhigh.phl.internal (Postfix) with ESMTP id AD8821400183;
- Wed, 28 Jan 2026 07:00:24 -0500 (EST)
+ by mails.dpdk.org (Postfix) with ESMTP id EC57D40671
+ for <dev@dpdk.org>; Wed, 28 Jan 2026 13:00:28 +0100 (CET)
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id A4D75140015A;
+ Wed, 28 Jan 2026 07:00:28 -0500 (EST)
 Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-04.internal (MEProxy); Wed, 28 Jan 2026 07:00:24 -0500
+ by phl-compute-02.internal (MEProxy); Wed, 28 Jan 2026 07:00:28 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:date:date:from:from
  :in-reply-to:in-reply-to:message-id:mime-version:references
- :reply-to:subject:subject:to:to; s=fm3; t=1769601624; x=
- 1769688024; bh=NJUNjwUoEjIN6nMijOx4/Jov/Z+VkknvbLGrbdejKTo=; b=Q
- VAQkJcmGYLvct7L0q6TA6jXWdU2zQBBqFpPcgZbTpj9eb92Nglcejk/UMsm244Ot
- 2RZ99+1vu711xY4rT86DeM3m/E4ZXszBgFRJVyBrPML/rre31UQRmfFKNd6Vlr9i
- 7uRgXnKZxz/Lof3uUMqDsd0TlAvOz8aDwUvBnii6zoYP65egUuxBwqOqSSBBH5Rb
- zmIOX41bK13ir3NYMYw8FfBvSoB769P39oy9I9RA64AjzhNmSBpwqgD2ChZ8JMcx
- qVQtY6paLIV1cVgoNeJYvrhl52gDwSzagwkJhdFG1ExrcgmAhjaEl0ZzjFVCK6ZY
- w3JUuqNyOaLmyNM0OzAdg==
+ :reply-to:subject:subject:to:to; s=fm3; t=1769601628; x=
+ 1769688028; bh=QKtORE5ACAi9oCrumSvcD73103Wlg7Alnp4GAOQgUzI=; b=X
+ bvAXd/7y1mAqT4P1KF5V+xDVViuI775+CpuwBVg0lH5FPj3b83MU/iNeFN+ofg+4
+ X+hON0SlQaiIiIxvNbYxOxk/7zX/9BAnpGnnztCcJ0A/s4jcUz7azU/OaxKFYm3E
+ aaP+y/QnHoetMSf8nX7mZFDaDkXyIhMu9TmtBocY/LWm+UobFWzBirZwp7nnkLUP
+ G2Xrx3aQh9IGmDNrHNHFP9GiHmSsf4iSJXIadbX01umh2bNLSHcgis/6IAkS4bJI
+ jSkF5OogpjqQjy5gX9bIXzwvfCx2ZkXKchFWE6AxOb7oI6lkd9Rw9r8ebS9gQDoj
+ 9UUki/zdNnv7NL0drXA1w==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:date:date:feedback-id:feedback-id:from:from
  :in-reply-to:in-reply-to:message-id:mime-version:references
  :reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
- :x-me-sender:x-sasl-enc; s=fm3; t=1769601624; x=1769688024; bh=N
- JUNjwUoEjIN6nMijOx4/Jov/Z+VkknvbLGrbdejKTo=; b=oNq4k8QRQbY0e5IqY
- FKxJAu/1sbKQ8j+3ai+wu0M8a9RoBqEeiWC5Yd9jMg10CCPj4ZY9ViGXPpkBIgC4
- f6VCyHbRVc+ihlhXpck0TMzofMoMjwLAZl+HrJT51LVkzhLiN8LgeBYbC5luKhdg
- 4khsJL2N7gb3jlL/F3mFS9u3kjePVizY9nKt+9RTRu0XNlp+MQcbcV4Gea6XNOIk
- yQ11dGuifz9MR9BXOzHCtEkWtdxwWf2A4txcmBSAu8ohn6X0EwLQx6XlZUao/0jP
- 3QeI6zTTgS+9yEQQKTYltVUFwlPKydA7njQQUtrwL85TBmuyPbMp/0bs8aXSGzDy
- MOR7w==
-X-ME-Sender: <xms:WPp5aWQEppHgllMyVbGis9ivjshotBxjwUfYhv7LLaAzXVio84IW4Q>
- <xme:WPp5aQGiaY1hwS_eHd8tFX8qAPLGVot_po379Ph--BmOl_mCoHYCZqWAq4l5emskD
- jDU2ab8d2A10pnGTKMEzNfYNr2-yo1mycjGGUEDNN8rO2pQhdpeJQ>
-X-ME-Received: <xmr:WPp5aS-TBzCEFAFXutER0oFiz3IO1OeuPN7aPcQBBG3R67AWcMOfpcsbnMnaSsTV4G2ewOXliT87feNKcuQfs4BMyqIhIF0>
+ :x-me-sender:x-sasl-enc; s=fm3; t=1769601628; x=1769688028; bh=Q
+ KtORE5ACAi9oCrumSvcD73103Wlg7Alnp4GAOQgUzI=; b=in3yAcPyczFaW9eVl
+ 0fSaQgaLf03CHCpmY/iBzs3AshLDeNSasx3ZEpFd9D0EWaltYtk5zQrTfwN+EzLk
+ UAaVop6vMH89ulVgwM8NMVtqYe6SMWdwNM9xEKnkB4nLot2lTAZLNlxKTaB+lybm
+ PqRfXjC9ZZA2ho9UCvBTPpzME4+NzH620SgBY8X6lw7/LADeJD/7C7I0elCbbDbA
+ MxDHwrTPcCI8SrqqEJuCOJHzDbmlG7l6ZABryvsYMW3U9lIq5M4eoOVG/e7t/1zb
+ 7ghXh7h7h7b2EQv2AzrNVo+QICePTe7wOMKUpphbycS2cQ4YvwDd3UH+igujvuPk
+ MWimA==
+X-ME-Sender: <xms:XPp5aXSWF-6HGxe8MesDXVGvEHt-AYM61xIreYLOWiiuOwsYK_2fPg>
+ <xme:XPp5aY7IuObnnl5N4L2PmzrvlCQR4omUr5DS6QPHAcmAnn_FfLDffKQCtmPfL-o7y
+ imjosXyhBj_AKkXGhvqbKCsfBs3BfDYBtUhFie9d3coSmucPDyQ>
+X-ME-Received: <xmr:XPp5aUwCmLWgsqLgEmqNrP_OyRSehYlIXtB61P1p6CAiI3y7lpXyzHK3diepNNcZvb8qhIPIf7ZmYI3r3XbYP8GNe4eTjHQ>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdduieeffeduucetufdoteggodetrf
  dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
  rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
@@ -51,25 +51,27 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdduieeffeduucetufdote
  ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
  frrghtthgvrhhnpedvjefhudeghedvtdeijeeigeetuedugfejueekieeltdfhteevkeeh
  hfeilefhtdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeefpdhm
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeegpdhm
  ohguvgepshhmthhpohhuthdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtph
  htthhopegurghvihgurdhmrghrtghhrghnugesrhgvughhrghtrdgtohhmpdhrtghpthht
- ohepshihrghlrghvrghrthhhihesmhgrrhhvvghllhdrtghomh
-X-ME-Proxy: <xmx:WPp5aaLcm2TNmKOa6MOwE_2EPbskl3eIBC0qrocgg3HNllc_-e5W_w>
- <xmx:WPp5aVaFbPSZjuaHIGNBAiUjHDuHel9Ac9LQJiPdlvWIaTkbHonzwA>
- <xmx:WPp5aUKNEvoR6HH1bkAOzns3vpmWGWjMiidzgrPWXvYAmI6CPRnthw>
- <xmx:WPp5abDsCAReEtmvkWXjzr4o0dAzND8Z1MTzAE-jQ7DM924TBEC0tQ>
- <xmx:WPp5adzp-b8tW5A3WI4JH_Skn0KWcFMIi9AL1aMPQm3a4_08g5X8FJEv>
+ oheprghnughrvgifrdhrhigstghhvghnkhhosehokhhtvghtlhgrsghsrdhruhdprhgtph
+ htthhopegsrhhutggvrdhrihgthhgrrhgushhonhesihhnthgvlhdrtghomh
+X-ME-Proxy: <xmx:XPp5afQCCE3tm9lJzpADFLy68Eo7bhHKgfX2ckRs3sFIuFW8GOUiWA>
+ <xmx:XPp5abWH6r0SGnIYjPQNnQoy3vxgDtWbixq25prOBMRQFnxwO_WHgw>
+ <xmx:XPp5aRZ0xHyhib1PbcudrENEbggWl6diaHGiD5ZCrD6bjd3hgf5THg>
+ <xmx:XPp5aR1nemWZprtH6byxIC-wpge9jK5dKs5cOET7px4KWj7SyWG4fA>
+ <xmx:XPp5acdieVUu6LBAgNtRA8uf7pIc3qUw0eADWl72NuMou0FYD3kBM1zd>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 28 Jan 2026 07:00:23 -0500 (EST)
+ 28 Jan 2026 07:00:27 -0500 (EST)
 From: Thomas Monjalon <thomas@monjalon.net>
 To: dev@dpdk.org
 Cc: david.marchand@redhat.com,
-	Srikanth Yalavarthi <syalavarthi@marvell.com>
-Subject: [PATCH v4 3/4] mldev: fix minsize build
-Date: Wed, 28 Jan 2026 12:58:32 +0100
-Message-ID: <20260128120005.2777473-4-thomas@monjalon.net>
+ Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
+ Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH v4 4/4] devtools: test different build types
+Date: Wed, 28 Jan 2026 12:58:33 +0100
+Message-ID: <20260128120005.2777473-5-thomas@monjalon.net>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260128120005.2777473-1-thomas@monjalon.net>
 References: <20210412215339.2439530-1-thomas@monjalon.net>
@@ -89,37 +91,49 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This error is seen in build of type "minsize":
-
-In function 'rte_ml_dev_pmd_allocate':
-lib/mldev/rte_mldev.c:84:16: error:
-'dev' may be used uninitialized [-Werror=maybe-uninitialized]
-   84 |         if (dev->data == NULL) {
-      |             ~~~^~~~~~
-
-It looks to be a compiler issue because we are not supposed
-to reach this point without finding a device to assign.
-
-The variable is initialized to allow compiling with "minsize" option.
+All builds were of type debugoptimized.
+It is kept only for builds having an ABI check.
+Others will have the default build type (release),
+except if specified differently as in the x86 generic build
+which will be a test of the non-optimized debug build type.
+Some static builds will test the minsize build type.
 
 Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
+Acked-by: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
 ---
- lib/mldev/rte_mldev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ devtools/test-meson-builds.sh | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/lib/mldev/rte_mldev.c b/lib/mldev/rte_mldev.c
-index f5061f015c..7fae867882 100644
---- a/lib/mldev/rte_mldev.c
-+++ b/lib/mldev/rte_mldev.c
-@@ -55,7 +55,7 @@ rte_ml_dev_pmd_allocate(const char *name, uint8_t socket_id)
- {
- 	char mz_name[RTE_MEMZONE_NAMESIZE];
- 	const struct rte_memzone *mz;
--	struct rte_ml_dev *dev;
-+	struct rte_ml_dev *dev = NULL;
- 	int16_t dev_id;
+diff --git a/devtools/test-meson-builds.sh b/devtools/test-meson-builds.sh
+index 867a0a9c0c..11e4be3f88 100755
+--- a/devtools/test-meson-builds.sh
++++ b/devtools/test-meson-builds.sh
+@@ -233,13 +233,15 @@ for c in gcc clang ; do
+ 	for s in static shared ; do
+ 		if [ $s = shared ] ; then
+ 			abicheck=ABI
++			buildtype=
+ 			stdatomic=-Denable_stdatomic=true
+ 		else
+ 			abicheck=skipABI # save time and disk space
++			buildtype='--buildtype=minsize'
+ 			stdatomic=-Denable_stdatomic=false
+ 		fi
+ 		export CC="$CCACHE $c"
+-		build build-$c-$s $c $abicheck $stdatomic --default-library=$s
++		build build-$c-$s $c $abicheck $buildtype $stdatomic --default-library=$s
+ 		unset CC
+ 	done
+ done
+@@ -254,7 +256,7 @@ generic_isa='nehalem'
+ if ! check_cc_flags "-march=$generic_isa" ; then
+ 	generic_isa='corei7'
+ fi
+-build build-x86-generic cc skipABI -Dcheck_includes=true \
++build build-x86-generic cc skipABI --buildtype=debug -Dcheck_includes=true \
+ 	-Dlibdir=lib -Dcpu_instruction_set=$generic_isa $use_shared
  
- 	/* implicit initialization of library before adding first device */
+ # 32-bit with default compiler
 -- 
 2.52.0
 
