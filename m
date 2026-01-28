@@ -2,82 +2,56 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A68B3D25B47
-	for <dpdk-dev@archiver.kernel.org>; Wed, 28 Jan 2026 12:00:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CA11D25B4C
+	for <dpdk-dev@archiver.kernel.org>; Wed, 28 Jan 2026 12:21:46 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5A24640671;
-	Wed, 28 Jan 2026 13:00:32 +0100 (CET)
-Received: from fhigh-a7-smtp.messagingengine.com
- (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
- by mails.dpdk.org (Postfix) with ESMTP id EC57D40671
- for <dev@dpdk.org>; Wed, 28 Jan 2026 13:00:28 +0100 (CET)
-Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
- by mailfhigh.phl.internal (Postfix) with ESMTP id A4D75140015A;
- Wed, 28 Jan 2026 07:00:28 -0500 (EST)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-02.internal (MEProxy); Wed, 28 Jan 2026 07:00:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:date:date:from:from
- :in-reply-to:in-reply-to:message-id:mime-version:references
- :reply-to:subject:subject:to:to; s=fm3; t=1769601628; x=
- 1769688028; bh=QKtORE5ACAi9oCrumSvcD73103Wlg7Alnp4GAOQgUzI=; b=X
- bvAXd/7y1mAqT4P1KF5V+xDVViuI775+CpuwBVg0lH5FPj3b83MU/iNeFN+ofg+4
- X+hON0SlQaiIiIxvNbYxOxk/7zX/9BAnpGnnztCcJ0A/s4jcUz7azU/OaxKFYm3E
- aaP+y/QnHoetMSf8nX7mZFDaDkXyIhMu9TmtBocY/LWm+UobFWzBirZwp7nnkLUP
- G2Xrx3aQh9IGmDNrHNHFP9GiHmSsf4iSJXIadbX01umh2bNLSHcgis/6IAkS4bJI
- jSkF5OogpjqQjy5gX9bIXzwvfCx2ZkXKchFWE6AxOb7oI6lkd9Rw9r8ebS9gQDoj
- 9UUki/zdNnv7NL0drXA1w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:date:date:feedback-id:feedback-id:from:from
- :in-reply-to:in-reply-to:message-id:mime-version:references
- :reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
- :x-me-sender:x-sasl-enc; s=fm3; t=1769601628; x=1769688028; bh=Q
- KtORE5ACAi9oCrumSvcD73103Wlg7Alnp4GAOQgUzI=; b=in3yAcPyczFaW9eVl
- 0fSaQgaLf03CHCpmY/iBzs3AshLDeNSasx3ZEpFd9D0EWaltYtk5zQrTfwN+EzLk
- UAaVop6vMH89ulVgwM8NMVtqYe6SMWdwNM9xEKnkB4nLot2lTAZLNlxKTaB+lybm
- PqRfXjC9ZZA2ho9UCvBTPpzME4+NzH620SgBY8X6lw7/LADeJD/7C7I0elCbbDbA
- MxDHwrTPcCI8SrqqEJuCOJHzDbmlG7l6ZABryvsYMW3U9lIq5M4eoOVG/e7t/1zb
- 7ghXh7h7h7b2EQv2AzrNVo+QICePTe7wOMKUpphbycS2cQ4YvwDd3UH+igujvuPk
- MWimA==
-X-ME-Sender: <xms:XPp5aXSWF-6HGxe8MesDXVGvEHt-AYM61xIreYLOWiiuOwsYK_2fPg>
- <xme:XPp5aY7IuObnnl5N4L2PmzrvlCQR4omUr5DS6QPHAcmAnn_FfLDffKQCtmPfL-o7y
- imjosXyhBj_AKkXGhvqbKCsfBs3BfDYBtUhFie9d3coSmucPDyQ>
-X-ME-Received: <xmr:XPp5aUwCmLWgsqLgEmqNrP_OyRSehYlIXtB61P1p6CAiI3y7lpXyzHK3diepNNcZvb8qhIPIf7ZmYI3r3XbYP8GNe4eTjHQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdduieeffeduucetufdoteggodetrf
- dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
- rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
- gurhephffvvefufffkofgjfhgggfestdekredtredttdenucfhrhhomhepvfhhohhmrghs
- ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
- frrghtthgvrhhnpedvjefhudeghedvtdeijeeigeetuedugfejueekieeltdfhteevkeeh
- hfeilefhtdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeegpdhm
- ohguvgepshhmthhpohhuthdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtph
- htthhopegurghvihgurdhmrghrtghhrghnugesrhgvughhrghtrdgtohhmpdhrtghpthht
- oheprghnughrvgifrdhrhigstghhvghnkhhosehokhhtvghtlhgrsghsrdhruhdprhgtph
- htthhopegsrhhutggvrdhrihgthhgrrhgushhonhesihhnthgvlhdrtghomh
-X-ME-Proxy: <xmx:XPp5afQCCE3tm9lJzpADFLy68Eo7bhHKgfX2ckRs3sFIuFW8GOUiWA>
- <xmx:XPp5abWH6r0SGnIYjPQNnQoy3vxgDtWbixq25prOBMRQFnxwO_WHgw>
- <xmx:XPp5aRZ0xHyhib1PbcudrENEbggWl6diaHGiD5ZCrD6bjd3hgf5THg>
- <xmx:XPp5aR1nemWZprtH6byxIC-wpge9jK5dKs5cOET7px4KWj7SyWG4fA>
- <xmx:XPp5acdieVUu6LBAgNtRA8uf7pIc3qUw0eADWl72NuMou0FYD3kBM1zd>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 28 Jan 2026 07:00:27 -0500 (EST)
-From: Thomas Monjalon <thomas@monjalon.net>
+	by mails.dpdk.org (Postfix) with ESMTP id A73B040274;
+	Wed, 28 Jan 2026 13:21:44 +0100 (CET)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id BCEE2400D7
+ for <dev@dpdk.org>; Wed, 28 Jan 2026 13:21:43 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1769602903;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding;
+ bh=8eavl4Dkp9edTp43Y4Ol7aJxTYvANmjAN+IvQjAbuKo=;
+ b=UJiH1lOUJSm+9wbyUWBwPFbVuoRnfovJAfILJ9APGLrxepQ0pack0zzOC5u3Zo9Kmy1mMd
+ hihA2jHPnhjG6QdYCKP+HMi2ZumqFitjWAomEnqDtNryIcL2k3daSANFwS5eMtL6DCBDX0
+ TX0hf5oKzYZxG8AOnMvX5+MLnJNNz24=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-624-zEO1BcQxM2eA05YbctCbBQ-1; Wed,
+ 28 Jan 2026 07:21:39 -0500
+X-MC-Unique: zEO1BcQxM2eA05YbctCbBQ-1
+X-Mimecast-MFC-AGG-ID: zEO1BcQxM2eA05YbctCbBQ_1769602898
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 3AABC180045C; Wed, 28 Jan 2026 12:21:38 +0000 (UTC)
+Received: from rh.redhat.com (unknown [10.45.226.123])
+ by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id 6FECA1956095; Wed, 28 Jan 2026 12:21:35 +0000 (UTC)
+From: Kevin Traynor <ktraynor@redhat.com>
 To: dev@dpdk.org
-Cc: david.marchand@redhat.com,
- Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
- Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v4 4/4] devtools: test different build types
-Date: Wed, 28 Jan 2026 12:58:33 +0100
-Message-ID: <20260128120005.2777473-5-thomas@monjalon.net>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20260128120005.2777473-1-thomas@monjalon.net>
-References: <20210412215339.2439530-1-thomas@monjalon.net>
- <20260128120005.2777473-1-thomas@monjalon.net>
+Cc: thomas@monjalon.net, david.marchand@redhat.com, dsosnowski@nvidia.com,
+ viacheslavo@nvidia.com, Kevin Traynor <ktraynor@redhat.com>,
+ stable@dpdk.org
+Subject: [PATCH] eal/linux: handle epoll error conditions
+Date: Wed, 28 Jan 2026 12:20:55 +0000
+Message-ID: <20260128122055.192104-1-ktraynor@redhat.com>
 MIME-Version: 1.0
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: M0Mg3XGZyP94az4fhMeSxZTsgZkob7_ndOSdzpL20C0_1769602898
+X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
+content-type: text/plain; charset="US-ASCII"; x-default=true
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -91,49 +65,125 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-All builds were of type debugoptimized.
-It is kept only for builds having an ABI check.
-Others will have the default build type (release),
-except if specified differently as in the x86 generic build
-which will be a test of the non-optimized debug build type.
-Some static builds will test the minsize build type.
+Add handling for epoll error conditions EPOLLERR, EPOLLHUP and
+EPOLLRDHUP. These events indicate that the interrupt file descriptor
+is in an error state or there has been a hangup.
 
-Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
-Acked-by: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
+This may happen when the interrupt file descriptor is deleted or for
+mlx5 devices when the device is unbound from mlx5 kernel driver or if
+the device is removed by the mlx5 kernel driver as part of LAG setup.
+
+Previously, the interrupts were being read, but the condition was not
+cleared and that may lead to an interrupt continuing to fire and a
+busy-loop processing it.
+
+Now when this condition is detected, an error message is logged and the
+interrupt is removed to prevent busy-looping.
+
+Also cover the case where no bytes are read even though the epoll has
+indicated there is something to read.
+
+Bugzilla ID: 1873
+Fixes: af75078fece3 ("first public release")
+Cc: stable@dpdk.org
+
+Signed-off-by: Kevin Traynor <ktraynor@redhat.com>
 ---
- devtools/test-meson-builds.sh | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ lib/eal/linux/eal_interrupts.c | 63 ++++++++++++++++++++++++----------
+ 1 file changed, 44 insertions(+), 19 deletions(-)
 
-diff --git a/devtools/test-meson-builds.sh b/devtools/test-meson-builds.sh
-index 867a0a9c0c..11e4be3f88 100755
---- a/devtools/test-meson-builds.sh
-+++ b/devtools/test-meson-builds.sh
-@@ -233,13 +233,15 @@ for c in gcc clang ; do
- 	for s in static shared ; do
- 		if [ $s = shared ] ; then
- 			abicheck=ABI
-+			buildtype=
- 			stdatomic=-Denable_stdatomic=true
- 		else
- 			abicheck=skipABI # save time and disk space
-+			buildtype='--buildtype=minsize'
- 			stdatomic=-Denable_stdatomic=false
- 		fi
- 		export CC="$CCACHE $c"
--		build build-$c-$s $c $abicheck $stdatomic --default-library=$s
-+		build build-$c-$s $c $abicheck $buildtype $stdatomic --default-library=$s
- 		unset CC
- 	done
- done
-@@ -254,7 +256,7 @@ generic_isa='nehalem'
- if ! check_cc_flags "-march=$generic_isa" ; then
- 	generic_isa='corei7'
- fi
--build build-x86-generic cc skipABI -Dcheck_includes=true \
-+build build-x86-generic cc skipABI --buildtype=debug -Dcheck_includes=true \
- 	-Dlibdir=lib -Dcpu_instruction_set=$generic_isa $use_shared
+diff --git a/lib/eal/linux/eal_interrupts.c b/lib/eal/linux/eal_interrupts.c
+index 9db978923a..eedc75d776 100644
+--- a/lib/eal/linux/eal_interrupts.c
++++ b/lib/eal/linux/eal_interrupts.c
+@@ -887,4 +887,21 @@ rte_intr_disable(const struct rte_intr_handle *intr_handle)
+ }
  
- # 32-bit with default compiler
++static void
++eal_intr_source_free(struct rte_intr_source *src)
++{
++	struct rte_intr_callback *cb, *next;
++
++	/* Free all callbacks */
++	for (cb = TAILQ_FIRST(&src->callbacks); cb; cb = next) {
++		next = TAILQ_NEXT(cb, next);
++		TAILQ_REMOVE(&src->callbacks, cb, next);
++		free(cb);
++	}
++
++	/* Free the interrupt source */
++	rte_intr_instance_free(src->intr_handle);
++	free(src);
++}
++
+ static int
+ eal_intr_process_interrupts(struct epoll_event *events, int nfds)
+@@ -918,4 +935,21 @@ eal_intr_process_interrupts(struct epoll_event *events, int nfds)
+ 		}
+ 
++		/* Check for error conditions on the fd before processing. */
++		if (events[n].events & (EPOLLRDHUP | EPOLLERR | EPOLLHUP)) {
++			EAL_LOG(WARNING, "Disconnect condition on fd %d "
++				"(events=0x%x), removing from epoll",
++				events[n].data.fd, events[n].events);
++			/*
++			 * There is an error or a hangup. Remove the
++			 * interrupt source and return to force the wait list
++			 * to be rebuilt.
++			 */
++			TAILQ_REMOVE(&intr_sources, src, next);
++			rte_spinlock_unlock(&intr_lock);
++
++			eal_intr_source_free(src);
++			return -1;
++		}
++
+ 		/* mark this interrupt source as active and release the lock. */
+ 		src->active = 1;
+@@ -957,5 +991,7 @@ eal_intr_process_interrupts(struct epoll_event *events, int nfds)
+ 			 */
+ 			bytes_read = read(events[n].data.fd, &buf, bytes_read);
+-			if (bytes_read < 0) {
++			if (bytes_read > 0) {
++				call = true;
++			} else if (bytes_read < 0) {
+ 				if (errno == EINTR || errno == EWOULDBLOCK)
+ 					continue;
+@@ -965,27 +1001,16 @@ eal_intr_process_interrupts(struct epoll_event *events, int nfds)
+ 					events[n].data.fd,
+ 					strerror(errno));
+-				/*
+-				 * The device is unplugged or buggy, remove
+-				 * it as an interrupt source and return to
+-				 * force the wait list to be rebuilt.
+-				 */
++			} else { /* bytes == 0 */
++				EAL_LOG(WARNING, "Read nothing from file "
++					"descriptor %d", events[n].data.fd);
++			}
++			if (bytes_read <= 0) {
+ 				rte_spinlock_lock(&intr_lock);
+ 				TAILQ_REMOVE(&intr_sources, src, next);
+ 				rte_spinlock_unlock(&intr_lock);
+ 
+-				for (cb = TAILQ_FIRST(&src->callbacks); cb;
+-							cb = next) {
+-					next = TAILQ_NEXT(cb, next);
+-					TAILQ_REMOVE(&src->callbacks, cb, next);
+-					free(cb);
+-				}
+-				rte_intr_instance_free(src->intr_handle);
+-				free(src);
++				eal_intr_source_free(src);
+ 				return -1;
+-			} else if (bytes_read == 0)
+-				EAL_LOG(ERR, "Read nothing from file "
+-					"descriptor %d", events[n].data.fd);
+-			else
+-				call = true;
++			}
+ 		}
+ 
 -- 
 2.52.0
 
