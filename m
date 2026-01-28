@@ -2,74 +2,86 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D68CD3567F
-	for <dpdk-dev@archiver.kernel.org>; Wed, 28 Jan 2026 06:05:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14249D35687
+	for <dpdk-dev@archiver.kernel.org>; Wed, 28 Jan 2026 07:06:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C98064066A;
-	Wed, 28 Jan 2026 07:05:22 +0100 (CET)
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
- [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id D857B40659
- for <dev@dpdk.org>; Wed, 28 Jan 2026 07:05:20 +0100 (CET)
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
- 60RGPxkk1390280 for <dev@dpdk.org>; Tue, 27 Jan 2026 22:05:19 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=G
- /VhHPnvBammGEVADKa8cWJ5a/AXrgEgS6ofYiswe7U=; b=PsiTD35UPUQG343Sx
- M5Qh0G4j2u11ShOw64AUhCYLH8B8mC2+NE4VV5DBX5WFVoE+hBF0utJxSoJHkikp
- U0njXlsSd7zZmFckgYvjq3hvL8oiQrBhLNxZalCPFP3G2sRHrE0VNR6Za8Z3sBDi
- mNc0P7VkjrkXtMJFA9mDTwRGrMWz2yhRLBYWTlPwCeoX99To+VxGn8AIU9YnT4VK
- khpQKTvim+z7yjtU7uZEMR1odKLdRyhnTftxbHb0iIOdzaAZpbLea8KZsf/GY2N2
- xqExcKz9xNvwGivUiCaGwywAorZLnEMPp3dRk/ZeBQv2r6h4HdVNCnB0HTv6f2tk
- BMfEA==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 4bx0qsws60-4
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Tue, 27 Jan 2026 22:05:18 -0800 (PST)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Tue, 27 Jan 2026 22:05:12 -0800
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Tue, 27 Jan 2026 22:05:12 -0800
-Received: from cavium-RAHUL-BM.. (unknown [10.28.36.48])
- by maili.marvell.com (Postfix) with ESMTP id 1CA333F706F;
- Tue, 27 Jan 2026 22:04:53 -0800 (PST)
-From: Rahul Bhansali <rbhansali@marvell.com>
-To: <dev@dpdk.org>, Nithin Dabilpuram <ndabilpuram@marvell.com>, Kiran Kumar K
- <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, Satha Rao
- <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>, "Rakesh
- Kudurumalla" <rkudurumalla@marvell.com>
-CC: <jerinj@marvell.com>, Rahul Bhansali <rbhansali@marvell.com>
-Subject: [PATCH 17/18] common/cnxk: fix CPT CQ roll over handling
-Date: Wed, 28 Jan 2026 11:33:15 +0530
-Message-ID: <20260128060316.3967610-17-rbhansali@marvell.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260128060316.3967610-1-rbhansali@marvell.com>
-References: <20260128060316.3967610-1-rbhansali@marvell.com>
+	by mails.dpdk.org (Postfix) with ESMTP id A9442402C4;
+	Wed, 28 Jan 2026 08:06:07 +0100 (CET)
+Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com
+ [209.85.222.42]) by mails.dpdk.org (Postfix) with ESMTP id 40A20402C1
+ for <dev@dpdk.org>; Wed, 28 Jan 2026 08:06:06 +0100 (CET)
+Received: by mail-ua1-f42.google.com with SMTP id
+ a1e0cc1a2514c-93f5761e09aso4274555241.1
+ for <dev@dpdk.org>; Tue, 27 Jan 2026 23:06:06 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1769583965; cv=none;
+ d=google.com; s=arc-20240605;
+ b=ZYAQhKM/VeGI956ud2TsoVN9NFaDYKNbA1B2HLnfAMSBNgH3woqqw1GfkQ5BS7z3pa
+ oTQU0Z8lA4UhsLZ0sPLSlArXCY2cvktEMXTOS5jWygWMhMIOn6MtLeZ3Mv94sZfVh3Vu
+ QVLy/EwDANVaf4MzkAXPN/awtZ9goWNFyiQzwqOQe0VeEZ0709imiBkFkw23p32/QB10
+ Qn0rB9LLek8USymmQ4wCxaH+EMDZ9YRivVJ1fgk4CbYB2PMTWqKUaKfS6ANMKqeTWbWV
+ ue4nT4if+db7bKEzoQ2ByKrsagp47vHQScOsF9mgSKyoH3uxRfXPEf3ghIVwYA+xFiib
+ qZsg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20240605; 
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:dkim-signature;
+ bh=/6gQFTObnRuHb4RrV4wSUuTYqg2nlfbuOhHG2tttk+M=;
+ fh=t33Egyn4DAOwVRnwraldPtDjoBFAjogf3LzpsEMwxHQ=;
+ b=VtROmxpD1GlDpfbfdqM3jtfcdUnI1fQX7f14k5sIVcTdY0RdfHMz+l6xLL2unvbAvx
+ 93L87/gwFGltety6zKs3ufVkbO6MYeCT1NCaUOQqdc1tZ1hZKvJMkPasVPBio7vFxvuI
+ rgD73pfe8HGfXfRdc9KgiBnff0H7ELM3kxM/ah8yvFK4xyU9jvESNSF4WfYoj/FKN2Uu
+ /5Z7Vbu7He2RrDJwcS+Au+0t3cbX0kWQsf6uS8pgaMJASyuCyRJrcNSZrLfBgdwiw1gQ
+ cJbe7dZRcWO42M8H5xDskWRjZObcOw58IBev2l24TuEImgiFbeElmC1pvxV0QBR+H4uH
+ 3jpg==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20230601; t=1769583965; x=1770188765; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=/6gQFTObnRuHb4RrV4wSUuTYqg2nlfbuOhHG2tttk+M=;
+ b=D/1+BHcjFDOWTtZQ66mCQfpk1U09O2WPUcLgJ89a8YgJLEB1RHDf5ocjvC3GhvM9Ob
+ omg1I6asjgSIaqjxUwF2+kQ0N0IwcMKKlHLwAlzUMB4dyg/keZvkPCwP1HJuEUfKl0q6
+ /RlAxkefxE7fxP9FWQN/iY+D+1iX6U9GP3CSmX4OB4M1Jk/0imOf9cG/0oZMZYzls+uC
+ +E9gH21C11/AH4hu/YnUI58V6+umyg7FGKmgj8QcFdStWl4wHZSkX0Q1EBGqWGg6lpxd
+ CE98/5Tn/Bfp2SwlG8B8VKRg9Xl1dmo+XQap6zAvrokXtbGbdVg+ozHJ5+snH94u9QAh
+ 8Djw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1769583965; x=1770188765;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=/6gQFTObnRuHb4RrV4wSUuTYqg2nlfbuOhHG2tttk+M=;
+ b=rw4HXwcXHSVVcPKjsDTAjke33DfCnbd1DUwqTqK5gOB9aRm30VaIm9R3GBBMR9S4ZA
+ kBQClnxc0E496cjGoq8x9BtF1UijEqh6Ja+UbCgq9D147/D6nJ9HEjtuk9V0I0aMe5qy
+ GcsHJEMmYwPVJkNkpmKJN/tkaqvRd2b0JwciS5pd4AXuq2Re0sTz1nPBcrMFsVE2FwiP
+ ML06KGjJK31Zqikh8Oo/imaeoA2bMru6op1+Bt0ERBvAWUa+eNVrapGDBj+oJljeSDtW
+ QkyAfLr2Vy++pZ1dmHUhnoVyjEn5TBLf8dEI+9tEm92BldbAZJOFz9YgmhxqcmkggyTd
+ uNqw==
+X-Gm-Message-State: AOJu0YyBzimSPKOrQqRtk71TCKLoUiiL+zKWRzf+6grgFszfImThdBKO
+ pW3nkBauO01T30+G2ybJSPCLi5LqpfCUxRmkVhRax/u7GowXaG11utPqLpymy0QclMVGCTmoWOv
+ oGhswjYJNz7d8VOME0DrroFVRw4+4EqEi4+ym
+X-Gm-Gg: AZuq6aKVGZnbTxWfHZo7WT+1yA0MKZOoA7entSPQbs5MVmpMUFFH4lW4rF3luzuRk36
+ 8eJ5ii7HgNYBYLnsEdOuYrsAfGUzqt3yjImlWHiUgdfW+4xz3O1Zmein9hWeGsxPZn2w0HcS9kB
+ qvlD3TzF0bmJLlpoRXh3KdS/Iyv2/ThF5ThJsj7wemkS10TRhn8V2qt6YPbq9YU9ZPiSu9rcRig
+ dRH4nL5pNMMtuyzpUx05d1g0ay6SzY7hNcPBRHmnDTuKPGDSsyxwihZxmgTdJONsE+/gPDB77qt
+ qQmu5g==
+X-Received: by 2002:a05:6102:3909:b0:5f5:4027:b6eb with SMTP id
+ ada2fe7eead31-5f7238a80bamr2072920137.45.1769583965400; Tue, 27 Jan 2026
+ 23:06:05 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTI4MDA0NiBTYWx0ZWRfXwvEKlJRzd60t
- 8MhhCzjxVlsE4XUQEvg/vTsN0/EFoJ878milnYlibDztuJ+JRV+5ZtL4+r5VbGw6TA4UlaTfjN3
- gwAcivNKuxkY8zgtQmUCVzbE9gle4wxy0AzWMHyJLEJ35pGWTgMbEqiL4fnYZcGZI8cDx23Nwk+
- RJ5FPDQnm2YVgN1Zhrjd8dHBGuo62jJiOJM3oLLLjjvxfWQ1WY0zxpDxn+zgbo5LAvtQP01Xdc8
- w6FrAu9CpCqLVQU8fvlnSmXBfjJus59yuU7kQNkn9mZz0ItX5Fp/ds5mdIV+uasiL+YPmTcJobx
- VxNM0d7VkfcyqO7BZ3XhEDRI79TKbZIM8pWDkXBl2/heHCrFCrW7/gr9kPMdOIZu5lJPzoRUTio
- af9K0TR1LvLbA7QoBLzACfmSyRvkymHWFQGf8CYY0fCzfO6nvulf5m1IUvecO33Gy9EOUAwbBD8
- nkhYLesZYGm2oVagkvw==
-X-Authority-Analysis: v=2.4 cv=P9E3RyAu c=1 sm=1 tr=0 ts=6979a71e cx=c_pps
- a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
- a=vUbySO9Y5rIA:10 a=VkNPw1HP01LnGYTKEx00:22 a=M5GUcnROAAAA:8
- a=wgwno-ROHo_tnHe101QA:9 a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-ORIG-GUID: -n8X29HqvThL3aLSk9viKoAosgCMTQ14
-X-Proofpoint-GUID: -n8X29HqvThL3aLSk9viKoAosgCMTQ14
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-01-27_05,2026-01-27_03,2025-10-01_01
+References: <20260127181355.98437-1-scott.k.mitch1@gmail.com>
+ <20260127181355.98437-4-scott.k.mitch1@gmail.com>
+ <20260127105749.2e2059a2@phoenix.local>
+In-Reply-To: <20260127105749.2e2059a2@phoenix.local>
+From: Scott Mitchell <scott.k.mitch1@gmail.com>
+Date: Tue, 27 Jan 2026 23:05:54 -0800
+X-Gm-Features: AZwV_QhmoIzMYVb8lJAIxrj50O9ozFhgRRB3SoWRWRIE329sq2lOdRi2iqtLILo
+Message-ID: <CAFn2buDn=jUNT2n8dAB0TceoQB5ebkC9nHejg43vDJyfpKMeqQ@mail.gmail.com>
+Subject: Re: [PATCH v1 3/3] net/af_packet: software checksum and tx poll
+ control
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: dev@dpdk.org
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,104 +95,24 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This fixes handling of CPT CQ ring roll over case.
+> I don't think each driver should be doing its own checksum helper.
+> It should be done at application or through libraries.
+> All modern hardware does checksum offload, so if it doesn't probably
+> a driver bug.
 
-Fixes: a7d64a7740e0 ("net/cnxk: handle soft expiry")
+The goal from the app perspective is to set rte_eth_txmode.offloads
+consistently across PMDs. Hardware devices are good but software
+devices like af_packet don't provide a consistent experience. The
+approach in this patch is similar to existing software eth devices tap
+[1] and vhost [2]. In v2 I will share checksum code with tap to avoid
+duplication and ensure they remain consistent.
 
-Signed-off-by: Rahul Bhansali <rbhansali@marvell.com>
----
- drivers/common/cnxk/roc_cpt.c             |  2 +-
- drivers/common/cnxk/roc_cpt.h             |  1 +
- drivers/common/cnxk/roc_nix_inl.c         |  1 +
- drivers/common/cnxk/roc_nix_inl_dev_irq.c | 18 ++++++++++++------
- 4 files changed, 15 insertions(+), 7 deletions(-)
+[1] https://github.com/DPDK/dpdk/blob/v25.11/drivers/net/tap/rte_eth_tap.c#L559-L624
+[2] https://github.com/DPDK/dpdk/blob/v25.11/drivers/net/vhost/rte_eth_vhost.c#L317-L357
 
-diff --git a/drivers/common/cnxk/roc_cpt.c b/drivers/common/cnxk/roc_cpt.c
-index 83e0c9896b..63419884ac 100644
---- a/drivers/common/cnxk/roc_cpt.c
-+++ b/drivers/common/cnxk/roc_cpt.c
-@@ -712,7 +712,7 @@ cpt_lf_cq_init(struct roc_cpt_lf *lf)
- 
- 	lf_cq_base.s.addr = addr >> 7;
- 	plt_write64(lf_cq_base.u, lf->rbase + CPT_LF_CQ_BASE);
--	lf_cq_size.s.size = PLT_ALIGN(len, ROC_ALIGN);
-+	lf_cq_size.s.size = lf->cq_size;
- 	plt_write64(lf_cq_size.u, lf->rbase + CPT_LF_CQ_SIZE);
- 
- 	return 0;
-diff --git a/drivers/common/cnxk/roc_cpt.h b/drivers/common/cnxk/roc_cpt.h
-index 67956758be..7547d0b020 100644
---- a/drivers/common/cnxk/roc_cpt.h
-+++ b/drivers/common/cnxk/roc_cpt.h
-@@ -159,6 +159,7 @@ struct roc_cpt_lf {
- 	bool cpt_cq_ena;
- 	uint8_t cq_entry_size;
- 	uint32_t cq_size;
-+	uint32_t cq_head;
- 	/* End of Input parameters */
- 	struct plt_pci_device *pci_dev;
- 	struct dev *dev;
-diff --git a/drivers/common/cnxk/roc_nix_inl.c b/drivers/common/cnxk/roc_nix_inl.c
-index 86d571c6e2..aad2631673 100644
---- a/drivers/common/cnxk/roc_nix_inl.c
-+++ b/drivers/common/cnxk/roc_nix_inl.c
-@@ -1580,6 +1580,7 @@ roc_nix_inl_outb_init(struct roc_nix *roc_nix)
- 				lf->cq_entry_size = 0;
- 				lf->cq_all = 0;
- 				lf->cq_size = lf->nb_desc;
-+				lf->cq_head = 1;
- 			}
- 		}
- 
-diff --git a/drivers/common/cnxk/roc_nix_inl_dev_irq.c b/drivers/common/cnxk/roc_nix_inl_dev_irq.c
-index 1c4822925c..89155a1f7d 100644
---- a/drivers/common/cnxk/roc_nix_inl_dev_irq.c
-+++ b/drivers/common/cnxk/roc_nix_inl_dev_irq.c
-@@ -57,8 +57,8 @@ nix_inl_cpt_cq_cb(struct roc_cpt_lf *lf)
- 	union cpt_lf_cq_ptr cq_ptr;
- 	struct cpt_cq_s *cq_s;
- 	uint8_t fmt_msk = 0x3;
--	uint64_t nq_ptr;
--	uint32_t count;
-+	uint32_t count, head;
-+	uint32_t nq_ptr;
- 	uint64_t i;
- 
- 	if (idev)
-@@ -69,14 +69,15 @@ nix_inl_cpt_cq_cb(struct roc_cpt_lf *lf)
- 		return;
- 	}
- 
-+	head = lf->cq_head;
- 	cq_base.u = plt_read64(lf->rbase + CPT_LF_CQ_BASE);
- 	cq_ptr.u = plt_read64(lf->rbase + CPT_LF_CQ_PTR);
- 	count = cq_ptr.s.count;
--
--	nq_ptr = (((cq_base.s.addr << 7)) + ((cq_ptr.s.nq_ptr - count) << 5));
--	cq_s = (struct cpt_cq_s *)nq_ptr;
-+	nq_ptr = cq_ptr.s.nq_ptr;
- 
- 	for (i = 0; i < count; i++) {
-+		cq_s = (struct cpt_cq_s *)(uintptr_t)(((cq_base.s.addr << 7)) + (head << 5));
-+
- 		if (cq_s->w0.s.uc_compcode && cq_s->w0.s.compcode) {
- 			switch (cq_s->w2.s.fmt & fmt_msk) {
- 			case WQE_PTR_CPTR:
-@@ -93,8 +94,13 @@ nix_inl_cpt_cq_cb(struct roc_cpt_lf *lf)
- 			inl_dev->work_cb(&tmp, sa, NIX_INL_CPT_CQ, (void *)cq_s, port_id);
- 		}
- done:
--		cq_s = cq_s + 1;
-+		head = (head + 1) % lf->cq_size;
- 	}
-+
-+	lf->cq_head = head;
-+	if (unlikely(nq_ptr != head))
-+		plt_err("CPT LF[%d] CQ head %d != NQ ptr %d", lf->lf_id, head, nq_ptr);
-+
- 	/* Acknowledge the number of completed requests */
- 	plt_write64(count, lf->rbase + CPT_LF_DONE_ACK);
- }
--- 
-2.34.1
+> Needs to be a separate patch. Don't do two things in one patch.
+> Not sure if some variant of the existing configure thresholds
+> could be used for this.
 
+ack, will split txpoll control. I'm not aware of any other way to
+prevent poll if dpdk tx is faster than kernel rx.
