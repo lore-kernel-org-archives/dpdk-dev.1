@@ -2,48 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31F2ED35697
-	for <dpdk-dev@archiver.kernel.org>; Wed, 28 Jan 2026 09:16:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF7FED35690
+	for <dpdk-dev@archiver.kernel.org>; Wed, 28 Jan 2026 09:36:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 167E840274;
-	Wed, 28 Jan 2026 10:16:24 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
- by mails.dpdk.org (Postfix) with ESMTP id 6CD4D400D7
- for <dev@dpdk.org>; Wed, 28 Jan 2026 10:16:22 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1769591783; x=1801127783;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=Tbo+KEte3F2diWVXb/5f4lyNHug/7aQN/roi2E/Fx+Q=;
- b=JXYdbHfIQQwLHLQmxdwSIBRiAGVv2vBzZpZiawRFIRAP5V+Jg0Vqc4RZ
- KG7vWYmogyJwJs6zoT1NkFQAErcxYn0hbxpKhtRyqDDOYBtngE86pOupw
- rrt76zsUY3P6Xoj8LwtqODXZRAHYWJ9l5u8ZQJY5FZnXdIkbOKQlND5AD
- 6bCJfWMuU+s2pZOrTRzj61SgtvtwyEbAnXT1AiOUzr5yJp2doBFHJ/soL
- AQDAjtZgWEE/M7LMt89T74ibY3ZrTLFDihsuVc/2GK8Uc81i0Wm/e7c0L
- dTb38skg2znb/FdDm4kMQ4zAye/18GZ3TqRf1IWsg0d5otpYWjOLPX+mD w==;
-X-CSE-ConnectionGUID: wb12bsTyTWWRHtU1J+OMwA==
-X-CSE-MsgGUID: 1DlVAlQRRGya7PsBaXO0Lw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11684"; a="82166285"
-X-IronPort-AV: E=Sophos;i="6.21,258,1763452800"; d="scan'208";a="82166285"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
- by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 28 Jan 2026 01:16:21 -0800
-X-CSE-ConnectionGUID: 403GwE7yQOyk1ixN1F8dkA==
-X-CSE-MsgGUID: TnMJo/vOS9qy7ovpfFBjuA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,258,1763452800"; d="scan'208";a="208240087"
-Received: from ces-tuh.iind.intel.com ([10.49.105.91])
- by orviesa008.jf.intel.com with ESMTP; 28 Jan 2026 01:16:20 -0800
-From: Sandeep Penigalapati <sandeep.penigalapati@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 9417740274;
+	Wed, 28 Jan 2026 10:36:14 +0100 (CET)
+Received: from mail-dl1-f43.google.com (mail-dl1-f43.google.com [74.125.82.43])
+ by mails.dpdk.org (Postfix) with ESMTP id 7CE61400D7
+ for <dev@dpdk.org>; Wed, 28 Jan 2026 10:36:13 +0100 (CET)
+Received: by mail-dl1-f43.google.com with SMTP id
+ a92af1059eb24-124877d78a6so4380142c88.1
+ for <dev@dpdk.org>; Wed, 28 Jan 2026 01:36:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20230601; t=1769592972; x=1770197772; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=jWctvwMLzan6h7VAsrTFIrrIIHs78aS/C3j4jYhnsuY=;
+ b=AgX+b8yOWiVj4Iltz4l/9aV3l9je4tEYIeaiCXGqjX0w+6B2tz+a5RueJoQVcWoLcO
+ DfoiWtli/5HNXyUi4hy/6vKd//RUVLuK6+T+kOJpsUUsexovOzDqvn1svETivgo/9vlL
+ A8qGY1w6lcr8N8ox79muguW7jFqeFzvMgtcJB4ZOvgy4BIFS6QUtj0LefswG26br2Sh6
+ nwzS1t6ZzC+t7GwxodsmplllBAaMyBUgAwB2I7Mn0FEgNLoiEp0s+qMx2RuAz/PKv943
+ LrQMt2LJD93ZabEC1GoBW2iP1eMfSVNaZKTmM5a07Uetaywc2vWJH431oCvAFvMJ/pss
+ p//A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1769592972; x=1770197772;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=jWctvwMLzan6h7VAsrTFIrrIIHs78aS/C3j4jYhnsuY=;
+ b=B3QI1qFwLFYJN3gdTFXHuCjgTnd3M9Pwmh7MJ8xIloAdT4XUR3fYaMzVzjy/nOEA0A
+ QJ00kX9NyKljWJEjJhd1obA4h7F9ZynX2GSQGRC5h/SCPsCFNwPxyRU9tLE2TLBOQfxP
+ TaNd/wxCrMEHisbshJaAiHGPx4YJIZ54RXRSvgqrFaPn6yI9EXjX3vXVP/o59XATIseo
+ pnHVXxDZS47ty2Uc3kYO/I3rDNjAja1B7IntJZqq0pZwW3TB2UTK0Vcld9vmKIdLtQKH
+ J8KSKgEJqEfJzoFMX+pYpAijOuKL2ld/ArPNTnxWGJszUG0MLeJJ8tkVjBxbTxkHP8HD
+ jG7g==
+X-Gm-Message-State: AOJu0YyW7Pz6UVxzWcagVIdT2yYdfKJfzdSwS5LF3OpdRin/mfge60sE
+ E4CdSThy7h6lgmW53kLbTHKWlMM3AXd6n+EIJrJYjlPP314NV07EBM8H1MLkKA==
+X-Gm-Gg: AZuq6aLYCcfNUC1rj5JNj0u2C1MbN2VrusEFGKv3WeG2oGmP9igpuT0dkeDNxNBNfs9
+ USw6/3NiKgAGyCGbg9fZ9tbDQac4yzyVOpTEwF+JpGIE7tVjTn0So1SPkdxTW6k2IlRg1o7ke7T
+ fBNhEIugwFAvZixdkU8emKXvCYWG8P//K/Yd2jQ7kxqXsmEUISbcqEAIZyJdwnbJHJyi3/KCWTA
+ x9Jeyin6ZlzhrMR6M4TNJ/XLxQYqNaFAPOCAuhyjBzIf+U8ZiSymHY2ikJ3XFvOApNeXO9mH5b1
+ sdDoeITcXHheH1UYs836nehAVx8rb/XnYhDbc6SUPiglHwhGtMZgPjZIyK+WzobkUomxT//a+sr
+ kHWuyEfOW9I9OTJUDDQE1kIuQFj146AX9qd+2ghg0mgBjJDjlkGmQ1VIsFsDfd46GNoA4Bl3thg
+ 0a573VP2VDLB6xm2Dw5+bSjK7MJ7iyx8fS
+X-Received: by 2002:a05:693c:61d0:b0:2ae:5af4:7d65 with SMTP id
+ 5a478bee46e88-2b78da0f5d1mr2670240eec.31.1769592972159; 
+ Wed, 28 Jan 2026 01:36:12 -0800 (PST)
+Received: from mac.com ([136.24.82.250]) by smtp.gmail.com with ESMTPSA id
+ 5a478bee46e88-2b7a14bb02csm1834864eec.0.2026.01.28.01.36.11
+ (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+ Wed, 28 Jan 2026 01:36:11 -0800 (PST)
+From: scott.k.mitch1@gmail.com
 To: dev@dpdk.org
-Cc: bruce.richardson@intel.com,
- Sandeep Penigalapati <sandeep.penigalapati@intel.com>
-Subject: [PATCH] doc/ixgbe: update ixgbe NIC guide to include E610 support
- information
-Date: Wed, 28 Jan 2026 14:44:16 +0530
-Message-ID: <20260128091416.75683-1-sandeep.penigalapati@intel.com>
-X-Mailer: git-send-email 2.43.0
+Cc: stephen@networkplumber.org,
+	Scott <scott.k.mitch1@gmail.com>
+Subject: [PATCH v2 0/4] af_packet correctness, performance, cksum
+Date: Wed, 28 Jan 2026 01:36:03 -0800
+Message-Id: <20260128093607.62908-1-scott.k.mitch1@gmail.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+In-Reply-To: <20260127181355.98437-1-scott.k.mitch1@gmail.com>
+References: <20260127181355.98437-1-scott.k.mitch1@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -59,30 +78,48 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add Intel Ethernet Controller E610 and related E610-based adapters
-to the list of supported devices in the ixgbe NIC guide to reflect
-current hardware support.
+From: Scott <scott.k.mitch1@gmail.com>
 
-Signed-off-by: Sandeep Penigalapati <sandeep.penigalapati@intel.com>
----
- doc/guides/nics/ixgbe.rst | 4 ++++
- 1 file changed, 4 insertions(+)
+This series fixes critical thread safety bugs in the af_packet PMD
+and adds performance optimizations.
 
-diff --git a/doc/guides/nics/ixgbe.rst b/doc/guides/nics/ixgbe.rst
-index a03ec7a7e8..34e6dd361c 100644
---- a/doc/guides/nics/ixgbe.rst
-+++ b/doc/guides/nics/ixgbe.rst
-@@ -36,6 +36,10 @@ Supported Chipsets and NICs
- - Intel Ethernet Converged Network Adapter X540-T2
- - Intel Ethernet Converged Network Adapter X550-T1
- - Intel Ethernet Converged Network Adapter X550-T2
-+- Intel Ethernet Controller E610
-+- Intel Ethernet Converged Network Adapter E610-XT2
-+- Intel Ethernet Converged Network Adapter E610-XT4
-+- Intel Ethernet Converged Network Adapter E610-IT4
- 
- Vector PMD for IXGBE
- --------------------
--- 
-2.43.0
+Patch 1 fixes two major correctness issues:
+- Thread safety: tp_status was accessed without memory barriers,
+  violating the kernel's PACKET_MMAP protocol. On aarch64 and other
+  weakly-ordered architectures, this causes packet corruption due to
+  missing memory ordering. The fix matches the kernel's memory model:
+  volatile unaligned reads/writes with explicit rte_smp_rmb/wmb
+  barriers and __may_alias__ protection.
+
+- Frame calculations: Fixed incorrect frame overhead and address
+  calculations that caused memory corruption when frames don't evenly
+  divide blocks.
+
+Patches 2-4 add performance improvements:
+- Patch 2: Bulk mbuf freeing, unlikely annotations, and prefetching
+- Patch 3: TX poll control to reduce syscall overhead
+- Patch 4: Software checksum offload support with shared rte_net
+  utility
+
+v2 changes:
+- Patch 1: Rewrote to use volatile + barriers instead of C11 atomics
+  to match kernel's memory model. Added dependency on patch-160274
+  for __rte_may_alias attribute.
+- Patch 4: Refactored to use shared rte_net_ip_udptcp_cksum_mbuf()
+  utility function, eliminating code duplication with tap driver.
+
+Scott Mitchell (4):
+  net/af_packet: fix thread safety and frame calculations
+  net/af_packet: RX/TX unlikely, bulk free, prefetch
+  net/af_packet: tx poll control
+  net/af_packet: software checksum
+
+ doc/guides/nics/af_packet.rst             |   6 +-
+ drivers/net/af_packet/rte_eth_af_packet.c | 257 ++++++++++++++++------
+ drivers/net/tap/rte_eth_tap.c             |  61 +----
+ lib/net/rte_net.h                         |  90 ++++++++
+ 4 files changed, 283 insertions(+), 131 deletions(-)
+
+--
+2.39.5 (Apple Git-154)
 
