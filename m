@@ -2,66 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5F7CD46BF9
-	for <dpdk-dev@archiver.kernel.org>; Wed, 28 Jan 2026 19:47:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B974D46BF9
+	for <dpdk-dev@archiver.kernel.org>; Wed, 28 Jan 2026 19:47:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 32E86409FA;
-	Wed, 28 Jan 2026 20:47:34 +0100 (CET)
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com
- [209.85.221.54]) by mails.dpdk.org (Postfix) with ESMTP id F41D240693
- for <dev@dpdk.org>; Wed, 28 Jan 2026 20:47:30 +0100 (CET)
-Received: by mail-wr1-f54.google.com with SMTP id
- ffacd0b85a97d-430f3ef2d37so192444f8f.3
- for <dev@dpdk.org>; Wed, 28 Jan 2026 11:47:30 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 4787240A70;
+	Wed, 28 Jan 2026 20:47:35 +0100 (CET)
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com
+ [209.85.221.53]) by mails.dpdk.org (Postfix) with ESMTP id 07C684069F
+ for <dev@dpdk.org>; Wed, 28 Jan 2026 20:47:32 +0100 (CET)
+Received: by mail-wr1-f53.google.com with SMTP id
+ ffacd0b85a97d-42fb2314f52so148653f8f.0
+ for <dev@dpdk.org>; Wed, 28 Jan 2026 11:47:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769629650;
- x=1770234450; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769629652;
+ x=1770234452; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=4/3Btw9KcZGUfi1eOgAwgjuczhHgnDlvzG5ZyIqRMAI=;
- b=dGKTGMV80ayIZ2djIpYw/euq/RVtDpXT7vFAsIWi3BkhUkruhJimE/epDhqeDMb72j
- 4qz/sEOKEvFE7Le///khu92xEpWp9c9uZuTn3xY/jXoX7qm56BknMyio0eOVouAMkQUL
- TWPykKb15iaBMK/SYfmh3liysACxSIGXZTobpVvJpMI4wt/+XbwIwOc0syMnMVL2UjaF
- 892MDdWlMkDalVEK7bumaG36NPCqJs88NHf56ZrjF0ttMMKIeyQcsEKgeHc/DFqUWquQ
- udHJQ6jWr9l3cYZxclSXIS2VCOwtIlLLGhXCbkJwip5imxoV0qH4ZKvbv1sV4Z6wXicp
- l2ow==
+ bh=cTcl/t650GnTyT0NhhVMWppsXK1agOlU8l8XLWxMQc8=;
+ b=SulZOKlAUJYxEO6vEqN4PBsJtL07rumn2lFpfRsvo9bvV18xy3ZKs5CmAwXMWrXkd0
+ 3u65sPBj8db1b++ZfBL0+qXR+hhKkZMJ1PQkNi/prbhI9KNmOfqBM9BPoA4Li00/+T88
+ oYJ4mVGT6hWLxksM1EJ1lE35dELv0pCBkyWF1CGo/O5igTjpjh0oJ1f8tsbrN6PUbVNg
+ cZui6JpvZZN+5hl9QkNh04XwQhfaBN6hUnh8Y1nBg+E556JPQjIiHTY/oCrvE6uKvJg0
+ X3BvkqCPjRHbRYxXOJ+tNfQrMjVLK9Wqr8OMO5gMnKNGZ4Fq7hwvj5rznFOdU/eWk4Lv
+ ObIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1769629650; x=1770234450;
+ d=1e100.net; s=20230601; t=1769629652; x=1770234452;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=4/3Btw9KcZGUfi1eOgAwgjuczhHgnDlvzG5ZyIqRMAI=;
- b=cqIxYWEFhaKxdVJOyEgBBf7ax6j41K0jHlW7NCbxWf141GhcAu1FZZoJaM4M8Icv8c
- +ymQmpTZ9Zcy9iATE2lJcc7SkvcB1s3/eNKMR4hIOsCogVenkWw9fTgFUQehLLg/XljS
- JxDkRBtTZAREBkutdxW4d70utNIbL24ZO5DT8OgrR8wmIS/JIIjj+i5iX4r8ns3schcJ
- 13P2/757IVC9f3hWu3eMrPYPIRVCLMKJmpOYcKHqejQ1jgz58Ofq4jUafvmsObXwMsbm
- xLFIbtYfsnTbK7YDPImAyNVzByw3mcJ60hZty0uSBDJ4PwBT4oipXVPIgZopIu3rcYiU
- rPyg==
-X-Gm-Message-State: AOJu0YznyNB4eGmeyo+MeiiQZzmVs6cqOXhOE8/q30CWIgccXZadFN7y
- eP0qxDCB+RBAKNmAsD7UwusCSu8WOpS0gpSwjUXJrAEL0WpdrxMhNZSWOj7VCO9IO2PLTXqQQ3A
- Pqx/h
-X-Gm-Gg: AZuq6aI0BIi8fbeIT/KfvvmOqNw/9Kihf/X09ZVX6POczGQtbO5UaWsW522xN4KegwA
- WITrhlBjkzn9LjIyt4RFchVHQw0nY5CZJcDy+/CmPpkCr2hD/ROENrknqFm8Z0XHa2l4KcTZOWb
- Lc9CVHRKDdjcSPJseY0/B2csDWrE32ckIUFbkdCbaptCg3z88/89pdLMvJuueh50ngPJR3Mp/yk
- +a55hbaLnMXTnidMvNd2UME3Usygq2fekmvNw70agajUkfod387uCl3PBy7YglQ00PzCoESX5LJ
- qJe5A9kdE2JoLxx5gfoS3oLgcR6DJmkukYQZNyKIKYDzXpu9WAXMIETh2sxE+F8cs8gPaHur6Cp
- TmPhBAS/nVRdi9WoGrYqh/fkj4V0WCqUhtm8HP1ptkDUISMzl88pTkGHjwxFUwb3SVrj1uhpyGX
- ZBX1D8h+bi7FeCebseqBXZddT1CUAv7pCAe4enNj6RqlsPdjT5HQ==
-X-Received: by 2002:a05:6000:2084:b0:429:c851:69ab with SMTP id
- ffacd0b85a97d-435dd1d928amr8739573f8f.55.1769629650420; 
- Wed, 28 Jan 2026 11:47:30 -0800 (PST)
+ bh=cTcl/t650GnTyT0NhhVMWppsXK1agOlU8l8XLWxMQc8=;
+ b=Ljdy9eARh9mDmK+T4T3tCQ1RKzk+nJ49Nszg6YgXEwW8Jw3NCX4FE7OUSoW2XmGEMq
+ xiikzEslAI0wHho0kDUuW4T7eWQfRZG6gW169i83NwkKaBzlzv0qp0PV5+0jOgsLZ/Mm
+ 3Qnl0emqJiRZsmk1xFGKwdyej/etuScdRGPm7N5sBngYVc/FjrI+hGyI8J3bXDfpR0io
+ 8IGzHlOaD1E77AO69c3LSzTnAzbwXY+fgTjOB9YgCZ58leqgM5HifdHoAt1nDoK+l3ca
+ o5MYdVl8WMOdb/MXPdtHXYww+DQoFeP1iMRig4ZcYpUrxsL1fr+qosFL6J8DtDx9Xu4A
+ 8vew==
+X-Gm-Message-State: AOJu0YyalTMBWXJYXvHMy7eLdG6I3HmTOp1PoeQvj0ndKwbyMhvrn2Tp
+ Ns2Y/c6eWVU1Eb7PC9DKpBSSsM+bMpd3zOqbasz32cxmUpllZ7oES7KCsjbS0P3oGlhnZ1mN5Nx
+ EVyVs
+X-Gm-Gg: AZuq6aKPdhkRYzHWYZUhKeUE3qefAt8paIC2THu0+zmRAxywPwCz98gcc167gquD/bw
+ IYcI7u4ITW+rHVntoIgbCn6phJdsBbb/sXe3DNTzAMDpaSGmEX+pcPcH4fiZ9KlhEQ74USC3L6D
+ bFfZDuaPEC+yZ3ATrF6XY8RDUlJNTcMybA6T0rgO3mqEkyN7iWfxeg8RRySnhwohPj7j+sJsm62
+ UlDxkNCyM6fOkeQvRizSjGpPRzzqKEnFZQvVoQAbI/2Sp5eputTmMLGjTfsGmRaw/qKYKUMbnDC
+ YFE/3NP3ccBNLox3q/BFPHbNzkKJ0qzBE8bSsuj7Nopyx2Yedy8zSiHioD9PJLRfunm2MGWho6W
+ LqQWsitAOdtWss0jJmbcF1dAG+cf50n6yOx/gBMrWzAiFEWHGDTVrga11N0Pppkq0hR/7ztkDYg
+ J+zybSTlItKY4wGbTF5MWMYbDAbi6CBiayh4b5O843D2P1hKE8+A==
+X-Received: by 2002:a5d:5f43:0:b0:435:8ec5:d27b with SMTP id
+ ffacd0b85a97d-435dd05c937mr10350827f8f.26.1769629652218; 
+ Wed, 28 Jan 2026 11:47:32 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-435e1354205sm9601438f8f.41.2026.01.28.11.47.28
+ ffacd0b85a97d-435e1354205sm9601438f8f.41.2026.01.28.11.47.30
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 28 Jan 2026 11:47:30 -0800 (PST)
+ Wed, 28 Jan 2026 11:47:31 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>, Ori Kam <orika@nvidia.com>
-Subject: [PATCH v2 2/8] doc: correct grammar in flow guide
-Date: Wed, 28 Jan 2026 11:46:01 -0800
-Message-ID: <20260128194722.480862-3-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Cristian Dumitrescu <cristian.dumitrescu@intel.com>
+Subject: [PATCH v2 3/8] doc: correct grammar in QoS framework guide
+Date: Wed, 28 Jan 2026 11:46:02 -0800
+Message-ID: <20260128194722.480862-4-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260128194722.480862-1-stephen@networkplumber.org>
 References: <20260116213100.110419-1-stephen@networkplumber.org>
@@ -81,189 +82,260 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Clarify several sections of the generic flow API documentation
-for better readability and technical accuracy. Fix terminology
-to use consistent DPDK conventions and improve explanations
-of complex concepts like transfer flows, indirect actions,
-and template tables.
+Add missing article "a" in phrase "As result" which should be
+"As a result" in four locations including table cell descriptions.
 
-Changes:
-- Remove duplicate article "an" in phrase "a single an item".
-- Replace "can not" with "cannot" throughout document
-- Clarify that transfer flows use PORT_REPRESENTOR and
-  REPRESENTED_PORT items instead of direction attributes
-- Improve explanation of indirect action persistence behavior
-- Fix grammar in flow isolated mode section
-- Standardize terminology for "ethdev" vs "port ID"
-- Clarify template table specialization description
-- Fix minor punctuation and spacing issues
+Improve readability and correct grammatical issues:
+- Correct missing word "The" in dropper description
+- Add missing article in EWMA filter description
+- Correct run-on sentence in traffic metering section
+- Improve clarity of color aware mode explanation
+- Correct inconsistent hyphenation in "run-time"
+
+Correct various issues in the QoS framework documentation:
+- Correct "an so on" to "and so on"
+- Correct "weights weights" duplicate word
+- Correct duplicate "the" in token bucket operations description
+- Correct "Pipelevel" to "Pipe level" for consistency
+- Correct "out performs" to "outperforms"
+- Correct "They could made" grammar error to "They could be made"
+- Correct inconsistent spacing in section references
+- Update hardcoded section numbers to use proper internal references
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- doc/guides/prog_guide/ethdev/flow_offload.rst | 58 ++++++++++---------
- 1 file changed, 30 insertions(+), 28 deletions(-)
+ .../prog_guide/ethdev/qos_framework.rst       | 59 ++++++++++---------
+ 1 file changed, 30 insertions(+), 29 deletions(-)
 
-diff --git a/doc/guides/prog_guide/ethdev/flow_offload.rst b/doc/guides/prog_guide/ethdev/flow_offload.rst
-index 1cd904e1ee..d5cca86c82 100644
---- a/doc/guides/prog_guide/ethdev/flow_offload.rst
-+++ b/doc/guides/prog_guide/ethdev/flow_offload.rst
-@@ -109,7 +109,7 @@ However, ``rte_eth_dev_configure()`` may fail if any rules remain,
- so the application must flush them before attempting a reconfiguration.
- Keeping may be unsupported for some types of rule items and actions,
- as well as depending on the value of flow attributes transfer bit.
--A combination of a single an item or action type
-+A combination of a single item or action type
- and a value of the transfer bit is called a rule feature.
- For example: a COUNT action with the transfer bit set.
- To test if rules with a particular feature are kept, the application must try
-@@ -198,15 +198,15 @@ Attribute: Transfer
- ^^^^^^^^^^^^^^^^^^^
+diff --git a/doc/guides/prog_guide/ethdev/qos_framework.rst b/doc/guides/prog_guide/ethdev/qos_framework.rst
+index 1144037dfa..0f61264ccc 100644
+--- a/doc/guides/prog_guide/ethdev/qos_framework.rst
++++ b/doc/guides/prog_guide/ethdev/qos_framework.rst
+@@ -189,7 +189,7 @@ The functionality of each hierarchical level is detailed in the following table.
+    |   |                    |                            |     called Best Effort (BE), has 4 queues.                    |
+    |   |                    |                            |                                                               |
+    |   |                    |                            | #.  Queues of the lowest priority TC (BE) are serviced using  |
+-   |   |                    |                            |     Weighted Round Robin (WRR) according to predefined weights|
++   |   |                    |                            |     Weighted Round Robin (WRR) according to predefined        |
+    |   |                    |                            |     weights.                                                  |
+    |   |                    |                            |                                                               |
+    +---+--------------------+----------------------------+---------------------------------------------------------------+
+@@ -368,7 +368,7 @@ The expected drop in performance is due to:
  
- Instead of simply matching the properties of traffic as it would appear on a
--given DPDK port ID, enabling this attribute transfers a flow rule to the
-+given ethdev, enabling this attribute transfers a flow rule to the
- lowest possible level of any device endpoints found in the pattern.
+ #.  Need to make the queue and bitmap operations thread safe,
+     which requires either using locking primitives for access serialization (for example, spinlocks/ semaphores) or
+-    using atomic primitives for lockless access (for example, Test and Set, Compare And Swap, an so on).
++    using atomic primitives for lockless access (for example, Test and Set, Compare And Swap, and so on).
+     The impact is much higher in the former case.
  
- When supported, this effectively enables an application to reroute traffic
- not necessarily intended for it (e.g. coming from or addressed to different
- physical ports, VFs or applications) at the device level.
+ #.  Ping-pong of cache lines storing the shared data structures between the cache hierarchies of the two cores
+@@ -621,7 +621,7 @@ The token bucket generic parameters and operations are presented in :numref:`tab
+    |   |                        | while the bucket is full are dropped.                                        |
+    |   |                        |                                                                              |
+    +---+------------------------+------------------------------------------------------------------------------+
+-   | 3 | Credit consumption     | As result of packet scheduling, the necessary number of credits is removed   |
++   | 3 | Credit consumption     | As a result of packet scheduling, the necessary number of credits is removed |
+    |   |                        | from the bucket. The packet can only be sent if enough credits are in the    |
+    |   |                        | bucket to send the full packet (packet bytes and framing overhead for the    |
+    |   |                        | packet).                                                                     |
+@@ -681,7 +681,7 @@ where, r = port line rate (in bytes per second).
+    +---+-------------------------+-----------------------------------------------------------------------------+
+    | 2 | Credit update           | Credit update options:                                                      |
+    |   |                         |                                                                             |
+-   |   |                         | *   Every time a packet is sent for a port, update the credits of all the   |
++   |   |                         | *   Every time a packet is sent for a port, update the credits of all       |
+    |   |                         |     the subports and pipes of that port. Not feasible.                      |
+    |   |                         |                                                                             |
+    |   |                         | *   Every time a packet is sent, update the credits for the pipe and        |
+@@ -716,7 +716,7 @@ where, r = port line rate (in bytes per second).
+    |   |                         | *   tb_time += n_periods * tb_period;                                       |
+    |   |                         |                                                                             |
+    +---+-------------------------+-----------------------------------------------------------------------------+
+-   | 3 | Credit consumption      | As result of packet scheduling, the necessary number of credits is removed  |
++   | 3 | Credit consumption      | As a result of packet scheduling, the necessary number of credits is removed|
+    |   |  (on packet scheduling) | from the bucket. The packet can only be sent if enough credits are in the   |
+    |   |                         | bucket to send the full packet (packet bytes and framing overhead for the   |
+    |   |                         | packet).                                                                    |
+@@ -805,7 +805,7 @@ as described in :numref:`table_qos_10` and :numref:`table_qos_11`.
+    |   |                          | }                                                                          |
+    |   |                          |                                                                            |
+    +---+--------------------------+----------------------------------------------------------------------------+
+-   | 3 | Credit consumption       | As result of packet scheduling, the TC limit is decreased with the         |
++   | 3 | Credit consumption       | As a result of packet scheduling, the TC limit is decreased with the       |
+    |   | (on packet scheduling)   | necessary number of credits. The packet can only be sent if enough credits |
+    |   |                          | are currently available in the TC limit to send the full packet            |
+    |   |                          | (packet bytes and framing overhead for the packet).                        |
+@@ -1042,7 +1042,7 @@ The highest value for the watermark is picked as the highest rate configured for
+    |     |                                 |                                                    |
+    |     |                                 | }                                                  |
+    |     |                                 |                                                    |
+-   |     |                                 | **Pipelevel:**                                     |
++   |     |                                 | **Pipe level:**                                    |
+    |     |                                 |                                                    |
+    |     |                                 | if(pipe_period_id != subport_period_id)            |
+    |     |                                 |                                                    |
+@@ -1163,7 +1163,7 @@ Droppers
  
--In "transfer" flows, the use of `Attribute: Traffic direction`_ in not allowed.
--One may use `Item: PORT_REPRESENTOR`_ and `Item: REPRESENTED_PORT`_ instead.
-+In "transfer" flows, the use of `Attribute: Traffic direction`_ is not allowed.
-+Use `Item: PORT_REPRESENTOR`_ and `Item: REPRESENTED_PORT`_ instead.
+ The purpose of the DPDK dropper is to drop packets arriving at a packet scheduler to avoid congestion.
+ The dropper supports the Proportional Integral Controller Enhanced (PIE), Random Early Detection (RED),
+-Weighted Random Early Detection (WRED) and tail drop algorithms.
++Weighted Random Early Detection (WRED), and tail drop algorithms.
+ :numref:`figure_blk_diag_dropper` illustrates how the dropper integrates with the scheduler.
+ The DPDK currently does not support congestion management
+ so the dropper provides the only method for congestion avoidance.
+@@ -1175,7 +1175,7 @@ so the dropper provides the only method for congestion avoidance.
+    High-level Block Diagram of the DPDK Dropper
  
- Pattern item
- ~~~~~~~~~~~~
-@@ -535,11 +535,11 @@ Item: ``PORT_ID``
- ^^^^^^^^^^^^^^^^^
  
- This item is deprecated. Consider:
-- - `Item: PORT_REPRESENTOR`_
-- - `Item: REPRESENTED_PORT`_
+-The dropper uses one of two congestion avoidance algorithms:
++The dropper uses one of the following congestion avoidance algorithms:
+    - the Random Early Detection (RED) as documented in the reference publication.
+    - the Proportional Integral Controller Enhanced (PIE) as documented in RFC8033 publication.
  
--Matches traffic originating from (ingress) or going to (egress) a given DPDK
--port ID.
-+- `Item: PORT_REPRESENTOR`_
-+- `Item: REPRESENTED_PORT`_
-+
-+Matches traffic originating from (ingress) or going to (egress) a given ethdev.
+@@ -1196,7 +1196,7 @@ In the case of severe congestion, the dropper resorts to tail drop.
+ This occurs when a packet queue has reached maximum capacity and cannot store any more packets.
+ In this situation, all arriving packets are dropped.
  
- Normally only supported if the port ID in question is known by the
- underlying PMD and related to the device the flow rule is created against.
-@@ -566,7 +566,7 @@ Item: ``MARK``
- Matches an arbitrary integer value which was set using the ``MARK`` action in
- a previously matched rule.
+-The flow through the dropper is illustrated in :numref:`figure_flow_tru_dropper`.
++The flow through the dropper is illustrated in :numref:`figure_flow_tru_dropper`,
+ The RED/WRED/PIE algorithm is exercised first and tail drop second.
  
--This item can only specified once as a match criteria as the ``MARK`` action can
-+This item can only be specified once as a match criteria as the ``MARK`` action can
- only be specified once in a flow action.
+ .. _figure_flow_tru_dropper:
+@@ -1205,7 +1205,7 @@ The RED/WRED/PIE algorithm is exercised first and tail drop second.
  
- Note the value of MARK field is arbitrary and application defined.
-@@ -2058,11 +2058,11 @@ Action: ``PF``
- ^^^^^^^^^^^^^^
+    Flow Through the Dropper
  
- This action is deprecated. Consider:
-- - `Action: PORT_REPRESENTOR`_
-- - `Action: REPRESENTED_PORT`_
+-The PIE algorithm periodically updates the drop probability based on the latency samples.
++The PIE algorithm periodically updates the drop probability based on latency samples.
+ The current latency sample but also analyze whether the latency is trending up or down.
+ This is the classical Proportional Integral (PI) controller method, which is known for
+ eliminating steady state errors.
+@@ -1226,7 +1226,7 @@ The use cases supported by the dropper are:
  
--Directs matching traffic to the physical function (PF) of the current
--device.
-+- `Action: PORT_REPRESENTOR`_
-+- `Action: REPRESENTED_PORT`_
-+
-+Directs matching traffic to the physical function (PF) of the current device.
+ *   *    Mark empty (record the time at which a packet queue becomes empty)
  
- - No configurable properties.
+-The configuration use case is explained in :ref:`Section2.23.3.1 <Configuration>`,
++The configuration use case is explained in :ref:`Section 2.23.3.1 <Configuration>`,
+ the enqueue operation is explained in  :ref:`Section 2.23.3.2 <Enqueue_Operation>`
+ and the mark empty operation is explained in :ref:`Section 2.23.3.3 <Queue_Empty_Operation>`.
  
-@@ -2080,8 +2080,9 @@ Action: ``VF``
- ^^^^^^^^^^^^^^
+@@ -1262,7 +1262,7 @@ The meaning of these parameters is explained in more detail in the following sec
+ The format of these parameters as specified to the dropper module API
+ corresponds to the format used by Cisco* in their RED implementation.
+ The minimum and maximum threshold parameters are specified to the dropper module in terms of number of packets.
+-The mark probability parameter is specified as an inverse value, for example,
++The mark probability parameter is specified as an inverse value; for example,
+ an inverse mark probability parameter value of 10 corresponds
+ to a mark probability of 1/10 (that is, 1 in 10 packets will be dropped).
+ The EWMA filter weight parameter is specified as an inverse log value,
+@@ -1278,7 +1278,7 @@ A PIE configuration contains the parameters given in :numref:`table_qos_16a`.
+    | Parameter                | Minimum | Maximum | Default          |
+    |                          |         |         |                  |
+    +==========================+=========+=========+==================+
+-   | Queue delay reference    | 1       | uint16  | 15               |
++   | Queue delay reference    | 1       | uint16_t| 15               |
+    | Latency Target Value     |         |         |                  |
+    | Unit: ms                 |         |         |                  |
+    +--------------------------+---------+---------+------------------+
+@@ -1286,7 +1286,7 @@ A PIE configuration contains the parameters given in :numref:`table_qos_16a`.
+    | Unit: ms                 |         |         |                  |
+    +--------------------------+---------+---------+------------------+
+    | Tail Drop Threshold      | 1       | uint16  | 64               |
+-   | Unit: bytes              |         |         |                  |
++   | Unit: number of packets  |         |         |                  |
+    +--------------------------+---------+---------+------------------+
+    | Period to calculate      | 1       | uint16  | 15               |
+    | drop probability         |         |         |                  |
+@@ -1294,8 +1294,9 @@ A PIE configuration contains the parameters given in :numref:`table_qos_16a`.
+    +--------------------------+---------+---------+------------------+
  
- This action is deprecated. Consider:
-- - `Action: PORT_REPRESENTOR`_
-- - `Action: REPRESENTED_PORT`_
-+
-+- `Action: PORT_REPRESENTOR`_
-+- `Action: REPRESENTED_PORT`_
+ The meaning of these parameters is explained in more detail in the next sections.
+-The format of these parameters as specified to the dropper module API.
+-They could made self calculated for fine tuning, within the apps.
++The format of these parameters is specified to the dropper module API
++and can be fine-tuned within applications.
++They could be made self-calculated for fine tuning within the apps.
  
- Directs matching traffic to a given virtual function of the current device.
+ .. _Enqueue_Operation:
  
-@@ -2105,8 +2106,9 @@ rule or if packets are not addressed to a VF in the first place.
- Action: ``PORT_ID``
- ^^^^^^^^^^^^^^^^^^^
- This action is deprecated. Consider:
-- - `Action: PORT_REPRESENTOR`_
-- - `Action: REPRESENTED_PORT`_
-+
-+- `Action: PORT_REPRESENTOR`_
-+- `Action: REPRESENTED_PORT`_
+@@ -1316,7 +1317,7 @@ decision is the output value and the remaining values are configuration paramete
+ EWMA Filter Microblock
+ ^^^^^^^^^^^^^^^^^^^^^^
  
- Directs matching traffic to a given DPDK port ID.
+-The purpose of the EWMA Filter microblock is to filter queue size values to smooth out transient changes
++The purpose of the EWMA filter microblock is to filter queue size values to smooth out transient changes
+ that result from "bursty" traffic.
+ The output value is the average queue size which gives a more stable view of the current congestion level in the queue.
  
-@@ -2336,8 +2338,8 @@ VXLAN tunnel as defined in the``rte_flow_action_vxlan_encap`` flow items
- definition.
+@@ -1426,7 +1427,7 @@ These approaches include:
  
- This action modifies the payload of matched flows. The flow definition specified
--in the ``rte_flow_action_tunnel_encap`` action structure must define a valid
--VLXAN network overlay which conforms with RFC 7348 (Virtual eXtensible Local
-+in the ``rte_flow_action_vxlan_encap`` action structure must define a valid
-+VXLAN network overlay which conforms with RFC 7348 (Virtual eXtensible Local
- Area Network (VXLAN): A Framework for Overlaying Virtualized Layer 2 Networks
- over Layer 3 Networks). The pattern must be terminated with the
- RTE_FLOW_ITEM_TYPE_END item type.
-@@ -2391,7 +2393,7 @@ NVGRE tunnel as defined in the``rte_flow_action_tunnel_encap`` flow item
- definition.
+ *   Large look-up table (76 KB)
  
- This action modifies the payload of matched flows. The flow definition specified
--in the ``rte_flow_action_tunnel_encap`` action structure must defined a valid
-+in the ``rte_flow_action_tunnel_encap`` action structure must define a valid
- NVGRE network overlay which conforms with RFC 7637 (NVGRE: Network
- Virtualization Using Generic Routing Encapsulation). The pattern must be
- terminated with the RTE_FLOW_ITEM_TYPE_END item type.
-@@ -2967,10 +2969,10 @@ The indirect action specified data (e.g. counter) can be queried by
-    The following description of indirect action persistence
-    is an experimental behavior that may change without a prior notice.
+-The method that was finally selected (described above in Section 26.3.2.2.1) out performs all of these approaches
++The method that was finally selected (described above in Section 26.3.2.2.1) outperforms all of these approaches
+ in terms of run-time performance and memory requirements and
+ also achieves accuracy comparable to floating-point evaluation.
+ :numref:`table_qos_17` lists the performance of each of these alternative approaches relative to the method that is used in the dropper.
+@@ -1700,7 +1701,7 @@ The arguments passed to the enqueue API are configuration data, run-time data,
+ the current size of the packet queue (in packets) and a value representing the current time.
+ The time reference is in units of bytes,
+ where a byte signifies the time duration required by the physical interface to send out a byte on the transmission medium
+-(see Section 26.2.4.5.1 "Internal Time Reference" ).
++(see `Internal Time Reference`_).
+ The dropper reuses the scheduler time stamps for performance reasons.
  
--If ``RTE_ETH_DEV_CAPA_FLOW_SHARED_OBJECT_KEEP`` is not advertised,
--indirect actions cannot be created until the device is started for the first time
--and cannot be kept when the device is stopped.
--However, PMD also does not flush them automatically on stop,
-+If the ``RTE_ETH_DEV_CAPA_FLOW_SHARED_OBJECT_KEEP`` capability is not advertised,
-+indirect actions cannot be created until the device starts for the first time
-+and are not kept when the device is stopped.
-+However, the PMD also does not flush them automatically on stop,
- so the application must call ``rte_flow_action_handle_destroy()``
- before stopping the device to ensure no indirect actions remain.
+ Empty API
+@@ -1720,7 +1721,7 @@ Traffic Metering
+ The traffic metering component implements the Single Rate Three Color Marker (srTCM) and
+ Two Rate Three Color Marker (trTCM) algorithms, as defined by IETF RFC 2697 and 2698 respectively.
+ These algorithms meter the stream of incoming packets based on the allowance defined in advance for each traffic flow.
+-As result, each incoming packet is tagged as green,
++As a result, each incoming packet is tagged as green,
+ yellow or red based on the monitored consumption of the flow the packet belongs to.
  
-@@ -3010,7 +3012,7 @@ Indirect API creates a shared flow action with unique action handle.
- Flow rules can access the shared flow action and resources related to
- that action through the indirect action handle.
- In addition, the API allows to update existing shared flow action configuration.
--After the update completes, new action configuration
-+After the update completes, the new action configuration
- is available to all flows that reference that shared action.
+ Functional Overview
+@@ -1739,12 +1740,12 @@ with the two buckets sharing the same token update rate:
+ The trTCM algorithm defines two token buckets for each traffic flow,
+ with the two buckets being updated with tokens at independent rates:
  
- Indirect actions list expands the indirect action API:
-@@ -3020,7 +3022,7 @@ Indirect actions list expands the indirect action API:
-   single action only.
-   Input flow actions arranged in END terminated list.
+-*   Committed (C) bucket: fed with tokens at the rate defined by the Committed Information Rate (CIR) parameter
++*   Committed (C) bucket: fed with tokens at the rate defined by Committed Information Rate (CIR) parameter
+     (measured in bytes of IP packet per second).
+     The size of the C bucket is defined by the Committed Burst Size (CBS) parameter (measured in bytes);
  
--- Flow rule can provide rule specific configuration parameters to
-+- Flow rules can provide rule-specific configuration parameters to
-   existing shared handle.
-   Updates of flow rule specific configuration will not change the base
-   action configuration.
-@@ -3834,8 +3836,8 @@ Group Miss Actions
- ~~~~~~~~~~~~~~~~~~
+-*   Peak (P) bucket: fed with tokens at the rate defined by the Peak Information Rate (PIR) parameter
+-    (measured in IP packet bytes per second).
++*   Peak (P) bucket: fed with tokens at the rate defined by Peak Information Rate (PIR) parameter
++    (measured in bytes of IP packet per second).
+     The size of the P bucket is defined by the Peak Burst Size (PBS) parameter (measured in bytes).
  
- In an application, many flow rules share common group attributes, meaning they can be grouped and
--classified together. A user can explicitly specify a set of actions performed on a packet when it
--did not match any flows rules in a group using the following API:
-+classified together. A user can explicitly specify a set of actions performed on a packet when
-+it did not match any flow rules in a group using the following API:
+ Please refer to RFC 2697 (for srTCM) and RFC 2698 (for trTCM) for details on how tokens are consumed
+@@ -1755,7 +1756,7 @@ Color Blind and Color Aware Modes
  
- .. code-block:: c
+ For both algorithms, the color blind mode is functionally equivalent to the color aware mode with input color set as green.
+ For color aware mode, a packet with red input color can only get the red output color,
+-while a packet with yellow input color can only get the yellow or red output colors.
++while a packet with yellow input color can only get yellow or red output colors.
  
+ The reason why the color blind mode is still implemented distinctly than the color aware mode is
+ that color blind mode can be implemented with fewer operations than the color aware mode.
+@@ -1766,12 +1767,12 @@ Implementation Overview
+ For each input packet, the steps for the srTCM / trTCM algorithms are:
+ 
+ *   Update the C and E / P token buckets. This is done by reading the current time (from the CPU timestamp counter),
+-    identifying the amount of time since the last bucket update and computing the associated number of tokens
+-    (according to the pre-configured bucket rate).
++    identifying the amount of time since the last bucket update, and computing the associated number of tokens
++    according to the pre-configured bucket rate.
+     The number of tokens in the bucket is limited by the pre-configured bucket size;
+ 
+ *   Identify the output color for the current packet based on the size of the IP packet
+-    and the amount of tokens currently available in the C and E / P buckets; for color aware mode only,
++    and the amount of tokens currently available in the C and E / P buckets. For color aware mode only,
+     the input color of the packet is also considered.
+     When the output color is not red, a number of tokens equal to the length of the IP packet are
+-    subtracted from the C or E /P or both buckets, depending on the algorithm and the output color of the packet.
++    subtracted from the C or E / P or both buckets, depending on the algorithm and the output color of the packet.
 -- 
 2.51.0
 
