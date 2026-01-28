@@ -2,75 +2,80 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23BC1D25B44
-	for <dpdk-dev@archiver.kernel.org>; Wed, 28 Jan 2026 12:00:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08D57D25B44
+	for <dpdk-dev@archiver.kernel.org>; Wed, 28 Jan 2026 12:00:20 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 63BDB40274;
-	Wed, 28 Jan 2026 13:00:15 +0100 (CET)
-Received: from fout-a1-smtp.messagingengine.com
- (fout-a1-smtp.messagingengine.com [103.168.172.144])
- by mails.dpdk.org (Postfix) with ESMTP id 05CDB400D7
- for <dev@dpdk.org>; Wed, 28 Jan 2026 13:00:14 +0100 (CET)
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
- by mailfout.phl.internal (Postfix) with ESMTP id 8CEA5EC0148;
- Wed, 28 Jan 2026 07:00:13 -0500 (EST)
+	by mails.dpdk.org (Postfix) with ESMTP id 4914740655;
+	Wed, 28 Jan 2026 13:00:20 +0100 (CET)
+Received: from fhigh-a7-smtp.messagingengine.com
+ (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
+ by mails.dpdk.org (Postfix) with ESMTP id B6E3B40653
+ for <dev@dpdk.org>; Wed, 28 Jan 2026 13:00:18 +0100 (CET)
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id 4255D140015A;
+ Wed, 28 Jan 2026 07:00:18 -0500 (EST)
 Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-01.internal (MEProxy); Wed, 28 Jan 2026 07:00:13 -0500
+ by phl-compute-05.internal (MEProxy); Wed, 28 Jan 2026 07:00:18 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:date:date:from:from
  :in-reply-to:in-reply-to:message-id:mime-version:references
- :reply-to:subject:subject:to:to; s=fm3; t=1769601613; x=
- 1769688013; bh=Oo9WRQ6Ie+wX5tB5vQ4qbvzma1eg/z4ExVxHDi/ghZY=; b=c
- SCp6tAZ6ooYcgXKNprOiYB2dR5SHsoBdcE9tCPkvZnOF8cBpa5C9fsO3ORL7i3+C
- 1HUtH5//2K5C8JxMJGFRoLYilnYbrdjV2gTqhd3t2dAokjiByS/ZOCjQvKYabcSx
- p9u0xJD9RPxEyf1Z6N6Z9gGXwJ4epvfbexVeWs54usP0w1Ca18umHHJji+mp1xHh
- luEU8rC7wZGyzGzrv+N5uIwd50vkEHQHfbHWMqYmOX4AEeRkllq8Fko0flY2QqkC
- mN9oqKLaYkWbQYmj/xW6McqzPdBJHzk7bFZ+D6TVb1gzM/gx9hkEDhx6qvXeXaFS
- YM3O46DmXafQ58AjRWe1g==
+ :reply-to:subject:subject:to:to; s=fm3; t=1769601618; x=
+ 1769688018; bh=hvQWB0LyEHHVct/x79L55HRQSfgVuAj5VRdQyLNuP7M=; b=h
+ rBpa4aL7nkELJZbSp+CTyBhUI0D/c4GyeN+Mr32gafazMqAqpIpZ1Y71XHb+h1z8
+ 7sd2ysSmsZJharJ8B3xVrWy7NUu/yxkYyOJO//TgHg5NosonC8EEEtLEJSlFZXP5
+ gxDTDIwhOq2c/qt+Mjm2X8p8Yr0Dqq6pgv/s/1/jnjbLU31qECFIy+khCm3XtR0s
+ 9NEw7sPiKwPIzH42BiXt4aJ+d6JxM9bCZTVT429puJvl+RPMzHHDXkNknW7R2rT2
+ EXkhP064vNnp3KwLPOFddeNJwa/h1Trfgp1HhzLo8u3zWsUCFYppq9OZ2zvTa+YK
+ POBQAlA4xK2KxmcLYHI4Q==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:date:date:feedback-id:feedback-id:from:from
  :in-reply-to:in-reply-to:message-id:mime-version:references
  :reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
- :x-me-sender:x-sasl-enc; s=fm3; t=1769601613; x=1769688013; bh=O
- o9WRQ6Ie+wX5tB5vQ4qbvzma1eg/z4ExVxHDi/ghZY=; b=KWXYkdaAM/Mq7ixVs
- AoLJT7MpXLRmqrgF+9dwfkW4L2KGXnAs5A8KwVQsktyHyLxabrqFQLm9sMdzqXme
- 45PyLHvnsZqmN2Gc0TO3Z0h0qzNgeiFxVM9w9dL85HL/q4N6ruxkRu7T1GOCMPOl
- bDHUh8vJz7pHE/jVKKllE4cyFnRrG9USZGWb76ombJAaFOJAoU/udtlQmWA1SMvw
- hTg8G31YSz6pnqh0JSEgk+KlN65Huhbl+DjjoxlF/MuoCWCc2sJzr8XmAYHIpKZ5
- /bdIGZr9hx4RZQfmsc2hcvCWsQq++4uiqnXtn2XnFPAt1/di4/vYJoplclCH+Mih
- MRbnw==
-X-ME-Sender: <xms:Tfp5aU5WUYghltS3R_wc5t7p1ckbigUhOSJZ3YjpO5r21xoeVGlPlg>
- <xme:Tfp5aSPAvhNCYj0jLc8_p4ozyW6pLP8k3h-KfWC9jQ_qhyLJNq9RdUyT0LIvGsAki
- -S7_1xkyv6OO78JuwDzqY-NE_5XqL_cmGQLVGn-M-RrTC7AeusEiA>
-X-ME-Received: <xmr:Tfp5aWNKGlKId4O8PfvlfyCWh9zyeE1esX-FkAGVVpgsKWXHpOJrfaBbCRuaYZOJ1EPtSqeZ6sVplEdObVDc9PCsJls7NYg>
+ :x-me-sender:x-sasl-enc; s=fm3; t=1769601618; x=1769688018; bh=h
+ vQWB0LyEHHVct/x79L55HRQSfgVuAj5VRdQyLNuP7M=; b=PIu6rLcXpzSdlDk4u
+ Ff7cZNMHeHmpGoJomKtAXHtOSbuRCiK1Y+j+y1OIPzkELfxPXjqmrI50XaCdXJTj
+ jkyQ9KKoKu++IiVIH1NQRzAKF/AjfV3IskGICT0aHNTBxg/++kW7+eQ6tysHxtwd
+ Uo8nUlkeoH0jSM6gDHWPYi1/8rtLkuWDNxIbOCgneaBtfKYUcQrmHHXkOUIGGE5p
+ YXKuqlqdjwEZnoKFN31UroPqggmNfgEH5cbSgwS1lOjLGiV6PF1zii6QprcWZag9
+ 1ljR9qF+5ibmVqUahw3qCQ8DimsFTvOtDj7siQBlterfglJnxl66UMR73jDU4lNO
+ QrMvw==
+X-ME-Sender: <xms:Uvp5aayFB6ZTkMLp3iplzawAdmZrM9rk8pZ_4ZxNEkEIIhU84ynX2A>
+ <xme:Uvp5aRvAciSlbPaAntwL4lJxyAGQkuojpZSN8is53XlDmqIVpHRXOq4m66-q6b1Cf
+ ySAtmIJDVeE4F5NOcAznL4aFSxFsF8gLakoEkLXFk-G5q1i1cX9nw>
+X-ME-Received: <xmr:Uvp5af0gQ6iblUlWZCI53v5jWNcl_KPIJ2pbHoznvsvHVJSo5sjvRLghEOaBqVYglo8-2DbNcDKmPcd--BG85sohZ0hfwKk>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdduieeffeduucetufdoteggodetrf
  dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
- rghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkffojghfggfgsedtkeertd
- ertddtnecuhfhrohhmpefvhhhomhgrshcuofhonhhjrghlohhnuceothhhohhmrghssehm
- ohhnjhgrlhhonhdrnhgvtheqnecuggftrfgrthhtvghrnhepvdejhfdugeehvddtieejie
- egteeuudfgjeeukeeiledthfetveekhefhieelhfdtnecuvehluhhsthgvrhfuihiivgep
- tdenucfrrghrrghmpehmrghilhhfrhhomhepthhhohhmrghssehmohhnjhgrlhhonhdrnh
- gvthdpnhgspghrtghpthhtohepvddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohep
- uggvvhesughpughkrdhorhhgpdhrtghpthhtohepuggrvhhiugdrmhgrrhgthhgrnhguse
- hrvgguhhgrthdrtghomh
-X-ME-Proxy: <xmx:Tfp5aa893tm3MtPWpKochPXYyVEXyTdbgT-sLORLWT5PLIyJegUvbQ>
- <xmx:Tfp5aa5zqELatNz9WzvBNQgkXjTdILdAea7LwXp83E1-uJk8zuHy4Q>
- <xmx:Tfp5aR3e6WmcRC6VwpaYqiKKo3SsVP_c0AfLsp4eJ9T2gBio2ub0GQ>
- <xmx:Tfp5aRAepAgkkTWUGBYhuXWjeJUMeQIh9CFEKfl3qvzZeOilDps44Q>
- <xmx:Tfp5aTuo8zAy6noMko9cIS2QU4-2W9pmiRZvVxUOW6PcIXUjOdwWwPEC>
+ rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+ gurhephffvvefufffkofgjfhgggfestdekredtredttdenucfhrhhomhepvfhhohhmrghs
+ ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
+ frrghtthgvrhhnpedvjefhudeghedvtdeijeeigeetuedugfejueekieeltdfhteevkeeh
+ hfeilefhtdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeehpdhm
+ ohguvgepshhmthhpohhuthdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtph
+ htthhopegurghvihgurdhmrghrtghhrghnugesrhgvughhrghtrdgtohhmpdhrtghpthht
+ oheprghnrghtohhlhidrsghurhgrkhhovhesihhnthgvlhdrtghomhdprhgtphhtthhope
+ gthhgvnhgsohigsehnvhhiughirgdrtghomhdprhgtphhtthhopehnihhpuhhnrdhguhhp
+ thgrsegrmhgurdgtohhm
+X-ME-Proxy: <xmx:Uvp5aU9Aod51NQDdnghUOmmWco2JOB_ckTP0-U3XSpfg-jJ-TjpU-g>
+ <xmx:Uvp5aYPuVRgwnaTxozpkSwwvC26jjH_EI58O6k276yFTjg_IVcssDA>
+ <xmx:Uvp5aQdqRZH-yiKBQc-46S7SvWJhRT8EhZ3jqSUdJgewuSyBOO_1Cw>
+ <xmx:Uvp5afUrWj36bRLdhuR8ceavSLDxeD_PkC4a5KbO2Cq0sc94y7q_PA>
+ <xmx:Uvp5aekt5oZ6hlH3SC7cvr06_fBRwwRVdwHhS7k9rjml47fYXC0Vysxu>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 28 Jan 2026 07:00:12 -0500 (EST)
+ 28 Jan 2026 07:00:17 -0500 (EST)
 From: Thomas Monjalon <thomas@monjalon.net>
 To: dev@dpdk.org
-Cc: david.marchand@redhat.com
-Subject: [PATCH v4 0/4] more build tests
-Date: Wed, 28 Jan 2026 12:58:29 +0100
-Message-ID: <20260128120005.2777473-1-thomas@monjalon.net>
+Cc: david.marchand@redhat.com, Anatoly Burakov <anatoly.burakov@intel.com>,
+ Chenbo Xia <chenbox@nvidia.com>, Nipun Gupta <nipun.gupta@amd.com>
+Subject: [PATCH v4 1/4] bus/pci: fix unmap on failure in multi-process
+Date: Wed, 28 Jan 2026 12:58:30 +0100
+Message-ID: <20260128120005.2777473-2-thomas@monjalon.net>
 X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20210412215339.2439530-1-thomas@monjalon.net>
+In-Reply-To: <20260128120005.2777473-1-thomas@monjalon.net>
 References: <20210412215339.2439530-1-thomas@monjalon.net>
+ <20260128120005.2777473-1-thomas@monjalon.net>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -86,24 +91,42 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-While testing more build types, some errors occur.
+This error is seen in build of type "minsize":
 
-v4: fix new warnings with minsize
-v3: fix minsize build with GCC
-v2: fix init of var buildtype
+In function 'pci_vfio_map_resource_secondary':
+drivers/bus/pci/linux/pci_vfio.c:1005:28: error:
+'maps' may be used uninitialized [-Werror=maybe-uninitialized]
+ 1005 |                 if (maps[j].addr)
 
-Thomas Monjalon (4):
-  bus/pci: fix unmap on failure in multi-process
-  argparse: fix minsize build
-  mldev: fix minsize build
-  devtools: test different build types
+On failure before assigning maps, it was trying to unmap.
+The fix is changing the goto destination after unmapping.
 
- devtools/test-meson-builds.sh    | 6 ++++--
+Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
+---
  drivers/bus/pci/linux/pci_vfio.c | 3 ++-
- lib/argparse/rte_argparse.c      | 2 +-
- lib/mldev/rte_mldev.c            | 2 +-
- 4 files changed, 8 insertions(+), 5 deletions(-)
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/bus/pci/linux/pci_vfio.c b/drivers/bus/pci/linux/pci_vfio.c
+index 242f567ed7..bc5c5c2499 100644
+--- a/drivers/bus/pci/linux/pci_vfio.c
++++ b/drivers/bus/pci/linux/pci_vfio.c
+@@ -968,7 +968,7 @@ pci_vfio_map_resource_secondary(struct rte_pci_device *dev)
+ 
+ 	ret = pci_vfio_fill_regions(dev, vfio_dev_fd, &device_info);
+ 	if (ret)
+-		goto err_vfio_dev_fd;
++		goto err_vfio_dev;
+ 
+ 	/* map BARs */
+ 	maps = vfio_res->maps;
+@@ -1005,6 +1005,7 @@ pci_vfio_map_resource_secondary(struct rte_pci_device *dev)
+ 		if (maps[j].addr)
+ 			pci_unmap_resource(maps[j].addr, maps[j].size);
+ 	}
++err_vfio_dev:
+ 	rte_vfio_release_device(rte_pci_get_sysfs_path(),
+ 			pci_addr, vfio_dev_fd);
+ 	return -1;
 -- 
 2.52.0
 
