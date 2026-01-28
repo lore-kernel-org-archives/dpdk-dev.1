@@ -2,73 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9FB3D46BEB
-	for <dpdk-dev@archiver.kernel.org>; Wed, 28 Jan 2026 18:06:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24A6DD46BEB
+	for <dpdk-dev@archiver.kernel.org>; Wed, 28 Jan 2026 18:10:13 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0F16940673;
-	Wed, 28 Jan 2026 19:06:46 +0100 (CET)
-Received: from mail-dl1-f41.google.com (mail-dl1-f41.google.com [74.125.82.41])
- by mails.dpdk.org (Postfix) with ESMTP id 97AEA40661
- for <dev@dpdk.org>; Wed, 28 Jan 2026 19:06:44 +0100 (CET)
-Received: by mail-dl1-f41.google.com with SMTP id
- a92af1059eb24-124a635476fso85946c88.0
- for <dev@dpdk.org>; Wed, 28 Jan 2026 10:06:44 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 4388F4026F;
+	Wed, 28 Jan 2026 19:10:13 +0100 (CET)
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com
+ [209.85.221.48]) by mails.dpdk.org (Postfix) with ESMTP id 678204003C
+ for <dev@dpdk.org>; Wed, 28 Jan 2026 19:10:11 +0100 (CET)
+Received: by mail-wr1-f48.google.com with SMTP id
+ ffacd0b85a97d-4327555464cso131147f8f.1
+ for <dev@dpdk.org>; Wed, 28 Jan 2026 10:10:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1769623603; x=1770228403; darn=dpdk.org;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769623811;
+ x=1770228611; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=tltjpgmqdPkBfsdNcVHeGKVyojLBWL+88ESr0MC4cnc=;
- b=KeD4uOZRo0bKwZcOjonXiv6DW51ivOrraV0g8HHvLCqk4eigIIicrJZWD7i4MPNkTX
- wgzStjZVGKSOMj02i1cyb6UfkW10VItwpW1AsnmVtZRuuhvgNr0wwjJclH1LVqZRUOVm
- ojqDWqo50ScpJC9mKMsZpM5ICAmFXJSmGm65N+QRAdxKs5Wq61TWe9OV+1DjzxX8NsQ6
- 7N6vtOqlxQs4XZea/MebrvscxogBGbRUDz2Uyr4Ced4GuspG8ScUHoFF1n24VGMkSiDM
- 7rPH/9iGWOUSZuNMQ7+n+dqgLpnh0RF83QLO34qwFi2DYHJcho8zd9lmlmQUMFrXHxum
- 2mAw==
+ bh=1HbmpBjMx7DiGe6fI6yEERzOyHUHCthVEYnbsJfS4+c=;
+ b=v4rJnd17HVuShxzbCAemuRp4EmGfm22wXH5ywGS+ab0gAutcKKEJLCso3b1voafTpo
+ n4on+idqeCH/iNwC2q0VzulzM/9cONVFsUDHeBUya4+JK14yQTK5NXWqZbCgCUBPkrt8
+ Ov58eobNLcnkUlTnZkr9vGMu8zgB3+frNLYm5Dlv5/dDumNhLtFPCIzMGHX5frHv68cY
+ Qbvtdg7C8GoUs9N5sITMkgCG+XVEK5QMSrWsYig8R4riCesITt4Fpv4MDGaShMEOufNP
+ vW8vj7unnbPop5CrDn/myxdTcUbMS7lHLgO5Zj00tduAqkxOwxPYj/50IA87T7smFATn
+ an+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1769623603; x=1770228403;
+ d=1e100.net; s=20230601; t=1769623811; x=1770228611;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=tltjpgmqdPkBfsdNcVHeGKVyojLBWL+88ESr0MC4cnc=;
- b=NfzElp3+gBZrqALP6oqMTpXZstRj6flhVSRWUDjXGWRGyFe9t2wVdLarU5fVmz0aB/
- hhc+/pkecWH0DWuIIuJk331kwaqqvgOsFigpqlInSwy2ZI4uiAzEOI+0ERDO3Necu5wg
- Mcz/hbtFbGJplIqpDhHZl3MANI5Er8ik+5SMCe4J+1H5D6TvupIxQIKJeqp2rIg+R/C3
- KYyo7T5UbX+d70umlUHBAdMn4KTltJtWJIP+EEdiDe98prl0BMYE9DYoohhdcVr8nKSm
- vb+eD+T5oTg9FzSxLZYL9BdaoXOan6E8PjqGcg8uSDV6xv8pVKIcmfTvMpFOAjHNcCqt
- Km4A==
-X-Gm-Message-State: AOJu0Yx4Dxgmyxn3H+T8hox7q1zmVabNi9D7QmvybO+VwofaTcVrNh9R
- GNl8X74aoFaYqoiPucZEKl56T19c8UpgImuOm5IPh6nNbULVg+4ELynxrbyF8A==
-X-Gm-Gg: AZuq6aJWgXWafLCB3fViQMlMzYoZ7DASqT/h4dv4rj5wfElp9Kg+lN/Jly5cdHD3l4P
- rRAm4rqGaKbGntm/8VyMP87W0KoIWOXi7S11XmGXXxkWOwoHlIQdk9TbTW8rwFNPBvUHSJo7rXt
- yQgJE29+++HxrCNeQhXaIhjdNmbrjW2eT+dBgj1z0a8By0pSIOHYchM/KAvxsMnGc2Uh7J/2Py2
- 1U+n6DAlzf5vRwzerwNMvZNUjDyyew8ldf6XQogQttmU92GAAvRd7lDClslNb3pS4ZBk87s0G/O
- exCp0D41JUkXdltY7zaiHWmoVJEVdYLj7uUB9Qh+wl8MswTiYkZTu4A6a0LDFI1Y4rEBwBuzH3S
- wm+V0WX/JgDVBp/WzmxiHKyGCVvj9zguZ1HlXk2tFno2oy8MN8ge7XuLvMlEAZdeZEoAy+dKezG
- ddISjh1tAn2GQCSPpMiO3hEU2xjmlk50Tw8Rfw5a3hw3Qym77qWQ==
-X-Received: by 2002:a05:7022:218:b0:123:3488:899c with SMTP id
- a92af1059eb24-124a011d463mr2977267c88.40.1769623603195; 
- Wed, 28 Jan 2026 10:06:43 -0800 (PST)
-Received: from mr41p01nt-relayp04.apple.com ([17.199.85.102])
+ bh=1HbmpBjMx7DiGe6fI6yEERzOyHUHCthVEYnbsJfS4+c=;
+ b=ibg80R8tRH3F6wFG7H6rFdjDsFcPtZysnJcYYySD7XpiG/Omdb/YbxYjN31U65irUx
+ DR55PMoR4OljIFpddlcN/UHu5igIEEG1PrWhpqLaN8zSUpxcMI9ggIlsnuNgsIN7mg6I
+ D8BYJuVRtJEGuk39YGwAVax/tnDP9CxXNaLLykHhoyynKyXsy9oXqv6Kmwwj2Ia+RVPU
+ /c0ekbo9jMcJOkmHZZr1qkC4toUW8//p0t9HfvGv2XGpq+bZtpAONPLCe+Tgm4ONz4E2
+ OKCnDdLcCa9BeFr1HCAo3mQVuEOrI8oPXZh4lOWtZLOi0A/QW55va0DSdEbq8bSEAkHI
+ eBSA==
+X-Gm-Message-State: AOJu0Yw6o4MBAvkoAeauP7sJ6yTAZyXFOlCfnYWPUTYY/S+4VrCAeKsT
+ zHsT85nii4e0loInOymsOYpTcOtgxPC3hDcjFcm/CErNRuM5zmwxOL/YJWV3cv6f3NDHVxkREme
+ BmkWt
+X-Gm-Gg: AZuq6aKi8r+l29klqi+FdYOOSiU7b7lKRCuTznZ98dWZnFqWjh4I/qsdJTbiB63KcU9
+ 7V3tk1vNmvtuR/TmaTfr2aqa8dZ8SfAORHpSga2r6yFflNy9pMC9uJCnjn0qPsnjeGgww97ivDf
+ cSzSZCJwVYW73xEVLMhIJaISv/qRKCLUxN+OgdKEWn9BD1oJLyecmsjgKGo3wCDGR5jzudkrpqC
+ gfK1vSSsteUrtuXzhbWsyPVX8AAWGa1ymAWyF9BQCUeOE20VrSDvrrtr+BqfW1ZffiiUXY20Lxm
+ 2PgYluCe4arIta+EQuA556Zp9uZjAOzuuzoOtc82ojORe+ekkeLrTrdRTNICiL/RRaZ2Q2kFxxN
+ +5vOi/qR5Yc4/YOtUxVHvrV3vE0iDL/eqctshcS05Lj4TbQuP5CheX7f6FJGmBX5y91kornVb1e
+ ZyC+AdRqRYwCKsWr/Lob/3gRfzcIc38HRl9YcS0KVumbve+OmX02ya
+X-Received: by 2002:a05:6000:2582:b0:432:851d:35ef with SMTP id
+ ffacd0b85a97d-435dd1c1ademr9695529f8f.42.1769623810790; 
+ Wed, 28 Jan 2026 10:10:10 -0800 (PST)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-2b7a1af898asm4013042eec.33.2026.01.28.10.06.42
- (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
- Wed, 28 Jan 2026 10:06:42 -0800 (PST)
-From: scott.k.mitch1@gmail.com
-To: dev@dpdk.org
-Cc: mb@smartsharesystems.com, stephen@networkplumber.org,
- bruce.richardson@intel.com, david.marchand@redhat.com,
- Scott Mitchell <scott.k.mitch1@gmail.com>
-Subject: [PATCH v17 2/2] net: __rte_raw_cksum pointers enable compiler
- optimizations
-Date: Wed, 28 Jan 2026 10:05:16 -0800
-Message-Id: <20260128180516.76786-3-scott.k.mitch1@gmail.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20260128180516.76786-1-scott.k.mitch1@gmail.com>
-References: <20260123160244.57335-1-scott.k.mitch1@gmail.com>
- <20260128180516.76786-1-scott.k.mitch1@gmail.com>
+ ffacd0b85a97d-435e1322eefsm8470814f8f.30.2026.01.28.10.10.09
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Wed, 28 Jan 2026 10:10:10 -0800 (PST)
+Date: Wed, 28 Jan 2026 10:09:53 -0800
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Lukas Sismis <sismis@dyna-nic.com>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH v6 0/6] flow_parser: add shared parser library
+Message-ID: <20260128100953.7f3ecb46@phoenix.local>
+In-Reply-To: <20260127210532.301464-1-sismis@dyna-nic.com>
+References: <20260127210532.301464-1-sismis@dyna-nic.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,322 +80,191 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Scott Mitchell <scott.k.mitch1@gmail.com>
+On Tue, 27 Jan 2026 22:05:25 +0100
+Lukas Sismis <sismis@dyna-nic.com> wrote:
 
-__rte_raw_cksum uses a loop with memcpy on each iteration.
-GCC 15+ is able to vectorize the loop but Clang 18.1 is not.
+> This series extracts the testpmd flow CLI parser into a reusable library,
+> enabling external applications to parse rte_flow rules using testpmd synt=
+ax.
+>=20
+> Motivation
+> ----------
+> External applications like Suricata IDS [1] need to express hardware filt=
+ering
+> rules in a consistent, human-readable format. Rather than inventing custom
+> syntax, reusing testpmd's well-tested flow grammar provides immediate
+> compatibility with existing documentation and user knowledge.
+>=20
+> Note: This library provides only one way to create rte_flow structures.
+> Applications can also construct rte_flow_attr, rte_flow_item[], and
+> rte_flow_action[] directly in C code.
+>=20
+> Design
+> ------
+> The library (librte_flow_parser) exposes the following APIs:
+> - rte_flow_parser_parse_attr_str(): Parse attributes only
+> - rte_flow_parser_parse_pattern_str(): Parse patterns only
+> - rte_flow_parser_parse_actions_str(): Parse actions only
+>=20
+> Testpmd is updated to use the library, ensuring a single
+> maintained parser implementation.
+>=20
+> Testing and Demo
+> -------
+> - Functional tests in dpdk-test
+> - Example application: examples/flow_parsing
+>=20
+> Changes
+> -------
+>=20
+> v6:
+> - Inconsistent Experimental API Version adjusted
+> - Fixes Tag added to MSVC build commit
+> - Non-Standard Header Guards updated
+> - Implicit Pointer Comparison and Return Type issues addressed in many pl=
+aces
+> - commit message in patch 6 updated
+>=20
+> v5:
+> - removed/replaced (f)printf code from the library=20
+> - reverted back to exporting the internal/private API as it is needed by
+>   testpmd and cannot be easily split further.
+> - adjusted length of certain lines
+> - marking port/queue id typedef as experimental
+> - updated release rel_notes
+> - copyeright adjustments
+>=20
+>=20
+> v4:
+> - ethdev changes in separate commit
+> - library's public API only exposes attribute, pattern and action parsing,
+>   while the full command parsing is kept internal for testpmd usage only.
+> - Addressed Stephen's comments from V3
+> - dpdk-test now have tests focused on public and internal library functio=
+ns
+>=20
+> v3:
+> - Add more functional tests
+> - More concise MAINTAINERS updates
+> - Updated license headers
+> - A thing to note: When playing with flow commands, I figured, some may u=
+se
+>   non-flow commands, such as raw decap/encap, policy meter and others.
+>   Flow parser library itself now supports `set` command to set e.g. the d=
+ecap/
+>   encap parameters, as the flow syntax only supports defining the index o=
+f the
+>   encap/decap configs. The library, however, does not support e.g. `creat=
+e`
+>   command to create policy meters, as that is just an ID and it can be cr=
+eated
+>   separately using rte_meter APIs.
+>=20
+> [1] https://github.com/OISF/suricata/pull/13950
+>=20
+> Lukas Sismis (6):
+>   cmdline: include stddef.h for MSVC compatibility
+>   ethdev: add RSS type helper APIs
+>   flow_parser: add shared parser library
+>   app/testpmd: use shared flow parser library
+>   examples/flow_parsing: add flow parser demo
+>   test: add flow parser library functional tests
+>=20
+>  MAINTAINERS                                   |     6 +-
+>  app/test-pmd/cmd_flex_item.c                  |    41 +-
+>  app/test-pmd/cmdline.c                        |   267 +-
+>  app/test-pmd/config.c                         |   112 +-
+>  app/test-pmd/flow_parser.c                    |   409 +
+>  app/test-pmd/flow_parser_cli.c                |   153 +
+>  app/test-pmd/meson.build                      |     5 +-
+>  app/test-pmd/testpmd.c                        |     4 +
+>  app/test-pmd/testpmd.h                        |   126 +-
+>  app/test/meson.build                          |     1 +
+>  app/test/test_ethdev_api.c                    |    51 +
+>  app/test/test_flow_parser.c                   |   923 ++
+>  doc/api/doxy-api-index.md                     |     1 +
+>  doc/api/doxy-api.conf.in                      |     1 +
+>  doc/guides/prog_guide/flow_parser_lib.rst     |   111 +
+>  doc/guides/prog_guide/index.rst               |     1 +
+>  doc/guides/rel_notes/release_26_03.rst        |    21 +
+>  examples/flow_parsing/main.c                  |   291 +
+>  examples/flow_parsing/meson.build             |    11 +
+>  examples/meson.build                          |     1 +
+>  lib/cmdline/cmdline_parse.h                   |     2 +
+>  lib/ethdev/rte_ethdev.c                       |   107 +
+>  lib/ethdev/rte_ethdev.h                       |    77 +
+>  lib/flow_parser/meson.build                   |     7 +
+>  .../flow_parser/rte_flow_parser.c             | 11430 ++++++++--------
+>  lib/flow_parser/rte_flow_parser.h             |   124 +
+>  lib/flow_parser/rte_flow_parser_private.h     |  1247 ++
+>  lib/meson.build                               |     2 +
+>  28 files changed, 9698 insertions(+), 5834 deletions(-)
+>  create mode 100644 app/test-pmd/flow_parser.c
+>  create mode 100644 app/test-pmd/flow_parser_cli.c
+>  create mode 100644 app/test/test_flow_parser.c
+>  create mode 100644 doc/guides/prog_guide/flow_parser_lib.rst
+>  create mode 100644 examples/flow_parsing/main.c
+>  create mode 100644 examples/flow_parsing/meson.build
+>  create mode 100644 lib/flow_parser/meson.build
+>  rename app/test-pmd/cmdline_flow.c =3D> lib/flow_parser/rte_flow_parser.=
+c (55%)
+>  create mode 100644 lib/flow_parser/rte_flow_parser.h
+>  create mode 100644 lib/flow_parser/rte_flow_parser_private.h
+>=20
 
-Replace memcpy with direct pointer access using unaligned_uint16_t.
-This enables both GCC and Clang to vectorize the loop while handling
-unaligned access safely on all architectures.
 
-Performance results from cksum_perf_autotest on Intel Xeon
-(Cascade Lake, AVX-512) built with Clang 18.1 (TSC cycles/byte):
+There are only a couple of minor nits left to keep me from putting this in =
+next-net.
+There is a check comparing pointer against 0 and the example is using
+headers not found on Windows.
 
-  Block size    Before    After    Improvement
-         100      0.40     0.24        ~40%
-        1500      0.50     0.06        ~8x
-        9000      0.49     0.06        ~8x
 
-Signed-off-by: Scott Mitchell <scott.k.mitch1@gmail.com>
+
+### Patch 3/6: flow_parser: add shared parser library
+
+**Error** (must fix):
+
+1. **Incorrect NULL checks in parse helper functions** (lines ~15667 and ~1=
+5692):
+```c
+if (src =3D=3D NULL || pattern =3D=3D NULL || pattern_n =3D=3D 0)  // BUG: =
+should be pattern_n =3D=3D NULL
+```
+```c
+if (src =3D=3D NULL || actions =3D=3D NULL || actions_n =3D=3D 0)  // BUG: =
+should be actions_n =3D=3D NULL
+```
+These check if the *count* is zero rather than if the *pointer* is NULL. Th=
+is will cause incorrect behavior when passing valid pointers.
+
+**Warning** (should fix):
+
+2. **Thread safety documentation** =E2=80=94 The documentation states "The =
+parser is not thread-safe" but the public header doesn't include this warni=
+ng in the API docstrings. Add `@warning Not thread-safe` to each public fun=
+ction's Doxygen comment.
+
+3. **Missing error return in `rte_flow_parser_init()`** =E2=80=94 The funct=
+ion signature shows `int` return but I don't see error handling for double-=
+initialization or invalid state.
+
 ---
- app/test/meson.build       |   1 +
- app/test/test_cksum_fuzz.c | 234 +++++++++++++++++++++++++++++++++++++
- app/test/test_cksum_perf.c |   2 +-
- lib/net/rte_cksum.h        |  14 +--
- 4 files changed, 241 insertions(+), 10 deletions(-)
- create mode 100644 app/test/test_cksum_fuzz.c
 
-diff --git a/app/test/meson.build b/app/test/meson.build
-index f4d04a6e42..2ca17716b9 100644
---- a/app/test/meson.build
-+++ b/app/test/meson.build
-@@ -38,6 +38,7 @@ source_file_deps = {
-     'test_byteorder.c': [],
-     'test_cfgfile.c': ['cfgfile'],
-     'test_cksum.c': ['net'],
-+    'test_cksum_fuzz.c': ['net'],
-     'test_cksum_perf.c': ['net'],
-     'test_cmdline.c': [],
-     'test_cmdline_cirbuf.c': [],
-diff --git a/app/test/test_cksum_fuzz.c b/app/test/test_cksum_fuzz.c
-new file mode 100644
-index 0000000000..33b4c77f51
---- /dev/null
-+++ b/app/test/test_cksum_fuzz.c
-@@ -0,0 +1,234 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2026 Apple Inc.
-+ */
-+
-+#include <stdio.h>
-+#include <string.h>
-+
-+#include <rte_common.h>
-+#include <rte_cycles.h>
-+#include <rte_hexdump.h>
-+#include <rte_cksum.h>
-+#include <rte_malloc.h>
-+#include <rte_random.h>
-+
-+#include "test.h"
-+
-+/*
-+ * Fuzz test for __rte_raw_cksum optimization.
-+ * Compares the optimized implementation against the original reference
-+ * implementation across random data of various lengths.
-+ */
-+
-+#define DEFAULT_ITERATIONS 1000
-+#define MAX_TEST_LEN 65536  /* 64K to match GRO frame sizes */
-+
-+/*
-+ * Original (reference) implementation of __rte_raw_cksum from DPDK v23.11.
-+ * This is retained here for comparison testing against the optimized version.
-+ */
-+static inline uint32_t
-+test_cksum_fuzz_cksum_reference(const void *buf, size_t len, uint32_t sum)
-+{
-+	const void *end;
-+
-+	for (end = RTE_PTR_ADD(buf, RTE_ALIGN_FLOOR(len, sizeof(uint16_t)));
-+	     buf != end; buf = RTE_PTR_ADD(buf, sizeof(uint16_t))) {
-+		uint16_t v;
-+
-+		memcpy(&v, buf, sizeof(uint16_t));
-+		sum += v;
-+	}
-+
-+	/* if length is odd, keeping it byte order independent */
-+	if (unlikely(len % 2)) {
-+		uint16_t left = 0;
-+
-+		memcpy(&left, end, 1);
-+		sum += left;
-+	}
-+
-+	return sum;
-+}
-+
-+static void
-+init_random_buffer(uint8_t *buf, size_t len)
-+{
-+	size_t i;
-+
-+	for (i = 0; i < len; i++)
-+		buf[i] = (uint8_t)rte_rand();
-+}
-+
-+static inline uint32_t
-+get_initial_sum(bool random_initial_sum)
-+{
-+	return random_initial_sum ? (rte_rand() & 0xFFFFFFFF) : 0;
-+}
-+
-+/*
-+ * Test a single buffer length with specific alignment and initial sum
-+ */
-+static int
-+test_cksum_fuzz_length_aligned(size_t len, bool aligned, uint32_t initial_sum)
-+{
-+	uint8_t *data;
-+	uint8_t *buf;
-+	size_t alloc_size;
-+	uint32_t sum_ref, sum_opt;
-+
-+	if (len == 0 && !aligned) {
-+		/* Skip unaligned test for zero length - nothing to test */
-+		return TEST_SUCCESS;
-+	}
-+
-+	/* Allocate exact size for aligned, +1 for unaligned offset */
-+	alloc_size = aligned ? len : len + 1;
-+	if (alloc_size == 0)
-+		alloc_size = 1;  /* rte_malloc doesn't like 0 */
-+
-+	data = rte_malloc(NULL, alloc_size, 64);
-+	if (data == NULL) {
-+		printf("Failed to allocate %zu bytes\n", alloc_size);
-+		return TEST_FAILED;
-+	}
-+
-+	buf = aligned ? data : (data + 1);
-+
-+	init_random_buffer(buf, len);
-+
-+	sum_ref = test_cksum_fuzz_cksum_reference(buf, len, initial_sum);
-+	sum_opt = __rte_raw_cksum(buf, len, initial_sum);
-+
-+	if (sum_ref != sum_opt) {
-+		printf("MISMATCH at len=%zu aligned='%s' initial_sum=0x%08x ref=0x%08x opt=0x%08x\n",
-+		       len, aligned ? "aligned" : "unaligned",
-+		       initial_sum, sum_ref, sum_opt);
-+		rte_hexdump(stdout, "failing buffer", buf, len);
-+		rte_free(data);
-+		return TEST_FAILED;
-+	}
-+
-+	rte_free(data);
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test a length with both alignments
-+ */
-+static int
-+test_cksum_fuzz_length(size_t len, uint32_t initial_sum)
-+{
-+	int rc;
-+
-+	/* Test aligned */
-+	rc = test_cksum_fuzz_length_aligned(len, true, initial_sum);
-+	if (rc != TEST_SUCCESS)
-+		return rc;
-+
-+	/* Test unaligned */
-+	rc = test_cksum_fuzz_length_aligned(len, false, initial_sum);
-+
-+	return rc;
-+}
-+
-+/*
-+ * Test specific edge case lengths
-+ */
-+static int
-+test_cksum_fuzz_edge_cases(void)
-+{
-+	/* Edge case lengths that might trigger bugs */
-+	static const size_t edge_lengths[] = {
-+		0, 1, 2, 3, 4, 5, 6, 7, 8,
-+		15, 16, 17,
-+		31, 32, 33,
-+		63, 64, 65,
-+		127, 128, 129,
-+		255, 256, 257,
-+		511, 512, 513,
-+		1023, 1024, 1025,
-+		1500, 1501,  /* MTU boundaries */
-+		2047, 2048, 2049,
-+		4095, 4096, 4097,
-+		8191, 8192, 8193,
-+		16383, 16384, 16385,
-+		32767, 32768, 32769,
-+		65534, 65535, 65536  /* 64K GRO boundaries */
-+	};
-+	unsigned int i;
-+	int rc;
-+
-+	printf("Testing edge case lengths...\n");
-+
-+	for (i = 0; i < RTE_DIM(edge_lengths); i++) {
-+		/* Test with zero initial sum */
-+		rc = test_cksum_fuzz_length(edge_lengths[i], 0);
-+		if (rc != TEST_SUCCESS)
-+			return rc;
-+
-+		/* Test with random initial sum */
-+		rc = test_cksum_fuzz_length(edge_lengths[i], get_initial_sum(true));
-+		if (rc != TEST_SUCCESS)
-+			return rc;
-+	}
-+
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test random lengths with optional random initial sums
-+ */
-+static int
-+test_cksum_fuzz_random(unsigned int iterations, bool random_initial_sum)
-+{
-+	unsigned int i;
-+	int rc;
-+
-+	printf("Testing random lengths (0-%d)%s...\n", MAX_TEST_LEN,
-+	       random_initial_sum ? " with random initial sums" : "");
-+
-+	for (i = 0; i < iterations; i++) {
-+		size_t len = rte_rand() % (MAX_TEST_LEN + 1);
-+
-+		rc = test_cksum_fuzz_length(len, get_initial_sum(random_initial_sum));
-+		if (rc != TEST_SUCCESS) {
-+			printf("Failed at len=%zu\n", len);
-+			return rc;
-+		}
-+	}
-+
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_cksum_fuzz_random_zero_sum(void)
-+{
-+	return test_cksum_fuzz_random(DEFAULT_ITERATIONS, false);
-+}
-+
-+static int
-+test_cksum_fuzz_random_random_sum(void)
-+{
-+	return test_cksum_fuzz_random(DEFAULT_ITERATIONS, true);
-+}
-+
-+static struct unit_test_suite ptr_cksum_fuzz_suite = {
-+	.suite_name = "cksum fuzz autotest",
-+	.setup = NULL,
-+	.teardown = NULL,
-+	.unit_test_cases = {
-+		TEST_CASE(test_cksum_fuzz_edge_cases),
-+		TEST_CASE(test_cksum_fuzz_random_zero_sum),
-+		TEST_CASE(test_cksum_fuzz_random_random_sum),
-+		TEST_CASES_END()
-+	}
-+};
-+
-+static int
-+test_cksum_fuzz_suite(void)
-+{
-+	return unit_test_suite_runner(&ptr_cksum_fuzz_suite);
-+}
-+
-+REGISTER_FAST_TEST(cksum_fuzz_autotest, NOHUGE_OK, ASAN_OK, test_cksum_fuzz_suite);
-diff --git a/app/test/test_cksum_perf.c b/app/test/test_cksum_perf.c
-index 0b919cd59f..6b1d4589e0 100644
---- a/app/test/test_cksum_perf.c
-+++ b/app/test/test_cksum_perf.c
-@@ -15,7 +15,7 @@
- #define NUM_BLOCKS 10
- #define ITERATIONS 1000000
- 
--static const size_t data_sizes[] = { 20, 21, 100, 101, 1500, 1501 };
-+static const size_t data_sizes[] = { 20, 21, 100, 101, 1500, 1501, 9000, 9001, 65536, 65537 };
- 
- static __rte_noinline uint16_t
- do_rte_raw_cksum(const void *buf, size_t len)
-diff --git a/lib/net/rte_cksum.h b/lib/net/rte_cksum.h
-index a8e8927952..f04b46a6c3 100644
---- a/lib/net/rte_cksum.h
-+++ b/lib/net/rte_cksum.h
-@@ -42,15 +42,11 @@ extern "C" {
- static inline uint32_t
- __rte_raw_cksum(const void *buf, size_t len, uint32_t sum)
- {
--	const void *end;
--
--	for (end = RTE_PTR_ADD(buf, RTE_ALIGN_FLOOR(len, sizeof(uint16_t)));
--	     buf != end; buf = RTE_PTR_ADD(buf, sizeof(uint16_t))) {
--		uint16_t v;
--
--		memcpy(&v, buf, sizeof(uint16_t));
--		sum += v;
--	}
-+	/* Process uint16 chunks to preserve overflow/carry math. GCC/Clang vectorize the loop. */
-+	const unaligned_uint16_t *buf16 = (const unaligned_uint16_t *)buf;
-+	const unaligned_uint16_t *end = buf16 + (len / sizeof(*buf16));
-+	for (; buf16 != end; buf16++)
-+		sum += *buf16;
- 
- 	/* if length is odd, keeping it byte order independent */
- 	if (unlikely(len % 2)) {
--- 
-2.39.5 (Apple Git-154)
+### Patch 5/6: examples/flow_parsing: add example
+**Warning**:
+- Uses `<arpa/inet.h>` which is not portable to Windows. Consider using DPD=
+K's byte order macros or conditional compilation.
 
+---
+
+
+### Required Fix
+```c
+// In rte_flow_parser_parse_pattern_str():
+-   if (src =3D=3D NULL || pattern =3D=3D NULL || pattern_n =3D=3D 0)
++   if (src =3D=3D NULL || pattern =3D=3D NULL || pattern_n =3D=3D NULL)
+
+// In rte_flow_parser_parse_actions_str(): =20
+-   if (src =3D=3D NULL || actions =3D=3D NULL || actions_n =3D=3D 0)
++   if (src =3D=3D NULL || actions =3D=3D NULL || actions_n =3D=3D NULL)
+```
