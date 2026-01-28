@@ -2,86 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3F7CD46BF3
-	for <dpdk-dev@archiver.kernel.org>; Wed, 28 Jan 2026 19:08:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AB7AD46BF4
+	for <dpdk-dev@archiver.kernel.org>; Wed, 28 Jan 2026 19:11:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EC2774014F;
-	Wed, 28 Jan 2026 20:08:19 +0100 (CET)
-Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com
- [209.85.222.52]) by mails.dpdk.org (Postfix) with ESMTP id 1A7CA4003C
- for <dev@dpdk.org>; Wed, 28 Jan 2026 20:08:19 +0100 (CET)
-Received: by mail-ua1-f52.google.com with SMTP id
- a1e0cc1a2514c-944168e8c5fso146882241.2
- for <dev@dpdk.org>; Wed, 28 Jan 2026 11:08:19 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1769627298; cv=none;
- d=google.com; s=arc-20240605;
- b=Qwd6wrcjUODRq4xGUOcqZSwrhdzNLUTX10IO02yIgWsTGR/UviH3EngDqoSTFpppO7
- P5durfg5LGkGw4NQ9Z0wgkp16cm0r1Dbx0Ce/FsXkspvpW0qmJH0K7fKp7ItUe9y5ZDB
- oQwjT8t70FLRklIFBRpdPmoaUD/Ar35PQiyDOoufudD5CvO2QB2RZ4HMfsMubAJHSK34
- Ip5KAqNb3CpBs5iAgiKzxHXJsJRsTwOth5AnOtMMi4ORB4taQIfCAe3TiC9/vjD+I92B
- m+6MBwII+i7v5xV/9BC9JJYqSoMrkU0OB1V16VC13TGNVtxTkzQ4a0CYlS/Q8Tz3Taiv
- BJvQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20240605; 
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:dkim-signature;
- bh=Tv6h9WpYEwKsyTw/vMyF9nFRLUUbdI0LoeNkkCWq/vI=;
- fh=t33Egyn4DAOwVRnwraldPtDjoBFAjogf3LzpsEMwxHQ=;
- b=HBVqvM3nBnMcVDMbJjOy2JKYwVsBHpRYSwWevWlzgIAs81Rjfjfi/tY0KvFG1zLUKg
- emsDKfLfZiPqQHz2IiRCwXeTcR8s9qtJDkLRqDGn3RUAZAcrg1JDp2WO9a7v4GAMfPZB
- GCUP7NZAB5wMsZ7iQWNiNQSp1UjlxzNtz8ZQbcMKuAHaWG2qacjEgplt2BTZy4k04u6u
- TEfoDs/SiDurcjUqCoW5+ruhcwpxF9EPlYqW90HuTK4bSCjv6sJ5V8Zmt6F4bLYVymGm
- XNVSq0tLm29JcCtWsivVJH5zvCr1llFXaFKmssSKzFIXbQAwnyMBod5xb6mt9QY/U4fk
- kFzA==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	by mails.dpdk.org (Postfix) with ESMTP id 41DEF4014F;
+	Wed, 28 Jan 2026 20:11:52 +0100 (CET)
+Received: from mail-dy1-f176.google.com (mail-dy1-f176.google.com
+ [74.125.82.176]) by mails.dpdk.org (Postfix) with ESMTP id A93674003C
+ for <dev@dpdk.org>; Wed, 28 Jan 2026 20:11:51 +0100 (CET)
+Received: by mail-dy1-f176.google.com with SMTP id
+ 5a478bee46e88-2b71320f501so365471eec.1
+ for <dev@dpdk.org>; Wed, 28 Jan 2026 11:11:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1769627298; x=1770232098; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=Tv6h9WpYEwKsyTw/vMyF9nFRLUUbdI0LoeNkkCWq/vI=;
- b=Zd+PtOzgpLEQHdMD+aGmDGiM2Jq1wq+Nay+ItZFrbx7lIm3Lb6UqnDwhskqYb7NneL
- oH9QwBd94C6OdVgA/cH5OYt5Qr2VYWJrBhpZhI84sDZ38g+df15W7hGphOa4CHnVQ1kE
- d3bAjjwCjh0Q9rrAES3pOad2sd4yX2LTEUy+4H5RXuIxfMVa41vX9g4gotH5E2oE0+Wo
- P911thKcXYQfJ6hFFGwdhNTXGwEPQT0VLsEyIPluhrISiaoUUM8vGkdKx3fQxK3sL7xS
- uVx/g8IkdYx93bB9YvIzC/1n+RYkqdMUziX0jTu/ejJ1mdJxaD1PWUvYelS/IRAG/ZJg
- gZRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1769627298; x=1770232098;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ d=gmail.com; s=20230601; t=1769627510; x=1770232310; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=Tv6h9WpYEwKsyTw/vMyF9nFRLUUbdI0LoeNkkCWq/vI=;
- b=M3MDrHpcyyG4sPfdvlieBTkqXTR9tvX6400vppxwPpQVYoodHXbdhXbUmXf5vIsw0/
- 0u2/WI2ivTYR3WpGp+VOMTEV1KRWFGuRhSjVKtwkT3paD+VIf3+XpTs3eIIdhWnjtGUc
- cFJBNPa00nOKaCtX9CqhyG3cmcOFZBoVKnMnRqnmD0nLXqQsO6Mu6gT5RcL0LtUEjpi0
- ixhaC8WCqn2kUCFs0ad5Q9NpZdfmLrgcFko6vOeSaIbyscoKsUYxamCTsTQJjt2+yIwL
- GYOymVp/knBIVmCViJQpUVFttspZSoOM1rz1QNbuqtTJt+Wl3q9cCoIsQV+mgGwweGyu
- d0kQ==
-X-Gm-Message-State: AOJu0YzIDplcWJ5eqHz6jzcz/lyL6jcQhtvXeRAEwUc0Fgqn2PeHVTAu
- RPY1fOr3Yo8e5qWGKgkYcdb3ZZR4c7zyl5lq9y2/uQb3j5C+TTp/F/FSKmZwZ0aKAAFxYDM3DrH
- Fvg6iF+gZpmayzSoQdRHoUx48PIMuP9g=
-X-Gm-Gg: AZuq6aLkyKdZXy50EuZ0sXkzcSKMuDT5cRj7HE39Ir/2wTQAdP6m6vJuhDoU+AGEWVR
- D0ZysrK0LwVUJSUz9jiOy1NOv4yX2kLZTHoDuaflaHPemTmzKkGe2k5OzcoBcOgCtblNPdFLyZb
- L/EodI6AmUTkIxNYmtkNqCNullRj9HY0WBsZXMMUromBljI9iJ2ypIer4A1f1LELPgDtZExR52l
- AWFh5pXLxrS5pdyAOC0BOSJZh2cESYwv5CZBp2h3W1NGHqEH+Vu0+9X90ZzK7COr38tJyz+QAyf
- ye8zfq3ErGG6grQ+CFZ4W3M=
-X-Received: by 2002:a05:6102:5090:b0:5ef:248b:d533 with SMTP id
- ada2fe7eead31-5f7237a6a9bmr2497591137.31.1769627298322; Wed, 28 Jan 2026
- 11:08:18 -0800 (PST)
+ bh=Ve7DDt7OE2ZaHNLgQ5jBWC4/eCUoLJZLY+nsi238Tv0=;
+ b=MLtd20w7wtTMM1xLgaVfSzUbrxNjYs3H+kX4NOHLFuTXq5dcTZxT4iPatq9uKE8oCP
+ gXUyPPIokf65XUFgYo3bXRA2GYABWz1MBso3vMjnhvFVmDO/U1DBoMhhSsRRBjf0QVUj
+ NXsUvCZDZXLONpwcbEIKqEIXVcGat4bXQYaj2esbbDR5QF5tRGfeHcd5Yq0Q6RRQjI1q
+ IuQhZD9dkNrHJce4IPHXXuTXBauSfb3KpyguN4nEksFQ/zfniFUzeZEHOYeRoY8l2Cce
+ Lel5zlQwUYSmMTNpaO2VvjGgZS/jc5a6feuP9shgb/alJzfdhcbiEq4bjPp/ZUm3QlAD
+ Q5hQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1769627510; x=1770232310;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=Ve7DDt7OE2ZaHNLgQ5jBWC4/eCUoLJZLY+nsi238Tv0=;
+ b=aqo9hWjhGvNvU6KGQvejsQAv+njhGmXATw33pvIHin1onBSDitkTVK+2jDHYV7kUbM
+ Bg1ac3bjEYHDToHfvZQy0m7r/8IHcOg/M0h5f6kTA1gzIlyEOiN5khylPTXGl+LWy47e
+ pP47zOHEZlIMQnzr+RC8IEck0D+KGl38TO8f1/kQeKfcSR4D01U0ngNOYtS+ZOxt1Qsc
+ cXK8Gg2yP1BUlTDR4WB/zcO9jjYpclmF9s8hLDtlVjfumkV7uLVBWADM2/pPImaFeQoy
+ tInEAk1O2kaMciBXex+9SFWE8eR5vPOhCG7lMcIRWJnR+KEi60/YUNJpU+DGv2QLoeLu
+ EgjQ==
+X-Gm-Message-State: AOJu0YzQYzawDo+8lhAp9pDR0UdDAyPLCmXEQwkRiFwQ1X0i0Q3/6WQ6
+ QzsvM36/BF5Yvc7UZ8O1XJCo/w1vmSodz9uZ5YnvUkn+mkeIjDe1nrgmu2bkIA==
+X-Gm-Gg: AZuq6aLtSL7ViWJ9W3nrMtZwtwaDokGZkNn0WmLfVYnV1avvocIVyXNkjN7lE7CB4Oq
+ hw95JUYx8Wet9ITmGO/GcwzzWc5f9wPHOtk43r3rz1DTn49l/GHEu5/pV6WGBF+LXiYvkijoz/3
+ a/0+wWPDazdja+0P1E19Edvicx2i7+gh9UgeHFQLABnGZ/k9oiBHXS7rUgI0ms1yn4grMfMQfHF
+ 4vHxrAEI8xfiIaHpYvuqtb0AV9i5xXuGfhhfBv+C00ZDm0IU1eWyKKx0m3P4sBvTnalcyfyHv/t
+ 7yv5oPzUBRCr9FGZFuDgRSl5ROpVpvhn9p1+MDFxoaQwhbKLYZANyyb5pblpQE2AHXjadJpCBCJ
+ YWVVxKSqa4XLtPavJWJWl6rvfbphEmx6sjThGlFq9EtHglSG08RcMP+HU3TRYdaWMzrtGi/EQvd
+ moAIpTaPMdhB5dvubLqOw1FPnfIUP/y7pQCd4djK7gLKLFe1JXqw==
+X-Received: by 2002:a05:7301:fa0e:b0:2b0:5bfb:86 with SMTP id
+ 5a478bee46e88-2b78d9245cdmr3420362eec.17.1769627509915; 
+ Wed, 28 Jan 2026 11:11:49 -0800 (PST)
+Received: from mr41p01nt-relayp04.apple.com ([17.199.85.102])
+ by smtp.gmail.com with ESMTPSA id
+ 5a478bee46e88-2b7a1adc5ecsm4261286eec.24.2026.01.28.11.11.49
+ (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+ Wed, 28 Jan 2026 11:11:49 -0800 (PST)
+From: scott.k.mitch1@gmail.com
+To: dev@dpdk.org
+Cc: stephen@networkplumber.org,
+	Scott <scott.k.mitch1@gmail.com>
+Subject: [PATCH v3 0/4] af_packet correctness, performance, cksum
+Date: Wed, 28 Jan 2026 11:10:28 -0800
+Message-Id: <20260128191032.78916-1-scott.k.mitch1@gmail.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+In-Reply-To: <20260128093607.62908-1-scott.k.mitch1@gmail.com>
+References: <20260128093607.62908-1-scott.k.mitch1@gmail.com>
 MIME-Version: 1.0
-References: <20260127181355.98437-1-scott.k.mitch1@gmail.com>
- <20260128093607.62908-1-scott.k.mitch1@gmail.com>
- <20260128093607.62908-5-scott.k.mitch1@gmail.com>
- <20260128102710.0b205120@phoenix.local>
-In-Reply-To: <20260128102710.0b205120@phoenix.local>
-From: Scott Mitchell <scott.k.mitch1@gmail.com>
-Date: Wed, 28 Jan 2026 11:08:06 -0800
-X-Gm-Features: AZwV_Qgoou3l6ALfRnblS0tyhdTQixNF014RKvbCG-P_Nf9OtLn9epUlARAgeHw
-Message-ID: <CAFn2buBQ+9mYXXQnFHA6bse5b8dROvpEPN3mr0F1W_cspvamhw@mail.gmail.com>
-Subject: Re: [PATCH v2 4/4] net/af_packet: software checksum
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: dev@dpdk.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -95,6 +79,51 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> This is failing CI build, fix and resubmit
+From: Scott <scott.k.mitch1@gmail.com>
 
-v3 coming soon.
+This series fixes critical thread safety bugs in the af_packet PMD
+and adds performance optimizations.
+
+Patch 1 fixes two major correctness issues:
+- Thread safety: tp_status was accessed without memory barriers,
+  violating the kernel's PACKET_MMAP protocol. On aarch64 and other
+  weakly-ordered architectures, this causes packet corruption due to
+  missing memory ordering. The fix matches the kernel's memory model:
+  volatile unaligned reads/writes with explicit rte_smp_rmb/wmb
+  barriers and __may_alias__ protection.
+
+- Frame calculations: Fixed incorrect frame overhead and address
+  calculations that caused memory corruption when frames don't evenly
+  divide blocks.
+
+Patches 2-4 add performance improvements:
+- Patch 2: Bulk mbuf freeing, unlikely annotations, and prefetching
+- Patch 3: TX poll control to reduce syscall overhead
+- Patch 4: Software checksum offload support with shared rte_net
+  utility
+
+v3 changes:
+- Patch 4: Fix compile error due to implict cast with c++ compiler
+
+v2 changes:
+- Patch 1: Rewrote to use volatile + barriers instead of C11 atomics
+  to match kernel's memory model. Added dependency on patch-160274
+  for __rte_may_alias attribute.
+- Patch 4: Refactored to use shared rte_net_ip_udptcp_cksum_mbuf()
+  utility function, eliminating code duplication with tap driver.
+
+Scott Mitchell (4):
+  net/af_packet: fix thread safety and frame calculations
+  net/af_packet: RX/TX unlikely, bulk free, prefetch
+  net/af_packet: tx poll control
+  net/af_packet: software checksum
+
+ doc/guides/nics/af_packet.rst             |   6 +-
+ drivers/net/af_packet/rte_eth_af_packet.c | 257 ++++++++++++++++------
+ drivers/net/tap/rte_eth_tap.c             |  61 +----
+ lib/net/rte_net.h                         |  90 ++++++++
+ 4 files changed, 283 insertions(+), 131 deletions(-)
+
+-- 
+2.39.5 (Apple Git-154)
+
