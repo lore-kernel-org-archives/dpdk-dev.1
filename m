@@ -2,64 +2,64 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEB15D35697
-	for <dpdk-dev@archiver.kernel.org>; Wed, 28 Jan 2026 09:36:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C161ED35697
+	for <dpdk-dev@archiver.kernel.org>; Wed, 28 Jan 2026 09:36:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1A5114060A;
-	Wed, 28 Jan 2026 10:36:22 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 0C17F40613;
+	Wed, 28 Jan 2026 10:36:23 +0100 (CET)
 Received: from mail-dy1-f175.google.com (mail-dy1-f175.google.com
- [74.125.82.175]) by mails.dpdk.org (Postfix) with ESMTP id 7ABE2402D3
- for <dev@dpdk.org>; Wed, 28 Jan 2026 10:36:18 +0100 (CET)
+ [74.125.82.175]) by mails.dpdk.org (Postfix) with ESMTP id D9606402DB
+ for <dev@dpdk.org>; Wed, 28 Jan 2026 10:36:19 +0100 (CET)
 Received: by mail-dy1-f175.google.com with SMTP id
- 5a478bee46e88-2b785801c93so5866415eec.0
- for <dev@dpdk.org>; Wed, 28 Jan 2026 01:36:18 -0800 (PST)
+ 5a478bee46e88-2b729f4c154so11568403eec.0
+ for <dev@dpdk.org>; Wed, 28 Jan 2026 01:36:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1769592977; x=1770197777; darn=dpdk.org;
+ d=gmail.com; s=20230601; t=1769592979; x=1770197779; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=Ajmt3QNZoMVbWir9GX/pimIOr2pIiHyePGWXaqd1zcM=;
- b=XUQ1Un70VrFc8gqR5VPtKMZKK3jCmo5CxCgm8RSgjR/PLIpqx+25IimyTA0uJm6xB9
- hX+8rafI9tv322a1p5WF0KtOP6ZAmbpLdcnDD4FiMp6bTSmif4GxqIEHnyO7MCs0Fd1x
- +ecfuLuJGxvT0aGx+4s81VCfvlGo8M2tSIrhzkJHkxEkIAVYFK6siT0iBKa331p22zRk
- YpjpYop4E3B2h61bwzjyd6Vj4vhT3yMP4syOvlGFv5QmHXRrwbfHEqiD8o916Ck0h+od
- 5PqfqpdXkHhnTuktScuT9Sd5uyYdc4iU6KKtbAZwf4KL5Iar2B8BXopsYw4BdC/k5R5k
- qDJw==
+ bh=YQD+UZnE/x+JI78VtpePZq9iPel0TiL+1/Swo8B8MJw=;
+ b=fynk+2Ls0fdxtQ1FjkwGqFMyf4hbqhP2gOAxDB+Z2nHJdOs6aNMo2Es4Y+RjyxG0c2
+ EGD6D72S2uwnO3k3+nB8+18/1hbbbWCn86qNY5qVlLPCEgJRsLVfw/7z58Al4UiOpw+H
+ uXUpO5Jj41kTfZUrAggNY7aKcHvHH+sXz5OaIBRMmr3HYUIK2Px0APs7Ms+JoNF+gIFM
+ FwNWykHLZzkHYI16Szg9AgkNtw+P4B0J9120RAeloBMqqDZN1DlSNVWwCFK0Eo4JMAi9
+ 3+/evRkncKpF556O0LSE5c2D6UbtyWfCoEtTbG4A3nUUqCJq+wqut1CepBz7iFo6S4CN
+ UyFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1769592977; x=1770197777;
+ d=1e100.net; s=20230601; t=1769592979; x=1770197779;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=Ajmt3QNZoMVbWir9GX/pimIOr2pIiHyePGWXaqd1zcM=;
- b=p/JlzgeatpZ9PCdvljStXQWaXbxULhrF0mF4tfKrfGo4st5oL4PlFlufm2yki4fnv5
- VDXMvpv5aQTqkW1TODSJ9mV0fvSyBHHAMWphTuTqXyyZWpNtkL9Moel59iHum3NuzK5I
- PkCI/C6cN1IB3NP58GSAeyjC0EVluKqPkxfK21yG417iF6lD+M3MinzsRcB1BUtcKjxv
- OB9Yi006l1OsDqwOp+zRdGYGw0bayd25A8HrbpktJQzTDu7j5O0L6Rx9vzgjgi2F0OUM
- ndChP9gHnWP8U+5i5Bd3B0LtZ5iRFeIWQaIpoE3Y9ZZKl5DEB4wyJrJbwv/wXKKOHLJf
- O0bA==
-X-Gm-Message-State: AOJu0YxgqH+IZHfv9yWVPXpJ3hrb+c3L5BXZ6652DCGNU4Fq6p3IaXb8
- mzVcr0tx11qXCcodEzfkpNKargwHfJlGp/9u94fYBZTstlQa4ZzPMSOWsky5mQ==
-X-Gm-Gg: AZuq6aJr0CAXGT2svTOqX5ggqYlLJXE3OKeB/VDcFmcScx5oUPspDkuQnF2r8PaG6cN
- DjhPj49zmGW7uRXj/lK6R24FXe4YTrAT+iaKfxwIi+qY5GCfowjuMMjIufLLuii7SkG8TmPU92o
- wNVCVP1bU13LTMVy898rPYOGrNz9ykHbZOQcONO5i1MPWX1CvSi/W9uO/bR2bO8wtQxyz6M0Jmq
- yhv+tvYqnmYwuoC2B4/oSR027anOq+QFIswtpcO3ll368Pms4EoiYPXzsfSqbbOkQBQupYgKUFu
- zCbdLPYlvnWFjm6Sit0rLNi8pgzpnTd6fTBVCT4b8aHPYSrxuOERulAI4d+60xXN7daE7s2FWnB
- wmNESnYpR7juPJJSDAWS8yrfNAd8n8Hw1EfTt3St1B5e2B0EUaq1pDEGtYXT508uJynWusMRdGS
- 4J+o6mtWZKhjkgU7wFDYbk9g==
-X-Received: by 2002:a05:7300:f10a:b0:2b7:23ba:af2e with SMTP id
- 5a478bee46e88-2b78da4dc5bmr3015977eec.43.1769592977342; 
- Wed, 28 Jan 2026 01:36:17 -0800 (PST)
+ bh=YQD+UZnE/x+JI78VtpePZq9iPel0TiL+1/Swo8B8MJw=;
+ b=nN08G2P8U59ExwweE73KGqD6xB18xunezDyct4Ifmca+ZKhcXf+qW0UyExrBwdp2T8
+ /UGk4LpuwG12+hRhEbuiVfGJPu6ciDt+5TlaG2+Jd8oH2qiIfIxsYNvDuP2fp2PNJJXy
+ 5VIABMZNMhfNKjl/fcN3gQeVrGVlStckv72zWir4IpJjaq5qNswlP5c1Mh+OXOED1uJU
+ bvBzbeRYJ/evACbTnbRM83mECZZdZEeX5ftfxUiVbYGZ6qQCLeEP2K8xWZfoA/D7BfhP
+ Vh9d8/1WriURGzbqsVFp+U3cI2xgwXAnRk2pvqlf8yCnX1Bpv0v9PXeh/AmoslVXxmwq
+ mWOQ==
+X-Gm-Message-State: AOJu0Yzyh3aLMbdcXlCL5/d/fNSCV0oLzSkWq7aguWtQ0IeBpeaNh0I4
+ CDQ2ZjYJ2GqRqJOtzjqKxfHhFCDPkX+f9h2EorqzR3QVrpvy5hamDx5fsazzJw==
+X-Gm-Gg: AZuq6aIH35i6s0kt2+3EKoOlXnJr0O38+oS1xfmmMkIwFtS8Vtoj5rjqzoZmVOsOkVJ
+ t44mHvzRiMfvugI+yZzXxh5hQp7EM/TqU2NZT5MU5P7A5cOslcZRyi3nSEUwgKEtxLCAdT24AbY
+ Qzn+CZ/ZF63JjHFipoX52H3a4SsSQ1RdefQlOV6A93P09Zlo9fYEGaZOCGX8W4HtqZABkynEV5j
+ bJBip0NAgqV3IF5oMxz/EoD99LtBZhG+dXRgvheVhOM29grj+TVy6iJR/jglLIdTwMuZoQed46a
+ tExMxgJLvWaPT83PPZ0OuWF8anHe4SBnfppAVIumASxbMvFcXPheDff5z7PFMeRhltmLKAWlxji
+ Lh0qflVI0KaIkQ4+98Lx/WvjUJ0ryto9daSbL7NtK6Zz9eT+iolWS9HYYebPovhOTaiaNKW0pD7
+ utBE66r2R0lhpGOkBDo9ztfo96LJ+4uBam
+X-Received: by 2002:a05:7300:6ca1:b0:2b7:1d54:87e5 with SMTP id
+ 5a478bee46e88-2b78d90c1camr2930532eec.13.1769592978613; 
+ Wed, 28 Jan 2026 01:36:18 -0800 (PST)
 Received: from mac.com ([136.24.82.250]) by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-2b7a14bb02csm1834864eec.0.2026.01.28.01.36.16
+ 5a478bee46e88-2b7a14bb02csm1834864eec.0.2026.01.28.01.36.18
  (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
- Wed, 28 Jan 2026 01:36:17 -0800 (PST)
+ Wed, 28 Jan 2026 01:36:18 -0800 (PST)
 From: scott.k.mitch1@gmail.com
 To: dev@dpdk.org
 Cc: stephen@networkplumber.org,
 	Scott Mitchell <scott.k.mitch1@gmail.com>
-Subject: [PATCH v2 2/4] net/af_packet: RX/TX unlikely, bulk free, prefetch
-Date: Wed, 28 Jan 2026 01:36:05 -0800
-Message-Id: <20260128093607.62908-3-scott.k.mitch1@gmail.com>
+Subject: [PATCH v2 3/4] net/af_packet: tx poll control
+Date: Wed, 28 Jan 2026 01:36:06 -0800
+Message-Id: <20260128093607.62908-4-scott.k.mitch1@gmail.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 In-Reply-To: <20260128093607.62908-1-scott.k.mitch1@gmail.com>
 References: <20260127181355.98437-1-scott.k.mitch1@gmail.com>
@@ -81,148 +81,170 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Scott Mitchell <scott.k.mitch1@gmail.com>
 
-- Add rte_prefetch0() to prefetch next frame/mbuf while processing
-  current packet, reducing cache miss latency
-- Use rte_pktmbuf_free_bulk() in TX path instead of individual
-  rte_pktmbuf_free() calls for better batch efficiency
-- Add unlikely() hints for error paths (oversized packets, VLAN
-  insertion failures, sendto errors) to optimize branch prediction
-- Remove unnecessary early nb_pkts == 0 when loop handles this
-  and app may never call with 0 frames.
+Add txpollnotrdy devarg (default=true) to control whether poll()
+is called when the TX ring is not ready. This allows users to
+avoid blocking behavior if application threads are in asynchronous
+poll mode where blocking the thread has negative side effects and
+backpressure is applied via different means.
 
 Signed-off-by: Scott Mitchell <scott.k.mitch1@gmail.com>
 ---
- drivers/net/af_packet/rte_eth_af_packet.c | 65 ++++++++++++-----------
- 1 file changed, 34 insertions(+), 31 deletions(-)
+ doc/guides/nics/af_packet.rst             |  6 +++-
+ drivers/net/af_packet/rte_eth_af_packet.c | 34 ++++++++++++++++++-----
+ 2 files changed, 32 insertions(+), 8 deletions(-)
 
+diff --git a/doc/guides/nics/af_packet.rst b/doc/guides/nics/af_packet.rst
+index 1505b98ff7..782a962c3f 100644
+--- a/doc/guides/nics/af_packet.rst
++++ b/doc/guides/nics/af_packet.rst
+@@ -29,6 +29,10 @@ Some of these, in turn, will be used to configure the PACKET_MMAP settings.
+ *   ``framesz`` - PACKET_MMAP frame size (optional, default 2048B; Note: multiple
+     of 16B);
+ *   ``framecnt`` - PACKET_MMAP frame count (optional, default 512).
++*   ``txpollnotrdy`` - Control behavior if tx is attempted but there is no
++    space available to write to the kernel. If 1, call poll() and block until
++    space is available to tx. If 0, don't call poll() and return from tx (optional,
++    default 1).
+ 
+ For details regarding ``fanout_mode`` argument, you can consult the
+ `PACKET_FANOUT documentation <https://www.man7.org/linux/man-pages/man7/packet.7.html>`_.
+@@ -75,7 +79,7 @@ framecnt=512):
+ 
+ .. code-block:: console
+ 
+-    --vdev=eth_af_packet0,iface=tap0,blocksz=4096,framesz=2048,framecnt=512,qpairs=1,qdisc_bypass=0,fanout_mode=hash
++    --vdev=eth_af_packet0,iface=tap0,blocksz=4096,framesz=2048,framecnt=512,qpairs=1,qdisc_bypass=0,fanout_mode=hash,txpollnotrdy=0
+ 
+ Features and Limitations
+ ------------------------
 diff --git a/drivers/net/af_packet/rte_eth_af_packet.c b/drivers/net/af_packet/rte_eth_af_packet.c
-index 6c276bb7fc..e357ae168b 100644
+index e357ae168b..be8e3260aa 100644
 --- a/drivers/net/af_packet/rte_eth_af_packet.c
 +++ b/drivers/net/af_packet/rte_eth_af_packet.c
-@@ -161,9 +161,6 @@ eth_af_packet_rx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- 	uint32_t tp_status;
- 	unsigned int framecount, framenum;
+@@ -18,6 +18,7 @@
+ #include <bus_vdev_driver.h>
  
--	if (unlikely(nb_pkts == 0))
--		return 0;
--
- 	/*
- 	 * Reads the given number of packets from the AF_PACKET socket one by
- 	 * one and copies the packet data into a newly allocated mbuf.
-@@ -177,6 +174,14 @@ eth_af_packet_rx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- 		if ((tp_status & TP_STATUS_USER) == 0)
- 			break;
+ #include <errno.h>
++#include <stdbool.h>
+ #include <linux/if_ether.h>
+ #include <linux/if_packet.h>
+ #include <arpa/inet.h>
+@@ -39,9 +40,11 @@
+ #define ETH_AF_PACKET_FRAMECOUNT_ARG	"framecnt"
+ #define ETH_AF_PACKET_QDISC_BYPASS_ARG	"qdisc_bypass"
+ #define ETH_AF_PACKET_FANOUT_MODE_ARG	"fanout_mode"
++#define ETH_AF_PACKET_TX_POLL_NOT_READY_ARG	"txpollnotrdy"
  
-+		unsigned int next_framenum = framenum + 1;
-+		if (next_framenum >= framecount)
-+			next_framenum = 0;
+ #define DFLT_FRAME_SIZE		(1 << 11)
+ #define DFLT_FRAME_COUNT	(1 << 9)
++#define DFLT_TX_POLL_NOT_RDY	true
+ 
+ static const uint16_t ETH_AF_PACKET_FRAME_SIZE_MAX = RTE_IPV4_MAX_PKT_LEN;
+ #define ETH_AF_PACKET_FRAME_OVERHEAD (TPACKET2_HDRLEN - sizeof(struct sockaddr_ll))
+@@ -78,6 +81,9 @@ struct __rte_cache_aligned pkt_tx_queue {
+ 	unsigned int framecount;
+ 	unsigned int framenum;
+ 
++	bool txpollnotrdy;
++	bool sw_cksum;
 +
-+		/* prefetch the next frame for the next loop iteration */
-+		if (likely(i + 1 < nb_pkts))
-+			rte_prefetch0(pkt_q->rd[next_framenum].iov_base);
-+
- 		/* allocate the next mbuf */
- 		mbuf = rte_pktmbuf_alloc(pkt_q->mb_pool);
- 		if (unlikely(mbuf == NULL)) {
-@@ -210,8 +215,7 @@ eth_af_packet_rx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
+ 	volatile unsigned long tx_pkts;
+ 	volatile unsigned long err_pkts;
+ 	volatile unsigned long tx_bytes;
+@@ -106,6 +112,7 @@ static const char *valid_arguments[] = {
+ 	ETH_AF_PACKET_FRAMECOUNT_ARG,
+ 	ETH_AF_PACKET_QDISC_BYPASS_ARG,
+ 	ETH_AF_PACKET_FANOUT_MODE_ARG,
++	ETH_AF_PACKET_TX_POLL_NOT_READY_ARG,
+ 	NULL
+ };
  
- 		/* release incoming frame and advance ring buffer */
- 		tpacket_write_status(&ppd->tp_status, TP_STATUS_KERNEL);
--		if (++framenum >= framecount)
--			framenum = 0;
-+		framenum = next_framenum;
- 		mbuf->port = pkt_q->in_port;
- 
- 		/* account for the receive frame */
-@@ -261,9 +265,6 @@ eth_af_packet_tx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
+@@ -265,10 +272,12 @@ eth_af_packet_tx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
  	uint32_t num_tx_bytes = 0;
  	uint16_t i;
  
--	if (unlikely(nb_pkts == 0))
--		return 0;
--
- 	memset(&pfd, 0, sizeof(pfd));
- 	pfd.fd = pkt_q->sockfd;
- 	pfd.events = POLLOUT;
-@@ -271,22 +272,25 @@ eth_af_packet_tx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
+-	memset(&pfd, 0, sizeof(pfd));
+-	pfd.fd = pkt_q->sockfd;
+-	pfd.events = POLLOUT;
+-	pfd.revents = 0;
++	if (pkt_q->txpollnotrdy) {
++		memset(&pfd, 0, sizeof(pfd));
++		pfd.fd = pkt_q->sockfd;
++		pfd.events = POLLOUT;
++		pfd.revents = 0;
++	}
  
  	framecount = pkt_q->framecount;
  	framenum = pkt_q->framenum;
--	ppd = (struct tpacket2_hdr *) pkt_q->rd[framenum].iov_base;
- 	for (i = 0; i < nb_pkts; i++) {
--		mbuf = *bufs++;
--
--		/* drop oversized packets */
--		if (mbuf->pkt_len > pkt_q->frame_data_size) {
--			rte_pktmbuf_free(mbuf);
--			continue;
-+		unsigned int next_framenum = framenum + 1;
-+		if (next_framenum >= framecount)
-+			next_framenum = 0;
-+
-+		/* prefetch the next source mbuf and destination TPACKET */
-+		if (likely(i + 1 < nb_pkts)) {
-+			rte_prefetch0(bufs[i + 1]);
-+			rte_prefetch0(pkt_q->rd[next_framenum].iov_base);
+@@ -308,8 +317,9 @@ eth_af_packet_tx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
+ 		 * This results in poll() returning POLLOUT.
+ 		 */
+ 		if (unlikely(!tx_ring_status_available(tpacket_read_status(&ppd->tp_status)) &&
+-			(poll(&pfd, 1, -1) < 0 || (pfd.revents & POLLERR) != 0 ||
+-			 !tx_ring_status_available(tpacket_read_status(&ppd->tp_status))))) {
++			(!pkt_q->txpollnotrdy || poll(&pfd, 1, -1) < 0 ||
++			(pfd.revents & POLLERR) != 0 ||
++			!tx_ring_status_available(tpacket_read_status(&ppd->tp_status))))) {
+ 			/* Ring is full, stop here. Don't process bufs[i]. */
+ 			break;
  		}
+@@ -820,6 +830,7 @@ rte_pmd_init_internals(struct rte_vdev_device *dev,
+                        unsigned int framecnt,
+ 		       unsigned int qdisc_bypass,
+ 		       const char *fanout_mode,
++		       bool txpollnotrdy,
+                        struct pmd_internals **internals,
+                        struct rte_eth_dev **eth_dev,
+                        struct rte_kvargs *kvlist)
+@@ -1038,6 +1049,7 @@ rte_pmd_init_internals(struct rte_vdev_device *dev,
+ 			tx_queue->rd[i].iov_len = req->tp_frame_size;
+ 		}
+ 		tx_queue->sockfd = qsockfd;
++		tx_queue->txpollnotrdy = txpollnotrdy;
  
--		/* insert vlan info if necessary */
--		if (mbuf->ol_flags & RTE_MBUF_F_TX_VLAN) {
--			if (rte_vlan_insert(&mbuf)) {
--				rte_pktmbuf_free(mbuf);
--				continue;
--			}
-+		mbuf = bufs[i];
-+		ppd = (struct tpacket2_hdr *)pkt_q->rd[framenum].iov_base;
-+
-+		/* Drop oversized packets. Insert VLAN if necessary */
-+		if (unlikely(mbuf->pkt_len > pkt_q->frame_data_size ||
-+			    ((mbuf->ol_flags & RTE_MBUF_F_TX_VLAN) != 0 &&
-+			     rte_vlan_insert(&mbuf) != 0))) {
+ 		rc = bind(qsockfd, (const struct sockaddr*)&sockaddr, sizeof(sockaddr));
+ 		if (rc == -1) {
+@@ -1126,6 +1138,7 @@ rte_eth_from_packet(struct rte_vdev_device *dev,
+ 	unsigned int qpairs = 1;
+ 	unsigned int qdisc_bypass = 1;
+ 	const char *fanout_mode = NULL;
++	bool txpollnotrdy = DFLT_TX_POLL_NOT_RDY;
+ 
+ 	/* do some parameter checking */
+ 	if (*sockfd < 0)
+@@ -1193,6 +1206,10 @@ rte_eth_from_packet(struct rte_vdev_device *dev,
+ 			fanout_mode = pair->value;
+ 			continue;
+ 		}
++		if (strstr(pair->key, ETH_AF_PACKET_TX_POLL_NOT_READY_ARG) != NULL) {
++			txpollnotrdy = atoi(pair->value) != 0;
 +			continue;
- 		}
- 
- 		/*
-@@ -312,6 +316,9 @@ eth_af_packet_tx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- 
- 		pbuf = (uint8_t *)ppd + ETH_AF_PACKET_FRAME_OVERHEAD;
- 
-+		ppd->tp_len = mbuf->pkt_len;
-+		ppd->tp_snaplen = mbuf->pkt_len;
-+
- 		struct rte_mbuf *tmp_mbuf = mbuf;
- 		do {
- 			uint16_t data_len = rte_pktmbuf_data_len(tmp_mbuf);
-@@ -320,23 +327,19 @@ eth_af_packet_tx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- 			tmp_mbuf = tmp_mbuf->next;
- 		} while (tmp_mbuf);
- 
--		ppd->tp_len = mbuf->pkt_len;
--		ppd->tp_snaplen = mbuf->pkt_len;
--
- 		/* release incoming frame and advance ring buffer */
- 		tpacket_write_status(&ppd->tp_status, TP_STATUS_SEND_REQUEST);
--		if (++framenum >= framecount)
--			framenum = 0;
--		ppd = (struct tpacket2_hdr *) pkt_q->rd[framenum].iov_base;
--
-+		framenum = next_framenum;
- 		num_tx++;
- 		num_tx_bytes += mbuf->pkt_len;
--		rte_pktmbuf_free(mbuf);
++		}
  	}
  
-+	rte_pktmbuf_free_bulk(&bufs[0], i);
-+
- 	/* kick-off transmits */
--	if (sendto(pkt_q->sockfd, NULL, 0, MSG_DONTWAIT, NULL, 0) == -1 &&
--			errno != ENOBUFS && errno != EAGAIN) {
-+	if (unlikely(num_tx > 0 &&
-+		     sendto(pkt_q->sockfd, NULL, 0, MSG_DONTWAIT, NULL, 0) == -1 &&
-+		     errno != ENOBUFS && errno != EAGAIN)) {
- 		/*
- 		 * In case of a ENOBUFS/EAGAIN error all of the enqueued
- 		 * packets will be considered successful even though only some
+ 	if (framesize > blocksize) {
+@@ -1261,12 +1278,14 @@ rte_eth_from_packet(struct rte_vdev_device *dev,
+ 		PMD_LOG(DEBUG, "%s:\tfanout mode %s", name, fanout_mode);
+ 	else
+ 		PMD_LOG(DEBUG, "%s:\tfanout mode %s", name, "default PACKET_FANOUT_HASH");
++	PMD_LOG(INFO, "%s:\ttxpollnotrdy %d", name, txpollnotrdy ? 1 : 0);
+ 
+ 	if (rte_pmd_init_internals(dev, *sockfd, qpairs,
+ 				   blocksize, blockcount,
+ 				   framesize, framecount,
+ 				   qdisc_bypass,
+ 				   fanout_mode,
++				   txpollnotrdy,
+ 				   &internals, &eth_dev,
+ 				   kvlist) < 0)
+ 		return -1;
+@@ -1364,4 +1383,5 @@ RTE_PMD_REGISTER_PARAM_STRING(net_af_packet,
+ 	"framesz=<int> "
+ 	"framecnt=<int> "
+ 	"qdisc_bypass=<0|1> "
+-	"fanout_mode=<hash|lb|cpu|rollover|rnd|qm>");
++	"fanout_mode=<hash|lb|cpu|rollover|rnd|qm> "
++	"txpollnotrdy=<0|1>");
 -- 
 2.39.5 (Apple Git-154)
 
