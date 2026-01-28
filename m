@@ -2,66 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99305D46BE2
-	for <dpdk-dev@archiver.kernel.org>; Wed, 28 Jan 2026 17:31:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68C24D46BE1
+	for <dpdk-dev@archiver.kernel.org>; Wed, 28 Jan 2026 17:31:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 873A84026F;
-	Wed, 28 Jan 2026 18:31:44 +0100 (CET)
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com
- [209.85.128.52]) by mails.dpdk.org (Postfix) with ESMTP id 3F2374003C
- for <dev@dpdk.org>; Wed, 28 Jan 2026 18:31:43 +0100 (CET)
-Received: by mail-wm1-f52.google.com with SMTP id
- 5b1f17b1804b1-4806f9e61f9so504695e9.1
- for <dev@dpdk.org>; Wed, 28 Jan 2026 09:31:43 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id A243840613;
+	Wed, 28 Jan 2026 18:31:45 +0100 (CET)
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com
+ [209.85.128.44]) by mails.dpdk.org (Postfix) with ESMTP id DC91240395
+ for <dev@dpdk.org>; Wed, 28 Jan 2026 18:31:44 +0100 (CET)
+Received: by mail-wm1-f44.google.com with SMTP id
+ 5b1f17b1804b1-47edd6111b4so981655e9.1
+ for <dev@dpdk.org>; Wed, 28 Jan 2026 09:31:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769621503;
- x=1770226303; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=HY9nAhANWLQY3mKG4Ji9XTL6FpXH+gGz4Pl8yEI7XpY=;
- b=iibN+TplBhFEu5b9ZXhgytwA2j8ncPBdgjjI5HY2QZdSS3zLNffo0Or4OwYgB11e/A
- ZG6ceTTtyeBEE7qvGuI/7RIxfA99OZ2g0w+443dLnKFEJSL/TnEKy32QfUduuD87t4aL
- 1e91rm/YoKBOwsh19Yw2+012KlsfuviD0JGV6qxWeFl7CpkHdRXCCxBjgds5/Z6mzfi6
- pvPz1zbQiO84lIfx6auEImNXvi9tft5QEsDE/n59VcmHQIbT6YimHky9Qdc5rtRGcaoe
- Zv4YLfvc7kCAOknAJEykoN3bPHuEAzpUa5mCuBuCXN5i/wXs7LuLc9e/rybsAoKVeNqx
- u57Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1769621503; x=1770226303;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769621504;
+ x=1770226304; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=HY9nAhANWLQY3mKG4Ji9XTL6FpXH+gGz4Pl8yEI7XpY=;
- b=F5En7NjLY3OUhND28tKcxVzu1TOa9kWc4tLsEoFC0DrbUoH9ieH2SFXCcxXIWW/Ha2
- HZQK43ORTiJECXaoDXiqE+qSQu9VTDPJoBxgW1jN2Rm1F6Gl9Uo+0NiaoXcui+weifMA
- qEog2mU7/G9IQ1uF+sSLK0vfbZ+vFPUcK7ewZuSWjxBKhn/99iKGQEapwG9jcY/NmtdV
- zxRXp2FLd+VBrDppG7fPvFlFrCRhhcjnX/70lc0NybpBn6CM5YntBxVIa1dMRftSbG7E
- LCWaIhEQtTXf2jCewmuJxzD53dEjcvM1a/oYqRLDonjGJ1bNL6oadlstYV9Mr7ElDpUb
- xHow==
-X-Gm-Message-State: AOJu0YxZh/ZOh9Nlz+ylrsDgAcJEOxE/GrIPkHIBDLtk+iXf9z+jcbHl
- SK5WiHwOp2tq7mtJ+Ay0J4ZyMep3gaXaDtcjXTXL7Iw9w3vMDXI+aI7yZcw0bV2nI+ExP+UE0Y8
- 0RFHL
-X-Gm-Gg: AZuq6aIu3axeGey8U3FTL5Hn8SAkAWU1LP5s9akRPyis688FQbQIM6OnpMDfWAgGRNN
- USMq1nOmv6c1ufUVFLgIiwfeJSWfjEqvtt2KhLE80vt23hUbEX9k7ZKE8SvRue6lN2PtoFPScIF
- NBx/Ou+7jtTdR5CvivJJf64gREKrWFxogYzWX4+L2b5Qtqofhg5xq00ZYzboF1/i5JKXD+ZOxAf
- +gmHOgBNMWa49GFcO4/0L+LmRYZdrjzsmSiMLJcjUSPHpPbfOzLEXllvX/Ne2o25FrAQK9e3keM
- wbGJP6pGxT7xBjLG6+VgQlnQpendJPHBCPKU1z9Q11tUbZiPiU12t5sBrPXnHn6IA6rKeL85Zhs
- nA3QQUl2iZbviI5m0Wb/1V0ZWJgpwgK3rtnZH8dN1CAWZljGG8KHRSLcp66vpe/fCXvAx3mWQ/a
- jJmtly5KLI+CmYsYHdM9JCt+wmfbIGKxQrVWfGW1gzG1SOqPGiEQ==
-X-Received: by 2002:a05:600c:e40b:b0:479:3a86:dc1c with SMTP id
- 5b1f17b1804b1-4806a5bef0fmr59045495e9.36.1769621502640; 
- Wed, 28 Jan 2026 09:31:42 -0800 (PST)
+ bh=+ZAMsrmCk6u8KUm5lk3/IcGr6wu10K9h5YurbCpAPgo=;
+ b=CyZ8OIwSvZO6/Q0Lms2xJTx0uOGsqXYBYQzcgoh6nkM3HFhXsNLQlea8ltEVSChZ7m
+ lFGw6jjQC1NaPOQMB9PVIWDZF5uperbD6cgwbmF+a8aJ4cNJp59edQGCvK2CanqX6w6x
+ GQ1fd5wnPoECAA5yXQEz9qjSG6NAkzpExdm+bpoS2RSQeT0JLrokvSTNh2Dpu5anELgq
+ V5r4TJw2qW5+Pr4hmps69xPgOTWX4dqXQV+H/4n2IDCg1O4c+1GVZ/oCwRoB14PlZLRq
+ 8PoEXZk7RV9c38qMb2H4kdkZMi1nqZ5ZDmj5G7GVQSIhxL2rG8MCsBdNvnrayTZy9JKS
+ G97Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1769621504; x=1770226304;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=+ZAMsrmCk6u8KUm5lk3/IcGr6wu10K9h5YurbCpAPgo=;
+ b=ryYuLetUIzIpoAUYY1lf+J3R/l9Jyrjq9kU0ZW/5KSsX8qXzgBJfLy4mRzMJF6mgJz
+ Rytn2N9J/cFfa+U+jGNRPUMl6YKhAi5W4FgO6O1SD1XgPDkcEVURxIqC4QRVaIeI5Ml5
+ rMAGRO3RVcHF48mXydvTKXfTigSIanPZ7qrDKq7ztN3MqtQ/MpYaFuxcCbhxmLpK+941
+ 02Zt1Yz0Pn29WItLb3yVn6IqBE1nV4nwwbU9Z+aZDWdWiuzujEO9CPBouNnLkHQnuK7i
+ bDudR1iadfB6BeqZY1ekxdeN1yK9wfQYrXFsl1I3TWEC0KRXu7OdFy/VHputcYkjfXXk
+ tOow==
+X-Gm-Message-State: AOJu0YxqE5REBFObCaXiMMjo6aKDm2xNQpQTLYRRDY3maadVNO0UZkqz
+ n1ILHhGqOI4b3aB0muq4bOF3nVs6TIW58o2Xxwou9m3pNQ+48q2CRJRMAqPgvMgegqfVsg36ERF
+ MSqmZ
+X-Gm-Gg: AZuq6aJN1Vat95gASRm6lH28eVQM5oFrhDVzMul6g7VbPaLD7PVxK/ghCQ1oYw66ks3
+ lNAk2WeREdOfSU5K9MSxtPhAAVRCrp49nC0nZCe2evderPQORYen1AsNPeuAWxIwcfYnSJOHck+
+ OhaFsma/eInW4D+xZe881uuPH4VcknNhS7BjNLW57P9nWcFwU/jZNJW9kH4mIrqEu16xnmvW/K1
+ 39FBs8R6JKLTxYVotVAsSQelkXwNozo0+EqHgwSbKqRTwxwgSIyWk8EuBpgRI+9lfBKzd8bmSZf
+ HVFDug7R3PB6j+teSSeKBhmW0z8QLY3HUSHmwu0IKuPyiI4XuvoHEnSxHYBzNcUjc8RCxTxfNB4
+ 9R17v4bZDJWNjoRmMsAJwUDL3cCjWGIgvdiYoj8ZSMrr18HVpcaAnh36hT4yiY3OWtvYbH8NsQN
+ 1Ivni95RfrJxPDciCWIfE1EgtTg/cDnL9VYqB4tneuE7PJB7SvSQ==
+X-Received: by 2002:a05:600c:3e85:b0:477:a54a:acba with SMTP id
+ 5b1f17b1804b1-48069c557a6mr90363375e9.17.1769621504300; 
+ Wed, 28 Jan 2026 09:31:44 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-48066bfb59asm133732875e9.7.2026.01.28.09.31.41
+ 5b1f17b1804b1-48066bfb59asm133732875e9.7.2026.01.28.09.31.42
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 28 Jan 2026 09:31:42 -0800 (PST)
+ Wed, 28 Jan 2026 09:31:43 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [RFC 0/4] net/af_packet: cleanups and optimizations
-Date: Wed, 28 Jan 2026 09:30:16 -0800
-Message-ID: <20260128173138.151837-1-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ "John W. Linville" <linville@tuxdriver.com>
+Subject: [RFC 1/4] net/af_packet: remove volatile from statistics
+Date: Wed, 28 Jan 2026 09:30:17 -0800
+Message-ID: <20260128173138.151837-2-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20260128173138.151837-1-stephen@networkplumber.org>
+References: <20260128173138.151837-1-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -77,48 +81,48 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This series contains several improvements to the AF_PACKET PMD:
+Statistics are only updated from a single thread at a time and
+the compiler should not have to worry about optimizing them.
+The statistics returned are 64 bit so use uint64_t instead
+of arch specific unsigned long.
 
-1. Remove unnecessary volatile qualifiers from statistics counters
-   and standardize on uint64_t for consistency.
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+---
+ drivers/net/af_packet/rte_eth_af_packet.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-2. Add a unit test for the AF_PACKET PMD. The test creates a TAP
-   interface and uses it to verify basic send/receive functionality,
-   statistics, and device operations.
-
-3. Implement VPP-style single/dual/quad loop pattern with software
-   prefetching in the receive path. This optimization processes
-   packets in batches of 4, 2, and 1, prefetching upcoming frame
-   headers and packet data to improve cache utilization and hide
-   memory latency.
-
-Note: The test code in patch 2 and the prefetch optimization in
-patch 4 were generated with the assistance of Claude AI (Anthropic),
-with manual review and cleanup afterwards.
-
-The prefetch pattern is modeled after FD.IO VPP's packet processing
-loops, which have proven effective in high-performance networking
-applications. The key techniques are:
-- Loop unrolling to reduce branch overhead
-- Prefetching next iteration's data while processing current batch
-- Graceful fallback from quad to dual to single packet processing
-
-Testing was performed using the new unit test on a TAP interface.
-Performance testing on real hardware with high packet rates would
-be valuable to quantify the prefetch benefits.
-
-Stephen Hemminger (4):
-  net/af_packet: remove volatile from statistics
-  test: add test for af_packet
-  net/af_packet: fix indentation
-  net/af_packet: add VPP-style prefetching to receive path
-
- app/test/meson.build                      |   1 +
- app/test/test_pmd_af_packet.c             | 875 ++++++++++++++++++++++
- drivers/net/af_packet/rte_eth_af_packet.c | 286 +++++--
- 3 files changed, 1079 insertions(+), 83 deletions(-)
- create mode 100644 app/test/test_pmd_af_packet.c
-
+diff --git a/drivers/net/af_packet/rte_eth_af_packet.c b/drivers/net/af_packet/rte_eth_af_packet.c
+index ef11b8fb6b..158393dd70 100644
+--- a/drivers/net/af_packet/rte_eth_af_packet.c
++++ b/drivers/net/af_packet/rte_eth_af_packet.c
+@@ -57,10 +57,10 @@ struct __rte_cache_aligned pkt_rx_queue {
+ 	uint8_t vlan_strip;
+ 	uint8_t timestamp_offloading;
+ 
+-	volatile unsigned long rx_pkts;
+-	volatile unsigned long rx_bytes;
+-	volatile unsigned long rx_nombuf;
+-	volatile unsigned long rx_dropped_pkts;
++	uint64_t rx_pkts;
++	uint64_t rx_bytes;
++	uint64_t rx_nombuf;
++	uint64_t rx_dropped_pkts;
+ };
+ 
+ struct __rte_cache_aligned pkt_tx_queue {
+@@ -72,9 +72,9 @@ struct __rte_cache_aligned pkt_tx_queue {
+ 	unsigned int framecount;
+ 	unsigned int framenum;
+ 
+-	volatile unsigned long tx_pkts;
+-	volatile unsigned long err_pkts;
+-	volatile unsigned long tx_bytes;
++	uint64_t tx_pkts;
++	uint64_t tx_bytes;
++	uint64_t err_pkts;
+ };
+ 
+ struct pmd_internals {
 -- 
 2.51.0
 
