@@ -2,74 +2,87 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F78FD46BE1
-	for <dpdk-dev@archiver.kernel.org>; Wed, 28 Jan 2026 17:36:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01FC2D46BE5
+	for <dpdk-dev@archiver.kernel.org>; Wed, 28 Jan 2026 17:40:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 09ADA4026F;
-	Wed, 28 Jan 2026 18:36:16 +0100 (CET)
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com
- [209.85.221.48]) by mails.dpdk.org (Postfix) with ESMTP id 5E3264003C
- for <dev@dpdk.org>; Wed, 28 Jan 2026 18:36:14 +0100 (CET)
-Received: by mail-wr1-f48.google.com with SMTP id
- ffacd0b85a97d-42fb5810d39so77541f8f.2
- for <dev@dpdk.org>; Wed, 28 Jan 2026 09:36:14 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 44A494026F;
+	Wed, 28 Jan 2026 18:40:09 +0100 (CET)
+Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com
+ [209.85.222.42]) by mails.dpdk.org (Postfix) with ESMTP id E0FF74003C
+ for <dev@dpdk.org>; Wed, 28 Jan 2026 18:40:07 +0100 (CET)
+Received: by mail-ua1-f42.google.com with SMTP id
+ a1e0cc1a2514c-94803734b11so70323241.2
+ for <dev@dpdk.org>; Wed, 28 Jan 2026 09:40:07 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1769622007; cv=none;
+ d=google.com; s=arc-20240605;
+ b=C/Ttg6CWdVHVvZNm9BXaS22d/OKakPRblVrUfFPKSsgLuTf+jpQgE7TN1s4JGJtNDg
+ /vZ3Rdq12DgOveTryGDKiSMVjVPFjoBMyVQnI3rVsEcZdYsNBQSswHyr54W89hFKR85m
+ m/xWBiVgeRHUm2DPWPjyRiu90XiYuGf1anrAFqtkcIMR0wyzBCWwQvbCG02iA38wNLN/
+ 7UgGveh4QUoGtgF7qXi5tbDM2wqTezOENTS+QJTW4TjEJ2HIitbIMVEQzBDDMJ2VBkaa
+ Rb/eMJRvBVQ65pB3B+v3xOhdfr+6GxeWIlqQebAYxVJVj4bkX1hswbnaLgYFe5L4+s8m
+ LMXA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20240605; 
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:dkim-signature;
+ bh=4UrVayZoHw4uVjWZcIRnhTHFkQKeVQ8sRva2hQqPjzA=;
+ fh=NYG0V0oaGpBTZNcqqw0KE150BBo6RcYjlZZTwwt0oNM=;
+ b=EcDa2s0qIIVUd9dLHAjLuE+Jh4plBU9KJrzJMZcbuS7jqDQewHM8CIP6OsyI7Cd9zn
+ 5wgT7kxX3uO7OgpT9wRU0h85MRl4wtkNHJa33GlRxUnFUISfp8sH6ZwKXLppg94znzKG
+ GAnp8/Fnot4+l0BMRPEQnqfUF7CPlKXGJgWDVrYK9TNHXtFJJRpownk1fjsq87KkTyP8
+ NkZ03td2Uo0SaLC9DkgLFFysuCtXpczISr2UKlZ7n84sKvzng6vVZpWGoaaIlmW/MgoS
+ UUp64wy0Hg6zc8PmY8/EA+1aZQ2ns1Z03O4ZA78ra71Ndf1jgUyLwQyIzeR51nWtA4xI
+ 1mDw==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769621774;
- x=1770226574; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=b0IAAs9iAaRaOSkfBHfcpFYzBnCxEUKaWnEFOMLtvdQ=;
- b=b0xSZATqFGjj2Mlh0osH/EGvQ5b9VGqKXWqGtVADsHrw7sa5EvmLzXXOoGhogzBZYz
- xmY0Zz/CanzfxKV6IJcl8CQznIFZDa8yhkKMdGX9fjb/Vwbai9eVUMkeZ7NnVJ5aWl9A
- YDvIHkz3sAhM5c1Vxg8IzLdAxqXxpI3clJY14oZFU+4Hkzm7oE6hSum5DIYrISBlb1FB
- PseNbGfKCTUcIfXwf/SixgxO6zq+39uwYZ1lK0VPkYnEtTbvThqZl769hduWgAejGlmz
- G3825IrbtBD8jr6RBk0nbGKjdgLcEuDy2vhKrp5FMK6UvKy1T7StOakjh98s/qQ3D+mT
- MmAQ==
+ d=gmail.com; s=20230601; t=1769622007; x=1770226807; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=4UrVayZoHw4uVjWZcIRnhTHFkQKeVQ8sRva2hQqPjzA=;
+ b=SgFhReIkQwfO/cXAsQeHilwrmjyaBO3j9qKQvm/f1yQKFdMaK0SGfWlv2s417eA2xi
+ 0Ak/Ine3fFKsjkjsb0cuz7FwgGXW6wGbZ8+M2dFG5I1+V6SdQNa90sCP6OpYJgYu+mNp
+ mt8yTF10Zh4VWBmcwCQxSZ1jKDvlf91RiUzjdRRadx6EWUwj1taAX4jfqx3PIDQmwPxq
+ fvqp0jKaw1lqfo7Vk5A4Il/CZRDXQrOFxh4PNseMdJ14cxRF7cV4N0lVpaDKjtpzSvmh
+ EhoMqrFIm0g4WNfrPalKMoElwfWBylQKNQLS9rPiHrtAjwuLJDWED7JWUM7IcqTI4qfZ
+ kyaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1769621774; x=1770226574;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=b0IAAs9iAaRaOSkfBHfcpFYzBnCxEUKaWnEFOMLtvdQ=;
- b=N1x6hj0D2fw3AOcjVcDZFMc6L1GYMFq9lHrhGewNzJI3fLohXZwhjPJ+2WROegh+4N
- 1ZlwIf9hfWoxRpS/wFkAD9hOGv8CzERp+WpxP2FDuJwWKLk5n2xVmvKA9gP7V5KkggK7
- LMQQoPtmIrNvtryEgEhvl7O8kv+aUXZskIsvP7kS9uViv6ATX+q52AZpxPtIh/h/a3Ut
- Ucb+Xb964p4RU0RaSD22i53eqASUG39Zp6Bhpghwbk1KLF+EUdHOYYLqQlqOmNx7I3KB
- H1L+Iwz0/AUnS+bdC4H3xPG+G8u8ELuIwTupIhoBWR0YxvhFuiHBV9NsBz/P92zmO6Ck
- Rn2w==
-X-Gm-Message-State: AOJu0YzuXZwGv59jjjmIU1ewvrBOkgjeCyd1hEAPEkOT7t4zSiXzPx9C
- tSWO5eSnPhv4p6inaWqvyMa42UgLRF3HokY91dH615Zy4hLSVtSCLTsiKXcaXYwmtXA=
-X-Gm-Gg: AZuq6aKRMwoqJqZswg/asu+Yubqj+Rbrr2LLc3pWD2shqPvsScBSEeTxksgFPJXTwpJ
- qjGXMit1E10UhiReUG0Hj+/g7CpljqImA6whA1YIrDNpreu5amJX9xA1SzqSW+SLVSaYp98fLtg
- jPCOLqCHDC1qvcD1Ff/vhW3OvYyjzFF7QT2yckcapmwk4brMZdqV9ggRrZeR5hAkN+YeOpEvd2d
- TIDjn2fIsBlJ+K8vjGK+Yl40hnYYSbnsi5WjwT6e0ffVzF/BIHFls1leLvitUKqzV6ATMQ+sf57
- QQICcQa2X2r1j+Bt7Gza+4S9mSf+sZTxIvWuJRVKogbi+yc1IQrEmcsIrJiuQUryGYzQwrYJ+3s
- /jS04PaXyohiNWbqbuygPOXO2Y+FVPfoY1aBC7ynPqWKNIeLoavZK9zuB6USmegtFv8rlTStbph
- PdKLlbpd0Wx49vsI2NPlWXT3pII028vet4rqt6BY9Mp/u5Ufmg6bepTZN6JZWMeRQ=
-X-Received: by 2002:a05:6000:2c01:b0:431:808:2d50 with SMTP id
- ffacd0b85a97d-435dd050dabmr8758846f8f.13.1769621773812; 
- Wed, 28 Jan 2026 09:36:13 -0800 (PST)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-435e132368csm7770463f8f.31.2026.01.28.09.36.12
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 28 Jan 2026 09:36:13 -0800 (PST)
-Date: Wed, 28 Jan 2026 09:36:09 -0800
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Scott Mitchell <scott.k.mitch1@gmail.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH v1 3/3] net/af_packet: software checksum and tx poll
- control
-Message-ID: <20260128093609.71674748@phoenix.local>
-In-Reply-To: <CAFn2buDn=jUNT2n8dAB0TceoQB5ebkC9nHejg43vDJyfpKMeqQ@mail.gmail.com>
-References: <20260127181355.98437-1-scott.k.mitch1@gmail.com>
- <20260127181355.98437-4-scott.k.mitch1@gmail.com>
- <20260127105749.2e2059a2@phoenix.local>
- <CAFn2buDn=jUNT2n8dAB0TceoQB5ebkC9nHejg43vDJyfpKMeqQ@mail.gmail.com>
+ d=1e100.net; s=20230601; t=1769622007; x=1770226807;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=4UrVayZoHw4uVjWZcIRnhTHFkQKeVQ8sRva2hQqPjzA=;
+ b=nfJprR65gHVCTApxmMlInEUTFmLb7S9ETFCw8n3YIVP7OoapRaU60bkSrxp4b0XIdt
+ I5899o93714KwCRzf4iKzNSjVrYLKc+PQhxIXSRaJf+wopugmE0Vl5kI7TnL6BHSLxtW
+ TK9kVI4iSXSDSkhAD2SXLD1/uy2NJTMLu42N1Vq0k+7hcXndRM0XUOps7uY3Hh6nv//c
+ YXsbU9ZqRxR5fcSQ8DsiFxh5aUjMyW1UcIryJU9N456znIi3EZrTLmg8Eqw9qhC8v+Rt
+ 9jw6VWduwxOBdAE2WxYpWjbKPCgebSYi3kTAsKjlED6IVvGlqJw7gXLp9uYOB6aKxQGG
+ QzOQ==
+X-Gm-Message-State: AOJu0YxGTUuN1iMUTG+tBguXzI8dEGb+m6JrCIJLB6AXz8Ymff8xHMhL
+ BT9tmSfJTXuxILbLbCcAF/ypIAuk8tuoedhpp2wTak1/Jn+ArX+kdr+RWAeDqBw1INgBr/Nr+r0
+ wddm5pTh1rzQQKUAWVyhJAEcEekeu78I=
+X-Gm-Gg: AZuq6aINz319koyt+EqY3GB5SEH3he20syfgu+aocEJnDs65bX20rwffLBVKEwTLiYp
+ k74yTT+MNzxfL/bELRoMGJcuFcPe1pZOEAOFaDL7YuT/P77cTzTcDLQ28qam+I4bshSvto5C05E
+ MSBK0TuYNWjn7TCXKz9g7YrwRas3iVLS2SJMMi2evAT8N0m6WatKh7gvrPYXPeZLWHfcrv9XyB3
+ M+GBDGtSYVZ4GP8mwXoxWvCXoMfE9UCdaQJhRZ38UDFw00nj04HCKsn0/rqto9YpZlER795MCWt
+ Md28ZFSAYm8hVZMrFfWQ1g3jWMRo0kgPHg==
+X-Received: by 2002:a05:6102:3909:b0:5f5:4027:b6eb with SMTP id
+ ada2fe7eead31-5f7238a80bamr2671300137.45.1769622005610; Wed, 28 Jan 2026
+ 09:40:05 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20260117212114.10466-1-scott.k.mitch1@gmail.com>
+ <20260123160244.57335-1-scott.k.mitch1@gmail.com>
+ <20260123160244.57335-3-scott.k.mitch1@gmail.com>
+ <CAJFAV8wOwtsANF_z3EXp1ZeeMNw=jDvrBu_3xJ5kDZcB1j9E_g@mail.gmail.com>
+In-Reply-To: <CAJFAV8wOwtsANF_z3EXp1ZeeMNw=jDvrBu_3xJ5kDZcB1j9E_g@mail.gmail.com>
+From: Scott Mitchell <scott.k.mitch1@gmail.com>
+Date: Wed, 28 Jan 2026 09:39:54 -0800
+X-Gm-Features: AZwV_QhGC3WTuacWmcg1_roE0360MXNyWJNAPYe5dYyKXyMK1Qv4V2kkwuXZ7Tk
+Message-ID: <CAFn2buDGZY_8MJpQ_=kDSC+H_kBe_vA23sjw3CEheu1h5-E2ag@mail.gmail.com>
+Subject: Re: [PATCH v16 2/2] net: __rte_raw_cksum pointers enable compiler
+ optimizations
+To: David Marchand <david.marchand@redhat.com>
+Cc: dev@dpdk.org, mb@smartsharesystems.com, stephen@networkplumber.org
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,30 +96,12 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 27 Jan 2026 23:05:54 -0800
-Scott Mitchell <scott.k.mitch1@gmail.com> wrote:
+> Unfortunately, clang 14 (Ubuntu 22.04) is complaining about unaligned
+> access in the new test.
+> Could you have a look?
 
-> > I don't think each driver should be doing its own checksum helper.
-> > It should be done at application or through libraries.
-> > All modern hardware does checksum offload, so if it doesn't probably
-> > a driver bug.  
-> 
-> The goal from the app perspective is to set rte_eth_txmode.offloads
-> consistently across PMDs. Hardware devices are good but software
-> devices like af_packet don't provide a consistent experience. The
-> approach in this patch is similar to existing software eth devices tap
-> [1] and vhost [2]. In v2 I will share checksum code with tap to avoid
-> duplication and ensure they remain consistent.
-> 
-> [1] https://github.com/DPDK/dpdk/blob/v25.11/drivers/net/tap/rte_eth_tap.c#L559-L624
-> [2] https://github.com/DPDK/dpdk/blob/v25.11/drivers/net/vhost/rte_eth_vhost.c#L317-L357
-> 
-> > Needs to be a separate patch. Don't do two things in one patch.
-> > Not sure if some variant of the existing configure thresholds
-> > could be used for this.  
-> 
-> ack, will split txpoll control. I'm not aware of any other way to
-> prevent poll if dpdk tx is faster than kernel rx.
-
-Well tap should NOT be doing software GSO and LRO in DPDK.
-The kernel driver has ability to do that, and is better done there.
+Yes, thx for flagging this. I think the unaligned types need both
+`__rte_may_alias __rte_aligned(1)` unconditionally and will submit a
+v17. I verified the asm on clang/gcc on x86 (-mavx512cd) and armv8
+(-msve-vector-bits=512) are identical when adding `__rte_aligned(1)`:
+https://godbolt.org/z/fdYPdoTa5
