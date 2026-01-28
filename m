@@ -2,89 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C46FDD46BE7
-	for <dpdk-dev@archiver.kernel.org>; Wed, 28 Jan 2026 18:00:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 816DED46BEC
+	for <dpdk-dev@archiver.kernel.org>; Wed, 28 Jan 2026 18:06:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0F15D4026F;
-	Wed, 28 Jan 2026 19:00:30 +0100 (CET)
-Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com
- [209.85.217.43]) by mails.dpdk.org (Postfix) with ESMTP id 44EEC4003C
- for <dev@dpdk.org>; Wed, 28 Jan 2026 19:00:29 +0100 (CET)
-Received: by mail-vs1-f43.google.com with SMTP id
- ada2fe7eead31-5eea31b5cb7so63520137.0
- for <dev@dpdk.org>; Wed, 28 Jan 2026 10:00:29 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1769623228; cv=none;
- d=google.com; s=arc-20240605;
- b=G/9yad1TyAtxoaKCIZmzGYndZTTjibnjCvikC09hzF8GpS1ZDR6D1eiB5TF8uin7Mo
- CxCm1yHx4GNvBoljqG+bbJFvyEVHjqhNAIofhl+TS9eIlZ/vilypl8Pnu4FtZsfhzNDH
- X8+mggeQS61kOaVm9HVkpfEXYZ3FmN7IH7umIn/FqwMQRQdrAtmCK0icyLogmxF4Pi81
- OaazHhAb29cXzMqM1cZ+S9yXaKFP4z/3Pvlp/ajpZVuok51GRYJBI8gHrpKv6OinB2bW
- lzNC9aPk4zHva1DDdxGDuHjKK7bLMhw+XvhJWn8PGvf9i/fCe7N5Su6A2wx/uFQfssfR
- p9iw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20240605; 
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:dkim-signature;
- bh=fdfTotNL+psNykSoOSoJCmbY/L7i7+TpBJ/eIoBtq4I=;
- fh=1c4TJrSHP01pKxi6GucbcO4vteuKi1v4GQTIV17P9es=;
- b=PBuZHLzSedmG0LSwJPSRZbnF1M9mdxXwlyc+AcNNmX3L0sWqsWOrorRLJRKij/KEJE
- Xr6W9ZJcAo87Sd4Tz/DOJRqrqA+NokzSjfTgt3MdvP1zYlNfdJEI9nV/BfUqxhXyO2TH
- 5RbDAOGLwDAZPQKHBVfCgtXS8Kp4mtbWp3e6xS4LDiV5WHL+a3oouzML1ZvdRUe4YEnM
- VQWhR8zj9WhmRG67gxVn1YPUW3fPHbCr48Bv78z6WENrRXVq7U/n32om8o06pL5YAhl0
- VfrtJSSb70WwHChIkhA4GUK4qSskUaAZZtGHdkLeiHG3kD8tUVYuHVyiiTthf19819nl
- C5Mw==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	by mails.dpdk.org (Postfix) with ESMTP id B32114026F;
+	Wed, 28 Jan 2026 19:06:36 +0100 (CET)
+Received: from mail-dy1-f179.google.com (mail-dy1-f179.google.com
+ [74.125.82.179]) by mails.dpdk.org (Postfix) with ESMTP id C1CC74003C
+ for <dev@dpdk.org>; Wed, 28 Jan 2026 19:06:35 +0100 (CET)
+Received: by mail-dy1-f179.google.com with SMTP id
+ 5a478bee46e88-2b714f30461so159480eec.0
+ for <dev@dpdk.org>; Wed, 28 Jan 2026 10:06:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1769623228; x=1770228028; darn=dpdk.org;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:from:to:cc:subject:date
+ d=gmail.com; s=20230601; t=1769623594; x=1770228394; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=fdfTotNL+psNykSoOSoJCmbY/L7i7+TpBJ/eIoBtq4I=;
- b=bZlX2vBezIzU7Z83FnqFstTeicJuei0d/K6TzlUXrpdht79eB1zLGsbu1ziquUGGxO
- MzPDHzCNwWuuMXUFvnWFBOVawSqwfPUASDTAbXm684I3KBGzEUs24O669aD2P/DUM1Gz
- i2EBzONk6hdTqir3gDPJ1OWEostpjcJvxykjunF3OmejS3z6mzJaE0P66+skkxOODvj9
- DGcuevk+JFzufLKhFR8c6v+2mn+lH5Q6tkzg8U9LrovoHtesUbIsZy1cRTayvta51GVL
- WewD+0rtLkAh/VBTPrgwbydjKfHy7RsoOz/KLngU6LFWwnwqCikX8eOAaVUqecoRJSOS
- QQ8g==
+ bh=iGPL4dGwJzrlSMa1uzVB0WH6E8uNybHjcwtWwi6Hxn4=;
+ b=cjDZ7G+dtKtG7wgkrTEQVpROKcVa4M7064u3V+S0HRpJU3AB6Nhqw4XvO1O02a9MP6
+ rJJ/zPj5nt7pZQs5Krq12ucXtIkHUhPRJ9Bmmp0mp6ElwjNBCQXmQqPn7i7faW85/L+H
+ ++R9WjUpccMjiRN17bfqZBOhEbFUBmq/uqMVoViMnUXimU2xrnA193cFn2pMOu7laZo/
+ HdqceiR/AFOXdM/1m9KjrLO8rq2uIAcOYfxL/LrzzP4VyFtleTpwPYlhP9UMiDefXAUB
+ KIJmZJ5OyFz2MZYCTl9RNE1EFm7o9+LoGNG3TTLVVqWSLgTR0QclSy562e9R3no6e/j6
+ VspA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1769623228; x=1770228028;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+ d=1e100.net; s=20230601; t=1769623594; x=1770228394;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=fdfTotNL+psNykSoOSoJCmbY/L7i7+TpBJ/eIoBtq4I=;
- b=IVLqyyzQNQYNZEL3JglZKpkCfVzpK4p3eE3lOXqazN6m9tOOwshNg9HVYNUsEtYGZe
- bt5OUmAW9WnpMkjWLskfYmmUlfPYL8m5fjtADJoG54zUzWU5BL6z0jyxpZRx9m16OlIe
- flUv+fcSv9N87GV3l0J/YXJ2yV20NR8nbFuNuvfXX8spt+tc8jIJ7wVzQMikJ6/W1chI
- nyg5eF2zfdfkB/FXchYIiOpGrN6aaOqWaSDRw8YueExH6OFmMW+XvUitTBe7SBxkZ2Mu
- wTAtjJ1iHabMjhhp85xjnTAPWZ2QMn63tq9AGTzKG7v/zvUJCxVOYHTfcrzSkllFsILW
- xxgA==
-X-Gm-Message-State: AOJu0YzZUIZU0GX2qvgC2Wxm2hOIBYxrpMuc3Hkiiss4jrlQo62Q8bXY
- xnV6+Mn6LhmmWfycxDJueSrXcu/SI2Olmz4pK2SI63N7o9GR9hu6DvSc8bkCxnwg+weylDffLKD
- Uzbm3HSlMy+jeMLp9qDsQL8JDEpXjXb3Y1seI
-X-Gm-Gg: AZuq6aKb9UaQ0DFfl4AmG5P+ubjy11OuwDTh+r3NKvnkx0sPlkRb4bmjPP6YtLMUpGn
- luJEwaVB5Y/S97dhgS3rqnJkzVThpwPqcfpTT1iYe2jvSdAc0h/0RyjL6SjfMp+28ow/Jc/5FIh
- xs7USHoYG1hTTpRrd7TsqKGYcgxz/Ldo1296aadpvNUvhALs9+v72lTa3M2CdrczaD1dKFDzc54
- QwNhg2aSsy3rnwKNFy2i+UlHx25RfN1nyhjHyJmAzHOwnzgu5O+6rGpVC6VGVfN2rAKK1UZ4kyu
- MAtiWnBDm7C7REhKyt1QyCRP8Vmwc7UTIg==
-X-Received: by 2002:a05:6102:3052:b0:5ed:f26:5615 with SMTP id
- ada2fe7eead31-5f7236a9441mr1910400137.18.1769623227403; Wed, 28 Jan 2026
- 10:00:27 -0800 (PST)
+ bh=iGPL4dGwJzrlSMa1uzVB0WH6E8uNybHjcwtWwi6Hxn4=;
+ b=ksIjxiYtFRL/HmaQuc4UI7PiAfWpaRkssQ2YsD8SFPWqA79RrNSS540TppQB+2JhRl
+ WO/YhZ5xQo4S9AWHmTv4m19m1waRCc4Gi6Uf0lH+8wvfaGWWpMxnfnAdmYj4dHrzMbTf
+ 5L79E512jAGpNvKUsvKPgvuwLT9qrRGh5H46JiP9vhClrY9wD6VXvUMzD+JaxJ+Q+AYs
+ jQIxJ6Xb8I9zhAf9zxq6r5d4jUA+Jkb9+p+Z9tX7ocJ7IV/F6+jH/kgbqPEHtwpOikqT
+ An4ZOU18LJ4pq368InsNBx+QhC2PKP3BO7/TeCOIkqmPk9Rl5YYGcitopWUqBCtm65zq
+ KDqQ==
+X-Gm-Message-State: AOJu0Yzirqe2STymjvOuUgJKtmRLN19vW8UcKD8LbL+PCkkPDQsT36RI
+ eYEAgjtb856feTvjz+gvoOtZFz1X72jQ1LGAsnNl1fapVz7KLhI1jbmne47I3Q==
+X-Gm-Gg: AZuq6aJs6j39SOco15AVUhm4ynYHMIJVTaCq7+2tqwn03Nyu4f6/EbbpK0eVH4YRl4H
+ Lk87iQRCzuLf2NlavNqvOyFN0bUh++r2/055LXD0Y92D4ur17A+NoUd94WHxj13l0LuChSIGTIu
+ ZKX0micUFQCr4K+vX9LEo8G6laarlqoPmA8r6MjLEAcRuuDDkoevP00zgXZ39FSEnPEHDL3t3Av
+ wbEqxMwUwUTJg03FkL2wI70tNuABYYLc3oT1GgmxAxcuPAL+ForwQeMhCANUHNooovAlf9VQCpI
+ C4ppAnLD1v14aMLeExyR9yytr4yWOctlpTSmh5CXzPEF5ZDY7aBKZtS25icQDp/8YJOq7qPudIC
+ bOmQG2qgU4NXYGX5pRGndNPNEbzyXjh6F22rgC7J0oD8T/6tCR9+wjyau62uqQ4TF7fqwSH4xK+
+ /qJqvpRqaL4W+XmdMjMqjvMHN51qvqee89kMomNGaS4cpOS2Q8Gw==
+X-Received: by 2002:a05:7300:e607:b0:2b0:5c14:dec1 with SMTP id
+ 5a478bee46e88-2b78da0f58bmr3609725eec.36.1769623594079; 
+ Wed, 28 Jan 2026 10:06:34 -0800 (PST)
+Received: from mr41p01nt-relayp04.apple.com ([17.199.85.102])
+ by smtp.gmail.com with ESMTPSA id
+ 5a478bee46e88-2b7a1af898asm4013042eec.33.2026.01.28.10.06.33
+ (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+ Wed, 28 Jan 2026 10:06:33 -0800 (PST)
+From: scott.k.mitch1@gmail.com
+To: dev@dpdk.org
+Cc: mb@smartsharesystems.com, stephen@networkplumber.org,
+ bruce.richardson@intel.com, david.marchand@redhat.com,
+ Scott <scott.k.mitch1@gmail.com>
+Subject: [PATCH v17 0/2] net: optimize __rte_raw_cksum
+Date: Wed, 28 Jan 2026 10:05:14 -0800
+Message-Id: <20260128180516.76786-1-scott.k.mitch1@gmail.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+In-Reply-To: <20260123160244.57335-1-scott.k.mitch1@gmail.com>
+References: <20260123160244.57335-1-scott.k.mitch1@gmail.com>
 MIME-Version: 1.0
-References: <20260127181355.98437-1-scott.k.mitch1@gmail.com>
- <20260128093607.62908-1-scott.k.mitch1@gmail.com>
- <20260128093607.62908-2-scott.k.mitch1@gmail.com>
- <20260128085928.671ce473@phoenix.local>
-In-Reply-To: <20260128085928.671ce473@phoenix.local>
-From: Scott Mitchell <scott.k.mitch1@gmail.com>
-Date: Wed, 28 Jan 2026 10:00:16 -0800
-X-Gm-Features: AZwV_QiYvUefx7WUgfIIvADiIniWi0D3nBFZUILHhQ1kea04LTyEou_rm_bakCI
-Message-ID: <CAFn2buB6zHAygTrdEx_gcE+xCbf=3Fz5eDK6UzVX-PEe2KO9zQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] net/af_packet: fix thread safety and frame
- calculations
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: dev@dpdk.org, linville@tuxdriver.com, stable@dpdk.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -98,40 +80,52 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, Jan 28, 2026 at 8:59=E2=80=AFAM Stephen Hemminger
-<stephen@networkplumber.org> wrote:
->
-> On Wed, 28 Jan 2026 01:36:04 -0800
-> scott.k.mitch1@gmail.com wrote:
->
-> > +/**
-> > + * Read tp_status from packet mmap ring. Matches kernel's READ_ONCE() =
-with smp_rmb()
-> > + * ordering in af_packet.c __packet_get_status.
-> > + */
-> > +static inline uint32_t
-> > +tpacket_read_status(const volatile void *tp_status)
-> > +{
-> > +     rte_smp_rmb();
-> > +     return *((const volatile unaligned_uint32_t *)tp_status);
-> > +}
->
-> Wouldn't rte_compiler_barrier() be better choice here.
-> You are really only trying to keep compiler from optimzing the access.
->
-> And tp_status is aligned in ring isn't it?
+From: Scott <scott.k.mitch1@gmail.com>
 
-The current approach replicates __packet_set_status and
-__packet_get_status [1] in the kernel which use the same barriers
-(WRITE_ONCE calls __write_once_size [2] which does a volatile cast).
-dpdk's rte_smp_rmb and rte_smp_wmb on x86 are just
-rte_compiler_barrier [3] but on arm it's different [4].
+This series optimizes __rte_raw_cksum by replacing memcpy with direct
+pointer access, enabling compiler vectorization on both GCC and Clang.
 
-[1] https://github.com/torvalds/linux/blob/v6.18/net/packet/af_packet.c#L39=
-9-L451
-[2] https://github.com/torvalds/linux/blob/v6.18/tools/include/linux/compil=
-er.h#L194
-[3] https://github.com/DPDK/dpdk/blob/v25.11/lib/eal/x86/include/rte_atomic=
-.h#L26-L28
-[4] https://github.com/DPDK/dpdk/blob/v25.11/lib/eal/arm/include/rte_atomic=
-_64.h#L29-L31
+Patch 1 adds __rte_may_alias and __rte_aligned(1) to unaligned typedefs
+to prevent a GCC strict-aliasing bug where struct initialization is
+incorrectly elided, and avoid UB by clarifying access can be from any
+address.
+
+Patch 2 uses the improved unaligned_uint16_t type in __rte_raw_cksum
+to enable compiler optimizations while maintaining correctness across
+all architectures (including strict-alignment platforms).
+
+Performance results show significant improvements (40% for small buffers,
+up to 8x for larger buffers) on Intel Xeon with Clang 18.1.
+
+Changes in v17:
+- Use __rte_aligned(1) unconditionally on unaligned type aliases
+- test_cksum_fuzz uses unit_test_suite_runner
+- test_cksum_fuzz reference method rename to
+test_cksum_fuzz_cksum_reference
+
+Changes in v16:
+- Add Fixes tag and Cc stable/author for backporting (patch 1)
+
+Changes in v15:
+- Use NOHUGE_OK and ASAN_OK constants in REGISTER_FAST_TEST
+
+Changes in v14:
+- Split into two patches: EAL typedef fix and checksum optimization
+- Use unaligned_uint16_t directly instead of wrapper struct
+- Added __rte_may_alias to unaligned typedefs to prevent GCC bug
+
+Scott Mitchell (2):
+  eal: add __rte_may_alias and __rte_aligned to unaligned typedefs
+  net: __rte_raw_cksum pointers enable compiler optimizations
+
+ app/test/meson.build         |   1 +
+ app/test/test_cksum_fuzz.c   | 234 +++++++++++++++++++++++++++++++++++
+ app/test/test_cksum_perf.c   |   2 +-
+ lib/eal/include/rte_common.h |  39 +++---
+ lib/net/rte_cksum.h          |  14 +--
+ 5 files changed, 264 insertions(+), 26 deletions(-)
+ create mode 100644 app/test/test_cksum_fuzz.c
+
+--
+2.39.5 (Apple Git-154)
+
