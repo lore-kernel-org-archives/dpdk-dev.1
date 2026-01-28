@@ -2,66 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81E71D46BF9
-	for <dpdk-dev@archiver.kernel.org>; Wed, 28 Jan 2026 19:48:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75A62D46BF9
+	for <dpdk-dev@archiver.kernel.org>; Wed, 28 Jan 2026 19:48:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DCE4D402DB;
-	Wed, 28 Jan 2026 20:47:44 +0100 (CET)
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com
- [209.85.128.54]) by mails.dpdk.org (Postfix) with ESMTP id 4230E406B6
- for <dev@dpdk.org>; Wed, 28 Jan 2026 20:47:39 +0100 (CET)
-Received: by mail-wm1-f54.google.com with SMTP id
- 5b1f17b1804b1-47f5c2283b6so1671275e9.1
- for <dev@dpdk.org>; Wed, 28 Jan 2026 11:47:39 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id F3A2B40B9D;
+	Wed, 28 Jan 2026 20:47:45 +0100 (CET)
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com
+ [209.85.128.48]) by mails.dpdk.org (Postfix) with ESMTP id 0816A40B8D
+ for <dev@dpdk.org>; Wed, 28 Jan 2026 20:47:41 +0100 (CET)
+Received: by mail-wm1-f48.google.com with SMTP id
+ 5b1f17b1804b1-4801ea9bafdso864075e9.3
+ for <dev@dpdk.org>; Wed, 28 Jan 2026 11:47:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769629659;
- x=1770234459; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769629660;
+ x=1770234460; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=JCELy7rSsfUIaRL/L9D4e5qCK+U0tzhfHs5M0elcAgA=;
- b=DINLgvgSpRNHDKVCncejeWuUeii2MVf+qibNGhk9Lfuw595UXvGF9nIfHJMBPe7Nle
- y0F6erN5BbP+aKs9AV974xVvMzb/C0nd+hldOPA3VaqZBIhUP0pIiIyr58NCg9OKWrbZ
- ZA+7SiYCAX20p2aUWIw22n56XTVLPSDRimKB6jUyaDY7Rp6KF1JBmmMsKqrik1pd2/8l
- uSX8ra7hYIAIbyvKv3AUKahQ2+hZHgwzNw2uVRqSqAh4j1T7fRScXXGQ/qRe0//6hy0L
- +ipVeC0onnxQv61YxR0YmX9wszex+jbc+D3pIlt9SzN4o2ydyszHoBos0FxEv9iFDOlw
- tsMg==
+ bh=QWqIUCdHuYX9YPREBYZ/qr+rIpVsIuvKlb2gFyCYpY0=;
+ b=KQV7pBlUF5Tz0MUS4OhVL/U5wkBLgp7mVnS7WlmY1MKJzttiOpYaQRxX16dKRMBMBR
+ l2PKXlt1Bh1ZyhhqFTskk0gAClwalW24QSsUHkOTRHKtZkg9Gual7N7TvpgsF6X7KCqH
+ rinDkES3nV50UhjdyXH3Ie7GVldQI1yRn3IzpXobTEpFCVnHU1GXEPGE2x5FimfC79Ot
+ tga6ZMjbO0l7hzwR5299Hz467P/nknhYSOV9NNEasPWQzhmnLz10XRdbGLQq94bQA2PL
+ fDMSzX9R1Id/79BDly9yKMkuzSsJj9nCAAcIG24y41fNn4Y4UOqpbN9+u6pklwmBCK4B
+ JgZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1769629659; x=1770234459;
+ d=1e100.net; s=20230601; t=1769629660; x=1770234460;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=JCELy7rSsfUIaRL/L9D4e5qCK+U0tzhfHs5M0elcAgA=;
- b=SfdO62omOw5bjdJdYhnodDyPFKAvcl3hxdf1P3c85wYv9OAL4mfCiT69g80cdwWWxX
- K14feWLEwvLRTwK7MKWo8QNsPiTqpo70o0d5eipMy7QZCrqhc1dNspS3k9JBYTv7l7Bx
- Spk93n1avUNFpWzw9lGxlYvpQc99OFlMoRllEP3kSrU7UtL8iJgRz7NHYlbh2B8i1LJY
- akhDUK/rdM+8moqeYLqVMQG+gDpO8e+z61eH+SgsHH4vTpgn+HUksEZ+apFOM88ptuYJ
- PKsmMSCv7vj8yig7KC3cY7P1DtfHeE4BuUpTcSZpqF4tOIc/emnOJ5NkmRLsGFqJYVuf
- aQ7g==
-X-Gm-Message-State: AOJu0YznI1+NoQqASA+PdP+iL/URrquieouuQj1buS8GN3jfj77CRcnW
- Y6RyaQID3RB9EioFhys20M1QLhT5wWxFYpKSBkNM+Jh3QaT5nk2w3R4+0UqGQv2mlEDY/RDfWaV
- uSrMz
-X-Gm-Gg: AZuq6aI9EPDIPoDxgQNdOr/h6SBnj5fVNu13aPE3w4cTeCtNxOmAuzxU6XrzPNQLWBT
- KCJYEC39BF20PwXdk4M08OdMDHgJdjTuRHZ7dgr5mna3tqUWc+Q7keBmmRFi6//Yw6Fg/b6wYig
- EqIDSgPudCBFaOwCVIGAtAtR3QzKJLNt9RmHMInVpui3fdFxtgGMs8/WdSJQ30pRZjcz0vDUpMA
- QvG4w0EIvjQedDoO/Wr66k3aQLkdDJ86VnsO2FY0Qv+t3HekwArJBxLrM97zC+9c3rfTxnD/JeA
- gDwtHUREv6/2NN0wNeHCpzUBYeuD5QnBAEib4SKU/zsT4MNZnsL9orDJtvWXG7CrcDDd/DM8o74
- 8JFbQOC6ieo8vYm8B2ereF0Cf58F/vsDyL1eChdJZW4tocLXjYS7BRxTM1cyIxpcrBqCjF7XFYM
- hLwWcC1WDllNuIya7YSPNzpyCAqzWItchI0QUxlS6KrUF7aE9nMQ==
-X-Received: by 2002:a05:6000:1786:b0:430:f68f:ee97 with SMTP id
- ffacd0b85a97d-435dd1c1d82mr10139273f8f.40.1769629658831; 
- Wed, 28 Jan 2026 11:47:38 -0800 (PST)
+ bh=QWqIUCdHuYX9YPREBYZ/qr+rIpVsIuvKlb2gFyCYpY0=;
+ b=Ye1ZCyVOmx8spiadgj8TwyIFddhzvhpH1hozjqYrjm/6NlXGnwgEtqyMjvFZ0aZSdm
+ 2hMmFnMncQj5E9ptvgfKt4XEP2LmeSfXgYjui5vH4tDAhFdCy3qjDw+5EhaKh8R2n2az
+ nxgSZfeTmK4LOs8IrTvVx56p3eZDtrQh7zb6pFAS4Z1G0Fzm+siPQ7TI1/V9ni2LSfPe
+ LRrqW42fnb5b3ApgDRAt0w64qP4v+d5V+I4IfP2C40N1jYCVoWzfiXsUm0bMuVITAPmo
+ ZFs9aK/Vz9qdIkb0Yq9ev92JxMqY3a2V5a9ibSoG9dD+YryRe+qV6yPGeQBEcCb0w/qB
+ pa+g==
+X-Gm-Message-State: AOJu0YwXbnGlHLBYBfMNJanac8TCqgJiZDa69avJxr/3sO30VX7KvT/z
+ NxmeXv4nIZhyk51cRyEAf6J43buh8z4Zirvq8U6G183NwtO+5//3EiLNv+KQC5D60+gm3hfrv0k
+ gN4kM
+X-Gm-Gg: AZuq6aJETAAgEf/efroFe3y/FUAIUNMYyz2/d2/u+b+Y6lP+FqquxMATV3SNhR1ArEf
+ ZMJBaYlHMjOSZI2/0UyZrDz9CeNJ+nS3edKaWgYEb4Qu3LqMsOn6nQEZrpRYadD4S/nCali/FIk
+ z8k1g+/bM3S46kuiXVHv2+PlQliRJ3P/WiPNVjJfiDlYdkQ0CIIqvtA5SVBjBw00Azpfz3ktnTb
+ JSxH81g4Cq5D04qJMIdVVGSPnwjdwkIgkLGwDmyreyS0wgjUWfYgkaxiQcHlW1vf8kvhXlnpDlf
+ Kna0qDegiFA+7dG+XTzvy96pg6g7dHJF4Crc+76RBKurVAPNq6yrTk950PaIu0g7d4BY9AOoZig
+ X+x0uBU1eoVzBG0S84MAVZFNWqCXloL19YNvZa3r3cKpo2nPuloKKuLbR73P8oESi0OvdH7sQ5l
+ j7T53HKfr2Er0n+K61mPfVshsQt/RpekPcH3sLUQRtmtDJyajCyg==
+X-Received: by 2002:a05:600c:608e:b0:480:1b1a:5526 with SMTP id
+ 5b1f17b1804b1-48069c167d2mr95532545e9.16.1769629660549; 
+ Wed, 28 Jan 2026 11:47:40 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-435e1354205sm9601438f8f.41.2026.01.28.11.47.37
+ ffacd0b85a97d-435e1354205sm9601438f8f.41.2026.01.28.11.47.39
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 28 Jan 2026 11:47:38 -0800 (PST)
+ Wed, 28 Jan 2026 11:47:40 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v2 7/8] doc: correct alphabetical ordering in ethdev toctree
-Date: Wed, 28 Jan 2026 11:46:06 -0800
-Message-ID: <20260128194722.480862-8-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Cristian Dumitrescu <cristian.dumitrescu@intel.com>
+Subject: [PATCH v2 8/8] doc: correct grammar and improve clarity in MTR guide
+Date: Wed, 28 Jan 2026 11:46:07 -0800
+Message-ID: <20260128194722.480862-9-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260128194722.480862-1-stephen@networkplumber.org>
 References: <20260116213100.110419-1-stephen@networkplumber.org>
@@ -81,32 +82,53 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The toctree entries should be alphabetically ordered for consistency
-with DPDK documentation guidelines. Move "flow_offload" before
-"qos_framework" and "switch_representation" to maintain alphabetical
-order.
+Correct grammatical issues and improve clarity in the traffic metering
+and policing documentation:
+
+- Correct grammar: "override the color the packet" to "override the
+  color of the packet"
+- Correct typo: "show" to "shown" for correct past participle
+- Standardize terminology: use "color-aware" and "color-blind"
+  consistently with hyphens as compound adjectives
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- doc/guides/prog_guide/ethdev/index.rst | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ .../prog_guide/ethdev/traffic_metering_and_policing.rst   | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/doc/guides/prog_guide/ethdev/index.rst b/doc/guides/prog_guide/ethdev/index.rst
-index 392ced0a2e..82a749e2b3 100644
---- a/doc/guides/prog_guide/ethdev/index.rst
-+++ b/doc/guides/prog_guide/ethdev/index.rst
-@@ -8,8 +8,8 @@ Ethernet Device Library
-     :maxdepth: 1
+diff --git a/doc/guides/prog_guide/ethdev/traffic_metering_and_policing.rst b/doc/guides/prog_guide/ethdev/traffic_metering_and_policing.rst
+index 7f9faf36e2..de8d643fb1 100644
+--- a/doc/guides/prog_guide/ethdev/traffic_metering_and_policing.rst
++++ b/doc/guides/prog_guide/ethdev/traffic_metering_and_policing.rst
+@@ -47,15 +47,17 @@ Traffic metering determines the color for the current packet (green, yellow,
+ red) based on the previous history for this flow as maintained by the MTR
+ object. The policer can do nothing, override the color the packet or drop the
+ packet. Statistics counters are maintained for MTR object, as configured.
++object. The policer can do nothing, override the color of the packet, or drop the
++packet. Statistics counters are maintained for each MTR object, as configured.
  
-     ethdev
--    switch_representation
-     flow_offload
--    traffic_metering_and_policing
--    traffic_management
-     qos_framework
-+    switch_representation
-+    traffic_management
-+    traffic_metering_and_policing
+ The processing done for each input packet hitting an MTR object is:
+ 
+ * Traffic metering: The packet is assigned a color (the meter output color)
+   based on the previous traffic history reflected in the current state of the
+   MTR object, according to the specific traffic metering algorithm. The
+-  traffic metering algorithm can typically work in color aware mode, in which
++  traffic metering algorithm can typically work in color-aware mode, in which
+   case the input packet already has an initial color (the input color), or in
+-  color blind mode, which is equivalent to considering all input packets
++  color-blind mode, which is equivalent to considering all input packets
+   initially colored as green.
+ 
+ * There is a meter policy API to manage pre-defined policies for meter.
+@@ -105,7 +107,7 @@ traffic meter and policing library.
+ 
+    * Adding one (or multiple) actions of the type ``RTE_FLOW_ACTION_TYPE_METER``
+      to the list of meter actions (``struct rte_mtr_meter_policy_params::actions``)
+-     specified per color as show in :numref:`figure_rte_mtr_chaining`.
++     specified per color as shown in :numref:`figure_rte_mtr_chaining`.
+ 
+ #. The ``rte_mtr_meter_profile_get()`` and ``rte_mtr_meter_policy_get()``
+    API functions are available for getting the object pointers directly.
 -- 
 2.51.0
 
