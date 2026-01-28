@@ -2,86 +2,84 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2CECD46BFA
-	for <dpdk-dev@archiver.kernel.org>; Wed, 28 Jan 2026 19:57:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DED6FD46BFA
+	for <dpdk-dev@archiver.kernel.org>; Wed, 28 Jan 2026 20:36:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DC1C4402B6;
-	Wed, 28 Jan 2026 20:57:28 +0100 (CET)
-Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com
- [209.85.217.52]) by mails.dpdk.org (Postfix) with ESMTP id 66F1D4003C
- for <dev@dpdk.org>; Wed, 28 Jan 2026 20:57:28 +0100 (CET)
-Received: by mail-vs1-f52.google.com with SMTP id
- ada2fe7eead31-5ecddf73062so126277137.1
- for <dev@dpdk.org>; Wed, 28 Jan 2026 11:57:28 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1769630248; cv=none;
+	by mails.dpdk.org (Postfix) with ESMTP id 5FED7402CE;
+	Wed, 28 Jan 2026 21:36:54 +0100 (CET)
+Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com
+ [209.85.217.43]) by mails.dpdk.org (Postfix) with ESMTP id D4838402B6
+ for <dev@dpdk.org>; Wed, 28 Jan 2026 21:36:53 +0100 (CET)
+Received: by mail-vs1-f43.google.com with SMTP id
+ ada2fe7eead31-5eea31b5cb7so110587137.0
+ for <dev@dpdk.org>; Wed, 28 Jan 2026 12:36:53 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1769632613; cv=none;
  d=google.com; s=arc-20240605;
- b=h8ptih4K7Va3eNh3OW5ua45bpEkWIG2Y5E7vlfZCmCJ7wexvAWSC8JzyF4roVTbw0l
- SgolPu7aVqcfJDYDBqAjSs9x/x/R71jVlmrMTRDrhRvjW/JvLxZlES0q3/4fnfbrUqaj
- hlPlFmZGZigAeVgKafkqaDHZmuKQ/ZwKnFOaHEnOJQ+TF4d8hkuYZUPJM4lZ1sXLMgLT
- 4Qoz/MIFw9Q3iL4KuPIsGDBKuxEFKFGY8+O14Ci+93PNmXGl1kk+TViKY84H/JxvfZJ8
- EEleXQ9c83WwKhbDEYpH70K3Zbxc6jgn7h+zZgylVq8I/LseyGawhWhDj8nIbc4itq7Z
- GB5g==
+ b=iJ/4uYycU5YDCMN/aUhV3Ckx5Am4O39T0+5KBwmFS1ld4OO6pMaRCoKpVxnQu64CMK
+ BeljXWkOlMLxYq3p7hvbYh5kaE+aQdJGUpNFJAhnwJuvDW+OC4A5NwkRYrPAC8Z+kFX8
+ OAZeNrvjBx6ARNCUl58YsT/U2VAniyoufWq11hNtJ2rW/eId7dBzzYCQ8xcwdPYcIjxb
+ txMIvQQhOKrI3zvF1YBP5cuyZk+S1JNpSaCueiUHonO6IhrDKr3yXmezEmMjHr1auEma
+ IEa7uMMzUNYyRFI8cMsyTwVIPq5p4kfLgXGcpEmnPxi4cCAhsaccJBHqLg2NrX8sWKKo
+ uuRQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
  s=arc-20240605; 
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:dkim-signature;
- bh=iJagRYA4B3rjFf2vyRn6+AHGO1uQdtI9M0Sj+uayj5A=;
- fh=+L1L+ZHbKjrb2f5CsW4olkadjYbHjR06LFcqyhSoUu4=;
- b=DcskXDX58kcrM1yLKDFuLNImEuimtZOBq5yUoTmg10EHsliEpDNbqdawFshL8VuVlo
- QRbGvWxyIEXO2TDp2Sg+bZuTwkx0WQwZWVoZiXBlU9HX237S2fRzeTFcupRrEqLZsdYB
- PBLduJwdjzzSJFADT5vQgkeFaUNpnLq7WwLnVm+YihQA10NpTwEFSWSbrn+F8jnpb8YE
- dHNCGglCuujxRWkkMY3K7MD3EWTXHb/Y8iZhayMXgf/ubbgWeIbjH8yAk6N9GV+nfb1g
- e4AF5Il8iZyXzRyIs4RXJXBQv59VVwyI82aAkJ4X/JuPAZhYKtHu3UPB1K638z1lmPsg
- pa7A==; darn=dpdk.org
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:dkim-signature;
+ bh=YenUkh4idglQwTAeECxnZQ6psi7ajX61aLll6TQ/Ytw=;
+ fh=t33Egyn4DAOwVRnwraldPtDjoBFAjogf3LzpsEMwxHQ=;
+ b=PuGpuVc20jkyOtnAu2J/6etaK0Y5Pn7bBJanxURCKs44EGdtPPFc09fjQGb06wx5Oa
+ xb4L9A+VhHtPnE2rpzK/64zWVFFVWJuWHonxxgrwmRh5BlugYCGscbEVXwAhizNT0FQB
+ 4m+iRo1bZvLeYj/zXh9uOQo7JHKmFo614HLqh4C7fkQvW697ZbmMNYtk8zTL0tzNyw1t
+ Jc4dUsEnZ1Cih/FxYHa6Bh1sHpmW7Fb0qJ7HfCkW3BqWons0wDkUu9sWZTn+CjZjFQVQ
+ k745XqtyKCMF5cpi892dZyx+irujv71uFEoSXGwUgGO4d+xip4mnRfq0UOBMTZhZGuBJ
+ 7TJw==; darn=dpdk.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1769630248; x=1770235048; darn=dpdk.org;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:from:to:cc:subject:date
- :message-id:reply-to;
- bh=iJagRYA4B3rjFf2vyRn6+AHGO1uQdtI9M0Sj+uayj5A=;
- b=H6lSfxxMCUiNEEzjNtQw6tqNGBfZvWyuB5FH1oothb/BlBLgCKarTRDCxwZ7AQiPOC
- iKtJUiDs6c0qMbzdYgw9MTe1xf6VakpJosgYeTPP/E2TC9vsL9wh4N+9bbX294nSJadr
- WbC1eBk1DsP7WXpVqE4rzbhTG//pp53idNT0RytkfVCwTq3CPOTi3RWNJugmNFrkePzu
- RPCqWd7FTIxPJX7YF68TZIBM+sbv/xa1EGM2OfK+jobZu6PqwWwmdur/MD6jLBMw7nX4
- 7+7NpBT4nb+4MendzWxrjoqMbug/begfBGbqNkyjkkW/2E9feOC8LCcnC/OynFSsDopI
- indg==
+ d=gmail.com; s=20230601; t=1769632613; x=1770237413; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=YenUkh4idglQwTAeECxnZQ6psi7ajX61aLll6TQ/Ytw=;
+ b=HTcbF2axb1LpKcliR3L7aJLHNaDsF6szdeDhaLlgM9FtpMq4Nq4Br+kx7nsJaLApM+
+ n+ruGccZNHezqJM3VRpd9QHdvIVBoVUbh9vaFJdgmS10y/HCRz+j3uRd/BXEmFE7kOSU
+ ca95G8n9PhUo1oj7tW7rT2J3iJ/zwT2655AeVWX6EcTTu7ss9sqLBep6Xdl/wWo/Mrob
+ 8UbivUoCtTvZAIfbia7HTGKlmaYE9uxpJN0UleHKlA8qzh7zKNpxwToYZEZR4nOVR+/4
+ NCjNM8HbLXrJrGWZqmsml8HfWMVz5k17Z8WFal3YzCxWgy0F05vrWFsOONTTADl6nTUM
+ Qhpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1769630248; x=1770235048;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=iJagRYA4B3rjFf2vyRn6+AHGO1uQdtI9M0Sj+uayj5A=;
- b=rSajVmxaRfsypkCZ3EmjtlXMt5xY5GTl3urnBbwX1b1Xd4Q1N73n2zN4nSTQD6ehC+
- /A8jlBIFugHHMrD/OToUtahFgDghaJTG4l9jiI5aRd4Hx0PVE2+7hOXx32yTuIvBQXq5
- XkDLd1/UKhA41Kczj704PEepuZ90VAkmIXDK97yk6Uxt/4RMZrMUz+pBgNxjqBJChis1
- hWhF+/x/AxNbqN3j3ytLvnSiist/LoJl8gD2Iig6gthrb0b+iv2TLZdGd+l/G/TLf2Z7
- vinJbhp0y6BcD6GGVLXqKjhLXRrdnhTLm9eJeM7dIIQ3pUApl7TmgrdHilXU6YAhW5PM
- 8MPQ==
-X-Gm-Message-State: AOJu0YwWqBTZTSv4X/NAvtoKt4+I5kzY8O56SA5DmRBzFLquIyCvPZdF
- lOinGykPFgITy2XKxZLskUX2DkVHPURlccL2IT043ba9OdmDf9E/37fMrdIJhAMaTl/yUdXNtnH
- tPWe6N0xJOuud8tgqVeNUSl++dppI6eF7t7EU
-X-Gm-Gg: AZuq6aL15yzqQQBLRRLUtIZyxGEH69P6NOAvkmqFG0zWrwqtiWLSjJhi0CyeTg9hjE/
- 6vrnby1dTKA61Q4OKo2AFgjJxxXJqrzxk3m5uggihqeJYHlzXxRyOuJP+9nZDdAad61XultVV4R
- BqoDUXaUlrIonUOBSZ3LJC7OHtMSlRaH52H/oPYcc1CpKodsEmdsZvF7CWuc+flQZhs+lRArS9J
- nq3A7reuLB+3ot0gJS9lFBUYVN4aZGxcDABnWbxF6X7H/6kyZbXrZMJ+Q1eZ63CSzOh9w/gek6d
- 3Vv/xApTc6fKeCVYUkNYSCw=
-X-Received: by 2002:a05:6102:3ec6:b0:5f5:3244:20c with SMTP id
- ada2fe7eead31-5f8cdae32abmr257117137.4.1769630247633; Wed, 28 Jan 2026
- 11:57:27 -0800 (PST)
+ d=1e100.net; s=20230601; t=1769632613; x=1770237413;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=YenUkh4idglQwTAeECxnZQ6psi7ajX61aLll6TQ/Ytw=;
+ b=lo5x2jJVdrgg15SGADqRzdnmsO2Ye64TgtOmdr0vx9o1gwxuLQjDBssa5aUHnPqPb0
+ EE2e69zl3j0ob3Er6cChnGZYCycWIbrE0kGvwPDiiHbpFpAVPqFpV2beRGKfgViVKwXb
+ dqwbtdFuEBjmfQQCrC485KXsDFLHGzpmS7WR7FP/Yi/O8WZGKzVtWTFDj0moulsiE1vi
+ r6pz9UyF/2Z18NDMmtW6bo8ZlWRst9H4sg1Jr4z9AI8VSxMYTC2/u9Hx1slW7P6xJ82V
+ 0NHWRIy3jORLVV4Ay81wbX8sF5OXDfrNtWwhwnl0qf3JPfnFClZtgI1Ta5oleCl0dkK3
+ sqsg==
+X-Gm-Message-State: AOJu0Yy2wrVDh1e7PdNQobAK+BLW4GZ4mbyL1Pu4Uht8GBlBPzcQQ3nh
+ R1yXbAfk/yUMFRXgMFUiolJ6xbFs6w5zBlRdH3s2GCGZBs1DYhJhePk+c9IUSgvaTiV8tBKEgBD
+ YxNyC85yTMCEQGwTgmmcBOy8iLtL0x3g=
+X-Gm-Gg: AZuq6aKipQMqzwKOQQ5evwZzERNpxMTUolHLyrm5xj5QpNN9ctjIFQlz3LhlSeGmDSn
+ QlfAbD4wnL/EdnN+TrYGGIKbqvnLfxcVugAjFR6maqEc7bVLLrRDarFNej6s+sghkky6S13QM9I
+ rekJV0wg/qag314HeN485Q2AE7WBv1sNogxcVKPP8Dc+GZ+f8maLdNF8ioXRaCvu9xDsCetFD23
+ j+uTS/PlyCYrwkNLWgWcIDWk2RWbDaAEaACiMHvmL6FFyq4kdh27yqgcLugfANhBgCCdQGZUZW+
+ 36gOP7Idu/87DTR06EoYLyE=
+X-Received: by 2002:a05:6102:948:b0:5f1:72a7:f879 with SMTP id
+ ada2fe7eead31-5f72378e7a1mr2305399137.28.1769632612895; Wed, 28 Jan 2026
+ 12:36:52 -0800 (PST)
 MIME-Version: 1.0
 References: <20260128173138.151837-1-stephen@networkplumber.org>
- <20260128173138.151837-2-stephen@networkplumber.org>
-In-Reply-To: <20260128173138.151837-2-stephen@networkplumber.org>
+ <20260128173138.151837-3-stephen@networkplumber.org>
+In-Reply-To: <20260128173138.151837-3-stephen@networkplumber.org>
 From: Scott Mitchell <scott.k.mitch1@gmail.com>
-Date: Wed, 28 Jan 2026 11:57:16 -0800
-X-Gm-Features: AZwV_Qi9NHVfgRiQB3huDTswaRaPRoSwKHTiwpxzepXH-IerbMH8o2ENjFu8DB8
-Message-ID: <CAFn2buD=1CwnP92LGuj7fGzi_Cujnp8eTV96ZzTNKBjsA6kzOA@mail.gmail.com>
-Subject: Re: [RFC 1/4] net/af_packet: remove volatile from statistics
+Date: Wed, 28 Jan 2026 12:36:41 -0800
+X-Gm-Features: AZwV_QjkaJpXSR-UcoeabgLYDDThuc1UvT2T-uN6PuG0my5QAOtAufdlVJOKjJ0
+Message-ID: <CAFn2buC-6sMuhiWRp-OmSR5HvGrhNRs+erqc=qZpWvqQ26GDPg@mail.gmail.com>
+Subject: Re: [RFC 2/4] test: add test for af_packet
 To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: dev@dpdk.org, "John W. Linville" <linville@tuxdriver.com>
+Cc: dev@dpdk.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -95,55 +93,57 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Can you clarify why removal of volatile is safe (visibility, ordering)
-when the producer thread and consumer thread can be different?
+Awesome! Some suggestions below but could easily be done in a followup
+for incremental progress.
 
-On Wed, Jan 28, 2026 at 9:39=E2=80=AFAM Stephen Hemminger
-<stephen@networkplumber.org> wrote:
->
-> Statistics are only updated from a single thread at a time and
-> the compiler should not have to worry about optimizing them.
-> The statistics returned are 64 bit so use uint64_t instead
-> of arch specific unsigned long.
->
-> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-> ---
->  drivers/net/af_packet/rte_eth_af_packet.c | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/net/af_packet/rte_eth_af_packet.c b/drivers/net/af_p=
-acket/rte_eth_af_packet.c
-> index ef11b8fb6b..158393dd70 100644
-> --- a/drivers/net/af_packet/rte_eth_af_packet.c
-> +++ b/drivers/net/af_packet/rte_eth_af_packet.c
-> @@ -57,10 +57,10 @@ struct __rte_cache_aligned pkt_rx_queue {
->         uint8_t vlan_strip;
->         uint8_t timestamp_offloading;
->
-> -       volatile unsigned long rx_pkts;
-> -       volatile unsigned long rx_bytes;
-> -       volatile unsigned long rx_nombuf;
-> -       volatile unsigned long rx_dropped_pkts;
-> +       uint64_t rx_pkts;
-> +       uint64_t rx_bytes;
-> +       uint64_t rx_nombuf;
-> +       uint64_t rx_dropped_pkts;
->  };
->
->  struct __rte_cache_aligned pkt_tx_queue {
-> @@ -72,9 +72,9 @@ struct __rte_cache_aligned pkt_tx_queue {
->         unsigned int framecount;
->         unsigned int framenum;
->
-> -       volatile unsigned long tx_pkts;
-> -       volatile unsigned long err_pkts;
-> -       volatile unsigned long tx_bytes;
-> +       uint64_t tx_pkts;
-> +       uint64_t tx_bytes;
-> +       uint64_t err_pkts;
->  };
->
->  struct pmd_internals {
-> --
-> 2.51.0
->
+> +       /* TX burst */
+> +       nb_tx = rte_eth_tx_burst(port_id, 0, bufs, BURST_SIZE);
+> +
+> +       /* Free any unsent mbufs */
+> +       for (i = nb_tx; i < BURST_SIZE; i++)
+> +               rte_pktmbuf_free(bufs[i]);
+> +
+> +       /* Small delay to allow stats update */
+> +       rte_delay_us_block(1000);
+
+Consider polling rte_eth_stats_get at a more frequent interval, break
+when you see status update, and apply overall timeout/repeat limit ->
+can make test more reliable and take less time when data is usually
+available quickly
+
+> +       /* Try to receive packets (non-blocking) */
+> +       nb_rx = rte_eth_rx_burst(port_id, 0, bufs, BURST_SIZE);
+> +
+> +       /* Free any received mbufs */
+> +       for (i = 0; i < nb_rx; i++)
+> +               rte_pktmbuf_free(bufs[i]);
+> +
+> +       /* RX from tap interface without external traffic will return 0 */
+> +       /* This test just verifies the RX path doesn't crash */
+
+Consider adding a test that round trips data (tx -> rx) to exercise
+the read loop.
+
+> +       /* Get current MTU */
+> +       ret = rte_eth_dev_get_mtu(port_id, &mtu);
+> +       TEST_ASSERT(ret == 0, "Failed to get MTU");
+> +
+> +       /* Try to set a smaller MTU */
+> +       ret = rte_eth_dev_set_mtu(port_id, 1400);
+
+Consider getting the min/max supported MTU and setting it to verify it
+works. My patch fixed some issues related to MTU and overhead of
+frames that may have been caught by this.
+
+> +
+> +       /* Reset stats */
+> +       ret = rte_eth_stats_reset(port_id);
+> +       TEST_ASSERT(ret == 0, "Failed to reset stats");
+
+Consider enhancing to introduce multiple threads (writer and reader)
+to replicate
+
+> +static int
+> +test_af_packet_multi_queue(void)
+
+Consider sharing rx/tx logic in common functions for single/multi-queue cases.
