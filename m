@@ -2,48 +2,89 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51A4DD3F07A
-	for <dpdk-dev@archiver.kernel.org>; Wed, 28 Jan 2026 15:21:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B74F1D3F07A
+	for <dpdk-dev@archiver.kernel.org>; Wed, 28 Jan 2026 15:37:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2FF83402AF;
-	Wed, 28 Jan 2026 16:21:49 +0100 (CET)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id DE25C4003C
- for <dev@dpdk.org>; Wed, 28 Jan 2026 16:21:47 +0100 (CET)
-Received: from mail.maildlp.com (unknown [172.18.224.150])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4f1Qvt473RzHnGjN;
- Wed, 28 Jan 2026 23:20:58 +0800 (CST)
-Received: from frapema500003.china.huawei.com (unknown [7.182.19.114])
- by mail.maildlp.com (Postfix) with ESMTPS id 563DB40565;
- Wed, 28 Jan 2026 23:21:46 +0800 (CST)
-Received: from frapema500003.china.huawei.com (7.182.19.114) by
- frapema500003.china.huawei.com (7.182.19.114) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 28 Jan 2026 16:21:46 +0100
-Received: from frapema500003.china.huawei.com ([7.182.19.114]) by
- frapema500003.china.huawei.com ([7.182.19.114]) with mapi id 15.02.1544.011;
- Wed, 28 Jan 2026 16:21:46 +0100
-From: Marat Khalili <marat.khalili@huawei.com>
-To: David Marchand <david.marchand@redhat.com>
-CC: "dev@dpdk.org" <dev@dpdk.org>, "scott.k.mitch1@gmail.com"
- <scott.k.mitch1@gmail.com>, Aaron Conole <aconole@redhat.com>
-Subject: RE: [PATCH] ci: display UBSan stack trace
-Thread-Topic: [PATCH] ci: display UBSan stack trace
-Thread-Index: AQHckEX/rWx7+vBmbEqXDvMdTGikTbVnczlggAAoMQCAABHgAA==
-Date: Wed, 28 Jan 2026 15:21:46 +0000
-Message-ID: <f55622b7d5cc426a9ffe04a9d3814b33@huawei.com>
-References: <20260128110438.3003192-1-david.marchand@redhat.com>
- <fdf5710e785c48c08cdd42e95aa56895@huawei.com>
- <CAJFAV8ytz4CJh8msWU354J3cbPU0r94-kg_3DWCDh5pvnbfXTQ@mail.gmail.com>
-In-Reply-To: <CAJFAV8ytz4CJh8msWU354J3cbPU0r94-kg_3DWCDh5pvnbfXTQ@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.206.138.16]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by mails.dpdk.org (Postfix) with ESMTP id 8FA22402AF;
+	Wed, 28 Jan 2026 16:37:25 +0100 (CET)
+Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com
+ [209.85.222.44]) by mails.dpdk.org (Postfix) with ESMTP id 33BC94003C
+ for <dev@dpdk.org>; Wed, 28 Jan 2026 16:37:25 +0100 (CET)
+Received: by mail-ua1-f44.google.com with SMTP id
+ a1e0cc1a2514c-9483864e473so3474923241.3
+ for <dev@dpdk.org>; Wed, 28 Jan 2026 07:37:25 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1769614644; cv=none;
+ d=google.com; s=arc-20240605;
+ b=XGB3WPOeRZIfHuJpgVXmjyKJYEURcr9ovowh6juz7M7hT99fMhUEE+Pc/KDsqhG//L
+ DSjCCe2G07OdVUV1UJmqEgoNvHUXvcJKsPwJJTe/9YFeVa4h6Q3IQzP+SSY+3sPaTbXB
+ r0TN0AYagEtthU8WRL2XDZianlAwbPvgaRHT9edum7rGzuOnS3QbuDsJ35TFrHtOf8Nf
+ Atkhzdc3ykB2jHNu87OD8Uh8O+fY+hFXA5zI/Oh0DIgReppJaz2jo2j2zGjoqvCC1b2l
+ oiV4W/+s7HQQSicjEfwH/VfZ9/kJT/dbxaB3xYtuia5DoLf1LOJ3BXtMBckAlffGbPx5
+ LulQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20240605; 
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:dkim-signature;
+ bh=Emtkuau5xOOo5LO9YkMJ5BLssbvYL29dJ2QoTQM6aso=;
+ fh=nb9NsLtKhz4KAWvkuvkLGT3wr9sdnnz/MGxrrqjnXhc=;
+ b=QDFKncawEXxH1HjXO5rBU/2lnYHM8+mVEy0q6ncN8/6HNBzq0nAq5ONt7ziDo8NATY
+ uR1HlpC9qvuF39hiGFAwxF5etKkzrw88TReJ5d+RgcrPIBOOWtrbcXmk5F+XwbXw7ueT
+ 0CRfknxdpbLE2E90HPhIII673HVFsKGpGkcv6Y6h6GGe8ZTVP9YwH2p1LEPnOXbW5wTB
+ SgMSXhW87AOxZU71WNBQixocZMNo+SsSA4CCMUdGychnJfYDvsah3BPfDjT/C6XMxbU4
+ e4oCicZxRQ8d0AomWD39UkHXRU49gkCkm83xt96/OrA/Vm3Z0udmN24zWnl+i7m91xHh
+ V8Kw==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20230601; t=1769614644; x=1770219444; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=Emtkuau5xOOo5LO9YkMJ5BLssbvYL29dJ2QoTQM6aso=;
+ b=mxpyXWkTbM1J53GpDhpjRWyQPSMUCuAdeqPPJDZDEJJzXh9p86yg0E6tFimK5iai1f
+ XvBg/36S+R205Uo6LhY5UiQAUKqUqIKkwHYzptZxhCMbbgFdoMzP6tE7z6Bd/jiEdX7I
+ bgmF69PQqzB7wvKm70rr/0sRjUCuOwDzys5+ZCVBglz/D0lNmf3kYiHXwbADl5vxl6+L
+ AMWW7fiEbFZtNcXVMBFNF3XvNFOUdzhi3+7xGCGr/wfb/SSdehaiKiosZq4zSxuf7zVe
+ LRgxvC3Mh5F1LnwepQHs7a/zfonaxb9r0b0pofrlRajtCp8fWgwLfJ/A4I8feHgFTM70
+ FiZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1769614644; x=1770219444;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=Emtkuau5xOOo5LO9YkMJ5BLssbvYL29dJ2QoTQM6aso=;
+ b=uxUNvee0yo2QO0n82nDMxBwFFkXSSAJSYJossWiwbMXTc+nTVDHJfWIo6c8Ygqdp7D
+ a/VzjQTmh5ROqUugQrbNQo0y79XuSfHmNhr//PisSr/wn85TZADAUP9juCgeuKVhonFG
+ y6Sh30ZQnxCxz7XPIUlPd+U6qKzTgI2mMEFhEc42/+RMr8SLnGMezBBgDjOEZLuHQHqJ
+ Byjmxr0bxYw79uUD8xJMxN3e4n4GA6bYxEjASUr5nrsYowtp39zB2+i1vqR9Axb3Pbis
+ FC22kfr5GhNQYQmRiKlMgkLrDItRTPZFvNAwSvA5UHnQ7W7dwT27vli7cQ6J9mza5DD3
+ +N1w==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCWjjQ0uMMWpG2kiZVHiKULmF1jENHlfgdqp512KoC+IHOwG3UyioMm9XelhnKFB426UZVY=@dpdk.org
+X-Gm-Message-State: AOJu0Yw4+HMdQdqk5rCYr2XRXjR8H6nxPf98nw6uNWxmCeYX7UdHvnRR
+ Rdxk6wdbnoGZDkeHyjPAnxC+zJEqB4h36F/FtfQbFEiHnDD5+7kLoauMy+0+3ms5WxS8KoQ3hUz
+ FgwYIF9+aAsf+RjOFjHFq5Z1X6z7i8uUBKw==
+X-Gm-Gg: AZuq6aKSJuyt9SeYFRR8QHz0hUqmMlYZ9+Y+H33SGV9gte+8nON3Ht3+TFYYIxU0B61
+ 2C/soWb7h2JIUzcx58m8w1xMt/Mb0qUQkIo3GqYRd8Q/UL83pYoGqO9v4g69wgBwWNKO9WfkZET
+ SXIwhGCoZC6QdskjIhm83QWW9xFcOtYH9fOIJpTC+fiIjy2tVrqJ8IqpLmVqzYusd5yelMnO/OI
+ EtPOf7bu+F/KzBXak7k6eXiDTxMPdyqkhfWBgXjjohZjPM4hUJpjvY5mRw7KCczy0b9IVtuLA==
+X-Received: by 2002:a05:6102:6214:20b0:5f7:307e:80d9 with SMTP id
+ ada2fe7eead31-5f7307e814bmr1315358137.28.1769614644136; Wed, 28 Jan 2026
+ 07:37:24 -0800 (PST)
 MIME-Version: 1.0
+References: <20260127181355.98437-1-scott.k.mitch1@gmail.com>
+ <20260127181355.98437-3-scott.k.mitch1@gmail.com>
+ <20260127105440.267abdec@phoenix.local>
+ <CAFn2buBzhD=+5fG44xVyVYvLdunSxK7hTUAqi8+acPqoLf508w@mail.gmail.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F656BF@smartserver.smartshare.dk>
+In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F656BF@smartserver.smartshare.dk>
+From: Scott Mitchell <scott.k.mitch1@gmail.com>
+Date: Wed, 28 Jan 2026 07:37:13 -0800
+X-Gm-Features: AZwV_Qi49YDwVi-VbrMS4MyfxTYF5AsgafEsFji833PiLUG5wuR_4owYzY03vrM
+Message-ID: <CAFn2buA=6ucB+UJ4=q=XU57S=FMd-94v6O0AhCjzCFO+bu0eug@mail.gmail.com>
+Subject: Re: [PATCH v1 2/3] net/af_packet: RX/TX rte_memcpy, bulk free,
+ prefetch
+To: =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>
+Cc: Stephen Hemminger <stephen@networkplumber.org>, dev@dpdk.org
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -57,35 +98,5 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-PiA+IEkgd2lsbCBzaGFyZSBvbmVzIHdlIGFyZSB1c2luZyBpbiBjYXNlIHlvdSBmaW5kIHNvbWUg
-b2YgdGhlbSBpbnRlcmVzdGluZzoNCj4gPg0KPiA+DQo+IEFTQU5fT1BUSU9OUz1hYm9ydF9vbl9l
-cnJvcj10cnVlOmNvbG9yPW5ldmVyOmhhbHRfb25fZXJyb3I9dHJ1ZTpwcmludF9zdW1tYXJ5PXRy
-dWU6c3RyaWN0X3N0cmluZ19jaGVjaw0KPiBzPXRydWU6Y2hlY2tfaW5pdGlhbGl6YXRpb25fb3Jk
-ZXI9dHJ1ZTpkZXRlY3Rfc3RhY2tfdXNlX2FmdGVyX3JldHVybj10cnVlOmhlYXBfcHJvZmlsZT1m
-YWxzZTpwcmludF9zY2ENCj4gcmluZXNzPXRydWU6c3RyaWN0X2luaXRfb3JkZXI9dHJ1ZTp2ZXJp
-ZnlfYXNhbl9saW5rX29yZGVyPWZhbHNlDQo+ID4NCj4gTFNBTl9PUFRJT05TPWFib3J0X29uX2Vy
-cm9yPXRydWU6Y29sb3I9bmV2ZXI6aGFsdF9vbl9lcnJvcj10cnVlOnByaW50X3N1bW1hcnk9dHJ1
-ZTpzdHJpY3Rfc3RyaW5nX2NoZWNrDQo+IHM9dHJ1ZQ0KPiA+DQo+IFVCU0FOX09QVElPTlM9YWJv
-cnRfb25fZXJyb3I9dHJ1ZTpjb2xvcj1uZXZlcjpoYWx0X29uX2Vycm9yPXRydWU6cHJpbnRfc3Vt
-bWFyeT10cnVlOnN0cmljdF9zdHJpbmdfY2hlYw0KPiBrcz10cnVlOnByaW50X3N0YWNrdHJhY2U9
-dHJ1ZTpyZXBvcnRfZXJyb3JfdHlwZT10cnVlDQo+ID4NCj4gPiAoQWRtaXR0ZWRseSBzb21lIG9m
-IHRoZW0gbWlnaHQgYmUgdW5uZWNlc3Nhcnkgb3Igbm9uc2Vuc2ljYWwsIHRoZXkgZGVwZW5kIG9u
-DQo+ID4gY29tcGlsZXIgYW5kIGl0J3Mgbm90IGVhc3kgdG8gZmluZCBkb2N1bWVudGF0aW9uLikN
-Cj4gDQo+IERpZCB0aG9zZSBvcHRpb25zIGhlbHAgd2l0aCB1bmRlcnN0YW5kaW5nIGZhaWx1cmVz
-IGluIHVuaXQgdGVzdHM/DQoNCnByaW50X3N0YWNrdHJhY2UgaXMgcHJvYmFibHkgdGhlIG1vc3Qg
-aW1wb3J0YW50IGZvciB1bmRlcnN0YW5kaW5nIGZhaWx1cmVzLg0KU29tZSBvZiB0aGUgcmVzdCBk
-ZXRlY3QgYWRkaXRpb25hbCBwcm9ibGVtcywgb3RoZXJzIGFyZSBtb3N0bHkgbmljZS10by1oYXZl
-DQpjb3NtZXRpY3MgKGUuZy4gZGlzYWJsaW5nIEFOU0kgc2VxdWVuY2VzKS4NCg0KaGVhcF9wcm9m
-aWxlIHdhcyBmb3VuZCB0byBiZSB1c2VmdWwgZm9yIGRlYnVnZ2luZyBidXQgbm90IGZvciBldmVy
-eWRheSB0ZXN0cw0Kc2luY2UgaXQgbWF5IGNhdXNlIHByb2Nlc3MgdG8gaGFuZyBvbiBleGl0ICht
-YXkgZGVwZW5kIG9uIG90aGVyIG9wdGlvbnMpLg0KDQp2ZXJpZnlfYXNhbl9saW5rX29yZGVyPWZh
-bHNlIGlzIGdlbmVyYWxseSBub3QgbmVlZGVkLCBpdCBkaXNhYmxlcyBhIHNlbGYtY2hlY2suDQoN
-CnJlcG9ydF9lcnJvcl90eXBlIGlzIHZlcnkgdXNlZnVsIGZvciBhZGRpbmcgc3VwcHJlc3Npb25z
-Lg0KDQo+IEkgc2VlICJhYm9ydCIgb3IgImhhbHQiIG9wdGlvbnMgaW4gdGhpcyBsaXN0LCBkb2Vz
-IGl0IHN0b3AgZXhlY3V0aW9uDQo+IG9mIGFsbCB0aGUgdGVzdHM/DQoNCk5vLCB0aGV5IG9ubHkg
-YWZmZWN0cyBkcGRrLXRlc3QgcHJvY2VzcywgYW5kIG1lc29uIHJ1bnMgZWFjaCB0ZXN0IGluIGEg
-c2VwYXJhdGUNCnByb2Nlc3MgaGVyZSwgc28gY29udGludWVzIHJ1bm5pbmcgb3RoZXIgdGVzdHMu
-IEJvdGggb2YgdGhlbSBnZXQgc2V0IGJ5IG15DQp2ZXJzaW9uIG9mIG1lc29uIGl0c2VsZiBCVFcu
-IElmIHNldCB0byBmYWxzZSBzYW5pdGl6ZXIgY29tcGxhaW5zIHRvIHRlcm1pbmFsDQpidXQgdGhl
-IHRlc3QgbWF5IGFjdHVhbGx5IHBhc3MgKGRlcGVuZGluZyBvbiBzcGVjaWZpYyBwcm9ibGVtKS4N
-Cg==
+Thanks for the context! That makes sense. I dropped rte_memcpy and can
+re-evaluate once all my upcoming changes are merged.
