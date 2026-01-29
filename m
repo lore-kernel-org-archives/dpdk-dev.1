@@ -2,72 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0657FD46BF0
-	for <dpdk-dev@archiver.kernel.org>; Thu, 29 Jan 2026 01:17:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 570D2D46C16
+	for <dpdk-dev@archiver.kernel.org>; Thu, 29 Jan 2026 01:35:40 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CBCDE402BA;
-	Thu, 29 Jan 2026 02:17:05 +0100 (CET)
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com
- [209.85.128.54]) by mails.dpdk.org (Postfix) with ESMTP id 79B6440297
- for <dev@dpdk.org>; Thu, 29 Jan 2026 02:17:04 +0100 (CET)
-Received: by mail-wm1-f54.google.com with SMTP id
- 5b1f17b1804b1-47ee76e8656so5871655e9.0
- for <dev@dpdk.org>; Wed, 28 Jan 2026 17:17:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769649424;
- x=1770254224; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=0rxQmr2M60iCbFNGCN2QD588XEtxoQxqCieLHeV1K+M=;
- b=c4ktPYt6CahIH1NN2HT9XqcN/wlE9eexTZE+K+3ZBW/L4F/itnIHthh0yiOFJWCMc8
- O38A4fRJ9AYnFcRGbnL0Y8FZwUIt0I0inXfjgZCU/3mBx8pSkDl45z3lHXBcZL7Tl09o
- oSAxTdy3mATKqqlT1nDnQcAxDrKkerR7oKoGMfUJm+FM953w0yK/g/eGCzIcDUdIeGaR
- abZdDW2JluE+vYohFyyiA3ftrkFMQE3SrasXkh5F/Cd5SO0nNJhq6PgT+cjl4v07xL9j
- Np+1fI5OQwVVkDOVM2z+bM9xAEy0MGAE54O1/kJbR2NH0d0W/0MRgsgN5HbBIBoCrHRd
- dMwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1769649424; x=1770254224;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=0rxQmr2M60iCbFNGCN2QD588XEtxoQxqCieLHeV1K+M=;
- b=dm42C3fsxqtuqIz9P9oVk3DEBLGrYhWbI7inOq22J1EUNAU7y4uRgQOtxTb1R5bB3H
- VBdDXeLIYplf9s1rhSx2b1IcipeYi4xdIxfW8MLEzlHnmvOMTFllzJzVy5Qm6LKCDG2V
- 9QRGX7zaignstF2SCW1b4Dr91qfgs124NIVyGd7EBvdHvoxqBpR/xIaXHXpnTPn6olH2
- sztzHqWGtfB7FY8gMRkjcYPex5RjECftZY2jJ7WWifRaiOkbKg6yZq+RIelPPdecSb09
- +L3B5M1N3MkZCdNuuGfVQch2w61ehCLDNbyHj0+YNlwiz/fP++yFGy2q33DcwNOF/XfU
- EtFA==
-X-Gm-Message-State: AOJu0YyccXUBt5fYVJI/Sl2YlS9+egUnYLf9/Wf65VDdI+MDKE4t/OPQ
- LaZJpHY8yX4/6L07mKawRTk8/UisQDJHwInqdiKrE06tfkRPdzBpTvq7nJO16B8pdZL3rtG8/Kz
- I9Pa0
-X-Gm-Gg: AZuq6aL0DjvT3qjkYAgev6NzADm0/MJfp4AbDNs9dD02eDzyMVBskazlHNNACwv2FBl
- 9Oqr5COJEc8rtMz8qDWrWNLvp5s4BMbCoPvtGtbKsVOaGGe/z5MOxo6KCOFRzgt8k7P5TdzL8JW
- 7ocmcvDORl+TxE80zcM8WV03Xpi3Zzrd0JkAy+lAOC68o2D1InqTxMiHT4YsYeCfsf52g/yGONS
- HZCpmiv3FR2e2kjP9JL7vDps9cOUUXYHiP03/Og6dad2ittdGLXAm2KN5sL/1zCmRFvPWZ7dkhR
- WkMNTGfr0R5E37DfPdi12/SVhr8u8A2l8xwSLyYhbrcfS4lE/CbcyvjmOAR8MghQGA0g39wi+QC
- mSaIH+KiGRTaHkTnKjlBQTTStTvv3/khWj/3XNiH3VDR5aM8BO5jqqRz/H5eEKHaE9hNKOJI9pz
- Oeiy9nadvgY19ZwLEH6fy5bTJyk2N8j/KOJyKAOUbFOEgQwlDUZR/DulqHDNWjP3k=
-X-Received: by 2002:a05:600c:a08e:b0:480:3bba:1ca9 with SMTP id
- 5b1f17b1804b1-48069c16480mr85512465e9.4.1769649423975; 
- Wed, 28 Jan 2026 17:17:03 -0800 (PST)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-4806ce4c3c6sm96375975e9.10.2026.01.28.17.17.02
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 28 Jan 2026 17:17:03 -0800 (PST)
-Date: Wed, 28 Jan 2026 17:16:55 -0800
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Lukas Sismis <sismis@dyna-nic.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH v7 2/6] ethdev: add RSS type helper APIs
-Message-ID: <20260128171655.398e9871@phoenix.local>
-In-Reply-To: <20260128215838.73502-3-sismis@dyna-nic.com>
-References: <20260128215838.73502-1-sismis@dyna-nic.com>
- <20260128215838.73502-3-sismis@dyna-nic.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 76302402C4;
+	Thu, 29 Jan 2026 02:35:39 +0100 (CET)
+Received: from canpmsgout04.his.huawei.com (canpmsgout04.his.huawei.com
+ [113.46.200.219])
+ by mails.dpdk.org (Postfix) with ESMTP id 7720040297
+ for <dev@dpdk.org>; Thu, 29 Jan 2026 02:35:38 +0100 (CET)
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+ c=relaxed/relaxed; q=dns/txt; h=From;
+ bh=eVnS8kZzIuSGBFospvGWqTMOQzNdSyO5PnN3jGpXAs8=;
+ b=gYMJdBEc9QQgcKAUFZtb6XHsfJWCr93zsATXEhv5HhIiQcXj//rJCSXdKuDPBH6jMm6pwsM44
+ BM8N+vzYVSBXP5UVjA78TmClold6ICac68nU9OBBzQoMUtf46ZwQVrScRLOLNfZqMWzEnymymct
+ MxjHhoHmIwYql9EiqbNLxbc=
+Received: from mail.maildlp.com (unknown [172.19.162.223])
+ by canpmsgout04.his.huawei.com (SkyGuard) with ESMTPS id 4f1hT20zkCz1prLc;
+ Thu, 29 Jan 2026 09:32:06 +0800 (CST)
+Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
+ by mail.maildlp.com (Postfix) with ESMTPS id 656F940569;
+ Thu, 29 Jan 2026 09:35:36 +0800 (CST)
+Received: from [10.67.121.161] (10.67.121.161) by
+ kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 29 Jan 2026 09:35:35 +0800
+Message-ID: <b5e6bceb-dddd-458f-9bb7-70ff08efbec1@huawei.com>
+Date: Thu, 29 Jan 2026 09:35:35 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/4] argparse: fix minsize build
+To: Thomas Monjalon <thomas@monjalon.net>, <dev@dpdk.org>
+CC: <david.marchand@redhat.com>
+References: <20210412215339.2439530-1-thomas@monjalon.net>
+ <20260128120005.2777473-1-thomas@monjalon.net>
+ <20260128120005.2777473-3-thomas@monjalon.net>
+Content-Language: en-US
+From: fengchengwen <fengchengwen@huawei.com>
+In-Reply-To: <20260128120005.2777473-3-thomas@monjalon.net>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.67.121.161]
+X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
+ kwepemk500009.china.huawei.com (7.202.194.94)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,31 +58,21 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 28 Jan 2026 22:58:34 +0100
-Lukas Sismis <sismis@dyna-nic.com> wrote:
+Acked-by: Chengwen Feng <fengchengwen@huawei.com>
 
-> --- a/doc/guides/rel_notes/release_26_03.rst
-> +++ b/doc/guides/rel_notes/release_26_03.rst
-> @@ -55,6 +55,17 @@ New Features
->       Also, make sure to start the actual text at the margin.
->       =======================================================
->  
-> +* **Added experimental RSS type helper APIs in ethdev.**
-> +
-> +  Added new experimental APIs ``rte_eth_rss_type_info_get()``,
-> +  ``rte_eth_rss_type_from_str()``, and ``rte_eth_rss_type_to_str()`` to
-> +  convert between RSS type names and values. These helpers provide a global
-> +  RSS type string table via ``struct rte_eth_rss_type_info``.
-> +
-> +* **Added experimental port and queue identifier typedefs in ethdev.**
-> +
-> +  Added new experimental typedefs ``rte_port_id_t`` and ``rte_queue_id_t``
-> +  to provide type-safe identifiers for Ethernet device ports and queues.
->  
+On 1/28/2026 7:58 PM, Thomas Monjalon wrote:
+> This error is seen in build of type "minsize":
+> 
+> In function 'parse_args', lib/argparse/rte_argparse.c:764:31: error:
+> 'arg_idx' may be used uninitialized [-Werror=maybe-uninitialized]
+>   764 |                 if (arg_parsed[arg_idx] && !arg_attr_flag_multi(arg)) {
+>       |                               ^
+> 
+> It looks to be a compiler issue because we are not supposed
+> to reach this point in case of find_option_arg() failure.
+> 
+> The variable is initialized to allow compiling with "minsize" option.
+> 
+> Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
 
-I would rather see this library work without the addition of typedefs for this.
-The types for port and queue should be typedef'd but it should be its own
-patch series and fix it everywhere, "yes that would be a very big patch".
 
-Introducing it in middle of other library addition means it would
-only be partially done and create lots of confusion.
