@@ -2,71 +2,166 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B33DBD6100C
-	for <dpdk-dev@archiver.kernel.org>; Thu, 29 Jan 2026 11:43:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28EF6D6100C
+	for <dpdk-dev@archiver.kernel.org>; Thu, 29 Jan 2026 11:43:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 609DB4066C;
-	Thu, 29 Jan 2026 12:42:21 +0100 (CET)
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com
- [209.85.128.52]) by mails.dpdk.org (Postfix) with ESMTP id 0FB3140431
- for <dev@dpdk.org>; Thu, 29 Jan 2026 12:42:17 +0100 (CET)
-Received: by mail-wm1-f52.google.com with SMTP id
- 5b1f17b1804b1-47edffe5540so10950725e9.0
- for <dev@dpdk.org>; Thu, 29 Jan 2026 03:42:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=dyna-nic.com; s=google; t=1769686936; x=1770291736; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=FckmrEpkGXHE6uDj430Jg/8Si3yBP0UKjo4L9nT3RSg=;
- b=Xqbzcp47lY27zQXrC7jd1+kG9ER0WzfcgflxSYrBT6oFkZf+hwtsyKOJHbOPzFh3hD
- DlfZrfuzcHXhqpWcHeZELP40w7hnY314moEMKt85xVhT0znJGikTVUNirSxFcL0wIoht
- GRWGuZcuATbc4y7sox+KSlD4hZZVXOHzXWZF00Ebsn9aHvIoywspUXqTCgZFdpP8fvNg
- Fw+uhieIKRAx5wX6Bwy4IFcxJxyZ76h0VA5+eZc0e061NX32B66/Q+B5JHwe1AYelEbB
- mO3uJf4HkAiaz3wrlabXK1g1XTbnjw3eqEMrXICHIz8ywF4uZdBRyhFBA0b+XvVkyNsf
- pxSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1769686936; x=1770291736;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=FckmrEpkGXHE6uDj430Jg/8Si3yBP0UKjo4L9nT3RSg=;
- b=fZb/lb86ZZHGZiTcBqwqUysyEu/TON9W4OEYT2eJHcqK/UICo55Z5ZYLAAB6uvsXek
- v/e0+5k/GKRSvFFj9AvrzP4nEWsSGPDTuzW1i6fIn76YguicjmFkGpxK3ktvWOlzbXAY
- r6WocN213ChFsOm3WrQWhLbrY4cGT8dKRShwfBK2e9VJi+0/iOsUxEc1wONoAUw8+ntK
- r2u6NRcOiFdPCZ7xR7vJseGHUtVGz64EHP/AgEguioWsTIaWWQ7bH2YCQ/MbFp0zcjeG
- 7mAT3GBZQbham/PFs312PCQ5dJbN8gS6lopY8+Fk0Bw7Elfeq987QGXyCeqlqLkce1zr
- xpzg==
-X-Gm-Message-State: AOJu0YwDNpPHkf7Ar1EnOWftMOoYQezMcSCPfrCEL9+K6vKFfaE3lqPr
- Vt1NaAM8B7m8rNXnnWl5NCdvkLSF0TTnLZhj0sH47NdLf4JjlF9M/I9KFLLBeQNYZQ1Idn0NZg/
- VXobZ
-X-Gm-Gg: AZuq6aLiUXN0tn0ULmXyoH4XTLFfSTFR/4EW3Y5Y+g10W0sXQBE5jPNWHKIOYPP7YiP
- SFgxaybGXca++aSnivKcXihmjK9uGage4CwJ28j3k4k/LYooWElaCmkpwoANFrcfxItcutE9cyG
- 4js8BD8IPdCmzeKJDd0YsRoZhDOxXu5ABT4ZvMQ377YbMzN0m4bUc6fuk7HWX/MxzAqN8srAuKA
- LtcenXTGQKuOtDx0qcdT0h2PZad1NnBF99UL0FpOFv/JTLrw3JFuRyqvf5GpglDgTyu3+2Giqsj
- bYoKyvwCyKC6tCZ18gWE4v4T5nlObImJHVR+/iL0gpNUOxYnJMODXnyQgJUfki56rtkN7uCs3eG
- 7nXbFpUl6rkzVfqTC5U8woQOcqAkQGdc4sG3vhF+JgcXJolFz8tLGo20MHt8HxpQGujOE/0qLsu
- zlQFdpNQ/0z/0oogx6efp2MzqgMujP+PKg716/yGAjsA61HA==
-X-Received: by 2002:a05:600c:a08c:b0:480:1c53:208b with SMTP id
- 5b1f17b1804b1-48069c9bbb9mr96425795e9.36.1769686936075; 
- Thu, 29 Jan 2026 03:42:16 -0800 (PST)
-Received: from claret.liberouter.org (rt-tmc-kou.liberouter.org.
- [195.113.172.126]) by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-4806ce4c515sm123071315e9.11.2026.01.29.03.42.14
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 29 Jan 2026 03:42:15 -0800 (PST)
-From: Lukas Sismis <sismis@dyna-nic.com>
-To: dev@dpdk.org
-Cc: stephen@networkplumber.org,
-	Lukas Sismis <sismis@dyna-nic.com>
-Subject: [PATCH v8 6/6] test: add flow parser library functional tests
-Date: Thu, 29 Jan 2026 12:42:02 +0100
-Message-ID: <20260129114202.61185-7-sismis@dyna-nic.com>
-X-Mailer: git-send-email 2.43.7
-In-Reply-To: <20260129114202.61185-1-sismis@dyna-nic.com>
-References: <20260129114202.61185-1-sismis@dyna-nic.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 9431640613;
+	Thu, 29 Jan 2026 12:42:35 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+ by mails.dpdk.org (Postfix) with ESMTP id 92E204066B
+ for <dev@dpdk.org>; Thu, 29 Jan 2026 12:42:33 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1769686954; x=1801222954;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=IKRPCluh4FK51VcoZqpPPlp5htsvVuNIwmeGmNBUQG0=;
+ b=TNEFi9/Pc9RzFEekWCymA+d3F5VZ23Dwqri6L3lUo1vlQCjfj5ziEk6B
+ 3qtBMtaQSWWh/RkJ5ZmoI09v9tYO4Nh4Hwpt0tYWEAC6vvli0ATTRvsie
+ IWpKbb1Vl1LQgqGWcekKgzNW/mndVtzWHCiczsoTB7dglJw1qtn/Y1aND
+ 4hSioOGLk5/JNOOTQgQ5Bko6hDV28JHH8EsUrdWYJoRMEtSr+bzcZ4v5F
+ e5sR1VJoyJNGk+FbqKXwWadaGerlgXHrHRP0x6uUZO3WKM4dB3w8D3tnd
+ 5maKpQCUh3JdLcStMJ2BBvDhZG1lIEIuRzXIeV/FNjTIx1/Q5/5JfM2P/ g==;
+X-CSE-ConnectionGUID: 5sAa7oL0QMK1wPeLHlUVGQ==
+X-CSE-MsgGUID: W28VEZzpQraC0wkopPwzhQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11685"; a="70976036"
+X-IronPort-AV: E=Sophos;i="6.21,260,1763452800"; d="scan'208";a="70976036"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+ by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 29 Jan 2026 03:42:33 -0800
+X-CSE-ConnectionGUID: CtK/jmNXR/u0jGOIujgBOQ==
+X-CSE-MsgGUID: NU5gAPkjS1CweBYl0K1mHA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,260,1763452800"; d="scan'208";a="239811212"
+Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
+ by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 29 Jan 2026 03:42:32 -0800
+Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.35; Thu, 29 Jan 2026 03:42:32 -0800
+Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
+ FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.35 via Frontend Transport; Thu, 29 Jan 2026 03:42:32 -0800
+Received: from DM5PR21CU001.outbound.protection.outlook.com (52.101.62.71) by
+ edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.35; Thu, 29 Jan 2026 03:42:31 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=F75/LlJ1Uijof7pjgv0iUVYfrU4Qmj8cSCWFad4s15EWFYVsxcLj7tN39r1VyWIMDLnl5s7qqGTan1j8Ii+qRfIoNRLN17gxYqHwUqfwr7gof6NYvEwVVEM7/3p1d4Y+c58J07rPKIlIkAjH5TNyuKBtDrSrv8flnPq41O/7UBINVPAt2IpSiC0UN2bk6+dzXIWFbcF92OSvoef9898t27iy2XRrd3jDXto6wUtt3FeG5Di90J+M/7l09wIE8tfS+YodB/I5JEnVOv5dAiGiFLFxpBY6/b1ktJf1TOu+j2dbXp6UqCNfq8VMLxMwCyMaFfCjhRsuBAehdQnNJv+s+A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wU/j+Xz7fgfeGMzHYJ+qSdjNFr5Tba1ryfxcYqdui4k=;
+ b=lDCCBxr3SonoIvVs7msqIOAxeBAQx+jQVxi0+D+Ohr4+E+dw8eCKKq0za1SZAiHkJxUsAhYD5jA/ce9ZRTQc8WV4eNe3L5fEonAJpy7JzC868Y1KvdjSneBqQZLthaSW6CedQvMcgR1lNQI6rsGQ8EPyRDMusBGwRp6KZ4+eHpknTKv/rGobl01dTRpekbg9hciHKhdWh+tC1ujhr0h0vFhIJd1jRrk3NBP2ii8/0+6ZMqFp6zX79kFTQB8BwBdmD201xzfscWBoKAG8eTaYf7UWBb+Kzd0VnWgk8EGgXnK2cjy8QKHmEr+uYWsgyoqjG2vGv1cHpkcbDIIaM9IyxQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
+ by PH0PR11MB7446.namprd11.prod.outlook.com (2603:10b6:510:26d::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9564.8; Thu, 29 Jan
+ 2026 11:42:29 +0000
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::2a1:33a9:9f92:b52e]) by DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::2a1:33a9:9f92:b52e%3]) with mapi id 15.20.9564.008; Thu, 29 Jan 2026
+ 11:42:28 +0000
+Date: Thu, 29 Jan 2026 11:42:24 +0000
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: "Medvedkin, Vladimir" <vladimir.medvedkin@intel.com>
+CC: <dev@dpdk.org>
+Subject: Re: [PATCH v2] net/intel: improve Rx descriptor ring size checks
+Message-ID: <aXtHoIRVwkkvfZbv@bricha3-mobl1.ger.corp.intel.com>
+References: <20251215173543.1707960-1-bruce.richardson@intel.com>
+ <20251215184342.1722960-1-bruce.richardson@intel.com>
+ <eaeaeb1b-16b1-42ed-9bba-69357833c9a4@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <eaeaeb1b-16b1-42ed-9bba-69357833c9a4@intel.com>
+X-ClientProxiedBy: DUZPR01CA0048.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:469::17) To DS0PR11MB7309.namprd11.prod.outlook.com
+ (2603:10b6:8:13e::17)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|PH0PR11MB7446:EE_
+X-MS-Office365-Filtering-Correlation-Id: c0e1659b-a9ba-473f-70e1-08de5f2b7b0c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?M/mc8/o9GrA70R5TNH5Doo+LU5EYgV09Xt9/UyilYT21DXVApMv0YGIwsAc2?=
+ =?us-ascii?Q?atpXSN7VMBrpGRc301MFroRZ8K20xkhv/0S+7DfW8FApzkHpECp3AFJmSK7D?=
+ =?us-ascii?Q?5z7fUUJewReGfvJLtf/eC0QOmj32o3YPZNYL4o7uvayFtIPcYqK3dQdjJrhE?=
+ =?us-ascii?Q?Aa9VjGSQ4r1Ndm2UH7XCy1YkJLPKfLdMAzhefdaZT4wEGgGltJNehmwhGU1y?=
+ =?us-ascii?Q?dOR0+Vf1ktLGlXRzAygCQNfYJ5z3eV0/O4OLTuNDlm9u763p4krwUt+iEHd8?=
+ =?us-ascii?Q?+yZr3DBAQWO+iiZxg10x5wZa9628AeTFIDLJvwqwMJL/MQFOcSPjEYPWiczA?=
+ =?us-ascii?Q?sN02EZme4ob5WhFmB5Hkc1BzzsvyEA6BJ2EW4TVOOghS2eXFz60Eh2Jg+Fek?=
+ =?us-ascii?Q?UXq6Nm4v+/MrnwpUxWZBVYSHRYDj245qSBiSLasVW9kDe/t1B981kuAH7avO?=
+ =?us-ascii?Q?wuZsWryaH9qqSR+isvxd/OjS5VsXTZGWGRtmh/qaezsm96s5i5cg4gqJwDMX?=
+ =?us-ascii?Q?eDRZLBOFTKi3GBNNT22AuCbRpMI1M6nBojQO1S7bIIvQxWFdDDlYTI32OuWe?=
+ =?us-ascii?Q?yzEfHG/bpCjDD+Nm3LYjELKt23HaKxOHgaOnZrwGP7T1ZqeEBCsiMxBjZVs3?=
+ =?us-ascii?Q?J5mCYdtDPgeb+PGj8fr1dJqp3frB9fsi/QOR8CjhzTR/v2dEQC51iu3hIe0B?=
+ =?us-ascii?Q?KLmQBl1cWCCYWGJGnt7iap3w4DrhZRkzrQ12oSVyBtiNdL/Ezw4WBEeUwjvO?=
+ =?us-ascii?Q?cr7yXHdHL3A7o5Ub5zWeP2/4BVlBQNywfMJgsBuDbUCJ+bEspqMYOVsdGlZZ?=
+ =?us-ascii?Q?LEmwJJRHD65vNFqPVnpwNA1K8Bjzb2gveekPKzJPpCPIaZIaxLLUj5Q7Zbpv?=
+ =?us-ascii?Q?dQVXolsEva/3XLOaVV1ECygSHOJiaOAT5LSjrxePBzpmm3+VhhkTV+YtvbBc?=
+ =?us-ascii?Q?EsB03Qds57ml9UhHhvyB2iOHRJGna5CVvWCB0mndylwm1nFT1iUouRYE1aN0?=
+ =?us-ascii?Q?8GzNqbRpLPqFQzfRtKwOOMIt+2W1vH8tjEnr+bD1IUb2tGzzvFhAGP+NXz3J?=
+ =?us-ascii?Q?UFW/kVICp3t9Ags6LWzbkc1JUrXB2bbMdmAfrJgYCAEgYzXpAPzCzggv1m8i?=
+ =?us-ascii?Q?IGjLcaOoovj07lRfnDCbD67YVmsmGpPSR2O54rk7n6OPByK+P4RBGtmc4GXJ?=
+ =?us-ascii?Q?pG/bqP3SKrzyYrln6Gne/vD43MB0g7ersc/CssNzJqBRVIxMSuA3wVrQTF1T?=
+ =?us-ascii?Q?WvQfNdxlVc2wYHnaPi9j+juyyE5AES4gvpOL82NCGQmNDW4Bvt91bs67fpT2?=
+ =?us-ascii?Q?QgPu7NnhYlGHQ8vJQIRhtzSFvdtBHnMdyaGxpjJ5g0AbO3dMP0uqoIJNG5iP?=
+ =?us-ascii?Q?yx6FMCXZiOkV8g6sfSuExjsMPEbPurlfSnv4LU2a2HxtymG9FAwgu3+vCHCK?=
+ =?us-ascii?Q?TXgECzA37qe8OzRwjNIIp7HHmxk3i6c6hUTkKjOFeEpqkoiWn6rpqmkkzgWD?=
+ =?us-ascii?Q?Y6nOfTeC2YZ0IJJzPGlcFayB0VGr1x0tjH+uCQZndegcX0+Vxr2PJAocSNg9?=
+ =?us-ascii?Q?4rsxK5ODM4Norqzrgjc=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(1800799024)(366016)(376014); DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?AajRnyuVzHSEjRpV5qzmMu8I/cOoPUYVYFB4FwvhCZyhiZ7fvpBzQugdOR6b?=
+ =?us-ascii?Q?6ASxt200/U9pPTwE5mrUbnkm7c+2YV2CVKfnoOexI+/adR75tsGN2J+TOHoj?=
+ =?us-ascii?Q?TyD1I3Ta6k4VY6BYj2piNo+n4tRbqSYRnKnAJZ0hU+pYOrX9sZmjvN+MpK56?=
+ =?us-ascii?Q?CYsWieRoZtCSXsENJP2JJh8BZRgT2TNmwvsLNR98Nyf2H/NfQTjFd41CENso?=
+ =?us-ascii?Q?7XGw9DAw/4Dri78TPf9phuYoJeHPVLYp9nVQBMJtECn4SPJylig6wzm4mRun?=
+ =?us-ascii?Q?lhF42Stz3UoiiJNThzSBtoBv0vXQIyUKLJ1ZMhpR4z4VOUeBl4yB76eY60T2?=
+ =?us-ascii?Q?7Aibpf4N9dAd53HAHUYQep+1XAZKssozXkqseGQ9U7zFAH+feIUfpX6Zy+No?=
+ =?us-ascii?Q?J1iRX7HXrFlYyRVuFEbUOgvM9XTv4X17vZPPh1Q3Vkaq3DIkusbqqR1OunIj?=
+ =?us-ascii?Q?JuImtNDxGh9guD5gyoX7px7jnQo/XM4K+N94jllFFrK9PwvSLF+fcR4VuTUU?=
+ =?us-ascii?Q?FQGOL8Y0H0k/AOlOxH1z1A8EiTHFLFly36pb5desErFfARq6ianuN+ZKz01R?=
+ =?us-ascii?Q?MzcEUJd8l6RuqFqgc/tvtcX8rVjp+CxGh9JRxKiIInDMxXhsS+LsObslFzJB?=
+ =?us-ascii?Q?H4iuEUaona58abh6OStq4aww+FqGJsqF+qB3NzUVrhLdBYHo1oiOMkry78hz?=
+ =?us-ascii?Q?5dVOHYwmW5DUBO9XitEOG4UkwyirMrnes6MfeCMQnE6fELF1tOT6QDLVQ3+P?=
+ =?us-ascii?Q?3gcwyzW0sMrokR43FhFHjI41IPCt4NoEy73zWMzUaf1us8mUfgTGOikIEn9y?=
+ =?us-ascii?Q?8FaR0RAMjhsAtrSHo7OEQVqn55NJpunuSd4t8ERSWcAejkjsiYTBF+AugmNf?=
+ =?us-ascii?Q?k+mN4yi9N4d0yBpglD41cD/xFpxTFpDin7JdiJC4hIVkqmWEex8Ayz3h7hzS?=
+ =?us-ascii?Q?yc4GJM5OBgEFkRBEQPk3UN0NS45pVOgPM9jGzSrrkJC2vaG5FEDDvaWbBgvn?=
+ =?us-ascii?Q?3RFOEbBrSqhOFe4Cd/OaAyGAre5/7hELZuz4NZGkVuzophNq451uCMtFl3F9?=
+ =?us-ascii?Q?PkM7EGPby3GVfllEzs2p0fpiPd84cNMbV2MazFNXBaTuT6Dzm2AVAiQZgFyR?=
+ =?us-ascii?Q?hkKjIXXpe02Xq5lViYZ/CMyqbjh/L9CFjPkw1VEqQozEtvsaXiV2kNmRjrkY?=
+ =?us-ascii?Q?EZG5bCStGZNJNmKzMSFXJ1MtmAIDm7poShQSD/ahvTRPy9bPWheZciSp8Oil?=
+ =?us-ascii?Q?ZWkp+V1d0baVmwTL1ncpri2yYAoeuZPvijYiR0S6qI5vOPzR2H8ACDNVtK5g?=
+ =?us-ascii?Q?rely93qxHStqaxvn+X/OR+h3X4buoyZoLc6GlHkS/GJXmaeVoqDPAEbljShc?=
+ =?us-ascii?Q?ZFk88UmRyL3n0U/ULFsyE0c2NdHHhE+otXnLdmd52NjmKlaMW8XoZsZ4Bt50?=
+ =?us-ascii?Q?VllgTQGALop+JK9V7e4UZwhBmaoq0xQI02ehm2XIqPh0dmK/1fjhJ+TmLX7H?=
+ =?us-ascii?Q?UQnRnSHLZxWmr4zBkfHDUAlaUV7djBx+WIRMhbGn7b5BXilePZACvErPduhA?=
+ =?us-ascii?Q?TLiVOKxLWXMy0f0XNl9J1bqLuW9R4T3ZvMKJfW73CmXZ56bxW7LtHjMFuXV0?=
+ =?us-ascii?Q?cwQdq52PB5PGps7Ayc5ZCyD9Ye+zK9c7VCZKo7fwWniKftsJhEgU8ATxjhcL?=
+ =?us-ascii?Q?+pF4Bh/qmGUWNERswz6vuU+5mSuSBBTtRqNMyzfjzy8uKDp6rmwKX2Eo5LrC?=
+ =?us-ascii?Q?XSRkjfSyVxeXkWzERkz+hezeuHloRvg=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: c0e1659b-a9ba-473f-70e1-08de5f2b7b0c
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jan 2026 11:42:28.6888 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: KZVTHwfiHlambh42wuBpHMXj3G9D9Y1bPWdqEylJOY2ZTn9xZICJD2qnJTOGgka4p34S5DE5I9opg/7LmFf8ZQzmMjKnKZl/ie1nwsdy/tQ=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB7446
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -80,972 +175,29 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add functional tests for the flow parser library covering:
-- success cases: verifying variety of flow/set rules through the main
-  parse function and through parser helpers
-- fail cases: testing invalid arguments, input, and syntax
+On Tue, Jan 27, 2026 at 08:58:39PM +0000, Medvedkin, Vladimir wrote:
+> Acked-by: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+> 
+> On 12/15/2025 6:43 PM, Bruce Richardson wrote:
+> > The default Rx ring size checks did not account for the fact that the
+> > port would not work correctly if the Rx ring size was only twice the
+> > free threshold size or less, so add in a new check for this. This would
+> > generally only apply in cases where very small rings sizes are being
+> > used, for example, with default Rx free thresh of 32, only ring size of
+> > 64 would cause issues.
+> > 
+> > Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+> > ---
+> > v2: add in extra error message for the small queue size case, to help
+> >      make users aware of what setting they need to use to fix things.
+> > ---
+> >   drivers/net/intel/cpfl/cpfl_rxtx.c   | 10 ++++++++++
+> >   drivers/net/intel/i40e/i40e_rxtx.c   | 10 ++++++++++
+> >   drivers/net/intel/iavf/iavf_rxtx.c   | 23 ++++++++---------------
+> >   drivers/net/intel/ice/ice_rxtx.c     | 10 ++++++++++
+> >   drivers/net/intel/idpf/idpf_rxtx.c   | 10 ++++++++++
+> >   drivers/net/intel/ixgbe/ixgbe_rxtx.c | 10 ++++++++++
+> >   6 files changed, 58 insertions(+), 15 deletions(-)
+> > 
 
-Signed-off-by: Lukas Sismis <sismis@dyna-nic.com>
----
- MAINTAINERS                 |   1 +
- app/test/meson.build        |   1 +
- app/test/test_flow_parser.c | 923 ++++++++++++++++++++++++++++++++++++
- 3 files changed, 925 insertions(+)
- create mode 100644 app/test/test_flow_parser.c
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 899c767691..92c09ad3b7 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -450,6 +450,7 @@ F: doc/guides/prog_guide/flow_parser_lib.rst
- F: lib/ethdev/rte_flow*
- F: lib/flow_parser/
- F: examples/flow_parsing/
-+F: app/test/test_flow_parser.c
- 
- Traffic Management API
- M: Cristian Dumitrescu <cristian.dumitrescu@intel.com>
-diff --git a/app/test/meson.build b/app/test/meson.build
-index f4d04a6e42..d18f827b73 100644
---- a/app/test/meson.build
-+++ b/app/test/meson.build
-@@ -88,6 +88,7 @@ source_file_deps = {
-     'test_fib6_perf.c': ['fib'],
-     'test_fib_perf.c': ['net', 'fib'],
-     'test_flow_classify.c': ['net', 'acl', 'table', 'ethdev', 'flow_classify'],
-+    'test_flow_parser.c': ['flow_parser', 'cmdline', 'ethdev'],
-     'test_func_reentrancy.c': ['hash', 'lpm'],
-     'test_graph.c': ['graph'],
-     'test_graph_feature_arc.c': ['graph'],
-diff --git a/app/test/test_flow_parser.c b/app/test/test_flow_parser.c
-new file mode 100644
-index 0000000000..ca43f441aa
---- /dev/null
-+++ b/app/test/test_flow_parser.c
-@@ -0,0 +1,923 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2026 DynaNIC Semiconductors, Ltd.
-+ */
-+
-+#include <stdint.h>
-+#include <inttypes.h>
-+#include <string.h>
-+#include <errno.h>
-+
-+#include <rte_byteorder.h>
-+#include <rte_flow.h>
-+#include <rte_flow_parser_private.h>
-+
-+#include "test.h"
-+
-+static int
-+flow_parser_setup(void)
-+{
-+	TEST_ASSERT_SUCCESS(rte_flow_parser_init(NULL),
-+		"rte_flow_parser_init failed");
-+	return 0;
-+}
-+
-+static int
-+flow_parser_case_setup(void)
-+{
-+	rte_flow_parser_reset_defaults();
-+	return 0;
-+}
-+
-+static void
-+flow_parser_teardown(void)
-+{
-+	rte_flow_parser_reset_defaults();
-+}
-+
-+/*
-+ * =============================================================================
-+ * Public API Tests (rte_flow_parser.h)
-+ * =============================================================================
-+ */
-+
-+static int
-+test_flow_parser_public_attr_parsing(void)
-+{
-+	struct rte_flow_attr attr;
-+	int ret;
-+
-+	/* Test basic ingress attribute */
-+	memset(&attr, 0, sizeof(attr));
-+	ret = rte_flow_parser_parse_attr_str("ingress", &attr);
-+	TEST_ASSERT_SUCCESS(ret, "ingress attr parse failed: %s",
-+		strerror(-ret));
-+	TEST_ASSERT(attr.ingress == 1 && attr.egress == 0,
-+		"attr flags mismatch ingress=%u egress=%u",
-+		attr.ingress, attr.egress);
-+
-+	/* Test egress attribute */
-+	memset(&attr, 0, sizeof(attr));
-+	ret = rte_flow_parser_parse_attr_str("egress", &attr);
-+	TEST_ASSERT_SUCCESS(ret, "egress attr parse failed: %s",
-+		strerror(-ret));
-+	TEST_ASSERT(attr.ingress == 0 && attr.egress == 1,
-+		"attr flags mismatch ingress=%u egress=%u",
-+		attr.ingress, attr.egress);
-+
-+	/* Test transfer attribute */
-+	memset(&attr, 0, sizeof(attr));
-+	ret = rte_flow_parser_parse_attr_str("transfer", &attr);
-+	TEST_ASSERT_SUCCESS(ret, "transfer attr parse failed: %s",
-+		strerror(-ret));
-+	TEST_ASSERT(attr.transfer == 1, "transfer flag not set");
-+
-+	/* Test combined attributes with group and priority */
-+	memset(&attr, 0, sizeof(attr));
-+	ret = rte_flow_parser_parse_attr_str("ingress group 1 priority 5", &attr);
-+	TEST_ASSERT_SUCCESS(ret, "combined attr parse failed: %s",
-+		strerror(-ret));
-+	TEST_ASSERT_EQUAL(attr.group, 1, "attr group mismatch: %u", attr.group);
-+	TEST_ASSERT_EQUAL(attr.priority, 5,
-+		"attr priority mismatch: %u", attr.priority);
-+	TEST_ASSERT(attr.ingress == 1 && attr.egress == 0,
-+		"attr flags mismatch ingress=%u egress=%u",
-+		attr.ingress, attr.egress);
-+
-+	/* Test multiple direction attributes (last one wins) */
-+	memset(&attr, 0, sizeof(attr));
-+	ret = rte_flow_parser_parse_attr_str("ingress egress", &attr);
-+	TEST_ASSERT_SUCCESS(ret, "multi-direction attr parse failed: %s",
-+		strerror(-ret));
-+	TEST_ASSERT(attr.ingress == 1 && attr.egress == 1,
-+		"both ingress and egress should be set");
-+
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_flow_parser_public_pattern_parsing(void)
-+{
-+	const struct rte_flow_item *pattern = NULL;
-+	uint32_t pattern_n = 0;
-+	int ret;
-+
-+	ret = rte_flow_parser_parse_pattern_str("eth / end",
-+						&pattern, &pattern_n);
-+	TEST_ASSERT_SUCCESS(ret, "simple pattern parse failed: %s",
-+		strerror(-ret));
-+	TEST_ASSERT_EQUAL(pattern_n, 2, "expected 2 pattern items, got %u",
-+		pattern_n);
-+	TEST_ASSERT_EQUAL(pattern[0].type, RTE_FLOW_ITEM_TYPE_ETH,
-+		"pattern[0] expected ETH, got %d", pattern[0].type);
-+	TEST_ASSERT_EQUAL(pattern[1].type, RTE_FLOW_ITEM_TYPE_END,
-+		"pattern[1] expected END, got %d", pattern[1].type);
-+
-+	ret = rte_flow_parser_parse_pattern_str("eth / ipv4 / end",
-+						&pattern, &pattern_n);
-+	TEST_ASSERT_SUCCESS(ret, "eth/ipv4 pattern parse failed: %s",
-+		strerror(-ret));
-+	TEST_ASSERT_EQUAL(pattern_n, 3, "expected 3 pattern items, got %u",
-+		pattern_n);
-+	TEST_ASSERT_EQUAL(pattern[0].type, RTE_FLOW_ITEM_TYPE_ETH,
-+		"pattern[0] expected ETH, got %d", pattern[0].type);
-+	TEST_ASSERT_EQUAL(pattern[1].type, RTE_FLOW_ITEM_TYPE_IPV4,
-+		"pattern[1] expected IPV4, got %d", pattern[1].type);
-+	TEST_ASSERT_EQUAL(pattern[2].type, RTE_FLOW_ITEM_TYPE_END,
-+		"pattern[2] expected END, got %d", pattern[2].type);
-+
-+	ret = rte_flow_parser_parse_pattern_str("eth / ipv4 / tcp / end",
-+						&pattern, &pattern_n);
-+	TEST_ASSERT_SUCCESS(ret, "complex pattern parse failed: %s",
-+		strerror(-ret));
-+	TEST_ASSERT_EQUAL(pattern_n, 4, "expected 4 pattern items, got %u",
-+		pattern_n);
-+	TEST_ASSERT(pattern[0].type == RTE_FLOW_ITEM_TYPE_ETH &&
-+		pattern[1].type == RTE_FLOW_ITEM_TYPE_IPV4 &&
-+		pattern[2].type == RTE_FLOW_ITEM_TYPE_TCP &&
-+		pattern[3].type == RTE_FLOW_ITEM_TYPE_END,
-+		"complex pattern type mismatch");
-+
-+	ret = rte_flow_parser_parse_pattern_str("eth / ipv6 / udp / end",
-+						&pattern, &pattern_n);
-+	TEST_ASSERT_SUCCESS(ret, "ipv6/udp pattern parse failed: %s",
-+		strerror(-ret));
-+	TEST_ASSERT_EQUAL(pattern_n, 4, "expected 4 pattern items, got %u",
-+		pattern_n);
-+	TEST_ASSERT_EQUAL(pattern[1].type, RTE_FLOW_ITEM_TYPE_IPV6,
-+		"pattern[1] expected IPV6, got %d", pattern[1].type);
-+	TEST_ASSERT_EQUAL(pattern[2].type, RTE_FLOW_ITEM_TYPE_UDP,
-+		"pattern[2] expected UDP, got %d", pattern[2].type);
-+
-+	ret = rte_flow_parser_parse_pattern_str("eth / vlan / ipv4 / end",
-+						&pattern, &pattern_n);
-+	TEST_ASSERT_SUCCESS(ret, "vlan pattern parse failed: %s",
-+		strerror(-ret));
-+	TEST_ASSERT_EQUAL(pattern_n, 4, "expected 4 pattern items, got %u",
-+		pattern_n);
-+	TEST_ASSERT_EQUAL(pattern[1].type, RTE_FLOW_ITEM_TYPE_VLAN,
-+		"pattern[1] expected VLAN, got %d", pattern[1].type);
-+
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_flow_parser_public_actions_parsing(void)
-+{
-+	const struct rte_flow_action *actions = NULL;
-+	const struct rte_flow_action_queue *queue_conf;
-+	const struct rte_flow_action_mark *mark_conf;
-+	uint32_t actions_n = 0;
-+	int ret;
-+
-+	ret = rte_flow_parser_parse_actions_str("drop / end",
-+						&actions, &actions_n);
-+	TEST_ASSERT_SUCCESS(ret, "drop action parse failed: %s",
-+		strerror(-ret));
-+	TEST_ASSERT_EQUAL(actions_n, 2, "expected 2 action items, got %u",
-+		actions_n);
-+	TEST_ASSERT_EQUAL(actions[0].type, RTE_FLOW_ACTION_TYPE_DROP,
-+		"actions[0] expected DROP, got %d", actions[0].type);
-+	TEST_ASSERT_EQUAL(actions[1].type, RTE_FLOW_ACTION_TYPE_END,
-+		"actions[1] expected END, got %d", actions[1].type);
-+
-+	ret = rte_flow_parser_parse_actions_str("queue index 3 / end",
-+						&actions, &actions_n);
-+	TEST_ASSERT_SUCCESS(ret, "queue action parse failed: %s",
-+		strerror(-ret));
-+	TEST_ASSERT_EQUAL(actions_n, 2, "expected 2 action items, got %u",
-+		actions_n);
-+	TEST_ASSERT_EQUAL(actions[0].type, RTE_FLOW_ACTION_TYPE_QUEUE,
-+		"actions[0] expected QUEUE, got %d", actions[0].type);
-+	queue_conf = actions[0].conf;
-+	TEST_ASSERT_NOT_NULL(queue_conf, "queue action configuration missing");
-+	TEST_ASSERT_EQUAL(queue_conf->index, 3,
-+		"queue index expected 3, got %u", queue_conf->index);
-+
-+	ret = rte_flow_parser_parse_actions_str("mark id 42 / drop / end",
-+						&actions, &actions_n);
-+	TEST_ASSERT_SUCCESS(ret, "multi-action parse failed: %s",
-+		strerror(-ret));
-+	TEST_ASSERT_EQUAL(actions_n, 3, "expected 3 action items, got %u",
-+		actions_n);
-+	TEST_ASSERT_EQUAL(actions[0].type, RTE_FLOW_ACTION_TYPE_MARK,
-+		"actions[0] expected MARK, got %d", actions[0].type);
-+	mark_conf = actions[0].conf;
-+	TEST_ASSERT_NOT_NULL(mark_conf, "mark action configuration missing");
-+	TEST_ASSERT_EQUAL(mark_conf->id, 42,
-+		"mark id expected 42, got %u", mark_conf->id);
-+	TEST_ASSERT_EQUAL(actions[1].type, RTE_FLOW_ACTION_TYPE_DROP,
-+		"actions[1] expected DROP, got %d", actions[1].type);
-+	TEST_ASSERT_EQUAL(actions[2].type, RTE_FLOW_ACTION_TYPE_END,
-+		"actions[2] expected END, got %d", actions[2].type);
-+
-+	ret = rte_flow_parser_parse_actions_str("rss / end",
-+						&actions, &actions_n);
-+	TEST_ASSERT_SUCCESS(ret, "rss action parse failed: %s",
-+		strerror(-ret));
-+	TEST_ASSERT_EQUAL(actions[0].type, RTE_FLOW_ACTION_TYPE_RSS,
-+		"actions[0] expected RSS, got %d", actions[0].type);
-+
-+	ret = rte_flow_parser_parse_actions_str("count / end",
-+						&actions, &actions_n);
-+	TEST_ASSERT_SUCCESS(ret, "count action parse failed: %s",
-+		strerror(-ret));
-+	TEST_ASSERT_EQUAL(actions[0].type, RTE_FLOW_ACTION_TYPE_COUNT,
-+		"actions[0] expected COUNT, got %d", actions[0].type);
-+
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_flow_parser_public_invalid_args(void)
-+{
-+	const struct rte_flow_item *pattern = NULL;
-+	const struct rte_flow_action *actions = NULL;
-+	struct rte_flow_attr attr;
-+	uint32_t count = 0;
-+	int ret;
-+
-+	/* Test NULL attribute string */
-+	ret = rte_flow_parser_parse_attr_str(NULL, &attr);
-+	TEST_ASSERT_EQUAL(ret, -EINVAL, "NULL attr string should fail");
-+
-+	/* Test NULL attribute output */
-+	ret = rte_flow_parser_parse_attr_str("ingress", NULL);
-+	TEST_ASSERT_EQUAL(ret, -EINVAL, "NULL attr output should fail");
-+
-+	/* Test NULL pattern string */
-+	ret = rte_flow_parser_parse_pattern_str(NULL, &pattern, &count);
-+	TEST_ASSERT_EQUAL(ret, -EINVAL, "NULL pattern string should fail");
-+
-+	/* Test NULL pattern output */
-+	ret = rte_flow_parser_parse_pattern_str("eth / end", NULL, &count);
-+	TEST_ASSERT_EQUAL(ret, -EINVAL, "NULL pattern out should fail");
-+
-+	/* Test NULL pattern count */
-+	ret = rte_flow_parser_parse_pattern_str("eth / end", &pattern, NULL);
-+	TEST_ASSERT_EQUAL(ret, -EINVAL, "NULL pattern count should fail");
-+
-+	/* Test NULL actions string */
-+	ret = rte_flow_parser_parse_actions_str(NULL, &actions, &count);
-+	TEST_ASSERT_EQUAL(ret, -EINVAL, "NULL actions string should fail");
-+
-+	/* Test NULL actions output */
-+	ret = rte_flow_parser_parse_actions_str("drop / end", NULL, &count);
-+	TEST_ASSERT_EQUAL(ret, -EINVAL, "NULL actions out should fail");
-+
-+	/* Test NULL actions count */
-+	ret = rte_flow_parser_parse_actions_str("drop / end", &actions, NULL);
-+	TEST_ASSERT_EQUAL(ret, -EINVAL, "NULL actions count should fail");
-+
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_flow_parser_public_invalid_syntax(void)
-+{
-+	const struct rte_flow_item *pattern = NULL;
-+	const struct rte_flow_action *actions = NULL;
-+	struct rte_flow_attr attr;
-+	uint32_t count = 0;
-+	int ret;
-+
-+	/* Invalid attribute syntax */
-+	ret = rte_flow_parser_parse_attr_str("ingress group", &attr);
-+	TEST_ASSERT(ret < 0, "expected attr failure for missing group id: %d",
-+		ret);
-+
-+	ret = rte_flow_parser_parse_attr_str("priority foo", &attr);
-+	TEST_ASSERT(ret < 0, "expected attr failure for invalid priority: %d",
-+		ret);
-+
-+	ret = rte_flow_parser_parse_attr_str("ingress bogus 1", &attr);
-+	TEST_ASSERT(ret < 0, "expected attr failure for unknown token: %d",
-+		ret);
-+
-+	/* Invalid pattern syntax */
-+	ret = rte_flow_parser_parse_pattern_str("eth / ipv4", &pattern, &count);
-+	TEST_ASSERT(ret < 0, "expected pattern failure for missing end: %d",
-+		ret);
-+
-+	ret = rte_flow_parser_parse_pattern_str("eth / unknown / end",
-+		&pattern, &count);
-+	TEST_ASSERT(ret < 0, "expected pattern failure for unknown item: %d",
-+		ret);
-+
-+	ret = rte_flow_parser_parse_pattern_str("", &pattern, &count);
-+	TEST_ASSERT(ret < 0, "expected pattern failure for empty string: %d",
-+		ret);
-+
-+	/* Invalid actions syntax */
-+	ret = rte_flow_parser_parse_actions_str("queue index / end",
-+		&actions, &count);
-+	TEST_ASSERT(ret < 0, "expected actions failure for missing index: %d",
-+		ret);
-+
-+	ret = rte_flow_parser_parse_actions_str("mark id / end",
-+		&actions, &count);
-+	TEST_ASSERT(ret < 0, "expected actions failure for missing id: %d",
-+		ret);
-+
-+	ret = rte_flow_parser_parse_actions_str("bogus / end",
-+		&actions, &count);
-+	TEST_ASSERT(ret < 0, "expected actions failure for unknown action: %d",
-+		ret);
-+
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * =============================================================================
-+ * Internal API Tests
-+ * =============================================================================
-+ */
-+
-+static int
-+test_flow_parser_internal_command_mapping(void)
-+{
-+	static const char *create_cmd =
-+		"flow create 0 ingress pattern eth / end "
-+		"actions drop / end";
-+	static const char *list_cmd = "flow list 0";
-+	static const char *destroy_cmd = "flow destroy 0 rule 1";
-+	static const char *flush_cmd = "flow flush 0";
-+	static const char *validate_cmd =
-+		"flow validate 0 ingress pattern eth / end actions drop / end";
-+	uint8_t outbuf[4096];
-+	struct rte_flow_parser_output *out = (void *)outbuf;
-+	int ret;
-+
-+	ret = rte_flow_parser_parse(create_cmd, out, sizeof(outbuf));
-+	TEST_ASSERT_SUCCESS(ret, "flow create parse failed: %s",
-+		strerror(-ret));
-+	TEST_ASSERT_EQUAL(out->command, RTE_FLOW_PARSER_CMD_CREATE,
-+		"expected CREATE command, got %d", out->command);
-+	TEST_ASSERT_EQUAL(out->port, 0, "expected port 0, got %u", out->port);
-+	TEST_ASSERT_EQUAL(out->args.vc.pattern_n, 2,
-+		"expected 2 pattern items, got %u", out->args.vc.pattern_n);
-+	TEST_ASSERT_EQUAL(out->args.vc.pattern[0].type, RTE_FLOW_ITEM_TYPE_ETH,
-+		"expected ETH pattern, got %d", out->args.vc.pattern[0].type);
-+	TEST_ASSERT_EQUAL(out->args.vc.pattern[1].type, RTE_FLOW_ITEM_TYPE_END,
-+		"expected END pattern, got %d", out->args.vc.pattern[1].type);
-+	TEST_ASSERT_EQUAL(out->args.vc.actions_n, 2,
-+		"expected 2 action items, got %u", out->args.vc.actions_n);
-+	TEST_ASSERT_EQUAL(out->args.vc.actions[0].type,
-+		RTE_FLOW_ACTION_TYPE_DROP,
-+		"expected DROP action, got %d", out->args.vc.actions[0].type);
-+	TEST_ASSERT_EQUAL(out->args.vc.actions[1].type,
-+		RTE_FLOW_ACTION_TYPE_END,
-+		"expected END action, got %d", out->args.vc.actions[1].type);
-+	TEST_ASSERT(out->args.vc.attr.ingress == 1 &&
-+		out->args.vc.attr.egress == 0,
-+		"expected ingress=1 egress=0");
-+
-+	ret = rte_flow_parser_parse(list_cmd, out, sizeof(outbuf));
-+	TEST_ASSERT_SUCCESS(ret, "flow list parse failed: %s", strerror(-ret));
-+	TEST_ASSERT_EQUAL(out->command, RTE_FLOW_PARSER_CMD_LIST,
-+		"expected LIST command, got %d", out->command);
-+	TEST_ASSERT_EQUAL(out->port, 0, "expected port 0, got %u", out->port);
-+
-+	ret = rte_flow_parser_parse(destroy_cmd, out, sizeof(outbuf));
-+	TEST_ASSERT_SUCCESS(ret, "flow destroy parse failed: %s",
-+		strerror(-ret));
-+	TEST_ASSERT_EQUAL(out->command, RTE_FLOW_PARSER_CMD_DESTROY,
-+		"expected DESTROY command, got %d", out->command);
-+
-+	ret = rte_flow_parser_parse(flush_cmd, out, sizeof(outbuf));
-+	TEST_ASSERT_SUCCESS(ret, "flow flush parse failed: %s", strerror(-ret));
-+	TEST_ASSERT_EQUAL(out->command, RTE_FLOW_PARSER_CMD_FLUSH,
-+		"expected FLUSH command, got %d", out->command);
-+
-+	ret = rte_flow_parser_parse(validate_cmd, out, sizeof(outbuf));
-+	TEST_ASSERT_SUCCESS(ret, "flow validate parse failed: %s",
-+		strerror(-ret));
-+	TEST_ASSERT_EQUAL(out->command, RTE_FLOW_PARSER_CMD_VALIDATE,
-+		"expected VALIDATE command, got %d", out->command);
-+
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_flow_parser_internal_indirect_action(void)
-+{
-+	static const char *flow_indirect_sample =
-+		"flow indirect_action 0 create transfer list "
-+		"actions sample ratio 1 index 1 / jump group 2 / end";
-+	uint8_t outbuf[8192];
-+	struct rte_flow_parser_output *out = (void *)outbuf;
-+	const struct rte_flow_action *actions;
-+	const struct rte_flow_action_sample *sample_conf;
-+	const struct rte_flow_action_ethdev *repr;
-+	struct rte_flow_action sample_actions[ACTION_SAMPLE_ACTIONS_NUM];
-+	uint32_t actions_n;
-+	int ret;
-+
-+	ret = rte_flow_parser_parse_actions_str(
-+		"port_representor port_id 0xffff / end",
-+		&actions, &actions_n);
-+	TEST_ASSERT_SUCCESS(ret, "parse sample actions failed: %s",
-+		strerror(-ret));
-+	TEST_ASSERT(actions_n <= RTE_DIM(sample_actions),
-+		"sample actions too long");
-+	memcpy(sample_actions, actions,
-+		sizeof(struct rte_flow_action) * actions_n);
-+	memset(out, 0, sizeof(*out));
-+	out->command = RTE_FLOW_PARSER_CMD_SET_SAMPLE_ACTIONS;
-+	out->port = 1;
-+	out->args.vc.actions = sample_actions;
-+	out->args.vc.actions_n = actions_n;
-+	rte_flow_parser_cmd_set_raw_dispatch(out);
-+
-+	ret = rte_flow_parser_parse(flow_indirect_sample, out, sizeof(outbuf));
-+	TEST_ASSERT_SUCCESS(ret, "indirect sample parse failed: %s",
-+		strerror(-ret));
-+	TEST_ASSERT(out->command == RTE_FLOW_PARSER_CMD_INDIRECT_ACTION_LIST_CREATE ||
-+		out->command == RTE_FLOW_PARSER_CMD_INDIRECT_ACTION_CREATE ||
-+		out->command == RTE_FLOW_PARSER_CMD_QUEUE_INDIRECT_ACTION_LIST_CREATE ||
-+		out->command == RTE_FLOW_PARSER_CMD_QUEUE_INDIRECT_ACTION_CREATE,
-+		"expected indirect action create command, got %d", out->command);
-+	TEST_ASSERT(out->args.vc.actions_n >= 3,
-+		"expected sample + jump + end actions for indirect action");
-+	TEST_ASSERT_EQUAL(out->args.vc.actions[0].type,
-+		RTE_FLOW_ACTION_TYPE_SAMPLE, "indirect actions[0] not SAMPLE");
-+	sample_conf = out->args.vc.actions[0].conf;
-+	TEST_ASSERT_NOT_NULL(sample_conf, "indirect sample conf missing");
-+	TEST_ASSERT_NOT_NULL(sample_conf->actions,
-+		"indirect sample actions missing");
-+	TEST_ASSERT_EQUAL(sample_conf->actions[0].type,
-+		RTE_FLOW_ACTION_TYPE_PORT_REPRESENTOR,
-+		"indirect sample action[0] type mismatch: %d",
-+		sample_conf->actions[0].type);
-+	repr = sample_conf->actions[0].conf;
-+	TEST_ASSERT_NOT_NULL(repr, "indirect sample port conf missing");
-+	TEST_ASSERT_EQUAL(repr->port_id, 0xffff,
-+		"indirect sample port representor id mismatch");
-+	TEST_ASSERT_EQUAL(sample_conf->actions[1].type,
-+		RTE_FLOW_ACTION_TYPE_END, "indirect sample actions should end");
-+
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_flow_parser_internal_meter(void)
-+{
-+	/* meter itself needs to be created beforehand; here we just test parsing */
-+	static const char *flow_meter =
-+		"flow create 0 ingress group 1 pattern eth / end "
-+		"actions meter mtr_id 101 / end";
-+	uint8_t outbuf[8192];
-+	struct rte_flow_parser_output *out = (void *)outbuf;
-+	const struct rte_flow_action_meter *meter_conf;
-+	int ret;
-+
-+	ret = rte_flow_parser_parse(flow_meter, out, sizeof(outbuf));
-+	TEST_ASSERT_SUCCESS(ret, "flow meter parse failed: %s", strerror(-ret));
-+	TEST_ASSERT_EQUAL(out->command, RTE_FLOW_PARSER_CMD_CREATE,
-+		"expected CREATE command, got %d", out->command);
-+	TEST_ASSERT_EQUAL(out->port, 0, "expected port 0, got %u", out->port);
-+	TEST_ASSERT(out->args.vc.attr.ingress == 1 &&
-+		out->args.vc.attr.egress == 0,
-+		"expected ingress=1 egress=0");
-+	TEST_ASSERT_EQUAL(out->args.vc.attr.group, 1,
-+		"expected group 1, got %u", out->args.vc.attr.group);
-+	TEST_ASSERT_EQUAL(out->args.vc.pattern_n, 2,
-+		"expected 2 pattern items, got %u", out->args.vc.pattern_n);
-+	TEST_ASSERT_EQUAL(out->args.vc.pattern[0].type, RTE_FLOW_ITEM_TYPE_ETH,
-+		"expected ETH pattern, got %d", out->args.vc.pattern[0].type);
-+	TEST_ASSERT_EQUAL(out->args.vc.pattern[1].type, RTE_FLOW_ITEM_TYPE_END,
-+		"expected END pattern, got %d", out->args.vc.pattern[1].type);
-+	TEST_ASSERT_EQUAL(out->args.vc.actions_n, 2,
-+		"expected 2 action items, got %u", out->args.vc.actions_n);
-+	TEST_ASSERT_EQUAL(out->args.vc.actions[0].type,
-+		RTE_FLOW_ACTION_TYPE_METER, "actions[0] not METER");
-+	meter_conf = out->args.vc.actions[0].conf;
-+	TEST_ASSERT_NOT_NULL(meter_conf, "meter action configuration missing");
-+	TEST_ASSERT_EQUAL(meter_conf->mtr_id, 101,
-+		"expected mtr_id 101, got %u", meter_conf->mtr_id);
-+	TEST_ASSERT_EQUAL(out->args.vc.actions[1].type,
-+		RTE_FLOW_ACTION_TYPE_END, "actions[1] not END");
-+
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_flow_parser_internal_queue_set_meta(void)
-+{
-+	static const char *flow_queue_meta =
-+		"flow create 0 ingress pattern eth / ipv4 / tcp dst is 80 / end "
-+		"actions queue index 0 / set_meta data 0x1234 / end";
-+	uint8_t outbuf[8192];
-+	struct rte_flow_parser_output *out = (void *)outbuf;
-+	const struct rte_flow_item_tcp *tcp_spec;
-+	const struct rte_flow_action_queue *queue_conf;
-+	const struct rte_flow_action_set_meta *set_meta_conf;
-+	int ret;
-+
-+	ret = rte_flow_parser_parse(flow_queue_meta, out, sizeof(outbuf));
-+	TEST_ASSERT_SUCCESS(ret, "flow queue set_meta parse failed: %s",
-+		strerror(-ret));
-+	TEST_ASSERT_EQUAL(out->command, RTE_FLOW_PARSER_CMD_CREATE,
-+		"expected CREATE command, got %d", out->command);
-+	TEST_ASSERT_EQUAL(out->port, 0, "expected port 0, got %u", out->port);
-+	TEST_ASSERT(out->args.vc.attr.ingress == 1 &&
-+		out->args.vc.attr.egress == 0,
-+		"expected ingress=1 egress=0");
-+	TEST_ASSERT_EQUAL(out->args.vc.pattern_n, 4,
-+		"expected 4 pattern items, got %u", out->args.vc.pattern_n);
-+	TEST_ASSERT_EQUAL(out->args.vc.pattern[0].type, RTE_FLOW_ITEM_TYPE_ETH,
-+		"pattern[0] expected ETH, got %d", out->args.vc.pattern[0].type);
-+	TEST_ASSERT_EQUAL(out->args.vc.pattern[1].type, RTE_FLOW_ITEM_TYPE_IPV4,
-+		"pattern[1] expected IPV4, got %d", out->args.vc.pattern[1].type);
-+	TEST_ASSERT_EQUAL(out->args.vc.pattern[2].type, RTE_FLOW_ITEM_TYPE_TCP,
-+		"pattern[2] expected TCP, got %d", out->args.vc.pattern[2].type);
-+	tcp_spec = out->args.vc.pattern[2].spec;
-+	TEST_ASSERT_NOT_NULL(tcp_spec, "tcp spec missing");
-+	TEST_ASSERT_EQUAL(tcp_spec->hdr.dst_port, rte_cpu_to_be_16(80),
-+		"tcp dst port mismatch");
-+	TEST_ASSERT_EQUAL(out->args.vc.pattern[3].type, RTE_FLOW_ITEM_TYPE_END,
-+		"pattern[3] expected END, got %d", out->args.vc.pattern[3].type);
-+
-+	TEST_ASSERT_EQUAL(out->args.vc.actions_n, 3,
-+		"expected 3 action items, got %u", out->args.vc.actions_n);
-+	TEST_ASSERT_EQUAL(out->args.vc.actions[0].type,
-+		RTE_FLOW_ACTION_TYPE_QUEUE, "actions[0] not QUEUE");
-+	queue_conf = out->args.vc.actions[0].conf;
-+	TEST_ASSERT_NOT_NULL(queue_conf, "queue action configuration missing");
-+	TEST_ASSERT_EQUAL(queue_conf->index, 0,
-+		"queue index expected 0, got %u", queue_conf->index);
-+	TEST_ASSERT_EQUAL(out->args.vc.actions[1].type,
-+		RTE_FLOW_ACTION_TYPE_SET_META, "actions[1] not SET_META");
-+	set_meta_conf = out->args.vc.actions[1].conf;
-+	TEST_ASSERT_NOT_NULL(set_meta_conf,
-+		"set_meta action configuration missing");
-+	TEST_ASSERT_EQUAL(set_meta_conf->data, 0x1234,
-+		"set_meta data expected 0x1234, got %#x",
-+		set_meta_conf->data);
-+	TEST_ASSERT_EQUAL(out->args.vc.actions[2].type,
-+		RTE_FLOW_ACTION_TYPE_END, "actions[2] not END");
-+
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_flow_parser_internal_modify_field_count(void)
-+{
-+	static const char *flow_modify_field =
-+		"flow validate 1 egress pattern "
-+		"tx_queue tx_queue_value is 0 / meta data is 0x1234 / end "
-+		"actions modify_field op set dst_type ipv4_src src_type value "
-+		"src_value 0x0a000001 width 32 / count / end";
-+	uint8_t outbuf[8192];
-+	struct rte_flow_parser_output *out = (void *)outbuf;
-+	const struct rte_flow_item_tx_queue *tx_queue_spec;
-+	const struct rte_flow_item_meta *meta_spec;
-+	const struct rte_flow_action_modify_field *modify_conf;
-+	const struct rte_flow_action_count *count_conf;
-+	const uint8_t expected_src_value[16] = { 0x0a, 0x00, 0x00, 0x01 };
-+	int ret;
-+
-+	ret = rte_flow_parser_parse(flow_modify_field, out, sizeof(outbuf));
-+	TEST_ASSERT_SUCCESS(ret, "flow modify_field parse failed: %s",
-+		strerror(-ret));
-+	TEST_ASSERT_EQUAL(out->command, RTE_FLOW_PARSER_CMD_VALIDATE,
-+		"expected VALIDATE command, got %d", out->command);
-+	TEST_ASSERT_EQUAL(out->port, 1, "expected port 1, got %u", out->port);
-+	TEST_ASSERT(out->args.vc.attr.ingress == 0 &&
-+		out->args.vc.attr.egress == 1,
-+		"expected ingress=0 egress=1");
-+	TEST_ASSERT_EQUAL(out->args.vc.pattern_n, 3,
-+		"expected 3 pattern items, got %u", out->args.vc.pattern_n);
-+	TEST_ASSERT_EQUAL(out->args.vc.pattern[0].type,
-+		RTE_FLOW_ITEM_TYPE_TX_QUEUE,
-+		"pattern[0] expected TX_QUEUE, got %d",
-+		out->args.vc.pattern[0].type);
-+	tx_queue_spec = out->args.vc.pattern[0].spec;
-+	TEST_ASSERT_NOT_NULL(tx_queue_spec, "tx_queue spec missing");
-+	TEST_ASSERT_EQUAL(tx_queue_spec->tx_queue, 0,
-+		"tx_queue value expected 0, got %u",
-+		tx_queue_spec->tx_queue);
-+	TEST_ASSERT_EQUAL(out->args.vc.pattern[1].type,
-+		RTE_FLOW_ITEM_TYPE_META,
-+		"pattern[1] expected META, got %d",
-+		out->args.vc.pattern[1].type);
-+	meta_spec = out->args.vc.pattern[1].spec;
-+	TEST_ASSERT_NOT_NULL(meta_spec, "meta spec missing");
-+	TEST_ASSERT_EQUAL(meta_spec->data, 0x1234,
-+		"meta data expected 0x1234, got %#x",
-+		meta_spec->data);
-+	TEST_ASSERT_EQUAL(out->args.vc.pattern[2].type, RTE_FLOW_ITEM_TYPE_END,
-+		"pattern[2] expected END, got %d", out->args.vc.pattern[2].type);
-+
-+	TEST_ASSERT_EQUAL(out->args.vc.actions_n, 3,
-+		"expected 3 action items, got %u", out->args.vc.actions_n);
-+	TEST_ASSERT_EQUAL(out->args.vc.actions[0].type,
-+		RTE_FLOW_ACTION_TYPE_MODIFY_FIELD, "actions[0] not MODIFY_FIELD");
-+	modify_conf = out->args.vc.actions[0].conf;
-+	TEST_ASSERT_NOT_NULL(modify_conf,
-+		"modify_field action configuration missing");
-+	TEST_ASSERT_EQUAL(modify_conf->operation, RTE_FLOW_MODIFY_SET,
-+		"modify_field operation expected SET, got %d",
-+		modify_conf->operation);
-+	TEST_ASSERT_EQUAL(modify_conf->dst.field, RTE_FLOW_FIELD_IPV4_SRC,
-+		"modify_field dst field expected IPV4_SRC, got %d",
-+		modify_conf->dst.field);
-+	TEST_ASSERT_EQUAL(modify_conf->src.field, RTE_FLOW_FIELD_VALUE,
-+		"modify_field src field expected VALUE, got %d",
-+		modify_conf->src.field);
-+	TEST_ASSERT_EQUAL(modify_conf->width, 32,
-+		"modify_field width expected 32, got %u",
-+		modify_conf->width);
-+	TEST_ASSERT_BUFFERS_ARE_EQUAL(modify_conf->src.value,
-+		expected_src_value, sizeof(expected_src_value),
-+		"modify_field src value mismatch");
-+	TEST_ASSERT_EQUAL(out->args.vc.actions[1].type,
-+		RTE_FLOW_ACTION_TYPE_COUNT, "actions[1] not COUNT");
-+	count_conf = out->args.vc.actions[1].conf;
-+	TEST_ASSERT_NOT_NULL(count_conf, "count action configuration missing");
-+	TEST_ASSERT_EQUAL(count_conf->id, 0,
-+		"count id expected 0, got %u", count_conf->id);
-+	TEST_ASSERT_EQUAL(out->args.vc.actions[2].type,
-+		RTE_FLOW_ACTION_TYPE_END, "actions[2] not END");
-+
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_flow_parser_internal_raw_decap_rss(void)
-+{
-+	char set_raw_decap[96];
-+	char flow_raw_decap_rss[160];
-+	const uint16_t raw_decap_index = 0;
-+	uint8_t outbuf[8192];
-+	struct rte_flow_parser_output *out = (void *)outbuf;
-+	const struct rte_flow_item_vxlan *vxlan_spec;
-+	const struct rte_flow_action_raw_decap *raw_decap_action;
-+	const struct rte_flow_action_rss *rss_conf;
-+	const struct rte_flow_action_raw_decap *decap_conf;
-+	const struct rte_vxlan_hdr *vxlan_hdr;
-+	uint32_t vni;
-+	int len;
-+	int ret;
-+
-+	len = snprintf(set_raw_decap, sizeof(set_raw_decap),
-+		"set raw_decap %u vxlan vni is 33 / end_set",
-+		raw_decap_index);
-+	TEST_ASSERT(len > 0 && len < (int)sizeof(set_raw_decap),
-+		"set raw_decap command truncated");
-+	len = snprintf(flow_raw_decap_rss, sizeof(flow_raw_decap_rss),
-+		"flow create 0 ingress pattern eth / ipv4 / end "
-+		"actions raw_decap index %u / rss / end",
-+		raw_decap_index);
-+	TEST_ASSERT(len > 0 && len < (int)sizeof(flow_raw_decap_rss),
-+		"flow raw_decap rss command truncated");
-+
-+	ret = rte_flow_parser_parse(set_raw_decap, out, sizeof(outbuf));
-+	TEST_ASSERT_SUCCESS(ret, "set raw_decap parse failed: %s",
-+		strerror(-ret));
-+	TEST_ASSERT_EQUAL(out->command, RTE_FLOW_PARSER_CMD_SET_RAW_DECAP,
-+		"expected SET_RAW_DECAP command, got %d", out->command);
-+	TEST_ASSERT_EQUAL(out->port, raw_decap_index,
-+		"expected raw_decap index %u, got %u",
-+		raw_decap_index, out->port);
-+	TEST_ASSERT(out->args.vc.pattern_n >= 1,
-+		"expected at least 1 pattern item, got %u",
-+		out->args.vc.pattern_n);
-+	TEST_ASSERT_EQUAL(out->args.vc.pattern[0].type,
-+		RTE_FLOW_ITEM_TYPE_VXLAN,
-+		"pattern[0] expected VXLAN, got %d",
-+		out->args.vc.pattern[0].type);
-+	vxlan_spec = out->args.vc.pattern[0].spec;
-+	TEST_ASSERT_NOT_NULL(vxlan_spec, "vxlan spec missing");
-+	vni = ((uint32_t)vxlan_spec->hdr.vni[0] << 16) |
-+	      ((uint32_t)vxlan_spec->hdr.vni[1] << 8) |
-+	      (uint32_t)vxlan_spec->hdr.vni[2];
-+	TEST_ASSERT_EQUAL(vni, 33, "vxlan vni expected 33, got %u", vni);
-+
-+	rte_flow_parser_cmd_set_raw_dispatch(out);
-+
-+	ret = rte_flow_parser_parse(flow_raw_decap_rss, out, sizeof(outbuf));
-+	TEST_ASSERT_SUCCESS(ret, "flow raw_decap rss parse failed: %s",
-+		strerror(-ret));
-+	TEST_ASSERT_EQUAL(out->command, RTE_FLOW_PARSER_CMD_CREATE,
-+		"expected CREATE command, got %d", out->command);
-+	TEST_ASSERT_EQUAL(out->port, 0, "expected port 0, got %u", out->port);
-+	TEST_ASSERT(out->args.vc.attr.ingress == 1 &&
-+		out->args.vc.attr.egress == 0,
-+		"expected ingress=1 egress=0");
-+
-+	TEST_ASSERT_EQUAL(out->args.vc.pattern_n, 3,
-+		"expected 3 pattern items, got %u", out->args.vc.pattern_n);
-+	TEST_ASSERT_EQUAL(out->args.vc.pattern[0].type, RTE_FLOW_ITEM_TYPE_ETH,
-+		"pattern[0] expected ETH, got %d", out->args.vc.pattern[0].type);
-+	TEST_ASSERT_EQUAL(out->args.vc.pattern[1].type, RTE_FLOW_ITEM_TYPE_IPV4,
-+		"pattern[1] expected IPV4, got %d", out->args.vc.pattern[1].type);
-+	TEST_ASSERT_EQUAL(out->args.vc.pattern[2].type, RTE_FLOW_ITEM_TYPE_END,
-+		"pattern[2] expected END, got %d", out->args.vc.pattern[2].type);
-+
-+	TEST_ASSERT_EQUAL(out->args.vc.actions_n, 3,
-+		"expected 3 action items, got %u", out->args.vc.actions_n);
-+	TEST_ASSERT_EQUAL(out->args.vc.actions[0].type,
-+		RTE_FLOW_ACTION_TYPE_RAW_DECAP, "actions[0] not RAW_DECAP");
-+	raw_decap_action = out->args.vc.actions[0].conf;
-+	TEST_ASSERT_NOT_NULL(raw_decap_action,
-+		"raw_decap action configuration missing");
-+	TEST_ASSERT_NOT_NULL(raw_decap_action->data,
-+		"raw_decap action data missing");
-+	TEST_ASSERT(raw_decap_action->size >= sizeof(struct rte_vxlan_hdr),
-+		"raw_decap action size too small: %zu",
-+		raw_decap_action->size);
-+	TEST_ASSERT_EQUAL(out->args.vc.actions[1].type,
-+		RTE_FLOW_ACTION_TYPE_RSS, "actions[1] not RSS");
-+	rss_conf = out->args.vc.actions[1].conf;
-+	TEST_ASSERT_NOT_NULL(rss_conf, "rss action configuration missing");
-+	TEST_ASSERT_EQUAL(out->args.vc.actions[2].type,
-+		RTE_FLOW_ACTION_TYPE_END, "actions[2] not END");
-+
-+	decap_conf = rte_flow_parser_raw_decap_conf_get(raw_decap_index);
-+	TEST_ASSERT_NOT_NULL(decap_conf, "raw_decap config missing");
-+	TEST_ASSERT_NOT_NULL(decap_conf->data, "raw_decap config data missing");
-+	TEST_ASSERT_EQUAL(decap_conf->size, raw_decap_action->size,
-+		"raw_decap size mismatch: %zu vs %zu",
-+		decap_conf->size, raw_decap_action->size);
-+	TEST_ASSERT_EQUAL(decap_conf->data, raw_decap_action->data,
-+		"raw_decap data pointer mismatch");
-+	TEST_ASSERT(decap_conf->size >= sizeof(struct rte_vxlan_hdr),
-+		"raw_decap config size too small: %zu",
-+		decap_conf->size);
-+	vxlan_hdr = (const struct rte_vxlan_hdr *)decap_conf->data;
-+	vni = ((uint32_t)vxlan_hdr->vni[0] << 16) |
-+	      ((uint32_t)vxlan_hdr->vni[1] << 8) |
-+	      (uint32_t)vxlan_hdr->vni[2];
-+	TEST_ASSERT_EQUAL(vni, 33,
-+		"raw_decap vxlan vni expected 33, got %u", vni);
-+
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_flow_parser_internal_invalid_args(void)
-+{
-+	uint8_t outbuf[sizeof(struct rte_flow_parser_output)];
-+	int ret;
-+
-+	/* Test NULL command string */
-+	ret = rte_flow_parser_parse(NULL, (void *)outbuf, sizeof(outbuf));
-+	TEST_ASSERT_EQUAL(ret, -EINVAL, "NULL cmd should return -EINVAL");
-+
-+	/* Test NULL output buffer */
-+	ret = rte_flow_parser_parse("flow list 0", NULL, sizeof(outbuf));
-+	TEST_ASSERT_EQUAL(ret, -EINVAL, "NULL output should return -EINVAL");
-+
-+	/* Test output buffer too small */
-+	ret = rte_flow_parser_parse("flow list 0", (void *)outbuf,
-+		sizeof(struct rte_flow_parser_output) - 1);
-+	TEST_ASSERT_EQUAL(ret, -ENOBUFS, "short output buffer not rejected");
-+
-+	/* Test zero-length output buffer */
-+	ret = rte_flow_parser_parse("flow list 0", (void *)outbuf, 0);
-+	TEST_ASSERT_EQUAL(ret, -ENOBUFS, "zero-length output buffer not rejected");
-+
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_flow_parser_internal_invalid_syntax(void)
-+{
-+	static const char *invalid_cmd = "flow invalid 0";
-+	static const char *wrong_cmd =
-+		"flow create 0 rule 7"; /* destroy syntax in create */
-+	static const char *actions_before_pattern =
-+		"flow create 0 ingress actions drop / end pattern eth / end";
-+	static const char *missing_actions_keyword =
-+		"flow create 0 ingress pattern eth / end drop / end";
-+	static const char *missing_pattern_keyword =
-+		"flow create 0 ingress actions drop / end";
-+	static const char *missing_action_separator =
-+		"flow create 0 ingress pattern eth / end actions drop end";
-+	static const char *missing_pattern_end =
-+		"flow create 0 ingress pattern eth / ipv4 actions drop / end";
-+	static const char *missing_port_id =
-+		"flow create ingress pattern eth / end actions drop / end";
-+	static const char *extra_trailing_token =
-+		"flow create 0 ingress pattern eth / end actions drop / end junk";
-+	static const char *empty_command = "";
-+	static const char *whitespace_only = "   ";
-+	uint8_t outbuf[4096];
-+	struct rte_flow_parser_output *out = (void *)outbuf;
-+	int ret;
-+
-+	ret = rte_flow_parser_parse(invalid_cmd, out, sizeof(outbuf));
-+	TEST_ASSERT(ret < 0, "unexpected status for invalid cmd: %d", ret);
-+
-+	ret = rte_flow_parser_parse(wrong_cmd, out, sizeof(outbuf));
-+	TEST_ASSERT(ret < 0,
-+		"expected failure for wrong command usage: %d", ret);
-+
-+	ret = rte_flow_parser_parse(actions_before_pattern, out, sizeof(outbuf));
-+	TEST_ASSERT(ret < 0,
-+		"expected failure for actions before pattern: %d", ret);
-+
-+	ret = rte_flow_parser_parse(missing_actions_keyword, out, sizeof(outbuf));
-+	TEST_ASSERT(ret < 0,
-+		"expected failure for missing actions keyword: %d", ret);
-+
-+	ret = rte_flow_parser_parse(missing_pattern_keyword, out, sizeof(outbuf));
-+	TEST_ASSERT(ret < 0,
-+		"expected failure for missing pattern keyword: %d", ret);
-+
-+	ret = rte_flow_parser_parse(missing_action_separator, out, sizeof(outbuf));
-+	TEST_ASSERT(ret < 0,
-+		"expected failure for missing action separator: %d", ret);
-+
-+	ret = rte_flow_parser_parse(missing_pattern_end, out, sizeof(outbuf));
-+	TEST_ASSERT(ret < 0,
-+		"expected failure for missing pattern end: %d", ret);
-+
-+	ret = rte_flow_parser_parse(missing_port_id, out, sizeof(outbuf));
-+	TEST_ASSERT(ret < 0,
-+		"expected failure for missing port id: %d", ret);
-+
-+	ret = rte_flow_parser_parse(extra_trailing_token, out, sizeof(outbuf));
-+	TEST_ASSERT(ret < 0,
-+		"expected failure for extra trailing token: %d", ret);
-+
-+	ret = rte_flow_parser_parse(empty_command, out, sizeof(outbuf));
-+	TEST_ASSERT(ret < 0,
-+		"expected failure for empty command: %d", ret);
-+
-+	ret = rte_flow_parser_parse(whitespace_only, out, sizeof(outbuf));
-+	TEST_ASSERT(ret < 0,
-+		"expected failure for whitespace-only command: %d", ret);
-+
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_flow_parser_internal_port_id(void)
-+{
-+	uint8_t outbuf[4096];
-+	struct rte_flow_parser_output *out = (void *)outbuf;
-+	int ret;
-+
-+	/* Test various port IDs */
-+	ret = rte_flow_parser_parse("flow list 0", out, sizeof(outbuf));
-+	TEST_ASSERT_SUCCESS(ret, "port 0 parse failed");
-+	TEST_ASSERT_EQUAL(out->port, 0, "expected port 0, got %u", out->port);
-+
-+	ret = rte_flow_parser_parse("flow list 1", out, sizeof(outbuf));
-+	TEST_ASSERT_SUCCESS(ret, "port 1 parse failed");
-+	TEST_ASSERT_EQUAL(out->port, 1, "expected port 1, got %u", out->port);
-+
-+	ret = rte_flow_parser_parse("flow list 255", out, sizeof(outbuf));
-+	TEST_ASSERT_SUCCESS(ret, "port 255 parse failed");
-+	TEST_ASSERT_EQUAL(out->port, 255, "expected port 255, got %u", out->port);
-+
-+	return TEST_SUCCESS;
-+}
-+
-+static struct unit_test_suite flow_parser_tests = {
-+	.suite_name = "flow parser autotest",
-+	.setup = flow_parser_setup,
-+	.teardown = flow_parser_teardown,
-+	.unit_test_cases = {
-+		/* Public API tests */
-+		TEST_CASE_ST(flow_parser_case_setup, NULL,
-+			test_flow_parser_public_attr_parsing),
-+		TEST_CASE_ST(flow_parser_case_setup, NULL,
-+			test_flow_parser_public_pattern_parsing),
-+		TEST_CASE_ST(flow_parser_case_setup, NULL,
-+			test_flow_parser_public_actions_parsing),
-+		TEST_CASE_ST(flow_parser_case_setup, NULL,
-+			test_flow_parser_public_invalid_args),
-+		TEST_CASE_ST(flow_parser_case_setup, NULL,
-+			test_flow_parser_public_invalid_syntax),
-+		/* Internal API tests */
-+		TEST_CASE_ST(flow_parser_case_setup, NULL,
-+			test_flow_parser_internal_command_mapping),
-+		TEST_CASE_ST(flow_parser_case_setup, NULL,
-+			test_flow_parser_internal_invalid_args),
-+		TEST_CASE_ST(flow_parser_case_setup, NULL,
-+			test_flow_parser_internal_invalid_syntax),
-+		TEST_CASE_ST(flow_parser_case_setup, NULL,
-+			test_flow_parser_internal_port_id),
-+		TEST_CASE_ST(flow_parser_case_setup, NULL,
-+			test_flow_parser_internal_indirect_action),
-+		TEST_CASE_ST(flow_parser_case_setup, NULL,
-+			test_flow_parser_internal_meter),
-+		TEST_CASE_ST(flow_parser_case_setup, NULL,
-+			test_flow_parser_internal_queue_set_meta),
-+		TEST_CASE_ST(flow_parser_case_setup, NULL,
-+			test_flow_parser_internal_modify_field_count),
-+		TEST_CASE_ST(flow_parser_case_setup, NULL,
-+			test_flow_parser_internal_raw_decap_rss),
-+		TEST_CASES_END()
-+	}
-+};
-+
-+static int
-+test_flow_parser(void)
-+{
-+	return unit_test_suite_runner(&flow_parser_tests);
-+}
-+
-+REGISTER_FAST_TEST(flow_parser_autotest, NOHUGE_OK, ASAN_OK, test_flow_parser);
--- 
-2.43.7
-
+Applied to dpdk-next-net-intel
