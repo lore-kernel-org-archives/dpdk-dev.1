@@ -2,68 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE032D73E84
-	for <dpdk-dev@archiver.kernel.org>; Thu, 29 Jan 2026 20:26:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7365D73E83
+	for <dpdk-dev@archiver.kernel.org>; Thu, 29 Jan 2026 20:26:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AD0584042C;
-	Thu, 29 Jan 2026 21:26:47 +0100 (CET)
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com
- [209.85.128.43]) by mails.dpdk.org (Postfix) with ESMTP id CA92C402D3
- for <dev@dpdk.org>; Thu, 29 Jan 2026 21:26:43 +0100 (CET)
-Received: by mail-wm1-f43.google.com with SMTP id
- 5b1f17b1804b1-47ff94b46afso12357985e9.1
- for <dev@dpdk.org>; Thu, 29 Jan 2026 12:26:43 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id B6B884060F;
+	Thu, 29 Jan 2026 21:26:48 +0100 (CET)
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com
+ [209.85.128.51]) by mails.dpdk.org (Postfix) with ESMTP id DF4854042C
+ for <dev@dpdk.org>; Thu, 29 Jan 2026 21:26:45 +0100 (CET)
+Received: by mail-wm1-f51.google.com with SMTP id
+ 5b1f17b1804b1-4806e0f6b69so10323005e9.3
+ for <dev@dpdk.org>; Thu, 29 Jan 2026 12:26:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769718403;
- x=1770323203; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769718405;
+ x=1770323205; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=9FbJuGUcKS3h0fvgDtfhnt+8qcQX5IMN3V8hqrNcFXw=;
- b=x1EHC1S1z/bvOsZ61UUeF5SThkMMLdk0HwnojdrZHsbmrFuXYnC7VpFYVfM2l2Dm6D
- 54/PqRwEdCkBofaLAQEHMSNvxNVbC+PR8ixgwKY5tQYDg5Y/MEU1emycbw9mFX1c2a+T
- bXxXxjYAl9wijW/6bc6tzEKEXO1FeUd13Q6UqthrkscL/DYFSMPdeNv9De9CDLww/W+w
- kR3ojFzZOetAxhlZq1yjVof+GzDViGt0SS9/DRZZUQbQlTdZQy+Jeqxac6KagQS5HsWU
- Zh131gnhdR9JcdDzfClbczk9k6wQyxxh8/kDXUAtZuUR8QLz9K9R4/LSwMePMND5juQ8
- CNQQ==
+ bh=ipLL/H93R4+vLJ5oRMolPl81x8WLMtMw3YpVS9Lzda0=;
+ b=nFPrHm1JCHWzevEjCYRVrWwfsua91WE4VEfNeHkTyXi8GwypSW0YjoReGkSq1BpuDg
+ loclWCrqaCCxk5kvsoiUcL7BTHIiq8I9uX2MV2Xefp7IiQBy596NIK76IWcrYXYZ2nTK
+ UDqYpsnZepxw4iToo/bo9Wc+1mq0I57AnSkgXeEU0fPxX+/4hcSIo+kSEmaDmXxgcHpR
+ bvkkvMb0NCb2dwWhwJgck1LfKwumKdo0ABtbZ1HhJSTBEXSnT7Jh2jNSQZ0rCQWjgaJL
+ DWQhjnOu8g9bVw/jKHXaf0ukI6Yf58yYwXiS43pacOIev5sLK0GQsllrrxGcucvFWQG7
+ 8tnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1769718403; x=1770323203;
+ d=1e100.net; s=20230601; t=1769718405; x=1770323205;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=9FbJuGUcKS3h0fvgDtfhnt+8qcQX5IMN3V8hqrNcFXw=;
- b=F+DTyzdwm+ooB/l3YeUW0rhAc9lfJnSpjiJxP/d0j3uW0PN0oeO9G9axYEALLhtmnK
- IammN0GJa5+TRpx4B7PhB9YDHzoyTAAQjnEnq4mkpRnEAjyq80vVnhqvEU0iHAF2/lLO
- Pz5wNnhXBc4my75s6dufE4bAI1NrDE42Gl3MsounWNuKOWriPLHf4W76gLseC+RTknpp
- vxA82PlrTxTxkvORdgB6Fu1E2mKOxZwSILfvq8Gjr0msAMF5R5pXtoWSvcUUuC7kOUU9
- Lb7qHIZlQLvfx8vM9zMS24V8l/byVvETePWs63vkD5ZyqkQ/LSpe3bH32+NCZRZMYIjF
- 5GmA==
-X-Gm-Message-State: AOJu0YxwTxrgO2K4gR+VfT+1saiQgywSeSb5p0cCO3cW/TGAxzyNPE/U
- jH2jTbfVmLId34bovdvcv6W6Q1Hw2M4lGpW2InCI0yxzs5/u1C81BXp/HiAO+j+EEbNPyJp4isZ
- IECwn
-X-Gm-Gg: AZuq6aKOmkOggPkMpQev9oHNemGTw7U4PYk00MpuGVe6yaW4W1u3YqxBGU0DafAp1Vb
- zk4dMlIwUK9eiwKPQUN5jhZJaW8eR+o0hm2Qs4B3AqlXR3qgKPts3rn4hgTbuiDBE2spC1aV/UF
- L3ib2Qfx4qoOaPuKwmBfZO1B2ToiCv/LurDLFqJSdY/f6F61ToJLHVv+L4SWRueeK4nHLGOCIni
- QEAP9eFrKw4eNg3Nhjtg4aouAwzu0eWMmnIZOG3grdAXWWxKoyHVM19TfajajgqdKul+PyowgVM
- 0wcLlGPG7g4Z49MgUjAG8BBj02BKA3r9wThUwTs9qI2r445dEdsziGDlEtJsMEDhOVxhfQO0gSd
- A8f4DmIUF5ugqJDxAC38tbk4JvEPxKe1aKzGpqLKac0mPZU+vIrSD4czYq/yO/V7Nl/uP/ADg+o
- mEfCkfz6gUUXeHELb5xMqKIWCrLThS3QTlkVEwNWPY2pvB89Awnw==
-X-Received: by 2002:a05:600c:4e91:b0:47f:1332:e5f with SMTP id
- 5b1f17b1804b1-480829b5cfamr59493065e9.12.1769718403302; 
- Thu, 29 Jan 2026 12:26:43 -0800 (PST)
+ bh=ipLL/H93R4+vLJ5oRMolPl81x8WLMtMw3YpVS9Lzda0=;
+ b=bWQ1XoJWi4Shn/nuG+q0FDgWVE1VKA5imIcTDFzYXa6fbnRYxfnWklYcKROMwPgkCc
+ 0SapcPpDj69cyH4k0Dkp45GKq3Y+89t5cdByNA0wLaeDLOF8/o+uV0hjqRsHjX+m6oi7
+ A7F+QalPDMi4uh4xIvbGtHuowCpEJ05V3Idey/cnflDf1ecD6wwAKnkeMVVTG+fSHzbs
+ xQrRxo6+jHUwW9vZL2gF2UOORbwYEdEFHkA0MU1zEuOpUNbVm72aDbqhs2dKLOUuM5ue
+ 6WyQrVBKJXTwKAU8wvgJ0MoL/beZ+ZOMQpxYF3YE1+3N4/GiZH35uI23W2hHOZPXSKX1
+ tyjw==
+X-Gm-Message-State: AOJu0YxF5tltdDNq4n1vt7Xvgzwi3+xXUhe17Q2SsZmDRkN7+KZzYLof
+ Z20nE2O1i/CoKMC6KqMAr34BP7uC4DD0No2wUzXHQ8zNoPDh4CT+0an9YJjAidQqGvTGZ5Z8ohl
+ i6zUJ
+X-Gm-Gg: AZuq6aLpsDAUyAj8Rn/ZVhnMhqoqU0Mivdt6YyLBe94GAUukNeIRCyUw+cN65ua8rXO
+ kas6k6DhR13Cimam46Nsf8btGDvZ7TQFffNBpexhFGdGGOcO9m1sGKJH8dJJ2hRaotphchqHsf1
+ rT08yiZVOgXE3XShzoCKP2mAhyWQEhoxdPvEid0ZndymWL2FjVYzZ60ZmN0jLdQAt4mmTIpeTB2
+ CsURGmSqaflQjoeSUTr/NbdvP+emzHAV083gZVpJznlmmQ+n8w/DXokHtfO/uopKGkcpfc8QxWE
+ S3t7Nh1RDdACNVkxv8O0+4jmeJtxJWtVlWrBjgdGN83+Bzj6Ugij9IMcDjv9MLgI2qQn/YUQ0PU
+ FGa/TpmnoPxsOoYfjHO8vD2HoX3PAih5zU5SqKczRHwF9xt+E3kZlk6T4elazNQ5eu5/Rj1bvz0
+ hax6soxTpjuIv6JkBBRDRrqYgp1g3htoITYdQoyo9IB07t/FswsA==
+X-Received: by 2002:a05:600c:3f0a:b0:477:a21c:2066 with SMTP id
+ 5b1f17b1804b1-482db447c57mr4058435e9.5.1769718405463; 
+ Thu, 29 Jan 2026 12:26:45 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-481a5e2ba7asm4819435e9.20.2026.01.29.12.26.41
+ 5b1f17b1804b1-481a5e2ba7asm4819435e9.20.2026.01.29.12.26.43
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 29 Jan 2026 12:26:42 -0800 (PST)
+ Thu, 29 Jan 2026 12:26:45 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
- Tetsuya Mukawa <mtetsuyah@gmail.com>,
- Bernard Iremonger <bernard.iremonger@intel.com>
-Subject: [PATCH v9 1/5] net/null: cleanup info response
-Date: Thu, 29 Jan 2026 12:25:27 -0800
-Message-ID: <20260129202635.173530-2-stephen@networkplumber.org>
+ Tetsuya Mukawa <mtetsuyah@gmail.com>, Ferruh Yigit <ferruh.yigit@amd.com>
+Subject: [PATCH v9 2/5] net/null: validate the numeric devargs
+Date: Thu, 29 Jan 2026 12:25:28 -0800
+Message-ID: <20260129202635.173530-3-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260129202635.173530-1-stephen@networkplumber.org>
 References: <20260104222523.329760-1-stephen@networkplumber.org>
@@ -83,50 +82,112 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The info_get callback doesn't need to check its args
-since already done by ethdev.
+The driver was not correctly validating the arguments for packet_size,
+packet_copy, and no_rx. The original parsing had several issues:
+- Empty strings were not rejected
+- Trailing non-numeric characters were silently ignored
+- Large values could wrap around causing unexpected behavior
 
-The null driver generates fake packets of configured packet_size.
-The mbuf pool passed when setting up Rx queue must have space
-to hold the requested packet size; otherwise eth_null_copy_rx()
-would generate invalid mbufs.
+Add a common helper function get_unsigned_arg() that properly validates
+numeric arguments by checking for empty input, ensuring the entire
+string is consumed, and enforcing appropriate maximum values for each
+parameter.
 
-Setting min_rx_bufsize to packet_size enables the existing
-validation in rte_eth_rx_queue_setup() to reject undersized pools.
-
-Fixes: c743e50c475f ("null: new poll mode driver")
+Fixes: 4df90194f2a2 ("net/null: prefer unsigned int")
 Cc: stable@dpdk.org
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/null/rte_eth_null.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+ drivers/net/null/rte_eth_null.c | 59 +++++++++++++++------------------
+ 1 file changed, 26 insertions(+), 33 deletions(-)
 
 diff --git a/drivers/net/null/rte_eth_null.c b/drivers/net/null/rte_eth_null.c
-index 46e7e7bd8c..ba87c82a73 100644
+index ba87c82a73..cd7a29bce9 100644
 --- a/drivers/net/null/rte_eth_null.c
 +++ b/drivers/net/null/rte_eth_null.c
-@@ -298,17 +298,13 @@ static int
- eth_dev_info(struct rte_eth_dev *dev,
- 		struct rte_eth_dev_info *dev_info)
+@@ -602,56 +602,49 @@ eth_dev_null_create(struct rte_vdev_device *dev, struct pmd_options *args)
+ 	return 0;
+ }
+ 
+-static inline int
+-get_packet_size_arg(const char *key __rte_unused,
+-		const char *value, void *extra_args)
++static int
++get_unsigned_arg(const char *str, unsigned int *retval,
++		 unsigned int maxval)
  {
--	struct pmd_internals *internals;
+-	const char *a = value;
+-	unsigned int *packet_size = extra_args;
++	char *endp = NULL;
++	unsigned long val;
+ 
+-	if ((value == NULL) || (extra_args == NULL))
++	if (str == NULL || retval == NULL)
+ 		return -EINVAL;
+ 
+-	*packet_size = (unsigned int)strtoul(a, NULL, 0);
+-	if (*packet_size == UINT_MAX)
+-		return -1;
++	if (*str == '\0')
++		return -EINVAL; /* empty string */
+ 
++	val = strtoul(str, &endp, 0);
++	if (*endp != '\0')
++		return -EINVAL; /* non-numeric character */
++
++	if (val > maxval)
++		return -ERANGE;
++
++	*retval = val;
+ 	return 0;
+ }
+ 
+-static inline int
+-get_packet_copy_arg(const char *key __rte_unused,
++static int
++get_packet_size_arg(const char *key __rte_unused,
+ 		const char *value, void *extra_args)
+ {
+-	const char *a = value;
+-	unsigned int *packet_copy = extra_args;
 -
--	if ((dev == NULL) || (dev_info == NULL))
+-	if ((value == NULL) || (extra_args == NULL))
 -		return -EINVAL;
-+	struct pmd_internals *internals = dev->data->dev_private;
+-
+-	*packet_copy = (unsigned int)strtoul(a, NULL, 0);
+-	if (*packet_copy == UINT_MAX)
+-		return -1;
++	return get_unsigned_arg(value, extra_args, UINT16_MAX);
++}
  
--	internals = dev->data->dev_private;
- 	dev_info->max_mac_addrs = 1;
--	dev_info->max_rx_pktlen = (uint32_t)-1;
-+	dev_info->max_rx_pktlen = UINT32_MAX;
- 	dev_info->max_rx_queues = RTE_DIM(internals->rx_null_queues);
- 	dev_info->max_tx_queues = RTE_DIM(internals->tx_null_queues);
--	dev_info->min_rx_bufsize = 0;
-+	dev_info->min_rx_bufsize = internals->packet_size;
- 	dev_info->tx_offload_capa = RTE_ETH_TX_OFFLOAD_MULTI_SEGS | RTE_ETH_TX_OFFLOAD_MT_LOCKFREE;
+-	return 0;
++static int
++get_packet_copy_arg(const char *key __rte_unused,
++		const char *value, void *extra_args)
++{
++	return get_unsigned_arg(value, extra_args, UINT32_MAX);
+ }
  
- 	dev_info->reta_size = internals->reta_size;
+ static int
+ get_packet_no_rx_arg(const char *key __rte_unused,
+ 		const char *value, void *extra_args)
+ {
+-	const char *a = value;
+-	unsigned int no_rx;
+-
+-	if (value == NULL || extra_args == NULL)
+-		return -EINVAL;
+-
+-	no_rx = (unsigned int)strtoul(a, NULL, 0);
+-	if (no_rx != 0 && no_rx != 1)
+-		return -1;
+-
+-	*(unsigned int *)extra_args = no_rx;
+-	return 0;
++	return get_unsigned_arg(value, extra_args, 1);
+ }
+ 
+ static int
 -- 
 2.51.0
 
