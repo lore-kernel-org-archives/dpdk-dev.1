@@ -2,78 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29FABD73E83
-	for <dpdk-dev@archiver.kernel.org>; Thu, 29 Jan 2026 20:14:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EBA2D73E84
+	for <dpdk-dev@archiver.kernel.org>; Thu, 29 Jan 2026 20:17:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0F5D940274;
-	Thu, 29 Jan 2026 21:14:26 +0100 (CET)
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com
- [209.85.221.43]) by mails.dpdk.org (Postfix) with ESMTP id C09C54014F
- for <dev@dpdk.org>; Thu, 29 Jan 2026 21:14:24 +0100 (CET)
-Received: by mail-wr1-f43.google.com with SMTP id
- ffacd0b85a97d-435a517be33so942215f8f.0
- for <dev@dpdk.org>; Thu, 29 Jan 2026 12:14:24 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 3421F40274;
+	Thu, 29 Jan 2026 21:17:34 +0100 (CET)
+Received: from mail-wm1-f66.google.com (mail-wm1-f66.google.com
+ [209.85.128.66]) by mails.dpdk.org (Postfix) with ESMTP id 7AFCD4014F
+ for <dev@dpdk.org>; Thu, 29 Jan 2026 21:17:32 +0100 (CET)
+Received: by mail-wm1-f66.google.com with SMTP id
+ 5b1f17b1804b1-48039fdc8aeso8425335e9.3
+ for <dev@dpdk.org>; Thu, 29 Jan 2026 12:17:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769717664;
- x=1770322464; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769717852;
+ x=1770322652; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=iK/0CPsBsBPN1Y72y4lH38RGjX0NwMb4we0i1RAAmSI=;
- b=UwXuAnX61XWUktMhRkUKf/ZM4QmZ57cOhzBCrAwEUxJhoXbOJGAXBsuCzZLPHJOZrP
- ob7kxk3o1wgybFLL5y3LV6M6iGz6UehwzKLSf9i1KMIYWA3HUf8tBx+AmTRm1W2JuUzv
- FhE6M6X8HeclHfAV0ifWlm+MlmuwLnBQSFvx3KB/zLb8q6AwpYLvtTZ348ztQq3aj6Nt
- yyRyAxY7lL9blEaZPT/iAHaUHFehb/fu3BcoQxkshC0eArW4+Iv/aIakxKWFKE9FAh8M
- wiFGahIvazc1IVtOksBDtRoWWwD46P7/b+QqGaRlOm4g2MtomAu6Fd3PT5zZONEDVjqo
- ZFrg==
+ bh=jFZ0GFeFRsfUa7PBcLkbnFOY/nzYxFQHlL98HWXL3NA=;
+ b=FNp9PG/elnE+MNjbGQfLEwd6YT5FOySds7GkL55FpPTI8Q1MAcXt6P0XSkHaHDPytE
+ wnPM+z1TD3s03IThkkugzQjU/vFy+lT6AdSEjcJqDo2BgEKRDP+A3Ql1OBWR7qy1Bak4
+ YJMqiV1sH3KLMIs+GcjIVQx9sqx2YTFTdRowto/KSjZUfCeCD5FFy50Nq+rZKVYdZnLb
+ snQKPJh3vqmjj8kQpblnUs7tlKbs/l9RcncpMiaRrJcj3DGWw3xuOuWPArsg1yD2QYtO
+ 10rHInz9pUMEZvO6h87mFvqottDDoRYVKrEAlpFJp+wCZHfdW7dazNnYAAslDXmNtzit
+ XS1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1769717664; x=1770322464;
+ d=1e100.net; s=20230601; t=1769717852; x=1770322652;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=iK/0CPsBsBPN1Y72y4lH38RGjX0NwMb4we0i1RAAmSI=;
- b=kIk03IDCtmj6vxL9IRwRajLVhrhwKFJZ2RUYRR2V71MZ4nOYClGwgW0tQzObt3k1gr
- qEiii5WLCU6Xbv0pSQxt2yBLjLXYS3fTfgSXQvfiiwCI5BDFwiOekY0BbHDZRc6WiVXs
- 1YBW6t9402dXadilaqRZHC0vx7FllUMw3g3/ddUdY6FSTaYk0gkwlnw0JawA79O5oiRe
- wZnFWiA5prAciN8Y2+FiOTNl2P8PYo6zdMBz7AmpgYJIB6AHLp/hZTvrRvWZ55R9nc0L
- sQg8PmEKFbOLxJSz5cb6K52E2IFKn+u/O5mYo0isG78yYzM/K5qphj9/qDMSN6eDTgw5
- jY0w==
-X-Gm-Message-State: AOJu0Yyrqcg22B6Q0MkHfptZDQMGKH9MdBq/NsVb9nzay0l6137rVpCR
- fxyiRFc9tcdzlI2k/W6zMTPSuQ4FltgzKnl3FPHwtvwK+mvpjzf+1F6OHbfwYWmc2es=
-X-Gm-Gg: AZuq6aJsAeLLENxL0X+VvGixnVZSJWRbtLtIqERTTbBbxYlMDYMtccKNT9zIncn9Ree
- yHj3VEXpPhjAVhiHaacWdJZSUEVLZ6Nd137KFUdfX3aEP7goWrQZ5rKOXNGPDanfo3XwJkJAWjs
- EHktAx1JudqavtHUYqKEYOFaDrf5MoA2PJuom9ZqkpVJZxZj2xfKC3giwFDodUeGBvESrzTu5ZF
- tESo0XmP11IdZ/N6pPzWxH7cc6chtmfTuxE83oPgiRUbustYzT4NjbZ1zum32Do3r/x4T7Nx0bn
- 7c8JwFYuzMuYZ/bHHTd/KXP4Z5Xsjd2fSi0ohA2kM8rSXG9F1SDEkujh4T0PI8A3xwASmkP8IJp
- N1+Hp2YeAHUgRD7E8kHx1mTN+TerP70g+Qk9RZSGsODGv0Y5mVqpabsmKmwAziJ8/OBC+PI2vcA
- El8Kb7fwMWzaTLCLqDBFIs2cs9n5Jrx8h3Wiwx6MFAFuUWif6Kebm6
-X-Received: by 2002:a05:6000:420d:b0:435:bbd7:18e9 with SMTP id
- ffacd0b85a97d-435f3ab5013mr1177824f8f.58.1769717663843; 
- Thu, 29 Jan 2026 12:14:23 -0800 (PST)
+ bh=jFZ0GFeFRsfUa7PBcLkbnFOY/nzYxFQHlL98HWXL3NA=;
+ b=DaVT562guDrItskBKEB5Aqlh4LOOmu++tpzMjg1cruAfei/we2LW68JC6WXPKz5+nn
+ 3p4gsw0nygpVy0tI/GLK4ChV86vA+G6Ts2ZgJo8WXOPw0cvGIhhZc9F7zDxHOi9tfMdl
+ DsrIIV54OnFWMJJqVrt4uq+xYzAZi84nVfLE0O00A8yLK5UXbMaIfdVqvprswP4Xpw70
+ 6Aocw7bBOjfGkrO1vfxk6/j9f0vD8dnkmRr0E+fl5myMBD2tUeyNUPKoc1TTEjS46O6P
+ Nbq04py02Xw3EF4tUgFsZtoEtJtXPYL+5HsYR0fn2lSQfRcf3gO5vy7f/hCA13ocNV7A
+ qrKA==
+X-Gm-Message-State: AOJu0YzCYrtzGwGxu0bLNyGjyUMrX6F7g9R9u9WluydSyWD18CLbq0uS
+ v+z1qntz0dQZBK/R8XFIKl4Zp+/s/bwKlngMBTSEWEXuQlGN+dlVYAPKEbwS/Y674A4=
+X-Gm-Gg: AZuq6aLGmswDnEbkCfaRd8X7XH2GGNhfOauaUTnWtGUyqsnMqgKBOWbO2WsaWpRQKrf
+ kI4LWajqb0tSL3rtDVqmvMMZRDNyqW5Fc6LMpWxRAm0dhmTIdaYIBXsQORhCEebNJy56CEDOEUF
+ rwV8OioUxhPBIZLKSsQV2wBNK/55GTCaEWOoOO8Duhfotq/NDfO5t4QdeXKUujhxQZ9VHyunqhR
+ ZADWMYmAjrLZIrGf/0iKL/ZbiMjogjSlvvH/P2nOEz8PYQontbsa0BLWX1aIZgMZwCPPVht3L+B
+ qshs7xw88QhgnU8QnljKiyuUrGUjPGqo5WI9S4sHN41DSDwTrUPGLHwUptdTZoSbvl7yrJpaQtw
+ ChJJ8bvRWGUAH84+NtRPEaKTTaXdRz0Z/20bJE+AWyUSLd6aIqp4+0/efM/+fPlFgXcibVl92l6
+ VxNfu9MtK6oUaoEeupkGeArBk5hd1FWeoPheVt6BxGXDOFrB4qiFTF
+X-Received: by 2002:a05:600c:1e24:b0:480:6a46:3616 with SMTP id
+ 5b1f17b1804b1-482db448890mr4697815e9.4.1769717852074; 
+ Thu, 29 Jan 2026 12:17:32 -0800 (PST)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-435e10e483asm15996656f8f.3.2026.01.29.12.14.20
+ ffacd0b85a97d-435e10e4762sm16406858f8f.6.2026.01.29.12.17.30
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 29 Jan 2026 12:14:23 -0800 (PST)
-Date: Thu, 29 Jan 2026 12:14:14 -0800
+ Thu, 29 Jan 2026 12:17:31 -0800 (PST)
+Date: Thu, 29 Jan 2026 12:17:27 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Thomas Monjalon <thomas@monjalon.net>
-Cc: dev@dpdk.org, Chengwen Feng <fengchengwen@huawei.com>, Nicolas Chautru
- <nicolas.chautru@intel.com>, Mattias =?UTF-8?B?UsO2bm5ibG9t?=
- <mattias.ronnblom@ericsson.com>, Ori Kam <orika@nvidia.com>, Andrew
- Rybchenko <andrew.rybchenko@oktetlabs.ru>, Jerin Jacob
- <jerinj@marvell.com>, Amit Prakash Shukla <amitprakashs@marvell.com>,
- Vladimir Medvedkin <vladimir.medvedkin@intel.com>, Kiran Kumar K
- <kirankumark@marvell.com>, Nithin Dabilpuram <ndabilpuram@marvell.com>,
- Zhirun Yan <yanzhirun_163@163.com>, Yipeng Wang <yipeng1.wang@intel.com>,
- Sameh Gobriel <sameh.gobriel@intel.com>, Bruce Richardson
- <bruce.richardson@intel.com>, Morten =?UTF-8?B?QnLDuHJ1cA==?=
- <mb@smartsharesystems.com>, Pavan Nikhilesh <pbhagavatula@marvell.com>,
- Paul Szczepanek <paul.szczepanek@arm.com>
-Subject: Re: [PATCH] lib: remove extra characters ending comment blocks
-Message-ID: <20260129121414.6aa40db0@phoenix.local>
-In-Reply-To: <20260129144749.3637111-1-thomas@monjalon.net>
-References: <20260129144749.3637111-1-thomas@monjalon.net>
+To: Zhanibek Bakin <zhanibek.bakin@gmail.com>
+Cc: dev@dpdk.org, mtetsuyah@gmail.com, stable@dpdk.org
+Subject: Re: [PATCH] net/null: fix Tx statistics accumulation
+Message-ID: <20260129121727.23c60947@phoenix.local>
+In-Reply-To: <20260129090312.98636-1-zhanibek.bakin@gmail.com>
+References: <20260129090312.98636-1-zhanibek.bakin@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -90,22 +79,20 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 29 Jan 2026 15:47:48 +0100
-Thomas Monjalon <thomas@monjalon.net> wrote:
+On Thu, 29 Jan 2026 14:03:12 +0500
+Zhanibek Bakin <zhanibek.bakin@gmail.com> wrote:
 
-> At the end of a comment, no need for an extra line.
+> The eth_stats_get() function incorrectly uses assignment (=) instead
+> of accumulation (+=) for opackets and obytes in the TX queue loop.
+> This causes only the last TX queue's statistics to be reported,
+> while the RX side correctly uses +=.
 > 
-> This pattern was fixed with the following command:
-> git ls lib | xargs sed -i '/^ *\* *$/{N;/ *\*\/ *$/D;}'
+> Fixes: 31326ce7f151 ("net/null: count all queues")
+> Cc: stable@dpdk.org
 > 
-> A comment should always be terminated with */
-> 
-> Extra asterisks were found with this command:
-> git grep '\* *\*/' lib
-> 
-> Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
+> Signed-off-by: Zhanibek Bakin <zhanibek.bakin@gmail.com>
+> ---
+> v2: Fixed Fixes tag to use 12-character hash
+> ---
 
-Acked-by: Stephen Hemminger <stephen@networkplumber.org>
-
-Should look at examples and drivers as well.
-Maybe add this to the AGENTS auto review script.
+Looks good, queued to next-net.
