@@ -2,69 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E2F6D46C01
-	for <dpdk-dev@archiver.kernel.org>; Thu, 29 Jan 2026 01:51:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8CF6D46C01
+	for <dpdk-dev@archiver.kernel.org>; Thu, 29 Jan 2026 01:52:06 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A6F4F4026F;
-	Thu, 29 Jan 2026 02:51:16 +0100 (CET)
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com
- [209.85.128.48]) by mails.dpdk.org (Postfix) with ESMTP id 179604026A
- for <dev@dpdk.org>; Thu, 29 Jan 2026 02:51:15 +0100 (CET)
-Received: by mail-wm1-f48.google.com with SMTP id
- 5b1f17b1804b1-480706554beso4310295e9.1
- for <dev@dpdk.org>; Wed, 28 Jan 2026 17:51:15 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id D5B364026F;
+	Thu, 29 Jan 2026 02:52:05 +0100 (CET)
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com
+ [209.85.128.44]) by mails.dpdk.org (Postfix) with ESMTP id B34F74026A
+ for <dev@dpdk.org>; Thu, 29 Jan 2026 02:52:04 +0100 (CET)
+Received: by mail-wm1-f44.google.com with SMTP id
+ 5b1f17b1804b1-47f5c2283b6so3310095e9.1
+ for <dev@dpdk.org>; Wed, 28 Jan 2026 17:52:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769651475;
- x=1770256275; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769651524;
+ x=1770256324; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=yTIvseU0gEgxZZgoYKqhPvr51m8opdAk3zeVBWgNc2E=;
- b=Ha3fIZdXk1Bhi1MSWRmN8TvzO2xwjoFlZRSksDL6j+ERDro2KGTVyuLSHiJdAv39S3
- 4f26G3uS/CT4XeFQUUXvnZ323Lv0KDs1hv8G9457zIBp8qzd1PJFUTrajY2MRKuTNxBZ
- kANJwF0A7Ji2UxamMnJSOzQVAjoaqrIG8ildDVjz9E1hqW6tPsgg2IxgzMgRR+r+EQeX
- IhZiNsFbRDZbWffL1c7OD+LR/2G6bHX3HD9n4EVkfim3mWVLLsTXeb0Gf2ZUBDj3OSAm
- rR6I/e/F7dvccrGeahY9c+gSfB5z4wSUFLUGQzRLfFz1FuJ9FMNbKXc3Vec6+7OuICFS
- 8inw==
+ bh=iQbsXbj7lZzXuQnYiydHn4wl4TnlnCSpRY29C5DV7ME=;
+ b=KUeY57XfZZ2bZLksJOY6l+bPvpomLtYuaprzDAZKXbl56LNQbVGU75+WLN3fXMBHUN
+ 23PRuROUrArzcfp/J6i/+BTRgs8nHQ/ulfwrK4/8tg1FrNmiXl7/20lvKsuzWSScyzis
+ fTl8jRpXbeuN+3Xf1n5KyYG6tMi0zRgsppKQq6uHhrCjSg1dH1lhKJVtIUgBjxuGejwl
+ LRt9RHYUhSIBwnWpG1a78UBxn9EkL3Gj74kC6snr44ukZPt5TMKr7dJ5ufBj0Gb4tjOi
+ cdsRnbaJZfdxxw3h36b9NySSO3gos6eJ6EOF+0D1I0krG2tJ1O2W6n3tPKOxg0d6ucGx
+ UIzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1769651475; x=1770256275;
+ d=1e100.net; s=20230601; t=1769651524; x=1770256324;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=yTIvseU0gEgxZZgoYKqhPvr51m8opdAk3zeVBWgNc2E=;
- b=exFY/ayyeJrNw6HAlyUBuPYbYQmIvlSb+l9J4C5iPuCDS8iE2mtmzmF4Utu9KeabTn
- H/GZgh/RivMgoL2YhyyvQtgdEzjJu0hS/HmKjjYmYpVxND0vCl9VSU1n8zsq8MUQ9Sh7
- XMPZ+68hy4jOSd4q6f+0FPlCpxvKwbsuMgIyBUIv+lCEg+pBNDZ18lbX8VodRE6Zqzei
- Nvgd34ZZm39FAbzYVuMXH5CpSYVmuhOPKSEyt+BnGkPiSeoK9ix4Mgw7kt0hslh5ZvGN
- k89lPpYgVyVJDJB2DlfWyZCz/BvadCtnjAzKEsg0T1N3oi9EvajcdImkLWi+UGuZ14kc
- gHlQ==
-X-Gm-Message-State: AOJu0YzH76+NdPKTRt/WWi3s5UD9hZZbADa0BOKQ+IuyWyC13knAYqye
- z2888tO8TaKXyFYCL1JVKNiIWNv7pm/AHDiaOomSdtQGQ5jW/7lDGqLr1UO1ws1OqJ4=
-X-Gm-Gg: AZuq6aKT6tC/twCMWg8qBS2MMugMmCiBmbxYVJhqgstqsFPuU/0pJTG21C8pQ+9z0XE
- 9wxiedZ18qqfCHrTisCJUPgpBdUcPN95bw4cf49u/ZBzeJOwUItq7WoGxDliUUIqxFY9pm7TNeQ
- KybMbToUyw6oXFRKw1tyxXzXn5OYsO+PaRIzbuJkWFFatTod0qqBqnMoUmaL9vLVqFmtGGxuNME
- upcTGKvyjIWzROHKEHjem87cUtZsesbkzrfci8CxZgUxWcwmxitTVp8HyT/rl0438MDWsofazWj
- /M+Tz68+9psFP/Fq2uAsI8duvtxcKM2uCOjoFYS66IquQyfwHHZaX58XVV+A1ZWq4n+X3Y2UyEf
- 5VSjhp8aod1oNg39SZEPn9qZu/mE1m4+A0G0gB2vdowo+pF0q9J3/f/CB1KgpXhrPCCSNTOoPwq
- kzaY6MmN2ZanpkEgazU8AEsDgM7Pu047KZQNZEsSOxkTiDpjWcrEJP
-X-Received: by 2002:a05:600c:3f0b:b0:47e:e20e:bbb2 with SMTP id
- 5b1f17b1804b1-48069c0e198mr94220335e9.7.1769651474671; 
- Wed, 28 Jan 2026 17:51:14 -0800 (PST)
+ bh=iQbsXbj7lZzXuQnYiydHn4wl4TnlnCSpRY29C5DV7ME=;
+ b=XzTQtVs5YsrHHmMuLe65zEnuIoUD6RGnpWkKfSFWwmuE38yTBlNkyAWWfxYOKTj747
+ NWWOa29ZtETZ4aH/3qMw7FNv7ong/YLmLPhh6N0ZlS1mlX0RRLful8m2D6syCQYNxb3z
+ s8Dbgfh6OCRpVrsRbSlFHlchRedTYCXG7ACRBl8MQUvfNlAJD5366HsSQCZuQ1Cuwt2z
+ 8CsS5cZj10D6gdTExCZH0Nuf734RRKxHDzHCw2HjSFqi6f7aCRyOyCVSwvDLv6ZL7EEZ
+ CFhblyCpgg5afr94JWOKkyyDO9vyLEKPsdSUFSjSFqfO5TL9N/mvIodRx67Gn457QGku
+ ttlw==
+X-Gm-Message-State: AOJu0YwbvDnor09hiFUWPAuS1P2JT9DlPNbldCYLxkr29RZoffovqtSj
+ AV2paYoa5wYt+Lr+q4Ebvr+RFt8wFZkGSyM2tPbpTl3pnSUZHr6ka3UJfSK8OLunHUI=
+X-Gm-Gg: AZuq6aJGAU92yh3bu+nO2Hpo8LaITyMndr01NgdDrc+pFvK2DyKNxLyQ5xCJRQ6U3/s
+ LAKyFXk6I6BNcGeywCbz7ONi5JqX+suoD45mgwIoNJPwRxwQzlZdpohBr9cWwVntAfdb+OZcYxp
+ yknY+7bEqGs9hhlz2gnHEhU1D0AuAbd8Oix7eTzTCFbjBqudrGqhIDSqpZnRxkQtVa30nSZKK33
+ 3kQxJIaJHek+bmrMzU9vd/DKvVFOVUoCsgDEWthiY9VeK6GtZi2yLh8WM01pfwx+QZDKJGCU9ll
+ DVvgJ8jthlqmDhsUjfuBtYa81tvQ4d0NJJyBnBpSlz3kT5F2EgMj9NjkwNr+T2VL+fLKl3m1xoG
+ 6bUai4ST/GaFc8zXDxKhSdTwp/pXWOtCRirCV0IE+727yDTSv2tsDCyGCqt4blCIl9W6GDIvAAb
+ k/9VhW071QTN2KmpjtwyfbZSZceCnb3ZmA8AcX9ha/LLgKnM5qOyxx
+X-Received: by 2002:a05:600c:4f95:b0:477:af8d:203a with SMTP id
+ 5b1f17b1804b1-48069c66b3bmr87082805e9.27.1769651524348; 
+ Wed, 28 Jan 2026 17:52:04 -0800 (PST)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-4806ce564f9sm102075605e9.14.2026.01.28.17.51.12
+ 5b1f17b1804b1-481a5d3164fsm3686395e9.4.2026.01.28.17.52.02
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 28 Jan 2026 17:51:13 -0800 (PST)
-Date: Wed, 28 Jan 2026 17:51:07 -0800
+ Wed, 28 Jan 2026 17:52:04 -0800 (PST)
+Date: Wed, 28 Jan 2026 17:51:57 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: Cliff Burdick <cburdick@nvidia.com>
-Cc: <dev@dpdk.org>, <anatoly.burakov@intel.com>, Thomas Monjalon
- <thomas@monjalon.net>
-Subject: Re: [PATCH 1/2] eal: support dmabuf
-Message-ID: <20260128175107.26fe3189@phoenix.local>
-In-Reply-To: <20260127174429.1504288-2-cburdick@nvidia.com>
+Cc: <dev@dpdk.org>, <anatoly.burakov@intel.com>, Dariusz Sosnowski
+ <dsosnowski@nvidia.com>, Viacheslav Ovsiienko <viacheslavo@nvidia.com>,
+ Bing Zhao <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>, Suanming Mou
+ <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>
+Subject: Re: [PATCH 2/2] common/mlx5: support dmabuf
+Message-ID: <20260128175157.15169b10@phoenix.local>
+In-Reply-To: <20260127174429.1504288-3-cburdick@nvidia.com>
 References: <20260127174429.1504288-1-cburdick@nvidia.com>
- <20260127174429.1504288-2-cburdick@nvidia.com>
+ <20260127174429.1504288-3-cburdick@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -81,29 +83,28 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 27 Jan 2026 17:44:08 +0000
+On Tue, 27 Jan 2026 17:44:09 +0000
 Cliff Burdick <cburdick@nvidia.com> wrote:
 
-> +/**
-> + * Get dma-buf file descriptor associated with a memseg list.
-> + *
-> + * @note This function does not perform any locking, and is only safe to call
-> + *       from within memory-related callback functions.
+> +static struct ibv_mr *
+> +mlx5_glue_reg_dmabuf_mr(struct ibv_pd *pd, uint64_t offset, size_t length,
+> +			uint64_t iova, int fd, int access)
+> +{
+> +#ifdef HAVE_IBV_REG_DMABUF_MR
+> +	return ibv_reg_dmabuf_mr(pd, offset, length, iova, fd, access);
+> +#else
+> +	(void)pd;
+> +	(void)offset;
+> +	(void)length;
+> +	(void)iova;
+> +	(void)fd;
+> +	(void)access;
+> +	errno = ENOTSUP;
+> +	return NULL;
+> +#endif
+> +}
 
-Maybe warning instead of note.
+I would prefer the callback hook did not exist (was NULL)
+if you don't have your #ifdef.
 
-> + *
-> + * @param msl
-> + *   A pointer to memseg list for which to get dma-buf fd.
-> + *
-> + * @return
-> + *   Valid dma-buf file descriptor (>= 0) in case of success.
-> + *   -1 if not dma-buf backed or in case of error, with ``rte_errno`` set to:
-> + *     - EINVAL  - ``msl`` pointer was NULL or did not point to a valid memseg list
-> + */
-> +int
-> +rte_memseg_list_get_dmabuf_fd_thread_unsafe(const struct rte_memseg_list *msl);
-
-ENAMETOOLONG
-
-At some point, you need to come up with a better naming convention.
+The (void) change looks messy and better handled by caller.
