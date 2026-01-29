@@ -2,69 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E10AD46C16
-	for <dpdk-dev@archiver.kernel.org>; Thu, 29 Jan 2026 01:43:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CDF0D46C16
+	for <dpdk-dev@archiver.kernel.org>; Thu, 29 Jan 2026 01:43:46 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 99B7D4066D;
-	Thu, 29 Jan 2026 02:43:26 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id C008040676;
+	Thu, 29 Jan 2026 02:43:28 +0100 (CET)
 Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com
- [209.85.128.44]) by mails.dpdk.org (Postfix) with ESMTP id 8EDFD40668
- for <dev@dpdk.org>; Thu, 29 Jan 2026 02:43:25 +0100 (CET)
+ [209.85.128.44]) by mails.dpdk.org (Postfix) with ESMTP id C496540676
+ for <dev@dpdk.org>; Thu, 29 Jan 2026 02:43:27 +0100 (CET)
 Received: by mail-wm1-f44.google.com with SMTP id
- 5b1f17b1804b1-47ee937ecf2so3318805e9.0
- for <dev@dpdk.org>; Wed, 28 Jan 2026 17:43:25 -0800 (PST)
+ 5b1f17b1804b1-4801d7c72a5so3021795e9.0
+ for <dev@dpdk.org>; Wed, 28 Jan 2026 17:43:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769651005;
- x=1770255805; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769651007;
+ x=1770255807; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=3vmW0EapljQF36KN4JI48XscDOxvks/pvjTAp8iLdZ8=;
- b=jgKChpWaefcybTCXVme+ARSsvoy4j4u/+4HnHgldk/ozoGaL4vVCPfc+84N4xjg390
- SHCbH0VakulRsRfEZ+LpFhnwG3KYi7egNBkVSGSEVJdlp2adakI3n7n+DbtEOPbQXOCh
- cWIPx5OJ+14aWVz1uTiJejBL7ECm5N2xydlCP7dCIIW4NyqVipHsNvjtec/zfqHCwxOW
- qtx3c6D4bSPlOT0xmD3nF1CrWNLLS8TqI7jMsyLhQ5S8DjDOa4Vp+RK+5oW3Q50Tjybj
- 0bcZEu53R4uEjllyRc8iebaL25+Gr3AX7oVVVubRmesvquXRKBAIC1wMS4Jb9oECVeMX
- zObQ==
+ bh=WBcQXCL9e7ygnYAJlzBMo7/tu31fXUYw1CrLRLAJ2+4=;
+ b=FBVrPTYjNgZ7i+mYTwgOn0uox7SqSQcc5zA96P3buu68NlNg4DxH2yWaymSmh4uxLA
+ HyZiWCsymI2bfYSYL95zDRyPecT9C4fAxxFJ2NHr8uEBHY0smMqwMbJTHPUL6pxuS1ZY
+ fE/Fm1Z4NMHD6ap3X3bWYsFwBWdnIUKkrKGvN889fvXFsMbNS0f3si6WbWZlBmjrMeBv
+ Qs+CQZFJP/k5Ncngkdy65SNEotzT6OckyQNtrgIC3nY4tLZ3Kk6HEVBoGNbQ3ULz4H3e
+ Q+a7rDF5WU8H6hr5AWwNavdcpe1POWetMBWv9xdxUAHGxAzfKmW1FowpTWwWBNHIVXiL
+ yo9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1769651005; x=1770255805;
+ d=1e100.net; s=20230601; t=1769651007; x=1770255807;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=3vmW0EapljQF36KN4JI48XscDOxvks/pvjTAp8iLdZ8=;
- b=sd62jT11lm4f8IOkkocxhlja+tsmD5trApi6da7ki3VJhRRGZHMi5fciiyfBOxydpR
- IScVkxic+sp21cn4yvMM4Y2jekJTxxRdglz+E93SC51bmN3nApOmzrIxhXXyerPe6XJ5
- A1pzVF67AEAVjBkp6buBYwqQO1gdL1j4mjwKcqq8HJDO8mSHubnApEGzokobQEO8BZgg
- PVnvqs1sKfwCArRLTl3yPxQ5UNEYKBFxyhgbUVVK+Fx4msR+5sncxIJsa9FLDlqr+7rO
- MZfFnNayHMlwXU/dSfGZE5r0aNOg0oOU8+D6asfRXT3L3XG/sl5s02u/KweXOz2DqkH7
- obHg==
-X-Gm-Message-State: AOJu0YzWAygPdY41gOQoci0uPx7pBhhfthp30f4aJzDyXUKaX/9VqDPu
- 9Mcsyv4XsETXLZxVJKmualgcKhnffWPUa6SoL0WCjvLPXEflwxOBh351dPyyjBXexo/KO8fZjMZ
- TRuZS
-X-Gm-Gg: AZuq6aJFiiJUpHBiZiK6pSdpH02p/z4e66QbmqtvHeblCgWj1xhCmD2jHVBe18s8pyB
- sM7zaVYkaJjnzcaAbWzSPjOpXKj+lUe5+W+iDntLLVVjgAAvCu6r9y6CprUODrVL7j6QUWo1OAn
- 1wCn1sUaNmylUeRM8IKfv1f/ldmdAjWs3UvJsLpg1hqSQ4/690EZn2IJaw1hUpMUAaIP6/BhdAB
- a5sryop2VzWCu5k36Chcqr+YXnsuGCNAOKC+GWm9Cci1HnqKfPUIDNg0tr0eqNUODW8T734e8QA
- qlzGoFjfXI3RQ1VwJ31rvhN46VtqbDacmAINV5kzz3VarO3DayiHgBrM7HnMMvcUktaXqxC264/
- wmm9dObLZgFOy7rwSJX3igBF4sChT9pZQaGB/66zIiCHwO++YejeOtX3kf4zrLQPlT1j7tvm0l6
- rTDLXITX554Fvw6U6XHOTpOqnhSHRd/dNUIJqCnyK4WnII18g0KQ==
-X-Received: by 2002:a05:600c:2305:b0:471:793:e795 with SMTP id
- 5b1f17b1804b1-48079af6674mr12032805e9.0.1769651005155; 
- Wed, 28 Jan 2026 17:43:25 -0800 (PST)
+ bh=WBcQXCL9e7ygnYAJlzBMo7/tu31fXUYw1CrLRLAJ2+4=;
+ b=ApJWTjP8NwjITRzomCZTiWr9T0mHSYNUacjl0HeUOxQ3mT7IkapSsF/bwHC13iPzPu
+ 4s1SIPM8pKFlSJj1NVXAhFSy1nyjZdndgGowUDpCiyTKi928SdWbf3n8u8oCJQwTtPu7
+ jOHc1iMYF+LRnmfrNMQJaHofMq4dftSTP0L/+53SmiIHKlaRLH/Yjr+0VmM0qOHmZQGS
+ j9mp/5q5mfLOFW3Xb5J4rqetpBBRYrmSjRSmmRaxvwUsKsDcKNTzXTgKXSFAyl7Zv8IC
+ kyEoOk39sWFINY4lLmpdgtfLSasLOpoYg5/XswpGpP5AqHIqBt7cL5KlIfWeRoTDKZmk
+ UBPQ==
+X-Gm-Message-State: AOJu0Yz3rM+39yUrJEsxh6GRS2Beqq6zqUXYpeuCh7p8oApuMkMjEkuW
+ 93EktGbtfIYn/CZXKZDL7RLTqjqdciqw/Ylz7dKSxKMWJtL0FdtIMchXIEKlFdZgbTekg2nDgnB
+ IBRNI
+X-Gm-Gg: AZuq6aI5Mb7smhhBXletdAZ1BQl17JbR+MWIXJSEdOTzruJVfUzULHC+/+b+ZfU4fgu
+ mw0nhwwyeGflmfBhilPKeBisUHOC6qDQsM1rn7r2gI6bevM17YztS7ZvDIMItrLj1C8HEKMPQo3
+ yEiekR2Y3CdvYhX7Y6CP4OxQIZYM4tv+l8fklhWR//oau0L8pIMOihnBbDVKjEmThmu+Xdijxyq
+ 20haMaV9uvySYPHp/v2TjUjkLMy1wUc0cs9bPY6C6uRtHrWJOJULqVTYx+2MJq8E6iwFcP3AUyx
+ kGNsepIdsOZVKv2AbY9pi2ZnajKHGa1reg1C3ek8ab0dTBLLWET92M99CniNZziRgRtgpGGqisF
+ h1c8wUfdsIHlRQ5tncR/FKZGoZdRow6I/Xlg2ZqNp73VCmdGbsSUEDgFpJyhEo1cKRnwX8fW7Rp
+ mcSyGY+EDGYSfOJmGamxT99QvS7WomTTMJk0Qz8DRvPCZLuJk+RA==
+X-Received: by 2002:a05:600c:4e94:b0:480:4b5d:9ec with SMTP id
+ 5b1f17b1804b1-48069cafa29mr96476025e9.33.1769651007343; 
+ Wed, 28 Jan 2026 17:43:27 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-481a5e18427sm3217985e9.16.2026.01.28.17.43.23
+ 5b1f17b1804b1-481a5e18427sm3217985e9.16.2026.01.28.17.43.25
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 28 Jan 2026 17:43:24 -0800 (PST)
+ Wed, 28 Jan 2026 17:43:26 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Jerin Jacob <jerinj@marvell.com>, Kiran Kumar K <kirankumark@marvell.com>,
- Nithin Dabilpuram <ndabilpuram@marvell.com>,
- Zhirun Yan <yanzhirun_163@163.com>
-Subject: [PATCH v14 03/17] graph: avoid overflowing comment buffer
-Date: Wed, 28 Jan 2026 17:41:06 -0800
-Message-ID: <20260129014313.939831-4-stephen@networkplumber.org>
+ Bruce Richardson <bruce.richardson@intel.com>,
+ Reshma Pattan <reshma.pattan@intel.com>
+Subject: [PATCH v14 04/17] latencystats: add check for string overflow
+Date: Wed, 28 Jan 2026 17:41:07 -0800
+Message-ID: <20260129014313.939831-5-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260129014313.939831-1-stephen@networkplumber.org>
 References: <20251202172626.283094-1-stephen@networkplumber.org>
@@ -84,55 +83,35 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The library builds a pcapng comment to put on each packet but
-the buffer is not big enough for the largest possible graph
-node name, etc. Change to use asprintf() to allow any
-string length. Note, if asprintf() fails it is better to
-still log the packet without comment so no data is lost.
+The copy of latency stat names could get truncated if in the
+future a new value is added. Add warning if that happens.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- lib/graph/graph_pcap.c | 9 ++++++---
+ lib/latencystats/rte_latencystats.c | 9 ++++++---
  1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/lib/graph/graph_pcap.c b/lib/graph/graph_pcap.c
-index 08dcda0d28..602be79ced 100644
---- a/lib/graph/graph_pcap.c
-+++ b/lib/graph/graph_pcap.c
-@@ -194,7 +194,7 @@ graph_pcap_dispatch(struct rte_graph *graph,
- 			      uint16_t nb_objs)
- {
- 	struct rte_mbuf *mbuf_clones[RTE_GRAPH_BURST_SIZE];
--	char buffer[GRAPH_PCAP_BUF_SZ];
-+	char *comment = NULL;
- 	uint64_t i, num_packets;
- 	struct rte_mbuf *mbuf;
- 	ssize_t len;
-@@ -207,19 +207,22 @@ graph_pcap_dispatch(struct rte_graph *graph,
- 	if (num_packets > nb_objs)
- 		num_packets = nb_objs;
+diff --git a/lib/latencystats/rte_latencystats.c b/lib/latencystats/rte_latencystats.c
+index f61d5a273f..0861d00c6b 100644
+--- a/lib/latencystats/rte_latencystats.c
++++ b/lib/latencystats/rte_latencystats.c
+@@ -405,9 +405,12 @@ rte_latencystats_get_names(struct rte_metric_name *names, uint16_t size)
+ 	if (names == NULL || size < NUM_LATENCY_STATS)
+ 		return NUM_LATENCY_STATS;
  
--	snprintf(buffer, GRAPH_PCAP_BUF_SZ, "%s: %s", graph->name, node->name);
-+	/* put a comment on all these packets */
-+	if (asprintf(&comment, "%s: %s", graph->name, node->name) < 0)
-+		graph_err("asprintf for comment failed.");
+-	for (i = 0; i < NUM_LATENCY_STATS; i++)
+-		strlcpy(names[i].name, lat_stats_strings[i].name,
+-			sizeof(names[i].name));
++	for (i = 0; i < NUM_LATENCY_STATS; i++) {
++		if (strlcpy(names[i].name, lat_stats_strings[i].name, sizeof(names[0].name))
++		    >= sizeof(names[0].name))
++			LATENCY_STATS_LOG(NOTICE, "Latency metric '%s' too long",
++					  lat_stats_strings[i].name);
++	}
  
- 	for (i = 0; i < num_packets; i++) {
- 		struct rte_mbuf *mc;
- 		mbuf = (struct rte_mbuf *)objs[i];
- 
- 		mc = rte_pcapng_copy(mbuf->port, 0, mbuf, pkt_mp, mbuf->pkt_len,
--				     0, buffer);
-+				     0, comment);
- 		if (mc == NULL)
- 			break;
- 
- 		mbuf_clones[i] = mc;
- 	}
-+	free(comment);
- 
- 	/* write it to capture file */
- 	len = rte_pcapng_write_packets(pcapng_fd, mbuf_clones, i);
+ 	return NUM_LATENCY_STATS;
+ }
 -- 
 2.51.0
 
