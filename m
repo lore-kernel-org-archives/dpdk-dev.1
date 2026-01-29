@@ -2,68 +2,41 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D66F3D358E5
-	for <dpdk-dev@archiver.kernel.org>; Thu, 29 Jan 2026 08:51:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9770ED358E4
+	for <dpdk-dev@archiver.kernel.org>; Thu, 29 Jan 2026 09:00:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 71C81402BA;
-	Thu, 29 Jan 2026 09:51:55 +0100 (CET)
-Received: from mail-lj1-f195.google.com (mail-lj1-f195.google.com
- [209.85.208.195])
- by mails.dpdk.org (Postfix) with ESMTP id DB4834026A
- for <dev@dpdk.org>; Thu, 29 Jan 2026 09:51:53 +0100 (CET)
-Received: by mail-lj1-f195.google.com with SMTP id
- 38308e7fff4ca-382fa66fa9dso5708851fa.0
- for <dev@dpdk.org>; Thu, 29 Jan 2026 00:51:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1769676713; x=1770281513; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=S58HVGt4RDbnmto6JQMC0SRmTG04vnXNcTK5E7+BkDE=;
- b=QBv1w3TCKr5jEILSaJRtHbNPvMjhG42rAV/mAY8/i+xAbM922b63NimAbfuig+L9sv
- XOpcmCV95F6LUyKvm4RQmJ1lQYqQPcvQcetYex0BGYj4P5DQcFqRc1GqL8lEo0o1ZW2Q
- PeSnDXlpvSbIpUq++raICXNeO8saazgEGGRuXf5CZRuMGMvJ497QaQGZ9jHYLS2P2PEj
- 7MAIubRB/JWyQYmqr13cBgSXJIpQ8DTM16kASVqRj+iH9Z6aowXYzxgywsBAt9DA4TJD
- qVtPt67vBGgsLgSJXpBUnHmoazgZqrra7vFCcranSGwaBDzuoAYS+L0lLQTEMn4cwoSf
- XO+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1769676713; x=1770281513;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=S58HVGt4RDbnmto6JQMC0SRmTG04vnXNcTK5E7+BkDE=;
- b=RunwMjBBm1/Ui4uLIzbrMpCrVg6SpehjW+Y7z37fFVOBPyWYThSyC5svns2HEfcilj
- cfNW702ES3KeBiuBkeuNm+Bpjcep+IkBMw27QE8fA4YlXkORlsy5H1WkmTpVKBdEwc4W
- lnvqFkby2E/M9F9hRz/kFhqq8YRNDgXjhwRTJeosY407znp7Hv1OudwkPB2NcJwV09um
- TjPMrk7rCYf9WqOoUsfkTsSql7ra0M6ot8uYDaf84PnbU3Hu71yIt1cr9hu09SCKO+Oc
- is81df2f+eDID03VsAbYeYlL1mnx9BGml6X2EgZCcI1KAjZEFv40pOQy90xF/yeCIgNd
- HLdw==
-X-Gm-Message-State: AOJu0YwYX6F7ohakU+C7cq88ZLdUuXQCgRPfn90e9VDMjsxlGB0d8Aaa
- QtQkp7RAgzPRA60OPMDCT6jzWNvGHGsQe28mdODtIAil1k4zjduvNSG6cNCvdVk2jU8CHQ==
-X-Gm-Gg: AZuq6aLkqkxkKUTFqTMNSIVo8x8NXnyZsgzA3HXW5noSWRRi6vpBsiSe7EGrbzvJd0R
- ZA+3CD6BCA0a9wl0PbWX8+ZB66o7p1QUqcii4RYT68zy+r1NdHkpENHE+jFZY+Js9ytACxnoZL6
- SmKumclFjWzpI48679A/0DcOxcboqpJLmb/d4FJ9+cSLx5dIsuztEXkrFxYBBvU/08pEkrQcT0Q
- mTJSth7yZ9UEgM6Ylmn+FipajF70qMi2K9ed9s/NHeLpkPFLa6tC/OuAkPSyrcG198tQ9V7ph4B
- bWRibyzZt/WELjsMi+tuHr1fSVfMWpM6XXNaisUHy2bE+/NmVFen6gVAKSOBys9PBN2KkzKyaXt
- g9md5bvrD4CZBwxytket3iu8tY1odIcz/xxsdIE8iSp81QLJmW7T8hJ5tNte5sYFt0k5M5SrKUG
- ChYgbK34p+9l110hpo0Azo/RcRWT5GgIzSRjK7Hardvj9l/NqmGxiK
-X-Received: by 2002:a05:651c:41d8:b0:385:c42a:1d3f with SMTP id
- 38308e7fff4ca-3861c89b097mr36771121fa.28.1769676712835; 
- Thu, 29 Jan 2026 00:51:52 -0800 (PST)
-Received: from dpi-G5-MF5.pulsar.kazdream.kz ([109.163.197.162])
- by smtp.gmail.com with ESMTPSA id
- 38308e7fff4ca-38625c74bb2sm9046781fa.17.2026.01.29.00.51.51
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 29 Jan 2026 00:51:52 -0800 (PST)
-From: Zhanibek Bakin <zhanibek.bakin@gmail.com>
-To: dev@dpdk.org
-Cc: mtetsuyah@gmail.com, stephen@networkplumber.org,
- Zhanibek Bakin <zhanibek.bakin@gmail.com>, stable@dpdk.org
-Subject: [PATCH] net/null: fix Tx statistics accumulation
-Date: Thu, 29 Jan 2026 13:51:24 +0500
-Message-ID: <20260129085125.96829-1-zhanibek.bakin@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	by mails.dpdk.org (Postfix) with ESMTP id 648054026F;
+	Thu, 29 Jan 2026 10:00:20 +0100 (CET)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 043824026A
+ for <dev@dpdk.org>; Thu, 29 Jan 2026 10:00:18 +0100 (CET)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 21C18206C2;
+ Thu, 29 Jan 2026 10:00:18 +0100 (CET)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Subject: RE: [RFC 4/4] net/af_packet: add VPP-style prefetching to receive path
+Date: Thu, 29 Jan 2026 10:00:15 +0100
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F656C7@smartserver.smartshare.dk>
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+In-Reply-To: <20260128170612.648cd657@phoenix.local>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [RFC 4/4] net/af_packet: add VPP-style prefetching to receive
+ path
+Thread-Index: AdyQu38PanCuamB9T468veLh0Ufw6QAP+TJg
+References: <20260128173138.151837-1-stephen@networkplumber.org>
+ <20260128173138.151837-5-stephen@networkplumber.org>
+ <20260128170612.648cd657@phoenix.local>
+From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
+To: "Stephen Hemminger" <stephen@networkplumber.org>,
+	<dev@dpdk.org>
+Cc: "John W. Linville" <linville@tuxdriver.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -77,34 +50,87 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The eth_stats_get() function incorrectly uses assignment (=) instead
-of accumulation (+=) for opackets and obytes in the TX queue loop.
-This causes only the last TX queue's statistics to be reported,
-while the RX side correctly uses +=.
+> From: Stephen Hemminger [mailto:stephen@networkplumber.org]
+> Sent: Thursday, 29 January 2026 02.06
+>=20
+> On Wed, 28 Jan 2026 09:30:20 -0800
+> Stephen Hemminger <stephen@networkplumber.org> wrote:
+>=20
+> > Implement the single/dual/quad loop design pattern from FD.IO VPP to
+> > improve cache efficiency in the af_packet PMD receive path.
+> >
+> > The original implementation processes packets one at a time in a
+> simple
+> > loop, which can result in cache misses when accessing frame headers
+> and
+> > packet data. The new implementation:
+> >
+> > - Processes packets in batches of 4 (quad), 2 (dual), and 1 (single)
+> > - Prefetches next batch of frame headers while processing current
+> batch
+> > - Prefetches packet data before memcpy to hide memory latency
+> > - Reduces loop overhead through partial unrolling
+> >
+> > Two helper functions are introduced:
+> > - af_packet_get_frame(): Returns frame pointer at index with
+> wraparound
+> > - af_packet_rx_one(): Common per-packet processing (mbuf alloc,
+> memcpy,
+> >   VLAN handling, timestamp offload)
+> >
+> > The quad loop checks availability of all 4 frames before processing,
+> > falling through to dual/single loops when fewer frames are ready.
+> Early
+> > exit paths (out_advance1/2/3) ensure correct frame index tracking
+> when
+> > mbuf allocation fails mid-batch.
+> >
+> > Prefetch strategy:
+> > - Frame headers: prefetch N+4..N+7 while processing N..N+3
+> > - Packet data: prefetch at tp_mac offset before memcpy
+> >
+> > This pattern is well-established in high-performance packet
+> processing
+> > and should improve throughput by better utilizing CPU cache
+> hierarchy,
+> > particularly beneficial when processing bursts of packets.
+> >
+> > Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+>=20
+>=20
+> This and previous proposal to prefetch have no impact on performance.
+> Rolled a simple perf test and all three versions come out the same.
 
-Fixes: 31326ce7f15 ("net/null: count all queues")
-Cc: stable@dpdk.org
+Please be aware that many test cases are inadvertently designed in a way =
+where mbufs unintendedly are hot in the cache, so prefetching does not =
+provide the expected performance gain.
+E.g. when working on a newly allocated mbuf, the mbuf should be cold.
+But if it came from the mempool cache, and was recently worked on and =
+then freed into the mempool cache, then it will be hot.
 
-Signed-off-by: Zhanibek Bakin <zhanibek.bakin@gmail.com>
----
- drivers/net/null/rte_eth_null.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> The bottleneck is not here, probably at system call and copies now.
 
-diff --git a/drivers/net/null/rte_eth_null.c b/drivers/net/null/rte_eth_null.c
-index 46e7e7bd8c..7fba3a661b 100644
---- a/drivers/net/null/rte_eth_null.c
-+++ b/drivers/net/null/rte_eth_null.c
-@@ -345,8 +345,8 @@ eth_stats_get(struct rte_eth_dev *dev, struct rte_eth_stats *stats,
- 		pkts = rte_atomic_load_explicit(&q->tx_pkts, rte_memory_order_relaxed);
- 		bytes = rte_atomic_load_explicit(&q->tx_bytes, rte_memory_order_relaxed);
- 
--		stats->opackets = pkts;
--		stats->obytes = bytes;
-+		stats->opackets += pkts;
-+		stats->obytes += bytes;
- 
- 		if (qstats != NULL && i < RTE_ETHDEV_QUEUE_STAT_CNTRS) {
- 			qstats->q_opackets[i] = pkts;
--- 
-2.43.0
+The most important bottleneck might be elsewhere.
+But this optimization might not be as irrelevant as the test results =
+indicate.
+
+Anyway, I agree that dropping the patch (for now) makes sense.
+
+>=20
+> 	Original	Prefetch	Quad/Dual
+> TX	1.427 Mpps	1.426 Mpps	1.426 Mpps
+>=20
+> RX	0.529 Mpps	0.530 Mpps	0.533 Mpps
+>  loss	87.93%		87.98%		88.0%
+>=20
+>=20
+> 	Original	Prefetch	Quad/Dual
+> TX	1.427 Mpps	1.426 Mpps	1.426 Mpps
+>=20
+> RX	0.529 Mpps	0.530 Mpps	0.533 Mpps
+>  loss	87.93%		87.98%		88.0%
+>=20
+>=20
+> Will put the test in the next version of this series, and
+> drop this patch.
 
