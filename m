@@ -2,66 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23EB4D73EAF
-	for <dpdk-dev@archiver.kernel.org>; Fri, 30 Jan 2026 01:14:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0381ED73EAA
+	for <dpdk-dev@archiver.kernel.org>; Fri, 30 Jan 2026 01:15:01 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6FEDD40678;
-	Fri, 30 Jan 2026 02:14:08 +0100 (CET)
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com
- [209.85.128.53]) by mails.dpdk.org (Postfix) with ESMTP id 7FA7840656
- for <dev@dpdk.org>; Fri, 30 Jan 2026 02:14:03 +0100 (CET)
-Received: by mail-wm1-f53.google.com with SMTP id
- 5b1f17b1804b1-480142406b3so11609305e9.1
- for <dev@dpdk.org>; Thu, 29 Jan 2026 17:14:03 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 86BA04068E;
+	Fri, 30 Jan 2026 02:14:17 +0100 (CET)
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com
+ [209.85.128.43]) by mails.dpdk.org (Postfix) with ESMTP id 097F64065B
+ for <dev@dpdk.org>; Fri, 30 Jan 2026 02:14:05 +0100 (CET)
+Received: by mail-wm1-f43.google.com with SMTP id
+ 5b1f17b1804b1-4806ce0f97bso13219505e9.0
+ for <dev@dpdk.org>; Thu, 29 Jan 2026 17:14:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769735643;
- x=1770340443; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769735645;
+ x=1770340445; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=4AKeZ5n9aHSLOPZJ7HNvITCDpuWc36TR960rnhrMnXA=;
- b=L1Qn7+HUAU24lw0r0wtG41RufHdb/VO/3XNE7zMf98Es2Xt23+tk4y+vxwGpHl9YbS
- Aq8eIOX2jksIb9dau/Mu20dfVDGaCJ/jMC8arqVhNFzmG4w/jU9pY1lT7xnrKlVku9ku
- NDLrpUKAjNThThsTImWZfEa0flXhPpkP1ht0KuM/v18b6W8dTI/2JkPAhqE0SDnPAuzK
- 3CZgKTIbQILBgrMTNbQHEulaYr7NW7leJKvOwzqYl/obs55ewnFuO6MBNohyqGtoqnKa
- Jhmcqj8bb04wVXSnreVGRnm+Krh32duZEkNvLpAzLfByOXxB6XxS3TEJrBi7jKAGjVSt
- DB9w==
+ bh=I3MdQYdU3LlOhmib+owipODgKux/7V5ilHdrXhfNIE8=;
+ b=j8WNH5mx8IV8RQ2g+3juhA6otKtS4Q1vGoKTYJhPQ8A8CK+tgMJaXfon+iBD950aOS
+ qx42/+mcRkPqeo2j6Mi2Whd2E4mFmIoUSZltI9OEWk2nTJVofTRQ7fR9nH1HGYZXIIsr
+ LrUrbEg0HUrOuHs+JHHd74SAcKtYHm9CqhV6SI+c+ZYwpgWzWg/BA5watEohqf6PfXry
+ KAz2rohScRa28/aYnY4iEaH1e0ckRAAcMlOVGLM2clzMY6WlKDgrR3OW+eCi6PM6RtG1
+ gQISPWmvO179rdtRwvk5fY7FlUjyphLyrrE0pvCbFfSADusmoY7OKKc1cggX4VYih2CB
+ incw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1769735643; x=1770340443;
+ d=1e100.net; s=20230601; t=1769735645; x=1770340445;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=4AKeZ5n9aHSLOPZJ7HNvITCDpuWc36TR960rnhrMnXA=;
- b=AlCv+peuxX2IZSgMkh4Z1eJ+gOgIw9wKkAqhBFWS9+Amaopx+2fe2du1UK0haXPQdF
- fTn8zMaXUqM13EmtTBDlkFqT2rQq1R8OHO/tDFIPEeDiO/Yb0Am8NBXdlCfFoe3rRoZ1
- oko0eqD2isZveH0dcm/b63y5V6V3cvaKBNMRo6tMbmX5Mqk19JFlvztebH/gnwPP/QNW
- YkUwXKkE+HobYTaer1tBuKdxb+DrACu/WsJO5FTeOSOuVtKlIc7y43eB/GLHqHZJzLLX
- MQv4H2RhRh54LFrDudwWXnkWKWoT9c1e1EFmES/ZQzoS3xvyiOIGIeb39cLg/t+Mrh9X
- Hc0w==
-X-Gm-Message-State: AOJu0YzJoYTglHp7/JHcrwpenzJDCtFtRDxfCFdu2d3zJL3GoHX7CuUJ
- 4DOrNGxY9O4V2K97Rf1DQbPUf7TxCMMACf1RifGdFFjIqRh4+bpn1df402iUHCJvCVm1j1CbkCL
- Nwq9z
-X-Gm-Gg: AZuq6aKegQkHah61uC/A3uaXTmYRyziF86y8GNygdkIYYrA4gV0a7/u4uMA2J0tmtrH
- 5U+wTDjAebo/GKeUA4j86PvBz+v0CnsHSaMEs9ne5glCpPUZRij0QpZVxfUi0QevvQTMPd8pB5A
- blA8lqah29aMhl4EvVfmSZWLsXnzuOw3b6oIEjCG8b4qGe6lRRgfnbf2OkSaazhk8x4Nc7VTcmq
- 5GtZTJGo2Onr/JHqwGLHrh18P5ahfmWGGrkyc26Xo7TWe5+3bGcVmvMB+/GEAkthaNbcpTCE9wV
- 5vkm9DgCBAgSRYSSt40A0CNsJAu6u2TAxg/BB6tCqS1Db3uRgMh8ySZDNQbKibicxSHVFhmxwDR
- m3as4TUsGjl/M5ykwnZ9y+PNuqHuK25j6TU+fbKljVU5NFclJK5eCXEUt8DojSVNnXPpcCPpPEA
- MSSWYxtzqfVnAClU5iYdqCzTGXTcTwIQDO74kMr7Boq5+vHaJ8zA==
-X-Received: by 2002:a05:600c:3148:b0:47a:935f:618e with SMTP id
- 5b1f17b1804b1-482db45ce3amr10806875e9.15.1769735643149; 
- Thu, 29 Jan 2026 17:14:03 -0800 (PST)
+ bh=I3MdQYdU3LlOhmib+owipODgKux/7V5ilHdrXhfNIE8=;
+ b=TOd2zm3bJPUwXhUSmAapv0nYubgffLavEem3m3PxIqqakN0lHg7Izmg3IzJIhnbTd6
+ kojN6oR5AAeG9miroGFiLMosFEWeAn1GM8gTBwXpkJkAgmwqinKOgR5CTr7d4lbgAi/l
+ FlgeV92/lJ1yqlhWP92L0tn9pRnyzViM2oO0NrYqf2FkmVAXtOAByNcyzVLk3ebaOMTX
+ OAPH2U4k77zu7E54mynvtPXIAyqPvYPA1X3FJ2kzGFcfRJ4y6if235a7/Etna7pdxDZQ
+ 2aJNUQXYXX7bQMlNX7Td71iUaLd2IGQe+jQJBzjBbCMXfofzO4jf7uSy9Tzvz7nDKuaN
+ 9b2A==
+X-Gm-Message-State: AOJu0YzpnwuYErEz8sZWgO0XhvIfwdw2opX3J8tdZuOP+g2BUX3wCNQj
+ hKtYsEhgzA/+UPAv1n7ELYQWzJfPuNY1I9QCPnhbOCM2YlAUF4xjzEZEl755uLRGBDBDdrmfMeG
+ /NhP+
+X-Gm-Gg: AZuq6aLs2N2hVtBIfbQnlE9YOmznu1VHR0EnKYJRI7mSzjqUWM28Tid0HavPJrLOfYD
+ WY/30UPD8aa6rsOK7PD/Gw5YxO5kA/7q7e8MlAObDHj7SXPrRmdF+qQhFMWCAjq7SUAfhmOr4vF
+ Sz4zV3WjcREkRQELuVCt9RA+MEKeXQpnWu/fKvxRDd6SKyOeHMNV1nDpGHlhhCC8QV2c5uODMPj
+ UydII+7UYVsbX+PqV+nQAFopPgCsBbIYW3wZjuPN0ZFLcgyORRHoUwO7+z6notxojwFVyG3NzY2
+ rK9a7MmNiRY5XmkU2TsJ5DujedUkmoLcrHpnzgY4vp4HJtBUTGBUu/arCb+HdgNE9sO1VGkz0xA
+ JB8eC7t0YZWF9cPr0BZcCeAaOj+Pb5L2Lb8fVAHh8GMxxz1K378PMPNYG9z0Y2fCGZNvsAJboE4
+ k2PxnK0iB5UCbeotvkgw9dGdBBXO63G+VV7wQCycfLep+Dss1Krg==
+X-Received: by 2002:a05:600c:4506:b0:477:7ab8:aba with SMTP id
+ 5b1f17b1804b1-482db448862mr12365935e9.1.1769735644678; 
+ Thu, 29 Jan 2026 17:14:04 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-481a5e1d0f9sm2934825e9.18.2026.01.29.17.14.01
+ 5b1f17b1804b1-481a5e1d0f9sm2934825e9.18.2026.01.29.17.14.03
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 29 Jan 2026 17:14:02 -0800 (PST)
+ Thu, 29 Jan 2026 17:14:04 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v10 08/19] net/pcap: cleanup transmit buffer handling
-Date: Thu, 29 Jan 2026 17:12:24 -0800
-Message-ID: <20260130011344.204233-9-stephen@networkplumber.org>
+Subject: [PATCH v10 09/19] net/pcap: report multi-segment transmit capability
+Date: Thu, 29 Jan 2026 17:12:25 -0800
+Message-ID: <20260130011344.204233-10-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260130011344.204233-1-stephen@networkplumber.org>
 References: <20260106182823.192350-1-stephen@networkplumber.org>
@@ -81,130 +81,26 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The transmit loops should handle the possible failure
-of rte_pktmbuf_read(). If a pcap_sendpacket fails, then
-the packet with error should be freed.
+The driver has always handled multi-segment transmit
+but the flag was never set in the offload capabilities.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/pcap/pcap_ethdev.c | 50 ++++++++++++++--------------------
- 1 file changed, 21 insertions(+), 29 deletions(-)
+ drivers/net/pcap/pcap_ethdev.c | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/drivers/net/pcap/pcap_ethdev.c b/drivers/net/pcap/pcap_ethdev.c
-index 1a186142d3..394fd0b6b2 100644
+index 394fd0b6b2..bd33e72a02 100644
 --- a/drivers/net/pcap/pcap_ethdev.c
 +++ b/drivers/net/pcap/pcap_ethdev.c
-@@ -389,7 +389,6 @@ static uint16_t
- eth_pcap_tx_dumper(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- {
- 	unsigned int i;
--	struct rte_mbuf *mbuf;
- 	struct pmd_process_private *pp;
- 	struct pcap_tx_queue *dumper_q = queue;
- 	uint16_t num_tx = 0;
-@@ -397,7 +396,6 @@ eth_pcap_tx_dumper(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- 	struct pcap_pkthdr header;
- 	pcap_dumper_t *dumper;
- 	unsigned char *temp_data;
--	size_t len, caplen;
+@@ -737,6 +737,7 @@ eth_dev_info(struct rte_eth_dev *dev,
+ 	dev_info->max_rx_queues = dev->data->nb_rx_queues;
+ 	dev_info->max_tx_queues = dev->data->nb_tx_queues;
+ 	dev_info->min_rx_bufsize = 0;
++	dev_info->tx_offload_capa = RTE_ETH_TX_OFFLOAD_MULTI_SEGS;
  
- 	pp = rte_eth_devices[dumper_q->port_id].process_private;
- 	dumper = pp->tx_dumper[dumper_q->queue_id];
-@@ -409,21 +407,22 @@ eth_pcap_tx_dumper(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- 	/* writes the nb_pkts packets to the previously opened pcap file
- 	 * dumper */
- 	for (i = 0; i < nb_pkts; i++) {
--		mbuf = bufs[i];
-+		struct rte_mbuf *mbuf = bufs[i];
-+		uint32_t len, caplen;
-+		const uint8_t *data;
-+
- 		len = caplen = rte_pktmbuf_pkt_len(mbuf);
- 
- 		calculate_timestamp(&header.ts);
- 		header.len = len;
- 		header.caplen = caplen;
--		/* rte_pktmbuf_read() returns a pointer to the data directly
--		 * in the mbuf (when the mbuf is contiguous) or, otherwise,
--		 * a pointer to temp_data after copying into it.
--		 */
--		pcap_dump((u_char *)dumper, &header,
--			  rte_pktmbuf_read(mbuf, 0, caplen, temp_data));
- 
--		num_tx++;
--		tx_bytes += caplen;
-+		data = rte_pktmbuf_read(mbuf, 0, caplen, temp_data);
-+		if (likely(data != NULL)) {
-+			pcap_dump((u_char *)dumper, &header, data);
-+			num_tx++;
-+			tx_bytes += caplen;
-+		}
- 	}
- 	rte_pktmbuf_free_bulk(bufs, nb_pkts);
- 
-@@ -458,7 +457,7 @@ eth_tx_drop(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- 	tx_queue->tx_stat.pkts += nb_pkts;
- 	tx_queue->tx_stat.bytes += tx_bytes;
- 
--	return i;
-+	return nb_pkts;
+ 	return 0;
  }
- 
- /*
-@@ -468,15 +467,12 @@ static uint16_t
- eth_pcap_tx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- {
- 	unsigned int i;
--	int ret;
--	struct rte_mbuf *mbuf;
- 	struct pmd_process_private *pp;
- 	struct pcap_tx_queue *tx_queue = queue;
- 	uint16_t num_tx = 0;
- 	uint32_t tx_bytes = 0;
- 	pcap_t *pcap;
- 	unsigned char *temp_data;
--	size_t len;
- 
- 	pp = rte_eth_devices[tx_queue->port_id].process_private;
- 	pcap = pp->tx_pcap[tx_queue->queue_id];
-@@ -486,19 +482,15 @@ eth_pcap_tx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- 		return 0;
- 
- 	for (i = 0; i < nb_pkts; i++) {
--		mbuf = bufs[i];
--		len = rte_pktmbuf_pkt_len(mbuf);
--
--		/* rte_pktmbuf_read() returns a pointer to the data directly
--		 * in the mbuf (when the mbuf is contiguous) or, otherwise,
--		 * a pointer to temp_data after copying into it.
--		 */
--		ret = pcap_sendpacket(pcap,
--			rte_pktmbuf_read(mbuf, 0, len, temp_data), len);
--		if (unlikely(ret != 0))
--			break;
--		num_tx++;
--		tx_bytes += len;
-+		struct rte_mbuf *mbuf = bufs[i];
-+		uint32_t len = rte_pktmbuf_pkt_len(mbuf);
-+		const uint8_t *data;
-+
-+		data = rte_pktmbuf_read(mbuf, 0, len, temp_data);
-+		if (likely(data != NULL && pcap_sendpacket(pcap, data, len) == 0)) {
-+			num_tx++;
-+			tx_bytes += len;
-+		}
- 	}
- 
- 	rte_pktmbuf_free_bulk(bufs, nb_pkts);
-@@ -507,7 +499,7 @@ eth_pcap_tx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- 	tx_queue->tx_stat.bytes += tx_bytes;
- 	tx_queue->tx_stat.err_pkts += i - num_tx;
- 
--	return i;
-+	return nb_pkts;
- }
- 
- /*
 -- 
 2.51.0
 
