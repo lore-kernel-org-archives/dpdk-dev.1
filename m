@@ -2,66 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 496E0D73EB7
-	for <dpdk-dev@archiver.kernel.org>; Fri, 30 Jan 2026 05:21:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C990D73EB7
+	for <dpdk-dev@archiver.kernel.org>; Fri, 30 Jan 2026 05:21:56 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 44B6E40274;
-	Fri, 30 Jan 2026 06:21:49 +0100 (CET)
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com
- [209.85.128.47]) by mails.dpdk.org (Postfix) with ESMTP id AA5E640150
- for <dev@dpdk.org>; Fri, 30 Jan 2026 06:21:48 +0100 (CET)
-Received: by mail-wm1-f47.google.com with SMTP id
- 5b1f17b1804b1-4806cc07ce7so15902485e9.1
- for <dev@dpdk.org>; Thu, 29 Jan 2026 21:21:48 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 7DC48402E9;
+	Fri, 30 Jan 2026 06:21:52 +0100 (CET)
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com
+ [209.85.221.53]) by mails.dpdk.org (Postfix) with ESMTP id 88C03402E2
+ for <dev@dpdk.org>; Fri, 30 Jan 2026 06:21:51 +0100 (CET)
+Received: by mail-wr1-f53.google.com with SMTP id
+ ffacd0b85a97d-43596062728so1753742f8f.1
+ for <dev@dpdk.org>; Thu, 29 Jan 2026 21:21:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769750508;
- x=1770355308; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=t4ARnYmAAenJLUbNHZDtiR01nIOzPSJeUYnn57qs598=;
- b=RCpZyAj195AUH7hVNs75ifgFr+j1me8VBvVxkHjQl3eLl8Wt/7lxFM2WDZEzMrPAMA
- y287Xt0ZIKvkU7X85a7Ygl/ywwgI2F1tdriM9QGmw0PVDnS2kSPAWGc1EnAl12GwPhcc
- PklJ6LkUhc6HdPygw/jOEnS/0ftZ8SrVBFePXfYIMzak8CjFHRpVZlDHsvHR3HfPttcx
- zkcTtxqFYie5LCD9ovOcAVyH6jm7NTpgvlBTpRB05TnTPXHUjcMoaxJ7TNu0VgZ59Arq
- Pmn41VKvOf/miazf8Kw9UhfTLcxuaizO0hyixakT/Rexrpu3oyFOM15fgMKgXfEreSP2
- 3a5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1769750508; x=1770355308;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769750511;
+ x=1770355311; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=t4ARnYmAAenJLUbNHZDtiR01nIOzPSJeUYnn57qs598=;
- b=fs/iAuLtH++sbUFUTWJID/b+vIRc4WwZBi62mwKkqcSKdj6GylcIb6w/CV9VU6WXXc
- SvAys6JUUNy86qwjpGRDgapm+3R8RK6oJfxtsiNXTASxtCY3idoV2j5xRlZSwUXBymbZ
- dR+Rm4xQA+voIP2i/aIUEZoeA4i/h0iusb2jhOSzxw6twAre1A/1BRySBnsePaUduPKp
- RyRmnbRa6neLk5cBRNFk3XFuhGZviwxq4WsaBl/hBfKl9qlCk3rVPlJjf8+kXR8S2LiM
- hXrbw5qkPd4OFXwn5BfMDs9Slmex5WFQTwJCXtWghPHpYPINj2HRXAAfw10xRoYst4MO
- pxRw==
-X-Gm-Message-State: AOJu0YyqvX56lAL9nOiKsYKVpNa53YTwVZMRrxeDrprCDqkw0N0lGfVE
- abDzuaqpPrG3Cf3fDa80GXxCrBJDFQVCltf0B6gPyfO5tI3kMPpLWFTWsdvCvTKxPFo6HJd2isD
- ltmVm
-X-Gm-Gg: AZuq6aIP6SWx5ZZi6v7TDjZxc2TguFQhCerQzU6xYfppupRLhm3Hg+hU6NFnGtsy6qN
- Qs564tHeUURLty4okx4jTMb9tde8Vm47Rj6gJcqWyYzwVNoWnktQSHFAvdZj2mNbmcJT8Elqjek
- IUCr6C3I4mVtq9gbwbwAmWhQk/DZu69/xl2HGekomN4VDnc1KIVvSnGKrZnV+HQFAUsySUvHiJu
- kr0r0ybFbrm1PDVof4cOnrAyKd/bLaTlqjcA8RzkTUyImONrTpaq7LDOGgb5yeTaAKiOF3WQS1e
- K5xVYlxEmzSJV6k+jKHQBSJkfi2NMESjN3DpP/7ICeZbbU4Y9HKwk0bX62akQpGkkCewRuxlLEa
- NjIvx43ywcQ6ew7C54M006OLZw11t3/R35ftXVknkeAHragpk1neMQnFdk3/bHjJZIIXw6huqvq
- 7EXdboU3NEG46DP8r0/2eKMAG6XHOq+DvwnNYjiTQS+CHDBgc7JA==
-X-Received: by 2002:a05:600c:3f16:b0:477:9eb8:97d2 with SMTP id
- 5b1f17b1804b1-482db4592efmr14121775e9.8.1769750507709; 
- Thu, 29 Jan 2026 21:21:47 -0800 (PST)
+ bh=5KbD3a6ogx+HDv0vFxdR4Ker2XT/DQ7IndIBydfaFVc=;
+ b=h3QN88K/Ikhbi1S4idJe26eVVoB/2x0LBH3NRegUoxrG1eapdUAI1SrTa6iSimd6bS
+ Ul1x1/llRF/Ie0p8ZwznksXxpe7TFtTMtExFgQU24JqFNr/nNbRoL9lDKWnbKPV7cE7t
+ vE5IUyp9NlvJdwR/Kv18ZeMesdHuJ0SnviHko9zZcRr4UpsjQJJ6jAJ9B/iB8xIE0zwx
+ vk/+6v3/foKUVbLy1PRJslPJuyeh5V9TU3NHNnq+Ed5gB1TzoYx2/Iom4FV4Jgh0wchf
+ AIrzpKSRMOlt2DzBDcXbDRwDAuocSaj1dnM8/Re27w3WPcPW0pyYQtWT6jggvhWYanqD
+ 884Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1769750511; x=1770355311;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=5KbD3a6ogx+HDv0vFxdR4Ker2XT/DQ7IndIBydfaFVc=;
+ b=YRqCw5I37Rcry89XKOIubzj2iRMsahZVhcrBTErZTkojrVUgLpCUU32SHcNrsRk9eP
+ HhGFplp9GREh2S8ilq/0t9j1eX9T+sDi2xxZ7HM6r8RWHBH0/btfP6bnbWbi/yZ0rKut
+ l6LgV9K1df8Z9pBKXy7NJEGISkrOMz3ns3QNDC0SIwCoLI1Z8HEOVs0/TLjFXy9Tjenw
+ 7qS5ubdZJw6ykSHcx6EpmNJ3aSe++bX8C0pyadBOkV4iXBKPaAsNeSPtw8vL3T0Ijze+
+ 8SPmh6PPBQKwoJKO0w9Kaj6o/wP7wPECliBAJPP4mJkDpcj7VEDVfvNnKRm9TrmDchfz
+ Q6YA==
+X-Gm-Message-State: AOJu0YyFHLoqEFeBKHKxPE22Vzsqk75aYbRRfqT1ajvRU+vAqxeLUvwT
+ zwVuvP2+covNO+8iEzm/P6Oza6INPphGaBDeDKLie3o2AcpRB/AFpgiPSGHNpfeAoyTtb89b2rV
+ BBe5Q
+X-Gm-Gg: AZuq6aJd8rpAvLx5yjSSeZ73rlcjPg6Y+yL6VnjXKL7nc9fSE9plWVfZnrjGTdflHIP
+ hMF1mebkC9zkdDKrq1pwzFjXQs8j6veOp1rAgI4RhOZRuS/Jo4VJ3YkyWB3oXcZBTdXAohQp7s4
+ HyaLLEHD3L4D0HRpvzGZjYVoNNIxSOihfdvQ5ArYi67kcSMw12E3ybkL54XpKKnAQ1gT29h/CDF
+ i7ARGj7tUlIrIiCzLuOgFiu4CFYXKdCA8xpq8DEaIbEXurdC/VmyUynja75PCklpRrXRZa+llVP
+ Hd4w7mCik/af0p8c73/UNJ6epndPZvKTmFVsd8LItq5x+qATEdjL4DAzG0BwFWykBZguzf0L4ib
+ +OMgJ7CS0sDi+0dqbGoT6MglqDeZuPXewWmRrun16zChMy3/9vrrJmrEfyEgbK4mEcLItn+uhbE
+ Ltns+pHAYw4J3dOauiYwaQoH/XYjGjWd/fQ9qhn08E9obSRL+x1G11yDjuZpZf
+X-Received: by 2002:a05:6000:3103:b0:435:bdc2:461 with SMTP id
+ ffacd0b85a97d-435ea2102a0mr7915408f8f.21.1769750510303; 
+ Thu, 29 Jan 2026 21:21:50 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-435e1323034sm19182107f8f.35.2026.01.29.21.21.46
+ ffacd0b85a97d-435e1323034sm19182107f8f.35.2026.01.29.21.21.48
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 29 Jan 2026 21:21:47 -0800 (PST)
+ Thu, 29 Jan 2026 21:21:49 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [RFC 0/6] Fix pthread mutexes for multi-process support
-Date: Thu, 29 Jan 2026 21:17:31 -0800
-Message-ID: <20260130052142.251649-1-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
+ Thomas Monjalon <thomas@monjalon.net>,
+ Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
+ Matan Azrad <matan@nvidia.com>, Suanming Mou <suanmingm@nvidia.com>,
+ Ajit Khaparde <ajit.khaparde@broadcom.com>
+Subject: [RFC 1/6] ethdev: fix flow_ops_mutex for multi-process
+Date: Thu, 29 Jan 2026 21:17:32 -0800
+Message-ID: <20260130052142.251649-2-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20260130052142.251649-1-stephen@networkplumber.org>
+References: <20260130052142.251649-1-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -77,80 +84,64 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-While look at the back catalog of bugs, started to use AI
-to analyze Bugzilla ID 662.
+The flow_ops_mutex in rte_eth_dev_data is located in shared memory
+that is accessed by both primary and secondary processes. However,
+the mutex is initialized without PTHREAD_PROCESS_SHARED attribute,
+which means synchronization between processes is undefined behavior.
 
 POSIX mutexes are by default private to the process creating them.
-Several places in DPDK use pthread_mutex to protect resources in
-shared memory that are accessed by multiple processes (primary and
-secondary). These mutexes must be initialized with the
-PTHREAD_PROCESS_SHARED attribute for correct synchronization.
+When a mutex protects data structures in shared memory that are
+accessed by multiple processes, pthread_mutexattr_setpshared() must
+be called with PTHREAD_PROCESS_SHARED.
 
-Without this attribute, synchronization between processes is
-undefined behavior according to POSIX, and may silently fail
-on some implementations.
+This bug has existed since the flow_ops_mutex was added and affects
+any multi-process DPDK application using rte_flow APIs.
 
-This problem was originally reported against the failsafe driver,
-but the issue exists in multiple locations. Every place calling
-pthread_mutex_init() in DPDK was suspected.
+Bugzilla ID: 662
+Fixes: 80d1a9aff7f6 ("ethdev: make flow API thread safe")
+Cc: stable@dpdk.org
 
-The following table summarizes the analysis:
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+---
+ lib/ethdev/ethdev_driver.c | 18 +++++++++++++++++-
+ 1 file changed, 17 insertions(+), 1 deletion(-)
 
-  | Component                          | Mutex(es)                      | In Shared Mem | Multi-process | Needs Fix |
-  |------------------------------------|--------------------------------|---------------|---------------|-----------|
-  | lib/ethdev/ethdev_driver.c         | flow_ops_mutex                 | Yes           | Yes           | YES       |
-  | drivers/net/failsafe/failsafe.c    | hotplug_mutex                  | Yes           | Yes           | YES       |
-  | drivers/net/atlantic/atl_ethdev.c  | mbox_mutex                     | Yes           | Yes           | YES       |
-  | drivers/net/axgbe/axgbe_ethdev.c   | xpcs_mutex, i2c_mutex,         | Yes           | Yes           | YES       |
-  |                                    | an_mutex, phy_mutex            |               |               |           |
-  | drivers/net/bnxt/bnxt_ethdev.c     | flow_lock, def_cp_lock,        | Yes           | Yes           | YES       |
-  |                                    | health_check_lock,             |               |               |           |
-  |                                    | err_recovery_lock,             |               |               |           |
-  |                                    | vfr_start_lock                 |               |               |           |
-  | drivers/net/bnxt/bnxt_txq.c        | txq_lock                       | Yes           | Yes           | YES       |
-  | drivers/net/bnxt/tf_ulp/bnxt_ulp.c | bnxt_ulp_mutex                 | Yes           | Yes           | YES       |
-  | drivers/net/bnxt/tf_ulp/bnxt_ulp_tf.c | flow_db_lock              | Yes           | Yes           | YES       |
-  | drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c | flow_db_lock             | Yes           | Yes           | YES       |
-  | drivers/net/hinic/base/hinic_compat.h | hinic_mutex_init wrapper  | Yes           | Yes           | YES       |
-  | lib/vhost/socket.c                 | conn_mutex, mutex              | No (heap)     | No            | OK        |
-  | lib/vhost/fd_man.c                 | fd_mutex                       | No (heap)     | No            | OK        |
-  | drivers/common/cnxk/roc_bphy_cgx.c | lock                           | TBD           | Unlikely      | TBD       |
-  | drivers/common/cnxk/roc_dev.c      | sync.mutex                     | No            | No            | OK        |
-  | drivers/net/cnxk/cnxk_rep.c        | repte_msg_proc.mutex           | No            | No            | OK        |
-  | drivers/net/intel/iavf/iavf_vchnl.c| event_handler.lock             | No (static)   | No            | OK        |
-  | drivers/net/intel/ixgbe/base/ixgbe_osdep.h | ixgbe_lock macro      | Yes           | Likely        | Maintainer|
-
-This RFC since obviously don't have the hardware to retest all
-these devices. Some of the bugs are in the base code, but
-a bug is a bug and should be fixed.
-
-Note: There may be additional drivers with similar issues that
-were not analyzed in this series. A grep for pthread_mutex_init
-in the source tree shows many potential locations that should
-be audited.
-
-Stephen Hemminger (6):
-  ethdev: fix flow_ops_mutex for multi-process
-  net/failsafe: fix hotplug_mutex for multi-process
-  net/atlantic: fix mbox_mutex for multi-process
-  net/axgbe: fix mutexes for multi-process
-  net/bnxt: fix mutexes for multi-process
-  net/hinic: fix mutexes for multi-process
-
- drivers/net/atlantic/atl_ethdev.c      | 14 +++++++++++++-
- drivers/net/axgbe/axgbe_ethdev.c       | 19 +++++++++++++++----
- drivers/net/bnxt/bnxt_ethdev.c         | 11 ++++++-----
- drivers/net/bnxt/bnxt_txq.c            |  3 ++-
- drivers/net/bnxt/bnxt_util.c           | 13 +++++++++++++
- drivers/net/bnxt/bnxt_util.h           |  2 ++
- drivers/net/bnxt/tf_ulp/bnxt_ulp.c     |  2 +-
- drivers/net/bnxt/tf_ulp/bnxt_ulp_tf.c  |  2 +-
- drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c |  2 +-
- drivers/net/failsafe/failsafe.c        | 15 ++++++++++++---
- drivers/net/hinic/base/hinic_compat.h  | 13 ++++++++++++-
- lib/ethdev/ethdev_driver.c             | 18 +++++++++++++++++-
- 12 files changed, 95 insertions(+), 19 deletions(-)
-
+diff --git a/lib/ethdev/ethdev_driver.c b/lib/ethdev/ethdev_driver.c
+index 2ec665be0f..d12395efe0 100644
+--- a/lib/ethdev/ethdev_driver.c
++++ b/lib/ethdev/ethdev_driver.c
+@@ -89,6 +89,22 @@ eth_dev_set_dummy_fops(struct rte_eth_dev *eth_dev)
+ 	eth_dev->recycle_rx_descriptors_refill = rte_eth_recycle_rx_descriptors_refill_dummy;
+ }
+ 
++/*
++ * Initialize mutex for process-shared access.
++ * The rte_eth_dev_data structure is in shared memory, so any mutex
++ * protecting it must use PTHREAD_PROCESS_SHARED.
++ */
++static void
++eth_dev_flow_ops_mutex_init(pthread_mutex_t *mutex)
++{
++	pthread_mutexattr_t attr;
++
++	pthread_mutexattr_init(&attr);
++	pthread_mutexattr_setpshared(&attr, PTHREAD_PROCESS_SHARED);
++	pthread_mutex_init(mutex, &attr);
++	pthread_mutexattr_destroy(&attr);
++}
++
+ RTE_EXPORT_INTERNAL_SYMBOL(rte_eth_dev_allocate)
+ struct rte_eth_dev *
+ rte_eth_dev_allocate(const char *name)
+@@ -135,7 +151,7 @@ rte_eth_dev_allocate(const char *name)
+ 	eth_dev->data->port_id = port_id;
+ 	eth_dev->data->backer_port_id = RTE_MAX_ETHPORTS;
+ 	eth_dev->data->mtu = RTE_ETHER_MTU;
+-	pthread_mutex_init(&eth_dev->data->flow_ops_mutex, NULL);
++	eth_dev_flow_ops_mutex_init(&eth_dev->data->flow_ops_mutex);
+ 	RTE_ASSERT(rte_eal_process_type() == RTE_PROC_PRIMARY);
+ 	eth_dev_shared_data->allocated_ports++;
+ 
 -- 
 2.51.0
 
