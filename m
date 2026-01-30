@@ -2,44 +2,84 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35766E6BF18
-	for <dpdk-dev@archiver.kernel.org>; Fri, 30 Jan 2026 14:59:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C84DDE6BF1B
+	for <dpdk-dev@archiver.kernel.org>; Fri, 30 Jan 2026 15:50:06 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4A3F6402AF;
-	Fri, 30 Jan 2026 15:59:26 +0100 (CET)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 0FE9940274
- for <dev@dpdk.org>; Fri, 30 Jan 2026 15:59:25 +0100 (CET)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 2AB16206EC;
- Fri, 30 Jan 2026 15:59:24 +0100 (CET)
-Content-class: urn:content-classes:message
+	by mails.dpdk.org (Postfix) with ESMTP id DA601402AF;
+	Fri, 30 Jan 2026 16:50:05 +0100 (CET)
+Received: from mail-dl1-f42.google.com (mail-dl1-f42.google.com [74.125.82.42])
+ by mails.dpdk.org (Postfix) with ESMTP id 1214940274
+ for <dev@dpdk.org>; Fri, 30 Jan 2026 16:50:04 +0100 (CET)
+Received: by mail-dl1-f42.google.com with SMTP id
+ a92af1059eb24-124877d78a6so2811533c88.1
+ for <dev@dpdk.org>; Fri, 30 Jan 2026 07:50:03 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1769788203; cv=none;
+ d=google.com; s=arc-20240605;
+ b=d17+mVVuAHH9rY29CAPHn6kv8kDEpbVf07M8qUVcSVHDm604iCEzsFIfkLkJd+ENDs
+ K7DOLvzHqRPi+O5vqPA0o8sP0yszfl6m5aU+JhzwGgacRHNtVtMQejOTyb5GvvTQ7iK8
+ QxXvS+iyg8739jAPhnXIuTHo0IcirmNXyWnuqpHGe5u+dBTTzTmA7s8oQVaV2Uu+LlOS
+ k7RBMQIZef+fKmbRVZGIAG9HwmB0MAYKfTXah4UpNi3DzGt64Rldb0Lrupl5bjBnYDA1
+ jrJVC/AX78siS6GIq1/z74wQtSWETBmb+HawbHPmjMPG5aQmRKccExNayBF4JkKaE9ME
+ e56g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20240605; 
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:dkim-signature;
+ bh=3CW7ofRf5SK94iNb1i4N5MXB38N2ZXT4XqNUxq2uP9Q=;
+ fh=2W0PFbjewz8ZnRJ40XN4dirXyVKEkha224G7MuvK+S4=;
+ b=TK1h+piiLb8aV4Nmhfh8HAs4smPh2siakww3zSjZzdmNDYSg4KpaatNnlheufhjbaJ
+ d5/crYOa3rP/Wx7Q3tV9rPlmvFpMxiUJPy1H/jYQrexRhnFoCH9Dq+RlxRz+510oZTOG
+ PVi6SYGzO4jcoeHnGI4RSqZJprzJrlrskCUKOdJdAbixy1L4sq/Pg7EEifPt7h9ttc5e
+ wqgF9kQ4HXg+53Q/9+DMJp7o9nT/uE/WMZltu740LYcz6M2EKH9Nxchvpu77gfwHDzTN
+ PjO5q8GbfaaxUaqDZB9BmkSatBbzBtnaOxtog76NccZcqpobsWWuSFrdEnqjjsJI/4ul
+ FjCA==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=iol.unh.edu; s=unh-iol; t=1769788203; x=1770393003; darn=dpdk.org;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=3CW7ofRf5SK94iNb1i4N5MXB38N2ZXT4XqNUxq2uP9Q=;
+ b=QWebENlqmEru12qb4X9z+O6XNnOBsey2iubNAMhdf50Oo2G/OB5/YPB4zXZrUp4i7q
+ UsdtZDwdPiQql7qbYwAvWUs10cxlrkrryGEozTnP34MjgW+1GVZXfRahGpfm2gcX2CVq
+ MG0C3N3dRvYKLqMpLJXUSL6BKpTLDBbLCSO/g=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1769788203; x=1770393003;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=3CW7ofRf5SK94iNb1i4N5MXB38N2ZXT4XqNUxq2uP9Q=;
+ b=hmm1T0VJNL8DrVew9r21x45a6Zz8V+pITtGj1jo6Qrgk5l090DsFbxAufW0vzfsT7y
+ pHHfKc2pIn4rEAJYgpEeY1rlx6xCp8H/rHuXCy2FfijfOIou/5O5jqYqkfgdabJRWi8b
+ B1kcNsN+xrou72GP/RD2VxrszD5WJfqwJ3PIFHuYtT9V1USWZtaUisKkc3AQDzSVPAAm
+ cPZI9KczUbt6iLOSrvjSj54GLlsBxEXDXNfCv0dS4bBbiv6cwlqXYjqlKC+1bzvy5w9T
+ sJ7zgcqn1ZoizUO8o5VKADfmcHQYlc5wM7jbW0um2GKJ45tiX5tPr9J8AmkdPc82WSvx
+ IWZg==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCVTMfmpPJjmeZ1BPnVKK3JPJseeDEcOsDXoQ9xMeMAMSZrybsG8gNAjT6YVHcRNOGZMETk=@dpdk.org
+X-Gm-Message-State: AOJu0YzDS3GhsmHD3qsPWOw6UX5JN5Jw4l9inehFz0r7fhFiaR4Ggw98
+ su2mbANMdOp4FGrVtifDKsk8ry2HUCZNHmC0UQ+1/hWKi9r6mJPgkrvuDyd7KyQFlqHLrXxv47p
+ M0B1uLp+Fr9BPUJ8l5RAmgweaB86JsKi2OM4o8PWSdw==
+X-Gm-Gg: AZuq6aJMg0TTdE/PgA25x0D9k1syBAXT9Z51d147Ud5suz4ma04on/dnAopp0FZSRV8
+ F6WB1jsYd8q+amaMaA4a0fMD8WN4rOdEC8pddaRRomptIZZGTJFibCTsqnbQscdar3ZgOfFPPlz
+ AsteDHWMQGaT1o3RtS040jjKzjxq3MIE0B73IBXSSIOtPfKxBVnwiV4/JshiLdEIucrgjh/zPPj
+ fT9PGRaRkhxvy76+oph1ZbMRjfmEEfGBwgVPAhDn3ZlmUKWVQQlTsry4PmmdFawRWwZlpnK/hw+
+ fNh+cLpS7dE6puDp3DACDoK8/UFhB3UwkzrsIjm/hrb0DyfDLtzGrZud1aps
+X-Received: by 2002:a05:7022:78a:b0:124:9acd:3bd0 with SMTP id
+ a92af1059eb24-125c0f9a94bmr1851084c88.5.1769788202833; Fri, 30 Jan 2026
+ 07:50:02 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="iso-8859-1"
+References: <20260129191303.373877-1-abailey@iol.unh.edu>
+In-Reply-To: <20260129191303.373877-1-abailey@iol.unh.edu>
+From: Patrick Robb <probb@iol.unh.edu>
+Date: Fri, 30 Jan 2026 10:47:36 -0500
+X-Gm-Features: AZwV_QgWhE-3ad9Nk3onSyyYft2bksbjHJTJYhzN0I5aMXsDxzCvsC0Gr4-06bk
+Message-ID: <CAJvnSUD5+jB9y7oJvJGth5y3dMdnKDagPRCxUrrUmiqUFH0ikA@mail.gmail.com>
+Subject: Re: [PATCH v1] dts: add missing rst file for QinQ test suite
+To: Andrew Bailey <abailey@iol.unh.edu>
+Cc: dmarx@iol.unh.edu, dev@dpdk.org, luca.vizzarro@arm.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Subject: RE: [PATCH 1/2] net: ethernet address comparison optimizations
-Date: Fri, 30 Jan 2026 15:59:21 +0100
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F656D8@smartserver.smartshare.dk>
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-In-Reply-To: <aXzBFlU6eW5SFTwq@bricha3-mobl1.ger.corp.intel.com>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH 1/2] net: ethernet address comparison optimizations
-Thread-Index: AdyR9WDl8ZZVQxYcSrScRMOILfSkSAAAOtGA
-References: <20260130104617.535413-1-mb@smartsharesystems.com>
- <aXyNh8Yja-Mg6qID@bricha3-mobl1.ger.corp.intel.com>
- <98CBD80474FA8B44BF855DF32C47DC35F656D4@smartserver.smartshare.dk>
- <aXyVd7BpQKR_4uRj@bricha3-mobl1.ger.corp.intel.com>
- <98CBD80474FA8B44BF855DF32C47DC35F656D5@smartserver.smartshare.dk>
- <aXy6EQgYlugWne7t@bricha3-mobl1.ger.corp.intel.com>
- <98CBD80474FA8B44BF855DF32C47DC35F656D7@smartserver.smartshare.dk>
- <aXzBFlU6eW5SFTwq@bricha3-mobl1.ger.corp.intel.com>
-From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
-To: "Bruce Richardson" <bruce.richardson@intel.com>
-Cc: <dev@dpdk.org>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -53,194 +93,66 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> From: Bruce Richardson [mailto:bruce.richardson@intel.com]
-> Sent: Friday, 30 January 2026 15.33
->=20
-> On Fri, Jan 30, 2026 at 03:25:34PM +0100, Morten Br=F8rup wrote:
-> > > From: Bruce Richardson [mailto:bruce.richardson@intel.com]
-> > > Sent: Friday, 30 January 2026 15.03
-> > >
-> > > On Fri, Jan 30, 2026 at 02:54:52PM +0100, Morten Br=F8rup wrote:
-> > > > > From: Bruce Richardson [mailto:bruce.richardson@intel.com]
-> > > > > Sent: Friday, 30 January 2026 12.27
-> > > > >
-> > > > > On Fri, Jan 30, 2026 at 12:16:43PM +0100, Morten Br=F8rup =
-wrote:
-> > > > > > > From: Bruce Richardson [mailto:bruce.richardson@intel.com]
-> > > > > > > Sent: Friday, 30 January 2026 11.53
-> > > > > > >
-> > > > > > > On Fri, Jan 30, 2026 at 10:46:16AM +0000, Morten Br=F8rup
-> wrote:
-> > > > > > > > For CPU architectures without strict alignment
-> requirements,
-> > > > > > > operations on
-> > > > > > > > 6-byte Ethernet addresses using three 2-byte operations
-> were
-> > > > > replaced
-> > > > > > > by a
-> > > > > > > > 4-byte and a 2-byte operation, i.e. two operations
-> instead of
-> > > > > three.
-> > > > > > > >
-> > > > > > > > Comparison functions are pure, so added __rte_pure.
-> > > > > > > >
-> > > > > > > > Removed superfluous parentheses. (No functional change.)
-> > > > > > > >
-> > > > > > > > Signed-off-by: Morten Br=F8rup =
-<mb@smartsharesystems.com>
-> > > > > > > > ---
-> > > > > > > >  lib/net/rte_ether.h | 19 ++++++++++++++++++-
-> > > > > > > >  1 file changed, 18 insertions(+), 1 deletion(-)
-> > > > > > > >
-> > > > > > > > diff --git a/lib/net/rte_ether.h b/lib/net/rte_ether.h
-> > > > > > > > index c9a0b536c3..5552d3c1f6 100644
-> > > > > > > > --- a/lib/net/rte_ether.h
-> > > > > > > > +++ b/lib/net/rte_ether.h
-> > > > > > > > @@ -99,13 +99,19 @@ static_assert(alignof(struct
-> > > rte_ether_addr)
-> > > > > =3D=3D
-> > > > > > > 2,
-> > > > > > > >   *  True  (1) if the given two ethernet address are the
-> > > same;
-> > > > > > > >   *  False (0) otherwise.
-> > > > > > > >   */
-> > > > > > > > +__rte_pure
-> > > > > > > >  static inline int rte_is_same_ether_addr(const struct
-> > > > > rte_ether_addr
-> > > > > > > *ea1,
-> > > > > > > >  				     const struct rte_ether_addr
-> *ea2)
-> > > > > > > >  {
-> > > > > > > > +#if !defined(RTE_ARCH_STRICT_ALIGN)
-> > > > > > > > +	return ((((const unaligned_uint32_t *)ea1)[0] ^
-> ((const
-> > > > > > > unaligned_uint32_t *)ea2)[0]) |
-> > > > > > > > +			(((const uint16_t *)ea1)[2] ^ ((const
-> uint16_t
-> > > > > > > *)ea2)[2])) =3D=3D 0;
-> > > > > > > > +#else
-> > > > > > > >  	const uint16_t *w1 =3D (const uint16_t *)ea1;
-> > > > > > > >  	const uint16_t *w2 =3D (const uint16_t *)ea2;
-> > > > > > > >
-> > > > > > > >  	return ((w1[0] ^ w2[0]) | (w1[1] ^ w2[1]) | (w1[2] ^
-> > > > > w2[2])) =3D=3D
-> > > > > > > 0;
-> > > > > > > > +#endif
-> > > > > > > >  }
-> > > > > > >
-> > > > > > > Is this actually faster?
-> > > > > >
-> > > > > > It's a simple micro-optimization, so I haven't benchmarked
-> it.
-> > > > > > On x86, the compiled function is simplified and reduced in
-> size
-> > > from
-> > > > > 34 to 24 bytes:
-> > > > > >
-> > > > > > 00000000004ed650 <review_rte_is_same_ether_addr>:
-> > > > > >   4ed650:	0f b7 07             	movzwl (%rdi),%eax
-> > > > > >   4ed653:	0f b7 57 02          	movzwl 0x2(%rdi),%edx
-> > > > > >   4ed657:	66 33 06             	xor    (%rsi),%ax
-> > > > > >   4ed65a:	66 33 56 02          	xor    0x2(%rsi),%dx
-> > > > > >   4ed65e:	09 d0                	or     %edx,%eax
-> > > > > >   4ed660:	0f b7 57 04          	movzwl 0x4(%rdi),%edx
-> > > > > >   4ed664:	66 33 56 04          	xor    0x4(%rsi),%dx
-> > > > > >   4ed668:	66 09 d0             	or     %dx,%ax
-> > > > > >   4ed66b:	0f 94 c0             	sete   %al
-> > > > > >   4ed66e:	0f b6 c0             	movzbl %al,%eax
-> > > > > >   4ed671:	c3                   	ret
-> > > > > >   4ed672:	66 66 2e 0f 1f 84 00 	data16 cs nopw
-> > > 0x0(%rax,%rax,1)
-> > > > > >   4ed679:	00 00 00 00
-> > > > > >   4ed67d:	0f 1f 00             	nopl   (%rax)
-> > > > > >
-> > > > > > 00000000004ed680 <rte_is_same_ether_addr_improved>:
-> > > > > >   4ed680:	0f b7 47 04          	movzwl 0x4(%rdi),%eax
-> > > > > >   4ed684:	66 33 46 04          	xor    0x4(%rsi),%ax
-> > > > > >   4ed688:	8b 17                	mov    (%rdi),%edx
-> > > > > >   4ed68a:	33 16                	xor    (%rsi),%edx
-> > > > > >   4ed68c:	0f b7 c0             	movzwl %ax,%eax
-> > > > > >   4ed68f:	09 c2                	or     %eax,%edx
-> > > > > >   4ed691:	0f 94 c0             	sete   %al
-> > > > > >   4ed694:	0f b6 c0             	movzbl %al,%eax
-> > > > > >   4ed697:	c3                   	ret
-> > > > > >   4ed698:	0f 1f 84 00 00 00 00 	nopl   0x0(%rax,%rax,1)
-> > > > > >   4ed69f:	00
-> > > > > >
-> > > > > > For reference, memcpy() of 6 bytes (compile time constant)
-> also
-> > > > > compiles to a 4-byte and a 2-byte operation, not three 2-byte
-> > > > > operations.
-> > > > > >
-> > > > > What about memcmp? Does it compile similarly?
-> > > >
-> > > > memcmp(a,b,6) on Clang compiles into something very similar.
-> > > > memcmp(a,b,6) on GCC compiles into something with a branch after
-> the
-> > > first 4-byte comparison, with the assumption (regarding static
-> branch
-> > > prediction) that they are likely to differ.
-> > > > I guess GCC's counterproductive behavior was the reason for
-> > > originally implementing a manual comparison, instead of simply
-> using
-> > > memcmp().
-> > > >
-> > > > BTW, GCC is clever enough to compile 8-byte and 16-byte
-> comparisons
-> > > into code without branches.
-> > > > I guess that's why rte_ipv6_addr_eq() is implemented using
-> memcpy()
-> > > [1].
-> > > >
-> > > > [1]:
-> > > =
-https://elixir.bootlin.com/dpdk/v25.11/source/lib/net/rte_ip6.h#L68
-> > > >
-> > > > > Before we start adding ifdefs
-> > > > > like this to the code, I'd like to see some measured
-> performance
-> > > > > benefits
-> > > > > from it. While the code may be 10 bytes shorter, does that
-> actually
-> > > > > translate into a measurable difference in some app?
-> > > >
-> > > > Excellent question!
-> > > > Some quick rudimentary testing shows that it seems to be ~4
-> cycles
-> > > slower than what it's replacing.
-> > > > Reality beats expectations.
-> > > >
-> > > > I'll drop this patch.
-> > > >
-> > > If you have the test-case already prepared, can you also check =
-what
-> > > memcmp() performs like? Replacing the whole function by memcmp and
-> > > punting
-> > > the optimization to the compiler would be a nice, though small,
-> code
-> > > improvement.
-> >
-> > Good you asked!
-> >
-> > While setting up the test for memcmp(), I noticed that I had been
-> testing my improved function without "inline".
-> > With inline (like the original), it's ~1 cycle faster than the
-> original.
-> > I have restored the patch status to "New".
-> >
-> > The memcmp() test (not forgetting "inline") performs very close to
-> the original.
-> >
->=20
-> If memcmp performs like the original, I'd be tempted to forgo the
-> 1cycle
-> benefit just to have the shortest simplest code.
+Thanks Andrew.
 
-Yes, I tend to agree.
-A modern C compiler should know how to compile memcmp(a,b,6) into =
-something efficient on the architecture it is compiling for.
-E.g. Clang would do it the way I proposed in this patch.
+Reviewed-by: Patrick Robb <probb@iol.unh.edu>
 
-For GCC, the cost of the branch was probably eliminated by the branch =
-predictor when running my test.
+Applied to next-dts.
 
+On Thu, Jan 29, 2026 at 2:13=E2=80=AFPM Andrew Bailey <abailey@iol.unh.edu>=
+ wrote:
+>
+> The QinQ test suite was added to DTS without an RST file. This patch
+> adds the missing RST file in the doc/api/dts directory. After adding
+> the RST file, the docs failed to build due to indents in the test
+> suite docstring. These indents were removed to resolve this issue.
+>
+> Bugzilla ID: 1874
+> Fixes: 4f69c54bbb2b ("dts: add QinQ test suite")
+>
+> Signed-off-by: Andrew Bailey <abailey@iol.unh.edu>
+> ---
+>  doc/api/dts/tests.TestSuite_qinq.rst | 8 ++++++++
+>  dts/tests/TestSuite_qinq.py          | 5 +++--
+>  2 files changed, 11 insertions(+), 2 deletions(-)
+>  create mode 100644 doc/api/dts/tests.TestSuite_qinq.rst
+>
+> diff --git a/doc/api/dts/tests.TestSuite_qinq.rst b/doc/api/dts/tests.Tes=
+tSuite_qinq.rst
+> new file mode 100644
+> index 0000000000..827174fcad
+> --- /dev/null
+> +++ b/doc/api/dts/tests.TestSuite_qinq.rst
+> @@ -0,0 +1,8 @@
+> +.. SPDX-License-Identifier: BSD-3-Clause
+> +
+> +qinq Test Suite
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +.. automodule:: tests.TestSuite_qinq
+> +   :members:
+> +   :show-inheritance:
+> \ No newline at end of file
+> diff --git a/dts/tests/TestSuite_qinq.py b/dts/tests/TestSuite_qinq.py
+> index bb385a0d91..505d71dbc8 100644
+> --- a/dts/tests/TestSuite_qinq.py
+> +++ b/dts/tests/TestSuite_qinq.py
+> @@ -26,10 +26,11 @@ class TestQinq(TestSuite):
+>      """QinQ test suite.
+>
+>      This suite consists of 2 test cases:
+> +
+>      1. QinQ Forwarding: Send a QinQ packet and verify the received packe=
+t contains
+> -        both QinQ/VLAN layers.
+> +    both QinQ/VLAN layers.
+>      2. QinQ Strip: Enable VLAN/QinQ stripping and verify sent packets ar=
+e received with the
+> -        expected VLAN/QinQ layers.
+> +    expected VLAN/QinQ layers.
+>      """
+>
+>      def _send_packet_and_verify(
+> --
+> 2.50.1
+>
