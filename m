@@ -2,70 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C990D73EB7
-	for <dpdk-dev@archiver.kernel.org>; Fri, 30 Jan 2026 05:21:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D724BD73EB7
+	for <dpdk-dev@archiver.kernel.org>; Fri, 30 Jan 2026 05:22:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7DC48402E9;
-	Fri, 30 Jan 2026 06:21:52 +0100 (CET)
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com
- [209.85.221.53]) by mails.dpdk.org (Postfix) with ESMTP id 88C03402E2
- for <dev@dpdk.org>; Fri, 30 Jan 2026 06:21:51 +0100 (CET)
-Received: by mail-wr1-f53.google.com with SMTP id
- ffacd0b85a97d-43596062728so1753742f8f.1
- for <dev@dpdk.org>; Thu, 29 Jan 2026 21:21:51 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 9FEDC402E8;
+	Fri, 30 Jan 2026 06:21:55 +0100 (CET)
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com
+ [209.85.128.54]) by mails.dpdk.org (Postfix) with ESMTP id C8598402F0
+ for <dev@dpdk.org>; Fri, 30 Jan 2026 06:21:52 +0100 (CET)
+Received: by mail-wm1-f54.google.com with SMTP id
+ 5b1f17b1804b1-47fedb7c68dso17505005e9.2
+ for <dev@dpdk.org>; Thu, 29 Jan 2026 21:21:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769750511;
- x=1770355311; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769750512;
+ x=1770355312; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=5KbD3a6ogx+HDv0vFxdR4Ker2XT/DQ7IndIBydfaFVc=;
- b=h3QN88K/Ikhbi1S4idJe26eVVoB/2x0LBH3NRegUoxrG1eapdUAI1SrTa6iSimd6bS
- Ul1x1/llRF/Ie0p8ZwznksXxpe7TFtTMtExFgQU24JqFNr/nNbRoL9lDKWnbKPV7cE7t
- vE5IUyp9NlvJdwR/Kv18ZeMesdHuJ0SnviHko9zZcRr4UpsjQJJ6jAJ9B/iB8xIE0zwx
- vk/+6v3/foKUVbLy1PRJslPJuyeh5V9TU3NHNnq+Ed5gB1TzoYx2/Iom4FV4Jgh0wchf
- AIrzpKSRMOlt2DzBDcXbDRwDAuocSaj1dnM8/Re27w3WPcPW0pyYQtWT6jggvhWYanqD
- 884Q==
+ bh=bCarlbCP6+ZUc2h7goQh+psgyAEUNY5s2Fc9ccpKcQ4=;
+ b=No6I3+4byH08HPSZQBE4KFXMfj/TDprN5cDtegXIXI6rEuX6scEmP7/6Elk5C0YYtI
+ rTTxi68KYcDkjMylBJOgKnye8XR17v8/hY9FijqGsoetYujLwa1OVedDa/YIRx7XbV+L
+ kmtyJ7XqfdMjgAP8IAC6W5zKH6ilBYUndhjlFsSvKIkRloqvAtaQChUiBC/HqNY0TEr3
+ dISnUuMBg8i7DpovB6qv/93lwqqMkJAWOnJ5/8O7TVNYnCsLBmLccZpCCh92HriUHUiY
+ kAOcEKGPXFV6i0aMb6SZNVfWkbYGlKlBRWY6DvjIlvwFmkgb1twrCgdUDTfOA/wzWF/Q
+ c16A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1769750511; x=1770355311;
+ d=1e100.net; s=20230601; t=1769750512; x=1770355312;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=5KbD3a6ogx+HDv0vFxdR4Ker2XT/DQ7IndIBydfaFVc=;
- b=YRqCw5I37Rcry89XKOIubzj2iRMsahZVhcrBTErZTkojrVUgLpCUU32SHcNrsRk9eP
- HhGFplp9GREh2S8ilq/0t9j1eX9T+sDi2xxZ7HM6r8RWHBH0/btfP6bnbWbi/yZ0rKut
- l6LgV9K1df8Z9pBKXy7NJEGISkrOMz3ns3QNDC0SIwCoLI1Z8HEOVs0/TLjFXy9Tjenw
- 7qS5ubdZJw6ykSHcx6EpmNJ3aSe++bX8C0pyadBOkV4iXBKPaAsNeSPtw8vL3T0Ijze+
- 8SPmh6PPBQKwoJKO0w9Kaj6o/wP7wPECliBAJPP4mJkDpcj7VEDVfvNnKRm9TrmDchfz
- Q6YA==
-X-Gm-Message-State: AOJu0YyFHLoqEFeBKHKxPE22Vzsqk75aYbRRfqT1ajvRU+vAqxeLUvwT
- zwVuvP2+covNO+8iEzm/P6Oza6INPphGaBDeDKLie3o2AcpRB/AFpgiPSGHNpfeAoyTtb89b2rV
- BBe5Q
-X-Gm-Gg: AZuq6aJd8rpAvLx5yjSSeZ73rlcjPg6Y+yL6VnjXKL7nc9fSE9plWVfZnrjGTdflHIP
- hMF1mebkC9zkdDKrq1pwzFjXQs8j6veOp1rAgI4RhOZRuS/Jo4VJ3YkyWB3oXcZBTdXAohQp7s4
- HyaLLEHD3L4D0HRpvzGZjYVoNNIxSOihfdvQ5ArYi67kcSMw12E3ybkL54XpKKnAQ1gT29h/CDF
- i7ARGj7tUlIrIiCzLuOgFiu4CFYXKdCA8xpq8DEaIbEXurdC/VmyUynja75PCklpRrXRZa+llVP
- Hd4w7mCik/af0p8c73/UNJ6epndPZvKTmFVsd8LItq5x+qATEdjL4DAzG0BwFWykBZguzf0L4ib
- +OMgJ7CS0sDi+0dqbGoT6MglqDeZuPXewWmRrun16zChMy3/9vrrJmrEfyEgbK4mEcLItn+uhbE
- Ltns+pHAYw4J3dOauiYwaQoH/XYjGjWd/fQ9qhn08E9obSRL+x1G11yDjuZpZf
-X-Received: by 2002:a05:6000:3103:b0:435:bdc2:461 with SMTP id
- ffacd0b85a97d-435ea2102a0mr7915408f8f.21.1769750510303; 
- Thu, 29 Jan 2026 21:21:50 -0800 (PST)
+ bh=bCarlbCP6+ZUc2h7goQh+psgyAEUNY5s2Fc9ccpKcQ4=;
+ b=kH6OiMR0ZUbM+e6l0uLD6C45zzordnUCjWje8y3Rzu5O3Q9Hwucbqyb6R3jQ+OulzN
+ S/levn6Ku0X5EI77VvYphg6yeZBo2nF/B388sbpbxLsKJ9iMyNpCxyBNKbQHOyKOvvii
+ 1BkQd7BPDDvLyJHk34SjOsfCdZZFS4VMNHSO6c1ukzd/kJ6MSrduWu0ZIJMMj+KS+176
+ vkNQ/jR5zUCyB12zyskULtZRXrEptooK+w40znJfHZ11j23IgumrDOi+1yAVcd65wD+G
+ C6AXOKsetHWh9vVqcDagxyZEKmhqG6OrUH8KFCW3mefzYo1MiaZpJoKhO/b4XjO4+JSa
+ Umkg==
+X-Gm-Message-State: AOJu0YyWQvLd9ArfXfX/fhx83/arBusOFrDt+q+XfNQHfhRjbRn+t9JT
+ OkDMDVPRtoexgpNH0XpSaTv3LBEzM9tbVWHjHBe6Od84olnbRHq+YHYxmDfbtkb1p8X9beb6ajQ
+ 6FDnv
+X-Gm-Gg: AZuq6aIwAep7A4meXf1x8AkVGPG93+ldwn8G/ewI6MZWClAqpMAXK39qKyRTONYSwqP
+ ZR9Z9EJmPAAF7bk9UaCyAT+O6RKwrmUQwOSHle/+B53EaVNZdhgIgNp04+37vbSzcUnpbtuskNV
+ AWQxSd4pq2mU4aVy4nzigRbdOrxMpVPwEmx6ORfePmGk16gFPvPmzEhMr59g9yyBrxrwTLtkQyE
+ /IzhhqcQuIMlITLoyaf1GN+C6yw3NubnK+2LuMjuBFwaD+0zGGFBWQw+DT6j+dWjJeQBoprTJKS
+ KDKKKOW5ZGNzBGD2ngxXPFkM/OOL+IKLgmJAXV7cVhYNgrBmR5NA3gXi2uU8UXvP5dazx46mGPc
+ wB3jB9c8YduQwampYtgN42NynSIC8Zlmw5+ePICsahJeO940u+mGQj1aRaYji4VdsUdlVZ+FetU
+ SOR/wXoN6X+0Rj6S50FdaEvwXrMqKhmBFwIyKPVZ32So6s63xPTA==
+X-Received: by 2002:a05:600c:64c8:b0:47d:264e:b435 with SMTP id
+ 5b1f17b1804b1-482db48cb4amr18522435e9.22.1769750512424; 
+ Thu, 29 Jan 2026 21:21:52 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-435e1323034sm19182107f8f.35.2026.01.29.21.21.48
+ ffacd0b85a97d-435e1323034sm19182107f8f.35.2026.01.29.21.21.50
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 29 Jan 2026 21:21:49 -0800 (PST)
+ Thu, 29 Jan 2026 21:21:51 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
- Thomas Monjalon <thomas@monjalon.net>,
- Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
- Matan Azrad <matan@nvidia.com>, Suanming Mou <suanmingm@nvidia.com>,
- Ajit Khaparde <ajit.khaparde@broadcom.com>
-Subject: [RFC 1/6] ethdev: fix flow_ops_mutex for multi-process
-Date: Thu, 29 Jan 2026 21:17:32 -0800
-Message-ID: <20260130052142.251649-2-stephen@networkplumber.org>
+ Gaetan Rivet <grive@u256.net>, Matan Azrad <matan@nvidia.com>
+Subject: [RFC 2/6] net/failsafe: fix hotplug_mutex for multi-process
+Date: Thu, 29 Jan 2026 21:17:33 -0800
+Message-ID: <20260130052142.251649-3-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260130052142.251649-1-stephen@networkplumber.org>
 References: <20260130052142.251649-1-stephen@networkplumber.org>
@@ -84,64 +81,54 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The flow_ops_mutex in rte_eth_dev_data is located in shared memory
-that is accessed by both primary and secondary processes. However,
-the mutex is initialized without PTHREAD_PROCESS_SHARED attribute,
-which means synchronization between processes is undefined behavior.
+The failsafe driver supports secondary process attachment via
+rte_eth_dev_attach_secondary() in rte_pmd_failsafe_probe(). The
+hotplug_mutex in fs_priv protects shared state but is initialized
+without PTHREAD_PROCESS_SHARED attribute.
 
 POSIX mutexes are by default private to the process creating them.
-When a mutex protects data structures in shared memory that are
-accessed by multiple processes, pthread_mutexattr_setpshared() must
-be called with PTHREAD_PROCESS_SHARED.
+When a mutex protects data structures accessed by multiple processes,
+pthread_mutexattr_setpshared() must be called with PTHREAD_PROCESS_SHARED.
 
-This bug has existed since the flow_ops_mutex was added and affects
-any multi-process DPDK application using rte_flow APIs.
+Also add missing pthread_mutexattr_destroy() call to avoid resource leak.
 
 Bugzilla ID: 662
-Fixes: 80d1a9aff7f6 ("ethdev: make flow API thread safe")
+Fixes: 655fcd68c7d2 ("net/failsafe: fix hotplug races")
 Cc: stable@dpdk.org
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- lib/ethdev/ethdev_driver.c | 18 +++++++++++++++++-
- 1 file changed, 17 insertions(+), 1 deletion(-)
+ drivers/net/failsafe/failsafe.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
-diff --git a/lib/ethdev/ethdev_driver.c b/lib/ethdev/ethdev_driver.c
-index 2ec665be0f..d12395efe0 100644
---- a/lib/ethdev/ethdev_driver.c
-+++ b/lib/ethdev/ethdev_driver.c
-@@ -89,6 +89,22 @@ eth_dev_set_dummy_fops(struct rte_eth_dev *eth_dev)
- 	eth_dev->recycle_rx_descriptors_refill = rte_eth_recycle_rx_descriptors_refill_dummy;
+diff --git a/drivers/net/failsafe/failsafe.c b/drivers/net/failsafe/failsafe.c
+index 3e590d38f7..aa3fe53b22 100644
+--- a/drivers/net/failsafe/failsafe.c
++++ b/drivers/net/failsafe/failsafe.c
+@@ -144,11 +144,20 @@ fs_mutex_init(struct fs_priv *priv)
+ 	/* Allow mutex relocks for the thread holding the mutex. */
+ 	ret = pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
+ 	if (ret) {
+-		ERROR("Cannot set mutex type - %s", strerror(ret));
+-		return ret;
++		ERROR("Cannot set mutex recursive - %s", strerror(ret));
++		goto out;
++	}
++	/* Allow mutex to be shared between processes. */
++	ret = pthread_mutexattr_setpshared(&attr, PTHREAD_PROCESS_SHARED);
++	if (ret) {
++		ERROR("Cannot set mutex pshared - %s", strerror(ret));
++		goto out;
+ 	}
++	pthread_mutex_init(&priv->hotplug_mutex, &attr);
+ 
+-	return pthread_mutex_init(&priv->hotplug_mutex, &attr);
++out:
++	pthread_mutexattr_destroy(&attr);
++	return ret;
  }
  
-+/*
-+ * Initialize mutex for process-shared access.
-+ * The rte_eth_dev_data structure is in shared memory, so any mutex
-+ * protecting it must use PTHREAD_PROCESS_SHARED.
-+ */
-+static void
-+eth_dev_flow_ops_mutex_init(pthread_mutex_t *mutex)
-+{
-+	pthread_mutexattr_t attr;
-+
-+	pthread_mutexattr_init(&attr);
-+	pthread_mutexattr_setpshared(&attr, PTHREAD_PROCESS_SHARED);
-+	pthread_mutex_init(mutex, &attr);
-+	pthread_mutexattr_destroy(&attr);
-+}
-+
- RTE_EXPORT_INTERNAL_SYMBOL(rte_eth_dev_allocate)
- struct rte_eth_dev *
- rte_eth_dev_allocate(const char *name)
-@@ -135,7 +151,7 @@ rte_eth_dev_allocate(const char *name)
- 	eth_dev->data->port_id = port_id;
- 	eth_dev->data->backer_port_id = RTE_MAX_ETHPORTS;
- 	eth_dev->data->mtu = RTE_ETHER_MTU;
--	pthread_mutex_init(&eth_dev->data->flow_ops_mutex, NULL);
-+	eth_dev_flow_ops_mutex_init(&eth_dev->data->flow_ops_mutex);
- 	RTE_ASSERT(rte_eal_process_type() == RTE_PROC_PRIMARY);
- 	eth_dev_shared_data->allocated_ports++;
- 
+ static int
 -- 
 2.51.0
 
