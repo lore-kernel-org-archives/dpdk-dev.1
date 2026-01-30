@@ -2,66 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95164D73EAA
-	for <dpdk-dev@archiver.kernel.org>; Fri, 30 Jan 2026 01:14:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23EB4D73EAF
+	for <dpdk-dev@archiver.kernel.org>; Fri, 30 Jan 2026 01:14:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 71FEB40676;
-	Fri, 30 Jan 2026 02:14:07 +0100 (CET)
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com
- [209.85.128.43]) by mails.dpdk.org (Postfix) with ESMTP id F2A5D40661
- for <dev@dpdk.org>; Fri, 30 Jan 2026 02:14:01 +0100 (CET)
-Received: by mail-wm1-f43.google.com with SMTP id
- 5b1f17b1804b1-4806d23e9f1so17601655e9.2
- for <dev@dpdk.org>; Thu, 29 Jan 2026 17:14:01 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 6FEDD40678;
+	Fri, 30 Jan 2026 02:14:08 +0100 (CET)
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com
+ [209.85.128.53]) by mails.dpdk.org (Postfix) with ESMTP id 7FA7840656
+ for <dev@dpdk.org>; Fri, 30 Jan 2026 02:14:03 +0100 (CET)
+Received: by mail-wm1-f53.google.com with SMTP id
+ 5b1f17b1804b1-480142406b3so11609305e9.1
+ for <dev@dpdk.org>; Thu, 29 Jan 2026 17:14:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769735641;
- x=1770340441; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769735643;
+ x=1770340443; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=E1J+D/6wTPbHBG42ig6K1FeXy0o2SOrxUJMQu5sahtE=;
- b=rlQnfWm/mJdlDtpTl9SA9KLV1bmwLV/9rfZK/SQOrfxLB5Smz+WkklbcibCZGHTGvD
- LGgKKIwazl1iaiIHqcNim1DAgcrN70YV60b/sB2oNZOx+/jiMgn8JgJbIK89PEOZXIiA
- QYiubVHJIyzXO4Wnix+ogTVLEyC0m4ixX7M/UR7NI/aae+Rkkaigp+zQyXUxHd5+oGNY
- c6VO6Ub7yCG6OHtRGs6OEGsfIAJdyOaybAxEWYf9wV2h4PImNLzfEF254J332DO2FJZo
- 4yJ6qd8d85vGayG5r17y85/Ds6wuAndm6FFRHHGqh2rxHdPzjWJjYGIM2VJZHfKdSz03
- +fMA==
+ bh=4AKeZ5n9aHSLOPZJ7HNvITCDpuWc36TR960rnhrMnXA=;
+ b=L1Qn7+HUAU24lw0r0wtG41RufHdb/VO/3XNE7zMf98Es2Xt23+tk4y+vxwGpHl9YbS
+ Aq8eIOX2jksIb9dau/Mu20dfVDGaCJ/jMC8arqVhNFzmG4w/jU9pY1lT7xnrKlVku9ku
+ NDLrpUKAjNThThsTImWZfEa0flXhPpkP1ht0KuM/v18b6W8dTI/2JkPAhqE0SDnPAuzK
+ 3CZgKTIbQILBgrMTNbQHEulaYr7NW7leJKvOwzqYl/obs55ewnFuO6MBNohyqGtoqnKa
+ Jhmcqj8bb04wVXSnreVGRnm+Krh32duZEkNvLpAzLfByOXxB6XxS3TEJrBi7jKAGjVSt
+ DB9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1769735641; x=1770340441;
+ d=1e100.net; s=20230601; t=1769735643; x=1770340443;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=E1J+D/6wTPbHBG42ig6K1FeXy0o2SOrxUJMQu5sahtE=;
- b=pjBckHdWoE+NM3+7UCOcPS/zn3a3SmT8oyFGVl7K97xLkvMqrN2Ztqi++tZV98HxJP
- LN5foiFXdRBRlpaPU1keKYzbxFvKis3XTGZ2i+reURohMrDd02kOzgCV5gqp5odaplKS
- Xv5TbJC6uiqXpao7SE4fvwoLmHxrimZtpxp2Qy+PNUKg7yMN9hjdaDWXaToBUFzOeMp0
- J2Zj2NpJpyUTyzELfm3z9IaAioBuAR+89s0CFbQh7tR17Aaysy8jq72TQzmsClS7vHOC
- WgK0nQRHQ/LAuGIymkCgk0joP6O6tNVUSbmfai5EKc/PzQ5Ea4SHOucSeGa95LDPoOKK
- ZHHQ==
-X-Gm-Message-State: AOJu0YyRFG1lSPnYDZYNMSMZb2iByxVY9PnbpHMjPADMwEDm83vfUD2/
- VdsuVuAGuwCoVM979ElbVr8r3yOC/HBizIy5M2szVtAYXdVwQj7XJfmOkiha+Ool/FwO6z7IPFe
- BaBm+
-X-Gm-Gg: AZuq6aKvR9DOY3VRSI/HE5E5WbHeQZ8euCfEE1TQ8vxdrGlCsjvzam5ibxsQGHQkl8l
- attR8EHoUxNDf4ag4c1gi4v3zgCGkfdL14eMh7e1SJmwwwCi9+ypG1tTSY0lJDkXmV8Y7oC7Z4d
- zA06Fzpp7LEorokdPMpTsmfDbJN/u45nzsEvSpJ9ldh12l09sjSOXPbBBw94f4aIbieIXm1cm7w
- be+PhNGaLOLj6UzrAn9U/JYaiIiyQDXUOKBNm1nJTs5EmRQZbNdN03o+APjklsaOXntb5stGRU4
- PqivAX7AHhdsjOq6ITdgHm2v8GP4YqD3p2Zytl5DcEElWhN28BV79aPJsH8nAZk/6aEH2uWEAIO
- V7c1AohA1S4MoQ0hbDpuPbBs6aFtpstanw3tQQT3rTsdbrVS1UW+qLsJjbXhxxcHBxyYaz2Fb+i
- mOArVMgdT6933dM4vgtachga9HjcUHNwg/9+iarF+/pj++2ctyIA==
-X-Received: by 2002:a05:600c:6214:b0:480:1c53:208b with SMTP id
- 5b1f17b1804b1-482db49da0bmr9862995e9.36.1769735641548; 
- Thu, 29 Jan 2026 17:14:01 -0800 (PST)
+ bh=4AKeZ5n9aHSLOPZJ7HNvITCDpuWc36TR960rnhrMnXA=;
+ b=AlCv+peuxX2IZSgMkh4Z1eJ+gOgIw9wKkAqhBFWS9+Amaopx+2fe2du1UK0haXPQdF
+ fTn8zMaXUqM13EmtTBDlkFqT2rQq1R8OHO/tDFIPEeDiO/Yb0Am8NBXdlCfFoe3rRoZ1
+ oko0eqD2isZveH0dcm/b63y5V6V3cvaKBNMRo6tMbmX5Mqk19JFlvztebH/gnwPP/QNW
+ YkUwXKkE+HobYTaer1tBuKdxb+DrACu/WsJO5FTeOSOuVtKlIc7y43eB/GLHqHZJzLLX
+ MQv4H2RhRh54LFrDudwWXnkWKWoT9c1e1EFmES/ZQzoS3xvyiOIGIeb39cLg/t+Mrh9X
+ Hc0w==
+X-Gm-Message-State: AOJu0YzJoYTglHp7/JHcrwpenzJDCtFtRDxfCFdu2d3zJL3GoHX7CuUJ
+ 4DOrNGxY9O4V2K97Rf1DQbPUf7TxCMMACf1RifGdFFjIqRh4+bpn1df402iUHCJvCVm1j1CbkCL
+ Nwq9z
+X-Gm-Gg: AZuq6aKegQkHah61uC/A3uaXTmYRyziF86y8GNygdkIYYrA4gV0a7/u4uMA2J0tmtrH
+ 5U+wTDjAebo/GKeUA4j86PvBz+v0CnsHSaMEs9ne5glCpPUZRij0QpZVxfUi0QevvQTMPd8pB5A
+ blA8lqah29aMhl4EvVfmSZWLsXnzuOw3b6oIEjCG8b4qGe6lRRgfnbf2OkSaazhk8x4Nc7VTcmq
+ 5GtZTJGo2Onr/JHqwGLHrh18P5ahfmWGGrkyc26Xo7TWe5+3bGcVmvMB+/GEAkthaNbcpTCE9wV
+ 5vkm9DgCBAgSRYSSt40A0CNsJAu6u2TAxg/BB6tCqS1Db3uRgMh8ySZDNQbKibicxSHVFhmxwDR
+ m3as4TUsGjl/M5ykwnZ9y+PNuqHuK25j6TU+fbKljVU5NFclJK5eCXEUt8DojSVNnXPpcCPpPEA
+ MSSWYxtzqfVnAClU5iYdqCzTGXTcTwIQDO74kMr7Boq5+vHaJ8zA==
+X-Received: by 2002:a05:600c:3148:b0:47a:935f:618e with SMTP id
+ 5b1f17b1804b1-482db45ce3amr10806875e9.15.1769735643149; 
+ Thu, 29 Jan 2026 17:14:03 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-481a5e1d0f9sm2934825e9.18.2026.01.29.17.13.59
+ 5b1f17b1804b1-481a5e1d0f9sm2934825e9.18.2026.01.29.17.14.01
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 29 Jan 2026 17:14:01 -0800 (PST)
+ Thu, 29 Jan 2026 17:14:02 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v10 07/19] net/pcap: allocate Tx bounce buffer
-Date: Thu, 29 Jan 2026 17:12:23 -0800
-Message-ID: <20260130011344.204233-8-stephen@networkplumber.org>
+Subject: [PATCH v10 08/19] net/pcap: cleanup transmit buffer handling
+Date: Thu, 29 Jan 2026 17:12:24 -0800
+Message-ID: <20260130011344.204233-9-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260130011344.204233-1-stephen@networkplumber.org>
 References: <20260106182823.192350-1-stephen@networkplumber.org>
@@ -81,144 +81,130 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-To handle possible multi segment mbufs, the driver would allocate
-a worst case 64k buffer on the stack. Since each Tx queue is
-single threaded, better to allocate the buffer from hugepage
-with rte_malloc when queue is setup.
+The transmit loops should handle the possible failure
+of rte_pktmbuf_read(). If a pcap_sendpacket fails, then
+the packet with error should be freed.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/pcap/pcap_ethdev.c | 41 +++++++++++++++++++++-------------
- 1 file changed, 26 insertions(+), 15 deletions(-)
+ drivers/net/pcap/pcap_ethdev.c | 50 ++++++++++++++--------------------
+ 1 file changed, 21 insertions(+), 29 deletions(-)
 
 diff --git a/drivers/net/pcap/pcap_ethdev.c b/drivers/net/pcap/pcap_ethdev.c
-index 61ba50e356..1a186142d3 100644
+index 1a186142d3..394fd0b6b2 100644
 --- a/drivers/net/pcap/pcap_ethdev.c
 +++ b/drivers/net/pcap/pcap_ethdev.c
-@@ -12,6 +12,7 @@
- #include <errno.h>
- #include <sys/time.h>
- #include <sys/types.h>
-+#include <unistd.h>
- #include <pcap.h>
- 
- #include <rte_cycles.h>
-@@ -91,6 +92,9 @@ struct pcap_tx_queue {
- 	struct queue_stat tx_stat;
- 	char name[PATH_MAX];
- 	char type[ETH_PCAP_ARG_MAXLEN];
-+
-+	/* Temp buffer used to for non-linear packets */
-+	uint8_t *bounce_buf;
- };
- 
- struct pmd_internals {
-@@ -392,11 +396,12 @@ eth_pcap_tx_dumper(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- 	uint32_t tx_bytes = 0;
+@@ -389,7 +389,6 @@ static uint16_t
+ eth_pcap_tx_dumper(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
+ {
+ 	unsigned int i;
+-	struct rte_mbuf *mbuf;
+ 	struct pmd_process_private *pp;
+ 	struct pcap_tx_queue *dumper_q = queue;
+ 	uint16_t num_tx = 0;
+@@ -397,7 +396,6 @@ eth_pcap_tx_dumper(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
  	struct pcap_pkthdr header;
  	pcap_dumper_t *dumper;
--	unsigned char temp_data[RTE_ETH_PCAP_SNAPLEN];
-+	unsigned char *temp_data;
- 	size_t len, caplen;
+ 	unsigned char *temp_data;
+-	size_t len, caplen;
  
  	pp = rte_eth_devices[dumper_q->port_id].process_private;
  	dumper = pp->tx_dumper[dumper_q->queue_id];
-+	temp_data = dumper_q->bounce_buf;
- 
- 	if (dumper == NULL || nb_pkts == 0)
- 		return 0;
-@@ -406,10 +411,6 @@ eth_pcap_tx_dumper(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
+@@ -409,21 +407,22 @@ eth_pcap_tx_dumper(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
+ 	/* writes the nb_pkts packets to the previously opened pcap file
+ 	 * dumper */
  	for (i = 0; i < nb_pkts; i++) {
- 		mbuf = bufs[i];
+-		mbuf = bufs[i];
++		struct rte_mbuf *mbuf = bufs[i];
++		uint32_t len, caplen;
++		const uint8_t *data;
++
  		len = caplen = rte_pktmbuf_pkt_len(mbuf);
--		if (unlikely(!rte_pktmbuf_is_contiguous(mbuf) &&
--				len > sizeof(temp_data))) {
--			caplen = sizeof(temp_data);
--		}
  
  		calculate_timestamp(&header.ts);
  		header.len = len;
-@@ -419,7 +420,7 @@ eth_pcap_tx_dumper(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- 		 * a pointer to temp_data after copying into it.
- 		 */
- 		pcap_dump((u_char *)dumper, &header,
--			rte_pktmbuf_read(mbuf, 0, caplen, temp_data));
-+			  rte_pktmbuf_read(mbuf, 0, caplen, temp_data));
+ 		header.caplen = caplen;
+-		/* rte_pktmbuf_read() returns a pointer to the data directly
+-		 * in the mbuf (when the mbuf is contiguous) or, otherwise,
+-		 * a pointer to temp_data after copying into it.
+-		 */
+-		pcap_dump((u_char *)dumper, &header,
+-			  rte_pktmbuf_read(mbuf, 0, caplen, temp_data));
  
- 		num_tx++;
- 		tx_bytes += caplen;
-@@ -474,11 +475,12 @@ eth_pcap_tx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
+-		num_tx++;
+-		tx_bytes += caplen;
++		data = rte_pktmbuf_read(mbuf, 0, caplen, temp_data);
++		if (likely(data != NULL)) {
++			pcap_dump((u_char *)dumper, &header, data);
++			num_tx++;
++			tx_bytes += caplen;
++		}
+ 	}
+ 	rte_pktmbuf_free_bulk(bufs, nb_pkts);
+ 
+@@ -458,7 +457,7 @@ eth_tx_drop(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
+ 	tx_queue->tx_stat.pkts += nb_pkts;
+ 	tx_queue->tx_stat.bytes += tx_bytes;
+ 
+-	return i;
++	return nb_pkts;
+ }
+ 
+ /*
+@@ -468,15 +467,12 @@ static uint16_t
+ eth_pcap_tx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
+ {
+ 	unsigned int i;
+-	int ret;
+-	struct rte_mbuf *mbuf;
+ 	struct pmd_process_private *pp;
+ 	struct pcap_tx_queue *tx_queue = queue;
  	uint16_t num_tx = 0;
  	uint32_t tx_bytes = 0;
  	pcap_t *pcap;
--	unsigned char temp_data[RTE_ETH_PCAP_SNAPLEN];
-+	unsigned char *temp_data;
- 	size_t len;
+ 	unsigned char *temp_data;
+-	size_t len;
  
  	pp = rte_eth_devices[tx_queue->port_id].process_private;
  	pcap = pp->tx_pcap[tx_queue->queue_id];
-+	temp_data = tx_queue->bounce_buf;
- 
- 	if (unlikely(nb_pkts == 0 || pcap == NULL))
+@@ -486,19 +482,15 @@ eth_pcap_tx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
  		return 0;
-@@ -486,13 +488,6 @@ eth_pcap_tx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
+ 
  	for (i = 0; i < nb_pkts; i++) {
- 		mbuf = bufs[i];
- 		len = rte_pktmbuf_pkt_len(mbuf);
--		if (unlikely(!rte_pktmbuf_is_contiguous(mbuf) &&
--				len > sizeof(temp_data))) {
--			PMD_LOG(ERR,
--				"Dropping multi segment PCAP packet. Size (%zd) > max size (%zd).",
--				len, sizeof(temp_data));
--			continue;
--		}
- 
- 		/* rte_pktmbuf_read() returns a pointer to the data directly
- 		 * in the mbuf (when the mbuf is contiguous) or, otherwise,
-@@ -962,7 +957,7 @@ static int
- eth_tx_queue_setup(struct rte_eth_dev *dev,
- 		uint16_t tx_queue_id,
- 		uint16_t nb_tx_desc __rte_unused,
--		unsigned int socket_id __rte_unused,
-+		unsigned int socket_id,
- 		const struct rte_eth_txconf *tx_conf __rte_unused)
- {
- 	struct pmd_internals *internals = dev->data->dev_private;
-@@ -970,11 +965,26 @@ eth_tx_queue_setup(struct rte_eth_dev *dev,
- 
- 	pcap_q->port_id = dev->data->port_id;
- 	pcap_q->queue_id = tx_queue_id;
-+	pcap_q->bounce_buf = rte_malloc_socket(NULL, RTE_ETH_PCAP_SNAPSHOT_LEN,
-+					       RTE_CACHE_LINE_SIZE, socket_id);
-+	if (pcap_q->bounce_buf == NULL)
-+		return -ENOMEM;
+-		mbuf = bufs[i];
+-		len = rte_pktmbuf_pkt_len(mbuf);
+-
+-		/* rte_pktmbuf_read() returns a pointer to the data directly
+-		 * in the mbuf (when the mbuf is contiguous) or, otherwise,
+-		 * a pointer to temp_data after copying into it.
+-		 */
+-		ret = pcap_sendpacket(pcap,
+-			rte_pktmbuf_read(mbuf, 0, len, temp_data), len);
+-		if (unlikely(ret != 0))
+-			break;
+-		num_tx++;
+-		tx_bytes += len;
++		struct rte_mbuf *mbuf = bufs[i];
++		uint32_t len = rte_pktmbuf_pkt_len(mbuf);
++		const uint8_t *data;
 +
- 	dev->data->tx_queues[tx_queue_id] = pcap_q;
++		data = rte_pktmbuf_read(mbuf, 0, len, temp_data);
++		if (likely(data != NULL && pcap_sendpacket(pcap, data, len) == 0)) {
++			num_tx++;
++			tx_bytes += len;
++		}
+ 	}
  
- 	return 0;
+ 	rte_pktmbuf_free_bulk(bufs, nb_pkts);
+@@ -507,7 +499,7 @@ eth_pcap_tx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
+ 	tx_queue->tx_stat.bytes += tx_bytes;
+ 	tx_queue->tx_stat.err_pkts += i - num_tx;
+ 
+-	return i;
++	return nb_pkts;
  }
  
-+static void
-+eth_tx_queue_release(struct rte_eth_dev *dev, uint16_t tx_queue_id)
-+{
-+	struct pmd_internals *internals = dev->data->dev_private;
-+	struct pcap_tx_queue *pcap_q = &internals->tx_queue[tx_queue_id];
-+
-+	rte_free(pcap_q->bounce_buf);
-+	pcap_q->bounce_buf = NULL;
-+}
-+
- static int
- eth_rx_queue_start(struct rte_eth_dev *dev, uint16_t rx_queue_id)
- {
-@@ -1015,6 +1025,7 @@ static const struct eth_dev_ops ops = {
- 	.dev_infos_get = eth_dev_info,
- 	.rx_queue_setup = eth_rx_queue_setup,
- 	.tx_queue_setup = eth_tx_queue_setup,
-+	.tx_queue_release = eth_tx_queue_release,
- 	.rx_queue_start = eth_rx_queue_start,
- 	.tx_queue_start = eth_tx_queue_start,
- 	.rx_queue_stop = eth_rx_queue_stop,
+ /*
 -- 
 2.51.0
 
