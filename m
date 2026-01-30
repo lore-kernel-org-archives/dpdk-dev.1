@@ -2,53 +2,84 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC37BE6BF01
-	for <dpdk-dev@archiver.kernel.org>; Fri, 30 Jan 2026 11:46:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54F2EE6BF06
+	for <dpdk-dev@archiver.kernel.org>; Fri, 30 Jan 2026 12:13:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0970640E48;
-	Fri, 30 Jan 2026 12:43:12 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
- by mails.dpdk.org (Postfix) with ESMTP id 3C03940395
- for <dev@dpdk.org>; Fri, 30 Jan 2026 12:43:06 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1769773386; x=1801309386;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=G/pmK0aUbBlChVErkyX5DUlBYYbItS+nGNNpqLxz8do=;
- b=hnHLUDdoWcE5irVrmMh9/t0HeZyr2RuyiCeAMQgTV24KhMDDyn+aDBTi
- aoTFeXI+TE3PS5ch/FbbxPcMqR4bB9PM/6G5cOqmdBcZ86J0dbmpI/9Mj
- SNsn/r66RWch+9BgaSxvPtpiEZJhWj0HGnOBHAHccRmtPW2yruEKTyKh4
- /gIwTEWTtoh9hILGBLnQ33BkgQgrTlel5/AckQzNIjTcatkpfWrdcKDRm
- RbyekrzQbR0R0J66tizjLe61uGRkqVORJ6tRICSWkcn3MzSItUYqOEp4K
- g3g88n5406dK1yK9nj3zdfYH1druEG9dC16vyGpreUQe3kHiw1sqS6nzR Q==;
-X-CSE-ConnectionGUID: J2EhycGITGq6pezzWDzGBA==
-X-CSE-MsgGUID: PP9Q16EaTb64ORynnyRyzA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11686"; a="82392346"
-X-IronPort-AV: E=Sophos;i="6.21,262,1763452800"; d="scan'208";a="82392346"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
- by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 30 Jan 2026 03:43:01 -0800
-X-CSE-ConnectionGUID: qBR6shIDRnW/yr/AF9wB8A==
-X-CSE-MsgGUID: kaYTtVnwTuKJFg81MfDkzQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,262,1763452800"; d="scan'208";a="209190594"
-Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by fmviesa010.fm.intel.com with ESMTP; 30 Jan 2026 03:43:00 -0800
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: dev@dpdk.org
-Cc: Bruce Richardson <bruce.richardson@intel.com>,
- Anatoly Burakov <anatoly.burakov@intel.com>
-Subject: [PATCH v3 35/36] net/intel: use vector mbuf cleanup from simple
- scalar path
-Date: Fri, 30 Jan 2026 11:42:02 +0000
-Message-ID: <20260130114207.1126032-36-bruce.richardson@intel.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20260130114207.1126032-1-bruce.richardson@intel.com>
-References: <20251219172548.2660777-1-bruce.richardson@intel.com>
- <20260130114207.1126032-1-bruce.richardson@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 1624B402BD;
+	Fri, 30 Jan 2026 13:13:32 +0100 (CET)
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com
+ [209.85.218.53]) by mails.dpdk.org (Postfix) with ESMTP id E394440274
+ for <dev@dpdk.org>; Fri, 30 Jan 2026 13:13:30 +0100 (CET)
+Received: by mail-ej1-f53.google.com with SMTP id
+ a640c23a62f3a-b8842e5a2a1so297994166b.2
+ for <dev@dpdk.org>; Fri, 30 Jan 2026 04:13:30 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1769775210; cv=none;
+ d=google.com; s=arc-20240605;
+ b=GN6OUln6IxLAQNG1Sxc5m/QMOyEWIb3+mjt1s8mcASKl1CgcoLPct3stVG0RAI0pmH
+ bnV932htG0nQ4R/yDNyeidpXvJLJmHbPUh6sPhpwSeJrjHVx/gxQt48ZlNQpRMRS0PXf
+ biFO9aAshWdgHv2xvxMhPU9GJIzP/cSrCOhzBX6nos3YaHvYMkoWUEBs8IiEzZf8+1bQ
+ Y0kWBuKDZUJ52B0Fvs4yCFrSNxieZfrr4S/ot1ORzsvV+HCrPjldKmelhCD/YDLybNw9
+ JjwgAfvNBMWyah6hrhIT+MfdCu+Pb4nNoBzY0KMX+/fNCKAsCZ6iIURnE4eKCepQN+a8
+ BjhA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20240605; 
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:dkim-signature;
+ bh=uwYZHTlgz7JvIO+/liLFMhsU6c6atnR3IApM88O1bHk=;
+ fh=t33Egyn4DAOwVRnwraldPtDjoBFAjogf3LzpsEMwxHQ=;
+ b=bs567c0fVXTgaAayupU2UgFE3ZQlmNCcmH7PwqGUnYSbfQZrg2JV5QaTf3sKNgF1wF
+ chCyP6WffMRFh0YqJ8nnik4udhmxr2tWfYx6y1s9MQAgTAPXTYm7QsNXg5vlWcduceRP
+ XqPR5cXKlI4HYa+6c7wcZH6uhpg1fS0BO2yVIfs9afa8QQepUnPD2bJAk7t2CRCxyCGt
+ 7Q0U6HmuLESxWvwGBk/+s5h7ePlsINbzmBzn3pdsXu7qvhcrxJl16Rn9D9HBtqtRjXk8
+ jb6NkLoG5Wk0QS4Vk1MQQOJGX7M262MuIghuK9LzXoklVBW68CONjZwCotZB2yLtDE90
+ GhoA==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=dyna-nic.com; s=google; t=1769775210; x=1770380010; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=uwYZHTlgz7JvIO+/liLFMhsU6c6atnR3IApM88O1bHk=;
+ b=rSjuK/VspKMIoAcQt5frGs+ZADDAmkzZeW0NVuNQEXmg7lwdMl2e8Cr/R1ihchnX8S
+ 6p0AGb/3+sACi1roKaZiu8fW8cBzRbAcXIQt5HApdWfV95bFrIAPX/JxqmQeeyWGhOqZ
+ OjSC4k3Jqd1r1OLX95M3sF42rGPAz79dMBgIQPCHKqIcRe4H8UG6SOUqsRfxVY+J5mEV
+ NMAMpT/StamtEo8y9UYBptkiXC0P00SkzAsBoPBeK30//s8b2YwTr9jtDSGLy337ZDzw
+ BbdBaGxAfaiCl+N/W0rxBwbIFz09YSU0wduxY01zYN6vQvMETAXT6mTBAmpT3mMS6dWq
+ mhXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1769775210; x=1770380010;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=uwYZHTlgz7JvIO+/liLFMhsU6c6atnR3IApM88O1bHk=;
+ b=wLFsyHeq01Ji+z6gv++FWRveIe4MzuSd478hOaAcfVnkIb9GxvdEyUPPxxbSACG80D
+ 5EBaVV6SDhD9XeWV60740SYOCPQhRhK5wTUGQZ6c3QdEodLjwVCkI4vCySnUvGC4DMD0
+ fE7oOy9hld0kbP6sG33kuH8nMa8NS4wqik5GqK2WCcnsmGyAHxuXDYXNpULha3KIkUVq
+ kpcz7Oc2Hm9Fpx/cU/+kVvUjKxo+8zC5iBG8Mr8ySXn/JirGLhE3YOtei/+dGkbjaNhm
+ e6n7ElJgvwoKwsbFG1ljK92byN1ClZToG92P9kTeCbLhd/PGTaF4DJzeF7ScEfp4jX58
+ hYQg==
+X-Gm-Message-State: AOJu0YzpDfnRAdCueAwj2CaOljisjXBuE9rF9ieXNsKqVUjIUjF3318X
+ G/YJBDt5cYz+ukoaEeLfbzeLmSXTB9TPwnpmXF3z6YKOMHYB8bmBNBEuAc+vQuS/O5x9n3UtUO0
+ ZzvVMCmEJ08iyir6EjDS8I8PJlmBx8uxn/AuxGF/fggsSUNCNZQ/Sdog=
+X-Gm-Gg: AZuq6aL9Z7992oh8CdB5FsTipI0Nb+DqdKpCS9Bq/otlAorZBOgK0mHsDtqyfZnJaNs
+ SbstU5+Fk4InhMrp1xoiD/hVTJ1efhYgsX3P1ivimgHZPz4BO9W1YT/vo6/Q+rWjzm96hgL6ALr
+ iVt6MjOm05eDqX6ZBpoEFXwCfpD+PYcbFW+LZiBtkvLiMMBWmZOc2vtYV6STUM6U2EWXekrN+PE
+ AafVao30UjKbR10wKVAh1YS75HfUy0Wy9khIadfJoV3FhCbcg11dvyODNPybt6oajWeKcA=
+X-Received: by 2002:a17:907:9284:b0:b87:d44:81d with SMTP id
+ a640c23a62f3a-b8dff754e5dmr144745666b.45.1769775210354; Fri, 30 Jan 2026
+ 04:13:30 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260129114202.61185-1-sismis@dyna-nic.com>
+ <20260129114202.61185-4-sismis@dyna-nic.com>
+ <20260129092815.750af8c6@phoenix.local>
+In-Reply-To: <20260129092815.750af8c6@phoenix.local>
+From: =?UTF-8?B?THVrw6HFoSDFoGnFoW1pxaE=?= <sismis@dyna-nic.com>
+Date: Fri, 30 Jan 2026 13:13:18 +0100
+X-Gm-Features: AZwV_QjqDlfuVua831qEXnqmBZwVOAuyfSoxmVYCe_DmR3_GNxjDnrlSLaFzE3o
+Message-ID: <CAPQRu6HhHgu5nxSHJgPud40-UThys2UNiFtPZQq7wpReRDORgw@mail.gmail.com>
+Subject: Re: [PATCH v8 3/6] flow_parser: add shared parser library
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: dev@dpdk.org
+Content-Type: multipart/alternative; boundary="000000000000bee62c064999e615"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -62,142 +93,50 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Since the simple scalar path now uses the vector Tx entry struct, we can
-leverage the vector mbuf cleanup function from that path and avoid
-having a separate cleanup function for it.
+--000000000000bee62c064999e615
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
----
- drivers/net/intel/common/tx_scalar_fns.h | 74 +++++-------------------
- drivers/net/intel/i40e/i40e_rxtx.c       |  2 +-
- drivers/net/intel/ice/ice_rxtx.c         |  2 +-
- 3 files changed, 17 insertions(+), 61 deletions(-)
+=C4=8Dt 29. 1. 2026 v 18:28 odes=C3=ADlatel Stephen Hemminger <
+stephen@networkplumber.org> napsal:
 
-diff --git a/drivers/net/intel/common/tx_scalar_fns.h b/drivers/net/intel/common/tx_scalar_fns.h
-index c8d370a921..27a07cf9e9 100644
---- a/drivers/net/intel/common/tx_scalar_fns.h
-+++ b/drivers/net/intel/common/tx_scalar_fns.h
-@@ -21,6 +21,20 @@ write_txd(volatile void *txd, uint64_t qw0, uint64_t qw1)
- 	txd_qw[1] = rte_cpu_to_le_64(qw1);
- }
- 
-+static __rte_always_inline int
-+ci_tx_desc_done_simple(struct ci_tx_queue *txq, uint16_t idx)
-+{
-+	return (txq->ci_tx_ring[idx].cmd_type_offset_bsz & rte_cpu_to_le_64(CI_TXD_QW1_DTYPE_M)) ==
-+			rte_cpu_to_le_64(CI_TX_DESC_DTYPE_DESC_DONE);
-+}
-+
-+/* Free transmitted mbufs using vector-style cleanup */
-+static __rte_always_inline int
-+ci_tx_free_bufs_simple(struct ci_tx_queue *txq)
-+{
-+	return ci_tx_free_bufs_vec(txq, ci_tx_desc_done_simple, false);
-+}
-+
- /* Fill hardware descriptor ring with mbuf data (simple path) */
- static inline void
- ci_tx_fill_hw_ring_simple(volatile struct ci_tx_desc *txdp, struct rte_mbuf **pkts,
-@@ -52,64 +66,6 @@ ci_tx_fill_hw_ring_simple(volatile struct ci_tx_desc *txdp, struct rte_mbuf **pk
- 	}
- }
- 
--/* Free transmitted mbufs from descriptor ring with bulk freeing for Tx simple path */
--static __rte_always_inline int
--ci_tx_free_bufs(struct ci_tx_queue *txq)
--{
--	const uint16_t rs_thresh = txq->tx_rs_thresh;
--	const uint16_t k = RTE_ALIGN_FLOOR(rs_thresh, CI_TX_MAX_FREE_BUF_SZ);
--	const uint16_t m = rs_thresh % CI_TX_MAX_FREE_BUF_SZ;
--	struct rte_mbuf *free[CI_TX_MAX_FREE_BUF_SZ];
--	struct ci_tx_entry_vec *txep;
--
--	if ((txq->ci_tx_ring[txq->tx_next_dd].cmd_type_offset_bsz &
--			rte_cpu_to_le_64(CI_TXD_QW1_DTYPE_M)) !=
--			rte_cpu_to_le_64(CI_TX_DESC_DTYPE_DESC_DONE))
--		return 0;
--
--	txep = &txq->sw_ring_vec[txq->tx_next_dd - (rs_thresh - 1)];
--
--	struct rte_mempool *fast_free_mp =
--			likely(txq->fast_free_mp != (void *)UINTPTR_MAX) ?
--				txq->fast_free_mp :
--				(txq->fast_free_mp = txep[0].mbuf->pool);
--
--	if (fast_free_mp) {
--		if (k) {
--			for (uint16_t j = 0; j != k; j += CI_TX_MAX_FREE_BUF_SZ) {
--				for (uint16_t i = 0; i < CI_TX_MAX_FREE_BUF_SZ; ++i, ++txep) {
--					free[i] = txep->mbuf;
--					txep->mbuf = NULL;
--				}
--				rte_mbuf_raw_free_bulk(fast_free_mp, free, CI_TX_MAX_FREE_BUF_SZ);
--			}
--		}
--
--		if (m) {
--			for (uint16_t i = 0; i < m; ++i, ++txep) {
--				free[i] = txep->mbuf;
--				txep->mbuf = NULL;
--			}
--			rte_mbuf_raw_free_bulk(fast_free_mp, free, m);
--		}
--	} else {
--		for (uint16_t i = 0; i < rs_thresh; ++i, ++txep)
--			rte_prefetch0((txep + i)->mbuf);
--
--		for (uint16_t i = 0; i < rs_thresh; ++i, ++txep) {
--			rte_pktmbuf_free_seg(txep->mbuf);
--			txep->mbuf = NULL;
--		}
--	}
--
--	txq->nb_tx_free = (uint16_t)(txq->nb_tx_free + rs_thresh);
--	txq->tx_next_dd = (uint16_t)(txq->tx_next_dd + rs_thresh);
--	if (txq->tx_next_dd >= txq->nb_tx_desc)
--		txq->tx_next_dd = (uint16_t)(rs_thresh - 1);
--
--	return rs_thresh;
--}
--
- /* Simple burst transmit for descriptor-based simple Tx path
-  *
-  * Transmits a burst of packets by filling hardware descriptors with mbuf
-@@ -135,7 +91,7 @@ ci_xmit_burst_simple(struct ci_tx_queue *txq,
- 	 * descriptor, free the associated buffer.
- 	 */
- 	if (txq->nb_tx_free < txq->tx_free_thresh)
--		ci_tx_free_bufs(txq);
-+		ci_tx_free_bufs_simple(txq);
- 
- 	/* Use available descriptor only */
- 	nb_pkts = (uint16_t)RTE_MIN(txq->nb_tx_free, nb_pkts);
-diff --git a/drivers/net/intel/i40e/i40e_rxtx.c b/drivers/net/intel/i40e/i40e_rxtx.c
-index ba63d42b85..6ea6ffbb2f 100644
---- a/drivers/net/intel/i40e/i40e_rxtx.c
-+++ b/drivers/net/intel/i40e/i40e_rxtx.c
-@@ -2377,7 +2377,7 @@ i40e_tx_done_cleanup_simple(struct ci_tx_queue *txq,
- 		if (txq->nb_tx_desc - txq->nb_tx_free < txq->tx_rs_thresh)
- 			break;
- 
--		n = ci_tx_free_bufs(txq);
-+		n = ci_tx_free_bufs_simple(txq);
- 
- 		if (n == 0)
- 			break;
-diff --git a/drivers/net/intel/ice/ice_rxtx.c b/drivers/net/intel/ice/ice_rxtx.c
-index 94951369fb..ece6ef6e2d 100644
---- a/drivers/net/intel/ice/ice_rxtx.c
-+++ b/drivers/net/intel/ice/ice_rxtx.c
-@@ -3218,7 +3218,7 @@ ice_tx_done_cleanup_simple(struct ci_tx_queue *txq,
- 		if (txq->nb_tx_desc - txq->nb_tx_free < txq->tx_rs_thresh)
- 			break;
- 
--		n = ci_tx_free_bufs(txq);
-+		n = ci_tx_free_bufs_simple(txq);
- 
- 		if (n == 0)
- 			break;
--- 
-2.51.0
+>
+> How big is this beast?
+>
 
+Heh, I am not sure if this was rhetorical or an actual technical question,
+but to answer, pahole reports it as 26,400 bytes big.
+Previously, it was sized similarly (25,884 B), it was just spread out over
+many globally defined arrays.
+The ~500 byte increase comes from new *_cache arrays (raw_encap_conf_cache,
+raw_decap_conf_cache, etc.).
+In the original testpmd, external code accessed global arrays directly
+(e.g., raw_encap_confs[idx].data). The library provides accessor APIs like
+rte_flow_parser_raw_encap_conf_get() that return const struct
+rte_flow_action_raw_encap *. Since this API returns a pointer to a
+properly-typed action struct (not just raw data), the library needs storage
+for these structs.
+
+--000000000000bee62c064999e615
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><div dir=3D"ltr"><br></div><br><div class=3D"gmail_quote g=
+mail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">=C4=8Dt 29. 1. =
+2026 v=C2=A018:28 odes=C3=ADlatel Stephen Hemminger &lt;<a href=3D"mailto:s=
+tephen@networkplumber.org">stephen@networkplumber.org</a>&gt; napsal:<br></=
+div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;bor=
+der-left:1px solid rgb(204,204,204);padding-left:1ex"><br>
+How big is this beast?<br></blockquote><div><br></div><div>Heh, I am not su=
+re if this was rhetorical or an actual technical question, but to answer, p=
+ahole reports it as 26,400 bytes big.</div><div>Previously, it was sized si=
+milarly (25,884 B), it was just spread out over many globally defined array=
+s.</div><div>The ~500 byte increase comes from new *_cache arrays (raw_enca=
+p_conf_cache, raw_decap_conf_cache, etc.).<br>In the original testpmd, exte=
+rnal code accessed global arrays directly (e.g., raw_encap_confs[idx].data)=
+. The library provides accessor APIs like rte_flow_parser_raw_encap_conf_ge=
+t() that return const struct rte_flow_action_raw_encap *. Since this API re=
+turns a pointer to a properly-typed action struct (not just raw data), the =
+library needs storage for these structs.</div></div></div>
+
+--000000000000bee62c064999e615--
