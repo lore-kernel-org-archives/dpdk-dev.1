@@ -2,66 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D55CE6BF31
-	for <dpdk-dev@archiver.kernel.org>; Fri, 30 Jan 2026 17:35:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7896EE6BF31
+	for <dpdk-dev@archiver.kernel.org>; Fri, 30 Jan 2026 17:35:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0F69840668;
-	Fri, 30 Jan 2026 18:35:14 +0100 (CET)
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com
- [209.85.128.54]) by mails.dpdk.org (Postfix) with ESMTP id 64AE94064C
- for <dev@dpdk.org>; Fri, 30 Jan 2026 18:35:05 +0100 (CET)
-Received: by mail-wm1-f54.google.com with SMTP id
- 5b1f17b1804b1-47d59da3d81so24910135e9.0
- for <dev@dpdk.org>; Fri, 30 Jan 2026 09:35:05 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 0604440274;
+	Fri, 30 Jan 2026 18:35:15 +0100 (CET)
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com
+ [209.85.128.45]) by mails.dpdk.org (Postfix) with ESMTP id 2EC0740664
+ for <dev@dpdk.org>; Fri, 30 Jan 2026 18:35:07 +0100 (CET)
+Received: by mail-wm1-f45.google.com with SMTP id
+ 5b1f17b1804b1-47ee3a63300so24881225e9.2
+ for <dev@dpdk.org>; Fri, 30 Jan 2026 09:35:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769794505;
- x=1770399305; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769794507;
+ x=1770399307; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=SouYZ6tU1paU16EOu15PvoChOiKXSP39Pj0QBhi2WFQ=;
- b=lIYDyz/VN7nPIVyKJQ4j+1hy8mI69kJUIt+EWtq5WoPOn9Fl+RfRPOvNQ5yw7fT4gF
- 86yPTdFkBELi1xQcpPSellCjZiPylDU3hnZT0bKud5lSuP3jvy0zKuY0dvp7OF9M3fjS
- UhkaupTHUj/+7vTqEiOypgzFxPnPJt9tgJ7+wjaPvFtpwDm8tTe5B+z/y11ZniumxpeP
- vx/qFeDE15LXh6VMdBA+GQOEMIMKIbMZQkUufx07Wx9iSza4pQVlHE3m7iuoazx+Jhqy
- /kW9zXwabQEkehzk98EPFh02qaqw2AJO7QC1L/MDyQV72rjWhV4KTje6eCez4u3GJLhv
- cgmg==
+ bh=ovUkmYF0+OUHl2I5Pg4pp/WyHvAQiZvf6VaBNC2OLOo=;
+ b=L+C9oBeREXtIaeQlolJE0Dq8Lc2l/PwSKmbhi2l2QLHPw88GAXPlvOudcjlA7YpGv4
+ qX9aqyCaZS7UBa6B94I5FijT5yNnDWmUpkgarcKItD/YkZqBMXyCPXWM4Ks9230DdCrq
+ 8BigWYIbXzzOCxX6ygNpXiRsjgpl7hzfRjOwOjhvwGviPRZq1cZb7x3+QqYIutrpcmmS
+ gB/2jpGnBTEGPFFrtQuTraLBh9o09IokLpB5bnuxueg/Gj/7xGhPRNbNufyFtRGg4wUi
+ oVaD4MkrdGpwVq1p8gOywCOH/wiZiHSxYIDdkeiAGRN21NJBw3dtZouqqs2MTrqgvbLX
+ DRew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1769794505; x=1770399305;
+ d=1e100.net; s=20230601; t=1769794507; x=1770399307;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=SouYZ6tU1paU16EOu15PvoChOiKXSP39Pj0QBhi2WFQ=;
- b=Ni8F5xssCgyBFiSjVEyIqULT5LNnMdzDXLJWYXYbEYGAI/rlCLLGpjdv6Xmp/Y7urA
- HC3cWUc7+3++ywAi0+MTlLgzbvGsenbQsrzoB9chyobXcNff9NPq1Ffm70Xbso4OiYl8
- DNwGFA/lhljk6sz5ujuxHxElcKLIsNqWpIa9oAI63fhPviZQyJQ3KXLOMzs+7vDrdF/0
- qeGDoC4i7IWenrWY/1ofKhM8VYXjXO1ULfXvdWNiFuIUxpEmGTASHkWlhJSC381BThnw
- zTDmCmZvjnYY8iMnvkSIE9jQysg1VgWVdpNs5iHU3YrH+PLSXHUbgqet0DPY6CExR2Y9
- wvAg==
-X-Gm-Message-State: AOJu0YzEYE77xVc4hVd7uEvTItG1l5X09X2vbsd08s3UrVWCTmfsMxsX
- nzbfg102R5Fq36SIHiJAiE2k7/UoCE/FOUKfKu7zPlg5bR6CnnG9C6DIh4vME+XODUDguhIIs2A
- dsD+Y
-X-Gm-Gg: AZuq6aLYhn+opjMt2Ga7BvWnEqHiNtSpOaG1sRIc1nV0uSNA4mRtaQ9a67AKWH+mGzY
- Ms9No2+SVTkIVlhBL08Eay5Le9gh4ZMCx6ZD7Gp2RGjFeAy8hCJ3AatZMqL4tmXAeeFU3doWoMP
- Mrp/nBgEGhYgGJOrkOrdhSgoatG43ivkGaBspJJzDRXuDRUh5q9FKSqNv1Uhrd14sRiSZpfPD+c
- 1Sj9CgA1AkvMtxggOjImo2MmuscFPaQE0ryQKL80hF7OvOfE3Di3a1FLgu/O8FRYxbvMSds3Has
- Siabwcq1HYtTih/w17CVJRxwtTLygdtBU/onys0VcUAZU6CVfdxjQhUNpD+fznVFgcks9Vaio4X
- 2Ip652YC8hJQQIdNoJPqd8ymNWLNk8pUV4fm8R3pBcywH0J/kswE06Jv9Nb4ChgQBz0fJrj0D+Y
- ozjN3a4rv8C2S18LLc2J0xBoCjEg7rzYQHb/Vv+EFw1VmCoGCH/Q==
-X-Received: by 2002:a05:600c:820c:b0:480:4a90:1afd with SMTP id
- 5b1f17b1804b1-482daf1816emr40743855e9.0.1769794504862; 
- Fri, 30 Jan 2026 09:35:04 -0800 (PST)
+ bh=ovUkmYF0+OUHl2I5Pg4pp/WyHvAQiZvf6VaBNC2OLOo=;
+ b=IDAvfaIktJJGNYE+xjF7NRgHqZyfLOXFbpYZ66ZJWEodeU1q5yipJwo5oKgcdo0FQL
+ 0N079/MLkd0w4EdYnUWHpNZaMvGavfT0Ft1bgGHTRrJPISLNVghfmcj9GfFwny0tUFrO
+ MX2hAM4gsIBHRfVOmTG2t5geY/ECrbEkHdiZILg1r5lfJwCVMGSQDppZxIOx8QNaPM79
+ 2rvPLatkjsl7DR/33V9VTP2HoPH8fOQ8FS2S3DUYxdFeDGAUsUYhdv48+R5vKCaB//A5
+ QPmmXi9GvrWaTlxxDPlu02VAinHjsNEKg5Y1PnDsQzxBX6k+U50n5SSbUPJmlkkZp8xr
+ 9FKA==
+X-Gm-Message-State: AOJu0YyqnX8yfZneDCB1XULmcI2kIi8pHmthjrcCsLoHq5rFgz1d1P0p
+ IoJKfBqr3c1NW6xdTE62E9V6pl1TDkwbFKhrgVPDjK0Iu5CfEB3TXC8hysK6Z7zey0rZ7e82VM9
+ VQy3c
+X-Gm-Gg: AZuq6aK7x8Aq+xfCgEqPWRexPYdMi7xeEcJlWj9ZefIUn5jgQAkJ3ibhrZIi61/XPC9
+ huc/h/hW7NwMaHKssGna0BFCHQEtrvxVBMWl58seIChin9sZm54cjw8hQgwy44zSxKr9/5EouLK
+ XaT3Gr7SpIl/5wdIRuJVHVtakCZg6Bt6UJ223OKq6SRdqwU1AOR1EaShWf2D7L6wULe/v67AsLm
+ 58AnE1fQOslcFqIx6F/9Bp9JgxId+jwSaVe+5NkSqmQUF4hn9cwQwitfieNJIpWsMF5mh6EozjZ
+ 2a2Cp46qWfKXBaWKpBdweqRCOwzfb23gfrsuL0WDNGIN8PDUvARUAMUgJ05yHus18f8unam14gm
+ qtve7TGX0++5kfIJEd9PZsacLzScBAqwZi85PnXTAvJnT0YcIfwlHi+vNzDxl0fitnSui/5dXCf
+ n4Yc2IKUywExAwVR6Gl3bgD45E1rX9ssv22eJo9oWiW2wwCL8J6Q==
+X-Received: by 2002:a05:600c:4443:b0:477:7c7d:d9b2 with SMTP id
+ 5b1f17b1804b1-482db4a1030mr44601255e9.32.1769794506508; 
+ Fri, 30 Jan 2026 09:35:06 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-4806ce56490sm201085325e9.12.2026.01.30.09.35.03
+ 5b1f17b1804b1-4806ce56490sm201085325e9.12.2026.01.30.09.35.05
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 30 Jan 2026 09:35:04 -0800 (PST)
+ Fri, 30 Jan 2026 09:35:06 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v11 05/19] net/pcap: avoid using rte_malloc and rte_memcpy
-Date: Fri, 30 Jan 2026 09:33:18 -0800
-Message-ID: <20260130173447.14546-6-stephen@networkplumber.org>
+Subject: [PATCH v11 06/19] net/pcap: use bulk free
+Date: Fri, 30 Jan 2026 09:33:19 -0800
+Message-ID: <20260130173447.14546-7-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260130173447.14546-1-stephen@networkplumber.org>
 References: <20260106182823.192350-1-stephen@networkplumber.org>
@@ -81,108 +81,64 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-No need to use rte_malloc or rte_memcpy in the short
-code to get MAC address.
+Using function rte_pktmbuf_free_bulk is marginally faster here.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/pcap/pcap_ethdev.c        |  3 ++-
- drivers/net/pcap/pcap_osdep_freebsd.c | 12 +++++-------
- drivers/net/pcap/pcap_osdep_linux.c   |  6 +++---
- 3 files changed, 10 insertions(+), 11 deletions(-)
+ drivers/net/pcap/pcap_ethdev.c | 15 ++++++---------
+ 1 file changed, 6 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/net/pcap/pcap_ethdev.c b/drivers/net/pcap/pcap_ethdev.c
-index fbd1021c39..806451dc99 100644
+index 806451dc99..61ba50e356 100644
 --- a/drivers/net/pcap/pcap_ethdev.c
 +++ b/drivers/net/pcap/pcap_ethdev.c
-@@ -6,6 +6,7 @@
+@@ -423,8 +423,8 @@ eth_pcap_tx_dumper(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
  
- #include <stdio.h>
- #include <stdlib.h>
-+#include <string.h>
- #include <time.h>
- #include <inttypes.h>
- #include <errno.h>
-@@ -1288,7 +1289,7 @@ eth_pcap_update_mac(const char *if_name, struct rte_eth_dev *eth_dev,
- 		return -1;
+ 		num_tx++;
+ 		tx_bytes += caplen;
+-		rte_pktmbuf_free(mbuf);
+ 	}
++	rte_pktmbuf_free_bulk(bufs, nb_pkts);
  
- 	PMD_LOG(INFO, "Setting phy MAC for %s", if_name);
--	rte_memcpy(mac_addrs, mac.addr_bytes, RTE_ETHER_ADDR_LEN);
-+	memcpy(mac_addrs, mac.addr_bytes, RTE_ETHER_ADDR_LEN);
- 	eth_dev->data->mac_addrs = mac_addrs;
- 	return 0;
- }
-diff --git a/drivers/net/pcap/pcap_osdep_freebsd.c b/drivers/net/pcap/pcap_osdep_freebsd.c
-index 20556b3e92..0185665f0b 100644
---- a/drivers/net/pcap/pcap_osdep_freebsd.c
-+++ b/drivers/net/pcap/pcap_osdep_freebsd.c
-@@ -4,13 +4,11 @@
-  * All rights reserved.
-  */
+ 	/*
+ 	 * Since there's no place to hook a callback when the forwarding
+@@ -449,13 +449,10 @@ eth_tx_drop(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
+ 	uint32_t tx_bytes = 0;
+ 	struct pcap_tx_queue *tx_queue = queue;
  
-+#include <string.h>
- #include <net/if.h>
- #include <net/if_dl.h>
- #include <sys/sysctl.h>
- 
--#include <rte_malloc.h>
--#include <rte_memcpy.h>
+-	if (unlikely(nb_pkts == 0))
+-		return 0;
 -
- #include "pcap_osdep.h"
+-	for (i = 0; i < nb_pkts; i++) {
++	for (i = 0; i < nb_pkts; i++)
+ 		tx_bytes += bufs[i]->pkt_len;
+-		rte_pktmbuf_free(bufs[i]);
+-	}
++
++	rte_pktmbuf_free_bulk(bufs, nb_pkts);
  
- int
-@@ -41,19 +39,19 @@ osdep_iface_mac_get(const char *if_name, struct rte_ether_addr *mac)
- 	if (len == 0)
- 		return -1;
+ 	tx_queue->tx_stat.pkts += nb_pkts;
+ 	tx_queue->tx_stat.bytes += tx_bytes;
+@@ -494,7 +491,6 @@ eth_pcap_tx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
+ 			PMD_LOG(ERR,
+ 				"Dropping multi segment PCAP packet. Size (%zd) > max size (%zd).",
+ 				len, sizeof(temp_data));
+-			rte_pktmbuf_free(mbuf);
+ 			continue;
+ 		}
  
--	buf = rte_malloc(NULL, len, 0);
-+	buf = malloc(len);
- 	if (!buf)
- 		return -1;
- 
- 	if (sysctl(mib, 6, buf, &len, NULL, 0) < 0) {
--		rte_free(buf);
-+		free(buf);
- 		return -1;
- 	}
- 	ifm = (struct if_msghdr *)buf;
- 	sdl = (struct sockaddr_dl *)(ifm + 1);
- 
--	rte_memcpy(mac->addr_bytes, LLADDR(sdl), RTE_ETHER_ADDR_LEN);
-+	memcpy(mac->addr_bytes, LLADDR(sdl), RTE_ETHER_ADDR_LEN);
- 
--	rte_free(buf);
-+	free(buf);
- 	return 0;
- }
-diff --git a/drivers/net/pcap/pcap_osdep_linux.c b/drivers/net/pcap/pcap_osdep_linux.c
-index 97033f57c5..df976417cb 100644
---- a/drivers/net/pcap/pcap_osdep_linux.c
-+++ b/drivers/net/pcap/pcap_osdep_linux.c
-@@ -4,12 +4,12 @@
-  * All rights reserved.
-  */
- 
-+#include <string.h>
-+#include <unistd.h>
- #include <net/if.h>
- #include <sys/ioctl.h>
- #include <sys/socket.h>
--#include <unistd.h>
- 
--#include <rte_memcpy.h>
- #include <rte_string_fns.h>
- 
- #include "pcap_osdep.h"
-@@ -35,7 +35,7 @@ osdep_iface_mac_get(const char *if_name, struct rte_ether_addr *mac)
- 		return -1;
+@@ -508,9 +504,10 @@ eth_pcap_tx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
+ 			break;
+ 		num_tx++;
+ 		tx_bytes += len;
+-		rte_pktmbuf_free(mbuf);
  	}
  
--	rte_memcpy(mac->addr_bytes, ifr.ifr_hwaddr.sa_data, RTE_ETHER_ADDR_LEN);
-+	memcpy(mac->addr_bytes, ifr.ifr_hwaddr.sa_data, RTE_ETHER_ADDR_LEN);
- 
- 	close(if_fd);
- 	return 0;
++	rte_pktmbuf_free_bulk(bufs, nb_pkts);
++
+ 	tx_queue->tx_stat.pkts += num_tx;
+ 	tx_queue->tx_stat.bytes += tx_bytes;
+ 	tx_queue->tx_stat.err_pkts += i - num_tx;
 -- 
 2.51.0
 
