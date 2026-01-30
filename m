@@ -2,66 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53617E6BF31
-	for <dpdk-dev@archiver.kernel.org>; Fri, 30 Jan 2026 17:36:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FF08E6BF31
+	for <dpdk-dev@archiver.kernel.org>; Fri, 30 Jan 2026 17:36:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 785F940A87;
-	Fri, 30 Jan 2026 18:35:48 +0100 (CET)
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com
- [209.85.128.54]) by mails.dpdk.org (Postfix) with ESMTP id 7B1674068E
- for <dev@dpdk.org>; Fri, 30 Jan 2026 18:35:25 +0100 (CET)
-Received: by mail-wm1-f54.google.com with SMTP id
- 5b1f17b1804b1-4806f3fc50bso24323075e9.0
- for <dev@dpdk.org>; Fri, 30 Jan 2026 09:35:25 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 7F91E406FF;
+	Fri, 30 Jan 2026 18:35:49 +0100 (CET)
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com
+ [209.85.128.48]) by mails.dpdk.org (Postfix) with ESMTP id 40232406B6
+ for <dev@dpdk.org>; Fri, 30 Jan 2026 18:35:27 +0100 (CET)
+Received: by mail-wm1-f48.google.com with SMTP id
+ 5b1f17b1804b1-4806d23e9f1so26638615e9.2
+ for <dev@dpdk.org>; Fri, 30 Jan 2026 09:35:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769794525;
- x=1770399325; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769794527;
+ x=1770399327; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=WlcqFC8n6cBujT0d8pZWE5FvC+E9TuzvyW45n3haPSE=;
- b=XVqYlFB2wiNoW/K/KWTmU83o68BCCrekaZoDDjIjh+HoxKSc3gctJYJNphczTSvBDe
- 3MTfVZoqH5v9qSCINWVDYiu4LFD4dvF8sa06ha1xQvhMhRzqSovAwCMR/G2u6W8uME0k
- wscK/KqRxhOUyJmgozLIUTLmzr2emWVhk1I+/ogCrduIkM2BHCfTfig0BZhVZtXlivYd
- PlGqRQq/0WSn/s/WH5FpRp2oOqi8fc6bvsXeqVbu5ivLghV9BT/S5/ZE2681VcID/byv
- IclzUAdjhpYnUTwjGpU3mKcgZwyGkb7rwCKHbBLZHyuwyB+/bhZSOl2ehgyZF/i+ncRH
- O61Q==
+ bh=MaBGxqkMuz242PdIaohFTUcT3jxVJixntRv8H3W04cY=;
+ b=LhUtSjXU0bCI4X7PvwVXdbkMCXlwcIgDCZ/O/H7z0yMx9Ha4vZNq21kjq3rAofeNw+
+ XZLlBxG6cMIm6cNy2lJjkRqkSt+9VBRH3nD8yGbqS4aJjTYBZjtheXGxNSL+eT0SC8Qr
+ OYNQER+1hh/nvpjVfUWao5FCvFA1ZSdG31CSH2nchB82y/CG9EUD9nI3EUC6Y9EQ4UkK
+ ru8YtFX8aBduENzaF8Z5y7nikS2noRJh3Fk4IosAOJ7a4rcX5Lv1NKDvHXcii9d90P/6
+ 0si1bhDitgyrBuU3Semcg9/cdmMXL2TkEwJhnWQPyx4i9v6kBxuM5oG5KIAYZxudgmLE
+ kJ+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1769794525; x=1770399325;
+ d=1e100.net; s=20230601; t=1769794527; x=1770399327;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=WlcqFC8n6cBujT0d8pZWE5FvC+E9TuzvyW45n3haPSE=;
- b=H6vU7Obq1DtH8vz40sJlUMB9PfUc0aeJ08muDcyTI8iS4LY0Sc5JAHQUzs7FCsOtfw
- IkBKe5euj5I/0sbQo/ZIXm9yu16+o7tmR0BhVBEJCuCpha7NGHcAYcjVY2AuNIWMWkmT
- J6e51NrCVBcfCq2o5jUW0sSCUAqp1UlEt7pVVAu/jH+Fg0MfqB4+YfEi0hIY/1TS0hHb
- V5DrasnnsYzqghFmuH8aJEdZGO41BOTaRAOIAHfAY1gWzqeMCMyURHLZI25DiVFmR2IA
- 04xeVDyt9dIFfy23uAGvxsYRY1iJRe7dMUlnNvAP4CZeK80bdpB2AKqC3PTabytug5/7
- TTXQ==
-X-Gm-Message-State: AOJu0YxpvFup6WI5ne7gkulDKaM4aSK8xsldtPYwxLl8lMuFzH6YCYxX
- SuB5dZlYtcIoKU10UyBimNwlDrne/DwvVg0weJ9OW0CoSFBnOPmesPTgoGbY86q9gkHCtMyFvfM
- 9YGc4
-X-Gm-Gg: AZuq6aLR2YjHO9olzkwuLP0rCoM/Tn8UZrvNDDVCxXxzfwWLG/u4vA5AA05emJoVpTV
- O5oigKug42O9+y2Tru1usx28hQnLj4PlRwcjjt6WnyOR7LXLT19W2uu1HgEQdyV9A76ZTmTX32P
- p6n+6Ymx/m4jd3btnyQx+j8Rc47y8cAmIFFmu8+olxaqm9s89GDS4760A7SUZl2Jvbd2SQ9nSrD
- gRaFmd4aJzZZDX9y/ZJuE8BYNVJ6LsnyD79FXfbl9S9sYVqjctKXYVhW1NEYb/o0QnBshfjfwOl
- g5LOBeXrs0MspghwN4fXCrKwacNCIDra1Ofc2hRqbgsZYR/JySGFIWe+2s4Md0ikt6dmkD5rjj1
- KinzVZj9gNGU1tmIFReUNE2ulrxz1ADpjObSJUMMNhzy1JV2TCiOSo1yzYUCGmzceSWxF2ZCndr
- SnC1HFJ8RIiTiKEaF/ioBuao7+Y/kjnk6ReLt2+IXul3eHtCIVmg==
-X-Received: by 2002:a05:600c:1d1b:b0:475:dd89:acb with SMTP id
- 5b1f17b1804b1-482db493aa8mr47146015e9.22.1769794524856; 
- Fri, 30 Jan 2026 09:35:24 -0800 (PST)
+ bh=MaBGxqkMuz242PdIaohFTUcT3jxVJixntRv8H3W04cY=;
+ b=rIxbB72z+x5KERwkYnroR3PZr1rQKUi+u8zfDRRaqYyhAyJApCnCl6Lw+C+3XOXBMU
+ T33lzFTiJBNraF8++cpQCAEViudtU9qHyAI+8ayYuWzcFaP96ekoJ1oWXQYunFisL/zV
+ jaPZTWXaGvGJg23gqwRuuC0CR5fp/C9kxhCP0R0BVCYOrEulDNojVIfqywtFgUp96n7k
+ L5S3sg8zvYd2dTSLMJzsNFNK1MkVwytlyb4DXRDqXfUB05mTF6XdMaAtS/3dVPVOR5kk
+ HbX7cWBFSFLMF4yOTjJ9X5z/LiUX68vEa6PGWRfY/R7C6Bfgz14PdzGRJQMW5OSltHvi
+ yXGQ==
+X-Gm-Message-State: AOJu0Yy2FnH78MFcayAxHSZ7jCdG1O8rd+y6HeyKh/g4Jua3NCL6G8N1
+ 8qtYIkAqGAxfTerQVOM/TUGUFZ0etyr00EUCBl/jmJblWpvSwIVepacwXylpwbbQ51JhUhDodWR
+ g/HBV
+X-Gm-Gg: AZuq6aJeYNvy0yLJ6cBARQ7ggS0Ky7qSO/SMK2C3cMsaFD4aUAwHZHN9Zz+IqZUM83r
+ UoNirV9OraYmmXDe9VOiB2jSQb1fZ0ula0QBj4P6CxfywXgakddoN116KIcvLt3OyfCPahc2pG7
+ Ht9EhrIzlvbh9ismEO3gVe8GUEFTBuSoI2FQBbCIYQzJ/NMbB57KgGMmZOR3YAO7X3GkfoN60FS
+ ViWjxehEIQFXGtr4wqTWWuWAffrLTw9DodQCPvZUVfiaMoWret/wfhTagy/XuNB4yZUmh/Sg6Rs
+ 9ZCgJB/wOtXxBdLC9PzkjvcH0wztNoLk1vEfhS4pf/fRuV28Tj8Zv1UXz3J6dx7DKs5jn+Hy4IL
+ 3evn9hYC+pIeJnfC/qRZ1MoKDKw2mI0+ICHLa4ELVuAvnqD6HcP1equpGkQq5eHreLe4XOoyMld
+ JmpLKhcz6voug52E7Mu9jiqxJzGLCGZLUXlLIHHY7J2DsHSnTMDg==
+X-Received: by 2002:a05:600c:34cd:b0:477:76bf:e1fb with SMTP id
+ 5b1f17b1804b1-482db46b5edmr48742985e9.16.1769794526690; 
+ Fri, 30 Jan 2026 09:35:26 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-4806ce56490sm201085325e9.12.2026.01.30.09.35.23
+ 5b1f17b1804b1-4806ce56490sm201085325e9.12.2026.01.30.09.35.25
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 30 Jan 2026 09:35:24 -0800 (PST)
+ Fri, 30 Jan 2026 09:35:26 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v11 17/19] net/pcap: clarify maximum received packet
-Date: Fri, 30 Jan 2026 09:33:30 -0800
-Message-ID: <20260130173447.14546-18-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH v11 18/19] net/pcap: add snapshot length devarg
+Date: Fri, 30 Jan 2026 09:33:31 -0800
+Message-ID: <20260130173447.14546-19-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260130173447.14546-1-stephen@networkplumber.org>
 References: <20260106182823.192350-1-stephen@networkplumber.org>
@@ -81,32 +82,537 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The driver has constant RTE_ETH_PCAP_SNAPSHOT_LEN with is set
-to the largest value the pcap library will return, so that should
-also be the largest receive buffer.
+Add a new devarg 'snaplen' to configure the pcap snapshot length,
+which controls the maximum packet size for capture and output.
+
+The snapshot length affects:
+- The pcap_set_snaplen() call when capturing from interfaces
+- The pcap_open_dead() snapshot parameter for output files
+- The reported max_rx_pktlen in device info
+- The reported max_mtu in device info (snaplen - ethernet header)
+
+The default value is 65535 bytes, preserving backward compatibility
+with previous driver behavior.
+
+Example usage:
+  --vdev 'net_pcap0,iface=eth0,snaplen=1518'
+  --vdev 'net_pcap0,rx_pcap=in.pcap,tx_pcap=out.pcap,snaplen=9000'
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/pcap/pcap_ethdev.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ doc/guides/nics/pcap_ring.rst          |  13 ++
+ doc/guides/rel_notes/release_26_03.rst |   1 +
+ drivers/net/pcap/pcap_ethdev.c         | 205 +++++++++++++++----------
+ 3 files changed, 137 insertions(+), 82 deletions(-)
 
+diff --git a/doc/guides/nics/pcap_ring.rst b/doc/guides/nics/pcap_ring.rst
+index 5b9ca71b18..3a3946e4f1 100644
+--- a/doc/guides/nics/pcap_ring.rst
++++ b/doc/guides/nics/pcap_ring.rst
+@@ -132,6 +132,19 @@ Runtime Config Options
+ 
+ In this case, one dummy rx queue is created for each tx queue argument passed
+ 
++- Set the snapshot length for packet capture
++
++ The snapshot length controls the maximum number of bytes captured per packet.
++ This affects both interface capture and pcap file output.
++ The default value is 65535 bytes, which captures complete packets up to the maximum Ethernet jumbo frame size.
++ Reducing this value can improve performance when only packet headers are needed.
++ This can be done with a ``devarg`` ``snaplen``, for example::
++
++   --vdev 'net_pcap0,iface=eth0,snaplen=1518'
++   --vdev 'net_pcap0,rx_pcap=in.pcap,tx_pcap=out.pcap,snaplen=9000'
++
++ The snapshot length also determines the reported ``max_rx_pktlen`` and ``max_mtu`` in device info.
++
+ Examples of Usage
+ ^^^^^^^^^^^^^^^^^
+ 
+diff --git a/doc/guides/rel_notes/release_26_03.rst b/doc/guides/rel_notes/release_26_03.rst
+index 50ba8bf109..3ad3531800 100644
+--- a/doc/guides/rel_notes/release_26_03.rst
++++ b/doc/guides/rel_notes/release_26_03.rst
+@@ -61,6 +61,7 @@ New Features
+   * Added support for reporting link state and speed in ``iface`` mode.
+   * Receive timestamp offload is only done if offload flag set.
+   * Receive timestamps support nanosecond precision.
++  * Added ``snaplen`` devarg to configure packet capture snapshot length.
+ 
+ 
+ Removed Items
 diff --git a/drivers/net/pcap/pcap_ethdev.c b/drivers/net/pcap/pcap_ethdev.c
-index 5e72a985e4..415de46e22 100644
+index 415de46e22..937ed8c91b 100644
 --- a/drivers/net/pcap/pcap_ethdev.c
 +++ b/drivers/net/pcap/pcap_ethdev.c
-@@ -820,10 +820,11 @@ eth_dev_info(struct rte_eth_dev *dev,
+@@ -32,8 +32,6 @@
+ 
+ #include "pcap_osdep.h"
+ 
+-#define RTE_ETH_PCAP_SNAPSHOT_LEN 65535
+-
+ #define ETH_PCAP_RX_PCAP_ARG  "rx_pcap"
+ #define ETH_PCAP_TX_PCAP_ARG  "tx_pcap"
+ #define ETH_PCAP_RX_IFACE_ARG "rx_iface"
+@@ -42,6 +40,9 @@
+ #define ETH_PCAP_IFACE_ARG    "iface"
+ #define ETH_PCAP_PHY_MAC_ARG  "phy_mac"
+ #define ETH_PCAP_INFINITE_RX_ARG  "infinite_rx"
++#define ETH_PCAP_SNAPSHOT_LEN_ARG "snaplen"
++
++#define ETH_PCAP_SNAPSHOT_LEN_DEFAULT 65535
+ 
+ #define ETH_PCAP_ARG_MAXLEN	64
+ 
+@@ -102,6 +103,7 @@ struct pmd_internals {
+ 	char devargs[ETH_PCAP_ARG_MAXLEN];
+ 	struct rte_ether_addr eth_addr;
+ 	int if_index;
++	uint32_t snapshot_len;
+ 	bool single_iface;
+ 	bool phy_mac;
+ 	bool infinite_rx;
+@@ -129,6 +131,7 @@ struct pmd_devargs {
+ struct pmd_devargs_all {
+ 	struct pmd_devargs rx_queues;
+ 	struct pmd_devargs tx_queues;
++	uint32_t snapshot_len;
+ 	bool single_iface;
+ 	bool is_tx_pcap;
+ 	bool is_tx_iface;
+@@ -146,11 +149,16 @@ static const char *valid_arguments[] = {
+ 	ETH_PCAP_IFACE_ARG,
+ 	ETH_PCAP_PHY_MAC_ARG,
+ 	ETH_PCAP_INFINITE_RX_ARG,
++	ETH_PCAP_SNAPSHOT_LEN_ARG,
+ 	NULL
+ };
+ 
+ RTE_LOG_REGISTER_DEFAULT(eth_pcap_logtype, NOTICE);
+ 
++/* Forward declaration */
++static inline int set_iface_direction(const char *iface, pcap_t *pcap,
++				      pcap_direction_t direction);
++
+ static struct queue_missed_stat*
+ queue_missed_stat_update(struct rte_eth_dev *dev, unsigned int qid)
+ {
+@@ -402,20 +410,19 @@ calculate_timestamp(struct timeval *ts)
+ static uint16_t
+ eth_pcap_tx_dumper(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
+ {
+-	unsigned int i;
+-	struct pmd_process_private *pp;
+ 	struct pcap_tx_queue *dumper_q = queue;
++	struct rte_eth_dev *dev = &rte_eth_devices[dumper_q->port_id];
++	struct pmd_internals *internals = dev->data->dev_private;
++	struct pmd_process_private *pp = dev->process_private;
++	pcap_dumper_t *dumper = pp->tx_dumper[dumper_q->queue_id];
++	unsigned char *temp_data = dumper_q->bounce_buf;
++	uint32_t snaplen = internals->snapshot_len;
+ 	uint16_t num_tx = 0;
+ 	uint32_t tx_bytes = 0;
+ 	struct pcap_pkthdr header;
+-	pcap_dumper_t *dumper;
+-	unsigned char *temp_data;
+-
+-	pp = rte_eth_devices[dumper_q->port_id].process_private;
+-	dumper = pp->tx_dumper[dumper_q->queue_id];
+-	temp_data = dumper_q->bounce_buf;
++	unsigned int i;
+ 
+-	if (dumper == NULL || nb_pkts == 0)
++	if (unlikely(dumper == NULL))
+ 		return 0;
+ 
+ 	/* all packets in burst have same timestamp */
+@@ -433,7 +440,8 @@ eth_pcap_tx_dumper(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
+ 				continue;
+ 		}
+ 
+-		len = caplen = rte_pktmbuf_pkt_len(mbuf);
++		len = rte_pktmbuf_pkt_len(mbuf);
++		caplen = RTE_MIN(len, snaplen);
+ 		header.len = len;
+ 		header.caplen = caplen;
+ 
+@@ -486,25 +494,22 @@ eth_tx_drop(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
+ static uint16_t
+ eth_pcap_tx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
+ {
+-	unsigned int i;
+-	struct pmd_process_private *pp;
+ 	struct pcap_tx_queue *tx_queue = queue;
++	struct rte_eth_dev *dev = &rte_eth_devices[tx_queue->port_id];
++	struct pmd_internals *internals = dev->data->dev_private;
++	struct pmd_process_private *pp = dev->process_private;
++	pcap_t *pcap = pp->tx_pcap[tx_queue->queue_id];
++	unsigned char *temp_data = tx_queue->bounce_buf;
++	uint32_t snaplen = internals->snapshot_len;
+ 	uint16_t num_tx = 0;
+ 	uint32_t tx_bytes = 0;
+-	pcap_t *pcap;
+-	unsigned char *temp_data;
+-
+-	pp = rte_eth_devices[tx_queue->port_id].process_private;
+-	pcap = pp->tx_pcap[tx_queue->queue_id];
+-	temp_data = tx_queue->bounce_buf;
++	unsigned int i;
+ 
+-	if (unlikely(nb_pkts == 0 || pcap == NULL))
++	if (unlikely(pcap == NULL))
+ 		return 0;
+ 
+ 	for (i = 0; i < nb_pkts; i++) {
+ 		struct rte_mbuf *mbuf = bufs[i];
+-		uint32_t len = rte_pktmbuf_pkt_len(mbuf);
+-		const uint8_t *data;
+ 
+ 		if (mbuf->ol_flags & RTE_MBUF_F_TX_VLAN) {
+ 			/* if vlan insert fails treat it as error */
+@@ -512,10 +517,21 @@ eth_pcap_tx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
+ 				continue;
+ 		}
+ 
+-		data = rte_pktmbuf_read(mbuf, 0, len, temp_data);
++		uint32_t len = rte_pktmbuf_pkt_len(mbuf);
++		/* Is bounce buffer needed and is it big enough. */
++		if (unlikely(mbuf->nb_segs > 1 && len > snaplen)) {
++			PMD_LOG(DEBUG, "multi-segment mbuf %u > packet size %u",
++				len, snaplen);
++			continue;
++		}
++
++		const uint8_t *data = rte_pktmbuf_read(mbuf, 0, len, temp_data);
+ 		if (likely(data != NULL && pcap_sendpacket(pcap, data, len) == 0)) {
+ 			num_tx++;
+ 			tx_bytes += len;
++		} else if (data != NULL) {
++			PMD_LOG(DEBUG, "pcap_sendpacket failed: %s",
++				pcap_geterr(pcap));
+ 		}
+ 	}
+ 
+@@ -532,7 +548,7 @@ eth_pcap_tx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
+  * pcap_open_live wrapper function
+  */
+ static inline int
+-open_iface_live(const char *iface, pcap_t **pcap)
++open_iface_live(const char *iface, pcap_t **pcap, uint32_t snaplen)
+ {
+ 	char errbuf[PCAP_ERRBUF_SIZE];
+ 	pcap_t *pc;
+@@ -561,7 +577,7 @@ open_iface_live(const char *iface, pcap_t **pcap)
+ 		PMD_LOG(WARNING, "%s: Could not set to promiscuous: %s",
+ 			iface, pcap_statustostr(status));
+ 
+-	status = pcap_set_snaplen(pc, RTE_ETH_PCAP_SNAPSHOT_LEN);
++	status = pcap_set_snaplen(pc, snaplen);
+ 	if (status != 0)
+ 		PMD_LOG(WARNING, "%s: Could not set snapshot length: %s",
+ 			iface, pcap_statustostr(status));
+@@ -575,6 +591,9 @@ open_iface_live(const char *iface, pcap_t **pcap)
+ 		else
+ 			PMD_LOG(ERR, "%s: %s (%s)", iface, pcap_statustostr(status), cp);
+ 		goto error;
++	} else if (status > 0) {
++		/* Warning condition - log but continue */
++		PMD_LOG(WARNING, "%s: %s", iface, pcap_statustostr(status));
+ 	}
+ 
+ 	/*
+@@ -603,9 +622,9 @@ open_iface_live(const char *iface, pcap_t **pcap)
+ }
+ 
+ static int
+-open_single_iface(const char *iface, pcap_t **pcap)
++open_single_iface(const char *iface, pcap_t **pcap, uint32_t snaplen)
+ {
+-	if (open_iface_live(iface, pcap) < 0) {
++	if (open_iface_live(iface, pcap, snaplen) < 0) {
+ 		PMD_LOG(ERR, "Couldn't open interface %s", iface);
+ 		return -1;
+ 	}
+@@ -614,7 +633,8 @@ open_single_iface(const char *iface, pcap_t **pcap)
+ }
+ 
+ static int
+-open_single_tx_pcap(const char *pcap_filename, pcap_dumper_t **dumper)
++open_single_tx_pcap(const char *pcap_filename, pcap_dumper_t **dumper,
++		    uint32_t snaplen)
+ {
+ 	pcap_t *tx_pcap;
+ 
+@@ -624,7 +644,7 @@ open_single_tx_pcap(const char *pcap_filename, pcap_dumper_t **dumper)
+ 	 * pcap holder.
+ 	 */
+ 	tx_pcap = pcap_open_dead_with_tstamp_precision(DLT_EN10MB,
+-			RTE_ETH_PCAP_SNAPSHOT_LEN, PCAP_TSTAMP_PRECISION_NANO);
++			snaplen, PCAP_TSTAMP_PRECISION_NANO);
+ 	if (tx_pcap == NULL) {
+ 		PMD_LOG(ERR, "Couldn't create dead pcap");
+ 		return -1;
+@@ -633,9 +653,9 @@ open_single_tx_pcap(const char *pcap_filename, pcap_dumper_t **dumper)
+ 	/* The dumper is created using the previous pcap_t reference */
+ 	*dumper = pcap_dump_open(tx_pcap, pcap_filename);
+ 	if (*dumper == NULL) {
++		PMD_LOG(ERR, "Couldn't open %s for writing: %s",
++			pcap_filename, pcap_geterr(tx_pcap));
+ 		pcap_close(tx_pcap);
+-		PMD_LOG(ERR, "Couldn't open %s for writing.",
+-			pcap_filename);
+ 		return -1;
+ 	}
+ 
+@@ -685,6 +705,7 @@ eth_dev_start(struct rte_eth_dev *dev)
+ 	struct pmd_process_private *pp = dev->process_private;
+ 	struct pcap_tx_queue *tx;
+ 	struct pcap_rx_queue *rx;
++	uint32_t snaplen = internals->snapshot_len;
+ 
+ 	/* Special iface case. Single pcap is open and shared between tx/rx. */
+ 	if (internals->single_iface) {
+@@ -693,7 +714,7 @@ eth_dev_start(struct rte_eth_dev *dev)
+ 
+ 		if (!pp->tx_pcap[0] &&
+ 			strcmp(tx->type, ETH_PCAP_IFACE_ARG) == 0) {
+-			if (open_single_iface(tx->name, &pp->tx_pcap[0]) < 0)
++			if (open_single_iface(tx->name, &pp->tx_pcap[0], snaplen) < 0)
+ 				return -1;
+ 			pp->rx_pcap[0] = pp->tx_pcap[0];
+ 		}
+@@ -705,14 +726,11 @@ eth_dev_start(struct rte_eth_dev *dev)
+ 	for (i = 0; i < dev->data->nb_tx_queues; i++) {
+ 		tx = &internals->tx_queue[i];
+ 
+-		if (!pp->tx_dumper[i] &&
+-				strcmp(tx->type, ETH_PCAP_TX_PCAP_ARG) == 0) {
+-			if (open_single_tx_pcap(tx->name,
+-				&pp->tx_dumper[i]) < 0)
++		if (!pp->tx_dumper[i] && strcmp(tx->type, ETH_PCAP_TX_PCAP_ARG) == 0) {
++			if (open_single_tx_pcap(tx->name, &pp->tx_dumper[i], snaplen) < 0)
+ 				return -1;
+-		} else if (!pp->tx_pcap[i] &&
+-				strcmp(tx->type, ETH_PCAP_TX_IFACE_ARG) == 0) {
+-			if (open_single_iface(tx->name, &pp->tx_pcap[i]) < 0)
++		} else if (!pp->tx_pcap[i] && strcmp(tx->type, ETH_PCAP_TX_IFACE_ARG) == 0) {
++			if (open_single_iface(tx->name, &pp->tx_pcap[i], snaplen) < 0)
+ 				return -1;
+ 		}
+ 	}
+@@ -727,9 +745,14 @@ eth_dev_start(struct rte_eth_dev *dev)
+ 		if (strcmp(rx->type, ETH_PCAP_RX_PCAP_ARG) == 0) {
+ 			if (open_single_rx_pcap(rx->name, &pp->rx_pcap[i]) < 0)
+ 				return -1;
+-		} else if (strcmp(rx->type, ETH_PCAP_RX_IFACE_ARG) == 0) {
+-			if (open_single_iface(rx->name, &pp->rx_pcap[i]) < 0)
++		} else if (strcmp(rx->type, ETH_PCAP_RX_IFACE_ARG) == 0 ||
++			   strcmp(rx->type, ETH_PCAP_RX_IFACE_IN_ARG) == 0) {
++			if (open_single_iface(rx->name, &pp->rx_pcap[i], snaplen) < 0)
+ 				return -1;
++			/* Set direction for rx_iface_in */
++			if (strcmp(rx->type, ETH_PCAP_RX_IFACE_IN_ARG) == 0)
++				set_iface_direction(rx->name, pp->rx_pcap[i],
++						    PCAP_D_IN);
+ 		}
+ 	}
+ 
+@@ -820,11 +843,11 @@ eth_dev_info(struct rte_eth_dev *dev,
  
  	dev_info->if_index = internals->if_index;
  	dev_info->max_mac_addrs = 1;
--	dev_info->max_rx_pktlen = (uint32_t) -1;
-+	dev_info->max_rx_pktlen = RTE_ETH_PCAP_SNAPSHOT_LEN;
+-	dev_info->max_rx_pktlen = RTE_ETH_PCAP_SNAPSHOT_LEN;
++	dev_info->max_rx_pktlen = internals->snapshot_len;
  	dev_info->max_rx_queues = dev->data->nb_rx_queues;
  	dev_info->max_tx_queues = dev->data->nb_tx_queues;
- 	dev_info->min_rx_bufsize = 0;
-+	dev_info->max_mtu = RTE_ETH_PCAP_SNAPSHOT_LEN - RTE_ETHER_HDR_LEN;
+-	dev_info->min_rx_bufsize = 0;
+-	dev_info->max_mtu = RTE_ETH_PCAP_SNAPSHOT_LEN - RTE_ETHER_HDR_LEN;
++	dev_info->min_rx_bufsize = RTE_ETHER_MIN_LEN;
++	dev_info->max_mtu = internals->snapshot_len - RTE_ETHER_HDR_LEN;
  	dev_info->tx_offload_capa = RTE_ETH_TX_OFFLOAD_MULTI_SEGS |
  		RTE_ETH_TX_OFFLOAD_VLAN_INSERT;
  	dev_info->rx_offload_capa = RTE_ETH_RX_OFFLOAD_VLAN_STRIP |
+@@ -1124,7 +1147,7 @@ eth_tx_queue_setup(struct rte_eth_dev *dev,
+ 
+ 	pcap_q->port_id = dev->data->port_id;
+ 	pcap_q->queue_id = tx_queue_id;
+-	pcap_q->bounce_buf = rte_malloc_socket(NULL, RTE_ETH_PCAP_SNAPSHOT_LEN,
++	pcap_q->bounce_buf = rte_malloc_socket(NULL, internals->snapshot_len,
+ 					       RTE_CACHE_LINE_SIZE, socket_id);
+ 	if (pcap_q->bounce_buf == NULL)
+ 		return -ENOMEM;
+@@ -1245,41 +1268,32 @@ open_rx_pcap(const char *key, const char *value, void *extra_args)
+ }
+ 
+ /*
+- * Opens a pcap file for writing and stores a reference to it
+- * for use it later on.
++ * Store TX pcap file configuration.
++ * The actual pcap dumper is opened in eth_dev_start().
+  */
+ static int
+ open_tx_pcap(const char *key, const char *value, void *extra_args)
+ {
+ 	const char *pcap_filename = value;
+ 	struct pmd_devargs *dumpers = extra_args;
+-	pcap_dumper_t *dumper;
+ 
+-	if (open_single_tx_pcap(pcap_filename, &dumper) < 0)
++	if (add_queue(dumpers, pcap_filename, key, NULL, NULL) < 0)
+ 		return -1;
+ 
+-	if (add_queue(dumpers, pcap_filename, key, NULL, dumper) < 0) {
+-		pcap_dump_close(dumper);
+-		return -1;
+-	}
+-
+ 	return 0;
+ }
+ 
+ /*
+- * Opens an interface for reading and writing
++ * Store interface configuration for reading and writing.
++ * The actual pcap handle is opened in eth_dev_start().
+  */
+ static inline int
+ open_rx_tx_iface(const char *key, const char *value, void *extra_args)
+ {
+ 	const char *iface = value;
+ 	struct pmd_devargs *tx = extra_args;
+-	pcap_t *pcap = NULL;
+-
+-	if (open_single_iface(iface, &pcap) < 0)
+-		return -1;
+ 
+-	tx->queue[0].pcap = pcap;
++	tx->queue[0].pcap = NULL;
+ 	tx->queue[0].name = iface;
+ 	tx->queue[0].type = key;
+ 
+@@ -1301,42 +1315,30 @@ set_iface_direction(const char *iface, pcap_t *pcap,
+ 	return 0;
+ }
+ 
++/*
++ * Store interface configuration.
++ * The actual pcap handle is opened in eth_dev_start().
++ */
+ static inline int
+ open_iface(const char *key, const char *value, void *extra_args)
+ {
+ 	const char *iface = value;
+ 	struct pmd_devargs *pmd = extra_args;
+-	pcap_t *pcap = NULL;
+ 
+-	if (open_single_iface(iface, &pcap) < 0)
++	if (add_queue(pmd, iface, key, NULL, NULL) < 0)
+ 		return -1;
+-	if (add_queue(pmd, iface, key, pcap, NULL) < 0) {
+-		pcap_close(pcap);
+-		return -1;
+-	}
+ 
+ 	return 0;
+ }
+ 
+ /*
+- * Opens a NIC for reading packets from it
++ * Store RX interface configuration.
++ * The actual pcap handle is opened and direction set in eth_dev_start().
+  */
+ static inline int
+ open_rx_iface(const char *key, const char *value, void *extra_args)
+ {
+-	int ret = open_iface(key, value, extra_args);
+-	if (ret < 0)
+-		return ret;
+-	if (strcmp(key, ETH_PCAP_RX_IFACE_IN_ARG) == 0) {
+-		struct pmd_devargs *pmd = extra_args;
+-		unsigned int qid = pmd->num_of_queue - 1;
+-
+-		set_iface_direction(pmd->queue[qid].name,
+-				pmd->queue[qid].pcap,
+-				PCAP_D_IN);
+-	}
+-
+-	return 0;
++	return open_iface(key, value, extra_args);
+ }
+ 
+ static inline int
+@@ -1376,6 +1378,30 @@ process_bool_flag(const char *key, const char *value, void *extra_args)
+ 	return 0;
+ }
+ 
++static int
++process_snapshot_len(const char *key, const char *value, void *extra_args)
++{
++	uint32_t *snaplen = extra_args;
++	unsigned long val;
++	char *endptr;
++
++	if (value == NULL || *value == '\0') {
++		PMD_LOG(ERR, "Argument '%s' requires a value", key);
++		return -1;
++	}
++
++	errno = 0;
++	val = strtoul(value, &endptr, 10);
++	if (errno != 0 || *endptr != '\0' ||
++	    val < RTE_ETHER_HDR_LEN || val > UINT32_MAX) {
++		PMD_LOG(ERR, "Invalid '%s' value '%s'", key, value);
++		return -1;
++	}
++
++	*snaplen = (uint32_t)val;
++	return 0;
++}
++
+ static int
+ pmd_init_internals(struct rte_vdev_device *vdev,
+ 		const unsigned int nb_rx_queues,
+@@ -1540,6 +1566,8 @@ eth_from_pcaps(struct rte_vdev_device *vdev,
+ 	}
+ 
+ 	internals->infinite_rx = infinite_rx;
++	internals->snapshot_len = devargs_all->snapshot_len;
++
+ 	/* Assign rx ops. */
+ 	if (infinite_rx)
+ 		eth_dev->rx_pkt_burst = eth_pcap_rx_infinite;
+@@ -1600,6 +1628,7 @@ pmd_pcap_probe(struct rte_vdev_device *dev)
+ 	int ret = 0;
+ 
+ 	struct pmd_devargs_all devargs_all = {
++		.snapshot_len = ETH_PCAP_SNAPSHOT_LEN_DEFAULT,
+ 		.single_iface = 0,
+ 		.is_tx_pcap = 0,
+ 		.is_tx_iface = 0,
+@@ -1641,6 +1670,17 @@ pmd_pcap_probe(struct rte_vdev_device *dev)
+ 			return -1;
+ 	}
+ 
++	/*
++	 * Process optional snapshot length argument.
++	 */
++	if (rte_kvargs_count(kvlist, ETH_PCAP_SNAPSHOT_LEN_ARG) == 1) {
++		ret = rte_kvargs_process(kvlist, ETH_PCAP_SNAPSHOT_LEN_ARG,
++					 &process_snapshot_len,
++					 &devargs_all.snapshot_len);
++		if (ret < 0)
++			goto free_kvlist;
++	}
++
+ 	/*
+ 	 * If iface argument is passed we open the NICs and use them for
+ 	 * reading / writing
+@@ -1847,4 +1887,5 @@ RTE_PMD_REGISTER_PARAM_STRING(net_pcap,
+ 	ETH_PCAP_TX_IFACE_ARG "=<ifc> "
+ 	ETH_PCAP_IFACE_ARG "=<ifc> "
+ 	ETH_PCAP_PHY_MAC_ARG "=<0|1> "
+-	ETH_PCAP_INFINITE_RX_ARG "=<0|1>");
++	ETH_PCAP_INFINITE_RX_ARG "=<0|1> "
++	ETH_PCAP_SNAPSHOT_LEN_ARG "=<int>");
 -- 
 2.51.0
 
