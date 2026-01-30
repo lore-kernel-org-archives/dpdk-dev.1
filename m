@@ -2,67 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D724BD73EB7
-	for <dpdk-dev@archiver.kernel.org>; Fri, 30 Jan 2026 05:22:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C431BD73EB7
+	for <dpdk-dev@archiver.kernel.org>; Fri, 30 Jan 2026 05:22:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9FEDC402E8;
-	Fri, 30 Jan 2026 06:21:55 +0100 (CET)
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com
- [209.85.128.54]) by mails.dpdk.org (Postfix) with ESMTP id C8598402F0
- for <dev@dpdk.org>; Fri, 30 Jan 2026 06:21:52 +0100 (CET)
-Received: by mail-wm1-f54.google.com with SMTP id
- 5b1f17b1804b1-47fedb7c68dso17505005e9.2
- for <dev@dpdk.org>; Thu, 29 Jan 2026 21:21:52 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id D241C40649;
+	Fri, 30 Jan 2026 06:21:56 +0100 (CET)
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com
+ [209.85.221.49]) by mails.dpdk.org (Postfix) with ESMTP id E7EE840150
+ for <dev@dpdk.org>; Fri, 30 Jan 2026 06:21:54 +0100 (CET)
+Received: by mail-wr1-f49.google.com with SMTP id
+ ffacd0b85a97d-435903c4040so1148165f8f.3
+ for <dev@dpdk.org>; Thu, 29 Jan 2026 21:21:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769750512;
- x=1770355312; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769750514;
+ x=1770355314; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=bCarlbCP6+ZUc2h7goQh+psgyAEUNY5s2Fc9ccpKcQ4=;
- b=No6I3+4byH08HPSZQBE4KFXMfj/TDprN5cDtegXIXI6rEuX6scEmP7/6Elk5C0YYtI
- rTTxi68KYcDkjMylBJOgKnye8XR17v8/hY9FijqGsoetYujLwa1OVedDa/YIRx7XbV+L
- kmtyJ7XqfdMjgAP8IAC6W5zKH6ilBYUndhjlFsSvKIkRloqvAtaQChUiBC/HqNY0TEr3
- dISnUuMBg8i7DpovB6qv/93lwqqMkJAWOnJ5/8O7TVNYnCsLBmLccZpCCh92HriUHUiY
- kAOcEKGPXFV6i0aMb6SZNVfWkbYGlKlBRWY6DvjIlvwFmkgb1twrCgdUDTfOA/wzWF/Q
- c16A==
+ bh=fVTc+BcxiiTtv/kBghSS0vQERGObVezK+FcOmGnCCKM=;
+ b=pRoxsKkP+rgCIIYfQUpiHsLR5XQJ8DQIAdYQfzokJyhMUp6Dd2W/TmfyofqxYg7BLp
+ kVb1w5s87V5Dbyjb3WCFkQ0UV5phECKK0gRY01ftbPotYS2QLrZSIHnU9lp+p25G2rX0
+ b++spwXSef8hwbfD7lP4U6Afnydw2BE2oHYuhvFMYx2hvWtwrCVebgZvD1alOTGneSpT
+ jJDkPXNeGcUJr/RsNvk7Zu3ZtxnVE9ccryMq0TS7YmBhNc3i0FWc1yOdphPKW7vpk8D8
+ sdUnN/pmlcTbtpej5z2936ZyhBOwfz+Ifu5Ep4oL5J1STB0o1p6yAO0eBJ5Os0WL4+Gl
+ zHyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1769750512; x=1770355312;
+ d=1e100.net; s=20230601; t=1769750514; x=1770355314;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=bCarlbCP6+ZUc2h7goQh+psgyAEUNY5s2Fc9ccpKcQ4=;
- b=kH6OiMR0ZUbM+e6l0uLD6C45zzordnUCjWje8y3Rzu5O3Q9Hwucbqyb6R3jQ+OulzN
- S/levn6Ku0X5EI77VvYphg6yeZBo2nF/B388sbpbxLsKJ9iMyNpCxyBNKbQHOyKOvvii
- 1BkQd7BPDDvLyJHk34SjOsfCdZZFS4VMNHSO6c1ukzd/kJ6MSrduWu0ZIJMMj+KS+176
- vkNQ/jR5zUCyB12zyskULtZRXrEptooK+w40znJfHZ11j23IgumrDOi+1yAVcd65wD+G
- C6AXOKsetHWh9vVqcDagxyZEKmhqG6OrUH8KFCW3mefzYo1MiaZpJoKhO/b4XjO4+JSa
- Umkg==
-X-Gm-Message-State: AOJu0YyWQvLd9ArfXfX/fhx83/arBusOFrDt+q+XfNQHfhRjbRn+t9JT
- OkDMDVPRtoexgpNH0XpSaTv3LBEzM9tbVWHjHBe6Od84olnbRHq+YHYxmDfbtkb1p8X9beb6ajQ
- 6FDnv
-X-Gm-Gg: AZuq6aIwAep7A4meXf1x8AkVGPG93+ldwn8G/ewI6MZWClAqpMAXK39qKyRTONYSwqP
- ZR9Z9EJmPAAF7bk9UaCyAT+O6RKwrmUQwOSHle/+B53EaVNZdhgIgNp04+37vbSzcUnpbtuskNV
- AWQxSd4pq2mU4aVy4nzigRbdOrxMpVPwEmx6ORfePmGk16gFPvPmzEhMr59g9yyBrxrwTLtkQyE
- /IzhhqcQuIMlITLoyaf1GN+C6yw3NubnK+2LuMjuBFwaD+0zGGFBWQw+DT6j+dWjJeQBoprTJKS
- KDKKKOW5ZGNzBGD2ngxXPFkM/OOL+IKLgmJAXV7cVhYNgrBmR5NA3gXi2uU8UXvP5dazx46mGPc
- wB3jB9c8YduQwampYtgN42NynSIC8Zlmw5+ePICsahJeO940u+mGQj1aRaYji4VdsUdlVZ+FetU
- SOR/wXoN6X+0Rj6S50FdaEvwXrMqKhmBFwIyKPVZ32So6s63xPTA==
-X-Received: by 2002:a05:600c:64c8:b0:47d:264e:b435 with SMTP id
- 5b1f17b1804b1-482db48cb4amr18522435e9.22.1769750512424; 
- Thu, 29 Jan 2026 21:21:52 -0800 (PST)
+ bh=fVTc+BcxiiTtv/kBghSS0vQERGObVezK+FcOmGnCCKM=;
+ b=txAXjmXe5YyPDEQB6efbauqoaer6Am8U+GpIqbrJ9LpOlPuRiIVmH2aRjxipN8Wxcl
+ H7dzG+ewDhi0mPqh0TLWb1UbgxoNat0dyIGell0B96b8R5tN0myVUVEm+fhhpc6BkdFu
+ 6JRoVnXnqMzoK0VMfiletkGhMZ6tfT1g/KUexr6/VKMKkvbp/wYm1qgjGzj9XjCqOagd
+ 1AqqzaWLqzQkEmM1/wXs8Y9J1nM8QrLe5JeckRbWR7ypvi5ycS/Uh2hCkllVXJq1/0V6
+ 5NowJKU319TJRWl4P0qmjXHpyqrczGkCEw1Pjten1BthCBCVRRzPYjvijUW0+BU4LiTS
+ mdyw==
+X-Gm-Message-State: AOJu0YxOq5jrDQ2gA83bJi26PlNHA7iMuvU//57Kj5IaIzOs1eLxv7g6
+ COea+ReQifbt3B3t8DF2u3Sdbj7ZJ7n81txzx66n+oI8boYixFx+oKoUhDJ1y5saZU5lnPCMcYE
+ XwKbd
+X-Gm-Gg: AZuq6aJ1PQhuQxi0+24AVRBsgCV+jnZOWc2vE9x9mIQo5tJB1eJeYQLYBsVXGwar8DT
+ mTxkNUJu8SMy8uhvk7tmvmd2ALLHTiZo18LmIbNmKSIfCR0eNhv2urQbAtbb0aWu0L3gWwCqKXs
+ k6Fm0wz7sJdsDaNcxyjgE0bWrWSpuww+/x2QWd7Mm9KSEw7safKXLOzdYQ3sJH5KTxnKZugXeQZ
+ oecaVO8L5/+avff1mgIIMtKepAD+bwsK+aYGxy4PQdoW7JrclT65swyv8uwnZ30noI9Qmi4rowl
+ 2ZNbZfNEyrMXzj8V0kp26S2GN8cl9ZqVkMupl0EDcGwC4Gjh3PrqfeOMlDx4S0PQmmh9QiiU6L4
+ ZFXxzbHmTnwCjCH1iz/hpqrrtzu8OcMT+RGl01Ur0iPBcaLs06DQ0MeKkG3qJJlA7fTQwLtijTR
+ w/4UZUzMeA37yKIrLf605xekQTG9XsvdJNKTUIOOFSHc9GWZq4UA==
+X-Received: by 2002:a05:6000:2dc9:b0:435:9b3d:d969 with SMTP id
+ ffacd0b85a97d-435f3a86766mr2290823f8f.21.1769750514551; 
+ Thu, 29 Jan 2026 21:21:54 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-435e1323034sm19182107f8f.35.2026.01.29.21.21.50
+ ffacd0b85a97d-435e1323034sm19182107f8f.35.2026.01.29.21.21.52
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 29 Jan 2026 21:21:51 -0800 (PST)
+ Thu, 29 Jan 2026 21:21:54 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
- Gaetan Rivet <grive@u256.net>, Matan Azrad <matan@nvidia.com>
-Subject: [RFC 2/6] net/failsafe: fix hotplug_mutex for multi-process
-Date: Thu, 29 Jan 2026 21:17:33 -0800
-Message-ID: <20260130052142.251649-3-stephen@networkplumber.org>
+ Igor Russkikh <irusskikh@marvell.com>,
+ Pavel Belous <pavel.belous@aquantia.com>
+Subject: [RFC 3/6] net/atlantic: fix mbox_mutex for multi-process
+Date: Thu, 29 Jan 2026 21:17:34 -0800
+Message-ID: <20260130052142.251649-4-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260130052142.251649-1-stephen@networkplumber.org>
 References: <20260130052142.251649-1-stephen@networkplumber.org>
@@ -81,54 +82,68 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The failsafe driver supports secondary process attachment via
-rte_eth_dev_attach_secondary() in rte_pmd_failsafe_probe(). The
-hotplug_mutex in fs_priv protects shared state but is initialized
-without PTHREAD_PROCESS_SHARED attribute.
+The Atlantic driver supports secondary processes, as shown by the
+explicit check in eth_atl_dev_init(). The mbox_mutex in aq_hw_s
+is located in dev_private which is in shared memory accessible
+by both primary and secondary processes.
+
+However, the mutex is initialized without PTHREAD_PROCESS_SHARED
+attribute, which means synchronization between processes is
+undefined behavior.
 
 POSIX mutexes are by default private to the process creating them.
-When a mutex protects data structures accessed by multiple processes,
-pthread_mutexattr_setpshared() must be called with PTHREAD_PROCESS_SHARED.
-
-Also add missing pthread_mutexattr_destroy() call to avoid resource leak.
+When a mutex protects data structures in shared memory that are
+accessed by multiple processes, pthread_mutexattr_setpshared() must
+be called with PTHREAD_PROCESS_SHARED.
 
 Bugzilla ID: 662
-Fixes: 655fcd68c7d2 ("net/failsafe: fix hotplug races")
+Fixes: e9924638f5c9 ("net/atlantic: add FW mailbox guard mutex")
 Cc: stable@dpdk.org
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/failsafe/failsafe.c | 15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
+ drivers/net/atlantic/atl_ethdev.c | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/failsafe/failsafe.c b/drivers/net/failsafe/failsafe.c
-index 3e590d38f7..aa3fe53b22 100644
---- a/drivers/net/failsafe/failsafe.c
-+++ b/drivers/net/failsafe/failsafe.c
-@@ -144,11 +144,20 @@ fs_mutex_init(struct fs_priv *priv)
- 	/* Allow mutex relocks for the thread holding the mutex. */
- 	ret = pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
- 	if (ret) {
--		ERROR("Cannot set mutex type - %s", strerror(ret));
--		return ret;
-+		ERROR("Cannot set mutex recursive - %s", strerror(ret));
-+		goto out;
-+	}
-+	/* Allow mutex to be shared between processes. */
-+	ret = pthread_mutexattr_setpshared(&attr, PTHREAD_PROCESS_SHARED);
-+	if (ret) {
-+		ERROR("Cannot set mutex pshared - %s", strerror(ret));
-+		goto out;
- 	}
-+	pthread_mutex_init(&priv->hotplug_mutex, &attr);
+diff --git a/drivers/net/atlantic/atl_ethdev.c b/drivers/net/atlantic/atl_ethdev.c
+index 2925dc2478..7282f9b691 100644
+--- a/drivers/net/atlantic/atl_ethdev.c
++++ b/drivers/net/atlantic/atl_ethdev.c
+@@ -3,6 +3,7 @@
+  */
  
--	return pthread_mutex_init(&priv->hotplug_mutex, &attr);
-+out:
-+	pthread_mutexattr_destroy(&attr);
-+	return ret;
+ #include <rte_string_fns.h>
++#include <pthread.h>
+ #include <ethdev_pci.h>
+ #include <rte_alarm.h>
+ 
+@@ -355,6 +356,17 @@ atl_disable_intr(struct aq_hw_s *hw)
+ 	hw_atl_itr_irq_msk_clearlsw_set(hw, 0xffffffff);
  }
  
++static void
++atl_init_mutex(pthread_mutex_t *mutex)
++{
++	pthread_mutexattr_t attr;
++
++	pthread_mutexattr_init(&attr);
++	pthread_mutexattr_setpshared(&attr, PTHREAD_PROCESS_SHARED);
++	pthread_mutex_init(mutex, &attr);
++	pthread_mutexattr_destroy(&attr);
++}
++
  static int
+ eth_atl_dev_init(struct rte_eth_dev *eth_dev)
+ {
+@@ -405,7 +417,7 @@ eth_atl_dev_init(struct rte_eth_dev *eth_dev)
+ 
+ 	hw->aq_nic_cfg = &adapter->hw_cfg;
+ 
+-	pthread_mutex_init(&hw->mbox_mutex, NULL);
++	atl_init_mutex(&hw->mbox_mutex);
+ 
+ 	/* disable interrupt */
+ 	atl_disable_intr(hw);
 -- 
 2.51.0
 
