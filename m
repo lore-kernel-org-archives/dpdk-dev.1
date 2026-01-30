@@ -2,83 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C84DDE6BF1B
-	for <dpdk-dev@archiver.kernel.org>; Fri, 30 Jan 2026 15:50:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4049E6BF1E
+	for <dpdk-dev@archiver.kernel.org>; Fri, 30 Jan 2026 16:20:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DA601402AF;
-	Fri, 30 Jan 2026 16:50:05 +0100 (CET)
-Received: from mail-dl1-f42.google.com (mail-dl1-f42.google.com [74.125.82.42])
- by mails.dpdk.org (Postfix) with ESMTP id 1214940274
- for <dev@dpdk.org>; Fri, 30 Jan 2026 16:50:04 +0100 (CET)
-Received: by mail-dl1-f42.google.com with SMTP id
- a92af1059eb24-124877d78a6so2811533c88.1
- for <dev@dpdk.org>; Fri, 30 Jan 2026 07:50:03 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1769788203; cv=none;
- d=google.com; s=arc-20240605;
- b=d17+mVVuAHH9rY29CAPHn6kv8kDEpbVf07M8qUVcSVHDm604iCEzsFIfkLkJd+ENDs
- K7DOLvzHqRPi+O5vqPA0o8sP0yszfl6m5aU+JhzwGgacRHNtVtMQejOTyb5GvvTQ7iK8
- QxXvS+iyg8739jAPhnXIuTHo0IcirmNXyWnuqpHGe5u+dBTTzTmA7s8oQVaV2Uu+LlOS
- k7RBMQIZef+fKmbRVZGIAG9HwmB0MAYKfTXah4UpNi3DzGt64Rldb0Lrupl5bjBnYDA1
- jrJVC/AX78siS6GIq1/z74wQtSWETBmb+HawbHPmjMPG5aQmRKccExNayBF4JkKaE9ME
- e56g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20240605; 
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:dkim-signature;
- bh=3CW7ofRf5SK94iNb1i4N5MXB38N2ZXT4XqNUxq2uP9Q=;
- fh=2W0PFbjewz8ZnRJ40XN4dirXyVKEkha224G7MuvK+S4=;
- b=TK1h+piiLb8aV4Nmhfh8HAs4smPh2siakww3zSjZzdmNDYSg4KpaatNnlheufhjbaJ
- d5/crYOa3rP/Wx7Q3tV9rPlmvFpMxiUJPy1H/jYQrexRhnFoCH9Dq+RlxRz+510oZTOG
- PVi6SYGzO4jcoeHnGI4RSqZJprzJrlrskCUKOdJdAbixy1L4sq/Pg7EEifPt7h9ttc5e
- wqgF9kQ4HXg+53Q/9+DMJp7o9nT/uE/WMZltu740LYcz6M2EKH9Nxchvpu77gfwHDzTN
- PjO5q8GbfaaxUaqDZB9BmkSatBbzBtnaOxtog76NccZcqpobsWWuSFrdEnqjjsJI/4ul
- FjCA==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	by mails.dpdk.org (Postfix) with ESMTP id 49D4B402AF;
+	Fri, 30 Jan 2026 17:20:36 +0100 (CET)
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com
+ [209.85.221.44]) by mails.dpdk.org (Postfix) with ESMTP id 05CF840274
+ for <dev@dpdk.org>; Fri, 30 Jan 2026 17:20:34 +0100 (CET)
+Received: by mail-wr1-f44.google.com with SMTP id
+ ffacd0b85a97d-435f177a8f7so1397656f8f.1
+ for <dev@dpdk.org>; Fri, 30 Jan 2026 08:20:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1769788203; x=1770393003; darn=dpdk.org;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:from:to:cc:subject:date
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769790034;
+ x=1770394834; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=3CW7ofRf5SK94iNb1i4N5MXB38N2ZXT4XqNUxq2uP9Q=;
- b=QWebENlqmEru12qb4X9z+O6XNnOBsey2iubNAMhdf50Oo2G/OB5/YPB4zXZrUp4i7q
- UsdtZDwdPiQql7qbYwAvWUs10cxlrkrryGEozTnP34MjgW+1GVZXfRahGpfm2gcX2CVq
- MG0C3N3dRvYKLqMpLJXUSL6BKpTLDBbLCSO/g=
+ bh=WuVpS7gAUu9NmqCLqz9h7mAeo3KNSOhZX0JiAGwDo+k=;
+ b=bTUHRsU7i017c+4pT5VLJ75E96EJuzeenALXpEd6hkSFvkVUsQEhK3wdsynCv2bm4C
+ uGXWtypFXJMUn5hbqTgmEDJJ/B5mqODlw15gedeTC30bIS07Ev9X+HcMw+TiEDZQcWr1
+ mZkFX2BQwDSV0eEamdLeaF2M2C6nzXnuj1xqLJwcTxWda1DdEv0CYSBwt/5iDCXCvSzf
+ KzYafl9KQ5OLMqukVGBXFMDMYNAb11dwmWv+Oiw7MVT3lFlpGdz8fyRxz1NKRT1sFK38
+ /fTP4I34k5kXzQDKKYm5FkMp/H8yUGnb+iyi09BbZrXLzLsdk78RCkjKz9iEePOx4OLq
+ Crrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1769788203; x=1770393003;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+ d=1e100.net; s=20230601; t=1769790034; x=1770394834;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=3CW7ofRf5SK94iNb1i4N5MXB38N2ZXT4XqNUxq2uP9Q=;
- b=hmm1T0VJNL8DrVew9r21x45a6Zz8V+pITtGj1jo6Qrgk5l090DsFbxAufW0vzfsT7y
- pHHfKc2pIn4rEAJYgpEeY1rlx6xCp8H/rHuXCy2FfijfOIou/5O5jqYqkfgdabJRWi8b
- B1kcNsN+xrou72GP/RD2VxrszD5WJfqwJ3PIFHuYtT9V1USWZtaUisKkc3AQDzSVPAAm
- cPZI9KczUbt6iLOSrvjSj54GLlsBxEXDXNfCv0dS4bBbiv6cwlqXYjqlKC+1bzvy5w9T
- sJ7zgcqn1ZoizUO8o5VKADfmcHQYlc5wM7jbW0um2GKJ45tiX5tPr9J8AmkdPc82WSvx
- IWZg==
-X-Forwarded-Encrypted: i=1;
- AJvYcCVTMfmpPJjmeZ1BPnVKK3JPJseeDEcOsDXoQ9xMeMAMSZrybsG8gNAjT6YVHcRNOGZMETk=@dpdk.org
-X-Gm-Message-State: AOJu0YzDS3GhsmHD3qsPWOw6UX5JN5Jw4l9inehFz0r7fhFiaR4Ggw98
- su2mbANMdOp4FGrVtifDKsk8ry2HUCZNHmC0UQ+1/hWKi9r6mJPgkrvuDyd7KyQFlqHLrXxv47p
- M0B1uLp+Fr9BPUJ8l5RAmgweaB86JsKi2OM4o8PWSdw==
-X-Gm-Gg: AZuq6aJMg0TTdE/PgA25x0D9k1syBAXT9Z51d147Ud5suz4ma04on/dnAopp0FZSRV8
- F6WB1jsYd8q+amaMaA4a0fMD8WN4rOdEC8pddaRRomptIZZGTJFibCTsqnbQscdar3ZgOfFPPlz
- AsteDHWMQGaT1o3RtS040jjKzjxq3MIE0B73IBXSSIOtPfKxBVnwiV4/JshiLdEIucrgjh/zPPj
- fT9PGRaRkhxvy76+oph1ZbMRjfmEEfGBwgVPAhDn3ZlmUKWVQQlTsry4PmmdFawRWwZlpnK/hw+
- fNh+cLpS7dE6puDp3DACDoK8/UFhB3UwkzrsIjm/hrb0DyfDLtzGrZud1aps
-X-Received: by 2002:a05:7022:78a:b0:124:9acd:3bd0 with SMTP id
- a92af1059eb24-125c0f9a94bmr1851084c88.5.1769788202833; Fri, 30 Jan 2026
- 07:50:02 -0800 (PST)
+ bh=WuVpS7gAUu9NmqCLqz9h7mAeo3KNSOhZX0JiAGwDo+k=;
+ b=ppide6C5DDdrsl9pviqPr/SRTvcx3RDul79998j8M6d3/rTfeEwY2JJtly9bq1Yr+L
+ KV8rvfbqvUQXE+wCHPVPKW7Vu0i20vMx3OBPO5t4nOs+dsiw3jekMwtL9r9F/oVGc0Kq
+ lW1T2QVl7ZMRNcP9ivHZXY9Z2SH4BqGBlFMbJIWlPcIeXrAOG5oM0tF5cqadDI/0h++K
+ PFtAEnIDOeH9j0J8NbTYGoKqm3FSkkFafgjbnpZfzcVp3U4AqBnyXD1pQYCEglyWPeUo
+ yyCQ0dbG1NRn587pc4I34gV7O4CaCI4FLIIWVOc7P58+IJIfpijImWNfBJUkGNILxBPz
+ UieQ==
+X-Gm-Message-State: AOJu0YzdmIKorYEPHAKEaffaEL4AiI65n2u6xEvEMAajlt5ilUiyqjSy
+ eXkcQs6521oWVMA0WH0IH63cWD98Xy6pn7hcFnVeceT57kV+58GFH8LDg3xi6zQny8Opq3bZcIV
+ yKhx9
+X-Gm-Gg: AZuq6aL5MqeOahlD82kGibiKqgav9Td7laKjRcMzjnkDhJRXSkr3u1mxovU0XjkjJ2y
+ ze1nGr1Sb4penn7MjUfemWmSbY0QPO4IEl5iOiTZ7zHhe0vRLKcdgsg8R+RnKVmNXs4c148JTZD
+ NCbb/DvG6scVK6h95vECkSP7mwYhv3mDjttN6fLX86ot8Y77TBPPFsjfQA+w9+of+ichVHp3epv
+ 7HnyYa42RZZTub1KzruCG8NeE405FgpAmMgV/JtAjEFc6SaS5x+u9ZloHGFnYVBXnNYEO84xwki
+ MWhI9Cawm31wHgRItJ4hhuL8kVBZqS03cBfJVIe1cIEefwIuUM7PdATAQhnLEnTHH/7wwp2nveu
+ pA/uvi0jeGI3GHy4huN11iM2/va9uy2M3g/UF5iP7SEod53be1G45gMhieg+vsSIBkbkwQif7K5
+ xi8Cc794b2loakklCvPy3ri2Zn6YFqCBUtbVSJm2vEgOASJkNJ8pXU
+X-Received: by 2002:a05:6000:2002:b0:430:f494:6a9c with SMTP id
+ ffacd0b85a97d-435f3a7b463mr5552035f8f.17.1769790034299; 
+ Fri, 30 Jan 2026 08:20:34 -0800 (PST)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ ffacd0b85a97d-435e13235f5sm22684795f8f.29.2026.01.30.08.20.33
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Fri, 30 Jan 2026 08:20:34 -0800 (PST)
+Date: Fri, 30 Jan 2026 08:20:28 -0800
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH 1/2] net: ethernet address comparison optimizations
+Message-ID: <20260130082028.1d3ebeb9@phoenix.local>
+In-Reply-To: <20260130104617.535413-1-mb@smartsharesystems.com>
+References: <20260130104617.535413-1-mb@smartsharesystems.com>
 MIME-Version: 1.0
-References: <20260129191303.373877-1-abailey@iol.unh.edu>
-In-Reply-To: <20260129191303.373877-1-abailey@iol.unh.edu>
-From: Patrick Robb <probb@iol.unh.edu>
-Date: Fri, 30 Jan 2026 10:47:36 -0500
-X-Gm-Features: AZwV_QgWhE-3ad9Nk3onSyyYft2bksbjHJTJYhzN0I5aMXsDxzCvsC0Gr4-06bk
-Message-ID: <CAJvnSUD5+jB9y7oJvJGth5y3dMdnKDagPRCxUrrUmiqUFH0ikA@mail.gmail.com>
-Subject: Re: [PATCH v1] dts: add missing rst file for QinQ test suite
-To: Andrew Bailey <abailey@iol.unh.edu>
-Cc: dmarx@iol.unh.edu, dev@dpdk.org, luca.vizzarro@arm.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -93,66 +80,42 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Thanks Andrew.
+On Fri, 30 Jan 2026 10:46:16 +0000
+Morten Br=C3=B8rup <mb@smartsharesystems.com> wrote:
 
-Reviewed-by: Patrick Robb <probb@iol.unh.edu>
+> +__rte_pure
+>  static inline int rte_is_same_ether_addr(const struct rte_ether_addr *ea=
+1,
+>  				     const struct rte_ether_addr *ea2)
+>  {
+> +#if !defined(RTE_ARCH_STRICT_ALIGN)
+> +	return ((((const unaligned_uint32_t *)ea1)[0] ^ ((const unaligned_uint3=
+2_t *)ea2)[0]) |
+> +			(((const uint16_t *)ea1)[2] ^ ((const uint16_t *)ea2)[2])) =3D=3D 0;
+> +#else
+>  	const uint16_t *w1 =3D (const uint16_t *)ea1;
+>  	const uint16_t *w2 =3D (const uint16_t *)ea2;
+> =20
+>  	return ((w1[0] ^ w2[0]) | (w1[1] ^ w2[1]) | (w1[2] ^ w2[2])) =3D=3D 0;
+> +#endif
+>  }
+> =20
 
-Applied to next-dts.
+FYI in Linux:
 
-On Thu, Jan 29, 2026 at 2:13=E2=80=AFPM Andrew Bailey <abailey@iol.unh.edu>=
- wrote:
->
-> The QinQ test suite was added to DTS without an RST file. This patch
-> adds the missing RST file in the doc/api/dts directory. After adding
-> the RST file, the docs failed to build due to indents in the test
-> suite docstring. These indents were removed to resolve this issue.
->
-> Bugzilla ID: 1874
-> Fixes: 4f69c54bbb2b ("dts: add QinQ test suite")
->
-> Signed-off-by: Andrew Bailey <abailey@iol.unh.edu>
-> ---
->  doc/api/dts/tests.TestSuite_qinq.rst | 8 ++++++++
->  dts/tests/TestSuite_qinq.py          | 5 +++--
->  2 files changed, 11 insertions(+), 2 deletions(-)
->  create mode 100644 doc/api/dts/tests.TestSuite_qinq.rst
->
-> diff --git a/doc/api/dts/tests.TestSuite_qinq.rst b/doc/api/dts/tests.Tes=
-tSuite_qinq.rst
-> new file mode 100644
-> index 0000000000..827174fcad
-> --- /dev/null
-> +++ b/doc/api/dts/tests.TestSuite_qinq.rst
-> @@ -0,0 +1,8 @@
-> +.. SPDX-License-Identifier: BSD-3-Clause
-> +
-> +qinq Test Suite
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +.. automodule:: tests.TestSuite_qinq
-> +   :members:
-> +   :show-inheritance:
-> \ No newline at end of file
-> diff --git a/dts/tests/TestSuite_qinq.py b/dts/tests/TestSuite_qinq.py
-> index bb385a0d91..505d71dbc8 100644
-> --- a/dts/tests/TestSuite_qinq.py
-> +++ b/dts/tests/TestSuite_qinq.py
-> @@ -26,10 +26,11 @@ class TestQinq(TestSuite):
->      """QinQ test suite.
->
->      This suite consists of 2 test cases:
-> +
->      1. QinQ Forwarding: Send a QinQ packet and verify the received packe=
-t contains
-> -        both QinQ/VLAN layers.
-> +    both QinQ/VLAN layers.
->      2. QinQ Strip: Enable VLAN/QinQ stripping and verify sent packets ar=
-e received with the
-> -        expected VLAN/QinQ layers.
-> +    expected VLAN/QinQ layers.
->      """
->
->      def _send_packet_and_verify(
-> --
-> 2.50.1
->
+static inline bool ether_addr_equal(const u8 *addr1, const u8 *addr2)
+{
+#if defined(CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS)
+	u32 fold =3D ((*(const u32 *)addr1) ^ (*(const u32 *)addr2)) |
+		   ((*(const u16 *)(addr1 + 4)) ^ (*(const u16 *)(addr2 + 4)));
+
+	return fold =3D=3D 0;
+#else
+	const u16 *a =3D (const u16 *)addr1;
+	const u16 *b =3D (const u16 *)addr2;
+
+	return ((a[0] ^ b[0]) | (a[1] ^ b[1]) | (a[2] ^ b[2])) =3D=3D 0;
+#endif
+}
+
+In FreeBSD kernel, there is no helper they just use memcmp
