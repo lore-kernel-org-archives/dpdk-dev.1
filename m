@@ -2,68 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C431BD73EB7
-	for <dpdk-dev@archiver.kernel.org>; Fri, 30 Jan 2026 05:22:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39EB6D73EB7
+	for <dpdk-dev@archiver.kernel.org>; Fri, 30 Jan 2026 05:22:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D241C40649;
-	Fri, 30 Jan 2026 06:21:56 +0100 (CET)
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com
- [209.85.221.49]) by mails.dpdk.org (Postfix) with ESMTP id E7EE840150
- for <dev@dpdk.org>; Fri, 30 Jan 2026 06:21:54 +0100 (CET)
-Received: by mail-wr1-f49.google.com with SMTP id
- ffacd0b85a97d-435903c4040so1148165f8f.3
- for <dev@dpdk.org>; Thu, 29 Jan 2026 21:21:54 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 17C3440608;
+	Fri, 30 Jan 2026 06:21:59 +0100 (CET)
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com
+ [209.85.221.43]) by mails.dpdk.org (Postfix) with ESMTP id C7FCF40655
+ for <dev@dpdk.org>; Fri, 30 Jan 2026 06:21:57 +0100 (CET)
+Received: by mail-wr1-f43.google.com with SMTP id
+ ffacd0b85a97d-432d2c7dd52so1510901f8f.2
+ for <dev@dpdk.org>; Thu, 29 Jan 2026 21:21:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769750514;
- x=1770355314; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769750517;
+ x=1770355317; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=fVTc+BcxiiTtv/kBghSS0vQERGObVezK+FcOmGnCCKM=;
- b=pRoxsKkP+rgCIIYfQUpiHsLR5XQJ8DQIAdYQfzokJyhMUp6Dd2W/TmfyofqxYg7BLp
- kVb1w5s87V5Dbyjb3WCFkQ0UV5phECKK0gRY01ftbPotYS2QLrZSIHnU9lp+p25G2rX0
- b++spwXSef8hwbfD7lP4U6Afnydw2BE2oHYuhvFMYx2hvWtwrCVebgZvD1alOTGneSpT
- jJDkPXNeGcUJr/RsNvk7Zu3ZtxnVE9ccryMq0TS7YmBhNc3i0FWc1yOdphPKW7vpk8D8
- sdUnN/pmlcTbtpej5z2936ZyhBOwfz+Ifu5Ep4oL5J1STB0o1p6yAO0eBJ5Os0WL4+Gl
- zHyg==
+ bh=STlSnTY7dYbliiUwXgCDekUaMtWe6XB1Q9Xlw+83T1Q=;
+ b=KdsxTuYUjRhxdot+JNLHH/VrNmOfrypUT95UUYFoW4STW6nUGZ/ig5x4+p/kEUbHgy
+ D/saNst63THAkulJ7j3+FqScx9Ddb8EciXYPbPf7SHM7SgnHETQHSxq5odIlPwkZUi+m
+ kUnPtpbSYQd43atszsjjHz6N7GUHqK5vX/C64x+HK8BZpBpOCg+12Kn4oMBGqPUCuV3I
+ TUQ9+W7k1Kgsk2IQ0dRpmDgbigNHwJS1aGqbKaQlkmFwEItnKlELQWu6DtYP1uqIrrO/
+ Y7JFxnTLBYqXS9GcjHOeNcdKe5DxM4VVNYD/PHrGWnaFsB4gJ+XnqCB+NSwCza1e0vdy
+ eaaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1769750514; x=1770355314;
+ d=1e100.net; s=20230601; t=1769750517; x=1770355317;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=fVTc+BcxiiTtv/kBghSS0vQERGObVezK+FcOmGnCCKM=;
- b=txAXjmXe5YyPDEQB6efbauqoaer6Am8U+GpIqbrJ9LpOlPuRiIVmH2aRjxipN8Wxcl
- H7dzG+ewDhi0mPqh0TLWb1UbgxoNat0dyIGell0B96b8R5tN0myVUVEm+fhhpc6BkdFu
- 6JRoVnXnqMzoK0VMfiletkGhMZ6tfT1g/KUexr6/VKMKkvbp/wYm1qgjGzj9XjCqOagd
- 1AqqzaWLqzQkEmM1/wXs8Y9J1nM8QrLe5JeckRbWR7ypvi5ycS/Uh2hCkllVXJq1/0V6
- 5NowJKU319TJRWl4P0qmjXHpyqrczGkCEw1Pjten1BthCBCVRRzPYjvijUW0+BU4LiTS
- mdyw==
-X-Gm-Message-State: AOJu0YxOq5jrDQ2gA83bJi26PlNHA7iMuvU//57Kj5IaIzOs1eLxv7g6
- COea+ReQifbt3B3t8DF2u3Sdbj7ZJ7n81txzx66n+oI8boYixFx+oKoUhDJ1y5saZU5lnPCMcYE
- XwKbd
-X-Gm-Gg: AZuq6aJ1PQhuQxi0+24AVRBsgCV+jnZOWc2vE9x9mIQo5tJB1eJeYQLYBsVXGwar8DT
- mTxkNUJu8SMy8uhvk7tmvmd2ALLHTiZo18LmIbNmKSIfCR0eNhv2urQbAtbb0aWu0L3gWwCqKXs
- k6Fm0wz7sJdsDaNcxyjgE0bWrWSpuww+/x2QWd7Mm9KSEw7safKXLOzdYQ3sJH5KTxnKZugXeQZ
- oecaVO8L5/+avff1mgIIMtKepAD+bwsK+aYGxy4PQdoW7JrclT65swyv8uwnZ30noI9Qmi4rowl
- 2ZNbZfNEyrMXzj8V0kp26S2GN8cl9ZqVkMupl0EDcGwC4Gjh3PrqfeOMlDx4S0PQmmh9QiiU6L4
- ZFXxzbHmTnwCjCH1iz/hpqrrtzu8OcMT+RGl01Ur0iPBcaLs06DQ0MeKkG3qJJlA7fTQwLtijTR
- w/4UZUzMeA37yKIrLf605xekQTG9XsvdJNKTUIOOFSHc9GWZq4UA==
-X-Received: by 2002:a05:6000:2dc9:b0:435:9b3d:d969 with SMTP id
- ffacd0b85a97d-435f3a86766mr2290823f8f.21.1769750514551; 
- Thu, 29 Jan 2026 21:21:54 -0800 (PST)
+ bh=STlSnTY7dYbliiUwXgCDekUaMtWe6XB1Q9Xlw+83T1Q=;
+ b=oBFpTr9ja4CscDn+XUGA2PWVvWDepKk59870tkCXOvE5uH1ZSPHEi6ue0bkaz4MQK3
+ Q9QnZnE1dU08elcL8pOgdIK+j0AxRbQWRV24OtBFS9BFHsPOBdZ8U+S33fw4eYd7MxTQ
+ yr/PiDOM9WwCojJ/+zpMjAUt4aQLNJ+miosL4oRcciYXBJgnYWpU7zyi9N3Q7+Fizkrq
+ W1IgWL1ZzthNfH5Ji9c5AA6ugm9wTI97saU1rSsIs3tFXacMQKBznaZ/lKPxGVa4mnXS
+ 1djjmZbQImJPaSufBPLRDCiIfX3cGvnwvBgKXWZ9WwITbIM7obq3q73UvzpGhuV1/jh8
+ lwCg==
+X-Gm-Message-State: AOJu0YyqRa+PisJCTX2OlcCgIzWKf+CpjciZC8B8TDJee9LUMLgVmwoJ
+ xD+WM2YnazCUQzcmIA41bNz/7oPOJ0gIce6caae9+LUOuzZyVYtzKtDZeyHEia3hI0YDizYsfA3
+ 6EaqN
+X-Gm-Gg: AZuq6aLs5eulF/a6tNTVI9l7VhPZKKmYVPNeuASn0C0UI+hdz4v8PGWREvZL1jpREaU
+ 0zMU5ihwXahcx+yc0XLXb3+K/zw9jUvCYI/gOActUHcXmp20Y9+nphomOGwPjaZNvZhC0751g3h
+ 9Fohv3MgMj4aUtV5FCThZOof0Tqhpsq9IzkLmPdlR8M8VUTRUOAg2+EZET5QVAWPWK7X25TWZHk
+ IAwUjP1MsPakVCYBRiEGvaiNMs3FfG63yTNkdypXEmvqMdOgwnXTjkYumanYLFUZKLY9jybyTk5
+ BMD2TnBoJqI0QuJ0sV3futxZjpb+GcHWdRMTaqdtiHNPmnNrsnIVcarbyNST41Itd8rkoV3uR18
+ vxzWFsrdDWRtzidSUUQF7zzXBm/23Y+iDCLKtB7dafH/ZGAWg2cCOv1ZBdFgS9+0fjzOxba1w+8
+ 9NmS+kILr3gMHG0yBbF3tvnJ43t5impmiDVSM1ixdh+JURamH88w==
+X-Received: by 2002:a05:6000:420b:b0:431:104:6daf with SMTP id
+ ffacd0b85a97d-435f3abc900mr2583857f8f.54.1769750517342; 
+ Thu, 29 Jan 2026 21:21:57 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-435e1323034sm19182107f8f.35.2026.01.29.21.21.52
+ ffacd0b85a97d-435e1323034sm19182107f8f.35.2026.01.29.21.21.54
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 29 Jan 2026 21:21:54 -0800 (PST)
+ Thu, 29 Jan 2026 21:21:56 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
- Igor Russkikh <irusskikh@marvell.com>,
- Pavel Belous <pavel.belous@aquantia.com>
-Subject: [RFC 3/6] net/atlantic: fix mbox_mutex for multi-process
-Date: Thu, 29 Jan 2026 21:17:34 -0800
-Message-ID: <20260130052142.251649-4-stephen@networkplumber.org>
+ Selwin Sebastian <selwin.sebastian@amd.com>,
+ Ravi Kumar <ravi1.kumar@amd.com>
+Subject: [RFC 4/6] net/axgbe: fix mutexes for multi-process
+Date: Thu, 29 Jan 2026 21:17:35 -0800
+Message-ID: <20260130052142.251649-5-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260130052142.251649-1-stephen@networkplumber.org>
 References: <20260130052142.251649-1-stephen@networkplumber.org>
@@ -82,12 +82,13 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The Atlantic driver supports secondary processes, as shown by the
-explicit check in eth_atl_dev_init(). The mbox_mutex in aq_hw_s
-is located in dev_private which is in shared memory accessible
-by both primary and secondary processes.
+The AXGBE driver supports secondary processes, as shown by the
+explicit check in eth_axgbe_dev_init(). The xpcs_mutex, i2c_mutex,
+an_mutex, and phy_mutex in axgbe_port are located in dev_private
+which is in shared memory accessible by both primary and secondary
+processes.
 
-However, the mutex is initialized without PTHREAD_PROCESS_SHARED
+However, the mutexes are initialized without PTHREAD_PROCESS_SHARED
 attribute, which means synchronization between processes is
 undefined behavior.
 
@@ -97,32 +98,24 @@ accessed by multiple processes, pthread_mutexattr_setpshared() must
 be called with PTHREAD_PROCESS_SHARED.
 
 Bugzilla ID: 662
-Fixes: e9924638f5c9 ("net/atlantic: add FW mailbox guard mutex")
+Fixes: 572890ef6625 ("net/axgbe: add structs for MAC init and reset")
 Cc: stable@dpdk.org
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/atlantic/atl_ethdev.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+ drivers/net/axgbe/axgbe_ethdev.c | 19 +++++++++++++++----
+ 1 file changed, 15 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/atlantic/atl_ethdev.c b/drivers/net/atlantic/atl_ethdev.c
-index 2925dc2478..7282f9b691 100644
---- a/drivers/net/atlantic/atl_ethdev.c
-+++ b/drivers/net/atlantic/atl_ethdev.c
-@@ -3,6 +3,7 @@
-  */
- 
- #include <rte_string_fns.h>
-+#include <pthread.h>
- #include <ethdev_pci.h>
- #include <rte_alarm.h>
- 
-@@ -355,6 +356,17 @@ atl_disable_intr(struct aq_hw_s *hw)
- 	hw_atl_itr_irq_msk_clearlsw_set(hw, 0xffffffff);
- }
+diff --git a/drivers/net/axgbe/axgbe_ethdev.c b/drivers/net/axgbe/axgbe_ethdev.c
+index cf3b0d9ef5..0fedac72ab 100644
+--- a/drivers/net/axgbe/axgbe_ethdev.c
++++ b/drivers/net/axgbe/axgbe_ethdev.c
+@@ -193,6 +193,17 @@ static const struct axgbe_xstats axgbe_xstats_strings[] = {
+ #define AMD_PCI_AXGBE_DEVICE_V2A 0x1458
+ #define AMD_PCI_AXGBE_DEVICE_V2B 0x1459
  
 +static void
-+atl_init_mutex(pthread_mutex_t *mutex)
++axgbe_init_mutex(pthread_mutex_t *mutex)
 +{
 +	pthread_mutexattr_t attr;
 +
@@ -132,18 +125,24 @@ index 2925dc2478..7282f9b691 100644
 +	pthread_mutexattr_destroy(&attr);
 +}
 +
- static int
- eth_atl_dev_init(struct rte_eth_dev *eth_dev)
- {
-@@ -405,7 +417,7 @@ eth_atl_dev_init(struct rte_eth_dev *eth_dev)
+ static const struct rte_pci_id pci_id_axgbe_map[] = {
+ 	{RTE_PCI_DEVICE(AMD_PCI_VENDOR_ID, AMD_PCI_AXGBE_DEVICE_V2A)},
+ 	{RTE_PCI_DEVICE(AMD_PCI_VENDOR_ID, AMD_PCI_AXGBE_DEVICE_V2B)},
+@@ -2403,10 +2414,10 @@ eth_axgbe_dev_init(struct rte_eth_dev *eth_dev)
  
- 	hw->aq_nic_cfg = &adapter->hw_cfg;
+ 	pdata->tx_desc_count = AXGBE_MAX_RING_DESC;
+ 	pdata->rx_desc_count = AXGBE_MAX_RING_DESC;
+-	pthread_mutex_init(&pdata->xpcs_mutex, NULL);
+-	pthread_mutex_init(&pdata->i2c_mutex, NULL);
+-	pthread_mutex_init(&pdata->an_mutex, NULL);
+-	pthread_mutex_init(&pdata->phy_mutex, NULL);
++	axgbe_init_mutex(&pdata->xpcs_mutex);
++	axgbe_init_mutex(&pdata->i2c_mutex);
++	axgbe_init_mutex(&pdata->an_mutex);
++	axgbe_init_mutex(&pdata->phy_mutex);
  
--	pthread_mutex_init(&hw->mbox_mutex, NULL);
-+	atl_init_mutex(&hw->mbox_mutex);
- 
- 	/* disable interrupt */
- 	atl_disable_intr(hw);
+ 	ret = pdata->phy_if.phy_init(pdata);
+ 	if (ret) {
 -- 
 2.51.0
 
