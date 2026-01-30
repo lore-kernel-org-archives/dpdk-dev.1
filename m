@@ -2,49 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79459E6BF04
-	for <dpdk-dev@archiver.kernel.org>; Fri, 30 Jan 2026 11:43:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF7CBE6BF04
+	for <dpdk-dev@archiver.kernel.org>; Fri, 30 Jan 2026 11:43:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DE075406B6;
-	Fri, 30 Jan 2026 12:42:36 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id E2CB1409FA;
+	Fri, 30 Jan 2026 12:42:38 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
- by mails.dpdk.org (Postfix) with ESMTP id EDC4940658
- for <dev@dpdk.org>; Fri, 30 Jan 2026 12:42:32 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 1177740672
+ for <dev@dpdk.org>; Fri, 30 Jan 2026 12:42:33 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1769773353; x=1801309353;
+ t=1769773354; x=1801309354;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=ZUl1RZ0v+XNJr89vToi5TekLAoLbT803cgvZmDLqYew=;
- b=nCdBZmN9JVFzqo8cF+M/Peo5RTOwqiXQORH9IL4VVSmN6s1lqgbzDFdt
- flLIE67DOAvQKTquTyi+eI++KIUU9Aex9W5/jM3ohBATnJKPbdzguHLo2
- ypNCTypvy7hDhbWVKiE3JQ2+42OyvKSXBiPNzQKyiDDgGTxrKC8ZHhqxE
- AlDs8tmX/nN0TPTMn0V87S8OFeB+tAV4xlRsoNxvBupfGho3i18ZkItbu
- XpNgXIrWWY8gb7ke23WNhZR0qL6XB0edezn2a8YTMn9lSomik5M5kRKyc
- jsvKvKJgPYK4tg5nkgfbWGW+vtUXX4TusafBdEH6HYGJQEcxgobvJH4v+ A==;
-X-CSE-ConnectionGUID: p1/NxODvSISStsUGErSzaA==
-X-CSE-MsgGUID: 1+suQBxzSbuGtub3cbB2xA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11686"; a="82392289"
-X-IronPort-AV: E=Sophos;i="6.21,262,1763452800"; d="scan'208";a="82392289"
+ bh=tFeEchar3zfqzrFI8BZTVVFYz/FHwSzDoAiDM3mKwPA=;
+ b=bTPYKW3jlNdUT19oQhb50f+2xV+lW7cehretANBHlsY0FdnQV6KdY2FO
+ IOibi0ASIcXJPQwdZC/IMM/r4eTs6NRjTe8u7Y6/bbh9+9cWp3NulKysS
+ nVy6qH7j4/WOoDN/Qi0rnMk+FxusoZF9IcqO+48bAHqK/Ic/7JID1/LxQ
+ FAWQRWdLJ1YcjkCnu60Uy92XQpNvrxdM7uLko+UbvVFpwTyNj6rU3UWyd
+ vZe1DF0dCcLb96XdH3WwC5iODeupUTtRHqVwUjdaUy4zRfoTM+jvWuCHJ
+ Z9S0BSSAxBnsWlRh8tYX+r+xn2cHvegRkDtuNeGQ5dHJ9mV130JY9v0l6 A==;
+X-CSE-ConnectionGUID: 78W6fz6kRU+RC9vnvsYsUw==
+X-CSE-MsgGUID: 7LnDUzTcREOwNchMroeg5Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11686"; a="82392295"
+X-IronPort-AV: E=Sophos;i="6.21,262,1763452800"; d="scan'208";a="82392295"
 Received: from fmviesa010.fm.intel.com ([10.60.135.150])
  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 30 Jan 2026 03:42:32 -0800
-X-CSE-ConnectionGUID: gpTv4BxXSdKc16SCPLZlZQ==
-X-CSE-MsgGUID: n/9L5OP9Sc6wDz7403zMzw==
+ 30 Jan 2026 03:42:33 -0800
+X-CSE-ConnectionGUID: bfYRik7vS8OpY+BwYgobwQ==
+X-CSE-MsgGUID: fctNPekfSv2HbKCZbCziNg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,262,1763452800"; d="scan'208";a="209190477"
+X-IronPort-AV: E=Sophos;i="6.21,262,1763452800"; d="scan'208";a="209190482"
 Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by fmviesa010.fm.intel.com with ESMTP; 30 Jan 2026 03:42:31 -0800
+ by fmviesa010.fm.intel.com with ESMTP; 30 Jan 2026 03:42:33 -0800
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: Bruce Richardson <bruce.richardson@intel.com>,
- Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
- Anatoly Burakov <anatoly.burakov@intel.com>,
- Jingjing Wu <jingjing.wu@intel.com>,
- Praveen Shetty <praveen.shetty@intel.com>
-Subject: [PATCH v3 10/36] net/intel: consolidate checksum mask definition
-Date: Fri, 30 Jan 2026 11:41:37 +0000
-Message-ID: <20260130114207.1126032-11-bruce.richardson@intel.com>
+ Anatoly Burakov <anatoly.burakov@intel.com>
+Subject: [PATCH v3 11/36] net/intel: create common checksum Tx offload function
+Date: Fri, 30 Jan 2026 11:41:38 +0000
+Message-ID: <20260130114207.1126032-12-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260130114207.1126032-1-bruce.richardson@intel.com>
 References: <20251219172548.2660777-1-bruce.richardson@intel.com>
@@ -64,163 +61,234 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Create a common definition for checksum masks across iavf, idpf, i40e
-and ice drivers.
+Since i40e and ice have the same checksum offload logic, merge their
+functions into one. Future rework should enable this to be used by more
+drivers also.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- drivers/net/intel/common/tx.h             | 8 ++++++++
- drivers/net/intel/i40e/i40e_rxtx.c        | 7 +------
- drivers/net/intel/iavf/iavf_rxtx.c        | 2 +-
- drivers/net/intel/iavf/iavf_rxtx.h        | 8 --------
- drivers/net/intel/ice/ice_rxtx.c          | 8 +-------
- drivers/net/intel/idpf/idpf_common_rxtx.c | 4 ++--
- drivers/net/intel/idpf/idpf_common_rxtx.h | 7 +------
- 7 files changed, 14 insertions(+), 30 deletions(-)
+ drivers/net/intel/common/tx_scalar_fns.h | 58 +++++++++++++++++++++++
+ drivers/net/intel/i40e/i40e_rxtx.c       | 52 +-------------------
+ drivers/net/intel/ice/ice_rxtx.c         | 60 +-----------------------
+ 3 files changed, 60 insertions(+), 110 deletions(-)
 
-diff --git a/drivers/net/intel/common/tx.h b/drivers/net/intel/common/tx.h
-index 01e42303b4..928fad1df5 100644
---- a/drivers/net/intel/common/tx.h
-+++ b/drivers/net/intel/common/tx.h
-@@ -53,6 +53,14 @@
- /* Common maximum data per TX descriptor */
- #define CI_MAX_DATA_PER_TXD     (CI_TXD_QW1_TX_BUF_SZ_M >> CI_TXD_QW1_TX_BUF_SZ_S)
+diff --git a/drivers/net/intel/common/tx_scalar_fns.h b/drivers/net/intel/common/tx_scalar_fns.h
+index f894cea616..f88ca7f25a 100644
+--- a/drivers/net/intel/common/tx_scalar_fns.h
++++ b/drivers/net/intel/common/tx_scalar_fns.h
+@@ -64,6 +64,64 @@ ci_tx_xmit_cleanup(struct ci_tx_queue *txq)
+ 	return 0;
+ }
  
-+/* Checksum offload mask to identify packets requesting offload */
-+#define CI_TX_CKSUM_OFFLOAD_MASK (RTE_MBUF_F_TX_IP_CKSUM |		 \
-+				   RTE_MBUF_F_TX_L4_MASK |		 \
-+				   RTE_MBUF_F_TX_TCP_SEG |		 \
-+				   RTE_MBUF_F_TX_UDP_SEG |		 \
-+				   RTE_MBUF_F_TX_OUTER_IP_CKSUM |	 \
-+				   RTE_MBUF_F_TX_OUTER_UDP_CKSUM)
++/* Common checksum enable function for Intel drivers (ice, i40e, etc.) */
++static inline void
++ci_txd_enable_checksum(uint64_t ol_flags,
++		       uint32_t *td_cmd,
++		       uint32_t *td_offset,
++		       union ci_tx_offload tx_offload)
++{
++	/* Enable L3 checksum offloads */
++	if (ol_flags & RTE_MBUF_F_TX_IP_CKSUM) {
++		*td_cmd |= CI_TX_DESC_CMD_IIPT_IPV4_CSUM;
++		*td_offset |= (tx_offload.l3_len >> 2) <<
++			CI_TX_DESC_LEN_IPLEN_S;
++	} else if (ol_flags & RTE_MBUF_F_TX_IPV4) {
++		*td_cmd |= CI_TX_DESC_CMD_IIPT_IPV4;
++		*td_offset |= (tx_offload.l3_len >> 2) <<
++			CI_TX_DESC_LEN_IPLEN_S;
++	} else if (ol_flags & RTE_MBUF_F_TX_IPV6) {
++		*td_cmd |= CI_TX_DESC_CMD_IIPT_IPV6;
++		*td_offset |= (tx_offload.l3_len >> 2) <<
++			CI_TX_DESC_LEN_IPLEN_S;
++	}
 +
- /**
-  * Common TX offload union for Intel drivers.
-  * Supports both basic offloads (l2_len, l3_len, l4_len, tso_segsz) and
++	if (ol_flags & RTE_MBUF_F_TX_TCP_SEG) {
++		*td_cmd |= CI_TX_DESC_CMD_L4T_EOFT_TCP;
++		*td_offset |= (tx_offload.l4_len >> 2) <<
++			      CI_TX_DESC_LEN_L4_LEN_S;
++		return;
++	}
++
++	if (ol_flags & RTE_MBUF_F_TX_UDP_SEG) {
++		*td_cmd |= CI_TX_DESC_CMD_L4T_EOFT_UDP;
++		*td_offset |= (tx_offload.l4_len >> 2) <<
++			      CI_TX_DESC_LEN_L4_LEN_S;
++		return;
++	}
++
++	/* Enable L4 checksum offloads */
++	switch (ol_flags & RTE_MBUF_F_TX_L4_MASK) {
++	case RTE_MBUF_F_TX_TCP_CKSUM:
++		*td_cmd |= CI_TX_DESC_CMD_L4T_EOFT_TCP;
++		*td_offset |= (sizeof(struct rte_tcp_hdr) >> 2) <<
++			      CI_TX_DESC_LEN_L4_LEN_S;
++		break;
++	case RTE_MBUF_F_TX_SCTP_CKSUM:
++		*td_cmd |= CI_TX_DESC_CMD_L4T_EOFT_SCTP;
++		*td_offset |= (sizeof(struct rte_sctp_hdr) >> 2) <<
++			      CI_TX_DESC_LEN_L4_LEN_S;
++		break;
++	case RTE_MBUF_F_TX_UDP_CKSUM:
++		*td_cmd |= CI_TX_DESC_CMD_L4T_EOFT_UDP;
++		*td_offset |= (sizeof(struct rte_udp_hdr) >> 2) <<
++			      CI_TX_DESC_LEN_L4_LEN_S;
++		break;
++	default:
++		break;
++	}
++}
++
+ static inline uint16_t
+ ci_div_roundup16(uint16_t x, uint16_t y)
+ {
 diff --git a/drivers/net/intel/i40e/i40e_rxtx.c b/drivers/net/intel/i40e/i40e_rxtx.c
-index 183b70c63f..a5349990f3 100644
+index a5349990f3..1ad445c47b 100644
 --- a/drivers/net/intel/i40e/i40e_rxtx.c
 +++ b/drivers/net/intel/i40e/i40e_rxtx.c
-@@ -53,11 +53,6 @@
- #define I40E_TX_IEEE1588_TMST 0
- #endif
+@@ -310,56 +310,6 @@ i40e_parse_tunneling_params(uint64_t ol_flags,
+ 		*cd_tunneling |= I40E_TXD_CTX_QW0_L4T_CS_MASK;
+ }
  
--#define I40E_TX_CKSUM_OFFLOAD_MASK (RTE_MBUF_F_TX_IP_CKSUM |		 \
--		RTE_MBUF_F_TX_L4_MASK |		 \
--		RTE_MBUF_F_TX_TCP_SEG |		 \
--		RTE_MBUF_F_TX_OUTER_IP_CKSUM)
+-static inline void
+-i40e_txd_enable_checksum(uint64_t ol_flags,
+-			uint32_t *td_cmd,
+-			uint32_t *td_offset,
+-			union ci_tx_offload tx_offload)
+-{
+-	/* Enable L3 checksum offloads */
+-	if (ol_flags & RTE_MBUF_F_TX_IP_CKSUM) {
+-		*td_cmd |= CI_TX_DESC_CMD_IIPT_IPV4_CSUM;
+-		*td_offset |= (tx_offload.l3_len >> 2)
+-				<< CI_TX_DESC_LEN_IPLEN_S;
+-	} else if (ol_flags & RTE_MBUF_F_TX_IPV4) {
+-		*td_cmd |= CI_TX_DESC_CMD_IIPT_IPV4;
+-		*td_offset |= (tx_offload.l3_len >> 2)
+-				<< CI_TX_DESC_LEN_IPLEN_S;
+-	} else if (ol_flags & RTE_MBUF_F_TX_IPV6) {
+-		*td_cmd |= CI_TX_DESC_CMD_IIPT_IPV6;
+-		*td_offset |= (tx_offload.l3_len >> 2)
+-				<< CI_TX_DESC_LEN_IPLEN_S;
+-	}
 -
- #define I40E_TX_OFFLOAD_MASK (RTE_MBUF_F_TX_OUTER_IPV4 |	\
- 		RTE_MBUF_F_TX_OUTER_IPV6 |	\
- 		RTE_MBUF_F_TX_IPV4 |		\
-@@ -1171,7 +1166,7 @@ i40e_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
- 		td_cmd |= CI_TX_DESC_CMD_ICRC;
+-	if (ol_flags & RTE_MBUF_F_TX_TCP_SEG) {
+-		*td_cmd |= CI_TX_DESC_CMD_L4T_EOFT_TCP;
+-		*td_offset |= (tx_offload.l4_len >> 2)
+-			<< CI_TX_DESC_LEN_L4_LEN_S;
+-		return;
+-	}
+-
+-	/* Enable L4 checksum offloads */
+-	switch (ol_flags & RTE_MBUF_F_TX_L4_MASK) {
+-	case RTE_MBUF_F_TX_TCP_CKSUM:
+-		*td_cmd |= CI_TX_DESC_CMD_L4T_EOFT_TCP;
+-		*td_offset |= (sizeof(struct rte_tcp_hdr) >> 2) <<
+-				CI_TX_DESC_LEN_L4_LEN_S;
+-		break;
+-	case RTE_MBUF_F_TX_SCTP_CKSUM:
+-		*td_cmd |= CI_TX_DESC_CMD_L4T_EOFT_SCTP;
+-		*td_offset |= (sizeof(struct rte_sctp_hdr) >> 2) <<
+-				CI_TX_DESC_LEN_L4_LEN_S;
+-		break;
+-	case RTE_MBUF_F_TX_UDP_CKSUM:
+-		*td_cmd |= CI_TX_DESC_CMD_L4T_EOFT_UDP;
+-		*td_offset |= (sizeof(struct rte_udp_hdr) >> 2) <<
+-				CI_TX_DESC_LEN_L4_LEN_S;
+-		break;
+-	default:
+-		break;
+-	}
+-}
+-
+ /* Construct the tx flags */
+ static inline uint64_t
+ i40e_build_ctob(uint32_t td_cmd,
+@@ -1167,7 +1117,7 @@ i40e_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
  
  		/* Enable checksum offloading */
--		if (ol_flags & I40E_TX_CKSUM_OFFLOAD_MASK)
-+		if (ol_flags & CI_TX_CKSUM_OFFLOAD_MASK)
- 			i40e_txd_enable_checksum(ol_flags, &td_cmd,
+ 		if (ol_flags & CI_TX_CKSUM_OFFLOAD_MASK)
+-			i40e_txd_enable_checksum(ol_flags, &td_cmd,
++			ci_txd_enable_checksum(ol_flags, &td_cmd,
  						 &td_offset, tx_offload);
  
-diff --git a/drivers/net/intel/iavf/iavf_rxtx.c b/drivers/net/intel/iavf/iavf_rxtx.c
-index 885d9309cc..3dbcfd5355 100644
---- a/drivers/net/intel/iavf/iavf_rxtx.c
-+++ b/drivers/net/intel/iavf/iavf_rxtx.c
-@@ -2596,7 +2596,7 @@ iavf_build_data_desc_cmd_offset_fields(volatile uint64_t *qw1,
- 	}
- 
- 	if ((m->ol_flags &
--	    (IAVF_TX_CKSUM_OFFLOAD_MASK | RTE_MBUF_F_TX_SEC_OFFLOAD)) == 0)
-+	    (CI_TX_CKSUM_OFFLOAD_MASK | RTE_MBUF_F_TX_SEC_OFFLOAD)) == 0)
- 		goto skip_cksum;
- 
- 	/* Set MACLEN */
-diff --git a/drivers/net/intel/iavf/iavf_rxtx.h b/drivers/net/intel/iavf/iavf_rxtx.h
-index 395d97b4ee..cca5c25119 100644
---- a/drivers/net/intel/iavf/iavf_rxtx.h
-+++ b/drivers/net/intel/iavf/iavf_rxtx.h
-@@ -136,14 +136,6 @@
- 
- #define IAVF_TX_MIN_PKT_LEN 17
- 
--#define IAVF_TX_CKSUM_OFFLOAD_MASK (		 \
--		RTE_MBUF_F_TX_IP_CKSUM |		 \
--		RTE_MBUF_F_TX_L4_MASK |		 \
--		RTE_MBUF_F_TX_TCP_SEG |          \
--		RTE_MBUF_F_TX_UDP_SEG |          \
--		RTE_MBUF_F_TX_OUTER_IP_CKSUM |   \
--		RTE_MBUF_F_TX_OUTER_UDP_CKSUM)
--
- #define IAVF_TX_OFFLOAD_MASK (  \
- 		RTE_MBUF_F_TX_OUTER_IPV6 |		 \
- 		RTE_MBUF_F_TX_OUTER_IPV4 |		 \
+ 		if (nb_ctx) {
 diff --git a/drivers/net/intel/ice/ice_rxtx.c b/drivers/net/intel/ice/ice_rxtx.c
-index cc442fed75..99751bceb7 100644
+index 99751bceb7..8650925577 100644
 --- a/drivers/net/intel/ice/ice_rxtx.c
 +++ b/drivers/net/intel/ice/ice_rxtx.c
-@@ -13,12 +13,6 @@
- #include "../common/rx_vec_x86.h"
- #endif
+@@ -2954,64 +2954,6 @@ ice_parse_tunneling_params(uint64_t ol_flags,
+ 		*cd_tunneling |= ICE_TXD_CTX_QW0_L4T_CS_M;
+ }
  
--#define ICE_TX_CKSUM_OFFLOAD_MASK (RTE_MBUF_F_TX_IP_CKSUM |		 \
--		RTE_MBUF_F_TX_L4_MASK |		 \
--		RTE_MBUF_F_TX_TCP_SEG |		 \
--		RTE_MBUF_F_TX_UDP_SEG |		 \
--		RTE_MBUF_F_TX_OUTER_IP_CKSUM)
+-static inline void
+-ice_txd_enable_checksum(uint64_t ol_flags,
+-			uint32_t *td_cmd,
+-			uint32_t *td_offset,
+-			union ci_tx_offload tx_offload)
+-{
 -
- /**
-  * The mbuf dynamic field pointer for protocol extraction metadata.
-  */
-@@ -3214,7 +3208,7 @@ ice_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
- 		}
+-	/* Enable L3 checksum offloads */
+-	if (ol_flags & RTE_MBUF_F_TX_IP_CKSUM) {
+-		*td_cmd |= CI_TX_DESC_CMD_IIPT_IPV4_CSUM;
+-		*td_offset |= (tx_offload.l3_len >> 2) <<
+-			CI_TX_DESC_LEN_IPLEN_S;
+-	} else if (ol_flags & RTE_MBUF_F_TX_IPV4) {
+-		*td_cmd |= CI_TX_DESC_CMD_IIPT_IPV4;
+-		*td_offset |= (tx_offload.l3_len >> 2) <<
+-			CI_TX_DESC_LEN_IPLEN_S;
+-	} else if (ol_flags & RTE_MBUF_F_TX_IPV6) {
+-		*td_cmd |= CI_TX_DESC_CMD_IIPT_IPV6;
+-		*td_offset |= (tx_offload.l3_len >> 2) <<
+-			CI_TX_DESC_LEN_IPLEN_S;
+-	}
+-
+-	if (ol_flags & RTE_MBUF_F_TX_TCP_SEG) {
+-		*td_cmd |= CI_TX_DESC_CMD_L4T_EOFT_TCP;
+-		*td_offset |= (tx_offload.l4_len >> 2) <<
+-			      CI_TX_DESC_LEN_L4_LEN_S;
+-		return;
+-	}
+-
+-	if (ol_flags & RTE_MBUF_F_TX_UDP_SEG) {
+-		*td_cmd |= CI_TX_DESC_CMD_L4T_EOFT_UDP;
+-		*td_offset |= (tx_offload.l4_len >> 2) <<
+-			      CI_TX_DESC_LEN_L4_LEN_S;
+-		return;
+-	}
+-
+-	/* Enable L4 checksum offloads */
+-	switch (ol_flags & RTE_MBUF_F_TX_L4_MASK) {
+-	case RTE_MBUF_F_TX_TCP_CKSUM:
+-		*td_cmd |= CI_TX_DESC_CMD_L4T_EOFT_TCP;
+-		*td_offset |= (sizeof(struct rte_tcp_hdr) >> 2) <<
+-			      CI_TX_DESC_LEN_L4_LEN_S;
+-		break;
+-	case RTE_MBUF_F_TX_SCTP_CKSUM:
+-		*td_cmd |= CI_TX_DESC_CMD_L4T_EOFT_SCTP;
+-		*td_offset |= (sizeof(struct rte_sctp_hdr) >> 2) <<
+-			      CI_TX_DESC_LEN_L4_LEN_S;
+-		break;
+-	case RTE_MBUF_F_TX_UDP_CKSUM:
+-		*td_cmd |= CI_TX_DESC_CMD_L4T_EOFT_UDP;
+-		*td_offset |= (sizeof(struct rte_udp_hdr) >> 2) <<
+-			      CI_TX_DESC_LEN_L4_LEN_S;
+-		break;
+-	default:
+-		break;
+-	}
+-}
+-
+ /* Construct the tx flags */
+ static inline uint64_t
+ ice_build_ctob(uint32_t td_cmd,
+@@ -3209,7 +3151,7 @@ ice_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
  
  		/* Enable checksum offloading */
--		if (ol_flags & ICE_TX_CKSUM_OFFLOAD_MASK)
-+		if (ol_flags & CI_TX_CKSUM_OFFLOAD_MASK)
- 			ice_txd_enable_checksum(ol_flags, &td_cmd,
+ 		if (ol_flags & CI_TX_CKSUM_OFFLOAD_MASK)
+-			ice_txd_enable_checksum(ol_flags, &td_cmd,
++			ci_txd_enable_checksum(ol_flags, &td_cmd,
  						&td_offset, tx_offload);
  
-diff --git a/drivers/net/intel/idpf/idpf_common_rxtx.c b/drivers/net/intel/idpf/idpf_common_rxtx.c
-index 9219ad9047..b34d545a0a 100644
---- a/drivers/net/intel/idpf/idpf_common_rxtx.c
-+++ b/drivers/net/intel/idpf/idpf_common_rxtx.c
-@@ -945,7 +945,7 @@ idpf_dp_splitq_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
- 		else
- 			nb_used = tx_pkt->nb_segs + nb_ctx;
- 
--		if (ol_flags & IDPF_TX_CKSUM_OFFLOAD_MASK)
-+		if (ol_flags & CI_TX_CKSUM_OFFLOAD_MASK)
- 			cmd_dtype = IDPF_TXD_FLEX_FLOW_CMD_CS_EN;
- 
- 		/* context descriptor */
-@@ -1425,7 +1425,7 @@ idpf_dp_singleq_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
- 			}
- 		}
- 
--		if (ol_flags & IDPF_TX_CKSUM_OFFLOAD_MASK)
-+		if (ol_flags & CI_TX_CKSUM_OFFLOAD_MASK)
- 			td_cmd |= IDPF_TX_FLEX_DESC_CMD_CS_EN;
- 
- 		if (nb_ctx != 0) {
-diff --git a/drivers/net/intel/idpf/idpf_common_rxtx.h b/drivers/net/intel/idpf/idpf_common_rxtx.h
-index b88a87402d..fe7094d434 100644
---- a/drivers/net/intel/idpf/idpf_common_rxtx.h
-+++ b/drivers/net/intel/idpf/idpf_common_rxtx.h
-@@ -39,13 +39,8 @@
- #define IDPF_RLAN_CTX_DBUF_S	7
- #define IDPF_RX_MAX_DATA_BUF_SIZE	(16 * 1024 - 128)
- 
--#define IDPF_TX_CKSUM_OFFLOAD_MASK (		\
--		RTE_MBUF_F_TX_IP_CKSUM |	\
--		RTE_MBUF_F_TX_L4_MASK |		\
--		RTE_MBUF_F_TX_TCP_SEG)
--
- #define IDPF_TX_OFFLOAD_MASK (			\
--		IDPF_TX_CKSUM_OFFLOAD_MASK |	\
-+		CI_TX_CKSUM_OFFLOAD_MASK |	\
- 		RTE_MBUF_F_TX_IPV4 |		\
- 		RTE_MBUF_F_TX_IPV6)
- 
+ 		if (nb_ctx) {
 -- 
 2.51.0
 
