@@ -2,45 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 909F1E6BF04
-	for <dpdk-dev@archiver.kernel.org>; Fri, 30 Jan 2026 11:42:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EEF9E6BF03
+	for <dpdk-dev@archiver.kernel.org>; Fri, 30 Jan 2026 11:43:06 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 91D5B40669;
-	Fri, 30 Jan 2026 12:42:29 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 1B2D04066B;
+	Fri, 30 Jan 2026 12:42:32 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
- by mails.dpdk.org (Postfix) with ESMTP id D0DD040647
- for <dev@dpdk.org>; Fri, 30 Jan 2026 12:42:25 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id D47C24064C
+ for <dev@dpdk.org>; Fri, 30 Jan 2026 12:42:27 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1769773346; x=1801309346;
+ t=1769773348; x=1801309348;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=rRdEpyHHBtZwebE8B6w5Z2YbkASJKUjXTDiHzGlC4bE=;
- b=V/QupyvhdvfhldorzEiXDQkf99cQDRrxovAxeGU4q2kUGuDaJMr2GzoP
- /pUGzjAYr16RLi2k9tlWRxG2uzSUzZL+arQhQt4ukNlucc8xxVIJxrBgM
- lW3JwzaZLujtM3EPvuzC3FPTCSzjTaqF30Nm4uu8254TcvKkd3Vum0qR6
- LycFAyQrhai0jDt1cF1mlbk5c6wvFBe9J9LP8PNtI6L0SvCwlfNAJ7Vt4
- EZlFJGf0WnW08YWtSjSLZHjT5en6DZNAIYi2ioLdc7cED7v9/HWGxfFNp
- rHerRjlHZKBOBl/IUP8sp0UxfIVEjA5fzmZf3RusXH0N8mdNKxIDOK7oJ A==;
-X-CSE-ConnectionGUID: 3d8aDfH1QnGbukpMz/ceBQ==
-X-CSE-MsgGUID: diwlomu0StS9/XDjb7rUAw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11686"; a="82392275"
-X-IronPort-AV: E=Sophos;i="6.21,262,1763452800"; d="scan'208";a="82392275"
+ bh=VlmGIIX+RVrJcHi16CX27eOwkjVOz0KoqYRTw0jNRC0=;
+ b=kTyj3ILWbf91yUwvCw0V0DYl7z8PTORJNruQf4yt2hV2gszskVS5HJZn
+ FwffZdnwtnQ4QCISsf8Y48k8wOwKO2lkuy2kHqGKxcW+w53om97X1Bu4U
+ A9grWNwdW5U7hip92Ho14nMAwC2H2iRVvxjUzUs9DQKG1AqWvNKLdHDpL
+ 6VCwRYnmmDKwiCrZafU4GQNAqRBUJlGiwt1plLH3utfrjqcj6Tgb7D2aK
+ ZVyPjoas2dhvriE6zYPoh87BeUxopXiusWAqUofuwEM86R8S18mP6BpcG
+ C55VsVYNW0b/x+zDVMOoK6IQ7FyE4ep6OodUj43kffs6W01GWwg0sF/hV w==;
+X-CSE-ConnectionGUID: NVPBhczOREaJyhyG6fVDiQ==
+X-CSE-MsgGUID: akXwpByQS9iQjiFApz386A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11686"; a="82392283"
+X-IronPort-AV: E=Sophos;i="6.21,262,1763452800"; d="scan'208";a="82392283"
 Received: from fmviesa010.fm.intel.com ([10.60.135.150])
  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 30 Jan 2026 03:42:25 -0800
-X-CSE-ConnectionGUID: iEnONPCBTUGKvxgunr80qw==
-X-CSE-MsgGUID: cZR+uEKbQ8abfEFSvXVJ9Q==
+ 30 Jan 2026 03:42:27 -0800
+X-CSE-ConnectionGUID: zxcU+MSMRj2ILmUDsw47nA==
+X-CSE-MsgGUID: rNqVclNrQISUsEOOa7j1GQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,262,1763452800"; d="scan'208";a="209190450"
+X-IronPort-AV: E=Sophos;i="6.21,262,1763452800"; d="scan'208";a="209190456"
 Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by fmviesa010.fm.intel.com with ESMTP; 30 Jan 2026 03:42:24 -0800
+ by fmviesa010.fm.intel.com with ESMTP; 30 Jan 2026 03:42:25 -0800
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
-Cc: Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v3 05/36] net/intel: create separate header for Tx scalar fns
-Date: Fri, 30 Jan 2026 11:41:32 +0000
-Message-ID: <20260130114207.1126032-6-bruce.richardson@intel.com>
+Cc: Bruce Richardson <bruce.richardson@intel.com>,
+ Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
+ Anatoly Burakov <anatoly.burakov@intel.com>,
+ Jingjing Wu <jingjing.wu@intel.com>,
+ Praveen Shetty <praveen.shetty@intel.com>
+Subject: [PATCH v3 06/36] net/intel: add common fn to calculate needed
+ descriptors
+Date: Fri, 30 Jan 2026 11:41:33 +0000
+Message-ID: <20260130114207.1126032-7-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260130114207.1126032-1-bruce.richardson@intel.com>
 References: <20251219172548.2660777-1-bruce.richardson@intel.com>
@@ -60,164 +65,197 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Rather than having all Tx code in the one file, which could start
-getting rather long, move the scalar datapath functions to a new header
-file.
+Multiple drivers used the same logic to calculate how many Tx data
+descriptors were needed. Move that calculation to common code. In the
+process of updating drivers, fix idpf driver calculation for the TSO
+case.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- drivers/net/intel/common/tx.h            | 58 ++------------------
- drivers/net/intel/common/tx_scalar_fns.h | 67 ++++++++++++++++++++++++
- 2 files changed, 72 insertions(+), 53 deletions(-)
- create mode 100644 drivers/net/intel/common/tx_scalar_fns.h
+ drivers/net/intel/common/tx_scalar_fns.h  | 21 +++++++++++++++++++++
+ drivers/net/intel/i40e/i40e_rxtx.c        | 18 +-----------------
+ drivers/net/intel/iavf/iavf_rxtx.c        | 17 +----------------
+ drivers/net/intel/ice/ice_rxtx.c          | 18 +-----------------
+ drivers/net/intel/idpf/idpf_common_rxtx.c | 21 +++++++++++++++++----
+ 5 files changed, 41 insertions(+), 54 deletions(-)
 
-diff --git a/drivers/net/intel/common/tx.h b/drivers/net/intel/common/tx.h
-index 03245d4fba..01e42303b4 100644
---- a/drivers/net/intel/common/tx.h
-+++ b/drivers/net/intel/common/tx.h
-@@ -319,59 +319,6 @@ ci_tx_free_bufs_vec(struct ci_tx_queue *txq, ci_desc_done_fn desc_done, bool ctx
- 	return txq->tx_rs_thresh;
+diff --git a/drivers/net/intel/common/tx_scalar_fns.h b/drivers/net/intel/common/tx_scalar_fns.h
+index c79210d084..f894cea616 100644
+--- a/drivers/net/intel/common/tx_scalar_fns.h
++++ b/drivers/net/intel/common/tx_scalar_fns.h
+@@ -64,4 +64,25 @@ ci_tx_xmit_cleanup(struct ci_tx_queue *txq)
+ 	return 0;
  }
  
--/*
-- * Common transmit descriptor cleanup function for Intel drivers.
-- * Used by ice, i40e, iavf, and idpf drivers.
-- *
-- * Returns:
-- *   0 on success
-- *  -1 if cleanup cannot proceed (descriptors not yet processed by HW)
-- */
--static __rte_always_inline int
--ci_tx_xmit_cleanup(struct ci_tx_queue *txq)
++static inline uint16_t
++ci_div_roundup16(uint16_t x, uint16_t y)
++{
++	return (uint16_t)((x + y - 1) / y);
++}
++
++/* Calculate the number of TX descriptors needed for each pkt */
++static inline uint16_t
++ci_calc_pkt_desc(const struct rte_mbuf *tx_pkt)
++{
++	uint16_t count = 0;
++
++	while (tx_pkt != NULL) {
++		count += ci_div_roundup16(tx_pkt->data_len, CI_MAX_DATA_PER_TXD);
++		tx_pkt = tx_pkt->next;
++	}
++
++	return count;
++}
++
++
+ #endif /* _COMMON_INTEL_TX_SCALAR_FNS_H_ */
+diff --git a/drivers/net/intel/i40e/i40e_rxtx.c b/drivers/net/intel/i40e/i40e_rxtx.c
+index f96c5c7f1e..b75306931a 100644
+--- a/drivers/net/intel/i40e/i40e_rxtx.c
++++ b/drivers/net/intel/i40e/i40e_rxtx.c
+@@ -1029,21 +1029,6 @@ i40e_set_tso_ctx(struct rte_mbuf *mbuf, union ci_tx_offload tx_offload)
+ 	return ctx_desc;
+ }
+ 
+-/* Calculate the number of TX descriptors needed for each pkt */
+-static inline uint16_t
+-i40e_calc_pkt_desc(struct rte_mbuf *tx_pkt)
 -{
--	struct ci_tx_entry *sw_ring = txq->sw_ring;
--	volatile struct ci_tx_desc *txd = txq->ci_tx_ring;
--	uint16_t last_desc_cleaned = txq->last_desc_cleaned;
--	uint16_t nb_tx_desc = txq->nb_tx_desc;
--	uint16_t desc_to_clean_to;
--	uint16_t nb_tx_to_clean;
+-	struct rte_mbuf *txd = tx_pkt;
+-	uint16_t count = 0;
 -
--	/* Determine the last descriptor needing to be cleaned */
--	desc_to_clean_to = (uint16_t)(last_desc_cleaned + txq->tx_rs_thresh);
--	if (desc_to_clean_to >= nb_tx_desc)
--		desc_to_clean_to = (uint16_t)(desc_to_clean_to - nb_tx_desc);
--
--	/* Check to make sure the last descriptor to clean is done */
--	desc_to_clean_to = sw_ring[desc_to_clean_to].last_id;
--
--	/* Check if descriptor is done - all drivers use 0xF as done value in bits 3:0 */
--	if ((txd[desc_to_clean_to].cmd_type_offset_bsz & rte_cpu_to_le_64(CI_TXD_QW1_DTYPE_M)) !=
--			rte_cpu_to_le_64(CI_TX_DESC_DTYPE_DESC_DONE)) {
--		/* Descriptor not yet processed by hardware */
--		return -1;
+-	while (txd != NULL) {
+-		count += DIV_ROUND_UP(txd->data_len, CI_MAX_DATA_PER_TXD);
+-		txd = txd->next;
 -	}
 -
--	/* Figure out how many descriptors will be cleaned */
--	if (last_desc_cleaned > desc_to_clean_to)
--		nb_tx_to_clean = (uint16_t)((nb_tx_desc - last_desc_cleaned) + desc_to_clean_to);
--	else
--		nb_tx_to_clean = (uint16_t)(desc_to_clean_to - last_desc_cleaned);
+-	return count;
+-}
 -
--	/* The last descriptor to clean is done, so that means all the
--	 * descriptors from the last descriptor that was cleaned
--	 * up to the last descriptor with the RS bit set
--	 * are done. Only reset the threshold descriptor.
--	 */
--	txd[desc_to_clean_to].cmd_type_offset_bsz = 0;
+ uint16_t
+ i40e_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
+ {
+@@ -1106,8 +1091,7 @@ i40e_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
+ 		 * per tx desc.
+ 		 */
+ 		if (ol_flags & RTE_MBUF_F_TX_TCP_SEG)
+-			nb_used = (uint16_t)(i40e_calc_pkt_desc(tx_pkt) +
+-					     nb_ctx);
++			nb_used = (uint16_t)(ci_calc_pkt_desc(tx_pkt) + nb_ctx);
+ 		else
+ 			nb_used = (uint16_t)(tx_pkt->nb_segs + nb_ctx);
+ 		tx_last = (uint16_t)(tx_id + nb_used - 1);
+diff --git a/drivers/net/intel/iavf/iavf_rxtx.c b/drivers/net/intel/iavf/iavf_rxtx.c
+index 947b6c24d2..885d9309cc 100644
+--- a/drivers/net/intel/iavf/iavf_rxtx.c
++++ b/drivers/net/intel/iavf/iavf_rxtx.c
+@@ -2666,21 +2666,6 @@ iavf_build_data_desc_cmd_offset_fields(volatile uint64_t *qw1,
+ 		((uint64_t)l2tag1 << IAVF_TXD_DATA_QW1_L2TAG1_SHIFT));
+ }
+ 
+-/* Calculate the number of TX descriptors needed for each pkt */
+-static inline uint16_t
+-iavf_calc_pkt_desc(struct rte_mbuf *tx_pkt)
+-{
+-	struct rte_mbuf *txd = tx_pkt;
+-	uint16_t count = 0;
 -
--	/* Update the txq to reflect the last descriptor that was cleaned */
--	txq->last_desc_cleaned = desc_to_clean_to;
--	txq->nb_tx_free = (uint16_t)(txq->nb_tx_free + nb_tx_to_clean);
+-	while (txd != NULL) {
+-		count += (txd->data_len + CI_MAX_DATA_PER_TXD - 1) / CI_MAX_DATA_PER_TXD;
+-		txd = txd->next;
+-	}
 -
--	return 0;
+-	return count;
 -}
 -
  static inline void
- ci_txq_release_all_mbufs(struct ci_tx_queue *txq, bool use_ctx)
- {
-@@ -490,4 +437,9 @@ ci_tx_path_select(const struct ci_tx_path_features *req_features,
- 	return idx;
+ iavf_fill_data_desc(volatile struct ci_tx_desc *desc,
+ 	uint64_t desc_template,	uint16_t buffsz,
+@@ -2766,7 +2751,7 @@ iavf_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
+ 		 * per tx desc.
+ 		 */
+ 		if (mb->ol_flags & RTE_MBUF_F_TX_TCP_SEG)
+-			nb_desc_required = iavf_calc_pkt_desc(mb) + nb_desc_ctx + nb_desc_ipsec;
++			nb_desc_required = ci_calc_pkt_desc(mb) + nb_desc_ctx + nb_desc_ipsec;
+ 		else
+ 			nb_desc_required = nb_desc_data + nb_desc_ctx + nb_desc_ipsec;
+ 
+diff --git a/drivers/net/intel/ice/ice_rxtx.c b/drivers/net/intel/ice/ice_rxtx.c
+index 52bbf95967..2a53b614b2 100644
+--- a/drivers/net/intel/ice/ice_rxtx.c
++++ b/drivers/net/intel/ice/ice_rxtx.c
+@@ -3075,21 +3075,6 @@ ice_set_tso_ctx(struct rte_mbuf *mbuf, union ci_tx_offload tx_offload)
+ 	return ctx_desc;
  }
  
-+/* include the scalar functions at the end, so they can use the common definitions.
-+ * This is done so drivers can use all functions just by including tx.h
-+ */
-+#include "tx_scalar_fns.h"
+-/* Calculate the number of TX descriptors needed for each pkt */
+-static inline uint16_t
+-ice_calc_pkt_desc(struct rte_mbuf *tx_pkt)
+-{
+-	struct rte_mbuf *txd = tx_pkt;
+-	uint16_t count = 0;
+-
+-	while (txd != NULL) {
+-		count += DIV_ROUND_UP(txd->data_len, CI_MAX_DATA_PER_TXD);
+-		txd = txd->next;
+-	}
+-
+-	return count;
+-}
+-
+ uint16_t
+ ice_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
+ {
+@@ -3152,8 +3137,7 @@ ice_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
+ 		 * per tx desc.
+ 		 */
+ 		if (ol_flags & (RTE_MBUF_F_TX_TCP_SEG | RTE_MBUF_F_TX_UDP_SEG))
+-			nb_used = (uint16_t)(ice_calc_pkt_desc(tx_pkt) +
+-					     nb_ctx);
++			nb_used = (uint16_t)(ci_calc_pkt_desc(tx_pkt) + nb_ctx);
+ 		else
+ 			nb_used = (uint16_t)(tx_pkt->nb_segs + nb_ctx);
+ 		tx_last = (uint16_t)(tx_id + nb_used - 1);
+diff --git a/drivers/net/intel/idpf/idpf_common_rxtx.c b/drivers/net/intel/idpf/idpf_common_rxtx.c
+index 587871b54a..11d6848430 100644
+--- a/drivers/net/intel/idpf/idpf_common_rxtx.c
++++ b/drivers/net/intel/idpf/idpf_common_rxtx.c
+@@ -934,7 +934,16 @@ idpf_dp_splitq_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
+ 		tx_offload.tso_segsz = tx_pkt->tso_segsz;
+ 		/* Calculate the number of context descriptors needed. */
+ 		nb_ctx = idpf_calc_context_desc(ol_flags);
+-		nb_used = tx_pkt->nb_segs + nb_ctx;
 +
- #endif /* _COMMON_INTEL_TX_H_ */
-diff --git a/drivers/net/intel/common/tx_scalar_fns.h b/drivers/net/intel/common/tx_scalar_fns.h
-new file mode 100644
-index 0000000000..c79210d084
---- /dev/null
-+++ b/drivers/net/intel/common/tx_scalar_fns.h
-@@ -0,0 +1,67 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2025 Intel Corporation
-+ */
-+
-+#ifndef _COMMON_INTEL_TX_SCALAR_FNS_H_
-+#define _COMMON_INTEL_TX_SCALAR_FNS_H_
-+
-+#include <stdint.h>
-+#include <rte_byteorder.h>
-+
-+/* depends on common Tx definitions. */
-+#include "tx.h"
-+
-+/*
-+ * Common transmit descriptor cleanup function for Intel drivers.
-+ * Used by ice, i40e, iavf, and idpf drivers.
-+ *
-+ * Returns:
-+ *   0 on success
-+ *  -1 if cleanup cannot proceed (descriptors not yet processed by HW)
-+ */
-+static __rte_always_inline int
-+ci_tx_xmit_cleanup(struct ci_tx_queue *txq)
-+{
-+	struct ci_tx_entry *sw_ring = txq->sw_ring;
-+	volatile struct ci_tx_desc *txd = txq->ci_tx_ring;
-+	uint16_t last_desc_cleaned = txq->last_desc_cleaned;
-+	uint16_t nb_tx_desc = txq->nb_tx_desc;
-+	uint16_t desc_to_clean_to;
-+	uint16_t nb_tx_to_clean;
-+
-+	/* Determine the last descriptor needing to be cleaned */
-+	desc_to_clean_to = (uint16_t)(last_desc_cleaned + txq->tx_rs_thresh);
-+	if (desc_to_clean_to >= nb_tx_desc)
-+		desc_to_clean_to = (uint16_t)(desc_to_clean_to - nb_tx_desc);
-+
-+	/* Check to make sure the last descriptor to clean is done */
-+	desc_to_clean_to = sw_ring[desc_to_clean_to].last_id;
-+
-+	/* Check if descriptor is done - all drivers use 0xF as done value in bits 3:0 */
-+	if ((txd[desc_to_clean_to].cmd_type_offset_bsz & rte_cpu_to_le_64(CI_TXD_QW1_DTYPE_M)) !=
-+			rte_cpu_to_le_64(CI_TX_DESC_DTYPE_DESC_DONE)) {
-+		/* Descriptor not yet processed by hardware */
-+		return -1;
-+	}
-+
-+	/* Figure out how many descriptors will be cleaned */
-+	if (last_desc_cleaned > desc_to_clean_to)
-+		nb_tx_to_clean = (uint16_t)((nb_tx_desc - last_desc_cleaned) + desc_to_clean_to);
-+	else
-+		nb_tx_to_clean = (uint16_t)(desc_to_clean_to - last_desc_cleaned);
-+
-+	/* The last descriptor to clean is done, so that means all the
-+	 * descriptors from the last descriptor that was cleaned
-+	 * up to the last descriptor with the RS bit set
-+	 * are done. Only reset the threshold descriptor.
-+	 */
-+	txd[desc_to_clean_to].cmd_type_offset_bsz = 0;
-+
-+	/* Update the txq to reflect the last descriptor that was cleaned */
-+	txq->last_desc_cleaned = desc_to_clean_to;
-+	txq->nb_tx_free = (uint16_t)(txq->nb_tx_free + nb_tx_to_clean);
-+
-+	return 0;
-+}
-+
-+#endif /* _COMMON_INTEL_TX_SCALAR_FNS_H_ */
++		/* Calculate the number of TX descriptors needed for
++		 * each packet. For TSO packets, use ci_calc_pkt_desc as
++		 * the mbuf data size might exceed max data size that hw allows
++		 * per tx desc.
++		 */
++		if (ol_flags & RTE_MBUF_F_TX_TCP_SEG)
++			nb_used = ci_calc_pkt_desc(tx_pkt) + nb_ctx;
++		else
++			nb_used = tx_pkt->nb_segs + nb_ctx;
+ 
+ 		if (ol_flags & IDPF_TX_CKSUM_OFFLOAD_MASK)
+ 			cmd_dtype = IDPF_TXD_FLEX_FLOW_CMD_CS_EN;
+@@ -1382,10 +1391,14 @@ idpf_dp_singleq_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
+ 		nb_ctx = idpf_calc_context_desc(ol_flags);
+ 
+ 		/* The number of descriptors that must be allocated for
+-		 * a packet equals to the number of the segments of that
+-		 * packet plus 1 context descriptor if needed.
++		 * a packet. For TSO packets, use ci_calc_pkt_desc as
++		 * the mbuf data size might exceed max data size that hw allows
++		 * per tx desc.
+ 		 */
+-		nb_used = (uint16_t)(tx_pkt->nb_segs + nb_ctx);
++		if (ol_flags & RTE_MBUF_F_TX_TCP_SEG)
++			nb_used = (uint16_t)(ci_calc_pkt_desc(tx_pkt) + nb_ctx);
++		else
++			nb_used = (uint16_t)(tx_pkt->nb_segs + nb_ctx);
+ 		tx_last = (uint16_t)(tx_id + nb_used - 1);
+ 
+ 		/* Circular ring */
 -- 
 2.51.0
 
