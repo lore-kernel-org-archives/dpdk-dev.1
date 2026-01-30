@@ -2,84 +2,40 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54F2EE6BF06
-	for <dpdk-dev@archiver.kernel.org>; Fri, 30 Jan 2026 12:13:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96B89E6BF11
+	for <dpdk-dev@archiver.kernel.org>; Fri, 30 Jan 2026 13:54:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1624B402BD;
-	Fri, 30 Jan 2026 13:13:32 +0100 (CET)
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com
- [209.85.218.53]) by mails.dpdk.org (Postfix) with ESMTP id E394440274
- for <dev@dpdk.org>; Fri, 30 Jan 2026 13:13:30 +0100 (CET)
-Received: by mail-ej1-f53.google.com with SMTP id
- a640c23a62f3a-b8842e5a2a1so297994166b.2
- for <dev@dpdk.org>; Fri, 30 Jan 2026 04:13:30 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1769775210; cv=none;
- d=google.com; s=arc-20240605;
- b=GN6OUln6IxLAQNG1Sxc5m/QMOyEWIb3+mjt1s8mcASKl1CgcoLPct3stVG0RAI0pmH
- bnV932htG0nQ4R/yDNyeidpXvJLJmHbPUh6sPhpwSeJrjHVx/gxQt48ZlNQpRMRS0PXf
- biFO9aAshWdgHv2xvxMhPU9GJIzP/cSrCOhzBX6nos3YaHvYMkoWUEBs8IiEzZf8+1bQ
- Y0kWBuKDZUJ52B0Fvs4yCFrSNxieZfrr4S/ot1ORzsvV+HCrPjldKmelhCD/YDLybNw9
- JjwgAfvNBMWyah6hrhIT+MfdCu+Pb4nNoBzY0KMX+/fNCKAsCZ6iIURnE4eKCepQN+a8
- BjhA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20240605; 
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:dkim-signature;
- bh=uwYZHTlgz7JvIO+/liLFMhsU6c6atnR3IApM88O1bHk=;
- fh=t33Egyn4DAOwVRnwraldPtDjoBFAjogf3LzpsEMwxHQ=;
- b=bs567c0fVXTgaAayupU2UgFE3ZQlmNCcmH7PwqGUnYSbfQZrg2JV5QaTf3sKNgF1wF
- chCyP6WffMRFh0YqJ8nnik4udhmxr2tWfYx6y1s9MQAgTAPXTYm7QsNXg5vlWcduceRP
- XqPR5cXKlI4HYa+6c7wcZH6uhpg1fS0BO2yVIfs9afa8QQepUnPD2bJAk7t2CRCxyCGt
- 7Q0U6HmuLESxWvwGBk/+s5h7ePlsINbzmBzn3pdsXu7qvhcrxJl16Rn9D9HBtqtRjXk8
- jb6NkLoG5Wk0QS4Vk1MQQOJGX7M262MuIghuK9LzXoklVBW68CONjZwCotZB2yLtDE90
- GhoA==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=dyna-nic.com; s=google; t=1769775210; x=1770380010; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=uwYZHTlgz7JvIO+/liLFMhsU6c6atnR3IApM88O1bHk=;
- b=rSjuK/VspKMIoAcQt5frGs+ZADDAmkzZeW0NVuNQEXmg7lwdMl2e8Cr/R1ihchnX8S
- 6p0AGb/3+sACi1roKaZiu8fW8cBzRbAcXIQt5HApdWfV95bFrIAPX/JxqmQeeyWGhOqZ
- OjSC4k3Jqd1r1OLX95M3sF42rGPAz79dMBgIQPCHKqIcRe4H8UG6SOUqsRfxVY+J5mEV
- NMAMpT/StamtEo8y9UYBptkiXC0P00SkzAsBoPBeK30//s8b2YwTr9jtDSGLy337ZDzw
- BbdBaGxAfaiCl+N/W0rxBwbIFz09YSU0wduxY01zYN6vQvMETAXT6mTBAmpT3mMS6dWq
- mhXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1769775210; x=1770380010;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=uwYZHTlgz7JvIO+/liLFMhsU6c6atnR3IApM88O1bHk=;
- b=wLFsyHeq01Ji+z6gv++FWRveIe4MzuSd478hOaAcfVnkIb9GxvdEyUPPxxbSACG80D
- 5EBaVV6SDhD9XeWV60740SYOCPQhRhK5wTUGQZ6c3QdEodLjwVCkI4vCySnUvGC4DMD0
- fE7oOy9hld0kbP6sG33kuH8nMa8NS4wqik5GqK2WCcnsmGyAHxuXDYXNpULha3KIkUVq
- kpcz7Oc2Hm9Fpx/cU/+kVvUjKxo+8zC5iBG8Mr8ySXn/JirGLhE3YOtei/+dGkbjaNhm
- e6n7ElJgvwoKwsbFG1ljK92byN1ClZToG92P9kTeCbLhd/PGTaF4DJzeF7ScEfp4jX58
- hYQg==
-X-Gm-Message-State: AOJu0YzpDfnRAdCueAwj2CaOljisjXBuE9rF9ieXNsKqVUjIUjF3318X
- G/YJBDt5cYz+ukoaEeLfbzeLmSXTB9TPwnpmXF3z6YKOMHYB8bmBNBEuAc+vQuS/O5x9n3UtUO0
- ZzvVMCmEJ08iyir6EjDS8I8PJlmBx8uxn/AuxGF/fggsSUNCNZQ/Sdog=
-X-Gm-Gg: AZuq6aL9Z7992oh8CdB5FsTipI0Nb+DqdKpCS9Bq/otlAorZBOgK0mHsDtqyfZnJaNs
- SbstU5+Fk4InhMrp1xoiD/hVTJ1efhYgsX3P1ivimgHZPz4BO9W1YT/vo6/Q+rWjzm96hgL6ALr
- iVt6MjOm05eDqX6ZBpoEFXwCfpD+PYcbFW+LZiBtkvLiMMBWmZOc2vtYV6STUM6U2EWXekrN+PE
- AafVao30UjKbR10wKVAh1YS75HfUy0Wy9khIadfJoV3FhCbcg11dvyODNPybt6oajWeKcA=
-X-Received: by 2002:a17:907:9284:b0:b87:d44:81d with SMTP id
- a640c23a62f3a-b8dff754e5dmr144745666b.45.1769775210354; Fri, 30 Jan 2026
- 04:13:30 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 5A38A402AF;
+	Fri, 30 Jan 2026 14:54:58 +0100 (CET)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 0E4B140274
+ for <dev@dpdk.org>; Fri, 30 Jan 2026 14:54:57 +0100 (CET)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 202F2206EC;
+ Fri, 30 Jan 2026 14:54:56 +0100 (CET)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-References: <20260129114202.61185-1-sismis@dyna-nic.com>
- <20260129114202.61185-4-sismis@dyna-nic.com>
- <20260129092815.750af8c6@phoenix.local>
-In-Reply-To: <20260129092815.750af8c6@phoenix.local>
-From: =?UTF-8?B?THVrw6HFoSDFoGnFoW1pxaE=?= <sismis@dyna-nic.com>
-Date: Fri, 30 Jan 2026 13:13:18 +0100
-X-Gm-Features: AZwV_QjqDlfuVua831qEXnqmBZwVOAuyfSoxmVYCe_DmR3_GNxjDnrlSLaFzE3o
-Message-ID: <CAPQRu6HhHgu5nxSHJgPud40-UThys2UNiFtPZQq7wpReRDORgw@mail.gmail.com>
-Subject: Re: [PATCH v8 3/6] flow_parser: add shared parser library
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: dev@dpdk.org
-Content-Type: multipart/alternative; boundary="000000000000bee62c064999e615"
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Subject: RE: [PATCH 1/2] net: ethernet address comparison optimizations
+Date: Fri, 30 Jan 2026 14:54:52 +0100
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F656D5@smartserver.smartshare.dk>
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+In-Reply-To: <aXyVd7BpQKR_4uRj@bricha3-mobl1.ger.corp.intel.com>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH 1/2] net: ethernet address comparison optimizations
+Thread-Index: AdyR21rj4bxZXZj0T86dC0cDRt90XwAAaG4A
+References: <20260130104617.535413-1-mb@smartsharesystems.com>
+ <aXyNh8Yja-Mg6qID@bricha3-mobl1.ger.corp.intel.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F656D4@smartserver.smartshare.dk>
+ <aXyVd7BpQKR_4uRj@bricha3-mobl1.ger.corp.intel.com>
+From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
+To: "Bruce Richardson" <bruce.richardson@intel.com>
+Cc: <dev@dpdk.org>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -93,50 +49,126 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---000000000000bee62c064999e615
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+> From: Bruce Richardson [mailto:bruce.richardson@intel.com]
+> Sent: Friday, 30 January 2026 12.27
+>=20
+> On Fri, Jan 30, 2026 at 12:16:43PM +0100, Morten Br=F8rup wrote:
+> > > From: Bruce Richardson [mailto:bruce.richardson@intel.com]
+> > > Sent: Friday, 30 January 2026 11.53
+> > >
+> > > On Fri, Jan 30, 2026 at 10:46:16AM +0000, Morten Br=F8rup wrote:
+> > > > For CPU architectures without strict alignment requirements,
+> > > operations on
+> > > > 6-byte Ethernet addresses using three 2-byte operations were
+> replaced
+> > > by a
+> > > > 4-byte and a 2-byte operation, i.e. two operations instead of
+> three.
+> > > >
+> > > > Comparison functions are pure, so added __rte_pure.
+> > > >
+> > > > Removed superfluous parentheses. (No functional change.)
+> > > >
+> > > > Signed-off-by: Morten Br=F8rup <mb@smartsharesystems.com>
+> > > > ---
+> > > >  lib/net/rte_ether.h | 19 ++++++++++++++++++-
+> > > >  1 file changed, 18 insertions(+), 1 deletion(-)
+> > > >
+> > > > diff --git a/lib/net/rte_ether.h b/lib/net/rte_ether.h
+> > > > index c9a0b536c3..5552d3c1f6 100644
+> > > > --- a/lib/net/rte_ether.h
+> > > > +++ b/lib/net/rte_ether.h
+> > > > @@ -99,13 +99,19 @@ static_assert(alignof(struct rte_ether_addr)
+> =3D=3D
+> > > 2,
+> > > >   *  True  (1) if the given two ethernet address are the same;
+> > > >   *  False (0) otherwise.
+> > > >   */
+> > > > +__rte_pure
+> > > >  static inline int rte_is_same_ether_addr(const struct
+> rte_ether_addr
+> > > *ea1,
+> > > >  				     const struct rte_ether_addr *ea2)
+> > > >  {
+> > > > +#if !defined(RTE_ARCH_STRICT_ALIGN)
+> > > > +	return ((((const unaligned_uint32_t *)ea1)[0] ^ ((const
+> > > unaligned_uint32_t *)ea2)[0]) |
+> > > > +			(((const uint16_t *)ea1)[2] ^ ((const uint16_t
+> > > *)ea2)[2])) =3D=3D 0;
+> > > > +#else
+> > > >  	const uint16_t *w1 =3D (const uint16_t *)ea1;
+> > > >  	const uint16_t *w2 =3D (const uint16_t *)ea2;
+> > > >
+> > > >  	return ((w1[0] ^ w2[0]) | (w1[1] ^ w2[1]) | (w1[2] ^
+> w2[2])) =3D=3D
+> > > 0;
+> > > > +#endif
+> > > >  }
+> > >
+> > > Is this actually faster?
+> >
+> > It's a simple micro-optimization, so I haven't benchmarked it.
+> > On x86, the compiled function is simplified and reduced in size from
+> 34 to 24 bytes:
+> >
+> > 00000000004ed650 <review_rte_is_same_ether_addr>:
+> >   4ed650:	0f b7 07             	movzwl (%rdi),%eax
+> >   4ed653:	0f b7 57 02          	movzwl 0x2(%rdi),%edx
+> >   4ed657:	66 33 06             	xor    (%rsi),%ax
+> >   4ed65a:	66 33 56 02          	xor    0x2(%rsi),%dx
+> >   4ed65e:	09 d0                	or     %edx,%eax
+> >   4ed660:	0f b7 57 04          	movzwl 0x4(%rdi),%edx
+> >   4ed664:	66 33 56 04          	xor    0x4(%rsi),%dx
+> >   4ed668:	66 09 d0             	or     %dx,%ax
+> >   4ed66b:	0f 94 c0             	sete   %al
+> >   4ed66e:	0f b6 c0             	movzbl %al,%eax
+> >   4ed671:	c3                   	ret
+> >   4ed672:	66 66 2e 0f 1f 84 00 	data16 cs nopw 0x0(%rax,%rax,1)
+> >   4ed679:	00 00 00 00
+> >   4ed67d:	0f 1f 00             	nopl   (%rax)
+> >
+> > 00000000004ed680 <rte_is_same_ether_addr_improved>:
+> >   4ed680:	0f b7 47 04          	movzwl 0x4(%rdi),%eax
+> >   4ed684:	66 33 46 04          	xor    0x4(%rsi),%ax
+> >   4ed688:	8b 17                	mov    (%rdi),%edx
+> >   4ed68a:	33 16                	xor    (%rsi),%edx
+> >   4ed68c:	0f b7 c0             	movzwl %ax,%eax
+> >   4ed68f:	09 c2                	or     %eax,%edx
+> >   4ed691:	0f 94 c0             	sete   %al
+> >   4ed694:	0f b6 c0             	movzbl %al,%eax
+> >   4ed697:	c3                   	ret
+> >   4ed698:	0f 1f 84 00 00 00 00 	nopl   0x0(%rax,%rax,1)
+> >   4ed69f:	00
+> >
+> > For reference, memcpy() of 6 bytes (compile time constant) also
+> compiles to a 4-byte and a 2-byte operation, not three 2-byte
+> operations.
+> >
+> What about memcmp? Does it compile similarly?
 
-=C4=8Dt 29. 1. 2026 v 18:28 odes=C3=ADlatel Stephen Hemminger <
-stephen@networkplumber.org> napsal:
+memcmp(a,b,6) on Clang compiles into something very similar.
+memcmp(a,b,6) on GCC compiles into something with a branch after the =
+first 4-byte comparison, with the assumption (regarding static branch =
+prediction) that they are likely to differ.
+I guess GCC's counterproductive behavior was the reason for originally =
+implementing a manual comparison, instead of simply using memcmp().
 
->
-> How big is this beast?
->
+BTW, GCC is clever enough to compile 8-byte and 16-byte comparisons into =
+code without branches.
+I guess that's why rte_ipv6_addr_eq() is implemented using memcpy() [1].
 
-Heh, I am not sure if this was rhetorical or an actual technical question,
-but to answer, pahole reports it as 26,400 bytes big.
-Previously, it was sized similarly (25,884 B), it was just spread out over
-many globally defined arrays.
-The ~500 byte increase comes from new *_cache arrays (raw_encap_conf_cache,
-raw_decap_conf_cache, etc.).
-In the original testpmd, external code accessed global arrays directly
-(e.g., raw_encap_confs[idx].data). The library provides accessor APIs like
-rte_flow_parser_raw_encap_conf_get() that return const struct
-rte_flow_action_raw_encap *. Since this API returns a pointer to a
-properly-typed action struct (not just raw data), the library needs storage
-for these structs.
+[1]: https://elixir.bootlin.com/dpdk/v25.11/source/lib/net/rte_ip6.h#L68
 
---000000000000bee62c064999e615
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+> Before we start adding ifdefs
+> like this to the code, I'd like to see some measured performance
+> benefits
+> from it. While the code may be 10 bytes shorter, does that actually
+> translate into a measurable difference in some app?
 
-<div dir=3D"ltr"><div dir=3D"ltr"><br></div><br><div class=3D"gmail_quote g=
-mail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">=C4=8Dt 29. 1. =
-2026 v=C2=A018:28 odes=C3=ADlatel Stephen Hemminger &lt;<a href=3D"mailto:s=
-tephen@networkplumber.org">stephen@networkplumber.org</a>&gt; napsal:<br></=
-div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;bor=
-der-left:1px solid rgb(204,204,204);padding-left:1ex"><br>
-How big is this beast?<br></blockquote><div><br></div><div>Heh, I am not su=
-re if this was rhetorical or an actual technical question, but to answer, p=
-ahole reports it as 26,400 bytes big.</div><div>Previously, it was sized si=
-milarly (25,884 B), it was just spread out over many globally defined array=
-s.</div><div>The ~500 byte increase comes from new *_cache arrays (raw_enca=
-p_conf_cache, raw_decap_conf_cache, etc.).<br>In the original testpmd, exte=
-rnal code accessed global arrays directly (e.g., raw_encap_confs[idx].data)=
-. The library provides accessor APIs like rte_flow_parser_raw_encap_conf_ge=
-t() that return const struct rte_flow_action_raw_encap *. Since this API re=
-turns a pointer to a properly-typed action struct (not just raw data), the =
-library needs storage for these structs.</div></div></div>
+Excellent question!
+Some quick rudimentary testing shows that it seems to be ~4 cycles =
+slower than what it's replacing.
+Reality beats expectations.
 
---000000000000bee62c064999e615--
+I'll drop this patch.
+
