@@ -2,72 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 103D9E6BF10
-	for <dpdk-dev@archiver.kernel.org>; Fri, 30 Jan 2026 20:24:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDDF1E6BF3C
+	for <dpdk-dev@archiver.kernel.org>; Fri, 30 Jan 2026 23:49:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1EEE140673;
-	Fri, 30 Jan 2026 21:23:47 +0100 (CET)
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com
- [209.85.128.48]) by mails.dpdk.org (Postfix) with ESMTP id AF46340677
- for <dev@dpdk.org>; Fri, 30 Jan 2026 21:23:43 +0100 (CET)
-Received: by mail-wm1-f48.google.com with SMTP id
- 5b1f17b1804b1-4801bc32725so18967015e9.0
- for <dev@dpdk.org>; Fri, 30 Jan 2026 12:23:43 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 8336A402D9;
+	Sat, 31 Jan 2026 00:49:57 +0100 (CET)
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com
+ [209.85.128.52]) by mails.dpdk.org (Postfix) with ESMTP id A158F402B2
+ for <dev@dpdk.org>; Sat, 31 Jan 2026 00:49:56 +0100 (CET)
+Received: by mail-wm1-f52.google.com with SMTP id
+ 5b1f17b1804b1-47edffe5540so32051165e9.0
+ for <dev@dpdk.org>; Fri, 30 Jan 2026 15:49:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769804623;
- x=1770409423; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769816996;
+ x=1770421796; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=ww5f8oBf4tr/AbiEAjXe6kcs2C1pYbiWCCm5cykfAag=;
- b=dLTB4VmBQWdmfgdx9mBgzzUXZbl8xVbfPfPGLK0EHD3KlwCh0yEHNq6MUoVqbogEQ9
- gP1R08O5Fu2549sIlsKXDJLgUfeVes9KOvnsT008CxCENjNvG9Tj4f1JV7tozeew9hs6
- e7dQlY7LuoFxLXSeJtcEr90hFfzkPxAxxRqvz8gU99ZQFsIYL6OHRIYvN4DbrQh3OMeK
- bDJKVDSU5odjf0OEnuybV2KCEGT2zCv/BlKmcSz2eB1ZQ7TxPHQGhpPG9eEcinUQdOEG
- TgT3KNzSO+YGGAF9FKYB+BN2T0yD+i+eMDgogxwVpMhS7pfmycAZXdKvWTgFieiCTQJk
- quPg==
+ :message-id:subject:to:from:date:from:to:cc:subject:date:message-id
+ :reply-to; bh=PNPsLidBkhZYPZlmP9nUB6hVYZs8EANYWMbKmoyGr9U=;
+ b=chcd8eyUQT52fEG4VdsXziodZYtlFB+ZDqd13ANSuhbKoiXuh+L7Ox98tU9pfnKkKm
+ QIdKsOAg4cFcR1W3VKelo5gl+j2eRA3ZKty5qaQo7RIm2BS2p9jBqxnrYbdItgjYwRvE
+ 5tZdtkH1oqrbuMjrDq0iFroMb5zYskj5m6hggd2UI3eENF0ihGegRiFEiCwxhDJq+Xs2
+ UWE7S1nUa4IqbiZj8ajJvCsdtXnmPDj59qij6A3gqMzCn4rAa0dPvt/b/hneZ5XfInlT
+ cnqzskUfM2C8vbaIQnkqABAlR5tNYyf5XGkLx9BS+iFD94BB1vMVq1FdD8DAOV6x2RPt
+ imHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1769804623; x=1770409423;
+ d=1e100.net; s=20230601; t=1769816996; x=1770421796;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=ww5f8oBf4tr/AbiEAjXe6kcs2C1pYbiWCCm5cykfAag=;
- b=AiF9Z+sHCGhOkDEc+mAVy1Zq0iZA4CfzpEsJ9hN0W8uqStaZUVt556kARwoxof/De5
- dIuPqXhr2esd3L5nOJVRDlhDvFjawWreuXLtvEZ9MCiLnEOKZLuRrL6sdNuHpze9z93y
- MCQdxyTwKAX37XsXXbyH1+/QS8cn4VWLkZmlUgjzziD2Gvg0sSka+nBdKXHERYlq+oQW
- F7hqQfKZIiapCYVY/0DoGBZlrDLLz7pz2R/nG3csBFGbY0UHdEUN/SAp1ZnpXcCg6zaK
- 4cbjkWgdalgqvc6BP7STs90QGB5FdGNTl7kgDjd2IvY8mX3fKcWbndYQ8I91CCBp+TRV
- vhUg==
-X-Gm-Message-State: AOJu0YxWda4duBrv4vqBWkB/bIOOfgINPRCzhFqUFi4fbCVuYqHyRLIs
- V0a2xnVtLzd4jB9YZIXf944oyYh0PPDxNvjjp2/FLFljqgAQqdvvKaIwAR0HiipFKlmR9m2m87x
- KTn9G
-X-Gm-Gg: AZuq6aLb3bVJotxS6I/k4YHxcQWeWCipeWX6ZsWEuIASKnJ9CIZlzcx/2rPktNdxBpP
- iH9jlbcw6VSMWyGmuCVbeNomH4KJmEzC7Am+Ng6TgKTvSmaaNVItp/OQy6+bczOhH6jKzhySPQ0
- 1mGTsuQKF4A6RenUaeVullS+KlILVP3G0y0Tl7Q9d/q2z2qz8oS4fNCl1UYrk93yKSdRWsNSZEu
- oos83D8PaNXWf1VurK0KD+WjY3b8/7VExoIacAIddVEIO9/Si6FG+lGVDPq/uOKwzKLpeT6x5BT
- G/IoHMrJ+GK0jdF1Ph0aB1U5uipuY29Id3dpW1uzIcJRuF+u74x02LQzZTQzVqYLnWJlbXvaCIR
- ZR2GukrxscdIS3UnLhJ/8SvXRGQdmUdQnVMIi7VhZ0w3dYzfjaxleFVWZtoh6esQyuhxCrpCfb1
- 96DHwdTRKGL5teaBPX4MDMu6iTFCB3XhfzpZEev75kl9bxD43jGw==
-X-Received: by 2002:a05:600c:3b96:b0:480:1c10:5633 with SMTP id
- 5b1f17b1804b1-482db49978emr49287095e9.26.1769804623272; 
- Fri, 30 Jan 2026 12:23:43 -0800 (PST)
-Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
+ :message-id:subject:to:from:date:x-gm-gg:x-gm-message-state:from:to
+ :cc:subject:date:message-id:reply-to;
+ bh=PNPsLidBkhZYPZlmP9nUB6hVYZs8EANYWMbKmoyGr9U=;
+ b=bHsz6jUONSdUPMjMLGC8g/PNitfcv2ym7SbSwSw+7bm5//AVGRtUOJ+tGOuuKmPmPR
+ 76m9Uz2WXqsb4kEmaEBoGrPs/bpU3RZ7bXFAEW8FDasW2O80ra5gsAbTtf8iuhLLvKUm
+ IbMuLtxE8lyrOOR6Gvdhk3w7pTGgs69HhWMp6tVbM5JmjJvhLkjWRIeBtqo1mUMTcwYu
+ drTMneiijdeB/D6Rap6h1UfF/OkVuP6wbLPzBRgIUox3qblj8D3qoLjQQl4fC22EUGhQ
+ Nuyou05lOUpiycscCtCkZ9Dn2Z4hUL/AM+yb+lK7OaVKxt64zq2brhaoCXQJjrTb1odF
+ MPTw==
+X-Gm-Message-State: AOJu0YxJGkN1PT8T0CL1GFx0YLY31AIJIoDyTbNONJToNR/eGOlUGHMv
+ zMkLYdaCAdyWt4F45rNAWYx+WL+A2Bz8DScmNksV+rbyte4T+2d5BVOKoLb8jcyigw6rJ5i6Lzi
+ gVCOt
+X-Gm-Gg: AZuq6aKiI0zWqfkltR09KXalRYWWHvmIdPTMM8KCX4E+2bdBrbL2G361cHtjgwgAsR2
+ ax02pmTBwD8bIEbIhkOAQ5elh2jqr1hjaSuvyfBiX0k2wx6cASasT9cZlHihnbYw82pDT9nK7Yd
+ 6hChPnXgdzqVFDs6g00+nx2PMYuEvKufoNP2BQsxb1BOXMDavkaiVQbOI1Gx4WXeGgjsuhjfH/9
+ 1skuikK7yBTwDLp/p7qew+q22mtF8TAzMEwBdtu6pj1FWYahvf8XW2HQj54BCvHMgolS8HrA/Hl
+ JlAYYjRiAR99RHgGX/t6zZw614xpIUpidtVM2A1MrLMG2PIws0pDXj1uTtrxohPd9rBNsZUS63g
+ k8HckxskKHubQKEzZICAsUrjKvisOeP4fz3fGA9e+Qy96i0SZEBNWRVD1GvV3eUMmDnxVzf2ltv
+ mpJRxXkfI/JxlyAZ4e5TbOlmG4VD3dqstlxXvx0cVX/UbYDBJb4uUv
+X-Received: by 2002:a05:600c:8b31:b0:480:1dc6:269c with SMTP id
+ 5b1f17b1804b1-482db49e6demr52011195e9.37.1769816996167; 
+ Fri, 30 Jan 2026 15:49:56 -0800 (PST)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-482e04c13a2sm23799065e9.5.2026.01.30.12.23.41
+ 5b1f17b1804b1-48066c4f3edsm282487735e9.15.2026.01.30.15.49.55
+ for <dev@dpdk.org>
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 30 Jan 2026 12:23:42 -0800 (PST)
+ Fri, 30 Jan 2026 15:49:55 -0800 (PST)
+Date: Fri, 30 Jan 2026 15:49:51 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v5 7/7] test/hash: add test for key compare functions
-Date: Fri, 30 Jan 2026 12:21:57 -0800
-Message-ID: <20260130202324.37485-8-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20260130202324.37485-1-stephen@networkplumber.org>
-References: <20250818233102.180207-1-stephen@networkplumber.org>
- <20260130202324.37485-1-stephen@networkplumber.org>
+Subject: Re: [PATCH v7 1/4] doc: add AGENTS.md for AI-powered code review tools
+Message-ID: <20260130154951.2acb79db@phoenix.local>
+In-Reply-To: <20260126184205.104629-2-stephen@networkplumber.org>
+References: <0260109014106.398156-1-stephen@networkplumber.org>
+ <20260126184205.104629-1-stephen@networkplumber.org>
+ <20260126184205.104629-2-stephen@networkplumber.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,114 +81,53 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The hash library has optimized key compare functions for various
-key lengths (in rte_cmp_jump_table). Add a test that creates hash
-tables with each length in hashtest_key_lens[] and verifies that
-add, lookup, and delete work correctly. The test also verifies
-that the compare function properly detects when a key differs
-by modifying the last byte and confirming lookup fails.
+On Mon, 26 Jan 2026 10:40:18 -0800
+Stephen Hemminger <stephen@networkplumber.org> wrote:
 
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
----
- app/test/test_hash.c | 78 ++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 78 insertions(+)
+> Add a structured reference document that enables AI code review tools
+> to validate DPDK contributions against project standards. This document
+> consolidates requirements from multiple sources into a machine-readable
+> format optimized for automated validation workflows.
+> 
+> The AGENTS.md file synthesizes guidelines from:
+> - DPDK Contributing Code documentation (patches.rst)
+> - DPDK Coding Style guidelines (coding_style.rst)
+> - DPDK validation scripts (check-git-log.sh, checkpatches.sh)
+> - Linux kernel patch submission process
+> - SPDX License Identifier specification
+> - DPDK Coccinelle scripts (cocci)
+> - common items spotted on mailing list review
+> 
+> Key sections include:
+> - SPDX license and copyright header requirements
+> - Commit message format with precise limits (60 char subject,
+>   75 char body) and tag ordering rules
+> - C coding style including explicit comparison requirements
+> - Forbidden tokens table derived from checkpatches.sh
+> - API tag placement rules for experimental and internal APIs
+> - Patch validation checklists with severity levels
+> 
+> The forbidden tokens section documents restrictions on deprecated
+> atomics, logging functions, threading APIs, and compiler built-ins
+> that are checked by the existing checkpatches.sh infrastructure.
+> 
+> Severity levels (error/warning/info) align with the exit codes and
+> messaging from check-git-log.sh and checkpatches.sh to help automated
+> tools prioritize feedback appropriately.
+> 
+> References:
+> - https://doc.dpdk.org/guides/contributing/patches.html
+> - https://doc.dpdk.org/guides/contributing/coding_style.html
+> - devtools/check-git-log.sh
+> - devtools/checkpatches.sh
+> - devtools/cocci/
+> 
+> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+> ---
 
-diff --git a/app/test/test_hash.c b/app/test/test_hash.c
-index f0825ca75d..499b064cb7 100644
---- a/app/test/test_hash.c
-+++ b/app/test/test_hash.c
-@@ -1494,6 +1494,83 @@ test_hash_creation_with_good_parameters(void)
- 	return 0;
- }
- 
-+/*
-+ * Test hash creation and key operations with various key lengths.
-+ * This exercises the key compare functions for different sizes.
-+ */
-+static int
-+test_hash_creation_with_key_lengths(void)
-+{
-+	struct rte_hash *handle;
-+	struct rte_hash_parameters params;
-+	uint8_t key[MAX_KEYSIZE];
-+	unsigned int i, j;
-+	int pos, expected_pos;
-+
-+	for (i = 0; i < RTE_DIM(hashtest_key_lens); i++) {
-+		uint32_t key_len = hashtest_key_lens[i];
-+
-+		/* key_len of 0 is invalid */
-+		if (key_len == 0)
-+			continue;
-+
-+		memcpy(&params, &ut_params, sizeof(params));
-+		params.name = "key_len_test";
-+		params.key_len = key_len;
-+
-+		handle = rte_hash_create(&params);
-+		if (handle == NULL) {
-+			printf("Creating hash with key_len %u failed\n", key_len);
-+			return -1;
-+		}
-+
-+		/* initialize key with pattern */
-+		for (j = 0; j < key_len; j++)
-+			key[j] = (uint8_t)j;
-+
-+		/* add the key */
-+		pos = rte_hash_add_key(handle, key);
-+		if (pos < 0) {
-+			printf("Adding key with key_len %u failed\n", key_len);
-+			rte_hash_free(handle);
-+			return -1;
-+		}
-+		expected_pos = pos;
-+
-+		/* lookup should find same key */
-+		pos = rte_hash_lookup(handle, key);
-+		if (pos != expected_pos) {
-+			printf("Lookup key with key_len %u failed: expected %d got %d\n",
-+			       key_len, expected_pos, pos);
-+			rte_hash_free(handle);
-+			return -1;
-+		}
-+
-+		/* modify one byte and lookup should fail */
-+		key[key_len - 1] ^= 0xff;
-+		pos = rte_hash_lookup(handle, key);
-+		if (pos != -ENOENT) {
-+			printf("Lookup modified key with key_len %u should have failed\n",
-+			       key_len);
-+			rte_hash_free(handle);
-+			return -1;
-+		}
-+
-+		/* restore key and delete */
-+		key[key_len - 1] ^= 0xff;
-+		pos = rte_hash_del_key(handle, key);
-+		if (pos != expected_pos) {
-+			printf("Delete key with key_len %u failed\n", key_len);
-+			rte_hash_free(handle);
-+			return -1;
-+		}
-+
-+		rte_hash_free(handle);
-+	}
-+
-+	return 0;
-+}
-+
- #define ITERATIONS 3
- /*
-  * Test to see the average table utilization (entries added/max entries)
-@@ -2411,6 +2488,7 @@ static struct unit_test_suite hash_test_suite = {
- 		TEST_CASE(fbk_hash_unit_test),
- 		TEST_CASE(test_hash_creation_with_bad_parameters),
- 		TEST_CASE(test_hash_creation_with_good_parameters),
-+		TEST_CASE(test_hash_creation_with_key_lengths),
- 		TEST_CASE(test_average_table_utilization_no_ext),
- 		TEST_CASE(test_hash_iteration_no_ext),
- 		TEST_CASE(test_average_table_utilization_ext),
--- 
-2.51.0
+Rather than one potentially huge file, I am thinking that breaking it
+into bits and putting it a directory similar to
+ https://github.com/masoncl/review-prompts/blob/main/README.md
+
+Maybe review-tools/ directory at top level.
 
