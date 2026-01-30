@@ -2,47 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F174E6BF01
-	for <dpdk-dev@archiver.kernel.org>; Fri, 30 Jan 2026 11:45:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BD96E6BF01
+	for <dpdk-dev@archiver.kernel.org>; Fri, 30 Jan 2026 11:45:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 61F3440E24;
-	Fri, 30 Jan 2026 12:43:01 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 90A1240E36;
+	Fri, 30 Jan 2026 12:43:02 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
- by mails.dpdk.org (Postfix) with ESMTP id 413C340613
- for <dev@dpdk.org>; Fri, 30 Jan 2026 12:42:56 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 7BF3140661
+ for <dev@dpdk.org>; Fri, 30 Jan 2026 12:42:58 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1769773376; x=1801309376;
+ t=1769773378; x=1801309378;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=L44XB73gpASG7xHzsK55LjVkbQyyCAdz1/xqXRDT6cc=;
- b=KdDbbkFeUOZEBP5NkFUfMSqAIfNLa+jzEmnXTnghOk2qTAXGmM53eBXQ
- MeMbGKe3OYQDlokV2ivaD3C9Si75R1RfOPDK30OXnsHt0vKgWRZiTOMO2
- Y1LwgGsxryVkRTiW0pst7H40eiW5e6UqZckVtmEbuMLaDmMVFnjtgnzZ8
- P0woHVz0GqN/fJIzjyvt2+L7tMXJDEiOQB3KsQ5HiKUyyua4syLNxs2ZG
- wS1ovw4VQvqn4kr75Sw0P3542OL5vo/0kaAS0oiS+WmwaIgex0MbtewT5
- wTOBj80AVlIQAn0JlRNANYAjuNyEF+PqGzeT/OLwK/JwhhIvJrnhWg8aZ A==;
-X-CSE-ConnectionGUID: mTggC8idSSihXb5iDPVsLg==
-X-CSE-MsgGUID: x5Y9XZ2BRsKyeHGKhv0HPg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11686"; a="82392336"
-X-IronPort-AV: E=Sophos;i="6.21,262,1763452800"; d="scan'208";a="82392336"
+ bh=XXIRW2AHSo4i24UrW8fdnHJdupy5A1WUECjbmrG7BW4=;
+ b=P/O00drpuM1gU3qX0xwjp8h6fdN6CTMbzU87IY0QmWbW/KgdFGyPjWm7
+ DyhFguRTvoghRxSnK1Y6Zi6nRCTG1pXFO8WaJOQM0rRtjXCqeyLEYLB01
+ j2MpLcXEcXTQQ5b0eHyKP0k9R7qoILLNNGaTDYyiBnAl4HFyrpOwkJYxf
+ 1ujFOt/xbBhFwkdmGsKRy6rYENhnku2yofupvrlyCZsiGx36V/5yUWyj3
+ 7G6ENEWCxa1ZiRu6KIqXS8TNzEi2mhsFRmZvuExKOh9JZKRym7iSciC6i
+ YrbQryiMY/3C1FkIiob5xzy8u8AdKrITsVqPM0vtM4KYhCGSBtmmDAt+Z g==;
+X-CSE-ConnectionGUID: He8YV5YwTJy4qoxalgnm0w==
+X-CSE-MsgGUID: t1MKcunlSg+biUpvTRX4MA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11686"; a="82392339"
+X-IronPort-AV: E=Sophos;i="6.21,262,1763452800"; d="scan'208";a="82392339"
 Received: from fmviesa010.fm.intel.com ([10.60.135.150])
  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 30 Jan 2026 03:42:56 -0800
-X-CSE-ConnectionGUID: TZq7Tq/8TQiT3uMuPpIvpw==
-X-CSE-MsgGUID: 3ZY6EcCJRrinSSFVIPZcmA==
+ 30 Jan 2026 03:42:57 -0800
+X-CSE-ConnectionGUID: wbFqImmwQnuu4HKr5pBcLQ==
+X-CSE-MsgGUID: 5H8UfYSwRp+4YRFEJxiO9Q==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,262,1763452800"; d="scan'208";a="209190575"
+X-IronPort-AV: E=Sophos;i="6.21,262,1763452800"; d="scan'208";a="209190579"
 Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by fmviesa010.fm.intel.com with ESMTP; 30 Jan 2026 03:42:55 -0800
+ by fmviesa010.fm.intel.com with ESMTP; 30 Jan 2026 03:42:56 -0800
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: Bruce Richardson <bruce.richardson@intel.com>,
  Anatoly Burakov <anatoly.burakov@intel.com>
-Subject: [PATCH v3 30/36] net/intel: consolidate ice and i40e buffer free
- function
-Date: Fri, 30 Jan 2026 11:41:57 +0000
-Message-ID: <20260130114207.1126032-31-bruce.richardson@intel.com>
+Subject: [PATCH v3 31/36] net/intel: complete merging simple Tx paths
+Date: Fri, 30 Jan 2026 11:41:58 +0000
+Message-ID: <20260130114207.1126032-32-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260130114207.1126032-1-bruce.richardson@intel.com>
 References: <20251219172548.2660777-1-bruce.richardson@intel.com>
@@ -62,260 +61,294 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The buffer freeing function for the simple scalar Tx path is almost
-identical in both ice and i40e drivers, except that the i40e has
-batching for the FAST_FREE case. Consolidate both functions into a
-common one based off the better i40e version.
+Complete the deduplication/merger of the ice and i40e Tx simple scalar
+paths.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- drivers/net/intel/common/tx.h            |  3 ++
- drivers/net/intel/common/tx_scalar_fns.h | 58 ++++++++++++++++++++++
- drivers/net/intel/i40e/i40e_rxtx.c       | 63 +-----------------------
- drivers/net/intel/ice/ice_rxtx.c         | 45 +----------------
- 4 files changed, 65 insertions(+), 104 deletions(-)
+ drivers/net/intel/common/tx_scalar_fns.h | 87 ++++++++++++++++++++++++
+ drivers/net/intel/i40e/i40e_rxtx.c       | 74 +-------------------
+ drivers/net/intel/ice/ice_rxtx.c         | 74 +-------------------
+ 3 files changed, 89 insertions(+), 146 deletions(-)
 
-diff --git a/drivers/net/intel/common/tx.h b/drivers/net/intel/common/tx.h
-index 0f545631af..3c388857a7 100644
---- a/drivers/net/intel/common/tx.h
-+++ b/drivers/net/intel/common/tx.h
-@@ -66,6 +66,9 @@ enum ci_tx_l2tag1_field {
- /* Common TX maximum burst size for chunked transmission in simple paths */
- #define CI_TX_MAX_BURST 32
- 
-+/* Common TX maximum free buffer size for batched bulk freeing */
-+#define CI_TX_MAX_FREE_BUF_SZ 64
-+
- /* Common TX descriptor command flags for simple transmit */
- #define CI_TX_DESC_CMD_DEFAULT (CI_TX_DESC_CMD_ICRC | CI_TX_DESC_CMD_EOP)
- 
 diff --git a/drivers/net/intel/common/tx_scalar_fns.h b/drivers/net/intel/common/tx_scalar_fns.h
-index d09d118197..185fcdfa72 100644
+index 185fcdfa72..5c4f09c197 100644
 --- a/drivers/net/intel/common/tx_scalar_fns.h
 +++ b/drivers/net/intel/common/tx_scalar_fns.h
-@@ -72,6 +72,64 @@ ci_tx_fill_hw_ring(struct ci_tx_queue *txq, struct rte_mbuf **pkts,
- 	}
+@@ -130,6 +130,93 @@ ci_tx_free_bufs(struct ci_tx_queue *txq)
+ 	return rs_thresh;
  }
  
-+/* Free transmitted mbufs from descriptor ring with bulk freeing for Tx simple path */
-+static __rte_always_inline int
-+ci_tx_free_bufs(struct ci_tx_queue *txq)
++/* Simple burst transmit for descriptor-based simple Tx path
++ *
++ * Transmits a burst of packets by filling hardware descriptors with mbuf
++ * data. Handles ring wrap-around and RS bit management. Performs descriptor
++ * cleanup when tx_free_thresh is reached.
++ *
++ * Returns: number of packets transmitted
++ */
++static inline uint16_t
++ci_xmit_burst_simple(struct ci_tx_queue *txq,
++		     struct rte_mbuf **tx_pkts,
++		     uint16_t nb_pkts)
 +{
-+	const uint16_t rs_thresh = txq->tx_rs_thresh;
-+	const uint16_t k = RTE_ALIGN_FLOOR(rs_thresh, CI_TX_MAX_FREE_BUF_SZ);
-+	const uint16_t m = rs_thresh % CI_TX_MAX_FREE_BUF_SZ;
-+	struct rte_mbuf *free[CI_TX_MAX_FREE_BUF_SZ];
-+	struct ci_tx_entry *txep;
++	volatile struct ci_tx_desc *txr = txq->ci_tx_ring;
++	uint16_t n = 0;
 +
-+	if ((txq->ci_tx_ring[txq->tx_next_dd].cmd_type_offset_bsz &
-+			rte_cpu_to_le_64(CI_TXD_QW1_DTYPE_M)) !=
-+			rte_cpu_to_le_64(CI_TX_DESC_DTYPE_DESC_DONE))
++	/**
++	 * Begin scanning the H/W ring for done descriptors when the number
++	 * of available descriptors drops below tx_free_thresh. For each done
++	 * descriptor, free the associated buffer.
++	 */
++	if (txq->nb_tx_free < txq->tx_free_thresh)
++		ci_tx_free_bufs(txq);
++
++	/* Use available descriptor only */
++	nb_pkts = (uint16_t)RTE_MIN(txq->nb_tx_free, nb_pkts);
++	if (unlikely(!nb_pkts))
 +		return 0;
 +
-+	txep = &txq->sw_ring[txq->tx_next_dd - (rs_thresh - 1)];
-+
-+	struct rte_mempool *fast_free_mp =
-+			likely(txq->fast_free_mp != (void *)UINTPTR_MAX) ?
-+				txq->fast_free_mp :
-+				(txq->fast_free_mp = txep[0].mbuf->pool);
-+
-+	if (fast_free_mp) {
-+		if (k) {
-+			for (uint16_t j = 0; j != k; j += CI_TX_MAX_FREE_BUF_SZ) {
-+				for (uint16_t i = 0; i < CI_TX_MAX_FREE_BUF_SZ; ++i, ++txep) {
-+					free[i] = txep->mbuf;
-+					txep->mbuf = NULL;
-+				}
-+				rte_mbuf_raw_free_bulk(fast_free_mp, free, CI_TX_MAX_FREE_BUF_SZ);
-+			}
-+		}
-+
-+		if (m) {
-+			for (uint16_t i = 0; i < m; ++i, ++txep) {
-+				free[i] = txep->mbuf;
-+				txep->mbuf = NULL;
-+			}
-+			rte_mbuf_raw_free_bulk(fast_free_mp, free, m);
-+		}
-+	} else {
-+		for (uint16_t i = 0; i < rs_thresh; ++i, ++txep)
-+			rte_prefetch0((txep + i)->mbuf);
-+
-+		for (uint16_t i = 0; i < rs_thresh; ++i, ++txep) {
-+			rte_pktmbuf_free_seg(txep->mbuf);
-+			txep->mbuf = NULL;
-+		}
++	txq->nb_tx_free = (uint16_t)(txq->nb_tx_free - nb_pkts);
++	if ((txq->tx_tail + nb_pkts) > txq->nb_tx_desc) {
++		n = (uint16_t)(txq->nb_tx_desc - txq->tx_tail);
++		ci_tx_fill_hw_ring(txq, tx_pkts, n);
++		txr[txq->tx_next_rs].cmd_type_offset_bsz |=
++			rte_cpu_to_le_64(((uint64_t)CI_TX_DESC_CMD_RS) <<
++					  CI_TXD_QW1_CMD_S);
++		txq->tx_next_rs = (uint16_t)(txq->tx_rs_thresh - 1);
++		txq->tx_tail = 0;
 +	}
 +
-+	txq->nb_tx_free = (uint16_t)(txq->nb_tx_free + rs_thresh);
-+	txq->tx_next_dd = (uint16_t)(txq->tx_next_dd + rs_thresh);
-+	if (txq->tx_next_dd >= txq->nb_tx_desc)
-+		txq->tx_next_dd = (uint16_t)(rs_thresh - 1);
++	/* Fill hardware descriptor ring with mbuf data */
++	ci_tx_fill_hw_ring(txq, tx_pkts + n, (uint16_t)(nb_pkts - n));
++	txq->tx_tail = (uint16_t)(txq->tx_tail + (nb_pkts - n));
 +
-+	return rs_thresh;
++	/* Determine if RS bit needs to be set */
++	if (txq->tx_tail > txq->tx_next_rs) {
++		txr[txq->tx_next_rs].cmd_type_offset_bsz |=
++			rte_cpu_to_le_64(((uint64_t)CI_TX_DESC_CMD_RS) <<
++					  CI_TXD_QW1_CMD_S);
++		txq->tx_next_rs =
++			(uint16_t)(txq->tx_next_rs + txq->tx_rs_thresh);
++		if (txq->tx_next_rs >= txq->nb_tx_desc)
++			txq->tx_next_rs = (uint16_t)(txq->tx_rs_thresh - 1);
++	}
++
++	if (txq->tx_tail >= txq->nb_tx_desc)
++		txq->tx_tail = 0;
++
++	/* Update the tx tail register */
++	rte_write32_wc((uint32_t)txq->tx_tail, txq->qtx_tail);
++
++	return nb_pkts;
++}
++
++static __rte_always_inline uint16_t
++ci_xmit_pkts_simple(struct ci_tx_queue *txq,
++		     struct rte_mbuf **tx_pkts,
++		     uint16_t nb_pkts)
++{
++	uint16_t nb_tx = 0;
++
++	if (likely(nb_pkts <= CI_TX_MAX_BURST))
++		return ci_xmit_burst_simple(txq, tx_pkts, nb_pkts);
++
++	while (nb_pkts) {
++		uint16_t ret, num = RTE_MIN(nb_pkts, CI_TX_MAX_BURST);
++
++		ret = ci_xmit_burst_simple(txq, &tx_pkts[nb_tx], num);
++		nb_tx += ret;
++		nb_pkts -= ret;
++		if (ret < num)
++			break;
++	}
++
++	return nb_tx;
 +}
 +
  /*
   * Common transmit descriptor cleanup function for Intel drivers.
   * Used by ice, i40e, iavf, and idpf drivers.
 diff --git a/drivers/net/intel/i40e/i40e_rxtx.c b/drivers/net/intel/i40e/i40e_rxtx.c
-index bd85c7324d..395808ff7c 100644
+index 395808ff7c..b286e89b1b 100644
 --- a/drivers/net/intel/i40e/i40e_rxtx.c
 +++ b/drivers/net/intel/i40e/i40e_rxtx.c
-@@ -1010,65 +1010,6 @@ i40e_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
+@@ -1010,84 +1010,12 @@ i40e_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
  			get_context_desc, NULL, NULL);
  }
  
--static __rte_always_inline int
--i40e_tx_free_bufs(struct ci_tx_queue *txq)
+-static inline uint16_t
+-tx_xmit_pkts(struct ci_tx_queue *txq,
+-	     struct rte_mbuf **tx_pkts,
+-	     uint16_t nb_pkts)
 -{
--	struct ci_tx_entry *txep;
--	const uint16_t tx_rs_thresh = txq->tx_rs_thresh;
--	uint16_t i, j;
--	struct rte_mbuf *free[I40E_TX_MAX_FREE_BUF_SZ];
--	const uint16_t k = RTE_ALIGN_FLOOR(tx_rs_thresh, I40E_TX_MAX_FREE_BUF_SZ);
--	const uint16_t m = tx_rs_thresh % I40E_TX_MAX_FREE_BUF_SZ;
+-	volatile struct ci_tx_desc *txr = txq->ci_tx_ring;
+-	uint16_t n = 0;
 -
--	if ((txq->ci_tx_ring[txq->tx_next_dd].cmd_type_offset_bsz &
--			rte_cpu_to_le_64(CI_TXD_QW1_DTYPE_M)) !=
--			rte_cpu_to_le_64(CI_TX_DESC_DTYPE_DESC_DONE))
+-	/**
+-	 * Begin scanning the H/W ring for done descriptors when the number
+-	 * of available descriptors drops below tx_free_thresh. For each done
+-	 * descriptor, free the associated buffer.
+-	 */
+-	if (txq->nb_tx_free < txq->tx_free_thresh)
+-		ci_tx_free_bufs(txq);
+-
+-	/* Use available descriptor only */
+-	nb_pkts = (uint16_t)RTE_MIN(txq->nb_tx_free, nb_pkts);
+-	if (unlikely(!nb_pkts))
 -		return 0;
 -
--	txep = &txq->sw_ring[txq->tx_next_dd - (tx_rs_thresh - 1)];
--
--	struct rte_mempool *fast_free_mp =
--			likely(txq->fast_free_mp != (void *)UINTPTR_MAX) ?
--			txq->fast_free_mp :
--			(txq->fast_free_mp = txep[0].mbuf->pool);
--
--	if (fast_free_mp != NULL) {
--		if (k) {
--			for (j = 0; j != k; j += I40E_TX_MAX_FREE_BUF_SZ) {
--				for (i = 0; i < I40E_TX_MAX_FREE_BUF_SZ; ++i, ++txep) {
--					free[i] = txep->mbuf;
--					txep->mbuf = NULL;
--				}
--				rte_mbuf_raw_free_bulk(fast_free_mp, free,
--						I40E_TX_MAX_FREE_BUF_SZ);
--			}
--		}
--
--		if (m) {
--			for (i = 0; i < m; ++i, ++txep) {
--				free[i] = txep->mbuf;
--				txep->mbuf = NULL;
--			}
--			rte_mbuf_raw_free_bulk(fast_free_mp, free, m);
--		}
--	} else {
--		for (i = 0; i < tx_rs_thresh; i++)
--			rte_prefetch0((txep + i)->mbuf);
--
--		for (i = 0; i < tx_rs_thresh; ++i, ++txep) {
--			rte_pktmbuf_free_seg(txep->mbuf);
--			txep->mbuf = NULL;
--		}
+-	txq->nb_tx_free = (uint16_t)(txq->nb_tx_free - nb_pkts);
+-	if ((txq->tx_tail + nb_pkts) > txq->nb_tx_desc) {
+-		n = (uint16_t)(txq->nb_tx_desc - txq->tx_tail);
+-		ci_tx_fill_hw_ring(txq, tx_pkts, n);
+-		txr[txq->tx_next_rs].cmd_type_offset_bsz |=
+-			rte_cpu_to_le_64(((uint64_t)CI_TX_DESC_CMD_RS) << CI_TXD_QW1_CMD_S);
+-		txq->tx_next_rs = (uint16_t)(txq->tx_rs_thresh - 1);
+-		txq->tx_tail = 0;
 -	}
 -
--	txq->nb_tx_free = (uint16_t)(txq->nb_tx_free + tx_rs_thresh);
--	txq->tx_next_dd = (uint16_t)(txq->tx_next_dd + tx_rs_thresh);
--	if (txq->tx_next_dd >= txq->nb_tx_desc)
--		txq->tx_next_dd = (uint16_t)(tx_rs_thresh - 1);
+-	/* Fill hardware descriptor ring with mbuf data */
+-	ci_tx_fill_hw_ring(txq, tx_pkts + n, (uint16_t)(nb_pkts - n));
+-	txq->tx_tail = (uint16_t)(txq->tx_tail + (nb_pkts - n));
 -
--	return tx_rs_thresh;
+-	/* Determine if RS bit needs to be set */
+-	if (txq->tx_tail > txq->tx_next_rs) {
+-		txr[txq->tx_next_rs].cmd_type_offset_bsz |=
+-			rte_cpu_to_le_64(((uint64_t)CI_TX_DESC_CMD_RS) << CI_TXD_QW1_CMD_S);
+-		txq->tx_next_rs =
+-			(uint16_t)(txq->tx_next_rs + txq->tx_rs_thresh);
+-		if (txq->tx_next_rs >= txq->nb_tx_desc)
+-			txq->tx_next_rs = (uint16_t)(txq->tx_rs_thresh - 1);
+-	}
+-
+-	if (txq->tx_tail >= txq->nb_tx_desc)
+-		txq->tx_tail = 0;
+-
+-	/* Update the tx tail register */
+-	I40E_PCI_REG_WC_WRITE(txq->qtx_tail, txq->tx_tail);
+-
+-	return nb_pkts;
 -}
 -
- static inline uint16_t
- tx_xmit_pkts(struct ci_tx_queue *txq,
- 	     struct rte_mbuf **tx_pkts,
-@@ -1083,7 +1024,7 @@ tx_xmit_pkts(struct ci_tx_queue *txq,
- 	 * descriptor, free the associated buffer.
- 	 */
- 	if (txq->nb_tx_free < txq->tx_free_thresh)
--		i40e_tx_free_bufs(txq);
-+		ci_tx_free_bufs(txq);
- 
- 	/* Use available descriptor only */
- 	nb_pkts = (uint16_t)RTE_MIN(txq->nb_tx_free, nb_pkts);
-@@ -2508,7 +2449,7 @@ i40e_tx_done_cleanup_simple(struct ci_tx_queue *txq,
- 		if (txq->nb_tx_desc - txq->nb_tx_free < txq->tx_rs_thresh)
- 			break;
- 
--		n = i40e_tx_free_bufs(txq);
-+		n = ci_tx_free_bufs(txq);
- 
- 		if (n == 0)
- 			break;
-diff --git a/drivers/net/intel/ice/ice_rxtx.c b/drivers/net/intel/ice/ice_rxtx.c
-index 26b4c73eb6..c1477f3e87 100644
---- a/drivers/net/intel/ice/ice_rxtx.c
-+++ b/drivers/net/intel/ice/ice_rxtx.c
-@@ -3129,47 +3129,6 @@ ice_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
- 	return ci_xmit_pkts(txq, tx_pkts, nb_pkts, CI_VLAN_IN_L2TAG1, get_context_desc, NULL, NULL);
+ static uint16_t
+ i40e_xmit_pkts_simple(void *tx_queue,
+ 		      struct rte_mbuf **tx_pkts,
+ 		      uint16_t nb_pkts)
+ {
+-	uint16_t nb_tx = 0;
+-
+-	if (likely(nb_pkts <= CI_TX_MAX_BURST))
+-		return tx_xmit_pkts((struct ci_tx_queue *)tx_queue,
+-						tx_pkts, nb_pkts);
+-
+-	while (nb_pkts) {
+-		uint16_t ret, num = (uint16_t)RTE_MIN(nb_pkts,
+-						CI_TX_MAX_BURST);
+-
+-		ret = tx_xmit_pkts((struct ci_tx_queue *)tx_queue,
+-						&tx_pkts[nb_tx], num);
+-		nb_tx = (uint16_t)(nb_tx + ret);
+-		nb_pkts = (uint16_t)(nb_pkts - ret);
+-		if (ret < num)
+-			break;
+-	}
+-
+-	return nb_tx;
++	return ci_xmit_pkts_simple(tx_queue, tx_pkts, nb_pkts);
  }
  
--static __rte_always_inline int
--ice_tx_free_bufs(struct ci_tx_queue *txq)
+ #ifndef RTE_ARCH_X86
+diff --git a/drivers/net/intel/ice/ice_rxtx.c b/drivers/net/intel/ice/ice_rxtx.c
+index c1477f3e87..eae57a08fc 100644
+--- a/drivers/net/intel/ice/ice_rxtx.c
++++ b/drivers/net/intel/ice/ice_rxtx.c
+@@ -3245,84 +3245,12 @@ ice_tx_done_cleanup(void *txq, uint32_t free_cnt)
+ 		return ice_tx_done_cleanup_full(q, free_cnt);
+ }
+ 
+-static inline uint16_t
+-tx_xmit_pkts(struct ci_tx_queue *txq,
+-	     struct rte_mbuf **tx_pkts,
+-	     uint16_t nb_pkts)
 -{
--	struct ci_tx_entry *txep;
--	uint16_t i;
+-	volatile struct ci_tx_desc *txr = txq->ci_tx_ring;
+-	uint16_t n = 0;
 -
--	if ((txq->ci_tx_ring[txq->tx_next_dd].cmd_type_offset_bsz &
--	     rte_cpu_to_le_64(CI_TXD_QW1_DTYPE_M)) !=
--	    rte_cpu_to_le_64(CI_TX_DESC_DTYPE_DESC_DONE))
+-	/**
+-	 * Begin scanning the H/W ring for done descriptors when the number
+-	 * of available descriptors drops below tx_free_thresh. For each done
+-	 * descriptor, free the associated buffer.
+-	 */
+-	if (txq->nb_tx_free < txq->tx_free_thresh)
+-		ci_tx_free_bufs(txq);
+-
+-	/* Use available descriptor only */
+-	nb_pkts = (uint16_t)RTE_MIN(txq->nb_tx_free, nb_pkts);
+-	if (unlikely(!nb_pkts))
 -		return 0;
 -
--	txep = &txq->sw_ring[txq->tx_next_dd - (txq->tx_rs_thresh - 1)];
--
--	struct rte_mempool *fast_free_mp =
--			likely(txq->fast_free_mp != (void *)UINTPTR_MAX) ?
--			txq->fast_free_mp :
--			(txq->fast_free_mp = txep[0].mbuf->pool);
--
--	if (fast_free_mp != NULL) {
--		for (i = 0; i < txq->tx_rs_thresh; ++i, ++txep) {
--			rte_mempool_put(fast_free_mp, txep->mbuf);
--			txep->mbuf = NULL;
--		}
--	} else {
--		for (i = 0; i < txq->tx_rs_thresh; i++)
--			rte_prefetch0((txep + i)->mbuf);
--
--		for (i = 0; i < txq->tx_rs_thresh; ++i, ++txep) {
--			rte_pktmbuf_free_seg(txep->mbuf);
--			txep->mbuf = NULL;
--		}
+-	txq->nb_tx_free = (uint16_t)(txq->nb_tx_free - nb_pkts);
+-	if ((txq->tx_tail + nb_pkts) > txq->nb_tx_desc) {
+-		n = (uint16_t)(txq->nb_tx_desc - txq->tx_tail);
+-		ci_tx_fill_hw_ring(txq, tx_pkts, n);
+-		txr[txq->tx_next_rs].cmd_type_offset_bsz |=
+-			rte_cpu_to_le_64(((uint64_t)CI_TX_DESC_CMD_RS) << CI_TXD_QW1_CMD_S);
+-		txq->tx_next_rs = (uint16_t)(txq->tx_rs_thresh - 1);
+-		txq->tx_tail = 0;
 -	}
 -
--	txq->nb_tx_free = (uint16_t)(txq->nb_tx_free + txq->tx_rs_thresh);
--	txq->tx_next_dd = (uint16_t)(txq->tx_next_dd + txq->tx_rs_thresh);
--	if (txq->tx_next_dd >= txq->nb_tx_desc)
--		txq->tx_next_dd = (uint16_t)(txq->tx_rs_thresh - 1);
+-	/* Fill hardware descriptor ring with mbuf data */
+-	ci_tx_fill_hw_ring(txq, tx_pkts + n, (uint16_t)(nb_pkts - n));
+-	txq->tx_tail = (uint16_t)(txq->tx_tail + (nb_pkts - n));
 -
--	return txq->tx_rs_thresh;
+-	/* Determine if RS bit needs to be set */
+-	if (txq->tx_tail > txq->tx_next_rs) {
+-		txr[txq->tx_next_rs].cmd_type_offset_bsz |=
+-			rte_cpu_to_le_64(((uint64_t)CI_TX_DESC_CMD_RS) << CI_TXD_QW1_CMD_S);
+-		txq->tx_next_rs =
+-			(uint16_t)(txq->tx_next_rs + txq->tx_rs_thresh);
+-		if (txq->tx_next_rs >= txq->nb_tx_desc)
+-			txq->tx_next_rs = (uint16_t)(txq->tx_rs_thresh - 1);
+-	}
+-
+-	if (txq->tx_tail >= txq->nb_tx_desc)
+-		txq->tx_tail = 0;
+-
+-	/* Update the tx tail register */
+-	ICE_PCI_REG_WC_WRITE(txq->qtx_tail, txq->tx_tail);
+-
+-	return nb_pkts;
 -}
 -
- static int
- ice_tx_done_cleanup_full(struct ci_tx_queue *txq,
- 			uint32_t free_cnt)
-@@ -3259,7 +3218,7 @@ ice_tx_done_cleanup_simple(struct ci_tx_queue *txq,
- 		if (txq->nb_tx_desc - txq->nb_tx_free < txq->tx_rs_thresh)
- 			break;
+ static uint16_t
+ ice_xmit_pkts_simple(void *tx_queue,
+ 		     struct rte_mbuf **tx_pkts,
+ 		     uint16_t nb_pkts)
+ {
+-	uint16_t nb_tx = 0;
+-
+-	if (likely(nb_pkts <= CI_TX_MAX_BURST))
+-		return tx_xmit_pkts((struct ci_tx_queue *)tx_queue,
+-				    tx_pkts, nb_pkts);
+-
+-	while (nb_pkts) {
+-		uint16_t ret, num = (uint16_t)RTE_MIN(nb_pkts,
+-						      CI_TX_MAX_BURST);
+-
+-		ret = tx_xmit_pkts((struct ci_tx_queue *)tx_queue,
+-				   &tx_pkts[nb_tx], num);
+-		nb_tx = (uint16_t)(nb_tx + ret);
+-		nb_pkts = (uint16_t)(nb_pkts - ret);
+-		if (ret < num)
+-			break;
+-	}
+-
+-	return nb_tx;
++	return ci_xmit_pkts_simple(tx_queue, tx_pkts, nb_pkts);
+ }
  
--		n = ice_tx_free_bufs(txq);
-+		n = ci_tx_free_bufs(txq);
- 
- 		if (n == 0)
- 			break;
-@@ -3300,7 +3259,7 @@ tx_xmit_pkts(struct ci_tx_queue *txq,
- 	 * descriptor, free the associated buffer.
- 	 */
- 	if (txq->nb_tx_free < txq->tx_free_thresh)
--		ice_tx_free_bufs(txq);
-+		ci_tx_free_bufs(txq);
- 
- 	/* Use available descriptor only */
- 	nb_pkts = (uint16_t)RTE_MIN(txq->nb_tx_free, nb_pkts);
+ static const struct ci_rx_path_info ice_rx_path_infos[] = {
 -- 
 2.51.0
 
