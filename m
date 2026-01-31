@@ -2,72 +2,79 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AA9DD73EB5
-	for <dpdk-dev@archiver.kernel.org>; Sat, 31 Jan 2026 18:18:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3F09E7C6E1
+	for <dpdk-dev@archiver.kernel.org>; Sat, 31 Jan 2026 19:54:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3645D402AF;
-	Sat, 31 Jan 2026 19:18:01 +0100 (CET)
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com
- [209.85.128.45]) by mails.dpdk.org (Postfix) with ESMTP id 8337540274
- for <dev@dpdk.org>; Sat, 31 Jan 2026 19:17:59 +0100 (CET)
-Received: by mail-wm1-f45.google.com with SMTP id
- 5b1f17b1804b1-47ee07570deso26280135e9.1
- for <dev@dpdk.org>; Sat, 31 Jan 2026 10:17:59 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id A97D6402AF;
+	Sat, 31 Jan 2026 20:53:59 +0100 (CET)
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com
+ [209.85.128.41]) by mails.dpdk.org (Postfix) with ESMTP id 68F9540274
+ for <dev@dpdk.org>; Sat, 31 Jan 2026 20:53:58 +0100 (CET)
+Received: by mail-wm1-f41.google.com with SMTP id
+ 5b1f17b1804b1-47ff94b46afso28654755e9.1
+ for <dev@dpdk.org>; Sat, 31 Jan 2026 11:53:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769883479;
- x=1770488279; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769889238;
+ x=1770494038; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=BtyHmSzRvpZj2x2ymVm/qq9p7ENRZj4fqdvq3vuyb44=;
- b=AA1HgyY8wXfBwYeZFNu702SYkXxGJLXWrLmP8XmEOW3/AW+gnv/QCGIwKFmu1QGs6I
- XAywI2/ai0m53m0YMpgKU3irF2vJkK2iqWObhBGu9HmGMX5Q2fafBK8qHmEdyr3dM2nx
- yjCeon2zkspsgz8PIKo22EAXEwIxo5Kby9dVW24XGDyM7NzuZxoG0HZqgfeRzvKp56BQ
- lIMzs2YZ3YMfC+v+qnRKKjPDOrlJqA518ZeeFzx/GJlPbsmp6VgHKC5hMBfwwPIrSR0Z
- f5tda08eUJ30mQ8iX68XZvBVt6pyH6QUKKKVHXE1M/XoGpi835+kmgj/2xsqM/CVHkSx
- ZMgQ==
+ bh=03LCMqtnNvWe4zHpU/SftynHbnSZemeDaGIKfcGRnxs=;
+ b=SnKybWaV2rGSJ155/MgZoAbeMDWqAccTevpZdlrO4RCVErtVlpVtO2xEonNFgtKIDu
+ lZOtQKm4VSLVywZDyr7Z/jBzLWy5OhUhtIKRN//qtLCBo3JGmj/xJ1wjG011/C+94b9q
+ //UHWIIQ5eJQaqOsAmwgQYujcEa+FQgR9p4t22NSaVGWtZcfaY/A6DuMKhEaRt6KK7tg
+ 2sqS0BmZL7rKNqfPNj00JRUug08d+yScZNE2WA1qipwEfAF3bGxXZIZkb3Q+cCtLJX5j
+ FIxBkAO85sT8NZfXfKeDkncKIblUrOCDf0xtENfGj/+LQu6mYphHJKfXaSGzUxn1gepU
+ kDog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1769883479; x=1770488279;
+ d=1e100.net; s=20230601; t=1769889238; x=1770494038;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=BtyHmSzRvpZj2x2ymVm/qq9p7ENRZj4fqdvq3vuyb44=;
- b=koMDRv+fI8fZH3SXm4maH3aiVafNjLPrNEw5OGoxN3962lx6KXtbGFCjZ/XrF+LnB6
- xRHmg7KlXqMxv7f+xJAkTL1SUTLiFt2x8RqbQbhmidKtHmVq6YyYoefjofa2Yla/OJ2s
- Da5czQpFsTP4+fE/bgIFufbC4dTjJJ/D8MF/FiHVB3IAN5bWHkxUj1GIQJ8Wq8irSk/L
- JyaVn+J1TKr1sCYyItUMDemz63UrwFmLobQdx//WShRias83iz7d7L4SYkl/kr7hUmUq
- miKjhcgqQhsKenEEZ3/odNfb4qYgIcbVYnwDy9g3AV0EuItF8ZCe7DN8cRSWHVR+q0NF
- UlZQ==
-X-Gm-Message-State: AOJu0YyCXPL6to8k/5pG+fnvBlEVt+SOsDwjf98+LG/WkgUn3gpaet9R
- hmfMMBRR1BujGXdLpeIAqAR49wfSAmea48lVtZnHQsF5nn/TUowAUnYKh7gPVPYilzlamiJrYlP
- bsdoY
-X-Gm-Gg: AZuq6aLOjXvY2T0eNseIUp738k35RToymMUBPvojkGIlPfHzWpaQShOjigfcVyxYoiU
- LoYcXdASm2Nuj2oohAEP862fysiKccGKRRR4vlmqMgFZapDEv1OSYFkVSEog2Zvkk+TZx+F8nSP
- qz09OCdPAQmwI8lXNIpYWu39950TNpg21WdW2QPypHuyF8rK81215jI+O79ZcFBzGgmiAVDhcw7
- erMg9HN1MS4BRg6GbcbZuEgeJP0VgghYNucbrptJmZQ+MqJlanAnFnwqfDsV9KzykK70qHKZkrz
- 7MRczvk9q6mnZbLgsqYPI/aVyFrrL6RYjZFsxfmaHrelszAYkYsr73Q9DbdW9ePALBKqPDDRX0y
- QYhLk16+ZiwEiKTbnM9WdgIJ5L/eE64ymDddoQhMwg1t1ttHMycJMKZaqOdYj2GvGJDy7fVWS8D
- K1kO0+48WHbNAbfErwI1zW8SUovbwvPGHlAVXCs2yU9pAne+ac4Q==
-X-Received: by 2002:a05:600c:3586:b0:477:582e:7a81 with SMTP id
- 5b1f17b1804b1-482db45237cmr98261815e9.4.1769883478974; 
- Sat, 31 Jan 2026 10:17:58 -0800 (PST)
-Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
+ bh=03LCMqtnNvWe4zHpU/SftynHbnSZemeDaGIKfcGRnxs=;
+ b=hxniPMFVpORXhkJd/YSggkVDS5sS7rkzAYcL718MBDZCxH/rjJG/ua77L6Nbwk+5Kw
+ F4cMPsAv/n25zBKtXXcufn8NGxDuJ5iTaL+Na5L2jGR5a2MkFYFV9xszaE8Ff8auXjO1
+ ma+xxo+7rPmYo2PRDUq3PVCncA6vIY/d2G19kN1LyD9elgErwV30nLhM8ZS2zfIiySP7
+ D2lJJQ6lG46rX6G4QmCaX3ISn1SMrk9CJ18jcPrY34edSIajiQh3MDALUV2BTP2MTBus
+ gSVawTUTlviMTRDD+JL6tZHH/QhwwNFW4K59uKvTdfjgZNgDRzchG46/0aawmPnHyyvK
+ DpBA==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCXzzao9NXoY1Rc5sRVkLn1D7Jj3RnJpWrh8CfJM66Cy1ElmbINzWVPNbOLT73vQXISdS0c=@dpdk.org
+X-Gm-Message-State: AOJu0Yw904Rs4t5RslNbhVBWhRGP06D4MpPmgxKm9JR1PK5S6EV9T7p8
+ BbSFTHftHdwBGQ4Q6bDbO3QnYLkdi7zf9yhH0AQ/44sRPEDrqf99MGbZPLrS6qwlYx8=
+X-Gm-Gg: AZuq6aKH6ZxBwj7j2ApaMOk77scFotTpxn5Q23bS1ziOuqUwvk1Vlr7mqfzeNG01UbH
+ SOzBD1P7CCLCkqGyvCsAIhD1SGR13AD7Kxxv364oY0w/7dgAw3mEqQcxXz2C/iAjT1dU2z+JOBS
+ 8LDZ1DwskmqXzk+VSG0X4k1Vrg1KoWac0ohkbw7VLeHb49vtqBBrTySOEIOuZKKB4M+CNX/yTc8
+ bFk2v1BuxBbO6G8SBIRnYQhsl6LVxpzJkfyxA2nO3bhj+/46tygKQUZNYkTikC/6c2ZLbyHGVLT
+ 2/g6rL/TdI1pmh035BE/4TO5y/cryZ/7szxWK6reRt54RSkkxUdUnLUNiqCDBT8AfwPveN+s3tF
+ r+j7ocHTZQ3XT8WVm69CWCD6TjlWepXtoeCzutG7nG79fnyl/qRkmTF86764IuCC5gHI9S65lYG
+ 1Y3wEkkHOdXRLyV9F+aF9NHoYjzjiBmOv7H9937POiZFf6IQsx71LE
+X-Received: by 2002:a05:600c:47d5:b0:480:63c1:3ac7 with SMTP id
+ 5b1f17b1804b1-48082874614mr88898725e9.2.1769889237947; 
+ Sat, 31 Jan 2026 11:53:57 -0800 (PST)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-48066c428basm358320345e9.12.2026.01.31.10.17.56
+ ffacd0b85a97d-435e10ee040sm31554833f8f.11.2026.01.31.11.53.56
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sat, 31 Jan 2026 10:17:57 -0800 (PST)
+ Sat, 31 Jan 2026 11:53:57 -0800 (PST)
+Date: Sat, 31 Jan 2026 11:53:52 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [REVIEW] net/hinic3: use different callback func to support htnfdir
-Date: Sat, 31 Jan 2026 10:17:54 -0800
-Message-ID: <20260131181754.6753-1-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20260131100608.12429-8-wff_light@vip.163.com>
-References: <20260131100608.12429-8-wff_light@vip.163.com>
-Content-Type: text/plain; charset="utf-8"
+To: Maxime Coquelin <maxime.coquelin@redhat.com>
+Cc: Rma Ma <rma.ma@jaguarmicro.com>, dpdk-dev <dev@dpdk.org>, Chenbo Xia
+ <chenbo.xia@intel.com>, "Michael S . Tsirkin" <mst@redhat.com>
+Subject: Re: =?UTF-8?B?5Zue5aSNOiDlm57lpI06?= [PATCH v3] vhost: add notify
+ reply ops to fix message deadlock
+Message-ID: <20260131115352.1891034b@phoenix.local>
+In-Reply-To: <f20b680b-e912-1c1d-b8d7-4f99ca9e97f1@redhat.com>
+References: <20230704023228.24879-1-rma.ma@jaguarmicro.com>
+ <20230704025157.26024-1-rma.ma@jaguarmicro.com>
+ <PUZPR06MB47423251E6A4BBCA6B9FEDA39931A@PUZPR06MB4742.apcprd06.prod.outlook.com>
+ <13dcdbde-df66-fc17-3eb5-d23bb6836a55@redhat.com>
+ <SI2PR06MB47521141F4002DB03B31694E9936A@SI2PR06MB4752.apcprd06.prod.outlook.com>
+ <f20b680b-e912-1c1d-b8d7-4f99ca9e97f1@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,231 +88,50 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-AI-generated review of hinic3.mbox
-Reviewed using Claude (claude-opus-4-5-20251101) on 2026-01-31
-
-This is an automated review. Please verify all suggestions.
-
----
-
-# DPDK Patch Review: net/hinic3 Series
-
-This is a review of a 7-patch series adding support for new SPx series NICs to the hinic3 driver.
-
----
-
-## Overall Series Issues
-
-### Errors
-
-1. **Multiple patches have compilation issues** - Several patches introduce syntax errors, missing semicolons, and undefined symbols that would prevent compilation.
-
-2. **Missing meson.build updates** - Patches 3-7 add new source directories (`htn_adapt/`, `stn_adapt/`) with their own `meson.build` files, but the main `drivers/net/hinic3/meson.build` is not updated to include these subdirectories.
-
-3. **Inconsistent function naming** - The series introduces functions with inconsistent naming between patches (e.g., `hinic3_cmdq_get_stn_ops()` vs `hinic3_nic_cmdq_get_stn_ops()`).
-
----
-
-## Patch 1/7: net/hinic3: add support for new SPx series NIC
-
-### Errors
-
-1. **Line 38 (hinic3_csr.h)**: Uppercase `X` in hex literal:
-   ```c
-   #define HINIC3_DEV_ID_SP230    0X0229
-   ```
-   Should be lowercase `0x0229`.
-
-2. **Line 48 (hinic3_ethdev.c)**: Undefined symbol `HINIC3_DEV_ID_VF_SP920` - this macro is not defined in the header file, only `HINIC3_DEV_ID_920` is defined.
-
-### Warnings
-
-1. **Commit message**: "suuport" should be "support" (typo).
-
-2. **Alignment inconsistencies** in `hinic3_cmd.h` - the alignment changes are inconsistent (some use tabs, some use spaces to different column positions).
-
----
-
-## Patch 2/7: net/hinic3: add enhance cmdq support for new SPx series NIC
-
-### Errors
-
-1. **Line 85 (hinic3_cmdq_enhance.c)**: Missing `RTE_UNUSED` or parameter `nic_dev` is unused in `prepare_rss_indir_table_cmd_header`.
-
-2. **Line 169 (hinic3_cmdq_enhance.h)**: Missing space before closing comment:
-   ```c
-   #endif /*_HINIC3_CMDQ_ENHANCE_H_ */
-   ```
-   Should be `/* _HINIC3_CMDQ_ENHANCE_H_ */`.
-
-3. **Line 1 (meson.build)**: Missing comma in sources list:
-   ```python
-   base_sources = files(
-           'hinic3_cmdq_enhance.c'
-           'hinic3_cmdq.c',
-   ```
-   Should have comma after first file.
-
-4. **Multiple typedef changes** - Using `u8`, `u16`, `u32`, `u64` instead of standard `uint8_t`, `uint16_t`, etc. DPDK uses standard C types.
-
-### Warnings
-
-1. **Inconsistent indentation** in `cmdq_sync_cmd()` function - some blocks have incorrect indentation levels.
-
-2. **Missing Doxygen documentation** for new public functions in `hinic3_cmdq_enhance.h`.
-
----
-
-## Patch 3/7: net/hinic3: use different callback func to split new/old cmdq operations
-
-### Errors
-
-1. **Line 55-60 (hinic3_nic_io.h)**: Missing semicolons in struct definition:
-   ```c
-   struct hinic3_nic_cmdq_ops {
-       prepare_cmd_buf_clean_tso_lro_space_t       prepare_cmd_buf_clean_tso_lro_space
-       prepare_cmd_buf_qp_context_multi_store_t    prepare_cmd_buf_qp_context_multi_store
-   ```
-   Each line needs a semicolon.
-
-2. **Line 80-81 (hinic3_htn_cmdq.c)**: Function `prepare_rss_indir_table_cmd_header` is called before it's defined (defined at line 93).
-
-3. **Line 38 (hinic3_stn_cmdq.h)**: Missing closing brace or semicolon at end of struct.
-
-4. **Undefined types** - `u32`, `u16`, `u8` used instead of `uint32_t`, `uint16_t`, `uint8_t`.
-
-### Warnings
-
-1. **Missing header guards** check - `hinic3_htn_cmdq.h` and `hinic3_stn_cmdq.h` header guards don't match standard format.
-
----
-
-## Patch 4/7: net/hinic3: add fun init ops to support Compact CQE
-
-### Errors
-
-1. **Line 614 (hinic3_nic_io.c)**: Unterminated string literal:
-   ```c
-   PMD_DRV_LOG(ERR, "Set rq cqe context failed,
-               qid: %d, err: %d, status: 0x%x, out_size: 0x%x",
-   ```
-   String cannot span lines like this.
-
-2. **Line 666 (hinic3_nic_io.c)**: Redefinition of `nic_dev`:
-   ```c
-   hinic3_set_rq_enable(struct hinic3_nic_dev *nic_dev, uint16_t q_id, bool enable)
-   {
-       struct hinic3_nic_dev *nic_dev = NULL;
-   ```
-
-3. **Line 669 (hinic3_nic_io.c)**: Undefined variable `dev` used:
-   ```c
-   if (!dev)
-       return -EINVAL;
-   ```
-
-4. **Missing function declaration** - `hinic3_nic_tx_rx_ops_init` is called but not declared.
-
-### Warnings
-
-1. **Commit message**: "fun init" should be "func init" or "function init".
-
-2. **Signed-off-by has leading space** in commit message.
-
----
-
-## Patch 5/7: net/hinic3: add rx ops to support Compact CQE
-
-### Errors
-
-1. **Line 476 (hinic3_rx.h)**: Missing comma in function declaration:
-   ```c
-   hinic3_rx_get_compact_cqe_info(struct hinic3_rxq *rxq, volatile struct hinic3_rq_cqe *rx_cqe
-                                  struct hinic3_cqe_info *cqe_info);
-   ```
-
-2. **Line 790 (hinic3_rx.c)**: `if` statement without space:
-   ```c
-   if(err) {
-   ```
-   Should be `if (err)`.
-
-3. **Undefined macro** `HINIC3_PKT_TX_TUNNEL_GENEVE` and `HINIC3_PKT_TX_TUNNEL_IPIP` used but not defined.
-
-### Warnings
-
-1. **Inconsistent brace style** - some functions use opening brace on same line, others on new line.
-
----
-
-## Patch 6/7: net/hinic3: add tx ops to support Compact CQE
-
-### Errors
-
-1. **Line 379 (hinic3_tx.c)**: Undefined variable `wqe`:
-   ```c
-   wqe->task->pkt_info0 =
-   ```
-   Should be `task->pkt_info0`.
-
-2. **Line 606 (hinic3_tx.c)**: Typo in function name:
-   ```c
-   return inic3_non_tso_pkt_pre_process(mbuf, wqe_info);
-   ```
-   Should be `hinic3_non_tso_pkt_pre_process`.
-
-3. **Line 328 (hinic3_tx.h)**: Duplicate enum value:
-   ```c
-   enum sq_wqe_data_format {
-       SQ_NORMAL_WQE = 0,
-   ```
-   `SQ_NORMAL_WQE` is already defined in `enum sq_wqe_type`.
-
-### Warnings
-
-1. **Missing `RTE_MBUF_F_TX_OUTER_UDP_CKSUM`** - `HINIC3_PKT_TX_OUTER_UDP_CKSUM` is used but the corresponding RTE flag mapping is missing.
-
----
-
-## Patch 7/7: net/hinic3: use different callback func to support htn fdir
-
-### Errors
-
-1. **Line 926 (hinic3_fdir.c)**: Wrong parameter type:
-   ```c
-   hinic3_tcam_alloc_index(struct hinic3_nic_dev nic_dev, uint16_t *block_id)
-   ```
-   Should be `struct hinic3_nic_dev *nic_dev` (pointer).
-
-2. **Line 942 (hinic3_fdir.c)**: Same issue - missing pointer for `nic_dev` parameter.
-
-3. **Line 656 (hinic3_fdir.h)**: Missing semicolon at end of function declaration:
-   ```c
-   void hinic3_tcam_index_free(struct hinic3_nic_dev nic_dev, uint16_t index, uint16_t *block_id)
-   ```
-
-4. **Line 750 (hinic3_fdir.c)**: Missing closing brace:
-   ```c
-   if (index == HINIC3_TCAM_INVALID_INDEX) {
-       return -ENOMEM;
-   }
-   ```
-   The outer `if` block is not closed properly.
-
-### Warnings
-
-1. **Inconsistent parameter types** - Some functions use `struct hinic3_nic_dev` while others use `struct hinic3_nic_dev *`.
-
----
-
-## Summary
-
-This patch series has significant issues that need to be addressed before it can be accepted:
-
-1. **Compilation errors** - Multiple syntax errors prevent building
-2. **Undefined symbols** - References to macros and functions that don't exist
-3. **Type inconsistencies** - Mix of kernel-style types (`u32`) and standard types (`uint32_t`)
-4. **Missing build system updates** - New directories not integrated into meson build
-5. **Documentation gaps** - New APIs lack Doxygen comments
-
-The patches should be thoroughly tested for compilation before resubmission.
+On Wed, 12 Jul 2023 10:06:05 +0200
+Maxime Coquelin <maxime.coquelin@redhat.com> wrote:
+
+> > 
+> > Hi,
+> > 
+> > Our company's jmnd vdpa driver, which requires the 
+> > rte_vhost_host_notifier_ctrl interface,
+> > replicates the problem with the following scenario:
+> > 
+> > QEMU start vhost-user with modern net and blk, backend use dpdk-vdpa 
+> > process,
+> > after live migration, dest QEMU deadlock with dpdk-vdpa.
+> > 
+> > - QEMU sends VHOST_USER_SET_VRING_KICK to dpdk-vdpa net
+> > - QEMU does not need to wait for a response to this message
+> > - QEMU then sends VHOST_USER_SET_MEM_TABLE to dpdk-vdpa blk
+> > - QEMU needs to wait reply in this message
+> > - when dpdk-vdpa recv VHOST_USER_SET_VRING_KICK,
+> > - it will send VHOST_USER_BACKEND_VRING_HOST_NOTIFIER_MSG to QEMU
+> > - dpdk-vdpa needs to wait for a response to this message
+> > - QEMU will deadlock with dpdk-vdpa
+> > 
+> > I tried to add a patch to the qemu community that uses a new thread to 
+> > loop backend channel,
+> > But there will be some multi-threaded synchronization issues
+> > 
+> > I think this is a public issue, and other backend messages take this 
+> > into account,
+> > so I think this message also needs a flag to fix it.
+> > 
+> > and jmnd vdpa driver will subsequently be open-sourced to the community.
+> >   
+> 
+> Thanks forthe clarification.
+> 
+> Please submit this patch in the same series that introduce jmnd vDPA
+> driver into upstream DPDK.
+> 
+> Indeed, we need to have an internal driver that makes use of this new op
+> for it to be accepted. Otherwise, we have no way to maintain it.
+
+Agree.
+Marking this patch as rejected. Not going to add a hook that is not
+used anywhere in the drivers in the repo. If you want to have out of
+tree driver, then you have to keep your own out of tree changes
+if it needs infrastructure changes.
