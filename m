@@ -2,73 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79FA7E65298
-	for <dpdk-dev@archiver.kernel.org>; Sun,  1 Feb 2026 19:04:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE10CE6529E
+	for <dpdk-dev@archiver.kernel.org>; Sun,  1 Feb 2026 19:23:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9DBD8402F0;
-	Sun,  1 Feb 2026 20:04:12 +0100 (CET)
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com
- [209.85.221.54]) by mails.dpdk.org (Postfix) with ESMTP id 8522240150
- for <dev@dpdk.org>; Sun,  1 Feb 2026 20:04:11 +0100 (CET)
-Received: by mail-wr1-f54.google.com with SMTP id
- ffacd0b85a97d-4359a16a400so3227188f8f.1
- for <dev@dpdk.org>; Sun, 01 Feb 2026 11:04:11 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 56C00402F0;
+	Sun,  1 Feb 2026 20:23:04 +0100 (CET)
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com
+ [209.85.128.53]) by mails.dpdk.org (Postfix) with ESMTP id 2266B40150
+ for <dev@dpdk.org>; Sun,  1 Feb 2026 20:23:03 +0100 (CET)
+Received: by mail-wm1-f53.google.com with SMTP id
+ 5b1f17b1804b1-4806bf03573so17890535e9.2
+ for <dev@dpdk.org>; Sun, 01 Feb 2026 11:23:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769972651;
- x=1770577451; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769973782;
+ x=1770578582; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=uqcUT3NbyxjR4p9dzhWI8KSz07ZicwGtQZbQxGZ47bU=;
- b=wK7ICp7QEoI5VwHZ/aoefZQj5QKZat50KB8xZ2oljM8TmRm+eoQg94DE6G0JTO324P
- grGdYHlKiHgdJtSa3UO8EZyYvdGDCJbotZ5PsGmgmlNfbgHQsEhzEU83P0/EIgW5EM7f
- G/OQM8iKBLg34GLhCYIHTTu22Qt9lvx+dWAm+Am+BG49uKTyq57FeUr6hIFkkncSidw4
- Xd261Fj9Ik/625WI0sP7T/2bzyF/ThKUfoOpNzh3bXH9dg8SjzkG6CGNfkE+EWEXByZF
- /gy1+0XJ1BYzTKwmS+qnmpAgUmg3ywcOLgZ/kGfQnuncufl9TtDbe4dntVfVs1UkmVNA
- UiDA==
+ bh=WcQslgCj1FQiADXTFpME1apW6o5Q7qw4Qjxpj8LY8AA=;
+ b=mIZ6sCYe1IRCXy8tIFQ1ajRgE4oBSyvL7NvLccQDDtYCJ6JeVZBTz+qpIuKZ+cO658
+ 5grmV0emMObypjJxxeUOzOB+Z+q9e6EgKsC9Mm/j69J3laAE0DL7awVzr6SHwcXbVgFD
+ xFKol1lz0ldbUbjNkiVcet2imQWxcLIbn3FclHCg0XbrI7FNX7orHBHIF63SbCxdR995
+ x9ZIrpDx/dBdjbhWoutRAbaInix+pP1jqRT61LbEFHp4my2wLPuu6wZhmNcjf2BCEbJS
+ ma9tOYgSHc2wgt9EFy6hPx4HGxYWHkk9uorz+eHZS0euAC0bihzRos9yDoXk3yifWuXf
+ QwvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1769972651; x=1770577451;
+ d=1e100.net; s=20230601; t=1769973782; x=1770578582;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=uqcUT3NbyxjR4p9dzhWI8KSz07ZicwGtQZbQxGZ47bU=;
- b=tTlZgw9hJZMKJSODM4hf79Rjj2NHge5cf0nPmoLvA+xLbaIhBKWxlzGDKBjQnRjGiW
- QDNoCAfpyVAaDS+xPqGIQIAEkW8t5QpragM7P00D1WqntuyCDDXzkQZTyVEXcpCd2kmI
- UXNOGmg1HHQO/F29xOiuRTMQsH3TA6JfEROnEU8NpFndAQxDz9BCcfRkjknS28EE+HHD
- bOlKnlCU0C9MMQkINSSnE3MGmvAyGVHFsbQt7qkPrM1b0cu04mTS+SuFZAoQMwZUZldU
- Myy2SiallRzzK/GaMVeh6zNwChxmW/EBknxkUovNo36asWZ1ZHkd3ppiMASnffNannP9
- iNSw==
-X-Gm-Message-State: AOJu0YxgWgkBzFUvzwzbvpz0nPxYJuYMtdy4niZ+lrMKHsbWahGHZ6D6
- ddWSkian85b4MCkV4WarnMbwtQuAcpdtVUeK3nptI0T4Aahlhl4uyv4+TXp+y7nlvRI=
-X-Gm-Gg: AZuq6aJPWVeHOYezpvm3dzY8Gj5a2ZAUNvsHmv9B3dC/3hoYv9rr/67RA3/M4ua+sj1
- BZMv8bd7RN09DlieOoWJEG371LcA9ae322f8gxCAwPTfKlsnbYGQi1cOJxwYUNt8c+kRAZ9KKqV
- 9GijyA2E1jyfkESaAlR2fhwy4DZo90iGn3tRBSHuH2DHbMh2PujVBLw+lJK6rP+HzkTYA2XNR+6
- rKEBKyYtHDygYPf7GPTK+hhOM5zMiHI78ka/HKiH6UP50j3b5ZQhaCSgZs9im8I2nsxpDIXj/zi
- Kqc08a0Zps5YNBpDoFrux2+2XAh8yH8og4ARFL9iUTu44U2kx0+ZhOHtdGZ3Ii7+nGhhyBbVqOP
- cMSMUrg7DmpBiTR6j3Th5xNBfVTgwcc84HhQTifuBBaTkbh1wbnXQFnZoo/j9V50s/PWBGxMk6K
- cf2TH8AppPHuvUvxULAo5Ad7wBuCeW/cT1+ij5C+NLgEkSckvTVsKC
-X-Received: by 2002:a05:6000:2388:b0:435:a52e:7758 with SMTP id
- ffacd0b85a97d-435f3ad8627mr14859203f8f.57.1769972651044; 
- Sun, 01 Feb 2026 11:04:11 -0800 (PST)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ bh=WcQslgCj1FQiADXTFpME1apW6o5Q7qw4Qjxpj8LY8AA=;
+ b=Fm3EK0Si86/l1ix/jLL+rvEDsOfmKzb1RZMM1/Q9djT88mBP6qA5VuVXGN1sn4xY1n
+ MtiacCY3uHqB5q0BZHgKa1u9PafzrahKGPU55CJq251pVNofiuIG6pAQt4q6uQN4vLu5
+ WxTZ5cTfaxfxMuYBYlyzMxGUKO504jYU8s39sPQB4yvaJuO6njHoVQFUV79OyPIUSmwl
+ Aa2expl+r4M1FlTLJHloOjOK+s7RVFGMEnVt39Nl3LDmLl4BnnGykQPljngRx/sctCux
+ 9AK+69uAx/QjDC3o63NJcqSM41eUshc1JtKo7mPM5miNoyQiCTo1E/DZHBuu7ZB2+6AP
+ e8AQ==
+X-Gm-Message-State: AOJu0YxvTFv1+ljtelpRkFIl3puQ+0o5eSuQ4wXpB0mXrov/YwTJAR6G
+ 0AbnIxn8pmKJQGxaet9Rf4ltmaAqeJeQ/CnAIOyUxLsXDbdt0DTJs0dzeEek6PE9bTztE+0rjwu
+ PMoRv
+X-Gm-Gg: AZuq6aImCdgbhsewoldG1Sj7ik19KMuzngJFLb2gjYCpU4DE8ukZVZnVjOsZJdpYW0v
+ YZkyrTIzkZoj3jf5M5r9VCKS3K3LO3P9zej3qSDjG0AwLgivgfYyA/gKBXbEmE6CF8tvtPqc0Ne
+ Z/pyZNvPKXp5OK124Tt/SAt91OwVPjxkQeLBPooygQVmHzVTxLzV2VZdpUy14UEJuxNlDAYCStk
+ XKl3ayuehHR0YjYaPn9RVpW09bBuOwY61YkfmJjr8LeP53snF9paTUXmx4wJD/b/VSdsET3cC/z
+ eTbA8nG+l9GN/OrFPjEn0mE22VCzbrXMNf4ulli4q2IT/ftUDlZ85VCHdmqJ0sAfbb0I3Fdqr8z
+ UXmsvySOiS7ycLxlk5ghovrKyDGLkRQQvni2vAGFJB8DTpOqXZj4E+oMz59PT7v6VeNWKEE5NDc
+ PJJQjqQY745TlQwu63JqtXp7E4bjZZTVhw+P9mBMYKbad9JJDo2g==
+X-Received: by 2002:a05:600c:8b12:b0:47e:e20e:bbb7 with SMTP id
+ 5b1f17b1804b1-482db499535mr116516465e9.25.1769973781696; 
+ Sun, 01 Feb 2026 11:23:01 -0800 (PST)
+Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-435e1048a54sm36897024f8f.0.2026.02.01.11.04.09
+ ffacd0b85a97d-435e10e483asm36647912f8f.3.2026.02.01.11.22.59
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 01 Feb 2026 11:04:10 -0800 (PST)
-Date: Sun, 1 Feb 2026 11:04:05 -0800
+ Sun, 01 Feb 2026 11:23:00 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Sun Yuechi <sunyuechi@iscas.ac.cn>
-Cc: dev@dpdk.org, Zijian <zijian.oerv@isrc.iscas.ac.cn>, =?UTF-8?B?U3Rh?=
- =?UTF-8?B?bmlzxYJhdw==?= Kardach <stanislaw.kardach@gmail.com>, Nithin
- Dabilpuram <ndabilpuram@marvell.com>, Pavan Nikhilesh
- <pbhagavatula@marvell.com>
-Subject: Re: [PATCH v2] node: lookup with RISC-V vector extension
-Message-ID: <20260201110405.0768a904@phoenix.local>
-In-Reply-To: <20260201160931.1896432-1-sunyuechi@iscas.ac.cn>
-References: <20260201160931.1896432-1-sunyuechi@iscas.ac.cn>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [RFC v2] devtools: replace checkpatches shell wrapper with Python
+ script
+Date: Sun,  1 Feb 2026 11:22:56 -0800
+Message-ID: <20260201192256.142050-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20260131204823.29363-1-stephen@networkplumber.org>
+References: <20260131204823.29363-1-stephen@networkplumber.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,108 +81,1329 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon,  2 Feb 2026 00:09:31 +0800
-Sun Yuechi <sunyuechi@iscas.ac.cn> wrote:
+Replace the checkpatches.sh shell script that wraps the Linux kernel's
+checkpatch.pl with a standalone Python implementation. The new
+checkpatches.py script provides equivalent functionality without
+requiring the kernel source tree or Perl.
 
-> +static uint16_t
-> +ip4_lookup_node_process_vec(struct rte_graph *graph, struct rte_node *node,
-> +			void **objs, uint16_t nb_objs)
-> +{
-> +	struct rte_mbuf **pkts;
-> +	struct rte_lpm *lpm = IP4_LOOKUP_NODE_LPM(node->ctx);
-> +	const int dyn = IP4_LOOKUP_NODE_PRIV1_OFF(node->ctx);
-> +	rte_edge_t next_index;
-> +	void **to_next, **from;
-> +	uint16_t last_spec = 0;
-> +	uint16_t n_left_from;
-> +	uint16_t held = 0;
-> +	uint32_t drop_nh;
-> +
-> +	/* Temporary arrays for batch processing */
-> +	uint32_t ips[RVV_MAX_BURST];
-> +	uint32_t res[RVV_MAX_BURST];
-> +	rte_edge_t next_hops[RVV_MAX_BURST];
-> +
-> +	/* Speculative next */
-> +	next_index = RTE_NODE_IP4_LOOKUP_NEXT_REWRITE;
-> +	/* Drop node */
-> +	drop_nh = ((uint32_t)RTE_NODE_IP4_LOOKUP_NEXT_PKT_DROP) << 16;
-> +
-> +	pkts = (struct rte_mbuf **)objs;
-> +	from = objs;
-> +	n_left_from = nb_objs;
-> +
-> +	/* Get stream for the speculated next node */
-> +	to_next = rte_node_next_stream_get(graph, node, next_index, nb_objs);
-> +
-> +	while (n_left_from > 0) {
-> +		rte_edge_t fix_spec = 0;
-> +
-> +		size_t vl = __riscv_vsetvl_e32m8(RTE_MIN(n_left_from, RVV_MAX_BURST));
-> +
-> +		/* Extract IP addresses and metadata from current batch */
-> +		for (size_t i = 0; i < vl; i++) {
-> +			struct rte_ipv4_hdr *ipv4_hdr =
-> +				rte_pktmbuf_mtod_offset(pkts[i], struct rte_ipv4_hdr *,
-> +						sizeof(struct rte_ether_hdr));
-> +			ips[i] = ipv4_hdr->dst_addr;
-> +			node_mbuf_priv1(pkts[i], dyn)->cksum = ipv4_hdr->hdr_checksum;
-> +			node_mbuf_priv1(pkts[i], dyn)->ttl = ipv4_hdr->time_to_live;
-> +		}
-> +
-> +		/* Perform LPM lookup */
-> +		rte_lpm_lookup_vec(lpm, ips, res, vl, drop_nh);
-> +
-> +		for (size_t i = 0; i < vl; i++) {
-> +			/* Update statistics */
-> +			if ((res[i] >> 16) == (drop_nh >> 16))
-> +				NODE_INCREMENT_XSTAT_ID(node, 0, 1, 1);
-> +
-> +			/* Extract next hop and next node */
-> +			node_mbuf_priv1(pkts[i], dyn)->nh = res[i] & 0xFFFF;
-> +			next_hops[i] = res[i] >> 16;
-> +
-> +			/* Check speculation */
-> +			fix_spec |= (next_index ^ next_hops[i]);
-> +		}
-> +
-> +		if (unlikely(fix_spec)) {
-> +			/* Copy successfully speculated packets before this batch */
-> +			rte_memcpy(to_next, from, last_spec * sizeof(from[0]));
+Performance is significantly improved: checking a recent flow parser
+patch series dropped from 2m23s to 0.43s (approximately 300x faster).
+The script is in a beta test state, it finds the same or more
+issues as the original.
 
-Please use memcpy for this small copy
+Features:
 
-> +			from += last_spec;
-> +			to_next += last_spec;
-> +			held += last_spec;
-> +			last_spec = 0;
-> +
-> +			/* Process each packet in current batch individually */
-> +			for (size_t i = 0; i < vl; i++) {
-> +				if (next_index == next_hops[i]) {
-> +					*to_next++ = from[i];
-> +					held++;
-> +				} else {
-> +					rte_node_enqueue_x1(graph, node, next_hops[i], from[i]);
-> +				}
-> +			}
-> +
-> +			from += vl;
-> +		} else {
-> +			last_spec += vl;
-> +		}
-> +
-> +		pkts += vl;
-> +		n_left_from -= vl;
-> +	}
-> +
-> +	/* Handle successfully speculated packets */
-> +	if (likely(last_spec == nb_objs)) {
-> +		rte_node_next_stream_move(graph, node, next_index);
-> +		return nb_objs;
-> +	}
-> +
-> +	held += last_spec;
-> +	rte_memcpy(to_next, from, last_spec * sizeof(from[0]));
+Patch validation:
+  - Format validation and corruption detection
+  - Signed-off-by verification
+  - Fixes tag format checking
+  - Line length and trailing whitespace checks
 
-Since compiler doesn't bounds check rte_memcpy() use memcpy here please
+Kernel checkpatch.pl compatible checks:
+  - AVOID_EXTERNS, UNNECESSARY_BREAK, COMPLEX_MACRO
+  - STRNCPY/STRCPY, RETURN_PARENTHESES, POINTER_LOCATION
+  - INITIALISED_STATIC, GLOBAL_INITIALISERS, DEEP_INDENTATION
+  - TRAILING_STATEMENTS, LINE_CONTINUATIONS, ONE_SEMICOLON
+  - REPEATED_WORD, CONSTANT_COMPARISON, SELF_ASSIGNMENT
+  - INLINE_LOCATION, STORAGE_CLASS, FUNCTION_WITHOUT_ARGS
+  - MACRO_WITH_FLOW_CONTROL, MULTISTATEMENT_MACRO_USE_DO_WHILE
+  - PREFER_DEFINED_ATTRIBUTE_MACRO (using DPDK __rte_* macros)
+  - TYPO_SPELLING via codespell dictionary
+
+DPDK-specific forbidden token checks:
+  - RTE_LOG usage (prefer RTE_LOG_LINE)
+  - printf/fprintf to stdout/stderr in libs/drivers
+  - rte_panic/rte_exit, direct __attribute__ usage
+  - Deprecated atomics (rte_atomicNN_xxx, rte_smp_[rw]mb)
+  - Compiler builtins (__sync_xxx, __atomic_xxx, __builtin_xxx)
+  - pthread functions (prefer rte_thread)
+  - Reserved keywords, pragma, variadic macros
+
+DPDK tag validation:
+  - __rte_experimental and __rte_internal placement
+  - __rte_packed_begin/end pairing
+  - __rte_aligned attribute checking
+
+Git integration:
+  - Check commits by range (-r) or count (-n)
+  - Read patches from files or stdin
+
+Known limitations:
+  - BRACES check not implemented (requires multi-line analysis)
+
+This script was developed with assistance from the Claude AI assistant.
+
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+---
+ devtools/checkpatches.py | 1259 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 1259 insertions(+)
+ create mode 100755 devtools/checkpatches.py
+
+diff --git a/devtools/checkpatches.py b/devtools/checkpatches.py
+new file mode 100755
+index 0000000000..0feb6b7624
+--- /dev/null
++++ b/devtools/checkpatches.py
+@@ -0,0 +1,1259 @@
++#!/usr/bin/env python3
++# SPDX-License-Identifier: BSD-3-Clause
++# Copyright 2015 6WIND S.A.
++# Copyright 2025 - Python rewrite
++#
++# checkpatch.py - Check patches for common style issues
++#
++# This is a standalone Python replacement for the DPDK checkpatches.sh
++# script that previously wrapped the Linux kernel's checkpatch.pl.
++
++import argparse
++import os
++import re
++import subprocess
++import sys
++import tempfile
++from dataclasses import dataclass, field
++from pathlib import Path
++from typing import Optional
++
++VERSION = "1.0"
++
++# Default configuration
++DEFAULT_LINE_LENGTH = 100
++DEFAULT_CODESPELL_DICT = "/usr/share/codespell/dictionary.txt"
++
++
++@dataclass
++class CheckResult:
++    """Result of a single check."""
++    level: str  # ERROR, WARNING, CHECK
++    type_name: str
++    message: str
++    filename: str = ""
++    line_num: int = 0
++    line_content: str = ""
++
++
++@dataclass
++class PatchInfo:
++    """Information extracted from a patch."""
++    subject: str = ""
++    author: str = ""
++    author_email: str = ""
++    signoffs: list = field(default_factory=list)
++    files: list = field(default_factory=list)
++    added_lines: dict = field(default_factory=dict)  # filename -> [(line_num, content)]
++    has_fixes_tag: bool = False
++    fixes_commits: list = field(default_factory=list)
++
++
++class CheckPatch:
++    """Main class for checking patches."""
++
++    def __init__(self, config: dict):
++        self.config = config
++        self.results: list[CheckResult] = []
++        self.errors = 0
++        self.warnings = 0
++        self.checks = 0
++        self.lines_checked = 0
++
++        # Load codespell dictionary if enabled
++        self.spelling_dict = {}
++        if config.get("codespell"):
++            self._load_codespell_dict()
++
++        # DPDK-specific ignore list (matches original shell script)
++        self.ignored_types = set([
++            "LINUX_VERSION_CODE", "ENOSYS", "FILE_PATH_CHANGES",
++            "MAINTAINERS_STYLE", "SPDX_LICENSE_TAG", "VOLATILE",
++            "PREFER_PACKED", "PREFER_ALIGNED", "PREFER_PRINTF", "STRLCPY",
++            "PREFER_KERNEL_TYPES", "PREFER_FALLTHROUGH", "BIT_MACRO",
++            "CONST_STRUCT", "SPLIT_STRING", "LONG_LINE_STRING",
++            "C99_COMMENT_TOLERANCE", "LINE_SPACING", "PARENTHESIS_ALIGNMENT",
++            "NETWORKING_BLOCK_COMMENT_STYLE", "NEW_TYPEDEFS",
++            "COMPARISON_TO_NULL", "AVOID_BUG", "EXPORT_SYMBOL",
++            "BAD_REPORTED_BY_LINK"
++        ])
++
++        # Forbidden token rules for DPDK
++        self.forbidden_rules = self._init_forbidden_rules()
++
++    def _load_codespell_dict(self) -> None:
++        """Load the codespell dictionary."""
++        dict_path = self.config.get("codespell_file")
++
++        if not dict_path:
++            # Search common locations for the dictionary
++            search_paths = [
++                DEFAULT_CODESPELL_DICT,
++                "/usr/local/lib/python3.12/dist-packages/codespell_lib/data/dictionary.txt",
++                "/usr/local/lib/python3.11/dist-packages/codespell_lib/data/dictionary.txt",
++                "/usr/local/lib/python3.10/dist-packages/codespell_lib/data/dictionary.txt",
++                "/usr/lib/python3/dist-packages/codespell_lib/data/dictionary.txt",
++            ]
++
++            # Also try to find it via codespell module
++            try:
++                import codespell_lib
++                module_path = os.path.join(
++                    os.path.dirname(codespell_lib.__file__),
++                    'data', 'dictionary.txt'
++                )
++                search_paths.insert(0, module_path)
++            except ImportError:
++                pass
++
++            for path in search_paths:
++                if os.path.exists(path):
++                    dict_path = path
++                    break
++
++        if not dict_path or not os.path.exists(dict_path):
++            return
++
++        try:
++            with open(dict_path, "r", encoding="utf-8", errors="ignore") as f:
++                for line in f:
++                    line = line.strip()
++                    if not line or line.startswith("#"):
++                        continue
++                    parts = line.split("->")
++                    if len(parts) >= 2:
++                        wrong = parts[0].strip().lower()
++                        correct = parts[1].strip().split(",")[0].strip()
++                        self.spelling_dict[wrong] = correct
++        except IOError:
++            pass
++
++    def _init_forbidden_rules(self) -> list:
++        """Initialize DPDK-specific forbidden token rules."""
++        return [
++            # Refrain from new calls to RTE_LOG in libraries
++            {
++                "folders": ["lib"],
++                "patterns": [r"RTE_LOG\("],
++                "message": "Prefer RTE_LOG_LINE",
++            },
++            # Refrain from new calls to RTE_LOG in drivers
++            {
++                "folders": ["drivers"],
++                "skip_files": [r".*osdep\.h$"],
++                "patterns": [r"RTE_LOG\(", r"RTE_LOG_DP\(", r"rte_log\("],
++                "message": "Prefer RTE_LOG_LINE/RTE_LOG_DP_LINE",
++            },
++            # No output on stdout or stderr
++            {
++                "folders": ["lib", "drivers"],
++                "patterns": [r"\bprintf\b", r"fprintf\(stdout,", r"fprintf\(stderr,"],
++                "message": "Writing to stdout or stderr",
++            },
++            # Refrain from rte_panic() and rte_exit()
++            {
++                "folders": ["lib", "drivers"],
++                "patterns": [r"rte_panic\(", r"rte_exit\("],
++                "message": "Using rte_panic/rte_exit",
++            },
++            # Don't call directly install_headers()
++            {
++                "folders": ["lib", "drivers"],
++                "patterns": [r"\binstall_headers\b"],
++                "message": "Using install_headers()",
++            },
++            # Refrain from using compiler attribute without common macro
++            {
++                "folders": ["lib", "drivers", "app", "examples"],
++                "skip_files": [r"lib/eal/include/rte_common\.h"],
++                "patterns": [r"__attribute__"],
++                "message": "Using compiler attribute directly",
++            },
++            # Check %l or %ll format specifier
++            {
++                "folders": ["lib", "drivers", "app", "examples"],
++                "patterns": [r"%ll*[xud]"],
++                "message": "Using %l format, prefer %PRI*64 if type is [u]int64_t",
++            },
++            # Refrain from 16/32/64 bits rte_atomicNN_xxx()
++            {
++                "folders": ["lib", "drivers", "app", "examples"],
++                "patterns": [r"rte_atomic[0-9][0-9]_.*\("],
++                "message": "Using rte_atomicNN_xxx",
++            },
++            # Refrain from rte_smp_[r/w]mb()
++            {
++                "folders": ["lib", "drivers", "app", "examples"],
++                "patterns": [r"rte_smp_(r|w)?mb\("],
++                "message": "Using rte_smp_[r/w]mb",
++            },
++            # Refrain from __sync_xxx builtins
++            {
++                "folders": ["lib", "drivers", "app", "examples"],
++                "patterns": [r"__sync_.*\("],
++                "message": "Using __sync_xxx builtins",
++            },
++            # Refrain from __rte_atomic_thread_fence()
++            {
++                "folders": ["lib", "drivers", "app", "examples"],
++                "patterns": [r"__rte_atomic_thread_fence\("],
++                "message": "Using __rte_atomic_thread_fence, prefer rte_atomic_thread_fence",
++            },
++            # Refrain from __atomic_xxx builtins
++            {
++                "folders": ["lib", "drivers", "app", "examples"],
++                "skip_files": [r"drivers/common/cnxk/"],
++                "patterns": [r"__atomic_.*\(", r"__ATOMIC_(RELAXED|CONSUME|ACQUIRE|RELEASE|ACQ_REL|SEQ_CST)"],
++                "message": "Using __atomic_xxx/__ATOMIC_XXX built-ins, prefer rte_atomic_xxx/rte_memory_order_xxx",
++            },
++            # Refrain from some pthread functions
++            {
++                "folders": ["lib", "drivers", "app", "examples"],
++                "patterns": [r"pthread_(create|join|detach|set(_?name_np|affinity_np)|attr_set(inheritsched|schedpolicy))\("],
++                "message": "Using pthread functions, prefer rte_thread",
++            },
++            # Forbid use of __reserved
++            {
++                "folders": ["lib", "drivers", "app", "examples"],
++                "patterns": [r"\b__reserved\b"],
++                "message": "Using __reserved",
++            },
++            # Forbid use of __alignof__
++            {
++                "folders": ["lib", "drivers", "app", "examples"],
++                "patterns": [r"\b__alignof__\b"],
++                "message": "Using __alignof__, prefer C11 alignof",
++            },
++            # Forbid use of __typeof__
++            {
++                "folders": ["lib", "drivers", "app", "examples"],
++                "patterns": [r"\b__typeof__\b"],
++                "message": "Using __typeof__, prefer typeof",
++            },
++            # Forbid use of __builtin_*
++            {
++                "folders": ["lib", "drivers", "app", "examples"],
++                "skip_files": [r"lib/eal/", r"drivers/.*/base/", r"drivers/.*osdep\.h$"],
++                "patterns": [r"\b__builtin_"],
++                "message": "Using __builtin helpers, prefer EAL macros",
++            },
++            # Forbid inclusion of linux/pci_regs.h
++            {
++                "folders": ["lib", "drivers", "app", "examples"],
++                "patterns": [r"include.*linux/pci_regs\.h"],
++                "message": "Using linux/pci_regs.h, prefer rte_pci.h",
++            },
++            # Forbid variadic argument pack extension in macros
++            {
++                "folders": ["lib", "drivers", "app", "examples"],
++                "patterns": [r"#\s*define.*[^(,\s]\.\.\.[\s]*\)"],
++                "message": "Do not use variadic argument pack in macros",
++            },
++            # Forbid __rte_packed_begin with enums
++            {
++                "folders": ["lib", "drivers", "app", "examples"],
++                "patterns": [r"enum.*__rte_packed_begin"],
++                "message": "Using __rte_packed_begin with enum is not allowed",
++            },
++            # Forbid use of #pragma
++            {
++                "folders": ["lib", "drivers", "app", "examples"],
++                "skip_files": [r"lib/eal/include/rte_common\.h"],
++                "patterns": [r"(#pragma|_Pragma)"],
++                "message": "Using compilers pragma is not allowed",
++            },
++            # Forbid experimental build flag except in examples
++            {
++                "folders": ["lib", "drivers", "app"],
++                "patterns": [r"-DALLOW_EXPERIMENTAL_API", r"allow_experimental_apis"],
++                "message": "Using experimental build flag for in-tree compilation",
++            },
++            # Refrain from using RTE_LOG_REGISTER for drivers and libs
++            {
++                "folders": ["lib", "drivers"],
++                "patterns": [r"\bRTE_LOG_REGISTER\b"],
++                "message": "Using RTE_LOG_REGISTER, prefer RTE_LOG_REGISTER_(DEFAULT|SUFFIX)",
++            },
++            # Forbid non-internal thread in drivers and libs
++            {
++                "folders": ["lib", "drivers"],
++                "patterns": [r"rte_thread_(set_name|create_control)\("],
++                "message": "Prefer rte_thread_(set_prefixed_name|create_internal_control)",
++            },
++        ]
++
++    def add_result(self, level: str, type_name: str, message: str,
++                   filename: str = "", line_num: int = 0, line_content: str = "") -> None:
++        """Add a check result."""
++        if type_name.upper() in self.ignored_types:
++            return
++
++        result = CheckResult(
++            level=level,
++            type_name=type_name,
++            message=message,
++            filename=filename,
++            line_num=line_num,
++            line_content=line_content
++        )
++        self.results.append(result)
++
++        if level == "ERROR":
++            self.errors += 1
++        elif level == "WARNING":
++            self.warnings += 1
++        else:
++            self.checks += 1
++
++    def parse_patch(self, content: str) -> PatchInfo:
++        """Parse a patch and extract information."""
++        info = PatchInfo()
++        current_file = ""
++        in_diff = False
++        line_num_in_new = 0
++
++        lines = content.split("\n")
++        for i, line in enumerate(lines):
++            # Extract subject
++            if line.startswith("Subject:"):
++                subject = line[8:].strip()
++                # Handle multi-line subjects
++                j = i + 1
++                while j < len(lines) and lines[j].startswith(" "):
++                    subject += " " + lines[j].strip()
++                    j += 1
++                info.subject = subject
++
++            # Extract author
++            if line.startswith("From:"):
++                info.author = line[5:].strip()
++                match = re.search(r"<([^>]+)>", info.author)
++                if match:
++                    info.author_email = match.group(1)
++
++            # Extract Signed-off-by
++            match = re.match(r"^Signed-off-by:\s*(.+)$", line, re.IGNORECASE)
++            if match:
++                info.signoffs.append(match.group(1).strip())
++
++            # Extract Fixes tag
++            match = re.match(r"^Fixes:\s*([0-9a-fA-F]+)", line)
++            if match:
++                info.has_fixes_tag = True
++                info.fixes_commits.append(match.group(1))
++
++            # Track files in diff
++            if line.startswith("diff --git"):
++                match = re.match(r"diff --git a/(\S+) b/(\S+)", line)
++                if match:
++                    current_file = match.group(2)
++                    if current_file not in info.files:
++                        info.files.append(current_file)
++                    info.added_lines[current_file] = []
++                in_diff = True
++
++            # Track hunks
++            if line.startswith("@@"):
++                match = re.match(r"@@ -\d+(?:,\d+)? \+(\d+)", line)
++                if match:
++                    line_num_in_new = int(match.group(1))
++                continue
++
++            # Track added lines
++            if in_diff and current_file:
++                if line.startswith("+") and not line.startswith("+++"):
++                    info.added_lines[current_file].append((line_num_in_new, line[1:]))
++                    line_num_in_new += 1
++                elif line.startswith("-"):
++                    pass  # Deleted line, don't increment
++                elif not line.startswith("\\"):
++                    line_num_in_new += 1
++
++        return info
++
++    def check_line_length(self, patch_info: PatchInfo) -> None:
++        """Check for lines exceeding maximum length."""
++        max_len = self.config.get("max_line_length", DEFAULT_LINE_LENGTH)
++
++        for filename, lines in patch_info.added_lines.items():
++            for line_num, content in lines:
++                # Skip strings that span multiple lines
++                if len(content) > max_len:
++                    # Don't warn about long strings or URLs
++                    if '\"' in content and content.count('\"') >= 2:
++                        continue
++                    if "http://" in content or "https://" in content:
++                        continue
++                    # Check if it's a comment line
++                    if content.strip().startswith("/*") or content.strip().startswith("*") or content.strip().startswith("//"):
++                        self.add_result(
++                            "WARNING", "LONG_LINE_COMMENT",
++                            f"line length of {len(content)} exceeds {max_len} columns",
++                            filename, line_num, content
++                        )
++                    else:
++                        self.add_result(
++                            "WARNING", "LONG_LINE",
++                            f"line length of {len(content)} exceeds {max_len} columns",
++                            filename, line_num, content
++                        )
++
++    def check_trailing_whitespace(self, patch_info: PatchInfo) -> None:
++        """Check for trailing whitespace."""
++        for filename, lines in patch_info.added_lines.items():
++            for line_num, content in lines:
++                if content != content.rstrip():
++                    self.add_result(
++                        "WARNING", "TRAILING_WHITESPACE",
++                        "trailing whitespace",
++                        filename, line_num, content
++                    )
++
++    def check_tabs_spaces(self, patch_info: PatchInfo) -> None:
++        """Check for space before tab and mixed indentation."""
++        for filename, lines in patch_info.added_lines.items():
++            for line_num, content in lines:
++                if " \t" in content:
++                    self.add_result(
++                        "WARNING", "SPACE_BEFORE_TAB",
++                        "space before tab in indent",
++                        filename, line_num, content
++                    )
++
++    def check_signoff(self, patch_info: PatchInfo) -> None:
++        """Check for Signed-off-by line."""
++        if not patch_info.signoffs:
++            self.add_result(
++                "ERROR", "MISSING_SIGN_OFF",
++                "Missing Signed-off-by: line(s)"
++            )
++
++    def check_coding_style(self, patch_info: PatchInfo) -> None:
++        """Check various coding style issues."""
++        for filename, lines in patch_info.added_lines.items():
++            # Skip non-C files for most checks
++            is_c_file = filename.endswith((".c", ".h"))
++            is_c_source = filename.endswith(".c")
++            is_header = filename.endswith(".h")
++
++            prev_line = ""
++            indent_stack = []
++            for line_num, content in lines:
++                self.lines_checked += 1
++
++                if is_c_file:
++                    # Check for externs in .c files
++                    if is_c_source and re.match(r"^\s*extern\b", content):
++                        self.add_result(
++                            "WARNING", "AVOID_EXTERNS",
++                            "externs should be avoided in .c files",
++                            filename, line_num, content
++                        )
++
++                    # Check for unnecessary break after goto/return/continue
++                    if re.match(r"^\s*break\s*;", content):
++                        if re.match(r"^\s*(goto|return|continue)\b", prev_line):
++                            self.add_result(
++                                "WARNING", "UNNECESSARY_BREAK",
++                                "break is not useful after a goto or return",
++                                filename, line_num, content
++                            )
++
++                    # STRNCPY: should use strlcpy
++                    if re.search(r"\bstrncpy\s*\(", content):
++                        self.add_result(
++                            "WARNING", "STRNCPY",
++                            "Prefer strlcpy over strncpy - see: https://lore.kernel.org/r/CAHk-=wgfRnXz0W3D37d01q3JFkr_i_uTL=V6A6G1oUZcprmknw@mail.gmail.com/",
++                            filename, line_num, content
++                        )
++
++                    # STRCPY: unsafe string copy
++                    if re.search(r"\bstrcpy\s*\(", content):
++                        self.add_result(
++                            "ERROR", "STRCPY",
++                            "strcpy is unsafe - use strlcpy or snprintf",
++                            filename, line_num, content
++                        )
++
++                    # Check for complex macros without proper enclosure
++                    if re.match(r"^\s*#\s*define\s+\w+\s*\([^)]*\)\s+\(", content):
++                        # Macro with arguments that starts with ( - check if it's a compound literal
++                        if re.search(r"\)\s+\([^)]*\]\s*\)\s*\{", content) or \
++                           re.search(r"\)\s+\(const\s+", content) or \
++                           re.search(r"\)\s+\(enum\s+", content) or \
++                           re.search(r"\)\s+\(struct\s+", content):
++                            self.add_result(
++                                "ERROR", "COMPLEX_MACRO",
++                                "Macros with complex values should be enclosed in parentheses",
++                                filename, line_num, content
++                            )
++
++                    # SPACING: missing space before ( in control statements
++                    if re.search(r"\b(if|while|for|switch)\(", content):
++                        self.add_result(
++                            "WARNING", "SPACING",
++                            "space required before the open parenthesis '('",
++                            filename, line_num, content
++                        )
++
++                    # SPACING: space prohibited after open square bracket
++                    if re.search(r"\[\s+[^\]]", content) and not re.search(r"\[\s*\]", content):
++                        self.add_result(
++                            "WARNING", "SPACING",
++                            "space prohibited after that open square bracket '['",
++                            filename, line_num, content
++                        )
++
++                    # SPACING: space prohibited before close square bracket
++                    if re.search(r"[^\[]\s+\]", content):
++                        self.add_result(
++                            "WARNING", "SPACING",
++                            "space prohibited before that close square bracket ']'",
++                            filename, line_num, content
++                        )
++
++                    # RETURN_PARENTHESES: return with parentheses
++                    if re.search(r"\breturn\s*\([^;]+\)\s*;", content):
++                        # Avoid false positives for function calls like return (func())
++                        if not re.search(r"\breturn\s*\(\s*\w+\s*\([^)]*\)\s*\)\s*;", content):
++                            self.add_result(
++                                "WARNING", "RETURN_PARENTHESES",
++                                "return is not a function, parentheses are not required",
++                                filename, line_num, content
++                            )
++
++                    # BRACES: single statement blocks that need braces
++                    # Check for if/else/while/for without braces on multiline
++                    if re.match(r"^\s*(if|else\s+if|while|for)\s*\([^{]*$", content):
++                        # Control statement without opening brace - check next line
++                        pass  # Would need lookahead
++
++                    # INITIALISED_STATIC: static initialized to 0/NULL
++                    if re.match(r"^\s*static\s+.*=\s*(0|NULL|0L|0UL|0ULL|0LL)\s*;", content):
++                        self.add_result(
++                            "WARNING", "INITIALISED_STATIC",
++                            "do not initialise statics to 0 or NULL",
++                            filename, line_num, content
++                        )
++
++                    # GLOBAL_INITIALISERS: global initialized to 0/NULL
++                    if re.match(r"^[a-zA-Z_][a-zA-Z0-9_\s\*]*=\s*(0|NULL|0L|0UL|0ULL|0LL)\s*;", content):
++                        if not re.match(r"^\s*static\s+", content):
++                            self.add_result(
++                                "WARNING", "GLOBAL_INITIALISERS",
++                                "do not initialise globals to 0 or NULL",
++                                filename, line_num, content
++                            )
++
++                    # DEEP_INDENTATION: more than 4-5 levels of tabs
++                    leading_tabs = len(content) - len(content.lstrip('\t'))
++                    if leading_tabs >= 5:
++                        self.add_result(
++                            "WARNING", "DEEP_INDENTATION",
++                            f"too many levels of indentation ({leading_tabs} tabs)",
++                            filename, line_num, content
++                        )
++
++                    # TRAILING_STATEMENTS: code on same line as } OR control statement
++                    if re.search(r"\}\s*[a-zA-Z_]", content) and not re.search(r"\}\s*(else|while)\b", content):
++                        self.add_result(
++                            "ERROR", "TRAILING_STATEMENTS",
++                            "trailing statements should be on next line",
++                            filename, line_num, content
++                        )
++                    # Also check for if/while/for with statement on same line (not opening brace)
++                    # Pattern: if (cond) statement; or if (cond) statement; /* comment */
++                    if re.search(r"\b(if|while|for)\s*\([^)]+\)\s+(?![\s{])[^;]*;", content):
++                        self.add_result(
++                            "ERROR", "TRAILING_STATEMENTS",
++                            "trailing statements should be on next line",
++                            filename, line_num, content
++                        )
++
++                    # CONSTANT_COMPARISON: Yoda conditions (constant on left)
++                    if re.search(r'\b(NULL|true|false)\s*[!=]=\s*[&*\w]', content) or \
++                       re.search(r'\(\s*0\s*[!=]=\s*[&*\w]', content):
++                        self.add_result(
++                            "WARNING", "CONSTANT_COMPARISON",
++                            "Comparisons should place the constant on the right side",
++                            filename, line_num, content
++                        )
++
++                    # BRACES: single statement block should not have braces (or vice versa)
++                    # Check for if/else/while/for with single statement in braces
++                    if re.match(r"^\s*(if|while|for)\s*\([^)]+\)\s*\{\s*$", prev_line):
++                        if re.match(r"^\s*\w.*;\s*$", content) and not re.search(r"^\s*(if|else|while|for|switch|case|default|return\s*;)", content):
++                            # Check if next line is just closing brace - would need lookahead
++                            pass
++
++                    # ONE_SEMICOLON: double semicolon
++                    if re.search(r";;", content) and not re.search(r"for\s*\([^)]*;;", content):
++                        self.add_result(
++                            "WARNING", "ONE_SEMICOLON",
++                            "Statements terminations use 1 semicolon",
++                            filename, line_num, content
++                        )
++
++                    # CODE_INDENT/LEADING_SPACE: spaces used for indentation instead of tabs
++                    if re.match(r"^    +[^\s]", content) and not content.strip().startswith("*"):
++                        # Line starts with spaces (not tabs) - but allow for alignment in comments
++                        self.add_result(
++                            "WARNING", "CODE_INDENT",
++                            "code indent should use tabs where possible",
++                            filename, line_num, content
++                        )
++
++                    # LEADING_SPACE: spaces at start of line (more general)
++                    if re.match(r"^ +\t", content):
++                        self.add_result(
++                            "WARNING", "LEADING_SPACE",
++                            "please, no spaces at the start of a line",
++                            filename, line_num, content
++                        )
++
++                    # LINE_CONTINUATIONS: backslash continuation outside macros
++                    if content.rstrip().endswith("\\") and not re.match(r"^\s*#", content):
++                        # Not a preprocessor line but has continuation
++                        if not re.match(r"^\s*#\s*define", prev_line):
++                            self.add_result(
++                                "WARNING", "LINE_CONTINUATIONS",
++                                "Avoid unnecessary line continuations",
++                                filename, line_num, content
++                            )
++
++                    # FUNCTION_WITHOUT_ARGS: empty parens instead of (void)
++                    if is_header and re.search(r"\b\w+\s*\(\s*\)\s*;", content):
++                        if not re.search(r"\b(while|if|for|switch|return)\s*\(\s*\)", content):
++                            self.add_result(
++                                "ERROR", "FUNCTION_WITHOUT_ARGS",
++                                "Bad function definition - use (void) instead of ()",
++                                filename, line_num, content
++                            )
++
++                    # INLINE_LOCATION: inline should come after storage class
++                    if re.match(r"^\s*inline\s+(static|extern)", content):
++                        self.add_result(
++                            "ERROR", "INLINE_LOCATION",
++                            "inline keyword should sit between storage class and type",
++                            filename, line_num, content
++                        )
++
++                    # STATIC_CONST: const should come after static
++                    if re.match(r"^\s*const\s+static\b", content):
++                        self.add_result(
++                            "WARNING", "STATIC_CONST",
++                            "Move const after static - use 'static const'",
++                            filename, line_num, content
++                        )
++                        self.add_result(
++                            "WARNING", "STORAGE_CLASS",
++                            "storage class should be at the beginning of the declaration",
++                            filename, line_num, content
++                        )
++
++                    # CONST_CONST: const used twice
++                    if re.search(r"\bconst\s+\w+\s+const\b", content):
++                        self.add_result(
++                            "WARNING", "CONST_CONST",
++                            "const used twice - remove duplicate const",
++                            filename, line_num, content
++                        )
++
++                    # SELF_ASSIGNMENT: x = x
++                    if re.search(r"\b(\w+)\s*=\s*\1\s*;", content):
++                        match = re.search(r"\b(\w+)\s*=\s*\1\s*;", content)
++                        if match:
++                            self.add_result(
++                                "WARNING", "SELF_ASSIGNMENT",
++                                f"Do not use self-assignments to avoid compiler warnings",
++                                filename, line_num, content
++                            )
++
++                    # PREFER_DEFINED_ATTRIBUTE_MACRO: prefer DPDK/kernel macros over __attribute__
++                    attr_macros = {
++                        'cold': '__rte_cold',
++                        'hot': '__rte_hot', 
++                        'noinline': '__rte_noinline',
++                        'always_inline': '__rte_always_inline',
++                        'unused': '__rte_unused',
++                        'packed': '__rte_packed',
++                        'aligned': '__rte_aligned',
++                        'weak': '__rte_weak',
++                        'pure': '__rte_pure',
++                    }
++                    for attr, replacement in attr_macros.items():
++                        if re.search(rf'__attribute__\s*\(\s*\(\s*{attr}\b', content):
++                            self.add_result(
++                                "WARNING", "PREFER_DEFINED_ATTRIBUTE_MACRO",
++                                f"Prefer {replacement} over __attribute__(({attr}))",
++                                filename, line_num, content
++                            )
++
++                    # POINTER_LOCATION: char* instead of char *
++                    if re.search(r"\b(char|int|void|short|long|float|double|unsigned|signed)\*\s+\w", content):
++                        self.add_result(
++                            "ERROR", "POINTER_LOCATION",
++                            "\"foo* bar\" should be \"foo *bar\"",
++                            filename, line_num, content
++                        )
++
++                    # MACRO_WITH_FLOW_CONTROL: macros with return/goto/break
++                    if re.match(r"^\s*#\s*define\s+\w+.*\b(return|goto|break|continue)\b", content):
++                        self.add_result(
++                            "WARNING", "MACRO_WITH_FLOW_CONTROL",
++                            "Macros with flow control statements should be avoided",
++                            filename, line_num, content
++                        )
++
++                    # MULTISTATEMENT_MACRO_USE_DO_WHILE: macros with multiple statements
++                    if re.match(r"^\s*#\s*define\s+\w+\([^)]*\)\s+.*;\s*[^\\]", content):
++                        if not re.search(r"do\s*\{", content):
++                            self.add_result(
++                                "WARNING", "MULTISTATEMENT_MACRO_USE_DO_WHILE",
++                                "Macros with multiple statements should use do {} while(0)",
++                                filename, line_num, content
++                            )
++
++                    # MULTISTATEMENT_MACRO_USE_DO_WHILE: macros starting with if
++                    if re.match(r"^\s*#\s*define\s+\w+\([^)]*\)\s+if\s*\(", content):
++                        self.add_result(
++                            "ERROR", "MULTISTATEMENT_MACRO_USE_DO_WHILE",
++                            "Macros starting with if should be enclosed by a do - while loop",
++                            filename, line_num, content
++                        )
++
++                    # Multiple statements on one line
++                    if re.search(r";\s*[a-zA-Z_]", content) and "for" not in content:
++                        self.add_result(
++                            "CHECK", "MULTIPLE_STATEMENTS",
++                            "multiple statements on one line",
++                            filename, line_num, content
++                        )
++
++                    # Check for C99 comments in headers that should use C89
++                    if is_header and "//" in content:
++                        # Only flag if not in a string
++                        stripped = re.sub(r'"[^"]*"', '', content)
++                        if "//" in stripped:
++                            self.add_result(
++                                "CHECK", "C99_COMMENTS",
++                                "C99 // comments are acceptable but /* */ is preferred in headers",
++                                filename, line_num, content
++                            )
++
++                    # BLOCK_COMMENT_STYLE: block comments style issues
++                    # Leading /* on its own line
++                    if re.match(r"^\s*/\*\*+\s*$", content):
++                        self.add_result(
++                            "WARNING", "BLOCK_COMMENT_STYLE",
++                            "Block comments should not use a leading /* on a line by itself",
++                            filename, line_num, content
++                        )
++                    # Trailing */ on separate line after block comment
++                    if re.match(r"^\s*\*+/\s*$", content) and prev_line.strip().startswith("*"):
++                        pass  # This is actually acceptable
++                    # Block with trailing */ but content before it
++                    if re.search(r"\S\s*=+\s*\*/\s*$", content):
++                        self.add_result(
++                            "WARNING", "BLOCK_COMMENT_STYLE",
++                            "Block comments use a trailing */ on a separate line",
++                            filename, line_num, content
++                        )
++
++                    # REPEATED_WORD: check for repeated words
++                    words = re.findall(r'\b(\w+)\s+\1\b', content, re.IGNORECASE)
++                    for word in words:
++                        word_lower = word.lower()
++                        # Skip common valid repeated patterns
++                        if word_lower not in ('that', 'had', 'long', 'int', 'short'):
++                            self.add_result(
++                                "WARNING", "REPEATED_WORD",
++                                f"Possible repeated word: '{word}'",
++                                filename, line_num, content
++                            )
++
++                    # STRING_FRAGMENTS: unnecessary string concatenation
++                    if re.search(r'"\s+"', content) and not re.search(r'#\s*define', content):
++                        self.add_result(
++                            "CHECK", "STRING_FRAGMENTS",
++                            "Consecutive strings are generally better as a single string",
++                            filename, line_num, content
++                        )
++
++                prev_line = content
++
++    def check_spelling(self, patch_info: PatchInfo) -> None:
++        """Check for spelling errors using codespell dictionary."""
++        for filename, lines in patch_info.added_lines.items():
++            for line_num, content in lines:
++                # REPEATED_WORD check for non-C files (C files handled in check_coding_style)
++                if not filename.endswith((".c", ".h")):
++                    words = re.findall(r'\b(\w+)\s+\1\b', content, re.IGNORECASE)
++                    for word in words:
++                        word_lower = word.lower()
++                        if word_lower not in ('that', 'had', 'long', 'int', 'short'):
++                            self.add_result(
++                                "WARNING", "REPEATED_WORD",
++                                f"Possible repeated word: '{word}'",
++                                filename, line_num, content
++                            )
++
++                # Spelling check
++                if self.spelling_dict:
++                    words = re.findall(r'\b[a-zA-Z]+\b', content)
++                    for word in words:
++                        lower_word = word.lower()
++                        if lower_word in self.spelling_dict:
++                            self.add_result(
++                                "WARNING", "TYPO_SPELLING",
++                                f"'{word}' may be misspelled - perhaps '{self.spelling_dict[lower_word]}'?",
++                                filename, line_num, content
++                            )
++
++    def check_forbidden_tokens(self, patch_info: PatchInfo) -> None:
++        """Check for DPDK-specific forbidden tokens."""
++        for filename, lines in patch_info.added_lines.items():
++            for rule in self.forbidden_rules:
++                # Check if file is in one of the target folders
++                in_folder = False
++                for folder in rule["folders"]:
++                    if filename.startswith(folder + "/") or filename.startswith("b/" + folder + "/"):
++                        in_folder = True
++                        break
++
++                if not in_folder:
++                    continue
++
++                # Check if file should be skipped
++                skip = False
++                for skip_pattern in rule.get("skip_files", []):
++                    if re.search(skip_pattern, filename):
++                        skip = True
++                        break
++
++                if skip:
++                    continue
++
++                # Check each line for forbidden patterns
++                for line_num, content in lines:
++                    for pattern in rule["patterns"]:
++                        if re.search(pattern, content):
++                            self.add_result(
++                                "WARNING", "FORBIDDEN_TOKEN",
++                                rule["message"],
++                                filename, line_num, content
++                            )
++                            break
++
++    def check_experimental_tags(self, patch_info: PatchInfo) -> None:
++        """Check __rte_experimental tag placement."""
++        for filename, lines in patch_info.added_lines.items():
++            for line_num, content in lines:
++                if "__rte_experimental" in content:
++                    # Should only be in headers
++                    if filename.endswith(".c"):
++                        self.add_result(
++                            "WARNING", "EXPERIMENTAL_TAG",
++                            f"Please only put __rte_experimental tags in headers ({filename})",
++                            filename, line_num, content
++                        )
++                    # Should appear alone on the line
++                    stripped = content.strip()
++                    if stripped != "__rte_experimental":
++                        self.add_result(
++                            "WARNING", "EXPERIMENTAL_TAG",
++                            "__rte_experimental must appear alone on the line immediately preceding the return type of a function",
++                            filename, line_num, content
++                        )
++
++    def check_internal_tags(self, patch_info: PatchInfo) -> None:
++        """Check __rte_internal tag placement."""
++        for filename, lines in patch_info.added_lines.items():
++            for line_num, content in lines:
++                if "__rte_internal" in content:
++                    # Should only be in headers
++                    if filename.endswith(".c"):
++                        self.add_result(
++                            "WARNING", "INTERNAL_TAG",
++                            f"Please only put __rte_internal tags in headers ({filename})",
++                            filename, line_num, content
++                        )
++                    # Should appear alone on the line
++                    stripped = content.strip()
++                    if stripped != "__rte_internal":
++                        self.add_result(
++                            "WARNING", "INTERNAL_TAG",
++                            "__rte_internal must appear alone on the line immediately preceding the return type of a function",
++                            filename, line_num, content
++                        )
++
++    def check_aligned_attributes(self, patch_info: PatchInfo) -> None:
++        """Check alignment attribute usage."""
++        align_tokens = ["__rte_aligned", "__rte_cache_aligned", "__rte_cache_min_aligned"]
++
++        for filename, lines in patch_info.added_lines.items():
++            for line_num, content in lines:
++                for token in align_tokens:
++                    if re.search(rf"\b{token}\b", content):
++                        # Should only be used with struct or union
++                        if not re.search(rf"\b(struct|union)\s*{token}\b", content):
++                            self.add_result(
++                                "WARNING", "ALIGNED_ATTRIBUTE",
++                                f"Please use {token} only for struct or union types alignment",
++                                filename, line_num, content
++                            )
++
++    def check_packed_attributes(self, patch_info: PatchInfo) -> None:
++        """Check packed attribute usage."""
++        begin_count = 0
++        end_count = 0
++
++        for filename, lines in patch_info.added_lines.items():
++            for line_num, content in lines:
++                if "__rte_packed_begin" in content:
++                    begin_count += 1
++                    # Should be after struct, union, or alignment attributes
++                    if not re.search(r"\b(struct|union)\s*__rte_packed_begin\b", content) and \
++                       not re.search(r"__rte_cache_aligned\s*__rte_packed_begin", content) and \
++                       not re.search(r"__rte_cache_min_aligned\s*__rte_packed_begin", content) and \
++                       not re.search(r"__rte_aligned\(.*\)\s*__rte_packed_begin", content):
++                        self.add_result(
++                            "WARNING", "PACKED_ATTRIBUTE",
++                            "Use __rte_packed_begin only after struct, union or alignment attributes",
++                            filename, line_num, content
++                        )
++
++                if "__rte_packed_end" in content:
++                    end_count += 1
++
++        if begin_count != end_count:
++            self.add_result(
++                "WARNING", "PACKED_ATTRIBUTE",
++                "__rte_packed_begin and __rte_packed_end should always be used in pairs"
++            )
++
++    def check_patch(self, content: str, patch_file: str = None) -> bool:
++        """Run all checks on a patch."""
++        self.results = []
++        self.errors = 0
++        self.warnings = 0
++        self.checks = 0
++        self.lines_checked = 0
++
++        # Check patch format first
++        self.check_patch_format(content, patch_file)
++
++        patch_info = self.parse_patch(content)
++
++        # Run all checks
++        self.check_signoff(patch_info)
++        self.check_line_length(patch_info)
++        self.check_trailing_whitespace(patch_info)
++        self.check_tabs_spaces(patch_info)
++        self.check_coding_style(patch_info)
++        self.check_spelling(patch_info)
++        self.check_forbidden_tokens(patch_info)
++        self.check_experimental_tags(patch_info)
++        self.check_internal_tags(patch_info)
++        self.check_aligned_attributes(patch_info)
++        self.check_packed_attributes(patch_info)
++        self.check_commit_message(patch_info, content)
++
++        return self.errors == 0 and self.warnings == 0
++
++    def check_patch_format(self, content: str, patch_file: str = None) -> None:
++        """Check basic patch format for corruption."""
++        lines = content.split("\n")
++
++        # Track patch structure
++        has_diff = False
++        has_hunk = False
++        in_hunk = False
++        hunk_line = 0
++
++        for i, line in enumerate(lines, 1):
++            # Track diff headers
++            if line.startswith("diff --git"):
++                has_diff = True
++                in_hunk = False
++
++            # Parse hunk header
++            if line.startswith("@@"):
++                has_hunk = True
++                in_hunk = True
++                hunk_line = i
++                # Validate hunk header format
++                if not re.match(r"@@ -\d+(?:,\d+)? \+\d+(?:,\d+)? @@", line):
++                    self.add_result(
++                        "ERROR", "CORRUPTED_PATCH",
++                        f"patch seems to be corrupt (malformed hunk header) at line {i}"
++                    )
++
++            # End of patch content (signature separator)
++            elif line == "-- ":
++                in_hunk = False
++
++            # Check for lines that look like they should be in a hunk but aren't prefixed
++            elif in_hunk and line and not line.startswith(("+", "-", " ", "\\", "diff ", "@@", "index ", "--- ", "+++ ", "new file", "deleted file", "old mode", "new mode", "rename ", "similarity", "copy ")):
++                # This could be a wrapped line or corruption
++                # But be careful - empty lines and commit message lines are OK
++                if not line.startswith(("From ", "Subject:", "Date:", "Signed-off-by:",
++                                       "Acked-by:", "Reviewed-by:", "Tested-by:",
++                                       "Fixes:", "Cc:", "---", "Message-Id:")):
++                    # Likely a corrupted/wrapped line in the diff
++                    self.add_result(
++                        "ERROR", "CORRUPTED_PATCH",
++                        f"patch seems to be corrupt (line wrapped?) at line {i}"
++                    )
++                    in_hunk = False  # Stop checking this hunk
++
++        if has_diff and not has_hunk:
++            self.add_result(
++                "ERROR", "CORRUPTED_PATCH",
++                "Patch appears to be corrupted (has diff but no hunks)"
++            )
++
++        # Check for DOS line endings
++        if "\r\n" in content:
++            self.add_result(
++                "ERROR", "DOS_LINE_ENDINGS",
++                "Patch has DOS line endings, should be UNIX line endings"
++            )
++
++    def check_commit_message(self, patch_info: PatchInfo, content: str) -> None:
++        """Check commit message for issues."""
++        lines = content.split("\n")
++
++        in_commit_msg = False
++        commit_msg_lines = []
++
++        for i, line in enumerate(lines):
++            if line.startswith("Subject:"):
++                in_commit_msg = True
++                continue
++            if line.startswith("---") or line.startswith("diff --git"):
++                in_commit_msg = False
++                continue
++            if in_commit_msg:
++                commit_msg_lines.append((i + 1, line))
++
++        for line_num, line in commit_msg_lines:
++            # UNKNOWN_COMMIT_ID: Fixes tag with short or invalid commit ID
++            match = re.match(r"^Fixes:\s*([0-9a-fA-F]+)", line)
++            if match:
++                commit_id = match.group(1)
++                if len(commit_id) < 12:
++                    self.add_result(
++                        "WARNING", "UNKNOWN_COMMIT_ID",
++                        f"Commit id '{commit_id}' is too short, use at least 12 characters",
++                        line_num=line_num, line_content=line
++                    )
++                # Check Fixes format: should be Fixes: <hash> ("commit subject")
++                if not re.match(r'^Fixes:\s+[0-9a-fA-F]{12,}\s+\("[^"]+"\)\s*$', line):
++                    self.add_result(
++                        "WARNING", "BAD_FIXES_TAG",
++                        "Fixes: tag format should be: Fixes: <12+ char hash> (\"commit subject\")",
++                        line_num=line_num, line_content=line
++                    )
++
++    def format_results(self, show_types: bool = True) -> str:
++        """Format the results for output."""
++        output = []
++
++        for result in self.results:
++            if result.filename and result.line_num:
++                prefix = f"{result.filename}:{result.line_num}:"
++            elif result.filename:
++                prefix = f"{result.filename}:"
++            else:
++                prefix = ""
++
++            type_str = f" [{result.type_name}]" if show_types else ""
++            output.append(f"{result.level}:{type_str} {result.message}")
++
++            if prefix:
++                output.append(f"#  {prefix}")
++            if result.line_content:
++                output.append(f"+  {result.line_content}")
++            output.append("")
++
++        return "\n".join(output)
++
++    def get_summary(self) -> str:
++        """Get a summary of the check results."""
++        return f"total: {self.errors} errors, {self.warnings} warnings, {self.checks} checks, {self.lines_checked} lines checked"
++
++
++def check_single_patch(checker: CheckPatch, patch_path: Optional[str],
++                       commit: Optional[str], verbose: bool, quiet: bool) -> bool:
++    """Check a single patch file or commit."""
++    subject = ""
++    content = ""
++
++    if patch_path:
++        try:
++            with open(patch_path, "r", encoding="utf-8", errors="replace") as f:
++                content = f.read()
++        except IOError as e:
++            print(f"Error reading {patch_path}: {e}", file=sys.stderr)
++            return False
++    elif commit:
++        try:
++            result = subprocess.run(
++                ["git", "format-patch", "--find-renames", "--no-stat", "--stdout", "-1", commit],
++                capture_output=True,
++                text=True
++            )
++            if result.returncode != 0:
++                print(f"Error getting commit {commit}", file=sys.stderr)
++                return False
++            content = result.stdout
++        except (subprocess.CalledProcessError, FileNotFoundError) as e:
++            print(f"Error running git: {e}", file=sys.stderr)
++            return False
++    else:
++        content = sys.stdin.read()
++
++    # Extract subject
++    match = re.search(r"^Subject:\s*(.+?)(?:\n(?=\S)|\n\n)", content, re.MULTILINE | re.DOTALL)
++    if match:
++        subject = match.group(1).replace("\n ", " ").strip()
++
++    if verbose:
++        print(f"\n### {subject}\n")
++
++    is_clean = checker.check_patch(content, patch_path)
++    has_issues = checker.errors > 0 or checker.warnings > 0
++
++    if has_issues or verbose:
++        if not verbose and subject:
++            print(f"\n### {subject}\n")
++        print(checker.format_results(show_types=True))
++        print(checker.get_summary())
++
++    return is_clean
++
++
++def parse_args() -> argparse.Namespace:
++    """Parse command line arguments."""
++    parser = argparse.ArgumentParser(
++        description="Check patches for DPDK coding style and common issues",
++        formatter_class=argparse.RawDescriptionHelpFormatter,
++        epilog="""
++Examples:
++  %(prog)s patch.diff                Check a patch file
++  %(prog)s -n 3                      Check last 3 commits
++  %(prog)s -r origin/main..HEAD      Check commits in range
++  cat patch.diff | %(prog)s          Check patch from stdin
++"""
++    )
++
++    parser.add_argument("patches", nargs="*", help="Patch files to check")
++    parser.add_argument("-n", type=int, metavar="NUM",
++                       help="Check last NUM commits")
++    parser.add_argument("-r", "--range", metavar="RANGE",
++                       help="Check commits in git range (default: origin/main..)")
++    parser.add_argument("-q", "--quiet", action="store_true",
++                       help="Quiet mode - only show summary")
++    parser.add_argument("-v", "--verbose", action="store_true",
++                       help="Verbose mode - show all checks")
++    parser.add_argument("--max-line-length", type=int, default=DEFAULT_LINE_LENGTH,
++                       help=f"Maximum line length (default: {DEFAULT_LINE_LENGTH})")
++    parser.add_argument("--codespell", action="store_true", default=True,
++                       help="Enable spell checking (default: enabled)")
++    parser.add_argument("--no-codespell", dest="codespell", action="store_false",
++                       help="Disable spell checking")
++    parser.add_argument("--codespellfile", metavar="FILE",
++                       help="Path to codespell dictionary")
++    parser.add_argument("--show-types", action="store_true", default=True,
++                       help="Show message types (default: enabled)")
++    parser.add_argument("--no-show-types", dest="show_types", action="store_false",
++                       help="Hide message types")
++
++    return parser.parse_args()
++
++
++def main():
++    """Main entry point."""
++    args = parse_args()
++
++    # Build configuration
++    config = {
++        "max_line_length": args.max_line_length,
++        "codespell": args.codespell,
++        "show_types": args.show_types,
++    }
++
++    if args.codespellfile:
++        config["codespell_file"] = args.codespellfile
++
++    checker = CheckPatch(config)
++
++    total = 0
++    failed = 0
++
++    if args.patches:
++        # Check specified patch files
++        for patch in args.patches:
++            total += 1
++            if not check_single_patch(checker, patch, None, args.verbose, args.quiet):
++                failed += 1
++
++    elif args.n or args.range:
++        # Check git commits
++        if args.n:
++            result = subprocess.run(
++                ["git", "rev-list", "--reverse", f"--max-count={args.n}", "HEAD"],
++                capture_output=True,
++                text=True
++            )
++        else:
++            git_range = args.range if args.range else "origin/main.."
++            result = subprocess.run(
++                ["git", "rev-list", "--reverse", git_range],
++                capture_output=True,
++                text=True
++            )
++
++        if result.returncode != 0:
++            print("Error getting git commits", file=sys.stderr)
++            sys.exit(1)
++
++        commits = result.stdout.strip().split("\n")
++        for commit in commits:
++            if commit:
++                total += 1
++                if not check_single_patch(checker, None, commit, args.verbose, args.quiet):
++                    failed += 1
++
++    elif not sys.stdin.isatty():
++        # Read from stdin
++        total = 1
++        if not check_single_patch(checker, None, None, args.verbose, args.quiet):
++            failed += 1
++
++    else:
++        # Default to checking commits since origin/main
++        result = subprocess.run(
++            ["git", "rev-list", "--reverse", "origin/main.."],
++            capture_output=True,
++            text=True
++        )
++
++        commits = result.stdout.strip().split("\n") if result.stdout.strip() else []
++        for commit in commits:
++            if commit:
++                total += 1
++                if not check_single_patch(checker, None, commit, args.verbose, args.quiet):
++                    failed += 1
++
++    # Print summary
++    passed = total - failed
++    if not args.quiet:
++        print(f"\n{passed}/{total} valid patch{'es' if passed != 1 else ''}")
++
++    sys.exit(failed)
++
++
++if __name__ == "__main__":
++    main()
+-- 
+2.51.0
+
