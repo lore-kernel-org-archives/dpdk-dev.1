@@ -2,48 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC4F4E6526B
-	for <dpdk-dev@archiver.kernel.org>; Sun,  1 Feb 2026 20:17:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DE72E6526B
+	for <dpdk-dev@archiver.kernel.org>; Sun,  1 Feb 2026 20:18:06 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 883F9402B2;
-	Sun,  1 Feb 2026 21:16:59 +0100 (CET)
-Received: from fhigh-b3-smtp.messagingengine.com
- (fhigh-b3-smtp.messagingengine.com [202.12.124.154])
- by mails.dpdk.org (Postfix) with ESMTP id 2B1B940150
- for <dev@dpdk.org>; Sun,  1 Feb 2026 21:16:57 +0100 (CET)
-Received: from phl-compute-08.internal (phl-compute-08.internal [10.202.2.48])
- by mailfhigh.stl.internal (Postfix) with ESMTP id CF0767A00F0;
- Sun,  1 Feb 2026 15:16:55 -0500 (EST)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-08.internal (MEProxy); Sun, 01 Feb 2026 15:16:56 -0500
+	by mails.dpdk.org (Postfix) with ESMTP id A32BD402B2;
+	Sun,  1 Feb 2026 21:18:05 +0100 (CET)
+Received: from fout-b5-smtp.messagingengine.com
+ (fout-b5-smtp.messagingengine.com [202.12.124.148])
+ by mails.dpdk.org (Postfix) with ESMTP id A0F7640150
+ for <dev@dpdk.org>; Sun,  1 Feb 2026 21:18:04 +0100 (CET)
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+ by mailfout.stl.internal (Postfix) with ESMTP id 765C41D00054;
+ Sun,  1 Feb 2026 15:18:03 -0500 (EST)
+Received: from phl-frontend-04 ([10.202.2.163])
+ by phl-compute-04.internal (MEProxy); Sun, 01 Feb 2026 15:18:03 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm3; t=1769977015;
- x=1770063415; bh=sW5EQ9nooL92AxnfB1FmLNc8O2y3C1kag8sQo2wYGiM=; b=
- KCdEmh3vXgaiCaNNKqz3xt9uxO8pB/qz/pvw9y2gW/odNaZOkTh5wrcZUqlxsCCj
- 7Pz0GiHEwiuXsGPyXXBEhW5blJ5O1zZxD2l4WaBWKVaRX6EH0vUNBbw76wgycmDG
- S3+AdaFhcAcstXKexFXhJkMkjXa+mzooUhKZozTfucGunmnOkbK6MVaxOoHLc7ef
- SGTcmJshFBz1wrHksyuskRevXmqYC2uNW5ti7JMbmlJO43zZSI3iq2WQWW9m+WKU
- ld0edCsTWAsSspCFTI+ZDjmFx6CNcgPd0EE46ke5+jZtyeCl95E90AjK9JfLAKiP
- BlfBhsIdWrEio+u9Rn3fnA==
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1769977083;
+ x=1770063483; bh=ZzaTnKos5KkslsrYN/avOgUPntjBcaZIQ3dARUhAkG8=; b=
+ OhAir8uylhxEhrqrZbIvf1TaTd5D9U7MeHxyz3aOYYT9eVWru9b+xSSqhLALe2Ut
+ GxF8YnNlgrgwnJBOfV4ZIad3Wrn9gCEYYZ+eVDveuPu2NcAx0XzwFXeq9Br7BKpF
+ R4HfGFzvLp4g5TAiKJNK311nN0Kboscmg7uhn09H1Dagh0R4/hQPKYN3eRnVeKOc
+ X+AJgZSzyPxZtn1Ge7M96XvMZXel01v812bXmQLBd5ISbMC5TMlTj5eF2zE33MmE
+ 1kBiU8ZCVXkn694nJQrdI2jVczHA27+qzxWifUD42E6yu0Qswltr98a9Rb2aKKqD
+ 2m02rn2GBF4CZ5A0hJH4IQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1769977015; x=
- 1770063415; bh=sW5EQ9nooL92AxnfB1FmLNc8O2y3C1kag8sQo2wYGiM=; b=F
- p0Ck8GNLsuh+WQ4DGgnI6LdnMLpVoO5HDYmbQdJ6PGWzpMh7+pRtxdpybEu65u0P
- iaiEn5ioPDIfOSXo6YbdyzASWEvmOmSCR4PdIGlhLNBUonydWcu9W5c+9ItTa2aq
- a+j5npkt5GmFbHUAIqSBetkYwBAsNKVVBWwFFVMLXZvWfZfzjf/iC6Njekho/6Aw
- k5SVxmQcDj8NF4Ibk7y50pvveoDZIOsJFcMhsXRPq5uBWZTjD0LP3Pg6h9s/NV3D
- QwsyyrkvpTFxg+kGsUCWRcYt9XAtr56uhZ+BdFj4MmzypQRBOjizVCZnLW9iwXfH
- 7GVnS6QLo1/E39Rvq+YAw==
-X-ME-Sender: <xms:trR_aUgmIg69I-XzKPsglVKo1dagztSSAIK8W2yl51icy_e-yh7Gww>
- <xme:trR_aYdK5bsiEKahwcb1VMjYP_U_msFav-jJ94shzEsCdaP7o4i-Oo8XuVWJ3gzqY
- e20n8gRi7HoONb1sRV5x1gvItrh_twnh1dD-_TEzXoLeGqZYUnpk7Y>
-X-ME-Received: <xmr:trR_afkY9U_JjpasF6Nqrg2MpvP1ugXsLoj6w6MJ8KcWqfRMLC8aEI_oDLadPrdlV4f_qKvEaNOtwqsYRwQucI_CgQ>
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1769977083; x=
+ 1770063483; bh=ZzaTnKos5KkslsrYN/avOgUPntjBcaZIQ3dARUhAkG8=; b=O
+ qPYM1M3OzzBIMafUeaL8/K22JP47Ye5ht8ncRWcwaRBU2YoWYIsz6ajBbjCd5XjX
+ fRw3yENIyj4XB7CYHV6xDO1ECrfJIl1XNgemTLffmiNKu7g3Sdl1dcopfeELC6hP
+ UWQpp1iR2FB67uGMGvNShQ8N0q4V9AzoeyzhMZ2/FbphVGQeW67qjPFW+VOH8BJW
+ BGi7viHpsc6KxuM6O7f+OvORCv7370QAUasui8Q1klpMcTcApvzbsB24mdsYxkmO
+ O6cwcNaZcvaajB3PkDwBHkhlzB9J+mm6Wy/yOq3/E8loEzBrnGiXD8CL52ks+soa
+ KztBK8zADwKSkD7ODsn8w==
+X-ME-Sender: <xms:-rR_aWGQaLi3W2yT1ljoMIkAL-kTp_aTFVLviFkf1P-GZjJTadnuPg>
+ <xme:-rR_aSS-2DzwZXk5kpglf4jv1QbHTEHRbWrzxLuGO3O_hgklat9iML59D2FscawZd
+ VFKuhLEbXlX6JcRqgN_PVroCLBOH6JEiYaBWQBV6X5_tEFgvhGIDg>
+X-ME-Received: <xmr:-rR_afLDVTIwBm9UlAO0FOUtlO8FAZEk6KJLAWQ0UyaxQbXjF9QGSkWwoVDO4DbUGQG45PIDt98444pOTlQhzEBrhg>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddujeehjeefucetufdoteggodetrf
  dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
  rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
@@ -51,31 +51,37 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddujeehjeefucetufdote
  ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
  frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
  uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeehpdhm
- ohguvgepshhmthhpohhuthdprhgtphhtthhopehsthgvphhhvghnsehnvghtfihorhhkph
- hluhhmsggvrhdrohhrghdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtphht
- thhopegsrhhutggvrdhrihgthhgrrhgushhonhesihhnthgvlhdrtghomhdprhgtphhtth
- hopegrtghonhholhgvsehrvgguhhgrthdrtghomhdprhgtphhtthhopegurghvihgurdhm
- rghrtghhrghnugesrhgvughhrghtrdgtohhm
-X-ME-Proxy: <xmx:trR_aZs-hE6XpxAWMrkZfzEu5--GI2mSzbi6cCn7ru-s2347lVXYHw>
- <xmx:trR_ad98hAKWUAbpzQDJHOJVA2F2dsSVVRYj04Gi5Oc34kdYSQVIjg>
- <xmx:trR_aTOvzh_526zfbI9TSrEPrgswsmwK7x2opDT6BsIw8xnm6qOu-A>
- <xmx:trR_abEngi5XF5IejTjPm4bIVE699BWJcGFRTZnuVbQTL7RqH-db_g>
- <xmx:t7R_aTPfbAuG4z9Cb_2JnH_u6saxnMIqAH5p-VEB-VOZcDlLpqpfwgt9>
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeejpdhm
+ ohguvgepshhmthhpohhuthdprhgtphhtthhopehivhgrnhdrmhgrlhhovhesrghrkhhnvg
+ htfihorhhkshdrrghmpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghpthht
+ oheprghnughrvgifrdhrhigstghhvghnkhhosehokhhtvghtlhgrsghsrdhruhdprhgtph
+ htthhopegrnhguhidrmhhorhgvthhonhesrghmugdrtghomhdprhgtphhtthhopehpihgv
+ thgvrhdrjhgrnhhsvghnqdhvrghnqdhvuhhurhgvnhesrghmugdrtghomhdprhgtphhtth
+ hopehvihgrtghhvghslhgrvhdrghgrlhgrkhhtihhonhhovhesrghrkhhnvghtfihorhhk
+ shdrrghmpdhrtghpthhtohepshhtvghphhgvnhesnhgvthifohhrkhhplhhumhgsvghrrd
+ horhhg
+X-ME-Proxy: <xmx:-rR_aVbedfqjjqqWPPhjjnoOGOzYM-M5Tg_qVfLcpQuQ3uF20dpB7g>
+ <xmx:-rR_aZ_KfAAjUErWHtvhVMz96eDNqFa7dPSuwDgEs3-B89uX_0sYhg>
+ <xmx:-rR_aeaNcI6fkPJSBoCPg67qqZqToTwba48vTD6JLhZykttuQ-FP1A>
+ <xmx:-rR_aVPjJVE6hMArkAFfiZE4ExDb3Qmlvs718ehUyjoEXihLOwBZfg>
+ <xmx:-7R_aYFQeH7F19jjdtc48nUBqCmb8VxY6KtMaHaGdH7kIARbm650dh5x>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 1 Feb 2026 15:16:54 -0500 (EST)
+ 1 Feb 2026 15:18:01 -0500 (EST)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: dev@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>,
- Aaron Conole <aconole@redhat.com>, David Marchand <david.marchand@redhat.com>
-Subject: Re: [RFC] devtools: replace get-maintainer shell wrapper with Python
- script
-Date: Sun, 01 Feb 2026 21:16:52 +0100
-Message-ID: <5531059.31r3eYUQgx@thomas>
-In-Reply-To: <20260201110108.5d80c3be@phoenix.local>
-References: <20260131204823.29363-1-stephen@networkplumber.org>
- <3273409.mvXUDI8C0e@thomas> <20260201110108.5d80c3be@phoenix.local>
+To: Ivan Malov <ivan.malov@arknetworks.am>
+Cc: dev@dpdk.org, Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
+ Andy Moreton <andy.moreton@amd.com>,
+ Pieter Jansen Van Vuuren <pieter.jansen-van-vuuren@amd.com>,
+ Viacheslav Galaktionov <viacheslav.galaktionov@arknetworks.am>,
+ Stephen Hemminger <stephen@networkplumber.org>
+Subject: Re: [PATCH 1/9] doc: remove support for AMD Solarflare SFN7xxx family
+ boards
+Date: Sun, 01 Feb 2026 21:17:59 +0100
+Message-ID: <5166877.LvFx2qVVIh@thomas>
+In-Reply-To: <20251229213527.37907-2-ivan.malov@arknetworks.am>
+References: <20251229213527.37907-1-ivan.malov@arknetworks.am>
+ <20251229213527.37907-2-ivan.malov@arknetworks.am>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -92,28 +98,12 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-01/02/2026 20:01, Stephen Hemminger:
-> On Sun, 01 Feb 2026 14:51:01 +0100
-> Thomas Monjalon <thomas@monjalon.net> wrote:
-> 
-> > 31/01/2026 21:48, Stephen Hemminger:
-> > > DPDK has been reusing the Linux kernel get_maintainer perl script
-> > > but that creates an unwanted dependency on kernel source.
-> > > 
-> > > This new script replaces that with a standalone Python implementation
-> > > created in a few minutes with AI. The command line arguments are
-> > > a subset of the features that make sense in DPDK.  
-> > 
-> > Almost thousand lines for this new script.
-> > Are you sure that's something we want to maintain ourself?
-> 
-> It really is less bad than the awk mess.
-> And the kernel often changes the rules.
-> 
-> The bigger issue is that the python version is not detecting everything yet.
+29/12/2025 22:35, Ivan Malov:
+> +* **Removed support for AMD Solarflare SFN7xxx family boards.**
+> +
+> +  7000 series adaptors are out of support in terms of hardware.
 
-Our wrapper is very simple.
-How much an issue is this dependency? What others think?
-
+Just to be clear, it is only a doc change?
+The code still works for this hardware?
 
 
