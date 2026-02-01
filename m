@@ -2,86 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7262EE6529D
-	for <dpdk-dev@archiver.kernel.org>; Sun,  1 Feb 2026 20:29:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A655FE6526B
+	for <dpdk-dev@archiver.kernel.org>; Sun,  1 Feb 2026 20:46:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E2BEC40654;
-	Sun,  1 Feb 2026 21:29:29 +0100 (CET)
-Received: from fhigh-b4-smtp.messagingengine.com
- (fhigh-b4-smtp.messagingengine.com [202.12.124.155])
- by mails.dpdk.org (Postfix) with ESMTP id 0248440150;
- Sun,  1 Feb 2026 21:29:27 +0100 (CET)
-Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
- by mailfhigh.stl.internal (Postfix) with ESMTP id 46C537A00E4;
- Sun,  1 Feb 2026 15:29:27 -0500 (EST)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-02.internal (MEProxy); Sun, 01 Feb 2026 15:29:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm3; t=1769977767;
- x=1770064167; bh=m3crgCR49GPHe4MfD7X6JbM3vM9a9pm7TFOaMVQ8uIs=; b=
- WEDkqMNVPLgfbn8UqGQ8QozcsatIZVHZiycE7phkUctKTrb9q+2J1ueROZ46J9Zn
- SCdPx4BG5IiszXBVPnx5M9f70sMviYfNg8Hb8/DMLp7EQHW+if3YBc0/adZbGBOd
- LVFJ2vrI+oaIX8KYL08zUwZw/U/XaoT0KLIq5yQXgOjURqo/CdvtcakwefraMq6S
- CQuAPVurEMTBHVDhCLLkzfgFxXwFldY+0fN3AscA980xPHw3L+cpoc+4+bMWdS9y
- UG1CdkAok2GkBdhCI6jNbTDhkHxhQ0ImjEs+oODR5o2I/UoEtG82ofxPwyBSIi1+
- ORfpeWvanIw/WVu0xfhS9g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1769977767; x=
- 1770064167; bh=m3crgCR49GPHe4MfD7X6JbM3vM9a9pm7TFOaMVQ8uIs=; b=n
- QYeNDdPFBbqiUI4M6a87MxdTlHlk0Fg9anj8hbs6G9PjdpQAyMYic8z2yoKtNlH3
- ukHu16KGPgul6kMuWZ2Hpg6Zvfk441XRnz0JoSx0cMalAZ1Sp02CPSw5ZsCRY4i7
- ITxP1Hrua+foawemEdV04KzF0dupNrgX3phR5JYXrFA0jF4K7uv19mLpKgQhwB2T
- TTdtEcPTTCytKKX+sXqp8SVZdV3un7ADJVcEtj/8iC0IFSdd4Lz2Hl37LYeFwM/Y
- PU2CcdSKkkQH0s5kp1Zn5IUlbozKI3wTkI8pAGLvSjlE1PMW2JhZNsIRu7yEr6kq
- gRD253mI6wNlr2MWmZezQ==
-X-ME-Sender: <xms:prd_aRJcqrbVklju6OnGk4zerQZbNrqqSaUjsV0RQtZ97YXEnCbe6g>
- <xme:prd_aYF-CeGKxk5WmOw9gXarMhzOcMFE4EsGXQNtgfZPSOpQ4PSvpI3K3M1kx8B3V
- kigeX7RqEUPk_veoV9oB3kFJ8iJSoaNBl_tjDL5aILOcZH3VHFtCg>
-X-ME-Received: <xmr:prd_aYs5p-Nl_ph-lANTiJ5YP03ER6CpN5ydmiXKR8AvTwwDwrIH-sDKijSdiDXDL0xfwZKenZhWYDu9xyGY_N7gkQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddujeehjeehucetufdoteggodetrf
- dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
- rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
- gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
- ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
- frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
- uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeejpdhm
- ohguvgepshhmthhpohhuthdprhgtphhtthhopeguihhmohhnrdiihhgrohesnhgvsghulh
- grqdhmrghtrhhigidrtghomhdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgt
- phhtthhopehsthgrsghlvgesughpughkrdhorhhgpdhrtghpthhtohepkhihohdrlhhiuh
- esnhgvsghulhgrqdhmrghtrhhigidrtghomhdprhgtphhtthhopehlvghonhdrhihusehn
- vggsuhhlrgdqmhgrthhrihigrdgtohhmpdhrtghpthhtohepshgrmhdrtghhvghnsehnvg
- gsuhhlrgdqmhgrthhrihigrdgtohhmpdhrtghpthhtohepshhtvghphhgvnhesnhgvthif
- ohhrkhhplhhumhgsvghrrdhorhhg
-X-ME-Proxy: <xmx:prd_aXtm2MCuOj3_L8eaxLXfEMYe98lBL9bMpmfZasgneEU2c7tniw>
- <xmx:prd_aWAA3pZAiQ54piWC_1YTn-LGwaCob_8a0ZYg1IOd4mbzz3wSCA>
- <xmx:prd_aRPXC9gcX24KdqjHWGNfbxSf0q761dMsbmYG1BGgkFXgV5GQiQ>
- <xmx:prd_aXx5fqfc7cBL4ZY-NZsgaX4zO0AvpAcC_qd5T4yh6xroHaCktg>
- <xmx:p7d_adXdGrw5RzHJR8Ty2s1CGoMfiG2y2LMYOjvj2gQU-v-tIFj-xCDF>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 1 Feb 2026 15:29:25 -0500 (EST)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Dimon Zhao <dimon.zhao@nebula-matrix.com>
-Cc: dev@dpdk.org, stable@dpdk.org, Kyo Liu <kyo.liu@nebula-matrix.com>,
- Leon Yu <leon.yu@nebula-matrix.com>, Sam Chen <sam.chen@nebula-matrix.com>,
- Stephen Hemminger <stephen@networkplumber.org>
-Subject: Re: [PATCH v3 1/1] net/nbl: fix issues reported by Coverity
-Date: Sun, 01 Feb 2026 21:29:24 +0100
-Message-ID: <5502163.GXAFRqVoOG@thomas>
-In-Reply-To: <20260120203613.6f292ccf@phoenix.local>
-References: <20251030033619.3386064-1-dimon.zhao@nebula-matrix.com>
- <20260115032744.62449-2-dimon.zhao@nebula-matrix.com>
- <20260120203613.6f292ccf@phoenix.local>
+	by mails.dpdk.org (Postfix) with ESMTP id A90DC402B2;
+	Sun,  1 Feb 2026 21:46:53 +0100 (CET)
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com
+ [209.85.128.44]) by mails.dpdk.org (Postfix) with ESMTP id BB5E940150
+ for <dev@dpdk.org>; Sun,  1 Feb 2026 21:46:51 +0100 (CET)
+Received: by mail-wm1-f44.google.com with SMTP id
+ 5b1f17b1804b1-4801bc32725so27629505e9.0
+ for <dev@dpdk.org>; Sun, 01 Feb 2026 12:46:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=dyna-nic.com; s=google; t=1769978811; x=1770583611; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=TYWdMlKYZ0bpRGkePwmEKaVtUClw5zSP7q2I00dbJeQ=;
+ b=dypSrE2Iw3qOO2ixxjhiRFw7KzvyoYFH/sPU9ClfxwrU5qTU4KWvabnX8a02qIUWKT
+ ZlC4+OpCbpCbrHv3Kb6r4T11cSjo/vkfFvdyFj/6FMZevrbCngEyc2i5EZLK2+urvkxz
+ 1RQJ4FoJdw2WWe4q+jVJtL5Q8SODAvQMlmWzAetSc+/N9KPTaq9f13PdlyczIE7ylyR+
+ wvKoiuAcUWB1M32gX+dN9yB3rsVmOGg7aOemmm0QlCCsHxtO2KrLtDdWX3U66d6Z2rjS
+ o9ZhfxtfPttMqZTQafxqGh4/DVM1/MKoFlNICqIuCx8DC687VkBSkhYWEVavB9fer6au
+ +R2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1769978811; x=1770583611;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=TYWdMlKYZ0bpRGkePwmEKaVtUClw5zSP7q2I00dbJeQ=;
+ b=YXE5lnI0vVzlbPJV2inKeBwPOHDivPoV7nQEkJZgqg7TJvi4R1Adei5KZ8cJziC7WZ
+ fJQLzhU4VthqniDPEuwzv1kldy2fa2i6GwhKU5MnuBXhI+Jofvx1w4Zkh58ZubMCyr0K
+ b1cWNbJVziK4kFrRnDazW6pCisJQzCClmgLfyq/0XTBxvPNZNjJsWpTFV7Wbxq8jN2PT
+ tImoEnlLfO2LbflKFJxa8IxpR6/1onqvMpjZzsvslYMSMpLn82MY3/OdBryBhu70MBdR
+ 3DSt/qowx2PQir2kxb5aFzRqwJEF1r+eXLtnA00Z2ZTQt8OsGX4BXapjtUhc28PMUPwA
+ nEFA==
+X-Gm-Message-State: AOJu0YyaBV2us0ibyE9g7ikQYPnlVNwQuk1tP2l5xUFPGmZQ+vtqPzBV
+ MOUgP3/AXkEIih0jUh3qala3dfHAtRDGsH+/nBnOt9ovFvCyGBR3N6/wBYl/sMg8TuKblgOPYgA
+ TV0tp
+X-Gm-Gg: AZuq6aKmpJU3rZGpo4WCIztuzz6/Hw+eXpCnt5fIRMtQ7MbCbADBRJPEZW7G4htW/oJ
+ T3bXkJEpSil/qQhZLa2x7WQ3744P8BNzc0wJ5ZUuW32h9tATSJafrU3cXLizbZSjfBiql3yADk7
+ 1D83WouuPlPW5AQQJsV7wKP4cR27KAr67bHvXJGqzBeOjaQ7k3N9lhzfwvJRSu7Zq1KyLaJeYSI
+ cdYu/4ht/zXiYAYp0AMe0TZAH/oCFwfjs8zTNNckQUhrqQKmBxXtGIQB+Qbwj1xYVb/l6d24q3C
+ HXYroiDPlUWZBsJ6iEbIUcdNojHHNQcT0+TrGGDxEH8gWRhtBqLtvOqqvQNKoBCZ84glE9HCcnU
+ 4uESUi8goN8PKgD86uHBq3yvfS93ds4y3bxmbvOfY4Yv2KrDPnCCJCedOJ9DVJ6oIq2KVVxWCm3
+ FLHRY1I/FJmSbAP4PngYKJNRbEZiLXJWE+GvadRaDQoTJWvw==
+X-Received: by 2002:a05:600c:6298:b0:477:2f7c:314f with SMTP id
+ 5b1f17b1804b1-482db4bda82mr120259805e9.10.1769978810615; 
+ Sun, 01 Feb 2026 12:46:50 -0800 (PST)
+Received: from claret.liberouter.org (rt-tmc-kou.liberouter.org.
+ [195.113.172.126]) by smtp.gmail.com with ESMTPSA id
+ ffacd0b85a97d-435e10e48a6sm37721491f8f.8.2026.02.01.12.46.49
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Sun, 01 Feb 2026 12:46:50 -0800 (PST)
+From: Lukas Sismis <sismis@dyna-nic.com>
+To: dev@dpdk.org
+Cc: stephen@networkplumber.org,
+	Lukas Sismis <sismis@dyna-nic.com>
+Subject: [PATCH v9 0/6] flow_parser: add shared parser library
+Date: Sun,  1 Feb 2026 21:46:37 +0100
+Message-ID: <20260201204643.9951-1-sismis@dyna-nic.com>
+X-Mailer: git-send-email 2.43.7
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -95,50 +77,136 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-21/01/2026 05:36, Stephen Hemminger:
-> On Wed, 14 Jan 2026 19:27:44 -0800
-> Dimon Zhao <dimon.zhao@nebula-matrix.com> wrote:
-> 
-> > Address multiple issues reported by Coverity static analysis:
-> > 
-> > Check return values of ioctl() calls for NBL_DEV_USER_GET_BAR_SIZE
-> > and NBL_DEV_USER_CLEAR_EVENTFD. The original code tested the return
-> > value without capturing it from the ioctl call.
-> > 
-> > Move debug log statement after NULL pointer validation in
-> > nbl_dev_configure() to prevent dereference of adapter before the
-> > check.
-> > 
-> > Cast u16 operands to u64 before multiplication when calculating
-> > buffer sizes and offsets to prevent potential integer overflow.
-> > The num_txq_entries, num_rxq_entries, txq_buf_size, and rxq_buf_size
-> > fields are all u16 types, and their product could overflow before
-> > assignment to size_t or u64 destination variables.
-> > 
-> > Coverity issue: 490942
-> > Coverity issue: 490943
-> > Coverity issue: 490946
-> > Coverity issue: 490947
-> > Coverity issue: 490949
-> > Coverity issue: 490950
-> > Coverity issue: 490951
-> > Coverity issue: 490952
-> > Coverity issue: 490953
-> > Coverity issue: 490954
-> > Coverity issue: 490955
-> > Coverity issue: 490957
-> > Coverity issue: 490958
-> > Coverity issue: 490959
-> > Fixes: a1c5ffa13b2c ("net/nbl: add channel layer")
-> > Fixes: dc955cd24c8f ("net/nbl: add coexistence mode")
-> > Fixes: 93b38df5a2ec ("net/nbl: support basic configuration")
-> > Cc: stable@dpdk.org
-> > 
-> > Signed-off-by: Dimon Zhao <dimon.zhao@nebula-matrix.com>
-> 
-> Queued to next-net
+This series extracts the testpmd flow CLI parser into a reusable library,
+enabling external applications to parse rte_flow rules using testpmd syntax.
 
-After another look, I think it deserves to be split per type of issue.
-Maybe 3 commits?
+Motivation
+----------
+External applications like Suricata IDS [1] need to express hardware filtering
+rules in a consistent, human-readable format. Rather than inventing custom
+syntax, reusing testpmd's well-tested flow grammar provides immediate
+compatibility with existing documentation and user knowledge.
 
+Note: This library provides only one way to create rte_flow structures.
+Applications can also construct rte_flow_attr, rte_flow_item[], and
+rte_flow_action[] directly in C code.
+
+Design
+------
+The library (librte_flow_parser) exposes the following APIs:
+- rte_flow_parser_parse_attr_str(): Parse attributes only
+- rte_flow_parser_parse_pattern_str(): Parse patterns only
+- rte_flow_parser_parse_actions_str(): Parse actions only
+
+Testpmd is updated to use the library, ensuring a single
+maintained parser implementation.
+
+Testing and Demo
+-------
+- Functional tests in dpdk-test
+- Example application: examples/flow_parsing
+
+Changes
+-------
+v9:
+- removed extra new line from the flow parser docs file
+
+v8:
+- rte_port/queue_id_t typedefs removal to be included in a separate patch series
+- move of accidental changes of rte_flow parser library from the testpmd commit
+- DynaNIC copyright name update
+
+v7:
+- Fixed implicit integer comparison (while (left) -> while (left != 0))
+- NULL checks fixed
+- arpa header removed for Windows compatibility
+- minor comments from the last review addressed
+
+v6:
+- Inconsistent Experimental API Version adjusted
+- Fixes Tag added to MSVC build commit
+- Non-Standard Header Guards updated
+- Implicit Pointer Comparison and Return Type issues addressed in many places
+- commit message in patch 6 updated
+
+v5:
+- removed/replaced (f)printf code from the library 
+- reverted back to exporting the internal/private API as it is needed by
+  testpmd and cannot be easily split further.
+- adjusted length of certain lines
+- marking port/queue id typedef as experimental
+- updated release rel_notes
+- copyeright adjustments
+
+v4:
+- ethdev changes in separate commit
+- library's public API only exposes attribute, pattern and action parsing,
+  while the full command parsing is kept internal for testpmd usage only.
+- Addressed Stephen's comments from V3
+- dpdk-test now have tests focused on public and internal library functions
+
+v3:
+- Add more functional tests
+- More concise MAINTAINERS updates
+- Updated license headers
+- A thing to note: When playing with flow commands, I figured, some may use
+  non-flow commands, such as raw decap/encap, policy meter and others.
+  Flow parser library itself now supports `set` command to set e.g. the decap/
+  encap parameters, as the flow syntax only supports defining the index of the
+  encap/decap configs. The library, however, does not support e.g. `create`
+  command to create policy meters, as that is just an ID and it can be created
+  separately using rte_meter APIs.
+
+[1] https://github.com/OISF/suricata/pull/13950
+
+Lukas Sismis (6):
+  cmdline: include stddef.h for MSVC compatibility
+  ethdev: add RSS type helper APIs
+  flow_parser: add shared parser library
+  app/testpmd: use shared flow parser library
+  examples/flow_parsing: add flow parser demo
+  test: add flow parser library functional tests
+
+ MAINTAINERS                                   |     6 +-
+ app/test-pmd/cmd_flex_item.c                  |    41 +-
+ app/test-pmd/cmdline.c                        |   267 +-
+ app/test-pmd/config.c                         |   112 +-
+ app/test-pmd/flow_parser.c                    |   409 +
+ app/test-pmd/flow_parser_cli.c                |   153 +
+ app/test-pmd/meson.build                      |     5 +-
+ app/test-pmd/testpmd.c                        |     4 +
+ app/test-pmd/testpmd.h                        |   122 +-
+ app/test/meson.build                          |     1 +
+ app/test/test_ethdev_api.c                    |    51 +
+ app/test/test_flow_parser.c                   |   923 ++
+ doc/api/doxy-api-index.md                     |     1 +
+ doc/api/doxy-api.conf.in                      |     1 +
+ doc/guides/prog_guide/flow_parser_lib.rst     |   110 +
+ doc/guides/prog_guide/index.rst               |     1 +
+ doc/guides/rel_notes/release_26_03.rst        |    16 +
+ examples/flow_parsing/main.c                  |   292 +
+ examples/flow_parsing/meson.build             |    11 +
+ examples/meson.build                          |     1 +
+ lib/cmdline/cmdline_parse.h                   |     2 +
+ lib/ethdev/rte_ethdev.c                       |   107 +
+ lib/ethdev/rte_ethdev.h                       |    55 +
+ lib/flow_parser/meson.build                   |     7 +
+ .../flow_parser/rte_flow_parser.c             | 11420 ++++++++--------
+ lib/flow_parser/rte_flow_parser.h             |   134 +
+ lib/flow_parser/rte_flow_parser_private.h     |  1247 ++
+ lib/meson.build                               |     2 +
+ 28 files changed, 9678 insertions(+), 5823 deletions(-)
+ create mode 100644 app/test-pmd/flow_parser.c
+ create mode 100644 app/test-pmd/flow_parser_cli.c
+ create mode 100644 app/test/test_flow_parser.c
+ create mode 100644 doc/guides/prog_guide/flow_parser_lib.rst
+ create mode 100644 examples/flow_parsing/main.c
+ create mode 100644 examples/flow_parsing/meson.build
+ create mode 100644 lib/flow_parser/meson.build
+ rename app/test-pmd/cmdline_flow.c => lib/flow_parser/rte_flow_parser.c (55%)
+ create mode 100644 lib/flow_parser/rte_flow_parser.h
+ create mode 100644 lib/flow_parser/rte_flow_parser_private.h
+
+-- 
+2.43.7
 
