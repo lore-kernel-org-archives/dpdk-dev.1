@@ -2,48 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCA2EE65296
-	for <dpdk-dev@archiver.kernel.org>; Sun,  1 Feb 2026 16:09:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F359E6529C
+	for <dpdk-dev@archiver.kernel.org>; Sun,  1 Feb 2026 16:10:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 59AA7402A2;
-	Sun,  1 Feb 2026 17:09:48 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 86ABD402A2;
+	Sun,  1 Feb 2026 17:10:22 +0100 (CET)
 Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
- by mails.dpdk.org (Postfix) with ESMTP id 7CFF240150
- for <dev@dpdk.org>; Sun,  1 Feb 2026 17:09:40 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id C371540150
+ for <dev@dpdk.org>; Sun,  1 Feb 2026 17:10:17 +0100 (CET)
 Received: from ar (unknown [113.239.66.27])
- by APP-03 (Coremail) with SMTP id rQCowACHp96_en9pOv1yBw--.51406S2;
- Mon, 02 Feb 2026 00:09:37 +0800 (CST)
+ by APP-03 (Coremail) with SMTP id rQCowABXadDmen9py_9yBw--.22333S2;
+ Mon, 02 Feb 2026 00:10:14 +0800 (CST)
 From: Sun Yuechi <sunyuechi@iscas.ac.cn>
 To: dev@dpdk.org
 Cc: Sun Yuechi <sunyuechi@iscas.ac.cn>, Zijian <zijian.oerv@isrc.iscas.ac.cn>,
+ Konstantin Ananyev <konstantin.ananyev@huawei.com>,
  =?UTF-8?q?Stanis=C5=82aw=20Kardach?= <stanislaw.kardach@gmail.com>,
- Nithin Dabilpuram <ndabilpuram@marvell.com>,
- Pavan Nikhilesh <pbhagavatula@marvell.com>
-Subject: [PATCH v2] node: lookup with RISC-V vector extension
-Date: Mon,  2 Feb 2026 00:09:31 +0800
-Message-ID: <20260201160931.1896432-1-sunyuechi@iscas.ac.cn>
+ Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH v3] acl: add RISC-V vector extension implementation
+Date: Mon,  2 Feb 2026 00:09:57 +0800
+Message-ID: <20260201160957.1898027-1-sunyuechi@iscas.ac.cn>
 X-Mailer: git-send-email 2.52.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: rQCowACHp96_en9pOv1yBw--.51406S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3Wr4UGrW7JFyDWr18uF45Wrg_yoW3Zr4Up3
- s8GFWIkryfJF13G3ySq3W8ZFyruF1xKr47KrykWayfCF93Cr4xCr1DJ3y2kay3Wryku3sr
- Xa1UZ34UXr17W3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDU0xBIdaVrnRJUUUkl14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
- rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
- 1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
- 6F4UM28EF7xvwVC2z280aVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4j6r
- 4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
- I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
- 4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY1x0262kKe7AKxVWU
- AVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14
- v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkG
- c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI
- 0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4U
- MIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7VUjuHq7UUUU
- U==
+X-CM-TRANSID: rQCowABXadDmen9py_9yBw--.22333S2
+X-Coremail-Antispam: 1UD129KBjvAXoWfur1fWFyxJF1rAF15tryDtrb_yoW8Zw15Zo
+ WSgrs5Ca18Gr13u3WDXw17JFy5urWqga1UZws3W39Yv3WxZ3WUCFWagw15Ja1fXas5tFnx
+ ur97Xa4DJF42qr1Un29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+ AaLaJ3UjIYCTnIWjp_UUUYr7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20xva
+ j40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2
+ x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8
+ JVWxJwA2z4x0Y4vEx4A2jsIE14v26r1j6r4UM28EF7xvwVC2z280aVCY1x0267AKxVW8JV
+ W8Jr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+ 2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+ W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7CjxVAaw2AFwI0_
+ JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67
+ AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIY
+ rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14
+ v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8
+ JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUYNVyDU
+ UUU
 X-Originating-IP: [113.239.66.27]
-X-CM-SenderInfo: 5vxq53phfkxq5lvft2wodfhubq/1tbiBg0FAml-ax0XDQAAs2
+X-CM-SenderInfo: 5vxq53phfkxq5lvft2wodfhubq/1tbiCQ8FAml-a6MWYgAAsr
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -57,34 +57,583 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Implement ip4_lookup_node_process_vec function for RISC-V architecture
-using RISC-V Vector Extension instruction set
+Implement ACL classify function for RISC-V architecture
+using RISC-V Vector Extension instruction set.
 
 Signed-off-by: Sun Yuechi <sunyuechi@iscas.ac.cn>
 Signed-off-by: Zijian <zijian.oerv@isrc.iscas.ac.cn>
+Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
 ---
- doc/guides/rel_notes/release_26_03.rst |   4 +
+ app/test-acl/main.c                    |   4 +
+ app/test/test_acl.c                    |   1 +
+ config/riscv/meson.build               |   1 +
+ doc/guides/rel_notes/release_26_03.rst |   6 +
+ examples/l3fwd/l3fwd_acl.c             |   4 +
+ lib/acl/acl.h                          |   4 +
+ lib/acl/acl_run.h                      |   2 +
+ lib/acl/acl_run_rvv.c                  |  18 ++
+ lib/acl/acl_run_rvv.h                  | 326 +++++++++++++++++++++++++
+ lib/acl/meson.build                    |   2 +
+ lib/acl/rte_acl.c                      |  34 +++
+ lib/acl/rte_acl.h                      |   1 +
  lib/eal/riscv/include/rte_vect.h       |   2 +-
- lib/node/ip4_lookup.c                  |   5 +-
- lib/node/ip4_lookup_rvv.h              | 167 +++++++++++++++++++++++++
- 4 files changed, 176 insertions(+), 2 deletions(-)
- create mode 100644 lib/node/ip4_lookup_rvv.h
+ 13 files changed, 404 insertions(+), 1 deletion(-)
+ create mode 100644 lib/acl/acl_run_rvv.c
+ create mode 100644 lib/acl/acl_run_rvv.h
 
+diff --git a/app/test-acl/main.c b/app/test-acl/main.c
+index 3a791b3ccf..ad0bc89644 100644
+--- a/app/test-acl/main.c
++++ b/app/test-acl/main.c
+@@ -97,6 +97,10 @@ static const struct acl_alg acl_alg[] = {
+ 		.name = "avx512x32",
+ 		.alg = RTE_ACL_CLASSIFY_AVX512X32,
+ 	},
++	{
++		.name = "rvv",
++		.alg = RTE_ACL_CLASSIFY_RVV,
++	},
+ };
+ 
+ static struct {
+diff --git a/app/test/test_acl.c b/app/test/test_acl.c
+index b5b3d9475b..58d9d74690 100644
+--- a/app/test/test_acl.c
++++ b/app/test/test_acl.c
+@@ -353,6 +353,7 @@ test_classify_run(struct rte_acl_ctx *acx, struct ipv4_7tuple test_data[],
+ 		RTE_ACL_CLASSIFY_ALTIVEC,
+ 		RTE_ACL_CLASSIFY_AVX512X16,
+ 		RTE_ACL_CLASSIFY_AVX512X32,
++		RTE_ACL_CLASSIFY_RVV,
+ 	};
+ 
+ 	/* swap all bytes in the data to network order */
+diff --git a/config/riscv/meson.build b/config/riscv/meson.build
+index a06429a1e2..83c41edbd0 100644
+--- a/config/riscv/meson.build
++++ b/config/riscv/meson.build
+@@ -141,6 +141,7 @@ if (riscv_extension_macros and
+                 int main(void) { size_t vl = __riscv_vsetvl_e32m1(1); }''', args: machine_args))
+             message('Compiling with the V extension')
+             machine_args += ['-DRTE_RISCV_FEATURE_V']
++            dpdk_flags += [['RTE_RISCV_FEATURE_V', 1],]
+         endif
+     else
+         warning('Detected V extension but cannot use because intrinsics are not available (present in GCC 14.1.0+ and Clang 18.1.0+)')
 diff --git a/doc/guides/rel_notes/release_26_03.rst b/doc/guides/rel_notes/release_26_03.rst
-index 15dabee7a1..769c4dcebb 100644
+index 15dabee7a1..20fd015b37 100644
 --- a/doc/guides/rel_notes/release_26_03.rst
 +++ b/doc/guides/rel_notes/release_26_03.rst
-@@ -55,6 +55,10 @@ New Features
+@@ -55,6 +55,12 @@ New Features
       Also, make sure to start the actual text at the margin.
       =======================================================
  
-+* **Added RISC-V vector extension support for node library.**
++* **Added RISC-V vector extension implementation for ACL.**
 +
-+  * Added vectorized IPv4 LPM lookup implementation for the node library
-+    using RISC-V Vector Extension instruction set.
++  * Added new ``RTE_ACL_CLASSIFY_RVV`` vector implementation,
++    which can process up to 8 flows in parallel.
++    Requires RISC-V Vector Extension support.
++
  
  Removed Items
  -------------
+diff --git a/examples/l3fwd/l3fwd_acl.c b/examples/l3fwd/l3fwd_acl.c
+index a1275e18bc..4ee3411d2a 100644
+--- a/examples/l3fwd/l3fwd_acl.c
++++ b/examples/l3fwd/l3fwd_acl.c
+@@ -64,6 +64,10 @@ struct acl_algorithms acl_alg[] = {
+ 		.name = "avx512x32",
+ 		.alg = RTE_ACL_CLASSIFY_AVX512X32,
+ 	},
++	{
++		.name = "rvv",
++		.alg = RTE_ACL_CLASSIFY_RVV,
++	},
+ };
+ 
+ struct rte_acl_field_def ipv4_defs[NUM_FIELDS_IPV4] = {
+diff --git a/lib/acl/acl.h b/lib/acl/acl.h
+index c8e4e72fab..04a4244313 100644
+--- a/lib/acl/acl.h
++++ b/lib/acl/acl.h
+@@ -225,6 +225,10 @@ int
+ rte_acl_classify_altivec(const struct rte_acl_ctx *ctx, const uint8_t **data,
+ 	uint32_t *results, uint32_t num, uint32_t categories);
+ 
++int
++rte_acl_classify_rvv(const struct rte_acl_ctx *ctx, const uint8_t **data,
++		      uint32_t *results, uint32_t num, uint32_t categories);
++
+ #ifdef __cplusplus
+ }
+ #endif /* __cplusplus */
+diff --git a/lib/acl/acl_run.h b/lib/acl/acl_run.h
+index 9fd3e60021..7756bec8d9 100644
+--- a/lib/acl/acl_run.h
++++ b/lib/acl/acl_run.h
+@@ -11,8 +11,10 @@
+ #define MAX_SEARCHES_AVX16	16
+ #define MAX_SEARCHES_SSE8	8
+ #define MAX_SEARCHES_ALTIVEC8	8
++#define MAX_SEARCHES_RVV8	8
+ #define MAX_SEARCHES_SSE4	4
+ #define MAX_SEARCHES_ALTIVEC4	4
++#define MAX_SEARCHES_RVV4	4
+ #define MAX_SEARCHES_SCALAR	2
+ 
+ #define GET_NEXT_4BYTES(prm, idx)	\
+diff --git a/lib/acl/acl_run_rvv.c b/lib/acl/acl_run_rvv.c
+new file mode 100644
+index 0000000000..097f4b8faa
+--- /dev/null
++++ b/lib/acl/acl_run_rvv.c
+@@ -0,0 +1,18 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright (c) 2025 Institute of Software Chinese Academy of Sciences (ISCAS).
++ */
++
++#include "acl_run_rvv.h"
++
++int
++rte_acl_classify_rvv(const struct rte_acl_ctx *ctx, const uint8_t **data,
++		      uint32_t *results, uint32_t num, uint32_t categories)
++{
++	if (likely(num >= MAX_SEARCHES_RVV8))
++		return search_rvv_8(ctx, data, results, num, categories);
++	else if (num >= MAX_SEARCHES_RVV4)
++		return search_rvv_4(ctx, data, results, num, categories);
++	else
++		return rte_acl_classify_scalar(ctx, data, results, num,
++			categories);
++}
+diff --git a/lib/acl/acl_run_rvv.h b/lib/acl/acl_run_rvv.h
+new file mode 100644
+index 0000000000..1d6fdff045
+--- /dev/null
++++ b/lib/acl/acl_run_rvv.h
+@@ -0,0 +1,326 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright (c) 2025 Institute of Software Chinese Academy of Sciences (ISCAS).
++ */
++
++#include "acl_run.h"
++#include <rte_vect.h>
++
++static const uint32_t rvv_range_base[4] = {
++	0xffffff00, 0xffffff04, 0xffffff08, 0xffffff0c
++};
++
++/*
++ * Resolve priority for multiple results (RVV version).
++ * This consists of comparing the priority of the current traversal with the
++ * running set of results for the packet.
++ * For each result, keep a running array of the result (rule number) and
++ * its priority for each category.
++ */
++static inline void
++resolve_priority_rvv(uint64_t transition, int n, const struct rte_acl_ctx *ctx,
++	struct parms *parms, const struct rte_acl_match_results *p,
++	uint32_t categories)
++{
++	const size_t vl = 4;
++
++	for (size_t i = 0; i < categories; i += vl) {
++
++		/* get results and priorities for completed trie */
++		vuint32m1_t v_current_results =
++			__riscv_vle32_v_u32m1(&p[transition].results[i], vl);
++		vint32m1_t v_current_priority =
++			__riscv_vle32_v_i32m1(&p[transition].priority[i], vl);
++
++		/* if this is not the first completed trie */
++		if (parms[n].cmplt->count != ctx->num_tries) {
++
++			/* get running best results and their priorities */
++			vuint32m1_t v_saved_results =
++				__riscv_vle32_v_u32m1(&parms[n].cmplt->results[i], vl);
++			vint32m1_t v_saved_priority =
++				__riscv_vle32_v_i32m1(&parms[n].cmplt->priority[i], vl);
++
++			/* select results that are highest priority */
++			vbool32_t v_mask = __riscv_vmsle_vv_i32m1_b32(
++				v_saved_priority, v_current_priority, vl);
++
++			v_current_results = __riscv_vmerge_vvm_u32m1(
++				v_saved_results, v_current_results, v_mask, vl);
++			v_current_priority = __riscv_vmerge_vvm_i32m1(
++				v_saved_priority, v_current_priority, v_mask, vl);
++		}
++
++		/* save running best results and their priorities */
++		__riscv_vse32_v_u32m1(&parms[n].cmplt->results[i],
++			v_current_results, vl);
++		__riscv_vse32_v_i32m1(&parms[n].cmplt->priority[i],
++			v_current_priority, vl);
++	}
++}
++
++/*
++ * Extract transitions from a vector register and check for any matches
++ */
++static void
++acl_process_matches(uint64_t *indices, int slot,
++	const struct rte_acl_ctx *ctx, struct parms *parms,
++	struct acl_flow_data *flows)
++{
++	/* extract transition from low 64 bits. */
++	indices[0] = acl_match_check(indices[0], slot, ctx,
++		parms, flows, resolve_priority_rvv);
++
++	/* extract transition from high 64 bits. */
++	indices[1] = acl_match_check(indices[1], slot + 1, ctx,
++		parms, flows, resolve_priority_rvv);
++}
++
++/*
++ * Check for any match in 4 transitions (contained in 2 pairs of indices)
++ */
++static __rte_always_inline void
++acl_match_check_x4(int slot, const struct rte_acl_ctx *ctx,
++	struct parms *parms, struct acl_flow_data *flows,
++	uint64_t *indices1, uint64_t *indices2, uint32_t match_mask)
++{
++	uint64_t check;
++
++	while (1) {
++		/* test for match node */
++		check = ((indices1[0] | indices1[1]) |
++			(indices2[0] | indices2[1])) & match_mask;
++		if (check == 0)
++			break;
++
++		acl_process_matches(indices1, slot, ctx, parms, flows);
++		acl_process_matches(indices2, slot + 2, ctx, parms, flows);
++	}
++}
++
++/*
++ * Process 4 transitions (in 1 RVV vector register) in parallel
++ */
++static __rte_always_inline vuint32m1_t
++transition_vec(vuint32m1_t v_next_input, const uint64_t *trans,
++	uint64_t *indices1, uint64_t *indices2, size_t vl,
++	vuint32m1_t v_range_base)
++{
++	vuint32m1_t v_tr_lo, v_tr_hi;
++	vuint64m2_t v_indices;
++
++	v_indices = __riscv_vle64_v_u64m2(indices1, vl);
++	v_tr_lo = __riscv_vnsrl_wx_u32m1(v_indices, 0, vl);
++	v_tr_hi = __riscv_vnsrl_wx_u32m1(v_indices, 32, vl);
++
++	/* expand input byte to 4 identical bytes per 32-bit element */
++	vuint32m1_t v_input_expanded = __riscv_vmul_vx_u32m1(
++		__riscv_vand_vx_u32m1(v_next_input, 0xFF, vl),
++		0x01010101, vl);
++
++	/* Calculate the address (array index) for all 4 transitions. */
++
++	vint8m1_t v_input_bytes = __riscv_vreinterpret_v_i32m1_i8m1(
++		__riscv_vreinterpret_v_u32m1_i32m1(v_input_expanded));
++	vint8m1_t v_tr_hi_bytes = __riscv_vreinterpret_v_i32m1_i8m1(
++		__riscv_vreinterpret_v_u32m1_i32m1(v_tr_hi));
++	vbool8_t v_compare = __riscv_vmsgt_vv_i8m1_b8(v_input_bytes,
++		v_tr_hi_bytes, vl * 4);
++
++	vuint32m1_t v_bitmap = __riscv_vreinterpret_v_u8m1_u32m1(
++		__riscv_vmerge_vxm_u8m1(__riscv_vmv_v_x_u8m1(0, vl * 4),
++			1, v_compare, vl * 4));
++
++	/* count set bits in bitmap to get quad offset */
++	vuint32m1_t v_low16 = __riscv_vand_vx_u32m1(v_bitmap, 0xFFFF, vl);
++	vuint32m1_t v_high16 = __riscv_vsrl_vx_u32m1(v_bitmap, 16, vl);
++	vuint32m1_t v_sum_low = __riscv_vadd_vv_u32m1(
++		__riscv_vand_vx_u32m1(v_low16, 0xFF, vl),
++		__riscv_vsrl_vx_u32m1(v_low16, 8, vl),
++		vl);
++	vuint32m1_t v_sum_high = __riscv_vadd_vv_u32m1(
++		__riscv_vand_vx_u32m1(v_high16, 0xFF, vl),
++		__riscv_vsrl_vx_u32m1(v_high16, 8, vl),
++		vl);
++	vuint32m1_t v_quad_ofs = __riscv_vadd_vv_u32m1(v_sum_low,
++		v_sum_high, vl);
++
++	/* calculate DFA range offset */
++	vuint32m1_t v_input_byte3 = __riscv_vsrl_vx_u32m1(v_input_expanded,
++		24, vl);
++	vuint8m1_t v_range_index = __riscv_vreinterpret_v_u32m1_u8m1(
++		__riscv_vadd_vv_u32m1(__riscv_vsrl_vx_u32m1(v_input_expanded,
++			30, vl), v_range_base, vl));
++	vuint32m1_t v_range_value = __riscv_vreinterpret_v_u8m1_u32m1(
++		__riscv_vrgather_vv_u8m1(__riscv_vreinterpret_v_u32m1_u8m1(
++			v_tr_hi), v_range_index, vl * 4));
++
++	/* select between quad offset (QRANGE/SINGLE) and DFA offset */
++	vuint32m1_t v_offset = __riscv_vmerge_vvm_u32m1(v_quad_ofs,
++		__riscv_vsub_vv_u32m1(v_input_byte3, v_range_value, vl),
++		__riscv_vmseq_vx_u32m1_b32(__riscv_vand_vx_u32m1(v_tr_lo,
++			~RTE_ACL_NODE_INDEX, vl), 0, vl), vl);
++
++	/* calculate final transition address */
++	vuint32m1_t v_addr = __riscv_vadd_vv_u32m1(
++		__riscv_vand_vx_u32m1(v_tr_lo, RTE_ACL_NODE_INDEX, vl),
++		v_offset, vl);
++
++	/* Gather 64 bit transitions and pack back into 2 pairs. */
++
++	indices1[0] = trans[__riscv_vmv_x_s_u32m1_u32(v_addr)];
++
++	indices1[1] = trans[__riscv_vmv_x_s_u32m1_u32(
++		__riscv_vslidedown_vx_u32m1(v_addr, 1, vl))];
++
++	indices2[0] = trans[__riscv_vmv_x_s_u32m1_u32(
++		__riscv_vslidedown_vx_u32m1(v_addr, 2, vl))];
++
++	indices2[1] = trans[__riscv_vmv_x_s_u32m1_u32(
++		__riscv_vslidedown_vx_u32m1(v_addr, 3, vl))];
++
++	return __riscv_vsrl_vx_u32m1(v_next_input, CHAR_BIT, vl);
++}
++
++/*
++ * Execute trie traversal with 8 traversals in parallel
++ */
++static inline int
++search_rvv_8(const struct rte_acl_ctx *ctx, const uint8_t **data,
++	uint32_t *results, uint32_t total_packets, uint32_t categories)
++{
++	int n;
++	const size_t vl = 4;
++	struct acl_flow_data flows;
++	uint64_t index_array[MAX_SEARCHES_RVV8];
++	struct completion cmplt[MAX_SEARCHES_RVV8];
++	struct parms parms[MAX_SEARCHES_RVV8];
++	vuint32m1_t v_input0, v_input1;
++	vuint32m1_t v_range_base;
++
++	v_range_base = __riscv_vle32_v_u32m1(rvv_range_base, vl);
++
++	acl_set_flow(&flows, cmplt, RTE_DIM(cmplt), data, results,
++		total_packets, categories, ctx->trans_table);
++
++	for (n = 0; n < MAX_SEARCHES_RVV8; n++)
++		index_array[n] = acl_start_next_trie(&flows, parms, n, ctx);
++
++	/*
++	 * index_array[0,1] and index_array[2,3] are processed by v_input0
++	 * index_array[4,5] and index_array[6,7] are processed by v_input1
++	 */
++
++	/* Check for any matches. */
++	acl_match_check_x4(0, ctx, parms, &flows,
++		&index_array[0], &index_array[2], RTE_ACL_NODE_MATCH);
++	acl_match_check_x4(4, ctx, parms, &flows,
++		&index_array[4], &index_array[6], RTE_ACL_NODE_MATCH);
++
++	while (flows.started > 0) {
++
++		/* Gather 4 bytes of input data for each stream. */
++		uint32_t input_data0[4] = {
++			GET_NEXT_4BYTES(parms, 0),
++			GET_NEXT_4BYTES(parms, 1),
++			GET_NEXT_4BYTES(parms, 2),
++			GET_NEXT_4BYTES(parms, 3)
++		};
++		uint32_t input_data1[4] = {
++			GET_NEXT_4BYTES(parms, 4),
++			GET_NEXT_4BYTES(parms, 5),
++			GET_NEXT_4BYTES(parms, 6),
++			GET_NEXT_4BYTES(parms, 7)
++		};
++
++		v_input0 = __riscv_vle32_v_u32m1(&input_data0[0], vl);
++		v_input1 = __riscv_vle32_v_u32m1(&input_data1[0], vl);
++
++		/* Process the 4 bytes of input on each stream. */
++
++		v_input0 = transition_vec(v_input0, flows.trans,
++			&index_array[0], &index_array[2], vl, v_range_base);
++		v_input1 = transition_vec(v_input1, flows.trans,
++			&index_array[4], &index_array[6], vl, v_range_base);
++
++		v_input0 = transition_vec(v_input0, flows.trans,
++			&index_array[0], &index_array[2], vl, v_range_base);
++		v_input1 = transition_vec(v_input1, flows.trans,
++			&index_array[4], &index_array[6], vl, v_range_base);
++
++		v_input0 = transition_vec(v_input0, flows.trans,
++			&index_array[0], &index_array[2], vl, v_range_base);
++		v_input1 = transition_vec(v_input1, flows.trans,
++			&index_array[4], &index_array[6], vl, v_range_base);
++
++		v_input0 = transition_vec(v_input0, flows.trans,
++			&index_array[0], &index_array[2], vl, v_range_base);
++		v_input1 = transition_vec(v_input1, flows.trans,
++			&index_array[4], &index_array[6], vl, v_range_base);
++
++		/* Check for any matches. */
++		acl_match_check_x4(0, ctx, parms, &flows,
++			&index_array[0], &index_array[2], RTE_ACL_NODE_MATCH);
++		acl_match_check_x4(4, ctx, parms, &flows,
++			&index_array[4], &index_array[6], RTE_ACL_NODE_MATCH);
++	}
++
++	return 0;
++}
++
++/*
++ * Execute trie traversal with 4 traversals in parallel
++ */
++static inline int
++search_rvv_4(const struct rte_acl_ctx *ctx, const uint8_t **data,
++	uint32_t *results, uint32_t total_packets, uint32_t categories)
++{
++	int n;
++	const size_t vl = 4;
++	struct acl_flow_data flows;
++	uint64_t index_array[MAX_SEARCHES_RVV4];
++	struct completion cmplt[MAX_SEARCHES_RVV4];
++	struct parms parms[MAX_SEARCHES_RVV4];
++	vuint32m1_t v_input0;
++	vuint32m1_t v_range_base;
++
++	v_range_base = __riscv_vle32_v_u32m1(rvv_range_base, vl);
++
++	acl_set_flow(&flows, cmplt, RTE_DIM(cmplt), data, results,
++		total_packets, categories, ctx->trans_table);
++
++	for (n = 0; n < MAX_SEARCHES_RVV4; n++)
++		index_array[n] = acl_start_next_trie(&flows, parms, n, ctx);
++
++	/* Check for any matches. */
++	acl_match_check_x4(0, ctx, parms, &flows,
++		&index_array[0], &index_array[2], RTE_ACL_NODE_MATCH);
++
++	while (flows.started > 0) {
++
++		/* Gather 4 bytes of input data for each stream. */
++		uint32_t input_data[4] = {
++			GET_NEXT_4BYTES(parms, 0),
++			GET_NEXT_4BYTES(parms, 1),
++			GET_NEXT_4BYTES(parms, 2),
++			GET_NEXT_4BYTES(parms, 3)
++		};
++
++		v_input0 = __riscv_vle32_v_u32m1(&input_data[0], vl);
++
++		/* Process the 4 bytes of input on each stream. */
++		v_input0 = transition_vec(v_input0, flows.trans,
++			&index_array[0], &index_array[2], vl, v_range_base);
++		v_input0 = transition_vec(v_input0, flows.trans,
++			&index_array[0], &index_array[2], vl, v_range_base);
++		v_input0 = transition_vec(v_input0, flows.trans,
++			&index_array[0], &index_array[2], vl, v_range_base);
++		v_input0 = transition_vec(v_input0, flows.trans,
++			&index_array[0], &index_array[2], vl, v_range_base);
++
++		/* Check for any matches. */
++		acl_match_check_x4(0, ctx, parms, &flows,
++			&index_array[0], &index_array[2], RTE_ACL_NODE_MATCH);
++	}
++
++	return 0;
++}
+diff --git a/lib/acl/meson.build b/lib/acl/meson.build
+index 87e9f25f8e..a26c111395 100644
+--- a/lib/acl/meson.build
++++ b/lib/acl/meson.build
+@@ -25,4 +25,6 @@ elif dpdk_conf.has('RTE_ARCH_ARM')
+     sources += files('acl_run_neon.c')
+ elif dpdk_conf.has('RTE_ARCH_PPC_64')
+     sources += files('acl_run_altivec.c')
++elif dpdk_conf.has('RTE_ARCH_RISCV') and dpdk_conf.has('RTE_RISCV_FEATURE_V')
++    sources += files('acl_run_rvv.c')
+ endif
+diff --git a/lib/acl/rte_acl.c b/lib/acl/rte_acl.c
+index 8c0ca29618..bba4cf6c8f 100644
+--- a/lib/acl/rte_acl.c
++++ b/lib/acl/rte_acl.c
+@@ -94,6 +94,18 @@ rte_acl_classify_altivec(__rte_unused const struct rte_acl_ctx *ctx,
+ }
+ #endif
+ 
++#ifndef RTE_RISCV_FEATURE_V
++int
++rte_acl_classify_rvv(__rte_unused const struct rte_acl_ctx *ctx,
++	__rte_unused const uint8_t **data,
++	__rte_unused uint32_t *results,
++	__rte_unused uint32_t num,
++	__rte_unused uint32_t categories)
++{
++	return -ENOTSUP;
++}
++#endif
++
+ static const rte_acl_classify_t classify_fns[] = {
+ 	[RTE_ACL_CLASSIFY_DEFAULT] = rte_acl_classify_scalar,
+ 	[RTE_ACL_CLASSIFY_SCALAR] = rte_acl_classify_scalar,
+@@ -103,6 +115,7 @@ static const rte_acl_classify_t classify_fns[] = {
+ 	[RTE_ACL_CLASSIFY_ALTIVEC] = rte_acl_classify_altivec,
+ 	[RTE_ACL_CLASSIFY_AVX512X16] = rte_acl_classify_avx512x16,
+ 	[RTE_ACL_CLASSIFY_AVX512X32] = rte_acl_classify_avx512x32,
++	[RTE_ACL_CLASSIFY_RVV] = rte_acl_classify_rvv,
+ };
+ 
+ /*
+@@ -201,6 +214,23 @@ acl_check_alg_x86(enum rte_acl_classify_alg alg)
+ 
+ 	return -EINVAL;
+ }
++/*
++ * Helper function for acl_check_alg.
++ * Check support for x86 specific classify methods.
++ */
++static int
++acl_check_alg_rvv(enum rte_acl_classify_alg alg)
++{
++	if (alg == RTE_ACL_CLASSIFY_RVV) {
++#ifdef RTE_RISCV_FEATURE_V
++		if (rte_vect_get_max_simd_bitwidth() >= RTE_VECT_SIMD_128)
++			return 0;
++#endif
++		return -ENOTSUP;
++	}
++
++	return -EINVAL;
++}
+ 
+ /*
+  * Check if input alg is supported by given platform/binary.
+@@ -221,6 +251,8 @@ acl_check_alg(enum rte_acl_classify_alg alg)
+ 	case RTE_ACL_CLASSIFY_AVX2:
+ 	case RTE_ACL_CLASSIFY_SSE:
+ 		return acl_check_alg_x86(alg);
++	case RTE_ACL_CLASSIFY_RVV:
++		return acl_check_alg_rvv(alg);
+ 	/* scalar method is supported on all platforms */
+ 	case RTE_ACL_CLASSIFY_SCALAR:
+ 		return 0;
+@@ -249,6 +281,8 @@ acl_get_best_alg(void)
+ 		RTE_ACL_CLASSIFY_AVX512X16,
+ 		RTE_ACL_CLASSIFY_AVX2,
+ 		RTE_ACL_CLASSIFY_SSE,
++#elif defined(RTE_RISCV_FEATURE_V)
++		RTE_ACL_CLASSIFY_RVV,
+ #endif
+ 		RTE_ACL_CLASSIFY_SCALAR,
+ 	};
+diff --git a/lib/acl/rte_acl.h b/lib/acl/rte_acl.h
+index 95354cabb8..99210ff9c7 100644
+--- a/lib/acl/rte_acl.h
++++ b/lib/acl/rte_acl.h
+@@ -248,6 +248,7 @@ enum rte_acl_classify_alg {
+ 	RTE_ACL_CLASSIFY_ALTIVEC = 5,    /**< requires ALTIVEC support. */
+ 	RTE_ACL_CLASSIFY_AVX512X16 = 6,  /**< requires AVX512 support. */
+ 	RTE_ACL_CLASSIFY_AVX512X32 = 7,  /**< requires AVX512 support. */
++	RTE_ACL_CLASSIFY_RVV = 8,     /**< requires RVV support. */
+ };
+ 
+ /**
 diff --git a/lib/eal/riscv/include/rte_vect.h b/lib/eal/riscv/include/rte_vect.h
 index a4357e266a..4d16082449 100644
 --- a/lib/eal/riscv/include/rte_vect.h
@@ -98,202 +647,6 @@ index a4357e266a..4d16082449 100644
  
  typedef int32_t		xmm_t __attribute__((vector_size(16)));
  
-diff --git a/lib/node/ip4_lookup.c b/lib/node/ip4_lookup.c
-index f6db3219f0..42db993142 100644
---- a/lib/node/ip4_lookup.c
-+++ b/lib/node/ip4_lookup.c
-@@ -44,6 +44,8 @@ static struct ip4_lookup_node_main ip4_lookup_nm;
- #include "ip4_lookup_neon.h"
- #elif defined(RTE_ARCH_X86)
- #include "ip4_lookup_sse.h"
-+#elif defined(RTE_ARCH_RISCV) && defined(RTE_RISCV_FEATURE_V)
-+#include "ip4_lookup_rvv.h"
- #endif
- 
- static uint16_t
-@@ -208,7 +210,8 @@ ip4_lookup_node_init(const struct rte_graph *graph, struct rte_node *node)
- 	IP4_LOOKUP_NODE_LPM(node->ctx) = ip4_lookup_nm.lpm_tbl[graph->socket];
- 	IP4_LOOKUP_NODE_PRIV1_OFF(node->ctx) = dyn;
- 
--#if defined(__ARM_NEON) || defined(RTE_ARCH_X86)
-+#if defined(__ARM_NEON) || defined(RTE_ARCH_X86) || \
-+	(defined(RTE_ARCH_RISCV) && defined(RTE_RISCV_FEATURE_V))
- 	if (rte_vect_get_max_simd_bitwidth() >= RTE_VECT_SIMD_128)
- 		node->process = ip4_lookup_node_process_vec;
- #endif
-diff --git a/lib/node/ip4_lookup_rvv.h b/lib/node/ip4_lookup_rvv.h
-new file mode 100644
-index 0000000000..a74e4fa204
---- /dev/null
-+++ b/lib/node/ip4_lookup_rvv.h
-@@ -0,0 +1,167 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright (c) 2025 Institute of Software Chinese Academy of Sciences (ISCAS).
-+ */
-+
-+#ifndef __INCLUDE_IP4_LOOKUP_RVV_H__
-+#define __INCLUDE_IP4_LOOKUP_RVV_H__
-+
-+#define RTE_LPM_LOOKUP_SUCCESS 0x01000000
-+#define RTE_LPM_VALID_EXT_ENTRY_BITMASK 0x03000000
-+
-+static __rte_always_inline vuint32m8_t
-+bswap32_vec(vuint32m8_t v, size_t vl)
-+{
-+	vuint32m8_t low16 = __riscv_vor_vv_u32m8(
-+		__riscv_vsll_vx_u32m8(__riscv_vand_vx_u32m8(v, 0xFF, vl), 24, vl),
-+		__riscv_vsll_vx_u32m8(__riscv_vand_vx_u32m8(v, 0xFF00, vl), 8, vl),
-+		vl);
-+
-+	vuint32m8_t high16 = __riscv_vor_vv_u32m8(
-+		__riscv_vsrl_vx_u32m8(__riscv_vand_vx_u32m8(v, 0xFF0000, vl), 8, vl),
-+		__riscv_vsrl_vx_u32m8(v, 24, vl),
-+		vl);
-+
-+	return __riscv_vor_vv_u32m8(low16, high16, vl);
-+}
-+
-+static __rte_always_inline void
-+rte_lpm_lookup_vec(const struct rte_lpm *lpm, const uint32_t *ips,
-+			uint32_t *hop, size_t vl, uint32_t defv)
-+{
-+	/* Load IP addresses (network byte order) */
-+	vuint32m8_t v_ip = bswap32_vec(__riscv_vle32_v_u32m8(ips, vl), vl);
-+
-+	vuint32m8_t v_tbl24_byte_offset = __riscv_vsll_vx_u32m8(
-+			__riscv_vsrl_vx_u32m8(v_ip, 8, vl), 2, vl);
-+
-+	vuint32m8_t vtbl_entry = __riscv_vluxei32_v_u32m8(
-+		(const uint32_t *)lpm->tbl24, v_tbl24_byte_offset, vl);
-+
-+	vbool4_t mask = __riscv_vmseq_vx_u32m8_b4(
-+		__riscv_vand_vx_u32m8(vtbl_entry, RTE_LPM_VALID_EXT_ENTRY_BITMASK, vl),
-+		RTE_LPM_VALID_EXT_ENTRY_BITMASK, vl);
-+
-+	vuint32m8_t vtbl8_index = __riscv_vsll_vx_u32m8(
-+		__riscv_vadd_vv_u32m8(
-+			__riscv_vsll_vx_u32m8(
-+				__riscv_vand_vx_u32m8(vtbl_entry, 0x00FFFFFF, vl), 8, vl),
-+			__riscv_vand_vx_u32m8(v_ip, 0x000000FF, vl), vl),
-+		2, vl);
-+
-+	vtbl_entry = __riscv_vluxei32_v_u32m8_mu(
-+		mask, vtbl_entry, (const uint32_t *)(lpm->tbl8), vtbl8_index, vl);
-+
-+	vuint32m8_t vnext_hop = __riscv_vand_vx_u32m8(vtbl_entry, 0x00FFFFFF, vl);
-+	mask = __riscv_vmseq_vx_u32m8_b4(
-+		__riscv_vand_vx_u32m8(vtbl_entry, RTE_LPM_LOOKUP_SUCCESS, vl), 0, vl);
-+
-+	vnext_hop = __riscv_vmerge_vxm_u32m8(vnext_hop, defv, mask, vl);
-+
-+	__riscv_vse32_v_u32m8(hop, vnext_hop, vl);
-+}
-+
-+/* Can be increased further for VLEN > 256 */
-+#define RVV_MAX_BURST 64U
-+
-+static uint16_t
-+ip4_lookup_node_process_vec(struct rte_graph *graph, struct rte_node *node,
-+			void **objs, uint16_t nb_objs)
-+{
-+	struct rte_mbuf **pkts;
-+	struct rte_lpm *lpm = IP4_LOOKUP_NODE_LPM(node->ctx);
-+	const int dyn = IP4_LOOKUP_NODE_PRIV1_OFF(node->ctx);
-+	rte_edge_t next_index;
-+	void **to_next, **from;
-+	uint16_t last_spec = 0;
-+	uint16_t n_left_from;
-+	uint16_t held = 0;
-+	uint32_t drop_nh;
-+
-+	/* Temporary arrays for batch processing */
-+	uint32_t ips[RVV_MAX_BURST];
-+	uint32_t res[RVV_MAX_BURST];
-+	rte_edge_t next_hops[RVV_MAX_BURST];
-+
-+	/* Speculative next */
-+	next_index = RTE_NODE_IP4_LOOKUP_NEXT_REWRITE;
-+	/* Drop node */
-+	drop_nh = ((uint32_t)RTE_NODE_IP4_LOOKUP_NEXT_PKT_DROP) << 16;
-+
-+	pkts = (struct rte_mbuf **)objs;
-+	from = objs;
-+	n_left_from = nb_objs;
-+
-+	/* Get stream for the speculated next node */
-+	to_next = rte_node_next_stream_get(graph, node, next_index, nb_objs);
-+
-+	while (n_left_from > 0) {
-+		rte_edge_t fix_spec = 0;
-+
-+		size_t vl = __riscv_vsetvl_e32m8(RTE_MIN(n_left_from, RVV_MAX_BURST));
-+
-+		/* Extract IP addresses and metadata from current batch */
-+		for (size_t i = 0; i < vl; i++) {
-+			struct rte_ipv4_hdr *ipv4_hdr =
-+				rte_pktmbuf_mtod_offset(pkts[i], struct rte_ipv4_hdr *,
-+						sizeof(struct rte_ether_hdr));
-+			ips[i] = ipv4_hdr->dst_addr;
-+			node_mbuf_priv1(pkts[i], dyn)->cksum = ipv4_hdr->hdr_checksum;
-+			node_mbuf_priv1(pkts[i], dyn)->ttl = ipv4_hdr->time_to_live;
-+		}
-+
-+		/* Perform LPM lookup */
-+		rte_lpm_lookup_vec(lpm, ips, res, vl, drop_nh);
-+
-+		for (size_t i = 0; i < vl; i++) {
-+			/* Update statistics */
-+			if ((res[i] >> 16) == (drop_nh >> 16))
-+				NODE_INCREMENT_XSTAT_ID(node, 0, 1, 1);
-+
-+			/* Extract next hop and next node */
-+			node_mbuf_priv1(pkts[i], dyn)->nh = res[i] & 0xFFFF;
-+			next_hops[i] = res[i] >> 16;
-+
-+			/* Check speculation */
-+			fix_spec |= (next_index ^ next_hops[i]);
-+		}
-+
-+		if (unlikely(fix_spec)) {
-+			/* Copy successfully speculated packets before this batch */
-+			rte_memcpy(to_next, from, last_spec * sizeof(from[0]));
-+			from += last_spec;
-+			to_next += last_spec;
-+			held += last_spec;
-+			last_spec = 0;
-+
-+			/* Process each packet in current batch individually */
-+			for (size_t i = 0; i < vl; i++) {
-+				if (next_index == next_hops[i]) {
-+					*to_next++ = from[i];
-+					held++;
-+				} else {
-+					rte_node_enqueue_x1(graph, node, next_hops[i], from[i]);
-+				}
-+			}
-+
-+			from += vl;
-+		} else {
-+			last_spec += vl;
-+		}
-+
-+		pkts += vl;
-+		n_left_from -= vl;
-+	}
-+
-+	/* Handle successfully speculated packets */
-+	if (likely(last_spec == nb_objs)) {
-+		rte_node_next_stream_move(graph, node, next_index);
-+		return nb_objs;
-+	}
-+
-+	held += last_spec;
-+	rte_memcpy(to_next, from, last_spec * sizeof(from[0]));
-+	rte_node_next_stream_put(graph, node, next_index, held);
-+
-+	return nb_objs;
-+}
-+#endif
 -- 
 2.52.0
 
