@@ -2,67 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B877E65296
-	for <dpdk-dev@archiver.kernel.org>; Sun,  1 Feb 2026 17:20:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F5F2E6529D
+	for <dpdk-dev@archiver.kernel.org>; Sun,  1 Feb 2026 17:20:22 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0121740654;
+	by mails.dpdk.org (Postfix) with ESMTP id CA0F94065A;
 	Sun,  1 Feb 2026 18:20:04 +0100 (CET)
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com
- [209.85.128.46]) by mails.dpdk.org (Postfix) with ESMTP id 529E640150
- for <dev@dpdk.org>; Sun,  1 Feb 2026 18:19:52 +0100 (CET)
-Received: by mail-wm1-f46.google.com with SMTP id
- 5b1f17b1804b1-47fedb7c68dso37871115e9.2
- for <dev@dpdk.org>; Sun, 01 Feb 2026 09:19:52 -0800 (PST)
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com
+ [209.85.128.52]) by mails.dpdk.org (Postfix) with ESMTP id D8D4240150
+ for <dev@dpdk.org>; Sun,  1 Feb 2026 18:19:53 +0100 (CET)
+Received: by mail-wm1-f52.google.com with SMTP id
+ 5b1f17b1804b1-48068ed1eccso33310165e9.2
+ for <dev@dpdk.org>; Sun, 01 Feb 2026 09:19:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769966392;
- x=1770571192; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1769966393;
+ x=1770571193; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=QTrlYKBvOhXDwdyHf13Jyi/97Ari/INIvdJmizJtVnU=;
- b=Vqvbz70qkVx0xCYpM4rdNiOnTL9CsCUF7W7Wbt8pjrURGqVFSEUXB+ysri0duvAlfs
- uPUUsVCM/JUnYA8SShzumdN2BvCG3BgiLrB1zVMUQUXI37R/nUnmM1gbr6R0o0kOsRd0
- aQW7iR/relRMafz0RgZ6s5aAzwbMyjrARz2K8yd3XuL1zEYtjwEq9v9RvOjzfkXDVQrc
- 4mhuhbw68iUdZlIXi6kNSo7Js7KANC8pexLSHRLA0QZ6hDFzUnZjuBT1gZe9S8Zu3drY
- ao5xF79ncmMiEZhXxZkU5/HTpoYepIlhgGvshnC66+0lqkVe7kJhSjQoGgqS9qMlacOk
- VjCA==
+ bh=MCYPMGlc6nQHrOo9GPbYciZ7KorDtY3PLqf6JhFhiGg=;
+ b=ndrCfMZYvSByarSIIA6o+izGsoz4vphMgSGunKU/hHf+25+oKdP+dloyJwEvmyZffg
+ VOOgPhU/fk5uNOSkdM7EAeP5X2N7Vfg1JxFz2ntKKOJNq5alpiCt9tMwVBY5Crpts9l+
+ LO5x4G4v6bYKjv5HWd+NSswbWPtZp3Va2ZGUUM/WV0Oox/Rka410AbJTvn8sq9d0hVD/
+ Nuzq/jHh6KjB5tOUoJd3tPdIZ9NBBkcmqU0KOUQTKjz0ZSVGegY1JZm73JfY8zr5a9kt
+ DXKZgGeRUnkqVmn8S+N2IBMbJIoaO3FN2pzU+FcGmnxigiucsvMcejAMjq4oGx/zYYXu
+ SiIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1769966392; x=1770571192;
+ d=1e100.net; s=20230601; t=1769966393; x=1770571193;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=QTrlYKBvOhXDwdyHf13Jyi/97Ari/INIvdJmizJtVnU=;
- b=gHtr2EQQqj39CHfOMoVDsYtr0QtBmOKOGVmHQUQCk7IKJ0/eOti1PpQClwUfiGbVEy
- wzTjY1LzSE3fLWqTiAhhx/A7cDoX7ueaYlFo46xsw02X5kQnhbI1I0NikDE1XCmnLolF
- S93Ptdgrh/zKM2wq25/Mbc+m79atpzreMZcCz0Y/xq5W5UhzxAp82lAqrosprHzQqBo/
- vkG4d26Me9nZUf+uMIGxP3O+Y/3uYFcEjNmv5SuoeaOPqddYTM3WSaI8hKhSaam082kU
- R3UF10Q1YhlLK2pcNLknvdy8XcYWapJPQZMr4Aro0oqtSuHDeEyBKol3udVTNoP5qM+v
- M4ZA==
-X-Gm-Message-State: AOJu0YyObWuFJbx5UNEgfOJ38PyKBnC/rXhDR/VhMXjJOiajgpyWJW3I
- HoJyCGNL+ckZ3MONpKmj3jlKcRWsZUKC5+gnZ/5gNdxjQ8AxGqhwn4+q+tax9JM8zpBoU62RJvo
- CStv/
-X-Gm-Gg: AZuq6aJ9vWqqtd4fx9LhN1Vvs2EWZEI8Bi9vaFC2TQuPeCU/DUjLhczkNVmNfB2Ix8h
- /1rOzfGLvm+TMIGXae6ZFwll6j5R6PCVYst/yvo3/RO6eIfx4UXCeZHtaijNROhwilpFnz9nht5
- yHE/w+SjHVbVEXsXiPUZsKlVDP8fzaXDl1s9cYU6yCbESCH8BmOXzuCJUeo4nNH6km87JecRmdn
- 8bGnqqnBDCQp6jihNVGew3w1FZnmuGnHVVpFJdU6tEHpUaAE0laAifW4pvp4trRLX60XzCa51XU
- Vuh2LeGd4ZYFMrfdI9a0gw8az/lTBikb2Cg4dB0iH9u9LZYL2t+UjD6UnRuPC2EEJl0lKNLldra
- pJjZ7fBYSakyI5QKrsltdNoGY3cLSEKUeMCqqQq7ZbWKbNsuCKr1bayRsl5Nu4YJaNQb8vUYhWi
- H2PeIMvOgTJEfhOK5Rb31MTv4r/wpsH1KQGD8ZFEDBffGJ2VixMQ==
-X-Received: by 2002:a05:600c:8b22:b0:47e:e4ff:e2ac with SMTP id
- 5b1f17b1804b1-482db4a7547mr108537235e9.33.1769966391853; 
- Sun, 01 Feb 2026 09:19:51 -0800 (PST)
+ bh=MCYPMGlc6nQHrOo9GPbYciZ7KorDtY3PLqf6JhFhiGg=;
+ b=U0RP6oI4LhOEVimrgc5bJiz2Y+2nO1FPnRbOM9ueTKt4TRG9p4E6IY5AI/ESnBPEkm
+ UnDRH4tuEKZ+oZEvsAMpketjN0LB0GYbwxYQ6YwBZTREhRCTYLeSRS5d70SolL7QV/jU
+ j+2+t1cQvoZfv8GU+5xLHYdy0ghzBFlN1nMI2pu79GsUblf/9QdAWT8I6gQRUDkyU5ym
+ Cx+qJ4SZz99otCvaFtVUMqmPbE3jR4B/Gwia9uOq9+/Kfv+0SgqEgKxoghMjgMDHztRu
+ wB0VLiD2+AtSe3+ZfyCo/HFcwqCuI5xxn46YpIcGQdEcdDmMJN8ZX0Iej+kDlSUlotTw
+ c9Zw==
+X-Gm-Message-State: AOJu0YwXrpcvXAMXmmzi+7e+0mi/NJITgLz0W+Kgsp4vMpVeb33YSlRL
+ ZF4Xt0mlA0U2109IvrsRBVvM9elfefrrYtVSVGk9EQQMVhCOaIY09Csa+IKPyWIsMAEGT062HXX
+ NzoY4
+X-Gm-Gg: AZuq6aL0XWj4+1NMMHiJtQ5CgwBywseOLpjcUxqcG0/bZ9qHw7/cPxKVqbOzQgd07ka
+ NOpDbo8JdYrS6oB5HxhTfAkEQnRmJZ95Krp1JAbP03MDne3ZhJsDFGiHLleC2GjCIspT1dtj5og
+ q1rNWtbwQ3nBasRVllM8TULgmSfczs3wHAb204f8r54LhiWm4xNnvqLloNFNBlALSmPHcvKgf92
+ pt2GMRN61MDwpuFCn2kT9sbVeSgBOgZyZQECs4oHHPPTva3w+SQbPztsqJp+J5V7P3d1n/ZR2qQ
+ WwvMnBOAlT1vksNsDfd3WdkJ3fuMMrxzIenrbl1fsPX/RhNwVlSKPzzmm/4NEv37aGk+IGHlCCm
+ 1VDwHYoEJaqKMFyOLseERKl6Y/55dOKoKYft+GC/eljETUL7J3P6QCjO2yxs98rZP1Mm1UYemEc
+ SXJPxeOfSNGQcrdqisgSy4EOaSx/8jEsU1SCDe2cOkLoj7Vfm2CQ==
+X-Received: by 2002:a05:600c:64c9:b0:480:6999:27ec with SMTP id
+ 5b1f17b1804b1-482db45ca9dmr114259555e9.13.1769966393463; 
+ Sun, 01 Feb 2026 09:19:53 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-4806cdd79c7sm346810765e9.2.2026.02.01.09.19.50
+ 5b1f17b1804b1-4806cdd79c7sm346810765e9.2.2026.02.01.09.19.52
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 01 Feb 2026 09:19:51 -0800 (PST)
+ Sun, 01 Feb 2026 09:19:53 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Tetsuya Mukawa <mtetsuyah@gmail.com>
-Subject: [PATCH v10 4/6] net/null: remove redundant argument validation
-Date: Sun,  1 Feb 2026 09:17:35 -0800
-Message-ID: <20260201171938.89492-5-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v10 5/6] test: support larger packet sizes in burst generator
+Date: Sun,  1 Feb 2026 09:17:36 -0800
+Message-ID: <20260201171938.89492-6-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260201171938.89492-1-stephen@networkplumber.org>
 References: <20260104222523.329760-1-stephen@networkplumber.org>
@@ -82,105 +81,107 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The dev_ops callbacks for stop, rx_queue_setup, and tx_queue_setup
-are only called from the ethdev layer which already validates the
-device pointer and queue index arguments.
+Widen the parameter types in the packet burst generator functions
+to support larger values:
+- pkt_len: uint8_t to uint16_t for larger packet sizes
+- nb_pkt_segs: uint8_t to uint16_t to match mbuf nb_segs
+- nb_pkt_per_burst: int to uint16_t to match tx_burst limit
 
-Remove the redundant checks for:
- - dev == NULL in eth_dev_stop, eth_rx_queue_setup, eth_tx_queue_setup
- - queue_id >= nb_queues in eth_rx_queue_setup, eth_tx_queue_setup
+Remove the incorrect RTE_MAX_SEGS_PER_PKT macro that claimed
+nb_segs is 8-bit when it is actually 16-bit.
 
-Also consolidate variable declarations with their initializations
-and remove unnecessary NULL initialization in rte_pmd_null_remove.
+Add validation to prevent division by zero when nb_pkt_segs is 0.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/null/rte_eth_null.c | 44 ++++++++-------------------------
- 1 file changed, 10 insertions(+), 34 deletions(-)
+ app/test/packet_burst_generator.c | 34 ++++++++++++++++++-------------
+ app/test/packet_burst_generator.h |  4 ++--
+ 2 files changed, 22 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/net/null/rte_eth_null.c b/drivers/net/null/rte_eth_null.c
-index 0b6c9577cd..672459fe05 100644
---- a/drivers/net/null/rte_eth_null.c
-+++ b/drivers/net/null/rte_eth_null.c
-@@ -208,9 +208,6 @@ eth_dev_stop(struct rte_eth_dev *dev)
+diff --git a/app/test/packet_burst_generator.c b/app/test/packet_burst_generator.c
+index 4c17737739..346c69e6ce 100644
+--- a/app/test/packet_burst_generator.c
++++ b/app/test/packet_burst_generator.c
+@@ -205,24 +205,24 @@ initialize_ipv4_header_proto(struct rte_ipv4_hdr *ip_hdr, uint32_t src_addr,
+ 	return pkt_len;
+ }
+ 
+-/*
+- * The maximum number of segments per packet is used when creating
+- * scattered transmit packets composed of a list of mbufs.
+- */
+-#define RTE_MAX_SEGS_PER_PKT 255 /**< pkt.nb_segs is a 8-bit unsigned char. */
+-
+ 
+ int
+ generate_packet_burst(struct rte_mempool *mp, struct rte_mbuf **pkts_burst,
+ 		struct rte_ether_hdr *eth_hdr, uint8_t vlan_enabled,
+ 		void *ip_hdr, uint8_t ipv4, struct rte_udp_hdr *udp_hdr,
+-		int nb_pkt_per_burst, uint8_t pkt_len, uint8_t nb_pkt_segs)
++		uint16_t nb_pkt_per_burst, uint16_t pkt_len, uint16_t nb_pkt_segs)
  {
- 	uint16_t i;
+-	const uint8_t pkt_seg_data_len = pkt_len / nb_pkt_segs;
++	int i, nb_pkt = 0;
++	size_t eth_hdr_size;
+ 	struct rte_mbuf *pkt_seg;
+ 	struct rte_mbuf *pkt;
+-	size_t eth_hdr_size;
+-	int i, nb_pkt = 0;
++	uint16_t pkt_seg_data_len;
++
++	if (nb_pkt_segs == 0)
++		return -1;
++
++	/* Calculate per-segment data length */
++	pkt_seg_data_len = pkt_len / nb_pkt_segs;
  
--	if (dev == NULL)
--		return 0;
--
- 	dev->data->dev_link.link_status = RTE_ETH_LINK_DOWN;
- 
- 	for (i = 0; i < dev->data->nb_rx_queues; i++)
-@@ -228,25 +225,16 @@ eth_rx_queue_setup(struct rte_eth_dev *dev, uint16_t rx_queue_id,
- 		const struct rte_eth_rxconf *rx_conf __rte_unused,
- 		struct rte_mempool *mb_pool)
+ 	for (nb_pkt = 0; nb_pkt < nb_pkt_per_burst; nb_pkt++) {
+ 		pkt = rte_pktmbuf_alloc(mp);
+@@ -300,13 +300,19 @@ generate_packet_burst_proto(struct rte_mempool *mp,
+ 		struct rte_mbuf **pkts_burst, struct rte_ether_hdr *eth_hdr,
+ 		uint8_t vlan_enabled, void *ip_hdr,
+ 		uint8_t ipv4, uint8_t proto, void *proto_hdr,
+-		int nb_pkt_per_burst, uint8_t pkt_len, uint8_t nb_pkt_segs)
++		uint16_t nb_pkt_per_burst, uint16_t pkt_len, uint16_t nb_pkt_segs)
  {
-+	struct pmd_internals *internals = dev->data->dev_private;
-+	unsigned int packet_size = internals->packet_size;
- 	struct rte_mbuf *dummy_packet;
--	struct pmd_internals *internals;
--	unsigned int packet_size;
+-	const uint8_t pkt_seg_data_len = pkt_len / nb_pkt_segs;
++	int i, nb_pkt = 0;
++	size_t eth_hdr_size;
+ 	struct rte_mbuf *pkt_seg;
+ 	struct rte_mbuf *pkt;
+-	size_t eth_hdr_size;
+-	int i, nb_pkt = 0;
++	uint16_t pkt_seg_data_len;
++
++	if (nb_pkt_segs == 0)
++		return -1;
++
++	/* Calculate per-segment data length */
++	pkt_seg_data_len = pkt_len / nb_pkt_segs;
  
--	if ((dev == NULL) || (mb_pool == NULL))
-+	if (mb_pool == NULL)
- 		return -EINVAL;
+ 	for (nb_pkt = 0; nb_pkt < nb_pkt_per_burst; nb_pkt++) {
+ 		pkt = rte_pktmbuf_alloc(mp);
+diff --git a/app/test/packet_burst_generator.h b/app/test/packet_burst_generator.h
+index cce41bcd0f..bc16764e77 100644
+--- a/app/test/packet_burst_generator.h
++++ b/app/test/packet_burst_generator.h
+@@ -62,14 +62,14 @@ int
+ generate_packet_burst(struct rte_mempool *mp, struct rte_mbuf **pkts_burst,
+ 		struct rte_ether_hdr *eth_hdr, uint8_t vlan_enabled,
+ 		void *ip_hdr, uint8_t ipv4, struct rte_udp_hdr *udp_hdr,
+-		int nb_pkt_per_burst, uint8_t pkt_len, uint8_t nb_pkt_segs);
++		uint16_t nb_pkt_per_burst, uint16_t pkt_len, uint16_t nb_pkt_segs);
  
--	internals = dev->data->dev_private;
--
--	if (rx_queue_id >= dev->data->nb_rx_queues)
--		return -ENODEV;
--
--	packet_size = internals->packet_size;
--
- 	internals->rx_null_queues[rx_queue_id].mb_pool = mb_pool;
--	dev->data->rx_queues[rx_queue_id] =
--		&internals->rx_null_queues[rx_queue_id];
--	dummy_packet = rte_zmalloc_socket(NULL,
--			packet_size, 0, dev->data->numa_node);
-+	dev->data->rx_queues[rx_queue_id] = &internals->rx_null_queues[rx_queue_id];
-+	dummy_packet = rte_zmalloc_socket(NULL, packet_size, 0, dev->data->numa_node);
- 	if (dummy_packet == NULL)
- 		return -ENOMEM;
+ int
+ generate_packet_burst_proto(struct rte_mempool *mp,
+ 		struct rte_mbuf **pkts_burst, struct rte_ether_hdr *eth_hdr,
+ 		uint8_t vlan_enabled, void *ip_hdr,
+ 		uint8_t ipv4, uint8_t proto, void *proto_hdr,
+-		int nb_pkt_per_burst, uint8_t pkt_len, uint8_t nb_pkt_segs);
++		uint16_t nb_pkt_per_burst, uint16_t pkt_len, uint16_t nb_pkt_segs);
  
-@@ -262,24 +250,12 @@ eth_tx_queue_setup(struct rte_eth_dev *dev, uint16_t tx_queue_id,
- 		unsigned int socket_id __rte_unused,
- 		const struct rte_eth_txconf *tx_conf __rte_unused)
- {
-+	struct pmd_internals *internals = dev->data->dev_private;
-+	unsigned int packet_size = internals->packet_size;
- 	struct rte_mbuf *dummy_packet;
--	struct pmd_internals *internals;
--	unsigned int packet_size;
--
--	if (dev == NULL)
--		return -EINVAL;
- 
--	internals = dev->data->dev_private;
--
--	if (tx_queue_id >= dev->data->nb_tx_queues)
--		return -ENODEV;
--
--	packet_size = internals->packet_size;
--
--	dev->data->tx_queues[tx_queue_id] =
--		&internals->tx_null_queues[tx_queue_id];
--	dummy_packet = rte_zmalloc_socket(NULL,
--			packet_size, 0, dev->data->numa_node);
-+	dev->data->tx_queues[tx_queue_id] = &internals->tx_null_queues[tx_queue_id];
-+	dummy_packet = rte_zmalloc_socket(NULL, packet_size, 0, dev->data->numa_node);
- 	if (dummy_packet == NULL)
- 		return -ENOMEM;
- 
-@@ -740,7 +716,7 @@ rte_pmd_null_probe(struct rte_vdev_device *dev)
- static int
- rte_pmd_null_remove(struct rte_vdev_device *dev)
- {
--	struct rte_eth_dev *eth_dev = NULL;
-+	struct rte_eth_dev *eth_dev;
- 
- 	if (!dev)
- 		return -EINVAL;
+ #ifdef __cplusplus
+ }
 -- 
 2.51.0
 
