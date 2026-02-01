@@ -2,82 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63750E65266
-	for <dpdk-dev@archiver.kernel.org>; Sun,  1 Feb 2026 13:51:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCA2EE65296
+	for <dpdk-dev@archiver.kernel.org>; Sun,  1 Feb 2026 16:09:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2BDFE402A2;
-	Sun,  1 Feb 2026 14:51:15 +0100 (CET)
-Received: from fout-b1-smtp.messagingengine.com
- (fout-b1-smtp.messagingengine.com [202.12.124.144])
- by mails.dpdk.org (Postfix) with ESMTP id 2F6D840150
- for <dev@dpdk.org>; Sun,  1 Feb 2026 14:51:09 +0100 (CET)
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
- by mailfout.stl.internal (Postfix) with ESMTP id 15BCC1D00063;
- Sun,  1 Feb 2026 08:51:08 -0500 (EST)
-Received: from phl-frontend-04 ([10.202.2.163])
- by phl-compute-01.internal (MEProxy); Sun, 01 Feb 2026 08:51:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm3; t=1769953867;
- x=1770040267; bh=ubmu+bLgBRMBu8tCnMwnLM6KFOziXPIjTI7Xu1Z9k/0=; b=
- EHTDHKS5Ua/onofPRRqX9f08ZGL5X229FjcqOg8RJsWyTlE6bpUBnYIFAaaMad9l
- xsyJEK8/YpbOPJtPMtfrMUCW/S+4jM86b6n1DlUp1uCEwjSZ5pTaZR3H2bK6sN7B
- oVHDB/z/Dmrd93gu/HY03rOs2oPvAwzPjRoACAf5pLFGB0qhrD/df+2OtL0mBLB4
- KjXEo7wDkVZXJbaPZHqk9VrqFOGmvdg7HREXEHuw2FozbxsejlRixDvt0IBAgkiM
- Z8HNlVM3DTT8Uyha3Pcs2pp6vhWD3CzNLpWlqEENzzFTM9Ud1DSKkfQius9LGvEg
- VWONnyKehma6udQTdEh7Kw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1769953867; x=
- 1770040267; bh=ubmu+bLgBRMBu8tCnMwnLM6KFOziXPIjTI7Xu1Z9k/0=; b=o
- a+qvx6LIEbXth9GCY9QtJnqAJZT2gdRPOBgwE5bd3MTFZ9veulvLpAC2Rpn7u9VR
- WhV3BjU2CJG4E+3pvwSP1nunc3Na/enO3yPZgit36UlIe2KAHzmBXDZQR6A/RPaz
- 2Llou5m9Y+nrbk/tdAx4+HdBNBKBR3ODBGYhg6Aq8ugy9n9vm+jC+kvzdaRPxJja
- mdKbfxIGuCLkp9o9Ke37V5+V5siOYSwZ9VrBHg37nW2fWuXim/+REKL5Q5ok9Hu9
- 7FBDLZr69c6shgX7F+rq4y9d4zc5MHkfKWc1TaNaXAz23lPRjtyM/TDGff2mW74t
- OuPDLlTkZo3eMgsy0SC6A==
-X-ME-Sender: <xms:Slp_aegpNgZQERoLAj-O_whApcnbz1piEn1rMdcQ8HT0bpcIpS3ofg>
- <xme:Slp_aaeVLG9pMtDNJudPqV-1NUB4j82qHSFbbEtV02cZAkteTsh7b0Ac23bRfVxRK
- U763nphntzedQALMsuwwzsy8BR5pZX7ctenYH02K4NXn_8YWHHYNA>
-X-ME-Received: <xmr:Slp_aZnVTrQ5Uqq7H4ptOMP1e9Vu-dugcVgl_ZDhbWQS6o888RssteDjIAT8oWzA12gk58yuQMXvlNaE4sCp7wg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddujeegleehucetufdoteggodetrf
- dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
- rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
- gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
- ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
- frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
- uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeehpdhm
- ohguvgepshhmthhpohhuthdprhgtphhtthhopehsthgvphhhvghnsehnvghtfihorhhkph
- hluhhmsggvrhdrohhrghdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtphht
- thhopegsrhhutggvrdhrihgthhgrrhgushhonhesihhnthgvlhdrtghomhdprhgtphhtth
- hopegrtghonhholhgvsehrvgguhhgrthdrtghomhdprhgtphhtthhopegurghvihgurdhm
- rghrtghhrghnugesrhgvughhrghtrdgtohhm
-X-ME-Proxy: <xmx:Slp_abtOsUvAI-sa1O5aRL6HYdAYaz3YzMlLc_5-eWRZDl5T4bEIsA>
- <xmx:Slp_aX8aseg9Y-zSBp7i7mob1B4JitYS8vyoMfgXt_hRbjdIGXg7Tw>
- <xmx:Slp_aVOM60XU9dX44aOrewBOhEDvsRPVb__xKpVCWhSReNGeUSxi_A>
- <xmx:Slp_aVEO9_DZhAJOnRj4Grmeue_6ei7EYp3poS54l5vRX1g1cB2UIA>
- <xmx:S1p_aVNSdWXHrSs1y8-hZTtQI9QD4xsOTqSDpWYlU8OHl6-vilqygH27>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 1 Feb 2026 08:51:04 -0500 (EST)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: dev@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>,
- Aaron Conole <aconole@redhat.com>, David Marchand <david.marchand@redhat.com>
-Subject: Re: [RFC] devtools: replace get-maintainer shell wrapper with Python
- script
-Date: Sun, 01 Feb 2026 14:51:01 +0100
-Message-ID: <3273409.mvXUDI8C0e@thomas>
-In-Reply-To: <20260131204823.29363-1-stephen@networkplumber.org>
-References: <20260131204823.29363-1-stephen@networkplumber.org>
+	by mails.dpdk.org (Postfix) with ESMTP id 59AA7402A2;
+	Sun,  1 Feb 2026 17:09:48 +0100 (CET)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+ by mails.dpdk.org (Postfix) with ESMTP id 7CFF240150
+ for <dev@dpdk.org>; Sun,  1 Feb 2026 17:09:40 +0100 (CET)
+Received: from ar (unknown [113.239.66.27])
+ by APP-03 (Coremail) with SMTP id rQCowACHp96_en9pOv1yBw--.51406S2;
+ Mon, 02 Feb 2026 00:09:37 +0800 (CST)
+From: Sun Yuechi <sunyuechi@iscas.ac.cn>
+To: dev@dpdk.org
+Cc: Sun Yuechi <sunyuechi@iscas.ac.cn>, Zijian <zijian.oerv@isrc.iscas.ac.cn>,
+ =?UTF-8?q?Stanis=C5=82aw=20Kardach?= <stanislaw.kardach@gmail.com>,
+ Nithin Dabilpuram <ndabilpuram@marvell.com>,
+ Pavan Nikhilesh <pbhagavatula@marvell.com>
+Subject: [PATCH v2] node: lookup with RISC-V vector extension
+Date: Mon,  2 Feb 2026 00:09:31 +0800
+Message-ID: <20260201160931.1896432-1-sunyuechi@iscas.ac.cn>
+X-Mailer: git-send-email 2.52.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: rQCowACHp96_en9pOv1yBw--.51406S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3Wr4UGrW7JFyDWr18uF45Wrg_yoW3Zr4Up3
+ s8GFWIkryfJF13G3ySq3W8ZFyruF1xKr47KrykWayfCF93Cr4xCr1DJ3y2kay3Wryku3sr
+ Xa1UZ34UXr17W3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDU0xBIdaVrnRJUUUkl14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+ rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+ 1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+ 6F4UM28EF7xvwVC2z280aVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4j6r
+ 4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+ I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+ 4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY1x0262kKe7AKxVWU
+ AVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14
+ v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkG
+ c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI
+ 0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4U
+ MIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7VUjuHq7UUUU
+ U==
+X-Originating-IP: [113.239.66.27]
+X-CM-SenderInfo: 5vxq53phfkxq5lvft2wodfhubq/1tbiBg0FAml-ax0XDQAAs2
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -91,16 +57,243 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-31/01/2026 21:48, Stephen Hemminger:
-> DPDK has been reusing the Linux kernel get_maintainer perl script
-> but that creates an unwanted dependency on kernel source.
-> 
-> This new script replaces that with a standalone Python implementation
-> created in a few minutes with AI. The command line arguments are
-> a subset of the features that make sense in DPDK.
+Implement ip4_lookup_node_process_vec function for RISC-V architecture
+using RISC-V Vector Extension instruction set
 
-Almost thousand lines for this new script.
-Are you sure that's something we want to maintain ourself?
+Signed-off-by: Sun Yuechi <sunyuechi@iscas.ac.cn>
+Signed-off-by: Zijian <zijian.oerv@isrc.iscas.ac.cn>
+---
+ doc/guides/rel_notes/release_26_03.rst |   4 +
+ lib/eal/riscv/include/rte_vect.h       |   2 +-
+ lib/node/ip4_lookup.c                  |   5 +-
+ lib/node/ip4_lookup_rvv.h              | 167 +++++++++++++++++++++++++
+ 4 files changed, 176 insertions(+), 2 deletions(-)
+ create mode 100644 lib/node/ip4_lookup_rvv.h
 
-
+diff --git a/doc/guides/rel_notes/release_26_03.rst b/doc/guides/rel_notes/release_26_03.rst
+index 15dabee7a1..769c4dcebb 100644
+--- a/doc/guides/rel_notes/release_26_03.rst
++++ b/doc/guides/rel_notes/release_26_03.rst
+@@ -55,6 +55,10 @@ New Features
+      Also, make sure to start the actual text at the margin.
+      =======================================================
+ 
++* **Added RISC-V vector extension support for node library.**
++
++  * Added vectorized IPv4 LPM lookup implementation for the node library
++    using RISC-V Vector Extension instruction set.
+ 
+ Removed Items
+ -------------
+diff --git a/lib/eal/riscv/include/rte_vect.h b/lib/eal/riscv/include/rte_vect.h
+index a4357e266a..4d16082449 100644
+--- a/lib/eal/riscv/include/rte_vect.h
++++ b/lib/eal/riscv/include/rte_vect.h
+@@ -19,7 +19,7 @@
+ extern "C" {
+ #endif
+ 
+-#define RTE_VECT_DEFAULT_SIMD_BITWIDTH RTE_VECT_SIMD_DISABLED
++#define RTE_VECT_DEFAULT_SIMD_BITWIDTH RTE_VECT_SIMD_128
+ 
+ typedef int32_t		xmm_t __attribute__((vector_size(16)));
+ 
+diff --git a/lib/node/ip4_lookup.c b/lib/node/ip4_lookup.c
+index f6db3219f0..42db993142 100644
+--- a/lib/node/ip4_lookup.c
++++ b/lib/node/ip4_lookup.c
+@@ -44,6 +44,8 @@ static struct ip4_lookup_node_main ip4_lookup_nm;
+ #include "ip4_lookup_neon.h"
+ #elif defined(RTE_ARCH_X86)
+ #include "ip4_lookup_sse.h"
++#elif defined(RTE_ARCH_RISCV) && defined(RTE_RISCV_FEATURE_V)
++#include "ip4_lookup_rvv.h"
+ #endif
+ 
+ static uint16_t
+@@ -208,7 +210,8 @@ ip4_lookup_node_init(const struct rte_graph *graph, struct rte_node *node)
+ 	IP4_LOOKUP_NODE_LPM(node->ctx) = ip4_lookup_nm.lpm_tbl[graph->socket];
+ 	IP4_LOOKUP_NODE_PRIV1_OFF(node->ctx) = dyn;
+ 
+-#if defined(__ARM_NEON) || defined(RTE_ARCH_X86)
++#if defined(__ARM_NEON) || defined(RTE_ARCH_X86) || \
++	(defined(RTE_ARCH_RISCV) && defined(RTE_RISCV_FEATURE_V))
+ 	if (rte_vect_get_max_simd_bitwidth() >= RTE_VECT_SIMD_128)
+ 		node->process = ip4_lookup_node_process_vec;
+ #endif
+diff --git a/lib/node/ip4_lookup_rvv.h b/lib/node/ip4_lookup_rvv.h
+new file mode 100644
+index 0000000000..a74e4fa204
+--- /dev/null
++++ b/lib/node/ip4_lookup_rvv.h
+@@ -0,0 +1,167 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright (c) 2025 Institute of Software Chinese Academy of Sciences (ISCAS).
++ */
++
++#ifndef __INCLUDE_IP4_LOOKUP_RVV_H__
++#define __INCLUDE_IP4_LOOKUP_RVV_H__
++
++#define RTE_LPM_LOOKUP_SUCCESS 0x01000000
++#define RTE_LPM_VALID_EXT_ENTRY_BITMASK 0x03000000
++
++static __rte_always_inline vuint32m8_t
++bswap32_vec(vuint32m8_t v, size_t vl)
++{
++	vuint32m8_t low16 = __riscv_vor_vv_u32m8(
++		__riscv_vsll_vx_u32m8(__riscv_vand_vx_u32m8(v, 0xFF, vl), 24, vl),
++		__riscv_vsll_vx_u32m8(__riscv_vand_vx_u32m8(v, 0xFF00, vl), 8, vl),
++		vl);
++
++	vuint32m8_t high16 = __riscv_vor_vv_u32m8(
++		__riscv_vsrl_vx_u32m8(__riscv_vand_vx_u32m8(v, 0xFF0000, vl), 8, vl),
++		__riscv_vsrl_vx_u32m8(v, 24, vl),
++		vl);
++
++	return __riscv_vor_vv_u32m8(low16, high16, vl);
++}
++
++static __rte_always_inline void
++rte_lpm_lookup_vec(const struct rte_lpm *lpm, const uint32_t *ips,
++			uint32_t *hop, size_t vl, uint32_t defv)
++{
++	/* Load IP addresses (network byte order) */
++	vuint32m8_t v_ip = bswap32_vec(__riscv_vle32_v_u32m8(ips, vl), vl);
++
++	vuint32m8_t v_tbl24_byte_offset = __riscv_vsll_vx_u32m8(
++			__riscv_vsrl_vx_u32m8(v_ip, 8, vl), 2, vl);
++
++	vuint32m8_t vtbl_entry = __riscv_vluxei32_v_u32m8(
++		(const uint32_t *)lpm->tbl24, v_tbl24_byte_offset, vl);
++
++	vbool4_t mask = __riscv_vmseq_vx_u32m8_b4(
++		__riscv_vand_vx_u32m8(vtbl_entry, RTE_LPM_VALID_EXT_ENTRY_BITMASK, vl),
++		RTE_LPM_VALID_EXT_ENTRY_BITMASK, vl);
++
++	vuint32m8_t vtbl8_index = __riscv_vsll_vx_u32m8(
++		__riscv_vadd_vv_u32m8(
++			__riscv_vsll_vx_u32m8(
++				__riscv_vand_vx_u32m8(vtbl_entry, 0x00FFFFFF, vl), 8, vl),
++			__riscv_vand_vx_u32m8(v_ip, 0x000000FF, vl), vl),
++		2, vl);
++
++	vtbl_entry = __riscv_vluxei32_v_u32m8_mu(
++		mask, vtbl_entry, (const uint32_t *)(lpm->tbl8), vtbl8_index, vl);
++
++	vuint32m8_t vnext_hop = __riscv_vand_vx_u32m8(vtbl_entry, 0x00FFFFFF, vl);
++	mask = __riscv_vmseq_vx_u32m8_b4(
++		__riscv_vand_vx_u32m8(vtbl_entry, RTE_LPM_LOOKUP_SUCCESS, vl), 0, vl);
++
++	vnext_hop = __riscv_vmerge_vxm_u32m8(vnext_hop, defv, mask, vl);
++
++	__riscv_vse32_v_u32m8(hop, vnext_hop, vl);
++}
++
++/* Can be increased further for VLEN > 256 */
++#define RVV_MAX_BURST 64U
++
++static uint16_t
++ip4_lookup_node_process_vec(struct rte_graph *graph, struct rte_node *node,
++			void **objs, uint16_t nb_objs)
++{
++	struct rte_mbuf **pkts;
++	struct rte_lpm *lpm = IP4_LOOKUP_NODE_LPM(node->ctx);
++	const int dyn = IP4_LOOKUP_NODE_PRIV1_OFF(node->ctx);
++	rte_edge_t next_index;
++	void **to_next, **from;
++	uint16_t last_spec = 0;
++	uint16_t n_left_from;
++	uint16_t held = 0;
++	uint32_t drop_nh;
++
++	/* Temporary arrays for batch processing */
++	uint32_t ips[RVV_MAX_BURST];
++	uint32_t res[RVV_MAX_BURST];
++	rte_edge_t next_hops[RVV_MAX_BURST];
++
++	/* Speculative next */
++	next_index = RTE_NODE_IP4_LOOKUP_NEXT_REWRITE;
++	/* Drop node */
++	drop_nh = ((uint32_t)RTE_NODE_IP4_LOOKUP_NEXT_PKT_DROP) << 16;
++
++	pkts = (struct rte_mbuf **)objs;
++	from = objs;
++	n_left_from = nb_objs;
++
++	/* Get stream for the speculated next node */
++	to_next = rte_node_next_stream_get(graph, node, next_index, nb_objs);
++
++	while (n_left_from > 0) {
++		rte_edge_t fix_spec = 0;
++
++		size_t vl = __riscv_vsetvl_e32m8(RTE_MIN(n_left_from, RVV_MAX_BURST));
++
++		/* Extract IP addresses and metadata from current batch */
++		for (size_t i = 0; i < vl; i++) {
++			struct rte_ipv4_hdr *ipv4_hdr =
++				rte_pktmbuf_mtod_offset(pkts[i], struct rte_ipv4_hdr *,
++						sizeof(struct rte_ether_hdr));
++			ips[i] = ipv4_hdr->dst_addr;
++			node_mbuf_priv1(pkts[i], dyn)->cksum = ipv4_hdr->hdr_checksum;
++			node_mbuf_priv1(pkts[i], dyn)->ttl = ipv4_hdr->time_to_live;
++		}
++
++		/* Perform LPM lookup */
++		rte_lpm_lookup_vec(lpm, ips, res, vl, drop_nh);
++
++		for (size_t i = 0; i < vl; i++) {
++			/* Update statistics */
++			if ((res[i] >> 16) == (drop_nh >> 16))
++				NODE_INCREMENT_XSTAT_ID(node, 0, 1, 1);
++
++			/* Extract next hop and next node */
++			node_mbuf_priv1(pkts[i], dyn)->nh = res[i] & 0xFFFF;
++			next_hops[i] = res[i] >> 16;
++
++			/* Check speculation */
++			fix_spec |= (next_index ^ next_hops[i]);
++		}
++
++		if (unlikely(fix_spec)) {
++			/* Copy successfully speculated packets before this batch */
++			rte_memcpy(to_next, from, last_spec * sizeof(from[0]));
++			from += last_spec;
++			to_next += last_spec;
++			held += last_spec;
++			last_spec = 0;
++
++			/* Process each packet in current batch individually */
++			for (size_t i = 0; i < vl; i++) {
++				if (next_index == next_hops[i]) {
++					*to_next++ = from[i];
++					held++;
++				} else {
++					rte_node_enqueue_x1(graph, node, next_hops[i], from[i]);
++				}
++			}
++
++			from += vl;
++		} else {
++			last_spec += vl;
++		}
++
++		pkts += vl;
++		n_left_from -= vl;
++	}
++
++	/* Handle successfully speculated packets */
++	if (likely(last_spec == nb_objs)) {
++		rte_node_next_stream_move(graph, node, next_index);
++		return nb_objs;
++	}
++
++	held += last_spec;
++	rte_memcpy(to_next, from, last_spec * sizeof(from[0]));
++	rte_node_next_stream_put(graph, node, next_index, held);
++
++	return nb_objs;
++}
++#endif
+-- 
+2.52.0
 
