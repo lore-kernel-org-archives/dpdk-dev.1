@@ -2,36 +2,36 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DD2FE7DEF2
-	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Feb 2026 15:35:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35960E7DEF2
+	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Feb 2026 15:35:36 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 85CDB40E25;
-	Mon,  2 Feb 2026 16:35:00 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id DFD8340E20;
+	Mon,  2 Feb 2026 16:35:01 +0100 (CET)
 Received: from office2.cesnet.cz (office2.cesnet.cz [78.128.248.237])
- by mails.dpdk.org (Postfix) with ESMTP id BED17409FA
- for <dev@dpdk.org>; Mon,  2 Feb 2026 16:34:54 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 0EC6240DD5
+ for <dev@dpdk.org>; Mon,  2 Feb 2026 16:34:55 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cesnet.cz;
  s=office2-2020; t=1770046494;
- bh=sriQ0dmURux7PSCi9mRNYBcN/IE6xO+Dlaambtjh/lU=;
+ bh=fHPIn2aPX8v2rfSGZiv/OXcp5potYReCLjJ8EUEQOOw=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References;
- b=LXhlxpJ3KvmhIQ9XMyNp+/hPhfYwj5oOqpp2fCtfgaHmlVj33BtWd2xaPEDq4IwpI
- QbhZFMT/uIb/iOAS3oUapDYj6Gps4G+aXyjhUAOeziTy/IRK34yczW0pdy85Wb8J36
- k+oC4yV/CuHrL+pEtX4mI7di3oHD5ZKWWrHkTbH3ESvE/1WiBTadBEF7PQdoa5c7Ti
- cqNQvP1LUjVPIwDLgVtJJhsHyiPTEMYFy1rIrEaF/GeuUsghoLZQHZ61qhzVyMXIzh
- BaXqH9xRVr4LmU+a5tZ2TmhbDiVSx2s/z7YSeef1E55GhAJ2Ce4TMLsWru5DpODx1G
- jJEJCzc3+hFaQ==
+ b=jH5OBI6oX6absBxPWW9a84l8Dr+swq/u6NssP0PmFjt4U3XQBT9SHgZWq98442JCW
+ EPJk2324HntR7aHcD5UjXcxkRmeagTN7g1P0O0NWv1dUMd0LembY5NdoUaG/lapIo+
+ /I55mIUPz39w7yV90NsArrOWJ03jFyjI0ygqhKzOsTM3eFZcqunuZLJD+7LROL+jNr
+ 9IrzDuTdOlvgDOJsyBlCit3WU3KpyUim5w39VCmfArLabb5tGL436UulToEskvq/lY
+ b1h7HcNEVfi2IkTw0kkPGw1NGYtVxWzSfuEBTQT15TQi7cnxH2h+/2weSD22L/9jNK
+ C1+gQ5Cyf16XQ==
 Received: from emil.cesnet.cz (gtx107.cesnet.cz [IPv6:2001:718:812:27::107])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by office2.cesnet.cz (Postfix) with ESMTPSA id 920A8118007E;
+ by office2.cesnet.cz (Postfix) with ESMTPSA id DB507118007E;
  Mon,  2 Feb 2026 16:34:54 +0100 (CET)
 From: spinler@cesnet.cz
 To: dev@dpdk.org
 Cc: Martin Spinler <spinler@cesnet.cz>
-Subject: [PATCH v6 5/8] net/nfb: init only MACs associated with device
-Date: Mon,  2 Feb 2026 16:34:46 +0100
-Message-ID: <20260202153449.3295979-6-spinler@cesnet.cz>
+Subject: [PATCH v6 8/8] doc/nfb: cleanup and update guide
+Date: Mon,  2 Feb 2026 16:34:49 +0100
+Message-ID: <20260202153449.3295979-9-spinler@cesnet.cz>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260202153449.3295979-1-spinler@cesnet.cz>
 References: <20260115151656.393106-1-spinler@cesnet.cz>
@@ -53,237 +53,279 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Martin Spinler <spinler@cesnet.cz>
 
-Use information obtained from the new manner of creating NFB ethdevs
-and initialize only RxMACs / TxMACs associated with actual ethdev.
-
-This enables separated management and configuration of interface ports.
+Clean up documentation and update the guide with:
+- Current card list with firmware download links
+- Updated port argument description
 
 Signed-off-by: Martin Spinler <spinler@cesnet.cz>
 ---
- drivers/net/nfb/nfb.h        |  12 +--
- drivers/net/nfb/nfb_ethdev.c | 137 ++++++++++++++++-------------------
- 2 files changed, 67 insertions(+), 82 deletions(-)
+ doc/guides/nics/features/nfb.ini       |   4 +
+ doc/guides/nics/nfb.rst                | 187 +++++++++++--------------
+ doc/guides/rel_notes/release_26_03.rst |   6 +
+ 3 files changed, 95 insertions(+), 102 deletions(-)
 
-diff --git a/drivers/net/nfb/nfb.h b/drivers/net/nfb/nfb.h
-index 10d74eb49c..01241860b1 100644
---- a/drivers/net/nfb/nfb.h
-+++ b/drivers/net/nfb/nfb.h
-@@ -36,10 +36,6 @@ extern int nfb_logtype;
- #define RTE_ETH_NDP_MAX_RX_QUEUES 32
- #define RTE_ETH_NDP_MAX_TX_QUEUES 32
+diff --git a/doc/guides/nics/features/nfb.ini b/doc/guides/nics/features/nfb.ini
+index c77b592789..7ac89fc15f 100644
+--- a/doc/guides/nics/features/nfb.ini
++++ b/doc/guides/nics/features/nfb.ini
+@@ -9,9 +9,13 @@ Link status          = Y
+ Queue start/stop     = Y
+ Promiscuous mode     = Y
+ Allmulticast mode    = Y
++Unicast MAC filter   = Y
++Timestamp offload    = P
+ Basic stats          = Y
+ Extended stats       = Y
+ Stats per queue      = Y
++FW version           = Y
++Multiprocess aware   = Y
+ Linux                = Y
+ x86-64               = Y
+ Usage doc            = Y
+diff --git a/doc/guides/nics/nfb.rst b/doc/guides/nics/nfb.rst
+index a9b4049654..55a635d8d4 100644
+--- a/doc/guides/nics/nfb.rst
++++ b/doc/guides/nics/nfb.rst
+@@ -2,64 +2,101 @@
+     Copyright 2019 Cesnet
+     Copyright 2019 Netcope Technologies
  
--/* Max index of rx/tx dmas */
--#define RTE_MAX_NC_RXMAC 256
--#define RTE_MAX_NC_TXMAC 256
+-NFB poll mode driver library
+-=================================
++NFB Poll Mode Driver
++====================
++
++The NFB PMD implements support for the FPGA-based
++programmable NICs running `CESNET-NDK <https://www.liberouter.org/ndk/>`_
++based firmware (formerly known as the NetCOPE platform). The CESNET Network Development Kit offers
++wide spectrum of supported cards, for example:
++N6010, FB2CGG3 (Silicom Denmark),
++IA-420F, IA-440i (BittWare),
++AGI-FH400G (ReflexCES),
++and `many more <https://github.com/CESNET/ndk-fpga/tree/devel/cards>`_.
++
++The CESNET-NDK framework is open source and
++can be found on `CESNET-NDK <https://github.com/CESNET/ndk-fpga>`_.
++Ready-to-use demo firmwares can be found on the `DYNANIC page <https://dyna-nic.com/try-now/>`_.
++
++Software compatibility and firmware for
++`historical cards <https://www.liberouter.org/technologies/cards/>`_
++are left unmaintained.
++
++Software prerequisites
++----------------------
+ 
+-The NFB poll mode driver library implements support for the Netcope
+-FPGA Boards (**NFB-40G2, NFB-100G2, NFB-200G2QL**) and Silicom **FB2CGG3** card,
+-FPGA-based programmable NICs. The NFB PMD uses interface provided by the libnfb
+-library to communicate with these cards over the nfb layer.
++This PMD requires a Linux kernel module, which is responsible for initialization and
++allocation of resources needed for the nfb layer function.
++Communication between PMD and kernel modules is mediated by the libnfb library.
++The kernel module and library are not part of DPDK and must be installed
++separately. Dependencies can be found on GitHub:
++`nfb-framework <https://github.com/CESNET/ndk-sw>`_ as source code,
++or for RPM-based distributions, the prebuilt `nfb-framework` package on
++`Fedora Copr <https://copr.fedorainfracloud.org/coprs/g/CESNET/nfb-framework/>`_.
+ 
+-More information about the
+-`NFB cards <https://www.liberouter.org/technologies/cards/>`_
+-and used technology
+-(`Network Development Kit <https://www.liberouter.org/ndk/>`_)
+-can be found on the `Liberouter website <http://www.liberouter.org/>`_.
++Before starting the DPDK, make sure that the kernel module is loaded (`sudo modprobe nfb`)
++and the card is running the CESNET-NDK based firmware (`nfb-info -l`).
+ 
+ .. note::
+ 
+-   Currently the driver is supported only on x86_64 architectures.
+-   Only x86_64 versions of the external libraries are provided.
++   Currently, the driver is supported only on x86_64 architectures.
++
++NFB card architecture
++---------------------
++
++Ethernet Ports
++~~~~~~~~~~~~~~
++
++The NFB cards are multi-port multi-queue cards, where (generally) data from any
++Ethernet port may be sent by the firmware to any queue.
+ 
+-Prerequisites
+--------------
++The cards were historically represented in DPDK as a single port.
++Currently each Ethernet channel is represented as one DPDK port.
+ 
+-This PMD requires kernel modules which are responsible for initialization and
+-allocation of resources needed for nfb layer function.
+-Communication between PMD and kernel modules is mediated by libnfb library.
+-These kernel modules and library are not part of DPDK and must be installed
+-separately:
++.. note::
+ 
+-*  **libnfb library**
++   Normally, one port corresponds to one channel, but ports can often be configured in a separate
++   manner. For example one 100G port can be used as 4x25G or 4x10G independent Ethernet channels.
+ 
+-   The library provides API for initialization of nfb transfers, receiving and
+-   transmitting data segments.
++By default, all ports are initialized and used for the allowed PCI device.
++When this behaviour is limiting (e.g., for multiple instances of DPDK app on different ports
++of the same PCI device), ports can be specified by the `port` item in the `allow` argument:
+ 
+-*  **Kernel modules**
++.. code-block:: console
+ 
+-   * nfb
++   -a 0000:01:00.0,port=0,port=3
+ 
+-   Kernel modules manage initialization of hardware, allocation and
+-   sharing of resources for user space applications.
++PCIe slots
++~~~~~~~~~~
+ 
+-Dependencies can be found here:
+-`Netcope common <https://github.com/CESNET/ndk-sw>`_.
++Some cards employ more than one PCIe device for better data throughput. This can be achieved by
++slot bifurcation (only a minor improvement) or by an add-on cable connected to another PCIe slot.
++Both improvements can work together, as is, for example, in the case of the AGI-FH400G card.
+ 
+-Versions of the packages
+-~~~~~~~~~~~~~~~~~~~~~~~~
++Because primary and secondary slot(s) can be attached to different NUMA nodes
++(also applies for bifurcation on some HW), the data structures need to be correctly allocated.
++(Device-aware allocation matters also on IOMMU-enabled systems.)
++The firmware already provides DMA queue to PCI device mapping. The DPDK application just needs to
++use all PCI devices, otherwise some queues will not be available; provide all PCI endpoints
++listed in the `nfb-info -v` in the `allow` argument.
+ 
+-The minimum version of the provided packages:
++.. note::
+ 
+-* for DPDK from 19.05
++   For cards where the number of Ethernet ports is less than the number of PCI devices
++   (e.g., AGI-FH400G: 1 port, up to 4 PCI devices), the virtual DPDK ports are
++   created to achieve the best NUMA-aware throughput
++   (virtual ports lack a lot of configuration features).
+ 
+-Configuration
+--------------
++Features
++--------
+ 
+ Timestamps
++~~~~~~~~~~
+ 
+-The PMD supports hardware timestamps of frame receipt on physical network interface. In order to use
+-the timestamps, the hardware timestamping unit must be enabled (follow the documentation of the NFB
+-products). The standard `RTE_ETH_RX_OFFLOAD_TIMESTAMP` flag can be used for this feature.
++The PMD supports hardware timestamps of frame receipt on physical network interface.
++In order to use the timestamps, the hardware timestamping unit must be enabled
++(follow the documentation of the NFB products).
++The standard `RTE_ETH_RX_OFFLOAD_TIMESTAMP` flag can be used for this feature.
+ 
+ When the timestamps are enabled, a timestamp validity flag is set in the MBUFs
+ containing received frames and timestamp is inserted into the `rte_mbuf` struct.
+@@ -67,72 +104,18 @@ containing received frames and timestamp is inserted into the `rte_mbuf` struct.
+ The timestamp is an `uint64_t` field and holds the number of nanoseconds
+ elapsed since 1.1.1970 00:00:00 UTC.
+ 
++Simulation
++~~~~~~~~~~
+ 
+-Using the NFB PMD
+-----------------------
 -
- #define RTE_NFB_DRIVER_NAME net_nfb
- 
- /* Device arguments */
-@@ -54,10 +50,10 @@ extern int nfb_logtype;
-  * Stored inside dev->process_private.
-  */
- struct pmd_internals {
--	uint16_t         max_rxmac;
--	uint16_t         max_txmac;
--	struct nc_rxmac *rxmac[RTE_MAX_NC_RXMAC];
--	struct nc_txmac *txmac[RTE_MAX_NC_TXMAC];
-+	uint16_t         max_rxmac;     /**< Count of valid rxmac items */
-+	uint16_t         max_txmac;     /**< Count of valid txmac items */
-+	struct nc_rxmac  **rxmac;       /**< Array of Rx MAC handles */
-+	struct nc_txmac  **txmac;       /**< Array of Tx MAC handles */
- 	struct nfb_device *nfb;
- 
- 	TAILQ_ENTRY(pmd_internals) eth_dev_list;  /**< Item in list of all devices */
-diff --git a/drivers/net/nfb/nfb_ethdev.c b/drivers/net/nfb/nfb_ethdev.c
-index b3863af2c3..dfacfbf5b8 100644
---- a/drivers/net/nfb/nfb_ethdev.c
-+++ b/drivers/net/nfb/nfb_ethdev.c
-@@ -53,81 +53,75 @@ static const struct rte_ether_addr eth_addr = {
- };
- 
- /**
-- * Open all RX DMA queues
-+ * Open Rx and Tx MAC components associated with current ifc
-  *
-- * @param dev
-- *   Pointer to nfb device.
-- * @param[out] rxmac
-- *   Pointer to output array of nc_rxmac
-- * @param[out] max_rxmac
-- *   Pointer to output max index of rxmac
-+ * @param intl
-+ *   Pointer to driver internal structure
-+ * @param params
-+ *   Pointer to init parameters structure
-  */
--static void
--nfb_nc_rxmac_init(struct nfb_device *nfb,
--	struct nc_rxmac *rxmac[RTE_MAX_NC_RXMAC],
--	uint16_t *max_rxmac)
-+static int
-+nfb_nc_eth_init(struct pmd_internals *intl, struct nfb_ifc_create_params *params)
- {
--	*max_rxmac = 0;
--	while ((rxmac[*max_rxmac] = nc_rxmac_open_index(nfb, *max_rxmac)))
--		++(*max_rxmac);
--}
-+	int ret;
-+	int i, rxm, txm;
-+	struct nc_ifc_info *ifc = params->ifc_info;
-+	struct nc_ifc_map_info *mi = &params->map_info;
- 
--/**
-- * Open all TX DMA queues
-- *
-- * @param dev
-- *   Pointer to nfb device.
-- * @param[out] txmac
-- *   Pointer to output array of nc_txmac
-- * @param[out] max_rxmac
-- *   Pointer to output max index of txmac
-- */
--static void
--nfb_nc_txmac_init(struct nfb_device *nfb,
--	struct nc_txmac *txmac[RTE_MAX_NC_TXMAC],
--	uint16_t *max_txmac)
--{
--	*max_txmac = 0;
--	while ((txmac[*max_txmac] = nc_txmac_open_index(nfb, *max_txmac)))
--		++(*max_txmac);
--}
-+	ret = -ENOMEM;
-+	if (ifc->eth_cnt == 0)
-+		return 0;
- 
--/**
-- * Close all RX DMA queues
-- *
-- * @param rxmac
-- *   Pointer to array of nc_rxmac
-- * @param max_rxmac
-- *   Maximum index of rxmac
-- */
--static void
--nfb_nc_rxmac_deinit(struct nc_rxmac *rxmac[RTE_MAX_NC_RXMAC],
--	uint16_t max_rxmac)
--{
--	uint16_t i;
--	for (i = 0; i < max_rxmac; i++) {
--		nc_rxmac_close(rxmac[i]);
--		rxmac[i] = NULL;
-+	intl->rxmac = calloc(ifc->eth_cnt, sizeof(*intl->rxmac));
-+	if (intl->rxmac == NULL)
-+		goto err_alloc_rxmac;
-+
-+	intl->txmac = calloc(ifc->eth_cnt, sizeof(*intl->txmac));
-+	if (intl->txmac == NULL)
-+		goto err_alloc_txmac;
-+
-+	/* Some eths may not have assigned MAC nodes, hence use separate var for indexing */
-+	rxm = 0;
-+	txm = 0;
-+	for (i = 0; i < mi->eth_cnt; i++) {
-+		if (mi->eth[i].ifc != ifc->id)
-+			continue;
-+
-+		intl->rxmac[rxm] = nc_rxmac_open(intl->nfb, mi->eth[i].node_rxmac);
-+		if (intl->rxmac[rxm])
-+			rxm++;
-+
-+		intl->txmac[txm] = nc_txmac_open(intl->nfb, mi->eth[i].node_txmac);
-+		if (intl->txmac[txm])
-+			txm++;
- 	}
-+
-+	intl->max_rxmac = rxm;
-+	intl->max_txmac = txm;
-+	return 0;
-+
-+err_alloc_txmac:
-+	free(intl->rxmac);
-+err_alloc_rxmac:
-+	return ret;
- }
- 
- /**
-- * Close all TX DMA queues
-- *
-- * @param txmac
-- *   Pointer to array of nc_txmac
-- * @param max_txmac
-- *   Maximum index of txmac
-+ * Close all Rx+Tx MAC components
-+ * @param intl
-+ *   Pointer to internal driver structure
-  */
- static void
--nfb_nc_txmac_deinit(struct nc_txmac *txmac[RTE_MAX_NC_TXMAC],
--	uint16_t max_txmac)
-+nfb_nc_eth_deinit(struct pmd_internals *intl)
- {
- 	uint16_t i;
--	for (i = 0; i < max_txmac; i++) {
--		nc_txmac_close(txmac[i]);
--		txmac[i] = NULL;
--	}
-+	for (i = 0; i < intl->max_txmac; i++)
-+		nc_txmac_close(intl->txmac[i]);
-+	for (i = 0; i < intl->max_rxmac; i++)
-+		nc_rxmac_close(intl->rxmac[i]);
-+
-+	free(intl->txmac);
-+	free(intl->rxmac);
- }
- 
- /**
-@@ -344,7 +338,7 @@ nfb_eth_link_update(struct rte_eth_dev *dev,
- 	link.link_duplex = RTE_ETH_LINK_FULL_DUPLEX;
- 	link.link_autoneg = RTE_ETH_LINK_SPEED_FIXED;
- 
--	if (internals->rxmac[0] != NULL) {
-+	if (internals->max_rxmac) {
- 		nc_rxmac_read_status(internals->rxmac[0], &status);
- 
- 		switch (status.speed) {
-@@ -569,12 +563,9 @@ nfb_eth_dev_init(struct rte_eth_dev *dev, void *init_data)
- 	max_rx_queues = ifc->rxq_cnt;
- 	max_tx_queues = ifc->txq_cnt;
- 
--	nfb_nc_rxmac_init(internals->nfb,
--		internals->rxmac,
--		&internals->max_rxmac);
--	nfb_nc_txmac_init(internals->nfb,
--		internals->txmac,
--		&internals->max_txmac);
-+	ret = nfb_nc_eth_init(internals, params);
-+	if (ret)
-+		goto err_nc_eth_init;
- 
- 	/* Set rx, tx burst functions */
- 	dev->rx_pkt_burst = nfb_eth_ndp_rx;
-@@ -640,10 +631,9 @@ nfb_eth_dev_init(struct rte_eth_dev *dev, void *init_data)
- err_malloc_mac_addrs:
- 	rte_free(priv->queue_map_rx);
- err_alloc_queue_map:
--	nfb_nc_rxmac_deinit(internals->rxmac, internals->max_rxmac);
--	nfb_nc_txmac_deinit(internals->txmac, internals->max_txmac);
-+	nfb_nc_eth_deinit(internals);
-+err_nc_eth_init:
- 	nfb_close(internals->nfb);
+-Kernel modules have to be loaded before running the DPDK application.
 -
- err_nfb_open:
- 	rte_free(internals);
- err_alloc_internals:
-@@ -670,8 +660,7 @@ nfb_eth_dev_uninit(struct rte_eth_dev *dev)
+-NFB card architecture
+----------------------
+-
+-The NFB cards are multi-port multi-queue cards, where (generally) data from any
+-Ethernet port may be sent to any queue.
+-They are represented in DPDK as a single port.
+-
+-NFB-200G2QL card employs an add-on cable which allows to connect it to two
+-physical PCI-E slots at the same time (see the diagram below).
+-This is done to allow 200 Gbps of traffic to be transferred through the PCI-E
+-bus (note that a single PCI-E 3.0 x16 slot provides only 125 Gbps theoretical
+-throughput).
+-
+-Although each slot may be connected to a different CPU and therefore to a different
+-NUMA node, the card is represented as a single port in DPDK. To work with data
+-from the individual queues on the right NUMA node, connection of NUMA nodes on
+-first and last queue (each NUMA node has half of the queues) need to be checked.
+-
+-Limitations
+------------
+-
+-Driver is usable only on Linux architecture, namely on CentOS.
+-
+-Since a card is always represented as a single port, but can be connected to two
+-NUMA nodes, there is need for manual check where master/slave is connected.
+-
+-Example of usage
+-----------------
+-
+-Read packets from 0. and 1. receive queue and write them to 0. and 1.
+-transmit queue:
++The CESNET-NDK framework offers the possibility of simulating the firmware together with DPDK.
++This allows for easy debugging of a packet flow behaviour with a specific firmware configuration.
++The DPDK NFB driver can be connected to the simulator (Questa/ModelSim/nvc) via a virtual device:
  
- 	TAILQ_REMOVE(&nfb_eth_dev_list, internals, eth_dev_list);
+ .. code-block:: console
  
--	nfb_nc_rxmac_deinit(internals->rxmac, internals->max_rxmac);
--	nfb_nc_txmac_deinit(internals->txmac, internals->max_txmac);
-+	nfb_nc_eth_deinit(internals);
- 	nfb_close(internals->nfb);
+-   ./<build_dir>/app/dpdk-testpmd -l 0-3 -n 2 \
+-   -- --port-topology=chained --rxq=2 --txq=2 --nb-cores=2 -i -a
+-
+-Example output:
+-
+-.. code-block:: console
++   dpdk-testpmd
++      --vdev=eth_vdev_nfb,dev=libnfb-ext-grpc.so:grpc+dma_vas:localhost:50051,queue_driver=native
++      --iova-mode=va -- -i
  
- 	rte_free(internals);
+-   [...]
+-   EAL: PCI device 0000:06:00.0 on NUMA socket -1
+-   EAL:   probe driver: 1b26:c1c1 net_nfb
+-   PMD: Initializing NFB device (0000:06:00.0)
+-   PMD: Available DMA queues RX: 8 TX: 8
+-   PMD: NFB device (0000:06:00.0) successfully initialized
+-   Interactive-mode selected
+-   Auto-start selected
+-   Configuring Port 0 (socket 0)
+-   Port 0: 00:11:17:00:00:00
+-   Checking link statuses...
+-   Port 0 Link Up - speed 10000 Mbps - full-duplex
+-   Done
+-   Start automatic packet forwarding
+-     io packet forwarding - CRC stripping disabled - packets/burst=32
+-     nb forwarding cores=2 - nb forwarding ports=1
+-     RX queues=2 - RX desc=128 - RX free threshold=0
+-     RX threshold registers: pthresh=0 hthresh=0 wthresh=0
+-     TX queues=2 - TX desc=512 - TX free threshold=0
+-     TX threshold registers: pthresh=0 hthresh=0 wthresh=0
+-     TX RS bit threshold=0 - TXQ flags=0x0
+-   testpmd>
++More info about the simulation can be found int the CESNET-NDK `documentation
++<https://cesnet.github.io/ndk-fpga/devel/ndk_apps/minimal/tests/cocotb/readme.html>`_.
+diff --git a/doc/guides/rel_notes/release_26_03.rst b/doc/guides/rel_notes/release_26_03.rst
+index 29d8c6bb37..d484ca98d2 100644
+--- a/doc/guides/rel_notes/release_26_03.rst
++++ b/doc/guides/rel_notes/release_26_03.rst
+@@ -58,6 +58,12 @@ New Features
+ * **Updated CESNET NFB ethernet driver.**
+ 
+   * The timestamp value has been updated to make it usable.
++  * The DPDK port now represents just one Ethernet port instead of all Ethernet ports on the NIC.
++  * All ports are used by default, but a subset can be selected using the ``port`` argument.
++  * Report firmware version.
++  * Common CESNET-NDK-based adapters have been added,
++    including the FB2CGHH (Silicom Denmark) and XpressSX AGI-FH400G (Reflex CES).
++
+ 
+ Removed Items
+ -------------
 -- 
 2.52.0
 
