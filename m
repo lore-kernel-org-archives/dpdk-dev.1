@@ -2,22 +2,22 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DF37E7DEFB
-	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Feb 2026 16:09:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6D91E7DEFB
+	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Feb 2026 16:09:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9D8A440281;
-	Mon,  2 Feb 2026 17:09:50 +0100 (CET)
-Received: from DM1PR04CU001.outbound.protection.outlook.com
- (mail-centralusazon11010048.outbound.protection.outlook.com [52.101.61.48])
- by mails.dpdk.org (Postfix) with ESMTP id 1AC334026D
- for <dev@dpdk.org>; Mon,  2 Feb 2026 17:09:49 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 090E840608;
+	Mon,  2 Feb 2026 17:09:54 +0100 (CET)
+Received: from SA9PR02CU001.outbound.protection.outlook.com
+ (mail-southcentralusazon11013047.outbound.protection.outlook.com
+ [40.93.196.47]) by mails.dpdk.org (Postfix) with ESMTP id 9097E4067E
+ for <dev@dpdk.org>; Mon,  2 Feb 2026 17:09:52 +0100 (CET)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Ind82owkkmELHWCT6DVhRy//mrqqATlgzPyVXRstMrikQX/AaeVnD4UnzyjPKy69SQoNdGluR+n8ped2lLWTkavWhNKiEk697xNXsjod0J51SOwGzT3csTgjPJNoYuRKU8f+rn3uu8HdeSny/NBijnZYD1PdVDQcwJjkMb2iSoYkZTXP6zqcJezFc/KgxrseFjmu4zy+kWo21zyJjGIk+3euxIsmRAEaLoU+8XgAI4L8zJC9fAw4LPkj9IWb7VvtI5vr9TZtnfVmHsPK8CSdiAfPalLZn5H9bRI4Si5l3wRuYIQhaALpaQeQk9ZzHdbSeXYTru7Ob6iBpLBDtrHN5A==
+ b=vb8KfB2qBdFXNFvQKgV5/QdnD1Mtu7oVWASM3ZRcd32UFnR6oAwJrpb5qq7wu9GQYqMmiwmn3bS85fk/ngAEoB8R0qvMdb36p3Xr+GqD+98brnFdL83UbttYi2Hhc21YgJ+T0qVNbimG95nYdl7nbpENGvqM/LjeWjHbnCKn3LKIGxHcESVrrbg8zQ5emKWL5cOJ0WAjeJdu1kHW21h/kzamhymFN2+llNzaXEcjvf8paQBm/CeGKD+JPkHTyisQe6GXwaycBXGgKkmqyKl8+eNoqOYewBTlcViVjbJU4H7Zvj/ZVZ817Axui12ADi4uFzXSu06fMXG86ehBEyF7dg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vA067Damy3KO77G60I68176rSF5+GWIRzPNnXkpuxgk=;
- b=Ol+16FBNPow0dbCn2nIL6r1dR6XPZGwqA11v09RD1p5FvhK+MxvonHUihviZw0OgEl2QFRcCCXAxlxsfNbRUbptVh4duVJtsPQSuGLMScSM9Yzaf2Cdvh1UxIge5vshyJDAVgFpvEUnxXWG/qbRLF1x5Arj+SkTe/1xqAdf4vDqbABBOgA+Z8HSvvNGis6LoxqBwmNwJqaKhPuppqfwKqv28SuA8DeUbwjDEN0n4MXsgyFy5V7JKphMEmtFgOg8VL7uLdGEjyUb0qEq8ysQIe5qFwqFBUDzu+fcdFEnGAyKPepMniXU13B2v+dSEIRqlQLYod2m8NENuGS//bApAKw==
+ bh=o9GAKhgTbcVKaa8+w/usv6FHFXU7X+YU7usM8o3DwA8=;
+ b=mE1OYTHIz1iWGuRB5VNRKqX+nYiY9Mr4cE9QwCswPomq4BoiqWZn1agn2UtiC8E97Cnx0vZ77gAFmQzLlI5nOUb1ShmyRvxhoaOzWVpM9eBPhXmnj33t/k6bCN9WOa9nuESxsBiuLKjRWZ6coAaa0ZKFm2NlOjdWb+khhXN9l1G2LreemlJwFopGp5vB3TEasHvpxpM0GJger64qXRgtSHmWm38p3EPOQeBKiPQGk5hmLc42fgjqKxY4Oli7pyn/bfYTOaitL8L3Ue4EQGlUyqXy1tT0rpIST7jNgkwgeG3rybXhNB25ula4usDddgKHZaXtVfnn0BQ3ZYVwnJq0Mw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  216.228.117.161) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
@@ -25,18 +25,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vA067Damy3KO77G60I68176rSF5+GWIRzPNnXkpuxgk=;
- b=uhhrAfqz8oUMISENcL64y1KfT856LSCBY/bH0ZXWS4D/wBElFh41PODZMPqe++K9Y4LQmdVIDYfZ9yUYC8P7s9nyI64jvNCJbC6hasVNCwmmI4aZN1BRb9Ti/Q8bjiNJ98vYUc+1cfJ9S5hqB8aCj/BIt3jPABa0RquLJL60E2BlFGPRKxm6Jdccr+m/ZvmgxT+QK/2AFgfYN2MGK5vLGFcPBQn34zVm0VOqo+/T5agrUQ5GHIDpuylm8tGzyp2ygAIU0lOEMRjkvUx4Mw10bb0RFiGI1YKdzgKMFR/yM75TprdPTHteHbBg59lPOR6vk/pHOu6igxvBQRHiZEz2zg==
-Received: from MW3PR05CA0003.namprd05.prod.outlook.com (2603:10b6:303:2b::8)
- by DM4PR12MB6326.namprd12.prod.outlook.com (2603:10b6:8:a3::15) with
- Microsoft SMTP Server (version=TLS1_2,
+ bh=o9GAKhgTbcVKaa8+w/usv6FHFXU7X+YU7usM8o3DwA8=;
+ b=Mz4iMfJAo5MZwhpGieFkHJ8AUZzgZX6s+pmNSfdHCkJHD7wno+ZBOg0J70g+Yf6BWYkQ6B9/oz8HIq4iUXMvrU6QzmAB5uV7wQUEgBFK3LhB/MAtM7pALGqtN+fwBVXeigxIsH/jO4dkL4Jp979KtFDpCgodpFdYCk1E8h7VJK2RIi1NRFBGB/dmqetEFsa+wJYBwsUjkILzPBhuoW6a3ri+LNku5JtVoUSYL3qXqb63PbMtjlzkx4KKkSSjYG9QM1xssonUxKWxBAdVRKgK9fo7JpnaPACUK3lKK5+pKz2c+ZoDxtsZL/+8cUfRu4CqYXOQeTyJe+BxpyeDf+Bsig==
+Received: from MW4PR03CA0014.namprd03.prod.outlook.com (2603:10b6:303:8f::19)
+ by SJ2PR12MB7962.namprd12.prod.outlook.com (2603:10b6:a03:4c2::14)
+ with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9564.16; Mon, 2 Feb
- 2026 16:09:42 +0000
-Received: from CO1PEPF000044FD.namprd21.prod.outlook.com
- (2603:10b6:303:2b:cafe::fa) by MW3PR05CA0003.outlook.office365.com
- (2603:10b6:303:2b::8) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9587.12 via Frontend Transport; Mon,
- 2 Feb 2026 16:09:23 +0000
+ 2026 16:09:45 +0000
+Received: from CO1PEPF000044F9.namprd21.prod.outlook.com
+ (2603:10b6:303:8f:cafe::6) by MW4PR03CA0014.outlook.office365.com
+ (2603:10b6:303:8f::19) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9564.16 via Frontend Transport; Mon,
+ 2 Feb 2026 16:09:13 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
  smtp.mailfrom=nvidia.com;
  dkim=none (message not signed)
@@ -45,25 +45,27 @@ Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
  216.228.117.161 as permitted sender) receiver=protection.outlook.com;
  client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
 Received: from mail.nvidia.com (216.228.117.161) by
- CO1PEPF000044FD.mail.protection.outlook.com (10.167.241.203) with Microsoft
+ CO1PEPF000044F9.mail.protection.outlook.com (10.167.241.199) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9587.0 via Frontend Transport; Mon, 2 Feb 2026 16:09:40 +0000
+ 15.20.9587.0 via Frontend Transport; Mon, 2 Feb 2026 16:09:44 +0000
 Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
  (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 2 Feb
- 2026 08:09:19 -0800
+ 2026 08:09:21 -0800
 Received: from nvidia.com (10.126.231.35) by rnnvmail201.nvidia.com
  (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 2 Feb
- 2026 08:09:16 -0800
+ 2026 08:09:19 -0800
 From: Gregory Etelson <getelson@nvidia.com>
 To: <dev@dpdk.org>
-CC: <getelson@nvidia.com>, <mkashani@nvidia.com>, Thomas Monjalon
- <thomas@monjalon.net>, Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
-Subject: [PATCH 1/2] ethdev: support selective Rx data
-Date: Mon, 2 Feb 2026 18:09:02 +0200
-Message-ID: <20260202160903.254621-1-getelson@nvidia.com>
+CC: <getelson@nvidia.com>, <mkashani@nvidia.com>, Claude Sonnet 4.5
+ <noreply@anthropic.com>, Aman Singh <aman.deep.singh@intel.com>
+Subject: [PATCH 2/2] app/testpmd: support selective Rx data
+Date: Mon, 2 Feb 2026 18:09:03 +0200
+Message-ID: <20260202160903.254621-2-getelson@nvidia.com>
 X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20260202160903.254621-1-getelson@nvidia.com>
+References: <20260202160903.254621-1-getelson@nvidia.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
@@ -72,58 +74,57 @@ X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
  rnnvmail201.nvidia.com (10.129.68.8)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000044FD:EE_|DM4PR12MB6326:EE_
-X-MS-Office365-Filtering-Correlation-Id: b71ff9f9-715a-45f5-ed4c-08de627578b2
-X-LD-Processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
+X-MS-TrafficTypeDiagnostic: CO1PEPF000044F9:EE_|SJ2PR12MB7962:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5f1632a9-b07a-4753-6c77-08de62757aa5
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|36860700013|1800799024|376014|82310400026; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?ucREISf/nEE3ZXV2k2NUKLufU2omI7gbytGxslHRSu6K+tFPc0X4JcDjl0l8?=
- =?us-ascii?Q?B0ft1r8hmzNCrOJf/jEGOW/4wVig4DFU1RruCe61yNMTq4Qlsyc//GCl8gDj?=
- =?us-ascii?Q?lT1EdpfFWfSNDZPF/ZBgiL82IVDLp8ujUkUjHyJ/Ji7ILoC6EAHyZeuG+6ov?=
- =?us-ascii?Q?X0iql7JHRyNRAlgU0QLrquLcshbglth7yhBWa5gKEL9JWHMa9dy4UXBnZPjY?=
- =?us-ascii?Q?1Ww1scCBH0gR3hXiLkx16s0N8SoTR5SapsGQ0VKbjRbl6y9KebitXxVlkN0U?=
- =?us-ascii?Q?2dTBzjNx9s/q/WSb1dKCfgiLPN1pQNXl85W8le93tXVpPibI0dLNo+K1AJgm?=
- =?us-ascii?Q?xu+8RK1Sibx+CakJGUSVP0DWbDkxtcSi6HRY8X0xu/rsMi1j4Lm1zSKTuDKy?=
- =?us-ascii?Q?Un4Joiezi20ayU1I83SdJLTztCjfplaHjOBsjmngeoX3/gP8cnbMfx77amGp?=
- =?us-ascii?Q?q/h5EQWykUU773hhjH8o231qT4l7USenWzHpiQIdEJy3FGB9rumUdOnxG/Jw?=
- =?us-ascii?Q?OKsAhcheGSnt6myO3AgxCEmR6utkGBf1DnHd5seWS5pBSGQOCXrxVsy9mhtF?=
- =?us-ascii?Q?b7fDOnR6d0gL6Q2GCq3sLgbv/PsG0lhtPX+/kSshY9VW7p/8u3eiR6f6pVb1?=
- =?us-ascii?Q?/1VlhdYwwynEd8gpECb9keHAuhm+iY6+r3f7kh95K1UQMbrw1kfyqW14kmJ7?=
- =?us-ascii?Q?aevjXpSEqvDgj63vnNMAQG4iuWQVTqLCpEaoTAan4esHgeK9FIBX5Nvjr5Zk?=
- =?us-ascii?Q?g/HTYsPX7B8JfpuMGdSmUrvHeaLzkjjjl29CI5sH3F7ZV9unl0BOQqCPXn2s?=
- =?us-ascii?Q?tiC/jZXJ1hxzb6HAgm0SrMp1jYYWdiNUaDKWbe8Pg0Xh7+iSaSuUrCbvksV9?=
- =?us-ascii?Q?coxlGUwnetZ8KCHvpx9fchZsJ4V3BwjNH9cHGMgYK+sJs6Lv3Hirt2syofoQ?=
- =?us-ascii?Q?WwEAjhIv3dac9t7cDWsqFGlvW2qz/WF8fGKTvsxKprEXn2IVvuT2DejqyUIf?=
- =?us-ascii?Q?OYK1SUIMmizs7MN6edJT5vG/TYYbMYi2F+IaqOR94uJMf0z3SGQZ660uAIYm?=
- =?us-ascii?Q?5iFogjcmlLqwUHiuONdPacTECxsfgSgTpIRx/Lc0QWqOiwTiIue3dU+6lKWF?=
- =?us-ascii?Q?cZof+h+nl8wPDFtNDpBpw7I8T+HiysOZrd7VnbjOL/nTKG+inTzbhYV2tSim?=
- =?us-ascii?Q?uhl51jegY2v2bTdJyo5Er4QgowkeglfA2IJfrUxwPOptR/BZ++wKiXa+wF47?=
- =?us-ascii?Q?NO9OBhtOkzDpr+1WP7TUt89/PPVkBhXpqtluL6+9ykVAJMUv+cMbK/3rht9k?=
- =?us-ascii?Q?0RV1RISEiYdmMixaL4r9gFmOeT5uIpff5CRHUzFxDBpmEo9CYYuk1J+DThnR?=
- =?us-ascii?Q?imMjYBw9tnrF9CqoTP0AAlQLV63cU9G4TnemWCmRAZ6nqFXyESFKQBAD8T2n?=
- =?us-ascii?Q?cDZAVtVpfyiAp4XKD+NHHTnOdPRwQKC6hwUdSzWXuPY0EFZk64oW3BI23Jqq?=
- =?us-ascii?Q?ZQpQ3BCfRIUZq/7nAJk/+TyVN2G3NYQ91Aj402BdKfoAr4Xm0laLNFJDvKDq?=
- =?us-ascii?Q?eyAQ+HPEImFvJpxgz091eFym/qULyCZHydtX9TC4Kb4eaT/IEOUOAEQBGvwo?=
- =?us-ascii?Q?GoJly6ZRLqnAS8nbPtlnUiz3KeIXQjNNu+p/FVGvbc+R66iK5HfxO/55vaCC?=
- =?us-ascii?Q?GnhZHw=3D=3D?=
+ ARA:13230040|1800799024|376014|82310400026|36860700013; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?zQOhObZ0baa/dR02AxF64Nee6vEiFOvVlm4zCIH6Eedu8Oe0GVgWs1GIW3nO?=
+ =?us-ascii?Q?31nGx3T26+JzMHT28LxGpYjFZF5gVSq3WnNOsglNo8XBWr3sp5vZOO8LGjXU?=
+ =?us-ascii?Q?hfQGbLlWzbNpF+RZIILFkIelXRorOvnM12M4WTfTd49c8jfJy6/nLqU6Rwaq?=
+ =?us-ascii?Q?o02R3LPnHFtHY4qAxZeF1AopeletTielDU5uAiuJ4tpT7sZy1U7X9MYhE21D?=
+ =?us-ascii?Q?NZdMPNTU/zr/YyjS5LPH+Nk/u8oU2V39AU26B7b6NepPtLDd+/FlbD+8zxg4?=
+ =?us-ascii?Q?oE4OEB6Pxzul3/qaej3Ph1DKfZa58LACNdelMVwjXYnciAFHx0DcRFiuMmL5?=
+ =?us-ascii?Q?lQzcn3cakajX6kPLtG+Dq+U4LOeaX7lF4a0BBchjfnY/dmQyJx1BkD3OD6IB?=
+ =?us-ascii?Q?/+vgUWi55vesw9YLEoKWKs+zdsl1een7WthXRNhyH1ADQZeSCJnrFudNrSG+?=
+ =?us-ascii?Q?EXUEJFRnPq3KoUbJL8uYJfvf18hDVV7TyJwKhQg0og4fDjk3igomMDJkqg/S?=
+ =?us-ascii?Q?rZ9aO9C8z2YV5cPWcn8RnJqIVpaQPbI6/gYNK/f/sFBN7XIHm+HObQP8wh/w?=
+ =?us-ascii?Q?QIchaM5bE4Rnmw6vHs/U2V9oeAoRprIyakBDUsbLfg8Lbpz+90fyWeHCGu2L?=
+ =?us-ascii?Q?1qj9ulkC87ZsBTZAWgS6DTqZ6EGPUsfe8V7mLLFW7ivCht/WHuRm4kzMGfNi?=
+ =?us-ascii?Q?TSf2ssU0JSOVp91jLS64s0uv4Ujl+iPO2oF6EM4COeSFuCPNCwuRSPFoi/ig?=
+ =?us-ascii?Q?bLRNF5i07K5kJgEX3T74+Pr7TjGpd+blIW50ABKeDwQ3gthPs4RQR4BXJWIe?=
+ =?us-ascii?Q?q84C2Mpd9UOMeZuWZxe26DYylpi4irtkMTt2JH3i5ZTpWyGVaunwBwX3IrHu?=
+ =?us-ascii?Q?pOEurEjXc+bJYiK0OciZA0Rbv8W74tIsq5Yjs2Lyux4Sd3TqU4TrGsR7v0Cd?=
+ =?us-ascii?Q?aa2X8B6cpCrRqE43T5THvXFRmw5/l+X03HuGI6MwkEwMzOW/wNerZ9Bkdbi4?=
+ =?us-ascii?Q?BGCb5+RuZJfdjARSbYXVp3+52szHZPL/z9oZkCcj24Ee+QD2juxnUYjWVJQ0?=
+ =?us-ascii?Q?6ehZ2kow7pd5GncPzO5VbI6r8DpyXDmtKtj7rXhd//CnaZ/L1MUMzX+3Sd8F?=
+ =?us-ascii?Q?2zkGBf3sAjdiqwRNMEzYkx2FeRRLNieYbQxmD4uk/dbBtagf4wu+Nj5Kws6u?=
+ =?us-ascii?Q?bNEk6/Kt6A8Zkb/cpPxzzKzihYggkOzdbd7+k7MWqbJw2xyEgk90QHlabZXo?=
+ =?us-ascii?Q?rX30rcof4gBeJXQ0RC4slgsMigPpNgl74PGV8nbvuSmw9+9DZIK0cmyFZAuA?=
+ =?us-ascii?Q?yBKVEEjFdPsJtazMh3cqeS/btJFql4BiXOL7QgDQ0Tkl1qQFiiuC2HFYyRRp?=
+ =?us-ascii?Q?OHwJocFk4GpEwRS9x7bF/H+mReJoqjEI8yZb/ufEdKHlUwoj9vFQ3mHYoyZ5?=
+ =?us-ascii?Q?gbGV7lmufBtFqThWC/TDqj0q8Trc5WDyFX3AJdKLRLWKAGGlu+FexanPSZKY?=
+ =?us-ascii?Q?eyXlv0tjM6nMzxjzN6a7bHoAPM1XAIi75n7mWQQs+Zg6w0LioLsV6GBi9pH/?=
+ =?us-ascii?Q?6LqYXCaKLyN6+EjGFq2Ry429rqX1lJgimfno2MoPK1zGKBQJD6cfTw1OGxz0?=
+ =?us-ascii?Q?e1irZ5kV9kEl1+jqmsvWFm7PES7nfCIR3xK9+nNecsepuLakYfWNOho6IRaa?=
+ =?us-ascii?Q?FxFoog=3D=3D?=
 X-Forefront-Antispam-Report: CIP:216.228.117.161; CTRY:US; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge2.nvidia.com; CAT:NONE;
- SFS:(13230040)(36860700013)(1800799024)(376014)(82310400026); DIR:OUT;
+ SFS:(13230040)(1800799024)(376014)(82310400026)(36860700013); DIR:OUT;
  SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: SdTtI+D6XxgImbY0tT0dDly6IWPC0GMB95gm3nJ08PaWOvggXGf1DbHyPBa6t76uTtRg+Bgm+M6mgLYknYWrrB2/h94LtAkmuNzMeEWMNhX22y96ie3DmHrX7cbbacOcusGU8TEhEdyAENJpicDPANLz812k6+FwjisgmRluII1zMDVk978NhpbtANl3+W15MQruAB6G5ilZ2C3yH/oDDUhjlP2Be60DAgU34c24xehZsuhddSbLCN8bCfPtFsumYeqBjGZ+lblDsxeV0V+/HhXS0WkntWe4BfwaspkCjBQQXIVvY4aIWFvHGEGjmnS/k5eLhvCkgLLP11i1EVRgtzbDsw3KZ/Yfv6vmaPNv543iSNQJyQs4Rueh7Xk1HDqTOFsSd7DfYhjev+tJonpb/Pjc4z4Jstz1rVuQ0C+qvxz0fr4zdJ2Iu53+f83nPP98
+X-MS-Exchange-AntiSpam-MessageData-0: KBSfNJaxws9Xd1cD7f8+AkRhSZBqmosg49J+7qkiQ1UIzRVizjELtXYMbPCeK4qn20yG/j7zzveJPdOMZCTMvhKisPQ2dGxPpEvYpz9ue1SQGroGiomLwPlyYnaolF2519axm04PfGrkhOqePbL/qB8b5Ie98tk24qVGSuptzI+D+ZY9Qqv+Ct4lWO3P1VFqYhVN9ShdqSGHrg+KN8mDsZikAlvPSobFHsWd4G9K3+TKdQ3AMZCBQDI5Wfao2RCA4wjNgi+xd7AdsOyDMMSsbb5erRYmFeLRGYdla/qjZCFCKUVysfriA/E5xGNyC9LUOZAh/9NfTpFGeFmnvzh1erlezcsD1wSt2tax3ugaaETb9Sdqe8zAv8kc3V1SukQYjKuBtqzggDMzN/vnNIFb39dkYx24U272yQQtw4GWBdslwsrchFqJ7Qv8f1x1R6dS
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Feb 2026 16:09:40.7963 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b71ff9f9-715a-45f5-ed4c-08de627578b2
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Feb 2026 16:09:44.0540 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5f1632a9-b07a-4753-6c77-08de62757aa5
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.161];
  Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1PEPF000044FD.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: CO1PEPF000044F9.namprd21.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6326
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB7962
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -137,111 +138,173 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-In some cases application does not need to receive entire packet
-from port hardware.
-If application could receive required Rx data only and safely discard
-the rest of Rx packet data, that could improve port performance by
-reducing PCI bandwidth and application memory consumption.
+Add support for selective Rx data using existing rxoffs and rxpkts
+command line parameters.
 
-Selective Rx data allows application to receive
-only pre-configured packet segments and discard the rest.
-For example:
-- Deliver the first N bytes only.
-- Deliver the last N bytes only.
-- Deliver N1 bytes from offset Off1 and N2 bytes from offset Off2.
+When both rxoffs and rxpkts are specified on PMDs supporting
+selective Rx data (selective_read capability), testpmd automatically:
+1. Inserts segments with NULL mempool for gaps between configured
+   segments to discard unwanted data.
+2. Adds a trailing segment with NULL mempool to cover any remaining
+   data up to MTU.
 
-Selective Rx data is implemented on-top of the existing Rx
-BUFFER_SPLIT functionality:
-- The rte_eth_rxseg_split will use the NULL mempool for data segments
-that should be discarded.
-- PMD will not create MBUF segments if no data was read.
+Example usage to receive only Ethernet header and a segment at
+offset 128:
+  --rxoffs=0,128 --rxpkts=14,64
 
-For example: Deliver Ethernet header only
-
-Rx queue segments configuration:
-struct rte_eth_rxseg_split split[2] = {
-    {
-        .mp = <some mempool>,
-        .length = sizeof(struct rte_ether_hdr)
-    },
-    {
-        .mp = NULL, /* discard data */
-        .length = <MTU>
-    }
-};
-
-Received MBUF configuration:
-mbuf[0].pkt_len = sizeof(struct rte_ether_hdr);
-mbuf[0].data_len = sizeof(struct rte_ether_hdr);
-mbuf[0].next = NULL; /* The next segment did not deliver data */
-
-After selective Rx, the mbuf packet length reflects only the
-existing data that was actually received, and can be less than the
-original wire packet length.
-
-A PMD activates the selective Rx data capability by setting the
-rte_eth_rxseg_capa.selective_read bit.
+This creates segments:
+- [0-13]: 14 bytes with mempool (received)
+- [14-127]: 114 bytes with NULL mempool (discarded)
+- [128-191]: 64 bytes with mempool (received)
+- [192-MTU]: remaining bytes with NULL mempool (discarded)
 
 Signed-off-by: Gregory Etelson <getelson@nvidia.com>
+Signed-off-by: Claude Sonnet 4.5 <noreply@anthropic.com>
 ---
- lib/ethdev/rte_ethdev.c | 10 +++++++---
- lib/ethdev/rte_ethdev.h |  8 +++++++-
- 2 files changed, 14 insertions(+), 4 deletions(-)
+ app/test-pmd/testpmd.c                | 74 +++++++++++++++++++++++++--
+ doc/guides/testpmd_app_ug/run_app.rst | 19 +++++++
+ 2 files changed, 88 insertions(+), 5 deletions(-)
 
-diff --git a/lib/ethdev/rte_ethdev.c b/lib/ethdev/rte_ethdev.c
-index c6fe0d5165..68a51c97c5 100644
---- a/lib/ethdev/rte_ethdev.c
-+++ b/lib/ethdev/rte_ethdev.c
-@@ -2161,9 +2161,11 @@ rte_eth_rx_queue_check_split(uint16_t port_id,
- 		uint32_t proto_hdr = rx_seg[seg_idx].proto_hdr;
+diff --git a/app/test-pmd/testpmd.c b/app/test-pmd/testpmd.c
+index 1fe41d852a..62129f0d28 100644
+--- a/app/test-pmd/testpmd.c
++++ b/app/test-pmd/testpmd.c
+@@ -2676,11 +2676,58 @@ rx_queue_setup(uint16_t port_id, uint16_t rx_queue_id,
+ 	int ret;
  
- 		if (mpl == NULL) {
--			RTE_ETHDEV_LOG_LINE(ERR, "null mempool pointer");
--			ret = -EINVAL;
--			goto out;
-+			if (dev_info->rx_seg_capa.selective_read == 0) {
-+				RTE_ETHDEV_LOG_LINE(ERR, "null mempool pointer");
-+				ret = -EINVAL;
-+				goto out;
+ 
+-	if ((rx_pkt_nb_segs > 1) &&
++	if ((rx_pkt_nb_segs > 1 || rx_pkt_nb_offs > 0) &&
+ 	    (rx_conf->offloads & RTE_ETH_RX_OFFLOAD_BUFFER_SPLIT)) {
++		struct rte_eth_dev_info dev_info;
++		uint16_t seg_idx = 0;
++		uint16_t next_offset = 0;
++		uint16_t mtu = 0;
++		bool selective_rx;
++
++		ret = rte_eth_dev_info_get(port_id, &dev_info);
++		if (ret != 0)
++			return ret;
++
++		selective_rx = rx_pkt_nb_offs > 0 &&
++			       dev_info.rx_seg_capa.selective_read != 0;
++
++		if (selective_rx) {
++			ret = rte_eth_dev_get_mtu(port_id, &mtu);
++			if (ret != 0)
++				return ret;
++		}
++
+ 		/* multi-segment configuration */
+ 		for (i = 0; i < rx_pkt_nb_segs; i++) {
+-			struct rte_eth_rxseg_split *rx_seg = &rx_useg[i].split;
++			struct rte_eth_rxseg_split *rx_seg;
++			uint16_t seg_offset;
++
++			seg_offset = i < rx_pkt_nb_offs ?
++				     rx_pkt_seg_offsets[i] : next_offset;
++
++			/* Insert gap segment if selective Rx and there's a gap */
++			if (selective_rx && seg_offset > next_offset) {
++				if (seg_idx >= MAX_SEGS_BUFFER_SPLIT) {
++					fprintf(stderr,
++						"Too many segments (max %u)\n",
++						MAX_SEGS_BUFFER_SPLIT);
++					return -EINVAL;
++				}
++				rx_seg = &rx_useg[seg_idx++].split;
++				rx_seg->offset = next_offset;
++				rx_seg->length = seg_offset - next_offset;
++				rx_seg->mp = NULL; /* Discard gap data */
++				next_offset = seg_offset;
 +			}
- 		}
- 		if (seg_idx != 0 && mp_first != mpl &&
- 		    seg_capa->multi_pools == 0) {
-@@ -2185,6 +2187,8 @@ rte_eth_rx_queue_check_split(uint16_t port_id,
- 				goto out;
++
++			/* Add the actual data segment */
++			if (seg_idx >= MAX_SEGS_BUFFER_SPLIT) {
++				fprintf(stderr,
++					"Too many segments (max %u)\n",
++					MAX_SEGS_BUFFER_SPLIT);
++				return -EINVAL;
++			}
++			rx_seg = &rx_useg[seg_idx++].split;
+ 			/*
+ 			 * Use last valid pool for the segments with number
+ 			 * exceeding the pool index.
+@@ -2688,8 +2735,7 @@ rx_queue_setup(uint16_t port_id, uint16_t rx_queue_id,
+ 			mp_n = (i >= mbuf_data_size_n) ? mbuf_data_size_n - 1 : i;
+ 			mpx = mbuf_pool_find(socket_id, mp_n);
+ 			/* Handle zero as mbuf data buffer size. */
+-			rx_seg->offset = i < rx_pkt_nb_offs ?
+-					   rx_pkt_seg_offsets[i] : 0;
++			rx_seg->offset = seg_offset;
+ 			rx_seg->mp = mpx ? mpx : mp;
+ 			if (rx_pkt_hdr_protos[i] != 0 && rx_pkt_seg_lengths[i] == 0) {
+ 				rx_seg->proto_hdr = rx_pkt_hdr_protos[i] & ~prev_hdrs;
+@@ -2699,8 +2745,26 @@ rx_queue_setup(uint16_t port_id, uint16_t rx_queue_id,
+ 						rx_pkt_seg_lengths[i] :
+ 						mbuf_data_size[mp_n];
  			}
++
++			if (selective_rx)
++				next_offset = seg_offset + rx_seg->length;
  		}
-+		if (mpl == NULL)
-+			goto out;
+-		rx_conf->rx_nseg = rx_pkt_nb_segs;
++
++		/* Add trailing segment to MTU if selective Rx enabled */
++		if (selective_rx && next_offset < mtu) {
++			if (seg_idx >= MAX_SEGS_BUFFER_SPLIT) {
++				fprintf(stderr,
++					"Too many segments (max %u)\n",
++					MAX_SEGS_BUFFER_SPLIT);
++				return -EINVAL;
++			}
++			rx_useg[seg_idx].split.offset = next_offset;
++			rx_useg[seg_idx].split.length = mtu - next_offset;
++			rx_useg[seg_idx].split.mp = NULL; /* Discard trailing data */
++			seg_idx++;
++		}
++
++		rx_conf->rx_nseg = seg_idx;
+ 		rx_conf->rx_seg = rx_useg;
+ 		rx_conf->rx_mempools = NULL;
+ 		rx_conf->rx_nmempool = 0;
+diff --git a/doc/guides/testpmd_app_ug/run_app.rst b/doc/guides/testpmd_app_ug/run_app.rst
+index 97d6c75716..638c0b0eb3 100644
+--- a/doc/guides/testpmd_app_ug/run_app.rst
++++ b/doc/guides/testpmd_app_ug/run_app.rst
+@@ -364,6 +364,11 @@ The command line options are:
+     feature is engaged. Affects only the queues configured
+     with split offloads (currently BUFFER_SPLIT is supported only).
  
- 		offset += seg_idx != 0 ? 0 : RTE_PKTMBUF_HEADROOM;
- 		*mbp_buf_size = rte_pktmbuf_data_room_size(mpl);
-diff --git a/lib/ethdev/rte_ethdev.h b/lib/ethdev/rte_ethdev.h
-index a66c2abbdb..173c773e72 100644
---- a/lib/ethdev/rte_ethdev.h
-+++ b/lib/ethdev/rte_ethdev.h
-@@ -1121,7 +1121,12 @@ struct rte_eth_txmode {
-  *   The rest will be put into the last valid pool.
-  */
- struct rte_eth_rxseg_split {
--	struct rte_mempool *mp; /**< Memory pool to allocate segment from. */
-+	/**
-+	 * Memory pool to allocate segment from.
-+	 * NULL means skipped segment in selective Rx data. @see selective_read.
-+	 * Skipped Rx segment length is not reflected in mbuf packet length.
-+	 */
-+	struct rte_mempool *mp;
- 	uint16_t length; /**< Segment data length, configures split point. */
- 	uint16_t offset; /**< Data offset from beginning of mbuf data buffer. */
- 	/**
-@@ -1758,6 +1763,7 @@ struct rte_eth_rxseg_capa {
- 	uint32_t multi_pools:1; /**< Supports receiving to multiple pools.*/
- 	uint32_t offset_allowed:1; /**< Supports buffer offsets. */
- 	uint32_t offset_align_log2:4; /**< Required offset alignment. */
-+	uint32_t selective_read:1; /**< Supports selective read. */
- 	uint16_t max_nseg; /**< Maximum amount of segments to split. */
- 	uint16_t reserved; /**< Reserved field. */
- };
++    When used with ``--rxpkts`` on PMDs supporting selective Rx data,
++    enables receiving only specific packet segments and discarding the rest.
++    Gaps between configured segments and any trailing data up to MTU are
++    automatically filled with NULL mempool segments (data is discarded).
++
+ *   ``--rxpkts=X[,Y]``
+ 
+     Set the length of segments to scatter packets on receiving if split
+@@ -373,6 +378,20 @@ The command line options are:
+     command line parameter and the mbufs to receive will be allocated
+     sequentially from these extra memory pools.
+ 
++    **Selective Rx Data Example:**
++
++    To receive only the Ethernet header (14 bytes at offset 0) and
++    a 64-byte segment starting at offset 128, while discarding the rest::
++
++        --rxoffs=0,128 --rxpkts=14,64
++
++    This configuration will:
++
++    * Receive 14 bytes at offset 0 (Ethernet header)
++    * Discard bytes 14-127 (inserted NULL mempool segment)
++    * Receive 64 bytes at offset 128
++    * Discard bytes 192-MTU (inserted NULL mempool segment)
++
+ *   ``--txpkts=X[,Y]``
+ 
+     Set TX segment sizes or total packet length. Valid for ``tx-only``
 -- 
 2.51.0
 
