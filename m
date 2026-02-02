@@ -2,65 +2,62 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0DFFE7314A
-	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Feb 2026 09:52:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31BB5E73151
+	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Feb 2026 09:57:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8010A40A6F;
-	Mon,  2 Feb 2026 10:52:12 +0100 (CET)
-Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
- [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id ED8C5402D8
- for <dev@dpdk.org>; Mon,  2 Feb 2026 10:52:10 +0100 (CET)
-Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
- 6126vXlB905652; Mon, 2 Feb 2026 01:52:06 -0800
-Received: from bn1pr04cu002.outbound.protection.outlook.com
- (mail-eastus2azon11020133.outbound.protection.outlook.com [52.101.56.133])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 4c2q3q0c4b-1
+	by mails.dpdk.org (Postfix) with ESMTP id E930E40A6F;
+	Mon,  2 Feb 2026 10:57:55 +0100 (CET)
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
+ [67.231.156.173])
+ by mails.dpdk.org (Postfix) with ESMTP id 078FF402D8
+ for <dev@dpdk.org>; Mon,  2 Feb 2026 10:57:53 +0100 (CET)
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+ by mx0b-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
+ 611MJLVG667603; Mon, 2 Feb 2026 01:57:50 -0800
+Received: from sn4pr0501cu005.outbound.protection.outlook.com
+ (mail-southcentralusazon11021121.outbound.protection.outlook.com
+ [40.93.194.121])
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4c28mxsf24-1
  (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
- Mon, 02 Feb 2026 01:52:06 -0800 (PST)
+ Mon, 02 Feb 2026 01:57:50 -0800 (PST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=eldfkDfNkQoftV0PASciN4tKnom/iD0yei2y1tYuDWNawRaOp+HyTHZ1mflRCQfgHeQu+6nm47laJeWGD2Pc6Of/hJ8bX+5695XGs3qT+0OYHSjy3dWjk8QxPL+LIDMh1HvlvoU+MoLXMcZlxZ+SqnqDT5SV5yEiNtJx4CZOPfNUX7Vnyi5O/XYTTuoWMuBBGzVgj5pFUk4B83mhVonff0QCJFlggZq4LyGThxqSlR88D6T+cPmb+pHi6zSAZR0TK0lx9Ijz7LEZCFFnrM5JYBumeC9vdFVOvmStDhInRbeG2/vR65xzO1z6si+KxRmoWxQ/8hFueletNvh2Knm1ZA==
+ b=gb78pBfGWr01+azPKcxqiy77+1BXcoXfzRUjA3DVHhER/+1ycfHlNNUs2rVy9x3rMo2jLl0EeMwJcEE7rqNlHFWvHHqx2NYQLINYl794xXd4+QPttSCjroefaKMJlcMLFa/555iXDn9C50Gl15RPAQOPDqxRHyQCNy54t6ZQJkHmdyzhrNTBi3y5+vw3xKS1Oc256tLQU1bf8KXCMssHkpn1LC7ZIrrN1s/CfUNCMhfdpl4DPfjols8fUXbr78s/TngpeOlO33oqXhP/+4XBcxqYylLzBmszZanwSNvQVtwv/G8yeU1vn3NeYix1J3Dijci4m8koZD46IQPTM6xe0w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/+ryTUyHpQni9+YRlV8a4awzBvoHwmj20kbgmXa2QnU=;
- b=WCYOyy+QLsSa00ZDSC9R4qknowbg5wl+Fc2fviiZ2AECHgssvZOh6NIX/o7WyxClaHv6Gp72VTqUUgttbcgT+gcRmPmmYf/xPZFqOSwfBWP6HyU0qBHu15MSnsdgp9rz8QiAuu5q4k2TkpxYR7GBytAwZMkTndtY8B5oatS/4yZgkUMTBCyILmuYvi2Hi1mh4OBI7J4HYKkrrvNcj+q518neLERUfuJEeMV3tRuvdfOzqoLOa110UldmdJafL1McyIXEqA2KXRFlKsV9I82xhEr9igY+e1JFWhSY9aTdt6LDMWYmUb25AyI+6Ze53pbrZSZfIDG2/gct8w9jlx4/1g==
+ bh=t8d2LZeAoV5FYfaAg7Tf1Ov2uwpppm69asTbgozBb3c=;
+ b=HNgpFZ23EV5xtQP75i9sXmaE3f9mT4oeKcNDOY6VYNmwkdoRad7rP+AQW98m9aWXErv0Xo61Xp3fYqhHxdsyWtnzVKx4VOWmk5jRGLQLZJHUGfa4fOeAuJ4HdtbTq2qjaW9QFyGe4ZNcDMUNqMV3O90GokPzGIBmEje/XTacwK6imrbHViJFrafoyrtjklNpQPOU7RWR5PkQJbE1nw3YdQDJS9B3dqIAT6oQdU+2tZDTfEuN/GwDTiW2EJ2vteBuiWzrOl4FFfcP7MTjTV4r5Ujodvx1Fbbs6J19TFJn4yAluTRPeYjAa88XM/wHEvKLAid0S575xmi/m3g01Er8VA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
  dkim=pass header.d=marvell.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/+ryTUyHpQni9+YRlV8a4awzBvoHwmj20kbgmXa2QnU=;
- b=ezHKCKOL0VqESELA9s+e3XCNJGDSMg83ew30Ewqti2splRulEmnVUxtWgyG2IeJN4BaCIvmuxJSDbIOuFs3ei0Vflu9H2WrcipzI1KvGCvNN0nNhrkgVU3BD7pKuahTIf1jZRuI01efuhU1D50772f0JVdphExBBlkbndPTW4+4=
+ bh=t8d2LZeAoV5FYfaAg7Tf1Ov2uwpppm69asTbgozBb3c=;
+ b=qr18qfxJWLkSuTyB/gu8JAhlaTxv3fM+dlzqt+IZi+nzM26btmJkV8PolIrWU8eSCUNJcocxGlWP06M7ZfzE0ynMV2V7ztWumBSHDG4DwgPodefZbfp30Dr+ABixwNtBD8LwSHXrqXQ4WbcYO9YFO1friTJ7EeAvOlTzKC5Gaig=
 Received: from PH0PR18MB4086.namprd18.prod.outlook.com (2603:10b6:510:3::9) by
  MN2PR18MB3512.namprd18.prod.outlook.com (2603:10b6:208:26f::22) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9587.12; Mon, 2 Feb
- 2026 09:52:04 +0000
+ 2026 09:57:48 +0000
 Received: from PH0PR18MB4086.namprd18.prod.outlook.com
  ([fe80::5757:762c:5bd5:938a]) by PH0PR18MB4086.namprd18.prod.outlook.com
  ([fe80::5757:762c:5bd5:938a%6]) with mapi id 15.20.9587.010; Mon, 2 Feb 2026
- 09:52:04 +0000
+ 09:57:48 +0000
 From: Pavan Nikhilesh Bhagavatula <pbhagavatula@marvell.com>
-To: Stephen Hemminger <stephen@networkplumber.org>,
- =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
-CC: Jerin Jacob <jerinj@marvell.com>, Wathsala Vithanage
- <wathsala.vithanage@arm.com>,
- Bruce Richardson <bruce.richardson@intel.com>,
- "dev@dpdk.org" <dev@dpdk.org>
-Subject: Re: [EXTERNAL] Re: [RFC 1/2] config: add optimal burst size
- configuration
-Thread-Topic: [EXTERNAL] Re: [RFC 1/2] config: add optimal burst size
- configuration
-Thread-Index: AQHcXq4VsKPYWcJQ0Eu6wbp/mlvALLUEuLeAgAJczYCAaH/+4Q==
-Date: Mon, 2 Feb 2026 09:52:03 +0000
-Message-ID: <PH0PR18MB40867E7E8143DC087E43F42FDE9AA@PH0PR18MB4086.namprd18.prod.outlook.com>
+To: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>, Jerin Jacob
+ <jerinj@marvell.com>, Wathsala Vithanage <wathsala.vithanage@arm.com>,
+ Bruce Richardson <bruce.richardson@intel.com>
+CC: "dev@dpdk.org" <dev@dpdk.org>
+Subject: Re: [RFC 1/2] config: add optimal burst size configuration
+Thread-Topic: [RFC 1/2] config: add optimal burst size configuration
+Thread-Index: AQHcXq4VsKPYWcJQ0Eu6wbp/mlvALLUEuLeAgAARbwKAasypLw==
+Date: Mon, 2 Feb 2026 09:57:48 +0000
+Message-ID: <PH0PR18MB408654829B824E2BF55A1BF7DE9AA@PH0PR18MB4086.namprd18.prod.outlook.com>
 References: <20251126082414.91933-1-pbhagavatula@marvell.com>
  <98CBD80474FA8B44BF855DF32C47DC35F65592@smartserver.smartshare.dk>
- <20251127140153.202a38dd@phoenix.local>
-In-Reply-To: <20251127140153.202a38dd@phoenix.local>
+ <PH0PR18MB4086DAA3DC6D60E7790A3722DEDEA@PH0PR18MB4086.namprd18.prod.outlook.com>
+In-Reply-To: <PH0PR18MB4086DAA3DC6D60E7790A3722DEDEA@PH0PR18MB4086.namprd18.prod.outlook.com>
 Accept-Language: en-US, en-IN
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -68,105 +65,105 @@ X-MS-TNEF-Correlator:
 msip_labels: 
 x-ms-publictraffictype: Email
 x-ms-traffictypediagnostic: PH0PR18MB4086:EE_|MN2PR18MB3512:EE_
-x-ms-office365-filtering-correlation-id: d91a8b34-43d2-4efb-f022-08de6240b826
+x-ms-office365-filtering-correlation-id: cabd7698-eaf4-41cd-5a42-08de62418555
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: BCL:0;
  ARA:13230040|376014|1800799024|366016|7142099003|38070700021; 
-x-microsoft-antispam-message-info: =?iso-8859-1?Q?YlDlUJERNfH9Q/HkhJWMnujaJehNm/vJvfYOb0gJE8WezLvah3R3Rq/A9H?=
- =?iso-8859-1?Q?BBieIohqbOz0PkXJ8/h1uDBQd3qz6LAJYtpz6lx3hT5rdMWUSoM3U/xsiS?=
- =?iso-8859-1?Q?39zP/w50e5KvhSAPvtQcXP8v5yMI6NQI4Um/PstTTVfGNoNY6M3rxBOMtz?=
- =?iso-8859-1?Q?qNc4qQjDuW377TDb00MdXhPC2RNHjzkUIwAvbY16y5yS5xX0/FwOJGMfuu?=
- =?iso-8859-1?Q?7bdZ8pOykIaw3jKRpGPys2esI5mFlIIcV4qIiLS2LdGxe95ULLjNT3Sfel?=
- =?iso-8859-1?Q?6CrvSaOM2/D42hnxldk5z0aOe2gGdkiS5wYZSkXW6NPRo0rH+ogqSEHI0B?=
- =?iso-8859-1?Q?cD1j3W8G1bBQLrpqBwqf7rlSL262FtYOrYbbvigeTaJo+Gxc2WVwjPkUib?=
- =?iso-8859-1?Q?MCrDg19Eq+OnOk34ITSXjzevgCOqeBtlVKHIn19dIoPmamMYLJ1las+fYP?=
- =?iso-8859-1?Q?T5K8UssPjxFlBdMQj1UPqhGOSWVFXp3Lqq9+q8lp/CpdGiSsyxJh6ZAtnY?=
- =?iso-8859-1?Q?rfvu1IvJRsyHgmMKDWB07KePvC5kr3KgMWqKC5LTX2KZkkJG3QPGJ9JVRZ?=
- =?iso-8859-1?Q?ts8rxBKGM1W3wfm4TWH8HWgLQCK6cxmIqyNp0q+ibmJUGKci7WYqRRZmQ9?=
- =?iso-8859-1?Q?Tv3sV/FO9sMabSFcpSaaB1U3h3LYSN44aG0qT4MpijLOYx2PHvhCVhGfn7?=
- =?iso-8859-1?Q?NizhzUlkPuK4uYySg20Lv4mLvThHGpKi58DV3CeMkqCfh2BxVuNkLHBzcG?=
- =?iso-8859-1?Q?7YheR1y/Q2jUR+CaQ++36DsdfxqI1B/kkUQ72RAFFZlWFtNaOVSGJzOLar?=
- =?iso-8859-1?Q?rGowniiYDC6B/uGbq3aT9nqUuMZIp5rrorjPcHVEKKO7bcD2cr5slvfgTm?=
- =?iso-8859-1?Q?GqD+vvIexEfkXTDo0HgFDq10retNZcGFbxzYgGKwzLFsF4y3pcYO1MDk+D?=
- =?iso-8859-1?Q?W+4wlLuN9h3XxcXcxQghg6fpWfPXW409OlHmNdwdzS2V6j4+MPVlXsAqvu?=
- =?iso-8859-1?Q?tf5V8XzduXBvpCv3hwUpwYwCZHOimuZmpZu7KRpuE5SgEFuUMYq9NC5YN9?=
- =?iso-8859-1?Q?mAQQsNZB/vWC1TBzcmkttBtRurEtSu8uphOQdWsbwJtquwHbQ1QM2OJFvW?=
- =?iso-8859-1?Q?RxqIcbNlcef7cH7KFwcFMMed4unftGrY6T+CAca4rVjndvEdiIVEdBXeBL?=
- =?iso-8859-1?Q?enKLQAel6lkYCDrfWAlNdKMwHm+pHll7YxXXZH8Ky0gbe97pMEWJp4oIkM?=
- =?iso-8859-1?Q?619w5MWQ7bwBoknTbh08t9Kg+lKcEOAboej9hSC4MTB9hmVeqTjRqY5/FH?=
- =?iso-8859-1?Q?Y+9TTbSFCbJGprU1auMawQPotiuoADz7IVxWDe3zzd6CqkBvYhRHwqXUug?=
- =?iso-8859-1?Q?ZYcGJLkUZSN7cFej25BfnfkFS5d3EWB5re5eUK+is8o8stannji4ElEx7n?=
- =?iso-8859-1?Q?LneiDTgUpyTdaIJJZe5y0W+Ph3oGdXRVqCacqWZu86u+VFw7pfugAh8YgK?=
- =?iso-8859-1?Q?XYCQc9q3m2NFtRBaTuC9EhmxVKi7RC6GkNjvz0ZfWoS+cMMRaVZl08RMBN?=
- =?iso-8859-1?Q?yef+gxyjdbL3hSYniOyIroaJWqp1IsujoMx5k8g7YN4kwyiE29ELh1nIGe?=
- =?iso-8859-1?Q?nqPrM+NZOPoAi6S2NLcKxtwQPj1b36Q7rbkOYCPn0MqcpwV9macHenEcGH?=
- =?iso-8859-1?Q?1fpnr+13s1kOIixQmTY=3D?=
+x-microsoft-antispam-message-info: =?iso-8859-1?Q?j53M6nE4uVXjg+rK+KDSaSwHdChKyqRsRoFzVpDL9lm8z6u4K4VUt4zC3e?=
+ =?iso-8859-1?Q?rNLrQ+D8XWHIr43A9WD2Uk+w/haFIxUnO7bx8+prCbB7gIya6tHJbC6LMa?=
+ =?iso-8859-1?Q?W9Ua9LUxEhTSS66AL7+R6BPJsfayfjws0PT4lqloz6fMXq5ZBST8Ilux2h?=
+ =?iso-8859-1?Q?/+1hat1EMYo3WaNYJWZ+8Q6C47MoYqum47dnDJYEICyhw1VTrnDTGF0dCB?=
+ =?iso-8859-1?Q?C3JErjiYfU4/Xxv9yQOf6IPpdoGD6OYBMB/WOHWO95CBWB8/s3il0S7LQy?=
+ =?iso-8859-1?Q?m7CLT5N+b223vXERzX85yWihJwLmRUVq9QyiRggbDnJ5ReKTuD6umkgmrz?=
+ =?iso-8859-1?Q?TNUVuyAgAmEH5NKIKre6l9myiPyPkYPZ+QJfT+0N9YliWLcS9Fy52jCwew?=
+ =?iso-8859-1?Q?5qxHv5XBhHpTXxjcAh3MJ4T9Ib8WV3dSVsiha9I4PHwtn3m1hcw1sCtFZG?=
+ =?iso-8859-1?Q?KfHlJpc3T23zRPa4DrG9KiyugpJrBh1ksdOdb3g4QGJpBdD4TDRgvfTnri?=
+ =?iso-8859-1?Q?vYawmAKsVZxhWY4mECRjBGNFi0tIvi7+i0GLXPXyTx+7e6O7tnr1MwGM4c?=
+ =?iso-8859-1?Q?J1p7LAqn/AOj66UNXFB0tRbCfScKeFjU51lMnzBnL/fWZk0hhkgqXKFJou?=
+ =?iso-8859-1?Q?DDDu5LvwmJMgurWIlsflBtXdzRELnXmFKZupB4wTF8VQF2aJvPe+hiUAji?=
+ =?iso-8859-1?Q?BjFjgd+egk7Lbr2nHLR/r1HhDNnZCeFSY28L8c96mny3ska+xVUl4SssQM?=
+ =?iso-8859-1?Q?VSCUxQNLJCWqghyCWmbDytJYZHFIl05fxyBJ5G2gtEegogVkXmEItPC0er?=
+ =?iso-8859-1?Q?zz+0mMnZaMtxsHuugwCLUAN90e7ctmWU6QF6EkEd9knwF/9+KFfb++LypX?=
+ =?iso-8859-1?Q?wjIKIGDcPFmwyas8oSnfESosueHj+T1F03Xn4SDcF3rJJjhv0qasLqNW/h?=
+ =?iso-8859-1?Q?brMz6cxtRwl0dJsiAncyqhmKh9HF86iDGPepcku6OrTJ+A9/fzVudWaXqL?=
+ =?iso-8859-1?Q?cF+9ClvZFFApeYjfTRmRPK0jkBDEOIHWtu54guG3S+u+xqeGWjc1tk3Mho?=
+ =?iso-8859-1?Q?Z2vLQMeGPTt2VEj3fFTv//B5/qrg5FQzTviDcrzB/+4owoQTaViIKZ9+7i?=
+ =?iso-8859-1?Q?96xxpsXjqHV4sCkuOULd84edX5HWVtZurqRt+tR1brmaMAGfDhDWXjw2L2?=
+ =?iso-8859-1?Q?VvoCm9wL/z4utzMDVSdhQHt9DWc/crERvsqK/iNSwvRtfo9UgTesoxNXTS?=
+ =?iso-8859-1?Q?C44/LbKBtPvLkX5tCWacSt8UASzsjF1ryl6XA++7QZIJUE7Bq2K/06Mpgw?=
+ =?iso-8859-1?Q?iV1dhJzAnBw/SjPsZAe3RbF6Lo4/f0MxPL3pt/tY0oAhXIGV0tbq73OqPK?=
+ =?iso-8859-1?Q?rUJEDXyDspwHoT6si191VopVUcXHByWCUM5mRRkDP/0+9O21q8Prz6f4ZJ?=
+ =?iso-8859-1?Q?+sAxpr7XXzbXtoSbvKM5gNw9J8pcdJ1mbjl9u+Q4M5eoc9B+uh3nvkhE8O?=
+ =?iso-8859-1?Q?imklrFH/uo+OvSEr+UYDT8yfEpyeaV8JQ5eu4SgYczYpsHnPf+v9Bo6v1C?=
+ =?iso-8859-1?Q?DSktKODQ3j0/fW46fl84WJtwCdQyKp536F4YpRuXDXZzdkYZ4iecjHlSpk?=
+ =?iso-8859-1?Q?LipWZgg1WGX5nzCqSgiZr3OJYnjAZLuhHH5i1FtWNwCbjeiKPDsdIAvura?=
+ =?iso-8859-1?Q?dBxq9b2XupAWSc1EqKo=3D?=
 x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:PH0PR18MB4086.namprd18.prod.outlook.com; PTR:; CAT:NONE;
  SFS:(13230040)(376014)(1800799024)(366016)(7142099003)(38070700021); DIR:OUT;
  SFP:1102; 
 x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?X3bvB66im9Pr+Cvm1DLUgywIxbZHR3BHsnCiFvURp+UahPLwIeyfyU6MCL?=
- =?iso-8859-1?Q?sjvZ8GNM6/W6j7iIWzEjlRV4hcnCebIFDyAylA87k6eCnsrNT32fgBxNu7?=
- =?iso-8859-1?Q?C+mzTdT2gaTUNJtHqAYaefx4CLQJ5sz5wdz9XMPkDt5YnzNdmXMH7RscPy?=
- =?iso-8859-1?Q?5pjk3pzZMKUGOS2ScfpbPf1avplZvScB7P80fokPsNlrdoVvryFoAvTgkQ?=
- =?iso-8859-1?Q?qbebYm42NFRlATe3aSNGlRpBSZpJB2yoPN4ZcmU7+ZgBfBs2+xiqAPrxiY?=
- =?iso-8859-1?Q?kWwM1e7i2Z5XNmqzA0y0bmpqKX71VPGg7NQpwrzQIhaLUOz1y2J2inKqm0?=
- =?iso-8859-1?Q?YJTx/SNEzMOcFysPGwXQ7AepPZnVtLCol+Ii4bNz0k2QLcKIlMIdnPuFSF?=
- =?iso-8859-1?Q?P1VDT6Fg89dDAnaNr5rp3q1VhFVZawTpzGDhQxb1Ti2BaNFEKEHLHp9P2B?=
- =?iso-8859-1?Q?yNYUWZF7tCEQz6/9w0TIrb4QOIoQzAV6RsQ+YMDs/dorANYQ6GK3/SygbX?=
- =?iso-8859-1?Q?vZH/PR2/B9kFYsDAO2QTcDFBwzxs84biaF8mguUpfp+8z1TdUP77ctYNNW?=
- =?iso-8859-1?Q?ArUEVQCIleoPPrCVgo6L+ZwTNsBEUpi5mEunsAVdBapuG4C8g9HN3cF19a?=
- =?iso-8859-1?Q?irSmkuWrJkFQWEwr1TFE4NJuM5MPTPHGPFgitntxF/EzLTz+3ojpov+EPI?=
- =?iso-8859-1?Q?1si1oL7YPwKVptlYfJoLzM2CzwVQdtHtRsuPWxogebG4bnqBzAQ//c0nKG?=
- =?iso-8859-1?Q?ZCV4Lek+uc1nP5lkgORtM8SzIjwGtqEwfRf8w9TnZ9T6sqQiIRXtIGzYXL?=
- =?iso-8859-1?Q?HhUYYYX+RgK1coC0A4dybXnUgwwR8KI4EiKbPJwkKtARCwhIe9EqjkpsPA?=
- =?iso-8859-1?Q?n1jIId6qrRPCeJF6xxROZS6q53x9iLxkqhiMJxaK8BXIG5fWK/0B850Xrf?=
- =?iso-8859-1?Q?vb28UZcOGw583TDUlDuA9edpuHTELWbFR1RIrfE6PjLuMUAho67CrU7vC4?=
- =?iso-8859-1?Q?JV4yCIVO0/4WGQw4/cdt85EgLe7LRO9NCw7mNJ8v7cftq8H13iYrd1sw+y?=
- =?iso-8859-1?Q?zD4ABvoIBb70B9OOfne/JLa2cJI3o4pRPqWSKoRKUrNUzxXBEv2L+9oKsP?=
- =?iso-8859-1?Q?Bm8xjzPKNATdPBXdTUVLXQeNCxncEZjVZPegn0jx5SCya3Xftnv6blDH2Z?=
- =?iso-8859-1?Q?WUATkD4I9gYCD22bKEXNVEUrZvO2KeLLD9S5B3eSWRlKerzpxrJxv89Kl3?=
- =?iso-8859-1?Q?KTLup9Pr7uxBRW0E+CTfdeElIJUm7bmWaH/wdEDcw4kWq7AxiVkGnsNCBj?=
- =?iso-8859-1?Q?d5BW/mLzlBBRcNlOVHl/okmwmr6+B9lh+9bxJq4LZcQygRaZm3CuWiak4h?=
- =?iso-8859-1?Q?eSmkRfi8HZLQQQiQIoS2WJ8f+6pnDWGnIgFhe7qnobBcyQlTuqy7hhfeUN?=
- =?iso-8859-1?Q?JViv2hh4xR9Iwhx7jI1t00PZyzrWQ9svpUP7YJeTNj245d7kLWO4fLNclZ?=
- =?iso-8859-1?Q?ecYSebzjjQ4IEjXSsVMySF9lezWnBWndPnT4qH+R1Fabp6DLB7whPkp03A?=
- =?iso-8859-1?Q?ZNyLVsm99KkKICt7r814KolMYdUnaj66/I7shobkhMv6jNinp70f+DZ84H?=
- =?iso-8859-1?Q?7stPv4H6Ik5//cXKktRUEZTofHX7Emh5Z2P3u1pYYwDnYybxFU76IdCAYS?=
- =?iso-8859-1?Q?lLcV8lLEdBcEP8jMvZWWlPn83Ki6EzI01171lfJcmYY758kH64Wn3RXpLZ?=
- =?iso-8859-1?Q?GhqPnJX/0jJUqMbnWthYvuFYfN9N7IQZ8AiMBLo1Sgsb9bRe1Dsf+ZWgld?=
- =?iso-8859-1?Q?4Hk1n5EkYQ=3D=3D?=
+x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?RLwaBm21z4Ygdjt+ESMJ33nJjRUT8nSuovNQfQFczuU4tlWyrf5fiiYWii?=
+ =?iso-8859-1?Q?aN2fx5uIVG3hitR/e9gScu3VTeg5+BFmDzvEoDX2NrE8RGEwcxp/mnJDGY?=
+ =?iso-8859-1?Q?30hat8zObvf6L2nV8flOPky9rjCq8UQ+Wdgl8ZimMLnFLQDYf7C6IdvIOX?=
+ =?iso-8859-1?Q?mtyzQUYcPC7w1qlMD93ouvpvzigSsEagKwyi8yB6BS6Rgts26g4WJ6xvAz?=
+ =?iso-8859-1?Q?l38gXIhuGdehRccDtQ8Da5f2Hgv5kV70KtpTyaIp98tKxqmW+PWt7UXLVm?=
+ =?iso-8859-1?Q?ZJy5nJu7NGIaUeHgGuyaTpL9pMHUObZ9wjAoIFQaa3B+JKJ6Xsc03vWEzf?=
+ =?iso-8859-1?Q?NEYQvp0CpcBy4CPhVa6tscvMxxQkQ9N8mP5+3dtBVydB4iZbVE7IH53CsF?=
+ =?iso-8859-1?Q?okWBhMwUnhkKwaEogHCUpw83+FZuIwiyBOTz3n9+BECcdjd0ZeVuMoc7tn?=
+ =?iso-8859-1?Q?EfUAcObkJeDHH1XMv0r2tbn8QQlBg2p0p9rLxSpcr+JAzwt6Dli0qlGFN0?=
+ =?iso-8859-1?Q?ic/VnPTA4YIwxmnmC1/rFaTTuWJnNShMKiwwUvMqipGNyRJ/3GCwkacZ1C?=
+ =?iso-8859-1?Q?2GyOiZ6IUmdUXDB6hJLummzsjthFge95Ruz7WJkLS1g10vDrEMFyDgmjrO?=
+ =?iso-8859-1?Q?9sGGoWPED7bADPUOVvLoCSxXiK4eAtfAqYYoQMPRxYV7PZksDT5ILWmRhg?=
+ =?iso-8859-1?Q?TV+LZqRkCahh6LPccUj9Lu5jaDH4DftotoFoIKUW0R/O3f9qv4i4bFqZzK?=
+ =?iso-8859-1?Q?3BnYSJJl7bLWhLfBQO7geoLsfj8w/At1ShbLsqS5qpcJbZKoAoo6HUbnlu?=
+ =?iso-8859-1?Q?EP7AVJ2xkIJF5WVJwhQ6IyV/pZLBU055Hr7zq+/d2cqasK3wO03dOJQUBP?=
+ =?iso-8859-1?Q?QzlvKhWw2e6T82jB2Hh2H3GSRr4CE8XmOBP5TgRnrlp4lyaOFUclBWSXbA?=
+ =?iso-8859-1?Q?n85W2jvkCqOVb4bJjbWQYRI8cFueuV0TTCVpyI7PrsI/hlEujFaDQS9oNM?=
+ =?iso-8859-1?Q?5mYiOQlYUBq0126jaIPMVPckGD04ZejjyKl4MoxxfGVPfvaMW12xmdBzbl?=
+ =?iso-8859-1?Q?RUs6o0oFjh/fg+hZXw2vkUA3GFTBvAO4r0T1Or6wTfrTlsi7h7MaQqN2Yk?=
+ =?iso-8859-1?Q?ehRPlVOYA4RBXShW5Cvyk+2Wo+okuimGKldgGGRh7RjWhPKdVipiJkMhtc?=
+ =?iso-8859-1?Q?3SPJlA0vnFncNQYSwyVH9iEVTana58P06Jz2WCHEyVIgDEPib5ZYJrTEqj?=
+ =?iso-8859-1?Q?gyiKmLc+veF8/xs4z8wEoXOxqlrtPpwBRSv02yimV5RWN0TNYWt2S6Rr3P?=
+ =?iso-8859-1?Q?r9FJZk77e19Jfa4CgjLYSuWbrAO8tkalaaoYkd7650YXeL22catabEm2sy?=
+ =?iso-8859-1?Q?ph0GiXTlKZtQpZbgkqaJ83h1oythyAilUe51NL5l/ofrt6dggirOkBmnV7?=
+ =?iso-8859-1?Q?Q3eqxM/giglW9GONYITU8ryZPDAgLDV3Jag0qJegsWdY9AReFuA95wkoWv?=
+ =?iso-8859-1?Q?tIhKhtya68mL8ADKTIwIpZOMLWNMGRwjosW4ziMkJaCL5xNkY5iouK/rHr?=
+ =?iso-8859-1?Q?nj8foMFlqZDCL9qO1ZZMLrtpD4vmZD7nuIjFbYl0yBgXY3Um7JNfk+suBf?=
+ =?iso-8859-1?Q?anORBUpopdOWaBDw5MkiU6MhXAoQUqYua6UsxUOoidlZPktz5yF+2boxs/?=
+ =?iso-8859-1?Q?yhwzFpGvsWfpXLetR02fUHo9PAu+nLukDndmwbun+zM4gwDOQ1Zc282tkP?=
+ =?iso-8859-1?Q?7AKOF+tpgaGGLIHWA/xJUuu7L8CWDjaUqhmKzjKkVsBW/d0qkNjdJlKihD?=
+ =?iso-8859-1?Q?7vWJ1lbSHw=3D=3D?=
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: marvell.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-AuthSource: PH0PR18MB4086.namprd18.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d91a8b34-43d2-4efb-f022-08de6240b826
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Feb 2026 09:52:03.9883 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: cabd7698-eaf4-41cd-5a42-08de62418555
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Feb 2026 09:57:48.2455 (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: cAB+bDewKAvpBnQ95iPKr1jaF+soH8UOB8/gFNV+Y+XShxCJKEh2Rsq5FpHP9LYIdcCH4S1ampRZ4QU8dLFsM5bzB+XDRFnXksn93em7o2s=
+X-MS-Exchange-CrossTenant-userprincipalname: F7Mht0Cl2dpSgdDzOBB3aCzPu3aJib+9f0xwUo3fzs5S+Ew/6AS8gSWSwh9Qw1ccqMH08L0Vq/l3sPiUaUHZSuM0BhnzBZcyiMsIjKlx2Xw=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR18MB3512
-X-Authority-Analysis: v=2.4 cv=ZeoQ98VA c=1 sm=1 tr=0 ts=698073c6 cx=c_pps
- a=q7ul7JX4f8a5wKXmg0eXeg==:117 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+X-Proofpoint-GUID: g_h5NglBBehYpYUvBpe6OVin9sy93Q-6
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjAyMDA4NCBTYWx0ZWRfX/aWCDZz/u1YN
+ oms+QrgtZuYJuox3170tbnu0f+1HxisGfZNwNOZi0R72vqWjBqKGDHFOB0ZGgbXCNi3YZYR8PRB
+ CUVDY/VFD6deGvW/gU71fxWr9YADhltZ+046yjiLVQKaYAURb32c5Q92kxHldDpFnx5skDqN4pD
+ 8KlWqf1YbJpCyaa/8RA2e5Tmn8bFRqk2awCsIkpgATlmTr8QdROKRo3QlDNOijS4ATuTp2SvQ7s
+ KmKBl7xPH7GOMUIKOB+cpRxh8CnqKGJNrD+9LUCvqTeJfsvWMd9LB5pAbxnz/0Qhi3B/H6Jhajl
+ rFQAF0dAHZNQCgZXbHir7ZlWrCr8agDruoyBAUVhuDdrqBaPLJ+smy29o5PRCfKVs7ADvtH+024
+ //W9Vwtif0nnpCD8Ym5tderF0G8EtMX1Uc65HN4ByBwetQFYKyTs2btysa3z0xPCfXOhhySYv4U
+ F2ItjFK+FCTMgDtok7g==
+X-Authority-Analysis: v=2.4 cv=UP7Q3Sfy c=1 sm=1 tr=0 ts=6980751e cx=c_pps
+ a=GRNSBXvNJw0HWouCR8jgEQ==:117 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
  a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=8nJEP1OIZ-IA:10
  a=HzLeVaNsDn8A:10 a=-AAbraWEqlQA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=M5GUcnROAAAA:8 a=Mt5I5iToxYBJC2xeZpUA:9 a=wPNLvfGTeEIA:10
+ a=M5GUcnROAAAA:8 a=Lre_9A2vaikyXJUvw1cA:9 a=wPNLvfGTeEIA:10
  a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-GUID: SWDTjEHgj4xUkiikyfjo_cpsio0Q_S7j
-X-Proofpoint-ORIG-GUID: SWDTjEHgj4xUkiikyfjo_cpsio0Q_S7j
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjAyMDA4NCBTYWx0ZWRfX6HsPfSuTwdM9
- L4cPSXpK+oLl3MeLgjoxqHZpVci7TDkmvh1+4/kh7clPW1Miqb77scGj6QPHEkK1tkL23nIKBCx
- l/lHWtWvMqiT/dCRSrtNVlfOrWB01YWbgM0Cng6OlGUqkJ0RNxmIzKKODT4wHluL9DCaL5sKldY
- ast9jlfxioqjz3C4u6XqFi7xcJe32u6ivdZW85SjjFs0ecdb3C55M/Z2dM2Dnx0Dqi89B9la8Yk
- KoVs8Z59RpDz9ZaDKgjNB8mI63vJNeOt/cBb8Uv8DIP8mDOQ+grWuaOUPxH1qcewl9Ewx1K83dC
- XfRV+zFTKC/GI0tX7LE2oGJrm/OqAxwz9Vc7WJgtGwdT+1N51BGRE/ySE28oeBe5oqc743DPT7i
- 0K/cKOIcqVr7eJrBICnSVzj+V45MnQw06NCqvynv9WqKjm27ulOFRPWpwDEbdy1FQ6l14e+5Kra
- AalYVdU7QXFQ/DR0TXg==
+X-Proofpoint-ORIG-GUID: g_h5NglBBehYpYUvBpe6OVin9sy93Q-6
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
  definitions=2026-02-02_03,2026-01-30_04,2025-10-01_01
@@ -183,125 +180,93 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
->> > From: Pavan Nikhilesh <pbhagavatula@marvell.com>=0A=
->> >=0A=
->> > Add RTE_OPTIMAL_BURST_SIZE to allow platforms to configure the=0A=
->> > optimal burst size.=0A=
->> >=0A=
->> > Set default value to 64 for soc_cn10k and 32 generally.=0A=
->> >=0A=
->> > Signed-off-by: Pavan Nikhilesh <pbhagavatula@marvell.com>=0A=
->> > ---=0A=
->> > This improves performance by 5% on l2fwd, other examples showed=0A=
->> > negligible difference on CN10K.=0A=
->> >=0A=
+>>> From: Pavan Nikhilesh <pbhagavatula@marvell.com>=0A=
+>>>=0A=
+>>> Add RTE_OPTIMAL_BURST_SIZE to allow platforms to configure the=0A=
+>>> optimal burst size.=0A=
+>>>=0A=
+>>> Set default value to 64 for soc_cn10k and 32 generally.=0A=
+>>>=0A=
+>>> Signed-off-by: Pavan Nikhilesh <pbhagavatula@marvell.com>=0A=
+>>> ---=0A=
+>>> This improves performance by 5% on l2fwd, other examples showed=0A=
+>>> negligible difference on CN10K.=0A=
+>>>=0A=
 >>=0A=
->> I support the concept of having a recommended mbuf burst size, targeting=
- the majority of generic applications.=0A=
->> Making it CPU dependent seems like a good choice.=0A=
+>>I support the concept of having a recommended mbuf burst size, targeting =
+the majority of generic applications.=0A=
+>>Making it CPU dependent seems like a good choice.=0A=
 >>=0A=
->> It should be named differently.=0A=
->> First of all, "optimal" depends on the use case; if targeting low latenc=
-y, shorter bursts are better, so "OPTIMAL" should not be part of the name.=
+>>It should be named differently.=0A=
+>>First of all, "optimal" depends on the use case; if targeting low latency=
+, shorter bursts are better, so "OPTIMAL" should not be part of the name.=
 =0A=
->> Second, I would guess that it only targets mbuf bursts, not also bursts =
-of other operations (e.g. hash lookups), so "MBUF" should be part of the na=
-me.=0A=
+>>Second, I would guess that it only targets mbuf bursts, not also bursts o=
+f other operations (e.g. hash lookups), so "MBUF" should be part of the nam=
+e.=0A=
 >>=0A=
->> Suggestion:=0A=
->> /* Recommended burst size for generic applications, striking a balance b=
-etween throughput and latency. */=0A=
->> dpdk_conf.set('RTE_MBUF_BURST_SIZE_MAX' (or _DEFAULT), 64)=0A=
+>>Suggestion:=0A=
+>>/* Recommended burst size for generic applications, striking a balance be=
+tween throughput and latency. */=0A=
+>>dpdk_conf.set('RTE_MBUF_BURST_SIZE_MAX' (or _DEFAULT), 64)=0A=
 >>=0A=
->> <feature creep>=0A=
->> /* Recommended burst size for generic applications targeting low latency=
-. */=0A=
->> dpdk_conf.set('RTE_MBUF_BURST_SIZE_MIN', 4)=0A=
->> </feature creep>=0A=
->>=0A=
->> Having these standardized will also allow libraries and drivers to optim=
-ize for them, e.g. drivers should support bursts sizes all the way down to =
-RTE_MBUF_BURST_SIZE_MIN, and can static_assert() that the RTE_MBUF_BURST_SI=
-ZE_MIN is not lower than supported by the driver/hardware.=0A=
->>=0A=
->> <more feature creep>=0A=
->> rte_config.h could have "#define RTE_MBUF_BURST_SIZE RTE_MBUF_BURST_SIZE=
-_MAX", for the application developer to change to RTE_MBUF_BURST_SIZE_MIN f=
-or low latency applications.=0A=
->> This will let the libraries and drivers optimize for the specific burst =
-size used by the application.=0A=
->> </more feature creep>=0A=
->>=0A=
->> <rambling>=0A=
->> Intuitively, I would assume that the optimal burst size essentially depe=
-nds on the CPU's L1D cache size and the application's number of non-mbuf ca=
-che lines accessed per burst.=0A=
->> Let's say a CPU core has 32 KiB cache (=3D 512 cache lines), and each bu=
-rst touches 4 cache lines per packet:=0A=
->> 2 cache lines for the mbuf=0A=
->> 1 cache line for the packet data=0A=
->> 1 cache line per packet for some table lookup/forwarding entry=0A=
->>=0A=
->> Then the mbuf burst should be max 512/4 =3D 128.=0A=
->> But local variables also use memory during processing, so using a burst =
-of 64 would leave room for that and some more.=0A=
->> </rambling>=0A=
->>=0A=
->> >  config/arm/meson.build | 1 +=0A=
->> >  config/meson.build     | 1 +=0A=
->> >  2 files changed, 2 insertions(+)=0A=
->> >=0A=
->> > diff --git a/config/arm/meson.build b/config/arm/meson.build=0A=
->> > index 523b0fc0ed50..fa64c07016b1 100644=0A=
->> > --- a/config/arm/meson.build=0A=
->> > +++ b/config/arm/meson.build=0A=
->> > @@ -481,6 +481,7 @@ soc_cn10k =3D {=0A=
->> >          ['RTE_MAX_LCORE', 24],=0A=
->> >          ['RTE_MAX_NUMA_NODES', 1],=0A=
->> >          ['RTE_MEMPOOL_ALIGN', 128],=0A=
->> > +        ['RTE_OPTIMAL_BURST_SIZE', 64],=0A=
->> >      ],=0A=
->> >      'part_number': '0xd49',=0A=
->> >      'extra_march_features': ['crypto'],=0A=
->> > diff --git a/config/meson.build b/config/meson.build=0A=
->> > index 0cb074ab95b7..95367ae88e2d 100644=0A=
->> > --- a/config/meson.build=0A=
->> > +++ b/config/meson.build=0A=
->> > @@ -386,6 +386,7 @@ if get_option('mbuf_refcnt_atomic')=0A=
->> >      dpdk_conf.set('RTE_MBUF_REFCNT_ATOMIC', true)=0A=
->> >  endif=0A=
->> >  dpdk_conf.set10('RTE_IOVA_IN_MBUF', get_option('enable_iova_as_pa'))=
-=0A=
->> > +dpdk_conf.set('RTE_OPTIMAL_BURST_SIZE', 32)=0A=
->> >=0A=
->> >  compile_time_cpuflags =3D []=0A=
->> >  subdir(arch_subdir)=0A=
->> > --=0A=
->> > 2.50.1 (Apple Git-155)=0A=
 >=0A=
->I understand the motivation, and it make sense for a pure embedded system.=
-=0A=
->But then again on an embedded system the application can just set its burs=
-t size;=0A=
->this config option only impacts performance of testpmd and examples. And t=
-he=0A=
->performance of testpmd is mostly irrelevant what matters is the real appli=
-cation.=0A=
+>Agreed, would the comment be enough to say that it is a recommendation and=
+ not an enforcement? or should it be added to the macro name?=0A=
+>I am sceptical of changing burst size of 64 since most of the applications=
+ _today_ use 32, might cause unintended regression.=0A=
+>=0A=
+>RTE_MBUF_BURST_SIZE_(REC)_PERF?=0A=
+>=0A=
+>><feature creep>=0A=
+>>/* Recommended burst size for generic applications targeting low latency.=
+ */=0A=
+>>dpdk_conf.set('RTE_MBUF_BURST_SIZE_MIN', 4)=0A=
+>></feature creep>=0A=
+>=0A=
+>RTE_MBUF_BURST_SIZE_(REC)_LAT?=0A=
+>=0A=
+>(I am bad at names)=0A=
+>>=0A=
+>>Having these standardized will also allow libraries and drivers to optimi=
+ze for them, e.g. drivers should support bursts sizes all the way down to R=
+TE_MBUF_BURST_SIZE_MIN, and can static_assert() that the RTE_MBUF_BURST_SIZ=
+E_MIN is not lower than supported by the driver/hardware.=0A=
+>>=0A=
+>><more feature creep>=0A=
+>>rte_config.h could have "#define RTE_MBUF_BURST_SIZE RTE_MBUF_BURST_SIZE_=
+MAX", for the application developer to change to RTE_MBUF_BURST_SIZE_MIN fo=
+r low latency applications.=0A=
+>>This will let the libraries and drivers optimize for the specific burst s=
+ize used by the application.=0A=
+>></more feature creep>=0A=
+>=0A=
+>This is fine with me, we can wrap it around a meson option to avoid manual=
+ly changing rte_config.h=0A=
+>=0A=
+>>=0A=
+>><rambling>=0A=
+>>Intuitively, I would assume that the optimal burst size essentially depen=
+ds on the CPU's L1D cache size and the application's number of non-mbuf cac=
+he lines accessed per burst.=0A=
+>>Let's say a CPU core has 32 KiB cache (=3D 512 cache lines), and each bur=
+st touches 4 cache lines per packet:=0A=
+>>2 cache lines for the mbuf=0A=
+>>1 cache line for the packet data=0A=
+>>1 cache line per packet for some table lookup/forwarding entry=0A=
+>>=0A=
+>>Then the mbuf burst should be max 512/4 =3D 128.=0A=
+>>But local variables also use memory during processing, so using a burst o=
+f 64 would leave room for that and some more.=0A=
+>></rambling>=0A=
+>=0A=
+>We could probably read `/sys/devices/system/cpu/cpu0/cache/index0/size` in=
+ meson and calculate the number of lines and burst but, I dont think its=0A=
+>that simple, for example, CN10K has 64KiB L1D cache and anything above 64 =
+burst size causes performance loss.=0A=
+>=0A=
+>Thanks,=0A=
+>Pavan=0A=
 >=0A=
 =0A=
-True, but generally customer engagements start with benchmarking testpmd/l3=
-fwd etc.=0A=
-berfore moving to custom apps.=0A=
-So, having better performance numbers helps.=0A=
-=0A=
->Making it a DPDK config option is a problem for DPDK build in distros.=0A=
->The optimal burst size would be driver dependent etc.=0A=
->=0A=
-=0A=
-Since we are not modifying the current default burst size (32) it shouldn't=
- be a problem and=0A=
-can even benifit SoCs.=0A=
-=0A=
->Perhaps better off in the existing rx / tx descriptor hints.=0A=
->Most of those device configs really need to be relooked at=0A=
->since they were inherited from how old Intel drivers worked.=0A=
+@Morten, Any further thoughts? I can spin up a v1.=
