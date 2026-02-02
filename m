@@ -2,69 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85241E7DF13
-	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Feb 2026 17:39:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C2D5E7DF13
+	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Feb 2026 17:42:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CBB074027D;
-	Mon,  2 Feb 2026 18:39:16 +0100 (CET)
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com
- [209.85.128.41]) by mails.dpdk.org (Postfix) with ESMTP id CEDF34026D
- for <dev@dpdk.org>; Mon,  2 Feb 2026 18:39:15 +0100 (CET)
-Received: by mail-wm1-f41.google.com with SMTP id
- 5b1f17b1804b1-48068ed1eccso43526645e9.2
- for <dev@dpdk.org>; Mon, 02 Feb 2026 09:39:15 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 118E14027D;
+	Mon,  2 Feb 2026 18:42:42 +0100 (CET)
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com
+ [209.85.128.44]) by mails.dpdk.org (Postfix) with ESMTP id 0DF8C4026D
+ for <dev@dpdk.org>; Mon,  2 Feb 2026 18:42:40 +0100 (CET)
+Received: by mail-wm1-f44.google.com with SMTP id
+ 5b1f17b1804b1-4806bf03573so23347695e9.2
+ for <dev@dpdk.org>; Mon, 02 Feb 2026 09:42:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1770053955;
- x=1770658755; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1770054160;
+ x=1770658960; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=erGSmHwhu6tJyFiEfkxEAiLw9zJ91NEqhHA+2rwq0L0=;
- b=YDPzP/tNL74OF3lTJom5xSg31i055i3XPtKVwvjm8iWadD9jlngampm2AXfO5QcWKw
- dSywSlsp1Br4fNtabqDtXcPfwLVLt0YAAfqFUTG2dLPE+tStyuc34B4MgC2Kme1261gR
- dDIrf/dkA8w449PHvZ18ErRywypUmgN301IhJWIevUHlD1Q4ERxnGmXsKWxGyAIRJIp+
- 64ItnA4HLTWwzV/zNlhoaAqN63wz8TAFas5QnGwAEe20XvYWcXh5ve8dxGkiddmWZ+Hw
- g30kUyPLae+T1d5cbJdCPiu4F8G1mBW5XEDh9KLy6yRhSIPAGWT+mtfslEa0Wr9fVFW1
- a1kw==
+ bh=d8zmCzXZWVEzqrjGdqHLJk1gn0PWya+b5A5plyJbi7M=;
+ b=28mULyh3c/RWRWExJaRlPz5mvVghpt5dcO5S0ZTCymVP3sbBVLjwB3tWK1b3+OKSTk
+ tFpvm8HU5ma5bTRYHJpTxp7AHxF8SUBn4Szb9NpIJVGhfB5t0zKW3QQlGEtZ5Qp0NZWE
+ 9JHuZjT+vowYqr07TiOAUCCaH7RlXB0KYl3uGVCoClfPBBcyS09vmTiLMwFjJmh+SqNL
+ 7AKR29YBn/CA9N7vlknpqIltTCOkBtvPB6xS/GmCZljxCtU4m68HoNZKa/cCav4Nk9uG
+ QgB+R5cJifvSiQfIONks1Oe+df04pppth3Meoi0JNCqLx5Al6L0ba9SnsotxL0SKaxSM
+ 84qA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1770053955; x=1770658755;
+ d=1e100.net; s=20230601; t=1770054160; x=1770658960;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=erGSmHwhu6tJyFiEfkxEAiLw9zJ91NEqhHA+2rwq0L0=;
- b=eEdpijy3+ngIeQeL0zLXomDyxVf6SJw93WvWGUICIFhcK/m9eEjJrdApJw3fYrE3kH
- /lYFAW4HaVKUhJY+Jr3AWRmKrgiWQIQ4NCEuY+yP39t3DIed9or79wS2c3LLagCwhf8P
- anu74KuKfKgaOL6gwFJMV/aNuQSYuJFOZJr4WtCZs1206kdClA3XAn7W+yG7l0bZ8z8s
- lVluLlseTqaFOa/5J+fUpfrpcZsv1ctmI3EsqoImGGseLG2nk8yYE9Pu/BkSsak9YxYX
- wbU6hSISqjpp9S92n9ZlsT2tgFlLxd5IrxTxTRbeVcGv3CctMZM3TuU8L+5APjQ7JKSJ
- eUkA==
-X-Gm-Message-State: AOJu0YxbHlhEI1V2uAKgsk8ojftJdRtbbhDcy3cxvYI+GPUkeJfempim
- +4CVhSnNj+WKrvQZAwMKHMwq4bHMtqjppvnSyZPeZO0d+ChftNeIHOKVS04XWAK3DryzpTkzLIx
- 1SOF4
-X-Gm-Gg: AZuq6aKyAZ8oJ3e7BP+rn1QoVnSKqKGAJmrZuidxlWxlN3/yg4rQF0ANBfaQeLNYxyW
- oKOuGu5V0hQmntIjX1aDS9Fka/UQqv4RAvO2edcVJEjH+1CRYR5qFUn8yCZoKOGtNAlO183+drI
- 0mEGblBjv1tXa0mbeGpgV3xFTtGsxHG7u5UbclMYVlmethUC/+lo+3OWzO13mqVmWkbvPJS4V3D
- Ezc8apJ6j5lq+wNjNNG2QIqsWru3eBysiuBhX3lDEEXI7x9ZBpS3LkRC5w7cdP2g3378hnbwcZT
- 8Yri3FDvetVUtsfBaALfdunMthRxjuWJmoBGF7Q+xx86s0x+OBHl+oO2sD9zE5r0pDsyIiFM+61
- JWIgV6kXjoWjahX6beu1Py6ZoNr03Y4dsajRH9DnSPFEQG1C9RpxbyKj8PNG82xO77VpOb82pxT
- IMN+7AO0uYPHdqtHtLny0/qnDYkjSAVMoQ0Wybzb340nyQjkuHw/CcWwItuuoA
-X-Received: by 2002:a05:600c:64c9:b0:480:6999:27ec with SMTP id
- 5b1f17b1804b1-482db45ca9dmr159367425e9.13.1770053955285; 
- Mon, 02 Feb 2026 09:39:15 -0800 (PST)
+ bh=d8zmCzXZWVEzqrjGdqHLJk1gn0PWya+b5A5plyJbi7M=;
+ b=rjGyeo3JCMsvBuU6SHbp1iV5pBrYfmsOYJDAj3cctwdMkdlHSmMrKvXNMCJqBIPWZd
+ x738RO83V11fFHKJA5fAE5ZrRoC7am2wt8Qv1yMrZx6O5dYN6FZtjOvzOy3ixeQ+5UMn
+ LTY7qKk5tJSoq4XW+CRjHjTun3p9BspwfF5zOg14yXS5EgfP9nbu/4I+ZJ2ZqeXQBdzR
+ J8IuJlBUWCQJHj5fm+lBlFNpMww14daHVPtPm33qng4MbCYEALI1IJug7WLb/x1nxmmh
+ j/JbGlCCjYTElGK6buPrI1lWHnxuNf4L/ptpPbehylG11hcp/sM8337unzPu74W16+gh
+ Mm4A==
+X-Gm-Message-State: AOJu0Yx8SzhDqnFtBOD/Q96rW+c6J21Uk7xXPg5Ou6KD71MpsZ4+G1a0
+ CG6A7NLJT42+uWeMn8zmo0X/o5cKu7/Ijgzf1b02DnFVuAMHBRZJGlfP4GPDZKx1j7Stysr2qv6
+ Wk9Fs
+X-Gm-Gg: AZuq6aIn3+AB9lJytpmBXSJ+CSlSGJfZO4oWKLVq5WGd7h6+oHY0lRKFcc8Bm9RqWD7
+ Phy46xz5ZSgm7/9Nbk7YStFZoFHD1vXfobqmMlurkQDtinFqXdqMmaMb5mAn7kjxfJG12E5QZbZ
+ PXEf0hZWkkPI8GZ3nRc64g3VCnNAYgDT1VDpUNnUglYtOApP2m5zdm5JAE1pxrvi0H8OAwf4lna
+ 2rs8YG8K8wpyWInSplCj+Q00wqL84wi31N+MVc3gTpj1GVkGVx/b77BFDn+IDykqXeKNa4VdtcS
+ +s6TomlOY/y+xJKKj9vQ3VvPpieRzoTl8Xi3IUECjcyK5cIITqV0JTVuga9ZbzTl8E9dX7tk01T
+ kYGEFauy+JPb3PyM8fvQ/SOw0YpnqN3ZSYMWOQ0mmVDBQkri2RUv8UVzpnTziuhmsj+9Yn/q+fo
+ iMUQubI/q8g11aqouTkzUFhLAQtUXc7X/CVC45f3qUe1mQaGnkG/CeQXSOIEEr
+X-Received: by 2002:a05:600c:3b96:b0:480:1c10:5633 with SMTP id
+ 5b1f17b1804b1-482db49978emr157095055e9.26.1770054159580; 
+ Mon, 02 Feb 2026 09:42:39 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-48305129321sm3766255e9.4.2026.02.02.09.39.13
+ 5b1f17b1804b1-483002955dbsm19212575e9.5.2026.02.02.09.42.38
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 02 Feb 2026 09:39:14 -0800 (PST)
+ Mon, 02 Feb 2026 09:42:39 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [REVIEW] net/ice: add L2TPv2 RSS hash support
-Date: Mon,  2 Feb 2026 09:39:11 -0800
-Message-ID: <20260202173911.19518-1-stephen@networkplumber.org>
+Subject: [REVIEW] doc/nfb: cleanup and update guide
+Date: Mon,  2 Feb 2026 09:42:35 -0800
+Message-ID: <20260202174235.20628-1-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20260202094244.447966-7-shaiq.wani@intel.com>
-References: <20260202094244.447966-7-shaiq.wani@intel.com>
+In-Reply-To: <20260202153449.3295979-9-spinler@cesnet.cz>
+References: <20260202153449.3295979-9-spinler@cesnet.cz>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -81,92 +81,138 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-AI-generated review of bundle-1719-L2TPV2.mbox
+AI-generated review of bundle-1720-nfb-multiport.mbox
 Reviewed using Claude (claude-opus-4-5-20251101) on 2026-02-02
 
 This is an automated review. Please verify all suggestions.
 
 ---
 
-## Review of DPDK Patch Series: L2TPv2 Support for net/ice
+# DPDK Patch Review: net/nfb Multi-port Series (v6)
 
-### Overall Summary
-This is a 6-patch series adding L2TPv2 and PPP protocol support for Flow Director (FDIR) filtering in the Intel ice driver. The patches are generally well-structured, but there are several issues that need attention.
+## Overview
+This is an 8-patch series that enhances the NFB driver to create one ethdev per physical Ethernet port instead of one ethdev per PCI device.
 
 ---
 
-## Patch 1/6: net/ice: add L2TPv2 and PPP data structures
+## Patch 1/8: net/nfb: prepare for indirect queue mapping scheme
 
 ### Errors
 None.
 
 ### Warnings
-1. **Subject line could be more specific**: The subject mentions "L2TPv2 and PPP data structures" but the patch adds PPPoE structure (`ice_fdir_pppoe`) as well as PPP structure. Consider clarifying or keeping just PPP if PPPoE isn't used.
+
+1. **Line length exceeds 100 characters** (nfb_ethdev.c)
+   - Line 580: `priv->queue_map_rx = rte_calloc("NFB queue map", (max_rx_queues + max_tx_queues),`
+   - Split across multiple lines to stay within 100 characters.
 
 ### Info
-- The data structures are cleanly defined and follow existing patterns in the file.
+- Clean preparation patch that adds queue mapping infrastructure for the multi-port implementation.
 
 ---
 
-## Patch 2/6: net/ice: add L2TPv2 tunnel type definition
+## Patch 2/8: net/nfb: create one ethdev per ethernet port
 
 ### Errors
-None.
 
-### Warnings
-None.
-
-### Info
-- Clean addition of the tunnel type enum and pattern structure fields.
-
----
-
-## Patch 3/6: net/ice: add L2TPv2 protocol and field definitions
-
-### Errors
-None.
-
-### Warnings
-1. **Renaming existing macros may break compatibility**: This patch renames `ICE_PROT_MAC` to `ICE_PROT_MAC_OUTER`, `ICE_PROT_IPV4` to `ICE_PROT_IPV4_OUTER`, etc. If these macros are used anywhere outside this file, this could break compilation. Verify no external dependencies exist.
-
-2. **Extra blank line at end of file**: There's a double blank line before the closing of the file (line after `ICE_INSET_TUN_IPV6_DST` definition).
-
-### Info
-- Good organization of inner/outer protocol definitions for tunnel support.
-
----
-
-## Patch 4/6: net/ice: add L2TPv2 flow patterns and FDIR support
-
-### Errors
-1. **Inconsistent indentation in IPV6 handling block** (around lines 2213-2245): The code block for `RTE_FLOW_ITEM_TYPE_IPV6` has incorrect indentation. After the `p_v6` assignment, the `if (!(ipv6_spec && ipv6_mask))` block and subsequent code uses inconsistent indentation (mix of tabs and spaces not aligned properly). The closing sections starting from `if (!(ipv6_spec && ipv6_mask))` through `p_v6->hlim = ipv6_spec->hdr.hop_limits;` should be indented one level further to align with the case block.
-
-2. **Multiple trailing blank lines at end of function** (line 2806): There are two extra blank lines before the closing of `ice_fdir_parse_pattern()`. Should be at most one.
-
-3. **Missing variable declaration in block scope** (line 2590): `struct ice_fdir_l2tpv2 l2tpv2_be;` is declared in the middle of the switch case after other statements. In C89/C90 style (which DPDK sometimes follows for compatibility), declarations should be at the beginning of a block. This should be moved or the declaration should be in its own block.
-
-### Warnings
-1. **Inconsistent alignment in pattern table** (lines 160-176): The new L2TPv2 pattern entries have inconsistent tab alignment compared to the existing GTPU entries. While not breaking, it reduces readability.
-
-2. **Long lines exceeding 100 characters**: Several lines in the L2TPv2 parsing section exceed 100 characters, for example:
-   - Line 2148: `if (tunnel_type && !is_outer && tunnel_type == ICE_FDIR_TUNNEL_TYPE_L2TPV2)`
-   - Multiple similar conditional lines in TCP/UDP handling
-
-3. **Potential uninitialized variable**: `flags_version` is initialized to 0 on line 1899, but is used in flow type determination even when `l2tpv2_spec` might be NULL. The logic appears safe due to the `tunnel_type` check, but the flow is not immediately clear.
-
-4. **Inconsistent spacing in conditionals**: Line 2809 has different indentation style:
+1. **`__rte_internal` functions in header file without the tag appearing alone on its own line** (nfb.h:89-92)
    ```c
-   if (!input_set || filter->input_set_o &
-       ~(item->input_set_mask_o | ICE_INSET_ETHERTYPE) ||
+   __rte_internal
+   int nfb_eth_common_probe(struct nfb_probe_params *params);
+   __rte_internal
+   int nfb_eth_common_remove(struct rte_device *dev);
    ```
-   vs the original code alignment.
+   The `__rte_internal` tag should be alone on its line, but the function signature should have the return type on a separate line per DPDK style:
+   ```c
+   __rte_internal
+   int
+   nfb_eth_common_probe(struct nfb_probe_params *params);
+   ```
+
+### Warnings
+
+1. **Extra blank line** (nfb.h:93)
+   - There are two blank lines before the `__rte_internal` declaration; one is sufficient.
+
+2. **Line exceeds 100 characters** (nfb_ethdev.c:704)
+   ```c
+   ret = snprintf(pp->name + cp->basename_len, sizeof(pp->name) - cp->basename_len,
+   ```
+   This line is approximately 101 characters.
 
 ### Info
-- The patch is large and implements comprehensive L2TPv2 FDIR support. Consider splitting into smaller patches if possible (e.g., pattern definitions separate from parsing logic).
+- Good refactoring to support multi-port architecture.
 
 ---
 
-## Patch 5/6: net/ice: add L2TPv2 hardware packet generation
+## Patch 3/8: net/nfb: add vdev as alternative device probe method
+
+### Errors
+None.
+
+### Warnings
+
+1. **Unnecessary cast of void pointer** (nfb_vdev.c:62)
+   ```c
+   ret = rte_kvargs_process(kvlist, NFB_ARG_PORT,
+           nfb_eth_dev_create_for_ifc_by_port, (void *)&ifc_params);
+   ```
+   The cast `(void *)` is unnecessary in C.
+
+2. **Missing newline at end of file** (nfb_vdev.c)
+   - The file appears to end without a trailing newline after line 108.
+
+### Info
+- Useful addition for virtual/simulated NFB devices.
+
+---
+
+## Patch 4/8: net/nfb: add device argument "port" to limit used ports
+
+### Errors
+None.
+
+### Warnings
+
+1. **Unnecessary cast of void pointer** (nfb_ethdev.c:774)
+   ```c
+   nfb_eth_dev_create_for_ifc_by_port, (void *)&ifc_params);
+   ```
+   The cast is unnecessary.
+
+### Info
+- Good feature addition for selecting specific ports.
+
+---
+
+## Patch 5/8: net/nfb: init only MACs associated with device
+
+### Errors
+None.
+
+### Warnings
+
+1. **Using `calloc()` instead of `rte_calloc()`** (nfb_ethdev.c:74-78)
+   ```c
+   intl->rxmac = calloc(ifc->eth_cnt, sizeof(*intl->rxmac));
+   ...
+   intl->txmac = calloc(ifc->eth_cnt, sizeof(*intl->txmac));
+   ```
+   For consistency within the driver and proper NUMA-aware allocation, consider using `rte_calloc()` or `rte_zmalloc()`. However, since these are control structures (not DMA-accessible), standard `calloc()` is acceptable.
+
+2. **Using `free()` instead of `rte_free()`** (nfb_ethdev.c:114-115)
+   ```c
+   free(intl->txmac);
+   free(intl->rxmac);
+   ```
+   Should match the allocation function. If using `calloc()`, then `free()` is correct.
+
+### Info
+- Properly scopes MAC initialization to the associated device.
+
+---
+
+## Patch 6/8: net/nfb: add compatible cards to driver PCI ID table
 
 ### Errors
 None.
@@ -175,31 +221,55 @@ None.
 None.
 
 ### Info
-- Clean addition of case statements for the new L2TPv2 packet types.
+- Straightforward addition of PCI IDs for additional compatible cards.
 
 ---
 
-## Patch 6/6: net/ice: add L2TPv2 RSS hash support
+## Patch 7/8: net/nfb: report firmware version
 
 ### Errors
 None.
 
 ### Warnings
-1. **Missing documentation update**: This patch adds new RSS types (`ICE_RSS_TYPE_IPV4_L2TPV2`, `ICE_RSS_TYPE_IPV6_L2TPV2`) but there's no corresponding documentation update for the new feature. Consider adding release notes for the L2TPv2 RSS support.
+None.
 
 ### Info
-- The RSS hash configuration follows the existing pattern for other protocols.
+- Clean implementation of firmware version reporting.
 
 ---
 
-## General Issues Across All Patches
+## Patch 8/8: doc/nfb: cleanup and update guide
+
+### Errors
+None.
 
 ### Warnings
-1. **Missing release notes**: This feature series adds significant new functionality (L2TPv2 FDIR and RSS support) but no patch updates `doc/guides/rel_notes/`. A release notes entry should be added documenting the new L2TPv2 support.
 
-2. **No test updates**: There are no corresponding test additions in `app/test` for the new L2TPv2 functionality.
+1. **HTTP link instead of HTTPS** (nfb.rst:20)
+   ```rst
+   `historical cards <https://www.liberouter.org/technologies/cards/>`_
+   ```
+   This appears to be HTTPS, which is correct. No issue.
 
 ### Info
-- The series is well-organized with logical progression of changes.
-- Each patch compiles independently based on the structure (data types → enums → definitions → implementation → hardware support → RSS).
-- The Tested-by tags are present on all patches, indicating the code has been tested.
+- Documentation updates align well with the code changes.
+- Release notes properly document the new features.
+
+---
+
+## Summary
+
+### Errors (Must Fix)
+1. **Patch 2**: `__rte_internal` function declarations should have return type on separate line per DPDK style.
+
+### Warnings (Should Fix)
+1. **Patch 1**: Line exceeds 100 characters in nfb_ethdev.c.
+2. **Patch 2**: Extra blank line in nfb.h; line exceeds 100 characters.
+3. **Patches 3, 4**: Unnecessary `(void *)` cast.
+4. **Patch 3**: Verify file ends with newline.
+
+### General Observations
+- The patch series is well-structured with clear separation of concerns.
+- Commit messages are well-written and follow DPDK conventions.
+- The code changes are logical and the multi-port architecture is cleanly implemented.
+- Documentation is updated appropriately with release notes.
