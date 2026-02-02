@@ -2,72 +2,83 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09A53D172C6
-	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Feb 2026 04:49:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4582D172CE
+	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Feb 2026 05:17:36 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8297140665;
-	Mon,  2 Feb 2026 05:48:51 +0100 (CET)
-Received: from mail-dl1-f45.google.com (mail-dl1-f45.google.com [74.125.82.45])
- by mails.dpdk.org (Postfix) with ESMTP id 65C0C40693
- for <dev@dpdk.org>; Mon,  2 Feb 2026 05:48:50 +0100 (CET)
-Received: by mail-dl1-f45.google.com with SMTP id
- a92af1059eb24-124a1b4dd40so5975352c88.0
- for <dev@dpdk.org>; Sun, 01 Feb 2026 20:48:50 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id B424F40285;
+	Mon,  2 Feb 2026 06:17:35 +0100 (CET)
+Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com
+ [209.85.217.46]) by mails.dpdk.org (Postfix) with ESMTP id 430C840281
+ for <dev@dpdk.org>; Mon,  2 Feb 2026 06:17:34 +0100 (CET)
+Received: by mail-vs1-f46.google.com with SMTP id
+ ada2fe7eead31-5f535ff78abso2877919137.1
+ for <dev@dpdk.org>; Sun, 01 Feb 2026 21:17:34 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1770009453; cv=none;
+ d=google.com; s=arc-20240605;
+ b=K5VCjGaRvR+FWp7aFLeWM7z0R6pWvi5nJJo8VAHvgHmbS+IYEQ0zOV1xZ+9qWV2T0m
+ T5Ehel2W+ex/5DPB7u0oFSLu2hrZpAtoPT6PO2jAl+GaL2149zw/Wz8+n+vrpbCRkEdQ
+ 5iaBDxTe6y+2aPJStU0FwvC7LZ8I35wBirLbeCWLkMBLNlZRat3ZCnVoWoQ7HNj34Kiv
+ 2fDzTBXihOSiaymho0o3BP/gU3zrqcyFbdvirrgCN/E73+atWLiE/gHTVU1iemb1tWYZ
+ VPNfemqrP9ri0Tguk8sa+sol0BXMB/ADQL6hqFAz/P7Fc/oF1R4o0KHnMMETeOzR1w53
+ fp+w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20240605; 
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:dkim-signature;
+ bh=bpVWRM/+jlsFUp7gqoBYYSzaLkANoInA3+l0kWUg2ZQ=;
+ fh=t33Egyn4DAOwVRnwraldPtDjoBFAjogf3LzpsEMwxHQ=;
+ b=R/PSA4mHP3bQn3MbnGaq0eEvFQ5JdcXRnZWqgG8V6d+VSIcE1JNzG3l7VjCzvAw0sL
+ 9PYGPsn2JMyMuYnQk56KqpDZ5SXZsZCcDn58wtP1aQ0h8rvc/ZmMZOa5GnCoA67cFOlY
+ KUef000J7MN+7tOYhTo4dslYJZNV7yl8NXZQ1VTILzoUKCCu9ftZVU6+j1UaFvs+45KP
+ Cd+TjwlWwHhwJqJGGr14M/x7yy/gnHS1sUSnS9h9xDkZ+cW1Qlwa8/36W5MMUGyEZ2IK
+ cjfbdzPgTTiiI+YKkpyVTMR42aWv0XGXcwVcHZdZS+nR8qfz+tMWdKnVoQ9HD9r9Asqb
+ ptNg==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1770007729; x=1770612529; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=tltjpgmqdPkBfsdNcVHeGKVyojLBWL+88ESr0MC4cnc=;
- b=Kxu6zDtSikVvZF6ZQnp3WTaHjgb5H5wIbhQLZXK4dgo9ze6LrMcWSIp5GOOteOk0Tm
- LGNNXEzJK4uZrMhunK8XScILkoKEl+P/MJXdxTDPUhyF4zImn9pJ4STkey7Ts9UxcqQq
- 9aynOR9ipDhJurNgBtJtllpqeJtuP0ncV1ahtsZxMX6HNaIQRTezGmdsn5FP1q6uK2WS
- 90ILNC6AB8904tEXWWbUTiKUKLENJPAXgqC9Tg3rs5GcvbTGKOVv/JpTbNwCFmnOdkj7
- ljMwd5uVkXAFnfOqyL82TpByY6I7Rav3ex83hSonvWlGqxiOf7PJ/sFSHEVv6gOxhBFJ
- nZGQ==
+ d=gmail.com; s=20230601; t=1770009453; x=1770614253; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=bpVWRM/+jlsFUp7gqoBYYSzaLkANoInA3+l0kWUg2ZQ=;
+ b=bWUvUFQAiukWacmW97wx75PYbUsR0UgdYCD2S5yk6H4aA0+2sUPSQnpMPXTQDxn+mF
+ 6wh/f5368KrbWaqRRQ/82FF7pj9Uh5UPu8YEu02aSb8ykpqmpZOz1cWtktfUuth2bUqU
+ oTPQI9OZhWp+bsNXUUxkWvBf2GGQDspvGoPNaKUjGHv8F8zLhSLaxgl2uEF78rb/mtwk
+ 0AD3p1Nh0wFtk2BfMnh+6dDVAlgBSSjHzNmhSdwP3XJE3zQx5VxqnX6rUNCZmKL5BYtX
+ BtJ2/jvxcaH27H1lu5c/OGXm9rZrtiL/R3LXQ+z3zdswb2f9defeq0p/daSxJ9+an7eD
+ Tf5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1770007729; x=1770612529;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=tltjpgmqdPkBfsdNcVHeGKVyojLBWL+88ESr0MC4cnc=;
- b=ejFO1psCoDoh3qbSYJpfkE64QA/I4PMvncp9J7BtN+kcjePRR0CZYSIpUMHyvJUnmL
- TQpQLhyAaJXoQVtYDMlmUmz/YAi6SquI84we58ufvqAdi41HsMecvmlpBXkAXrV/LdLF
- LXeFIkD6hw6dNPclItv8QijciLY+U3MmdTzxu9RwjbrKBVA2Tbe2r3R/s//9fCrjxJ7+
- mqBY8Ynm41W2ReGnI7JlWDaNfLjae5necGilZUkn34UQyqlZV7dBfDg8o9iBC2p6knkS
- PJmB+Ka//nqWTp/iIqcY9fwcxZHB/kQIw37B4MwkARTnbBVQc42PnNUIYrq4ft5XxuV/
- 5F+A==
-X-Gm-Message-State: AOJu0YzDdIhPKJ3PpvLUfuq2OrEhKWwWBEav09mGj+0CeoH87oxTBSIf
- kMfCSG3sE3IqNXc5Vf5Bo9oafDAGshDA+jFX0GGpZa7DZ51C63QScHxAZVzvsw==
-X-Gm-Gg: AZuq6aIUT/cploosFPDkeKQfdCRl5xONwEJ7RnSnsFjbqPBN/VFy+YcYcv2bKfuKlE1
- UvfLu/4V8EmyRM7D0+houmI6arOPv5YIwWAibtRJOhKG3esgTmtM3jQl5FnV+jq1mYy6DCx92ea
- +8x/thHCSG1PaoaNcv5sv5gPAisNneT4dSbssM2rj9ubO7bz4Sq8YDldi1F9CO8t+Y3p40QHH69
- +G+9NkD0M0GJ3eiotr+988uGipUBF5S0BKvPouD08dL0mbJ1gxRCmqLk0a3PMmyQ9mV6niN8WLQ
- 85Xr4+bdmQCBB0bz2iBUG8TyI/kwzaiVY6IiRMMRxu05MM9G6/EnzVG0lwXDI0Uj4yYQ+49zKPQ
- GbGMx6HYryfT87xEFDfuEh/SdLRuzRRkoE2t58sfFA/z5PUDpQNyKyvMXgyyg/CRCLw8D7axULU
- zX8m3hWJa1ZwV093+G8AyflRttdsk=
-X-Received: by 2002:a05:7022:6893:b0:124:acc6:6dd1 with SMTP id
- a92af1059eb24-125c100fdebmr5772945c88.46.1770007729161; 
- Sun, 01 Feb 2026 20:48:49 -0800 (PST)
-Received: from mac.com ([136.24.82.250]) by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-124a9d7f789sm16784293c88.6.2026.02.01.20.48.48
- (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
- Sun, 01 Feb 2026 20:48:48 -0800 (PST)
-From: scott.k.mitch1@gmail.com
-To: dev@dpdk.org
-Cc: mb@smartsharesystems.com, stephen@networkplumber.org,
- bruce.richardson@intel.com, david.marchand@redhat.com,
- Scott Mitchell <scott.k.mitch1@gmail.com>
-Subject: [PATCH v19 2/2] net: __rte_raw_cksum pointers enable compiler
- optimizations
-Date: Sun,  1 Feb 2026 20:48:41 -0800
-Message-Id: <20260202044841.90945-3-scott.k.mitch1@gmail.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20260202044841.90945-1-scott.k.mitch1@gmail.com>
-References: <20260128194141.90018-1-scott.k.mitch1@gmail.com>
- <20260202044841.90945-1-scott.k.mitch1@gmail.com>
+ d=1e100.net; s=20230601; t=1770009453; x=1770614253;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=bpVWRM/+jlsFUp7gqoBYYSzaLkANoInA3+l0kWUg2ZQ=;
+ b=OIxe88Rnt/oE0MqTxG1+hxjWN88jOaXYYIyJXSAzTiOxE53tCGYhMtfneZQXPv+fnh
+ gGJTlYyOmx3kToBw4/GXs8Xcuh39xZNsLYQ1qPBfsfqMIGTwnFEmap4eVqjwOIkQokpU
+ k2SoDdfqxWTUiqNY2JnOJpebMVzafFARNNJS48YIqQH62VpMhvvPxZ7d1Wk4Dy5SY7V0
+ Vfra/yxPEZAWvqqGLmuIJMHmM64VtCd3gNErngBGUMYpDZcqeXBTM6GK2IWFpV/IpOcW
+ UD2YpEwHsk2S0f/UgDy3OrCSZJL8rpgaZ/osac16Bu6ySQ9J08Nrxtsz12xjfT2KANHE
+ Tvmg==
+X-Gm-Message-State: AOJu0YwhApno9R9zeWCElO2gzTCy2hPiw29ZXtEb4ij2Uj9eK+8OQRrY
+ TsQxaj1u7GrYVu/Xtn1TpZUF2OHydTRHAq/yMvk47WBBPyKCb6zR8YpQoLVyS/GpZMoWdYpIHl+
+ WLhMx0QnQqO9oLaCorNjivp/IssRBIdRhsQ==
+X-Gm-Gg: AZuq6aIV/phEI/pprf30ZjuxbtUp8wSdR1piHZB47hHdvC6sfQpZWohrSA8gpLS7cXo
+ AwiXoDyrUG7HNqAgOl/1PGNHZRuFvq5MV7fxRA2/ZaRi186wLXKVCFGf8Gtq9FeuqyfQCa5t/Zl
+ PyfkYTB4WsnHYQ5pZWRg0/azUnu82KgmChpBu/MJSvk75l2mAjHgbKl8rWgTgrbYn8HyO17ZMC5
+ IZ7EAe8AuSq9o5TCdrEFGmv8eVQ1fIx41TEEPyf+hca6nXEJd5bs5prrynAUi/s0tv7Xbs=
+X-Received: by 2002:a05:6102:b0f:b0:5f1:b904:d310 with SMTP id
+ ada2fe7eead31-5f8e25fc974mr3736181137.33.1770009453242; Sun, 01 Feb 2026
+ 21:17:33 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260125223015.69190-1-scott.k.mitch1@gmail.com>
+ <20260127202843.20273-1-stephen@networkplumber.org>
+In-Reply-To: <20260127202843.20273-1-stephen@networkplumber.org>
+From: Scott Mitchell <scott.k.mitch1@gmail.com>
+Date: Sun, 1 Feb 2026 21:17:22 -0800
+X-Gm-Features: AZwV_Qhv5cR1rXmEwzyR3lMPwaJa4Fa_8bkHe5nxQmQSqkSePjFUxpG9wkvvrn0
+Message-ID: <CAFn2buCp0T38QNu4aLJOgMpvNZjXVSpV-yf0zSXxtgvUSJ8W-Q@mail.gmail.com>
+Subject: Re: [REVIEW] eal: RTE_PTR_ADD/SUB API improvements
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: dev@dpdk.org
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,322 +92,70 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Scott Mitchell <scott.k.mitch1@gmail.com>
+> 2. **Missing `Cc: stable@dpdk.org`**
+>    - This patch changes API behavior (NULL to `RTE_PTR_ADD`/`RTE_PTR_SUB` is now undefined). If this is considered a fix for existing issues, it should include `Cc: stable@dpdk.org`.
 
-__rte_raw_cksum uses a loop with memcpy on each iteration.
-GCC 15+ is able to vectorize the loop but Clang 18.1 is not.
+Morten opened a discussion on this. It's API breaking so I'm not
+proposing backporting. If backporting is desired and API compatibility
+is required an option is to deprecate existing macros, and introduce
+new implementation with a distinct naming convention (e.g.
+RTE_PTR_QUAL_ALL - qualified add), then remove old macros in the main
+branch.
 
-Replace memcpy with direct pointer access using unaligned_uint16_t.
-This enables both GCC and Clang to vectorize the loop while handling
-unaligned access safely on all architectures.
+> 3. **Missing explicit NULL checks before some `RTE_PTR_ADD` calls**
+>    - `lib/eal/common/eal_common_fbarray.c:1062`: Added `RTE_ASSERT(arr->data)` - good, but this is a debug-only check. Consider returning error in release builds.
 
-Performance results from cksum_perf_autotest on Intel Xeon
-(Cascade Lake, AVX-512) built with Clang 18.1 (TSC cycles/byte):
+I'll add a runtime check here. Note there are other cases where APIs
+didn't have any null handling and would have crashed, and I added an
+assert to at least be explicit about expectations.
 
-  Block size    Before    After    Improvement
-         100      0.40     0.24        ~40%
-        1500      0.50     0.06        ~8x
-        9000      0.49     0.06        ~8x
+> 5. **`volatile` qualifier handling in `idxd_pci.c`**
+>    ```c
+>    // Line 62
+>    static volatile uint32_t *
+>    idxd_get_wq_cfg(struct idxd_pci_common *pci, uint8_t wq_idx)
+>    ```
+>    Good fix, but the FIXME comment at line 398-400 indicates incomplete resolution:
+>    ```c
+>    /* FIXME: cast drops volatile propagation to idxd_dmadev.portal
+>     * See: https://bugs.dpdk.org/show_bug.cgi?id=1871
+>     */
+>    idxd.portal = RTE_PTR_ADD(RTE_PTR_UNQUAL(idxd.u.pci->portals),
+>    ```
+>    This should be tracked in the commit message or release notes.
 
-Signed-off-by: Scott Mitchell <scott.k.mitch1@gmail.com>
----
- app/test/meson.build       |   1 +
- app/test/test_cksum_fuzz.c | 234 +++++++++++++++++++++++++++++++++++++
- app/test/test_cksum_perf.c |   2 +-
- lib/net/rte_cksum.h        |  14 +--
- 4 files changed, 241 insertions(+), 10 deletions(-)
- create mode 100644 app/test/test_cksum_fuzz.c
+Can you clarify what would be captured in this commit message or
+release notes? This commit isn't introducing any issues, and a bug was
+filed to follow up.
 
-diff --git a/app/test/meson.build b/app/test/meson.build
-index f4d04a6e42..2ca17716b9 100644
---- a/app/test/meson.build
-+++ b/app/test/meson.build
-@@ -38,6 +38,7 @@ source_file_deps = {
-     'test_byteorder.c': [],
-     'test_cfgfile.c': ['cfgfile'],
-     'test_cksum.c': ['net'],
-+    'test_cksum_fuzz.c': ['net'],
-     'test_cksum_perf.c': ['net'],
-     'test_cmdline.c': [],
-     'test_cmdline_cirbuf.c': [],
-diff --git a/app/test/test_cksum_fuzz.c b/app/test/test_cksum_fuzz.c
-new file mode 100644
-index 0000000000..33b4c77f51
---- /dev/null
-+++ b/app/test/test_cksum_fuzz.c
-@@ -0,0 +1,234 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2026 Apple Inc.
-+ */
-+
-+#include <stdio.h>
-+#include <string.h>
-+
-+#include <rte_common.h>
-+#include <rte_cycles.h>
-+#include <rte_hexdump.h>
-+#include <rte_cksum.h>
-+#include <rte_malloc.h>
-+#include <rte_random.h>
-+
-+#include "test.h"
-+
-+/*
-+ * Fuzz test for __rte_raw_cksum optimization.
-+ * Compares the optimized implementation against the original reference
-+ * implementation across random data of various lengths.
-+ */
-+
-+#define DEFAULT_ITERATIONS 1000
-+#define MAX_TEST_LEN 65536  /* 64K to match GRO frame sizes */
-+
-+/*
-+ * Original (reference) implementation of __rte_raw_cksum from DPDK v23.11.
-+ * This is retained here for comparison testing against the optimized version.
-+ */
-+static inline uint32_t
-+test_cksum_fuzz_cksum_reference(const void *buf, size_t len, uint32_t sum)
-+{
-+	const void *end;
-+
-+	for (end = RTE_PTR_ADD(buf, RTE_ALIGN_FLOOR(len, sizeof(uint16_t)));
-+	     buf != end; buf = RTE_PTR_ADD(buf, sizeof(uint16_t))) {
-+		uint16_t v;
-+
-+		memcpy(&v, buf, sizeof(uint16_t));
-+		sum += v;
-+	}
-+
-+	/* if length is odd, keeping it byte order independent */
-+	if (unlikely(len % 2)) {
-+		uint16_t left = 0;
-+
-+		memcpy(&left, end, 1);
-+		sum += left;
-+	}
-+
-+	return sum;
-+}
-+
-+static void
-+init_random_buffer(uint8_t *buf, size_t len)
-+{
-+	size_t i;
-+
-+	for (i = 0; i < len; i++)
-+		buf[i] = (uint8_t)rte_rand();
-+}
-+
-+static inline uint32_t
-+get_initial_sum(bool random_initial_sum)
-+{
-+	return random_initial_sum ? (rte_rand() & 0xFFFFFFFF) : 0;
-+}
-+
-+/*
-+ * Test a single buffer length with specific alignment and initial sum
-+ */
-+static int
-+test_cksum_fuzz_length_aligned(size_t len, bool aligned, uint32_t initial_sum)
-+{
-+	uint8_t *data;
-+	uint8_t *buf;
-+	size_t alloc_size;
-+	uint32_t sum_ref, sum_opt;
-+
-+	if (len == 0 && !aligned) {
-+		/* Skip unaligned test for zero length - nothing to test */
-+		return TEST_SUCCESS;
-+	}
-+
-+	/* Allocate exact size for aligned, +1 for unaligned offset */
-+	alloc_size = aligned ? len : len + 1;
-+	if (alloc_size == 0)
-+		alloc_size = 1;  /* rte_malloc doesn't like 0 */
-+
-+	data = rte_malloc(NULL, alloc_size, 64);
-+	if (data == NULL) {
-+		printf("Failed to allocate %zu bytes\n", alloc_size);
-+		return TEST_FAILED;
-+	}
-+
-+	buf = aligned ? data : (data + 1);
-+
-+	init_random_buffer(buf, len);
-+
-+	sum_ref = test_cksum_fuzz_cksum_reference(buf, len, initial_sum);
-+	sum_opt = __rte_raw_cksum(buf, len, initial_sum);
-+
-+	if (sum_ref != sum_opt) {
-+		printf("MISMATCH at len=%zu aligned='%s' initial_sum=0x%08x ref=0x%08x opt=0x%08x\n",
-+		       len, aligned ? "aligned" : "unaligned",
-+		       initial_sum, sum_ref, sum_opt);
-+		rte_hexdump(stdout, "failing buffer", buf, len);
-+		rte_free(data);
-+		return TEST_FAILED;
-+	}
-+
-+	rte_free(data);
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test a length with both alignments
-+ */
-+static int
-+test_cksum_fuzz_length(size_t len, uint32_t initial_sum)
-+{
-+	int rc;
-+
-+	/* Test aligned */
-+	rc = test_cksum_fuzz_length_aligned(len, true, initial_sum);
-+	if (rc != TEST_SUCCESS)
-+		return rc;
-+
-+	/* Test unaligned */
-+	rc = test_cksum_fuzz_length_aligned(len, false, initial_sum);
-+
-+	return rc;
-+}
-+
-+/*
-+ * Test specific edge case lengths
-+ */
-+static int
-+test_cksum_fuzz_edge_cases(void)
-+{
-+	/* Edge case lengths that might trigger bugs */
-+	static const size_t edge_lengths[] = {
-+		0, 1, 2, 3, 4, 5, 6, 7, 8,
-+		15, 16, 17,
-+		31, 32, 33,
-+		63, 64, 65,
-+		127, 128, 129,
-+		255, 256, 257,
-+		511, 512, 513,
-+		1023, 1024, 1025,
-+		1500, 1501,  /* MTU boundaries */
-+		2047, 2048, 2049,
-+		4095, 4096, 4097,
-+		8191, 8192, 8193,
-+		16383, 16384, 16385,
-+		32767, 32768, 32769,
-+		65534, 65535, 65536  /* 64K GRO boundaries */
-+	};
-+	unsigned int i;
-+	int rc;
-+
-+	printf("Testing edge case lengths...\n");
-+
-+	for (i = 0; i < RTE_DIM(edge_lengths); i++) {
-+		/* Test with zero initial sum */
-+		rc = test_cksum_fuzz_length(edge_lengths[i], 0);
-+		if (rc != TEST_SUCCESS)
-+			return rc;
-+
-+		/* Test with random initial sum */
-+		rc = test_cksum_fuzz_length(edge_lengths[i], get_initial_sum(true));
-+		if (rc != TEST_SUCCESS)
-+			return rc;
-+	}
-+
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test random lengths with optional random initial sums
-+ */
-+static int
-+test_cksum_fuzz_random(unsigned int iterations, bool random_initial_sum)
-+{
-+	unsigned int i;
-+	int rc;
-+
-+	printf("Testing random lengths (0-%d)%s...\n", MAX_TEST_LEN,
-+	       random_initial_sum ? " with random initial sums" : "");
-+
-+	for (i = 0; i < iterations; i++) {
-+		size_t len = rte_rand() % (MAX_TEST_LEN + 1);
-+
-+		rc = test_cksum_fuzz_length(len, get_initial_sum(random_initial_sum));
-+		if (rc != TEST_SUCCESS) {
-+			printf("Failed at len=%zu\n", len);
-+			return rc;
-+		}
-+	}
-+
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_cksum_fuzz_random_zero_sum(void)
-+{
-+	return test_cksum_fuzz_random(DEFAULT_ITERATIONS, false);
-+}
-+
-+static int
-+test_cksum_fuzz_random_random_sum(void)
-+{
-+	return test_cksum_fuzz_random(DEFAULT_ITERATIONS, true);
-+}
-+
-+static struct unit_test_suite ptr_cksum_fuzz_suite = {
-+	.suite_name = "cksum fuzz autotest",
-+	.setup = NULL,
-+	.teardown = NULL,
-+	.unit_test_cases = {
-+		TEST_CASE(test_cksum_fuzz_edge_cases),
-+		TEST_CASE(test_cksum_fuzz_random_zero_sum),
-+		TEST_CASE(test_cksum_fuzz_random_random_sum),
-+		TEST_CASES_END()
-+	}
-+};
-+
-+static int
-+test_cksum_fuzz_suite(void)
-+{
-+	return unit_test_suite_runner(&ptr_cksum_fuzz_suite);
-+}
-+
-+REGISTER_FAST_TEST(cksum_fuzz_autotest, NOHUGE_OK, ASAN_OK, test_cksum_fuzz_suite);
-diff --git a/app/test/test_cksum_perf.c b/app/test/test_cksum_perf.c
-index 0b919cd59f..6b1d4589e0 100644
---- a/app/test/test_cksum_perf.c
-+++ b/app/test/test_cksum_perf.c
-@@ -15,7 +15,7 @@
- #define NUM_BLOCKS 10
- #define ITERATIONS 1000000
- 
--static const size_t data_sizes[] = { 20, 21, 100, 101, 1500, 1501 };
-+static const size_t data_sizes[] = { 20, 21, 100, 101, 1500, 1501, 9000, 9001, 65536, 65537 };
- 
- static __rte_noinline uint16_t
- do_rte_raw_cksum(const void *buf, size_t len)
-diff --git a/lib/net/rte_cksum.h b/lib/net/rte_cksum.h
-index a8e8927952..f04b46a6c3 100644
---- a/lib/net/rte_cksum.h
-+++ b/lib/net/rte_cksum.h
-@@ -42,15 +42,11 @@ extern "C" {
- static inline uint32_t
- __rte_raw_cksum(const void *buf, size_t len, uint32_t sum)
- {
--	const void *end;
--
--	for (end = RTE_PTR_ADD(buf, RTE_ALIGN_FLOOR(len, sizeof(uint16_t)));
--	     buf != end; buf = RTE_PTR_ADD(buf, sizeof(uint16_t))) {
--		uint16_t v;
--
--		memcpy(&v, buf, sizeof(uint16_t));
--		sum += v;
--	}
-+	/* Process uint16 chunks to preserve overflow/carry math. GCC/Clang vectorize the loop. */
-+	const unaligned_uint16_t *buf16 = (const unaligned_uint16_t *)buf;
-+	const unaligned_uint16_t *end = buf16 + (len / sizeof(*buf16));
-+	for (; buf16 != end; buf16++)
-+		sum += *buf16;
- 
- 	/* if length is odd, keeping it byte order independent */
- 	if (unlikely(len % 2)) {
--- 
-2.39.5 (Apple Git-154)
+>
+> 6. **`RTE_PTR_UNQUAL` macro is used but not defined in this patch**
+>    - The patch uses `RTE_PTR_UNQUAL` in multiple places but the macro definition is not visible in the diff. Ensure it exists or is added.
 
+False positive.
+
+>
+> 8. **`drivers/dma/odm/odm_dmadev.c` changes remove `const`**
+>    ```c
+>    // Before: const uint32_t *base_addr = vq->cring_mz->addr;
+>    // After:  uint32_t *base_addr = vq->cring_mz->addr;
+>    ```
+>    This removes a useful const qualifier. If the intent is to allow writes, document why. If not, preserve const.
+
+The comment would be similar to "this value is used in a non-const
+way, so don't use const", and I don't think this adds too much value.
+
+>
+> 9. **Release notes format**
+>    - The API Changes section uses bullet points correctly but should reference the specific macros more prominently for searchability.
+
+Clarified.
+
+>
+> **`lib/eal/common/eal_common_memory.c:1563`:**
+> ```c
+> struct malloc_elem *volatile elem;
+> ```
+> The `volatile` on a local pointer variable is unusual. This appears to be preventing optimization, but the rationale should be documented.
+
+Comment added.
