@@ -2,66 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A19E9E7315D
-	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Feb 2026 11:37:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED351E7315B
+	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Feb 2026 11:37:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 769FA40BA2;
-	Mon,  2 Feb 2026 12:37:06 +0100 (CET)
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com
- [209.85.128.50]) by mails.dpdk.org (Postfix) with ESMTP id C0EF440A7A
- for <dev@dpdk.org>; Mon,  2 Feb 2026 12:37:04 +0100 (CET)
-Received: by mail-wm1-f50.google.com with SMTP id
- 5b1f17b1804b1-4806cc07ce7so43902025e9.1
- for <dev@dpdk.org>; Mon, 02 Feb 2026 03:37:04 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 3BABE40DDC;
+	Mon,  2 Feb 2026 12:37:11 +0100 (CET)
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com
+ [209.85.128.53]) by mails.dpdk.org (Postfix) with ESMTP id 88E2540DD0
+ for <dev@dpdk.org>; Mon,  2 Feb 2026 12:37:09 +0100 (CET)
+Received: by mail-wm1-f53.google.com with SMTP id
+ 5b1f17b1804b1-48039fdc8aeso25710195e9.3
+ for <dev@dpdk.org>; Mon, 02 Feb 2026 03:37:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=dyna-nic.com; s=google; t=1770032224; x=1770637024; darn=dpdk.org;
+ d=dyna-nic.com; s=google; t=1770032229; x=1770637029; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=Q148VLjCOTiRgFDHfzNlpAafuTceAZcVHAtC2tffj34=;
- b=W7mjq1VwusKe2V1LwU3e19lqHlyAHm1H4d4etKgdykIQfANFRNbYdS+xoReO03DNA1
- sD3vVR8JGI5gYrwtoZLPeCpKiG4KCXujVuBpsJz3tS3iUzjIpJyc1mUxyK+8ygNb8R70
- 6Rz3ptPrq2xx7knu/r3/Exux0i1r+AjYliDXojwgbrShoTu31RcWdF9TV68gufvv/Yrl
- YsTKDQktz2ajYWWpcfeAJxAKMJVNorrOQMph9T5qlgWsZ9pYqToN5mRlBzFNQAeLc/6D
- /Yv+pTu52U/BGZBf54kIOcUdOrrk+5vTDXdSMmxRfT/4paZROnVe48FaazqTeF2DysPj
- Bw3A==
+ bh=LpmAOePh/Q7QC8MISaiV+nN71hrzIa2i3qMy3se7ols=;
+ b=Dr2qMDBEO1h/CiI6xhNr5Y3r6N/SgifNmqPAclSAus2dnhKfXv2gy4PxVZaYEixmfZ
+ eLm5LyTTCbaq0sVX3F3ClANkZ9D3qTKUwaOP8RXF8OELq89IoreIAx0KhTImEvFRySEE
+ +7jPlNGaBxJ4cAJApq2rs66ucmHyAGhbdWz/43IYfWXtSPWaJztSsw/ZPbRLeNxSJ5IU
+ 1qK6HsFcP8CY1NaZfBQSNa+Xg1N+DH1XPNt5rXBHDFNF058LFLyiR5h9/AIGjPydoyhS
+ gBsTAPq9xfl5LOSch2py0YCUdGmJbvmWHvI3SamjDZAbPIuiapQp1e269eTv2McCxB30
+ A7eQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1770032224; x=1770637024;
+ d=1e100.net; s=20230601; t=1770032229; x=1770637029;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=Q148VLjCOTiRgFDHfzNlpAafuTceAZcVHAtC2tffj34=;
- b=u3gFRDWrfobOjYJwof4LGgbJAbhsncNhLny0r+GjBFOP1v0pt+xH/n1iXO7MnFdYZu
- WbZ7SiNXXvwbRGptAHXIAzlhtG2unRyCRaHq48/YSiIsfBd279uZJEOaEgg5WN197fyw
- jMn2ASE18RKIU7iujDiHphbiiyu6OCM5dYTAvJQD2Mh2Ay3cKZ0nAUTaQxNKgbqVxnM0
- RAjvYSGk7YyPyO+Yu1xuHD0q29GhnS/Hn8mAcurGmt6ECqsyCyH1m5fOsxBIvVJQVEnz
- mMa/PnrcJlvPDvT1XTelRxTpGtJUNAzUinuqC0MSO9TAneVIxhwe9tPjNn4fIv8/0C48
- QKIA==
-X-Gm-Message-State: AOJu0YzXBSd62m3usn32kyVIUZ7ZHhQKSHyp15qdWgBYqXS67KUPB0bq
- rCw/IsEykyTG8YUlWAcm4kkVHmVwlXa8yUjfPMMIB21k2+jNSZm7s6ZIT+Uco/Bbi2q5JxYDNuh
- nCOmJ
-X-Gm-Gg: AZuq6aL4X8smum0+b0DZL4TYyQwJK22Z5K50gtt0qBFBT+eVc2XmQYYCU7oc5ymyHMn
- ck7CEcfiBINPAl+e3y3Ga3Q7Py29zSkIO25GbZ8hcuII3hDbPboKDaOIzY1VMCo/G6v2aRTWiQm
- lTa2jggKmdZeT8AUy8hZGStGSZojEyGJA0AFPiTHbCOE4V6jWhKIRSu5rQ9dfNvwZoPQBKxoSFT
- mBd7aLI56xtJKdrCBHBtjzYT7fLOaqAQLLLFjiB71QyYM3nLMYCGG6RtFWA08oK5u1xfPAGY0IB
- NKm29B5PngbzFaqfZsrSkDGAoK2AV85WijPWNojWSgVzqNehMTrg/yMzdfjZbnZADfamhLlalvj
- TeMpXlM/QAPz4GujUCQwsMfLjq/PijPHU19ma9Orz1iWSwU79Y2YMy2YXwfNqetQNXB7GGim+N4
- KshrQVIAfzKG5ut8wUIsqo/6CCRP+mhET1pe8WH7rq/vW3hg==
-X-Received: by 2002:a05:600c:4ec7:b0:477:8b77:155e with SMTP id
- 5b1f17b1804b1-482db46b04fmr146700175e9.15.1770032223933; 
- Mon, 02 Feb 2026 03:37:03 -0800 (PST)
+ bh=LpmAOePh/Q7QC8MISaiV+nN71hrzIa2i3qMy3se7ols=;
+ b=lYFOvRvdRW5tuTyerHXMPlKlC5AZjjmlUneiGPRKxHWFG8S4DyfIjqeyeuXknp6KFn
+ VYMTflJjLtlaCQXjNaaKKzKl+VAwqQ/GyK8TLTN1LJfNgIhXIEkRZhq3+27BbOozYQ1f
+ TUKkZ5U7MbQAZ7EbD8apzB6Hm2MjqMm8A3oU4e9RyoM2RiVm5xuWYDUxJbbYoxDK6rZb
+ eVzWEqvD37mIJfBciUuVshdWj4gM2pgs5qY5VxFKuXGI+WU1ejPsJjmagNCmjFs1JbVH
+ sxSKhGn+93bw9pTnToFc9XnP1tlWid8uCyKVxHAyyeAF8KKfZw3g6zEau/Dnobgr0M9Y
+ sP7w==
+X-Gm-Message-State: AOJu0YwGM1McY2xXHZG2hr77QW8O1DFE8FvuCTrLSG7fQGVLU8grlG86
+ zV288kG/EQKgc0J8MRJOdKVKQstG6qpoeQuDiPLjXRUx+VPeYEx3BcI4dUZqdNsujI2Zg2r2VPi
+ 47bNX
+X-Gm-Gg: AZuq6aLATtafAoXdyn8ch/7sAIt8Opgqj4Hb7fSlcSVJmhg/Mu5zMcbFtS7TVLJrlg7
+ aGM9sPwcvPQPx+vHAiVFsL98duJygz7BkdnkcjgaHWwfXAxvRcIa4F0GtP1003gUU9i55/OEg5e
+ otZDeH6DxBoaEz0z5RZqgDx286xYsKPF5dsyGONVRE+IkyIumKOXnidk8VQQ4UG2TmhginU8rjy
+ Tb/A/9+YB8JyokGndLy8MTV3LZKiwnaNkofK0/ANhigzzeekQ5HcUZHXsAWsh3wm+axbcV9ymTH
+ KlG502yk1dumzbetLGiFXqwOGRc+vBNSiKKrSV8KC+UxWto3ei622+44SKdU0eIPB9msKSrta6d
+ 3MjgpwzqtAKsa75/g8pa8plgjtQPfsLVV0NsuuIFZRlRI/274AkT6q+H59EirrVuz/7oq0SCi4I
+ 3kZExjn3qZAvVfOD4ZC1qOyQxIcyJ3u21FYlhZitQbJflA3A==
+X-Received: by 2002:a05:600c:4e8a:b0:477:73e9:dc17 with SMTP id
+ 5b1f17b1804b1-482db4992famr148651135e9.35.1770032228759; 
+ Mon, 02 Feb 2026 03:37:08 -0800 (PST)
 Received: from claret.liberouter.org (rt-tmc-kou.liberouter.org.
  [195.113.172.126]) by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-48066bee687sm696090615e9.5.2026.02.02.03.37.03
+ 5b1f17b1804b1-48066bee687sm696090615e9.5.2026.02.02.03.37.08
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 02 Feb 2026 03:37:03 -0800 (PST)
+ Mon, 02 Feb 2026 03:37:08 -0800 (PST)
 From: Lukas Sismis <sismis@dyna-nic.com>
 To: dev@dpdk.org
 Cc: stephen@networkplumber.org,
 	Lukas Sismis <sismis@dyna-nic.com>
-Subject: [PATCH v10 2/6] ethdev: add RSS type helper APIs
-Date: Mon,  2 Feb 2026 12:36:54 +0100
-Message-ID: <20260202113659.24052-3-sismis@dyna-nic.com>
+Subject: [PATCH v10 5/6] examples/flow_parsing: add flow parser demo
+Date: Mon,  2 Feb 2026 12:36:57 +0100
+Message-ID: <20260202113659.24052-6-sismis@dyna-nic.com>
 X-Mailer: git-send-email 2.43.7
 In-Reply-To: <20260202113659.24052-1-sismis@dyna-nic.com>
 References: <20260202113659.24052-1-sismis@dyna-nic.com>
@@ -80,292 +80,362 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add a global RSS type string table and helper functions to convert
-between RSS type names and values.
-Add unit tests for RSS type helper.
+Add example application demonstrating the flow parser library API.
+
+The example shows how to use the primary external functions for
+parsing parts of rte_flow rules.
+
+Configure with: meson configure -Dexamples=flow_parsing
 
 Signed-off-by: Lukas Sismis <sismis@dyna-nic.com>
 ---
- app/test/test_ethdev_api.c             |  51 ++++++++++++
- doc/guides/rel_notes/release_26_03.rst |   4 +
- lib/ethdev/rte_ethdev.c                | 107 +++++++++++++++++++++++++
- lib/ethdev/rte_ethdev.h                |  55 +++++++++++++
- 4 files changed, 217 insertions(+)
+ MAINTAINERS                       |   1 +
+ examples/flow_parsing/main.c      | 292 ++++++++++++++++++++++++++++++
+ examples/flow_parsing/meson.build |  11 ++
+ examples/meson.build              |   1 +
+ 4 files changed, 305 insertions(+)
+ create mode 100644 examples/flow_parsing/main.c
+ create mode 100644 examples/flow_parsing/meson.build
 
-diff --git a/app/test/test_ethdev_api.c b/app/test/test_ethdev_api.c
-index 76afd0345c..7c0cde87a6 100644
---- a/app/test/test_ethdev_api.c
-+++ b/app/test/test_ethdev_api.c
-@@ -2,6 +2,9 @@
-  * Copyright (C) 2023, Advanced Micro Devices, Inc.
-  */
+diff --git a/MAINTAINERS b/MAINTAINERS
+index d668dcc8e4..899c767691 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -449,6 +449,7 @@ F: doc/guides/prog_guide/ethdev/flow_offload.rst
+ F: doc/guides/prog_guide/flow_parser_lib.rst
+ F: lib/ethdev/rte_flow*
+ F: lib/flow_parser/
++F: examples/flow_parsing/
  
-+#include <stdbool.h>
+ Traffic Management API
+ M: Cristian Dumitrescu <cristian.dumitrescu@intel.com>
+diff --git a/examples/flow_parsing/main.c b/examples/flow_parsing/main.c
+new file mode 100644
+index 0000000000..a672e21ce8
+--- /dev/null
++++ b/examples/flow_parsing/main.c
+@@ -0,0 +1,292 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(c) 2026 DynaNIC Semiconductors, Ltd.
++ */
++
++/*
++ * Flow Parsing Example
++ * ====================
++ * This example demonstrates how to use the flow_parser library to parse
++ * flow rule strings into rte_flow C structures. The library provides ONE WAY
++ * to create rte_flow structures - by parsing testpmd-style command strings.
++ *
++ * Alternative approaches:
++ *   - Construct rte_flow_attr, rte_flow_item[], and rte_flow_action[]
++ *     directly in C code and call rte_flow_create()/rte_flow_validate().
++ *
++ * This string-based approach is useful when:
++ *   - Accepting flow rules from user input or configuration files
++ *   - Reusing the familiar testpmd flow command syntax
++ *   - Rapid prototyping without manually constructing C structures
++ *
++ * Key functions demonstrated:
++ *   - rte_flow_parser_parse_attr_str() - Parse flow attributes (ingress/egress/priority)
++ *   - rte_flow_parser_parse_pattern_str() - Parse match patterns (eth/ipv4/tcp/etc)
++ *   - rte_flow_parser_parse_actions_str() - Parse actions (drop/queue/mark/etc)
++ *
++ * NOTE: The parse functions return pointers to internal static buffers.
++ * Each subsequent parse call overwrites the previous result.
++ */
++
++#include <stdio.h>
++#include <stdint.h>
 +#include <string.h>
 +
- #include <rte_log.h>
- #include <rte_ethdev.h>
- 
-@@ -162,12 +165,60 @@ ethdev_api_queue_status(void)
- 	return TEST_SUCCESS;
- }
- 
-+static int
-+ethdev_api_rss_type_helpers(void)
++#include <rte_common.h>
++#include <rte_byteorder.h>
++#include <rte_ether.h>
++#include <rte_flow.h>
++#include <rte_flow_parser.h>
++
++/* Helper to print flow attributes */
++static void
++print_attr(const struct rte_flow_attr *attr)
 +{
-+	const struct rte_eth_rss_type_info *tbl;
-+	const char *zero_name = NULL;
-+	unsigned int i;
-+	bool has_zero = false;
-+	const char *name;
-+	uint64_t type;
++	printf("  Attributes:\n");
++	printf("    group=%u priority=%u\n", attr->group, attr->priority);
++	printf("    ingress=%u egress=%u transfer=%u\n",
++	       attr->ingress, attr->egress, attr->transfer);
++}
 +
-+	tbl = rte_eth_rss_type_info_get();
-+	TEST_ASSERT_NOT_NULL(tbl, "rss type table missing");
++/* Helper to print a MAC address */
++static void
++print_mac(const char *label, const struct rte_ether_addr *mac)
++{
++	char buf[RTE_ETHER_ADDR_FMT_SIZE];
 +
-+	for (i = 0; tbl[i].str != NULL; i++) {
-+		type = rte_eth_rss_type_from_str(tbl[i].str);
-+		TEST_ASSERT_EQUAL(type, tbl[i].rss_type,
-+			"rss type mismatch for %s", tbl[i].str);
++	rte_ether_format_addr(buf, sizeof(buf), mac);
++	printf("    %s: %s\n", label, buf);
++}
 +
-+		if (tbl[i].rss_type == 0 && !has_zero) {
-+			has_zero = true;
-+			zero_name = tbl[i].str;
++/* Helper to print pattern items */
++static void
++print_pattern(const struct rte_flow_item *pattern, uint32_t pattern_n)
++{
++	uint32_t i;
++
++	printf("  Pattern (%u items):\n", pattern_n);
++	for (i = 0; i < pattern_n; i++) {
++		const struct rte_flow_item *item = &pattern[i];
++
++		switch (item->type) {
++		case RTE_FLOW_ITEM_TYPE_END:
++			printf("    [%u] END\n", i);
++			break;
++		case RTE_FLOW_ITEM_TYPE_ETH:
++			printf("    [%u] ETH", i);
++			if (item->spec) {
++				const struct rte_flow_item_eth *eth = item->spec;
++				printf("\n");
++				print_mac("dst", &eth->hdr.dst_addr);
++				print_mac("src", &eth->hdr.src_addr);
++			} else {
++				printf(" (any)\n");
++			}
++			break;
++		case RTE_FLOW_ITEM_TYPE_IPV4:
++			printf("    [%u] IPV4", i);
++			if (item->spec) {
++				const struct rte_flow_item_ipv4 *ipv4 = item->spec;
++				const uint8_t *s = (const uint8_t *)&ipv4->hdr.src_addr;
++				const uint8_t *d = (const uint8_t *)&ipv4->hdr.dst_addr;
++				printf(" src=%u.%u.%u.%u dst=%u.%u.%u.%u\n",
++				       s[0], s[1], s[2], s[3],
++				       d[0], d[1], d[2], d[3]);
++			} else {
++				printf(" (any)\n");
++			}
++			break;
++		case RTE_FLOW_ITEM_TYPE_TCP:
++			printf("    [%u] TCP", i);
++			if (item->spec) {
++				const struct rte_flow_item_tcp *tcp = item->spec;
++				printf(" sport=%u dport=%u\n",
++				       rte_be_to_cpu_16(tcp->hdr.src_port),
++				       rte_be_to_cpu_16(tcp->hdr.dst_port));
++			} else {
++				printf(" (any)\n");
++			}
++			break;
++		case RTE_FLOW_ITEM_TYPE_UDP:
++			printf("    [%u] UDP", i);
++			if (item->spec) {
++				const struct rte_flow_item_udp *udp = item->spec;
++				printf(" sport=%u dport=%u\n",
++				       rte_be_to_cpu_16(udp->hdr.src_port),
++				       rte_be_to_cpu_16(udp->hdr.dst_port));
++			} else {
++				printf(" (any)\n");
++			}
++			break;
++		default:
++			printf("    [%u] type=%d\n", i, item->type);
++			break;
 +		}
-+
-+		name = rte_eth_rss_type_to_str(tbl[i].rss_type);
-+		TEST_ASSERT_NOT_NULL(name, "rss type name missing for %s",
-+			tbl[i].str);
-+		TEST_ASSERT_EQUAL(rte_eth_rss_type_from_str(name), tbl[i].rss_type,
-+			"rss type round-trip mismatch for %s", name);
 +	}
-+
-+	TEST_ASSERT(tbl[i].str == NULL, "rss type table not NULL terminated");
-+	TEST_ASSERT_EQUAL(rte_eth_rss_type_from_str(NULL), 0,
-+		"rss type from NULL should be 0");
-+	TEST_ASSERT_EQUAL(rte_eth_rss_type_from_str("not-a-type"), 0,
-+		"rss type unknown should be 0");
-+	name = rte_eth_rss_type_to_str(0);
-+	if (has_zero) {
-+		TEST_ASSERT_NOT_NULL(name, "rss type 0 should be defined");
-+		TEST_ASSERT(strcmp(name, zero_name) == 0,
-+			"rss type 0 name mismatch");
-+	} else {
-+		TEST_ASSERT(name == NULL, "rss type 0 should be NULL");
-+	}
-+
-+	return TEST_SUCCESS;
 +}
 +
- static struct unit_test_suite ethdev_api_testsuite = {
- 	.suite_name = "ethdev API tests",
- 	.setup = NULL,
- 	.teardown = NULL,
- 	.unit_test_cases = {
- 		TEST_CASE(ethdev_api_queue_status),
-+		TEST_CASE(ethdev_api_rss_type_helpers),
- 		/* TODO: Add deferred_start queue status test */
- 		TEST_CASES_END() /**< NULL terminate unit test array */
- 	}
-diff --git a/doc/guides/rel_notes/release_26_03.rst b/doc/guides/rel_notes/release_26_03.rst
-index 39a3db0f18..648af00f13 100644
---- a/doc/guides/rel_notes/release_26_03.rst
-+++ b/doc/guides/rel_notes/release_26_03.rst
-@@ -59,6 +59,10 @@ New Features
- 
-   * Added support for V4000 Krackan2e.
- 
-+* **Added experimental RSS type helper APIs in ethdev.**
-+
-+  * Added new APIs to convert between RSS type names and values.
-+  * Added new API call to obtain the global RSS string table.
- 
- Removed Items
- -------------
-diff --git a/lib/ethdev/rte_ethdev.c b/lib/ethdev/rte_ethdev.c
-index 2659e8d9eb..b572bbf321 100644
---- a/lib/ethdev/rte_ethdev.c
-+++ b/lib/ethdev/rte_ethdev.c
-@@ -5167,6 +5167,113 @@ rte_eth_find_rss_algo(const char *name, uint32_t *algo)
- 	return -EINVAL;
- }
- 
-+/* Global RSS type string table. */
-+static const struct rte_eth_rss_type_info rte_eth_rss_type_table[] = {
-+	/* Group types */
-+	{ "all", RTE_ETH_RSS_ETH | RTE_ETH_RSS_VLAN | RTE_ETH_RSS_IP |
-+		RTE_ETH_RSS_TCP | RTE_ETH_RSS_UDP | RTE_ETH_RSS_SCTP |
-+		RTE_ETH_RSS_L2_PAYLOAD | RTE_ETH_RSS_L2TPV3 |
-+		RTE_ETH_RSS_ESP | RTE_ETH_RSS_AH | RTE_ETH_RSS_PFCP |
-+		RTE_ETH_RSS_GTPU | RTE_ETH_RSS_ECPRI | RTE_ETH_RSS_MPLS |
-+		RTE_ETH_RSS_L2TPV2 | RTE_ETH_RSS_IB_BTH },
-+	{ "none", 0 },
-+	{ "ip", RTE_ETH_RSS_IP },
-+	{ "udp", RTE_ETH_RSS_UDP },
-+	{ "tcp", RTE_ETH_RSS_TCP },
-+	{ "sctp", RTE_ETH_RSS_SCTP },
-+	{ "tunnel", RTE_ETH_RSS_TUNNEL },
-+	{ "vlan", RTE_ETH_RSS_VLAN },
-+
-+	/* Individual type */
-+	{ "ipv4", RTE_ETH_RSS_IPV4 },
-+	{ "ipv4-frag", RTE_ETH_RSS_FRAG_IPV4 },
-+	{ "ipv4-tcp", RTE_ETH_RSS_NONFRAG_IPV4_TCP },
-+	{ "ipv4-udp", RTE_ETH_RSS_NONFRAG_IPV4_UDP },
-+	{ "ipv4-sctp", RTE_ETH_RSS_NONFRAG_IPV4_SCTP },
-+	{ "ipv4-other", RTE_ETH_RSS_NONFRAG_IPV4_OTHER },
-+	{ "ipv6", RTE_ETH_RSS_IPV6 },
-+	{ "ipv6-frag", RTE_ETH_RSS_FRAG_IPV6 },
-+	{ "ipv6-tcp", RTE_ETH_RSS_NONFRAG_IPV6_TCP },
-+	{ "ipv6-udp", RTE_ETH_RSS_NONFRAG_IPV6_UDP },
-+	{ "ipv6-sctp", RTE_ETH_RSS_NONFRAG_IPV6_SCTP },
-+	{ "ipv6-other", RTE_ETH_RSS_NONFRAG_IPV6_OTHER },
-+	{ "l2-payload", RTE_ETH_RSS_L2_PAYLOAD },
-+	{ "ipv6-ex", RTE_ETH_RSS_IPV6_EX },
-+	{ "ipv6-tcp-ex", RTE_ETH_RSS_IPV6_TCP_EX },
-+	{ "ipv6-udp-ex", RTE_ETH_RSS_IPV6_UDP_EX },
-+	{ "port", RTE_ETH_RSS_PORT },
-+	{ "vxlan", RTE_ETH_RSS_VXLAN },
-+	{ "geneve", RTE_ETH_RSS_GENEVE },
-+	{ "nvgre", RTE_ETH_RSS_NVGRE },
-+	{ "gtpu", RTE_ETH_RSS_GTPU },
-+	{ "eth", RTE_ETH_RSS_ETH },
-+	{ "s-vlan", RTE_ETH_RSS_S_VLAN },
-+	{ "c-vlan", RTE_ETH_RSS_C_VLAN },
-+	{ "esp", RTE_ETH_RSS_ESP },
-+	{ "ah", RTE_ETH_RSS_AH },
-+	{ "l2tpv3", RTE_ETH_RSS_L2TPV3 },
-+	{ "pfcp", RTE_ETH_RSS_PFCP },
-+	{ "pppoe", RTE_ETH_RSS_PPPOE },
-+	{ "ecpri", RTE_ETH_RSS_ECPRI },
-+	{ "mpls", RTE_ETH_RSS_MPLS },
-+	{ "ipv4-chksum", RTE_ETH_RSS_IPV4_CHKSUM },
-+	{ "l4-chksum", RTE_ETH_RSS_L4_CHKSUM },
-+	{ "l2tpv2", RTE_ETH_RSS_L2TPV2 },
-+	{ "l3-pre96", RTE_ETH_RSS_L3_PRE96 },
-+	{ "l3-pre64", RTE_ETH_RSS_L3_PRE64 },
-+	{ "l3-pre56", RTE_ETH_RSS_L3_PRE56 },
-+	{ "l3-pre48", RTE_ETH_RSS_L3_PRE48 },
-+	{ "l3-pre40", RTE_ETH_RSS_L3_PRE40 },
-+	{ "l3-pre32", RTE_ETH_RSS_L3_PRE32 },
-+	{ "l2-dst-only", RTE_ETH_RSS_L2_DST_ONLY },
-+	{ "l2-src-only", RTE_ETH_RSS_L2_SRC_ONLY },
-+	{ "l4-dst-only", RTE_ETH_RSS_L4_DST_ONLY },
-+	{ "l4-src-only", RTE_ETH_RSS_L4_SRC_ONLY },
-+	{ "l3-dst-only", RTE_ETH_RSS_L3_DST_ONLY },
-+	{ "l3-src-only", RTE_ETH_RSS_L3_SRC_ONLY },
-+	{ "ipv6-flow-label", RTE_ETH_RSS_IPV6_FLOW_LABEL },
-+	{ "ib-bth", RTE_ETH_RSS_IB_BTH },
-+	{ NULL, 0 },
-+};
-+
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_eth_rss_type_info_get, 26.03)
-+const struct rte_eth_rss_type_info *
-+rte_eth_rss_type_info_get(void)
++/* Helper to print actions */
++static void
++print_actions(const struct rte_flow_action *actions, uint32_t actions_n)
 +{
-+	return rte_eth_rss_type_table;
++	uint32_t i;
++
++	printf("  Actions (%u items):\n", actions_n);
++	for (i = 0; i < actions_n; i++) {
++		const struct rte_flow_action *action = &actions[i];
++
++		switch (action->type) {
++		case RTE_FLOW_ACTION_TYPE_END:
++			printf("    [%u] END\n", i);
++			break;
++		case RTE_FLOW_ACTION_TYPE_DROP:
++			printf("    [%u] DROP\n", i);
++			break;
++		case RTE_FLOW_ACTION_TYPE_QUEUE:
++			if (action->conf) {
++				const struct rte_flow_action_queue *q = action->conf;
++				printf("    [%u] QUEUE index=%u\n", i, q->index);
++			}
++			break;
++		case RTE_FLOW_ACTION_TYPE_MARK:
++			if (action->conf) {
++				const struct rte_flow_action_mark *m = action->conf;
++				printf("    [%u] MARK id=%u\n", i, m->id);
++			}
++			break;
++		case RTE_FLOW_ACTION_TYPE_COUNT:
++			printf("    [%u] COUNT\n", i);
++			break;
++		case RTE_FLOW_ACTION_TYPE_PORT_ID:
++			if (action->conf) {
++				const struct rte_flow_action_port_id *p = action->conf;
++				printf("    [%u] PORT_ID id=%u\n", i, p->id);
++			}
++			break;
++		default:
++			printf("    [%u] type=%d\n", i, action->type);
++			break;
++		}
++	}
 +}
 +
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_eth_rss_type_from_str, 26.03)
-+uint64_t
-+rte_eth_rss_type_from_str(const char *str)
++/*
++ * Demonstrate parsing flow attributes
++ */
++static void
++demo_parse_attr(void)
 +{
++	static const char * const attr_strings[] = {
++		"ingress",
++		"egress",
++		"ingress priority 5",
++		"ingress group 1 priority 10",
++		"transfer",
++	};
++	struct rte_flow_attr attr;
 +	unsigned int i;
++	int ret;
 +
-+	if (str == NULL)
-+		return 0;
++	printf("\n=== Parsing Flow Attributes ===\n");
++	printf("Use rte_flow_parser_parse_attr_str() to parse attribute strings.\n\n");
 +
-+	for (i = 0; rte_eth_rss_type_table[i].str != NULL; i++) {
-+		if (strcmp(rte_eth_rss_type_table[i].str, str) == 0)
-+			return rte_eth_rss_type_table[i].rss_type;
++	for (i = 0; i < RTE_DIM(attr_strings); i++) {
++		printf("Input: \"%s\"\n", attr_strings[i]);
++		memset(&attr, 0, sizeof(attr));
++		ret = rte_flow_parser_parse_attr_str(attr_strings[i], &attr);
++		if (ret == 0)
++			print_attr(&attr);
++		else
++			printf("  ERROR: %d (%s)\n", ret, strerror(-ret));
++		printf("\n");
++	}
++}
++
++/*
++ * Demonstrate parsing flow patterns
++ */
++static void
++demo_parse_pattern(void)
++{
++	static const char * const pattern_strings[] = {
++		"eth / end",
++		"eth dst is 90:61:ae:fd:41:43 / end",
++		"eth / ipv4 src is 192.168.1.1 / end",
++		"eth / ipv4 / tcp dst is 80 / end",
++		"eth / ipv4 src is 10.0.0.1 dst is 10.0.0.2 / udp src is 1234 dst is 5678 / end",
++	};
++	const struct rte_flow_item *pattern;
++	uint32_t pattern_n;
++	unsigned int i;
++	int ret;
++
++	printf("\n=== Parsing Flow Patterns ===\n");
++	printf("Use rte_flow_parser_parse_pattern_str() to parse pattern strings.\n\n");
++
++	for (i = 0; i < RTE_DIM(pattern_strings); i++) {
++		printf("Input: \"%s\"\n", pattern_strings[i]);
++		ret = rte_flow_parser_parse_pattern_str(pattern_strings[i],
++							&pattern, &pattern_n);
++		if (ret == 0)
++			print_pattern(pattern, pattern_n);
++		else
++			printf("  ERROR: %d (%s)\n", ret, strerror(-ret));
++		printf("\n");
++	}
++}
++
++/*
++ * Demonstrate parsing flow actions
++ */
++static void
++demo_parse_actions(void)
++{
++	static const char * const action_strings[] = {
++		"drop / end",
++		"queue index 3 / end",
++		"mark id 42 / end",
++		"count / queue index 1 / end",
++		"mark id 100 / count / queue index 5 / end",
++	};
++	const struct rte_flow_action *actions;
++	uint32_t actions_n;
++	unsigned int i;
++	int ret;
++
++	printf("\n=== Parsing Flow Actions ===\n");
++	printf("Use rte_flow_parser_parse_actions_str() to parse action strings.\n\n");
++
++	for (i = 0; i < RTE_DIM(action_strings); i++) {
++		printf("Input: \"%s\"\n", action_strings[i]);
++		ret = rte_flow_parser_parse_actions_str(action_strings[i],
++							&actions, &actions_n);
++		if (ret == 0)
++			print_actions(actions, actions_n);
++		else
++			printf("  ERROR: %d (%s)\n", ret, strerror(-ret));
++		printf("\n");
++	}
++}
++
++int
++main(void)
++{
++	int ret;
++
++	printf("Flow Parser Library Example\n");
++	printf("===========================\n");
++
++	/* Initialize the flow parser */
++	ret = rte_flow_parser_init(NULL);
++	if (ret != 0) {
++		fprintf(stderr, "Failed to initialize flow parser: %d\n", ret);
++		return 1;
 +	}
 +
++	/* Run demonstrations */
++	demo_parse_attr();
++	demo_parse_pattern();
++	demo_parse_actions();
++
++	printf("\n=== Example Complete ===\n");
 +	return 0;
 +}
+diff --git a/examples/flow_parsing/meson.build b/examples/flow_parsing/meson.build
+new file mode 100644
+index 0000000000..a4f4c5910c
+--- /dev/null
++++ b/examples/flow_parsing/meson.build
+@@ -0,0 +1,11 @@
++# SPDX-License-Identifier: BSD-3-Clause
++# Copyright(c) 2026 DynaNIC Semiconductors, Ltd.
 +
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_eth_rss_type_to_str, 26.03)
-+const char *
-+rte_eth_rss_type_to_str(uint64_t rss_type)
-+{
-+	unsigned int i;
++# meson file, for building this example as part of a main DPDK build.
++#
++# To build this example as a standalone application with an already-installed
++# DPDK instance, use 'make'
 +
-+	for (i = 0; rte_eth_rss_type_table[i].str != NULL; i++) {
-+		if (rte_eth_rss_type_table[i].rss_type == rss_type)
-+			return rte_eth_rss_type_table[i].str;
-+	}
-+
-+	return NULL;
-+}
-+
- RTE_EXPORT_SYMBOL(rte_eth_dev_udp_tunnel_port_add)
- int
- rte_eth_dev_udp_tunnel_port_add(uint16_t port_id,
-diff --git a/lib/ethdev/rte_ethdev.h b/lib/ethdev/rte_ethdev.h
-index a66c2abbdb..e7bb7384a6 100644
---- a/lib/ethdev/rte_ethdev.h
-+++ b/lib/ethdev/rte_ethdev.h
-@@ -4889,6 +4889,61 @@ __rte_experimental
- int
- rte_eth_find_rss_algo(const char *name, uint32_t *algo);
- 
-+/**
-+ * RSS type name mapping entry.
-+ *
-+ * The table returned by rte_eth_rss_type_info_get() is terminated by an entry
-+ * with a NULL string.
-+ */
-+struct rte_eth_rss_type_info {
-+	const char *str; /**< RSS type name. */
-+	uint64_t rss_type; /**< RSS type value (RTE_ETH_RSS_*). */
-+};
-+
-+/**
-+ * @warning
-+ * @b EXPERIMENTAL: this API may change, or be removed, without prior notice.
-+ *
-+ * Get the global RSS type string table.
-+ *
-+ * @return
-+ *   Pointer to a table of RSS type string mappings terminated by an entry with
-+ *   a NULL string.
-+ */
-+__rte_experimental
-+const struct rte_eth_rss_type_info *
-+rte_eth_rss_type_info_get(void);
-+
-+/**
-+ * @warning
-+ * @b EXPERIMENTAL: this API may change, or be removed, without prior notice.
-+ *
-+ * Convert an RSS type name to its value.
-+ *
-+ * @param str
-+ *   RSS type name.
-+ * @return
-+ *   RSS type value (RTE_ETH_RSS_*), or 0 if not found or if str is NULL.
-+ */
-+__rte_experimental
-+uint64_t
-+rte_eth_rss_type_from_str(const char *str);
-+
-+/**
-+ * @warning
-+ * @b EXPERIMENTAL: this API may change, or be removed, without prior notice.
-+ *
-+ * Convert an RSS type value to its name.
-+ *
-+ * @param rss_type
-+ *   RSS type value (RTE_ETH_RSS_*).
-+ * @return
-+ *   RSS type name, or NULL if the value cannot be recognized.
-+ */
-+__rte_experimental
-+const char *
-+rte_eth_rss_type_to_str(uint64_t rss_type);
-+
- /**
-  * Add UDP tunneling port for a type of tunnel.
-  *
++allow_experimental_apis = true
++deps += 'flow_parser'
++sources = files('main.c')
+diff --git a/examples/meson.build b/examples/meson.build
+index 25d9c88457..22f45e8c81 100644
+--- a/examples/meson.build
++++ b/examples/meson.build
+@@ -17,6 +17,7 @@ all_examples = [
+         'eventdev_pipeline',
+         'fips_validation',
+         'flow_filtering',
++        'flow_parsing',
+         'helloworld',
+         'ip_fragmentation',
+         'ip_pipeline',
 -- 
 2.43.7
 
