@@ -2,69 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32AD0E7FDE0
-	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Feb 2026 22:18:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68065E7FDF2
+	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Feb 2026 22:18:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 036064027D;
-	Mon,  2 Feb 2026 23:18:27 +0100 (CET)
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com
- [209.85.128.51]) by mails.dpdk.org (Postfix) with ESMTP id D77294026D
- for <dev@dpdk.org>; Mon,  2 Feb 2026 23:18:25 +0100 (CET)
-Received: by mail-wm1-f51.google.com with SMTP id
- 5b1f17b1804b1-4806fbc6bf3so53120375e9.2
- for <dev@dpdk.org>; Mon, 02 Feb 2026 14:18:25 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 5DBF440648;
+	Mon,  2 Feb 2026 23:18:29 +0100 (CET)
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com
+ [209.85.128.54]) by mails.dpdk.org (Postfix) with ESMTP id 883A4402CC
+ for <dev@dpdk.org>; Mon,  2 Feb 2026 23:18:27 +0100 (CET)
+Received: by mail-wm1-f54.google.com with SMTP id
+ 5b1f17b1804b1-4806bf39419so1060205e9.1
+ for <dev@dpdk.org>; Mon, 02 Feb 2026 14:18:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1770070705;
- x=1770675505; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1770070707;
+ x=1770675507; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=piVoKS9jhv3kZ7RU9/doz+cVCRgEtPT7PqzQ3mJlOHU=;
- b=cMCrlSdlse9zaZxLXY+SC4wFMJac7Lzl/JSsDkQ11qJaPzSyrQQLnOhNAF1tfwvKzT
- bsnYHjBvouvhh0ltEwf2Wmy0kEqyoTiaUxqthXoR45aeSSmxHTlANvOug5F1V5yqrLBV
- PO5g7GweB9EAJ80XLBAcbPoUoIta7SUlHzu0e5lNup6YMutQlF4HTz0F6ful4D6udTm/
- etyMbGkJHkuM2HhLigOr6D/wIxSGV2ADEnY5rjySViN9rS4MWnngl5h+eoyVKRvhCnsh
- GkteYQOZUdYmUGuLKutSBK9gUTrsQdeLrDUI+E9zBVLREx/D+zSiNMFf2PofWb9X7YOH
- DP3A==
+ bh=dShM9mz1LDLr7WNu/7z1v37nf4QY4MJXKxbCTRaTits=;
+ b=GFWCliLTFu04+ZTbhYUGm9Oa3l6qbmFTrIW1Xo3yD/7KSr3j6W+WxC3OrT/kkkUoij
+ m/Nk0+u7m693YIakLOEZ8ZQmIHRr/+nhwIA4N50qiwf0RJ94HNZ6B/UgpHNwVjloq3mB
+ AT/NR2dWJcrlh4jkqMVk8QegFrhg18gDV2x05cqjBZhuPurrk5xU/vHxiXBIbta7qYHU
+ ZIHcT1DarxDrXgDy46RGIYLJXEN5RZJYIbpumDe1rLL5MFddK6xSwAGFex3mOtBtFJwY
+ mPjelORY0CGOdbGrPtLpCD42kHwncQJBhV/2ETzh/3ScxmL2+bGjbrUZAtWHpu6sG+lo
+ zSHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1770070705; x=1770675505;
+ d=1e100.net; s=20230601; t=1770070707; x=1770675507;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=piVoKS9jhv3kZ7RU9/doz+cVCRgEtPT7PqzQ3mJlOHU=;
- b=QxAZCNOxdE7lcP93t1fK6Um0xYTpxu9HPE4gtLuvN+icB5vjzky5LOt+rp2h9b70mU
- Hk7Ahzxndjc7wpW/g3SgWnAHAY36RAdK8TMDCKslufrqrcweUQPt0VCZta8yRNtT+x6m
- h+xGhSJXOV+Y4Sy/zdsPqEMPUMvjhSIrMdPMRm7HRYKK8taYvS0daqmKAz2XzUuo20vt
- TzFJhtC2vcUr+EgTXVr2P1hpI9l0alnnoXvR5SQVXA7Lh+HCRgPSmTscr59PZE/DlSqH
- 5+p6rWU7rmoPzvCoMGvvih2CsiyHBxMnCHtLCVWvvmLurIXDuHi8VrcRMBG1Bx7AwYt3
- I3Uw==
-X-Gm-Message-State: AOJu0Yxt5U0DaHzAaaoIvvLOY2PFytDiZdK/x9f+/tBJo1RR7s2/Cy34
- Rr6c1eh4ZBNPjIi6eP23D1llUt1yRcJCWGICiFa8zAK5JNMGz3Wu3KEGotqiZFNpRRgvF9yNRGe
- uZKGL
-X-Gm-Gg: AZuq6aKyiN9Z7an7PJAF6mtKSzXQV34o2RlfUNgmRqaYzLP1gRIOUWY4Oz7DYJbgKc5
- iDVkPKtneSNf1S817GiQ0WFtMfyg48C9YS/fehixxq0kSZPdfz3b7/Ugywe/uByjmfwD89f+2Dm
- 5+sNgsmJYpoSCliuuoSchdMwyk4p0FBxNm7PTy7gFPw1Vpo84YjB9bK3PitBtyHlV7ZdrOILV9u
- XsBAdR3F74Ij/vGG6L+NX3dcxai90rxw92/rTznfHIV9kLC+GfihpH9CADnl/My/u1qnAyVE7X/
- scFl8/URObXsLQKe2xkL9szwhY9Hf+aHvrntFpumMbHw28TzYBt5N5sXlEW/aFw+6aJ4HcEqqSR
- vWAK+m7fxpmfCVEVMR3bcP7CzJ5ZQmxCZfHZm4pToCki2hRzbSZbvczKrelbMtAfvnnbxcJsxlN
- SKjiZCKk52pgerdteLhlpBa7s82p7q3cvswCzKvvdbBF5jTFUxlg==
-X-Received: by 2002:a05:600c:4591:b0:477:5cc6:7e44 with SMTP id
- 5b1f17b1804b1-482db4607cbmr169704985e9.11.1770070704998; 
- Mon, 02 Feb 2026 14:18:24 -0800 (PST)
+ bh=dShM9mz1LDLr7WNu/7z1v37nf4QY4MJXKxbCTRaTits=;
+ b=l9Px+WZomJWB4dVRrNFeCpDVjbXEup1jSsai4CIml12158kJNHghxf3ScZmCX+FPay
+ DIacRRDmh7bdZG/OzrzhoeyBLdnr5lnaNjsyE07XApGjdGl//drfCTMG7zwKALyaPyN7
+ yQshEq8nT8BC3jxvMnm6u9ChsCyj1GwxLICXM2suvltccKRP89c+sUb++xmpknBn5P1c
+ QRdYg4xiUgx7y69tMCnharLH/MSLEVdS6KL+mL+38Gaxt7BgokEHQRW9QhtkSV7No6Lp
+ 9C9PZbUMr9IVUc4vjKD51C97uGg9KP8MLwKDfk9r+LUMPm7QUL1LaH1lE4whMrHtdb7K
+ 7Vgg==
+X-Gm-Message-State: AOJu0Yw6hJT+HZKfaEha9FhAaAJvhcy7VMLsQ46xqOT+iHT7ARRZGX2U
+ zag/FdUS0MMuumG5ICeDu2u5fXO0g32ZZvu8uTcivY/PLe0ivN4OAa3crF8FOI/g54EIPr5TQRO
+ opqpv
+X-Gm-Gg: AZuq6aLTSWGzjkKfvHfCNuVvfVX1aFdBaptlw5w9/SsgCCqeT3MgcBqOA6c1+RjLzbh
+ uC5jhp60iP5jj8UIqv4QObxFfdXVwzoq+6U51B6J8RM/X/NgRlpsXg8sO4f9AOav5PoXSBw6Ar7
+ LPV+oKHJFFPlNgkI1+hFcyBVo9naTfUPmL/Kgs46b46T87qWIHKTJYBa9xD5T2cFFweibCr4o93
+ vZTcWlAnTHgygn+5nHz1tdBztgS35JQ4m93bzZFvtbEBAfi7cWiuSnb3GU1O+mVj+gvihxpyYek
+ Iu2KYp/KUP7T9ISYoAM57svLz58nJgr9pjWfFN/X7IUXPxD4kVUuMYSw+OxFREtV1XHsBo7scCS
+ jfhWa1FCdjxs/yvdX6h4ZGqFRhUKD3CSD266e748x4U0GjLkBYpIXnNGnHG1wlHPFTjvkm1BSBm
+ gdxmrp6CevYRK4HdGfHSoi7CWD77WeXTySaFwf7eSxw8k0Epnsgg==
+X-Received: by 2002:a05:600c:4f4f:b0:47d:6c36:a125 with SMTP id
+ 5b1f17b1804b1-483051553a4mr14874015e9.17.1770070706957; 
+ Mon, 02 Feb 2026 14:18:26 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-435e10ee04csm47109336f8f.12.2026.02.02.14.18.23
+ ffacd0b85a97d-435e10ee04csm47109336f8f.12.2026.02.02.14.18.25
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 02 Feb 2026 14:18:24 -0800 (PST)
+ Mon, 02 Feb 2026 14:18:26 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v11 0/7] net/null: bug fixes and improvements
-Date: Mon,  2 Feb 2026 14:16:45 -0800
-Message-ID: <20260202221820.204680-1-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
+ Tetsuya Mukawa <mtetsuyah@gmail.com>
+Subject: [PATCH v11 1/7] net/null: fix missing mbuf leakage in the copy
+ transmit
+Date: Mon,  2 Feb 2026 14:16:46 -0800
+Message-ID: <20260202221820.204680-2-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20260104222523.329760-1-stephen@networkplumber.org>
+In-Reply-To: <20260202221820.204680-1-stephen@networkplumber.org>
 References: <20260104222523.329760-1-stephen@networkplumber.org>
+ <20260202221820.204680-1-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -80,72 +83,30 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This series makes several improvements to the null PMD driver and
-adds comprehensive unit tests.
+The transmit variant that copies the data into the dummy packet
+is missing calling free. Looks like a regression got introduced
+when optimizing the transmit logic to do bulk free.
 
-The series:
-1) Cleans up the info_get callback by removing redundant argument
-   checks and using proper constants. Also sets min_rx_bufsize to
-   the configured packet_size, enabling the ethdev layer to reject
-   undersized mbuf pools.
+Fixes: 9946ba548bf8 ("net/null: optimize Tx")
+Cc: stable@dpdk.org
 
-2) Adds proper validation for numeric devargs (packet_size,
-   packet_copy, no_rx) using a common helper function that rejects
-   empty strings, trailing non-numeric characters, and out-of-range
-   values.
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+---
+ drivers/net/null/rte_eth_null.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-3) Removes redundant argument validation in dev_ops callbacks that
-   is already performed by the ethdev layer.
-
-4) Adds VLAN insert and strip offload support. The driver advertises
-   RX VLAN strip and TX VLAN insert capabilities. When VLAN strip is
-   enabled, received mbufs are marked with the appropriate flags and
-   a dummy vlan_tci. The vlan_offload_set dev_op is implemented for
-   runtime toggling via rte_eth_dev_set_vlan_offload().
-
-5) Extends the packet burst generator to support larger packets
-   by widening parameter types from uint8_t to uint16_t.
-
-6) Adds a comprehensive unit test for the null PMD covering RX/TX,
-   statistics, custom packet sizes, copy mode, no-RX mode, link
-   status, device info, RSS, RETA, VLAN strip, VLAN insert, and
-   multi-threaded TX.
-
-Patches 1, 2, and 3 are marked for stable backport as they fix issues
-where invalid mbufs could be generated or invalid arguments silently
-accepted.
-
-v11:
-  - Add VLAN insert and strip offload support to the driver
-  - Rebase to main
-
-v10:
-  - Fix mbuf leak in eth_null_copy_tx
-
-v9:
-  - Consolidated argument validation into a single patch with
-    common helper function get_unsigned_arg()
-  - Merged pool vs packet size check into the cleanup patch
-  - Removed redundant argument validation in a separate patch
-  - Reordered patches to put fixes before tests
-
-Stephen Hemminger (7):
-  net/null: fix missing mbuf leakage in the copy transmit
-  net/null: cleanup info response
-  net/null: validate the numeric devargs
-  net/null: remove redundant argument validation
-  test: support larger packet sizes in burst generator
-  test: add a test for null PMD
-  net/null: add VLAN insert and strip offload support
-
- app/test/meson.build              |   1 +
- app/test/packet_burst_generator.c |  34 +-
- app/test/packet_burst_generator.h |   4 +-
- app/test/test_pmd_null.c          | 947 ++++++++++++++++++++++++++++++
- drivers/net/null/rte_eth_null.c   | 156 ++---
- 5 files changed, 1050 insertions(+), 92 deletions(-)
- create mode 100644 app/test/test_pmd_null.c
-
+diff --git a/drivers/net/null/rte_eth_null.c b/drivers/net/null/rte_eth_null.c
+index 46e7e7bd8c..0931dac12e 100644
+--- a/drivers/net/null/rte_eth_null.c
++++ b/drivers/net/null/rte_eth_null.c
+@@ -172,6 +172,7 @@ eth_null_copy_tx(void *q, struct rte_mbuf **bufs, uint16_t nb_bufs)
+ 		rte_memcpy(h->dummy_packet, rte_pktmbuf_mtod(m, void *), len);
+ 		bytes += m->pkt_len;
+ 	}
++	rte_pktmbuf_free_bulk(bufs, nb_bufs);
+ 
+ 	rte_atomic_fetch_add_explicit(&h->tx_pkts, nb_bufs, rte_memory_order_relaxed);
+ 	rte_atomic_fetch_add_explicit(&h->tx_bytes, bytes, rte_memory_order_relaxed);
 -- 
 2.51.0
 
