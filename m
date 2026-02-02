@@ -2,37 +2,37 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 937B8E73165
-	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Feb 2026 19:33:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 147CCE7316F
+	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Feb 2026 19:33:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CA5B540647;
-	Mon,  2 Feb 2026 20:33:38 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 0960C40656;
+	Mon,  2 Feb 2026 20:33:40 +0100 (CET)
 Received: from office2.cesnet.cz (office2.cesnet.cz [78.128.248.237])
- by mails.dpdk.org (Postfix) with ESMTP id 1A9D3402AA;
- Mon,  2 Feb 2026 20:33:36 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 2500C402CC
+ for <dev@dpdk.org>; Mon,  2 Feb 2026 20:33:36 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cesnet.cz;
- s=office2-2020; t=1770060815;
- bh=X2SlewtWkMDpwjd6at9DeLq15VdcP4ZDaoigxuZlV3c=;
+ s=office2-2020; t=1770060816;
+ bh=UfwXKOwyYrO+QKbb3JF/JWCKG6cT631oH4q8NvMPC14=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References;
- b=F5OTYc+thGP4nM/Y+RtD2uwz90KakCoo4vj22ATnfc9rahihPqZVBbi0MeYgx7/ST
- 3ZkuMQqG4cm8urMB/nJydk1at26hs9lUSDGoeOl/u/gL78yzvrqymvMKx6jx+m9Okm
- yKc4kwpBtb+Vocdf7pJ7dQCbKC2C09IylY0nFYQaf2huGt4q7lc332qLEnyBXq6S+2
- jqkqlpxybpDybH4hwlRGAUKLea0ZxKlnqbJYWhGPNzzrRTpQnnmba7O1Z4yHperpL5
- grl3RAM3UyFxpfM7TT8mKfYRl21O7NC+DHrpjAgjtsbu/19hv0EYNU+Ovl47hqkzbI
- xq5ReSXEn1/2Q==
+ b=UAdRkwjvKJdZWtywuUKtn7sPYo6fnqf50udPe97H7eFpdeZxoKkVGvYfJJ+GsxYsw
+ zVMcKQ6CMpbKqIYagJVtagoBKUkyYbqcrHccgL2ycEJgp6B2TwISwmpyWxxgT9fec/
+ URhFnj1p0RrzekQek9yAUSj6aCejwYeXCS/TdindrrNamJnQKZJQnwblgcoYfkLNKs
+ GFE7GscAtrORTB3ehycMAJ4QdepNvv9jThjtxrBDfpd96s4MrFYq2lrfLNuriDZy4o
+ /Xi3yZK5eKDLzVwF4UugDli4s5xxzrsIe3yYp320YvE3Ot95QPVw67gdg9C+ZFWhJF
+ EFeYe+r6APUOA==
 Received: from emil.cesnet.cz (gtx107.cesnet.cz [IPv6:2001:718:812:27::107])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by office2.cesnet.cz (Postfix) with ESMTPSA id D0875118007E;
+ by office2.cesnet.cz (Postfix) with ESMTPSA id EEBCC1180072;
  Mon,  2 Feb 2026 20:33:35 +0100 (CET)
 From: spinler@cesnet.cz
 To: dev@dpdk.org
-Cc: Martin Spinler <spinler@cesnet.cz>,
-	stable@dpdk.org
-Subject: [PATCH v5 2/6] net/nfb: fix bad pointer access in queue stats
-Date: Mon,  2 Feb 2026 20:33:26 +0100
-Message-ID: <20260202193330.3324681-3-spinler@cesnet.cz>
+Cc: Martin Spinler <spinler@cesnet.cz>
+Subject: [PATCH v5 3/6] net/nfb: update timestamp calculation to meaningful
+ value
+Date: Mon,  2 Feb 2026 20:33:27 +0100
+Message-ID: <20260202193330.3324681-4-spinler@cesnet.cz>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260202193330.3324681-1-spinler@cesnet.cz>
 References: <20260115140134.235877-1-spinler@cesnet.cz>
@@ -54,99 +54,70 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Martin Spinler <spinler@cesnet.cz>
 
-The driver code has dereferenced the dev->data->rx_queues pointer
-without checking for its validity.
-Pointer invalidation can occur when the eth_dev_rx_queue_config
-is called with set to 0, for example.
+The resulting timestamp wasn't monotonically increasing value.
 
-Moreover, an array of pointers (to a structure) was used like array
-of structures (which worked with early dereference just for one queue).
+Now the timestamp is value in nanoseconds (Unix epoch).
 
-Fixes: 6435f9a0ac22 ("net/nfb: add new netcope driver")
-Cc: stable@dpdk.org
+Unfortunately there's currently no safe mechanism in nfb-framework
+to get ticks from hardware to implement read_clock function.
 
 Signed-off-by: Martin Spinler <spinler@cesnet.cz>
 ---
- drivers/net/nfb/nfb_stats.c | 46 ++++++++++++++++++-------------------
- 1 file changed, 23 insertions(+), 23 deletions(-)
+ doc/guides/nics/nfb.rst  |  6 ++----
+ drivers/net/nfb/nfb_rx.h | 13 +++++++------
+ 2 files changed, 9 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/net/nfb/nfb_stats.c b/drivers/net/nfb/nfb_stats.c
-index 4ea6b7be21..27a01c3160 100644
---- a/drivers/net/nfb/nfb_stats.c
-+++ b/drivers/net/nfb/nfb_stats.c
-@@ -20,28 +20,28 @@ nfb_eth_stats_get(struct rte_eth_dev *dev, struct rte_eth_stats *stats,
- 	uint64_t rx_total_bytes = 0;
- 	uint64_t tx_total_bytes = 0;
+diff --git a/doc/guides/nics/nfb.rst b/doc/guides/nics/nfb.rst
+index 96aaf64440..a9b4049654 100644
+--- a/doc/guides/nics/nfb.rst
++++ b/doc/guides/nics/nfb.rst
+@@ -64,10 +64,8 @@ products). The standard `RTE_ETH_RX_OFFLOAD_TIMESTAMP` flag can be used for this
+ When the timestamps are enabled, a timestamp validity flag is set in the MBUFs
+ containing received frames and timestamp is inserted into the `rte_mbuf` struct.
  
--	struct ndp_rx_queue *rx_queue = *((struct ndp_rx_queue **)
--		dev->data->rx_queues);
--	struct ndp_tx_queue *tx_queue = *((struct ndp_tx_queue **)
--		dev->data->tx_queues);
-+	struct ndp_rx_queue *rx_queue;
-+	struct ndp_tx_queue *tx_queue;
+-The timestamp is an `uint64_t` field. Its lower 32 bits represent *seconds* portion of the timestamp
+-(number of seconds elapsed since 1.1.1970 00:00:00 UTC) and its higher 32 bits represent
+-*nanosecond* portion of the timestamp (number of nanoseconds elapsed since the beginning of the
+-second in the *seconds* portion.
++The timestamp is an `uint64_t` field and holds the number of nanoseconds
++elapsed since 1.1.1970 00:00:00 UTC.
  
- 	for (i = 0; i < nb_rx; i++) {
-+		rx_queue = dev->data->rx_queues[i];
- 		if (qstats && i < RTE_ETHDEV_QUEUE_STAT_CNTRS) {
--			qstats->q_ipackets[i] = rx_queue[i].rx_pkts;
--			qstats->q_ibytes[i] = rx_queue[i].rx_bytes;
-+			qstats->q_ipackets[i] = rx_queue->rx_pkts;
-+			qstats->q_ibytes[i] = rx_queue->rx_bytes;
- 		}
--		rx_total += rx_queue[i].rx_pkts;
--		rx_total_bytes += rx_queue[i].rx_bytes;
-+		rx_total += rx_queue->rx_pkts;
-+		rx_total_bytes += rx_queue->rx_bytes;
- 	}
  
- 	for (i = 0; i < nb_tx; i++) {
-+		tx_queue = dev->data->tx_queues[i];
- 		if (qstats && i < RTE_ETHDEV_QUEUE_STAT_CNTRS) {
--			qstats->q_opackets[i] = tx_queue[i].tx_pkts;
--			qstats->q_obytes[i] = tx_queue[i].tx_bytes;
-+			qstats->q_opackets[i] = tx_queue->tx_pkts;
-+			qstats->q_obytes[i] = tx_queue->tx_bytes;
- 		}
--		tx_total += tx_queue[i].tx_pkts;
--		tx_total_bytes += tx_queue[i].tx_bytes;
--		tx_err_total += tx_queue[i].err_pkts;
-+		tx_total += tx_queue->tx_pkts;
-+		tx_total_bytes += tx_queue->tx_bytes;
-+		tx_err_total += tx_queue->err_pkts;
- 	}
+ Using the NFB PMD
+diff --git a/drivers/net/nfb/nfb_rx.h b/drivers/net/nfb/nfb_rx.h
+index 12769841ae..67b3b00e2a 100644
+--- a/drivers/net/nfb/nfb_rx.h
++++ b/drivers/net/nfb/nfb_rx.h
+@@ -13,6 +13,7 @@
+ #include <rte_mbuf.h>
+ #include <rte_mbuf_dyn.h>
+ #include <rte_ethdev.h>
++#include <rte_time.h>
  
- 	stats->ipackets = rx_total;
-@@ -59,20 +59,20 @@ nfb_eth_stats_reset(struct rte_eth_dev *dev)
- 	uint16_t nb_rx = dev->data->nb_rx_queues;
- 	uint16_t nb_tx = dev->data->nb_tx_queues;
+ #include "nfb.h"
  
--	struct ndp_rx_queue *rx_queue = *((struct ndp_rx_queue **)
--		dev->data->rx_queues);
--	struct ndp_tx_queue *tx_queue = *((struct ndp_tx_queue **)
--		dev->data->tx_queues);
-+	struct ndp_rx_queue *rx_queue;
-+	struct ndp_tx_queue *tx_queue;
+@@ -202,15 +203,15 @@ nfb_eth_ndp_rx(void *queue,
+ 			if (nfb_timestamp_dynfield_offset >= 0) {
+ 				rte_mbuf_timestamp_t timestamp;
  
- 	for (i = 0; i < nb_rx; i++) {
--		rx_queue[i].rx_pkts = 0;
--		rx_queue[i].rx_bytes = 0;
--		rx_queue[i].err_pkts = 0;
-+		rx_queue = dev->data->rx_queues[i];
-+		rx_queue->rx_pkts = 0;
-+		rx_queue->rx_bytes = 0;
-+		rx_queue->err_pkts = 0;
- 	}
- 	for (i = 0; i < nb_tx; i++) {
--		tx_queue[i].tx_pkts = 0;
--		tx_queue[i].tx_bytes = 0;
--		tx_queue[i].err_pkts = 0;
-+		tx_queue = dev->data->tx_queues[i];
-+		tx_queue->tx_pkts = 0;
-+		tx_queue->tx_bytes = 0;
-+		tx_queue->err_pkts = 0;
- 	}
- 
- 	return 0;
+-				/* nanoseconds */
+-				timestamp =
+-					rte_le_to_cpu_32(*((uint32_t *)
+-					(packets[i].header + 4)));
+-				timestamp <<= 32;
+ 				/* seconds */
+-				timestamp |=
++				timestamp =
+ 					rte_le_to_cpu_32(*((uint32_t *)
+ 					(packets[i].header + 8)));
++				timestamp *= NSEC_PER_SEC;
++				/* nanoseconds */
++				timestamp +=
++					rte_le_to_cpu_32(*((uint32_t *)
++					(packets[i].header + 4)));
+ 				*nfb_timestamp_dynfield(mbuf) = timestamp;
+ 				mbuf->ol_flags |= nfb_timestamp_rx_dynflag;
+ 			}
 -- 
 2.52.0
 
