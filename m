@@ -2,71 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FEB8E7DF11
-	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Feb 2026 17:34:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C2A1E7DF19
+	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Feb 2026 17:37:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8AF724027D;
-	Mon,  2 Feb 2026 18:34:39 +0100 (CET)
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com
- [209.85.128.47]) by mails.dpdk.org (Postfix) with ESMTP id EB3FC4026D
- for <dev@dpdk.org>; Mon,  2 Feb 2026 18:34:37 +0100 (CET)
-Received: by mail-wm1-f47.google.com with SMTP id
- 5b1f17b1804b1-4806dffc64cso36185375e9.1
- for <dev@dpdk.org>; Mon, 02 Feb 2026 09:34:37 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id AB8564027D;
+	Mon,  2 Feb 2026 18:37:14 +0100 (CET)
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com
+ [209.85.128.43]) by mails.dpdk.org (Postfix) with ESMTP id A23134026D
+ for <dev@dpdk.org>; Mon,  2 Feb 2026 18:37:13 +0100 (CET)
+Received: by mail-wm1-f43.google.com with SMTP id
+ 5b1f17b1804b1-480706554beso51308715e9.1
+ for <dev@dpdk.org>; Mon, 02 Feb 2026 09:37:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1770053677;
- x=1770658477; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1770053833;
+ x=1770658633; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=c/byMa95hA5Vtl1UqxLr2HAogVeq6ef4wf9Rh+jCLVk=;
- b=Ccy88V+g121i5r4XTBjOJT1FX59Cq4vr9guW3oJldnR/GJMs8ZubRYYJeDalDDBBTs
- DqWs7pHHlUQ1yPqYt45D3liow5f8CPFRk7tyUrXbRW25lUS3YywiOhlnK8j3rRQkklm6
- LvjIrubq442nVB+gDJnIrmoclxLQfoW17DoA9T1yww6MF1yLHI9tcG2Y6UGbn3dphvH1
- Dmu9vRWx1nb9Nlz3xEo2tqClpWrd4QOZ24O2epf7YJK0fm94R8udInydlbtPcqaarKYp
- rS0CoTr/r3kg+1BdKCkJufDhY7Acgp3Tl0nCPBNkbqPrqjwSibh+L5+bWb0EDWpKvaa6
- bqJQ==
+ bh=aTaQnRp/N38S1WVFvIJWYbLAvIvY785RQoImlWgdIzI=;
+ b=uBDl1B/Zn1iB73TFhQ7C50I8O9mtHONeUgLo16c7mqs3JFSZxNjQfGjmyUg+LATnn2
+ 6E9NrfF33E41k9lEC84LbE8Pa0mlxiJGqt4TPj1fc/W42mYNYEzROANQBv1/sFxwBKnX
+ 4R/IbwxrSOdEVzmGEJONhIosM9Z55gtHW25GEmJZumyZj16yOW+a0xIzkjx0/rd9n2aO
+ 6HtQ7ukGVsY0/xiOGw7lGOqdgMw/5cYOs7FhHfFr8JVGYN2ZBWCvtBg0UCqt5lTHVFh+
+ SFn1z4RKA52tNy+c0BCXyApUNEYkn5CPWDpjqpdp+oZcl51Tnz6evGWOynWMyPhYof+F
+ miog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1770053677; x=1770658477;
+ d=1e100.net; s=20230601; t=1770053833; x=1770658633;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=c/byMa95hA5Vtl1UqxLr2HAogVeq6ef4wf9Rh+jCLVk=;
- b=RuHC8XbVB4c+gjBegvYjSMraFsG2aCXMDs7Iigj+9tCONHOghAC/LTI5jo+Xw1J8PG
- y5gsw2bcFdII/EYGFLfCwiPZ5LsYeYyOBiwRa0sht+9gHpIDnHPKbq1jqwGGnTx7VB36
- YvBppE8JNnE5vqEd3YOPy4TZ07R1PuZG7l6dRAxtLwZAc/yyDo4df9rcMeEB8bmeDDar
- 4ryh6tsmqCTPA5txc3ZqnQz6oUFHNVUthKaOJOyougwKjMuetFghSBTLYOIgBJx/gKP0
- zlHY2BRtmQkpgpDGF4DvH72HuAiYABtCxOeZBnXxvkmZ8wxxwr7R83E6EHH0sXUP3BbG
- 5D2w==
-X-Gm-Message-State: AOJu0Yx2o+6qODO34slMGtpIntRUmWxBESTkPbV6UYaoEdGpQNJhTm91
- wx1MEy+hM6SFwZgngv00mtwBf1VOH/HIriyKIf7BNOlg7IQK11YXUKVg3R4suGs3kEY=
-X-Gm-Gg: AZuq6aJMYjNMq+IDMCF7BWKdgI3Zlj5hH5lyZiYBx2jt1U6payC1CMKVD+MVtODaQ8I
- UqiQ9IdFfnPXI8Vp+6S5e07p/xUrGoIecs3CyjcThxmktFj9w8wW7B6q15dS7iY1+P/fEM0fSb9
- ouLm13ZeD73Cz0/do4AVXCtbVWHMxNVowGKBBZyqjau3ZD1ip1jJXMRlzc/x+4R1rovNX5RwgqQ
- vm5S3pHpPMBBzA9VKY2RLjkPNQ8BqTGPt7X6rLA7c2D309CTymnKr5obkGaf8IRXETzXhHlljwg
- iXN3+LmP9TjB+e0Qk1v8jRDkAxHB8KN+aARPew17ex/mtNxi/FK5+JzUyFxf9YNzBv0DNHEjPln
- WpRPvUg8FLqxNqc84Y/f9KRLNhMvD0Zz2NuKxUtvazmvJ/Rpde6iCyiRibnm2b9H6/PP+mw4OOJ
- FQpAshPYm9mfp2SgZKeqD9t83r9IgAeYagzdydQ33/jNv8ioYHoG7dTm2n8Ug1UBo=
-X-Received: by 2002:a05:600c:4ecd:b0:480:3230:6c89 with SMTP id
- 5b1f17b1804b1-482db4616damr167429335e9.12.1770053677057; 
- Mon, 02 Feb 2026 09:34:37 -0800 (PST)
+ bh=aTaQnRp/N38S1WVFvIJWYbLAvIvY785RQoImlWgdIzI=;
+ b=h/WPdOtU0oZApO2w/s0Wy57BHGThzYL2N4y+IRjmuWbyKivdCvRqQJhphqed/q2O+z
+ VdaVise9e5jtoT6V+CwaM5HVX3zYc+s1NSPvr9WfEQv1A1w0ynVpOpz5lgPc5QhPYbxL
+ l4c+XSqFp/Y1152lG4819d9VuZe/4hHowz75sw3T18ajDCeAQdkcjZqtkOj72Ok0NO1/
+ CmaSD5wmVhPTDOGOsvsjWadlDuXrbai44bYDttUZVqBfcbFLozbFrqxV9cBsZMRAVDd0
+ +pAWYKYBPwKqW9RP0epsA4x9QlKMxfJAm8IaKaD8s9U8EHG/gFHVkMmCBRIvlGzNfyAe
+ pzww==
+X-Gm-Message-State: AOJu0YwgNfRnW2uKU++Bgg1Cl4qnf4fAfIsUozqM+lTAxkCKcx37Qt1J
+ Oe33UaVgHHMWRwuG92O10pJgTRvcSeA1XDda83cXZSYX7wCPfWXv+jshioTsPy8NkBQ=
+X-Gm-Gg: AZuq6aJgfXEZaxrdg2HrdCvzQhEXmIQidTMynfIwp6Mw4n+dlJRaxe7b3liB7SZrtFW
+ HjuCMQd4iTVv2KsB1RvXujOTJvJ1oaipddI3TbyOI4nzk8B2APWrnweWW1IDAXTRi1xrbWN8ZFc
+ uPkxGcNnlK6PxeIqqIXkh2h4gbgluy0OUjdShUXXjumDxkSOcLC9GDJSYDLzNTgDbK+I5/jisS3
+ WpbApCaiV0ZpyHCoZ1IcIK6sbzfTtzADS6xlZ7RIH/Ui46XAKC9CoQdp/S7LXSIaQua5Lxjh2fa
+ Tv4UYXq9ObTo1w440Ok9lEXxnawVdfRKO9U8wmzpBeczcx483aSSMQp9UTA38SGUVoicJuAtYgZ
+ RpNdWxzmeerqS0apDo7rvQ2lyjYbWgAU0Ly3evf5h70TLaT8ivXbq+1AnKt2phgtNVmfBAqdeyH
+ 84RTyDSbHqiMQmxyOOXvbJk5tizUDG9ehJsgAUBzhS2QaNLqxcptLC
+X-Received: by 2002:a05:600c:1d1b:b0:46e:59bd:f7d3 with SMTP id
+ 5b1f17b1804b1-482db4939d8mr159530185e9.20.1770053833209; 
+ Mon, 02 Feb 2026 09:37:13 -0800 (PST)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-48305129419sm3399515e9.6.2026.02.02.09.34.35
+ ffacd0b85a97d-435e10e474csm44328775f8f.2.2026.02.02.09.37.11
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 02 Feb 2026 09:34:36 -0800 (PST)
-Date: Mon, 2 Feb 2026 09:34:31 -0800
+ Mon, 02 Feb 2026 09:37:12 -0800 (PST)
+Date: Mon, 2 Feb 2026 09:37:07 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Scott Mitchell <scott.k.mitch1@gmail.com>
-Cc: dev@dpdk.org, "John W. Linville" <linville@tuxdriver.com>
-Subject: Re: [RFC 1/4] net/af_packet: remove volatile from statistics
-Message-ID: <20260202093431.57c1d652@phoenix.local>
-In-Reply-To: <CAFn2buDhLQstsTxLyqsK3ZbOJG4ZgOGreKm0Lv7seieBEfJq_w@mail.gmail.com>
-References: <20260128173138.151837-1-stephen@networkplumber.org>
- <20260128173138.151837-2-stephen@networkplumber.org>
- <CAFn2buD=1CwnP92LGuj7fGzi_Cujnp8eTV96ZzTNKBjsA6kzOA@mail.gmail.com>
- <20260128130014.0489e0a0@phoenix.local>
- <CAFn2buDhLQstsTxLyqsK3ZbOJG4ZgOGreKm0Lv7seieBEfJq_w@mail.gmail.com>
+To: Gregory Etelson <getelson@nvidia.com>
+Cc: <dev@dpdk.org>, <mkashani@nvidia.com>, "Claude Sonnet 4.5"
+ <noreply@anthropic.com>, Aman Singh <aman.deep.singh@intel.com>
+Subject: Re: [PATCH 2/2] app/testpmd: support selective Rx data
+Message-ID: <20260202093707.2c699414@phoenix.local>
+In-Reply-To: <20260202160903.254621-2-getelson@nvidia.com>
+References: <20260202160903.254621-1-getelson@nvidia.com>
+ <20260202160903.254621-2-getelson@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -83,38 +81,21 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Sun, 1 Feb 2026 23:02:53 -0800
-Scott Mitchell <scott.k.mitch1@gmail.com> wrote:
+On Mon, 2 Feb 2026 18:09:03 +0200
+Gregory Etelson <getelson@nvidia.com> wrote:
 
-> Without volatile, is there any guarantee the consumer thread will see
-> the writes from the producer thread? For example, couldn't the
-> compiler cache rx_pkts in a register on the consumer side?
-> // Consumer thread:
-> uint64_t prev = 0;
-> while (monitoring) {
->     uint64_t curr = rx_pkts;  // Compiler may cache in register
->     if (curr != prev) {       // Without volatile: may always be false
->       update_display();       // Never executes
->       prev = curr;
->     }
-> }
-> 
-> I created a godbolt comparing different approaches
-> (https://godbolt.org/z/1Gaz6jPxh) showing assembly for x86-64 and ARM
-> at -O3. Summary:
-> 1. Plain load/store: Fastest. No visibility guarantees. May tear on 32-bit.
-> 2. Volatile: Provides visibility. May tear on 32-bit.
-> 3. Atomic load/store (relaxed): Same performance as volatile. Provides
-> visibility and guarantees no tearing (even on 32-bit).
-> 4. Atomic_fetch_add: Heaviest cost (LOCK on x86).
-> 
-> My concern is that Option 1 (Plain) has no guaranteed visibility - the
-> compiler may optimize away loads entirely. Since Option 3 (Atomic
-> Load/Store) has identical instruction cost to Volatile but provides
-> formal guarantees (visibility + no tearing), would that be the
-> preferred solution?
+> diff --git a/doc/guides/testpmd_app_ug/run_app.rst b/doc/guides/testpmd_app_ug/run_app.rst
+> index 97d6c75716..638c0b0eb3 100644
+> --- a/doc/guides/testpmd_app_ug/run_app.rst
+> +++ b/doc/guides/testpmd_app_ug/run_app.rst
+> @@ -364,6 +364,11 @@ The command line options are:
+>      feature is engaged. Affects only the queues configured
+>      with split offloads (currently BUFFER_SPLIT is supported only).
+>  
+> +    When used with ``--rxpkts`` on PMDs supporting selective Rx data,
+> +    enables receiving only specific packet segments and discarding the rest.
+> +    Gaps between configured segments and any trailing data up to MTU are
+> +    a
 
-In normal case, compiler isn't going to be able to see across function
-boundary especially through indirection of eth_dev_ops table.
-With LTO it might be possible but unlikely.
-
+I don't see driver support for this. Seems like you are putting out
+something that is not testable yet.
