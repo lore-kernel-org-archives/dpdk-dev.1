@@ -2,66 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B874E7FDF8
-	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Feb 2026 23:13:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFC5AE7FDF8
+	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Feb 2026 23:13:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 111F64065E;
-	Tue,  3 Feb 2026 00:13:00 +0100 (CET)
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com
- [209.85.221.54]) by mails.dpdk.org (Postfix) with ESMTP id 2B1C440657
- for <dev@dpdk.org>; Tue,  3 Feb 2026 00:12:58 +0100 (CET)
-Received: by mail-wr1-f54.google.com with SMTP id
- ffacd0b85a97d-43601e96f72so1286028f8f.2
- for <dev@dpdk.org>; Mon, 02 Feb 2026 15:12:58 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 2798540668;
+	Tue,  3 Feb 2026 00:13:01 +0100 (CET)
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com
+ [209.85.221.53]) by mails.dpdk.org (Postfix) with ESMTP id 9538840657
+ for <dev@dpdk.org>; Tue,  3 Feb 2026 00:12:59 +0100 (CET)
+Received: by mail-wr1-f53.google.com with SMTP id
+ ffacd0b85a97d-4359108fd24so3057730f8f.2
+ for <dev@dpdk.org>; Mon, 02 Feb 2026 15:12:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1770073978;
- x=1770678778; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1770073979;
+ x=1770678779; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=lftoMFquX5nMuetOGndTweQEe6ZOGwEyfPpEQwi+Wuw=;
- b=GjjxtBbcujMj1OVcZWIXTkoqs0PL2J1vtREkZkCKD/TzyWzGbkn+AdF6xKzX21qsU/
- tO+8TDOD/tZTNSPQAz0Uo3cFqdOE5WmSApN0oqlQEFSaS2VVWdpYt5fJP1bpayQvC3Rb
- vn8thJknPt/DnssUmctDU0SNJiExPsvRJWdW57hne7lesPIQBMWdsQ9Psc4gELC4kO1h
- U2T/VqgQoAz66FkKYjcngsXCxnzenPwpbdMql9db38h0Y8cDJrQ9EVTNv3+E7FpMWqRl
- oJ1UOx8d6c4ian5+tfkvm+NNyQ6s813rVhONSThZv7RTzcNQAKDOewH4YQKiHMlV7s+q
- SXeA==
+ bh=qr2ibaKZFZ1WwKRZQD97rDlklZTjrIslHzDyjV82s/Y=;
+ b=AlCjkWLUv2V48JEDCwZoJWvg0C79/Th5t42eelN3rCaT07MPxxVhQWs2p0jnPQ44W5
+ Ona8HVtsw60Eqph6bp9i60Jpr60QXrCZIBnVv2X0OXH/+UwBbMldXlnVimvV1M/4yjMz
+ Y0cogAu41U7J5H7/XTtEydRo91k1FpBjGijtEXzSCEmtOytor/jSEyNLJim+1QUJDIk8
+ f31jE90MValM3P3ugTnxUmQz9MpKC1bqrme/47+5xEZ/CczIuMr6vywr3BwGa+p8ncnn
+ UOcX65q+Ij78lx84YxB9Yvo41uUnx8iuYgcfnTOJPzStYE4TjNx8inDBft6DNDuz3YnT
+ WqBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1770073978; x=1770678778;
+ d=1e100.net; s=20230601; t=1770073979; x=1770678779;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=lftoMFquX5nMuetOGndTweQEe6ZOGwEyfPpEQwi+Wuw=;
- b=wZvoo/ZmXI0QIbJGmdvyAWSOTSKpXws7ch3bBDnG8pvTXYn1C3fAigQqVRnDvxlM4s
- gdzEzzA1B5kSRLYe58HP801QRXO34zhe0yoXDEZk38+sh/fwEhVXBNrVcxel5oTAJJrM
- +Yc0sNqsl64s0lAqBRlis385l45T4J0VmK8OjECtTQ/ULEKZwCnhoRMEwXgawQIJHTmC
- RWcQ/KAeJhN4YrncvJfcKJYzRK4n1lv9/03tiy9t2FL3JCfG3xKl1DDNwrmJkIAm8S7d
- MEQ7CC7G2St+RttwX8TN/3cBnJLSP/vIKZeMOcQqe8zjd4izWjkbF6L5hfx2vXj2veTR
- 8vKw==
-X-Gm-Message-State: AOJu0YwJiIw0HpZgwtsu0UfxlxiuBkMd2xPk0k3vMWik3rNJ+DO323Pa
- 2FOQUl+oy3Ht2qI9Xb4/wAdAbb447Prq0YFN3Aab7GJQzmFmAPBxT1aNX1EKmWGVSxVxdKMaiqJ
- 17EE0
-X-Gm-Gg: AZuq6aJPJEdPtMv0JorZlqjiXeQO1Xa2f6eC9g7hYbJZXrjxxa2wRJdLcOzo0eYsOSc
- T9q/VDkab5UJhoc3jSP0x5bnI92N5KjpAaVPh2mmEKInnYsyOW91/eCS1wFOZGZ7U+uSY7Viv4p
- Kw6jpXnKmLsYRsnJVdfBEXe3CNpFqRnuot3zd0bli+Jq9Rp2Stj3+WK75gJ9QReDhuM4w2OCPt8
- kqCXC9ue+DhCRfgQJUaUPfCGBuXciRVU1w+mg+svUJ6ViMVyYEXq1EE0hsMojUQI/hMShilq2O0
- 8AZ9DTPW4IlZkNfORfpq/zCamYTm7Yk+Qdvhrowf1hbRNRfe9v0UF2t+KSKahUrbzAACtutlPRP
- nXaNWIw3oAc2FBzLVpIDR46TXH2djw6GoIYGieaW93d03XUudh8ESxFrBrYWpF+s4rAuTGYQYAe
- 42FfXPjGLWEqGqV2ZX8vKLd67LSLMpcLSGAngo2O/Qvkd4bkH+lA==
-X-Received: by 2002:a05:6000:1865:b0:430:ff0c:35fb with SMTP id
- ffacd0b85a97d-435f3aae00fmr20329643f8f.52.1770073977678; 
- Mon, 02 Feb 2026 15:12:57 -0800 (PST)
+ bh=qr2ibaKZFZ1WwKRZQD97rDlklZTjrIslHzDyjV82s/Y=;
+ b=PyFsVkz6FzN9E1lmR0opS3fJiDXDAErsyyDtIgmA85Y2km3UVVrCdEW7A9l6FXc0a9
+ tg8OEmp6TUh4JCTYQpEdF6lUxHlpnDsWZTXGDxX8IWETOovJVtceh5T3wuQuWYXL9Uek
+ 3gjI6lZp2UTbD3HsGRVhyyOW+L35vLduUgq3XPiAZyt7rphFPEGgro4LZNl55tjz6qp3
+ XdeV+mSmMt68IDLcTcmG8hzFcR0UkEifxzqQde6GRUwo98I8sSExiwHGHfoGodk6OqdL
+ zRHjtnNspE8IfMVvXAEwre4vAIHCPDw/zQYmgMOwEMB1V6DVYmArPGFKajPiq3osPcNo
+ ZI0g==
+X-Gm-Message-State: AOJu0YyE8Y00q/sXB9VIqVX1pQnmw2ANwLl9WTEIwtpJJbmEioMxfrMa
+ yk0bHaqojV5GdJ91XQJ7PMgIsHr8chTFxTxo/ydwl6Io1yzSKn6voufb7sGNKEeW5KbSw+3Qk1G
+ nrb8a
+X-Gm-Gg: AZuq6aIwp5vpjBXfgr4qKhaA2YeDqQ/dGrkC5iHPc5wjhxLuRlD5BWAnCo0ll73B7CE
+ VqXkesSMuLM1UIRBGGzhuONaxMbMem3W8uPjLplUDNW9wr2Nm8fSxPnMC2HmLYxC1NP5Tb4u4OV
+ N1tY+vLLZEgB3Ld54dEUuiJ8+NmNFuFHKMm3AnjqnKOD3IZcyCmMlXMwSXNZf0iH2OczYV37+pe
+ b2Dq540f/Yy3Cc8RkHHqibKpC7ghmyB/DMyUDPLI2RTyEmKPnKD7bh5iCN07ncA7TJOSwTytdYQ
+ GPaJbwq6O3bQzHAVc+UbS2RG3WUajrfsKH4ezegWIMmFuuzbx00EYBcKQkJqNYw8eju/VX7sx9t
+ LJ7e1wSXZ4c7p31lO6En93VgeVe8XmRlXHTlrHPA83iPAsYAzrFmit7Q+NtXGkThltTgdumsbe6
+ xSddx6uvbkMJVilxnbPUpnrJGsozJ1WBIB5w+/KCce7HH4cqCcyA==
+X-Received: by 2002:a05:6000:1ac8:b0:432:8651:4071 with SMTP id
+ ffacd0b85a97d-435f3a8873dmr19634466f8f.18.1770073979202; 
+ Mon, 02 Feb 2026 15:12:59 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-435e10e48a6sm45799474f8f.8.2026.02.02.15.12.55
+ ffacd0b85a97d-435e10e48a6sm45799474f8f.8.2026.02.02.15.12.57
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 02 Feb 2026 15:12:56 -0800 (PST)
+ Mon, 02 Feb 2026 15:12:58 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v12 03/19] net/pcap: include used headers
-Date: Mon,  2 Feb 2026 15:09:06 -0800
-Message-ID: <20260202231245.216433-4-stephen@networkplumber.org>
+Subject: [PATCH v12 04/19] net/pcap: remove unnecessary casts
+Date: Mon,  2 Feb 2026 15:09:07 -0800
+Message-ID: <20260202231245.216433-5-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260202231245.216433-1-stephen@networkplumber.org>
 References: <20260106182823.192350-1-stephen@networkplumber.org>
@@ -81,56 +81,44 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Include the used headers instead of relying on getting
-the headers indirectly through other headers.
+The function rte_zmalloc returns void * so cast is unnecessary.
+
+Correct the indentation in that code. Not really worth backporting.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/pcap/pcap_ethdev.c | 9 ++++++++-
- drivers/net/pcap/pcap_osdep.h  | 1 +
- 2 files changed, 9 insertions(+), 1 deletion(-)
+ drivers/net/pcap/pcap_ethdev.c | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/net/pcap/pcap_ethdev.c b/drivers/net/pcap/pcap_ethdev.c
-index f323c0b0df..4513d46d61 100644
+index 4513d46d61..fbd1021c39 100644
 --- a/drivers/net/pcap/pcap_ethdev.c
 +++ b/drivers/net/pcap/pcap_ethdev.c
-@@ -4,16 +4,23 @@
-  * All rights reserved.
-  */
+@@ -1220,9 +1220,8 @@ pmd_init_internals(struct rte_vdev_device *vdev,
+ 	PMD_LOG(INFO, "Creating pcap-backed ethdev on numa socket %d",
+ 		numa_node);
  
-+#include <stdio.h>
- #include <stdlib.h>
- #include <time.h>
--
-+#include <inttypes.h>
-+#include <errno.h>
-+#include <sys/time.h>
-+#include <sys/types.h>
- #include <pcap.h>
+-	pp = (struct pmd_process_private *)
+-		rte_zmalloc(NULL, sizeof(struct pmd_process_private),
+-				RTE_CACHE_LINE_SIZE);
++	pp = rte_zmalloc(NULL, sizeof(struct pmd_process_private),
++			 RTE_CACHE_LINE_SIZE);
  
- #include <rte_cycles.h>
-+#include <rte_ring.h>
-+#include <rte_ethdev.h>
- #include <ethdev_driver.h>
- #include <ethdev_vdev.h>
- #include <rte_kvargs.h>
- #include <rte_malloc.h>
-+#include <rte_memcpy.h>
- #include <rte_mbuf.h>
- #include <rte_mbuf_dyn.h>
- #include <bus_vdev_driver.h>
-diff --git a/drivers/net/pcap/pcap_osdep.h b/drivers/net/pcap/pcap_osdep.h
-index 2aa13f3629..a0e2b5ace9 100644
---- a/drivers/net/pcap/pcap_osdep.h
-+++ b/drivers/net/pcap/pcap_osdep.h
-@@ -6,6 +6,7 @@
- #define _RTE_PCAP_OSDEP_
+ 	if (pp == NULL) {
+ 		PMD_LOG(ERR,
+@@ -1590,10 +1589,8 @@ pmd_pcap_probe(struct rte_vdev_device *dev)
+ 		unsigned int i;
  
- #include <rte_ether.h>
-+#include <rte_log.h>
+ 		internal = eth_dev->data->dev_private;
+-			pp = (struct pmd_process_private *)
+-				rte_zmalloc(NULL,
+-					sizeof(struct pmd_process_private),
+-					RTE_CACHE_LINE_SIZE);
++		pp = rte_zmalloc(NULL, sizeof(struct pmd_process_private),
++				 RTE_CACHE_LINE_SIZE);
  
- #define PMD_LOG(level, ...) \
- 	RTE_LOG_LINE_PREFIX(level, ETH_PCAP, "%s(): ", __func__, __VA_ARGS__)
+ 		if (pp == NULL) {
+ 			PMD_LOG(ERR,
 -- 
 2.51.0
 
