@@ -2,72 +2,41 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 665E7E7FDC7
-	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Feb 2026 20:03:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AA9DE7FDCD
+	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Feb 2026 20:12:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 790564027D;
-	Mon,  2 Feb 2026 21:03:22 +0100 (CET)
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com
- [209.85.128.51]) by mails.dpdk.org (Postfix) with ESMTP id 37DD04026D
- for <dev@dpdk.org>; Mon,  2 Feb 2026 21:03:21 +0100 (CET)
-Received: by mail-wm1-f51.google.com with SMTP id
- 5b1f17b1804b1-47edd9024b1so39403555e9.3
- for <dev@dpdk.org>; Mon, 02 Feb 2026 12:03:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1770062601;
- x=1770667401; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=PqfeaWf7fdJj8gUT/bcE1mbaj2uruCQGXMoTcbVxQiU=;
- b=LD0oocLm0DQ//A8uOGcj3d44RiRIBxShe/pNKPB15IcXoyOm7k0LLlOTL+kLMOBhKu
- 3gwmS+bpVA6kQoCPv9G3a3zwEQf9aOiGE04KyUpMQa/JRWHepEv69CSmGx215WGdwO4t
- qdxh6Tb0BkLxWo6qiMn5/LysTILeIt0R5hpUsw3iB0hI+HYLXY9Z66bF0Ich4nSylE8s
- AlPiBFafjU/fuMxkXbY2BlhQJGm3HGDLKZ746AX/tWaOoMipqYHF9fBxswsxx7UL8ZSz
- 9PE9Y5XMdSMMrrx9sD1nJl7d80R6pSc6Qemx+Adm9vZHca/8RqyM2SE2XuCYs4hn24O5
- 4lDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1770062601; x=1770667401;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=PqfeaWf7fdJj8gUT/bcE1mbaj2uruCQGXMoTcbVxQiU=;
- b=o3gVp0oWXAu9dwpDfFIJZwVrq5YMs7BmukeFxcVpVfHjm1O3Dqp6r8tCEgxHnxAekk
- EUF5g0SaF5KpgUxBEWj1Aa2zSE1mcZwWQIw8bYpoS1CkDE5qyYge083IVPHxhogWsjT2
- aUOw3uB0KiBuNAv2Y7fq77FyribQjJFSwpZXMELP1ihR66Vo5wpkg8mZYkgpp550TmDJ
- HiNjbYAX0CqqnIt5cC9ibhxSML8qijvKK2xAya+e07Uy/LBzzrSjiRsYslEfq5WpCV1i
- OVvcmaLCbsIGM2fZFxmNJ2UlbrlxfluIQ0kiaBTgTO2pFWdbYzAdS4aB2VW6qhzAa2+a
- Qczw==
-X-Gm-Message-State: AOJu0Yyixk5nxmJSYIeZQA4p08ghU2dcEaSeFvo9Uo/RAY976eHQxV3T
- iHV3m8z4toCYPzpZ0Dbz6Lcrc+UyEhbRKfhT472ehtAdZzk9PCwXbWV2vHTzj7knz0OWz5GxixZ
- 0X977
-X-Gm-Gg: AZuq6aIZMAFQ5Re89rKHDNJuzE4ziPFJRZwy5mqvuB0/ZgPaG53uYE9HDa1t6Dsjiph
- Twgg8MgbvmoAb9wbzXhWBTVfwaiOmMKQWCz9UxmwagrGONLarhW+Xdkw4bUk6YnA8qYKq9n+mCX
- h7O9ucoieBjEjDuj+KpDekz/oacvoJm83R/l6FRABK+L8jvQM3O+6zW/UwcGp9SBGDx1nkay8sa
- hfacFwE7lxigC7ZLsdaeKWgmwIljW2/iBOTA2rUAWdrFoUevSRdtegc1Ag1QQGaUEUaTOeKxJMr
- mRt6M1Q/vwCMlaGxpzgmOA5oXGNg0elj8+jCDNb85iIzdTa38Rse82D8S7wSK0dynmmOWPhtXA2
- +YQDGzHCmpJ9rxeA4nCG9jWQTsTAYMfNt8LVbfwQDuVrazRT56aZJLB2UxpN4zf21Y0d1uCNbR4
- eBq0WNyZA4b4Cpy6tAAJ81lm9f4WVn1ev/SojpOBXkQm+daYsEkl9A
-X-Received: by 2002:a05:600c:3b96:b0:480:1c10:5633 with SMTP id
- 5b1f17b1804b1-482db49978emr162302365e9.26.1770062600462; 
- Mon, 02 Feb 2026 12:03:20 -0800 (PST)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-48305129419sm10668435e9.6.2026.02.02.12.03.19
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 02 Feb 2026 12:03:20 -0800 (PST)
-Date: Mon, 2 Feb 2026 12:03:13 -0800
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Lukas Sismis <sismis@dyna-nic.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH v10 3/6] flow_parser: add shared parser library
-Message-ID: <20260202120313.15ecedb3@phoenix.local>
-In-Reply-To: <20260202113659.24052-4-sismis@dyna-nic.com>
-References: <20260202113659.24052-1-sismis@dyna-nic.com>
- <20260202113659.24052-4-sismis@dyna-nic.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 4F3FE4027D;
+	Mon,  2 Feb 2026 21:12:13 +0100 (CET)
+Received: from office2.cesnet.cz (office2.cesnet.cz [78.128.248.237])
+ by mails.dpdk.org (Postfix) with ESMTP id 6D0EB4026D
+ for <dev@dpdk.org>; Mon,  2 Feb 2026 21:12:11 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cesnet.cz;
+ s=office2-2020; t=1770063131;
+ bh=QFUV9aYJ/AujKo2/AMQQszZwYA/zR/DsA9NU4VoCYnE=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References;
+ b=hV37+kl4Kab+Hu3eGjaM6KKxHywZ1X3RLylzAfufPprYIiO27ed0W8G7TqNGGdrnM
+ AsLxBlpcngH2yIXkvunjuXH2xNW7+xFj3wzHQMgTyRZhJ0NBemuW9jJ4vrl+8le6wF
+ UrI68UCsnvhmJsrLqrEzUSo8iTfeYd5/pX/QF4Vkln7cQOH8CacHqqdyBnjHZhsA+l
+ /RYogf5zDB42MKnuXrlZjjBAm4vtcMjCrpzpByxtCtZaKBv7hti2tN/0f+8IwWp6zr
+ iyjQI5SuQSDiwzJcA/l/8wBInlmnWd5/Q6loTLQnTTH2cPxy0S44VPRlDW6TYgpiDf
+ xCBOBObnaSqlA==
+Received: from emil.cesnet.cz (gtx107.cesnet.cz [IPv6:2001:718:812:27::107])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by office2.cesnet.cz (Postfix) with ESMTPSA id 06FFF1180078;
+ Mon,  2 Feb 2026 21:12:10 +0100 (CET)
+From: spinler@cesnet.cz
+To: dev@dpdk.org
+Cc: Martin Spinler <spinler@cesnet.cz>
+Subject: [PATCH v2] doc/nfb: update release notes for nfb driver
+Date: Mon,  2 Feb 2026 21:12:07 +0100
+Message-ID: <20260202201207.3326331-1-spinler@cesnet.cz>
+X-Mailer: git-send-email 2.52.0
+In-Reply-To: <20260202151521.3245438-1-spinler@cesnet.cz>
+References: <20260202151521.3245438-1-spinler@cesnet.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,38 +50,35 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon,  2 Feb 2026 12:36:55 +0100
-Lukas Sismis <sismis@dyna-nic.com> wrote:
+From: Martin Spinler <spinler@cesnet.cz>
 
-> +int
-> +rte_flow_parser_run(const char *src)
-> +{
-> +	uint8_t buf[4096];
-> +	struct rte_flow_parser_output *out = (struct rte_flow_parser_output *)buf;
-> +	int ret;
-> +
-> +	ret = rte_flow_parser_parse(src,
-> +				    (struct rte_flow_parser_output *)buf,
-> +				    sizeof(buf));
-> +	if (ret < 0)
-> +		return ret;
-> +	switch (out->command) {
-> +	case RTE_FLOW_PARSER_CMD_SET_SAMPLE_ACTIONS:
-> +	case RTE_FLOW_PARSER_CMD_SET_IPV6_EXT_PUSH:
-> +	case RTE_FLOW_PARSER_CMD_SET_IPV6_EXT_REMOVE:
-> +	case RTE_FLOW_PARSER_CMD_SET_RAW_ENCAP:
-> +	case RTE_FLOW_PARSER_CMD_SET_RAW_DECAP:
-> +		cmd_set_raw_parsed(out);
-> +		break;
-> +	default:
-> +		return cmd_flow_parsed(out);
-> +		break;
+Update the release notes for the NFB driver
+with the timestamp value changes.
 
-The kernel version of checkpatch complains here. The DPDK shell script
-seems to be set to ignore this but. 
+Signed-off-by: Martin Spinler <spinler@cesnet.cz>
+---
+Depends-on: series-37244 ("net/nfb: code cleanup")
 
-WARNING: break is not useful after a return
-#15008: FILE: lib/flow_parser/rte_flow_parser.c:14763:
-+		return cmd_flow_parsed(out);
-+		break;
+v2:
+* Rebased on next-net-main and updated Depends-on
+
+ doc/guides/rel_notes/release_26_03.rst | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/doc/guides/rel_notes/release_26_03.rst b/doc/guides/rel_notes/release_26_03.rst
+index a837bdb600..ff02c294d0 100644
+--- a/doc/guides/rel_notes/release_26_03.rst
++++ b/doc/guides/rel_notes/release_26_03.rst
+@@ -59,6 +59,9 @@ New Features
+ 
+   * Added support for V4000 Krackan2e.
+ 
++* **Updated CESNET NFB ethernet driver.**
++
++  * The timestamp value has been updated to make it usable.
+ 
+ Removed Items
+ -------------
+-- 
+2.52.0
 
