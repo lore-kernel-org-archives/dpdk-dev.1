@@ -2,67 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C62ED172C6
-	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Feb 2026 04:48:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09A53D172C6
+	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Feb 2026 04:49:01 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 92AD140689;
-	Mon,  2 Feb 2026 05:48:49 +0100 (CET)
-Received: from mail-dy1-f177.google.com (mail-dy1-f177.google.com
- [74.125.82.177]) by mails.dpdk.org (Postfix) with ESMTP id 39FFB40661
- for <dev@dpdk.org>; Mon,  2 Feb 2026 05:48:48 +0100 (CET)
-Received: by mail-dy1-f177.google.com with SMTP id
- 5a478bee46e88-2ae2eb49b4bso7927220eec.0
- for <dev@dpdk.org>; Sun, 01 Feb 2026 20:48:48 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 8297140665;
+	Mon,  2 Feb 2026 05:48:51 +0100 (CET)
+Received: from mail-dl1-f45.google.com (mail-dl1-f45.google.com [74.125.82.45])
+ by mails.dpdk.org (Postfix) with ESMTP id 65C0C40693
+ for <dev@dpdk.org>; Mon,  2 Feb 2026 05:48:50 +0100 (CET)
+Received: by mail-dl1-f45.google.com with SMTP id
+ a92af1059eb24-124a1b4dd40so5975352c88.0
+ for <dev@dpdk.org>; Sun, 01 Feb 2026 20:48:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1770007727; x=1770612527; darn=dpdk.org;
+ d=gmail.com; s=20230601; t=1770007729; x=1770612529; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=fkA25M5bB705bk3ADBbMT4b9l4NNGHF4jcxNLwvovz4=;
- b=K+pZ2J5Y9sdPZ+ztCzraiD0He5DvW/QY74pBqye3JRfglEcXMRcti0GysK5KHq/7oL
- 7CkMyE6lX2iHq5/wUdKrB6LNyNzOZqOjya4yE/UKryt3qP7TqRaq1Iwdf7VJMDsIwFGT
- XtSFi5cG4qeVySSF6sZnSJe246Ush/TfbivlCC/pe+prXA2GZjjAqXwzGZGpliZ4VIWd
- 6SWeRSWH/yUKHHgH0YzKtKFxp3KDL79Gfy4PhpD8vybTJA3gz8FHdl/orR2V6bIphRga
- FItGGIrJ9GOpveDBtTOW5DjFRd50vI/sqt40smGKfNitOadGj1YbIFxtvMX7IYxirCf7
- PNVg==
+ bh=tltjpgmqdPkBfsdNcVHeGKVyojLBWL+88ESr0MC4cnc=;
+ b=Kxu6zDtSikVvZF6ZQnp3WTaHjgb5H5wIbhQLZXK4dgo9ze6LrMcWSIp5GOOteOk0Tm
+ LGNNXEzJK4uZrMhunK8XScILkoKEl+P/MJXdxTDPUhyF4zImn9pJ4STkey7Ts9UxcqQq
+ 9aynOR9ipDhJurNgBtJtllpqeJtuP0ncV1ahtsZxMX6HNaIQRTezGmdsn5FP1q6uK2WS
+ 90ILNC6AB8904tEXWWbUTiKUKLENJPAXgqC9Tg3rs5GcvbTGKOVv/JpTbNwCFmnOdkj7
+ ljMwd5uVkXAFnfOqyL82TpByY6I7Rav3ex83hSonvWlGqxiOf7PJ/sFSHEVv6gOxhBFJ
+ nZGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1770007727; x=1770612527;
+ d=1e100.net; s=20230601; t=1770007729; x=1770612529;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=fkA25M5bB705bk3ADBbMT4b9l4NNGHF4jcxNLwvovz4=;
- b=SgF2OT7ib7MTBrKN9im2WV4ItMttkDFNgYF2kLrfuvU+JIIXlLKhACwEAeN1BxUtqA
- Uj7mZmuCLcedOygmrxm137gcM2EjbPAXcr8lOen1bYBOfX5PGLmWs9fgOGdBneEve2Xi
- OdcKQMYIKNVGaoWoK3lq7uFb7HgCvP1WFdwFq7ViCM9JW11vXm+Ak5PNYVUUezROojmH
- Y01879Fi+gDJrwRDKSC+QA3OTVlWcw8DcM1/rmprPPMWKD7ANlp2SbF9T24/2KcaVt7n
- Y5ujoS/7B7b3VrPpBnf14pUlqvzaLqbIiqN/DxaiqG6n0K0lcjchCYCv478j1WTqocZp
- 8sJA==
-X-Gm-Message-State: AOJu0YwVHW6S2FTxj8UFIuOlKg7nTRMYmunL4RsJeAdwDG9M8pjw8P5v
- I/wUSO1vUxZyVs0lAvH3a5dipqLueNjYLWtaH5AAbo5kI2dbjafAxsc3Sep53A==
-X-Gm-Gg: AZuq6aKUhaR+rTPmurozGB5rdcyvsSvYb19bn2VQo7Tv0yfqFtMegkPraNfIw3JaB6Z
- kRtdHiUCE1shkUXacH6VP1Yj6hAF58mpuins62BXKkwz6NcaJSHuPhCi+eN6zbTKbgRiLzA1+CO
- KYzZRY8MoSMZQfVpxSbosQHblTN7wdoW3BHa5HuzQSlDufaLccSTNVK6QzbHE8FwotE5SzTU4yR
- 5trGm6yRxgoByRDWSfwh2SMEnZQG8AHvxAKRlX/YG6dk5+qMJTM3dRfL9C9xHXwqAgOiBD0ttC5
- FmSYDVmzEwruUUsj1dxikM0A4J/GHz32jzwCNflsrMYUBcoq/WeRfp4UUGL0ehRIWNbTwyTLcDc
- sKMv5VYx5dLuPZWc1+qlssQK8pS/r9SISH4/cWDPu+oZ6ZIlnT1DjUOlHXTA2PeBj75uqqUdELC
- F9bhehK0KBZAxTMllHHXR8bZUo6Yc=
-X-Received: by 2002:a05:7300:5720:b0:2b7:f25b:9229 with SMTP id
- 5a478bee46e88-2b7f25b95f8mr2005383eec.8.1770007726951; 
- Sun, 01 Feb 2026 20:48:46 -0800 (PST)
+ bh=tltjpgmqdPkBfsdNcVHeGKVyojLBWL+88ESr0MC4cnc=;
+ b=ejFO1psCoDoh3qbSYJpfkE64QA/I4PMvncp9J7BtN+kcjePRR0CZYSIpUMHyvJUnmL
+ TQpQLhyAaJXoQVtYDMlmUmz/YAi6SquI84we58ufvqAdi41HsMecvmlpBXkAXrV/LdLF
+ LXeFIkD6hw6dNPclItv8QijciLY+U3MmdTzxu9RwjbrKBVA2Tbe2r3R/s//9fCrjxJ7+
+ mqBY8Ynm41W2ReGnI7JlWDaNfLjae5necGilZUkn34UQyqlZV7dBfDg8o9iBC2p6knkS
+ PJmB+Ka//nqWTp/iIqcY9fwcxZHB/kQIw37B4MwkARTnbBVQc42PnNUIYrq4ft5XxuV/
+ 5F+A==
+X-Gm-Message-State: AOJu0YzDdIhPKJ3PpvLUfuq2OrEhKWwWBEav09mGj+0CeoH87oxTBSIf
+ kMfCSG3sE3IqNXc5Vf5Bo9oafDAGshDA+jFX0GGpZa7DZ51C63QScHxAZVzvsw==
+X-Gm-Gg: AZuq6aIUT/cploosFPDkeKQfdCRl5xONwEJ7RnSnsFjbqPBN/VFy+YcYcv2bKfuKlE1
+ UvfLu/4V8EmyRM7D0+houmI6arOPv5YIwWAibtRJOhKG3esgTmtM3jQl5FnV+jq1mYy6DCx92ea
+ +8x/thHCSG1PaoaNcv5sv5gPAisNneT4dSbssM2rj9ubO7bz4Sq8YDldi1F9CO8t+Y3p40QHH69
+ +G+9NkD0M0GJ3eiotr+988uGipUBF5S0BKvPouD08dL0mbJ1gxRCmqLk0a3PMmyQ9mV6niN8WLQ
+ 85Xr4+bdmQCBB0bz2iBUG8TyI/kwzaiVY6IiRMMRxu05MM9G6/EnzVG0lwXDI0Uj4yYQ+49zKPQ
+ GbGMx6HYryfT87xEFDfuEh/SdLRuzRRkoE2t58sfFA/z5PUDpQNyKyvMXgyyg/CRCLw8D7axULU
+ zX8m3hWJa1ZwV093+G8AyflRttdsk=
+X-Received: by 2002:a05:7022:6893:b0:124:acc6:6dd1 with SMTP id
+ a92af1059eb24-125c100fdebmr5772945c88.46.1770007729161; 
+ Sun, 01 Feb 2026 20:48:49 -0800 (PST)
 Received: from mac.com ([136.24.82.250]) by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-124a9d7f789sm16784293c88.6.2026.02.01.20.48.45
+ a92af1059eb24-124a9d7f789sm16784293c88.6.2026.02.01.20.48.48
  (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
- Sun, 01 Feb 2026 20:48:46 -0800 (PST)
+ Sun, 01 Feb 2026 20:48:48 -0800 (PST)
 From: scott.k.mitch1@gmail.com
 To: dev@dpdk.org
 Cc: mb@smartsharesystems.com, stephen@networkplumber.org,
  bruce.richardson@intel.com, david.marchand@redhat.com,
- Scott Mitchell <scott.k.mitch1@gmail.com>,
- Cyril Chemparathy <cchemparathy@ezchip.com>, stable@dpdk.org
-Subject: [PATCH v19 1/2] eal: add __rte_may_alias and __rte_aligned to
- unaligned typedefs
-Date: Sun,  1 Feb 2026 20:48:40 -0800
-Message-Id: <20260202044841.90945-2-scott.k.mitch1@gmail.com>
+ Scott Mitchell <scott.k.mitch1@gmail.com>
+Subject: [PATCH v19 2/2] net: __rte_raw_cksum pointers enable compiler
+ optimizations
+Date: Sun,  1 Feb 2026 20:48:41 -0800
+Message-Id: <20260202044841.90945-3-scott.k.mitch1@gmail.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 In-Reply-To: <20260202044841.90945-1-scott.k.mitch1@gmail.com>
 References: <20260128194141.90018-1-scott.k.mitch1@gmail.com>
@@ -84,124 +83,320 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Scott Mitchell <scott.k.mitch1@gmail.com>
 
-Add __rte_may_alias attribute to unaligned_uint{16,32,64}_t typedefs
-to prevent GCC strict-aliasing optimization bugs. GCC has a bug where
-it incorrectly elides struct initialization when strict aliasing is
-enabled, causing reads from uninitialized memory.
+__rte_raw_cksum uses a loop with memcpy on each iteration.
+GCC 15+ is able to vectorize the loop but Clang 18.1 is not.
 
-Add __rte_aligned(1) attribute to unaligned_uint{16,32,64}_t typedefs
-which allows for safe access at any alignment. Without this, accessing
-a uint16_t at an odd address is undefined behavior. Without this
-UBSan detects `UndefinedBehaviorSanitizer: undefined-behavior`.
+Replace memcpy with direct pointer access using unaligned_uint16_t.
+This enables both GCC and Clang to vectorize the loop while handling
+unaligned access safely on all architectures.
 
-Fixes: 7621d6a8d0bd ("eal: add and use unaligned integer types")
-Cc: Cyril Chemparathy <cchemparathy@ezchip.com>
-Cc: stable@dpdk.org
+Performance results from cksum_perf_autotest on Intel Xeon
+(Cascade Lake, AVX-512) built with Clang 18.1 (TSC cycles/byte):
+
+  Block size    Before    After    Improvement
+         100      0.40     0.24        ~40%
+        1500      0.50     0.06        ~8x
+        9000      0.49     0.06        ~8x
+
 Signed-off-by: Scott Mitchell <scott.k.mitch1@gmail.com>
 ---
- app/test/test_hash_functions.c |  6 ++++-
- lib/eal/include/rte_common.h   | 49 +++++++++++++++++++++++-----------
- 2 files changed, 38 insertions(+), 17 deletions(-)
+ app/test/meson.build       |   1 +
+ app/test/test_cksum_fuzz.c | 234 +++++++++++++++++++++++++++++++++++++
+ app/test/test_cksum_perf.c |   2 +-
+ lib/net/rte_cksum.h        |  14 +--
+ 4 files changed, 241 insertions(+), 10 deletions(-)
+ create mode 100644 app/test/test_cksum_fuzz.c
 
-diff --git a/app/test/test_hash_functions.c b/app/test/test_hash_functions.c
-index 70820d1f19..9524e3135f 100644
---- a/app/test/test_hash_functions.c
-+++ b/app/test/test_hash_functions.c
-@@ -187,11 +187,15 @@ verify_jhash_32bits(void)
+diff --git a/app/test/meson.build b/app/test/meson.build
+index f4d04a6e42..2ca17716b9 100644
+--- a/app/test/meson.build
++++ b/app/test/meson.build
+@@ -38,6 +38,7 @@ source_file_deps = {
+     'test_byteorder.c': [],
+     'test_cfgfile.c': ['cfgfile'],
+     'test_cksum.c': ['net'],
++    'test_cksum_fuzz.c': ['net'],
+     'test_cksum_perf.c': ['net'],
+     'test_cmdline.c': [],
+     'test_cmdline_cirbuf.c': [],
+diff --git a/app/test/test_cksum_fuzz.c b/app/test/test_cksum_fuzz.c
+new file mode 100644
+index 0000000000..33b4c77f51
+--- /dev/null
++++ b/app/test/test_cksum_fuzz.c
+@@ -0,0 +1,234 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(c) 2026 Apple Inc.
++ */
++
++#include <stdio.h>
++#include <string.h>
++
++#include <rte_common.h>
++#include <rte_cycles.h>
++#include <rte_hexdump.h>
++#include <rte_cksum.h>
++#include <rte_malloc.h>
++#include <rte_random.h>
++
++#include "test.h"
++
++/*
++ * Fuzz test for __rte_raw_cksum optimization.
++ * Compares the optimized implementation against the original reference
++ * implementation across random data of various lengths.
++ */
++
++#define DEFAULT_ITERATIONS 1000
++#define MAX_TEST_LEN 65536  /* 64K to match GRO frame sizes */
++
++/*
++ * Original (reference) implementation of __rte_raw_cksum from DPDK v23.11.
++ * This is retained here for comparison testing against the optimized version.
++ */
++static inline uint32_t
++test_cksum_fuzz_cksum_reference(const void *buf, size_t len, uint32_t sum)
++{
++	const void *end;
++
++	for (end = RTE_PTR_ADD(buf, RTE_ALIGN_FLOOR(len, sizeof(uint16_t)));
++	     buf != end; buf = RTE_PTR_ADD(buf, sizeof(uint16_t))) {
++		uint16_t v;
++
++		memcpy(&v, buf, sizeof(uint16_t));
++		sum += v;
++	}
++
++	/* if length is odd, keeping it byte order independent */
++	if (unlikely(len % 2)) {
++		uint16_t left = 0;
++
++		memcpy(&left, end, 1);
++		sum += left;
++	}
++
++	return sum;
++}
++
++static void
++init_random_buffer(uint8_t *buf, size_t len)
++{
++	size_t i;
++
++	for (i = 0; i < len; i++)
++		buf[i] = (uint8_t)rte_rand();
++}
++
++static inline uint32_t
++get_initial_sum(bool random_initial_sum)
++{
++	return random_initial_sum ? (rte_rand() & 0xFFFFFFFF) : 0;
++}
++
++/*
++ * Test a single buffer length with specific alignment and initial sum
++ */
++static int
++test_cksum_fuzz_length_aligned(size_t len, bool aligned, uint32_t initial_sum)
++{
++	uint8_t *data;
++	uint8_t *buf;
++	size_t alloc_size;
++	uint32_t sum_ref, sum_opt;
++
++	if (len == 0 && !aligned) {
++		/* Skip unaligned test for zero length - nothing to test */
++		return TEST_SUCCESS;
++	}
++
++	/* Allocate exact size for aligned, +1 for unaligned offset */
++	alloc_size = aligned ? len : len + 1;
++	if (alloc_size == 0)
++		alloc_size = 1;  /* rte_malloc doesn't like 0 */
++
++	data = rte_malloc(NULL, alloc_size, 64);
++	if (data == NULL) {
++		printf("Failed to allocate %zu bytes\n", alloc_size);
++		return TEST_FAILED;
++	}
++
++	buf = aligned ? data : (data + 1);
++
++	init_random_buffer(buf, len);
++
++	sum_ref = test_cksum_fuzz_cksum_reference(buf, len, initial_sum);
++	sum_opt = __rte_raw_cksum(buf, len, initial_sum);
++
++	if (sum_ref != sum_opt) {
++		printf("MISMATCH at len=%zu aligned='%s' initial_sum=0x%08x ref=0x%08x opt=0x%08x\n",
++		       len, aligned ? "aligned" : "unaligned",
++		       initial_sum, sum_ref, sum_opt);
++		rte_hexdump(stdout, "failing buffer", buf, len);
++		rte_free(data);
++		return TEST_FAILED;
++	}
++
++	rte_free(data);
++	return TEST_SUCCESS;
++}
++
++/*
++ * Test a length with both alignments
++ */
++static int
++test_cksum_fuzz_length(size_t len, uint32_t initial_sum)
++{
++	int rc;
++
++	/* Test aligned */
++	rc = test_cksum_fuzz_length_aligned(len, true, initial_sum);
++	if (rc != TEST_SUCCESS)
++		return rc;
++
++	/* Test unaligned */
++	rc = test_cksum_fuzz_length_aligned(len, false, initial_sum);
++
++	return rc;
++}
++
++/*
++ * Test specific edge case lengths
++ */
++static int
++test_cksum_fuzz_edge_cases(void)
++{
++	/* Edge case lengths that might trigger bugs */
++	static const size_t edge_lengths[] = {
++		0, 1, 2, 3, 4, 5, 6, 7, 8,
++		15, 16, 17,
++		31, 32, 33,
++		63, 64, 65,
++		127, 128, 129,
++		255, 256, 257,
++		511, 512, 513,
++		1023, 1024, 1025,
++		1500, 1501,  /* MTU boundaries */
++		2047, 2048, 2049,
++		4095, 4096, 4097,
++		8191, 8192, 8193,
++		16383, 16384, 16385,
++		32767, 32768, 32769,
++		65534, 65535, 65536  /* 64K GRO boundaries */
++	};
++	unsigned int i;
++	int rc;
++
++	printf("Testing edge case lengths...\n");
++
++	for (i = 0; i < RTE_DIM(edge_lengths); i++) {
++		/* Test with zero initial sum */
++		rc = test_cksum_fuzz_length(edge_lengths[i], 0);
++		if (rc != TEST_SUCCESS)
++			return rc;
++
++		/* Test with random initial sum */
++		rc = test_cksum_fuzz_length(edge_lengths[i], get_initial_sum(true));
++		if (rc != TEST_SUCCESS)
++			return rc;
++	}
++
++	return TEST_SUCCESS;
++}
++
++/*
++ * Test random lengths with optional random initial sums
++ */
++static int
++test_cksum_fuzz_random(unsigned int iterations, bool random_initial_sum)
++{
++	unsigned int i;
++	int rc;
++
++	printf("Testing random lengths (0-%d)%s...\n", MAX_TEST_LEN,
++	       random_initial_sum ? " with random initial sums" : "");
++
++	for (i = 0; i < iterations; i++) {
++		size_t len = rte_rand() % (MAX_TEST_LEN + 1);
++
++		rc = test_cksum_fuzz_length(len, get_initial_sum(random_initial_sum));
++		if (rc != TEST_SUCCESS) {
++			printf("Failed at len=%zu\n", len);
++			return rc;
++		}
++	}
++
++	return TEST_SUCCESS;
++}
++
++static int
++test_cksum_fuzz_random_zero_sum(void)
++{
++	return test_cksum_fuzz_random(DEFAULT_ITERATIONS, false);
++}
++
++static int
++test_cksum_fuzz_random_random_sum(void)
++{
++	return test_cksum_fuzz_random(DEFAULT_ITERATIONS, true);
++}
++
++static struct unit_test_suite ptr_cksum_fuzz_suite = {
++	.suite_name = "cksum fuzz autotest",
++	.setup = NULL,
++	.teardown = NULL,
++	.unit_test_cases = {
++		TEST_CASE(test_cksum_fuzz_edge_cases),
++		TEST_CASE(test_cksum_fuzz_random_zero_sum),
++		TEST_CASE(test_cksum_fuzz_random_random_sum),
++		TEST_CASES_END()
++	}
++};
++
++static int
++test_cksum_fuzz_suite(void)
++{
++	return unit_test_suite_runner(&ptr_cksum_fuzz_suite);
++}
++
++REGISTER_FAST_TEST(cksum_fuzz_autotest, NOHUGE_OK, ASAN_OK, test_cksum_fuzz_suite);
+diff --git a/app/test/test_cksum_perf.c b/app/test/test_cksum_perf.c
+index 0b919cd59f..6b1d4589e0 100644
+--- a/app/test/test_cksum_perf.c
++++ b/app/test/test_cksum_perf.c
+@@ -15,7 +15,7 @@
+ #define NUM_BLOCKS 10
+ #define ITERATIONS 1000000
+ 
+-static const size_t data_sizes[] = { 20, 21, 100, 101, 1500, 1501 };
++static const size_t data_sizes[] = { 20, 21, 100, 101, 1500, 1501, 9000, 9001, 65536, 65537 };
+ 
+ static __rte_noinline uint16_t
+ do_rte_raw_cksum(const void *buf, size_t len)
+diff --git a/lib/net/rte_cksum.h b/lib/net/rte_cksum.h
+index a8e8927952..f04b46a6c3 100644
+--- a/lib/net/rte_cksum.h
++++ b/lib/net/rte_cksum.h
+@@ -42,15 +42,11 @@ extern "C" {
+ static inline uint32_t
+ __rte_raw_cksum(const void *buf, size_t len, uint32_t sum)
  {
- 	unsigned i, j;
- 	uint8_t key[64];
-+	/* to guarantee alignment for rte_jhash_32b, use u32 and copy data */
-+	uint32_t key32[sizeof(key) / sizeof(uint32_t)];
- 	uint32_t hash, hash32;
- 
- 	for (i = 0; i < 64; i++)
- 		key[i] = rand() & 0xff;
- 
-+	memcpy(key32, key, sizeof(key));
-+
- 	for (i = 0; i < RTE_DIM(hashtest_key_lens); i++) {
- 		for (j = 0; j < RTE_DIM(hashtest_initvals); j++) {
- 			/* Key size must be multiple of 4 (32 bits) */
-@@ -199,7 +203,7 @@ verify_jhash_32bits(void)
- 				hash = rte_jhash(key, hashtest_key_lens[i],
- 						hashtest_initvals[j]);
- 				/* Divide key length by 4 in rte_jhash for 32 bits */
--				hash32 = rte_jhash_32b((const unaligned_uint32_t *)key,
-+				hash32 = rte_jhash_32b(key32,
- 						hashtest_key_lens[i] >> 2,
- 						hashtest_initvals[j]);
- 				if (hash != hash32) {
-diff --git a/lib/eal/include/rte_common.h b/lib/eal/include/rte_common.h
-index 573bf4f2ce..7b36966019 100644
---- a/lib/eal/include/rte_common.h
-+++ b/lib/eal/include/rte_common.h
-@@ -121,16 +121,42 @@ extern "C" {
- #define __rte_aligned(a) __attribute__((__aligned__(a)))
- #endif
- 
--#ifdef RTE_ARCH_STRICT_ALIGN
--typedef uint64_t unaligned_uint64_t __rte_aligned(1);
--typedef uint32_t unaligned_uint32_t __rte_aligned(1);
--typedef uint16_t unaligned_uint16_t __rte_aligned(1);
-+/**
-+ * Macro to mark a type that is not subject to type-based aliasing rules
-+ */
-+#ifdef RTE_TOOLCHAIN_MSVC
-+#define __rte_may_alias
- #else
--typedef uint64_t unaligned_uint64_t;
--typedef uint32_t unaligned_uint32_t;
--typedef uint16_t unaligned_uint16_t;
-+#define __rte_may_alias __attribute__((__may_alias__))
- #endif
- 
-+/* Unaligned types implementation notes:
-+ * __rte_aligned(1) - Reduces alignment requirement to 1 byte, allowing
-+ *                    these types to safely access memory at any address.
-+ *                    Without this, accessing a uint16_t at an odd address
-+ *                    is undefined behavior (even on x86 where hardware
-+ *                    handles it).
-+ *
-+ * __rte_may_alias  - Prevents strict-aliasing optimization bugs where
-+ *                    compilers may incorrectly elide memory operations
-+ *                    when casting between pointer types.
-+ */
-+
-+/**
-+ * Type for safe unaligned u64 access.
-+ */
-+typedef __rte_may_alias __rte_aligned(1) uint64_t unaligned_uint64_t;
-+
-+/**
-+ * Type for safe unaligned u32 access.
-+ */
-+typedef __rte_may_alias __rte_aligned(1) uint32_t unaligned_uint32_t;
-+
-+/**
-+ * Type for safe unaligned u16 access.
-+ */
-+typedef __rte_may_alias __rte_aligned(1) uint16_t unaligned_uint16_t;
-+
- /**
-  * @deprecated
-  * @see __rte_packed_begin
-@@ -159,15 +185,6 @@ typedef uint16_t unaligned_uint16_t;
- #define __rte_packed_end __attribute__((__packed__))
- #endif
- 
--/**
-- * Macro to mark a type that is not subject to type-based aliasing rules
-- */
--#ifdef RTE_TOOLCHAIN_MSVC
--#define __rte_may_alias
--#else
--#define __rte_may_alias __attribute__((__may_alias__))
--#endif
+-	const void *end;
 -
- /******* Macro to mark functions and fields scheduled for removal *****/
- #ifdef RTE_TOOLCHAIN_MSVC
- #define __rte_deprecated
+-	for (end = RTE_PTR_ADD(buf, RTE_ALIGN_FLOOR(len, sizeof(uint16_t)));
+-	     buf != end; buf = RTE_PTR_ADD(buf, sizeof(uint16_t))) {
+-		uint16_t v;
+-
+-		memcpy(&v, buf, sizeof(uint16_t));
+-		sum += v;
+-	}
++	/* Process uint16 chunks to preserve overflow/carry math. GCC/Clang vectorize the loop. */
++	const unaligned_uint16_t *buf16 = (const unaligned_uint16_t *)buf;
++	const unaligned_uint16_t *end = buf16 + (len / sizeof(*buf16));
++	for (; buf16 != end; buf16++)
++		sum += *buf16;
+ 
+ 	/* if length is odd, keeping it byte order independent */
+ 	if (unlikely(len % 2)) {
 -- 
 2.39.5 (Apple Git-154)
 
