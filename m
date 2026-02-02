@@ -2,65 +2,65 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C937CE7DF16
-	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Feb 2026 17:51:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08B2AE7DF13
+	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Feb 2026 17:52:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 372D14027D;
-	Mon,  2 Feb 2026 18:51:06 +0100 (CET)
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com
- [209.85.128.48]) by mails.dpdk.org (Postfix) with ESMTP id 6F7DD4026D
- for <dev@dpdk.org>; Mon,  2 Feb 2026 18:51:05 +0100 (CET)
-Received: by mail-wm1-f48.google.com with SMTP id
- 5b1f17b1804b1-4806dffc64cso36316855e9.1
- for <dev@dpdk.org>; Mon, 02 Feb 2026 09:51:05 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 4B0024027D;
+	Mon,  2 Feb 2026 18:52:53 +0100 (CET)
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com
+ [209.85.221.47]) by mails.dpdk.org (Postfix) with ESMTP id 6AA234026D
+ for <dev@dpdk.org>; Mon,  2 Feb 2026 18:52:52 +0100 (CET)
+Received: by mail-wr1-f47.google.com with SMTP id
+ ffacd0b85a97d-432d2c96215so4550409f8f.3
+ for <dev@dpdk.org>; Mon, 02 Feb 2026 09:52:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1770054665;
- x=1770659465; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1770054772;
+ x=1770659572; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:to:from:date:from:to:cc:subject:date:message-id
- :reply-to; bh=6cqZlx7xUn0HOjJc/zy+HEyybCb+JdKFUxCYm00xVJM=;
- b=NWe/DuVRgFuOysjCeigFvIcu1yaGbMxajH+/F0BWlr3GogZgwlbuQS9ugeCi4AXcOB
- xqZxeioKTrZiwnBbySoNjt6uzUbRmsX9WRhhT1nJNqE/vOc/9LNUAp4NN4dbDShBme5u
- dMXRgUMK9PEBFobRClrUecrq0YuBIDoEgy9YEfATqxGbk9EB7uv9kt9HmEu+J8x2B8SN
- wsswfVBGJHyqac1pIwuiWLAOVHW0O0+nwXGaIPM77WLl0PySJ3LSqEMYRjd6012jAs2j
- ecQW+R/lyaFHneTzmHbuARUUvCPmfnNPSdUiUa4DDe+Zdu22nKKDlpeH3ejMCTsnxcj5
- aHdA==
+ :reply-to; bh=1nlGPC5bWU5Zrv/VMevooD3NWWP3PN/nDS/67onWt0g=;
+ b=QiGIXNkztvX0Dcvxrvh5NizfKwzV8if9M6euKIz/XnxAPVl5L1YEY+W3Pga6B6zluJ
+ 95x0AcFyrDMwBaATH6GpxOleAfUW2toGzcSXX1ozC/tktuhWLmITrBGUAzcxtErqg7+E
+ Ev1F67HYIbi/9F4+BmvYSiCHbgYHrzC/Sa86nnql6jaf0VpAckkKvbFbYEgMo4q02ui9
+ 0UspcanOjDyuav45cmik4vTlKI4bUF3/MrbR3JYncSbEwxtz0PIbKWHPvtvCBoJCuA/3
+ lPlvgB0N2bgSkaLZIGvBF7PwTJWj5v7wo+iRPd/fAq25KpGrGw/1I8IW/qELwuhp6VE7
+ RRlQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1770054665; x=1770659465;
+ d=1e100.net; s=20230601; t=1770054772; x=1770659572;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:to:from:date:x-gm-gg:x-gm-message-state:from:to
  :cc:subject:date:message-id:reply-to;
- bh=6cqZlx7xUn0HOjJc/zy+HEyybCb+JdKFUxCYm00xVJM=;
- b=t/+iptaciIpPYL/EuKFFAN+UQ4i+atVhVsyvScE1vJfJhPTTq6o+XxOU9VYGiUkSuT
- g3dByWMse1iepun5lAb9xP86pdt9zIJ8lywzLi2OBta/PwzgB53ODQTon6qErmbWGobs
- KsCud1J4DJzMzSkH79wluhz7eEbopPofZsFQjBUJpfISZ5v4jPy9VonMoUWh5Qdl/E5v
- Cnp1GZIgpl+pIDLQ1BtJniP67po76q7oIgacJ6Wz3qgc+xoYJRygm2kPTMgYe7U68eSQ
- mnC+ZiCw7NjuNvfSyW6gdczXjf7F5BzwehZCKrDElyTSYpCa4f7Y5hxjDwEVH9NXjI0X
- 419A==
-X-Gm-Message-State: AOJu0YyaqUuYcxorRXRv/RMED+7jXk1+fAHy+Rv1z2ICokhBZ9mqafkh
- eVO+LIowP5JiS8gjk/kvpJ4vybLloBjQYFXpxK6RAAvBe/oXhDo0UQRCLMh+9cudT/U69qH7shj
- nvhD7
-X-Gm-Gg: AZuq6aLtxJFwNKDbuGkH4LvIdfBgdxdw9d337FGS8o/M08EGE1GRme6Hhneg8XQURBO
- GhbZIyRCIZba/Bke5LT0QHrt8uP2arj2jflkZ9zr9nJewxxEEoSz2j2tuiuE+e1ro540YKka6n4
- 9bknrbHaNVb8hcJGTTsij4BLtrgEV/3C6mOW8gdo7/XVKYqYx45as79VDc4EbzHtQPI4c6eZ1hN
- /b76R0IrHDwfPnX3GYgKBuxcPvLwWRUuQGI5NhYzLq4NiolTtOcPbfIQWlR3bUmbAyyLfXk9Vj0
- gtJ181L3SgkeB/rJaCOQrCLU2hWDInZy+L17610gJIspmlLA0J4MM/jK97o+UM5JzA/JoccoNjb
- FA54tbJFBzhFQkyd3HczEZPzzWn3EHMbg03bLt6si8nH/rSkLKRsIAXOzu7r3C3JceFBQLsT3lF
- eH7au2D7+EbuldXRndWr/syqXpfVoeigzyOLOvnlHrxa4tiJbNj6NI
-X-Received: by 2002:a05:600c:3f0b:b0:480:1e9e:f9c with SMTP id
- 5b1f17b1804b1-482db45fe83mr165380145e9.10.1770054665066; 
- Mon, 02 Feb 2026 09:51:05 -0800 (PST)
+ bh=1nlGPC5bWU5Zrv/VMevooD3NWWP3PN/nDS/67onWt0g=;
+ b=AH091OBesIOiDOCv3P6zrU6yT5h0SkXgxuJuR5Mlrev3fBubatDwAfP7KVPKmKvfbt
+ MIh/RFaaR1L9TDSt3b3sJXT5CpDf2jUDPZ1NDL8+vT3HY0fGtm9i2TfipUQ7tOWlrN/f
+ 8fsNoLv4h53eVaeZ6XHhudOPtUlcqaMSvWQsZu1m2cz2F4p19E+ML4V6B8XHHY4nKRKS
+ lEyRB2TcZMwcdx7vAm/vVhz8/q/iUli8UYKoSIfWoluJW0587b8rg/S3id60F6iJIV69
+ FTrJpyjJ2xzrLRpsiwWzibuE/I5h/4mw2qIQMBhRCA4ryxe36Wyk80uAyaZH9CNF6UQK
+ TfWQ==
+X-Gm-Message-State: AOJu0YyKMId+RpqAnyI0qsMQFehjHM3x0hY2SET/dX+dIcMSk0lnd0yv
+ +XSQVnv8wY9G2aLCl2V1RYjyLNRe+C6gmqr2pji+jxHll2MA+d1gWNCZIYePLJ9C8Cpfs5MF0CJ
+ mHMSb
+X-Gm-Gg: AZuq6aKRsJjBlKkFs3dE+Ag15eTfvOymsLlysmLqmZ06gXQa30dyR9tlZ3bygnjt4VP
+ av13CZhLw/cktXZsfpfvLYQQ/X/D1N8lzJSnONhehKvzPsee+MQJpTwKLKI6C7fgtp3bxoU7Wha
+ jSOSr5DEtGBYYJu/jBkRWc4OdMdDfv0K/s4RCzgfUCjDf1Fkv5HMUZ1Pus18BZU6/TXWwHZLVVO
+ X6ZKSsDaLHZxBRYHK/1FWXdoQRmxQFTfjFF/zq+lEH2snyWxlNFDxy9buIfMn0J81dgVVA4SGV5
+ VKaqfkOCn4V4OffK2ybbKjDGWXh7Fu61iEuKam2l70/u087nnZ9IiimGJYaaGlC1VHlhbRjJmss
+ w6PwIghPIAd9blVuFKL9pFAbdPSSowr4iZyj1WHSiBa+sMZ1kp84PLDOoRkIMFvshAlVXNwPNDP
+ MVj0RKeVi5me4OtUiEO1QhRfA4QMmf4/7OKIt0uDknCPigE77yGti0H+hxKiXCCTQ=
+X-Received: by 2002:a05:6000:26c3:b0:435:91b6:f53 with SMTP id
+ ffacd0b85a97d-435f3a6b868mr16108598f8f.8.1770054771934; 
+ Mon, 02 Feb 2026 09:52:51 -0800 (PST)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-483002955dbsm19388515e9.5.2026.02.02.09.51.03
+ ffacd0b85a97d-435e1354d43sm49731120f8f.43.2026.02.02.09.52.50
  for <dev@dpdk.org>
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 02 Feb 2026 09:51:04 -0800 (PST)
-Date: Mon, 2 Feb 2026 09:51:00 -0800
+ Mon, 02 Feb 2026 09:52:51 -0800 (PST)
+Date: Mon, 2 Feb 2026 09:52:46 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Subject: Re: [REVIEW] doc/nfb: cleanup and update guide
-Message-ID: <20260202095100.3c898e35@phoenix.local>
+Message-ID: <20260202095246.1888b43c@phoenix.local>
 In-Reply-To: <20260202174235.20628-1-stephen@networkplumber.org>
 References: <20260202153449.3295979-9-spinler@cesnet.cz>
  <20260202174235.20628-1-stephen@networkplumber.org>
@@ -83,22 +83,26 @@ Errors-To: dev-bounces@dpdk.org
 On Mon,  2 Feb 2026 09:42:35 -0800
 Stephen Hemminger <stephen@networkplumber.org> wrote:
 
-> ## Patch 2/8: net/nfb: create one ethdev per ethernet port
+> ## Patch 3/8: net/nfb: add vdev as alternative device probe method
 > 
 > ### Errors
+> None.
 > 
-> 1. **`__rte_internal` functions in header file without the tag appearing alone on its own line** (nfb.h:89-92)
+> ### Warnings
+> 
+> 1. **Unnecessary cast of void pointer** (nfb_vdev.c:62)
 >    ```c
->    __rte_internal
->    int nfb_eth_common_probe(struct nfb_probe_params *params);
->    __rte_internal
->    int nfb_eth_common_remove(struct rte_device *dev);
+>    ret = rte_kvargs_process(kvlist, NFB_ARG_PORT,
+>            nfb_eth_dev_create_for_ifc_by_port, (void *)&ifc_params);
 >    ```
->    The `__rte_internal` tag should be alone on its line, but the function signature should have the return type on a separate line per DPDK style:
->    ```c
->    __rte_internal
->    int
->    nfb_eth_common_probe(struct nfb_probe_params *params);
->    ```
+>    The cast `(void *)` is unnecessary in C.
+> 
+> 2. **Missing newline at end of file** (nfb_vdev.c)
+>    - The file appears to end without a trailing newline after line 108.
+> 
+> ### Info
+> - Useful addition for virtual/simulated NFB devices.
 
-Definately a false positive, ignore this.
+The first is a "meh" not a serious issue
+
+Not sure why false positive #2 happens.
