@@ -2,64 +2,64 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76244E73140
-	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Feb 2026 08:15:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCD8CE73140
+	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Feb 2026 08:15:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id F22DA40A87;
-	Mon,  2 Feb 2026 09:15:05 +0100 (CET)
-Received: from mail-dy1-f170.google.com (mail-dy1-f170.google.com
- [74.125.82.170]) by mails.dpdk.org (Postfix) with ESMTP id F3FBA40A72
- for <dev@dpdk.org>; Mon,  2 Feb 2026 09:15:03 +0100 (CET)
-Received: by mail-dy1-f170.google.com with SMTP id
- 5a478bee46e88-2b785801c93so11479584eec.0
- for <dev@dpdk.org>; Mon, 02 Feb 2026 00:15:03 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id BA5EC40A6C;
+	Mon,  2 Feb 2026 09:15:07 +0100 (CET)
+Received: from mail-dl1-f46.google.com (mail-dl1-f46.google.com [74.125.82.46])
+ by mails.dpdk.org (Postfix) with ESMTP id 2939F40A8A
+ for <dev@dpdk.org>; Mon,  2 Feb 2026 09:15:06 +0100 (CET)
+Received: by mail-dl1-f46.google.com with SMTP id
+ a92af1059eb24-124a95e592fso4244363c88.0
+ for <dev@dpdk.org>; Mon, 02 Feb 2026 00:15:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1770020103; x=1770624903; darn=dpdk.org;
+ d=gmail.com; s=20230601; t=1770020105; x=1770624905; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=sHhyAp+/WUPlHm5QkFRDDgGGYrTrNAs0zLjjxLGEw+s=;
- b=dbeZt63BcXfRjUE57SWeiQotmVy0Iojp5vIjanT/M3s8k865lCddLX+wa0DMlAVE7g
- HtOCoX6pAf75DBniRmLI5ektAl+kWJf0JTcREEh7+4qinwEhik+dwnWcgS/jztvW1DF4
- hzB/6/QND9Lj0IYqbr8hveIU3oRAvTLRTaX+VDoEqYFldt1XQxYGvKxPfqsoY1jpTUIh
- Qc+GftTB6tjigRih+zv3MII8H/XzVdcsXro70d8f7aM60UTsVrfUGcHP5v0N4u8Q9VMU
- n4HVTgZeL9CYRclsaOJS7OrfFAfdidNUFgZHeOyc15nqV7MBZu9H3oh9OVv87aUQSvuY
- HpHA==
+ bh=alI04e/Gf+QKrZLFJHKmKKfYUaFE2mY3OXgZ0wCQh/g=;
+ b=SGDFA5HsHphioh2BQ9YrouDi30cFW64bhe2Z0aNbESwoYmzswpsJcm/hhW6pBcIDjT
+ IqFFFVMCv0H9i7it0ab3J3rwOig3ZNn73U9lMEyeo2s05A69MgJC8GG7NgcPO+7CL6+b
+ EGT5jVY5051FujVZVu5nnkWa0O873J6mpvvYiNNS6sMPWWtcdlQhuQ9+oq+caydgmBEU
+ KzJXiPdnG3/rr7v1/gWtVJMsHmrhRgLuKQYq5LnGyn8Je7Arx1j1/CMVWUVIZA+OeYIT
+ 7jIfgpLIRtkJm/xirUnpxsCfaT9W2G0L/R9W1wzyYRam6Wc/PfXk6602qfp2roHi9eWp
+ 1GQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1770020103; x=1770624903;
+ d=1e100.net; s=20230601; t=1770020105; x=1770624905;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=sHhyAp+/WUPlHm5QkFRDDgGGYrTrNAs0zLjjxLGEw+s=;
- b=taJB+OuVIV87iu6exZRHFuBidyulKTGpj2TZLvD/JEW41grO0rNCjRjdQe+qA7EMtq
- BUZinPE3hEuCxvr1OdLv6WnIxuFIvl3geyFJmFkj2Caq7bY8h5wczFPn5fEkk+dPYMTM
- a1d5fcpvO/qPB+Ce0iPB4V73ygXXdSUEDbnegNWWkqfILLUS/YamwkSvUK75qV4MBFFL
- Y/tf93WLTrVPOzm83b8fp88SWz/P8mdUEaafZx7MVm6piZ2rM7+l6S7CeA2XJ9Tgs+9S
- LF8Cx8M1bd/2+qSLK8Rc8z+cUQcbsBjv+XpKW/58GoSOOsLP3yL5/3k1EOc5XJSOcLcZ
- 5gAA==
-X-Gm-Message-State: AOJu0YxhTXapQnKZyq4UUY6BPANdIQbDqjchd5hckCQGuED8B8wVZDT8
- SXOMF47PlLYhdd5BLTN57CBijjv7UNUxsSkszfNDP6bo4V9rK1+RYrk0ZNhFaA==
-X-Gm-Gg: AZuq6aJ8IxM8JomGBsT812TAkPJDe05C4BkrrmUVPNTk97G1bYrI9C2K5uB1oUYvMDA
- F2WVMEX2/UblG8koq7RY+PaqSDNtSyCqpKE+0+WkSkY2OJu431ZSGxsMazHg3s6YBLK8LYWMW5R
- cwj3Z9Gg0MmBRex5q7zot6Ofucky4X9xzQ25n2ZS/BqY1+RUMkD/GO6q+mAciUcEEFQiQfRedFj
- jpDUGW6vE9dGwwxa9Bod/HPHYN9DOuAv/lvpaTlrVboFbzOSH7iDXJiIyKUAJgnyIKRK1bbfzXl
- CtfWMCbzyd3MvnZFP2fPw1yqgD5iL7AjRZsgl51DrqIi39JFJqDYDcC5fwnOBrnPP/EC09hU4qO
- 6Crd+gKw7F1Uyhc/IhYgsOV5Yn1pomWSEwchGW/TXfZLxLOKCvFBtUIX7KNeEimxBJLaBrjm16S
- UzaN73ucZ++npu3iLF6izYZw==
-X-Received: by 2002:a05:693c:2d85:b0:2b7:4157:9cec with SMTP id
- 5a478bee46e88-2b7c88d959emr4175219eec.26.1770020102625; 
- Mon, 02 Feb 2026 00:15:02 -0800 (PST)
+ bh=alI04e/Gf+QKrZLFJHKmKKfYUaFE2mY3OXgZ0wCQh/g=;
+ b=BhYl2M6h7mYyYJBGH7amEBp+MeIANCx/2ZyozyTWGrfWgesQREzbU3JTb8aLgLk+fr
+ 2cmmctD0GCp6x4/ogx66ZP6AWDJcIRa4LGVk1T3aD07Qv6xKE9n2xV7ov5tOr7q38cTv
+ 23iMYA9rDoG6z8vbEtjoVLXHojHvGZTtcXYfhg+imKNyU0PBaESu26Ok/HNw8bL+1VOz
+ 4jo2uS80DTFLeigIaQJ38f//U3tRnEa1/WAbkJii0hKk605tmeDwEp6CV6YF7rMSsnzm
+ 8YdMc8cDF1AvMBLJvajSpxPhG548Ty1Kia4gbPhi71K25INL95K2mQlWIw2I2JwaI1iA
+ oa3g==
+X-Gm-Message-State: AOJu0YxsuUbazQYnQzz4kybw6ZGfPKaI0ghhhtC4iB6CQN7cvaD/J5m7
+ GuqbjX6up8AJoLtxSwhIn28vkUzGY0Th71iWcsslqjq1RIZMi4/xV29EE1lkyA==
+X-Gm-Gg: AZuq6aKLE8WnBetfPvYLkQi1F6geptpbSxcoQ6VyDLwGaZXMsAGqZBqoi1lmf5xN8jq
+ 5UmrryzHzewWSyF23GnzQDCbgDovk5cplpu7VfDlmQ0foQTRTQb/6UDVA6J/JWvTS2FKeVRBoV8
+ VGy0zSQ8xCx0b46gQyUSkgM/mx1Nv5n7pLeHcO2ixfN1vxNTLuZ4bdbKWSJ/IA3Fp7Be8O45eS1
+ Da3HeY58odJC/x6dsJ4kfRABRctznc5SYMYgt102WXubbZ9py6JYVRE5NpuKOAHaRvfRB7KIGB6
+ j75xkYewdquCbwYNFxYX/a37H2BPQjEty4kntIpiDlI943thd7+O+CCMQCq5DiuJnU9BFw9LkSk
+ 9yZvu73HjSalSkBT0lXbjjS355k4275/CivVczefer7gc12p2zGeUItebQS1XcSupI03RMeAo2j
+ 0/Lc5CwHDEy3NvgGlOlxLMsv3JkiW8rZJU
+X-Received: by 2002:a05:7022:1288:b0:123:345f:5d9c with SMTP id
+ a92af1059eb24-125c0f99a07mr4707317c88.2.1770020104846; 
+ Mon, 02 Feb 2026 00:15:04 -0800 (PST)
 Received: from mac.com ([136.24.82.250]) by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-124a9d7f597sm17142131c88.5.2026.02.02.00.15.02
+ a92af1059eb24-124a9d7f597sm17142131c88.5.2026.02.02.00.15.03
  (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
- Mon, 02 Feb 2026 00:15:02 -0800 (PST)
+ Mon, 02 Feb 2026 00:15:04 -0800 (PST)
 From: scott.k.mitch1@gmail.com
 To: dev@dpdk.org
 Cc: stephen@networkplumber.org,
 	Scott Mitchell <scott.k.mitch1@gmail.com>
-Subject: [PATCH v4 3/4] net/af_packet: tx poll control
-Date: Mon,  2 Feb 2026 00:14:55 -0800
-Message-Id: <20260202081456.4322-4-scott.k.mitch1@gmail.com>
+Subject: [PATCH v4 4/4] net/af_packet: add software checksum offload support
+Date: Mon,  2 Feb 2026 00:14:56 -0800
+Message-Id: <20260202081456.4322-5-scott.k.mitch1@gmail.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 In-Reply-To: <20260202081456.4322-1-scott.k.mitch1@gmail.com>
 References: <20260128191032.78916-1-scott.k.mitch1@gmail.com>
@@ -81,175 +81,293 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Scott Mitchell <scott.k.mitch1@gmail.com>
 
-Add txpollnotrdy devarg (default=true) to control whether poll()
-is called when the TX ring is not ready. This allows users to
-avoid blocking behavior if application threads are in asynchronous
-poll mode where blocking the thread has negative side effects and
-backpressure is applied via different means.
+Add software checksum offload support and configurable TX poll
+behavior to improve flexibility and performance.
+
+Add rte_net_ip_udptcp_cksum_mbuf in rte_net.h which is shared
+between rte_eth_tap and rte_eth_af_packet that supports
+IPv4/UDP/TCP checksums in software due to hardware offload
+and context propagation not being supported.
 
 Signed-off-by: Scott Mitchell <scott.k.mitch1@gmail.com>
 ---
- doc/guides/nics/af_packet.rst             |  6 ++++-
- doc/guides/rel_notes/release_26_03.rst    |  1 +
- drivers/net/af_packet/rte_eth_af_packet.c | 33 ++++++++++++++++++-----
- 3 files changed, 32 insertions(+), 8 deletions(-)
+ doc/guides/nics/features/afpacket.ini     |  2 +
+ doc/guides/rel_notes/release_26_03.rst    |  2 +
+ drivers/net/af_packet/rte_eth_af_packet.c | 15 +++-
+ drivers/net/tap/rte_eth_tap.c             | 61 +--------------
+ lib/net/rte_net.h                         | 92 +++++++++++++++++++++++
+ 5 files changed, 112 insertions(+), 60 deletions(-)
 
-diff --git a/doc/guides/nics/af_packet.rst b/doc/guides/nics/af_packet.rst
-index 1505b98ff7..782a962c3f 100644
---- a/doc/guides/nics/af_packet.rst
-+++ b/doc/guides/nics/af_packet.rst
-@@ -29,6 +29,10 @@ Some of these, in turn, will be used to configure the PACKET_MMAP settings.
- *   ``framesz`` - PACKET_MMAP frame size (optional, default 2048B; Note: multiple
-     of 16B);
- *   ``framecnt`` - PACKET_MMAP frame count (optional, default 512).
-+*   ``txpollnotrdy`` - Control behavior if tx is attempted but there is no
-+    space available to write to the kernel. If 1, call poll() and block until
-+    space is available to tx. If 0, don't call poll() and return from tx (optional,
-+    default 1).
- 
- For details regarding ``fanout_mode`` argument, you can consult the
- `PACKET_FANOUT documentation <https://www.man7.org/linux/man-pages/man7/packet.7.html>`_.
-@@ -75,7 +79,7 @@ framecnt=512):
- 
- .. code-block:: console
- 
--    --vdev=eth_af_packet0,iface=tap0,blocksz=4096,framesz=2048,framecnt=512,qpairs=1,qdisc_bypass=0,fanout_mode=hash
-+    --vdev=eth_af_packet0,iface=tap0,blocksz=4096,framesz=2048,framecnt=512,qpairs=1,qdisc_bypass=0,fanout_mode=hash,txpollnotrdy=0
- 
- Features and Limitations
- ------------------------
+diff --git a/doc/guides/nics/features/afpacket.ini b/doc/guides/nics/features/afpacket.ini
+index 391f79b173..4bb81c84ff 100644
+--- a/doc/guides/nics/features/afpacket.ini
++++ b/doc/guides/nics/features/afpacket.ini
+@@ -7,5 +7,7 @@
+ Link status          = Y
+ Promiscuous mode     = Y
+ MTU update           = Y
++L3 checksum offload  = Y
++L4 checksum offload  = Y
+ Basic stats          = Y
+ Stats per queue      = Y
 diff --git a/doc/guides/rel_notes/release_26_03.rst b/doc/guides/rel_notes/release_26_03.rst
-index c7e7c7d25b..3b6be19645 100644
+index 3b6be19645..2946acce99 100644
 --- a/doc/guides/rel_notes/release_26_03.rst
 +++ b/doc/guides/rel_notes/release_26_03.rst
-@@ -59,6 +59,7 @@ New Features
- 
+@@ -60,6 +60,8 @@ New Features
    * Fixed kernel memory barrier protocol for memory availability
    * Fixed shared memory frame overhead offset calculation
-+  * Added ``txpollnotrdy`` devarg to avoid ``poll()`` blocking calls
+   * Added ``txpollnotrdy`` devarg to avoid ``poll()`` blocking calls
++  * Added checksum offload support for ``IPV4_CKSUM``, ``UDP_CKSUM``,
++    and ``TCP_CKSUM``
  
  Removed Items
  -------------
 diff --git a/drivers/net/af_packet/rte_eth_af_packet.c b/drivers/net/af_packet/rte_eth_af_packet.c
-index 51ac95ff5e..9df1b1fd4c 100644
+index 9df1b1fd4c..128f93bec6 100644
 --- a/drivers/net/af_packet/rte_eth_af_packet.c
 +++ b/drivers/net/af_packet/rte_eth_af_packet.c
-@@ -39,9 +39,11 @@
- #define ETH_AF_PACKET_FRAMECOUNT_ARG	"framecnt"
- #define ETH_AF_PACKET_QDISC_BYPASS_ARG	"qdisc_bypass"
- #define ETH_AF_PACKET_FANOUT_MODE_ARG	"fanout_mode"
-+#define ETH_AF_PACKET_TX_POLL_NOT_READY_ARG	"txpollnotrdy"
- 
- #define DFLT_FRAME_SIZE		(1 << 11)
- #define DFLT_FRAME_COUNT	(1 << 9)
-+#define DFLT_TX_POLL_NOT_RDY	true
- 
- static const uint16_t eth_af_packet_frame_size_max = RTE_IPV4_MAX_PKT_LEN;
- #define ETH_AF_PACKET_FRAME_OVERHEAD (TPACKET2_HDRLEN - sizeof(struct sockaddr_ll))
-@@ -78,6 +80,9 @@ struct __rte_cache_aligned pkt_tx_queue {
- 	unsigned int framecount;
- 	unsigned int framenum;
- 
-+	bool txpollnotrdy;
-+	bool sw_cksum;
-+
- 	volatile unsigned long tx_pkts;
- 	volatile unsigned long err_pkts;
- 	volatile unsigned long tx_bytes;
-@@ -106,6 +111,7 @@ static const char *valid_arguments[] = {
- 	ETH_AF_PACKET_FRAMECOUNT_ARG,
- 	ETH_AF_PACKET_QDISC_BYPASS_ARG,
- 	ETH_AF_PACKET_FANOUT_MODE_ARG,
-+	ETH_AF_PACKET_TX_POLL_NOT_READY_ARG,
- 	NULL
+@@ -10,6 +10,8 @@
+ #include <rte_string_fns.h>
+ #include <rte_mbuf.h>
+ #include <rte_atomic.h>
++#include <rte_ip.h>
++#include <rte_net.h>
+ #include <rte_bitops.h>
+ #include <ethdev_driver.h>
+ #include <ethdev_vdev.h>
+@@ -101,6 +103,7 @@ struct pmd_internals {
+ 	struct pkt_tx_queue *tx_queue;
+ 	uint8_t vlan_strip;
+ 	uint8_t timestamp_offloading;
++	bool tx_sw_cksum;
  };
  
-@@ -258,10 +264,12 @@ eth_af_packet_tx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- 	uint32_t num_tx_bytes = 0;
- 	uint16_t i;
+ static const char *valid_arguments[] = {
+@@ -311,6 +314,9 @@ eth_af_packet_tx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
+ 		ppd->tp_len = mbuf->pkt_len;
+ 		ppd->tp_snaplen = mbuf->pkt_len;
  
--	memset(&pfd, 0, sizeof(pfd));
--	pfd.fd = pkt_q->sockfd;
--	pfd.events = POLLOUT;
--	pfd.revents = 0;
-+	if (pkt_q->txpollnotrdy) {
-+		memset(&pfd, 0, sizeof(pfd));
-+		pfd.fd = pkt_q->sockfd;
-+		pfd.events = POLLOUT;
-+		pfd.revents = 0;
-+	}
- 
- 	framecount = pkt_q->framecount;
- 	framenum = pkt_q->framenum;
-@@ -291,8 +299,9 @@ eth_af_packet_tx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- 		 * This results in poll() returning POLLOUT.
- 		 */
- 		if (unlikely(!tx_ring_status_available(tpacket_read_status(&ppd->tp_status)) &&
--			(poll(&pfd, 1, -1) < 0 || (pfd.revents & POLLERR) != 0 ||
--			 !tx_ring_status_available(tpacket_read_status(&ppd->tp_status))))) {
-+			(!pkt_q->txpollnotrdy || poll(&pfd, 1, -1) < 0 ||
-+			(pfd.revents & POLLERR) != 0 ||
-+			!tx_ring_status_available(tpacket_read_status(&ppd->tp_status))))) {
- 			/* Ring is full, stop here. Don't process bufs[i]. */
- 			break;
- 		}
-@@ -804,6 +813,7 @@ rte_pmd_init_internals(struct rte_vdev_device *dev,
-                        unsigned int framecnt,
- 		       unsigned int qdisc_bypass,
- 		       const char *fanout_mode,
-+			bool txpollnotrdy,
-                        struct pmd_internals **internals,
-                        struct rte_eth_dev **eth_dev,
-                        struct rte_kvargs *kvlist)
-@@ -1022,6 +1032,7 @@ rte_pmd_init_internals(struct rte_vdev_device *dev,
- 			tx_queue->rd[i].iov_len = req->tp_frame_size;
- 		}
- 		tx_queue->sockfd = qsockfd;
-+		tx_queue->txpollnotrdy = txpollnotrdy;
- 
- 		rc = bind(qsockfd, (const struct sockaddr*)&sockaddr, sizeof(sockaddr));
- 		if (rc == -1) {
-@@ -1111,6 +1122,7 @@ rte_eth_from_packet(struct rte_vdev_device *dev,
- 	unsigned int qpairs = 1;
- 	unsigned int qdisc_bypass = 1;
- 	const char *fanout_mode = NULL;
-+	bool txpollnotrdy = DFLT_TX_POLL_NOT_RDY;
- 
- 	/* do some parameter checking */
- 	if (*sockfd < 0)
-@@ -1175,6 +1187,10 @@ rte_eth_from_packet(struct rte_vdev_device *dev,
- 			fanout_mode = pair->value;
- 			continue;
- 		}
-+		if (strstr(pair->key, ETH_AF_PACKET_TX_POLL_NOT_READY_ARG) != NULL) {
-+			txpollnotrdy = atoi(pair->value) != 0;
++		if (pkt_q->sw_cksum && !rte_net_ip_udptcp_cksum_mbuf(mbuf, false))
 +			continue;
-+		}
- 	}
++
+ 		struct rte_mbuf *tmp_mbuf = mbuf;
+ 		do {
+ 			uint16_t data_len = rte_pktmbuf_data_len(tmp_mbuf);
+@@ -396,10 +402,13 @@ eth_dev_configure(struct rte_eth_dev *dev __rte_unused)
+ {
+ 	struct rte_eth_conf *dev_conf = &dev->data->dev_conf;
+ 	const struct rte_eth_rxmode *rxmode = &dev_conf->rxmode;
++	const struct rte_eth_txmode *txmode = &dev_conf->txmode;
+ 	struct pmd_internals *internals = dev->data->dev_private;
  
- 	if (framesize > blocksize) {
-@@ -1243,12 +1259,14 @@ rte_eth_from_packet(struct rte_vdev_device *dev,
- 		PMD_LOG(DEBUG, "%s:\tfanout mode %s", name, fanout_mode);
- 	else
- 		PMD_LOG(DEBUG, "%s:\tfanout mode %s", name, "default PACKET_FANOUT_HASH");
-+	PMD_LOG(INFO, "%s:\ttxpollnotrdy %d", name, txpollnotrdy ? 1 : 0);
+ 	internals->vlan_strip = !!(rxmode->offloads & RTE_ETH_RX_OFFLOAD_VLAN_STRIP);
+ 	internals->timestamp_offloading = !!(rxmode->offloads & RTE_ETH_RX_OFFLOAD_TIMESTAMP);
++	internals->tx_sw_cksum = !!(txmode->offloads & (RTE_ETH_TX_OFFLOAD_IPV4_CKSUM |
++			RTE_ETH_TX_OFFLOAD_UDP_CKSUM | RTE_ETH_TX_OFFLOAD_TCP_CKSUM));
+ 	return 0;
+ }
  
- 	if (rte_pmd_init_internals(dev, *sockfd, qpairs,
- 				   blocksize, blockcount,
- 				   framesize, framecount,
- 				   qdisc_bypass,
- 				   fanout_mode,
-+				   txpollnotrdy,
- 				   &internals, &eth_dev,
- 				   kvlist) < 0)
- 		return -1;
-@@ -1346,4 +1364,5 @@ RTE_PMD_REGISTER_PARAM_STRING(net_af_packet,
- 	"framesz=<int> "
- 	"framecnt=<int> "
- 	"qdisc_bypass=<0|1> "
--	"fanout_mode=<hash|lb|cpu|rollover|rnd|qm>");
-+	"fanout_mode=<hash|lb|cpu|rollover|rnd|qm> "
-+	"txpollnotrdy=<0|1>");
+@@ -417,7 +426,10 @@ eth_dev_info(struct rte_eth_dev *dev, struct rte_eth_dev_info *dev_info)
+ 	dev_info->max_tx_queues = (uint16_t)internals->nb_queues;
+ 	dev_info->min_rx_bufsize = ETH_AF_PACKET_ETH_OVERHEAD;
+ 	dev_info->tx_offload_capa = RTE_ETH_TX_OFFLOAD_MULTI_SEGS |
+-		RTE_ETH_TX_OFFLOAD_VLAN_INSERT;
++		RTE_ETH_TX_OFFLOAD_VLAN_INSERT |
++		RTE_ETH_TX_OFFLOAD_IPV4_CKSUM |
++		RTE_ETH_TX_OFFLOAD_UDP_CKSUM |
++		RTE_ETH_TX_OFFLOAD_TCP_CKSUM;
+ 	dev_info->rx_offload_capa = RTE_ETH_RX_OFFLOAD_VLAN_STRIP |
+ 		RTE_ETH_RX_OFFLOAD_TIMESTAMP;
+ 
+@@ -618,6 +630,7 @@ eth_tx_queue_setup(struct rte_eth_dev *dev,
+ {
+ 
+ 	struct pmd_internals *internals = dev->data->dev_private;
++	internals->tx_queue[tx_queue_id].sw_cksum = internals->tx_sw_cksum;
+ 
+ 	dev->data->tx_queues[tx_queue_id] = &internals->tx_queue[tx_queue_id];
+ 	return 0;
+diff --git a/drivers/net/tap/rte_eth_tap.c b/drivers/net/tap/rte_eth_tap.c
+index 730f1859bd..55f496babe 100644
+--- a/drivers/net/tap/rte_eth_tap.c
++++ b/drivers/net/tap/rte_eth_tap.c
+@@ -560,70 +560,13 @@ tap_write_mbufs(struct tx_queue *txq, uint16_t num_mbufs,
+ 		if (txq->csum && (mbuf->ol_flags & RTE_MBUF_F_TX_IP_CKSUM ||
+ 				l4_ol_flags == RTE_MBUF_F_TX_UDP_CKSUM ||
+ 				l4_ol_flags == RTE_MBUF_F_TX_TCP_CKSUM)) {
+-			unsigned int hdrlens = mbuf->l2_len + mbuf->l3_len;
+-			uint16_t *l4_cksum;
+-			void *l3_hdr;
+-
+-			if (l4_ol_flags == RTE_MBUF_F_TX_UDP_CKSUM)
+-				hdrlens += sizeof(struct rte_udp_hdr);
+-			else if (l4_ol_flags == RTE_MBUF_F_TX_TCP_CKSUM)
+-				hdrlens += sizeof(struct rte_tcp_hdr);
+-			else if (l4_ol_flags != RTE_MBUF_F_TX_L4_NO_CKSUM)
+-				return -1;
+-
+-			/* Support only packets with at least layer 4
+-			 * header included in the first segment
+-			 */
+-			if (rte_pktmbuf_data_len(mbuf) < hdrlens)
+-				return -1;
+-
+-			/* To change checksums (considering that a mbuf can be
+-			 * indirect, for example), copy l2, l3 and l4 headers
+-			 * in a new segment and chain it to existing data
+-			 */
+-			seg = rte_pktmbuf_copy(mbuf, mbuf->pool, 0, hdrlens);
++			/* Compute checksums in software, copying headers if needed */
++			seg = rte_net_ip_udptcp_cksum_mbuf(mbuf, true);
+ 			if (seg == NULL)
+ 				return -1;
+-			rte_pktmbuf_adj(mbuf, hdrlens);
+-			rte_pktmbuf_chain(seg, mbuf);
+ 			pmbufs[i] = mbuf = seg;
+-
+-			l3_hdr = rte_pktmbuf_mtod_offset(mbuf, void *, mbuf->l2_len);
+-			if (mbuf->ol_flags & RTE_MBUF_F_TX_IP_CKSUM) {
+-				struct rte_ipv4_hdr *iph = l3_hdr;
+-
+-				iph->hdr_checksum = 0;
+-				iph->hdr_checksum = rte_ipv4_cksum(iph);
+-			}
+-
+-			if (l4_ol_flags == RTE_MBUF_F_TX_L4_NO_CKSUM)
+-				goto skip_l4_cksum;
+-
+-			if (l4_ol_flags == RTE_MBUF_F_TX_UDP_CKSUM) {
+-				struct rte_udp_hdr *udp_hdr;
+-
+-				udp_hdr = rte_pktmbuf_mtod_offset(mbuf, struct rte_udp_hdr *,
+-					mbuf->l2_len + mbuf->l3_len);
+-				l4_cksum = &udp_hdr->dgram_cksum;
+-			} else {
+-				struct rte_tcp_hdr *tcp_hdr;
+-
+-				tcp_hdr = rte_pktmbuf_mtod_offset(mbuf, struct rte_tcp_hdr *,
+-					mbuf->l2_len + mbuf->l3_len);
+-				l4_cksum = &tcp_hdr->cksum;
+-			}
+-
+-			*l4_cksum = 0;
+-			if (mbuf->ol_flags & RTE_MBUF_F_TX_IPV4) {
+-				*l4_cksum = rte_ipv4_udptcp_cksum_mbuf(mbuf, l3_hdr,
+-					mbuf->l2_len + mbuf->l3_len);
+-			} else {
+-				*l4_cksum = rte_ipv6_udptcp_cksum_mbuf(mbuf, l3_hdr,
+-					mbuf->l2_len + mbuf->l3_len);
+-			}
+ 		}
+ 
+-skip_l4_cksum:
+ 		for (j = 0; j < mbuf->nb_segs; j++) {
+ 			iovecs[k].iov_len = rte_pktmbuf_data_len(seg);
+ 			iovecs[k].iov_base = rte_pktmbuf_mtod(seg, void *);
+diff --git a/lib/net/rte_net.h b/lib/net/rte_net.h
+index 65d724b84b..44f42010c8 100644
+--- a/lib/net/rte_net.h
++++ b/lib/net/rte_net.h
+@@ -246,6 +246,98 @@ rte_net_intel_cksum_prepare(struct rte_mbuf *m)
+ 	return rte_net_intel_cksum_flags_prepare(m, m->ol_flags);
+ }
+ 
++/**
++ * Compute IPv4 header and UDP/TCP checksums in software.
++ *
++ * Computes checksums based on mbuf offload flags:
++ * - RTE_MBUF_F_TX_IP_CKSUM: Compute IPv4 header checksum
++ * - RTE_MBUF_F_TX_UDP_CKSUM: Compute UDP checksum (IPv4 or IPv6)
++ * - RTE_MBUF_F_TX_TCP_CKSUM: Compute TCP checksum (IPv4 or IPv6)
++ *
++ * @param mbuf
++ *   The packet mbuf. Must have l2_len and l3_len set correctly.
++ * @param copy
++ *   If true, copy L2/L3/L4 headers to a new segment before computing
++ *   checksums. This is safe for indirect mbufs but has overhead.
++ *   If false, compute checksums in place. This is only safe if the
++ *   mbuf will be copied afterward (e.g., to a device ring buffer).
++ * @return
++ *   - On success: Returns mbuf (new segment if copy=true, original if copy=false)
++ *   - On error: Returns NULL (allocation failed or malformed packet)
++ */
++__rte_experimental
++static inline struct rte_mbuf *
++rte_net_ip_udptcp_cksum_mbuf(struct rte_mbuf *mbuf, bool copy)
++{
++	const uint64_t l4_ol_flags = mbuf->ol_flags & RTE_MBUF_F_TX_L4_MASK;
++	const uint64_t l4_offset = mbuf->l2_len + mbuf->l3_len;
++	uint32_t hdrlens = l4_offset;
++	void *l3_hdr = NULL;
++
++	/* Determine total header length needed */
++	if (l4_ol_flags == RTE_MBUF_F_TX_UDP_CKSUM)
++		hdrlens += sizeof(struct rte_udp_hdr);
++	else if (l4_ol_flags == RTE_MBUF_F_TX_TCP_CKSUM)
++		hdrlens += sizeof(struct rte_tcp_hdr);
++	else if (l4_ol_flags != RTE_MBUF_F_TX_L4_NO_CKSUM)
++		return NULL; /* Unsupported L4 checksum type */
++	else if (!(mbuf->ol_flags & RTE_MBUF_F_TX_IP_CKSUM))
++		return mbuf; /* Nothing to do */
++
++	/* Validate we at least have L2+L3 headers before doing any work */
++	if (unlikely(rte_pktmbuf_data_len(mbuf) < l4_offset))
++		return NULL;
++
++	if (copy) {
++		/*
++		 * Copy headers to new segment to handle indirect mbufs.
++		 * This ensures we can safely modify checksums without
++		 * corrupting shared/read-only data.
++		 */
++		struct rte_mbuf *seg = rte_pktmbuf_copy(mbuf, mbuf->pool, 0, hdrlens);
++		if (!seg)
++			return NULL;
++
++		rte_pktmbuf_adj(mbuf, hdrlens);
++		rte_pktmbuf_chain(seg, mbuf);
++		mbuf = seg;
++	} else if (unlikely(!RTE_MBUF_DIRECT(mbuf) || rte_mbuf_refcnt_read(mbuf) > 1))
++		return NULL;
++
++	l3_hdr = rte_pktmbuf_mtod_offset(mbuf, void *, mbuf->l2_len);
++
++	/* IPv4 header checksum */
++	if (mbuf->ol_flags & RTE_MBUF_F_TX_IP_CKSUM) {
++		struct rte_ipv4_hdr *iph = (struct rte_ipv4_hdr *)l3_hdr;
++		iph->hdr_checksum = 0;
++		iph->hdr_checksum = rte_ipv4_cksum(iph);
++	}
++
++	/* L4 checksum (UDP or TCP) - skip if headers not in first segment */
++	if (l4_ol_flags == RTE_MBUF_F_TX_UDP_CKSUM && rte_pktmbuf_data_len(mbuf) >= hdrlens) {
++		struct rte_udp_hdr *udp_hdr = rte_pktmbuf_mtod_offset(mbuf, struct rte_udp_hdr *,
++				l4_offset);
++		udp_hdr->dgram_cksum = 0;
++		udp_hdr->dgram_cksum = (mbuf->ol_flags & RTE_MBUF_F_TX_IPV4) ?
++			rte_ipv4_udptcp_cksum_mbuf(mbuf, (const struct rte_ipv4_hdr *)l3_hdr,
++					l4_offset) :
++			rte_ipv6_udptcp_cksum_mbuf(mbuf, (const struct rte_ipv6_hdr *)l3_hdr,
++					l4_offset);
++	} else if (l4_ol_flags == RTE_MBUF_F_TX_TCP_CKSUM &&
++			rte_pktmbuf_data_len(mbuf) >= hdrlens) {
++		struct rte_tcp_hdr *tcp_hdr = rte_pktmbuf_mtod_offset(mbuf, struct rte_tcp_hdr *,
++				l4_offset);
++		tcp_hdr->cksum = 0;
++		tcp_hdr->cksum = (mbuf->ol_flags & RTE_MBUF_F_TX_IPV4) ?
++			rte_ipv4_udptcp_cksum_mbuf(mbuf,  (const struct rte_ipv4_hdr *)l3_hdr,
++					l4_offset) :
++			rte_ipv6_udptcp_cksum_mbuf(mbuf, (const struct rte_ipv6_hdr *)l3_hdr,
++					l4_offset);
++	}
++
++	return mbuf;
++}
++
+ #ifdef __cplusplus
+ }
+ #endif
 -- 
 2.39.5 (Apple Git-154)
 
