@@ -2,73 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2903E87834
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Feb 2026 14:14:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FDB7E87839
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Feb 2026 14:18:03 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1FED54029D;
-	Tue,  3 Feb 2026 15:14:05 +0100 (CET)
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com
- [209.85.221.43]) by mails.dpdk.org (Postfix) with ESMTP id 939B34013F
- for <dev@dpdk.org>; Tue,  3 Feb 2026 15:14:03 +0100 (CET)
-Received: by mail-wr1-f43.google.com with SMTP id
- ffacd0b85a97d-432d2670932so5109625f8f.2
- for <dev@dpdk.org>; Tue, 03 Feb 2026 06:14:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1770128043;
- x=1770732843; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=6Db6G7MyHqvnHKSQY+tRdKQwsyN9UrQD9VnkqvDP7rk=;
- b=l5EAryRqz8dc/HH6xf8+faSZaP85Bsx8iHZb1fZkP2JGyx76FgwvCmiSHESKI8CFgs
- yMyoj6N3ZCiVRzxO7K48FGddgKYQla6gD9G9wfeyQ6BlPWDhe+xHXteqJuxrEQKztqq5
- wlDVYaREfB/CEVPNdCJxlq2jMgrb3LNInVMRe5ntqL4IGYx0+NAZ1FlKwDBu9n02ZjcT
- 0FfArzjktPQu/pIreNMSJvMT0kPc/EETC6xyjUFvHg9NClafkBH0Vb48FT8Dwc4G8p9X
- x4vikhsZBUYnqjRjT/UjVqe+SwhFMp+IrlYD+0nGZIpN33qEEmT4VHnVwnPeXlvD61s9
- wcDQ==
+	by mails.dpdk.org (Postfix) with ESMTP id B3E2A4029D;
+	Tue,  3 Feb 2026 15:18:02 +0100 (CET)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 85F594013F
+ for <dev@dpdk.org>; Tue,  3 Feb 2026 15:18:00 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1770128279;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=prtsw4qdU2gKYBh4o/s/9HxH+NrvLicXfKULMxDRkUQ=;
+ b=U/pACW3fNgpgMmW7tVbuKiT0FgX9unG4v94cCYEd/ngr0mKbhc5gFlC+UUyyo1N4wcqwbZ
+ 8d1vAkf5JmBTVNMWDmhAkTvp+qcySuyABGbOAOU61ioYiB06P2Nc3NTqb3xGfz4sZPhAki
+ lxl1s9zR5/KjD1AfUfT7QTDws+APbG4=
+Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
+ [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-587-tJP4Ld13MNiU2qVFv33HMA-1; Tue, 03 Feb 2026 09:17:58 -0500
+X-MC-Unique: tJP4Ld13MNiU2qVFv33HMA-1
+X-Mimecast-MFC-AGG-ID: tJP4Ld13MNiU2qVFv33HMA_1770128276
+Received: by mail-lj1-f198.google.com with SMTP id
+ 38308e7fff4ca-382fcf9cb7dso30727841fa.3
+ for <dev@dpdk.org>; Tue, 03 Feb 2026 06:17:57 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1770128043; x=1770732843;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=6Db6G7MyHqvnHKSQY+tRdKQwsyN9UrQD9VnkqvDP7rk=;
- b=e2bzP+zSvzIuyy+7qF97lyWq5lsdJLpm1fdDoBu4H369zd33r6uC50EcO+gJ9vXDT1
- bQloEC3zkseVvRLoaWtXWzGBb7Iq9UaA0fErfQxgj/QWb/sXnSVWDAbaLSREEL8g0uHQ
- o3V4b8GUkwu1U3d47bkXR3rkgQakql2RG5N20jcgL+3bRNS+bzSBHs2MOVUvnEQ2r+A7
- QT6sJHa4bqxVR+370nWd2FWQO145fijvk6JByMT8V+Nk2JV6dG4gck5h9Fe6XPwVvh86
- wn5GyaqEE2EsVQX0Nl9tiYP+NXj6NwwPPC4locS49g/EG1+zNE8T4Dj+k5o82+Mkeqp0
- 7FcQ==
-X-Gm-Message-State: AOJu0Yy/befNwt1SCr68xQahFRmP4PRiO2Cn5GBoO347qw9xt061dGLY
- n81w/+BCbzZctp90sOndzel5YWwRaCjrVrMNozn/8bYZXAmPDgsNelsv4e3c7HHhk9o=
-X-Gm-Gg: AZuq6aLLo3C6PbWllR9WwNUplp2WTc9t//uLlfQgMi+QyRTIbOQR1BmzNFE0VjrVNOB
- gHNFur3IQx4hz5pbEiu0a8IMkYLrP9gKVQCPn7yuC2pCZ32N/PQ9XtnBsgtE/oyUOb84Gh200j7
- UDz4TlGwcWMcbW5HeXYwX1DehvVmjI1J1rqNlbyg6FO9Tj/gJYsN9nP8JTe3upcKaBfV0ZQetwJ
- 8n2XZGpT9h8fFEehM+TG9+8XGuK91Ntud9Rt3YGBt8eUIq7r7x61IDx03OWhpdP171TpVQhSXUR
- MyaaRopacATdcjom8QFr/RnSqwlpj5gQkdPA7byBbLtCmqo0wSdgeJxYgUNzN8ujn/3m2jeFZ24
- lTM+xB0228RN43+eX/TMpjkpstebOofQqbRp96O9O22t58el/ZVo3VEt+992D4mMWmuK7sqx+/K
- b3Vn/hNn72FWFCxa5C2i4t+mqdImEThZai3pe/9a62FuQvJHXeuMeE
-X-Received: by 2002:a05:6000:2905:b0:432:5bac:3915 with SMTP id
- ffacd0b85a97d-435f3aaa63fmr23306656f8f.39.1770128042909; 
- Tue, 03 Feb 2026 06:14:02 -0800 (PST)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-435e131ce58sm51115769f8f.20.2026.02.03.06.14.01
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 03 Feb 2026 06:14:02 -0800 (PST)
-Date: Tue, 3 Feb 2026 06:13:58 -0800
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: scott.k.mitch1@gmail.com
-Cc: dev@dpdk.org
-Subject: Re: [PATCH v5 4/4] net/af_packet: add software checksum offload
- support
-Message-ID: <20260203061358.381ec977@phoenix.local>
-In-Reply-To: <20260203070740.62305-5-scott.k.mitch1@gmail.com>
-References: <20260202081456.4322-1-scott.k.mitch1@gmail.com>
- <20260203070740.62305-1-scott.k.mitch1@gmail.com>
- <20260203070740.62305-5-scott.k.mitch1@gmail.com>
+ d=1e100.net; s=20230601; t=1770128276; x=1770733076;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=prtsw4qdU2gKYBh4o/s/9HxH+NrvLicXfKULMxDRkUQ=;
+ b=a5EZ4n33lDI7LJAS92lk5nTMHN0EPpz6CHgyrFXw0vXbuxLtSJQ/veLg8AisV035Jd
+ STtL42msge9IQWnB/YzA/mbqiO38WoReN8VKb+C4CRTqdcjF5O4TG3yBZmDdL+Lp5gP9
+ oa+B7MVP0gCnlVFDHJp4f5saIGQY+HShlpaLKqlV15boxYkOWnKM9h2Acwo2VkFLpZ77
+ aLRPFBeRmWOnpIIn5js9q8opTvBOCJxcBQg3SxNbfyk4OTOcqGx1kDVtra0h7lGibMZE
+ T0kxPpy3TO0FNsHsoVlyZU8r2oHgtrkBeLhR2/VE7/zpc0mskWzBrLEGLZvHRiGXieCx
+ n1fA==
+X-Gm-Message-State: AOJu0YzLQMXb9u9kFZ6KMG298Dtnk0vOLQN+UWeJqRaHfo9idVzSaJ1O
+ Sdqlg2r68b2uVfTAl2+vT/CeO8nl24gJtNgrniYG3JtwoXI3GGodyrClFD80ic7osjaM5wlKPU0
+ QWJc5H5PXEJvsFQmxbDw/lSTpICJqnql9yNODd+KloAgVhHaJbtUKiBWkkuuMbTHcPYgAHANVIG
+ Vw4d4avrZbu0ECn/GH624=
+X-Gm-Gg: AZuq6aLjjmcI/dayLvSq7tT6ZSs9a+Cffh4yjBuHapm30TQ9PRH7kcK5jz8tJxW40mC
+ 9x42zP2d5gJiJt5erIE5nX2LLnUfZ9Y7xX1K80VP/RSnKtOzmiz6kRWhAJG5EC0PXR1Ey5BbXF8
+ do3EIKbqKHQrEIEcqL0kdJYZirUB7ssAXGNCjXbLkPBLfuEE8uUetI6CqRVUvSrqFpxpGCCtErS
+ LT09OwFJ0WmXsBjOpCXcRZE8iFn4bKtEmxvL5wULZUeQnHaBxeIYQOiHQ==
+X-Received: by 2002:a05:6512:3f1f:b0:595:81eb:5368 with SMTP id
+ 2adb3069b0e04-59e1643285emr6094299e87.39.1770128276118; 
+ Tue, 03 Feb 2026 06:17:56 -0800 (PST)
+X-Received: by 2002:a05:6512:3f1f:b0:595:81eb:5368 with SMTP id
+ 2adb3069b0e04-59e1643285emr6094283e87.39.1770128275706; Tue, 03 Feb 2026
+ 06:17:55 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20260126164519.3029952-1-bruce.richardson@intel.com>
+ <20260126164519.3029952-2-bruce.richardson@intel.com>
+In-Reply-To: <20260126164519.3029952-2-bruce.richardson@intel.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Tue, 3 Feb 2026 15:17:43 +0100
+X-Gm-Features: AZwV_QjSPHHYoOopPg_yEQXb5JxLDMzEz6YHi30Bmj0RVRxV15HMAJyJHGn0eAI
+Message-ID: <CAJFAV8yRYXKjQCniarc=u9fYuh-1GYTnKr-fnEJDQwEOrZuSeQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] test/eal_flags: add EAL debug logs to recursive calls
+To: Bruce Richardson <bruce.richardson@intel.com>
+Cc: dev@dpdk.org
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: xHa9eyIpgpNYix4amZLP3Le4tbtxQUKHuTlIYw0rsdk_1770128276
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,30 +83,25 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon,  2 Feb 2026 23:07:40 -0800
-scott.k.mitch1@gmail.com wrote:
+On Mon, 26 Jan 2026 at 17:45, Bruce Richardson
+<bruce.richardson@intel.com> wrote:
+>
+> When we make recursive calls to dpdk-test to check flag support, either
+> as a secondary process or as another primary process, add the log-level
+> flag to give extra EAL output to help with debugging any issues. For
+> calls that are spawning another primary process, pass in --no-pci flag
+> too, to skip device probing.
+>
+> Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 
->  
-> +/**
-> + * Compute IP and L4 checksums in software for mbufs with
-> + * RTE_MBUF_F_TX_IP_CKSUM, RTE_MBUF_F_TX_UDP_CKSUM, or
-> + * RTE_MBUF_F_TX_TCP_CKSUM offload flags set.
-> + *
-> + * On success, this function takes ownership of the input mbuf. The mbuf may be
-> + * modified in-place (for direct, non-shared mbufs) or a new mbuf chain may be
-> + * created (for indirect/shared mbufs) with the original becoming part of the chain.
-> + *
-> + * @param mbuf
-> + *   The packet mbuf to checksum.
-> + * @return
-> + *   - On success: pointer to mbuf with checksums computed (may be same as input
-> + *     or a new mbuf chain). Caller must free only this returned pointer; the input
-> + *     mbuf pointer should not be freed separately as it may be part of the returned
-> + *     chain or may be the same as the returned pointer.
-> + *   - On error: NULL. Original mbuf remains valid and owned by caller.
-> + */
-> +__rte_experimental
-> +struct rte_mbuf *
-> +rte_net_ip_udptcp_cksum_mbuf(struct rte_mbuf *mbuf);
+On one side, the debug will probably help with future errors.
+But on the second change, the --no-pci stuff is not about debug it
+seems more like an actual fix (or well, a way to hide the issue in
+CI).
 
-Probably need to add EXPERIMENTAL into docbook comment as well.
+I would prefer we split in two.
+
+
+-- 
+David Marchand
+
