@@ -2,167 +2,185 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA572E87822
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Feb 2026 12:52:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15847E8782F
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Feb 2026 13:59:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id ABD1C4029D;
-	Tue,  3 Feb 2026 13:52:52 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
- by mails.dpdk.org (Postfix) with ESMTP id 7461040285
- for <dev@dpdk.org>; Tue,  3 Feb 2026 13:52:51 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1770123172; x=1801659172;
- h=date:from:to:cc:subject:message-id:references:
- in-reply-to:mime-version;
- bh=Ah+jJdoP4LlvwrrWICNHGpHSj6hc1E3U58QanN3Q4y0=;
- b=lTB6VEFuKYY7YZJLFm5Ven2821y/M49zABLXorjAqQmze778FuZnM4bP
- 99qZQb4GmZvYB0MfjWr/ItkuswhQiY7zRV+fLfWW6Bt6woX0GxU79pAOM
- yBxKL6ZfKGVLdORT7xjnZd8jadZFhPvuaRHemej88S9siv9ZYAUcUnVLx
- OVc7taAb2W/DlVXz3E9KHfW3tNKYYPbo+xGuMqFOMi1A5lzQpNZfAjMRE
- fT/nUkSWelDLVqc1z5dMna0n/uqO8ONft/uJla+ROxfrRhvn4n0Lqofoh
- 03yIcCCcDIuokcgrpWuGoXsrVr0VasB+DRwU1B1zd5roCQGJXQzOKEc/V g==;
-X-CSE-ConnectionGUID: xroFfNaYS3Wx3qNdo6GAHg==
-X-CSE-MsgGUID: XdSCeV6fQ82SEtuOvTL6RA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11690"; a="82029311"
-X-IronPort-AV: E=Sophos;i="6.21,270,1763452800"; d="scan'208";a="82029311"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
- by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 03 Feb 2026 04:52:50 -0800
-X-CSE-ConnectionGUID: LtCC7CjKRkyEVkMHf0W00A==
-X-CSE-MsgGUID: MADxQIlMQpG8OZm4Vz50xA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,270,1763452800"; d="scan'208";a="209255757"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
- by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 03 Feb 2026 04:52:50 -0800
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.35; Tue, 3 Feb 2026 04:52:49 -0800
-Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.35 via Frontend Transport; Tue, 3 Feb 2026 04:52:49 -0800
-Received: from SN4PR0501CU005.outbound.protection.outlook.com (40.93.194.23)
- by edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.35; Tue, 3 Feb 2026 04:52:49 -0800
+	by mails.dpdk.org (Postfix) with ESMTP id CC17A402D9;
+	Tue,  3 Feb 2026 14:59:42 +0100 (CET)
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
+ [67.231.156.173])
+ by mails.dpdk.org (Postfix) with ESMTP id 548CE402BE
+ for <dev@dpdk.org>; Tue,  3 Feb 2026 14:59:41 +0100 (CET)
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+ by mx0b-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
+ 6136nPJZ815985; Tue, 3 Feb 2026 05:59:40 -0800
+Received: from sa9pr02cu001.outbound.protection.outlook.com
+ (mail-southcentralusazon11023111.outbound.protection.outlook.com
+ [40.93.196.111])
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4c28mxvneh-1
+ (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+ Tue, 03 Feb 2026 05:59:40 -0800 (PST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=J8bmGJM73N6AUWPWzR9NJC4VBTtr0iwTzPAzu2CErDBI86jvmttVcbRjfl+Q2Tc8NCIgDU7WrDtiwgA9x/pAKtDwh27Z2cDgjmW+YpmO3nKhb75nU2mxv6G0kteuGOGamjAPH8puq8ILPeooZpDmga1zhB3zQQ2CVe4i5U2AGn8odkT9juarueOjfAsduJH4IdeMqjxpI4GZlpicV/R9naIbx062bADX9vo9pH1XxJVgIDThSIvpp+payWRUzLob58MdVuJ/Uyk60tgJoVH/nOZmxE25ycZ3r6+tu5U4l8Ph2DpMzotc7Y2YhWft6cEGpON+bZiww0sDEpjO4/ZHBw==
+ b=uWWJ6w2R6W0QHzWIhu4gcG9dRVYR+nehvo4OWUKp3Eurqa1WNxJXs/oaKpsTMGgI04/TLTwhwHtZccQ/fEWrhatTQVqcwyMvmLRL0joJzT9ZwhGiqgtvD/uNZ2ZAana0zsYXBLiTrKU6GD6oSem+7XBvc+9YEH2n2civ2QQtEnHiWVHozcvoH3oOIfrqMfaf8D37NKcSnfQfw5O1aqN2GHl8N9JtnAQoGY8ktVDL6+Krecc4hqqAPl4ZgqS6qtc/O3AMa6xKjUrXnXyORavfq+d80z0gIr8lOLP3h/BpjiEyz4TbJhPvqReOoIKz8p3JzeHp+NumS64AB2pWLSDGJg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=pOJHt7PsOlXwNXaVRsBtI21gPjs1Lqt8k+YMVIurKys=;
- b=eRp951CKKqCmUnHPQ2dZb20sZppMBdkhYCfj3gD3Q1z6V0k5jMsjtOhI0YUz0wLdKlEzZrNKQE2VM5JGaRs9K5y98MYJlx4geRJ8/G/L4RnERQqsCWRSdVntoHuJSREAem8ErWdHsyEoG3OKbaz90fZSeZP70Jfuq4ukxNCfn/6o95pvEnirjZBi8oaR8vc5cYerWad58T5Y+DBPSrJWIUst4nlOr/kL6eajFrYTZQphLAR3XX11v5E3PRTm6hEepiCh7M5aWpzndbphKGXcVw00JfXsTiJWCexVvuLBfM4qRaMCmdoSSASbfslW+/Zi4L2ejyDe1uximy76roSCBw==
+ bh=+jcvLsNsjvkkkAGvCZgmRP/TZWuPAi5O3H9Y06TD1x4=;
+ b=xozdHEHC332xUp13JfwVeiOXmfjPBrtWya1z+ryqDIzx/0lSqLDsNFl/rqoyEZXeI1Fj0Tsm7LH5FVU1Q+ZlMHG5o2xrKdPG8FkFtNV5Adw6axFasSDve1rEc1MZn05q25J37iH6l0wrzcmJKV2uO8A4/UCq4ldRDz94Y/48a0A+Z0Ew2S6wYBgND9xBbOo2AdtZ3CnnaZehHFtgvoofRcRMH4VCED0cqcDz58xSK7qG7JuNq1NY/7pg5QLW3eNrspWpye97d0uFCKJjDfAWCNSurd0F3Lo6VFZ6hTQwPCl4MAjywfkJP5vIBNzIIX4ogt1puYG12BDfJW4dEtWa7Q==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from CY8PR11MB7290.namprd11.prod.outlook.com (2603:10b6:930:9a::6)
- by PH7PR11MB6699.namprd11.prod.outlook.com (2603:10b6:510:1ad::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9564.16; Tue, 3 Feb
- 2026 12:52:47 +0000
-Received: from CY8PR11MB7290.namprd11.prod.outlook.com
- ([fe80::97aa:4b89:4558:19e1]) by CY8PR11MB7290.namprd11.prod.outlook.com
- ([fe80::97aa:4b89:4558:19e1%6]) with mapi id 15.20.9564.016; Tue, 3 Feb 2026
- 12:52:47 +0000
-Date: Tue, 3 Feb 2026 12:52:39 +0000
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: Soumyadeep Hore <soumyadeep.hore@intel.com>
-CC: <dev@dpdk.org>, <rajesh3.kumar@intel.com>, <aman.deep.singh@intel.com>,
- <manoj.kumar.subbarao@intel.com>
-Subject: Re: [PATCH v5 2/4] net/idpf: add PTP virtchnl2 support
-Message-ID: <aYHvl8fWWcS1ZKNz@bricha3-mobl1.ger.corp.intel.com>
-References: <20260120191120.137078-4-soumyadeep.hore@intel.com>
- <20260123000449.188008-1-soumyadeep.hore@intel.com>
- <20260123000449.188008-3-soumyadeep.hore@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20260123000449.188008-3-soumyadeep.hore@intel.com>
-X-ClientProxiedBy: DUZPR01CA0010.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:3c3::12) To DS0PR11MB7309.namprd11.prod.outlook.com
- (2603:10b6:8:13e::17)
+ smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
+ dkim=pass header.d=marvell.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+jcvLsNsjvkkkAGvCZgmRP/TZWuPAi5O3H9Y06TD1x4=;
+ b=g3Ic/ymNiM5j3FkFZPMPHzrmIUSlIAazJCb/NADFDvppyQGdIrfT++Yu14JnDlJiGO6m63s6k7kYEefFRe7hi74tTOTc+OfLRn5QK83lmpbIlEDoObIon/lRr7Ixjt5EMZcOVqjxNQxIEG2RNhHwsZgQ97Qkux6XJTN1t3jVKe8=
+Received: from IA0PPF0A466555A.namprd18.prod.outlook.com
+ (2603:10b6:20f:fc04::c09) by MW5PR18MB5809.namprd18.prod.outlook.com
+ (2603:10b6:303:1a8::16) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9564.3; Tue, 3 Feb
+ 2026 13:59:32 +0000
+Received: from IA0PPF0A466555A.namprd18.prod.outlook.com
+ ([fe80::b876:8173:5121:dc8f]) by IA0PPF0A466555A.namprd18.prod.outlook.com
+ ([fe80::b876:8173:5121:dc8f%6]) with mapi id 15.20.9587.010; Tue, 3 Feb 2026
+ 13:59:32 +0000
+From: Nithinsen Kaithakadan <nkaithakadan@marvell.com>
+To: Radu Nicolau <radu.nicolau@intel.com>, "dev@dpdk.org" <dev@dpdk.org>
+CC: "kai.ji@intel.com" <kai.ji@intel.com>, Anoob Joseph <anoobj@marvell.com>, 
+ "stephen@networkplumber.org" <stephen@networkplumber.org>, Akhil Goyal
+ <gakhil@marvell.com>, Fan Zhang <fanzhang.oss@gmail.com>
+Subject: RE: [EXTERNAL] [PATCH v8 1/2] cryptodev: add support for 256-NxA4/5/6
+ algorithms
+Thread-Topic: [EXTERNAL] [PATCH v8 1/2] cryptodev: add support for
+ 256-NxA4/5/6 algorithms
+Thread-Index: AQHclP4slhGVRsm0a0SvfYSQEhAaH7VxADgA
+Date: Tue, 3 Feb 2026 13:59:32 +0000
+Message-ID: <IA0PPF0A466555A7179EB4241CFFD50390CC99BA@IA0PPF0A466555A.namprd18.prod.outlook.com>
+References: <20260107105649.1708347-1-radu.nicolau@intel.com>
+ <20260203111338.183138-1-radu.nicolau@intel.com>
+In-Reply-To: <20260203111338.183138-1-radu.nicolau@intel.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: IA0PPF0A466555A:EE_|MW5PR18MB5809:EE_
+x-ms-office365-filtering-correlation-id: 30e8c15d-04c3-4c67-c81b-08de632c74d7
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0; ARA:13230040|366016|376014|1800799024|38070700021;
+x-microsoft-antispam-message-info: =?utf-8?B?SzBhUTE2Njc0OFZaNHR0UkNHOXp0MFJZT2E4VW1nMlkxQk1QUnRTcyt0aHNR?=
+ =?utf-8?B?TXpXcEpEU3lwb0xOa3RORGFiclZkNElZUkoyY0xOUnpPY0FzVnd2dElBT0o5?=
+ =?utf-8?B?YkVDR2wyc0dUaVZBSk0vWXFyOEg5MjgxeGx6VDZEU1l2NWs2RitOYkRwd1pY?=
+ =?utf-8?B?Rm5zVDVSQ3RjaHcxSHBxK1dLODZQUXhuUW8xVHJlV3g2RDl0aXptWjVBczN1?=
+ =?utf-8?B?Q3A5b2RJZFpDaUFlQ0UzSzlwVnBHRVA5TEJXTFpaNUNkazVIR1BhcW5qbDRo?=
+ =?utf-8?B?ZUVaZ2IyNy94SHd1SnZra3dJM3k2a2IyaVFwY1JVZk1SYk5LN0E3VnphYnVh?=
+ =?utf-8?B?MXo5cDdRQnkrdXg2Nkh1U2FOYnlYWmpPNU5STnhlKzZERVdJZnY4WkRmdGVR?=
+ =?utf-8?B?b2k2SE5pL1NrNGlTTVp0aHl5aUt1aVVlN2hZNVZlOCt0di9SMzZwT3htRHpG?=
+ =?utf-8?B?WjJKaUlFMmJiWE8zL0QyTWQxSDBqa21xdm0yK1VOcUhOcHBJWXpnVWVKNExQ?=
+ =?utf-8?B?RTlpcVBnbGlGTG93NmJHbkRCSy85ZDkrK0RjRUV5OHkvTERNKy84WVowSnRH?=
+ =?utf-8?B?Wmc4ekRoL3I3M1Z3RlIraERLblpJNHdmV1NrSU00UFpWODB4MzMrblFqUGJW?=
+ =?utf-8?B?WnYza3phbHFRYkQ5RHlvdDRpdTB6UmRCazBrNEZ6ejFKemxSUVdHQXJ0aUdM?=
+ =?utf-8?B?ZFlKeWR4a1FNMjBQaVJ2U1RZYVVLbUJidDllTXdFT252ZXQ4K2pTT0tPOXRw?=
+ =?utf-8?B?UGNHeXhtaGZIbTFmVmNQanVmOWp6N0tXTjNCVzVTRXZYT21Td1FyVzZNUHA4?=
+ =?utf-8?B?bmgvL29IMERNZGF4Q091SnZRdjFRdUo3OW1BMG03dnJzVE9yY0swS2JRWmJy?=
+ =?utf-8?B?QjZ5VDBTWmRlYThmSmNaMzZJTVFXZDZhdUhUa2VVV3VUc0JDR01pckM5VXlj?=
+ =?utf-8?B?TVZvMWN3V0kxVk9pcTJib0VhY1ZzRGNsY0FFQkk0MUVHRnFyMm5oNkh3MzBs?=
+ =?utf-8?B?OFFBQ0hiZWlHL2kvVWs5d3gxaGtuYkw0WHg5ei9VejFoUjlabDBicktFTzVr?=
+ =?utf-8?B?YXhIdVlnNnJ0aFMxUlNNQmFSakJONDN1TG5HZUJ6c3IwV1h1THhLdW40NXZV?=
+ =?utf-8?B?RVVzRkVPdFF6RC9PRWZBZlhkQkVMLzM4MG1yTkMrdEFxaWppdnptL0FVOGt2?=
+ =?utf-8?B?NFRjb01vc1N2b3duODN0RzFkOXA3WkhxLzZBdzJyRVhUMGVuNGp6ZTBLb3NH?=
+ =?utf-8?B?cmtlcGhQYjZ2aDBZMkhJNnJxQUtBVXBtOE5vOG9VWVNHVHRpNTBjQUZ0cEph?=
+ =?utf-8?B?bk4zMzc5ZzZoUlNkMVRyZGpGbndDS0lMdVpDOXlLeDNOL2tGU01hd1pPMTF3?=
+ =?utf-8?B?V0EzLzl3UTBwOWk0MnpTMTdTZVdjbDJMMUZyN0VHVVk5b3lWemVQM2R2cVpR?=
+ =?utf-8?B?aFdObWRGZ0Z0Y01ycnl1Mk4zS2p4TFZTNmlxaEpxTEoxZUh1cHFUdGNrZVdp?=
+ =?utf-8?B?WnUzZS9XWXN5b0tPRlF5amoxM1phTmNLalkxWitKY1plYndSRU13dVYyaUpu?=
+ =?utf-8?B?RU9MZlZJMS9rZVovcWdVdExMK2FVZVQ5RzR0NmpMbzlDdGhKYXQ3UVlHL1lu?=
+ =?utf-8?B?VXp5NDZqUStqNk5scW95UWRrRjdlYkxZaGhtM2s1V0JEYXYyNzRob0dKam5j?=
+ =?utf-8?B?M0IzN3BQVTZqOS9mRUFaYm9PVGRJMzJQT1FuUGJ1RStueU5aekNFUXZ1UWhE?=
+ =?utf-8?B?cFpPcTFSMEZ2cWRZSWJLSndoSnJUYjVSK2hJVkFOMlQ3OU81QmJ6UThpSnNG?=
+ =?utf-8?B?WXJ3Ny9jT1Q0cThHTEExWEJ1Q3VOSnhoa2N0QjFDK2N3dkV5YXo0NSsybDVa?=
+ =?utf-8?B?eFhDQURTWUhORmt2S2JTaXltLzBuWmxPQTZ1cVdZMDRCdjRvR2JTeXVhQTFm?=
+ =?utf-8?B?d2NHS25LR3hKZDRzL2NnZ0hHdDRKL0JJa1Z3NU9YVXdsWUNVMnpDSXhqZUVl?=
+ =?utf-8?B?eU1BdExyK3ZGcnQwMEljc3YrMHI1SVMxSXk3WEJTcGZ5ME1Xak81TzBpS0VJ?=
+ =?utf-8?B?aUo5TmZsU0F4NmI4WC9vN2VDb2tvcTBueERrSWgyMks1dVhtVDBaZVZiWmQ5?=
+ =?utf-8?Q?qEyCRLKS2m6UoSiRAZ4awiocw?=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:IA0PPF0A466555A.namprd18.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(366016)(376014)(1800799024)(38070700021); DIR:OUT; SFP:1102; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?NUhPMyt0YU13TUVwTGErbldlbEZVUjhGbFpWSGFTZ1c0UWR3S0dtUXoyenBt?=
+ =?utf-8?B?amFBNlBoZ0ZUcHRlaTlqSUlXNGVCbTdpU0IvMXpkcm1LM0daeDJyanliTEJ0?=
+ =?utf-8?B?ZDZVd25IR1ZtOFk0M2JJQkZOT2h5RzIvWmxsSDZBYk1zUkZCaTQvRWttN1JH?=
+ =?utf-8?B?bEpPNUNZOTVQQktxMHA4eVlHSzZsTENJa3pFM0dSbkI1UitWSFdxaW1UdHc2?=
+ =?utf-8?B?azVTVU5rSE1nVk5BUmNRcHF1dzdDSVJQRk1iTGUwZ3gzQ3lDZzdDRTlZbllF?=
+ =?utf-8?B?SnlXdnNwZXNwVGh3dGR6Rjh2MGFRTkRITFJtNkY4RjU2am5YcU9aRFIwaDdY?=
+ =?utf-8?B?WUtLUnNqSmxKZTZjRlg0RklxZVdGNldzdlc4R2hUbmNneVEvaFZ1cmVUU2RJ?=
+ =?utf-8?B?REY0Y0p2K0RhMUpGUFdOYWF1d3ZuTi9KSGRpdlF4QkJmRjk2amExbEdWRE5G?=
+ =?utf-8?B?S0hvNU5BNzE3NVB6ZXZJaThkaFdkSXUwdFJ4aVlqMWtVZEJUQXF0ZUQ0Yyty?=
+ =?utf-8?B?clVBWHgzeXE2ZEV0L3hHdEdEWVJxWjdGdEFSSms2RlpISTlHTFhNTUJaVmZS?=
+ =?utf-8?B?NlhjTlNxQWwyQzZ3bHNLRDI5bkNuK1FiaGdwcmVNSjE2VlBqakc3blZGTFU3?=
+ =?utf-8?B?bVNoR3VDN05vR0JOdE0raXNWby9BYTVyRVpOcDVtMW5LaEQ5TGluVjdyb24x?=
+ =?utf-8?B?cng2Ullvemd2eFVsMXVHVGNNRFVQVWRzNzZFdlorTzFqT1laaXN1dTRlYm8y?=
+ =?utf-8?B?YUNaY1VYSWRVbHpDamk4Zk5GUm9LRG94SEhnVGpsSDlrNzhZN2Ird3JWQUdn?=
+ =?utf-8?B?Q3krT0w1MkkyMlN4NW5GQjNQb281RFFpaS90emczQ3lIUWhTcW9wdnpDeGpM?=
+ =?utf-8?B?YjRsMVV1VFFzV2pnQ3VoSlByLytSRWZPZGU2a3Zvd0ZpWVVuR05jaW9KSkpU?=
+ =?utf-8?B?MVpJd3V0akRwa3E4aHBQaWs0RFpNRWlTR0FRdTBpejRzcmJ0aXFnWmEyVnVv?=
+ =?utf-8?B?ekR0MmxmVVFCbUlHL05NWXMwZ0RyVnp3RnZvSzlwSGtMUVN2aXcvTGJqOTNn?=
+ =?utf-8?B?QU5sQXVDakl5MzM2MzlYbU1jWWx0VjM4S3FUZ3cvT2FicjJIcEdBdlZESWdY?=
+ =?utf-8?B?SFUrM3FpRk00ZENrbXo5V1ZLWTVXdVNvTFQramp4TG4xL2JuRUtoUzJrLzU3?=
+ =?utf-8?B?eVBtaE1MR2I0SFpqVlh1UWFDbzZWaFB4ZVdnVzZZTzVZZnM4bnVFeXR0SHRY?=
+ =?utf-8?B?UEROWFF3WFRCUGNZNUlHZ3pyc21YNWdCNmFYVmVjWGk3ZXlTSEV0VEc4cU04?=
+ =?utf-8?B?Q25VRWNoY0NJRGVPcjFpWlp5S2ZsaHdPRGdBVHowRGZTOGI0ak9OdFh3TjZ4?=
+ =?utf-8?B?NGtJc29yQnI1WjFzTkpoRE9kc0J6Zng5bUdaSHJZUFVIcVUrMzJ6cDJFejVq?=
+ =?utf-8?B?K0d1QTJ6LzdDSHBXT3UxMExvajNEZWtBcm04OXE5djA5a1h4Ym9RUXlFc2dV?=
+ =?utf-8?B?cWRNSWNXQUNyT2dFMXlhZXNMNy9NL3ZvaVlpYmJBbWx3TmNBcUVRbW1BdWVR?=
+ =?utf-8?B?R3BsNnVVcW5VMVF2d25VMC9hUE1zMnM3RUtOVXRZc3lLSVZYNHFzNGJYUXdh?=
+ =?utf-8?B?ODQ4T21KcmIzVUdEZFQzQjlFNVBJVDNwRDZIdjNSNnQrcFYxMEQ0YXRTT1Y1?=
+ =?utf-8?B?Sm9XYlE3bG1wUXdtZzlaYWk3YklHOUU4SzJrQjRQaUZ6RUkrazBlUWF4bExX?=
+ =?utf-8?B?RlI2ZzJKd2Y4c2hMZFJMUDk4YWxpVDdQVmNUNC8welBwN3hQWWJmaFUxc0xH?=
+ =?utf-8?B?OFBPNXI0WlNIRm14c3htNTE3Z1UyUXhuYTRKcUNEbHlyZFNTVGVNOXBvTHQ2?=
+ =?utf-8?B?WnhFUDNYYzN4QW8vaDlXOThmMWhoTFJlanJ4cUQvWTlGa1VDY2NiMlFXQ2Nj?=
+ =?utf-8?B?SituV016VFRMYVZBM1J4RDJmYVdiZmJxMStPd25WWkJlQUdObE1FeDZoYlpk?=
+ =?utf-8?B?TkxCaHVIY05Fc0RLU21LWDZKYlY3MXUxNlZiTm53TWd6Y2N6SkxBMGp2bk9n?=
+ =?utf-8?B?ckVPUzRxRDcwWlQ1ZGlZZlpXS2pRNFAvTTV0Q092MzJHU200OXBIV1V6d0hL?=
+ =?utf-8?B?WjRvR0hlWk92ZDQrZ2o1Zm1xcHZOaklsY1NTcHByMHMzbHlLOTluMU5rcjYx?=
+ =?utf-8?B?TmNSMDllSWx2ajlqc2g4TTF6bHRUY2owdkRzTzJEUmIwZ252MFNrdmQxbWo3?=
+ =?utf-8?B?dUZnQ3FaYnpQWlg2RlhHM0pLeXJXaWV6VXZGYWdNN1dVMm9MTWx0dDJDRGZm?=
+ =?utf-8?B?b3c2WVhCZDZHMnR4djVNUy95bENmMzVEcktqMk15T3R1bkhNUW5BZz09?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY8PR11MB7290:EE_|PH7PR11MB6699:EE_
-X-MS-Office365-Filtering-Correlation-Id: 372cf6f0-33c1-4dcc-146e-08de63232081
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?1uQp40943SeeDA03HUTMljwg3dfR1KGmCXO00WMFOTM8ulPKyyyRWRyxkp+g?=
- =?us-ascii?Q?6y/JZfgE4g8nS9zdImIlinxzPguEOmHYvKZN38eoAsyaQTASEpSNyv4OxYSF?=
- =?us-ascii?Q?KyILHpzynOftDlj1wRq36bLMeJKXGsk8/7xw7EoiHygo1TOSYgIMI854ZUto?=
- =?us-ascii?Q?XRawlRhbirnttBsMOoKHcsBxNHxSr/Ow1G4qwdebyM0KlCeqCnrYPTccizvJ?=
- =?us-ascii?Q?Hkw6fjd4rUTRNayZMsbGYj7BwzLN9/q5aet7rc2NZ9/UW3LdFTcUe61ONN+o?=
- =?us-ascii?Q?Zs5jEe0ufOh7l7L3dTeC6SdwNwDYkpl2mC4LV1pxjTICgEBrTYhRoH5A3hhe?=
- =?us-ascii?Q?BVTYrNegrA/IkgIpDfurqm0Erw3Cc/Z4xOrSoXrihJgv0KRC9TQGhCyAKdC0?=
- =?us-ascii?Q?UscUsnxsJl0qLQqQ/SdwvD6NFM3ILOA5Dyapjq9XP+IdhLqUrCgu2EScMOUF?=
- =?us-ascii?Q?jwi5ik2QnQRAVHbvI5D5+kqrIiBxW97uO8lRhxH+/5rzyar40uA0xV/llGjp?=
- =?us-ascii?Q?KXM/k7O3GUFLI73wngxLNAm0UR5SxGVrFfrulnnA8nN5rOEpFUWjwJQ6ZVnB?=
- =?us-ascii?Q?WV1kiRgcCsoPOsH/aArrLNlLQnspnFWPrrmrGp/daLs5fvkqSxeTunVTnCp3?=
- =?us-ascii?Q?t8+qRUm9+aAAjfeZymJZbIm7+x9g/T1030vxgMqmmQCpL2Ndzr4Ip6SHMP+l?=
- =?us-ascii?Q?GrYqwd8WBLOr0LbiS4YWDN+HyGi4u6SndcmrcDm3jCy9d6MXeuq8Pg+eI5er?=
- =?us-ascii?Q?Gzi8Ab5Sd72YAKDfbZ0Lf51/lz4jX0sAgjl8GDcnXgMnNURXeW943/R2lobR?=
- =?us-ascii?Q?FoEkie1wJOSJy43SR+LwcrMgCVpHJNhM2FI9ZusC0QjG76sEH38BxtBw/6qT?=
- =?us-ascii?Q?fSV8Tn8MsrXVLAHqvbY9dmZ6BeYDEcHZC/4r5NIu81iJHLg7jYiitfYxzYdS?=
- =?us-ascii?Q?m8Mbz0DXrQx0cXRj8cbTyH00H92Ib3KoqfqkKiO3kuJAq99SH9SKUj+XJaJC?=
- =?us-ascii?Q?F6u8DuO3xGy2urpVxXw6U5jVDwsWB6QXGLq+olic22YcgQHmm99G3GaqFKf1?=
- =?us-ascii?Q?LdZdvSUKQamjUjt0xeUrYDIghBgDjwc7USSt1CZv+IoVXO85Fn86+otKSkgQ?=
- =?us-ascii?Q?Bjz3fU0LvsTPKHjCNGYXHGFjOwTUOiOpR1JhokaYa7mtbI+ZKUAcH2vww+iR?=
- =?us-ascii?Q?PoLLnPIvQMi2RklMghun6wdz0uoFbYOMPaWOMbdIWRpiXGd3isGeDEQXPnX/?=
- =?us-ascii?Q?wHOmsTFewTAffkIK7m5xcJFsakqQk9KC8/Q1xksDeJZH/3+gXczEQ85yu1w5?=
- =?us-ascii?Q?BZTgRkE9aoosYFUdeJmfrnh3xnQB/TXP9lZ78bPdL6pVRfoqi0gJBsrK1dME?=
- =?us-ascii?Q?iXHdBZmOXIbJUFP/rS0QlYhgZnQBTLDlNXy83wHYd4gBwws3F7DBjFMT7Cwb?=
- =?us-ascii?Q?BQQk2+KlCDpPkYutjpP/Ih1D/9iLdvyEOLx4lmtlAg1+s4HPxa2FPTpeqzsk?=
- =?us-ascii?Q?5FphXK3parpZo6OmH0ejg7ZuoQIxGwQVQq4P4XCE+CKSDTB7ezXPP3/Feuwb?=
- =?us-ascii?Q?Wq2Xfu5WLy7PrV9jK/k=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:CY8PR11MB7290.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(1800799024)(376014); DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?RoIyewq3t4KQJZseBbfcrkzj3hceZgA1rm2Nrqt9knbkT4GKrBpeeIFn6h9j?=
- =?us-ascii?Q?YuLV/4FDPP3K8tkOAuEXPnqYahHklLNdOuhdVm7C9pLom1Cw4HXcTqpFV43w?=
- =?us-ascii?Q?pX2DdW2VH2DjQB9FYkBmBgx8xTvCZZ4NsvbLrInmW0OZjmRHZim0r5GUBLMd?=
- =?us-ascii?Q?rFmkNre/JzX7JeUR1k2RCf/6DJSvS59ftUS0mtom72nB4PebEdddifws09hq?=
- =?us-ascii?Q?Nb3ITMhJEuPcjFsE1KlH/wyytJNvCxOr91zTjR3hQ8X0E1srJ+n4myNbeNaT?=
- =?us-ascii?Q?8lb5wOyNuVnddIMGoZUbkdlhT2ckwl0cR8V6JaS/CsxNfwQh/txKXmgLH66J?=
- =?us-ascii?Q?WsMTrIFhkiQEP2V839imtlu0APULOMLuAzCb9VQCfKMZ2MSAixLukEUOj/Ii?=
- =?us-ascii?Q?UkQHd73IxElirFKnT+z36QMTU05/FzJK6FhiwrBETH4GngEXyuNfA34rYcM8?=
- =?us-ascii?Q?HtetVLe4sp//cWv4PPH9emVv403LhKfNcmrdQBbI/pGiVqme9cO19IUrXyE6?=
- =?us-ascii?Q?QpAtgwmtHmkkPOQLPltgeemRsTfsbARQYC0Auuxa51JKbfHh6EllYnAurCsH?=
- =?us-ascii?Q?qNISd6kRIP68GeXFB+N3HDcsPW2fwykuTzT8hhYg2fEhXfhXUv0hEpq5qx+e?=
- =?us-ascii?Q?4BayeFA9PmU+JQr/+1dqdGnYkgzdFiYGAAQ/ImyZeiFGxWfCuW5afdMpxaB/?=
- =?us-ascii?Q?UPXsgAndeWwqEjOz26+meNIYbs/kixrfygvSc+Shcp2zJUkWmNVE8w13yKat?=
- =?us-ascii?Q?godWETtxy4E4MoIq205eWEwhDlQ3nRm4g0D1/5IwTweD1OZg4/m5zOE7WDpt?=
- =?us-ascii?Q?GUggGXAKOEkfS8Kx5f3rH3VdMCRGoT33zogVbSltfJMFWM5odCB0W1zYsEhp?=
- =?us-ascii?Q?g7USV1WTXy7me1StnUAu4dGTvpgQmyU/opAnVbJGbU+35s3o3RvCVpE8ssSr?=
- =?us-ascii?Q?EvubGe7X56TAwgjUguwdQ6qVS9eNlGAcGqmUdAcCzpVkXpBm3a19FWeenXBH?=
- =?us-ascii?Q?tC6Tw3ISzXyJz+R2dwMPfNYljvHPN2hy9pm67+UY5h+9c725PuZRX9/ZS979?=
- =?us-ascii?Q?W0O2ZVk0oIHUnajF502o0Z4MoGFlesTRO9nAQ55zW1Te529KAyak7HapTlfB?=
- =?us-ascii?Q?dosB1opW0mGYi0Wy99NQIPNhSlERuN5roRiKIVm5zoGlGXl51A3jcKKSsVjC?=
- =?us-ascii?Q?zl/3WGSCVkaaYbVnpDECcEFAAq+KH7qqCBanDBiaTzBZc8x/45oaa78ExVHd?=
- =?us-ascii?Q?lNbBNW6O+mp5bYMObrnf83VSpwuYHEdncUH+Piz8g0aLri3FUxLGeGxR/Vog?=
- =?us-ascii?Q?CxE7/FL1XEvsHKsRn5L8omJWCK4O/x+Dd8q9yxJGLMMsjQ5CsACj23KJd/lg?=
- =?us-ascii?Q?Jxv6lAbwGbbSn1NqopCLFf75Z7S+mxHDnE3pfAn/brmkPamWiwfUFM670CuU?=
- =?us-ascii?Q?cP2awgpP2wKunVclOBSpGgBtUU8Dg7xMLhLSI4lSjavoibYaRqdjdFNLRv24?=
- =?us-ascii?Q?Fyiobo6vIbQh6CFsuP27Qe6qdIRzjUAx4BzvgPL/Hx6gJFqDdKsu1AU6lVL1?=
- =?us-ascii?Q?DeHfp+kXDOZnMvExkYWajLFgINcECdDSThg/BgTtzdyAplYSBsR5dFUt1uNt?=
- =?us-ascii?Q?CFpuXaJ+uIrZ9MfQ2IVP3cXa+tvYbYthmuPh9Iul13TlZVCmDaiLvJnmr2Cx?=
- =?us-ascii?Q?WAxtqSj2v7t0CdPYv/ju1vtY1fgR83sw4fPSJyRKbjMBX8jV6To3dtGzsXLY?=
- =?us-ascii?Q?o06xikYQMyKNbLn2iWPNlO8sljjzU8o=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 372cf6f0-33c1-4dcc-146e-08de63232081
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
+X-OriginatorOrg: marvell.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Feb 2026 12:52:46.8848 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: AnS8nPLCBXDHYcq9yuH7Y1EVC27I8lERWcpA6Sqoqys80hA2eEfxrGza4fecFXYcUnjWLHsSXuK+c6PYSffMjtk2i7e1c4svczsiY92BjS4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB6699
-X-OriginatorOrg: intel.com
+X-MS-Exchange-CrossTenant-AuthSource: IA0PPF0A466555A.namprd18.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 30e8c15d-04c3-4c67-c81b-08de632c74d7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Feb 2026 13:59:32.2981 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: II2+fsRDV6qfP3h4s2mypu9LRpdoGTOc95S7j8IRHD0bTDgGESwQ4OSVPy69uajQDZSBJZyTsP4zM99xRBMVhx+eA8DkmPDJGgpapQOBqiE=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW5PR18MB5809
+X-Proofpoint-GUID: ksIb78mlcAvlYuUq8U7jnTfosrIDWOUM
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjAzMDExMSBTYWx0ZWRfXwjad4SftzyQv
+ vXRgjZOyYA9iN6BAR2lRki7p0dJVyN+mwqzUgyYti4oL6/YktVwuJ91UnCp1tWMSjaeB4tk7kS4
+ 2ys30ZQftE1ljZ5ihSvlipdJ3RFHeUFqZZkm4Sjnn/XXP+ZzZ/EjbvFGFbcXNyYKyRppg4mp3F6
+ AC0wDHuntLe1wi7l/P8a4U22ovj4/MnL/gUtMYn6DQJOiCzyAuGpUWsDqQjhhqrdFI5WhZkK8Bw
+ KVAMN7tIKq/IuJZcV2xPyb95TaM9Z7r6Y8Z5kF0DV/nT9caklyEZ8m66a1PjiaBouNTRoxF1w2V
+ Mqao8oOV/VFGzm9YdOBKPZvFRETNTkYy+bX3YeRiGFyF7wYhZZD8U3fjQrRc7hC9BuT9GhxXS6B
+ mMjf+M9m793iKw/3klVGG5tUa70sxycgyKTUquhQ/KljdbLZjUhnNONPVF14VCgKjm+E9Tbp04r
+ Yun3/IWacuIS0ByjZrg==
+X-Authority-Analysis: v=2.4 cv=UP7Q3Sfy c=1 sm=1 tr=0 ts=6981ff4c cx=c_pps
+ a=xKt9kXuiMwQaJDL2paq1FQ==:117 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=HzLeVaNsDn8A:10 a=-AAbraWEqlQA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=M5GUcnROAAAA:8 a=QyXUC8HyAAAA:8 a=8rWy6zfcAAAA:8 a=jZVsG21pAAAA:8
+ a=pGLkceISAAAA:8 a=RpNjiQI2AAAA:8 a=bpLqiFhlVsLz5z-7AWEA:9 a=QEXdDO2ut3YA:10
+ a=OBjm3rFKGHvpk9ecZwUJ:22 a=YjdVzJdQTyZRADMV7wFX:22 a=3Sh2lD0sZASs_lUdrUhf:22
+X-Proofpoint-ORIG-GUID: ksIb78mlcAvlYuUq8U7jnTfosrIDWOUM
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-02-03_04,2026-02-02_01,2025-10-01_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -176,1078 +194,32 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, Jan 22, 2026 at 07:04:47PM -0500, Soumyadeep Hore wrote:
-> Add a new file - idpf_ptp - to handle PTP virtchnl messages.
-> Keep the registers addresses in the PTP struct.
-> 
-> Signed-off-by: Soumyadeep Hore <soumyadeep.hore@intel.com>
-> ---
-
-Some review feedback inline below. See also review feedback from AI review
-that was posted by Stephen.
-
->  drivers/net/intel/idpf/idpf_common_device.h   |   4 +
->  drivers/net/intel/idpf/idpf_common_virtchnl.c |  34 +-
->  drivers/net/intel/idpf/idpf_ptp.c             | 639 ++++++++++++++++++
->  drivers/net/intel/idpf/idpf_ptp.h             | 227 +++++++
->  drivers/net/intel/idpf/meson.build            |   1 +
->  5 files changed, 903 insertions(+), 2 deletions(-)
->  create mode 100644 drivers/net/intel/idpf/idpf_ptp.c
->  create mode 100644 drivers/net/intel/idpf/idpf_ptp.h
-> 
-> diff --git a/drivers/net/intel/idpf/idpf_common_device.h b/drivers/net/intel/idpf/idpf_common_device.h
-> index c32dcfbb12..3c84b96225 100644
-> --- a/drivers/net/intel/idpf/idpf_common_device.h
-> +++ b/drivers/net/intel/idpf/idpf_common_device.h
-> @@ -90,6 +90,7 @@ struct idpf_adapter {
->  
->  	/* For timestamp */
->  	uint64_t time_hw;
-> +	struct idpf_ptp *ptp;
->  
->  	enum idpf_rx_func_type rx_func_type;
->  };
-> @@ -161,6 +162,9 @@ struct idpf_vport {
->  	/* Event from ipf */
->  	bool link_up;
->  	uint32_t link_speed;
-> +
-> +	/* For PTP */
-> +	struct idpf_ptp_vport_tx_tstamp_caps *tx_tstamp_caps;
->  };
->  
->  /* Message type read in virtual channel from PF */
-> diff --git a/drivers/net/intel/idpf/idpf_common_virtchnl.c b/drivers/net/intel/idpf/idpf_common_virtchnl.c
-> index e927d7415a..a28bc9bee6 100644
-> --- a/drivers/net/intel/idpf/idpf_common_virtchnl.c
-> +++ b/drivers/net/intel/idpf/idpf_common_virtchnl.c
-> @@ -4,6 +4,7 @@
->  
->  #include "idpf_common_virtchnl.h"
->  #include "idpf_common_logs.h"
-> +#include "idpf_ptp.h"
->  
->  #include <eal_export.h>
->  
-> @@ -38,6 +39,28 @@ idpf_vc_clean(struct idpf_adapter *adapter)
->  	return 0;
->  }
->  
-> +/**
-> + * idpf_ptp_is_mb_msg - Check if the message is PTP-related
-> + * @op: virtchnl opcode
-> + *
-> + * Returns true if msg is PTP-related, false otherwise
-> + */
-> +static inline bool idpf_ptp_is_mb_msg(uint32_t op)
-> +{
-
-The name of this function seems backward to me. We are not returning if
-it's a mailbox message, we are returning if it's PTP related, no? Therefore
-would idpf_mb_msg_is_ptp, not be a better name?
-
-> +	switch (op) {
-> +	case VIRTCHNL2_OP_PTP_GET_VPORT_TX_TSTAMP:
-> +	case VIRTCHNL2_OP_PTP_GET_DEV_CLK_TIME:
-> +	case VIRTCHNL2_OP_PTP_GET_CROSS_TIME:
-> +	case VIRTCHNL2_OP_PTP_SET_DEV_CLK_TIME:
-> +	case VIRTCHNL2_OP_PTP_ADJ_DEV_CLK_FINE:
-> +	case VIRTCHNL2_OP_PTP_ADJ_DEV_CLK_TIME:
-> +	case VIRTCHNL2_OP_PTP_GET_VPORT_TX_TSTAMP_CAPS:
-> +		return true;
-> +	default:
-> +		return false;
-> +	}
-> +}
-> +
->  static int
->  idpf_send_vc_msg(struct idpf_adapter *adapter, uint32_t op,
->  		 uint16_t msg_size, uint8_t *msg)
-> @@ -71,8 +94,15 @@ idpf_send_vc_msg(struct idpf_adapter *adapter, uint32_t op,
->  
->  	memcpy(dma_mem->va, msg, msg_size);
->  
-> -	ctlq_msg->opcode = idpf_mbq_opc_send_msg_to_pf;
-> -	ctlq_msg->func_id = 0;
-> +	if (idpf_ptp_is_mb_msg(op) && adapter->ptp->secondary_mbx.valid) {
-
-If the first of these is true and the second not, is that an error
-condition and do we need to handle it?
-
-> +		ctlq_msg->opcode = idpf_mbq_opc_send_msg_to_peer_drv;
-> +		ctlq_msg->func_id = adapter->ptp->secondary_mbx.peer_mbx_q_id;
-> +		ctlq_msg->host_id = adapter->ptp->secondary_mbx.peer_id;
-> +	} else {
-> +		ctlq_msg->opcode = idpf_mbq_opc_send_msg_to_pf;
-> +		ctlq_msg->func_id = 0;
-> +	}
-> +
->  	ctlq_msg->data_len = msg_size;
->  	ctlq_msg->cookie.mbx.chnl_opcode = op;
->  	ctlq_msg->cookie.mbx.chnl_retval = VIRTCHNL_STATUS_SUCCESS;
-> diff --git a/drivers/net/intel/idpf/idpf_ptp.c b/drivers/net/intel/idpf/idpf_ptp.c
-> new file mode 100644
-> index 0000000000..b8f6afa518
-> --- /dev/null
-> +++ b/drivers/net/intel/idpf/idpf_ptp.c
-> @@ -0,0 +1,639 @@
-> +/* SPDX-License-Identifier: BSD-3-Clause
-> + * Copyright(c) 2025 Intel Corporation
-> + */
-> +
-> +#include "idpf_ptp.h"
-> +#include <base/virtchnl2.h>
-> +#include "idpf_common_virtchnl.h"
-> +
-> +/**
-> + * idpf_ptp_get_access - Determine the access type of the PTP features
-> + * @adapter: Driver specific private structure
-> + * @direct: Capability that indicates the direct access
-> + * @mailbox: Capability that indicates the mailbox access
-> + *
-> + * Return: the type of supported access for the PTP feature.
-> + */
-> +static enum idpf_ptp_access
-> +idpf_ptp_get_access(const struct idpf_adapter *adapter, u32 direct, u32 mailbox)
-> +{
-> +	if (adapter->ptp->caps & direct)
-> +		return IDPF_PTP_DIRECT;
-> +	else if (adapter->ptp->caps & mailbox)
-> +		return IDPF_PTP_MAILBOX;
-> +	else
-> +		return IDPF_PTP_NONE;
-> +}
-> +
-> +/**
-> + * idpf_ptp_get_features_access - Determine the access type of PTP features
-> + * @adapter: Driver specific private structure
-> + *
-> + * Fulfill the adapter structure with type of the supported PTP features
-> + * access.
-> + */
-> +static void idpf_ptp_get_features_access(const struct idpf_adapter *adapter)
-> +{
-> +	struct idpf_ptp *ptp = adapter->ptp;
-> +	u32 direct, mailbox;
-> +
-> +	/* Get the device clock time */
-> +	direct = VIRTCHNL2_CAP_PTP_GET_DEVICE_CLK_TIME;
-> +	mailbox = VIRTCHNL2_CAP_PTP_GET_DEVICE_CLK_TIME_MB;
-> +	ptp->get_dev_clk_time_access = (uint8_t)idpf_ptp_get_access(adapter,
-> +							 direct,
-> +							 mailbox);
-> +
-> +	/* Get the cross timestamp */
-> +	direct = VIRTCHNL2_CAP_PTP_GET_CROSS_TIME;
-> +	mailbox = VIRTCHNL2_CAP_PTP_GET_CROSS_TIME_MB;
-> +	ptp->get_cross_tstamp_access = (uint8_t)idpf_ptp_get_access(adapter,
-> +							 direct,
-> +							 mailbox);
-> +
-> +	/* Set the device clock time */
-> +	direct = VIRTCHNL2_CAP_PTP_SET_DEVICE_CLK_TIME;
-> +	mailbox = VIRTCHNL2_CAP_PTP_SET_DEVICE_CLK_TIME_MB;
-> +	ptp->set_dev_clk_time_access = (uint8_t)idpf_ptp_get_access(adapter,
-> +							 direct,
-> +							 mailbox);
-> +
-> +	/* Adjust the device clock time */
-> +	direct = VIRTCHNL2_CAP_PTP_ADJ_DEVICE_CLK;
-> +	mailbox = VIRTCHNL2_CAP_PTP_ADJ_DEVICE_CLK_MB;
-> +	ptp->adj_dev_clk_time_access = (uint8_t)idpf_ptp_get_access(adapter,
-> +							 direct,
-> +							 mailbox);
-> +
-> +	/* Tx timestamping */
-> +	direct = VIRTCHNL2_CAP_PTP_TX_TSTAMPS;
-> +	mailbox = VIRTCHNL2_CAP_PTP_TX_TSTAMPS_MB;
-> +	ptp->tx_tstamp_access = (uint8_t)idpf_ptp_get_access(adapter,
-> +							 direct,
-> +							 mailbox);
-> +}
-
-This function could be much shorter if you just removed the variables "direct"
-and "mailbox". Rather than doing 
-
-	direct = VIRTCHNL2_CAP_PTP_TX_TSTAMPS;
-	mailbox = VIRTCHNL2_CAP_PTP_TX_TSTAMPS_MB;
-	ptp->tx_tstamp_access = (uint8_t)idpf_ptp_get_access(adapter,
-							 direct,
-							 mailbox);
-
-You can shorten the 5 lines down to 3 as:
-
-	ptp->tx_tstamp_access = idpf_ptp_get_access(adapter,
-			VIRTCHNL2_CAP_PTP_TX_TSTAMPS,
-			VIRTCHNL2_CAP_PTP_TX_TSTAMPS_MB);
-
-Furthermore, since all the defines used for mailbox are the same as those
-used for direct, except for an _MB suffix, you could use a macro to shorten
-thngs further if you want - maybe even fit each assignment on  one line.
-For example (untested, and also shortening adapter to ad to fit one line):
-
-#define IDPF_PTP_ACCESS(a, d) (uint8_t)idpf_ptp_get_access(a, d, d##_MB)
-
-static void
-idpf_ptp_get_features_access(const struct idpf_adapter *ad)
-{
-	struct idpf_ptp *ptp = ad->ptp;
-
-	ptp->get_dev_clk_time_access = IDPF_PTP_ACCESS(ad, VIRTCHNL2_CAP_PTP_GET_DEVICE_CLK_TIME);
-	ptp->get_cross_tstamp_access = IDPF_PTP_ACCESS(ad, VIRTCHNL2_CAP_PTP_GET_CROSS_TIME);
-	ptp->set_dev_clk_time_access = IDPF_PTP_ACCESS(ad, VIRTCHNL2_CAP_PTP_SET_DEVICE_CLK_TIME);
-	ptp->adj_dev_clk_time_access = IDPF_PTP_ACCESS(ad, VIRTCHNL2_CAP_PTP_ADJ_DEVICE_CLK);
-	ptp->tx_stamp_access = IDPF_PTP_ACCESS(ad, VIRTCHNL2_CAP_PTP_TX_TSTAMPS);
-}
-
-Much shorter! :-)
-
-
-> +/**
-> + * idpf_ptp_get_caps - Send virtchnl get ptp capabilities message
-> + * @adapter: Driver specific private structure
-> + *
-> + * Send virtchnl get PTP capabilities message.
-> + *
-> + * Return: 0 on success, -errno on failure.
-> + */
-> +int idpf_ptp_get_caps(struct idpf_adapter *adapter)
-> +{
-> +	struct virtchnl2_ptp_cross_time_reg_offsets cross_tstamp_offsets;
-> +	struct virtchnl2_ptp_clk_adj_reg_offsets clk_adj_offsets;
-> +	struct virtchnl2_ptp_get_caps send_ptp_caps_msg = { };
-
-Using {} is a GNU extension to C11, so its best to use {0} as initializer.
-
-> +	struct virtchnl2_ptp_clk_reg_offsets clock_offsets;
-> +	struct virtchnl2_ptp_get_caps *recv_ptp_caps_msg;
-> +	struct idpf_cmd_info args = { };
-> +	struct idpf_ptp_secondary_mbx *scnd_mbx;
-> +	struct idpf_ptp *ptp = adapter->ptp;
-> +	struct idpf_hw *hw = &adapter->hw;
-> +	enum idpf_ptp_access access_type;
-> +	int err;
-> +	u32 temp_offset;
-> +
-> +	send_ptp_caps_msg.caps = CPU_TO_LE32(VIRTCHNL2_CAP_PTP_GET_DEVICE_CLK_TIME |
-> +					     VIRTCHNL2_CAP_PTP_GET_DEVICE_CLK_TIME_MB |
-> +					     VIRTCHNL2_CAP_PTP_GET_CROSS_TIME |
-> +					     VIRTCHNL2_CAP_PTP_GET_CROSS_TIME_MB |
-> +					     VIRTCHNL2_CAP_PTP_SET_DEVICE_CLK_TIME |
-> +					     VIRTCHNL2_CAP_PTP_SET_DEVICE_CLK_TIME_MB |
-> +					     VIRTCHNL2_CAP_PTP_ADJ_DEVICE_CLK |
-> +					     VIRTCHNL2_CAP_PTP_ADJ_DEVICE_CLK_MB |
-> +					     VIRTCHNL2_CAP_PTP_TX_TSTAMPS |
-> +					     VIRTCHNL2_CAP_PTP_TX_TSTAMPS_MB);
-> +
-> +	args.ops = VIRTCHNL2_OP_PTP_GET_CAPS;
-> +	args.in_args = (uint8_t *)&send_ptp_caps_msg;
-> +	args.in_args_size = sizeof(send_ptp_caps_msg);
-> +
-> +	args.out_buffer = adapter->mbx_resp;
-> +	args.out_size = sizeof(*recv_ptp_caps_msg);
-> +
-> +	err = idpf_vc_cmd_execute(adapter, &args);
-> +	if (err < 0)
-> +		return err;
-> +
-> +	recv_ptp_caps_msg = (struct virtchnl2_ptp_get_caps *)args.out_buffer;
-> +	ptp->caps = LE32_TO_CPU(recv_ptp_caps_msg->caps);
-> +	ptp->base_incval = LE64_TO_CPU(recv_ptp_caps_msg->base_incval);
-> +	ptp->max_adj = LE32_TO_CPU(recv_ptp_caps_msg->max_adj);
-> +
-> +	scnd_mbx = &ptp->secondary_mbx;
-> +	scnd_mbx->peer_mbx_q_id = LE16_TO_CPU(recv_ptp_caps_msg->peer_mbx_q_id);
-> +
-> +	/* if the ptp_mb_q_id holds invalid value (0xffff), the secondary
-> +	 * mailbox is not supported.
-> +	 */
-> +	scnd_mbx->valid = scnd_mbx->peer_mbx_q_id != 0xffff;
-> +	if (scnd_mbx->valid)
-> +		scnd_mbx->peer_id = recv_ptp_caps_msg->peer_id;
-> +
-> +	/* Determine the access type for the PTP features */
-> +	idpf_ptp_get_features_access(adapter);
-> +
-> +	access_type = (enum idpf_ptp_access)ptp->get_dev_clk_time_access;
-> +	if (access_type != IDPF_PTP_DIRECT)
-> +		goto cross_tstamp;
-> +
-> +	clock_offsets = recv_ptp_caps_msg->clk_offsets;
-> +
-> +	temp_offset = LE32_TO_CPU(clock_offsets.dev_clk_ns_l);
-> +	ptp->dev_clk_regs.dev_clk_ns_l = IDPF_PCI_REG_ADDR(hw,
-> +							   temp_offset);
-
-No need to wrap these lines. Use the full 100 chars.
-(Also, when wrapping, double tab indent is sufficient, no need to put in 7
-tabs + spaces to try and align braces in cases like this)
-
-> +	temp_offset = LE32_TO_CPU(clock_offsets.dev_clk_ns_h);
-> +	ptp->dev_clk_regs.dev_clk_ns_h = IDPF_PCI_REG_ADDR(hw,
-> +							   temp_offset);
-> +	temp_offset = LE32_TO_CPU(clock_offsets.phy_clk_ns_l);
-> +	ptp->dev_clk_regs.phy_clk_ns_l = IDPF_PCI_REG_ADDR(hw,
-> +				  temp_offset);
-> +	temp_offset = LE32_TO_CPU(clock_offsets.phy_clk_ns_h);
-> +	ptp->dev_clk_regs.phy_clk_ns_h = IDPF_PCI_REG_ADDR(hw,
-> +				  temp_offset);
-> +	temp_offset = LE32_TO_CPU(clock_offsets.cmd_sync_trigger);
-> +	ptp->dev_clk_regs.cmd_sync = IDPF_PCI_REG_ADDR(hw, temp_offset);
-> +
-> +cross_tstamp:
-> +	access_type = (enum idpf_ptp_access)ptp->get_cross_tstamp_access;
-> +	if (access_type != IDPF_PTP_DIRECT)
-> +		goto discipline_clock;
-> +
-> +	cross_tstamp_offsets = recv_ptp_caps_msg->cross_time_offsets;
-> +
-> +	temp_offset = LE32_TO_CPU(cross_tstamp_offsets.sys_time_ns_l);
-> +	ptp->dev_clk_regs.sys_time_ns_l = IDPF_PCI_REG_ADDR(hw,
-> +					temp_offset);
-
-Again, don't wrap. Also, this indentation used neither is a simple
-double-indent, nor does it align to brace so please use one style
-consistently.
-
-> +	temp_offset = LE32_TO_CPU(cross_tstamp_offsets.sys_time_ns_h);
-> +	ptp->dev_clk_regs.sys_time_ns_h = IDPF_PCI_REG_ADDR(hw,
-> +					temp_offset);
-> +	temp_offset = LE32_TO_CPU(cross_tstamp_offsets.cmd_sync_trigger);
-> +	ptp->dev_clk_regs.cmd_sync = IDPF_PCI_REG_ADDR(hw, temp_offset);
-> +
-> +discipline_clock:
-> +	access_type = (enum idpf_ptp_access)ptp->adj_dev_clk_time_access;
-> +	if (access_type != IDPF_PTP_DIRECT)
-> +		return err;
-> +
-> +	clk_adj_offsets = recv_ptp_caps_msg->clk_adj_offsets;
-> +
-> +	/* Device clock offsets */
-> +	temp_offset = LE32_TO_CPU(clk_adj_offsets.dev_clk_cmd_type);
-> +	ptp->dev_clk_regs.cmd = IDPF_PCI_REG_ADDR(hw, temp_offset);
-> +	temp_offset = LE32_TO_CPU(clk_adj_offsets.dev_clk_incval_l);
-> +	ptp->dev_clk_regs.incval_l = IDPF_PCI_REG_ADDR(hw, temp_offset);
-> +	temp_offset = LE32_TO_CPU(clk_adj_offsets.dev_clk_incval_h);
-> +	ptp->dev_clk_regs.incval_h = IDPF_PCI_REG_ADDR(hw, temp_offset);
-> +	temp_offset = LE32_TO_CPU(clk_adj_offsets.dev_clk_shadj_l);
-> +	ptp->dev_clk_regs.shadj_l = IDPF_PCI_REG_ADDR(hw, temp_offset);
-> +	temp_offset = LE32_TO_CPU(clk_adj_offsets.dev_clk_shadj_h);
-> +	ptp->dev_clk_regs.shadj_h = IDPF_PCI_REG_ADDR(hw, temp_offset);
-> +
-> +	/* PHY clock offsets */
-> +	temp_offset = LE32_TO_CPU(clk_adj_offsets.phy_clk_cmd_type);
-> +	ptp->dev_clk_regs.phy_cmd = IDPF_PCI_REG_ADDR(hw, temp_offset);
-> +	temp_offset = LE32_TO_CPU(clk_adj_offsets.phy_clk_incval_l);
-> +	ptp->dev_clk_regs.phy_incval_l = IDPF_PCI_REG_ADDR(hw,
-> +				  temp_offset);
-> +	temp_offset = LE32_TO_CPU(clk_adj_offsets.phy_clk_incval_h);
-> +	ptp->dev_clk_regs.phy_incval_h = IDPF_PCI_REG_ADDR(hw,
-> +				  temp_offset);
-> +	temp_offset = LE32_TO_CPU(clk_adj_offsets.phy_clk_shadj_l);
-> +	ptp->dev_clk_regs.phy_shadj_l = IDPF_PCI_REG_ADDR(hw, temp_offset);
-> +	temp_offset = LE32_TO_CPU(clk_adj_offsets.phy_clk_shadj_h);
-> +	ptp->dev_clk_regs.phy_shadj_h = IDPF_PCI_REG_ADDR(hw, temp_offset);
-> +
-> +	return err;
-> +}
-> +
-> +/**
-> + * idpf_ptp_enable_shtime - Enable shadow time and execute a command
-> + * @adapter: Driver specific private structure
-> + */
-> +static void idpf_ptp_enable_shtime(struct idpf_adapter *adapter)
-> +{
-> +	uint32_t shtime_enable, exec_cmd;
-> +
-> +	/* Get offsets */
-> +	shtime_enable = adapter->ptp->cmd.shtime_enable_mask;
-> +	exec_cmd = adapter->ptp->cmd.exec_cmd_mask;
-> +
-> +	/* Set the shtime en and the sync field */
-> +	IDPF_PCI_REG_WRITE(adapter->ptp->dev_clk_regs.cmd_sync, shtime_enable);
-> +	IDPF_PCI_REG_WRITE(adapter->ptp->dev_clk_regs.cmd_sync, exec_cmd | shtime_enable);
-> +}
-> +
-> +/**
-> + * idpf_ptp_get_dev_clk_time - Send virtchnl get device clk time message
-> + * @adapter: Driver specific private structure
-> + * @dev_clk_time: Pointer to the device clock structure where the value is set
-> + *
-> + * Send virtchnl get time message to get the time of the clock.
-> + *
-> + * Return: 0 on success, -errno otherwise.
-> + */
-> +int idpf_ptp_get_dev_clk_time(struct idpf_adapter *adapter,
-> +			      struct idpf_ptp_dev_timers *dev_clk_time)
-> +{
-> +	struct virtchnl2_ptp_get_dev_clk_time get_dev_clk_time_msg = { };
-> +	struct idpf_cmd_info args = { };
-
-As above, use {0} as initializer.
-
-> +	int err;
-> +	u64 dev_time;
-> +
-> +	args.ops = VIRTCHNL2_OP_PTP_GET_DEV_CLK_TIME;
-> +	args.in_args = (uint8_t *)&get_dev_clk_time_msg;
-> +	args.in_args_size = sizeof(get_dev_clk_time_msg);
-> +	args.out_buffer = adapter->mbx_resp;
-> +	args.out_size = sizeof(get_dev_clk_time_msg);
-> +
-> +	err = idpf_vc_cmd_execute(adapter, &args);
-> +	if (err < 0)
-> +		return err;
-> +
-> +	get_dev_clk_time_msg = *(struct virtchnl2_ptp_get_dev_clk_time *)args.out_buffer;
-> +	dev_time = LE64_TO_CPU(get_dev_clk_time_msg.dev_time_ns);
-> +	dev_clk_time->dev_clk_time_ns = dev_time;
-> +
-> +	return err;
-> +}
-> +
-> +/**
-> + * idpf_ptp_get_cross_time - Send virtchnl get cross time message
-> + * @adapter: Driver specific private structure
-> + * @cross_time: Pointer to the device clock structure where the value is set
-> + *
-> + * Send virtchnl get cross time message to get the time of the clock and the
-> + * system time.
-> + *
-> + * Return: 0 on success, -errno otherwise.
-> + */
-> +int idpf_ptp_get_cross_time(struct idpf_adapter *adapter,
-> +			    struct idpf_ptp_dev_timers *cross_time)
-> +{
-> +	struct virtchnl2_ptp_get_cross_time cross_time_msg = { };
-> +	struct idpf_cmd_info args = { };
-> +	int err;
-> +
-> +	args.ops = VIRTCHNL2_OP_PTP_GET_CROSS_TIME;
-> +	args.in_args = (uint8_t *)&cross_time_msg;
-> +	args.in_args_size = sizeof(cross_time_msg);
-> +	args.out_buffer = adapter->mbx_resp;
-> +	args.out_size = sizeof(cross_time_msg);
-> +
-> +	err = idpf_vc_cmd_execute(adapter, &args);
-> +	if (err < 0)
-> +		return err;
-> +
-> +	cross_time_msg = *(struct virtchnl2_ptp_get_cross_time *)args.out_buffer;
-> +	cross_time->dev_clk_time_ns = LE64_TO_CPU(cross_time_msg.dev_time_ns);
-> +	cross_time->sys_time_ns = LE64_TO_CPU(cross_time_msg.sys_time_ns);
-> +
-> +	return err;
-> +}
-> +
-> +/**
-> + * idpf_ptp_set_dev_clk_time - Send virtchnl set device time message
-> + * @adapter: Driver specific private structure
-> + * @time: New time value
-> + *
-> + * Send virtchnl set time message to set the time of the clock.
-> + *
-> + * Return: 0 on success, -errno otherwise.
-> + */
-> +int idpf_ptp_set_dev_clk_time(struct idpf_adapter *adapter, u64 time)
-> +{
-> +	struct virtchnl2_ptp_set_dev_clk_time set_dev_clk_time_msg = { };
-> +	struct idpf_cmd_info args = { };
-> +	int err;
-> +
-> +	set_dev_clk_time_msg.dev_time_ns = CPU_TO_LE64(time);
-> +
-> +	args.ops = VIRTCHNL2_OP_PTP_SET_DEV_CLK_TIME;
-> +	args.in_args = (uint8_t *)&set_dev_clk_time_msg;
-> +	args.in_args_size = sizeof(set_dev_clk_time_msg);
-> +	args.out_buffer = adapter->mbx_resp;
-> +	args.out_size = sizeof(set_dev_clk_time_msg);
-> +
-> +	err = idpf_vc_cmd_execute(adapter, &args);
-> +	if (err < 0)
-> +		return err;
-> +
-> +	return err;
-> +}
-> +
-> +/**
-> + * idpf_ptp_adj_dev_clk_time - Send virtchnl adj device clock time message
-> + * @adapter: Driver specific private structure
-> + * @delta: Offset in nanoseconds to adjust the time by
-> + *
-> + * Send virtchnl adj time message to adjust the clock by the indicated delta.
-> + *
-> + * Return: 0 on success, -errno otherwise.
-> + */
-> +int idpf_ptp_adj_dev_clk_time(struct idpf_adapter *adapter, int64_t delta)
-> +{
-> +	struct virtchnl2_ptp_adj_dev_clk_time adj_dev_clk_time_msg = { };
-> +	struct idpf_cmd_info args = { };
-> +	int err;
-> +
-> +	adj_dev_clk_time_msg.delta = CPU_TO_LE64(delta);
-> +
-> +	args.ops = VIRTCHNL2_OP_PTP_ADJ_DEV_CLK_TIME;
-> +	args.in_args = (uint8_t *)&adj_dev_clk_time_msg;
-> +	args.in_args_size = sizeof(adj_dev_clk_time_msg);
-> +	args.out_buffer = adapter->mbx_resp;
-> +	args.out_size = sizeof(adj_dev_clk_time_msg);
-> +
-> +	err = idpf_vc_cmd_execute(adapter, &args);
-> +	if (err < 0)
-> +		return err;
-> +
-> +	return err;
-> +}
-> +
-> +/**
-> + * idpf_ptp_adj_dev_clk_fine - Send virtchnl adj time message
-> + * @adapter: Driver specific private structure
-> + * @incval: Source timer increment value per clock cycle
-> + *
-> + * Send virtchnl adj fine message to adjust the frequency of the clock by
-> + * incval.
-> + *
-> + * Return: 0 on success, -errno otherwise.
-> + */
-> +int idpf_ptp_adj_dev_clk_fine(struct idpf_adapter *adapter, u64 incval)
-> +{
-> +	struct virtchnl2_ptp_adj_dev_clk_fine adj_dev_clk_fine_msg = { };
-> +	struct idpf_cmd_info args = { };
-> +	int err;
-> +
-> +	adj_dev_clk_fine_msg.incval = CPU_TO_LE64(incval);
-> +
-> +	args.ops = VIRTCHNL2_OP_PTP_ADJ_DEV_CLK_FINE;
-> +	args.in_args = (uint8_t *)&adj_dev_clk_fine_msg;
-> +	args.in_args_size = sizeof(adj_dev_clk_fine_msg);
-> +	args.out_buffer = adapter->mbx_resp;
-> +	args.out_size = sizeof(adj_dev_clk_fine_msg);
-> +
-> +	err = idpf_vc_cmd_execute(adapter, &args);
-> +	if (err < 0)
-> +		return err;
-> +
-> +	return err;
-> +}
-> +
-> +/**
-> + * idpf_ptp_get_vport_tstamps_caps - Send virtchnl to get tstamps caps for vport
-> + * @vport: Virtual port structure
-> + *
-> + * Send virtchnl get vport tstamps caps message to receive the set of tstamp
-> + * capabilities per vport.
-> + *
-> + * Return: 0 on success, -errno otherwise.
-> + */
-> +int idpf_ptp_get_vport_tstamps_caps(struct idpf_vport *vport)
-> +{
-> +	struct virtchnl2_ptp_get_vport_tx_tstamp_caps send_tx_tstamp_caps = { };
-> +	struct virtchnl2_ptp_get_vport_tx_tstamp_caps *rcv_tx_tstamp_caps;
-> +	struct virtchnl2_ptp_tx_tstamp_latch_caps tx_tstamp_latch_caps;
-> +	enum idpf_ptp_access tstamp_access, get_dev_clk_access;
-> +	struct idpf_ptp_vport_tx_tstamp_caps *tstamp_caps;
-> +	struct idpf_ptp *ptp = vport->adapter->ptp;
-> +	struct idpf_cmd_info args = { };
-> +	int err;
-> +	u16 num_latches, i;
-> +	u32 size;
-> +
-> +	if (ptp == NULL)
-> +		return -EOPNOTSUPP;
-> +
-> +	tstamp_access = (enum idpf_ptp_access)ptp->tx_tstamp_access;
-> +	get_dev_clk_access = (enum idpf_ptp_access)ptp->get_dev_clk_time_access;
-> +	if (tstamp_access == IDPF_PTP_NONE ||
-> +	    get_dev_clk_access == IDPF_PTP_NONE)
-> +		return -EOPNOTSUPP;
-> +
-> +	send_tx_tstamp_caps.vport_id = CPU_TO_LE32(vport->vport_id);
-> +
-> +	args.ops = VIRTCHNL2_OP_PTP_GET_VPORT_TX_TSTAMP_CAPS;
-> +	args.in_args = (uint8_t *)&send_tx_tstamp_caps;
-> +	args.in_args_size = sizeof(send_tx_tstamp_caps);
-> +	args.out_size = IDPF_CTLQ_MAX_BUF_LEN;
-> +	args.out_buffer = vport->adapter->mbx_resp;
-> +
-> +	err = idpf_vc_cmd_execute(vport->adapter, &args);
-> +	if (err < 0)
-> +		return err;
-> +
-> +	rcv_tx_tstamp_caps = (struct virtchnl2_ptp_get_vport_tx_tstamp_caps *)
-> +			     args.out_buffer;
-> +	num_latches = LE16_TO_CPU(rcv_tx_tstamp_caps->num_latches);
-> +	size = sizeof(struct idpf_ptp_vport_tx_tstamp_caps) +
-> +	       sizeof(struct idpf_ptp_tx_tstamp) * num_latches;
-> +	tstamp_caps = rte_zmalloc(NULL, size, 0);
-> +	if (tstamp_caps == NULL)
-> +		return -ENOMEM;
-> +
-> +	tstamp_caps->access = true;
-> +	tstamp_caps->num_entries = num_latches;
-> +
-> +	tstamp_caps->tstamp_ns_lo_bit = rcv_tx_tstamp_caps->tstamp_ns_lo_bit;
-> +
-> +	for (i = 0; i < tstamp_caps->num_entries; i++) {
-> +		__le32 offset_l, offset_h;
-> +
-> +		tx_tstamp_latch_caps = rcv_tx_tstamp_caps->tstamp_latches[i];
-> +
-> +		if (tstamp_access == IDPF_PTP_DIRECT) {
-> +			offset_l = tx_tstamp_latch_caps.tx_latch_reg_offset_l;
-> +			offset_h = tx_tstamp_latch_caps.tx_latch_reg_offset_h;
-> +			tstamp_caps->tx_tstamp[i].tx_latch_reg_offset_l = LE32_TO_CPU(offset_l);
-> +			tstamp_caps->tx_tstamp[i].tx_latch_reg_offset_h = LE32_TO_CPU(offset_h);
-> +		}
-> +		tstamp_caps->tx_tstamp[i].idx = tx_tstamp_latch_caps.index;
-> +	}
-> +
-> +	tstamp_caps->latched_idx = -1;
-> +	vport->tx_tstamp_caps = tstamp_caps;
-> +
-> +	return err;
-> +}
-> +
-> +/**
-> + * idpf_ptp_get_tstamp_value - Get the Tx timestamp value and provide it
-> + *			       back to the skb.
-> + * @vport: Virtual port structure
-> + * @tstamp_latch: Tx timestamp latch structure fulfilled by the Control Plane
-> + * @tx_tstamp: Tx timestamp structure to be fulfilled with the timestamp value
-> + *
-> + * Read the value of the Tx timestamp for a given latch received from the
-> + * Control Plane.
-> + *
-> + * Return: 0 on success, -errno otherwise.
-> + */
-> +static int
-> +idpf_ptp_get_tstamp_value(struct idpf_vport *vport,
-> +			  struct virtchnl2_ptp_tx_tstamp_latch *tstamp_latch,
-> +			  struct idpf_ptp_tx_tstamp *tx_tstamp)
-> +{
-> +	struct idpf_ptp_vport_tx_tstamp_caps *tx_tstamp_caps;
-> +	u8 tstamp_ns_lo_bit;
-> +
-> +	tx_tstamp_caps = vport->tx_tstamp_caps;
-> +	tstamp_ns_lo_bit = tx_tstamp_caps->tstamp_ns_lo_bit;
-> +
-> +	tx_tstamp->tstamp = LE64_TO_CPU(tstamp_latch->tstamp);
-> +	tx_tstamp->tstamp >>= tstamp_ns_lo_bit;
-> +
-> +	return 0;
-> +}
-> +
-> +/**
-> + * idpf_ptp_get_tx_tstamp - Send virtchnl get Tx timestamp latches message
-> + * @vport: Virtual port structure
-> + *
-> + * Send virtchnl get Tx tstamp message to read the value of the HW timestamp.
-> + * The message contains a list of indexes set in the Tx descriptors.
-> + *
-> + * Return: 0 on success, -errno otherwise.
-> + */
-> +int idpf_ptp_get_tx_tstamp(struct idpf_vport *vport)
-> +{
-> +	struct virtchnl2_ptp_get_vport_tx_tstamp_latches *send_tx_tstamp_msg;
-> +	struct virtchnl2_ptp_get_vport_tx_tstamp_latches *recv_tx_tstamp_msg;
-> +	struct idpf_ptp_vport_tx_tstamp_caps *tx_tstamp_caps;
-> +	struct virtchnl2_ptp_tx_tstamp_latch tstamp_latch;
-> +	struct idpf_ptp_tx_tstamp *ptp_tx_tstamp;
-> +	struct idpf_cmd_info args = { };
-> +	int size, msg_size;
-> +	u32 vport_id;
-> +	u16 num_latches, id;
-> +	int err;
-> +
-> +	tx_tstamp_caps = vport->tx_tstamp_caps;
-> +	ptp_tx_tstamp = tx_tstamp_caps->tx_tstamp;
-> +
-> +	size = sizeof(struct virtchnl2_ptp_get_vport_tx_tstamp_latches) +
-> +	      sizeof(struct virtchnl2_ptp_tx_tstamp_latch) *
-> +	      tx_tstamp_caps->num_entries;
-> +	send_tx_tstamp_msg = rte_zmalloc(NULL, size, 0);
-> +	if (send_tx_tstamp_msg == NULL)
-> +		return -ENOMEM;
-> +
-> +	for (id = 0; id < tx_tstamp_caps->num_entries; id++,
-> +		ptp_tx_tstamp++)
-> +		send_tx_tstamp_msg->tstamp_latches[id].index =
-> +										ptp_tx_tstamp->idx;
-
-Identation in this loop badly needs to be reworked.
-
-> +	send_tx_tstamp_msg->get_devtime_with_txtstmp = 1;
-> +
-> +	msg_size = sizeof(struct virtchnl2_ptp_get_vport_tx_tstamp_latches) +
-> +		   sizeof(struct virtchnl2_ptp_tx_tstamp_latch) * id;
-> +	send_tx_tstamp_msg->vport_id = CPU_TO_LE32(vport->vport_id);
-> +	send_tx_tstamp_msg->num_latches = CPU_TO_LE16(id);
-> +
-> +	args.ops = VIRTCHNL2_OP_PTP_GET_VPORT_TX_TSTAMP;
-> +	args.in_args = (uint8_t *)send_tx_tstamp_msg;
-> +	args.in_args_size = msg_size;
-> +	args.out_size = msg_size;
-> +	args.out_buffer = vport->adapter->mbx_resp;
-> +
-> +	err = idpf_vc_cmd_execute(vport->adapter, &args);
-> +	rte_free(send_tx_tstamp_msg);
-> +	if (err < 0)
-> +		return err;
-> +
-> +	recv_tx_tstamp_msg = (struct virtchnl2_ptp_get_vport_tx_tstamp_latches *)
-> +			     args.out_buffer;
-> +	vport_id = LE32_TO_CPU(recv_tx_tstamp_msg->vport_id);
-> +	if (vport->vport_id != vport_id)
-> +		return -EINVAL;
-> +
-> +	num_latches = LE16_TO_CPU(recv_tx_tstamp_msg->num_latches);
-> +
-> +	ptp_tx_tstamp = tx_tstamp_caps->tx_tstamp;
-> +	for (id = 0; id < num_latches; id++, ptp_tx_tstamp++) {
-> +		tstamp_latch = recv_tx_tstamp_msg->tstamp_latches[id];
-> +
-> +		if (!tstamp_latch.valid)
-> +			continue;
-> +
-> +		err = idpf_ptp_get_tstamp_value(vport, &tstamp_latch,
-> +						ptp_tx_tstamp);
-> +		if (err == 0) {
-> +			tx_tstamp_caps->latched_idx = id;
-> +			vport->adapter->time_hw = recv_tx_tstamp_msg->device_time;
-> +		}
-> +		break;
-> +	}
-> +	return err;
-> +}
-> +
-> +/**
-> + * idpf_ptp_read_src_clk_reg_direct - Read directly the main timer value
-> + * @adapter: Driver specific private structure
-> + *
-> + * Return: the device clock time.
-> + */
-> +static u64 idpf_ptp_read_src_clk_reg_direct(struct idpf_adapter *adapter)
-> +{
-> +	struct idpf_ptp *ptp = adapter->ptp;
-> +	u32 hi, lo;
-> +
-> +	idpf_ptp_enable_shtime(adapter);
-> +
-> +	lo = IDPF_PCI_REG(ptp->dev_clk_regs.dev_clk_ns_l);
-> +	hi = IDPF_PCI_REG(ptp->dev_clk_regs.dev_clk_ns_h);
-> +
-> +	return ((u64)hi << 32) | lo;
-> +}
-> +
-> +/**
-> + * idpf_ptp_read_src_clk_reg_mailbox - Read the main timer value through mailbox
-> + * @adapter: Driver specific private structure
-> + * @src_clk: Returned main timer value in nanoseconds unit
-> + *
-> + * Return: 0 on success, -errno otherwise.
-> + */
-> +static int idpf_ptp_read_src_clk_reg_mailbox(struct idpf_adapter *adapter,
-> +					     u64 *src_clk)
-> +{
-> +	struct idpf_ptp_dev_timers clk_time;
-> +	int err;
-> +
-> +	err = idpf_ptp_get_dev_clk_time(adapter, &clk_time);
-> +	if (err)
-> +		return err;
-> +
-> +	*src_clk = clk_time.dev_clk_time_ns;
-> +
-> +	return 0;
-> +}
-> +
-> +/**
-> + * idpf_ptp_read_src_clk_reg - Read the main timer value
-> + * @adapter: Driver specific private structure
-> + * @src_clk: Returned main timer value in nanoseconds unit
-> + *
-> + * Return: the device clock time on success, -errno otherwise.
-> + */
-> +int idpf_ptp_read_src_clk_reg(struct idpf_adapter *adapter, u64 *src_clk)
-> +{
-> +	if (adapter->ptp == NULL)
-> +		return 0;
-
-Should this not be an error, returning -EINVAL?
-
-> +	switch ((enum idpf_ptp_access)adapter->ptp->get_dev_clk_time_access) {
-> +	case IDPF_PTP_NONE:
-> +		return -EOPNOTSUPP;
-
-Strictly speaking, you don't need this, it's handled by the default case.
-
-> +	case IDPF_PTP_MAILBOX:
-> +		return idpf_ptp_read_src_clk_reg_mailbox(adapter, src_clk);
-> +	case IDPF_PTP_DIRECT:
-> +		*src_clk = idpf_ptp_read_src_clk_reg_direct(adapter);
-> +		break;
-
-Why have the function types for direct and mailbox different? Why not have
-both just take src_clk as parameter and return 0 on success, so you can
-have similar use of them. It would also possibly allow function pointer use
-in future, if they are the same types.
-
-> +	default:
-> +		return -EOPNOTSUPP;
-> +	}
-> +
-> +	return 0;
-> +}
-> diff --git a/drivers/net/intel/idpf/idpf_ptp.h b/drivers/net/intel/idpf/idpf_ptp.h
-> new file mode 100644
-> index 0000000000..68ac66ae91
-> --- /dev/null
-> +++ b/drivers/net/intel/idpf/idpf_ptp.h
-> @@ -0,0 +1,227 @@
-> +/* SPDX-License-Identifier: BSD-3-Clause
-> + * Copyright(c) 2025 Intel Corporation
-> + */
-> +
-> +#ifndef _IDPF_PTP_H_
-> +#define _IDPF_PTP_H_
-> +
-> +#include "idpf_osdep.h"
-> +#include <rte_time.h>
-> +#include "idpf_common_device.h"
-> +
-> +/**
-> + * @struct idpf_ptp_cmd - PTP command masks
-> + * @exec_cmd_mask: mask to trigger command execution
-> + * @shtime_enable_mask: mask to enable shadow time
-> + */
-> +struct idpf_ptp_cmd {
-> +	uint32_t exec_cmd_mask;
-> +	uint32_t shtime_enable_mask;
-> +};
-> +
-> +/* @struct idpf_ptp_dev_clk_regs - PTP device registers
-> + * @dev_clk_ns_l: low part of the device clock register
-> + * @dev_clk_ns_h: high part of the device clock register
-> + * @phy_clk_ns_l: low part of the PHY clock register
-> + * @phy_clk_ns_h: high part of the PHY clock register
-> + * @sys_time_ns_l: low part of the system time register
-> + * @sys_time_ns_h: high part of the system time register
-> + * @incval_l: low part of the increment value register
-> + * @incval_h: high part of the increment value register
-> + * @shadj_l: low part of the shadow adjust register
-> + * @shadj_h: high part of the shadow adjust register
-> + * phy_incval_l: low part of the PHY increment value register
-> + * phy_incval_h: high part of the PHY increment value register
-> + * phy_shadj_l: low part of the PHY shadow adjust register
-> + * phy_shadj_h: high part of the PHY shadow adjust register
-> + * @cmd: PTP command register
-> + * @phy_cmd: PHY command register
-> + * @cmd_sync: PTP command synchronization register
-> + */
-> +struct idpf_ptp_dev_clk_regs {
-> +	/* Main clock */
-> +	volatile uint32_t *dev_clk_ns_l;
-> +	volatile uint32_t *dev_clk_ns_h;
-> +
-> +	/* PHY timer */
-> +	volatile uint32_t *phy_clk_ns_l;
-> +	volatile uint32_t *phy_clk_ns_h;
-> +
-> +	/* System time */
-> +	volatile uint32_t *sys_time_ns_l;
-> +	volatile uint32_t *sys_time_ns_h;
-> +
-> +	/* Main timer adjustments */
-> +	volatile uint32_t *incval_l;
-> +	volatile uint32_t *incval_h;
-> +	volatile uint32_t *shadj_l;
-> +	volatile uint32_t *shadj_h;
-> +
-> +	/* PHY timer adjustments */
-> +	volatile uint32_t *phy_incval_l;
-> +	volatile uint32_t *phy_incval_h;
-> +	volatile uint32_t *phy_shadj_l;
-> +	volatile uint32_t *phy_shadj_h;
-> +
-> +	/* Command */
-> +	volatile uint32_t *cmd;
-> +	volatile uint32_t *phy_cmd;
-> +	volatile uint32_t *cmd_sync;
-> +};
-> +
-> +/**
-> + * @enum idpf_ptp_access - the type of access to PTP operations
-> + * @IDPF_PTP_NONE: no access
-> + * @IDPF_PTP_DIRECT: direct access through BAR registers
-> + * @IDPF_PTP_MAILBOX: access through mailbox messages
-> + */
-> +enum idpf_ptp_access {
-> +	IDPF_PTP_NONE = 0,
-> +	IDPF_PTP_DIRECT,
-> +	IDPF_PTP_MAILBOX,
-> +};
-> +
-> +/**
-> + * @struct idpf_ptp_secondary_mbx - PTP secondary mailbox
-> + * @peer_mbx_q_id: PTP mailbox queue ID
-> + * @peer_id: Peer ID for PTP Device Control daemon
-> + * @valid: indicates whether secondary mailblox is supported by the Control
-> + *	   Plane
-> + */
-> +struct idpf_ptp_secondary_mbx {
-> +	uint16_t peer_mbx_q_id;
-> +	uint16_t peer_id;
-> +	bool valid:1;
-> +};
-> +
-> +/**
-> + * @enum idpf_ptp_tx_tstamp_state - Tx timestamp states
-> + * @IDPF_PTP_FREE: Tx timestamp index free to use
-> + * @IDPF_PTP_REQUEST: Tx timestamp index set to the Tx descriptor
-> + * @IDPF_PTP_READ_VALUE: Tx timestamp value ready to be read
-> + */
-> +enum idpf_ptp_tx_tstamp_state {
-> +	IDPF_PTP_FREE,
-> +	IDPF_PTP_REQUEST,
-> +	IDPF_PTP_READ_VALUE,
-> +};
-> +
-> +/**
-> + * @struct idpf_ptp_tx_tstamp - Parameters for Tx timestamping
-> + * @list_member: the list member structure
-> + * @tx_latch_reg_offset_l: Tx tstamp latch low register offset
-> + * @tx_latch_reg_offset_h: Tx tstamp latch high register offset
-> + * @tstamp: the Tx tstamp value
-> + * @idx: the index of the Tx tstamp
-> + */
-> +struct idpf_ptp_tx_tstamp {
-> +	uint64_t tstamp;
-> +	uint32_t tx_latch_reg_offset_l;
-> +	uint32_t tx_latch_reg_offset_h;
-> +	uint32_t idx;
-> +};
-> +
-> +/**
-> + * @struct idpf_ptp_vport_tx_tstamp_caps - Tx timestamp capabilities
-> + * @vport_id: the vport id
-> + * @num_entries: the number of negotiated Tx timestamp entries
-> + * @tstamp_ns_lo_bit: first bit for nanosecond part of the timestamp
-> + * @access: indicates an access to Tx timestamp
-> + * @latches_index: the index  of the latched Tx timestamps
-> + * @tx_tstamp: array of Tx timestamp parameters
-> + */
-> +struct idpf_ptp_vport_tx_tstamp_caps {
-> +	uint32_t vport_id;
-> +	uint16_t num_entries;
-> +	uint16_t tstamp_ns_lo_bit;
-> +	uint16_t latched_idx;
-> +	bool access:1;
-> +	struct idpf_ptp_tx_tstamp tx_tstamp[];
-> +};
-> +
-> +/**
-> + * @struct idpf_ptp - PTP parameters
-> + * @base_incval: base increment value of the PTP clock
-> + * @max_adj: maximum adjustment of the PTP clock
-> + * @cmd: HW specific command masks
-> + * @dev_clk_regs: the set of registers to access the device clock
-> + * @caps: PTP capabilities negotiated with the Control Plane
-> + * @get_dev_clk_time_access: access type for getting the device clock time
-> + * @get_cross_tstamp_access: access type for the cross timestamping
-> + * @set_dev_clk_time_access: access type for setting the device clock time
-> + * @adj_dev_clk_time_access: access type for the adjusting the device clock
-> + * @tx_tstamp_access: access type for the Tx timestamp value read
-> + * @rsv: Reserved fields
-> + * @secondary_mbx: parameters for using dedicated PTP mailbox
-> + */
-> +struct idpf_ptp {
-> +	uint64_t base_incval;
-> +	uint64_t max_adj;
-> +	struct idpf_ptp_cmd cmd;
-> +	struct idpf_ptp_dev_clk_regs dev_clk_regs;
-> +	uint32_t caps;
-> +	uint8_t get_dev_clk_time_access:2;
-> +	uint8_t get_cross_tstamp_access:2;
-> +	uint8_t set_dev_clk_time_access:2;
-> +	uint8_t adj_dev_clk_time_access:2;
-> +	uint8_t tx_tstamp_access:2;
-> +	uint8_t rsv:6;
-> +	struct idpf_ptp_secondary_mbx secondary_mbx;
-> +};
-> +
-> +/**
-> + * @struct idpf_ptp_dev_timers - System time and device time values
-> + * @sys_time_ns: system time value expressed in nanoseconds
-> + * @dev_clk_time_ns: device clock time value expressed in nanoseconds
-> + */
-> +struct idpf_ptp_dev_timers {
-> +	uint64_t sys_time_ns;
-> +	uint64_t dev_clk_time_ns;
-> +};
-> +
-> +int idpf_ptp_get_caps(struct idpf_adapter *adapter);
-> +int idpf_ptp_read_src_clk_reg(struct idpf_adapter *adapter, uint64_t *src_clk);
-> +int idpf_ptp_get_dev_clk_time(struct idpf_adapter *adapter,
-> +			      struct idpf_ptp_dev_timers *dev_clk_time);
-> +int idpf_ptp_get_cross_time(struct idpf_adapter *adapter,
-> +			    struct idpf_ptp_dev_timers *cross_time);
-> +int idpf_ptp_set_dev_clk_time(struct idpf_adapter *adapter, uint64_t time);
-> +int idpf_ptp_adj_dev_clk_fine(struct idpf_adapter *adapter, uint64_t incval);
-> +int idpf_ptp_adj_dev_clk_time(struct idpf_adapter *adapter, int64_t delta);
-> +int idpf_ptp_get_vport_tstamps_caps(struct idpf_vport *vport);
-> +int idpf_ptp_get_tx_tstamp(struct idpf_vport *vport);
-> +
-> +/* Helper function to convert a 32b nanoseconds timestamp to 64b. */
-> +static inline uint64_t
-> +idpf_tstamp_convert_32b_64b(struct idpf_adapter *ad, uint32_t flag,
-> +			    bool is_rx, uint32_t in_timestamp)
-> +{
-> +	const uint64_t mask = 0xFFFFFFFF;
-> +	uint32_t phc_time_lo, delta;
-> +	uint64_t ns;
-> +
-> +	if (flag != 0)
-> +		idpf_ptp_read_src_clk_reg(ad, &ad->time_hw);
-> +
-> +    /* Extract the lower 32 bits of the PHC time */
-> +	phc_time_lo = (uint32_t)(ad->time_hw);
-> +
-> +	/* Calculate the delta between the lower 32bits of the cached PHC
-> +	 * time and the in_timestamp value.
-> +	 */
-> +	delta = in_timestamp - phc_time_lo;
-> +
-> +	if (delta > mask / 2) {
-> +		/* Reverse the delta calculation here */
-> +		delta = phc_time_lo - in_timestamp;
-> +		ns = ad->time_hw - delta;
-> +	} else {
-> +		if (is_rx)
-> +			ns = ad->time_hw - delta;
-> +		else
-> +			ns = ad->time_hw + delta;
-> +	}
-> +
-> +	return ns;
-> +}
-> +#endif /* _IDPF_PTP_H_ */
-> diff --git a/drivers/net/intel/idpf/meson.build b/drivers/net/intel/idpf/meson.build
-> index a805d02ea2..5a4a3c2259 100644
-> --- a/drivers/net/intel/idpf/meson.build
-> +++ b/drivers/net/intel/idpf/meson.build
-> @@ -18,6 +18,7 @@ sources += files(
->  
->          'idpf_ethdev.c',
->          'idpf_rxtx.c',
-> +        'idpf_ptp.c',
-
-All lists in DPDK should be in alphabetical order, unless there is a reason
-they can't be. Therefore, this new C file should be above idpf_rxtx.c in
-the list.
-
->  )
->  
->  if arch_subdir == 'x86' and dpdk_conf.get('RTE_IOVA_IN_MBUF') == 1
-> -- 
-> 2.47.1
-> 
+QWNrZWQtYnk6IE5pdGhpbnNlbiBLYWl0aGFrYWRhbiA8bmthaXRoYWthZGFuQG1hcnZlbGwuY29t
+Pg0KDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogUmFkdSBOaWNvbGF1
+IDxyYWR1Lm5pY29sYXVAaW50ZWwuY29tPg0KPiBTZW50OiBUdWVzZGF5LCBGZWJydWFyeSAzLCAy
+MDI2IDQ6NDMgUE0NCj4gVG86IGRldkBkcGRrLm9yZw0KPiBDYzogTml0aGluc2VuIEthaXRoYWth
+ZGFuIDxua2FpdGhha2FkYW5AbWFydmVsbC5jb20+OyBrYWkuamlAaW50ZWwuY29tOw0KPiBBbm9v
+YiBKb3NlcGggPGFub29iakBtYXJ2ZWxsLmNvbT47IHN0ZXBoZW5AbmV0d29ya3BsdW1iZXIub3Jn
+OyBSYWR1DQo+IE5pY29sYXUgPHJhZHUubmljb2xhdUBpbnRlbC5jb20+OyBBa2hpbCBHb3lhbCA8
+Z2FraGlsQG1hcnZlbGwuY29tPjsgRmFuDQo+IFpoYW5nIDxmYW56aGFuZy5vc3NAZ21haWwuY29t
+Pg0KPiBTdWJqZWN0OiBbRVhURVJOQUxdIFtQQVRDSCB2OCAxLzJdIGNyeXB0b2RldjogYWRkIHN1
+cHBvcnQgZm9yIDI1Ni0NCj4gTnhBNC81LzYgYWxnb3JpdGhtcw0KPiANCj4gQWRkIHN1cHBvcnQg
+Zm9yIE5FQTQsIE5JQTQsIE5DQTQ6IFNub3cgNUcgY29uZmlkZW50aWFsaXR5LCBpbnRlZ3JpdHkg
+YW5kDQo+IEFFQUQgbW9kZXMgRVRTSSBUUyAxMzUgMjQwIC8gM0dQUCBUUyAzNS7igIoyNDAgTkVB
+NSwgTklBNSwgTkNBNTogQUVTIDI1Ng0KPiBjb25maWRlbnRpYWxpdHksIGludGVncml0eSBhbmQg
+QUVBRCBtb2RlcyBFVFNJIFRTIDEzNSAyNDQgLyAzR1BQIFRTIDM1LuKAijI0NA0KPiBORUE2LCBO
+SUE2LCBOQ0E2OiBaVUMgMjU2IFpqUWNtUVJZRnBmcHRCYW5uZXJTdGFydCBQcmlvcml0aXplIHNl
+Y3VyaXR5DQo+IGZvciBleHRlcm5hbCBlbWFpbHM6DQo+IENvbmZpcm0gc2VuZGVyIGFuZCBjb250
+ZW50IHNhZmV0eSBiZWZvcmUgY2xpY2tpbmcgbGlua3Mgb3Igb3BlbmluZw0KPiBhdHRhY2htZW50
+cyA8aHR0cHM6Ly91cy1waGlzaGFsYXJtLQ0KPiBld3QucHJvb2Zwb2ludC5jb20vRVdUL3YxL0NS
+Vm1Ya3FXIXRpM1oxZjhVWW5XYTlHLQ0KPiBjbWYwNkQzbnNyQl94eld2UHBzVE9aZnhhR19oR0FX
+QkxpTG5XU0RwbHZXN1VoRXJRQVZxX2RmQl9SQkoNCj4gV0E4UVVlYVQ0bDE1QnBXUU5WV3VTakFy
+LSQ+DQo+IFJlcG9ydCBTdXNwaWNpb3VzDQo+IA0KPiBaalFjbVFSWUZwZnB0QmFubmVyRW5kDQo+
+IEFkZCBzdXBwb3J0IGZvcg0KPiANCj4gTkVBNCwgTklBNCwgTkNBNDogU25vdyA1RyBjb25maWRl
+bnRpYWxpdHksIGludGVncml0eSBhbmQgQUVBRCBtb2RlcyBFVFNJDQo+IFRTIDEzNSAyNDAgLyAz
+R1BQIFRTIDM1LjI0MA0KPiANCj4gTkVBNSwgTklBNSwgTkNBNTogQUVTIDI1NiBjb25maWRlbnRp
+YWxpdHksIGludGVncml0eSBhbmQgQUVBRCBtb2RlcyBFVFNJIFRTDQo+IDEzNSAyNDQgLyAzR1BQ
+IFRTIDM1LjI0NA0KPiANCj4gTkVBNiwgTklBNiwgTkNBNjogWlVDIDI1NiBjb25maWRlbnRpYWxp
+dHksIGludGVncml0eSBhbmQgQUVBRCBtb2RlcyBFVFNJIFRTDQo+IDEzNSAyNDYgLyAzR1BQIFRT
+IDM1LjI0Ng0KPiANCj4gU2lnbmVkLW9mZi1ieTogUmFkdSBOaWNvbGF1IDxyYWR1Lm5pY29sYXVA
+aW50ZWwuY29tPg0KDQoNCg==
