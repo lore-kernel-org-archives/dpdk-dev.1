@@ -2,44 +2,43 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA28EE83061
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Feb 2026 08:18:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3053FE83061
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Feb 2026 08:19:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5AD294042C;
-	Tue,  3 Feb 2026 09:18:12 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 74162402EF;
+	Tue,  3 Feb 2026 09:19:09 +0100 (CET)
 Received: from dkmailrelay1.smartsharesystems.com
  (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id F3EBA402A2;
- Tue,  3 Feb 2026 09:18:10 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id A07FB402A2
+ for <dev@dpdk.org>; Tue,  3 Feb 2026 09:19:07 +0100 (CET)
 Received: from smartserver.smartsharesystems.com
  (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id B9FDF206EC;
- Tue,  3 Feb 2026 09:18:10 +0100 (CET)
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 80404206EC;
+ Tue,  3 Feb 2026 09:19:07 +0100 (CET)
 Content-class: urn:content-classes:message
 MIME-Version: 1.0
 Content-Type: text/plain;
 	charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
-Subject: RE: [PATCH v19 1/2] eal: add __rte_may_alias and __rte_aligned to
- unaligned typedefs
-Date: Tue, 3 Feb 2026 09:18:07 +0100
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F656E3@smartserver.smartshare.dk>
+Subject: RE: [PATCH v19 2/2] net: __rte_raw_cksum pointers enable compiler
+ optimizations
+Date: Tue, 3 Feb 2026 09:19:05 +0100
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F656E4@smartserver.smartshare.dk>
 X-MimeOLE: Produced By Microsoft Exchange V6.5
-In-Reply-To: <20260202044841.90945-2-scott.k.mitch1@gmail.com>
+In-Reply-To: <20260202044841.90945-3-scott.k.mitch1@gmail.com>
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH v19 1/2] eal: add __rte_may_alias and __rte_aligned to
- unaligned typedefs
-Thread-Index: AdyT/zj1wfdNwPTkTjCDynqJfvZpZAA5lrhA
+Thread-Topic: [PATCH v19 2/2] net: __rte_raw_cksum pointers enable compiler
+ optimizations
+Thread-Index: AdyT/zpD/9cN2d6PTmmCJ7HvVpuyBQA5oZ2Q
 References: <20260128194141.90018-1-scott.k.mitch1@gmail.com>
  <20260202044841.90945-1-scott.k.mitch1@gmail.com>
- <20260202044841.90945-2-scott.k.mitch1@gmail.com>
+ <20260202044841.90945-3-scott.k.mitch1@gmail.com>
 From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
 To: <scott.k.mitch1@gmail.com>,
 	<dev@dpdk.org>
 Cc: <stephen@networkplumber.org>, <bruce.richardson@intel.com>,
- <david.marchand@redhat.com>, "Cyril Chemparathy" <cchemparathy@ezchip.com>,
- <stable@dpdk.org>
+ <david.marchand@redhat.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
