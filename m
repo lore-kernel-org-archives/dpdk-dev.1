@@ -2,80 +2,76 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2F43E8306E
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Feb 2026 09:48:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64C92E8306E
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Feb 2026 09:51:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E4769402BE;
-	Tue,  3 Feb 2026 10:48:43 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 46041402BE;
+	Tue,  3 Feb 2026 10:51:58 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 50803402BE
- for <dev@dpdk.org>; Tue,  3 Feb 2026 10:48:42 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 0EDDF402A2
+ for <dev@dpdk.org>; Tue,  3 Feb 2026 10:51:56 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1770112121;
+ s=mimecast20190719; t=1770112316;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=AnSmN/cH2PIVKjX57L6uNdtWiIbTUwz9dywDqrtCTJc=;
- b=gpW6+iNPkaxeDsyu4B/mk9Y2/3Px4pMoVoKyEGchwNxI7ICCMnavo+pOE9JQ6tbk4CGO69
- 89W5+QU3nJVowT/E4qhAJBCIHCEtJoOjnKdQ7FqfTN0bgrknKSo80rAhaKDtG2aejMUNI+
- FAWGO8O+KTbaiuGh7Gb9P0N2MpaSiyo=
-Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
- [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ bh=+WphknWF8rC9jgk5tROEM6Kz8jCBrFItuGmF94cDrGw=;
+ b=b+pj+RNkGcLx78rCcDqeEveyNZTNFIWIrUgEEYY3qS6oCXiWEG7CZzcO2hlH4C5aMmK4Y+
+ KouKp0nhR4Xm09KJwUNQepRXzz2EVQ8REDVAtTmjK6/E9g1IPWtiP3shRpFcY9bnp/vRfW
+ zIBDWLst3plYY97ch7tTY7duKRhUbbY=
+Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
+ [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-538-XaKpgQmuMN-RIEziTPzQBQ-1; Tue, 03 Feb 2026 04:48:39 -0500
-X-MC-Unique: XaKpgQmuMN-RIEziTPzQBQ-1
-X-Mimecast-MFC-AGG-ID: XaKpgQmuMN-RIEziTPzQBQ_1770112118
-Received: by mail-lj1-f200.google.com with SMTP id
- 38308e7fff4ca-382f49594c5so32175181fa.0
- for <dev@dpdk.org>; Tue, 03 Feb 2026 01:48:39 -0800 (PST)
+ us-mta-82-eZqJYT-QOSiwGxOHIQCTWw-1; Tue, 03 Feb 2026 04:51:55 -0500
+X-MC-Unique: eZqJYT-QOSiwGxOHIQCTWw-1
+X-Mimecast-MFC-AGG-ID: eZqJYT-QOSiwGxOHIQCTWw_1770112314
+Received: by mail-lf1-f71.google.com with SMTP id
+ 2adb3069b0e04-59b730b2b0aso356431e87.0
+ for <dev@dpdk.org>; Tue, 03 Feb 2026 01:51:55 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1770112118; x=1770716918;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=AnSmN/cH2PIVKjX57L6uNdtWiIbTUwz9dywDqrtCTJc=;
- b=o0L5jflEwqjX1zNNk2ECzPYevh9+t6fJ/NjRaOuzR1rtK/Rk5htMEJiC78s3ny+0oV
- BjJmFVA6NEgU/AzKYarLpf58r6fm0qo9g/pIMobVfV9shH/7PnP8Gu4dFvMOobP7NzpS
- b2yHboAD5o8EZPwGppet7bp7X5tSXVC6WFMqUqPgXwPTOheWaNIXYtW1+0ZfzgzXanHi
- JTZfoWs6+1Q1VLjQE+lg/d7if/22pV3SbVdv+sxJwxiVfmPCtLZ/a2Xj9TPsPfUnO2P4
- f2e6WpIZakZIv+GEFI1CO0mpO3URnlifHVxlPXxE5F5BGtSd8zaD6qt3trj5G/mitsQX
- OwiQ==
-X-Gm-Message-State: AOJu0YyRcau7s755BXE4xdqT/nComTv3EkycbWzSfPjNXd/NFWOK8OQq
- g4+UualkrzwZK+Z18sJdMzEqvSnvqeEjsEik6xgBks4vVkqn+AfRjiWskIgLNSHABjQskr1MADO
- o/qUwjF5pIV1jQWVhmSLwzU1Diso7Q1fL23rNs3cFTezkiNtkWqsAie6HrCz1iSaP9sy2ZOImfd
- UOXoHUDRoJI3im1/pQT6U=
-X-Gm-Gg: AZuq6aKvklCQU7InSej/T09fUhiFXN60LFAuu6VlgbV1dE8cH0Jd7AYLvdJ3efPpVO1
- xWTNYjDw1LBAvlkEG1ILTS+R8ViMsHnmTBer990GtfyXEONkq5G8Ev2LQZGuSnq2xbG9+NQZ+h+
- 6XzFr505toZSNPzvW3zQtzMJm/JEJbvCJ1T4WjmQ+WYAav4rnqALGpvUFEJETitEL9/Suw9VPvY
- ZIL1+jZwMP2soPWoD+ps8zpfSWShkOQY7ZnqLwmmE15t5/vHJdRgH68dw==
-X-Received: by 2002:a05:651c:19a5:b0:37b:a640:765e with SMTP id
- 38308e7fff4ca-386464f8618mr60924071fa.11.1770112117928; 
- Tue, 03 Feb 2026 01:48:37 -0800 (PST)
-X-Received: by 2002:a05:651c:19a5:b0:37b:a640:765e with SMTP id
- 38308e7fff4ca-386464f8618mr60923991fa.11.1770112117512; Tue, 03 Feb 2026
- 01:48:37 -0800 (PST)
+ d=1e100.net; s=20230601; t=1770112314; x=1770717114;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=+WphknWF8rC9jgk5tROEM6Kz8jCBrFItuGmF94cDrGw=;
+ b=e5LoENDPaonawKe09bRqVgmeZDAF4hEDpTJ7w2dv0KIFI0qXmZxSxVTNlEEPt6Oi+9
+ gplJiknAioiVkTHiw++rrL+MupUm55xXus780gl25nsyEs7UYzvkeyM2rdYx+XoEaKUz
+ y9lUEzJ6OB/LTY4tPQhFWkuNSEBIBOFeRro0vZaElBApirZC4WRx6q/iWAUmnOW6OysF
+ JSGlmM1CaPeuIVpxDU/68CvV61+ltv/z/07MKxPy+k+kY7bJKu/bmunc2r2k/lC/XDkD
+ 3dVTOAnFPYCgM1tJOrsqjP4StU4FshOPB4mZeNADagVobYyWBdjqn7Q0sDgakBywmoH3
+ XPJg==
+X-Gm-Message-State: AOJu0Ywugl5DimHQkqbfShYnKVTznlOFB5Kwjm95FaSUJyhxrIqsR8Ye
+ no+yuqPso2pnZe5+IHVfpf9IVslnNyiFiCHI1j3JrsuG/eFfFDhLBgH9IAYM1qQHRvgApHuJUtl
+ hd2a9XI5n3wWAa8aisnuDVQl3Zc2ZRaDX0ezgPSbIPyAGp350ktuH2ppVGglZUQQCUn4kv1CPOR
+ guQ4KrbovD1NJ9Ze1oBIE=
+X-Gm-Gg: AZuq6aLGvnbdVO9rKEvDZo2YXbvBOcNkb1oP7/BeUgpfLB7MKUf5gRetbySAbU/RjbF
+ D1Ak+puIdWaCsUnj5oqdjXFAUhvOhk+PDlycwDjXbGFhz7kWQGtAW5g/Waro9YJQ8FjMlC7Hurg
+ ewht7ZIMiJkNyvnrrZKLTI2mZGEbF//AjGFRxZBzbLjmBheYShetDpupi/XYm2V9UkIwQEoUo91
+ 5+7BbOccT+O7Nhr4u5K8k4nsWq0me28KIfCnspOVU+4xKyvMf/5uRNLSw==
+X-Received: by 2002:a05:6512:3dab:b0:59d:dffb:cd70 with SMTP id
+ 2adb3069b0e04-59e31707fc0mr855764e87.21.1770112313808; 
+ Tue, 03 Feb 2026 01:51:53 -0800 (PST)
+X-Received: by 2002:a05:6512:3dab:b0:59d:dffb:cd70 with SMTP id
+ 2adb3069b0e04-59e31707fc0mr855749e87.21.1770112313391; Tue, 03 Feb 2026
+ 01:51:53 -0800 (PST)
 MIME-Version: 1.0
 References: <20260127052900.68045-1-scott.k.mitch1@gmail.com>
  <20260202052442.92192-1-scott.k.mitch1@gmail.com>
- <20260202052442.92192-2-scott.k.mitch1@gmail.com>
- <98CBD80474FA8B44BF855DF32C47DC35F656E5@smartserver.smartshare.dk>
-In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F656E5@smartserver.smartshare.dk>
+ <20260202052442.92192-3-scott.k.mitch1@gmail.com>
+In-Reply-To: <20260202052442.92192-3-scott.k.mitch1@gmail.com>
 From: David Marchand <david.marchand@redhat.com>
-Date: Tue, 3 Feb 2026 10:48:25 +0100
-X-Gm-Features: AZwV_QgttBLV0jPspvGdoXKzgmW_qOcJZ0jr5_MIeyHEpcHk3zRE2LKeo5MYoA8
-Message-ID: <CAJFAV8xLCFJ0ZD=71YLPOjd7-sVJkZtxGRsDVMMqwpSg181jRQ@mail.gmail.com>
-Subject: Re: [PATCH v17 1/2] eal: remove alloc_size from rte_lcore_var_alloc
+Date: Tue, 3 Feb 2026 10:51:39 +0100
+X-Gm-Features: AZwV_QgSPiJSJQbamE4A7JnDCD77q7suEewt3V0Luz2Zk2nXpgvf08k9BGFKIPE
+Message-ID: <CAJFAV8wayi8bsYXsUUb=HmMAcppxF1Brb=owY+4S3WQiGyGuFA@mail.gmail.com>
+Subject: Re: [PATCH v17 2/2] eal: RTE_PTR_ADD/SUB API improvements
 To: scott.k.mitch1@gmail.com
-Cc: dev@dpdk.org, =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>, 
- stephen@networkplumber.org, bruce.richardson@intel.com, 
- mattias.ronnblom@ericsson.com, stable@dpdk.org
+Cc: dev@dpdk.org, mb@smartsharesystems.com, stephen@networkplumber.org, 
+ bruce.richardson@intel.com
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: MDeQFO4D6KPkFVcQ852UYo4P5T_zUu2xsqp5grk0JBk_1770112118
+X-Mimecast-MFC-PROC-ID: As4yrnJpKevWO97bQqmt3ecj-zgTlp4_Mm5Jse3LDRk_1770112314
 X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -89,53 +85,44 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 3 Feb 2026 at 09:24, Morten Br=C3=B8rup <mb@smartsharesystems.com> =
-wrote:
+On Mon, 2 Feb 2026 at 06:25, <scott.k.mitch1@gmail.com> wrote:
 >
-> > From: Scott Mitchell <scott.k.mitch1@gmail.com>
-> >
-> > The __rte_alloc_size(1) attribute on rte_lcore_var_alloc() is
-> > semantically incorrect and causes false positives with FORTIFY_SOURCE
-> > runtime checks.
-> >
-> > The attribute tells the compiler that the function returns a pointer
-> > to 'size' bytes of usable memory. However, rte_lcore_var_alloc()
-> > actually returns a handle to a per-lcore variable scheme. The
-> > allocator internally allocates 'size' bytes per lcore
-> > (size * RTE_MAX_LCORE total), partitioned into per-lcore sections.
-> > The handle points to lcore 0's copy, and accessed via
-> > RTE_LCORE_VAR_LCORE(lcore_id, handle) which computes:
-> > handle + (lcore_id * RTE_MAX_LCORE_VAR). Access is expected
-> > beyond 'size' bytes beyond the returned pointer when 'lcore_id !=3D 0'
-> > but FORTIFY_SOURCE may terminate the program due to out of bounds
-> > access.
-> >
-> > This can be observed on CI with gcc 13.3.0 in lcore_var_autotest with
-> > '*** buffer overflow detected ***: terminated' if pointer provenance
-> > is preserved (e.g. if offsets avoid casting to uintptr_t).
-> >
-> > Fixes: 5bce9bed67ad ("eal: add static per-lcore memory allocation
-> > facility")
-> > Cc: mattias.ronnblom@ericsson.com
-> > Cc: stable@dpdk.org
-> >
-> > Signed-off-by: Scott Mitchell <scott.k.mitch1@gmail.com>
+> From: Scott Mitchell <scott.k.mitch1@gmail.com>
 >
-> This patch could be separated from the RTE_PTR_ADD/SUB series.
-
-I agree.
-There were comments on patch 2, so I took this patch directly.
-
-> Acked-by: Morten Br=C3=B8rup <mb@smartsharesystems.com>
+> RTE_PTR_ADD and RTE_PTR_SUB APIs have a few limitations:
+> 1. ptr cast to uintptr_t drops pointer provenance and
+> prevents compiler optimizations
+> 2. return cast discards qualifiers (const, volatile)
+> which may hide correctness/concurrency issues.
+> 3. Accepts both "pointers" and "integers as pointers" which
+> overloads the use case and constrains the implementation
+> to address other challenges.
 >
-> NB: Please keep this ACK for any new versions of this patch if the essenc=
-e of the patch doesn't change.
+> This patch splits the API on two dimensions:
+> 1. pointer types
+> 2. integer types that represent pointers
+>
+> This split allows addressing each of the challenges above
+> and provides distinct APIs for the distinct use cases.
+> Examples:
+> 1. Clang is able to optimize and improve __rte_raw_cksum
+> (which uses RTE_PTR_ADD) by ~40% (100 bytes) to ~8x (1.5k bytes)
+> TSC cycles/byte.
+> 2. Refactoring discovered cases that dropped qualifiers (volatile)
+> that the new API exposes.
+>
+> Signed-off-by: Scott Mitchell <scott.k.mitch1@gmail.com>
+> ---
+>  app/test-pmd/cmdline_flow.c                 |   4 +-
+>  app/test/meson.build                        |   1 +
+>  app/test/test_common.c                      |  20 +-
+>  app/test/test_ptr_add_sub.c                 | 199 +++++++++++++++++
 
-Yes please, I restored acks from Mattias and Stephen.
+Do we *need* a new file for testing new macros?
+So far, everything went to test_common.c.
 
-Applied, thanks.
 
 
---=20
+-- 
 David Marchand
 
