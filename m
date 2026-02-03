@@ -2,52 +2,35 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4468BE8305B
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Feb 2026 07:41:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C28D9E8305B
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Feb 2026 07:42:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E939840647;
-	Tue,  3 Feb 2026 08:41:47 +0100 (CET)
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.34])
- by mails.dpdk.org (Postfix) with ESMTP id A09D2402A2
- for <dev@dpdk.org>; Tue,  3 Feb 2026 08:41:46 +0100 (CET)
-Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mxhk.zte.com.cn (FangMail) with ESMTPS id 4f4wRF3QbYz6FyBy;
- Tue, 03 Feb 2026 15:41:45 +0800 (CST)
-Received: from szxlzmapp02.zte.com.cn ([10.5.231.79])
- by mse-fl2.zte.com.cn with SMTP id 6137fT4Y032459;
- Tue, 3 Feb 2026 15:41:29 +0800 (+08)
- (envelope-from zhang.tianhao2@zte.com.cn)
-Received: from localhost.localdomain (unknown [192.168.6.15])
- by smtp (Zmail) with SMTP; Tue, 3 Feb 2026 15:41:31 +0800
-X-Zmail-TransId: 3e816981a6ab001-42e7e
-X-Zmail-LocalSMTP: 1
-X-Zmail-RealSender: zhang.tianhao2@zte.com.cn
-From: Tianhao Zhang <zhang.tianhao2@zte.com.cn>
-To: stephen@networkplumber.org, wang.junlong1@zte.com.cn,
- yang.yonggang@zte.com.cn
-Cc: dev@dpdk.org, Tianhao Zhang <zhang.tianhao2@zte.com.cn>
-Subject: [PATCH v3 1/2] net/zxdh: add pcie bar channel check
-Date: Tue,  3 Feb 2026 15:17:28 +0800
-Message-ID: <20260203071732.2601630-2-zhang.tianhao2@zte.com.cn>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260203071732.2601630-1-zhang.tianhao2@zte.com.cn>
-References: <20251230081127.813605-2-zhang.tianhao2@zte.com.cn>
- <20260203071732.2601630-1-zhang.tianhao2@zte.com.cn>
+	by mails.dpdk.org (Postfix) with ESMTP id 5776F40651;
+	Tue,  3 Feb 2026 08:41:53 +0100 (CET)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id B7C4540616;
+ Tue,  3 Feb 2026 08:41:51 +0100 (CET)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id A336E206EC;
+ Tue,  3 Feb 2026 08:41:51 +0100 (CET)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: multipart/mixed;
-	boundary="=====_001_next====="
-X-MAIL: mse-fl2.zte.com.cn 6137fT4Y032459
-X-TLS: YES
-X-SPF-DOMAIN: zte.com.cn
-X-ENVELOPE-SENDER: zhang.tianhao2@zte.com.cn
-X-SPF: None
-X-SOURCE-IP: 10.5.228.133 unknown Tue, 03 Feb 2026 15:41:45 +0800
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 6981A6B9.000/4f4wRF3QbYz6FyBy
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Subject: DPDK Tech Board meeting minutes 21-January-2026
+Date: Tue, 3 Feb 2026 08:41:49 +0100
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F656E2@smartserver.smartshare.dk>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: DPDK Tech Board meeting minutes 21-January-2026
+Thread-Index: AdyUNWFAZ8jq31skQaien7gajDr+nAAqv4zQ
+From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
+To: <dev@dpdk.org>
+Cc: <techboard@dpdk.org>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -61,159 +44,84 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+> From: Morten Br=F8rup
+> Sent: Monday, 2 February 2026 12.17
+> To: dev@dpdk.org
+> Cc: techboard@dpdk.org
+> Subject: DPDK Tech Board meeting minutes 21-January-2025
 
+Correction: 21-January-2026
 
---=====_001_next=====
-Content-Type: multipart/related;
-	boundary="=====_002_next====="
+>=20
+> Members Attending
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> Aaron Conole
+> Bruce Richardson
+> Hemant Agrawal
+> Jerin Jacob
+> Kevin Traynor
+> Konstantin Ananyev
+> Maxime Coquelin
+> Morten Br=F8rup (chair)
+> Stephen Hemminger
+> Thomas Monjalon
+>=20
+> NOTE
+> =3D=3D=3D=3D
+> The technical board meetings are on every second Wednesday at 3 pm =
+UTC.
+> Meetings are public. DPDK community members are welcome to attend on
+> Zoom:
+> https://zoom-
+> =
+lfx.platform.linuxfoundation.org/meeting/96459488340?password=3Dd808f1f6-=
 
-
---=====_002_next=====
-Content-Type: multipart/alternative;
-	boundary="=====_003_next====="
-
-
---=====_003_next=====
-Content-Type: text/plain;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
-
-QWZ0ZXIgb2J0YWluaW5nIHRoZSBEVEIgZWxlbWVudCByZWdpc3RlciwgY2hlY2sgaWYgdGhlIFBD
-SWUgbGluayBpcyBhYm5vcm1hbC4NCg0KU2lnbmVkLW9mZi1ieTogVGlhbmhhbyBaaGFuZyA8emhh
-bmcudGlhbmhhbzJAenRlLmNvbS5jbj4NCi0tLQ0KIGRyaXZlcnMvbmV0L3p4ZGgvenhkaF9ucC5j
-IHwgOCArKysrKysrLQ0KIGRyaXZlcnMvbmV0L3p4ZGgvenhkaF9ucC5oIHwgMyArKysNCiAyIGZp
-bGVzIGNoYW5nZWQsIDEwIGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkNCg0KZGlmZiAtLWdp
-dCBhL2RyaXZlcnMvbmV0L3p4ZGgvenhkaF9ucC5jIGIvZHJpdmVycy9uZXQvenhkaC96eGRoX25w
-LmMNCmluZGV4IDAyNGRhMTEzZTIuLjRjYjlkZGU5ODIgMTAwNjQ0DQotLS0gYS9kcml2ZXJzL25l
-dC96eGRoL3p4ZGhfbnAuYw0KKysrIGIvZHJpdmVycy9uZXQvenhkaC96eGRoX25wLmMNCkBAIC0z
-Njk4LDYgKzM2OTgsMTIgQEAgenhkaF9ucF9kdGJfcXVldWVfdW51c2VkX2l0ZW1fbnVtX2dldCh1
-aW50MzJfdCBkZXZfaWQsDQogCXJjID0genhkaF9ucF9yZWdfcmVhZChkZXZfaWQsIFpYREhfRFRC
-X0lORk9fUVVFVUVfQlVGX1NQQUNFLA0KIAkJMCwgcXVldWVfaWQsIHBfaXRlbV9udW0pOw0KIAla
-WERIX0NPTU1fQ0hFQ0tfREVWX1JDKGRldl9pZCwgcmMsICJkcHBfcmVnX3JlYWQiKTsNCisNCisJ
-aWYgKCgqcF9pdGVtX251bSAmIFpYREhfRFRCX1NQQUNFX0xFRlRfTUFTSykgPT0gWlhESF9EVEJf
-U1BBQ0VfTEVGVF9NQVNLKSB7DQorCQlQTURfRFJWX0xPRyhFUlIsICJwY2llIGJhciBhYm5vcm1h
-bC4iKTsNCisJCXJldHVybiBaWERIX1JDX0RUQl9CQVJfQUJOT1JNQUw7DQorCX0NCisNCiAJcmV0
-dXJuIHJjOw0KIH0NCiANCkBAIC01Mzc0LDcgKzUzODAsNyBAQCB6eGRoX25wX2R0Yl90YWJfZG93
-bl9zdWNjZXNzX3N0YXR1c19jaGVjayh1aW50MzJfdCBkZXZfaWQsDQogCQkJCWVsZW1lbnRfaWQs
-IDAsIFpYREhfRFRCX1RBQl9BQ0tfVU5VU0VEX01BU0spOw0KIAkJCVpYREhfQ09NTV9DSEVDS19E
-RVZfUkMoZGV2X2lkLCByYywgInp4ZGhfbnBfZHRiX2l0ZW1fYWNrX3dyIik7DQogDQotCQkJcmV0
-dXJuIFpYREhfRVJSOw0KKwkJCXJldHVybiBaWERIX1JDX0RUQl9PVkVSX1RJTUU7DQogCQl9DQog
-DQogCQlyZF9jbnQrKzsNCmRpZmYgLS1naXQgYS9kcml2ZXJzL25ldC96eGRoL3p4ZGhfbnAuaCBi
-L2RyaXZlcnMvbmV0L3p4ZGgvenhkaF9ucC5oDQppbmRleCBiMDgyMzE5MmU3Li44MGVhYzhkZTM3
-IDEwMDY0NA0KLS0tIGEvZHJpdmVycy9uZXQvenhkaC96eGRoX25wLmgNCisrKyBiL2RyaXZlcnMv
-bmV0L3p4ZGgvenhkaF9ucC5oDQpAQCAtOTQsNiArOTQsNyBAQA0KICNkZWZpbmUgWlhESF9EVEJf
-VEFCX0FDS19TVUNDRVNTX01BU0sgICAgICAgICAgICAoMHhmZikNCiAjZGVmaW5lIFpYREhfRFRC
-X1RBQl9BQ0tfRkFJTEVEX01BU0sgICAgICAgICAgICAgKDB4MSkNCiAjZGVmaW5lIFpYREhfRFRC
-X1RBQl9BQ0tfQ0hFQ0tfVkFMVUUgICAgICAgICAgICAgKDB4MTIzNDU2NzgpDQorI2RlZmluZSBa
-WERIX0RUQl9TUEFDRV9MRUZUX01BU0sgICAgICAgICAgICAgICAgICgweDNGKQ0KIA0KICNkZWZp
-bmUgWlhESF9EVEJfVEFCX0FDS19WTERfU0hJRlQgICAgICAgICAgICAgICAoMTA0KQ0KICNkZWZp
-bmUgWlhESF9EVEJfVEFCX0FDS19TVEFUVVNfU0hJRlQgICAgICAgICAgICAoOTYpDQpAQCAtMzIx
-LDYgKzMyMiw4IEBADQogI2RlZmluZSBaWERIX1JDX0RUQl9EVU1QX1NJWkVfU01BTEwgICAgICAg
-ICAgICAgKFpYREhfUkNfRFRCX0JBU0UgfCAweDE2KQ0KICNkZWZpbmUgWlhESF9SQ19EVEJfU0VB
-UkNIX1ZQT1JUX1FVRVVFX1pFUk8gICAgIChaWERIX1JDX0RUQl9CQVNFIHwgMHgxNykNCiAjZGVm
-aW5lIFpYREhfUkNfRFRCX1FVRVVFX05PVF9FTkFCTEUgICAgICAgICAgICAoWlhESF9SQ19EVEJf
-QkFTRSB8IDB4MTgpDQorI2RlZmluZSBaWERIX1JDX0RUQl9PVkVSX1RJTUUgICAgICAgICAgICAg
-ICAgICAgKFpYREhfUkNfRFRCX0JBU0UgfCAweDE5KQ0KKyNkZWZpbmUgWlhESF9SQ19EVEJfQkFS
-X0FCTk9STUFMICAgICAgICAgICAgICAgIChaWERIX1JDX0RUQl9CQVNFIHwgMHgxYSkNCiANCiAj
-ZGVmaW5lIFpYREhfUkNfQ1RSTENIX0JBU0UgICAgICAgICAgICAgICAgICAgICAoMHhmMDApDQog
-I2RlZmluZSBaWERIX1JDX0NUUkxDSF9NU0dfTEVOX1pFUk8gICAgICAgICAgICAgKFpYREhfUkNf
-Q1RSTENIX0JBU0UgfCAweDApDQotLSANCjIuMjcuMA==
-
-
---=====_003_next=====
-Content-Type: text/html ;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
-
-QWZ0ZXImbmJzcDtvYnRhaW5pbmcmbmJzcDt0aGUmbmJzcDtEVEImbmJzcDtlbGVtZW50Jm5ic3A7
-cmVnaXN0ZXIsJm5ic3A7Y2hlY2smbmJzcDtpZiZuYnNwO3RoZSZuYnNwO1BDSWUmbmJzcDtsaW5r
-Jm5ic3A7aXMmbmJzcDthYm5vcm1hbC48YnIgLz4NPGJyIC8+U2lnbmVkLW9mZi1ieTombmJzcDtU
-aWFuaGFvJm5ic3A7WmhhbmcmbmJzcDsmbHQ7emhhbmcudGlhbmhhbzJAenRlLmNvbS5jbiZndDsN
-PGJyIC8+LS0tPGJyIC8+Jm5ic3A7ZHJpdmVycy9uZXQvenhkaC96eGRoX25wLmMmbmJzcDt8Jm5i
-c3A7OCZuYnNwOysrKysrKystPGJyIC8+Jm5ic3A7ZHJpdmVycy9uZXQvenhkaC96eGRoX25wLmgm
-bmJzcDt8Jm5ic3A7MyZuYnNwOysrKzxiciAvPiZuYnNwOzImbmJzcDtmaWxlcyZuYnNwO2NoYW5n
-ZWQsJm5ic3A7MTAmbmJzcDtpbnNlcnRpb25zKCspLCZuYnNwOzEmbmJzcDtkZWxldGlvbigtKTxi
-ciAvPg08YnIgLz5kaWZmJm5ic3A7LS1naXQmbmJzcDthL2RyaXZlcnMvbmV0L3p4ZGgvenhkaF9u
-cC5jJm5ic3A7Yi9kcml2ZXJzL25ldC96eGRoL3p4ZGhfbnAuYzxiciAvPmluZGV4Jm5ic3A7MDI0
-ZGExMTNlMi4uNGNiOWRkZTk4MiZuYnNwOzEwMDY0NDxiciAvPi0tLSZuYnNwO2EvZHJpdmVycy9u
-ZXQvenhkaC96eGRoX25wLmM8YnIgLz4rKysmbmJzcDtiL2RyaXZlcnMvbmV0L3p4ZGgvenhkaF9u
-cC5jPGJyIC8+QEAmbmJzcDstMzY5OCw2Jm5ic3A7KzM2OTgsMTImbmJzcDtAQCZuYnNwO3p4ZGhf
-bnBfZHRiX3F1ZXVlX3VudXNlZF9pdGVtX251bV9nZXQodWludDMyX3QmbmJzcDtkZXZfaWQsPGJy
-IC8+Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7cmMmbmJzcDs9Jm5ic3A7enhkaF9ucF9y
-ZWdfcmVhZChkZXZfaWQsJm5ic3A7WlhESF9EVEJfSU5GT19RVUVVRV9CVUZfU1BBQ0UsPGJyIC8+
-Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7MCwm
-bmJzcDtxdWV1ZV9pZCwmbmJzcDtwX2l0ZW1fbnVtKTs8YnIgLz4mbmJzcDsmbmJzcDsmbmJzcDsm
-bmJzcDsmbmJzcDtaWERIX0NPTU1fQ0hFQ0tfREVWX1JDKGRldl9pZCwmbmJzcDtyYywmbmJzcDsm
-cXVvdDtkcHBfcmVnX3JlYWQmcXVvdDspOzxiciAvPis8YnIgLz4rJm5ic3A7Jm5ic3A7Jm5ic3A7
-Jm5ic3A7aWYmbmJzcDsoKCpwX2l0ZW1fbnVtJm5ic3A7JmFtcDsmbmJzcDtaWERIX0RUQl9TUEFD
-RV9MRUZUX01BU0spJm5ic3A7PT0mbmJzcDtaWERIX0RUQl9TUEFDRV9MRUZUX01BU0spJm5ic3A7
-ezxiciAvPismbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDtQ
-TURfRFJWX0xPRyhFUlIsJm5ic3A7JnF1b3Q7cGNpZSZuYnNwO2JhciZuYnNwO2Fibm9ybWFsLiZx
-dW90Oyk7PGJyIC8+KyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZu
-YnNwO3JldHVybiZuYnNwO1pYREhfUkNfRFRCX0JBUl9BQk5PUk1BTDs8YnIgLz4rJm5ic3A7Jm5i
-c3A7Jm5ic3A7Jm5ic3A7fTxiciAvPis8YnIgLz4mbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJz
-cDtyZXR1cm4mbmJzcDtyYzs8YnIgLz4mbmJzcDt9PGJyIC8+Jm5ic3A7DTxiciAvPkBAJm5ic3A7
-LTUzNzQsNyZuYnNwOys1MzgwLDcmbmJzcDtAQCZuYnNwO3p4ZGhfbnBfZHRiX3RhYl9kb3duX3N1
-Y2Nlc3Nfc3RhdHVzX2NoZWNrKHVpbnQzMl90Jm5ic3A7ZGV2X2lkLDxiciAvPiZuYnNwOyZuYnNw
-OyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZu
-YnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwO2VsZW1lbnRfaWQsJm5ic3A7MCwmbmJz
-cDtaWERIX0RUQl9UQUJfQUNLX1VOVVNFRF9NQVNLKTs8YnIgLz4mbmJzcDsmbmJzcDsmbmJzcDsm
-bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJz
-cDtaWERIX0NPTU1fQ0hFQ0tfREVWX1JDKGRldl9pZCwmbmJzcDtyYywmbmJzcDsmcXVvdDt6eGRo
-X25wX2R0Yl9pdGVtX2Fja193ciZxdW90Oyk7PGJyIC8+Jm5ic3A7DTxiciAvPi0mbmJzcDsmbmJz
-cDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsm
-bmJzcDtyZXR1cm4mbmJzcDtaWERIX0VSUjs8YnIgLz4rJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7
-Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7cmV0dXJuJm5i
-c3A7WlhESF9SQ19EVEJfT1ZFUl9USU1FOzxiciAvPiZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZu
-YnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwO308YnIgLz4mbmJzcDsNPGJyIC8+Jm5ic3A7Jm5i
-c3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7cmRfY250Kys7PGJy
-IC8+ZGlmZiZuYnNwOy0tZ2l0Jm5ic3A7YS9kcml2ZXJzL25ldC96eGRoL3p4ZGhfbnAuaCZuYnNw
-O2IvZHJpdmVycy9uZXQvenhkaC96eGRoX25wLmg8YnIgLz5pbmRleCZuYnNwO2IwODIzMTkyZTcu
-LjgwZWFjOGRlMzcmbmJzcDsxMDA2NDQ8YnIgLz4tLS0mbmJzcDthL2RyaXZlcnMvbmV0L3p4ZGgv
-enhkaF9ucC5oPGJyIC8+KysrJm5ic3A7Yi9kcml2ZXJzL25ldC96eGRoL3p4ZGhfbnAuaDxiciAv
-PkBAJm5ic3A7LTk0LDYmbmJzcDsrOTQsNyZuYnNwO0BAPGJyIC8+Jm5ic3A7I2RlZmluZSZuYnNw
-O1pYREhfRFRCX1RBQl9BQ0tfU1VDQ0VTU19NQVNLJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5i
-c3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7KDB4ZmYpPGJyIC8+
-Jm5ic3A7I2RlZmluZSZuYnNwO1pYREhfRFRCX1RBQl9BQ0tfRkFJTEVEX01BU0smbmJzcDsmbmJz
-cDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsm
-bmJzcDsmbmJzcDsoMHgxKTxiciAvPiZuYnNwOyNkZWZpbmUmbmJzcDtaWERIX0RUQl9UQUJfQUNL
-X0NIRUNLX1ZBTFVFJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5i
-c3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7KDB4MTIzNDU2NzgpPGJyIC8+KyNkZWZp
-bmUmbmJzcDtaWERIX0RUQl9TUEFDRV9MRUZUX01BU0smbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsm
-bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJz
-cDsmbmJzcDsmbmJzcDsmbmJzcDsoMHgzRik8YnIgLz4mbmJzcDsNPGJyIC8+Jm5ic3A7I2RlZmlu
-ZSZuYnNwO1pYREhfRFRCX1RBQl9BQ0tfVkxEX1NISUZUJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7
-Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5i
-c3A7Jm5ic3A7KDEwNCk8YnIgLz4mbmJzcDsjZGVmaW5lJm5ic3A7WlhESF9EVEJfVEFCX0FDS19T
-VEFUVVNfU0hJRlQmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJz
-cDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsoOTYpPGJyIC8+QEAmbmJzcDstMzIxLDYmbmJzcDsr
-MzIyLDgmbmJzcDtAQDxiciAvPiZuYnNwOyNkZWZpbmUmbmJzcDtaWERIX1JDX0RUQl9EVU1QX1NJ
-WkVfU01BTEwmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsm
-bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsoWlhESF9SQ19EVEJfQkFTRSZuYnNwO3wmbmJz
-cDsweDE2KTxiciAvPiZuYnNwOyNkZWZpbmUmbmJzcDtaWERIX1JDX0RUQl9TRUFSQ0hfVlBPUlRf
-UVVFVUVfWkVSTyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyhaWERIX1JDX0RUQl9CQVNF
-Jm5ic3A7fCZuYnNwOzB4MTcpPGJyIC8+Jm5ic3A7I2RlZmluZSZuYnNwO1pYREhfUkNfRFRCX1FV
-RVVFX05PVF9FTkFCTEUmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsm
-bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsoWlhESF9SQ19EVEJfQkFTRSZuYnNwO3wmbmJz
-cDsweDE4KTxiciAvPisjZGVmaW5lJm5ic3A7WlhESF9SQ19EVEJfT1ZFUl9USU1FJm5ic3A7Jm5i
-c3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7
-Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7KFpYREhfUkNf
-RFRCX0JBU0UmbmJzcDt8Jm5ic3A7MHgxOSk8YnIgLz4rI2RlZmluZSZuYnNwO1pYREhfUkNfRFRC
-X0JBUl9BQk5PUk1BTCZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZu
-YnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyhaWERI
-X1JDX0RUQl9CQVNFJm5ic3A7fCZuYnNwOzB4MWEpPGJyIC8+Jm5ic3A7DTxiciAvPiZuYnNwOyNk
-ZWZpbmUmbmJzcDtaWERIX1JDX0NUUkxDSF9CQVNFJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5i
-c3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7
-Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7KDB4ZjAwKTxiciAvPiZu
-YnNwOyNkZWZpbmUmbmJzcDtaWERIX1JDX0NUUkxDSF9NU0dfTEVOX1pFUk8mbmJzcDsmbmJzcDsm
-bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJz
-cDsmbmJzcDsoWlhESF9SQ19DVFJMQ0hfQkFTRSZuYnNwO3wmbmJzcDsweDApPGJyIC8+LS0mbmJz
-cDsNPGJyIC8+Mi4yNy4wPGJyIC8+
-
-
---=====_003_next=====--
-
---=====_002_next=====--
-
---=====_001_next=====--
+> 0a28-4165-929e-5a5bcae7efeb
+> Agenda:
+> https://annuel.framapad.org/p/r.0c3cc4d1e011214183872a98f6b5c7db
+> Minutes of previous meetings: http://core.dpdk.org/techboard/minutes
+>=20
+> Next meeting will be on: Wednesday 4-February-2026 at 3pm UTC, and =
+will
+> be chaired by: Stephen Hemminger.
+>=20
+> Agenda Items
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>=20
+> 1. Automated AI review in the CI
+> --------------------------------
+> Aaron has estimated the cost for LLM tokens.
+> The Governing Board was presented with this cost, and promptly =
+approved
+> a budget for it.
+> The Governing Board requested safeguards to prevent sudden rapid
+> spending or exceeding the budget, e.g. in the event of a runaway =
+system
+> or malicious attack.
+> Linux Foundation had been asked about any existing LF projects which
+> have already implemented automated AI reviews so that we can learn =
+from
+> their experiences, and replied that multiple projects use GitHub
+> Copilot, and get good results for reviews.
+> Copilot is primarily a developer tool; and it is a frontend, so it =
+does
+> not tie us to one specific LLM.
+> Aaron was tasked to get this set up in the CI. Bruce will assist as
+> needed.
+>=20
+> 2. Maintainer update
+> --------------------
+> Honnappa Nagarahalli will move to other responsibilities within ARM.
+> Wathsala Vithanage has agreed to replace Honnappa as maintainer of the
+> Ring, MCSlock RCU libraries currently maintained by Honnappa.
+> The board (including Ring library co-maintainer Konstantin Ananyev)
+> agreed, and thanks Honnappa for his work as maintainer.
+>=20
+> 3. New features in DPDK 26.03
+> -----------------------------
+> The board confirmed that no major features are coming in DPDK 26.03.
+>=20
+>=20
+> Venlig hilsen / Kind regards,
+> -Morten Br=F8rup
 
