@@ -2,71 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6FAFE7317E
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Feb 2026 01:50:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4983E7C712
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Feb 2026 02:06:48 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8C7D34028B;
-	Tue,  3 Feb 2026 02:50:25 +0100 (CET)
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com
- [209.85.221.49]) by mails.dpdk.org (Postfix) with ESMTP id F2ADC40151
- for <dev@dpdk.org>; Tue,  3 Feb 2026 02:50:22 +0100 (CET)
-Received: by mail-wr1-f49.google.com with SMTP id
- ffacd0b85a97d-432d2c7dd52so5354562f8f.2
- for <dev@dpdk.org>; Mon, 02 Feb 2026 17:50:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1770083422;
- x=1770688222; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=aNO8eqy3WbeD4fXGr9EKoHxErZDEZrLDwYlOP1GdVc0=;
- b=J5EAE/mIy1zskcwsK6SLlY8M7Z7DtcKeqTHMKt23m6of2AFDOHJAxvgTh7naiuOrbA
- ZD2rkpqK+2HH6W9sbjE1iAT5coqMO5mwFJAfUBrbqG2cl+DiRXcjURsoCet6gEBq/ZRM
- FqlptYOiZ24bOGKFLvM+lxNLvCSqtjMrv9CjLMHPf3nFpkHutD1o+BUJMO/GpXOJe/M2
- 9LqENY+OqGBfmUwHH9XoUA+J2ByG2wFUm0Tl9UmJmej0NtYb/JtXH59B7bfwnenlRALa
- pgUfA3iBPhO/8VjajYkCG6a9MfnBuJ7NZWa+mYBV1ibciBNHxEs5DIEb1+veqMwAXfqb
- yeTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1770083422; x=1770688222;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=aNO8eqy3WbeD4fXGr9EKoHxErZDEZrLDwYlOP1GdVc0=;
- b=Avsd4K84p53PW5mBAiUTtm9gEr85NolFdDLaQp40k+YVn9xiSAMSzO+V0Og8e1Tpfn
- vU8IMGLNR9wou51c84urMc0qP8e4S/nT8XPlu2cg0JTPeq39GUBzblDn4hvZXJgNENR7
- qUIJZtN8WZDJ/FF7L4gHXFQTqfJrs6rGseM1cCnk3/xCuR5vtKaPYx4iAkQIrQszCTmd
- Z1rHY/WDH2bXTVzktUZhnuDLBjgCsR8mvaBQM/clvQwzlS5yShtW+PWTQqn3FrSI9uka
- 0+Va8NkaxPO1wAKqWUAVGWmOOFNgAAMhvkJuBNjkxLbIGUwlfEz2lU5v5sZ6qBG4mjm6
- F83g==
-X-Gm-Message-State: AOJu0YzcGIfnt8bOyaw9ns9sqQrZSoAFkgFShB/ppMduNjT87I7KgwiF
- l9ANWoFumqmrNVczBxGVmMtiy0g9VJHhkl689qqoEZEnL2yZJT0WZF5qTuu/kUgZUeg=
-X-Gm-Gg: AZuq6aKgBPS/WbOZCxbHtUCKLfSk4vmA21VQOD0xxv1llOKdS0S7fsEZFC8mSD1Oh62
- K/2NyJlx9D9tona28YHT7gk59Jq1a+/Lq0BxOrGOMzWDCKpvTdK8vArMJulTbOrAqhgTq5Hly4k
- 0LJONXbJXq8FFqvXVNztCfvrpMWfeku+qf+nMpLndu1sZpyP6iaAZnCeSaMAJCjxDWHA0PgmvY7
- eM/qXJQfu744gvh3IZ8ZDvTHDtbZeQCfcEi/MNBJWGHHCzfimcbqPtPX1mUvSxLVuBFcpgJ0nfK
- rKELj8RRAaKnB/SNoMiN2QAWrp2LaI1fViVOdrExxb81ratkhZZEjRlmQw1fxcSAdDwSYFTFGze
- IqhOWGOlQHTS3WAzm7sgcDnO6maQRIfnmnryVCuxjHEQS3epNmm0FWoe18xW1FzzoUfzAwJ5Ahf
- m2wFJFVGsy+IO/GSwtiUQpsK0zlwAJkYyyBDUkxm13M+FlFr3tcO7C
-X-Received: by 2002:a05:6000:1868:b0:42f:bbc6:eda2 with SMTP id
- ffacd0b85a97d-435f3ab214dmr20917802f8f.40.1770083422299; 
- Mon, 02 Feb 2026 17:50:22 -0800 (PST)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-435e13235f5sm45486395f8f.29.2026.02.02.17.50.19
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 02 Feb 2026 17:50:21 -0800 (PST)
-Date: Mon, 2 Feb 2026 17:50:13 -0800
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: spinler@cesnet.cz
+	by mails.dpdk.org (Postfix) with ESMTP id DE8104028B;
+	Tue,  3 Feb 2026 03:06:47 +0100 (CET)
+Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
+ by mails.dpdk.org (Postfix) with ESMTP id 716E940151
+ for <dev@dpdk.org>; Tue,  3 Feb 2026 03:06:46 +0100 (CET)
+Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mxct.zte.com.cn (FangMail) with ESMTPS id 4f4n0g0q4gz51SWB;
+ Tue, 03 Feb 2026 10:06:43 +0800 (CST)
+Received: from szxlzmapp04.zte.com.cn ([10.5.231.166])
+ by mse-fl1.zte.com.cn with SMTP id 61326apl064093;
+ Tue, 3 Feb 2026 10:06:36 +0800 (+08)
+ (envelope-from wang.junlong1@zte.com.cn)
+Received: from localhost.localdomain (unknown [192.168.6.15])
+ by smtp (Zmail) with SMTP; Tue, 3 Feb 2026 10:06:37 +0800
+X-Zmail-TransId: 3e8169815828001-35ad1
+X-Zmail-LocalSMTP: 1
+X-Zmail-RealSender: wang.junlong1@zte.com.cn
+From: Junlong Wang <wang.junlong1@zte.com.cn>
+To: stephen@networkplumber.org
 Cc: dev@dpdk.org
-Subject: Re: [PATCH v5 0/6] net/nfb: code cleanup
-Message-ID: <20260202175013.64da846a@phoenix.local>
-In-Reply-To: <20260202193330.3324681-1-spinler@cesnet.cz>
-References: <20260115140134.235877-1-spinler@cesnet.cz>
- <20260202193330.3324681-1-spinler@cesnet.cz>
+Subject: Re: [v3,0/5] net/zxdh: add support some new features
+Date: Tue,  3 Feb 2026 09:43:03 +0800
+Message-ID: <20260203014303.2589144-1-wang.junlong1@zte.com.cn>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260131062208.2445121-1-wang.junlong1@zte.com.cn>
+References: <20260131062208.2445121-1-wang.junlong1@zte.com.cn>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed;
+	boundary="=====_001_next====="
+X-MAIL: mse-fl1.zte.com.cn 61326apl064093
+X-TLS: YES
+X-SPF-DOMAIN: zte.com.cn
+X-ENVELOPE-SENDER: wang.junlong1@zte.com.cn
+X-SPF: None
+X-SOURCE-IP: 10.5.228.132 unknown Tue, 03 Feb 2026 10:06:43 +0800
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 69815833.000/4f4n0g0q4gz51SWB
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -80,65 +59,129 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon,  2 Feb 2026 20:33:24 +0100
-spinler@cesnet.cz wrote:
-
-> From: Martin Spinler <spinler@cesnet.cz>
->=20
-> This patchset mainly cleans up the code and prepare it for another
-> quite large rework. Also it resolves some unpleasant behavior.
->=20
-> ---
-> v5:
-> * Rebased to next-net-main
->=20
-> Martin Spinler (6):
->   net/nfb: use constant values for max Rx/Tx queues count
->   net/nfb: fix bad pointer access in queue stats
->   net/nfb: update timestamp calculation to meaningful value
->   net/nfb: use process private variable for internal data
->   net/nfb: release allocated resources correctly
->   net/nfb: stop only started queues in fail path
->=20
->  doc/guides/nics/nfb.rst      |   6 +-
->  drivers/net/nfb/nfb.h        |  14 ++-
->  drivers/net/nfb/nfb_ethdev.c | 166 +++++++++++++++++++++--------------
->  drivers/net/nfb/nfb_rx.c     |   2 +-
->  drivers/net/nfb/nfb_rx.h     |  13 +--
->  drivers/net/nfb/nfb_rxmode.c |  12 +--
->  drivers/net/nfb/nfb_stats.c  |  46 +++++-----
->  drivers/net/nfb/nfb_tx.c     |   2 +-
->  8 files changed, 152 insertions(+), 109 deletions(-)
->=20
-
-AI patch review summary.  My comments afterward,
-
-> Here's the review. The series is in good shape overall =E2=80=94 no error=
-s found across all six patches. The main items worth raising with Martin:
-> Patch 2: The new queue iteration still doesn't NULL-check the per-queue p=
-ointer before dereferencing. Given the commit message specifically calls ou=
-t the pointer validity problem, this seems like an oversight.
-> Patch 4: rte_zmalloc_socket for a small control structure of file handles=
- is using limited hugepage memory unnecessarily =E2=80=94 plain calloc woul=
-d suffice.
-> Patch 5: The removal of dev_stop from close relies on the ethdev layer ca=
-lling stop first. That's fine for modern DPDK but worth a sanity check. Sim=
-ilarly, the dev_started =3D 0 removal is correct if the minimum supported D=
-PDK version manages that flag in the ethdev layer.
-> Everything else =E2=80=94 commit messages, tags, formatting, error paths,=
- the timestamp arithmetic, the start error unwinding =E2=80=94 looks clean.
-
-Ignore the comment on 5.
-
-Patch 4 raises a good point, file handles are per-process so doesn't need t=
-o be in hugepages.
-
-Not sure about comment about Patch #2. The queues are set to null on close.=
- So there might be small race with another process getting stats.
-
-I needed to do some manual application to workaround patch fuzz.
-Then queued to next-net.
 
 
+--=====_001_next=====
+Content-Type: multipart/related;
+	boundary="=====_002_next====="
 
+
+--=====_002_next=====
+Content-Type: multipart/alternative;
+	boundary="=====_003_next====="
+
+
+--=====_003_next=====
+Content-Type: text/plain;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+
+PiA+ICBkcml2ZXJzL25ldC96eGRoL3p4ZGhfcGNpLmggICAgICAgICAgICB8ICAgMiArDQo+ID4g
+IGRyaXZlcnMvbmV0L3p4ZGgvenhkaF9xdWV1ZS5jICAgICAgICAgIHwgMTM3ICsrKysrKysrKysr
+LS0tDQo+ID4gIGRyaXZlcnMvbmV0L3p4ZGgvenhkaF9xdWV1ZS5oICAgICAgICAgIHwgIDEyICst
+DQo+ID4gIGRyaXZlcnMvbmV0L3p4ZGgvenhkaF9yeHR4LmMgICAgICAgICAgIHwgMTE3ICsrKysr
+KysrKy0tLQ0KPiA+ICBkcml2ZXJzL25ldC96eGRoL3p4ZGhfdGFibGVzLmggICAgICAgICB8ICAx
+MiArLQ0KPiA+ICAxNCBmaWxlcyBjaGFuZ2VkLCA2NTUgaW5zZXJ0aW9ucygrKSwgMjI3IGRlbGV0
+aW9ucygtKQ0KPiA+IA0KDQo+IFRoaXMgbG9va3MgbXVjaCBiZXR0ZXIsIHRoZXJlIGEgY291cGxl
+IG9mIEFJIHJldmlldyBjb21wbGFpbnRzIGFib3V0DQo+IGNvbW1pdCBtZXNzYWdlIHN0eWxlLiBJ
+IHdpbGwgYWRkcmVzcyB0aG9zZSBkdXJpbmcgdGhlIG1lcmdlLg0KDQo+IEZvciBleGFtcGxlLCB0
+aGUgQUkgZ2VuZXJhdGVkIGNvbW1pdCBtZXNzYWdlIGZvciB0aGUgc2Vjb25kIHBhdGNoDQo+IHdv
+dWxkIGJlOg0KDQo+IG5ldC96eGRoOiBvcHRpbWl6ZSBxdWV1ZSByZXNvdXJjZSBhbGxvY2F0aW9u
+IHdpdGggaGFyZHdhcmUgbG9ja2luZw0KDQo+IFRoaXMgcGF0Y2ggcmVmYWN0b3JzIHRoZSBxdWV1
+ZSByZXNvdXJjZSBhbGxvY2F0aW9uIG1lY2hhbmlzbSB0byBpbXByb3ZlDQo+IHBlcmZvcm1hbmNl
+IGFuZCByZWR1Y2UgY29tcGxleGl0eSBieSBtb3ZpbmcgdGhlIGFsbG9jYXRpb24gb3BlcmF0aW9u
+DQo+IGluc2lkZSB0aGUgaGFyZHdhcmUgbG9jayBjcml0aWNhbCBzZWN0aW9uLg0KDQo+IEtleSBj
+aGFuZ2VzOg0KPiAtIFJlbW92ZSB0aGUgY29tcGxleCB6eGRoX2NvbW1vbl90YWJsZV93cml0ZSgp
+IGZ1bmN0aW9uIGFuZCBpdHMNCj4gICBhc3NvY2lhdGVkIG1lc3NhZ2luZyBpbmZyYXN0cnVjdHVy
+ZQ0KPiAtIFNpbXBsaWZ5IHp4ZGhfZGF0YWNoX3NldCgpIHRvIGRpcmVjdGx5IHdyaXRlIFBDSWUg
+SUQgdG8gaGFyZHdhcmUNCj4gICByZWdpc3RlcnMgdXNpbmcgQkFSMCBtZW1vcnkgbWFwcGluZw0K
+PiAtIE1vdmUgcXVldWUgcmVzb3VyY2UgYWxsb2NhdGlvbiAoenhkaF9kYXRhY2hfc2V0KSBpbnNp
+ZGUgdGhlIGhhcmR3YXJlDQo+ICAgbG9jayBjcml0aWNhbCBzZWN0aW9uIGluIHp4ZGhfZ2V0X2F2
+YWlsYWJsZV9jaGFubmVsKCkNCj4gLSBSZW1vdmUgdGhlIHNlcGFyYXRlIHp4ZGhfZGF0YWNoX3Nl
+dCgpIGNhbGwgZnJvbSB6eGRoX3JlY29uZmlnX3F1ZXVlcygpDQo+ICAgc2luY2UgaXQncyBub3cg
+aGFuZGxlZCBkdXJpbmcgY2hhbm5lbCBhbGxvY2F0aW9uDQo+IC0gQWRkIG5ldyBQQ0llIElEIGFk
+ZHJlc3MgYW5kIHNpemUgZGVmaW5pdGlvbnMgZm9yIGRpcmVjdCByZWdpc3RlciBhY2Nlc3MNCg0K
+PiBUaGlzIG9wdGltaXphdGlvbiBlbGltaW5hdGVzIHRoZSBvdmVyaGVhZCBvZiBjb21wbGV4IG1l
+c3NhZ2UgcGFzc2luZyBmb3INCj4gcXVldWUgc2V0dXAgb3BlcmF0aW9ucyB3aGlsZSBlbnN1cmlu
+ZyBhdG9taWMgYWxsb2NhdGlvbiBvZiBxdWV1ZSByZXNvdXJjZXMNCj4gdW5kZXIgaGFyZHdhcmUg
+bG9jayBwcm90ZWN0aW9uLg0KDQpUaGlzIGxvb2tzIGdvb2QgZm9yIG1lIGFuZCBtYXRjaGVzIGV4
+cGVjdGF0aW9ucy4NClNvcnJ5IGZvciBjYXVzaW5nIHlvdSBleHRyYSB3b3JrLg0KDQpXaGVuIHN1
+Ym1pdHRpbmcgbmV3IHBhdGNoZXMgaW4gbmV4dCwgSSB3aWxsIHByb3ZpZGUgY2xlYXJlciBwYXRj
+aCBjb21taXQgbWVzc2FnZXMu
+
+
+--=====_003_next=====
+Content-Type: text/html ;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+
+Jmd0OyZuYnNwOyZndDsmbmJzcDsmbmJzcDtkcml2ZXJzL25ldC96eGRoL3p4ZGhfcGNpLmgmbmJz
+cDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsm
+bmJzcDsmbmJzcDt8Jm5ic3A7Jm5ic3A7Jm5ic3A7MiZuYnNwOys8YnIgLz4mZ3Q7Jm5ic3A7Jmd0
+OyZuYnNwOyZuYnNwO2RyaXZlcnMvbmV0L3p4ZGgvenhkaF9xdWV1ZS5jJm5ic3A7Jm5ic3A7Jm5i
+c3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7fCZuYnNwOzEzNyZu
+YnNwOysrKysrKysrKysrLS0tPGJyIC8+Jmd0OyZuYnNwOyZndDsmbmJzcDsmbmJzcDtkcml2ZXJz
+L25ldC96eGRoL3p4ZGhfcXVldWUuaCZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
+OyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwO3wmbmJzcDsmbmJzcDsxMiZuYnNwOystPGJyIC8+Jmd0
+OyZuYnNwOyZndDsmbmJzcDsmbmJzcDtkcml2ZXJzL25ldC96eGRoL3p4ZGhfcnh0eC5jJm5ic3A7
+Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5i
+c3A7fCZuYnNwOzExNyZuYnNwOysrKysrKysrKy0tLTxiciAvPiZndDsmbmJzcDsmZ3Q7Jm5ic3A7
+Jm5ic3A7ZHJpdmVycy9uZXQvenhkaC96eGRoX3RhYmxlcy5oJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5i
+c3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7fCZuYnNwOyZuYnNwOzEyJm5ic3A7Ky08
+YnIgLz4mZ3Q7Jm5ic3A7Jmd0OyZuYnNwOyZuYnNwOzE0Jm5ic3A7ZmlsZXMmbmJzcDtjaGFuZ2Vk
+LCZuYnNwOzY1NSZuYnNwO2luc2VydGlvbnMoKyksJm5ic3A7MjI3Jm5ic3A7ZGVsZXRpb25zKC0p
+PGJyIC8+Jmd0OyZuYnNwOyZndDsmbmJzcDsNPGJyIC8+DTxiciAvPiZndDsmbmJzcDtUaGlzJm5i
+c3A7bG9va3MmbmJzcDttdWNoJm5ic3A7YmV0dGVyLCZuYnNwO3RoZXJlJm5ic3A7YSZuYnNwO2Nv
+dXBsZSZuYnNwO29mJm5ic3A7QUkmbmJzcDtyZXZpZXcmbmJzcDtjb21wbGFpbnRzJm5ic3A7YWJv
+dXQ8YnIgLz4mZ3Q7Jm5ic3A7Y29tbWl0Jm5ic3A7bWVzc2FnZSZuYnNwO3N0eWxlLiZuYnNwO0km
+bmJzcDt3aWxsJm5ic3A7YWRkcmVzcyZuYnNwO3Rob3NlJm5ic3A7ZHVyaW5nJm5ic3A7dGhlJm5i
+c3A7bWVyZ2UuPGJyIC8+DTxiciAvPiZndDsmbmJzcDtGb3ImbmJzcDtleGFtcGxlLCZuYnNwO3Ro
+ZSZuYnNwO0FJJm5ic3A7Z2VuZXJhdGVkJm5ic3A7Y29tbWl0Jm5ic3A7bWVzc2FnZSZuYnNwO2Zv
+ciZuYnNwO3RoZSZuYnNwO3NlY29uZCZuYnNwO3BhdGNoPGJyIC8+Jmd0OyZuYnNwO3dvdWxkJm5i
+c3A7YmU6PGJyIC8+DTxiciAvPiZndDsmbmJzcDtuZXQvenhkaDombmJzcDtvcHRpbWl6ZSZuYnNw
+O3F1ZXVlJm5ic3A7cmVzb3VyY2UmbmJzcDthbGxvY2F0aW9uJm5ic3A7d2l0aCZuYnNwO2hhcmR3
+YXJlJm5ic3A7bG9ja2luZzxiciAvPg08YnIgLz4mZ3Q7Jm5ic3A7VGhpcyZuYnNwO3BhdGNoJm5i
+c3A7cmVmYWN0b3JzJm5ic3A7dGhlJm5ic3A7cXVldWUmbmJzcDtyZXNvdXJjZSZuYnNwO2FsbG9j
+YXRpb24mbmJzcDttZWNoYW5pc20mbmJzcDt0byZuYnNwO2ltcHJvdmU8YnIgLz4mZ3Q7Jm5ic3A7
+cGVyZm9ybWFuY2UmbmJzcDthbmQmbmJzcDtyZWR1Y2UmbmJzcDtjb21wbGV4aXR5Jm5ic3A7Ynkm
+bmJzcDttb3ZpbmcmbmJzcDt0aGUmbmJzcDthbGxvY2F0aW9uJm5ic3A7b3BlcmF0aW9uPGJyIC8+
+Jmd0OyZuYnNwO2luc2lkZSZuYnNwO3RoZSZuYnNwO2hhcmR3YXJlJm5ic3A7bG9jayZuYnNwO2Ny
+aXRpY2FsJm5ic3A7c2VjdGlvbi48YnIgLz4NPGJyIC8+Jmd0OyZuYnNwO0tleSZuYnNwO2NoYW5n
+ZXM6PGJyIC8+Jmd0OyZuYnNwOy0mbmJzcDtSZW1vdmUmbmJzcDt0aGUmbmJzcDtjb21wbGV4Jm5i
+c3A7enhkaF9jb21tb25fdGFibGVfd3JpdGUoKSZuYnNwO2Z1bmN0aW9uJm5ic3A7YW5kJm5ic3A7
+aXRzPGJyIC8+Jmd0OyZuYnNwOyZuYnNwOyZuYnNwO2Fzc29jaWF0ZWQmbmJzcDttZXNzYWdpbmcm
+bmJzcDtpbmZyYXN0cnVjdHVyZTxiciAvPiZndDsmbmJzcDstJm5ic3A7U2ltcGxpZnkmbmJzcDt6
+eGRoX2RhdGFjaF9zZXQoKSZuYnNwO3RvJm5ic3A7ZGlyZWN0bHkmbmJzcDt3cml0ZSZuYnNwO1BD
+SWUmbmJzcDtJRCZuYnNwO3RvJm5ic3A7aGFyZHdhcmU8YnIgLz4mZ3Q7Jm5ic3A7Jm5ic3A7Jm5i
+c3A7cmVnaXN0ZXJzJm5ic3A7dXNpbmcmbmJzcDtCQVIwJm5ic3A7bWVtb3J5Jm5ic3A7bWFwcGlu
+ZzxiciAvPiZndDsmbmJzcDstJm5ic3A7TW92ZSZuYnNwO3F1ZXVlJm5ic3A7cmVzb3VyY2UmbmJz
+cDthbGxvY2F0aW9uJm5ic3A7KHp4ZGhfZGF0YWNoX3NldCkmbmJzcDtpbnNpZGUmbmJzcDt0aGUm
+bmJzcDtoYXJkd2FyZTxiciAvPiZndDsmbmJzcDsmbmJzcDsmbmJzcDtsb2NrJm5ic3A7Y3JpdGlj
+YWwmbmJzcDtzZWN0aW9uJm5ic3A7aW4mbmJzcDt6eGRoX2dldF9hdmFpbGFibGVfY2hhbm5lbCgp
+PGJyIC8+Jmd0OyZuYnNwOy0mbmJzcDtSZW1vdmUmbmJzcDt0aGUmbmJzcDtzZXBhcmF0ZSZuYnNw
+O3p4ZGhfZGF0YWNoX3NldCgpJm5ic3A7Y2FsbCZuYnNwO2Zyb20mbmJzcDt6eGRoX3JlY29uZmln
+X3F1ZXVlcygpPGJyIC8+Jmd0OyZuYnNwOyZuYnNwOyZuYnNwO3NpbmNlJm5ic3A7aXQmYXBvcztz
+Jm5ic3A7bm93Jm5ic3A7aGFuZGxlZCZuYnNwO2R1cmluZyZuYnNwO2NoYW5uZWwmbmJzcDthbGxv
+Y2F0aW9uPGJyIC8+Jmd0OyZuYnNwOy0mbmJzcDtBZGQmbmJzcDtuZXcmbmJzcDtQQ0llJm5ic3A7
+SUQmbmJzcDthZGRyZXNzJm5ic3A7YW5kJm5ic3A7c2l6ZSZuYnNwO2RlZmluaXRpb25zJm5ic3A7
+Zm9yJm5ic3A7ZGlyZWN0Jm5ic3A7cmVnaXN0ZXImbmJzcDthY2Nlc3M8YnIgLz4NPGJyIC8+Jmd0
+OyZuYnNwO1RoaXMmbmJzcDtvcHRpbWl6YXRpb24mbmJzcDtlbGltaW5hdGVzJm5ic3A7dGhlJm5i
+c3A7b3ZlcmhlYWQmbmJzcDtvZiZuYnNwO2NvbXBsZXgmbmJzcDttZXNzYWdlJm5ic3A7cGFzc2lu
+ZyZuYnNwO2ZvcjxiciAvPiZndDsmbmJzcDtxdWV1ZSZuYnNwO3NldHVwJm5ic3A7b3BlcmF0aW9u
+cyZuYnNwO3doaWxlJm5ic3A7ZW5zdXJpbmcmbmJzcDthdG9taWMmbmJzcDthbGxvY2F0aW9uJm5i
+c3A7b2YmbmJzcDtxdWV1ZSZuYnNwO3Jlc291cmNlczxiciAvPiZndDsmbmJzcDt1bmRlciZuYnNw
+O2hhcmR3YXJlJm5ic3A7bG9jayZuYnNwO3Byb3RlY3Rpb24uPGJyIC8+DTxiciAvPlRoaXMmbmJz
+cDtsb29rcyZuYnNwO2dvb2QmbmJzcDtmb3ImbmJzcDttZSZuYnNwO2FuZCZuYnNwO21hdGNoZXMm
+bmJzcDtleHBlY3RhdGlvbnMuPGJyIC8+U29ycnkmbmJzcDtmb3ImbmJzcDtjYXVzaW5nJm5ic3A7
+eW91Jm5ic3A7ZXh0cmEmbmJzcDt3b3JrLjxiciAvPg08YnIgLz5XaGVuJm5ic3A7c3VibWl0dGlu
+ZyZuYnNwO25ldyZuYnNwO3BhdGNoZXMmbmJzcDtpbiZuYnNwO25leHQsJm5ic3A7SSZuYnNwO3dp
+bGwmbmJzcDtwcm92aWRlJm5ic3A7Y2xlYXJlciZuYnNwO3BhdGNoJm5ic3A7Y29tbWl0Jm5ic3A7
+bWVzc2FnZXMuPGJyIC8+DTxiciAvPg==
+
+
+--=====_003_next=====--
+
+--=====_002_next=====--
+
+--=====_001_next=====--
 
