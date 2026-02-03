@@ -2,64 +2,64 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCDC3E8305D
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Feb 2026 07:07:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F6C0E8305D
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Feb 2026 07:07:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7AF044060F;
-	Tue,  3 Feb 2026 08:07:48 +0100 (CET)
-Received: from mail-dy1-f171.google.com (mail-dy1-f171.google.com
- [74.125.82.171]) by mails.dpdk.org (Postfix) with ESMTP id B95A0402F1
- for <dev@dpdk.org>; Tue,  3 Feb 2026 08:07:46 +0100 (CET)
-Received: by mail-dy1-f171.google.com with SMTP id
- 5a478bee46e88-2b71320f501so1733208eec.1
- for <dev@dpdk.org>; Mon, 02 Feb 2026 23:07:46 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id A7BD840648;
+	Tue,  3 Feb 2026 08:07:49 +0100 (CET)
+Received: from mail-dy1-f177.google.com (mail-dy1-f177.google.com
+ [74.125.82.177]) by mails.dpdk.org (Postfix) with ESMTP id 3EE9C402EF
+ for <dev@dpdk.org>; Tue,  3 Feb 2026 08:07:47 +0100 (CET)
+Received: by mail-dy1-f177.google.com with SMTP id
+ 5a478bee46e88-2b4520f6b32so9367935eec.0
+ for <dev@dpdk.org>; Mon, 02 Feb 2026 23:07:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=gmail.com; s=20230601; t=1770102466; x=1770707266; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=O1ivLGdIV23o0eFvdxMnBXNLCgbnjj6s07aQAQqBKHE=;
- b=lvrNEu5Y/9xxXoVZ3SdxLyXDQgNJ3pKaPailrvylvwRUSsHFrLKXwE/vg820VT6GWp
- DwnOqEsxLVBEmt9fjzujFnSRD1J8LddRJV/2+mgSvMu/H+5BgkzqH5nueyTPNbCu9U7E
- aaw6exn4OrGtGVGFZ1ARSc6B20UeXJFXq1TN0jNDSieVX7Cod8xs2sZFJAfH1Zl8gXzg
- II5mYR8L6oh9X/M66TQyZZIzF26MOTOmK810ewqy0dcCL3zb1o2VkWRgA9x6BevfETdY
- L8Nonv5fdowiiZ38L9JeGAM64xw7gEfw3p4ZNxZW4ynkkGBsYAFd82eDLqQ/2Qe25Dmm
- gfSw==
+ bh=bbOiC9tOovJ6pBfMGbcBVFH9C7Z3D8BopdtjFOYmFCw=;
+ b=ERNSMh3NKE9rvCdvO60HJ3cL6f7ywfbIh3DXmPaOwDISzIlq5vsiIsD9BExgTh/wi5
+ 4RxSKPw79WyfP7ki+cjwDzQp1VAeZPVw11sqTaDCkw4kvOqCV9BAKR86Jx+F0hgpSfF5
+ us4EklbPC0Is1mOd2Hy/O0J80z2q524D4Hxl85Dho5Bu5vfFQH5geofl9v6IfeOrSG8F
+ VoHPiX9rBxZ6HHtpfFOUgEVXW/680eYThfRaF5zvJT7trZ5mVwm8+WckQKshbDq+qv3L
+ KmA349TQ3HfrMjyIz/yS59dHiDVIIEhOLXgCpuLiYVsesWCXwZaiRxL55BPAoIZZyY+m
+ fldw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=1e100.net; s=20230601; t=1770102466; x=1770707266;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=O1ivLGdIV23o0eFvdxMnBXNLCgbnjj6s07aQAQqBKHE=;
- b=WjYhTL5dBYj4jvYTYTds69pMLqY+hBWBZRoa47mLr4Xd+sGH1GiPCdI/ltCEulkGOM
- MHUJZ7V3gyrayUFotSP0JH6o66MT7Ph0B67/OuGcIrKDP2tpZed5qFBgjEg460WlWOIY
- rqNpAUPhWYEWJ7sYA/xAPCMm4zMODPDfQfmotvFMELEIh7TW3MqvRfilRyswhF4q/HGp
- guljcpmOaQhLCfCb/2AmPwYHffWxFuZ92xI9XH1hgZdAZFeO/N9YgPg+zE6AYnx/2Gik
- zAMYUQ4/AFOP+5eo/RUCMeox0Q5peFXC1rXideZPeN2909yqhx7pNoXk+yPbuRumF/y8
- EeFQ==
-X-Gm-Message-State: AOJu0Yz8jab6eE20qbgQhMrYAwaugUeFjxhUVwo9ADCl1WIkyIPFMx2k
- PnvTX9+2AODuyby+qjHIuXubmruzGxgM1n6vCOTXhLBoI5aIn1wWqcX+r9dVvw==
-X-Gm-Gg: AZuq6aKzTnQRJby/g9S2RBwPdDBq9xGyZiiuM2M1MslzLRyWXczTn5GANvsY5M0gxb/
- VegKhjTd/ebzNOzwSHTwG038jJ4oqmu5XODZH0fFYLfRdisirudZ6NFNFMUE8GPylyEDnPoDXWo
- t5kEmGhSWgz5xMZaU19AUOp+VaibcVo5wQ2X1PfVstti0v/T+FtKA3gI6E0G3DV3Fo0B1b5WHQ1
- pkjtdYHQnfFWwG8/BDuLeLGNKw7wRM22rJMReiELWZ1Qm6doOiXUXgYTtJ1CZdgJch8+gSXSPNV
- eeeHc8NtKfi9s7xv+jF6L/0eM181t1v5LPE88hB8iqrXowGT0M1N2lmNqTQAuWvLXPhT5yXjMEg
- YNBSJm23MKwPbUbaFFIIvnmPz99KXmI/CGeKnAX80ehfFrFyiKPiLN3oeMllTLVTu8PfPFO94Wr
- DVqnJfXl3GwxEax7jM1zTewzpt1oTKEJLS
-X-Received: by 2002:a05:7300:50d:b0:2b8:23e7:827f with SMTP id
- 5a478bee46e88-2b823e792dfmr580811eec.17.1770102465370; 
+ bh=bbOiC9tOovJ6pBfMGbcBVFH9C7Z3D8BopdtjFOYmFCw=;
+ b=qLg1dJUKbFVFAuCseR02y12Lv54wI6C4EW6saXada5kNS20XXw9Aj42KaZBOJoO2TJ
+ FMLKEDk1aJbRxisjrt7VVWMVbxnpUfPAXhOCJTRy9c9QUz4TnGg7V3ZRm0RAU0534QZB
+ UKkyNlKTlvPokPhXM9exerPOmZ7F2CN7ltW0LRi2R5vXb2IqBz8XTewOKxtcSCEqBchQ
+ Ta+nSMg9+zEgcC7tjHKzonA3S74tfjFJ8UEJrfhL7NBw80/oSDkk2cf8IHpYTEE38DPN
+ ngMf6g960u92PFU7AjpQCnIB3BRlJQK4m1YsleJGh9ff7ubKag5gnOoWQg095Ds5Q8Wu
+ p+Iw==
+X-Gm-Message-State: AOJu0YxYZIs1hkU0hDvDtoduifNMhtRSBr5QAfAutL96oFoStEiVk0IY
+ 2pEbFM0F58qZbozY/Pr48DZK8NVkxtUVmefp4zNMXEaOrUOuqZbAdghy6QyyBw==
+X-Gm-Gg: AZuq6aKQ5NtczRmACyVBFGaNy2a9QR2APheuvvsM5pLQeOUXHVU25J6t8tHXtz911Lg
+ bkylqemWmNEJTg8EuA26/lXD3E4Nvte1AIwXGmwihe4Ybm+y2jcu719r+Yhehinuf8CciFWtBlj
+ 6BZZXmbCDmZrdtCSh8ZDVqHRGuhRv7gNGgFeqyjYWjTWhH/3d0c2XsWCM4vTBa24O+NbWClBTOb
+ EYYa4PStNiHo2en27uJAJEERBBK25lMqccZTdHDAjgG4NDZN0vLpG2x/vPKNOZXrlAB/m1Iiu20
+ EqkPoFNkv0A/PDdw46ZVczjDrZDTk14cez/PS/R7BTl3uo4tGQCpdY/+G3JnCTZfry6YrtdeVV6
+ e09Ve0up6A3r+g2XMqXw1sx7RZ2X8ZqNEhrZEl9xFP+zU45FwsY7937rDWxRynhAQiNitbxECSw
+ BBzMux9lqbn1Wraos1mRHUfZMQsJ3bfBgL
+X-Received: by 2002:a05:7300:e7ab:b0:2b6:fa0c:6c44 with SMTP id
+ 5a478bee46e88-2b7c86485f8mr5938243eec.12.1770102465994; 
  Mon, 02 Feb 2026 23:07:45 -0800 (PST)
 Received: from mac.com ([136.24.82.250]) by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-2b7a16cfaa8sm21073318eec.4.2026.02.02.23.07.44
+ 5a478bee46e88-2b7a16cfaa8sm21073318eec.4.2026.02.02.23.07.45
  (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
  Mon, 02 Feb 2026 23:07:45 -0800 (PST)
 From: scott.k.mitch1@gmail.com
 To: dev@dpdk.org
-Cc: stephen@networkplumber.org, Scott Mitchell <scott.k.mitch1@gmail.com>,
- linville@tuxdriver.com, stable@dpdk.org
-Subject: [PATCH v5 1/4] net/af_packet: fix thread safety and frame calculations
-Date: Mon,  2 Feb 2026 23:07:37 -0800
-Message-Id: <20260203070740.62305-2-scott.k.mitch1@gmail.com>
+Cc: stephen@networkplumber.org,
+	Scott Mitchell <scott.k.mitch1@gmail.com>
+Subject: [PATCH v5 2/4] net/af_packet: RX/TX bulk free, unlikely hint
+Date: Mon,  2 Feb 2026 23:07:38 -0800
+Message-Id: <20260203070740.62305-3-scott.k.mitch1@gmail.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 In-Reply-To: <20260203070740.62305-1-scott.k.mitch1@gmail.com>
 References: <20260202081456.4322-1-scott.k.mitch1@gmail.com>
@@ -81,387 +81,112 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Scott Mitchell <scott.k.mitch1@gmail.com>
 
-Thread Safety:
-The tp_status field was accessed without proper memory barriers,
-violating the kernel's PACKET_MMAP synchronization protocol. The
-kernel implements this protocol in net/packet/af_packet.c:
-- __packet_get_status: smp_rmb() then READ_ONCE() (volatile read)
-- __packet_set_status: WRITE_ONCE() (volatile write) then smp_wmb()
-
-READ_ONCE/WRITE_ONCE use __may_alias__ attribute via __uXX_alias_t
-types to prevent compiler optimizations that assume type-based aliasing
-rules, which is critical for tp_status access that may be misaligned
-within the ring buffer.
-
-Userspace must use equivalent semantics: volatile unaligned_uint32_t
-(with __rte_may_alias) reads/writes with explicit memory barriers
-(rte_smp_rmb/rte_smp_wmb).
-
-On aarch64 and other weakly-ordered architectures, missing barriers
-cause packet corruption because:
-- RX: CPU may read stale packet data before seeing tp_status update
-- TX: CPU may reorder stores, causing kernel to see tp_status before
-  packet data is fully written
-
-This becomes critical with io_uring SQPOLL mode where the kernel
-polling thread on a different CPU core asynchronously updates
-tp_status, making proper memory ordering essential.
-
-Note: Uses rte_smp_[r/w]mb which triggers checkpatch warnings, but
-C11 atomics cannot be used because tp_status is not declared _Atomic
-in the kernel's tpacket2_hdr structure. We must match the kernel's
-volatile + barrier memory model with __may_alias__ protection.
-
-Frame Calculation Issues:
-1. Frame overhead incorrectly calculated as TPACKET_ALIGN(TPACKET2_HDRLEN)
-   instead of TPACKET2_HDRLEN - sizeof(struct sockaddr_ll), causing
-   incorrect usable frame data size.
-
-2. Frame address calculation assumed sequential layout
-   (frame_base + i * frame_size), but the kernel's packet_lookup_frame()
-   uses block-based addressing:
-     block_idx = position / frames_per_block
-     frame_offset = position % frames_per_block
-     address = block_start[block_idx] + (frame_offset * frame_size)
-
-   This caused memory corruption when frames don't evenly divide blocks.
-
-Fixes: 364e08f2bbc0 ("af_packet: add PMD for AF_PACKET-based virtual devices")
-Cc: linville@tuxdriver.com
-Cc: stable@dpdk.org
+- Use rte_pktmbuf_free_bulk() in TX path instead of individual
+  rte_pktmbuf_free() calls for better batch efficiency
+- Add unlikely() hints for error paths (oversized packets, VLAN
+  insertion failures, sendto errors) to optimize branch prediction
+- Remove unnecessary early nb_pkts == 0 when loop handles this
+  and app may never call with 0 frames.
 
 Signed-off-by: Scott Mitchell <scott.k.mitch1@gmail.com>
 ---
-Depends-on: patch-160679 ("eal: add __rte_may_alias and __rte_aligned to unaligned typedefs")
+ drivers/net/af_packet/rte_eth_af_packet.c | 41 ++++++++---------------
+ 1 file changed, 14 insertions(+), 27 deletions(-)
 
- doc/guides/rel_notes/release_26_03.rst    |   4 +
- drivers/net/af_packet/rte_eth_af_packet.c | 151 ++++++++++++++++------
- 2 files changed, 118 insertions(+), 37 deletions(-)
-
-diff --git a/doc/guides/rel_notes/release_26_03.rst b/doc/guides/rel_notes/release_26_03.rst
-index 15dabee7a1..c7e7c7d25b 100644
---- a/doc/guides/rel_notes/release_26_03.rst
-+++ b/doc/guides/rel_notes/release_26_03.rst
-@@ -55,6 +55,10 @@ New Features
-      Also, make sure to start the actual text at the margin.
-      =======================================================
- 
-+* **Updated af_packet net driver.**
-+
-+  * Fixed kernel memory barrier protocol for memory availability
-+  * Fixed shared memory frame overhead offset calculation
- 
- Removed Items
- -------------
 diff --git a/drivers/net/af_packet/rte_eth_af_packet.c b/drivers/net/af_packet/rte_eth_af_packet.c
-index ef11b8fb6b..d0cc2c419a 100644
+index d0cc2c419a..51ac95ff5e 100644
 --- a/drivers/net/af_packet/rte_eth_af_packet.c
 +++ b/drivers/net/af_packet/rte_eth_af_packet.c
-@@ -9,6 +9,8 @@
- #include <rte_common.h>
- #include <rte_string_fns.h>
- #include <rte_mbuf.h>
-+#include <rte_atomic.h>
-+#include <rte_bitops.h>
- #include <ethdev_driver.h>
- #include <ethdev_vdev.h>
- #include <rte_malloc.h>
-@@ -41,6 +43,10 @@
- #define DFLT_FRAME_SIZE		(1 << 11)
- #define DFLT_FRAME_COUNT	(1 << 9)
- 
-+static const uint16_t eth_af_packet_frame_size_max = RTE_IPV4_MAX_PKT_LEN;
-+#define ETH_AF_PACKET_FRAME_OVERHEAD (TPACKET2_HDRLEN - sizeof(struct sockaddr_ll))
-+#define ETH_AF_PACKET_ETH_OVERHEAD (RTE_ETHER_HDR_LEN + RTE_ETHER_CRC_LEN)
-+
- static uint64_t timestamp_dynflag;
- static int timestamp_dynfield_offset = -1;
- 
-@@ -120,6 +126,28 @@ RTE_LOG_REGISTER_DEFAULT(af_packet_logtype, NOTICE);
- 	RTE_LOG_LINE(level, AFPACKET, "%s(): " fmt ":%s", __func__, \
- 		## __VA_ARGS__, strerror(errno))
- 
-+/**
-+ * Read tp_status from packet mmap ring. Matches kernel's READ_ONCE() with smp_rmb()
-+ * ordering in af_packet.c __packet_get_status.
-+ */
-+static inline uint32_t
-+tpacket_read_status(const volatile void *tp_status)
-+{
-+	rte_smp_rmb();
-+	return *((const volatile unaligned_uint32_t *)tp_status);
-+}
-+
-+/**
-+ * Write tp_status to packet mmap ring. Matches kernel's WRITE_ONCE() with smp_wmb()
-+ * ordering in af_packet.c __packet_set_status.
-+ */
-+static inline void
-+tpacket_write_status(volatile void *tp_status, uint32_t status)
-+{
-+	*((volatile unaligned_uint32_t *)tp_status) = status;
-+	rte_smp_wmb();
-+}
-+
- static uint16_t
- eth_af_packet_rx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- {
-@@ -129,7 +157,8 @@ eth_af_packet_rx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- 	uint8_t *pbuf;
- 	struct pkt_rx_queue *pkt_q = queue;
- 	uint16_t num_rx = 0;
--	unsigned long num_rx_bytes = 0;
-+	uint32_t num_rx_bytes = 0;
-+	uint32_t tp_status;
+@@ -161,9 +161,6 @@ eth_af_packet_rx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
+ 	uint32_t tp_status;
  	unsigned int framecount, framenum;
  
- 	if (unlikely(nb_pkts == 0))
-@@ -144,7 +173,8 @@ eth_af_packet_rx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- 	for (i = 0; i < nb_pkts; i++) {
- 		/* point at the next incoming frame */
- 		ppd = (struct tpacket2_hdr *) pkt_q->rd[framenum].iov_base;
--		if ((ppd->tp_status & TP_STATUS_USER) == 0)
-+		tp_status = tpacket_read_status(&ppd->tp_status);
-+		if ((tp_status & TP_STATUS_USER) == 0)
- 			break;
- 
- 		/* allocate the next mbuf */
-@@ -160,7 +190,7 @@ eth_af_packet_rx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- 		memcpy(rte_pktmbuf_mtod(mbuf, void *), pbuf, rte_pktmbuf_data_len(mbuf));
- 
- 		/* check for vlan info */
--		if (ppd->tp_status & TP_STATUS_VLAN_VALID) {
-+		if (tp_status & TP_STATUS_VLAN_VALID) {
- 			mbuf->vlan_tci = ppd->tp_vlan_tci;
- 			mbuf->ol_flags |= (RTE_MBUF_F_RX_VLAN | RTE_MBUF_F_RX_VLAN_STRIPPED);
- 
-@@ -179,7 +209,7 @@ eth_af_packet_rx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- 		}
- 
- 		/* release incoming frame and advance ring buffer */
--		ppd->tp_status = TP_STATUS_KERNEL;
-+		tpacket_write_status(&ppd->tp_status, TP_STATUS_KERNEL);
- 		if (++framenum >= framecount)
- 			framenum = 0;
- 		mbuf->port = pkt_q->in_port;
-@@ -228,8 +258,8 @@ eth_af_packet_tx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- 	struct pollfd pfd;
- 	struct pkt_tx_queue *pkt_q = queue;
- 	uint16_t num_tx = 0;
--	unsigned long num_tx_bytes = 0;
--	int i;
-+	uint32_t num_tx_bytes = 0;
-+	uint16_t i;
- 
- 	if (unlikely(nb_pkts == 0))
- 		return 0;
-@@ -259,16 +289,6 @@ eth_af_packet_tx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- 			}
- 		}
- 
--		/* point at the next incoming frame */
--		if (!tx_ring_status_available(ppd->tp_status)) {
--			if (poll(&pfd, 1, -1) < 0)
--				break;
+-	if (unlikely(nb_pkts == 0))
+-		return 0;
 -
--			/* poll() can return POLLERR if the interface is down */
--			if (pfd.revents & POLLERR)
--				break;
+ 	/*
+ 	 * Reads the given number of packets from the AF_PACKET socket one by
+ 	 * one and copies the packet data into a newly allocated mbuf.
+@@ -261,9 +258,6 @@ eth_af_packet_tx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
+ 	uint32_t num_tx_bytes = 0;
+ 	uint16_t i;
+ 
+-	if (unlikely(nb_pkts == 0))
+-		return 0;
+-
+ 	memset(&pfd, 0, sizeof(pfd));
+ 	pfd.fd = pkt_q->sockfd;
+ 	pfd.events = POLLOUT;
+@@ -271,24 +265,17 @@ eth_af_packet_tx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
+ 
+ 	framecount = pkt_q->framecount;
+ 	framenum = pkt_q->framenum;
+-	ppd = (struct tpacket2_hdr *) pkt_q->rd[framenum].iov_base;
+ 	for (i = 0; i < nb_pkts; i++) {
+-		mbuf = *bufs++;
++		mbuf = bufs[i];
+ 
+-		/* drop oversized packets */
+-		if (mbuf->pkt_len > pkt_q->frame_data_size) {
+-			rte_pktmbuf_free(mbuf);
++		/* Drop oversized packets. Insert VLAN if necessary */
++		if (unlikely(mbuf->pkt_len > pkt_q->frame_data_size ||
++			    ((mbuf->ol_flags & RTE_MBUF_F_TX_VLAN) != 0 &&
++			     rte_vlan_insert(&mbuf) != 0))) {
+ 			continue;
+ 		}
+ 
+-		/* insert vlan info if necessary */
+-		if (mbuf->ol_flags & RTE_MBUF_F_TX_VLAN) {
+-			if (rte_vlan_insert(&mbuf)) {
+-				rte_pktmbuf_free(mbuf);
+-				continue;
+-			}
 -		}
 -
++		ppd = (struct tpacket2_hdr *)pkt_q->rd[framenum].iov_base;
  		/*
  		 * poll() will almost always return POLLOUT, even if there
  		 * are no extra buffers available
-@@ -283,26 +303,28 @@ eth_af_packet_tx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- 		 *
- 		 * This results in poll() returning POLLOUT.
- 		 */
--		if (!tx_ring_status_available(ppd->tp_status))
-+		if (unlikely(!tx_ring_status_available(tpacket_read_status(&ppd->tp_status)) &&
-+			(poll(&pfd, 1, -1) < 0 || (pfd.revents & POLLERR) != 0 ||
-+			 !tx_ring_status_available(tpacket_read_status(&ppd->tp_status))))) {
-+			/* Ring is full, stop here. Don't process bufs[i]. */
- 			break;
-+		}
+@@ -312,6 +299,9 @@ eth_af_packet_tx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
  
--		/* copy the tx frame data */
--		pbuf = (uint8_t *) ppd + TPACKET2_HDRLEN -
--			sizeof(struct sockaddr_ll);
-+		pbuf = (uint8_t *)ppd + ETH_AF_PACKET_FRAME_OVERHEAD;
+ 		pbuf = (uint8_t *)ppd + ETH_AF_PACKET_FRAME_OVERHEAD;
  
++		ppd->tp_len = mbuf->pkt_len;
++		ppd->tp_snaplen = mbuf->pkt_len;
++
  		struct rte_mbuf *tmp_mbuf = mbuf;
--		while (tmp_mbuf) {
-+		do {
+ 		do {
  			uint16_t data_len = rte_pktmbuf_data_len(tmp_mbuf);
- 			memcpy(pbuf, rte_pktmbuf_mtod(tmp_mbuf, void*), data_len);
- 			pbuf += data_len;
+@@ -320,23 +310,20 @@ eth_af_packet_tx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
  			tmp_mbuf = tmp_mbuf->next;
--		}
-+		} while (tmp_mbuf);
+ 		} while (tmp_mbuf);
  
- 		ppd->tp_len = mbuf->pkt_len;
- 		ppd->tp_snaplen = mbuf->pkt_len;
- 
+-		ppd->tp_len = mbuf->pkt_len;
+-		ppd->tp_snaplen = mbuf->pkt_len;
+-
  		/* release incoming frame and advance ring buffer */
--		ppd->tp_status = TP_STATUS_SEND_REQUEST;
-+		tpacket_write_status(&ppd->tp_status, TP_STATUS_SEND_REQUEST);
+ 		tpacket_write_status(&ppd->tp_status, TP_STATUS_SEND_REQUEST);
  		if (++framenum >= framecount)
  			framenum = 0;
- 		ppd = (struct tpacket2_hdr *) pkt_q->rd[framenum].iov_base;
-@@ -392,10 +414,12 @@ eth_dev_info(struct rte_eth_dev *dev, struct rte_eth_dev_info *dev_info)
- 
- 	dev_info->if_index = internals->if_index;
- 	dev_info->max_mac_addrs = 1;
--	dev_info->max_rx_pktlen = RTE_ETHER_MAX_LEN;
-+	dev_info->max_rx_pktlen = (uint32_t)eth_af_packet_frame_size_max +
-+		ETH_AF_PACKET_ETH_OVERHEAD;
-+	dev_info->max_mtu = eth_af_packet_frame_size_max;
- 	dev_info->max_rx_queues = (uint16_t)internals->nb_queues;
- 	dev_info->max_tx_queues = (uint16_t)internals->nb_queues;
--	dev_info->min_rx_bufsize = 0;
-+	dev_info->min_rx_bufsize = ETH_AF_PACKET_ETH_OVERHEAD;
- 	dev_info->tx_offload_capa = RTE_ETH_TX_OFFLOAD_MULTI_SEGS |
- 		RTE_ETH_TX_OFFLOAD_VLAN_INSERT;
- 	dev_info->rx_offload_capa = RTE_ETH_RX_OFFLOAD_VLAN_STRIP |
-@@ -572,8 +596,7 @@ eth_rx_queue_setup(struct rte_eth_dev *dev,
- 	/* Now get the space available for data in the mbuf */
- 	buf_size = rte_pktmbuf_data_room_size(pkt_q->mb_pool) -
- 		RTE_PKTMBUF_HEADROOM;
--	data_size = internals->req.tp_frame_size;
--	data_size -= TPACKET2_HDRLEN - sizeof(struct sockaddr_ll);
-+	data_size = internals->req.tp_frame_size - ETH_AF_PACKET_FRAME_OVERHEAD;
- 
- 	if (data_size > buf_size) {
- 		PMD_LOG(ERR,
-@@ -612,7 +635,7 @@ eth_dev_mtu_set(struct rte_eth_dev *dev, uint16_t mtu)
- 	int ret;
- 	int s;
- 	unsigned int data_size = internals->req.tp_frame_size -
--				 TPACKET2_HDRLEN;
-+				 ETH_AF_PACKET_FRAME_OVERHEAD;
- 
- 	if (mtu > data_size)
- 		return -EINVAL;
-@@ -977,25 +1000,38 @@ rte_pmd_init_internals(struct rte_vdev_device *dev,
- 		rx_queue->rd = rte_zmalloc_socket(name, rdsize, 0, numa_node);
- 		if (rx_queue->rd == NULL)
- 			goto error;
-+		/* Frame addresses must match kernel's packet_lookup_frame():
-+		 * block_idx = position / frames_per_block
-+		 * frame_offset = position % frames_per_block
-+		 * address = block_start + (frame_offset * frame_size)
-+		 */
-+		const uint32_t frames_per_block = req->tp_block_size / req->tp_frame_size;
- 		for (i = 0; i < req->tp_frame_nr; ++i) {
--			rx_queue->rd[i].iov_base = rx_queue->map + (i * framesize);
-+			const uint32_t block_idx = i / frames_per_block;
-+			const uint32_t frame_in_block = i % frames_per_block;
-+			rx_queue->rd[i].iov_base = rx_queue->map +
-+				(block_idx * req->tp_block_size) +
-+				(frame_in_block * req->tp_frame_size);
- 			rx_queue->rd[i].iov_len = req->tp_frame_size;
- 		}
- 		rx_queue->sockfd = qsockfd;
- 
- 		tx_queue = &((*internals)->tx_queue[q]);
- 		tx_queue->framecount = req->tp_frame_nr;
--		tx_queue->frame_data_size = req->tp_frame_size;
--		tx_queue->frame_data_size -= TPACKET2_HDRLEN -
--			sizeof(struct sockaddr_ll);
-+		tx_queue->frame_data_size = req->tp_frame_size - ETH_AF_PACKET_FRAME_OVERHEAD;
- 
- 		tx_queue->map = rx_queue->map + req->tp_block_size * req->tp_block_nr;
- 
- 		tx_queue->rd = rte_zmalloc_socket(name, rdsize, 0, numa_node);
- 		if (tx_queue->rd == NULL)
- 			goto error;
-+		/* See comment above rx_queue->rd initialization. */
- 		for (i = 0; i < req->tp_frame_nr; ++i) {
--			tx_queue->rd[i].iov_base = tx_queue->map + (i * framesize);
-+			const uint32_t block_idx = i / frames_per_block;
-+			const uint32_t frame_in_block = i % frames_per_block;
-+			tx_queue->rd[i].iov_base = tx_queue->map +
-+				(block_idx * req->tp_block_size) +
-+				(frame_in_block * req->tp_frame_size);
- 			tx_queue->rd[i].iov_len = req->tp_frame_size;
- 		}
- 		tx_queue->sockfd = qsockfd;
-@@ -1081,7 +1117,8 @@ rte_eth_from_packet(struct rte_vdev_device *dev,
- 	struct rte_kvargs_pair *pair = NULL;
- 	unsigned k_idx;
- 	unsigned int blockcount;
--	unsigned int blocksize;
-+	const int pagesize = getpagesize();
-+	unsigned int blocksize = pagesize;
- 	unsigned int framesize = DFLT_FRAME_SIZE;
- 	unsigned int framecount = DFLT_FRAME_COUNT;
- 	unsigned int qpairs = 1;
-@@ -1092,8 +1129,6 @@ rte_eth_from_packet(struct rte_vdev_device *dev,
- 	if (*sockfd < 0)
- 		return -1;
- 
--	blocksize = getpagesize();
+-		ppd = (struct tpacket2_hdr *) pkt_q->rd[framenum].iov_base;
 -
- 	/*
- 	 * Walk arguments for configurable settings
- 	 */
-@@ -1162,13 +1197,55 @@ rte_eth_from_packet(struct rte_vdev_device *dev,
- 		return -1;
+ 		num_tx++;
+ 		num_tx_bytes += mbuf->pkt_len;
+-		rte_pktmbuf_free(mbuf);
  	}
  
--	blockcount = framecount / (blocksize / framesize);
-+	const unsigned int frames_per_block = blocksize / framesize;
-+	blockcount = framecount / frames_per_block;
- 	if (!blockcount) {
- 		PMD_LOG(ERR,
- 			"%s: invalid AF_PACKET MMAP parameters", name);
- 		return -1;
- 	}
- 
-+	/*
-+	 * https://www.kernel.org/doc/Documentation/networking/packet_mmap.txt
-+	 * Check constraints that may be enforced by the kernel and cause failure
-+	 * to initialize the rings but explicit error messages aren't provided.
-+	 * See packet_set_ring in linux kernel for enforcement:
-+	 * https://github.com/torvalds/linux/blob/master/net/packet/af_packet.c
-+	 */
-+	if (blocksize % pagesize != 0) {
-+		/* tp_block_size must be a multiple of PAGE_SIZE */
-+		PMD_LOG(WARNING, "%s: %s=%u must be a multiple of PAGE_SIZE=%d",
-+			name, ETH_AF_PACKET_BLOCKSIZE_ARG, blocksize, pagesize);
-+	}
-+	if (framesize % TPACKET_ALIGNMENT != 0) {
-+		/* tp_frame_size must be a multiple of TPACKET_ALIGNMENT */
-+		PMD_LOG(WARNING, "%s: %s=%u must be a multiple of TPACKET_ALIGNMENT=%d",
-+			name, ETH_AF_PACKET_FRAMESIZE_ARG, framesize, TPACKET_ALIGNMENT);
-+	}
-+	if (frames_per_block == 0 || frames_per_block > UINT_MAX / blockcount ||
-+	    framecount != frames_per_block * blockcount) {
-+		/* tp_frame_nr must be exactly frames_per_block*tp_block_nr */
-+		PMD_LOG(WARNING, "%s: %s=%u must be exactly "
-+			"frames_per_block(%s/%s = %u/%u = %u) * blockcount(%u)",
-+			name, ETH_AF_PACKET_FRAMECOUNT_ARG, framecount,
-+			ETH_AF_PACKET_BLOCKSIZE_ARG, ETH_AF_PACKET_FRAMESIZE_ARG,
-+			blocksize, framesize, frames_per_block, blockcount);
-+	}
++	rte_pktmbuf_free_bulk(&bufs[0], i);
 +
-+	/* Below conditions may not cause errors but provide hints to improve */
-+	if (blocksize % framesize != 0) {
-+		PMD_LOG(WARNING, "%s: %s=%u not evenly divisible by %s=%u, "
-+			"may waste memory", name,
-+			ETH_AF_PACKET_BLOCKSIZE_ARG, blocksize,
-+			ETH_AF_PACKET_FRAMESIZE_ARG, framesize);
-+	}
-+	if (!rte_is_power_of_2(blocksize)) {
-+		/* tp_block_size should be a power of two or there will be waste */
-+		PMD_LOG(WARNING, "%s: %s=%u should be a power of two "
-+			"or there will be a waste of memory",
-+			name, ETH_AF_PACKET_BLOCKSIZE_ARG, blocksize);
-+	}
-+
- 	PMD_LOG(DEBUG, "%s: AF_PACKET MMAP parameters:", name);
- 	PMD_LOG(DEBUG, "%s:\tblock size %d", name, blocksize);
- 	PMD_LOG(DEBUG, "%s:\tblock count %d", name, blockcount);
+ 	/* kick-off transmits */
+-	if (sendto(pkt_q->sockfd, NULL, 0, MSG_DONTWAIT, NULL, 0) == -1 &&
+-			errno != ENOBUFS && errno != EAGAIN) {
++	if (unlikely(num_tx > 0 &&
++		     sendto(pkt_q->sockfd, NULL, 0, MSG_DONTWAIT, NULL, 0) == -1 &&
++		     errno != ENOBUFS && errno != EAGAIN)) {
+ 		/*
+ 		 * In case of a ENOBUFS/EAGAIN error all of the enqueued
+ 		 * packets will be considered successful even though only some
 -- 
 2.39.5 (Apple Git-154)
 
