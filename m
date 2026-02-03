@@ -2,70 +2,43 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E76DE8305D
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Feb 2026 07:08:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2025E8305D
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Feb 2026 07:18:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E670540657;
-	Tue,  3 Feb 2026 08:07:51 +0100 (CET)
-Received: from mail-dl1-f46.google.com (mail-dl1-f46.google.com [74.125.82.46])
- by mails.dpdk.org (Postfix) with ESMTP id 8C13240611
- for <dev@dpdk.org>; Tue,  3 Feb 2026 08:07:48 +0100 (CET)
-Received: by mail-dl1-f46.google.com with SMTP id
- a92af1059eb24-126ea4b77adso1053716c88.1
- for <dev@dpdk.org>; Mon, 02 Feb 2026 23:07:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1770102467; x=1770707267; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=yzZXfdEFxFt8JpGJIezVLIXv9ZEGCLwOtqM14IO3HRk=;
- b=f2AUe+OVTQtsAWo+zvbPvPMmLyX3E+w7nZjOylL9+I481o/WRBCyHp6XJQUv1CCV6h
- ryGxiFRzhlXuMz8+aCns+NSJIQurTYpT5QxzU3QWfnyLRqz4FSv91kre0ha3EJjxMack
- 2X2OpuorgO0e+NDIRUgkqnn1SLXCG6cMncpjZH6XjkOGxj312U+za7BPFzHEcUT3Fa1p
- Rl1oLPtgfaM7o13iLyBO2CzKSJ/ydadzhWnyYhP9+pWIPRj6HnYQTKX+salQqFndNitT
- KJsCNJMDl1WYNuXAWUVXc8Xkxq9RAH7iAqqcajm6Fwi1Brh7Tt3y0jK0OgDLxKrR6ueP
- XwAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1770102467; x=1770707267;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=yzZXfdEFxFt8JpGJIezVLIXv9ZEGCLwOtqM14IO3HRk=;
- b=RNpHw16D1V4fgrfGdEUzzp+1qA71/FsjlTMmR4Y4Oxbv6RUlkYtSAOI0zX0cZXEftJ
- mFOs0G3u4ta5c1LjYULJ2Eu5unOja5pVxMOD/ymWLH3ZG3UDj69kA+la+hqkpwV3aBc8
- HoRu5f/z5eIXffcWCa5eyg07utw1VNKRlnJA0sMIkCeaXg8SHNPq9JNiXRelC3fwn9Pm
- XQ3cz0YaxFyy+07SsNF7F5/3brL3ke4jWphakjtB6mpAWYbOOBww8t56bYag5tRx/rNr
- xjTrvlqyo+SE2J4moduSoVjbg5uk43/zaS0M2RY79ailOjKYvjaKM4CvtJM1Ryblj5SA
- hM5A==
-X-Gm-Message-State: AOJu0YzsgO6MtcujVc8YAkQhc+LNZDG5yJw2e1WkpRDw3ScfPECfNecN
- joXnFG5hVjQbhe4wlkkFBnPGpRLRQ8PfYxvFgnrc//4hJQRYQdZz5DED+P3tmQ==
-X-Gm-Gg: AZuq6aJMxOpULh1O9WPSL6tj5H3dkxZNaXyTL49jYkgu3k1sLYXHCBbitmp8rfvCS+Y
- LONu8hFOluEa9M2Ou0pJheAONxr3BaWc+63vnKTN9bXR2/uTtZwIvVj+6fOOJCja3PkOZ/+H7nl
- tET3K0rmGl9YIvGKP2nC791InOFsWLeAAZV/M3igsL6yimNoubsodUgnFnHCJYcwmYYB/rEDvIj
- neVRGp+NqpkuGnrdIkL9kRBQ8eSJdE0bGorQST/KctxFLYENuQVK8NWSothCTeZiEO/JccmdlvQ
- ZthONjVNKWmh9RKHY6VFLBF8a9yNb5c1RZfV7hHb1fExFUwkwUZANYfr1eK0aZXH1qWR3MtYdGF
- RfzgeQbvKUuO3yMOP00vX12HV564+uaTzlGevQRIOaV1AJYS6ZMP870hHtuEF7dQHzn7/5yUTh7
- Um/jF+bcl4wW8U1VNsCP9tXA==
-X-Received: by 2002:a05:7300:4306:b0:2b7:b7e7:9025 with SMTP id
- 5a478bee46e88-2b7c88f4382mr7309186eec.31.1770102467272; 
- Mon, 02 Feb 2026 23:07:47 -0800 (PST)
-Received: from mac.com ([136.24.82.250]) by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-2b7a16cfaa8sm21073318eec.4.2026.02.02.23.07.46
- (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
- Mon, 02 Feb 2026 23:07:46 -0800 (PST)
-From: scott.k.mitch1@gmail.com
-To: dev@dpdk.org
-Cc: stephen@networkplumber.org,
-	Scott Mitchell <scott.k.mitch1@gmail.com>
-Subject: [PATCH v5 4/4] net/af_packet: add software checksum offload support
-Date: Mon,  2 Feb 2026 23:07:40 -0800
-Message-Id: <20260203070740.62305-5-scott.k.mitch1@gmail.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20260203070740.62305-1-scott.k.mitch1@gmail.com>
-References: <20260202081456.4322-1-scott.k.mitch1@gmail.com>
- <20260203070740.62305-1-scott.k.mitch1@gmail.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 0669C402EE;
+	Tue,  3 Feb 2026 08:18:35 +0100 (CET)
+Received: from out198-4.us.a.mail.aliyun.com (out198-4.us.a.mail.aliyun.com
+ [47.90.198.4]) by mails.dpdk.org (Postfix) with ESMTP id 2D9E3402A2;
+ Tue,  3 Feb 2026 08:18:31 +0100 (CET)
+X-Alimail-AntiSpam: AC=CONTINUE; BC=0.07386656|-1; CH=green;
+ DM=|CONTINUE|false|; DS=CONTINUE|ham_alarm|0.0155441-0.00532257-0.979133;
+ FP=13934501250321616461|0|0|0|0|-1|-1|-1;
+ HT=maildocker-contentspam033037025160; MF=dimon.zhao@nebula-matrix.com; NM=1;
+ PH=DW; RN=6; RT=6; SR=0; TI=W4_0.2.3_212515AD_1770102339520_o7001c847; 
+Received: from WS-web
+ (dimon.zhao@nebula-matrix.com[W4_0.2.3_212515AD_1770102339520_o7001c847]
+ cluster:ay29) at Tue, 03 Feb 2026 15:05:39 +0800
+Date: Tue, 03 Feb 2026 15:05:39 +0800
+From: "Dimon" <dimon.zhao@nebula-matrix.com>
+To: "Stephen Hemminger" <stephen@networkplumber.org>
+Cc: "Thomas Monjalon" <thomas@monjalon.net>, "dev" <dev@dpdk.org>,
+ "stable" <stable@dpdk.org>, "Kyo Liu" <kyo.liu@nebula-matrix.com>,
+ "Leon" <leon.yu@nebula-matrix.com>, "Sam" <sam.chen@nebula-matrix.com>
+Message-ID: <f6f0529e-09c6-450a-807e-82fd07fd373a.dimon.zhao@nebula-matrix.com>
+Subject: =?UTF-8?B?5Zue5aSN77yaW1BBVENIIHYzIDEvMV0gbmV0L25ibDogZml4IGlzc3VlcyByZXBvcnRlZCBi?=
+ =?UTF-8?B?eSBDb3Zlcml0eQ==?=
+X-Mailer: [Alimail-Mailagent revision 57][W4_0.2.3][null][Chrome]
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+x-aliyun-im-through: {"version":"v1.0"}
+References: <20251030033619.3386064-1-dimon.zhao@nebula-matrix.com>
+ <20260115032744.62449-2-dimon.zhao@nebula-matrix.com>
+ <20260120203613.6f292ccf@phoenix.local> <5502163.GXAFRqVoOG@thomas>
+ <cf2f08da-4ffd-414c-9ae3-5a6ecb404c06.dimon.zhao@nebula-matrix.com>,
+ <CAOaVG14zbrQJbFUpX1Hw8trb0C8g6KyxVwaEURxN=2Pnaq456g@mail.gmail.com>
+x-aliyun-mail-creator: W4_0.2.3_null_d2lTW96aWxsYS81LjAgKFdpbmRvd3MgTlQgMTAuMDsgV2luNjQ7IHg2NCkgQXBwbGVXZWJLaXQvNTM3LjM2IChLSFRNTCwgbGlrZSBHZWNrbykgQ2hyb21lLzEzMy4wLjY5NDMuMTQyIFNhZmFyaS81MzcuMzYgZGluZ3RhbGstd2luLzEuMC4wIG53KDAuMTQuNykgRGluZ1RhbGsoOC4yLjAtUmVsZWFzZS4yNTEyMjIwMTkpIE1vam8vMS4wLjAgTmF0aXZlIEFwcFR5cGUocmVsZWFzZSkgQ2hhbm5lbC8yMDEyMDAgQXJjaGl0ZWN0dXJlL3g4Nl82NA==Gs
+In-Reply-To: <CAOaVG14zbrQJbFUpX1Hw8trb0C8g6KyxVwaEURxN=2Pnaq456g@mail.gmail.com>
+Content-Type: multipart/alternative;
+ boundary="----=ALIBOUNDARY_2482_7fd11d1eb700_69819e43_42fc2"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -77,378 +50,220 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
+Reply-To: Dimon <dimon.zhao@nebula-matrix.com>
 Errors-To: dev-bounces@dpdk.org
 
-From: Scott Mitchell <scott.k.mitch1@gmail.com>
+------=ALIBOUNDARY_2482_7fd11d1eb700_69819e43_42fc2
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
 
-Add software checksum offload support and configurable TX poll
-behavior to improve flexibility and performance.
+SGkgU3RlcGhlbiwKVGhhbmsgeW91IGZvciB0aGUgZ3VpZGFuY2UuCkknbGwgcHJlcGFyZSBhIG5l
+dyBwYXRjaCBzZXJpZXMgd2l0aCB0aGUgQ292ZXJpdHkgZml4ZXMgc3BsaXQgaW50byAzIHNlcGFy
+YXRlIGNvbW1pdHMgYXMgc3VnZ2VzdGVkLgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0K5Y+R5Lu25Lq677yaU3RlcGhlbiBI
+ZW1taW5nZXIgPHN0ZXBoZW5AbmV0d29ya3BsdW1iZXIub3JnPgrlj5HpgIHml7bpl7TvvJoyMDI2
+5bm0MuaciDPml6Uo5ZGo5LqMKSAxNDo1NArmlLbku7bkurrvvJpEaW1vbjxkaW1vbi56aGFvQG5l
+YnVsYS1tYXRyaXguY29tPgrmioTjgIDpgIHvvJpUaG9tYXMgTW9uamFsb248dGhvbWFzQG1vbmph
+bG9uLm5ldD47IGRldjxkZXZAZHBkay5vcmc+OyBzdGFibGU8c3RhYmxlQGRwZGsub3JnPjsgS3lv
+IExpdTxreW8ubGl1QG5lYnVsYS1tYXRyaXguY29tPjsgTGVvbjxsZW9uLnl1QG5lYnVsYS1tYXRy
+aXguY29tPjsgU2FtPHNhbS5jaGVuQG5lYnVsYS1tYXRyaXguY29tPgrkuLvjgIDpopjvvJpSZTog
+W1BBVENIIHYzIDEvMV0gbmV0L25ibDogZml4IGlzc3VlcyByZXBvcnRlZCBieSBDb3Zlcml0eQpT
+ZW5kIGEgbmV3IHNlcmllcyBhbmQgSSByZXBsYWNlIHRoZSBvbmUgaW4gbmV4dCBuZXQKT24gTW9u
+LCBGZWIgMiwgMjAyNiwgMjA6MDEgRGltb24gPGRpbW9uLnpoYW9AbmVidWxhLW1hdHJpeC5jb20g
+PG1haWx0bzpkaW1vbi56aGFvQG5lYnVsYS1tYXRyaXguY29tID4+IHdyb3RlOgpIaSBUaG9tYXMs
+ClRoYW5rIHlvdSBmb3IgdGhlIGZlZWRiYWNrIGFib3V0IHNwbGl0dGluZyB0aGUgQ292ZXJpdHkg
+Zml4ZXMgcGF0Y2ggYnkgaXNzdWUgdHlwZS4KWW91J3JlIGFic29sdXRlbHkgcmlnaHQgLSBpdCBh
+ZGRyZXNzZXMgdGhyZWUgZGlzdGluY3QgcHJvYmxlbXMgYW5kIHNob3VsZCBiZSBzZXBhcmF0ZSBj
+b21taXRzLgpOb3cgdGhlIHBhdGNoIGlzIGFscmVhZHkgcXVldWVkIHRvIG5leHQtbmV0LCBhbmQg
+c2luY2UgdGhlbiBmaXZlIGFkZGl0aW9uYWwgbmJsIGRyaXZlciBmaXhlcyBoYXZlIGJlZW4gbWVy
+Z2VkOgpuZXQvbmJsOiBpbXByb3ZlIG1haWxib3ggZXhjZXB0aW9uIGhhbmRsaW5nCm5ldC9uYmw6
+IGZpeCBtYnVmIGRvdWJsZS1mcmVlIGluIHF1ZXVlIGNsZWFudXAKbmV0L25ibDogZml4IG1idWYg
+aGVhZHJvb20gdXNhZ2UgaW4gcGFja2V0IFR4Cm5ldC9uYmw6IGZpeCBtZW16b25lIGxlYWsgb24g
+cXVldWUgcmVsZWFzZQpuZXQvbmJsOiBmaXggaGFyZHdhcmUgc3RhdHMgaW50ZXJydXB0IG5lc3Rp
+bmcgaXNzdWUKV2hhdCBzaG91bGQgSSBkbz8gU2hvdWxkIEkgYXNrIFN0ZXBoZW4gdG8gaGVscCBy
+ZXZlcnQgdGhlc2UgNiBjb21taXRzIGFuZCB0aGVuIHJlc3VibWl0IHRoZW0/Ci0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQrl
+j5Hku7bkurrvvJpUaG9tYXMgTW9uamFsb24gPHRob21hc0Btb25qYWxvbi5uZXQgPG1haWx0bzp0
+aG9tYXNAbW9uamFsb24ubmV0ID4+CuWPkemAgeaXtumXtO+8mjIwMjblubQy5pyIMuaXpSjlkajk
+uIApIDA0OjI5CuaUtuS7tuS6uu+8mkRpbW9uPGRpbW9uLnpoYW9AbmVidWxhLW1hdHJpeC5jb20g
+PG1haWx0bzpkaW1vbi56aGFvQG5lYnVsYS1tYXRyaXguY29tID4+CuaKhOOAgOmAge+8mmRldjxk
+ZXZAZHBkay5vcmcgPG1haWx0bzpkZXZAZHBkay5vcmcgPj47IHN0YWJsZTxzdGFibGVAZHBkay5v
+cmcgPG1haWx0bzpzdGFibGVAZHBkay5vcmcgPj47IEt5byBMaXU8a3lvLmxpdUBuZWJ1bGEtbWF0
+cml4LmNvbSA8bWFpbHRvOmt5by5saXVAbmVidWxhLW1hdHJpeC5jb20gPj47IExlb248bGVvbi55
+dUBuZWJ1bGEtbWF0cml4LmNvbSA8bWFpbHRvOmxlb24ueXVAbmVidWxhLW1hdHJpeC5jb20gPj47
+IFNhbTxzYW0uY2hlbkBuZWJ1bGEtbWF0cml4LmNvbSA8bWFpbHRvOnNhbS5jaGVuQG5lYnVsYS1t
+YXRyaXguY29tID4+OyBTdGVwaGVuIEhlbW1pbmdlcjxzdGVwaGVuQG5ldHdvcmtwbHVtYmVyLm9y
+ZyA8bWFpbHRvOnN0ZXBoZW5AbmV0d29ya3BsdW1iZXIub3JnID4+CuS4u+OAgOmimO+8mlJlOiBb
+UEFUQ0ggdjMgMS8xXSBuZXQvbmJsOiBmaXggaXNzdWVzIHJlcG9ydGVkIGJ5IENvdmVyaXR5CjIx
+LzAxLzIwMjYgMDU6MzYsIFN0ZXBoZW4gSGVtbWluZ2VyOgo+IE9uIFdlZCwgMTQgSmFuIDIwMjYg
+MTk6Mjc6NDQgLTA4MDAKPiBEaW1vbiBaaGFvIDxkaW1vbi56aGFvQG5lYnVsYS1tYXRyaXguY29t
+IDxtYWlsdG86ZGltb24uemhhb0BuZWJ1bGEtbWF0cml4LmNvbSA+PiB3cm90ZToKPiAKPiA+IEFk
+ZHJlc3MgbXVsdGlwbGUgaXNzdWVzIHJlcG9ydGVkIGJ5IENvdmVyaXR5IHN0YXRpYyBhbmFseXNp
+czoKPiA+IAo+ID4gQ2hlY2sgcmV0dXJuIHZhbHVlcyBvZiBpb2N0bCgpIGNhbGxzIGZvciBOQkxf
+REVWX1VTRVJfR0VUX0JBUl9TSVpFCj4gPiBhbmQgTkJMX0RFVl9VU0VSX0NMRUFSX0VWRU5URkQu
+IFRoZSBvcmlnaW5hbCBjb2RlIHRlc3RlZCB0aGUgcmV0dXJuCj4gPiB2YWx1ZSB3aXRob3V0IGNh
+cHR1cmluZyBpdCBmcm9tIHRoZSBpb2N0bCBjYWxsLgo+ID4gCj4gPiBNb3ZlIGRlYnVnIGxvZyBz
+dGF0ZW1lbnQgYWZ0ZXIgTlVMTCBwb2ludGVyIHZhbGlkYXRpb24gaW4KPiA+IG5ibF9kZXZfY29u
+ZmlndXJlKCkgdG8gcHJldmVudCBkZXJlZmVyZW5jZSBvZiBhZGFwdGVyIGJlZm9yZSB0aGUKPiA+
+IGNoZWNrLgo+ID4gCj4gPiBDYXN0IHUxNiBvcGVyYW5kcyB0byB1NjQgYmVmb3JlIG11bHRpcGxp
+Y2F0aW9uIHdoZW4gY2FsY3VsYXRpbmcKPiA+IGJ1ZmZlciBzaXplcyBhbmQgb2Zmc2V0cyB0byBw
+cmV2ZW50IHBvdGVudGlhbCBpbnRlZ2VyIG92ZXJmbG93Lgo+ID4gVGhlIG51bV90eHFfZW50cmll
+cywgbnVtX3J4cV9lbnRyaWVzLCB0eHFfYnVmX3NpemUsIGFuZCByeHFfYnVmX3NpemUKPiA+IGZp
+ZWxkcyBhcmUgYWxsIHUxNiB0eXBlcywgYW5kIHRoZWlyIHByb2R1Y3QgY291bGQgb3ZlcmZsb3cg
+YmVmb3JlCj4gPiBhc3NpZ25tZW50IHRvIHNpemVfdCBvciB1NjQgZGVzdGluYXRpb24gdmFyaWFi
+bGVzLgo+ID4gCj4gPiBDb3Zlcml0eSBpc3N1ZTogNDkwOTQyCj4gPiBDb3Zlcml0eSBpc3N1ZTog
+NDkwOTQzCj4gPiBDb3Zlcml0eSBpc3N1ZTogNDkwOTQ2Cj4gPiBDb3Zlcml0eSBpc3N1ZTogNDkw
+OTQ3Cj4gPiBDb3Zlcml0eSBpc3N1ZTogNDkwOTQ5Cj4gPiBDb3Zlcml0eSBpc3N1ZTogNDkwOTUw
+Cj4gPiBDb3Zlcml0eSBpc3N1ZTogNDkwOTUxCj4gPiBDb3Zlcml0eSBpc3N1ZTogNDkwOTUyCj4g
+PiBDb3Zlcml0eSBpc3N1ZTogNDkwOTUzCj4gPiBDb3Zlcml0eSBpc3N1ZTogNDkwOTU0Cj4gPiBD
+b3Zlcml0eSBpc3N1ZTogNDkwOTU1Cj4gPiBDb3Zlcml0eSBpc3N1ZTogNDkwOTU3Cj4gPiBDb3Zl
+cml0eSBpc3N1ZTogNDkwOTU4Cj4gPiBDb3Zlcml0eSBpc3N1ZTogNDkwOTU5Cj4gPiBGaXhlczog
+YTFjNWZmYTEzYjJjICgibmV0L25ibDogYWRkIGNoYW5uZWwgbGF5ZXIiKQo+ID4gRml4ZXM6IGRj
+OTU1Y2QyNGM4ZiAoIm5ldC9uYmw6IGFkZCBjb2V4aXN0ZW5jZSBtb2RlIikKPiA+IEZpeGVzOiA5
+M2IzOGRmNWEyZWMgKCJuZXQvbmJsOiBzdXBwb3J0IGJhc2ljIGNvbmZpZ3VyYXRpb24iKQo+ID4g
+Q2M6IHN0YWJsZUBkcGRrLm9yZyA8bWFpbHRvOnN0YWJsZUBkcGRrLm9yZyA+Cj4gPiAKPiA+IFNp
+Z25lZC1vZmYtYnk6IERpbW9uIFpoYW8gPGRpbW9uLnpoYW9AbmVidWxhLW1hdHJpeC5jb20gPG1h
+aWx0bzpkaW1vbi56aGFvQG5lYnVsYS1tYXRyaXguY29tID4+Cj4gCj4gUXVldWVkIHRvIG5leHQt
+bmV0CkFmdGVyIGFub3RoZXIgbG9vaywgSSB0aGluayBpdCBkZXNlcnZlcyB0byBiZSBzcGxpdCBw
+ZXIgdHlwZSBvZiBpc3N1ZS4KTWF5YmUgMyBjb21taXRzPwo=
+------=ALIBOUNDARY_2482_7fd11d1eb700_69819e43_42fc2
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: base64
 
-Add rte_net_ip_udptcp_cksum_mbuf in rte_net.h which is shared
-between rte_eth_tap and rte_eth_af_packet that supports
-IPv4/UDP/TCP checksums in software due to hardware offload
-and context propagation not being supported.
-
-Signed-off-by: Scott Mitchell <scott.k.mitch1@gmail.com>
----
-Depends-on: patch-160679 ("eal: add __rte_may_alias and __rte_aligned to unaligned typedefs")
-
- doc/guides/nics/features/afpacket.ini     |  2 +
- doc/guides/rel_notes/release_26_03.rst    |  2 +
- drivers/net/af_packet/rte_eth_af_packet.c | 42 ++++++++++----
- drivers/net/tap/rte_eth_tap.c             | 70 ++---------------------
- lib/net/rte_net.c                         | 68 ++++++++++++++++++++++
- lib/net/rte_net.h                         | 22 +++++++
- 6 files changed, 130 insertions(+), 76 deletions(-)
-
-diff --git a/doc/guides/nics/features/afpacket.ini b/doc/guides/nics/features/afpacket.ini
-index 391f79b173..4bb81c84ff 100644
---- a/doc/guides/nics/features/afpacket.ini
-+++ b/doc/guides/nics/features/afpacket.ini
-@@ -7,5 +7,7 @@
- Link status          = Y
- Promiscuous mode     = Y
- MTU update           = Y
-+L3 checksum offload  = Y
-+L4 checksum offload  = Y
- Basic stats          = Y
- Stats per queue      = Y
-diff --git a/doc/guides/rel_notes/release_26_03.rst b/doc/guides/rel_notes/release_26_03.rst
-index 3b6be19645..2946acce99 100644
---- a/doc/guides/rel_notes/release_26_03.rst
-+++ b/doc/guides/rel_notes/release_26_03.rst
-@@ -60,6 +60,8 @@ New Features
-   * Fixed kernel memory barrier protocol for memory availability
-   * Fixed shared memory frame overhead offset calculation
-   * Added ``txpollnotrdy`` devarg to avoid ``poll()`` blocking calls
-+  * Added checksum offload support for ``IPV4_CKSUM``, ``UDP_CKSUM``,
-+    and ``TCP_CKSUM``
- 
- Removed Items
- -------------
-diff --git a/drivers/net/af_packet/rte_eth_af_packet.c b/drivers/net/af_packet/rte_eth_af_packet.c
-index 9df1b1fd4c..662341ffc7 100644
---- a/drivers/net/af_packet/rte_eth_af_packet.c
-+++ b/drivers/net/af_packet/rte_eth_af_packet.c
-@@ -10,6 +10,8 @@
- #include <rte_string_fns.h>
- #include <rte_mbuf.h>
- #include <rte_atomic.h>
-+#include <rte_ip.h>
-+#include <rte_net.h>
- #include <rte_bitops.h>
- #include <ethdev_driver.h>
- #include <ethdev_vdev.h>
-@@ -101,6 +103,7 @@ struct pmd_internals {
- 	struct pkt_tx_queue *tx_queue;
- 	uint8_t vlan_strip;
- 	uint8_t timestamp_offloading;
-+	bool tx_sw_cksum;
- };
- 
- static const char *valid_arguments[] = {
-@@ -220,7 +223,7 @@ eth_af_packet_rx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- 		/* account for the receive frame */
- 		bufs[i] = mbuf;
- 		num_rx++;
--		num_rx_bytes += mbuf->pkt_len;
-+		num_rx_bytes += rte_pktmbuf_pkt_len(mbuf);
- 	}
- 	pkt_q->framenum = framenum;
- 	pkt_q->rx_pkts += num_rx;
-@@ -256,6 +259,7 @@ eth_af_packet_tx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- {
- 	struct tpacket2_hdr *ppd;
- 	struct rte_mbuf *mbuf;
-+	struct rte_mbuf *seg;
- 	uint8_t *pbuf;
- 	unsigned int framecount, framenum;
- 	struct pollfd pfd;
-@@ -277,7 +281,7 @@ eth_af_packet_tx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- 		mbuf = bufs[i];
- 
- 		/* Drop oversized packets. Insert VLAN if necessary */
--		if (unlikely(mbuf->pkt_len > pkt_q->frame_data_size ||
-+		if (unlikely(rte_pktmbuf_pkt_len(mbuf) > pkt_q->frame_data_size ||
- 			    ((mbuf->ol_flags & RTE_MBUF_F_TX_VLAN) != 0 &&
- 			     rte_vlan_insert(&mbuf) != 0))) {
- 			continue;
-@@ -308,23 +312,32 @@ eth_af_packet_tx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- 
- 		pbuf = (uint8_t *)ppd + ETH_AF_PACKET_FRAME_OVERHEAD;
- 
--		ppd->tp_len = mbuf->pkt_len;
--		ppd->tp_snaplen = mbuf->pkt_len;
-+		if (pkt_q->sw_cksum) {
-+			seg = rte_net_ip_udptcp_cksum_mbuf(mbuf);
-+			if (!seg)
-+				continue;
- 
--		struct rte_mbuf *tmp_mbuf = mbuf;
-+			mbuf = seg;
-+			bufs[i] = seg;
-+		}
-+
-+		ppd->tp_len = rte_pktmbuf_pkt_len(mbuf);
-+		ppd->tp_snaplen = rte_pktmbuf_pkt_len(mbuf);
-+
-+		seg = mbuf;
- 		do {
--			uint16_t data_len = rte_pktmbuf_data_len(tmp_mbuf);
--			memcpy(pbuf, rte_pktmbuf_mtod(tmp_mbuf, void*), data_len);
-+			uint16_t data_len = rte_pktmbuf_data_len(seg);
-+			memcpy(pbuf, rte_pktmbuf_mtod(seg, void*), data_len);
- 			pbuf += data_len;
--			tmp_mbuf = tmp_mbuf->next;
--		} while (tmp_mbuf);
-+			seg = seg->next;
-+		} while (seg);
- 
- 		/* release incoming frame and advance ring buffer */
- 		tpacket_write_status(&ppd->tp_status, TP_STATUS_SEND_REQUEST);
- 		if (++framenum >= framecount)
- 			framenum = 0;
- 		num_tx++;
--		num_tx_bytes += mbuf->pkt_len;
-+		num_tx_bytes += rte_pktmbuf_pkt_len(mbuf);
- 	}
- 
- 	rte_pktmbuf_free_bulk(&bufs[0], i);
-@@ -396,10 +409,13 @@ eth_dev_configure(struct rte_eth_dev *dev __rte_unused)
- {
- 	struct rte_eth_conf *dev_conf = &dev->data->dev_conf;
- 	const struct rte_eth_rxmode *rxmode = &dev_conf->rxmode;
-+	const struct rte_eth_txmode *txmode = &dev_conf->txmode;
- 	struct pmd_internals *internals = dev->data->dev_private;
- 
- 	internals->vlan_strip = !!(rxmode->offloads & RTE_ETH_RX_OFFLOAD_VLAN_STRIP);
- 	internals->timestamp_offloading = !!(rxmode->offloads & RTE_ETH_RX_OFFLOAD_TIMESTAMP);
-+	internals->tx_sw_cksum = !!(txmode->offloads & (RTE_ETH_TX_OFFLOAD_IPV4_CKSUM |
-+			RTE_ETH_TX_OFFLOAD_UDP_CKSUM | RTE_ETH_TX_OFFLOAD_TCP_CKSUM));
- 	return 0;
- }
- 
-@@ -417,7 +433,10 @@ eth_dev_info(struct rte_eth_dev *dev, struct rte_eth_dev_info *dev_info)
- 	dev_info->max_tx_queues = (uint16_t)internals->nb_queues;
- 	dev_info->min_rx_bufsize = ETH_AF_PACKET_ETH_OVERHEAD;
- 	dev_info->tx_offload_capa = RTE_ETH_TX_OFFLOAD_MULTI_SEGS |
--		RTE_ETH_TX_OFFLOAD_VLAN_INSERT;
-+		RTE_ETH_TX_OFFLOAD_VLAN_INSERT |
-+		RTE_ETH_TX_OFFLOAD_IPV4_CKSUM |
-+		RTE_ETH_TX_OFFLOAD_UDP_CKSUM |
-+		RTE_ETH_TX_OFFLOAD_TCP_CKSUM;
- 	dev_info->rx_offload_capa = RTE_ETH_RX_OFFLOAD_VLAN_STRIP |
- 		RTE_ETH_RX_OFFLOAD_TIMESTAMP;
- 
-@@ -618,6 +637,7 @@ eth_tx_queue_setup(struct rte_eth_dev *dev,
- {
- 
- 	struct pmd_internals *internals = dev->data->dev_private;
-+	internals->tx_queue[tx_queue_id].sw_cksum = internals->tx_sw_cksum;
- 
- 	dev->data->tx_queues[tx_queue_id] = &internals->tx_queue[tx_queue_id];
- 	return 0;
-diff --git a/drivers/net/tap/rte_eth_tap.c b/drivers/net/tap/rte_eth_tap.c
-index 730f1859bd..c7ed6dfb8b 100644
---- a/drivers/net/tap/rte_eth_tap.c
-+++ b/drivers/net/tap/rte_eth_tap.c
-@@ -525,7 +525,6 @@ tap_write_mbufs(struct tx_queue *txq, uint16_t num_mbufs,
- 		struct iovec iovecs[mbuf->nb_segs + 2];
- 		struct tun_pi pi = { .flags = 0, .proto = 0x00 };
- 		struct rte_mbuf *seg = mbuf;
--		uint64_t l4_ol_flags;
- 		int proto;
- 		int n;
- 		int j;
-@@ -556,74 +555,15 @@ tap_write_mbufs(struct tx_queue *txq, uint16_t num_mbufs,
- 		iovecs[k].iov_len = sizeof(pi);
- 		k++;
- 
--		l4_ol_flags = mbuf->ol_flags & RTE_MBUF_F_TX_L4_MASK;
--		if (txq->csum && (mbuf->ol_flags & RTE_MBUF_F_TX_IP_CKSUM ||
--				l4_ol_flags == RTE_MBUF_F_TX_UDP_CKSUM ||
--				l4_ol_flags == RTE_MBUF_F_TX_TCP_CKSUM)) {
--			unsigned int hdrlens = mbuf->l2_len + mbuf->l3_len;
--			uint16_t *l4_cksum;
--			void *l3_hdr;
--
--			if (l4_ol_flags == RTE_MBUF_F_TX_UDP_CKSUM)
--				hdrlens += sizeof(struct rte_udp_hdr);
--			else if (l4_ol_flags == RTE_MBUF_F_TX_TCP_CKSUM)
--				hdrlens += sizeof(struct rte_tcp_hdr);
--			else if (l4_ol_flags != RTE_MBUF_F_TX_L4_NO_CKSUM)
-+		if (txq->csum) {
-+			seg = rte_net_ip_udptcp_cksum_mbuf(mbuf);
-+			if (!seg)
- 				return -1;
- 
--			/* Support only packets with at least layer 4
--			 * header included in the first segment
--			 */
--			if (rte_pktmbuf_data_len(mbuf) < hdrlens)
--				return -1;
--
--			/* To change checksums (considering that a mbuf can be
--			 * indirect, for example), copy l2, l3 and l4 headers
--			 * in a new segment and chain it to existing data
--			 */
--			seg = rte_pktmbuf_copy(mbuf, mbuf->pool, 0, hdrlens);
--			if (seg == NULL)
--				return -1;
--			rte_pktmbuf_adj(mbuf, hdrlens);
--			rte_pktmbuf_chain(seg, mbuf);
--			pmbufs[i] = mbuf = seg;
--
--			l3_hdr = rte_pktmbuf_mtod_offset(mbuf, void *, mbuf->l2_len);
--			if (mbuf->ol_flags & RTE_MBUF_F_TX_IP_CKSUM) {
--				struct rte_ipv4_hdr *iph = l3_hdr;
--
--				iph->hdr_checksum = 0;
--				iph->hdr_checksum = rte_ipv4_cksum(iph);
--			}
--
--			if (l4_ol_flags == RTE_MBUF_F_TX_L4_NO_CKSUM)
--				goto skip_l4_cksum;
--
--			if (l4_ol_flags == RTE_MBUF_F_TX_UDP_CKSUM) {
--				struct rte_udp_hdr *udp_hdr;
--
--				udp_hdr = rte_pktmbuf_mtod_offset(mbuf, struct rte_udp_hdr *,
--					mbuf->l2_len + mbuf->l3_len);
--				l4_cksum = &udp_hdr->dgram_cksum;
--			} else {
--				struct rte_tcp_hdr *tcp_hdr;
--
--				tcp_hdr = rte_pktmbuf_mtod_offset(mbuf, struct rte_tcp_hdr *,
--					mbuf->l2_len + mbuf->l3_len);
--				l4_cksum = &tcp_hdr->cksum;
--			}
--
--			*l4_cksum = 0;
--			if (mbuf->ol_flags & RTE_MBUF_F_TX_IPV4) {
--				*l4_cksum = rte_ipv4_udptcp_cksum_mbuf(mbuf, l3_hdr,
--					mbuf->l2_len + mbuf->l3_len);
--			} else {
--				*l4_cksum = rte_ipv6_udptcp_cksum_mbuf(mbuf, l3_hdr,
--					mbuf->l2_len + mbuf->l3_len);
--			}
-+			mbuf = seg;
-+			pmbufs[i] = seg;
- 		}
- 
--skip_l4_cksum:
- 		for (j = 0; j < mbuf->nb_segs; j++) {
- 			iovecs[k].iov_len = rte_pktmbuf_data_len(seg);
- 			iovecs[k].iov_base = rte_pktmbuf_mtod(seg, void *);
-diff --git a/lib/net/rte_net.c b/lib/net/rte_net.c
-index 458b4814a9..1a0397bcd7 100644
---- a/lib/net/rte_net.c
-+++ b/lib/net/rte_net.c
-@@ -615,3 +615,71 @@ uint32_t rte_net_get_ptype(const struct rte_mbuf *m,
- 
- 	return pkt_type;
- }
-+
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_net_ip_udptcp_cksum_mbuf, 26.03)
-+struct rte_mbuf *
-+rte_net_ip_udptcp_cksum_mbuf(struct rte_mbuf *mbuf)
-+{
-+	const uint64_t l4_ol_flags = mbuf->ol_flags & RTE_MBUF_F_TX_L4_MASK;
-+	const uint32_t l4_offset = mbuf->l2_len + mbuf->l3_len;
-+	uint32_t hdrlens = l4_offset;
-+	unaligned_uint16_t *l4_cksum = NULL;
-+	void *l3_hdr;
-+
-+	/* Quick check - nothing to do if no checksum offloads requested */
-+	if (!(mbuf->ol_flags & (RTE_MBUF_F_TX_IP_CKSUM | RTE_MBUF_F_TX_L4_MASK)))
-+		return mbuf;
-+
-+	/* Determine total header length needed */
-+	if (l4_ol_flags == RTE_MBUF_F_TX_UDP_CKSUM)
-+		hdrlens += sizeof(struct rte_udp_hdr);
-+	else if (l4_ol_flags == RTE_MBUF_F_TX_TCP_CKSUM)
-+		hdrlens += sizeof(struct rte_tcp_hdr);
-+	else if (l4_ol_flags != RTE_MBUF_F_TX_L4_NO_CKSUM)
-+		return NULL; /* Unsupported L4 checksum type */
-+
-+	/* Validate we at least have L2+L3 headers */
-+	if (unlikely(rte_pktmbuf_data_len(mbuf) < l4_offset))
-+		return NULL;
-+
-+	if (!RTE_MBUF_DIRECT(mbuf) || rte_mbuf_refcnt_read(mbuf) > 1) {
-+		/* Indirect or shared - must copy, cannot modify in-place */
-+		struct rte_mbuf *seg = rte_pktmbuf_copy(mbuf, mbuf->pool, 0, hdrlens);
-+		if (!seg)
-+			return NULL;
-+
-+		rte_pktmbuf_adj(mbuf, hdrlens);
-+		rte_pktmbuf_chain(seg, mbuf);
-+		mbuf = seg;
-+	} else if (rte_pktmbuf_data_len(mbuf) < hdrlens &&
-+		(rte_pktmbuf_linearize(mbuf) < 0 || rte_pktmbuf_data_len(mbuf) < hdrlens)) {
-+		/* failed: direct, non-shared, but segmented headers linearize in-place */
-+		return NULL;
-+	}
-+	/* else: Direct, non-shared, contiguous - can modify in-place, nothing to do */
-+
-+	l3_hdr = rte_pktmbuf_mtod_offset(mbuf, void *, mbuf->l2_len);
-+
-+	/* IPv4 header checksum */
-+	if (mbuf->ol_flags & RTE_MBUF_F_TX_IP_CKSUM) {
-+		struct rte_ipv4_hdr *iph = (struct rte_ipv4_hdr *)l3_hdr;
-+		iph->hdr_checksum = 0;
-+		iph->hdr_checksum = rte_ipv4_cksum(iph);
-+	}
-+
-+	/* L4 checksum */
-+	if (l4_ol_flags == RTE_MBUF_F_TX_UDP_CKSUM)
-+		l4_cksum = &rte_pktmbuf_mtod_offset(mbuf, struct rte_udp_hdr *,
-+				l4_offset)->dgram_cksum;
-+	else if (l4_ol_flags == RTE_MBUF_F_TX_TCP_CKSUM)
-+		l4_cksum = &rte_pktmbuf_mtod_offset(mbuf, struct rte_tcp_hdr *, l4_offset)->cksum;
-+
-+	if (l4_cksum) {
-+		*l4_cksum = 0;
-+		*l4_cksum = (mbuf->ol_flags & RTE_MBUF_F_TX_IPV4) ?
-+				rte_ipv4_udptcp_cksum_mbuf(mbuf, l3_hdr, l4_offset) :
-+				rte_ipv6_udptcp_cksum_mbuf(mbuf, l3_hdr, l4_offset);
-+	}
-+
-+	return mbuf;
-+}
-diff --git a/lib/net/rte_net.h b/lib/net/rte_net.h
-index 65d724b84b..b258a86928 100644
---- a/lib/net/rte_net.h
-+++ b/lib/net/rte_net.h
-@@ -246,6 +246,28 @@ rte_net_intel_cksum_prepare(struct rte_mbuf *m)
- 	return rte_net_intel_cksum_flags_prepare(m, m->ol_flags);
- }
- 
-+/**
-+ * Compute IP and L4 checksums in software for mbufs with
-+ * RTE_MBUF_F_TX_IP_CKSUM, RTE_MBUF_F_TX_UDP_CKSUM, or
-+ * RTE_MBUF_F_TX_TCP_CKSUM offload flags set.
-+ *
-+ * On success, this function takes ownership of the input mbuf. The mbuf may be
-+ * modified in-place (for direct, non-shared mbufs) or a new mbuf chain may be
-+ * created (for indirect/shared mbufs) with the original becoming part of the chain.
-+ *
-+ * @param mbuf
-+ *   The packet mbuf to checksum.
-+ * @return
-+ *   - On success: pointer to mbuf with checksums computed (may be same as input
-+ *     or a new mbuf chain). Caller must free only this returned pointer; the input
-+ *     mbuf pointer should not be freed separately as it may be part of the returned
-+ *     chain or may be the same as the returned pointer.
-+ *   - On error: NULL. Original mbuf remains valid and owned by caller.
-+ */
-+__rte_experimental
-+struct rte_mbuf *
-+rte_net_ip_udptcp_cksum_mbuf(struct rte_mbuf *mbuf);
-+
- #ifdef __cplusplus
- }
- #endif
--- 
-2.39.5 (Apple Git-154)
+PGRpdiBjbGFzcz0iX19hbGl5dW5fZW1haWxfYm9keV9ibG9jayI+PGRpdiAgc3R5bGU9ImZvbnQt
+ZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBTVEhlaXRpU0MtTGlnaHQsIFNpbVN1biI+PGRpdiAgc3R5
+bGU9ImNsZWFyOiBib3RoOyBmb250LWZhbWlseTogVGFob21hLCBBcmlhbCwgU1RIZWl0aVNDLUxp
+Z2h0LCBTaW1TdW47Ij48c3BhbiAgc3R5bGU9ImZvbnQtZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBT
+VEhlaXRpU0MtTGlnaHQsIFNpbVN1bjsiPjxzcGFuID5IaSBTdGVwaGVuLDwvc3Bhbj48L3NwYW4+
+PC9kaXY+PGRpdiAgc3R5bGU9ImNsZWFyOiBib3RoOyBmb250LWZhbWlseTogVGFob21hLCBBcmlh
+bCwgU1RIZWl0aVNDLUxpZ2h0LCBTaW1TdW47Ij48YnIgPjxkaXYgIHN0eWxlPSJjbGVhcjogYm90
+aDsiPlRoYW5rIHlvdSBmb3IgdGhlIGd1aWRhbmNlLjxiciA+PC9kaXY+PGRpdiA+PHNwYW4gPkkn
+bGwgcHJlcGFyZSBhIG5ldyBwYXRjaCBzZXJpZXMgd2l0aCB0aGUgQ292ZXJpdHkgZml4ZXMgc3Bs
+aXQgaW50byAzIHNlcGFyYXRlIGNvbW1pdHMgYXMgc3VnZ2VzdGVkLjwvc3Bhbj48L2Rpdj48c3Bh
+biAgc3R5bGU9ImZvbnQtZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBTVEhlaXRpU0MtTGlnaHQsIFNp
+bVN1bjsiPjxiciA+PC9zcGFuPjwvZGl2PjxkaXYgIHN0eWxlPSJjbGVhcjogYm90aDsgZm9udC1m
+YW1pbHk6IFRhaG9tYSwgQXJpYWwsIFNUSGVpdGlTQy1MaWdodCwgU2ltU3VuOyI+PHNwYW4gIHN0
+eWxlPSJmb250LWZhbWlseTogVGFob21hLCBBcmlhbCwgU1RIZWl0aVNDLUxpZ2h0LCBTaW1TdW47
+Ij48YnIgPjwvc3Bhbj48L2Rpdj48YmxvY2txdW90ZSAgX3F1b3RlPSIxIiBzdHlsZT0ibWFyZ2lu
+LXJpZ2h0OiAwcHg7IG1hcmdpbi10b3A6IDBweDsgbWFyZ2luLWJvdHRvbTogMHB4OyBmb250LWZh
+bWlseTogVGFob21hLCBBcmlhbCwgU1RIZWl0aSwgU2ltU3VuOyBmb250LXNpemU6IDE0cHg7IGNv
+bG9yOiByZ2IoMCwgMCwgMCk7Ij48ZGl2ICBjbGFzcz0iYWxpbWFpbC1xdW90ZSI+PGRpdiAgc3R5
+bGU9ImNsZWFyOiBib3RoOyI+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tPC9kaXY+PGRpdiAgc3R5bGU9ImNsZWFyOiBib3Ro
+OyI+5Y+R5Lu25Lq677yaU3RlcGhlbiBIZW1taW5nZXIgJmx0O3N0ZXBoZW5AbmV0d29ya3BsdW1i
+ZXIub3JnJmd0OzwvZGl2PjxkaXYgIHN0eWxlPSJjbGVhcjogYm90aDsiPuWPkemAgeaXtumXtO+8
+mjIwMjblubQy5pyIM+aXpSjlkajkuowpIDE0OjU0PC9kaXY+PGRpdiAgc3R5bGU9ImNsZWFyOiBi
+b3RoOyI+5pS25Lu25Lq677yaRGltb24mbHQ7ZGltb24uemhhb0BuZWJ1bGEtbWF0cml4LmNvbSZn
+dDs8L2Rpdj48ZGl2ICBzdHlsZT0iY2xlYXI6IGJvdGg7Ij7mioTjgIDpgIHvvJpUaG9tYXMgTW9u
+amFsb24mbHQ7dGhvbWFzQG1vbmphbG9uLm5ldCZndDs7IGRldiZsdDtkZXZAZHBkay5vcmcmZ3Q7
+OyBzdGFibGUmbHQ7c3RhYmxlQGRwZGsub3JnJmd0OzsgS3lvIExpdSZsdDtreW8ubGl1QG5lYnVs
+YS1tYXRyaXguY29tJmd0OzsgTGVvbiZsdDtsZW9uLnl1QG5lYnVsYS1tYXRyaXguY29tJmd0Ozsg
+U2FtJmx0O3NhbS5jaGVuQG5lYnVsYS1tYXRyaXguY29tJmd0OzwvZGl2PjxkaXYgIHN0eWxlPSJj
+bGVhcjogYm90aDsiPuS4u+OAgOmimO+8mlJlOiBbUEFUQ0ggdjMgMS8xXSBuZXQvbmJsOiBmaXgg
+aXNzdWVzIHJlcG9ydGVkIGJ5IENvdmVyaXR5PC9kaXY+PGRpdiAgc3R5bGU9ImNsZWFyOiBib3Ro
+OyI+PGJyID48L2Rpdj48ZGl2ID5TZW5kIGEgbmV3IHNlcmllcyBhbmQgSSByZXBsYWNlIHRoZSBv
+bmUgaW4gbmV4dCBuZXQ8L2Rpdj48YnIgPjxkaXYgIGNsYXNzPSJnbWFpbF9xdW90ZSBnbWFpbF9x
+dW90ZV9jb250YWluZXIiPjxkaXYgIGNsYXNzPSJnbWFpbF9hdHRyIj5PbiBNb24sIEZlYiAyLCAy
+MDI2LCAyMDowMSBEaW1vbiAmbHQ7PGEgIGhyZWY9Im1haWx0bzpkaW1vbi56aGFvQG5lYnVsYS1t
+YXRyaXguY29tIiB0YXJnZXQ9Il9ibGFuayI+ZGltb24uemhhb0BuZWJ1bGEtbWF0cml4LmNvbTwv
+YT4mZ3Q7IHdyb3RlOjxiciA+PC9kaXY+PGRpdiAgc3R5bGU9Im1hcmdpbjogMTRweCA0MHB4IDE0
+cHggMHB4OyBmb250LWZhbWlseTogVGFob21hLCBBcmlhbCwgU1RIZWl0aVNDLUxpZ2h0LCBTaW1T
+dW47Ij48ZGl2ICBzdHlsZT0iY2xlYXI6IGJvdGg7IGZvbnQtZmFtaWx5OiBUYWhvbWEsIEFyaWFs
+LCBTVEhlaXRpU0MtTGlnaHQsIFNpbVN1bjsiPjxzcGFuICBzdHlsZT0iZm9udC1mYW1pbHk6IFRh
+aG9tYSwgQXJpYWwsIFNUSGVpdGlTQy1MaWdodCwgU2ltU3VuOyI+SGkgVGhvbWFzLDxiciA+PC9z
+cGFuPjxkaXYgIHN0eWxlPSJjbGVhcjogYm90aDsiPjxiciA+PC9kaXY+PGRpdiAgc3R5bGU9ImNs
+ZWFyOiBib3RoOyI+VGhhbmsgeW91IGZvciB0aGUgZmVlZGJhY2sgYWJvdXQgc3BsaXR0aW5nIHRo
+ZSBDb3Zlcml0eSBmaXhlcyBwYXRjaCBieSBpc3N1ZSB0eXBlLjwvZGl2PjxkaXYgIHN0eWxlPSJj
+bGVhcjogYm90aDsiPllvdSdyZSBhYnNvbHV0ZWx5IHJpZ2h0IC0gaXQgYWRkcmVzc2VzIHRocmVl
+IGRpc3RpbmN0IHByb2JsZW1zIGFuZCBzaG91bGQgYmUgc2VwYXJhdGUgY29tbWl0cy48YnIgPjwv
+ZGl2PjxkaXYgIHN0eWxlPSJjbGVhcjogYm90aDsiPjxiciA+PC9kaXY+PGRpdiAgc3R5bGU9ImNs
+ZWFyOiBib3RoOyI+Tm93IHRoZSBwYXRjaCBpcyBhbHJlYWR5IHF1ZXVlZCB0byBuZXh0LW5ldCwg
+YW5kIHNpbmNlIHRoZW4gZml2ZSBhZGRpdGlvbmFsIG5ibCBkcml2ZXIgZml4ZXMgaGF2ZSBiZWVu
+IG1lcmdlZDo8YnIgPjwvZGl2PjxkaXYgIHN0eWxlPSJjbGVhcjogYm90aDsiPm5ldC9uYmw6IGlt
+cHJvdmUgbWFpbGJveCBleGNlcHRpb24gaGFuZGxpbmc8YnIgPjwvZGl2PjxkaXYgIHN0eWxlPSJj
+bGVhcjogYm90aDsiPm5ldC9uYmw6IGZpeCBtYnVmIGRvdWJsZS1mcmVlIGluIHF1ZXVlIGNsZWFu
+dXA8YnIgPjwvZGl2PjxkaXYgIHN0eWxlPSJjbGVhcjogYm90aDsiPm5ldC9uYmw6IGZpeCBtYnVm
+IGhlYWRyb29tIHVzYWdlIGluIHBhY2tldCBUeDxiciA+PC9kaXY+PGRpdiAgc3R5bGU9ImNsZWFy
+OiBib3RoOyI+bmV0L25ibDogZml4IG1lbXpvbmUgbGVhayBvbiBxdWV1ZSByZWxlYXNlPGJyID48
+L2Rpdj48ZGl2ICBzdHlsZT0iY2xlYXI6IGJvdGg7Ij5uZXQvbmJsOiBmaXggaGFyZHdhcmUgc3Rh
+dHMgaW50ZXJydXB0IG5lc3RpbmcgaXNzdWU8YnIgPjwvZGl2PjxkaXYgIHN0eWxlPSJjbGVhcjog
+Ym90aDsiPjxiciA+PC9kaXY+PGRpdiA+PHNwYW4gPldoYXQgc2hvdWxkIEkgZG8/IFNob3VsZCBJ
+IGFzayBTdGVwaGVuIHRvIGhlbHAgcmV2ZXJ0IHRoZXNlIDYgY29tbWl0cyBhbmQgdGhlbiByZXN1
+Ym1pdCB0aGVtPzwvc3Bhbj48L2Rpdj48L2Rpdj48ZGl2ICBzdHlsZT0iY2xlYXI6IGJvdGg7IGZv
+bnQtZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBTVEhlaXRpU0MtTGlnaHQsIFNpbVN1bjsiPjxzcGFu
+ICBzdHlsZT0iZm9udC1mYW1pbHk6IFRhaG9tYSwgQXJpYWwsIFNUSGVpdGksIFNpbVN1bjsiPjxi
+ciA+PC9zcGFuPjwvZGl2PjxkaXYgIHN0eWxlPSJjbGVhcjogYm90aDsgZm9udC1mYW1pbHk6IFRh
+aG9tYSwgQXJpYWwsIFNUSGVpdGlTQy1MaWdodCwgU2ltU3VuOyI+PHNwYW4gIHN0eWxlPSJmb250
+LWZhbWlseTogVGFob21hLCBBcmlhbCwgU1RIZWl0aSwgU2ltU3VuOyI+PGJyID48L3NwYW4+PC9k
+aXY+PGRpdiAgc3R5bGU9ImNsZWFyOiBib3RoOyBmb250LWZhbWlseTogVGFob21hLCBBcmlhbCwg
+U1RIZWl0aVNDLUxpZ2h0LCBTaW1TdW47Ij48c3BhbiAgc3R5bGU9ImZvbnQtZmFtaWx5OiBUYWhv
+bWEsIEFyaWFsLCBTVEhlaXRpLCBTaW1TdW47Ij48YnIgPjwvc3Bhbj48L2Rpdj48ZGl2ICBzdHls
+ZT0iY2xlYXI6IGJvdGg7IGZvbnQtZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBTVEhlaXRpU0MtTGln
+aHQsIFNpbVN1bjsiPjxzcGFuICBzdHlsZT0iZm9udC1mYW1pbHk6IFRhaG9tYSwgQXJpYWwsIFNU
+SGVpdGksIFNpbVN1bjsiPi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLTwvc3Bhbj48L2Rpdj48ZGl2ID48ZGl2ICBzdHlsZT0i
+Y2xlYXI6IGJvdGg7Ij7lj5Hku7bkurrvvJpUaG9tYXMgTW9uamFsb24gJmx0OzxhICBocmVmPSJt
+YWlsdG86dGhvbWFzQG1vbmphbG9uLm5ldCIgdGFyZ2V0PSJfYmxhbmsiPnRob21hc0Btb25qYWxv
+bi5uZXQ8L2E+Jmd0OzwvZGl2PjxkaXYgIHN0eWxlPSJjbGVhcjogYm90aDsiPuWPkemAgeaXtumX
+tO+8mjIwMjblubQy5pyIMuaXpSjlkajkuIApIDA0OjI5PC9kaXY+PGRpdiAgc3R5bGU9ImNsZWFy
+OiBib3RoOyI+5pS25Lu25Lq677yaRGltb24mbHQ7PGEgIGhyZWY9Im1haWx0bzpkaW1vbi56aGFv
+QG5lYnVsYS1tYXRyaXguY29tIiB0YXJnZXQ9Il9ibGFuayI+ZGltb24uemhhb0BuZWJ1bGEtbWF0
+cml4LmNvbTwvYT4mZ3Q7PC9kaXY+PGRpdiAgc3R5bGU9ImNsZWFyOiBib3RoOyI+5oqE44CA6YCB
+77yaZGV2Jmx0OzxhICBocmVmPSJtYWlsdG86ZGV2QGRwZGsub3JnIiB0YXJnZXQ9Il9ibGFuayI+
+ZGV2QGRwZGsub3JnPC9hPiZndDs7IHN0YWJsZSZsdDs8YSAgaHJlZj0ibWFpbHRvOnN0YWJsZUBk
+cGRrLm9yZyIgdGFyZ2V0PSJfYmxhbmsiPnN0YWJsZUBkcGRrLm9yZzwvYT4mZ3Q7OyBLeW8gTGl1
+Jmx0OzxhICBocmVmPSJtYWlsdG86a3lvLmxpdUBuZWJ1bGEtbWF0cml4LmNvbSIgdGFyZ2V0PSJf
+YmxhbmsiPmt5by5saXVAbmVidWxhLW1hdHJpeC5jb208L2E+Jmd0OzsgTGVvbiZsdDs8YSAgaHJl
+Zj0ibWFpbHRvOmxlb24ueXVAbmVidWxhLW1hdHJpeC5jb20iIHRhcmdldD0iX2JsYW5rIj5sZW9u
+Lnl1QG5lYnVsYS1tYXRyaXguY29tPC9hPiZndDs7IFNhbSZsdDs8YSAgaHJlZj0ibWFpbHRvOnNh
+bS5jaGVuQG5lYnVsYS1tYXRyaXguY29tIiB0YXJnZXQ9Il9ibGFuayI+c2FtLmNoZW5AbmVidWxh
+LW1hdHJpeC5jb208L2E+Jmd0OzsgU3RlcGhlbiBIZW1taW5nZXImbHQ7PGEgIGhyZWY9Im1haWx0
+bzpzdGVwaGVuQG5ldHdvcmtwbHVtYmVyLm9yZyIgdGFyZ2V0PSJfYmxhbmsiPnN0ZXBoZW5AbmV0
+d29ya3BsdW1iZXIub3JnPC9hPiZndDs8L2Rpdj48ZGl2ICBzdHlsZT0iY2xlYXI6IGJvdGg7Ij7k
+uLvjgIDpopjvvJpSZTogW1BBVENIIHYzIDEvMV0gbmV0L25ibDogZml4IGlzc3VlcyByZXBvcnRl
+ZCBieSBDb3Zlcml0eTwvZGl2PjxkaXYgIHN0eWxlPSJjbGVhcjogYm90aDsiPjxiciA+PC9kaXY+
+MjEvMDEvMjAyNiAwNTozNiwgU3RlcGhlbiBIZW1taW5nZXI6PGJyID4mZ3Q7IE9uIFdlZCwgMTQg
+SmFuIDIwMjYgMTk6Mjc6NDQgLTA4MDA8YnIgPiZndDsgRGltb24gWmhhbyAmbHQ7PGEgIGhyZWY9
+Im1haWx0bzpkaW1vbi56aGFvQG5lYnVsYS1tYXRyaXguY29tIiB0YXJnZXQ9Il9ibGFuayI+ZGlt
+b24uemhhb0BuZWJ1bGEtbWF0cml4LmNvbTwvYT4mZ3Q7IHdyb3RlOjxiciA+Jmd0OyA8YnIgPiZn
+dDsgJmd0OyBBZGRyZXNzIG11bHRpcGxlIGlzc3VlcyByZXBvcnRlZCBieSBDb3Zlcml0eSBzdGF0
+aWMgYW5hbHlzaXM6PGJyID4mZ3Q7ICZndDsgPGJyID4mZ3Q7ICZndDsgQ2hlY2sgcmV0dXJuIHZh
+bHVlcyBvZiBpb2N0bCgpIGNhbGxzIGZvciBOQkxfREVWX1VTRVJfR0VUX0JBUl9TSVpFPGJyID4m
+Z3Q7ICZndDsgYW5kIE5CTF9ERVZfVVNFUl9DTEVBUl9FVkVOVEZELiBUaGUgb3JpZ2luYWwgY29k
+ZSB0ZXN0ZWQgdGhlIHJldHVybjxiciA+Jmd0OyAmZ3Q7IHZhbHVlIHdpdGhvdXQgY2FwdHVyaW5n
+IGl0IGZyb20gdGhlIGlvY3RsIGNhbGwuPGJyID4mZ3Q7ICZndDsgPGJyID4mZ3Q7ICZndDsgTW92
+ZSBkZWJ1ZyBsb2cgc3RhdGVtZW50IGFmdGVyIE5VTEwgcG9pbnRlciB2YWxpZGF0aW9uIGluPGJy
+ID4mZ3Q7ICZndDsgbmJsX2Rldl9jb25maWd1cmUoKSB0byBwcmV2ZW50IGRlcmVmZXJlbmNlIG9m
+IGFkYXB0ZXIgYmVmb3JlIHRoZTxiciA+Jmd0OyAmZ3Q7IGNoZWNrLjxiciA+Jmd0OyAmZ3Q7IDxi
+ciA+Jmd0OyAmZ3Q7IENhc3QgdTE2IG9wZXJhbmRzIHRvIHU2NCBiZWZvcmUgbXVsdGlwbGljYXRp
+b24gd2hlbiBjYWxjdWxhdGluZzxiciA+Jmd0OyAmZ3Q7IGJ1ZmZlciBzaXplcyBhbmQgb2Zmc2V0
+cyB0byBwcmV2ZW50IHBvdGVudGlhbCBpbnRlZ2VyIG92ZXJmbG93LjxiciA+Jmd0OyAmZ3Q7IFRo
+ZSBudW1fdHhxX2VudHJpZXMsIG51bV9yeHFfZW50cmllcywgdHhxX2J1Zl9zaXplLCBhbmQgcnhx
+X2J1Zl9zaXplPGJyID4mZ3Q7ICZndDsgZmllbGRzIGFyZSBhbGwgdTE2IHR5cGVzLCBhbmQgdGhl
+aXIgcHJvZHVjdCBjb3VsZCBvdmVyZmxvdyBiZWZvcmU8YnIgPiZndDsgJmd0OyBhc3NpZ25tZW50
+IHRvIHNpemVfdCBvciB1NjQgZGVzdGluYXRpb24gdmFyaWFibGVzLjxiciA+Jmd0OyAmZ3Q7IDxi
+ciA+Jmd0OyAmZ3Q7IENvdmVyaXR5IGlzc3VlOiA0OTA5NDI8YnIgPiZndDsgJmd0OyBDb3Zlcml0
+eSBpc3N1ZTogNDkwOTQzPGJyID4mZ3Q7ICZndDsgQ292ZXJpdHkgaXNzdWU6IDQ5MDk0NjxiciA+
+Jmd0OyAmZ3Q7IENvdmVyaXR5IGlzc3VlOiA0OTA5NDc8YnIgPiZndDsgJmd0OyBDb3Zlcml0eSBp
+c3N1ZTogNDkwOTQ5PGJyID4mZ3Q7ICZndDsgQ292ZXJpdHkgaXNzdWU6IDQ5MDk1MDxiciA+Jmd0
+OyAmZ3Q7IENvdmVyaXR5IGlzc3VlOiA0OTA5NTE8YnIgPiZndDsgJmd0OyBDb3Zlcml0eSBpc3N1
+ZTogNDkwOTUyPGJyID4mZ3Q7ICZndDsgQ292ZXJpdHkgaXNzdWU6IDQ5MDk1MzxiciA+Jmd0OyAm
+Z3Q7IENvdmVyaXR5IGlzc3VlOiA0OTA5NTQ8YnIgPiZndDsgJmd0OyBDb3Zlcml0eSBpc3N1ZTog
+NDkwOTU1PGJyID4mZ3Q7ICZndDsgQ292ZXJpdHkgaXNzdWU6IDQ5MDk1NzxiciA+Jmd0OyAmZ3Q7
+IENvdmVyaXR5IGlzc3VlOiA0OTA5NTg8YnIgPiZndDsgJmd0OyBDb3Zlcml0eSBpc3N1ZTogNDkw
+OTU5PGJyID4mZ3Q7ICZndDsgRml4ZXM6IGExYzVmZmExM2IyYyAoIm5ldC9uYmw6IGFkZCBjaGFu
+bmVsIGxheWVyIik8YnIgPiZndDsgJmd0OyBGaXhlczogZGM5NTVjZDI0YzhmICgibmV0L25ibDog
+YWRkIGNvZXhpc3RlbmNlIG1vZGUiKTxiciA+Jmd0OyAmZ3Q7IEZpeGVzOiA5M2IzOGRmNWEyZWMg
+KCJuZXQvbmJsOiBzdXBwb3J0IGJhc2ljIGNvbmZpZ3VyYXRpb24iKTxiciA+Jmd0OyAmZ3Q7IENj
+OiA8YSAgaHJlZj0ibWFpbHRvOnN0YWJsZUBkcGRrLm9yZyIgdGFyZ2V0PSJfYmxhbmsiPnN0YWJs
+ZUBkcGRrLm9yZzwvYT48YnIgPiZndDsgJmd0OyA8YnIgPiZndDsgJmd0OyBTaWduZWQtb2ZmLWJ5
+OiBEaW1vbiBaaGFvICZsdDs8YSAgaHJlZj0ibWFpbHRvOmRpbW9uLnpoYW9AbmVidWxhLW1hdHJp
+eC5jb20iIHRhcmdldD0iX2JsYW5rIj5kaW1vbi56aGFvQG5lYnVsYS1tYXRyaXguY29tPC9hPiZn
+dDs8YnIgPiZndDsgPGJyID4mZ3Q7IFF1ZXVlZCB0byBuZXh0LW5ldDxiciA+PGJyID5BZnRlciBh
+bm90aGVyIGxvb2ssIEkgdGhpbmsgaXQgZGVzZXJ2ZXMgdG8gYmUgc3BsaXQgcGVyIHR5cGUgb2Yg
+aXNzdWUuPGJyID5NYXliZSAzIGNvbW1pdHM/PGJyID48L2Rpdj48ZGl2ICBzdHlsZT0ibGluZS1o
+ZWlnaHQ6IDIwcHg7IGNsZWFyOiBib3RoOyI+PGJyID48L2Rpdj48L2Rpdj48L2Rpdj48L2Rpdj48
+L2Jsb2NrcXVvdGU+PGRpdiAgc3R5bGU9ImxpbmUtaGVpZ2h0OiAyMHB4OyBjbGVhcjogYm90aDsi
+PjxiciA+PC9kaXY+PC9kaXY+PC9kaXY+
+------=ALIBOUNDARY_2482_7fd11d1eb700_69819e43_42fc2--
 
