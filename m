@@ -2,40 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED295E8305C
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Feb 2026 07:31:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D468E8305B
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Feb 2026 07:41:48 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 32B67402C0;
-	Tue,  3 Feb 2026 08:31:07 +0100 (CET)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id B06BC402A2
- for <dev@dpdk.org>; Tue,  3 Feb 2026 08:31:05 +0100 (CET)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 7BD5D206EC;
- Tue,  3 Feb 2026 08:31:05 +0100 (CET)
-Content-class: urn:content-classes:message
+	by mails.dpdk.org (Postfix) with ESMTP id 030264042E;
+	Tue,  3 Feb 2026 08:41:47 +0100 (CET)
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.35])
+ by mails.dpdk.org (Postfix) with ESMTP id 9146D402A2
+ for <dev@dpdk.org>; Tue,  3 Feb 2026 08:41:45 +0100 (CET)
+Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mxhk.zte.com.cn (FangMail) with ESMTPS id 4f4wRD1TS3z8Xs77;
+ Tue, 03 Feb 2026 15:41:44 +0800 (CST)
+Received: from szxlzmapp04.zte.com.cn ([10.5.231.166])
+ by mse-fl1.zte.com.cn with SMTP id 6137fMS4038995;
+ Tue, 3 Feb 2026 15:41:22 +0800 (+08)
+ (envelope-from zhang.tianhao2@zte.com.cn)
+Received: from localhost.localdomain (unknown [192.168.6.15])
+ by smtp (Zmail) with SMTP; Tue, 3 Feb 2026 15:41:25 +0800
+X-Zmail-TransId: 3e816981a696001-42e61
+X-Zmail-LocalSMTP: 1
+X-Zmail-RealSender: zhang.tianhao2@zte.com.cn
+From: Tianhao Zhang <zhang.tianhao2@zte.com.cn>
+To: stephen@networkplumber.org, wang.junlong1@zte.com.cn,
+ yang.yonggang@zte.com.cn
+Cc: dev@dpdk.org, Tianhao Zhang <zhang.tianhao2@zte.com.cn>
+Subject: [PATCH v3 0/2] net/zxdh: fix npsdk bug
+Date: Tue,  3 Feb 2026 15:17:27 +0800
+Message-ID: <20260203071732.2601630-1-zhang.tianhao2@zte.com.cn>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20251230081127.813605-2-zhang.tianhao2@zte.com.cn>
+References: <20251230081127.813605-2-zhang.tianhao2@zte.com.cn>
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
-Subject: RE: [RFC 4/4] net/af_packet: add VPP-style prefetching to receive path
-Date: Tue, 3 Feb 2026 08:31:03 +0100
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F656E1@smartserver.smartshare.dk>
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-In-Reply-To: <20260202104330.27156f31@phoenix.local>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [RFC 4/4] net/af_packet: add VPP-style prefetching to receive
- path
-Thread-Index: AdyUc9dCjF4rlYRkTpKJA7Fb8o41/gAabvsg
-References: <20260128173138.151837-1-stephen@networkplumber.org><20260128173138.151837-5-stephen@networkplumber.org><20260128170612.648cd657@phoenix.local><98CBD80474FA8B44BF855DF32C47DC35F656C7@smartserver.smartshare.dk>
- <20260202104330.27156f31@phoenix.local>
-From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
-To: "Stephen Hemminger" <stephen@networkplumber.org>
-Cc: <dev@dpdk.org>,
-	"John W. Linville" <linville@tuxdriver.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed;
+	boundary="=====_001_next====="
+X-MAIL: mse-fl1.zte.com.cn 6137fMS4038995
+X-TLS: YES
+X-SPF-DOMAIN: zte.com.cn
+X-ENVELOPE-SENDER: zhang.tianhao2@zte.com.cn
+X-SPF: None
+X-SOURCE-IP: 10.5.228.132 unknown Tue, 03 Feb 2026 15:41:44 +0800
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 6981A6B8.001/4f4wRD1TS3z8Xs77
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -49,35 +60,72 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-PiBGcm9tOiBTdGVwaGVuIEhlbW1pbmdlciBbbWFpbHRvOnN0ZXBoZW5AbmV0d29ya3BsdW1iZXIu
-b3JnXQ0KPiBTZW50OiBNb25kYXksIDIgRmVicnVhcnkgMjAyNiAxOS40NA0KPiANCj4gT24gVGh1
-LCAyOSBKYW4gMjAyNiAxMDowMDoxNSArMDEwMA0KPiBNb3J0ZW4gQnLDuHJ1cCA8bWJAc21hcnRz
-aGFyZXN5c3RlbXMuY29tPiB3cm90ZToNCj4gDQo+ID4gPiBUaGlzIGFuZCBwcmV2aW91cyBwcm9w
-b3NhbCB0byBwcmVmZXRjaCBoYXZlIG5vIGltcGFjdCBvbg0KPiBwZXJmb3JtYW5jZS4NCj4gPiA+
-IFJvbGxlZCBhIHNpbXBsZSBwZXJmIHRlc3QgYW5kIGFsbCB0aHJlZSB2ZXJzaW9ucyBjb21lIG91
-dCB0aGUgc2FtZS4NCj4gPg0KPiA+IFBsZWFzZSBiZSBhd2FyZSB0aGF0IG1hbnkgdGVzdCBjYXNl
-cyBhcmUgaW5hZHZlcnRlbnRseSBkZXNpZ25lZCBpbiBhDQo+IHdheSB3aGVyZSBtYnVmcyB1bmlu
-dGVuZGVkbHkgYXJlIGhvdCBpbiB0aGUgY2FjaGUsIHNvIHByZWZldGNoaW5nIGRvZXMNCj4gbm90
-IHByb3ZpZGUgdGhlIGV4cGVjdGVkIHBlcmZvcm1hbmNlIGdhaW4uDQo+ID4gRS5nLiB3aGVuIHdv
-cmtpbmcgb24gYSBuZXdseSBhbGxvY2F0ZWQgbWJ1ZiwgdGhlIG1idWYgc2hvdWxkIGJlIGNvbGQu
-DQo+ID4gQnV0IGlmIGl0IGNhbWUgZnJvbSB0aGUgbWVtcG9vbCBjYWNoZSwgYW5kIHdhcyByZWNl
-bnRseSB3b3JrZWQgb24gYW5kDQo+IHRoZW4gZnJlZWQgaW50byB0aGUgbWVtcG9vbCBjYWNoZSwg
-dGhlbiBpdCB3aWxsIGJlIGhvdC4NCj4gPg0KPiA+ID4gVGhlIGJvdHRsZW5lY2sgaXMgbm90IGhl
-cmUsIHByb2JhYmx5IGF0IHN5c3RlbSBjYWxsIGFuZCBjb3BpZXMgbm93Lg0KPiA+DQo+ID4gVGhl
-IG1vc3QgaW1wb3J0YW50IGJvdHRsZW5lY2sgbWlnaHQgYmUgZWxzZXdoZXJlLg0KPiA+IEJ1dCB0
-aGlzIG9wdGltaXphdGlvbiBtaWdodCBub3QgYmUgYXMgaXJyZWxldmFudCBhcyB0aGUgdGVzdCBy
-ZXN1bHRzDQo+IGluZGljYXRlLg0KPiA+DQo+ID4gQW55d2F5LCBJIGFncmVlIHRoYXQgZHJvcHBp
-bmcgdGhlIHBhdGNoIChmb3Igbm93KSBtYWtlcyBzZW5zZS4NCj4gDQo+IEkgZG91YnQgcHJlLWZl
-dGNoIHdpbGwgbWF0dGVyIG11Y2ggaW4gYSBkcml2ZXIgbGlrZSB0aGlzIGJlY2F1c2U6DQo+ICAt
-IG9uIHR4IHRoZSBkYXRhIGlzIHN0aWxsIGluIGNhY2hlIHNpbmNlIGp1c3Qgc2V0dXAgYnkgY2Fs
-bGVyDQpJZiB0aGUgcGFja2V0IGhhcyBiZWVuIHNpdHRpbmcgaW4gYSBxdWV1ZSwgZS5nLiBmb3Ig
-UW9TIGJ1ZmZlcmluZywgaXQgbWF5IGhhdmUgYmVlbiBldmljdGVkIGZyb20gdGhlIGNhY2hlLg0K
-PiAgLSBvbiByeCB0aGUgZGF0YSBpcyBzdGlsbCBpbiBjYWNoZSBzaW5jZSBrZXJuZWwganVzdCBj
-b3BpZWQNCj4gICAgaXQgaW50byB0aGUgYnVmZmVyLg0KSWYgdGhlcmUncyBhbnkgZGVsYXkgYmV0
-d2VlbiB0aGUgc2lnbmFsaW5nIGFuZCB0aGUgaGFuZGxpbmcsIGl0IGNvdWxkIGJlIGV2aWN0ZWQg
-ZnJvbSB0aGUgY2FjaGUgaW4gdGhlIG1lYW50aW1lLg0KKFRoZSBkZWxheSBjb3VsZCBjb21lIGZy
-b20gZS5nLiB0aGUgaGFuZGxpbmcgQ1BVIGNvcmUgYmVpbmcgYnVzeSB3aXRoIHNvbWV0aGluZyBl
-bHNlIGJlZm9yZSBoYW5kbGluZyB0aGUgUlggcmVhZHkgc2lnbmFsLikNCkFuZCBpdCBjb3VsZCBi
-ZSBpbiB0aGUgY2FjaGUgb2YgYSBkaWZmZXJlbnQgQ1BVIGNvcmUuDQoNCkFueXdheSwgSSBzdGls
-bCBhZ3JlZSB3aXRoIGRyb3BwaW5nIHRoZSBwYXRjaCBmb3Igbm93LCBzaW5jZSB0ZXN0aW5nIHNo
-b3dzIG5vIGRpZmZlcmVuY2UuDQoNCg==
+
+
+--=====_001_next=====
+Content-Type: multipart/related;
+	boundary="=====_002_next====="
+
+
+--=====_002_next=====
+Content-Type: multipart/alternative;
+	boundary="=====_003_next====="
+
+
+--=====_003_next=====
+Content-Type: text/plain;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+
+VjM6DQogIC0gRml4IHRoZSBpbmRlbnRhdGlvbiBpc3N1ZXPjgIINCg0KVjI6DQogIC0gUmVzb2x2
+ZSBjb2RlIHN0eWxlLg0KICAtIFByb3ZpZGUgY2xlYXIgZXJyb3IgbWVzc2FnZXMuDQoNClYxOg0K
+ICAtIEFkZCBuZXcgdGltZW91dCBlcnJvciByZXR1cm4uDQogIC0gQWRkIFBDSWUgbGluayBoZWFs
+dGggY2hlY2suDQogIC0gUmVtb3ZlIHRoZSBOUCBzb2Z0d2FyZSByZXNvdXJjZSB1bmluc3RhbGxh
+dGlvbiBwcm9jZWR1cmUgZnJvbSB0aGUgTlAgb25saW5lIHVuaW5pdCBwcm9jZXNzLiANCiAgLSBO
+UCBzb2Z0d2FyZSByZXNvdXJjZSB1bmluc3RhbGxhdGlvbiBzaG91bGQgYmUgY2FsbGVkIHNlcGFy
+YXRlbHkgd2l0aGluIE5QIHVuaW5pdCB0byBhdm9pZCBkdXBsaWNhdGUgcmVzb3VyY2UgcmVsZWFz
+ZS4NCg0KKioqIEJMVVJCIEhFUkUgKioqDQoNClRpYW5oYW8gWmhhbmcgKDIpOg0KICBuZXQvenhk
+aDogYWRkIHBjaWUgYmFyIGNoYW5uZWwgY2hlY2sNCiAgbmV0L3p4ZGg6IG9wdGltaXplIHRoZSBw
+cm9jZWR1cmUgZm9yIE5QIG9ubGluZSB1bmluaXQNCg0KIGRyaXZlcnMvbmV0L3p4ZGgvenhkaF9u
+cC5jIHwgMTIgKysrKysrKy0tLS0tDQogZHJpdmVycy9uZXQvenhkaC96eGRoX25wLmggfCAgMyAr
+KysNCiAyIGZpbGVzIGNoYW5nZWQsIDEwIGluc2VydGlvbnMoKyksIDUgZGVsZXRpb25zKC0pDQoN
+Ci0tIA0KMi4yNy4w
+
+
+--=====_003_next=====
+Content-Type: text/html ;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+
+VjM6PGJyIC8+Jm5ic3A7Jm5ic3A7LSZuYnNwO0ZpeCZuYnNwO3RoZSZuYnNwO2luZGVudGF0aW9u
+Jm5ic3A7aXNzdWVz44CCPGJyIC8+DTxiciAvPlYyOjxiciAvPiZuYnNwOyZuYnNwOy0mbmJzcDtS
+ZXNvbHZlJm5ic3A7Y29kZSZuYnNwO3N0eWxlLjxiciAvPiZuYnNwOyZuYnNwOy0mbmJzcDtQcm92
+aWRlJm5ic3A7Y2xlYXImbmJzcDtlcnJvciZuYnNwO21lc3NhZ2VzLjxiciAvPg08YnIgLz5WMTo8
+YnIgLz4mbmJzcDsmbmJzcDstJm5ic3A7QWRkJm5ic3A7bmV3Jm5ic3A7dGltZW91dCZuYnNwO2Vy
+cm9yJm5ic3A7cmV0dXJuLjxiciAvPiZuYnNwOyZuYnNwOy0mbmJzcDtBZGQmbmJzcDtQQ0llJm5i
+c3A7bGluayZuYnNwO2hlYWx0aCZuYnNwO2NoZWNrLjxiciAvPiZuYnNwOyZuYnNwOy0mbmJzcDtS
+ZW1vdmUmbmJzcDt0aGUmbmJzcDtOUCZuYnNwO3NvZnR3YXJlJm5ic3A7cmVzb3VyY2UmbmJzcDt1
+bmluc3RhbGxhdGlvbiZuYnNwO3Byb2NlZHVyZSZuYnNwO2Zyb20mbmJzcDt0aGUmbmJzcDtOUCZu
+YnNwO29ubGluZSZuYnNwO3VuaW5pdCZuYnNwO3Byb2Nlc3MuJm5ic3A7DTxiciAvPiZuYnNwOyZu
+YnNwOy0mbmJzcDtOUCZuYnNwO3NvZnR3YXJlJm5ic3A7cmVzb3VyY2UmbmJzcDt1bmluc3RhbGxh
+dGlvbiZuYnNwO3Nob3VsZCZuYnNwO2JlJm5ic3A7Y2FsbGVkJm5ic3A7c2VwYXJhdGVseSZuYnNw
+O3dpdGhpbiZuYnNwO05QJm5ic3A7dW5pbml0Jm5ic3A7dG8mbmJzcDthdm9pZCZuYnNwO2R1cGxp
+Y2F0ZSZuYnNwO3Jlc291cmNlJm5ic3A7cmVsZWFzZS48YnIgLz4NPGJyIC8+KioqJm5ic3A7QkxV
+UkImbmJzcDtIRVJFJm5ic3A7KioqPGJyIC8+DTxiciAvPlRpYW5oYW8mbmJzcDtaaGFuZyZuYnNw
+OygyKTo8YnIgLz4mbmJzcDsmbmJzcDtuZXQvenhkaDombmJzcDthZGQmbmJzcDtwY2llJm5ic3A7
+YmFyJm5ic3A7Y2hhbm5lbCZuYnNwO2NoZWNrPGJyIC8+Jm5ic3A7Jm5ic3A7bmV0L3p4ZGg6Jm5i
+c3A7b3B0aW1pemUmbmJzcDt0aGUmbmJzcDtwcm9jZWR1cmUmbmJzcDtmb3ImbmJzcDtOUCZuYnNw
+O29ubGluZSZuYnNwO3VuaW5pdDxiciAvPg08YnIgLz4mbmJzcDtkcml2ZXJzL25ldC96eGRoL3p4
+ZGhfbnAuYyZuYnNwO3wmbmJzcDsxMiZuYnNwOysrKysrKystLS0tLTxiciAvPiZuYnNwO2RyaXZl
+cnMvbmV0L3p4ZGgvenhkaF9ucC5oJm5ic3A7fCZuYnNwOyZuYnNwOzMmbmJzcDsrKys8YnIgLz4m
+bmJzcDsyJm5ic3A7ZmlsZXMmbmJzcDtjaGFuZ2VkLCZuYnNwOzEwJm5ic3A7aW5zZXJ0aW9ucygr
+KSwmbmJzcDs1Jm5ic3A7ZGVsZXRpb25zKC0pPGJyIC8+DTxiciAvPi0tJm5ic3A7DTxiciAvPjIu
+MjcuMDxiciAvPg==
+
+
+--=====_003_next=====--
+
+--=====_002_next=====--
+
+--=====_001_next=====--
+
