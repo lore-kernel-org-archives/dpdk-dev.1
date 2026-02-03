@@ -2,41 +2,85 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CD8EE83061
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Feb 2026 08:24:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C765E83060
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Feb 2026 08:34:40 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D1BE440611;
-	Tue,  3 Feb 2026 09:24:30 +0100 (CET)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 5D2F3402A2;
- Tue,  3 Feb 2026 09:24:29 +0100 (CET)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 367DB206EC;
- Tue,  3 Feb 2026 09:24:29 +0100 (CET)
-Content-class: urn:content-classes:message
+	by mails.dpdk.org (Postfix) with ESMTP id A1CB7402A2;
+	Tue,  3 Feb 2026 09:34:39 +0100 (CET)
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com
+ [209.85.208.47]) by mails.dpdk.org (Postfix) with ESMTP id 9CE624028B
+ for <dev@dpdk.org>; Tue,  3 Feb 2026 09:34:38 +0100 (CET)
+Received: by mail-ed1-f47.google.com with SMTP id
+ 4fb4d7f45d1cf-6581234d208so8899328a12.3
+ for <dev@dpdk.org>; Tue, 03 Feb 2026 00:34:38 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1770107678; cv=none;
+ d=google.com; s=arc-20240605;
+ b=YO2H/lymFkaj6stoXXuovWYOLQ/1BWRoEOw3+0iG82oVkGWr6f4OXJjfOCpSOwiJXl
+ GRmOmnrsQBQxtQ3ZdfgQtWeSTQOaOvWAFicITbS11xDmmHjYp7oIjf2cT8PH2YXsui0K
+ sogDy2264bcRVoF0WSCCjC8bqdUxaYRt5TUeLCnVeXv6cnzI5IGKNMrqnabKskZxtYbq
+ NUazcgCO65VDxFk4hLUPzeHsuLHvVK6mlKcip7CvK2oVw4sy9MRYPFsM5QWP7S549K/U
+ 2CPNN6nVCWEPftjgshjKHdNITxYApdBZ2F5ays+R4cLGLH2oiNL3krlEYck7Nd2ayJo+
+ wYfQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20240605; 
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:dkim-signature;
+ bh=8FCgt4sUI0Cg1tUsGS+5bBjrIn5a2yeQ5DgoMk+Cu5o=;
+ fh=t33Egyn4DAOwVRnwraldPtDjoBFAjogf3LzpsEMwxHQ=;
+ b=X7LDQ0ThlYQfWatnmH4KUuOH4KIO8zotgQnevZjYDvIhagoAfC3kGCWRPEleZaspiT
+ Qccb2/HF7qUxSXTG+Eg5TOlHywHAjFfWauCB6foz7lYDvmVICHy+B9cQdFb9psn6q4IY
+ HhsRGDJxt/+01hiSZG9Ee1T5ivVWA8oUrYUuEtpKvf059/iKdx99JdwlxhkwsUGW5ONo
+ T6egiHS4HJxIZPYDZ5frlI7s7eDEYNhYAFHvkhw5pBSetogWZaVjCm/OD0oXTdsN2y6u
+ poQCM0rmDk8sgaEjHgk5E8Qa94/JncJuL0/HGn5+ccG24+bJqcrEj3Rtp6iWsnupL/gv
+ 60GQ==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=dyna-nic.com; s=google; t=1770107678; x=1770712478; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=8FCgt4sUI0Cg1tUsGS+5bBjrIn5a2yeQ5DgoMk+Cu5o=;
+ b=dBy4rS3rrutbGQrixq+yjK2SjDaQwrOx7GTl9VKoTbqJnYujkj9McLf6Fd6rIYIDNC
+ VlZIThG1C8xSFs70GJ8RkR5CVsjjwtQyOFzHAyfKdZnT8BepMPGy5LXCtGxjso7t0UIC
+ eMoxCPxeTggKl+8dQXnhPDxrjkyfHfct+LThs3J15h/Uenyo3wtkDCDSBg2689Wvxfqu
+ A3wlmj3GkdQnXMEIMVQdx0aDbvSv/DB6rJilODxCtCQ8mUNSa1jA0eY1yzbggE+7kVn9
+ gbpKX/C8VnSSNr5Vsxb4+ivhieT2jxCInksYAruEp3BkCPhjVmYgHqRoLM468patoc1P
+ JViA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1770107678; x=1770712478;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=8FCgt4sUI0Cg1tUsGS+5bBjrIn5a2yeQ5DgoMk+Cu5o=;
+ b=YsYgc1wyCo1mPIIZ8BKlo7lJ9vXE5eeEOVID0bMjpckjWAu3r9V3CJl9I29E920F37
+ aTg3lKoWUkPVdNi+O110P65Detqn57ibXOR7moANhiMqhAtSCo2RJoP7g1uDY62mmY1d
+ DddwcaLyrijz3TwLPgdeEhM9Z5bPusfMJaO1sj1kxQSDeOeGA8vdAAQ5gU9sTXJAETIx
+ V3ao5RVFvN7Lgse23QDAQlj3sIuzumVF4lCi4dDCd2r2h9sPVKL30vV4tnTFF9DxvQo5
+ o8gTvLq7+96zSjfw2JlykXqyddyHQgNcsb0Gio1FNztC9x+s8Bo3EIcRuE9Zj96lJVCb
+ /eKA==
+X-Gm-Message-State: AOJu0Yy3i/Oh5D1RPA3FNE+CMRCihyzgRuvS5Lc8is8Wd9izyO/jq2+l
+ X0Ahv8gYAy+jX1hFaGKSeji12AWpt7XrBZHCqkEfYEt7oox5OfdvzUtqfQIQZ9pjKOe9GFfU+uo
+ qOM9Qvb3MbO9exHE4AQKSU42OpH4WtRtqeqvSm2SaYs5Hq+UPcWyc
+X-Gm-Gg: AZuq6aLL9xS+pPrA7Mw4qaVbBLpPg++4w67JPNUkRw2iqBgikWvCaIvJ6bknQ3rIBLL
+ Q2jzGwt8bR3ceajMqTDOCgYgBSL7V6GBHN4XXGPmmv5Ob0XBinOecxcUGw9Y9NowtbF2CPkLGL+
+ PiebMchY0zdWVrUe4MgHRdHuzYow6LY3u+3vJUQZLmTDiykPNk4xpTz78LRdqbaLzk5/47OVtLX
+ otPTJuLbEJpH00C1LRwk3tL0DkoYmWT7R7AO8YZJaxehFyaZX/P598xEpT8V7921m3HWgsf1Yp+
+ tKA=
+X-Received: by 2002:a05:6402:5256:b0:658:1421:b569 with SMTP id
+ 4fb4d7f45d1cf-658de58528bmr8107794a12.14.1770107678111; Tue, 03 Feb 2026
+ 00:34:38 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Subject: RE: [PATCH v17 1/2] eal: remove alloc_size from rte_lcore_var_alloc
-Date: Tue, 3 Feb 2026 09:24:26 +0100
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F656E5@smartserver.smartshare.dk>
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-In-Reply-To: <20260202052442.92192-2-scott.k.mitch1@gmail.com>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH v17 1/2] eal: remove alloc_size from rte_lcore_var_alloc
-Thread-Index: AdyUBED8gncKqVNYT2630YyYxKp1HgA4cKoA
-References: <20260127052900.68045-1-scott.k.mitch1@gmail.com>
- <20260202052442.92192-1-scott.k.mitch1@gmail.com>
- <20260202052442.92192-2-scott.k.mitch1@gmail.com>
-From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
-To: <scott.k.mitch1@gmail.com>,
-	<dev@dpdk.org>
-Cc: <stephen@networkplumber.org>, <bruce.richardson@intel.com>,
- <mattias.ronnblom@ericsson.com>, <stable@dpdk.org>
+References: <20260202113659.24052-1-sismis@dyna-nic.com>
+ <20260202113659.24052-4-sismis@dyna-nic.com>
+ <20260202120313.15ecedb3@phoenix.local>
+In-Reply-To: <20260202120313.15ecedb3@phoenix.local>
+From: =?UTF-8?B?THVrw6HFoSDFoGnFoW1pxaE=?= <sismis@dyna-nic.com>
+Date: Tue, 3 Feb 2026 09:34:26 +0100
+X-Gm-Features: AZwV_QhBInG_vx6OM-yAmcMIFZBZpy0kDXk2saehwcNFuVy5ZJuFkJUG7rwpDRU
+Message-ID: <CAPQRu6Gb0tMH6f-5T7_vCVK23mAkEOmXn-T+X_DYaWsNZdYtjg@mail.gmail.com>
+Subject: Re: [PATCH v10 3/6] flow_parser: add shared parser library
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: dev@dpdk.org
+Content-Type: multipart/alternative; boundary="0000000000005e4ff40649e74fcf"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -50,60 +94,37 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> From: Scott Mitchell <scott.k.mitch1@gmail.com>
->=20
-> The __rte_alloc_size(1) attribute on rte_lcore_var_alloc() is
-> semantically incorrect and causes false positives with FORTIFY_SOURCE
-> runtime checks.
->=20
-> The attribute tells the compiler that the function returns a pointer
-> to 'size' bytes of usable memory. However, rte_lcore_var_alloc()
-> actually returns a handle to a per-lcore variable scheme. The
-> allocator internally allocates 'size' bytes per lcore
-> (size * RTE_MAX_LCORE total), partitioned into per-lcore sections.
-> The handle points to lcore 0's copy, and accessed via
-> RTE_LCORE_VAR_LCORE(lcore_id, handle) which computes:
-> handle + (lcore_id * RTE_MAX_LCORE_VAR). Access is expected
-> beyond 'size' bytes beyond the returned pointer when 'lcore_id !=3D 0'
-> but FORTIFY_SOURCE may terminate the program due to out of bounds
-> access.
->=20
-> This can be observed on CI with gcc 13.3.0 in lcore_var_autotest with
-> '*** buffer overflow detected ***: terminated' if pointer provenance
-> is preserved (e.g. if offsets avoid casting to uintptr_t).
->=20
-> Fixes: 5bce9bed67ad ("eal: add static per-lcore memory allocation
-> facility")
-> Cc: mattias.ronnblom@ericsson.com
-> Cc: stable@dpdk.org
->=20
-> Signed-off-by: Scott Mitchell <scott.k.mitch1@gmail.com>
-> ---
->  lib/eal/include/rte_lcore_var.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/lib/eal/include/rte_lcore_var.h
-> b/lib/eal/include/rte_lcore_var.h
-> index ca31dff6fd..48b022e84e 100644
-> --- a/lib/eal/include/rte_lcore_var.h
-> +++ b/lib/eal/include/rte_lcore_var.h
-> @@ -202,7 +202,7 @@ rte_lcore_var_lcore(unsigned int lcore_id, void
-> *handle)
->  __rte_experimental
->  void *
->  rte_lcore_var_alloc(size_t size, size_t align)
-> -	__rte_alloc_size(1) __rte_alloc_align(2);
-> +	__rte_alloc_align(2);
->=20
->  #ifdef __cplusplus
->  }
-> --
-> 2.39.5 (Apple Git-154)
+--0000000000005e4ff40649e74fcf
+Content-Type: text/plain; charset="UTF-8"
 
-This patch could be separated from the RTE_PTR_ADD/SUB series.
+>
+> The kernel version of checkpatch complains here. The DPDK shell script
+> seems to be set to ignore this but.
+>
+> WARNING: break is not useful after a return
+> #15008: FILE: lib/flow_parser/rte_flow_parser.c:14763:
+> +               return cmd_flow_parsed(out);
+> +               break;
+>
+> Should I create a new patch set or just let it be at this moment?
+Lukas
 
-Acked-by: Morten Br=F8rup <mb@smartsharesystems.com>
+--0000000000005e4ff40649e74fcf
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-NB: Please keep this ACK for any new versions of this patch if the =
-essence of the patch doesn't change.
+<div dir=3D"ltr"><div class=3D"gmail_quote gmail_quote_container"><blockquo=
+te class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px =
+solid rgb(204,204,204);padding-left:1ex">The kernel version of checkpatch c=
+omplains here. The DPDK shell script<br>
+seems to be set to ignore this but. <br>
+<br>
+WARNING: break is not useful after a return<br>
+#15008: FILE: lib/flow_parser/rte_flow_parser.c:14763:<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return cmd_flow_par=
+sed(out);<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0break;<br>
+<br></blockquote><div>Should I create a new patch set or just let it be at =
+this moment?</div><div>Lukas=C2=A0</div></div></div>
 
+--0000000000005e4ff40649e74fcf--
