@@ -2,85 +2,41 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4725DE9538C
-	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Feb 2026 11:45:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 845ACE95394
+	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Feb 2026 12:32:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7FFD9402EE;
-	Wed,  4 Feb 2026 12:45:02 +0100 (CET)
-Received: from fout-a3-smtp.messagingengine.com
- (fout-a3-smtp.messagingengine.com [103.168.172.146])
- by mails.dpdk.org (Postfix) with ESMTP id D367B402DE
- for <dev@dpdk.org>; Wed,  4 Feb 2026 12:45:00 +0100 (CET)
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
- by mailfout.phl.internal (Postfix) with ESMTP id 64148EC0573;
- Wed,  4 Feb 2026 06:45:00 -0500 (EST)
-Received: from phl-frontend-04 ([10.202.2.163])
- by phl-compute-01.internal (MEProxy); Wed, 04 Feb 2026 06:45:00 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm3; t=1770205500;
- x=1770291900; bh=H/dEkOcXLMKXeeOZF1fR1uB6zSIVwkylrvWKKlkH+gI=; b=
- IPqyqXSqvqUz9pxRois1RnZjnW1+BQYD9zdvQ6bsnS0c6T+EPW/vCCP396nuVkT5
- vbEZnS2OMR81CtG4iF8gMR46weHO3owtI3kLLksDOTMA4ykOHgd5Q18sTvMaGqKW
- BIz/8IwfirdXwZpElXijnYKZX3LbFLybIupdI5MY+YcWzd/CIFBdsTU8h3Y5B7M3
- L/9DacVL9EcbScnfyM7NR6MaNoRuT3l99PlTBilH+0jngvBcwsIzCJ7SAH/jDDrs
- U0hpFfZAWwXWMZl82CckfRXtBarC42Xu+MILy4LWM6GgCzTVDNZ4rCUuf0zmY28x
- Wmi5tKHH3GQY9oSGqT2Yzg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1770205500; x=
- 1770291900; bh=H/dEkOcXLMKXeeOZF1fR1uB6zSIVwkylrvWKKlkH+gI=; b=M
- +ShfiKbsaAxaQe1J8S672dC/AJMjzw7z3EovOvZ1wa6D+PWYvdkcZ8GlP+oYRmg8
- Be5URLO/ZhY0zVf5kELY3yMrMF6WcgPw+/svVWni0ES5D9xmGAGi72NK/8al92Pw
- iNM3q8JnNsLRTiuzzwQqyR2YudvP6RDnVQf8ui1DxRP0nqUkOPU2MU1A7JmziLDq
- HLp+7jbSLzIMlpf1Tl+eN1lkrHndh5q5t9QbLMu48LgG3TLfUIwxCK7xekzJAiaV
- 8ptYxVxmi1ojVeVfCRnaUSDsuiHpOxTc3ivHP/KA2MscOaRAlLQAqvzk3hFRb4T1
- j1vV/wPkKR9AzstX5gZvg==
-X-ME-Sender: <xms:OzGDaei6rR02l8WF7FjjaL_0D7ebkR1dJPmL_AmfxUha5e94EdlSxQ>
- <xme:OzGDaX9ewTokrtG4U1zA4yZ9-teiQRRcTrbSK3i-sxORBablGvqRhH92mVKp6MsXi
- i5XbrzYVAaiOVfg629d70JGMiJMM2z0RQ9GD0EdbB5pgWCOlWeOeg>
-X-ME-Received: <xmr:OzGDaRqeiFQ3OZ3OM-7CmE11Mjo4Os3MyRI3K9jy-Gdo6hHZ5yiSAj7IrP9nxtIHEjVAYoDEPktL7JRMfkJ-XC8vhg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddukedvfeehucetufdoteggodetrf
- dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
- rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
- gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
- ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
- frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
- uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeeipdhm
- ohguvgepshhmthhpohhuthdprhgtphhtthhopehkohhnshhtrghnthhinhdrrghnrghnhi
- gvvheshhhurgifvghirdgtohhmpdhrtghpthhtohepshhtvghphhgvnhesnhgvthifohhr
- khhplhhumhgsvghrrdhorhhgpdhrtghpthhtohepmhgrrhgrthdrkhhhrghlihhliheshh
- hurgifvghirdgtohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghpthht
- ohepjhgvrhhinhhjrggtohgskhesghhmrghilhdrtghomhdprhgtphhtthhopehmsgessh
- hmrghrthhshhgrrhgvshihshhtvghmshdrtghomh
-X-ME-Proxy: <xmx:OzGDaXXun_-VmGDctA-pWRs4Z1erYOvrO_UrPr4rhgEyl2jgfuVL_g>
- <xmx:OzGDaYAA9RllBX3R27GjioKNFG35NNGB4zK6VBVh78ysJJoqQczrYw>
- <xmx:OzGDaT2msYUhrTBZC4xUPhmi7h2ruUmvgdQRIH_2HAmR2G0OYLNX2Q>
- <xmx:OzGDaS1lsBSzlsQ8h0iX80BskS9hBnsK1dm3DjEL8v8V1f1ENftseQ>
- <xmx:PDGDaU_INg5IF1E751sS-B4L3aAGJPNjawzb0K2oPqrG75bwrW-2rcCy>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 4 Feb 2026 06:44:58 -0500 (EST)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: konstantin.ananyev@huawei.com,
- Stephen Hemminger <stephen@networkplumber.org>
-Cc: Marat Khalili <marat.khalili@huawei.com>, dev@dpdk.org,
- jerinjacobk@gmail.com, mb@smartsharesystems.com
-Subject: Re: [PATCH v4 0/6] bpf: simple tests and fixes
-Date: Wed, 04 Feb 2026 12:44:57 +0100
-Message-ID: <4487716.QJadu78ljV@thomas>
-In-Reply-To: <20260127060244.46b2cee6@phoenix.local>
-References: <20251217180141.60227-1-marat.khalili@huawei.com>
- <20260127114944.35993-1-marat.khalili@huawei.com>
- <20260127060244.46b2cee6@phoenix.local>
+	by mails.dpdk.org (Postfix) with ESMTP id 4C6A8402EE;
+	Wed,  4 Feb 2026 13:32:04 +0100 (CET)
+Received: from office2.cesnet.cz (office2.cesnet.cz [78.128.248.237])
+ by mails.dpdk.org (Postfix) with ESMTP id 99767402DE
+ for <dev@dpdk.org>; Wed,  4 Feb 2026 13:32:02 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cesnet.cz;
+ s=office2-2020; t=1770208322;
+ bh=kABBpCp78JzRVQc6cnzWdnqJct1iLeGY50/yTCT/oL0=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References;
+ b=VVfLtAJxzMm+H5JGWLyKWAiKR/KnPwCHO9m/GofZtl7AEvN8Iobe4so8gLqXMatQ6
+ Qcs//dsTS8BJbx0Y2XYhRoqpoT9sy1gShGsyHo4iziIoTsoKs13TAzAT0LHQYbmoLp
+ 1HyDxgyfSkyQUarme5B4kVRguLz9hybOuV1m+NXQ1d4CmxO4P4p7Vsh138HIz06rch
+ TKYZuOPfOuxoXvr/b6fj4S4ukYaC+I8KRRXP6U2ROVewkNDNn4FH6eKm8bO5bFYa5l
+ Aawsq1C215WDPkRO5O77/J8IalIbbJyPTQ4a0xL1+qRy1xmVnuPlBQVTPO3rHzyasn
+ hV2e0R8TPtNxA==
+Received: from emil.cesnet.cz (gtx107.cesnet.cz [IPv6:2001:718:812:27::107])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by office2.cesnet.cz (Postfix) with ESMTPSA id 4CA6F1180072;
+ Wed,  4 Feb 2026 13:32:02 +0100 (CET)
+From: spinler@cesnet.cz
+To: dev@dpdk.org
+Cc: Martin Spinler <spinler@cesnet.cz>
+Subject: [PATCH v7 0/8] net/nfb: rework to real multiport
+Date: Wed,  4 Feb 2026 13:31:29 +0100
+Message-ID: <20260204123137.123171-1-spinler@cesnet.cz>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260115151656.393106-1-spinler@cesnet.cz>
+References: <20260115151656.393106-1-spinler@cesnet.cz>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -94,28 +50,49 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-27/01/2026 15:02, Stephen Hemminger:
-> On Tue, 27 Jan 2026 11:49:36 +0000
-> Marat Khalili <marat.khalili@huawei.com> wrote:
-> > Marat Khalili (6):
-> >   eal: variable first arguments of RTE_SHIFT_VALxx
-> >   bpf: fix signed shift overflows in ARM JIT
-> >   bpf: mark ARM opcodes with UINT32_C
-> >   bpf: disallow empty program
-> >   bpf: make add/subtract one program validate
-> >   bpf: fix validation when conditional jump is first instruction
-> > 
-> >  app/test/test_bpf.c          | 254 +++++++++++++++++++++++++++++++++++
-> >  lib/bpf/bpf_jit_arm64.c      | 184 ++++++++++++-------------
-> >  lib/bpf/bpf_load.c           |   2 +-
-> >  lib/bpf/bpf_validate.c       |  48 ++++---
-> >  lib/eal/include/rte_bitops.h |   4 +-
-> >  5 files changed, 375 insertions(+), 117 deletions(-)
-> > 
-> 
-> This is what an automated review looks like when everything is good:
+From: Martin Spinler <spinler@cesnet.cz>
 
-Does it make the author a good candidate to be co-maintainer?
+This series implements real multiport for better user experience.
 
+The existing driver creates one ethdev/port for one PCI device.
+As the CESNET-NDK based cards aren't capable to represent each
+Ethernet port by own PCI device, new driver implementation
+processes real port configuration from firmware/card and switches
+from rte_eth_dev_pci_generic_probe to multiple rte_eth_dev_create calls.
 
+---
+Depends-on: patch-37245 ("doc/nfb: update release notes for nfb driver")
+
+v7:
+* Rebased to patch-37245
+* Removed timestamp update info from release notes
+* Added missing ctype include for isdigit()
+* Updated style: removed extra brackets
+
+Martin Spinler (8):
+  net/nfb: prepare for indirect queue mapping scheme
+  net/nfb: create one ethdev per ethernet port
+  net/nfb: add vdev as alternative device probe method
+  net/nfb: add device argument "port" to limit used ports
+  net/nfb: init only MACs associated with device
+  net/nfb: add compatible cards to driver PCI ID table
+  net/nfb: report firmware version
+  doc/nfb: cleanup and update guide
+
+ doc/guides/nics/features/nfb.ini       |   4 +
+ doc/guides/nics/nfb.rst                | 187 +++++------
+ doc/guides/rel_notes/release_26_03.rst |   6 +
+ drivers/net/nfb/meson.build            |   1 +
+ drivers/net/nfb/nfb.h                  |  56 +++-
+ drivers/net/nfb/nfb_ethdev.c           | 445 +++++++++++++++++++------
+ drivers/net/nfb/nfb_rx.c               |  30 +-
+ drivers/net/nfb/nfb_rx.h               |   9 +-
+ drivers/net/nfb/nfb_tx.c               |  27 +-
+ drivers/net/nfb/nfb_tx.h               |   7 +-
+ drivers/net/nfb/nfb_vdev.c             | 107 ++++++
+ 11 files changed, 622 insertions(+), 257 deletions(-)
+ create mode 100644 drivers/net/nfb/nfb_vdev.c
+
+-- 
+2.53.0
 
