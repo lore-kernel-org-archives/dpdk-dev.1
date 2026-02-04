@@ -2,100 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43982EA7946
-	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Feb 2026 20:34:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77567EA7946
+	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Feb 2026 20:34:32 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 21791402E1;
-	Wed,  4 Feb 2026 21:34:14 +0100 (CET)
-Received: from fout-a8-smtp.messagingengine.com
- (fout-a8-smtp.messagingengine.com [103.168.172.151])
- by mails.dpdk.org (Postfix) with ESMTP id 007D6402AA
- for <dev@dpdk.org>; Wed,  4 Feb 2026 21:34:12 +0100 (CET)
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
- by mailfout.phl.internal (Postfix) with ESMTP id 747FDEC0329;
- Wed,  4 Feb 2026 15:34:12 -0500 (EST)
-Received: from phl-frontend-04 ([10.202.2.163])
- by phl-compute-03.internal (MEProxy); Wed, 04 Feb 2026 15:34:12 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm3; t=1770237252;
- x=1770323652; bh=EBgNq0PKCL5YKJOwRYGLoPpdpwfz32YmPug75AHLpBo=; b=
- DkV+drHCz2uvSTBy93cbyITDV+GDjP7z3FtJ71g6tjlB2hjmzO0+rw/q8IOmzE7e
- eJFPARVUcJZ2WikKmkG+lV2pi7zdmtvbNQkANFgmihz/ZQZMu/LAVxBM+w1ExAw4
- EBUpQNEWaLi126fxmhBAhRJt9vGrJU44rKEBgYbr5VH9ihRYX20LFmfFDgEUVDwz
- RaxjBwBkMPE/Jw0i4g7/w6CmUzwoCleV3aMp8BNYlOJF6RVlQPPbnvxucJig5auH
- q1puIY1jWVxsLsX7Hveu5qrJKr4mbt+1GZuG6dVMB7YXlp1d0Kxgr9nwty/kqaC9
- Ywcl+P3hvfcytSpJAWgOvw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1770237252; x=
- 1770323652; bh=EBgNq0PKCL5YKJOwRYGLoPpdpwfz32YmPug75AHLpBo=; b=G
- dtbEC3zY+Jgp5xRkcv7b3uCgspwUymr7gokz/PdrwDsgFh9y50RbDEoJJ/BaWRhe
- dDvXsD9dyIGyuRMHbHTXplUSzYw9LgliGdk9Ak2dpUdmQtlHtHayVYQQw/5r/Y6B
- PQP619ZSqB201gD1gmKZNbkQ5oelSlOBMlP0/AhYJD83MYAei4FHUjlMWjMvkt0P
- PLYHgjCHwiTraCfiIE5So5ejrAGSwgufFwzZwMZJwqKB/fEfWC1jRI1G/hxzyBcZ
- sHIfCBSHT46nsNL7knbeG+47cRpKc3B5PR+GaAwb0WaEpoGG6OQHZmDq9f36MWwZ
- YhRWAcUouxXibliDUh3XQ==
-X-ME-Sender: <xms:Q62Daee4HNZYuMMMpaQf9Eq0acYddXD5M2RMnEzQVXGpl2RuT7OVxw>
- <xme:Q62DaS4d9OEgQhElcIkCfNbWwkwDfS_7jyW3Moxfnoes6Be3APuNiz4ImzcSc6NTA
- JxgYo4gooLumooW2SKBg58gih-rm2sGu6hFqVj6iG1OVib2PkCwkQ>
-X-ME-Received: <xmr:Q62DaWJzT16cxjVKhAx7Tih_MHl1kzIULjnt39LhUda0pWb1nBBchJT3ecfRjcRCHnfIGJIcEKOmFPYEafaukXBg0A>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddukeefgeduucetufdoteggodetrf
- dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
- rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
- gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
- ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
- frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
- uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeduledp
- mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtg
- hpthhtohepfhgvnhhgtghhvghnghifvghnsehhuhgrfigvihdrtghomhdprhgtphhtthho
- pehnihgtohhlrghsrdgthhgruhhtrhhusehinhhtvghlrdgtohhmpdhrtghpthhtohepmh
- grthhtihgrshdrrhhonhhnsghlohhmsegvrhhitghsshhonhdrtghomhdprhgtphhtthho
- pehorhhikhgrsehnvhhiughirgdrtghomhdprhgtphhtthhopegrnhgurhgvfidrrhihsg
- gthhgvnhhkohesohhkthgvthhlrggsshdrrhhupdhrtghpthhtohepjhgvrhhinhhjsehm
- rghrvhgvlhhlrdgtohhmpdhrtghpthhtoheprghmihhtphhrrghkrghshhhssehmrghrvh
- gvlhhlrdgtohhmpdhrtghpthhtohepvhhlrgguihhmihhrrdhmvgguvhgvughkihhnsehi
- nhhtvghlrdgtohhm
-X-ME-Proxy: <xmx:Q62DaW7I_oC23df4bEgVoMaW9BZLVtCIfC7L0TkhW12N_N5q8I_k6w>
- <xmx:Q62DaVZKlUioGDVQ0Ozsf1JFwwjKRLWE0J-3-H4Zra0z1_xard9TOA>
- <xmx:Q62DadyBvIXotIbzpY8NnrV2Z4cwpcon835iiq2eflwLRQ5J0GGSMw>
- <xmx:Q62DaROydWj7yQ2iexkL7dNkQl2DNm8cFdNI9kKT1FG7j0ZQQrnFug>
- <xmx:RK2DaciquaWJ3vnzUHp6fDSIu03IFcvKMOUqMWpqholw1UesOcALntBe>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 4 Feb 2026 15:34:08 -0500 (EST)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: dev@dpdk.org
-Cc: Chengwen Feng <fengchengwen@huawei.com>,
- Nicolas Chautru <nicolas.chautru@intel.com>,
- Mattias =?UTF-8?B?UsO2bm5ibG9t?= <mattias.ronnblom@ericsson.com>,
- Ori Kam <orika@nvidia.com>, Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>, 
- Jerin Jacob <jerinj@marvell.com>,
- Amit Prakash Shukla <amitprakashs@marvell.com>,
- Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
- Kiran Kumar K <kirankumark@marvell.com>,
- Nithin Dabilpuram <ndabilpuram@marvell.com>,
- Zhirun Yan <yanzhirun_163@163.com>, Yipeng Wang <yipeng1.wang@intel.com>,
- Sameh Gobriel <sameh.gobriel@intel.com>,
- Bruce Richardson <bruce.richardson@intel.com>,
- Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>,
- Pavan Nikhilesh <pbhagavatula@marvell.com>,
- Paul Szczepanek <paul.szczepanek@arm.com>,
- Stephen Hemminger <stephen@networkplumber.org>
-Subject: Re: [PATCH] lib: remove extra characters ending comment blocks
-Date: Wed, 04 Feb 2026 21:34:07 +0100
-Message-ID: <5378649.ejJDZkT8p0@thomas>
-In-Reply-To: <20260129121414.6aa40db0@phoenix.local>
-References: <20260129144749.3637111-1-thomas@monjalon.net>
- <20260129121414.6aa40db0@phoenix.local>
+	by mails.dpdk.org (Postfix) with ESMTP id 4BC8840B94;
+	Wed,  4 Feb 2026 21:34:31 +0100 (CET)
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com
+ [209.85.221.44]) by mails.dpdk.org (Postfix) with ESMTP id A103440B92
+ for <dev@dpdk.org>; Wed,  4 Feb 2026 21:34:30 +0100 (CET)
+Received: by mail-wr1-f44.google.com with SMTP id
+ ffacd0b85a97d-43621bf67ceso5278f8f.2
+ for <dev@dpdk.org>; Wed, 04 Feb 2026 12:34:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1770237270;
+ x=1770842070; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=Hxw/mPPqBcuJVyuodRoAQ9nPwBOfKeUNxu/jpRCuis4=;
+ b=CJ6TBfdcJ2u4C3BvIog8EEpPF1pO6i9GRG6LWe36bbVhokjYK/oMeahDdIOR5LkADj
+ Tn23Zn6KrA8M5cJfrn/B7HHLeRwTXq+w2RIksYlPLl7W/Z/qXo1kY7YO5u174kH+p1hM
+ SN6D0YG6u/QtsxFHBVnV9vhVX0iSYC7oLRpdpgF9rfpGvKkabs9rFeJcdY+MshYiaf5A
+ awetUPdHHL8+npN5cUdMQwJHqeAlYAtwiU3ktmhq6lBXP8lNQgZEzfzkFzgyqi0zNzog
+ 5Q0KphDjUceNnT5S6IEASIezFXvAGowlzTHK/fOFR6kJ9OO+UL9dTBw/Xh+pqWa9dVzF
+ e6UA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1770237270; x=1770842070;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=Hxw/mPPqBcuJVyuodRoAQ9nPwBOfKeUNxu/jpRCuis4=;
+ b=DRZEvF2nky3xZ7pkdqI7Le0hZpoeajuNZYdUHH6WsoXwK7YRS/foljRLn9/x8OILtx
+ wYa+vO8z+Sc2gzg+RAY+x9WL9xGpSZPW6cbCdp6rENRtUKvJfadvjGGNfZdBYvNF2s+0
+ /W/dP+XezJ2dFXbwSjaO3qcELHW1y/29IUf3QkEN1hZSuowKkaGR7AtGMtuD9T8B0HyE
+ wBgW+a8Nc7PXGPeLW7/EwHQeuNskxXCbV/5DuP5D6qWl81IO/FX/ufpHAPuCW8RNxpmw
+ EL/L55nmPxNRDt5KCT+JYmU8wQhVff6mNYlkr2lcydqXczNuVvD0iDyNU63iJAvSbh9O
+ zySA==
+X-Gm-Message-State: AOJu0Yzeqr1iJNB1sufIQvUahso7g5cqgKG5gwd11Lyuxkkm4SiTdtYA
+ hc0Y7iYN6RLdeaeRmVRAZMpFTHopjdatVFVI8UJ+15ig09qEkQqNg36dGThLGgGjMuA=
+X-Gm-Gg: AZuq6aIu93WBial98GrsoT8ZHOGw6OaKAHjEWWYiwakRPfuCH66wYEA69i9BZjKOsTO
+ a0cjpOzigJs7AiRXCFwWXToH86z6W3AHWN6GRWrpl3/GfnSE4JkHGYdYqYRlyO9GKGhCko2aQL/
+ ILoL2pqx2jPZKpPZ72m67EsX2zoAsXFqaVPPM3i5PkwtI9jUPnPeYnbrKhHedh1aFai0yUc6CYw
+ 88Rw7eGBG7gMrGWZKLv6AmzN7uvZMRys1MStGSAtgPAYzgZptdlCSv5ICgdyT6bdhGLT2PC3gFn
+ myL+rC8u/UncVNLMaS9lnHdft7bSoQzl1xk6v1Dz3gCi1VONdBEY3HfYXm3+IZ1ZDuqs/8C9dE1
+ 28c2WDDrOcDZ0ZwwFB0zLGZvf95/EZKMU7+904F96fDHy6ddHWS8Ue1/gcp501TVFQVZJ2gwNm/
+ WkHjfQDO6/+ThJ94YzNlYFVMTdQXCmrImQR45TlcZJGhkkEAGSvKty
+X-Received: by 2002:a05:6000:2909:b0:436:14d2:540c with SMTP id
+ ffacd0b85a97d-43617e43139mr6342053f8f.25.1770237270077; 
+ Wed, 04 Feb 2026 12:34:30 -0800 (PST)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ ffacd0b85a97d-436180659b8sm8296880f8f.43.2026.02.04.12.34.28
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Wed, 04 Feb 2026 12:34:29 -0800 (PST)
+Date: Wed, 4 Feb 2026 12:34:24 -0800
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Yehor Malikov <malikovyehor@gmail.com>
+Cc: dev@dpdk.org, maxime.coquelin@redhat.com, chenbox@nvidia.com, Yehor
+ Malikov <Yehor.Malikov@solidigm.com>
+Subject: Re: [PATCH v3] vhost: fix use-after-free in fdset during shutdown
+Message-ID: <20260204123424.6ff763cc@phoenix.local>
+In-Reply-To: <20260204185800.9299-1-malikovyehor@gmail.com>
+References: <20260204184848.9104-1-Yehor.Malikov@solidigm.com>
+ <20260204185800.9299-1-malikovyehor@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -109,24 +81,24 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-29/01/2026 21:14, Stephen Hemminger:
-> On Thu, 29 Jan 2026 15:47:48 +0100
-> Thomas Monjalon <thomas@monjalon.net> wrote:
-> 
-> > At the end of a comment, no need for an extra line.
-> > 
-> > This pattern was fixed with the following command:
-> > git ls lib | xargs sed -i '/^ *\* *$/{N;/ *\*\/ *$/D;}'
-> > 
-> > A comment should always be terminated with */
-> > 
-> > Extra asterisks were found with this command:
-> > git grep '\* *\*/' lib
-> > 
-> > Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
-> 
-> Acked-by: Stephen Hemminger <stephen@networkplumber.org>
+On Wed,  4 Feb 2026 19:58:00 +0100
+Yehor Malikov <malikovyehor@gmail.com> wrote:
 
-Applied.
+> +	/* Remove from global fdsets list */
+> +	pthread_mutex_lock(&fdsets_mutex);
+> +	for (i = 0; i < MAX_FDSETS; i++) {
+> +		if (fdsets[i] == pfdset) {
+> +			fdsets[i] = NULL;
+> +			break;
+> +		}
+> +	}
+> +	pthread_mutex_unlock(&fdsets_mutex);
+> +
+> +	/* Free the fdset */
+> +	rte_free(pfdset);
+> +}
+> +
 
-
+Calling mutex_lock in destructor seems it could be a problem.
+Also, I would put in a destructor unless the init was called
+by a constructor.
