@@ -2,166 +2,145 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E745E83EF6
-	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Feb 2026 17:32:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA7ADE9D41E
+	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Feb 2026 18:03:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 84C26402F2;
-	Wed,  4 Feb 2026 18:32:41 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
- by mails.dpdk.org (Postfix) with ESMTP id 44054402E1
- for <dev@dpdk.org>; Wed,  4 Feb 2026 18:32:40 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1770226360; x=1801762360;
- h=date:from:to:cc:subject:message-id:references:
- in-reply-to:mime-version;
- bh=aBnV9cS/lvee3tPQLWk11amZkV12W3ywFnrAV8zQh5c=;
- b=kRutEqWgLeSVh/HqQTQ1TBdsLVdYy9owkPQyrQxIbTmG1grCbHvC7CXh
- Ix2bvu2KdQkHN60aoKW+O42Sa/CxEw6frnLSxZNFkCtd3BTPM+XRJdOIW
- m38DlNmA6tSMsnfDdXEE3wGXK+7w41+n6uJhKfnSbkpj9UWSR8yLQ3T7L
- zGYWsDikyyCFlKwyfkr/DWJrZmmDaQUv18SlZLZHXoZ4WmVznG/b9SBAY
- mgvDLNlha1vO0u+bMHm5hSgF3bjzrA/YKafV7L1dDa4SG7gFOUvPorzJQ
- DR3pW4EEJG6Uaxw9Y17n/K/QdcXgvko2GmdiWtcTJg1MUIoIvs9qMDnzp g==;
-X-CSE-ConnectionGUID: lCA6+yPaQ3uhMDT3pokvww==
-X-CSE-MsgGUID: 5rHWRd6RQ/6bXGs3TyI8BQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11691"; a="71146059"
-X-IronPort-AV: E=Sophos;i="6.21,272,1763452800"; d="scan'208";a="71146059"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
- by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 04 Feb 2026 09:32:39 -0800
-X-CSE-ConnectionGUID: DWaE4rqCR+eyqeUpG4rPpg==
-X-CSE-MsgGUID: g51QfYE9ReKcKT8ZTgQrjQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,272,1763452800"; d="scan'208";a="214754148"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
- by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 04 Feb 2026 09:32:39 -0800
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.35; Wed, 4 Feb 2026 09:32:39 -0800
-Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.35 via Frontend Transport; Wed, 4 Feb 2026 09:32:39 -0800
-Received: from CH4PR04CU002.outbound.protection.outlook.com (40.107.201.34) by
- edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.35; Wed, 4 Feb 2026 09:32:38 -0800
+	by mails.dpdk.org (Postfix) with ESMTP id D3DD4402F2;
+	Wed,  4 Feb 2026 19:03:43 +0100 (CET)
+Received: from BYAPR05CU005.outbound.protection.outlook.com
+ (mail-westusazon11010021.outbound.protection.outlook.com [52.101.85.21])
+ by mails.dpdk.org (Postfix) with ESMTP id 923AB402E1
+ for <dev@dpdk.org>; Wed,  4 Feb 2026 19:03:40 +0100 (CET)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=mnoe6HK8OC64QZEGmGkg740yxg81nwr1qMrcc1McaI62vy5LosmAeZIvfZWgdX7aaa1SCox3EURyxCfFM7aNmay/ja983uybXjeP3OiVVZaaz4sbueM+agCM5tdbeZCq+s6dWTNuxWHA2K2B2zOyph14WC39Tg6ha3U+8NkbDqxFyQt8CQjq0mQz+s8JEx+vVm6xsP/FC1/azS1B9sB/S2QzDDOJPU6RbvDRESh5+qYD05Be6FolWqO2kuCV4o29Qh8et4fL9BI5ZvU7nMoZv4RysddDssY7ixwuIaQtV850Hxle0VbbMTvZIX1vEDCpPOdKC3739WI6h4naayfpvQ==
+ b=LPhxhVhd+S0Gsm3sP+yeIuo+Bw/SH0CcIyrLAZNLis/B/bxujPWpnVs3SLM/e8qzgoiFaeq7kFBZEcD9bfrTZ02Eo46iJAfcAS+I8JZRsUB/AnhUZxrys6kNMdAlTJABZySkFx4IfRexNiESyctisyeov6KHixT3oOyMg/Mj4PCEulg7mhE8p+LqrUdWLyQ3aXON3GCFskjBpTvYw4GgGdkjnJbCQLZt8Jlx4cSWy6x9F5zNojmtZsc3zSQntqBSC+wbs1GPaaOAQ5BIsGFGAb8leY//CjIqj1pxNG2QQcsm39mLC0Pa459cp0bTjWRknkQiw+7fzcEGGpGKCO6Scw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6sS5c7DWQRAxKokUVt0d8LkbJ/NPzrSJuLIq+TxLU+o=;
- b=r8i/x3wGPGkn+m8KKnScZqbTMGwZFF3e5AaEurkOwduWCyAilo0DM5kFWJUnokKnuH0h5l6Wt1OWXjeT4k7CJs9IBjeAGRguBwpilUSE1T73e5znlv7MDbkYQBJfo+jldtf6XmeoF8wuhSTjNhqbqu53Hi8rV7yh1PXlZf1+uDfL6WeTr0QlqdtASk/xKmu8055gviSvLnQgQO6KZqhKXZQ29RCq3GahDsv2tsIGyWs9bDxKNM2GwiOZduuygNXKFUFKOAUihVgi5Du6D64B0+0XqXE/XbDvbuPzC4S0AH9DUTB23Yr6Hp6dLI00uUENKlVMsw96EmIjnhxV9tY7Wg==
+ bh=/W3PS6d91FQIlcMy1i1FqkMvzuTJZDLDismTXZ6P4Zg=;
+ b=R4yVyYYFftku8lHoP+/88RxNcxwcoz16jIULj7tlKMiqR0Eae7M+QtD9KYt7mT6eAINik7htNIyvbH/gnANHAQXwJliownB/7l+qwKPtWuWM6FxrHbCVA2E01kxqy6FvSIhQ6sZ5Dvw2vnPL/0RNOAln3WT2+scciy6wxFbr0Rco0Okp+1l4LOFjPgNAS2OFfi5Q68Vx8giZ4fOwhPhzA5K3ILtk2ustvZerWgD75wuxajwr5ZNBw7E+qq0GNM2wGeRY6QAlmjQ5B3Ezur2iL6kDx/VNbNXM+D77mWV+ThYwoXQwWTXfbgtZs11GYceTtHrVbcsSFJAFJqQhUdHgLw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from CY8PR11MB7290.namprd11.prod.outlook.com (2603:10b6:930:9a::6)
- by SA1PR11MB6824.namprd11.prod.outlook.com (2603:10b6:806:29e::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9564.16; Wed, 4 Feb
- 2026 17:32:36 +0000
-Received: from CY8PR11MB7290.namprd11.prod.outlook.com
- ([fe80::97aa:4b89:4558:19e1]) by CY8PR11MB7290.namprd11.prod.outlook.com
- ([fe80::97aa:4b89:4558:19e1%6]) with mapi id 15.20.9564.016; Wed, 4 Feb 2026
- 17:32:36 +0000
-Date: Wed, 4 Feb 2026 17:32:31 +0000
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: Stephen Hemminger <stephen@networkplumber.org>
-CC: <dev@dpdk.org>
-Subject: Re: [PATCH v4] devtools: replace checkpatches shell wrapper with
- Python script
-Message-ID: <aYOCr5S3USrer0vp@bricha3-mobl1.ger.corp.intel.com>
-References: <20260131204823.29363-1-stephen@networkplumber.org>
- <20260204165949.19709-1-stephen@networkplumber.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20260204165949.19709-1-stephen@networkplumber.org>
-X-ClientProxiedBy: DU2PR04CA0300.eurprd04.prod.outlook.com
- (2603:10a6:10:28c::35) To CY8PR11MB7290.namprd11.prod.outlook.com
- (2603:10b6:930:9a::6)
+ smtp.mailfrom=solidigm.com; dmarc=pass action=none header.from=solidigm.com;
+ dkim=pass header.d=solidigm.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=solidigm.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/W3PS6d91FQIlcMy1i1FqkMvzuTJZDLDismTXZ6P4Zg=;
+ b=mb5kVhsK5tJsYUdbt3wU7N5+ECaE+DHIGhGkYfIHwJ4vCYWHh7QrxzJ8Bq9bnGE3w8JQB973mpxUCNVcqsJrk5BU4FSNgX5xO+mo6PN9RO9XJL84RZsA2t4cnmHUCnH67mRUsD0lWdMvqjIkEW8j+IAM0speeXDDDHEhqWBX1onfbcnlbPTvgognzOl/xwOZMRAlsQ/arOPWrsRXp2kVE3x3mF4GmQGK5QevNJYtHV2Maou7+L8cq/Axx0+dBhiH3pI1HZ5TCOrs8ya0sv8NDMdJxLCw9pXkt+UPS9SSGQTQL150eWF0aCrbF+l34TGYUsp7eaf4SP3+ikFVst9nHg==
+Received: from DM3PPF6AE862AC6.namprd10.prod.outlook.com
+ (2603:10b6:f:fc00::c2d) by DM3PPFEC98198CD.namprd10.prod.outlook.com
+ (2603:10b6:f:fc00::c55) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9587.12; Wed, 4 Feb
+ 2026 18:03:31 +0000
+Received: from DM3PPF6AE862AC6.namprd10.prod.outlook.com
+ ([fe80::712a:23e7:b6f2:a7e4]) by DM3PPF6AE862AC6.namprd10.prod.outlook.com
+ ([fe80::712a:23e7:b6f2:a7e4%3]) with mapi id 15.20.9587.013; Wed, 4 Feb 2026
+ 18:03:30 +0000
+From: Yehor Malikov <Yehor.Malikov@solidigm.com>
+To: "dev@dpdk.org" <dev@dpdk.org>
+CC: "maxime.coquelin@redhat.com" <maxime.coquelin@redhat.com>,
+ "chenbox@nvidia.com" <chenbox@nvidia.com>
+Subject: [PATCH] vhost: fix use-after-free in fdset during shutdown
+Thread-Topic: [PATCH] vhost: fix use-after-free in fdset during shutdown
+Thread-Index: AQHclgAacr3pqobJM0K9FTG+TxLPjQ==
+Date: Wed, 4 Feb 2026 18:03:26 +0000
+Message-ID: <DM3PPF6AE862AC6D49FBCC8B8702D368CD19798A@DM3PPF6AE862AC6.namprd10.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-GB
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_1a4d86c9-6ef8-4c81-b7a9-15a3140c062e_Enabled=True;
+ MSIP_Label_1a4d86c9-6ef8-4c81-b7a9-15a3140c062e_SiteId=4bb44aac-867a-4be0-aa34-30794e8470dd;
+ MSIP_Label_1a4d86c9-6ef8-4c81-b7a9-15a3140c062e_SetDate=2026-02-04T18:00:11.0071497Z;
+ MSIP_Label_1a4d86c9-6ef8-4c81-b7a9-15a3140c062e_Name=P2
+ Confidential; MSIP_Label_1a4d86c9-6ef8-4c81-b7a9-15a3140c062e_ContentBits=0;
+ MSIP_Label_1a4d86c9-6ef8-4c81-b7a9-15a3140c062e_Method=Standard
+x-ms-reactions: allow
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=solidigm.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DM3PPF6AE862AC6:EE_|DM3PPFEC98198CD:EE_
+x-ms-office365-filtering-correlation-id: 7f5d0d63-9658-4f3a-9e93-08de6417b471
+x-etr-sdm: Outbound Disclaimer
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+ ARA:13230040|366016|376014|1800799024|38070700021|8096899003; 
+x-microsoft-antispam-message-info: =?us-ascii?Q?d5xcx0ofP1xSqgZ6lZrVoy58g7AiYd5wSXFlZHfMdkFe+0cpxH39uz5FaA3S?=
+ =?us-ascii?Q?CiPGENmFFFLS6SRcGHPXkw/QD2YnAfsXLg+vVzpSmwkH897qa0crtU5xCEbR?=
+ =?us-ascii?Q?mvNdyMcu+ywoXTELfvqSS4G8yqtug/Kl2mnO6s5hcmwDlD9kGyYqjijgFQo8?=
+ =?us-ascii?Q?s4wCTB1EvFejyyb/2wVr+itT34KlYgDKQREUF32MqXPlvOD6RsgDuMTAb/Ec?=
+ =?us-ascii?Q?sYVSi5ZN+tnL4n85zfFttCH+PECbDxFoMhcNbHpLSIyp57mHx6ET3Z0mJUTv?=
+ =?us-ascii?Q?ZPsaPqlXoUcl2szsh2wZ0n3QD/uauRfEOlucUYx6tLXukNy8uuCHx71Q9VGC?=
+ =?us-ascii?Q?gvNazBxy0Q5CuICIg62mawh3C2IomqQamnFncJjIxucR/xkWgfnB4CSHVZGj?=
+ =?us-ascii?Q?0LWRbUDr6/ZwJjT0/Jdiq4PUmBI4z3bbm+k9eha7No4grN7Vl2mEA22NZKXP?=
+ =?us-ascii?Q?UBdJP+LaL8EGtUZs/jQAWU0SyrtgXJmJKvMhBDS9z6Qqc0tlQtET4WGafzDo?=
+ =?us-ascii?Q?LH+OYFgqARrx1NO2fdjUiv5OcsEjmziECAw4FFTk9R7rP7Kf/UthmdwTfewR?=
+ =?us-ascii?Q?uvvCKQklcPpsu78HcOgIfyXum7I2cFVNa6E7eJqxaQJmDTpeLZmiW6WXbx6L?=
+ =?us-ascii?Q?s3keQEradMdbGzt+anKYHqrrNX7b3bHecbgHnCXeeRo72fKkXHNkHexH+THy?=
+ =?us-ascii?Q?jNOMWNf5aK9edspDGTHr30hP7Z4QTCx30cpUVcO4Cjb5Brqau0dcAixsfPc5?=
+ =?us-ascii?Q?h6roC886jFv6R0CGf3IKoR3dT6yZfK8AtklC0plbFt4eM8T4zCVR7RTX8QQm?=
+ =?us-ascii?Q?UEJefmt5DT88P7y6mFQ4alh9kvjvLQFpbIvuPLRCW2UmAjuTvoLNwwk2MZkU?=
+ =?us-ascii?Q?c+KjfPtltfqBtMTU1FioeGjVRrk9y3FV925m4Sz+xDf17IKyPGGhYFE6+FYX?=
+ =?us-ascii?Q?q4YX5ZZsTZ74n20vNQM/Rhhk9+Aw9UyKl/yEnxPvMxyhmzm8RcIbKy11ZKLw?=
+ =?us-ascii?Q?bufdv0sckNv47dVtpD79JUfsqp5yR/GJIRN/E3AAkQVtc1MoaJ4abUl478dg?=
+ =?us-ascii?Q?euCPsvxNfBFIvdrwTjcDv8UDmj8ivtMB1DtZ3U/9IbzXjNmigxbosvxbyv5R?=
+ =?us-ascii?Q?qMsC3NLpgZkkc7atncbT0aTi5AoJioPtEdq2yHcF1cnLcfcGZDdqntGBUruv?=
+ =?us-ascii?Q?ehidX/lpjOiZ93pXzRSvMWSp/0uWQGcshL5A5HxtEBi3PumTbFiKzMT8Zkd2?=
+ =?us-ascii?Q?keh9GJUo4PRAK4rmMJBPZoDgsF3bzul42/lggMprFWYv2pdAmlm2todNeqYA?=
+ =?us-ascii?Q?DmiTHGMOs9SuVSHaL1EWxUDTVfnNsi2z4JcfEksdnCL1YFwZrEbdrb+22hhi?=
+ =?us-ascii?Q?seJ2cbuPSjnVEFFEkv3I51PKZv2o++vky7tELDJnFmipRjzPstAkRjdy53Z/?=
+ =?us-ascii?Q?ol22xP4BmOXBSl0CEmayzSzl3Izkv6efWVm3OL/zXSdaQcvrC4EY1ykyHZ7X?=
+ =?us-ascii?Q?gZFOSYP7TJaJ5HPHz6RaXqLUqdm349Vl3yEheb3hQNVam6ylrcj97zDUySex?=
+ =?us-ascii?Q?X1vbQkjazUOEyHwMtGMtP3wIKf2FagCSP8d+rLULK4/12R0aW94OPPCVw1hN?=
+ =?us-ascii?Q?MGLPs9ayYt71Cji2zrB3ZwY=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DM3PPF6AE862AC6.namprd10.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(366016)(376014)(1800799024)(38070700021)(8096899003); DIR:OUT;
+ SFP:1101; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?+xNp3LUweT4PhMicIxD3Bo2ipf5/axapThHsbli3R8biTrSyOcinTLQVjc7W?=
+ =?us-ascii?Q?F0kV7+UzycatGhdv5Kwj4WNN6Tx/rDU8hoIM2ids2HyM7qpNaK0plRukJE9G?=
+ =?us-ascii?Q?vyNeZkzHO8QGI6FcFwz7fyFxp14woSwLd376AwLONafWmsfLV8FlwyCN3oxg?=
+ =?us-ascii?Q?M3wqzu1f8X6GZy/5wSA9sW7T2I74GqrYRUaIKSqUdE+ln0HZC9yNabpOFbn7?=
+ =?us-ascii?Q?RhwZ0qvX1am/97GBA72jJmW5VMML+oez3hIn3/RCQwGMrekybs1MeR4rOGI/?=
+ =?us-ascii?Q?l7RYMBrJ8fpMOyzEbuwxjKKyhpA2neWkpRjutbbvhBqJeo+n/jE/bhafSpHv?=
+ =?us-ascii?Q?MEETx8Jfku4G9dqLnY3A6hweIUeXfkPzUYN1+/dGXxVB+cTHS1gGPaDs3uFC?=
+ =?us-ascii?Q?DEFWwuDJwNS5D32JiUwiggZUrU/d8iaZexQm2M0oVeVVmiI7xPd3k4opsDkw?=
+ =?us-ascii?Q?lVYdiH12K+dsgOG61LuzSGbVTyK6nflWt2ZfumgZdyvlh01v5dOZboXCB/qE?=
+ =?us-ascii?Q?0hnALuIdGGKyeP/aNHj3xHYMsSryTOGWHGSz/p7huNFR47rGUU5J1dK41ugA?=
+ =?us-ascii?Q?PyH+FxiFIrk0jEiEKJeUKoDskSiAGB0Pnl90g45DhtV8GDyQUuy2x0cGIM1r?=
+ =?us-ascii?Q?QB8Xys3szyTMcn/xysQ7LB8mJs+a3Qm20bxpi/nz6pD1X9rfWPWp06zQXCfa?=
+ =?us-ascii?Q?3Y0cDII1V8ejVLIMH+rvJBfjzfQZbOQkFfdv+QXKf4mxUDu2AGTUtCJEPxE9?=
+ =?us-ascii?Q?EXkMY68aDG7AER4EpkwPas5krpsSwRzqMVgymeURiebVg9flOpetwLoo31nZ?=
+ =?us-ascii?Q?90a1Azlr/xpVBC3/UaUcRvwKHCrgW6tUMGmWoOx1roqIGTyiYN/ZUnQXqRz6?=
+ =?us-ascii?Q?Rs//3RbtxHYDHiSr5Vct5G793TMrhz0lOHHRRuUO89dK/uwWnioTUWk3ug1E?=
+ =?us-ascii?Q?ciSoMg5NlrjmbG6yVY2yZ9TRmSrCsmpRH6v18vHAy0x0JsnFQ+EBmk6O60R2?=
+ =?us-ascii?Q?HI3Cf8h80dOO97A7jndB5BsSMm6/k0K9/MbEKKgu/8yRcx4V60SuJmHp2CQ8?=
+ =?us-ascii?Q?40mPwcD3bnYOdS36LmQFa0ixLpZan6gqAICQ/5THPHceQ1AmJ08LSebuBT+h?=
+ =?us-ascii?Q?WDfu/5RoZeuEh2w9Eyd9+HB/x1s0GhCbjP8SRdMOwEDwLgfb4KaDVEaL4Utf?=
+ =?us-ascii?Q?22sB8H+655tHV0D/ko2YtuhU6Z/fhxS4mrVGzltB87fdJBFGe0SJ7tYL9IFs?=
+ =?us-ascii?Q?YTTUdDJjZ7jldE8cVlfTd+ZEs1z8DAeErUjnZL4DQbCp0aKW1j9jw2HBAeR8?=
+ =?us-ascii?Q?FpLy9yWm6mzJiBIMtq78a3sW6aWJXgRyahpAgrBV3VCzXIXFJ+4w5oxgJvX2?=
+ =?us-ascii?Q?C9e3F1JZmH1eURWdpnxnGeXOhy7hx5VX8+h11KcpYqzpj1XaRPKpwx+ALS69?=
+ =?us-ascii?Q?GhGUrmG7RWeFAKaLA7YQ8ZoHiWb0llpDQLh74vKLzjCB02l0nFd29Bp3wqJO?=
+ =?us-ascii?Q?bLMqRxB8933r8+mVUV8DrChly87uxy1tue6+cBmt8sl7WbCCsm5dLvU17JpV?=
+ =?us-ascii?Q?Cu3J/BZcsi6pGTqSXcTIygcNvNouvWFplKvKGl6KDj11XsDnI1UIsT/kKwnv?=
+ =?us-ascii?Q?w2RdJtkqxcbLeKdN/bu/qOc1mugyq8QmFzOGP2s//+fJQkOwKP5aZgVrpOAs?=
+ =?us-ascii?Q?HJxPNd4r45lOtctxkm1dFlmV91XXi4g+10gaBuE/THZcfspJKbu0uwvU1+uD?=
+ =?us-ascii?Q?a4ZSR3e+S56eaB/bVVt6EDK350uOx/ptdO6pIdLiV/lq7eDBOk8E?=
+Content-Type: multipart/alternative;
+ boundary="_000_DM3PPF6AE862AC6D49FBCC8B8702D368CD19798ADM3PPF6AE862AC6_"
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY8PR11MB7290:EE_|SA1PR11MB6824:EE_
-X-MS-Office365-Filtering-Correlation-Id: 914ff193-c0a6-4bdd-1df4-08de64136326
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?QnI8+L5P5Yb+LptClUKkx4qxWll3t3NHgTHRmb59nsAD0MYgujbjMHxFYrju?=
- =?us-ascii?Q?0C3xhKcS9dxCk28QGYN0mYKEPOfvzHuBH9hDa/11N2k0jdWLWP9/lwE+VnMt?=
- =?us-ascii?Q?ycnQPzBoHGKn1//pvFlKDWeW8c65IZyXF66XCryHnSv/3VOoTLKDlM6LLPjq?=
- =?us-ascii?Q?TKdp/HgNxN7gD8cYbpB7b1I10u4BF+iHvBDR4vAUFOKEKt4GraCbeZRSre2B?=
- =?us-ascii?Q?WUvvIJmAWXsfcH269L3Betj9we9gX6pNWpTtHL0tNoCpFv05KivOlwWCsThF?=
- =?us-ascii?Q?IMJU3nGZtxmkr67CaHkVfaC3M79b1LmpV7ORcVJUZv1VaUqTzCrqyfbp7MQF?=
- =?us-ascii?Q?hwaGSG3w0T2Z37+knHkcryNyjNWjBu28zHC/o0XPJIkraegX41SWMIZC8JoG?=
- =?us-ascii?Q?ZXEdi7iqsuTDNyakdPYMUtiCWLqU968ZXAQq6iEWRpK45olqVMsVMsOInrkq?=
- =?us-ascii?Q?q+UjIiM4uBZyFlEjXXsmo1hZTg14hVnNtMVfZpUu6gAk5f2GvYpjO4r6kR3x?=
- =?us-ascii?Q?NQDdLuC1pl/m8zP4MEllQ4KhrJyCTjnD/d/WcdxV7c3OUshDIkXN7C/SyXl/?=
- =?us-ascii?Q?8t47VS9nZ6Rs7hsfNvRVvLNNLAVJ3Wp2VHRp1o0VMnPDh26b/X9rpHbJvDSO?=
- =?us-ascii?Q?1yxp56nw+DI6bZM71Iqi7zS+mkn3X9UY/BI4iH66EJptmkGjT5CSGfRfMwvb?=
- =?us-ascii?Q?P5yuWoYQp5PJVaaH/VSgVJZ2DwG6p3Sa6RdR7eOnIBM4wc12il0SZO6tz5jd?=
- =?us-ascii?Q?p2Ig5azykT16LTNxZKKa/zgbcM7vpcWrIsqgD3hXr+SO+tWYUqWC12sgIuDE?=
- =?us-ascii?Q?zDWds4k3O16cy0V7/GGsZnRDa4Kiz3iVekcKd0ffWEShowb0/WoJrWDhfxSO?=
- =?us-ascii?Q?oJMh+r0anc9o0rniSUTArAutf1kLNDBgbpFfGday3EywGoFb3M6sGhtZsPW4?=
- =?us-ascii?Q?QZFs5qLP89iJqMzNI7rGSD+Mj7vYGd9BK++98TKTPEagerVswYLWeUY8fap9?=
- =?us-ascii?Q?vjhOlc/o1evz3oDwYNLgx+P0AAmC5eElPhK7O6D7vWDzuJoDlCOwkTZEInZK?=
- =?us-ascii?Q?L97NZCVP2Df0bZCRLXWHu36SXkF3+MyqR3jP2MjiCdSgaS+UH+iRCrTZFmWQ?=
- =?us-ascii?Q?/fVBc+yWFlCTsCpKO8qwvfLFJrTMC1tKTAOKqB3v0DriVt4btiGiLkXgGgIt?=
- =?us-ascii?Q?Tylt2meZZGK/LYTb4fzCPZ6WvoIPgMW+Hwm6w0Cn3Atu/u4q5AfmCcYVi4ev?=
- =?us-ascii?Q?2NXDClwUkkwKxXtCMvd++z4jjXTAlv2n1DBpNw9Iv9Rn1L+3e00hafk2/O68?=
- =?us-ascii?Q?r4FE6sVihQnkHNFDt6Ocf/rqmvbZaGR4Ysms0XaySGD7FcP/Fu12wjMIlIm8?=
- =?us-ascii?Q?9uAc5I7A8/yrBdsvvzPtxGcJ6vqZ4nRd8XeJYUVaQ+bQePLvf0939K94ttgE?=
- =?us-ascii?Q?LjNon66XNZduHD3S1mQKN+1soQpwXIDcwxAr9CbakMTJzydJ4ffHlVApTzst?=
- =?us-ascii?Q?0FYYZCwdst6lixISd4Q82mpgNhdsvI6MkVxJ0LnuTfFfaGbIcGkJzRrl1b2C?=
- =?us-ascii?Q?jH5jiiGiS6zAoPhwePU=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:CY8PR11MB7290.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(376014)(1800799024); DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?DhDru00o6XlaaOixfH/APgh5Wf6rGmhITcrKMbdXNDhN6zPwibuKf0Vb9D4W?=
- =?us-ascii?Q?bTP/fy+pnEhE+hzCtU5e01F+Mlb+oD51ZVnLaj4JYsZN92WU7wVqRMRsKPQg?=
- =?us-ascii?Q?Jc3ITV7vTdyecovKllCaCgMvEZRE5vcTMi/Vgze8J9nNNKjWBBHOHXO5GYjj?=
- =?us-ascii?Q?LKJAmCDzTv6k7byX6LhscGPKDgDhqP99GrR0DOUZvivXNLBC9f1XZ3iBqVfx?=
- =?us-ascii?Q?zXy1e4CNJVrnD0MV64Gi8bWcvM4WPVEnmuzMJzUnq7EpLM45nZgpi1vdcxCf?=
- =?us-ascii?Q?pUrGcL/XWesYLKbakc+eAAJlXwRRLHSsqamV0oGkFHC5+uwqpX1sBZYuk7YB?=
- =?us-ascii?Q?IrT8qi/+6H3HVrzo6bv7NhVG0hvb0hvQBlBowdCeiDwa4xgVqzhiS+CMr/62?=
- =?us-ascii?Q?nSK3fnlkyL0w4UctvMR43XlRb0I/Q5cpjkYfs2yveeQN0lyeO1usoLTvZjxX?=
- =?us-ascii?Q?Pj0eoTWjq71CWwo/KyoM0lRc4t93MKURafkdWkIaIWvlL5VxN5E/nLSfWaPx?=
- =?us-ascii?Q?z5h2r2kiikIlPqD29jMltlY+JgySVecX2H1G5M+Tz8lAf2iOf6FPR4k2EsWp?=
- =?us-ascii?Q?Rd3TdysQkt3/UUC8TiZGjLSloo2PW1f1INWu8/OU7/yurqppGq/Vsse3KAnq?=
- =?us-ascii?Q?L3bZM8dkDdiPicFj6WQcLlWe+6XKnqPSv/17qv/p/uzDwdCwpFqOKKpx16jT?=
- =?us-ascii?Q?8BDyGeKPHh0gJHa4QKINWkhhTxB9qphnjoYUXVZinbodQfz2phtXb971WgDL?=
- =?us-ascii?Q?PoME4kChDWJTViciZAMw+6yL+B2qdEUdaE6T3w6idKu7d6UmJpdNDE6HwPs8?=
- =?us-ascii?Q?dHL2D6grUUAQcglfN87d4JSr4B9CTr1qkw/63le13jGfAZD9mr1uzGzFXXRQ?=
- =?us-ascii?Q?dnOI5DSK7q7GyeVLyCWxro/q2ZrK31rznCztKnp13nvUbdHsF0+tjn9O1wsD?=
- =?us-ascii?Q?UV+Z96pO+VbudEi65DzeGirc+1jPP9ovd8H42vPkx20D/zo+OEi6InUDD5jR?=
- =?us-ascii?Q?0GG77DwtksMC3XH+UrIkLuO9HYuQcP2mHThJfo5Li5fv1jCC2R2v+11K6r3i?=
- =?us-ascii?Q?ciDrxmH9wlEaGRT9HwFUnCPrdehtd5Mj0P4xMQTrNjqzp6zBGX1OOyFs+ACp?=
- =?us-ascii?Q?q9k8RuYZKv8syGXwQXdGzgtjHzkraAe4ltbfyQyqHwzdoDDTEApF/S1OX1e4?=
- =?us-ascii?Q?RQDFKXgcGM87S9Cenqwc8em0dyhB274uDtE9SHffCvsRu/+WeNLovC1Q58oj?=
- =?us-ascii?Q?UF3fMEJD5zDIb+3vN/NxKe8FqRNCI4/HsXB7yFF6CX3FnwkFvM71gwSFJUXy?=
- =?us-ascii?Q?BEZm7pz1Fin5r7h2totEu/cHGMViIs1SpnMOJN9SOSD1jQrMf4rZgNFEUw/A?=
- =?us-ascii?Q?Ot5ch41vdw6ZBvQ5drk9uPtwTyhBOmfJrml47UmW4KcI7nlN6Kg1acI1OzZj?=
- =?us-ascii?Q?bWM5R1qKIeLbfx+M6aTNuZH64Y4jsqalNLEPlheylNy+4xbYiEIM01Ha4ThT?=
- =?us-ascii?Q?YKR6Eyl/Rx+W3sCZcW8NocR4f3M68y6wy9KROOyQGUejagi2rFgHsuaMbakW?=
- =?us-ascii?Q?XrjNMzhEdK7yhA8cn8GKUmrc9fPsMQsPC1kk+2swaP55fIVJXshMtn56x2Un?=
- =?us-ascii?Q?YcmWA956Q5UU/wvX1KXJ6TNhN+njKwgIbPqt3c2RmWCJ5lEM9KwDUCG4cJow?=
- =?us-ascii?Q?45Cm3kp62tCiG9JfaEQuYQIKLG6iFBR7pMavJlI49qpXkI/TS66o7/i1uC52?=
- =?us-ascii?Q?RtlMV7f2P0F/t23NUQu0+lkdS5DgpIs=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 914ff193-c0a6-4bdd-1df4-08de64136326
-X-MS-Exchange-CrossTenant-AuthSource: CY8PR11MB7290.namprd11.prod.outlook.com
+X-OriginatorOrg: solidigm.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Feb 2026 17:32:36.5904 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ECtq4yeEAd1Rm20PucK/U5e+uF57n2EC6AtDLGYNxtCcdMlmch76vF5WUkFB2lNkQ2QiR0a9SqOg7GKuXm0zYGJFpzObc47YTsVJG3XbeIo=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB6824
-X-OriginatorOrg: intel.com
+X-MS-Exchange-CrossTenant-AuthSource: DM3PPF6AE862AC6.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7f5d0d63-9658-4f3a-9e93-08de6417b471
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Feb 2026 18:03:30.7248 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 4bb44aac-867a-4be0-aa34-30794e8470dd
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: RJ0CO6txQ5vwq5TAUkU7EoEUQW3z6C7qdxd136TFWC+ysU6uf1hyA5uc7XXKGC0ixw1ay7rzzrFqapsKqipnrt6qMuQTJYMYBeJmcnN36NfMeyn18eAYRPhhFx/emnZX
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PPFEC98198CD
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -175,36 +154,531 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, Feb 04, 2026 at 08:59:17AM -0800, Stephen Hemminger wrote:
-> Alternative to the checkpatches.sh shell script that wraps the Linux kernel's
-> checkpatch.pl with a standalone Python implementation. The new
-> dpdk-checkpatch.py script provides equivalent functionality without
-> requiring the kernel source tree or Perl.
-> 
-> Performance is significantly improved: checking a recent flow parser
-> patch series dropped from 2m23s to 0.43s (approximately 300x faster).
-> 
-Yep, it is definitely a LOT faster. Running on top 10 commits on main tree
-with old and new script:
+--_000_DM3PPF6AE862AC6D49FBCC8B8702D368CD19798ADM3PPF6AE862AC6_
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 
-$ time ./devtools/checkpatches.sh -n10
+From ecc4db77657e4a1388d3799883238adf6d693c73 Mon Sep 17 00:00:00 2001
+From: Yehor Malikov <Yehor.Malikov@solidigm.com>
+Date: Wed, 4 Feb 2026 11:58:15 +0100
+Subject: [PATCH] vhost: fix use-after-free in fdset during shutdown
 
-10/10 valid patches
+The fdset_event_dispatch thread runs in a loop checking the destroy
+flag after each epoll_wait iteration. During process exit,
+rte_eal_cleanup() frees hugepages memory while the fdset thread is
+still running, causing use-after-free when accessing the fdset
+structure.
 
-real	0m32.570s
-user	0m30.517s
-sys	0m2.256s
+Add fdset_deinit() function to properly stop the dispatch thread
+before freeing resources:
+- Set destroy flag to signal thread exit
+- Wait for thread completion via rte_thread_join()
+- Close epoll fd and free memory only after thread exits
+
+Add RTE_FINI destructor to ensure fdset cleanup runs before EAL
+cleanup frees hugepages.
+
+Fixes: e68a6feaa3b3 ("vhost: improve fdset initialization")
+
+Signed-off-by: Yehor Malikov <Yehor.Malikov@solidigm.com>
+---
+ .mailmap           |  1 +
+ lib/vhost/fd_man.c | 33 +++++++++++++++++++++++++++++++++
+ lib/vhost/fd_man.h |  1 +
+ lib/vhost/socket.c |  8 ++++++++
+ 4 files changed, 43 insertions(+)
+
+diff --git a/.mailmap b/.mailmap
+index 34a99f93a1..6fb87ca810 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -1800,6 +1800,7 @@ Yaron Illouz <yaroni@radcom.com>
+ Yaroslav Brustinov <ybrustin@cisco.com>
+ Yash Sharma <ysharma@marvell.com>
+ Yasufumi Ogawa <ogawa.yasufumi@lab.ntt.co.jp> <yasufum.o@gmail.com>
++Yehor Malikov <Yehor.Malikov@solidigm.com>
+ Yelena Krivosheev <yelena@marvell.com>
+ Yerden Zhumabekov <e_zhumabekov@sts.kz> <yerden.zhumabekov@sts.kz>
+ Yevgeny Kliteynik <kliteyn@nvidia.com>
+diff --git a/lib/vhost/fd_man.c b/lib/vhost/fd_man.c
+index f9147edee7..4c759d44a4 100644
+--- a/lib/vhost/fd_man.c
++++ b/lib/vhost/fd_man.c
+@@ -149,6 +149,39 @@ fdset_init(const char *name)
+        return NULL;
+ }
+
++void
++fdset_deinit(struct fdset *pfdset)
++{
++       unsigned int val;
++       int i;
++
++       if (pfdset =3D=3D NULL)
++               return;
++
++       /* Signal the dispatch thread to stop */
++       pfdset->destroy =3D true;
++
++       /* Wait for the dispatch thread to exit */
++       if (rte_thread_join(pfdset->tid, &val) !=3D 0)
++               VHOST_FDMAN_LOG(ERR, "Failed to join %s event dispatch thre=
+ad", pfdset->name);
++
++       /* Close epoll fd */
++       close(pfdset->epfd);
++
++       /* Remove from global fdsets list */
++       pthread_mutex_lock(&fdsets_mutex);
++       for (i =3D 0; i < MAX_FDSETS; i++) {
++               if (fdsets[i] =3D=3D pfdset) {
++                       fdsets[i] =3D NULL;
++                       break;
++               }
++       }
++       pthread_mutex_unlock(&fdsets_mutex);
++
++       /* Free the fdset */
++       rte_free(pfdset);
++}
++
+ static int
+ fdset_insert_entry(struct fdset *pfdset, int fd, fd_cb rcb, fd_cb wcb, voi=
+d *dat)
+ {
+diff --git a/lib/vhost/fd_man.h b/lib/vhost/fd_man.h
+index eadcc6fb42..c9e51badaa 100644
+--- a/lib/vhost/fd_man.h
++++ b/lib/vhost/fd_man.h
+@@ -15,6 +15,7 @@ struct fdset;
+ typedef void (*fd_cb)(int fd, void *dat, int *close);
+
+ struct fdset *fdset_init(const char *name);
++void fdset_deinit(struct fdset *pfdset);
+
+ int fdset_add(struct fdset *pfdset, int fd,
+        fd_cb rcb, fd_cb wcb, void *dat);
+diff --git a/lib/vhost/socket.c b/lib/vhost/socket.c
+index 9b4f332f94..e953dd1849 100644
+--- a/lib/vhost/socket.c
++++ b/lib/vhost/socket.c
+@@ -1209,3 +1209,11 @@ rte_vhost_driver_start(const char *path)
+        else
+                return vhost_user_start_client(vsocket);
+ }
++
++RTE_FINI(vhost_user_fdset_fini)
++{
++       if (vhost_user.fdset !=3D NULL) {
++               fdset_deinit(vhost_user.fdset);
++               vhost_user.fdset =3D NULL;
++       }
++}
+--
+2.51.1
 
 
-$ time ./devtools/dpdk-checkpatch.py -n10
+CONFIDENTIALITY NOTICE: This email and any files attached may contain confi=
+dential information and may be restricted from disclosure by corporate conf=
+identiality guidelines, or applicable state and federal law. It is intended=
+ solely for the use of the person or entity to whom the email was addressed=
+. If you are not the intended recipient of this message, be advised that an=
+y dissemination, distribution, or use of the contents of this message is st=
+rictly prohibited. Please delete this email from your system if you are not=
+ the intended recipient.
 
-10/10 valid patches
+--_000_DM3PPF6AE862AC6D49FBCC8B8702D368CD19798ADM3PPF6AE862AC6_
+Content-Type: text/html; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 
-real	0m0.255s
-user	0m0.214s
-sys	0m0.040s
+<html>
+<head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Dus-ascii"=
+>
+</head>
+<body>
+<div style=3D"direction: ltr; font-family: Aptos, Arial, Helvetica, sans-se=
+rif; font-size: 12pt; color: rgb(0, 0, 0);">
+From ecc4db77657e4a1388d3799883238adf6d693c73 Mon Sep 17 00:00:00 2001</div=
+>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
+From: Yehor Malikov &lt;Yehor.Malikov@solidigm.com&gt;</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
+Date: Wed, 4 Feb 2026 11:58:15 +0100</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
+Subject: [PATCH] vhost: fix use-after-free in fdset during shutdown</div>
+<div style=3D"direction: ltr; font-family: Aptos, Arial, Helvetica, sans-se=
+rif; font-size: 12pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
+The fdset_event_dispatch thread runs in a loop checking the destroy</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
+flag after each epoll_wait iteration. During process exit,</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
+rte_eal_cleanup() frees hugepages memory while the fdset thread is</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
+still running, causing use-after-free when accessing the fdset</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
+structure.</div>
+<div style=3D"direction: ltr; font-family: Aptos, Arial, Helvetica, sans-se=
+rif; font-size: 12pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
+Add fdset_deinit() function to properly stop the dispatch thread</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
+before freeing resources:</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
+- Set destroy flag to signal thread exit</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
+- Wait for thread completion via rte_thread_join()</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
+- Close epoll fd and free memory only after thread exits</div>
+<div style=3D"direction: ltr; font-family: Aptos, Arial, Helvetica, sans-se=
+rif; font-size: 12pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
+Add RTE_FINI destructor to ensure fdset cleanup runs before EAL</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
+cleanup frees hugepages.</div>
+<div style=3D"direction: ltr; font-family: Aptos, Arial, Helvetica, sans-se=
+rif; font-size: 12pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
+Fixes: e68a6feaa3b3 (&quot;vhost: improve fdset initialization&quot;)</div>
+<div style=3D"direction: ltr; font-family: Aptos, Arial, Helvetica, sans-se=
+rif; font-size: 12pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
+Signed-off-by: Yehor Malikov &lt;Yehor.Malikov@solidigm.com&gt;</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
+---</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
+&nbsp;.mailmap &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; | &nbsp;1 +</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
+&nbsp;lib/vhost/fd_man.c | 33 +++++++++++++++++++++++++++++++++</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
+&nbsp;lib/vhost/fd_man.h | &nbsp;1 +</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
+&nbsp;lib/vhost/socket.c | &nbsp;8 ++++++++</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
+&nbsp;4 files changed, 43 insertions(+)</div>
+<div style=3D"direction: ltr; font-family: Aptos, Arial, Helvetica, sans-se=
+rif; font-size: 12pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
+diff --git a/.mailmap b/.mailmap</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
+index 34a99f93a1..6fb87ca810 100644</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
+--- a/.mailmap</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
++++ b/.mailmap</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
+@@ -1800,6 +1800,7 @@ Yaron Illouz &lt;yaroni@radcom.com&gt;</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
+&nbsp;Yaroslav Brustinov &lt;ybrustin@cisco.com&gt;</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
+&nbsp;Yash Sharma &lt;ysharma@marvell.com&gt;</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
+&nbsp;Yasufumi Ogawa &lt;ogawa.yasufumi@lab.ntt.co.jp&gt; &lt;yasufum.o@gma=
+il.com&gt;</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
++Yehor Malikov &lt;Yehor.Malikov@solidigm.com&gt;</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
+&nbsp;Yelena Krivosheev &lt;yelena@marvell.com&gt;</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
+&nbsp;Yerden Zhumabekov &lt;e_zhumabekov@sts.kz&gt; &lt;yerden.zhumabekov@s=
+ts.kz&gt;</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
+&nbsp;Yevgeny Kliteynik &lt;kliteyn@nvidia.com&gt;</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
+diff --git a/lib/vhost/fd_man.c b/lib/vhost/fd_man.c</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
+index f9147edee7..4c759d44a4 100644</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
+--- a/lib/vhost/fd_man.c</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
++++ b/lib/vhost/fd_man.c</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
+@@ -149,6 +149,39 @@ fdset_init(const char *name)</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
+&nbsp; &nbsp; &nbsp; &nbsp; return NULL;</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
+&nbsp;}</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
+&nbsp;</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
++void</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
++fdset_deinit(struct fdset *pfdset)</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
++{</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
++ &nbsp; &nbsp; &nbsp; unsigned int val;</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
++ &nbsp; &nbsp; &nbsp; int i;</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
++</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
++ &nbsp; &nbsp; &nbsp; if (pfdset =3D=3D NULL)</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
++ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; return;</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
++</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
++ &nbsp; &nbsp; &nbsp; /* Signal the dispatch thread to stop */</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
++ &nbsp; &nbsp; &nbsp; pfdset-&gt;destroy =3D true;</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
++</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
++ &nbsp; &nbsp; &nbsp; /* Wait for the dispatch thread to exit */</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
++ &nbsp; &nbsp; &nbsp; if (rte_thread_join(pfdset-&gt;tid, &amp;val) !=3D 0=
+)</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
++ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; VHOST_FDMAN_LOG(ERR, &qu=
+ot;Failed to join %s event dispatch thread&quot;, pfdset-&gt;name);</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
++</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
++ &nbsp; &nbsp; &nbsp; /* Close epoll fd */</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
++ &nbsp; &nbsp; &nbsp; close(pfdset-&gt;epfd);</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
++</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
++ &nbsp; &nbsp; &nbsp; /* Remove from global fdsets list */</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
++ &nbsp; &nbsp; &nbsp; pthread_mutex_lock(&amp;fdsets_mutex);</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
++ &nbsp; &nbsp; &nbsp; for (i =3D 0; i &lt; MAX_FDSETS; i++) {</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
++ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; if (fdsets[i] =3D=3D pfd=
+set) {</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
++ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nb=
+sp; fdsets[i] =3D NULL;</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
++ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nb=
+sp; break;</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
++ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; }</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
++ &nbsp; &nbsp; &nbsp; }</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
++ &nbsp; &nbsp; &nbsp; pthread_mutex_unlock(&amp;fdsets_mutex);</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
++</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
++ &nbsp; &nbsp; &nbsp; /* Free the fdset */</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
++ &nbsp; &nbsp; &nbsp; rte_free(pfdset);</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
++}</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
++</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
+&nbsp;static int</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
+&nbsp;fdset_insert_entry(struct fdset *pfdset, int fd, fd_cb rcb, fd_cb wcb=
+, void *dat)</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
+&nbsp;{</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
+diff --git a/lib/vhost/fd_man.h b/lib/vhost/fd_man.h</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
+index eadcc6fb42..c9e51badaa 100644</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
+--- a/lib/vhost/fd_man.h</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
++++ b/lib/vhost/fd_man.h</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
+@@ -15,6 +15,7 @@ struct fdset;</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
+&nbsp;typedef void (*fd_cb)(int fd, void *dat, int *close);</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
+&nbsp;</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
+&nbsp;struct fdset *fdset_init(const char *name);</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
++void fdset_deinit(struct fdset *pfdset);</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
+&nbsp;</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
+&nbsp;int fdset_add(struct fdset *pfdset, int fd,</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
+&nbsp; &nbsp; &nbsp; &nbsp; fd_cb rcb, fd_cb wcb, void *dat);</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
+diff --git a/lib/vhost/socket.c b/lib/vhost/socket.c</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
+index 9b4f332f94..e953dd1849 100644</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
+--- a/lib/vhost/socket.c</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
++++ b/lib/vhost/socket.c</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
+@@ -1209,3 +1209,11 @@ rte_vhost_driver_start(const char *path)</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
+&nbsp; &nbsp; &nbsp; &nbsp; else</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; return vhost_user_s=
+tart_client(vsocket);</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
+&nbsp;}</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
++</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
++RTE_FINI(vhost_user_fdset_fini)</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
++{</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
++ &nbsp; &nbsp; &nbsp; if (vhost_user.fdset !=3D NULL) {</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
++ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; fdset_deinit(vhost_user.=
+fdset);</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
++ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; vhost_user.fdset =3D NUL=
+L;</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
++ &nbsp; &nbsp; &nbsp; }</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
++}</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
+--&nbsp;</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
+2.51.1</div>
+<div dir=3D"ltr" id=3D"ms-outlook-mobile-signature" style=3D"color: inherit=
+; background-color: inherit;">
+<div style=3D"direction: ltr;"><br>
+</div>
+</div>
+<p><span style=3D"font-size:12px;">CONFIDENTIALITY NOTICE: This email and a=
+ny files attached may contain confidential information and may be restricte=
+d from disclosure by corporate confidentiality guidelines, or applicable st=
+ate and federal law. It is intended
+ solely for the use of the person or entity to whom the email was addressed=
+. If you are not the intended recipient of this message, be advised that an=
+y dissemination, distribution, or use of the contents of this message is st=
+rictly prohibited. Please delete
+ this email from your system if you are not the intended recipient.</span><=
+/p>
+</body>
+</html>
 
-32.5 seconds down to a quarter of a second is a massive gain. Looking
-forward to switching script for checking patches in future!
-
-/Bruce
+--_000_DM3PPF6AE862AC6D49FBCC8B8702D368CD19798ADM3PPF6AE862AC6_--
