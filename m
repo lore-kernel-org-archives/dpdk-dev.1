@@ -2,68 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17829EA7943
-	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Feb 2026 21:36:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD826EA7943
+	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Feb 2026 22:01:03 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E6302402EE;
-	Wed,  4 Feb 2026 22:36:11 +0100 (CET)
-Received: from mail-dl1-f45.google.com (mail-dl1-f45.google.com [74.125.82.45])
- by mails.dpdk.org (Postfix) with ESMTP id AAC39400D5
- for <dev@dpdk.org>; Wed,  4 Feb 2026 22:36:09 +0100 (CET)
-Received: by mail-dl1-f45.google.com with SMTP id
- a92af1059eb24-126ea4e9694so554071c88.1
- for <dev@dpdk.org>; Wed, 04 Feb 2026 13:36:09 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id AFC00402EE;
+	Wed,  4 Feb 2026 23:01:02 +0100 (CET)
+Received: from mail-dl1-f44.google.com (mail-dl1-f44.google.com [74.125.82.44])
+ by mails.dpdk.org (Postfix) with ESMTP id 4CCA9400D5
+ for <dev@dpdk.org>; Wed,  4 Feb 2026 23:01:01 +0100 (CET)
+Received: by mail-dl1-f44.google.com with SMTP id
+ a92af1059eb24-1249b9f5703so642994c88.0
+ for <dev@dpdk.org>; Wed, 04 Feb 2026 14:01:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1770240968; x=1770845768; darn=dpdk.org;
+ d=gmail.com; s=20230601; t=1770242460; x=1770847260; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=Qz5JYX8hQuWyd/4ny+exN8EDAee3msctpEBfwuIzI64=;
- b=UqGdeQUixoL6We713i/hr+DxYr+Ii0ETiVPqNxM5hPw3yjHOaR3S1uAs0p0QYMPbTX
- 5Wf4egKsqeIEcePCiLKiJStghjiQ8BcZoGdzkUSh9Jb1lFE7ebme/tkZfaW2+6eVmSqG
- LUSH9oxro9ghRNxZSiG5DX3mLJ2ZcLmAjPFF8QVndtdK3xGaqvGJhzqPRApoJO/ME0Ys
- 0kp9gdwQ+75viZEPBqShhIWI+8y4kMBWZiVZpmQlFqdMDuQ53WfPC+/j/ciB3qUFz91j
- 1kaP6+3gpZldgoJhTL2eZdKfFuoWKMgxuHee7B7LdNTYtgkYdmor/C3kW4KAeKDFtHg0
- Hu/A==
+ bh=HY17X4Du7lVmMAz+gvhoGn3zlRp+l1QNh49paQF6p/A=;
+ b=MD6H/Bwr4rn6TOpw46/AvvKtGhGUQxLRKvV5nGfJ33WgpNXxoTCScYANj2lzYQxagA
+ BEHf+rQKU8AFBW16w/v0PhheihdVIJAhQVgfG878ZzxUKlrywdMKVP4SZJrec9ciEpDi
+ jdVV9KDlD26rZ7wNj6NONVMqkF/KnmkFYmCqFGqt5kAueJmM02LtpGZ0pEUeqOWyf6g7
+ WW9oYcuG22qN4ephxXQ6+w2QAWEMqIoo7poms/j2wK6LF+RbvupBTuSJRGn5nIRPF6tP
+ /5sO3a23mCnXvCYumnB7IifLGAfR7FY9L0UxkROfR8avQGCyN4wVA8vYLR3OWFe3xi5r
+ WwAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1770240968; x=1770845768;
+ d=1e100.net; s=20230601; t=1770242460; x=1770847260;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=Qz5JYX8hQuWyd/4ny+exN8EDAee3msctpEBfwuIzI64=;
- b=eL1PGCc82ZKaEElm4NkuglMQcbdWxYxFpH5fbjr7E06pvv5XX1f9tMyLZdtU7aY7qT
- j9ita59qrkEFEv2qplPrmblmCM14xzPY4s+B1vBH81DJGF0NZnU2f7sxUDzgrRD+jG/s
- Bij/j9Nm98xH7sGkO/EKA6VKGglgfcZIj7nYhddJNY33XbpC9oNZ7HC8vmTGEezYT/jl
- l7toA/vyCxkMt2MMpPHq5YOZIhf2XGeo9XmWtuRGpAsDA1b8hw9pLrBe/NQ7pwg3JUz9
- sQcFVcltsrDZSQK1arGdblrqWGOqHfUIaieUa4Dyux6GbK8WpvNxPwI0kGR/scEA/iTs
- JAaQ==
-X-Gm-Message-State: AOJu0YxNGOr4qEQOTxXFScR1k8kDcbTKXuZlTMdz1UrXO/U+GIxIdN+J
- Zw4Re9C3VQiaOtoZwMzBkqoc0Fh8nwi+o5lIyzm+j58ejWIuFtR8An3fObLZCg==
-X-Gm-Gg: AZuq6aK4ia3cJJiG14q+6lVDTZhPquyBeGYVeahXFLsq2qqbr5bQmVjGj65o2/QYBV7
- vB4colauZUzuE9RE1sh+4bJEooOY2esBTmQbvKu39K9jyj1ntlIzd0ucj0OMHbJWOcba/k7ssLd
- hQAtFDOBmftSoWPQr9D1bXT+au7U9WVGXoPJXjGeB8I0E/poJmDXMlCvmjnWUl3zxeQPtJqlO9a
- FpipOX75BXeWgRWDbymEJzNlVLH6ROPOgYxC4wkCaSO286anFUUxbcoq06dZBt6VnTBPj7s4XiS
- gvUuzdyzgF0a0ldYaiCyEn0LW3B2Wc60sLsf4Mdw5fyVwmqNxBA06tlr7aQmddBvPQqZnrzhwh0
- 3LHJEgMaK5WqbrnsiDUAvKZd9PgUaWfFVmofeK5m4b8d9Ku5G1CTljRPR2vS+skwdeGlHDKwnDB
- 2ME89uVOZD26u6bEWYWvqx2BMyst2lIt6lI32KARZd8nyOh3wRn9KkHJ6fkvEU
-X-Received: by 2002:a05:7300:2303:b0:2b7:2bf3:ce01 with SMTP id
- 5a478bee46e88-2b832a7c450mr1818572eec.30.1770240968108; 
- Wed, 04 Feb 2026 13:36:08 -0800 (PST)
+ bh=HY17X4Du7lVmMAz+gvhoGn3zlRp+l1QNh49paQF6p/A=;
+ b=ZDOX6H3MGvz0uTnSCxfOcyxAL7wKG1CB0oyitu1p21DpVg46f2gCk2JjvrnwUelhfL
+ sJu/AS6Pwjgb5rTFwQGozIY9LnBrvp3Hf3wL5Q/mq2kMqCeFo8IZT9DxDDkUQCmdowks
+ uQ3bKH4ykZn01FbVYaHKVLApsJw9vwveCK6pfnblPaQTtl2U2sAA4CvmiN/60poHEGGc
+ pVYBZkB2VG9vzGTYEQ4bMJrwcpfZHi+qsl/9/mZjJJO8hVvafExGKvOxQZKtJFrstE3R
+ p6X4Ff5DBEPDX+volQ5ROWyDzPPCAOwiVdsmtuzg21xOW8Ff/05c+GiAmDRKKH9c/E2U
+ paDg==
+X-Gm-Message-State: AOJu0Ywh9nxTilaykYYsxKtckzpDxDizCtwftvkeFfxMDBYDjEL6Tgio
+ rItrgXfvwhAmjtej2cH3G3eDK9bOocyFVtBani9lWurP5EB+3Df5qa5JnIfFmw==
+X-Gm-Gg: AZuq6aI2NCo10xl/aDjaQiYZ9onwlk0iX7tfnCZNmXXHr7AGwhEyrtXjLdPsmq86gWc
+ wHGnLu7Rqy8Cpo5GvaGSl2JOpXajrCWH5PcPpN16WgfWukDr5QroY3HlJrnt8EBKLJ/UCFLJoQg
+ 6IyMolcbuDWgnLWHLI+7eUqSULenGatMWesN1lMuvZJH7fnBixq7rh+QDqdOksqiCYf4wGtkuIQ
+ akybjf2YsJ17Dyynl5wRKXkA8/4jsMMjrL93o7VstbJWpCI3piXxOOsnc6VTlV0mIRB/nFIdHx3
+ mYqklFhcv2BQH5M0vLnlv93y/4vYoijO5DeCA0yufP3h6H6UYDd3FPfzC2C68FIjsHz+pL9oVvO
+ ZhwYledUMeYcgKNSFwDl86/LPy48ca23km9x+29qJsM6W1R/R5QBWXOpyg+Z/lagRn+VU2ITs9T
+ UbQhjEBYidwWiGaTs+ZlgyLFgTxCJ+hFbjdepCtvhJPNyDjsFVeg==
+X-Received: by 2002:a05:7022:4384:b0:123:3103:b248 with SMTP id
+ a92af1059eb24-126f477950emr1973868c88.5.1770242459534; 
+ Wed, 04 Feb 2026 14:00:59 -0800 (PST)
 Received: from C9HFQX6C61.corp.nandps.com ([130.41.236.144])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-2b832f8e829sm2060442eec.22.2026.02.04.13.36.05
+ 5a478bee46e88-2b832fb564fsm2126935eec.25.2026.02.04.14.00.56
  (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
- Wed, 04 Feb 2026 13:36:07 -0800 (PST)
+ Wed, 04 Feb 2026 14:00:58 -0800 (PST)
 From: Yehor Malikov <malikovyehor@gmail.com>
 To: dev@dpdk.org
 Cc: maxime.coquelin@redhat.com, chenbox@nvidia.com, stephen@networkplumber.org,
  Yehor Malikov <Yehor.Malikov@solidigm.com>
-Subject: [PATCH v4] vhost: fix use-after-free in fdset during shutdown
-Date: Wed,  4 Feb 2026 22:35:59 +0100
-Message-ID: <20260204213559.15659-1-malikovyehor@gmail.com>
+Subject: [PATCH v5] vhost: fix use-after-free in fdset during shutdown
+Date: Wed,  4 Feb 2026 23:00:37 +0100
+Message-ID: <20260204220037.23760-1-malikovyehor@gmail.com>
 X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20260204185800.9299-1-malikovyehor@gmail.com>
-References: <20260204185800.9299-1-malikovyehor@gmail.com>
+In-Reply-To: <20260204213559.15659-1-malikovyehor@gmail.com>
+References: <20260204213559.15659-1-malikovyehor@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -110,10 +110,10 @@ Signed-off-by: Yehor Malikov <Yehor.Malikov@solidigm.com>
  5 files changed, 55 insertions(+), 10 deletions(-)
 
 diff --git a/.mailmap b/.mailmap
-index 34a99f93a1..6fb87ca810 100644
+index fc53ed2a55..998185a66e 100644
 --- a/.mailmap
 +++ b/.mailmap
-@@ -1800,6 +1800,7 @@ Yaron Illouz <yaroni@radcom.com>
+@@ -1839,6 +1839,7 @@ Yaron Illouz <yaroni@radcom.com>
  Yaroslav Brustinov <ybrustin@cisco.com>
  Yash Sharma <ysharma@marvell.com>
  Yasufumi Ogawa <ogawa.yasufumi@lab.ntt.co.jp> <yasufum.o@gmail.com>
@@ -161,7 +161,7 @@ index eadcc6fb42..c9e51badaa 100644
  int fdset_add(struct fdset *pfdset, int fd,
  	fd_cb rcb, fd_cb wcb, void *dat);
 diff --git a/lib/vhost/socket.c b/lib/vhost/socket.c
-index 9b4f332f94..93d129774f 100644
+index ae95e7e6b0..b73d3e75a9 100644
 --- a/lib/vhost/socket.c
 +++ b/lib/vhost/socket.c
 @@ -76,6 +76,8 @@ struct vhost_user_connection {
@@ -173,8 +173,8 @@ index 9b4f332f94..93d129774f 100644
  struct vhost_user {
  	struct vhost_user_socket *vsockets[MAX_VHOST_SOCKET];
  	struct fdset *fdset;
-@@ -1197,11 +1199,8 @@ rte_vhost_driver_start(const char *path)
- 		return vduse_device_create(path, vsocket->net_compliant_ol_flags);
+@@ -1198,11 +1200,8 @@ rte_vhost_driver_start(const char *path)
+ 			vsocket->extbuf, vsocket->linearbuf);
  
  	if (vhost_user.fdset == NULL) {
 -		vhost_user.fdset = fdset_init("vhost-evt");
@@ -187,7 +187,7 @@ index 9b4f332f94..93d129774f 100644
  	}
  
  	if (vsocket->is_server)
-@@ -1209,3 +1208,18 @@ rte_vhost_driver_start(const char *path)
+@@ -1210,3 +1209,18 @@ rte_vhost_driver_start(const char *path)
  	else
  		return vhost_user_start_client(vsocket);
  }
@@ -207,7 +207,7 @@ index 9b4f332f94..93d129774f 100644
 +	}
 +}
 diff --git a/lib/vhost/vduse.c b/lib/vhost/vduse.c
-index 9de7f04a4f..e770bd61d4 100644
+index 0b5d158fee..ad0588ef9f 100644
 --- a/lib/vhost/vduse.c
 +++ b/lib/vhost/vduse.c
 @@ -27,6 +27,7 @@
@@ -218,7 +218,7 @@ index 9de7f04a4f..e770bd61d4 100644
  
  struct vduse {
  	struct fdset *fdset;
-@@ -627,11 +628,8 @@ vduse_device_create(const char *path, bool compliant_ol_flags)
+@@ -685,11 +686,8 @@ vduse_device_create(const char *path, bool compliant_ol_flags, bool extbuf, bool
  	bool reconnect = false;
  
  	if (vduse.fdset == NULL) {
@@ -232,7 +232,7 @@ index 9de7f04a4f..e770bd61d4 100644
  	}
  
  	control_fd = open(VDUSE_CTRL_PATH, O_RDWR);
-@@ -878,3 +876,18 @@ vduse_device_destroy(const char *path)
+@@ -942,3 +940,18 @@ vduse_device_destroy(const char *path)
  
  	return 0;
  }
