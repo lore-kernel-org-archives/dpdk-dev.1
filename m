@@ -2,66 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EAFEEA7942
-	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Feb 2026 18:43:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AB18EA7940
+	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Feb 2026 18:48:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D2834402F2;
-	Wed,  4 Feb 2026 19:43:05 +0100 (CET)
-Received: from mail-dy1-f177.google.com (mail-dy1-f177.google.com
- [74.125.82.177]) by mails.dpdk.org (Postfix) with ESMTP id 8AF4E402E1
- for <dev@dpdk.org>; Wed,  4 Feb 2026 19:43:04 +0100 (CET)
-Received: by mail-dy1-f177.google.com with SMTP id
- 5a478bee46e88-2b740872a01so70111eec.1
- for <dev@dpdk.org>; Wed, 04 Feb 2026 10:43:04 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id AAFFD402F2;
+	Wed,  4 Feb 2026 19:48:58 +0100 (CET)
+Received: from mail-dy1-f172.google.com (mail-dy1-f172.google.com
+ [74.125.82.172]) by mails.dpdk.org (Postfix) with ESMTP id 03C7B402E1
+ for <dev@dpdk.org>; Wed,  4 Feb 2026 19:48:57 +0100 (CET)
+Received: by mail-dy1-f172.google.com with SMTP id
+ 5a478bee46e88-2b72e49776eso66781eec.1
+ for <dev@dpdk.org>; Wed, 04 Feb 2026 10:48:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1770230583; x=1770835383; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=x7FF8mM5O3hymmP5teOVwft8ZkwyM90IwXIqr/Haxog=;
- b=DyWGfmH8IbTnlL/Wb/8O6IxfjCndZ3zuc9k1FRBXllms1H2Q6uYe2Z+S4kTykqoU/F
- kmz5YxBhQFJDP1SpDyn5zvMIrnOLzs05yADR1Izt8WT2lYvMdln7+6VntG3Wn0dvyThl
- HuUQ7jPYLHgbGRZCwQj/f0jd8mpD1PUySioou1/GbTJS10I4IX1jeniKMPqiblMd3+m2
- 9q1FAW5KubZACyRi9JwmgE3HYHmYQXv+yZMV6MTKf8o/w9noOjASb021uGagy5IG5hOo
- aoWon7BP57spOZaR4/g2qYCAO4bWriQWmlvoKBEElJx7QLL95H1og65UazAyvtPUxA1F
- rgsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1770230583; x=1770835383;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ d=gmail.com; s=20230601; t=1770230935; x=1770835735; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
  bh=x7FF8mM5O3hymmP5teOVwft8ZkwyM90IwXIqr/Haxog=;
- b=MCsVd5V+3MEwuLxpCEuWUxW0Xbz0CqsrNDLejQy29R7rOXy8s4rp51gzRXDHKkUBfP
- HMW7Dqnng2iwd9WqUmmfwVXlo6cgxk6lYkrM/IBhqNvoW0usxJJ9nlFp0TCebLNFPsVP
- 9DJxyEqxum/JCPKyquSA6kNJbzBMiCX1xesL7bLXekjNwcyWCNw7MZHEsk8qNlkWhkv6
- Z7Y6+LvrCz3NETOmnziY9K3goXuK90wmorbBCFgDZ2BPWuxC6APrNIw/i74t1WHkatAo
- q9QuiG6RJHd5/dhw+XmbVX2ygw3Y7DYRhz6hh5xs7y0QWiJeTxcxQWcpfFnpmT5dDAX+
- GAsA==
-X-Gm-Message-State: AOJu0YwtcWblB/er3l0hz7T8SbynEpyG02if50krISTQNboP8gVGvDvD
- o1SQNRTUslPzUMcHWYiwuvAGV872wNs0zC4/Fcin/rniI6pci46tJCxKxYAg7g==
-X-Gm-Gg: AZuq6aLOrvzwg99I4YnGu0rNEMrI0vDGZ7VBrrFSV4w+jFkfCvtjmaakHPgkU+kRYY0
- T/bLMGmrbmf84ZLSMjfgVa5jUDoeG+hvmj/h7WFVSF0dkTctp7rzdE32ktf0ARtEbntGO7V13ap
- 2CfllwlIL9QgFbnX09vA9k+WcidZeSyYq+Ck6f9z3wo7WENf0te4WDIaYa/UIKYJXOodnr4wOdb
- mQBY/6NGO9rmWbKMNW0yNuWMlhg66l/0eXcS1oNTiYSppcAZy2EcOGOgwvv9RDBJZ/8eavfVb6l
- injQt/CV+/POK2zrLi3I8ZBSZirogeKPDPPh+CN+UUfeg1BCKYfwGavTeyjIzU3Q+U+493okZW9
- Pd+eK3TV8kAo7NYlmFIJVV+y28V43iFoNwc/K6ObUiE4zU6Iv15pEI0fsBFxCRY/jMl20ZYy0iX
- xCEA5+MArvaY5oIfAH30aQ4rrOlw56En7DSnz1ff1J7F0dGtBaUKqUThk=
-X-Received: by 2002:a05:693c:3618:b0:2b0:542a:227d with SMTP id
- 5a478bee46e88-2b83287d775mr1923014eec.2.1770230583002; 
- Wed, 04 Feb 2026 10:43:03 -0800 (PST)
+ b=g1rfYr5cssmVy+FEUwMSe2DODmNVzVm6O60c2P0YyR5A54xyghsvzkw+hQE46xSVCx
+ /I6s7XIVJyBMRyQq/HdfPBdLf4OdKeVxBrAjSmC3cy4yBiontaoG0BZYVlKLNZZlRCdI
+ 8gsO3ulVEuHRw1mlsb/142CPTXQDMH8fYlyQXIlnbfs7RuFRhMHFj2gbhchYtoXZ368v
+ WZ7snj//NkHyGB44IWibeXcKIHVgP1EXiQUnQuExrshSYpMuKw6trZm1sWXmRxuMsoTP
+ 2GFAe7/yGFeOdOACELEdmpdEB6EieDhsLry4AJSe7ZJT6FZTpWoy56EH0QARrW+tzoj3
+ hT0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1770230935; x=1770835735;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=x7FF8mM5O3hymmP5teOVwft8ZkwyM90IwXIqr/Haxog=;
+ b=NzGtQZ6UKd8e0x9e+tUc9pcwa7ZSg1AbQruV64gHWTNrK2VCPEfQQnaFTPVvrrfKBR
+ /wa3Bq6mfd9iCfmEFMIk3Yf6rHMxoLd0zgIktPG2JJ+tBn8oHHQiiGNr5YxXoB7RfA1B
+ rTmpt0Y6R3TfNxu8LNG0vbubrnBfraNDA0jCo80MQ/VGoUoNcXOLYNI9vfjeLA4NuC8p
+ 68+YO/MqsAe3TagkVuJ5ASUIXLXUSjM8a0yDdFwBKJk8OECnckeZeaZ2RGS/tk7qtl5Q
+ Z5sLRv2m91f6hpOR4xRxVdy01V8cOE3HuTaQAhwatTpBTI3UaE1c6PeNjVly/F58KS+a
+ QPQA==
+X-Gm-Message-State: AOJu0YzylXglLBotfRRK0lxM+kcooYXrpg4CinQUpgO4FN4R2ZVRC6E0
+ wh0jXxx77Us1JSqnmoIi5MkjDG5/1rfjxYdgB6eKVFoN43lQA/s9aemRXc4KTQ==
+X-Gm-Gg: AZuq6aJ4qNm5hdTrKI0IPKeBmr3omKWQ9QvK/oi0nmNLTNjRMD8dGcHeZKcb1mQPYos
+ thv8b3dC9Ig2mvoLcw0zoM/r8Fz0wiJNcjotLyALWcwZ2aDlndGYOMb88P++C2Yrgb4EOHAiB9K
+ WAuKRK6zpEydFXkrPR7GEDbmlElhQg0ie9K2z9RJZKnxFfIx5tKTRklCgwDasC4R/H7iyAtpnim
+ aE5knS/m3FmVbh8QG+x7PVWqRj79WLgpRyPj9ZyFi05nqw07EnVXuQhxhtyrMZqEok8a3ylL7cB
+ +osMNIqF2txARGULwmTcQP0q61bs7aVwaF/yzpH0Evpi5Z8ZEcXOz00y1gbi9Iz2UZc6QfhPY2e
+ rvwbTSHLLkIOzPFcCHxXbZPKNNkutZTYVnArQ5XI0xwWlx+q6EPJWWqtXXNCaeCH5+Uurl1+zNU
+ lxl1E345uBz0WO4fBLPWqdusEygeE4ocu9MdF0Yd3UftEwY0DnXFTQYRM=
+X-Received: by 2002:a05:7300:dc86:b0:2b7:97a:75fb with SMTP id
+ 5a478bee46e88-2b83289d5ffmr1810812eec.11.1770230935441; 
+ Wed, 04 Feb 2026 10:48:55 -0800 (PST)
 Received: from C9HFQX6C61.corp.nandps.com ([130.41.236.144])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-2b832e12845sm1988998eec.5.2026.02.04.10.43.01
+ 5a478bee46e88-2b832fd62acsm1930019eec.30.2026.02.04.10.48.53
  (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
- Wed, 04 Feb 2026 10:43:02 -0800 (PST)
+ Wed, 04 Feb 2026 10:48:54 -0800 (PST)
 From: malikovyehor@gmail.com
 X-Google-Original-From: Yehor.Malikov@solidigm.com
 To: dev@dpdk.org
 Cc: maxime.coquelin@redhat.com, chenbox@nvidia.com,
  Yehor Malikov <Yehor.Malikov@solidigm.com>
 Subject: [PATCH v2] vhost: fix use-after-free in fdset during shutdown
-Date: Wed,  4 Feb 2026 19:42:56 +0100
-Message-ID: <20260204184256.8809-1-Yehor.Malikov@solidigm.com>
+Date: Wed,  4 Feb 2026 19:48:48 +0100
+Message-ID: <20260204184848.9104-1-Yehor.Malikov@solidigm.com>
 X-Mailer: git-send-email 2.50.1
+In-Reply-To: <DM3PPF6AE862AC6D49FBCC8B8702D368CD19798A@DM3PPF6AE862AC6.namprd10.prod.outlook.com>
+References: <DM3PPF6AE862AC6D49FBCC8B8702D368CD19798A@DM3PPF6AE862AC6.namprd10.prod.outlook.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
