@@ -2,75 +2,82 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AA32E95389
-	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Feb 2026 11:40:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4725DE9538C
+	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Feb 2026 11:45:03 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EBA51402EE;
-	Wed,  4 Feb 2026 12:40:11 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 7FFD9402EE;
+	Wed,  4 Feb 2026 12:45:02 +0100 (CET)
 Received: from fout-a3-smtp.messagingengine.com
  (fout-a3-smtp.messagingengine.com [103.168.172.146])
- by mails.dpdk.org (Postfix) with ESMTP id 17AEF402DE
- for <dev@dpdk.org>; Wed,  4 Feb 2026 12:40:10 +0100 (CET)
-Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
- by mailfout.phl.internal (Postfix) with ESMTP id 7538DEC0583;
- Wed,  4 Feb 2026 06:40:09 -0500 (EST)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-02.internal (MEProxy); Wed, 04 Feb 2026 06:40:09 -0500
+ by mails.dpdk.org (Postfix) with ESMTP id D367B402DE
+ for <dev@dpdk.org>; Wed,  4 Feb 2026 12:45:00 +0100 (CET)
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+ by mailfout.phl.internal (Postfix) with ESMTP id 64148EC0573;
+ Wed,  4 Feb 2026 06:45:00 -0500 (EST)
+Received: from phl-frontend-04 ([10.202.2.163])
+ by phl-compute-01.internal (MEProxy); Wed, 04 Feb 2026 06:45:00 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm3; t=1770205209;
- x=1770291609; bh=Yue2bo4AVO/hGjo+WAFuZZJoxBa5AP4u+7LqyUi3K4s=; b=
- W5EYY74xlpXKlHKemHGaQK4K0JB6LxKMkgyna3f5XEBsnYeKxiwCa5KwKDANEZc4
- eK8dX7bWh6F3IVnxsqA2H6NPUtAmrxRWLLIqhsSwUKPAPJB/11S4YxPZUmQXULIU
- t2KlztKNafeBBFzaZg7qPOuT9xFhARkfryX6BnKxqEcw/xmkDqo2/hvOJZphwBeU
- ltI44ifSzSIn05ve8Q431xkCFbM5GxFuL6W+ycp3TpAfkYfQzHNSbENbGx3jV9Sm
- PunPT4e1f0eaIT/73BRS6+OQxNit/TiXEgIdCduHGe8IAzOyS+Lz1vRmB+KTlhoU
- T2nke2e+92lsMG+rStI6yg==
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1770205500;
+ x=1770291900; bh=H/dEkOcXLMKXeeOZF1fR1uB6zSIVwkylrvWKKlkH+gI=; b=
+ IPqyqXSqvqUz9pxRois1RnZjnW1+BQYD9zdvQ6bsnS0c6T+EPW/vCCP396nuVkT5
+ vbEZnS2OMR81CtG4iF8gMR46weHO3owtI3kLLksDOTMA4ykOHgd5Q18sTvMaGqKW
+ BIz/8IwfirdXwZpElXijnYKZX3LbFLybIupdI5MY+YcWzd/CIFBdsTU8h3Y5B7M3
+ L/9DacVL9EcbScnfyM7NR6MaNoRuT3l99PlTBilH+0jngvBcwsIzCJ7SAH/jDDrs
+ U0hpFfZAWwXWMZl82CckfRXtBarC42Xu+MILy4LWM6GgCzTVDNZ4rCUuf0zmY28x
+ Wmi5tKHH3GQY9oSGqT2Yzg==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1770205209; x=
- 1770291609; bh=Yue2bo4AVO/hGjo+WAFuZZJoxBa5AP4u+7LqyUi3K4s=; b=G
- 3EGZkyoFHgdRlOBWelak3KT31bzgVyldcvRGtWCt+yM3vpj5bAx1GUYp/TUNBerd
- eDSn1fodG3tJvqXMxC866K0QE8B4Mm/mhsCkCEgE1//7yCA2K2SWsPNzx2gWMNzL
- 3t+4ok8aqM89zxtPP5j4gFA5KPleRM6kRmD+ol65U13c26fwRnjhbks0Su+FpFQF
- ONrJ+qUQ4sI0bqRFfqElc38IzGfsklpL+QJnhOhIpfDBuM+U5tlL06CTtWnusBdZ
- EHwnLGFIOlc58oJ9yUzJrA8ryTCdlsm9v5q25gim56zttQpKgvwYdzV4awT76x4O
- fWfaAyhHfm7oLGcWFBP8w==
-X-ME-Sender: <xms:GDCDaS_SYE9Ua1LZgoB2tNvc2F5aKFvCBTUS1uAFlIs8j25gAgkDFA>
- <xme:GDCDafCkDhD-9_Rj81D5aXzgdFgbFZMD3silRGMcpI2NybqNGOm3cZ3vr7H7hLEJg
- tNVHlAJUaMRjYo6CAusdVhwE90p233519JjuebiXx5YyXuzrqcQ2w>
-X-ME-Received: <xmr:GDCDaazjqjqy1oS9c5E77o1qFWkYJdv_vPncfq2xzJQnNhky-5AaEdfUG-BCJmUjohETFLH2M6sivPeDi9dKksi6Dg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddukedvfeegucetufdoteggodetrf
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1770205500; x=
+ 1770291900; bh=H/dEkOcXLMKXeeOZF1fR1uB6zSIVwkylrvWKKlkH+gI=; b=M
+ +ShfiKbsaAxaQe1J8S672dC/AJMjzw7z3EovOvZ1wa6D+PWYvdkcZ8GlP+oYRmg8
+ Be5URLO/ZhY0zVf5kELY3yMrMF6WcgPw+/svVWni0ES5D9xmGAGi72NK/8al92Pw
+ iNM3q8JnNsLRTiuzzwQqyR2YudvP6RDnVQf8ui1DxRP0nqUkOPU2MU1A7JmziLDq
+ HLp+7jbSLzIMlpf1Tl+eN1lkrHndh5q5t9QbLMu48LgG3TLfUIwxCK7xekzJAiaV
+ 8ptYxVxmi1ojVeVfCRnaUSDsuiHpOxTc3ivHP/KA2MscOaRAlLQAqvzk3hFRb4T1
+ j1vV/wPkKR9AzstX5gZvg==
+X-ME-Sender: <xms:OzGDaei6rR02l8WF7FjjaL_0D7ebkR1dJPmL_AmfxUha5e94EdlSxQ>
+ <xme:OzGDaX9ewTokrtG4U1zA4yZ9-teiQRRcTrbSK3i-sxORBablGvqRhH92mVKp6MsXi
+ i5XbrzYVAaiOVfg629d70JGMiJMM2z0RQ9GD0EdbB5pgWCOlWeOeg>
+X-ME-Received: <xmr:OzGDaRqeiFQ3OZ3OM-7CmE11Mjo4Os3MyRI3K9jy-Gdo6hHZ5yiSAj7IrP9nxtIHEjVAYoDEPktL7JRMfkJ-XC8vhg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddukedvfeehucetufdoteggodetrf
  dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
  rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
  gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
  ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
  frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
  uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopedvpdhm
- ohguvgepshhmthhpohhuthdprhgtphhtthhopehmrghrrghtrdhkhhgrlhhilhhisehhuh
- grfigvihdrtghomhdprhgtphhtthhopeguvghvseguphgukhdrohhrgh
-X-ME-Proxy: <xmx:GDCDacQXc2Yswht3LXVJcd2TEpgXpE0uD3FuMgHmxk5MmZoxktK7gA>
- <xmx:GDCDaZ8sVBvYfiJvgKO10WLnpqRoZm5c7YBLcyPv4uaU7KkAhGuG2A>
- <xmx:GDCDaboiXG_XEIfkN_SpzPVli31LfMnhrXl4_6oLCsITh8Ph4sGmDQ>
- <xmx:GDCDaelirGqBwJ2etu_ZlNY1tbAZzFRYPxcOhuGKKJwtLOe891aWKg>
- <xmx:GTCDaRMRbtB0UE0DsiHvMzV101sNB2hxvfSP7aspEGfbPxJ63cJt8sSh>
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeeipdhm
+ ohguvgepshhmthhpohhuthdprhgtphhtthhopehkohhnshhtrghnthhinhdrrghnrghnhi
+ gvvheshhhurgifvghirdgtohhmpdhrtghpthhtohepshhtvghphhgvnhesnhgvthifohhr
+ khhplhhumhgsvghrrdhorhhgpdhrtghpthhtohepmhgrrhgrthdrkhhhrghlihhliheshh
+ hurgifvghirdgtohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghpthht
+ ohepjhgvrhhinhhjrggtohgskhesghhmrghilhdrtghomhdprhgtphhtthhopehmsgessh
+ hmrghrthhshhgrrhgvshihshhtvghmshdrtghomh
+X-ME-Proxy: <xmx:OzGDaXXun_-VmGDctA-pWRs4Z1erYOvrO_UrPr4rhgEyl2jgfuVL_g>
+ <xmx:OzGDaYAA9RllBX3R27GjioKNFG35NNGB4zK6VBVh78ysJJoqQczrYw>
+ <xmx:OzGDaT2msYUhrTBZC4xUPhmi7h2ruUmvgdQRIH_2HAmR2G0OYLNX2Q>
+ <xmx:OzGDaS1lsBSzlsQ8h0iX80BskS9hBnsK1dm3DjEL8v8V1f1ENftseQ>
+ <xmx:PDGDaU_INg5IF1E751sS-B4L3aAGJPNjawzb0K2oPqrG75bwrW-2rcCy>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 4 Feb 2026 06:40:08 -0500 (EST)
+ 4 Feb 2026 06:44:58 -0500 (EST)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: Marat Khalili <marat.khalili@huawei.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH v2 0/2] bpf: add xchg and fix rte_bpf_dump
-Date: Wed, 04 Feb 2026 12:40:06 +0100
-Message-ID: <9574512.NyiUUSuA9g@thomas>
-In-Reply-To: <20251218170914.7737-1-marat.khalili@huawei.com>
-References: <20251217172037.59170-1-marat.khalili@huawei.com>
- <20251218170914.7737-1-marat.khalili@huawei.com>
+To: konstantin.ananyev@huawei.com,
+ Stephen Hemminger <stephen@networkplumber.org>
+Cc: Marat Khalili <marat.khalili@huawei.com>, dev@dpdk.org,
+ jerinjacobk@gmail.com, mb@smartsharesystems.com
+Subject: Re: [PATCH v4 0/6] bpf: simple tests and fixes
+Date: Wed, 04 Feb 2026 12:44:57 +0100
+Message-ID: <4487716.QJadu78ljV@thomas>
+In-Reply-To: <20260127060244.46b2cee6@phoenix.local>
+References: <20251217180141.60227-1-marat.khalili@huawei.com>
+ <20260127114944.35993-1-marat.khalili@huawei.com>
+ <20260127060244.46b2cee6@phoenix.local>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -87,22 +94,28 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-18/12/2025 18:09, Marat Khalili:
-> Two patches that are not exectly functionally related, but one depends
-> on the other code-wise.
+27/01/2026 15:02, Stephen Hemminger:
+> On Tue, 27 Jan 2026 11:49:36 +0000
+> Marat Khalili <marat.khalili@huawei.com> wrote:
+> > Marat Khalili (6):
+> >   eal: variable first arguments of RTE_SHIFT_VALxx
+> >   bpf: fix signed shift overflows in ARM JIT
+> >   bpf: mark ARM opcodes with UINT32_C
+> >   bpf: disallow empty program
+> >   bpf: make add/subtract one program validate
+> >   bpf: fix validation when conditional jump is first instruction
+> > 
+> >  app/test/test_bpf.c          | 254 +++++++++++++++++++++++++++++++++++
+> >  lib/bpf/bpf_jit_arm64.c      | 184 ++++++++++++-------------
+> >  lib/bpf/bpf_load.c           |   2 +-
+> >  lib/bpf/bpf_validate.c       |  48 ++++---
+> >  lib/eal/include/rte_bitops.h |   4 +-
+> >  5 files changed, 375 insertions(+), 117 deletions(-)
+> > 
 > 
-> Atomic exchange is particularly useful since it can be used not just for
-> exchange per se, but also as atomic store.
-> 
-> Incidentally it was discovered that rte_bpf_dump does not support not
-> just atomics but also some other instructions.
-> 
-> v2: Fix CI failure: do not assume in tests that all platforms have JIT.
-> 
-> Marat Khalili (2):
->   bpf: add atomic xchg support
->   bpf: dump additional instructions
+> This is what an automated review looks like when everything is good:
 
-Applied with REGISTER_FAST_TEST updated to the new standard values.
+Does it make the author a good candidate to be co-maintainer?
+
 
 
