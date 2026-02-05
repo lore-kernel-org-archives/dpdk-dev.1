@@ -2,76 +2,77 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1031ECD9A6
-	for <dpdk-dev@archiver.kernel.org>; Thu,  5 Feb 2026 21:31:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29EEAECD9A6
+	for <dpdk-dev@archiver.kernel.org>; Thu,  5 Feb 2026 21:31:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id F1DA340611;
-	Thu,  5 Feb 2026 22:31:01 +0100 (CET)
-Received: from fhigh-a4-smtp.messagingengine.com
- (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
- by mails.dpdk.org (Postfix) with ESMTP id 59C9A40658
- for <dev@dpdk.org>; Thu,  5 Feb 2026 22:31:00 +0100 (CET)
-Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
- by mailfhigh.phl.internal (Postfix) with ESMTP id 06E24140012F;
- Thu,  5 Feb 2026 16:31:00 -0500 (EST)
+	by mails.dpdk.org (Postfix) with ESMTP id DF60C40656;
+	Thu,  5 Feb 2026 22:31:03 +0100 (CET)
+Received: from fout-a8-smtp.messagingengine.com
+ (fout-a8-smtp.messagingengine.com [103.168.172.151])
+ by mails.dpdk.org (Postfix) with ESMTP id 3125940647
+ for <dev@dpdk.org>; Thu,  5 Feb 2026 22:31:02 +0100 (CET)
+Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
+ by mailfout.phl.internal (Postfix) with ESMTP id DCBCBEC04F2;
+ Thu,  5 Feb 2026 16:31:01 -0500 (EST)
 Received: from phl-frontend-04 ([10.202.2.163])
- by phl-compute-06.internal (MEProxy); Thu, 05 Feb 2026 16:31:00 -0500
+ by phl-compute-12.internal (MEProxy); Thu, 05 Feb 2026 16:31:01 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:date:date:from:from
  :in-reply-to:in-reply-to:message-id:mime-version:references
- :reply-to:subject:subject:to:to; s=fm3; t=1770327060; x=
- 1770413460; bh=4okz/oE6vtEC8FQMt+G0yGZED2j0WWEuPeWHYTzVvFw=; b=H
- 8DvVHFxcg6Ud36x0aGXKxtw/a0l8i+SFfOLFFO/Xnq2x4xh3gxpqCz24Y2Zm5cox
- Geon3qXet8u6Rqy1Ua6w5/+SFPGqxzLmYTLdsP3ofqKme6yfvt0s81DLfDHtZcKD
- 6oSK3i0x5u7ogmEu1H40MX3xR81NaoCHmxFbf/09SIdGw5RVYrsKK2rezfgg8OvU
- 2WRzNGi9H15feEpLCaX4ohKxpxcCpIHPQ9R+cOhCYoUEu/9qlHjNJAAPLNwGnbg0
- iJWC8jmFooM63PAvXuPpj1Tc9guXGcYYHT9sso2TM40WZGdEcWnydH6neDn2B5rG
- QAeATZ6bdPOsQFWEGMTtw==
+ :reply-to:subject:subject:to:to; s=fm3; t=1770327061; x=
+ 1770413461; bh=fjeWoP25rz7BV4OouTm3/uqLs0Nuv/AvQwU39L0FAPU=; b=S
+ w1F0t2hlqlqfQzmJdtaPRzQfUSonmPriAJ3gOYfECxYMhkr/PAzJS1aTMbyKoV+n
+ JV9kqhU38pAxg28UZkcp24EK9NbKqFhUcNHJtnG6/HKKrEzy5RhxFYFNysCOI/Ne
+ RM7CtAAg6EwT3SAPc8fLI6SMO0kdJymwDCKR0Qx3sRULYzJHETHCbKXAIp/gGMEJ
+ 5wX50QY0mrQRHFBmEr0Qp9dhwqmG6ViuBIXo94By/Om9fOf6keJyhqKhtooxO/jw
+ 9fbGvBH3A+KwqtNgAqZUyPunwdnV9uIWkfP+2QwnA57bKqhfKQxNUqkP8L+2eKvJ
+ FJco32TbXbZt4ZK/io1/A==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:date:date:feedback-id:feedback-id:from:from
  :in-reply-to:in-reply-to:message-id:mime-version:references
  :reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
- :x-me-sender:x-sasl-enc; s=fm3; t=1770327060; x=1770413460; bh=4
- okz/oE6vtEC8FQMt+G0yGZED2j0WWEuPeWHYTzVvFw=; b=NaXtgcbGkIYl1e059
- 2eijyoVenWodphHbs3i+QU3yxwTvtXL+WgKIBq+P7z/c/is7X89SIlU0zQVlnNxI
- plGrwrpJ7WU4/NW5j8sTy47JZgcrm0SokI5ZGxPSioleQTA/fgYQmJgPDFyt0iTX
- qMEm5fSnuYmWoxOiIzbKAn4txz34TcrVtuFopBxWWOIbQm6wQhZQM5vq9/5UV4Jk
- G/lj7Gk2vDH1lGsFbXruMchTdorRx1zqE+SJ1psy1P2XfRMdu/ZczZh7fsdckP4U
- VsC4PvCLW7wVA9+QkREYwQtkYl5fWjR7uZ7qqQg3a/5BVTdU+lSaqIG+PnemuID4
- Fvf4w==
-X-ME-Sender: <xms:EwyFaYMkR0wYyruT3MzjaX3rtZyYPCYfBMdMc1_gE49C36wnp8HFXg>
- <xme:EwyFaaaLcvaZlSsJv9tWATzNj0FFK54dcJip9LPl901gXnbYSZ7euvDk6ZdwFFaX7
- TJLlGWDpFosf4r7g8WJgBd0eZ0P-JWtY6YQibQb-oHX-Q186W3OEg>
-X-ME-Received: <xmr:EwyFaSytLxHzwGp5lscIbo1IcMFJKrKuX8OKF2Yo-Tf5tk8y0geAYW33cxLZZoL1w4nuY4Gv3331zoZ3NYsT3FCCEMApm70>
+ :x-me-sender:x-sasl-enc; s=fm3; t=1770327061; x=1770413461; bh=f
+ jeWoP25rz7BV4OouTm3/uqLs0Nuv/AvQwU39L0FAPU=; b=nPi7R7S5DXtRtns1c
+ uwrop9iPLSiLliu07K80V9fclEV+7q81OpqoVq3EvR1WuBeY2gqaaMAXNHLdDd2F
+ t1rHAbP/5sNQJm+9H4TSdabnWw1ANfmaqtV+49Smy5eUTbrc5BnJVIDtW8K+Rfxd
+ X0zNwxbVkGS+/wDV678que7o0+w7QHin7dolPQRpRnIntfaMpWoKsnFc9FtZN2Y5
+ vZuzKKj05nvKulnn7cGiisfkQFGh8cL3JWBZnQ/lPjHF54+GuDiBiSwZdr1rDzPl
+ rp6zOTSzoLuvdphbCUBjcyvDbNcxfVDnT6DPPZprllTqg51Oj7nADmuJsgE4vaRk
+ biBzg==
+X-ME-Sender: <xms:FQyFaQsKWb8SVE7Hceo3MntGTXam5WDFt0FBrSIoGrinRV3KBqXeWQ>
+ <xme:FQyFaY52qZJdTLGu6epjJ3mh44MYPSeKmxnHRTm2ia24k2YET7a1NF--0dOnFmHi4
+ xIoCsHjnQsXPB2FaRyvUYDgugaust51Y2ExTbxESXiv0Y_A11w>
+X-ME-Received: <xmr:FQyFafQhfqknKFew6yWdbWLkm9t3h9T4Z_W-A7SzbFc_a3fKfy9fB8oytRZnWeqlH-tXFoZUuU_CJl8a1Muq71qLbT3gV5U>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddukeeifeekucetufdoteggodetrf
  dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
  rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
  gurhephffvvefufffkofgjfhgggfestdekredtredttdenucfhrhhomhepvfhhohhmrghs
  ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
  frrghtthgvrhhnpedvjefhudeghedvtdeijeeigeetuedugfejueekieeltdfhteevkeeh
- hfeilefhtdenucevlhhushhtvghrufhiiigvpedunecurfgrrhgrmhepmhgrihhlfhhroh
+ hfeilefhtdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
  hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeehpdhm
  ohguvgepshhmthhpohhuthdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtph
  htthhopegurghvihgurdhmrghrtghhrghnugesrhgvughhrghtrdgtohhmpdhrtghpthht
  oheprghnrghtohhlhidrsghurhgrkhhovhesihhnthgvlhdrtghomhdprhgtphhtthhope
- gthhgvnhgsohigsehnvhhiughirgdrtghomhdprhgtphhtthhopehnihhpuhhnrdhguhhp
- thgrsegrmhgurdgtohhm
-X-ME-Proxy: <xmx:EwyFaVIqnw6t28SJ8ooMmRzkiadnWqaHrt2fqi0niSQCKaUAa5envQ>
- <xmx:EwyFacpDdfwZGTIIviAq_C5Sf1OZm7RB8vU6LboGrsqw8V07asGxng>
- <xmx:EwyFaUKDrginJQMOWKa89bMPKyu-vAJIIqX4LtzFziy0SwriQohWgQ>
- <xmx:EwyFaRTsKO7TFPkaHAI0ERhGFMUZ_M_WpY6KZOv5Qmpe27n3BiEpXg>
- <xmx:FAyFacT5lMaxuy94zltYUaxtZ-B-bWIU1RLiX-n8rH6zk2FAJ-JIG94g>
+ gurghvihgurdhhuhhnthesihhnthgvlhdrtghomhdprhgtphhtthhopehsihhvrghprhgr
+ shgrugdrthhumhhmrghlrgesrghmugdrtghomh
+X-ME-Proxy: <xmx:FQyFaXqTUn3iU0PExFNav8yRn8ihb0SpXcZlODjhQVDgWLnJ78xJig>
+ <xmx:FQyFadL5MvBWuiak89kghhQtmRNz8NWNj_23gqEKVJ1WQmf8TW1-HQ>
+ <xmx:FQyFaao0YAEdbDmeK2l4hNbbZQeZzNgiywept3IaUbobjZaNkI8Njg>
+ <xmx:FQyFaVzlFDPZl-PXhczzJ50qucag5gFex_4dlGpOHytAIJx-svnl9w>
+ <xmx:FQyFaQZhxgeeghYXjJ5GnKm4ua2F3V-47WzYogqdki9w5YuGZoSS4EQn>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 5 Feb 2026 16:30:58 -0500 (EST)
+ 5 Feb 2026 16:31:00 -0500 (EST)
 From: Thomas Monjalon <thomas@monjalon.net>
 To: dev@dpdk.org
 Cc: david.marchand@redhat.com, Anatoly Burakov <anatoly.burakov@intel.com>,
- Chenbo Xia <chenbox@nvidia.com>, Nipun Gupta <nipun.gupta@amd.com>
-Subject: [PATCH v4 05/11] bus/pci: fix minsize build
-Date: Thu,  5 Feb 2026 22:27:37 +0100
-Message-ID: <20260205213044.702908-6-thomas@monjalon.net>
+ David Hunt <david.hunt@intel.com>,
+ Sivaprasad Tummala <sivaprasad.tummala@amd.com>
+Subject: [PATCH v4 06/11] power/intel_pstate: fix minsize build
+Date: Thu,  5 Feb 2026 22:27:38 +0100
+Message-ID: <20260205213044.702908-7-thomas@monjalon.net>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260205213044.702908-1-thomas@monjalon.net>
 References: <20210412215339.2439530-1-thomas@monjalon.net>
@@ -93,43 +94,37 @@ Errors-To: dev-bounces@dpdk.org
 
 This error is seen in build of type "minsize":
 
-In function 'pci_vfio_map_resource_secondary':
-drivers/bus/pci/linux/pci_vfio.c:1005:28: error:
-'maps' may be used uninitialized [-Werror=maybe-uninitialized]
- 1005 |                 if (maps[j].addr)
+In function 'power_init_for_setting_freq',
+	drivers/power/intel_pstate/intel_pstate_cpufreq.c:205:30:
+	error: 'max_non_turbo' may be used uninitialized
+		[-Werror=maybe-uninitialized]
+drivers/power/intel_pstate/intel_pstate_cpufreq.c:122:18:
+	note: 'max_non_turbo' was declared here
+  122 |         uint64_t max_non_turbo;
 
-On failure before assigning maps, it was trying to unmap.
-The compiler should have detected that the unmap loop is a nop.
+It looks to be a compiler issue because we are not supposed
+to reach this point in case of power_read_turbo_pct() failure.
 
-The fix is changing the goto destination after unmapping
-to allow compiling with "minsize" option.
+The variable is initialized to allow compiling with "minsize" option.
 
 Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
 ---
- drivers/bus/pci/linux/pci_vfio.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/power/intel_pstate/intel_pstate_cpufreq.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/bus/pci/linux/pci_vfio.c b/drivers/bus/pci/linux/pci_vfio.c
-index 242f567ed7..bc5c5c2499 100644
---- a/drivers/bus/pci/linux/pci_vfio.c
-+++ b/drivers/bus/pci/linux/pci_vfio.c
-@@ -968,7 +968,7 @@ pci_vfio_map_resource_secondary(struct rte_pci_device *dev)
+diff --git a/drivers/power/intel_pstate/intel_pstate_cpufreq.c b/drivers/power/intel_pstate/intel_pstate_cpufreq.c
+index eba50b2874..8e27570e3c 100644
+--- a/drivers/power/intel_pstate/intel_pstate_cpufreq.c
++++ b/drivers/power/intel_pstate/intel_pstate_cpufreq.c
+@@ -119,7 +119,7 @@ power_init_for_setting_freq(struct pstate_power_info *pi)
+ 	FILE *f_base = NULL, *f_base_min = NULL, *f_base_max = NULL,
+ 	     *f_min = NULL, *f_max = NULL;
+ 	uint32_t base_ratio, base_min_ratio, base_max_ratio;
+-	uint64_t max_non_turbo;
++	uint64_t max_non_turbo = 0;
+ 	int ret;
  
- 	ret = pci_vfio_fill_regions(dev, vfio_dev_fd, &device_info);
- 	if (ret)
--		goto err_vfio_dev_fd;
-+		goto err_vfio_dev;
- 
- 	/* map BARs */
- 	maps = vfio_res->maps;
-@@ -1005,6 +1005,7 @@ pci_vfio_map_resource_secondary(struct rte_pci_device *dev)
- 		if (maps[j].addr)
- 			pci_unmap_resource(maps[j].addr, maps[j].size);
- 	}
-+err_vfio_dev:
- 	rte_vfio_release_device(rte_pci_get_sysfs_path(),
- 			pci_addr, vfio_dev_fd);
- 	return -1;
+ 	/* open all files we expect to have open */
 -- 
 2.52.0
 
