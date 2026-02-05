@@ -2,75 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4465ECD994
-	for <dpdk-dev@archiver.kernel.org>; Thu,  5 Feb 2026 17:58:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1308AECD993
+	for <dpdk-dev@archiver.kernel.org>; Thu,  5 Feb 2026 17:58:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C0A8A4279C;
-	Thu,  5 Feb 2026 18:57:58 +0100 (CET)
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com
- [209.85.128.50]) by mails.dpdk.org (Postfix) with ESMTP id EBA4142798
- for <dev@dpdk.org>; Thu,  5 Feb 2026 18:57:57 +0100 (CET)
-Received: by mail-wm1-f50.google.com with SMTP id
- 5b1f17b1804b1-482f454be5bso19328305e9.0
- for <dev@dpdk.org>; Thu, 05 Feb 2026 09:57:57 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id CF991427A8;
+	Thu,  5 Feb 2026 18:58:01 +0100 (CET)
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com
+ [209.85.221.54]) by mails.dpdk.org (Postfix) with ESMTP id B628C427A3
+ for <dev@dpdk.org>; Thu,  5 Feb 2026 18:58:00 +0100 (CET)
+Received: by mail-wr1-f54.google.com with SMTP id
+ ffacd0b85a97d-4362507f396so749960f8f.0
+ for <dev@dpdk.org>; Thu, 05 Feb 2026 09:58:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1770314277;
- x=1770919077; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1770314280;
+ x=1770919080; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=QGNuRblYumtwqpN+9gqA2URFkAOSBLjfXWBeuth59Rc=;
- b=Z4aUdvcCiSd63C+ZbBPxJYrbtnnquuuKpFHFZ7iyAj54KCpxdHCnvrHFjgPJKd6Nqu
- X7hbFTHD2OxwTjOW0KFKah1oiefzDI2gyVCgcZptQUUNfm1ukK2BsCJJvn2/Zw/MTPGV
- 7zVTz7qTnleTnG7JiHYQORcc8x4G6Axv8Pt1LQuGOnLWOAPoIpLXPCpD9nPdBsPXIGyc
- G36iZI4sSvXhvCjNxo54U+thYEezUykR9mYDFKjWCVSA+eY0LiYKhwn10tzVs4h4TO0X
- kRXbVcp0smpc9NHngAEGs0TvOVsm/YID1TAviuC9sYLlR7Mv76dun/Jq6Xl63rCWfzmO
- 8kqw==
+ bh=OTQS0DaWxTqjs3HNXqGBrSUvg4NWW1WqcH/yntND4/A=;
+ b=R0PA8rDkXsPNmn6S/ExSKpmZk7u6ZBqFT336hH3yfUoGvlgf32iRizBzxGu1qCkl+H
+ mThUIwAj9HBHcoRY+kRgIKdBpWE26jKXjXNINvApUtFJtQ0io5a0OAaDePK9SulgFZp2
+ wqjYgOLFtxjqcu0M4IjKmHBKbJnMfCTORf3O7NZBeLlCon3TttAVJvx1EaQg4TW0j52d
+ 2I45JXJ/QDAptOWYxZjLAUDy6xDBIboZj14qQMCDWE8VbB4xsusaweDx6ZblOh19/CKj
+ hqUzs8EZkrTjjJmm8FfXugEm5i5bjFl/yGt1YqhM9YtXiAXDzfL5p0FW+Umobmt6zSuj
+ 6uhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1770314277; x=1770919077;
+ d=1e100.net; s=20230601; t=1770314280; x=1770919080;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=QGNuRblYumtwqpN+9gqA2URFkAOSBLjfXWBeuth59Rc=;
- b=b3kqfM4xuF1WIax7LDtHUbP3ZzKHbpUAVCrtLUAbxs209byMEbY6rk0vswmB8Jqmuw
- HA/p4EWl0mcaeQxzE1QVbjde88UFDJeSgol0y6jYldA4hrPzxY68gcNokR+cmchypINN
- LT1sbTO20iAT5iNfXbHjr/LnaOYW3HGL2E13aJKguiqmd6epAzvebr8FQ3WYC/pElPf7
- bVxjpLd5Sd/c5KjY6sGRnmR2i6dTCTtPorFJrif6wednixUfVhycoxFBSij2R8y0LYiB
- tm2J1MD5jANs53EJZwpGKCS7mknU3gKywPhUBwJvNI5rncO7PAASFfvIlK/cjNzfRnP7
- 0kaA==
-X-Gm-Message-State: AOJu0YyatV+g1j2RT7BDLH5GS2v+xWOxgod5Fp4M0YxyjoW/YnVzpcS0
- ap85i6tVr2Bl7ntMhDowHa97C4aqpb5VxC/bMXGJTKPyl39kLZJYnScgm0ECdcSKVDFSP+OZ5Po
- 3DumM
-X-Gm-Gg: AZuq6aJkA1fea4iLh1fHg6c3fBSNkZ1PoTkUSqpgWLa38PRtM34Oq5SvJuNXLW6A5xV
- jnPYcLjDKy6oqY9JFUdOv1Cvyp+kF19vylah5X6Lbie7JHlTPZrKpA3cIKOUftsfBrfp5Pek87I
- R8dOHt581HgZuqTPmeSxg1e7GsTnQfUrJWk6BlBpM2MAB32nSqIKvJXnq/FKKux3OYbhJGdqPEQ
- O1Ovk0YWVcNTF8SgIH5B74mpiaazGAESpzOix90la5rtMQutXCbcCE3hsAtem8fZr3mqkAFSu6z
- c0JsYRsU+pWqDx8XU2r5ITHMVLW8UHUm4njwL1cpTNVnXOBExk3sQxamm2/YSP77jlMGAk5cu5U
- cMRwo3rd4B2ZsNyA4b3Giehh2l0P/j3Lj7Gy0JqkgPOhEtb0Z/VouGovSSm+DDAog/iG+Nz6e1k
- D0YeUrZVaPesa9OOUNzlOhFYtHYkqbIropIkuweelWDSJWbIMmNQ==
-X-Received: by 2002:a05:600c:8b6b:b0:46e:59bd:f7e2 with SMTP id
- 5b1f17b1804b1-483203d074emr1543985e9.11.1770314277558; 
- Thu, 05 Feb 2026 09:57:57 -0800 (PST)
+ bh=OTQS0DaWxTqjs3HNXqGBrSUvg4NWW1WqcH/yntND4/A=;
+ b=trj1T1RQxkZbbCFkILRp9Sl7TvMRn1IOphyl1kAFJucqOa9WXzLWijbGXavZRSIQX+
+ 1Q/qJgnoQlaYYcjSqUEM4XLZEDJ0bdHVWeXXk5xpBZMM+gg1GNaqmJ9eFNlPzQOFQZab
+ 6rkPHnBkoSYh8ATYHVafhv+vxF3DNlnfThpyNx+t9XAl00NKUaax+h73cbOe0S65JQsk
+ FAdvW1XaAYQHWVQOkCk0CIlt53yuf+L/e+Q93jWNu3MOhNu7ZoBV1kLrxacsVAMqDMzX
+ xYXBsSgacKL7vf4krkDZ5o+k/4gfOsc+uZkJRA1hgsMoGMsKYu9leuskTRaKMeY1xnJY
+ wTuA==
+X-Gm-Message-State: AOJu0Yw8W/wI3F69g5+Ip1gsJ+Jb8OWd37YJmeeWZpfZd93K87TGGnIw
+ uy4p8ee/6Pm2+KpU1FO0GDs8Jq83dYaxEsuvvRQeyWVLJ/aWwccqSOu/BRLSyZcN08a+KyYLmxD
+ 481Ji
+X-Gm-Gg: AZuq6aKip+JmurYyKzjL6LFf734qE1g234p54nGo17ThTAxtB/qJVdodnkxjBqVaYLM
+ +5U+oADiSUNwfLx4nc5+R/8CkII2bfoEKxhscpGRzLCs2/yqfUrYQmtEsc+gXoQWh6tWCsYe5Bm
+ gJ3uecSEBUlrCZRqeOCvP58iZ9pQh1/eR40VUo0jdld8zdL0U3GYy3vpi9fUkGUxWgPh6SZcE01
+ p2JXwk492YZlcpjwMY5ssyAmfabxR1RhdQo70eOQSnqCgSCiRBGG8SrON+iG3FWWOlZm9+W7BRx
+ i9vCF/K3Vd4ooaxy2dIaaFlR9txcSNrEBGI38oSzYRh5FDBmtfcV4MS7VzGoZKkiGfRGMGRk945
+ +rKarpTOei+FxwGhsh/r1RqebRMQtGzLmDmJ7Irc/gsegras++kCCyfbfqXfX6wsvshN4SHRArp
+ VUa73AgVAuBYilpUbkaE0GNbSIP3Pg8esrzUbCISInmVcxU4GNn5y+pda/Q5VI
+X-Received: by 2002:a5d:584c:0:b0:436:db8:c4a7 with SMTP id
+ ffacd0b85a97d-4362933aad4mr147287f8f.6.1770314280314; 
+ Thu, 05 Feb 2026 09:58:00 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-43618057f7csm15465594f8f.23.2026.02.05.09.57.55
+ ffacd0b85a97d-43618057f7csm15465594f8f.23.2026.02.05.09.57.57
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 05 Feb 2026 09:57:56 -0800 (PST)
+ Thu, 05 Feb 2026 09:57:59 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Nithin Dabilpuram <ndabilpuram@marvell.com>,
+Cc: Stephen Hemminger <stephen@networkplumber.org>, skoteshwar@marvell.com,
+ stable@dpdk.org, Nithin Dabilpuram <ndabilpuram@marvell.com>,
  Kiran Kumar K <kirankumark@marvell.com>,
- Sunil Kumar Kori <skori@marvell.com>, Satha Rao <skoteshwar@marvell.com>,
- Harman Kalra <hkalra@marvell.com>
-Subject: [PATCH v6 1/6] common/cnxk: replace variable length state array
-Date: Thu,  5 Feb 2026 09:55:53 -0800
-Message-ID: <20260205175750.653353-2-stephen@networkplumber.org>
+ Sunil Kumar Kori <skori@marvell.com>, Harman Kalra <hkalra@marvell.com>
+Subject: [PATCH v6 2/6] common/cnxk: replace variable length array
+Date: Thu,  5 Feb 2026 09:55:54 -0800
+Message-ID: <20260205175750.653353-3-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260205175750.653353-1-stephen@networkplumber.org>
 References: <20260120195418.466318-1-stephen@networkplumber.org>
  <20260205175750.653353-1-stephen@networkplumber.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -85,30 +85,41 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The cipher function is always called with in_len = 16
-and there is an existing define for that.
+This fixes errors when compiled with LTO about large VLA.
+../drivers/common/cnxk/roc_platform.c: In function ‘irq_init’:
+../drivers/common/cnxk/roc_platform.c:92:14: warning: argument to variable-length array is too large [-Wvla-larger-than=]
+   92 |         char irq_set_buf[MSIX_IRQ_SET_BUF_LEN];
+      |              ^
+
+Since the number of IRQ is limited by EAL max interrupt vectors
+use that define that already exists rather than a function call
+hidden in a macro.
+
+Bugzilla ID: 1863
+Fixes: 375cb1601882 ("common/cnxk: move interrupt handling to platform-specific")
+Cc: skoteshwar@marvell.com
+Cc: stable@dpdk.org
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/common/cnxk/roc_aes.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/common/cnxk/roc_platform.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/common/cnxk/roc_aes.c b/drivers/common/cnxk/roc_aes.c
-index d84feb546a..babf149ccf 100644
---- a/drivers/common/cnxk/roc_aes.c
-+++ b/drivers/common/cnxk/roc_aes.c
-@@ -157,9 +157,10 @@ static void
- cipher(uint8_t *in, uint8_t *out, uint32_t *ks, uint32_t key_rounds, uint8_t in_len)
- {
- 	uint8_t data_word_len = in_len / sizeof(uint32_t);
--	uint32_t state[data_word_len];
-+	uint32_t state[AES_HASH_KEY_LEN / sizeof(uint32_t)];
- 	unsigned int i, round;
+diff --git a/drivers/common/cnxk/roc_platform.c b/drivers/common/cnxk/roc_platform.c
+index e13cb42285..1fdbf8f051 100644
+--- a/drivers/common/cnxk/roc_platform.c
++++ b/drivers/common/cnxk/roc_platform.c
+@@ -17,8 +17,8 @@
+ #include <sys/ioctl.h>
+ #include <unistd.h>
  
-+	PLT_ASSERT(in_len <= AES_HASH_KEY_LEN);
- 	memcpy(state, in, sizeof(state));
+-#define MSIX_IRQ_SET_BUF_LEN                                                                       \
+-	(sizeof(struct vfio_irq_set) + sizeof(int) * (plt_intr_max_intr_get(intr_handle)))
++#define MSIX_IRQ_SET_BUF_LEN							\
++	(sizeof(struct vfio_irq_set) + sizeof(int) * PLT_MAX_RXTX_INTR_VEC_ID)
  
- 	/* AddRoundKey(state, w[0, Nb-1]) // See Sec. 5.1.4 */
+ static int
+ irq_get_info(struct plt_intr_handle *intr_handle)
 -- 
 2.51.0
 
