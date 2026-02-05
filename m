@@ -2,80 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 239DDECD9A6
-	for <dpdk-dev@archiver.kernel.org>; Thu,  5 Feb 2026 21:31:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F591ECD9AF
+	for <dpdk-dev@archiver.kernel.org>; Thu,  5 Feb 2026 22:11:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 231134067C;
-	Thu,  5 Feb 2026 22:31:14 +0100 (CET)
-Received: from fhigh-a4-smtp.messagingengine.com
- (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
- by mails.dpdk.org (Postfix) with ESMTP id 0FA8F4066C
- for <dev@dpdk.org>; Thu,  5 Feb 2026 22:31:13 +0100 (CET)
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
- by mailfhigh.phl.internal (Postfix) with ESMTP id A6DB11400135;
- Thu,  5 Feb 2026 16:31:12 -0500 (EST)
-Received: from phl-frontend-04 ([10.202.2.163])
- by phl-compute-04.internal (MEProxy); Thu, 05 Feb 2026 16:31:12 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:date:date:from:from
- :in-reply-to:in-reply-to:message-id:mime-version:references
- :reply-to:subject:subject:to:to; s=fm3; t=1770327072; x=
- 1770413472; bh=IPfgPZE/f//FEtuR0//uxUEgj62p3E/ViF9o4jr+kuQ=; b=i
- 670gZOvf3hdbFn+Oy4N+SbW8kejztN5PuNNXrWUJdjIFqmjuPWrOUvhPfdw5MgqB
- dyIxb4b/Ku6z11Zu/NmGiF0c3VY5tJ4wV+CGUsrzR2B9Wo5pEItkkxWY9DofcJZv
- m1t95Di3OnSz10aP8mh22iGyZNsppF34FHTjf4+3JclRezboyphC4lnRXvGO5I+4
- 4BSBxcFDJSSPHoVYIV9JVu1hdFFTGwGoBbzTxF8M3kdwOild222VEgR60+6deFzt
- 1I5/yib5Fd/oLONQA0CnMDfXsscTDXpRM4fNWsJRnjXk7zo4oX0qwRODdN2Ix1Nc
- cWY7P/jaRpoDg0zMyC1zg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:date:date:feedback-id:feedback-id:from:from
- :in-reply-to:in-reply-to:message-id:mime-version:references
- :reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
- :x-me-sender:x-sasl-enc; s=fm3; t=1770327072; x=1770413472; bh=I
- PfgPZE/f//FEtuR0//uxUEgj62p3E/ViF9o4jr+kuQ=; b=Mnix2tqsuZgZQrn9m
- tpe2rr0+/P+7uumef+BsC4eEAT1FwaT+fDJtfl65RUoUnhrP396L4Z9SeexVXemM
- p9dOADkyOPL3NzzBZF/7z4vZR4CXO6FmByJTBo4RhKvmPCwal4jiXhdFBTfKId00
- JMf1I3iaHvOZh6BQkBnq6ixz4zkiKTOhTvLpqOpfMkLUJ4bwY3WxlA1RST9fPUzu
- MTWgWZtrvXgONuYuU0j+baoe8qAKokyrFE+sP5BeaDnXy2UMRbkxLvyW50XxTRQA
- 9rLL+vMBw+uTGg3EkabyQxgJT15SKLBWwbf9WUrrxCfZtVIUNnw6lNO2k3aAAv8c
- VHd9Q==
-X-ME-Sender: <xms:IAyFaZ27vessu1JEqFydflGdlW2IaMAPCIZGT1qrcq1Qc3v6J8Ou-Q>
- <xme:IAyFaUbbq46mjjVo3Z3OBFShA_DoDUiEfzWc1dNLHSJREgsZByNF431C3M6cHW3Qk
- XV8j4146j7bndvLGF6u4EQjraEQaAgENc3eGfThhZdgyGwiAC79ew>
-X-ME-Received: <xmr:IAyFaZDzSdq-ZLcD_VSHnAGUSoGCNtTa7OJm9xGpalJQvf3_O4SZrow1Vk2WEBX-Cp-TTqQMIFIxTjXr0-y9f8tHjaTTONg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddukeeifeelucetufdoteggodetrf
- dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
- rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
- gurhephffvvefufffkofgjfhgggfestdekredtredttdenucfhrhhomhepvfhhohhmrghs
- ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
- frrghtthgvrhhnpedvjefhudeghedvtdeijeeigeetuedugfejueekieeltdfhteevkeeh
- hfeilefhtdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeefpdhm
- ohguvgepshhmthhpohhuthdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtph
- htthhopegurghvihgurdhmrghrtghhrghnugesrhgvughhrghtrdgtohhmpdhrtghpthht
- oheprggtohhnohhlvgesrhgvughhrghtrdgtohhm
-X-ME-Proxy: <xmx:IAyFae8L4ny--tGREqM0D2H-vpbUip2zwmdPyqYnRsXQ_zS5zhlzVA>
- <xmx:IAyFaR_XybkaZ1vqv7Vd8_UspAElskJFJLWrUkMKHPUYeZm1g338Ew>
- <xmx:IAyFadf1lI0DLsKNBmgRaHfM_VA_0pDHbSW9QPXC2Zg-EraDO8z08g>
- <xmx:IAyFaSFS4ZsiDj5_61NSS-hRuQkY9TtnvjXoxq0ZGGE-OeHUoc4plg>
- <xmx:IAyFaYN1KxDoHdRk2cYpKPz2KAC97Khc6YC43BCmpY0w7OGCXgN0GjVa>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 5 Feb 2026 16:31:11 -0500 (EST)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: dev@dpdk.org
-Cc: david.marchand@redhat.com,
-	Aaron Conole <aconole@redhat.com>
-Subject: [PATCH v4 11/11] ci: check minsize build type in GHA
-Date: Thu,  5 Feb 2026 22:27:43 +0100
-Message-ID: <20260205213044.702908-12-thomas@monjalon.net>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20260205213044.702908-1-thomas@monjalon.net>
-References: <20210412215339.2439530-1-thomas@monjalon.net>
- <20260205213044.702908-1-thomas@monjalon.net>
+	by mails.dpdk.org (Postfix) with ESMTP id 7C21B4021F;
+	Thu,  5 Feb 2026 23:11:38 +0100 (CET)
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com
+ [209.85.128.45]) by mails.dpdk.org (Postfix) with ESMTP id 4AB194021E
+ for <dev@dpdk.org>; Thu,  5 Feb 2026 23:11:37 +0100 (CET)
+Received: by mail-wm1-f45.google.com with SMTP id
+ 5b1f17b1804b1-47ee3a63300so15462155e9.2
+ for <dev@dpdk.org>; Thu, 05 Feb 2026 14:11:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1770329497;
+ x=1770934297; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=mSb7YLOqL15wJasbPteTMq+q7CsfbngNt5kyqd6bSgI=;
+ b=QO/k0W2gmhyjGPJmC7taJRXYT35zV1TQWLGAeBaj0GYu+O3Onx3uA2+euu49ebP0/a
+ W/me06X33FBYeP9K98s2FWZtj5H4WQf6MwlP1RQoDw/Z0L23Yv68T5/r8AdqwlWd6oh+
+ Y+M6RoGAhY8oFew1xj34PCcFED2OH1oPgBJA7rhfVymcJYFZ1NvseXZNi01eGE5nb1gs
+ wsm1Mn5lIPCgRsuZ3bCwZP8C8SYro2xqO5jdGSdR0gTRSBZEISsBnmC/W75Hnodno8C7
+ gNrWpZNH0F3pIBbYWS1j9c3eiCZ6aUTihI7wtiMgwlXqsIKW6v0m+F60XKJe2Wt5pMT6
+ 7Hzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1770329497; x=1770934297;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=mSb7YLOqL15wJasbPteTMq+q7CsfbngNt5kyqd6bSgI=;
+ b=bAQBq7ju8+1EOqef1BlZnDlK07kCd+o0vLSIYINXsX+JwUViX2lZvYMbhimNyf/+XH
+ vSLSTr2brvXP/ZXEgIWOE4JV2GO3Z8eFyJNdcetfBfVCpYA6MUgXnSDGSmc+d5cO2BNR
+ t6zXpZMShoEqfEp7nasen+h4ec7rvmme8f97gv5/pyxpHufDzsOPzffFk9ad8wCVHfFV
+ SUfKH04DCu1loJBIuJn2smPGGyKcSkRzsP91H5067jmfEHAPAZHZvD+HdW0Oi2ZGXJvQ
+ 2W1rC0XjkyjBpfr6unDWLC5akaRznuQr4h6mym/te29KQ3D/+gw2oZ9Ex6oCFV9+AS96
+ bFSA==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCVo/Z56dLQqJ8FqE7Pl8d4Ym7sn8mr4syhDNCh92DiYCBLq+MzSq4mmvDJ/vD5ho+q1cec=@dpdk.org
+X-Gm-Message-State: AOJu0Yw5Qlu+v6XRy3/VZ/q5jxr8Wv5B7etLHe83X8NgjP1EthxUKCUk
+ 2SwKO5HdrCn2ZxTHtwsrPzTP6+anztac+hN+0IQEv9GDb5IYIvP/Jcl87BID3NTaJFcyADvb0+G
+ DIPCj
+X-Gm-Gg: AZuq6aKVq2+fQ8/SxFUB/eO/mhvSnscuuCST+YgTolHKbwNwfB9b4UYDXKvvS/hVa4P
+ rMwI2B/q9DrBImmBd1Ns9PiI00gsz+qb2X69+L3tKuR9DpzwmQtpMGkLGf6hb/Cq057E4IguGvt
+ 6fCXACSGZLi3zeWj0q6IrWMawxbbnVzSC1uO9D89IlQBdpi7gdKwiGubQkPJYGzus3dunqIwYGC
+ D29sM9Jn9JzzVs/iL6f/p0r+WmIFba6F4F/7z4GWBhTkQ0aDvLrocleFcXEQAG6dIbW0WEWB5FH
+ Y3oizMqSPj4OJf6QJLxFW4QKtG3iJerjvBoY5R6NATahR/Jh5kngAfrOw9tM4SAW5aQ3/zYydR1
+ pFC9yunrdS+jACyxkPmZPoF2Vp7Ht3tudqoP+efsL1Uy8ma/qtDGV8wLMeG2Dy40OysZ5l7kv4R
+ rwLz1QfBmVUw4Tl1AVwCs1ney1uq2kUcxDM3qV4zwwd+MjBEbP/lIg
+X-Received: by 2002:a05:600c:6289:b0:47d:18b0:bb9a with SMTP id
+ 5b1f17b1804b1-483203393b7mr12827805e9.33.1770329496669; 
+ Thu, 05 Feb 2026 14:11:36 -0800 (PST)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 5b1f17b1804b1-483206cc7d3sm8490885e9.5.2026.02.05.14.11.35
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Thu, 05 Feb 2026 14:11:36 -0800 (PST)
+Date: Thu, 5 Feb 2026 14:11:30 -0800
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Tianhao Zhang <zhang.tianhao2@zte.com.cn>
+Cc: wang.junlong1@zte.com.cn, yang.yonggang@zte.com.cn, dev@dpdk.org
+Subject: Re: [PATCH v3 0/2] net/zxdh: fix npsdk bug
+Message-ID: <20260205141130.6431af14@phoenix.local>
+In-Reply-To: <20260203071732.2601630-1-zhang.tianhao2@zte.com.cn>
+References: <20251230081127.813605-2-zhang.tianhao2@zte.com.cn>
+ <20260203071732.2601630-1-zhang.tianhao2@zte.com.cn>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -89,50 +83,22 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-In GitHub Actions, the build for Fedora with GCC is updated
-to use the Meson build type "minsize".
-This type may have some different requirements (or bugs),
-so it is better for its maintenance to test it regularly in the CI.
+On Tue,  3 Feb 2026 15:17:27 +0800
+Tianhao Zhang <zhang.tianhao2@zte.com.cn> wrote:
 
-Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
----
- .ci/linux-build.sh          | 2 ++
- .github/workflows/build.yml | 2 ++
- 2 files changed, 4 insertions(+)
+> V3:
+>   - Fix the indentation issues=E3=80=82
+>=20
+> V2:
+>   - Resolve code style.
+>   - Provide clear error messages.
+>=20
+> V1:
+>   - Add new timeout error return.
+>   - Add PCIe link health check.
+>   - Remove the NP software resource uninstallation procedure from the NP =
+online uninit process.=20
+>   - NP software resource uninstallation should be called separately withi=
+n NP uninit to avoid duplicate resource release.
 
-diff --git a/.ci/linux-build.sh b/.ci/linux-build.sh
-index aac0bd3dc5..e0b914a142 100755
---- a/.ci/linux-build.sh
-+++ b/.ci/linux-build.sh
-@@ -85,6 +85,8 @@ buildtype=debugoptimized
- 
- if [ "$BUILD_DEBUG" = "true" ]; then
-     buildtype=debug
-+elif [ "$BUILD_MINSIZE" = "true" ]; then
-+    buildtype=minsize
- fi
- 
- if [ "$BUILD_DOCS" = "true" ]; then
-diff --git a/.github/workflows/build.yml b/.github/workflows/build.yml
-index ab140f885e..f0142efd3b 100644
---- a/.github/workflows/build.yml
-+++ b/.github/workflows/build.yml
-@@ -325,6 +325,7 @@ jobs:
-         config:
-           - image: fedora:43
-             compiler: gcc
-+            checks: minsize
-           - image: fedora:43
-             compiler: clang
- 
-@@ -362,6 +363,7 @@ jobs:
-         echo CCACHE_DIR=/root/.ccache >> ~/env
-         echo DEF_LIB=${{ matrix.config.library }} >> ~/env
-         echo STDATOMIC=false >> ~/env
-+        echo BUILD_MINSIZE=${{ contains(matrix.config.checks, 'minsize') }} >> ~/env
-     - name: Load the cached image
-       run: |
-         docker load -i ~/.image/${{ matrix.config.image }}.tar
--- 
-2.52.0
-
+Queued to next-net, with reworded commit message
