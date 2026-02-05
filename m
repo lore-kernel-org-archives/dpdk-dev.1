@@ -2,74 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F591ECD9AF
-	for <dpdk-dev@archiver.kernel.org>; Thu,  5 Feb 2026 22:11:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D49C9ECD9B0
+	for <dpdk-dev@archiver.kernel.org>; Thu,  5 Feb 2026 22:17:36 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7C21B4021F;
-	Thu,  5 Feb 2026 23:11:38 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 290E34021F;
+	Thu,  5 Feb 2026 23:17:36 +0100 (CET)
 Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com
- [209.85.128.45]) by mails.dpdk.org (Postfix) with ESMTP id 4AB194021E
- for <dev@dpdk.org>; Thu,  5 Feb 2026 23:11:37 +0100 (CET)
+ [209.85.128.45]) by mails.dpdk.org (Postfix) with ESMTP id 961114021E
+ for <dev@dpdk.org>; Thu,  5 Feb 2026 23:17:34 +0100 (CET)
 Received: by mail-wm1-f45.google.com with SMTP id
- 5b1f17b1804b1-47ee3a63300so15462155e9.2
- for <dev@dpdk.org>; Thu, 05 Feb 2026 14:11:37 -0800 (PST)
+ 5b1f17b1804b1-48068ed1eccso15240425e9.2
+ for <dev@dpdk.org>; Thu, 05 Feb 2026 14:17:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1770329497;
- x=1770934297; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1770329854;
+ x=1770934654; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=mSb7YLOqL15wJasbPteTMq+q7CsfbngNt5kyqd6bSgI=;
- b=QO/k0W2gmhyjGPJmC7taJRXYT35zV1TQWLGAeBaj0GYu+O3Onx3uA2+euu49ebP0/a
- W/me06X33FBYeP9K98s2FWZtj5H4WQf6MwlP1RQoDw/Z0L23Yv68T5/r8AdqwlWd6oh+
- Y+M6RoGAhY8oFew1xj34PCcFED2OH1oPgBJA7rhfVymcJYFZ1NvseXZNi01eGE5nb1gs
- wsm1Mn5lIPCgRsuZ3bCwZP8C8SYro2xqO5jdGSdR0gTRSBZEISsBnmC/W75Hnodno8C7
- gNrWpZNH0F3pIBbYWS1j9c3eiCZ6aUTihI7wtiMgwlXqsIKW6v0m+F60XKJe2Wt5pMT6
- 7Hzg==
+ bh=1LV7jxV9uKMiaWan4z/YSuAq31PdS/5SjwDmgn+CE4Q=;
+ b=yMyaN8bBOLIr70Rxo4Wv6wWdh23EPaDP+Fj7Umphy/kH5AyCh9GsB8KqvpVVj5z1T2
+ Dwsm5PVzslk4+1Sre3KnsFmrblk7CUP7/UEUtkgXR0Y69mvojzwsQCvsscqBqWck8y6M
+ aSOtoqoqH9qWibyBOo+ourxmOeRojQ0L/Y9VOx+4cDAVqHMrJSsM2Is4N2QtxVR25I03
+ donfbTUmmfTPtPU1z8qiYj0J/IiH4fc6SbeCOmdx7Gs8IRRp9Z/VMb7CpPzvYjkdEDBH
+ ZU8SlXVP/U87vTwpJn+O9ECJBA8kCejL5MZPFtUgrcPNrc1xpFqXhe9RETTBiNuuiohk
+ Ua2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1770329497; x=1770934297;
+ d=1e100.net; s=20230601; t=1770329854; x=1770934654;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=mSb7YLOqL15wJasbPteTMq+q7CsfbngNt5kyqd6bSgI=;
- b=bAQBq7ju8+1EOqef1BlZnDlK07kCd+o0vLSIYINXsX+JwUViX2lZvYMbhimNyf/+XH
- vSLSTr2brvXP/ZXEgIWOE4JV2GO3Z8eFyJNdcetfBfVCpYA6MUgXnSDGSmc+d5cO2BNR
- t6zXpZMShoEqfEp7nasen+h4ec7rvmme8f97gv5/pyxpHufDzsOPzffFk9ad8wCVHfFV
- SUfKH04DCu1loJBIuJn2smPGGyKcSkRzsP91H5067jmfEHAPAZHZvD+HdW0Oi2ZGXJvQ
- 2W1rC0XjkyjBpfr6unDWLC5akaRznuQr4h6mym/te29KQ3D/+gw2oZ9Ex6oCFV9+AS96
- bFSA==
+ bh=1LV7jxV9uKMiaWan4z/YSuAq31PdS/5SjwDmgn+CE4Q=;
+ b=QBZr5l6J6/NZTEhltPaJ1UxtDOjJdupNH8zDIIvIwGhshrlHidmlxBnjnfBKFdGaxe
+ mxhqND/lEIQZJ+sz2SYjYJe7zordvy8CUyZ9AB3mG/npDBNMt7qMEoPY+HFMHmmYGVOK
+ NhwvaYwNLDJnLdaym5dI9T9BV1fIkkCmRvvL1mlsRnmyrvd2ve6U1iGYBO6q7ImBPM+o
+ pQ3HkhVrVu+M/UmmECUKWRMFGcjxT1SSaDGcx7qEwQrmDiRGPerCfMSX/QTwyJ5k7i5o
+ /HX5egyh5vHSTghSq89+HPspSdqxLlNs2DaN3nvykkeU4aTgCtxZFbKBf2K3S/vJAds2
+ PRmA==
 X-Forwarded-Encrypted: i=1;
- AJvYcCVo/Z56dLQqJ8FqE7Pl8d4Ym7sn8mr4syhDNCh92DiYCBLq+MzSq4mmvDJ/vD5ho+q1cec=@dpdk.org
-X-Gm-Message-State: AOJu0Yw5Qlu+v6XRy3/VZ/q5jxr8Wv5B7etLHe83X8NgjP1EthxUKCUk
- 2SwKO5HdrCn2ZxTHtwsrPzTP6+anztac+hN+0IQEv9GDb5IYIvP/Jcl87BID3NTaJFcyADvb0+G
- DIPCj
-X-Gm-Gg: AZuq6aKVq2+fQ8/SxFUB/eO/mhvSnscuuCST+YgTolHKbwNwfB9b4UYDXKvvS/hVa4P
- rMwI2B/q9DrBImmBd1Ns9PiI00gsz+qb2X69+L3tKuR9DpzwmQtpMGkLGf6hb/Cq057E4IguGvt
- 6fCXACSGZLi3zeWj0q6IrWMawxbbnVzSC1uO9D89IlQBdpi7gdKwiGubQkPJYGzus3dunqIwYGC
- D29sM9Jn9JzzVs/iL6f/p0r+WmIFba6F4F/7z4GWBhTkQ0aDvLrocleFcXEQAG6dIbW0WEWB5FH
- Y3oizMqSPj4OJf6QJLxFW4QKtG3iJerjvBoY5R6NATahR/Jh5kngAfrOw9tM4SAW5aQ3/zYydR1
- pFC9yunrdS+jACyxkPmZPoF2Vp7Ht3tudqoP+efsL1Uy8ma/qtDGV8wLMeG2Dy40OysZ5l7kv4R
- rwLz1QfBmVUw4Tl1AVwCs1ney1uq2kUcxDM3qV4zwwd+MjBEbP/lIg
-X-Received: by 2002:a05:600c:6289:b0:47d:18b0:bb9a with SMTP id
- 5b1f17b1804b1-483203393b7mr12827805e9.33.1770329496669; 
- Thu, 05 Feb 2026 14:11:36 -0800 (PST)
+ AJvYcCVrm6j6Pa91A7SDI0TXp82OiU+nGFTPYB8Zvn1dsRr8zsI6xanf5Iu70M7Tax8uGbgYfz0=@dpdk.org
+X-Gm-Message-State: AOJu0Yxkml2IsxjIknmc5e6CLMomPzVynVI0QcybVA2437vjC5Vv8zoU
+ rdnqg6min4A3OyoVa3vMata5GUN3SdvVH5rLzaP6Qr29+d4PmGGcDUi73DCLUFe0uP8=
+X-Gm-Gg: AZuq6aJtn9cmX34qGWneoelLiBvJu+Mqr3r+U/xAKSGD3GX+U4oKk5AbIS/4YHlyKjF
+ 1vVHDuDtZzEbNShfdl1x2zi7rTF9ejlGmyt8Mvv1Gov3ydGB+L3cS/YCzVg1mwNwGn8nP1pAJS5
+ azF5HD+nDaPqHH731GSx7rxERo4owqBqi0ueo9TsDLBwoGfN22q7OUPhhdYsXXNufQAJC9LvuEB
+ xPcHtuTy6lsSQkV6QKiV/dbn+tZbJQUKZ0aXBidFrdi7H30EDzQnXW1QfIhh/tf5BBRXGR4ZZzC
+ Lh9NDNyUft/Oy1c41lv5ZykRPBOeJ+tzf5314NMEMqZqZqCLFH9hVQaUzldrIw9hfyMy3rajFRv
+ E+zPFffOOsN9fjj7c84GGgt72bdjyFoL5QDPEIm3Y07jzB/FHQn3iVNjIai3pk9QvTSN0MKwdrB
+ TxnQYr5IB2f9MzFg1Pd+pkAWq2U0hDdeuxlUUwIYbt7LL7cvmn4nBB
+X-Received: by 2002:a05:600c:1f16:b0:482:eec4:758 with SMTP id
+ 5b1f17b1804b1-4832021fe37mr12070825e9.26.1770329854004; 
+ Thu, 05 Feb 2026 14:17:34 -0800 (PST)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-483206cc7d3sm8490885e9.5.2026.02.05.14.11.35
+ ffacd0b85a97d-436297460a5sm1241883f8f.32.2026.02.05.14.17.32
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 05 Feb 2026 14:11:36 -0800 (PST)
-Date: Thu, 5 Feb 2026 14:11:30 -0800
+ Thu, 05 Feb 2026 14:17:33 -0800 (PST)
+Date: Thu, 5 Feb 2026 14:17:28 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Tianhao Zhang <zhang.tianhao2@zte.com.cn>
-Cc: wang.junlong1@zte.com.cn, yang.yonggang@zte.com.cn, dev@dpdk.org
-Subject: Re: [PATCH v3 0/2] net/zxdh: fix npsdk bug
-Message-ID: <20260205141130.6431af14@phoenix.local>
-In-Reply-To: <20260203071732.2601630-1-zhang.tianhao2@zte.com.cn>
-References: <20251230081127.813605-2-zhang.tianhao2@zte.com.cn>
- <20260203071732.2601630-1-zhang.tianhao2@zte.com.cn>
+To: Dariusz Sosnowski <dsosnowski@nvidia.com>
+Cc: Aman Singh <aman.deep.singh@intel.com>, Ori Kam <orika@nvidia.com>,
+ <dev@dpdk.org>, Bing Zhao <bingz@nvidia.com>, <stable@dpdk.org>
+Subject: Re: [PATCH v4] app/testpmd: fix flow queue job leaks
+Message-ID: <20260205141728.0622320b@phoenix.local>
+In-Reply-To: <20260203093718.561443-1-dsosnowski@nvidia.com>
+References: <20260112173648.1528180-1-dsosnowski@nvidia.com>
+ <20260203093718.561443-1-dsosnowski@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,22 +83,59 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue,  3 Feb 2026 15:17:27 +0800
-Tianhao Zhang <zhang.tianhao2@zte.com.cn> wrote:
+On Tue, 3 Feb 2026 10:37:18 +0100
+Dariusz Sosnowski <dsosnowski@nvidia.com> wrote:
 
-> V3:
->   - Fix the indentation issues=E3=80=82
->=20
-> V2:
->   - Resolve code style.
->   - Provide clear error messages.
->=20
-> V1:
->   - Add new timeout error return.
->   - Add PCIe link health check.
->   - Remove the NP software resource uninstallation procedure from the NP =
-online uninit process.=20
->   - NP software resource uninstallation should be called separately withi=
-n NP uninit to avoid duplicate resource release.
+> Each enqueued async flow operation in testpmd has an associated
+> queue_job struct. It is passed in user data and used to determine
+> the type of operation when operation results are pulled on a given
+> queue. This information informs the necessary additional handling
+> (e.g., freeing flow struct or dumping the queried action state).
+> 
+> If async flow operations were enqueued and results were not pulled
+> before quitting testpmd, these queue_job structs were leaked as reported
+> by ASAN:
+> 
+> Direct leak of 88 byte(s) in 1 object(s) allocated from:
+>     #0 0x7f7539084a37 in __interceptor_calloc
+>         ../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:154
+>     #1 0x55a872c8e512 in port_queue_flow_create
+>         (/download/dpdk/install/bin/dpdk-testpmd+0x4cd512)
+>     #2 0x55a872c28414 in cmd_flow_cb
+>         (/download/dpdk/install/bin/dpdk-testpmd+0x467414)
+>     #3 0x55a8734fa6a3 in __cmdline_parse
+>         (/download/dpdk/install/bin/dpdk-testpmd+0xd396a3)
+>     #4 0x55a8734f6130 in cmdline_valid_buffer
+>         (/download/dpdk/install/bin/dpdk-testpmd+0xd35130)
+>     #5 0x55a873503b4f in rdline_char_in
+>         (/download/dpdk/install/bin/dpdk-testpmd+0xd42b4f)
+>     #6 0x55a8734f62ba in cmdline_in
+>         (/download/dpdk/install/bin/dpdk-testpmd+0xd352ba)
+>     #7 0x55a8734f65eb in cmdline_interact
+>         (/download/dpdk/install/bin/dpdk-testpmd+0xd355eb)
+>     #8 0x55a872c19b8e in prompt
+>         (/download/dpdk/install/bin/dpdk-testpmd+0x458b8e)
+>     #9 0x55a872be425a in main
+>         (/download/dpdk/install/bin/dpdk-testpmd+0x42325a)
+>     #10 0x7f7538756d8f in __libc_start_call_main
+>         ../sysdeps/nptl/libc_start_call_main.h:58
+> 
+> This patch addresses that by registering all queue_job structs, for a
+> given queue, on a linked list. Whenever operation results are pulled
+> and result is handled, queue_job struct will be removed from that list
+> and freed.
+> Before port is closed, during flow flush, testpmd will pull
+> all of the expected results
+> (based on the number of queue_job on the list).
+> 
+> Fixes: c9dc03840873 ("ethdev: add indirect action async query")
+> Fixes: 99231e480b69 ("ethdev: add template table resize")
+> Fixes: 77e7939acf1f ("app/testpmd: add flow rule update command")
+> Fixes: 3e3edab530a1 ("ethdev: add flow quota")
+> Fixes: 966eb55e9a00 ("ethdev: add queue-based API to report aged flow rules")
+> Cc: stable@dpdk.org
+> 
+> Signed-off-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
+> ---
 
-Queued to next-net, with reworded commit message
+Queued to next-net
