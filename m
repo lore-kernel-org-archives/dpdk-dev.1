@@ -2,68 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4402DECD992
-	for <dpdk-dev@archiver.kernel.org>; Thu,  5 Feb 2026 18:30:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA024ECD996
+	for <dpdk-dev@archiver.kernel.org>; Thu,  5 Feb 2026 18:35:40 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 648CD42796;
-	Thu,  5 Feb 2026 19:30:15 +0100 (CET)
-Received: from mail-dy1-f174.google.com (mail-dy1-f174.google.com
- [74.125.82.174]) by mails.dpdk.org (Postfix) with ESMTP id BAF0142670
- for <dev@dpdk.org>; Thu,  5 Feb 2026 19:30:13 +0100 (CET)
-Received: by mail-dy1-f174.google.com with SMTP id
- 5a478bee46e88-2b72e49776eso841596eec.1
- for <dev@dpdk.org>; Thu, 05 Feb 2026 10:30:13 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id F35CB4279E;
+	Thu,  5 Feb 2026 19:35:39 +0100 (CET)
+Received: from mail-dl1-f52.google.com (mail-dl1-f52.google.com [74.125.82.52])
+ by mails.dpdk.org (Postfix) with ESMTP id BC99842670
+ for <dev@dpdk.org>; Thu,  5 Feb 2026 19:35:37 +0100 (CET)
+Received: by mail-dl1-f52.google.com with SMTP id
+ a92af1059eb24-12339e2e2c1so766805c88.1
+ for <dev@dpdk.org>; Thu, 05 Feb 2026 10:35:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1770316212; x=1770921012; darn=dpdk.org;
+ d=gmail.com; s=20230601; t=1770316536; x=1770921336; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=J7+3m6nJO2zRklakEUIGA/J3/EaUlKQRML3Kwd+nW/4=;
- b=VIbjC0zU+fzFvGHKVFO9oReup//p6AqnX+53vGShZZAgHWDzrkYKFv968vkwc4/sx4
- ecMoLDaXwnjjGI/RzDIFvliPsIBlfOdigtDoVtovmqjJwIukmuZhGa0Y3muHC4LJDUei
- GWKGqgHP5rvuhhKbsuH2y8E1H/beG8ZMG6hvO9DLW4p/YAku2ToyfSYsLKdqoKzHIBh4
- h6PDvzoVJNHJSzL71XWWBKqhHNPUWEpNSzMEadxX6cfLdEGq4guGS2Yh7N8Xq5Tp2qi/
- 7jp04ZEdiDmTt6X3i5mknsQHow5sU2m2Vwbz8hzrMO8zFr1qPiRYvn02OYczQMvtyLRS
- OoQQ==
+ bh=NifZ9PbbPwne9hO7ybB2mvddkrZ6Gyn3t/SNrweG64w=;
+ b=SzqdpRquVuSs4V6ckj+mVtJifIipvU3z7PEhmUhxSoh+EnuyG+BBeK60IYLT0s2Q91
+ zjroIvzG0niXNPs24UxZNCA/TYStCqnBeQ+b5MZJpoSBppjFeqUDOWdDZyyh/oD4s/pP
+ K+nnigwwgfmOi+Kt5U2yLHZcpD9cOBjIyiqrfC0M3dwDMqh6kkOCg7G0WnLP2iOF/o0b
+ +aZQFR9WfLpd3nfp0NCdDrV3y4n/GyciskJ3q6Bcc+OaRaZjfr5EVD5UxecchlAlh3Fc
+ ZtHyxTj0Mp/f+3Y8CM9yg0SIGlMqyzaQTEhJLLlyD/Igj3TfRy5ppuVSzfcho1DAA56V
+ e3YQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1770316212; x=1770921012;
+ d=1e100.net; s=20230601; t=1770316536; x=1770921336;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=J7+3m6nJO2zRklakEUIGA/J3/EaUlKQRML3Kwd+nW/4=;
- b=TBshl6mAYJhOUWVABdIWHgf1zNskCbOubpFiPbNiTsVFSqx6nrrpItjAByg11OsZCP
- PbNq5R+SV4tIisRqjaYiHa7JO4OUOhyAQS2y8d6dzWkTmINmJt5J6+l5eM8UAB1dIsug
- S4uszlV0K8ZEvJjDmpiSzbthro1V5F4GTRcrkLY0w8+wu58/fR0hAfDOiRbIxuyMog8z
- /oYpolQbNT1BDSrfkB23G8KIfs0da9Z53xThIMUrbTmSF3XQRRprP3iTre3QaWIAIHOL
- MeNuASrw+sc0BvbzZb6rC4Tbkkr6/LXFhatwIlImubOkAb4pY+iqpRXl6f3k6qLlxj8y
- p3zQ==
-X-Gm-Message-State: AOJu0YzliGOFlYsqK+ODej5FXvxB4LvRi1nB/10o2xaf2CIGbsliXgOA
- ii1HJ6LJZ2FOdkbKJupCAGdv+HoKQ5DZGXpDr3AVRsefBppW9JABDQz//pkR8w==
-X-Gm-Gg: AZuq6aK2U4OZ/oxXrSe+WGnDRi5nBBjfqlohJNZ19bMShNjBYFAa4OtSw/bYYlVL90x
- YvgpKDWSrz30/WMO7V9jUDhECiQKlMvL2CQ2+BxsZxR3vc3ujxyNc5dpZelM0txqpLfY6+2Vmb/
- UxzJGhGMCy6N+WWV8SlxN+qxt+/5GVQPIOyp1th+9NFHTg7hN9cdtuk6PmRfILDpN87MWupCVry
- dJLR22P1r9CMY7inLj4LEpodaWJZt1FUQUwc8qZ7ByOP0S0kYYlDmuUF0DIAAH2qxnu6L2TugSw
- OxJoj0XGtbrDvOxQyEarN2hTUO/nFCbdPmVwWo7fjeJCO8VLzQct3dZmpoV+p8UF5u+FIyIA2my
- OwLCYFNUPKmbPXExw9maARsu4VeKGGr/A3kbq+sJnslWE55D9pIDfTS8HV2Rl6SRC+UHeX7iVnK
- 9ojMwrCWsvAzmE74fB6cHGq+K/wkgZrzMLLqhvGdr4qiPG5JCZLw==
-X-Received: by 2002:a05:7301:d89:b0:2b7:23ba:af2e with SMTP id
- 5a478bee46e88-2b8329ed7aamr3102213eec.43.1770316211928; 
- Thu, 05 Feb 2026 10:30:11 -0800 (PST)
+ bh=NifZ9PbbPwne9hO7ybB2mvddkrZ6Gyn3t/SNrweG64w=;
+ b=k/bbmmAs2GhwtxpSWPlEfwVHlKn1hQULU27zVceh+vAU6niBjgccu/E14xPK4FlaJ0
+ qpr1u0XRG27YKseL08HOZUzbDGFSSZIws+EQ0S++XlcVMT+NfHnuWX6XrLK1T6eLyz5m
+ WFkLRe5XjgWgjD5ZaXPV2/xLjBjzuDihAAAVlwfWylD/QtHCP6nAaxWFAtGVr6wW25zi
+ V28yH//uE0/1KeBoOx+GVOTgkNWovS5iN6NlFFBU9Jms7lUu+8TOHmB9cCGGsQMw9/38
+ C3fp/n2N1j2BHKD+YkUvgphZBAYOxBMAh/8b+kzTARFIDxzVtaO9UMlFT2fqCh2wA4li
+ /XPQ==
+X-Gm-Message-State: AOJu0YzpamyUdueCY6s9dEFThIevFBsRKarVtqRFIiZKUZ5PwSYPPiLj
+ lqseQvbXcfATbm8Y6+FLTlMLx4H98dkXpPyL+HwqNTRcxAqABHBeV84832lWDw==
+X-Gm-Gg: AZuq6aLdvK3PyltIW11gWWkea1Hekb82YxMz+WpCcHmjMiyFgGfGGQWB+T7orfiVzo1
+ V9KMKHJF0kdf0CM4Hqaz5k0CK0pmyfDW9Ggq6jRTr+JMaR6N+dCiGTAt+rzhUWlpsSjxf+kQ3Nu
+ fKz+KmB93xyV/GcYK6zfwarSpcImyN8KzIojC5Jsz4PDsyVwuF0EQtGffWCq98P3Iq7RIVIzR6b
+ 5zktHnnzBJD81w+oqf5VaUWQdH455INx/cwyL+ctgfK20OCCs6nMgB/rRVNNtp0y3SOlcSA7AsP
+ TIARC4kLjd8Lx620oevreu52ASuVoJBd0ia90T6MM094C2dXjBwDfxjVbBjkzpZUwSTO6MpNIWk
+ L0KyEDBAZR6etVl5GzZfwG5Oq1uqQCf13eo4O9AaaJogATnTpRhsDjJcm1jfAlCEA/EbF4XAgLn
+ hJLA98xywTM4rOYWpIgzxsoO2zlYPDDjHFRlh4rvGZJPGrV6GLDA==
+X-Received: by 2002:a05:7022:ba8:b0:11a:4ffb:984f with SMTP id
+ a92af1059eb24-12703f45aeamr97270c88.11.1770316535955; 
+ Thu, 05 Feb 2026 10:35:35 -0800 (PST)
 Received: from C9HFQX6C61.corp.nandps.com ([130.41.236.144])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-2b855c3db4asm120794eec.18.2026.02.05.10.30.09
+ a92af1059eb24-127041e5460sm36646c88.6.2026.02.05.10.35.33
  (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
- Thu, 05 Feb 2026 10:30:11 -0800 (PST)
+ Thu, 05 Feb 2026 10:35:35 -0800 (PST)
 From: Yehor Malikov <malikovyehor@gmail.com>
 To: dev@dpdk.org
 Cc: maxime.coquelin@redhat.com, chenbox@nvidia.com, stephen@networkplumber.org,
  Yehor Malikov <Yehor.Malikov@solidigm.com>
-Subject: [PATCH v8] vhost: fix use-after-free in fdset during shutdown
-Date: Thu,  5 Feb 2026 19:30:04 +0100
-Message-ID: <20260205183004.66631-1-malikovyehor@gmail.com>
+Subject: [PATCH v9] vhost: fix use-after-free in fdset during shutdown
+Date: Thu,  5 Feb 2026 19:35:29 +0100
+Message-ID: <20260205183529.66909-1-malikovyehor@gmail.com>
 X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20260205112051.48107-1-malikovyehor@gmail.com>
-References: <20260205112051.48107-1-malikovyehor@gmail.com>
+In-Reply-To: <20260205183004.66631-1-malikovyehor@gmail.com>
+References: <20260205183004.66631-1-malikovyehor@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -342,7 +342,7 @@ index 2f7c4c0080..31cbbe6039 100644
   * Set the vdpa device id, enforce single connection per socket
   *
 diff --git a/lib/vhost/socket.c b/lib/vhost/socket.c
-index ae95e7e6b0..dc9fd16c62 100644
+index ae95e7e6b0..78d177e24b 100644
 --- a/lib/vhost/socket.c
 +++ b/lib/vhost/socket.c
 @@ -76,6 +76,8 @@ struct vhost_user_connection {
@@ -396,7 +396,7 @@ index ae95e7e6b0..dc9fd16c62 100644
 +RTE_INIT(vhost_cleanup_register)
 +{
 +	if (rte_eal_cleanup_register(vhost_cleanup_handler) < 0)
-+		RTE_LOG(ERR, VHOST_CONFIG, "Failed to register vhost cleanup\n");
++		RTE_LOG_LINE(ERR, VHOST_CONFIG, "Failed to register vhost cleanup");
 +}
 diff --git a/lib/vhost/vduse.c b/lib/vhost/vduse.c
 index 0b5d158fee..5c9e77f11e 100644
