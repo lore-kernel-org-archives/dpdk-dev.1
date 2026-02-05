@@ -2,46 +2,79 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CC69EC1EB2
-	for <dpdk-dev@archiver.kernel.org>; Thu,  5 Feb 2026 14:03:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26471E8B39F
+	for <dpdk-dev@archiver.kernel.org>; Thu,  5 Feb 2026 14:30:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8A2DF40E5A;
-	Thu,  5 Feb 2026 15:03:37 +0100 (CET)
-Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id 89AA340E09
- for <dev@dpdk.org>; Thu,  5 Feb 2026 15:03:36 +0100 (CET)
-Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 785C14A5AC; Thu,  5 Feb 2026 15:03:36 +0100 (CET)
-From: bugzilla@dpdk.org
-To: dev@dpdk.org
-Subject: [DPDK/core Bug 1878] format-truncation warnings in eal_memalloc
- compiling find_numasocket and secondary_msl_create_walk
-Date: Thu, 05 Feb 2026 14:03:36 +0000
-X-Bugzilla-Reason: AssignedTo
-X-Bugzilla-Type: new
-X-Bugzilla-Watch-Reason: None
-X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: core
-X-Bugzilla-Version: 26.03
-X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: normal
-X-Bugzilla-Who: marat.khalili@huawei.com
-X-Bugzilla-Status: UNCONFIRMED
-X-Bugzilla-Resolution: 
-X-Bugzilla-Priority: Normal
-X-Bugzilla-Assigned-To: dev@dpdk.org
-X-Bugzilla-Target-Milestone: ---
-X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
- op_sys bug_status bug_severity priority component assigned_to reporter cc
- target_milestone
-Message-ID: <bug-1878-3@http.bugs.dpdk.org/>
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-X-Bugzilla-URL: http://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
+	by mails.dpdk.org (Postfix) with ESMTP id 5DDDD40E5A;
+	Thu,  5 Feb 2026 15:30:29 +0100 (CET)
+Received: from fhigh-a8-smtp.messagingengine.com
+ (fhigh-a8-smtp.messagingengine.com [103.168.172.159])
+ by mails.dpdk.org (Postfix) with ESMTP id 53EB340E09
+ for <dev@dpdk.org>; Thu,  5 Feb 2026 15:30:28 +0100 (CET)
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id A94801400155;
+ Thu,  5 Feb 2026 09:30:27 -0500 (EST)
+Received: from phl-frontend-04 ([10.202.2.163])
+ by phl-compute-04.internal (MEProxy); Thu, 05 Feb 2026 09:30:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1770301827;
+ x=1770388227; bh=2sRPFfrVXjz4pUgACZRoUZIwQNJjIzI2jGIGo0Qab4w=; b=
+ H/rMJxtM/78OPCXQu9IAzxN/CJKG5I+1N9wrKfcbRu55sGXt9JI7NqKjzBpqUjZD
+ hfUvEss4apwpJWF1+liBi+S/gZZnCBoi0CCz89Qr6LmM0KTvsiH865np0Zs+Y/x9
+ +/tTImgyBewNe/Acrw0mt9ABogaMT3zkFAb3oYfOdnJaboVmlKS04khuVMdQJBdc
+ p6OdhP7UjjbkyuSofPxD3C5S43rFJD2d7iUEKTru/A1ytJSVb8z9qns2iNsSGYCq
+ WlClkrxXeHax9LsmmguZ0kN+E4b9T+sMq5VxTichvThEt3f8Kx95tshRvf4GybHk
+ 80LTAcC/wwSaxY8alTnpZw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1770301827; x=
+ 1770388227; bh=2sRPFfrVXjz4pUgACZRoUZIwQNJjIzI2jGIGo0Qab4w=; b=C
+ 7ZtTDTaSRh7XFaHAO6GtC9cXCqhcMO99VpbqaIlTOhQPWWRK9jKZfkes2h2b3dhr
+ aAPUANDnninBv2TZAjsQMPvCVJJUUoj0EcQn0iGOKj/L756kUnkzCaFP1DLh9KGn
+ ValuI/dtPxFx1irKIgvsgjlOTYz083VxOTeKw7z2iLK2QFfXOZRuK8Pbe+vXZSVN
+ x4eYsB4L6hbbRnw2RcrcGRDtZVgXKPqOBh32uCyqCqqR0gEglLdMp3xOwcmQj61V
+ q6NG8Pqb1ykPF6JIN3uO4k7amWPARrCvapHreSu2747AwZSfopVlxMHJOOc9xFog
+ gQ5ZDVs4kGgYAyCsz1EWA==
+X-ME-Sender: <xms:g6mEaeZecWuzROSEKH53IvRjLn2fZyvIuh1WB3nnsWugbfLd0JcsCw>
+ <xme:g6mEadv4OkzoF4WiU1YhfHFYnO54zXx4pViIDsOyTVCz6Mhi-jye7jYSiMp0mHGp-
+ QmLKaAOQFVmOWrr9bwbwvbEUpE6MBzdzXIDyxro-zGXV5d_gU3Ba7E>
+X-ME-Received: <xmr:g6mEabvAk9Py9qfQxYTCsXdKl6EuQ1y7XOcdzGcteKbsx2XJ93gTmYJz6MNr_usVRw5bvr4W3R1ULJZAnWLtdQRrHA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddukeehheegucetufdoteggodetrf
+ dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+ rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+ gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
+ ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
+ frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
+ uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopedvpdhm
+ ohguvgepshhmthhpohhuthdprhgtphhtthhopegsrhhutggvrdhrihgthhgrrhgushhonh
+ esihhnthgvlhdrtghomhdprhgtphhtthhopeguvghvseguphgukhdrohhrgh
+X-ME-Proxy: <xmx:g6mEaSexCIT4qBE5nMYRSUAQxDcDiq5afHbfuCv3lWz1z8Ye-lDhLw>
+ <xmx:g6mEacZtGV1cjwh1haCseJ1LNPN-BkeLpVhCOJEVlIwXG7ZanexaZQ>
+ <xmx:g6mEaVXq1YqfXXweo_bPzZYEW2NU9RZn6h9Gv-NryU6cUbTJk9Gh2w>
+ <xmx:g6mEaeihv_M15LiSiQu2qQ5vAei3sr_rvfokcTe7ZwZcInVF9W0xWQ>
+ <xmx:g6mEaaDbefzjIUHVY5PMm6HoqZfqs9NmqH_8kTNxwBp0QVEWvu-PX31K>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 5 Feb 2026 09:30:27 -0500 (EST)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Bruce Richardson <bruce.richardson@intel.com>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH v3 0/2] standardize SPDX tag
+Date: Thu, 05 Feb 2026 15:30:25 +0100
+Message-ID: <2888376.taCxCBeP46@thomas>
+In-Reply-To: <aYRYW9PMGfu3NI_j@bricha3-mobl1.ger.corp.intel.com>
+References: <20251112091335.662991-1-thomas@monjalon.net>
+ <20260204204945.3893117-1-thomas@monjalon.net>
+ <aYRYW9PMGfu3NI_j@bricha3-mobl1.ger.corp.intel.com>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -55,124 +88,23 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-http://bugs.dpdk.org/show_bug.cgi?id=3D1878
+05/02/2026 09:44, Bruce Richardson:
+> On Wed, Feb 04, 2026 at 09:46:04PM +0100, Thomas Monjalon wrote:
+> > SPDX lines are fixed to be more standard,
+> > and the checker is improved to detect some of the fixed issues.
+> > For readability, the script changes are in a separate patch,
+> > but for the sake of atomicity, the patches should be squashed.
+> > 
+> > v2: update the script and README, and remove useless parentheses
+> > v3: keep Linux uAPI imported file untouched
+> > 
+> > Thomas Monjalon (2):
+> >   license: standardize SPDX tag
+> >   devtools: check SPDX syntax
+> > 
+> Series-acked-by: Bruce Richardson <bruce.richardson@intel.com>
 
-            Bug ID: 1878
-           Summary: format-truncation warnings in eal_memalloc compiling
-                    find_numasocket and secondary_msl_create_walk
-           Product: DPDK
-           Version: 26.03
-          Hardware: All
-                OS: All
-            Status: UNCONFIRMED
-          Severity: normal
-          Priority: Normal
-         Component: core
-          Assignee: dev@dpdk.org
-          Reporter: marat.khalili@huawei.com
-                CC: stephen@networkplumber.org
-  Target Milestone: ---
+Applied
 
-When configured with:
-```bash
-CC=3Dgcc-13 meson setup --werror
-'-Ddisable_drivers=3Dgpu/*,net/bnx2x,net/cnxk,net/qede' -Denable_docs=3Dfal=
-se
--Dbuildtype=3Ddebug -Db_sanitize=3Daddress,undefined -Ddeveloper_mode=3Dena=
-bled
--Dc_args=3D-DRTE_ENABLE_ASSERT
-```
-the following warnings are produced during compilation of branch main
-(de2604d55cb7098a941db696248c4d4d00abff43):
-```
-FAILED: lib/librte_eal.a.p/eal_linux_eal_memory.c.o=20
-gcc-13 -Ilib/librte_eal.a.p -Ilib -I../../src/lib -Ilib/eal/common
--I../../src/lib/eal/common -I. -I../../src -Iconfig -I../../src/config
--Ilib/eal/include -I../../src/lib/eal/include -Ilib/eal/linux/include
--I../../src/lib/eal/linux/include -Ilib/eal/x86/include
--I../../src/lib/eal/x86/include -I../../src/kernel/linux -Ilib/eal
--I../../src/lib/eal -Ilib/kvargs -I../../src/lib/kvargs -Ilib/log
--I../../src/lib/log -Ilib/metrics -I../../src/lib/metrics -Ilib/telemetry
--I../../src/lib/telemetry -Ilib/argparse -I../../src/lib/argparse
--fdiagnostics-color=3Dalways -fsanitize=3Daddress,undefined -fno-omit-frame=
--pointer
--D_FILE_OFFSET_BITS=3D64 -Wall -Winvalid-pch -Wextra -Werror -std=3Dc11 -O0=
- -g
--include rte_config.h -Wvla -Wcast-qual -Wdeprecated -Wformat
--Wformat-nonliteral -Wformat-security -Wmissing-declarations
--Wmissing-prototypes -Wnested-externs -Wold-style-definition -Wpointer-arith
--Wshadow -Wsign-compare -Wstrict-prototypes -Wundef -Wwrite-strings
--Wno-packed-not-aligned -Wno-missing-field-initializers -D_GNU_SOURCE
--DRTE_ENABLE_ASSERT -fPIC -march=3Dnative -mrtm -DALLOW_EXPERIMENTAL_API
--DALLOW_INTERNAL_API '-DABI_VERSION=3D"26.1"'
--DRTE_EAL_PTHREAD_ATTR_SETAFFINITY_NP -DRTE_LOG_DEFAULT_LOGTYPE=3Dlib.eal -=
-MD -MQ
-lib/librte_eal.a.p/eal_linux_eal_memory.c.o -MF
-lib/librte_eal.a.p/eal_linux_eal_memory.c.o.d -o
-lib/librte_eal.a.p/eal_linux_eal_memory.c.o -c
-../../src/lib/eal/linux/eal_memory.c
-../../src/lib/eal/linux/eal_memory.c: In function 'find_numasocket':
-../../src/lib/eal/linux/eal_memory.c:450:31: error: 'snprintf' output may be
-truncated before the last format character [-Werror=3Dformat-truncation=3D]
-  450 |                         "%s/%s", hpi->hugedir,
-eal_get_hugefile_prefix());
-      |                               ^
-../../src/lib/eal/linux/eal_memory.c:449:9: note: 'snprintf' output 2 or mo=
-re
-bytes (assuming 4097) into a destination of size 4096
-  449 |         snprintf(hugedir_str, sizeof(hugedir_str),
-      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  450 |                         "%s/%s", hpi->hugedir,
-eal_get_hugefile_prefix());
-      |=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-```
-and
-```
-FAILED: lib/librte_eal.a.p/eal_linux_eal_memalloc.c.o=20
-gcc-13 -Ilib/librte_eal.a.p -Ilib -I../../src/lib -Ilib/eal/common
--I../../src/lib/eal/common -I. -I../../src -Iconfig -I../../src/config
--Ilib/eal/include -I../../src/lib/eal/include -Ilib/eal/linux/include
--I../../src/lib/eal/linux/include -Ilib/eal/x86/include
--I../../src/lib/eal/x86/include -I../../src/kernel/linux -Ilib/eal
--I../../src/lib/eal -Ilib/kvargs -I../../src/lib/kvargs -Ilib/log
--I../../src/lib/log -Ilib/metrics -I../../src/lib/metrics -Ilib/telemetry
--I../../src/lib/telemetry -Ilib/argparse -I../../src/lib/argparse
--fdiagnostics-color=3Dalways -fsanitize=3Daddress,undefined -fno-omit-frame=
--pointer
--D_FILE_OFFSET_BITS=3D64 -Wall -Winvalid-pch -Wextra -Werror -std=3Dc11 -O0=
- -g
--include rte_config.h -Wvla -Wcast-qual -Wdeprecated -Wformat
--Wformat-nonliteral -Wformat-security -Wmissing-declarations
--Wmissing-prototypes -Wnested-externs -Wold-style-definition -Wpointer-arith
--Wshadow -Wsign-compare -Wstrict-prototypes -Wundef -Wwrite-strings
--Wno-packed-not-aligned -Wno-missing-field-initializers -D_GNU_SOURCE
--DRTE_ENABLE_ASSERT -fPIC -march=3Dnative -mrtm -DALLOW_EXPERIMENTAL_API
--DALLOW_INTERNAL_API '-DABI_VERSION=3D"26.1"'
--DRTE_EAL_PTHREAD_ATTR_SETAFFINITY_NP -DRTE_LOG_DEFAULT_LOGTYPE=3Dlib.eal -=
-MD -MQ
-lib/librte_eal.a.p/eal_linux_eal_memalloc.c.o -MF
-lib/librte_eal.a.p/eal_linux_eal_memalloc.c.o.d -o
-lib/librte_eal.a.p/eal_linux_eal_memalloc.c.o -c
-../../src/lib/eal/linux/eal_memalloc.c
-../../src/lib/eal/linux/eal_memalloc.c: In function
-'secondary_msl_create_walk':
-../../src/lib/eal/linux/eal_memalloc.c:1401:50: error: '%i' directive output
-may be truncated writing between 1 and 11 bytes into a region of size betwe=
-en 0
-and 63 [-Werror=3Dformat-truncation=3D]
- 1401 |         snprintf(name, RTE_FBARRAY_NAME_LEN, "%s_%i",
-      |                                                  ^~
-../../src/lib/eal/linux/eal_memalloc.c:1401:9: note: 'snprintf' output betw=
-een
-3 and 76 bytes into a destination of size 64
- 1401 |         snprintf(name, RTE_FBARRAY_NAME_LEN, "%s_%i",
-      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- 1402 |                 primary_msl->memseg_arr.name, getpid());
-      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-```
 
---=20
-You are receiving this mail because:
-You are the assignee for the bug.=
+
