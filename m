@@ -2,73 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D28F8ECD993
-	for <dpdk-dev@archiver.kernel.org>; Thu,  5 Feb 2026 17:41:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BD34ECD994
+	for <dpdk-dev@archiver.kernel.org>; Thu,  5 Feb 2026 17:53:03 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6709442670;
-	Thu,  5 Feb 2026 18:41:18 +0100 (CET)
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com
- [209.85.128.49]) by mails.dpdk.org (Postfix) with ESMTP id A970D40684
- for <dev@dpdk.org>; Thu,  5 Feb 2026 18:41:16 +0100 (CET)
-Received: by mail-wm1-f49.google.com with SMTP id
- 5b1f17b1804b1-47ee76e8656so18303925e9.0
- for <dev@dpdk.org>; Thu, 05 Feb 2026 09:41:16 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 78EB740684;
+	Thu,  5 Feb 2026 18:53:02 +0100 (CET)
+Received: from mail-wm1-f65.google.com (mail-wm1-f65.google.com
+ [209.85.128.65]) by mails.dpdk.org (Postfix) with ESMTP id DD551402E6
+ for <dev@dpdk.org>; Thu,  5 Feb 2026 18:53:00 +0100 (CET)
+Received: by mail-wm1-f65.google.com with SMTP id
+ 5b1f17b1804b1-483100e97d8so7748305e9.2
+ for <dev@dpdk.org>; Thu, 05 Feb 2026 09:53:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1770313276;
- x=1770918076; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1770313980;
+ x=1770918780; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=N4xqSRAZuMg0GWj3UX0WbTGuIl5EQnBASAHEeUFkAYk=;
- b=SFBSoMvFK+L5ve/iXJPjK3AkU2YPp4/AVT3Mhc4Y/rQcYj4oWeQEe0Ma5oYE9AjKNQ
- 0voyP5q0x6AK3bHqL/jsk4Sm54eTeWiiOZVbMoeRh4nrskN4NrH0pFmjNwyxv+v6c5cH
- Lk6a0fFu30gLifZzomGZ4OFvZzK23YtjRRT0MMJ+PiWinF4RTCuiTKfkS28JBl2HGpZz
- 7IQONpB79T95SJF6ijqRv+87Dl0ABLm1m0wlkPrTWUBqcOjKHNJPZBwd2z+AjPpGIsKL
- fQ+JgsEYGpA+eOrSsWhKmg3ZNmb1by2PFKT2PD9SRkyjoiBPfp9kswsIKPJPzMrd4I/G
- dlcw==
+ bh=2vVl+C/myu/MggOPx0MHK7RzOOd8uLv8TFL5os2V3lE=;
+ b=3dwN/DpBCPqlvrJnuz8ctPjI1bTanJLF3WiCVuoptP18BIElmViDwS9uTuxq1JMvyP
+ 4Z287kGC1SyeMsdHVfDGMLA/u6SFq5NsZ9SkXJsjjHBhC/Jh25bCOJ+CyCx77SrtcI/6
+ jxGKMtICw67Fv5GiPMjRf15HHJpr1eqcframYHyGJXJmUXtrNVEMHZOOBHtai3oSKtZm
+ g870/TJjIv5KsaFErVwT/oy+g7O0l8yTJUpm6k9YPie3jCOQhgzEcyEzALTuCMf9d6pc
+ wwRfuRo2CyYbGE24jELsS0xtNykge9Vu2mfd+7OFcHTd/BzhLx+3Tgte7n8fYqMMImSY
+ Hh9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1770313276; x=1770918076;
+ d=1e100.net; s=20230601; t=1770313980; x=1770918780;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=N4xqSRAZuMg0GWj3UX0WbTGuIl5EQnBASAHEeUFkAYk=;
- b=WP0OFe9UpUXCmzBRWjuvx5V/vJhI+wo7WD/zOVNuIVRyOI4xvL1PZwZ4R380Wuq4c2
- KAS/0TCp2X6R6dGd9P3h1QZ1nj+GYrGuXBmEBvSMOTjIoWjwtzcSxDq2DHXvoTSm6VHJ
- LNMiGSLUZ6ZAfmJwXSEEB06vo2HC0An6ESJYpLP7IbmXNosVb/EbyZYxx0xBNNU/rqE0
- lAf6cAddCDC1wtJCwkE+lvU9jxZ9QbiGfWljSLGkLH5HLJ8ppZ8y27rHP9N2XFtlsJH3
- ZKMLzgApmH2t19VTk2q6fLxBYqefDH+/bpqdHPwh9DOQxtSBcDBoppAHUf2B9eOHuhC1
- KVJw==
-X-Gm-Message-State: AOJu0YypFfSsUG0BpgqjeB1HPwXXROYjTRC8XZwJpd2zzKbRPTZ4lUIN
- tJ1aUrLZ7ZfXLSLsVHpLf1JmprY0ywYmfu6yHSaOApBQN67rs+Fmh6Pvdrvam0XovsQ=
-X-Gm-Gg: AZuq6aJvGt2QdBTh7Ch1hs7P1FBcA3xW0AErfTbdA9NHzkUYsneUoQ5Oh0PysjbFKC1
- VLOeL2jjXhSuxiePiJiDi1MQnQGvUD+MSUIm3mD5RxMPOidaqOOfID8qc9JUXf1iXayvz9gd6ZA
- S5Em+K3eu2VndnJdsXnEkiyaL0+BTsHi9Zfur/7F+CXTiXRyUDzBYbrplUrnkAMNyJOxLe319pd
- xpC1p2draDAhpUFEqetAHy6D20P3NC25K+tPkpfkafgm0Ikzt3bJD0Xms5lT9erhrNeMhaCdE+I
- Pklot+BPpev6BzRjDBHOXtMibP0Qj0I4oP3weZUApB1OUj5UykTDAswhn/oEyace78A/IYplMYJ
- Dg3I5ePtt5ECuyWS0TLVnxKuAA5AzmkWkCiNpb1nt6WnhdmVhsSBYTEjzNheUckjSfTf9z55Zh2
- 5hGhT+kzoCXYYHm733KWy6NBLxxAenX4Fb7tMhN9wOXQ4Ev/Rn8sWP9ZFZ3Q6GOAQ=
-X-Received: by 2002:a05:600c:468d:b0:477:fcb:2256 with SMTP id
- 5b1f17b1804b1-4832023126bmr2549345e9.17.1770313276092; 
- Thu, 05 Feb 2026 09:41:16 -0800 (PST)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ bh=2vVl+C/myu/MggOPx0MHK7RzOOd8uLv8TFL5os2V3lE=;
+ b=FHlHVNCDnni5h9DNNYOCYISVC9NuUjrgwgqSkVrrnUUJnZmPfxYiMvQZ/ehKdWPtzZ
+ AyHNhSdDOA/uGepQiJu9JfMawSLlKxmkl79lY+xoD8+oHx5PPaEmvNmRDe8dWWziBsU2
+ 9mCEstvc1uLkDYC21LTx+YHBET3j0xExkigA6N5MUI+QlVevEyZ2RE0bsTrwCTbUkhTN
+ jfXz4pqcpusNgGaAVIr3s8Jq4OX9FwC1QZeKfnp2V9BfhfIt76I8CEosv6KHIFXgIvAK
+ uL8i6dTe8KwOph6H/xHM1+B7vDN07hKEiGmcgGwSbhp3tyIENPEW/dj1uWtLMJ7tXm8C
+ J+0g==
+X-Gm-Message-State: AOJu0Ywf2Ct34dAS2czfbvbuwwvQIDrJ4mLoeUj3k47+y8EgxaZUXKTt
+ wWGs9A5Z93CThb/mAx/GSYnEETNOWx8IT21LD6ztQ3iG3eie/B/mNqxMzu5jBSANpmTUUEl9HJ5
+ Lk0sgciI=
+X-Gm-Gg: AZuq6aLbpkiFq1Or4RiK2qpgNLq17wB4hCiW1HzTYioNbQ1iLNxFAV/exjDZ93GVfqW
+ QXgUAvCNZJtrot6rIV4bEH1BFeSpo+cE48sIfKlX3Erz8bPgsp1K3xGRO5FJCzAFWINaZ4uU6Y8
+ J8hHEp8u6f+KMLhImvXZXu6oAd4mFY34ShgLTFcbyMiYB+CdBKRxGNY88iROFrinj3jZDoHAUZ1
+ jo8iDpDbklRzRsVOUN5BsVOkJMnJym9M8c8jrIviayNUrLvoxacJQydTAFuLfzTFONPMW94Zt1k
+ Msf3wxQqxWNKAHruVXIG18csNwC3/bww2UHNNIaE7l1k3GseEUt5MyQTHDSn5BenotHioCyiCru
+ b8Xdza8C9w4GYKTc/awYPaMyApes1K/LNHMsSzA3WeBzCEwf/2qh1Y8BSioyklItX2pXVmgma8N
+ Es6rqbR2I3s//wcx4u7oS9BsRkM4VqbP0SmrrHqaTXHkP8JbM7jQ==
+X-Received: by 2002:a05:600c:6290:b0:47e:e78a:c834 with SMTP id
+ 5b1f17b1804b1-48320226676mr2855005e9.34.1770313980382; 
+ Thu, 05 Feb 2026 09:53:00 -0800 (PST)
+Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-4361805f25dsm16574522f8f.29.2026.02.05.09.41.14
+ 5b1f17b1804b1-483203e1099sm667185e9.6.2026.02.05.09.52.58
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 05 Feb 2026 09:41:15 -0800 (PST)
-Date: Thu, 5 Feb 2026 09:41:09 -0800
+ Thu, 05 Feb 2026 09:52:59 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>
-Cc: dev@dpdk.org, techboard@dpdk.org, Bruce Richardson
- <bruce.richardson@intel.com>, Andrew Rybchenko
- <andrew.rybchenko@oktetlabs.ru>, Konstantin Ananyev
- <konstantin.ananyev@huawei.com>, stable@dpdk.org
-Subject: Re: [PATCH] ethdev: fix mbuf fast release requirements description
-Message-ID: <20260205094109.07193182@phoenix.local>
-In-Reply-To: <20260205092848.36435-1-mb@smartsharesystems.com>
-References: <20260205092848.36435-1-mb@smartsharesystems.com>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v8 0/6] devtools: AI-assisted code and documentation review
+Date: Thu,  5 Feb 2026 09:51:31 -0800
+Message-ID: <20260205175255.652963-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20260109014106.398156-1-stephen@networkplumber.org>
+References: <20260109014106.398156-1-stephen@networkplumber.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,34 +80,65 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu,  5 Feb 2026 09:28:48 +0000
-Morten Br=C3=B8rup <mb@smartsharesystems.com> wrote:
+This series adds tooling for AI-assisted review of DPDK patches and
+documentation. The goal is to catch common coding style violations,
+commit message formatting errors, and documentation issues before
+patches reach the mailing list, reducing reviewer workload on
+mechanical checks.
 
-> It was unclear if mbuf fast release could support segmented packets, or if
-> mbuf fast release required non-segmented packets.
-> This has now been investigated in detail, and it was concluded that
-> segmented packets can be supported with mbuf fast release still achieving
-> the enhanced performance.
-> So the description of the mbuf fast release Tx offload flag was fixed.
->=20
-> Furthermore, the general descriptions of the Rx and Tx offloads were
-> improved, to reflect that they are not only for device capability
-> reporting, but also for device and queue configuration purposes.
->=20
-> NB: If a driver does not support segmented packets with mbuf fast release,
-> it can check the multi segment send flag when selecting transmit function.
->=20
-> Fixes: 55624173bacb ("mbuf: add raw free and alloc bulk functions")
-> Cc: stable@dpdk.org
->=20
-> Signed-off-by: Morten Br=C3=B8rup <mb@smartsharesystems.com>
-> ---
-> The other description improvements were taken from patch-155635 ("[v3,2/3]
-> ethdev: Improve descriptions of RX and TX offloads").
-> ---
+The approach uses a structured guidelines document (AGENTS.md) that
+codifies the project's existing standards from the contributor
+documentation, coding style guide, and validation scripts into a
+format that AI models can apply consistently. The review scripts
+then submit patches or documentation against these guidelines using
+any of several AI providers.
 
-Acked-by: Stephen Hemminger <stephen@networkplumber.org>
+The series includes:
 
-I wonder if it would be good to point the AI documentation review
-tool at the docbook comments in ethdev. There are some grammar
-and clarity errors there.
+  1. AGENTS.md - consolidated review guidelines derived from
+     patches.rst, coding_style.rst, check-git-log.sh,
+     checkpatches.sh, and the Coccinelle scripts
+
+  2. analyze-patch.py - reviews patches against AGENTS.md using
+     AI providers (Anthropic, OpenAI, xAI, Google), with support
+     for patch series splitting and LTS-specific rules
+
+  3. compare-reviews.sh - runs the same patch through multiple
+     providers for comparison, auto-detecting available API keys
+
+  4. review-doc.py - reviews documentation files for spelling,
+     grammar, and technical accuracy, with batch processing and
+     multiple output formats
+
+  5. Contributing guide updates documenting the new tools
+
+  6. MAINTAINERS entry for the new files
+
+AI review is intended as a supplement to human review, not a
+replacement. The tools are optional and require the contributor
+to have an API key for their chosen provider.
+
+Stephen Hemminger (6):
+  doc: add AGENTS.md for AI code review tools
+  devtools: add multi-provider AI patch review script
+  devtools: add compare-reviews.sh for multi-provider analysis
+  devtools: add multi-provider AI documentation review script
+  doc: add AI-assisted patch review to contributing guide
+  MAINTAINERS: add section for AI review tools
+
+ AGENTS.md                              | 1392 ++++++++++++++++++++++++
+ MAINTAINERS                            |    8 +
+ devtools/analyze-patch.py              | 1334 +++++++++++++++++++++++
+ devtools/compare-reviews.sh            |  192 ++++
+ devtools/review-doc.py                 | 1098 +++++++++++++++++++
+ doc/guides/contributing/new_driver.rst |    2 +
+ doc/guides/contributing/patches.rst    |   56 +
+ 7 files changed, 4082 insertions(+)
+ create mode 100644 AGENTS.md
+ create mode 100755 devtools/analyze-patch.py
+ create mode 100755 devtools/compare-reviews.sh
+ create mode 100755 devtools/review-doc.py
+
+-- 
+2.51.0
+
