@@ -2,72 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE8E7ECD997
-	for <dpdk-dev@archiver.kernel.org>; Thu,  5 Feb 2026 21:27:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0438ECD9A6
+	for <dpdk-dev@archiver.kernel.org>; Thu,  5 Feb 2026 21:30:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B3BAA4021F;
-	Thu,  5 Feb 2026 22:27:12 +0100 (CET)
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com
- [209.85.128.46]) by mails.dpdk.org (Postfix) with ESMTP id 299964021E
- for <dev@dpdk.org>; Thu,  5 Feb 2026 22:27:11 +0100 (CET)
-Received: by mail-wm1-f46.google.com with SMTP id
- 5b1f17b1804b1-4806d23e9f1so16180145e9.2
- for <dev@dpdk.org>; Thu, 05 Feb 2026 13:27:11 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id D856A4021F;
+	Thu,  5 Feb 2026 22:29:59 +0100 (CET)
+Received: from mail-wm1-f67.google.com (mail-wm1-f67.google.com
+ [209.85.128.67]) by mails.dpdk.org (Postfix) with ESMTP id 888304021E
+ for <dev@dpdk.org>; Thu,  5 Feb 2026 22:29:58 +0100 (CET)
+Received: by mail-wm1-f67.google.com with SMTP id
+ 5b1f17b1804b1-4801ea9bafdso8731325e9.3
+ for <dev@dpdk.org>; Thu, 05 Feb 2026 13:29:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1770326830;
- x=1770931630; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1770326998;
+ x=1770931798; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=LEjfWgzuFr2rsm2LSiwNrBaNiCmSralAg9V9jzIPsnA=;
- b=BYxuKnkMmaQQMsI64jY5Hr/k97bz/VkAIkPva2UkrIA38wRwDGN7aRskz8V/h0L9JI
- FeqUEn3ekdyWhTdcDeKloUKSK9N+5zWAR8GTvrwhDykAkPvMMrHjaNYD4VsAhAt4f7v0
- PtN84T+hBxD4JVM7mI2VdY4eR3wAbafw8+sxr9Qh+dJhtHvL1a53+h5LB8qZPUD4Nxob
- +d6keBMmGqwLPjLQE6X1aqHEia5KVV5608UF6X12CgcMHprjElBJ9lnjcwjzSsgMjrxC
- nZGuIJX+mj0txKCJ71i+xjIIIu0/JIORqTTipxM4+N5/4XVIu2Ff9MNjPhlgCCmbjZTx
- 9yaQ==
+ :message-id:subject:to:from:date:from:to:cc:subject:date:message-id
+ :reply-to; bh=kgOrxKDWhziICp9+cwgF5G3vI/uRS7EsuwQWLXJI9dg=;
+ b=diFvgk3hBbA331vAtjbGIGstvCOu0vOeejmuE0Sp1IdDxO1Pv6WOwJK0tLwPTzEjUO
+ S5k2+/XznVU8q4Y3ZCENMHYYQHC2xwXQqJ3dhMwVOrV5LM4IXcX25/Y/YS48qP8EYilk
+ jhdTRu3gwpy5gUTrDZVO1k4CPiDVKg4PE+oSqeSetdDLmXcwh1aKhymKUZM+5kSJEVQ2
+ U+cTsPFEsycrgQSQPdBvJFsD/JqjoiaiKpN1f3JTNig4EoIEG+tlG6RmnaGDnSGZMbIQ
+ p+G//CA4xF+xR/YqXMMjoOSVvaKKznapLleEQjlnVJJ9ZeSquhSGDMKT1zUyGIvgG0QV
+ SzTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1770326830; x=1770931630;
+ d=1e100.net; s=20230601; t=1770326998; x=1770931798;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=LEjfWgzuFr2rsm2LSiwNrBaNiCmSralAg9V9jzIPsnA=;
- b=J6v0+5LfoGe66ZUFc+aHe3KuIm9+ElqgB5z24DhVYTp/TcXMlWpUjsTwjhQKcRJWsU
- T/FwP3I/hCj0sV6p6yTxju4w8cBtppMJJ6Eo0O7AxIRGBIiGTSy3h5hfUU4E0OAIc0PE
- 72IIPl6RI6iI5UgGA/SRFczz4hFT05YeCoYfmjmlTlGpKHrLWdQbRZcfA6RoUhwEvvcz
- 33UBoxs05+OyFxCTZxq2G0IhEs45FOK1ozQM0R6LcjM30/3GcId1t5PUmziF0FfLgUpS
- 0FvTHVTlVudfBAlJIKWLpc1461OhKouWjqBhkYtZW2ofgbyPVOD62kXQVORpF916aRgO
- n9JA==
-X-Gm-Message-State: AOJu0YyRPBR41DgdfYla3fJYuOOvwgn8qj9Da+nXUX/GWxIBfpLcgiZx
- M3JhM2BkL9vCrHPY2Ps1qLN7ckBFB/UOekak3UM9QsnINtUZdhuyw8A94VfHIhuetUw=
-X-Gm-Gg: AZuq6aL7YcF7WV5I6FTquxUEjezyRXJ+6r3jnK+Y+epjtVFG5bztWbUPKs2CRF+mR5/
- /hk2G5nMRlI2h5G5c69S7VlEcjYsUVSGCSpJrP5vwaqaE/1cNxEcGqbfX8QH4ps3UB8v5aswN0w
- Dnhg5VCyvRS27IGR3hteLqto9aEUusEZUUuvJT5gSwwJs0VM8z7wbFFv0yKTwtQk2dKTrc7AYDI
- OF78cBXHnyVC5splk5bXsX7G5y4JaOpcl7sbWVyPRzOfuptutvDbU+W8dftnpsWdkcb8fSexgYR
- Ld3wAVK07BspYYwt1g7OruQ4bhSkWBHO0qB2QMZSJLHRZDgUegGmIwH2XutQFXm1i+/xb6zVHPy
- pd++sn0Kne0ycRNJX2iar2FLlek72f0KYifr9n+pkjBDATYcyirJHFChxkAQu2cHKrTNIskgEQV
- U1w5/sSTN8ldeMCtwmvhl2/gxSRqw1EHfd+DKggTv/qyGv1bB+q2kb
-X-Received: by 2002:a05:600c:1d16:b0:483:1ed8:75d4 with SMTP id
- 5b1f17b1804b1-483201effc4mr11050855e9.15.1770326830400; 
- Thu, 05 Feb 2026 13:27:10 -0800 (PST)
+ :message-id:subject:to:from:date:x-gm-gg:x-gm-message-state:from:to
+ :cc:subject:date:message-id:reply-to;
+ bh=kgOrxKDWhziICp9+cwgF5G3vI/uRS7EsuwQWLXJI9dg=;
+ b=dIkizR3PtuyW+wZAS7g6/fBrbcGLhTIw2UEElblxm8kloCVigRaBT3Oy0pG0OPOPNx
+ pMg2rDG5ns0+/RuxVtjJKCXotjk0eN+yAVuv3DNcteMgrRovDfZW0vCOlG5y2kTOgZSx
+ 75hMYHphHG003zR1r3wBo7Hr8L/DdLho2uHr7Mnqf6t5VEfcQgx61HUQSm3qkVBU89En
+ pMfNv13rBxtxwYB6llJaUwBZU70fYcTbfe+VI7boZ15LlJt65ORC6rDpAOXmW0ybxcAd
+ NJ7nAoD/HcXh9bOf/MKw/+o7j7N4MFG+aaZzjDVvM/Izlc2t/wKJfv4ION2hNCDxptUA
+ P/FA==
+X-Gm-Message-State: AOJu0Yxc7/2wRSMS8P9SSGZnlXALJ8N2vXRpbCdZ31WrJsIzopXcYuVZ
+ Z1jl7WSJ30ReyvWsFxz2/cFhO0QfMj6Tj/MwI1VRXPf3S3Yj7DTBVp4EoASTbZDIppbg/+fpdQK
+ 8QH/ehkI=
+X-Gm-Gg: AZuq6aKKQg8yH6z/5WpoKGVekeSV3VKu0DJx1EMIurwYJn4Z5EzoL0xrZ/xyGh66Fj9
+ pHs2IdXjtn8utD4hzMjRYiYYg/89TcbbKicRP+fxT9zjReSgZ/1OE36Rhskq2hyNR7KNQYLwyVU
+ wI6d/hRLCEa5+vn5cbeEzVPIvHr9nnUUc/5KEPN9ABD7l5JGDLLqel626oTZ20rkwYEzLEQO/1e
+ LjK07ARiTzEYezqC0VB6vIHiuurH8DUpQ97JdK39XY+q0cTIovv3D5Kg8dU7CLqKFziWZ7ND8Zq
+ dcuR8AN1JpMfnk55QFkgshS9bH8FVXPIbxZ2Hz0pNNxTVzpQa32MLErFL/s0Vj1F2E0Gbi2FB6e
+ G9HXSkcotBM7VbASMIrVPsnm/Y92tDwxC+NIrXdx+alAMzOwrIlSn2naYRLnVIZYR/rW+nLQ5JC
+ P+srKvIaAeKmok3rPZYac1FIzhHF389mPC9kV/fN38KbNLPwSWb3Oe
+X-Received: by 2002:a05:600c:8b61:b0:47d:3ffb:16c9 with SMTP id
+ 5b1f17b1804b1-48320966711mr3352535e9.23.1770326998090; 
+ Thu, 05 Feb 2026 13:29:58 -0800 (PST)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-483206cc7d3sm6429765e9.5.2026.02.05.13.27.08
+ 5b1f17b1804b1-483207286bcsm5977575e9.12.2026.02.05.13.29.56
+ for <dev@dpdk.org>
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 05 Feb 2026 13:27:09 -0800 (PST)
-Date: Thu, 5 Feb 2026 13:27:03 -0800
+ Thu, 05 Feb 2026 13:29:57 -0800 (PST)
+Date: Thu, 5 Feb 2026 13:29:53 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Scott Mitchell <scott.k.mitch1@gmail.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH v5 4/4] net/af_packet: add software checksum offload
- support
-Message-ID: <20260205132703.0eb6080f@phoenix.local>
-In-Reply-To: <CAFn2buCpy6C+ahAcM6mNUjdJL33YVgUHy_5AFxE4V6HjRffL0Q@mail.gmail.com>
-References: <20260202081456.4322-1-scott.k.mitch1@gmail.com>
- <20260203070740.62305-1-scott.k.mitch1@gmail.com>
- <20260203070740.62305-5-scott.k.mitch1@gmail.com>
- <20260203061358.381ec977@phoenix.local>
- <CAFn2buCpy6C+ahAcM6mNUjdJL33YVgUHy_5AFxE4V6HjRffL0Q@mail.gmail.com>
+To: dev@dpdk.org
+Subject: Re: [PATCH v2 0/8] doc: ethdev documentation grammar and typo
+ corrections
+Message-ID: <20260205132953.0d1df590@phoenix.local>
+In-Reply-To: <20260128194722.480862-1-stephen@networkplumber.org>
+References: <20260116213100.110419-1-stephen@networkplumber.org>
+ <20260128194722.480862-1-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -84,11 +81,24 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 3 Feb 2026 17:39:37 -0800
-Scott Mitchell <scott.k.mitch1@gmail.com> wrote:
+On Wed, 28 Jan 2026 11:45:59 -0800
+Stephen Hemminger <stephen@networkplumber.org> wrote:
 
-> > Probably need to add EXPERIMENTAL into docbook comment as well.  
+> This series corrects grammar errors, typos, and punctuation issues
+> in the Ethernet device library section of the DPDK Programmer's Guide.
+> Initial work on this was done as part of review by technical writer
+> then more changes as result of AI reviews.
 > 
-> Done.
+> The first patch provides a comprehensive update to the Poll Mode Driver
+> documentation, modernizing the description and improving readability.
+> The remaining patches address smaller issues in the rte_flow, QoS
+> framework, switch representation, traffic management, and traffic
+> metering guides.
+> 
+> v2:
+>   - Add patch to fix minor grammar issue in ethdev introduction
+>   - Add patch to correct alphabetical ordering in ethdev toctree
+>   - Add patch to fix grammar issues in traffic metering and policing guide
 
-Rebase and resubmit, the dependent patch is already in main.
+
+Queued this to next-net.
