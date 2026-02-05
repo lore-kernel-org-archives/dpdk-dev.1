@@ -2,73 +2,58 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEE13EA7950
-	for <dpdk-dev@archiver.kernel.org>; Thu,  5 Feb 2026 01:43:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B13E7EA7954
+	for <dpdk-dev@archiver.kernel.org>; Thu,  5 Feb 2026 01:56:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B901D4028E;
-	Thu,  5 Feb 2026 02:43:51 +0100 (CET)
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com
- [209.85.221.41]) by mails.dpdk.org (Postfix) with ESMTP id EFD7740264
- for <dev@dpdk.org>; Thu,  5 Feb 2026 02:43:50 +0100 (CET)
-Received: by mail-wr1-f41.google.com with SMTP id
- ffacd0b85a97d-4358fb60802so267510f8f.1
- for <dev@dpdk.org>; Wed, 04 Feb 2026 17:43:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1770255830;
- x=1770860630; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=Bw9pkgCwH3DHoWwf2Sj7FnPmTGK1G0Z48s2bB3FWhaU=;
- b=dgxj/Kf0Ipk5l3i8Vu24dToV13OQa9PUsxbrxquJkmLr2eXnYn0HlZv88M6u70m2XE
- 98T6CkTa/6KMmrfruaWX/DJ42YuZYHkqYe7D2NKemoeoySou0UZTOAet5vPExQFUMvNc
- +9P7/rBK9NG/AtO3COg+rrI04dY3K6zoF09zllL8mWvS+iqXzY4X6+jtjmAjmoGwQ0PW
- Bglfpu0zmyVRzzE1XiKgzspImjY6QhkzS2CNUCx+9FvZOsnv+VZ6ZA/HTzHgJfvHIFSm
- E0QuMD6TwaOiL662qq5bLNXeEB1DZ7LfY9n50dwZuirAiUrklAIqTxU9KsFd6mB6eUMa
- 5x7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1770255830; x=1770860630;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=Bw9pkgCwH3DHoWwf2Sj7FnPmTGK1G0Z48s2bB3FWhaU=;
- b=epCaPTju5aJT8s/6/9ctqP4kFlL/PgdUkPb6LNv5KLZOuJPtyh8P3HTMoFy8AlUgjh
- uQnwLazofBC0W6A9KeeCnLEvdkfmUNgTrBHVFhv7JSdyR7gT/NLPWjohoOErSOfuIwR4
- BBGEI4TG6K68m+mK0i/gDHfeKEFZnIhXDhCArRbq87k9yQOvNi4n5WssY4MaXQDjOFH4
- kVFiCaCtjkjAsOtXrtTUdXeobNQxbGP4J7MOWctOdfOQHfuS/m6wDWH2PgaYFw3Hhlr7
- ZlLHTj2QEhzXYjCGrM1rWbkTVN6Qmj5cxRScfb0Dt6vvuC0MXaqmMVHGD0c89CTB0iJH
- tonw==
-X-Gm-Message-State: AOJu0YwFrUwDW30BLwTdiHnEonbY/1NUor+RYuQ/8+XmCXXccqA+/wWh
- Nx8ITWEX2wjP3XJK0Idhw3OfQd3w+xmwZ97SAdRmWy17aAPtk5KAZh/YWXpUUmgKpc8=
-X-Gm-Gg: AZuq6aJSJEE8zFh2KmnkU7cipexKg+lFETuWDRriaGGkMfkgkmXAYJzHudXdVaPzAmy
- M2oSvuPnNUZmHV7AqOG5LlGczi5JRAA7q9yzlZVuXi5OgrlspnPMX11/I+JONjOJ/CR8cTd7spO
- KBpoHmR8VvjpHYMdKgtbq927miY91j8240QLQVCj5dviKDaNmZ2PadxUVQilPgCdY9nvvUdoUv4
- ooc6zC2fDCuIO+JHf5FcnyDq//jEEV8MwcqQ0u1IjIUsB0P1KaEzuy/+moJBv71hjruo54G+Huv
- dZqM+ltqTFBtH9pcs74b3bWiC7dIt9yPN5UyyCxFe0luH0j1nqIL39ZnVeB3tAOfZ2WtoQtnAvg
- WeMI9mhnvx2CpQHFUMORH2qK1jJcx2jYatnxgvlTYykwJKLzc5K+5m7zaGWWoAPY/NS3gqZOl2r
- MUe3w8WvrQIglBU1qJe+k6SsJO1QZZK9g6RctL1rp75Om+iJMgELHw
-X-Received: by 2002:a05:6000:2887:b0:425:86da:325f with SMTP id
- ffacd0b85a97d-436213eb7d6mr1559128f8f.27.1770255830537; 
- Wed, 04 Feb 2026 17:43:50 -0800 (PST)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-43617e38fbbsm10693743f8f.13.2026.02.04.17.43.49
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 04 Feb 2026 17:43:50 -0800 (PST)
-Date: Wed, 4 Feb 2026 17:43:45 -0800
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: <dev@dpdk.org>
-Subject: Re: [PATCH v4] devtools: replace checkpatches shell wrapper with
- Python script
-Message-ID: <20260204174345.06352357@phoenix.local>
-In-Reply-To: <aYOCr5S3USrer0vp@bricha3-mobl1.ger.corp.intel.com>
-References: <20260131204823.29363-1-stephen@networkplumber.org>
- <20260204165949.19709-1-stephen@networkplumber.org>
- <aYOCr5S3USrer0vp@bricha3-mobl1.ger.corp.intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id E70BC4028E;
+	Thu,  5 Feb 2026 02:56:14 +0100 (CET)
+Received: from canpmsgout03.his.huawei.com (canpmsgout03.his.huawei.com
+ [113.46.200.218])
+ by mails.dpdk.org (Postfix) with ESMTP id 166AA40264;
+ Thu,  5 Feb 2026 02:56:12 +0100 (CET)
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+ c=relaxed/relaxed; q=dns/txt; h=From;
+ bh=sQP6PrprpRXqZC1BNqVvAzKP1v8q6gSQmqhpYxYT8Do=;
+ b=zba5+iM3y6TMUoz5+ZSChfWu/ytR2L0UErWIh7nace5K05wgj65YbgPDYytxsKLi15A3IGmA8
+ j8MYKi914F5jN/pBSiK/WX2WP1vFQkEMM2A6SfUgdXAOuVAH2qi5qY2yo84BeAXiux+U8PwHwCO
+ CpEnhJ0Rp3KvKFABE7KMPFA=
+Received: from mail.maildlp.com (unknown [172.19.162.144])
+ by canpmsgout03.his.huawei.com (SkyGuard) with ESMTPS id 4f60Zk4Vv2zpSvW;
+ Thu,  5 Feb 2026 09:51:58 +0800 (CST)
+Received: from kwepemf500001.china.huawei.com (unknown [7.202.181.239])
+ by mail.maildlp.com (Postfix) with ESMTPS id 7C60840538;
+ Thu,  5 Feb 2026 09:56:10 +0800 (CST)
+Received: from kwepemq100013.china.huawei.com (7.202.195.192) by
+ kwepemf500001.china.huawei.com (7.202.181.239) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 5 Feb 2026 09:56:10 +0800
+Received: from kwepemq100013.china.huawei.com ([7.202.195.192]) by
+ kwepemq100013.china.huawei.com ([7.202.195.192]) with mapi id 15.02.1544.011; 
+ Thu, 5 Feb 2026 09:56:10 +0800
+From: Wangyunjian <wangyunjian@huawei.com>
+To: "dev@dpdk.org" <dev@dpdk.org>
+CC: "matan@nvidia.com" <matan@nvidia.com>, "suanmingm@nvidia.com"
+ <suanmingm@nvidia.com>, "Lilijun (Jerry)" <jerry.lilijun@huawei.com>,
+ "stable@dpdk.org" <stable@dpdk.org>, "dsosnowski@nvidia.com"
+ <dsosnowski@nvidia.com>, "viacheslavo@nvidia.com" <viacheslavo@nvidia.com>,
+ Bing Zhao <bingz@nvidia.com>, "orika@nvidia.com" <orika@nvidia.com>,
+ "rasland@nvidia.com" <rasland@nvidia.com>
+Subject: RE: [PATCH v2] net/mlx5: fix memoy leak after device spawn failure
+Thread-Topic: [PATCH v2] net/mlx5: fix memoy leak after device spawn failure
+Thread-Index: AQHccA0gn5KbQmtapESNF/K5Q2oMcrVzpBsg
+Date: Thu, 5 Feb 2026 01:56:09 +0000
+Message-ID: <3a252aace4b640689122e2c03b102679@huawei.com>
+References: <1766050280-21036-1-git-send-email-wangyunjian@huawei.com>
+ <1766055446-41476-1-git-send-email-wangyunjian@huawei.com>
+In-Reply-To: <1766055446-41476-1-git-send-email-wangyunjian@huawei.com>
+Accept-Language: en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.174.243.191]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,42 +67,48 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 4 Feb 2026 17:32:31 +0000
-Bruce Richardson <bruce.richardson@intel.com> wrote:
+Friendly ping
 
-> On Wed, Feb 04, 2026 at 08:59:17AM -0800, Stephen Hemminger wrote:
-> > Alternative to the checkpatches.sh shell script that wraps the Linux kernel's
-> > checkpatch.pl with a standalone Python implementation. The new
-> > dpdk-checkpatch.py script provides equivalent functionality without
-> > requiring the kernel source tree or Perl.
-> > 
-> > Performance is significantly improved: checking a recent flow parser
-> > patch series dropped from 2m23s to 0.43s (approximately 300x faster).
-> >   
-> Yep, it is definitely a LOT faster. Running on top 10 commits on main tree
-> with old and new script:
-> 
-> $ time ./devtools/checkpatches.sh -n10
-> 
-> 10/10 valid patches
-> 
-> real	0m32.570s
-> user	0m30.517s
-> sys	0m2.256s
-> 
-> 
-> $ time ./devtools/dpdk-checkpatch.py -n10
-> 
-> 10/10 valid patches
-> 
-> real	0m0.255s
-> user	0m0.214s
-> sys	0m0.040s
-> 
-> 32.5 seconds down to a quarter of a second is a massive gain. Looking
-> forward to switching script for checking patches in future!
-> 
-> /Bruce
+> -----Original Message-----
+> From: Wangyunjian <wangyunjian@huawei.com>
+> Sent: Thursday, December 18, 2025 6:57 PM
+> To: dev@dpdk.org
+> Cc: matan@nvidia.com; suanmingm@nvidia.com; Lilijun (Jerry)
+> <jerry.lilijun@huawei.com>; Wangyunjian <wangyunjian@huawei.com>;
+> stable@dpdk.org
+> Subject: [PATCH v2] net/mlx5: fix memoy leak after device spawn failure
+>=20
+> In mlx5_dev_spawn() allocated memory for the 'priv->flows', we should fre=
+e it
+> when errors occur, otherwise it will lead to memory leak.
+>=20
+> Fixes: b4edeaf3efd5 ("net/mlx5: replace flow list with indexed pool")
+> Cc: stable@dpdk.org
+>=20
+> Signed-off-by: Yunjian Wang <wangyunjian@huawei.com>
+> ---
+> v2: fix code styles
+> ---
+>  drivers/net/mlx5/linux/mlx5_os.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+>=20
+> diff --git a/drivers/net/mlx5/linux/mlx5_os.c b/drivers/net/mlx5/linux/ml=
+x5_os.c
+> index 7f73183bb1..7624b2aba2 100644
+> --- a/drivers/net/mlx5/linux/mlx5_os.c
+> +++ b/drivers/net/mlx5/linux/mlx5_os.c
+> @@ -1831,6 +1831,11 @@ mlx5_dev_spawn(struct rte_device *dpdk_dev,
+>  			close(priv->nl_socket_route);
+>  		if (priv->vmwa_context)
+>  			mlx5_vlan_vmwa_exit(priv->vmwa_context);
+> +		for (i =3D 0; i < MLX5_FLOW_TYPE_MAXI; i++) {
+> +			if (!priv->flows[i])
+> +				continue;
+> +			mlx5_ipool_destroy(priv->flows[i]);
+> +		}
+>  		if (eth_dev && priv->drop_queue.hrxq)
+>  			mlx5_drop_action_destroy(eth_dev);
+>  		if (priv->mtr_profile_tbl)
+> --
+> 2.33.0
 
-I still am finding some unintentional differences but it much
-easier to fix false positives than in old code.
