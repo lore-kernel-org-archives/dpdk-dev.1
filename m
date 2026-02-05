@@ -2,86 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D4DCEA794E
-	for <dpdk-dev@archiver.kernel.org>; Thu,  5 Feb 2026 00:08:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F3AEEA794C
+	for <dpdk-dev@archiver.kernel.org>; Thu,  5 Feb 2026 01:17:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E98934028E;
-	Thu,  5 Feb 2026 01:08:34 +0100 (CET)
-Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com
- [209.85.222.44]) by mails.dpdk.org (Postfix) with ESMTP id 00DAD40264
- for <dev@dpdk.org>; Thu,  5 Feb 2026 01:08:33 +0100 (CET)
-Received: by mail-ua1-f44.google.com with SMTP id
- a1e0cc1a2514c-948a374845fso204059241.3
- for <dev@dpdk.org>; Wed, 04 Feb 2026 16:08:33 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1770250113; cv=none;
- d=google.com; s=arc-20240605;
- b=kw+1CBtVf9kZf6rLAC6tpxmFyvuBke71YM9njO79sGbq51/PebF1uChQX8YxWXMALu
- 63OIdQzume/11VIAd7TaLe/lXi3lvYGHKaMcziJgSUHHqoo0FoGBVdVr+mbv8lxB4NIh
- qxERBTvLOvJYXoVbvI6pQ5yUevC3l9jNc9B/qGwGWs8EP726mM02rXdHwARY3rf60hZ2
- LsKSp/pKkAe5x9UKNmOQ71NzkHT9uUpI9rYteuOqDgn180xYVwzi9TkI9EwVEdUzsYPH
- gbASNM6M88JYZg8LJq6cVLimF9qqHdZtyyanU32SZLrog37OyiAdXy4Ik7Hgvb/9+AQ7
- vQ/Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20240605; 
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:dkim-signature;
- bh=Z+9sQJBxO/ja1DTDWXbe7MQr/u9EqboNtMqofedIDFI=;
- fh=t33Egyn4DAOwVRnwraldPtDjoBFAjogf3LzpsEMwxHQ=;
- b=aOpABOhWT80/XQWCMQEpoHxF+Q64UExm9Vx8lfpC32iaid13ep8GVaKTIVcbNKG2QO
- 3oK7+xB6iJiFIZl+YjqZxslI/OCyQH3hglJqYjuqZiVq/TQm/IINdbI08BKWCWjY5aTW
- 8Gurp0ktv1d1ybs6/5mP6N8yceehgXA7tnWnDnX5lfRUuWjLgfLDJA/+tpI6YOMTP5RL
- G1TIY90Ej1rNsM91eoCtw/8mNY/hfLlW3S1/rBRn1ieRRzzK98V6YdQpgVHFf026j2S0
- 2mC+rVOzhw9m9nvK89rTUau9RsMwT7h6H0wX5SSRvi/wT9QYbESJJLtW6HQz58PJd3d/
- BlpA==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	by mails.dpdk.org (Postfix) with ESMTP id DCAF04028E;
+	Thu,  5 Feb 2026 02:17:26 +0100 (CET)
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com
+ [209.85.128.44]) by mails.dpdk.org (Postfix) with ESMTP id 9059840264
+ for <dev@dpdk.org>; Thu,  5 Feb 2026 02:17:25 +0100 (CET)
+Received: by mail-wm1-f44.google.com with SMTP id
+ 5b1f17b1804b1-4806fbc6bf3so3992655e9.2
+ for <dev@dpdk.org>; Wed, 04 Feb 2026 17:17:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1770250113; x=1770854913; darn=dpdk.org;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:from:to:cc:subject:date
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1770254245;
+ x=1770859045; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=Z+9sQJBxO/ja1DTDWXbe7MQr/u9EqboNtMqofedIDFI=;
- b=jPioxKD4Rz/l2n+WPLoALEcLfvuG/Jg5kN/GhFJwbKjU1bDrmR2UFznGX9UgV9mpZU
- Eqpj4lzpKzkaz5V1NKGVmqSwNkcaBnnh6UgxWu0ayW5Z3lWz1YOssAS1DzG3vYixfTbC
- 8+pviobQ8BCw47WvGNE5SB3wkQ8MWN6ilmNKs0PxsB8FCGZ4qlThMbnY6d3gtY6JqfdU
- b/XZI+ADBBKxTlboVrhWmggHK/USuta2vCeJ9oE6Y0Y1lvhOnMuV+7jfoFZVqCTYRk0C
- gu5NeEvxbt/0Zfj7O86ldzifVApV065zdblQF3z7sa6y/0oExop1T/7/o1xhzxgOARMf
- HzGg==
+ bh=lfaIRd831Z1XR3QSCvN2QGIAdlOEDYiuKy5/TZDzid0=;
+ b=VoQovDwrPk1BP8tes4t5cUSyQXTaCm90bqsxCjE8Bz+EXiZAFKZwGNW6Qht5yXbRoi
+ lFUT6y95mOwwg2bUsJQBxdIRm8BOD9/mHnZEZWZh3y8LDBCuIFmrfVHqjhg/NPeIatGU
+ Q1EdscMgWALCrf9uRig5UnD90esf/G0uVkQ1bxOVeWO6Br7gZp3bKh+zmMS0FqUgUASt
+ dXmPxuxImcaOj8uY/eObWTnM25tTA78uY+QP46uxd3HikukSNTdCwUNHM5oT1nL5J3Av
+ Ygz/6KF2eAYAuugl7Q+PdFORZpG08GSeRgFoYSpnaXs27jfqAH9gy+02LuIkQOCe+a+R
+ pNYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1770250113; x=1770854913;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+ d=1e100.net; s=20230601; t=1770254245; x=1770859045;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=Z+9sQJBxO/ja1DTDWXbe7MQr/u9EqboNtMqofedIDFI=;
- b=ZiDzOxKEITkGriesSwZ6RBjdhKBOr2k4J9Q8GuMitVQLveZ94qr4H+MG4Mi+ZbXwc2
- zIBWW/m/2KdpEbidbCRZ8XwW27YiLBEJ3vW6R1bbyVeSVPptyXO7euc22MmjJeS0ZTJ8
- 3VmhtdkA5tjP+y4Me0I6RYJuJCldFns2dZJm3IjVM8/5k/8GkSL8meFpvOrlDFJZ1w6E
- KZ/FOWVZ6Z5+Tul9mYiWspBJZcqcigSjNamg7qeNybvKRNP5HnQqywW7li7Y36ezhvk0
- nwadFoja1/uHBZHRkG/wtU6xsY3qnU0LnDrhfCBVLE/qR+s89/IxrUSUmbckccyuyiEn
- aHJA==
-X-Gm-Message-State: AOJu0YxjymsPN7VSDB2B+ii1D2ld5zKcMTMmkF6Xte6lJcWsteINqmpY
- uE9NsCRIRphnHbaSeAVV3i0bEOO6MYCAJz9wmim95NHjyHb6xXwV2P/yRzcqhJPO1w/MrUiHIP9
- kAnYUF2trcZRxf7MSqJ+sByGGn9zh7ITtxn/T
-X-Gm-Gg: AZuq6aIdrkBwIa/JrMFJwwgY0ABF/d0iY8t+GAYBeXFKSAVshRiT3BRNQ0jr3X+b34B
- lH7dJ15iNHngTK8g6mOm0T2bVr1TK1xiSZIXTfw3HnCA2Ytip7MfrKCpIZVa86ZQap1c6XFBdwI
- u2BRHeOA7//DrBnECmjJndgkwqe8TndZnViknAmnI87T4IUwqOS9lD35LjWZg2Yd1Axx6MZmGaN
- h4bh9A9EkNx1bMNu+mPgB8DavmuuJpo4iYj8DluQmnA+CP01UC359BDSW4oDMIaABVm5VASJx4M
- /yBE0qWlELDSqVbVh5pxzqI=
-X-Received: by 2002:a05:6102:390f:b0:5ed:8e3:b66a with SMTP id
- ada2fe7eead31-5f9395ad9bfmr1787913137.28.1770250113122; Wed, 04 Feb 2026
- 16:08:33 -0800 (PST)
+ bh=lfaIRd831Z1XR3QSCvN2QGIAdlOEDYiuKy5/TZDzid0=;
+ b=tBqLTBHB85xx89rqXesDYyK1dSliPFKY3/JPgMdMWP+ouf9ixYiXdzc5JA05JH0o0t
+ BrfDsL4MTnOrC9umcQ47TmeAKVybv9zZNDuTYELhyQ0fZ/dsaiwsppJymU8p8iE7bGqU
+ qr0M/l6ZtYLpSfpl32NglzEw0MXro/2YFuKbcAPFz1iv8D0Wj1N27lXGWSd/jCBlFukI
+ dDwaOqlw6qBRskeTOhCgbXxYO1oQw6pjuFVg8rMQmqJn3XR3wjg5KQpKCvj82WWY8VbC
+ wui8f2UDqhm0MLxb8RXotLQyfPB1GPwK73VZ71srW5vnp3f5oWq8GwxgVHY1pbLHFQkz
+ 5NXg==
+X-Gm-Message-State: AOJu0Yz5A1nqmMtN1bwjIA4RteqUaBu5qX9glYWgrnY79/s/XszmLhvS
+ 7a0UNUQyeewJXO5awN6qPS1OX0iZeX/G5A0RWgcG925NFyEe2DkCp1DWwbelxYijuv4=
+X-Gm-Gg: AZuq6aL5WgzAEW+tyBJSZxDVuFDaNj8/VdSZCFs9k5iULelWASVHRwyqOKgHVS/mYn5
+ OyNH1ns/1bUoVxkv/mlGLNeIyRytpZEN2UGpp8ZauGX4akH1CccW6jLFYXv2Kb90pbw18fSc70C
+ vCoH4UQbwfTPfmursETVwrZMU+Bfar5zw5zS9MPSnDp2CknbB4zilgFbxiC9BaboxbM6ppSsyeU
+ UqoPkCiZPeggerCDnJqVO6jl5aXHstaxldUFerOjzgKr3YfZXzFz56mACo3Wf7/iU7quheRXrKD
+ G4DUpOQWwoM3Fcdbc92MWi721WsQLUeuRkCUruT8k1fwc65VAXBrqRPKFzUihjBd1kuibgrqwID
+ pEuS72i3yba5k6fH21+nXyfqpdOH3RYBg+7va4CnqsrNJ78iczzBFVzoWD+Uq0DCW12vnDuec3P
+ szppOZG+YKnB/jVedD8MLS2YuUlmtuswMiSKsDjDjPIecUHF274Pla
+X-Received: by 2002:a05:600c:3e0d:b0:46e:59bd:f7d3 with SMTP id
+ 5b1f17b1804b1-4830e96fb0cmr53131755e9.20.1770254244880; 
+ Wed, 04 Feb 2026 17:17:24 -0800 (PST)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 5b1f17b1804b1-48317d835f0sm19120875e9.14.2026.02.04.17.17.23
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Wed, 04 Feb 2026 17:17:24 -0800 (PST)
+Date: Wed, 4 Feb 2026 17:17:19 -0800
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Yehor Malikov <malikovyehor@gmail.com>
+Cc: dev@dpdk.org, maxime.coquelin@redhat.com, chenbox@nvidia.com, Yehor
+ Malikov <Yehor.Malikov@solidigm.com>
+Subject: Re: [PATCH v6] vhost: fix use-after-free in fdset during shutdown
+Message-ID: <20260204171719.347924a1@phoenix.local>
+In-Reply-To: <20260204230502.24983-1-malikovyehor@gmail.com>
+References: <20260204220037.23760-1-malikovyehor@gmail.com>
+ <20260204230502.24983-1-malikovyehor@gmail.com>
 MIME-Version: 1.0
-References: <20260204161202.36805-1-scott.k.mitch1@gmail.com>
- <20260204085233.17c32e71@phoenix.local>
-In-Reply-To: <20260204085233.17c32e71@phoenix.local>
-From: Scott Mitchell <scott.k.mitch1@gmail.com>
-Date: Wed, 4 Feb 2026 16:08:22 -0800
-X-Gm-Features: AZwV_QjoxGcaA1t4VIBz54jtXp0ydP9R1a2bWA4NLmj9tEnDd1bbQmHieHlWHzA
-Message-ID: <CAFn2buB3bu+ow7uOru73mXDu111kfJGg8B6NZDQRCZzHcuZz+A@mail.gmail.com>
-Subject: Re: [RFC v1] net/af_packet: add io_uring TX acceleration
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: dev@dpdk.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -95,77 +81,50 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Can you send a link to the RFC patch? I found a discussion thread
-https://mails.dpdk.org/archives/dev/2024-November/307925.html but some
-of the discussion in this thread (use of epoll, independent FDs per Rx
-and Tx, etc.) don't apply to af_packet which doesn't use system calls
-on the data path, but only the sendto() notify on TX. Seems reasonable
-that TAP could benefit from io_uring but not clear that needs to be
-mutually exclusive to af_packet. Can you clarify?
+On Thu,  5 Feb 2026 00:05:02 +0100
+Yehor Malikov <malikovyehor@gmail.com> wrote:
 
-On Wed, Feb 4, 2026 at 8:52=E2=80=AFAM Stephen Hemminger
-<stephen@networkplumber.org> wrote:
->
-> On Wed,  4 Feb 2026 08:12:02 -0800
-> scott.k.mitch1@gmail.com wrote:
->
-> > From: Scott <scott.k.mitch1@gmail.com>
-> >
-> > When user space application does sendto() to notify the kernel
-> > there is data to process, the kernel synchronously processes
-> > pending frames and the CPU cost is attributed to the application.
-> > The kernel processing may also include kernel RX (netlink, ovs)
-> > and packet manipulation. This can negatively impact performance
-> > by limiting CPU to each dpdk network thread.
-> >
-> > io_uring offers a mode (SQPOLL) to offload this processing
-> > to a dedicated kernel thread. This makes the kernel processing
-> > asynchronous, which can improve throughput by 30%+. The trade-off
-> > is SQPOLL threads consume additional CPU but this follows the
-> > same principle as virtio backends, and enables use cases that
-> > can't adopt virtio (e.g. containerized workloads).
-> >
-> > This patch adds optional io_uring support for TX kick operations
-> > to replace synchronous sendto() syscalls. When enabled, uses
-> > SQPOLL mode with kernel-side submission polling for reduced
-> > syscall overhead.
-> >
-> > Features:
-> > - Optional liburing dependency (version >=3D 2.4 required)
-> > - SQPOLL mode with configurable idle timeout
-> > - CPU affinity for SQPOLL threads (IORING_SETUP_SQ_AFF)
-> > - Shared workqueue support (IORING_SETUP_ATTACH_WQ)
-> > - Registered file descriptors for IOSQE_FIXED_FILE optimization
-> > - Single issuer and cooperative taskrun optimizations when available
-> >
-> > New devargs:
-> > - tx_io_uring_enabled: Enable io_uring TX (default: 0)
-> > - tx_io_uring_sq_size: Submission queue size (default: 1024)
-> > - tx_io_uring_sq_thread_idle: SQPOLL idle timeout in ms (default: 500)
-> > - tx_io_uring_q_cpu: CPU affinity for SQPOLL threads (repeatable)
-> > - tx_io_uring_wq_num: Number of shared workqueues (default: 0)
-> >
-> > The TX path updates the ring tail pointer directly instead of calling
-> > io_uring_submit() to avoid the io_uring_enter syscall, relying on
-> > SQPOLL to pick up submissions. If the SQPOLL thread sleeps, we wake
-> > it with IORING_ENTER_SQ_WAKEUP.
-> >
-> > Falls back gracefully to sendto() when:
-> > - liburing is not available at compile time
-> > - SQPOLL is not supported by the kernel
-> > - io_uring initialization fails for any reason
-> >
-> > Signed-off-by: Scott <scott.k.mitch1@gmail.com>
-> > ---
-> > Depends-on: series-37248 ("af_packet correctness, performance, cksum")
-> >
-> >  doc/guides/nics/af_packet.rst             |  16 +-
-> >  doc/guides/rel_notes/release_26_03.rst    |   1 +
-> >  drivers/net/af_packet/meson.build         |  14 +
-> >  drivers/net/af_packet/rte_eth_af_packet.c | 420 +++++++++++++++++++++-
-> >  4 files changed, 435 insertions(+), 16 deletions(-)
-> >
-> > diff --git a/doc/guides/nics/af_packet.rst b/doc/guides/nics/af_pac
->
-> I would rather it be a different driver than af_packet.
-> See my RFC patch for using io_uring
+> From: Yehor Malikov <Yehor.Malikov@solidigm.com>
+> 
+> The fdset_event_dispatch thread runs in a loop checking the destroy
+> flag after each epoll_wait iteration. During process exit,
+> rte_eal_cleanup() frees hugepages memory while the fdset thread is
+> still running, causing use-after-free when accessing the fdset
+> structure.
+> 
+> Add fdset_deinit() function to stop the dispatch thread by setting
+> the destroy flag and waiting for thread completion. Resource cleanup
+> (epoll fd, fdsets array, memory) is intentionally skipped since the
+> function is only called during process exit when the OS will reclaim
+> all resources anyway, avoiding potential deadlocks from mutex
+> operations in destructor context.
+> 
+> Use symmetric RTE_FINI destructors for both vhost-user and VDUSE fdsets
+> to ensure proper cleanup before EAL teardown.
+> 
+> Fixes: e68a6feaa3b3 ("vhost: improve fdset initialization")
+> 
+> Signed-off-by: Yehor Malikov <Yehor.Malikov@solidigm.com>
+
+
+I understand why this is important but not sure if it will work as
+you expect. I asked AI to help give a better explanation (so don't trust it
+to be right).
+
+Good question. Yes, there are potential concerns:
+
+**RTE_FINI ordering is undefined.** There's no guarantee about the order destructors run relative to each other or to EAL cleanup. The commit message says the goal is to stop the fdset thread "before EAL teardown" but `RTE_FINI` doesn't actually guarantee that - it just registers an `__attribute__((destructor))` function.
+
+**Possible scenarios:**
+
+1. **EAL cleanup runs first** - If `rte_eal_cleanup()` frees hugepages before the `RTE_FINI` destructor runs, we're back to the original bug. The destructor would then call `fdset_deinit()` on already-freed memory.
+
+2. **Destructor runs during active vhost operations** - If the application is still doing vhost work when exit starts, the destructor could stop the dispatch thread while callbacks are expected to run. The `busy` flag helps with `fdset_del()` synchronization, but abrupt thread termination during shutdown could leave things inconsistent.
+
+3. **Fork concerns** - After `fork()`, the child has the same destructor registered but the dispatch thread doesn't exist in the child (threads aren't inherited). `rte_thread_join()` on an invalid/non-existent thread ID could behave unexpectedly.
+
+**What would be more robust:**
+
+The proper fix would be to integrate with EAL cleanup directly - register a callback via `rte_eal_cleanup_register()` (if that exists) or have vhost explicitly clean up its fdsets in a documented shutdown sequence before `rte_eal_cleanup()` is called, rather than relying on destructor ordering.
+
+Worth raising with the author: has this been tested with different linking scenarios (static vs dynamic) and confirmed the destructor actually runs before EAL teardown in practice?
