@@ -2,36 +2,36 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94751EE20B6
-	for <dpdk-dev@archiver.kernel.org>; Fri,  6 Feb 2026 17:05:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38A3FEE20B6
+	for <dpdk-dev@archiver.kernel.org>; Fri,  6 Feb 2026 17:05:20 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BAD774065E;
-	Fri,  6 Feb 2026 18:04:45 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id ADFBA40663;
+	Fri,  6 Feb 2026 18:04:46 +0100 (CET)
 Received: from office2.cesnet.cz (office2.cesnet.cz [78.128.248.237])
- by mails.dpdk.org (Postfix) with ESMTP id 9545840156
+ by mails.dpdk.org (Postfix) with ESMTP id BA21F40276
  for <dev@dpdk.org>; Fri,  6 Feb 2026 18:04:39 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cesnet.cz;
  s=office2-2020; t=1770397479;
- bh=I+eek92qVagVdXqLzYBqEVASZtNDqj6amBbC/LKyV84=;
+ bh=KXDdLdaPClJN6dP631IqdbzYQ1jEjYfvesVt/HxjmrY=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References;
- b=ZH0KXpTWQ6Zfx2P8G55sclA6g/et3pq1idH/oV6uM1BKagtU4yATKqFRMBOQrARlD
- GAwYILNRL4sIfRvggXsmanZu5uSAziUSaQAGhC+16f5/K8kdJhJTOjVES9pRkSrVe0
- emM4qS1CXwQbpOGHILmW+TqbQ+leHW+0+FUTxiMf12JqoAfTngSr+6epZfT+dUl66p
- EZIXhdH9YiVtNYxlF/Gj0JM16y+PAhiyI3fiTf8Kd8ZhNpkl8FYjOE/BxdYSDevRJZ
- rWTOwz4OyP/kGxZdPBIzPHrY2YtDEzxEeyJJkG19uE/SLT8ZmjHQH5l9qiewhYvOk3
- Qb1z1I8fW6Abg==
+ b=cvDatToURzPJJvFfFsaVMhzOWQANxiqTTB4AezDJs8+g1XHhHEI8Y0kWibep+bcM9
+ l+86uP9yrIEoPMlRc/66kw0j6RJ02nNehimq0jjPRdJXmeQwZgTQAPLrD4eY+Lw3P2
+ 4RoJNVoDWZXteXxJQbCVFPFR8qgwuPAZ0iFrba4h2wWcxfdInfC1g42OYOJJrgyQzT
+ 4sVKiplKiUCtHjMn1oUMM7uuVmjeWsYa1Jwu4NslIdhe7R6AsW69TsSbIcsDvH9hoL
+ MJQ4rlFBUeW2S6/9k3A1aHBEB4IiAMYES4PUjm70ZfcXEBHanWKfB39Eu9vJmmMfdE
+ m3thOX4PFAtAA==
 Received: from emil.cesnet.cz (gtx107.cesnet.cz [IPv6:2001:718:812:27::107])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by office2.cesnet.cz (Postfix) with ESMTPSA id 788C71180078;
+ by office2.cesnet.cz (Postfix) with ESMTPSA id 918F51180072;
  Fri,  6 Feb 2026 18:04:39 +0100 (CET)
 From: spinler@cesnet.cz
 To: dev@dpdk.org
 Cc: Martin Spinler <spinler@cesnet.cz>
-Subject: [PATCH 5/7] net/nfb: support setting Rx MTU
-Date: Fri,  6 Feb 2026 18:04:33 +0100
-Message-ID: <20260206170435.302184-6-spinler@cesnet.cz>
+Subject: [PATCH 6/7] net/nfb: read total stats from macs
+Date: Fri,  6 Feb 2026 18:04:34 +0100
+Message-ID: <20260206170435.302184-7-spinler@cesnet.cz>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260206170435.302184-1-spinler@cesnet.cz>
 References: <20260206170435.302184-1-spinler@cesnet.cz>
@@ -52,91 +52,81 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Martin Spinler <spinler@cesnet.cz>
 
-Enable configuration of the MTU on the Rx MAC assigned to the port.
+Both the Rx and Tx MAC components in firmware provide basic statistics.
+Use these statistics instead of the sum of the per-queue counters.
 
 Signed-off-by: Martin Spinler <spinler@cesnet.cz>
 ---
- drivers/net/nfb/nfb_ethdev.c | 39 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 39 insertions(+)
+ drivers/net/nfb/nfb_stats.c | 40 +++++++++++++++++++++++--------------
+ 1 file changed, 25 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/net/nfb/nfb_ethdev.c b/drivers/net/nfb/nfb_ethdev.c
-index b927d006e7..b4bd98e08c 100644
---- a/drivers/net/nfb/nfb_ethdev.c
-+++ b/drivers/net/nfb/nfb_ethdev.c
-@@ -49,6 +49,7 @@ static struct nfb_pmd_internals_head nfb_eth_dev_list =
- 	TAILQ_HEAD_INITIALIZER(nfb_eth_dev_list);
- 
- static int nfb_eth_dev_uninit(struct rte_eth_dev *dev);
-+static int nfb_eth_mtu_set(struct rte_eth_dev *dev, uint16_t mtu);
- 
- static int
- nfb_mdio_read(void *priv, int prtad, int devad, uint16_t addr)
-@@ -255,6 +256,10 @@ nfb_eth_dev_configure(struct rte_eth_dev *dev __rte_unused)
- 	int ret;
- 	struct rte_eth_conf *dev_conf = &dev->data->dev_conf;
- 
-+	ret = nfb_eth_mtu_set(dev, dev_conf->rxmode.mtu);
-+	if (ret)
-+		goto err_mtu_set;
+diff --git a/drivers/net/nfb/nfb_stats.c b/drivers/net/nfb/nfb_stats.c
+index 27a01c3160..4bdec17219 100644
+--- a/drivers/net/nfb/nfb_stats.c
++++ b/drivers/net/nfb/nfb_stats.c
+@@ -14,11 +14,11 @@ nfb_eth_stats_get(struct rte_eth_dev *dev, struct rte_eth_stats *stats,
+ 	uint16_t i;
+ 	uint16_t nb_rx = dev->data->nb_rx_queues;
+ 	uint16_t nb_tx = dev->data->nb_tx_queues;
+-	uint64_t rx_total = 0;
+-	uint64_t tx_total = 0;
+-	uint64_t tx_err_total = 0;
+-	uint64_t rx_total_bytes = 0;
+-	uint64_t tx_total_bytes = 0;
 +
- 	if (dev_conf->rxmode.offloads & RTE_ETH_RX_OFFLOAD_TIMESTAMP) {
- 		ret = rte_mbuf_dyn_rx_timestamp_register
- 				(&nfb_timestamp_dynfield_offset,
-@@ -269,6 +274,7 @@ nfb_eth_dev_configure(struct rte_eth_dev *dev __rte_unused)
- 	return 0;
++	int ret;
++	struct pmd_internals *internals = dev->process_private;
++	struct nc_rxmac_counters rx_cntrs;
++	struct nc_txmac_counters tx_cntrs;
  
- err_ts_register:
-+err_mtu_set:
- 	nfb_eth_dev_uninit(dev);
- 	return ret;
- }
-@@ -549,6 +555,38 @@ nfb_eth_mac_addr_remove(struct rte_eth_dev *dev, uint32_t index)
- 		nc_rxmac_set_mac(internals->rxmac[i], index, 0, 0);
- }
+ 	struct ndp_rx_queue *rx_queue;
+ 	struct ndp_tx_queue *tx_queue;
+@@ -29,8 +29,6 @@ nfb_eth_stats_get(struct rte_eth_dev *dev, struct rte_eth_stats *stats,
+ 			qstats->q_ipackets[i] = rx_queue->rx_pkts;
+ 			qstats->q_ibytes[i] = rx_queue->rx_bytes;
+ 		}
+-		rx_total += rx_queue->rx_pkts;
+-		rx_total_bytes += rx_queue->rx_bytes;
+ 	}
  
-+static int
-+nfb_eth_mtu_set(struct rte_eth_dev *dev, uint16_t mtu)
-+{
-+	unsigned int i;
-+	struct nc_rxmac_status status;
-+	struct pmd_internals *intl = dev->process_private;
-+	uint16_t frame_length_max_capable;
+ 	for (i = 0; i < nb_tx; i++) {
+@@ -39,16 +37,28 @@ nfb_eth_stats_get(struct rte_eth_dev *dev, struct rte_eth_stats *stats,
+ 			qstats->q_opackets[i] = tx_queue->tx_pkts;
+ 			qstats->q_obytes[i] = tx_queue->tx_bytes;
+ 		}
+-		tx_total += tx_queue->tx_pkts;
+-		tx_total_bytes += tx_queue->tx_bytes;
+-		tx_err_total += tx_queue->err_pkts;
+ 	}
+ 
+-	stats->ipackets = rx_total;
+-	stats->opackets = tx_total;
+-	stats->ibytes = rx_total_bytes;
+-	stats->obytes = tx_total_bytes;
+-	stats->oerrors = tx_err_total;
++	for (i = 0; i < internals->max_rxmac; i++) {
++		ret = nc_rxmac_read_counters(internals->rxmac[i], &rx_cntrs, NULL);
++		if (ret)
++			return -EIO;
 +
-+	mtu += RTE_ETHER_HDR_LEN + RTE_ETHER_CRC_LEN;
-+
-+	if (!intl->max_rxmac)
-+		return 0;
-+
-+	status.frame_length_max_capable = 0;
-+	nc_rxmac_read_status(intl->rxmac[0], &status);
-+	frame_length_max_capable = status.frame_length_max_capable;
-+
-+	for (i = 1; i < intl->max_rxmac; ++i) {
-+		nc_rxmac_read_status(intl->rxmac[i], &status);
-+		if (frame_length_max_capable > status.frame_length_max_capable)
-+			frame_length_max_capable = status.frame_length_max_capable;
++		stats->ipackets += rx_cntrs.cnt_received;
++		stats->ibytes += rx_cntrs.cnt_octets;
++		stats->ierrors += rx_cntrs.cnt_drop - rx_cntrs.cnt_overflowed;
++		stats->imissed += rx_cntrs.cnt_overflowed;
 +	}
 +
-+	if (frame_length_max_capable < mtu && frame_length_max_capable != 0)
-+		return -EINVAL;
++	for (i = 0; i < internals->max_txmac; i++) {
++		ret = nc_txmac_read_counters(internals->txmac[i], &tx_cntrs);
++		if (ret)
++			return -EIO;
 +
-+	for (i = 0; i < intl->max_rxmac; ++i)
-+		nc_rxmac_set_frame_length(intl->rxmac[i], mtu, RXMAC_FRAME_LENGTH_MAX);
-+
-+	return 0;
-+}
-+
- static int
- nfb_eth_fw_version_get(struct rte_eth_dev *dev, char *fw_version,
- 		size_t fw_size)
-@@ -661,6 +699,7 @@ static const struct eth_dev_ops ops = {
- 	.mac_addr_set = nfb_eth_mac_addr_set,
- 	.mac_addr_add = nfb_eth_mac_addr_add,
- 	.mac_addr_remove = nfb_eth_mac_addr_remove,
-+	.mtu_set = nfb_eth_mtu_set,
- 	.fw_version_get = nfb_eth_fw_version_get,
- 	.fec_get = nfb_eth_fec_get,
- 	.fec_set = nfb_eth_fec_set,
++		stats->opackets += tx_cntrs.cnt_sent;
++		stats->obytes += tx_cntrs.cnt_octets;
++		stats->oerrors += tx_cntrs.cnt_drop;
++	}
+ 	return 0;
+ }
+ 
 -- 
 2.53.0
 
