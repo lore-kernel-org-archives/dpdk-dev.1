@@ -2,81 +2,40 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D70CEE20A6
-	for <dpdk-dev@archiver.kernel.org>; Fri,  6 Feb 2026 14:02:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21C9FEE20AA
+	for <dpdk-dev@archiver.kernel.org>; Fri,  6 Feb 2026 14:36:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DE6914028C;
-	Fri,  6 Feb 2026 15:02:01 +0100 (CET)
-Received: from fout-a2-smtp.messagingengine.com
- (fout-a2-smtp.messagingengine.com [103.168.172.145])
- by mails.dpdk.org (Postfix) with ESMTP id 881864028C
- for <dev@dpdk.org>; Fri,  6 Feb 2026 15:02:00 +0100 (CET)
-Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
- by mailfout.phl.internal (Postfix) with ESMTP id 3180AEC0096;
- Fri,  6 Feb 2026 09:02:00 -0500 (EST)
-Received: from phl-frontend-04 ([10.202.2.163])
- by phl-compute-10.internal (MEProxy); Fri, 06 Feb 2026 09:02:00 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm3; t=1770386520;
- x=1770472920; bh=BtyuKFRToxYUtbNXbK4LsedC1gul5+xevv5t6SmKfI4=; b=
- clIkuTFb0xdHxu9HTWiCjHxvsSajjBWfLGU3kvGoEHFSuS/yZZW7uZBteHiQ6e9a
- czyDsVi2It3qP3lt+f6gIo+GrjFTMcotihY5wSfpB1pTdGJRvrlnEsJfpgd/EyYg
- jw8309f7h4M4KTuo6y9AnSZKldBn/fkV5yTEkSrld4FrCSpApUyvG4Rf8IAMkan0
- IhCf7dlj615HTmF4fmHGoAXF3TMaLJwD15sbIh71k7lO6SUf5d/8gpsO6CugukG4
- Ljc8I9X+ZDXWjCxgYPSMlNDTRUo0FHnaljmHChR4AaZ4TIoadZrXTvf9R5c5cbyT
- TdV5imhHIYeEb8jBBPtYew==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1770386520; x=
- 1770472920; bh=BtyuKFRToxYUtbNXbK4LsedC1gul5+xevv5t6SmKfI4=; b=g
- yAl/COriTSrn6zlr/2wj2r3ScNWvhT+804ftQWXnjrf0QT3uCB9VGxXsj8fiB7CR
- lT1z7atD8hqsiGUgsSCLiy2se/y1PWUjPPETZV0qK4FIW9UjFzWnWG9eAty3Co7d
- 1sQTMzsb2Asf3NUlVpKmvQMkVielcudc6kLwYqGtA1NCtG/+UrlKfnv9RlfrrGWv
- Xm5CyzUt1nECz0LZCE3328fl6iyowJGgDIWtzo3+Vmy9Ia0GBuD0BQ1uLpGHbMe/
- 8nX6SDwhaiBTjbWMEfsmALmZgHlbBgy4oy4iC6hZztwjTkMpM1EKt4rHPmttJmqI
- YjwcdmtuJNtW1DA4U5ZjQ==
-X-ME-Sender: <xms:WPSFafnbWwXDKOf9N2m1g8V4L5F5DM-USlvSN7KgZh8sOuocrV24Iw>
- <xme:WPSFaXJK4iQK8qkG2ACDv4oQaFgNXvWLPT8T_PGEk1N6iKc9Be6ibU5YuqsiQUOLb
- x8D_7dGHaLmaZ2wSRWh3llCcYUqktPClcwYEJYR0aRtqwejK_Fxwg>
-X-ME-Received: <xmr:WPSFaUzR6FtzswC2q40vqjw1gaO2k7RHqz06os9cSE7w1X-2lWzrMD_QVW1OimFuTadd61W4fn6gavKel1pmhgnqYQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddukeekfeehucetufdoteggodetrf
- dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
- rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
- gurhephffvvefufffkjghfggfgtgesthhqredttddtjeenucfhrhhomhepvfhhohhmrghs
- ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
- frrghtthgvrhhnpeetieejvdegvdfhkeegjeevgffgleejleevvdduffelvdfgvdeugfef
- heejjeeikeenucffohhmrghinhepghhithhhuhgsrdgtohhmnecuvehluhhsthgvrhfuih
- iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepthhhohhmrghssehmohhnjhgrlhho
- nhdrnhgvthdpnhgspghrtghpthhtohepfedpmhhouggvpehsmhhtphhouhhtpdhrtghpth
- htohepshhishhmihhsseguhihnrgdqnhhitgdrtghomhdprhgtphhtthhopeguvghvsegu
- phgukhdrohhrghdprhgtphhtthhopehsthgvphhhvghnsehnvghtfihorhhkphhluhhmsg
- gvrhdrohhrgh
-X-ME-Proxy: <xmx:WPSFaftcDdp4Y3O_Cgz4MMAtAumnHCsSxIkrBSuuLHtIhgsf3ZJprQ>
- <xmx:WPSFaTshHG8B0v-8nKcUY6fwTO1GUnBpURdpijQ4GSWK-9LkwG9f_w>
- <xmx:WPSFacOrA0psouJdf8B37xe-NydARBokCSeQnJleGPbWDzMZt_AIRw>
- <xmx:WPSFaZ3PBqzxUd-QJ5yDTV-dxSPfztHGcWxlCsuAAyTgNfxmNFOEXA>
- <xmx:WPSFaSaI9JEnfh1dnQFP5RI1VB87EPM9UsOJBgKBuktRd9Z_b_kjpsgo>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 6 Feb 2026 09:01:59 -0500 (EST)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: =?UTF-8?B?THVrw6HFoSDFoGnFoW1pxaE=?= <sismis@dyna-nic.com>
-Cc: dev@dpdk.org, Stephen Hemminger <stephen@networkplumber.org>
-Subject: Re: [PATCH v10 3/6] flow_parser: add shared parser library
-Date: Fri, 06 Feb 2026 15:01:57 +0100
-Message-ID: <2762564.TLkxdtWsSY@thomas>
-In-Reply-To: <20260204065338.0fae67fe@phoenix.local>
-References: <20260202113659.24052-1-sismis@dyna-nic.com>
- <CAPQRu6Gb0tMH6f-5T7_vCVK23mAkEOmXn-T+X_DYaWsNZdYtjg@mail.gmail.com>
- <20260204065338.0fae67fe@phoenix.local>
+	by mails.dpdk.org (Postfix) with ESMTP id 1785840276;
+	Fri,  6 Feb 2026 15:36:44 +0100 (CET)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id A64D440156
+ for <dev@dpdk.org>; Fri,  6 Feb 2026 15:36:42 +0100 (CET)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id AB4CA20BEE;
+ Fri,  6 Feb 2026 15:36:41 +0100 (CET)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
+Content-Type: text/plain;
+	charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Subject: RE: [PATCH v6 0/4] af_packet correctness, performance, cksum
+Date: Fri, 6 Feb 2026 15:36:37 +0100
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F656F0@smartserver.smartshare.dk>
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+In-Reply-To: <20260205174901.462eddb1@phoenix.local>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH v6 0/4] af_packet correctness, performance, cksum
+Thread-Index: AdyXCswei643l+mVTdOq8+h/zg7C9gAaH7QQ
+References: <20260203070740.62305-1-scott.k.mitch1@gmail.com>
+ <20260206011141.2377-1-scott.k.mitch1@gmail.com>
+ <20260205174901.462eddb1@phoenix.local>
+From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
+To: "Stephen Hemminger" <stephen@networkplumber.org>,
+ <scott.k.mitch1@gmail.com>
+Cc: <dev@dpdk.org>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -90,41 +49,42 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-04/02/2026 15:53, Stephen Hemminger:
-> On Tue, 3 Feb 2026 09:34:26 +0100
-> Luk=C3=A1=C5=A1 =C5=A0i=C5=A1mi=C5=A1 <sismis@dyna-nic.com> wrote:
+> From: Stephen Hemminger [mailto:stephen@networkplumber.org]
+> Sent: Friday, 6 February 2026 02.49
 >=20
-> > >
-> > > The kernel version of checkpatch complains here. The DPDK shell script
-> > > seems to be set to ignore this but.
-> > >
-> > > WARNING: break is not useful after a return
-> > > #15008: FILE: lib/flow_parser/rte_flow_parser.c:14763:
-> > > +               return cmd_flow_parsed(out);
-> > > +               break;
-> > >
-> > > Should I create a new patch set or just let it be at this moment? =20
-> > Lukas
->=20
->=20
-> I am ok with it as is.
+> Why are the header structures marked packed, that is bogus, BSD and
+> Linux don't do it.
 
-Better to update.
+They have been packed since the first public release in 2013 [1].
 
-There are other warnings:
+I guess it's because the IP and TCP headers contain 4-byte fields, which =
+make those structures 4-byte aligned; but since the IP header follows a =
+14 byte Ethernet header (without the magic 2-byte pre-padding done by =
+the kernel), the instances of the IP header are not 4-byte aligned, but =
+2-byte aligned. Marking them packed is a way of stripping the alignment.
 
-WARNING:STRNCPY: Prefer strscpy, strscpy_pad, or __nonstring over strncpy -=
- see: https://github.com/KSPP/linux/issues/90
-#13052: FILE: lib/flow_parser/rte_flow_parser.c:12825:
-+       strncpy(buf, str, len);
+BTW, the IPv4 header was bumped (from no alignment) to 2-byte alignment =
+with patch [2].
 
-and a lot of WARNING:LONG_LINE
+[1]: =
+https://github.com/DPDK/dpdk/commit/af75078fece3615088e561357c1e97603e43a=
+5fe#diff-620c2b2031359304a7f26328a52035c9f8ddf722b9280f957047dcb81467777f=
+
+[2]: =
+https://github.com/DPDK/dpdk/commit/c14fba68edfa4aeba7c0dfb5dbc3b4f23affb=
+b81
 
 
-And on a more general note, I would have expected to ask the opinion
-of rte_flow maintainers, but they are not Cc'ed in these patches.
+> Windows probably does=20
 
-I'm a bit skeptical about adding this outside of ethdev library
-which defines the flow API.
+Yes, probably.
+The Microsoft compiler is more pedantic (leading to fewer bugs), and =
+many of those structures should formally be packed (or more correctly: =
+unaligned).
 
+> but Windows code seems to love packed even when
+> it is not necessary.
+
+I guess packing (without thinking about the need for it) has become a =
+bad habit for some Windows programmers.
 
