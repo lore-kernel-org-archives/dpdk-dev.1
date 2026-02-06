@@ -2,37 +2,39 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DF7BEE20B6
-	for <dpdk-dev@archiver.kernel.org>; Fri,  6 Feb 2026 17:04:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DCC7EE20B9
+	for <dpdk-dev@archiver.kernel.org>; Fri,  6 Feb 2026 17:04:47 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8254140276;
-	Fri,  6 Feb 2026 18:04:40 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 9A0284060A;
+	Fri,  6 Feb 2026 18:04:41 +0100 (CET)
 Received: from office2.cesnet.cz (office2.cesnet.cz [78.128.248.237])
- by mails.dpdk.org (Postfix) with ESMTP id 47F1940156
+ by mails.dpdk.org (Postfix) with ESMTP id 51D9B40276
  for <dev@dpdk.org>; Fri,  6 Feb 2026 18:04:39 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cesnet.cz;
- s=office2-2020; t=1770397478;
- bh=xlCvVbe9T+jsqI9XZs0NHf4HEVCKJ0CUHRTfu6r5D5s=;
- h=From:To:Cc:Subject:Date;
- b=Kc5TEkRxU2liLWxTABQyyr/lVwmNoa/kbtVqkyN2U6OUqPXhagxVJNr5v/CO5lvPR
- 1B87ZawyHhyyPZVuhzG5u1FhlySPpiPZNH7s5u242720cn4DBEXYhHR74H/wZCrrtl
- cDf2kUUG4tvYdIEbiAkf/rN1eSItzBtDKfpfGQRgXPr7yVCyC8dwMAKByGyp9jFqh2
- 27QAgzVXBrYWStWB5vQCgHVaTvkMrMawsCKvuHzQDSsezsaznTuUBWhlZt2A+cDiJS
- y8OMn0UdcTj9WGtr8/SngSApi45LDt4uC9rMg8vRpoZrlRyg6wnfzE2hOJDiyokakt
- nedWOPRAG3Ztg==
+ s=office2-2020; t=1770397479;
+ bh=wgeVlo8IdwPSBjleyjodzVsnx/Fjb/PPXHT/KIC2RPg=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References;
+ b=BAj0RrFhDktnBPfVd6QxtoAQzQTwoq/QRHPDm75M8HUYTIwtR8nrax4rg6QUbGKAM
+ Ub7qY2sQ/rOB+VB01URtGHMk8lwNcI3nojq4X/TwU3aZFGY5k0KpV9kruR0w0E/Kyw
+ RkGEYqnLZ601KKT/D7a70aonY8OMYAw8SgG3/r7owc2lBTQ4ZPdXvcvlmbNP66dv7b
+ N3phsxVkwDOSjGlgz3f1HQxiHmbcw3FkVJw1eZkAaiJqsQNSuza7fAQ/iUQlQZUdkI
+ U4pqBtcsO54a4EmBIAwhKAFxNZWeitS5oeoyi2pu43Hbtq8EIAi1o4hub1mPXaDEYF
+ fR3gNlFlJhn1Q==
 Received: from emil.cesnet.cz (gtx107.cesnet.cz [IPv6:2001:718:812:27::107])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by office2.cesnet.cz (Postfix) with ESMTPSA id E9A821180072;
- Fri,  6 Feb 2026 18:04:38 +0100 (CET)
+ by office2.cesnet.cz (Postfix) with ESMTPSA id 0FF70118007E;
+ Fri,  6 Feb 2026 18:04:39 +0100 (CET)
 From: spinler@cesnet.cz
 To: dev@dpdk.org
 Cc: Martin Spinler <spinler@cesnet.cz>
-Subject: [PATCH 0/7] net/nfb: ethernet enhancements
-Date: Fri,  6 Feb 2026 18:04:28 +0100
-Message-ID: <20260206170435.302184-1-spinler@cesnet.cz>
+Subject: [PATCH 1/7] net/nfb: use MAC address assigned to card
+Date: Fri,  6 Feb 2026 18:04:29 +0100
+Message-ID: <20260206170435.302184-2-spinler@cesnet.cz>
 X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260206170435.302184-1-spinler@cesnet.cz>
+References: <20260206170435.302184-1-spinler@cesnet.cz>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -50,32 +52,45 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Martin Spinler <spinler@cesnet.cz>
 
-This set includes minor enhancements to the Ethernet
-configuration and overall usage.
+Check for a specific MAC address assigned to a card.
+If there is no assigned MAC address, then use a random MAC as fallback.
 
+Signed-off-by: Martin Spinler <spinler@cesnet.cz>
 ---
-Depends-on: series-37261 ("net/nfb: rework to real multiport")
+ drivers/net/nfb/nfb_ethdev.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
-Martin Spinler (7):
-  net/nfb: use MAC address assigned to card
-  net/nfb: get correct link speed
-  net/nfb: support real link-up/down config
-  net/nfb: support setting RS-FEC mode
-  net/nfb: support setting Rx MTU
-  net/nfb: read total stats from macs
-  doc/nfb: update release notes for nfb driver
-
- doc/guides/rel_notes/release_26_03.rst |   3 +-
- drivers/net/nfb/meson.build            |   1 +
- drivers/net/nfb/nfb.h                  |   7 +
- drivers/net/nfb/nfb_ethdev.c           | 228 +++++++++++++++++++++----
- drivers/net/nfb/nfb_mdio.c             |  42 +++++
- drivers/net/nfb/nfb_mdio.h             |  34 ++++
- drivers/net/nfb/nfb_stats.c            |  40 +++--
- 7 files changed, 308 insertions(+), 47 deletions(-)
- create mode 100644 drivers/net/nfb/nfb_mdio.c
- create mode 100644 drivers/net/nfb/nfb_mdio.h
-
+diff --git a/drivers/net/nfb/nfb_ethdev.c b/drivers/net/nfb/nfb_ethdev.c
+index 157f04a891..ca3dbad879 100644
+--- a/drivers/net/nfb/nfb_ethdev.c
++++ b/drivers/net/nfb/nfb_ethdev.c
+@@ -11,6 +11,7 @@
+ 
+ #include <nfb/nfb.h>
+ #include <nfb/ndp.h>
++#include <netcope/eth.h>
+ #include <netcope/rxmac.h>
+ #include <netcope/txmac.h>
+ 
+@@ -639,10 +640,14 @@ nfb_eth_dev_init(struct rte_eth_dev *dev, void *init_data)
+ 			goto err_malloc_mac_addrs;
+ 		}
+ 
+-		rte_eth_random_addr(eth_addr_init.addr_bytes);
+-		eth_addr_init.addr_bytes[0] = eth_addr.addr_bytes[0];
+-		eth_addr_init.addr_bytes[1] = eth_addr.addr_bytes[1];
+-		eth_addr_init.addr_bytes[2] = eth_addr.addr_bytes[2];
++		ret = nc_ifc_get_default_mac(internals->nfb, ifc->id, eth_addr_init.addr_bytes,
++			sizeof(eth_addr_init.addr_bytes));
++		if (ret != 0) {
++			rte_eth_random_addr(eth_addr_init.addr_bytes);
++			eth_addr_init.addr_bytes[0] = eth_addr.addr_bytes[0];
++			eth_addr_init.addr_bytes[1] = eth_addr.addr_bytes[1];
++			eth_addr_init.addr_bytes[2] = eth_addr.addr_bytes[2];
++		}
+ 
+ 		nfb_eth_mac_addr_set(dev, &eth_addr_init);
+ 		rte_ether_addr_copy(&eth_addr_init, &data->mac_addrs[0]);
 -- 
 2.53.0
 
