@@ -2,84 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10806ECD9BF
-	for <dpdk-dev@archiver.kernel.org>; Fri,  6 Feb 2026 04:45:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FC0AEB28E2
+	for <dpdk-dev@archiver.kernel.org>; Fri,  6 Feb 2026 08:13:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1040D402B6;
-	Fri,  6 Feb 2026 05:45:36 +0100 (CET)
-Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com
- [209.85.221.172])
- by mails.dpdk.org (Postfix) with ESMTP id 8B6C640293
- for <dev@dpdk.org>; Fri,  6 Feb 2026 05:45:34 +0100 (CET)
-Received: by mail-vk1-f172.google.com with SMTP id
- 71dfb90a1353d-5637886c92aso100248e0c.0
- for <dev@dpdk.org>; Thu, 05 Feb 2026 20:45:34 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1770353134; cv=none;
- d=google.com; s=arc-20240605;
- b=AbB0YX2YTEeFjHlCDaakAIGSuTiH2+SCHp991SOLZ/VE3R/DJ6hgIEW2qP6ZA3LOY2
- TrWvHImY79fe1BUsn3whvPgAzxkLuteM1jHjX3if4na9alGgEp7EgV2sO6/Co2fLywGT
- AH3NUPnltSssEJGeMn+qDHpqfbRGHBXyMdI6eT1GAxVxkymSNyJVsJISCAf4Q2nnfjIO
- UOwL2jHjXNkU24VadbvWFTSX2v3jdQ0+tNgqcHv4pn76NJl7dGWL/ID79QhyWhEFsx0p
- B+1688fiZK31VUKwav61BmX5IyIV9PeLyvmKSgY08PtiQJhLTJKPv29njkrgmv4dDQOH
- AENA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20240605; 
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:dkim-signature;
- bh=nw1x3abL3Shl9VBVovxcafJZIXyJF+bulNN6KL9lmWc=;
- fh=t33Egyn4DAOwVRnwraldPtDjoBFAjogf3LzpsEMwxHQ=;
- b=Ms8kyk8NiR3GoqL2rxOqyO/sSKsU4Qxtie5L1NgmazKoA8ds1wYdrfbPcZZv2eXcRE
- trsuQnfqJXO9FPHvgcZeWgatKcZNuaWCfBf6soCtgTouBrAEv6c7k8eBwlA5Cpr9K8NZ
- Bx38SgbOvDPGckTZAK9dpMqYY/cVTzwLRta4xV/5xKZEtbtGEX9ymaMlle+kOsj9KTVL
- S1PISP1k7O7rQeNXI3nGWcqCKNp9COvlV75LJHb8TCA0ep+JMJeXETOGcXhLoMqcoeFu
- W+SeetIW+Syxc4Z6kImrRI2U3oXegRLmQQR0IeS39owwhPZ/K12cFlT1Kq/60xe31fLw
- pRAg==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1770353134; x=1770957934; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=nw1x3abL3Shl9VBVovxcafJZIXyJF+bulNN6KL9lmWc=;
- b=X/wZ9mUA/XMeXs6NKAwmQXFmEfpL7QWY5Vmyx0ZM5J2nKTT01pNt8gTBV32hx+B/fj
- bNb0UJyDyN6Lk2TNnhoojCIo1SZ2cuSgQ2URHU0nmkt/KFPIY/igp6PA87CGuMwBX5WY
- HEktFED3zAAjONaVc77m3HyMOeJH5pB2tqqTSyaRzw3JU+q8WP8inZXvKvpQxIIw/sNM
- xBxz+feLAAXCNOCivOlFHvZlnJVFeb72z2CXex5uOrEu0g8dAIikipaCVaEuQoM5qcIU
- PuzCuAeeLfXhDFYu/XLtXbehYZlpNt9K7+VBIe9qoEhS3kDPXGqAcja6EVxDpey9TLsO
- hUEg==
+	by mails.dpdk.org (Postfix) with ESMTP id 543D34029A;
+	Fri,  6 Feb 2026 09:13:09 +0100 (CET)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id E484C40293
+ for <dev@dpdk.org>; Fri,  6 Feb 2026 09:13:07 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1770365587;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=uAnwFNUO27u3MZWxfSGhDE1ikiBmkuY9SU+iuRX5MWU=;
+ b=L6glSJU7hb2w8pOjjDjzOtlpB7hXAiFk1N9fQuWkDwBQwCI9KVkPS//+UbHYXb2jTZUQO/
+ nP79KRvQp7Ts4doH2GpRnGZ1C3Tm5OP8IFmBNCJ1M5UiHIF+M+LwFR0J+O9xnGsqaYGtNF
+ B04W8jYVr5hcyrI6Y1Q4MSBZU8wCPPE=
+Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
+ [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-274-F1rAGalLOgO_n0npkXJ1BA-1; Fri, 06 Feb 2026 03:13:05 -0500
+X-MC-Unique: F1rAGalLOgO_n0npkXJ1BA-1
+X-Mimecast-MFC-AGG-ID: F1rAGalLOgO_n0npkXJ1BA_1770365584
+Received: by mail-lf1-f69.google.com with SMTP id
+ 2adb3069b0e04-59e34a1ef8fso1169647e87.3
+ for <dev@dpdk.org>; Fri, 06 Feb 2026 00:13:05 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1770353134; x=1770957934;
+ d=1e100.net; s=20230601; t=1770365584; x=1770970384;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to;
- bh=nw1x3abL3Shl9VBVovxcafJZIXyJF+bulNN6KL9lmWc=;
- b=XEjW4E8BRCsLKCO7uzmVNylv5Id2MDbL9YMHEngX/0j7ogGL6ikzng9qrNIbvEQ1l5
- 1pJs/yDtwBglzygexXA7AMSIXJTWd+iNySQBWgio2EyKvS24w46xSgd7pruE8XiufAIB
- wraa4+OJ9dD7A3j1iktipsk5woE/lk4JIe645UA4k4Ocktx8lOqDeFNhIRnMBksa8g6y
- Ez1eJzZiznlDCmGkAwBcVD9nBSbJ1XlSnGqlV/Nh58GRgcMlUXm5AXszLjge+ohHcX9o
- tRmZyvm+Y2lgHkuORD7pmJhNtaFl+sPDYgWR4NJqXcFfucWKJ1QApICz1F48bcSnVJYg
- AI3w==
-X-Gm-Message-State: AOJu0YxS98gEgqjgiywNdoGdp/JAJ2HdKw5sihZuU0Y1wYU0B2DiuwPc
- ryv6i/TGtDm+hOF3xuIrd1T+oZznQDRtDpxB4dsQEfpWppYVAU2v/qS4L6/oOv814ygxelb5OBp
- 8D8z3nIljEUCnj0HngxDCRcHYPXo87N77nor6
-X-Gm-Gg: AZuq6aKMil98kwXNfZifezsIZdvLJpkXYS3aSQSHIAdDUs6ZhlJFaWFXjJlQgL3An12
- 8DYEL++FZDtQ5b/jw4bR0KMvOtNAReTOkWu+6oK/izrbsKMDNWXlt0CvdcaD22pdLxOZVbVOXmR
- 97qmx8NvyzyFsgLmLTon54LgD4RD9Hz9X2E2uuPx/uph2S9ZNPxnrhjXywx2p5J9COoDbDOwMDc
- sxTlLKAE5q2vY5jgBQAYxh9MHYAbpWZqFE/JrZtRgvuypdfPduBahxAeuzx3L2PMYV9Qgw=
-X-Received: by 2002:a05:6122:f18:b0:559:5ef5:b196 with SMTP id
- 71dfb90a1353d-56705fcf6e7mr493388e0c.13.1770353133703; Thu, 05 Feb 2026
- 20:45:33 -0800 (PST)
+ bh=uAnwFNUO27u3MZWxfSGhDE1ikiBmkuY9SU+iuRX5MWU=;
+ b=Uc1sOYObe0gmHRV6udE9TSQj22lAFctxVbBXReI8SjHj1sU667z/bfGYOMiVRMrLsb
+ HvolDTCsuwUwdqJ89DSZifsouo3c2ywqLYp6N2oYkejrQ+1cQ9+Qq6xS2TIq7IDFtI1+
+ XjlVELlR7XubbeEE9omHzTEMnP09Z4UQo9jgxkkDmhBl6L8D0tlakhh8wG6pGAwdpuGk
+ imyzJbpdkwxKQQlFueBKTQbZwWRXfNeKyez9l9dgc4XOUNRAfLa40B7+89BmPMFiBn9j
+ FvhOf3n+hpoJdsfROKX+FYEG/4yCpKH1qSycnFmyHAcQpWknBoCCe0Ye7bCAEjrhGpYk
+ iyHA==
+X-Gm-Message-State: AOJu0YxwwqqEvWgaon+RZ0bBJBheS6AusOiBKxeOgBn4rfUrNrKtNCQo
+ XfV9MN9xavh1Dfpc2crxdrpU3+YLa+hLnJEjqiNoRJlH3TNaX/yAHKGgPfdAOuIfxi6sHUMz0Sx
+ k6ULW4WrrasyCvf6TCUf45x4MVHzSQ0WZrgCumam+M/PGFPtGYLmkcBR16ABobLw+SAPyve3KJt
+ hxjp5Qnncyg9/iHNqyG2I=
+X-Gm-Gg: AZuq6aIl6KoSEC7Fh+mNXQv5zMF+h0v24/XfistvmXXviT2R8PBP7fMO69wcEOp2b5i
+ u5xq3TEapeJB51WtnYvycu0cYUZiDh0Ihv/a8p54AuaHz0W8QrWUnzfJJtkfph6cc8i9kOFoHsK
+ stQccvUZvZoVjPkFtCSZni3V7FSIwP516W4eGpBKJeZ+OPphbVGUWdpCBl2YEa6/ogSo9V2/q0B
+ dLQNynxx5U+1AmD5KsOOxsk2W1q9MwGnpaZnaipZbNSiq/WBSYKbWVEtA==
+X-Received: by 2002:a05:6512:1302:b0:59e:39af:a70f with SMTP id
+ 2adb3069b0e04-59e45156d7emr499237e87.35.1770365584201; 
+ Fri, 06 Feb 2026 00:13:04 -0800 (PST)
+X-Received: by 2002:a05:6512:1302:b0:59e:39af:a70f with SMTP id
+ 2adb3069b0e04-59e45156d7emr499230e87.35.1770365583793; Fri, 06 Feb 2026
+ 00:13:03 -0800 (PST)
 MIME-Version: 1.0
-References: <20260203070740.62305-1-scott.k.mitch1@gmail.com>
- <20260206011141.2377-1-scott.k.mitch1@gmail.com>
- <20260205174901.462eddb1@phoenix.local>
-In-Reply-To: <20260205174901.462eddb1@phoenix.local>
-From: Scott Mitchell <scott.k.mitch1@gmail.com>
-Date: Thu, 5 Feb 2026 20:45:22 -0800
-X-Gm-Features: AZwV_Qi9HTcNtbNCcAnP75utyliw4iCV_FxcZBnVakKLyo96kDcxIbEmdE5KeMg
-Message-ID: <CAFn2buBvDjxTwKjq03tpWL0wG896sjA4qggjw_YD4xk6WL_zBA@mail.gmail.com>
-Subject: Re: [PATCH v6 0/4] af_packet correctness, performance, cksum
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: dev@dpdk.org
+References: <20210412215339.2439530-1-thomas@monjalon.net>
+ <20260205213044.702908-1-thomas@monjalon.net>
+ <20260205213044.702908-3-thomas@monjalon.net>
+In-Reply-To: <20260205213044.702908-3-thomas@monjalon.net>
+From: David Marchand <david.marchand@redhat.com>
+Date: Fri, 6 Feb 2026 09:12:50 +0100
+X-Gm-Features: AZwV_QhVWYb1Ynu1wSFjPZN6o3pvmXaGaiLpES8OR63LAY6oOz1ZPQ9er_Mr0XY
+Message-ID: <CAJFAV8w9nyJU92feqy9KJme4WeTnv5k4nOXgc3=hBsnGU1VMWA@mail.gmail.com>
+Subject: Re: [PATCH v4 02/11] mem: avoid hugepage path overflow
+To: Thomas Monjalon <thomas@monjalon.net>
+Cc: dev@dpdk.org, Anatoly Burakov <anatoly.burakov@intel.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: Z7HPPSJSx2uWIH4imyDwDsO2VIhb1jrO-bCx984KQtg_1770365584
+X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -94,16 +84,24 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> Why are the header structures marked packed, that is bogus, BSD and Linux don't do it.
-> Windows probably does but Windows code seems to love packed even when it is not necessary.
+On Thu, 5 Feb 2026 at 22:30, Thomas Monjalon <thomas@monjalon.net> wrote:
+> @@ -446,8 +447,14 @@ find_numasocket(struct hugepage_file *hugepg_tbl, struct hugepage_info *hpi)
+>                 return 0;
+>         }
+>
+> -       snprintf(hugedir_str, sizeof(hugedir_str),
+> -                       "%s/%s", hpi->hugedir, eal_get_hugefile_prefix());
+> +       ret = asprintf(&hugedir_str, "%s/%s",
+> +                       hpi->hugedir, eal_get_hugefile_prefix());
+> +       if (ret < 0) {
+> +               EAL_LOG(ERR, "%s(): failed to store hugepage path", __func__);
+> +               goto error;
 
-Agreed. I'm not sure why rte_udp_hdr and rte_tcp_hdr are marked as packed.
+On asprintf failure, hugedir_str content is undefined.
+It is safer to reset hugedir_str to NULL before jumping to the error
+label where free() is called.
 
-> This is failing compile on FreeBsd
 
-I forgot to carry the "Depends-on: patch-160679 ("eal: add
-__rte_may_alias and __rte_aligned to unaligned typedefs")"
-(https://patches.dpdk.org/project/dpdk/patch/20260202044841.90945-2-scott.k.mitch1@gmail.com/)
-forward from previous patches. I also see this failure locally with
-GCC without the Depends-on patch applied. I expect it will resolve on
-FreeBsd once this patch is applied and I can rebase this patch.
+-- 
+David Marchand
+
