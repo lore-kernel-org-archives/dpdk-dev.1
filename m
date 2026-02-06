@@ -2,54 +2,77 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EB68EB28D6
-	for <dpdk-dev@archiver.kernel.org>; Fri,  6 Feb 2026 08:37:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBF6AEB28FA
+	for <dpdk-dev@archiver.kernel.org>; Fri,  6 Feb 2026 09:37:36 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6D7F34029A;
-	Fri,  6 Feb 2026 09:37:04 +0100 (CET)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 8C19040293
- for <dev@dpdk.org>; Fri,  6 Feb 2026 09:37:02 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1770367022;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding;
- bh=DzxVQPzSosAwfXlj6p/MyWDcVjUGjEvmew0aedOcW1s=;
- b=iz1T4xpOp0lpouKZQEDQwej2A3w5AenbzUcPUVsn+YJLbNoe46xjx7+GSQ6cAw33cqZQOn
- gR5UTmLcGCoWtV/srLbrn8g9RfrPsSRgHn7w3JjAFxGoexhNK1x6a1nQFKQZ8c5gxKP8np
- XbE7n7XWTsWZkCNIpWeWe0bYn8l5IUk=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-610-DeNG0ZvyPSacfjbsrpMCEA-1; Fri,
- 06 Feb 2026 03:36:58 -0500
-X-MC-Unique: DeNG0ZvyPSacfjbsrpMCEA-1
-X-Mimecast-MFC-AGG-ID: DeNG0ZvyPSacfjbsrpMCEA_1770367018
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id B6D6C1800349; Fri,  6 Feb 2026 08:36:57 +0000 (UTC)
-Received: from dmarchan.lan (unknown [10.44.34.76])
- by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id 7637A1800465; Fri,  6 Feb 2026 08:36:56 +0000 (UTC)
-From: David Marchand <david.marchand@redhat.com>
-To: dev@dpdk.org
-Cc: Thomas Monjalon <thomas@monjalon.net>
-Subject: [PATCH] devtools: fix indent in SPDX check
-Date: Fri,  6 Feb 2026 09:36:49 +0100
-Message-ID: <20260206083649.2625478-1-david.marchand@redhat.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 81BBF4029A;
+	Fri,  6 Feb 2026 10:37:35 +0100 (CET)
+Received: from fout-b8-smtp.messagingengine.com
+ (fout-b8-smtp.messagingengine.com [202.12.124.151])
+ by mails.dpdk.org (Postfix) with ESMTP id 64B5D40293
+ for <dev@dpdk.org>; Fri,  6 Feb 2026 10:37:34 +0100 (CET)
+Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
+ by mailfout.stl.internal (Postfix) with ESMTP id 4957C1D00090;
+ Fri,  6 Feb 2026 04:37:33 -0500 (EST)
+Received: from phl-frontend-04 ([10.202.2.163])
+ by phl-compute-12.internal (MEProxy); Fri, 06 Feb 2026 04:37:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1770370653;
+ x=1770457053; bh=ttUC9MmPbNEfNMZPUCXN2QLnq62L0AxuEWgkqaIkyfI=; b=
+ jK2zJw/YU2Al8AykvYLMPv1yZGN5oxmBPP1CcfUgePd0hncOfLuK7CW14DC4Left
+ //TeJqJ/LqpAvE/9xaQhqBayln6od9GO2cwN1CXmnl6+cYQ/FB7LI1XWJYshkDWn
+ jEHKFgYHmNwNnRQPwS8T9FQhzBCWgMIwA44enVddTdnMybrTeznH0aiJ4bWt4rEj
+ lXZbqR8i5i1Edaip+mJayuoR14CNRdorY2a/hfeek2DJ3YUmybv0g8okAqabMNkk
+ N2toIMbsGwtS3XCEHQ5g7sw+Dqjllkcu2ExFSZgpnDOwT1YMTMuMc+IaJQ3Wx0/W
+ FdpPD9/ClAIfFChQmGzV6g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1770370653; x=
+ 1770457053; bh=ttUC9MmPbNEfNMZPUCXN2QLnq62L0AxuEWgkqaIkyfI=; b=X
+ FYzlUnAvN2KENg3xtcRSzmIBq7Y8N9evR5bnO3tPYOSQ0qhjHMWIBNhS1xdc0Ruh
+ AeVF4BJ1Wz4KbHSSo1chC734T1Swtoy/LxTeLfH/H5eLTwYfBSKhf8M0BVlEc2vW
+ B9wdMh25QWDtypXGaprcOKaoKMx65GKtIfnZVk90fFPDt1SIKYpRD0hdkE2okmju
+ POoZ8Efstj2M4vJW2vb0pP0W6GDFQxLz7TwutaLAzGOWS1v9MpjYnhs6WyWrxyja
+ oM4LV9IqUVy/e/dNW2GbsX6eQnf5GkfAjqDiQYjjzcmiBLQeXWLVjS3UQSol9vp6
+ OdV3oMheFaxop5XzbkgbQ==
+X-ME-Sender: <xms:XLaFaVW0zXvWoqX5QPBylH1WxEpl392WU3K5siIfISycEftiuBeeTQ>
+ <xme:XLaFaR4ToTxk8Jjw1HhZFpGY4durISbDU47RPYGGA48GdBs2sg2FT9ASGMv2A8-jQ
+ hC6cZN1kKLsca2oWtXmTLnsEwzp14l67Fv2P7nSJ07XeXsDbkxqaA>
+X-ME-Received: <xmr:XLaFaUIhaToAmf_O2fagjFFqnsg_o_zW0fntbZUchZFM5-iDpjvZ8TcaDkfuLK69OuFYyD56CCXVhyfhpp0wusii4A>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddukeejkedvucetufdoteggodetrf
+ dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+ rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+ gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
+ ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
+ frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
+ uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopedvpdhm
+ ohguvgepshhmthhpohhuthdprhgtphhtthhopegurghvihgurdhmrghrtghhrghnugesrh
+ gvughhrghtrdgtohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhg
+X-ME-Proxy: <xmx:XLaFaaIUEBAtKxIMGMytW5FR0Mgxusq08s-V24qCcwMCsZYGCalV0w>
+ <xmx:XLaFaSVLA_8pjT0YTeYw8BD6RKwwOkjAXF2aqIdOEIHUvDkCYq2Jng>
+ <xmx:XLaFaciF4A00tjSCd2wByCYhe6RW2ISiJxMHylY7VmkLylxFzdW9ZQ>
+ <xmx:XLaFad8j8U77cV8cRbQzCi3Xe1Ej1apUpnVvsOWlnetHunaqzrdn4g>
+ <xmx:XbaFaaqCaTTfxSRiMmGz0-DTfnf1B1SGbMgTuaZli08K18J4EgxKiCSp>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 6 Feb 2026 04:37:32 -0500 (EST)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: David Marchand <david.marchand@redhat.com>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH] devtools: fix indent in SPDX check
+Date: Fri, 06 Feb 2026 10:37:30 +0100
+Message-ID: <3359303.NG923GbCHz@thomas>
+In-Reply-To: <20260206083649.2625478-1-david.marchand@redhat.com>
+References: <20260206083649.2625478-1-david.marchand@redhat.com>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: -wd6PPtSu_luV0FNrXzmfGOj9W1oAFcEV0k0CqzyKec_1770367018
-X-Mimecast-Originator: redhat.com
-Content-Transfer-Encoding: 8bit
-content-type: text/plain; charset="US-ASCII"; x-default=true
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -63,103 +86,13 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-We have a mix of tabs and spaces.
-Clean this up.
+06/02/2026 09:36, David Marchand:
+> We have a mix of tabs and spaces.
+> Clean this up.
 
-Signed-off-by: David Marchand <david.marchand@redhat.com>
----
- devtools/check-spdx-tag.sh | 37 ++++++++++++++++++-------------------
- 1 file changed, 18 insertions(+), 19 deletions(-)
+Most shell scripts in devtools are indented with tabs.
+So replacing spaces with tabs makes more sense here.
+And of course, if someone asks, vim is better than emacs ;)
 
-diff --git a/devtools/check-spdx-tag.sh b/devtools/check-spdx-tag.sh
-index 2390941c74..a55d28581a 100755
---- a/devtools/check-spdx-tag.sh
-+++ b/devtools/check-spdx-tag.sh
-@@ -23,8 +23,8 @@ no_license_list=\
- 
- check_spdx() {
-     if $verbose ; then
--	echo "Files without SPDX License"
--	echo "--------------------------"
-+        echo "Files without SPDX License"
-+        echo "--------------------------"
-     fi
- 
-     git grep -L SPDX-License-Identifier -- $no_license_list > $tmpfile
-@@ -33,15 +33,15 @@ check_spdx() {
-     $quiet || cat $tmpfile
- 
-     if $verbose ; then
--	echo
--	echo "Files with wrong SPDX format"
--	echo "----------------------------"
-+        echo
-+        echo "Files with wrong SPDX format"
-+        echo "----------------------------"
-     fi
- 
-     files_without_spdx=$(cat $tmpfile)
-     git grep -LE '(/\*|#|;|\.\.) *SPDX-License-Identifier: [A-Z(]' -- $no_license_list > $tmpfile
-     for file in $files_without_spdx ; do
--	sed -i "/^$file$/d" $tmpfile
-+        sed -i "/^$file$/d" $tmpfile
-     done
- 
-     warnings=$(($warnings + $(wc -l < $tmpfile)))
-@@ -49,7 +49,7 @@ check_spdx() {
- 
-     files_with_andor=$(git grep -lEi 'SPDX-License-Identifier:.*\<(AND|OR)\>' -- $no_license_list)
-     for file in $files_with_andor ; do
--	grep -LE 'SPDX-License-Identifier:.*\<(AND|OR)\>' "$file"
-+        grep -LE 'SPDX-License-Identifier:.*\<(AND|OR)\>' "$file"
-     done > $tmpfile
- 
-     warnings=$(($warnings + $(wc -l < $tmpfile)))
-@@ -67,8 +67,8 @@ build_exceptions_list() {
- 
- check_licenses() {
-     if $verbose ; then
--	echo "Files with wrong license and no exception"
--	echo "-----------------------------------------"
-+        echo "Files with wrong license and no exception"
-+        echo "-----------------------------------------"
-     fi
- 
-     exceptions=$(build_exceptions_list)
-@@ -81,24 +81,23 @@ check_licenses() {
- 
- check_boilerplate() {
-     if $verbose ; then
--	echo "Files with redundant license text"
--	echo "---------------------------------"
-+        echo "Files with redundant license text"
-+        echo "---------------------------------"
-     fi
- 
--    git grep -l Redistribution -- \
--	':^license/' ':^/devtools/check-spdx-tag.sh' > $tmpfile
-+    git grep -l Redistribution -- ':^license/' ':^/devtools/check-spdx-tag.sh' > $tmpfile
- 
-     warnings=$(($warnings + $(wc -l <$tmpfile)))
-     $quiet || cat $tmpfile
- }
- 
- while getopts qvh ARG ; do
--	case $ARG in
--		q ) quiet=true ;;
--		v ) verbose=true ;;
--		h ) print_usage ; exit 0 ;;
--		? ) print_usage ; exit 1 ;;
--	esac
-+    case $ARG in
-+        q ) quiet=true ;;
-+        v ) verbose=true ;;
-+        h ) print_usage ; exit 0 ;;
-+        ? ) print_usage ; exit 1 ;;
-+    esac
- done
- shift $(($OPTIND - 1))
- 
--- 
-2.52.0
+
 
