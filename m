@@ -2,171 +2,166 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78A42EE2084
-	for <dpdk-dev@archiver.kernel.org>; Fri,  6 Feb 2026 12:01:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA51FEE2092
+	for <dpdk-dev@archiver.kernel.org>; Fri,  6 Feb 2026 12:13:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6A80D4028E;
-	Fri,  6 Feb 2026 13:01:48 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
- by mails.dpdk.org (Postfix) with ESMTP id A5E9C40276
- for <dev@dpdk.org>; Fri,  6 Feb 2026 13:01:45 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id B18CF4028E;
+	Fri,  6 Feb 2026 13:13:23 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+ by mails.dpdk.org (Postfix) with ESMTP id DA9E040276
+ for <dev@dpdk.org>; Fri,  6 Feb 2026 13:13:21 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1770379306; x=1801915306;
- h=from:to:cc:subject:date:message-id:references:
- in-reply-to:content-transfer-encoding:mime-version;
- bh=3vWIJTVdxNJG69m+D6VFBttZphLJGiaKOiekDbTWsYk=;
- b=B2PuB5InbZ/SQ6hdGZqZJDYLNYBObnCLaUQorU1vYv02X0gT2aT0HzGK
- Sw+mUqIDoXjR3neWAdbxkPy9jT2r0lP1gu/ElPnwS9mt5FmDbu0svxvhi
- VUw49zQVXYOtgsEjtRurJMuzGZVaHPfmRQnK2cL9dxJGVjglL39bCC5dT
- 1eHs/gh8/KM9shZ1FcaseSe3O0kag0X83/8f2EsbvYUmTTI8sNcMMAnpC
- X8gWM+7NtDxgQVRwe0Qm3X6g9N444utDaWbuRDnVOl+/yTq484gfjleLc
- FoM+5i1/YRI936ENkeiZqWggwgpIv8uVM22rfiReOKDiT4JcWgY3wazaS Q==;
-X-CSE-ConnectionGUID: WDBzIQX/QXmk4n6jxLGcCA==
-X-CSE-MsgGUID: T5JKpYhkRpWZ63WqIH1wVw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11692"; a="97041173"
-X-IronPort-AV: E=Sophos;i="6.21,276,1763452800"; d="scan'208";a="97041173"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
- by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 06 Feb 2026 04:01:44 -0800
-X-CSE-ConnectionGUID: tSaE+gioREWTBd4atgJaLg==
-X-CSE-MsgGUID: OoIZdeOJRA6BVOI7g26RhQ==
+ t=1770380002; x=1801916002;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=02reWqRdtZXlgpxnfpXpx9KiSiG3vOYES4NHKNo41Pk=;
+ b=j0XjCwRkrwctXigeHPhzqSOC6qfhGpuZmEow8ClomEsAT7puo/47N22X
+ a0RoJbDPOKxptB8xy+3J6ORsHfAV/P6W/flVxzGP8/oNYXhJmfw4Turbt
+ l3kmqr20a6JxlDr/0MAPKjxKylJAiPgngMJhtA77EPyYCnQupgDUg1S7q
+ LotsxV8kg7ZP6LzPj7D6xDHL9VXU8qEwbY4TfYEU0ZN6Zw0Uu2wJaVHVq
+ RLYh/TkIaUMPhbHUxLqpsms4mlsVQAj4Imr6/JDO5VR9NW5YRSGh/hsC1
+ A1voZdAWGK9G5f2Fov02g9aDBEA31Leqhsv6m3lbSxw9/TAOpJ4a8n/I4 w==;
+X-CSE-ConnectionGUID: LNyTz50OSvWzwXpD5ANM4Q==
+X-CSE-MsgGUID: nnxiLYcaSiGGMw47W6gTWA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11692"; a="81903640"
+X-IronPort-AV: E=Sophos;i="6.21,276,1763452800"; d="scan'208";a="81903640"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+ by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 06 Feb 2026 04:13:21 -0800
+X-CSE-ConnectionGUID: 8ETzntE1ToKd2rRAJQgw2g==
+X-CSE-MsgGUID: k2eu0o7MR3G3DOFBzcbNhg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,276,1763452800"; d="scan'208";a="215375635"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
- by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 06 Feb 2026 04:01:44 -0800
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+ by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 06 Feb 2026 04:13:21 -0800
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.35; Fri, 6 Feb 2026 04:01:43 -0800
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ 15.2.2562.35; Fri, 6 Feb 2026 04:13:20 -0800
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.35 via Frontend Transport; Fri, 6 Feb 2026 04:01:43 -0800
-Received: from SN4PR2101CU001.outbound.protection.outlook.com (40.93.195.68)
- by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ 15.2.2562.35 via Frontend Transport; Fri, 6 Feb 2026 04:13:20 -0800
+Received: from BYAPR05CU005.outbound.protection.outlook.com (52.101.85.10) by
+ edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.35; Fri, 6 Feb 2026 04:01:41 -0800
+ 15.2.2562.35; Fri, 6 Feb 2026 04:13:20 -0800
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=TihdwmpfPaoTwkcifvBk7m+Xx3F9K8ttmoGXrKWUxjj17VW0YLRYeBsYnhOtjZyu14JimyKCjHxqrinzkLQ0gbKTfya9+7DCPkf0Yj+k1r9aO8u6g1wzzqHvceFLWaKR7tK3NAjltALJ0IqK9DaO6o39ZWHTwtugdkIQVEQRokD0XZ2pG+cgDWuKnTYkN1SRaSGD1VVAIASMxsr5JD7kHAQTTu4XtTAb1fLjHphU+KE1CZvce0AYmtp0ZpKM3lQ2pCd2cNyLrYJu0/TH01PkxXMbtLEe7RILDe+N8IuGY3TUbep6rcMY2MuUgoKa+CXXsZ5MvxINOorf9sHxHgjkAA==
+ b=gIUspiRiod9bVJigDHP6TsDh47mHWS02cultNajC8655pPB8A7DbHtZegC89HiYlQWjQtC6W9UvR+xGIvZ9TrHOQ+UEGyDtkdUDFI+IvO5PCtr3N3GC78Sm63t9REpyb7xCQI8eXe5znsonl1NcuTX6yIuz8DTIkCpVZhYvrG4l55iXnrVv2V5S85JOPwAz6yOpvxno/Wa7JQbGsxtZcaVazE6NIG2wFUOTPUz8uT8Hb/nNhMNHY2wnZPKdj00zxOW48V7pukUfxKdc/Xdax0tJRU8ExIe+pu1gZAbeEfGqTZ86BWmWJ37FD83PDRd/Cksc6oFr7kf+BnChWm6iAog==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xE16TooJTRDrRPHTp+cNWldL8KZcgvLoAqnFp0d+BZA=;
- b=Nin8W+j0bw5speHFD2w81VtHEk8vEzUE90NghDhy1c2iYNxSq4h0Vndkg+/uDB4oUR98sLo/DCVttPItDfiIYSnZ4Rwwr30oe9lvPlJyF3GKzT9dglgBUw81a9ZV7M6+GN8+r39DCEMmJWTS2fELo4xCEW67iRGY7zFmyT8KfiRc4Yf8HTrRK70vnSHgE0h/j1mFXGy9SahpA4u344HXKb7IgBX/T3S4yf9PBU8Hoe+wgkowVlevBcddDb08hH7GfZboTc+YOtCTrcqUL8wyHYBQPlrnnkfE87mdK9Bnqd+YNdtQHwXaQJbhJR3J326Zq0K7BYPwbMDuLtejgmc2dA==
+ bh=cRJC9jqdZ6BcwFNG8YQAZywqLTI5Ibug1/UK4uZlkvU=;
+ b=cc7kVoW5EKumIlwqnbFTYhyPolal5IgQ6PTjWSDnWlIAJuV7xUBsUvZabYIKSm1BK7ZqkGLYwEeJgd9h0pY5oQ9QRIPMQaJ/JfRXhUMDapEI4AMT8dw6Wvc2UWdBl2q2j1D82zzOrvcQxz6Tw8MbDPD5wOuTX4RkItQo6xDm+LAOp8XFcdCDsHccv358Kvrfuk1gwe69qdAN9CIUNcA8QN8ZYoECTCnTNI6f+t1rXbhVgaqqSiu9rRKn3PZPynP4zXMZKHMw49FXSah5NhrRhH5zts8FRDDJzXAZnDxc1AiwCSvybDeSYGbKQ62HjXxMvM3P2BwtGBzg8irEB5nFlg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
-Received: from DM3PPF7D18F34A1.namprd11.prod.outlook.com
- (2603:10b6:f:fc00::f32) by DM6PR11MB4580.namprd11.prod.outlook.com
- (2603:10b6:5:2af::22) with Microsoft SMTP Server (version=TLS1_2,
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
+ by SJ1PR11MB6202.namprd11.prod.outlook.com (2603:10b6:a03:45b::9) with
+ Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9587.16; Fri, 6 Feb
- 2026 12:01:38 +0000
-Received: from DM3PPF7D18F34A1.namprd11.prod.outlook.com
- ([fe80::5f81:9e50:1761:ca54]) by DM3PPF7D18F34A1.namprd11.prod.outlook.com
- ([fe80::5f81:9e50:1761:ca54%7]) with mapi id 15.20.9587.013; Fri, 6 Feb 2026
- 12:01:38 +0000
-From: "Loftus, Ciara" <ciara.loftus@intel.com>
-To: "Richardson, Bruce" <bruce.richardson@intel.com>, "dev@dpdk.org"
- <dev@dpdk.org>
-CC: "Richardson, Bruce" <bruce.richardson@intel.com>, "Burakov, Anatoly"
+ 2026 12:13:15 +0000
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::2a1:33a9:9f92:b52e]) by DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::2a1:33a9:9f92:b52e%3]) with mapi id 15.20.9587.010; Fri, 6 Feb 2026
+ 12:13:14 +0000
+Date: Fri, 6 Feb 2026 12:13:09 +0000
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: "Loftus, Ciara" <ciara.loftus@intel.com>
+CC: "dev@dpdk.org" <dev@dpdk.org>, "Burakov, Anatoly"
  <anatoly.burakov@intel.com>
-Subject: RE: [PATCH v3 12/36] net/intel: create a common scalar Tx function
-Thread-Topic: [PATCH v3 12/36] net/intel: create a common scalar Tx function
-Thread-Index: AQHckd2/UsJIHbT2nE2wMug4r+DNIbV1mqOg
-Date: Fri, 6 Feb 2026 12:01:38 +0000
-Message-ID: <DM3PPF7D18F34A1A9D1B959705F1F8BDEBF8E66A@DM3PPF7D18F34A1.namprd11.prod.outlook.com>
+Subject: Re: [PATCH v3 12/36] net/intel: create a common scalar Tx function
+Message-ID: <aYXa1f5Cz5mKR34G@bricha3-mobl1.ger.corp.intel.com>
 References: <20251219172548.2660777-1-bruce.richardson@intel.com>
  <20260130114207.1126032-1-bruce.richardson@intel.com>
  <20260130114207.1126032-13-bruce.richardson@intel.com>
-In-Reply-To: <20260130114207.1126032-13-bruce.richardson@intel.com>
-Accept-Language: en-IE, en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DM3PPF7D18F34A1:EE_|DM6PR11MB4580:EE_
-x-ms-office365-filtering-correlation-id: 325ce11a-421a-4360-e477-08de65777bd3
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0; ARA:13230040|1800799024|366016|376014|38070700021;
-x-microsoft-antispam-message-info: =?us-ascii?Q?hCTJJZWCKnyPNUg6Vn6SKFmOIxFk6AAL3osCKN+JGNBYDQjz15jFkjt1phtx?=
- =?us-ascii?Q?xXKfb2SB4ajwMPMbaFmoisuqUifChdUM2itNJB9DbTA2UN6f5r76ZJ/xBwm8?=
- =?us-ascii?Q?aJ4rC7lTgVwQ5reImCzrbkhwkQgjuFI1rrJWOoMaugmzQT9K4Sk6jao2EGgI?=
- =?us-ascii?Q?bIoElP1OqMGk+O/2eU9S2TrR2FMSCyOtC3FM1+1UOJoY19wCy+EfTvg0X2bA?=
- =?us-ascii?Q?SWybgxDfqhR5mvkAKL3p2VcipOrkzdBkpuqa4n2YEUlmJnbg4vy9OfwOJjkV?=
- =?us-ascii?Q?lrjsPzLaAKde2nMYPRV8dqmom5OJMEvz3a/IOyYsNTTvAhqnt9RxqSR9pqvm?=
- =?us-ascii?Q?4XKGQQLmgEli3uc3TT31TL+AO3HPdBsRT2GYir44awcoskWfiA2xAl1RwquS?=
- =?us-ascii?Q?pEzj07I3wvDZnaAX4mnINI3/Cl5bx465XOZiWeNRTaPqzz883sImiPt5FNg2?=
- =?us-ascii?Q?us1dNHT7OX9aE6KseQ4/ffs50Fm6pnl0B2BDkUQpAs3mn88fOvvhEsRRlma+?=
- =?us-ascii?Q?m56SqSahwHwqfz4ygQ3uJkMytjZWSRchKzDK6SUxevvD8djrrgO18uyzkMof?=
- =?us-ascii?Q?gLBujanqBs5ueVIS1jIDJf2TwYwRp0fjMYkQShDbTon0gqKmJwtHAN+yttFI?=
- =?us-ascii?Q?9csHy7rgW4BKcpAgaBxiruiaeSpip7adXHu/U/Rid0TtT4bR3peVYP+/5+Al?=
- =?us-ascii?Q?D3+pSXvZFQGqgVDg47967MfAVPt58qUPlcPdv/PNJspqGoB0gsOyQaVY9yh8?=
- =?us-ascii?Q?NifVE+wBd2y4GmLNjqvcXoF3QmV0BvSFS3TCpBuofc37Y0yPobxMQUwt3sT+?=
- =?us-ascii?Q?bFp0F/Js3/1+PO4XoU/wjcbHUYizcP1HrpAZa9A023uyCJ1y1b9Nc4ZMQLfq?=
- =?us-ascii?Q?suCy/UbVeWeKrcwBN7PaZmpEpnCqW0f6a3+dtkSnpNZr4VNbsbxeljVc5RCe?=
- =?us-ascii?Q?246GPogjk9tgouFdwZDdcFdNFxgO3Zh5m5OSimdIix7l+hkh7G8wg8evhjL/?=
- =?us-ascii?Q?piHidMNuCP9ggB5377I0qs8xsE8EHxeIdgzJ1PTRrt0s5zPZL8k4QGrksl4C?=
- =?us-ascii?Q?JB+z02QnLcNNgApeu0VYianRNCMd+R4bibz4F8dmVzX0SoH3PPpv1QuC1iR3?=
- =?us-ascii?Q?1YDsfuw7AWGJQcUjrPZ2q2YvdJKZYxCweLOp9SQECOJa2GilM9y8d88nm2xu?=
- =?us-ascii?Q?519rGoQRue+32CBmDb4ndVmi2EgGWm5eMIrXfZ3ZgPqDrDyYnhjd97UXDV5a?=
- =?us-ascii?Q?SLuTG9I+QaEME848qh5ngVCpoAHEFkRTJBIJIvh6e2lz9VAjcd6wncv87duM?=
- =?us-ascii?Q?+Pqeyf66n3FMPTdswEgWvTc90NXZSAVHxzyVcEDBDzz5radNQZ0jvAXlY0ZW?=
- =?us-ascii?Q?0IaxTppxau0dHgncI1hQsXZ5aT82CAI6//K+/QTfuYyOpD0g9kXx5AFeYjGe?=
- =?us-ascii?Q?YlGApW6lTBt+OJrhKYoNWzhijJTxf+kkbWwEQ7tqY7NL78LE35vJBqaExcEU?=
- =?us-ascii?Q?4v2az28rZFeADqoAnrIDb0ARj7x9rZafjBy3vIQD6WJbPCqGx6hhJMxtILne?=
- =?us-ascii?Q?7MV/qVRJdcs6JheH90KzOiqC4WgMzLunfBAE0dlJFlrzvGHz1U4JW0+u1C5X?=
- =?us-ascii?Q?RCkhnp0eA8VQks00mE0cRIg=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DM3PPF7D18F34A1.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(1800799024)(366016)(376014)(38070700021); DIR:OUT; SFP:1101; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?MrIJuWu0xghmLaJhaD5UOyRTvwbZ/6Fhr+qw26zOQX5BhW9EjGHrrTpWXx7V?=
- =?us-ascii?Q?por17/u1BumY5tPlLrORhnbKT0sXd5271+KYreritufUvY7Xi1AaJlPut2WP?=
- =?us-ascii?Q?STL+vPr9lQCDTXlOG9ykWSnuL/Qyr5z5+oEjgECWuSdwYuwb7SLHw2e+YmBP?=
- =?us-ascii?Q?MvXFRGeWI9SALF2NX49PTqvRU99dS8B/Ad+rFW5BgcNwo4vvjX6NHJAC4mmu?=
- =?us-ascii?Q?UsfPTW7i6M9T+qqbrGQWTv/+/mz84HofT3Rf6GyiILwMGn6CTpgdQsHfLh6t?=
- =?us-ascii?Q?axMYqkKToUlr263Us3Zzi7C3/z7UMYhEuYWJ5ZRMjQxbWC8rO7XwIsL7NTJu?=
- =?us-ascii?Q?NoriA3JhCkgdj0F77m3zUqbZ5M8loSkC37byf4ob1oGlOJIaF0QwxU6cFgk2?=
- =?us-ascii?Q?oJzzUoDK0jqf5v3pnqEBRtCA/cLhORGtQmZdJlwdVD1quCZeH4XTe+akvrTH?=
- =?us-ascii?Q?WkIGaw/F4RgdGBnx+OxlTDWmjIG1joB99ue1OBdSIk8DLySvRnPB2E7HTxm2?=
- =?us-ascii?Q?XTeBppCB7c1+5eYWWbRoFqv/0GgckXVHkfiryG4clSsBRTeBpaPbIa2hcNwZ?=
- =?us-ascii?Q?d0ZCPTk79zmA6P9vBUkH3TLtglHMVoZVV+kkE+qjGNWjU5T+K3oKa8ps6Lxt?=
- =?us-ascii?Q?tyf1jP8zBtFXRgu4MEneTzTS23RlH/m2aaFSvAIeFaJCdSGHGpGXt3uWYjoA?=
- =?us-ascii?Q?KNBah6vg56cz7srfHgRyARvKt5f5A0yGRUwpTPvQ0BEC1HHO0BtLb/p4QxM8?=
- =?us-ascii?Q?a4OpSvj80MZ7yyj9Dbi1BC3HxeY1ejwb8TLKJFi8hrv85/HA9PX0mYbZxqID?=
- =?us-ascii?Q?xcSPgf2L+qMPO6rHYDHv0cs61btA1Xh5NOAsDUAJ6dFQsw410O4Y1DpSK8zY?=
- =?us-ascii?Q?cs7z1VW2SYRU5HJEZRrDOAR7sgrCl446aqB4EDkRIdoWLN8ugkV3qZKEe+6G?=
- =?us-ascii?Q?nhishtyLNuSPyGLm2YM56ITAH+6FVITlyJQFiP+BdlnYuj15Jd0ujhX08WcO?=
- =?us-ascii?Q?KF70R4kFhm8X8DcbxsmimwbgGqaYPRl2POgL7/tl3VfwflZSma51F3wwyALW?=
- =?us-ascii?Q?PBTE0Y81t6w7Ljy9Lm41O0jYNN1S+O5ChPv0dWaPB1NuW6cdHBP03xwAG53H?=
- =?us-ascii?Q?Mkb5ryCRZkNZBo5H5kV+PcK1170n+pSQ0YNhbZBK3fA6fZcYTwMTQg7pzZES?=
- =?us-ascii?Q?SQY5RVINedmxa5m0iLfZZPGrkhqnbiG3uuuG4xKZ1iN9umcSCj1f8u1/+ljE?=
- =?us-ascii?Q?YBCeBNGLpetpZMhLjS7figcZd7giBNzS1RqCURMFOo4xdRw+PgVcSUh2l2U6?=
- =?us-ascii?Q?Pqssm3ZtOSnTYyekZ6TPyEeer5N1SgJtnPYDNswMWqJ6WRDuivfTbhQOAe4N?=
- =?us-ascii?Q?DgnyAkBAEwFBQtLllJEtcZCyXTgpaHiaVInvvK7dyliDYWUw6J2eIh4LdjjY?=
- =?us-ascii?Q?SsQUqXbyWPcFrDbNchdT/gv7sJEKW4AOH7EsjEqdtOxbFpZbZrbucLZyNUGg?=
- =?us-ascii?Q?1x0QjmSXXbvPAhcRoOFBJRNAVWdf92t4N3d8JOi0+bQkUCL49PKsIGWPBKBc?=
- =?us-ascii?Q?dE+DNiNm8r4NGnXugizKQdlt8YXpy5p5soKagzSBF2g0lsg7C57GcKep7+J3?=
- =?us-ascii?Q?c2NMOR3gfCDiVLbm/cf1I7dfdw+vHTRb+s0/dEzFcUWt8hzAJ1HsIpux+RGt?=
- =?us-ascii?Q?aawQ58Atc/E4NdEHF3NjYv2b3kejrB5+DItgZL+usW10yu9O0vIFpTwkukoB?=
- =?us-ascii?Q?eNAMZidJ9A=3D=3D?=
+ <DM3PPF7D18F34A1A9D1B959705F1F8BDEBF8E66A@DM3PPF7D18F34A1.namprd11.prod.outlook.com>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+In-Reply-To: <DM3PPF7D18F34A1A9D1B959705F1F8BDEBF8E66A@DM3PPF7D18F34A1.namprd11.prod.outlook.com>
+X-ClientProxiedBy: DUZPR01CA0324.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:4ba::29) To DS0PR11MB7309.namprd11.prod.outlook.com
+ (2603:10b6:8:13e::17)
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|SJ1PR11MB6202:EE_
+X-MS-Office365-Filtering-Correlation-Id: c27524bb-ad07-4f96-b3e1-08de65791ab9
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?YwY1sEI1JyYYN7wBw2sqXcGmxLBIEaMvAgMQxj1ZlxRxyff+xEzcYDbcIg/6?=
+ =?us-ascii?Q?UrElFgpEcDXq8XyAQaavPA0ty2cgHo/HJxr5QQJHI70kAxuD+Z6sgbo3JdiX?=
+ =?us-ascii?Q?Va7RdW0BZ4tAapFHkXr5EYGjn8uCDs4cjomtfpCOZsMFkryaepUbyXDDmT14?=
+ =?us-ascii?Q?oIIRLDuipVV/twVJAgdXtgCIj3CNXTAVr2wc5GKwXgix7dixERfeLIVN7Gly?=
+ =?us-ascii?Q?E7Oz7pV/ZtL5iuke/4uT1DF37nNEJsDSa/U2uWcq/Lu81w8tcnq/W7ao9vx9?=
+ =?us-ascii?Q?Reb9wAshuXvhYgGgEYja/iMZUfv+ug3eW4XVshuIlFup+MquzPEs/lJHN9gR?=
+ =?us-ascii?Q?z/bbvj/bhW+DiTfqXRmnL7nfFRv/ykyLH7Z61VERN9C2CMAebwJ1jVwvfn3T?=
+ =?us-ascii?Q?R4pwUoaslHa4oPVzJgHwSzshOyqqooiBV/v20MLqtNZuo3udY1XgVC4nFnpn?=
+ =?us-ascii?Q?P9xhSnsAr/A0jeJEa2aQsDEFAygZ1X0FdfQhDWSi06kQvCt92H5HelTJNxyM?=
+ =?us-ascii?Q?CVsM1ZjfcKJmbyX7aXPJfmSuMd6BFdUB5iEsVHPgN0wgoXD5lyNfP4NA/mFA?=
+ =?us-ascii?Q?XlmkUwIt6bZXRLMl3x3SugxRp640k6DlagwyOqxQDKhCdy8TlY4SpTy3gdHP?=
+ =?us-ascii?Q?X2LJ2yIH/QAnIw7QiLXrap65ewZiNmntQUIbu1Iw6Qh50GEDVqGJC1NI79uF?=
+ =?us-ascii?Q?aQF8U7iytNmRH8Rlt8s/aehy4L68YcAO/uml4TDeFfspEB+pvGXLFu6dKcam?=
+ =?us-ascii?Q?TJ1nUUuhkYQCss3kKuOdeflgpjhf/LKLp66ehdyAs8fk0E+QKlDNRiWihySv?=
+ =?us-ascii?Q?Hg0rah7PxmnIltr43qwLlQB17PtAUZKnnABktfaXeENFvRj8T36KP7oYOlPJ?=
+ =?us-ascii?Q?fgTzP83EMgzpFTvkOUwXGg+0RclJPKvEpLPH8VQUn88Ef7OpTyNG/y9qDuBL?=
+ =?us-ascii?Q?tyIMn28WzWKHKTkqWhm1q6Tla74be1ICe2jmYHJckP9tnkE54U2qmgfBbzwv?=
+ =?us-ascii?Q?D+XCmVINwXXOCifJL5Bxu05uhH2x1lzWzq8smaYZFQknjP65fGNkbdXiXZyS?=
+ =?us-ascii?Q?KYnyrNss4w7+/K5yolKjugU1RU41MWdR9Lr9+8pgOrILUL4LF09kOvJPKULL?=
+ =?us-ascii?Q?r9ZWkGPCQGs59xKaYx4cBZNRxlUKBbpR6wV495dykG5ojOwXKtDW6k0NIRm0?=
+ =?us-ascii?Q?xEnzlMecBlRBe+wOw9LY13k8cBMg1AG2JxEBEr7b+gSro+3KGaM3CVBH70OT?=
+ =?us-ascii?Q?41XJS0RqeuHk/3FwaYcouXL1kRqhcSnuH3IwfAHKwaLtoup9pwA3JVavr/l1?=
+ =?us-ascii?Q?FZ67bIJ8/iEFkaSxGDWveKV+/U+ZXX4JakKW+rE/wqi/UPmDNBmmGBj9+/uk?=
+ =?us-ascii?Q?XLFgeSbuI30KWFMVq6JzVsuAV7Nc19X4iJxlNGxqS2r/mh+INJ53hPlG3G/R?=
+ =?us-ascii?Q?t7bWwt49WhQ2EAYvSZ0kydSAONb0uwhJdim5mFgVh6eea+j+aVodNrd/D6jr?=
+ =?us-ascii?Q?gZNF8tX23FC8qZCZU0YvqCCl2F3p3vliq4+F4bBAzgzUJ2kuF9ekGpXowoBV?=
+ =?us-ascii?Q?Kejfl2t4+XPD2xXSBCs=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(366016)(1800799024); DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?qV92wihwA9+XU7NVmueS0bTOhDFDNDxrSZ221/NuUcpOyuQGODLGZcR77bh7?=
+ =?us-ascii?Q?jK8qOBlCGcbotSvhWDXdlNK5rgA6iYFYSA22xGn0tV3bPCxYOrZPKRKq6iiP?=
+ =?us-ascii?Q?Ot5cuZM4WW0/V90OhRoiVsjJ+aVUNUSKvA33xn3mvLAXhI8H2kId3gBUFGLE?=
+ =?us-ascii?Q?wzMGsPfOGd6/3r6fUFjCFs1OhQSqvyB7bkgofkh9WN9onLcbYurSkTzyFkS8?=
+ =?us-ascii?Q?bk+2cRcYuz6MTyRobcNUB9IywNMPSHyqoghfbHtNx7IEnJsfxDgK6vnsSCW6?=
+ =?us-ascii?Q?tAQOePksZGQ8lLs6yEq9Jd5KOtBFjsUIwGxiHPpxjQZFLT+0cu1/G2YmOcKr?=
+ =?us-ascii?Q?z3n7Bh+TeYt/05wxZH8sZrauYx92qdtc/5wd91LCEriAwXpziaJwFtJZBfKi?=
+ =?us-ascii?Q?G1fxTewZ5c0msnFaeuLnUM88IQBY4EMfe1nC7rd5PC0M8gp2ZYGtSLVSlEoC?=
+ =?us-ascii?Q?KbrU38Ze9HYRvr+QoM4hno5I323sV4WAEsHaUYCg/hyVKGnZwVyNw8D2KTJI?=
+ =?us-ascii?Q?qYYKDTVKoIB4hYiSI3ItQjAo6QOO45qBhFXUkGdG4GDMWCXGCznDG1pqDIlF?=
+ =?us-ascii?Q?s6+tMbkSc/LyRpPTMkVlGY49A1t1wZkumDX5rSGNymK8gAZO/705lku9NVi2?=
+ =?us-ascii?Q?a3riSd8pKp4BMpcnxA+9YrFzwHPGmF/TSTi0B2UXl63bjsFzeeILFxGqN4DD?=
+ =?us-ascii?Q?ck0iqz0YozWVbXHp2Jm14oMhRqfm8DzPCTWhf42BYnqh3eq1tcZwogGiSAUa?=
+ =?us-ascii?Q?zGeqZCy1N7aGSC5poftTSrbRQzajqnm7P+vMhTosyXXbRhvZzNtUEglTR/lq?=
+ =?us-ascii?Q?5CJkiE61KfrsDKAZgE3321iY7zM+Zdw5eoTAinHPq6k87SA3O7T2BXixcq1P?=
+ =?us-ascii?Q?VrQE9Mp2NVvMXqS2UkTyFqcVKIoEPx/UwSTaNfT5MZwv1AM9nbvfGKtXQprM?=
+ =?us-ascii?Q?4RAKCMf+bte7w08tBiAMiR5vnL7jS3qpRcjnqiFrBiMW/o2kfh0PzqneL0Mv?=
+ =?us-ascii?Q?QO1zaO9AP9VfkitL3ktIwmfXSvRRo3YazKU9D9Vb6DedlKXJ1dQvdzTP9U8I?=
+ =?us-ascii?Q?OoSdWNuBTr2sGT4QUZ64KRDWMXmcFx3lq/zY6HmmfPUFfDo9B8VBILy+wyt6?=
+ =?us-ascii?Q?tc2aOw24Sv+sm4UyIiFTSiSkH6nJxlMXB9Hiez3nI6IyH+7s/sjB2i3ggnPa?=
+ =?us-ascii?Q?29Kuvo4U01MSHPGRNlkua4HArP8mf1Z9M0TXgQY53fktgGLOPzR1fx7KN+lO?=
+ =?us-ascii?Q?IMH5nPuy5p5FoA6GNwmtibvAKJGPUWuuHitFYf8uhZGz8AD9wDgHvEkdct32?=
+ =?us-ascii?Q?0dib6Uuprx+ktL+SSU6jEuiEGxTie/p16L7V4ZdFyrrf7U/mhYhHtH8c3qXT?=
+ =?us-ascii?Q?kb13vY8A47ewESRiggk84HEW+RjVTXpPbmZgmCDGhRznu1jTAa2Jogbl924+?=
+ =?us-ascii?Q?Ua9hEW3hw7zsQr3WUGjQvE+bTWkGS1XAaZCiMIPFvDZ/2Z8/MsnXN7l4qD4A?=
+ =?us-ascii?Q?Ym4FRyrmLPtbXW5b3DSKtiQhcRIwnFCRqIIIhOA0XxWBjc3XVr/N/KiawXgw?=
+ =?us-ascii?Q?iyw6uri9cgXd5XLMGfXp3jUDegq+BHjVNgwePcWa6ayV+UwTfVCLvUg+Zsir?=
+ =?us-ascii?Q?YnERjZxZyw+wjP/XXDq1oMYiwiU5i2QS9t0AS8kMoOk7GB93qU5r5sdgv1Wn?=
+ =?us-ascii?Q?FdsM/B6MARmJOG+nN6qhSCh25uVmYY+UlQAMJPHTIASGsrqX1XXmtwAWcPCx?=
+ =?us-ascii?Q?9+hQeLJIR+0kZG+qE+W5yuLSFUQ3cpU=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: c27524bb-ad07-4f96-b3e1-08de65791ab9
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DM3PPF7D18F34A1.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 325ce11a-421a-4360-e477-08de65777bd3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Feb 2026 12:01:38.5646 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Vdvou1je2LwY8KYOKzMFLhwREGhY4MXz2McWEB7eM19nRby+P9vNOBx/5Pp/Sh/Pgek4Nxwv8LcUkEaLIbeC8A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR11MB4580
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Feb 2026 12:13:14.9176 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 51SZECdh+YxLkMLblXM/rmF9ptGlv0rHXc3twZohKpmN9oVjqxjxRCzU9wFaVG0Oar84Fkzuo+yiImzoDcApl94qscQ7otc43/dAk4jE1SI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR11MB6202
 X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -181,92 +176,85 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> Subject: [PATCH v3 12/36] net/intel: create a common scalar Tx function
->=20
-> Given the similarities between the transmit functions across various
-> Intel drivers, make a start on consolidating them by moving the ice Tx
-> function into common, for reuse by other drivers.
->=20
-> Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
-> ---
->  drivers/net/intel/common/tx_scalar_fns.h | 218 ++++++++++++++++++
->  drivers/net/intel/ice/ice_rxtx.c         | 270 +++++------------------
->  2 files changed, 270 insertions(+), 218 deletions(-)
->=20
-> diff --git a/drivers/net/intel/common/tx_scalar_fns.h
-> b/drivers/net/intel/common/tx_scalar_fns.h
-> index f88ca7f25a..6d01c14283 100644
-> --- a/drivers/net/intel/common/tx_scalar_fns.h
-> +++ b/drivers/net/intel/common/tx_scalar_fns.h
-
-<snip>
-
-> +typedef void (*write_ts_tail_t)(struct ci_tx_queue *txq, uint16_t ts_id)=
-;
-> +
-> +struct ci_timesstamp_queue_fns {
-
-typo: timesstamp
-
-> +	get_ts_tail_t get_ts_tail;
-> +	write_ts_desc_t write_ts_desc;
-> +	write_ts_tail_t write_ts_tail;
-> +};
-> +
-> +static inline uint16_t
-> +ci_xmit_pkts(struct ci_tx_queue *txq,
-> +	     struct rte_mbuf **tx_pkts,
-> +	     uint16_t nb_pkts,
-> +	     ci_get_ctx_desc_fn get_ctx_desc,
-> +	     const struct ci_timesstamp_queue_fns *ts_fns)
-> +{
-> +	volatile struct ci_tx_desc *ci_tx_ring;
-> +	volatile struct ci_tx_desc *txd;
-> +	struct ci_tx_entry *sw_ring;
-> +	struct ci_tx_entry *txe, *txn;
-> +	struct rte_mbuf *tx_pkt;
-> +	struct rte_mbuf *m_seg;
-> +	uint16_t tx_id;
-> +	uint16_t ts_id =3D -1;
-> +	uint16_t nb_tx;
-> +	uint16_t nb_used;
-> +	uint16_t nb_ctx;
-> +	uint32_t td_cmd =3D 0;
-> +	uint32_t td_offset =3D 0;
-> +	uint32_t td_tag =3D 0;
-> +	uint16_t tx_last;
-> +	uint16_t slen;
-> +	uint16_t l2_len;
-> +	uint64_t buf_dma_addr;
-> +	uint64_t ol_flags;
-> +	union ci_tx_offload tx_offload =3D {0};
-> +
-> +	sw_ring =3D txq->sw_ring;
-> +	ci_tx_ring =3D txq->ci_tx_ring;
-> +	tx_id =3D txq->tx_tail;
-> +	txe =3D &sw_ring[tx_id];
-> +
-> +	if (ts_fns !=3D NULL)
-> +		ts_id =3D ts_fns->get_ts_tail(txq);
-> +
-> +	/* Check if the descriptor ring needs to be cleaned. */
-> +	if (txq->nb_tx_free < txq->tx_free_thresh)
-> +		(void)ci_tx_xmit_cleanup(txq);
-> +
-> +	for (nb_tx =3D 0; nb_tx < nb_pkts; nb_tx++) {
-> +		uint64_t cd_qw0, cd_qw1;
-> +		tx_pkt =3D *tx_pkts++;
-> +
-> +		ol_flags =3D tx_pkt->ol_flags;
-> +		td_cmd =3D CI_TX_DESC_CMD_ICRC;
-
-Why change this initialisation from 0 in the ice code to this value in the =
-common code?
-
-> +		td_tag =3D 0;
-> +		l2_len =3D ol_flags & RTE_MBUF_F_TX_TUNNEL_MASK ?
-> +				tx_pkt->outer_l2_len : tx_pkt->l2_len;
-> +		td_offset =3D (l2_len >> 1) << CI_TX_DESC_LEN_MACLEN_S;
-> +
-> +
-> +		tx_offload.l2_len =3D tx_pkt->l2_len;
+On Fri, Feb 06, 2026 at 12:01:38PM +0000, Loftus, Ciara wrote:
+> > Subject: [PATCH v3 12/36] net/intel: create a common scalar Tx function
+> > 
+> > Given the similarities between the transmit functions across various
+> > Intel drivers, make a start on consolidating them by moving the ice Tx
+> > function into common, for reuse by other drivers.
+> > 
+> > Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+> > ---
+> >  drivers/net/intel/common/tx_scalar_fns.h | 218 ++++++++++++++++++
+> >  drivers/net/intel/ice/ice_rxtx.c         | 270 +++++------------------
+> >  2 files changed, 270 insertions(+), 218 deletions(-)
+> > 
+> > diff --git a/drivers/net/intel/common/tx_scalar_fns.h
+> > b/drivers/net/intel/common/tx_scalar_fns.h
+> > index f88ca7f25a..6d01c14283 100644
+> > --- a/drivers/net/intel/common/tx_scalar_fns.h
+> > +++ b/drivers/net/intel/common/tx_scalar_fns.h
+> 
+> <snip>
+> 
+> > +typedef void (*write_ts_tail_t)(struct ci_tx_queue *txq, uint16_t ts_id);
+> > +
+> > +struct ci_timesstamp_queue_fns {
+> 
+> typo: timesstamp
+> 
+> > +	get_ts_tail_t get_ts_tail;
+> > +	write_ts_desc_t write_ts_desc;
+> > +	write_ts_tail_t write_ts_tail;
+> > +};
+> > +
+> > +static inline uint16_t
+> > +ci_xmit_pkts(struct ci_tx_queue *txq,
+> > +	     struct rte_mbuf **tx_pkts,
+> > +	     uint16_t nb_pkts,
+> > +	     ci_get_ctx_desc_fn get_ctx_desc,
+> > +	     const struct ci_timesstamp_queue_fns *ts_fns)
+> > +{
+> > +	volatile struct ci_tx_desc *ci_tx_ring;
+> > +	volatile struct ci_tx_desc *txd;
+> > +	struct ci_tx_entry *sw_ring;
+> > +	struct ci_tx_entry *txe, *txn;
+> > +	struct rte_mbuf *tx_pkt;
+> > +	struct rte_mbuf *m_seg;
+> > +	uint16_t tx_id;
+> > +	uint16_t ts_id = -1;
+> > +	uint16_t nb_tx;
+> > +	uint16_t nb_used;
+> > +	uint16_t nb_ctx;
+> > +	uint32_t td_cmd = 0;
+> > +	uint32_t td_offset = 0;
+> > +	uint32_t td_tag = 0;
+> > +	uint16_t tx_last;
+> > +	uint16_t slen;
+> > +	uint16_t l2_len;
+> > +	uint64_t buf_dma_addr;
+> > +	uint64_t ol_flags;
+> > +	union ci_tx_offload tx_offload = {0};
+> > +
+> > +	sw_ring = txq->sw_ring;
+> > +	ci_tx_ring = txq->ci_tx_ring;
+> > +	tx_id = txq->tx_tail;
+> > +	txe = &sw_ring[tx_id];
+> > +
+> > +	if (ts_fns != NULL)
+> > +		ts_id = ts_fns->get_ts_tail(txq);
+> > +
+> > +	/* Check if the descriptor ring needs to be cleaned. */
+> > +	if (txq->nb_tx_free < txq->tx_free_thresh)
+> > +		(void)ci_tx_xmit_cleanup(txq);
+> > +
+> > +	for (nb_tx = 0; nb_tx < nb_pkts; nb_tx++) {
+> > +		uint64_t cd_qw0, cd_qw1;
+> > +		tx_pkt = *tx_pkts++;
+> > +
+> > +		ol_flags = tx_pkt->ol_flags;
+> > +		td_cmd = CI_TX_DESC_CMD_ICRC;
+> 
+> Why change this initialisation from 0 in the ice code to this value in the common code?
+> 
+The spec specifies that this bit is reserved and should be set to 1.
