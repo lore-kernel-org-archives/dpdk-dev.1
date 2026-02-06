@@ -2,36 +2,36 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57226EE20BC
-	for <dpdk-dev@archiver.kernel.org>; Fri,  6 Feb 2026 17:05:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDE79EE20B6
+	for <dpdk-dev@archiver.kernel.org>; Fri,  6 Feb 2026 17:05:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9C43C40654;
-	Fri,  6 Feb 2026 18:04:43 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id A5ECF4065B;
+	Fri,  6 Feb 2026 18:04:44 +0100 (CET)
 Received: from office2.cesnet.cz (office2.cesnet.cz [78.128.248.237])
- by mails.dpdk.org (Postfix) with ESMTP id 737C64042C
+ by mails.dpdk.org (Postfix) with ESMTP id 879F040431
  for <dev@dpdk.org>; Fri,  6 Feb 2026 18:04:39 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cesnet.cz;
  s=office2-2020; t=1770397479;
- bh=yL/BOSchP/ZTqvv7SPOIkpzybj/fk8N+JsdsxXvssZM=;
+ bh=AHjsR6GYioKIH0KMD3W8KFEbA2ZL6aa16zg8V1/aBKQ=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References;
- b=lXh+hxVGlnkde4f7qVJFRcop7fR4uns0Klz3Hah0lnxo8EpPCMfQBnbr2ALYdBsQC
- eFBmMwljqYVCjEmcmY05qDclS3e+7HQQMbtsvaGx2JYLQo+5i+leOQo5WNeJDYFxny
- xssT+kk2nP0eNS1mG4M5r8wieDAM35TA8+gLA3x/NbZtTdtg/6OkaC0AnXf6NXAtXc
- ZMOGbMndy0jVURxIBKGfVGjDXW+xnkGDnLbJZG/pWCGSr5cXlX11e6TpTccTKUvZP9
- VwjaYlzMI9/ET1LGy1CqHMfOnkEu0ASEUONCitmYrk8ytMk6oS2KpSsKZ1VZu3Dgta
- 7NCi5+RPbI/3A==
+ b=gQsuoew3SUjRXI0ZD7qTxUGKPpmCLj0spxR7imEhg2Up2ij3KnRs3ub1onghZBl9C
+ BJak2065TvyCmMHpHBQ9pLJW82zuJHAej3vjqX2EsL684aMnVEPJVClMSxZCLx76FW
+ oc994ihAGwjdRklZDXJjdHtkU5STlWVL4Zhsgo4Lq/OPJm9P4+tBzOUV+TdJ7rA7dZ
+ NZObD+0SE/hv+no9wiV7s1Xvv2T+CjkTsVEXgiUs9rVj/A0v7kttRFqeGDh3A+Oiq2
+ ApooyTUN8Pk0ppnP3ovyDWpbE8bYNTgpK2+Jq7xMLxkDhQtNa2SdR1pp+0A353ALsG
+ jQjkcH2qujU6Q==
 Received: from emil.cesnet.cz (gtx107.cesnet.cz [IPv6:2001:718:812:27::107])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by office2.cesnet.cz (Postfix) with ESMTPSA id 454891180081;
+ by office2.cesnet.cz (Postfix) with ESMTPSA id 5EF051180072;
  Fri,  6 Feb 2026 18:04:39 +0100 (CET)
 From: spinler@cesnet.cz
 To: dev@dpdk.org
 Cc: Martin Spinler <spinler@cesnet.cz>
-Subject: [PATCH 3/7] net/nfb: support real link-up/down config
-Date: Fri,  6 Feb 2026 18:04:31 +0100
-Message-ID: <20260206170435.302184-4-spinler@cesnet.cz>
+Subject: [PATCH 4/7] net/nfb: support setting RS-FEC mode
+Date: Fri,  6 Feb 2026 18:04:32 +0100
+Message-ID: <20260206170435.302184-5-spinler@cesnet.cz>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260206170435.302184-1-spinler@cesnet.cz>
 References: <20260206170435.302184-1-spinler@cesnet.cz>
@@ -52,26 +52,53 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Martin Spinler <spinler@cesnet.cz>
 
-Use the standard PMA reset bit in the MDIO registers
-to configure of the link-up/link-down state.
+Enable basic configuration of the RS-FEC link mode over MDIO.
 
 Signed-off-by: Martin Spinler <spinler@cesnet.cz>
 ---
- drivers/net/nfb/nfb_ethdev.c | 36 +++++++++++++++++++++++++++++-------
- 1 file changed, 29 insertions(+), 7 deletions(-)
+ drivers/net/nfb/nfb_ethdev.c | 62 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 62 insertions(+)
 
 diff --git a/drivers/net/nfb/nfb_ethdev.c b/drivers/net/nfb/nfb_ethdev.c
-index 437aed9ae7..950754f4cf 100644
+index 950754f4cf..b927d006e7 100644
 --- a/drivers/net/nfb/nfb_ethdev.c
 +++ b/drivers/net/nfb/nfb_ethdev.c
-@@ -410,6 +410,29 @@ nfb_eth_link_update(struct rte_eth_dev *dev,
+@@ -575,6 +575,66 @@ nfb_eth_fw_version_get(struct rte_eth_dev *dev, char *fw_version,
  	return 0;
  }
  
 +static int
-+nfb_eth_dev_set_link(struct pmd_internals *intl, bool val)
++nfb_eth_fec_get(struct rte_eth_dev *dev, uint32_t *fec_capa)
 +{
 +	int reg;
++	struct pmd_internals *intl = dev->process_private;
++	struct mdio_if_info *if_info;
++
++	*fec_capa = 0;
++	if (!intl->max_eth)
++		return 0;
++
++	if_info = &intl->eth_node[0].if_info;
++
++	reg = nfb_mdio_if_read_pma(if_info, NFB_MDIO_PMA_RSFEC_CR);
++	if (reg < 0)
++		return -EIO;
++
++	*fec_capa = (reg & NFB_MDIO_PMA_RSFEC_CR_ENABLE) ?
++			RTE_ETH_FEC_MODE_CAPA_MASK(RS) :
++			RTE_ETH_FEC_MODE_CAPA_MASK(NOFEC);
++
++	return 0;
++}
++
++static int
++nfb_eth_fec_set(struct rte_eth_dev *dev, uint32_t fec_capa)
++{
++	int ret;
++	uint32_t fec_capa2 = 0;
++	int reg;
++
++	struct pmd_internals *intl = dev->process_private;
 +	struct mdio_if_info *if_info;
 +
 +	if (!intl->max_eth)
@@ -79,63 +106,39 @@ index 437aed9ae7..950754f4cf 100644
 +
 +	if_info = &intl->eth_node[0].if_info;
 +
-+	reg = nfb_mdio_if_read_pma(if_info, NFB_MDIO_PMA_CTRL);
-+	if (reg < 0)
-+		return reg;
++	if (fec_capa & RTE_ETH_FEC_MODE_CAPA_MASK(AUTO))
++		return -EINVAL;
 +
-+	/* Update PMA Reset flag if necessary (Reset flag set means link down) */
-+	if ((reg & NFB_MDIO_PMA_CTRL_RESET) != (val ? 0 : NFB_MDIO_PMA_CTRL_RESET)) {
-+		reg ^= NFB_MDIO_PMA_CTRL_RESET;
-+		return nfb_mdio_if_write_pma(if_info, NFB_MDIO_PMA_CTRL, reg);
-+	}
++	reg = nfb_mdio_if_read_pma(if_info, NFB_MDIO_PMA_RSFEC_CR);
++	if (reg < 0)
++		return -EIO;
++
++	reg = (fec_capa & RTE_ETH_FEC_MODE_CAPA_MASK(RS)) ?
++			(reg | NFB_MDIO_PMA_RSFEC_CR_ENABLE) :
++			(reg & ~NFB_MDIO_PMA_RSFEC_CR_ENABLE);
++	nfb_mdio_if_write_pma(if_info, NFB_MDIO_PMA_RSFEC_CR, reg);
++	ret = nfb_eth_fec_get(dev, &fec_capa2);
++	if (ret)
++		return ret;
++
++	if (fec_capa != fec_capa2)
++		return -EINVAL;
++
 +	return 0;
 +}
 +
- /**
-  * DPDK callback to bring the link UP.
-  *
-@@ -422,17 +445,16 @@ nfb_eth_link_update(struct rte_eth_dev *dev,
- static int
- nfb_eth_dev_set_link_up(struct rte_eth_dev *dev)
- {
--	struct pmd_internals *internals = (struct pmd_internals *)
--		dev->process_private;
--
-+	struct pmd_internals *internals = dev->process_private;
- 	uint16_t i;
-+
- 	for (i = 0; i < internals->max_rxmac; ++i)
- 		nc_rxmac_enable(internals->rxmac[i]);
- 
- 	for (i = 0; i < internals->max_txmac; ++i)
- 		nc_txmac_enable(internals->txmac[i]);
- 
--	return 0;
-+	return nfb_eth_dev_set_link(internals, true);
- }
+ static const struct eth_dev_ops ops = {
+ 	.dev_start = nfb_eth_dev_start,
+ 	.dev_stop = nfb_eth_dev_stop,
+@@ -602,6 +662,8 @@ static const struct eth_dev_ops ops = {
+ 	.mac_addr_add = nfb_eth_mac_addr_add,
+ 	.mac_addr_remove = nfb_eth_mac_addr_remove,
+ 	.fw_version_get = nfb_eth_fw_version_get,
++	.fec_get = nfb_eth_fec_get,
++	.fec_set = nfb_eth_fec_set,
+ };
  
  /**
-@@ -447,17 +469,17 @@ nfb_eth_dev_set_link_up(struct rte_eth_dev *dev)
- static int
- nfb_eth_dev_set_link_down(struct rte_eth_dev *dev)
- {
--	struct pmd_internals *internals = (struct pmd_internals *)
--		dev->process_private;
-+	struct pmd_internals *internals = dev->process_private;
- 
- 	uint16_t i;
-+
- 	for (i = 0; i < internals->max_rxmac; ++i)
- 		nc_rxmac_disable(internals->rxmac[i]);
- 
- 	for (i = 0; i < internals->max_txmac; ++i)
- 		nc_txmac_disable(internals->txmac[i]);
- 
--	return 0;
-+	return nfb_eth_dev_set_link(internals, false);
- }
- 
- static uint64_t
 -- 
 2.53.0
 
