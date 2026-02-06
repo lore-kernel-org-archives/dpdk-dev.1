@@ -2,59 +2,59 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A06EFEE2082
-	for <dpdk-dev@archiver.kernel.org>; Fri,  6 Feb 2026 10:23:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BE4EEE2082
+	for <dpdk-dev@archiver.kernel.org>; Fri,  6 Feb 2026 10:25:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CCA7B4029A;
-	Fri,  6 Feb 2026 11:23:48 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 43C854029A;
+	Fri,  6 Feb 2026 11:25:44 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
- by mails.dpdk.org (Postfix) with ESMTP id 50E6B40293
- for <dev@dpdk.org>; Fri,  6 Feb 2026 11:23:47 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id F1B9840293
+ for <dev@dpdk.org>; Fri,  6 Feb 2026 11:25:41 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1770373427; x=1801909427;
+ t=1770373542; x=1801909542;
  h=from:to:cc:subject:date:message-id:references:
  in-reply-to:content-transfer-encoding:mime-version;
- bh=yqE58ywQY815aC1tTuE184qot1cHa7yy8RCMNsswyeg=;
- b=m+Kzbdm6i5KqDf08jsHilEvYe/lCpEy9LBp1QAcb6o9lJIoik0Kh2fX7
- tmJIQEzUhM/fkkk1MUTVmH+m/Tj7SIZuV1h2oxAdS9Zo63hXqhujkjHo3
- 1SaTbRObMtPLKlA0/sP2wg1HlR+PSc7toWjCXljYKMzLB+3XUmyZHNCH1
- zO1c/+C0HoAAysn7umgd+sbgmA0QJ6Xg2pJMr09bCr3xeR58Dfz5KN18Y
- cmCrQSYct0cCj7d8o3Se6YCRrH7iSchbMxrY6E2moNNxzrGLaBjUFe2Mt
- Lpgp+k3K8BAydSsGm0ALea1qnNSGsDt6ZmbCkbnuoeL9MtJHQqxUQ4b4y g==;
-X-CSE-ConnectionGUID: EPYB/6yWQIKANeEY5OE+ug==
-X-CSE-MsgGUID: BTbQOcH3SHWyyHTnaTAJLA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11692"; a="82317114"
-X-IronPort-AV: E=Sophos;i="6.21,276,1763452800"; d="scan'208";a="82317114"
+ bh=F5sxZ4ra48weIWHma8qiUDz5P2xe2mf4D9YTOb9VmOA=;
+ b=DN/A4ppGRvhz3G0Drf5h7Qw9L+V3mP7f4Ji242/gCdO5x1zIJpCmQPY7
+ elKBD5mX5f/hEcxhldt9M00V8PA3CJ/A6lXRZV7RGV90XWkZB5v6aOWvV
+ OVZUL9LcG7AQyET7rEAHGUZKqDiflOc6pVRY2mA1ndDjyrEKKg2peoc3s
+ Z7xBKtMRodC0HUIvzIjMb02jIGjR7xbXnXWq/d7HVzYWLpvqtZ/9dUm6l
+ qDkKp3f3goi+5G7Z2KTVEgZc7gsWx1Q5qZeyQyiswYgNR02wP8jKkp889
+ 7YERb2+RsVE/wprq2RsjJo/hzS0gAWTW26j/oce9/BWOk0C/x5Kl195gZ w==;
+X-CSE-ConnectionGUID: dzxss0RIQWSwfIYiFwG/nQ==
+X-CSE-MsgGUID: uJtKNRsXR/u9Y86fvET9qA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11692"; a="82317279"
+X-IronPort-AV: E=Sophos;i="6.21,276,1763452800"; d="scan'208";a="82317279"
 Received: from fmviesa001.fm.intel.com ([10.60.135.141])
  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 06 Feb 2026 02:23:46 -0800
-X-CSE-ConnectionGUID: xGKJ7KkAQk+CHZgk/nTnxw==
-X-CSE-MsgGUID: abClwYnTTsS67MED8gxsWA==
+ 06 Feb 2026 02:25:41 -0800
+X-CSE-ConnectionGUID: quY+KTruS1yXqwizgR62yw==
+X-CSE-MsgGUID: cxru4HIPShCPoFQMBr3+LQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,276,1763452800"; d="scan'208";a="241312735"
+X-IronPort-AV: E=Sophos;i="6.21,276,1763452800"; d="scan'208";a="241312826"
 Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 06 Feb 2026 02:23:46 -0800
+ 06 Feb 2026 02:25:41 -0800
 Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
  fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.35; Fri, 6 Feb 2026 02:23:45 -0800
+ 15.2.2562.35; Fri, 6 Feb 2026 02:25:40 -0800
 Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
  FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.35 via Frontend Transport; Fri, 6 Feb 2026 02:23:45 -0800
-Received: from BYAPR05CU005.outbound.protection.outlook.com (52.101.85.55) by
+ 15.2.2562.35 via Frontend Transport; Fri, 6 Feb 2026 02:25:40 -0800
+Received: from BYAPR05CU005.outbound.protection.outlook.com (52.101.85.66) by
  edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.35; Fri, 6 Feb 2026 02:23:45 -0800
+ 15.2.2562.35; Fri, 6 Feb 2026 02:25:40 -0800
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ikNNv9b9zqnfwUj6UmxfXqIuufGmp273AkwGg4jPYRnqogSZvVrZxB9OHYK+lb+mzYbSsZ4a4T9eDzvBz7C/7nXjbojk1b13DiZqG38WqrliSQsJ6hLEUZoqyTq4aDnb86YNYXYFPGtYkt1rDfkKMBsftKOUN8WCWf/vEFnXs+Dmx9yjDEBHwVGVYh/T6NDSSWRN0Y4CobMPnSaR2F14+haQe5olCdBqoYqP9wLHDRuCr7lZcYB9sc99HUY6RPVRb7w6uXbkuhFokgMpUdFhVrxo1Wpck76itXluyLKp4yjtC7/AMfyNFI6jeL6JlRECvqcVw8TLWgTbFSaQq4P9lA==
+ b=Itoz3DxZ3vEWMSxcnE3Ho59ehps+ddoURzsi1V+yaeC7KU/aXD0sstyNOtcM0KUcVDfXjk+9DcOGLRWOyJFXDHDCpb9NHZq+r/jD92JcgTj10EX1LGYu/oQpf7nsJGysta8ILaj0tWKZhgn4IyG038XxnBkaY0iUi7cpNpJVEyqVXR2Y6OmlWSdCBUlaOYnhqtBi8Z9S60wkuoK9R90jatUK/JZxM96DkYMIR33bYhuj9TW1hwrLgQqYHlVzGmyzRqNaOD+5iLQ//VNNRVG+cIC5yaMuoK1dfWejHjGZ1jHH5jinwrt0EjwyAv+o9ziqN/Ao2xsF80vtdfEz7FfqZg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=W6Yo+AF90rd18P2M6FeojAX5hduoLnx91QmXfCbnKX8=;
- b=CccMV0pmLEOzCPWK1no/5MQtTFe5duQ3RBSDkrGNqBB+4sfsAG1jP5AEgkW9s3GB9IBQ5MYaqpEqDz0HpwCHgAyyRoGfn9Qz9GWnBeiXS0kivNp1C7B2eeW2hKIMEeXSgNzfrT8oPVlSLFYj9BO87ukcFA6xV9k5q+gbscMtNPGhFG8vhMT3HGtZF+n+OqNZuoQU9QL9SxRBs9sGUCQ0m9R7WNu+MRUHfTGEjDJHHIkAAZmXV31sKX8QFlYQ5O0rIlobJrtB+VmrF3sy2Pk/nu/v6QSA2Bi0cbY+1MUdq+i3ou/T+cxe4dLhYkvMTy14+BDRQEKcGXdWMyk14NbxqA==
+ bh=kv54LKqFaOg+f0/xD18sdm+ovQwiLKB9AzTpSa0DCEk=;
+ b=UjnUCfdc4T40juI8FHv/jB1F1ImrbKesbp7izKm5/tHbOPw0kzQtVUtzvHEo3mRVD/wSxCCr7TLVvKnOsMJ/m4LZb8SBkAGB6B3liqSPIWcKe9V3yXXwf4GpsBMViaCK68sn6TAy6B89QKr6r4mkwJoS9MTOe2/ynGUsXwrZJfxpU/mAPgQWvOR9z2zmwQZVG9zRaVjMssPkDRgeYCFn9eP4bbltNhRM9rhhzAhvKN1UUfzcij65sKVXPG15XSXQKcMjUbeWX1R0N3iEXweY1Ry1ZlC8Nh/zRPezVm8lPnNvJ7nSyX+Fg6U1VVciCxpQ1uzDTSWUI/gM9/St5+2Vsw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
@@ -62,26 +62,29 @@ Received: from DM3PPF7D18F34A1.namprd11.prod.outlook.com
  (2603:10b6:f:fc00::f32) by SA2PR11MB5210.namprd11.prod.outlook.com
  (2603:10b6:806:fa::23) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9587.15; Fri, 6 Feb
- 2026 10:23:44 +0000
+ 2026 10:25:36 +0000
 Received: from DM3PPF7D18F34A1.namprd11.prod.outlook.com
  ([fe80::5f81:9e50:1761:ca54]) by DM3PPF7D18F34A1.namprd11.prod.outlook.com
  ([fe80::5f81:9e50:1761:ca54%7]) with mapi id 15.20.9587.013; Fri, 6 Feb 2026
- 10:23:43 +0000
+ 10:25:36 +0000
 From: "Loftus, Ciara" <ciara.loftus@intel.com>
 To: "Richardson, Bruce" <bruce.richardson@intel.com>, "dev@dpdk.org"
  <dev@dpdk.org>
-CC: "Richardson, Bruce" <bruce.richardson@intel.com>
-Subject: RE: [PATCH v3 05/36] net/intel: create separate header for Tx scalar
- fns
-Thread-Topic: [PATCH v3 05/36] net/intel: create separate header for Tx scalar
- fns
-Thread-Index: AQHckd2isdc81VuWKEuup0+sVAEEdLV1f0Jg
-Date: Fri, 6 Feb 2026 10:23:43 +0000
-Message-ID: <DM3PPF7D18F34A1FE170818FAAF21F014D28E66A@DM3PPF7D18F34A1.namprd11.prod.outlook.com>
+CC: "Richardson, Bruce" <bruce.richardson@intel.com>, "Medvedkin, Vladimir"
+ <vladimir.medvedkin@intel.com>, "Burakov, Anatoly"
+ <anatoly.burakov@intel.com>, "Wu, Jingjing" <jingjing.wu@intel.com>, "Shetty, 
+ Praveen" <praveen.shetty@intel.com>
+Subject: RE: [PATCH v3 06/36] net/intel: add common fn to calculate needed
+ descriptors
+Thread-Topic: [PATCH v3 06/36] net/intel: add common fn to calculate needed
+ descriptors
+Thread-Index: AQHckd2oep47vm7vq0q6+8z8s+bl8bV1gd7w
+Date: Fri, 6 Feb 2026 10:25:36 +0000
+Message-ID: <DM3PPF7D18F34A1ED8AB89FC2F13E0E152F8E66A@DM3PPF7D18F34A1.namprd11.prod.outlook.com>
 References: <20251219172548.2660777-1-bruce.richardson@intel.com>
  <20260130114207.1126032-1-bruce.richardson@intel.com>
- <20260130114207.1126032-6-bruce.richardson@intel.com>
-In-Reply-To: <20260130114207.1126032-6-bruce.richardson@intel.com>
+ <20260130114207.1126032-7-bruce.richardson@intel.com>
+In-Reply-To: <20260130114207.1126032-7-bruce.richardson@intel.com>
 Accept-Language: en-IE, en-GB, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -90,83 +93,83 @@ authentication-results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=intel.com;
 x-ms-publictraffictype: Email
 x-ms-traffictypediagnostic: DM3PPF7D18F34A1:EE_|SA2PR11MB5210:EE_
-x-ms-office365-filtering-correlation-id: 0ee2305c-c078-44e0-1c8c-08de6569ce39
+x-ms-office365-filtering-correlation-id: f95d568b-70ff-469b-40b4-08de656a112f
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: BCL:0; ARA:13230040|376014|1800799024|366016|38070700021;
-x-microsoft-antispam-message-info: =?us-ascii?Q?V4aFiYIsFYW9lvq/yevxZkvdM8/K4ptZeYokDW0+KbzxQDq1ZTAJ6qcdB/o8?=
- =?us-ascii?Q?FCnszDBWGI8Ai1ye9Wmc1rid4+8tHa9sN4tnzmqPhHcG7cNbJCk+Xd/SKRv/?=
- =?us-ascii?Q?G2m7Xg4jPFO9fLQklDUCxXM3hqpjuiwuB1DEmVIfgi9WRnEv9dysMXIfViru?=
- =?us-ascii?Q?6e6aq2E4GdAdPgztiDeao/uDAjbuSKpuRMiCmjVl273YYUj51Qc1fPU8Ctoq?=
- =?us-ascii?Q?yJFpmG6419c/rPI2CTpjstcEN41iQrUv1bTvTW6t2KDPX7y69Rpvy6D+oVR/?=
- =?us-ascii?Q?AWsAJqCB+aw5GmSZ5DH/wXDk4p4L5YwUDCsctJx/GciUc3g9MQbicMGso771?=
- =?us-ascii?Q?VBsTFNEia4uy1ceonyY9o+hDcDUyQG+PBhAILZXejsjc2zgbKJzwMLZdSgWl?=
- =?us-ascii?Q?3a7LDHb0TWa+WFEPxXnnTpNRXsNTELTNsJjpsbv+KVjkiGVUwI0uiF2hkRUb?=
- =?us-ascii?Q?DbQBX7w7h+BP0f1Cmt/8xMpJKy/8H8SXQAu7MVSr6K3QK6gnt6Uz82dDVh6F?=
- =?us-ascii?Q?AQZfZwYr/ZCJYFabH1i6SF2vFEsDv4hEMToEeLN8QIz2d06K8e0HbM1ux58i?=
- =?us-ascii?Q?CJOtDptKehWAqeKG+qSdTK/kWUsdLQ4w79GS29bOGmmP+HIKvD1SzcaGgUx2?=
- =?us-ascii?Q?4m9lzBeZ+Wy/28R2NWXBFv33nslclC7OgbRo8euWiqY4DiB1eHxaxYWuSPyu?=
- =?us-ascii?Q?ly8A4TrtWOorz1uFBlRgAUer3PrHeKzQCw2JcAWzf2uH1nnvTgS2ez8miAF1?=
- =?us-ascii?Q?Cs77VlpnfQXiXBYkUS/tdZXnym/1tQVCXyFHnN5VTZxNhdD6jloDEBcerfxR?=
- =?us-ascii?Q?Ad8n5oK6Ka+zMpwJwodLWYqCcg+MBAmDNqfOOF0CZj59K3Tf4O2Gz69jFJt5?=
- =?us-ascii?Q?fJPToUtmCwn1nk4J9ZZNnGMUfeVSFXs2oFiuHjp8Yh/9XeC46+HLU4ZDizSt?=
- =?us-ascii?Q?mSaNgZrY+zbMO/uVGwiFvnlB8iK8CKN/K1jaw1CJZPVNCGlt1EnK+1BUyYpH?=
- =?us-ascii?Q?gQ74xFnN9mxa80GbmPEsP6J3+nePldCd3R6grM+jZhwPN+oZJNf/Zw/Fd15m?=
- =?us-ascii?Q?1NuiMG49TG8138InhHn0xoGeiEGKPGaua/5F8MkbF1jKsznVJ1DlYw7IEad1?=
- =?us-ascii?Q?cy3H1c1BY1bUGbyGIFkGLlNV5AR+saTqIMQaG2K832i4tVme+KZN0wspDDTC?=
- =?us-ascii?Q?6VbA5IVsQCmg0HoDDSvyihuX7PgyaSW8MTnNSj6q3+shgrwSFJCg44Miq08y?=
- =?us-ascii?Q?rRQq7Hp8Uil4Gp2MYcW+1wgV/rE8XZfZH0jes3Sr33DaAkkpeFtGxa72M0zs?=
- =?us-ascii?Q?l7rjOh+Jc86grLft2I7qqnjmfvZppiS47sGqBSa2L2kJytfXOil1JueBhbUc?=
- =?us-ascii?Q?LRhNd8f5Z54mlksai1I5/tUx7b7icGEct3vmBFLeF3THgLuOVREJJlkvITrU?=
- =?us-ascii?Q?MuUIHfyXCLBu8sMMMgTkoUEragjDTSp3HaPIv5mOxhokjT3zSiIq06KQgqU0?=
- =?us-ascii?Q?6wwQGKA+HEjTG/kWzahTFCh8ZsPjlycnlkY8Rpifl5Uv0ihKGNQc35nixS46?=
- =?us-ascii?Q?kvCmehFbbLbVsBkZFue5/lFsG0Nw1eK6h1jzw6a9nqZaHJDGi/yOhVZ3XnFt?=
- =?us-ascii?Q?DW4zFv/HSid9H0e1GwibWX4=3D?=
+x-microsoft-antispam-message-info: =?us-ascii?Q?zgjAsfCD9CVm/6t1+sdKtRLMvlUYJV67OKyAF8mirIOcSgcEhWLwZPt98Ch8?=
+ =?us-ascii?Q?hKbH2gdYS0An1FCu0CMT5oR+LQ0fdSx4/OqK06l9nM+NBhxromLgz1h7g8SA?=
+ =?us-ascii?Q?3TCFn1K0Cfcp4HNzwq519AKigTnSLOYeI8vJ6MCe4mrjvC27QuLfntbZSFpo?=
+ =?us-ascii?Q?OLqoW3rlTXhOTSo79OkZOCylOpqCaYWOfyuHmyFtIV3nT6MED7SxvmwqUnyo?=
+ =?us-ascii?Q?jF3+ArsE+ui3PsKm6W8haBylJZkI1c+mQdA4RMRqBA2REuXjHvtvBbHibt1c?=
+ =?us-ascii?Q?pnW9eqmFI/yVljVW2Zx0DkxwzH5EI6rud0KTxZ+Pqxm4H8nF+iRq+Ml5X+Lo?=
+ =?us-ascii?Q?hI4nc0/QxBslfiEcjmIk6J44/NoNT+gmEpvZ9cu61chjbxn8lUUEDGjgKdpn?=
+ =?us-ascii?Q?JoE3dtdP3YT8DawqVbluBs8tDyQUV+vdINVM/cfbpFaLxKiQGMR/0X4+gOT1?=
+ =?us-ascii?Q?n0NDNBM6FtufwMP2YrrOvFZ95WwEWuzL2SwaelOkIV+15YSlND6WSH08klhk?=
+ =?us-ascii?Q?KqHLCuSv3Y8oVWd+7Ex3QMGgYWRHqKAEQpd1SI7sjl3xJ7CrYQR6ZARIAt7l?=
+ =?us-ascii?Q?i0y3zCXd1FRuGWQKo665N52ZgZMU90+Zp/b3xg/q3B+WrwV1Xmi8xCKjpeIJ?=
+ =?us-ascii?Q?VOPYrx1Qd0l7ihY7dRfnnGQ80vEHszC9zCEG+VGmsRpSeV9jzOLSQWIfzx2y?=
+ =?us-ascii?Q?4xnIyWX1v4PCJ6ssvahVZWFZvbHGWf8SUwLxr3Sk04D3AmqMlEzPVcaNBBG2?=
+ =?us-ascii?Q?Xa5+5beOd5H3f8tkJJwgaIf7L6XgFzxA7TUWFzyw/5O4rh+nvMAJzRQbsAaH?=
+ =?us-ascii?Q?AHLo86cwllaCZyis+pJmZSluKr3+t0w6JvdNAcvKbFnOxdE/JC05t6d39HY5?=
+ =?us-ascii?Q?2WoNulfPYv0NQemugnvyQ4oKB5z4WpNXJouzkXDmOl9STe1AhxIecKT8YIXl?=
+ =?us-ascii?Q?LvLMI7dM1ziP6u7Rz9u196AwcgZZrsa4mjHp9sVMRtbOcFusfnjvZ/XRw8P/?=
+ =?us-ascii?Q?ojPUZxLypq04icteZmKwemMTQS6654GVJfNbLLS2iV92++nBiSm3R6RZAKnB?=
+ =?us-ascii?Q?VRs3RoiPS0kMpGhCyrz148GPnbeaGWs7YElgtaCBF5uKj3C0Nfbj3A/ZoBuT?=
+ =?us-ascii?Q?yW4zBQspOnHufgQjDdVcRSM3xSpCGronTEILirWo/KVGam7Mm2NmuRo+BLqB?=
+ =?us-ascii?Q?X04aPal6XkeNxwX8+LWWItowRnOuUZrK8Ierxpcud0yPZkSgRqNdxHZqeJxs?=
+ =?us-ascii?Q?3F3264xVSFniIYFv5qv+SP/bfRUqPcS55GedLRB2sbO/VWrvM0D+w0lfilPQ?=
+ =?us-ascii?Q?DoQycOAf86elgGKPlA1bW+cnD1f7Mt3U+9pdFjd7+u6EvOoBBPY5SnLyaNdc?=
+ =?us-ascii?Q?/xzDRElSmy2KvMj3OsiZLiTznvynw547vm3IgVd2Z91bjjB+CBgtRtM3gwH9?=
+ =?us-ascii?Q?mGw3jQ+mXksKHEGhpA9GeaDY0LSUbyFa7DvSVJEvUlhl8Z4a3j8bC+oLXfvj?=
+ =?us-ascii?Q?WC70PwwDCKl9ERVIOLlQ8aG/WNIfWfbkh4zoaAGe9L6M0yYRzNdUmbumW0il?=
+ =?us-ascii?Q?mpwgoDORUtkuN3cdfkhk7xfwYFxz3Er7yr78kTxuIdXgJVNpNrHMph6L9JZL?=
+ =?us-ascii?Q?KLuU5jvk4CY5ebbNlJ0DgFY=3D?=
 x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:DM3PPF7D18F34A1.namprd11.prod.outlook.com; PTR:; CAT:NONE;
  SFS:(13230040)(376014)(1800799024)(366016)(38070700021); DIR:OUT; SFP:1101; 
 x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?0JUfPt2d14V3jw6FYU//y91t7kt9lERLodHtfGj+mFz5jN0AKd0ote9zoy0L?=
- =?us-ascii?Q?e/w6/MqZOea5NXqQ6YuCBwNd1cUGIAVz9kzAUnttB2g4DM7hmpYGg3ehUc09?=
- =?us-ascii?Q?m4AGFW87uxewwHnAsUCoz2E6XU6O9GXKYfOddUePBiObMfyEmCBbeWtDSNNH?=
- =?us-ascii?Q?mapl9c1DLfbpw1mZuL6cz+kmLJhb1fFe+We0xC17yBMB4BWVOa52KDccSQUu?=
- =?us-ascii?Q?ni/MzV2q6RejFXS54wZXFaZpQkaHqVJ+i1WeqLLiEvqdUI8WioYE7zCldFcc?=
- =?us-ascii?Q?XH+VC2580ibPk506ZDatZNh+QwjgQdyEQ3soYGmJtdvJ3oBZdmIcjgqnaexs?=
- =?us-ascii?Q?wAnMMAvpeqgvbIth+VgkKh1Sxygzub7Rc9wd+L0GuLTJtlPrzeiVeMpYmmvK?=
- =?us-ascii?Q?wb09adPnB0UIMW0KpB7yla2qJzePi4+4q2eps3gSyg/+QKsX9PaV7ZdC9fIp?=
- =?us-ascii?Q?MKnG3FemLnX+oYHsWxYI1hq0gAE94UDOzG3aUaG60dxc/CDzO5OtrGPODXlz?=
- =?us-ascii?Q?81Z0NpspShSuaxyk6oSb28XqvriHIlFhS3kgaxMNNRiUbJYNjjCHFp0HsEVn?=
- =?us-ascii?Q?3+Tzcwa5PTKGu029vZAYFEWA/06q2PnrSI0dCjqb/VO7zGMuaT22oW8XHYGa?=
- =?us-ascii?Q?6lNnihyVh4pSS9V3DF7YXMbNmjIN92Fj0ijNqTBV8JZWcwcGx+2GHwM2NUpH?=
- =?us-ascii?Q?GXCPJxaYtgRC15kVtjr8KPfO9nDwQ8wyPhZ4wkA1MltE2KZFQLqVVFeaTguW?=
- =?us-ascii?Q?UYc+wQHldNniSs/NB2tzpOdhVomXHAAFZb2XoktL4jxrqVsWatJNa4wYLSX+?=
- =?us-ascii?Q?3wmx07wfrrwnc9kSenubUulagUT/gzOa+QHuh9CumXugCqf2qTyNDAZeVuLC?=
- =?us-ascii?Q?4YKL+jXHE7VClY93POnEFTR64srX2zv+YFU3pnd6p+VPLZg4Fsk4TnOvyaFq?=
- =?us-ascii?Q?oc687Lkq9kUYt+U6oW6KZB5k0Xc+fGGIOqoCBpBMJDbBzrF6zmUrsNxy9U7b?=
- =?us-ascii?Q?AtSpIQ1uW1ppXTYbeIpycxkdksiROL6/BBnpK460EAXRXgvqF3FDBFkJepaV?=
- =?us-ascii?Q?QDwCnbAMGdlrc4LtZ80GIdsBw9EYC0OteXWy/xcd/O6Kv2EfawgDZbUjpcoq?=
- =?us-ascii?Q?V2Jv7pTQoQquZnDkr8yNtkIslbDbn/B+P4mhn0mhwekDqFQIxlz0+W4vIZx0?=
- =?us-ascii?Q?DQG+Xey69dfpY0Kpov3HDgW7QTNV8g8rsZRBJUemW1lmrwdh/weVaSMWNP6H?=
- =?us-ascii?Q?YaftkNwPWmHkG7OcdgRUZ1qiFeyxCPq4LZos3j1G7eOt5zrRDTCuLTjhmHZa?=
- =?us-ascii?Q?wNXrJNveG9aqyheo6R8HaeGWSXLSWXzXzicpoKaszNCTZgMQcMOKVSmv6lmL?=
- =?us-ascii?Q?BOn1PKHh21KOdgV3Xq3VpC3qw2R9tUS8j9g3fl+uY0xuUm7Cll0My9HQW0Vo?=
- =?us-ascii?Q?AXDl1V78oracsIUWwjzC6bqSJgqD3hw6rx4eKNKVx4owGNgF8+aMSlVvc/TO?=
- =?us-ascii?Q?UcQHNmrjj26xRMT2p/uh/vubDrSgM7fOmKrQhxv7oiJ+DFTsSFz+ZWFhZ9Yz?=
- =?us-ascii?Q?nBcW+0pVowssQYCcp+TLAj/ioeH3XebNPApr0sojV2sSzTsE7ugkWMeD65zM?=
- =?us-ascii?Q?vR5hZpM/Gfksy3OZDHlD8dFoRE7Kthn7E0eScvSlcpTkVnij48iaiyO6OYs5?=
- =?us-ascii?Q?8rYv9FkcV/McSwF/+emaUv0hGzVdnHdsKkQMUsIV1aFLT/+maViU+4G2JvoE?=
- =?us-ascii?Q?7ThldklD/w=3D=3D?=
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?amYzapD+tcbSGlkhjzjTIopS0RY2wOj5cnJBmmDi1q6BRL5byOWanExgKyc6?=
+ =?us-ascii?Q?AaQ1lV7aQo7uScmj7Uxk+b5StliDDE5ZrDS3Q0AC70JKOQnbT3rey6th2SHA?=
+ =?us-ascii?Q?Ruo9uIBPwDUMtSI9YXD6c163kIi7VYF3GN93uxbFcWlcGo/QDA4FJrq919Bc?=
+ =?us-ascii?Q?cPv/TtKWW5XksApf6iR+AH1OXHq5+bg+xc/U9vDVUGjQf1iBQ4/mdsvRg6jR?=
+ =?us-ascii?Q?DJMyJO6oM4aH1RDDY9KehhbQ4irgOfrO1b6AP5mWpQMCoIEfHBdplH6ZhlQf?=
+ =?us-ascii?Q?hQB42jQlIX9ZwLIpsD7ez9MHw4TLO1nNRJXWprzsU1+RVzotbnX+MDWdxKXA?=
+ =?us-ascii?Q?FAVHx5CJBOmWcQ3z+uYWcDmexjYmdAk7cyTSg4F7hLCGf/zjO++f1DognU9z?=
+ =?us-ascii?Q?WUID+uzUUOlm5TeM6Ejzxddz2XbT9F2/mabMCkn9PWymNaL60wNB8pBbBKf0?=
+ =?us-ascii?Q?+fTQD2wuu8FwKdumS5/GF59+Z+KjwaOR5Q2CaHEq6gIyfZgN3wSPK9tMvQ3K?=
+ =?us-ascii?Q?mu3Y9okuWn9fZa3gOMnT8GZqmcSsMTlja93gWxxKa46TVDmJHUfpSPFeMn+T?=
+ =?us-ascii?Q?M7igRVGp1djBSfk7iKLQ3hitGnL0LoN0xmWITU8QkdppwS9Hk2RjNljt7zuR?=
+ =?us-ascii?Q?DUrPmesxpkEwF6z/iIrOZeteP2gMSFfmHjzK5XOz1UIb49hzi+XHkPUfFKC6?=
+ =?us-ascii?Q?DsDwtG2+4tL7LWqKJHJFNBOOOT3UBg7F7mkxVF5aUWI02Jv+gy9fk5bHyfpe?=
+ =?us-ascii?Q?vR7wCaRMrZ1pYOjvvPJLuEjVtMuMjV6gBOF2Fmb1yL6Zvh2nnR0QpKvmFTxX?=
+ =?us-ascii?Q?UHhFF8In0F2PR6pOBinmQdMgN50xmuyUdkaAYInc/kxX3RnXD7ojQqUYcQ7q?=
+ =?us-ascii?Q?O0unCVCvnzo4guLskGGB7qpiXmi2PbXnml0vuFJ387PXkqQDDt/IlVQMCcrF?=
+ =?us-ascii?Q?sBOFE7Oh3oMyKnDVGoyHSqLJkx7LC6JSxkc/mzQ3lplmXJjdmc9N6fWeDvTe?=
+ =?us-ascii?Q?BtxqGpa3EoMchK1JI+0wpHqC8vhLhV4phg6D8yDLbPCmuIUcpXNbyA5bOOYZ?=
+ =?us-ascii?Q?IdiLBEHKD/NJZCf+zq3Z6RzKTcYFQfJxiB+ds4+pbcg83mzn1PhJhiS9hOv0?=
+ =?us-ascii?Q?ZZDMmiMOdItO3eSgLr+fjglGw6t/z38jh7NAv+UK3zlcYtmfDb77jq6cx+nL?=
+ =?us-ascii?Q?H9vZevgHu10bDDmnjR+SVIKA5Z7KpnA02Po/+prwIOSnJhnScDMYASOVvw0N?=
+ =?us-ascii?Q?0NAl6X9gT9HY07P0gfSgf/A+OAvfiOEm7FvvZe1J2Y1HORUPA6sWcY/Rohke?=
+ =?us-ascii?Q?YqIVEgxtOC8BBLwDIjzRas5LxpreCOvF74YUrRe59GaLbJWsr4hcElZat6jt?=
+ =?us-ascii?Q?gevIB1QSzzpL4nI7pPoq4mXNgpBZCR3GnCwO64Y421AJs4wA10hOY1E8iJKs?=
+ =?us-ascii?Q?M5jQNY3bsZy2IVd2CQGiDGSN/jSMwTKZquQ5IFBOuJpEwPOnqF/VhOUoqfo1?=
+ =?us-ascii?Q?hS/oFZ8mWjvyhkkCKELlBYrvi30B7CmF3eIGqjCyraFwgZg6Ri0bHcCL+8Eb?=
+ =?us-ascii?Q?1WbzSGt65aX9v/KliRrYDBlGyiWk0s2qvUv4qojOafvV+OXUaaHSNaqropcC?=
+ =?us-ascii?Q?/EL+xxYo6t6avacgSIdR4uE7f+7w8sQfDROjnLqXv2/13EI6mABjj4RL+wNo?=
+ =?us-ascii?Q?onWChbiM7YTE8UKyk6O2P/qd+dA+42wMhgvuxZGayEpsBmsy9IsxEpt2Yx2P?=
+ =?us-ascii?Q?EjkZzIc6Cg=3D=3D?=
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-AuthSource: DM3PPF7D18F34A1.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0ee2305c-c078-44e0-1c8c-08de6569ce39
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Feb 2026 10:23:43.8837 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: f95d568b-70ff-469b-40b4-08de656a112f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Feb 2026 10:25:36.1820 (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 7g1Az34tJiXqSzjDW5OS7lAX3ycVE8khjKg1IXstbgBZ4CFmiWMJd0oW3NhrCjXGjFH68+1SEaqRNkx/YDRR0Q==
+X-MS-Exchange-CrossTenant-userprincipalname: jSvCFaVum3gblCyR/00BNqA3/NUyL5oucVXjTdiK6nz2Qfs4A8ZneTTDNVTRNIXPis9zdHD3/bTZGNyS4498dQ==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR11MB5210
 X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
@@ -182,200 +185,231 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> Subject: [PATCH v3 05/36] net/intel: create separate header for Tx scalar=
- fns
+> Subject: [PATCH v3 06/36] net/intel: add common fn to calculate needed
+> descriptors
 >=20
-> Rather than having all Tx code in the one file, which could start
-> getting rather long, move the scalar datapath functions to a new header
-> file.
+> Multiple drivers used the same logic to calculate how many Tx data
+> descriptors were needed. Move that calculation to common code. In the
+> process of updating drivers, fix idpf driver calculation for the TSO
+> case.
+
+Should this fix be split out into a separate patch with a Fixes tag?
+
 >=20
 > Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 > ---
->  drivers/net/intel/common/tx.h            | 58 ++------------------
->  drivers/net/intel/common/tx_scalar_fns.h | 67
-> ++++++++++++++++++++++++
->  2 files changed, 72 insertions(+), 53 deletions(-)
->  create mode 100644 drivers/net/intel/common/tx_scalar_fns.h
-
-Why not create the file when ci_tx_xmit_cleanup was first introduced?
-I prefer the naming tx_scalar.h but keep tx_scalar_fns.h if you feel it's b=
-etter.
-
+>  drivers/net/intel/common/tx_scalar_fns.h  | 21 +++++++++++++++++++++
+>  drivers/net/intel/i40e/i40e_rxtx.c        | 18 +-----------------
+>  drivers/net/intel/iavf/iavf_rxtx.c        | 17 +----------------
+>  drivers/net/intel/ice/ice_rxtx.c          | 18 +-----------------
+>  drivers/net/intel/idpf/idpf_common_rxtx.c | 21 +++++++++++++++++----
+>  5 files changed, 41 insertions(+), 54 deletions(-)
 >=20
-> diff --git a/drivers/net/intel/common/tx.h b/drivers/net/intel/common/tx.=
-h
-> index 03245d4fba..01e42303b4 100644
-> --- a/drivers/net/intel/common/tx.h
-> +++ b/drivers/net/intel/common/tx.h
-> @@ -319,59 +319,6 @@ ci_tx_free_bufs_vec(struct ci_tx_queue *txq,
-> ci_desc_done_fn desc_done, bool ctx
->  	return txq->tx_rs_thresh;
+> diff --git a/drivers/net/intel/common/tx_scalar_fns.h
+> b/drivers/net/intel/common/tx_scalar_fns.h
+> index c79210d084..f894cea616 100644
+> --- a/drivers/net/intel/common/tx_scalar_fns.h
+> +++ b/drivers/net/intel/common/tx_scalar_fns.h
+> @@ -64,4 +64,25 @@ ci_tx_xmit_cleanup(struct ci_tx_queue *txq)
+>  	return 0;
 >  }
 >=20
-> -/*
-> - * Common transmit descriptor cleanup function for Intel drivers.
-> - * Used by ice, i40e, iavf, and idpf drivers.
-> - *
-> - * Returns:
-> - *   0 on success
-> - *  -1 if cleanup cannot proceed (descriptors not yet processed by HW)
-> - */
-> -static __rte_always_inline int
-> -ci_tx_xmit_cleanup(struct ci_tx_queue *txq)
+> +static inline uint16_t
+> +ci_div_roundup16(uint16_t x, uint16_t y)
+> +{
+> +	return (uint16_t)((x + y - 1) / y);
+> +}
+> +
+> +/* Calculate the number of TX descriptors needed for each pkt */
+> +static inline uint16_t
+> +ci_calc_pkt_desc(const struct rte_mbuf *tx_pkt)
+> +{
+> +	uint16_t count =3D 0;
+> +
+> +	while (tx_pkt !=3D NULL) {
+> +		count +=3D ci_div_roundup16(tx_pkt->data_len,
+> CI_MAX_DATA_PER_TXD);
+> +		tx_pkt =3D tx_pkt->next;
+> +	}
+> +
+> +	return count;
+> +}
+> +
+> +
+>  #endif /* _COMMON_INTEL_TX_SCALAR_FNS_H_ */
+> diff --git a/drivers/net/intel/i40e/i40e_rxtx.c
+> b/drivers/net/intel/i40e/i40e_rxtx.c
+> index f96c5c7f1e..b75306931a 100644
+> --- a/drivers/net/intel/i40e/i40e_rxtx.c
+> +++ b/drivers/net/intel/i40e/i40e_rxtx.c
+> @@ -1029,21 +1029,6 @@ i40e_set_tso_ctx(struct rte_mbuf *mbuf, union
+> ci_tx_offload tx_offload)
+>  	return ctx_desc;
+>  }
+>=20
+> -/* Calculate the number of TX descriptors needed for each pkt */
+> -static inline uint16_t
+> -i40e_calc_pkt_desc(struct rte_mbuf *tx_pkt)
 > -{
-> -	struct ci_tx_entry *sw_ring =3D txq->sw_ring;
-> -	volatile struct ci_tx_desc *txd =3D txq->ci_tx_ring;
-> -	uint16_t last_desc_cleaned =3D txq->last_desc_cleaned;
-> -	uint16_t nb_tx_desc =3D txq->nb_tx_desc;
-> -	uint16_t desc_to_clean_to;
-> -	uint16_t nb_tx_to_clean;
+> -	struct rte_mbuf *txd =3D tx_pkt;
+> -	uint16_t count =3D 0;
 > -
-> -	/* Determine the last descriptor needing to be cleaned */
-> -	desc_to_clean_to =3D (uint16_t)(last_desc_cleaned + txq->tx_rs_thresh);
-> -	if (desc_to_clean_to >=3D nb_tx_desc)
-> -		desc_to_clean_to =3D (uint16_t)(desc_to_clean_to -
-> nb_tx_desc);
-> -
-> -	/* Check to make sure the last descriptor to clean is done */
-> -	desc_to_clean_to =3D sw_ring[desc_to_clean_to].last_id;
-> -
-> -	/* Check if descriptor is done - all drivers use 0xF as done value in b=
-its
-> 3:0 */
-> -	if ((txd[desc_to_clean_to].cmd_type_offset_bsz &
-> rte_cpu_to_le_64(CI_TXD_QW1_DTYPE_M)) !=3D
-> -			rte_cpu_to_le_64(CI_TX_DESC_DTYPE_DESC_DONE))
-> {
-> -		/* Descriptor not yet processed by hardware */
-> -		return -1;
+> -	while (txd !=3D NULL) {
+> -		count +=3D DIV_ROUND_UP(txd->data_len,
+> CI_MAX_DATA_PER_TXD);
+> -		txd =3D txd->next;
 > -	}
 > -
-> -	/* Figure out how many descriptors will be cleaned */
-> -	if (last_desc_cleaned > desc_to_clean_to)
-> -		nb_tx_to_clean =3D (uint16_t)((nb_tx_desc - last_desc_cleaned)
-> + desc_to_clean_to);
-> -	else
-> -		nb_tx_to_clean =3D (uint16_t)(desc_to_clean_to -
-> last_desc_cleaned);
+> -	return count;
+> -}
 > -
-> -	/* The last descriptor to clean is done, so that means all the
-> -	 * descriptors from the last descriptor that was cleaned
-> -	 * up to the last descriptor with the RS bit set
-> -	 * are done. Only reset the threshold descriptor.
-> -	 */
-> -	txd[desc_to_clean_to].cmd_type_offset_bsz =3D 0;
+>  uint16_t
+>  i40e_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t
+> nb_pkts)
+>  {
+> @@ -1106,8 +1091,7 @@ i40e_xmit_pkts(void *tx_queue, struct rte_mbuf
+> **tx_pkts, uint16_t nb_pkts)
+>  		 * per tx desc.
+>  		 */
+>  		if (ol_flags & RTE_MBUF_F_TX_TCP_SEG)
+> -			nb_used =3D (uint16_t)(i40e_calc_pkt_desc(tx_pkt) +
+> -					     nb_ctx);
+> +			nb_used =3D (uint16_t)(ci_calc_pkt_desc(tx_pkt) +
+> nb_ctx);
+>  		else
+>  			nb_used =3D (uint16_t)(tx_pkt->nb_segs + nb_ctx);
+>  		tx_last =3D (uint16_t)(tx_id + nb_used - 1);
+> diff --git a/drivers/net/intel/iavf/iavf_rxtx.c
+> b/drivers/net/intel/iavf/iavf_rxtx.c
+> index 947b6c24d2..885d9309cc 100644
+> --- a/drivers/net/intel/iavf/iavf_rxtx.c
+> +++ b/drivers/net/intel/iavf/iavf_rxtx.c
+> @@ -2666,21 +2666,6 @@ iavf_build_data_desc_cmd_offset_fields(volatile
+> uint64_t *qw1,
+>  		((uint64_t)l2tag1 << IAVF_TXD_DATA_QW1_L2TAG1_SHIFT));
+>  }
+>=20
+> -/* Calculate the number of TX descriptors needed for each pkt */
+> -static inline uint16_t
+> -iavf_calc_pkt_desc(struct rte_mbuf *tx_pkt)
+> -{
+> -	struct rte_mbuf *txd =3D tx_pkt;
+> -	uint16_t count =3D 0;
 > -
-> -	/* Update the txq to reflect the last descriptor that was cleaned */
-> -	txq->last_desc_cleaned =3D desc_to_clean_to;
-> -	txq->nb_tx_free =3D (uint16_t)(txq->nb_tx_free + nb_tx_to_clean);
+> -	while (txd !=3D NULL) {
+> -		count +=3D (txd->data_len + CI_MAX_DATA_PER_TXD - 1) /
+> CI_MAX_DATA_PER_TXD;
+> -		txd =3D txd->next;
+> -	}
 > -
-> -	return 0;
+> -	return count;
 > -}
 > -
 >  static inline void
->  ci_txq_release_all_mbufs(struct ci_tx_queue *txq, bool use_ctx)
->  {
-> @@ -490,4 +437,9 @@ ci_tx_path_select(const struct ci_tx_path_features
-> *req_features,
->  	return idx;
+>  iavf_fill_data_desc(volatile struct ci_tx_desc *desc,
+>  	uint64_t desc_template,	uint16_t buffsz,
+> @@ -2766,7 +2751,7 @@ iavf_xmit_pkts(void *tx_queue, struct rte_mbuf
+> **tx_pkts, uint16_t nb_pkts)
+>  		 * per tx desc.
+>  		 */
+>  		if (mb->ol_flags & RTE_MBUF_F_TX_TCP_SEG)
+> -			nb_desc_required =3D iavf_calc_pkt_desc(mb) +
+> nb_desc_ctx + nb_desc_ipsec;
+> +			nb_desc_required =3D ci_calc_pkt_desc(mb) +
+> nb_desc_ctx + nb_desc_ipsec;
+>  		else
+>  			nb_desc_required =3D nb_desc_data + nb_desc_ctx +
+> nb_desc_ipsec;
+>=20
+> diff --git a/drivers/net/intel/ice/ice_rxtx.c b/drivers/net/intel/ice/ice=
+_rxtx.c
+> index 52bbf95967..2a53b614b2 100644
+> --- a/drivers/net/intel/ice/ice_rxtx.c
+> +++ b/drivers/net/intel/ice/ice_rxtx.c
+> @@ -3075,21 +3075,6 @@ ice_set_tso_ctx(struct rte_mbuf *mbuf, union
+> ci_tx_offload tx_offload)
+>  	return ctx_desc;
 >  }
 >=20
-> +/* include the scalar functions at the end, so they can use the common
-> definitions.
-> + * This is done so drivers can use all functions just by including tx.h
-> + */
-> +#include "tx_scalar_fns.h"
+> -/* Calculate the number of TX descriptors needed for each pkt */
+> -static inline uint16_t
+> -ice_calc_pkt_desc(struct rte_mbuf *tx_pkt)
+> -{
+> -	struct rte_mbuf *txd =3D tx_pkt;
+> -	uint16_t count =3D 0;
+> -
+> -	while (txd !=3D NULL) {
+> -		count +=3D DIV_ROUND_UP(txd->data_len,
+> CI_MAX_DATA_PER_TXD);
+> -		txd =3D txd->next;
+> -	}
+> -
+> -	return count;
+> -}
+> -
+>  uint16_t
+>  ice_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkt=
+s)
+>  {
+> @@ -3152,8 +3137,7 @@ ice_xmit_pkts(void *tx_queue, struct rte_mbuf
+> **tx_pkts, uint16_t nb_pkts)
+>  		 * per tx desc.
+>  		 */
+>  		if (ol_flags & (RTE_MBUF_F_TX_TCP_SEG |
+> RTE_MBUF_F_TX_UDP_SEG))
+> -			nb_used =3D (uint16_t)(ice_calc_pkt_desc(tx_pkt) +
+> -					     nb_ctx);
+> +			nb_used =3D (uint16_t)(ci_calc_pkt_desc(tx_pkt) +
+> nb_ctx);
+>  		else
+>  			nb_used =3D (uint16_t)(tx_pkt->nb_segs + nb_ctx);
+>  		tx_last =3D (uint16_t)(tx_id + nb_used - 1);
+> diff --git a/drivers/net/intel/idpf/idpf_common_rxtx.c
+> b/drivers/net/intel/idpf/idpf_common_rxtx.c
+> index 587871b54a..11d6848430 100644
+> --- a/drivers/net/intel/idpf/idpf_common_rxtx.c
+> +++ b/drivers/net/intel/idpf/idpf_common_rxtx.c
+> @@ -934,7 +934,16 @@ idpf_dp_splitq_xmit_pkts(void *tx_queue, struct
+> rte_mbuf **tx_pkts,
+>  		tx_offload.tso_segsz =3D tx_pkt->tso_segsz;
+>  		/* Calculate the number of context descriptors needed. */
+>  		nb_ctx =3D idpf_calc_context_desc(ol_flags);
+> -		nb_used =3D tx_pkt->nb_segs + nb_ctx;
 > +
->  #endif /* _COMMON_INTEL_TX_H_ */
-> diff --git a/drivers/net/intel/common/tx_scalar_fns.h
-> b/drivers/net/intel/common/tx_scalar_fns.h
-> new file mode 100644
-> index 0000000000..c79210d084
-> --- /dev/null
-> +++ b/drivers/net/intel/common/tx_scalar_fns.h
-> @@ -0,0 +1,67 @@
-> +/* SPDX-License-Identifier: BSD-3-Clause
-> + * Copyright(c) 2025 Intel Corporation
-
-Should this be 2026?
-
-> + */
-> +
-> +#ifndef _COMMON_INTEL_TX_SCALAR_FNS_H_
-> +#define _COMMON_INTEL_TX_SCALAR_FNS_H_
-> +
-> +#include <stdint.h>
-> +#include <rte_byteorder.h>
-> +
-> +/* depends on common Tx definitions. */
-> +#include "tx.h"
-> +
-> +/*
-> + * Common transmit descriptor cleanup function for Intel drivers.
-> + * Used by ice, i40e, iavf, and idpf drivers.
-
-Do we need to call out the driver names in the comment? If a new driver
-were to adopt this function they would need to patch this file too to
-update the comment.
-
-> + *
-> + * Returns:
-> + *   0 on success
-> + *  -1 if cleanup cannot proceed (descriptors not yet processed by HW)
-> + */
-> +static __rte_always_inline int
-> +ci_tx_xmit_cleanup(struct ci_tx_queue *txq)
-> +{
-> +	struct ci_tx_entry *sw_ring =3D txq->sw_ring;
-> +	volatile struct ci_tx_desc *txd =3D txq->ci_tx_ring;
-> +	uint16_t last_desc_cleaned =3D txq->last_desc_cleaned;
-> +	uint16_t nb_tx_desc =3D txq->nb_tx_desc;
-> +	uint16_t desc_to_clean_to;
-> +	uint16_t nb_tx_to_clean;
-> +
-> +	/* Determine the last descriptor needing to be cleaned */
-> +	desc_to_clean_to =3D (uint16_t)(last_desc_cleaned + txq->tx_rs_thresh);
-> +	if (desc_to_clean_to >=3D nb_tx_desc)
-> +		desc_to_clean_to =3D (uint16_t)(desc_to_clean_to -
-> nb_tx_desc);
-> +
-> +	/* Check to make sure the last descriptor to clean is done */
-> +	desc_to_clean_to =3D sw_ring[desc_to_clean_to].last_id;
-> +
-> +	/* Check if descriptor is done - all drivers use 0xF as done value in b=
-its
-> 3:0 */
-> +	if ((txd[desc_to_clean_to].cmd_type_offset_bsz &
-> rte_cpu_to_le_64(CI_TXD_QW1_DTYPE_M)) !=3D
-> +			rte_cpu_to_le_64(CI_TX_DESC_DTYPE_DESC_DONE))
-> {
-> +		/* Descriptor not yet processed by hardware */
-> +		return -1;
-> +	}
-> +
-> +	/* Figure out how many descriptors will be cleaned */
-> +	if (last_desc_cleaned > desc_to_clean_to)
-> +		nb_tx_to_clean =3D (uint16_t)((nb_tx_desc - last_desc_cleaned)
-> + desc_to_clean_to);
-> +	else
-> +		nb_tx_to_clean =3D (uint16_t)(desc_to_clean_to -
-> last_desc_cleaned);
-> +
-> +	/* The last descriptor to clean is done, so that means all the
-> +	 * descriptors from the last descriptor that was cleaned
-> +	 * up to the last descriptor with the RS bit set
-> +	 * are done. Only reset the threshold descriptor.
-> +	 */
-> +	txd[desc_to_clean_to].cmd_type_offset_bsz =3D 0;
-> +
-> +	/* Update the txq to reflect the last descriptor that was cleaned */
-> +	txq->last_desc_cleaned =3D desc_to_clean_to;
-> +	txq->nb_tx_free =3D (uint16_t)(txq->nb_tx_free + nb_tx_to_clean);
-> +
-> +	return 0;
-> +}
-> +
-> +#endif /* _COMMON_INTEL_TX_SCALAR_FNS_H_ */
+> +		/* Calculate the number of TX descriptors needed for
+> +		 * each packet. For TSO packets, use ci_calc_pkt_desc as
+> +		 * the mbuf data size might exceed max data size that hw
+> allows
+> +		 * per tx desc.
+> +		 */
+> +		if (ol_flags & RTE_MBUF_F_TX_TCP_SEG)
+> +			nb_used =3D ci_calc_pkt_desc(tx_pkt) + nb_ctx;
+> +		else
+> +			nb_used =3D tx_pkt->nb_segs + nb_ctx;
+>=20
+>  		if (ol_flags & IDPF_TX_CKSUM_OFFLOAD_MASK)
+>  			cmd_dtype =3D IDPF_TXD_FLEX_FLOW_CMD_CS_EN;
+> @@ -1382,10 +1391,14 @@ idpf_dp_singleq_xmit_pkts(void *tx_queue,
+> struct rte_mbuf **tx_pkts,
+>  		nb_ctx =3D idpf_calc_context_desc(ol_flags);
+>=20
+>  		/* The number of descriptors that must be allocated for
+> -		 * a packet equals to the number of the segments of that
+> -		 * packet plus 1 context descriptor if needed.
+> +		 * a packet. For TSO packets, use ci_calc_pkt_desc as
+> +		 * the mbuf data size might exceed max data size that hw
+> allows
+> +		 * per tx desc.
+>  		 */
+> -		nb_used =3D (uint16_t)(tx_pkt->nb_segs + nb_ctx);
+> +		if (ol_flags & RTE_MBUF_F_TX_TCP_SEG)
+> +			nb_used =3D (uint16_t)(ci_calc_pkt_desc(tx_pkt) +
+> nb_ctx);
+> +		else
+> +			nb_used =3D (uint16_t)(tx_pkt->nb_segs + nb_ctx);
+>  		tx_last =3D (uint16_t)(tx_id + nb_used - 1);
+>=20
+>  		/* Circular ring */
 > --
 > 2.51.0
 
