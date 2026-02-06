@@ -2,84 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4537AECD9AA
-	for <dpdk-dev@archiver.kernel.org>; Fri,  6 Feb 2026 01:04:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9985FECD9AA
+	for <dpdk-dev@archiver.kernel.org>; Fri,  6 Feb 2026 01:11:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 37A8140264;
-	Fri,  6 Feb 2026 02:04:21 +0100 (CET)
-Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com
- [209.85.217.53]) by mails.dpdk.org (Postfix) with ESMTP id DD02D40156
- for <dev@dpdk.org>; Fri,  6 Feb 2026 02:04:19 +0100 (CET)
-Received: by mail-vs1-f53.google.com with SMTP id
- ada2fe7eead31-5eea9f9c29bso122782137.2
- for <dev@dpdk.org>; Thu, 05 Feb 2026 17:04:19 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1770339859; cv=none;
- d=google.com; s=arc-20240605;
- b=M4qd5LCVzV64qE+/xKGQJsvwFSpLbwAThNherWpO3KN/GFLPn8lvlls9F5ZwQAMcsj
- LQraYSvC9phwU6s9YKh1mgq5AzinDysEPFn1Vuou5e8lgFlpU8eZ3SFxtGnXGPHXF1dI
- XLByzxpwLKia0/aSce4g+ZidChLYmbY83q0K1ulArYq3W3cB7OEW/9W5HCfjvr5mLDe/
- Y2wrraf0QQsPcY8oBWib4bs3C61+9BCivm51IaZmagVYOS4nAXLYpWvUN479oWhRi4m5
- dkVgL/pdqrPdZJOZ+w8L4kTdGQIeiVkN0Cqw0I1uye2qamKRu1MbdDMX3jp8sG/qOsp1
- aNZQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20240605; 
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:dkim-signature;
- bh=qhS7nh2Y4NqUn4lsn6kJ4ou1GkYaqPnEaqdOLNSyLUQ=;
- fh=7hGAxMJ0ahU9WdmcbH8esh2qqgZqbutD5AFuMCFFoQY=;
- b=KridRQ+Nm8fxs6wMLQ4VCi0KAN/u8RTDklnbv6esdioCI46G6DzdCltnWyceUJJ855
- Qb140gnNx5Mm67iwhJs1GhIhM9rYyHE4tUEsg8heUAplZ19NKWGV91YUYWpYPD4f+1/l
- BL35kgE7YjdrXk828ku5Q4bUbSYLsFWF92sLMqEb7AgpeqkPxJFkapBMVf7ImI9EMT/r
- jVslSB7bwz6/9u9Uv6o8yXc/CHcKzxHqnApsZnhsh5U6yjowErN1aLGZzm0CV+ZnUKUN
- dC/a65J6Zv+iXbJXO80z4O1GqZhcOQnHEvodESev2TW4Sk0vuBTDTklbPfauCT1dQDyc
- huYA==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	by mails.dpdk.org (Postfix) with ESMTP id CAC9940264;
+	Fri,  6 Feb 2026 02:11:51 +0100 (CET)
+Received: from mail-dy1-f176.google.com (mail-dy1-f176.google.com
+ [74.125.82.176]) by mails.dpdk.org (Postfix) with ESMTP id 4F0F840156
+ for <dev@dpdk.org>; Fri,  6 Feb 2026 02:11:50 +0100 (CET)
+Received: by mail-dy1-f176.google.com with SMTP id
+ 5a478bee46e88-2b72e49776eso347568eec.1
+ for <dev@dpdk.org>; Thu, 05 Feb 2026 17:11:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1770339859; x=1770944659; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=qhS7nh2Y4NqUn4lsn6kJ4ou1GkYaqPnEaqdOLNSyLUQ=;
- b=N4bHCZ6TRzUnq3Pyeo5w+hb5oopRxgxYGCKY5QS7hSMgWEW3643Gc1Ugn2P82+f/el
- ucZlTPFQDuu2Uj7nifbwUL3ZLEv5mli/fauHox7R/HLvxQEzgTxnPerrjHTxFGW6MV5I
- 8y2uGIqRsluRTV7P7K0AeGTvnkJZAbSVISzxBSPyvuxA+ulRceKG7wIkP5W4K/LcLpA1
- SaV962GGbGrJV3C+mcpLH0Dot0W/bHwLW8Jan2BGA4tqUwXhNVPqszYj0pqM6cl+wWg0
- JNkV1STPqXSYNbMF/fCPnXEKmvVLnI4IcvY++Fi98tn2SpyZ3kGtSDG5GbZILaMsynJ+
- xqew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1770339859; x=1770944659;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ d=gmail.com; s=20230601; t=1770340309; x=1770945109; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=qhS7nh2Y4NqUn4lsn6kJ4ou1GkYaqPnEaqdOLNSyLUQ=;
- b=SZz7m+hL/EKHadcG15kmV1meO7HWol2UmE3gRIGxmga9JUHimQcUR4B5Tmk0/RVmQT
- LAs5rMqKq2lBG8WLmG9yXP3ZvTsGn2u+jZOYWrwHl5W/t7Lrw1USPqmTryLbTYSZERTK
- 3UOyS72MOqoA7NAcVRus7z7vvlpnrg0qg0LEKfiPe8i2q8DOCrIhV0KZtbSAbRQitV4l
- k8GOnw08guhTsA99I9l5iRI9/sbRFJsSsekxeyZPZy9mDc/TdndmH1PsJInaxbhghp2Y
- mWcWmgpj42AXQrFRtn+8m1LX9lCRtiA0Jo/PMAjxXOw2ayXnTyntZ8adGVjcHPdCIx6Y
- m0oQ==
-X-Gm-Message-State: AOJu0YyK7tCt5letEieGqVsJXkdQwR3uxsPS1YxSg0hkMTS0p2VOaowF
- DoDnNZCY2kbgmerllIgTdbEZ86/L4J2697t8h388enMBhbh2rCLwRM0DsG7Z1xTKNCNWNqbAS4h
- BFlpci2ty/70xfy9FR5EZvyGzIUel+Dg=
-X-Gm-Gg: AZuq6aL/6/OV+ouaBZxmtcuulXLGY1kTj774PqSUrJZhhVdCaMTfUU5EDCLg/tcT9K9
- O1uzyFQY1O6VDDOT9qhGxr5NVyNztgCjjlzRkidILwdZQBDUcFhCYsQIxGIp7xaEWFPftgX7oIA
- LmMEL2b27L1B529Wp60/1RbVaiwurOr5CLnvfen6VjcBFLSCqzCeg+iLpv8t1XalLhj5TQd+R0z
- f0krRawAUTbb2ISCZC/rFTzCI2j/Dc2toM3LmrObYSQIhz1RLaXm1esCwayC7dI05QFNfD7HQ==
-X-Received: by 2002:a05:6102:2ac4:b0:5f1:9641:4f2a with SMTP id
- ada2fe7eead31-5fae8ab345cmr286507137.18.1770339859182; Thu, 05 Feb 2026
- 17:04:19 -0800 (PST)
+ bh=cooh3GWhwXJxvN6QrgFqEqJn7/qKLq5LfN89KSRryBo=;
+ b=Qv6JVZ2FlIwukaNshuEchce3UmGbSCz86d0JpEQfhrEYtB463uMSDgS1LSB8jj8sKW
+ jK6Ml29rcpUqbIGV/NQN3Xiy45cHLvzqSy99NrFsHF2u6Tqeb3RWtQzWEDFq/tZ/8ATe
+ oa2og77HREFjBf00ZPyLl336FgJqvr6EEJ9odgQZ56oU5wfdXyPhAIh9YlftYzTnBzAr
+ I47c6v4NqGxQEHo/B0PbGrIsCXk+brhbH1wGKV6Wc4/B5xkh4zpXdVQfsGnjNBQGlL/d
+ 7mBf2hAKj9w2rjpFe3PUnNsuYfjGQTU4aIlPz9hRy9K3mIZ+rWmbhQ64hiY4dAV8GXiX
+ qGwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1770340309; x=1770945109;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=cooh3GWhwXJxvN6QrgFqEqJn7/qKLq5LfN89KSRryBo=;
+ b=TV/FkWPfqW+mznsBAHjDRDRY7TqpIqO2JmqoPmcIyGZC1rLPreCbAOgORKOiiHuCGJ
+ O6dVmL3G/y8bYNTG6O4SSbJz58V6QxIiPAsSDW0MrynynEKnWLt8zFIBl2tS2+vlotQy
+ h1SfhJrKhDEBgLAd57Pk/Z2zYyR5QvIDsWXhZgjnOkS6xUiECTUV6cbx+1xM7vJGR4xw
+ sDcFYFPF3jqqawhJdUJRdnuuyvN2Ox5BV1/s6uHNfj5c6Ktvirw4M566YYcUqm+3AZCJ
+ SL72ouDKNdM98UnhtN+wnAZIyO8IswWMB6oqgQLP0a/EzFhg3pNMTwBOYpUldtmu00db
+ NNIQ==
+X-Gm-Message-State: AOJu0YzmI1ryb0OPTF1XyvSh3Rrif+cEm83z/VIisnj82U1Xh1oyNcOB
+ yNJA62wbxwmOVI2DKIj2rfkdDUFURhfcVSEI6esrZiZi1/moP0ZZ7snOqNP7og==
+X-Gm-Gg: AZuq6aJAmcmqjr2Jxfei7GgN3Kn+8jNS8VtvR2j9K+5GMM23rcCINxH+DikN02rpju7
+ 3LrvNg+7GjpQ8dyHAKeq0Iy/VefRXi8DYxb94xCXVBJPAAYuLzaN3JUpnzYCBlzmJ3y6OoAaRCZ
+ qqiaIEFOXha1Bt/RxfZFj1F3GZbOwmQGudPxQJ2BAjDPLQ/ZDqlHLc4GRayJGkjts7qEDPognip
+ 2VFmrSODbOy22t2FiBnY68HL8Az3wxUACvhXQ6i6PfdiWLKTtja16POUOHXJV/C9qz4nUe1IfIA
+ MdfvhGSCo5ld7X6y6YkibvhTBQm9Hl5cyPPe66hxjbvTyJLKU5+HY8viaDlH9hYwuxH7Ge2whBQ
+ Vcxeluj921lOveP8CYXcrpQHR4VBzgnn1BE3nbhoWLJGgQs/cGXapik/VgjPX8++XaIJIHdAITS
+ 7IVUJqeUvGKpZwXf1mTe78P0wZwZLRyWGyIT/cspGhwrJuUkd88HehMFuy0MjvZLU=
+X-Received: by 2002:a05:7300:8184:b0:2b7:ee0e:e9dd with SMTP id
+ 5a478bee46e88-2b85683434dmr608401eec.25.1770340308946; 
+ Thu, 05 Feb 2026 17:11:48 -0800 (PST)
+Received: from mr41p01nt-relayp03.apple.com ([216.157.103.139])
+ by smtp.gmail.com with ESMTPSA id
+ 5a478bee46e88-2b855afc852sm711730eec.13.2026.02.05.17.11.46
+ (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+ Thu, 05 Feb 2026 17:11:48 -0800 (PST)
+From: scott.k.mitch1@gmail.com
+To: dev@dpdk.org
+Cc: stephen@networkplumber.org,
+	Scott <scott.k.mitch1@gmail.com>
+Subject: [PATCH v6 0/4] af_packet correctness, performance, cksum
+Date: Thu,  5 Feb 2026 17:11:37 -0800
+Message-Id: <20260206011141.2377-1-scott.k.mitch1@gmail.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+In-Reply-To: <20260203070740.62305-1-scott.k.mitch1@gmail.com>
+References: <20260203070740.62305-1-scott.k.mitch1@gmail.com>
 MIME-Version: 1.0
-References: <20260204061234.25610-1-scott.k.mitch1@gmail.com>
- <20260205070345.23483-1-scott.k.mitch1@gmail.com>
- <98CBD80474FA8B44BF855DF32C47DC35F656EE@smartserver.smartshare.dk>
-In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F656EE@smartserver.smartshare.dk>
-From: Scott Mitchell <scott.k.mitch1@gmail.com>
-Date: Thu, 5 Feb 2026 17:04:08 -0800
-X-Gm-Features: AZwV_QjTwdnTpMahqIVWtf6UpLcWXfHOkkBZCuA0NHAsWXR1y7WAay6y0GQpw4c
-Message-ID: <CAFn2buDHQfM+9bNRhE6wBGPCXn5nypysPKL5-qpcjVfbcn+CXw@mail.gmail.com>
-Subject: Re: [PATCH v21] eal: RTE_PTR_ADD/SUB API improvements
-To: =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>
-Cc: dev@dpdk.org, stephen@networkplumber.org, bruce.richardson@intel.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -93,5 +79,67 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-msvc build failed. I missed a cast in RTE_PTR_ALIGN_CEIL return value
-of RTE_PTR_ADD, fixed and v22 submitted
+From: Scott <scott.k.mitch1@gmail.com>
+
+This series fixes critical thread safety bugs in the af_packet PMD
+and adds performance optimizations.
+
+Patch 1 fixes two major correctness issues:
+- Thread safety: tp_status was accessed without memory barriers,
+  violating the kernel's PACKET_MMAP protocol. On aarch64 and other
+  weakly-ordered architectures, this causes packet corruption due to
+  missing memory ordering. The fix matches the kernel's memory model:
+  volatile unaligned reads/writes with explicit rte_smp_rmb/wmb
+  barriers and __may_alias__ protection.
+
+- Frame calculations: Fixed incorrect frame overhead and address
+  calculations that caused memory corruption when frames don't evenly
+  divide blocks.
+
+Patches 2-4 add performance improvements:
+- Patch 2: Bulk mbuf freeing, unlikely annotations
+- Patch 3: TX poll control to reduce syscall overhead
+- Patch 4: Software checksum offload support with shared rte_net
+  utility
+
+v6 changes:
+- rte_net_ip_udptcp_cksum_mbuf doxygen EXPERIMENTAL tag
+
+v5 changes:
+- rte_net_ip_udptcp_cksum_mbuf moved to rte_net.c (avoid forced inline)
+- rte_net_ip_udptcp_cksum_mbuf remove copy arg, handle more mbuf types
+- af_packet and tap calling code consistent for sw cksum
+
+v4 changes:
+- Remove prefetch (perf results didn't show benefit)
+- Fix variable sytle for consistency (declare at start of method)
+- Add release notes for af_packet and documentation for fixes
+
+v3 changes:
+- Patch 4: Fix compile error due to implict cast with c++ compiler
+
+v2 changes:
+- Patch 1: Rewrote to use volatile + barriers instead of C11 atomics
+  to match kernel's memory model. Added dependency on patch-160274
+  for __rte_may_alias attribute.
+- Patch 4: Refactored to use shared rte_net_ip_udptcp_cksum_mbuf()
+  utility function, eliminating code duplication with tap driver.
+
+Scott Mitchell (4):
+  net/af_packet: fix thread safety and frame calculations
+  net/af_packet: RX/TX bulk free, unlikely hint
+  net/af_packet: tx poll control
+  net/af_packet: add software checksum offload support
+
+ doc/guides/nics/af_packet.rst             |   6 +-
+ doc/guides/nics/features/afpacket.ini     |   2 +
+ doc/guides/rel_notes/release_26_03.rst    |   9 +-
+ drivers/net/af_packet/rte_eth_af_packet.c | 253 +++++++++++++++-------
+ drivers/net/tap/rte_eth_tap.c             |  70 +-----
+ lib/net/rte_net.c                         |  69 ++++++
+ lib/net/rte_net.h                         |  25 +++
+ 7 files changed, 292 insertions(+), 142 deletions(-)
+
+-- 
+2.39.5 (Apple Git-154)
+
