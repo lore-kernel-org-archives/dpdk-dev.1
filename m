@@ -2,70 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FEC5EE6B77
-	for <dpdk-dev@archiver.kernel.org>; Sat,  7 Feb 2026 06:09:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6682EE6B77
+	for <dpdk-dev@archiver.kernel.org>; Sat,  7 Feb 2026 06:11:22 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7D6DF402A9;
-	Sat,  7 Feb 2026 07:09:48 +0100 (CET)
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com
- [209.85.128.46]) by mails.dpdk.org (Postfix) with ESMTP id F37614029A
- for <dev@dpdk.org>; Sat,  7 Feb 2026 07:09:46 +0100 (CET)
-Received: by mail-wm1-f46.google.com with SMTP id
- 5b1f17b1804b1-4833115090dso725765e9.3
- for <dev@dpdk.org>; Fri, 06 Feb 2026 22:09:46 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id D205D4042E;
+	Sat,  7 Feb 2026 07:11:21 +0100 (CET)
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com
+ [209.85.128.47]) by mails.dpdk.org (Postfix) with ESMTP id 5F340402A9
+ for <dev@dpdk.org>; Sat,  7 Feb 2026 07:11:20 +0100 (CET)
+Received: by mail-wm1-f47.google.com with SMTP id
+ 5b1f17b1804b1-4806cc07ce7so29030015e9.1
+ for <dev@dpdk.org>; Fri, 06 Feb 2026 22:11:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1770444586;
- x=1771049386; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1770444680;
+ x=1771049480; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=bl254tIJnx4i6dXuTJIor5iviegJnxcmOKpbaXU0lh4=;
- b=XEnuruW3VeELhifzGeM4rL2T4cy1vzVmXtitjGDdpgX8ZbKCm33Nx1FT3WAbV+YEsG
- LZAx7tNJYDbrMRIgdmlB0t/GB7K1E1e1wE0JxfepfxqXdR29+rUn+aAFz34sV7c22JQ6
- qAFzl5ZMCIjT5ROFniyBrMAhyl82v/3TFNqhXywejvgxSa2MN/2tJtWE4RVSisqDr038
- DmzVtBYAWNNUIS1FhSk1oHyFAGjCJp0N1sJ85GAIpgpJuUdK4MWif+UldIh/tIN9PnfU
- xYr7fbgNrBifNGRl6rJURel6GKBwo4io1RpST09x895t4M9NWfJXl9x4Py2EYoFFjirT
- T6pg==
+ bh=RDWQmVxi3tme5NvpFZ9N0IEBNk/DFfrxYIN51W4vPFM=;
+ b=MS08k983Ld+p1rXOtwU6C7S47A2k3oKeQYELTnmEet+ONzKVNUYhxUV5JCKXljWsxS
+ RcWPVWi842wdqMa+1uN/sXQKAcYxaH07w/SDDtJIzEZdrn/MqMxqaPsxTl4yd5y6cwEQ
+ 5NYZK5I8eaLLTobKDnEUQcAhZjgOdJi0tkma7K7mfpqHlA+nCDtdo1mmfAieFHjGpp3x
+ a9BLXRMAG3f5R8q+UfO73PKTdSEUDOKKa0xHIrApH9Sj6csm30xChkNtkzvgijDw3RJP
+ 8PaSALH+gTPzTFcNUIEZbXmFe4O8Z0Wk3DjvoYw4N85BsAc7SsT5P6QsO86iMEdQvlLS
+ YBKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1770444586; x=1771049386;
+ d=1e100.net; s=20230601; t=1770444680; x=1771049480;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=bl254tIJnx4i6dXuTJIor5iviegJnxcmOKpbaXU0lh4=;
- b=K7+89z58i8h9bP15xolzLulWsbqxXENKsyxgHw8xCWIZt1Xdlbhsbrmhk3ZhTaJLHl
- cl1bVRuWnCz2sRvP865zJUjWVhiB3kvHwp2ty6WH1oBYQBNt17hleNT3squIGct1pyIE
- r3y/Zi7AcgLtzasCDLhlERUKHaAlD/HBngnVfIApx7uSxgGDTfS4xnzPPwdgpUaW9RLY
- phvjomRVpXGFJCDct4fK0Wv7zJBjfLB3fayoiRIWI8gQyq/UjBMpLIH9mb1KCeKpAvG4
- bOMI0F+9hSURGu6q0JYXea1BE0FMKYhYasHFcMKEXcHkGQlMd37FrLkANWBRd6qK0BHX
- 2aIw==
-X-Gm-Message-State: AOJu0YzNXmhkkLXPRrC8VVJyMTb9rhAEZitCwNbMVvWXMWohy9OioMfO
- dKN8rLG/OUlm3IN90xm/G7bblfag+sFS0eBGZvowCIL8lVdyTuhv60xfsvheu279xuI=
-X-Gm-Gg: AZuq6aKeXohrS4y4V4U5RtyX8zV4AfWLTEXZx/aTvEgGy7KbwMKwmI777yoCHhU/aUI
- ztmPCFWUDs+kxpO3oMmsW/PDYuiAaoNk+TS35kjJ8eceTSBSqHI/P+IFOLOn3KdfYDWRVDoGgho
- yf7G9mQbSUIUF5LQRC/FYHv8G+wvbkfvISvd8gckSs7GvuNDFWdSVlzpH9heYadNel4Ha+Ln4ZI
- zKeBdCwF8//XKieAAlBbeJIypSea0xn/PCGbyFTC8X4seUUkkadnYLlRrnQK2Av1KTpxSGBZfec
- jpisSVcq6KbvcH2Ga2b4tZQ3LzXzeIvGhk5C9sIn1dB4i+jcQiNECaiJhKbBv+CcmbDJLNtgy7e
- npRt0C4j67gggOXe1PubpYXkr90RAQs1NQo8Jd1xH0xbyUdn2UNezwXEq8U+NLtrOx6fW3QYdvG
- N2cSQ6pzse0tm+L4WcPUAKqtKWXQfSGoN7SMiiS0ONCo3uXTo4VGU1
-X-Received: by 2002:a05:600c:6214:b0:483:887:59b0 with SMTP id
- 5b1f17b1804b1-4832022ff38mr80076665e9.35.1770444586229; 
- Fri, 06 Feb 2026 22:09:46 -0800 (PST)
+ bh=RDWQmVxi3tme5NvpFZ9N0IEBNk/DFfrxYIN51W4vPFM=;
+ b=kWERgWHob8hQ+6PxHsC3DWsEuMOV7FZCMZ9UtBeresBFAEHQrC4i8M3mDMhheEeB6a
+ acodWShKTFi9lxx4+t2VcI1jgX1jHyW4gioSB4DgiB+xLxkYoCoT1fzj8VHLzx2Cy32q
+ IRnh0+VU0PdDqxc2PUfVkYV6hIdXJ3P1qXflBK1W9L4pfua00OSaYAMsC87t6mT2C2mP
+ oqTixFoMjIBDuEbvMpzolPqfTbOJ9BigkkSfOQh+ln/TEFcLUCPcfdjzX2/Vhm8hW2Ha
+ 7Qixt9STXevGBzBBAlBNtPMh1RCaBXSK7FecUz6JnF0N/dn94vushvRytHtwVm8GywlR
+ DAeA==
+X-Gm-Message-State: AOJu0YxncZMK1NvoJPEaguG8kL4S0bN4b40hE3rAb2b1GO1n1sjz/SOR
+ G9oR/zmChcnzP7fs7qUevtQD2CXDfVmtmiVR5PZ+KErd2GfsMnhPG9xmdnj59vuj9AE=
+X-Gm-Gg: AZuq6aJDWnnN2/53lmm2MbVa8ov4ntX98kN8kdHJ34UqP9dOdcJvL9CIoOHJwph0jP+
+ SXzx5U+MMdBy9pQvpUMtJHQwNWgZeEapyBKyqmqg0zBm0vzrEBQmQ5LmDTGD2a8BmSLg/ZabWG7
+ pc7+6c+lCBSE+IUbjIlPnF5rD1wembl45VIsbrm8dqYGtV74l78hL+m7w4BYgwHo9rUDcn0/7Hc
+ DryG67lf954M2PEN/NaiDNh73zXOBFbPpYBvCETrjnJQXcKjqc/tsGIF4ZRoVidBXJCBprpy5F9
+ ttdih8L26ZGLt0Vlx9MQNLApZMD2qLOw9POYUEj9y5B6nYd0+P5UsNyR2N6XnDJNTnsJr60S3e4
+ cN26pjgkUIN/IAIWCJ3InX0NsxUQ4Qwi9X3Sg0rMC04KqoKx5I+JungK2baOMFsJsxtDqMsaDlZ
+ upq3u77UQ7tzaTHPRPbEqC0Pwf22qRS6Z/z2rKREmbnyX8e7itvSz1
+X-Received: by 2002:a05:600c:8719:b0:482:eec4:76d with SMTP id
+ 5b1f17b1804b1-4832021b461mr77837915e9.17.1770444679558; 
+ Fri, 06 Feb 2026 22:11:19 -0800 (PST)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-483206b8bbbsm156501755e9.3.2026.02.06.22.09.43
+ 5b1f17b1804b1-48320719bf4sm94996495e9.10.2026.02.06.22.11.17
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 06 Feb 2026 22:09:45 -0800 (PST)
-Date: Fri, 6 Feb 2026 22:09:39 -0800
+ Fri, 06 Feb 2026 22:11:19 -0800 (PST)
+Date: Fri, 6 Feb 2026 22:11:14 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: Kevin Traynor <ktraynor@redhat.com>
 Cc: dev@dpdk.org, thomas@monjalon.net, david.marchand@redhat.com,
  dsosnowski@nvidia.com, viacheslavo@nvidia.com, stable@dpdk.org
-Subject: Re: [PATCH v2 1/2] net/mlx5: check for no data read in devx interrupt
-Message-ID: <20260206220939.5a90c67c@phoenix.local>
-In-Reply-To: <20260206172054.273858-2-ktraynor@redhat.com>
+Subject: Re: [PATCH v2 2/2] eal/linux: handle interrupt epoll events
+Message-ID: <20260206221114.423e498f@phoenix.local>
+In-Reply-To: <20260206172054.273858-3-ktraynor@redhat.com>
 References: <20260128122055.192104-1-ktraynor@redhat.com>
  <20260206172054.273858-1-ktraynor@redhat.com>
- <20260206172054.273858-2-ktraynor@redhat.com>
+ <20260206172054.273858-3-ktraynor@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -82,78 +82,41 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri,  6 Feb 2026 17:20:53 +0000
+On Fri,  6 Feb 2026 17:20:54 +0000
 Kevin Traynor <ktraynor@redhat.com> wrote:
 
-> A busy-loop may occur when there are EPOLLERR, EPOLLHUP or
-> EPOLLRDHUP epoll events for the devx interrupt fd.
+> Add handling for epoll error and disconnect conditions EPOLLERR,
+> EPOLLHUP and EPOLLRDHUP.
 > 
-> This may happen if the interrupt fd is deleted, if the device
-> is unbound from mlx5_core kernel driver or if the device is
-> removed by the mlx5 kernel driver as part of LAG setup.
+> These events indicate that the interrupt file descriptor is in
+> an error state or there has been a hangup.
 > 
-> When that occurs, there is no data to be read and in the devx
-> interrupt handler an EAGAIN is returned on the first call to
-> devx_get_async_cmd_comp, but this is not checked.
+> Only do this for interrupts that are read in eal. Interrupts that
+> are read outside eal should deal with different interrupt scenarios
+> appropriate to their functionality. e.g. virtio interrupt handling
+> has reconnect mechanisms for some cases.
 > 
-> As the interrupt is not removed or condition reset, it causes
-> an interrupt processing busy-loop, which leads to the dpdk-intr
-> thread going to 100% CPU.
-> 
-> e.g.
-> epoll_wait
->    (6, [{events=EPOLLIN|EPOLLRDHUP, data={u32=28, u64=28}}], 8, -1) = 1
-> read(28, 0x7f1f5c7fc2f0, 40)
->    = -1 EAGAIN (Resource temporarily unavailable)
-> epoll_wait
->    (6, [{events=EPOLLIN|EPOLLRDHUP, data={u32=28, u64=28}}], 8, -1) = 1
-> read(28, 0x7f1f5c7fc2f0, 40)
->    = -1 EAGAIN (Resource temporarily unavailable)
-> 
-> Add a check for an EAGAIN return from devx_get_async_cmd_comp on the
-> first read. If that happens, unregister the callback to prevent looping.
+> Also, treat no bytes read as an error condition.
 > 
 > Bugzilla ID: 1873
-> Fixes: f15db67df09c ("net/mlx5: accelerate DV flow counter query")
+> Fixes: af75078fece3 ("first public release")
 > Cc: stable@dpdk.org
 > 
 > Signed-off-by: Kevin Traynor <ktraynor@redhat.com>
 
-AI spotted this, I didn't...
+Minor AI review nits.
 
+Code Review
 
 Errors:
 
-    Line 139: Unnecessary semicolon after closing brace
-
-c
-
-   };
-
-Should be:
-c
-
-   }
-
-    Lines 142-146: Block comment uses incorrect style Block comments in C code should use /* and */ style, not /** which is reserved for documentation comments.
-
-c
-
-   /**
-    * no data and EAGAIN indicate there is an error or
-    * disconnect state. Unregister callback to prevent
-    * interrupt busy-looping.
-    */
-
-Should be:
-c
-
-   /*
-    * no data and EAGAIN indicate there is an error or
-    * disconnect state. Unregister callback to prevent
-    * interrupt busy-looping.
-    */
+    Lines 295-298: Block comment uses incorrect style Same issue as patch 1 - should use /* not /** for non-documentation comments.
 
 Warnings:
 
-    Logic clarity: The variable data_read is set to true inside the while loop but never checked when data WAS read. Consider if data_read is the clearest way to express this condition.
+    Line 304: Return value inconsistency The function returns -1 to force rebuild of the wait list, but this happens in the middle of processing multiple events. The existing code had the same pattern for error handling, so this is consistent with the codebase style.
+    Line 342: Log level changed from ERR to WARNING For a condition that causes interrupt source removal, WARNING may be too low. Consider if INFO (as used in line 300) might be more appropriate for consistency.
+
+Overall Assessment
+
+Both patches address a real bug (busy-looping on interrupt errors) with reasonable solutions. The main issues are code style violations with comment formatting and a minor semicolon error. The logic appears sound for handling the EAGAIN and epoll error conditions.
