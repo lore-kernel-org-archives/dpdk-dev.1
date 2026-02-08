@@ -2,33 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DF72EF06E2
-	for <dpdk-dev@archiver.kernel.org>; Sun,  8 Feb 2026 11:57:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0AAFEF06E3
+	for <dpdk-dev@archiver.kernel.org>; Sun,  8 Feb 2026 11:57:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6D42E406B4;
-	Sun,  8 Feb 2026 12:56:33 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 8D79F406B8;
+	Sun,  8 Feb 2026 12:56:34 +0100 (CET)
 Received: from cstnet.cn (smtp25.cstnet.cn [159.226.251.25])
- by mails.dpdk.org (Postfix) with ESMTP id 677C840687
+ by mails.dpdk.org (Postfix) with ESMTP id 5E3EF4067A
  for <dev@dpdk.org>; Sun,  8 Feb 2026 12:56:30 +0100 (CET)
 Received: from mail.cstnet.cn (unknown [221.238.36.162])
- by APP-05 (Coremail) with SMTP id zQCowAD3hAjreYhpts_KBw--.49177S8;
+ by APP-05 (Coremail) with SMTP id zQCowAD3hAjreYhpts_KBw--.49177S6;
  Sun, 08 Feb 2026 19:56:28 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org,
 	Jie Liu <liujie5@linkdatatechnology.com>
-Subject: [PATCH v16 07/13] net/sxe: support rss offload
-Date: Sun,  8 Feb 2026 19:56:20 +0800
-Message-Id: <20260208115626.146863-7-liujie5@linkdatatechnology.com>
+Subject: [PATCH v16 05/13] net/sxe: support vlan filter
+Date: Sun,  8 Feb 2026 19:56:18 +0800
+Message-Id: <20260208115626.146863-5-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.18.2
 In-Reply-To: <20260208115626.146863-1-liujie5@linkdatatechnology.com>
 References: <20260208093122.10329-13-liujie5@linkdatatechnology.com>
  <20260208115626.146863-1-liujie5@linkdatatechnology.com>
-X-CM-TRANSID: zQCowAD3hAjreYhpts_KBw--.49177S8
-X-Coremail-Antispam: 1UD129KBjvJXoW3Cr4Dtr1ktr43Wr1kKrW8Crg_yoWDuF18pF
- WkG3W8trWftF1Sgw15Aa1UuF13Wr1vka1UKa93J3yfAa1UJF1xJryYya4UKw1rt3sxXr1k
- JFZYqa45GF1kuFJanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDU0xBIdaVrnRJUUUmC14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+X-CM-TRANSID: zQCowAD3hAjreYhpts_KBw--.49177S6
+X-Coremail-Antispam: 1UD129KBjvJXoW3Cr43tFyxXrWDXFWrCw17ZFb_yoWDZFyDpF
+ WUGa48ArWxJFn7Xa95Aw43uFn8GF4kX34qgFn3C34Yya42vryxJFnrJF9rA3yrKF98Gw1Y
+ yan3Z3ZrGF1FkFDanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDU0xBIdaVrnRJUUUmC14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
  rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
  kIc2x26xkF7I0E14v26r4j6ryUM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
  z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_Gr
@@ -41,7 +41,7 @@ X-Coremail-Antispam: 1UD129KBjvJXoW3Cr4Dtr1ktr43Wr1kKrW8Crg_yoWDuF18pF
  WUWwC2zVAF1VAY17CE14v26r1Y6r17MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_
  Gr0_Xr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26F4j6r4UJwCI42IY6xAIw20EY4v20xvaj4
  0_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_
- Cr1UYxBIdaVFxhVjvjDU0xZFpf9x0JU55rsUUUUU=
+ Cr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUnmRbUUUUU=
 X-Originating-IP: [221.238.36.162]
 X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
 X-BeenThere: dev@dpdk.org
@@ -59,397 +59,364 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-Support rss offload.
+Support vlan filter.
 
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- drivers/net/sxe/base/sxe_offload_common.c |   3 +-
- drivers/net/sxe/pf/sxe_offload.c          | 299 ++++++++++++++++++++++
- drivers/net/sxe/pf/sxe_offload.h          |  33 +++
- 3 files changed, 334 insertions(+), 1 deletion(-)
+ drivers/net/sxe/base/sxe_offload_common.c |   4 +
+ drivers/net/sxe/pf/sxe_filter.c           | 277 ++++++++++++++++++++++
+ drivers/net/sxe/pf/sxe_filter.h           |  13 +
+ drivers/net/sxe/pf/sxe_main.c             |   2 +
+ 4 files changed, 296 insertions(+)
 
 diff --git a/drivers/net/sxe/base/sxe_offload_common.c b/drivers/net/sxe/base/sxe_offload_common.c
-index f7c7363a2e..4eb4e03a4d 100644
+index f07d2b9572..f7c7363a2e 100644
 --- a/drivers/net/sxe/base/sxe_offload_common.c
 +++ b/drivers/net/sxe/base/sxe_offload_common.c
-@@ -27,7 +27,8 @@ u64 __sxe_rx_port_offload_capa_get(struct rte_eth_dev *dev)
+@@ -12,6 +12,8 @@ u64 __sxe_rx_queue_offload_capa_get(struct rte_eth_dev *dev)
+ 
+ 	u64 offloads = 0;
+ 
++	offloads |= RTE_ETH_RX_OFFLOAD_VLAN_STRIP;
++
+ 	return offloads;
+ }
+ 
+@@ -23,6 +25,8 @@ u64 __sxe_rx_port_offload_capa_get(struct rte_eth_dev *dev)
+ 			RTE_ETH_RX_OFFLOAD_UDP_CKSUM   |
+ 			RTE_ETH_RX_OFFLOAD_TCP_CKSUM   |
  			RTE_ETH_RX_OFFLOAD_KEEP_CRC	|
- 			RTE_ETH_RX_OFFLOAD_VLAN_FILTER |
- 			RTE_ETH_RX_OFFLOAD_VLAN_EXTEND |
--			RTE_ETH_RX_OFFLOAD_SCATTER;
-+			RTE_ETH_RX_OFFLOAD_SCATTER |
-+			RTE_ETH_RX_OFFLOAD_RSS_HASH;
++			RTE_ETH_RX_OFFLOAD_VLAN_FILTER |
++			RTE_ETH_RX_OFFLOAD_VLAN_EXTEND |
+ 			RTE_ETH_RX_OFFLOAD_SCATTER;
  
  	if (!RTE_ETH_DEV_SRIOV(dev).active)
- 		rx_offload_capa |= RTE_ETH_RX_OFFLOAD_TCP_LRO;
-diff --git a/drivers/net/sxe/pf/sxe_offload.c b/drivers/net/sxe/pf/sxe_offload.c
-index 0fa3f4822a..d34cf7ecc8 100644
---- a/drivers/net/sxe/pf/sxe_offload.c
-+++ b/drivers/net/sxe/pf/sxe_offload.c
-@@ -9,11 +9,26 @@
- #include "sxe_queue_common.h"
- #include "sxe_offload_common.h"
- 
-+static u8 rss_sxe_key[40] = {
-+	0x6D, 0x5A, 0x56, 0xDA, 0x25, 0x5B, 0x0E, 0xC2,
-+	0x41, 0x67, 0x25, 0x3D, 0x43, 0xA3, 0x8F, 0xB0,
-+	0xD0, 0xCA, 0x2B, 0xCB, 0xAE, 0x7B, 0x30, 0xB4,
-+	0x77, 0xCB, 0x2D, 0xA3, 0x80, 0x30, 0xF2, 0x0C,
-+	0x6A, 0x42, 0xB7, 0x3B, 0xBE, 0xAC, 0x01, 0xFA,
-+};
-+
- #define SXE_4_BIT_WIDTH  (CHAR_BIT / 2)
- #define SXE_4_BIT_MASK   RTE_LEN2MASK(SXE_4_BIT_WIDTH, u8)
- #define SXE_8_BIT_WIDTH  CHAR_BIT
- #define SXE_8_BIT_MASK   UINT8_MAX
- 
-+#if defined SXE_DPDK_L4_FEATURES && defined SXE_DPDK_FILTER_CTRL
-+u8 *sxe_rss_hash_key_get(void)
-+{
-+	return rss_sxe_key;
-+}
-+#endif
-+
- u64 sxe_rx_queue_offload_capa_get(struct rte_eth_dev *dev)
- {
- 	return __sxe_rx_queue_offload_capa_get(dev);
-@@ -35,3 +50,287 @@ u64 sxe_tx_port_offload_capa_get(struct rte_eth_dev *dev)
- {
- 	return __sxe_tx_port_offload_capa_get(dev);
+diff --git a/drivers/net/sxe/pf/sxe_filter.c b/drivers/net/sxe/pf/sxe_filter.c
+index 3cd5ddad03..8e3f6b6b29 100644
+--- a/drivers/net/sxe/pf/sxe_filter.c
++++ b/drivers/net/sxe/pf/sxe_filter.c
+@@ -276,3 +276,280 @@ static void sxe_hash_mac_addr_parse(u8 *mac_addr, u16 *reg_idx,
+ 			 mac_addr[0], mac_addr[1], mac_addr[2], mac_addr[3],
+ 			 mac_addr[4], mac_addr[5], *reg_idx, *bit_idx);
  }
 +
-+void sxe_rss_disable(struct rte_eth_dev *dev)
++s32 sxe_vlan_filter_set(struct rte_eth_dev *eth_dev, u16 vlan_id, s32 on)
 +{
-+	struct sxe_adapter *adapter = dev->data->dev_private;
++	struct sxe_adapter *adapter = eth_dev->data->dev_private;
 +	struct sxe_hw *hw = &adapter->hw;
++	struct sxe_vlan_context *vlan_ctxt = &adapter->vlan_ctxt;
++	u8 reg_idx;
++	u8 bit_idx;
++	u32 value;
 +
-+	PMD_INIT_FUNC_TRACE();
++	reg_idx = (vlan_id >> SXE_VLAN_ID_SHIFT) & SXE_VLAN_ID_REG_MASK;
++	bit_idx = (vlan_id & SXE_VLAN_ID_BIT_MASK);
 +
-+	sxe_hw_rss_cap_switch(hw, false);
++	value = sxe_hw_vlan_filter_array_read(hw, reg_idx);
++	if (on)
++		value |= (1 << bit_idx);
++	else
++		value &= ~(1 << bit_idx);
++
++	sxe_hw_vlan_filter_array_write(hw, reg_idx, value);
++
++	vlan_ctxt->vlan_hash_table[reg_idx] = value;
++
++	PMD_LOG_INFO(DRV, "vlan_id:0x%x on:%d set done", vlan_id, on);
++
++	return 0;
 +}
 +
-+void sxe_rss_hash_set(struct sxe_hw *hw,
-+				struct rte_eth_rss_conf *rss_conf)
++static void sxe_vlan_tpid_write(struct sxe_hw *hw, u16 tpid)
 +{
-+	u8  *hash_key;
-+	u32 rss_key[SXE_MAX_RSS_KEY_ENTRIES];
-+	u16 i;
-+	u64 rss_hf;
-+	u32 rss_field = 0;
++	u32 value;
 +
-+	PMD_INIT_FUNC_TRACE();
++	value = sxe_hw_vlan_type_get(hw);
++	value = (value & (~SXE_VLNCTRL_VET)) | tpid;
++	sxe_hw_vlan_type_set(hw, value);
 +
-+	hash_key = rss_conf->rss_key;
-+	if (hash_key != NULL) {
-+		for (i = 0; i < SXE_MAX_RSS_KEY_ENTRIES; i++) {
-+			rss_key[i]  = hash_key[(i * 4)];
-+			rss_key[i] |= hash_key[(i * 4) + 1] << 8;
-+			rss_key[i] |= hash_key[(i * 4) + 2] << 16;
-+			rss_key[i] |= hash_key[(i * 4) + 3] << 24;
-+		}
-+		sxe_hw_rss_key_set_all(hw, rss_key);
-+	}
-+
-+	rss_hf = rss_conf->rss_hf;
-+	if (rss_hf & RTE_ETH_RSS_IPV4)
-+		rss_field |= SXE_MRQC_RSS_FIELD_IPV4;
-+
-+	if (rss_hf & RTE_ETH_RSS_NONFRAG_IPV4_TCP)
-+		rss_field |= SXE_MRQC_RSS_FIELD_IPV4_TCP;
-+
-+	if (rss_hf & RTE_ETH_RSS_IPV6)
-+		rss_field |= SXE_MRQC_RSS_FIELD_IPV6;
-+
-+	if (rss_hf & RTE_ETH_RSS_NONFRAG_IPV6_TCP)
-+		rss_field |= SXE_MRQC_RSS_FIELD_IPV6_TCP;
-+
-+	if (rss_hf & RTE_ETH_RSS_NONFRAG_IPV4_UDP)
-+		rss_field |= SXE_MRQC_RSS_FIELD_IPV4_UDP;
-+
-+	if (rss_hf & RTE_ETH_RSS_NONFRAG_IPV6_UDP)
-+		rss_field |= SXE_MRQC_RSS_FIELD_IPV6_UDP;
-+
-+	sxe_hw_rss_field_set(hw, rss_field);
-+
-+	sxe_hw_rss_cap_switch(hw, true);
++	value = sxe_hw_txctl_vlan_type_get(hw);
++	value = (value & (~SXE_DMATXCTL_VT_MASK)) |
++		(tpid << SXE_DMATXCTL_VT_SHIFT);
++	sxe_hw_txctl_vlan_type_set(hw, value);
 +}
 +
-+void sxe_rss_configure(struct rte_eth_dev *dev)
++s32 sxe_vlan_tpid_set(struct rte_eth_dev *eth_dev,
++			enum rte_vlan_type vlan_type, u16 tpid)
 +{
-+	struct rte_eth_rss_conf *rss_conf;
-+	struct sxe_adapter *adapter = dev->data->dev_private;
++	struct sxe_adapter *adapter = eth_dev->data->dev_private;
 +	struct sxe_hw *hw = &adapter->hw;
-+	u16 i;
-+	u16 j;
-+	u8  rss_indir_tbl[SXE_MAX_RETA_ENTRIES];
++	s32 ret = 0;
++	u32 txctl;
++	bool double_vlan;
 +
-+	PMD_INIT_FUNC_TRACE();
++	txctl = sxe_hw_txctl_vlan_type_get(hw);
++	double_vlan = txctl & SXE_DMATXCTL_GDV;
 +
-+	if (!adapter->rss_reta_updated) {
-+		for (i = 0, j = 0; i < SXE_MAX_RETA_ENTRIES; i++, j++) {
-+			if (j == dev->data->nb_rx_queues)
-+				j = 0;
-+
-+			rss_indir_tbl[i] = j;
++	switch (vlan_type) {
++	case RTE_ETH_VLAN_TYPE_INNER:
++		if (double_vlan) {
++			sxe_vlan_tpid_write(hw, tpid);
++		} else {
++			ret = -ENOTSUP;
++			PMD_LOG_ERR(DRV, "unsupported inner vlan without "
++					 "global double vlan.");
 +		}
-+
-+		sxe_hw_rss_redir_tbl_set_all(hw, rss_indir_tbl);
++		break;
++	case RTE_ETH_VLAN_TYPE_OUTER:
++		if (double_vlan) {
++			sxe_hw_vlan_ext_type_set(hw,
++				(tpid << SXE_EXVET_VET_EXT_SHIFT));
++		} else {
++			sxe_vlan_tpid_write(hw, tpid);
++		}
++		break;
++	default:
++		ret = -EINVAL;
++		PMD_LOG_ERR(DRV, "unsupported VLAN type %d", vlan_type);
++		break;
 +	}
 +
-+	rss_conf = &dev->data->dev_conf.rx_adv_conf.rss_conf;
-+	if ((rss_conf->rss_hf & SXE_RSS_OFFLOAD_ALL) == 0) {
-+		PMD_LOG_INFO(INIT, "user rss config match hw supports is 0");
-+		sxe_rss_disable(dev);
++	PMD_LOG_INFO(DRV, "double_vlan:%d vlan_type:%d tpid:0x%x set done ret:%d",
++			   double_vlan, vlan_type, tpid, ret);
++	return ret;
++}
++
++static void sxe_vlan_strip_bitmap_set(struct rte_eth_dev *dev, u16 queue_idx, bool on)
++{
++	struct sxe_adapter *adapter = dev->data->dev_private;
++	struct sxe_vlan_context *vlan_ctxt = &adapter->vlan_ctxt;
++
++	sxe_rx_queue_s *rxq;
++
++	if (queue_idx >= SXE_HW_TXRX_RING_NUM_MAX ||
++		queue_idx >= dev->data->nb_rx_queues) {
++		PMD_LOG_ERR(DRV, "invalid queue idx:%u exceed max"
++			   " queue number:%u or nb_rx_queues:%u.",
++			   queue_idx, SXE_HW_TXRX_RING_NUM_MAX,
++			   dev->data->nb_rx_queues);
 +		return;
 +	}
 +
-+	if (rss_conf->rss_key == NULL)
-+		rss_conf->rss_key = rss_sxe_key;
++	if (on)
++		SXE_STRIP_BITMAP_SET(vlan_ctxt, queue_idx);
++	else
++		SXE_STRIP_BITMAP_CLEAR(vlan_ctxt, queue_idx);
 +
-+	sxe_rss_hash_set(hw, rss_conf);
++	rxq = dev->data->rx_queues[queue_idx];
++
++	if (on) {
++		rxq->vlan_flags = RTE_MBUF_F_RX_VLAN | RTE_MBUF_F_RX_VLAN_STRIPPED;
++		rxq->offloads |= RTE_ETH_RX_OFFLOAD_VLAN_STRIP;
++	} else {
++		rxq->vlan_flags = RTE_MBUF_F_RX_VLAN;
++		rxq->offloads &= ~RTE_ETH_RX_OFFLOAD_VLAN_STRIP;
++	}
++
++	PMD_LOG_INFO(DRV, "queue idx:%u vlan strip on:%d set bitmap and offload done.",
++			 queue_idx, on);
 +}
 +
-+s32 sxe_rss_reta_update(struct rte_eth_dev *dev,
-+			struct rte_eth_rss_reta_entry64 *reta_conf,
-+			u16 reta_size)
++void sxe_vlan_strip_switch_set(struct rte_eth_dev *dev)
 +{
-+	u16 i;
-+	u8 j, mask;
-+	u32 reta, r;
-+	u16 idx, shift;
 +	struct sxe_adapter *adapter = dev->data->dev_private;
-+	struct rte_eth_dev_data *dev_data = dev->data;
 +	struct sxe_hw *hw = &adapter->hw;
-+	s32 ret = 0;
++	u16 i;
++	sxe_rx_queue_s *rxq;
++	bool on;
 +
 +	PMD_INIT_FUNC_TRACE();
 +
-+	if (!dev_data->dev_started) {
-+		PMD_LOG_ERR(DRV,
-+			"port %d must be started before rss reta update",
-+			 dev_data->port_id);
-+		ret = -EIO;
-+		goto l_end;
-+	}
++	for (i = 0; i < dev->data->nb_rx_queues; i++) {
++		rxq = dev->data->rx_queues[i];
 +
-+	if (reta_size != RTE_ETH_RSS_RETA_SIZE_128) {
-+		PMD_LOG_ERR(DRV, "The size of hash lookup table configured "
-+			"(%d) doesn't match the number hardware can supported "
-+			"(%d)", reta_size, RTE_ETH_RSS_RETA_SIZE_128);
-+		ret = -EINVAL;
-+		goto l_end;
-+	}
-+
-+	for (i = 0; i < reta_size; i += SXE_4_BIT_WIDTH) {
-+		idx = i / RTE_ETH_RETA_GROUP_SIZE;
-+		shift = i % RTE_ETH_RETA_GROUP_SIZE;
-+		mask = (u8)((reta_conf[idx].mask >> shift) &
-+						SXE_4_BIT_MASK);
-+		if (!mask)
-+			continue;
-+
-+		if (mask == SXE_4_BIT_MASK)
-+			r = 0;
++		if (rxq->offloads & RTE_ETH_RX_OFFLOAD_VLAN_STRIP)
++			on = true;
 +		else
-+			r = sxe_hw_rss_redir_tbl_get_by_idx(hw, i);
++			on = false;
++		sxe_hw_vlan_tag_strip_switch(hw, i, on);
 +
-+		for (j = 0, reta = 0; j < SXE_4_BIT_WIDTH; j++) {
-+			if (mask & (0x1 << j)) {
-+				reta |= reta_conf[idx].reta[shift + j] <<
-+						(CHAR_BIT * j);
-+			} else {
-+				reta |= r & (SXE_8_BIT_MASK <<
-+					(CHAR_BIT * j));
-+			}
-+		}
-+
-+		sxe_hw_rss_redir_tbl_set_by_idx(hw, i, reta);
++		sxe_vlan_strip_bitmap_set(dev, i, on);
 +	}
-+	adapter->rss_reta_updated = true;
-+
-+l_end:
-+	return ret;
 +}
 +
-+s32 sxe_rss_reta_query(struct rte_eth_dev *dev,
-+			 struct rte_eth_rss_reta_entry64 *reta_conf,
-+			 u16 reta_size)
++static void sxe_vlan_filter_disable(struct rte_eth_dev *dev)
 +{
-+	u16 i;
-+	u8 j, mask;
-+	u32 reta;
-+	u16 idx, shift;
 +	struct sxe_adapter *adapter = dev->data->dev_private;
 +	struct sxe_hw *hw = &adapter->hw;
-+	s32 ret = 0;
 +
 +	PMD_INIT_FUNC_TRACE();
-+	if (reta_size != RTE_ETH_RSS_RETA_SIZE_128) {
-+		PMD_LOG_ERR(DRV, "the size of hash lookup table configured "
-+			"(%d) doesn't match the number hardware can supported "
-+			"(%d)", reta_size, RTE_ETH_RSS_RETA_SIZE_128);
-+		ret = -EINVAL;
-+		goto l_end;
-+	}
 +
-+	for (i = 0; i < reta_size; i += SXE_4_BIT_WIDTH) {
-+		idx = i / RTE_ETH_RETA_GROUP_SIZE;
-+		shift = i % RTE_ETH_RETA_GROUP_SIZE;
-+		mask = (u8)((reta_conf[idx].mask >> shift) &
-+						SXE_4_BIT_MASK);
-+		if (!mask)
-+			continue;
-+
-+		reta = sxe_hw_rss_redir_tbl_get_by_idx(hw, i);
-+		for (j = 0; j < SXE_4_BIT_WIDTH; j++) {
-+			if (mask & (0x1 << j)) {
-+				reta_conf[idx].reta[shift + j] =
-+					((reta >> (CHAR_BIT * j)) &
-+						SXE_8_BIT_MASK);
-+			}
-+		}
-+	}
-+
-+l_end:
-+	return ret;
++	sxe_hw_vlan_filter_switch(hw, 0);
 +}
 +
-+s32 sxe_rss_hash_update(struct rte_eth_dev *dev,
-+			struct rte_eth_rss_conf *rss_conf)
++static void sxe_vlan_filter_enable(struct rte_eth_dev *dev)
 +{
 +	struct sxe_adapter *adapter = dev->data->dev_private;
 +	struct sxe_hw *hw = &adapter->hw;
-+	u64 rss_hf;
-+	s32 ret = 0;
-+
-+	rss_hf = (rss_conf->rss_hf & SXE_RSS_OFFLOAD_ALL);
-+
-+	if (!sxe_hw_is_rss_enabled(hw)) {
-+		if (rss_hf != 0) {
-+			PMD_LOG_ERR(DRV, "rss not init but want set");
-+			ret = -EINVAL;
-+			goto l_end;
-+		}
-+
-+		goto l_end;
-+	}
-+
-+	if (rss_hf == 0) {
-+		PMD_LOG_ERR(DRV, "rss init but want disable it");
-+		ret = -EINVAL;
-+		goto l_end;
-+	}
-+
-+	sxe_rss_hash_set(hw, rss_conf);
-+
-+l_end:
-+	return ret;
-+}
-+
-+s32 sxe_rss_hash_conf_get(struct rte_eth_dev *dev,
-+				struct rte_eth_rss_conf *rss_conf)
-+{
-+	struct sxe_adapter *adapter = dev->data->dev_private;
-+	struct sxe_hw *hw = &adapter->hw;
-+	u8 *hash_key;
-+	u32 rss_field;
-+	u32 rss_key;
-+	u64 rss_hf;
++	struct sxe_vlan_context *vlan_ctxt = &adapter->vlan_ctxt;
++	u32 vlan_ctl;
 +	u16 i;
 +
-+	hash_key = rss_conf->rss_key;
-+	if (hash_key != NULL) {
-+		for (i = 0; i < SXE_MAX_RSS_KEY_ENTRIES; i++) {
-+			rss_key = sxe_hw_rss_key_get_by_idx(hw, i);
-+			hash_key[(i * 4)] = rss_key & 0x000000FF;
-+			hash_key[(i * 4) + 1] = (rss_key >> 8) & 0x000000FF;
-+			hash_key[(i * 4) + 2] = (rss_key >> 16) & 0x000000FF;
-+			hash_key[(i * 4) + 3] = (rss_key >> 24) & 0x000000FF;
-+		}
++	PMD_INIT_FUNC_TRACE();
++
++	vlan_ctl = sxe_hw_vlan_type_get(hw);
++	vlan_ctl &= ~SXE_VLNCTRL_CFI;
++	vlan_ctl |= SXE_VLNCTRL_VFE;
++	sxe_hw_vlan_type_set(hw, vlan_ctl);
++
++	for (i = 0; i < SXE_VFT_TBL_SIZE; i++)
++		sxe_hw_vlan_filter_array_write(hw, i, vlan_ctxt->vlan_hash_table[i]);
++}
++
++static void sxe_vlan_extend_disable(struct rte_eth_dev *dev)
++{
++	struct sxe_adapter *adapter = dev->data->dev_private;
++	struct sxe_hw *hw = &adapter->hw;
++	u32 ctrl;
++
++	PMD_INIT_FUNC_TRACE();
++
++	ctrl = sxe_hw_txctl_vlan_type_get(hw);
++	ctrl &= ~SXE_DMATXCTL_GDV;
++	sxe_hw_txctl_vlan_type_set(hw, ctrl);
++
++	ctrl = sxe_hw_ext_vlan_get(hw);
++	ctrl &= ~SXE_EXTENDED_VLAN;
++	sxe_hw_ext_vlan_set(hw, ctrl);
++}
++
++static void sxe_vlan_extend_enable(struct rte_eth_dev *dev)
++{
++	struct sxe_adapter *adapter = dev->data->dev_private;
++	struct sxe_hw *hw = &adapter->hw;
++	u32 ctrl;
++
++	PMD_INIT_FUNC_TRACE();
++
++	ctrl = sxe_hw_txctl_vlan_type_get(hw);
++	ctrl |= SXE_DMATXCTL_GDV;
++	sxe_hw_txctl_vlan_type_set(hw, ctrl);
++
++	ctrl = sxe_hw_ext_vlan_get(hw);
++	ctrl |= SXE_EXTENDED_VLAN;
++	sxe_hw_ext_vlan_set(hw, ctrl);
++}
++
++static s32 sxe_vlan_offload_configure(struct rte_eth_dev *dev, s32 mask)
++{
++	struct rte_eth_rxmode *rxmode = &dev->data->dev_conf.rxmode;
++
++	if (mask & RTE_ETH_VLAN_STRIP_MASK)
++		sxe_vlan_strip_switch_set(dev);
++
++	if (mask & RTE_ETH_VLAN_FILTER_MASK) {
++		if (rxmode->offloads & RTE_ETH_RX_OFFLOAD_VLAN_FILTER)
++			sxe_vlan_filter_enable(dev);
++		else
++			sxe_vlan_filter_disable(dev);
 +	}
 +
-+
-+	if (!sxe_hw_is_rss_enabled(hw)) {
-+		rss_conf->rss_hf = 0;
-+		PMD_LOG_INFO(DRV, "rss not enabled, return 0");
-+		goto l_end;
++	if (mask & RTE_ETH_VLAN_EXTEND_MASK) {
++		if (rxmode->offloads & RTE_ETH_RX_OFFLOAD_VLAN_EXTEND)
++			sxe_vlan_extend_enable(dev);
++		else
++			sxe_vlan_extend_disable(dev);
 +	}
 +
-+	rss_hf = 0;
-+	rss_field = sxe_hw_rss_field_get(hw);
-+	if (rss_field & SXE_MRQC_RSS_FIELD_IPV4)
-+		rss_hf |= RTE_ETH_RSS_IPV4;
++	PMD_LOG_INFO(DRV, "mask:0x%x rx mode offload:0x%" SXE_PRIX64
++			 " vlan offload set done", mask, rxmode->offloads);
 +
-+	if (rss_field & SXE_MRQC_RSS_FIELD_IPV4_TCP)
-+		rss_hf |= RTE_ETH_RSS_NONFRAG_IPV4_TCP;
-+
-+	if (rss_field & SXE_MRQC_RSS_FIELD_IPV4_UDP)
-+		rss_hf |= RTE_ETH_RSS_NONFRAG_IPV4_UDP;
-+
-+	if (rss_field & SXE_MRQC_RSS_FIELD_IPV6)
-+		rss_hf |= RTE_ETH_RSS_IPV6;
-+
-+	if (rss_field & SXE_MRQC_RSS_FIELD_IPV6_TCP)
-+		rss_hf |= RTE_ETH_RSS_NONFRAG_IPV6_TCP;
-+
-+	if (rss_field & SXE_MRQC_RSS_FIELD_IPV6_UDP)
-+		rss_hf |= RTE_ETH_RSS_NONFRAG_IPV6_UDP;
-+
-+	PMD_LOG_DEBUG(DRV, "got rss hash func=0x%" SXE_PRIX64, rss_hf);
-+	rss_conf->rss_hf = rss_hf;
-+
-+l_end:
 +	return 0;
 +}
-diff --git a/drivers/net/sxe/pf/sxe_offload.h b/drivers/net/sxe/pf/sxe_offload.h
-index a70d6bf94b..458b6464c5 100644
---- a/drivers/net/sxe/pf/sxe_offload.h
-+++ b/drivers/net/sxe/pf/sxe_offload.h
-@@ -7,6 +7,21 @@
++
++s32 sxe_vlan_offload_set(struct rte_eth_dev *dev, s32 vlan_mask)
++{
++	s32 mask;
++	s32 ret = 0;
++
++	if (vlan_mask & RTE_ETH_VLAN_STRIP_MASK) {
++		PMD_LOG_WARN(DRV, "please set vlan strip before device start, not at this stage.");
++		ret = -1;
++		goto l_out;
++	}
++	mask = vlan_mask & ~RTE_ETH_VLAN_STRIP_MASK;
++
++	sxe_vlan_offload_configure(dev, mask);
++
++	PMD_LOG_INFO(DRV, "vlan offload mask:0x%x set done.", vlan_mask);
++
++l_out:
++	return ret;
++}
++
++void sxe_vlan_strip_queue_set(struct rte_eth_dev *dev, u16 queue, s32 on)
++{
++	UNUSED(dev);
++	UNUSED(queue);
++	UNUSED(on);
++	PMD_LOG_WARN(DRV, "please set vlan strip before device start, not at this stage.");
++}
++
++void sxe_vlan_filter_configure(struct rte_eth_dev *dev)
++{
++	struct sxe_adapter *adapter = dev->data->dev_private;
++	struct sxe_hw *hw = &adapter->hw;
++	u32 vlan_mask;
++	u32 vlan_ctl;
++
++	vlan_mask = RTE_ETH_VLAN_STRIP_MASK | RTE_ETH_VLAN_FILTER_MASK |
++			RTE_ETH_VLAN_EXTEND_MASK;
++	sxe_vlan_offload_configure(dev, vlan_mask);
++
++	if (dev->data->dev_conf.rxmode.mq_mode == RTE_ETH_MQ_RX_VMDQ_ONLY) {
++		vlan_ctl = sxe_hw_vlan_type_get(hw);
++		vlan_ctl |= SXE_VLNCTRL_VFE;
++		sxe_hw_vlan_type_set(hw, vlan_ctl);
++		LOG_DEBUG_BDF("vmdq mode enable vlan filter done.");
++	}
++}
+diff --git a/drivers/net/sxe/pf/sxe_filter.h b/drivers/net/sxe/pf/sxe_filter.h
+index 1f103f978d..51df05ac8e 100644
+--- a/drivers/net/sxe/pf/sxe_filter.h
++++ b/drivers/net/sxe/pf/sxe_filter.h
+@@ -43,10 +43,23 @@ void sxe_mac_addr_remove(struct rte_eth_dev *dev, u32 rar_idx);
+ s32 sxe_mac_addr_set(struct rte_eth_dev *dev,
+ 				 struct rte_ether_addr *mac_addr);
  
- #include "sxe_hw.h"
++s32 sxe_vlan_filter_set(struct rte_eth_dev *eth_dev, u16 vlan_id, s32 on);
++
++s32 sxe_vlan_tpid_set(struct rte_eth_dev *eth_dev,
++			enum rte_vlan_type vlan_type, u16 tpid);
++
++s32 sxe_vlan_offload_set(struct rte_eth_dev *dev, s32 vlan_mask);
++
++void sxe_vlan_strip_queue_set(struct rte_eth_dev *dev, u16 queue, s32 on);
++
++void sxe_vlan_filter_configure(struct rte_eth_dev *dev);
++
+ s32 sxe_set_mc_addr_list(struct rte_eth_dev *dev,
+ 			  struct rte_ether_addr *mc_addr_list,
+ 			  u32 nb_mc_addr);
  
-+#define SXE_RSS_OFFLOAD_ALL ( \
-+		RTE_ETH_RSS_IPV4 | \
-+		RTE_ETH_RSS_NONFRAG_IPV4_TCP | \
-+		RTE_ETH_RSS_NONFRAG_IPV4_UDP | \
-+		RTE_ETH_RSS_IPV6 | \
-+		RTE_ETH_RSS_NONFRAG_IPV6_TCP | \
-+		RTE_ETH_RSS_NONFRAG_IPV6_UDP)
++void sxe_vlan_strip_switch_set(struct rte_eth_dev *dev);
 +
-+#if defined SXE_DPDK_L4_FEATURES && defined SXE_DPDK_FILTER_CTRL
-+u8 *sxe_rss_hash_key_get(void);
-+#endif
-+
-+void sxe_rss_hash_set(struct sxe_hw *hw,
-+				struct rte_eth_rss_conf *rss_conf);
-+
- u64 sxe_rx_queue_offload_capa_get(struct rte_eth_dev *dev);
+ void sxe_fc_mac_addr_set(struct sxe_adapter *adapter);
  
- u64 sxe_rx_port_offload_capa_get(struct rte_eth_dev *dev);
-@@ -15,4 +30,22 @@ u64 sxe_tx_queue_offload_capa_get(struct rte_eth_dev *dev);
- 
- u64 sxe_tx_port_offload_capa_get(struct rte_eth_dev *dev);
- 
-+void sxe_rss_disable(struct rte_eth_dev *dev);
-+
-+void sxe_rss_configure(struct rte_eth_dev *dev);
-+
-+s32 sxe_rss_reta_update(struct rte_eth_dev *dev,
-+			struct rte_eth_rss_reta_entry64 *reta_conf,
-+			u16 reta_size);
-+
-+s32 sxe_rss_reta_query(struct rte_eth_dev *dev,
-+			 struct rte_eth_rss_reta_entry64 *reta_conf,
-+			 u16 reta_size);
-+
-+s32 sxe_rss_hash_update(struct rte_eth_dev *dev,
-+			struct rte_eth_rss_conf *rss_conf);
-+
-+s32 sxe_rss_hash_conf_get(struct rte_eth_dev *dev,
-+				struct rte_eth_rss_conf *rss_conf);
-+
  #endif
+diff --git a/drivers/net/sxe/pf/sxe_main.c b/drivers/net/sxe/pf/sxe_main.c
+index 1abd0303f3..ec727c92d3 100644
+--- a/drivers/net/sxe/pf/sxe_main.c
++++ b/drivers/net/sxe/pf/sxe_main.c
+@@ -154,6 +154,8 @@ s32 sxe_hw_reset(struct sxe_hw *hw)
+ 
+ void sxe_hw_start(struct sxe_hw *hw)
+ {
++	sxe_hw_vlan_filter_array_clear(hw);
++
+ 	sxe_fc_autoneg_localcap_set(hw);
+ 
+ 	hw->mac.auto_restart = true;
 -- 
 2.18.2
 
