@@ -2,32 +2,32 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDCE3EF06E3
-	for <dpdk-dev@archiver.kernel.org>; Sun,  8 Feb 2026 11:58:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD998EF06E3
+	for <dpdk-dev@archiver.kernel.org>; Sun,  8 Feb 2026 11:58:20 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 265CE4060C;
-	Sun,  8 Feb 2026 12:56:39 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 3371140B8C;
+	Sun,  8 Feb 2026 12:56:40 +0100 (CET)
 Received: from cstnet.cn (smtp25.cstnet.cn [159.226.251.25])
- by mails.dpdk.org (Postfix) with ESMTP id 1CA86409FA
+ by mails.dpdk.org (Postfix) with ESMTP id 03165406BB
  for <dev@dpdk.org>; Sun,  8 Feb 2026 12:56:30 +0100 (CET)
 Received: from mail.cstnet.cn (unknown [221.238.36.162])
- by APP-05 (Coremail) with SMTP id zQCowAD3hAjreYhpts_KBw--.49177S10;
+ by APP-05 (Coremail) with SMTP id zQCowAD3hAjreYhpts_KBw--.49177S12;
  Sun, 08 Feb 2026 19:56:28 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org,
 	Jie Liu <liujie5@linkdatatechnology.com>
-Subject: [PATCH v16 09/13] net/sxe: support ptp
-Date: Sun,  8 Feb 2026 19:56:22 +0800
-Message-Id: <20260208115626.146863-9-liujie5@linkdatatechnology.com>
+Subject: [PATCH v16 11/13] net/sxe: add custom cmd led ctrl
+Date: Sun,  8 Feb 2026 19:56:24 +0800
+Message-Id: <20260208115626.146863-11-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.18.2
 In-Reply-To: <20260208115626.146863-1-liujie5@linkdatatechnology.com>
 References: <20260208093122.10329-13-liujie5@linkdatatechnology.com>
  <20260208115626.146863-1-liujie5@linkdatatechnology.com>
-X-CM-TRANSID: zQCowAD3hAjreYhpts_KBw--.49177S10
-X-Coremail-Antispam: 1UD129KBjvJXoWxtr4fGrWrGFy7Cr45tF4xJFb_yoW3WF1rpF
- Z8Ca4YyrWxtFsFgFWfCF4Dury5KFsYqr92gF9ayw43Z34xCrW8Wry09r1UtFn5G34kJw13
- A3ZYqanxWr1rXF7anT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID: zQCowAD3hAjreYhpts_KBw--.49177S12
+X-Coremail-Antispam: 1UD129KBjvJXoWxKF4rtrWruFykZF1kWF18AFb_yoWfXF48pF
+ 45Cr15W3WfJFyIka1fJF4DZF1rCa1jqFWDWF9F9w4Svas2yr1UJF4qgFsIy34Fv3y8Gry2
+ va12vFy5Kwn5K3DanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
  9KBjDU0xBIdaVrnRJUUUmC14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
  rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
  kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
@@ -59,263 +59,341 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-Add ptp module.
+Add custom cmd led ctrl.
 
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- drivers/net/sxe/pf/sxe_ptp.c | 209 +++++++++++++++++++++++++++++++++++
- drivers/net/sxe/pf/sxe_ptp.h |  26 +++++
- 2 files changed, 235 insertions(+)
- create mode 100644 drivers/net/sxe/pf/sxe_ptp.c
- create mode 100644 drivers/net/sxe/pf/sxe_ptp.h
+ drivers/net/sxe/include/sxe/sxe_cli.h   | 218 ++++++++++++++++++++++++
+ drivers/net/sxe/include/sxe/sxe_ioctl.h |  21 +++
+ drivers/net/sxe/sxe_testpmd.c           |  66 +++++++
+ 3 files changed, 305 insertions(+)
+ create mode 100644 drivers/net/sxe/include/sxe/sxe_cli.h
+ create mode 100644 drivers/net/sxe/include/sxe/sxe_ioctl.h
+ create mode 100644 drivers/net/sxe/sxe_testpmd.c
 
-diff --git a/drivers/net/sxe/pf/sxe_ptp.c b/drivers/net/sxe/pf/sxe_ptp.c
+diff --git a/drivers/net/sxe/include/sxe/sxe_cli.h b/drivers/net/sxe/include/sxe/sxe_cli.h
 new file mode 100644
-index 0000000000..4116dbb37e
+index 0000000000..b278a67907
 --- /dev/null
-+++ b/drivers/net/sxe/pf/sxe_ptp.c
-@@ -0,0 +1,209 @@
++++ b/drivers/net/sxe/include/sxe/sxe_cli.h
+@@ -0,0 +1,218 @@
 +/* SPDX-License-Identifier: BSD-3-Clause
 + * Copyright (C), 2022, Linkdata Technology Co., Ltd.
 + */
 +
-+#include "sxe.h"
-+#include "sxe_logs.h"
-+#include "sxe_hw.h"
-+#include "sxe_ptp.h"
++#ifndef __SXE_CLI_H__
++#define __SXE_CLI_H__
 +
-+#define SXE_CYCLECOUNTER_MASK   0xffffffffffffffffULL
++#ifdef SXE_HOST_DRIVER
++#include "sxe_drv_type.h"
++#endif
 +
-+static void sxe_timecounters_start(struct rte_eth_dev *dev)
-+{
-+	struct sxe_adapter *adapter = dev->data->dev_private;
++#define SXE_CODE_VERSION_LEN			(32)
++#define SXE_MAC_NUM				(128)
++#define SXE_PORT_TRANSCEIVER_LEN		(32)
++#define SXE_PORT_VENDOR_LEN			(32)
++#define SXE_CHIP_TYPE_LEN			(32)
++#define SXE_VPD_SN_LEN				(16)
++#define SXE_SOC_RST_TIME			(0x93A80)
++#define SXE_SFP_TEMP_THRESHOLD_INTERVAL		(3)
++#define MGC_TERMLOG_INFO_MAX_LEN		(12 * 1024)
++#define SXE_REGS_DUMP_MAX_LEN			(12 * 1024)
++#define SXE_PRODUCT_NAME_LEN			(32)
 +
-+	u32 shift = 0;
++typedef enum sxe_led_mode {
++	SXE_IDENTIFY_LED_BLINK_ON = 0,
++	SXE_IDENTIFY_LED_BLINK_OFF,
++	SXE_IDENTIFY_LED_ON,
++	SXE_IDENTIFY_LED_OFF,
++	SXE_IDENTIFY_LED_RESET,
++} sxe_led_mode_s;
 +
-+	memset(&adapter->ptp_ctxt.systime_tc, 0, sizeof(struct rte_timecounter));
-+	memset(&adapter->ptp_ctxt.rx_tstamp_tc, 0, sizeof(struct rte_timecounter));
-+	memset(&adapter->ptp_ctxt.tx_tstamp_tc, 0, sizeof(struct rte_timecounter));
++typedef struct sxe_led_ctrl {
++	U32	mode;
++	U32	duration;
 +
-+	adapter->ptp_ctxt.systime_tc.cc_mask = SXE_CYCLECOUNTER_MASK;
-+	adapter->ptp_ctxt.systime_tc.cc_shift = shift;
-+	adapter->ptp_ctxt.systime_tc.nsec_mask = (1ULL << shift) - 1;
++} sxe_led_ctrl_s;
 +
-+	adapter->ptp_ctxt.rx_tstamp_tc.cc_mask = SXE_CYCLECOUNTER_MASK;
-+	adapter->ptp_ctxt.rx_tstamp_tc.cc_shift = shift;
-+	adapter->ptp_ctxt.rx_tstamp_tc.nsec_mask = (1ULL << shift) - 1;
++typedef struct sxe_led_ctrl_resp {
++	U32	ack;
++} sxe_led_ctrl_resp_s;
 +
-+	adapter->ptp_ctxt.tx_tstamp_tc.cc_mask = SXE_CYCLECOUNTER_MASK;
-+	adapter->ptp_ctxt.tx_tstamp_tc.cc_shift = shift;
-+	adapter->ptp_ctxt.tx_tstamp_tc.nsec_mask = (1ULL << shift) - 1;
++typedef enum port_link_speed {
++	PORT_LINK_NO	= 0,
++	PORT_LINK_100M	= 1,
++	PORT_LINK_1G	= 2,
++	PORT_LINK_10G	= 3,
++} port_link_speed_e;
 +
-+	adapter->ptp_ctxt.tx_hwtstamp_nsec = 0;
-+	adapter->ptp_ctxt.tx_hwtstamp_sec = 0;
-+}
++typedef struct sys_soc_info {
++	S8	fw_ver[SXE_CODE_VERSION_LEN];
++	S8	opt_ver[SXE_CODE_VERSION_LEN];
++	U8	soc_status;
++	U8	pad[3];
++	S32	soc_temp;
++	U64	chipid;
++	S8	chip_type[SXE_CHIP_TYPE_LEN];
++	S8	pba[SXE_VPD_SN_LEN];
++	S8	product_name[SXE_PRODUCT_NAME_LEN];
++} sys_soc_info_s;
 +
-+s32 sxe_timesync_enable(struct rte_eth_dev *dev)
-+{
-+	struct sxe_adapter *adapter = dev->data->dev_private;
-+	struct sxe_hw *hw = &adapter->hw;
-+	u32 tses = SXE_TSES_TXES_V2_ALL | SXE_TSES_RXES_V2_ALL;
-+
-+	struct timespec ts;
-+
-+	memset(&ts, 0, sizeof(struct timespec));
-+
-+	clock_gettime(CLOCK_REALTIME, &ts);
-+
-+	sxe_hw_ptp_init(hw);
-+
-+
-+	sxe_hw_ptp_timestamp_mode_set(hw, true, 0, tses);
-+
-+	sxe_hw_ptp_timestamp_enable(hw);
-+
-+	sxe_hw_ptp_rx_timestamp_clear(hw);
-+
-+	sxe_hw_ptp_systime_init(hw);
-+
-+	sxe_timecounters_start(dev);
++typedef struct sys_port_info {
++	U64	mac[SXE_MAC_NUM];
++	U8	is_port_abs;
++	U8	link_stat;
++	U8	link_speed;
 +
 +
-+	sxe_timesync_write_time(dev, &ts);
++	U8	is_sfp:1;
++	U8	is_get_info:1;
++	U8	rvd:6;
++	S8	optical_mod_temp;
++	U8	pad[3];
++	S8	transceiver_type[SXE_PORT_TRANSCEIVER_LEN];
++	S8	vendor_name[SXE_PORT_VENDOR_LEN];
++	S8	vendor_pn[SXE_PORT_VENDOR_LEN];
++} sys_port_info_s;
 +
-+	return 0;
-+}
++typedef struct sys_info_resp {
++	sys_soc_info_s	soc_info;
++	sys_port_info_s	port_info;
++} sys_info_resp_s;
 +
-+s32 sxe_timesync_disable(struct rte_eth_dev *dev)
-+{
-+	struct sxe_adapter *adapter = dev->data->dev_private;
-+	struct sxe_hw *hw = &adapter->hw;
++typedef enum sfp_temp_td_mode {
++	SFP_TEMP_THRESHOLD_MODE_ALARM   = 0,
++	SFP_TEMP_THRESHOLD_MODE_WARN,
++} sfp_temp_td_mode_e;
 +
-+	sxe_hw_ptp_timestamp_disable(hw);
++typedef struct sfp_temp_td_set {
++	U8	mode;
++	U8	pad[3];
++	S8	hthreshold;
++	S8	lthreshold;
++} sfp_temp_td_set_s;
 +
-+	sxe_hw_ptp_timestamp_mode_set(hw, false, 0, 0);
++typedef struct sxe_log_export_resp {
++	U16	cur_log_len;
++	U8	is_end;
++	U8	pad;
++	S32	session_id;
++	S8	data[0];
++} sxe_log_export_resp_s;
 +
-+	sxe_hw_ptp_time_inc_stop(hw);
++typedef enum sxe_log_export_type  {
++	SXE_LOG_EXPORT_REQ	= 0,
++	SXE_LOG_EXPORT_FIN,
++	SXE_LOG_EXPORT_ABORT,
++} sxe_log_export_type_e;
 +
-+	return 0;
-+}
++typedef struct sxe_log_export_req {
++	U8	is_all_log;
++	U8	cmdtype;
++	U8	is_begin;
++	U8	pad;
++	S32	session_id;
++	U32	log_len;
++} sxe_log_export_req_s;
 +
-+s32 sxe_timesync_read_rx_timestamp(struct rte_eth_dev *dev,
-+				 struct timespec *timestamp,
-+				 u32 flags __rte_unused)
-+{
-+	struct sxe_adapter *adapter = dev->data->dev_private;
-+	struct sxe_hw *hw = &adapter->hw;
-+	u64 ns;
-+	s32 ret = 0;
-+	bool is_valid;
-+	u64 rx_tstamp_cycles;
++typedef struct soc_rst_req {
++	U32	time;
++} soc_rst_req_s;
 +
-+	is_valid = sxe_hw_ptp_is_rx_timestamp_valid(hw);
-+	if (!is_valid) {
-+		PMD_LOG_ERR(DRV, "no valid ptp timestamp in rx register");
-+		ret = -EINVAL;
-+		goto l_end;
-+	}
++typedef struct regs_dump_resp {
++	U32	curdw_len;
++	U8	data[0];
++} regs_dump_resp_s;
 +
-+	rx_tstamp_cycles = sxe_hw_ptp_rx_timestamp_get(hw);
-+	ns = rte_timecounter_update(&adapter->ptp_ctxt.rx_tstamp_tc, rx_tstamp_cycles);
-+	PMD_LOG_DEBUG(DRV, "got rx_tstamp_cycles = %" SXE_PRIU64 "ns=%" SXE_PRIU64,
-+			rx_tstamp_cycles, ns);
-+	*timestamp = rte_ns_to_timespec(ns);
++enum {
++	SXE_MFG_PART_NUMBER_LEN   = 8,
++	SXE_MFG_SERIAL_NUMBER_LEN = 16,
++	SXE_MFG_REVISION_LEN	  = 4,
++	SXE_MFG_OEM_STR_LEN	   = 64,
++	SXE_MFG_SXE_BOARD_ASSEMBLY_LEN  = 32,
++	SXE_MFG_SXE_BOARD_TRACE_NUM_LEN = 16,
++	SXE_MFG_SXE_MAC_ADDR_CNT		= 2,
++};
 +
-+l_end:
-+	return ret;
-+}
++typedef struct sxe_mfg_info {
++	U8 part_number[SXE_MFG_PART_NUMBER_LEN];
++	U8 serial_number[SXE_MFG_SERIAL_NUMBER_LEN];
++	U32 mfg_date;
++	U8 revision[SXE_MFG_REVISION_LEN];
++	U32 rework_date;
++	U8 pad[4];
++	U64 mac_addr[SXE_MFG_SXE_MAC_ADDR_CNT];
++	U8 board_trace_num[SXE_MFG_SXE_BOARD_TRACE_NUM_LEN];
++	U8 board_assembly[SXE_MFG_SXE_BOARD_ASSEMBLY_LEN];
++	U8 extra1[SXE_MFG_OEM_STR_LEN];
++	U8 extra2[SXE_MFG_OEM_STR_LEN];
++} sxe_mfg_info_t;
 +
-+static u64 sxe_timesync_tx_tstamp_cycles_get(struct sxe_adapter *adapter)
-+{
-+	return SXE_TIME_TO_NS(adapter->ptp_ctxt.tx_hwtstamp_nsec,
-+				adapter->ptp_ctxt.tx_hwtstamp_sec);
-+}
++typedef struct sxe_lldp_info {
++	U8	lldp_state;
++	U8	pad[3];
++} sxe_lldp_info_t;
 +
-+s32 sxe_timesync_read_tx_timestamp(struct rte_eth_dev *dev,
-+				 struct timespec *timestamp)
-+{
-+	struct sxe_adapter *adapter = dev->data->dev_private;
-+	struct sxe_hw *hw = &adapter->hw;
-+	u64 ns;
-+	s32 ret = 0;
-+	u64 tx_tstamp_cycles;
-+	u32 ts_sec;
-+	u32 ts_ns;
-+	u32 last_sec;
-+	u32 last_ns;
-+	bool tx_tstamp_valid = true;
-+	u8 i;
++typedef struct regs_dump_req {
++	U32	base_addr;
++	U32	dw_len;
++} regs_dump_req_s;
 +
-+	sxe_hw_ptp_tx_timestamp_get(hw, &ts_sec, &ts_ns);
-+	if (ts_ns  != adapter->ptp_ctxt.tx_hwtstamp_nsec ||
-+		ts_sec != adapter->ptp_ctxt.tx_hwtstamp_sec) {
-+		for (i = 0; i < SXE_TXTS_POLL_CHECK; i++)
-+			sxe_hw_ptp_tx_timestamp_get(hw, &last_sec, &last_ns);
++typedef enum sxe_pcs_mode {
++	SXE_PCS_MODE_1000BASE_KX_WO = 0,
++	SXE_PCS_MODE_1000BASE_KX_W,
++	SXE_PCS_MODE_SGMII,
++	SXE_PCS_MODE_10GBASE_KR_WO,
++	SXE_PCS_MODE_AUTO_NEGT_73,
++	SXE_PCS_MODE_LPBK_PHY_TX2RX,
++	SXE_PCS_MODE_LPBK_PHY_RX2TX,
++	SXE_PCS_MODE_LPBK_PCS_RX2TX,
++	SXE_PCS_MODE_BUTT,
++} sxe_pcs_mode_e;
 +
-+		for (; i < SXE_TXTS_POLL; i++) {
-+			sxe_hw_ptp_tx_timestamp_get(hw, &ts_sec, &ts_ns);
-+			if (last_ns != ts_ns || last_sec != ts_sec) {
-+				tx_tstamp_valid = false;
-+				break;
-+			}
-+		}
-+	}
++typedef enum sxe_remote_fault_mode {
++	SXE_REMOTE_FALUT_NO_ERROR		= 0,
++	SXE_REMOTE_FALUT_OFFLINE,
++	SXE_REMOTE_FALUT_LINK_FAILURE,
++	SXE_REMOTE_FALUT_AUTO_NEGOTIATION,
++	SXE_REMOTE_UNKNOWN,
++} sxe_remote_fault_e;
 +
-+	if (!tx_tstamp_valid || (ts_ns == adapter->ptp_ctxt.tx_hwtstamp_nsec &&
-+			ts_sec == adapter->ptp_ctxt.tx_hwtstamp_sec)) {
-+		PMD_LOG_DEBUG(DRV, "no valid ptp timestamp in tx register");
-+		ret = -EINVAL;
-+		goto l_end;
-+	} else {
-+		adapter->ptp_ctxt.tx_hwtstamp_nsec = ts_ns;
-+		adapter->ptp_ctxt.tx_hwtstamp_sec  = ts_sec;
-+		tx_tstamp_cycles =
-+			sxe_timesync_tx_tstamp_cycles_get(adapter);
-+		ns = rte_timecounter_update(&adapter->ptp_ctxt.tx_tstamp_tc,
-+						tx_tstamp_cycles);
-+		PMD_LOG_DEBUG(DRV, "got tx_tstamp_cycles = %"
-+			SXE_PRIU64 "ns=%" SXE_PRIU64, tx_tstamp_cycles, ns);
-+		*timestamp = rte_ns_to_timespec(ns);
-+	}
++typedef struct sxe_phy_cfg {
++	sxe_pcs_mode_e mode;
++	U32 mtu;
++} sxe_pcs_cfg_s;
 +
-+l_end:
-+	return ret;
-+}
++typedef enum sxe_an_speed {
++	SXE_AN_SPEED_NO_LINK = 0,
++	SXE_AN_SPEED_100M,
++	SXE_AN_SPEED_1G,
++	SXE_AN_SPEED_10G,
++	SXE_AN_SPEED_UNKNOWN,
++} sxe_an_speed_e;
 +
-+s32 sxe_timesync_adjust_time(struct rte_eth_dev *dev, s64 delta)
-+{
-+	struct sxe_adapter *adapter = dev->data->dev_private;
++typedef enum sxe_phy_pause_cap {
++	SXE_PAUSE_CAP_NO_PAUSE	= 0,
++	SXE_PAUSE_CAP_ASYMMETRIC_PAUSE,
++	SXE_PAUSE_CAP_SYMMETRIC_PAUSE,
++	SXE_PAUSE_CAP_BOTH_PAUSE,
++	SXE_PAUSE_CAP_UNKNOWN,
++} sxe_phy_pause_cap_e;
 +
-+	PMD_LOG_DEBUG(DRV, "got delta = %" SXE_PRID64, delta);
++typedef enum sxe_phy_duplex_type {
++	SXE_FULL_DUPLEX	= 0,
++	SXE_HALF_DUPLEX	= 1,
++	SXE_UNKNOWN_DUPLEX,
++} sxe_phy_duplex_type_e;
 +
-+	adapter->ptp_ctxt.systime_tc.nsec += delta;
-+	adapter->ptp_ctxt.rx_tstamp_tc.nsec += delta;
-+	adapter->ptp_ctxt.tx_tstamp_tc.nsec += delta;
++typedef struct sxe_phy_an_cap {
++	sxe_remote_fault_e   remote_fault;
++	sxe_phy_pause_cap_e  pause_cap;
++	sxe_phy_duplex_type_e duplex_cap;
++} sxe_phy_an_cap_s;
 +
-+	return 0;
-+}
-+
-+s32 sxe_timesync_read_time(struct rte_eth_dev *dev, struct timespec *ts)
-+{
-+	struct sxe_adapter *adapter = dev->data->dev_private;
-+	struct sxe_hw *hw = &adapter->hw;
-+	u64 ns, systime_cycles;
-+
-+	systime_cycles = sxe_hw_ptp_systime_get(hw);
-+	ns = rte_timecounter_update(&adapter->ptp_ctxt.systime_tc, systime_cycles);
-+	PMD_LOG_DEBUG(DRV, "got systime_cycles = %" SXE_PRIU64 "ns=%" SXE_PRIU64,
-+			systime_cycles, ns);
-+	*ts = rte_ns_to_timespec(ns);
-+
-+	return 0;
-+}
-+
-+s32 sxe_timesync_write_time(struct rte_eth_dev *dev,
-+					const struct timespec *ts)
-+{
-+	u64 ns;
-+	struct sxe_adapter *adapter = dev->data->dev_private;
-+
-+	ns = rte_timespec_to_ns(ts);
-+	PMD_LOG_DEBUG(DRV, "set systime ns = %" SXE_PRIU64, ns);
-+	adapter->ptp_ctxt.systime_tc.nsec = ns;
-+	adapter->ptp_ctxt.rx_tstamp_tc.nsec = ns;
-+	adapter->ptp_ctxt.tx_tstamp_tc.nsec = ns;
-+
-+	return 0;
-+}
-diff --git a/drivers/net/sxe/pf/sxe_ptp.h b/drivers/net/sxe/pf/sxe_ptp.h
++typedef struct sxe_an_cap {
++	sxe_phy_an_cap_s local;
++	sxe_phy_an_cap_s peer;
++} sxe_an_cap_s;
++#endif
+diff --git a/drivers/net/sxe/include/sxe/sxe_ioctl.h b/drivers/net/sxe/include/sxe/sxe_ioctl.h
 new file mode 100644
-index 0000000000..14971b2d50
+index 0000000000..4a4b0bc304
 --- /dev/null
-+++ b/drivers/net/sxe/pf/sxe_ptp.h
-@@ -0,0 +1,26 @@
++++ b/drivers/net/sxe/include/sxe/sxe_ioctl.h
+@@ -0,0 +1,21 @@
 +/* SPDX-License-Identifier: BSD-3-Clause
 + * Copyright (C), 2022, Linkdata Technology Co., Ltd.
 + */
++#ifndef _SXE_IOCTL_H_
++#define _SXE_IOCTL_H_
 +
-+#ifndef __SXE_PTP_H__
-+#define __SXE_PTP_H__
++#ifdef SXE_HOST_DRIVER
++#include "sxe_drv_type.h"
++#endif
 +
-+s32 sxe_timesync_enable(struct rte_eth_dev *dev);
++struct sxe_ioctl_sync_cmd {
++	U64   traceid;
++	void *in_data;
++	U32   in_len;
++	void *out_data;
++	U32   out_len;
++};
 +
-+s32 sxe_timesync_disable(struct rte_eth_dev *dev);
-+
-+s32 sxe_timesync_read_rx_timestamp(struct rte_eth_dev *dev,
-+				 struct timespec *timestamp,
-+				 u32 flags __rte_unused);
-+
-+s32 sxe_timesync_read_tx_timestamp(struct rte_eth_dev *dev,
-+				 struct timespec *timestamp);
-+
-+s32 sxe_timesync_adjust_time(struct rte_eth_dev *dev, s64 delta);
-+
-+s32 sxe_timesync_read_time(struct rte_eth_dev *dev, struct timespec *ts);
-+
-+s32 sxe_timesync_write_time(struct rte_eth_dev *dev,
-+					const struct timespec *ts);
++#define SXE_CMD_IOCTL_SYNC_CMD _IOWR('M', 1, struct sxe_ioctl_sync_cmd)
 +
 +#endif
+diff --git a/drivers/net/sxe/sxe_testpmd.c b/drivers/net/sxe/sxe_testpmd.c
+new file mode 100644
+index 0000000000..6974bfe002
+--- /dev/null
++++ b/drivers/net/sxe/sxe_testpmd.c
+@@ -0,0 +1,66 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright (C), 2022, Linkdata Technology Co., Ltd.
++ */
++#include <ethdev_driver.h>
++#include "sxe_drv_type.h"
++#include "sxe_ethdev.h"
++#include "rte_pmd_sxe.h"
++
++#include <cmdline_parse_etheraddr.h>
++#include <cmdline_parse_num.h>
++#include <cmdline_parse_string.h>
++
++#include "testpmd.h"
++
++struct led_ctrl_result {
++	cmdline_fixed_string_t port;
++	uint16_t port_id;
++	cmdline_fixed_string_t led;
++	cmdline_fixed_string_t action;
++};
++
++cmdline_parse_token_string_t cmd_led_ctrl_port =
++	TOKEN_STRING_INITIALIZER(struct led_ctrl_result, port, "port");
++cmdline_parse_token_num_t cmd_led_ctrl_port_id =
++	TOKEN_NUM_INITIALIZER(struct led_ctrl_result, port_id, RTE_UINT16);
++cmdline_parse_token_string_t cmd_led_ctrl_led =
++	TOKEN_STRING_INITIALIZER(struct led_ctrl_result, led, "led");
++cmdline_parse_token_string_t cmd_led_ctrl_action =
++	TOKEN_STRING_INITIALIZER(struct led_ctrl_result, action, "on#off");
++
++static void cmd_led_ctrl_parsed(void *parsed_result,
++			__rte_unused struct cmdline *cl,
++			__rte_unused void *data)
++{
++	struct led_ctrl_result *res = parsed_result;
++
++	if (strcmp(res->action, "on") == 0)
++		rte_eth_led_on(res->port_id);
++	else
++		rte_eth_led_off(res->port_id);
++}
++
++cmdline_parse_inst_t  cmd_led_ctrl = {
++	.f = cmd_led_ctrl_parsed,
++	.data = NULL,
++	.help_str = "port <port_id> led on|off",
++	.tokens = {
++		(void *)&cmd_led_ctrl_port,
++		(void *)&cmd_led_ctrl_port_id,
++		(void *)&cmd_led_ctrl_led,
++		(void *)&cmd_led_ctrl_action,
++		NULL,
++	},
++};
++
++static struct testpmd_driver_commands sxe_cmds = {
++	.commands = {
++		{
++			&cmd_led_ctrl,
++			"port <port_id> led on|off\n"
++			"	Set led on or off.\n",
++		},
++		{ NULL, NULL },
++	},
++};
++TESTPMD_ADD_DRIVER_COMMANDS(sxe_cmds)
 -- 
 2.18.2
 
