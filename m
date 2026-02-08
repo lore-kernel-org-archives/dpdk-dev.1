@@ -2,73 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6682EE6B77
-	for <dpdk-dev@archiver.kernel.org>; Sat,  7 Feb 2026 06:11:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 521C8EF06E3
+	for <dpdk-dev@archiver.kernel.org>; Sun,  8 Feb 2026 09:31:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D205D4042E;
-	Sat,  7 Feb 2026 07:11:21 +0100 (CET)
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com
- [209.85.128.47]) by mails.dpdk.org (Postfix) with ESMTP id 5F340402A9
- for <dev@dpdk.org>; Sat,  7 Feb 2026 07:11:20 +0100 (CET)
-Received: by mail-wm1-f47.google.com with SMTP id
- 5b1f17b1804b1-4806cc07ce7so29030015e9.1
- for <dev@dpdk.org>; Fri, 06 Feb 2026 22:11:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1770444680;
- x=1771049480; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=RDWQmVxi3tme5NvpFZ9N0IEBNk/DFfrxYIN51W4vPFM=;
- b=MS08k983Ld+p1rXOtwU6C7S47A2k3oKeQYELTnmEet+ONzKVNUYhxUV5JCKXljWsxS
- RcWPVWi842wdqMa+1uN/sXQKAcYxaH07w/SDDtJIzEZdrn/MqMxqaPsxTl4yd5y6cwEQ
- 5NYZK5I8eaLLTobKDnEUQcAhZjgOdJi0tkma7K7mfpqHlA+nCDtdo1mmfAieFHjGpp3x
- a9BLXRMAG3f5R8q+UfO73PKTdSEUDOKKa0xHIrApH9Sj6csm30xChkNtkzvgijDw3RJP
- 8PaSALH+gTPzTFcNUIEZbXmFe4O8Z0Wk3DjvoYw4N85BsAc7SsT5P6QsO86iMEdQvlLS
- YBKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1770444680; x=1771049480;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=RDWQmVxi3tme5NvpFZ9N0IEBNk/DFfrxYIN51W4vPFM=;
- b=kWERgWHob8hQ+6PxHsC3DWsEuMOV7FZCMZ9UtBeresBFAEHQrC4i8M3mDMhheEeB6a
- acodWShKTFi9lxx4+t2VcI1jgX1jHyW4gioSB4DgiB+xLxkYoCoT1fzj8VHLzx2Cy32q
- IRnh0+VU0PdDqxc2PUfVkYV6hIdXJ3P1qXflBK1W9L4pfua00OSaYAMsC87t6mT2C2mP
- oqTixFoMjIBDuEbvMpzolPqfTbOJ9BigkkSfOQh+ln/TEFcLUCPcfdjzX2/Vhm8hW2Ha
- 7Qixt9STXevGBzBBAlBNtPMh1RCaBXSK7FecUz6JnF0N/dn94vushvRytHtwVm8GywlR
- DAeA==
-X-Gm-Message-State: AOJu0YxncZMK1NvoJPEaguG8kL4S0bN4b40hE3rAb2b1GO1n1sjz/SOR
- G9oR/zmChcnzP7fs7qUevtQD2CXDfVmtmiVR5PZ+KErd2GfsMnhPG9xmdnj59vuj9AE=
-X-Gm-Gg: AZuq6aJDWnnN2/53lmm2MbVa8ov4ntX98kN8kdHJ34UqP9dOdcJvL9CIoOHJwph0jP+
- SXzx5U+MMdBy9pQvpUMtJHQwNWgZeEapyBKyqmqg0zBm0vzrEBQmQ5LmDTGD2a8BmSLg/ZabWG7
- pc7+6c+lCBSE+IUbjIlPnF5rD1wembl45VIsbrm8dqYGtV74l78hL+m7w4BYgwHo9rUDcn0/7Hc
- DryG67lf954M2PEN/NaiDNh73zXOBFbPpYBvCETrjnJQXcKjqc/tsGIF4ZRoVidBXJCBprpy5F9
- ttdih8L26ZGLt0Vlx9MQNLApZMD2qLOw9POYUEj9y5B6nYd0+P5UsNyR2N6XnDJNTnsJr60S3e4
- cN26pjgkUIN/IAIWCJ3InX0NsxUQ4Qwi9X3Sg0rMC04KqoKx5I+JungK2baOMFsJsxtDqMsaDlZ
- upq3u77UQ7tzaTHPRPbEqC0Pwf22qRS6Z/z2rKREmbnyX8e7itvSz1
-X-Received: by 2002:a05:600c:8719:b0:482:eec4:76d with SMTP id
- 5b1f17b1804b1-4832021b461mr77837915e9.17.1770444679558; 
- Fri, 06 Feb 2026 22:11:19 -0800 (PST)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-48320719bf4sm94996495e9.10.2026.02.06.22.11.17
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 06 Feb 2026 22:11:19 -0800 (PST)
-Date: Fri, 6 Feb 2026 22:11:14 -0800
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Kevin Traynor <ktraynor@redhat.com>
-Cc: dev@dpdk.org, thomas@monjalon.net, david.marchand@redhat.com,
- dsosnowski@nvidia.com, viacheslavo@nvidia.com, stable@dpdk.org
-Subject: Re: [PATCH v2 2/2] eal/linux: handle interrupt epoll events
-Message-ID: <20260206221114.423e498f@phoenix.local>
-In-Reply-To: <20260206172054.273858-3-ktraynor@redhat.com>
-References: <20260128122055.192104-1-ktraynor@redhat.com>
- <20260206172054.273858-1-ktraynor@redhat.com>
- <20260206172054.273858-3-ktraynor@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+	by mails.dpdk.org (Postfix) with ESMTP id CECF44028C;
+	Sun,  8 Feb 2026 10:31:42 +0100 (CET)
+Received: from cstnet.cn (smtp25.cstnet.cn [159.226.251.25])
+ by mails.dpdk.org (Postfix) with ESMTP id 2A3C74025D
+ for <dev@dpdk.org>; Sun,  8 Feb 2026 10:31:28 +0100 (CET)
+Received: from mail.cstnet.cn (unknown [221.238.36.162])
+ by APP-05 (Coremail) with SMTP id zQCowAD3hQntV4hp7xbIBw--.48983S10;
+ Sun, 08 Feb 2026 17:31:26 +0800 (CST)
+From: liujie5@linkdatatechnology.com
+To: stephen@networkplumber.org
+Cc: dev@dpdk.org,
+	Jie Liu <liujie5@linkdatatechnology.com>
+Subject: [PATCH v15 09/13] net/sxe: support ptp
+Date: Sun,  8 Feb 2026 17:31:18 +0800
+Message-Id: <20260208093122.10329-9-liujie5@linkdatatechnology.com>
+X-Mailer: git-send-email 2.18.2
+In-Reply-To: <20260208093122.10329-1-liujie5@linkdatatechnology.com>
+References: <20251225092224.227202-13-liujie5@linkdatatechnology.com>
+ <20260208093122.10329-1-liujie5@linkdatatechnology.com>
+X-CM-TRANSID: zQCowAD3hQntV4hp7xbIBw--.48983S10
+X-Coremail-Antispam: 1UD129KBjvJXoWxtr4fGrWrGFy7Cr45tF4xJFb_yoW3WF1rpF
+ Z8Ca4YyrWxtFsFgFWfCF4Dury5KFsYqr92gF9ayw43Z34xCrW8Wry09r1UtFn5G34kJw13
+ A3ZYqanxWr1rXF7anT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDU0xBIdaVrnRJUUUPa14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+ rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
+ kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
+ z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr
+ 1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1U
+ M2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjx
+ v20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1l
+ F7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4kE6xkIj40Ew7xC0wCY02
+ Avz4vE14v_GFWl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAq
+ x4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1Y6r
+ 17MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Xr0_Ar1lIxAIcVC0I7IYx2IY6xkF
+ 7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxV
+ W8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfU
+ 5JPEDUUUU
+X-Originating-IP: [221.238.36.162]
+X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,41 +57,265 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri,  6 Feb 2026 17:20:54 +0000
-Kevin Traynor <ktraynor@redhat.com> wrote:
+From: Jie Liu <liujie5@linkdatatechnology.com>
 
-> Add handling for epoll error and disconnect conditions EPOLLERR,
-> EPOLLHUP and EPOLLRDHUP.
-> 
-> These events indicate that the interrupt file descriptor is in
-> an error state or there has been a hangup.
-> 
-> Only do this for interrupts that are read in eal. Interrupts that
-> are read outside eal should deal with different interrupt scenarios
-> appropriate to their functionality. e.g. virtio interrupt handling
-> has reconnect mechanisms for some cases.
-> 
-> Also, treat no bytes read as an error condition.
-> 
-> Bugzilla ID: 1873
-> Fixes: af75078fece3 ("first public release")
-> Cc: stable@dpdk.org
-> 
-> Signed-off-by: Kevin Traynor <ktraynor@redhat.com>
+Add ptp module.
 
-Minor AI review nits.
+Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
+---
+ drivers/net/sxe/pf/sxe_ptp.c | 209 +++++++++++++++++++++++++++++++++++
+ drivers/net/sxe/pf/sxe_ptp.h |  26 +++++
+ 2 files changed, 235 insertions(+)
+ create mode 100644 drivers/net/sxe/pf/sxe_ptp.c
+ create mode 100644 drivers/net/sxe/pf/sxe_ptp.h
 
-Code Review
+diff --git a/drivers/net/sxe/pf/sxe_ptp.c b/drivers/net/sxe/pf/sxe_ptp.c
+new file mode 100644
+index 0000000000..4116dbb37e
+--- /dev/null
++++ b/drivers/net/sxe/pf/sxe_ptp.c
+@@ -0,0 +1,209 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright (C), 2022, Linkdata Technology Co., Ltd.
++ */
++
++#include "sxe.h"
++#include "sxe_logs.h"
++#include "sxe_hw.h"
++#include "sxe_ptp.h"
++
++#define SXE_CYCLECOUNTER_MASK   0xffffffffffffffffULL
++
++static void sxe_timecounters_start(struct rte_eth_dev *dev)
++{
++	struct sxe_adapter *adapter = dev->data->dev_private;
++
++	u32 shift = 0;
++
++	memset(&adapter->ptp_ctxt.systime_tc, 0, sizeof(struct rte_timecounter));
++	memset(&adapter->ptp_ctxt.rx_tstamp_tc, 0, sizeof(struct rte_timecounter));
++	memset(&adapter->ptp_ctxt.tx_tstamp_tc, 0, sizeof(struct rte_timecounter));
++
++	adapter->ptp_ctxt.systime_tc.cc_mask = SXE_CYCLECOUNTER_MASK;
++	adapter->ptp_ctxt.systime_tc.cc_shift = shift;
++	adapter->ptp_ctxt.systime_tc.nsec_mask = (1ULL << shift) - 1;
++
++	adapter->ptp_ctxt.rx_tstamp_tc.cc_mask = SXE_CYCLECOUNTER_MASK;
++	adapter->ptp_ctxt.rx_tstamp_tc.cc_shift = shift;
++	adapter->ptp_ctxt.rx_tstamp_tc.nsec_mask = (1ULL << shift) - 1;
++
++	adapter->ptp_ctxt.tx_tstamp_tc.cc_mask = SXE_CYCLECOUNTER_MASK;
++	adapter->ptp_ctxt.tx_tstamp_tc.cc_shift = shift;
++	adapter->ptp_ctxt.tx_tstamp_tc.nsec_mask = (1ULL << shift) - 1;
++
++	adapter->ptp_ctxt.tx_hwtstamp_nsec = 0;
++	adapter->ptp_ctxt.tx_hwtstamp_sec = 0;
++}
++
++s32 sxe_timesync_enable(struct rte_eth_dev *dev)
++{
++	struct sxe_adapter *adapter = dev->data->dev_private;
++	struct sxe_hw *hw = &adapter->hw;
++	u32 tses = SXE_TSES_TXES_V2_ALL | SXE_TSES_RXES_V2_ALL;
++
++	struct timespec ts;
++
++	memset(&ts, 0, sizeof(struct timespec));
++
++	clock_gettime(CLOCK_REALTIME, &ts);
++
++	sxe_hw_ptp_init(hw);
++
++
++	sxe_hw_ptp_timestamp_mode_set(hw, true, 0, tses);
++
++	sxe_hw_ptp_timestamp_enable(hw);
++
++	sxe_hw_ptp_rx_timestamp_clear(hw);
++
++	sxe_hw_ptp_systime_init(hw);
++
++	sxe_timecounters_start(dev);
++
++
++	sxe_timesync_write_time(dev, &ts);
++
++	return 0;
++}
++
++s32 sxe_timesync_disable(struct rte_eth_dev *dev)
++{
++	struct sxe_adapter *adapter = dev->data->dev_private;
++	struct sxe_hw *hw = &adapter->hw;
++
++	sxe_hw_ptp_timestamp_disable(hw);
++
++	sxe_hw_ptp_timestamp_mode_set(hw, false, 0, 0);
++
++	sxe_hw_ptp_time_inc_stop(hw);
++
++	return 0;
++}
++
++s32 sxe_timesync_read_rx_timestamp(struct rte_eth_dev *dev,
++				 struct timespec *timestamp,
++				 u32 flags __rte_unused)
++{
++	struct sxe_adapter *adapter = dev->data->dev_private;
++	struct sxe_hw *hw = &adapter->hw;
++	u64 ns;
++	s32 ret = 0;
++	bool is_valid;
++	u64 rx_tstamp_cycles;
++
++	is_valid = sxe_hw_ptp_is_rx_timestamp_valid(hw);
++	if (!is_valid) {
++		PMD_LOG_ERR(DRV, "no valid ptp timestamp in rx register");
++		ret = -EINVAL;
++		goto l_end;
++	}
++
++	rx_tstamp_cycles = sxe_hw_ptp_rx_timestamp_get(hw);
++	ns = rte_timecounter_update(&adapter->ptp_ctxt.rx_tstamp_tc, rx_tstamp_cycles);
++	PMD_LOG_DEBUG(DRV, "got rx_tstamp_cycles = %" SXE_PRIU64 "ns=%" SXE_PRIU64,
++			rx_tstamp_cycles, ns);
++	*timestamp = rte_ns_to_timespec(ns);
++
++l_end:
++	return ret;
++}
++
++static u64 sxe_timesync_tx_tstamp_cycles_get(struct sxe_adapter *adapter)
++{
++	return SXE_TIME_TO_NS(adapter->ptp_ctxt.tx_hwtstamp_nsec,
++				adapter->ptp_ctxt.tx_hwtstamp_sec);
++}
++
++s32 sxe_timesync_read_tx_timestamp(struct rte_eth_dev *dev,
++				 struct timespec *timestamp)
++{
++	struct sxe_adapter *adapter = dev->data->dev_private;
++	struct sxe_hw *hw = &adapter->hw;
++	u64 ns;
++	s32 ret = 0;
++	u64 tx_tstamp_cycles;
++	u32 ts_sec;
++	u32 ts_ns;
++	u32 last_sec;
++	u32 last_ns;
++	bool tx_tstamp_valid = true;
++	u8 i;
++
++	sxe_hw_ptp_tx_timestamp_get(hw, &ts_sec, &ts_ns);
++	if (ts_ns  != adapter->ptp_ctxt.tx_hwtstamp_nsec ||
++		ts_sec != adapter->ptp_ctxt.tx_hwtstamp_sec) {
++		for (i = 0; i < SXE_TXTS_POLL_CHECK; i++)
++			sxe_hw_ptp_tx_timestamp_get(hw, &last_sec, &last_ns);
++
++		for (; i < SXE_TXTS_POLL; i++) {
++			sxe_hw_ptp_tx_timestamp_get(hw, &ts_sec, &ts_ns);
++			if (last_ns != ts_ns || last_sec != ts_sec) {
++				tx_tstamp_valid = false;
++				break;
++			}
++		}
++	}
++
++	if (!tx_tstamp_valid || (ts_ns == adapter->ptp_ctxt.tx_hwtstamp_nsec &&
++			ts_sec == adapter->ptp_ctxt.tx_hwtstamp_sec)) {
++		PMD_LOG_DEBUG(DRV, "no valid ptp timestamp in tx register");
++		ret = -EINVAL;
++		goto l_end;
++	} else {
++		adapter->ptp_ctxt.tx_hwtstamp_nsec = ts_ns;
++		adapter->ptp_ctxt.tx_hwtstamp_sec  = ts_sec;
++		tx_tstamp_cycles =
++			sxe_timesync_tx_tstamp_cycles_get(adapter);
++		ns = rte_timecounter_update(&adapter->ptp_ctxt.tx_tstamp_tc,
++						tx_tstamp_cycles);
++		PMD_LOG_DEBUG(DRV, "got tx_tstamp_cycles = %"
++			SXE_PRIU64 "ns=%" SXE_PRIU64, tx_tstamp_cycles, ns);
++		*timestamp = rte_ns_to_timespec(ns);
++	}
++
++l_end:
++	return ret;
++}
++
++s32 sxe_timesync_adjust_time(struct rte_eth_dev *dev, s64 delta)
++{
++	struct sxe_adapter *adapter = dev->data->dev_private;
++
++	PMD_LOG_DEBUG(DRV, "got delta = %" SXE_PRID64, delta);
++
++	adapter->ptp_ctxt.systime_tc.nsec += delta;
++	adapter->ptp_ctxt.rx_tstamp_tc.nsec += delta;
++	adapter->ptp_ctxt.tx_tstamp_tc.nsec += delta;
++
++	return 0;
++}
++
++s32 sxe_timesync_read_time(struct rte_eth_dev *dev, struct timespec *ts)
++{
++	struct sxe_adapter *adapter = dev->data->dev_private;
++	struct sxe_hw *hw = &adapter->hw;
++	u64 ns, systime_cycles;
++
++	systime_cycles = sxe_hw_ptp_systime_get(hw);
++	ns = rte_timecounter_update(&adapter->ptp_ctxt.systime_tc, systime_cycles);
++	PMD_LOG_DEBUG(DRV, "got systime_cycles = %" SXE_PRIU64 "ns=%" SXE_PRIU64,
++			systime_cycles, ns);
++	*ts = rte_ns_to_timespec(ns);
++
++	return 0;
++}
++
++s32 sxe_timesync_write_time(struct rte_eth_dev *dev,
++					const struct timespec *ts)
++{
++	u64 ns;
++	struct sxe_adapter *adapter = dev->data->dev_private;
++
++	ns = rte_timespec_to_ns(ts);
++	PMD_LOG_DEBUG(DRV, "set systime ns = %" SXE_PRIU64, ns);
++	adapter->ptp_ctxt.systime_tc.nsec = ns;
++	adapter->ptp_ctxt.rx_tstamp_tc.nsec = ns;
++	adapter->ptp_ctxt.tx_tstamp_tc.nsec = ns;
++
++	return 0;
++}
+diff --git a/drivers/net/sxe/pf/sxe_ptp.h b/drivers/net/sxe/pf/sxe_ptp.h
+new file mode 100644
+index 0000000000..14971b2d50
+--- /dev/null
++++ b/drivers/net/sxe/pf/sxe_ptp.h
+@@ -0,0 +1,26 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright (C), 2022, Linkdata Technology Co., Ltd.
++ */
++
++#ifndef __SXE_PTP_H__
++#define __SXE_PTP_H__
++
++s32 sxe_timesync_enable(struct rte_eth_dev *dev);
++
++s32 sxe_timesync_disable(struct rte_eth_dev *dev);
++
++s32 sxe_timesync_read_rx_timestamp(struct rte_eth_dev *dev,
++				 struct timespec *timestamp,
++				 u32 flags __rte_unused);
++
++s32 sxe_timesync_read_tx_timestamp(struct rte_eth_dev *dev,
++				 struct timespec *timestamp);
++
++s32 sxe_timesync_adjust_time(struct rte_eth_dev *dev, s64 delta);
++
++s32 sxe_timesync_read_time(struct rte_eth_dev *dev, struct timespec *ts);
++
++s32 sxe_timesync_write_time(struct rte_eth_dev *dev,
++					const struct timespec *ts);
++
++#endif
+-- 
+2.18.2
 
-Errors:
-
-    Lines 295-298: Block comment uses incorrect style Same issue as patch 1 - should use /* not /** for non-documentation comments.
-
-Warnings:
-
-    Line 304: Return value inconsistency The function returns -1 to force rebuild of the wait list, but this happens in the middle of processing multiple events. The existing code had the same pattern for error handling, so this is consistent with the codebase style.
-    Line 342: Log level changed from ERR to WARNING For a condition that causes interrupt source removal, WARNING may be too low. Consider if INFO (as used in line 300) might be more appropriate for consistency.
-
-Overall Assessment
-
-Both patches address a real bug (busy-looping on interrupt errors) with reasonable solutions. The main issues are code style violations with comment formatting and a minor semicolon error. The logic appears sound for handling the EAGAIN and epoll error conditions.
