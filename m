@@ -2,46 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F85FEF06E3
-	for <dpdk-dev@archiver.kernel.org>; Sun,  8 Feb 2026 12:02:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73735EF06E3
+	for <dpdk-dev@archiver.kernel.org>; Sun,  8 Feb 2026 12:02:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AC42240430;
-	Sun,  8 Feb 2026 13:02:08 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id AFAD64064E;
+	Sun,  8 Feb 2026 13:02:09 +0100 (CET)
 Received: from cstnet.cn (smtp25.cstnet.cn [159.226.251.25])
- by mails.dpdk.org (Postfix) with ESMTP id AD362402F1
+ by mails.dpdk.org (Postfix) with ESMTP id AD3A240430
  for <dev@dpdk.org>; Sun,  8 Feb 2026 13:02:06 +0100 (CET)
 Received: from mail.cstnet.cn (unknown [221.238.36.162])
- by APP-05 (Coremail) with SMTP id zQCowAD3hAjreYhpts_KBw--.49177S9;
- Sun, 08 Feb 2026 19:56:28 +0800 (CST)
+ by APP-05 (Coremail) with SMTP id zQCowAD3iAyveYhp1svKBw--.57133S13;
+ Sun, 08 Feb 2026 19:55:29 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org,
 	Jie Liu <liujie5@linkdatatechnology.com>
-Subject: [PATCH v16 08/13] net/sxe: add dcb function
-Date: Sun,  8 Feb 2026 19:56:21 +0800
-Message-Id: <20260208115626.146863-8-liujie5@linkdatatechnology.com>
+Subject: [PATCH v15 12/13] net/sxe: add simd function
+Date: Sun,  8 Feb 2026 19:55:25 +0800
+Message-Id: <20260208115526.146104-12-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.18.2
-In-Reply-To: <20260208115626.146863-1-liujie5@linkdatatechnology.com>
+In-Reply-To: <20260208115526.146104-1-liujie5@linkdatatechnology.com>
 References: <20260208093122.10329-13-liujie5@linkdatatechnology.com>
- <20260208115626.146863-1-liujie5@linkdatatechnology.com>
-X-CM-TRANSID: zQCowAD3hAjreYhpts_KBw--.49177S9
-X-Coremail-Antispam: 1UD129KBjvAXoWfWFy7ZF1kCF1rCrW3AF4DXFb_yoW5KF1fAo
- WfWrnxJ3W8Ary2grWxW3Z5CFWjvr1j9ay7Jws8ZFsxXw47AF1rZFyUKr47A3Z7Wr10yF15
- Aw1F93y3Aw47WF1kn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
- AaLaJ3UjIYCTnIWjp_UUUOS7AC8VAFwI0_Wr0E3s1l1xkIjI8I6I8E6xAIw20EY4v20xva
+ <20260208115526.146104-1-liujie5@linkdatatechnology.com>
+X-CM-TRANSID: zQCowAD3iAyveYhp1svKBw--.57133S13
+X-Coremail-Antispam: 1UD129KBjvAXoWDJFyfZFyxCrWUZF15CF1kuFg_yoW7CryrAo
+ WIvw4fJr4ruF1xAr1kuw1UuFy2vF4F9ryUCrZY9393Zay8CrySk34xAw15AF98Kw1jkFn5
+ Xa4xta9ayrW3Jr4fn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+ AaLaJ3UjIYCTnIWjp_UUUO57AC8VAFwI0_Wr0E3s1l1xkIjI8I6I8E6xAIw20EY4v20xva
  j40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l82xGYIkIc2x26280x7IE14v26r126s0DM28Irc
  Ia0xkI8VCY1x0267AKxVW5JVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l
- 84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j6r
- 4UJwA2z4x0Y4vEx4A2jsIE14v26F4j6r4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr1j
- 6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7V
- C0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j
- 6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwAKzVCY07xG64k0F2
- 4lc7CjxVAaw2AFwI0_JF0_Jw1lc2xSY4AK67AK6r4kMxAIw28IcxkI7VAKI48JMxC20s02
- 6xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_Jr
- I_JrWlx4CE17CEb7AF67AKxVWUXVWUAwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v2
- 6ryj6F1UMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWxJVW8Jr1lIxAIcVCF04k26cxKx2IYs7
- xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j
- 6F4UJbIYCTnIWIevJa73UjIFyTuYvjfU5OJ5DUUUU
+ 84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j6F
+ 4UM28EF7xvwVC2z280aVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVCY1x0267AKxVW8Jr0_
+ Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6x
+ IIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_
+ Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4kE6xkIj40Ew7xC0w
+ CY02Avz4vE14v_Gw4l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2Iq
+ xVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r
+ 1Y6r17MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Gr0_Xr1lIxAIcVC0I7IYx2IY
+ 6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67
+ AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuY
+ vjfUe8nYDUUUU
 X-Originating-IP: [221.238.36.162]
 X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
 X-BeenThere: dev@dpdk.org
@@ -59,1225 +59,1866 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-Add dcb function.
+Add simd function.
 
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- drivers/net/sxe/meson.build      |  28 +
- drivers/net/sxe/pf/rte_pmd_sxe.h |   4 +
- drivers/net/sxe/pf/sxe_dcb.c     | 945 +++++++++++++++++++++++++++++++
- drivers/net/sxe/pf/sxe_dcb.h     |  99 ++++
- drivers/net/sxe/pf/sxe_main.c    |   1 +
- drivers/net/sxe/pf/sxe_phy.c     |  34 ++
- drivers/net/sxe/pf/sxe_phy.h     |   2 +
- 7 files changed, 1113 insertions(+)
- create mode 100644 drivers/net/sxe/pf/sxe_dcb.c
- create mode 100644 drivers/net/sxe/pf/sxe_dcb.h
+ drivers/net/sxe/base/sxe_queue_common.c |  52 +-
+ drivers/net/sxe/base/sxe_rx_common.c    | 124 ++++-
+ drivers/net/sxe/pf/sxe_vec_common.h     | 321 ++++++++++++
+ drivers/net/sxe/pf/sxe_vec_neon.c       | 600 +++++++++++++++++++++++
+ drivers/net/sxe/pf/sxe_vec_sse.c        | 622 ++++++++++++++++++++++++
+ 5 files changed, 1716 insertions(+), 3 deletions(-)
+ create mode 100644 drivers/net/sxe/pf/sxe_vec_common.h
+ create mode 100644 drivers/net/sxe/pf/sxe_vec_neon.c
+ create mode 100644 drivers/net/sxe/pf/sxe_vec_sse.c
 
-diff --git a/drivers/net/sxe/meson.build b/drivers/net/sxe/meson.build
-index eab222d7c4..700f331ac5 100644
---- a/drivers/net/sxe/meson.build
-+++ b/drivers/net/sxe/meson.build
-@@ -5,8 +5,12 @@ if not is_linux or not (dpdk_conf.has('RTE_ARCH_X86_64') or dpdk_conf.has('RTE_A
-     reason = 'only supported on x86_64 or arm64 Linux'
-     subdir_done()
- endif
-+
- cflags += ['-DSXE_DPDK']
- cflags += ['-DSXE_HOST_DRIVER']
-+cflags += ['-DSXE_DPDK_L4_FEATURES']
-+cflags += ['-DSXE_DPDK_SRIOV']
-+cflags += ['-DSXE_DPDK_SIMD']
+diff --git a/drivers/net/sxe/base/sxe_queue_common.c b/drivers/net/sxe/base/sxe_queue_common.c
+index da44270019..991b374667 100644
+--- a/drivers/net/sxe/base/sxe_queue_common.c
++++ b/drivers/net/sxe/base/sxe_queue_common.c
+@@ -13,6 +13,10 @@
+ #include "sxe_logs.h"
+ #include "sxe_regs.h"
+ #include "sxe.h"
++#if defined SXE_DPDK_L4_FEATURES && defined SXE_DPDK_SIMD
++#include "sxe_vec_common.h"
++#include <rte_vect.h>
++#endif
+ #include "sxe_queue_common.h"
+ #include "sxe_queue.h"
  
- #subdir('base')
- #objs = [base_objs]
-@@ -22,17 +26,41 @@ sources = files(
-         'pf/sxe_queue.c',
-         'pf/sxe_rx.c',
-         'pf/sxe_tx.c',
-+        'pf/sxe_stats.c',
-         'pf/sxe_pmd_hdc.c',
-         'pf/sxe_phy.c',
-+        'pf/sxe_ptp.c',
-+        'pf/sxe_vf.c',
-+        'pf/sxe_dcb.c',
-+        'vf/sxevf_main.c',
-+        'vf/sxevf_filter.c',
-+        'vf/sxevf_irq.c',
-+        'vf/sxevf_msg.c',
-+        'vf/sxevf_ethdev.c',
-+        'vf/sxevf_stats.c',
-+        'vf/sxevf_rx.c',
-+        'vf/sxevf_tx.c',
-+        'vf/sxevf_queue.c',
-+        'vf/sxevf_offload.c',
-         'base/sxe_queue_common.c',
-         'base/sxe_rx_common.c',
-         'base/sxe_tx_common.c',
-         'base/sxe_offload_common.c',
-         'base/sxe_common.c',
-         'base/sxe_hw.c',
-+        'base/sxevf_hw.c',
- )
+@@ -57,6 +61,10 @@ s32 __rte_cold __sxe_rx_queue_setup(struct rx_setup *rx_setup, bool is_vf)
+ 	u16 len;
+ 	u64 offloads;
+ 	s32 ret = 0;
++#if defined SXE_DPDK_L4_FEATURES && defined SXE_DPDK_SIMD
++	struct sxe_adapter *pf_adapter = dev->data->dev_private;
++	struct sxevf_adapter *vf_adapter = dev->data->dev_private;
++#endif
  
-+testpmd_sources = files('sxe_testpmd.c')
-+
-+if arch_subdir == 'x86'
-+    sources += files('pf/sxe_vec_sse.c')
-+elif arch_subdir == 'arm'
-+    sources += files('pf/sxe_vec_neon.c')
-+endif
-+
- includes += include_directories('base')
- includes += include_directories('pf')
-+includes += include_directories('vf')
- includes += include_directories('include/sxe/')
- includes += include_directories('include/')
-diff --git a/drivers/net/sxe/pf/rte_pmd_sxe.h b/drivers/net/sxe/pf/rte_pmd_sxe.h
-index 64c1140490..25e768624f 100644
---- a/drivers/net/sxe/pf/rte_pmd_sxe.h
-+++ b/drivers/net/sxe/pf/rte_pmd_sxe.h
-@@ -5,10 +5,14 @@
- #ifndef __PMD_SXE_H__
- #define __PMD_SXE_H__
+ 	PMD_INIT_FUNC_TRACE();
  
-+#include <rte_compat.h>
+@@ -161,6 +169,23 @@ s32 __rte_cold __sxe_rx_queue_setup(struct rx_setup *rx_setup, bool is_vf)
+ 				"dma_addr=0x%" SXE_PRIX64,
+ 			 rxq->buffer_ring, rxq->sc_buffer_ring, rxq->desc_ring,
+ 			 rxq->base_addr);
 +
- typedef uint8_t		u8;
- typedef uint16_t	u16;
- typedef uint32_t	u32;
- typedef int32_t		s32;
++#if defined SXE_DPDK_L4_FEATURES && defined SXE_DPDK_SIMD
++	if (!rte_is_power_of_2(desc_num)) {
++		PMD_LOG_DEBUG(INIT, "queue[%d] doesn't meet Vector Rx "
++					"preconditions - canceling the feature for "
++					"the whole port[%d]",
++				 rxq->queue_id, rxq->port_id);
++		if (is_vf)
++			vf_adapter->rx_vec_allowed = false;
++		else
++			pf_adapter->rx_vec_allowed = false;
++
++	} else {
++		sxe_rxq_vec_setup(rxq);
++	}
++#endif
++
+ 	dev->data->rx_queues[queue_idx] = rxq;
  
- s32 rte_pmd_sxe_tx_loopback_set(u16 port, u8 on);
-+__rte_experimental
-+s32 rte_pmd_sxe_tc_bw_set(u8 port, u8 tc_num, u8 *bw_weight);
- #endif
-diff --git a/drivers/net/sxe/pf/sxe_dcb.c b/drivers/net/sxe/pf/sxe_dcb.c
+ 	sxe_rx_queue_init(*rx_setup->rx_batch_alloc_allowed, rxq);
+@@ -254,6 +279,9 @@ void __sxe_recycle_rxq_info_get(struct rte_eth_dev *dev, u16 queue_id,
+ 		struct rte_eth_recycle_rxq_info *q_info)
+ {
+ 	struct sxe_rx_queue *rxq;
++#if defined SXE_DPDK_L4_FEATURES && defined SXE_DPDK_SIMD
++	struct sxe_adapter *adapter = dev->data->dev_private;
++#endif
+ 
+ 	rxq = dev->data->rx_queues[queue_id];
+ 
+@@ -261,9 +289,21 @@ void __sxe_recycle_rxq_info_get(struct rte_eth_dev *dev, u16 queue_id,
+ 	q_info->mp = rxq->mb_pool;
+ 	q_info->mbuf_ring_size = rxq->ring_depth;
+ 	q_info->receive_tail = &rxq->processing_idx;
+-
++#if defined SXE_DPDK_L4_FEATURES && defined SXE_DPDK_SIMD
++	if (adapter->rx_vec_allowed) {
++#if defined(RTE_ARCH_X86) || defined(RTE_ARCH_ARM)
++		q_info->refill_requirement = rxq->realloc_num;
++		q_info->refill_head = &rxq->realloc_start;
++#endif
++	} else {
++		q_info->refill_requirement = rxq->batch_alloc_size;
++		q_info->refill_head = &rxq->batch_alloc_trigger;
++	}
++#else
+ 	q_info->refill_requirement = rxq->batch_alloc_size;
+ 	q_info->refill_head = &rxq->batch_alloc_trigger;
++#endif
++	return;
+ }
+ 
+ void __sxe_tx_queue_info_get(struct rte_eth_dev *dev, u16 queue_id,
+@@ -289,7 +329,17 @@ s32 __sxe_tx_done_cleanup(void *tx_queue, u32 free_cnt)
+ 	struct sxe_tx_queue *txq = (struct sxe_tx_queue *)tx_queue;
+ 	if (txq->offloads == 0 &&
+ 		txq->rs_thresh >= RTE_PMD_SXE_MAX_TX_BURST) {
++#if defined SXE_DPDK_L4_FEATURES && defined SXE_DPDK_SIMD
++		if (txq->rs_thresh <= RTE_SXE_MAX_TX_FREE_BUF_SZ &&
++			(rte_eal_process_type() != RTE_PROC_PRIMARY ||
++			txq->buffer_ring_vec != NULL)) {
++			ret = sxe_tx_done_cleanup_vec(txq, free_cnt);
++		} else {
++			ret = sxe_tx_done_cleanup_simple(txq, free_cnt);
++		}
++#else
+ 		ret = sxe_tx_done_cleanup_simple(txq, free_cnt);
++#endif
+ 
+ 	} else {
+ 		ret = sxe_tx_done_cleanup_full(txq, free_cnt);
+diff --git a/drivers/net/sxe/base/sxe_rx_common.c b/drivers/net/sxe/base/sxe_rx_common.c
+index ae97b719e7..5e46ff76f3 100644
+--- a/drivers/net/sxe/base/sxe_rx_common.c
++++ b/drivers/net/sxe/base/sxe_rx_common.c
+@@ -18,6 +18,10 @@
+ #include "sxe_errno.h"
+ #include "sxe_irq.h"
+ #include "sxe_rx_common.h"
++#if defined SXE_DPDK_L4_FEATURES && defined SXE_DPDK_SIMD
++#include "sxe_vec_common.h"
++#include "rte_vect.h"
++#endif
+ 
+ static inline void sxe_rx_resource_prefetch(u16 next_idx,
+ 				struct sxe_rx_buffer *buf_ring,
+@@ -29,12 +33,61 @@ static inline void sxe_rx_resource_prefetch(u16 next_idx,
+ 		rte_sxe_prefetch(&desc_ring[next_idx]);
+ 		rte_sxe_prefetch(&buf_ring[next_idx]);
+ 	}
++
+ }
+ 
++#if defined SXE_DPDK_L4_FEATURES && defined SXE_DPDK_SIMD
++#if defined(RTE_ARCH_X86) || defined(RTE_ARCH_ARM)
++static void sxe_recycle_rx_descriptors_refill_vec(void *rx_queue, u16 nb_mbufs)
++{
++	struct sxe_rx_queue *rxq = rx_queue;
++	struct sxe_rx_buffer *rxep;
++	volatile union sxe_rx_data_desc *rxdp;
++	u16 rx_id;
++	u64 paddr;
++	u64 dma_addr;
++	u16 i;
++
++	rxdp = rxq->desc_ring + rxq->realloc_start;
++	rxep = &rxq->buffer_ring[rxq->realloc_start];
++
++	for (i = 0; i < nb_mbufs; i++) {
++		paddr = (rxep[i].mbuf)->buf_iova + RTE_PKTMBUF_HEADROOM;
++		dma_addr = rte_cpu_to_le_64(paddr);
++		rxdp[i].read.hdr_addr = 0;
++		rxdp[i].read.pkt_addr = dma_addr;
++	}
++
++	rxq->realloc_start += nb_mbufs;
++	if (rxq->realloc_start >= rxq->ring_depth)
++		rxq->realloc_start = 0;
++
++	rxq->realloc_num -= nb_mbufs;
++
++	rx_id = (u16)((rxq->realloc_start == 0) ?
++					(rxq->ring_depth - 1) : (rxq->realloc_start - 1));
++
++	SXE_PCI_REG_WC_WRITE_RELAXED(rxq->rdt_reg_addr, rx_id);
++}
++#endif
++#endif
++
+ void __rte_cold __sxe_rx_function_set(struct rte_eth_dev *dev,
+ 	bool rx_batch_alloc_allowed, bool *rx_vec_allowed)
+ {
++#if defined SXE_DPDK_L4_FEATURES && defined SXE_DPDK_SIMD
++	u16  i, is_using_sse;
++
++	if (sxe_rx_vec_condition_check(dev) ||
++		!rx_batch_alloc_allowed
++		) {
++		PMD_LOG_DEBUG(INIT, "Port[%d] doesn't meet Vector Rx "
++					"preconditions", dev->data->port_id);
++		*rx_vec_allowed = false;
++	}
++#else
+ 	UNUSED(rx_vec_allowed);
++#endif
+ 
+ 	if (dev->data->lro) {
+ 		if (rx_batch_alloc_allowed) {
+@@ -47,7 +100,27 @@ void __rte_cold __sxe_rx_function_set(struct rte_eth_dev *dev,
+ 			dev->rx_pkt_burst = sxe_single_alloc_lro_pkts_recv;
+ 		}
+ 	} else if (dev->data->scattered_rx) {
++#if defined SXE_DPDK_L4_FEATURES && defined SXE_DPDK_SIMD
++		if (*rx_vec_allowed) {
++			PMD_LOG_DEBUG(INIT, "Using Vector Scattered Rx "
++						"callback (port=%d).",
++					 dev->data->port_id);
++
++#if defined(RTE_ARCH_X86) || defined(RTE_ARCH_ARM)
++			dev->recycle_rx_descriptors_refill = sxe_recycle_rx_descriptors_refill_vec;
++
++#endif
++			dev->rx_pkt_burst = sxe_scattered_pkts_vec_recv;
++
++#endif
++
++#if defined SXE_DPDK_L4_FEATURES && defined SXE_DPDK_SIMD
++
++		} else if (rx_batch_alloc_allowed) {
++#else
+ 		if (rx_batch_alloc_allowed) {
++#endif
++
+ 			PMD_LOG_DEBUG(INIT, "Using a Scattered with bulk "
+ 					   "allocation callback (port=%d).",
+ 					 dev->data->port_id);
+@@ -62,7 +135,22 @@ void __rte_cold __sxe_rx_function_set(struct rte_eth_dev *dev,
+ 
+ 			dev->rx_pkt_burst = sxe_single_alloc_lro_pkts_recv;
+ 		}
+-	} else if (rx_batch_alloc_allowed) {
++	}
++	#if defined SXE_DPDK_L4_FEATURES && defined SXE_DPDK_SIMD
++	else if (*rx_vec_allowed) {
++		PMD_LOG_DEBUG(INIT, "Vector rx enabled, please make sure RX "
++					"burst size no less than %d (port=%d).",
++				 SXE_DESCS_PER_LOOP,
++				 dev->data->port_id);
++
++#if defined(RTE_ARCH_X86) || defined(RTE_ARCH_ARM)
++		dev->recycle_rx_descriptors_refill = sxe_recycle_rx_descriptors_refill_vec;
++
++#endif
++		dev->rx_pkt_burst = sxe_pkts_vec_recv;
++	}
++#endif
++	else if (rx_batch_alloc_allowed) {
+ 		PMD_LOG_DEBUG(INIT, "Rx Burst Bulk Alloc Preconditions are "
+ 					"satisfied. Rx Burst Bulk Alloc function "
+ 					"will be used on port=%d.",
+@@ -77,6 +165,19 @@ void __rte_cold __sxe_rx_function_set(struct rte_eth_dev *dev,
+ 
+ 		dev->rx_pkt_burst = sxe_pkts_recv;
+ 	}
++
++#if defined SXE_DPDK_L4_FEATURES && defined SXE_DPDK_SIMD
++	is_using_sse =
++		(dev->rx_pkt_burst == sxe_scattered_pkts_vec_recv ||
++		dev->rx_pkt_burst == sxe_pkts_vec_recv);
++
++	for (i = 0; i < dev->data->nb_rx_queues; i++) {
++		struct sxe_rx_queue *rxq = dev->data->rx_queues[i];
++
++		rxq->is_using_sse = is_using_sse;
++	}
++#endif
++
+ }
+ 
+ s32 __sxe_rx_descriptor_status(void *rx_queue, u16 offset)
+@@ -93,7 +194,15 @@ s32 __sxe_rx_descriptor_status(void *rx_queue, u16 offset)
+ 		ret = -EINVAL;
+ 		goto l_end;
+ 	}
+-	hold_num = rxq->hold_num;
++
++#if defined SXE_DPDK_L4_FEATURES && defined SXE_DPDK_SIMD
++#if defined(RTE_ARCH_X86)
++	if (rxq->is_using_sse)
++		hold_num = rxq->realloc_num;
++	else
++#endif
++#endif
++		hold_num = rxq->hold_num;
+ 	if (offset >= rxq->ring_depth - hold_num) {
+ 		ret = RTE_ETH_RX_DESC_UNAVAIL;
+ 		goto l_end;
+@@ -233,6 +342,17 @@ const u32 *__sxe_dev_supported_ptypes_get(struct rte_eth_dev *dev, size_t *no_of
+ 		goto l_end;
+ 	}
+ 
++#if defined SXE_DPDK_L4_FEATURES && defined SXE_DPDK_SIMD
++#if defined(RTE_ARCH_X86)
++	if (dev->rx_pkt_burst == sxe_pkts_vec_recv ||
++		dev->rx_pkt_burst == sxe_scattered_pkts_vec_recv) {
++		*no_of_elements = RTE_DIM(ptypes_arr);
++		ptypes = ptypes_arr;
++	}
++
++#endif
++#endif
++
+ l_end:
+ 	return ptypes;
+ }
+diff --git a/drivers/net/sxe/pf/sxe_vec_common.h b/drivers/net/sxe/pf/sxe_vec_common.h
 new file mode 100644
-index 0000000000..7e9dc1aea3
+index 0000000000..90ace4c324
 --- /dev/null
-+++ b/drivers/net/sxe/pf/sxe_dcb.c
-@@ -0,0 +1,945 @@
++++ b/drivers/net/sxe/pf/sxe_vec_common.h
+@@ -0,0 +1,321 @@
 +/* SPDX-License-Identifier: BSD-3-Clause
 + * Copyright (C), 2022, Linkdata Technology Co., Ltd.
 + */
++#ifndef __SXE_VEC_COMMON_H__
++#define __SXE_VEC_COMMON_H__
 +
++#if defined SXE_DPDK_L4_FEATURES && defined SXE_DPDK_SIMD
++#include <stdint.h>
++#include <rte_mempool.h>
++#include <ethdev_driver.h>
++#include <dev_driver.h>
++#include <rte_malloc.h>
 +#include "sxe.h"
-+#include "sxe_logs.h"
-+#include "sxe_hw.h"
-+#include "sxe_phy.h"
-+#include "sxe_errno.h"
-+#include "sxe_offload.h"
-+#include "sxe_ethdev.h"
-+#include "sxe_compat_version.h"
-+#include "rte_pmd_sxe.h"
-+#include <eal_export.h>
++#include "sxe_queue.h"
++#include "sxe_rx.h"
 +
-+#define DCB_RX_CONFIG  1
-+#define DCB_TX_CONFIG  1
++#define RTE_SXE_MAX_TX_FREE_BUF_SZ	64
++#define SXE_TXD_STAT_DD				0x00000001
 +
-+#define DCB_CREDIT_QUANTUM	64
-+#define MAX_CREDIT_REFILL	   511
-+#define MAX_CREDIT			  4095
-+
-+void sxe_dcb_init(struct rte_eth_dev *dev)
++static __rte_always_inline s32
++sxe_tx_bufs_vec_free(struct sxe_tx_queue *txq)
 +{
-+	u8 i;
-+	struct sxe_adapter *adapter = dev->data->dev_private;
-+	struct sxe_dcb_config *cfg = &adapter->dcb_ctxt.config;
-+	struct sxe_tc_config *tc;
-+	u8 dcb_max_tc = SXE_DCB_MAX_TRAFFIC_CLASS;
-+
-+	memset(cfg, 0, sizeof(struct sxe_dcb_config));
-+
-+	cfg->num_tcs.pg_tcs = dcb_max_tc;
-+	cfg->num_tcs.pfc_tcs = dcb_max_tc;
-+	for (i = 0; i < dcb_max_tc; i++) {
-+		tc = &cfg->tc_config[i];
-+		tc->channel[DCB_PATH_TX].bwg_id = i;
-+		tc->channel[DCB_PATH_TX].bwg_percent =
-+				 (u8)(100 / dcb_max_tc + (i & 1));
-+		tc->channel[DCB_PATH_RX].bwg_id = i;
-+		tc->channel[DCB_PATH_RX].bwg_percent =
-+				 (u8)(100 / dcb_max_tc + (i & 1));
-+		tc->pfc_type = pfc_disabled;
-+	}
-+
-+	tc = &cfg->tc_config[0];
-+	tc->channel[DCB_PATH_TX].up_to_tc_bitmap = 0xFF;
-+	tc->channel[DCB_PATH_RX].up_to_tc_bitmap = 0xFF;
-+	for (i = 0; i < MAX_BW_GROUP; i++) {
-+		cfg->bwg_link_percent[DCB_PATH_TX][i] = 100;
-+		cfg->bwg_link_percent[DCB_PATH_RX][i] = 100;
-+	}
-+	cfg->rx_pba_config = SXE_DCB_PBA_EQUAL;
-+	cfg->pfc_mode_enable = false;
-+	cfg->vmdq_active = true;
-+	cfg->round_robin_enable = false;
-+}
-+
-+static u8 sxe_dcb_get_tc_from_up(struct sxe_dcb_config *cfg,
-+					u8 direction, u8 up)
-+{
-+	struct sxe_tc_config *tc_config = &cfg->tc_config[0];
-+	u8 prio_mask = BIT(up);
-+	u8 tc = cfg->num_tcs.pg_tcs;
-+
-+	if (!tc)
-+		goto l_ret;
-+
-+	for (tc--; tc; tc--) {
-+		if (prio_mask & tc_config[tc].channel[direction].up_to_tc_bitmap)
-+			break;
-+	}
-+
-+l_ret:
-+	LOG_DEBUG("up[%u] to tc[%u]", up, tc);
-+	return tc;
-+}
-+
-+static void sxe_dcb_up2tc_map_parse(struct sxe_dcb_config *cfg,
-+						u8 direction, u8 *map)
-+{
-+	u8 up;
-+
-+	for (up = 0; up < MAX_USER_PRIORITY; up++) {
-+		map[up] = sxe_dcb_get_tc_from_up(cfg, direction, up);
-+		LOG_DEBUG("up[%u] --- up2tc_map[%u]", up, map[up]);
-+	}
-+}
-+
-+s32 sxe_priority_flow_ctrl_set(struct rte_eth_dev *dev,
-+					struct rte_eth_pfc_conf *pfc_conf)
-+{
++	struct sxe_tx_buffer_vec *txep;
++	u32 status;
++	u32 n;
++	u32 i;
 +	s32 ret;
-+	u32 rx_buf_size;
-+	u32 max_high_water;
-+	u8 tc_idx;
-+	u8  up2tc_map[MAX_USER_PRIORITY] = { 0 };
-+	struct sxe_adapter *adapter = dev->data->dev_private;
-+	struct sxe_hw *hw = &adapter->hw;
++	s32 nb_free = 0;
++	struct rte_mbuf *m, *free[RTE_SXE_MAX_TX_FREE_BUF_SZ];
 +
-+	struct sxe_dcb_config *dcb_config = &adapter->dcb_ctxt.config;
-+
-+	static const enum sxe_fc_mode fcmode[] = {
-+		SXE_FC_NONE,
-+		SXE_FC_RX_PAUSE,
-+		SXE_FC_TX_PAUSE,
-+		SXE_FC_FULL,
-+	};
-+
-+	PMD_INIT_FUNC_TRACE();
-+
-+	sxe_dcb_up2tc_map_parse(dcb_config, DCB_PATH_RX, up2tc_map);
-+	tc_idx = up2tc_map[pfc_conf->priority];
-+	rx_buf_size = sxe_hw_rx_pkt_buf_size_get(hw, tc_idx);
-+	PMD_LOG_DEBUG(INIT, "Rx packet buffer size = 0x%x", rx_buf_size);
-+
-+	max_high_water = (rx_buf_size -
-+			RTE_ETHER_MAX_LEN) >> SXE_RX_PKT_BUF_SIZE_SHIFT;
-+	if (pfc_conf->fc.high_water > max_high_water ||
-+		pfc_conf->fc.high_water <= pfc_conf->fc.low_water) {
-+		PMD_LOG_ERR(INIT, "Invalid high/low water setup value in KB, "
-+				"high water=0x%x, low water=0x%x",
-+				pfc_conf->fc.high_water, pfc_conf->fc.low_water);
-+		PMD_LOG_ERR(INIT, "High_water must <= 0x%x", max_high_water);
-+		ret = -EINVAL;
-+		goto l_end;
-+	}
-+
-+	sxe_hw_fc_requested_mode_set(hw, fcmode[pfc_conf->fc.mode]);
-+	sxe_hw_fc_pause_time_set(hw, pfc_conf->fc.pause_time);
-+	sxe_hw_fc_send_xon_set(hw, pfc_conf->fc.send_xon);
-+	sxe_hw_fc_tc_low_water_mark_set(hw, tc_idx, pfc_conf->fc.low_water);
-+	sxe_hw_fc_tc_high_water_mark_set(hw, tc_idx, pfc_conf->fc.high_water);
-+
-+	ret = sxe_pfc_enable(adapter, tc_idx);
-+
-+	if (ret == 0 || ret == SXE_ERR_FC_NOT_NEGOTIATED) {
-+		PMD_LOG_DEBUG(INIT, "pfc set end ret = %d", ret);
++	status = txq->desc_ring[txq->next_dd].wb.status;
++	if (!(status & SXE_TXD_STAT_DD)) {
 +		ret = 0;
-+		goto l_end;
++		goto out;
 +	}
 +
-+	PMD_LOG_ERR(INIT, "sxe_dcb_pfc_enable = 0x%x", ret);
-+	ret = -EIO;
-+l_end:
-+	return ret;
-+}
++	n = txq->rs_thresh;
 +
-+s32 sxe_get_dcb_info(struct rte_eth_dev *dev,
-+			struct rte_eth_dcb_info *dcb_info)
-+{
-+	struct sxe_adapter *adapter = dev->data->dev_private;
-+	struct sxe_dcb_config *dcb_config = &adapter->dcb_ctxt.config;
++	txep = &txq->buffer_ring_vec[txq->next_dd - (n - 1)];
++	m = rte_pktmbuf_prefree_seg(txep[0].mbuf);
 +
-+	struct sxe_tc_config *tc;
-+	struct rte_eth_dcb_tc_queue_mapping *tc_queue;
-+	u8 tcs_num;
-+	u8 i, j;
-+
-+	if (dev->data->dev_conf.rxmode.mq_mode & RTE_ETH_MQ_RX_DCB_FLAG)
-+		dcb_info->nb_tcs = dcb_config->num_tcs.pg_tcs;
-+	else
-+		dcb_info->nb_tcs = 1;
-+
-+	tc_queue = &dcb_info->tc_queue;
-+	tcs_num = dcb_info->nb_tcs;
-+
-+	if (dcb_config->vmdq_active) {
-+		struct rte_eth_vmdq_dcb_conf *vmdq_rx_conf =
-+				&dev->data->dev_conf.rx_adv_conf.vmdq_dcb_conf;
-+		for (i = 0; i < RTE_ETH_DCB_NUM_USER_PRIORITIES; i++)
-+			dcb_info->prio_tc[i] = vmdq_rx_conf->dcb_tc[i];
-+
-+		if (RTE_ETH_DEV_SRIOV(dev).active > 0) {
-+			for (j = 0; j < tcs_num; j++) {
-+				tc_queue->tc_rxq[0][j].base = j;
-+				tc_queue->tc_rxq[0][j].nb_queue = 1;
-+				tc_queue->tc_txq[0][j].base = j;
-+				tc_queue->tc_txq[0][j].nb_queue = 1;
-+			}
-+		} else {
-+			for (i = 0; i < vmdq_rx_conf->nb_queue_pools; i++) {
-+				for (j = 0; j < tcs_num; j++) {
-+					tc_queue->tc_rxq[i][j].base =
-+						i * tcs_num + j;
-+					tc_queue->tc_rxq[i][j].nb_queue = 1;
-+					tc_queue->tc_txq[i][j].base =
-+						i * tcs_num + j;
-+					tc_queue->tc_txq[i][j].nb_queue = 1;
++	if (likely(m != NULL)) {
++		free[0] = m;
++		nb_free = 1;
++		for (i = 1; i < n; i++) {
++			m = rte_pktmbuf_prefree_seg(txep[i].mbuf);
++			if (likely(m != NULL)) {
++				if (likely(m->pool == free[0]->pool)) {
++					free[nb_free++] = m;
++				} else {
++					rte_mempool_put_bulk(free[0]->pool,
++							(void *)free, nb_free);
++					free[0] = m;
++					nb_free = 1;
 +				}
 +			}
 +		}
++		rte_mempool_put_bulk(free[0]->pool, (void **)free, nb_free);
 +	} else {
-+		struct rte_eth_dcb_rx_conf *rx_conf =
-+				&dev->data->dev_conf.rx_adv_conf.dcb_rx_conf;
-+		for (i = 0; i < RTE_ETH_DCB_NUM_USER_PRIORITIES; i++)
-+			dcb_info->prio_tc[i] = rx_conf->dcb_tc[i];
-+
-+		if (dcb_info->nb_tcs == RTE_ETH_4_TCS) {
-+			for (i = 0; i < dcb_info->nb_tcs; i++) {
-+				dcb_info->tc_queue.tc_rxq[0][i].base = i * 32;
-+				dcb_info->tc_queue.tc_rxq[0][i].nb_queue = 16;
-+			}
-+
-+			dcb_info->tc_queue.tc_txq[0][0].base = 0;
-+			dcb_info->tc_queue.tc_txq[0][1].base = 64;
-+			dcb_info->tc_queue.tc_txq[0][2].base = 96;
-+			dcb_info->tc_queue.tc_txq[0][3].base = 112;
-+			dcb_info->tc_queue.tc_txq[0][0].nb_queue = 64;
-+			dcb_info->tc_queue.tc_txq[0][1].nb_queue = 32;
-+			dcb_info->tc_queue.tc_txq[0][2].nb_queue = 16;
-+			dcb_info->tc_queue.tc_txq[0][3].nb_queue = 16;
-+		} else if (dcb_info->nb_tcs == RTE_ETH_8_TCS) {
-+			for (i = 0; i < dcb_info->nb_tcs; i++) {
-+				dcb_info->tc_queue.tc_rxq[0][i].base = i * 16;
-+				dcb_info->tc_queue.tc_rxq[0][i].nb_queue = 16;
-+			}
-+
-+			dcb_info->tc_queue.tc_txq[0][0].base = 0;
-+			dcb_info->tc_queue.tc_txq[0][1].base = 32;
-+			dcb_info->tc_queue.tc_txq[0][2].base = 64;
-+			dcb_info->tc_queue.tc_txq[0][3].base = 80;
-+			dcb_info->tc_queue.tc_txq[0][4].base = 96;
-+			dcb_info->tc_queue.tc_txq[0][5].base = 104;
-+			dcb_info->tc_queue.tc_txq[0][6].base = 112;
-+			dcb_info->tc_queue.tc_txq[0][7].base = 120;
-+			dcb_info->tc_queue.tc_txq[0][0].nb_queue = 32;
-+			dcb_info->tc_queue.tc_txq[0][1].nb_queue = 32;
-+			dcb_info->tc_queue.tc_txq[0][2].nb_queue = 16;
-+			dcb_info->tc_queue.tc_txq[0][3].nb_queue = 16;
-+			dcb_info->tc_queue.tc_txq[0][4].nb_queue = 8;
-+			dcb_info->tc_queue.tc_txq[0][5].nb_queue = 8;
-+			dcb_info->tc_queue.tc_txq[0][6].nb_queue = 8;
-+			dcb_info->tc_queue.tc_txq[0][7].nb_queue = 8;
++		for (i = 1; i < n; i++) {
++			m = rte_pktmbuf_prefree_seg(txep[i].mbuf);
++			if (m != NULL)
++				rte_mempool_put(m->pool, m);
 +		}
 +	}
 +
-+	for (i = 0; i < dcb_info->nb_tcs; i++) {
-+		tc = &dcb_config->tc_config[i];
-+		dcb_info->tc_bws[i] = tc->channel[DCB_PATH_TX].bwg_percent;
++	txq->desc_free_num = (u16)(txq->desc_free_num + txq->rs_thresh);
++	txq->next_dd = (u16)(txq->next_dd + txq->rs_thresh);
++	if (txq->next_dd >= txq->ring_depth)
++		txq->next_dd = (u16)(txq->rs_thresh - 1);
++
++	ret = txq->rs_thresh;
++out:
++	return ret;
++}
++
++static inline u16
++sxe_packets_reassemble(sxe_rx_queue_s *rxq, struct rte_mbuf **rx_bufs,
++			u16 bufs_num, u8 *split_flags)
++{
++	struct rte_mbuf **pkts = (struct rte_mbuf **)malloc(bufs_num * sizeof(struct rte_mbuf *));
++	if (pkts == NULL) {
++		perror("pkts malloc failed");
++		exit(EXIT_FAILURE);
 +	}
++	struct rte_mbuf *start = rxq->pkt_first_seg;
++	struct rte_mbuf *end = rxq->pkt_last_seg;
++	u32 pkt_idx, buf_idx;
++
++	for (buf_idx = 0, pkt_idx = 0; buf_idx < bufs_num; buf_idx++) {
++		if (end != NULL) {
++			end->next = rx_bufs[buf_idx];
++			rx_bufs[buf_idx]->data_len += rxq->crc_len;
++
++			start->nb_segs++;
++			start->pkt_len += rx_bufs[buf_idx]->data_len;
++			end = end->next;
++
++			if (!split_flags[buf_idx]) {
++				start->hash = end->hash;
++				start->ol_flags = end->ol_flags;
++				start->pkt_len -= rxq->crc_len;
++				if (end->data_len > rxq->crc_len) {
++					end->data_len -= rxq->crc_len;
++				} else {
++					struct rte_mbuf *secondlast = start;
++
++					start->nb_segs--;
++					while (secondlast->next != end)
++						secondlast = secondlast->next;
++
++					secondlast->data_len -= (rxq->crc_len -
++							end->data_len);
++					secondlast->next = NULL;
++					rte_pktmbuf_free_seg(end);
++				}
++				pkts[pkt_idx++] = start;
++				start = NULL;
++				end = NULL;
++			}
++		} else {
++			if (!split_flags[buf_idx]) {
++				pkts[pkt_idx++] = rx_bufs[buf_idx];
++				continue;
++			}
++			start = rx_bufs[buf_idx];
++			end = rx_bufs[buf_idx];
++			rx_bufs[buf_idx]->data_len += rxq->crc_len;
++			rx_bufs[buf_idx]->pkt_len += rxq->crc_len;
++		}
++	}
++
++	rxq->pkt_first_seg = start;
++	rxq->pkt_last_seg = end;
++	memcpy(rx_bufs, pkts, pkt_idx * (sizeof(*pkts)));
++
++	free(pkts);
++	return pkt_idx;
++}
++
++static inline void
++sxe_rx_vec_mbufs_release(sxe_rx_queue_s *rxq)
++{
++	u16 i;
++
++	if (rxq->buffer_ring == NULL || rxq->realloc_num >= rxq->ring_depth)
++		return;
++
++	if (rxq->realloc_num == 0) {
++		for (i = 0; i < rxq->ring_depth; i++) {
++			if (rxq->buffer_ring[i].mbuf != NULL)
++				rte_pktmbuf_free_seg(rxq->buffer_ring[i].mbuf);
++		}
++	} else {
++		for (i = rxq->processing_idx;
++			 i != rxq->realloc_start;
++			 i = (i + 1) % rxq->ring_depth) {
++			if (rxq->buffer_ring[i].mbuf != NULL)
++				rte_pktmbuf_free_seg(rxq->buffer_ring[i].mbuf);
++		}
++	}
++
++	rxq->realloc_num = rxq->ring_depth;
++
++	memset(rxq->buffer_ring, 0, sizeof(rxq->buffer_ring[0]) * rxq->ring_depth);
++}
++
++static inline s32
++sxe_default_rxq_vec_setup(sxe_rx_queue_s *rxq)
++{
++	uintptr_t p;
++	struct rte_mbuf mbuf = { .buf_addr = 0 };
++
++	mbuf.nb_segs = 1;
++	mbuf.data_off = RTE_PKTMBUF_HEADROOM;
++	mbuf.port = rxq->port_id;
++	rte_mbuf_refcnt_set(&mbuf, 1);
++
++	rte_compiler_barrier();
++	p = (uintptr_t)&mbuf.rearm_data;
++	rxq->mbuf_init_value = *(u64 *)p;
 +
 +	return 0;
 +}
 +
-+static void sxe_dcb_vmdq_rx_param_get(struct rte_eth_dev *dev,
-+			struct sxe_dcb_config *dcb_config)
++static inline s32
++sxe_default_rx_vec_condition_check(struct rte_eth_dev *dev)
 +{
-+	struct rte_eth_vmdq_dcb_conf *vmdq_rx_conf =
-+			&dev->data->dev_conf.rx_adv_conf.vmdq_dcb_conf;
-+	struct sxe_tc_config *tc;
-+	u8 i, j;
++	s32 ret = 0;
 +
-+	if (vmdq_rx_conf->nb_queue_pools == RTE_ETH_16_POOLS) {
-+		dcb_config->num_tcs.pg_tcs = RTE_ETH_8_TCS;
-+		dcb_config->num_tcs.pfc_tcs = RTE_ETH_8_TCS;
-+	} else {
-+		dcb_config->num_tcs.pg_tcs = RTE_ETH_4_TCS;
-+		dcb_config->num_tcs.pfc_tcs = RTE_ETH_4_TCS;
-+	}
++#ifndef RTE_LIBRTE_IEEE1588
++	struct rte_eth_fdir_conf *fnav_conf = SXE_DEV_FNAV_CONF(dev);
++	if (fnav_conf->mode != RTE_FDIR_MODE_NONE)
++		ret = -1;
++#else
++	RTE_SET_USED(dev);
++	ret = -1;
++#endif
 +
-+	for (j = 0; j < MAX_TRAFFIC_CLASS; j++) {
-+		tc = &dcb_config->tc_config[j];
-+		tc->channel[DCB_PATH_RX].up_to_tc_bitmap = 0;
-+	}
-+
-+	for (i = 0; i < RTE_ETH_DCB_NUM_USER_PRIORITIES; i++) {
-+		j = vmdq_rx_conf->dcb_tc[i];
-+		tc = &dcb_config->tc_config[j];
-+		tc->channel[DCB_PATH_RX].up_to_tc_bitmap |=
-+						(u8)(1 << i);
-+	}
++	return ret;
 +}
 +
-+void sxe_dcb_vmdq_rx_hw_configure(struct rte_eth_dev *dev)
++static __rte_always_inline void
++sxe_vec_mbuf_fill(struct sxe_tx_buffer_vec *buffer_ring,
++		 struct rte_mbuf **tx_pkts, u16 pkts_num)
 +{
-+	struct rte_eth_vmdq_dcb_conf *cfg;
-+	struct sxe_adapter *adapter = dev->data->dev_private;
-+	struct sxe_hw *hw = &adapter->hw;
-+	enum rte_eth_nb_pools pools_num;
++	s32 i;
++
++	for (i = 0; i < pkts_num; ++i)
++		buffer_ring[i].mbuf = tx_pkts[i];
++}
++
++static inline void
++sxe_tx_queue_vec_init(sxe_tx_queue_s *txq)
++{
 +	u16 i;
++	volatile sxe_tx_data_desc_u *txd;
++	static const sxe_tx_data_desc_u zeroed_desc = { {0} };
++	struct sxe_tx_buffer_vec *tx_buffer = txq->buffer_ring_vec;
 +
-+	PMD_INIT_FUNC_TRACE();
-+	cfg = &dev->data->dev_conf.rx_adv_conf.vmdq_dcb_conf;
-+	pools_num = cfg->nb_queue_pools;
++	for (i = 0; i < txq->ring_depth; i++)
++		txq->desc_ring[i] = zeroed_desc;
 +
-+	if (pools_num != RTE_ETH_16_POOLS && pools_num != RTE_ETH_32_POOLS) {
-+		sxe_rss_disable(dev);
++	for (i = 0; i < txq->ring_depth; i++) {
++		txd = &txq->desc_ring[i];
++		txd->wb.status = SXE_TX_DESC_STAT_DD;
++		tx_buffer[i].mbuf = NULL;
++	}
++
++	txq->ctx_curr	  = 0;
++	txq->desc_used_num = 0;
++	txq->desc_free_num = txq->ring_depth - 1;
++	txq->next_to_use   = 0;
++	txq->next_to_clean = txq->ring_depth - 1;
++	txq->next_dd	   = txq->rs_thresh  - 1;
++	txq->next_rs	   = txq->rs_thresh  - 1;
++	memset((void *)&txq->ctx_cache, 0,
++			SXE_CTXT_DESC_NUM * sizeof(struct sxe_ctxt_info));
++}
++
++static inline void
++sxe_tx_mbufs_vec_release(sxe_tx_queue_s *txq)
++{
++	u16 i;
++	struct sxe_tx_buffer_vec *tx_buffer;
++	const u16 max_desc = (u16)(txq->ring_depth - 1);
++
++	if (txq->buffer_ring_vec == NULL || txq->desc_free_num == max_desc)
 +		return;
++
++	for (i = txq->next_dd - (txq->rs_thresh - 1);
++		 i != txq->next_to_use;
++		 i = (i + 1) % txq->ring_depth) {
++		tx_buffer = &txq->buffer_ring_vec[i];
++		rte_pktmbuf_free_seg(tx_buffer->mbuf);
 +	}
++	txq->desc_free_num = max_desc;
 +
-+	sxe_hw_dcb_vmdq_mq_configure(hw, pools_num);
-+
-+	sxe_hw_dcb_vmdq_default_pool_configure(hw,
-+						cfg->enable_default_pool,
-+						cfg->default_pool);
-+
-+	sxe_hw_dcb_vmdq_up_2_tc_configure(hw, cfg->dcb_tc);
-+
-+	sxe_hw_dcb_vmdq_vlan_configure(hw, pools_num);
-+
-+	for (i = 0; i < cfg->nb_pool_maps; i++) {
-+		sxe_hw_dcb_vmdq_pool_configure(hw,
-+					i, cfg->pool_map[i].vlan_id,
-+					cfg->pool_map[i].pools);
++	for (i = 0; i < txq->ring_depth; i++) {
++		tx_buffer = &txq->buffer_ring_vec[i];
++		tx_buffer->mbuf = NULL;
 +	}
 +}
 +
-+static void sxe_dcb_rx_param_get(struct rte_eth_dev *dev,
-+		struct sxe_dcb_config *dcb_config)
++static inline void
++sxe_tx_buffer_ring_vec_free(sxe_tx_queue_s *txq)
 +{
-+	struct rte_eth_dcb_rx_conf *rx_conf =
-+			&dev->data->dev_conf.rx_adv_conf.dcb_rx_conf;
-+	struct sxe_tc_config *tc;
-+	u8 i, j;
++	if (txq == NULL)
++		return;
 +
-+	dcb_config->num_tcs.pg_tcs = (u8)rx_conf->nb_tcs;
-+	dcb_config->num_tcs.pfc_tcs = (u8)rx_conf->nb_tcs;
-+
-+	for (j = 0; j < MAX_TRAFFIC_CLASS; j++) {
-+		tc = &dcb_config->tc_config[j];
-+		tc->channel[DCB_PATH_RX].up_to_tc_bitmap = 0;
-+	}
-+
-+	for (i = 0; i < RTE_ETH_DCB_NUM_USER_PRIORITIES; i++) {
-+		j = rx_conf->dcb_tc[i];
-+		tc = &dcb_config->tc_config[j];
-+		tc->channel[DCB_PATH_RX].up_to_tc_bitmap |=
-+						(u8)(1 << i);
++	if (txq->buffer_ring_vec != NULL) {
++		rte_free(txq->buffer_ring_vec - 1);
++		txq->buffer_ring_vec = NULL;
 +	}
 +}
 +
-+static void sxe_dcb_rx_hw_configure(struct rte_eth_dev *dev,
-+			   struct sxe_dcb_config *dcb_config)
-+{
-+	struct sxe_adapter *adapter = dev->data->dev_private;
-+	struct sxe_hw *hw = &adapter->hw;
-+
-+	PMD_INIT_FUNC_TRACE();
-+	sxe_hw_dcb_rx_configure(hw, dcb_config->vmdq_active,
-+				RTE_ETH_DEV_SRIOV(dev).active,
-+				dcb_config->num_tcs.pg_tcs);
-+}
-+
-+static void sxe_dcb_vmdq_tx_param_get(struct rte_eth_dev *dev,
-+			struct sxe_dcb_config *dcb_config)
-+{
-+	struct rte_eth_vmdq_dcb_tx_conf *vmdq_tx_conf =
-+			&dev->data->dev_conf.tx_adv_conf.vmdq_dcb_tx_conf;
-+	struct sxe_tc_config *tc;
-+	u8 i, j;
-+
-+	if (vmdq_tx_conf->nb_queue_pools == RTE_ETH_16_POOLS) {
-+		dcb_config->num_tcs.pg_tcs = RTE_ETH_8_TCS;
-+		dcb_config->num_tcs.pfc_tcs = RTE_ETH_8_TCS;
-+	} else {
-+		dcb_config->num_tcs.pg_tcs = RTE_ETH_4_TCS;
-+		dcb_config->num_tcs.pfc_tcs = RTE_ETH_4_TCS;
-+	}
-+
-+	for (j = 0; j < MAX_TRAFFIC_CLASS; j++) {
-+		tc = &dcb_config->tc_config[j];
-+		tc->channel[DCB_PATH_TX].up_to_tc_bitmap = 0;
-+	}
-+
-+	for (i = 0; i < RTE_ETH_DCB_NUM_USER_PRIORITIES; i++) {
-+		j = vmdq_tx_conf->dcb_tc[i];
-+		tc = &dcb_config->tc_config[j];
-+		tc->channel[DCB_PATH_TX].up_to_tc_bitmap |=
-+						(u8)(1 << i);
-+	}
-+}
-+
-+static void sxe_dcb_vmdq_tx_hw_configure(struct rte_eth_dev *dev,
-+			struct sxe_dcb_config *dcb_config)
-+{
-+	struct rte_eth_vmdq_dcb_tx_conf *vmdq_tx_conf =
-+			&dev->data->dev_conf.tx_adv_conf.vmdq_dcb_tx_conf;
-+	struct sxe_adapter *adapter = dev->data->dev_private;
-+	struct sxe_hw *hw = &adapter->hw;
-+
-+	PMD_INIT_FUNC_TRACE();
-+
-+	sxe_hw_pool_xmit_enable(hw, 0, (u8)vmdq_tx_conf->nb_queue_pools);
-+
-+	sxe_hw_dcb_tx_configure(hw, dcb_config->vmdq_active,
-+				dcb_config->num_tcs.pg_tcs);
-+}
-+
-+static void sxe_dcb_tx_param_get(struct rte_eth_dev *dev,
-+		struct sxe_dcb_config *dcb_config)
-+{
-+	struct rte_eth_dcb_tx_conf *tx_conf =
-+			&dev->data->dev_conf.tx_adv_conf.dcb_tx_conf;
-+	struct sxe_tc_config *tc;
-+	u8 i, j;
-+
-+	dcb_config->num_tcs.pg_tcs = (u8)tx_conf->nb_tcs;
-+	dcb_config->num_tcs.pfc_tcs = (u8)tx_conf->nb_tcs;
-+
-+	for (j = 0; j < MAX_TRAFFIC_CLASS; j++) {
-+		tc = &dcb_config->tc_config[j];
-+		tc->channel[DCB_PATH_TX].up_to_tc_bitmap = 0;
-+	}
-+
-+	for (i = 0; i < RTE_ETH_DCB_NUM_USER_PRIORITIES; i++) {
-+		j = tx_conf->dcb_tc[i];
-+		tc = &dcb_config->tc_config[j];
-+		tc->channel[DCB_PATH_TX].up_to_tc_bitmap |=
-+						(u8)(1 << i);
-+	}
-+}
-+
-+static u32 sxe_dcb_min_credit_get(u32 max_frame)
-+{
-+	return ((max_frame / 2) + DCB_CREDIT_QUANTUM - 1) /
-+				DCB_CREDIT_QUANTUM;
-+}
-+
-+static u16 sxe_dcb_cee_tc_link_percent_get(struct sxe_dcb_config *cee_config,
-+			u8 direction, u8 tc_index)
-+{
-+	u8  bw_percent;
-+	u16 link_percentage;
-+	struct sxe_tc_bw_alloc *tc_info;
-+
-+	tc_info = &cee_config->tc_config[tc_index].channel[direction];
-+	link_percentage =
-+		cee_config->bwg_link_percent[direction][tc_info->bwg_id];
-+	bw_percent = tc_info->bwg_percent;
-+
-+	link_percentage = (link_percentage * bw_percent) / 100;
-+
-+	return link_percentage;
-+}
-+
-+static u32 sxe_dcb_cee_min_link_percent_get(struct sxe_dcb_config *cee_config,
-+		u8 direction)
-+{
-+	u8  tc_index;
-+	u16 link_percentage;
-+	u32 min_link_percent = 100;
-+
-+	for (tc_index = 0; tc_index < MAX_TRAFFIC_CLASS; tc_index++) {
-+		link_percentage = sxe_dcb_cee_tc_link_percent_get(cee_config,
-+					direction, tc_index);
-+
-+		if (link_percentage && link_percentage < min_link_percent)
-+			min_link_percent = link_percentage;
-+	}
-+
-+	return min_link_percent;
-+}
-+
-+static s32 sxe_dcb_cee_tc_credits_calculate(struct sxe_hw *hw,
-+				   struct sxe_dcb_config *cee_config,
-+				   u32 max_frame, u8 direction)
++static inline s32
++sxe_default_txq_vec_setup(sxe_tx_queue_s *txq,
++				const struct sxe_txq_ops *txq_ops)
 +{
 +	s32 ret = 0;
-+	struct sxe_adapter *adapter = hw->adapter;
-+	struct sxe_tc_bw_alloc *tc_info;
-+	u32 min_credit;
-+	u32 total_credit;
-+	u32 min_link_percent;
-+	u32 credit_refill;
-+	u32 credit_max;
-+	u16 link_percentage;
-+	u8  tc_index;
 +
-+	LOG_DEBUG_BDF("cee_config[%p] input max_frame[%u] direction[%s]",
-+			cee_config, max_frame, direction ? "RX" : "TX");
-+
-+	min_credit = sxe_dcb_min_credit_get(max_frame);
-+	LOG_DEBUG_BDF("cee_config[%p] max_frame[%u] got min_credit[%u]",
-+			cee_config, max_frame, min_credit);
-+
-+	min_link_percent = sxe_dcb_cee_min_link_percent_get(cee_config, direction);
-+	LOG_DEBUG_BDF("cee_config[%p] direction[%s] got min_link_percent[%u]",
-+			cee_config, direction ? "RX" : "TX", min_link_percent);
-+
-+	total_credit = (min_credit / min_link_percent) + 1;
-+	LOG_DEBUG_BDF("cee_config[%p] total_credit=%u", cee_config, total_credit);
-+
-+	for (tc_index = 0; tc_index < MAX_TRAFFIC_CLASS; tc_index++) {
-+		tc_info = &cee_config->tc_config[tc_index].channel[direction];
-+
-+		link_percentage = sxe_dcb_cee_tc_link_percent_get(cee_config,
-+					direction, tc_index);
-+		LOG_DEBUG_BDF("tc[%u] bwg_percent=%u, link_percentage=%u",
-+			tc_index, tc_info->bwg_percent, link_percentage);
-+
-+		if (tc_info->bwg_percent > 0 && link_percentage == 0)
-+			link_percentage = 1;
-+
-+		tc_info->link_percent = (u8)link_percentage;
-+
-+		credit_refill = RTE_MIN(link_percentage * total_credit,
-+					(u32)MAX_CREDIT_REFILL);
-+
-+		if (credit_refill < min_credit)
-+			credit_refill = min_credit;
-+
-+		tc_info->data_credits_refill = (u16)credit_refill;
-+		LOG_DEBUG_BDF("tc[%u] credit_refill=%u",
-+					tc_index, credit_refill);
-+
-+		credit_max = (link_percentage * MAX_CREDIT) / 100;
-+
-+		if (credit_max < min_credit)
-+			credit_max = min_credit;
-+		LOG_DEBUG_BDF("tc[%u] credit_max=%u",
-+					tc_index, credit_max);
-+
-+		if (direction == DCB_PATH_TX)
-+			cee_config->tc_config[tc_index].desc_credits_max =
-+				(u16)credit_max;
-+
-+		tc_info->data_credits_max = (u16)credit_max;
++	if (txq->buffer_ring_vec == NULL) {
++		ret = -1;
++		goto l_out;
 +	}
 +
++	txq->buffer_ring_vec = txq->buffer_ring_vec + 1;
++	txq->ops = txq_ops;
++
++l_out:
 +	return ret;
 +}
 +
-+static void sxe_dcb_cee_refill_parse(struct sxe_dcb_config *cfg,
-+					u8 direction, u16 *refill)
++static inline int
++sxe_tx_done_cleanup_vec(sxe_tx_queue_s *txq, u32 free_cnt)
 +{
-+	u32 tc;
-+	struct sxe_tc_config *tc_config = &cfg->tc_config[0];
++	UNUSED(txq);
++	UNUSED(free_cnt);
 +
-+	for (tc = 0; tc < MAX_TRAFFIC_CLASS; tc++) {
-+		refill[tc] = tc_config[tc].channel[direction].data_credits_refill;
-+		LOG_DEBUG("tc[%u] --- refill[%u]", tc, refill[tc]);
-+	}
++	return -ENOTSUP;
 +}
 +
-+static void sxe_dcb_cee_max_credits_parse(struct sxe_dcb_config *cfg,
-+						u16 *max_credits)
-+{
-+	u32 tc;
-+	struct sxe_tc_config *tc_config = &cfg->tc_config[0];
++s32 sxe_txq_vec_setup(sxe_tx_queue_s *txq);
 +
-+	for (tc = 0; tc < MAX_TRAFFIC_CLASS; tc++) {
-+		max_credits[tc] = tc_config[tc].desc_credits_max;
-+		LOG_DEBUG("tc[%u] --- max_credits[%u]", tc, max_credits[tc]);
-+	}
-+}
++s32 sxe_rx_vec_condition_check(struct rte_eth_dev *dev);
 +
-+static void sxe_dcb_cee_bwgid_parse(struct sxe_dcb_config *cfg,
-+					u8 direction, u8 *bwgid)
-+{
-+	u32 tc;
-+	struct sxe_tc_config *tc_config = &cfg->tc_config[0];
++s32 sxe_rxq_vec_setup(sxe_rx_queue_s *rxq);
 +
-+	for (tc = 0; tc < MAX_TRAFFIC_CLASS; tc++) {
-+		bwgid[tc] = tc_config[tc].channel[direction].bwg_id;
-+		LOG_DEBUG("tc[%u] --- bwgid[%u]", tc, bwgid[tc]);
-+	}
-+}
++void sxe_rx_queue_vec_mbufs_release(sxe_rx_queue_s *rxq);
 +
-+static void sxe_dcb_cee_prio_parse(struct sxe_dcb_config *cfg,
-+					u8 direction, u8 *ptype)
-+{
-+	u32 tc;
-+	struct sxe_tc_config *tc_config = &cfg->tc_config[0];
++u16 sxe_scattered_pkts_vec_recv(void *rx_queue, struct rte_mbuf **rx_pkts, u16 pkts_num);
 +
-+	for (tc = 0; tc < MAX_TRAFFIC_CLASS; tc++) {
-+		ptype[tc] = tc_config[tc].channel[direction].prio_type;
-+		LOG_DEBUG("tc[%u] --- ptype[%u]", tc, ptype[tc]);
-+	}
-+}
++u16 sxe_pkts_vec_recv(void *rx_queue, struct rte_mbuf **rx_pkts, u16 pkts_num);
 +
-+static void sxe_dcb_cee_pfc_parse(struct sxe_dcb_config *cfg,
-+						u8 *map, u8 *pfc_en)
-+{
-+	u32 up;
-+	struct sxe_tc_config *tc_config = &cfg->tc_config[0];
++u16
++__sxe_pkts_vector_xmit(void *tx_queue, struct rte_mbuf **tx_pkts,
++			   u16 pkts_num);
 +
-+	for (*pfc_en = 0, up = 0; up < MAX_TRAFFIC_CLASS; up++) {
-+		if (tc_config[map[up]].pfc_type != pfc_disabled)
-+			*pfc_en |= BIT(up);
-+	}
-+	LOG_DEBUG("cfg[%p] pfc_en[0x%x]", cfg, *pfc_en);
-+}
-+
-+static s32 sxe_dcb_tc_stats_configure(struct sxe_hw *hw,
-+					struct sxe_dcb_config *dcb_config)
-+{
-+	s32 ret = 0;
-+	u8 tc_count = 8;
-+	bool vmdq_active = false;
-+
-+	if (dcb_config != NULL) {
-+		tc_count = dcb_config->num_tcs.pg_tcs;
-+		vmdq_active = dcb_config->vmdq_active;
-+	}
-+
-+	if (!((tc_count == 8 && !vmdq_active) || tc_count == 4)) {
-+		ret = -SXE_ERR_PARAM;
-+		PMD_LOG_ERR(INIT, "dcb tc stats configure failed, "
-+				"tc_num = %u, vmdq_active = %s",
-+				tc_count, vmdq_active ? "on" : "off");
-+		goto l_end;
-+	}
-+
-+	sxe_hw_dcb_tc_stats_configure(hw, tc_count, vmdq_active);
-+
-+l_end:
-+	return ret;
-+}
-+
-+static void sxe_dcb_rx_mq_mode_configure(struct rte_eth_dev *dev,
-+					struct sxe_dcb_config *dcb_config,
-+					u8 *rx_configured)
-+{
-+	switch (dev->data->dev_conf.rxmode.mq_mode) {
-+	case RTE_ETH_MQ_RX_VMDQ_DCB:
-+		dcb_config->vmdq_active = true;
-+		*rx_configured = DCB_RX_CONFIG;
-+
-+		sxe_dcb_vmdq_rx_param_get(dev, dcb_config);
-+		sxe_dcb_vmdq_rx_hw_configure(dev);
-+		break;
-+	case RTE_ETH_MQ_RX_DCB:
-+	case RTE_ETH_MQ_RX_DCB_RSS:
-+		dcb_config->vmdq_active = false;
-+		*rx_configured = DCB_RX_CONFIG;
-+
-+		sxe_dcb_rx_param_get(dev, dcb_config);
-+		sxe_dcb_rx_hw_configure(dev, dcb_config);
-+		break;
-+	default:
-+		PMD_LOG_ERR(INIT, "Incorrect DCB RX mode configuration");
-+		break;
-+	}
-+}
-+
-+static void sxe_dcb_tx_mq_mode_configure(struct rte_eth_dev *dev,
-+					struct sxe_dcb_config *dcb_config,
-+					u8 *tx_configured)
-+{
-+	struct sxe_adapter *adapter = dev->data->dev_private;
-+	struct sxe_hw *hw = &adapter->hw;
-+
-+	switch (dev->data->dev_conf.txmode.mq_mode) {
-+	case RTE_ETH_MQ_TX_VMDQ_DCB:
-+		dcb_config->vmdq_active = true;
-+		*tx_configured = DCB_TX_CONFIG;
-+
-+		sxe_dcb_vmdq_tx_param_get(dev, dcb_config);
-+		sxe_dcb_vmdq_tx_hw_configure(dev, dcb_config);
-+		break;
-+
-+	case RTE_ETH_MQ_TX_DCB:
-+		dcb_config->vmdq_active = false;
-+		*tx_configured = DCB_TX_CONFIG;
-+
-+		sxe_dcb_tx_param_get(dev, dcb_config);
-+		sxe_hw_dcb_tx_configure(hw, dcb_config->vmdq_active,
-+				dcb_config->num_tcs.pg_tcs);
-+		break;
-+	default:
-+		PMD_LOG_ERR(INIT, "Incorrect DCB TX mode configuration");
-+		break;
-+	}
-+}
-+
-+static void sxe_dcb_bwg_percentage_alloc(struct rte_eth_dev *dev,
-+				struct sxe_dcb_config *dcb_config, u8 *map)
-+{
-+	u8 i;
-+	struct sxe_tc_config *tc;
-+	struct sxe_adapter *adapter = dev->data->dev_private;
-+	struct sxe_bw_config *bw_conf = &adapter->dcb_ctxt.bw_config;
-+
-+	u8 nb_tcs = dcb_config->num_tcs.pfc_tcs;
-+
-+	if (nb_tcs == RTE_ETH_4_TCS) {
-+		for (i = 0; i < MAX_TRAFFIC_CLASS; i++) {
-+			if (map[i] >= nb_tcs) {
-+				PMD_LOG_INFO(DRV, "map[up-%u] to tc[%u] not exist, "
-+								"change to tc 0", i, map[i]);
-+				map[i] = 0;
-+			}
-+		}
-+
-+		for (i = 0; i < nb_tcs; i++) {
-+			tc = &dcb_config->tc_config[i];
-+			if (bw_conf->tc_num != nb_tcs) {
-+				tc->channel[DCB_PATH_TX].bwg_percent =
-+							(u8)(100 / nb_tcs);
-+		}
-+		tc->channel[DCB_PATH_RX].bwg_percent =
-+					(u8)(100 / nb_tcs);
-+		}
-+		for (; i < MAX_TRAFFIC_CLASS; i++) {
-+			tc = &dcb_config->tc_config[i];
-+			tc->channel[DCB_PATH_TX].bwg_percent = 0;
-+			tc->channel[DCB_PATH_RX].bwg_percent = 0;
-+		}
-+	} else {
-+		for (i = 0; i < nb_tcs; i++) {
-+			tc = &dcb_config->tc_config[i];
-+			if (bw_conf->tc_num != nb_tcs) {
-+				tc->channel[DCB_PATH_TX].bwg_percent =
-+					(u8)(100 / nb_tcs + (i & 1));
-+			}
-+
-+			tc->channel[DCB_PATH_RX].bwg_percent =
-+				(u8)(100 / nb_tcs + (i & 1));
-+		}
-+	}
-+}
-+
-+static void sxe_dcb_rx_pkt_buf_configure(struct sxe_hw *hw,
-+						u16 rx_buffer_size, u8 tcs_num)
-+{
-+	u8 i;
-+	u16 pbsize;
-+
-+	pbsize = (u16)(rx_buffer_size / tcs_num);
-+
-+	for (i = 0; i < tcs_num; i++)
-+		sxe_hw_rx_pkt_buf_size_set(hw, i, pbsize);
-+
-+	for (; i < RTE_ETH_DCB_NUM_USER_PRIORITIES; i++)
-+		sxe_hw_rx_pkt_buf_size_set(hw, i, 0);
-+}
-+
-+static void sxe_dcb_tx_pkt_buf_configure(struct sxe_hw *hw, u8 tcs_num)
-+{
-+	sxe_hw_tx_pkt_buf_switch(hw, false);
-+
-+	sxe_hw_tx_pkt_buf_size_configure(hw, tcs_num);
-+	sxe_hw_tx_pkt_buf_thresh_configure(hw, tcs_num, true);
-+
-+	sxe_hw_tx_pkt_buf_switch(hw, true);
-+}
-+
-+static void sxe_dcb_rx_configure(struct rte_eth_dev *dev,
-+			struct sxe_dcb_config *dcb_config, u8 *map)
-+{
-+	struct sxe_adapter *adapter = dev->data->dev_private;
-+	struct sxe_hw *hw = &adapter->hw;
-+	u8 tsa[MAX_TRAFFIC_CLASS]	 = {0};
-+	u8 bwgid[MAX_TRAFFIC_CLASS]   = {0};
-+	u16 refill[MAX_TRAFFIC_CLASS] = {0};
-+	u16 max[MAX_TRAFFIC_CLASS]	= {0};
-+
-+	sxe_dcb_rx_pkt_buf_configure(hw, SXE_RX_PKT_BUF_SIZE, dcb_config->num_tcs.pg_tcs);
-+
-+	sxe_dcb_cee_refill_parse(dcb_config, DCB_PATH_RX, refill);
-+	sxe_dcb_cee_bwgid_parse(dcb_config, DCB_PATH_RX, bwgid);
-+	sxe_dcb_cee_prio_parse(dcb_config, DCB_PATH_RX, tsa);
-+	sxe_dcb_cee_max_credits_parse(dcb_config, max);
-+
-+	sxe_hw_dcb_rx_bw_alloc_configure(hw, refill, max,
-+				bwgid, tsa, map, MAX_USER_PRIORITY);
-+}
-+
-+static void sxe_dcb_tx_configure(struct rte_eth_dev *dev,
-+			struct sxe_dcb_config *dcb_config, u8 *map)
-+{
-+	struct sxe_adapter *adapter = dev->data->dev_private;
-+	struct sxe_hw *hw = &adapter->hw;
-+	u8 tsa[MAX_TRAFFIC_CLASS]	 = {0};
-+	u8 bwgid[MAX_TRAFFIC_CLASS]   = {0};
-+	u16 refill[MAX_TRAFFIC_CLASS] = {0};
-+	u16 max[MAX_TRAFFIC_CLASS]	= {0};
-+
-+	sxe_dcb_tx_pkt_buf_configure(hw, dcb_config->num_tcs.pg_tcs);
-+
-+	sxe_dcb_cee_refill_parse(dcb_config, DCB_PATH_TX, refill);
-+	sxe_dcb_cee_max_credits_parse(dcb_config, max);
-+	sxe_dcb_cee_bwgid_parse(dcb_config, DCB_PATH_TX, bwgid);
-+	sxe_dcb_cee_prio_parse(dcb_config, DCB_PATH_TX, tsa);
-+
-+	sxe_hw_dcb_tx_desc_bw_alloc_configure(hw, refill, max, bwgid, tsa);
-+	sxe_hw_dcb_tx_data_bw_alloc_configure(hw, refill, max,
-+				bwgid, tsa, map, MAX_USER_PRIORITY);
-+}
-+
-+static void sxe_dcb_pfc_configure(struct sxe_hw *hw,
-+					struct sxe_dcb_config *dcb_config,
-+					u8 *map)
-+{
-+	u8 nb_tcs = dcb_config->num_tcs.pg_tcs;
-+	u16 pbsize;
-+	u8 i, pfc_en;
-+	struct sxe_tc_config *tc;
-+
-+	pbsize = (u16)(SXE_RX_PKT_BUF_SIZE / nb_tcs);
-+	for (i = 0; i < nb_tcs; i++) {
-+		sxe_hw_fc_tc_high_water_mark_set(hw, i, (pbsize * 3) / 4);
-+		sxe_hw_fc_tc_low_water_mark_set(hw, i, pbsize / 4);
-+
-+		tc = &dcb_config->tc_config[i];
-+		tc->pfc_type = pfc_enabled_full;
-+	}
-+
-+	sxe_dcb_cee_pfc_parse(dcb_config, map, &pfc_en);
-+	if (dcb_config->num_tcs.pfc_tcs == RTE_ETH_4_TCS)
-+		pfc_en &= 0x0F;
-+
-+	sxe_hw_dcb_pfc_configure(hw, pfc_en, map, MAX_USER_PRIORITY);
-+}
-+
-+static void sxe_dcb_hw_configure(struct rte_eth_dev *dev,
-+			struct sxe_dcb_config *dcb_config)
-+{
-+	u8 rx_configured = 0;
-+	u8 tx_configured = 0;
-+	u8 map[MAX_TRAFFIC_CLASS] = {0};
-+	u32 max_frame = dev->data->mtu + SXE_ETH_DEAD_LOAD;
-+	struct sxe_adapter *adapter = dev->data->dev_private;
-+	struct sxe_hw *hw = &adapter->hw;
-+
-+	sxe_dcb_rx_mq_mode_configure(dev, dcb_config, &rx_configured);
-+	sxe_dcb_tx_mq_mode_configure(dev, dcb_config, &tx_configured);
-+
-+	sxe_dcb_up2tc_map_parse(dcb_config, DCB_PATH_RX, map);
-+
-+	sxe_dcb_bwg_percentage_alloc(dev, dcb_config, map);
-+
-+	sxe_dcb_cee_tc_credits_calculate(hw, dcb_config, max_frame, DCB_PATH_TX);
-+	sxe_dcb_cee_tc_credits_calculate(hw, dcb_config, max_frame, DCB_PATH_RX);
-+
-+	if (rx_configured)
-+		sxe_dcb_rx_configure(dev, dcb_config, map);
-+
-+	if (tx_configured)
-+		sxe_dcb_tx_configure(dev, dcb_config, map);
-+
-+	sxe_dcb_tc_stats_configure(hw, dcb_config);
-+
-+	if (dev->data->dev_conf.dcb_capability_en & RTE_ETH_DCB_PFC_SUPPORT)
-+		sxe_dcb_pfc_configure(hw, dcb_config, map);
-+}
-+
-+void sxe_dcb_configure(struct rte_eth_dev *dev)
-+{
-+	struct sxe_adapter *adapter = dev->data->dev_private;
-+
-+	struct sxe_dcb_config *dcb_cfg = &adapter->dcb_ctxt.config;
-+	struct rte_eth_conf *dev_conf = &dev->data->dev_conf;
-+
-+	PMD_INIT_FUNC_TRACE();
-+
-+	if (dev_conf->rxmode.mq_mode != RTE_ETH_MQ_RX_VMDQ_DCB &&
-+		dev_conf->rxmode.mq_mode != RTE_ETH_MQ_RX_DCB &&
-+		dev_conf->rxmode.mq_mode != RTE_ETH_MQ_RX_DCB_RSS) {
-+		PMD_LOG_INFO(INIT, "dcb config failed, cause mq_mode=0x%x",
-+				(u8)dev_conf->rxmode.mq_mode);
-+		return;
-+	}
-+
-+	if (dev->data->nb_rx_queues > RTE_ETH_DCB_NUM_QUEUES) {
-+		PMD_LOG_INFO(INIT, "dcb config failed, cause nb_rx_queues=%u > %u",
-+			dev->data->nb_rx_queues, RTE_ETH_DCB_NUM_QUEUES);
-+		return;
-+	}
-+
-+	sxe_dcb_hw_configure(dev, dcb_cfg);
-+}
-+
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_pmd_sxe_tc_bw_set, 26.03)
-+s32 rte_pmd_sxe_tc_bw_set(u8 port, u8 tc_num, u8 *bw_weight)
-+{
-+	struct sxe_adapter *adapter;
-+	struct rte_eth_dev *dev;
-+	struct sxe_dcb_config *dcb_config;
-+	struct sxe_tc_config *tc;
-+	struct rte_eth_conf *eth_conf;
-+	struct sxe_bw_config *bw_conf;
-+	u8 i;
-+	u8 nb_tcs;
-+	u16 sum;
-+	s32 ret = 0;
-+
-+	RTE_ETH_VALID_PORTID_OR_ERR_RET(port, -ENODEV);
-+
-+	dev = &rte_eth_devices[port];
-+	if (!sxe_is_supported(dev)) {
-+		ret = -ENOTSUP;
-+		goto l_end;
-+	}
-+
-+	if (tc_num > MAX_TRAFFIC_CLASS) {
-+		PMD_LOG_ERR(DRV, "TCs should be no more than %d.",
-+				MAX_TRAFFIC_CLASS);
-+		ret = -EINVAL;
-+		goto l_end;
-+	}
-+
-+	adapter = dev->data->dev_private;
-+	dcb_config = &adapter->dcb_ctxt.config;
-+	bw_conf = &adapter->dcb_ctxt.bw_config;
-+	eth_conf = &dev->data->dev_conf;
-+
-+	if (eth_conf->txmode.mq_mode == RTE_ETH_MQ_TX_DCB) {
-+		nb_tcs = eth_conf->tx_adv_conf.dcb_tx_conf.nb_tcs;
-+	} else if (eth_conf->txmode.mq_mode == RTE_ETH_MQ_TX_VMDQ_DCB) {
-+		if (eth_conf->tx_adv_conf.vmdq_dcb_tx_conf.nb_queue_pools ==
-+			RTE_ETH_32_POOLS) {
-+			nb_tcs = RTE_ETH_4_TCS;
-+		} else {
-+			nb_tcs = RTE_ETH_8_TCS;
-+		}
-+	} else {
-+		nb_tcs = 1;
-+	}
-+
-+	if (nb_tcs != tc_num) {
-+		PMD_LOG_ERR(DRV,
-+				"Weight should be set for all %d enabled TCs.",
-+				nb_tcs);
-+		ret = -EINVAL;
-+		goto l_end;
-+	}
-+
-+	sum = 0;
-+	for (i = 0; i < nb_tcs; i++)
-+		sum += bw_weight[i];
-+
-+	if (sum != 100) {
-+		PMD_LOG_ERR(DRV,
-+				"The summary of the TC weight should be 100.");
-+		ret = -EINVAL;
-+		goto l_end;
-+	}
-+
-+	for (i = 0; i < nb_tcs; i++) {
-+		tc = &dcb_config->tc_config[i];
-+		tc->channel[DCB_PATH_TX].bwg_percent = bw_weight[i];
-+	}
-+
-+	for (; i < MAX_TRAFFIC_CLASS; i++) {
-+		tc = &dcb_config->tc_config[i];
-+		tc->channel[DCB_PATH_TX].bwg_percent = 0;
-+	}
-+
-+	bw_conf->tc_num = nb_tcs;
-+
-+l_end:
-+	return ret;
-+}
-diff --git a/drivers/net/sxe/pf/sxe_dcb.h b/drivers/net/sxe/pf/sxe_dcb.h
++#endif
++#endif
+diff --git a/drivers/net/sxe/pf/sxe_vec_neon.c b/drivers/net/sxe/pf/sxe_vec_neon.c
 new file mode 100644
-index 0000000000..2330febb2e
+index 0000000000..b786486803
 --- /dev/null
-+++ b/drivers/net/sxe/pf/sxe_dcb.h
-@@ -0,0 +1,99 @@
++++ b/drivers/net/sxe/pf/sxe_vec_neon.c
+@@ -0,0 +1,600 @@
 +/* SPDX-License-Identifier: BSD-3-Clause
 + * Copyright (C), 2022, Linkdata Technology Co., Ltd.
 + */
 +
-+#ifndef __SXE_DCB_H__
-+#define __SXE_DCB_H__
-+#include <stdbool.h>
++#if defined SXE_DPDK_L4_FEATURES && defined SXE_DPDK_SIMD
++#include <stdint.h>
++#include <ethdev_driver.h>
++#include <rte_malloc.h>
 +
-+#define PBA_STRATEGY_EQUAL	   (0)
-+#define PBA_STRATEGY_WEIGHTED	(1)
-+#define MAX_BW_GROUP			 8
-+#define MAX_USER_PRIORITY		8
-+#define SXE_DCB_MAX_TRAFFIC_CLASS		8
++#include <rte_vect.h>
++#include "sxe_vec_common.h"
 +
-+enum sxe_dcb_strict_prio_type {
-+	DCB_PRIO_NONE = 0,
-+	DCB_PRIO_GROUP,
-+	DCB_PRIO_LINK
++#define RTE_SXE_DESCS_PER_LOOP			4
++#define SXE_PACKET_TYPE_MASK_TUNNEL		0xFF
++#define SXE_PACKET_TYPE_SHIFT			0x04
++#define SXE_RXDADV_ERR_TCPE				0x40000000
++#define SXE_VPMD_DESC_EOP_MASK			0x02020202
++#define SXE_UINT8_BIT					(CHAR_BIT * sizeof(u8))
++
++static inline void
++sxe_rxq_rearm(struct sxe_rx_queue *rxq)
++{
++	s32 i;
++	u16 rx_id;
++	volatile union sxe_rx_data_desc *rxdp;
++	struct sxe_rx_buffer *rxep = &rxq->buffer_ring[rxq->realloc_start];
++	struct rte_mbuf *mb0, *mb1;
++	uint64x2_t dma_addr0, dma_addr1;
++	uint64x2_t zero = vdupq_n_u64(0);
++	u64 paddr;
++	uint8x8_t p;
++
++	rxdp = rxq->desc_ring + rxq->realloc_start;
++
++	if (unlikely(rte_mempool_get_bulk(rxq->mb_pool,
++					  (void *)rxep,
++					  RTE_PMD_SXE_MAX_RX_BURST) < 0)) {
++		if (rxq->realloc_num + RTE_PMD_SXE_MAX_RX_BURST >=
++			rxq->ring_depth) {
++			for (i = 0; i < RTE_SXE_DESCS_PER_LOOP; i++) {
++				rxep[i].mbuf = &rxq->fake_mbuf;
++				vst1q_u64(RTE_CAST_PTR(u64 *), &rxdp[i].read),
++					  zero);
++			}
++		}
++		rte_eth_devices[rxq->port_id].data->rx_mbuf_alloc_failed +=
++			RTE_PMD_SXE_MAX_RX_BURST;
++		return;
++	}
++
++	p = vld1_u8((u8 *)&rxq->mbuf_init_value);
++
++	for (i = 0; i < RTE_PMD_SXE_MAX_RX_BURST; i += 2, rxep += 2) {
++		mb0 = rxep[0].mbuf;
++		mb1 = rxep[1].mbuf;
++
++		vst1_u8((u8 *)&mb0->rearm_data, p);
++		paddr = mb0->buf_iova + RTE_PKTMBUF_HEADROOM;
++		dma_addr0 = vsetq_lane_u64(paddr, zero, 0);
++
++		vst1q_u64(RTE_CAST_PTR(u64 *, &rxdp++->read), dma_addr0);
++
++		vst1_u8((u8 *)&mb1->rearm_data, p);
++		paddr = mb1->buf_iova + RTE_PKTMBUF_HEADROOM;
++		dma_addr1 = vsetq_lane_u64(paddr, zero, 0);
++		vst1q_u64(RTE_CAST_PTR(u64 *, &rxdp++->read), dma_addr1);
++	}
++
++	rxq->realloc_start += RTE_PMD_SXE_MAX_RX_BURST;
++	if (rxq->realloc_start >= rxq->ring_depth)
++		rxq->realloc_start = 0;
++
++	rxq->realloc_num -= RTE_PMD_SXE_MAX_RX_BURST;
++
++	rx_id = (u16)((rxq->realloc_start == 0) ?
++				(rxq->ring_depth - 1) : (rxq->realloc_start - 1));
++
++	sxe_write_addr(rx_id, rxq->rdt_reg_addr);
++}
++
++static inline void
++sxe_desc_to_olflags_v(uint8x16x2_t sterr_tmp1, uint8x16x2_t sterr_tmp2,
++		  uint8x16_t staterr, u8 vlan_flags, u16 udp_p_flag,
++		  struct rte_mbuf **rx_pkts)
++{
++	u16 udp_p_flag_hi;
++	uint8x16_t ptype, udp_csum_skip;
++	uint32x4_t temp_udp_csum_skip = {0, 0, 0, 0};
++	uint8x16_t vtag_lo, vtag_hi, vtag;
++	uint8x16_t temp_csum;
++	uint32x4_t csum = {0, 0, 0, 0};
++
++	union {
++		u16 e[4];
++		u64 word;
++	} vol;
++
++	const uint8x16_t rsstype_msk = {
++			0x0F, 0x0F, 0x0F, 0x0F,
++			0x00, 0x00, 0x00, 0x00,
++			0x00, 0x00, 0x00, 0x00,
++			0x00, 0x00, 0x00, 0x00};
++
++	const uint8x16_t rss_flags = {
++			0, RTE_MBUF_F_RX_RSS_HASH, RTE_MBUF_F_RX_RSS_HASH, RTE_MBUF_F_RX_RSS_HASH,
++			0, RTE_MBUF_F_RX_RSS_HASH, 0, RTE_MBUF_F_RX_RSS_HASH,
++			RTE_MBUF_F_RX_RSS_HASH, 0, 0, 0,
++			0, 0, 0, RTE_MBUF_F_RX_FDIR};
++
++	const uint8x16_t vlan_csum_msk = {
++			SXE_RXD_STAT_VP, SXE_RXD_STAT_VP,
++			SXE_RXD_STAT_VP, SXE_RXD_STAT_VP,
++			0, 0, 0, 0,
++			0, 0, 0, 0,
++			(SXE_RXDADV_ERR_TCPE | SXE_RXDADV_ERR_IPE) >> 24,
++			(SXE_RXDADV_ERR_TCPE | SXE_RXDADV_ERR_IPE) >> 24,
++			(SXE_RXDADV_ERR_TCPE | SXE_RXDADV_ERR_IPE) >> 24,
++			(SXE_RXDADV_ERR_TCPE | SXE_RXDADV_ERR_IPE) >> 24};
++
++	const uint8x16_t vlan_csum_map_lo = {
++			RTE_MBUF_F_RX_IP_CKSUM_GOOD,
++			RTE_MBUF_F_RX_IP_CKSUM_GOOD | RTE_MBUF_F_RX_L4_CKSUM_BAD,
++			RTE_MBUF_F_RX_IP_CKSUM_BAD,
++			RTE_MBUF_F_RX_IP_CKSUM_BAD | RTE_MBUF_F_RX_L4_CKSUM_BAD,
++			0, 0, 0, 0,
++			vlan_flags | RTE_MBUF_F_RX_IP_CKSUM_GOOD,
++			vlan_flags | RTE_MBUF_F_RX_IP_CKSUM_GOOD | RTE_MBUF_F_RX_L4_CKSUM_BAD,
++			vlan_flags | RTE_MBUF_F_RX_IP_CKSUM_BAD,
++			vlan_flags | RTE_MBUF_F_RX_IP_CKSUM_BAD | RTE_MBUF_F_RX_L4_CKSUM_BAD,
++			0, 0, 0, 0};
++
++	const uint8x16_t vlan_csum_map_hi = {
++			RTE_MBUF_F_RX_L4_CKSUM_GOOD >> sizeof(u8), 0,
++			RTE_MBUF_F_RX_L4_CKSUM_GOOD >> sizeof(u8), 0,
++			0, 0, 0, 0,
++			RTE_MBUF_F_RX_L4_CKSUM_GOOD >> sizeof(u8), 0,
++			RTE_MBUF_F_RX_L4_CKSUM_GOOD >> sizeof(u8), 0,
++			0, 0, 0, 0};
++
++	udp_p_flag_hi = udp_p_flag >> 8;
++
++	const uint8x16_t udp_hdr_p_msk = {
++			0, 0, 0, 0,
++			udp_p_flag_hi, udp_p_flag_hi, udp_p_flag_hi, udp_p_flag_hi,
++			0, 0, 0, 0,
++			0, 0, 0, 0};
++
++	const uint8x16_t udp_csum_bad_shuf = {
++			0xFF, ~(u8)RTE_MBUF_F_RX_L4_CKSUM_BAD, 0, 0,
++			0, 0, 0, 0,
++			0, 0, 0, 0,
++			0, 0, 0, 0};
++
++	ptype = vzipq_u8(sterr_tmp1.val[0], sterr_tmp2.val[0]).val[0];
++
++	udp_csum_skip = vandq_u8(ptype, udp_hdr_p_msk);
++
++	temp_udp_csum_skip = vcopyq_laneq_u32(temp_udp_csum_skip, 0,
++				vreinterpretq_u32_u8(udp_csum_skip), 1);
++
++	ptype = vandq_u8(ptype, rsstype_msk);
++	ptype = vqtbl1q_u8(rss_flags, ptype);
++
++	vtag = vandq_u8(staterr, vlan_csum_msk);
++
++	temp_csum = vshrq_n_u8(vtag, 6);
++
++	csum = vsetq_lane_u32(vgetq_lane_u32(vreinterpretq_u32_u8(temp_csum), 3), csum, 0);
++	vtag = vorrq_u8(vreinterpretq_u8_u32(csum), vtag);
++
++	vtag_hi = vqtbl1q_u8(vlan_csum_map_hi, vtag);
++	vtag_hi = vshrq_n_u8(vtag_hi, 7);
++
++	vtag_lo = vqtbl1q_u8(vlan_csum_map_lo, vtag);
++	vtag_lo = vorrq_u8(ptype, vtag_lo);
++
++	udp_csum_skip = vshrq_n_u8(vreinterpretq_u8_u32(temp_udp_csum_skip), 1);
++	udp_csum_skip = vqtbl1q_u8(udp_csum_bad_shuf, udp_csum_skip);
++	vtag_lo = vandq_u8(vtag_lo, udp_csum_skip);
++
++	vtag = vzipq_u8(vtag_lo, vtag_hi).val[0];
++	vol.word = vgetq_lane_u64(vreinterpretq_u64_u8(vtag), 0);
++
++	rx_pkts[0]->ol_flags = vol.e[0];
++	rx_pkts[1]->ol_flags = vol.e[1];
++	rx_pkts[2]->ol_flags = vol.e[2];
++	rx_pkts[3]->ol_flags = vol.e[3];
++}
++
++static inline u32
++sxe_get_packet_type(u32 pkt_info,
++		u32 etqf_check,
++		u32 tunnel_check)
++{
++	u32 rte;
++
++	if (etqf_check) {
++		rte = RTE_PTYPE_UNKNOWN;
++		goto out;
++	}
++
++	if (tunnel_check) {
++		pkt_info &= SXE_PACKET_TYPE_MASK_TUNNEL;
++		rte = sxe_ptype_table_tn[pkt_info];
++		goto out;
++	}
++
++	pkt_info &= SXE_PACKET_TYPE_MASK;
++	rte = sxe_ptype_table[pkt_info];
++
++out:
++	return rte;
++}
++
++static inline void
++sxe_desc_to_ptype_v(uint64x2_t descs[4], u16 pkt_type_mask,
++		struct rte_mbuf **rx_pkts)
++{
++	uint32x4_t etqf_check, tunnel_check;
++	uint32x4_t etqf_mask = vdupq_n_u32(0x8000);
++	uint32x4_t tunnel_mask = vdupq_n_u32(0x10000);
++	uint32x4_t ptype_mask = vdupq_n_u32((u32)pkt_type_mask);
++	uint32x4_t ptype0 = vzipq_u32(vreinterpretq_u32_u64(descs[0]),
++				vreinterpretq_u32_u64(descs[2])).val[0];
++	uint32x4_t ptype1 = vzipq_u32(vreinterpretq_u32_u64(descs[1]),
++				vreinterpretq_u32_u64(descs[3])).val[0];
++
++	ptype0 = vzipq_u32(ptype0, ptype1).val[0];
++
++	etqf_check = vandq_u32(ptype0, etqf_mask);
++	tunnel_check = vandq_u32(ptype0, tunnel_mask);
++
++	ptype0 = vandq_u32(vshrq_n_u32(ptype0, SXE_PACKET_TYPE_SHIFT),
++			ptype_mask);
++
++	rx_pkts[0]->packet_type =
++		sxe_get_packet_type(vgetq_lane_u32(ptype0, 0),
++				vgetq_lane_u32(etqf_check, 0),
++				vgetq_lane_u32(tunnel_check, 0));
++	rx_pkts[1]->packet_type =
++		sxe_get_packet_type(vgetq_lane_u32(ptype0, 1),
++				vgetq_lane_u32(etqf_check, 1),
++				vgetq_lane_u32(tunnel_check, 1));
++	rx_pkts[2]->packet_type =
++		sxe_get_packet_type(vgetq_lane_u32(ptype0, 2),
++				vgetq_lane_u32(etqf_check, 2),
++				vgetq_lane_u32(tunnel_check, 2));
++	rx_pkts[3]->packet_type =
++		sxe_get_packet_type(vgetq_lane_u32(ptype0, 3),
++				vgetq_lane_u32(etqf_check, 3),
++				vgetq_lane_u32(tunnel_check, 3));
++}
++
++static inline u16
++sxe_recv_raw_pkts_vec(struct sxe_rx_queue *rxq, struct rte_mbuf **rx_pkts,
++		   u16 nb_pkts, u8 *split_packet)
++{
++	volatile union sxe_rx_data_desc *rxdp;
++	struct sxe_rx_buffer *sw_ring;
++	u16 nb_pkts_recd;
++	s32 pos;
++	u16 rte;
++	uint8x16_t shuf_msk = {
++		0xFF, 0xFF,
++		0xFF, 0xFF,
++		12, 13,
++		0xFF, 0xFF,
++		12, 13,
++		14, 15,
++		4, 5, 6, 7
++		};
++	uint16x8_t crc_adjust = {0, 0, rxq->crc_len, 0,
++				 rxq->crc_len, 0, 0, 0};
++
++	nb_pkts = RTE_ALIGN_FLOOR(nb_pkts, RTE_SXE_DESCS_PER_LOOP);
++
++	rxdp = rxq->desc_ring + rxq->processing_idx;
++
++	rte_prefetch_non_temporal(rxdp);
++
++	if (rxq->realloc_num > RTE_PMD_SXE_MAX_RX_BURST)
++		sxe_rxq_rearm(rxq);
++
++	if (!(rxdp->wb.upper.status_error &
++				rte_cpu_to_le_32(SXE_RXDADV_STAT_DD))) {
++		rte = 0;
++		goto out;
++	}
++
++	sw_ring = &rxq->buffer_ring[rxq->processing_idx];
++
++	RTE_BUILD_BUG_ON((RTE_MBUF_F_RX_VLAN | RTE_MBUF_F_RX_VLAN_STRIPPED) > UINT8_MAX);
++
++	u16 udp_p_flag = SXE_RXDADV_PKTTYPE_UDP;
++	u8 vlan_flags = rxq->vlan_flags & UINT8_MAX;
++
++	for (pos = 0, nb_pkts_recd = 0; pos < nb_pkts;
++			pos += RTE_SXE_DESCS_PER_LOOP,
++			rxdp += RTE_SXE_DESCS_PER_LOOP) {
++		uint64x2_t descs[RTE_SXE_DESCS_PER_LOOP];
++		uint8x16_t pkt_mb1, pkt_mb2, pkt_mb3, pkt_mb4;
++		uint8x16x2_t sterr_tmp1, sterr_tmp2;
++		uint64x2_t mbp1, mbp2;
++		uint8x16_t staterr;
++		uint16x8_t tmp;
++		u32 stat;
++
++		mbp1 = vld1q_u64((u64 *)&sw_ring[pos]);
++
++		vst1q_u64((u64 *)&rx_pkts[pos], mbp1);
++
++		mbp2 = vld1q_u64((u64 *)&sw_ring[pos + 2]);
++
++		descs[0] =  vld1q_u64(RTE_CAST_PTR(u64 *, (rxdp)));
++		descs[1] =  vld1q_u64(RTE_CAST_PTR(u64 *, (rxdp + 1)));
++		descs[2] =  vld1q_u64(RTE_CAST_PTR(u64 *, (rxdp + 2)));
++		descs[3] =  vld1q_u64(RTE_CAST_PTR(u64 *, (rxdp + 3)));
++
++		vst1q_u64((u64 *)&rx_pkts[pos + 2], mbp2);
++
++		if (split_packet) {
++			rte_mbuf_prefetch_part2(rx_pkts[pos]);
++			rte_mbuf_prefetch_part2(rx_pkts[pos + 1]);
++			rte_mbuf_prefetch_part2(rx_pkts[pos + 2]);
++			rte_mbuf_prefetch_part2(rx_pkts[pos + 3]);
++		}
++
++		pkt_mb4 = vqtbl1q_u8(vreinterpretq_u8_u64(descs[3]), shuf_msk);
++		pkt_mb3 = vqtbl1q_u8(vreinterpretq_u8_u64(descs[2]), shuf_msk);
++
++		pkt_mb2 = vqtbl1q_u8(vreinterpretq_u8_u64(descs[1]), shuf_msk);
++		pkt_mb1 = vqtbl1q_u8(vreinterpretq_u8_u64(descs[0]), shuf_msk);
++
++		sterr_tmp2 = vzipq_u8(vreinterpretq_u8_u64(descs[1]),
++					  vreinterpretq_u8_u64(descs[3]));
++		sterr_tmp1 = vzipq_u8(vreinterpretq_u8_u64(descs[0]),
++					  vreinterpretq_u8_u64(descs[2]));
++
++		staterr = vzipq_u8(sterr_tmp1.val[1], sterr_tmp2.val[1]).val[0];
++
++		sxe_desc_to_olflags_v(sterr_tmp1, sterr_tmp2, staterr, vlan_flags,
++				  udp_p_flag, &rx_pkts[pos]);
++
++		tmp = vsubq_u16(vreinterpretq_u16_u8(pkt_mb4), crc_adjust);
++		pkt_mb4 = vreinterpretq_u8_u16(tmp);
++		tmp = vsubq_u16(vreinterpretq_u16_u8(pkt_mb3), crc_adjust);
++		pkt_mb3 = vreinterpretq_u8_u16(tmp);
++
++		vst1q_u8((void *)&rx_pkts[pos + 3]->rx_descriptor_fields1,
++			 pkt_mb4);
++		vst1q_u8((void *)&rx_pkts[pos + 2]->rx_descriptor_fields1,
++			 pkt_mb3);
++
++		tmp = vsubq_u16(vreinterpretq_u16_u8(pkt_mb2), crc_adjust);
++		pkt_mb2 = vreinterpretq_u8_u16(tmp);
++		tmp = vsubq_u16(vreinterpretq_u16_u8(pkt_mb1), crc_adjust);
++		pkt_mb1 = vreinterpretq_u8_u16(tmp);
++
++		if (split_packet) {
++			stat = vgetq_lane_u32(vreinterpretq_u32_u8(staterr), 0);
++			*(s32 *)split_packet = ~stat & SXE_VPMD_DESC_EOP_MASK;
++
++			split_packet += RTE_SXE_DESCS_PER_LOOP;
++		}
++
++		staterr = vshlq_n_u8(staterr, SXE_UINT8_BIT - 1);
++		staterr = vreinterpretq_u8_s8
++				(vshrq_n_s8(vreinterpretq_s8_u8(staterr),
++					SXE_UINT8_BIT - 1));
++		stat = ~vgetq_lane_u32(vreinterpretq_u32_u8(staterr), 0);
++
++		rte_prefetch_non_temporal(rxdp + RTE_SXE_DESCS_PER_LOOP);
++
++		vst1q_u8((u8 *)&rx_pkts[pos + 1]->rx_descriptor_fields1,
++			 pkt_mb2);
++		vst1q_u8((u8 *)&rx_pkts[pos]->rx_descriptor_fields1,
++			 pkt_mb1);
++
++		sxe_desc_to_ptype_v(descs, rxq->pkt_type_mask, &rx_pkts[pos]);
++
++		if (unlikely(stat == 0)) {
++			nb_pkts_recd += RTE_SXE_DESCS_PER_LOOP;
++		} else {
++			nb_pkts_recd += rte_ctz32(stat) / SXE_UINT8_BIT;
++			break;
++		}
++	}
++
++	rxq->processing_idx = (u16)(rxq->processing_idx + nb_pkts_recd);
++	rxq->processing_idx = (u16)(rxq->processing_idx & (rxq->ring_depth - 1));
++	rxq->realloc_num = (u16)(rxq->realloc_num + nb_pkts_recd);
++
++	rte = nb_pkts_recd;
++
++out:
++	return rte;
++}
++
++u16 sxe_pkts_vec_recv(void *rx_queue, struct rte_mbuf **rx_pkts, u16 nb_pkts)
++{
++	return sxe_recv_raw_pkts_vec(rx_queue, rx_pkts, nb_pkts, NULL);
++}
++
++static u16 sxe_recv_scattered_burst_vec(void *rx_queue,
++			struct rte_mbuf **rx_pkts, u16 nb_pkts)
++{
++	u32 i = 0;
++	struct sxe_rx_queue *rxq = rx_queue;
++	u8 split_flags[RTE_PMD_SXE_MAX_RX_BURST] = {0};
++
++	u16 nb_bufs = sxe_recv_raw_pkts_vec(rxq, rx_pkts, nb_pkts,
++			split_flags);
++	if (nb_bufs == 0)
++		goto l_out;
++
++	const u64 *split_fl64 = (u64 *)split_flags;
++	if (rxq->pkt_first_seg == NULL &&
++			split_fl64[0] == 0 && split_fl64[1] == 0 &&
++			split_fl64[2] == 0 && split_fl64[3] == 0)
++		goto l_out;
++
++	if (rxq->pkt_first_seg == NULL) {
++		while (i < nb_bufs && !split_flags[i])
++			i++;
++		if (i == nb_bufs)
++			goto l_out;
++		rxq->pkt_first_seg = rx_pkts[i];
++	}
++
++	nb_bufs = i + sxe_packets_reassemble(rxq, &rx_pkts[i], nb_bufs - i,
++		&split_flags[i]);
++
++l_out:
++	return nb_bufs;
++}
++
++u16
++sxe_scattered_pkts_vec_recv(void *rx_queue, struct rte_mbuf **rx_pkts,
++				  u16 nb_pkts)
++{
++	u16 retval = 0;
++
++	while (nb_pkts > RTE_PMD_SXE_MAX_RX_BURST) {
++		u16 burst;
++
++		burst = sxe_recv_scattered_burst_vec(rx_queue,
++							   rx_pkts + retval,
++							   RTE_PMD_SXE_MAX_RX_BURST);
++		retval += burst;
++		nb_pkts -= burst;
++		if (burst < RTE_PMD_SXE_MAX_RX_BURST)
++			goto l_out;
++	}
++
++	retval += sxe_recv_scattered_burst_vec(rx_queue,
++						rx_pkts + retval,
++						nb_pkts);
++l_out:
++	return retval;
++}
++
++static inline void
++sxe_single_vec_desc_fill(volatile union sxe_tx_data_desc *txdp,
++		struct rte_mbuf *pkt, u64 flags)
++{
++	uint64x2_t descriptor = {
++			pkt->buf_iova + pkt->data_off,
++			(u64)pkt->pkt_len << 46 | flags | pkt->data_len};
++
++	vst1q_u64(RTE_CAST_PTR(u64 *, &txdp->read), descriptor);
++}
++
++static inline void
++sxe_vec_desc_fill(volatile union sxe_tx_data_desc *txdp,
++		struct rte_mbuf **pkt, u16 nb_pkts,  u64 flags)
++{
++	s32 i;
++
++	for (i = 0; i < nb_pkts; ++i, ++txdp, ++pkt)
++		sxe_single_vec_desc_fill(txdp, *pkt, flags);
++}
++
++u16 __sxe_pkts_vector_xmit(void *tx_queue, struct rte_mbuf **tx_pkts,
++			   u16 nb_pkts)
++{
++	struct sxe_tx_queue *txq = (struct sxe_tx_queue *)tx_queue;
++	volatile union sxe_tx_data_desc *txdp;
++	struct sxe_tx_buffer_vec *txep;
++	u16 n, nb_commit, tx_id;
++	u64 flags = SXE_TX_DESC_FLAGS;
++	u64 rs = SXE_TX_DESC_RS_MASK | SXE_TX_DESC_FLAGS;
++	s32 i;
++
++	nb_pkts = RTE_MIN(nb_pkts, txq->rs_thresh);
++
++	if (txq->desc_free_num < txq->free_thresh)
++		sxe_tx_bufs_vec_free(txq);
++
++	nb_pkts = (u16)RTE_MIN(txq->desc_free_num, nb_pkts);
++	nb_commit = nb_pkts;
++	if (unlikely(nb_pkts == 0))
++		goto l_out;
++
++	tx_id = txq->next_to_use;
++	txdp = &txq->desc_ring[tx_id];
++	txep = &txq->buffer_ring_vec[tx_id];
++
++	txq->desc_free_num = (u16)(txq->desc_free_num - nb_pkts);
++
++	n = (u16)(txq->ring_depth - tx_id);
++	if (nb_commit >= n) {
++		sxe_vec_mbuf_fill(txep, tx_pkts, n);
++
++		for (i = 0; i < n - 1; ++i, ++tx_pkts, ++txdp)
++			sxe_single_vec_desc_fill(txdp, *tx_pkts, flags);
++
++		sxe_single_vec_desc_fill(txdp, *tx_pkts++, rs);
++
++		nb_commit = (u16)(nb_commit - n);
++
++		tx_id = 0;
++		txq->next_rs = (u16)(txq->rs_thresh - 1);
++
++		txdp = &txq->desc_ring[tx_id];
++		txep = &txq->buffer_ring_vec[tx_id];
++	}
++
++	sxe_vec_mbuf_fill(txep, tx_pkts, nb_commit);
++	sxe_vec_desc_fill(txdp, tx_pkts, nb_commit, flags);
++
++	tx_id = (u16)(tx_id + nb_commit);
++	if (tx_id > txq->next_rs) {
++		txq->desc_ring[txq->next_rs].read.cmd_type_len |=
++			rte_cpu_to_le_32(SXE_TX_DESC_RS_MASK);
++		txq->next_rs = (u16)(txq->next_rs +
++			txq->rs_thresh);
++	}
++
++	txq->next_to_use = tx_id;
++
++	sxe_write_addr(txq->next_to_use, txq->tdt_reg_addr);
++
++l_out:
++	return nb_pkts;
++}
++
++static void __rte_cold
++sxe_tx_queue_release_mbufs_vec(struct sxe_tx_queue *txq)
++{
++	sxe_tx_mbufs_vec_release(txq);
++}
++
++void __rte_cold
++sxe_rx_queue_vec_mbufs_release(struct sxe_rx_queue *rxq)
++{
++	sxe_rx_vec_mbufs_release(rxq);
++}
++
++static void __rte_cold
++sxe_tx_free_swring(struct sxe_tx_queue *txq)
++{
++	sxe_tx_buffer_ring_vec_free(txq);
++}
++
++static void __rte_cold
++sxe_reset_tx_queue(struct sxe_tx_queue *txq)
++{
++	sxe_tx_queue_vec_init(txq);
++}
++
++static const struct sxe_txq_ops vec_txq_ops = {
++	.init = sxe_reset_tx_queue,
++	.mbufs_release = sxe_tx_queue_release_mbufs_vec,
++	.buffer_ring_free = sxe_tx_free_swring,
 +};
-+enum {
-+	DCB_PATH_TX   =  0,
-+	DCB_PATH_RX   =  1,
-+	DCB_PATH_NUM  =  DCB_PATH_RX + 1,
-+};
 +
-+enum sxe_dcb_tsa {
-+	sxe_dcb_tsa_ets = 0,
-+	sxe_dcb_tsa_group_strict_cee,
-+	sxe_dcb_tsa_strict
-+};
++s32 __rte_cold
++sxe_rxq_vec_setup(struct sxe_rx_queue *rxq)
++{
++	return sxe_default_rxq_vec_setup(rxq);
++}
 +
-+enum sxe_dcb_pba_config {
-+	SXE_DCB_PBA_EQUAL = PBA_STRATEGY_EQUAL,
-+	SXE_DCB_PBA_80_48 = PBA_STRATEGY_WEIGHTED
-+};
++s32 __rte_cold
++sxe_txq_vec_setup(struct sxe_tx_queue *txq)
++{
++	return sxe_default_txq_vec_setup(txq, &vec_txq_ops);
++}
 +
-+struct sxe_dcb_num_tcs {
-+	u8 pg_tcs;
-+	u8 pfc_tcs;
-+};
++s32 __rte_cold
++sxe_rx_vec_condition_check(struct rte_eth_dev *dev)
++{
++	struct rte_eth_rxmode *rxmode = &dev->data->dev_conf.rxmode;
 +
-+struct sxe_tc_bw_alloc {
-+	u8 bwg_id;
-+	u8 bwg_percent;
-+	u8 link_percent;
-+	u8 up_to_tc_bitmap;
-+	u16 data_credits_refill;
-+	u16 data_credits_max;
-+	enum sxe_dcb_strict_prio_type prio_type;
-+};
++	if (rxmode->offloads & DEV_RX_OFFLOAD_CHECKSUM)
++		return -1;
 +
-+enum sxe_dcb_pfc_type {
-+	pfc_disabled = 0,
-+	pfc_enabled_full,
-+	pfc_enabled_tx,
-+	pfc_enabled_rx
-+};
-+
-+struct sxe_tc_config {
-+	struct sxe_tc_bw_alloc channel[DCB_PATH_NUM];
-+	enum sxe_dcb_pfc_type  pfc_type;
-+
-+	u16 desc_credits_max;
-+	u8 tc;
-+};
-+
-+struct sxe_dcb_config {
-+	struct sxe_tc_config tc_config[SXE_DCB_MAX_TRAFFIC_CLASS];
-+	struct sxe_dcb_num_tcs num_tcs;
-+	u8 bwg_link_percent[DCB_PATH_NUM][MAX_BW_GROUP];
-+	bool pfc_mode_enable;
-+	bool round_robin_enable;
-+
-+	enum sxe_dcb_pba_config rx_pba_config;
-+	bool vmdq_active;
-+};
-+
-+struct sxe_bw_config {
-+	u8 tc_num;
-+};
-+
-+struct sxe_dcb_context {
-+	struct sxe_dcb_config config;
-+	struct sxe_bw_config bw_config;
-+};
-+
-+void sxe_dcb_init(struct rte_eth_dev *dev);
-+
-+s32 sxe_priority_flow_ctrl_set(struct rte_eth_dev *dev,
-+					struct rte_eth_pfc_conf *pfc_conf);
-+
-+s32 sxe_get_dcb_info(struct rte_eth_dev *dev,
-+			struct rte_eth_dcb_info *dcb_info);
-+
-+void sxe_dcb_configure(struct rte_eth_dev *dev);
-+
-+void sxe_dcb_vmdq_rx_hw_configure(struct rte_eth_dev *dev);
++	return sxe_default_rx_vec_condition_check(dev);
++}
 +
 +#endif
-diff --git a/drivers/net/sxe/pf/sxe_main.c b/drivers/net/sxe/pf/sxe_main.c
-index 4d32d193ff..eb165b35b4 100644
---- a/drivers/net/sxe/pf/sxe_main.c
-+++ b/drivers/net/sxe/pf/sxe_main.c
-@@ -156,6 +156,7 @@ s32 sxe_hw_reset(struct sxe_hw *hw)
- void sxe_hw_start(struct sxe_hw *hw)
- {
- 	sxe_hw_vlan_filter_array_clear(hw);
-+	sxe_hw_dcb_rate_limiter_clear(hw, SXE_TXRX_RING_NUM_MAX);
- 
- 	sxe_fc_autoneg_localcap_set(hw);
- 
-diff --git a/drivers/net/sxe/pf/sxe_phy.c b/drivers/net/sxe/pf/sxe_phy.c
-index 7b10eec7f5..afc885545e 100644
---- a/drivers/net/sxe/pf/sxe_phy.c
-+++ b/drivers/net/sxe/pf/sxe_phy.c
-@@ -737,6 +737,40 @@ s32 sxe_fc_enable(struct sxe_adapter *adapter)
- 	return ret;
- }
- 
-+s32 sxe_pfc_enable(struct sxe_adapter *adapter, u8 tc_idx)
+diff --git a/drivers/net/sxe/pf/sxe_vec_sse.c b/drivers/net/sxe/pf/sxe_vec_sse.c
+new file mode 100644
+index 0000000000..3d687f33df
+--- /dev/null
++++ b/drivers/net/sxe/pf/sxe_vec_sse.c
+@@ -0,0 +1,622 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright (C), 2022, Linkdata Technology Co., Ltd.
++ */
++
++#if defined SXE_DPDK_L4_FEATURES && defined SXE_DPDK_SIMD
++#include <stdint.h>
++#include <ethdev_driver.h>
++#include <rte_malloc.h>
++#include <rte_vect.h>
++
++#include "sxe_vec_common.h"
++#include "sxe_compat_version.h"
++
++#define SXE_MAX_TX_FREE_BUF_SZ 64
++
++static inline void
++sxe_rxq_realloc(sxe_rx_queue_s *rx_queue)
 +{
-+	s32 ret;
-+	struct sxe_hw *hw = &adapter->hw;
++	s32 i;
++	u16 rx_index;
++	volatile union sxe_rx_data_desc *desc_ring;
++	sxe_rx_buffer_s *buf_ring =
++			&rx_queue->buffer_ring[rx_queue->realloc_start];
++	struct rte_mbuf *mbuf_0, *mbuf_1;
++	__m128i head_room = _mm_set_epi64x(RTE_PKTMBUF_HEADROOM,
++			RTE_PKTMBUF_HEADROOM);
++	__m128i dma_addr0, dma_addr1;
 +
-+	if (!hw->fc.pause_time) {
-+		LOG_ERROR_BDF("link fc disabled since pause time is 0");
-+		ret = -SXE_ERR_INVALID_LINK_SETTINGS;
-+		goto l_ret;
++	const __m128i addr_mask = _mm_set_epi64x(0, UINT64_MAX);
++
++	desc_ring = rx_queue->desc_ring + rx_queue->realloc_start;
++
++	if (rte_mempool_get_bulk(rx_queue->mb_pool,
++				 (void *)buf_ring,
++				 RTE_PMD_SXE_MAX_RX_BURST) < 0) {
++		if (rx_queue->realloc_num + RTE_PMD_SXE_MAX_RX_BURST >=
++			rx_queue->ring_depth) {
++			dma_addr0 = _mm_setzero_si128();
++			for (i = 0; i < SXE_DESCS_PER_LOOP; i++) {
++				buf_ring[i].mbuf = &rx_queue->fake_mbuf;
++				_mm_store_si128(RTE_CAST_PTR(__m128i *, &desc_ring[i].read),
++						dma_addr0);
++			}
++		}
++		rte_eth_devices[rx_queue->port_id].data->rx_mbuf_alloc_failed +=
++			RTE_PMD_SXE_MAX_RX_BURST;
++		return;
 +	}
 +
-+	if (hw->fc.current_mode & SXE_FC_TX_PAUSE) {
-+		if (!hw->fc.high_water[tc_idx] || !hw->fc.low_water[tc_idx]) {
-+			LOG_ERROR_BDF("Invalid water mark configuration");
-+			ret = SXE_ERR_INVALID_LINK_SETTINGS;
-+			goto l_ret;
-+		}
++	for (i = 0; i < RTE_PMD_SXE_MAX_RX_BURST; i += 2, buf_ring += 2) {
++		__m128i vaddr0, vaddr1;
 +
-+		if (hw->fc.low_water[tc_idx] >= hw->fc.high_water[tc_idx]) {
-+			LOG_ERROR_BDF("Invalid water mark configuration");
-+			ret = SXE_ERR_INVALID_LINK_SETTINGS;
-+			goto l_ret;
-+		}
++		mbuf_0 = buf_ring[0].mbuf;
++		mbuf_1 = buf_ring[1].mbuf;
++
++		RTE_BUILD_BUG_ON(offsetof(struct rte_mbuf, buf_iova) !=
++				offsetof(struct rte_mbuf, buf_addr) + 8);
++
++		vaddr0 = _mm_loadu_si128((__m128i *)&mbuf_0->buf_addr);
++		vaddr1 = _mm_loadu_si128((__m128i *)&mbuf_1->buf_addr);
++
++		dma_addr0 = _mm_unpackhi_epi64(vaddr0, vaddr0);
++		dma_addr1 = _mm_unpackhi_epi64(vaddr1, vaddr1);
++
++		dma_addr0 = _mm_add_epi64(dma_addr0, head_room);
++		dma_addr1 = _mm_add_epi64(dma_addr1, head_room);
++
++		dma_addr0 = _mm_and_si128(dma_addr0, addr_mask);
++		dma_addr1 = _mm_and_si128(dma_addr1, addr_mask);
++
++		_mm_store_si128(RTE_CAST_PTR(__m128i *, &desc_ring++->read), dma_addr0);
++		_mm_store_si128(RTE_CAST_PTR(__m128i *, &desc_ring++->read), dma_addr1);
 +	}
 +
-+	sxe_fc_autoneg(adapter);
++	rx_queue->realloc_start += RTE_PMD_SXE_MAX_RX_BURST;
++	if (rx_queue->realloc_start >= rx_queue->ring_depth)
++		rx_queue->realloc_start = 0;
 +
-+	ret = sxe_hw_pfc_enable(hw, tc_idx);
-+	if (ret)
-+		PMD_LOG_ERR(INIT, "link fc enable failed, ret=%d", ret);
++	rx_queue->realloc_num -= RTE_PMD_SXE_MAX_RX_BURST;
 +
-+l_ret:
++	rx_index = (u16)((rx_queue->realloc_start == 0) ?
++			(rx_queue->ring_depth - 1) : (rx_queue->realloc_start - 1));
++
++	SXE_PCI_REG_WC_WRITE_RELAXED(rx_queue->rdt_reg_addr, rx_index);
++}
++
++static inline void
++sxe_desc_to_olflags(__m128i descs[4], __m128i mbuf_init, u8 vlan_flags,
++			u16 udp_p_flag, struct rte_mbuf **rx_pkts)
++{
++	__m128i ptype0, ptype1, vtype0, vtype1, csum, udp_csum_skip;
++	__m128i rearm0, rearm1, rearm2, rearm3;
++
++	const __m128i rsstype_mask = _mm_set_epi16
++			(0x0000, 0x0000, 0x0000, 0x0000,
++			0x000F, 0x000F, 0x000F, 0x000F);
++
++	const __m128i ol_flags_mask = _mm_set_epi16
++			(0x0000, 0x0000, 0x0000, 0x0000,
++			0x00FF, 0x00FF, 0x00FF, 0x00FF);
++
++	const __m128i rss_flags = _mm_set_epi8(RTE_MBUF_F_RX_FDIR, 0, 0, 0,
++			0, 0, 0, RTE_MBUF_F_RX_RSS_HASH,
++			RTE_MBUF_F_RX_RSS_HASH, 0, RTE_MBUF_F_RX_RSS_HASH, 0,
++			RTE_MBUF_F_RX_RSS_HASH, RTE_MBUF_F_RX_RSS_HASH, RTE_MBUF_F_RX_RSS_HASH, 0);
++
++	const __m128i vlan_csum_mask = _mm_set_epi16
++		((SXE_RXDADV_ERR_L4E | SXE_RXDADV_ERR_IPE) >> 16,
++		(SXE_RXDADV_ERR_L4E | SXE_RXDADV_ERR_IPE) >> 16,
++		(SXE_RXDADV_ERR_L4E | SXE_RXDADV_ERR_IPE) >> 16,
++		(SXE_RXDADV_ERR_L4E | SXE_RXDADV_ERR_IPE) >> 16,
++		SXE_RXD_STAT_VP, SXE_RXD_STAT_VP,
++		SXE_RXD_STAT_VP, SXE_RXD_STAT_VP);
++
++	const __m128i vlan_csum_map_low = _mm_set_epi8
++		(0, 0, 0, 0,
++		vlan_flags | RTE_MBUF_F_RX_IP_CKSUM_BAD | RTE_MBUF_F_RX_L4_CKSUM_BAD,
++		vlan_flags | RTE_MBUF_F_RX_IP_CKSUM_BAD,
++		vlan_flags | RTE_MBUF_F_RX_IP_CKSUM_GOOD | RTE_MBUF_F_RX_L4_CKSUM_BAD,
++		vlan_flags | RTE_MBUF_F_RX_IP_CKSUM_GOOD,
++		0, 0, 0, 0,
++		RTE_MBUF_F_RX_IP_CKSUM_BAD | RTE_MBUF_F_RX_L4_CKSUM_BAD,
++		RTE_MBUF_F_RX_IP_CKSUM_BAD,
++		RTE_MBUF_F_RX_IP_CKSUM_GOOD | RTE_MBUF_F_RX_L4_CKSUM_BAD,
++		RTE_MBUF_F_RX_IP_CKSUM_GOOD);
++
++	const __m128i vlan_csum_map_high = _mm_set_epi8
++		(0, 0, 0, 0,
++		0, RTE_MBUF_F_RX_L4_CKSUM_GOOD >> sizeof(u8), 0,
++		RTE_MBUF_F_RX_L4_CKSUM_GOOD >> sizeof(u8),
++		0, 0, 0, 0,
++		0, RTE_MBUF_F_RX_L4_CKSUM_GOOD >> sizeof(u8), 0,
++		RTE_MBUF_F_RX_L4_CKSUM_GOOD >> sizeof(u8));
++
++	const __m128i udp_hdr_p_msk = _mm_set_epi16
++		(0, 0, 0, 0,
++		 udp_p_flag, udp_p_flag, udp_p_flag, udp_p_flag);
++
++	const __m128i udp_csum_bad_shuf = _mm_set_epi8
++		(0, 0, 0, 0, 0, 0, 0, 0,
++		 0, 0, 0, 0, 0, 0, ~(u8)RTE_MBUF_F_RX_L4_CKSUM_BAD, 0xFF);
++
++	ptype0 = _mm_unpacklo_epi16(descs[0], descs[1]);
++	ptype1 = _mm_unpacklo_epi16(descs[2], descs[3]);
++
++	vtype0 = _mm_unpackhi_epi16(descs[0], descs[1]);
++	vtype1 = _mm_unpackhi_epi16(descs[2], descs[3]);
++
++	ptype0 = _mm_unpacklo_epi32(ptype0, ptype1);
++
++	udp_csum_skip = _mm_and_si128(ptype0, udp_hdr_p_msk);
++
++	ptype0 = _mm_and_si128(ptype0, rsstype_mask);
++
++	ptype0 = _mm_shuffle_epi8(rss_flags, ptype0);
++
++	vtype1 = _mm_unpacklo_epi32(vtype0, vtype1);
++	vtype1 = _mm_and_si128(vtype1, vlan_csum_mask);
++
++	csum = _mm_srli_epi16(vtype1, 14);
++
++	csum = _mm_srli_si128(csum, 8);
++	vtype1 = _mm_or_si128(csum, vtype1);
++
++	vtype0 = _mm_shuffle_epi8(vlan_csum_map_high, vtype1);
++	vtype0 = _mm_slli_epi16(vtype0, sizeof(u8));
++
++	vtype1 = _mm_shuffle_epi8(vlan_csum_map_low, vtype1);
++	vtype1 = _mm_and_si128(vtype1, ol_flags_mask);
++	vtype1 = _mm_or_si128(vtype0, vtype1);
++
++	vtype1 = _mm_or_si128(ptype0, vtype1);
++
++	udp_csum_skip = _mm_srli_epi16(udp_csum_skip, 9);
++	udp_csum_skip = _mm_shuffle_epi8(udp_csum_bad_shuf, udp_csum_skip);
++	vtype1 = _mm_and_si128(vtype1, udp_csum_skip);
++
++	rearm0 = _mm_blend_epi16(mbuf_init, _mm_slli_si128(vtype1, 8), 0x10);
++	rearm1 = _mm_blend_epi16(mbuf_init, _mm_slli_si128(vtype1, 6), 0x10);
++	rearm2 = _mm_blend_epi16(mbuf_init, _mm_slli_si128(vtype1, 4), 0x10);
++	rearm3 = _mm_blend_epi16(mbuf_init, _mm_slli_si128(vtype1, 2), 0x10);
++
++	RTE_BUILD_BUG_ON(offsetof(struct rte_mbuf, ol_flags) !=
++			offsetof(struct rte_mbuf, rearm_data) + 8);
++	RTE_BUILD_BUG_ON(offsetof(struct rte_mbuf, rearm_data) !=
++			RTE_ALIGN(offsetof(struct rte_mbuf, rearm_data), 16));
++
++	_mm_store_si128((__m128i *)&rx_pkts[0]->rearm_data, rearm0);
++	_mm_store_si128((__m128i *)&rx_pkts[1]->rearm_data, rearm1);
++	_mm_store_si128((__m128i *)&rx_pkts[2]->rearm_data, rearm2);
++	_mm_store_si128((__m128i *)&rx_pkts[3]->rearm_data, rearm3);
++}
++
++static inline u32 sxe_packet_type_get(int index,
++					u32 pkt_info,
++					u32 etqf_check)
++{
++	if (etqf_check & (0x02 << (index * SXE_DESCS_PER_LOOP)))
++		return RTE_PTYPE_UNKNOWN;
++
++	pkt_info &= SXE_PACKET_TYPE_MASK;
++	return sxe_ptype_table[pkt_info];
++}
++
++static inline void
++sxe_desc_to_ptype_vec(__m128i descs[4], u16 pkt_type_mask,
++		struct rte_mbuf **rx_pkts)
++{
++	__m128i etqf_mask = _mm_set_epi64x(0x800000008000LL, 0x800000008000LL);
++	__m128i ptype_mask = _mm_set_epi32(pkt_type_mask,
++			pkt_type_mask, pkt_type_mask, pkt_type_mask);
++
++	u32 etqf_check, pkt_info;
++
++	__m128i ptype0 = _mm_unpacklo_epi32(descs[0], descs[2]);
++	__m128i ptype1 = _mm_unpacklo_epi32(descs[1], descs[3]);
++
++	ptype0 = _mm_unpacklo_epi32(ptype0, ptype1);
++
++	etqf_check = _mm_movemask_epi8(_mm_and_si128(ptype0, etqf_mask));
++
++	ptype0 = _mm_and_si128(_mm_srli_epi32(ptype0, SXE_RXDADV_PKTTYPE_ETQF_SHIFT),
++				   ptype_mask);
++
++
++	pkt_info = _mm_extract_epi32(ptype0, 0);
++	rx_pkts[0]->packet_type =
++		sxe_packet_type_get(0, pkt_info, etqf_check);
++	pkt_info = _mm_extract_epi32(ptype0, 1);
++	rx_pkts[1]->packet_type =
++		sxe_packet_type_get(1, pkt_info, etqf_check);
++	pkt_info = _mm_extract_epi32(ptype0, 2);
++	rx_pkts[2]->packet_type =
++		sxe_packet_type_get(2, pkt_info, etqf_check);
++	pkt_info = _mm_extract_epi32(ptype0, 3);
++	rx_pkts[3]->packet_type =
++		sxe_packet_type_get(3, pkt_info, etqf_check);
++}
++
++static inline u16
++sxe_raw_pkts_vec_recv(sxe_rx_queue_s *rx_queue, struct rte_mbuf **rx_pkts,
++		u16 pkts_num, u8 *split_packet)
++{
++	volatile union sxe_rx_data_desc *desc_ring;
++	sxe_rx_buffer_s *buffer_ring;
++	u16 pkts_recd_num;
++	s32 pos;
++	u64 var;
++	__m128i shuf_msk;
++	__m128i crc_adjust = _mm_set_epi16
++				(0, 0, 0,
++				-rx_queue->crc_len,
++				0,
++				-rx_queue->crc_len,
++				0, 0
++			);
++
++	RTE_BUILD_BUG_ON(offsetof(struct rte_mbuf, pkt_len) !=
++			offsetof(struct rte_mbuf, rx_descriptor_fields1) + 4);
++	RTE_BUILD_BUG_ON(offsetof(struct rte_mbuf, data_len) !=
++			offsetof(struct rte_mbuf, rx_descriptor_fields1) + 8);
++	__m128i dd_check, eop_check;
++	__m128i mbuf_init;
++	u8 vlan_flags;
++	u16 udp_p_flag = 0;
++
++	pkts_num = RTE_MIN(pkts_num, RTE_PMD_SXE_MAX_RX_BURST);
++
++	pkts_num = RTE_ALIGN_FLOOR(pkts_num, SXE_DESCS_PER_LOOP);
++
++	desc_ring = rx_queue->desc_ring + rx_queue->processing_idx;
++
++	rte_prefetch0(desc_ring);
++
++	if (rx_queue->realloc_num > RTE_PMD_SXE_MAX_RX_BURST)
++		sxe_rxq_realloc(rx_queue);
++
++	if (!(desc_ring->wb.upper.status_error &
++				rte_cpu_to_le_32(SXE_RXDADV_STAT_DD))) {
++		pkts_recd_num = 0;
++		goto l_out;
++	}
++
++	udp_p_flag = SXE_RXDADV_PKTTYPE_UDP;
++
++	dd_check = _mm_set_epi64x(0x0000000100000001LL, 0x0000000100000001LL);
++
++	eop_check = _mm_set_epi64x(0x0000000200000002LL, 0x0000000200000002LL);
++
++	shuf_msk = _mm_set_epi8
++		(7, 6, 5, 4,
++		15, 14,
++		13, 12,
++		0xFF, 0xFF,
++		13, 12,
++		0xFF, 0xFF,
++		0xFF, 0xFF
++		);
++
++	RTE_BUILD_BUG_ON(offsetof(struct rte_mbuf, pkt_len) !=
++			offsetof(struct rte_mbuf, rx_descriptor_fields1) + 4);
++	RTE_BUILD_BUG_ON(offsetof(struct rte_mbuf, data_len) !=
++			offsetof(struct rte_mbuf, rx_descriptor_fields1) + 8);
++	RTE_BUILD_BUG_ON(offsetof(struct rte_mbuf, vlan_tci) !=
++			offsetof(struct rte_mbuf, rx_descriptor_fields1) + 10);
++	RTE_BUILD_BUG_ON(offsetof(struct rte_mbuf, hash) !=
++			offsetof(struct rte_mbuf, rx_descriptor_fields1) + 12);
++
++	mbuf_init = _mm_set_epi64x(0, rx_queue->mbuf_init_value);
++
++	buffer_ring = &rx_queue->buffer_ring[rx_queue->processing_idx];
++
++	RTE_BUILD_BUG_ON((RTE_MBUF_F_RX_VLAN | RTE_MBUF_F_RX_VLAN_STRIPPED) > UINT8_MAX);
++	vlan_flags = rx_queue->vlan_flags & UINT8_MAX;
++
++	for (pos = 0, pkts_recd_num = 0; pos < pkts_num;
++			pos += SXE_DESCS_PER_LOOP,
++			desc_ring += SXE_DESCS_PER_LOOP) {
++		__m128i descs[SXE_DESCS_PER_LOOP];
++		__m128i pkt_mb1, pkt_mb2, pkt_mb3, pkt_mb4;
++		__m128i zero, staterr, state_err1, state_err2;
++		__m128i mbp1;
++#if defined(RTE_ARCH_X86_64)
++		__m128i mbp2;
++#endif
++
++		mbp1 = _mm_loadu_si128((__m128i *)&buffer_ring[pos]);
++
++		descs[3] = _mm_loadu_si128(RTE_CAST_PTR(__m128i *, (desc_ring + 3)));
++		rte_compiler_barrier();
++
++		_mm_storeu_si128((__m128i *)&rx_pkts[pos], mbp1);
++
++#if defined(RTE_ARCH_X86_64)
++		mbp2 = _mm_loadu_si128((__m128i *)&buffer_ring[pos + 2]);
++#endif
++
++		descs[2] = _mm_loadu_si128(RTE_CAST_PTR(__m128i *, (desc_ring + 2)));
++		rte_compiler_barrier();
++		descs[1] = _mm_loadu_si128(RTE_CAST_PTR(__m128i *, (desc_ring + 1)));
++		rte_compiler_barrier();
++		descs[0] = _mm_loadu_si128(RTE_CAST_PTR(__m128i *, (desc_ring)));
++
++#if defined(RTE_ARCH_X86_64)
++		_mm_storeu_si128((__m128i *)&rx_pkts[pos + 2], mbp2);
++#endif
++
++		if (split_packet) {
++			rte_mbuf_prefetch_part2(rx_pkts[pos]);
++			rte_mbuf_prefetch_part2(rx_pkts[pos + 1]);
++			rte_mbuf_prefetch_part2(rx_pkts[pos + 2]);
++			rte_mbuf_prefetch_part2(rx_pkts[pos + 3]);
++		}
++
++		rte_compiler_barrier();
++
++		pkt_mb4 = _mm_shuffle_epi8(descs[3], shuf_msk);
++		pkt_mb3 = _mm_shuffle_epi8(descs[2], shuf_msk);
++		pkt_mb2 = _mm_shuffle_epi8(descs[1], shuf_msk);
++		pkt_mb1 = _mm_shuffle_epi8(descs[0], shuf_msk);
++
++		state_err2 = _mm_unpackhi_epi32(descs[3], descs[2]);
++		state_err1 = _mm_unpackhi_epi32(descs[1], descs[0]);
++
++		sxe_desc_to_olflags(descs, mbuf_init, vlan_flags, udp_p_flag,
++					&rx_pkts[pos]);
++
++		pkt_mb4 = _mm_add_epi16(pkt_mb4, crc_adjust);
++		pkt_mb3 = _mm_add_epi16(pkt_mb3, crc_adjust);
++
++		zero = _mm_xor_si128(dd_check, dd_check);
++
++		staterr = _mm_unpacklo_epi32(state_err1, state_err2);
++
++		_mm_storeu_si128((void *)&rx_pkts[pos + 3]->rx_descriptor_fields1,
++				pkt_mb4);
++		_mm_storeu_si128((void *)&rx_pkts[pos + 2]->rx_descriptor_fields1,
++				pkt_mb3);
++
++		pkt_mb2 = _mm_add_epi16(pkt_mb2, crc_adjust);
++		pkt_mb1 = _mm_add_epi16(pkt_mb1, crc_adjust);
++
++		if (split_packet) {
++			__m128i eop_shuf_mask = _mm_set_epi8
++				(0xFF, 0xFF, 0xFF, 0xFF,
++				0xFF, 0xFF, 0xFF, 0xFF,
++				0xFF, 0xFF, 0xFF, 0xFF,
++				0x04, 0x0C, 0x00, 0x08
++				);
++
++			__m128i eop_bits = _mm_andnot_si128(staterr, eop_check);
++			eop_bits = _mm_shuffle_epi8(eop_bits, eop_shuf_mask);
++			*(int *)split_packet = _mm_cvtsi128_si32(eop_bits);
++			split_packet += SXE_DESCS_PER_LOOP;
++		}
++
++		staterr = _mm_and_si128(staterr, dd_check);
++
++		staterr = _mm_packs_epi32(staterr, zero);
++
++		_mm_storeu_si128((void *)&rx_pkts[pos + 1]->rx_descriptor_fields1,
++				pkt_mb2);
++		_mm_storeu_si128((void *)&rx_pkts[pos]->rx_descriptor_fields1,
++				pkt_mb1);
++
++		sxe_desc_to_ptype_vec(descs, rx_queue->pkt_type_mask, &rx_pkts[pos]);
++		var = rte_popcount64(_mm_cvtsi128_si64(staterr));
++		pkts_recd_num += var;
++		if (likely(var != SXE_DESCS_PER_LOOP))
++			break;
++	}
++
++	rx_queue->processing_idx = (u16)(rx_queue->processing_idx + pkts_recd_num);
++	rx_queue->processing_idx = (u16)(rx_queue->processing_idx & (rx_queue->ring_depth - 1));
++	rx_queue->realloc_num = (u16)(rx_queue->realloc_num + pkts_recd_num);
++
++l_out:
++	return pkts_recd_num;
++}
++
++u16
++sxe_pkts_vec_recv(void *rx_queue, struct rte_mbuf **rx_pkts, u16 pkts_num)
++{
++	return sxe_raw_pkts_vec_recv(rx_queue, rx_pkts, pkts_num, NULL);
++}
++
++static u16
++sxe_scattered_burst_vec_recv(void *rx_queue, struct rte_mbuf **rx_pkts,
++				u16 pkts_num)
++{
++	u16 i = 0;
++	u16 bufs_num;
++	sxe_rx_queue_s *rxq = rx_queue;
++	u8 split_flags[RTE_PMD_SXE_MAX_RX_BURST] = {0};
++
++	bufs_num = sxe_raw_pkts_vec_recv(rxq, rx_pkts, pkts_num,
++			split_flags);
++	if (bufs_num == 0)
++		goto l_out;
++
++	const u64 *split_flag_64 = (u64 *)split_flags;
++	if (rxq->pkt_first_seg == NULL &&
++		split_flag_64[0] == 0 && split_flag_64[1] == 0 &&
++		split_flag_64[2] == 0 && split_flag_64[3] == 0)
++		goto l_out;
++
++	if (rxq->pkt_first_seg == NULL) {
++		while (i < bufs_num && !split_flags[i])
++			i++;
++		if (i == bufs_num)
++			goto l_out;
++		rxq->pkt_first_seg = rx_pkts[i];
++	}
++
++	bufs_num = i + sxe_packets_reassemble(rxq, &rx_pkts[i], bufs_num - i,
++		&split_flags[i]);
++
++l_out:
++	return bufs_num;
++}
++
++u16
++sxe_scattered_pkts_vec_recv(void *rx_queue, struct rte_mbuf **rx_pkts,
++				  u16 pkts_num)
++{
++	u16 ret = 0;
++
++	while (pkts_num > RTE_PMD_SXE_MAX_RX_BURST) {
++		u16 burst;
++
++		burst = sxe_scattered_burst_vec_recv(rx_queue,
++						rx_pkts + ret,
++						RTE_PMD_SXE_MAX_RX_BURST);
++		ret += burst;
++		pkts_num -= burst;
++		if (burst < RTE_PMD_SXE_MAX_RX_BURST)
++			goto l_out;
++	}
++
++	ret += sxe_scattered_burst_vec_recv(rx_queue,
++					rx_pkts + ret,
++					pkts_num);
++l_out:
 +	return ret;
 +}
- s32 sxe_sfp_identify(struct sxe_adapter *adapter)
- {
- 	s32 ret;
-diff --git a/drivers/net/sxe/pf/sxe_phy.h b/drivers/net/sxe/pf/sxe_phy.h
-index a3d7dbf85b..9fd2746ec8 100644
---- a/drivers/net/sxe/pf/sxe_phy.h
-+++ b/drivers/net/sxe/pf/sxe_phy.h
-@@ -105,6 +105,8 @@ s32 sxe_fc_enable(struct sxe_adapter *adapter);
- 
- void sxe_link_info_get(struct sxe_adapter *adapter, u32 *link_speed, bool *link_up);
- 
-+s32 sxe_pfc_enable(struct sxe_adapter *adapter, u8 tc_idx);
 +
- void sxe_sfp_link_capabilities_get(struct sxe_adapter *adapter, u32 *speed,
- 							bool *autoneg);
- 
++void __rte_cold
++sxe_rx_queue_vec_mbufs_release(sxe_rx_queue_s *rx_queue)
++{
++	sxe_rx_vec_mbufs_release(rx_queue);
++}
++
++s32 __rte_cold
++sxe_rxq_vec_setup(sxe_rx_queue_s *rx_queue)
++{
++	return sxe_default_rxq_vec_setup(rx_queue);
++}
++
++s32 __rte_cold
++sxe_rx_vec_condition_check(struct rte_eth_dev *dev)
++{
++	return sxe_default_rx_vec_condition_check(dev);
++}
++
++static inline void
++sxe_single_vec_desc_fill(volatile sxe_tx_data_desc_u *desc_ring,
++		struct rte_mbuf *pkts, u64 flags)
++{
++	__m128i descriptor = _mm_set_epi64x((u64)pkts->pkt_len << 46 |
++			flags | pkts->data_len,
++			pkts->buf_iova + pkts->data_off);
++	_mm_store_si128(RTE_CAST_PTR(__m128i *, &desc_ring->read), descriptor);
++}
++
++static inline void
++sxe_vec_desc_fill(volatile sxe_tx_data_desc_u *desc_ring,
++		struct rte_mbuf **pkts, u16 pkts_num, u64 flags)
++{
++	s32 i;
++
++	for (i = 0; i < pkts_num; ++i, ++desc_ring, ++pkts)
++		sxe_single_vec_desc_fill(desc_ring, *pkts, flags);
++}
++
++u16
++__sxe_pkts_vector_xmit(void *tx_queue, struct rte_mbuf **tx_pkts,
++			   u16 pkts_num)
++{
++	sxe_tx_queue_s *txq = (sxe_tx_queue_s *)tx_queue;
++	volatile sxe_tx_data_desc_u *desc_ring;
++	struct sxe_tx_buffer_vec *buffer_ring;
++	u16 n, commit_num, ntu, xmit_pkts_num;
++	u64 flags = SXE_TX_DESC_FLAGS;
++	u64 rs_flags = SXE_TX_DESC_RS_MASK | SXE_TX_DESC_FLAGS;
++	s32 i;
++
++	if (txq->desc_free_num < txq->free_thresh)
++		sxe_tx_bufs_vec_free(txq);
++
++	xmit_pkts_num = RTE_MIN(pkts_num, txq->rs_thresh);
++	xmit_pkts_num = (u16)RTE_MIN(txq->desc_free_num, xmit_pkts_num);
++
++	commit_num = xmit_pkts_num;
++	if (unlikely(commit_num == 0))
++		goto l_out;
++
++	ntu = txq->next_to_use;
++	desc_ring = &txq->desc_ring[ntu];
++	buffer_ring = &txq->buffer_ring_vec[ntu];
++
++	txq->desc_free_num = (u16)(txq->desc_free_num - xmit_pkts_num);
++
++	n = (u16)(txq->ring_depth - ntu);
++	if (commit_num >= n) {
++		sxe_vec_mbuf_fill(buffer_ring, tx_pkts, n);
++
++		for (i = 0; i < n - 1; ++i, ++tx_pkts, ++desc_ring)
++			sxe_single_vec_desc_fill(desc_ring, *tx_pkts, flags);
++
++		sxe_single_vec_desc_fill(desc_ring, *tx_pkts++, rs_flags);
++
++		commit_num = (u16)(commit_num - n);
++
++		ntu = 0;
++		txq->next_rs = (u16)(txq->rs_thresh - 1);
++
++		desc_ring = &txq->desc_ring[ntu];
++		buffer_ring = &txq->buffer_ring_vec[ntu];
++	}
++
++	sxe_vec_mbuf_fill(buffer_ring, tx_pkts, commit_num);
++
++	sxe_vec_desc_fill(desc_ring, tx_pkts, commit_num, flags);
++
++	ntu = (u16)(ntu + commit_num);
++	if (ntu > txq->next_rs) {
++		txq->desc_ring[txq->next_rs].read.cmd_type_len |=
++			rte_cpu_to_le_32(SXE_TX_DESC_RS_MASK);
++		txq->next_rs = (u16)(txq->next_rs +
++			txq->rs_thresh);
++	}
++
++	txq->next_to_use = ntu;
++	rte_wmb();
++	rte_write32_wc_relaxed((rte_cpu_to_le_32(txq->next_to_use)),
++							txq->tdt_reg_addr);
++
++l_out:
++	return xmit_pkts_num;
++}
++
++static void __rte_cold
++sxe_tx_queue_init(sxe_tx_queue_s *tx_queue)
++{
++	sxe_tx_queue_vec_init(tx_queue);
++}
++
++static void __rte_cold
++sxe_tx_queue_mbufs_release(sxe_tx_queue_s *tx_queue)
++{
++	sxe_tx_mbufs_vec_release(tx_queue);
++}
++
++static void __rte_cold
++sxe_tx_buffer_ring_free(sxe_tx_queue_s *tx_queue)
++{
++	sxe_tx_buffer_ring_vec_free(tx_queue);
++}
++
++static const struct sxe_txq_ops txq_vec_ops = {
++	.init			 = sxe_tx_queue_init,
++	.mbufs_release	= sxe_tx_queue_mbufs_release,
++	.buffer_ring_free = sxe_tx_buffer_ring_free,
++};
++
++s32 __rte_cold
++sxe_txq_vec_setup(sxe_tx_queue_s *tx_queue)
++{
++	return sxe_default_txq_vec_setup(tx_queue, &txq_vec_ops);
++}
++
++#endif
 -- 
 2.18.2
 
