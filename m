@@ -2,46 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9150E7E0BC
-	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Feb 2026 16:49:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D7DBE81BDF
+	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Feb 2026 16:49:36 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7490040ED2;
-	Mon,  9 Feb 2026 17:46:25 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id E6DAE40ED9;
+	Mon,  9 Feb 2026 17:46:26 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
- by mails.dpdk.org (Postfix) with ESMTP id B7E1740E42
- for <dev@dpdk.org>; Mon,  9 Feb 2026 17:46:18 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 074DB40DDE
+ for <dev@dpdk.org>; Mon,  9 Feb 2026 17:46:19 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1770655579; x=1802191579;
+ t=1770655580; x=1802191580;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=/8Bd2LZLK2HTn48sR71zEvIsCTyCXs/7koBhI2L1h+8=;
- b=Fz2jtyGL1mA4uy9RQF8Bpqb0n6oj3diZegfl0XluO4kD38wWfJMYHhD6
- KxX9x6DLNB/GG1V7WJZbkdXsiU0nDIKcxDGiHRbx1LP0oWQbOmwBZBBu0
- g4QS0lKOpgXS6mcaoGhhdxftZorGjg09oOOliVhjyztcecPzy0DSgmDIo
- tHrPgMLL80/b5tGPfEW+N/zZ/OuWTFEAp/MV19jslaQfASGFBFlyp4cGE
- WTUj5AlrlP76HJnvDnOkDKGubKclBNl1yVuibjTgp8cStu4RWhFcd+zpZ
- zzwPhBEnTCNyxKH/gOqryBq45t1wkDKau6kOL7MLUUGB46WBZ0PBIiaPG A==;
-X-CSE-ConnectionGUID: 5/xNjQNHTNeVBRDrKHxrAQ==
-X-CSE-MsgGUID: avlSQL1EQnWZ+ksYBTUXfw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11696"; a="71663512"
-X-IronPort-AV: E=Sophos;i="6.21,282,1763452800"; d="scan'208";a="71663512"
+ bh=DHbBf9Em5GHYyGBQb94TkFPoW+l8mqUDB0MrhsryWFU=;
+ b=JDhS7XCrW78F8OtNrLdVLB9Rgwa04zWYnTYWDVbkSEurF/zytYRfNTMe
+ LGd12rm3vG5VutbzpMb1yjYOo+jGAobL7oMxEPnIw2ipkeUHtlneuAjKt
+ 7kntaUTB2z9OSdgDsImZYkbrHd/LOtc1A8znRX3W+yKJr5IkYfbFxILIr
+ iJnjf2VGfNRxVFiosljEGpyhjm5VFkgUEYV0u69qHyrhsCJLmua6H4A50
+ glajNnSBsAe/dg9aGyiyPw2Bbx3GwZfXdhHz3vHyYI7A4KcSik76JbV8C
+ /7MIKPNJ3yHbe0nruHlbnxev+4j84XNOfh9i69q99NnIKVk4qIqyKm5o9 w==;
+X-CSE-ConnectionGUID: AoJk0KZyQRiMLrpu7Sh9Uw==
+X-CSE-MsgGUID: ZoONhLZPQSmGN5vlDeZLzg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11696"; a="71663519"
+X-IronPort-AV: E=Sophos;i="6.21,282,1763452800"; d="scan'208";a="71663519"
 Received: from fmviesa006.fm.intel.com ([10.60.135.146])
  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 09 Feb 2026 08:46:18 -0800
-X-CSE-ConnectionGUID: Zo5zpiLvTyueu1E2b/dAtg==
-X-CSE-MsgGUID: 8ebdSPLWQdu9wusTE7oqWA==
+ 09 Feb 2026 08:46:20 -0800
+X-CSE-ConnectionGUID: KW/eTw7VS5qNf4gfIdhfrw==
+X-CSE-MsgGUID: YW2ZkF+JRFaatEzS33WdOA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,282,1763452800"; d="scan'208";a="210789217"
+X-IronPort-AV: E=Sophos;i="6.21,282,1763452800"; d="scan'208";a="210789225"
 Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by fmviesa006.fm.intel.com with ESMTP; 09 Feb 2026 08:46:17 -0800
+ by fmviesa006.fm.intel.com with ESMTP; 09 Feb 2026 08:46:18 -0800
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
-Cc: Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v4 32/35] net/intel: align scalar simple Tx path with vector
- logic
-Date: Mon,  9 Feb 2026 16:45:30 +0000
-Message-ID: <20260209164538.1428499-33-bruce.richardson@intel.com>
+Cc: Bruce Richardson <bruce.richardson@intel.com>,
+ Praveen Shetty <praveen.shetty@intel.com>,
+ Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
+ Anatoly Burakov <anatoly.burakov@intel.com>,
+ Jingjing Wu <jingjing.wu@intel.com>
+Subject: [PATCH v4 33/35] net/intel: use vector SW ring entry for simple path
+Date: Mon,  9 Feb 2026 16:45:31 +0000
+Message-ID: <20260209164538.1428499-34-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260209164538.1428499-1-bruce.richardson@intel.com>
 References: <20251219172548.2660777-1-bruce.richardson@intel.com>
@@ -61,131 +64,202 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The scalar simple Tx path has the same restrictions as the vector Tx
-path, so we can use the same logic flow in both, to try and ensure we
-get best performance from the scalar path.
+The simple scalar Tx path does not need to use the full sw_entry
+structure that the full Tx path uses, so rename the flag for "vector_tx"
+to instead be "use_vec_entry" since its sole purpose is to flag the use
+of the smaller tx_entry_vec structure. Then set this flag for the simple
+Tx path, giving us a perf boost.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- drivers/net/intel/common/tx_scalar.h | 54 +++++++++++++++++-----------
- 1 file changed, 34 insertions(+), 20 deletions(-)
+ drivers/net/intel/common/tx.h                    |  6 ++++--
+ drivers/net/intel/common/tx_scalar.h             | 14 +++++++-------
+ drivers/net/intel/cpfl/cpfl_rxtx.c               |  4 ++--
+ drivers/net/intel/i40e/i40e_rxtx.c               |  2 +-
+ drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c      |  2 +-
+ drivers/net/intel/ice/ice_rxtx.c                 |  2 +-
+ drivers/net/intel/idpf/idpf_common_rxtx_avx512.c |  2 +-
+ drivers/net/intel/ixgbe/ixgbe_rxtx_vec_common.c  |  2 +-
+ 8 files changed, 18 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/net/intel/common/tx_scalar.h b/drivers/net/intel/common/tx_scalar.h
-index 918cd806a4..2405d6a2f0 100644
---- a/drivers/net/intel/common/tx_scalar.h
-+++ b/drivers/net/intel/common/tx_scalar.h
-@@ -21,13 +21,11 @@ write_txd(volatile void *txd, uint64_t qw0, uint64_t qw1)
- 	txd_qw[1] = rte_cpu_to_le_64(qw1);
- }
+diff --git a/drivers/net/intel/common/tx.h b/drivers/net/intel/common/tx.h
+index 67378a0803..62d919d338 100644
+--- a/drivers/net/intel/common/tx.h
++++ b/drivers/net/intel/common/tx.h
+@@ -166,7 +166,7 @@ struct ci_tx_queue {
+ 	rte_iova_t tx_ring_dma;        /* TX ring DMA address */
+ 	bool tx_deferred_start; /* don't start this queue in dev start */
+ 	bool q_set;             /* indicate if tx queue has been configured */
+-	bool vector_tx;         /* port is using vector TX */
++	bool use_vec_entry;     /* use sw_ring_vec (true for vector and simple paths) */
+ 	union {                  /* the VSI this queue belongs to */
+ 		struct i40e_vsi *i40e_vsi;
+ 		struct iavf_vsi *iavf_vsi;
+@@ -354,7 +354,8 @@ ci_txq_release_all_mbufs(struct ci_tx_queue *txq, bool use_ctx)
+ 	if (unlikely(!txq || !txq->sw_ring))
+ 		return;
  
--/* Fill hardware descriptor ring with mbuf data */
-+/* Fill hardware descriptor ring with mbuf data (simple path) */
- static inline void
--ci_tx_fill_hw_ring(struct ci_tx_queue *txq, struct rte_mbuf **pkts,
--		   uint16_t nb_pkts)
-+ci_tx_fill_hw_ring_simple(volatile struct ci_tx_desc *txdp, struct rte_mbuf **pkts,
-+			  uint16_t nb_pkts)
- {
--	volatile struct ci_tx_desc *txdp = &txq->ci_tx_ring[txq->tx_tail];
--	struct ci_tx_entry *txep = &txq->sw_ring[txq->tx_tail];
- 	const int N_PER_LOOP = 4;
- 	const int N_PER_LOOP_MASK = N_PER_LOOP - 1;
- 	int mainpart, leftover;
-@@ -36,8 +34,6 @@ ci_tx_fill_hw_ring(struct ci_tx_queue *txq, struct rte_mbuf **pkts,
- 	mainpart = nb_pkts & ((uint32_t)~N_PER_LOOP_MASK);
- 	leftover = nb_pkts & ((uint32_t)N_PER_LOOP_MASK);
- 	for (i = 0; i < mainpart; i += N_PER_LOOP) {
--		for (j = 0; j < N_PER_LOOP; ++j)
--			(txep + i + j)->mbuf = *(pkts + i + j);
- 		for (j = 0; j < N_PER_LOOP; ++j)
- 			write_txd(txdp + i + j, rte_mbuf_data_iova(*(pkts + i + j)),
- 				CI_TX_DESC_DTYPE_DATA |
-@@ -48,12 +44,10 @@ ci_tx_fill_hw_ring(struct ci_tx_queue *txq, struct rte_mbuf **pkts,
- 	if (unlikely(leftover > 0)) {
- 		for (i = 0; i < leftover; ++i) {
- 			uint16_t idx = mainpart + i;
--			(txep + idx)->mbuf = *(pkts + idx);
- 			write_txd(txdp + idx, rte_mbuf_data_iova(*(pkts + idx)),
- 				CI_TX_DESC_DTYPE_DATA |
- 				((uint64_t)CI_TX_DESC_CMD_DEFAULT << CI_TXD_QW1_CMD_S) |
- 				((uint64_t)(*(pkts + idx))->data_len << CI_TXD_QW1_TX_BUF_SZ_S));
--
- 		}
+-	if (!txq->vector_tx) {
++	if (!txq->use_vec_entry) {
++		/* Regular scalar path uses sw_ring with ci_tx_entry */
+ 		for (uint16_t i = 0; i < txq->nb_tx_desc; i++) {
+ 			if (txq->sw_ring[i].mbuf != NULL) {
+ 				rte_pktmbuf_free_seg(txq->sw_ring[i].mbuf);
+@@ -365,6 +366,7 @@ ci_txq_release_all_mbufs(struct ci_tx_queue *txq, bool use_ctx)
  	}
- }
-@@ -130,6 +124,9 @@ ci_xmit_burst_simple(struct ci_tx_queue *txq,
- 		     uint16_t nb_pkts)
- {
- 	volatile struct ci_tx_desc *txr = txq->ci_tx_ring;
-+	volatile struct ci_tx_desc *txdp;
-+	struct ci_tx_entry *txep;
-+	uint16_t tx_id;
- 	uint16_t n = 0;
  
  	/**
-@@ -145,23 +142,41 @@ ci_xmit_burst_simple(struct ci_tx_queue *txq,
- 	if (unlikely(!nb_pkts))
++	 *  Vector and simple paths use sw_ring_vec (ci_tx_entry_vec).
+ 	 *  vPMD tx will not set sw_ring's mbuf to NULL after free,
+ 	 *  so determining buffers to free is a little more complex.
+ 	 */
+diff --git a/drivers/net/intel/common/tx_scalar.h b/drivers/net/intel/common/tx_scalar.h
+index 2405d6a2f0..02c60cdaff 100644
+--- a/drivers/net/intel/common/tx_scalar.h
++++ b/drivers/net/intel/common/tx_scalar.h
+@@ -60,14 +60,14 @@ ci_tx_free_bufs(struct ci_tx_queue *txq)
+ 	const uint16_t k = RTE_ALIGN_FLOOR(rs_thresh, CI_TX_MAX_FREE_BUF_SZ);
+ 	const uint16_t m = rs_thresh % CI_TX_MAX_FREE_BUF_SZ;
+ 	struct rte_mbuf *free[CI_TX_MAX_FREE_BUF_SZ];
+-	struct ci_tx_entry *txep;
++	struct ci_tx_entry_vec *txep;
+ 
+ 	if ((txq->ci_tx_ring[txq->tx_next_dd].cmd_type_offset_bsz &
+ 			rte_cpu_to_le_64(CI_TXD_QW1_DTYPE_M)) !=
+ 			rte_cpu_to_le_64(CI_TX_DESC_DTYPE_DESC_DONE))
  		return 0;
  
-+	tx_id = txq->tx_tail;
-+	txdp = &txr[tx_id];
-+	txep = &txq->sw_ring[tx_id];
-+
+-	txep = &txq->sw_ring[txq->tx_next_dd - (rs_thresh - 1)];
++	txep = &txq->sw_ring_vec[txq->tx_next_dd - (rs_thresh - 1)];
+ 
+ 	struct rte_mempool *fast_free_mp =
+ 			likely(txq->fast_free_mp != (void *)UINTPTR_MAX) ?
+@@ -125,7 +125,7 @@ ci_xmit_burst_simple(struct ci_tx_queue *txq,
+ {
+ 	volatile struct ci_tx_desc *txr = txq->ci_tx_ring;
+ 	volatile struct ci_tx_desc *txdp;
+-	struct ci_tx_entry *txep;
++	struct ci_tx_entry_vec *txep;
+ 	uint16_t tx_id;
+ 	uint16_t n = 0;
+ 
+@@ -144,7 +144,7 @@ ci_xmit_burst_simple(struct ci_tx_queue *txq,
+ 
+ 	tx_id = txq->tx_tail;
+ 	txdp = &txr[tx_id];
+-	txep = &txq->sw_ring[tx_id];
++	txep = &txq->sw_ring_vec[tx_id];
+ 
  	txq->nb_tx_free = (uint16_t)(txq->nb_tx_free - nb_pkts);
--	if ((txq->tx_tail + nb_pkts) > txq->nb_tx_desc) {
--		n = (uint16_t)(txq->nb_tx_desc - txq->tx_tail);
--		ci_tx_fill_hw_ring(txq, tx_pkts, n);
-+
-+	if ((tx_id + nb_pkts) > txq->nb_tx_desc) {
-+		n = (uint16_t)(txq->nb_tx_desc - tx_id);
-+
-+		/* Store mbufs in backlog */
-+		ci_tx_backlog_entry(txep, tx_pkts, n);
-+
-+		/* Write descriptors to HW ring */
-+		ci_tx_fill_hw_ring_simple(txdp, tx_pkts, n);
-+
- 		txr[txq->tx_next_rs].cmd_type_offset_bsz |=
- 			rte_cpu_to_le_64(((uint64_t)CI_TX_DESC_CMD_RS) <<
- 					  CI_TXD_QW1_CMD_S);
- 		txq->tx_next_rs = (uint16_t)(txq->tx_rs_thresh - 1);
--		txq->tx_tail = 0;
-+
-+		tx_id = 0;
-+		txdp = &txr[tx_id];
-+		txep = &txq->sw_ring[tx_id];
+ 
+@@ -152,7 +152,7 @@ ci_xmit_burst_simple(struct ci_tx_queue *txq,
+ 		n = (uint16_t)(txq->nb_tx_desc - tx_id);
+ 
+ 		/* Store mbufs in backlog */
+-		ci_tx_backlog_entry(txep, tx_pkts, n);
++		ci_tx_backlog_entry_vec(txep, tx_pkts, n);
+ 
+ 		/* Write descriptors to HW ring */
+ 		ci_tx_fill_hw_ring_simple(txdp, tx_pkts, n);
+@@ -164,11 +164,11 @@ ci_xmit_burst_simple(struct ci_tx_queue *txq,
+ 
+ 		tx_id = 0;
+ 		txdp = &txr[tx_id];
+-		txep = &txq->sw_ring[tx_id];
++		txep = &txq->sw_ring_vec[tx_id];
  	}
  
--	/* Fill hardware descriptor ring with mbuf data */
--	ci_tx_fill_hw_ring(txq, tx_pkts + n, (uint16_t)(nb_pkts - n));
--	txq->tx_tail = (uint16_t)(txq->tx_tail + (nb_pkts - n));
-+	/* Store remaining mbufs in backlog */
-+	ci_tx_backlog_entry(txep, tx_pkts + n, (uint16_t)(nb_pkts - n));
-+
-+	/* Write remaining descriptors to HW ring */
-+	ci_tx_fill_hw_ring_simple(txdp, tx_pkts + n, (uint16_t)(nb_pkts - n));
-+
-+	tx_id = (uint16_t)(tx_id + (nb_pkts - n));
+ 	/* Store remaining mbufs in backlog */
+-	ci_tx_backlog_entry(txep, tx_pkts + n, (uint16_t)(nb_pkts - n));
++	ci_tx_backlog_entry_vec(txep, tx_pkts + n, (uint16_t)(nb_pkts - n));
  
- 	/* Determine if RS bit needs to be set */
--	if (txq->tx_tail > txq->tx_next_rs) {
-+	if (tx_id > txq->tx_next_rs) {
- 		txr[txq->tx_next_rs].cmd_type_offset_bsz |=
- 			rte_cpu_to_le_64(((uint64_t)CI_TX_DESC_CMD_RS) <<
- 					  CI_TXD_QW1_CMD_S);
-@@ -171,11 +186,10 @@ ci_xmit_burst_simple(struct ci_tx_queue *txq,
- 			txq->tx_next_rs = (uint16_t)(txq->tx_rs_thresh - 1);
+ 	/* Write remaining descriptors to HW ring */
+ 	ci_tx_fill_hw_ring_simple(txdp, tx_pkts + n, (uint16_t)(nb_pkts - n));
+diff --git a/drivers/net/intel/cpfl/cpfl_rxtx.c b/drivers/net/intel/cpfl/cpfl_rxtx.c
+index e7a98ed4f6..b5b9015310 100644
+--- a/drivers/net/intel/cpfl/cpfl_rxtx.c
++++ b/drivers/net/intel/cpfl/cpfl_rxtx.c
+@@ -329,7 +329,7 @@ cpfl_tx_queue_release(void *txq)
+ 		rte_free(q->complq);
  	}
  
--	if (txq->tx_tail >= txq->nb_tx_desc)
--		txq->tx_tail = 0;
-+	txq->tx_tail = tx_id;
+-	ci_txq_release_all_mbufs(q, q->vector_tx);
++	ci_txq_release_all_mbufs(q, q->use_vec_entry);
+ 	rte_free(q->sw_ring);
+ 	rte_free(q->rs_last_id);
+ 	rte_memzone_free(q->mz);
+@@ -1364,7 +1364,7 @@ cpfl_tx_queue_stop(struct rte_eth_dev *dev, uint16_t tx_queue_id)
+ 	}
  
- 	/* Update the tx tail register */
--	rte_write32_wc((uint32_t)txq->tx_tail, txq->qtx_tail);
-+	rte_write32_wc((uint32_t)tx_id, txq->qtx_tail);
+ 	txq = &cpfl_txq->base;
+-	ci_txq_release_all_mbufs(txq, txq->vector_tx);
++	ci_txq_release_all_mbufs(txq, txq->use_vec_entry);
+ 	if (vport->txq_model == VIRTCHNL2_QUEUE_MODEL_SINGLE) {
+ 		idpf_qc_single_tx_queue_reset(txq);
+ 	} else {
+diff --git a/drivers/net/intel/i40e/i40e_rxtx.c b/drivers/net/intel/i40e/i40e_rxtx.c
+index bedc78b9ff..155eec210e 100644
+--- a/drivers/net/intel/i40e/i40e_rxtx.c
++++ b/drivers/net/intel/i40e/i40e_rxtx.c
+@@ -1451,7 +1451,7 @@ i40e_dev_tx_queue_start(struct rte_eth_dev *dev, uint16_t tx_queue_id)
+ 		PMD_DRV_LOG(WARNING, "TX queue %u is deferred start",
+ 			    tx_queue_id);
  
- 	return nb_pkts;
+-	txq->vector_tx = ad->tx_vec_allowed;
++	txq->use_vec_entry = ad->tx_vec_allowed || ad->tx_simple_allowed;
+ 
+ 	/*
+ 	 * tx_queue_id is queue id application refers to, while
+diff --git a/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c b/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c
+index cea4ee9863..374c713a94 100644
+--- a/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c
++++ b/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c
+@@ -1803,7 +1803,7 @@ iavf_xmit_pkts_vec_avx2_offload(void *tx_queue, struct rte_mbuf **tx_pkts,
+ int __rte_cold
+ iavf_txq_vec_setup(struct ci_tx_queue *txq)
+ {
+-	txq->vector_tx = true;
++	txq->use_vec_entry = true;
+ 	return 0;
+ }
+ 
+diff --git a/drivers/net/intel/ice/ice_rxtx.c b/drivers/net/intel/ice/ice_rxtx.c
+index 2b82a16422..0fc7237234 100644
+--- a/drivers/net/intel/ice/ice_rxtx.c
++++ b/drivers/net/intel/ice/ice_rxtx.c
+@@ -882,7 +882,7 @@ ice_tx_queue_start(struct rte_eth_dev *dev, uint16_t tx_queue_id)
+ 		}
+ 
+ 	/* record what kind of descriptor cleanup we need on teardown */
+-	txq->vector_tx = ad->tx_vec_allowed;
++	txq->use_vec_entry = ad->tx_vec_allowed || ad->tx_simple_allowed;
+ 
+ 	if (txq->tsq != NULL && txq->tsq->ts_flag > 0) {
+ 		struct ice_aqc_set_txtime_qgrp *ts_elem;
+diff --git a/drivers/net/intel/idpf/idpf_common_rxtx_avx512.c b/drivers/net/intel/idpf/idpf_common_rxtx_avx512.c
+index 49ace35615..666ad1a4dd 100644
+--- a/drivers/net/intel/idpf/idpf_common_rxtx_avx512.c
++++ b/drivers/net/intel/idpf/idpf_common_rxtx_avx512.c
+@@ -1365,6 +1365,6 @@ idpf_qc_tx_vec_avx512_setup(struct ci_tx_queue *txq)
+ 	if (!txq)
+ 		return 0;
+ 
+-	txq->vector_tx = true;
++	txq->use_vec_entry = true;
+ 	return 0;
+ }
+diff --git a/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_common.c b/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_common.c
+index 63c7cb50d3..c42b8fc96b 100644
+--- a/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_common.c
++++ b/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_common.c
+@@ -111,7 +111,7 @@ ixgbe_txq_vec_setup(struct ci_tx_queue *txq)
+ 	/* leave the first one for overflow */
+ 	txq->sw_ring_vec = txq->sw_ring_vec + 1;
+ 	txq->ops = &vec_txq_ops;
+-	txq->vector_tx = 1;
++	txq->use_vec_entry = true;
+ 
+ 	return 0;
  }
 -- 
 2.51.0
