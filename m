@@ -2,71 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29A02E7E0D5
-	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Feb 2026 19:51:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1F3CE7E0DF
+	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Feb 2026 20:06:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3440640A82;
-	Mon,  9 Feb 2026 20:51:13 +0100 (CET)
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com
- [209.85.128.53]) by mails.dpdk.org (Postfix) with ESMTP id C7E8B40A6B
- for <dev@dpdk.org>; Mon,  9 Feb 2026 20:51:11 +0100 (CET)
-Received: by mail-wm1-f53.google.com with SMTP id
- 5b1f17b1804b1-483337aa225so8912305e9.2
- for <dev@dpdk.org>; Mon, 09 Feb 2026 11:51:11 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 045A6402F2;
+	Mon,  9 Feb 2026 21:06:55 +0100 (CET)
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com
+ [209.85.128.51]) by mails.dpdk.org (Postfix) with ESMTP id 4B2D9402C3
+ for <dev@dpdk.org>; Mon,  9 Feb 2026 21:06:53 +0100 (CET)
+Received: by mail-wm1-f51.google.com with SMTP id
+ 5b1f17b1804b1-48068127f00so944635e9.3
+ for <dev@dpdk.org>; Mon, 09 Feb 2026 12:06:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1770666671;
- x=1771271471; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=jDgaq8HQoLp/mNwPuerXrJihfXFTgJQRezRhI0w2sfQ=;
- b=eiRYsri0TBOT3CSIqq8NsgL6TgCM9a06hWSGOVQ2oLLKGUoSx1mKmDAQgQvl5NuXMr
- QizTzgvy5/Y0r6U/BHhETa7qaTOB1Y2lbf5Nmz3tHQ0U/myK5CNgLX3rPvQoHocHzox4
- /HVk4xVNKhC/xEdQu0Y0xNz1quxjWuVI1Ad2+TZXXhwiOpf0d8HXMHTrRSrlog8GSOhG
- EQ3CTXk1ei8K7cXWc1OPM4s136MMmWvPs6uDFrckinQ/ZNRyxdx85ZazawdHP0CpKEgv
- HH0+oVcphQWoj0Qk5AiKvPpWzZ/zkc1wrku8I/Zcs0nJnsa2m76ZsFcNfH64tAz4WvgX
- uhpA==
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1770667613;
+ x=1771272413; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=tQGmVr0EuW/dZNPjuuisLwsuU5pwJxWokRTkQK4b0Ik=;
+ b=nVfpWeILNsNY2bFq0dPikQE90OK78h+BVfw7w1PvV8E/uAeUU2Hvs1Ek4fK7ZnJLsb
+ S1cEYGIyKNQFi+0bhAoSCGE1flE5yD5LjpSpZeuuiM2u5GF4OQowZDVWuQvUqUSWoBg1
+ FcEJ3AVdphKoaiPIOwaw0jtxfMTTf9L79jzsWG8vbssXISuCA55DEyOsKAkjVCaiZnpR
+ yCDhv5CygJAYoVr6Ps/DtFD0dToWiG3I1JtIaIi1eqd4+WheWl7D2JRpWA7YiruKk9dy
+ 5TbXnHlfwLjGtFdUxaXai0CF2rKpCwLVJRk7KOC3bFnx0eY5T/xk4+QZN1vRlf3rkBA3
+ nD/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1770666671; x=1771271471;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=jDgaq8HQoLp/mNwPuerXrJihfXFTgJQRezRhI0w2sfQ=;
- b=RZJYay0Tkc/i78d6/irLY/BHDWhhYkZkllaBtgeTYoMxHoq86KAW2p+lVOBy06k9LP
- aV2nEJIjhNYw2mc+nx4RONXnWC0Kk0z6ukFKplLqB6GzsoqVtVOuRSu99ZibTU9+VeZW
- 5ZbvCYo3oxD9/1k2Ug7wkNZIzyayEWLReJJNcXn/TQNpoXOaunmLTS1TSpc7UCiJtAJ4
- Cmwc1/Bv9Cv8HL/J0Tr4+U/QhYlvzh8AV7NSTiuNkr8QleRnHo3ev9dnxU1L32IniMNW
- V5f/zNClSRjDfN6aLuHHRIBrzYtDgQOBELoCFpBBPQOzeVesqlEyPDg62dWdLAqUiCtJ
- ULoA==
-X-Gm-Message-State: AOJu0YxI+s6fu3udbdOa6OY7tu3c6RbQonbbabwVlvctVZT2aOvu3p9v
- M0mMN5nG3IfzjTJTMoFNLQhGEIvwC2IhZZ/RQrntC/snAhVHFV4pHXgAMEKd/ulA5Ez0hQuBRiK
- joX9D
-X-Gm-Gg: AZuq6aL+CGgZdhvB7TIIS//wtDrGxSsuPCSaMoY6anjnnEDfvmdQWXdXGMVbjs3KWz7
- r6bii5SXADOjLWAiAoIwx4Lds4FCGBfSlQmaXYw5pLcvLijh9B2ubBpaTlhw905HNT8dYxsrn1w
- RbeMzgJ8gMGOfxQKzfHHaEK6NpfMYN68ptXKIz8Bl/9jIl32UgrRZWh+yxc/iwKrft99f9ofhwS
- 5pSF1wmL9xYr87pDHNEt6R7N2Z+JZ0cRj6QG92EM5oaSLFXZ0WPkdwvBvfYtL5043Lhf0BQJPRs
- ifxVGvtren+0PiBMVOgDQDmLzZ0HTLaf8tMplRCoDkHHR+31pKRh+rVHmfg09PkmeXht2kmYiNw
- ccAD64/ctUeQpgyCNLMGLzNBZQzC0+oo+Br+dEsP88pTlL7k0YE8aQo2xiCG8s8wjd94wm4qLb1
- Bh+DGMdwmtbuwU1xS951f9ZGUPz3gldzZUuR5xwaat+xn+vHn+gw==
-X-Received: by 2002:a05:600c:528b:b0:477:2f7c:314f with SMTP id
- 5b1f17b1804b1-483201e25b5mr167076995e9.10.1770666671327; 
- Mon, 09 Feb 2026 11:51:11 -0800 (PST)
+ d=1e100.net; s=20230601; t=1770667613; x=1771272413;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=tQGmVr0EuW/dZNPjuuisLwsuU5pwJxWokRTkQK4b0Ik=;
+ b=JnneY71HY3WjrxYHM/KYkc4N84Pi78zssCI7VjcKqqM5R3gYe5zX7nyTlPbBOrjVKE
+ v3mVVWLverYJve7WZyVHDMOin0TwKqXnzHpvvfylZQ7jb+vPmj1I0MrtPCkUssXq+v69
+ 9f1rPXoWj5sdOJbuujs8SQib1aYY/i9DHtENPFh/gxgFNSBgLcVgSHbjwDUBl0oimBJ8
+ xasgSOwkoFLtGq1k/ZswrmTt+fZilpQ92FM7nKAaRAHYxlSwZIJ0QzXzeSHu+HI+egm/
+ ZYgcI9XcIBVJZs0vyaPml0c+SOZCKIqglEHV6rWAmMtwJLzUhEzf+VorYUGMC6RZcldB
+ 11bw==
+X-Gm-Message-State: AOJu0Yyu4lZSgkxn+uXimvCOGs8Ss2xMZIT45iofu4vvTVEQOARIVOzc
+ AzUNp4SMHjC8hUDCnKhXScP4lc3aBShS6CB7+zXVGElVXWjyDqnyHKKV5G+K+qqqw21RFaqxvWC
+ pNiAm
+X-Gm-Gg: AZuq6aJ3e7WL0mKSEQE241xS/PI8gdPi+qNlnd+6NSS7cwGkr2daRx8sJ7ENoDeczAT
+ xVIFPji6eecG2eGaYJEEmhhAspyZbrgEYg7ULY8oUlXbHmdgc3AV+2ek3vDA+ziOwUopiEeyVHE
+ M9/VczkouiAPG6WwWTu+qOOwFgySAqidkCI7FqeHxMtQOgMszoQ8ZkCOMxha8MrWL6vbxzOq7EP
+ 3GRkQI3WbAEcIL8fsIyfYqOnGy9TbMVeCBALsTzV1nUYo8faxW3yukVsbeMsullxA3tsx1tVumK
+ XDypyL2K5oJmk8L6w+r5Yg5UxIH92Hp3Cnuf70XWmBKHG9HuBJ/NOxTZeZHG2sbD5VWCTgDSl7t
+ BTkM7lenyAG31P9IAeJmAYUgM2RWoNDj/RhKGSd21aZJMG7vUot8hjk4Xrsw15kbrZ4Ehg+mKpT
+ FzMTyfDt2AepZwxtd/T7QZBOm/LqwQx4euBiqAmmlmuYbJcvPmdQ==
+X-Received: by 2002:a05:600c:8b6f:b0:477:7975:30ea with SMTP id
+ 5b1f17b1804b1-48320236963mr178149685e9.29.1770667612526; 
+ Mon, 09 Feb 2026 12:06:52 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-4834d5d77f9sm10178345e9.3.2026.02.09.11.51.09
+ ffacd0b85a97d-4376bd5a074sm11905721f8f.11.2026.02.09.12.06.51
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 09 Feb 2026 11:51:10 -0800 (PST)
+ Mon, 09 Feb 2026 12:06:52 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Thomas Monjalon <thomas@monjalon.net>
-Subject: [PATCH v8 6/6] MAINTAINERS: add section for AI review tools
-Date: Mon,  9 Feb 2026 11:48:54 -0800
-Message-ID: <20260209195055.142484-7-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [RFC 0/2] rte_flow API unit testing via null PMD
+Date: Mon,  9 Feb 2026 12:05:41 -0800
+Message-ID: <20260209200648.182725-1-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20260209195055.142484-1-stephen@networkplumber.org>
-References: <20260126184205.104629-1-stephen@networkplumber.org>
- <20260209195055.142484-1-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -82,34 +77,46 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add maintainer entries for the AI-assisted code review tooling:
-AGENTS.md, analyze-patch.py, compare-reviews.sh, and
-review-doc.py.
+The rte_flow API is an important DPDK interface but has no dedicated
+unit tests. This series adds stub flow ops to the null PMD and a test
+suite that exercises the public API without requiring hardware.
 
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
----
- MAINTAINERS | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Patch 1 adds flow_ops to net_null that validate input structure and
+reject all rules with specific error types and cause pointers.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 5683b87e4a..a30f08974e 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -109,6 +109,14 @@ F: license/
- F: .editorconfig
- F: .mailmap
- 
-+AI review tools
-+M: Stephen Hemminger <stephen@networkplumber.org>
-+M: Aaron Conole <aconole@redhat.com>
-+F: AGENTS.md
-+F: devtools/analyze-patch.py
-+F: devtools/compare-reviews.sh
-+F: devtools/review-doc.py
-+
- Linux kernel uAPI headers
- M: Maxime Coquelin <maxime.coquelin@redhat.com>
- F: devtools/linux-uapi.sh
+Patch 2 adds flow_api_autotest with 31 test cases covering basic
+operations and error handling.
+
+Limitations:
+
+- Only negative-path behaviour is tested since the null PMD rejects
+   all rules. Positive-path coverage requires a PMD that installs
+   flows.
+
+ - The async template API, meters, and indirect actions can be
+   covered with additional stubs in a follow-up series.
+
+ - Aged flow testing requires a PMD that creates real rules and is
+   outside the scope of the null PMD stub approach.
+
+The test code and null PMD stub were generated with AI assistance
+(Claude) and reviewed/edited by the author.
+
+Stephen Hemminger (2):
+  net/null: add stub flow ops for rte_flow API testing
+  app/test: add rte_flow API unit tests
+
+ app/test/meson.build            |    1 +
+ app/test/test_flow_api.c        | 1015 +++++++++++++++++++++++++++++++
+ drivers/net/null/meson.build    |    6 +-
+ drivers/net/null/null_flow.c    |  237 ++++++++
+ drivers/net/null/null_flow.h    |   12 +
+ drivers/net/null/rte_eth_null.c |   12 +
+ 6 files changed, 1282 insertions(+), 1 deletion(-)
+ create mode 100644 app/test/test_flow_api.c
+ create mode 100644 drivers/net/null/null_flow.c
+ create mode 100644 drivers/net/null/null_flow.h
+
 -- 
 2.51.0
 
