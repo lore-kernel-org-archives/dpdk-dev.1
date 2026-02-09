@@ -2,66 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D279E7E0D5
-	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Feb 2026 18:41:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC7D3E7E0DA
+	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Feb 2026 18:41:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E1D424067A;
-	Mon,  9 Feb 2026 19:41:00 +0100 (CET)
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com
- [209.85.221.52]) by mails.dpdk.org (Postfix) with ESMTP id 1B61240696
- for <dev@dpdk.org>; Mon,  9 Feb 2026 19:40:59 +0100 (CET)
-Received: by mail-wr1-f52.google.com with SMTP id
- ffacd0b85a97d-4359a16a400so47060f8f.1
- for <dev@dpdk.org>; Mon, 09 Feb 2026 10:40:59 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 3A58640A6D;
+	Mon,  9 Feb 2026 19:41:02 +0100 (CET)
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com
+ [209.85.221.47]) by mails.dpdk.org (Postfix) with ESMTP id C8E964069D
+ for <dev@dpdk.org>; Mon,  9 Feb 2026 19:41:00 +0100 (CET)
+Received: by mail-wr1-f47.google.com with SMTP id
+ ffacd0b85a97d-4362507f0feso2236524f8f.0
+ for <dev@dpdk.org>; Mon, 09 Feb 2026 10:41:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1770662459;
- x=1771267259; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1770662460;
+ x=1771267260; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=X2ulEejtPdkPZ9tBcCbA0GKRek3PougiuaYgMNZ+/Fg=;
- b=LdOjHb+P8snrznPywDkG3qc/T6mjx6EzNA8ClKxcuK3Hko5QvwEK3VZbXmnKzZ+JWe
- UOHhfk+SqO6QRswwJdSvH6aCYYfatDDYqQytjA6V0amiqbGn5Dgii60xozOju5KlFxXU
- wBV+SGoBr9TXGAxZB7jpPY8qWmji+WIabLImcFVVqzbDtu2DI7t4Dc9KHpXfMkQmLJI9
- wV2CmdJd4MaHevTiwWBlV1S//aLr1O+lqLDD6C8ikKKmU9y/pMh8j2NcA6cyRdW+s1y8
- /JpI6lQsvloTDvORCkMM6W8Z1/poh/K3v0pNqyowVnNd0iSgyh8B6mjgf1+WODSJdYcY
- XpdQ==
+ bh=sgRqo/ZkFTXf2hRup5a7MpGT5cyvJEqVvQgIA7DwgH4=;
+ b=tDMnuwP+t2rx6QCEjtKA5PKOuvfYZv0+qFIfaA/OrunzjcQcNWAUr6LvF4q2cteGQt
+ jvtN7VqwYJ10dYqXzb5RPRao2a0nZQNG91Js9KafF7n12WmWSq/n6aHMEQoNkOBT4j7J
+ uQjCMvOy3P3zfElu6mu2GOC+9UdPtIV89lw4RJnGuUgZz/iQ49dZtIpNUfAUS5O7UI1c
+ xnbEXXCj/ek2ufNFe5oT7X6uQ2P+4WmOKGYwLAOZVx/pSNPEbVNByEgX2h8Ac0rMkxoL
+ j3arkNjYoqEs0UJ3wb6RNNdbx+UVrC73KTicOsSg8fTlGI2Dr1SnSFAC2qnqz9L8230M
+ GMTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1770662459; x=1771267259;
+ d=1e100.net; s=20230601; t=1770662460; x=1771267260;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=X2ulEejtPdkPZ9tBcCbA0GKRek3PougiuaYgMNZ+/Fg=;
- b=Iz5sJNVwtKi4awJMbNHIZGIkii+dC49ubvzNUlqI3tFKl4sV2ftSe2p4nXO1juG8BS
- kTnf/nQGIVqjf+XxFyr1tg/hM+R0VvT/I+P1Qh1tHu+ZvbfUnCR4kK/OzchAE7m11wc3
- fxjy7ihKkcASLSemjNo7md2VpmHgcE7a06bV8ufdTOAutINH6xv9tcTD1NmSTjJvdNfF
- t5yPdSu5/KsApBYK/UUE37leW6amTc7XMTTOeAsjPP9hZRZEY/OCD/nJF2PGLtXLQKZL
- z1a7bJh+RRxwtjPLEnzNRjANKwzY75zQ+Pi63JrDR3suEXvBPbKRQ5Yj8tguDkMEG4gw
- tzOQ==
-X-Gm-Message-State: AOJu0YxMeby+IhQdUJjwqPIdVtGrFZjeITMKbisSK6tQlU+4+JDim+WF
- dA9CUUs++FVk4WbtTR32mo8LsiulzULF2EkVT2KT8GueXF3VKcyJA6jpxt0DoUxcXKutOK7aodo
- +uIs/
-X-Gm-Gg: AZuq6aJhMNdBpcQEJrleFEk2sOkXHuRdIXy5fEXsZPoDniFuvHyC/wuDBUKjSzeD3a8
- FSd5CxSSKME6UnsMWU4XvM55Hlh6V7Z7iqezkeoTxHFYViMrIs7VimdRM6qNlosqgvh4PHbftDj
- kWb3aym5mk1HqGkyJBHPJAVNa5FlEZYSqv5JcEOq33hqC5BZpuIR9I1f+kGTnQy78c/1rtFFCm9
- l55A3m8VpFvQtfZ4qCi+e5CjFsGe3n/w4vq6kCrsW+9unMgsuKq2/DhmaH7Q4+msyETnekf0o7u
- w86pKqo9OQaTGW1DXMCD6nHLSRGqxqhxdtFp6jGo/9kpCXhzG06WaRE2pX4IZl5eHM+qUXGQx6C
- K0QChioeTrgZuJu7bUD5rstZFW+tyuERyX3G0MRXlhH4yfFeoZi8gxb9UdEwVCLB4C0f4SKtWt7
- alOFWcEOJVu3I/CMpAr7c9YAswpZi/nPPKN8vGIEOiCiMXEpusYQ==
-X-Received: by 2002:a05:6000:2913:b0:435:bbd7:18d8 with SMTP id
- ffacd0b85a97d-436293410ffmr18864464f8f.17.1770662458525; 
- Mon, 09 Feb 2026 10:40:58 -0800 (PST)
+ bh=sgRqo/ZkFTXf2hRup5a7MpGT5cyvJEqVvQgIA7DwgH4=;
+ b=M55ZrmQgAweoN+rsv2836TmaEpddA72tYvxKILaj30x/fm+X3xoz4MODk+hbzW/gvS
+ LwBWETNJeY2KpoN1VHDQ53SYn0vOIwtrug8WVyoOF/I/m9lysXMQgpnlFqwdOLPfPa/A
+ c1Xo03Gwcgb33gSmHo7RJNR27bAxOfy3ONBZDGc1IVd91oCKAV5Pc8N8u7zDU19RwrQP
+ qRYCUxPhXpAyc0QF13JiKyACxIdcZD1l8yCDLCQVrRcBSUeXYllsc9Pj5yUy2ArJrB76
+ eYLtlLdYmZI3ySf+Fi5+FTIhvz0z2pmfZ4P4URHH5qT7lJRE8rOYLsWZGP8wZQxOSk4j
+ M5OQ==
+X-Gm-Message-State: AOJu0YxTfq2Hn1Foc6iQDitRMGtcPnXKuHnHZpg1rKFBKBe8bg+GDHta
+ XYNE96xcdaykg66UeXr3U9sOi83fsp97Duz4uLiwjdsJkzfJ4s7/KJPijk+7OzeXk5A4HNMiJwg
+ WcIVk
+X-Gm-Gg: AZuq6aL9QlQXN14bx5vtw16qoD8Ax3AGJGGuwlPQc1V9/p80uFdMivhNY757z87pbf+
+ JULv0dA+wl52ZHMhKXcQw3rXnTL2UlV+W3gGphgnrzc1s/cP+9qznL7+GVvoBT3j6d1iaBh6JPv
+ HEW1DWDOk3HfMgXJqEz5FvN302eKeVC6ZuOEulHlumY/JXflkIzaM4sA26ITMWgveJg5O7WhGTO
+ 4KcKq4zfho6f9nSvyn0IjXoHVddEf9dDgNbxUAsUkiLJXML97CKUeGdg9E1N6G9dMmqtPxWyvhq
+ qoj2npDK2GXHDP2umClvRBv57f2pd8OuIBEtsiQ2e7TJmsWAwH40L/LZov+n4KrtnMZSeL3V5Ni
+ 6qYz4W+xtO0bXXGw0+RQ4UBpavTwQ8y3nQnUxnnu5rsQqmnFq7TrCb3SqvpEr387ZHSi7xs8vej
+ g9l6zLCJdrWXTDnJBarLJBsb5wtdK8FCkFRREoU6klLi5PP5Auug==
+X-Received: by 2002:a05:6000:26c4:b0:435:8f1b:bb32 with SMTP id
+ ffacd0b85a97d-436293888d9mr18824394f8f.32.1770662460346; 
+ Mon, 09 Feb 2026 10:41:00 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-4362972fc26sm26448426f8f.22.2026.02.09.10.40.57
+ ffacd0b85a97d-4362972fc26sm26448426f8f.22.2026.02.09.10.40.58
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 09 Feb 2026 10:40:58 -0800 (PST)
+ Mon, 09 Feb 2026 10:40:59 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v5 05/10] net/rtap: add link and device management operations
-Date: Mon,  9 Feb 2026 10:39:04 -0800
-Message-ID: <20260209184045.132774-6-stephen@networkplumber.org>
+Subject: [PATCH v5 06/10] net/rtap: add checksum and TSO offload support
+Date: Mon,  9 Feb 2026 10:39:05 -0800
+Message-ID: <20260209184045.132774-7-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260209184045.132774-1-stephen@networkplumber.org>
 References: <20241210212757.83490-1-stephen@networkplumber.org>
@@ -81,251 +81,100 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add device management operations for the TAP interface:
-  - Link up/down control via SIOCSIFFLAGS
-  - Link status query via SIOCGIFFLAGS
-  - Promiscuous mode enable/disable
-  - All-multicast mode enable/disable
-  - MTU configuration via SIOCSIFMTU
-  - MAC address configuration via SIOCSIFHWADDR
+Add transmit and receive offload support using the virtio-net header
+that is exchanged with the kernel TAP device.
 
-These operations manipulate the kernel TAP interface flags and
-parameters through ioctl calls.
+Tx offloads:
+  - UDP and TCP checksum offload: set VIRTIO_NET_HDR_F_NEEDS_CSUM
+    with appropriate csum_start and csum_offset fields
+  - TCP segmentation offload (TSO): set gso_type and gso_size
+
+Rx offloads:
+  - Parse virtio-net header flags to determine checksum status
+  - Handle NEEDS_CSUM by either marking L4_CKSUM_NONE for known
+    protocols or computing the checksum in software for tunnels
+  - Handle DATA_VALID flag to mark L4_CKSUM_GOOD
+  - Parse GSO headers to populate LRO metadata
+
+Configure kernel-side offloads via TUNSETOFFLOAD in dev_configure
+based on the requested rx offload flags.
+
+Report offload capabilities in dev_info.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- doc/guides/nics/features/rtap.ini |   4 +
- drivers/net/rtap/rtap.h           |   1 +
- drivers/net/rtap/rtap_ethdev.c    | 172 ++++++++++++++++++++++++++++++
- 3 files changed, 177 insertions(+)
+ doc/guides/nics/features/rtap.ini |  2 ++
+ drivers/net/rtap/rtap_ethdev.c    | 30 +++++++++++++++++++++++++++++-
+ 2 files changed, 31 insertions(+), 1 deletion(-)
 
 diff --git a/doc/guides/nics/features/rtap.ini b/doc/guides/nics/features/rtap.ini
-index 9bef9e341d..ce0804d795 100644
+index ce0804d795..b8eaa805fe 100644
 --- a/doc/guides/nics/features/rtap.ini
 +++ b/doc/guides/nics/features/rtap.ini
-@@ -4,6 +4,10 @@
- ; Refer to default.ini for the full list of available PMD features.
- ;
- [Features]
-+Link status          = Y
-+MTU update           = Y
-+Promiscuous mode     = Y
-+Allmulticast mode    = Y
+@@ -11,6 +11,8 @@ Allmulticast mode    = Y
  Scattered Rx         = P
  Basic stats          = Y
  Stats per queue      = Y
-diff --git a/drivers/net/rtap/rtap.h b/drivers/net/rtap/rtap.h
-index a93d7dae17..99f413f001 100644
---- a/drivers/net/rtap/rtap.h
-+++ b/drivers/net/rtap/rtap.h
-@@ -71,6 +71,7 @@ struct rtap_pmd {
- /* rtap_ethdev.c */
- int rtap_queue_open(struct rte_eth_dev *dev, uint16_t queue_id);
- void rtap_queue_close(struct rte_eth_dev *dev, uint16_t queue_id);
-+int rtap_link_update(struct rte_eth_dev *dev, int wait_to_complete);
- 
- /* rtap_rxtx.c */
- uint16_t rtap_rx_burst(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts);
++TSO                  = Y
++L4 checksum offload  = Y
+ Linux                = Y
+ ARMv7                = Y
+ ARMv8                = Y
 diff --git a/drivers/net/rtap/rtap_ethdev.c b/drivers/net/rtap/rtap_ethdev.c
-index a8481d9864..591fe91eac 100644
+index 591fe91eac..277a280772 100644
 --- a/drivers/net/rtap/rtap_ethdev.c
 +++ b/drivers/net/rtap/rtap_ethdev.c
-@@ -108,9 +108,170 @@ rtap_tap_open(const char *name, struct ifreq *ifr, uint8_t persist)
- 	return -1;
- }
+@@ -31,6 +31,16 @@
  
-+static int
-+rtap_change_flags(struct rte_eth_dev *dev, uint32_t flags, uint32_t mask)
-+{
-+	struct rtap_pmd *pmd = dev->data->dev_private;
-+
-+	int sock = socket(AF_INET, SOCK_DGRAM, 0);
-+	if (sock < 0)
-+		return -errno;
-+
-+	struct ifreq ifr = { 0 };
-+	strlcpy(ifr.ifr_name, pmd->ifname, IFNAMSIZ);
-+
-+	int ret = ioctl(sock, SIOCGIFFLAGS, &ifr);
-+	if (ret < 0) {
-+		PMD_LOG_ERRNO(ERR, "Unable to get flags for %s", ifr.ifr_name);
-+		goto error;
-+	}
-+
-+	/* NB: ifr.ifr_flags is type short */
-+	ifr.ifr_flags &= mask;
-+	ifr.ifr_flags |= flags;
-+
-+	ret = ioctl(sock, SIOCSIFFLAGS, &ifr);
-+	if (ret < 0)
-+		PMD_LOG_ERRNO(ERR, "Unable to set flags for %s", ifr.ifr_name);
-+error:
-+	close(sock);
-+	return (ret < 0) ? -errno : 0;
-+}
-+
-+static int
-+rtap_get_flags(struct rte_eth_dev *dev, short *flags)
-+{
-+	struct rtap_pmd *pmd = dev->data->dev_private;
-+
-+	int sock = socket(AF_INET, SOCK_DGRAM, 0);
-+	if (sock < 0) {
-+		PMD_LOG_ERRNO(ERR, "socket failed");
-+		return -1;
-+	}
-+
-+	struct ifreq ifr = { 0 };
-+	strlcpy(ifr.ifr_name, pmd->ifname, IFNAMSIZ);
-+
-+	int ret = ioctl(sock, SIOCGIFFLAGS, &ifr);
-+	if (ret == 0)
-+		*flags = ifr.ifr_flags;
-+	else
-+		PMD_LOG_ERRNO(ERR, "ioctl(SIOCGIFFLAGS)");
-+	close(sock);
-+	return ret;
-+}
-+
-+static int
-+rtap_set_link_up(struct rte_eth_dev *dev)
-+{
-+	return rtap_change_flags(dev, IFF_UP, (uint16_t)~0);
-+}
-+
-+static int
-+rtap_set_link_down(struct rte_eth_dev *dev)
-+{
-+	return rtap_change_flags(dev, 0, ~IFF_UP);
-+}
-+
-+static int
-+rtap_promiscuous_enable(struct rte_eth_dev *dev)
-+{
-+	return rtap_change_flags(dev, IFF_PROMISC, ~0);
-+}
-+
-+static int
-+rtap_promiscuous_disable(struct rte_eth_dev *dev)
-+{
-+	return rtap_change_flags(dev, 0, ~IFF_PROMISC);
-+}
-+
-+static int
-+rtap_allmulticast_enable(struct rte_eth_dev *dev)
-+{
-+	return rtap_change_flags(dev, IFF_ALLMULTI, ~0);
-+}
-+
-+static int
-+rtap_allmulticast_disable(struct rte_eth_dev *dev)
-+{
-+	return rtap_change_flags(dev, 0, ~IFF_ALLMULTI);
-+}
-+
-+int
-+rtap_link_update(struct rte_eth_dev *dev, int wait_to_complete __rte_unused)
-+{
-+	struct rte_eth_link link = {
-+		.link_speed = RTE_ETH_SPEED_NUM_UNKNOWN,
-+		.link_duplex = RTE_ETH_LINK_FULL_DUPLEX,
-+		.link_autoneg = RTE_ETH_LINK_FIXED,
-+		.link_status = RTE_ETH_LINK_DOWN,
-+	};
-+	short flags = 0;
-+
-+	if (rtap_get_flags(dev, &flags) < 0)
-+		return -1;
-+
-+	if (flags & IFF_UP)
-+		link.link_status = RTE_ETH_LINK_UP;
-+
-+	rte_eth_linkstatus_set(dev, &link);
-+	return 0;
-+}
-+
-+static int
-+rtap_mtu_set(struct rte_eth_dev *dev, uint16_t mtu)
-+{
-+	struct rtap_pmd *pmd = dev->data->dev_private;
-+
-+	int sock = socket(AF_INET, SOCK_DGRAM, 0);
-+	if (sock < 0)
-+		return -errno;
-+
-+	struct ifreq ifr = { .ifr_mtu = mtu };
-+	strlcpy(ifr.ifr_name, pmd->ifname, IFNAMSIZ);
-+
-+	int ret = ioctl(sock, SIOCSIFMTU, &ifr);
-+	if (ret < 0) {
-+		PMD_LOG(ERR, "ioctl(SIOCSIFMTU) failed: %s", strerror(errno));
-+		ret = -errno;
-+	}
-+	close(sock);
-+
-+	return ret;
-+}
-+
-+static int
-+rtap_macaddr_set(struct rte_eth_dev *dev, struct rte_ether_addr *addr)
-+{
-+	struct rtap_pmd *pmd = dev->data->dev_private;
-+
-+	int sock = socket(AF_INET, SOCK_DGRAM, 0);
-+	if (sock < 0)
-+		return -errno;
-+
-+	struct ifreq ifr = { 0 };
-+	strlcpy(ifr.ifr_name, pmd->ifname, IFNAMSIZ);
-+	ifr.ifr_hwaddr.sa_family = ARPHRD_ETHER;
-+	memcpy(ifr.ifr_hwaddr.sa_data, addr, sizeof(*addr));
-+
-+	int ret = ioctl(sock, SIOCSIFHWADDR, &ifr);
-+	if (ret < 0) {
-+		PMD_LOG(ERR, "ioctl(SIOCSIFHWADDR) failed: %s", strerror(errno));
-+		ret = -errno;
-+	}
-+	close(sock);
-+
-+	return ret;
-+}
-+
- static int
- rtap_dev_start(struct rte_eth_dev *dev)
- {
-+	int ret = rtap_set_link_up(dev);
-+
-+	if (ret != 0)
-+		return ret;
-+
- 	dev->data->dev_link.link_status = RTE_ETH_LINK_UP;
- 	for (uint16_t i = 0; i < dev->data->nb_rx_queues; i++) {
- 		dev->data->rx_queue_state[i] = RTE_ETH_QUEUE_STATE_STARTED;
-@@ -127,6 +288,8 @@ rtap_dev_stop(struct rte_eth_dev *dev)
+ #define RTAP_DEFAULT_IFNAME	"rtap%d"
  
- 	dev->data->dev_link.link_status = RTE_ETH_LINK_DOWN;
- 
-+	rtap_set_link_down(dev);
++#define RTAP_TX_OFFLOAD		(RTE_ETH_TX_OFFLOAD_MULTI_SEGS | \
++				 RTE_ETH_TX_OFFLOAD_UDP_CKSUM | \
++				 RTE_ETH_TX_OFFLOAD_TCP_CKSUM | \
++				 RTE_ETH_TX_OFFLOAD_TCP_TSO)
 +
- 	for (uint16_t i = 0; i < dev->data->nb_rx_queues; i++) {
- 		dev->data->rx_queue_state[i] = RTE_ETH_QUEUE_STATE_STOPPED;
- 		dev->data->tx_queue_state[i] = RTE_ETH_QUEUE_STATE_STOPPED;
-@@ -368,6 +531,15 @@ static const struct eth_dev_ops rtap_ops = {
- 	.dev_configure		= rtap_dev_configure,
- 	.dev_infos_get		= rtap_dev_info,
- 	.dev_close		= rtap_dev_close,
-+	.link_update		= rtap_link_update,
-+	.dev_set_link_up	= rtap_set_link_up,
-+	.dev_set_link_down	= rtap_set_link_down,
-+	.mac_addr_set		= rtap_macaddr_set,
-+	.mtu_set		= rtap_mtu_set,
-+	.promiscuous_enable	= rtap_promiscuous_enable,
-+	.promiscuous_disable	= rtap_promiscuous_disable,
-+	.allmulticast_enable	= rtap_allmulticast_enable,
-+	.allmulticast_disable	= rtap_allmulticast_disable,
- 	.stats_get		= rtap_stats_get,
- 	.stats_reset		= rtap_stats_reset,
- 	.rx_queue_setup		= rtap_rx_queue_setup,
++#define RTAP_RX_OFFLOAD		(RTE_ETH_RX_OFFLOAD_UDP_CKSUM | \
++				 RTE_ETH_RX_OFFLOAD_TCP_CKSUM | \
++				 RTE_ETH_RX_OFFLOAD_TCP_LRO | \
++				 RTE_ETH_RX_OFFLOAD_SCATTER)
++
+ #define RTAP_DEFAULT_BURST	64
+ #define RTAP_NUM_BUFFERS	1024
+ #define RTAP_MAX_QUEUES		128
+@@ -317,7 +327,21 @@ rtap_dev_configure(struct rte_eth_dev *dev)
+ 	if (dev->data->nb_rx_queues != dev->data->nb_tx_queues)
+ 		return -EINVAL;
+ 
+-	if (ioctl(pmd->keep_fd, TUNSETOFFLOAD, 0) != 0) {
++	/*
++	 * Set offload flags visible on the kernel network interface.
++	 * This controls whether kernel will use checksum offload etc.
++	 * Note: kernel transmit is DPDK receive.
++	 */
++	const struct rte_eth_rxmode *rx_mode = &dev->data->dev_conf.rxmode;
++	unsigned int offload = 0;
++	if (rx_mode->offloads & RTE_ETH_RX_OFFLOAD_CHECKSUM) {
++		offload |= TUN_F_CSUM;
++
++		if (rx_mode->offloads & RTE_ETH_RX_OFFLOAD_TCP_LRO)
++			offload |= TUN_F_TSO4 | TUN_F_TSO6 | TUN_F_TSO_ECN;
++	}
++
++	if (ioctl(pmd->keep_fd, TUNSETOFFLOAD, offload) != 0) {
+ 		PMD_LOG(ERR, "ioctl(TUNSETOFFLOAD) failed: %s", strerror(errno));
+ 		return -1;
+ 	}
+@@ -336,6 +360,10 @@ rtap_dev_info(struct rte_eth_dev *dev, struct rte_eth_dev_info *dev_info)
+ 	dev_info->min_rx_bufsize = RTAP_MIN_RX_BUFSIZE;
+ 	dev_info->max_rx_queues = RTAP_MAX_QUEUES;
+ 	dev_info->max_tx_queues = RTAP_MAX_QUEUES;
++	dev_info->rx_queue_offload_capa = RTAP_RX_OFFLOAD;
++	dev_info->rx_offload_capa = dev_info->rx_queue_offload_capa;
++	dev_info->tx_queue_offload_capa = RTAP_TX_OFFLOAD;
++	dev_info->tx_offload_capa = dev_info->tx_queue_offload_capa;
+ 
+ 	dev_info->default_rxportconf = (struct rte_eth_dev_portconf) {
+ 		.burst_size = RTAP_DEFAULT_BURST,
 -- 
 2.51.0
 
