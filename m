@@ -2,45 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7459FE81BCB
-	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Feb 2026 14:14:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7B53E81BCC
+	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Feb 2026 14:14:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0CE4F402C6;
-	Mon,  9 Feb 2026 15:14:00 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 241F140652;
+	Mon,  9 Feb 2026 15:14:01 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
- by mails.dpdk.org (Postfix) with ESMTP id 4597A402B0
+ by mails.dpdk.org (Postfix) with ESMTP id D1268402B0
  for <dev@dpdk.org>; Mon,  9 Feb 2026 15:13:58 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1770646438; x=1802182438;
- h=from:to:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=TjX72Smf7CdgnwrHEGz2U47sDwh0kT9SM6RmfXixSTo=;
- b=DsK2xcylhn0aZX1RAvKiTtx/DVadXQO6Q8XNZA8o8Uw8nGIDJgHoconV
- Nu4bYOgZndKXflWh3rdQDSDxMB/rgKYFiDYgojTNZgt7mtXyDoy6ajdG+
- TYFAugaYRc+O88sK4CuDcY7nW1CIzzjc2Lqfu49gkYkxntL9xFoOa64A9
- akEZbazJ6Lw89h1m6YIe4yhOATTkFi2CY1YPu6K72t/8HSgjsyEQ+11u1
- 4qnH5/XVewDfT/SJkxzHOdi/t1h422GHSmfCRBtA/YjagJN8gql4ulU2m
- 6eTnjJZBWN9nIprVCWyJhyKxHmiS7GB5kO5Z+UQlpzLEBmain7FjNJjUj w==;
-X-CSE-ConnectionGUID: dkK2OnqASFWslZAzprdyOA==
-X-CSE-MsgGUID: MWTkdIL7Q9WtwikaeHKG5Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11696"; a="71658475"
-X-IronPort-AV: E=Sophos;i="6.21,282,1763452800"; d="scan'208";a="71658475"
+ t=1770646439; x=1802182439;
+ h=from:to:subject:date:message-id:in-reply-to:references:
+ mime-version:content-transfer-encoding;
+ bh=+VitgqdSj+SJhl+szIBg9z2h9niAe0VvQoh81CGOesU=;
+ b=P68XXMc/Qg7CmZPkRS21MrSGgc9GDBYEq/tlCTeOHK5/AOmk9e4RNm7m
+ KDBzAOYEN6LfILAdMdaGIgIGnu1mABmNjks7ubkuWAM1yu/5s4bcR6dkM
+ XHfs+WPB9eXruELY6j4FgXufvluX8vew1sKXemVMUwL1i+DzMvWBXy699
+ AnJzRTkiMsr6h53NBzjQ+Q6tlY7skAILD8CuHwoWqR2gGSjd6zd++l9L+
+ qmezOP4EipwJ3qFmz+EnHDr3aCFxjhm+OmotpaUob/XQdZCk3aamiAd38
+ ZdV0txROkHkMqtL+UxjoTKrVxYFf6UgSIrhzd4zgolMZFSoYZl4evIW0q A==;
+X-CSE-ConnectionGUID: /ymcgTuWRoCjkKjDNWVKwA==
+X-CSE-MsgGUID: PTYQLJWVT/+OL/hoQGUyKQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11696"; a="71658478"
+X-IronPort-AV: E=Sophos;i="6.21,282,1763452800"; d="scan'208";a="71658478"
 Received: from orviesa002.jf.intel.com ([10.64.159.142])
  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 09 Feb 2026 06:13:55 -0800
-X-CSE-ConnectionGUID: xtRT+i1MQpyg6lc+sTFbMA==
-X-CSE-MsgGUID: AMBq2aUwS4WFU5AQ1GKQ+w==
+ 09 Feb 2026 06:13:57 -0800
+X-CSE-ConnectionGUID: z80gs5suR0+9HtgRy0U0VA==
+X-CSE-MsgGUID: RUnmf3ZLSNmIe6/apinRpw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,282,1763452800"; d="scan'208";a="242215946"
+X-IronPort-AV: E=Sophos;i="6.21,282,1763452800"; d="scan'208";a="242215956"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by orviesa002.jf.intel.com with ESMTP; 09 Feb 2026 06:13:55 -0800
+ by orviesa002.jf.intel.com with ESMTP; 09 Feb 2026 06:13:57 -0800
 From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org
-Subject: [PATCH v1 00/12] Cleanups for ixgbe, i40e, and iavf PMD's
-Date: Mon,  9 Feb 2026 14:13:36 +0000
-Message-ID: <cover.1770646012.git.anatoly.burakov@intel.com>
+To: dev@dpdk.org,
+	Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+Subject: [PATCH v1 01/12] net/ixgbe: remove MAC type check macros
+Date: Mon,  9 Feb 2026 14:13:37 +0000
+Message-ID: <2e0ed7e0f254c7ad71c9a45d15bf21df5e1aa29f.1770646012.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.47.3
+In-Reply-To: <cover.1770646012.git.anatoly.burakov@intel.com>
+References: 
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -56,62 +59,83 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This patchset is an assortment of cleanups for ixgbe, i40e, and iavf PMD.
+The macros used were not informative and did not add any value beyond code
+golf, so remove them and make MAC type checks explicit.
 
-IXGBE:
+Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
+---
+ drivers/net/intel/ixgbe/ixgbe_ethdev.h | 12 ------------
+ drivers/net/intel/ixgbe/ixgbe_flow.c   | 20 +++++++++++++++++---
+ 2 files changed, 17 insertions(+), 15 deletions(-)
 
-- Remove unnecessary macros and #ifdef's
-- Disentangle unrelated flow API code paths
-
-I40E:
-
-- Get rid of global variables and unnecessary allocations
-- Reduce code duplication around default RSS keys
-- Use more appropriate integer types and definitions
-
-IAVF:
-
-- Remove dead code
-- Remove unnecessary allocations
-- Separate RSS uninit from hash flow parser uninit
-
-This is done in preparation for further rework.
-
-Anatoly Burakov (12):
-  net/ixgbe: remove MAC type check macros
-  net/ixgbe: remove security-related ifdefery
-  net/ixgbe: split security and ntuple filters
-  net/i40e: get rid of global filter variables
-  net/i40e: use stack allocations for tunnel set
-  net/i40e: make default RSS key global
-  net/i40e: use unsigned types for queue comparisons
-  net/i40e: use proper flex len define
-  net/i40e: remove global pattern variable
-  net/iavf: remove remnants of pipeline mode
-  net/iavf: do not use malloc in crypto VF commands
-  net/iavf: decouple hash uninit from parser uninit
-
- drivers/net/intel/i40e/i40e_ethdev.c         | 148 ++++++++---------
- drivers/net/intel/i40e/i40e_ethdev.h         |  24 +--
- drivers/net/intel/i40e/i40e_flow.c           | 146 ++++++++---------
- drivers/net/intel/i40e/i40e_hash.c           |  27 +++-
- drivers/net/intel/i40e/i40e_hash.h           |   3 +
- drivers/net/intel/iavf/iavf_ethdev.c         |   4 +
- drivers/net/intel/iavf/iavf_fdir.c           |   1 -
- drivers/net/intel/iavf/iavf_fsub.c           |   1 -
- drivers/net/intel/iavf/iavf_generic_flow.h   |  15 --
- drivers/net/intel/iavf/iavf_hash.c           |  14 +-
- drivers/net/intel/iavf/iavf_hash.h           |  13 ++
- drivers/net/intel/iavf/iavf_ipsec_crypto.c   | 158 ++++++------------
- drivers/net/intel/ixgbe/ixgbe_ethdev.c       |   8 -
- drivers/net/intel/ixgbe/ixgbe_ethdev.h       |  16 --
- drivers/net/intel/ixgbe/ixgbe_flow.c         | 162 ++++++++++++-------
- drivers/net/intel/ixgbe/ixgbe_rxtx.c         |  26 ---
- drivers/net/intel/ixgbe/ixgbe_rxtx.h         |   2 -
- drivers/net/intel/ixgbe/ixgbe_rxtx_vec_sse.c |   6 -
- 18 files changed, 352 insertions(+), 422 deletions(-)
- create mode 100644 drivers/net/intel/iavf/iavf_hash.h
-
+diff --git a/drivers/net/intel/ixgbe/ixgbe_ethdev.h b/drivers/net/intel/ixgbe/ixgbe_ethdev.h
+index 5393c81363..55b121b15d 100644
+--- a/drivers/net/intel/ixgbe/ixgbe_ethdev.h
++++ b/drivers/net/intel/ixgbe/ixgbe_ethdev.h
+@@ -137,18 +137,6 @@
+ #define IXGBE_MAX_FDIR_FILTER_NUM       (1024 * 32)
+ #define IXGBE_MAX_L2_TN_FILTER_NUM      128
+ 
+-#define MAC_TYPE_FILTER_SUP_EXT(type)    do {\
+-	if ((type) != ixgbe_mac_82599EB && (type) != ixgbe_mac_X540)\
+-		return -ENOTSUP;\
+-} while (0)
+-
+-#define MAC_TYPE_FILTER_SUP(type)    do {\
+-	if ((type) != ixgbe_mac_82599EB && (type) != ixgbe_mac_X540 &&\
+-		(type) != ixgbe_mac_X550 && (type) != ixgbe_mac_X550EM_x &&\
+-		(type) != ixgbe_mac_X550EM_a && (type) != ixgbe_mac_E610)\
+-		return -ENOTSUP;\
+-} while (0)
+-
+ /* Link speed for X550 auto negotiation */
+ #define IXGBE_LINK_SPEED_X550_AUTONEG	(IXGBE_LINK_SPEED_100_FULL | \
+ 					 IXGBE_LINK_SPEED_1GB_FULL | \
+diff --git a/drivers/net/intel/ixgbe/ixgbe_flow.c b/drivers/net/intel/ixgbe/ixgbe_flow.c
+index 27d2ba1132..a1245bb906 100644
+--- a/drivers/net/intel/ixgbe/ixgbe_flow.c
++++ b/drivers/net/intel/ixgbe/ixgbe_flow.c
+@@ -621,7 +621,9 @@ ixgbe_parse_ntuple_filter(struct rte_eth_dev *dev,
+ 	int ret;
+ 	struct ixgbe_hw *hw = IXGBE_DEV_PRIVATE_TO_HW(dev->data->dev_private);
+ 
+-	MAC_TYPE_FILTER_SUP_EXT(hw->mac.type);
++	if (hw->mac.type != ixgbe_mac_82599EB &&
++			hw->mac.type != ixgbe_mac_X540)
++		return -ENOTSUP;
+ 
+ 	ret = cons_parse_ntuple_filter(attr, pattern, actions, filter, error);
+ 
+@@ -861,7 +863,13 @@ ixgbe_parse_ethertype_filter(struct rte_eth_dev *dev,
+ 	int ret;
+ 	struct ixgbe_hw *hw = IXGBE_DEV_PRIVATE_TO_HW(dev->data->dev_private);
+ 
+-	MAC_TYPE_FILTER_SUP(hw->mac.type);
++	if (hw->mac.type != ixgbe_mac_82599EB &&
++			hw->mac.type != ixgbe_mac_X540 &&
++			hw->mac.type != ixgbe_mac_X550 &&
++			hw->mac.type != ixgbe_mac_X550EM_x &&
++			hw->mac.type != ixgbe_mac_X550EM_a &&
++			hw->mac.type != ixgbe_mac_E610)
++		return -ENOTSUP;
+ 
+ 	ret = cons_parse_ethertype_filter(attr, pattern,
+ 					actions, filter, error);
+@@ -1150,7 +1158,13 @@ ixgbe_parse_syn_filter(struct rte_eth_dev *dev,
+ 	int ret;
+ 	struct ixgbe_hw *hw = IXGBE_DEV_PRIVATE_TO_HW(dev->data->dev_private);
+ 
+-	MAC_TYPE_FILTER_SUP(hw->mac.type);
++	if (hw->mac.type != ixgbe_mac_82599EB &&
++			hw->mac.type != ixgbe_mac_X540 &&
++			hw->mac.type != ixgbe_mac_X550 &&
++			hw->mac.type != ixgbe_mac_X550EM_x &&
++			hw->mac.type != ixgbe_mac_X550EM_a &&
++			hw->mac.type != ixgbe_mac_E610)
++		return -ENOTSUP;
+ 
+ 	ret = cons_parse_syn_filter(attr, pattern,
+ 					actions, filter, error);
 -- 
 2.47.3
 
