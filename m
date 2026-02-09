@@ -2,67 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89FAEE7E0DF
-	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Feb 2026 19:51:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7AE3EE6B6F
+	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Feb 2026 19:51:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 632F240663;
-	Mon,  9 Feb 2026 20:51:03 +0100 (CET)
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com
- [209.85.128.41]) by mails.dpdk.org (Postfix) with ESMTP id 82DF54065E
- for <dev@dpdk.org>; Mon,  9 Feb 2026 20:51:02 +0100 (CET)
-Received: by mail-wm1-f41.google.com with SMTP id
- 5b1f17b1804b1-48336a6e932so11837705e9.3
- for <dev@dpdk.org>; Mon, 09 Feb 2026 11:51:02 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id A52F340689;
+	Mon,  9 Feb 2026 20:51:05 +0100 (CET)
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com
+ [209.85.128.42]) by mails.dpdk.org (Postfix) with ESMTP id 66A5940684
+ for <dev@dpdk.org>; Mon,  9 Feb 2026 20:51:04 +0100 (CET)
+Received: by mail-wm1-f42.google.com with SMTP id
+ 5b1f17b1804b1-483487335c2so8296955e9.2
+ for <dev@dpdk.org>; Mon, 09 Feb 2026 11:51:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1770666662;
- x=1771271462; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1770666664;
+ x=1771271464; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=x6gO9hunjNB7HPyd5FfItMh75uPPFQT7Z36S2aNmtJU=;
- b=hqSvmmUIj+c90od4UL2MXGPEFgIKnn7bgehC9mMlV0U9t98fah2qkjjMb93UkeoX3W
- 7traj2RYxLx3nih+kWkNRbOdNqL+gzTMKG1ILow0IBnfXH9uDKB3iWi4OocKz8eR1+dU
- kizX+PjOoyEEw3ZoeaUDrOpztru+IkTtsmVBv1yYBdphBWTk7L9R91hjblbVZN8TK/WL
- Qeq/iHnHW07rqqvqge4TWhBZQ6V8ApZyc+qEhQucgdKrp3RZ1h1ZSKQN6iR4jQxNv/K9
- ZCzor/Ti9mzDbUlxBpnaWOIwoFYV5Pp3L+KpqqAYT4b9DvQ9TIda0gROzkjarC+aAnUP
- AyKQ==
+ bh=dbZlANkMQYHj7WagzvDpmCJgwTegJEXHrS1tCS9fW+Q=;
+ b=m73at29E5Euk0cwoe9YdlsBaPBMAnnSGdx29HqK72I8VRZQTzKqJCaqJzOVXdex4b1
+ KrVgWtJg08FRKwNioxS3OrUD0SiDqHpR+60Ns9TV2J5P/n7OC3cUh42ZexAoD/SLIEyi
+ vcdi4JhYmstPvofoABl4gMPjEEWdTDaSM0HZJGyWJl22qXqcSTBxz2P6pHQXsVKAPLrj
+ eKozl/j9jWS6AildpZHNHL12J8IjnQ6nEpznPKjkfBKYgE1l34ul+831cCZmssrPCKD2
+ 0KPnN2K6BgdOtFk2j0Uo7unOAe2wj12gkvuQOBqOpkvBrIjtK7MPWauMwEFSVRTqL4uQ
+ 19xQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1770666662; x=1771271462;
+ d=1e100.net; s=20230601; t=1770666664; x=1771271464;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=x6gO9hunjNB7HPyd5FfItMh75uPPFQT7Z36S2aNmtJU=;
- b=YvZ0fByJbBJNu2kVMI+ToMcxA5TUp54nM1PUwueLILGIshM32TSYPpVoCKkTfZ8+MV
- 0m6MY8G+yeprSj5xuTdabk0Ij2ihG8/n0ZE0Y00IpVhhOiDc5dD363KjlE+J/U2+75ux
- n/B3FAn0I0CH/6ADfzd+xFwVlc1Tuk+CIMChPg20pZJXLec8aAupqIvM1hgFmaK4PlhH
- /gxtDOlsPG7kxcmEvXmmWC/zVGU6wo6cx68M4WL8tcCrcS4uzO2Gn/paqxPj65xRwyRU
- Aev0Rb7Toyw/FY1jxrXmUNkU7trfVbc+q4C45rWggG+qtNkd00ALEgWZIIvZVUBmWPGu
- ijzA==
-X-Gm-Message-State: AOJu0YyviWF6mdqyGO5tqTG8GRtNWetdtCYXcAoIXKmuGQclp33fHTW2
- VK4y4DRaykCSHb4sTtQYVy14AB6FADRq+bEFBtQzN3StEhVdcy7WyN8c6bfCaeTjjfoh26TuOKc
- SMs2p
-X-Gm-Gg: AZuq6aK+8CxIDd6mNth15GeatQUnlMLdNW+KpCjtHGoRXOVwVNBFmI6Je2vz//9OcQK
- opdTgie2FL6mSd9bXVfTCufHYtodBPQQ2ajNtd+G1zl68MnhsLrQ/v5m8Gl16KaBq81QN+1ROOk
- +MaQPdmIKWf+Uqx+z40lsev2EzC+tsBwxExkUti766Qqijqjp1MJtV7VkaCMzcTas7t/jZfvZDe
- fEkgtmj5RyRIqiukBnaJ4eaB98vz/uijSHf5891oWGaAepvFPNBqqHcSPHL43KK9KvbqkvWym6Z
- 3EUfkNnBrf+Q6Ct1sHJbM6gxfRi5jI28wZAKW4+1pF6xVdqEgBiIlVnzKzTBPrdrYaNg8iggAlh
- ROHa4IP4A9ga45yeQW8E8rFIzLm0YxHMDj/4+yk8DEfj0LrB7YMO8u1uCK1ljOBW67lJS11qFQd
- KEIooUGWtk1OrzYoVc/rIWiNxNQ7owQ4b3bDliR9/BoSKXiRkF5A==
-X-Received: by 2002:a05:600c:4745:b0:47e:e48b:506d with SMTP id
- 5b1f17b1804b1-483201e4b18mr201358885e9.16.1770666661669; 
- Mon, 09 Feb 2026 11:51:01 -0800 (PST)
+ bh=dbZlANkMQYHj7WagzvDpmCJgwTegJEXHrS1tCS9fW+Q=;
+ b=jX4tDtTX6gScDulgn0IovKCSQsvaolkk0MCGWaNYy/r3JdWvfmSVeLIDCh//tXPCUZ
+ BvTfU8YbE2u277RCkIsKlI6n1JvLPkLTj/rdooJIZw9p6OXJG3w1r3WE5G/rL7RV+Tf0
+ D+DOmKjMSu9cZjR9i4oV2sg+wg1KUoyBFFhBS9C7Vl+T3zOkMVSmTYGGQPCRmLzNwozb
+ AahylYeqfCg1/GnEdRzkF7wSb/uxRNvwagYfhAkrwsT6Dj+PHUxk5mDNNfRffuA3DtEa
+ iF94nXaVSfrGJ4kJjZvSy+w38josQRwdhgcCPVxUz/G2pjrkcDvT4c/hQg28gzBrvOAQ
+ QLiQ==
+X-Gm-Message-State: AOJu0YwBxiwoi5b2alEKmxPp6gVxpCu51cSDq6Nrz/2lDVIHt3YHq3BI
+ jbTHDMmTwKJ9UCHpVyax7rjjcjaiW5W1r5MVYWQBzOpDML8v0aZBPovCV2wvrytoynHwgCkaoIY
+ r57/7
+X-Gm-Gg: AZuq6aKX4E5S0fd4IWsjUXDg03HNITdkSpo+fTIVfARU7FAg17B9T05BQyfA4q5N/M3
+ vJgSdF2p/33yrQiaqNq9GxT6klfTIzzYL0c25CsK0CAx4bpXTdDG6DD8sh8DO2fQytKzwtsEZcT
+ +ayDrCiXPy1gk4uK32nuD19SGWbowf8b0lfJwIMLCub0UhVLt+3dwUBgZNVyiqVGH4J77pt4SOf
+ Pq4Jj6G+BBdAQ1VOcUCumYV7jUrgjmnaMjSgMkefxHXvCWVojm+0URcFZ1Y3ZvzsK8u+RQSIpli
+ Zi6IqJm0jewf3U3AjYjlo1x2UjcIgU56HQ9+fTqkLHBQ1UO/Tr8YnUcQamG6miXpdsJVCCCu6cn
+ /kuADzaFDf81aTTrTsGgWmT8kgDJpcKAidCoWgfrqHX0ffUEUfr756xa116b7DaYZUw/PmuPytL
+ ojX/2vJun+jfWhIE0Vuq/WevuCs9U1yVe7FERuWx+DYWj/WX6WnQ==
+X-Received: by 2002:a05:600c:8b13:b0:480:52fe:58f5 with SMTP id
+ 5b1f17b1804b1-483209bcb1amr162221915e9.31.1770666663649; 
+ Mon, 09 Feb 2026 11:51:03 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-4834d5d77f9sm10178345e9.3.2026.02.09.11.50.59
+ 5b1f17b1804b1-4834d5d77f9sm10178345e9.3.2026.02.09.11.51.01
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 09 Feb 2026 11:51:01 -0800 (PST)
+ Mon, 09 Feb 2026 11:51:03 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
  Aaron Conole <aconole@redhat.com>
-Subject: [PATCH v8 1/6] doc: add AGENTS.md for AI code review tools
-Date: Mon,  9 Feb 2026 11:48:49 -0800
-Message-ID: <20260209195055.142484-2-stephen@networkplumber.org>
+Subject: [PATCH v8 2/6] devtools: add multi-provider AI patch review script
+Date: Mon,  9 Feb 2026 11:48:50 -0800
+Message-ID: <20260209195055.142484-3-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260209195055.142484-1-stephen@networkplumber.org>
 References: <20260126184205.104629-1-stephen@networkplumber.org>
@@ -82,1544 +82,1382 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add a reference document that enables AI code review tools to
-validate DPDK patches against project coding standards and
-submission requirements.
+This is an AI generated script to review DPDK patches against
+the AGENTS.md coding guidelines using AI language models.
 
-The document consolidates guidelines from the DPDK contributor
-documentation, coding style guide, and validation scripts
-(check-git-log.sh, checkpatches.sh) into a single structured
-file. It covers SPDX license requirements, commit message
-formatting, C coding style rules, forbidden token restrictions,
-API tag placement, and severity levels aligned with existing
-validation tool output.
+Supported AI providers:
+  - Anthropic Claude (default)
+  - OpenAI ChatGPT
+  - xAI Grok
+  - Google Gemini
+
+The script reads a patch file and the AGENTS.md guidelines, then
+submits them to the selected AI provider for review. Results are
+organized by severity level (Error, Warning, Info) as defined in
+the guidelines.
+
+Features:
+  - Provider selection via -p/--provider option
+  - Custom model selection via -m/--model option
+  - Verbose mode shows token usage statistics
+  - Uses temporary files for API requests to handle large patches
+  - Prompt caching support for Anthropic to reduce costs
+
+Usage:
+  ./devtools/analyze-patch.py 0001-net-ixgbe-fix-something.patch
+  ./devtools/analyze-patch.py -p xai my-patch.patch
+  ./devtools/analyze-patch.py -l  # list providers
+
+Requires the appropriate API key environment variable to be set
+for the chosen provider (ANTHROPIC_API_KEY, OPENAI_API_KEY,
+XAI_API_KEY, or GOOGLE_API_KEY).
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- AGENTS.md | 1514 +++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 1514 insertions(+)
- create mode 100644 AGENTS.md
+ devtools/analyze-patch.py | 1334 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 1334 insertions(+)
+ create mode 100755 devtools/analyze-patch.py
 
-diff --git a/AGENTS.md b/AGENTS.md
-new file mode 100644
-index 0000000000..e14e4284f5
+diff --git a/devtools/analyze-patch.py b/devtools/analyze-patch.py
+new file mode 100755
+index 0000000000..c77908fb3c
 --- /dev/null
-+++ b/AGENTS.md
-@@ -0,0 +1,1514 @@
-+# AGENTS.md - DPDK Code Review Guidelines for AI Tools
-+
-+## CRITICAL INSTRUCTION - READ FIRST
-+
-+This document has two categories of review rules with different
-+confidence thresholds:
-+
-+### 1. Correctness Bugs -- HIGHEST PRIORITY (report at >=50% confidence)
-+
-+**Always report potential correctness bugs.** These are the most
-+valuable findings. When in doubt, report them with a note about
-+your confidence level. A possible use-after-free or resource leak
-+is worth mentioning even if you are not certain.
-+
-+Correctness bugs include:
-+- Use-after-free (accessing memory after `free`/`rte_free`)
-+- Resource leaks on error paths (memory, file descriptors, locks)
-+- Double-free or double-close
-+- NULL pointer dereference
-+- Buffer overflows or out-of-bounds access
-+- Uninitialized variable use in a reachable code path
-+- Race conditions (unsynchronized shared state)
-+- Missing error checks on functions that can fail
-+- Error paths that skip cleanup (goto labels, missing free/close)
-+- Incorrect error propagation (wrong return value, lost errno)
-+- Logic errors in conditionals (wrong operator, inverted test)
-+- Integer overflow/truncation in size calculations
-+- Missing bounds checks on user-supplied sizes or indices
-+
-+**Do NOT self-censor correctness bugs.** If you identify a code
-+path where a resource could leak or memory could be used after
-+free, report it. Do not talk yourself out of it.
-+
-+### 2. Style, Process, and Formatting -- suppress false positives
-+
-+**NEVER list a style/process item under "Errors" or "Warnings" if
-+you conclude it is correct.**
-+
-+Before outputting any style, formatting, or process error/warning,
-+verify it is actually wrong. If your analysis concludes with
-+phrases like "there's no issue here", "which is fine", "appears
-+correct", "is acceptable", or "this is actually correct" -- then
-+DO NOT INCLUDE IT IN YOUR OUTPUT AT ALL. Delete it. Omit it
-+entirely.
-+
-+This suppression rule applies to: SPDX/copyright format, commit
-+message formatting, tag ordering, line length, naming conventions,
-+code style, and process compliance. It does NOT apply to
-+correctness bugs listed above.
-+
-+---
-+
-+This document provides guidelines for AI-powered code review tools
-+when reviewing contributions to the Data Plane Development Kit
-+(DPDK). It is derived from the official DPDK contributor guidelines
-+and validation scripts.
-+
-+## Overview
-+
-+DPDK follows a development process modeled on the Linux Kernel. All
-+patches are reviewed publicly on the mailing list before being
-+merged. AI review tools should verify compliance with the standards
-+outlined below.
-+
-+## Review Philosophy
-+
-+**Correctness bugs are the primary goal of AI review.** Style and
-+formatting checks are secondary. A review that catches a
-+use-after-free but misses a style nit is far more valuable than
-+one that catches every style issue but misses the bug.
-+
-+**BEFORE OUTPUTTING YOUR REVIEW**: Re-read each item.
-+- For correctness bugs: keep them. If you have reasonable doubt
-+  that a code path is safe, report it.
-+- For style/process items: if ANY item contains phrases like "is
-+  fine", "no issue", "appears correct", "is acceptable",
-+  "actually correct" -- DELETE THAT ITEM. Do not include it.
-+
-+### Correctness review guidelines
-+- Trace error paths: for every function that allocates a resource
-+  or acquires a lock, verify that ALL error paths after that point
-+  release it
-+- Check every `goto error` and early `return`: does it clean up
-+  everything allocated so far?
-+- Look for use-after-free: after `free(p)`, is `p` accessed again?
-+- Check that error codes are propagated, not silently dropped
-+- Report at >=50% confidence; note uncertainty if appropriate
-+- It is better to report a potential bug that turns out to be safe
-+  than to miss a real bug
-+
-+### Style and process review guidelines
-+- Only comment on style/process issues when you have HIGH CONFIDENCE (>80%) that an issue exists
-+- Be concise: one sentence per comment when possible
-+- Focus on actionable feedback, not observations
-+- When reviewing text, only comment on clarity issues if the text is genuinely
-+  confusing or could lead to errors.
-+- Do NOT comment on copyright years unless outside valid range (2013 to current year)
-+- Do NOT report an issue then contradict yourself - if something is acceptable, do not mention it at all
-+- Do NOT include items in Errors/Warnings that you then say are "acceptable" or "correct"
-+- Do NOT mention things that are correct or "not an issue" - only report actual problems
-+- Do NOT speculate about contributor circumstances (employment, company policies, etc.)
-+- Before adding any style item to your review, ask: "Is this actually wrong?" If no, omit it entirely.
-+- VERIFY before reporting: For subject line length, COUNT the characters first. If <=60, do not mention it.
-+- NEVER write "(Correction: ...)" - if you need to correct yourself, simply omit the item entirely
-+- Do NOT add vague suggestions like "should be verified" or "should be checked" - either it's wrong or don't mention it
-+- Do NOT flag something as an Error then say "which is correct" in the same item
-+- Do NOT say "no issue here" or "this is actually correct" - if there's no issue, do not include it in your review
-+- Do NOT call the standard DPDK SPDX/copyright format "different style" - it is THE standard
-+- Do NOT analyze cross-patch dependencies or compilation order - you cannot reliably determine this from patch review
-+- Do NOT claim a patch "would cause compilation failure" based on symbols used in other patches in the series
-+- Review each patch individually for its own correctness; assume the patch author ordered them correctly
-+
-+## Priority Areas (Review These)
-+
-+### Security & Safety
-+- Unsafe code blocks without justification
-+- Command injection risks (shell commands, user input)
-+- Path traversal vulnerabilities
-+- Credential exposure or hard coded secrets
-+- Missing input validation on external data
-+- Improper error handling that could leak sensitive info
-+
-+### Correctness Issues
-+- Logic errors that could cause panics or incorrect behavior
-+- Buffer overflows
-+- Race conditions
-+- Resource leaks (files, connections, memory)
-+- Off-by-one errors or boundary conditions
-+- Incorrect error propagation
-+- **Use-after-free** (any access to memory after it has been freed)
-+- **Error path resource leaks**: For every allocation or fd open,
-+  trace each error path (`goto`, early `return`, conditional) to
-+  verify the resource is released. Common patterns to check:
-+  - `malloc`/`rte_malloc` followed by a failure that does `return -1`
-+    instead of `goto cleanup`
-+  - `open()`/`socket()` fd not closed on a later error
-+  - Lock acquired but not released on an error branch
-+  - Partially initialized structure where early fields are allocated
-+    but later allocation fails without freeing the early ones
-+- **Double-free / double-close**: resource freed in both a normal
-+  path and an error path, or fd closed but not set to -1 allowing
-+  a second close
-+- **Missing error checks**: functions that can fail (malloc, open,
-+  ioctl, etc.) whose return value is not checked
-+- Changes to API without release notes
-+- Changes to ABI on non-LTS release
-+- Usage of deprecated APIs when replacements exist
-+- Overly defensive code that adds unnecessary checks
-+- Unnecessary comments that just restate what the code already shows (remove them)
-+- **Process-shared synchronization errors** (pthread mutexes in shared memory without `PTHREAD_PROCESS_SHARED`)
-+
-+### Architecture & Patterns
-+- Code that violates existing patterns in the code base
-+- Missing error handling
-+- Code that is not safe against signals
-+
-+---
-+
-+## Source License Requirements
-+
-+### SPDX License Identifiers
-+
-+Every source file must begin with an SPDX license identifier, followed
-+by the copyright notice, then a blank line before other content.
-+
-+- SPDX tag on first line (or second line for `#!` scripts)
-+- Copyright line immediately follows
-+- Blank line after copyright before any code/includes
-+- Core libraries and drivers use `BSD-3-Clause`
-+- Kernel components use `GPL-2.0`
-+- Dual-licensed code uses: `(BSD-3-Clause OR GPL-2.0)`
-+
-+```c
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2024 John Smith
-+ */
-+
-+#include <stdio.h>
-+```
-+
-+For scripts:
-+```python
++++ b/devtools/analyze-patch.py
+@@ -0,0 +1,1334 @@
 +#!/usr/bin/env python3
 +# SPDX-License-Identifier: BSD-3-Clause
-+# Copyright(c) 2024 Jane Doe
++# Copyright(c) 2026 Stephen Hemminger
 +
++"""
++Analyze DPDK patches using AI providers.
++
++Supported providers: Anthropic Claude, OpenAI ChatGPT, xAI Grok, Google Gemini
++"""
++
++import argparse
++import json
++import os
++import re
++import subprocess
 +import sys
-+```
-+
-+**Do not include boilerplate license text** - the SPDX identifier is sufficient.
-+
-+**Do NOT flag copyright years** - Copyright years reflect when code was written. Valid years range from 2013 (DPDK's first release) through the current year. Only flag years outside this range (e.g., years before 2013 or future years beyond the current date).
-+
-+**Copyright holders can be individuals or organizations** - Both are equally valid. NEVER comment on, question, or speculate about copyright holders. Do not mention employer policies, company resources, or suggest copyright "should" be assigned differently. The copyright holder's choice is not subject to review.
-+
-+**The following SPDX/copyright format is correct** - do NOT flag it or comment on it:
-+```c
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2026 Stephen Hemminger
-+ */
-+```
-+This is the standard DPDK format. Do not say it is "different" or "unusual" - it is correct.
-+Do not suggest the copyright year "should be verified" - if it's in the valid range (2013-current year), it's fine.
-+If SPDX is on line 1 and copyright follows, this is CORRECT - do not include it in Errors.
-+
-+---
-+
-+## Commit Message Requirements
-+
-+### Subject Line (First Line)
-+
-+| Rule | Limit |
-+|------|-------|
-+| Maximum length | **60 characters** |
-+| Format | `component: lowercase description` |
-+| Case | Lowercase except acronyms |
-+| Mood | Imperative (instructions to codebase) |
-+| Punctuation | **No trailing period** |
-+
-+**Before flagging subject line length**: Actually count the characters. Only flag if >60. Do not flag then correct yourself.
-+
-+```
-+# Good examples
-+net/ixgbe: fix offload config option name
-+config: increase max queues per port
-+net/mlx5: add support for flow counters
-+app/testpmd: fix memory leak in flow create
-+
-+# Bad examples
-+Fixed the offload config option.    # past tense, has period, no prefix
-+net/ixgbe: Fix Offload Config       # uppercase after colon
-+ixgbe: fix something                # wrong prefix, should be net/ixgbe
-+lib/ethdev: add new feature         # wrong prefix, should be ethdev:
-+```
-+
-+#### Headline Format Errors (from check-git-log.sh)
-+
-+The following are flagged as errors:
-+- Tab characters in subject
-+- Leading or trailing spaces
-+- Trailing period (`.`)
-+- Punctuation marks: `, ; ! ? & |`
-+- Underscores after the colon (indicates code in subject)
-+- Missing colon separator
-+- No space after colon
-+- Space before colon
-+
-+#### Common Prefix Mistakes
-+
-+| Wrong | Correct |
-+|-------|---------|
-+| `ixgbe:` | `net/ixgbe:` |
-+| `lib/ethdev:` | `ethdev:` |
-+| `example:` | `examples/foo:` |
-+| `apps/` | `app/name:` |
-+| `app/test:` | `test:` |
-+| `testpmd:` | `app/testpmd:` |
-+| `test-pmd:` | `app/testpmd:` |
-+| `bond:` | `net/bonding:` |
-+
-+#### Case-Sensitive Terms (Commit Messages Only)
-+
-+These terms must use exact capitalization **in commit messages** (from `devtools/words-case.txt`):
-+- `Rx`, `Tx` (not `RX`, `TX`, `rx`, `tx`)
-+- `VF`, `PF` (not `vf`, `pf`)
-+- `MAC`, `VLAN`, `RSS`, `API`
-+- `Linux`, `Windows`, `FreeBSD`
-+- Check `devtools/words-case.txt` for complete list
-+
-+**Note**: These rules apply to commit messages only, NOT to code comments or documentation.
-+
-+### Commit Body
-+
-+| Rule | Limit |
-+|------|-------|
-+| Line wrap | **75 characters** |
-+| Exception | `Fixes:` lines may exceed 75 chars |
-+
-+Body guidelines:
-+- Describe the issue being fixed or feature being added
-+- Provide enough context for reviewers
-+- **Do not start the commit message body with "It"**
-+- **Must end with** `Signed-off-by:` line (real name, not alias)
-+
-+### Fixes Tag
-+
-+When fixing regressions, use the `Fixes:` tag with a 12-character abbreviated SHA:
-+
-+```
-+Fixes: abcdefgh1234 ("original commit subject")
-+```
-+
-+The hash must reference a commit in the current branch, and the subject must match exactly.
-+
-+**Do NOT flag Fixes tags** asking for verification that the commit "exists in the tree" or "cannot verify" - you cannot verify this from a patch review. If the format is correct (12-char SHA, quoted subject), accept it. NEVER say "cannot verify this exists".
-+
-+**Finding maintainers**: Use `devtools/get-maintainer.sh` to identify the current subsystem maintainer from the `MAINTAINERS` file, rather than CC'ing the original author:
-+
-+```bash
-+git send-email --to-cmd ./devtools/get-maintainer.sh --cc dev@dpdk.org 000*.patch
-+```
-+
-+### Required Tags
-+
-+```
-+# For Coverity issues (required if "coverity" mentioned in body):
-+Coverity issue: 12345
-+
-+# For Bugzilla issues (required if "bugzilla" mentioned in body):
-+Bugzilla ID: 12345
-+
-+# For stable release backport candidates:
-+Cc: stable@dpdk.org
-+
-+# For patch dependencies (in commit notes after ---):
-+Depends-on: series-NNNNN ("Title of the series")
-+```
-+
-+### Tag Order
-+
-+Tags must appear in this order, with a blank line separating the two groups:
-+
-+**Group 1** (optional tags, no blank lines within this group):
-+- Coverity issue:
-+- Bugzilla ID:
-+- Fixes:
-+- Cc:
-+
-+**Blank line required here** (only if Group 1 tags are present)
-+
-+**Group 2** (no blank lines within this group):
-+- Reported-by:
-+- Suggested-by:
-+- Signed-off-by:
-+- Acked-by:
-+- Reviewed-by:
-+- Tested-by:
-+
-+**Correct examples:**
-+
-+Simple patch with no Group 1 tags (most common):
-+```
-+The info_get callback doesn't need to check its args
-+since already done by ethdev.
-+
-+Signed-off-by: John Smith <john@example.com>
-+```
-+
-+Patch with Fixes and Cc tags:
-+```
-+Fixes: c743e50c475f ("null: new poll mode driver")
-+Cc: stable@dpdk.org
-+
-+Signed-off-by: John Smith <john@example.com>
-+```
-+
-+Patch with only Fixes tag:
-+```
-+Fixes: abcd1234abcd ("component: original commit")
-+
-+Signed-off-by: Jane Doe <jane@example.com>
-+```
-+
-+**What is correct (do NOT flag):**
-+- Signed-off-by directly after commit body when there are no Group 1 tags - this is CORRECT
-+- No blank line between `Fixes:` and `Cc:` - this is CORRECT
-+- Blank line between `Cc:` (or last tag in Group 1) and `Signed-off-by:` - this is CORRECT
-+
-+**What is wrong (DO flag):**
-+- Missing blank line between Group 1 tags and Group 2 tags (when Group 1 tags exist)
-+
-+**Tag format**: `Tag-name: Full Name <email@domain.com>`
-+
-+---
-+
-+## C Coding Style
-+
-+### Line Length
-+
-+| Context | Limit |
-+|---------|-------|
-+| Source code | **100 characters** |
-+| Commit body | **75 characters** |
-+
-+### General Formatting
-+
-+- **Tab width**: 8 characters (hard tabs for indentation, spaces for alignment)
-+- **No trailing whitespace** on lines or at end of files
-+- Files must end with a new line
-+- Code style should be consistent within each file
-+
-+
-+### Comments
-+
-+```c
-+/* Most single-line comments look like this. */
-+
-+/*
-+ * VERY important single-line comments look like this.
-+ */
-+
-+/*
-+ * Multi-line comments look like this. Make them real sentences. Fill
-+ * them so they look like real paragraphs.
-+ */
-+```
-+
-+### Header File Organization
-+
-+Include order (each group separated by blank line):
-+1. System/libc includes
-+2. DPDK EAL includes
-+3. DPDK misc library includes
-+4. Application-specific includes
-+
-+```c
-+#include <stdio.h>
-+#include <stdlib.h>
-+
-+#include <rte_eal.h>
-+
-+#include <rte_ring.h>
-+#include <rte_mempool.h>
-+
-+#include "application.h"
-+```
-+
-+### Header Guards
-+
-+```c
-+#ifndef _FILE_H_
-+#define _FILE_H_
-+
-+/* Code */
-+
-+#endif /* _FILE_H_ */
-+```
-+
-+### Naming Conventions
-+
-+- **All external symbols** must have `RTE_` or `rte_` prefix
-+- **Macros**: ALL_UPPERCASE with `RTE_` prefix
-+- **Functions**: lowercase with underscores only (no CamelCase)
-+- **Variables**: lowercase with underscores only
-+- **Enum values**: ALL_UPPERCASE with `RTE_<ENUM>_` prefix
-+
-+**Exception**: Driver base directories (`drivers/*/base/`) may use different
-+naming conventions when sharing code across platforms or with upstream vendor code.
-+
-+#### Symbol Naming for Static Linking
-+
-+Drivers and libraries must not expose global variables that could
-+clash when statically linked with other DPDK components or
-+applications. Use consistent and unique prefixes for all exported
-+symbols to avoid namespace collisions.
-+
-+**Good practice**: Use a driver-specific or library-specific prefix for all global variables:
-+
-+```c
-+/* Good - virtio driver uses consistent "virtio_" prefix */
-+const struct virtio_ops virtio_legacy_ops = {
-+	.read = virtio_legacy_read,
-+	.write = virtio_legacy_write,
-+	.configure = virtio_legacy_configure,
-+};
-+
-+const struct virtio_ops virtio_modern_ops = {
-+	.read = virtio_modern_read,
-+	.write = virtio_modern_write,
-+	.configure = virtio_modern_configure,
-+};
-+
-+/* Good - mlx5 driver uses consistent "mlx5_" prefix */
-+struct mlx5_flow_driver_ops mlx5_flow_dv_ops;
-+```
-+
-+**Bad practice**: Generic names that may clash:
-+
-+```c
-+/* Bad - "ops" is too generic, will clash with other drivers */
-+const struct virtio_ops ops = { ... };
-+
-+/* Bad - "legacy_ops" could clash with other legacy implementations */
-+const struct virtio_ops legacy_ops = { ... };
-+
-+/* Bad - "driver_config" is not unique */
-+struct driver_config config;
-+```
-+
-+**Guidelines**:
-+- Prefix all global variables with the driver or library name (e.g., `virtio_`, `mlx5_`, `ixgbe_`)
-+- Prefix all global functions similarly unless they use the `rte_` namespace
-+- Internal static variables do not require prefixes as they have file scope
-+- Consider using the `RTE_` or `rte_` prefix only for symbols that are part of the public DPDK API
-+
-+#### Prohibited Terminology
-+
-+Do not use non-inclusive naming including:
-+- `master/slave` -> Use: primary/secondary, controller/worker, leader/follower
-+- `blacklist/whitelist` -> Use: denylist/allowlist, blocklist/passlist
-+- `cripple` -> Use: impacted, degraded, restricted, immobolized
-+- `tribe` -> Use: team, squad
-+- `sanity check` -> Use: coherence check, test, verification
-+
-+
-+### Comparisons and Boolean Logic
-+
-+```c
-+/* Pointers - compare explicitly with NULL */
-+if (p == NULL)      /* Good */
-+if (p != NULL)      /* Good */
-+if (likely(p != NULL))   /* Good - likely/unlikely don't change this */
-+if (unlikely(p == NULL)) /* Good - likely/unlikely don't change this */
-+if (!p)             /* Bad - don't use ! on pointers */
-+
-+/* Integers - compare explicitly with zero */
-+if (a == 0)         /* Good */
-+if (a != 0)         /* Good */
-+if (errno != 0)     /* Good - this IS explicit */
-+if (likely(a != 0)) /* Good - likely/unlikely don't change this */
-+if (!a)             /* Bad - don't use ! on integers */
-+if (a)              /* Bad - implicit, should be a != 0 */
-+
-+/* Characters - compare with character constant */
-+if (*p == '\0')     /* Good */
-+
-+/* Booleans - direct test is acceptable */
-+if (flag)           /* Good for actual bool types */
-+if (!flag)          /* Good for actual bool types */
-+```
-+
-+**Explicit comparison** means using `==` or `!=` operators (e.g., `x != 0`, `p == NULL`).
-+**Implicit comparison** means relying on truthiness without an operator (e.g., `if (x)`, `if (!p)`).
-+**Note**: `likely()` and `unlikely()` macros do NOT affect whether a comparison is explicit or implicit.
-+
-+### Boolean Usage
-+
-+- Using `bool` type is allowed
-+- Prefer `bool` over `int` when a variable or field is only used as a boolean
-+- For structure fields, consider if the size/alignment impact is acceptable
-+
-+### Indentation and Braces
-+
-+```c
-+/* Control statements - no braces for single statements */
-+if (val != NULL)
-+	val = realloc(val, newsize);
-+
-+/* Braces on same line as else */
-+if (test)
-+	stmt;
-+else if (bar) {
-+	stmt;
-+	stmt;
-+} else
-+	stmt;
-+
-+/* Switch statements - don't indent case */
-+switch (ch) {
-+case 'a':
-+	aflag = 1;
-+	/* FALLTHROUGH */
-+case 'b':
-+	bflag = 1;
-+	break;
-+default:
-+	usage();
++import tempfile
++from datetime import date
++from email.message import EmailMessage
++from pathlib import Path
++from typing import Iterator
++from urllib.request import Request, urlopen
++from urllib.error import URLError, HTTPError
++
++# Output formats
++OUTPUT_FORMATS = ["text", "markdown", "html", "json"]
++
++# Large file handling modes
++LARGE_FILE_MODES = ["error", "truncate", "chunk", "commits-only", "summary"]
++
++# Approximate tokens per character (conservative estimate for code)
++CHARS_PER_TOKEN = 3.5
++
++# Default token limits by provider (leaving room for system prompt and response)
++PROVIDER_INPUT_LIMITS = {
++    "anthropic": 180000,  # 200K context, reserve for system/response
++    "openai": 115000,  # 128K context for gpt-4o
++    "xai": 115000,  # Assume similar to OpenAI
++    "google": 900000,  # Gemini has 1M context
 +}
 +
-+/* Long conditions - double indent continuation */
-+if (really_long_variable_name_1 == really_long_variable_name_2 &&
-+		really_long_variable_name_3 == really_long_variable_name_4)
-+	stmt;
-+```
-+
-+### Variable Declarations
-+
-+- Prefer declaring variables inside the basic block where they are used
-+- Variables may be declared either at the start of the block, or at point of first use (C99 style)
-+- Both declaration styles are acceptable; consistency within a function is preferred
-+- Initialize variables only when a meaningful value exists at declaration time
-+- Use C99 designated initializers for structures
-+
-+```c
-+/* Good - declaration at start of block */
-+int ret;
-+ret = some_function();
-+
-+/* Also good - declaration at point of use (C99 style) */
-+for (int i = 0; i < count; i++)
-+	process(i);
-+
-+/* Good - declaration in inner block where variable is used */
-+if (condition) {
-+	int local_val = compute();
-+	use(local_val);
++# Provider configurations
++PROVIDERS = {
++    "anthropic": {
++        "name": "Claude",
++        "endpoint": "https://api.anthropic.com/v1/messages",
++        "default_model": "claude-sonnet-4-5-20250929",
++        "env_var": "ANTHROPIC_API_KEY",
++    },
++    "openai": {
++        "name": "ChatGPT",
++        "endpoint": "https://api.openai.com/v1/chat/completions",
++        "default_model": "gpt-4o",
++        "env_var": "OPENAI_API_KEY",
++    },
++    "xai": {
++        "name": "Grok",
++        "endpoint": "https://api.x.ai/v1/chat/completions",
++        "default_model": "grok-3",
++        "env_var": "XAI_API_KEY",
++    },
++    "google": {
++        "name": "Gemini",
++        "endpoint": "https://generativelanguage.googleapis.com/v1beta/models",
++        "default_model": "gemini-2.0-flash",
++        "env_var": "GOOGLE_API_KEY",
++    },
 +}
 +
-+/* Bad - unnecessary initialization defeats compiler warnings */
-+int ret = 0;
-+ret = some_function();    /* Compiler won't warn if assignment removed */
-+```
++# LTS releases: any DPDK release with minor version .11
++# (e.g., 19.11, 20.11, 21.11, 22.11, 23.11, 24.11, 25.11, ...)
 +
-+### Function Format
++SYSTEM_PROMPT_BASE = """\
++You are an expert DPDK code reviewer. Analyze patches for compliance with \
++DPDK coding standards and contribution guidelines. Provide clear, actionable \
++feedback organized by severity (Error, Warning, Info) as defined in the \
++guidelines."""
 +
-+- Return type on its own line
-+- Opening brace on its own line
-+- Place an empty line between declarations and statements
++LTS_RULES = """
++LTS (Long Term Stable) branch rules apply:
++- Only bug fixes allowed, no new features
++- No new APIs (experimental or stable)
++- ABI must remain unchanged
++- Backported fixes should reference the original commit with Fixes: tag
++- Copyright years should reflect when the code was originally written
++- Be conservative: reject changes that aren't clearly bug fixes"""
 +
-+```c
-+static char *
-+function(int a1, int b1)
++FORMAT_INSTRUCTIONS = {
++    "text": """Provide your review in plain text format.""",
++    "markdown": """Provide your review in Markdown format with:
++- Headers (##) for each severity level (Errors, Warnings, Info)
++- Bullet points for individual issues
++- Code blocks (```) for code references
++- Bold (**) for emphasis on key points""",
++    "html": """Provide your review in HTML format with:
++- <h2> tags for each severity level (Errors, Warnings, Info)
++- <ul>/<li> for individual issues
++- <pre><code> for code references
++- <strong> for emphasis on key points
++- Use appropriate semantic HTML tags
++- Do NOT include <html>, <head>, or <body> tags - just the content""",
++    "json": """Provide your review in JSON format with this structure:
 +{
-+	char *p;
-+
-+	p = do_something(a1, b1);
-+	return p;
++  "summary": "Brief one-line summary of the review",
++  "errors": [
++    {"issue": "description", "location": "file:line", "suggestion": "fix"}
++  ],
++  "warnings": [
++    {"issue": "description", "location": "file:line", "suggestion": "fix"}
++  ],
++  "info": [
++    {"issue": "description", "location": "file:line", "suggestion": "fix"}
++  ],
++  "passed_checks": ["list of checks that passed"],
++  "overall_status": "PASS|WARN|FAIL"
 +}
-+```
-+
-+---
-+
-+## Unnecessary Code Patterns
-+
-+The following patterns add unnecessary code, hide bugs, or reduce performance. Avoid them.
-+
-+### Unnecessary Variable Initialization
-+
-+Do not initialize variables that will be assigned before use. This defeats the compiler's uninitialized variable warnings, hiding potential bugs.
-+
-+```c
-+/* Bad - initialization defeats -Wuninitialized */
-+int ret = 0;
-+if (condition)
-+	ret = func_a();
-+else
-+	ret = func_b();
-+
-+/* Good - compiler will warn if any path misses assignment */
-+int ret;
-+if (condition)
-+	ret = func_a();
-+else
-+	ret = func_b();
-+
-+/* Good - meaningful initial value */
-+int count = 0;
-+for (i = 0; i < n; i++)
-+	if (test(i))
-+		count++;
-+```
-+
-+### Unnecessary Casts of void *
-+
-+In C, `void *` converts implicitly to any pointer type. Casting the result of `malloc()`, `calloc()`, `rte_malloc()`, or similar functions is unnecessary and can hide the error of a missing `#include <stdlib.h>`.
-+
-+```c
-+/* Bad - unnecessary cast */
-+struct foo *p = (struct foo *)malloc(sizeof(*p));
-+struct bar *q = (struct bar *)rte_malloc(NULL, sizeof(*q), 0);
-+
-+/* Good - no cast needed in C */
-+struct foo *p = malloc(sizeof(*p));
-+struct bar *q = rte_malloc(NULL, sizeof(*q), 0);
-+```
-+
-+Note: Casts are required in C++ but DPDK is a C project.
-+
-+### Zero-Length Arrays vs Variable-Length Arrays
-+
-+Zero-length arrays (`int arr[0]`) are a GCC extension. Use C99 flexible array members instead.
-+
-+```c
-+/* Bad - GCC extension */
-+struct msg {
-+	int len;
-+	char data[0];
-+};
-+
-+/* Good - C99 flexible array member */
-+struct msg {
-+	int len;
-+	char data[];
-+};
-+```
-+
-+### Unnecessary NULL Checks Before free()
-+
-+Functions like `free()`, `rte_free()`, and similar deallocation functions accept NULL pointers safely. Do not add redundant NULL checks.
-+
-+```c
-+/* Bad - unnecessary check */
-+if (ptr != NULL)
-+	free(ptr);
-+
-+if (rte_ptr != NULL)
-+	rte_free(rte_ptr);
-+
-+/* Good - free handles NULL */
-+free(ptr);
-+rte_free(rte_ptr);
-+```
-+
-+### memset Before free()
-+
-+Do not call `memset()` to zero memory before freeing it. The compiler may optimize away the `memset()` as a dead store. For security-sensitive data, use `rte_free_sensitive()` which ensures memory is cleared.
-+
-+```c
-+/* Bad - compiler may eliminate memset */
-+memset(secret_key, 0, sizeof(secret_key));
-+free(secret_key);
-+
-+/* Good - for non-sensitive data, just free */
-+free(ptr);
-+
-+/* Good - for sensitive data, use secure free */
-+rte_free_sensitive(secret_key);
-+```
-+
-+### Appropriate Use of rte_malloc()
-+
-+`rte_malloc()` allocates from hugepage memory. Use it only when required:
-+
-+- Memory that will be accessed by DMA (NIC descriptors, packet buffers)
-+- Memory shared between primary and secondary DPDK processes
-+- Memory requiring specific NUMA node placement
-+
-+For general allocations, use standard `malloc()` which is faster and does not consume limited hugepage resources.
-+
-+```c
-+/* Bad - rte_malloc for ordinary data structure */
-+struct config *cfg = rte_malloc(NULL, sizeof(*cfg), 0);
-+
-+/* Good - standard malloc for control structures */
-+struct config *cfg = malloc(sizeof(*cfg));
-+
-+/* Good - rte_malloc for DMA-accessible memory */
-+struct rte_mbuf *mbufs = rte_malloc(NULL, n * sizeof(*mbufs), RTE_CACHE_LINE_SIZE);
-+```
-+
-+### Appropriate Use of rte_memcpy()
-+
-+`rte_memcpy()` is optimized for bulk data transfer in the fast path. For general use, standard `memcpy()` is preferred because:
-+
-+- Modern compilers optimize `memcpy()` effectively
-+- `memcpy()` includes bounds checking with `_FORTIFY_SOURCE`
-+- `memcpy()` handles small fixed-size copies efficiently
-+
-+```c
-+/* Bad - rte_memcpy in control path */
-+rte_memcpy(&config, &default_config, sizeof(config));
-+
-+/* Good - standard memcpy for control path */
-+memcpy(&config, &default_config, sizeof(config));
-+
-+/* Good - rte_memcpy for packet data in fast path */
-+rte_memcpy(rte_pktmbuf_mtod(m, void *), payload, len);
-+```
-+
-+---
-+
-+## Forbidden Tokens
-+
-+### Functions
-+
-+| Forbidden | Preferred | Context |
-+|-----------|-----------|---------|
-+| `rte_panic()` | Return error codes | lib/, drivers/ |
-+| `rte_exit()` | Return error codes | lib/, drivers/ |
-+| `perror()` | `RTE_LOG()` with `strerror(errno)` | lib/, drivers/ (allowed in examples/, app/test/) |
-+| `printf()` | `RTE_LOG()` | lib/, drivers/ (allowed in examples/, app/test/) |
-+| `fprintf()` | `RTE_LOG()` | lib/, drivers/ (allowed in examples/, app/test/) |
-+
-+### Atomics and Memory Barriers
-+
-+| Forbidden | Preferred |
-+|-----------|-----------|
-+| `rte_atomic16/32/64_xxx()` | C11 atomics via `rte_atomic_xxx()` |
-+| `rte_smp_mb()` | `rte_atomic_thread_fence()` |
-+| `rte_smp_rmb()` | `rte_atomic_thread_fence()` |
-+| `rte_smp_wmb()` | `rte_atomic_thread_fence()` |
-+| `__sync_xxx()` | `rte_atomic_xxx()` |
-+| `__atomic_xxx()` | `rte_atomic_xxx()` |
-+| `__ATOMIC_RELAXED` etc. | `rte_memory_order_xxx` |
-+| `__rte_atomic_thread_fence()` | `rte_atomic_thread_fence()` |
-+
-+### Threading
-+
-+| Forbidden | Preferred |
-+|-----------|-----------|
-+| `pthread_create()` | `rte_thread_create()` |
-+| `pthread_join()` | `rte_thread_join()` |
-+| `pthread_detach()` | EAL thread functions |
-+| `pthread_setaffinity_np()` | `rte_thread_set_affinity()` |
-+| `rte_thread_set_name()` | `rte_thread_set_prefixed_name()` |
-+| `rte_thread_create_control()` | `rte_thread_create_internal_control()` |
-+
-+### Process-Shared Synchronization
-+
-+When placing synchronization primitives in shared memory (memory accessible by multiple processes, such as DPDK primary/secondary processes or `mmap`'d regions), they **must** be initialized with process-shared attributes. Failure to do so causes **undefined behavior** that may appear to work in testing but fail unpredictably in production.
-+
-+#### pthread Mutexes in Shared Memory
-+
-+**This is an error** - mutex in shared memory without `PTHREAD_PROCESS_SHARED`:
-+
-+```c
-+/* BAD - undefined behavior when used across processes */
-+struct shared_data {
-+	pthread_mutex_t lock;
-+	int counter;
-+};
-+
-+void init_shared(struct shared_data *shm) {
-+	pthread_mutex_init(&shm->lock, NULL);  /* ERROR: missing pshared attribute */
-+}
-+```
-+
-+**Correct implementation**:
-+
-+```c
-+/* GOOD - properly initialized for cross-process use */
-+struct shared_data {
-+	pthread_mutex_t lock;
-+	int counter;
-+};
-+
-+int init_shared(struct shared_data *shm) {
-+	pthread_mutexattr_t attr;
-+	int ret;
-+
-+	ret = pthread_mutexattr_init(&attr);
-+	if (ret != 0)
-+		return -ret;
-+
-+	ret = pthread_mutexattr_setpshared(&attr, PTHREAD_PROCESS_SHARED);
-+	if (ret != 0) {
-+		pthread_mutexattr_destroy(&attr);
-+		return -ret;
-+	}
-+
-+	ret = pthread_mutex_init(&shm->lock, &attr);
-+	pthread_mutexattr_destroy(&attr);
-+
-+	return -ret;
-+}
-+```
-+
-+#### pthread Condition Variables in Shared Memory
-+
-+Condition variables also require the process-shared attribute:
-+
-+```c
-+/* BAD - will not work correctly across processes */
-+pthread_cond_init(&shm->cond, NULL);
-+
-+/* GOOD */
-+pthread_condattr_t cattr;
-+pthread_condattr_init(&cattr);
-+pthread_condattr_setpshared(&cattr, PTHREAD_PROCESS_SHARED);
-+pthread_cond_init(&shm->cond, &cattr);
-+pthread_condattr_destroy(&cattr);
-+```
-+
-+#### pthread Read-Write Locks in Shared Memory
-+
-+```c
-+/* BAD */
-+pthread_rwlock_init(&shm->rwlock, NULL);
-+
-+/* GOOD */
-+pthread_rwlockattr_t rwattr;
-+pthread_rwlockattr_init(&rwattr);
-+pthread_rwlockattr_setpshared(&rwattr, PTHREAD_PROCESS_SHARED);
-+pthread_rwlock_init(&shm->rwlock, &rwattr);
-+pthread_rwlockattr_destroy(&rwattr);
-+```
-+
-+#### When to Flag This Issue
-+
-+Flag as an **Error** when ALL of the following are true:
-+1. A `pthread_mutex_t`, `pthread_cond_t`, `pthread_rwlock_t`, or `pthread_barrier_t` is initialized
-+2. The primitive is stored in shared memory (identified by context such as: structure in `rte_malloc`/`rte_memzone`, `mmap`'d memory, memory passed to secondary processes, or structures documented as shared)
-+3. The initialization uses `NULL` attributes or attributes without `PTHREAD_PROCESS_SHARED`
-+
-+**Do NOT flag** when:
-+- The mutex is in thread-local or process-private heap memory (`malloc`)
-+- The mutex is a local/static variable not in shared memory
-+- The code already uses `pthread_mutexattr_setpshared()` with `PTHREAD_PROCESS_SHARED`
-+- The synchronization uses DPDK primitives (`rte_spinlock_t`, `rte_rwlock_t`) which are designed for shared memory
-+
-+#### Preferred Alternatives
-+
-+For DPDK code, prefer DPDK's own synchronization primitives which are designed for shared memory:
-+
-+| pthread Primitive | DPDK Alternative |
-+|-------------------|------------------|
-+| `pthread_mutex_t` | `rte_spinlock_t` (busy-wait) or properly initialized pthread mutex |
-+| `pthread_rwlock_t` | `rte_rwlock_t` |
-+| `pthread_spinlock_t` | `rte_spinlock_t` |
-+
-+Note: `rte_spinlock_t` and `rte_rwlock_t` work correctly in shared memory without special initialization, but they are spinning locks unsuitable for long wait times.
-+
-+### Compiler Built-ins and Attributes
-+
-+| Forbidden | Preferred | Notes |
-+|-----------|-----------|-------|
-+| `__attribute__` | RTE macros in `rte_common.h` | Except in `lib/eal/include/rte_common.h` |
-+| `__alignof__` | C11 `alignof` | |
-+| `__typeof__` | `typeof` | |
-+| `__builtin_*` | EAL macros | Except in `lib/eal/` and `drivers/*/base/` |
-+| `__reserved` | Different name | Reserved in Windows headers |
-+| `#pragma` / `_Pragma` | Avoid | Except in `rte_common.h` |
-+
-+### Format Specifiers
-+
-+| Forbidden | Preferred |
-+|-----------|-----------|
-+| `%lld`, `%llu`, `%llx` | `%PRId64`, `%PRIu64`, `%PRIx64` |
-+
-+### Headers and Build
-+
-+| Forbidden | Preferred | Context |
-+|-----------|-----------|---------|
-+| `#include <linux/pci_regs.h>` | `#include <rte_pci.h>` | |
-+| `install_headers()` | Meson `headers` variable | meson.build |
-+| `-DALLOW_EXPERIMENTAL_API` | Not in lib/drivers/app | Build flags |
-+| `allow_experimental_apis` | Not in lib/drivers/app | Meson |
-+| `#undef XXX` | `// XXX is not set` | config/rte_config.h |
-+| Driver headers (`*_driver.h`, `*_pmd.h`) | Public API headers | app/, examples/ |
-+
-+### Testing
-+
-+| Forbidden | Preferred |
-+|-----------|-----------|
-+| `REGISTER_TEST_COMMAND` | `REGISTER_<suite_name>_TEST` |
-+
-+### Documentation
-+
-+| Forbidden | Preferred |
-+|-----------|-----------|
-+| `http://...dpdk.org` | `https://...dpdk.org` |
-+| `//doc.dpdk.org/guides/...` | `:ref:` or `:doc:` Sphinx references |
-+| `::  file.svg` | `::  file.*` (wildcard extension) |
-+
-+---
-+
-+## Deprecated API Usage
-+
-+New patches must not introduce usage of deprecated APIs, macros, or functions.
-+Deprecated items are marked with `RTE_DEPRECATED` or documented in the
-+deprecation notices section of the release notes.
-+
-+### Rules for New Code
-+
-+- Do not call functions marked with `RTE_DEPRECATED` or `__rte_deprecated`
-+- Do not use macros that have been superseded by newer alternatives
-+- Do not use data structures or enum values marked as deprecated
-+- Check `doc/guides/rel_notes/deprecation.rst` for planned deprecations
-+- When a deprecated API has a replacement, use the replacement
-+
-+### Deprecating APIs
-+
-+A patch may mark an API as deprecated provided:
-+
-+- No remaining usages exist in the current DPDK codebase
-+- The deprecation is documented in the release notes
-+- A migration path or replacement API is documented
-+- The `RTE_DEPRECATED` macro is used to generate compiler warnings
-+
-+```c
-+/* Marking a function as deprecated */
-+__rte_deprecated
-+int
-+rte_old_function(void);
-+
-+/* With a message pointing to the replacement */
-+__rte_deprecated_msg("use rte_new_function() instead")
-+int
-+rte_old_function(void);
-+```
-+
-+### Common Deprecated Patterns
-+
-+| Deprecated | Replacement | Notes |
-+|-----------|-------------|-------|
-+| `rte_atomic*_t` types | C11 atomics | Use `rte_atomic_xxx()` wrappers |
-+| `rte_smp_*mb()` barriers | `rte_atomic_thread_fence()` | See Atomics section |
-+| `pthread_*()` in portable code | `rte_thread_*()` | See Threading section |
-+
-+When reviewing patches that add new code, flag any usage of deprecated APIs
-+as requiring change to use the modern replacement.
-+
-+---
-+
-+## API Tag Requirements
-+
-+### `__rte_experimental`
-+
-+- Must appear **alone on the line** immediately preceding the return type
-+- Only allowed in **header files** (not `.c` files)
-+
-+```c
-+/* Correct */
-+__rte_experimental
-+int
-+rte_new_feature(void);
-+
-+/* Wrong - not alone on line */
-+__rte_experimental int rte_new_feature(void);
-+
-+/* Wrong - in .c file */
-+```
-+
-+### `__rte_internal`
-+
-+- Must appear **alone on the line** immediately preceding the return type
-+- Only allowed in **header files** (not `.c` files)
-+
-+```c
-+/* Correct */
-+__rte_internal
-+int
-+internal_function(void);
-+```
-+
-+### Alignment Attributes
-+
-+`__rte_aligned`, `__rte_cache_aligned`, `__rte_cache_min_aligned` may only be used with `struct` or `union` types:
-+
-+```c
-+/* Correct */
-+struct __rte_cache_aligned my_struct {
-+	/* ... */
-+};
-+
-+/* Wrong */
-+int __rte_cache_aligned my_variable;
-+```
-+
-+### Packed Attributes
-+
-+- `__rte_packed_begin` must follow `struct`, `union`, or alignment attributes
-+- `__rte_packed_begin` and `__rte_packed_end` must be used in pairs
-+- Cannot use `__rte_packed_begin` with `enum`
-+
-+```c
-+/* Correct */
-+struct __rte_packed_begin my_packed_struct {
-+	/* ... */
-+} __rte_packed_end;
-+
-+/* Wrong - with enum */
-+enum __rte_packed_begin my_enum {
-+	/* ... */
-+};
-+```
-+
-+---
-+
-+## Code Quality Requirements
-+
-+### Compilation
-+
-+- Each commit must compile independently (for `git bisect`)
-+- No forward dependencies within a patchset
-+- Test with multiple targets, compilers, and options
-+- Use `devtools/test-meson-builds.sh`
-+
-+**Note for AI reviewers**: You cannot verify compilation order or cross-patch dependencies from patch review alone. Do NOT flag patches claiming they "would fail to compile" based on symbols used in other patches in the series. Assume the patch author has ordered them correctly.
-+
-+### Testing
-+
-+- Add tests to `app/test` unit test framework
-+- New API functions must be used in `/app` test directory
-+- New device APIs require at least one driver implementation
-+
-+#### Functional Test Infrastructure
-+
-+Standalone functional tests should use the `TEST_ASSERT` macros and `unit_test_suite_runner` infrastructure for consistency and proper integration with the DPDK test framework.
-+
-+```c
-+#include <rte_test.h>
-+
-+static int
-+test_feature_basic(void)
-+{
-+	int ret;
-+
-+	ret = rte_feature_init();
-+	TEST_ASSERT_SUCCESS(ret, "Failed to initialize feature");
-+
-+	ret = rte_feature_operation();
-+	TEST_ASSERT_EQUAL(ret, 0, "Operation returned unexpected value");
-+
-+	TEST_ASSERT_NOT_NULL(rte_feature_get_ptr(),
-+		"Feature pointer should not be NULL");
-+
-+	return TEST_SUCCESS;
++Output ONLY valid JSON, no markdown code fences or other text.""",
 +}
 +
-+static struct unit_test_suite feature_testsuite = {
-+	.suite_name = "feature_autotest",
-+	.setup = test_feature_setup,
-+	.teardown = test_feature_teardown,
-+	.unit_test_cases = {
-+		TEST_CASE(test_feature_basic),
-+		TEST_CASE(test_feature_advanced),
-+		TEST_CASES_END()
-+	}
-+};
++USER_PROMPT = """Please review the following DPDK patch file '{patch_name}' \
++against the AGENTS.md guidelines. Check for:
 +
-+static int
-+test_feature(void)
-+{
-+	return unit_test_suite_runner(&feature_testsuite);
-+}
++1. Commit message format (subject line, body, tags)
++2. License/copyright compliance
++3. C coding style issues
++4. API and documentation requirements
++5. Any other guideline violations
 +
-+REGISTER_FAST_TEST(feature_autotest, NOHUGE_OK, ASAN_OK, test_feature);
-+```
++{format_instruction}
 +
-+The `REGISTER_FAST_TEST` macro parameters are:
-+- Test name (e.g., `feature_autotest`)
-+- `NOHUGE_OK` or `HUGEPAGES_REQUIRED` - whether test can run without hugepages
-+- `ASAN_OK` or `ASAN_FAILS` - whether test is compatible with Address Sanitizer
-+- Test function name
++--- PATCH CONTENT ---
++"""
 +
-+Common `TEST_ASSERT` macros:
-+- `TEST_ASSERT(cond, msg, ...)` - Assert condition is true
-+- `TEST_ASSERT_SUCCESS(val, msg, ...)` - Assert value equals 0
-+- `TEST_ASSERT_FAIL(val, msg, ...)` - Assert value is non-zero
-+- `TEST_ASSERT_EQUAL(a, b, msg, ...)` - Assert two values are equal
-+- `TEST_ASSERT_NOT_EQUAL(a, b, msg, ...)` - Assert two values differ
-+- `TEST_ASSERT_NULL(val, msg, ...)` - Assert value is NULL
-+- `TEST_ASSERT_NOT_NULL(val, msg, ...)` - Assert value is not NULL
 +
-+### Documentation
++def error(msg):
++    """Print error message and exit."""
++    print(f"Error: {msg}", file=sys.stderr)
++    sys.exit(1)
 +
-+- Add Doxygen comments for public APIs
-+- Update release notes in `doc/guides/rel_notes/` for important changes
-+- Code and documentation must be updated atomically in same patch
-+- Only update the **current release** notes file
-+- Documentation must match the code
-+- PMD features must match the features matrix in `doc/guides/nics/features/`
-+- Documentation must match device operations (see `doc/guides/nics/features.rst` for the mapping between features, `eth_dev_ops`, and related APIs)
-+- Release notes are NOT required for:
-+  - Test-only changes (unit tests, functional tests)
-+  - Internal APIs and helper functions (not exported to applications)
-+  - Internal implementation changes that don't affect public API
 +
-+### API and Driver Changes
++def get_git_config(key):
++    """Get a value from git config."""
++    try:
++        result = subprocess.run(
++            ["git", "config", "--get", key],
++            capture_output=True,
++            text=True,
++            check=True,
++        )
++        return result.stdout.strip()
++    except (subprocess.CalledProcessError, FileNotFoundError):
++        return None
 +
-+- New APIs must be marked as `__rte_experimental`
-+- New APIs must have hooks in `app/testpmd` and tests in the functional test suite
-+- Changes to existing APIs require release notes
-+- New drivers or subsystems must have release notes
-+- Internal APIs (used only within DPDK, not exported to applications) do NOT require release notes
 +
-+### ABI Compatibility and Symbol Exports
++def is_lts_release(release):
++    """Check if a release is an LTS release.
 +
-+**IMPORTANT**: DPDK uses automatic symbol map generation. Do **NOT** recommend
-+manually editing `version.map` files - they are auto-generated from source code
-+annotations.
++    Per DPDK project guidelines, any release with minor version .11
++    is an LTS release (e.g., 19.11, 21.11, 23.11, 24.11, 25.11).
++    """
++    if not release:
++        return False
++    # Check for explicit -lts suffix
++    if "-lts" in release.lower():
++        return True
++    # Extract base version (e.g., "23.11" from "23.11.1" or "23.11-rc1")
++    version = release.split("-")[0]
++    parts = version.split(".")
++    if len(parts) >= 2:
++        try:
++            minor = int(parts[1])
++            return minor == 11
++        except ValueError:
++            pass
++    return False
 +
-+#### Symbol Export Macros
 +
-+New public functions must be annotated with export macros (defined in
-+`rte_export.h`). Place the macro on the line immediately before the function
-+definition in the `.c` file:
++def estimate_tokens(text):
++    """Estimate token count from text length."""
++    return int(len(text) / CHARS_PER_TOKEN)
 +
-+```c
-+/* For stable ABI symbols */
-+RTE_EXPORT_SYMBOL(rte_foo_create)
-+int
-+rte_foo_create(struct rte_foo_config *config)
-+{
-+    /* ... */
-+}
 +
-+/* For experimental symbols (include version when first added) */
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_foo_new_feature, 25.03)
-+__rte_experimental
-+int
-+rte_foo_new_feature(void)
-+{
-+    /* ... */
-+}
++def split_mbox_patches(content):
++    """Split an mbox file into individual patches."""
++    patches = []
++    current_patch = []
++    in_patch = False
 +
-+/* For internal symbols (shared between DPDK components only) */
-+RTE_EXPORT_INTERNAL_SYMBOL(rte_foo_internal_helper)
-+int
-+rte_foo_internal_helper(void)
-+{
-+    /* ... */
-+}
-+```
++    for line in content.split("\n"):
++        # Detect start of new message in mbox format
++        if line.startswith("From ") and (
++            " Mon " in line
++            or " Tue " in line
++            or " Wed " in line
++            or " Thu " in line
++            or " Fri " in line
++            or " Sat " in line
++            or " Sun " in line
++        ):
++            if current_patch:
++                patches.append("\n".join(current_patch))
++            current_patch = [line]
++            in_patch = True
++        elif in_patch:
++            current_patch.append(line)
 +
-+#### Symbol Export Rules
++    # Don't forget the last patch
++    if current_patch:
++        patches.append("\n".join(current_patch))
 +
-+- `RTE_EXPORT_SYMBOL` - Use for stable ABI functions
-+- `RTE_EXPORT_EXPERIMENTAL_SYMBOL(name, ver)` - Use for new experimental APIs
-+  (version is the DPDK release, e.g., `25.03`)
-+- `RTE_EXPORT_INTERNAL_SYMBOL` - Use for functions shared between DPDK libs/drivers
-+  but not part of public API
-+- Export macros go in `.c` files, not headers
-+- The build system generates linker version maps automatically
++    return patches if patches else [content]
 +
-+#### What NOT to Review
 +
-+- Do **NOT** flag missing `version.map` updates - maps are auto-generated
-+- Do **NOT** suggest adding symbols to `lib/*/version.map` files
++def extract_commit_messages(content):
++    """Extract only commit messages from patch content."""
++    patches = split_mbox_patches(content)
++    messages = []
 +
-+#### ABI Versioning for Changed Functions
++    for patch in patches:
++        lines = patch.split("\n")
++        msg_lines = []
++        in_headers = True
++        in_body = False
++        found_subject = False
 +
-+When changing the signature of an existing stable function, use versioning macros
-+from `rte_function_versioning.h`:
++        for line in lines:
++            # Collect headers we care about
++            if in_headers:
++                if line.startswith("Subject:"):
++                    msg_lines.append(line)
++                    found_subject = True
++                elif line.startswith(("From:", "Date:")):
++                    msg_lines.append(line)
++                elif line.startswith((" ", "\t")) and found_subject:
++                    # Subject continuation
++                    msg_lines.append(line)
++                elif line == "":
++                    if found_subject:
++                        in_headers = False
++                        in_body = True
++                        msg_lines.append("")
++            elif in_body:
++                # Stop at the diff
++                if line.startswith("---") and not line.startswith("----"):
++                    break
++                if line.startswith("diff --git"):
++                    break
++                msg_lines.append(line)
 +
-+- `RTE_VERSION_SYMBOL` - Create versioned symbol for backward compatibility
-+- `RTE_DEFAULT_SYMBOL` - Mark the new default version
++        if msg_lines:
++            messages.append("\n".join(msg_lines))
 +
-+Follow ABI policy and versioning guidelines in the contributor documentation.
-+Enable ABI checks with `DPDK_ABI_REF_VERSION` environment variable.
++    return "\n\n---\n\n".join(messages)
++
++
++def truncate_content(content, max_tokens, provider):
++    """Truncate content to fit within token limit."""
++    max_chars = int(max_tokens * CHARS_PER_TOKEN)
++
++    if len(content) <= max_chars:
++        return content, False
++
++    # Try to truncate at a reasonable boundary
++    truncated = content[:max_chars]
++
++    # Find last complete diff hunk or patch boundary
++    last_diff = truncated.rfind("\ndiff --git")
++    last_patch = truncated.rfind("\nFrom ")
++
++    if last_diff > max_chars * 0.5:
++        truncated = truncated[:last_diff]
++    elif last_patch > max_chars * 0.5:
++        truncated = truncated[:last_patch]
++
++    truncated += "\n\n[... Content truncated due to size limits ...]\n"
++    return truncated, True
++
++
++def chunk_content(content, max_tokens, provider) -> Iterator[tuple[str, int, int]]:
++    """Split content into chunks that fit within token limit.
++
++    Yields tuples of (chunk_content, chunk_number, total_chunks).
++    """
++    patches = split_mbox_patches(content)
++
++    if len(patches) == 1:
++        # Single large patch - split by diff sections
++        yield from chunk_single_patch(content, max_tokens)
++        return
++
++    # Multiple patches - group them to fit within limits
++    chunks = []
++    current_chunk = []
++    current_size = 0
++    max_chars = int(max_tokens * CHARS_PER_TOKEN * 0.9)  # 90% to leave margin
++
++    for patch in patches:
++        patch_size = len(patch)
++        if current_size + patch_size > max_chars and current_chunk:
++            chunks.append("\n".join(current_chunk))
++            current_chunk = []
++            current_size = 0
++
++        if patch_size > max_chars:
++            # Single patch too large, truncate it
++            if current_chunk:
++                chunks.append("\n".join(current_chunk))
++                current_chunk = []
++                current_size = 0
++            truncated, _ = truncate_content(patch, max_tokens * 0.9, provider)
++            chunks.append(truncated)
++        else:
++            current_chunk.append(patch)
++            current_size += patch_size
++
++    if current_chunk:
++        chunks.append("\n".join(current_chunk))
++
++    total = len(chunks)
++    for i, chunk in enumerate(chunks, 1):
++        yield chunk, i, total
++
++
++def chunk_single_patch(content, max_tokens) -> Iterator[tuple[str, int, int]]:
++    """Split a single large patch by diff sections."""
++    max_chars = int(max_tokens * CHARS_PER_TOKEN * 0.9)
++
++    # Extract header (everything before first diff)
++    first_diff = content.find("\ndiff --git")
++    if first_diff == -1:
++        # No diff sections, just truncate
++        truncated, _ = truncate_content(content, max_tokens * 0.9, "anthropic")
++        yield truncated, 1, 1
++        return
++
++    header = content[: first_diff + 1]
++    diff_content = content[first_diff + 1 :]
++
++    # Split by diff sections
++    diffs = []
++    current_diff = []
++    for line in diff_content.split("\n"):
++        if line.startswith("diff --git") and current_diff:
++            diffs.append("\n".join(current_diff))
++            current_diff = []
++        current_diff.append(line)
++    if current_diff:
++        diffs.append("\n".join(current_diff))
++
++    # Group diffs into chunks
++    chunks = []
++    current_chunk_diffs = []
++    current_size = len(header)
++
++    for diff in diffs:
++        diff_size = len(diff)
++        if current_size + diff_size > max_chars and current_chunk_diffs:
++            chunks.append(header + "\n".join(current_chunk_diffs))
++            current_chunk_diffs = []
++            current_size = len(header)
++
++        if diff_size + len(header) > max_chars:
++            # Single diff too large
++            if current_chunk_diffs:
++                chunks.append(header + "\n".join(current_chunk_diffs))
++                current_chunk_diffs = []
++            truncated_diff = diff[: max_chars - len(header) - 100]
++            truncated_diff += "\n[... diff truncated ...]\n"
++            chunks.append(header + truncated_diff)
++            current_size = len(header)
++        else:
++            current_chunk_diffs.append(diff)
++            current_size += diff_size
++
++    if current_chunk_diffs:
++        chunks.append(header + "\n".join(current_chunk_diffs))
++
++    total = len(chunks)
++    for i, chunk in enumerate(chunks, 1):
++        yield chunk, i, total
++
++
++def get_summary_prompt():
++    """Get prompt modifications for summary mode."""
++    return """
++NOTE: This is a LARGE patch series. Provide a HIGH-LEVEL summary review only:
++- Focus on overall architecture and design concerns
++- Check commit message formatting across the series
++- Identify any obvious policy violations
++- Do NOT attempt detailed line-by-line code review
++- Summarize the scope and purpose of the changes
++"""
++
++
++def format_combined_reviews(reviews, output_format, patch_name):
++    """Combine multiple chunk/patch reviews into a single output."""
++    if output_format == "json":
++        combined = {
++            "patch_file": patch_name,
++            "sections": [
++                {"label": label, "review": review} for label, review in reviews
++            ],
++        }
++        return json.dumps(combined, indent=2)
++    elif output_format == "html":
++        sections = []
++        for label, review in reviews:
++            sections.append(f"<h2>{label}</h2>\n{review}")
++        return "\n<hr>\n".join(sections)
++    elif output_format == "markdown":
++        sections = []
++        for label, review in reviews:
++            sections.append(f"## {label}\n\n{review}")
++        return "\n\n---\n\n".join(sections)
++    else:  # text
++        sections = []
++        for label, review in reviews:
++            sections.append(f"=== {label} ===\n\n{review}")
++        return "\n\n" + "=" * 60 + "\n\n".join(sections)
++
++
++def build_system_prompt(review_date, release):
++    """Build system prompt with date and release context."""
++    prompt = SYSTEM_PROMPT_BASE
++    prompt += f"\n\nCurrent date: {review_date}."
++
++    if release:
++        prompt += f"\nTarget DPDK release: {release}."
++        if is_lts_release(release):
++            prompt += LTS_RULES
++        else:
++            prompt += "\nThis is a main branch or standard release."
++            prompt += "\nNew features and experimental APIs are allowed."
++
++    return prompt
++
++
++def build_anthropic_request(
++    model,
++    max_tokens,
++    system_prompt,
++    agents_content,
++    patch_content,
++    patch_name,
++    output_format="text",
++):
++    """Build request payload for Anthropic API."""
++    format_instruction = FORMAT_INSTRUCTIONS.get(output_format, "")
++    user_prompt = USER_PROMPT.format(
++        patch_name=patch_name, format_instruction=format_instruction
++    )
++    return {
++        "model": model,
++        "max_tokens": max_tokens,
++        "system": [
++            {"type": "text", "text": system_prompt},
++            {
++                "type": "text",
++                "text": agents_content,
++                "cache_control": {"type": "ephemeral"},
++            },
++        ],
++        "messages": [
++            {
++                "role": "user",
++                "content": user_prompt + patch_content,
++            }
++        ],
++    }
++
++
++def build_openai_request(
++    model,
++    max_tokens,
++    system_prompt,
++    agents_content,
++    patch_content,
++    patch_name,
++    output_format="text",
++):
++    """Build request payload for OpenAI-compatible APIs."""
++    format_instruction = FORMAT_INSTRUCTIONS.get(output_format, "")
++    user_prompt = USER_PROMPT.format(
++        patch_name=patch_name, format_instruction=format_instruction
++    )
++    return {
++        "model": model,
++        "max_tokens": max_tokens,
++        "messages": [
++            {"role": "system", "content": system_prompt},
++            {"role": "system", "content": agents_content},
++            {
++                "role": "user",
++                "content": user_prompt + patch_content,
++            },
++        ],
++    }
++
++
++def build_google_request(
++    max_tokens,
++    system_prompt,
++    agents_content,
++    patch_content,
++    patch_name,
++    output_format="text",
++):
++    """Build request payload for Google Gemini API."""
++    format_instruction = FORMAT_INSTRUCTIONS.get(output_format, "")
++    user_prompt = USER_PROMPT.format(
++        patch_name=patch_name, format_instruction=format_instruction
++    )
++    return {
++        "contents": [
++            {"role": "user", "parts": [{"text": system_prompt}]},
++            {"role": "user", "parts": [{"text": agents_content}]},
++            {
++                "role": "user",
++                "parts": [{"text": user_prompt + patch_content}],
++            },
++        ],
++        "generationConfig": {"maxOutputTokens": max_tokens},
++    }
++
++
++def call_api(
++    provider,
++    api_key,
++    model,
++    max_tokens,
++    system_prompt,
++    agents_content,
++    patch_content,
++    patch_name,
++    output_format="text",
++    verbose=False,
++):
++    """Make API request to the specified provider."""
++    config = PROVIDERS[provider]
++
++    # Build request based on provider
++    if provider == "anthropic":
++        request_data = build_anthropic_request(
++            model,
++            max_tokens,
++            system_prompt,
++            agents_content,
++            patch_content,
++            patch_name,
++            output_format,
++        )
++        headers = {
++            "Content-Type": "application/json",
++            "x-api-key": api_key,
++            "anthropic-version": "2023-06-01",
++        }
++        url = config["endpoint"]
++    elif provider == "google":
++        request_data = build_google_request(
++            max_tokens,
++            system_prompt,
++            agents_content,
++            patch_content,
++            patch_name,
++            output_format,
++        )
++        headers = {"Content-Type": "application/json"}
++        url = f"{config['endpoint']}/{model}:generateContent?key={api_key}"
++    else:  # openai, xai
++        request_data = build_openai_request(
++            model,
++            max_tokens,
++            system_prompt,
++            agents_content,
++            patch_content,
++            patch_name,
++            output_format,
++        )
++        headers = {
++            "Content-Type": "application/json",
++            "Authorization": f"Bearer {api_key}",
++        }
++        url = config["endpoint"]
++
++    # Make request
++    request_body = json.dumps(request_data).encode("utf-8")
++    req = Request(url, data=request_body, headers=headers, method="POST")
++
++    try:
++        with urlopen(req) as response:
++            result = json.loads(response.read().decode("utf-8"))
++    except HTTPError as e:
++        error_body = e.read().decode("utf-8")
++        try:
++            error_data = json.loads(error_body)
++            error(f"API error: {error_data.get('error', error_body)}")
++        except json.JSONDecodeError:
++            error(f"API error ({e.code}): {error_body}")
++    except URLError as e:
++        error(f"Connection error: {e.reason}")
++
++    # Show verbose info
++    if verbose:
++        print("=== Token Usage ===", file=sys.stderr)
++        if provider == "anthropic":
++            usage = result.get("usage", {})
++            print(f"Input tokens: {usage.get('input_tokens', 'N/A')}", file=sys.stderr)
++            print(
++                f"Cache creation: {usage.get('cache_creation_input_tokens', 0)}",
++                file=sys.stderr,
++            )
++            print(
++                f"Cache read: {usage.get('cache_read_input_tokens', 0)}",
++                file=sys.stderr,
++            )
++            print(
++                f"Output tokens: {usage.get('output_tokens', 'N/A')}", file=sys.stderr
++            )
++        elif provider == "google":
++            usage = result.get("usageMetadata", {})
++            print(
++                f"Prompt tokens: {usage.get('promptTokenCount', 'N/A')}",
++                file=sys.stderr,
++            )
++            print(
++                f"Output tokens: {usage.get('candidatesTokenCount', 'N/A')}",
++                file=sys.stderr,
++            )
++        else:  # openai, xai
++            usage = result.get("usage", {})
++            print(
++                f"Prompt tokens: {usage.get('prompt_tokens', 'N/A')}", file=sys.stderr
++            )
++            print(
++                f"Completion tokens: {usage.get('completion_tokens', 'N/A')}",
++                file=sys.stderr,
++            )
++        print("===================", file=sys.stderr)
++
++    # Extract response text
++    if provider == "anthropic":
++        if "error" in result:
++            error(f"API error: {result['error'].get('message', result)}")
++        content = result.get("content", [])
++        return "".join(
++            block.get("text", "") for block in content if block.get("type") == "text"
++        )
++    elif provider == "google":
++        if "error" in result:
++            error(f"API error: {result['error'].get('message', result)}")
++        candidates = result.get("candidates", [])
++        if not candidates:
++            error("No response from Gemini")
++        parts = candidates[0].get("content", {}).get("parts", [])
++        return "".join(part.get("text", "") for part in parts)
++    else:  # openai, xai
++        if "error" in result:
++            error(f"API error: {result['error'].get('message', result)}")
++        choices = result.get("choices", [])
++        if not choices:
++            error("No response from API")
++        return choices[0].get("message", {}).get("content", "")
++
++
++def get_last_message_id(patch_content):
++    """Extract Message-ID from the last patch in an mbox."""
++    msg_ids = re.findall(
++        r"^Message-I[Dd]:\s*(.+)$", patch_content, re.MULTILINE | re.IGNORECASE
++    )
++    if msg_ids:
++        msg_id = msg_ids[-1].strip()
++        # Normalize: remove < > and add them back
++        msg_id = msg_id.strip("<>")
++        return f"<{msg_id}>"
++    return None
++
++
++def get_last_subject(patch_content):
++    """Extract subject from the last patch in an mbox."""
++    # Find all Subject lines with potential continuations
++    subjects = []
++    lines = patch_content.split("\n")
++    i = 0
++    while i < len(lines):
++        if lines[i].lower().startswith("subject:"):
++            subject = lines[i][8:].strip()
++            i += 1
++            # Handle continuation lines
++            while i < len(lines) and lines[i].startswith((" ", "\t")):
++                subject += lines[i].strip()
++                i += 1
++            subjects.append(subject)
++        else:
++            i += 1
++    return subjects[-1] if subjects else None
++
++
++def send_email(
++    to_addrs, cc_addrs, from_addr, subject, in_reply_to, body, dry_run=False
++):
++    """Send review email using git send-email, sendmail, or msmtp."""
++    msg = EmailMessage()
++    msg["From"] = from_addr
++    msg["To"] = ", ".join(to_addrs)
++    if cc_addrs:
++        msg["Cc"] = ", ".join(cc_addrs)
++    msg["Subject"] = subject
++    if in_reply_to:
++        msg["In-Reply-To"] = in_reply_to
++        msg["References"] = in_reply_to
++    msg.set_content(body)
++
++    email_text = msg.as_string()
++
++    if dry_run:
++        print("=== Email Preview (dry-run) ===", file=sys.stderr)
++        print(email_text, file=sys.stderr)
++        print("=== End Preview ===", file=sys.stderr)
++        return True
++
++    # Write to temp file for git send-email
++    with tempfile.NamedTemporaryFile(mode="w", suffix=".eml", delete=False) as f:
++        f.write(email_text)
++        temp_file = f.name
++
++    try:
++        # Try git send-email first
++        if get_git_config("sendemail.smtpserver"):
++            # Build command with all arguments
++            flat_cmd = ["git", "send-email", "--confirm=never", "--quiet"]
++            for addr in to_addrs:
++                flat_cmd.extend(["--to", addr])
++            for addr in cc_addrs:
++                flat_cmd.extend(["--cc", addr])
++            if from_addr:
++                flat_cmd.extend(["--from", from_addr])
++            if in_reply_to:
++                flat_cmd.extend(["--in-reply-to", in_reply_to])
++            flat_cmd.append(temp_file)
++
++            try:
++                subprocess.run(flat_cmd, check=True, capture_output=True)
++                print("Email sent via git send-email", file=sys.stderr)
++                return True
++            except (subprocess.CalledProcessError, FileNotFoundError):
++                pass
++
++        # Try sendmail
++        try:
++            subprocess.run(
++                ["sendmail", "-t"],
++                input=email_text,
++                text=True,
++                capture_output=True,
++                check=True,
++            )
++            print("Email sent via sendmail", file=sys.stderr)
++            return True
++        except (subprocess.CalledProcessError, FileNotFoundError):
++            pass
++
++        # Try msmtp
++        try:
++            subprocess.run(
++                ["msmtp", "-t"],
++                input=email_text,
++                text=True,
++                capture_output=True,
++                check=True,
++            )
++            print("Email sent via msmtp", file=sys.stderr)
++            return True
++        except (subprocess.CalledProcessError, FileNotFoundError):
++            pass
++
++        error("Could not send email. Configure git send-email, sendmail, or msmtp.")
++
++    finally:
++        os.unlink(temp_file)
++
++
++def list_providers():
++    """Print available providers and exit."""
++    print("Available AI Providers:\n")
++    print(f"{'Provider':<12} {'Default Model':<30} {'API Key Variable'}")
++    print(f"{'--------':<12} {'-------------':<30} {'----------------'}")
++    for name, config in PROVIDERS.items():
++        print(f"{name:<12} {config['default_model']:<30} {config['env_var']}")
++    sys.exit(0)
++
++
++def main():
++    parser = argparse.ArgumentParser(
++        description="Analyze DPDK patches using AI providers",
++        formatter_class=argparse.RawDescriptionHelpFormatter,
++        epilog="""
++Examples:
++    %(prog)s patch.patch                    # Review with default settings
++    %(prog)s -p openai my-patch.patch       # Use OpenAI ChatGPT
++    %(prog)s -f markdown patch.patch        # Output as Markdown
++    %(prog)s -f json -o review.json patch.patch  # Save JSON to file
++    %(prog)s -f html -o review.html patch.patch  # Save HTML to file
++    %(prog)s -r 24.11 patch.patch           # Review for specific release
++    %(prog)s -r 24.11-lts patch.patch       # Review for LTS branch
++    %(prog)s --send-email --to dev@dpdk.org series.mbox
++    %(prog)s --send-email --to dev@dpdk.org --dry-run series.mbox
++
++Large File Handling:
++    %(prog)s --split-patches series.mbox    # Review each patch separately
++    %(prog)s --split-patches --patch-range 1-5 series.mbox  # Review patches 1-5
++    %(prog)s --large-file=truncate patch.mbox   # Truncate to fit limit
++    %(prog)s --large-file=commits-only series.mbox  # Review commit messages only
++    %(prog)s --large-file=summary series.mbox   # High-level summary only
++    %(prog)s --large-file=chunk series.mbox     # Split and review in chunks
++
++Large File Modes:
++    error       - Fail with error (default)
++    truncate    - Truncate content to fit token limit
++    chunk       - Split into chunks and review each
++    commits-only - Extract and review only commit messages
++    summary     - Request high-level summary review
++
++LTS Releases:
++    Use -r/--release with LTS version (e.g., 24.11-lts, 23.11) to enable
++    stricter review rules: bug fixes only, no new features or APIs.
++    Any DPDK release with minor version .11 is an LTS release.
++        """,
++    )
++
++    parser.add_argument("patch_file", nargs="?", help="Patch file to analyze")
++    parser.add_argument(
++        "-p",
++        "--provider",
++        choices=PROVIDERS.keys(),
++        default="anthropic",
++        help="AI provider (default: anthropic)",
++    )
++    parser.add_argument(
++        "-a",
++        "--agents",
++        default="AGENTS.md",
++        help="Path to AGENTS.md file (default: AGENTS.md)",
++    )
++    parser.add_argument(
++        "-m",
++        "--model",
++        help="Model to use (default: provider-specific)",
++    )
++    parser.add_argument(
++        "-t",
++        "--tokens",
++        type=int,
++        default=4096,
++        help="Max tokens for response (default: 4096)",
++    )
++    parser.add_argument(
++        "-v",
++        "--verbose",
++        action="store_true",
++        help="Show API request details",
++    )
++    parser.add_argument(
++        "-f",
++        "--format",
++        choices=OUTPUT_FORMATS,
++        default="text",
++        dest="output_format",
++        help="Output format: text, markdown, html, json (default: text)",
++    )
++    parser.add_argument(
++        "-o",
++        "--output",
++        metavar="FILE",
++        help="Write output to file instead of stdout",
++    )
++    parser.add_argument(
++        "-l",
++        "--list-providers",
++        action="store_true",
++        help="List available providers and exit",
++    )
++
++    # Date and release options
++    parser.add_argument(
++        "-D",
++        "--date",
++        metavar="YYYY-MM-DD",
++        help="Review date context (default: today)",
++    )
++    parser.add_argument(
++        "-r",
++        "--release",
++        metavar="VERSION",
++        help="Target DPDK release (e.g., 24.11, 23.11-lts)",
++    )
++
++    # Large file handling options
++    large_group = parser.add_argument_group("Large File Handling")
++    large_group.add_argument(
++        "--large-file",
++        choices=LARGE_FILE_MODES,
++        default="error",
++        metavar="MODE",
++        help="How to handle large files: error (default), truncate, "
++        "chunk, commits-only, summary",
++    )
++    large_group.add_argument(
++        "--max-tokens",
++        type=int,
++        metavar="N",
++        help="Max input tokens (default: provider-specific)",
++    )
++    large_group.add_argument(
++        "--split-patches",
++        action="store_true",
++        help="Split mbox into individual patches and review each separately",
++    )
++    large_group.add_argument(
++        "--patch-range",
++        metavar="N-M",
++        help="Review only patches N through M (1-indexed, use with --split-patches)",
++    )
++
++    # Email options
++    email_group = parser.add_argument_group("Email Options")
++    email_group.add_argument(
++        "--send-email",
++        action="store_true",
++        help="Send review via email",
++    )
++    email_group.add_argument(
++        "--to",
++        action="append",
++        dest="to_addrs",
++        default=[],
++        metavar="ADDRESS",
++        help="Email recipient (can be specified multiple times)",
++    )
++    email_group.add_argument(
++        "--cc",
++        action="append",
++        dest="cc_addrs",
++        default=[],
++        metavar="ADDRESS",
++        help="CC recipient (can be specified multiple times)",
++    )
++    email_group.add_argument(
++        "--from",
++        dest="from_addr",
++        metavar="ADDRESS",
++        help="From address (default: from git config)",
++    )
++    email_group.add_argument(
++        "--dry-run",
++        action="store_true",
++        help="Show email without sending",
++    )
++
++    args = parser.parse_args()
++
++    if args.list_providers:
++        list_providers()
++
++    # Check patch file is provided
++    if not args.patch_file:
++        parser.error("patch_file is required")
++
++    # Get provider config
++    config = PROVIDERS[args.provider]
++    model = args.model or config["default_model"]
++
++    # Get API key
++    api_key = os.environ.get(config["env_var"])
++    if not api_key:
++        error(f"{config['env_var']} environment variable not set")
++
++    # Validate files
++    agents_path = Path(args.agents)
++    if not agents_path.exists():
++        error(f"AGENTS.md not found: {args.agents}")
++
++    patch_path = Path(args.patch_file)
++    if not patch_path.exists():
++        error(f"Patch file not found: {args.patch_file}")
++
++    # Validate email options
++    if args.send_email and not args.to_addrs:
++        error("--send-email requires at least one --to address")
++
++    # Get from address for email
++    from_addr = args.from_addr
++    if args.send_email and not from_addr:
++        git_name = get_git_config("user.name")
++        git_email = get_git_config("user.email")
++        if git_email:
++            from_addr = f"{git_name} <{git_email}>" if git_name else git_email
++        else:
++            error("No --from specified and git user.email not configured")
++
++    # Determine review date
++    review_date = args.date or date.today().isoformat()
++
++    # Build system prompt with date and release context
++    system_prompt = build_system_prompt(review_date, args.release)
++
++    # Read files
++    agents_content = agents_path.read_text()
++    patch_content = patch_path.read_text()
++    patch_name = patch_path.name
++
++    # Determine max tokens for this provider
++    max_input_tokens = args.max_tokens or PROVIDER_INPUT_LIMITS.get(
++        args.provider, 100000
++    )
++
++    # Estimate token count
++    estimated_tokens = estimate_tokens(patch_content + agents_content)
++
++    # Parse patch range if specified
++    patch_start, patch_end = None, None
++    if args.patch_range:
++        try:
++            if "-" in args.patch_range:
++                start, end = args.patch_range.split("-", 1)
++                patch_start = int(start)
++                patch_end = int(end)
++            else:
++                patch_start = patch_end = int(args.patch_range)
++        except ValueError:
++            error(f"Invalid --patch-range format: {args.patch_range}")
++
++    # Handle --split-patches mode
++    if args.split_patches:
++        patches = split_mbox_patches(patch_content)
++        total_patches = len(patches)
++
++        if total_patches == 1:
++            print(
++                f"Note: Only 1 patch found in mbox, --split-patches has no effect",
++                file=sys.stderr,
++            )
++        else:
++            print(
++                f"Found {total_patches} patches in mbox",
++                file=sys.stderr,
++            )
++
++            # Apply patch range filter
++            if patch_start is not None:
++                if patch_start < 1 or patch_start > total_patches:
++                    error(
++                        f"Patch range start {patch_start} out of range (1-{total_patches})"
++                    )
++                if patch_end < patch_start or patch_end > total_patches:
++                    error(
++                        f"Patch range end {patch_end} out of range ({patch_start}-{total_patches})"
++                    )
++                patches = patches[patch_start - 1 : patch_end]
++                print(
++                    f"Reviewing patches {patch_start}-{patch_end} ({len(patches)} patches)",
++                    file=sys.stderr,
++                )
++
++            # Review each patch separately
++            all_reviews = []
++            for i, patch in enumerate(patches, patch_start or 1):
++                patch_label = f"Patch {i}/{total_patches}"
++                print(f"\nReviewing {patch_label}...", file=sys.stderr)
++
++                review_text = call_api(
++                    args.provider,
++                    api_key,
++                    model,
++                    args.tokens,
++                    system_prompt,
++                    agents_content,
++                    patch,
++                    f"{patch_name} ({patch_label})",
++                    args.output_format,
++                    args.verbose,
++                )
++                all_reviews.append((patch_label, review_text))
++
++            # Combine reviews
++            review_text = format_combined_reviews(
++                all_reviews, args.output_format, patch_name
++            )
++
++            # Skip the normal API call
++            estimated_tokens = 0  # Bypass size check since we've already processed
++
++    # Check if content is too large
++    is_large = estimated_tokens > max_input_tokens
++
++    if is_large:
++        print(
++            f"Warning: Estimated {estimated_tokens:,} tokens exceeds limit of "
++            f"{max_input_tokens:,}",
++            file=sys.stderr,
++        )
++
++        if args.large_file == "error":
++            error(
++                f"Patch file too large ({estimated_tokens:,} tokens). "
++                f"Use --large-file=truncate|chunk|commits-only|summary to handle, "
++                f"or --split-patches to review patches individually."
++            )
++        elif args.large_file == "truncate":
++            print("Truncating content to fit token limit...", file=sys.stderr)
++            patch_content, was_truncated = truncate_content(
++                patch_content, max_input_tokens, args.provider
++            )
++            if was_truncated:
++                print("Content was truncated.", file=sys.stderr)
++        elif args.large_file == "commits-only":
++            print("Extracting commit messages only...", file=sys.stderr)
++            patch_content = extract_commit_messages(patch_content)
++            new_estimate = estimate_tokens(patch_content + agents_content)
++            print(
++                f"Reduced to ~{new_estimate:,} tokens (commit messages only)",
++                file=sys.stderr,
++            )
++            if new_estimate > max_input_tokens:
++                patch_content, _ = truncate_content(
++                    patch_content, max_input_tokens, args.provider
++                )
++        elif args.large_file == "summary":
++            print("Using summary mode for large patch...", file=sys.stderr)
++            system_prompt += get_summary_prompt()
++            patch_content, _ = truncate_content(
++                patch_content, max_input_tokens, args.provider
++            )
++        elif args.large_file == "chunk":
++            print("Processing in chunks...", file=sys.stderr)
++            all_reviews = []
++            for chunk, chunk_num, total_chunks in chunk_content(
++                patch_content, max_input_tokens, args.provider
++            ):
++                chunk_label = f"Chunk {chunk_num}/{total_chunks}"
++                print(f"Reviewing {chunk_label}...", file=sys.stderr)
++
++                review_text = call_api(
++                    args.provider,
++                    api_key,
++                    model,
++                    args.tokens,
++                    system_prompt,
++                    agents_content,
++                    chunk,
++                    f"{patch_name} ({chunk_label})",
++                    args.output_format,
++                    args.verbose,
++                )
++                all_reviews.append((chunk_label, review_text))
++
++            # Combine chunk reviews
++            review_text = format_combined_reviews(
++                all_reviews, args.output_format, patch_name
++            )
++
++            # Skip the normal single API call below
++            estimated_tokens = 0
++
++    if args.verbose:
++        print("=== Request ===", file=sys.stderr)
++        print(f"Provider: {args.provider}", file=sys.stderr)
++        print(f"Model: {model}", file=sys.stderr)
++        print(f"Review date: {review_date}", file=sys.stderr)
++        if args.release:
++            lts_status = " (LTS)" if is_lts_release(args.release) else ""
++            print(f"Target release: {args.release}{lts_status}", file=sys.stderr)
++        print(f"Output format: {args.output_format}", file=sys.stderr)
++        print(f"AGENTS file: {args.agents}", file=sys.stderr)
++        print(f"Patch file: {args.patch_file}", file=sys.stderr)
++        print(f"Estimated tokens: {estimated_tokens:,}", file=sys.stderr)
++        print(f"Max input tokens: {max_input_tokens:,}", file=sys.stderr)
++        if args.large_file != "error":
++            print(f"Large file mode: {args.large_file}", file=sys.stderr)
++        if args.split_patches:
++            print("Split patches: yes", file=sys.stderr)
++        if args.output:
++            print(f"Output file: {args.output}", file=sys.stderr)
++        if args.send_email:
++            print("Send email: yes", file=sys.stderr)
++            print(f"To: {', '.join(args.to_addrs)}", file=sys.stderr)
++            if args.cc_addrs:
++                print(f"Cc: {', '.join(args.cc_addrs)}", file=sys.stderr)
++            print(f"From: {from_addr}", file=sys.stderr)
++        print("===============", file=sys.stderr)
++
++    # Call API (unless already processed via chunks/split)
++    if estimated_tokens > 0:  # Not already processed
++        review_text = call_api(
++            args.provider,
++            api_key,
++            model,
++            args.tokens,
++            system_prompt,
++            agents_content,
++            patch_content,
++            patch_name,
++            args.output_format,
++            args.verbose,
++        )
++
++    if not review_text:
++        error(f"No response received from {args.provider}")
++
++    # Format output based on requested format
++    provider_name = config["name"]
++
++    if args.output_format == "json":
++        # For JSON, try to parse and add metadata
++        try:
++            review_data = json.loads(review_text)
++        except json.JSONDecodeError:
++            # If AI didn't return valid JSON, wrap the text
++            review_data = {"raw_review": review_text}
++
++        output_data = {
++            "metadata": {
++                "patch_file": patch_name,
++                "provider": args.provider,
++                "provider_name": provider_name,
++                "model": model,
++                "review_date": review_date,
++                "target_release": args.release,
++                "is_lts": is_lts_release(args.release) if args.release else False,
++            },
++            "review": review_data,
++        }
++        output_text = json.dumps(output_data, indent=2)
++    elif args.output_format == "html":
++        # Wrap HTML content with header
++        release_info = ""
++        if args.release:
++            lts_badge = " (LTS)" if is_lts_release(args.release) else ""
++            release_info = f"<br>Target release: {args.release}{lts_badge}"
++        output_text = f"""<!-- AI-generated review of {patch_name} -->
++<!-- Reviewed using {provider_name} ({model}) on {review_date} -->
++<div class="patch-review">
++<h1>Patch Review: {patch_name}</h1>
++<p class="review-meta">Reviewed by {provider_name} ({model}) on {review_date}{release_info}</p>
++{review_text}
++</div>
++"""
++    elif args.output_format == "markdown":
++        release_info = ""
++        if args.release:
++            lts_badge = " (LTS)" if is_lts_release(args.release) else ""
++            release_info = f"\n*Target release: {args.release}{lts_badge}*\n"
++        output_text = f"""# Patch Review: {patch_name}
++
++*Reviewed by {provider_name} ({model}) on {review_date}*
++{release_info}
++{review_text}
++"""
++    else:  # text
++        release_info = ""
++        if args.release:
++            lts_badge = " (LTS)" if is_lts_release(args.release) else ""
++            release_info = f"Target release: {args.release}{lts_badge}\n"
++        output_text = f"=== Patch Review: {patch_name} (via {provider_name}) ===\n"
++        output_text += f"Review date: {review_date}\n"
++        output_text += release_info
++        output_text += "\n" + review_text
++
++    # Write output
++    if args.output:
++        Path(args.output).write_text(output_text)
++        print(f"Review written to: {args.output}", file=sys.stderr)
++    else:
++        print(output_text)
++
++    # Send email if requested
++    if args.send_email:
++        # Email always uses plain text - warn if different format requested
++        if args.output_format != "text":
++            print(
++                f"Note: Email will be sent as plain text regardless of "
++                f"--format={args.output_format}",
++                file=sys.stderr,
++            )
++
++        in_reply_to = get_last_message_id(patch_content)
++        orig_subject = get_last_subject(patch_content)
++
++        if orig_subject:
++            # Remove [PATCH n/m] prefix
++            review_subject = re.sub(r"^\[PATCH[^\]]*\]\s*", "", orig_subject)
++            review_subject = f"[REVIEW] {review_subject}"
++        else:
++            review_subject = f"[REVIEW] {patch_name}"
++
++        # Build email body - always use plain text version
++        release_info = ""
++        if args.release:
++            lts_badge = " (LTS)" if is_lts_release(args.release) else ""
++            release_info = f"Target release: {args.release}{lts_badge}\n"
++
++        email_body = f"""AI-generated review of {patch_name}
++Reviewed using {provider_name} ({model}) on {review_date}
++{release_info}
++This is an automated review. Please verify all suggestions.
 +
 +---
 +
-+## LTS (Long Term Stable) Release Review
++{review_text}
++"""
 +
-+LTS releases are DPDK versions ending in `.11` (e.g., 23.11, 22.11,
-+21.11, 20.11, 19.11). When reviewing patches targeting an LTS branch,
-+apply stricter criteria:
++        if args.verbose:
++            print("", file=sys.stderr)
++            print("=== Email Details ===", file=sys.stderr)
++            print(f"Subject: {review_subject}", file=sys.stderr)
++            print(f"In-Reply-To: {in_reply_to}", file=sys.stderr)
++            print("=====================", file=sys.stderr)
 +
-+### LTS-Specific Rules
++        send_email(
++            args.to_addrs,
++            args.cc_addrs,
++            from_addr,
++            review_subject,
++            in_reply_to,
++            email_body,
++            args.dry_run,
++        )
 +
-+- **Only bug fixes allowed** -- no new features
-+- **No new APIs** (experimental or stable)
-+- **ABI must remain unchanged** -- no symbol additions, removals,
-+  or signature changes
-+- Backported fixes should reference the original commit with a
-+  `Fixes:` tag
-+- Copyright years should reflect when the code was originally
-+  written
-+- Be conservative: reject changes that are not clearly bug fixes
++        if not args.dry_run:
++            print("", file=sys.stderr)
++            print(f"Review sent to: {', '.join(args.to_addrs)}", file=sys.stderr)
 +
-+### What to Flag on LTS Branches
 +
-+**Error:**
-+- New feature code (new functions, new driver capabilities)
-+- New experimental or stable API additions
-+- ABI changes (new or removed symbols, changed function signatures)
-+- Changes that add new configuration options or parameters
-+
-+**Warning:**
-+- Large refactoring that goes beyond what is needed for a fix
-+- Missing `Fixes:` tag on a backported bug fix
-+- Missing `Cc: stable@dpdk.org`
-+
-+### When LTS Rules Apply
-+
-+LTS rules apply when the reviewer is told the target release is an
-+LTS version (via the `--release` option or equivalent). If no
-+release is specified, assume the patch targets the main development
-+branch where new features and APIs are allowed.
-+
-+---
-+
-+## Patch Validation Checklist
-+
-+### Commit Message
-+
-+- [ ] Subject line <=60 characters
-+- [ ] Subject is lowercase (except acronyms from words-case.txt)
-+- [ ] Correct component prefix (e.g., `net/ixgbe:` not `ixgbe:`)
-+- [ ] No `lib/` prefix for libraries
-+- [ ] Imperative mood, no trailing period
-+- [ ] No tabs, leading/trailing spaces, or punctuation marks
-+- [ ] Body wrapped at 75 characters
-+- [ ] Body does not start with "It"
-+- [ ] `Signed-off-by:` present with real name and valid email
-+- [ ] `Fixes:` tag present for bug fixes with 12-char SHA and exact subject
-+- [ ] `Coverity issue:` tag present if Coverity mentioned
-+- [ ] `Bugzilla ID:` tag present if Bugzilla mentioned
-+- [ ] `Cc: stable@dpdk.org` for stable backport candidates
-+- [ ] Tags in correct order with blank line separator
-+
-+### License
-+
-+- [ ] SPDX identifier on first line (or second for scripts)
-+- [ ] Copyright line follows SPDX
-+- [ ] Blank line after copyright before code
-+- [ ] Appropriate license for file type
-+
-+### Code Style
-+
-+- [ ] Lines <=100 characters
-+- [ ] Hard tabs for indentation, spaces for alignment
-+- [ ] No trailing whitespace
-+- [ ] Proper include order
-+- [ ] Header guards present
-+- [ ] `rte_`/`RTE_` prefix on external symbols
-+- [ ] Driver/library global variables use unique prefixes (e.g., `virtio_`, `mlx5_`)
-+- [ ] No prohibited terminology
-+- [ ] Proper brace style
-+- [ ] Function return type on own line
-+- [ ] Explicit comparisons: `== NULL`, `== 0`, `!= NULL`, `!= 0`
-+- [ ] No forbidden tokens (see table above)
-+- [ ] No unnecessary code patterns (see section above)
-+- [ ] No usage of deprecated APIs, macros, or functions
-+- [ ] Process-shared primitives in shared memory use `PTHREAD_PROCESS_SHARED`
-+
-+### API Tags
-+
-+- [ ] `__rte_experimental` alone on line, only in headers
-+- [ ] `__rte_internal` alone on line, only in headers
-+- [ ] Alignment attributes only on struct/union
-+- [ ] Packed attributes properly paired
-+- [ ] New public functions have `RTE_EXPORT_*` macro in `.c` file
-+- [ ] Experimental functions use `RTE_EXPORT_EXPERIMENTAL_SYMBOL(name, version)`
-+
-+### Structure
-+
-+- [ ] Each commit compiles independently
-+- [ ] Code and docs updated together
-+- [ ] Documentation matches code behavior
-+- [ ] PMD features match `doc/guides/nics/features/` matrix
-+- [ ] Device operations match documentation (per `features.rst` mappings)
-+- [ ] Tests added/updated as needed
-+- [ ] Functional tests use TEST_ASSERT macros and unit_test_suite_runner
-+- [ ] New APIs marked as `__rte_experimental`
-+- [ ] New APIs have testpmd hooks and functional tests
-+- [ ] Current release notes updated for significant changes
-+- [ ] Release notes updated for API changes
-+- [ ] Release notes updated for new drivers or subsystems
-+
-+---
-+
-+## Meson Build Files
-+
-+### Style Requirements
-+
-+- 4-space indentation (no tabs)
-+- Line continuations double-indented
-+- Lists alphabetically ordered
-+- Short lists (<=3 items): single line, no trailing comma
-+- Long lists: one item per line, trailing comma on last item
-+- No strict line length limit for meson files; lines under 100 characters are acceptable
-+
-+```python
-+# Short list
-+sources = files('file1.c', 'file2.c')
-+
-+# Long list
-+headers = files(
-+	'header1.h',
-+	'header2.h',
-+	'header3.h',
-+)
-+```
-+
-+---
-+
-+## Python Code
-+
-+- Must comply with formatting standards
-+- Use **`black`** for code formatting validation
-+- Line length acceptable up to 100 characters
-+
-+---
-+
-+## Validation Tools
-+
-+Run these before submitting:
-+
-+```bash
-+# Check commit messages
-+devtools/check-git-log.sh -n1
-+
-+# Check patch format and forbidden tokens
-+devtools/checkpatches.sh -n1
-+
-+# Check maintainers coverage
-+devtools/check-maintainers.sh
-+
-+# Build validation
-+devtools/test-meson-builds.sh
-+
-+# Find maintainers for your patch
-+devtools/get-maintainer.sh <patch-file>
-+```
-+
-+---
-+
-+## Severity Levels for AI Review
-+
-+**Error** (must fix):
-+
-+*Correctness bugs (highest value findings):*
-+- Use-after-free
-+- Resource leaks on error paths (memory, file descriptors, locks)
-+- Double-free or double-close
-+- NULL pointer dereference on reachable code path
-+- Buffer overflow or out-of-bounds access
-+- Missing error check on a function that can fail, leading to undefined behavior
-+- Race condition on shared mutable state without synchronization
-+- Error path that skips necessary cleanup
-+
-+*Process and format errors:*
-+- Missing or malformed SPDX license
-+- Missing Signed-off-by
-+- Subject line over 60 characters
-+- Body lines over 75 characters
-+- Wrong tag order or format
-+- Missing required tags (Fixes, Coverity issue, Bugzilla ID)
-+- Forbidden tokens in code
-+- `__rte_experimental`/`__rte_internal` in .c files or not alone on line
-+- Compilation failures
-+- ABI breaks without proper versioning
-+- pthread mutex/cond/rwlock in shared memory without `PTHREAD_PROCESS_SHARED`
-+
-+**Warning** (should fix):
-+- Subject line style issues (case, punctuation)
-+- Wrong component prefix
-+- Missing Cc: stable@dpdk.org for fixes
-+- Documentation gaps
-+- Documentation does not match code behavior
-+- PMD features missing from `doc/guides/nics/features/` matrix
-+- Device operations not documented per `features.rst` mappings
-+- Missing tests
-+- Functional tests not using TEST_ASSERT macros or unit_test_suite_runner
-+- New API not marked as `__rte_experimental`
-+- New API without testpmd hooks or functional tests
-+- New public function missing `RTE_EXPORT_*` macro
-+- API changes without release notes
-+- New drivers or subsystems without release notes
-+- Implicit comparisons (`!ptr` instead of `ptr == NULL`)
-+- Unnecessary variable initialization
-+- Unnecessary casts of `void *`
-+- Unnecessary NULL checks before free
-+- Inappropriate use of `rte_malloc()` or `rte_memcpy()`
-+- Use of `perror()`, `printf()`, `fprintf()` in libraries or drivers (allowed in examples and test code)
-+- Driver/library global variables without unique prefixes (static linking clash risk)
-+- Usage of deprecated APIs, macros, or functions in new code
-+
-+**Do NOT flag** (common false positives):
-+- Missing `version.map` updates (maps are auto-generated from `RTE_EXPORT_*` macros)
-+- Suggesting manual edits to any `version.map` file
-+- Copyright years within valid range (2013 to current year)
-+- Copyright held by individuals (never speculate about employers, company policies, or who "should" hold copyright)
-+- SPDX/copyright format that matches the standard DPDK format (do not call it "different" or "unusual")
-+- Meson file lines under 100 characters
-+- Case-sensitive term violations in code comments (words-case.txt applies to commit messages only)
-+- Comparisons using `== 0`, `!= 0`, `== NULL`, `!= NULL` as "implicit" (these ARE explicit)
-+- Comparisons wrapped in `likely()` or `unlikely()` macros - these are still explicit if using == or !=
-+- Anything you determine is correct (do not mention non-issues or say "No issue here")
-+- `REGISTER_FAST_TEST` using `NOHUGE_OK`/`ASAN_OK` macros (this is the correct current format)
-+- Tag ordering: Signed-off-by directly after commit body (when no Fixes/Cc tags) is CORRECT
-+- Tag ordering: no blank line between Fixes/Cc, blank line before Signed-off-by (when Fixes/Cc present) is CORRECT
-+- Missing release notes for test-only changes (unit tests do not require release notes)
-+- Missing release notes for internal APIs or helper functions (only public APIs need release notes)
-+- Subject lines that are within the 60 character limit (count first, do not guess)
-+- Any item you later correct with "(Correction: ...)" or "actually acceptable" - just omit it
-+- Vague concerns ("should be verified", "should be checked") - if you're not sure it's wrong, don't flag it
-+- Items where you say "which is correct" or "this is correct" - if it's correct, don't mention it at all
-+- Fixes tags with correct format (12-char SHA, quoted subject) - NEVER ask for verification that commit exists
-+- Items where you conclude "no issue here" or "this is actually correct" - omit these entirely
-+- Cross-patch compilation dependencies - you cannot determine patch ordering correctness from review
-+- Claims that a symbol "was removed in patch N" causing issues in patch M - assume author ordered correctly
-+- Any speculation about whether patches will compile when applied in sequence
-+- Mutexes/locks in process-private memory (standard `malloc`, stack, static non-shared) - these don't need `PTHREAD_PROCESS_SHARED`
-+- Use of `rte_spinlock_t` or `rte_rwlock_t` in shared memory (these work correctly without special init)
-+
-+**Info** (consider):
-+- Minor style preferences
-+- Optimization suggestions
-+- Alternative approaches
-+
-+---
-+
-+# Response Format
-+
-+When you identify an issue:
-+1. **State the problem** (1 sentence)
-+2. **Why it matters** (1 sentence, only if not obvious)
-+3. **Suggested fix** (code snippet or specific action)
-+
-+Example:
-+This could panic if the string is NULL.
-+
-+---
-+
-+## FINAL CHECK BEFORE SUBMITTING REVIEW
-+
-+Before outputting your review, do two separate passes:
-+
-+### Pass 1: Verify correctness bugs are included
-+
-+Ask: "Did I trace every error path for resource leaks? Did I check
-+for use-after-free? Did I verify error codes are propagated?"
-+
-+If you identified a potential correctness bug but talked yourself
-+out of it, **add it back**. It is better to report a possible bug
-+than to miss a real one.
-+
-+### Pass 2: Remove style/process false positives
-+
-+For EACH style/process item, ask: "Did I conclude this is actually
-+fine/correct/acceptable/no issue?"
-+
-+If YES, DELETE THAT ITEM. It should not be in your output.
-+
-+An item that says "X is wrong... actually this is correct" is a
-+FALSE POSITIVE and must be removed. This applies to style, format,
-+and process items only.
-+
-+**If your Errors section would be empty after this check, that's
-+fine -- it means the patches are good.**
++if __name__ == "__main__":
++    main()
 -- 
 2.51.0
 
