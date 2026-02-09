@@ -2,67 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 451B2E7E0DF
-	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Feb 2026 20:07:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0D28E7E0DB
+	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Feb 2026 20:07:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E58D140668;
-	Mon,  9 Feb 2026 21:06:57 +0100 (CET)
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com
- [209.85.221.53]) by mails.dpdk.org (Postfix) with ESMTP id E68E9402C3
- for <dev@dpdk.org>; Mon,  9 Feb 2026 21:06:54 +0100 (CET)
-Received: by mail-wr1-f53.google.com with SMTP id
- ffacd0b85a97d-436317c80f7so1485772f8f.1
- for <dev@dpdk.org>; Mon, 09 Feb 2026 12:06:54 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 071B140677;
+	Mon,  9 Feb 2026 21:06:59 +0100 (CET)
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com
+ [209.85.221.47]) by mails.dpdk.org (Postfix) with ESMTP id B9D5940667
+ for <dev@dpdk.org>; Mon,  9 Feb 2026 21:06:56 +0100 (CET)
+Received: by mail-wr1-f47.google.com with SMTP id
+ ffacd0b85a97d-435f177a8f7so3403535f8f.1
+ for <dev@dpdk.org>; Mon, 09 Feb 2026 12:06:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1770667614;
- x=1771272414; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1770667616;
+ x=1771272416; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=JAvX7pmS556ekiWZ7fxI/KSmtgI/vjkasYHY5dy6a3w=;
- b=cIe4yC+vs9h7egnj6eRCkBBqBRet2CyBpmh2lLB76OIVPc2HZKC+HSJq+VxXYSaOLD
- 07PNZTm6za78h8Tcu/bOD0ivz/DDnfM7jFwpBlQ7Q4W0TMvAVl0GLSq4HXQDrah4YRNn
- RrHZ5Na8IyLC8LZXvMJ633/Af2IBwxDLMSmybjkNXPJPmuYri4EIj2p6KlAFlJJDmsS5
- 0TmctvKMQt4WHnphiIrA/fshL7p0LbNeecqRvcHPMMXxwjxbK0sk/BENKu+KCyVk1I5F
- +11bX0UX2AC8Y1pmxFqXax+pMCZUdVIQp5t7LZzHBlBdAO89KLwIoXSM3sPkBeegBdQM
- lUKg==
+ bh=qJdoY2UpfvcOKvy9k46lSEGBeT4S3arcx92oEChi8/8=;
+ b=ZlbCsixXsNCWb6nujKPkOZXtjatX+zdiE5NhbthdYp5fj3JfUkBT77STgGomZKK7Zv
+ K1W9f7LT7M3jYgD5vkKa1pOWyPLacj0cl4WWrBi2O4XetcptJz0lQ0MIrx3fp57Va2Bg
+ VEMPhc0rJIG3EYW5QF2KJsmUKTEL/yDsc70RyZ0yV320KqsyToIMLJ6F6Pg9/r+Qa6FJ
+ sGz0sSbm10rlAAeqHwy+1ZiXkX+98LnFlnujkbn49wlUY1ixTHvBzViu0rWR9lJOd1Cg
+ Ldi+DWgRvS2tBgUXHZXu0b0xiKtE7yyjXBXd7FQNijIUKKMW0ARqjG6AALAx21o8K7ax
+ PLEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1770667614; x=1771272414;
+ d=1e100.net; s=20230601; t=1770667616; x=1771272416;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=JAvX7pmS556ekiWZ7fxI/KSmtgI/vjkasYHY5dy6a3w=;
- b=smZYRvkdPPPxFhEZk72ZnwYl42n/owMkzAM/DNOeNeoFp4dpwiJkpy50R/2pd2BohM
- LCPs5gUrFri9f4pq2IBIs12Joux7icy+1AuEHcMiBF+30CQY1L/lKCq/JAQ5UVWDw5Gg
- QlTUJcSjNuw35qsBtAGHYbmDfc/5LpZBmcAMNAHqNKUy/fFnPvJaL3eoDTsdHL6wT8az
- Yb8oOYYZomIp0fu8DM9k98+XgBhwwt6Jk3SlBRLUL+JhMsOwNzqz29QASA0/oUpntEkm
- 9fs9OGGsx3rtRKH1o2S8PUVW+NhxRtM4ei+UZr6kgxUVIIW9pjACzJ/VQ3V9/HOudl2R
- o+uQ==
-X-Gm-Message-State: AOJu0YyyW/HSqyd3QHxXUFa+uCaBVLISHXLE5ASMydREjbOmQ1l4a3R8
- zx13l62P9aUoR1TDepWjLaYLtXpl1GQVSuiCLe5aFGhmNhr/5FrPcSY7GKi6FgVZu//K6efe/yv
- vWL+V
-X-Gm-Gg: AZuq6aJ2ArSBzKduIQ5QEP5obPrp/flXIcSmTzBja7oeilBQL3h+MX83a17ge/+Zegl
- m/TeSFBlpSmq3pbI5sNJ/OIdpZO2HHUNisgGiSgIuIGTSbEE4E3Eekax1eH5Yl1mPGqjgM0L+4N
- cMZe8d/yXhvplA7vcI4EoE4AzzHbpYbtQPZPqSZAh4uYLHiaFwy41x+qlvqjscvx+mo7SiW6hWE
- ZoyMN1um9Fa6m/BrQ3VKM+rM2SbmKP6Wro4HT9TOPWYZDInyYB+2FcTXHlvcT4RuA3tPwZXTjxR
- SnijnriaDV9kTVjnpIa048NdPhAkx5AyxYk9N/4jQ65+5radQoPM6mn7R4cMZr8dREEDLQJIbok
- WBuSzTaZEXh0RQs943B7VZKUkuUwD42xLmuW/ZHXLrsvQuDq+1mI9iPm00DEwDvAx8NnzQ1ONHv
- TULDTsi9Ez1bM2dEWtsOIjCkMo4T9PVOnWcRfAUM4n7kFgJhrzkQ==
-X-Received: by 2002:a05:6000:178f:b0:435:9a18:5a29 with SMTP id
- ffacd0b85a97d-43779e43460mr66648f8f.11.1770667614316; 
- Mon, 09 Feb 2026 12:06:54 -0800 (PST)
+ bh=qJdoY2UpfvcOKvy9k46lSEGBeT4S3arcx92oEChi8/8=;
+ b=B+sfmMTnVnYri5MRNGoFcNGxTJhrIzoyVZtQkpM7J/eXEBtv5Iue06MRLzw2nc3Zn2
+ Xl/4MJfn3SbF75JGeeK5ItuYJAOyLXyzsxF6ihlyzN8mRiimDi+Ok/P3JV8mCEVU1Lxr
+ eHGlQsUk8N86Azw8VpP71EJ+/BgC9bF1rEM0kLMjcBUsoqP2fATxx2qupfFTHYjzqKdU
+ r9QzNhX0qBBkviLd0RZ13zFsztuaiJz54NrrePJneHerbwk/davxuWqQ2GQdmszuJiOm
+ K2AZ7ULyq/n1gxoFgY0NMbV7qZRPofxaJzwU/fixW/UZDOjGPVpVj4GIlxqc1GnBJVso
+ km8w==
+X-Gm-Message-State: AOJu0YxsW07lG2oJPafLMI2dPbEHvWpbvKcEbw9tp4qsrXqTW9T/ozfq
+ +DiUIfTTD8QVmF3g+xyueJd2QC6js8sS/8YqP0u4BBSxpw2mApUZV57tfpa1goS0wbEcE27GVif
+ MwIL4
+X-Gm-Gg: AZuq6aJu2oMif8FfAYZRixFo6uNlAFkgTtnjdA9mWJbBJnaMVl92xNAEeYb5WTEl51k
+ BwGai9FbuLz+hCm0AGT2tNQICIubncxAgenk+d672w1AD9jBDl7AvkSKDQgqT/BU20wml098vl2
+ qS3rTkFSt2rNr7eK2jp/2gFM0GI0+0LiR0sFSJFa8YU/8eoMlM7LbR8RH7JhRyuJJ6fSGVt7W3/
+ 9wD4ygM6J2TkHbV338HbSteC2MT1GeJQ/gvC/sBhgO9jFQsL6N/RBvT77ZUCFI06N5WPAT6IwMT
+ Wxjpaw4NFXon0f5gSv02NJY+RHMiPK5Mr+J93Cl3tU3EV3uExD30mFb1Fm5AIRLtqnHXeezjlam
+ d3X2n4m9OaPHwIsurZ3EVyhTHZE/X3LvqpCDNMrdWz6GHi3CxAQyvkjvznCJEQiHoCFHAiVJAWE
+ /l72uYfdds02EI+IzbesDt+dC5wKd1im9k29lnaSYx6foxXWavgQ==
+X-Received: by 2002:a05:6000:230a:b0:437:678b:83ca with SMTP id
+ ffacd0b85a97d-437678b8589mr11430355f8f.50.1770667616108; 
+ Mon, 09 Feb 2026 12:06:56 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-4376bd5a074sm11905721f8f.11.2026.02.09.12.06.52
+ ffacd0b85a97d-4376bd5a074sm11905721f8f.11.2026.02.09.12.06.54
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 09 Feb 2026 12:06:53 -0800 (PST)
+ Mon, 09 Feb 2026 12:06:55 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Tetsuya Mukawa <mtetsuyah@gmail.com>
-Subject: [RFC 1/2] net/null: add stub flow ops for rte_flow API testing
-Date: Mon,  9 Feb 2026 12:05:42 -0800
-Message-ID: <20260209200648.182725-2-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [RFC 2/2] app/test: add rte_flow API unit tests
+Date: Mon,  9 Feb 2026 12:05:43 -0800
+Message-ID: <20260209200648.182725-3-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260209200648.182725-1-stephen@networkplumber.org>
 References: <20260209200648.182725-1-stephen@networkplumber.org>
@@ -82,342 +81,1051 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add flow_ops to the null PMD that validate input structure and reject
-all rules with properly typed rte_flow_error responses. Pattern items
-and actions are walked individually, with cause pointers set to the
-offending element. flush() succeeds as a no-op; all other operations
-return appropriate error codes.
-
-This enables testing the full rte_flow code path without hardware.
+Add flow_api_autotest to exercise the rte_flow API through the null
+PMD stub flow ops. Covers basic operations and error handling,
+verifying that error types, cause pointers, and messages are
+correctly propagated.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/null/meson.build    |   6 +-
- drivers/net/null/null_flow.c    | 237 ++++++++++++++++++++++++++++++++
- drivers/net/null/null_flow.h    |  12 ++
- drivers/net/null/rte_eth_null.c |  12 ++
- 4 files changed, 266 insertions(+), 1 deletion(-)
- create mode 100644 drivers/net/null/null_flow.c
- create mode 100644 drivers/net/null/null_flow.h
+ app/test/meson.build     |    1 +
+ app/test/test_flow_api.c | 1015 ++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 1016 insertions(+)
+ create mode 100644 app/test/test_flow_api.c
 
-diff --git a/drivers/net/null/meson.build b/drivers/net/null/meson.build
-index bad7dc1af7..810715de52 100644
---- a/drivers/net/null/meson.build
-+++ b/drivers/net/null/meson.build
-@@ -1,5 +1,9 @@
- # SPDX-License-Identifier: BSD-3-Clause
- # Copyright(c) 2017 Intel Corporation
- 
--sources = files('rte_eth_null.c')
-+sources = files(
-+        'rte_eth_null.c',
-+        'null_flow.c',
-+)
-+
- require_iova_in_mbuf = false
-diff --git a/drivers/net/null/null_flow.c b/drivers/net/null/null_flow.c
+diff --git a/app/test/meson.build b/app/test/meson.build
+index 48874037eb..36f34c066b 100644
+--- a/app/test/meson.build
++++ b/app/test/meson.build
+@@ -87,6 +87,7 @@ source_file_deps = {
+     'test_fib6.c': ['rib', 'fib'],
+     'test_fib6_perf.c': ['fib'],
+     'test_fib_perf.c': ['net', 'fib'],
++    'test_flow_api.c': ['net_null', 'ethdev', 'bus_vdev'],
+     'test_flow_classify.c': ['net', 'acl', 'table', 'ethdev', 'flow_classify'],
+     'test_func_reentrancy.c': ['hash', 'lpm'],
+     'test_graph.c': ['graph'],
+diff --git a/app/test/test_flow_api.c b/app/test/test_flow_api.c
 new file mode 100644
-index 0000000000..57de18f455
+index 0000000000..ae6f8e33ea
 --- /dev/null
-+++ b/drivers/net/null/null_flow.c
-@@ -0,0 +1,237 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) Stephen Hemminger
-+ */
-+
-+/*
-+ * Stub flow operations for the net_null PMD.
-+ *
-+ * These ops provide a realistic-but-minimal implementation of
-+ * rte_flow_ops that can be used for API-layer testing.  Every
-+ * operation walks its input, performs basic structural validation,
-+ * and then rejects the request with the most specific error type
-+ * and message it can produce.  This exercises the full flow-API
-+ * code path (port lookup → ops dispatch → PMD callback → error
-+ * propagation) without requiring any hardware.
-+ *
-+ * Summary of behaviour:
-+ *
-+ *   validate  – walks pattern + actions; rejects each unsupported
-+ *               item/action with RTE_FLOW_ERROR_TYPE_ITEM or
-+ *               _ACTION, pointing `cause` at the offending element.
-+ *               A structurally valid rule whose items are all VOID/END
-+ *               and whose actions are all VOID/END gets rejected at
-+ *               the attribute level (no ingress+egress+transfer) or
-+ *               with a generic "no resources" if nothing else applies.
-+ *
-+ *   create    – calls validate, then returns NULL (never creates).
-+ *
-+ *   destroy   – returns -ENOENT (no flows exist).
-+ *
-+ *   flush     – succeeds (there are no flows to flush).
-+ *
-+ *   query     – returns -ENOTSUP (no queryable actions).
-+ *
-+ *   isolate   – returns -ENOTSUP (isolation not supported).
-+ */
-+
-+#include <errno.h>
-+#include <string.h>
-+
-+#include <rte_ethdev.h>
-+#include <rte_flow.h>
-+#include <rte_flow_driver.h>
-+
-+/* --------------------------------------------------------------------------
-+ * Helpers
-+ * -------------------------------------------------------------------------- */
-+
-+/*
-+ * Walk the pattern array and reject the first item that is not
-+ * VOID or END.  Return 0 if nothing objectionable was found
-+ * (all items are VOID/END), or -rte_errno on failure.
-+ */
-+static int
-+null_flow_validate_pattern(const struct rte_flow_item pattern[],
-+			   struct rte_flow_error *error)
-+{
-+	const struct rte_flow_item *item;
-+
-+	if (pattern == NULL)
-+		return rte_flow_error_set(error, EINVAL,
-+			RTE_FLOW_ERROR_TYPE_ITEM_NUM,
-+			NULL, "NULL pattern");
-+
-+	for (item = pattern;
-+	     item->type != RTE_FLOW_ITEM_TYPE_END; item++) {
-+		if (item->type == RTE_FLOW_ITEM_TYPE_VOID)
-+			continue;
-+
-+		/* Any real match item is unsupported. */
-+		return rte_flow_error_set(error, ENOTSUP,
-+			RTE_FLOW_ERROR_TYPE_ITEM,
-+			item,
-+			"null PMD does not support pattern items");
-+	}
-+
-+	return 0; /* only VOID + END */
-+}
-+
-+/*
-+ * Walk the action array and reject the first action that is not
-+ * VOID or END.  Same semantics as above.
-+ */
-+static int
-+null_flow_validate_actions(const struct rte_flow_action actions[],
-+			   struct rte_flow_error *error)
-+{
-+	const struct rte_flow_action *action;
-+
-+	if (actions == NULL)
-+		return rte_flow_error_set(error, EINVAL,
-+			RTE_FLOW_ERROR_TYPE_ACTION_NUM,
-+			NULL, "NULL action list");
-+
-+	for (action = actions;
-+	     action->type != RTE_FLOW_ACTION_TYPE_END; action++) {
-+		if (action->type == RTE_FLOW_ACTION_TYPE_VOID)
-+			continue;
-+
-+		return rte_flow_error_set(error, ENOTSUP,
-+			RTE_FLOW_ERROR_TYPE_ACTION,
-+			action,
-+			"null PMD does not support flow actions");
-+	}
-+
-+	return 0; /* only VOID + END */
-+}
-+
-+/* --------------------------------------------------------------------------
-+ * Flow ops callbacks
-+ * -------------------------------------------------------------------------- */
-+
-+static int
-+null_flow_validate(struct rte_eth_dev *dev __rte_unused,
-+		   const struct rte_flow_attr *attr,
-+		   const struct rte_flow_item pattern[],
-+		   const struct rte_flow_action actions[],
-+		   struct rte_flow_error *error)
-+{
-+	int ret;
-+
-+	/* ---- attribute checks ---- */
-+	if (attr == NULL)
-+		return rte_flow_error_set(error, EINVAL,
-+			RTE_FLOW_ERROR_TYPE_ATTR,
-+			NULL, "NULL attributes");
-+
-+	if (!attr->ingress && !attr->egress && !attr->transfer)
-+		return rte_flow_error_set(error, EINVAL,
-+			RTE_FLOW_ERROR_TYPE_ATTR,
-+			attr,
-+			"at least one of ingress/egress/transfer "
-+			"must be set");
-+
-+	if (attr->transfer)
-+		return rte_flow_error_set(error, ENOTSUP,
-+			RTE_FLOW_ERROR_TYPE_ATTR_TRANSFER,
-+			attr,
-+			"transfer attribute not supported");
-+
-+	if (attr->group > 0)
-+		return rte_flow_error_set(error, ENOTSUP,
-+			RTE_FLOW_ERROR_TYPE_ATTR_GROUP,
-+			attr,
-+			"only group 0 is supported");
-+
-+	if (attr->priority > 0)
-+		return rte_flow_error_set(error, ENOTSUP,
-+			RTE_FLOW_ERROR_TYPE_ATTR_PRIORITY,
-+			attr,
-+			"only priority 0 is supported");
-+
-+	/* ---- pattern checks ---- */
-+	ret = null_flow_validate_pattern(pattern, error);
-+	if (ret)
-+		return ret;
-+
-+	/* ---- action checks ---- */
-+	ret = null_flow_validate_actions(actions, error);
-+	if (ret)
-+		return ret;
-+
-+	/*
-+	 * If we get here, the rule is structurally valid but contains
-+	 * nothing but VOID items and VOID actions — reject generically.
-+	 */
-+	return rte_flow_error_set(error, ENOTSUP,
-+		RTE_FLOW_ERROR_TYPE_UNSPECIFIED,
-+		NULL,
-+		"null PMD cannot offload any flow rules");
-+}
-+
-+static struct rte_flow *
-+null_flow_create(struct rte_eth_dev *dev,
-+		 const struct rte_flow_attr *attr,
-+		 const struct rte_flow_item pattern[],
-+		 const struct rte_flow_action actions[],
-+		 struct rte_flow_error *error)
-+{
-+	null_flow_validate(dev, attr, pattern, actions, error);
-+	return NULL;
-+}
-+
-+static int
-+null_flow_destroy(struct rte_eth_dev *dev __rte_unused,
-+		  struct rte_flow *flow __rte_unused,
-+		  struct rte_flow_error *error)
-+{
-+	return rte_flow_error_set(error, ENOENT,
-+		RTE_FLOW_ERROR_TYPE_HANDLE,
-+		flow,
-+		"no flow rules exist on null PMD");
-+}
-+
-+static int
-+null_flow_flush(struct rte_eth_dev *dev __rte_unused,
-+		struct rte_flow_error *error __rte_unused)
-+{
-+	/* Nothing to flush — success. */
-+	return 0;
-+}
-+
-+static int
-+null_flow_query(struct rte_eth_dev *dev __rte_unused,
-+		struct rte_flow *flow __rte_unused,
-+		const struct rte_flow_action *action __rte_unused,
-+		void *data __rte_unused,
-+		struct rte_flow_error *error)
-+{
-+	return rte_flow_error_set(error, ENOTSUP,
-+		RTE_FLOW_ERROR_TYPE_UNSPECIFIED,
-+		NULL,
-+		"null PMD does not support flow queries");
-+}
-+
-+static int
-+null_flow_isolate(struct rte_eth_dev *dev __rte_unused,
-+		  int set __rte_unused,
-+		  struct rte_flow_error *error)
-+{
-+	return rte_flow_error_set(error, ENOTSUP,
-+		RTE_FLOW_ERROR_TYPE_UNSPECIFIED,
-+		NULL,
-+		"null PMD does not support flow isolation");
-+}
-+
-+/* --------------------------------------------------------------------------
-+ * Public ops structure — referenced by rte_eth_null.c
-+ * -------------------------------------------------------------------------- */
-+
-+const struct rte_flow_ops null_flow_ops = {
-+	.validate = null_flow_validate,
-+	.create   = null_flow_create,
-+	.destroy  = null_flow_destroy,
-+	.flush    = null_flow_flush,
-+	.query    = null_flow_query,
-+	.isolate  = null_flow_isolate,
-+};
-diff --git a/drivers/net/null/null_flow.h b/drivers/net/null/null_flow.h
-new file mode 100644
-index 0000000000..f589533079
---- /dev/null
-+++ b/drivers/net/null/null_flow.h
-@@ -0,0 +1,12 @@
++++ b/app/test/test_flow_api.c
+@@ -0,0 +1,1015 @@
 +/* SPDX-License-Identifier: BSD-3-Clause
 + * Copyright(c) 2026 Stephen Hemminger
 + */
 +
-+#ifndef NULL_FLOW_H
-+#define NULL_FLOW_H
++/*
++ * Unit tests for the rte_flow generic flow API (rte_flow.h).
++ *
++ * These tests exercise the full rte_flow code path through the null PMD,
++ * which implements flow_ops that validate input and reject all rules with
++ * properly typed rte_flow_error responses.  This lets us verify:
++ *
++ *   1. Specific error types (TYPE_ITEM, TYPE_ACTION, TYPE_ATTR_*, etc.)
++ *      are reported for each class of rejection.
++ *   2. The `cause` pointer in rte_flow_error points at the offending
++ *      pattern item, action, or attribute structure.
++ *   3. Descriptive error messages are propagated to the caller.
++ *   4. Utility functions (rte_flow_error_set, rte_flow_conv) work.
++ *   5. Edge cases (NULL pointers, invalid ports, VOID items) are
++ *      handled without crashes.
++ *
++ * The test requires that net_null is built with null_flow.c (the stub
++ * flow ops).  It is registered as a fast-test and can run with --no-huge.
++ */
 +
-+#include <rte_flow_driver.h>
++#include <string.h>
++#include <errno.h>
 +
-+extern const struct rte_flow_ops null_flow_ops;
-+
-+#endif /* NULL_FLOW_H */
-diff --git a/drivers/net/null/rte_eth_null.c b/drivers/net/null/rte_eth_null.c
-index 46e7e7bd8c..b8dbef35e1 100644
---- a/drivers/net/null/rte_eth_null.c
-+++ b/drivers/net/null/rte_eth_null.c
-@@ -8,12 +8,15 @@
- #include <rte_mbuf.h>
- #include <ethdev_driver.h>
- #include <ethdev_vdev.h>
++#include <rte_common.h>
++#include <rte_errno.h>
++#include <rte_ethdev.h>
 +#include <rte_flow.h>
- #include <rte_malloc.h>
- #include <rte_memcpy.h>
- #include <bus_vdev_driver.h>
- #include <rte_kvargs.h>
- #include <rte_spinlock.h>
- 
-+#include "null_flow.h"
++#include <rte_malloc.h>
++#include <rte_bus_vdev.h>
 +
- #define ETH_NULL_PACKET_SIZE_ARG	"size"
- #define ETH_NULL_PACKET_COPY_ARG	"copy"
- #define ETH_NULL_PACKET_NO_RX_ARG	"no-rx"
-@@ -511,12 +514,21 @@ eth_dev_close(struct rte_eth_dev *dev)
- 	return 0;
- }
- 
++#include "test.h"
++
++/* --------------------------------------------------------------------------
++ * Constants
++ * -------------------------------------------------------------------------- */
++
++#define TEST_NULL_VDEV_NAME "net_null_flow_test"
++
++static uint16_t test_port_id;
++static int port_created;
++static struct rte_mempool *mp;
++
++static struct rte_eth_conf port_conf = {
++	.rxmode = {
++		.mq_mode = RTE_ETH_MQ_RX_NONE,
++	},
++	.txmode = {
++		.mq_mode = RTE_ETH_MQ_TX_NONE,
++	},
++};
++
++/* --------------------------------------------------------------------------
++ * Suite setup / teardown
++ * -------------------------------------------------------------------------- */
++
 +static int
-+null_dev_flow_ops_get(struct rte_eth_dev *dev __rte_unused,
-+		      const struct rte_flow_ops **ops)
++testsuite_setup(void)
 +{
-+	*ops = &null_flow_ops;
-+	return 0;
++	int ret;
++
++	ret = rte_vdev_init(TEST_NULL_VDEV_NAME, "copy=0");
++	if (ret < 0) {
++		printf("TEST-FLOW: failed to create net_null vdev: %s\n",
++		       rte_strerror(-ret));
++		return TEST_SKIPPED;
++	}
++	port_created = 1;
++
++	if (rte_eth_dev_count_avail() == 0) {
++		printf("TEST-FLOW: no available ports after vdev init\n");
++		return TEST_SKIPPED;
++	}
++
++	RTE_ETH_FOREACH_DEV(test_port_id)
++		break;
++
++	mp = rte_pktmbuf_pool_create("flow_test_pool", 256, 32, 0,
++				     RTE_MBUF_DEFAULT_BUF_SIZE,
++				     rte_socket_id());
++	if (mp == NULL) {
++		printf("TEST-FLOW: mempool creation failed\n");
++		return TEST_FAILED;
++	}
++
++	ret = rte_eth_dev_configure(test_port_id, 1, 1, &port_conf);
++	if (ret < 0) {
++		printf("TEST-FLOW: port configure failed: %s\n",
++		       rte_strerror(-ret));
++		return TEST_FAILED;
++	}
++
++	ret = rte_eth_rx_queue_setup(test_port_id, 0, 64,
++				     rte_eth_dev_socket_id(test_port_id),
++				     NULL, mp);
++	if (ret < 0)
++		return TEST_FAILED;
++
++	ret = rte_eth_tx_queue_setup(test_port_id, 0, 64,
++				     rte_eth_dev_socket_id(test_port_id),
++				     NULL);
++	if (ret < 0)
++		return TEST_FAILED;
++
++	ret = rte_eth_dev_start(test_port_id);
++	if (ret < 0)
++		return TEST_FAILED;
++
++	/*
++	 * Verify the PMD actually has flow ops.  If it returns -ENOSYS
++	 * that means null_flow.c was not linked — skip the suite.
++	 */
++	{
++		struct rte_flow_attr attr = { .ingress = 1 };
++		struct rte_flow_item pattern[] = {
++			{ .type = RTE_FLOW_ITEM_TYPE_END },
++		};
++		struct rte_flow_action actions[] = {
++			{ .type = RTE_FLOW_ACTION_TYPE_END },
++		};
++		struct rte_flow_error error;
++
++		ret = rte_flow_validate(test_port_id, &attr,
++					pattern, actions, &error);
++		if (ret == -ENOSYS) {
++			printf("TEST-FLOW: null PMD has no flow_ops "
++			       "(null_flow.c not linked) — skipping\n");
++			return TEST_SKIPPED;
++		}
++	}
++
++	return TEST_SUCCESS;
 +}
 +
- static const struct eth_dev_ops ops = {
- 	.dev_close = eth_dev_close,
- 	.dev_start = eth_dev_start,
- 	.dev_stop = eth_dev_stop,
- 	.dev_configure = eth_dev_configure,
- 	.dev_infos_get = eth_dev_info,
-+	.flow_ops_get = null_dev_flow_ops_get,
- 	.rx_queue_setup = eth_rx_queue_setup,
- 	.tx_queue_setup = eth_tx_queue_setup,
- 	.rx_queue_release = eth_rx_queue_release,
++static void
++testsuite_teardown(void)
++{
++	if (rte_eth_dev_is_valid_port(test_port_id)) {
++		rte_eth_dev_stop(test_port_id);
++		rte_eth_dev_close(test_port_id);
++	}
++	if (port_created)
++		rte_vdev_uninit(TEST_NULL_VDEV_NAME);
++	if (mp != NULL)
++		rte_mempool_free(mp);
++}
++
++/* --------------------------------------------------------------------------
++ * Helper builders
++ * -------------------------------------------------------------------------- */
++
++static void
++build_eth_ipv4_pattern(struct rte_flow_item pattern[3])
++{
++	memset(pattern, 0, 3 * sizeof(struct rte_flow_item));
++	pattern[0].type = RTE_FLOW_ITEM_TYPE_ETH;
++	pattern[1].type = RTE_FLOW_ITEM_TYPE_IPV4;
++	pattern[2].type = RTE_FLOW_ITEM_TYPE_END;
++}
++
++static void
++build_drop_actions(struct rte_flow_action actions[2])
++{
++	memset(actions, 0, 2 * sizeof(struct rte_flow_action));
++	actions[0].type = RTE_FLOW_ACTION_TYPE_DROP;
++	actions[1].type = RTE_FLOW_ACTION_TYPE_END;
++}
++
++static void
++build_queue_actions(struct rte_flow_action actions[2],
++		    struct rte_flow_action_queue *q)
++{
++	memset(actions, 0, 2 * sizeof(struct rte_flow_action));
++	memset(q, 0, sizeof(*q));
++	q->index = 0;
++	actions[0].type = RTE_FLOW_ACTION_TYPE_QUEUE;
++	actions[0].conf = q;
++	actions[1].type = RTE_FLOW_ACTION_TYPE_END;
++}
++
++/* ==========================================================================
++ *  Group 1: rte_flow_error_set() utility
++ * ========================================================================== */
++
++static int
++test_error_set_basic(void)
++{
++	struct rte_flow_error error;
++	int dummy = 42;
++	int ret;
++
++	memset(&error, 0x55, sizeof(error));
++
++	ret = rte_flow_error_set(&error, EINVAL,
++				 RTE_FLOW_ERROR_TYPE_ATTR,
++				 &dummy,
++				 "test error message");
++
++	RTE_TEST_ASSERT(ret < 0,
++			"error_set should return negative");
++	RTE_TEST_ASSERT_EQUAL(error.type, RTE_FLOW_ERROR_TYPE_ATTR,
++			      "error type mismatch");
++	RTE_TEST_ASSERT(error.cause == &dummy,
++			"cause pointer mismatch");
++	RTE_TEST_ASSERT(error.message != NULL &&
++			strcmp(error.message, "test error message") == 0,
++			"message mismatch");
++	RTE_TEST_ASSERT_EQUAL(rte_errno, EINVAL,
++			      "rte_errno mismatch");
++
++	/* NULL error pointer — must not crash. */
++	ret = rte_flow_error_set(NULL, ENOTSUP,
++				 RTE_FLOW_ERROR_TYPE_UNSPECIFIED,
++				 NULL, NULL);
++	RTE_TEST_ASSERT(ret < 0,
++			"error_set(NULL) should return negative");
++
++	return TEST_SUCCESS;
++}
++
++static int
++test_error_set_type_none(void)
++{
++	struct rte_flow_error error;
++
++	memset(&error, 0xFF, sizeof(error));
++	rte_flow_error_set(&error, 0,
++			   RTE_FLOW_ERROR_TYPE_NONE,
++			   NULL, NULL);
++
++	RTE_TEST_ASSERT_EQUAL(error.type, RTE_FLOW_ERROR_TYPE_NONE,
++			      "type should be NONE");
++	RTE_TEST_ASSERT(error.cause == NULL, "cause should be NULL");
++	RTE_TEST_ASSERT(error.message == NULL, "message should be NULL");
++
++	return TEST_SUCCESS;
++}
++
++static int
++test_error_set_all_types(void)
++{
++	struct rte_flow_error error;
++	static const enum rte_flow_error_type types[] = {
++		RTE_FLOW_ERROR_TYPE_NONE,
++		RTE_FLOW_ERROR_TYPE_UNSPECIFIED,
++		RTE_FLOW_ERROR_TYPE_HANDLE,
++		RTE_FLOW_ERROR_TYPE_ATTR_GROUP,
++		RTE_FLOW_ERROR_TYPE_ATTR_PRIORITY,
++		RTE_FLOW_ERROR_TYPE_ATTR_INGRESS,
++		RTE_FLOW_ERROR_TYPE_ATTR_EGRESS,
++		RTE_FLOW_ERROR_TYPE_ATTR,
++		RTE_FLOW_ERROR_TYPE_ITEM_NUM,
++		RTE_FLOW_ERROR_TYPE_ITEM_SPEC,
++		RTE_FLOW_ERROR_TYPE_ITEM_LAST,
++		RTE_FLOW_ERROR_TYPE_ITEM_MASK,
++		RTE_FLOW_ERROR_TYPE_ITEM,
++		RTE_FLOW_ERROR_TYPE_ACTION_NUM,
++		RTE_FLOW_ERROR_TYPE_ACTION_CONF,
++		RTE_FLOW_ERROR_TYPE_ACTION,
++	};
++	unsigned int i;
++
++	for (i = 0; i < RTE_DIM(types); i++) {
++		memset(&error, 0xFF, sizeof(error));
++		rte_flow_error_set(&error, EINVAL, types[i], NULL, NULL);
++		RTE_TEST_ASSERT_EQUAL((int)error.type, (int)types[i],
++				      "type mismatch at index %u", i);
++	}
++	return TEST_SUCCESS;
++}
++
++/* ==========================================================================
++ *  Group 2: validate — attribute rejection
++ * ========================================================================== */
++
++static int
++test_validate_no_direction(void)
++{
++	struct rte_flow_attr attr;
++	struct rte_flow_item pattern[3];
++	struct rte_flow_action actions[2];
++	struct rte_flow_error error;
++	int ret;
++
++	memset(&attr, 0, sizeof(attr));
++	build_eth_ipv4_pattern(pattern);
++	build_drop_actions(actions);
++	memset(&error, 0, sizeof(error));
++
++	ret = rte_flow_validate(test_port_id, &attr, pattern, actions, &error);
++
++	RTE_TEST_ASSERT(ret != 0, "should reject no-direction rule");
++	RTE_TEST_ASSERT_EQUAL(error.type, RTE_FLOW_ERROR_TYPE_ATTR,
++			      "error type should be ATTR");
++	RTE_TEST_ASSERT(error.message != NULL,
++			"error message should be set");
++
++	return TEST_SUCCESS;
++}
++
++static int
++test_validate_transfer_rejected(void)
++{
++	struct rte_flow_attr attr;
++	struct rte_flow_item pattern[3];
++	struct rte_flow_action actions[2];
++	struct rte_flow_error error;
++	int ret;
++
++	memset(&attr, 0, sizeof(attr));
++	attr.transfer = 1;
++	build_eth_ipv4_pattern(pattern);
++	build_drop_actions(actions);
++	memset(&error, 0, sizeof(error));
++
++	ret = rte_flow_validate(test_port_id, &attr, pattern, actions, &error);
++
++	RTE_TEST_ASSERT(ret != 0, "transfer should be rejected");
++	RTE_TEST_ASSERT_EQUAL(error.type, RTE_FLOW_ERROR_TYPE_ATTR_TRANSFER,
++			      "should be ATTR_TRANSFER");
++
++	return TEST_SUCCESS;
++}
++
++static int
++test_validate_group_rejected(void)
++{
++	struct rte_flow_attr attr;
++	struct rte_flow_item pattern[3];
++	struct rte_flow_action actions[2];
++	struct rte_flow_error error;
++	int ret;
++
++	memset(&attr, 0, sizeof(attr));
++	attr.ingress = 1;
++	attr.group = 5;
++	build_eth_ipv4_pattern(pattern);
++	build_drop_actions(actions);
++	memset(&error, 0, sizeof(error));
++
++	ret = rte_flow_validate(test_port_id, &attr, pattern, actions, &error);
++
++	RTE_TEST_ASSERT(ret != 0, "group > 0 should be rejected");
++	RTE_TEST_ASSERT_EQUAL(error.type, RTE_FLOW_ERROR_TYPE_ATTR_GROUP,
++			      "should be ATTR_GROUP");
++	RTE_TEST_ASSERT_EQUAL(rte_errno, ENOTSUP, "errno should be ENOTSUP");
++
++	return TEST_SUCCESS;
++}
++
++static int
++test_validate_priority_rejected(void)
++{
++	struct rte_flow_attr attr;
++	struct rte_flow_item pattern[3];
++	struct rte_flow_action actions[2];
++	struct rte_flow_error error;
++	int ret;
++
++	memset(&attr, 0, sizeof(attr));
++	attr.ingress = 1;
++	attr.priority = 7;
++	build_eth_ipv4_pattern(pattern);
++	build_drop_actions(actions);
++	memset(&error, 0, sizeof(error));
++
++	ret = rte_flow_validate(test_port_id, &attr, pattern, actions, &error);
++
++	RTE_TEST_ASSERT(ret != 0, "priority > 0 should be rejected");
++	RTE_TEST_ASSERT_EQUAL(error.type, RTE_FLOW_ERROR_TYPE_ATTR_PRIORITY,
++			      "should be ATTR_PRIORITY");
++
++	return TEST_SUCCESS;
++}
++
++/* ==========================================================================
++ *  Group 3: validate — pattern item rejection with cause pointer
++ * ========================================================================== */
++
++static int
++test_validate_item_rejected(void)
++{
++	struct rte_flow_attr attr;
++	struct rte_flow_item pattern[3];
++	struct rte_flow_action actions[2];
++	struct rte_flow_error error;
++	int ret;
++
++	memset(&attr, 0, sizeof(attr));
++	attr.ingress = 1;
++	build_eth_ipv4_pattern(pattern);
++	build_drop_actions(actions);
++	memset(&error, 0, sizeof(error));
++
++	ret = rte_flow_validate(test_port_id, &attr, pattern, actions, &error);
++
++	RTE_TEST_ASSERT(ret != 0, "ETH item should be rejected");
++	RTE_TEST_ASSERT_EQUAL(error.type, RTE_FLOW_ERROR_TYPE_ITEM,
++			      "should be TYPE_ITEM");
++	RTE_TEST_ASSERT(error.cause == &pattern[0],
++			"cause should point at pattern[0] (ETH)");
++	RTE_TEST_ASSERT_EQUAL(rte_errno, ENOTSUP, "errno should be ENOTSUP");
++	RTE_TEST_ASSERT(error.message != NULL, "should have a message");
++
++	return TEST_SUCCESS;
++}
++
++static int
++test_validate_void_then_real_item(void)
++{
++	struct rte_flow_attr attr;
++	struct rte_flow_item pattern[5];
++	struct rte_flow_action actions[2];
++	struct rte_flow_error error;
++	int ret;
++
++	memset(&attr, 0, sizeof(attr));
++	attr.ingress = 1;
++
++	memset(pattern, 0, sizeof(pattern));
++	pattern[0].type = RTE_FLOW_ITEM_TYPE_VOID;
++	pattern[1].type = RTE_FLOW_ITEM_TYPE_ETH;
++	pattern[2].type = RTE_FLOW_ITEM_TYPE_IPV4;
++	pattern[3].type = RTE_FLOW_ITEM_TYPE_END;
++
++	build_drop_actions(actions);
++	memset(&error, 0, sizeof(error));
++
++	ret = rte_flow_validate(test_port_id, &attr, pattern, actions, &error);
++
++	RTE_TEST_ASSERT(ret != 0, "should be rejected");
++	RTE_TEST_ASSERT_EQUAL(error.type, RTE_FLOW_ERROR_TYPE_ITEM,
++			      "should be TYPE_ITEM");
++	RTE_TEST_ASSERT(error.cause == &pattern[1],
++			"cause should skip VOID, point at ETH (pattern[1])");
++
++	return TEST_SUCCESS;
++}
++
++static int
++test_validate_ipv4_with_spec_mask(void)
++{
++	struct rte_flow_attr attr;
++	struct rte_flow_item pattern[4];
++	struct rte_flow_action actions[2];
++	struct rte_flow_error error;
++	struct rte_flow_item_eth eth_spec, eth_mask;
++	struct rte_flow_item_ipv4 ipv4_spec, ipv4_mask;
++	int ret;
++
++	memset(&attr, 0, sizeof(attr));
++	attr.ingress = 1;
++
++	memset(&eth_spec, 0, sizeof(eth_spec));
++	memset(&eth_mask, 0, sizeof(eth_mask));
++	eth_spec.hdr.ether_type = rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV4);
++	eth_mask.hdr.ether_type = 0xFFFF;
++
++	memset(&ipv4_spec, 0, sizeof(ipv4_spec));
++	memset(&ipv4_mask, 0, sizeof(ipv4_mask));
++	ipv4_spec.hdr.dst_addr = rte_cpu_to_be_32(0xC0A80001);
++	ipv4_mask.hdr.dst_addr = 0xFFFFFFFF;
++
++	memset(pattern, 0, sizeof(pattern));
++	pattern[0].type = RTE_FLOW_ITEM_TYPE_ETH;
++	pattern[0].spec = &eth_spec;
++	pattern[0].mask = &eth_mask;
++	pattern[1].type = RTE_FLOW_ITEM_TYPE_IPV4;
++	pattern[1].spec = &ipv4_spec;
++	pattern[1].mask = &ipv4_mask;
++	pattern[2].type = RTE_FLOW_ITEM_TYPE_END;
++
++	build_drop_actions(actions);
++	memset(&error, 0, sizeof(error));
++
++	ret = rte_flow_validate(test_port_id, &attr, pattern, actions, &error);
++
++	RTE_TEST_ASSERT(ret != 0, "should be rejected");
++	RTE_TEST_ASSERT_EQUAL(error.type, RTE_FLOW_ERROR_TYPE_ITEM,
++			      "should be TYPE_ITEM");
++	RTE_TEST_ASSERT(error.cause == &pattern[0],
++			"cause should point at first real item");
++
++	return TEST_SUCCESS;
++}
++
++/* ==========================================================================
++ *  Group 4: validate — action rejection with cause pointer
++ * ========================================================================== */
++
++static int
++test_validate_action_drop_rejected(void)
++{
++	struct rte_flow_attr attr;
++	struct rte_flow_item pattern[2];
++	struct rte_flow_action actions[2];
++	struct rte_flow_error error;
++	int ret;
++
++	memset(&attr, 0, sizeof(attr));
++	attr.ingress = 1;
++
++	memset(pattern, 0, sizeof(pattern));
++	pattern[0].type = RTE_FLOW_ITEM_TYPE_END;
++
++	build_drop_actions(actions);
++	memset(&error, 0, sizeof(error));
++
++	ret = rte_flow_validate(test_port_id, &attr, pattern, actions, &error);
++
++	RTE_TEST_ASSERT(ret != 0, "DROP should be rejected");
++	RTE_TEST_ASSERT_EQUAL(error.type, RTE_FLOW_ERROR_TYPE_ACTION,
++			      "should be TYPE_ACTION");
++	RTE_TEST_ASSERT(error.cause == &actions[0],
++			"cause should point at the DROP action");
++
++	return TEST_SUCCESS;
++}
++
++static int
++test_validate_action_queue_rejected(void)
++{
++	struct rte_flow_attr attr;
++	struct rte_flow_item pattern[2];
++	struct rte_flow_action actions[2];
++	struct rte_flow_action_queue queue_conf;
++	struct rte_flow_error error;
++	int ret;
++
++	memset(&attr, 0, sizeof(attr));
++	attr.ingress = 1;
++
++	memset(pattern, 0, sizeof(pattern));
++	pattern[0].type = RTE_FLOW_ITEM_TYPE_END;
++
++	build_queue_actions(actions, &queue_conf);
++	memset(&error, 0, sizeof(error));
++
++	ret = rte_flow_validate(test_port_id, &attr, pattern, actions, &error);
++
++	RTE_TEST_ASSERT(ret != 0, "QUEUE should be rejected");
++	RTE_TEST_ASSERT_EQUAL(error.type, RTE_FLOW_ERROR_TYPE_ACTION,
++			      "should be TYPE_ACTION");
++	RTE_TEST_ASSERT(error.cause == &actions[0],
++			"cause should point at the QUEUE action");
++
++	return TEST_SUCCESS;
++}
++
++static int
++test_validate_void_only_rejected(void)
++{
++	struct rte_flow_attr attr;
++	struct rte_flow_item pattern[2];
++	struct rte_flow_action actions[3];
++	struct rte_flow_error error;
++	int ret;
++
++	memset(&attr, 0, sizeof(attr));
++	attr.ingress = 1;
++
++	memset(pattern, 0, sizeof(pattern));
++	pattern[0].type = RTE_FLOW_ITEM_TYPE_END;
++
++	memset(actions, 0, sizeof(actions));
++	actions[0].type = RTE_FLOW_ACTION_TYPE_VOID;
++	actions[1].type = RTE_FLOW_ACTION_TYPE_END;
++
++	memset(&error, 0, sizeof(error));
++	ret = rte_flow_validate(test_port_id, &attr, pattern, actions, &error);
++
++	RTE_TEST_ASSERT(ret != 0, "VOID-only should still be rejected");
++	RTE_TEST_ASSERT_EQUAL(error.type, RTE_FLOW_ERROR_TYPE_UNSPECIFIED,
++			      "should be UNSPECIFIED (generic reject)");
++	RTE_TEST_ASSERT_EQUAL(rte_errno, ENOTSUP, "errno should be ENOTSUP");
++
++	return TEST_SUCCESS;
++}
++
++static int
++test_validate_action_mark_first(void)
++{
++	struct rte_flow_attr attr;
++	struct rte_flow_item pattern[2];
++	struct rte_flow_action actions[4];
++	struct rte_flow_action_mark mark_conf;
++	struct rte_flow_action_queue queue_conf;
++	struct rte_flow_error error;
++	int ret;
++
++	memset(&attr, 0, sizeof(attr));
++	attr.ingress = 1;
++
++	memset(pattern, 0, sizeof(pattern));
++	pattern[0].type = RTE_FLOW_ITEM_TYPE_END;
++
++	memset(actions, 0, sizeof(actions));
++	memset(&mark_conf, 0, sizeof(mark_conf));
++	memset(&queue_conf, 0, sizeof(queue_conf));
++	mark_conf.id = 0xBEEF;
++	queue_conf.index = 0;
++	actions[0].type = RTE_FLOW_ACTION_TYPE_MARK;
++	actions[0].conf = &mark_conf;
++	actions[1].type = RTE_FLOW_ACTION_TYPE_QUEUE;
++	actions[1].conf = &queue_conf;
++	actions[2].type = RTE_FLOW_ACTION_TYPE_END;
++
++	memset(&error, 0, sizeof(error));
++	ret = rte_flow_validate(test_port_id, &attr, pattern, actions, &error);
++
++	RTE_TEST_ASSERT(ret != 0, "MARK+QUEUE should be rejected");
++	RTE_TEST_ASSERT_EQUAL(error.type, RTE_FLOW_ERROR_TYPE_ACTION,
++			      "should be TYPE_ACTION");
++	RTE_TEST_ASSERT(error.cause == &actions[0],
++			"cause should point at MARK (first non-VOID)");
++
++	return TEST_SUCCESS;
++}
++
++/* ==========================================================================
++ *  Group 5: rte_flow_create()
++ * ========================================================================== */
++
++static int
++test_create_returns_null(void)
++{
++	struct rte_flow_attr attr;
++	struct rte_flow_item pattern[3];
++	struct rte_flow_action actions[2];
++	struct rte_flow_error error;
++	struct rte_flow *flow;
++
++	memset(&attr, 0, sizeof(attr));
++	attr.ingress = 1;
++	build_eth_ipv4_pattern(pattern);
++	build_drop_actions(actions);
++	memset(&error, 0, sizeof(error));
++
++	flow = rte_flow_create(test_port_id, &attr, pattern, actions, &error);
++
++	RTE_TEST_ASSERT(flow == NULL, "create should return NULL");
++	RTE_TEST_ASSERT(error.type != RTE_FLOW_ERROR_TYPE_NONE,
++			"error type should be set");
++	RTE_TEST_ASSERT(error.message != NULL, "should have a message");
++
++	return TEST_SUCCESS;
++}
++
++static int
++test_create_invalid_port(void)
++{
++	struct rte_flow_attr attr = { .ingress = 1 };
++	struct rte_flow_item pattern[3];
++	struct rte_flow_action actions[2];
++	struct rte_flow_error error;
++
++	build_eth_ipv4_pattern(pattern);
++	build_drop_actions(actions);
++	memset(&error, 0, sizeof(error));
++
++	RTE_TEST_ASSERT(rte_flow_create(RTE_MAX_ETHPORTS, &attr,
++					pattern, actions, &error) == NULL,
++			"create must fail on invalid port");
++
++	return TEST_SUCCESS;
++}
++
++static int
++test_create_null_error(void)
++{
++	struct rte_flow_attr attr = { .ingress = 1 };
++	struct rte_flow_item pattern[3];
++	struct rte_flow_action actions[2];
++
++	build_eth_ipv4_pattern(pattern);
++	build_drop_actions(actions);
++
++	RTE_TEST_ASSERT(rte_flow_create(test_port_id, &attr,
++					pattern, actions, NULL) == NULL,
++			"create(null error) should return NULL");
++
++	return TEST_SUCCESS;
++}
++
++/* ==========================================================================
++ *  Group 6: rte_flow_destroy()
++ * ========================================================================== */
++
++static int
++test_destroy_null_handle(void)
++{
++	struct rte_flow_error error;
++
++	memset(&error, 0, sizeof(error));
++	int ret = rte_flow_destroy(test_port_id, NULL, &error);
++
++	RTE_TEST_ASSERT(ret != 0, "destroy(NULL) should fail");
++	RTE_TEST_ASSERT_EQUAL(error.type, RTE_FLOW_ERROR_TYPE_HANDLE,
++			      "should be TYPE_HANDLE");
++	RTE_TEST_ASSERT_EQUAL(rte_errno, ENOENT, "errno should be ENOENT");
++	RTE_TEST_ASSERT(error.message != NULL, "should have a message");
++
++	return TEST_SUCCESS;
++}
++
++static int
++test_destroy_invalid_port(void)
++{
++	struct rte_flow_error error;
++
++	memset(&error, 0, sizeof(error));
++	RTE_TEST_ASSERT(rte_flow_destroy(RTE_MAX_ETHPORTS, NULL, &error) != 0,
++			"destroy should fail on bad port");
++
++	return TEST_SUCCESS;
++}
++
++/* ==========================================================================
++ *  Group 7: rte_flow_flush()
++ * ========================================================================== */
++
++static int
++test_flush_succeeds(void)
++{
++	struct rte_flow_error error;
++
++	memset(&error, 0, sizeof(error));
++	RTE_TEST_ASSERT_EQUAL(rte_flow_flush(test_port_id, &error), 0,
++			      "flush should succeed (nothing to flush)");
++
++	return TEST_SUCCESS;
++}
++
++static int
++test_flush_invalid_port(void)
++{
++	struct rte_flow_error error;
++
++	memset(&error, 0, sizeof(error));
++	RTE_TEST_ASSERT(rte_flow_flush(RTE_MAX_ETHPORTS, &error) != 0,
++			"flush bad port should fail");
++
++	return TEST_SUCCESS;
++}
++
++static int
++test_flush_null_error(void)
++{
++	RTE_TEST_ASSERT_EQUAL(rte_flow_flush(test_port_id, NULL), 0,
++			      "flush(null error) should succeed");
++
++	return TEST_SUCCESS;
++}
++
++/* ==========================================================================
++ *  Group 8: rte_flow_query()
++ * ========================================================================== */
++
++static int
++test_query_rejected(void)
++{
++	struct rte_flow_action action = {
++		.type = RTE_FLOW_ACTION_TYPE_COUNT,
++	};
++	struct rte_flow_query_count count;
++	struct rte_flow_error error;
++
++	memset(&count, 0, sizeof(count));
++	memset(&error, 0, sizeof(error));
++
++	int ret = rte_flow_query(test_port_id, NULL, &action, &count, &error);
++
++	RTE_TEST_ASSERT(ret != 0, "query should fail");
++	RTE_TEST_ASSERT_EQUAL(error.type, RTE_FLOW_ERROR_TYPE_UNSPECIFIED,
++			      "should be UNSPECIFIED");
++	RTE_TEST_ASSERT_EQUAL(rte_errno, ENOTSUP, "errno should be ENOTSUP");
++
++	return TEST_SUCCESS;
++}
++
++static int
++test_query_invalid_port(void)
++{
++	struct rte_flow_action action = {
++		.type = RTE_FLOW_ACTION_TYPE_COUNT,
++	};
++	struct rte_flow_query_count count;
++	struct rte_flow_error error;
++
++	memset(&count, 0, sizeof(count));
++	memset(&error, 0, sizeof(error));
++
++	RTE_TEST_ASSERT(rte_flow_query(RTE_MAX_ETHPORTS, NULL,
++				       &action, &count, &error) != 0,
++			"query bad port should fail");
++
++	return TEST_SUCCESS;
++}
++
++/* ==========================================================================
++ *  Group 9: rte_flow_isolate()
++ * ========================================================================== */
++
++static int
++test_isolate_rejected(void)
++{
++	struct rte_flow_error error;
++
++	memset(&error, 0, sizeof(error));
++	int ret = rte_flow_isolate(test_port_id, 1, &error);
++
++	RTE_TEST_ASSERT(ret != 0, "isolate should fail");
++	RTE_TEST_ASSERT_EQUAL(error.type, RTE_FLOW_ERROR_TYPE_UNSPECIFIED,
++			      "should be UNSPECIFIED");
++	RTE_TEST_ASSERT_EQUAL(rte_errno, ENOTSUP, "errno should be ENOTSUP");
++
++	memset(&error, 0, sizeof(error));
++	RTE_TEST_ASSERT(rte_flow_isolate(test_port_id, 0, &error) != 0,
++			"isolate(0) should also fail");
++
++	return TEST_SUCCESS;
++}
++
++static int
++test_isolate_invalid_port(void)
++{
++	struct rte_flow_error error;
++
++	memset(&error, 0, sizeof(error));
++	RTE_TEST_ASSERT(rte_flow_isolate(RTE_MAX_ETHPORTS, 1, &error) != 0,
++			"isolate bad port should fail");
++
++	return TEST_SUCCESS;
++}
++
++/* ==========================================================================
++ *  Group 10: rte_flow_conv() utilities
++ * ========================================================================== */
++
++static int
++test_conv_item_name(void)
++{
++	const char *name = NULL;
++
++	int ret = rte_flow_conv(RTE_FLOW_CONV_OP_ITEM_NAME_PTR,
++				&name, sizeof(name),
++				(void *)(uintptr_t)RTE_FLOW_ITEM_TYPE_ETH,
++				NULL);
++	RTE_TEST_ASSERT(ret > 0, "conv ETH should succeed");
++	RTE_TEST_ASSERT(name != NULL, "name should be non-NULL");
++
++	name = NULL;
++	rte_flow_conv(RTE_FLOW_CONV_OP_ITEM_NAME_PTR, &name, sizeof(name),
++		      (void *)(uintptr_t)RTE_FLOW_ITEM_TYPE_IPV4, NULL);
++	RTE_TEST_ASSERT(name != NULL, "IPV4 name should be non-NULL");
++
++	name = NULL;
++	rte_flow_conv(RTE_FLOW_CONV_OP_ITEM_NAME_PTR, &name, sizeof(name),
++		      (void *)(uintptr_t)RTE_FLOW_ITEM_TYPE_END, NULL);
++	RTE_TEST_ASSERT(name != NULL, "END name should be non-NULL");
++
++	return TEST_SUCCESS;
++}
++
++static int
++test_conv_action_name(void)
++{
++	const char *name = NULL;
++
++	int ret = rte_flow_conv(RTE_FLOW_CONV_OP_ACTION_NAME_PTR,
++				&name, sizeof(name),
++				(void *)(uintptr_t)RTE_FLOW_ACTION_TYPE_DROP,
++				NULL);
++	RTE_TEST_ASSERT(ret > 0, "conv DROP should succeed");
++	RTE_TEST_ASSERT(name != NULL, "DROP name should be non-NULL");
++
++	name = NULL;
++	rte_flow_conv(RTE_FLOW_CONV_OP_ACTION_NAME_PTR, &name, sizeof(name),
++		      (void *)(uintptr_t)RTE_FLOW_ACTION_TYPE_QUEUE, NULL);
++	RTE_TEST_ASSERT(name != NULL, "QUEUE name should be non-NULL");
++
++	return TEST_SUCCESS;
++}
++
++static int
++test_conv_zero_len(void)
++{
++	int ret = rte_flow_conv(RTE_FLOW_CONV_OP_ITEM_NAME_PTR,
++				NULL, 0,
++				(void *)(uintptr_t)RTE_FLOW_ITEM_TYPE_ETH,
++				NULL);
++	RTE_TEST_ASSERT(ret != 0, "should return non-zero");
++
++	return TEST_SUCCESS;
++}
++
++/* ==========================================================================
++ *  Group 11: Egress direction and NULL error pointer
++ * ========================================================================== */
++
++static int
++test_validate_egress(void)
++{
++	struct rte_flow_attr attr;
++	struct rte_flow_item pattern[3];
++	struct rte_flow_action actions[2];
++	struct rte_flow_error error;
++
++	memset(&attr, 0, sizeof(attr));
++	attr.egress = 1;
++	build_eth_ipv4_pattern(pattern);
++	build_drop_actions(actions);
++	memset(&error, 0, sizeof(error));
++
++	int ret = rte_flow_validate(test_port_id, &attr,
++				    pattern, actions, &error);
++
++	RTE_TEST_ASSERT(ret != 0, "egress rule should be rejected");
++	RTE_TEST_ASSERT_EQUAL(error.type, RTE_FLOW_ERROR_TYPE_ITEM,
++			      "should be TYPE_ITEM for egress too");
++
++	return TEST_SUCCESS;
++}
++
++static int
++test_validate_null_error(void)
++{
++	struct rte_flow_attr attr = { .ingress = 1 };
++	struct rte_flow_item pattern[3];
++	struct rte_flow_action actions[2];
++
++	build_eth_ipv4_pattern(pattern);
++	build_drop_actions(actions);
++
++	RTE_TEST_ASSERT(rte_flow_validate(test_port_id, &attr,
++					  pattern, actions, NULL) != 0,
++			"validate(null error) should still fail");
++
++	return TEST_SUCCESS;
++}
++
++/* ==========================================================================
++ *  Suite definition
++ * ========================================================================== */
++
++static struct unit_test_suite flow_api_testsuite = {
++	.suite_name = "rte_flow API unit tests",
++	.setup = testsuite_setup,
++	.teardown = testsuite_teardown,
++	.unit_test_cases = {
++		/* Error utility */
++		TEST_CASE(test_error_set_basic),
++		TEST_CASE(test_error_set_type_none),
++		TEST_CASE(test_error_set_all_types),
++
++		/* Validate — attributes */
++		TEST_CASE(test_validate_no_direction),
++		TEST_CASE(test_validate_transfer_rejected),
++		TEST_CASE(test_validate_group_rejected),
++		TEST_CASE(test_validate_priority_rejected),
++		TEST_CASE(test_validate_egress),
++		TEST_CASE(test_validate_null_error),
++
++		/* Validate — pattern items */
++		TEST_CASE(test_validate_item_rejected),
++		TEST_CASE(test_validate_void_then_real_item),
++		TEST_CASE(test_validate_ipv4_with_spec_mask),
++
++		/* Validate — actions */
++		TEST_CASE(test_validate_action_drop_rejected),
++		TEST_CASE(test_validate_action_queue_rejected),
++		TEST_CASE(test_validate_void_only_rejected),
++		TEST_CASE(test_validate_action_mark_first),
++
++		/* Create */
++		TEST_CASE(test_create_returns_null),
++		TEST_CASE(test_create_invalid_port),
++		TEST_CASE(test_create_null_error),
++
++		/* Destroy */
++		TEST_CASE(test_destroy_null_handle),
++		TEST_CASE(test_destroy_invalid_port),
++
++		/* Flush */
++		TEST_CASE(test_flush_succeeds),
++		TEST_CASE(test_flush_invalid_port),
++		TEST_CASE(test_flush_null_error),
++
++		/* Query */
++		TEST_CASE(test_query_rejected),
++		TEST_CASE(test_query_invalid_port),
++
++		/* Isolate */
++		TEST_CASE(test_isolate_rejected),
++		TEST_CASE(test_isolate_invalid_port),
++
++		/* Conv utilities */
++		TEST_CASE(test_conv_item_name),
++		TEST_CASE(test_conv_action_name),
++		TEST_CASE(test_conv_zero_len),
++
++		TEST_CASES_END(),
++	},
++};
++
++static int
++test_flow_api(void)
++{
++	return unit_test_suite_runner(&flow_api_testsuite);
++}
++
++REGISTER_FAST_TEST(flow_api_autotest, NOHUGE_OK, ASAN_OK, test_flow_api);
 -- 
 2.51.0
 
