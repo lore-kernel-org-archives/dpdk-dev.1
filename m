@@ -2,67 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10D1AE7E0D2
-	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Feb 2026 18:41:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5306CE7E0D2
+	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Feb 2026 18:41:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4DE9540A82;
-	Mon,  9 Feb 2026 19:41:07 +0100 (CET)
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com
- [209.85.221.42]) by mails.dpdk.org (Postfix) with ESMTP id 2E85B40A72
- for <dev@dpdk.org>; Mon,  9 Feb 2026 19:41:04 +0100 (CET)
-Received: by mail-wr1-f42.google.com with SMTP id
- ffacd0b85a97d-436234ef0f0so2623499f8f.1
- for <dev@dpdk.org>; Mon, 09 Feb 2026 10:41:04 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 2855C40A8A;
+	Mon,  9 Feb 2026 19:41:08 +0100 (CET)
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com
+ [209.85.128.48]) by mails.dpdk.org (Postfix) with ESMTP id C706F40A72
+ for <dev@dpdk.org>; Mon,  9 Feb 2026 19:41:05 +0100 (CET)
+Received: by mail-wm1-f48.google.com with SMTP id
+ 5b1f17b1804b1-4801eb2c0a5so45787215e9.3
+ for <dev@dpdk.org>; Mon, 09 Feb 2026 10:41:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1770662464;
- x=1771267264; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1770662465;
+ x=1771267265; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=xlKvyXv4EqVdAluoq6MSAbQmwzn/RvG7UFQ78l2pyv0=;
- b=WlE7dI0NjIELdK7Cg+NhA2uTS51I2GlJwSu/bbp2U2qvJleCS2TniBDLD1ZUq8nBHH
- hE3xJ3prfLH/Lzfa8unu0028oz+g5fEko5j4wroqkmzRX1V8tn4tPMi0iZUJeHavJzEL
- tyfDSydpnoDIjfXzEZ3uK3ZvhFzS+H9EIJd4jsUpFAwB2a9zwMFm6SQX96hRCVuSayII
- b3qijvsD3kIgv4qysTwmRvpPMQGtaOAKB8ff0oamht7uYWwRAWcbe/U4oo07kTcJ8w/o
- 1MJMcTfajUVNZMEwpxhHitCpx2SuSZylhrkYDfHQ4R0Dw8ouXL4pbFS/OwIUsivCPx2N
- l5Ew==
+ bh=YjOtpjciW1EGIs+fqZwfcEPAZG1T1DZugT/eiryfh/I=;
+ b=swjAULjaiqkYaI43SAQGV1ey8rH6JccNqyf48pV2tLuzjhCQeyohT/IIdTrmakE+Tt
+ 4F1aeUIIJkP6AkSFkO25wC+3fuZNkFo239maIoTQ7ky22UZzyHQX2MGtM2+ml+zQjquV
+ QF9irj7ebESRKhIB21SL/609x1OepvEO3tulAudSJmXbxgp3h2YrIZAw2tB/74xOj6BV
+ /EW65NDiqOcHsMjnBC1AIk3yFqiMPUPTlWU8d53mSfPYTiH3YaH+35wxL62KnKpqsFVZ
+ abqL5dutM+ALXyTtL8HSg8TeJ1moIFjrnUHLIX/lacc9wTFK+1vDpwm9tXRwGI3dwO62
+ sMQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1770662464; x=1771267264;
+ d=1e100.net; s=20230601; t=1770662465; x=1771267265;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=xlKvyXv4EqVdAluoq6MSAbQmwzn/RvG7UFQ78l2pyv0=;
- b=pP9koXZh/7pTUvIJVZO/gpyNwOgYHiiVoRimJHh2ditokiEN7EmapeoFo76VmO0Sv7
- WgnCJZ7Et1szXTPwOGu/64YV+cN2dCCSLplu2fibE1reeu+wxmGuFMp1zuH/KL+TI5WD
- 0MEUq2CVASCU5QAY5g/aEukLu+pNoR6rotq7X54PR++CwDNTe2kxe/oTHCs1E+XQvOcT
- vsFh4x/BtqxGuHr28b2A1Df2kxtXqrq3LstjdeQVxnNkakCWaeT/iIErqBaDAofhUH88
- 4/bTtR592lWb8lLQFVi2szdigCuNvnSf213Ao/bbMAG7lhOamLM7YzAMDQupID4GSHqD
- H3KQ==
-X-Gm-Message-State: AOJu0Yygyu7thF6OfSFTYxkyBP5JGgTJnuzmAnQTTMI1JQSjak0vrslQ
- 6iq9Dt/O5aq3d+vJwHkHC9yxw2wBIlvtorBSde4xT6o15NHuI8EtXF4ym3C7D4MQgryeb1SO2Mu
- fllIj
-X-Gm-Gg: AZuq6aIqbjyOmPHe0OQ3w/Pfye/c66Uh9FZSjJgEYHnhHpU7X3SL29+KrnO7q7SVxhY
- RZQpbEMSeuAIbGuZZi83+vVDHPpAhSkuQJF69zmnw9p70m4qG8745PFw+AV9ns5TvKiPMlv49Xl
- hV6pJfhLpe0+UREQB/ElDNrI1O38SbSqm28DvaXO2jO5d3gB16bDfVP3vs3C1HG6cc0Qm6G+XgT
- oN8tQ1P9BxOYMqt/b4mq5iKbbdykEuSFYwAEU4SuujSUBE/gCrz1V1mj1MsJE24LpCHuw62pk+1
- DAeex0qZIQHZyD0Jn43b6S8Ox22QaGRqMAlXJVyYhzROwhUb/N35BGRN5VgSQf9s13LFo4zbT1f
- lE4ZuHZMHeXFctL56+U+dFB5Gnho/K0yHTNdut9X/s0x2gm1INibxVE0+2RB7l7i6mXBa05UZ0p
- 6Sy8/IFlkLLcZ7RJJN6WpDfMfuglaYgpOgvU3qi+juSeS1y0rrjx+kqewdsFSp
-X-Received: by 2002:adf:e9c2:0:b0:436:3499:52b9 with SMTP id
- ffacd0b85a97d-436349954a0mr8654946f8f.10.1770662463667; 
- Mon, 09 Feb 2026 10:41:03 -0800 (PST)
+ bh=YjOtpjciW1EGIs+fqZwfcEPAZG1T1DZugT/eiryfh/I=;
+ b=iwNhpXcw5UgvIwhqyt3fXpOLrzkqz/0ryQa/Bsp+XINLUgvCVALfJwUyoMt1B07h1B
+ f7/ROCMdcPZ7NzV2taHCPtr7lYaaPjCH6u2gZQLQtqS6+IfHMRo+ETqH7lflJZ5vX4x6
+ cGyUL2j1ueu2ndUTpKVeyngRqCWHObz8AN8cQvRpYyUBvriNcbMSFzvp51OWrzDtIFM8
+ LFEH6lrGxadcC77MojYjzP8GyLRIabMIOXccXNzFAErd8hmapmDgSRShNvbvBXpR2e85
+ X9AaLm4m3WCGQqti2osGXXXnE6GLLIRUBzM7Oa91FdgpUr9IC+GJnTNE2/GnFoX1QQ9C
+ MgnA==
+X-Gm-Message-State: AOJu0Ywjf9g7YIvygmmPSKXdli1dHO6spY0WH7t+EBtyy0dKBz8wA+d2
+ AgYcwcxPMBO1o0n4NR2MskeKSRadFm9R6YS6JKCqhOcRXrQhb1t1Ia8BfORKRnxHVH1UEcPIPdI
+ 4TP2N
+X-Gm-Gg: AZuq6aJTFkd5mkHY21xAOm3pavqTRoZKH2aIw9OGPUb/XSTDau0wxvnoefPFejL6pvc
+ px/ra/15dIKLCkr9z1wMKrMv+PZ/8lqfDdm8KT/nCSsWiH0UKTO8oSawRI/Cu01bbmw6iDbrwUT
+ yi1C1BJOW7bYQ8jKL7DeMiI+jy1K1YKp5X5DiA9cdJuBSP49Ulsr9y13FjCj4m7VrAdLegvD0cw
+ 7NDdhKtruo7Z+vA2MLKj7KNgkxVAmCzHfnJywOrZsxhp/JLHk6G6dlFr+bg63D++4QK+UQdDxqs
+ Y+1761Sjs2uuZvi4v4a8nLxbjiuH6xv+Xf81l0WETUZ3u/fMn2gzvtZZpPVYHzOs9lsraIMp403
+ k97vVoca2ufFQ+5ueB3mKbhAUsgpfSsmTRTRNGiRZhSQyaYEL1IukiT5FfbgV+HeyNUD01QdZ+H
+ cClpuE/A06KODZSQ2vfy9SOfB/3rmdZihj6wyX+B5ZvvnoAdmOWw==
+X-Received: by 2002:a05:6000:2386:b0:436:3563:49a6 with SMTP id
+ ffacd0b85a97d-43635634ac8mr11593136f8f.43.1770662465244; 
+ Mon, 09 Feb 2026 10:41:05 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-4362972fc26sm26448426f8f.22.2026.02.09.10.41.02
+ ffacd0b85a97d-4362972fc26sm26448426f8f.22.2026.02.09.10.41.03
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 09 Feb 2026 10:41:03 -0800 (PST)
+ Mon, 09 Feb 2026 10:41:04 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Anatoly Burakov <anatoly.burakov@intel.com>
-Subject: [PATCH v5 08/10] net/rtap: add multi-process support
-Date: Mon,  9 Feb 2026 10:39:07 -0800
-Message-ID: <20260209184045.132774-9-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v5 09/10] net/rtap: add Rx interrupt support
+Date: Mon,  9 Feb 2026 10:39:08 -0800
+Message-ID: <20260209184045.132774-10-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260209184045.132774-1-stephen@networkplumber.org>
 References: <20241210212757.83490-1-stephen@networkplumber.org>
@@ -82,213 +81,327 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add support for DPDK multi-process operation. Secondary processes
-need access to the per-queue TAP file descriptors owned by the
-primary process.
+Add support for the DPDK Rx interrupt mechanism, enabling
+power-aware applications (e.g. l3fwd-power) to sleep until
+packets arrive rather than busy-polling.
 
-Implement fd sharing using the DPDK multi-process IPC mechanism:
-  - Primary registers an MP action handler that responds to fd
-    requests by sending queue fds via rte_mp_reply()
-  - Secondary process attaches to the existing device and requests
-    fds from primary via rte_mp_request_sync()
+Each Rx queue creates an eventfd during queue setup and registers
+it with its io_uring instance via io_uring_register_eventfd().
+When the kernel posts a CQE (completing a read, i.e. a packet
+arrived), it signals the eventfd. These per-queue eventfds are
+wired into a VDEV interrupt handle during dev_start when the
+application has set intr_conf.rxq.
 
-The MP action is registered on the first device probe and
-unregistered when the last device is closed.
+The enable op drains the eventfd counter to re-arm notification;
+disable is a no-op since the application simply stops polling.
+The eventfd is always created unconditionally so it is available
+if the application enables Rx interrupts later.
+
+The Rx interrupt handle is kept separate from the existing LSC
+netlink interrupt handle to avoid coupling the two mechanisms.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
  doc/guides/nics/features/rtap.ini |   1 +
- drivers/net/rtap/rtap_ethdev.c    | 130 ++++++++++++++++++++++++++++++
- 2 files changed, 131 insertions(+)
+ drivers/net/rtap/rtap.h           |   6 ++
+ drivers/net/rtap/rtap_ethdev.c    |  16 ++++
+ drivers/net/rtap/rtap_intr.c      | 120 ++++++++++++++++++++++++++++++
+ drivers/net/rtap/rtap_rxtx.c      |  31 +++++++-
+ 5 files changed, 173 insertions(+), 1 deletion(-)
 
 diff --git a/doc/guides/nics/features/rtap.ini b/doc/guides/nics/features/rtap.ini
-index 36a14e9696..fe0c88a8fc 100644
+index fe0c88a8fc..48fe3f1b33 100644
 --- a/doc/guides/nics/features/rtap.ini
 +++ b/doc/guides/nics/features/rtap.ini
-@@ -14,6 +14,7 @@ Basic stats          = Y
- Stats per queue      = Y
- TSO                  = Y
- L4 checksum offload  = Y
-+Multiprocess aware   = Y
- Linux                = Y
- ARMv7                = Y
- ARMv8                = Y
+@@ -6,6 +6,7 @@
+ [Features]
+ Link status          = Y
+ Link status event    = Y
++Rx interrupt         = Y
+ MTU update           = Y
+ Promiscuous mode     = Y
+ Allmulticast mode    = Y
+diff --git a/drivers/net/rtap/rtap.h b/drivers/net/rtap/rtap.h
+index f73b5e317d..f37cac87ad 100644
+--- a/drivers/net/rtap/rtap.h
++++ b/drivers/net/rtap/rtap.h
+@@ -42,6 +42,7 @@ extern int rtap_logtype;
+ struct rtap_rx_queue {
+ 	struct rte_mempool *mb_pool;	/* rx buffer pool */
+ 	struct io_uring io_ring;	/* queue of posted read's */
++	int intr_fd;			/* eventfd for Rx interrupt */
+ 	uint16_t port_id;
+ 	uint16_t queue_id;
+ 
+@@ -64,6 +65,7 @@ struct rtap_tx_queue {
+ struct rtap_pmd {
+ 	int keep_fd;			/* keep alive file descriptor */
+ 	struct rte_intr_handle *intr_handle; /* LSC interrupt handle */
++	struct rte_intr_handle *rx_intr_handle; /* Rx queue interrupt handle */
+ 	char ifname[IFNAMSIZ];		/* name assigned by kernel */
+ 	struct rte_ether_addr eth_addr; /* address assigned by kernel */
+ 
+@@ -90,5 +92,9 @@ void rtap_tx_queue_release(struct rte_eth_dev *dev, uint16_t queue_id);
+ 
+ /* rtap_intr.c */
+ int rtap_lsc_set(struct rte_eth_dev *dev, int set);
++int rtap_rx_intr_vec_install(struct rte_eth_dev *dev);
++void rtap_rx_intr_vec_uninstall(struct rte_eth_dev *dev);
++int rtap_rx_queue_intr_enable(struct rte_eth_dev *dev, uint16_t queue_id);
++int rtap_rx_queue_intr_disable(struct rte_eth_dev *dev, uint16_t queue_id);
+ 
+ #endif /* _RTAP_H_ */
 diff --git a/drivers/net/rtap/rtap_ethdev.c b/drivers/net/rtap/rtap_ethdev.c
-index 8c22021655..9b8ad1f452 100644
+index 9b8ad1f452..8a9fb5be85 100644
 --- a/drivers/net/rtap/rtap_ethdev.c
 +++ b/drivers/net/rtap/rtap_ethdev.c
-@@ -42,6 +42,8 @@
- 				 RTE_ETH_RX_OFFLOAD_TCP_LRO | \
- 				 RTE_ETH_RX_OFFLOAD_SCATTER)
+@@ -293,8 +293,18 @@ rtap_dev_start(struct rte_eth_dev *dev)
+ 	if (ret != 0)
+ 		return ret;
  
-+#define RTAP_MP_KEY		"rtap_mp_send_fds"
++	/* Install Rx interrupt vector if requested by application */
++	if (dev->data->dev_conf.intr_conf.rxq) {
++		ret = rtap_rx_intr_vec_install(dev);
++		if (ret != 0) {
++			rtap_lsc_set(dev, 0);
++			return ret;
++		}
++	}
 +
- #define RTAP_DEFAULT_BURST	64
- #define RTAP_NUM_BUFFERS	1024
- #define RTAP_MAX_QUEUES		128
-@@ -53,6 +55,8 @@ static_assert(RTAP_MAX_QUEUES <= RTE_MP_MAX_FD_NUM, "Max queues exceeds MP fd li
- #define RTAP_IFACE_ARG		"iface"
- #define RTAP_PERSIST_ARG	"persist"
+ 	ret = rtap_set_link_up(dev);
+ 	if (ret != 0) {
++		rtap_rx_intr_vec_uninstall(dev);
+ 		rtap_lsc_set(dev, 0);
+ 		return ret;
+ 	}
+@@ -315,6 +325,7 @@ rtap_dev_stop(struct rte_eth_dev *dev)
  
-+static RTE_ATOMIC(unsigned int) rtap_dev_count;
-+
- static const char * const valid_arguments[] = {
- 	RTAP_IFACE_ARG,
- 	RTAP_PERSIST_ARG,
-@@ -530,6 +534,8 @@ rtap_dev_close(struct rte_eth_dev *dev)
- 	free(dev->process_private);
- 	dev->process_private = NULL;
+ 	dev->data->dev_link.link_status = RTE_ETH_LINK_DOWN;
  
-+	if (rte_atomic_fetch_sub_explicit(&rtap_dev_count, 1, rte_memory_order_release) == 1)
-+		rte_mp_action_unregister(RTAP_MP_KEY);
- 	return 0;
- }
++	rtap_rx_intr_vec_uninstall(dev);
+ 	rtap_lsc_set(dev, 0);
+ 	rtap_set_link_down(dev);
  
-@@ -669,6 +675,89 @@ rtap_parse_iface(const char *key __rte_unused, const char *value, void *extra_ar
- 	return 0;
- }
+@@ -527,6 +538,9 @@ rtap_dev_close(struct rte_eth_dev *dev)
+ 			pmd->keep_fd = -1;
+ 		}
  
-+/* Secondary process requests rxq fds from primary. */
-+static int
-+rtap_request_fds(const char *name, struct rte_eth_dev *dev)
-+{
-+	struct rte_mp_msg request = { };
++		rte_intr_instance_free(pmd->rx_intr_handle);
++		pmd->rx_intr_handle = NULL;
 +
-+	strlcpy(request.name, RTAP_MP_KEY, sizeof(request.name));
-+	strlcpy((char *)request.param, name, RTE_MP_MAX_PARAM_LEN);
-+	request.len_param = strlen(name);
-+
-+	/* Send the request and receive the reply */
-+	PMD_LOG(DEBUG, "Sending multi-process IPC request for %s", name);
-+
-+	struct timespec timeout = {.tv_sec = 1, .tv_nsec = 0};
-+	struct rte_mp_reply replies;
-+	int ret = rte_mp_request_sync(&request, &replies, &timeout);
-+	if (ret < 0 || replies.nb_received != 1) {
-+		PMD_LOG(ERR, "Failed to request fds from primary: %s",
-+			rte_strerror(rte_errno));
-+		return -1;
-+	}
-+
-+	struct rte_mp_msg *reply = replies.msgs;
-+	PMD_LOG(DEBUG, "Received multi-process IPC reply for %s", name);
-+	if (dev->data->nb_rx_queues != reply->num_fds) {
-+		PMD_LOG(ERR, "Incorrect number of fds received: %d != %d",
-+			reply->num_fds, dev->data->nb_rx_queues);
-+		free(reply);
-+		return -EINVAL;
-+	}
-+
-+	int *fds = dev->process_private;
-+	for (int i = 0; i < reply->num_fds; i++) {
-+		fds[i] = reply->fds[i];
-+		PMD_LOG(DEBUG, "Received queue %u fd %d from primary", i, fds[i]);
-+	}
-+
-+	free(reply);
-+	return 0;
-+}
-+
-+/* Primary process sends rxq fds to secondary. */
-+static int
-+rtap_mp_send_fds(const struct rte_mp_msg *request, const void *peer)
-+{
-+	const char *request_name = (const char *)request->param;
-+
-+	PMD_LOG(DEBUG, "Received multi-process IPC request for %s", request_name);
-+
-+	/* Find the requested port */
-+	struct rte_eth_dev *dev = rte_eth_dev_get_by_name(request_name);
-+	if (!dev) {
-+		PMD_LOG(ERR, "Failed to get port id for %s", request_name);
-+		return -1;
-+	}
-+
-+	/* Populate the reply with the fds for each queue */
-+	struct rte_mp_msg reply = { };
-+	if (dev->data->nb_rx_queues > RTE_MP_MAX_FD_NUM) {
-+		PMD_LOG(ERR, "Number of rx queues (%d) exceeds max number of fds (%d)",
-+			   dev->data->nb_rx_queues, RTE_MP_MAX_FD_NUM);
-+		return -EINVAL;
-+	}
-+
-+	int *fds = dev->process_private;
-+	for (uint16_t i = 0; i < dev->data->nb_rx_queues; i++) {
-+		PMD_LOG(DEBUG, "Send queue %u fd %d to secondary", i, fds[i]);
-+		reply.fds[reply.num_fds++] = fds[i];
-+	}
-+
-+	/* Send the reply */
-+	strlcpy(reply.name, request->name, sizeof(reply.name));
-+	strlcpy((char *)reply.param, request_name, RTE_MP_MAX_PARAM_LEN);
-+	reply.len_param = strlen(request_name);
-+
-+	PMD_LOG(DEBUG, "Sending multi-process IPC reply for %s", request_name);
-+	if (rte_mp_reply(&reply, peer) < 0) {
-+		PMD_LOG(ERR, "Failed to reply to multi-process IPC request");
-+		return -1;
-+	}
-+	return 0;
-+}
-+
+ 		rte_intr_instance_free(pmd->intr_handle);
+ 		pmd->intr_handle = NULL;
+ 	}
+@@ -597,6 +611,8 @@ static const struct eth_dev_ops rtap_ops = {
+ 	.rx_queue_release	= rtap_rx_queue_release,
+ 	.tx_queue_setup		= rtap_tx_queue_setup,
+ 	.tx_queue_release	= rtap_tx_queue_release,
++	.rx_queue_intr_enable	= rtap_rx_queue_intr_enable,
++	.rx_queue_intr_disable	= rtap_rx_queue_intr_disable,
+ };
+ 
  static int
- rtap_probe(struct rte_vdev_device *vdev)
- {
-@@ -683,6 +772,38 @@ rtap_probe(struct rte_vdev_device *vdev)
+diff --git a/drivers/net/rtap/rtap_intr.c b/drivers/net/rtap/rtap_intr.c
+index 8a27b811e1..231666efae 100644
+--- a/drivers/net/rtap/rtap_intr.c
++++ b/drivers/net/rtap/rtap_intr.c
+@@ -145,3 +145,123 @@ rtap_lsc_set(struct rte_eth_dev *dev, int set)
  
- 	PMD_LOG(INFO, "Initializing %s", name);
- 
-+	if (rte_eal_process_type() == RTE_PROC_SECONDARY) {
-+		eth_dev = rte_eth_dev_attach_secondary(name);
-+		if (!eth_dev) {
-+			PMD_LOG(ERR, "Failed to probe %s", name);
-+			return -1;
-+		}
-+		eth_dev->dev_ops = &rtap_ops;
-+		eth_dev->data->dev_flags |= RTE_ETH_DEV_AUTOFILL_QUEUE_XSTATS;
-+		eth_dev->device = &vdev->device;
+ 	return 0;
+ }
 +
-+		if (!rte_eal_primary_proc_alive(NULL)) {
-+			PMD_LOG(ERR, "Primary process is missing");
-+			goto error;
-+		}
++/*
++ * Install per-queue Rx interrupt vector.
++ *
++ * Each Rx queue has an eventfd registered with its io_uring instance.
++ * When a CQE is posted (packet received), the kernel signals the eventfd.
++ * This function wires those eventfds into an rte_intr_handle so that
++ * DPDK's interrupt framework (rte_epoll_wait) can poll them.
++ *
++ * Only called when dev_conf.intr_conf.rxq is set.
++ */
++int
++rtap_rx_intr_vec_install(struct rte_eth_dev *dev)
++{
++	struct rtap_pmd *pmd = dev->data->dev_private;
++	uint16_t nb_rx = dev->data->nb_rx_queues;
 +
-+		fds = calloc(RTE_MAX_QUEUES_PER_PORT, sizeof(int));
-+		if (fds == NULL) {
-+			PMD_LOG(ERR, "Failed to alloc memory for process private");
-+			goto error;
-+		}
-+		for (uint16_t i = 0; i < RTE_MAX_QUEUES_PER_PORT; i++)
-+			fds[i] = -1;
-+
-+		eth_dev->process_private = fds;
-+
-+		if (rtap_request_fds(name, eth_dev))
-+			goto error;
-+
-+		rte_eth_dev_probing_finish(eth_dev);
++	if (pmd->rx_intr_handle != NULL) {
++		PMD_LOG(DEBUG, "Rx interrupt vector already installed");
 +		return 0;
 +	}
 +
- 	if (params != NULL) {
- 		kvlist = rte_kvargs_parse(params, valid_arguments);
- 		if (kvlist == NULL)
-@@ -721,6 +842,15 @@ rtap_probe(struct rte_vdev_device *vdev)
- 	if (rtap_create(eth_dev, tap_name, persist) < 0)
- 		goto error;
- 
-+	/* register the MP server on the first device */
-+	if (rte_atomic_fetch_add_explicit(&rtap_dev_count, 1, rte_memory_order_acquire) == 0) {
-+		if (rte_mp_action_register(RTAP_MP_KEY, rtap_mp_send_fds) < 0) {
-+			PMD_LOG(ERR, "Failed to register multi-process callback: %s",
-+				rte_strerror(rte_errno));
++	pmd->rx_intr_handle = rte_intr_instance_alloc(RTE_INTR_INSTANCE_F_PRIVATE);
++	if (pmd->rx_intr_handle == NULL) {
++		PMD_LOG(ERR, "Failed to allocate Rx intr handle");
++		return -ENOMEM;
++	}
++
++	if (rte_intr_type_set(pmd->rx_intr_handle, RTE_INTR_HANDLE_VDEV) < 0)
++		goto error;
++
++	if (rte_intr_nb_efd_set(pmd->rx_intr_handle, nb_rx) < 0)
++		goto error;
++
++	if (rte_intr_max_intr_set(pmd->rx_intr_handle, nb_rx + 1) < 0)
++		goto error;
++
++	for (uint16_t i = 0; i < nb_rx; i++) {
++		struct rtap_rx_queue *rxq = dev->data->rx_queues[i];
++
++		if (rxq == NULL || rxq->intr_fd < 0) {
++			PMD_LOG(ERR, "Rx queue %u not ready for interrupts", i);
++			goto error;
++		}
++
++		if (rte_intr_efds_index_set(pmd->rx_intr_handle, i,
++					    rxq->intr_fd) < 0) {
++			PMD_LOG(ERR, "Failed to set efd for queue %u", i);
 +			goto error;
 +		}
 +	}
 +
- 	rte_eth_dev_probing_finish(eth_dev);
- 	rte_kvargs_free(kvlist);
- 	return 0;
++	dev->intr_handle = pmd->rx_intr_handle;
++	PMD_LOG(DEBUG, "Rx interrupt vector installed for %u queues", nb_rx);
++	return 0;
++
++error:
++	rte_intr_instance_free(pmd->rx_intr_handle);
++	pmd->rx_intr_handle = NULL;
++	return -1;
++}
++
++/*
++ * Remove per-queue Rx interrupt vector.
++ * Restores dev->intr_handle to the LSC handle.
++ */
++void
++rtap_rx_intr_vec_uninstall(struct rte_eth_dev *dev)
++{
++	struct rtap_pmd *pmd = dev->data->dev_private;
++
++	if (pmd->rx_intr_handle == NULL)
++		return;
++
++	/* Restore LSC handle as device interrupt handle */
++	dev->intr_handle = pmd->intr_handle;
++
++	rte_intr_instance_free(pmd->rx_intr_handle);
++	pmd->rx_intr_handle = NULL;
++
++	PMD_LOG(DEBUG, "Rx interrupt vector uninstalled");
++}
++
++/*
++ * Enable Rx interrupt for a queue.
++ *
++ * Drain any pending eventfd notification so the next CQE
++ * triggers a fresh wakeup in rte_epoll_wait().
++ */
++int
++rtap_rx_queue_intr_enable(struct rte_eth_dev *dev, uint16_t queue_id)
++{
++	struct rtap_rx_queue *rxq = dev->data->rx_queues[queue_id];
++	uint64_t val;
++
++	if (rxq == NULL || rxq->intr_fd < 0)
++		return -EINVAL;
++
++	/* Drain the eventfd counter to re-arm notification */
++	if (read(rxq->intr_fd, &val, sizeof(val)) < 0 && errno != EAGAIN) {
++		PMD_LOG(ERR, "eventfd drain failed queue %u: %s",
++			queue_id, strerror(errno));
++		return -errno;
++	}
++
++	return 0;
++}
++
++/*
++ * Disable Rx interrupt for a queue.
++ *
++ * Nothing to do - the eventfd stays registered with io_uring
++ * but the application simply stops polling it.
++ */
++int
++rtap_rx_queue_intr_disable(struct rte_eth_dev *dev __rte_unused,
++			   uint16_t queue_id __rte_unused)
++{
++	return 0;
++}
+diff --git a/drivers/net/rtap/rtap_rxtx.c b/drivers/net/rtap/rtap_rxtx.c
+index c972ab4ca0..87d181eded 100644
+--- a/drivers/net/rtap/rtap_rxtx.c
++++ b/drivers/net/rtap/rtap_rxtx.c
+@@ -8,6 +8,7 @@
+ #include <stdlib.h>
+ #include <string.h>
+ #include <unistd.h>
++#include <sys/eventfd.h>
+ #include <liburing.h>
+ #include <sys/uio.h>
+ #include <linux/virtio_net.h>
+@@ -369,6 +370,7 @@ rtap_rx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_id, uint16_t nb_rx_d
+ 	rxq->mb_pool = mb_pool;
+ 	rxq->port_id = dev->data->port_id;
+ 	rxq->queue_id = queue_id;
++	rxq->intr_fd = -1;
+ 	dev->data->rx_queues[queue_id] = rxq;
+ 
+ 	if (io_uring_queue_init(nb_rx_desc, &rxq->io_ring, 0) != 0) {
+@@ -376,10 +378,26 @@ rtap_rx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_id, uint16_t nb_rx_d
+ 		goto error_rxq_free;
+ 	}
+ 
++	/*
++	 * Create an eventfd for Rx interrupt notification.
++	 * io_uring will signal this fd whenever a CQE is posted,
++	 * enabling power-aware applications to sleep until packets arrive.
++	 */
++	rxq->intr_fd = eventfd(0, EFD_NONBLOCK | EFD_CLOEXEC);
++	if (rxq->intr_fd < 0) {
++		PMD_LOG(ERR, "eventfd failed: %s", strerror(errno));
++		goto error_iouring_exit;
++	}
++
++	if (io_uring_register_eventfd(&rxq->io_ring, rxq->intr_fd) < 0) {
++		PMD_LOG(ERR, "io_uring_register_eventfd failed: %s", strerror(errno));
++		goto error_eventfd_close;
++	}
++
+ 	mbufs = calloc(nb_rx_desc, sizeof(struct rte_mbuf *));
+ 	if (mbufs == NULL) {
+ 		PMD_LOG(ERR, "Rx mbuf pointer alloc failed");
+-		goto error_iouring_exit;
++		goto error_eventfd_close;
+ 	}
+ 
+ 	/* open shared tap fd maybe already setup */
+@@ -429,6 +447,11 @@ rtap_rx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_id, uint16_t nb_rx_d
+ 	}
+ 	rtap_queue_close(dev, queue_id);
+ 	free(mbufs);
++error_eventfd_close:
++	if (rxq->intr_fd >= 0) {
++		close(rxq->intr_fd);
++		rxq->intr_fd = -1;
++	}
+ error_iouring_exit:
+ 	io_uring_queue_exit(&rxq->io_ring);
+ error_rxq_free:
+@@ -503,6 +526,12 @@ rtap_rx_queue_release(struct rte_eth_dev *dev, uint16_t queue_id)
+ 	if (rxq == NULL)
+ 		return;
+ 
++	if (rxq->intr_fd >= 0) {
++		io_uring_unregister_eventfd(&rxq->io_ring);
++		close(rxq->intr_fd);
++		rxq->intr_fd = -1;
++	}
++
+ 	rtap_cancel_all(&rxq->io_ring);
+ 	io_uring_queue_exit(&rxq->io_ring);
+ 
 -- 
 2.51.0
 
