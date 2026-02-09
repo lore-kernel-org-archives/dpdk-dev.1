@@ -2,48 +2,143 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05DA2EF06FC
-	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Feb 2026 01:26:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF268EF070C
+	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Feb 2026 04:24:03 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 360564069F;
-	Mon,  9 Feb 2026 02:25:21 +0100 (CET)
-Received: from cstnet.cn (smtp25.cstnet.cn [159.226.251.25])
- by mails.dpdk.org (Postfix) with ESMTP id 2EBC04065F
- for <dev@dpdk.org>; Mon,  9 Feb 2026 02:25:11 +0100 (CET)
-Received: from mail.cstnet.cn (unknown [221.238.36.162])
- by APP-05 (Coremail) with SMTP id zQCowABX5wpsN4lpelvYBw--.52568S12;
- Mon, 09 Feb 2026 09:25:01 +0800 (CST)
-From: liujie5@linkdatatechnology.com
-To: stephen@networkplumber.org
-Cc: dev@dpdk.org,
-	Jie Liu <liujie5@linkdatatechnology.com>
-Subject: [PATCH v17 11/13] net/sxe: add custom cmd led ctrl
-Date: Mon,  9 Feb 2026 09:24:56 +0800
-Message-Id: <20260209012458.506200-11-liujie5@linkdatatechnology.com>
-X-Mailer: git-send-email 2.18.2
-In-Reply-To: <20260209012458.506200-1-liujie5@linkdatatechnology.com>
-References: <20260208115626.146863-13-liujie5@linkdatatechnology.com>
- <20260209012458.506200-1-liujie5@linkdatatechnology.com>
-X-CM-TRANSID: zQCowABX5wpsN4lpelvYBw--.52568S12
-X-Coremail-Antispam: 1UD129KBjvJXoWxKF4rtrWruFykZF1kWF18AFb_yoWfXF48pF
- 45Cr15W3WfJFyIka1fJF4DZF1rCa1jqFWDWF9F9w4Svas2yr1UJF4qgFsIy34Fv3y8Gry2
- va12vFy5Kwn5K3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDU0xBIdaVrnRJUUUPI14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
- rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
- kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
- z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr
- 1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1U
- M2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjx
- v20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1l
- F7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4kE6xkIj40Ew7xC0wCY02
- Avz4vE14v_KwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02
- F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jrv_JF
- 1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVW8JVW5JwCI42IY6xIIjxv20xvEc7Cj
- xVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r
- 4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JU9
- YFZUUUUU=
-X-Originating-IP: [221.238.36.162]
-X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
+	by mails.dpdk.org (Postfix) with ESMTP id C0E804028F;
+	Mon,  9 Feb 2026 05:24:02 +0100 (CET)
+Received: from DM1PR04CU001.outbound.protection.outlook.com
+ (mail-centralusazon11010015.outbound.protection.outlook.com [52.101.61.15])
+ by mails.dpdk.org (Postfix) with ESMTP id 72A0F40270
+ for <dev@dpdk.org>; Mon,  9 Feb 2026 05:24:00 +0100 (CET)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Sajs63tvz3QQxg8fRmRlxc/SJPw1P3N7LYve7j4ARqf+6tMHIZVsPClZKrTfFRMTwiE+62Milzk8Gsnr7G5qbhLPEG6vLcCECuMV80fFn8UWsCdYuznIIOK3rI9fkeItpXRKOCvsv2C0ZQPo1E2BVZPUR7iy3X+85gqBIWZbQM5E6c177QJtV4BgBZOZBZYpV0+H76t/VR2AK9OKJc6YXBcg/1+dgqRbU82uV9c8TeE3lQTo7RBMtJ7CrTnGHDrGl7S+t8lnohmSmQGI8NmqwJ/af92eSLfEn2FNEzi3Kw05VZQrWwUab8TyXkqpyt+hH6R603HTCwsBkAKrem3+tA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=a3udVYq4wKxyu1t/dw1mN59h6aJL4H3b3ZB8hX71p0Y=;
+ b=paWn+M3UA7n/zrmjXpMturRxviY6YXAtA46BN2e/kP2UrBwJq8JyxPlceawjQkGQpJA7hpgutLdbOz3ThdOzBrjhr7wwPF1DMuZZ+FjyASQzj1agUoSc813uRqSv6NaVJ88CFp9yhJVHvJCTqmlDxuVbUPWuFocI5IGMN77WbldTzAM0AKn5ohGW5wRwI9EsHKNva38Z6ynA3n2i3eD5T4z2z3u0uCbf2ne/ANZS/Z6nMd/SpeVWx56FihZYypBx/YH6OzSiL4UMFCW2CzJM2Z4cwhBgYDI1rliZ/EhK0zZaJpbroVX0MMFnSqS93+m23owj5KwGP3yatHRpH3KisQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=a3udVYq4wKxyu1t/dw1mN59h6aJL4H3b3ZB8hX71p0Y=;
+ b=LKYg9MS3FhNlLcBYrBk7YT88tDmIgmOW39TUwDiP/F2K2w1Ptmk1H1asWl/TJHNjOkgWzYIn4ynkYw7q12xUEU4xoD0W93RI5V+cR7tzlm/XNRb2BDAeEPGUeh+xZs9Ch0YdPk2flDxaGxjbGi5nbGaUmD0CUmqd+6LsbdN5NmcKFUxUcQOB5cvnhve2ex9mVp+r6NjHHDJdq+6MrqfNoLcsKlAHoW0kI96x+XV3DWOiJYXPEOm1R/AfhS/HFUYRbylXI8ruvF2pYgR1fEYZIs2pjEIT33jp5CdlJHXDkHnlwQ+qORpe/kIKE39quwDveKIlfRtQ9wdnukuDQ0rKZQ==
+Received: from IA4PR12MB9763.namprd12.prod.outlook.com (2603:10b6:208:55a::20)
+ by PH8PR12MB6817.namprd12.prod.outlook.com (2603:10b6:510:1c8::6)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9587.18; Mon, 9 Feb
+ 2026 04:23:56 +0000
+Received: from IA4PR12MB9763.namprd12.prod.outlook.com
+ ([fe80::3d3c:bcd3:d413:7f7b]) by IA4PR12MB9763.namprd12.prod.outlook.com
+ ([fe80::3d3c:bcd3:d413:7f7b%3]) with mapi id 15.20.9587.017; Mon, 9 Feb 2026
+ 04:23:56 +0000
+From: Bing Zhao <bingz@nvidia.com>
+To: Stephen Hemminger <stephen@networkplumber.org>
+CC: Slava Ovsiienko <viacheslavo@nvidia.com>, "dev@dpdk.org" <dev@dpdk.org>,
+ Raslan Darawsheh <rasland@nvidia.com>, Ori Kam <orika@nvidia.com>, Dariusz
+ Sosnowski <dsosnowski@nvidia.com>, Suanming Mou <suanmingm@nvidia.com>, Matan
+ Azrad <matan@nvidia.com>, "NBU-Contact-Thomas Monjalon (EXTERNAL)"
+ <thomas@monjalon.net>
+Subject: RE: [PATCH 1/2] lib/ethdev: support inline calculating masked item
+ value
+Thread-Topic: [PATCH 1/2] lib/ethdev: support inline calculating masked item
+ value
+Thread-Index: AQHcV5d2f5lwV3ChikmVEqm/sRDM67V0zcMAgAV6zZA=
+Date: Mon, 9 Feb 2026 04:23:56 +0000
+Message-ID: <IA4PR12MB9763C7AB75A5B08D1FC30B0DD065A@IA4PR12MB9763.namprd12.prod.outlook.com>
+References: <20251117075407.9632-1-bingz@nvidia.com>
+ <20260205084254.29f823c9@phoenix.local>
+In-Reply-To: <20260205084254.29f823c9@phoenix.local>
+Accept-Language: en-US, zh-CN
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: IA4PR12MB9763:EE_|PH8PR12MB6817:EE_
+x-ms-office365-filtering-correlation-id: 26a2a543-ddb3-43b6-a62d-08de67930a4c
+x-ld-processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0; ARA:13230040|1800799024|376014|366016|38070700021;
+x-microsoft-antispam-message-info: =?us-ascii?Q?NKkke0sFWxdFe26pHLzHVpwL4Id3doqyKNylUA1+foSFcMpLcp76yG87PhcT?=
+ =?us-ascii?Q?c2sewLA/yrtAcxz9pAJk7HKRgPjUG+V1Tij8SJM40l9KBO+la0b8qfry6juX?=
+ =?us-ascii?Q?fyQfNgnlVLhN84XCuhCNHNRY380Nr3mw4Qs2EoiqKDhLPf2LF+10p8NHWJtj?=
+ =?us-ascii?Q?m3N75Ohc0YzPykhq8ZcMtwOcs6CwovnPOQVhCpL5mLtmDR7eHpZH6H0B83lx?=
+ =?us-ascii?Q?diteLGTY00xMzmKXt3S4QRRlhcpFLxmGMN8gLkXo/4j8W1I/OZVMjisS5ufp?=
+ =?us-ascii?Q?c/ygp45jHNqK3Qloy7dYWG6O3Uv6tc9L4mbd1cohBJGpfMKwx2O/2c7UmbeI?=
+ =?us-ascii?Q?qdIM/KBBsvgRRmGQVlhk+ADR1CshWAWjyvpwZiyYh5y5iig6OI2OO9sUVyZ1?=
+ =?us-ascii?Q?zFt5TTP9vIi8y2ForbKfI+oUBBX9Efgc2tCWm3sEvJLD4DS9/1kaPz/15Q69?=
+ =?us-ascii?Q?uEoflgPBHJAEGf1JslujgET8dZvVikhngKW2bu21LPaajt/bmgoawLc7RXm6?=
+ =?us-ascii?Q?8cjhr0cYj27khTvsUywCCs+z3up8C/MscdSjOR574JDqYZTXEkFzhqNQLC1U?=
+ =?us-ascii?Q?RC9yh4L684G6N3zO0qXyu0CkYq2BVj69qkYcEfPlCxUmN0k2/s8v6z2gbLyy?=
+ =?us-ascii?Q?1KndoHIcZSTwQDM8b+MgUn6aiU0v9eEof+CVRdoqZiyme2iC+v115LhdVRYb?=
+ =?us-ascii?Q?6PymE5JI7C9LYmvGC8o49IJZKwLjet1FdM+s+bnygQtS4NR5Z3g4HFquGhLm?=
+ =?us-ascii?Q?zmkB5Qld+7XfRNTtb+zBH0dp9kR/sOdfDE0V37InVVSn05uYcKsfjYYdIJuF?=
+ =?us-ascii?Q?mZY+qGedBOa06sUvuRc6neklC0JugNjI0cZM31Kmty9JYMVWnQsK5bbVMVDT?=
+ =?us-ascii?Q?4MpTlcJODI1TBhPnQfqO601d4HJuESG6WiuEgMMCUes1pSEquEiFeZknY8Ag?=
+ =?us-ascii?Q?KOfo0/ilec2xGoTiExzcEzhECLezLe2zT5DbmHtauNk0wDNCOwy4vC3NtJUS?=
+ =?us-ascii?Q?JTSe6+v4TQEsVI4UwmEYS6moFJErtHJiUbU5Jryn/oH7fbenH8Et+c8ChA0O?=
+ =?us-ascii?Q?T8+fqFABeg3opLxMZzAZJEHppdsTq5d3fs4BPf+Gb9iOBcJ3bGIUizEbvXUw?=
+ =?us-ascii?Q?PtCRgFHSY0QE/yLtk+L6she5d+ruK0gHfcJEgbmOWUnqrvxet7A8brFOhgSf?=
+ =?us-ascii?Q?ADDe59rDiP+TwUy1sv4dryAFKJRBJnDGwrfznFMFz/Rxjj5PyLD1MX/6HBZY?=
+ =?us-ascii?Q?LrW2YewhgtQnn0iMxz3rcbYLfA3kF8A6+xSYrEX5cO/ZDI1mMwo6VjRwm5z4?=
+ =?us-ascii?Q?7W+4+migcyCJKhOQdz4UN/yE5R7Tix/vHUFxzPSxhvm6MeHU4ffuz5pw9VGV?=
+ =?us-ascii?Q?P2PGUEphHUIOA89SNi4ttguYYYF/U8W8i2fmW4Rb2QgF9/0GeoOiaFgmV47Y?=
+ =?us-ascii?Q?L4QX8Nz4rEvOKA1TOOClk4e+Cdnka/hi7/dD0Dy46RS2Njw65pfQiZr2CqgG?=
+ =?us-ascii?Q?DeWfgmKICD/ijAtT3cCvgiG6aRnA58Nh/CKiQL7UYkbPjuOfFn4cct349I9h?=
+ =?us-ascii?Q?3C99nJ9A0sGt0KJJ1f/PNk756nIYunOC87IYxftTlDkXck9xac0po9N8tJ8U?=
+ =?us-ascii?Q?STqSc2zn+CNg7OXp6HFDyZg=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:IA4PR12MB9763.namprd12.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(1800799024)(376014)(366016)(38070700021); DIR:OUT; SFP:1101; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?WqVBSZWAft3HHJ6n7/+eerpLmnV64Rb39D1hJ5lmHK7tU3Z/Nc8z1akvHJ5t?=
+ =?us-ascii?Q?dWTydaWjuWszFbcgXHJ0WIHlbsupSx6ZQcJ9QrjzFpX67ct4/anTEvkdCKgt?=
+ =?us-ascii?Q?ynaK1oSCJhRDSG0yoaezUiLxcUPaRO8jiOueU7+qYNY//+dhhNd30X7510+W?=
+ =?us-ascii?Q?9Pr+zZcCt/O0SWIRbgtvlIC4dD2cxW0F8TxpgtUxwVpn1BIsqHBGz/g/KeFG?=
+ =?us-ascii?Q?e52usINb0q15cuFcUpM6OjAGMEukoz1aUOStsDXRvB5IZ3SarT9XGcR34Yaa?=
+ =?us-ascii?Q?xnKtQvZAf+3udWv6PpqS665DVcnLtZTBpUeNFgvHAVlwj80htodBjU80QQqU?=
+ =?us-ascii?Q?wClgQQMp+22uaG8rRhdwJ2pe6YZsKG/6VVpV9Afm3PQyAZhautTHmNBVqciY?=
+ =?us-ascii?Q?or2KL0bEDkhL1JmkAmBvMHablWm40woXAT1Y5BqgB/slscOGi9vsy9rmFBcC?=
+ =?us-ascii?Q?bZ26mCD01yBDHMctRH1gcvHR41/CkldtzP9ACkPtqGEY3jPRHGSyg/jHld5P?=
+ =?us-ascii?Q?hH5BexeQyFG1MMYnIGNXdOP2L4yjhu1C0y7CoDwtbV6gWqGuqRRDfaHmf4cC?=
+ =?us-ascii?Q?87qfqSEAqrECGIbLI48EVnR6Ksx3WPk1/mHzjhAEf61jKU1NYw7hWSLByIzt?=
+ =?us-ascii?Q?pgNGOaBw8OPjyo7seyw6sWD/HmL3Dddj518j3zWbVx8JbH40Tll/aUT00+N6?=
+ =?us-ascii?Q?BluHYCn88i0ldVmzeFHuVWs/62XhBRWbBdKPztYRMDN66RpnovZONGZwx4fd?=
+ =?us-ascii?Q?py27ncpkmLK09sFzgflKlmof15/QROSGDFVlFDBcUCWMUbd2Oy44URfn3kKZ?=
+ =?us-ascii?Q?qCoIh4WzoBm9Po+8UzFt2V0ES0mf9/PWNSfCfTUT+4ZgtT8fmuT6XkKlAyKk?=
+ =?us-ascii?Q?yclN7vwhCQcWnOdF4T9Msk/pBX06Q49vysqMhlu38YZnHXp5q62mF1SAQexK?=
+ =?us-ascii?Q?AKnh+LUAmozkOnuaNKYoRTM6PURit/UsZLo3g0Smuns6PYGVBjcuMEsEwu7Z?=
+ =?us-ascii?Q?v8giWqFFvIJ72nVlKLhRSK9xApkhtC1aGcw5GImmW4fr+FozNEP/4zxqhfkR?=
+ =?us-ascii?Q?FcWqQwKzCRndslk2JpZa92ITIpMUyRn0yQvI+TjS/xAncaehyEvYFpqm+K0G?=
+ =?us-ascii?Q?p4w7GGuHtlW/+kNwzMjDru2jcv1GMYlU9a9qI7+C5Fwt6p2D5Q4G8/23nR4Z?=
+ =?us-ascii?Q?+iE6A0cjR7E8G9b7NAWZgCW0Aagnv+rMIYXHROszO/jaDpBDF1162lakmAqi?=
+ =?us-ascii?Q?wGUcLgyAZp2SpY04AB3+9I0+D7xzIbbOhbLN6PY/uylU+8CqhauC2k5CtTKv?=
+ =?us-ascii?Q?pfnHW4ql09ZsTyMYG+S88xgFU9x2JyGkdysd8x6yM0XYhodtDbAmkFC1oEqn?=
+ =?us-ascii?Q?K7RaLzWX11y1KYbg4XWvTbG2kKze+tDxZt+o2dsncbE7kMe9BEsEMCfVfwZ/?=
+ =?us-ascii?Q?3CY0k+D7xxtiMRPicqc0HmzYxoUVu9tQGHbzqbbBCCSIzj1fMhvbfjTrY4qk?=
+ =?us-ascii?Q?qLvZgXI+Ee5HPgU2AjDut5bihbpqRtaPYySmKySXXkrWoOXvR6updoRKqeIV?=
+ =?us-ascii?Q?eohMfg0dhFdbSJbdiZ29k+SvEHFtbukNL8QFOwp26h+x2F8Yz02pKopPUorP?=
+ =?us-ascii?Q?gtLEMgIQ/D+ik/PqyZPDwXFMjXY+iz3xylzGllqi55OMWr2MdlYJOzFD7m1d?=
+ =?us-ascii?Q?pVQ8PAOwjaJl/FzFP/Tn2Lb/MQhbuhNA3N85RT+z9Yf87/TL?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: IA4PR12MB9763.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 26a2a543-ddb3-43b6-a62d-08de67930a4c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Feb 2026 04:23:56.3559 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: CNC8mSzGheKUSPcpmK2zn0o3rZmLnL30kNPWMG8hVtSbVSj/jXVnnaQbJ0eTJRwScAb1EQHkoaldV3a7BFVkRw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB6817
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -57,343 +152,52 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Jie Liu <liujie5@linkdatatechnology.com>
+Sure. I will add some tests.
 
-Add custom cmd led ctrl.
-
-Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
----
- drivers/net/sxe/include/sxe/sxe_cli.h   | 218 ++++++++++++++++++++++++
- drivers/net/sxe/include/sxe/sxe_ioctl.h |  21 +++
- drivers/net/sxe/sxe_testpmd.c           |  66 +++++++
- 3 files changed, 305 insertions(+)
- create mode 100644 drivers/net/sxe/include/sxe/sxe_cli.h
- create mode 100644 drivers/net/sxe/include/sxe/sxe_ioctl.h
- create mode 100644 drivers/net/sxe/sxe_testpmd.c
-
-diff --git a/drivers/net/sxe/include/sxe/sxe_cli.h b/drivers/net/sxe/include/sxe/sxe_cli.h
-new file mode 100644
-index 0000000000..b278a67907
---- /dev/null
-+++ b/drivers/net/sxe/include/sxe/sxe_cli.h
-@@ -0,0 +1,218 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright (C), 2022, Linkdata Technology Co., Ltd.
-+ */
-+
-+#ifndef __SXE_CLI_H__
-+#define __SXE_CLI_H__
-+
-+#ifdef SXE_HOST_DRIVER
-+#include "sxe_drv_type.h"
-+#endif
-+
-+#define SXE_CODE_VERSION_LEN			(32)
-+#define SXE_MAC_NUM				(128)
-+#define SXE_PORT_TRANSCEIVER_LEN		(32)
-+#define SXE_PORT_VENDOR_LEN			(32)
-+#define SXE_CHIP_TYPE_LEN			(32)
-+#define SXE_VPD_SN_LEN				(16)
-+#define SXE_SOC_RST_TIME			(0x93A80)
-+#define SXE_SFP_TEMP_THRESHOLD_INTERVAL		(3)
-+#define MGC_TERMLOG_INFO_MAX_LEN		(12 * 1024)
-+#define SXE_REGS_DUMP_MAX_LEN			(12 * 1024)
-+#define SXE_PRODUCT_NAME_LEN			(32)
-+
-+typedef enum sxe_led_mode {
-+	SXE_IDENTIFY_LED_BLINK_ON = 0,
-+	SXE_IDENTIFY_LED_BLINK_OFF,
-+	SXE_IDENTIFY_LED_ON,
-+	SXE_IDENTIFY_LED_OFF,
-+	SXE_IDENTIFY_LED_RESET,
-+} sxe_led_mode_s;
-+
-+typedef struct sxe_led_ctrl {
-+	U32	mode;
-+	U32	duration;
-+
-+} sxe_led_ctrl_s;
-+
-+typedef struct sxe_led_ctrl_resp {
-+	U32	ack;
-+} sxe_led_ctrl_resp_s;
-+
-+typedef enum port_link_speed {
-+	PORT_LINK_NO	= 0,
-+	PORT_LINK_100M	= 1,
-+	PORT_LINK_1G	= 2,
-+	PORT_LINK_10G	= 3,
-+} port_link_speed_e;
-+
-+typedef struct sys_soc_info {
-+	S8	fw_ver[SXE_CODE_VERSION_LEN];
-+	S8	opt_ver[SXE_CODE_VERSION_LEN];
-+	U8	soc_status;
-+	U8	pad[3];
-+	S32	soc_temp;
-+	U64	chipid;
-+	S8	chip_type[SXE_CHIP_TYPE_LEN];
-+	S8	pba[SXE_VPD_SN_LEN];
-+	S8	product_name[SXE_PRODUCT_NAME_LEN];
-+} sys_soc_info_s;
-+
-+typedef struct sys_port_info {
-+	U64	mac[SXE_MAC_NUM];
-+	U8	is_port_abs;
-+	U8	link_stat;
-+	U8	link_speed;
-+
-+
-+	U8	is_sfp:1;
-+	U8	is_get_info:1;
-+	U8	rvd:6;
-+	S8	optical_mod_temp;
-+	U8	pad[3];
-+	S8	transceiver_type[SXE_PORT_TRANSCEIVER_LEN];
-+	S8	vendor_name[SXE_PORT_VENDOR_LEN];
-+	S8	vendor_pn[SXE_PORT_VENDOR_LEN];
-+} sys_port_info_s;
-+
-+typedef struct sys_info_resp {
-+	sys_soc_info_s	soc_info;
-+	sys_port_info_s	port_info;
-+} sys_info_resp_s;
-+
-+typedef enum sfp_temp_td_mode {
-+	SFP_TEMP_THRESHOLD_MODE_ALARM   = 0,
-+	SFP_TEMP_THRESHOLD_MODE_WARN,
-+} sfp_temp_td_mode_e;
-+
-+typedef struct sfp_temp_td_set {
-+	U8	mode;
-+	U8	pad[3];
-+	S8	hthreshold;
-+	S8	lthreshold;
-+} sfp_temp_td_set_s;
-+
-+typedef struct sxe_log_export_resp {
-+	U16	cur_log_len;
-+	U8	is_end;
-+	U8	pad;
-+	S32	session_id;
-+	S8	data[0];
-+} sxe_log_export_resp_s;
-+
-+typedef enum sxe_log_export_type  {
-+	SXE_LOG_EXPORT_REQ	= 0,
-+	SXE_LOG_EXPORT_FIN,
-+	SXE_LOG_EXPORT_ABORT,
-+} sxe_log_export_type_e;
-+
-+typedef struct sxe_log_export_req {
-+	U8	is_all_log;
-+	U8	cmdtype;
-+	U8	is_begin;
-+	U8	pad;
-+	S32	session_id;
-+	U32	log_len;
-+} sxe_log_export_req_s;
-+
-+typedef struct soc_rst_req {
-+	U32	time;
-+} soc_rst_req_s;
-+
-+typedef struct regs_dump_resp {
-+	U32	curdw_len;
-+	U8	data[0];
-+} regs_dump_resp_s;
-+
-+enum {
-+	SXE_MFG_PART_NUMBER_LEN   = 8,
-+	SXE_MFG_SERIAL_NUMBER_LEN = 16,
-+	SXE_MFG_REVISION_LEN	  = 4,
-+	SXE_MFG_OEM_STR_LEN	   = 64,
-+	SXE_MFG_SXE_BOARD_ASSEMBLY_LEN  = 32,
-+	SXE_MFG_SXE_BOARD_TRACE_NUM_LEN = 16,
-+	SXE_MFG_SXE_MAC_ADDR_CNT		= 2,
-+};
-+
-+typedef struct sxe_mfg_info {
-+	U8 part_number[SXE_MFG_PART_NUMBER_LEN];
-+	U8 serial_number[SXE_MFG_SERIAL_NUMBER_LEN];
-+	U32 mfg_date;
-+	U8 revision[SXE_MFG_REVISION_LEN];
-+	U32 rework_date;
-+	U8 pad[4];
-+	U64 mac_addr[SXE_MFG_SXE_MAC_ADDR_CNT];
-+	U8 board_trace_num[SXE_MFG_SXE_BOARD_TRACE_NUM_LEN];
-+	U8 board_assembly[SXE_MFG_SXE_BOARD_ASSEMBLY_LEN];
-+	U8 extra1[SXE_MFG_OEM_STR_LEN];
-+	U8 extra2[SXE_MFG_OEM_STR_LEN];
-+} sxe_mfg_info_t;
-+
-+typedef struct sxe_lldp_info {
-+	U8	lldp_state;
-+	U8	pad[3];
-+} sxe_lldp_info_t;
-+
-+typedef struct regs_dump_req {
-+	U32	base_addr;
-+	U32	dw_len;
-+} regs_dump_req_s;
-+
-+typedef enum sxe_pcs_mode {
-+	SXE_PCS_MODE_1000BASE_KX_WO = 0,
-+	SXE_PCS_MODE_1000BASE_KX_W,
-+	SXE_PCS_MODE_SGMII,
-+	SXE_PCS_MODE_10GBASE_KR_WO,
-+	SXE_PCS_MODE_AUTO_NEGT_73,
-+	SXE_PCS_MODE_LPBK_PHY_TX2RX,
-+	SXE_PCS_MODE_LPBK_PHY_RX2TX,
-+	SXE_PCS_MODE_LPBK_PCS_RX2TX,
-+	SXE_PCS_MODE_BUTT,
-+} sxe_pcs_mode_e;
-+
-+typedef enum sxe_remote_fault_mode {
-+	SXE_REMOTE_FALUT_NO_ERROR		= 0,
-+	SXE_REMOTE_FALUT_OFFLINE,
-+	SXE_REMOTE_FALUT_LINK_FAILURE,
-+	SXE_REMOTE_FALUT_AUTO_NEGOTIATION,
-+	SXE_REMOTE_UNKNOWN,
-+} sxe_remote_fault_e;
-+
-+typedef struct sxe_phy_cfg {
-+	sxe_pcs_mode_e mode;
-+	U32 mtu;
-+} sxe_pcs_cfg_s;
-+
-+typedef enum sxe_an_speed {
-+	SXE_AN_SPEED_NO_LINK = 0,
-+	SXE_AN_SPEED_100M,
-+	SXE_AN_SPEED_1G,
-+	SXE_AN_SPEED_10G,
-+	SXE_AN_SPEED_UNKNOWN,
-+} sxe_an_speed_e;
-+
-+typedef enum sxe_phy_pause_cap {
-+	SXE_PAUSE_CAP_NO_PAUSE	= 0,
-+	SXE_PAUSE_CAP_ASYMMETRIC_PAUSE,
-+	SXE_PAUSE_CAP_SYMMETRIC_PAUSE,
-+	SXE_PAUSE_CAP_BOTH_PAUSE,
-+	SXE_PAUSE_CAP_UNKNOWN,
-+} sxe_phy_pause_cap_e;
-+
-+typedef enum sxe_phy_duplex_type {
-+	SXE_FULL_DUPLEX	= 0,
-+	SXE_HALF_DUPLEX	= 1,
-+	SXE_UNKNOWN_DUPLEX,
-+} sxe_phy_duplex_type_e;
-+
-+typedef struct sxe_phy_an_cap {
-+	sxe_remote_fault_e   remote_fault;
-+	sxe_phy_pause_cap_e  pause_cap;
-+	sxe_phy_duplex_type_e duplex_cap;
-+} sxe_phy_an_cap_s;
-+
-+typedef struct sxe_an_cap {
-+	sxe_phy_an_cap_s local;
-+	sxe_phy_an_cap_s peer;
-+} sxe_an_cap_s;
-+#endif
-diff --git a/drivers/net/sxe/include/sxe/sxe_ioctl.h b/drivers/net/sxe/include/sxe/sxe_ioctl.h
-new file mode 100644
-index 0000000000..4a4b0bc304
---- /dev/null
-+++ b/drivers/net/sxe/include/sxe/sxe_ioctl.h
-@@ -0,0 +1,21 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright (C), 2022, Linkdata Technology Co., Ltd.
-+ */
-+#ifndef _SXE_IOCTL_H_
-+#define _SXE_IOCTL_H_
-+
-+#ifdef SXE_HOST_DRIVER
-+#include "sxe_drv_type.h"
-+#endif
-+
-+struct sxe_ioctl_sync_cmd {
-+	U64   traceid;
-+	void *in_data;
-+	U32   in_len;
-+	void *out_data;
-+	U32   out_len;
-+};
-+
-+#define SXE_CMD_IOCTL_SYNC_CMD _IOWR('M', 1, struct sxe_ioctl_sync_cmd)
-+
-+#endif
-diff --git a/drivers/net/sxe/sxe_testpmd.c b/drivers/net/sxe/sxe_testpmd.c
-new file mode 100644
-index 0000000000..6974bfe002
---- /dev/null
-+++ b/drivers/net/sxe/sxe_testpmd.c
-@@ -0,0 +1,66 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright (C), 2022, Linkdata Technology Co., Ltd.
-+ */
-+#include <ethdev_driver.h>
-+#include "sxe_drv_type.h"
-+#include "sxe_ethdev.h"
-+#include "rte_pmd_sxe.h"
-+
-+#include <cmdline_parse_etheraddr.h>
-+#include <cmdline_parse_num.h>
-+#include <cmdline_parse_string.h>
-+
-+#include "testpmd.h"
-+
-+struct led_ctrl_result {
-+	cmdline_fixed_string_t port;
-+	uint16_t port_id;
-+	cmdline_fixed_string_t led;
-+	cmdline_fixed_string_t action;
-+};
-+
-+cmdline_parse_token_string_t cmd_led_ctrl_port =
-+	TOKEN_STRING_INITIALIZER(struct led_ctrl_result, port, "port");
-+cmdline_parse_token_num_t cmd_led_ctrl_port_id =
-+	TOKEN_NUM_INITIALIZER(struct led_ctrl_result, port_id, RTE_UINT16);
-+cmdline_parse_token_string_t cmd_led_ctrl_led =
-+	TOKEN_STRING_INITIALIZER(struct led_ctrl_result, led, "led");
-+cmdline_parse_token_string_t cmd_led_ctrl_action =
-+	TOKEN_STRING_INITIALIZER(struct led_ctrl_result, action, "on#off");
-+
-+static void cmd_led_ctrl_parsed(void *parsed_result,
-+			__rte_unused struct cmdline *cl,
-+			__rte_unused void *data)
-+{
-+	struct led_ctrl_result *res = parsed_result;
-+
-+	if (strcmp(res->action, "on") == 0)
-+		rte_eth_led_on(res->port_id);
-+	else
-+		rte_eth_led_off(res->port_id);
-+}
-+
-+cmdline_parse_inst_t  cmd_led_ctrl = {
-+	.f = cmd_led_ctrl_parsed,
-+	.data = NULL,
-+	.help_str = "port <port_id> led on|off",
-+	.tokens = {
-+		(void *)&cmd_led_ctrl_port,
-+		(void *)&cmd_led_ctrl_port_id,
-+		(void *)&cmd_led_ctrl_led,
-+		(void *)&cmd_led_ctrl_action,
-+		NULL,
-+	},
-+};
-+
-+static struct testpmd_driver_commands sxe_cmds = {
-+	.commands = {
-+		{
-+			&cmd_led_ctrl,
-+			"port <port_id> led on|off\n"
-+			"	Set led on or off.\n",
-+		},
-+		{ NULL, NULL },
-+	},
-+};
-+TESTPMD_ADD_DRIVER_COMMANDS(sxe_cmds)
--- 
-2.18.2
-
+> -----Original Message-----
+> From: Stephen Hemminger <stephen@networkplumber.org>
+> Sent: Friday, February 6, 2026 12:43 AM
+> To: Bing Zhao <bingz@nvidia.com>
+> Cc: Slava Ovsiienko <viacheslavo@nvidia.com>; dev@dpdk.org; Raslan
+> Darawsheh <rasland@nvidia.com>; Ori Kam <orika@nvidia.com>; Dariusz
+> Sosnowski <dsosnowski@nvidia.com>; Suanming Mou <suanmingm@nvidia.com>;
+> Matan Azrad <matan@nvidia.com>; NBU-Contact-Thomas Monjalon (EXTERNAL)
+> <thomas@monjalon.net>
+> Subject: Re: [PATCH 1/2] lib/ethdev: support inline calculating masked
+> item value
+>=20
+> External email: Use caution opening links or attachments
+>=20
+>=20
+> On Mon, 17 Nov 2025 09:54:07 +0200
+> Bing Zhao <bingz@nvidia.com> wrote:
+>=20
+> > In the asynchronous API definition and some drivers, the rte_flow_item
+> > spec value may not be calculated by the driver due to the reason of
+> > speed of light rule insertion rate and sometimes the input parameters
+> > will be copied and changed internally.
+> >
+> > After copying, the spec and last will be protected by the keyword
+> > const and cannot be changed in the code itself. And also the driver
+> > needs some extra memory to do the calculation and extra conditions to
+> > understand the length of each item spec. This is not efficient.
+> >
+> > To solve the issue and support usage of the following fix, a new OP
+> > was introduced to calculate the spec and last values after applying
+> > the mask inline.
+> >
+> > Signed-off-by: Bing Zhao <bingz@nvidia.com>
+> > ---
+>=20
+> Looked at this patch again:
+>   1. No API/ABI breakage adding a single flow type is going
+>      to work great. rte_flow_conv_pattern is internal so changing is no
+> problem.
+>   2. No need for release note for single flow change.
+>=20
+>   3. Do need a test to cover the new code. I know rte_flow is way under
+> tested
+>      right now. Maybe a chance to use AI to generate a unit test for
+> rte_flow.
+>      This is important because it is a bug trap to add code that is not
+> covered.
