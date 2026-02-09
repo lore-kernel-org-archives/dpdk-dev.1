@@ -2,50 +2,166 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E477E81BD7
-	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Feb 2026 15:21:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A16D3E81BD3
+	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Feb 2026 16:10:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 73D584066E;
-	Mon,  9 Feb 2026 16:21:07 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
- by mails.dpdk.org (Postfix) with ESMTP id CC0114028F
- for <dev@dpdk.org>; Mon,  9 Feb 2026 16:21:04 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id E798C402B0;
+	Mon,  9 Feb 2026 17:10:52 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+ by mails.dpdk.org (Postfix) with ESMTP id 767944028F
+ for <dev@dpdk.org>; Mon,  9 Feb 2026 17:10:50 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1770650465; x=1802186465;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=B34URsjHGV8l9IAqK16GPiiLBjqaT9AG1kdpgoPViH0=;
- b=WubCIUtKLzmYhcl802qNTQXx426BYPA9ivN5RRXxcI5rfWXD84WKdFxZ
- 5e7Ryvfq2smjuw8X8MhrCKyCmXKXf6BNNlvP35RFxdSfUZ5lMCdouTSJo
- q4AepOgFVfoyFNUzzOca8yWeerUH6XpqXwzaMbNVdDUgMN0RRKk+6+GvO
- RbHCu27dAPZdv27KapRDwRWg1bZK/zpuC3Bao89QJn2BqD5O5JtE/Za9i
- Wv6iq2yrqs+JXjWGGccYO+16JiheW1kjzbSHPxwhoOGeuaEKzVzuvTLdh
- JWfqc4ux7ne0ktBcc6ObTZwjECtWL/6Oo8GnYkotl2kC2UrVoE1k8H3Qh A==;
-X-CSE-ConnectionGUID: WmBztNiJSKW1t3Xf26nlmw==
-X-CSE-MsgGUID: +pLLY5XsSb2JKdGpixiuSg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11696"; a="71749097"
-X-IronPort-AV: E=Sophos;i="6.21,282,1763452800"; d="scan'208";a="71749097"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
- by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 09 Feb 2026 07:21:05 -0800
-X-CSE-ConnectionGUID: Cmzu06lbTsuuaLCCHySptg==
-X-CSE-MsgGUID: VmOFYNAMRHOv5u3HxsJixw==
+ t=1770653451; x=1802189451;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=3w4bZunAYywOuR8KzWtrexW7WpjIccJX8a4T3Dx7nHo=;
+ b=kLG7611hRHO1AcnApzrKqi8ND/L8QnmNedN8/zZsvS7AK0WhQP+/4/tD
+ kSgCh1lpBwhx8M18Og5c2JduUjGe8XiCyaa/YzoTTP/388VZffuaswfgh
+ fkiIGizEgZtFTEEd3obSuFc32RAuiVN+o3nwfXgkfvFaIaiciG9R2Z48G
+ PKkVJVDOldkKFuMiB358rAJXjIiIyoNTqFQ9wU31Fpc8y+ookalQBN8KU
+ o0o5qNAHwsKuThh+YDiW8tJOmRth7sJIIMMGc8H/V628yz+RtD28hKHKz
+ +oqusUy7mx/PekDh4B5IA5vOndTOMgbVWuETfLhnRYnA6MjeB5aPrXGsJ A==;
+X-CSE-ConnectionGUID: RAu9nmqzQgG/auFwXO25wg==
+X-CSE-MsgGUID: nbowJbfQQmeBRp+AahYDag==
+X-IronPort-AV: E=McAfee;i="6800,10657,11696"; a="75615238"
+X-IronPort-AV: E=Sophos;i="6.21,282,1763452800"; d="scan'208";a="75615238"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+ by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 09 Feb 2026 08:10:49 -0800
+X-CSE-ConnectionGUID: i7jjiSllQ32c0b3q2xiXCg==
+X-CSE-MsgGUID: Z3bsIghbS8qfumhtopCqKA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,282,1763452800"; d="scan'208";a="211676131"
-Received: from silpixa00401921.ir.intel.com ([10.20.224.96])
- by orviesa007.jf.intel.com with ESMTP; 09 Feb 2026 07:21:04 -0800
-From: Ciara Loftus <ciara.loftus@intel.com>
-To: dev@dpdk.org
-Cc: Ciara Loftus <ciara.loftus@intel.com>
-Subject: [PATCH 2/2] net/iavf: add AVX2 context descriptor Tx paths
-Date: Mon,  9 Feb 2026 15:20:49 +0000
-Message-ID: <20260209152049.1640121-3-ciara.loftus@intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260209152049.1640121-1-ciara.loftus@intel.com>
+X-IronPort-AV: E=Sophos;i="6.21,282,1763452800"; d="scan'208";a="242244016"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+ by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 09 Feb 2026 08:10:49 -0800
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.35; Mon, 9 Feb 2026 08:10:49 -0800
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.35 via Frontend Transport; Mon, 9 Feb 2026 08:10:49 -0800
+Received: from SN4PR2101CU001.outbound.protection.outlook.com (40.93.195.24)
+ by edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.35; Mon, 9 Feb 2026 08:10:48 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=D0Nm2ZjwklvMNkhtYdj/Zcxe8V/+fcImGnZTEcw0dZF9g8sAIAvIxIOI+MX3pusptnyZUaEtJezo0iFOrQBUZEbmHitAfuPnqo8ZA7PeoqlGDA2YTj9nhH4bZWyI707t9Ezp4B/5Ekt8ALgWTUKmWG3R7BOAnIXQA8VkxW2ronep5tUqXHgMAX9RKL62am51dByO1GvKhqDzSe2yD87HIgQ3Of+M6qnZSvr7lmHSsLs2/nZCQ3/Pzs7HMQYFmaWnhZB2hLpc1rK/uPMlOxMGRv9UE4es6xVHpoLDW1UN77dmc/HZ+a2PbeSr3WgEPPE89Y0yeh9U7C8KAVsXLzhQMA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=r2GQyF99Xd8KyFoeo/q7Qgj1cEpQlOCzTz/bnOZ9Ywg=;
+ b=VfZveRotQi6beZQkZriE6ztGQOs2ymlg109DQYxerxL9+iCnX4sFQzGjGGwkTQQMPYx+sNQLZk5+yDQ0f6PA2npFMqdAg/fSx9egI7Hwv3oZBHBD6Dq/IeNCzGCpeZV+yuI+mzbYHYf7b3pwvP7JyEJCNrXfHrVJRESNYC4RkELeZQ6mzGOYeJlRacoBqoKvty1/ADT1pCB7nAc9W8rgWoshn08hOi3sqjo6WDK35Eh4NiMpUaSTrw1EdrNFN22Hm5BYtelPA1CD7Yi0GxlBSQoRZHeJfRhJdcoWmdQilbqV40+QqJapFibKlduXZPpougGXfwXuJI2YW/kMZPTrWQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
+ by PH0PR11MB7709.namprd11.prod.outlook.com (2603:10b6:510:296::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9587.17; Mon, 9 Feb
+ 2026 16:10:46 +0000
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::2a1:33a9:9f92:b52e]) by DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::2a1:33a9:9f92:b52e%3]) with mapi id 15.20.9587.017; Mon, 9 Feb 2026
+ 16:10:45 +0000
+Date: Mon, 9 Feb 2026 16:10:40 +0000
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: Ciara Loftus <ciara.loftus@intel.com>
+CC: <dev@dpdk.org>
+Subject: Re: [PATCH 1/2] net/iavf: use mbuf packet type instead of dynfield
+ for LLDP
+Message-ID: <aYoHAPSKLXs3m67F@bricha3-mobl1.ger.corp.intel.com>
 References: <20260209152049.1640121-1-ciara.loftus@intel.com>
+ <20260209152049.1640121-2-ciara.loftus@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20260209152049.1640121-2-ciara.loftus@intel.com>
+X-ClientProxiedBy: DUZPR01CA0296.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:4b7::25) To DS0PR11MB7309.namprd11.prod.outlook.com
+ (2603:10b6:8:13e::17)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|PH0PR11MB7709:EE_
+X-MS-Office365-Filtering-Correlation-Id: a52081ce-c7b0-43b4-d253-08de67f5c823
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?zdmrb8S1VheAt3v3uhcRjFePXu2J6Z51FhoT2Z7ILcXgsietNXLtq2T6WOxi?=
+ =?us-ascii?Q?pebdSZzu8mxpeQSjqf0eMDHj+g/bQvxYvY29to2r4ADTQiMvP+g8tjOoCGef?=
+ =?us-ascii?Q?3OzE+d9ToSaoq7I6Zc2ruwEHQYj9jLwM/omwGbz2LLyK4U4hBfqEuNwge2wk?=
+ =?us-ascii?Q?VW0B5oeZek85twH9uk/VJGzx7FaHW4gIarDvbDn/dsiaX+M645c0ypJ43irg?=
+ =?us-ascii?Q?6HlBTgax12xNQDuc6GhIU98CPZEUkwlBQ8KllxJyKEkFmeqNdGsZD10ckGzY?=
+ =?us-ascii?Q?sO3BRIlMNF41+2m1z8VQjiHLksmdt1pFD90B3rK7JT7FjQuyLW2Up8ABEM7C?=
+ =?us-ascii?Q?7HUB0FILOu6c+GMo7j9vOw9KWJYACtfTXXCPCEZvcHGiq2Qa2FRQYK/XnIgV?=
+ =?us-ascii?Q?Ul50Qi5M2N0K5ti2KlF8Lq8tythR60RwSbWs10HUP+Rbw40NReNRFBypH7Se?=
+ =?us-ascii?Q?dGz9QsNoVc4KJ6lanX0bcQfet3/83+v3Zny4yPot6nTudY9bxSm0KOvHvq3F?=
+ =?us-ascii?Q?d53tZxGQLurwAQyPYBsW80rumNsUmChT5S7di6OIdqjR661Ql5262Hc7N00h?=
+ =?us-ascii?Q?z3CRaPIsa/mCm2JoCJxAeJ9eBLwVKqUtSxfLDPW6niJPi6e/5xMgKLoZ+LPk?=
+ =?us-ascii?Q?5ZYMD7EPNKnUwJCi52dlLg5iKSl7DAdLx93Idpy9iem4A3C399nqw4azlaxR?=
+ =?us-ascii?Q?6Km4r0HxazsRxapETVYSTq9yGhhUMrRzoQJ+/bAyvHrcgAU20zvx8rSRnvKP?=
+ =?us-ascii?Q?AGHNVxFg6G/xiKqG4pAz4bLnnYj1H9tzkA7sNN8aBqoXsbEE7gdRupFJfsUf?=
+ =?us-ascii?Q?EEk89tfbl3wkU3AJmzm1AlpATzr0bEBFqyvyNdf4guD+kueyzYl51sglwL17?=
+ =?us-ascii?Q?C1yjlHwVn+ZgaZADDog8BgRdpGeMN5i2B+DRtN7y63wIE/j56+KaIJjp6gW1?=
+ =?us-ascii?Q?AJyIVF1pQ+ddfpDrWEkZov+uEXRSNhpf0GOKpIhG+ju9xsQvL2ri2IrRa/nm?=
+ =?us-ascii?Q?bOumpkMPcNLnVOmWF+4NhgX9PZ1REU2KT34Rh2iIVrjKBjcjWudzDmsNlrS5?=
+ =?us-ascii?Q?Q4NAygb52bRlbd/X5Xuh9aGca9xKbrc5MpudlJ+ehM17UBRldQDvn9bZI6/L?=
+ =?us-ascii?Q?fGnGnXO8T9BSSdQ8vOawWka3uBnP5HF5GFjCPpZKw9OUZ65h/KJUoQEhXV1B?=
+ =?us-ascii?Q?DSJSesxZDrAghkfIR4C5VRWfCMaaVU4+t6+dVCctQd/dSnBZ2JGNY7EwwN0J?=
+ =?us-ascii?Q?h9dkh19vKVOmOVXI96TPL0w4hmbmvu6nZdGFLEyg2UrGB48Px9t0mXei+pCt?=
+ =?us-ascii?Q?t+mvO7U92IhFRIkLUO+0l7k75LoSz+WsIdnJjezE7Sk0qVQsjVTv6erIDObO?=
+ =?us-ascii?Q?PiK+4kTh+U1J3GXFfJMqQVOfaCHAOHYr1ZEkyBqWRKXIy1jMI33KiBhh95jK?=
+ =?us-ascii?Q?CnJipNO8I4HEeQsy87sjjyzS4895/uxMYCOWH9oNmpomUpsQgcus+XU3PG7F?=
+ =?us-ascii?Q?4tISEC+rzWJ8LOQ3+AxViQ+GiB1YWj+FNtQBGboCR5gOsU9twIY9ub5PjleP?=
+ =?us-ascii?Q?a6DHu2rD5TyOSpmDGVA=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(1800799024)(366016)(376014); DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?grfsslUyp2NDvR0hM1DaCvmWVx66mxoDs6ITs5yB2KgW2alRcUgLDjB8E91i?=
+ =?us-ascii?Q?Wrhiyo8uAR7gdzV8AmvxzIL5Ob29yEtU3ySB9ZjyeY23+NTXU4QPhztNfT1y?=
+ =?us-ascii?Q?HVgQi5cHGjqEd+1sn8E5mN2Qa6D2ZX+hP1ZPYvMD/mDyRYTL0bJREuj11QUK?=
+ =?us-ascii?Q?1XtpY+nnaYWuEDHUzgekRA0s0gCus/K+S5Bu3YMJ6j7gL+tPk+/Aq1lOtPBg?=
+ =?us-ascii?Q?fBREzdQ+U1ijG3iQvjT4aI4sI0FXFjLv1zKU9SHLbZTF+ZBu/g8wbAYbq6jm?=
+ =?us-ascii?Q?iE8S2mcNSdCzxeQbV45IMD9BVSEkIk5PySjxHcxE2Lo+xpU9mGgtxlahLl3p?=
+ =?us-ascii?Q?WJ6fUB+aBz/w0hKqhb3/gnP39PRIfKdW6Gz/g55Z1T3SOlAz3pTEAiQJkUZG?=
+ =?us-ascii?Q?t9yV7x8rSxZZ31lqpCyO1XhdlCyyLx9ZOPaX4/1IrEI6ic6b0tVCZslrTTeb?=
+ =?us-ascii?Q?50k0zU+NxXfpJUHmCY4qNAHXTwxwLD3dwBTdlO00MuOVnRuf0c3qKlADlA8M?=
+ =?us-ascii?Q?GVPgoB3Qj1JuQkXDYblp2p3y68xMMVf/Es+9PmiBj6LlIg4giZ9na1WIpjP/?=
+ =?us-ascii?Q?R6bqflvhq2g324fp3aLsx8eqXtYCjdVfJE4oR3yYXRwTlO1UpoC0BKogAOtZ?=
+ =?us-ascii?Q?zOG6tJfqrY/zJs4ubufPaGrZawr36e1BVYsPAIIOdAaph28VRq3VjFpKetM6?=
+ =?us-ascii?Q?1bqU564SZeSJXg4UnpwVQKreYXx70nD4DuW9TsVWR0gyTCwtMNNlegSCKYdb?=
+ =?us-ascii?Q?z0LnggouEUdaZ6OKN+WaNQ0XbnCmZei2lyg/QG1L8N1wAp7v1gryUDPJsU67?=
+ =?us-ascii?Q?EPS8/jWwDu9mM5HRolNQc5qvHv5vRi47WxcDlXNiwbTyVIGZAkLcbq0Sm+xH?=
+ =?us-ascii?Q?Ud6Zio0tLTkDUIyCk9qFNLl7cnAicJBiD5W3FkbCs4UnVSHjHpXyDzKuchzH?=
+ =?us-ascii?Q?lttFPDs6nGOmRWouJcYXHlxCG4ZOvnE+5/KRD7Iu7YPAgRHsdsBwzpS3uWJN?=
+ =?us-ascii?Q?wH90e1++urCJu7VQJrFA1Phr4DP3EXTtP3JhMx+BqUkP2/Bz7oVsIhhoeqyo?=
+ =?us-ascii?Q?biRynJnAP0xKLdOm6atQid3EzOTvsdB4R3jRUhEOPeHwh2+xQJzLS7WSHWTR?=
+ =?us-ascii?Q?Ry/QVnHvYQ6/7R6fYkaasTzh/xiljVk9Wg6hWq2UMc0zfpV47B1zlECnBcV0?=
+ =?us-ascii?Q?du/O4ZUDxKWHsWBB70rtPNSQr58r58qDrxzww6ow3hQ6n2l6uHZyGeUdHjbQ?=
+ =?us-ascii?Q?0SWMV98JalYAdwFKwuOTUXA07eitbGGginjY2exwlV+sNR9MBaZC5pcvDbHL?=
+ =?us-ascii?Q?XI6/Y2gnC9TAxgMVghrByVltLoOdOE0PYd54EKafkfExTeRYHNoNxsrmFoHL?=
+ =?us-ascii?Q?bwHSxEcFhcEFB59t1/96FDbN7lwpBnPc2L7w9lGQ0PCIsAMxcYXxiPlZcFgA?=
+ =?us-ascii?Q?RYT9dsLl15bDAF9mvcLWTjgNlYVDwPtUMoac+8wxUM6CnkCm89gEZ9h02/p/?=
+ =?us-ascii?Q?VvRCfaAqexPv8qDHtQwCiqIl/P4jqEefUaBXB6oXsQw2PYvl7/nHTHGi4Dgv?=
+ =?us-ascii?Q?zuE6u87jlMBzMdOxX5GCCvoi8jttehYg42TtY4I0B1t95ExcjlGx3WlaIEFZ?=
+ =?us-ascii?Q?MSfjDF6rgfDSfI1VM6TFVkZqYeTzfWwWTqWZw1m/uOq6exrsej5uUWTOLElv?=
+ =?us-ascii?Q?346IHMVe1oS/ndlb3rW3Kdr+anV/ectH3zjzF+QySa0KEkVa5vKKlG6YrGyX?=
+ =?us-ascii?Q?WJnyFDVticeHm+ClkPR+N78E0OJ8DsE=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: a52081ce-c7b0-43b4-d253-08de67f5c823
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Feb 2026 16:10:45.7439 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: K6I+w9LT8aIcFyIhGUd6+mVZDV9r2JFloij3Mr9ewVTO6ytaccP03aS5xPQm0DLQs7HJwoAcpGwq4SVxy305J9KjWUzbO3QGSoD6R75vJ7I=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB7709
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -59,487 +175,50 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Prior to this commit the transmit paths implemented for AVX2 used the
-transmit descriptor only, making some offloads and features unavailable
-on the AVX2 path, like LLDP. Enable two new AVX2 transmit paths, both
-of which support using a context descriptor, one which performs offload
-and the other which does not.
+On Mon, Feb 09, 2026 at 03:20:48PM +0000, Ciara Loftus wrote:
+> Instead of using a dynamic mbuf field to flag a packet as LLDP, instead
+> utilise the mbuf packet type field as the identifier instead. If the
+> type is RTE_PTYPE_L2_ETHER_LLDP the packet is identified as LLDP. This
+> approach is preferable because the use of dynamic mbuf fields should be
+> reserved for features that are not easily implemented using the existing
+> mbuf infrastructure. No negative performance impacts were observed with
+> the new approach.
+> 
+> Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
 
-Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
----
- doc/guides/rel_notes/release_26_03.rst      |   1 +
- drivers/net/intel/iavf/iavf.h               |   2 +
- drivers/net/intel/iavf/iavf_rxtx.c          |  18 +
- drivers/net/intel/iavf/iavf_rxtx.h          |   4 +
- drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c | 386 ++++++++++++++++++++
- 5 files changed, 411 insertions(+)
+For ABI compatibility, though, I think we need to keep the old method of
+identifying LLDP packets there too. While I completely agree that using
+packet types is the better approach, we need to go through a deprecation
+process for the old dynamic field method, though.
 
-diff --git a/doc/guides/rel_notes/release_26_03.rst b/doc/guides/rel_notes/release_26_03.rst
-index c58c5cebd0..3b16f0b00c 100644
---- a/doc/guides/rel_notes/release_26_03.rst
-+++ b/doc/guides/rel_notes/release_26_03.rst
-@@ -63,6 +63,7 @@ New Features
- 
-   * Added support for pre and post VF reset callbacks.
-   * Changed LLDP packet detection from dynamic mbuf field to mbuf packet_type.
-+  * Implemented AVX2 context descriptor transmit paths.
- 
- 
- Removed Items
-diff --git a/drivers/net/intel/iavf/iavf.h b/drivers/net/intel/iavf/iavf.h
-index 39949acc11..d4dd48d520 100644
---- a/drivers/net/intel/iavf/iavf.h
-+++ b/drivers/net/intel/iavf/iavf.h
-@@ -357,6 +357,8 @@ enum iavf_tx_func_type {
- 	IAVF_TX_DEFAULT,
- 	IAVF_TX_AVX2,
- 	IAVF_TX_AVX2_OFFLOAD,
-+	IAVF_TX_AVX2_CTX,
-+	IAVF_TX_AVX2_CTX_OFFLOAD,
- 	IAVF_TX_AVX512,
- 	IAVF_TX_AVX512_OFFLOAD,
- 	IAVF_TX_AVX512_CTX,
-diff --git a/drivers/net/intel/iavf/iavf_rxtx.c b/drivers/net/intel/iavf/iavf_rxtx.c
-index 2fdd0f5ffe..6effc97c07 100644
---- a/drivers/net/intel/iavf/iavf_rxtx.c
-+++ b/drivers/net/intel/iavf/iavf_rxtx.c
-@@ -3974,6 +3974,24 @@ static const struct ci_tx_path_info iavf_tx_path_infos[] = {
- 			.simd_width = RTE_VECT_SIMD_256
- 		}
- 	},
-+	[IAVF_TX_AVX2_CTX] = {
-+		.pkt_burst = iavf_xmit_pkts_vec_avx2_ctx,
-+		.info = "Vector AVX2 Ctx",
-+		.features = {
-+			.tx_offloads = IAVF_TX_VECTOR_OFFLOADS,
-+			.simd_width = RTE_VECT_SIMD_256,
-+			.ctx_desc = true
-+		}
-+	},
-+	[IAVF_TX_AVX2_CTX_OFFLOAD] = {
-+		.pkt_burst = iavf_xmit_pkts_vec_avx2_ctx_offload,
-+		.info = "Vector AVX2 Ctx Offload",
-+		.features = {
-+			.tx_offloads = IAVF_TX_VECTOR_CTX_OFFLOAD_OFFLOADS,
-+			.simd_width = RTE_VECT_SIMD_256,
-+			.ctx_desc = true
-+		}
-+	},
- #ifdef CC_AVX512_SUPPORT
- 	[IAVF_TX_AVX512] = {
- 		.pkt_burst = iavf_xmit_pkts_vec_avx512,
-diff --git a/drivers/net/intel/iavf/iavf_rxtx.h b/drivers/net/intel/iavf/iavf_rxtx.h
-index f8d75abe35..147f1d03f1 100644
---- a/drivers/net/intel/iavf/iavf_rxtx.h
-+++ b/drivers/net/intel/iavf/iavf_rxtx.h
-@@ -609,6 +609,10 @@ uint16_t iavf_xmit_pkts_vec_avx2(void *tx_queue, struct rte_mbuf **tx_pkts,
- 				 uint16_t nb_pkts);
- uint16_t iavf_xmit_pkts_vec_avx2_offload(void *tx_queue, struct rte_mbuf **tx_pkts,
- 					 uint16_t nb_pkts);
-+uint16_t iavf_xmit_pkts_vec_avx2_ctx(void *tx_queue, struct rte_mbuf **tx_pkts,
-+				  uint16_t nb_pkts);
-+uint16_t iavf_xmit_pkts_vec_avx2_ctx_offload(void *tx_queue, struct rte_mbuf **tx_pkts,
-+				  uint16_t nb_pkts);
- int iavf_get_monitor_addr(void *rx_queue, struct rte_power_monitor_cond *pmc);
- int iavf_rx_vec_dev_check(struct rte_eth_dev *dev);
- int iavf_tx_vec_dev_check(struct rte_eth_dev *dev);
-diff --git a/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c b/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c
-index e29958e0bc..8c2bc73819 100644
---- a/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c
-+++ b/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c
-@@ -1774,6 +1774,392 @@ iavf_xmit_fixed_burst_vec_avx2(void *tx_queue, struct rte_mbuf **tx_pkts,
- 	return nb_pkts;
- }
- 
-+static inline void
-+iavf_fill_ctx_desc_tunneling_avx2(uint64_t *low_ctx_qw, struct rte_mbuf *pkt)
-+{
-+	if (pkt->ol_flags & RTE_MBUF_F_TX_TUNNEL_MASK) {
-+		uint64_t eip_typ = IAVF_TX_CTX_DESC_EIPT_NONE;
-+		uint64_t eip_len = 0;
-+		uint64_t eip_noinc = 0;
-+		/* Default - IP_ID is increment in each segment of LSO */
-+
-+		switch (pkt->ol_flags & (RTE_MBUF_F_TX_OUTER_IPV4 |
-+				RTE_MBUF_F_TX_OUTER_IPV6 |
-+				RTE_MBUF_F_TX_OUTER_IP_CKSUM)) {
-+		case RTE_MBUF_F_TX_OUTER_IPV4:
-+			eip_typ = IAVF_TX_CTX_DESC_EIPT_IPV4_NO_CHECKSUM_OFFLOAD;
-+			eip_len = pkt->outer_l3_len >> 2;
-+		break;
-+		case RTE_MBUF_F_TX_OUTER_IPV4 | RTE_MBUF_F_TX_OUTER_IP_CKSUM:
-+			eip_typ = IAVF_TX_CTX_DESC_EIPT_IPV4_CHECKSUM_OFFLOAD;
-+			eip_len = pkt->outer_l3_len >> 2;
-+		break;
-+		case RTE_MBUF_F_TX_OUTER_IPV6:
-+			eip_typ = IAVF_TX_CTX_DESC_EIPT_IPV6;
-+			eip_len = pkt->outer_l3_len >> 2;
-+		break;
-+		}
-+
-+		/* L4TUNT: L4 Tunneling Type */
-+		switch (pkt->ol_flags & RTE_MBUF_F_TX_TUNNEL_MASK) {
-+		case RTE_MBUF_F_TX_TUNNEL_IPIP:
-+			/* for non UDP / GRE tunneling, set to 00b */
-+			break;
-+		case RTE_MBUF_F_TX_TUNNEL_VXLAN:
-+		case RTE_MBUF_F_TX_TUNNEL_VXLAN_GPE:
-+		case RTE_MBUF_F_TX_TUNNEL_GTP:
-+		case RTE_MBUF_F_TX_TUNNEL_GENEVE:
-+			eip_typ |= IAVF_TXD_CTX_UDP_TUNNELING;
-+			break;
-+		case RTE_MBUF_F_TX_TUNNEL_GRE:
-+			eip_typ |= IAVF_TXD_CTX_GRE_TUNNELING;
-+			break;
-+		default:
-+			PMD_TX_LOG(ERR, "Tunnel type not supported");
-+			return;
-+		}
-+
-+		/* L4TUNLEN: L4 Tunneling Length, in Words
-+		 *
-+		 * We depend on app to set rte_mbuf.l2_len correctly.
-+		 * For IP in GRE it should be set to the length of the GRE
-+		 * header;
-+		 * For MAC in GRE or MAC in UDP it should be set to the length
-+		 * of the GRE or UDP headers plus the inner MAC up to including
-+		 * its last Ethertype.
-+		 * If MPLS labels exists, it should include them as well.
-+		 */
-+		eip_typ |= (pkt->l2_len >> 1) << IAVF_TXD_CTX_QW0_NATLEN_SHIFT;
-+
-+		/**
-+		 * Calculate the tunneling UDP checksum.
-+		 * Shall be set only if L4TUNT = 01b and EIPT is not zero
-+		 */
-+		if ((eip_typ & (IAVF_TX_CTX_EXT_IP_IPV4 |
-+					IAVF_TX_CTX_EXT_IP_IPV6 |
-+					IAVF_TX_CTX_EXT_IP_IPV4_NO_CSUM)) &&
-+				(eip_typ & IAVF_TXD_CTX_UDP_TUNNELING) &&
-+				(pkt->ol_flags & RTE_MBUF_F_TX_OUTER_UDP_CKSUM))
-+			eip_typ |= IAVF_TXD_CTX_QW0_L4T_CS_MASK;
-+
-+		*low_ctx_qw = eip_typ << IAVF_TXD_CTX_QW0_TUN_PARAMS_EIPT_SHIFT |
-+			eip_len << IAVF_TXD_CTX_QW0_TUN_PARAMS_EIPLEN_SHIFT |
-+			eip_noinc << IAVF_TXD_CTX_QW0_TUN_PARAMS_EIP_NOINC_SHIFT;
-+
-+	} else {
-+		*low_ctx_qw = 0;
-+	}
-+}
-+
-+static inline void
-+iavf_fill_ctx_desc_tunneling_field(volatile uint64_t *qw0,
-+		const struct rte_mbuf *m)
-+{
-+	uint64_t eip_typ = IAVF_TX_CTX_DESC_EIPT_NONE;
-+	uint64_t eip_len = 0;
-+	uint64_t eip_noinc = 0;
-+	/* Default - IP_ID is increment in each segment of LSO */
-+
-+	switch (m->ol_flags & (RTE_MBUF_F_TX_OUTER_IPV4 |
-+			RTE_MBUF_F_TX_OUTER_IPV6 |
-+			RTE_MBUF_F_TX_OUTER_IP_CKSUM)) {
-+	case RTE_MBUF_F_TX_OUTER_IPV4:
-+		eip_typ = IAVF_TX_CTX_DESC_EIPT_IPV4_NO_CHECKSUM_OFFLOAD;
-+		eip_len = m->outer_l3_len >> 2;
-+	break;
-+	case RTE_MBUF_F_TX_OUTER_IPV4 | RTE_MBUF_F_TX_OUTER_IP_CKSUM:
-+		eip_typ = IAVF_TX_CTX_DESC_EIPT_IPV4_CHECKSUM_OFFLOAD;
-+		eip_len = m->outer_l3_len >> 2;
-+	break;
-+	case RTE_MBUF_F_TX_OUTER_IPV6:
-+		eip_typ = IAVF_TX_CTX_DESC_EIPT_IPV6;
-+		eip_len = m->outer_l3_len >> 2;
-+	break;
-+	}
-+
-+	/* L4TUNT: L4 Tunneling Type */
-+	switch (m->ol_flags & RTE_MBUF_F_TX_TUNNEL_MASK) {
-+	case RTE_MBUF_F_TX_TUNNEL_IPIP:
-+		/* for non UDP / GRE tunneling, set to 00b */
-+		break;
-+	case RTE_MBUF_F_TX_TUNNEL_VXLAN:
-+	case RTE_MBUF_F_TX_TUNNEL_VXLAN_GPE:
-+	case RTE_MBUF_F_TX_TUNNEL_GTP:
-+	case RTE_MBUF_F_TX_TUNNEL_GENEVE:
-+		eip_typ |= IAVF_TXD_CTX_UDP_TUNNELING;
-+		break;
-+	case RTE_MBUF_F_TX_TUNNEL_GRE:
-+		eip_typ |= IAVF_TXD_CTX_GRE_TUNNELING;
-+		break;
-+	default:
-+		PMD_TX_LOG(ERR, "Tunnel type not supported");
-+		return;
-+	}
-+
-+	/* L4TUNLEN: L4 Tunneling Length, in Words
-+	 *
-+	 * We depend on app to set rte_mbuf.l2_len correctly.
-+	 * For IP in GRE it should be set to the length of the GRE
-+	 * header;
-+	 * For MAC in GRE or MAC in UDP it should be set to the length
-+	 * of the GRE or UDP headers plus the inner MAC up to including
-+	 * its last Ethertype.
-+	 * If MPLS labels exists, it should include them as well.
-+	 */
-+	eip_typ |= (m->l2_len >> 1) << IAVF_TXD_CTX_QW0_NATLEN_SHIFT;
-+
-+	/**
-+	 * Calculate the tunneling UDP checksum.
-+	 * Shall be set only if L4TUNT = 01b and EIPT is not zero
-+	 */
-+	if ((eip_typ & (IAVF_TX_CTX_EXT_IP_IPV6 |
-+				IAVF_TX_CTX_EXT_IP_IPV4 |
-+				IAVF_TX_CTX_EXT_IP_IPV4_NO_CSUM)) &&
-+			(eip_typ & IAVF_TXD_CTX_UDP_TUNNELING) &&
-+			(m->ol_flags & RTE_MBUF_F_TX_OUTER_UDP_CKSUM))
-+		eip_typ |= IAVF_TXD_CTX_QW0_L4T_CS_MASK;
-+
-+	*qw0 = eip_typ << IAVF_TXD_CTX_QW0_TUN_PARAMS_EIPT_SHIFT |
-+		eip_len << IAVF_TXD_CTX_QW0_TUN_PARAMS_EIPLEN_SHIFT |
-+		eip_noinc << IAVF_TXD_CTX_QW0_TUN_PARAMS_EIP_NOINC_SHIFT;
-+}
-+
-+static __rte_always_inline void
-+ctx_vtx1(volatile struct iavf_tx_desc *txdp, struct rte_mbuf *pkt,
-+		uint64_t flags, bool offload, uint8_t vlan_flag)
-+{
-+	uint64_t high_ctx_qw = IAVF_TX_DESC_DTYPE_CONTEXT;
-+	uint64_t low_ctx_qw = 0;
-+
-+	if (offload) {
-+		iavf_fill_ctx_desc_tunneling_avx2(&low_ctx_qw, pkt);
-+#ifdef IAVF_TX_VLAN_QINQ_OFFLOAD
-+		if (pkt->ol_flags & RTE_MBUF_F_TX_QINQ) {
-+			uint64_t qinq_tag = vlan_flag & IAVF_TX_FLAGS_VLAN_TAG_LOC_L2TAG2 ?
-+				(uint64_t)pkt->vlan_tci_outer :
-+				(uint64_t)pkt->vlan_tci;
-+			high_ctx_qw |= IAVF_TX_CTX_DESC_IL2TAG2 << IAVF_TXD_CTX_QW1_CMD_SHIFT;
-+			low_ctx_qw |= qinq_tag << IAVF_TXD_CTX_QW0_L2TAG2_PARAM;
-+		} else if ((pkt->ol_flags & RTE_MBUF_F_TX_VLAN) &&
-+				vlan_flag & IAVF_TX_FLAGS_VLAN_TAG_LOC_L2TAG2) {
-+			high_ctx_qw |= IAVF_TX_CTX_DESC_IL2TAG2 << IAVF_TXD_CTX_QW1_CMD_SHIFT;
-+			low_ctx_qw |= (uint64_t)pkt->vlan_tci << IAVF_TXD_CTX_QW0_L2TAG2_PARAM;
-+		}
-+#endif
-+	}
-+	if (IAVF_CHECK_TX_LLDP(pkt))
-+		high_ctx_qw |= IAVF_TX_CTX_DESC_SWTCH_UPLINK << IAVF_TXD_CTX_QW1_CMD_SHIFT;
-+	uint64_t high_data_qw = (IAVF_TX_DESC_DTYPE_DATA |
-+				((uint64_t)flags  << IAVF_TXD_QW1_CMD_SHIFT) |
-+				((uint64_t)pkt->data_len << IAVF_TXD_QW1_TX_BUF_SZ_SHIFT));
-+	if (offload)
-+		iavf_txd_enable_offload(pkt, &high_data_qw, vlan_flag);
-+
-+	__m256i ctx_data_desc = _mm256_set_epi64x(high_data_qw, pkt->buf_iova + pkt->data_off,
-+							high_ctx_qw, low_ctx_qw);
-+
-+	_mm256_storeu_si256(RTE_CAST_PTR(__m256i *, txdp), ctx_data_desc);
-+}
-+
-+static __rte_always_inline void
-+ctx_vtx(volatile struct iavf_tx_desc *txdp,
-+		struct rte_mbuf **pkt, uint16_t nb_pkts,  uint64_t flags,
-+		bool offload, uint8_t vlan_flag)
-+{
-+	uint64_t hi_data_qw_tmpl = (IAVF_TX_DESC_DTYPE_DATA |
-+					((uint64_t)flags  << IAVF_TXD_QW1_CMD_SHIFT));
-+
-+	/* if unaligned on 32-bit boundary, do one to align */
-+	if (((uintptr_t)txdp & 0x1F) != 0 && nb_pkts != 0) {
-+		ctx_vtx1(txdp, *pkt, flags, offload, vlan_flag);
-+		nb_pkts--, txdp++, pkt++;
-+	}
-+
-+	for (; nb_pkts > 1; txdp += 4, pkt += 2, nb_pkts -= 2) {
-+		uint64_t hi_ctx_qw1 = IAVF_TX_DESC_DTYPE_CONTEXT;
-+		uint64_t hi_ctx_qw0 = IAVF_TX_DESC_DTYPE_CONTEXT;
-+		uint64_t low_ctx_qw1 = 0;
-+		uint64_t low_ctx_qw0 = 0;
-+		uint64_t hi_data_qw1 = 0;
-+		uint64_t hi_data_qw0 = 0;
-+
-+		hi_data_qw1 = hi_data_qw_tmpl |
-+				((uint64_t)pkt[1]->data_len <<
-+					IAVF_TXD_QW1_TX_BUF_SZ_SHIFT);
-+		hi_data_qw0 = hi_data_qw_tmpl |
-+				((uint64_t)pkt[0]->data_len <<
-+					IAVF_TXD_QW1_TX_BUF_SZ_SHIFT);
-+
-+#ifdef IAVF_TX_VLAN_QINQ_OFFLOAD
-+		if (offload) {
-+			if (pkt[1]->ol_flags & RTE_MBUF_F_TX_QINQ) {
-+				uint64_t qinq_tag = vlan_flag & IAVF_TX_FLAGS_VLAN_TAG_LOC_L2TAG2 ?
-+					(uint64_t)pkt[1]->vlan_tci :
-+					(uint64_t)pkt[1]->vlan_tci_outer;
-+				hi_ctx_qw1 |= IAVF_TX_CTX_DESC_IL2TAG2 <<
-+						IAVF_TXD_CTX_QW1_CMD_SHIFT;
-+				low_ctx_qw1 |= qinq_tag << IAVF_TXD_CTX_QW0_L2TAG2_PARAM;
-+			} else if (pkt[1]->ol_flags & RTE_MBUF_F_TX_VLAN &&
-+					vlan_flag & IAVF_TX_FLAGS_VLAN_TAG_LOC_L2TAG2) {
-+				hi_ctx_qw1 |=
-+					IAVF_TX_CTX_DESC_IL2TAG2 << IAVF_TXD_CTX_QW1_CMD_SHIFT;
-+				low_ctx_qw1 |=
-+					(uint64_t)pkt[1]->vlan_tci << IAVF_TXD_CTX_QW0_L2TAG2_PARAM;
-+			}
-+		}
-+#endif
-+		if (IAVF_CHECK_TX_LLDP(pkt[1]))
-+			hi_ctx_qw1 |= IAVF_TX_CTX_DESC_SWTCH_UPLINK << IAVF_TXD_CTX_QW1_CMD_SHIFT;
-+
-+#ifdef IAVF_TX_VLAN_QINQ_OFFLOAD
-+		if (offload) {
-+			if (pkt[0]->ol_flags & RTE_MBUF_F_TX_QINQ) {
-+				uint64_t qinq_tag = vlan_flag & IAVF_TX_FLAGS_VLAN_TAG_LOC_L2TAG2 ?
-+					(uint64_t)pkt[0]->vlan_tci :
-+					(uint64_t)pkt[0]->vlan_tci_outer;
-+				hi_ctx_qw0 |= IAVF_TX_CTX_DESC_IL2TAG2 <<
-+						IAVF_TXD_CTX_QW1_CMD_SHIFT;
-+				low_ctx_qw0 |= qinq_tag << IAVF_TXD_CTX_QW0_L2TAG2_PARAM;
-+			} else if (pkt[0]->ol_flags & RTE_MBUF_F_TX_VLAN &&
-+					vlan_flag & IAVF_TX_FLAGS_VLAN_TAG_LOC_L2TAG2) {
-+				hi_ctx_qw0 |=
-+					IAVF_TX_CTX_DESC_IL2TAG2 << IAVF_TXD_CTX_QW1_CMD_SHIFT;
-+				low_ctx_qw0 |=
-+					(uint64_t)pkt[0]->vlan_tci << IAVF_TXD_CTX_QW0_L2TAG2_PARAM;
-+			}
-+		}
-+#endif
-+		if (IAVF_CHECK_TX_LLDP(pkt[0]))
-+			hi_ctx_qw0 |= IAVF_TX_CTX_DESC_SWTCH_UPLINK << IAVF_TXD_CTX_QW1_CMD_SHIFT;
-+
-+		if (offload) {
-+			iavf_txd_enable_offload(pkt[1], &hi_data_qw1, vlan_flag);
-+			iavf_txd_enable_offload(pkt[0], &hi_data_qw0, vlan_flag);
-+			iavf_fill_ctx_desc_tunneling_field(&low_ctx_qw1, pkt[1]);
-+			iavf_fill_ctx_desc_tunneling_field(&low_ctx_qw0, pkt[0]);
-+		}
-+
-+		__m256i desc2_3 =
-+			_mm256_set_epi64x
-+				(hi_data_qw1, pkt[1]->buf_iova + pkt[1]->data_off,
-+				 hi_ctx_qw1, low_ctx_qw1);
-+		__m256i desc0_1 =
-+			_mm256_set_epi64x
-+				(hi_data_qw0, pkt[0]->buf_iova + pkt[0]->data_off,
-+				 hi_ctx_qw0, low_ctx_qw0);
-+		_mm256_store_si256(RTE_CAST_PTR(__m256i *, txdp + 2), desc2_3);
-+		_mm256_store_si256(RTE_CAST_PTR(__m256i *, txdp), desc0_1);
-+	}
-+
-+	if (nb_pkts)
-+		ctx_vtx1(txdp, *pkt, flags, offload, vlan_flag);
-+}
-+
-+static __rte_always_inline uint16_t
-+iavf_xmit_fixed_burst_vec_avx2_ctx(void *tx_queue, struct rte_mbuf **tx_pkts,
-+				 uint16_t nb_pkts, bool offload)
-+{
-+	struct ci_tx_queue *txq = (struct ci_tx_queue *)tx_queue;
-+	volatile struct iavf_tx_desc *txdp;
-+	struct ci_tx_entry_vec *txep;
-+	uint16_t n, nb_commit, nb_mbuf, tx_id;
-+	/* bit2 is reserved and must be set to 1 according to Spec */
-+	uint64_t flags = IAVF_TX_DESC_CMD_EOP | IAVF_TX_DESC_CMD_ICRC;
-+	uint64_t rs = IAVF_TX_DESC_CMD_RS | flags;
-+
-+	if (txq->nb_tx_free < txq->tx_free_thresh)
-+		ci_tx_free_bufs_vec(txq, iavf_tx_desc_done, true);
-+
-+	nb_commit = (uint16_t)RTE_MIN(txq->nb_tx_free, nb_pkts << 1);
-+	nb_commit &= 0xFFFE;
-+	if (unlikely(nb_commit == 0))
-+		return 0;
-+
-+	nb_pkts = nb_commit >> 1;
-+	tx_id = txq->tx_tail;
-+	txdp = &txq->iavf_tx_ring[tx_id];
-+	txep = (void *)txq->sw_ring;
-+	txep += (tx_id >> 1);
-+
-+	txq->nb_tx_free = (uint16_t)(txq->nb_tx_free - nb_commit);
-+	n = (uint16_t)(txq->nb_tx_desc - tx_id);
-+
-+	if (n != 0 && nb_commit >= n) {
-+		nb_mbuf = n >> 1;
-+		ci_tx_backlog_entry_vec(txep, tx_pkts, nb_mbuf);
-+
-+		ctx_vtx(txdp, tx_pkts, nb_mbuf - 1, flags, offload, txq->vlan_flag);
-+		tx_pkts += (nb_mbuf - 1);
-+		txdp += (n - 2);
-+		ctx_vtx1(txdp, *tx_pkts++, rs, offload, txq->vlan_flag);
-+
-+		nb_commit = (uint16_t)(nb_commit - n);
-+
-+		txq->tx_next_rs = (uint16_t)(txq->tx_rs_thresh - 1);
-+		tx_id = 0;
-+		/* avoid reach the end of ring */
-+		txdp = txq->iavf_tx_ring;
-+		txep = (void *)txq->sw_ring;
-+	}
-+
-+	nb_mbuf = nb_commit >> 1;
-+	ci_tx_backlog_entry_vec(txep, tx_pkts, nb_mbuf);
-+
-+	ctx_vtx(txdp, tx_pkts, nb_mbuf, flags, offload, txq->vlan_flag);
-+	tx_id = (uint16_t)(tx_id + nb_commit);
-+
-+	if (tx_id > txq->tx_next_rs) {
-+		txq->iavf_tx_ring[txq->tx_next_rs].cmd_type_offset_bsz |=
-+			rte_cpu_to_le_64(((uint64_t)IAVF_TX_DESC_CMD_RS) <<
-+					 IAVF_TXD_QW1_CMD_SHIFT);
-+		txq->tx_next_rs =
-+			(uint16_t)(txq->tx_next_rs + txq->tx_rs_thresh);
-+	}
-+
-+	txq->tx_tail = tx_id;
-+
-+	IAVF_PCI_REG_WC_WRITE(txq->qtx_tail, txq->tx_tail);
-+	return nb_pkts;
-+}
-+
-+static __rte_always_inline uint16_t
-+iavf_xmit_pkts_vec_avx2_ctx_cmn(void *tx_queue, struct rte_mbuf **tx_pkts,
-+				  uint16_t nb_pkts, bool offload)
-+{
-+	uint16_t nb_tx = 0;
-+	struct ci_tx_queue *txq = (struct ci_tx_queue *)tx_queue;
-+
-+	while (nb_pkts) {
-+		uint16_t ret, num;
-+
-+		/* cross rs_thresh boundary is not allowed */
-+		num = (uint16_t)RTE_MIN(nb_pkts << 1, txq->tx_rs_thresh);
-+		num = num >> 1;
-+		ret = iavf_xmit_fixed_burst_vec_avx2_ctx(tx_queue, &tx_pkts[nb_tx],
-+						       num, offload);
-+		nb_tx += ret;
-+		nb_pkts -= ret;
-+		if (ret < num)
-+			break;
-+	}
-+
-+	return nb_tx;
-+}
-+
-+uint16_t
-+iavf_xmit_pkts_vec_avx2_ctx(void *tx_queue, struct rte_mbuf **tx_pkts,
-+				  uint16_t nb_pkts)
-+{
-+	return iavf_xmit_pkts_vec_avx2_ctx_cmn(tx_queue, tx_pkts, nb_pkts, false);
-+}
-+
-+uint16_t
-+iavf_xmit_pkts_vec_avx2_ctx_offload(void *tx_queue, struct rte_mbuf **tx_pkts,
-+				  uint16_t nb_pkts)
-+{
-+	return iavf_xmit_pkts_vec_avx2_ctx_cmn(tx_queue, tx_pkts, nb_pkts, true);
-+}
-+
- static __rte_always_inline uint16_t
- iavf_xmit_pkts_vec_avx2_common(void *tx_queue, struct rte_mbuf **tx_pkts,
- 			       uint16_t nb_pkts, bool offload)
--- 
-2.43.0
+> ---
+>  doc/guides/nics/intel_vf.rst           | 16 +++++++++-------
+>  doc/guides/rel_notes/release_26_03.rst |  1 +
+>  drivers/net/intel/iavf/iavf_ethdev.c   | 13 ++++++++-----
+>  drivers/net/intel/iavf/iavf_rxtx.c     |  3 +--
+>  drivers/net/intel/iavf/iavf_rxtx.h     |  8 +++-----
+>  drivers/net/intel/iavf/iavf_testpmd.c  | 20 +++++---------------
+>  drivers/net/intel/iavf/rte_pmd_iavf.h  | 10 ++++++++++
+>  7 files changed, 37 insertions(+), 34 deletions(-)
+> 
+> diff --git a/doc/guides/nics/intel_vf.rst b/doc/guides/nics/intel_vf.rst
+> index bc600e4b58..197918b2e8 100644
+> --- a/doc/guides/nics/intel_vf.rst
+> +++ b/doc/guides/nics/intel_vf.rst
+> @@ -668,19 +668,21 @@ Inline IPsec Support
+>  Diagnostic Utilities
+>  --------------------
+>  
 
+<snip>
+>  
+
+> +RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_pmd_iavf_enable_tx_lldp, 26.03)
+> +void
+> +rte_pmd_iavf_enable_tx_lldp(bool enable)
+> +{
+> +	iavf_tx_lldp_enabled = enable;
+> +}
+> +
+Rather than a private function, this looks something that should be a
+feature flag or capability somewhere, e.g. like TSO.
