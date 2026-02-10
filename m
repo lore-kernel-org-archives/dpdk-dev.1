@@ -2,66 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 241A1E94625
-	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Feb 2026 00:03:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43479E94625
+	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Feb 2026 00:03:36 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 30D8D40B90;
-	Tue, 10 Feb 2026 01:02:35 +0100 (CET)
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com
- [209.85.221.42]) by mails.dpdk.org (Postfix) with ESMTP id B04D840A77
- for <dev@dpdk.org>; Tue, 10 Feb 2026 01:02:33 +0100 (CET)
-Received: by mail-wr1-f42.google.com with SMTP id
- ffacd0b85a97d-4362507f0feso2368565f8f.0
- for <dev@dpdk.org>; Mon, 09 Feb 2026 16:02:33 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 3850B40A79;
+	Tue, 10 Feb 2026 01:02:37 +0100 (CET)
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com
+ [209.85.221.54]) by mails.dpdk.org (Postfix) with ESMTP id 00F7440B9B
+ for <dev@dpdk.org>; Tue, 10 Feb 2026 01:02:35 +0100 (CET)
+Received: by mail-wr1-f54.google.com with SMTP id
+ ffacd0b85a97d-4376c0bffc1so1350649f8f.0
+ for <dev@dpdk.org>; Mon, 09 Feb 2026 16:02:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1770681753;
- x=1771286553; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1770681755;
+ x=1771286555; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=HC84spky+UWShWSskuhDB9qFmAA+sWRzzp+paEXlzbE=;
- b=ZFZOLq/gNqGYWoGkphYGwHmfSojUX7iPEmPrZHq1SainznKjll/ZuWeo0vBqJtT4qD
- B/zEXeWCEGCmz4hydzZ3LLcBbRC/jM44fZrp5YS3ErFLGwwWooeg2rID2EY54+X/UQDS
- lWKYPyHL9Vv4/zaMP4XsoZghMwBrgtZqhKs+w92jKbSI+BcsDoE2exqEcIOHn1nJ3En9
- AKWvI7Sm+NTnwWTYNZBavLVUTpXUE6hcB2azzUzIlcPiikUeds/LbwYc/VznUMZnAx09
- Shazsx1Q6O6uk0o1m6ZMKiSZio/fb3YQoPITYmX9hxlFGKXF1dsjP1e3OGoZ5Q8Vec/s
- dF+w==
+ bh=q8P/Ldrayrb2OdCB7T+We5wTtR494Pik1p5pic4BGAw=;
+ b=yQV+NDUDpWQanmED2mTVSZASgLU4/MwpOFec2+lxXy7nKe2C0zmmSogbamtr2lOqIH
+ I6vLnQhk7aP/lfDS7wL3DQd2gCN9CvdUqK6Pv8UyLzodOUxzy4URyf1myoIAMV0rvRvs
+ /I3rf1KAH1r4z9J1kTX5xAxWttDR26SvBJo9KycC5sBnvnNIaZGN1rS7WOSdGtWMFJUJ
+ yWAPfpZwpQR4CXdbwsVZz1nRjHKTRxdYboeEXE6xJx7XHjoH7WDBYhy4Wnr5mNAxfSSp
+ Fns4AElyc+mz9L6bQsFJkUjL2KWz3azRSgB8nEXq6AMagb4t1MJwiGr6pV7Dd2HEG3z9
+ Ya2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1770681753; x=1771286553;
+ d=1e100.net; s=20230601; t=1770681755; x=1771286555;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=HC84spky+UWShWSskuhDB9qFmAA+sWRzzp+paEXlzbE=;
- b=qbOmJWLmZLrcAMoeD0LQDa0FZfKUQcxINfAxuRxmH3l6V3z/0GQUNVlnnp6THZuLjF
- 9En1R/vjleGcv1c2TXB6TYtpW/EJYY46LB9D8IJP9UraF1bsNJ5ytui9YBoDS5Ajmt1t
- gOifzzOsvaQbWWIUL9+LteYZRz5p1QhVawQpiJQcrexksJxW47yMr9u/JDhxgtwhb5sD
- ImNDtbHS9WIIzPjANUVFCBL7U4gvbzpX2IZARmg/V8zMprzt40GVmN/d0fS2fSlur3pn
- /t/FyNFHB8GxFsVgF2Q++Vm2DlKVIFLzWthFbmaAZZxBppZBAkOQ0x6KZj4IgaU18jpE
- efNQ==
-X-Gm-Message-State: AOJu0Yylnkg2n+JRvPDq5MmkPNjkXfhQZw4v/vP5tsY4Dfxtnv0CGIBU
- K6EYgvL3SCELEFEyDXEWECNJhUWLKEDd02ryrVwCo4b2jtVGRM9RJcZSy/1l8FJ3zj/PWxTFS1p
- /1udy
-X-Gm-Gg: AZuq6aKg/h11gJCTRQFFhEDfOrrtpT03i10oKGkL8xVwDhL3kvVqgDgbQ7+ChsWmMly
- upsMnXV/LxoEnyMrlFaoK0T+gPc1ki1BjV5EwIj/dF4t4jU8hXb/b46a4N8Cz6qWgLq0pCJt+d6
- GrmqCCVG5mHC2J1d1nncDqi5egodm6M6UYEBQhF+arTBM4+zAyjuqLr1hWsBLZ3rwwloZZXXVRb
- +W1SjLv+5I5l+HpO+Z5Exi4PIXfbneShSFh9eywXiIE6pFvSc4qIYdrULCxIVb7UemuTOSLZ9rX
- a+hYRH08phJe/obzTH3lsL48x+3RAt4RgmC/nq4s94xY55xoOxUGdhsu4X/HeFKJG4KTzn/Odxc
- f0L0BZ0MBHrmwG/GYr+SipxJ+jRCwYDOlw6nShYACC8KnwHZgTGuLBs6uG44c5Ud7hcp/uMzx3c
- WOQm49BMfcB+dBaiNW9MJa+qLWMU3nTDxvWuJydQPKzJp2GCTP7g==
-X-Received: by 2002:a5d:5846:0:b0:436:d824:620b with SMTP id
- ffacd0b85a97d-4377a57c68amr410789f8f.39.1770681753327; 
- Mon, 09 Feb 2026 16:02:33 -0800 (PST)
+ bh=q8P/Ldrayrb2OdCB7T+We5wTtR494Pik1p5pic4BGAw=;
+ b=Nvd7WGxAlU9WpGsdQFAdEkOqXVKkFgXsgW9+kuB4mKgtmir8aqUS9tuhRwksvY7BHE
+ idYxZe6iwfa8dwo5d8W5g7Kz84fufjGRPIHQgqeg4Sbpu15P+uXJ9h5S+MIY7oHD9lr6
+ 4uJOfAwpBqRZX0c3S/jw0oeVnBRTThsh8/JwXttl06WJ6ote3rR2J09EXLFMvRBSbS7f
+ 4oZGfjt+hrQoHrs/DvBWvZWoG+m7xbToGMVWLeGbujCBVm0WMhylGLe7Zysw+hy8Kf9a
+ yWp+SjIEgJghpGJX7V1PEr/gtlghYtTxSvXtsClNM86aPW9B71T1PclyP7bi80LfNA2T
+ +opQ==
+X-Gm-Message-State: AOJu0Yy886OmMe2jWtu0tK2KD6d/OvOE/QMqMX4TfNUNY6R+vgFTQpot
+ X5qbdLvMDnaJwmFWRdZ+pNsaNaRpDKCxa5oaWFwQREBFefvoFW0fEoqqvxDyAPOu/bYDFFkmqJh
+ FO8GI
+X-Gm-Gg: AZuq6aL3pdcuJHwXevLPqmT5b6s4dWhNU+K+DSyqkXT1VxBlBnWkCsOTbNm2DLlnkHs
+ 1xqH3k9GUvD0sRQ1tf7GxYmcyiwUkcHC40vRsCZCPv5oza81Q07nYH+c+N6fNokZxZka7yA48ij
+ ew7VK+BTHSpUD6sypxJq4m/foRhOQHLCzYR46XlJk6pAfVs4BP91HoOjs0G8Ae3nW86dEBKmjIp
+ aFG//jvosP+CqcHSeVX8cHolU+8RwyuF6JOM00hIcLfxFDZdcco5Bk04Ae+AZ/1OLGVmg131peg
+ 8D3Q2sURH8ukxG2hbCj1dAUnigQEu+C5azGiPg1t5CpfOjhM3khtnocgbmARQhw3nUEW5lfH4hq
+ CzyYGjqzGK0mfBNJHFacmmBza0nhNwUyIQmdgZ8B90u+rikTd8H0/OF34ZArtALsdlcZhPVPiAy
+ UVJn0Xax9FJ+UjojziyVigxR5NbtdtW9w/R85iDR6PB/olQD/r5A==
+X-Received: by 2002:a5d:584e:0:b0:435:a501:359 with SMTP id
+ ffacd0b85a97d-4362967defbmr19298581f8f.41.1770681755549; 
+ Mon, 09 Feb 2026 16:02:35 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-436296bd211sm31529133f8f.13.2026.02.09.16.02.31
+ ffacd0b85a97d-436296bd211sm31529133f8f.13.2026.02.09.16.02.33
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 09 Feb 2026 16:02:32 -0800 (PST)
+ Mon, 09 Feb 2026 16:02:34 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v13 13/16] net/pcap: avoid use of volatile
-Date: Mon,  9 Feb 2026 16:00:44 -0800
-Message-ID: <20260210000201.295839-14-stephen@networkplumber.org>
+Subject: [PATCH v13 14/16] net/pcap: clarify maximum received packet
+Date: Mon,  9 Feb 2026 16:00:45 -0800
+Message-ID: <20260210000201.295839-15-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260210000201.295839-1-stephen@networkplumber.org>
 References: <20260106182823.192350-1-stephen@networkplumber.org>
@@ -81,50 +81,32 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Using volatile for statistics is not necessary since only one
-thread is allowed to operate on a queue at a time.
+The driver has constant RTE_ETH_PCAP_SNAPSHOT_LEN with is set
+to the largest value the pcap library will return, so that should
+also be the largest receive buffer.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/pcap/pcap_ethdev.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ drivers/net/pcap/pcap_ethdev.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/net/pcap/pcap_ethdev.c b/drivers/net/pcap/pcap_ethdev.c
-index fde1f9fef2..acfee68711 100644
+index acfee68711..2413e44377 100644
 --- a/drivers/net/pcap/pcap_ethdev.c
 +++ b/drivers/net/pcap/pcap_ethdev.c
-@@ -55,10 +55,10 @@ static uint64_t timestamp_rx_dynflag;
- static int timestamp_dynfield_offset = -1;
+@@ -896,10 +896,11 @@ eth_dev_info(struct rte_eth_dev *dev,
  
- struct queue_stat {
--	volatile unsigned long pkts;
--	volatile unsigned long bytes;
--	volatile unsigned long err_pkts;
--	volatile unsigned long rx_nombuf;
-+	uint64_t pkts;
-+	uint64_t bytes;
-+	uint64_t err_pkts;
-+	uint64_t rx_nombuf;
- };
- 
- struct queue_missed_stat {
-@@ -913,11 +913,11 @@ eth_stats_get(struct rte_eth_dev *dev, struct rte_eth_stats *stats,
- 	      struct eth_queue_stats *qstats)
- {
- 	unsigned int i;
--	unsigned long rx_packets_total = 0, rx_bytes_total = 0;
--	unsigned long rx_missed_total = 0;
--	unsigned long rx_nombuf_total = 0, rx_err_total = 0;
--	unsigned long tx_packets_total = 0, tx_bytes_total = 0;
--	unsigned long tx_packets_err_total = 0;
-+	uint64_t rx_packets_total = 0, rx_bytes_total = 0;
-+	uint64_t rx_missed_total = 0;
-+	uint64_t rx_nombuf_total = 0, rx_err_total = 0;
-+	uint64_t tx_packets_total = 0, tx_bytes_total = 0;
-+	uint64_t tx_packets_err_total = 0;
- 	const struct pmd_internals *internal = dev->data->dev_private;
- 
- 	for (i = 0; i < RTE_ETHDEV_QUEUE_STAT_CNTRS &&
+ 	dev_info->if_index = internals->if_index;
+ 	dev_info->max_mac_addrs = 1;
+-	dev_info->max_rx_pktlen = (uint32_t) -1;
++	dev_info->max_rx_pktlen = RTE_ETH_PCAP_SNAPSHOT_LEN;
+ 	dev_info->max_rx_queues = dev->data->nb_rx_queues;
+ 	dev_info->max_tx_queues = dev->data->nb_tx_queues;
+ 	dev_info->min_rx_bufsize = 0;
++	dev_info->max_mtu = RTE_ETH_PCAP_SNAPSHOT_LEN - RTE_ETHER_HDR_LEN;
+ 	dev_info->tx_offload_capa = RTE_ETH_TX_OFFLOAD_MULTI_SEGS |
+ 		RTE_ETH_TX_OFFLOAD_VLAN_INSERT;
+ 	dev_info->rx_offload_capa = RTE_ETH_RX_OFFLOAD_VLAN_STRIP |
 -- 
 2.51.0
 
