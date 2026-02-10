@@ -2,48 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9810DEA3F2A
-	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Feb 2026 09:51:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB034EA3F35
+	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Feb 2026 10:15:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 80C0E400D7;
-	Tue, 10 Feb 2026 10:51:08 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
- by mails.dpdk.org (Postfix) with ESMTP id F2339400D6
- for <dev@dpdk.org>; Tue, 10 Feb 2026 10:51:06 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1770717067; x=1802253067;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=+lvi0VV/spSQg9AkYZKzLt6JPfY9TtWHDzPVVgXekfc=;
- b=njKUu0rcNXJaXYOJnVTZJARquKGNRs0qkcyUXF9iyFpr9NsWkLsqSxhk
- hxObhGVCKD9xdzFMTw1pt0xZrqnKFCu0WJBP44X9kpOPxK2HoXwjPHEpP
- xv6D4wUfYVz/7ynuIwEZ2Qr7c5Il+QVyCKTVEWbJ8mIUsxc8tGUFTec2O
- 6roMXOkPxxcMfV1aFeNyn6tgaBkDcH+vSLTwq8xUToaLfBmPnxsPRTOOa
- lyJ1H9Ob7LeKbem3Rjz/9CuK66i/FRPYUzzO0/XfI/UKoAst7PMxVPBD6
- 2503fCaKvxkIdzLwEjjdwS6zzgwDnFL/cbNs80MI92elxiF7EB46SWlT/ g==;
-X-CSE-ConnectionGUID: KlAdd0++QrKhgJ4q+ZgxVg==
-X-CSE-MsgGUID: m8MFPGJ6QAi7g9z617Rb4g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11696"; a="74443921"
-X-IronPort-AV: E=Sophos;i="6.21,283,1763452800"; d="scan'208";a="74443921"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
- by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 10 Feb 2026 01:51:05 -0800
-X-CSE-ConnectionGUID: pzACl8cJRf+hQuK5b8qFoA==
-X-CSE-MsgGUID: dDkfQl5eQjiX74Z/zx0uqw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,283,1763452800"; d="scan'208";a="211197572"
-Received: from silpixa00401921.ir.intel.com ([10.20.224.96])
- by orviesa010.jf.intel.com with ESMTP; 10 Feb 2026 01:51:04 -0800
-From: Ciara Loftus <ciara.loftus@intel.com>
-To: dev@dpdk.org
-Cc: Ciara Loftus <ciara.loftus@intel.com>
-Subject: [PATCH] net/iavf: fix txq flags setting after Tx path selection
-Date: Tue, 10 Feb 2026 09:50:44 +0000
-Message-ID: <20260210095045.1901921-1-ciara.loftus@intel.com>
-X-Mailer: git-send-email 2.43.0
+	by mails.dpdk.org (Postfix) with ESMTP id 96717400D7;
+	Tue, 10 Feb 2026 11:15:32 +0100 (CET)
+Received: from mailgw2.hygon.cn (unknown [101.204.27.37])
+ by mails.dpdk.org (Postfix) with ESMTP id 33945400D6
+ for <dev@dpdk.org>; Tue, 10 Feb 2026 11:15:30 +0100 (CET)
+Received: from maildlp2.hygon.cn (unknown [127.0.0.1])
+ by mailgw2.hygon.cn (Postfix) with ESMTP id 4f9HWG2rnhz1YHN2Z;
+ Tue, 10 Feb 2026 18:15:22 +0800 (CST)
+Received: from maildlp2.hygon.cn (unknown [172.23.18.61])
+ by mailgw2.hygon.cn (Postfix) with ESMTP id 4f9HWD4dVYz1YHN2Z;
+ Tue, 10 Feb 2026 18:15:20 +0800 (CST)
+Received: from cncheex03.Hygon.cn (unknown [172.23.18.113])
+ by maildlp2.hygon.cn (Postfix) with ESMTPS id 18CBD30195CE;
+ Tue, 10 Feb 2026 18:14:42 +0800 (CST)
+Received: from cncheex04.Hygon.cn (172.23.18.114) by cncheex03.Hygon.cn
+ (172.23.18.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.36; Tue, 10 Feb
+ 2026 18:15:21 +0800
+Received: from cncheex04.Hygon.cn ([fe80::1b6f:6c58:58a4:430d]) by
+ cncheex04.Hygon.cn ([fe80::1b6f:6c58:58a4:430d%10]) with mapi id
+ 15.02.1544.036; Tue, 10 Feb 2026 18:15:21 +0800
+From: Liangxing Wang <wangliangxing@hygon.cn>
+To: Thomas Monjalon <thomas@monjalon.net>
+CC: "stephen@networkplumber.org" <stephen@networkplumber.org>,
+ "fengchengwen@huawei.com" <fengchengwen@huawei.com>, "dev@dpdk.org"
+ <dev@dpdk.org>
+Subject: RE: [PATCH v2 1/3] examples/l3fwd: extend NUMA nodes limit beyond 8
+Thread-Topic: [PATCH v2 1/3] examples/l3fwd: extend NUMA nodes limit beyond 8
+Thread-Index: AQHcgHCUC5q1bz9lpE6JM/w8ds+K5bVZRsQggAKmGACAH/xSkA==
+Date: Tue, 10 Feb 2026 10:15:21 +0000
+Message-ID: <5c38455874a1433aa34842391525e8a5@hygon.cn>
+References: <20260108072919.1279731-1-wangliangxing@hygon.cn>
+ <c0fde19abc9e4b44b2d21a9cf22553e8@hygon.cn> <15656361.tv2OnDr8pf@thomas>
+In-Reply-To: <15656361.tv2OnDr8pf@thomas>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.19.25.208]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -57,78 +60,19 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Ensure the txq flags "use_ctx" and "vector_tx" are set/unset properly
-after tx path selection. Prior to this commit these flags were only
-configured if a vector path was chosen. Fix this by making their
-configuration unconditional. Also simplify how the "vector_tx" flag is
-set by removing the dedicated function that sets the flag in favour of
-just setting it inline.
-
-Fixes: ebcfb039afa8 ("net/iavf: use common Tx path selection infrastructure")
-
-Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
----
- drivers/net/intel/iavf/iavf_rxtx.c          | 15 ++++++---------
- drivers/net/intel/iavf/iavf_rxtx.h          |  1 -
- drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c |  7 -------
- 3 files changed, 6 insertions(+), 17 deletions(-)
-
-diff --git a/drivers/net/intel/iavf/iavf_rxtx.c b/drivers/net/intel/iavf/iavf_rxtx.c
-index 4b763627bc..da8ac488fe 100644
---- a/drivers/net/intel/iavf/iavf_rxtx.c
-+++ b/drivers/net/intel/iavf/iavf_rxtx.c
-@@ -4263,15 +4263,12 @@ iavf_set_tx_function(struct rte_eth_dev *dev)
- 
- out:
- #ifdef RTE_ARCH_X86
--	if (iavf_tx_path_infos[adapter->tx_func_type].features.simd_width != 0) {
--		for (i = 0; i < dev->data->nb_tx_queues; i++) {
--			txq = dev->data->tx_queues[i];
--			if (!txq)
--				continue;
--			iavf_txq_vec_setup(txq);
--			txq->use_ctx =
--				iavf_tx_path_infos[adapter->tx_func_type].features.ctx_desc;
--		}
-+	for (i = 0; i < dev->data->nb_tx_queues; i++) {
-+		txq = dev->data->tx_queues[i];
-+		if (!txq)
-+			continue;
-+		txq->use_ctx = iavf_tx_path_infos[adapter->tx_func_type].features.ctx_desc;
-+		txq->vector_tx = iavf_tx_path_infos[adapter->tx_func_type].features.simd_width != 0;
- 	}
- #endif
- 
-diff --git a/drivers/net/intel/iavf/iavf_rxtx.h b/drivers/net/intel/iavf/iavf_rxtx.h
-index e1f78dcde0..d258c1fc1b 100644
---- a/drivers/net/intel/iavf/iavf_rxtx.h
-+++ b/drivers/net/intel/iavf/iavf_rxtx.h
-@@ -615,7 +615,6 @@ int iavf_get_monitor_addr(void *rx_queue, struct rte_power_monitor_cond *pmc);
- int iavf_rx_vec_dev_check(struct rte_eth_dev *dev);
- int iavf_tx_vec_dev_check(struct rte_eth_dev *dev);
- int iavf_rxq_vec_setup(struct ci_rx_queue *rxq);
--int iavf_txq_vec_setup(struct ci_tx_queue *txq);
- uint16_t iavf_recv_pkts_vec_avx512(void *rx_queue, struct rte_mbuf **rx_pkts,
- 				   uint16_t nb_pkts);
- uint16_t iavf_recv_pkts_vec_avx512_offload(void *rx_queue,
-diff --git a/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c b/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c
-index e29958e0bc..1849af166a 100644
---- a/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c
-+++ b/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c
-@@ -1811,13 +1811,6 @@ iavf_xmit_pkts_vec_avx2_offload(void *tx_queue, struct rte_mbuf **tx_pkts,
- 	return iavf_xmit_pkts_vec_avx2_common(tx_queue, tx_pkts, nb_pkts, true);
- }
- 
--int __rte_cold
--iavf_txq_vec_setup(struct ci_tx_queue *txq)
--{
--	txq->vector_tx = true;
--	return 0;
--}
--
- void __rte_cold
- iavf_rx_queue_release_mbufs_vec(struct ci_rx_queue *rxq)
- {
--- 
-2.43.0
+SGkgVGhvbWFzLA0KDQpUaGlzIHNpbXBsZSBzZXJpZXMgaGFzIGJlZW4gd2l0aG91dCBhIGRlbGVn
+YXRlIGZvciBhYm91dCBhIG1vbnRoLiBDb3VsZCB5b3UgaGVscCBoYXZlIGEgbG9vaz8gVGhhbmtz
+Lg0KDQpSZWdhcmRzLA0KTGlhbmd4aW5nDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0N
+Cj4gRnJvbTogVGhvbWFzIE1vbmphbG9uIDx0aG9tYXNAbW9uamFsb24ubmV0Pg0KPiBTZW50OiAy
+MDI25bm0MeaciDIx5pelIDE3OjQwDQo+IFRvOiBMaWFuZ3hpbmcgV2FuZyA8d2FuZ2xpYW5neGlu
+Z0BoeWdvbi5jbj4NCj4gQ2M6IHN0ZXBoZW5AbmV0d29ya3BsdW1iZXIub3JnOyBmZW5nY2hlbmd3
+ZW5AaHVhd2VpLmNvbTsNCj4gZGV2QGRwZGsub3JnDQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggdjIg
+MS8zXSBleGFtcGxlcy9sM2Z3ZDogZXh0ZW5kIE5VTUEgbm9kZXMgbGltaXQNCj4gYmV5b25kIDgN
+Cj4gDQo+IDE5LzAxLzIwMjYgMTA6MTksIExpYW5neGluZyBXYW5nOg0KPiA+IEhpLA0KPiA+DQo+
+ID4gTm90IHN1cmUgZm9yIHdoYXQgcmVhc29uLCB0aGVyZSB3YXNuJ3QgYW55IHRlc3QgY2hlY2sg
+dHJpZ2dlcmVkIGJ5IHRoaXMgcGF0Y2guDQo+IERvIEkgaGF2ZSB0byBzdWJtaXQgYSBuZXcgcGF0
+Y2ggdmVyc2lvbiB0byB0cmlnZ2VyIHRoZSB0ZXN0cz8gVGhhbmtzLg0KPiANCj4gVGhlIHdob2xl
+IHNlcmllcyBnb3QgdGVzdGVkIGFuZCByZXBvcnRlZCBvbiB0aGUgbGFzdCBwYXRjaDoNCj4gaHR0
+cHM6Ly9wYXRjaGVzLmRwZGsub3JnL3Byb2plY3QvZHBkay9wYXRjaC8yMDI2MDEwODA3MzEzNS4x
+Mjc5ODE0LTEtdw0KPiBhbmdsaWFuZ3hpbmdAaHlnb24uY24vDQo+IA0KPiANCg0K
 
