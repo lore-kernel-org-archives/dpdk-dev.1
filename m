@@ -2,130 +2,132 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5725EA8121
-	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Feb 2026 14:47:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C16B3EA8123
+	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Feb 2026 14:47:29 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 41CA540698;
-	Tue, 10 Feb 2026 15:47:14 +0100 (CET)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 2D92940609
- for <dev@dpdk.org>; Tue, 10 Feb 2026 15:47:12 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1770734831;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=/onpyZJXY2Y9VIyYdifYueW7jjGZW9lsk2KplDlhW7M=;
- b=YHc9QLXl3cUgtMbA08+r7u/Cf8qVf1jkZnzxGnmQ/Pqbj9a/kxUC5FdnV5kSrZvbtLZEnn
- kZQ6EX2j898nTje5u9mlIvQtnmY/3jzLlxnLWto7gq1r5EndeeSP7SDvQy8zJhCF+ffLC1
- ettYXh90843UFKuWjOHlAsTY3XReX2U=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-591-kbz-i3JSO8SnuhaaBzLG1A-1; Tue, 10 Feb 2026 09:47:10 -0500
-X-MC-Unique: kbz-i3JSO8SnuhaaBzLG1A-1
-X-Mimecast-MFC-AGG-ID: kbz-i3JSO8SnuhaaBzLG1A_1770734829
-Received: by mail-wm1-f71.google.com with SMTP id
- 5b1f17b1804b1-4803e8b6007so7729045e9.0
- for <dev@dpdk.org>; Tue, 10 Feb 2026 06:47:10 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1770734829; x=1771339629;
- h=content-transfer-encoding:in-reply-to:autocrypt:from
- :content-language:references:cc:to:subject:user-agent:mime-version
- :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=/onpyZJXY2Y9VIyYdifYueW7jjGZW9lsk2KplDlhW7M=;
- b=ePEP7VUmzMhXNpv/GFdKyfziv+JJLsPlGiMzz5DZUuHQDM77uRmhsYbdSNml3UMga6
- EaWF29TbLW7X4Akv8NLQSObc+p75XiLByt7Jvpw4/j8sZlINx1CcACKZHHvv6JT/E4x8
- J2u7oLQztkZ5sJAng7TyfmXHsKCHdaQgOhRPhIEsvj/ETpohnP6nZtXaPiAA+efwKkex
- Ys9G+J/Dc7xgX2CFmynRvf1OLTV7fMIUfp9zOsdKdh2BaCTDwovwkTdFiElhiTNVjnx8
- g7bAeyN5O4RcojmfQo22G/rMsJwsDUph8u+lrE4sjwAixhJR5rkn6Qz5DvfxBWVXPEIA
- P2pg==
-X-Gm-Message-State: AOJu0YwFqagc57oNiOELFPzR4uVkmZIFxbSPJVZlXrqARHXpkC5//dRv
- pXdG8BkL1oNF33Ck8m6lyNVwSHuNi6/wF54U9RuWB7Q8DRIk3kDi+K2xghaB1B2H+zBh/0qZRDY
- p7wOzANp1Lv+557ezccamkv6/VJKPlOb5+COsQ5rLYgpw
-X-Gm-Gg: AZuq6aKJEcXQcLtTF0/+IRqz705SbxqO/I59FGi4tUK6TiaNdjrLjSZSFROVy4PJPc8
- BiTbaZ4YMk7VftNAaDrlpwdYeQsC60Vuha7FcePD/vmJ71k0rfFa/5WcnmWYd8+l8cgBPmhXiCs
- tQaTraz7bdFdR0HG++Ugjt3MbkVx+sGCnlSMw87aHOxQcLD7ayIPLX31zwOF/KO3eeXSo9WmMM9
- 9h8YH2/4JPD2qTQ/dp4POuK7/LluCqUAv1Esh6ZeZAwpQP9leblFWKQ1F0XGaGCV+PX3exH1b+/
- dP19zkh+mlwK3h1MycqyMiDHrh4jq7e6JC+7ajbTxVts9+gVbmFA5Ebphd+iRivRvmLDn7bofys
- XgwOqqUKLIIaR5/RAjZl2zk3b
-X-Received: by 2002:a05:600c:a08c:b0:47d:8479:78d5 with SMTP id
- 5b1f17b1804b1-483201dadabmr224997755e9.7.1770734828985; 
- Tue, 10 Feb 2026 06:47:08 -0800 (PST)
-X-Received: by 2002:a05:600c:a08c:b0:47d:8479:78d5 with SMTP id
- 5b1f17b1804b1-483201dadabmr224997325e9.7.1770734828539; 
- Tue, 10 Feb 2026 06:47:08 -0800 (PST)
-Received: from [192.168.0.56] ([78.16.128.210])
- by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-483203e5b63sm196761585e9.1.2026.02.10.06.47.06
- (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
- Tue, 10 Feb 2026 06:47:07 -0800 (PST)
-Message-ID: <8d2aed2e-87fb-4946-b96a-f0d07a11d5f2@redhat.com>
-Date: Tue, 10 Feb 2026 14:47:05 +0000
+	by mails.dpdk.org (Postfix) with ESMTP id 1C3BA406FF;
+	Tue, 10 Feb 2026 15:47:29 +0100 (CET)
+Received: from CH1PR05CU001.outbound.protection.outlook.com
+ (mail-northcentralusazon11010032.outbound.protection.outlook.com
+ [52.101.193.32]) by mails.dpdk.org (Postfix) with ESMTP id 79D5B4064E
+ for <dev@dpdk.org>; Tue, 10 Feb 2026 15:47:27 +0100 (CET)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=H8lm3jz8SztCcvekyroRSzyS1L1hTdwrCjWAVKeBVRXSiWjyfuVFYpGi/5cvhKNHGSmleRWHe359P39rV/kJ7eXttT0he0Rzp2D18PjHhRU3Ur+4e3Yn7E88dymkEvD6BRcihE3DKG8vv48GABgNbB6N+R1fv9jyLKw9H90mAK69V3Y5pUqvT5VEu582dQXlQnTZ4IvdNrYTVTzjT9L848u/4SjW2yN+KYOtiY75ILqDM7UPUa7ls4I120VT0/iNMjT6Nf6YqZF1uM7DEoi6RHWfEukCxEZUGp9iD5NE6YImtkVKyfgxkI4Av6uaHgJbJDkq/66PvgzYSDQD1N8TqQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=SgDYEmp42UGGH1qs57UETpN0kBOLokw852IrpLsu7ho=;
+ b=YkBGdRnlg7Be5UFlBxjTtHY4yt8P7HhOVJO/5E7+zlqGdMsa1quVSxkcdH0nwjHnC/Qv8kS5H5tVI5D9zr+Xi49t4EXuypT9uj8h9fEqAmqhk5Ett04Pzkz/mpOZRlr+CgnrfrDdAp62io4SRqEgfUf7pgvPX1xRcBhuIPx0CQovf4YIuxCDGtSWnm0zzo/K2bGYM5CSjOzy+ahQoLNlL+emecqrakRM3k8Sg6PvkiC50h26vBppe4vV2LjQEde4972GBQg7FXnT0JY/TDog5Fv833/bx+OQcNNjEuq5eBLA3uFmeqz2EYWid+Wij1WvLNC9lXedt7TNO3imyPWpOg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SgDYEmp42UGGH1qs57UETpN0kBOLokw852IrpLsu7ho=;
+ b=Z9SgUrDWLxO5P7b8nJSmKmUNC4g6EKTUKOGVzU+dHaPPZTpZ5KLPYs6jnOqwhXyuqAin2bhjqG7u4qgey8VApue85ZWgYjW6FyqhSv8cnWArTx9YHyLol2W+FmR8hwCWaZdxQBUxODIrAC7EF1gylmNQSFlUZ7fMzH74UyWGgP78Sp6cPS/GzabLW+IG1uUp+v5FnAopoyCLKA9N+mDrIMxSSWww/Nd9i2pbxCGhH0clIt8nQ+ZVbOA/6F0QsV/AdJJUHLkRuZWjDHoUQ2U/BC/Ck/8AofuC24voNOXr9dBWItggTPUHJg+Iku4Rrzr7+h04ZdPqE0aWKTstRmHCSQ==
+Received: from BL1PR13CA0100.namprd13.prod.outlook.com (2603:10b6:208:2b9::15)
+ by PH0PR12MB7861.namprd12.prod.outlook.com (2603:10b6:510:26e::16)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9587.18; Tue, 10 Feb
+ 2026 14:47:23 +0000
+Received: from BL02EPF00021F6B.namprd02.prod.outlook.com
+ (2603:10b6:208:2b9:cafe::5b) by BL1PR13CA0100.outlook.office365.com
+ (2603:10b6:208:2b9::15) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9611.6 via Frontend Transport; Tue,
+ 10 Feb 2026 14:47:23 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com;
+ dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ BL02EPF00021F6B.mail.protection.outlook.com (10.167.249.7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9611.8 via Frontend Transport; Tue, 10 Feb 2026 14:47:23 +0000
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 10 Feb
+ 2026 06:47:02 -0800
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail202.nvidia.com
+ (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 10 Feb
+ 2026 06:47:01 -0800
+Received: from nvidia.com (10.127.8.12) by mail.nvidia.com (10.129.68.7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Tue, 10 Feb 2026 06:46:59 -0800
+From: Shani Peretz <shperetz@nvidia.com>
+To: <dev@dpdk.org>
+CC: <rasland@nvidia.com>, <michaelba@nvidia.com>, Shani Peretz
+ <shperetz@nvidia.com>, Dariusz Sosnowski <dsosnowski@nvidia.com>, "Viacheslav
+ Ovsiienko" <viacheslavo@nvidia.com>, Bing Zhao <bingz@nvidia.com>, Ori Kam
+ <orika@nvidia.com>, Suanming Mou <suanmingm@nvidia.com>, Matan Azrad
+ <matan@nvidia.com>
+Subject: [PATCH] platform/mlx5: clarify device FD closure in mlx5 guide
+Date: Tue, 10 Feb 2026 16:46:53 +0200
+Message-ID: <20260210144654.96538-1-shperetz@nvidia.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] eal/linux: handle interrupt epoll events
-To: David Marchand <david.marchand@redhat.com>
-Cc: dev@dpdk.org, thomas@monjalon.net, dsosnowski@nvidia.com,
- viacheslavo@nvidia.com, stable@dpdk.org, Harman Kalra <hkalra@marvell.com>
-References: <20260128122055.192104-1-ktraynor@redhat.com>
- <20260206172054.273858-1-ktraynor@redhat.com>
- <20260206172054.273858-3-ktraynor@redhat.com>
- <CAJFAV8w0ic1OzGHSmLecR4bGjPCxTWuYA_yCEoxqBSR28aKo5A@mail.gmail.com>
-From: Kevin Traynor <ktraynor@redhat.com>
-Autocrypt: addr=ktraynor@redhat.com; keydata=
- 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
-In-Reply-To: <CAJFAV8w0ic1OzGHSmLecR4bGjPCxTWuYA_yCEoxqBSR28aKo5A@mail.gmail.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: q6G7MB7AZv0b0sgWgYCL5cRvR5kPNj9pt_y_JP_izhY_1770734829
-X-Mimecast-Originator: redhat.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL02EPF00021F6B:EE_|PH0PR12MB7861:EE_
+X-MS-Office365-Filtering-Correlation-Id: b1a4fb36-3194-4bf7-335c-08de68b34d09
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|1800799024|376014|36860700013|82310400026; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?7XOHHHhMH6KMhowwL1ThLY9v65i2rj45ivdYTwnYlPR9yfAP/hoaWM2DZvNC?=
+ =?us-ascii?Q?vvf6rSPxwndNmZPA4p3qlFNJlTkOS+FVtOYiv2ChHozR6YJPnQNr+mKAqScR?=
+ =?us-ascii?Q?MmipN/fXRJxXr16tpxRor/iOE7IhWoi2LxTj3uzjAPpnqHVbC+GFfEgEwgm8?=
+ =?us-ascii?Q?pTb1VHKikqPDmSf8KkqMZAB6SnAIIc04LoqNFhl1n1V0MYPd12+qi/np5tIh?=
+ =?us-ascii?Q?xD1yme4m9Pnykpig0US+MWXopWIcuMiDa2RGv1arD6SWR3OVLIu+41vDwHSi?=
+ =?us-ascii?Q?lx8zxXiMWwRuSELgYcNLbmB5fyryAmc6T1e4tWgljC8JBtT12VvrBr1w03vX?=
+ =?us-ascii?Q?/ZFLEq4EDD5lTN1Pse455vRa78Mfcd3jIP7Y0PEbFibAXLrfRLeV44ZyEJeZ?=
+ =?us-ascii?Q?2zhpivHqLhdZXXdHziB8/N/1dYOr6o1W1z38KU9aVXOXHXIBdvpc7XnA5f6E?=
+ =?us-ascii?Q?pVYPf0ZP/5GlyYH/ojjSQkNABA4xv0v4FVpu5qsMjau2jl9OrhT7l3H/oaeh?=
+ =?us-ascii?Q?wZbWGGiF+PWqLvmjp04yK42zUaLYxcdPC1qntf8PUrZ17ix2yDKXw2C32Kwe?=
+ =?us-ascii?Q?37+OMpygj11qcryqOCL1bTOcBwr6cPt6qlCRq9TAtLZz5+Efwb0Z/0LLyD+x?=
+ =?us-ascii?Q?2P2zBiFIV/YlrwjbAOPXavySKAr2/0wf/ff4R8054NMp9BPJtVch6G62siaa?=
+ =?us-ascii?Q?iVz9yDGb/uOYOvp53NvyuSguVmnPE83ZYHjyHwSYdr3imvPNPXh0l/6yQ0GD?=
+ =?us-ascii?Q?OZgWxOTaDXB4TtAloLRGFhuvsvkDOyOigYDK1z58n91FBiSSy1483qzYLnb4?=
+ =?us-ascii?Q?hosB7WDHWQEPqwzGDZvTSXTtCAAa5wY5GeuWi8JO+P8ItxfuEBcsbLu+v+sj?=
+ =?us-ascii?Q?PeNmGunHhYd4AlcgAO7Vz77re/8H29D4j9KGAkzl8e2gE+v/Yfye9xV+sD5Q?=
+ =?us-ascii?Q?o/97vYn/gkDknoZsP0cB+Lz0HVygCbccAeWJmev5eixUZd11HQ+LRCe+8ZJ1?=
+ =?us-ascii?Q?e2aw+26razw8lb8ohMedOdZAU3A3tgF4LQ0EeKyA1/ti2R+dq2d+B+y0NI9R?=
+ =?us-ascii?Q?zudFEVtbr1zcwqE48kM1ODjALNSLnYnKxgq24PtLfhbgEQqCswuTNHhSoQ++?=
+ =?us-ascii?Q?YYdrn0bQS29UftVNyrWNJ+rHceokE8s684R2/mkGeCC4Hudy5p77ATtfV0H3?=
+ =?us-ascii?Q?/4aFh+apv24qVvmE+KaPSZpkY2+rEWPEVVmsrww7giB2WVfQxEdf4PxQLoJY?=
+ =?us-ascii?Q?dmk62M8sV3ZzWlktEpV4KXEFFO99ft2Vd51NGTSlaJ/62qiMlINkrmgKknLE?=
+ =?us-ascii?Q?UZDYT+0ln/2o6fD0OKzx09ZLxClrWTorAgqY67CC+d/W4H/fNl5BrW5zXwkJ?=
+ =?us-ascii?Q?URz2Le0OjfUXNcnTDS18wTWRGz6mvA+TN3ZzZuL8aU/ER004xiDseTtRJVsU?=
+ =?us-ascii?Q?bENRh07HD9+N6M36HSxsmpXv5rlTi539QF1YkWDfpJgu/CMSlXOHgVerctiW?=
+ =?us-ascii?Q?jNsxnRXl+CVaX33mYKZf8dfFEo5krWw2yLwh/eK4kEd8OvOg/O9qtN1G0NCG?=
+ =?us-ascii?Q?1sY247ImADVLLT/D+9DHcQvX2lRmC8HiHvtqfHYDsoq1L1cxbrB1f3EIFs/z?=
+ =?us-ascii?Q?jCnRz6neLijPMfRWFtrxV7MyrORmGNiFdCjm/3cotsXRgyC7iOroG8WOD1cn?=
+ =?us-ascii?Q?iA4oBg=3D=3D?=
+X-Forefront-Antispam-Report: CIP:216.228.117.161; CTRY:US; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge2.nvidia.com; CAT:NONE;
+ SFS:(13230040)(1800799024)(376014)(36860700013)(82310400026); DIR:OUT;
+ SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: +btVEDQWhW4JJiu8JIzZuGFkeBrwhgViAX18pcHcutgMQ0xR1kg24iYEzpO2vzH11U410PyjLxhAIJvJmu43I/G0bxlrMY7Y4QF/2xaAZ0VJTjw6XbTN+/5Outossweyad1ejTgJPrOdXQ1j9tQUyCFD0DbbK5wbc2px6DvCcNsH7dkZGyDA9LX3oP4Cj5MIgrXAWe7hee6sEkIcsrJeGvMAzpzkiZnsIJmN85aB6DKblA7oC4PqjrwfcGpFc/7avqQP8HiFJ2EsA0lYiXJ31/WvrUAQvHfUbK5GmLcDQaSloDljesrHSvedFIpPvAbs1sfXUb2oMFsGzk0pHh+ly4YHBiDmU5dR8gYFAilM8F2O6ujrQ5jmrb+7uDHDF90GOkhn5Ugm8gXl34JI3urfuNqYHvB57rthYCvjPyNDyTreOprpqC0scVoVCVM3gp5W
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Feb 2026 14:47:23.2150 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b1a4fb36-3194-4bf7-335c-08de68b34d09
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.161];
+ Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BL02EPF00021F6B.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB7861
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -139,171 +141,27 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On 10/02/2026 09:17, David Marchand wrote:
-> Hello Kevin,
-> 
-> On Fri, 6 Feb 2026 at 18:21, Kevin Traynor <ktraynor@redhat.com> wrote:
->>
->> Add handling for epoll error and disconnect conditions EPOLLERR,
->> EPOLLHUP and EPOLLRDHUP.
->>
->> These events indicate that the interrupt file descriptor is in
->> an error state or there has been a hangup.
->>
->> Only do this for interrupts that are read in eal. Interrupts that
->> are read outside eal should deal with different interrupt scenarios
->> appropriate to their functionality. e.g. virtio interrupt handling
->> has reconnect mechanisms for some cases.
->>
->> Also, treat no bytes read as an error condition.
->>
->> Bugzilla ID: 1873
->> Fixes: af75078fece3 ("first public release")
->> Cc: stable@dpdk.org
-> 
-> Cc: Harman.
-> 
->>
->> Signed-off-by: Kevin Traynor <ktraynor@redhat.com>
->> ---
->>  lib/eal/linux/eal_interrupts.c | 67 ++++++++++++++++++++++------------
->>  1 file changed, 44 insertions(+), 23 deletions(-)
->>
->> diff --git a/lib/eal/linux/eal_interrupts.c b/lib/eal/linux/eal_interrupts.c
->> index 9db978923a..68ca0f929e 100644
->> --- a/lib/eal/linux/eal_interrupts.c
->> +++ b/lib/eal/linux/eal_interrupts.c
->> @@ -887,4 +887,26 @@ rte_intr_disable(const struct rte_intr_handle *intr_handle)
->>  }
->>
->> +static void
->> +eal_intr_source_remove_and_free(struct rte_intr_source *src)
->> +{
->> +       struct rte_intr_callback *cb, *next;
->> +
->> +       /* Remove the interrupt source */
->> +       rte_spinlock_lock(&intr_lock);
->> +       TAILQ_REMOVE(&intr_sources, src, next);
->> +       rte_spinlock_unlock(&intr_lock);
->> +
->> +       /* Free callbacks */
->> +       for (cb = TAILQ_FIRST(&src->callbacks); cb; cb = next) {
->> +               next = TAILQ_NEXT(cb, next);
->> +               TAILQ_REMOVE(&src->callbacks, cb, next);
->> +               free(cb);
->> +       }
->> +
->> +       /* Free the interrupt source */
->> +       rte_intr_instance_free(src->intr_handle);
->> +       free(src);
->> +}
->> +
->>  static int
->>  eal_intr_process_interrupts(struct epoll_event *events, int nfds)
->> @@ -952,4 +974,16 @@ eal_intr_process_interrupts(struct epoll_event *events, int nfds)
->>
->>                 if (bytes_read > 0) {
->> +                       /**
->> +                        * Check for epoll error or disconnect events for
->> +                        * interrupts that are read directly in eal.
->> +                        */
->> +                       if (events[n].events & (EPOLLERR | EPOLLHUP | EPOLLRDHUP)) {
->> +                               EAL_LOG(INFO, "Disconnect condition on fd %d "
-> 
-> This is an anormal situation, I would make this log level the same as
-> other logs below.
-> 
-> The fact that the interrupt fd gets into this state should be
-> something to report and investigate.
-> 
+Document that PMD takes ownership of the duplicated cmd_fd
+and closes it during device teardown.
 
-ok. I'll change to warning.
+Signed-off-by: Shani Peretz <shperetz@nvidia.com>
+Acked-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
+---
+ doc/guides/platform/mlx5.rst | 1 +
+ 1 file changed, 1 insertion(+)
 
-> 
->> +                                       "(events=0x%x), removing from epoll",
->> +                                       events[n].data.fd, events[n].events);
->> +                               eal_intr_source_remove_and_free(src);
->> +                               return -1;
->> +                       }
->> +
->>                         /**
->>                          * read out to clear the ready-to-be-read flag
->> @@ -957,5 +991,7 @@ eal_intr_process_interrupts(struct epoll_event *events, int nfds)
->>                          */
->>                         bytes_read = read(events[n].data.fd, &buf, bytes_read);
->> -                       if (bytes_read < 0) {
->> +                       if (bytes_read > 0) {
->> +                               call = true;
->> +                       } else if (bytes_read < 0) {
->>                                 if (errno == EINTR || errno == EWOULDBLOCK)
->>                                         continue;
->> @@ -965,27 +1001,12 @@ eal_intr_process_interrupts(struct epoll_event *events, int nfds)
->>                                         events[n].data.fd,
->>                                         strerror(errno));
->> -                               /*
->> -                                * The device is unplugged or buggy, remove
->> -                                * it as an interrupt source and return to
->> -                                * force the wait list to be rebuilt.
->> -                                */
->> -                               rte_spinlock_lock(&intr_lock);
->> -                               TAILQ_REMOVE(&intr_sources, src, next);
->> -                               rte_spinlock_unlock(&intr_lock);
->> -
->> -                               for (cb = TAILQ_FIRST(&src->callbacks); cb;
->> -                                                       cb = next) {
->> -                                       next = TAILQ_NEXT(cb, next);
->> -                                       TAILQ_REMOVE(&src->callbacks, cb, next);
->> -                                       free(cb);
->> -                               }
->> -                               rte_intr_instance_free(src->intr_handle);
->> -                               free(src);
->> -                               return -1;
->> -                       } else if (bytes_read == 0)
->> -                               EAL_LOG(ERR, "Read nothing from file "
->> +                       } else { /* bytes == 0 */
-> 
-> "bytes_read == 0", or remove this comment as the code is quite compact
-> and leaves little space for wondering what this else block is about.
-> 
-
-Ack. I will take it as a compliment and remove the comment ;-)
-
-> 
->> +                               EAL_LOG(WARNING, "Read nothing from file "
-> 
-> I would keep this log at the same level than the < 0 condition.
-> It seems the same type of error.
-> 
->>                                         "descriptor %d", events[n].data.fd);
-> 
-> And avoid splitting the format string.
-> 
-
-Ack.
-
-> 
->> -                       else
->> -                               call = true;
->> +                       }
->> +                       if (bytes_read <= 0) {
->> +                               eal_intr_source_remove_and_free(src);
->> +                               return -1;
->> +                       }
->>                 }
->>
->> --
->> 2.52.0
->>
-> 
-> Except those nits, the fix looks correct.
-> 
-> Acked-by: David Marchand <david.marchand@redhat.com>
-> 
-
-
-Thanks David. I will make these changes in v3.
-
-> 
-> 
-> 
+diff --git a/doc/guides/platform/mlx5.rst b/doc/guides/platform/mlx5.rst
+index f386980fdd..285d58be4f 100644
+--- a/doc/guides/platform/mlx5.rst
++++ b/doc/guides/platform/mlx5.rst
+@@ -710,6 +710,7 @@ and below are the arguments supported by the common mlx5 layer.
+   File descriptor of ``ibv_context`` created outside the PMD.
+   PMD will use this FD to import remote CTX. The ``cmd_fd`` is obtained from
+   the ``ibv_context->cmd_fd`` member, which must be dup'd before being passed.
++  The PMD closes the duplicated FD when the device is closed.
+   This parameter is valid only if ``pd_handle`` parameter is specified.
+ 
+   By default, the PMD will create a new ``ibv_context``.
+-- 
+2.34.1
 
