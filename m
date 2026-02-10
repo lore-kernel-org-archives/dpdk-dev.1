@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C425EA8130
-	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Feb 2026 16:14:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE98BEA8130
+	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Feb 2026 16:14:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CDA5240697;
-	Tue, 10 Feb 2026 17:14:09 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id AFAAF4068E;
+	Tue, 10 Feb 2026 17:14:12 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
- by mails.dpdk.org (Postfix) with ESMTP id A2E8F40677
+ by mails.dpdk.org (Postfix) with ESMTP id 0205040687
  for <dev@dpdk.org>; Tue, 10 Feb 2026 17:14:08 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
  t=1770740049; x=1802276049;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=+VitgqdSj+SJhl+szIBg9z2h9niAe0VvQoh81CGOesU=;
- b=HDzVthWWX9em5dwOArsqvDjZkiCH5RO+Y7jcxkMqBCnFvhIZKRbwUmfK
- q0BLirfa/A5jPmyY1Md41bbsFKXMihV4WiR4YASKvru6kcPRoi4b0Zdfm
- n0OKrZOdjTNZZLItXsuD6J5j79587W5lIFZ77jOqfpngLZRZR5Ccv2347
- w1635+IYaAMdoJFYeKl3VoCSss4gJSFMBmrgB0OOz9QN+WlHjQSa4QfWU
- zon5L33DtPDcbJd5XVOJv3SMzwigDmvKgP4EO+gYAXgKhbhfxvKgi82K3
- 1lFJ+lGvpviSHeuCQdyAYnm0X4piP9bwrvCuDNOiLCFkkNL2Ev147vk2G Q==;
-X-CSE-ConnectionGUID: dhybOMyEQU+XtKoOH7g+Kg==
-X-CSE-MsgGUID: ctSovBMLSQeEK+G9/CKBCw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11697"; a="89286176"
-X-IronPort-AV: E=Sophos;i="6.21,283,1763452800"; d="scan'208";a="89286176"
+ bh=UF59Kxg5/6jSn/bK3yNOeEMHPAu3N5Ik2j7PT4I3/vA=;
+ b=YElQhyMFvkOc0/ebaNSJ7yq2BgOaAD+qGap0E5f+kfOs6RJfBj2RnNJP
+ OJYakci2wms1kvl5rbSWnhwI9hBshdW3oLVM80Y8NqqU24hIXn8V7i16t
+ EHFeJkuC7PBG+iPvf0/VP8MNBkBv65mL9GNepKBucpa2UnO4q0qXKBram
+ lQZOrq9RxzCvz5YUS3TvdhutE11jEKiO0G0SlF4GOWlSP4CzXrjSV+1K4
+ NFVmrjUABCr1e6z4TDdgmWW6XQhTMAWsCORuDxo61BlFgj7RWga9WRh7k
+ 7fIWAaPpQ1oXVMx+n5Taw8AjcYmy52AuGA/ASddVXlJpzRAv50nVLvX9L A==;
+X-CSE-ConnectionGUID: fD7cVILeQK2MI+o6GJ4KUw==
+X-CSE-MsgGUID: iX4A+HhhRKuZpasXUOg14Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11697"; a="89286184"
+X-IronPort-AV: E=Sophos;i="6.21,283,1763452800"; d="scan'208";a="89286184"
 Received: from orviesa003.jf.intel.com ([10.64.159.143])
  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 10 Feb 2026 08:14:05 -0800
-X-CSE-ConnectionGUID: ef1GE6RtSdqdEcW9jB52Qw==
-X-CSE-MsgGUID: zpd2TCNoQsiNuNUs86LCrw==
+ 10 Feb 2026 08:14:08 -0800
+X-CSE-ConnectionGUID: B/oUs5dPQnybz9NjO6ciOQ==
+X-CSE-MsgGUID: ymisQTUlTuqzJfLpocHzzA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,283,1763452800"; d="scan'208";a="216127707"
+X-IronPort-AV: E=Sophos;i="6.21,283,1763452800"; d="scan'208";a="216127722"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by orviesa003.jf.intel.com with ESMTP; 10 Feb 2026 08:14:05 -0800
+ by orviesa003.jf.intel.com with ESMTP; 10 Feb 2026 08:14:07 -0800
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org,
 	Vladimir Medvedkin <vladimir.medvedkin@intel.com>
-Subject: [PATCH v2 01/26] net/ixgbe: remove MAC type check macros
-Date: Tue, 10 Feb 2026 16:13:30 +0000
-Message-ID: <684868caadd5ae593db0663610f3b7511d764590.1770739924.git.anatoly.burakov@intel.com>
+Subject: [PATCH v2 03/26] net/ixgbe: split security and ntuple filters
+Date: Tue, 10 Feb 2026 16:13:32 +0000
+Message-ID: <4100911c26466f0a47ecd47b718447ca2e4500f8.1770739924.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <cover.1770739924.git.anatoly.burakov@intel.com>
  <cover.1770739924.git.anatoly.burakov@intel.com>
@@ -60,58 +60,78 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The macros used were not informative and did not add any value beyond code
-golf, so remove them and make MAC type checks explicit.
+These filters are mashed together even though they almost do not share any
+code at all between each other. Separate security filter from ntuple filter
+and parse it separately.
+
+While we're at it, we're making checks more stringent (such as checking for
+NULL conf), and more type safe.
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- drivers/net/intel/ixgbe/ixgbe_ethdev.h | 12 ------------
- drivers/net/intel/ixgbe/ixgbe_flow.c   | 20 +++++++++++++++++---
- 2 files changed, 17 insertions(+), 15 deletions(-)
+ drivers/net/intel/ixgbe/ixgbe_flow.c | 136 ++++++++++++++++++---------
+ 1 file changed, 91 insertions(+), 45 deletions(-)
 
-diff --git a/drivers/net/intel/ixgbe/ixgbe_ethdev.h b/drivers/net/intel/ixgbe/ixgbe_ethdev.h
-index 5393c81363..55b121b15d 100644
---- a/drivers/net/intel/ixgbe/ixgbe_ethdev.h
-+++ b/drivers/net/intel/ixgbe/ixgbe_ethdev.h
-@@ -137,18 +137,6 @@
- #define IXGBE_MAX_FDIR_FILTER_NUM       (1024 * 32)
- #define IXGBE_MAX_L2_TN_FILTER_NUM      128
- 
--#define MAC_TYPE_FILTER_SUP_EXT(type)    do {\
--	if ((type) != ixgbe_mac_82599EB && (type) != ixgbe_mac_X540)\
--		return -ENOTSUP;\
--} while (0)
--
--#define MAC_TYPE_FILTER_SUP(type)    do {\
--	if ((type) != ixgbe_mac_82599EB && (type) != ixgbe_mac_X540 &&\
--		(type) != ixgbe_mac_X550 && (type) != ixgbe_mac_X550EM_x &&\
--		(type) != ixgbe_mac_X550EM_a && (type) != ixgbe_mac_E610)\
--		return -ENOTSUP;\
--} while (0)
--
- /* Link speed for X550 auto negotiation */
- #define IXGBE_LINK_SPEED_X550_AUTONEG	(IXGBE_LINK_SPEED_100_FULL | \
- 					 IXGBE_LINK_SPEED_1GB_FULL | \
 diff --git a/drivers/net/intel/ixgbe/ixgbe_flow.c b/drivers/net/intel/ixgbe/ixgbe_flow.c
-index 27d2ba1132..a1245bb906 100644
+index e7521a4b1f..fee5d7b901 100644
 --- a/drivers/net/intel/ixgbe/ixgbe_flow.c
 +++ b/drivers/net/intel/ixgbe/ixgbe_flow.c
-@@ -621,7 +621,9 @@ ixgbe_parse_ntuple_filter(struct rte_eth_dev *dev,
- 	int ret;
- 	struct ixgbe_hw *hw = IXGBE_DEV_PRIVATE_TO_HW(dev->data->dev_private);
+@@ -214,41 +214,6 @@ cons_parse_ntuple_filter(const struct rte_flow_attr *attr,
+ 	memset(&eth_null, 0, sizeof(struct rte_flow_item_eth));
+ 	memset(&vlan_null, 0, sizeof(struct rte_flow_item_vlan));
  
--	MAC_TYPE_FILTER_SUP_EXT(hw->mac.type);
-+	if (hw->mac.type != ixgbe_mac_82599EB &&
-+			hw->mac.type != ixgbe_mac_X540)
-+		return -ENOTSUP;
+-	/**
+-	 *  Special case for flow action type RTE_FLOW_ACTION_TYPE_SECURITY
+-	 */
+-	act = next_no_void_action(actions, NULL);
+-	if (act->type == RTE_FLOW_ACTION_TYPE_SECURITY) {
+-		const void *conf = act->conf;
+-		/* check if the next not void item is END */
+-		act = next_no_void_action(actions, act);
+-		if (act->type != RTE_FLOW_ACTION_TYPE_END) {
+-			memset(filter, 0, sizeof(struct rte_eth_ntuple_filter));
+-			rte_flow_error_set(error, EINVAL,
+-				RTE_FLOW_ERROR_TYPE_ACTION,
+-				act, "Not supported action.");
+-			return -rte_errno;
+-		}
+-
+-		/* get the IP pattern*/
+-		item = next_no_void_pattern(pattern, NULL);
+-		while (item->type != RTE_FLOW_ITEM_TYPE_IPV4 &&
+-				item->type != RTE_FLOW_ITEM_TYPE_IPV6) {
+-			if (item->last ||
+-					item->type == RTE_FLOW_ITEM_TYPE_END) {
+-				rte_flow_error_set(error, EINVAL,
+-					RTE_FLOW_ERROR_TYPE_ITEM,
+-					item, "IP pattern missing.");
+-				return -rte_errno;
+-			}
+-			item = next_no_void_pattern(pattern, item);
+-		}
+-
+-		filter->proto = IPPROTO_ESP;
+-		return ixgbe_crypto_add_ingress_sa_from_flow(conf, item->spec,
+-					item->type == RTE_FLOW_ITEM_TYPE_IPV6);
+-	}
+-
+ 	/* the first not void item can be MAC or IPv4 */
+ 	item = next_no_void_pattern(pattern, NULL);
  
- 	ret = cons_parse_ntuple_filter(attr, pattern, actions, filter, error);
+@@ -607,6 +572,81 @@ cons_parse_ntuple_filter(const struct rte_flow_attr *attr,
+ 	return 0;
+ }
  
-@@ -861,7 +863,13 @@ ixgbe_parse_ethertype_filter(struct rte_eth_dev *dev,
- 	int ret;
- 	struct ixgbe_hw *hw = IXGBE_DEV_PRIVATE_TO_HW(dev->data->dev_private);
- 
--	MAC_TYPE_FILTER_SUP(hw->mac.type);
++static int __rte_unused
++ixgbe_parse_security_filter(struct rte_eth_dev *dev, const struct rte_flow_attr *attr,
++		const struct rte_flow_item pattern[], const struct rte_flow_action actions[],
++		struct rte_flow_error *error)
++{
++	struct ixgbe_hw *hw = IXGBE_DEV_PRIVATE_TO_HW(dev->data->dev_private);
++	const struct rte_flow_action_security *security;
++	const struct rte_flow_item *item;
++	const struct rte_flow_action *act;
++
 +	if (hw->mac.type != ixgbe_mac_82599EB &&
 +			hw->mac.type != ixgbe_mac_X540 &&
 +			hw->mac.type != ixgbe_mac_X550 &&
@@ -119,24 +139,116 @@ index 27d2ba1132..a1245bb906 100644
 +			hw->mac.type != ixgbe_mac_X550EM_a &&
 +			hw->mac.type != ixgbe_mac_E610)
 +		return -ENOTSUP;
++
++	if (pattern == NULL) {
++		rte_flow_error_set(error,
++			EINVAL, RTE_FLOW_ERROR_TYPE_ITEM_NUM,
++			NULL, "NULL pattern.");
++		return -rte_errno;
++	}
++	if (actions == NULL) {
++		rte_flow_error_set(error, EINVAL,
++				   RTE_FLOW_ERROR_TYPE_ACTION_NUM,
++				   NULL, "NULL action.");
++		return -rte_errno;
++	}
++	if (attr == NULL) {
++		rte_flow_error_set(error, EINVAL,
++				   RTE_FLOW_ERROR_TYPE_ATTR,
++				   NULL, "NULL attribute.");
++		return -rte_errno;
++	}
++
++	/* check if next non-void action is security */
++	act = next_no_void_action(actions, NULL);
++	if (act->type != RTE_FLOW_ACTION_TYPE_SECURITY) {
++		return rte_flow_error_set(error, EINVAL,
++				RTE_FLOW_ERROR_TYPE_ACTION,
++				act, "Not supported action.");
++	}
++	security = act->conf;
++	if (security == NULL) {
++		return rte_flow_error_set(error, EINVAL,
++				RTE_FLOW_ERROR_TYPE_ACTION, act,
++				"NULL security action config.");
++	}
++	/* check if the next not void item is END */
++	act = next_no_void_action(actions, act);
++	if (act->type != RTE_FLOW_ACTION_TYPE_END) {
++		return rte_flow_error_set(error, EINVAL,
++				RTE_FLOW_ERROR_TYPE_ACTION,
++				act, "Not supported action.");
++	}
++
++	/* get the IP pattern*/
++	item = next_no_void_pattern(pattern, NULL);
++	while (item->type != RTE_FLOW_ITEM_TYPE_IPV4 &&
++			item->type != RTE_FLOW_ITEM_TYPE_IPV6) {
++		if (item->last || item->type == RTE_FLOW_ITEM_TYPE_END) {
++			rte_flow_error_set(error, EINVAL,
++				RTE_FLOW_ERROR_TYPE_ITEM,
++				item, "IP pattern missing.");
++			return -rte_errno;
++		}
++		item = next_no_void_pattern(pattern, item);
++	}
++
++	return ixgbe_crypto_add_ingress_sa_from_flow(security->security_session,
++			item->spec, item->type == RTE_FLOW_ITEM_TYPE_IPV6);
++}
++
+ /* a specific function for ixgbe because the flags is specific */
+ static int
+ ixgbe_parse_ntuple_filter(struct rte_eth_dev *dev,
+@@ -628,10 +668,6 @@ ixgbe_parse_ntuple_filter(struct rte_eth_dev *dev,
+ 	if (ret)
+ 		return ret;
  
- 	ret = cons_parse_ethertype_filter(attr, pattern,
- 					actions, filter, error);
-@@ -1150,7 +1158,13 @@ ixgbe_parse_syn_filter(struct rte_eth_dev *dev,
+-	/* ESP flow not really a flow*/
+-	if (filter->proto == IPPROTO_ESP)
+-		return 0;
+-
+ 	/* Ixgbe doesn't support tcp flags. */
+ 	if (filter->flags & RTE_NTUPLE_FLAGS_TCP_FLAG) {
+ 		memset(filter, 0, sizeof(struct rte_eth_ntuple_filter));
+@@ -3066,14 +3102,17 @@ ixgbe_flow_create(struct rte_eth_dev *dev,
+ 	TAILQ_INSERT_TAIL(&ixgbe_flow_list,
+ 				ixgbe_flow_mem_ptr, entries);
+ 
+-	memset(&ntuple_filter, 0, sizeof(struct rte_eth_ntuple_filter));
+-	ret = ixgbe_parse_ntuple_filter(dev, attr, pattern,
+-			actions, &ntuple_filter, error);
+-
+-	/* ESP flow not really a flow*/
+-	if (ntuple_filter.proto == IPPROTO_ESP)
++	/**
++	 *  Special case for flow action type RTE_FLOW_ACTION_TYPE_SECURITY
++	 */
++	ret = ixgbe_parse_security_filter(dev, attr, pattern, actions, error);
++	if (!ret)
+ 		return flow;
+ 
++	memset(&ntuple_filter, 0, sizeof(struct rte_eth_ntuple_filter));
++	ret = ixgbe_parse_ntuple_filter(dev, attr, pattern,
++			actions, &ntuple_filter, error);
++
+ 	if (!ret) {
+ 		ret = ixgbe_add_del_ntuple_filter(dev, &ntuple_filter, TRUE);
+ 		if (!ret) {
+@@ -3297,6 +3336,13 @@ ixgbe_flow_validate(struct rte_eth_dev *dev,
+ 	struct ixgbe_rte_flow_rss_conf rss_conf;
  	int ret;
- 	struct ixgbe_hw *hw = IXGBE_DEV_PRIVATE_TO_HW(dev->data->dev_private);
  
--	MAC_TYPE_FILTER_SUP(hw->mac.type);
-+	if (hw->mac.type != ixgbe_mac_82599EB &&
-+			hw->mac.type != ixgbe_mac_X540 &&
-+			hw->mac.type != ixgbe_mac_X550 &&
-+			hw->mac.type != ixgbe_mac_X550EM_x &&
-+			hw->mac.type != ixgbe_mac_X550EM_a &&
-+			hw->mac.type != ixgbe_mac_E610)
-+		return -ENOTSUP;
- 
- 	ret = cons_parse_syn_filter(attr, pattern,
- 					actions, filter, error);
++	/**
++	 *  Special case for flow action type RTE_FLOW_ACTION_TYPE_SECURITY
++	 */
++	ret = ixgbe_parse_security_filter(dev, attr, pattern, actions, error);
++	if (!ret)
++		return 0;
++
+ 	memset(&ntuple_filter, 0, sizeof(struct rte_eth_ntuple_filter));
+ 	ret = ixgbe_parse_ntuple_filter(dev, attr, pattern,
+ 				actions, &ntuple_filter, error);
 -- 
 2.47.3
 
