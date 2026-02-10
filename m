@@ -2,67 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEB21E94625
-	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Feb 2026 00:02:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4263E94625
+	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Feb 2026 00:03:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8FA2840A4B;
-	Tue, 10 Feb 2026 01:02:23 +0100 (CET)
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com
- [209.85.221.41]) by mails.dpdk.org (Postfix) with ESMTP id 81FC640A4B
- for <dev@dpdk.org>; Tue, 10 Feb 2026 01:02:22 +0100 (CET)
-Received: by mail-wr1-f41.google.com with SMTP id
- ffacd0b85a97d-4362197d174so172594f8f.3
- for <dev@dpdk.org>; Mon, 09 Feb 2026 16:02:22 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 42C7D40679;
+	Tue, 10 Feb 2026 01:02:26 +0100 (CET)
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com
+ [209.85.128.45]) by mails.dpdk.org (Postfix) with ESMTP id E489740A7F
+ for <dev@dpdk.org>; Tue, 10 Feb 2026 01:02:24 +0100 (CET)
+Received: by mail-wm1-f45.google.com with SMTP id
+ 5b1f17b1804b1-482f2599980so3227215e9.0
+ for <dev@dpdk.org>; Mon, 09 Feb 2026 16:02:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1770681742;
- x=1771286542; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1770681744;
+ x=1771286544; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=k4wDbXGzzw/WfaPvT1wL6uZXToJNS/HoeZDoZJiao3I=;
- b=Z7j9dUFkOWWWs70gdKC/CkWWsju5yWuBldkKV1+rQx+f3Xbcp1FjS8QOCKo2uwcS/w
- RGIZtOMByXRPe+1/0Hn1m+SqCfkstY7ObfOZtT8sirxJJb2J9OJyzpglqEVmVj8AySCo
- 62zuPfAJ4i3BTItqYT5ClMjUlHFqRtmMx0a907m7xLTGy8q0g5cuHshZTDdZYcChfrRf
- cfWaM9Alvw4Qye4N1tWJtgP4H/yN1SLwDMV41fmcYeqD8M7eYIKJjtSZTLEQQ2CZdDpD
- AjOKXYPGDm5TFYYdSyse4/OvpzEYvNrqRAbMhbA2K++OU2LtY8H2eYepLEU0HboV5iPi
- MJjw==
+ bh=PmIwD4iBNcUuw3i6x3kYV1IdinJvK8Ycy3AB9P+Bgr8=;
+ b=0nvenjhvDJiH57OuxudFPqYkriTpXJHQPfSEFScFRIkBBX0vK4sGZn1Q28kVrKvU2a
+ PJcpvZ3mVKoL631yht16MtOgnkkPX3bkcJsblHhbwPpGiGxEFiZy+9aLl3EPChNZxUKz
+ 5zIxjjh9N05XJErDf1bfFjs1A5VgsIqjYWpxYHd+5YZ4PO954bW5PY6DsO2NeusAI5B2
+ 4XYTEOl/Zfp2OhwJCPV1zoY2ovR+SHovIIAjgYfsfIEgF8bqrt//CLleZoHhUcepnz/q
+ PXjY/le6bxu9OEnNAy2rKS5l87yNXk6h2A81oAEczY47nP+2KKwmXiSZ2P9d8bRdYK0i
+ SMxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1770681742; x=1771286542;
+ d=1e100.net; s=20230601; t=1770681744; x=1771286544;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=k4wDbXGzzw/WfaPvT1wL6uZXToJNS/HoeZDoZJiao3I=;
- b=djBb/Zfg3KWC9QtiDuKQi3ufcZqHdqhw4Trn6wKCEeQmykF2HBYYQZ0N4wkoyTY4zT
- 8xEVn4Pht9qFDbKBHN6ZNB8bgRO+TAtQkxugRhkF0OPiLxAm/DcxvO1Sd0h9qdn95uDI
- HHU9JdcnRyVxE8o0DKhS1nK4HilLogz+VLmiTWiAhp73O7BlibqKmLZBsnaqx6Wis8ao
- vpYEq5C9TnK+3oXW8qZoHJQLynNG1qNYmdE0DAyb+7M0H9a4G0PLjzO5JX8vNjAbu5Rt
- hmTbCwfU9VRKHppMk2hEH/B28zkZ9Aa0uuP08apALqGWbxj3kniDFPOrRvuAgMD7uleI
- fBNQ==
-X-Gm-Message-State: AOJu0Yxdg62+ATznVAau1URWsVoZ4zpnaxOj3vjaZRiur2iNBeXPegr6
- iCNje9D+tkFB9IaktPJaJlvRVWY9KjQMd2ktx2ebdQ1HsBbgkO0AAPp6PNgm9CwYbe8pdgeIOAq
- rtZVT
-X-Gm-Gg: AZuq6aJEMNaj9vbwRybj9s1M3f4USDy/rIOymhCJpFuhI2bxs4ICveukNyOX1AjnMp2
- bRYWVKMslLvx0f+JztZ0nzJBP+b5eRnudDn43GmANWUN6FT3H9I+iXB/uHUzhTlyjg1kxTyvj18
- QBhr3SrTXjICGHh9a7QBM2N8VyaH1h9E+qYTvVZaHIIOoKAIGFGaVZg10ZDL+aWkIYZKH7/ygFk
- zwjI+JOPRKBXj09IF04GnjqQ6bkwuZUyDKT3WiV+Dhuf6RJaSxA4r/8IIq8DVM/+xjKpghCNBIK
- HO8N/jGloRC/7w7o5sJfGtPyGMCAgAIpAneWOhnsum3/s7FgqdAy7Z+6pVRwiCevV2YTpx2600c
- dHdSmbcxdUDuvkeEWcdOpNWpSpmBnLcZF2zIl2n3AQN15xm4399Uct84EwXHSy4bYenkrAtTMwn
- a1Ch381vIZlPulW9NXdflJoQsrjWoiJO+2EYrysiQk2J/WWBQPwg==
-X-Received: by 2002:a05:6000:24c9:b0:435:a2f8:1534 with SMTP id
- ffacd0b85a97d-4362937e19fmr19116678f8f.49.1770681741998; 
- Mon, 09 Feb 2026 16:02:21 -0800 (PST)
+ bh=PmIwD4iBNcUuw3i6x3kYV1IdinJvK8Ycy3AB9P+Bgr8=;
+ b=MK1C8vzXAqNg4uz9Oh8BH5wzmkr7UsaQWQ93eQOcAmByD39Iyy5MTsnJRaXjuc86Ia
+ +A8fMwNuR8oTha2THV2NF21MmJMEd5xzQyjK2/TrK7sSvOHIyNcZRwY/gp42aDNsLFhg
+ w83kjkAVcfh6e1G4oJvAZozDCdLXbIrtLNR9LrIcGCvDoZBVNGukvkLlGLFyc/IRi/6K
+ /qyDaBM/ZhX7Q3jka7SNARnUYkBfa1q3dxNlXeWzTMCdV4iJD5XiSswiPQFsRWC3NJbX
+ 0Is1XG4B3B1xQzlV9iUvpAvFYojhLpeLTx1G91O5r5doSODBupTfswXBVv5ZaGtBCNfy
+ 9ePg==
+X-Gm-Message-State: AOJu0YzutfncM4w3JG1UbdaVVcz+u5uzaIVXhAoG1nS5rnoQPc+XzZ/K
+ FuBGabEztRpFLwkOB/i2v8bU2EgPYb1PcyqLoqzSE1LD0jD9qVqDUdN5Xb+L3cAfRU5ru6P/2fw
+ KiT4h
+X-Gm-Gg: AZuq6aK8uw0OFiS4ToIXaNXQMusbGWiCO9j0VuMn28nLs8NJM62rmgK/SzL6yQDr6Ao
+ gqwx3aBYD59SCiaoqZA6rkK8E3sj2jNtBJWN/YmoHENoBALvldDmMVKzLgD2tiHlJPNUVwJEtPv
+ bAukkUPssPpTGmnRnYt1Wwm8WC1gE6cm/76HmVEv+KwUr691MXAp3GIeq02yspTeh3cXCKCXmhy
+ +N+/BTcaH209GCPJWdgumvwYJyeShkW8McL977i4FU9HZwp5n2znn2cH+gqf6vioYqpO84GdzEl
+ I8FJlAt1weZzjyCJC4ZjJ2iz7smiNkgr43y+Z0Gi9JwosaVmLHvFWioCK7d/SCzSqaPH9vxrHSu
+ ejbvwFKj8hDA1y1j0qxtREpvCQJwszTk8pCnT3CmBZhMVxdy4d/bMgpwlVxlfFpSuRI54izVw50
+ B1bySWy2+LtK/p6KKS0jQUSsjYwgX3umXPk3r4IuwNvE6OXVla8Q==
+X-Received: by 2002:a05:6000:420f:b0:437:4872:fc83 with SMTP id
+ ffacd0b85a97d-4374873007fmr11997267f8f.33.1770681744248; 
+ Mon, 09 Feb 2026 16:02:24 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-436296bd211sm31529133f8f.13.2026.02.09.16.02.19
+ ffacd0b85a97d-436296bd211sm31529133f8f.13.2026.02.09.16.02.22
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 09 Feb 2026 16:02:20 -0800 (PST)
+ Mon, 09 Feb 2026 16:02:23 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v13 08/16] net/pcap: support VLAN insert and strip
-Date: Mon,  9 Feb 2026 16:00:39 -0800
-Message-ID: <20260210000201.295839-9-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v13 09/16] net/pcap: add link state and speed for interface
+ mode
+Date: Mon,  9 Feb 2026 16:00:40 -0800
+Message-ID: <20260210000201.295839-10-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260210000201.295839-1-stephen@networkplumber.org>
 References: <20260106182823.192350-1-stephen@networkplumber.org>
@@ -82,304 +82,583 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Driver can easily insert VLAN tag strip and insertion similar
-to how it is handled in virtio and af_packet.
+When the PCAP PMD is used in pass-through mode with a physical
+interface (iface=X), the link status was always reported with
+hardcoded values regardless of the actual interface state.
+
+Add OS-dependent functions to query the real link state, speed,
+duplex, and autonegotiation settings from the underlying interface.
+The eth_link_update() callback now returns accurate information
+when operating in pass-through mode.
+
+Linux uses ETHTOOL_GLINKSETTINGS which supports all speeds up to
+800 Gbps. FreeBSD uses SIOCGIFMEDIA, and Windows uses
+GetAdaptersAddresses().
+
+For pcap file mode or separate rx/tx interface configurations,
+default values continue to be used since there is no single
+underlying interface to query.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- doc/guides/nics/features/pcap.ini      |   1 +
- doc/guides/nics/pcap_ring.rst          |  11 +++
- doc/guides/rel_notes/release_26_03.rst |   4 +
- drivers/net/pcap/pcap_ethdev.c         | 117 ++++++++++++++++++++++++-
- 4 files changed, 129 insertions(+), 4 deletions(-)
+ doc/guides/rel_notes/release_26_03.rst |   1 +
+ drivers/net/pcap/pcap_ethdev.c         |  93 ++++++++++++++++---
+ drivers/net/pcap/pcap_osdep.h          |  24 +++++
+ drivers/net/pcap/pcap_osdep_freebsd.c  |  86 ++++++++++++++++++
+ drivers/net/pcap/pcap_osdep_linux.c    | 118 +++++++++++++++++++++++++
+ drivers/net/pcap/pcap_osdep_windows.c  |  95 +++++++++++++++++---
+ 6 files changed, 394 insertions(+), 23 deletions(-)
 
-diff --git a/doc/guides/nics/features/pcap.ini b/doc/guides/nics/features/pcap.ini
-index b0dac3cca7..814bc2119f 100644
---- a/doc/guides/nics/features/pcap.ini
-+++ b/doc/guides/nics/features/pcap.ini
-@@ -10,6 +10,7 @@ Scattered Rx         = Y
- Timestamp offload    = Y
- Basic stats          = Y
- Stats per queue      = Y
-+VLAN offload         = Y
- Multiprocess aware   = Y
- FreeBSD              = Y
- Linux                = Y
-diff --git a/doc/guides/nics/pcap_ring.rst b/doc/guides/nics/pcap_ring.rst
-index 6955e91130..c005786ce3 100644
---- a/doc/guides/nics/pcap_ring.rst
-+++ b/doc/guides/nics/pcap_ring.rst
-@@ -213,6 +213,17 @@ Otherwise, the first 512 packets from the input pcap file will be discarded by t
-    an error if interface is down, and the PMD itself won't change the status
-    of the external network interface.
- 
-+Features and Limitations
-+^^^^^^^^^^^^^^^^^^^^^^^^
-+
-+*  The PMD will re-insert the VLAN tag transparently to the packet if the kernel
-+   strips it, as long as the ``RTE_ETH_RX_OFFLOAD_VLAN_STRIP`` is not enabled by the
-+   application.
-+
-+*  The PMD will transparently insert a VLAN tag to transmitted packets if
-+   ``RTE_ETH_TX_OFFLOAD_VLAN_INSERT`` is enabled and the mbuf has ``RTE_MBUF_F_TX_VLAN``
-+   set.
-+
- 
- Rings-based PMD
- ~~~~~~~~~~~~~~~
 diff --git a/doc/guides/rel_notes/release_26_03.rst b/doc/guides/rel_notes/release_26_03.rst
-index 031eaa657e..c97ab7c3ca 100644
+index c97ab7c3ca..1ccf17d1e7 100644
 --- a/doc/guides/rel_notes/release_26_03.rst
 +++ b/doc/guides/rel_notes/release_26_03.rst
-@@ -63,6 +63,10 @@ New Features
+@@ -66,6 +66,7 @@ New Features
+ * **Updated PCAP ethernet driver.**
  
-   * Added support for pre and post VF reset callbacks.
+   * Added support for VLAN insertion and stripping.
++  * Added support for reporting link state and speed in ``iface`` mode.
  
-+* **Updated PCAP ethernet driver.**
-+
-+  * Added support for VLAN insertion and stripping.
-+
  
  Removed Items
- -------------
 diff --git a/drivers/net/pcap/pcap_ethdev.c b/drivers/net/pcap/pcap_ethdev.c
-index b77fa85dd4..7fb6d98d75 100644
+index 7fb6d98d75..90b23d6c2a 100644
 --- a/drivers/net/pcap/pcap_ethdev.c
 +++ b/drivers/net/pcap/pcap_ethdev.c
-@@ -77,6 +77,7 @@ struct queue_missed_stat {
- struct pcap_rx_queue {
- 	uint16_t port_id;
- 	uint16_t queue_id;
-+	bool vlan_strip;
- 	struct rte_mempool *mb_pool;
- 	struct queue_stat rx_stat;
- 	struct queue_missed_stat missed_stat;
-@@ -107,6 +108,7 @@ struct pmd_internals {
- 	bool single_iface;
- 	bool phy_mac;
- 	bool infinite_rx;
-+	bool vlan_strip;
+@@ -151,13 +151,6 @@ static const char *valid_arguments[] = {
+ 	NULL
  };
  
- struct pmd_process_private {
-@@ -271,7 +273,11 @@ eth_pcap_rx_infinite(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- 		bufs[i]->data_len = pcap_buf->data_len;
- 		bufs[i]->pkt_len = pcap_buf->pkt_len;
- 		bufs[i]->port = pcap_q->port_id;
--		rx_bytes += pcap_buf->data_len;
-+
-+		if (pcap_q->vlan_strip)
-+			rte_vlan_strip(bufs[i]);
-+
-+		rx_bytes += bufs[i]->data_len;
+-static struct rte_eth_link pmd_link = {
+-		.link_speed = RTE_ETH_SPEED_NUM_10G,
+-		.link_duplex = RTE_ETH_LINK_FULL_DUPLEX,
+-		.link_status = RTE_ETH_LINK_DOWN,
+-		.link_autoneg = RTE_ETH_LINK_FIXED,
+-};
+-
+ RTE_LOG_REGISTER_DEFAULT(eth_pcap_logtype, NOTICE);
  
- 		/* Enqueue packet back on ring to allow infinite rx. */
- 		rte_ring_enqueue(pcap_q->pkts, pcap_buf);
-@@ -337,6 +343,10 @@ eth_pcap_rx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- 		}
- 
- 		mbuf->pkt_len = len;
-+
-+		if (pcap_q->vlan_strip)
-+			rte_vlan_strip(mbuf);
-+
- 		uint64_t us = (uint64_t)header->ts.tv_sec * US_PER_S + header->ts.tv_usec;
- 
- 		*RTE_MBUF_DYNFIELD(mbuf, timestamp_dynfield_offset, rte_mbuf_timestamp_t *) = us;
-@@ -383,6 +393,56 @@ calculate_timestamp(struct timeval *ts) {
- 	}
+ static struct queue_missed_stat*
+@@ -957,11 +950,84 @@ eth_dev_close(struct rte_eth_dev *dev)
+ 	return 0;
  }
  
-+
 +/*
-+ * If Vlan offload flag is present, insert the vlan.
-+ * Returns the mbuf to send, or NULL on error.
++ * Convert osdep speed (Mbps) to rte_eth_link speed constant.
 + */
-+static inline int
-+eth_pcap_tx_vlan(struct pcap_tx_queue *tx_queue, struct rte_mbuf **mbuf)
++static uint32_t
++speed_mbps_to_rte(uint32_t speed_mbps)
 +{
-+	struct rte_mbuf *mb = *mbuf;
++	switch (speed_mbps) {
++	case 10:
++		return RTE_ETH_SPEED_NUM_10M;
++	case 100:
++		return RTE_ETH_SPEED_NUM_100M;
++	case 1000:
++		return RTE_ETH_SPEED_NUM_1G;
++	case 2500:
++		return RTE_ETH_SPEED_NUM_2_5G;
++	case 5000:
++		return RTE_ETH_SPEED_NUM_5G;
++	case 10000:
++		return RTE_ETH_SPEED_NUM_10G;
++	case 20000:
++		return RTE_ETH_SPEED_NUM_20G;
++	case 25000:
++		return RTE_ETH_SPEED_NUM_25G;
++	case 40000:
++		return RTE_ETH_SPEED_NUM_40G;
++	case 50000:
++		return RTE_ETH_SPEED_NUM_50G;
++	case 56000:
++		return RTE_ETH_SPEED_NUM_56G;
++	case 100000:
++		return RTE_ETH_SPEED_NUM_100G;
++	case 200000:
++		return RTE_ETH_SPEED_NUM_200G;
++	case 400000:
++		return RTE_ETH_SPEED_NUM_400G;
++	case 800000:
++		return RTE_ETH_SPEED_NUM_800G;
++	default:
++		return RTE_ETH_SPEED_NUM_UNKNOWN;
++	}
++}
 +
-+	if ((mb->ol_flags & RTE_MBUF_F_TX_VLAN) == 0)
-+		return 0;
+ static int
+-eth_link_update(struct rte_eth_dev *dev __rte_unused,
+-		int wait_to_complete __rte_unused)
++eth_link_update(struct rte_eth_dev *dev, int wait_to_complete __rte_unused)
+ {
+-	return 0;
++	struct pmd_internals *internals = dev->data->dev_private;
++	const char *iface_name = internals->rx_queue[0].name;
++	struct rte_eth_link link;
++	struct osdep_iface_link osdep_link;
 +
-+	if (unlikely(mb->data_len < RTE_ETHER_HDR_LEN)) {
-+		PMD_TX_LOG(ERR, "mbuf missing ether header");
-+		goto error;
++	memset(&link, 0, sizeof(link));
++
++	/*
++	 * For pass-through mode (single_iface), query the actual interface.
++	 * Otherwise, use the default static link values.
++	 */
++	if (internals->single_iface &&
++	    osdep_iface_link_get(iface_name, &osdep_link) == 0) {
++		link.link_speed = speed_mbps_to_rte(osdep_link.link_speed);
++		link.link_status = osdep_link.link_status ?
++			RTE_ETH_LINK_UP : RTE_ETH_LINK_DOWN;
++		link.link_duplex = osdep_link.link_duplex ?
++			RTE_ETH_LINK_FULL_DUPLEX : RTE_ETH_LINK_HALF_DUPLEX;
++		link.link_autoneg = osdep_link.link_autoneg ?
++			RTE_ETH_LINK_AUTONEG : RTE_ETH_LINK_FIXED;
++	} else {
++		/*
++		 * Not in pass-through mode (using pcap files or separate
++		 * interfaces for rx/tx). Or query failed. Use default values.
++		 */
++		link.link_speed = RTE_ETH_SPEED_NUM_10G;
++		link.link_duplex = RTE_ETH_LINK_FULL_DUPLEX;
++		link.link_status = dev->data->dev_started ?
++			RTE_ETH_LINK_UP : RTE_ETH_LINK_DOWN;
++		link.link_autoneg = RTE_ETH_LINK_FIXED;
 +	}
 +
-+	/* Need at another buffer to hold VLAN header? */
-+	if (!RTE_MBUF_DIRECT(mb) || rte_mbuf_refcnt_read(mb) > 1) {
-+		struct rte_mbuf *mh = rte_pktmbuf_alloc(mb->pool);
-+		if (unlikely(mh == NULL)) {
-+			PMD_TX_LOG(ERR, "mbuf pool exhausted on transmit vlan");
-+			goto error;
++	return rte_eth_linkstatus_set(dev, &link);
+ }
+ 
+ static int
+@@ -1376,7 +1442,12 @@ pmd_init_internals(struct rte_vdev_device *vdev,
+ 	data = (*eth_dev)->data;
+ 	data->nb_rx_queues = (uint16_t)nb_rx_queues;
+ 	data->nb_tx_queues = (uint16_t)nb_tx_queues;
+-	data->dev_link = pmd_link;
++	data->dev_link = (struct rte_eth_link) {
++		.link_speed = RTE_ETH_SPEED_NUM_NONE,
++		.link_duplex = RTE_ETH_LINK_FULL_DUPLEX,
++		.link_status = RTE_ETH_LINK_DOWN,
++		.link_autoneg = RTE_ETH_LINK_FIXED,
++	};
+ 	data->mac_addrs = &(*internals)->eth_addr;
+ 	data->promiscuous = 1;
+ 	data->all_multicast = 1;
+diff --git a/drivers/net/pcap/pcap_osdep.h b/drivers/net/pcap/pcap_osdep.h
+index fe7399ff9f..b72dd0d74c 100644
+--- a/drivers/net/pcap/pcap_osdep.h
++++ b/drivers/net/pcap/pcap_osdep.h
+@@ -10,6 +10,7 @@
+ 
+ #define PMD_LOG(level, ...) \
+ 	RTE_LOG_LINE_PREFIX(level, ETH_PCAP, "%s(): ", __func__, __VA_ARGS__)
++
+ extern int eth_pcap_logtype;
+ #define RTE_LOGTYPE_ETH_PCAP eth_pcap_logtype
+ 
+@@ -27,7 +28,30 @@ extern int eth_pcap_logtype;
+ #define PMD_TX_LOG(...) do { } while (0)
+ #endif
+ 
++/**
++ * Link information returned by osdep_iface_link_get().
++ */
++struct osdep_iface_link {
++	uint32_t link_speed;    /**< Speed in Mbps, 0 if unknown */
++	uint8_t link_status;    /**< 1 = up, 0 = down */
++	uint8_t link_duplex;    /**< 1 = full, 0 = half */
++	uint8_t link_autoneg;   /**< 1 = autoneg enabled, 0 = fixed */
++};
++
++
+ int osdep_iface_index_get(const char *name);
+ int osdep_iface_mac_get(const char *name, struct rte_ether_addr *mac);
+ 
++/**
++ * Get link state and speed for a network interface.
++ *
++ * @param name
++ *   Interface name (e.g., "eth0" on Linux, "{GUID}" on Windows).
++ * @param link
++ *   Pointer to structure to fill with link information.
++ * @return
++ *   0 on success, -1 on failure.
++ */
++int osdep_iface_link_get(const char *name, struct osdep_iface_link *link);
++
+ #endif
+diff --git a/drivers/net/pcap/pcap_osdep_freebsd.c b/drivers/net/pcap/pcap_osdep_freebsd.c
+index 0185665f0b..5963b67087 100644
+--- a/drivers/net/pcap/pcap_osdep_freebsd.c
++++ b/drivers/net/pcap/pcap_osdep_freebsd.c
+@@ -5,12 +5,36 @@
+  */
+ 
+ #include <string.h>
++#include <stdlib.h>
++#include <unistd.h>
+ #include <net/if.h>
+ #include <net/if_dl.h>
++#include <net/if_media.h>
++#include <sys/ioctl.h>
++#include <sys/socket.h>
+ #include <sys/sysctl.h>
+ 
+ #include "pcap_osdep.h"
+ 
++/*
++ * Userspace implementation of ifmedia_baudrate().
++ * The kernel function is not exported to userspace, so we implement
++ * our own using the IFM_BAUDRATE_DESCRIPTIONS table from if_media.h.
++ */
++static uint64_t
++ifmedia_baudrate_user(int mword)
++{
++	static const struct ifmedia_baudrate descs[] =
++		IFM_BAUDRATE_DESCRIPTIONS;
++	const struct ifmedia_baudrate *desc;
++
++	for (desc = descs; desc->ifmb_word != 0; desc++) {
++		if (IFM_TYPE_MATCH(desc->ifmb_word, mword))
++			return desc->ifmb_baudrate;
++	}
++	return 0;
++}
++
+ int
+ osdep_iface_index_get(const char *name)
+ {
+@@ -55,3 +79,65 @@ osdep_iface_mac_get(const char *if_name, struct rte_ether_addr *mac)
+ 	free(buf);
+ 	return 0;
+ }
++
++int
++osdep_iface_link_get(const char *if_name, struct osdep_iface_link *link)
++{
++	struct ifmediareq ifmr;
++	struct ifreq ifr;
++	uint64_t baudrate;
++	int if_fd;
++
++	memset(link, 0, sizeof(*link));
++
++	if_fd = socket(AF_INET, SOCK_DGRAM, 0);
++	if (if_fd == -1)
++		return -1;
++
++	/* Get interface flags to determine administrative status */
++	memset(&ifr, 0, sizeof(ifr));
++	strlcpy(ifr.ifr_name, if_name, sizeof(ifr.ifr_name));
++	if (ioctl(if_fd, SIOCGIFFLAGS, &ifr) == 0) {
++		if (ifr.ifr_flags & IFF_UP)
++			link->link_status = 1;
++	}
++
++	/* Get media status for speed, duplex, and link state */
++	memset(&ifmr, 0, sizeof(ifmr));
++	strlcpy(ifmr.ifm_name, if_name, sizeof(ifmr.ifm_name));
++
++	if (ioctl(if_fd, SIOCGIFMEDIA, &ifmr) == 0) {
++		/* Check if link is actually active */
++		if (!(ifmr.ifm_status & IFM_ACTIVE))
++			link->link_status = 0;
++
++		/* Only parse media if we have a valid current media type */
++		if (ifmr.ifm_current != 0 && IFM_TYPE(ifmr.ifm_current) == IFM_ETHER) {
++			/* Use userspace baudrate lookup */
++			baudrate = ifmedia_baudrate_user(ifmr.ifm_current);
++			link->link_speed = baudrate / 1000000;
++
++			/* Check duplex - FDX option means full duplex */
++			if (IFM_OPTIONS(ifmr.ifm_current) & IFM_FDX)
++				link->link_duplex = 1;
++			else
++				link->link_duplex = 0;
++		} else {
++			/* Default to full duplex if we can't determine */
++			link->link_duplex = 1;
 +		}
 +
-+		/* Extract original ethernet header into new mbuf */
-+		memcpy(rte_pktmbuf_mtod(mh, void *), rte_pktmbuf_mtod(mb, void *), RTE_ETHER_HDR_LEN);
-+		mh->nb_segs = mb->nb_segs + 1;
-+		mh->data_len = RTE_ETHER_HDR_LEN;
-+		mh->pkt_len = mb->pkt_len;
-+		mh->ol_flags = mb->ol_flags;
-+
-+		mb->data_len -= RTE_ETHER_HDR_LEN;
-+		mh->next = mb;
-+
-+		*mbuf = mh;
-+	}
-+
-+	int ret = rte_vlan_insert(mbuf);
-+	if (unlikely(ret != 0)) {
-+		PMD_TX_LOG(ERR, "Vlan insert failed: %s", strerror(-ret));
-+		goto error;
-+	}
-+	return 0;
-+error:
-+	tx_queue->tx_stat.err_pkts++;
-+	return -1;
-+}
-+
- /*
-  * Callback to handle writing packets to a pcap file.
-  */
-@@ -408,13 +468,17 @@ eth_pcap_tx_dumper(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- 	/* writes the nb_pkts packets to the previously opened pcap file
- 	 * dumper */
- 	for (i = 0; i < nb_pkts; i++) {
--		struct rte_mbuf *mbuf = bufs[i];
- 		uint32_t len, caplen;
- 		const uint8_t *data;
- 
-+		if (eth_pcap_tx_vlan(dumper_q, &bufs[i]) < 0)
-+			continue;
-+
-+		struct rte_mbuf *mbuf = bufs[i];
- 		len = caplen = rte_pktmbuf_pkt_len(mbuf);
- 
- 		calculate_timestamp(&header.ts);
-+
- 		header.len = len;
- 		header.caplen = caplen;
- 
-@@ -493,6 +557,9 @@ eth_pcap_tx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- 		return 0;
- 
- 	for (i = 0; i < nb_pkts; i++) {
-+		if (eth_pcap_tx_vlan(tx_queue, &bufs[i]) < 0)
-+			continue;
-+
- 		struct rte_mbuf *mbuf = bufs[i];
- 		uint32_t len = rte_pktmbuf_pkt_len(mbuf);
- 
-@@ -740,8 +807,13 @@ eth_dev_stop(struct rte_eth_dev *dev)
- }
- 
- static int
--eth_dev_configure(struct rte_eth_dev *dev __rte_unused)
-+eth_dev_configure(struct rte_eth_dev *dev)
- {
-+	struct pmd_internals *internals = dev->data->dev_private;
-+	struct rte_eth_conf *dev_conf = &dev->data->dev_conf;
-+	const struct rte_eth_rxmode *rxmode = &dev_conf->rxmode;
-+
-+	internals->vlan_strip = !!(rxmode->offloads & RTE_ETH_RX_OFFLOAD_VLAN_STRIP);
- 	return 0;
- }
- 
-@@ -757,7 +829,9 @@ eth_dev_info(struct rte_eth_dev *dev,
- 	dev_info->max_rx_queues = dev->data->nb_rx_queues;
- 	dev_info->max_tx_queues = dev->data->nb_tx_queues;
- 	dev_info->min_rx_bufsize = 0;
--	dev_info->tx_offload_capa = RTE_ETH_TX_OFFLOAD_MULTI_SEGS;
-+	dev_info->tx_offload_capa = RTE_ETH_TX_OFFLOAD_MULTI_SEGS |
-+		RTE_ETH_TX_OFFLOAD_VLAN_INSERT;
-+	dev_info->rx_offload_capa = RTE_ETH_RX_OFFLOAD_VLAN_STRIP;
- 
- 	return 0;
- }
-@@ -904,6 +978,7 @@ eth_rx_queue_setup(struct rte_eth_dev *dev,
- 	pcap_q->mb_pool = mb_pool;
- 	pcap_q->port_id = dev->data->port_id;
- 	pcap_q->queue_id = rx_queue_id;
-+	pcap_q->vlan_strip = internals->vlan_strip;
- 	dev->data->rx_queues[rx_queue_id] = pcap_q;
- 
- 	if (internals->infinite_rx) {
-@@ -913,6 +988,7 @@ eth_rx_queue_setup(struct rte_eth_dev *dev,
- 		uint64_t pcap_pkt_count = 0;
- 		struct rte_mbuf *bufs[1];
- 		pcap_t **pcap;
-+		bool save_vlan_strip;
- 
- 		pp = rte_eth_devices[pcap_q->port_id].process_private;
- 		pcap = &pp->rx_pcap[pcap_q->queue_id];
-@@ -932,11 +1008,20 @@ eth_rx_queue_setup(struct rte_eth_dev *dev,
- 		if (!pcap_q->pkts)
- 			return -ENOENT;
- 
++		/* Check autonegotiation status */
++		link->link_autoneg = (ifmr.ifm_current & IFM_AUTO) ? 1 : 0;
++	} else {
 +		/*
-+		 * Temporarily disable offloads while filling the ring
-+		 * with raw packets. VLAN strip and timestamp will be
-+		 * applied later in eth_pcap_rx_infinite() on each copy.
++		 * SIOCGIFMEDIA failed - interface may not support it.
++		 * Default to reasonable values.
 +		 */
-+		save_vlan_strip = pcap_q->vlan_strip;
-+		pcap_q->vlan_strip = false;
-+
- 		/* Fill ring with packets from PCAP file one by one. */
- 		while (eth_pcap_rx(pcap_q, bufs, 1)) {
- 			/* Check for multiseg mbufs. */
- 			if (bufs[0]->nb_segs != 1) {
- 				infinite_rx_ring_free(pcap_q->pkts);
-+				pcap_q->vlan_strip = save_vlan_strip;
- 				PMD_LOG(ERR,
- 					"Multiseg mbufs are not supported in infinite_rx mode.");
- 				return -EINVAL;
-@@ -946,6 +1031,9 @@ eth_rx_queue_setup(struct rte_eth_dev *dev,
- 					(void * const *)bufs, 1, NULL);
- 		}
- 
-+		/* Restore offloads for use during packet delivery */
-+		pcap_q->vlan_strip = save_vlan_strip;
-+
- 		if (rte_ring_count(pcap_q->pkts) < pcap_pkt_count) {
- 			infinite_rx_ring_free(pcap_q->pkts);
- 			PMD_LOG(ERR,
-@@ -1030,6 +1118,26 @@ eth_tx_queue_stop(struct rte_eth_dev *dev, uint16_t tx_queue_id)
- 	return 0;
- }
- 
-+static int
-+eth_vlan_offload_set(struct rte_eth_dev *dev, int mask)
-+{
-+	struct pmd_internals *internals = dev->data->dev_private;
-+	unsigned int i;
-+
-+	if (mask & RTE_ETH_VLAN_STRIP_MASK) {
-+		bool vlan_strip = !!(dev->data->dev_conf.rxmode.offloads &
-+				     RTE_ETH_RX_OFFLOAD_VLAN_STRIP);
-+
-+		internals->vlan_strip = vlan_strip;
-+
-+		/* Update all RX queues */
-+		for (i = 0; i < dev->data->nb_rx_queues; i++)
-+			internals->rx_queue[i].vlan_strip = vlan_strip;
++		link->link_duplex = 1;  /* Assume full duplex */
++		link->link_autoneg = 0;
 +	}
 +
++	close(if_fd);
 +	return 0;
 +}
-+
- static const struct eth_dev_ops ops = {
- 	.dev_start = eth_dev_start,
- 	.dev_stop = eth_dev_stop,
-@@ -1046,6 +1154,7 @@ static const struct eth_dev_ops ops = {
- 	.link_update = eth_link_update,
- 	.stats_get = eth_stats_get,
- 	.stats_reset = eth_stats_reset,
-+	.vlan_offload_set = eth_vlan_offload_set,
- };
+diff --git a/drivers/net/pcap/pcap_osdep_linux.c b/drivers/net/pcap/pcap_osdep_linux.c
+index df976417cb..3b56a833a9 100644
+--- a/drivers/net/pcap/pcap_osdep_linux.c
++++ b/drivers/net/pcap/pcap_osdep_linux.c
+@@ -4,11 +4,14 @@
+  * All rights reserved.
+  */
  
- static int
++#include <stdlib.h>
+ #include <string.h>
+ #include <unistd.h>
+ #include <net/if.h>
+ #include <sys/ioctl.h>
+ #include <sys/socket.h>
++#include <linux/ethtool.h>
++#include <linux/sockios.h>
+ 
+ #include <rte_string_fns.h>
+ 
+@@ -40,3 +43,118 @@ osdep_iface_mac_get(const char *if_name, struct rte_ether_addr *mac)
+ 	close(if_fd);
+ 	return 0;
+ }
++
++/*
++ * Get link speed, duplex, and autoneg using ETHTOOL_GLINKSETTINGS.
++ *
++ * ETHTOOL_GLINKSETTINGS was introduced in kernel 4.7 and supports
++ * speeds beyond 65535 Mbps (up to 800 Gbps and beyond).
++ * DPDK requires kernel 4.19 or later, so this interface is always available.
++ *
++ * Returns 0 on success, -1 on failure.
++ */
++static int
++get_link_settings(int fd, struct ifreq *ifr, struct osdep_iface_link *link)
++{
++	struct ethtool_link_settings probe = { };
++	struct ethtool_link_settings *req;
++	size_t req_size;
++	int nwords;
++	int ret = -1;
++
++	/* First call with nwords = 0 to get the required size */
++	probe.cmd = ETHTOOL_GLINKSETTINGS;
++	ifr->ifr_data = (void *)&probe;
++
++	if (ioctl(fd, SIOCETHTOOL, ifr) < 0)
++		return -1;
++
++	/* Kernel returns negative nwords on first call */
++	if (probe.link_mode_masks_nwords >= 0)
++		return -1;
++
++	nwords = -probe.link_mode_masks_nwords;
++
++	/* Bounds check */
++	if (nwords == 0 || nwords > 127)
++		return -1;
++
++	/* Second call with correct nwords - need space for 3 link mode masks */
++	req_size = sizeof(*req) + 3 * nwords * sizeof(uint32_t);
++	req = malloc(req_size);
++	if (req == NULL)
++		return -1;
++
++	memset(req, 0, req_size);
++	req->cmd = ETHTOOL_GLINKSETTINGS;
++	req->link_mode_masks_nwords = nwords;
++	ifr->ifr_data = (void *)req;
++
++	if (ioctl(fd, SIOCETHTOOL, ifr) < 0)
++		goto out;
++
++	/* Speed is in Mbps, directly usable */
++	link->link_speed = req->speed;
++
++	/* Handle special values */
++	if (link->link_speed == (uint32_t)SPEED_UNKNOWN ||
++	    link->link_speed == (uint32_t)-1)
++		link->link_speed = 0;
++
++	switch (req->duplex) {
++	case DUPLEX_FULL:
++		link->link_duplex = 1;
++		break;
++	case DUPLEX_HALF:
++		link->link_duplex = 0;
++		break;
++	default:
++		link->link_duplex = 1;  /* Default to full duplex */
++		break;
++	}
++
++	link->link_autoneg = (req->autoneg == AUTONEG_ENABLE) ? 1 : 0;
++	ret = 0;
++out:
++	free(req);
++	return ret;
++}
++
++int
++osdep_iface_link_get(const char *if_name, struct osdep_iface_link *link)
++{
++	struct ifreq ifr;
++	int if_fd;
++
++	memset(link, 0, sizeof(*link));
++
++	if_fd = socket(AF_INET, SOCK_DGRAM, 0);
++	if (if_fd == -1)
++		return -1;
++
++	/* Get interface flags to determine link status */
++	rte_strscpy(ifr.ifr_name, if_name, sizeof(ifr.ifr_name));
++	if (ioctl(if_fd, SIOCGIFFLAGS, &ifr) == 0) {
++		/*
++		 * IFF_UP means administratively up
++		 * IFF_RUNNING means operationally up (carrier detected)
++		 */
++		if ((ifr.ifr_flags & IFF_UP) && (ifr.ifr_flags & IFF_RUNNING))
++			link->link_status = 1;
++	}
++
++	rte_strscpy(ifr.ifr_name, if_name, sizeof(ifr.ifr_name));
++	if (get_link_settings(if_fd, &ifr, link) < 0) {
++		/*
++		 * ethtool failed - interface may not support it
++		 * (e.g., virtual interfaces like veth, lo).
++		 * Use reasonable defaults.
++		 */
++		link->link_speed = 0;
++		link->link_duplex = 1;  /* Assume full duplex */
++		link->link_autoneg = 0;
++	}
++
++	close(if_fd);
++	return 0;
++}
+diff --git a/drivers/net/pcap/pcap_osdep_windows.c b/drivers/net/pcap/pcap_osdep_windows.c
+index 1d398dc7ed..1b76ae3185 100644
+--- a/drivers/net/pcap/pcap_osdep_windows.c
++++ b/drivers/net/pcap/pcap_osdep_windows.c
+@@ -61,38 +61,56 @@ osdep_iface_index_get(const char *device_name)
+ }
+ 
+ /*
+- * libpcap takes device names like "\Device\NPF_{GUID}",
+- * GetAdaptersAddresses() returns names in "{GUID}" form.
+- * Try to extract GUID from device name, fall back to original device name.
++ * Helper function to get adapter information by name.
++ * Returns adapter info on success, NULL on failure.
++ * Caller must free the returned buffer.
+  */
+-int
+-osdep_iface_mac_get(const char *device_name, struct rte_ether_addr *mac)
++static IP_ADAPTER_ADDRESSES *
++get_adapter_addresses(void)
+ {
+-	IP_ADAPTER_ADDRESSES *info = NULL, *cur = NULL;
+-	ULONG size, sys_ret;
+-	const char *adapter_name;
+-	int ret = -1;
++	IP_ADAPTER_ADDRESSES *info = NULL;
++	ULONG size;
++	DWORD sys_ret;
+ 
+ 	sys_ret = GetAdaptersAddresses(AF_UNSPEC, 0, NULL, NULL, &size);
+ 	if (sys_ret != ERROR_BUFFER_OVERFLOW) {
+ 		PMD_LOG(ERR, "GetAdapterAddresses() = %lu, expected %lu\n",
+ 			sys_ret, ERROR_BUFFER_OVERFLOW);
+-		return -1;
++		return NULL;
+ 	}
+ 
+ 	info = (IP_ADAPTER_ADDRESSES *)malloc(size);
+ 	if (info == NULL) {
+ 		PMD_LOG(ERR, "Cannot allocate adapter address info\n");
+-		return -1;
++		return NULL;
+ 	}
+ 
+ 	sys_ret = GetAdaptersAddresses(AF_UNSPEC, 0, NULL, info, &size);
+ 	if (sys_ret != ERROR_SUCCESS) {
+ 		PMD_LOG(ERR, "GetAdapterAddresses() = %lu\n", sys_ret);
+ 		free(info);
+-		return -1;
++		return NULL;
+ 	}
+ 
++	return info;
++}
++
++/*
++ * libpcap takes device names like "\Device\NPF_{GUID}",
++ * GetAdaptersAddresses() returns names in "{GUID}" form.
++ * Try to extract GUID from device name, fall back to original device name.
++ */
++int
++osdep_iface_mac_get(const char *device_name, struct rte_ether_addr *mac)
++{
++	IP_ADAPTER_ADDRESSES *info = NULL, *cur = NULL;
++	const char *adapter_name;
++	int ret = -1;
++
++	info = get_adapter_addresses();
++	if (info == NULL)
++		return -1;
++
+ 	adapter_name = iface_guid(device_name);
+ 	if (adapter_name == NULL)
+ 		adapter_name = device_name;
+@@ -116,3 +134,56 @@ osdep_iface_mac_get(const char *device_name, struct rte_ether_addr *mac)
+ 	free(info);
+ 	return ret;
+ }
++
++int
++osdep_iface_link_get(const char *device_name, struct osdep_iface_link *link)
++{
++	IP_ADAPTER_ADDRESSES *info = NULL, *cur = NULL;
++	const char *adapter_name;
++	int ret = -1;
++
++	memset(link, 0, sizeof(*link));
++
++	info = get_adapter_addresses();
++	if (info == NULL)
++		return -1;
++
++	adapter_name = iface_guid(device_name);
++	if (adapter_name == NULL)
++		adapter_name = device_name;
++
++	for (cur = info; cur != NULL; cur = cur->Next) {
++		if (strcmp(cur->AdapterName, adapter_name) == 0) {
++			/* Check operational status */
++			if (cur->OperStatus == IfOperStatusUp)
++				link->link_status = 1;
++			else
++				link->link_status = 0;
++
++			/*
++			 * TransmitLinkSpeed and ReceiveLinkSpeed are in bits/sec.
++			 * Convert to Mbps. Use transmit speed as the link speed.
++			 * For asymmetric links, this is a reasonable approximation.
++			 */
++			if (cur->TransmitLinkSpeed != 0 &&
++			    cur->TransmitLinkSpeed != (ULONG64)-1) {
++				link->link_speed =
++					(uint32_t)(cur->TransmitLinkSpeed / 1000000ULL);
++			}
++
++			/*
++			 * Windows doesn't directly expose duplex/autoneg via
++			 * GetAdaptersAddresses(). Default to full duplex.
++			 * For more detailed info, WMI or OID queries would be needed.
++			 */
++			link->link_duplex = 1;  /* Assume full duplex */
++			link->link_autoneg = 0; /* Cannot determine */
++
++			ret = 0;
++			break;
++		}
++	}
++
++	free(info);
++	return ret;
++}
 -- 
 2.51.0
 
