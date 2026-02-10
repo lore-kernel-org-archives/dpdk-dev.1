@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DF29EA813E
-	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Feb 2026 16:15:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3880EF0702
+	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Feb 2026 16:15:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 20A5E40E18;
-	Tue, 10 Feb 2026 17:14:27 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 40CDA40E1B;
+	Tue, 10 Feb 2026 17:14:28 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
- by mails.dpdk.org (Postfix) with ESMTP id 55DC140DFB
+ by mails.dpdk.org (Postfix) with ESMTP id 9652D40DDE
  for <dev@dpdk.org>; Tue, 10 Feb 2026 17:14:23 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
  t=1770740064; x=1802276064;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=3cIWH7FxIVj2mRjRK7KcZNFK0IWHv3+Pu1Ni5Il63Dc=;
- b=F36yu3uk9PDfYzq68unP/asedQHByIh6febSuP1FPveCHKcdSA5AkWZD
- LKx1vFQXrekscKwGSInYfYPG574l7sz/BF0la23xAyQ64ynxZhv9ITVGs
- jW7ZJR0DFfFZhP89axJZqSDqnD+Nca1j8YZohVtBd6zV51l3+JaCzACV0
- zJujsMZ3ggtDPSlMOGzrOJo/JczO18f1+10NlsREp8+MgRsrv3ssKAWew
- 6qrElqxuq23c3RU08nAxrpf4l+BX/AsssUIHoVSn+z3f4b8UupMpWk22l
- GkK3nQ4JMmr5n5IdgIuRoBuikJ+oCmxduthdpWrAw31epumN6yftOm5EK g==;
-X-CSE-ConnectionGUID: vPDZNzdlTW631BtDr/NH8Q==
-X-CSE-MsgGUID: 0RBBl1Y2SrypnmdXR9KRjw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11697"; a="89286220"
-X-IronPort-AV: E=Sophos;i="6.21,283,1763452800"; d="scan'208";a="89286220"
+ bh=vRMwjLqMdoa3XuDio5Hz4GQTNP8whMRI9Ha19pIWsiY=;
+ b=JfMCnP0lZ54DfLI/1HKZ4rmGLpMJr2nL+mrBylDVf9FGWOb3txAYXPD+
+ fU90kRpr2/Br5i0LNgPslNsCY2t/CBVVpMO+meqzUv2RMH0aUji5Gp8H5
+ GJtFa/eOSQq7Cc1lomhNUeZVySXaIh1ikpATNsEOQdY0sUUDdxs/oUVrr
+ 4V1XmA8nPbwZA0k42dj3PN0Mu0dU/9kmO9WXMyofXzKZUIO8tjfuI4wQr
+ byVHErHSh4wZFO+Ibl75RNkIIwqWaG316FHvS3PyKGc/ubK/4uUcnRgcj
+ D6ScpHyBLpq+/QSkbkWbt0VgQnsPQqsSV4d9K0ElVLxtm3OHnxaTouGgi Q==;
+X-CSE-ConnectionGUID: kC3qMZWeThuBNgpgsco8HQ==
+X-CSE-MsgGUID: wUX1gDq9RqyoTeAGWtPxZQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11697"; a="89286229"
+X-IronPort-AV: E=Sophos;i="6.21,283,1763452800"; d="scan'208";a="89286229"
 Received: from orviesa003.jf.intel.com ([10.64.159.143])
  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 10 Feb 2026 08:14:20 -0800
-X-CSE-ConnectionGUID: ZiN1mveMSvKZfbX+oidtPg==
-X-CSE-MsgGUID: 4PQ8UcZDQmmxz/0ds4OhAw==
+ 10 Feb 2026 08:14:22 -0800
+X-CSE-ConnectionGUID: zuUY6/fzQDmVjB/vwbvMrA==
+X-CSE-MsgGUID: xGXjOwkHR1W62q47L9nArw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,283,1763452800"; d="scan'208";a="216127768"
+X-IronPort-AV: E=Sophos;i="6.21,283,1763452800"; d="scan'208";a="216127794"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by orviesa003.jf.intel.com with ESMTP; 10 Feb 2026 08:14:19 -0800
+ by orviesa003.jf.intel.com with ESMTP; 10 Feb 2026 08:14:22 -0800
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org,
-	Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v2 14/26] net/i40e: avoid rte malloc in DDP package handling
-Date: Tue, 10 Feb 2026 16:13:43 +0000
-Message-ID: <8d277542ef4e5d0d0afab8cf28c6ad969727e547.1770739925.git.anatoly.burakov@intel.com>
+	Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+Subject: [PATCH v2 16/26] net/iavf: remove remnants of pipeline mode
+Date: Tue, 10 Feb 2026 16:13:45 +0000
+Message-ID: <59f8ba8b9fc5c21e6579a221a130b8ccfc75da5a.1770739925.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <cover.1770739924.git.anatoly.burakov@intel.com>
  <cover.1770739924.git.anatoly.burakov@intel.com>
@@ -60,167 +60,99 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Currently, when processing Dynamic Driver Profile (DDP) packages and
-checking profile information, we are using rte_zmalloc followed by
-immediate rte_free. This is not needed as these buffers are only used
-temporarily, so replace it with stack-allocated structures or regular
-malloc/free where appropriate.
+When pipeline mode was removed, some of the things used by pipelines were
+left in the code. Remove them as they are unused.
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- drivers/net/intel/i40e/rte_pmd_i40e.c | 43 +++++++++------------------
- 1 file changed, 14 insertions(+), 29 deletions(-)
+ drivers/net/intel/iavf/iavf_fdir.c         |  1 -
+ drivers/net/intel/iavf/iavf_fsub.c         |  1 -
+ drivers/net/intel/iavf/iavf_generic_flow.h | 15 ---------------
+ drivers/net/intel/iavf/iavf_hash.c         |  1 -
+ drivers/net/intel/iavf/iavf_ipsec_crypto.c |  1 -
+ 5 files changed, 19 deletions(-)
 
-diff --git a/drivers/net/intel/i40e/rte_pmd_i40e.c b/drivers/net/intel/i40e/rte_pmd_i40e.c
-index fb73fa924f..a2e24b5ea2 100644
---- a/drivers/net/intel/i40e/rte_pmd_i40e.c
-+++ b/drivers/net/intel/i40e/rte_pmd_i40e.c
-@@ -1569,9 +1569,7 @@ i40e_check_profile_info(uint16_t port, uint8_t *profile_info_sec)
- 		PMD_DRV_LOG(INFO, "Read-only profile.");
- 		return 0;
- 	}
--	buff = rte_zmalloc("pinfo_list",
--			   (I40E_PROFILE_INFO_SIZE * I40E_MAX_PROFILE_NUM + 4),
--			   0);
-+	buff = calloc(I40E_MAX_PROFILE_NUM + 4, I40E_PROFILE_INFO_SIZE);
- 	if (!buff) {
- 		PMD_DRV_LOG(ERR, "failed to allocate memory");
- 		return -1;
-@@ -1583,7 +1581,7 @@ i40e_check_profile_info(uint16_t port, uint8_t *profile_info_sec)
- 		0, NULL);
- 	if (ret) {
- 		PMD_DRV_LOG(ERR, "Failed to get profile info list.");
--		rte_free(buff);
-+		free(buff);
- 		return -1;
- 	}
- 	p_list = (struct rte_pmd_i40e_profile_list *)buff;
-@@ -1591,20 +1589,20 @@ i40e_check_profile_info(uint16_t port, uint8_t *profile_info_sec)
- 		p = &p_list->p_info[i];
- 		if (pinfo->track_id == p->track_id) {
- 			PMD_DRV_LOG(INFO, "Profile exists.");
--			rte_free(buff);
-+			free(buff);
- 			return 1;
- 		}
- 	}
- 	/* profile with group id 0xff is compatible with any other profile */
- 	if ((pinfo->track_id & group_mask) == group_mask) {
--		rte_free(buff);
-+		free(buff);
- 		return 0;
- 	}
- 	for (i = 0; i < p_list->p_count; i++) {
- 		p = &p_list->p_info[i];
- 		if ((p->track_id & group_mask) == 0) {
- 			PMD_DRV_LOG(INFO, "Profile of the group 0 exists.");
--			rte_free(buff);
-+			free(buff);
- 			return 2;
- 		}
- 	}
-@@ -1615,12 +1613,12 @@ i40e_check_profile_info(uint16_t port, uint8_t *profile_info_sec)
- 		if ((pinfo->track_id & group_mask) !=
- 		    (p->track_id & group_mask)) {
- 			PMD_DRV_LOG(INFO, "Profile of different group exists.");
--			rte_free(buff);
-+			free(buff);
- 			return 3;
- 		}
- 	}
+diff --git a/drivers/net/intel/iavf/iavf_fdir.c b/drivers/net/intel/iavf/iavf_fdir.c
+index 0ef6e0d04a..9eae874800 100644
+--- a/drivers/net/intel/iavf/iavf_fdir.c
++++ b/drivers/net/intel/iavf/iavf_fdir.c
+@@ -1632,7 +1632,6 @@ static struct iavf_flow_parser iavf_fdir_parser = {
+ 	.array = iavf_fdir_pattern,
+ 	.array_len = RTE_DIM(iavf_fdir_pattern),
+ 	.parse_pattern_action = iavf_fdir_parse,
+-	.stage = IAVF_FLOW_STAGE_DISTRIBUTOR,
+ };
  
--	rte_free(buff);
-+	free(buff);
- 	return 0;
- }
+ RTE_INIT(iavf_fdir_engine_register)
+diff --git a/drivers/net/intel/iavf/iavf_fsub.c b/drivers/net/intel/iavf/iavf_fsub.c
+index cf1030320f..bfb34695de 100644
+--- a/drivers/net/intel/iavf/iavf_fsub.c
++++ b/drivers/net/intel/iavf/iavf_fsub.c
+@@ -814,7 +814,6 @@ iavf_flow_parser iavf_fsub_parser = {
+ 	.array = iavf_fsub_pattern_list,
+ 	.array_len = RTE_DIM(iavf_fsub_pattern_list),
+ 	.parse_pattern_action = iavf_fsub_parse,
+-	.stage = IAVF_FLOW_STAGE_DISTRIBUTOR,
+ };
  
-@@ -1636,7 +1634,10 @@ rte_pmd_i40e_process_ddp_package(uint16_t port, uint8_t *buff,
- 	struct i40e_generic_seg_header *profile_seg_hdr;
- 	struct i40e_generic_seg_header *metadata_seg_hdr;
- 	uint32_t track_id;
--	uint8_t *profile_info_sec;
-+	struct {
-+		struct i40e_profile_section_header sec;
-+		struct i40e_profile_info info;
-+	} profile_info_sec = {0};
- 	int is_exist;
- 	enum i40e_status_code status = I40E_SUCCESS;
- 	static const uint32_t type_mask = 0xff000000;
-@@ -1701,26 +1702,15 @@ rte_pmd_i40e_process_ddp_package(uint16_t port, uint8_t *buff,
- 		return -EINVAL;
- 	}
+ RTE_INIT(iavf_fsub_engine_init)
+diff --git a/drivers/net/intel/iavf/iavf_generic_flow.h b/drivers/net/intel/iavf/iavf_generic_flow.h
+index b11bb4cf2b..b97cf8b7ff 100644
+--- a/drivers/net/intel/iavf/iavf_generic_flow.h
++++ b/drivers/net/intel/iavf/iavf_generic_flow.h
+@@ -485,20 +485,6 @@ enum iavf_flow_engine_type {
+ 	IAVF_FLOW_ENGINE_MAX,
+ };
  
--	profile_info_sec = rte_zmalloc(
--		"i40e_profile_info",
--		sizeof(struct i40e_profile_section_header) +
--		sizeof(struct i40e_profile_info),
--		0);
--	if (!profile_info_sec) {
--		PMD_DRV_LOG(ERR, "Failed to allocate memory");
--		return -EINVAL;
--	}
+-/**
+- * classification stages.
+- * for non-pipeline mode, we have two classification stages: Distributor/RSS
+- * for pipeline-mode we have three classification stages:
+- * Permission/Distributor/RSS
+- */
+-enum iavf_flow_classification_stage {
+-	IAVF_FLOW_STAGE_NONE = 0,
+-	IAVF_FLOW_STAGE_IPSEC_CRYPTO,
+-	IAVF_FLOW_STAGE_RSS,
+-	IAVF_FLOW_STAGE_DISTRIBUTOR,
+-	IAVF_FLOW_STAGE_MAX,
+-};
 -
- 	/* Check if the profile already loaded */
- 	i40e_generate_profile_info_sec(
- 		((struct i40e_profile_segment *)profile_seg_hdr)->name,
- 		&((struct i40e_profile_segment *)profile_seg_hdr)->version,
--		track_id, profile_info_sec,
-+		track_id, (uint8_t* )&profile_info_sec,
- 		op == RTE_PMD_I40E_PKG_OP_WR_ADD);
--	is_exist = i40e_check_profile_info(port, profile_info_sec);
-+	is_exist = i40e_check_profile_info(port, (uint8_t* )&profile_info_sec);
- 	if (is_exist < 0) {
- 		PMD_DRV_LOG(ERR, "Failed to check profile.");
--		rte_free(profile_info_sec);
- 		return -EINVAL;
- 	}
+ /* Struct to store engine created. */
+ struct iavf_flow_engine {
+ 	TAILQ_ENTRY(iavf_flow_engine) node;
+@@ -527,7 +513,6 @@ struct iavf_flow_parser {
+ 	struct iavf_pattern_match_item *array;
+ 	uint32_t array_len;
+ 	parse_pattern_action_t parse_pattern_action;
+-	enum iavf_flow_classification_stage stage;
+ };
  
-@@ -1733,13 +1723,11 @@ rte_pmd_i40e_process_ddp_package(uint16_t port, uint8_t *buff,
- 			else if (is_exist == 3)
- 				PMD_DRV_LOG(ERR, "Profile of different group already exists");
- 			i40e_update_customized_info(dev, buff, size, op);
--			rte_free(profile_info_sec);
- 			return -EEXIST;
- 		}
- 	} else if (op == RTE_PMD_I40E_PKG_OP_WR_DEL) {
- 		if (is_exist != 1) {
- 			PMD_DRV_LOG(ERR, "Profile does not exist.");
--			rte_free(profile_info_sec);
- 			return -EACCES;
- 		}
- 	}
-@@ -1751,7 +1739,6 @@ rte_pmd_i40e_process_ddp_package(uint16_t port, uint8_t *buff,
- 			track_id);
- 		if (status) {
- 			PMD_DRV_LOG(ERR, "Failed to write profile for delete.");
--			rte_free(profile_info_sec);
- 			return status;
- 		}
- 	} else {
-@@ -1764,14 +1751,13 @@ rte_pmd_i40e_process_ddp_package(uint16_t port, uint8_t *buff,
- 				PMD_DRV_LOG(ERR, "Failed to write profile for add.");
- 			else
- 				PMD_DRV_LOG(ERR, "Failed to write profile.");
--			rte_free(profile_info_sec);
- 			return status;
- 		}
- 	}
+ /* Struct to store parser created. */
+diff --git a/drivers/net/intel/iavf/iavf_hash.c b/drivers/net/intel/iavf/iavf_hash.c
+index 1725c2b2b9..a40fed7542 100644
+--- a/drivers/net/intel/iavf/iavf_hash.c
++++ b/drivers/net/intel/iavf/iavf_hash.c
+@@ -691,7 +691,6 @@ static struct iavf_flow_parser iavf_hash_parser = {
+ 	.array = iavf_hash_pattern_list,
+ 	.array_len = RTE_DIM(iavf_hash_pattern_list),
+ 	.parse_pattern_action = iavf_hash_parse_pattern_action,
+-	.stage = IAVF_FLOW_STAGE_RSS,
+ };
  
- 	if (track_id && (op != RTE_PMD_I40E_PKG_OP_WR_ONLY)) {
- 		/* Modify loaded profiles info list */
--		status = i40e_add_rm_profile_info(hw, profile_info_sec);
-+		status = i40e_add_rm_profile_info(hw, (uint8_t* )&profile_info_sec);
- 		if (status) {
- 			if (op == RTE_PMD_I40E_PKG_OP_WR_ADD)
- 				PMD_DRV_LOG(ERR, "Failed to add profile to info list.");
-@@ -1784,7 +1770,6 @@ rte_pmd_i40e_process_ddp_package(uint16_t port, uint8_t *buff,
- 	    op == RTE_PMD_I40E_PKG_OP_WR_DEL)
- 		i40e_update_customized_info(dev, buff, size, op);
+ int
+diff --git a/drivers/net/intel/iavf/iavf_ipsec_crypto.c b/drivers/net/intel/iavf/iavf_ipsec_crypto.c
+index 6d41b1744e..66eaea8715 100644
+--- a/drivers/net/intel/iavf/iavf_ipsec_crypto.c
++++ b/drivers/net/intel/iavf/iavf_ipsec_crypto.c
+@@ -1983,7 +1983,6 @@ static struct iavf_flow_parser iavf_ipsec_flow_parser = {
+ 	.array = iavf_ipsec_flow_pattern,
+ 	.array_len = RTE_DIM(iavf_ipsec_flow_pattern),
+ 	.parse_pattern_action = iavf_ipsec_flow_parse,
+-	.stage = IAVF_FLOW_STAGE_IPSEC_CRYPTO,
+ };
  
--	rte_free(profile_info_sec);
- 	return status;
- }
- 
+ RTE_INIT(iavf_ipsec_flow_engine_register)
 -- 
 2.47.3
 
