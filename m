@@ -2,67 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97E18E94625
-	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Feb 2026 00:03:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 831F5E94625
+	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Feb 2026 00:03:25 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 954A040B91;
-	Tue, 10 Feb 2026 01:02:30 +0100 (CET)
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com
- [209.85.221.52]) by mails.dpdk.org (Postfix) with ESMTP id 1F08D40A76
- for <dev@dpdk.org>; Tue, 10 Feb 2026 01:02:29 +0100 (CET)
-Received: by mail-wr1-f52.google.com with SMTP id
- ffacd0b85a97d-43638a33157so202905f8f.1
- for <dev@dpdk.org>; Mon, 09 Feb 2026 16:02:29 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 2EB2B40B8D;
+	Tue, 10 Feb 2026 01:02:33 +0100 (CET)
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com
+ [209.85.221.49]) by mails.dpdk.org (Postfix) with ESMTP id 834C440613
+ for <dev@dpdk.org>; Tue, 10 Feb 2026 01:02:31 +0100 (CET)
+Received: by mail-wr1-f49.google.com with SMTP id
+ ffacd0b85a97d-43638a3330dso1847355f8f.0
+ for <dev@dpdk.org>; Mon, 09 Feb 2026 16:02:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1770681749;
- x=1771286549; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1770681751;
+ x=1771286551; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=+CtBeugUaqWdZ3Jlfo/zxhh5QcLRUpG91lNEjAspbo8=;
- b=FRvzdct8UrXFL1TxBg8NajQBg8iy/9byrPbaUQNvraW3M0WuhKD8lnVXAusa8hx4L6
- fwpjL+2CKbX8fghK9H12JVdm3OtXVtw6TvbHnijcGrt/Vkt3RS0RtQslJo4jSfC8nuEA
- GuTewkyKUcoNLrqiyisiGJy4jPaYMLOXcCd8N+vdDkrEimEq+YnjykcrKsKTBYsHoWzx
- F+koORs1xyR56vZ5K7gyE/NZ39KUpDGrCLoISfi1roqgm3k2UWrQognLhWhWZSGsHhGw
- XHgHvWerx3hujS29C9FFZY77MbpB+KiT9tWSdr779dAslzdTFfbdJDJ3VClYIaiBQYiw
- iyRw==
+ bh=Y3F7JggwHYFsSKlFSlfyPfSQTX1kozFM4AzMp5GcIYo=;
+ b=1TD9tUPxDLa2SAsI+osB3/jhe2hsQia+J2QR2Ths8wqSXPVQn1W5MSxxMUvIplpssm
+ AYi2E4R34Z8/XfVoOhguG+j2R5HLWZ0A91z5tR/dmcYr34c1lVPPqxpjQ1/r0roF7PTo
+ jX0HwlTUkau5u6k6WrvjuN23VYgXGwBxAFoBK2fSkYiXR2AIX8uyDuyOAf5nNf/vpaGZ
+ 1gneLa/8IHbBRkTtImQkUuxGNbQVA49juLmhof4zUDIV9PH/ASpFsBDNqlmTEAkgp6kO
+ xRDipWH+GqS1Ix0SXQ2lsdxDhK3UhiiPCjDiVd1g1BeTn+7ERky1/ARVywkFinKN6/3d
+ S7Dg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1770681749; x=1771286549;
+ d=1e100.net; s=20230601; t=1770681751; x=1771286551;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=+CtBeugUaqWdZ3Jlfo/zxhh5QcLRUpG91lNEjAspbo8=;
- b=qTAMny2fwnINddhjJCBNtjjpyd+0qO0SiwR9ENV8hggEJDF/fJoBMn9Bgf3osIr8/q
- nmG2zRyd6gcKp755qXJdU/efSbC9tGEKwayne9w9O+vwQnXekOfzok3b7OcV/eiXV9T6
- Zx7z2rshSd1Mvh+uN1tLX3o6I1m9Qwc/RJRlsEK3eXI/2YiCGO4KeilZc/d+RgACOGX4
- Ie9ZmrLX6zetB0oipWMnuUK3IwwHGUkQHXqkbGuLgUrYR83+CyyFtJ6bhKyKvfHSJDR/
- 5EFhnq1/hx0q/qDOXhmPiwTWKdz42QvwSLR9CtVtTrdkp6MmGkyxR/ONSqmFWOZDfbjd
- WeRQ==
-X-Gm-Message-State: AOJu0YyQBKO2G1U1A87u3QJo3fkMs/26z0vu5aM9253vFJva8LLn7FHJ
- e91UXXlOPB0M+VagbmhU9jhEl8g5aG8OB9z8erqg0lY/2KjJCgrI+7Ap+IoXf/whWo4CFjc1g8o
- qon1q
-X-Gm-Gg: AZuq6aIZBR/1cP4WJ/Ypv0atZHpiOp5nKPlfxQU9krKQ3ViCl8Ca7uWjq1ZRGFvJaJe
- DxIPZhDnCCTcTKN68eRAk9kGqbbPgraiT7c0sPjDzCpXJ3+ZGJKHqqd3qHVq0H65sQaJ0f9oytq
- wR4vuL05S9hQCXp7zmsmxAcOJAoF2QA6HH0BiDfBZ5dtBF50SbVf4R8CXr9Ympbv0S+ypWILHdj
- MG6ZHjq+bJV0jCSs0hLf+6hcWo2z7A5OpRv/oxcUp2I8h0SM6dlJB+9OqIx1hG/OZ37n0OA0/pz
- 9n6YrvQhbIseOozDc5GcyDOmNQgZZ4tZtk8zzdyW/uqidVdp0ql50VK0zGOuc8K/vd8nfZiJ0VX
- ZmGPBDAm/LWM69017DxdL1LBhsIvPW5IoEgNH+utNK7SsYqE2nZFsvvIy++J1fgd4q4tPKHZTKh
- YZLM+joGzIs6uH5GmALE+cHHrj22KwbDd2daLegv69hnhZuYS9HZHk/oJvrbje
-X-Received: by 2002:a05:6000:18a8:b0:437:6e63:9172 with SMTP id
- ffacd0b85a97d-4376e6396c7mr6837534f8f.4.1770681748710; 
- Mon, 09 Feb 2026 16:02:28 -0800 (PST)
+ bh=Y3F7JggwHYFsSKlFSlfyPfSQTX1kozFM4AzMp5GcIYo=;
+ b=ReE35hQ/qu0fOEetPPuFIudSAG4+upmzzNQrrwApoXIUN0/WfYhEE8Z0bT4mt0Afqf
+ J45IreuQO14eWO2bl4nJzZk8VI9bf6+KG990yIRZYbTcu4DuTxPDI4+LvDoJkYWJ0L1Z
+ 4nIzwuccDTc6+6BDLU2HWItj3Y/PpfIUeoAae6nrX8IxJ2qYuxgO/J65w8xFrJhrh36i
+ EuhhurW08xRGntjL4CS67n3djtxzx0ztVbqKS8Df9J6IlEfEam9u1ZrUVO8HT9U2JMAG
+ ieVkXEGnz4E1fj5SN2WXCzKLDjXSMnCwYWNNtiAgRWkJMEYHUYIYgrObwQVWLd2pFA/7
+ 19sQ==
+X-Gm-Message-State: AOJu0YzWFJQTLFGKjmJJxuSghfOJADAH29E/XWSUA1sbNs87cKn5dhqm
+ 48ecDeqKXLVU+lz+O4rgy6egXy+K5VJw5bfxgIdUrssfU9OnDWdlHI933ddzFuRo+fLCDIY8ycO
+ QVNDx
+X-Gm-Gg: AZuq6aLuVjaEulRYsghih8s0V1L6ZiTSF8h7tmu7ZYGMml1UoXpVdI7pH8FvVlG21Hs
+ GsIlWvJnhv6M9sNKL27jp0xXnZyViiRUdQti1kivGtk59/M+h8dyV5VYWpn0EyDxaloO4zgOhmR
+ VM3937cRDSyJq8+/4wasHhN5O72Nw+2HG7dB6MCikjnEMLLOIStcvHh4Psi9kiOFknnGa5T3V0a
+ keKsqy2aLuxmiWuIM5DvLeQNAC2KuGCoaTYh4YE0XGZ5iFuhZ0Ut7MiNHnL8DhP7uGbRmTa/dQr
+ 8oRxLNPu8p1CbwTxEb721EJ2F4tF6p9pJD2/M37wAZn1PLube9uuRUDwuBH0AiaJMxwR+7a0sYU
+ TNXJC17TcdhKsXKSfzr+zaLfErE6dl9RS3dzwHUwotLOPSPS5SzhLD1kyWhRJ80abWGDNSOFBu+
+ v5Q+pjWhC8QS8kvE5F3DpmktUMtzDvHF4w3d/oyjOSnE6Rd5A10g==
+X-Received: by 2002:a05:6000:2006:b0:435:96ec:679e with SMTP id
+ ffacd0b85a97d-43629341e57mr21653002f8f.23.1770681751127; 
+ Mon, 09 Feb 2026 16:02:31 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-436296bd211sm31529133f8f.13.2026.02.09.16.02.27
+ ffacd0b85a97d-436296bd211sm31529133f8f.13.2026.02.09.16.02.29
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 09 Feb 2026 16:02:28 -0800 (PST)
+ Mon, 09 Feb 2026 16:02:30 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
-	stable@dpdk.org
-Subject: [PATCH v13 11/16] net/pcap: reject non-Ethernet interfaces
-Date: Mon,  9 Feb 2026 16:00:42 -0800
-Message-ID: <20260210000201.295839-12-stephen@networkplumber.org>
+ Marat Khalili <marat.khalili@huawei.com>
+Subject: [PATCH v13 12/16] net/pcap: reduce scope of file-level variables
+Date: Mon,  9 Feb 2026 16:00:43 -0800
+Message-ID: <20260210000201.295839-13-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260210000201.295839-1-stephen@networkplumber.org>
 References: <20260106182823.192350-1-stephen@networkplumber.org>
@@ -82,47 +82,61 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The pcap PMD sends and receives raw Ethernet frames. If used with
-an interface that has a different link type, packets will be malformed.
-
-On FreeBSD and macOS, the loopback interface uses DLT_NULL which expects
-a 4-byte address family header instead of an Ethernet header. Sending
-Ethernet frames to such interfaces causes kernel warnings like:
-  looutput: af=-1 unexpected
-
-Add a check after pcap_activate() to verify the interface uses
-DLT_EN10MB (Ethernet) link type and reject others with a clear error.
-
-Fixes: 4c173302c307 ("pcap: add new driver")
-Cc: stable@dpdk.org
+Move errbuf from file scope to local variables in the two functions that
+use it (open_iface_live and open_single_rx_pcap). This avoids potential
+issues if these functions were called concurrently, since each call now
+has its own error buffer.  Move iface_idx to a static local variable
+within pmd_init_internals(), the only function that uses it. The
+variable remains static to preserve the MAC address uniqueness counter
+across calls.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+Acked-by: Marat Khalili <marat.khalili@huawei.com>
 ---
- drivers/net/pcap/pcap_ethdev.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/net/pcap/pcap_ethdev.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/net/pcap/pcap_ethdev.c b/drivers/net/pcap/pcap_ethdev.c
-index 29030544b8..cde9744766 100644
+index cde9744766..fde1f9fef2 100644
 --- a/drivers/net/pcap/pcap_ethdev.c
 +++ b/drivers/net/pcap/pcap_ethdev.c
-@@ -654,6 +654,17 @@ open_iface_live(const char *iface, pcap_t **pcap)
- 		goto error;
- 	}
+@@ -47,11 +47,9 @@
  
-+	/*
-+	 * Verify interface supports Ethernet link type.
-+	 * Loopback on FreeBSD/macOS uses DLT_NULL which expects a 4-byte
-+	 * address family header instead of Ethernet, causing kernel warnings.
-+	 */
-+	if (pcap_datalink(pc) != DLT_EN10MB) {
-+		PMD_LOG(ERR, "%s: not Ethernet (link type %d)",
-+			iface, pcap_datalink(pc));
-+		goto error;
-+	}
+ #define RTE_PMD_PCAP_MAX_QUEUES 16
+ 
+-static char errbuf[PCAP_ERRBUF_SIZE];
+ static struct timespec start_time;
+ static uint64_t start_cycles;
+ static uint64_t hz;
+-static uint8_t iface_idx;
+ 
+ static uint64_t timestamp_rx_dynflag;
+ static int timestamp_dynfield_offset = -1;
+@@ -612,6 +610,7 @@ eth_pcap_tx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
+ static inline int
+ open_iface_live(const char *iface, pcap_t **pcap)
+ {
++	char errbuf[PCAP_ERRBUF_SIZE];
+ 	pcap_t *pc;
+ 	int status;
+ 
+@@ -723,6 +722,8 @@ open_single_tx_pcap(const char *pcap_filename, pcap_dumper_t **dumper)
+ static int
+ open_single_rx_pcap(const char *pcap_filename, pcap_t **pcap)
+ {
++	char errbuf[PCAP_ERRBUF_SIZE];
 +
- 	if (pcap_setnonblock(pc, 1, errbuf)) {
- 		PMD_LOG(ERR, "Couldn't set non-blocking on %s: %s", iface, errbuf);
- 		goto error;
+ 	*pcap = pcap_open_offline_with_tstamp_precision(pcap_filename,
+ 							PCAP_TSTAMP_PRECISION_NANO, errbuf);
+ 	if (*pcap == NULL) {
+@@ -1526,6 +1527,7 @@ pmd_init_internals(struct rte_vdev_device *vdev,
+ 	 * derived from: 'locally administered':'p':'c':'a':'p':'iface_idx'
+ 	 * where the middle 4 characters are converted to hex.
+ 	 */
++	static uint8_t iface_idx;
+ 	(*internals)->eth_addr = (struct rte_ether_addr) {
+ 		.addr_bytes = { 0x02, 0x70, 0x63, 0x61, 0x70, iface_idx++ }
+ 	};
 -- 
 2.51.0
 
