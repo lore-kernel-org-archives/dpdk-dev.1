@@ -2,43 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0A89EA3F2A
-	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Feb 2026 09:28:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9810DEA3F2A
+	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Feb 2026 09:51:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 31E4A400D7;
-	Tue, 10 Feb 2026 10:28:15 +0100 (CET)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 72064400D6
- for <dev@dpdk.org>; Tue, 10 Feb 2026 10:28:13 +0100 (CET)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 40B4F208FB;
- Tue, 10 Feb 2026 10:28:13 +0100 (CET)
-Content-class: urn:content-classes:message
+	by mails.dpdk.org (Postfix) with ESMTP id 80C0E400D7;
+	Tue, 10 Feb 2026 10:51:08 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+ by mails.dpdk.org (Postfix) with ESMTP id F2339400D6
+ for <dev@dpdk.org>; Tue, 10 Feb 2026 10:51:06 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1770717067; x=1802253067;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=+lvi0VV/spSQg9AkYZKzLt6JPfY9TtWHDzPVVgXekfc=;
+ b=njKUu0rcNXJaXYOJnVTZJARquKGNRs0qkcyUXF9iyFpr9NsWkLsqSxhk
+ hxObhGVCKD9xdzFMTw1pt0xZrqnKFCu0WJBP44X9kpOPxK2HoXwjPHEpP
+ xv6D4wUfYVz/7ynuIwEZ2Qr7c5Il+QVyCKTVEWbJ8mIUsxc8tGUFTec2O
+ 6roMXOkPxxcMfV1aFeNyn6tgaBkDcH+vSLTwq8xUToaLfBmPnxsPRTOOa
+ lyJ1H9Ob7LeKbem3Rjz/9CuK66i/FRPYUzzO0/XfI/UKoAst7PMxVPBD6
+ 2503fCaKvxkIdzLwEjjdwS6zzgwDnFL/cbNs80MI92elxiF7EB46SWlT/ g==;
+X-CSE-ConnectionGUID: KlAdd0++QrKhgJ4q+ZgxVg==
+X-CSE-MsgGUID: m8MFPGJ6QAi7g9z617Rb4g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11696"; a="74443921"
+X-IronPort-AV: E=Sophos;i="6.21,283,1763452800"; d="scan'208";a="74443921"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+ by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 10 Feb 2026 01:51:05 -0800
+X-CSE-ConnectionGUID: pzACl8cJRf+hQuK5b8qFoA==
+X-CSE-MsgGUID: dDkfQl5eQjiX74Z/zx0uqw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,283,1763452800"; d="scan'208";a="211197572"
+Received: from silpixa00401921.ir.intel.com ([10.20.224.96])
+ by orviesa010.jf.intel.com with ESMTP; 10 Feb 2026 01:51:04 -0800
+From: Ciara Loftus <ciara.loftus@intel.com>
+To: dev@dpdk.org
+Cc: Ciara Loftus <ciara.loftus@intel.com>
+Subject: [PATCH] net/iavf: fix txq flags setting after Tx path selection
+Date: Tue, 10 Feb 2026 09:50:44 +0000
+Message-ID: <20260210095045.1901921-1-ciara.loftus@intel.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Subject: RE: [PATCH v4 20/35] net/intel: write descriptors using non-volatile
- pointers
-Date: Tue, 10 Feb 2026 10:28:10 +0100
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F656F9@smartserver.smartshare.dk>
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-In-Reply-To: <aYr0bDamNTwyDl9D@bricha3-mobl1.ger.corp.intel.com>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH v4 20/35] net/intel: write descriptors using non-volatile
- pointers
-Thread-Index: AdyabC5k7cVYs9VwQzyejkeBJh1rJwAAomsA
-References: <20251219172548.2660777-1-bruce.richardson@intel.com>
- <20260209164538.1428499-1-bruce.richardson@intel.com>
- <20260209164538.1428499-21-bruce.richardson@intel.com>
- <98CBD80474FA8B44BF855DF32C47DC35F656F6@smartserver.smartshare.dk>
- <aYr0bDamNTwyDl9D@bricha3-mobl1.ger.corp.intel.com>
-From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
-To: "Bruce Richardson" <bruce.richardson@intel.com>
-Cc: <dev@dpdk.org>
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -52,56 +57,78 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> From: Bruce Richardson [mailto:bruce.richardson@intel.com]
-> Sent: Tuesday, 10 February 2026 10.04
->=20
-> On Tue, Feb 10, 2026 at 12:08:44AM +0100, Morten Br=F8rup wrote:
-> > > +static inline void
-> > > +write_txd(volatile void *txd, uint64_t qw0, uint64_t qw1)
-> > > +{
-> > > +	uint64_t *txd_qw =3D __rte_assume_aligned(RTE_CAST_PTR(void *,
-> > > txd), 16);
-> > > +
-> > > +	txd_qw[0] =3D rte_cpu_to_le_64(qw0);
-> > > +	txd_qw[1] =3D rte_cpu_to_le_64(qw1);
-> > > +}
-> >
-> > How about using __rte_aligned() instead, something like this
-> (untested):
-> >
-> > struct __rte_aligned(16) txd_t {
-> > 	uint64_t	qw0;
-> > 	uint64_t	qw1;
-> > };
->=20
-> I can see if this works for us...
->=20
-> >
-> > *RTE_CAST_PTR(volatile struct txd_t *, txd) =3D {
-> rte_cpu_to_le_64(qw0),
-> > rte_cpu_to_le_64(qw1) };
-> >
-> >
-> > And why strip the "volatile"?
-> >
->=20
-> For the descriptor writes, it doesn't matter the order in which the
-> descriptors and the descriptor fields are actually written, since the
-> NIC
-> relies upon the tail pointer update - which includes a fence - to
-> inform it
-> of when the descriptors are ready. The volatile is necessary for =
-reads,
-> though, which is why the ring is marked as such, but for Tx it =
-prevents
-> the
-> compiler from opportunistically e.g. converting two 64-byte writes =
-into
-> a
-> 128-byte write.
+Ensure the txq flags "use_ctx" and "vector_tx" are set/unset properly
+after tx path selection. Prior to this commit these flags were only
+configured if a vector path was chosen. Fix this by making their
+configuration unconditional. Also simplify how the "vector_tx" flag is
+set by removing the dedicated function that sets the flag in favour of
+just setting it inline.
 
-Makes sense.
-Suggest that you spread out a few comments about this at the relevant =
-locations in the source code.
+Fixes: ebcfb039afa8 ("net/iavf: use common Tx path selection infrastructure")
 
+Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
+---
+ drivers/net/intel/iavf/iavf_rxtx.c          | 15 ++++++---------
+ drivers/net/intel/iavf/iavf_rxtx.h          |  1 -
+ drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c |  7 -------
+ 3 files changed, 6 insertions(+), 17 deletions(-)
+
+diff --git a/drivers/net/intel/iavf/iavf_rxtx.c b/drivers/net/intel/iavf/iavf_rxtx.c
+index 4b763627bc..da8ac488fe 100644
+--- a/drivers/net/intel/iavf/iavf_rxtx.c
++++ b/drivers/net/intel/iavf/iavf_rxtx.c
+@@ -4263,15 +4263,12 @@ iavf_set_tx_function(struct rte_eth_dev *dev)
+ 
+ out:
+ #ifdef RTE_ARCH_X86
+-	if (iavf_tx_path_infos[adapter->tx_func_type].features.simd_width != 0) {
+-		for (i = 0; i < dev->data->nb_tx_queues; i++) {
+-			txq = dev->data->tx_queues[i];
+-			if (!txq)
+-				continue;
+-			iavf_txq_vec_setup(txq);
+-			txq->use_ctx =
+-				iavf_tx_path_infos[adapter->tx_func_type].features.ctx_desc;
+-		}
++	for (i = 0; i < dev->data->nb_tx_queues; i++) {
++		txq = dev->data->tx_queues[i];
++		if (!txq)
++			continue;
++		txq->use_ctx = iavf_tx_path_infos[adapter->tx_func_type].features.ctx_desc;
++		txq->vector_tx = iavf_tx_path_infos[adapter->tx_func_type].features.simd_width != 0;
+ 	}
+ #endif
+ 
+diff --git a/drivers/net/intel/iavf/iavf_rxtx.h b/drivers/net/intel/iavf/iavf_rxtx.h
+index e1f78dcde0..d258c1fc1b 100644
+--- a/drivers/net/intel/iavf/iavf_rxtx.h
++++ b/drivers/net/intel/iavf/iavf_rxtx.h
+@@ -615,7 +615,6 @@ int iavf_get_monitor_addr(void *rx_queue, struct rte_power_monitor_cond *pmc);
+ int iavf_rx_vec_dev_check(struct rte_eth_dev *dev);
+ int iavf_tx_vec_dev_check(struct rte_eth_dev *dev);
+ int iavf_rxq_vec_setup(struct ci_rx_queue *rxq);
+-int iavf_txq_vec_setup(struct ci_tx_queue *txq);
+ uint16_t iavf_recv_pkts_vec_avx512(void *rx_queue, struct rte_mbuf **rx_pkts,
+ 				   uint16_t nb_pkts);
+ uint16_t iavf_recv_pkts_vec_avx512_offload(void *rx_queue,
+diff --git a/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c b/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c
+index e29958e0bc..1849af166a 100644
+--- a/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c
++++ b/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c
+@@ -1811,13 +1811,6 @@ iavf_xmit_pkts_vec_avx2_offload(void *tx_queue, struct rte_mbuf **tx_pkts,
+ 	return iavf_xmit_pkts_vec_avx2_common(tx_queue, tx_pkts, nb_pkts, true);
+ }
+ 
+-int __rte_cold
+-iavf_txq_vec_setup(struct ci_tx_queue *txq)
+-{
+-	txq->vector_tx = true;
+-	return 0;
+-}
+-
+ void __rte_cold
+ iavf_rx_queue_release_mbufs_vec(struct ci_rx_queue *rxq)
+ {
+-- 
+2.43.0
 
