@@ -2,180 +2,52 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C73ACEA8126
-	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Feb 2026 15:11:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7014FEA8131
+	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Feb 2026 15:52:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 13E63400D7;
-	Tue, 10 Feb 2026 16:11:00 +0100 (CET)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id CC1C9400D6
- for <dev@dpdk.org>; Tue, 10 Feb 2026 16:10:58 +0100 (CET)
-Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
- 61AC6M3f510734; Tue, 10 Feb 2026 07:10:58 -0800
-Received: from bl2pr02cu003.outbound.protection.outlook.com
- (mail-eastusazon11021130.outbound.protection.outlook.com [52.101.52.130])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4c84cw0chv-1
- (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
- Tue, 10 Feb 2026 07:10:57 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=BXGb6ITBjkMf12qUGsyE9qJvTXa+7cYO1PbTi4D8PQAbV8Oil3AS6urL54QaH3oFjQA1yvCncM6zAfvjwgicZq6QPMiBLrKsi555ty2dgeZiLIOkuXzUvA3zaCx1+twj87LxqK1TADVHgG/Mfc5ElLEfuwL6cZCPLAfgU9A6X4TtMCwCEQyXv71+J+47PEds0T6DWkBdwR2fCYsNqkY5B4vIvX7zDgxKt1sGVUQKh+dzSYyutC8UJDXZkx4+WapvuDEzzYcNgMEXS29DPEdXzXAeZPIQVtH+JsaZQ534lBDhNQJ5gAWCI0aNpdnOUL2MaLMe0dDZi+SyuWol6g1BKw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=BVhmT3Mn5PzGul+Yb2usJnliRsLQvMKCkd229pl8A1c=;
- b=IkFSBdC5F2T6zfNnYaHXcZ6j69EY3yDsh+cvon5wA44f/uBzdhFxR3CFLmmxOPl9Gqgll62e2dZQcsMenmkWWHfVs/bkgmvQkE8ly0qrweneOCT3QvWRzlx53zGCgKy/bVshza7EaDAo4g8Ed4YgMdFiuds0JweaCcU1+TszY54ZdRBGQvgfqXLN1DxhsX5PeFZbbuz486dbduvhhm5RaAfcsKwwjGjuOHVu3e2h7MhWwmOPQPPwkmF+rD1DLL4s8PDSmp3KUHEcBN7cvnOqxiL+BvmpkQmH/LlXTr6BnTrTEe+uCCO2LHt5iZVIvIG824kd3bi72URIdBLmqSzXjw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
- dkim=pass header.d=marvell.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BVhmT3Mn5PzGul+Yb2usJnliRsLQvMKCkd229pl8A1c=;
- b=v6N79O5zr2jeONDFknBaSWcIysHSsc/OyWvoCtUx+Se97YVYsxw9fpFY7bmsnSAZDaIZG7g8G38Fo7BOP3sxKpbuZHLoL5qQ72dRfKBW5scVhMppQwhcsbSJyP4wISqbRyZrDCvKhbK+FSzeco9F6D1QNM4Rh+KeDRxijiPLxvA=
-Received: from CO6PR18MB4484.namprd18.prod.outlook.com (2603:10b6:5:359::9) by
- DS2PR18MB927570.namprd18.prod.outlook.com (2603:10b6:8:32d::6) with
- Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9587.15; Tue, 10 Feb 2026 15:10:55 +0000
-Received: from CO6PR18MB4484.namprd18.prod.outlook.com
- ([fe80::a2df:a596:cfe:17]) by CO6PR18MB4484.namprd18.prod.outlook.com
- ([fe80::a2df:a596:cfe:17%4]) with mapi id 15.20.9611.006; Tue, 10 Feb 2026
- 15:10:55 +0000
-From: Akhil Goyal <gakhil@marvell.com>
-To: Emma Finn <emma.finn@intel.com>, Kai Ji <kai.ji@intel.com>
-CC: "dev@dpdk.org" <dev@dpdk.org>
-Subject: RE: [EXTERNAL] [v3] crypto/openssl: Add support for SHAKE algorithms
-Thread-Topic: [EXTERNAL] [v3] crypto/openssl: Add support for SHAKE algorithms
-Thread-Index: AQHcj3TTE6L2H2j/PkK7v+MQnYaasLV8Hu6g
-Date: Tue, 10 Feb 2026 15:10:55 +0000
-Message-ID: <CO6PR18MB4484F3A23A3D9D7845BF81C2D862A@CO6PR18MB4484.namprd18.prod.outlook.com>
-References: <20260108153330.2441799-1-emma.finn@intel.com>
- <20260127100741.3845554-1-emma.finn@intel.com>
-In-Reply-To: <20260127100741.3845554-1-emma.finn@intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CO6PR18MB4484:EE_|DS2PR18MB927570:EE_
-x-ms-office365-filtering-correlation-id: 4650eb8e-a395-4572-80d3-08de68b696a0
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0; ARA:13230040|366016|376014|1800799024|38070700021;
-x-microsoft-antispam-message-info: =?utf-8?B?eGlvTXpzcnBlVEh1cERta2RFd3dZOHBHQVdPS0c3OFA4Y2Zuc0E4VTg0YUJX?=
- =?utf-8?B?UUw3MlovdTBKRXR3TG03MW9mRUM4MU14a0MrVlNmdmVHWVBMYzNycDcvUVhV?=
- =?utf-8?B?MzJ4NzkxY1IzWnFRdXBGOUI2ZEVXUHU3RzhZalozWWVTWXpOR0ZXUk4yTE9E?=
- =?utf-8?B?bEQwYWdlbXQyRWo5dHpDejkxMi80OHZEdGRWbmFrem9JWDBHcW1DQTc0NDJx?=
- =?utf-8?B?eHU1eVN1dkRrS2wwTTlVOWdKWTVCTmsxL3NxcVl0eXBmSklWbElFb2lSOHVi?=
- =?utf-8?B?Ly9sMTkydEZVQzlBbVJITE9CUVV5YXVtZ3RNSHROVXJaVUpHeWdoeTNyK1VK?=
- =?utf-8?B?WHFuWWI1VkF6a09MclRNdXdYVnNpbW9sYnRZTzZrNFlRWjkyZkhpUGR3TUFT?=
- =?utf-8?B?dkdsTGRKUFpjWnpQVHdMVjlFRC9Fc0Z4eUcwSEE0WkJIZ1l2U3pUUHVLcHhu?=
- =?utf-8?B?ekxTZUlKam9iQ0tuY0t1UndWSUd3ZVkvaXlkVm5LUWd6YmhoR3F3Zzc4SWxM?=
- =?utf-8?B?ckNaamVDOXkzTUZ2dW5hcDY3SjcyUC9kRGlUU3B1aG9MaDRQWkJsMFZmRnlu?=
- =?utf-8?B?STVINEQ2ZUFqSGRmN2FCUVZ3UHlpU2s3T3VYek4rN2xVZDFrM3BOK2JobU1h?=
- =?utf-8?B?TE44Z3RPS3FnaXRIQUk1NjZFTDhPN0pXNXh1bFI3b293aWNjNTBQeUVqdEp4?=
- =?utf-8?B?V3owYWx0RnpBNC9KSW9SSEVIbFNvNWNVY3pDcXBXTDJlSUNzbXk5QmJrdXYv?=
- =?utf-8?B?cmdmSjlHUEJYeXNYUmN2a3pwUEg2QWVzVHFFOHRmNU5YcEdoU3oyNUhHV2xO?=
- =?utf-8?B?UFY1ZEw2ckVNUzl6blZuU3dxWmpCbGZHZnJRSnNadnBiNE5ON1VsU0FiWktB?=
- =?utf-8?B?V241MlFOb2JxZ2tseFNIU3cyWm5yQUZoTEtGME5NQ2lCdU95ZFFPYmcrNm1m?=
- =?utf-8?B?SVhIV2haWWZ5RjlWbVNsQWJQaGpSeFRkUUVlQXUrVFdnVHdUbEJTb0JTTXpj?=
- =?utf-8?B?Qk9WUkxjVEdRNng3TEFVd0thbkN6bnJhNTZKRkNaSWdQejlUZ05DMnlySStu?=
- =?utf-8?B?RUF5c1IwS1Z4bVVPZE83SFdpUVBUTiswZHRLWmNHdlV5ZUtvZzZwWFpMT2ZT?=
- =?utf-8?B?dFVxNWlUUitRM3Y2R2FWSGxMMVBCeWZPd2VnamJOekVMTU1Ya2FGOU5IaGt3?=
- =?utf-8?B?eTVEZnRvbDFvWkRxZ245RjEvV0lMYWxEcHo2czNYN080YmtyMEpxVitJNHdk?=
- =?utf-8?B?TFcxUVpSenVWM3ozQ3ZMVVJaQU12ZjhySUdZdTF6S1ZOdGVxbzJ2emVrR0kw?=
- =?utf-8?B?QzJZVzB5NTQ2aTFLQXZDZHdvYmMrOUVnWTdyRHV5SlFmenB2QUVXeFlEWHBT?=
- =?utf-8?B?bDY5dFc1TllZSWs2UkJONmZXNFBldWNSQldGbUtISWllS3NyVFYxcEZ1WGs2?=
- =?utf-8?B?WXdqeVdwWUNpR3NGNTNwUGdWSC9ySXdSWFFzc0FaZVBOQ0d5YmJ5ZWgvWktv?=
- =?utf-8?B?M0hkWHJSNTJUbnhUOWNMckltQXp4dG5RdXJsbFdsa0ZRVjUzWm9lVmkwNndO?=
- =?utf-8?B?VnozOWovYVNtdnVpV05HVjNBWTlSUWlpMEY0QkJPdjFYZU9qTVVsZUVZWE11?=
- =?utf-8?B?dDhPd3QwU3ErVWUwcS9zR0sxTFloVitTZmFlYzlGUlBaU3Z4VjZWaC96ZzNt?=
- =?utf-8?B?RkdBTG1LNVZSTW8wZFFOQVF3SDRaM0gwVm5Va0ZBQ0xmUGZnMHM2a3NsRTN0?=
- =?utf-8?B?ZHlYcGgzT2lrWEN5SEpXQ09jeXEyVzNFdHFBbHoxQjhadnRIS2F4ZmdJZGFv?=
- =?utf-8?B?Y0JuWUxKZWd1L2V0THRob3AzSXZ1eVhnM2FSTW1HQlVaOWRua0xFcXJ6bjRT?=
- =?utf-8?B?QzkxQ0FRaGpCVDBlYnk5KzVpZ0R3bEJWcGJmdWVZM0dXYUVYaTNuWkp2TlE4?=
- =?utf-8?B?VGx2eVU5SFpPVjFaa2FIY2FreThTaDBXaUJBYW9ZUjY5dzBNQVdYRVNLUGZM?=
- =?utf-8?B?c2s3VkRublM1NHdidGl1a1ZNMTVETjZOUHNIZmJLWlJEK0tSc2lIb21wU1pP?=
- =?utf-8?B?M0cvVkNZR1E1MDBCeGVCaTZyUmhvOUlZQ3ZsRGtRaWJLVi93SXVyVkdiaGM2?=
- =?utf-8?Q?xxaJV9dAZ2/pVd/k6C5thrfOb?=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:CO6PR18MB4484.namprd18.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(376014)(1800799024)(38070700021); DIR:OUT; SFP:1102; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?Y2o4VEtMeXpMRTllb0Q3N3BxUkx6bUNLeGVWZkw4eWVvbzdOTndoKzhCdHJO?=
- =?utf-8?B?NWpXeUV0djd4RS9rUUxQRVd1UWpETmdRdC9DZnpIRC9PUFFVMXMvR0VHbTVi?=
- =?utf-8?B?c0pua0t5MWtxZmRydS9nUTBJdFBtQ0tFRGdIZHRtK1RtTVE5ajZEcnR2aUR4?=
- =?utf-8?B?cDZIWWFZUjVoVVpEc2R2SEM4ZzBQT0FKLzdGeEdOcTNLTG4xSEFBU2Z4bDRy?=
- =?utf-8?B?RlpjRzVUb256QlI4bE5KL2hVOW9HcWJyY0R3TFRrK3VZNEQxMXRIajdRYity?=
- =?utf-8?B?MVpTcTNCM3EySWhsT3dNRldmcG93K0RuTk9GUzNVdG5JU2FyNmVvSzJuY282?=
- =?utf-8?B?UmR5Y0gyZUE3ZEw4cEpSWkkzQ3NKN05UQTBvOEVJaUhKZE9HOWdQNmRxZE4v?=
- =?utf-8?B?YmEwVklHcE55aEZNZDB1d3UzV2E0RWlRMVF2czc0ejEvYkwwc2diakRFbjdy?=
- =?utf-8?B?bVFrRU5nVVFMYXBmb0RkbnQvWGFiekpWTWRiYUdyOEJkdDJxb2RyOUFiaDVo?=
- =?utf-8?B?ZWpOblVaTlNmREVKWFBObmZDVlpLUEc3RVJsWktKRFAvMGhVblgzb0lJeGZD?=
- =?utf-8?B?Z0V2cisvaXRVZGI4dlcxSnltTjJvZmFnSTYrVGRIVkpPMXhRODdmbjhPN1dp?=
- =?utf-8?B?S01Dd2pUNDJ5LzduTWZaQnRLQVpwV2ZpLzdCVkRtZUZtRWV1SEhlU2pldG82?=
- =?utf-8?B?eUxBcy92Rkc5ZjZjbUJaL2NIYUdoeEVLeXZoMEdtdkRSQjlGUE5DK2k3YmhZ?=
- =?utf-8?B?TGJhRGlCR0NSelc5aFN5TSt0RHRHTXQxWVNmeXdHMUc0MVVsMnpkWWx5dzRV?=
- =?utf-8?B?elpxTVBWd1RnR1UvVEFrYzFxQ3p5YVV0M2dLTnFvT01uUXBIcTVUNEpIZ0JI?=
- =?utf-8?B?YWhJRjBUaWRiam1ZTTZ6eEZjQ0ZCSEc4bXFwMjgxYU83TWE0OWpObXBtMzV1?=
- =?utf-8?B?REJ0SlUwOEV3SUhjUU1DekpvRGFnVXJWRWdNUGk3MHVWQ2NxS011MCtjNXov?=
- =?utf-8?B?VldrRkhZaFZGVFd2ZVU3akk0c3A2djNTQ2NtMXpIY2xQR0NZVEdrb2tDQUZF?=
- =?utf-8?B?K3NQUHlVZGpoVTZyOGFERGRwUUVlREJ2L2pNU3BoS0pJaDlMQ1NYNW10YWts?=
- =?utf-8?B?L2o2U3FvR054OGFpZEZOdExnM1k2bm93ZDVlKzZJaHpwRXdCMDBUNjhlQ2tj?=
- =?utf-8?B?cFoyZEFBSStCb1pseXN2eTJlOHV0ZUU4MDdVeXB2UCtsRkR5d2RIdnp3a2lQ?=
- =?utf-8?B?cTJiWXViY0tqVkQwNFJwUG9qU09ZTUJyWmd5TTIrbmVDODd5bkd2SFlWQmRy?=
- =?utf-8?B?enhkVDYwUFh5UTErd0paVHJoWlRkY1hoLy9YVSs2MnRDTitlYUVwUUZ1QnNT?=
- =?utf-8?B?a2xBVWZ4Rmh4NHRoMCtCSzYrU3FLckVaaTllekV4azhUQVI2N1dEamVyaUVm?=
- =?utf-8?B?RDhUWHdQYlc2SDQ2QUovQzVVNkw5Zmt4K1FibjVDdFNkcTR0OXJXT0ZrTDVG?=
- =?utf-8?B?WU5vSjJ4ZDN0c0VqRGI5bmNTR2EzM1IwY3oyYlAraHR0N0Jod25sbXFMUVkx?=
- =?utf-8?B?dy9rcE9Hd3MyUGM2QXRtYTlxUzJBWVB5VStvTk9qUXlvT3F2SklMTG85TEQ0?=
- =?utf-8?B?RUNSYUNHcXdDSlk5am50NmxBWmdNcVovK2YwTXAyMHhlV2NnbnFCd3pORHB4?=
- =?utf-8?B?UDlBb1ZiVE5xOVVRQUxzZmlJbTZ1Ry9BZDJjYkd2TUJLajVESnVWa3k1T0Qw?=
- =?utf-8?B?QjZLYWdFUlF0RGpZZWdBRjk2ZlFLR2ZoR0ZrYlRzUTVnN3RSdjhPcVI5USs0?=
- =?utf-8?B?OHloZGFoNGRjOGRZdjJjdmlQUkQzdzM2eG5SYkk5MitqUWRjdGNOTWhmV2Rw?=
- =?utf-8?B?Q2xsb0J5OGpCdlhvYlJRSDdnNGtva0pOTXROS1JSUWhWWkU5ejhvS3BtWVkr?=
- =?utf-8?B?TWRSV0J0alprc1cwa0RKL1o0dVU3OEZYeS9nQzdXRXY5TnVQUm5XRTJYOUZn?=
- =?utf-8?B?TVhCMzJLUW5sOCtRd21CS1ZHYWJwMzZqbHBLcExCWjMyb1NBR2pYbWFpdmhu?=
- =?utf-8?B?bkZHaUMxeFRmcHhZRlZEb2UzSWRMTUVwbW8xOThjQThpVHNUdEcyVmE5Uk9z?=
- =?utf-8?B?YnR0clZ6Q0tZeFc2TTJ6T0hqa0JoWm1jVHh4OVNqS3h1TzViZHBJcC93dlFQ?=
- =?utf-8?B?WnMzTHJlQVYzeG9UYXE3aWJZcTJRQXQ1Tnh6S2hVKytIcmxEU2ZMZnoyTC84?=
- =?utf-8?B?T2w1YUQwUXhNMGkwaXJNZ3JnWkI2WFVIL3ZGdjZrOU83VFhIbitFRFZjbEVM?=
- =?utf-8?Q?Yp5C95NqG7psxkq7pg?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by mails.dpdk.org (Postfix) with ESMTP id 3342B400D7;
+	Tue, 10 Feb 2026 16:52:17 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+ by mails.dpdk.org (Postfix) with ESMTP id DBA98400D6
+ for <dev@dpdk.org>; Tue, 10 Feb 2026 16:52:14 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1770738735; x=1802274735;
+ h=from:to:subject:date:message-id:in-reply-to:references:
+ mime-version:content-transfer-encoding;
+ bh=B7YH2FBdReGv+TAcFRpsbEVVUyPkmaiKY+8nHAF6TOM=;
+ b=RC5yPLUv+c8am9sBwweI9/ACBmmtemgXmBTeJBpvW2da0/Ao4BePYaho
+ KCKxI/aQElTAyX5NG1F4Wfl4JwGelswbimeiC7wcVRPa9eiUWsKhdc4eL
+ 7Cu2dgC8pqk0YTaV8HRIXESwKUD9gdNTw1m1ZMBFu01f668RDz0zGzdCT
+ a6r1zuYRj2ffVrL0L3v1SV6s5dhIjfn0XL8ZKk0f704s8QZnBYGg5WvLV
+ S0W2vJDN0BcftQzToiWD0VDOrjd2gXZC8HGR9/FIUdMRWnHa9KD76oTyE
+ S9ZUgDppN5N/ADZ8N0nffgiEF9aT4e2Hcz8Ja79B6xJsZ2Pea/oDuTxv8 Q==;
+X-CSE-ConnectionGUID: N8Aj+2yvQomgQQ68dvLAYg==
+X-CSE-MsgGUID: fZs3nlXdRwSiXM4A0XZArQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11697"; a="71080887"
+X-IronPort-AV: E=Sophos;i="6.21,283,1763452800"; d="scan'208";a="71080887"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+ by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 10 Feb 2026 07:52:14 -0800
+X-CSE-ConnectionGUID: H1bKaTvTR0iEv/w36UKGbA==
+X-CSE-MsgGUID: OZTlrPuZSrulO8U5kcVntg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,283,1763452800"; d="scan'208";a="211285370"
+Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
+ by orviesa010.jf.intel.com with ESMTP; 10 Feb 2026 07:52:12 -0800
+From: Anatoly Burakov <anatoly.burakov@intel.com>
+To: dev@dpdk.org, Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
+ Jedrzej Jagielski <jedrzej.jagielski@intel.com>,
+ Piotr Kwapulinski <piotr.kwapulinski@intel.com>,
+ Carolyn Wyborny <carolyn.wyborny@intel.com>
+Subject: [PATCH v2 1/7] net/ixgbe: add missing E610 MAC type checks
+Date: Tue, 10 Feb 2026 15:52:03 +0000
+Message-ID: <23738c8f043b1f65742744caa9b725d5474cb059.1770738711.git.anatoly.burakov@intel.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <4084ed8c4f7c01852ca22c7975d0639fc4c8a066.1770641909.git.anatoly.burakov@intel.com>
+References: <4084ed8c4f7c01852ca22c7975d0639fc4c8a066.1770641909.git.anatoly.burakov@intel.com>
 MIME-Version: 1.0
-X-OriginatorOrg: marvell.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CO6PR18MB4484.namprd18.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4650eb8e-a395-4572-80d3-08de68b696a0
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Feb 2026 15:10:55.3234 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 8D913yvmpiGy3elhrmZd2rns6Apgnyt20kF02OsIUkt655pE1bolO692l+qXweznc/LaiHJsMMlJx5IbRvKPww==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS2PR18MB927570
-X-Authority-Analysis: v=2.4 cv=YsIChoYX c=1 sm=1 tr=0 ts=698b4a81 cx=c_pps
- a=0+nbxk2pwnolPG6y4jTXag==:117 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=HzLeVaNsDn8A:10 a=-AAbraWEqlQA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=Mpw57Om8IfrbqaoTuvik:22 a=GgsMoib0sEa3-_RKJdDe:22 a=aFtGNCwJAAAA:8
- a=QyXUC8HyAAAA:8 a=M5GUcnROAAAA:8 a=5QPiE0UUtRj0hdxkoSkA:9 a=QEXdDO2ut3YA:10
- a=37_LVEjxSQTuOH1zQYhg:22 a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-GUID: tn7bHT1XJhGefPr3rIEbIZV30rOX7E6D
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjEwMDEyOCBTYWx0ZWRfX+gNG23PdG1H4
- t+8/u6KfMh9bCbzVZ0sEoWrl8zqlG5Yq51OxvOU+w6JRHvI+gIH4+Xy1YIQugehN8klwzLpERUK
- ug4Di4CBybDHLLnRbL/3FaqpQMYPAl/L5A5FOz3P/YbtVNea+OU5iMA5X7ffNQt8NF91rxIuxBI
- Lmtc3y3ni7Tj0XN8AyRz8YOh/Cd4e1h3vbEHKrYKAXkqtHH1kCwFwPfUrlDU1PYJg74VFa5NtCF
- SdUincrplTfcjEtNWHIuP7MJ17wOWBanSVxLognOtL3OAzOy5W+fgQT7YUFg/F01z1xPa6RTNHm
- qKE0CeaiEAnuvYdHhdyrFc4AeELhrNHizXGLNqzl3J+prKJYONVoZVOifUlZqBMSQdt3n5lVpFs
- LqgDaHxMeg+D95ptlVBtDeVY3U4wQ9a0XU2PWTF44vfQOewwdPeQT1kd4yNBlrExOuOzR/pXWJJ
- l0uRRljSwdJHtncD4tw==
-X-Proofpoint-ORIG-GUID: tn7bHT1XJhGefPr3rIEbIZV30rOX7E6D
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-02-10_01,2026-02-10_02,2025-10-01_01
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -189,21 +61,265 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-PiBPcGVuU1NMIDMuWCBoYXMgc3VwcG9ydCBmb3IgU0hBS0UsIEhlbmNlIGFkZGluZw0KPiBTSEFL
-RS0xMjggYW5kIFNIQUtFLTI1NiBzdXBwb3J0IHRvIHRoZSBPcGVuU1NMIFBNRC4NCg0KU2luY2Ug
-T3BlblNTTCAxLjEuMSBpcyBFT0wgKGh0dHBzOi8vb3BlbnNzbC1jb3Jwb3JhdGlvbi5vcmcvcG9z
-dC8yMDIzLTA5LTExLWVvbC0xMTEvKQ0KQ2FuIHdlIHJlbW92ZSB0aGUgaWZkZWZzIGluIGZ1dHVy
-ZSBmb3IgdmVyc2lvbiBjaGVja3MgYW5kIHVwZGF0ZSB0aGUgbWluaW11bSANCk9wZW5TU0wgdmVy
-c2lvbiBzdXBwb3J0ZWQgaW4gRFBESyBhcyAzLjA/DQoNCklmIG5vIG9iamVjdGlvbiBjYW4geW91
-IHNlbmQgZGVwcmVjYXRpb24gbm90aWNlIGluIHRoaXMgcmVsZWFzZSBhbmQgZG8gdGhlIGNsZWFu
-dXAgaW4gbmV4dCByZWxlYXNlPw0KDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBFbW1hIEZpbm4gPGVt
-bWEuZmlubkBpbnRlbC5jb20+DQo+IC0tLQ0KPiB2MjoNCj4gKiBGaXhlZCB1bnVzZWQgZGlnZXN0
-X2xlbmd0aCB2YXJpYWJsZQ0KPiB2MzoNCj4gKiBVcGRhdGVkIGRvY3VtZW50YXRpb24NCj4gLS0t
-DQo+ICBkb2MvZ3VpZGVzL2NyeXB0b2RldnMvZmVhdHVyZXMvb3BlbnNzbC5pbmkgICB8ICAyICsN
-Cj4gIGRvYy9ndWlkZXMvY3J5cHRvZGV2cy9vcGVuc3NsLnJzdCAgICAgICAgICAgIHwgIDIgKw0K
-PiAgZG9jL2d1aWRlcy9yZWxfbm90ZXMvcmVsZWFzZV8yNl8wMy5yc3QgICAgICAgfCAgNCArKw0K
-PiAgZHJpdmVycy9jcnlwdG8vb3BlbnNzbC9ydGVfb3BlbnNzbF9wbWQuYyAgICAgfCAzNiArKysr
-KysrKysrKysrKy0tDQo+ICBkcml2ZXJzL2NyeXB0by9vcGVuc3NsL3J0ZV9vcGVuc3NsX3BtZF9v
-cHMuYyB8IDQ0ICsrKysrKysrKysrKysrKysrKysrDQo+ICA1IGZpbGVzIGNoYW5nZWQsIDg1IGlu
-c2VydGlvbnMoKyksIDMgZGVsZXRpb25zKC0pDQo+IA0KDQpBY2tlZC1ieTogQWtoaWwgR295YWwg
-PGdha2hpbEBtYXJ2ZWxsLmNvbT4NCg0KQXBwbGllZCB0byBkcGRrLW5leHQtY3J5cHRvDQo=
+A few E610 MAC type checks were missing (verified using E610 datasheet).
+
+Fixes: 316637762a5f ("net/ixgbe/base: enable E610 device")
+Cc: stable@dpdk.org
+
+Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
+---
+ drivers/net/intel/ixgbe/ixgbe_bypass_api.h |  8 +-----
+ drivers/net/intel/ixgbe/ixgbe_ethdev.c     | 29 ++++++++++++++--------
+ drivers/net/intel/ixgbe/ixgbe_fdir.c       |  8 +++---
+ drivers/net/intel/ixgbe/ixgbe_flow.c       |  3 ++-
+ drivers/net/intel/ixgbe/ixgbe_pf.c         |  5 ++--
+ drivers/net/intel/ixgbe/ixgbe_rxtx.c       | 14 +++++++----
+ 6 files changed, 39 insertions(+), 28 deletions(-)
+
+diff --git a/drivers/net/intel/ixgbe/ixgbe_bypass_api.h b/drivers/net/intel/ixgbe/ixgbe_bypass_api.h
+index 6ef965dbb6..eb73bc8b17 100644
+--- a/drivers/net/intel/ixgbe/ixgbe_bypass_api.h
++++ b/drivers/net/intel/ixgbe/ixgbe_bypass_api.h
+@@ -40,16 +40,10 @@ static s32 ixgbe_bypass_rw_generic(struct ixgbe_hw *hw, u32 cmd, u32 *status)
+ 		dir_sdo = IXGBE_ESDP_SDP6_DIR;
+ 		break;
+ 	case ixgbe_mac_X540:
+-		sck = IXGBE_ESDP_SDP2;
+-		sdi = IXGBE_ESDP_SDP0;
+-		sdo = IXGBE_ESDP_SDP1;
+-		dir_sck = IXGBE_ESDP_SDP2_DIR;
+-		dir_sdi = IXGBE_ESDP_SDP0_DIR;
+-		dir_sdo = IXGBE_ESDP_SDP1_DIR;
+-		break;
+ 	case ixgbe_mac_X550:
+ 	case ixgbe_mac_X550EM_x:
+ 	case ixgbe_mac_X550EM_a:
++	case ixgbe_mac_E610:
+ 		sck = IXGBE_ESDP_SDP2;
+ 		sdi = IXGBE_ESDP_SDP0;
+ 		sdo = IXGBE_ESDP_SDP1;
+diff --git a/drivers/net/intel/ixgbe/ixgbe_ethdev.c b/drivers/net/intel/ixgbe/ixgbe_ethdev.c
+index 89a799762f..11500a923c 100644
+--- a/drivers/net/intel/ixgbe/ixgbe_ethdev.c
++++ b/drivers/net/intel/ixgbe/ixgbe_ethdev.c
+@@ -911,7 +911,8 @@ ixgbe_dev_queue_stats_mapping_set(struct rte_eth_dev *eth_dev,
+ 		(hw->mac.type != ixgbe_mac_X540) &&
+ 		(hw->mac.type != ixgbe_mac_X550) &&
+ 		(hw->mac.type != ixgbe_mac_X550EM_x) &&
+-		(hw->mac.type != ixgbe_mac_X550EM_a))
++		(hw->mac.type != ixgbe_mac_X550EM_a) &&
++		(hw->mac.type != ixgbe_mac_E610))
+ 		return -ENOSYS;
+ 
+ 	PMD_INIT_LOG(DEBUG, "Setting port %d, %s queue_id %d to stat index %d",
+@@ -2134,10 +2135,11 @@ ixgbe_vlan_hw_extend_enable(struct rte_eth_dev *dev)
+ 	ctrl |= IXGBE_EXTENDED_VLAN;
+ 	IXGBE_WRITE_REG(hw, IXGBE_CTRL_EXT, ctrl);
+ 
+-	/* Clear pooling mode of PFVTCTL. It's required by X550. */
++	/* Clear pooling mode of PFVTCTL. It's required by X550 and E610. */
+ 	if (hw->mac.type == ixgbe_mac_X550 ||
+ 	    hw->mac.type == ixgbe_mac_X550EM_x ||
+-	    hw->mac.type == ixgbe_mac_X550EM_a) {
++	    hw->mac.type == ixgbe_mac_X550EM_a ||
++	    hw->mac.type == ixgbe_mac_E610) {
+ 		ctrl = IXGBE_READ_REG(hw, IXGBE_VT_CTL);
+ 		ctrl &= ~IXGBE_VT_CTL_POOLING_MODE_MASK;
+ 		IXGBE_WRITE_REG(hw, IXGBE_VT_CTL, ctrl);
+@@ -2830,6 +2832,7 @@ ixgbe_dev_start(struct rte_eth_dev *dev)
+ 		case ixgbe_mac_X550:
+ 		case ixgbe_mac_X550EM_x:
+ 		case ixgbe_mac_X550EM_a:
++		case ixgbe_mac_E610:
+ 			speed = IXGBE_LINK_SPEED_X550_AUTONEG;
+ 			break;
+ 		default:
+@@ -4046,10 +4049,11 @@ ixgbe_dev_info_get(struct rte_eth_dev *dev, struct rte_eth_dev_info *dev_info)
+ 	if (hw->mac.type == ixgbe_mac_X540 ||
+ 	    hw->mac.type == ixgbe_mac_X540_vf ||
+ 	    hw->mac.type == ixgbe_mac_X550 ||
+-	    hw->mac.type == ixgbe_mac_X550_vf) {
++	    hw->mac.type == ixgbe_mac_X550_vf ||
++	    hw->mac.type == ixgbe_mac_E610) {
+ 		dev_info->speed_capa |= RTE_ETH_LINK_SPEED_100M;
+ 	}
+-	if (hw->mac.type == ixgbe_mac_X550) {
++	if (hw->mac.type == ixgbe_mac_X550 || hw->mac.type == ixgbe_mac_E610) {
+ 		dev_info->speed_capa |= RTE_ETH_LINK_SPEED_2_5G;
+ 		dev_info->speed_capa |= RTE_ETH_LINK_SPEED_5G;
+ 	}
+@@ -7665,7 +7669,8 @@ ixgbe_update_e_tag_eth_type(struct ixgbe_hw *hw,
+ 
+ 	if (hw->mac.type != ixgbe_mac_X550 &&
+ 	    hw->mac.type != ixgbe_mac_X550EM_x &&
+-	    hw->mac.type != ixgbe_mac_X550EM_a) {
++	    hw->mac.type != ixgbe_mac_X550EM_a &&
++	    hw->mac.type != ixgbe_mac_E610) {
+ 		return -ENOTSUP;
+ 	}
+ 
+@@ -7686,7 +7691,8 @@ ixgbe_e_tag_enable(struct ixgbe_hw *hw)
+ 
+ 	if (hw->mac.type != ixgbe_mac_X550 &&
+ 	    hw->mac.type != ixgbe_mac_X550EM_x &&
+-	    hw->mac.type != ixgbe_mac_X550EM_a) {
++	    hw->mac.type != ixgbe_mac_X550EM_a &&
++	    hw->mac.type != ixgbe_mac_E610) {
+ 		return -ENOTSUP;
+ 	}
+ 
+@@ -7709,7 +7715,8 @@ ixgbe_e_tag_filter_del(struct rte_eth_dev *dev,
+ 
+ 	if (hw->mac.type != ixgbe_mac_X550 &&
+ 	    hw->mac.type != ixgbe_mac_X550EM_x &&
+-	    hw->mac.type != ixgbe_mac_X550EM_a) {
++	    hw->mac.type != ixgbe_mac_X550EM_a &&
++	    hw->mac.type != ixgbe_mac_E610) {
+ 		return -ENOTSUP;
+ 	}
+ 
+@@ -7745,7 +7752,8 @@ ixgbe_e_tag_filter_add(struct rte_eth_dev *dev,
+ 
+ 	if (hw->mac.type != ixgbe_mac_X550 &&
+ 	    hw->mac.type != ixgbe_mac_X550EM_x &&
+-	    hw->mac.type != ixgbe_mac_X550EM_a) {
++	    hw->mac.type != ixgbe_mac_X550EM_a &&
++	    hw->mac.type != ixgbe_mac_E610) {
+ 		return -ENOTSUP;
+ 	}
+ 
+@@ -7932,7 +7940,8 @@ ixgbe_e_tag_forwarding_en_dis(struct rte_eth_dev *dev, bool en)
+ 
+ 	if (hw->mac.type != ixgbe_mac_X550 &&
+ 	    hw->mac.type != ixgbe_mac_X550EM_x &&
+-	    hw->mac.type != ixgbe_mac_X550EM_a) {
++	    hw->mac.type != ixgbe_mac_X550EM_a &&
++	    hw->mac.type != ixgbe_mac_E610) {
+ 		return -ENOTSUP;
+ 	}
+ 
+diff --git a/drivers/net/intel/ixgbe/ixgbe_fdir.c b/drivers/net/intel/ixgbe/ixgbe_fdir.c
+index 97ef185583..0bdfbd411a 100644
+--- a/drivers/net/intel/ixgbe/ixgbe_fdir.c
++++ b/drivers/net/intel/ixgbe/ixgbe_fdir.c
+@@ -650,10 +650,11 @@ ixgbe_fdir_configure(struct rte_eth_dev *dev)
+ 		hw->mac.type != ixgbe_mac_E610)
+ 		return -ENOSYS;
+ 
+-	/* x550 supports mac-vlan and tunnel mode but other NICs not */
++	/* x550 and E610 supports mac-vlan and tunnel mode but other NICs not */
+ 	if (hw->mac.type != ixgbe_mac_X550 &&
+ 	    hw->mac.type != ixgbe_mac_X550EM_x &&
+ 	    hw->mac.type != ixgbe_mac_X550EM_a &&
++	    hw->mac.type != ixgbe_mac_E610 &&
+ 	    mode != RTE_FDIR_MODE_SIGNATURE &&
+ 	    mode != RTE_FDIR_MODE_PERFECT)
+ 		return -ENOSYS;
+@@ -1130,7 +1131,7 @@ ixgbe_fdir_filter_program(struct rte_eth_dev *dev,
+ 		return -ENOTSUP;
+ 
+ 	/*
+-	 * Sanity check for x550.
++	 * Sanity check for x550 and E610.
+ 	 * When adding a new filter with flow type set to IPv4,
+ 	 * the flow director mask should be configed before,
+ 	 * and the L4 protocol and ports are masked.
+@@ -1138,7 +1139,8 @@ ixgbe_fdir_filter_program(struct rte_eth_dev *dev,
+ 	if ((!del) &&
+ 	    (hw->mac.type == ixgbe_mac_X550 ||
+ 	     hw->mac.type == ixgbe_mac_X550EM_x ||
+-	     hw->mac.type == ixgbe_mac_X550EM_a) &&
++	     hw->mac.type == ixgbe_mac_X550EM_a ||
++	     hw->mac.type == ixgbe_mac_E610) &&
+ 	    (rule->ixgbe_fdir.formatted.flow_type ==
+ 	     IXGBE_ATR_FLOW_TYPE_IPV4 ||
+ 	     rule->ixgbe_fdir.formatted.flow_type ==
+diff --git a/drivers/net/intel/ixgbe/ixgbe_flow.c b/drivers/net/intel/ixgbe/ixgbe_flow.c
+index 3b68d820ca..27d2ba1132 100644
+--- a/drivers/net/intel/ixgbe/ixgbe_flow.c
++++ b/drivers/net/intel/ixgbe/ixgbe_flow.c
+@@ -1361,7 +1361,8 @@ ixgbe_parse_l2_tn_filter(struct rte_eth_dev *dev,
+ 
+ 	if (hw->mac.type != ixgbe_mac_X550 &&
+ 		hw->mac.type != ixgbe_mac_X550EM_x &&
+-		hw->mac.type != ixgbe_mac_X550EM_a) {
++		hw->mac.type != ixgbe_mac_X550EM_a &&
++		hw->mac.type != ixgbe_mac_E610) {
+ 		memset(l2_tn_filter, 0, sizeof(struct ixgbe_l2_tunnel_conf));
+ 		rte_flow_error_set(error, EINVAL,
+ 			RTE_FLOW_ERROR_TYPE_ITEM,
+diff --git a/drivers/net/intel/ixgbe/ixgbe_pf.c b/drivers/net/intel/ixgbe/ixgbe_pf.c
+index e967fe5e48..d9a775f99a 100644
+--- a/drivers/net/intel/ixgbe/ixgbe_pf.c
++++ b/drivers/net/intel/ixgbe/ixgbe_pf.c
+@@ -558,11 +558,12 @@ ixgbe_set_vf_lpe(struct rte_eth_dev *dev, uint32_t vf, uint32_t *msgbuf)
+ 	uint32_t max_frs;
+ 	uint32_t hlreg0;
+ 
+-	/* X540 and X550 support jumbo frames in IOV mode */
++	/* X540, X550, and E610 support jumbo frames in IOV mode */
+ 	if (hw->mac.type != ixgbe_mac_X540 &&
+ 		hw->mac.type != ixgbe_mac_X550 &&
+ 		hw->mac.type != ixgbe_mac_X550EM_x &&
+-		hw->mac.type != ixgbe_mac_X550EM_a) {
++		hw->mac.type != ixgbe_mac_X550EM_a &&
++		hw->mac.type != ixgbe_mac_E610) {
+ 		struct ixgbe_vf_info *vfinfo =
+ 			*IXGBE_DEV_PRIVATE_TO_P_VFDATA(dev->data->dev_private);
+ 
+diff --git a/drivers/net/intel/ixgbe/ixgbe_rxtx.c b/drivers/net/intel/ixgbe/ixgbe_rxtx.c
+index 0af04c9b0d..2857c19355 100644
+--- a/drivers/net/intel/ixgbe/ixgbe_rxtx.c
++++ b/drivers/net/intel/ixgbe/ixgbe_rxtx.c
+@@ -2707,7 +2707,8 @@ ixgbe_get_tx_port_offloads(struct rte_eth_dev *dev)
+ 
+ 	if (hw->mac.type == ixgbe_mac_X550 ||
+ 	    hw->mac.type == ixgbe_mac_X550EM_x ||
+-	    hw->mac.type == ixgbe_mac_X550EM_a)
++	    hw->mac.type == ixgbe_mac_X550EM_a ||
++	    hw->mac.type == ixgbe_mac_E610)
+ 		tx_offload_capa |= RTE_ETH_TX_OFFLOAD_OUTER_IPV4_CKSUM;
+ 
+ #ifdef RTE_LIB_SECURITY
+@@ -3166,7 +3167,8 @@ ixgbe_get_rx_port_offloads(struct rte_eth_dev *dev)
+ 
+ 	if (hw->mac.type == ixgbe_mac_X550 ||
+ 	    hw->mac.type == ixgbe_mac_X550EM_x ||
+-	    hw->mac.type == ixgbe_mac_X550EM_a)
++	    hw->mac.type == ixgbe_mac_X550EM_a ||
++	    hw->mac.type == ixgbe_mac_E610)
+ 		offloads |= RTE_ETH_RX_OFFLOAD_OUTER_IPV4_CKSUM;
+ 
+ #ifdef RTE_LIB_SECURITY
+@@ -3246,7 +3248,7 @@ ixgbe_dev_rx_queue_setup(struct rte_eth_dev *dev,
+ 
+ 	/*
+ 	 * The packet type in RX descriptor is different for different NICs.
+-	 * Some bits are used for x550 but reserved for other NICS.
++	 * Some bits are used for x550 and E610 but reserved for other NICS.
+ 	 * So set different masks for different NICs.
+ 	 */
+ 	if (hw->mac.type == ixgbe_mac_X550 ||
+@@ -3254,7 +3256,8 @@ ixgbe_dev_rx_queue_setup(struct rte_eth_dev *dev,
+ 	    hw->mac.type == ixgbe_mac_X550EM_a ||
+ 	    hw->mac.type == ixgbe_mac_X550_vf ||
+ 	    hw->mac.type == ixgbe_mac_X550EM_x_vf ||
+-	    hw->mac.type == ixgbe_mac_X550EM_a_vf)
++	    hw->mac.type == ixgbe_mac_X550EM_a_vf ||
++	    hw->mac.type == ixgbe_mac_E610)
+ 		rxq->pkt_type_mask = IXGBE_PACKET_TYPE_MASK_X550;
+ 	else
+ 		rxq->pkt_type_mask = IXGBE_PACKET_TYPE_MASK_82599;
+@@ -3506,7 +3509,8 @@ ixgbe_dev_clear_queues(struct rte_eth_dev *dev)
+ 		if (hw->mac.type == ixgbe_mac_X540 ||
+ 		     hw->mac.type == ixgbe_mac_X550 ||
+ 		     hw->mac.type == ixgbe_mac_X550EM_x ||
+-		     hw->mac.type == ixgbe_mac_X550EM_a)
++		     hw->mac.type == ixgbe_mac_X550EM_a ||
++		     hw->mac.type == ixgbe_mac_E610)
+ 			ixgbe_setup_loopback_link_x540_x550(hw, false);
+ 	}
+ }
+-- 
+2.47.3
+
