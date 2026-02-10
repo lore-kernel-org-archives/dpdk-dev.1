@@ -2,45 +2,44 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8BA5EA3F0C
-	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Feb 2026 05:55:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F0BFEA3F0C
+	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Feb 2026 05:55:48 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2C5FE40655;
-	Tue, 10 Feb 2026 06:55:25 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 360BE4065F;
+	Tue, 10 Feb 2026 06:55:26 +0100 (CET)
 Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
- by mails.dpdk.org (Postfix) with ESMTP id 2D565402C6
+ by mails.dpdk.org (Postfix) with ESMTP id 217BD400D6
  for <dev@dpdk.org>; Tue, 10 Feb 2026 06:55:19 +0100 (CET)
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 61A5tHgX53127160,
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 61A5tHgV53127160,
  This message is accepted by code: ctloc85258
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realsil.com.cn;
- s=dkim; t=1770702918;
- bh=lL4IIEmpQOBzk+B1c/+Y89zX7d6g1Dsn9D5h45t2gto=;
+ s=dkim; t=1770702917;
+ bh=vQihHup3PXhfXukbJBXC2OJ4vp9Ka4T7LjtmQt6nwaA=;
  h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
  MIME-Version:Content-Transfer-Encoding:Content-Type;
- b=BMCMZltf2Iom2/SIl3DeBwFqg46PAZqaAqNjD3y5SbYrxhwSULCLkYCWcBk9esmt/
- cgXhmBCJOpHvE7TIqeDjTuxf69YrBchmsquTDwSopPjTa/uoXN7Wonts4U1C4gVhvI
- R5lVTZc5rv/iMqRVdtfPl7G1PO5vklSU6pjBYN6VEMMyLCbZlMdYx0GVRkNqUqCH05
- /Ybia5pVRfwuqBqhcob14u6GH6mXMyqrs4VAWciZIpV/TWATAsq0LPYqYgcoFu0lXo
- JeGM7/wle0JjjUQBRP96PSL3XRXUWPASkVRkz+AUUOd2a5b2CI38/T1u4y1uFVjUrg
- rvLn+0xrKSyaA==
+ b=n7yDnh5ex6ZA52JnZczjo16gM5nmROdiGgV1xPTVai1DW1wtCgMIi6yv/ztc9iP6j
+ x+e3Z3iB+Jkla+Et1VkgCwUF3jXAi69Usuo1TopUhmGuJXzmmdY0QOxVLcAXqxPCpP
+ 6Pr8DJQ3NHYTK33ylaMoz/6dKKiO0al8Kg6AzNIy9BvOXRzdnKBYPSL6Dq4o8D1OhB
+ BtPficORRkaiR6amvvJW+LTcs4a4rHkDGoufZPpdIKhveyzP2ZEceWPWStK2RVQAK6
+ KVS5NjBE93ka97Hf2ON3vPf0JUX8qT3USvbVA+p/0ATIyK4PqCuYcurzLlvXDDrHFh
+ Xl8cPrWHN4hOQ==
 Received: from RS-EX-MBS4.realsil.com.cn ([172.29.17.104])
- by rtits2.realtek.com.tw (8.15.2/3.21/5.94) with ESMTPS id 61A5tHgX53127160
+ by rtits2.realtek.com.tw (8.15.2/3.21/5.94) with ESMTPS id 61A5tHgV53127160
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL)
  for <dev@dpdk.org>; Tue, 10 Feb 2026 13:55:17 +0800
 Received: from RS-EX-MBS1.realsil.com.cn (172.29.17.101) by
  RS-EX-MBS4.realsil.com.cn (172.29.17.104) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.39; Tue, 10 Feb 2026 13:55:17 +0800
+ 15.2.1748.39; Tue, 10 Feb 2026 13:55:16 +0800
 Received: from 172.29.32.27 (172.29.32.27) by RS-EX-MBS1.realsil.com.cn
  (172.29.17.101) with Microsoft SMTP Server id 15.2.1748.39 via Frontend
- Transport; Tue, 10 Feb 2026 13:55:17 +0800
+ Transport; Tue, 10 Feb 2026 13:55:16 +0800
 From: Howard Wang <howard_wang@realsil.com.cn>
 To: <dev@dpdk.org>
 CC: <pro_nic_dpdk@realtek.com>, Howard Wang <howard_wang@realsil.com.cn>
-Subject: [PATCH v2 05/12] net/r8169: adjust jumbo frame size limit for non-1G
- cards
-Date: Tue, 10 Feb 2026 13:55:04 +0800
-Message-ID: <20260210055511.62382-6-howard_wang@realsil.com.cn>
+Subject: [PATCH v2 02/12] net/r8169: tune RX desc fetch num for 8126 and 8127
+Date: Tue, 10 Feb 2026 13:55:01 +0800
+Message-ID: <20260210055511.62382-3-howard_wang@realsil.com.cn>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20260210055511.62382-1-howard_wang@realsil.com.cn>
 References: <20260210055511.62382-1-howard_wang@realsil.com.cn>
@@ -60,63 +59,61 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-For 8125A, set the max size to (16K - 1).
-For other non-1G cards, set the max size to 16K.
+For RTL8126: Tune RX descriptor fetch number to 20.
+For RTL8127: Tune RX descriptor fetch number to 12.
 
 Signed-off-by: Howard Wang <howard_wang@realsil.com.cn>
 ---
- drivers/net/r8169/r8169_compat.h |  1 +
- drivers/net/r8169/r8169_ethdev.c | 23 ++++++++++++++++++++++-
- 2 files changed, 23 insertions(+), 1 deletion(-)
+ drivers/net/r8169/base/rtl8126a.c | 4 ++--
+ drivers/net/r8169/base/rtl8127.c  | 2 +-
+ drivers/net/r8169/r8169_compat.h  | 2 ++
+ 3 files changed, 5 insertions(+), 3 deletions(-)
 
+diff --git a/drivers/net/r8169/base/rtl8126a.c b/drivers/net/r8169/base/rtl8126a.c
+index 047ef83587..58b1cc2664 100644
+--- a/drivers/net/r8169/base/rtl8126a.c
++++ b/drivers/net/r8169/base/rtl8126a.c
+@@ -14,12 +14,12 @@ hw_init_rxcfg_8126a(struct rtl_hw *hw)
+ {
+ 	switch (hw->mcfg) {
+ 	case CFG_METHOD_69:
+-		RTL_W32(hw, RxConfig, Rx_Fetch_Number_8 | RxCfg_pause_slot_en |
++		RTL_W32(hw, RxConfig, Rx_Fetch_Number_20 | RxCfg_pause_slot_en |
+ 			(RX_DMA_BURST_512 << RxCfgDMAShift));
+ 		break;
+ 	case CFG_METHOD_70:
+ 	case CFG_METHOD_71:
+-		RTL_W32(hw, RxConfig, Rx_Fetch_Number_8 | Rx_Close_Multiple |
++		RTL_W32(hw, RxConfig, Rx_Fetch_Number_20 | Rx_Close_Multiple |
+ 			RxCfg_pause_slot_en | (RX_DMA_BURST_512 << RxCfgDMAShift));
+ 		break;
+ 	}
+diff --git a/drivers/net/r8169/base/rtl8127.c b/drivers/net/r8169/base/rtl8127.c
+index 9e79255e3c..26c2cfd25b 100644
+--- a/drivers/net/r8169/base/rtl8127.c
++++ b/drivers/net/r8169/base/rtl8127.c
+@@ -14,7 +14,7 @@ hw_init_rxcfg_8127(struct rtl_hw *hw)
+ {
+ 	switch (hw->mcfg) {
+ 	case CFG_METHOD_91:
+-		RTL_W32(hw, RxConfig, Rx_Fetch_Number_8 | Rx_Close_Multiple |
++		RTL_W32(hw, RxConfig, Rx_Fetch_Number_12 | Rx_Close_Multiple |
+ 			RxCfg_pause_slot_en | (RX_DMA_BURST_512 << RxCfgDMAShift));
+ 		break;
+ 	}
 diff --git a/drivers/net/r8169/r8169_compat.h b/drivers/net/r8169/r8169_compat.h
-index d2d928cdd7..673a1ca274 100644
+index 9163c7f59f..ab6a984a54 100644
 --- a/drivers/net/r8169/r8169_compat.h
 +++ b/drivers/net/r8169/r8169_compat.h
-@@ -617,6 +617,7 @@ enum RTL_chipset_name {
-  */
- #define RTL_ETH_OVERHEAD (RTE_ETHER_HDR_LEN + RTE_ETHER_CRC_LEN + VLAN_TAG_SIZE)
- #define JUMBO_FRAME_9K  (9 * 1024 - RTE_ETHER_HDR_LEN - RTE_VLAN_HLEN - RTE_ETHER_CRC_LEN)
-+#define JUMBO_FRAME_16K  (16 * 1024 - RTE_ETHER_HDR_LEN - RTE_VLAN_HLEN - RTE_ETHER_CRC_LEN)
- 
- #define DMA_BIT_MASK(n) (((n) == 64) ? ~0ULL : ((1ULL << (n)) - 1))
- 
-diff --git a/drivers/net/r8169/r8169_ethdev.c b/drivers/net/r8169/r8169_ethdev.c
-index f620154bf0..8e46ce09a1 100644
---- a/drivers/net/r8169/r8169_ethdev.c
-+++ b/drivers/net/r8169/r8169_ethdev.c
-@@ -412,9 +412,30 @@ rtl_dev_infos_get(struct rte_eth_dev *dev, struct rte_eth_dev_info *dev_info)
- 	struct rtl_hw *hw = &adapter->hw;
- 
- 	dev_info->min_rx_bufsize = 1024;
--	dev_info->max_rx_pktlen = JUMBO_FRAME_9K;
- 	dev_info->max_mac_addrs = 1;
- 
-+	switch (hw->mcfg) {
-+	case CFG_METHOD_48:
-+	case CFG_METHOD_49:
-+		dev_info->max_rx_pktlen = JUMBO_FRAME_16K - 1;
-+		break;
-+	case CFG_METHOD_50:
-+	case CFG_METHOD_51:
-+	case CFG_METHOD_54:
-+	case CFG_METHOD_55:
-+	case CFG_METHOD_56:
-+	case CFG_METHOD_57:
-+	case CFG_METHOD_58:
-+	case CFG_METHOD_70:
-+	case CFG_METHOD_71:
-+	case CFG_METHOD_91:
-+		dev_info->max_rx_pktlen = JUMBO_FRAME_16K;
-+		break;
-+	default:
-+		dev_info->max_rx_pktlen = JUMBO_FRAME_9K;
-+		break;
-+	}
-+
- 	if (hw->mcfg >= CFG_METHOD_69) {
- 		dev_info->max_rx_queues = 4;
- 		dev_info->max_tx_queues = 2;
+@@ -563,6 +563,8 @@ enum RTL_chipset_name {
+ #define TX_DMA_BURST_16     0
+ #define InterFrameGap       0x03    /* 3 means InterFrameGap = the shortest one */
+ #define Rx_Fetch_Number_8  (1 << 30)
++#define Rx_Fetch_Number_12  (BIT_30 | BIT_29)
++#define Rx_Fetch_Number_20  (BIT_31 | BIT_29)
+ #define Rx_Close_Multiple  (1 << 21)
+ #define RxEarly_off_V2	   (1 << 11)
+ #define Rx_Single_fetch_V2 (1 << 14)
 -- 
 2.34.1
 
