@@ -2,51 +2,170 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC5F7EB26E0
-	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Feb 2026 16:24:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 747EFEB26E0
+	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Feb 2026 16:47:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9B54C40A6F;
-	Tue, 10 Feb 2026 17:14:13 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 9E12140608;
+	Tue, 10 Feb 2026 17:47:17 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
- by mails.dpdk.org (Postfix) with ESMTP id 51B3F4068E
- for <dev@dpdk.org>; Tue, 10 Feb 2026 17:14:09 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 46A084042F
+ for <dev@dpdk.org>; Tue, 10 Feb 2026 17:47:16 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1770740050; x=1802276050;
- h=from:to:subject:date:message-id:in-reply-to:references:
- mime-version:content-transfer-encoding;
- bh=E7XrzxeV32CJTXUcZx8jHeJ8Oh663Mf/InA2QlhVk1U=;
- b=JmrA/5ndArshZ2miAwLhEoVt7ynqDDDb2vc8oxhfp1MuxWk8kVJOIEjx
- f+nvCMcFRaRFT97GNciBSwIXJZxRMFh1TyZrf7AClUIBkIsKEwfyJiObi
- d9by9WPEFP3xiQ/EvBLOJSgw3jCrxlNEAkjTl9grwxFqZ1JKVyXnHjWbP
- hLUmOYunCzrHnm3tG5zA9xmw/skyeaHH5m/VJjngN2H+C/j0vNhAjpcpu
- htpEDOFDkYnySCyaNiQaElkyBdM9xuO1TlxEsLgYsMzwLs+jO4YF/R1B5
- Ov7b+7d+a+T5hROJCePn6k83XV0vpYHajBxGz8CBK4jmn+iKpDq79fRAb g==;
-X-CSE-ConnectionGUID: EOrwH6GHRJ2gggboNOnW6A==
-X-CSE-MsgGUID: wK1kS5XLR56UKVX/tGY2Hw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11697"; a="89286180"
-X-IronPort-AV: E=Sophos;i="6.21,283,1763452800"; d="scan'208";a="89286180"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
+ t=1770742036; x=1802278036;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=OG4Y177l8027ij6UbRzWtNtc0GrplrTQYII7HEZCwJs=;
+ b=cqmA2AXmGiP2Vb+kIQflPeeVR/FvXpskW1nOFn+CkodUV8dwA+7oOttq
+ wUfDci8U117/JSFZP4RWlKSRV8+mhxEv0UgyxMR10hyQ6Okwe7zq0yCx0
+ cJJ/81jDBE+AG4SXtDYJr9odMs0gNT/V8zw7BomYTOLKsxYpnG87jEPN0
+ R/Z66CXlbMCqxy4dmxh/33gK0bVpHdQuNZRZAu6DiUOuvOa1gQV8olgci
+ 3Pz949xZ3DeLaUZVKDpmKgb2/eN8rKzxWBtHjZ9DB52E5UfYIZEW8hjCr
+ YwVHcBsbertDXrLRtRKkaqhaoBorO4FsIJOjQhmKoZWgInFUCrtZ3FK+8 Q==;
+X-CSE-ConnectionGUID: ety4URm5SfWh/TrJLHPwLQ==
+X-CSE-MsgGUID: zlFA1BurQtq0axxjBKYEXg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11697"; a="89290512"
+X-IronPort-AV: E=Sophos;i="6.21,283,1763452800"; d="scan'208";a="89290512"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 10 Feb 2026 08:14:07 -0800
-X-CSE-ConnectionGUID: pR+ecSVEReeUuRWfChNWEA==
-X-CSE-MsgGUID: vl6KH5WgQVeQePOpUhQHRQ==
+ 10 Feb 2026 08:47:15 -0800
+X-CSE-ConnectionGUID: GUpliwyIQSm2phiLgVOt3Q==
+X-CSE-MsgGUID: x7wq6DDXQgyB9VPvZ/EAwA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,283,1763452800"; d="scan'208";a="216127717"
-Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by orviesa003.jf.intel.com with ESMTP; 10 Feb 2026 08:14:06 -0800
-From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org,
-	Vladimir Medvedkin <vladimir.medvedkin@intel.com>
-Subject: [PATCH v2 02/26] net/ixgbe: remove security-related ifdefery
-Date: Tue, 10 Feb 2026 16:13:31 +0000
-Message-ID: <d764baf62dfa2c1d19c8c599c783b5e02a61405b.1770739924.git.anatoly.burakov@intel.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <cover.1770739924.git.anatoly.burakov@intel.com>
- <cover.1770739924.git.anatoly.burakov@intel.com>
-References: 
+X-IronPort-AV: E=Sophos;i="6.21,283,1763452800"; d="scan'208";a="211009152"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+ by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 10 Feb 2026 08:47:15 -0800
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.35; Tue, 10 Feb 2026 08:47:14 -0800
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.35 via Frontend Transport; Tue, 10 Feb 2026 08:47:14 -0800
+Received: from CY7PR03CU001.outbound.protection.outlook.com (40.93.198.0) by
+ edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.35; Tue, 10 Feb 2026 08:47:14 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=yZ/Si6oq81naZLrzMhwvtR/1ji3DOCrlo03F81Gfw2hFbGwjV0CfHj3hi9EAsqp2J4Ntc1XLtLMoKakroMctxm/MnUf5sapMeyh32cq2KqMyUSbgC++DNd0LOKKe4AC24yJUI2WzPls1VfXwn5xH7GNC6dKyDDuvOJAptBEBZ8UUWYc1ga4LNFcxbRqwKH6NpH9d80/EeOkqzW8XSuaYu3bqQb+MGE7jplyg4rR+k5i0FmEWxzOAYlgxEOHevjhO2w2s/fqgl2M36esndOqbAI+A12Y+sudg2bzu7pP4DD9x5Odm6enLjVH11yrYyXwfFFWSsxvljCnFDBNpAKDv1A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=2xhj8Bd+vvBBTUxYCsX+zoseW40+HObIpdJEjGb4ZeA=;
+ b=i24fRS9oACpxpFvmgHZ7LesUr7EqMIehuK7apfdbT1eyScD662HerxEzEXZIKwQN6Xw8njCLgM1mj3yFiCZAhZoCkr/w2ErHnCJkDWBrd6Hx4YQMsAWtKzoJFLCqcqT2Gdo4oO0lY4oVTJt/XP3cNqpAO5vY7qcgvLS37SWCWZMf/wmdqu2/8D7vn5tx6v/p1jOzrPqhhqrQSa+Q7pN9bI0D1Bnx7b8cgDqaX3sjYix+2s0g3qy3I8SCTsHGaNyzD9iL9hZ1XZDdRy41McfEV8edJBLinf9TupxK3lIKiugoYhJtpyHkoRTF5FSTZBfSZaXCSIhP7zkHBX8mlWsbMg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
+ by IA3PR11MB9062.namprd11.prod.outlook.com (2603:10b6:208:577::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9587.16; Tue, 10 Feb
+ 2026 16:47:12 +0000
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::2a1:33a9:9f92:b52e]) by DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::2a1:33a9:9f92:b52e%3]) with mapi id 15.20.9587.017; Tue, 10 Feb 2026
+ 16:47:12 +0000
+Date: Tue, 10 Feb 2026 16:47:07 +0000
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: "Burakov, Anatoly" <anatoly.burakov@intel.com>
+CC: <dev@dpdk.org>, Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
+ Jingjing Wu <jingjing.wu@intel.com>, Praveen Shetty
+ <praveen.shetty@intel.com>
+Subject: Re: [PATCH v4 04/35] net/intel: consolidate definitions for Tx desc
+ fields
+Message-ID: <aYthC8nabQT3SaPt@bricha3-mobl1.ger.corp.intel.com>
+References: <20251219172548.2660777-1-bruce.richardson@intel.com>
+ <20260209164538.1428499-1-bruce.richardson@intel.com>
+ <20260209164538.1428499-5-bruce.richardson@intel.com>
+ <8e683730-a57a-4d12-88a1-7268dc507c4c@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <8e683730-a57a-4d12-88a1-7268dc507c4c@intel.com>
+X-ClientProxiedBy: DU7PR01CA0002.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:50f::24) To DS0PR11MB7309.namprd11.prod.outlook.com
+ (2603:10b6:8:13e::17)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|IA3PR11MB9062:EE_
+X-MS-Office365-Filtering-Correlation-Id: f96f3b17-e8d7-4966-5045-08de68c409f9
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?5AQK8dAn05W2pt452P/jLYN6sDP0UVyYt89RA++YYB+Ylq/MK/AufcI9lHCx?=
+ =?us-ascii?Q?ygUbJpqyYMK/0CyLpi4FMGxbqZ9TJfMLkk5eqS3jyxn4dsksGRTNQ+nuFgSz?=
+ =?us-ascii?Q?0n+GeoSLNSGPyIm6dKYQBn2JRVvR///dSiB+UpxLoKO73j760SUh/fokgQdG?=
+ =?us-ascii?Q?UmKBIFeg8OxvDuVySxRGPX8O+m7rkD9uWXPPgxgt5ujpw+ela/zqzLKc9gEi?=
+ =?us-ascii?Q?bAsnJXfD1YFSl+HlgdAHR4AmIJzRcBfnWapiC8QC5zzVbXiQX54kVPx13Lbe?=
+ =?us-ascii?Q?JLomIGOFibOYsqZKQkJHvPL1psn6KQqZGrmp5wBnrIJ9AruJDgam37rHJSNv?=
+ =?us-ascii?Q?eQ4SBAWW1SAluU00x1bgEASTrDSMrYchN9SwrheTkRqXnrgxf3rTfOXKGCWO?=
+ =?us-ascii?Q?DfMZ3Z5lQ3JwwQdD59u2g8PL8kQZcVHtDoUbolrTNn6AIVtDHID8JkBlMOcw?=
+ =?us-ascii?Q?CN8TZ+SgwlBG3s51t6ubsktYQSxeFgzRLhr7gHBtPL9Mju9m3z6/yq4yi9iL?=
+ =?us-ascii?Q?91cHmMaCXLdZ+nsbwhslQmEDHO+nWTEZ67BFHfivWeL1aoFfiOnTJt4PgOl5?=
+ =?us-ascii?Q?QiEc0mE31/i6IFGMd7HQkuIzSfian8ANhtVXeKe2HxW6QQmVzPdBGLdvkDaI?=
+ =?us-ascii?Q?1Y93pc5GqI2A57gbpCKzt01taMGD0T8n9ajoCRPYpupXYJewW39uXvlXnkMI?=
+ =?us-ascii?Q?AlHKpSyj4yb5Isjv08AU8s4w0+pmvYuQFQ2zjj6eGvwdHqdBuYtfAgoN6clP?=
+ =?us-ascii?Q?a8lrBmi+9XcQrqP1ediWqc2gTVmVLueKZaswClH8mjL72xRCxSOhE0DuedT7?=
+ =?us-ascii?Q?VQAgegkFFM7WZ89gAMZ+fOdBwNqUSja1zQXiprSNurvRMhoYEpC1OPUyXaHd?=
+ =?us-ascii?Q?YdHpBDrXVuHgr1N0jfQ1JZ5wZFFTDSUHs1iYG/cEuw2FM+Hqr18vB59j+ZtP?=
+ =?us-ascii?Q?8pn6TTicvfsDg8WcMZQCu1XqLl3F+dSvyic9uwf0PksGri3Be8/QEYhyqV2Y?=
+ =?us-ascii?Q?jOFdkJFV6SQxlSLwSY4kxcfMVc6E5D5Up1A0YW6sk/XUssS+xdVCFMc24hex?=
+ =?us-ascii?Q?nl0Qbgrh5261inv0fOb3LKfL55ngbyrUhwW/7Sw47JYaluBHqTsNITEd7hEz?=
+ =?us-ascii?Q?e053sQXO158XfbzNUE5AQOHWx0NTmuzsZfuoows4UKGnjqn0SNOzbFw0HJ0Q?=
+ =?us-ascii?Q?Gs1ApS15nZxLQkvL5re+ad1y+emv7xku78qcTb5haFZ56vFYqvN0mCkwtPoQ?=
+ =?us-ascii?Q?+yapIeZLpfltd4tEch16C13FGsLixl9jw3PCrBBSYTK7R/QTl5P360HnhEuA?=
+ =?us-ascii?Q?BujMNTDOO+Lm/PR2W13HC/TA/TGib8GJZzAiVVe39NoZds4EJPn9MJypwWYg?=
+ =?us-ascii?Q?FbuXPWMY3j8QrFXIymT0UOEe078u0xBxlEwVvgf+lHPPlq3ZDTkvrlpbz2cE?=
+ =?us-ascii?Q?4J9vBNvdF3/TyCHFDxgyIRi1XzjpA1y6miAAIYmxYadXFb3ywjnap6oxMIiY?=
+ =?us-ascii?Q?Pm7EshdVkgt9MoGbvyDv29xePl164lqGoYydk+loNhZF12EmzXuIjnlxxfpA?=
+ =?us-ascii?Q?xfZI03H/0YtD3bfM43g=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(366016)(1800799024); DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?YNijgt0JptVnOX5oMQYhvxuxmAPCkb8AlV4jz0mjJAVcJB+kwEopeW5eU+j1?=
+ =?us-ascii?Q?bdAYsoNiZ6c3+oVAike/QjTqGzbjVsTE5pncxaJQjbrjpuSNZb/BG/JY7OT1?=
+ =?us-ascii?Q?xV0X7A/6skWCpUST5pMaNNSE7eDj71ymhTbZB2jyMkoTXTJbdxuRDz8uBWCx?=
+ =?us-ascii?Q?Pzr7Nlaj5q5veTTTxF3lBnSxUb/OVTBSeHMA9vc6TUSOiJG6wpHXmzt3nAZl?=
+ =?us-ascii?Q?/CZvYI5eFORMRSpvksF/bJSGcgSSkosYREDwRMpgpJSjZz7sWgOAsbBWEzgS?=
+ =?us-ascii?Q?aTsI4f3agvrncqt2t6DTUU9hseR9tvV03+ReBxRwg9yNXtYbhqDAERRohoiS?=
+ =?us-ascii?Q?QU8+dnd7yX07x2VuTyqGVLAGVaw0jnI5XKSm+GYL9QAzYaHsgoqLewkLXR3C?=
+ =?us-ascii?Q?cWSL/P5rI/2iBG2OXDt3809zBlGw4A2MfXKTSKwZhLyzHryqS0VgV50UNti2?=
+ =?us-ascii?Q?uj7hFqIXEc0Um2W31ZIs6iunL2Z+sLJ6iyPX6IwLV+9n1T1dt3cGadZfGUJY?=
+ =?us-ascii?Q?6pn3VKG7DoOvqvVxdJG6vAM87ZOthMWuwpNvXS6M3qqIoPiOmfqqkknDSWHx?=
+ =?us-ascii?Q?Lh83UWNvZInj8QVVECcsgbdfFEIQTMQk3//LI7X3gCR7HR/5WRXaycHJc6Ff?=
+ =?us-ascii?Q?qVQ47VobHsCyDBgN3zyv29mgENHjlHH6lgDtzVXUR2IOm/zMQGYU0aLPaalG?=
+ =?us-ascii?Q?ShFI8ktnQIYExCBgeoFJyYVT5Fo+dBxx+3jq4f95aulr1Ddt+kGczHRyNYLn?=
+ =?us-ascii?Q?WuiFPM3itGvxEVgT5wH4jRDepS39pbOKWFSBMUdSQcwlwhxjkqQ3YKmonoPq?=
+ =?us-ascii?Q?000uAYteYXOPd1BirrI7k4g/bVHVXgQNwjttyDn3In8949IP85+zUDt9t4B+?=
+ =?us-ascii?Q?CpUvTGeXLPe0iSpWoJ46odc9WjdMJVwFya4uMGwQVjBTzAU6x46TW2o+YIOH?=
+ =?us-ascii?Q?+T7SQfaO9O0JhDXcUGxejlAcaOXGMvpDiISHmObqhV+WiCSFAPWEI6jPoa1f?=
+ =?us-ascii?Q?op8srQgtlCEHGtQttdqLkfOPK8eLs68wnn23KQpg9SN5YdSIIrgWg3KRFLMp?=
+ =?us-ascii?Q?L96TG7615kxd3Yy+7VG99zcpxXQ25stqYG1mj60ZDNucQKnpwRT+bvHmAL/1?=
+ =?us-ascii?Q?K4BLBB33r7+cmDikSjBMm8Ot4JI8gb0FnqkAB75i9pq6U+1fl6Tu1re1hrCb?=
+ =?us-ascii?Q?oonan1m1JZkiMYSoJBBf6/O9tEi/ns44RwEUjYJ18itZH+GmqilryHDbpic5?=
+ =?us-ascii?Q?V6Fi6K3Tndbez0Lb+q33ljvMtlh1yoNOZSPUfK1btGcxTTbA9OUE3un+9vDs?=
+ =?us-ascii?Q?g2Wi8Kw0m+/KvItU/KqosXtlCAjXFFJ33kb2MqZ42DeBIJ9iVCcyDmDG4hhW?=
+ =?us-ascii?Q?pPvVaoyrZMzQkmZuqKwohHP2yS4bm57tJCvvUCngFcUQpg81BeRrixP2I2rJ?=
+ =?us-ascii?Q?Y2ypFJdpXzBypiVcbfFUNXg8xYok7W30d/CjfelaCujsUioQLmd8lhQtv007?=
+ =?us-ascii?Q?WyhDXGSVorev4JUYfi8i2YLJPCFETJYBd7hW99PM1xuPSB6Imk9pdchJT5VD?=
+ =?us-ascii?Q?MWgT0ntsTK00YkGiEViWQgU2Hb94GdPnJ9CTQ2l4encQjC7GaW3GVl8XwoMV?=
+ =?us-ascii?Q?WNUqLfZvquwkISFb2nkNKdC844HHVy3TOlVZziz5nA8N7dNRTYYYTk+s7g3B?=
+ =?us-ascii?Q?wCiQw5ThQHO5fK7QZ3vUiA/C64QackrhJ5t94eN0sQuUSXtLkjqxEb6rF0WU?=
+ =?us-ascii?Q?4hkMbgfb3qiz9Gapgi6xj9BiUzbtTlo=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: f96f3b17-e8d7-4966-5045-08de68c409f9
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Feb 2026 16:47:12.4837 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: g8nKUl1KGk8SW0C82S9azLcAKIf1IpftqGagpdKWoIE1d1lgeBv1R0m1JrVdlNNVQBn906WgQSOIzmw3Us2USzt4vL9WF1gx8Tjtha4HO68=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA3PR11MB9062
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -60,354 +179,20 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The security library is specified as explicit dependency for ixgbe, so
-there is no more need to gate features behind #ifdef blocks that depend
-on presence of this library.
-
-Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
----
- drivers/net/intel/ixgbe/ixgbe_ethdev.c       |  8 ------
- drivers/net/intel/ixgbe/ixgbe_ethdev.h       |  4 ---
- drivers/net/intel/ixgbe/ixgbe_flow.c         |  6 -----
- drivers/net/intel/ixgbe/ixgbe_rxtx.c         | 26 --------------------
- drivers/net/intel/ixgbe/ixgbe_rxtx.h         |  2 --
- drivers/net/intel/ixgbe/ixgbe_rxtx_vec_sse.c |  6 -----
- 6 files changed, 52 deletions(-)
-
-diff --git a/drivers/net/intel/ixgbe/ixgbe_ethdev.c b/drivers/net/intel/ixgbe/ixgbe_ethdev.c
-index 11500a923c..57d929cf2c 100644
---- a/drivers/net/intel/ixgbe/ixgbe_ethdev.c
-+++ b/drivers/net/intel/ixgbe/ixgbe_ethdev.c
-@@ -32,9 +32,7 @@
- #include <rte_random.h>
- #include <dev_driver.h>
- #include <rte_hash_crc.h>
--#ifdef RTE_LIB_SECURITY
- #include <rte_security_driver.h>
--#endif
- #include <rte_os_shim.h>
- 
- #include "ixgbe_logs.h"
-@@ -1177,11 +1175,9 @@ eth_ixgbe_dev_init(struct rte_eth_dev *eth_dev, void *init_params __rte_unused)
- 	/* Unlock any pending hardware semaphore */
- 	ixgbe_swfw_lock_reset(hw);
- 
--#ifdef RTE_LIB_SECURITY
- 	/* Initialize security_ctx only for primary process*/
- 	if (ixgbe_ipsec_ctx_create(eth_dev))
- 		return -ENOMEM;
--#endif
- 
- 	/* Initialize DCB configuration*/
- 	memset(dcb_config, 0, sizeof(struct ixgbe_dcb_config));
-@@ -1362,10 +1358,8 @@ eth_ixgbe_dev_init(struct rte_eth_dev *eth_dev, void *init_params __rte_unused)
- 	rte_free(eth_dev->data->hash_mac_addrs);
- 	eth_dev->data->hash_mac_addrs = NULL;
- err_exit:
--#ifdef RTE_LIB_SECURITY
- 	rte_free(eth_dev->security_ctx);
- 	eth_dev->security_ctx = NULL;
--#endif
- 	return ret;
- }
- 
-@@ -3148,10 +3142,8 @@ ixgbe_dev_close(struct rte_eth_dev *dev)
- 	/* Remove all Traffic Manager configuration */
- 	ixgbe_tm_conf_uninit(dev);
- 
--#ifdef RTE_LIB_SECURITY
- 	rte_free(dev->security_ctx);
- 	dev->security_ctx = NULL;
--#endif
- 
- 	return ret;
- }
-diff --git a/drivers/net/intel/ixgbe/ixgbe_ethdev.h b/drivers/net/intel/ixgbe/ixgbe_ethdev.h
-index 55b121b15d..877fce697b 100644
---- a/drivers/net/intel/ixgbe/ixgbe_ethdev.h
-+++ b/drivers/net/intel/ixgbe/ixgbe_ethdev.h
-@@ -14,9 +14,7 @@
- #include "base/ixgbe_dcb_82599.h"
- #include "base/ixgbe_dcb_82598.h"
- #include "ixgbe_bypass.h"
--#ifdef RTE_LIB_SECURITY
- #include "ixgbe_ipsec.h"
--#endif
- #include <rte_flow.h>
- #include <rte_time.h>
- #include <rte_hash.h>
-@@ -478,9 +476,7 @@ struct ixgbe_adapter {
- 	struct ixgbe_filter_info    filter;
- 	struct ixgbe_l2_tn_info     l2_tn;
- 	struct ixgbe_bw_conf        bw_conf;
--#ifdef RTE_LIB_SECURITY
- 	struct ixgbe_ipsec          ipsec;
--#endif
- 	bool rx_bulk_alloc_allowed;
- 	bool rx_vec_allowed;
- 	struct rte_timecounter      systime_tc;
-diff --git a/drivers/net/intel/ixgbe/ixgbe_flow.c b/drivers/net/intel/ixgbe/ixgbe_flow.c
-index a1245bb906..e7521a4b1f 100644
---- a/drivers/net/intel/ixgbe/ixgbe_flow.c
-+++ b/drivers/net/intel/ixgbe/ixgbe_flow.c
-@@ -214,7 +214,6 @@ cons_parse_ntuple_filter(const struct rte_flow_attr *attr,
- 	memset(&eth_null, 0, sizeof(struct rte_flow_item_eth));
- 	memset(&vlan_null, 0, sizeof(struct rte_flow_item_vlan));
- 
--#ifdef RTE_LIB_SECURITY
- 	/**
- 	 *  Special case for flow action type RTE_FLOW_ACTION_TYPE_SECURITY
- 	 */
-@@ -249,7 +248,6 @@ cons_parse_ntuple_filter(const struct rte_flow_attr *attr,
- 		return ixgbe_crypto_add_ingress_sa_from_flow(conf, item->spec,
- 					item->type == RTE_FLOW_ITEM_TYPE_IPV6);
- 	}
--#endif
- 
- 	/* the first not void item can be MAC or IPv4 */
- 	item = next_no_void_pattern(pattern, NULL);
-@@ -630,11 +628,9 @@ ixgbe_parse_ntuple_filter(struct rte_eth_dev *dev,
- 	if (ret)
- 		return ret;
- 
--#ifdef RTE_LIB_SECURITY
- 	/* ESP flow not really a flow*/
- 	if (filter->proto == IPPROTO_ESP)
- 		return 0;
--#endif
- 
- 	/* Ixgbe doesn't support tcp flags. */
- 	if (filter->flags & RTE_NTUPLE_FLAGS_TCP_FLAG) {
-@@ -3074,11 +3070,9 @@ ixgbe_flow_create(struct rte_eth_dev *dev,
- 	ret = ixgbe_parse_ntuple_filter(dev, attr, pattern,
- 			actions, &ntuple_filter, error);
- 
--#ifdef RTE_LIB_SECURITY
- 	/* ESP flow not really a flow*/
- 	if (ntuple_filter.proto == IPPROTO_ESP)
- 		return flow;
--#endif
- 
- 	if (!ret) {
- 		ret = ixgbe_add_del_ntuple_filter(dev, &ntuple_filter, TRUE);
-diff --git a/drivers/net/intel/ixgbe/ixgbe_rxtx.c b/drivers/net/intel/ixgbe/ixgbe_rxtx.c
-index 2857c19355..71deda9ed6 100644
---- a/drivers/net/intel/ixgbe/ixgbe_rxtx.c
-+++ b/drivers/net/intel/ixgbe/ixgbe_rxtx.c
-@@ -459,7 +459,6 @@ ixgbe_set_xmit_ctx(struct ci_tx_queue *txq,
- 		seqnum_seed |= tx_offload.l2_len
- 			       << IXGBE_ADVTXD_TUNNEL_LEN;
- 	}
--#ifdef RTE_LIB_SECURITY
- 	if (ol_flags & RTE_MBUF_F_TX_SEC_OFFLOAD) {
- 		union ixgbe_crypto_tx_desc_md *md =
- 				(union ixgbe_crypto_tx_desc_md *)mdata;
-@@ -473,7 +472,6 @@ ixgbe_set_xmit_ctx(struct ci_tx_queue *txq,
- 		tx_offload_mask.sa_idx |= ~0;
- 		tx_offload_mask.sec_pad_len |= ~0;
- 	}
--#endif
- 
- 	txq->ctx_cache[ctx_idx].flags = ol_flags;
- 	txq->ctx_cache[ctx_idx].tx_offload.data[0]  =
-@@ -652,9 +650,7 @@ ixgbe_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
- 	uint32_t ctx = 0;
- 	uint32_t new_ctx;
- 	union ixgbe_tx_offload tx_offload;
--#ifdef RTE_LIB_SECURITY
- 	uint8_t use_ipsec;
--#endif
- 
- 	tx_offload.data[0] = 0;
- 	tx_offload.data[1] = 0;
-@@ -682,9 +678,7 @@ ixgbe_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
- 		 * are needed for offload functionality.
- 		 */
- 		ol_flags = tx_pkt->ol_flags;
--#ifdef RTE_LIB_SECURITY
- 		use_ipsec = txq->using_ipsec && (ol_flags & RTE_MBUF_F_TX_SEC_OFFLOAD);
--#endif
- 
- 		/* If hardware offload required */
- 		tx_ol_req = ol_flags & IXGBE_TX_OFFLOAD_MASK;
-@@ -696,7 +690,6 @@ ixgbe_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
- 			tx_offload.tso_segsz = tx_pkt->tso_segsz;
- 			tx_offload.outer_l2_len = tx_pkt->outer_l2_len;
- 			tx_offload.outer_l3_len = tx_pkt->outer_l3_len;
--#ifdef RTE_LIB_SECURITY
- 			if (use_ipsec) {
- 				union ixgbe_crypto_tx_desc_md *ipsec_mdata =
- 					(union ixgbe_crypto_tx_desc_md *)
-@@ -704,7 +697,6 @@ ixgbe_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
- 				tx_offload.sa_idx = ipsec_mdata->sa_idx;
- 				tx_offload.sec_pad_len = ipsec_mdata->pad_len;
- 			}
--#endif
- 
- 			/* If new context need be built or reuse the exist ctx. */
- 			ctx = what_advctx_update(txq, tx_ol_req,
-@@ -896,10 +888,8 @@ ixgbe_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
- 			olinfo_status |= ctx << IXGBE_ADVTXD_IDX_SHIFT;
- 		}
- 		olinfo_status |= (pkt_len << IXGBE_ADVTXD_PAYLEN_SHIFT);
--#ifdef RTE_LIB_SECURITY
- 		if (use_ipsec)
- 			olinfo_status |= IXGBE_ADVTXD_POPTS_IPSEC;
--#endif
- 
- 		m_seg = tx_pkt;
- 		do {
-@@ -1523,13 +1513,11 @@ rx_desc_error_to_pkt_flags(uint32_t rx_status, uint16_t pkt_info,
- 		pkt_flags |= RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD;
- 	}
- 
--#ifdef RTE_LIB_SECURITY
- 	if (rx_status & IXGBE_RXD_STAT_SECP) {
- 		pkt_flags |= RTE_MBUF_F_RX_SEC_OFFLOAD;
- 		if (rx_status & IXGBE_RXDADV_LNKSEC_ERROR_BAD_SIG)
- 			pkt_flags |= RTE_MBUF_F_RX_SEC_OFFLOAD_FAILED;
- 	}
--#endif
- 
- 	return pkt_flags;
- }
-@@ -2490,9 +2478,7 @@ ixgbe_dev_tx_done_cleanup(void *tx_queue, uint32_t free_cnt)
- {
- 	struct ci_tx_queue *txq = (struct ci_tx_queue *)tx_queue;
- 	if (txq->offloads == 0 &&
--#ifdef RTE_LIB_SECURITY
- 			!(txq->using_ipsec) &&
--#endif
- 			txq->tx_rs_thresh >= IXGBE_TX_MAX_BURST) {
- 		if (txq->tx_rs_thresh <= IXGBE_TX_MAX_FREE_BUF_SZ &&
- 				rte_vect_get_max_simd_bitwidth() >= RTE_VECT_SIMD_128 &&
-@@ -2648,9 +2634,7 @@ ixgbe_set_tx_function(struct rte_eth_dev *dev, struct ci_tx_queue *txq)
- {
- 	/* Use a simple Tx queue (no offloads, no multi segs) if possible */
- 	if ((txq->offloads == 0) &&
--#ifdef RTE_LIB_SECURITY
- 			!(txq->using_ipsec) &&
--#endif
- 			(txq->tx_rs_thresh >= IXGBE_TX_MAX_BURST)) {
- 		PMD_INIT_LOG(DEBUG, "Using simple tx code path");
- 		dev->tx_pkt_prepare = rte_eth_tx_pkt_prepare_dummy;
-@@ -2711,10 +2695,8 @@ ixgbe_get_tx_port_offloads(struct rte_eth_dev *dev)
- 	    hw->mac.type == ixgbe_mac_E610)
- 		tx_offload_capa |= RTE_ETH_TX_OFFLOAD_OUTER_IPV4_CKSUM;
- 
--#ifdef RTE_LIB_SECURITY
- 	if (dev->security_ctx)
- 		tx_offload_capa |= RTE_ETH_TX_OFFLOAD_SECURITY;
--#endif
- 	return tx_offload_capa;
- }
- 
-@@ -2884,10 +2866,8 @@ ixgbe_dev_tx_queue_setup(struct rte_eth_dev *dev,
- 	txq->offloads = offloads;
- 	txq->ops = &def_txq_ops;
- 	txq->tx_deferred_start = tx_conf->tx_deferred_start;
--#ifdef RTE_LIB_SECURITY
- 	txq->using_ipsec = !!(dev->data->dev_conf.txmode.offloads &
- 			RTE_ETH_TX_OFFLOAD_SECURITY);
--#endif
- 
- 	/*
- 	 * Modification to set VFTDT for virtual function if vf is detected
-@@ -3171,10 +3151,8 @@ ixgbe_get_rx_port_offloads(struct rte_eth_dev *dev)
- 	    hw->mac.type == ixgbe_mac_E610)
- 		offloads |= RTE_ETH_RX_OFFLOAD_OUTER_IPV4_CKSUM;
- 
--#ifdef RTE_LIB_SECURITY
- 	if (dev->security_ctx)
- 		offloads |= RTE_ETH_RX_OFFLOAD_SECURITY;
--#endif
- 
- 	return offloads;
- }
-@@ -5102,10 +5080,8 @@ ixgbe_set_rx_function(struct rte_eth_dev *dev)
- 		struct ci_rx_queue *rxq = dev->data->rx_queues[i];
- 
- 		rxq->vector_rx = rx_using_sse;
--#ifdef RTE_LIB_SECURITY
- 		rxq->using_ipsec = !!(dev->data->dev_conf.rxmode.offloads &
- 				RTE_ETH_RX_OFFLOAD_SECURITY);
--#endif
- 	}
- }
- 
-@@ -5611,7 +5587,6 @@ ixgbe_dev_rxtx_start(struct rte_eth_dev *dev)
- 			ixgbe_setup_loopback_link_x540_x550(hw, true);
- 	}
- 
--#ifdef RTE_LIB_SECURITY
- 	if ((dev->data->dev_conf.rxmode.offloads &
- 			RTE_ETH_RX_OFFLOAD_SECURITY) ||
- 		(dev->data->dev_conf.txmode.offloads &
-@@ -5624,7 +5599,6 @@ ixgbe_dev_rxtx_start(struct rte_eth_dev *dev)
- 			return ret;
- 		}
- 	}
--#endif
- 
- 	return 0;
- }
-diff --git a/drivers/net/intel/ixgbe/ixgbe_rxtx.h b/drivers/net/intel/ixgbe/ixgbe_rxtx.h
-index 7950e56ee4..33023a3580 100644
---- a/drivers/net/intel/ixgbe/ixgbe_rxtx.h
-+++ b/drivers/net/intel/ixgbe/ixgbe_rxtx.h
-@@ -99,11 +99,9 @@ union ixgbe_tx_offload {
- 		/* fields for TX offloading of tunnels */
- 		uint64_t outer_l3_len:8; /**< Outer L3 (IP) Hdr Length. */
- 		uint64_t outer_l2_len:8; /**< Outer L2 (MAC) Hdr Length. */
--#ifdef RTE_LIB_SECURITY
- 		/* inline ipsec related*/
- 		uint64_t sa_idx:8;	/**< TX SA database entry index */
- 		uint64_t sec_pad_len:4;	/**< padding length */
--#endif
- 	};
- };
- 
-diff --git a/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_sse.c b/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_sse.c
-index dca3a20ca0..3f37038e5c 100644
---- a/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_sse.c
-+++ b/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_sse.c
-@@ -21,7 +21,6 @@ ixgbe_rxq_rearm(struct ci_rx_queue *rxq)
- 	ci_rxq_rearm(rxq, CI_RX_VEC_LEVEL_SSE);
- }
- 
--#ifdef RTE_LIB_SECURITY
- static inline void
- desc_to_olflags_v_ipsec(__m128i descs[4], struct rte_mbuf **rx_pkts)
- {
-@@ -56,7 +55,6 @@ desc_to_olflags_v_ipsec(__m128i descs[4], struct rte_mbuf **rx_pkts)
- 	*rearm2 = _mm_extract_epi32(rearm, 2);
- 	*rearm3 = _mm_extract_epi32(rearm, 3);
- }
--#endif
- 
- static inline void
- desc_to_olflags_v(__m128i descs[4], __m128i mbuf_init, uint8_t vlan_flags,
-@@ -265,9 +263,7 @@ _recv_raw_pkts_vec(struct ci_rx_queue *rxq, struct rte_mbuf **rx_pkts,
- 	volatile union ixgbe_adv_rx_desc *rxdp;
- 	struct ci_rx_entry *sw_ring;
- 	uint16_t nb_pkts_recd;
--#ifdef RTE_LIB_SECURITY
- 	uint8_t use_ipsec = rxq->using_ipsec;
--#endif
- 	int pos;
- 	uint64_t var;
- 	__m128i shuf_msk;
-@@ -444,10 +440,8 @@ _recv_raw_pkts_vec(struct ci_rx_queue *rxq, struct rte_mbuf **rx_pkts,
- 		desc_to_olflags_v(descs, mbuf_init, vlan_flags, udp_p_flag,
- 				  &rx_pkts[pos]);
- 
--#ifdef RTE_LIB_SECURITY
- 		if (unlikely(use_ipsec))
- 			desc_to_olflags_v_ipsec(descs, &rx_pkts[pos]);
--#endif
- 
- 		/* D.2 pkt 3,4 set in_port/nb_seg and remove crc */
- 		pkt_mb4 = _mm_add_epi16(pkt_mb4, crc_adjust);
--- 
-2.47.3
-
+On Tue, Feb 10, 2026 at 01:26:19PM +0100, Burakov, Anatoly wrote:
+> On 2/9/2026 5:45 PM, Bruce Richardson wrote:
+> > The offsets of the various fields within the Tx descriptors are common
+> > for i40e, iavf, ice and idpf, so put a single set of defines in tx.h and
+> > use those throughout all drivers. (NOTE: there was a small difference in
+> > mask of CMD field between drivers depending on whether reserved fields
+> > or not were included. Those can be ignored as those bits are unused in
+> > the drivers for which they are reserved). Similarly, the various flag
+> > fields, such as End-of-packet (EOP) and Report-status (RS) are the same,
+> > as are offload definitions so consolidate them.
+> 
+> Nitpick: the NOTE should IMO be separated, as otherwise the flow of the
+> commit message is a bit confusing, as the latter part kinda parses as being
+> part of the NOTE section that accidentally got left out of the parens,
+> instead of being a continuation of the pre-NOTE section.
+> 
+Splitting into separate paragraphs for v5.
