@@ -2,130 +2,183 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3E90EA8126
-	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Feb 2026 15:06:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11929EA8126
+	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Feb 2026 15:06:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3E9F9400D7;
-	Tue, 10 Feb 2026 16:06:04 +0100 (CET)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id DC7D0400D6
- for <dev@dpdk.org>; Tue, 10 Feb 2026 16:06:01 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1770735961;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=Ji4kZPXTa4Lbu/0lg086nQi3/LK1UJZG5r9PScqZkIc=;
- b=eIvBSYWmMtIaYoU8aLVSwnc1eaqzmMN1n3qQry+qkxHGt5l9fs/qFOAoE6mYGDmhsyHT4C
- mlMlY+Z7jnz/hy7s+S953PNSHaavknQRDdXxsCfgH8AdPmJhoPW7mpJu9bZPUt8Y6Ilayl
- T0Ey1BVE7ND7hQEpz88RHkJk7Y4yPwU=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-493-RCms8xrTPRuq3rHAAVXwrQ-1; Tue, 10 Feb 2026 10:05:59 -0500
-X-MC-Unique: RCms8xrTPRuq3rHAAVXwrQ-1
-X-Mimecast-MFC-AGG-ID: RCms8xrTPRuq3rHAAVXwrQ_1770735958
-Received: by mail-wm1-f69.google.com with SMTP id
- 5b1f17b1804b1-482eec44485so6819235e9.3
- for <dev@dpdk.org>; Tue, 10 Feb 2026 07:05:59 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1770735958; x=1771340758;
- h=content-transfer-encoding:in-reply-to:autocrypt:from
- :content-language:references:cc:to:subject:user-agent:mime-version
- :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=Ji4kZPXTa4Lbu/0lg086nQi3/LK1UJZG5r9PScqZkIc=;
- b=HVPXOf5pK+r8JDu96Mr4YbkrpyqSYAO4lHosBUHRBb6IpbeRYTxp19DVSNU0wovqYq
- /+hxL74T+kJwECy+KEwi17aUV1Ds5/dfUe3VLhkoFdfaGHxGHXFXO1LeVIzt1pLuFaA6
- asYtzjdPf58Kglj1jNcM9HOk90JTRxyIzGO9LkRoEEuILtrP18AsRGgKFHvgbfOTHH55
- KCL6yYMbchcOABAbauBPpw1UTE9oMacFnuMZdPGsnNHjm7AignTB42oc/nZ6Mq9/jEWH
- zX7EbuqpoHFfLQsAKyRxflVcnDwgMW2RRt6RMVBdyJIJ8LegIPShfU3UgJ7zTyGctPff
- N7Fw==
-X-Gm-Message-State: AOJu0Yy4AzTX68cGdiGY6p+eX9z+HbNuMJ0UPStNCns8PuU6rf9IgLhv
- 6XJNk/oCrk7t/HuwhC5hjvlFmB5mOAPOSufm9XKXqMg4hZPeZpFwrqPPzyxhb+QObwyVVOs+zB6
- eVfawJWFfZKPBMMcHiazvnNSlhunaBqpSioQItCv2jETU
-X-Gm-Gg: AZuq6aLglq84ybn68wDICv51D1kbVwgqX4dcLyNj160Onu51fqLwXjl3X3I4B23yI1o
- PbmofL17FcZrDvBCpOAiKUBw/ppwPzWN4kRF8xWrIm0shb4B5HyOeEs+maxgX80Xejyf8GXJdHc
- famPEOw3Dx1HBYyjCIulEW8tHA/c5sObB1soM8g3aCn78oHLm/qbgDm5jwJrcm/V/X0nkvYcT2g
- CzZh45UreLVsJcwkngQBBKS50xcltvN9/0bGdoLsdYe/A3vG3UrHtxynndKp8oqSNS5lClUpcfJ
- HzV8zZWWprlKAI2rH7NTpc/adLJDreZOC3k8xE+Y81SEWwCkFdAiOtU9GoChDQT/xq+XzD4Wqo3
- 3ExhzTLkHGfawS5EAMMVLtciq
-X-Received: by 2002:a05:600c:3b23:b0:47f:8c05:786b with SMTP id
- 5b1f17b1804b1-4832021eae9mr215639705e9.28.1770735958465; 
- Tue, 10 Feb 2026 07:05:58 -0800 (PST)
-X-Received: by 2002:a05:600c:3b23:b0:47f:8c05:786b with SMTP id
- 5b1f17b1804b1-4832021eae9mr215639125e9.28.1770735958006; 
- Tue, 10 Feb 2026 07:05:58 -0800 (PST)
-Received: from [192.168.0.56] ([78.16.128.210])
- by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-48323c0296dsm338629075e9.1.2026.02.10.07.05.56
- (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
- Tue, 10 Feb 2026 07:05:57 -0800 (PST)
-Message-ID: <dd9faf73-b153-42b8-a42c-418bf22fe1f6@redhat.com>
-Date: Tue, 10 Feb 2026 15:05:55 +0000
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] net/mlx5: check for no data read in devx interrupt
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: dev@dpdk.org, thomas@monjalon.net, david.marchand@redhat.com,
- dsosnowski@nvidia.com, viacheslavo@nvidia.com, stable@dpdk.org
-References: <20260128122055.192104-1-ktraynor@redhat.com>
- <20260206172054.273858-1-ktraynor@redhat.com>
- <20260206172054.273858-2-ktraynor@redhat.com>
- <20260206220939.5a90c67c@phoenix.local>
-From: Kevin Traynor <ktraynor@redhat.com>
-Autocrypt: addr=ktraynor@redhat.com; keydata=
- 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
-In-Reply-To: <20260206220939.5a90c67c@phoenix.local>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: qd7piBzUkuCsLqt0zaA9VEJzAzkzyza3lbssxelAxVk_1770735958
-X-Mimecast-Originator: redhat.com
+	by mails.dpdk.org (Postfix) with ESMTP id 4C82A40697;
+	Tue, 10 Feb 2026 16:06:14 +0100 (CET)
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
+ [67.231.156.173])
+ by mails.dpdk.org (Postfix) with ESMTP id 648F1400D6
+ for <dev@dpdk.org>; Tue, 10 Feb 2026 16:06:12 +0100 (CET)
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+ by mx0b-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
+ 61A8bkkP2594817; Tue, 10 Feb 2026 07:06:11 -0800
+Received: from ch1pr05cu001.outbound.protection.outlook.com
+ (mail-northcentralusazon11020110.outbound.protection.outlook.com
+ [52.101.193.110])
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4c65snpe7s-1
+ (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+ Tue, 10 Feb 2026 07:06:11 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=JxE39lBzJP97SCDLLTAO6zaVU2D9xe06LQgWLT+/NWbns25hAcdl07svAXZqv6P9kJMo6g9g6gDPH2KFOMu43vBTNc9r9avaWQWiFIoAtvxcv1OI+5tMIcWlz/qA7FJJM+S/hWig+mv4gA5xzkAyeeoxZIlBP1oO4NbIejBk8SILZNI8AsABZuJt+dZc4Xeha4nq4lbWP67dOwBtmzrrGquVIDaGa//jsOtfAigP4pcjB1pqNX5nd+AFJQfuDPYVP3E/F3Bx0o6nYtCyyOjALIDvZJRH5P/2LYOug+Wxslezj1jMJKg5RUsNnu+/YaeOeoFcMDBjoNISzg5OZyTRbQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=OHUZ3kzWB9aa8M+w+gTiYBRN+7wRQJtoTjy/fK3nu7s=;
+ b=p+PZCI/MHtsm7fClwxS8p4d2UJuvY176NJwbcJWsR8fWAXFCpdnaOKw5fKgSnmCRi07R6n/EI5DGRsPJTkCuaoz8ovM3ajeWXcNdIbhNQyJGxFbdk+rrOAJljl2Tt3DlIdroQJ1Xh9+fQkchRnns71AHzp1P3JDxDNVrzc6c1f2PbRT8s4wvQQy0VkxOvRoE3KyWSctPFyAtqjKKzGRNmISS7rVxzycQsYvcQSeje+f48C1lolQRMtz8syaRWqzP+vBELyaIqrA5YYzrnDWhN68Ae/IoniihTLbrsnrvHhWOJ0uACJdjvy95cP/5uURw/BZQqpNfZpc/GB9gxzjJ6Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
+ dkim=pass header.d=marvell.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OHUZ3kzWB9aa8M+w+gTiYBRN+7wRQJtoTjy/fK3nu7s=;
+ b=g/qLtsq2bCNyq2ZUxKn4YKPX6IvTKtUym1Ya9bE2wE07hbJzVyFWKNgWCXLmE/ZD7ZtkyN2qRF9Id9XEwvyA+a6gzwtzyncpRDhRyvRw6m2BvyaTOCbMSnbWcORywJl5txFQqVUKgm+sfNxOHresFfadSgl5fYT2gsemeAKJ4tI=
+Received: from CO6PR18MB4484.namprd18.prod.outlook.com (2603:10b6:5:359::9) by
+ MN2PR18MB3511.namprd18.prod.outlook.com (2603:10b6:208:264::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9611.5; Tue, 10 Feb
+ 2026 15:06:07 +0000
+Received: from CO6PR18MB4484.namprd18.prod.outlook.com
+ ([fe80::a2df:a596:cfe:17]) by CO6PR18MB4484.namprd18.prod.outlook.com
+ ([fe80::a2df:a596:cfe:17%4]) with mapi id 15.20.9611.006; Tue, 10 Feb 2026
+ 15:06:06 +0000
+From: Akhil Goyal <gakhil@marvell.com>
+To: Shaokai Zhang <felix.zhang@jaguarmicro.com>, "dev@dpdk.org" <dev@dpdk.org>
+CC: "kai.ji@intel.com" <kai.ji@intel.com>, Joey Xing
+ <joey.xing@jaguarmicro.com>
+Subject: RE: [EXTERNAL] [PATCH v2] crypto/openssl: support AES-XTS operations
+Thread-Topic: [EXTERNAL] [PATCH v2] crypto/openssl: support AES-XTS operations
+Thread-Index: AQHcWUx0pp3zembieUuERiqfUHaWxLV8it2A
+Date: Tue, 10 Feb 2026 15:06:06 +0000
+Message-ID: <CO6PR18MB4484492C408634C7C9EDD992D862A@CO6PR18MB4484.namprd18.prod.outlook.com>
+References: <20251117124414.1839-1-felix.zhang@jaguarmicro.com>
+ <20251119120231.1399-1-felix.zhang@jaguarmicro.com>
+In-Reply-To: <20251119120231.1399-1-felix.zhang@jaguarmicro.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CO6PR18MB4484:EE_|MN2PR18MB3511:EE_
+x-ms-office365-filtering-correlation-id: a2acb38e-aff0-4f9a-fc56-08de68b5eaab
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0; ARA:13230040|366016|376014|1800799024|38070700021;
+x-microsoft-antispam-message-info: =?utf-8?B?dHZnOXBOY1Vtd3NWRjNiZnNONlFrTW9BSzBXSUpRRE52R3QyZDZ3UE1VU1pY?=
+ =?utf-8?B?ZEJoRnNvaVRyWlB3bnlpZFgrcy9WYzRKK0xCdlYwQy9leWgyUU5nNk1raWR1?=
+ =?utf-8?B?akt3d1hUMzV0RFA5NVdmYk5hYnFqYmlONkxNeDJ5dFF0UjQzck9hWERPQTJ6?=
+ =?utf-8?B?TXZhY3FPZGl5RkJHWVhiZmEyazdWdmx0Zm8zZ3QrUXNyQ3VwUXM1c29NRGxB?=
+ =?utf-8?B?NkZQSkNaNzladDFxVlUxOFdzSWZwbHFXeDlZVzNPMlhlbk15TjNYVEhObjZz?=
+ =?utf-8?B?N29rYmRzUE5ZU3pWbng4S2FLOGtJMlR4dGtWbERubU0vbGJKd1diSmdLY0xO?=
+ =?utf-8?B?ZDBCMmVUZjN2blJmNndJVHU5QUN1MFVxSEhpd0U4a1k5OTQ4c2dEb1U2eE04?=
+ =?utf-8?B?SHB3R2hWZTB0WnZNdlRUTW1rdGxIQ05EOVRRR3VQRzN6N2dpS0VaU1FxbUJB?=
+ =?utf-8?B?U2Uwd2ZGaDg2ZlIxODlkcXZHTUN5V2ljSG1jRVF2MDQxVDd4ZmRrOW44Uytl?=
+ =?utf-8?B?NWpFOTdrRGhKQXZDNjA0N3ltT2Vnb253Sm9UWXJVQklxc1VHdWJ4czJtamhR?=
+ =?utf-8?B?cVU5WU5WUERqbXYweXozTWZqVG9ZOTROMUphbFFtWjBienlhNnVTU05vN2Q3?=
+ =?utf-8?B?aVZCckJKUFZBL1orVVFxM1JlQnJiWjUrK21OMVpYODZaSGpKSStjWWxYTDJp?=
+ =?utf-8?B?STk0aHhPWXYweHFaTHBXdE85aVRNcXljekFPVEhSSGVnODhaWFUyZFZCRnR4?=
+ =?utf-8?B?V2NxbDBWa1JWbVZYbk1zMGxjMkQzKy9LdlRyQUhUc291ZmlHYmlGY2NOakpv?=
+ =?utf-8?B?Vmx6RzBqWHhFZjY2dzZ4NjM0RTRVQWpGZU50d0w0V3pkcTlLdHVNWUlVOEht?=
+ =?utf-8?B?dlN3MC9pb2dKN2tHd0E3TzhseFlMZW1IM3lsck0wUXEyWlc4Z3o1SDJocGYy?=
+ =?utf-8?B?R3RZaHl5MjJkeGV4VnAxU2dxbUxaMDZ3M0ErY1c3dlpHRkpVMVZDQUM1cDQr?=
+ =?utf-8?B?UWJqZFJMWmZDUTRHc1Z2NU5pTnl2d3p4QTdMblMvOUtNOERMUURkcWhzQzd4?=
+ =?utf-8?B?c0dLQ3JYMmVteGtUcHV3QUZCdHQrQy9LZTV5aU5yMXYrRS9CTk9pQkxWNzNP?=
+ =?utf-8?B?aVBIWkMvTTljbkhYL2t2MmxjaGVxWktseEJrR2NqWkQ1ZzZQbmhkcldVeVRG?=
+ =?utf-8?B?Y096V3IyTW9IS3htZXBackZrZElkTFN1L00zZVJCOXZRRng1Uk0rZTdOVWYy?=
+ =?utf-8?B?bUZnclJUWTZkNGtkWkFnckRaOVNNRFFXSktaNEJyK2cydVlBSnJVbFFiVDhT?=
+ =?utf-8?B?YnJkNElBTWZBTGlqakdxTHhqQldnSTZWcjVkTHA3Mjdvc1haRVQwa1htN2wr?=
+ =?utf-8?B?U1laU1d1NEQ3RmZvMlUyNndPRjdXa2NrUjI4V0JINy9RWWdSekdHTEZBcnBV?=
+ =?utf-8?B?cFVpblpZUm1uSVJzWlFMbjhtb3JhcGV5azZ4Q1p0MVFJUVJGdTVleE9jRnk1?=
+ =?utf-8?B?NEc3WS9qcUVRanJmK3lsc1NNNVZFellSMHcwS1phQWUxVlhGZWEvb0pWTG5F?=
+ =?utf-8?B?R3ZyOHlySmJzR0ZDOUhuZ3NqdnVRUzI1alJjV294OTMxVjR0NGVoQTROcDIx?=
+ =?utf-8?B?Qzk4eE5ITnhKQzYxeU12UzIxV1FxcnBFTXU3UG1zcTVUZ2VvS0NINEVUU09E?=
+ =?utf-8?B?eTFjTXlTRjlLK2R2VTRaOXBoSzZRZ05wdWw5STM4ajZxUlpBdHZKYnhUUDdx?=
+ =?utf-8?B?Yi9KTjJTZitxOTBpU2IzRmpUMEFyYUZMeUIxNmdqam5tbmt4K1M2VjlPWmtU?=
+ =?utf-8?B?eWdFSndlRjdhYm9KYVhLRDJOK0pjR3FUS045dlUvQnkzWnFycjBRM0J2cGp2?=
+ =?utf-8?B?R0xnNUFIend2VDNDOWlDcThJaEQ0NUZBcVJjSDk0d3lWSXp6U3lrajhrMWtj?=
+ =?utf-8?B?Z0M2b1NiSUMrR0VFTUczRmo2K3hoUXFkclFrV0NRamQ4RENMNmpsSlgyRUdI?=
+ =?utf-8?B?VlJZSk4wdWNlTTVZa0RkR0NhUTVmOGFwa3FmbCtEZFBOdjFid0o1S05rRHoy?=
+ =?utf-8?B?VFFJNXFsN3JMZ1B5QjdDRVMxRURiaVdyQkh2ZVdnb2ord1BxdzlZQmh1SnE0?=
+ =?utf-8?B?V3BZcFdYbXlxVDNpU251K3drYU9XQTF5TUFObjl5SkR3cW1hdG9ITVdHYkZk?=
+ =?utf-8?Q?4ydtvOTQpiT+bSP63YLRMJ8=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:CO6PR18MB4484.namprd18.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(366016)(376014)(1800799024)(38070700021); DIR:OUT; SFP:1102; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?dHFKLytuWHpwU092UndCQzNqVEV5Q1JSck1oSU1IMlI2S3lkaU12L20yUXZL?=
+ =?utf-8?B?b0JWV0VhWUVCT3BYZkdxdzIvQlpUUm5EclFtU3A5MUlEaVlZbnJDVlQ0MXQ4?=
+ =?utf-8?B?RGVidDlXMFY4KytsZ25PMWx5d2VMVWhrdUJEWThJdzQ2b0dTNE5VcWh4d1Jw?=
+ =?utf-8?B?dVM1RUdVRXpXNFdtWk4vdjFTQmJrTzhieU9VUm52TEpVSERSa3crN0doUEtn?=
+ =?utf-8?B?VGFyRHdWY0dUeUZMUDcreXV3K093ZlNGV2d5dTQxVVd3SGcrdTNsMFlDMHdm?=
+ =?utf-8?B?NTBSWFBKUUxpczdJRnMvNmxQYXhBZDYvUmxtUGh4L1VVZUUvUEFadmo1MFZG?=
+ =?utf-8?B?aWJITWNQWDg3ZzgwUkVNVklEL1Z0VkNyL3FGQWJqWnZwWXNUZ2dDWWt0QW1u?=
+ =?utf-8?B?aTl3NjhOUW1rUU5tcUtXTXdEenpsdFlqSjlobGV0UjJLc21RMnpsRWV1NjJm?=
+ =?utf-8?B?UitHVi9CcEt5OTZkcE5uck9sMUVLdE44d1hCM01pL1NaTmM1UG1kTktQZllt?=
+ =?utf-8?B?VE9LR0FNTlRYaGM0V3RpemdyN3pMaUJiVWNTbnZ1Q3o2NW1ndHZKRnNRZmRW?=
+ =?utf-8?B?R3FRYk5NMTU0RmkxV2szYTRkeWJMM2xuTlRyUGRqQVQwaFZVRzFuRS9CYTd1?=
+ =?utf-8?B?ZGpwaytUc1Q2RUlEVlpncWlYVHUvS05SZERTa1V1WjVYRVJyR0NJMHdwL1BL?=
+ =?utf-8?B?bExDZ2dOTC9uYlV2TG9GVjNQRzBLN0s0OU5kYWJaMkFnYmxFZmIva0hReEhO?=
+ =?utf-8?B?b2xZL0Q0bEtxZkJoZmx6Syt4M1pid0dxZk1COU5UY1Z0cU1ndlAwdHA2ZmZp?=
+ =?utf-8?B?MUp3TFlDQUVVVzZiekN4YmVWaTBXRzVxK3kwWGFJQ1BkZ0VZQ21jaG1weWVO?=
+ =?utf-8?B?VDJKYi9vT0pockYrRW1NTHNrcXJaa0x2NGd1bytvL0lIT3BSNTNSNGMwRzVk?=
+ =?utf-8?B?ZWtjNUE1UjY1eTFKL3h2L1BtZ2pqaEFyaTVWYXN4bCtkY3pDbS9tNDdSL2cx?=
+ =?utf-8?B?dUJLWWJNZ0ZnbG1XWGNLcG9VKzhyazZlbmdkNDBiKyswMnUvdnBQTWVqOTBi?=
+ =?utf-8?B?ZDZjNCtVNXJJZFlzRHgxSW5sUjZkR3BFNE5KU2VIUFlMR3cwemdCSkl0SmVr?=
+ =?utf-8?B?dnZUa2x5ZzRGRVQ1VmI0bmNMbUF4R1ZCRXFWa0pLR3RNRCtDa2tCQjRFZWFx?=
+ =?utf-8?B?SXVHbm5vWHhDUi9MR1VNNEMxNGlIZW05akZEZE1MdzNBcnpuUkhUWGdCQjJw?=
+ =?utf-8?B?V3R0WjhVN1IxcUtaQmtIaDVYSHhaRFhJdWJSZHBGMGJsbktWNVA3N0d5UGt0?=
+ =?utf-8?B?S0E3VXo3a0d5QWExR3NhNUxsWnh5bWVraUVaVUtmVnNEd0ZwcmNRV0xwUUJV?=
+ =?utf-8?B?QUx4UjBxYkRpMG42b1d3YVRWN1BPNGRubHVQa3ZHOUdveFd3YWFzeEVqZzhC?=
+ =?utf-8?B?aEJmbStrb0FHaWN3SjVEMG9qSDhyN29MYU5NeWJWVWNpbnJKQ2JQS0U2KzVE?=
+ =?utf-8?B?OUFUWHZHb2tTa1pXTXdtNVhLS1pEbWZqUDJITWN0WmdFZUZIVG5wdWJ6a2hV?=
+ =?utf-8?B?UEdrc3BjNzg1dUVFd1kreDVJQ1cxNFArRXl3L0lrakdLY3o3UmNxUUE4MHo1?=
+ =?utf-8?B?a01MM0UrK3VxZUdsamp0djZOYTd5aDc2aUluc1VYQ0FNSG5FWUZGb1AwWmFM?=
+ =?utf-8?B?OUdkMm1YNnc5YmU5T1RqUGxBNXRzNkdHUHlPdm1scVlsZ1gzV0VVQWljOG5u?=
+ =?utf-8?B?QndDMGg2MnFEN0NQbnpzaVZIS09kN3MyYmRzZElzVXNNYXoxUWNaQzlJSjcv?=
+ =?utf-8?B?RnlCNDlNS3pBZi9rU3czUm1mZzdNdS9OM3JYaklZOXcyNDU3U2ZCaTdsK0pF?=
+ =?utf-8?B?bDAzZ3g4NitqQUlFbk1FL3BVVytzbDh5SURac2FFUVNKTUI4OG1UQTlkeVNm?=
+ =?utf-8?B?Ym1HZnZUU1NDRWRQRVhrdjJLTXZHVlVMVWxHQk85Q1kvam9seE42MmV1WFl2?=
+ =?utf-8?B?ZmM3YkN2Y0RhZG42T0RMdEVWZU5QRkZMRC9vaWZldXRMY290UXdwellSVnlk?=
+ =?utf-8?B?SU1wRk9KRk1qanJJOEFTMDNkNXBIMzYrYXBrSUhOeWNvaWZxK0VrWHBNamI3?=
+ =?utf-8?B?Q2tPSGREQzh2ejd6UExKU2xKaVpkaTN3QzUvbDYxMXpvc21JMFpRM0tPUTBi?=
+ =?utf-8?B?b2FsYzFWYlRxOVFVbS80NEVyWUkyblp4Y2p5eThkbHdWMHFRZ2lBanF5YzFt?=
+ =?utf-8?B?a3pIMlZaYTJ2M3RYSEtXbWVKZklGVjkwK2RvdjhTOGVKU1ZQK1djVUIxVFc1?=
+ =?utf-8?Q?pugmsPjKpkKH4sLOV7?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: marvell.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CO6PR18MB4484.namprd18.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a2acb38e-aff0-4f9a-fc56-08de68b5eaab
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Feb 2026 15:06:06.8066 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 1sXTTrs3uik77igogEdhU9v+bVB9VOj5H6sHJIJYwcq4GNBDIKOeEvEF6M3TB2vYICvLGzz4kNigGt1UZxiv6A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR18MB3511
+X-Proofpoint-ORIG-GUID: GCvPZ3aTkGToLqzBRs09P4ekkUHxGdh_
+X-Authority-Analysis: v=2.4 cv=aue/yCZV c=1 sm=1 tr=0 ts=698b4963 cx=c_pps
+ a=pY+kOdcf8RAo0+yonGAjpg==:117 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=HzLeVaNsDn8A:10 a=-AAbraWEqlQA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=Mpw57Om8IfrbqaoTuvik:22 a=GgsMoib0sEa3-_RKJdDe:22 a=yacp4PbrAAAA:8
+ a=M5GUcnROAAAA:8 a=f3x1QCOo691-KGJfO-sA:9 a=QEXdDO2ut3YA:10 a=_CEE-nPnlLYA:10
+ a=V3FWeFeR7HlZ9tVNOp1k:22 a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjEwMDEyNyBTYWx0ZWRfXyyLjQJ3vGDok
+ EEiYg7Wid/uPKDNqfffLofdz821CUxUqizHWj86gBNZPV/FUWvU7qsh+hOXaXB5RsOmMn5FmP+X
+ lWcDVEBMkLM2YnQyEueKrmwzTGrIoh5ty+Qk0lgPTXgcVD8bXuzEVRRQddAjzIYXYyHnUTupWn/
+ MNqcRr7XxbwAgVXsT94272LYobLYVxRyjD7+nlOYRH+ydioGPUU8S+29AGvUbpIn63iG+YhSWzt
+ /8yFbqQ7pKWuOwsI5y+IGNT9xFvwQtPABDee8y8lIa0ACMSmsZnanetxzR4mstWTLO6ar/SjLdL
+ qbW0CbUyNxzToVWTswDixq2m/smuV07xebLYHm4h/rFLNmrFCqECo6hXmU5kH6dSxComk8Xh1gg
+ ktFZPrMAEVgpW2myQkgYMe4r0y7Em+dvaTwvoOEzJqGpd2EsQA1iGbsPPfheqvI52HVKIIFp2sE
+ rMClr6re781kDTf401g==
+X-Proofpoint-GUID: GCvPZ3aTkGToLqzBRs09P4ekkUHxGdh_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-02-10_01,2026-02-10_02,2025-10-01_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -139,83 +192,8 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On 07/02/2026 06:09, Stephen Hemminger wrote:
-> On Fri,  6 Feb 2026 17:20:53 +0000
-> Kevin Traynor <ktraynor@redhat.com> wrote:
-> 
->> A busy-loop may occur when there are EPOLLERR, EPOLLHUP or
->> EPOLLRDHUP epoll events for the devx interrupt fd.
->>
->> This may happen if the interrupt fd is deleted, if the device
->> is unbound from mlx5_core kernel driver or if the device is
->> removed by the mlx5 kernel driver as part of LAG setup.
->>
->> When that occurs, there is no data to be read and in the devx
->> interrupt handler an EAGAIN is returned on the first call to
->> devx_get_async_cmd_comp, but this is not checked.
->>
->> As the interrupt is not removed or condition reset, it causes
->> an interrupt processing busy-loop, which leads to the dpdk-intr
->> thread going to 100% CPU.
->>
->> e.g.
->> epoll_wait
->>    (6, [{events=EPOLLIN|EPOLLRDHUP, data={u32=28, u64=28}}], 8, -1) = 1
->> read(28, 0x7f1f5c7fc2f0, 40)
->>    = -1 EAGAIN (Resource temporarily unavailable)
->> epoll_wait
->>    (6, [{events=EPOLLIN|EPOLLRDHUP, data={u32=28, u64=28}}], 8, -1) = 1
->> read(28, 0x7f1f5c7fc2f0, 40)
->>    = -1 EAGAIN (Resource temporarily unavailable)
->>
->> Add a check for an EAGAIN return from devx_get_async_cmd_comp on the
->> first read. If that happens, unregister the callback to prevent looping.
->>
->> Bugzilla ID: 1873
->> Fixes: f15db67df09c ("net/mlx5: accelerate DV flow counter query")
->> Cc: stable@dpdk.org
->>
->> Signed-off-by: Kevin Traynor <ktraynor@redhat.com>
-> 
-> AI spotted this, I didn't...
-> 
-> 
-> Errors:
-> 
->     Line 139: Unnecessary semicolon after closing brace
-> 
-> c
-> 
->    };
-> 
-> Should be:
-> c
-> 
->    }
-> 
->     Lines 142-146: Block comment uses incorrect style Block comments in C code should use /* and */ style, not /** which is reserved for documentation comments.
-> 
-> c
-> 
->    /**
->     * no data and EAGAIN indicate there is an error or
->     * disconnect state. Unregister callback to prevent
->     * interrupt busy-looping.
->     */
-> 
-> Should be:
-> c
-> 
->    /*
->     * no data and EAGAIN indicate there is an error or
->     * disconnect state. Unregister callback to prevent
->     * interrupt busy-looping.
->     */
-> 
-> Warnings:
-> 
->     Logic clarity: The variable data_read is set to true inside the while loop but never checked when data WAS read. Consider if data_read is the clearest way to express this condition.
-> 
-
-Ack above. Thanks.Will be fixed in v3.
-
+PiBFeHRlbmQgb3BlbnNzbCBjcnlwdG8gUE1EIHRvIHN1cHBvcnQgQUVTIFhUUyBvcGVyYXRpb25z
+Lg0KPiANCj4gU2lnbmVkLW9mZi1ieTogU2hhb2thaSBaaGFuZyA8ZmVsaXguemhhbmdAamFndWFy
+bWljcm8uY29tPg0KPiBSZXZpZXdlZC1ieTogSm9leSBYaW5nIDxqb2V5LnhpbmdAamFndWFybWlj
+cm8uY29tPg0KPiAtLS0NCkFja2VkLWJ5OiBBa2hpbCBHb3lhbCA8Z2FraGlsQG1hcnZlbGwuY29t
+Pg0KDQpBcHBsaWVkIHRvIGRwZGstbmV4dC1jcnlwdG8uDQpUaGFua3MuDQo=
