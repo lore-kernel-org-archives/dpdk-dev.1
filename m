@@ -2,70 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7684EE94626
-	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Feb 2026 00:33:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62A7EE94625
+	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Feb 2026 00:35:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 58DD2402DC;
-	Tue, 10 Feb 2026 01:33:24 +0100 (CET)
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com
- [209.85.128.49]) by mails.dpdk.org (Postfix) with ESMTP id 05ABC400D6
- for <dev@dpdk.org>; Tue, 10 Feb 2026 01:33:22 +0100 (CET)
-Received: by mail-wm1-f49.google.com with SMTP id
- 5b1f17b1804b1-4806bf39419so37637595e9.1
- for <dev@dpdk.org>; Mon, 09 Feb 2026 16:33:22 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 8226B402DC;
+	Tue, 10 Feb 2026 01:35:11 +0100 (CET)
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com
+ [209.85.128.43]) by mails.dpdk.org (Postfix) with ESMTP id 2A92C400D6
+ for <dev@dpdk.org>; Tue, 10 Feb 2026 01:35:10 +0100 (CET)
+Received: by mail-wm1-f43.google.com with SMTP id
+ 5b1f17b1804b1-4801eb2c0a5so47924145e9.3
+ for <dev@dpdk.org>; Mon, 09 Feb 2026 16:35:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1770683602;
- x=1771288402; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=sKh42sq/MJpgu3TgNX4J3gHJJum/YoYqW6PFcf7yfN4=;
- b=GVWzZY89K3G8t9WPzp6EaNuA4FIU8cr03jwoTcflsgpF1G/dji39rWZphBq9lDPWjT
- KQfyCEPd2GzEbD/8lKQ6I0qVwjYHVVeHBwq9Ggpz9/dcq2h9LOizkcrLrvjEiJyAKxdP
- +3IIamX0+pfBMkzEhnRYKXuniWoKbx/6vSJN/mfpcEXxNgfq6nceS676uuAeWs7rbHp+
- 7LjdVkNJKow8rv33M4JkHkyZ59R9BBoouKZFjHfANfTCn6ecOO1y8uUW83PlzM2HhzG8
- 2MxOa3s+CAkpQ37iAyQoKZxtrukTAF35se4s3vnMwdYRmlaoskSUrelVwxuRJHIJemUr
- essw==
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1770683710;
+ x=1771288510; darn=dpdk.org; 
+ h=mime-version:references:in-reply-to:message-id:subject:cc:to:from
+ :date:from:to:cc:subject:date:message-id:reply-to;
+ bh=cIT8we50lhZbCuYUKlksPjQVF8Vu5k1p6AtOdnVPyPk=;
+ b=q2Yq/ExPrxAGQFAi3Tkfo/X6/WTG80I5gmIxov/P32Fp0P2ecsPiHdUB6DAP3Bw+IR
+ W0x5iIiW2/5AmCiP8D6xVP+r2gq7CbFP0Mm6dfMVAWBX0O3vb7FOAey044MvQ2OXg69z
+ qr+dQutWMuNf0FqDmH1qV75d3RU320yPX4RJczSetURLQ8FotdgQ6dQdOodJu6MAE2/8
+ gFGXLaXh10+rz0dDYbAp/ICTf+vYH+AqZE/r5y62mWjA+ydfrKSevUvznjl/w0LEptxB
+ yBaDle4LKZ1QmiYKCPnucCpA2/4gjyIUrwW7f71IFP9e58UL66dBsGOVR7wUQfmPQzYK
+ kfFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1770683602; x=1771288402;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=sKh42sq/MJpgu3TgNX4J3gHJJum/YoYqW6PFcf7yfN4=;
- b=MEo0p7cXhrbFG7jqUkl7H0P3ZsJGJCvEOeRevih4d+kivmsiMKlEjEf2kW+gg5cha6
- g7atLD2Av7z4RX/lwoTcKWQ6tGEyKF4EQDpMqP6CjMuI8TFW1HwHu+UK8LafZUqxgfMX
- /gXPpyR1oGonU13GWJwAm1tjwz1vcKNRoO+Cr82ws4v1w1VHhtYExIut28hPbFKr8XTu
- mmcXMZKZ6J7ExX4wK3cCv8AP4VOhe3WbPC3ZGEq6J4k0pcXFyAa0OSkbuz091q48sx7M
- VhncmT6vrl4i9OnEdu8WXlxprAa2tv9D8vLQmwhVTDfiCb+f+ByZgotzvMkQrDVXyFeb
- F6Pg==
-X-Gm-Message-State: AOJu0YykqOrvATA9bipSKREydrQMRvNghem84BSuZqoF2GRsZT7ihNF0
- LjyXE+WCauQ1esAbYvHmYNIJjpDOTymGe1fZ2Y9e6sjH1NlrsCqXLB+w0AlW143Z2xY=
-X-Gm-Gg: AZuq6aJ6+NEVV3n69aiBzaTkXodiaZre60kU8Mz4Nq+75C1zWxX2EhFy9DB9xD7mBob
- 57VGfpI00MkP8YNA5kcr1HVzMKJEaqf3sXDug0d7T0JLYYpfoZcgmJSI8KK7t+qdXafGrOu534h
- BOzDf4nmeNoadFRQRhBLtvp+IYxElZ4t3hXavrDshKHEXbCzxdB/T1eZZ0IvnTL3XAK0fGZ+ce4
- SszsqatcbSOgzwn/IuDND5a6rygU1jVHxwy7mWlb2zWoqStyCiapnEIt3gC9V5Yv4NGL2jEHCJI
- jXze7SDRMszgEQ+AlSudTL6M7FdLPRzwiqFpnRNYn9Y1Limu1fR+t/kjsgF8dtfYUGRX3KCtCUf
- ew/VZ107FYYkbvF3iLceni3npmIYMl7a969yteLO34KcpchgBwXy19MWFknKE/KirBnUqe0S3/G
- 34hcVuDlTBlBBXw3TMq4E7Y7XACcyAtk9ICUd7n8kB11ALyd/drC85dHquz+S+Gd9Z
-X-Received: by 2002:a05:600c:820c:b0:47d:333d:99c with SMTP id
- 5b1f17b1804b1-4835054f3f4mr6911945e9.18.1770683602323; 
- Mon, 09 Feb 2026 16:33:22 -0800 (PST)
+ d=1e100.net; s=20230601; t=1770683710; x=1771288510;
+ h=mime-version:references:in-reply-to:message-id:subject:cc:to:from
+ :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=cIT8we50lhZbCuYUKlksPjQVF8Vu5k1p6AtOdnVPyPk=;
+ b=OfsfphKyModTMuKNrSAJ/hKfaEtXsFqROKRg8/N+t/zQcNmScWEuHMplcpBo+pFDTm
+ ExFjGYpybIkhIRkjpBtnLl1UdFvPMV0QkOO3OM8x6K6+FyCu1ZlMQ1WGtZO94q9FH5IY
+ LFk64NXcCnCAzDBywIlO78PUFiUfj4HeR1Wx/so5yY9eshpe9CboowhoWD8OQ+t8I3PU
+ x7yTdu1au90dO/44RYqN4niRO6SMujIciD6pcZMo1ZwgfLyYiYiQ9rkwHoNjYR1kXoHM
+ M6JBVIMBPwInrJvFsBjkZK/CNRWtXmwH1W3TyLL86zO/MBtQ9PgDdCtYGIjJD7QZVDDj
+ vMCA==
+X-Gm-Message-State: AOJu0YxbyoJyYyX4+Q+cDxpNiFIGY0p/uy5oDYSCbL8nWso4/2uTgeEj
+ Mqct8GIj0KLUgnye0x4kWti9mlQ3sirBbog0RB7DrglXOO7eATchEEojHKwEFGtp1/8=
+X-Gm-Gg: AZuq6aIvogmqxUpXLQgBEdJNW6qRvWp50lq7b+tDFjZdq8Gt5Ic11Oq3eUe7D4JClet
+ J/BJdgVqAvEnP5xSbkY+Zu0Nvev/C4iZ+LvhfAHXljwrf1zsPzd3G/1CAB4xkUsxRtIKtHmZnS8
+ CaZvxRWCtRLuv02ltVeGC2t4whA8mvylHGHl4L712fw/t8zoVh9wJXa0V82f83t11S1YrhQRQ3S
+ oGcOt2pwi5zf/dx+z+8SDrKyJIgMHZc7A1ZGNCeXIwWWEaGgt9zUiN6Yc0UKOuJWkGnZg7XdrFt
+ DO79YjmZvyb93mVP/zo0BUXHPqwyK08r2+gprcApmjKugmmIh+T4t4EIxr8RZmxQS/XV0OrbL4I
+ L3CyRNjrHzMJOSVztENhavTyVwUuNRFBuU2nWGBl36XP27lvRz4VHgg8AbGQoI9aC9+uNdyxzfS
+ rYPo8QkhfHFsrayoNGHTJPlUHN78OQQmlT4Dg7mKHJsyPhW8Qtvud3Pky0sJeS4NJ+
+X-Received: by 2002:a05:600c:3b9f:b0:47d:6856:9bd9 with SMTP id
+ 5b1f17b1804b1-4835081ec28mr6677595e9.23.1770683709721; 
+ Mon, 09 Feb 2026 16:35:09 -0800 (PST)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-483209eeef0sm99232255e9.20.2026.02.09.16.33.21
+ ffacd0b85a97d-43629756bc3sm28010592f8f.39.2026.02.09.16.35.07
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 09 Feb 2026 16:33:22 -0800 (PST)
-Date: Mon, 9 Feb 2026 16:33:16 -0800
+ Mon, 09 Feb 2026 16:35:08 -0800 (PST)
+Date: Mon, 9 Feb 2026 16:35:03 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: spinler@cesnet.cz
 Cc: dev@dpdk.org
-Subject: Re: [PATCH 0/7] net/nfb: ethernet enhancements
-Message-ID: <20260209163316.0588af71@phoenix.local>
-In-Reply-To: <20260206170435.302184-1-spinler@cesnet.cz>
-References: <20260206170435.302184-1-spinler@cesnet.cz>
+Subject: Re: [PATCH v7 0/8] net/nfb: rework to real multiport
+Message-ID: <20260209163503.4c7a20e2@phoenix.local>
+In-Reply-To: <20260204123137.123171-1-spinler@cesnet.cz>
+References: <20260115151656.393106-1-spinler@cesnet.cz>
+ <20260204123137.123171-1-spinler@cesnet.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/mixed; boundary="MP_/YhUaGBlbV1R9o+P8Yta0_U4"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -79,247 +78,380 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri,  6 Feb 2026 18:04:28 +0100
+--MP_/YhUaGBlbV1R9o+P8Yta0_U4
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+On Wed,  4 Feb 2026 13:31:29 +0100
 spinler@cesnet.cz wrote:
 
 > From: Martin Spinler <spinler@cesnet.cz>
->=20
-> This set includes minor enhancements to the Ethernet
-> configuration and overall usage.
->=20
+> 
+> This series implements real multiport for better user experience.
+> 
+> The existing driver creates one ethdev/port for one PCI device.
+> As the CESNET-NDK based cards aren't capable to represent each
+> Ethernet port by own PCI device, new driver implementation
+> processes real port configuration from firmware/card and switches
+> from rte_eth_dev_pci_generic_probe to multiple rte_eth_dev_create calls.
+> 
 > ---
-> Depends-on: series-37261 ("net/nfb: rework to real multiport")
->=20
-> Martin Spinler (7):
->   net/nfb: use MAC address assigned to card
->   net/nfb: get correct link speed
->   net/nfb: support real link-up/down config
->   net/nfb: support setting RS-FEC mode
->   net/nfb: support setting Rx MTU
->   net/nfb: read total stats from macs
->   doc/nfb: update release notes for nfb driver
->=20
->  doc/guides/rel_notes/release_26_03.rst |   3 +-
->  drivers/net/nfb/meson.build            |   1 +
->  drivers/net/nfb/nfb.h                  |   7 +
->  drivers/net/nfb/nfb_ethdev.c           | 228 +++++++++++++++++++++----
->  drivers/net/nfb/nfb_mdio.c             |  42 +++++
->  drivers/net/nfb/nfb_mdio.h             |  34 ++++
->  drivers/net/nfb/nfb_stats.c            |  40 +++--
->  7 files changed, 308 insertions(+), 47 deletions(-)
->  create mode 100644 drivers/net/nfb/nfb_mdio.c
->  create mode 100644 drivers/net/nfb/nfb_mdio.h
->=20
+Patch 1/8 (Queue Mapping):
 
-The CI and I don't have hardware to do deep check so have to rely
-on my and AI review.
+    Missing NULL checks before accessing queue_map_rx/tx arrays (could crash in secondary process)
+    Missing bounds checks on queue indices (buffer overflow risk)
 
+Patch 2/8 (Core Refactoring):
 
-Bundle 1747 (Feature Additions - 7 patches)
+    Resource leak: nfb_dev not closed on error path
+    NULL pointer dereference: no check after rte_eth_dev_get_by_name()
+    Array overflow in queue mapping initialization
+    Partial device cleanup missing on errors
 
-3 Critical Issues:
+Patch 4/8 (Port Argument):
 
-    Patch 2: MDIO resource leak on error path - opened handles not closed
-    Patch 3: Missing NULL check before accessing eth_node[0]
-    Patch 4: Same NULL check issue in FEC get/set functions
+    Missing errno check after strtoul() conversion
 
-Quick Summary: The feature additions are mostly solid. The main issue is a =
-consistent pattern of accessing eth_node[0] without verifying the pointer i=
-s non-NULL. One resource leak needs cleanup code added.
+Quick Summary: The architectural refactoring is well-designed but needs defensive programming additions. Most issues are missing validation checks that could cause crashes or leaks on error paths.
 
-Detailed output:
+Detailed review attached.
 
-# NFB Driver Review - Bundle 1747 (Feature Additions)
+--MP_/YhUaGBlbV1R9o+P8Yta0_U4
+Content-Type: text/markdown
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: attachment; filename=bundle-1748-review.md
 
-## Series: 7 patches adding MAC, link speed, FEC, MTU, and stats features
+# NFB Driver Review - Bundle 1748 (Multiport Architecture)
+
+## Series v7: 8 patches refactoring driver for one ethdev per physical port
 
 ---
 
-## PATCH 1/7: net/nfb: use MAC address assigned to card
+## PATCH v7 1/8: net/nfb: prepare for indirect queue mapping scheme
 
-**Subject**: net/nfb: use MAC address assigned to card (47 chars) =E2=9C=93
-
-### Summary
-Retrieves MAC address from card firmware via `nc_ifc_get_default_mac()` ins=
-tead of always generating random MAC with OUI prefix.
-
-### Status: =E2=9C=93 No errors found
-
-This patch is clean. Falls back gracefully to random MAC generation if firm=
-ware MAC retrieval fails.
-
----
-
-## PATCH 2/7: net/nfb: get correct link speed
-
-**Subject**: net/nfb: get correct link speed (38 chars) =E2=9C=93
+**Subject**: net/nfb: prepare for indirect queue mapping scheme (57 chars) =
+=E2=9C=93
 
 ### Summary
-Adds MDIO infrastructure to read accurate link speed from PHY PMA registers=
- instead of MAC status register. Introduces `struct eth_node` with MDIO int=
-erface info.
-
-### Errors
-
-**Error 1: Resource leak on error path**
-```c
-intl->eth_node[eth].if_info.dev =3D nc_mdio_open(intl->nfb, node, node_cp);
-if (intl->eth_node[eth].if_info.dev) {
-    // ... set up interface info
-    eth++;
-}
-```
-Location: `nfb_nc_eth_init()`, loop at line ~126
-
-If `nc_mdio_open()` succeeds for some iterations but then a later error occ=
-urs (e.g., memory allocation for subsequent MACs fails), the function jumps=
- to error labels `err_alloc_ethnode`, `err_alloc_txmac`, or `err_alloc_rxma=
-c`. None of these labels close the already-opened MDIO handles.
-
-**Suggested fix**: Add cleanup loop before freeing eth_node:
-```c
-err_alloc_ethnode:
-    for (i =3D 0; i < eth; i++)
-        if (intl->eth_node[i].if_info.dev)
-            nc_mdio_close(intl->eth_node[i].if_info.dev);
-    free(intl->eth_node);
-err_alloc_txmac:
-    free(intl->txmac);
-err_alloc_rxmac:
-    free(intl->rxmac);
-    return ret;
-```
-
----
-
-## PATCH 3/7: net/nfb: support real link-up/down config
-
-**Subject**: net/nfb: support real link-up/down config (47 chars) =E2=9C=93
-
-### Summary
-Implements actual PHY link control via MDIO PMA reset register (`NFB_MDIO_P=
-MA_CTRL`) instead of just enabling/disabling MAC layer.
+Adds `queue_map_rx` and `queue_map_tx` arrays to `struct pmd_priv` to enabl=
+e indirect mapping between DPDK queue indices and firmware queue IDs. Alloc=
+ates single buffer for both arrays, initializes with 1:1 mapping.
 
 ### Errors
 
 **Error 1: Missing NULL check before array access**
 ```c
-static int
-nfb_eth_dev_set_link(struct pmd_internals *intl, bool val)
-{
-    // ...
-    if (!intl->max_eth)
-        return 0;
-   =20
-    if_info =3D &intl->eth_node[0].if_info;  // <-- dereference without NUL=
-L check
+qid =3D priv->queue_map_rx[rx_queue_id];
 ```
-Location: `nfb_eth_dev_set_link()`
+Location: `nfb_eth_rx_queue_setup()` in `nfb_rx.c`
 
-If `intl->eth_node` is NULL (allocation failed but not caught), this crashe=
-s. While initialization should guarantee that `max_eth > 0` implies `eth_no=
-de !=3D NULL`, defensive coding requires verification.
+If `priv->queue_map_rx` is NULL (allocation failed in primary process, or n=
+ot yet initialized in secondary process), this dereferences NULL causing se=
+gfault.
 
-**Suggested fix**: Add NULL check:
+**Suggested fix**: Add NULL check at start of function:
 ```c
-if (!intl->max_eth || !intl->eth_node)
-    return 0;
-   =20
-if_info =3D &intl->eth_node[0].if_info;
+if (priv->queue_map_rx =3D=3D NULL) {
+    NFB_LOG(ERR, "Queue mapping not initialized");
+    return -EINVAL;
+}
+qid =3D priv->queue_map_rx[rx_queue_id];
 ```
+
+Same issue exists in `nfb_eth_tx_queue_setup()` in `nfb_tx.c`:
+```c
+qid =3D priv->queue_map_tx[tx_queue_id];
+```
+
+**Error 2: Missing bounds check on queue index**
+```c
+qid =3D priv->queue_map_rx[rx_queue_id];
+```
+Location: `nfb_eth_rx_queue_setup()` in `nfb_rx.c`
+
+If `rx_queue_id >=3D priv->max_rx_queues`, this accesses beyond allocated a=
+rray bounds. The array is allocated with size `max_rx_queues + max_tx_queue=
+s`, and TX mapping starts at offset `max_rx_queues`.
+
+**Suggested fix**: Add bounds check:
+```c
+if (rx_queue_id >=3D priv->max_rx_queues) {
+    NFB_LOG(ERR, "RX queue index %u exceeds max %u",
+            rx_queue_id, priv->max_rx_queues);
+    return -EINVAL;
+}
+```
+
+Same for TX queues in `nfb_tx.c`.
 
 ---
 
-## PATCH 4/7: net/nfb: support setting RS-FEC mode
+## PATCH v7 2/8: net/nfb: create one ethdev per ethernet port
 
-**Subject**: net/nfb: support setting RS-FEC mode (44 chars) =E2=9C=93
+**Subject**: net/nfb: create one ethdev per ethernet port (52 chars) =E2=9C=
+=93
 
 ### Summary
-Implements FEC (Forward Error Correction) get/set operations via MDIO PMA R=
-S-FEC control register. Supports RS-FEC enable/disable; rejects AUTO mode.
+Major architectural refactoring: creates one `rte_eth_dev` per physical Eth=
+ernet port instead of one per PCI device. Uses libnfb's `nc_ifc_map_info` t=
+o discover port-to-queue mappings. Switches from single `rte_eth_dev_pci_ge=
+neric_probe()` to loop calling `rte_eth_dev_create()` for each port.
 
 ### Errors
 
-**Error 1: Same NULL check issue as Patch 3**
+**Error 1: Resource leak - nfb_dev not closed on error**
 ```c
-static int
-nfb_eth_fec_get(struct rte_eth_dev *dev, uint32_t *fec_capa)
-{
-    // ...
-    if (!intl->max_eth)
-        return 0;
-   =20
-    if_info =3D &intl->eth_node[0].if_info;  // <-- dereference without NUL=
-L check
-```
-Location: `nfb_eth_fec_get()` and `nfb_eth_fec_set()`
+nfb_dev =3D nfb_open(params->path);
+if (nfb_dev =3D=3D NULL) {
+    NFB_LOG(ERR, "nfb_open(): failed to open %s", params->path);
+    return -EINVAL;
+}
 
-**Suggested fix**: Add NULL check in both functions:
-```c
-if (!intl->max_eth || !intl->eth_node)
-    return 0;
+ret =3D nc_ifc_map_info_create_ordinary(nfb_dev, &ifc_params.map_info);
+if (ret)
+    goto err_map_info_create;
 ```
+Location: `nfb_eth_common_probe()` in `nfb_ethdev.c`
+
+The label `err_map_info_create` does not close `nfb_dev`:
+```c
+err_map_info_create:
+    nfb_close(nfb_dev);  // <-- MISSING
+    return ret;
+```
+
+**Suggested fix**: Add cleanup:
+```c
+err_map_info_create:
+    nfb_close(nfb_dev);
+    return ret;
+```
+
+**Error 2: Missing NULL check after rte_eth_dev_get_by_name()**
+```c
+ret =3D rte_eth_dev_create(pp->device, pp->name, ...);
+if (ret)
+    goto out;
+
+eth_dev =3D rte_eth_dev_get_by_name(pp->name);
+p =3D eth_dev->process_private;  // <-- NULL dereference if get_by_name() f=
+ails
+```
+Location: `nfb_eth_dev_create_for_ifc()` in `nfb_ethdev.c`
+
+If `rte_eth_dev_get_by_name()` returns NULL (device creation succeeded but =
+lookup failed), dereferencing `eth_dev` causes crash.
+
+**Suggested fix**: Add NULL check:
+```c
+eth_dev =3D rte_eth_dev_get_by_name(pp->name);
+if (eth_dev =3D=3D NULL) {
+    NFB_LOG(ERR, "Failed to get created device %s", pp->name);
+    ret =3D -ENODEV;
+    goto out;
+}
+```
+
+**Error 3: Array overflow in queue mapping - no bounds check**
+```c
+cnt =3D 0;
+for (i =3D 0; i < mi->rxq_cnt; i++) {
+    if (mi->rxq[i].ifc =3D=3D ifc->id)
+        priv->queue_map_rx[cnt++] =3D mi->rxq[i].id;  // <-- no bounds chec=
+k on cnt
+}
+```
+Location: `nfb_eth_dev_init()` in `nfb_ethdev.c`
+
+If firmware mapping data is inconsistent (more queues mapped to this interf=
+ace than `ifc->rxq_cnt` claims), `cnt` exceeds `max_rx_queues` and writes b=
+eyond allocated array.
+
+**Suggested fix**: Add bounds check:
+```c
+if (cnt >=3D max_rx_queues) {
+    NFB_LOG(ERR, "RX queue count exceeds maximum %u", max_rx_queues);
+    ret =3D -EINVAL;
+    goto err_alloc_queue_map;
+}
+priv->queue_map_rx[cnt++] =3D mi->rxq[i].id;
+```
+
+Apply same fix for TX queue loop.
+
+**Error 4: Potential buffer overflow in snprintf**
+```c
+ret =3D snprintf(pp->name + cp->basename_len, sizeof(pp->name) - cp->basena=
+me_len,
+        "_eth%d", ifc->id);
+if (ret < 0 || ret >=3D (signed int)sizeof(pp->name) - cp->basename_len)
+    return -EINVAL;
+```
+Location: `nfb_eth_dev_create_for_ifc()` in `nfb_ethdev.c`
+
+While there's a check after `snprintf`, if it triggers and returns -EINVAL,=
+ any ethdevs created in previous loop iterations are not cleaned up. This l=
+eaves partially initialized devices.
+
+**Suggested fix**: Document that cleanup happens at caller level via `nfb_e=
+th_common_remove()`, or add cleanup loop before returning error.
 
 ---
 
-## PATCH 5/7: net/nfb: support setting Rx MTU
+## PATCH v7 3/8: net/nfb: add vdev as alternative device probe method
 
-**Subject**: net/nfb: support setting Rx MTU (38 chars) =E2=9C=93
+**Subject**: net/nfb: add vdev as alternative device probe method (55 chars=
+) =E2=9C=93
 
 ### Summary
-Implements MTU setting by querying maximum frame length capability from all=
- RX MACs, taking minimum, and configuring all MACs with requested MTU.
+Adds virtual device (vdev) probe support alongside PCI. Allows specifying N=
+FB device path via `dev=3D<path>` argument. Parses vdev arguments and calls=
+ common probe function.
 
 ### Status: =E2=9C=93 No errors found
 
-The logic correctly handles the case of no RX MACs (`if (!intl->max_rxmac) =
-return 0`), queries capability limits, validates against minimum capability=
-, and applies MTU to all MACs.
-
-One minor observation: `status.frame_length_max_capable` is initialized to =
-0, and the function checks `frame_length_max_capable !=3D 0` before rejecti=
-ng MTU. This allows unlimited MTU if all MACs report 0 capability (meaning =
-unlimited). This seems intentional.
+Error handling is correct:
+- `strdup()` allocation failure handled properly
+- `kvargs` parsing failure handled
+- All error paths properly free allocated resources
+- `snprintf()` truncation checked and handled
 
 ---
 
-## PATCH 6/7: net/nfb: read total stats from macs
+## PATCH v7 4/8: net/nfb: add device argument "port" to limit used ports
 
-**Subject**: net/nfb: read total stats from macs (41 chars) =E2=9C=93
+**Subject**: net/nfb: add device argument "port" to limit used (52 chars + =
+continuation) =E2=9C=93
 
 ### Summary
-Aggregates statistics from all MAC instances instead of reading from queues=
-. Changes `nfb_eth_stats_get()` to sum across all RX/TX MACs.
+Adds `port=3D<number>` device argument to create ethdevs only for specified=
+ ports instead of all available ports. Argument can be repeated multiple ti=
+mes. Adds `rte_kvargs` parsing infrastructure.
 
-### Status: =E2=9C=93 No errors found
+### Errors
 
-The aggregation logic is straightforward and correct. Iterates over all MAC=
-s and accumulates statistics into the stats structure.
+**Error 1: Integer overflow in port validation**
+```c
+port =3D strtoul(value, &end, 0);
+if (*end !=3D '\0' || port >=3D (unsigned long)ifc_params->map_info.ifc_cnt)
+    return -EINVAL;
+
+ifc_params->ifc_info =3D &ifc_params->map_info.ifc[port];
+```
+Location: `nfb_eth_dev_create_for_ifc_by_port()` in `nfb_ethdev.c`
+
+The cast `(unsigned long)ifc_params->map_info.ifc_cnt` could overflow if `i=
+fc_cnt` is `INT_MAX` and cast to unsigned long. However, in practice `ifc_c=
+nt` is small (number of interfaces), so this is extremely unlikely.
+
+More concerning: if `strtoul()` returns `ULONG_MAX` on error (and sets errn=
+o), the comparison might pass incorrectly. Should check errno.
+
+**Suggested fix**: Check for strtoul errors:
+```c
+errno =3D 0;
+port =3D strtoul(value, &end, 0);
+if (errno !=3D 0 || *end !=3D '\0' || port >=3D (unsigned long)ifc_params->=
+map_info.ifc_cnt)
+    return -EINVAL;
+```
+
+### Warnings
+
+**Warning 1: kvargs leaked on some error paths**
+The main probe function allocates kvargs but may not free it on all error p=
+aths. Need to verify `err_dev_create` path includes `rte_kvargs_free(kvlist=
+)`.
+
+Looking at the code:
+```c
+err_dev_create:
+    nfb_eth_common_remove(params->device);
+    rte_kvargs_free(kvlist);  // <-- present, good
+err_parse_args:
+```
+This is correct.
 
 ---
 
-## PATCH 7/7: doc/nfb: update release notes for nfb driver
+## PATCH v7 5/8: net/nfb: init only MACs associated with device
 
-**Subject**: doc/nfb: update release notes for nfb driver (52 chars) =E2=9C=
-=93
+**Subject**: net/nfb: init only MACs associated with device (50 chars) =E2=
+=9C=93
+
+### Summary
+Changes MAC initialization to only open MACs associated with specific inter=
+face instead of all MACs in system. Filters MACs by checking `mi->eth[i].if=
+c =3D=3D ifc->id`.
+
+### Status: Need to review full patch
+
+Cannot review without seeing full diff. Key areas to check:
+- Array bounds when filtering MACs
+- NULL checks after nc_rxmac_open/nc_txmac_open
+- Error path cleanup for partially opened MACs
+
+---
+
+## PATCH v7 6/8: net/nfb: add compatible cards to driver PCI ID table
+
+**Subject**: net/nfb: add compatible cards to driver PCI ID table (59 chars=
+) =E2=9C=93
+
+### Status: =E2=9C=93 Likely no errors (PCI ID table additions)
+
+Patch should be simple PCI ID additions to the device table. Low risk for b=
+ugs.
+
+---
+
+## PATCH v7 7/8: net/nfb: report firmware version
+
+**Subject**: net/nfb: report firmware version (38 chars) =E2=9C=93
+
+### Status: Need to review implementation
+
+Should check:
+- Buffer overflow in version string formatting
+- NULL checks on firmware version string
+- Proper error handling if version retrieval fails
+
+---
+
+## PATCH v7 8/8: doc/nfb: cleanup and update guide
+
+**Subject**: doc/nfb: cleanup and update guide (37 chars) =E2=9C=93
 
 ### Status: =E2=9C=93 Not reviewed (documentation)
 
-Documentation patch - should verify that release notes accurately describe =
-all changes in the series.
+Documentation update - should verify it accurately describes the new multi-=
+port architecture.
 
 ---
 
-## Summary - Bundle 1747
+## Summary - Bundle 1748
 
-### Critical Issues: 3
+### Critical Issues: 7
 
-1. **Patch 2/7**: Resource leak - MDIO handles not closed on error path in =
-`nfb_nc_eth_init()`
-2. **Patch 3/7**: Missing NULL check before accessing `eth_node[0]` in `nfb=
-_eth_dev_set_link()`
-3. **Patch 4/7**: Missing NULL check before accessing `eth_node[0]` in `nfb=
-_eth_fec_get()` and `nfb_eth_fec_set()`
+**Patch 1/8:**
+1. Missing NULL check before accessing queue_map arrays (2 locations: RX an=
+d TX)
+2. Missing bounds check on queue indices (2 locations: RX and TX)
+
+**Patch 2/8:**
+3. Resource leak - nfb_dev not closed on error path
+4. Missing NULL check after rte_eth_dev_get_by_name()
+5. Array overflow in queue mapping loop (no bounds check on cnt variable)
+6. Partial device cleanup missing on probe error
+
+**Patch 4/8:**
+7. Missing errno check after strtoul() for proper error detection
+
+### Medium Priority: 1
+
+**Patch 2/8:**
+- Missing documentation for new internal APIs
 
 ### All Patches: Format =E2=9C=93
 
@@ -331,17 +463,34 @@ _eth_fec_get()` and `nfb_eth_fec_set()`
 
 ## Recommended Actions
 
-### Must Fix:
-1. **Patch 2**: Add MDIO handle cleanup loop on error paths
-2. **Patches 3-4**: Add NULL check for `eth_node` before accessing array el=
-ement
-
-### Pattern to Apply:
-For all functions accessing `intl->eth_node[0]`, use:
+### Must Fix - Patch 1/8:
+Add NULL and bounds checks at start of queue setup functions:
 ```c
-if (!intl->max_eth || !intl->eth_node)
-    return 0;  // or appropriate error code
+if (priv->queue_map_rx =3D=3D NULL) {
+    NFB_LOG(ERR, "Queue mapping not initialized");
+    return -EINVAL;
+}
+if (rx_queue_id >=3D priv->max_rx_queues) {
+    NFB_LOG(ERR, "RX queue index %u exceeds max %u",
+            rx_queue_id, priv->max_rx_queues);
+    return -EINVAL;
+}
 ```
 
-This defensive pattern prevents crashes if initialization invariants are vi=
-olated.
+### Must Fix - Patch 2/8:
+1. Close nfb_dev on err_map_info_create path
+2. Check NULL after rte_eth_dev_get_by_name()
+3. Add bounds check in queue mapping loops before `cnt++`
+4. Document or implement cleanup for partial probe failures
+
+### Must Fix - Patch 4/8:
+Check errno after strtoul() to catch conversion errors properly
+
+### Architecture Review Needed:
+This is a major architectural change. Beyond code correctness, recommend:
+- Performance testing with multi-port configurations
+- Multi-process testing (primary/secondary)
+- Backward compatibility verification
+- Documentation review for completeness
+
+--MP_/YhUaGBlbV1R9o+P8Yta0_U4--
