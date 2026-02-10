@@ -2,70 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DFF0EB2700
-	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Feb 2026 19:52:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC421EB270B
+	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Feb 2026 19:59:06 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7BAC6402B0;
-	Tue, 10 Feb 2026 20:52:20 +0100 (CET)
-Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com
- [209.85.222.47]) by mails.dpdk.org (Postfix) with ESMTP id 6570F400D6
- for <dev@dpdk.org>; Tue, 10 Feb 2026 20:52:19 +0100 (CET)
-Received: by mail-ua1-f47.google.com with SMTP id
- a1e0cc1a2514c-948ee050c4cso89309241.1
- for <dev@dpdk.org>; Tue, 10 Feb 2026 11:52:19 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 0051B402B0;
+	Tue, 10 Feb 2026 20:59:05 +0100 (CET)
+Received: from mail-dy1-f174.google.com (mail-dy1-f174.google.com
+ [74.125.82.174]) by mails.dpdk.org (Postfix) with ESMTP id 614BF400D6
+ for <dev@dpdk.org>; Tue, 10 Feb 2026 20:59:04 +0100 (CET)
+Received: by mail-dy1-f174.google.com with SMTP id
+ 5a478bee46e88-2b7da62b487so4130683eec.1
+ for <dev@dpdk.org>; Tue, 10 Feb 2026 11:59:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1770753139; x=1771357939; darn=dpdk.org;
+ d=iol.unh.edu; s=unh-iol; t=1770753543; x=1771358343; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=4Uao9+nTVNNbq4aJ5LDLIhICLczvkgcexV0XAk7F0pk=;
- b=RKStmPOLGRpdLTVQAcopERW7NELnCZRCcJT98mhRudIFoBBm2G9Q2HZKeFQd1POoH3
- AGdDWcj+0pQwyBcDXyDGQGjbQS0jBAHNCBujy3GT4fbWh836Nf8ufEUtL4K24jFX6po6
- JQ4fGER1Vwb3XCsjOqzX1d0pMNJNQPL5BNrZc=
+ bh=866BvrvO50gKYRHYAfuNmOp7Nhx8VxT+bVuKNJtnGhg=;
+ b=jitI1JxElg61Ywxy10+I8IJ9naUg7BB13hSTbmHFJ2KGZV+GN/r/coQr9n0g+wWrdN
+ hZ/K+AXTayFOrmHRAfIWkdB5udfa+jjHypOrKZmscE8ir/q+u4Hyo2es3rcwDKnI06+b
+ cIRzMfGTPeRNX4ittYbvuSnXS9ibY2nVHelxI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1770753139; x=1771357939;
+ d=1e100.net; s=20230601; t=1770753543; x=1771358343;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=4Uao9+nTVNNbq4aJ5LDLIhICLczvkgcexV0XAk7F0pk=;
- b=VDhu61pyoswb7Qs7LIEW+WLGFLzUhzKDrj0kJL07ShwE3oaS0+B7qJSjAITU175NUD
- YhpxNZABk1Sce1denvRiSuwtKX2W5Z3N4sat4DPQJJhwQfePcRWzN+eJ42ZxvsWGtEZr
- NhCZR3ZG62lj4/YZvrc47bxQjmIhlO3zCm6QGZHwmorQlDc2VJRWDPiQf/FLDyRtoJQP
- t6VwWPWUSU7Y3MV26Vwzkbde/HR8x5/oEkwnnkYi6d8+e+8paAFRcnizHfLei9+D82sM
- +Q3DhiYmN7AOaICdRU/RPAddL0h3WL1rExWEDZxZEB8LFPK9Za0zrC8BVaZ5IZ5Iratt
- n+yA==
+ bh=866BvrvO50gKYRHYAfuNmOp7Nhx8VxT+bVuKNJtnGhg=;
+ b=MCX6Xm9myHLGP3gZX0g/ykYe+lDW9gnuSHQQcK9KOYfhQHDyoO+VpH9OeOIhxERCT7
+ 6MS7GnfWBKJ0FtJdIFVlN0Mp+zbfRKthVQpay5aI5EweKAO34STVPTdaXMKTS5cFtSbl
+ XSf/V3aX15/uGmTlXeXlkxBRs2o+Co/ViSloWhGsniQPMiLtX7d63Wkn6P9SIjl150GM
+ JqdYO7PCjqKOoKstwdqlhUA5UNQwrfktaA4TdBM5W3bPiNyofGBrpkAWexLzgPDT9n/n
+ OYN7Mn11ANTcLocSySqKJ6fpmO7zHXg+CrjbGZbRp3itKATVDkuTDQf40yXwRbo1Yken
+ rXeg==
 X-Forwarded-Encrypted: i=1;
- AJvYcCX/24ZwKF5SKzgCr4FR7lC/5vDk4wvi4VDCng7qkjwEKNhLZ4ITeLRUbOWxVZEQeBYOTyc=@dpdk.org
-X-Gm-Message-State: AOJu0YxBYCLWR8c7+M/Jssakse1tzcPRg+Z6AGnndrthuWtkSFHIJk7J
- nlEpTsEabbuUjqgeHsEsfs2yVqx5rDjH+Iw5SbpnTD+VkEr22kcmFXwgRJtZlzZK7RPEefHoojG
- yeDBM
-X-Gm-Gg: AZuq6aKjZgVThYyUInxxYYqDYiDwQMRyMzbLbSqB8mz5XxUkzV2K9HyJ6z8Uwb619h9
- 3LIeMKzTvTbzBJ8YSKrhYM7GuzBxfMbdHJBkT+DIJ4YEpm5gsyqkVEbAKXkudVckcdom2x59E9X
- 4E3Anfg1KhhRwTJ2oaQkwhqh7NuCKNpIvaHHTf8Nj+fHV7RTYMTxKPefYodIdjRboeyVNuN8qdG
- 9C2dwbv6b+29i5fOOPDdwKez5WF8CwI8yH5zEzrnT009S+B7ISa26GIVOKY/VVB/SmIHursIYGr
- rX5A5NFYsEIcye+dsf4GDK/VhPNKCUZ8DAbz00tfKg9ZYYkLFjQD3zEdO4SiDySvfW72/eJBIVV
- +OmpiH+wX5lawvTIuBtGrsem3ANczsu0Cni8Rk7b88669Gd0Cr2bf9lAXKGkLYLhC873jOK0FTa
- 2UHYRlsi6fIyN00rfxAw6ZDSFZH6GPtPglRshPgXHY94HEYBMHytpNDG6MmdV8oyQm
-X-Received: by 2002:a05:620a:294a:b0:8c7:3ff0:d489 with SMTP id
- af79cd13be357-8cb1eeeb92fmr400611685a.1.1770746808688; 
- Tue, 10 Feb 2026 10:06:48 -0800 (PST)
+ AJvYcCWq2RB3xa+68989UBqJD1EhhEKikPhHOSmGiWAfyLY/lqd0cUhbs5T9h7pXOk3JMrtnFSA=@dpdk.org
+X-Gm-Message-State: AOJu0YylipOzsaNWxdT+t1CQLeBTf59AMSYf+Gi/Qu0upCLzId+mBiP6
+ wOlaMK7PA/uJXtdwIs9Kcp+Ns8GWX/F+KXeYgJwz0u/wHNV8v85+m+vSpzcZgOGw/XrzZ0cKPFx
+ f52PV
+X-Gm-Gg: AZuq6aL0jxTCBqLH62ypkD0s3LCbvng6pLG7C0Udx4aXqn7iZMkEzCAgO8mSVFvDuLj
+ qTfgcxKFLCJ0nT4fZuKo3ABmfuFGd9we8+mJo9xnREWap/uGGvwN3XU+oyBs+99aWxxCY3Okm0s
+ rxkShV58bP1fu6K8sTUSIi37wLW65FpAYGt9iFUuMZ4J5z2mrmmrqnAcekisLa0x/jYKk2EmWDQ
+ QgLpj+PlyK8Y1IXSJ9VwNO+oDJxO59gVZrZsfw15im4u7JcpaQaYM0IdOUGUtMATwiqfWfdOIyV
+ 63K8bQtfuAc18IoFz0ONY2h+3NasF9J/j96fzPHuYpojF+qm5NANwlx2Ti1oc1Rf2S+cRYEt0jm
+ +nlkZI5RZVJEy3JrsFoneGYT1gxVHB/oD1/XipyrejWxAtD6B/MI3bkFGWhJlD5hPFk+YPUjq7/
+ uP+55Y0AaCSFuNMQTFokpF5ZHrkJH06kNRr39RKHEJ/PRqEJMmjI4Jw6VctevWhVDLRFzdoWFHN
+ mc=
+X-Received: by 2002:a05:620a:29cc:b0:8c7:1595:7355 with SMTP id
+ af79cd13be357-8caee678781mr2025086385a.33.1770746810286; 
+ Tue, 10 Feb 2026 10:06:50 -0800 (PST)
 Received: from d122205.iol.unh.edu ([2606:4100:3880:1220:4f6d:e2af:7f5f:4df])
  by smtp.gmail.com with ESMTPSA id
- af79cd13be357-8caf77f2868sm1079300385a.3.2026.02.10.10.06.47
+ af79cd13be357-8caf77f2868sm1079300385a.3.2026.02.10.10.06.48
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 10 Feb 2026 10:06:48 -0800 (PST)
+ Tue, 10 Feb 2026 10:06:49 -0800 (PST)
 From: Andrew Bailey <abailey@iol.unh.edu>
 To: luca.vizzarro@arm.com,
 	probb@iol.unh.edu
 Cc: dmarx@iol.unh.edu,
 	dev@dpdk.org,
 	Andrew Bailey <abailey@iol.unh.edu>
-Subject: [PATCH v2 0/5] *** dts: add cryptodev testing support ***
-Date: Tue, 10 Feb 2026 13:06:40 -0500
-Message-ID: <20260210180645.65880-1-abailey@iol.unh.edu>
+Subject: [PATCH v2 1/5] dts: add find float method to text parser
+Date: Tue, 10 Feb 2026 13:06:41 -0500
+Message-ID: <20260210180645.65880-2-abailey@iol.unh.edu>
 X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20260122214424.322422-1-abailey@iol.unh.edu>
+In-Reply-To: <20260210180645.65880-1-abailey@iol.unh.edu>
 References: <20260122214424.322422-1-abailey@iol.unh.edu>
+ <20260210180645.65880-1-abailey@iol.unh.edu>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -81,60 +83,54 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This patch series adds support to use the dpdk-test-crypto-perf
-application. This application utilizes crypto devices that must be
-listed in the format of a port under the `cryptodevs:` label. Along
-with this, the application does not utilize a traffic generator and
-therefore a new test suite decorator has been made to signify this.
-Crypto tests must be enabled in test_run.yaml as `crypto: true`.
-It is not supported to enable crypto testing along with functional
-or performance testing. Specific capabilities of a crypto device
-cannot be gathered at setup and therefore, non-relevant tests skip at
-runtime. Finally, the application must be run with virtual functions
-and the process of creating and binding them has been automated within
-this series.
+Currently, there is no way to gather floats from text using the parser.
+Adding a new method to find floats will allow testsuites to utilize
+valuable float values that are output from applications.
 
+Signed-off-by: Andrew Bailey <abailey@iol.unh.edu>
 ---
-v2:
-* Updated example yaml files for test_run and tests_config.
-* Expanded test suite coverage.
-* Resolved git problems where patches were removing code added by the
-  previous commit.
-* Updated test suite to only run tests that are configured in the
-  tests_config yaml.
+ dts/framework/parser.py | 28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
 
-Andrew Bailey (5):
-  dts: add find float method to text parser
-  dts: add cryptodev package to DTS
-  dts: add cryptodev throughput test suite
-  dts: add crypto test decorator
-  dts: automate VFIO-PCI modprobe in node setup
-
- .../tests.TestSuite_cryptodev_throughput.rst  |   8 +
- dts/api/cryptodev/__init__.py                 | 134 ++++
- dts/api/cryptodev/config.py                   | 499 +++++++++++++
- dts/api/cryptodev/types.py                    | 185 +++++
- dts/configurations/test_run.example.yaml      |   1 +
- dts/configurations/tests_config.example.yaml  |   5 +
- dts/framework/config/node.py                  |   4 +
- dts/framework/config/test_run.py              |   3 +
- dts/framework/params/types.py                 |  65 ++
- dts/framework/parser.py                       |  28 +
- dts/framework/remote_session/dpdk_shell.py    |   5 +-
- dts/framework/test_run.py                     |   5 +
- dts/framework/test_suite.py                   |   6 +
- dts/framework/testbed_model/linux_session.py  |  84 +++
- dts/framework/testbed_model/node.py           |  10 +
- dts/framework/testbed_model/os_session.py     |  34 +
- dts/framework/testbed_model/topology.py       |  92 ++-
- dts/tests/TestSuite_cryptodev_throughput.py   | 691 ++++++++++++++++++
- 18 files changed, 1856 insertions(+), 3 deletions(-)
- create mode 100644 doc/api/dts/tests.TestSuite_cryptodev_throughput.rst
- create mode 100644 dts/api/cryptodev/__init__.py
- create mode 100644 dts/api/cryptodev/config.py
- create mode 100644 dts/api/cryptodev/types.py
- create mode 100644 dts/tests/TestSuite_cryptodev_throughput.py
-
---
+diff --git a/dts/framework/parser.py b/dts/framework/parser.py
+index 4170cdb1dd..3075c36857 100644
+--- a/dts/framework/parser.py
++++ b/dts/framework/parser.py
+@@ -220,6 +220,34 @@ def find_int(
+ 
+         return TextParser.wrap(TextParser.find(pattern), partial(int, base=int_base))
+ 
++    @staticmethod
++    def find_float(
++        pattern: str | re.Pattern[str],
++        flags: re.RegexFlag = re.RegexFlag(0),
++    ) -> ParserFn:
++        """Makes a parser function that converts the match of :meth:`~find` to float.
++
++        This function is compatible only with a pattern containing one capturing group.
++
++        Args:
++            pattern: The regular expression pattern.
++            flags: The regular expression flags. Ignored if the given pattern is already compiled.
++
++        Raises:
++            InternalError: If the pattern does not have exactly one capturing group.
++
++        Returns:
++            ParserFn: A dictionary for the `dataclasses.field` metadata argument containing the
++                :meth:`~find` parser function wrapped by the float built-in.
++        """
++        if isinstance(pattern, str):
++            pattern = re.compile(pattern, flags)
++
++        if pattern.groups != 1:
++            raise InternalError("only one capturing group is allowed with this parser function")
++
++        return TextParser.wrap(TextParser.find(pattern), partial(float))
++
+     """============ END PARSER FUNCTIONS ============"""
+ 
+     @classmethod
+-- 
 2.50.1
 
