@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9FF7E9E302
-	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Feb 2026 13:04:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16EC0E9E302
+	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Feb 2026 13:04:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B9B8A40666;
-	Wed, 11 Feb 2026 14:04:15 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id DC7304065B;
+	Wed, 11 Feb 2026 14:04:16 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
- by mails.dpdk.org (Postfix) with ESMTP id E49D34026A
- for <dev@dpdk.org>; Wed, 11 Feb 2026 14:04:12 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 9ED0040663
+ for <dev@dpdk.org>; Wed, 11 Feb 2026 14:04:14 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1770815053; x=1802351053;
+ t=1770815055; x=1802351055;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=g8+Y92jbPKrVPW+9DiqNFrdDFFq/EA8SNrP5i/FGp60=;
- b=c42ZTck/UUMMhnISJYB+ijIHpv+lQj1KPkqAQY+Gd45fpLJ4VIxnnqHr
- T3PT/enPk2xiRzt6c/HhTPsIbEkbcTkhQXmRwfDxtzZ4EmKosP/Yk9sI/
- hMdXuvdHL5q+7MdO/p17TVzarYxHpPZl3036IHHV2PFIDTVHQaJTyEDKA
- U8kJ1vpQ7BGd/CWWxK+TY7iyQCSS+lM8f9CipI00Rn6jJj2g7LnxztBev
- JA07bCAJuJK4kTd9bvZM3U6SdzpskU6K3sBo1bkX/r+QD5yJUXmjuA1rF
- 7gNsOTuUvMUCzQhc0hj+ioIiHLtZnf9FlLgygLtOPpI+rcZXtTzgocAgw Q==;
-X-CSE-ConnectionGUID: jlnZ/NVRSZix0sG69ZQzcA==
-X-CSE-MsgGUID: 3kGWGrthQnGzmJdxnbakLw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11697"; a="59529074"
-X-IronPort-AV: E=Sophos;i="6.21,283,1763452800"; d="scan'208";a="59529074"
+ bh=z7diHGNt++cT5woFQfm8GFwgCBla9nt3aHQi0eDDeOc=;
+ b=nj1Gz0vH4IGKs3SIg6cP5GbBhvUgPOKP0B0rw7H0qzfrG8zyHV4LoNoA
+ kmKf/a9rJGhnRNxhci+Z1Tv46MEnDyKQWIbiTmeHyz0wbDiLbpYFydF+J
+ VuCH+9+FhZTxSP9OEe6R+KQ7AGVkBpRYJrjQAt1Kqks22/Mj6jNGK+r5K
+ masng2rMqPKmGX3VQWhKeOitNPcKg5qba+Klh4R6vX3FedekxzZh04Yaq
+ J6HrkGeVHLg3exduSKknsSy/Q0IPsyA2QXeuM+wj7XH4mEYZu1tH8EvtR
+ CsGfzDiYf1X9gIvot65BNQLUZmYcmR1C9j8aJmDN5fucvRWDholC7SLxx w==;
+X-CSE-ConnectionGUID: BkeykCaBSHe2XAp8DAKIxA==
+X-CSE-MsgGUID: Kz2+TUbfQcG9Ha+HrBgahQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11697"; a="59529078"
+X-IronPort-AV: E=Sophos;i="6.21,283,1763452800"; d="scan'208";a="59529078"
 Received: from orviesa005.jf.intel.com ([10.64.159.145])
  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 11 Feb 2026 05:04:13 -0800
-X-CSE-ConnectionGUID: 6lK5j2QxT6i0CCDDGReV8w==
-X-CSE-MsgGUID: RIsRfnHXTiWmo3x/cD9lGA==
+ 11 Feb 2026 05:04:14 -0800
+X-CSE-ConnectionGUID: zggfCxZfR4Oh0gJDAy9v7Q==
+X-CSE-MsgGUID: 2v6IT3bSRFeOH3UpWtGW8A==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,283,1763452800"; d="scan'208";a="217206410"
+X-IronPort-AV: E=Sophos;i="6.21,283,1763452800"; d="scan'208";a="217206419"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by orviesa005.jf.intel.com with ESMTP; 11 Feb 2026 05:04:12 -0800
+ by orviesa005.jf.intel.com with ESMTP; 11 Feb 2026 05:04:13 -0800
 From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>,
- Jingjing Wu <jingjing.wu@intel.com>, Beilei Xing <beilei.xing@intel.com>
-Subject: [PATCH v3 5/8] net/i40e: fix IPv6 GTPU handling
-Date: Wed, 11 Feb 2026 13:03:50 +0000
-Message-ID: <70fc490a915d60748461ee5a8fd3a4dcd7a0b04b.1770814868.git.anatoly.burakov@intel.com>
+To: dev@dpdk.org, Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
+ Jie Wang <jie1x.wang@intel.com>, Qi Zhang <qi.z.zhang@intel.com>
+Subject: [PATCH v3 6/8] net/iavf: fix IPv4 flow subscription
+Date: Wed, 11 Feb 2026 13:03:51 +0000
+Message-ID: <f4b1d40a7f7255c93e58449a581c6e4c2f7b4977.1770814868.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <cover.1770814868.git.anatoly.burakov@intel.com>
  <cover.1770814868.git.anatoly.burakov@intel.com>
@@ -60,42 +60,37 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-GTP tunnel code declares support for IPv6 GTPU flows but does not actually
-handle IPv6 flow pattern item, resulting in incorrect parsing for IPv6
-GTPU flows. Add IPv6 flow item handling.
+Currently, when IPv4 is parsed as part of flow subscription input set, we
+add two bytes to the total number of bytes in the input set for IPv4 source
+or destination addresses, whereas they should be 4 bytes. Fix to add the
+correct number of bytes.
 
-Fixes: 47ba0398da3f ("net/i40e: add cloud filter parsing function for GTP")
+Fixes: 6d42380e5983 ("net/iavf: add flow subscrption supported pattern")
 Cc: stable@dpdk.org
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- drivers/net/intel/i40e/i40e_flow.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ drivers/net/intel/iavf/iavf_fsub.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/intel/i40e/i40e_flow.c b/drivers/net/intel/i40e/i40e_flow.c
-index 193b1b6725..2374b9bbca 100644
---- a/drivers/net/intel/i40e/i40e_flow.c
-+++ b/drivers/net/intel/i40e/i40e_flow.c
-@@ -3580,6 +3580,19 @@ i40e_flow_parse_gtp_pattern(struct rte_eth_dev *dev,
- 				return -rte_errno;
- 			}
- 			break;
-+		case RTE_FLOW_ITEM_TYPE_IPV6:
-+			filter->ip_type = I40E_TUNNEL_IPTYPE_IPV6;
-+			/* IPv6 is used to describe protocol,
-+			 * spec and mask should be NULL.
-+			 */
-+			if (item->spec || item->mask) {
-+				rte_flow_error_set(error, EINVAL,
-+						   RTE_FLOW_ERROR_TYPE_ITEM,
-+						   item,
-+						   "Invalid IPv6 item");
-+				return -rte_errno;
-+			}
-+			break;
- 		case RTE_FLOW_ITEM_TYPE_UDP:
- 			if (item->spec || item->mask) {
- 				rte_flow_error_set(error, EINVAL,
+diff --git a/drivers/net/intel/iavf/iavf_fsub.c b/drivers/net/intel/iavf/iavf_fsub.c
+index 18df9c6500..cf1030320f 100644
+--- a/drivers/net/intel/iavf/iavf_fsub.c
++++ b/drivers/net/intel/iavf/iavf_fsub.c
+@@ -314,11 +314,11 @@ iavf_fsub_parse_pattern(const struct rte_flow_item pattern[],
+ 
+ 				if (ipv4_mask->hdr.src_addr) {
+ 					*input |= IAVF_INSET_IPV4_SRC;
+-					input_set_byte += 2;
++					input_set_byte += 4;
+ 				}
+ 				if (ipv4_mask->hdr.dst_addr) {
+ 					*input |= IAVF_INSET_IPV4_DST;
+-					input_set_byte += 2;
++					input_set_byte += 4;
+ 				}
+ 				if (ipv4_mask->hdr.time_to_live) {
+ 					*input |= IAVF_INSET_IPV4_TTL;
 -- 
 2.47.3
 
