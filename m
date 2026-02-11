@@ -2,53 +2,128 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1353FEB5969
-	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Feb 2026 06:10:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A0B7EB597B
+	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Feb 2026 08:13:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 460744064F;
-	Wed, 11 Feb 2026 07:10:38 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
- by mails.dpdk.org (Postfix) with ESMTP id D2688400D7
- for <dev@dpdk.org>; Wed, 11 Feb 2026 07:10:32 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1770790233; x=1802326233;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=dt113HJlQjGGilL+6JIgFAx5dbbTLCLJ8KTCkXQMLEI=;
- b=RzyWEHcZbDXt5b5t/vHNhYjX9wuqNlClcRG+psq1iG11k8NxWhRLbGcE
- UFBwx/tFtgQTlEstPU6qtdacjUbzkEA27e99EDVqCc2EL5vW3XCDt0iPC
- vo8mTat3WGZvZCK5UHuflhYdaELBvg24KmqaGI2LUGWzUHehoObbQRYK6
- +Jfpla2kAkmmncWO7JT+qJ5zx7j9y8S7vG81ko7cYqpSdhZiBo3WkdodC
- JD4/nxewGHDG+kEkUz5jAnFvlXLPoDCaIKmXWSVs959SbxBLjqVdni72n
- /tQxoN0JiholkPDw6b87xf7LUAQ2lr3kNT0uaKjmML6sbJOPf/IkLNdL6 A==;
-X-CSE-ConnectionGUID: ggtwOYc4RtW6DO+p1Ly3qQ==
-X-CSE-MsgGUID: a0brGHAzQhCl9mB8TImI1g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11697"; a="71829060"
-X-IronPort-AV: E=Sophos;i="6.21,283,1763452800"; d="scan'208";a="71829060"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
- by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 10 Feb 2026 22:10:33 -0800
-X-CSE-ConnectionGUID: +VmDVPt3QaubFLH9NDyddQ==
-X-CSE-MsgGUID: ni+uGB8JQMa7VZpKHECDqQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,283,1763452800"; d="scan'208";a="216655477"
-Received: from unknown (HELO srv24..) ([10.138.182.231])
- by fmviesa005.fm.intel.com with ESMTP; 10 Feb 2026 22:10:30 -0800
-From: Shaiq Wani <shaiq.wani@intel.com>
-To: dev@dpdk.org,
-	bruce.richardson@intel.com,
-	aman.deep.singh@intel.com
-Cc: Song Jiale <songx.jiale@intel.com>
-Subject: [PATCH v3 4/7] net/ice: add L2TPv2 flow patterns and FDIR support
-Date: Wed, 11 Feb 2026 11:39:07 +0530
-Message-Id: <20260211060910.219419-5-shaiq.wani@intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260211060910.219419-1-shaiq.wani@intel.com>
-References: <20260202094244.447966-1-shaiq.wani@intel.com>
- <20260211060910.219419-1-shaiq.wani@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id F1B71402B5;
+	Wed, 11 Feb 2026 09:13:37 +0100 (CET)
+Received: from BN1PR04CU002.outbound.protection.outlook.com
+ (mail-eastus2azon11010069.outbound.protection.outlook.com [52.101.56.69])
+ by mails.dpdk.org (Postfix) with ESMTP id C1D644026A;
+ Wed, 11 Feb 2026 09:13:35 +0100 (CET)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=bCtjld5RvYOGc5AirazwWdYXKxt8BufLSxVonKbnuq3mShekE9voBgcaFMhBYvIB1BlSfbSSn4rthPXeoF+zpMl2qp3qTJBKBZqnv2rNzIsoLljPGflQtTSro5LzejpR5aoV9YzjF770njQ0pyIxO5kDi92VZUu1xqA7MHTO4Q/TyCEKoT5ibwQUkRYhY5LeNInoNxz5y5nKBALR6C16oszFmtsMyj8C6mePHdmRwh1e4WcMWtghB9edQXZlU2kFxgLBT/t2dEpPxOhq5d6/d2G3E/v9OhHwwR9vgFSWxoSGSuQeptIqRwYQtpvESxglmjyed1ZX13cChPFeWA4elg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=z4LfgPijwlBxMIlEtZQSZ8wOlcdZwhv6qRNKAcivzRg=;
+ b=iuNCuPKNIKGbl1eS+a+XPixaItMYORfujT3lD7e5a2sX1hLjPCAhbW+/q3aBmw86+1yh+lm+Rqs/2VT7SYvfCTZQ644cZsjTaHJzwi7WYBoaFjmt/TeFVPV1SKkqbaxkhozwz8MAzYTR192M52GeH7OuVtm8BSg/fW2NV5evvOOrULF3tA6fcSnGnR1rjxCaxtyX40X60XX/1FUJ15RTl+4cTOB21F2vEHJk+e9bIlVKPI4JKTF/tq8xnQL9PT4n9ZuDIAb8xJKMSKRqbpnf39cso93nHDDjRxeQ5ZOmHRS93zA5TnFus20i3ou9hxxgntxprqwDzE7gQO7Eoe+8kw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=z4LfgPijwlBxMIlEtZQSZ8wOlcdZwhv6qRNKAcivzRg=;
+ b=RPdG9iQvEQHB83ikLXq57WNX+yg7eEkG8PqT2k/QWMXGWsPO2L+abUg8aesLKmLnhbLGprSa6hTIBDIAcShJ2lbAn9jET7oa2ezGNU8iApfKrlZcMRX6VL3JGay2iF66iEVMy7Xodl5tSGAiXbFakAnxn48H4LwY3++aUbCMZM3xc0KewIhq9T4IikZJ7U2bzpurfa0WnIy3tvmTDFRPjC8dk24M/wBBIiORzLshov7RIEyusbHCd61RvMPETMDvJayS7lnKVHQwMBV1TXU8CVMb0ajVtNoU2s/E02qU4Vz84U3fFWik3GCqjD6FHqDQwNK3SjlcZd4NSv2fIN6ICw==
+Received: from CH0PR13CA0032.namprd13.prod.outlook.com (2603:10b6:610:b2::7)
+ by CH0PR12MB8506.namprd12.prod.outlook.com (2603:10b6:610:18a::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9587.19; Wed, 11 Feb
+ 2026 08:13:32 +0000
+Received: from CH1PEPF0000A347.namprd04.prod.outlook.com
+ (2603:10b6:610:b2:cafe::df) by CH0PR13CA0032.outlook.office365.com
+ (2603:10b6:610:b2::7) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9611.8 via Frontend Transport; Wed,
+ 11 Feb 2026 08:13:31 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com;
+ dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ CH1PEPF0000A347.mail.protection.outlook.com (10.167.244.7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9611.8 via Frontend Transport; Wed, 11 Feb 2026 08:13:32 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 11 Feb
+ 2026 00:13:18 -0800
+Received: from nvidia.com (10.126.231.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 11 Feb
+ 2026 00:13:16 -0800
+From: Dariusz Sosnowski <dsosnowski@nvidia.com>
+To: Viacheslav Ovsiienko <viacheslavo@nvidia.com>, Bing Zhao
+ <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>, Suanming Mou
+ <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>
+CC: <dev@dpdk.org>, <stable@dpdk.org>
+Subject: [PATCH] net/mlx5: fix flow mark reading after reconfigure
+Date: Wed, 11 Feb 2026 09:12:38 +0100
+Message-ID: <20260211081239.191118-1-dsosnowski@nvidia.com>
+X-Mailer: git-send-email 2.47.3
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.126.231.35]
+X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH1PEPF0000A347:EE_|CH0PR12MB8506:EE_
+X-MS-Office365-Filtering-Correlation-Id: 149ed9ad-7167-4094-88ed-08de69457224
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|36860700013|82310400026|1800799024|376014|7142099003; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?yMpsAVqp7WCZbYc8ETG5vtaXMvkd9ilBe4gKPldVzUbawC9ebVdjEmS9eIRl?=
+ =?us-ascii?Q?ZsXBJheLtisg9Rw0FloCvrvDQrlb/OthLzoBUksCyfHutZPgpitp0enGmVz/?=
+ =?us-ascii?Q?JBkrvgwRkQHPZVhicLzsHmaGzOjv8HNfakPpE5CYPl4NVszsyxiuCt8+520p?=
+ =?us-ascii?Q?JUU2SV9In1Bcu3A1OO37pizFGjvIbpB31pAfMr0A0hfudOA9R7bKtlbHWcZu?=
+ =?us-ascii?Q?Fn+BGS9uPCkwNdw4HBU0dnPZ42Q63FF+ktOjCtZxsmGsljba0s1aJQIHmYou?=
+ =?us-ascii?Q?ymAs2SxSoB8uU33tb3GzxGQDC7sz/m1CzZc2qRgAWXzNg4MmVP9/NQqqp6In?=
+ =?us-ascii?Q?suY92nLSW2YsNYejYKVX387Q/glbwfKukTtTwaIzeCUTc83WugAoGrD8Zicb?=
+ =?us-ascii?Q?23TGlwjGG7pMTmBNsT8pSOg6al5M0p8s1maKEq4WFk7cnmSZNhJZT228thZR?=
+ =?us-ascii?Q?/EmEyd3WKjYCJUEkx9BBEkaD+a1COo0KpL6zhA3uApAMYmdfIhfp9VoHSuNB?=
+ =?us-ascii?Q?Vrs9EMzks+v3zkgmbg5YXGMW5Edyawqn+Bc4/mYleoVlB29E6k4I0Z8DYpob?=
+ =?us-ascii?Q?cZu83RKBxESaj4/apYhX9U1tyw4f81Hf1hrEsSgj1sG4Mqf29ulUCmzGMRcH?=
+ =?us-ascii?Q?Dp4rwcjmbVPkbSCmieLDPYO/olWM1OTbINdL3BpVks2NWHhvnnlN5ICOomb+?=
+ =?us-ascii?Q?PxknL/LjAseS++/GUXdCLIUnuTLWdRiO7a9bAiPmfhvm5IwInJT+aPM5npK8?=
+ =?us-ascii?Q?M1aYmPAEhjHs8wizHjiFZpklYOpl5PauXmAsbQjessCjWzvaRQUMR52FYwyx?=
+ =?us-ascii?Q?m6ks2/OslU9mdXEBuZRqVYiOVcP8KTjHLOM2oQ6qe0Q8kEveWSxO9r9++GyN?=
+ =?us-ascii?Q?nWmm+/rBfP9uKXQyfOyC+56/9BUZIn8y1zSNT2gjAWCJXFbGXkO29HpY0tuC?=
+ =?us-ascii?Q?hJ32tUhm7HZQPR7qH7dHIhAvZqF4TRAcdz3JRZ8/jF9kgt/2f4SFHUQ2vzCd?=
+ =?us-ascii?Q?WAan9RDJEK6DbmZJYN0lxWoIhnTq5+KziMX3mwwWMPurxnYhWXlpT2vXqfJn?=
+ =?us-ascii?Q?lgcFJSMyszzf2Da4thsoQYZy1ZSyX5EMYj8WFdnInYn5PRDPpdk2PtLMzQTM?=
+ =?us-ascii?Q?oktdtFEDRlO0PviRA542stfrtD5qZ38f4Tr+S4qAy6xBtgN5Or9S4FvKGRAG?=
+ =?us-ascii?Q?96HcWQBgoJrU+v+7uqdMNn4KzO7mnFIj/v5bzYJSlE+cY6t2Fu4QIe7F3e8h?=
+ =?us-ascii?Q?GayonTLYqD1/cJVVv6p4dDVq+MieejJN7tTVprslGY4dmtCYHGzLNVCO4htq?=
+ =?us-ascii?Q?MAGTnjhHwpWITTBYd/fhWPgseiQt/L/yzBxtBIqCIHuDGQNpOyUkv6HnFKZV?=
+ =?us-ascii?Q?NtRytW+Tnz+OF3XsCjbXO+rsVRWyir8SKYAc1io+1loj22SbgN6SSbMrgW0e?=
+ =?us-ascii?Q?o7C68/XE5Ufn2G5QPDOv6h5TtCVvZWE4OJLrwDXWYwUPgmdX2xQp1EmVwSpp?=
+ =?us-ascii?Q?A0LJ8DFpaX+ODdQfJ36r+sZ+v3c97SQTMWeeTSCYAGUwWZbPBN9bO830sJ3C?=
+ =?us-ascii?Q?MLFE+OGh45KRelCfwd3DYvBFUffC/Kdmt9fnFMu6ZSC5J1VqShGACDiUJZGo?=
+ =?us-ascii?Q?J/Qeip7aio7Ldpq7Jv1d3Z1RvRrhTL33dares8QVKydIsLyGYi6hcuMbL3ri?=
+ =?us-ascii?Q?TFgLMg=3D=3D?=
+X-Forefront-Antispam-Report: CIP:216.228.117.161; CTRY:US; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge2.nvidia.com; CAT:NONE;
+ SFS:(13230040)(36860700013)(82310400026)(1800799024)(376014)(7142099003);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: cooIxyFkLiehbij8CODSQGITEoDhlmuvuqCbbiaoK61IKYviBEzhMqYakxyXlSVGrduh+4/fHoTVjBCKo9Qim13HEVuZvNREx4v4LRaG30u+PYJD0w2wsjzk0vz8gbqYSt2Ca25sdVSFy+en/To2YnOhBUrdbxOBDLx0G7iVok5LpGJpa3EOwQ6uGM2jZwePZt3Kl4lYs+Nw39W4e1v+S++eUpIepZ9PMtGcz5XdmGcuu+UBSeqUNXpykYH3CzcHGMS0n3oASzjgGJV7M5SjcrPmgUmx/dub8aXRyVBTHlhOIeMl3/uuE2M4Sg7PDZnTDVkJ3NvjHdPVtHBQWPZ4nx2uC3R+UTARowN4ouwFW7uvFMCK9kXJdh0oJY1b+kaf2p6sQqKMnz0a4qZvPh0gS0R88VTyo9XqksLsrl/0MuMuko2dg3zYydC36wZ5HBbN
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Feb 2026 08:13:32.0122 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 149ed9ad-7167-4094-88ed-08de69457224
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.161];
+ Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CH1PEPF0000A347.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR12MB8506
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -62,840 +137,51 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Implement comprehensive L2TPv2 support for Flow Director
--Flow pattern definitions for different L2TPv2 packet combinations
--FDIR filter parsing logic
--Flow type assignment for proper packet classification
+mlx5 PMD supports flow mark action which attaches additional
+metadata to received packets. This metadata is stored
+in the rte_mbuf in hash.fdir.hi field and applications
+are notified about it with RTE_MBUF_F_RX_FDIR mbuf flag.
 
-Signed-off-by: Shaiq Wani <shaiq.wani@intel.com>
-Tested-by: Song Jiale <songx.jiale@intel.com>
+When working with HW Steering flow engine,
+mlx5 PMD reads the HW completion entry field with flow mark value
+if and only if at least one template table with flow mark action
+was created.
+Whenever table was created mlx5 PMD updated the private
+data of each Rx queue to inform
+Rx burst function to read HW field.
+
+Whenever application reconfigures any of the Rx queues
+through additional call to rte_eth_rx_queue_setup(),
+this private Rx queue data is reset, but information
+about existence of flow mark was not restored by PMD.
+As a result, reconfiguration caused applications
+to not receive flow mark metadata.
+
+This patch fixes that behavior. Whenever port is started,
+PMD will check if flow mark action is used and update
+relevant private Rx queue data struct.
+
+Fixes: 1deadfd709f5 ("net/mlx5: add HW mark action")
+Cc: stable@dpdk.org
+
+Signed-off-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
+Acked-by: Bing Zhao <bingz@nvidia.com>
 ---
- drivers/net/intel/ice/ice_fdir_filter.c  | 451 ++++++++++++++++++++---
- drivers/net/intel/ice/ice_generic_flow.c | 177 +++++++++
- 2 files changed, 573 insertions(+), 55 deletions(-)
+ drivers/net/mlx5/mlx5_flow.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/intel/ice/ice_fdir_filter.c b/drivers/net/intel/ice/ice_fdir_filter.c
-index f7730ec6ab..6a5d605f03 100644
---- a/drivers/net/intel/ice/ice_fdir_filter.c
-+++ b/drivers/net/intel/ice/ice_fdir_filter.c
-@@ -107,6 +107,31 @@
- 	ICE_INSET_IPV6_SRC | ICE_INSET_IPV6_DST | \
- 	ICE_INSET_NAT_T_ESP_SPI)
- 
-+#define ICE_FDIR_INSET_L2TPV2 (\
-+	ICE_INSET_SMAC | ICE_INSET_DMAC | ICE_INSET_L2TPV2OIP_SESSION_ID)
-+
-+#define ICE_FDIR_INSET_L2TPV2_PPP_IPV4 (\
-+	ICE_INSET_TUN_IPV4_SRC | ICE_INSET_TUN_IPV4_DST)
-+
-+#define ICE_FDIR_INSET_L2TPV2_PPP_IPV4_UDP (\
-+	ICE_FDIR_INSET_L2TPV2_PPP_IPV4 | ICE_INSET_TUN_UDP_SRC_PORT | \
-+	ICE_INSET_TUN_UDP_DST_PORT)
-+
-+#define ICE_FDIR_INSET_L2TPV2_PPP_IPV4_TCP (\
-+	ICE_FDIR_INSET_L2TPV2_PPP_IPV4 | ICE_INSET_TUN_TCP_SRC_PORT | \
-+	ICE_INSET_TUN_TCP_DST_PORT)
-+
-+#define ICE_FDIR_INSET_L2TPV2_PPP_IPV6 (\
-+	ICE_INSET_TUN_IPV6_SRC | ICE_INSET_TUN_IPV6_DST)
-+
-+#define ICE_FDIR_INSET_L2TPV2_PPP_IPV6_UDP (\
-+	ICE_FDIR_INSET_L2TPV2_PPP_IPV6 | ICE_INSET_TUN_UDP_SRC_PORT | \
-+	ICE_INSET_TUN_UDP_DST_PORT)
-+
-+#define ICE_FDIR_INSET_L2TPV2_PPP_IPV6_TCP (\
-+	ICE_FDIR_INSET_L2TPV2_PPP_IPV6 | ICE_INSET_TUN_TCP_SRC_PORT | \
-+	ICE_INSET_TUN_TCP_DST_PORT)
-+
- static struct ice_pattern_match_item ice_fdir_supported_pattern[] = {
- 	{pattern_raw,					ICE_INSET_NONE,			ICE_INSET_NONE,			ICE_INSET_NONE},
- 	{pattern_ethertype,				ICE_FDIR_INSET_ETH,		ICE_INSET_NONE,			ICE_INSET_NONE},
-@@ -132,10 +157,26 @@ static struct ice_pattern_match_item ice_fdir_supported_pattern[] = {
- 	{pattern_eth_ipv4_udp_vxlan_eth_ipv4_tcp,	ICE_FDIR_INSET_ETH_IPV4_VXLAN,	ICE_FDIR_INSET_ETH_IPV4_TCP,	ICE_INSET_NONE},
- 	{pattern_eth_ipv4_udp_vxlan_eth_ipv4_sctp,	ICE_FDIR_INSET_ETH_IPV4_VXLAN,	ICE_FDIR_INSET_ETH_IPV4_SCTP,	ICE_INSET_NONE},
- 	/* duplicated GTPU input set in 3rd column to align with shared code behavior. Ideally, only put GTPU field in 2nd column. */
--	{pattern_eth_ipv4_gtpu,				ICE_FDIR_INSET_IPV4_GTPU,	ICE_FDIR_INSET_IPV4_GTPU,	ICE_INSET_NONE},
--	{pattern_eth_ipv4_gtpu_eh,			ICE_FDIR_INSET_IPV4_GTPU_EH,	ICE_FDIR_INSET_IPV4_GTPU_EH,	ICE_INSET_NONE},
--	{pattern_eth_ipv6_gtpu,				ICE_FDIR_INSET_IPV6_GTPU,	ICE_FDIR_INSET_IPV6_GTPU,	ICE_INSET_NONE},
--	{pattern_eth_ipv6_gtpu_eh,			ICE_FDIR_INSET_IPV6_GTPU_EH,	ICE_FDIR_INSET_IPV6_GTPU_EH,	ICE_INSET_NONE},
-+	{pattern_eth_ipv4_gtpu,				ICE_FDIR_INSET_IPV4_GTPU,	ICE_FDIR_INSET_IPV4_GTPU,		ICE_INSET_NONE},
-+	{pattern_eth_ipv4_gtpu_eh,			ICE_FDIR_INSET_IPV4_GTPU_EH,	ICE_FDIR_INSET_IPV4_GTPU_EH,		ICE_INSET_NONE},
-+	{pattern_eth_ipv6_gtpu,				ICE_FDIR_INSET_IPV6_GTPU,	ICE_FDIR_INSET_IPV6_GTPU,		ICE_INSET_NONE},
-+	{pattern_eth_ipv6_gtpu_eh,			ICE_FDIR_INSET_IPV6_GTPU_EH,	ICE_FDIR_INSET_IPV6_GTPU_EH,		ICE_INSET_NONE},
-+	{pattern_eth_ipv4_udp_l2tpv2,			ICE_FDIR_INSET_L2TPV2,		ICE_INSET_NONE,		ICE_INSET_NONE},
-+	{pattern_eth_ipv4_udp_l2tpv2_ppp,		ICE_FDIR_INSET_L2TPV2,		ICE_INSET_NONE,		ICE_INSET_NONE},
-+	{pattern_eth_ipv6_udp_l2tpv2,			ICE_FDIR_INSET_L2TPV2,		ICE_INSET_NONE,		ICE_INSET_NONE},
-+	{pattern_eth_ipv6_udp_l2tpv2_ppp,		ICE_FDIR_INSET_L2TPV2,		ICE_INSET_NONE,		ICE_INSET_NONE},
-+	{pattern_eth_ipv4_udp_l2tpv2_ppp_ipv4,		ICE_FDIR_INSET_L2TPV2,		ICE_FDIR_INSET_L2TPV2_PPP_IPV4,		ICE_INSET_NONE},
-+	{pattern_eth_ipv4_udp_l2tpv2_ppp_ipv4_udp,	ICE_FDIR_INSET_L2TPV2,		ICE_FDIR_INSET_L2TPV2_PPP_IPV4_UDP,	ICE_INSET_NONE},
-+	{pattern_eth_ipv4_udp_l2tpv2_ppp_ipv4_tcp,	ICE_FDIR_INSET_L2TPV2,		ICE_FDIR_INSET_L2TPV2_PPP_IPV4_TCP,	ICE_INSET_NONE},
-+	{pattern_eth_ipv6_udp_l2tpv2_ppp_ipv4,		ICE_FDIR_INSET_L2TPV2,		ICE_FDIR_INSET_L2TPV2_PPP_IPV4,		ICE_INSET_NONE},
-+	{pattern_eth_ipv6_udp_l2tpv2_ppp_ipv4_udp,	ICE_FDIR_INSET_L2TPV2,		ICE_FDIR_INSET_L2TPV2_PPP_IPV4_UDP,	ICE_INSET_NONE},
-+	{pattern_eth_ipv6_udp_l2tpv2_ppp_ipv4_tcp,	ICE_FDIR_INSET_L2TPV2,		ICE_FDIR_INSET_L2TPV2_PPP_IPV4_TCP,	ICE_INSET_NONE},
-+	{pattern_eth_ipv4_udp_l2tpv2_ppp_ipv6,		ICE_FDIR_INSET_L2TPV2,		ICE_FDIR_INSET_L2TPV2_PPP_IPV6,		ICE_INSET_NONE},
-+	{pattern_eth_ipv4_udp_l2tpv2_ppp_ipv6_udp,	ICE_FDIR_INSET_L2TPV2,		ICE_FDIR_INSET_L2TPV2_PPP_IPV6_UDP,	ICE_INSET_NONE},
-+	{pattern_eth_ipv4_udp_l2tpv2_ppp_ipv6_tcp,	ICE_FDIR_INSET_L2TPV2,		ICE_FDIR_INSET_L2TPV2_PPP_IPV6_TCP,	ICE_INSET_NONE},
-+	{pattern_eth_ipv6_udp_l2tpv2_ppp_ipv6,		ICE_FDIR_INSET_L2TPV2,		ICE_FDIR_INSET_L2TPV2_PPP_IPV6,		ICE_INSET_NONE},
-+	{pattern_eth_ipv6_udp_l2tpv2_ppp_ipv6_udp,	ICE_FDIR_INSET_L2TPV2,		ICE_FDIR_INSET_L2TPV2_PPP_IPV6_UDP,	ICE_INSET_NONE},
-+	{pattern_eth_ipv6_udp_l2tpv2_ppp_ipv6_tcp,	ICE_FDIR_INSET_L2TPV2,		ICE_FDIR_INSET_L2TPV2_PPP_IPV6_TCP,	ICE_INSET_NONE},
- };
- 
- static int
-@@ -957,6 +998,7 @@ ice_fdir_input_set_parse(uint64_t inset, enum ice_flow_field *field)
- 		{ICE_INSET_VXLAN_VNI, ICE_FLOW_FIELD_IDX_VXLAN_VNI},
- 		{ICE_INSET_ESP_SPI, ICE_FLOW_FIELD_IDX_ESP_SPI},
- 		{ICE_INSET_NAT_T_ESP_SPI, ICE_FLOW_FIELD_IDX_NAT_T_ESP_SPI},
-+		{ICE_INSET_L2TPV2OIP_SESSION_ID, ICE_FLOW_FIELD_IDX_L2TPV2_SESS_ID},
- 	};
- 
- 	for (i = 0, j = 0; i < RTE_DIM(ice_inset_map); i++) {
-@@ -1068,6 +1110,43 @@ ice_fdir_input_set_hdrs(enum ice_fltr_ptype flow, struct ice_flow_seg_info *seg)
- 				  ICE_FLOW_SEG_HDR_IPV6 |
- 				  ICE_FLOW_SEG_HDR_IPV_OTHER);
- 		break;
-+	case ICE_FLTR_PTYPE_NONF_IPV6_L2TPV2:
-+	case ICE_FLTR_PTYPE_NONF_IPV6_L2TPV2_CONTROL:
-+		ICE_FLOW_SET_HDRS(seg, ICE_FLOW_SEG_HDR_L2TPV2 |
-+				  ICE_FLOW_SEG_HDR_IPV6 |
-+				  ICE_FLOW_SEG_HDR_IPV_OTHER);
-+		break;
-+	case ICE_FLTR_PTYPE_NONF_IPV6_L2TPV2_PPP:
-+	case ICE_FLTR_PTYPE_NONF_IPV6_L2TPV2_PPP_IPV4:
-+	case ICE_FLTR_PTYPE_NONF_IPV6_L2TPV2_PPP_IPV4_TCP:
-+	case ICE_FLTR_PTYPE_NONF_IPV6_L2TPV2_PPP_IPV4_UDP:
-+	case ICE_FLTR_PTYPE_NONF_IPV6_L2TPV2_PPP_IPV6:
-+	case ICE_FLTR_PTYPE_NONF_IPV6_L2TPV2_PPP_IPV6_TCP:
-+	case ICE_FLTR_PTYPE_NONF_IPV6_L2TPV2_PPP_IPV6_UDP:
-+		ICE_FLOW_SET_HDRS(seg, ICE_FLOW_SEG_HDR_L2TPV2 |
-+				  ICE_FLOW_SEG_HDR_PPP |
-+				  ICE_FLOW_SEG_HDR_IPV6 |
-+				  ICE_FLOW_SEG_HDR_IPV_OTHER);
-+		break;
-+	case ICE_FLTR_PTYPE_NONF_IPV4_L2TPV2:
-+	case ICE_FLTR_PTYPE_NONF_IPV4_L2TPV2_CONTROL:
-+		ICE_FLOW_SET_HDRS(seg, ICE_FLOW_SEG_HDR_L2TPV2 |
-+				  ICE_FLOW_SEG_HDR_IPV4 |
-+				  ICE_FLOW_SEG_HDR_IPV_OTHER);
-+		break;
-+	case ICE_FLTR_PTYPE_NONF_IPV4_L2TPV2_PPP:
-+	case ICE_FLTR_PTYPE_NONF_IPV4_L2TPV2_PPP_IPV4:
-+	case ICE_FLTR_PTYPE_NONF_IPV4_L2TPV2_PPP_IPV4_TCP:
-+	case ICE_FLTR_PTYPE_NONF_IPV4_L2TPV2_PPP_IPV4_UDP:
-+	case ICE_FLTR_PTYPE_NONF_IPV4_L2TPV2_PPP_IPV6:
-+	case ICE_FLTR_PTYPE_NONF_IPV4_L2TPV2_PPP_IPV6_TCP:
-+	case ICE_FLTR_PTYPE_NONF_IPV4_L2TPV2_PPP_IPV6_UDP:
-+		ICE_FLOW_SET_HDRS(seg, ICE_FLOW_SEG_HDR_L2TPV2 |
-+				  ICE_FLOW_SEG_HDR_PPP |
-+				  ICE_FLOW_SEG_HDR_IPV4 |
-+				  ICE_FLOW_SEG_HDR_IPV_OTHER);
-+		break;
-+
- 	default:
- 		PMD_DRV_LOG(ERR, "not supported filter type.");
- 		break;
-@@ -1170,7 +1249,10 @@ ice_fdir_uninit(struct ice_adapter *ad)
- static int
- ice_fdir_is_tunnel_profile(enum ice_fdir_tunnel_type tunnel_type)
- {
--	if (tunnel_type == ICE_FDIR_TUNNEL_TYPE_VXLAN)
-+	if (tunnel_type == ICE_FDIR_TUNNEL_TYPE_VXLAN ||
-+	    tunnel_type == ICE_FDIR_TUNNEL_TYPE_L2TPV2 ||
-+	    tunnel_type == ICE_FDIR_TUNNEL_TYPE_GTPU ||
-+	    tunnel_type == ICE_FDIR_TUNNEL_TYPE_GTPU_EH)
- 		return 1;
- 	else
- 		return 0;
-@@ -1239,6 +1321,9 @@ ice_fdir_extract_fltr_key(struct ice_fdir_fltr_pattern *key,
- 	rte_memcpy(&key->gtpu_data, &input->gtpu_data, sizeof(key->gtpu_data));
- 	rte_memcpy(&key->gtpu_mask, &input->gtpu_mask, sizeof(key->gtpu_mask));
- 
-+	rte_memcpy(&key->l2tpv2_data, &input->l2tpv2_data, sizeof(key->l2tpv2_data));
-+	rte_memcpy(&key->l2tpv2_mask, &input->l2tpv2_mask, sizeof(key->l2tpv2_mask));
-+
- 	key->tunnel_type = filter->tunnel_type;
+diff --git a/drivers/net/mlx5/mlx5_flow.c b/drivers/net/mlx5/mlx5_flow.c
+index 0821c93a9a..5add0c4a2b 100644
+--- a/drivers/net/mlx5/mlx5_flow.c
++++ b/drivers/net/mlx5/mlx5_flow.c
+@@ -1898,6 +1898,7 @@ mlx5_flow_rxq_dynf_set(struct rte_eth_dev *dev)
+ 				data->flow_meta_port_mask = priv->sh->dv_meta_mask;
+ 			}
+ 		}
++		data->mark = !!priv->mark_enabled;
+ 		data->mark_flag = mark_flag;
+ 	}
  }
- 
-@@ -1797,16 +1882,22 @@ ice_fdir_parse_pattern(__rte_unused struct ice_adapter *ad,
- 	const struct rte_flow_item_gtp *gtp_spec, *gtp_mask;
- 	const struct rte_flow_item_gtp_psc *gtp_psc_spec, *gtp_psc_mask;
- 	const struct rte_flow_item_esp *esp_spec, *esp_mask;
-+	const struct rte_flow_item_l2tpv2 *l2tpv2_spec, *l2tpv2_mask;
-+	const struct rte_flow_item_ppp *ppp_spec, *ppp_mask;
- 	uint64_t input_set_i = ICE_INSET_NONE; /* only for tunnel inner */
- 	uint64_t input_set_o = ICE_INSET_NONE; /* non-tunnel and tunnel outer */
- 	uint64_t *input_set;
- 	uint8_t flow_type = ICE_FLTR_PTYPE_NONF_NONE;
-+	enum rte_flow_item_type inner_l3 = RTE_FLOW_ITEM_TYPE_END;
-+	enum rte_flow_item_type inner_l4 = RTE_FLOW_ITEM_TYPE_END;
-+	enum rte_flow_item_type current_l3 = RTE_FLOW_ITEM_TYPE_END;
-+	bool ppp_present = false;
- 	uint8_t  ipv6_addr_mask[16] = {
- 		0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
- 		0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF
- 	};
- 	uint32_t vtc_flow_cpu;
--	uint16_t ether_type;
-+	uint16_t ether_type = 0, flags_version = 0;
- 	enum rte_flow_item_type next_type;
- 	bool is_outer = true;
- 	struct ice_fdir_extra *p_ext_data;
-@@ -2001,22 +2092,30 @@ ice_fdir_parse_pattern(__rte_unused struct ice_adapter *ad,
- 				   &eth_spec->hdr.ether_type, sizeof(eth_spec->hdr.ether_type));
- 			break;
- 		case RTE_FLOW_ITEM_TYPE_IPV4:
--			flow_type = ICE_FLTR_PTYPE_NONF_IPV4_OTHER;
--			l3 = RTE_FLOW_ITEM_TYPE_IPV4;
-+			/* Only set flow_type for outer IPv4, track inner L3 for tunnels */
-+			if (is_outer || !tunnel_type) {
-+				flow_type = ICE_FLTR_PTYPE_NONF_IPV4_OTHER;
-+				l3 = RTE_FLOW_ITEM_TYPE_IPV4;
-+				current_l3 = RTE_FLOW_ITEM_TYPE_IPV4;
-+			} else {
-+				inner_l3 = RTE_FLOW_ITEM_TYPE_IPV4;
-+				current_l3 = RTE_FLOW_ITEM_TYPE_IPV4;
-+			}
-+
- 			ipv4_spec = item->spec;
- 			ipv4_last = item->last;
- 			ipv4_mask = item->mask;
- 			p_v4 = (tunnel_type && is_outer) ?
--			       &filter->input.ip_outer.v4 :
--			       &filter->input.ip.v4;
-+					&filter->input.ip_outer.v4 :
-+					&filter->input.ip.v4;
- 
- 			if (!(ipv4_spec && ipv4_mask))
- 				break;
- 
- 			/* Check IPv4 mask and update input set */
- 			if (ipv4_mask->hdr.version_ihl ||
--			    ipv4_mask->hdr.total_length ||
--			    ipv4_mask->hdr.hdr_checksum) {
-+				ipv4_mask->hdr.total_length ||
-+				ipv4_mask->hdr.hdr_checksum) {
- 				rte_flow_error_set(error, EINVAL,
- 						   RTE_FLOW_ERROR_TYPE_ITEM,
- 						   item,
-@@ -2048,10 +2147,20 @@ ice_fdir_parse_pattern(__rte_unused struct ice_adapter *ad,
- 				ipv4_mask->hdr.dst_addr != UINT32_MAX)
- 				return -rte_errno;
- 
--			if (ipv4_mask->hdr.dst_addr == UINT32_MAX)
--				*input_set |= ICE_INSET_IPV4_DST;
--			if (ipv4_mask->hdr.src_addr == UINT32_MAX)
--				*input_set |= ICE_INSET_IPV4_SRC;
-+			if (ipv4_mask->hdr.dst_addr == UINT32_MAX) {
-+				if (!is_outer &&
-+				    tunnel_type == ICE_FDIR_TUNNEL_TYPE_L2TPV2)
-+					*input_set |= ICE_INSET_TUN_IPV4_DST;
-+				else
-+					*input_set |= ICE_INSET_IPV4_DST;
-+			}
-+			if (ipv4_mask->hdr.src_addr == UINT32_MAX) {
-+				if (!is_outer &&
-+				    tunnel_type == ICE_FDIR_TUNNEL_TYPE_L2TPV2)
-+					*input_set |= ICE_INSET_TUN_IPV4_SRC;
-+				else
-+					*input_set |= ICE_INSET_IPV4_SRC;
-+			}
- 			if (ipv4_mask->hdr.time_to_live == UINT8_MAX)
- 				*input_set |= ICE_INSET_IPV4_TTL;
- 			if (ipv4_mask->hdr.next_proto_id == UINT8_MAX)
-@@ -2092,8 +2201,15 @@ ice_fdir_parse_pattern(__rte_unused struct ice_adapter *ad,
- 
- 			break;
- 		case RTE_FLOW_ITEM_TYPE_IPV6:
--			flow_type = ICE_FLTR_PTYPE_NONF_IPV6_OTHER;
--			l3 = RTE_FLOW_ITEM_TYPE_IPV6;
-+			if (is_outer || !tunnel_type) {
-+				flow_type = ICE_FLTR_PTYPE_NONF_IPV6_OTHER;
-+				l3 = RTE_FLOW_ITEM_TYPE_IPV6;
-+				current_l3 = RTE_FLOW_ITEM_TYPE_IPV6;
-+			} else {
-+				inner_l3 = RTE_FLOW_ITEM_TYPE_IPV6;
-+				current_l3 = RTE_FLOW_ITEM_TYPE_IPV6;
-+			}
-+
- 			ipv6_spec = item->spec;
- 			ipv6_mask = item->mask;
- 			p_v6 = (tunnel_type && is_outer) ?
-@@ -2113,15 +2229,24 @@ ice_fdir_parse_pattern(__rte_unused struct ice_adapter *ad,
- 			}
- 
- 			if (!memcmp(&ipv6_mask->hdr.src_addr, ipv6_addr_mask,
--				    sizeof(ipv6_mask->hdr.src_addr)))
--				*input_set |= ICE_INSET_IPV6_SRC;
-+				    sizeof(ipv6_mask->hdr.src_addr))) {
-+				if (tunnel_type && !is_outer &&
-+				    tunnel_type == ICE_FDIR_TUNNEL_TYPE_L2TPV2)
-+					*input_set |= ICE_INSET_TUN_IPV6_SRC;
-+				else
-+					*input_set |= ICE_INSET_IPV6_SRC;
-+			}
- 			if (!memcmp(&ipv6_mask->hdr.dst_addr, ipv6_addr_mask,
--				    sizeof(ipv6_mask->hdr.dst_addr)))
--				*input_set |= ICE_INSET_IPV6_DST;
--
-+				    sizeof(ipv6_mask->hdr.dst_addr))) {
-+				if (tunnel_type && !is_outer &&
-+				    tunnel_type == ICE_FDIR_TUNNEL_TYPE_L2TPV2)
-+					*input_set |= ICE_INSET_TUN_IPV6_DST;
-+				else
-+					*input_set |= ICE_INSET_IPV6_DST;
-+			}
- 			if ((ipv6_mask->hdr.vtc_flow &
--			     rte_cpu_to_be_32(ICE_IPV6_TC_MASK))
--			    == rte_cpu_to_be_32(ICE_IPV6_TC_MASK))
-+			     rte_cpu_to_be_32(ICE_IPV6_TC_MASK)) ==
-+			    rte_cpu_to_be_32(ICE_IPV6_TC_MASK))
- 				*input_set |= ICE_INSET_IPV6_TC;
- 			if (ipv6_mask->hdr.proto == UINT8_MAX)
- 				*input_set |= ICE_INSET_IPV6_NEXT_HDR;
-@@ -2167,10 +2292,16 @@ ice_fdir_parse_pattern(__rte_unused struct ice_adapter *ad,
- 			break;
- 
- 		case RTE_FLOW_ITEM_TYPE_TCP:
--			if (l3 == RTE_FLOW_ITEM_TYPE_IPV4)
--				flow_type = ICE_FLTR_PTYPE_NONF_IPV4_TCP;
--			if (l3 == RTE_FLOW_ITEM_TYPE_IPV6)
--				flow_type = ICE_FLTR_PTYPE_NONF_IPV6_TCP;
-+			if (!is_outer && tunnel_type) {
-+				/* For inner TCP in tunnels, track inner_l4 */
-+				inner_l4 = RTE_FLOW_ITEM_TYPE_TCP;
-+			} else {
-+				/* For outer TCP, update flow_type normally */
-+				if (l3 == RTE_FLOW_ITEM_TYPE_IPV4)
-+					flow_type = ICE_FLTR_PTYPE_NONF_IPV4_TCP;
-+				if (l3 == RTE_FLOW_ITEM_TYPE_IPV6)
-+					flow_type = ICE_FLTR_PTYPE_NONF_IPV6_TCP;
-+			}
- 
- 			tcp_spec = item->spec;
- 			tcp_mask = item->mask;
-@@ -2201,28 +2332,44 @@ ice_fdir_parse_pattern(__rte_unused struct ice_adapter *ad,
- 				tcp_mask->hdr.dst_port != UINT16_MAX)
- 				return -rte_errno;
- 
--			if (tcp_mask->hdr.src_port == UINT16_MAX)
--				*input_set |= ICE_INSET_TCP_SRC_PORT;
--			if (tcp_mask->hdr.dst_port == UINT16_MAX)
--				*input_set |= ICE_INSET_TCP_DST_PORT;
-+			if (tcp_mask->hdr.src_port == UINT16_MAX) {
-+				if (!is_outer &&
-+				    tunnel_type == ICE_FDIR_TUNNEL_TYPE_L2TPV2)
-+					*input_set |= ICE_INSET_TUN_TCP_SRC_PORT;
-+				else
-+					*input_set |= ICE_INSET_TCP_SRC_PORT;
-+			}
-+			if (tcp_mask->hdr.dst_port == UINT16_MAX) {
-+				if (!is_outer &&
-+				    tunnel_type == ICE_FDIR_TUNNEL_TYPE_L2TPV2)
-+					*input_set |= ICE_INSET_TUN_TCP_DST_PORT;
-+				else
-+					*input_set |= ICE_INSET_TCP_DST_PORT;
-+			}
- 
- 			/* Get filter info */
--			if (l3 == RTE_FLOW_ITEM_TYPE_IPV4) {
-+			if (current_l3 == RTE_FLOW_ITEM_TYPE_IPV4) {
- 				assert(p_v4);
- 				p_v4->dst_port = tcp_spec->hdr.dst_port;
- 				p_v4->src_port = tcp_spec->hdr.src_port;
--			} else if (l3 == RTE_FLOW_ITEM_TYPE_IPV6) {
-+			} else if (current_l3 == RTE_FLOW_ITEM_TYPE_IPV6) {
- 				assert(p_v6);
- 				p_v6->dst_port = tcp_spec->hdr.dst_port;
- 				p_v6->src_port = tcp_spec->hdr.src_port;
- 			}
- 			break;
- 		case RTE_FLOW_ITEM_TYPE_UDP:
--			l4 = RTE_FLOW_ITEM_TYPE_UDP;
--			if (l3 == RTE_FLOW_ITEM_TYPE_IPV4)
--				flow_type = ICE_FLTR_PTYPE_NONF_IPV4_UDP;
--			if (l3 == RTE_FLOW_ITEM_TYPE_IPV6)
--				flow_type = ICE_FLTR_PTYPE_NONF_IPV6_UDP;
-+			if (!is_outer && tunnel_type) {
-+				/* For inner UDP in tunnels, track inner_l4 */
-+				inner_l4 = RTE_FLOW_ITEM_TYPE_UDP;
-+			} else {
-+				/* For outer UDP, update flow_type normally */
-+				l4 = RTE_FLOW_ITEM_TYPE_UDP;
-+				if (l3 == RTE_FLOW_ITEM_TYPE_IPV4)
-+					flow_type = ICE_FLTR_PTYPE_NONF_IPV4_UDP;
-+				if (l3 == RTE_FLOW_ITEM_TYPE_IPV6)
-+					flow_type = ICE_FLTR_PTYPE_NONF_IPV6_UDP;
-+			}
- 
- 			udp_spec = item->spec;
- 			udp_mask = item->mask;
-@@ -2248,27 +2395,43 @@ ice_fdir_parse_pattern(__rte_unused struct ice_adapter *ad,
- 				udp_mask->hdr.dst_port != UINT16_MAX)
- 				return -rte_errno;
- 
--			if (udp_mask->hdr.src_port == UINT16_MAX)
--				*input_set |= ICE_INSET_UDP_SRC_PORT;
--			if (udp_mask->hdr.dst_port == UINT16_MAX)
--				*input_set |= ICE_INSET_UDP_DST_PORT;
-+			if (udp_mask->hdr.src_port == UINT16_MAX) {
-+				if (!is_outer &&
-+				    tunnel_type == ICE_FDIR_TUNNEL_TYPE_L2TPV2)
-+					*input_set |= ICE_INSET_TUN_UDP_SRC_PORT;
-+				else
-+					*input_set |= ICE_INSET_UDP_SRC_PORT;
-+			}
-+			if (udp_mask->hdr.dst_port == UINT16_MAX) {
-+				if (!is_outer &&
-+				    tunnel_type == ICE_FDIR_TUNNEL_TYPE_L2TPV2)
-+					*input_set |= ICE_INSET_TUN_UDP_DST_PORT;
-+				else
-+					*input_set |= ICE_INSET_UDP_DST_PORT;
-+			}
- 
- 			/* Get filter info */
--			if (l3 == RTE_FLOW_ITEM_TYPE_IPV4) {
-+			if (current_l3 == RTE_FLOW_ITEM_TYPE_IPV4) {
- 				assert(p_v4);
- 				p_v4->dst_port = udp_spec->hdr.dst_port;
- 				p_v4->src_port = udp_spec->hdr.src_port;
--			} else if (l3 == RTE_FLOW_ITEM_TYPE_IPV6) {
-+			} else if (current_l3 == RTE_FLOW_ITEM_TYPE_IPV6) {
- 				assert(p_v6);
- 				p_v6->src_port = udp_spec->hdr.src_port;
- 				p_v6->dst_port = udp_spec->hdr.dst_port;
- 			}
- 			break;
- 		case RTE_FLOW_ITEM_TYPE_SCTP:
--			if (l3 == RTE_FLOW_ITEM_TYPE_IPV4)
--				flow_type = ICE_FLTR_PTYPE_NONF_IPV4_SCTP;
--			if (l3 == RTE_FLOW_ITEM_TYPE_IPV6)
--				flow_type = ICE_FLTR_PTYPE_NONF_IPV6_SCTP;
-+			if (!is_outer && tunnel_type) {
-+				/* For inner SCTP in tunnels, track inner_l4 */
-+				inner_l4 = RTE_FLOW_ITEM_TYPE_SCTP;
-+			} else {
-+				/* For outer SCTP, update flow_type normally */
-+				if (l3 == RTE_FLOW_ITEM_TYPE_IPV4)
-+					flow_type = ICE_FLTR_PTYPE_NONF_IPV4_SCTP;
-+				if (l3 == RTE_FLOW_ITEM_TYPE_IPV6)
-+					flow_type = ICE_FLTR_PTYPE_NONF_IPV6_SCTP;
-+			}
- 
- 			sctp_spec = item->spec;
- 			sctp_mask = item->mask;
-@@ -2299,11 +2462,11 @@ ice_fdir_parse_pattern(__rte_unused struct ice_adapter *ad,
- 				*input_set |= ICE_INSET_SCTP_DST_PORT;
- 
- 			/* Get filter info */
--			if (l3 == RTE_FLOW_ITEM_TYPE_IPV4) {
-+			if (current_l3 == RTE_FLOW_ITEM_TYPE_IPV4) {
- 				assert(p_v4);
- 				p_v4->dst_port = sctp_spec->hdr.dst_port;
- 				p_v4->src_port = sctp_spec->hdr.src_port;
--			} else if (l3 == RTE_FLOW_ITEM_TYPE_IPV6) {
-+			} else if (current_l3 == RTE_FLOW_ITEM_TYPE_IPV6) {
- 				assert(p_v6);
- 				p_v6->dst_port = sctp_spec->hdr.dst_port;
- 				p_v6->src_port = sctp_spec->hdr.src_port;
-@@ -2406,6 +2569,115 @@ ice_fdir_parse_pattern(__rte_unused struct ice_adapter *ad,
- 				filter->input.ip.v6.sec_parm_idx =
- 					esp_spec->hdr.spi;
- 			break;
-+		case RTE_FLOW_ITEM_TYPE_L2TPV2: {
-+			struct ice_fdir_l2tpv2 l2tpv2_be;
-+
-+			l2tpv2_spec = item->spec;
-+			l2tpv2_mask = item->mask;
-+
-+			if (!(l2tpv2_spec && l2tpv2_mask))
-+				break;
-+
-+			flags_version =
-+				rte_be_to_cpu_16(l2tpv2_spec->hdr.common.flags_version);
-+			if ((flags_version == RTE_L2TPV2_MSG_TYPE_CONTROL &&
-+			     l2tpv2_mask->hdr.type3.session_id == UINT16_MAX) ||
-+			    (flags_version == RTE_L2TPV2_MSG_TYPE_DATA &&
-+			     l2tpv2_mask->hdr.type7.session_id == UINT16_MAX) ||
-+			    (flags_version == RTE_L2TPV2_MSG_TYPE_DATA_L &&
-+			     l2tpv2_mask->hdr.type6.session_id == UINT16_MAX) ||
-+			    (flags_version == RTE_L2TPV2_MSG_TYPE_DATA_S &&
-+			     l2tpv2_mask->hdr.type5.session_id == UINT16_MAX) ||
-+			    (flags_version == RTE_L2TPV2_MSG_TYPE_DATA_O &&
-+			     l2tpv2_mask->hdr.type4.session_id == UINT16_MAX) ||
-+			    (flags_version == RTE_L2TPV2_MSG_TYPE_DATA_L_S &&
-+			     l2tpv2_mask->hdr.type3.session_id == UINT16_MAX) ||
-+			    (flags_version == RTE_L2TPV2_MSG_TYPE_DATA_L_O &&
-+			     l2tpv2_mask->hdr.type2.session_id == UINT16_MAX) ||
-+			    (flags_version == RTE_L2TPV2_MSG_TYPE_DATA_S_O &&
-+			     l2tpv2_mask->hdr.type1.session_id == UINT16_MAX) ||
-+			    (flags_version == RTE_L2TPV2_MSG_TYPE_DATA_L_S_O &&
-+			     l2tpv2_mask->hdr.type0.session_id == UINT16_MAX)) {
-+				input_set_o |= ICE_INSET_L2TPV2OIP_SESSION_ID;
-+			}
-+
-+			tunnel_type = ICE_FDIR_TUNNEL_TYPE_L2TPV2;
-+			memset(&l2tpv2_be, 0, sizeof(l2tpv2_be));
-+
-+			if (flags_version == RTE_L2TPV2_MSG_TYPE_CONTROL) {
-+				l2tpv2_be.length = rte_cpu_to_be_16(l2tpv2_spec->hdr.type3.length);
-+				l2tpv2_be.tunnel_id = rte_cpu_to_be_16(l2tpv2_spec->hdr.type3.tunnel_id);
-+				l2tpv2_be.session_id = rte_cpu_to_be_16(l2tpv2_spec->hdr.type3.session_id);
-+				l2tpv2_be.ns = rte_cpu_to_be_16(l2tpv2_spec->hdr.type3.ns);
-+				l2tpv2_be.nr = rte_cpu_to_be_16(l2tpv2_spec->hdr.type3.nr);
-+			} else if (flags_version == RTE_L2TPV2_MSG_TYPE_DATA) {
-+				l2tpv2_be.tunnel_id = rte_cpu_to_be_16(l2tpv2_spec->hdr.type7.tunnel_id);
-+				l2tpv2_be.session_id = rte_cpu_to_be_16(l2tpv2_spec->hdr.type7.session_id);
-+			} else if (flags_version == RTE_L2TPV2_MSG_TYPE_DATA_L) {
-+				l2tpv2_be.length = rte_cpu_to_be_16(l2tpv2_spec->hdr.type6.length);
-+				l2tpv2_be.tunnel_id = rte_cpu_to_be_16(l2tpv2_spec->hdr.type6.tunnel_id);
-+				l2tpv2_be.session_id = rte_cpu_to_be_16(l2tpv2_spec->hdr.type6.session_id);
-+			} else if (flags_version == RTE_L2TPV2_MSG_TYPE_DATA_S) {
-+				l2tpv2_be.tunnel_id = rte_cpu_to_be_16(l2tpv2_spec->hdr.type5.tunnel_id);
-+				l2tpv2_be.session_id = rte_cpu_to_be_16(l2tpv2_spec->hdr.type5.session_id);
-+				l2tpv2_be.ns = rte_cpu_to_be_16(l2tpv2_spec->hdr.type5.ns);
-+				l2tpv2_be.nr = rte_cpu_to_be_16(l2tpv2_spec->hdr.type5.nr);
-+			} else if (flags_version == RTE_L2TPV2_MSG_TYPE_DATA_O) {
-+				l2tpv2_be.tunnel_id = rte_cpu_to_be_16(l2tpv2_spec->hdr.type4.tunnel_id);
-+				l2tpv2_be.session_id = rte_cpu_to_be_16(l2tpv2_spec->hdr.type4.session_id);
-+				l2tpv2_be.offset_size = rte_cpu_to_be_16(l2tpv2_spec->hdr.type4.offset_size);
-+			} else if (flags_version == RTE_L2TPV2_MSG_TYPE_DATA_L_S) {
-+				l2tpv2_be.length = rte_cpu_to_be_16(l2tpv2_spec->hdr.type3.length);
-+				l2tpv2_be.tunnel_id = rte_cpu_to_be_16(l2tpv2_spec->hdr.type3.tunnel_id);
-+				l2tpv2_be.session_id = rte_cpu_to_be_16(l2tpv2_spec->hdr.type3.session_id);
-+				l2tpv2_be.ns = rte_cpu_to_be_16(l2tpv2_spec->hdr.type3.ns);
-+				l2tpv2_be.nr = rte_cpu_to_be_16(l2tpv2_spec->hdr.type3.nr);
-+			} else if (flags_version == RTE_L2TPV2_MSG_TYPE_DATA_L_O) {
-+				l2tpv2_be.length = rte_cpu_to_be_16(l2tpv2_spec->hdr.type2.length);
-+				l2tpv2_be.tunnel_id = rte_cpu_to_be_16(l2tpv2_spec->hdr.type2.tunnel_id);
-+				l2tpv2_be.session_id = rte_cpu_to_be_16(l2tpv2_spec->hdr.type2.session_id);
-+				l2tpv2_be.offset_size = rte_cpu_to_be_16(l2tpv2_spec->hdr.type2.offset_size);
-+			} else if (flags_version == RTE_L2TPV2_MSG_TYPE_DATA_S_O) {
-+				l2tpv2_be.tunnel_id = rte_cpu_to_be_16(l2tpv2_spec->hdr.type1.tunnel_id);
-+				l2tpv2_be.session_id = rte_cpu_to_be_16(l2tpv2_spec->hdr.type1.session_id);
-+				l2tpv2_be.ns = rte_cpu_to_be_16(l2tpv2_spec->hdr.type1.ns);
-+				l2tpv2_be.nr = rte_cpu_to_be_16(l2tpv2_spec->hdr.type1.nr);
-+				l2tpv2_be.offset_size = rte_cpu_to_be_16(l2tpv2_spec->hdr.type1.offset_size);
-+			} else if (flags_version == RTE_L2TPV2_MSG_TYPE_DATA_L_S_O) {
-+				l2tpv2_be.length = rte_cpu_to_be_16(l2tpv2_spec->hdr.type0.length);
-+				l2tpv2_be.tunnel_id = rte_cpu_to_be_16(l2tpv2_spec->hdr.type0.tunnel_id);
-+				l2tpv2_be.session_id = rte_cpu_to_be_16(l2tpv2_spec->hdr.type0.session_id);
-+				l2tpv2_be.ns = rte_cpu_to_be_16(l2tpv2_spec->hdr.type0.ns);
-+				l2tpv2_be.nr = rte_cpu_to_be_16(l2tpv2_spec->hdr.type0.nr);
-+				l2tpv2_be.offset_size = rte_cpu_to_be_16(l2tpv2_spec->hdr.type0.offset_size);
-+			}
-+
-+			/* Copy converted values to filter */
-+			filter->input.l2tpv2_data.flags_version = rte_cpu_to_be_16(flags_version);
-+			filter->input.l2tpv2_data.length = l2tpv2_be.length;
-+			filter->input.l2tpv2_data.tunnel_id = l2tpv2_be.tunnel_id;
-+			filter->input.l2tpv2_data.session_id = l2tpv2_be.session_id;
-+			filter->input.l2tpv2_data.ns = l2tpv2_be.ns;
-+			filter->input.l2tpv2_data.nr = l2tpv2_be.nr;
-+			filter->input.l2tpv2_data.offset_size = l2tpv2_be.offset_size;
-+			break;
-+		}
-+		case RTE_FLOW_ITEM_TYPE_PPP:
-+			ppp_spec = item->spec;
-+			ppp_mask = item->mask;
-+
-+			/* PPP marks transition from outer to inner in L2TPv2 tunnels */
-+			if (tunnel_type == ICE_FDIR_TUNNEL_TYPE_L2TPV2) {
-+				is_outer = false;
-+				ppp_present = true;
-+			}
-+
-+			if (ppp_spec && ppp_mask) {
-+				filter->input.ppp_data.addr = ppp_spec->hdr.addr;
-+				filter->input.ppp_data.ctrl = ppp_spec->hdr.ctrl;
-+				filter->input.ppp_data.proto_id = ppp_spec->hdr.proto_id;
-+			}
-+			break;
- 		default:
- 			rte_flow_error_set(error, EINVAL,
- 					   RTE_FLOW_ERROR_TYPE_ITEM,
-@@ -2439,6 +2711,74 @@ ice_fdir_parse_pattern(__rte_unused struct ice_adapter *ad,
- 	else if (tunnel_type == ICE_FDIR_TUNNEL_TYPE_VXLAN &&
- 		flow_type == ICE_FLTR_PTYPE_NONF_IPV4_OTHER)
- 		flow_type = ICE_FLTR_PTYPE_NONF_IPV4_UDP_VXLAN_IPV4_OTHER;
-+	else if (tunnel_type == ICE_FDIR_TUNNEL_TYPE_L2TPV2 &&
-+		flow_type == ICE_FLTR_PTYPE_NONF_IPV4_UDP &&
-+		flags_version != RTE_L2TPV2_MSG_TYPE_CONTROL &&
-+		!ppp_present)
-+		flow_type = ICE_FLTR_PTYPE_NONF_IPV4_L2TPV2;
-+	else if (tunnel_type == ICE_FDIR_TUNNEL_TYPE_L2TPV2 &&
-+		flow_type == ICE_FLTR_PTYPE_NONF_IPV6_UDP &&
-+		flags_version != RTE_L2TPV2_MSG_TYPE_CONTROL &&
-+		!ppp_present)
-+		flow_type = ICE_FLTR_PTYPE_NONF_IPV6_L2TPV2;
-+	else if (tunnel_type == ICE_FDIR_TUNNEL_TYPE_L2TPV2 &&
-+		flow_type == ICE_FLTR_PTYPE_NONF_IPV4_UDP &&
-+		flags_version == RTE_L2TPV2_MSG_TYPE_CONTROL &&
-+		!ppp_present)
-+		flow_type = ICE_FLTR_PTYPE_NONF_IPV4_L2TPV2_CONTROL;
-+	else if (tunnel_type == ICE_FDIR_TUNNEL_TYPE_L2TPV2 &&
-+		flow_type == ICE_FLTR_PTYPE_NONF_IPV6_UDP &&
-+		flags_version == RTE_L2TPV2_MSG_TYPE_CONTROL &&
-+		!ppp_present)
-+		flow_type = ICE_FLTR_PTYPE_NONF_IPV6_L2TPV2_CONTROL;
-+	/* Handle L2TPV2 with PPP and inner protocols */
-+	else if (tunnel_type == ICE_FDIR_TUNNEL_TYPE_L2TPV2 &&
-+		ppp_present &&
-+		inner_l3 != RTE_FLOW_ITEM_TYPE_END) {
-+		/* L2TPV2 with inner IPv4/IPv6 */
-+		if (flow_type == ICE_FLTR_PTYPE_NONF_IPV4_UDP) {
-+			/* Outer IPv4 + inner protocol */
-+			if (inner_l3 == RTE_FLOW_ITEM_TYPE_IPV4) {
-+				if (inner_l4 == RTE_FLOW_ITEM_TYPE_TCP)
-+					flow_type = ICE_FLTR_PTYPE_NONF_IPV4_L2TPV2_PPP_IPV4_TCP;
-+				else if (inner_l4 == RTE_FLOW_ITEM_TYPE_UDP)
-+					flow_type = ICE_FLTR_PTYPE_NONF_IPV4_L2TPV2_PPP_IPV4_UDP;
-+				else
-+					flow_type = ICE_FLTR_PTYPE_NONF_IPV4_L2TPV2_PPP_IPV4;
-+			} else if (inner_l3 == RTE_FLOW_ITEM_TYPE_IPV6) {
-+				if (inner_l4 == RTE_FLOW_ITEM_TYPE_TCP)
-+					flow_type = ICE_FLTR_PTYPE_NONF_IPV4_L2TPV2_PPP_IPV6_TCP;
-+				else if (inner_l4 == RTE_FLOW_ITEM_TYPE_UDP)
-+					flow_type = ICE_FLTR_PTYPE_NONF_IPV4_L2TPV2_PPP_IPV6_UDP;
-+				else
-+					flow_type = ICE_FLTR_PTYPE_NONF_IPV4_L2TPV2_PPP_IPV6;
-+			}
-+		} else if (flow_type == ICE_FLTR_PTYPE_NONF_IPV6_UDP) {
-+			/* Outer IPv6 + inner protocol */
-+			if (inner_l3 == RTE_FLOW_ITEM_TYPE_IPV4) {
-+				if (inner_l4 == RTE_FLOW_ITEM_TYPE_TCP)
-+					flow_type = ICE_FLTR_PTYPE_NONF_IPV6_L2TPV2_PPP_IPV4_TCP;
-+				else if (inner_l4 == RTE_FLOW_ITEM_TYPE_UDP)
-+					flow_type = ICE_FLTR_PTYPE_NONF_IPV6_L2TPV2_PPP_IPV4_UDP;
-+				else
-+					flow_type = ICE_FLTR_PTYPE_NONF_IPV6_L2TPV2_PPP_IPV4;
-+			} else if (inner_l3 == RTE_FLOW_ITEM_TYPE_IPV6) {
-+				if (inner_l4 == RTE_FLOW_ITEM_TYPE_TCP)
-+					flow_type = ICE_FLTR_PTYPE_NONF_IPV6_L2TPV2_PPP_IPV6_TCP;
-+				else if (inner_l4 == RTE_FLOW_ITEM_TYPE_UDP)
-+					flow_type = ICE_FLTR_PTYPE_NONF_IPV6_L2TPV2_PPP_IPV6_UDP;
-+				else
-+					flow_type = ICE_FLTR_PTYPE_NONF_IPV6_L2TPV2_PPP_IPV6;
-+			}
-+		}
-+	} else if (tunnel_type == ICE_FDIR_TUNNEL_TYPE_L2TPV2 && ppp_present &&
-+		inner_l3 == RTE_FLOW_ITEM_TYPE_END) {
-+		/* Handle L2TPV2 with PPP but no inner protocol specified */
-+		if (flow_type == ICE_FLTR_PTYPE_NONF_IPV4_UDP)
-+			flow_type = ICE_FLTR_PTYPE_NONF_IPV4_L2TPV2_PPP;
-+		else if (flow_type == ICE_FLTR_PTYPE_NONF_IPV6_UDP)
-+			flow_type = ICE_FLTR_PTYPE_NONF_IPV6_L2TPV2_PPP;
-+	}
- 
- 	filter->tunnel_type = tunnel_type;
- 	filter->input.flow_type = flow_type;
-@@ -2482,9 +2822,10 @@ ice_fdir_parse(struct ice_adapter *ad,
- 	input_set = filter->input_set_o | filter->input_set_i;
- 	input_set = raw ? ~input_set : input_set;
- 
--	if (!input_set || filter->input_set_o &
--	    ~(item->input_set_mask_o | ICE_INSET_ETHERTYPE) ||
--	    filter->input_set_i & ~item->input_set_mask_i) {
-+	if (!input_set ||
-+	    (filter->input_set_o &
-+	     ~(item->input_set_mask_o | ICE_INSET_ETHERTYPE)) ||
-+	    (filter->input_set_i & ~item->input_set_mask_i)) {
- 		rte_flow_error_set(error, EINVAL,
- 				   RTE_FLOW_ERROR_TYPE_ITEM_SPEC,
- 				   pattern,
-diff --git a/drivers/net/intel/ice/ice_generic_flow.c b/drivers/net/intel/ice/ice_generic_flow.c
-index 4049157eab..644958cccf 100644
---- a/drivers/net/intel/ice/ice_generic_flow.c
-+++ b/drivers/net/intel/ice/ice_generic_flow.c
-@@ -1794,6 +1794,166 @@ enum rte_flow_item_type pattern_eth_ipv6_pfcp[] = {
- 	RTE_FLOW_ITEM_TYPE_PFCP,
- 	RTE_FLOW_ITEM_TYPE_END,
- };
-+enum rte_flow_item_type pattern_eth_ipv4_l2tpv2[] = {
-+	RTE_FLOW_ITEM_TYPE_ETH,
-+	RTE_FLOW_ITEM_TYPE_IPV4,
-+	RTE_FLOW_ITEM_TYPE_L2TPV2,
-+	RTE_FLOW_ITEM_TYPE_END,
-+};
-+enum rte_flow_item_type pattern_eth_ipv6_l2tpv2[] = {
-+	RTE_FLOW_ITEM_TYPE_ETH,
-+	RTE_FLOW_ITEM_TYPE_IPV6,
-+	RTE_FLOW_ITEM_TYPE_L2TPV2,
-+	RTE_FLOW_ITEM_TYPE_END,
-+};
-+enum rte_flow_item_type pattern_eth_ipv4_udp_l2tpv2[] = {
-+	RTE_FLOW_ITEM_TYPE_ETH,
-+	RTE_FLOW_ITEM_TYPE_IPV4,
-+	RTE_FLOW_ITEM_TYPE_UDP,
-+	RTE_FLOW_ITEM_TYPE_L2TPV2,
-+	RTE_FLOW_ITEM_TYPE_END,
-+};
-+enum rte_flow_item_type pattern_eth_ipv4_udp_l2tpv2_ppp[] = {
-+	RTE_FLOW_ITEM_TYPE_ETH,
-+	RTE_FLOW_ITEM_TYPE_IPV4,
-+	RTE_FLOW_ITEM_TYPE_UDP,
-+	RTE_FLOW_ITEM_TYPE_L2TPV2,
-+	RTE_FLOW_ITEM_TYPE_PPP,
-+	RTE_FLOW_ITEM_TYPE_END,
-+};
-+enum rte_flow_item_type pattern_eth_ipv6_udp_l2tpv2[] = {
-+	RTE_FLOW_ITEM_TYPE_ETH,
-+	RTE_FLOW_ITEM_TYPE_IPV6,
-+	RTE_FLOW_ITEM_TYPE_UDP,
-+	RTE_FLOW_ITEM_TYPE_L2TPV2,
-+	RTE_FLOW_ITEM_TYPE_END,
-+};
-+enum rte_flow_item_type pattern_eth_ipv6_udp_l2tpv2_ppp[] = {
-+	RTE_FLOW_ITEM_TYPE_ETH,
-+	RTE_FLOW_ITEM_TYPE_IPV6,
-+	RTE_FLOW_ITEM_TYPE_UDP,
-+	RTE_FLOW_ITEM_TYPE_L2TPV2,
-+	RTE_FLOW_ITEM_TYPE_PPP,
-+	RTE_FLOW_ITEM_TYPE_END,
-+};
-+/* PPPoL2TPv2oUDP */
-+enum rte_flow_item_type pattern_eth_ipv4_udp_l2tpv2_ppp_ipv4[] = {
-+	RTE_FLOW_ITEM_TYPE_ETH,
-+	RTE_FLOW_ITEM_TYPE_IPV4,
-+	RTE_FLOW_ITEM_TYPE_UDP,
-+	RTE_FLOW_ITEM_TYPE_L2TPV2,
-+	RTE_FLOW_ITEM_TYPE_PPP,
-+	RTE_FLOW_ITEM_TYPE_IPV4,
-+	RTE_FLOW_ITEM_TYPE_END,
-+};
-+enum rte_flow_item_type pattern_eth_ipv4_udp_l2tpv2_ppp_ipv4_udp[] = {
-+	RTE_FLOW_ITEM_TYPE_ETH,
-+	RTE_FLOW_ITEM_TYPE_IPV4,
-+	RTE_FLOW_ITEM_TYPE_UDP,
-+	RTE_FLOW_ITEM_TYPE_L2TPV2,
-+	RTE_FLOW_ITEM_TYPE_PPP,
-+	RTE_FLOW_ITEM_TYPE_IPV4,
-+	RTE_FLOW_ITEM_TYPE_UDP,
-+	RTE_FLOW_ITEM_TYPE_END,
-+};
-+enum rte_flow_item_type pattern_eth_ipv4_udp_l2tpv2_ppp_ipv4_tcp[] = {
-+	RTE_FLOW_ITEM_TYPE_ETH,
-+	RTE_FLOW_ITEM_TYPE_IPV4,
-+	RTE_FLOW_ITEM_TYPE_UDP,
-+	RTE_FLOW_ITEM_TYPE_L2TPV2,
-+	RTE_FLOW_ITEM_TYPE_PPP,
-+	RTE_FLOW_ITEM_TYPE_IPV4,
-+	RTE_FLOW_ITEM_TYPE_TCP,
-+	RTE_FLOW_ITEM_TYPE_END,
-+};
-+enum rte_flow_item_type pattern_eth_ipv6_udp_l2tpv2_ppp_ipv4[] = {
-+	RTE_FLOW_ITEM_TYPE_ETH,
-+	RTE_FLOW_ITEM_TYPE_IPV6,
-+	RTE_FLOW_ITEM_TYPE_UDP,
-+	RTE_FLOW_ITEM_TYPE_L2TPV2,
-+	RTE_FLOW_ITEM_TYPE_PPP,
-+	RTE_FLOW_ITEM_TYPE_IPV4,
-+	RTE_FLOW_ITEM_TYPE_END,
-+};
-+enum rte_flow_item_type pattern_eth_ipv6_udp_l2tpv2_ppp_ipv4_udp[] = {
-+	RTE_FLOW_ITEM_TYPE_ETH,
-+	RTE_FLOW_ITEM_TYPE_IPV6,
-+	RTE_FLOW_ITEM_TYPE_UDP,
-+	RTE_FLOW_ITEM_TYPE_L2TPV2,
-+	RTE_FLOW_ITEM_TYPE_PPP,
-+	RTE_FLOW_ITEM_TYPE_IPV4,
-+	RTE_FLOW_ITEM_TYPE_UDP,
-+	RTE_FLOW_ITEM_TYPE_END,
-+};
-+enum rte_flow_item_type pattern_eth_ipv6_udp_l2tpv2_ppp_ipv4_tcp[] = {
-+	RTE_FLOW_ITEM_TYPE_ETH,
-+	RTE_FLOW_ITEM_TYPE_IPV6,
-+	RTE_FLOW_ITEM_TYPE_UDP,
-+	RTE_FLOW_ITEM_TYPE_L2TPV2,
-+	RTE_FLOW_ITEM_TYPE_PPP,
-+	RTE_FLOW_ITEM_TYPE_IPV4,
-+	RTE_FLOW_ITEM_TYPE_TCP,
-+	RTE_FLOW_ITEM_TYPE_END,
-+};
-+enum rte_flow_item_type pattern_eth_ipv4_udp_l2tpv2_ppp_ipv6[] = {
-+	RTE_FLOW_ITEM_TYPE_ETH,
-+	RTE_FLOW_ITEM_TYPE_IPV4,
-+	RTE_FLOW_ITEM_TYPE_UDP,
-+	RTE_FLOW_ITEM_TYPE_L2TPV2,
-+	RTE_FLOW_ITEM_TYPE_PPP,
-+	RTE_FLOW_ITEM_TYPE_IPV6,
-+	RTE_FLOW_ITEM_TYPE_END,
-+};
-+enum rte_flow_item_type pattern_eth_ipv4_udp_l2tpv2_ppp_ipv6_udp[] = {
-+	RTE_FLOW_ITEM_TYPE_ETH,
-+	RTE_FLOW_ITEM_TYPE_IPV4,
-+	RTE_FLOW_ITEM_TYPE_UDP,
-+	RTE_FLOW_ITEM_TYPE_L2TPV2,
-+	RTE_FLOW_ITEM_TYPE_PPP,
-+	RTE_FLOW_ITEM_TYPE_IPV6,
-+	RTE_FLOW_ITEM_TYPE_UDP,
-+	RTE_FLOW_ITEM_TYPE_END,
-+};
-+enum rte_flow_item_type pattern_eth_ipv4_udp_l2tpv2_ppp_ipv6_tcp[] = {
-+	RTE_FLOW_ITEM_TYPE_ETH,
-+	RTE_FLOW_ITEM_TYPE_IPV4,
-+	RTE_FLOW_ITEM_TYPE_UDP,
-+	RTE_FLOW_ITEM_TYPE_L2TPV2,
-+	RTE_FLOW_ITEM_TYPE_PPP,
-+	RTE_FLOW_ITEM_TYPE_IPV6,
-+	RTE_FLOW_ITEM_TYPE_TCP,
-+	RTE_FLOW_ITEM_TYPE_END,
-+};
-+enum rte_flow_item_type pattern_eth_ipv6_udp_l2tpv2_ppp_ipv6[] = {
-+	RTE_FLOW_ITEM_TYPE_ETH,
-+	RTE_FLOW_ITEM_TYPE_IPV6,
-+	RTE_FLOW_ITEM_TYPE_UDP,
-+	RTE_FLOW_ITEM_TYPE_L2TPV2,
-+	RTE_FLOW_ITEM_TYPE_PPP,
-+	RTE_FLOW_ITEM_TYPE_IPV6,
-+	RTE_FLOW_ITEM_TYPE_END,
-+};
-+enum rte_flow_item_type pattern_eth_ipv6_udp_l2tpv2_ppp_ipv6_udp[] = {
-+	RTE_FLOW_ITEM_TYPE_ETH,
-+	RTE_FLOW_ITEM_TYPE_IPV6,
-+	RTE_FLOW_ITEM_TYPE_UDP,
-+	RTE_FLOW_ITEM_TYPE_L2TPV2,
-+	RTE_FLOW_ITEM_TYPE_PPP,
-+	RTE_FLOW_ITEM_TYPE_IPV6,
-+	RTE_FLOW_ITEM_TYPE_UDP,
-+	RTE_FLOW_ITEM_TYPE_END,
-+};
-+enum rte_flow_item_type pattern_eth_ipv6_udp_l2tpv2_ppp_ipv6_tcp[] = {
-+	RTE_FLOW_ITEM_TYPE_ETH,
-+	RTE_FLOW_ITEM_TYPE_IPV6,
-+	RTE_FLOW_ITEM_TYPE_UDP,
-+	RTE_FLOW_ITEM_TYPE_L2TPV2,
-+	RTE_FLOW_ITEM_TYPE_PPP,
-+	RTE_FLOW_ITEM_TYPE_IPV6,
-+	RTE_FLOW_ITEM_TYPE_TCP,
-+	RTE_FLOW_ITEM_TYPE_END,
-+};
-+
- 
- typedef bool (*parse_engine_t)(struct ice_adapter *ad,
- 			       struct rte_flow *flow,
-@@ -2021,6 +2181,23 @@ static struct ice_ptype_match ice_ptype_map[] = {
- 	{pattern_eth_ipv4_udp_esp,			ICE_MAC_IPV4_NAT_T_ESP},
- 	{pattern_eth_ipv4_ah,				ICE_MAC_IPV4_AH},
- 	{pattern_eth_ipv4_l2tp,				ICE_MAC_IPV4_L2TPV3},
-+	{pattern_eth_ipv4_udp_l2tpv2,		ICE_MAC_IPV4_L2TPV2},
-+	{pattern_eth_ipv4_udp_l2tpv2_ppp,		ICE_MAC_IPV4_L2TPV2},
-+	{pattern_eth_ipv4_udp_l2tpv2_ppp_ipv4,		ICE_MAC_IPV4_L2TPV2},
-+	{pattern_eth_ipv4_udp_l2tpv2_ppp_ipv4_udp,	ICE_MAC_IPV4_L2TPV2},
-+	{pattern_eth_ipv4_udp_l2tpv2_ppp_ipv4_tcp,	ICE_MAC_IPV4_L2TPV2},
-+	{pattern_eth_ipv4_udp_l2tpv2_ppp_ipv6,		ICE_MAC_IPV4_L2TPV2},
-+	{pattern_eth_ipv4_udp_l2tpv2_ppp_ipv6_udp,	ICE_MAC_IPV4_L2TPV2},
-+	{pattern_eth_ipv4_udp_l2tpv2_ppp_ipv6_tcp,	ICE_MAC_IPV4_L2TPV2},
-+	{pattern_eth_ipv6_udp_l2tpv2,		ICE_MAC_IPV6_L2TPV2},
-+	{pattern_eth_ipv6_udp_l2tpv2_ppp,		ICE_MAC_IPV6_L2TPV2},
-+	{pattern_eth_ipv6_udp_l2tpv2_ppp_ipv4,		ICE_MAC_IPV6_L2TPV2},
-+	{pattern_eth_ipv6_udp_l2tpv2_ppp_ipv4_udp,	ICE_MAC_IPV6_L2TPV2},
-+	{pattern_eth_ipv6_udp_l2tpv2_ppp_ipv4_tcp,	ICE_MAC_IPV6_L2TPV2},
-+	{pattern_eth_ipv6_udp_l2tpv2_ppp_ipv6,		ICE_MAC_IPV6_L2TPV2},
-+	{pattern_eth_ipv6_udp_l2tpv2_ppp_ipv6_udp,	ICE_MAC_IPV6_L2TPV2},
-+	{pattern_eth_ipv6_udp_l2tpv2_ppp_ipv6_tcp,	ICE_MAC_IPV6_L2TPV2},
-+
- 	{pattern_eth_ipv4_pfcp,				ICE_MAC_IPV4_PFCP_SESSION},
- 	{pattern_eth_ipv6,				ICE_PTYPE_IPV6_PAY},
- 	{pattern_eth_ipv6_udp,				ICE_PTYPE_IPV6_UDP_PAY},
 -- 
-2.34.1
+2.47.3
 
