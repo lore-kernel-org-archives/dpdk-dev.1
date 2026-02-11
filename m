@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD754E9E30B
-	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Feb 2026 13:53:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83C75E9E30A
+	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Feb 2026 13:54:04 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0E8A340691;
-	Wed, 11 Feb 2026 14:53:41 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 206D140697;
+	Wed, 11 Feb 2026 14:53:42 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
- by mails.dpdk.org (Postfix) with ESMTP id 827EB40647
- for <dev@dpdk.org>; Wed, 11 Feb 2026 14:53:37 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id ABD74402AB
+ for <dev@dpdk.org>; Wed, 11 Feb 2026 14:53:38 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1770818017; x=1802354017;
+ t=1770818019; x=1802354019;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=oanRrHLpDnVCJ1NEcJfhieiQoU6ARcZjRdY2QyJtQQY=;
- b=H9ZbsnKb8DRrstP2vo8R1oJ/HkqGFW8gfB/wUuY90YiAAzAv1mILg8qn
- le/49rpiCjcZVAQGotI48iSbVkg/hj/UVkl9NBm9i1nSapqZM9HQWw6ff
- eOJct4RddK1SX7fBGq0HGl4lF7BFLdGPBJwrFcEEVEP7diGGPaPojLTo2
- FCVDzag+7suk9VQikZA5xQK63UxpQEizFePi/E361WiCfr/8kXOp6qm1p
- OYf0A73ZT3LjkuyMCC5789uwfZRUaamn2ZjMwFEuBACX5r0tD1RL25RMz
- ipa+q+blxi0Lculz9xKnmz8xyJJfYQBrn9rPGCmOUOeo/UyGx+iOuR3ea g==;
-X-CSE-ConnectionGUID: x48NKLp3TZyXbTpfGWTiQw==
-X-CSE-MsgGUID: nURcKflqTCidLlx7NAr4Iw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11698"; a="75808230"
-X-IronPort-AV: E=Sophos;i="6.21,283,1763452800"; d="scan'208";a="75808230"
+ bh=e+xU4Tm/Aa32Ukwhlg+G5frL/AVx8UUAfwhgyghABV4=;
+ b=jSCVKDuL3h7FvMKJCKhJZv7KEhhUIKysFTtxskodEpJ89GF10kwlhqVm
+ ot/QFeNo6W7QKxo3aoulyTYi7POEOt2Mr7vkUIhrYv84TOEmNMbyMrJlI
+ fWIGnLg0w5mJtSJlKHTa62gxd5mHFFVT9hPUT9KUQEBL5moJwv7mUw/LA
+ aakOQjhCmvs7mGWDUgmSilFb+CrpSG5s5+UmGJwN/N60HujInS0Dh4Eog
+ b78ZRV8XAV1g8wqvJnxmGVPaoiPZZuNCCdJ2lpBkWfIa9n04SLoPAVlRu
+ 1xb1vp5BTPhXnk6hSqodQg0ugbVI39fXRxXWa9MsCTzXFgJTLGZiE0aP1 Q==;
+X-CSE-ConnectionGUID: aEJjNv+VRjy+SXt0muwIuA==
+X-CSE-MsgGUID: X605expkRZCuNlx16YW+hQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11698"; a="75808231"
+X-IronPort-AV: E=Sophos;i="6.21,283,1763452800"; d="scan'208";a="75808231"
 Received: from orviesa007.jf.intel.com ([10.64.159.147])
  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 11 Feb 2026 05:53:37 -0800
-X-CSE-ConnectionGUID: ylNwwzN3SKCyxYA2XBd1CQ==
-X-CSE-MsgGUID: kO9tPRAPTF2lav87bZsBAg==
+ 11 Feb 2026 05:53:38 -0800
+X-CSE-ConnectionGUID: q/BAE+hXS0Cv8D9N0Pj1XA==
+X-CSE-MsgGUID: iMr1mGLiSEuzQiwSdDa3qw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,283,1763452800"; d="scan'208";a="212359565"
+X-IronPort-AV: E=Sophos;i="6.21,283,1763452800"; d="scan'208";a="212359569"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by orviesa007.jf.intel.com with ESMTP; 11 Feb 2026 05:53:36 -0800
+ by orviesa007.jf.intel.com with ESMTP; 11 Feb 2026 05:53:37 -0800
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org,
 	Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v3 04/27] net/i40e: get rid of global filter variables
-Date: Wed, 11 Feb 2026 13:52:46 +0000
-Message-ID: <48663f05d927602fae9113be517c9f8ed2f73c89.1770817884.git.anatoly.burakov@intel.com>
+Subject: [PATCH v3 05/27] net/i40e: make default RSS key global
+Date: Wed, 11 Feb 2026 13:52:47 +0000
+Message-ID: <c874f9e475b9821695793cdc2f8eaa17fbf51b76.1770817884.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <cover.1770817884.git.anatoly.burakov@intel.com>
  <cover.1770817884.git.anatoly.burakov@intel.com>
@@ -60,438 +60,118 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Currently, i40e driver relies on global state to work around the fact that
-`rte_flow_validate()` is being called directly from `rte_flow_create()`,
-and it not being possible to pass state between two functions. Fix that by
-making a small wrapper around validation that will create a dummy context.
-
-Additionally, tunnel filter doesn't appear to be used by anything and so is
-omitted from the structure.
+Currently, there are multiple places where we need a default RSS key, but
+in each of those places we define it as a local variable. Make it global
+constant, and adjust all callers to use the global constant. When dealing
+with adminq, we cannot send down the constant because adminq commands do
+not guarantee const-ness, so copy RSS key into a local buffer before
+sending it down to hardware.
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- drivers/net/intel/i40e/i40e_ethdev.h |  16 ++--
- drivers/net/intel/i40e/i40e_flow.c   | 117 ++++++++++++++-------------
- 2 files changed, 68 insertions(+), 65 deletions(-)
+ drivers/net/intel/i40e/i40e_ethdev.c | 22 ++++++++++------------
+ drivers/net/intel/i40e/i40e_hash.c   | 23 +++++++++++++++++------
+ drivers/net/intel/i40e/i40e_hash.h   |  3 +++
+ 3 files changed, 30 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/net/intel/i40e/i40e_ethdev.h b/drivers/net/intel/i40e/i40e_ethdev.h
-index cab6d7e9dc..0de036f2d9 100644
---- a/drivers/net/intel/i40e/i40e_ethdev.h
-+++ b/drivers/net/intel/i40e/i40e_ethdev.h
-@@ -1304,12 +1304,14 @@ struct i40e_vf_representor {
- 
- extern const struct rte_flow_ops i40e_flow_ops;
- 
--union i40e_filter_t {
--	struct rte_eth_ethertype_filter ethertype_filter;
--	struct i40e_fdir_filter_conf fdir_filter;
--	struct rte_eth_tunnel_filter_conf tunnel_filter;
--	struct i40e_tunnel_filter_conf consistent_tunnel_filter;
--	struct i40e_rte_flow_rss_conf rss_conf;
-+struct i40e_filter_ctx {
-+	union {
-+		struct rte_eth_ethertype_filter ethertype_filter;
-+		struct i40e_fdir_filter_conf fdir_filter;
-+		struct i40e_tunnel_filter_conf consistent_tunnel_filter;
-+		struct i40e_rte_flow_rss_conf rss_conf;
-+	};
-+	enum rte_filter_type type;
- };
- 
- typedef int (*parse_filter_t)(struct rte_eth_dev *dev,
-@@ -1317,7 +1319,7 @@ typedef int (*parse_filter_t)(struct rte_eth_dev *dev,
- 			      const struct rte_flow_item pattern[],
- 			      const struct rte_flow_action actions[],
- 			      struct rte_flow_error *error,
--			      union i40e_filter_t *filter);
-+			      struct i40e_filter_ctx *filter);
- struct i40e_valid_pattern {
- 	enum rte_flow_item_type *items;
- 	parse_filter_t parse_filter;
-diff --git a/drivers/net/intel/i40e/i40e_flow.c b/drivers/net/intel/i40e/i40e_flow.c
-index 2374b9bbca..e611de0c06 100644
---- a/drivers/net/intel/i40e/i40e_flow.c
-+++ b/drivers/net/intel/i40e/i40e_flow.c
-@@ -80,37 +80,37 @@ static int i40e_flow_parse_ethertype_filter(struct rte_eth_dev *dev,
- 				    const struct rte_flow_item pattern[],
- 				    const struct rte_flow_action actions[],
- 				    struct rte_flow_error *error,
--				    union i40e_filter_t *filter);
-+				    struct i40e_filter_ctx *filter);
- static int i40e_flow_parse_fdir_filter(struct rte_eth_dev *dev,
- 				       const struct rte_flow_attr *attr,
- 				       const struct rte_flow_item pattern[],
- 				       const struct rte_flow_action actions[],
- 				       struct rte_flow_error *error,
--				       union i40e_filter_t *filter);
-+				       struct i40e_filter_ctx *filter);
- static int i40e_flow_parse_vxlan_filter(struct rte_eth_dev *dev,
- 					const struct rte_flow_attr *attr,
- 					const struct rte_flow_item pattern[],
- 					const struct rte_flow_action actions[],
- 					struct rte_flow_error *error,
--					union i40e_filter_t *filter);
-+					struct i40e_filter_ctx *filter);
- static int i40e_flow_parse_nvgre_filter(struct rte_eth_dev *dev,
- 					const struct rte_flow_attr *attr,
- 					const struct rte_flow_item pattern[],
- 					const struct rte_flow_action actions[],
- 					struct rte_flow_error *error,
--					union i40e_filter_t *filter);
-+					struct i40e_filter_ctx *filter);
- static int i40e_flow_parse_mpls_filter(struct rte_eth_dev *dev,
- 				       const struct rte_flow_attr *attr,
- 				       const struct rte_flow_item pattern[],
- 				       const struct rte_flow_action actions[],
- 				       struct rte_flow_error *error,
--				       union i40e_filter_t *filter);
-+				       struct i40e_filter_ctx *filter);
- static int i40e_flow_parse_gtp_filter(struct rte_eth_dev *dev,
- 				      const struct rte_flow_attr *attr,
- 				      const struct rte_flow_item pattern[],
- 				      const struct rte_flow_action actions[],
- 				      struct rte_flow_error *error,
--				      union i40e_filter_t *filter);
-+				      struct i40e_filter_ctx *filter);
- static int i40e_flow_destroy_ethertype_filter(struct i40e_pf *pf,
- 				      struct i40e_ethertype_filter *filter);
- static int i40e_flow_destroy_tunnel_filter(struct i40e_pf *pf,
-@@ -124,7 +124,7 @@ i40e_flow_parse_qinq_filter(struct rte_eth_dev *dev,
- 			      const struct rte_flow_item pattern[],
- 			      const struct rte_flow_action actions[],
- 			      struct rte_flow_error *error,
--			      union i40e_filter_t *filter);
-+			      struct i40e_filter_ctx *filter);
- static int
- i40e_flow_parse_qinq_pattern(struct rte_eth_dev *dev,
- 			      const struct rte_flow_item *pattern,
-@@ -136,7 +136,7 @@ static int i40e_flow_parse_l4_cloud_filter(struct rte_eth_dev *dev,
- 					   const struct rte_flow_item pattern[],
- 					   const struct rte_flow_action actions[],
- 					   struct rte_flow_error *error,
--					   union i40e_filter_t *filter);
-+					   struct i40e_filter_ctx *filter);
- const struct rte_flow_ops i40e_flow_ops = {
- 	.validate = i40e_flow_validate,
- 	.create = i40e_flow_create,
-@@ -145,8 +145,6 @@ const struct rte_flow_ops i40e_flow_ops = {
- 	.query = i40e_flow_query,
- };
- 
--static union i40e_filter_t cons_filter;
--static enum rte_filter_type cons_filter_type = RTE_ETH_FILTER_NONE;
- /* internal pattern w/o VOID items */
- struct rte_flow_item g_items[32];
- 
-@@ -1454,10 +1452,9 @@ i40e_flow_parse_ethertype_filter(struct rte_eth_dev *dev,
- 				 const struct rte_flow_item pattern[],
- 				 const struct rte_flow_action actions[],
- 				 struct rte_flow_error *error,
--				 union i40e_filter_t *filter)
-+				 struct i40e_filter_ctx *filter)
+diff --git a/drivers/net/intel/i40e/i40e_ethdev.c b/drivers/net/intel/i40e/i40e_ethdev.c
+index c8153f3351..2deb87b01b 100644
+--- a/drivers/net/intel/i40e/i40e_ethdev.c
++++ b/drivers/net/intel/i40e/i40e_ethdev.c
+@@ -9082,23 +9082,21 @@ i40e_pf_reset_rss_reta(struct i40e_pf *pf)
+ int
+ i40e_pf_reset_rss_key(struct i40e_pf *pf)
  {
--	struct rte_eth_ethertype_filter *ethertype_filter =
--		&filter->ethertype_filter;
-+	struct rte_eth_ethertype_filter *ethertype_filter = &filter->ethertype_filter;
- 	int ret;
+-	const uint8_t key_len = (I40E_PFQF_HKEY_MAX_INDEX + 1) *
+-			sizeof(uint32_t);
+-	uint8_t *rss_key;
++	uint8_t key_buf[I40E_RSS_KEY_LEN];
++	const uint8_t *rss_key;
  
- 	ret = i40e_flow_parse_ethertype_pattern(dev, pattern, error,
-@@ -1474,7 +1471,7 @@ i40e_flow_parse_ethertype_filter(struct rte_eth_dev *dev,
- 	if (ret)
- 		return ret;
+ 	/* Reset key */
+ 	rss_key = pf->dev_data->dev_conf.rx_adv_conf.rss_conf.rss_key;
+-	if (!rss_key ||
+-	    pf->dev_data->dev_conf.rx_adv_conf.rss_conf.rss_key_len < key_len) {
+-		static uint32_t rss_key_default[] = {0x6b793944,
+-			0x23504cb5, 0x5bea75b6, 0x309f4f12, 0x3dc0a2b8,
+-			0x024ddcdf, 0x339b8ca0, 0x4c4af64a, 0x34fac605,
+-			0x55d85839, 0x3a58997d, 0x2ec938e1, 0x66031581};
++	if (!rss_key || pf->dev_data->dev_conf.rx_adv_conf.rss_conf.rss_key_len < sizeof(key_buf))
++		rss_key = i40e_rss_key_default;
  
--	cons_filter_type = RTE_ETH_FILTER_ETHERTYPE;
-+	filter->type = RTE_ETH_FILTER_ETHERTYPE;
+-		rss_key = (uint8_t *)rss_key_default;
+-	}
++	/*
++	 * adminq does not guarantee const-ness of RSS key once a command is sent down, so make a
++	 * local copy.
++	 */
++	memcpy(&key_buf, rss_key, sizeof(key_buf));
  
- 	return ret;
- }
-@@ -2549,7 +2546,7 @@ i40e_flow_parse_fdir_filter(struct rte_eth_dev *dev,
- 			    const struct rte_flow_item pattern[],
- 			    const struct rte_flow_action actions[],
- 			    struct rte_flow_error *error,
--			    union i40e_filter_t *filter)
-+			    struct i40e_filter_ctx *filter)
- {
- 	struct i40e_fdir_filter_conf *fdir_filter = &filter->fdir_filter;
- 	int ret;
-@@ -2566,7 +2563,7 @@ i40e_flow_parse_fdir_filter(struct rte_eth_dev *dev,
- 	if (ret)
- 		return ret;
- 
--	cons_filter_type = RTE_ETH_FILTER_FDIR;
-+	filter->type = RTE_ETH_FILTER_FDIR;
- 
- 	return 0;
- }
-@@ -2834,10 +2831,9 @@ i40e_flow_parse_l4_cloud_filter(struct rte_eth_dev *dev,
- 				const struct rte_flow_item pattern[],
- 				const struct rte_flow_action actions[],
- 				struct rte_flow_error *error,
--				union i40e_filter_t *filter)
-+				struct i40e_filter_ctx *filter)
- {
--	struct i40e_tunnel_filter_conf *tunnel_filter =
--		&filter->consistent_tunnel_filter;
-+	struct i40e_tunnel_filter_conf *tunnel_filter = &filter->consistent_tunnel_filter;
- 	int ret;
- 
- 	ret = i40e_flow_parse_l4_pattern(pattern, error, tunnel_filter);
-@@ -2852,7 +2848,7 @@ i40e_flow_parse_l4_cloud_filter(struct rte_eth_dev *dev,
- 	if (ret)
- 		return ret;
- 
--	cons_filter_type = RTE_ETH_FILTER_TUNNEL;
-+	filter->type = RTE_ETH_FILTER_TUNNEL;
- 
- 	return ret;
- }
-@@ -3086,10 +3082,9 @@ i40e_flow_parse_vxlan_filter(struct rte_eth_dev *dev,
- 			     const struct rte_flow_item pattern[],
- 			     const struct rte_flow_action actions[],
- 			     struct rte_flow_error *error,
--			     union i40e_filter_t *filter)
-+			     struct i40e_filter_ctx *filter)
- {
--	struct i40e_tunnel_filter_conf *tunnel_filter =
--		&filter->consistent_tunnel_filter;
-+	struct i40e_tunnel_filter_conf *tunnel_filter = &filter->consistent_tunnel_filter;
- 	int ret;
- 
- 	ret = i40e_flow_parse_vxlan_pattern(dev, pattern,
-@@ -3105,7 +3100,7 @@ i40e_flow_parse_vxlan_filter(struct rte_eth_dev *dev,
- 	if (ret)
- 		return ret;
- 
--	cons_filter_type = RTE_ETH_FILTER_TUNNEL;
-+	filter->type = RTE_ETH_FILTER_TUNNEL;
- 
- 	return ret;
- }
-@@ -3338,10 +3333,9 @@ i40e_flow_parse_nvgre_filter(struct rte_eth_dev *dev,
- 			     const struct rte_flow_item pattern[],
- 			     const struct rte_flow_action actions[],
- 			     struct rte_flow_error *error,
--			     union i40e_filter_t *filter)
-+			     struct i40e_filter_ctx *filter)
- {
--	struct i40e_tunnel_filter_conf *tunnel_filter =
--		&filter->consistent_tunnel_filter;
-+	struct i40e_tunnel_filter_conf *tunnel_filter = &filter->consistent_tunnel_filter;
- 	int ret;
- 
- 	ret = i40e_flow_parse_nvgre_pattern(dev, pattern,
-@@ -3357,7 +3351,7 @@ i40e_flow_parse_nvgre_filter(struct rte_eth_dev *dev,
- 	if (ret)
- 		return ret;
- 
--	cons_filter_type = RTE_ETH_FILTER_TUNNEL;
-+	filter->type = RTE_ETH_FILTER_TUNNEL;
- 
- 	return ret;
- }
-@@ -3495,10 +3489,9 @@ i40e_flow_parse_mpls_filter(struct rte_eth_dev *dev,
- 			    const struct rte_flow_item pattern[],
- 			    const struct rte_flow_action actions[],
- 			    struct rte_flow_error *error,
--			    union i40e_filter_t *filter)
-+			    struct i40e_filter_ctx *filter)
- {
--	struct i40e_tunnel_filter_conf *tunnel_filter =
--		&filter->consistent_tunnel_filter;
-+	struct i40e_tunnel_filter_conf *tunnel_filter = &filter->consistent_tunnel_filter;
- 	int ret;
- 
- 	ret = i40e_flow_parse_mpls_pattern(dev, pattern,
-@@ -3514,7 +3507,7 @@ i40e_flow_parse_mpls_filter(struct rte_eth_dev *dev,
- 	if (ret)
- 		return ret;
- 
--	cons_filter_type = RTE_ETH_FILTER_TUNNEL;
-+	filter->type = RTE_ETH_FILTER_TUNNEL;
- 
- 	return ret;
- }
-@@ -3648,10 +3641,9 @@ i40e_flow_parse_gtp_filter(struct rte_eth_dev *dev,
- 			   const struct rte_flow_item pattern[],
- 			   const struct rte_flow_action actions[],
- 			   struct rte_flow_error *error,
--			   union i40e_filter_t *filter)
-+			   struct i40e_filter_ctx *filter)
- {
--	struct i40e_tunnel_filter_conf *tunnel_filter =
--		&filter->consistent_tunnel_filter;
-+	struct i40e_tunnel_filter_conf *tunnel_filter = &filter->consistent_tunnel_filter;
- 	int ret;
- 
- 	ret = i40e_flow_parse_gtp_pattern(dev, pattern,
-@@ -3667,7 +3659,7 @@ i40e_flow_parse_gtp_filter(struct rte_eth_dev *dev,
- 	if (ret)
- 		return ret;
- 
--	cons_filter_type = RTE_ETH_FILTER_TUNNEL;
-+	filter->type = RTE_ETH_FILTER_TUNNEL;
- 
- 	return ret;
- }
-@@ -3766,10 +3758,9 @@ i40e_flow_parse_qinq_filter(struct rte_eth_dev *dev,
- 			      const struct rte_flow_item pattern[],
- 			      const struct rte_flow_action actions[],
- 			      struct rte_flow_error *error,
--			      union i40e_filter_t *filter)
-+			      struct i40e_filter_ctx *filter)
- {
--	struct i40e_tunnel_filter_conf *tunnel_filter =
--		&filter->consistent_tunnel_filter;
-+	struct i40e_tunnel_filter_conf *tunnel_filter = &filter->consistent_tunnel_filter;
- 	int ret;
- 
- 	ret = i40e_flow_parse_qinq_pattern(dev, pattern,
-@@ -3785,16 +3776,17 @@ i40e_flow_parse_qinq_filter(struct rte_eth_dev *dev,
- 	if (ret)
- 		return ret;
- 
--	cons_filter_type = RTE_ETH_FILTER_TUNNEL;
-+	filter->type = RTE_ETH_FILTER_TUNNEL;
- 
- 	return ret;
+-	return i40e_set_rss_key(pf->main_vsi, rss_key, key_len);
++	return i40e_set_rss_key(pf->main_vsi, key_buf, sizeof(key_buf));
  }
  
  static int
--i40e_flow_validate(struct rte_eth_dev *dev,
-+i40e_flow_check(struct rte_eth_dev *dev,
- 		   const struct rte_flow_attr *attr,
- 		   const struct rte_flow_item pattern[],
- 		   const struct rte_flow_action actions[],
-+		   struct i40e_filter_ctx *filter_ctx,
- 		   struct rte_flow_error *error)
- {
- 	struct rte_flow_item *items; /* internal pattern w/o VOID items */
-@@ -3823,7 +3815,6 @@ i40e_flow_validate(struct rte_eth_dev *dev,
- 				   NULL, "NULL attribute.");
- 		return -rte_errno;
+diff --git a/drivers/net/intel/i40e/i40e_hash.c b/drivers/net/intel/i40e/i40e_hash.c
+index 3149682197..f20b40e7d0 100644
+--- a/drivers/net/intel/i40e/i40e_hash.c
++++ b/drivers/net/intel/i40e/i40e_hash.c
+@@ -233,6 +233,22 @@ struct i40e_hash_match_pattern {
+ 					RTE_ETH_RSS_NONFRAG_IPV6_UDP | \
+ 					RTE_ETH_RSS_NONFRAG_IPV6_SCTP)
+ 
++const uint8_t i40e_rss_key_default[] = {
++	0x44, 0x39, 0x79, 0x6b,
++	0xb5, 0x4c, 0x50, 0x23,
++	0xb6, 0x75, 0xea, 0x5b,
++	0x12, 0x4f, 0x9f, 0x30,
++	0xb8, 0xa2, 0xc0, 0x3d,
++	0xdf, 0xdc, 0x4d, 0x02,
++	0xa0, 0x8c, 0x9b, 0x33,
++	0x4a, 0xf6, 0x4a, 0x4c,
++	0x05, 0xc6, 0xfa, 0x34,
++	0x39, 0x58, 0xd8, 0x55,
++	0x7d, 0x99, 0x58, 0x3a,
++	0xe1, 0x38, 0xc9, 0x2e,
++	0x81, 0x15, 0x03, 0x66
++};
++
+ /* Current supported patterns and RSS types.
+  * All items that have the same pattern types are together.
+  */
+@@ -910,17 +926,12 @@ i40e_hash_parse_key(const struct rte_flow_action_rss *rss_act,
+ 	const uint8_t *key = rss_act->key;
+ 
+ 	if (!key || rss_act->key_len != sizeof(rss_conf->key)) {
+-		const uint32_t rss_key_default[] = {0x6b793944,
+-			0x23504cb5, 0x5bea75b6, 0x309f4f12, 0x3dc0a2b8,
+-			0x024ddcdf, 0x339b8ca0, 0x4c4af64a, 0x34fac605,
+-			0x55d85839, 0x3a58997d, 0x2ec938e1, 0x66031581};
+-
+ 		if (rss_act->key_len != sizeof(rss_conf->key))
+ 			PMD_DRV_LOG(WARNING,
+ 				    "RSS key length invalid, must be %u bytes, now set key to default",
+ 				    (uint32_t)sizeof(rss_conf->key));
+ 
+-		memcpy(rss_conf->key, rss_key_default, sizeof(rss_conf->key));
++		memcpy(rss_conf->key, i40e_rss_key_default, sizeof(rss_conf->key));
+ 	} else {
+ 		memcpy(rss_conf->key, key, sizeof(rss_conf->key));
  	}
--	memset(&cons_filter, 0, sizeof(cons_filter));
+diff --git a/drivers/net/intel/i40e/i40e_hash.h b/drivers/net/intel/i40e/i40e_hash.h
+index ff8c91c030..2513d84565 100644
+--- a/drivers/net/intel/i40e/i40e_hash.h
++++ b/drivers/net/intel/i40e/i40e_hash.h
+@@ -27,6 +27,9 @@ int i40e_hash_filter_destroy(struct i40e_pf *pf,
+ 			     const struct i40e_rss_filter *rss_filter);
+ int i40e_hash_filter_flush(struct i40e_pf *pf);
  
- 	/* Get the non-void item of action */
- 	while ((actions + i)->type == RTE_FLOW_ACTION_TYPE_VOID)
-@@ -3834,9 +3825,8 @@ i40e_flow_validate(struct rte_eth_dev *dev,
- 		if (ret)
- 			return ret;
- 
--		cons_filter_type = RTE_ETH_FILTER_HASH;
--		return i40e_hash_parse(dev, pattern, actions + i,
--				       &cons_filter.rss_conf, error);
-+		filter_ctx->type = RTE_ETH_FILTER_HASH;
-+		return i40e_hash_parse(dev, pattern, actions + i, &filter_ctx->rss_conf, error);
- 	}
- 
- 	i = 0;
-@@ -3878,8 +3868,7 @@ i40e_flow_validate(struct rte_eth_dev *dev,
- 		}
- 
- 		if (parse_filter)
--			ret = parse_filter(dev, attr, items, actions,
--					   error, &cons_filter);
-+			ret = parse_filter(dev, attr, items, actions, error, filter_ctx);
- 
- 		flag = true;
- 	} while ((ret < 0) && (i < RTE_DIM(i40e_supported_patterns)));
-@@ -3890,6 +3879,19 @@ i40e_flow_validate(struct rte_eth_dev *dev,
- 	return ret;
++#define I40E_RSS_KEY_LEN ((I40E_PFQF_HKEY_MAX_INDEX + 1) * sizeof(uint32_t))
++extern const uint8_t i40e_rss_key_default[I40E_RSS_KEY_LEN];
++
+ #ifdef __cplusplus
  }
- 
-+static int
-+i40e_flow_validate(struct rte_eth_dev *dev,
-+		   const struct rte_flow_attr *attr,
-+		   const struct rte_flow_item pattern[],
-+		   const struct rte_flow_action actions[],
-+		   struct rte_flow_error *error)
-+{
-+	/* creates dummy context */
-+	struct i40e_filter_ctx filter_ctx = {0};
-+
-+	return i40e_flow_check(dev, attr, pattern, actions, &filter_ctx, error);
-+}
-+
- static struct rte_flow *
- i40e_flow_create(struct rte_eth_dev *dev,
- 		 const struct rte_flow_attr *attr,
-@@ -3898,15 +3900,16 @@ i40e_flow_create(struct rte_eth_dev *dev,
- 		 struct rte_flow_error *error)
- {
- 	struct i40e_pf *pf = I40E_DEV_PRIVATE_TO_PF(dev->data->dev_private);
-+	struct i40e_filter_ctx filter_ctx = {0};
- 	struct rte_flow *flow = NULL;
- 	struct i40e_fdir_info *fdir_info = &pf->fdir;
- 	int ret;
- 
--	ret = i40e_flow_validate(dev, attr, pattern, actions, error);
-+	ret = i40e_flow_check(dev, attr, pattern, actions, &filter_ctx, error);
- 	if (ret < 0)
- 		return NULL;
- 
--	if (cons_filter_type == RTE_ETH_FILTER_FDIR) {
-+	if (filter_ctx.type == RTE_ETH_FILTER_FDIR) {
- 		/* if this is the first time we're creating an fdir flow */
- 		if (pf->fdir.fdir_vsi == NULL) {
- 			ret = i40e_fdir_setup(pf);
-@@ -3947,18 +3950,16 @@ i40e_flow_create(struct rte_eth_dev *dev,
- 		}
- 	}
- 
--	switch (cons_filter_type) {
-+	switch (filter_ctx.type) {
- 	case RTE_ETH_FILTER_ETHERTYPE:
--		ret = i40e_ethertype_filter_set(pf,
--					&cons_filter.ethertype_filter, 1);
-+		ret = i40e_ethertype_filter_set(pf, &filter_ctx.ethertype_filter, 1);
- 		if (ret)
- 			goto free_flow;
- 		flow->rule = TAILQ_LAST(&pf->ethertype.ethertype_list,
- 					i40e_ethertype_filter_list);
- 		break;
- 	case RTE_ETH_FILTER_FDIR:
--		ret = i40e_flow_add_del_fdir_filter(dev,
--			       &cons_filter.fdir_filter, 1);
-+		ret = i40e_flow_add_del_fdir_filter(dev, &filter_ctx.fdir_filter, 1);
- 		if (ret)
- 			goto free_flow;
- 		flow->rule = TAILQ_LAST(&pf->fdir.fdir_list,
-@@ -3966,14 +3967,14 @@ i40e_flow_create(struct rte_eth_dev *dev,
- 		break;
- 	case RTE_ETH_FILTER_TUNNEL:
- 		ret = i40e_dev_consistent_tunnel_filter_set(pf,
--			    &cons_filter.consistent_tunnel_filter, 1);
-+				&filter_ctx.consistent_tunnel_filter, 1);
- 		if (ret)
- 			goto free_flow;
- 		flow->rule = TAILQ_LAST(&pf->tunnel.tunnel_list,
- 					i40e_tunnel_filter_list);
- 		break;
- 	case RTE_ETH_FILTER_HASH:
--		ret = i40e_hash_filter_create(pf, &cons_filter.rss_conf);
-+		ret = i40e_hash_filter_create(pf, &filter_ctx.rss_conf);
- 		if (ret)
- 			goto free_flow;
- 		flow->rule = TAILQ_LAST(&pf->rss_config_list,
-@@ -3983,7 +3984,7 @@ i40e_flow_create(struct rte_eth_dev *dev,
- 		goto free_flow;
- 	}
- 
--	flow->filter_type = cons_filter_type;
-+	flow->filter_type = filter_ctx.type;
- 	TAILQ_INSERT_TAIL(&pf->flow_list, flow, node);
- 	return flow;
- 
-@@ -3992,7 +3993,7 @@ i40e_flow_create(struct rte_eth_dev *dev,
- 			   RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
- 			   "Failed to create flow.");
- 
--	if (cons_filter_type != RTE_ETH_FILTER_FDIR)
-+	if (filter_ctx.type != RTE_ETH_FILTER_FDIR)
- 		rte_free(flow);
- 	else
- 		i40e_fdir_entry_pool_put(fdir_info, flow);
+ #endif
 -- 
 2.47.3
 
