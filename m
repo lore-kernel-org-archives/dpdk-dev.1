@@ -2,46 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4E7EE9E30A
-	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Feb 2026 13:49:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E21FE9E30A
+	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Feb 2026 13:49:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 00E0A40608;
+	by mails.dpdk.org (Postfix) with ESMTP id E166C40648;
 	Wed, 11 Feb 2026 14:49:42 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
- by mails.dpdk.org (Postfix) with ESMTP id 04DC840268
- for <dev@dpdk.org>; Wed, 11 Feb 2026 14:49:38 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 42C464026A
+ for <dev@dpdk.org>; Wed, 11 Feb 2026 14:49:39 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
  t=1770817779; x=1802353779;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=B7YH2FBdReGv+TAcFRpsbEVVUyPkmaiKY+8nHAF6TOM=;
- b=bECuOKSuy05+dKD5RVJ4TaTObFISQf3IULUkyz9Y5otmb5BRbTBfvmgZ
- NRk3HyKqCO2jHPzsXMypJf0ejaD/6xsHTReomsrx3aCZAwglTCvcRG3XW
- 2Ex4zvNGNp9CIF6Jo99MxlhKnkItdw5mzi01oE3zpN5uugdZvXnfGXxfN
- yblMaQgqlUlp+CVz2vzOBdsbZfFRgAp2GmLj9baOYWzymbz5x7e/XE9Dy
- f6DGAvm0xFhRDxNoVnXD9PaNDWvXPEjrOPUpPyTWJPu4YxudsTulJzKTP
- HAXHe37+mukLempo0li/UYt/Wi7KR83ki1Mbut9rZGP8jeIgKQ9wXmU3I g==;
-X-CSE-ConnectionGUID: owI4t13gTKOYeropKUiZXw==
-X-CSE-MsgGUID: xyR0Z582SjuP76Tw5rEM3A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11698"; a="83332506"
-X-IronPort-AV: E=Sophos;i="6.21,283,1763452800"; d="scan'208";a="83332506"
+ bh=o6JqKM4AAQ5duugMct6DYXwEb0qxr341xsPCQOgNbxk=;
+ b=Zye8opw3JgNvTtqjlvDmxQUdKE9TfGMgepUXZO9h1KTSC0eAq2qvojMF
+ uMwZbirl6NVNbY7urOJDvXa/jO1DIoNr/m5Kb1YhCfRCp5Vl3UAzQX6/L
+ X7GqnC5XSRS05VtfDrejleyx1RDlf+Fu7fcRYpXmND26ZJsFvLySRZrzf
+ uH2M453KrfQM9Y1oEGkSinCkRAlJaZEgwAMuyTWqWtqgKvE26QODLJiGl
+ 5s1dGT3umVhTdEqjYM95yabQ8ub9TBhp4H+ZSFaQNoZk/x5JTa7fNspNy
+ BR6oogElajK8956IMVaz5BSbwLTdBHEoKmbScXm11o6O8CNjw5s/sD/zb Q==;
+X-CSE-ConnectionGUID: ZQw5Qd6fRraGqrs2bJlfHA==
+X-CSE-MsgGUID: oXiIGldhQh2OSLv1HA9Nww==
+X-IronPort-AV: E=McAfee;i="6800,10657,11698"; a="83332511"
+X-IronPort-AV: E=Sophos;i="6.21,283,1763452800"; d="scan'208";a="83332511"
 Received: from fmviesa003.fm.intel.com ([10.60.135.143])
  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 11 Feb 2026 05:49:29 -0800
-X-CSE-ConnectionGUID: gvQUIGYRRVCKCS3hBSMP1Q==
-X-CSE-MsgGUID: XwQ3ZrnET926tAHBdKjNeQ==
+ 11 Feb 2026 05:49:31 -0800
+X-CSE-ConnectionGUID: TyHqWsH2TiuJA1wciFYJLQ==
+X-CSE-MsgGUID: g/CIhO0DQSympQx71r8mnA==
 X-ExtLoop1: 1
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by fmviesa003.fm.intel.com with ESMTP; 11 Feb 2026 05:49:28 -0800
+ by fmviesa003.fm.intel.com with ESMTP; 11 Feb 2026 05:49:30 -0800
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org, Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
- Piotr Kwapulinski <piotr.kwapulinski@intel.com>,
- Jedrzej Jagielski <jedrzej.jagielski@intel.com>,
- Carolyn Wyborny <carolyn.wyborny@intel.com>
-Subject: [PATCH v4 1/9] net/ixgbe: add missing E610 MAC type checks
-Date: Wed, 11 Feb 2026 13:49:08 +0000
-Message-ID: <00e9b9a24f3984857d568aad04335a01e6834850.1770817694.git.anatoly.burakov@intel.com>
+ Declan Doherty <declan.doherty@intel.com>,
+ Radu Nicolau <radu.nicolau@intel.com>
+Subject: [PATCH v4 2/9] net/ixgbe: fix memory leak in security flows
+Date: Wed, 11 Feb 2026 13:49:09 +0000
+Message-ID: <27473234ede7bb1551ad61cd69e3ed34f120fed7.1770817694.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <cover.1770817694.git.anatoly.burakov@intel.com>
  <cover.1770817694.git.anatoly.burakov@intel.com>
@@ -61,265 +60,72 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-A few E610 MAC type checks were missing (verified using E610 datasheet).
+Currently, security flows are implemented as a special case and do not go
+through the normal flow create/destroy infrastructure. However, because of
+that, it is impossible to destroy such flows once created. Fix it by adding
+a flag to rte_flow indicating that it is a security flow, so that it can be
+destroyed later.
 
-Fixes: 316637762a5f ("net/ixgbe/base: enable E610 device")
+Fixes: 9a0752f498d2 ("net/ixgbe: enable inline IPsec")
+Cc: radu.nicolau@intel.com
 Cc: stable@dpdk.org
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- drivers/net/intel/ixgbe/ixgbe_bypass_api.h |  8 +-----
- drivers/net/intel/ixgbe/ixgbe_ethdev.c     | 29 ++++++++++++++--------
- drivers/net/intel/ixgbe/ixgbe_fdir.c       |  8 +++---
- drivers/net/intel/ixgbe/ixgbe_flow.c       |  3 ++-
- drivers/net/intel/ixgbe/ixgbe_pf.c         |  5 ++--
- drivers/net/intel/ixgbe/ixgbe_rxtx.c       | 14 +++++++----
- 6 files changed, 39 insertions(+), 28 deletions(-)
+ drivers/net/intel/ixgbe/ixgbe_ethdev.h |  2 ++
+ drivers/net/intel/ixgbe/ixgbe_flow.c   | 11 ++++++++++-
+ 2 files changed, 12 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/intel/ixgbe/ixgbe_bypass_api.h b/drivers/net/intel/ixgbe/ixgbe_bypass_api.h
-index 6ef965dbb6..eb73bc8b17 100644
---- a/drivers/net/intel/ixgbe/ixgbe_bypass_api.h
-+++ b/drivers/net/intel/ixgbe/ixgbe_bypass_api.h
-@@ -40,16 +40,10 @@ static s32 ixgbe_bypass_rw_generic(struct ixgbe_hw *hw, u32 cmd, u32 *status)
- 		dir_sdo = IXGBE_ESDP_SDP6_DIR;
- 		break;
- 	case ixgbe_mac_X540:
--		sck = IXGBE_ESDP_SDP2;
--		sdi = IXGBE_ESDP_SDP0;
--		sdo = IXGBE_ESDP_SDP1;
--		dir_sck = IXGBE_ESDP_SDP2_DIR;
--		dir_sdi = IXGBE_ESDP_SDP0_DIR;
--		dir_sdo = IXGBE_ESDP_SDP1_DIR;
--		break;
- 	case ixgbe_mac_X550:
- 	case ixgbe_mac_X550EM_x:
- 	case ixgbe_mac_X550EM_a:
-+	case ixgbe_mac_E610:
- 		sck = IXGBE_ESDP_SDP2;
- 		sdi = IXGBE_ESDP_SDP0;
- 		sdo = IXGBE_ESDP_SDP1;
-diff --git a/drivers/net/intel/ixgbe/ixgbe_ethdev.c b/drivers/net/intel/ixgbe/ixgbe_ethdev.c
-index 89a799762f..11500a923c 100644
---- a/drivers/net/intel/ixgbe/ixgbe_ethdev.c
-+++ b/drivers/net/intel/ixgbe/ixgbe_ethdev.c
-@@ -911,7 +911,8 @@ ixgbe_dev_queue_stats_mapping_set(struct rte_eth_dev *eth_dev,
- 		(hw->mac.type != ixgbe_mac_X540) &&
- 		(hw->mac.type != ixgbe_mac_X550) &&
- 		(hw->mac.type != ixgbe_mac_X550EM_x) &&
--		(hw->mac.type != ixgbe_mac_X550EM_a))
-+		(hw->mac.type != ixgbe_mac_X550EM_a) &&
-+		(hw->mac.type != ixgbe_mac_E610))
- 		return -ENOSYS;
+diff --git a/drivers/net/intel/ixgbe/ixgbe_ethdev.h b/drivers/net/intel/ixgbe/ixgbe_ethdev.h
+index 5393c81363..5dbd659941 100644
+--- a/drivers/net/intel/ixgbe/ixgbe_ethdev.h
++++ b/drivers/net/intel/ixgbe/ixgbe_ethdev.h
+@@ -359,6 +359,8 @@ struct ixgbe_l2_tn_info {
  
- 	PMD_INIT_LOG(DEBUG, "Setting port %d, %s queue_id %d to stat index %d",
-@@ -2134,10 +2135,11 @@ ixgbe_vlan_hw_extend_enable(struct rte_eth_dev *dev)
- 	ctrl |= IXGBE_EXTENDED_VLAN;
- 	IXGBE_WRITE_REG(hw, IXGBE_CTRL_EXT, ctrl);
+ struct rte_flow {
+ 	enum rte_filter_type filter_type;
++	/* security flows are not rte_filter_type */
++	bool is_security;
+ 	void *rule;
+ };
  
--	/* Clear pooling mode of PFVTCTL. It's required by X550. */
-+	/* Clear pooling mode of PFVTCTL. It's required by X550 and E610. */
- 	if (hw->mac.type == ixgbe_mac_X550 ||
- 	    hw->mac.type == ixgbe_mac_X550EM_x ||
--	    hw->mac.type == ixgbe_mac_X550EM_a) {
-+	    hw->mac.type == ixgbe_mac_X550EM_a ||
-+	    hw->mac.type == ixgbe_mac_E610) {
- 		ctrl = IXGBE_READ_REG(hw, IXGBE_VT_CTL);
- 		ctrl &= ~IXGBE_VT_CTL_POOLING_MODE_MASK;
- 		IXGBE_WRITE_REG(hw, IXGBE_VT_CTL, ctrl);
-@@ -2830,6 +2832,7 @@ ixgbe_dev_start(struct rte_eth_dev *dev)
- 		case ixgbe_mac_X550:
- 		case ixgbe_mac_X550EM_x:
- 		case ixgbe_mac_X550EM_a:
-+		case ixgbe_mac_E610:
- 			speed = IXGBE_LINK_SPEED_X550_AUTONEG;
- 			break;
- 		default:
-@@ -4046,10 +4049,11 @@ ixgbe_dev_info_get(struct rte_eth_dev *dev, struct rte_eth_dev_info *dev_info)
- 	if (hw->mac.type == ixgbe_mac_X540 ||
- 	    hw->mac.type == ixgbe_mac_X540_vf ||
- 	    hw->mac.type == ixgbe_mac_X550 ||
--	    hw->mac.type == ixgbe_mac_X550_vf) {
-+	    hw->mac.type == ixgbe_mac_X550_vf ||
-+	    hw->mac.type == ixgbe_mac_E610) {
- 		dev_info->speed_capa |= RTE_ETH_LINK_SPEED_100M;
- 	}
--	if (hw->mac.type == ixgbe_mac_X550) {
-+	if (hw->mac.type == ixgbe_mac_X550 || hw->mac.type == ixgbe_mac_E610) {
- 		dev_info->speed_capa |= RTE_ETH_LINK_SPEED_2_5G;
- 		dev_info->speed_capa |= RTE_ETH_LINK_SPEED_5G;
- 	}
-@@ -7665,7 +7669,8 @@ ixgbe_update_e_tag_eth_type(struct ixgbe_hw *hw,
- 
- 	if (hw->mac.type != ixgbe_mac_X550 &&
- 	    hw->mac.type != ixgbe_mac_X550EM_x &&
--	    hw->mac.type != ixgbe_mac_X550EM_a) {
-+	    hw->mac.type != ixgbe_mac_X550EM_a &&
-+	    hw->mac.type != ixgbe_mac_E610) {
- 		return -ENOTSUP;
- 	}
- 
-@@ -7686,7 +7691,8 @@ ixgbe_e_tag_enable(struct ixgbe_hw *hw)
- 
- 	if (hw->mac.type != ixgbe_mac_X550 &&
- 	    hw->mac.type != ixgbe_mac_X550EM_x &&
--	    hw->mac.type != ixgbe_mac_X550EM_a) {
-+	    hw->mac.type != ixgbe_mac_X550EM_a &&
-+	    hw->mac.type != ixgbe_mac_E610) {
- 		return -ENOTSUP;
- 	}
- 
-@@ -7709,7 +7715,8 @@ ixgbe_e_tag_filter_del(struct rte_eth_dev *dev,
- 
- 	if (hw->mac.type != ixgbe_mac_X550 &&
- 	    hw->mac.type != ixgbe_mac_X550EM_x &&
--	    hw->mac.type != ixgbe_mac_X550EM_a) {
-+	    hw->mac.type != ixgbe_mac_X550EM_a &&
-+	    hw->mac.type != ixgbe_mac_E610) {
- 		return -ENOTSUP;
- 	}
- 
-@@ -7745,7 +7752,8 @@ ixgbe_e_tag_filter_add(struct rte_eth_dev *dev,
- 
- 	if (hw->mac.type != ixgbe_mac_X550 &&
- 	    hw->mac.type != ixgbe_mac_X550EM_x &&
--	    hw->mac.type != ixgbe_mac_X550EM_a) {
-+	    hw->mac.type != ixgbe_mac_X550EM_a &&
-+	    hw->mac.type != ixgbe_mac_E610) {
- 		return -ENOTSUP;
- 	}
- 
-@@ -7932,7 +7940,8 @@ ixgbe_e_tag_forwarding_en_dis(struct rte_eth_dev *dev, bool en)
- 
- 	if (hw->mac.type != ixgbe_mac_X550 &&
- 	    hw->mac.type != ixgbe_mac_X550EM_x &&
--	    hw->mac.type != ixgbe_mac_X550EM_a) {
-+	    hw->mac.type != ixgbe_mac_X550EM_a &&
-+	    hw->mac.type != ixgbe_mac_E610) {
- 		return -ENOTSUP;
- 	}
- 
-diff --git a/drivers/net/intel/ixgbe/ixgbe_fdir.c b/drivers/net/intel/ixgbe/ixgbe_fdir.c
-index 97ef185583..0bdfbd411a 100644
---- a/drivers/net/intel/ixgbe/ixgbe_fdir.c
-+++ b/drivers/net/intel/ixgbe/ixgbe_fdir.c
-@@ -650,10 +650,11 @@ ixgbe_fdir_configure(struct rte_eth_dev *dev)
- 		hw->mac.type != ixgbe_mac_E610)
- 		return -ENOSYS;
- 
--	/* x550 supports mac-vlan and tunnel mode but other NICs not */
-+	/* x550 and E610 supports mac-vlan and tunnel mode but other NICs not */
- 	if (hw->mac.type != ixgbe_mac_X550 &&
- 	    hw->mac.type != ixgbe_mac_X550EM_x &&
- 	    hw->mac.type != ixgbe_mac_X550EM_a &&
-+	    hw->mac.type != ixgbe_mac_E610 &&
- 	    mode != RTE_FDIR_MODE_SIGNATURE &&
- 	    mode != RTE_FDIR_MODE_PERFECT)
- 		return -ENOSYS;
-@@ -1130,7 +1131,7 @@ ixgbe_fdir_filter_program(struct rte_eth_dev *dev,
- 		return -ENOTSUP;
- 
- 	/*
--	 * Sanity check for x550.
-+	 * Sanity check for x550 and E610.
- 	 * When adding a new filter with flow type set to IPv4,
- 	 * the flow director mask should be configed before,
- 	 * and the L4 protocol and ports are masked.
-@@ -1138,7 +1139,8 @@ ixgbe_fdir_filter_program(struct rte_eth_dev *dev,
- 	if ((!del) &&
- 	    (hw->mac.type == ixgbe_mac_X550 ||
- 	     hw->mac.type == ixgbe_mac_X550EM_x ||
--	     hw->mac.type == ixgbe_mac_X550EM_a) &&
-+	     hw->mac.type == ixgbe_mac_X550EM_a ||
-+	     hw->mac.type == ixgbe_mac_E610) &&
- 	    (rule->ixgbe_fdir.formatted.flow_type ==
- 	     IXGBE_ATR_FLOW_TYPE_IPV4 ||
- 	     rule->ixgbe_fdir.formatted.flow_type ==
 diff --git a/drivers/net/intel/ixgbe/ixgbe_flow.c b/drivers/net/intel/ixgbe/ixgbe_flow.c
-index 3b68d820ca..27d2ba1132 100644
+index 27d2ba1132..066a69eb12 100644
 --- a/drivers/net/intel/ixgbe/ixgbe_flow.c
 +++ b/drivers/net/intel/ixgbe/ixgbe_flow.c
-@@ -1361,7 +1361,8 @@ ixgbe_parse_l2_tn_filter(struct rte_eth_dev *dev,
- 
- 	if (hw->mac.type != ixgbe_mac_X550 &&
- 		hw->mac.type != ixgbe_mac_X550EM_x &&
--		hw->mac.type != ixgbe_mac_X550EM_a) {
-+		hw->mac.type != ixgbe_mac_X550EM_a &&
-+		hw->mac.type != ixgbe_mac_E610) {
- 		memset(l2_tn_filter, 0, sizeof(struct ixgbe_l2_tunnel_conf));
- 		rte_flow_error_set(error, EINVAL,
- 			RTE_FLOW_ERROR_TYPE_ITEM,
-diff --git a/drivers/net/intel/ixgbe/ixgbe_pf.c b/drivers/net/intel/ixgbe/ixgbe_pf.c
-index e967fe5e48..d9a775f99a 100644
---- a/drivers/net/intel/ixgbe/ixgbe_pf.c
-+++ b/drivers/net/intel/ixgbe/ixgbe_pf.c
-@@ -558,11 +558,12 @@ ixgbe_set_vf_lpe(struct rte_eth_dev *dev, uint32_t vf, uint32_t *msgbuf)
- 	uint32_t max_frs;
- 	uint32_t hlreg0;
- 
--	/* X540 and X550 support jumbo frames in IOV mode */
-+	/* X540, X550, and E610 support jumbo frames in IOV mode */
- 	if (hw->mac.type != ixgbe_mac_X540 &&
- 		hw->mac.type != ixgbe_mac_X550 &&
- 		hw->mac.type != ixgbe_mac_X550EM_x &&
--		hw->mac.type != ixgbe_mac_X550EM_a) {
-+		hw->mac.type != ixgbe_mac_X550EM_a &&
-+		hw->mac.type != ixgbe_mac_E610) {
- 		struct ixgbe_vf_info *vfinfo =
- 			*IXGBE_DEV_PRIVATE_TO_P_VFDATA(dev->data->dev_private);
- 
-diff --git a/drivers/net/intel/ixgbe/ixgbe_rxtx.c b/drivers/net/intel/ixgbe/ixgbe_rxtx.c
-index 0af04c9b0d..2857c19355 100644
---- a/drivers/net/intel/ixgbe/ixgbe_rxtx.c
-+++ b/drivers/net/intel/ixgbe/ixgbe_rxtx.c
-@@ -2707,7 +2707,8 @@ ixgbe_get_tx_port_offloads(struct rte_eth_dev *dev)
- 
- 	if (hw->mac.type == ixgbe_mac_X550 ||
- 	    hw->mac.type == ixgbe_mac_X550EM_x ||
--	    hw->mac.type == ixgbe_mac_X550EM_a)
-+	    hw->mac.type == ixgbe_mac_X550EM_a ||
-+	    hw->mac.type == ixgbe_mac_E610)
- 		tx_offload_capa |= RTE_ETH_TX_OFFLOAD_OUTER_IPV4_CKSUM;
+@@ -3062,8 +3062,10 @@ ixgbe_flow_create(struct rte_eth_dev *dev,
  
  #ifdef RTE_LIB_SECURITY
-@@ -3166,7 +3167,8 @@ ixgbe_get_rx_port_offloads(struct rte_eth_dev *dev)
+ 	/* ESP flow not really a flow*/
+-	if (ntuple_filter.proto == IPPROTO_ESP)
++	if (ntuple_filter.proto == IPPROTO_ESP) {
++		flow->is_security = true;
+ 		return flow;
++	}
+ #endif
  
- 	if (hw->mac.type == ixgbe_mac_X550 ||
- 	    hw->mac.type == ixgbe_mac_X550EM_x ||
--	    hw->mac.type == ixgbe_mac_X550EM_a)
-+	    hw->mac.type == ixgbe_mac_X550EM_a ||
-+	    hw->mac.type == ixgbe_mac_E610)
- 		offloads |= RTE_ETH_RX_OFFLOAD_OUTER_IPV4_CKSUM;
+ 	if (!ret) {
+@@ -3350,6 +3352,12 @@ ixgbe_flow_destroy(struct rte_eth_dev *dev,
+ 		IXGBE_DEV_PRIVATE_TO_FDIR_INFO(dev->data->dev_private);
+ 	struct ixgbe_rss_conf_ele *rss_filter_ptr;
  
- #ifdef RTE_LIB_SECURITY
-@@ -3246,7 +3248,7 @@ ixgbe_dev_rx_queue_setup(struct rte_eth_dev *dev,
- 
- 	/*
- 	 * The packet type in RX descriptor is different for different NICs.
--	 * Some bits are used for x550 but reserved for other NICS.
-+	 * Some bits are used for x550 and E610 but reserved for other NICS.
- 	 * So set different masks for different NICs.
- 	 */
- 	if (hw->mac.type == ixgbe_mac_X550 ||
-@@ -3254,7 +3256,8 @@ ixgbe_dev_rx_queue_setup(struct rte_eth_dev *dev,
- 	    hw->mac.type == ixgbe_mac_X550EM_a ||
- 	    hw->mac.type == ixgbe_mac_X550_vf ||
- 	    hw->mac.type == ixgbe_mac_X550EM_x_vf ||
--	    hw->mac.type == ixgbe_mac_X550EM_a_vf)
-+	    hw->mac.type == ixgbe_mac_X550EM_a_vf ||
-+	    hw->mac.type == ixgbe_mac_E610)
- 		rxq->pkt_type_mask = IXGBE_PACKET_TYPE_MASK_X550;
- 	else
- 		rxq->pkt_type_mask = IXGBE_PACKET_TYPE_MASK_82599;
-@@ -3506,7 +3509,8 @@ ixgbe_dev_clear_queues(struct rte_eth_dev *dev)
- 		if (hw->mac.type == ixgbe_mac_X540 ||
- 		     hw->mac.type == ixgbe_mac_X550 ||
- 		     hw->mac.type == ixgbe_mac_X550EM_x ||
--		     hw->mac.type == ixgbe_mac_X550EM_a)
-+		     hw->mac.type == ixgbe_mac_X550EM_a ||
-+		     hw->mac.type == ixgbe_mac_E610)
- 			ixgbe_setup_loopback_link_x540_x550(hw, false);
++	/* Special case for SECURITY flows */
++	if (flow->is_security) {
++		ret = 0;
++		goto free;
++	}
++
+ 	switch (filter_type) {
+ 	case RTE_ETH_FILTER_NTUPLE:
+ 		ntuple_filter_ptr = (struct ixgbe_ntuple_filter_ele *)
+@@ -3442,6 +3450,7 @@ ixgbe_flow_destroy(struct rte_eth_dev *dev,
+ 		return ret;
  	}
- }
+ 
++free:
+ 	TAILQ_FOREACH(ixgbe_flow_mem_ptr, &ixgbe_flow_list, entries) {
+ 		if (ixgbe_flow_mem_ptr->flow == pmd_flow) {
+ 			TAILQ_REMOVE(&ixgbe_flow_list,
 -- 
 2.47.3
 
