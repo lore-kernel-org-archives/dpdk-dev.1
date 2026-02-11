@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 146B2E9E30C
-	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Feb 2026 13:53:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E5CDE9E30B
+	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Feb 2026 13:53:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 395A9402AB;
-	Wed, 11 Feb 2026 14:53:39 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 26AF140676;
+	Wed, 11 Feb 2026 14:53:40 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
- by mails.dpdk.org (Postfix) with ESMTP id 3B4444060C
- for <dev@dpdk.org>; Wed, 11 Feb 2026 14:53:35 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 55EF84065C
+ for <dev@dpdk.org>; Wed, 11 Feb 2026 14:53:36 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1770818015; x=1802354015;
+ t=1770818016; x=1802354016;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=/nWQ7gfbLdtQg59Y5dm4oB994T/PaGyXNLKTN3K1SSI=;
- b=aNDxRyHrfjiEZNbTl/4Esqkfz0A8bK9bA7VWhY24rGix1/qUIeRCVxj6
- d2EOjwPts9j8qBjlY/7IgKKsN8W3L00/lcna//jaWcD7JtDJ/ZhRc8to4
- STPfA1uuHL3MyDmQVo1B4LMeGi28VpoAPEoBYyRKFhu8XG9YODF9ACwEu
- Smh05xOgb+/fhF5bBlCZCgS+1d4gl77c3k0yTmyHdcS8exRmW9ygA5IKV
- +ne0F5tt1pKZqu4HqTnCQkPbWkxp87pJo0M6wmi02SJ2cQScvp5o1Vpt1
- txRTqh1sGHajUx1wylUms77CCj29XBwj31T2AvIJivoKL6DUt8+oyFvg2 A==;
-X-CSE-ConnectionGUID: dho36AwMRxut/zOcaMeCIQ==
-X-CSE-MsgGUID: CuUCKtCqSa+FUAkzha/nUw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11698"; a="75808226"
-X-IronPort-AV: E=Sophos;i="6.21,283,1763452800"; d="scan'208";a="75808226"
+ bh=4ow2pUkdtoOfNhFRM26ITSEf8QgsjA9Q5OHEhwMfgsY=;
+ b=EmBMxsh5uObVbeEb2OwQ48rdLS9AWgkivvGQKlLQyTkMO4iQRAgMG+sm
+ 39XOgVRYGUQjbmTCAtmGpOl1OY2bZcKcgwTx0dtg1YGsEpxqjzgPuAY1I
+ 1OaEFmngOuOydXwA2bultFpavMLEiQCRx+DRuurEyrHug46PCwUj/x6Uw
+ xkTKBZPDle8cE/0/egYRyzhBrTzNgY3yyy2SzFmBLQMUEZu2vG+zmCW6+
+ jbmtOG91i/TxPqdtApiQCtw2nHNgyZkqkb4mVXhmg4yZ+DYScml06/Ks5
+ MWreGzfhCJMd45Ka+AvYOMq/e4EWHQtPCGJZN3HA3kzJjy/gxI1b9mJ24 w==;
+X-CSE-ConnectionGUID: 8zhZJ0IXQFm/CiVUn82NEQ==
+X-CSE-MsgGUID: MOIrIltUS7SU/V7l0vj90Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11698"; a="75808228"
+X-IronPort-AV: E=Sophos;i="6.21,283,1763452800"; d="scan'208";a="75808228"
 Received: from orviesa007.jf.intel.com ([10.64.159.147])
  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 11 Feb 2026 05:53:34 -0800
-X-CSE-ConnectionGUID: 206BKo1cSVeL7SvuuTuOYw==
-X-CSE-MsgGUID: KeGAm6rfQKGMANflb2F4oA==
+ 11 Feb 2026 05:53:36 -0800
+X-CSE-ConnectionGUID: +J+PuyaTQ+uN9TKLTdx7Tw==
+X-CSE-MsgGUID: /DfIRWmJRly7PixJSbvjvg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,283,1763452800"; d="scan'208";a="212359558"
+X-IronPort-AV: E=Sophos;i="6.21,283,1763452800"; d="scan'208";a="212359562"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by orviesa007.jf.intel.com with ESMTP; 11 Feb 2026 05:53:34 -0800
+ by orviesa007.jf.intel.com with ESMTP; 11 Feb 2026 05:53:35 -0800
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org,
 	Vladimir Medvedkin <vladimir.medvedkin@intel.com>
-Subject: [PATCH v3 02/27] net/ixgbe: remove security-related ifdefery
-Date: Wed, 11 Feb 2026 13:52:44 +0000
-Message-ID: <953ecb0032fcd0e5c57f519bd4a5b846756b4245.1770817884.git.anatoly.burakov@intel.com>
+Subject: [PATCH v3 03/27] net/ixgbe: split security and ntuple filters
+Date: Wed, 11 Feb 2026 13:52:45 +0000
+Message-ID: <1d6d12f5387fb70df51a4a9bc38abced0e915548.1770817884.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <cover.1770817884.git.anatoly.burakov@intel.com>
  <cover.1770817884.git.anatoly.burakov@intel.com>
@@ -60,356 +60,197 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The security library is specified as explicit dependency for ixgbe, so
-there is no more need to gate features behind #ifdef blocks that depend
-on presence of this library.
+These filters are mashed together even though they almost do not share any
+code at all between each other. Separate security filter from ntuple filter
+and parse it separately.
+
+While we're at it, we're making checks more stringent (such as checking for
+NULL conf), and more type safe.
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- drivers/net/intel/ixgbe/ixgbe_ethdev.c       |  8 ------
- drivers/net/intel/ixgbe/ixgbe_ethdev.h       |  4 ---
- drivers/net/intel/ixgbe/ixgbe_flow.c         |  6 -----
- drivers/net/intel/ixgbe/ixgbe_rxtx.c         | 26 --------------------
- drivers/net/intel/ixgbe/ixgbe_rxtx.h         |  2 --
- drivers/net/intel/ixgbe/ixgbe_rxtx_vec_sse.c |  6 -----
- 6 files changed, 52 deletions(-)
+ drivers/net/intel/ixgbe/ixgbe_flow.c | 136 ++++++++++++++++++---------
+ 1 file changed, 91 insertions(+), 45 deletions(-)
 
-diff --git a/drivers/net/intel/ixgbe/ixgbe_ethdev.c b/drivers/net/intel/ixgbe/ixgbe_ethdev.c
-index 11500a923c..57d929cf2c 100644
---- a/drivers/net/intel/ixgbe/ixgbe_ethdev.c
-+++ b/drivers/net/intel/ixgbe/ixgbe_ethdev.c
-@@ -32,9 +32,7 @@
- #include <rte_random.h>
- #include <dev_driver.h>
- #include <rte_hash_crc.h>
--#ifdef RTE_LIB_SECURITY
- #include <rte_security_driver.h>
--#endif
- #include <rte_os_shim.h>
- 
- #include "ixgbe_logs.h"
-@@ -1177,11 +1175,9 @@ eth_ixgbe_dev_init(struct rte_eth_dev *eth_dev, void *init_params __rte_unused)
- 	/* Unlock any pending hardware semaphore */
- 	ixgbe_swfw_lock_reset(hw);
- 
--#ifdef RTE_LIB_SECURITY
- 	/* Initialize security_ctx only for primary process*/
- 	if (ixgbe_ipsec_ctx_create(eth_dev))
- 		return -ENOMEM;
--#endif
- 
- 	/* Initialize DCB configuration*/
- 	memset(dcb_config, 0, sizeof(struct ixgbe_dcb_config));
-@@ -1362,10 +1358,8 @@ eth_ixgbe_dev_init(struct rte_eth_dev *eth_dev, void *init_params __rte_unused)
- 	rte_free(eth_dev->data->hash_mac_addrs);
- 	eth_dev->data->hash_mac_addrs = NULL;
- err_exit:
--#ifdef RTE_LIB_SECURITY
- 	rte_free(eth_dev->security_ctx);
- 	eth_dev->security_ctx = NULL;
--#endif
- 	return ret;
- }
- 
-@@ -3148,10 +3142,8 @@ ixgbe_dev_close(struct rte_eth_dev *dev)
- 	/* Remove all Traffic Manager configuration */
- 	ixgbe_tm_conf_uninit(dev);
- 
--#ifdef RTE_LIB_SECURITY
- 	rte_free(dev->security_ctx);
- 	dev->security_ctx = NULL;
--#endif
- 
- 	return ret;
- }
-diff --git a/drivers/net/intel/ixgbe/ixgbe_ethdev.h b/drivers/net/intel/ixgbe/ixgbe_ethdev.h
-index 7dc02a472b..32d7b98ed1 100644
---- a/drivers/net/intel/ixgbe/ixgbe_ethdev.h
-+++ b/drivers/net/intel/ixgbe/ixgbe_ethdev.h
-@@ -14,9 +14,7 @@
- #include "base/ixgbe_dcb_82599.h"
- #include "base/ixgbe_dcb_82598.h"
- #include "ixgbe_bypass.h"
--#ifdef RTE_LIB_SECURITY
- #include "ixgbe_ipsec.h"
--#endif
- #include <rte_flow.h>
- #include <rte_time.h>
- #include <rte_hash.h>
-@@ -480,9 +478,7 @@ struct ixgbe_adapter {
- 	struct ixgbe_filter_info    filter;
- 	struct ixgbe_l2_tn_info     l2_tn;
- 	struct ixgbe_bw_conf        bw_conf;
--#ifdef RTE_LIB_SECURITY
- 	struct ixgbe_ipsec          ipsec;
--#endif
- 	bool rx_bulk_alloc_allowed;
- 	bool rx_vec_allowed;
- 	struct rte_timecounter      systime_tc;
 diff --git a/drivers/net/intel/ixgbe/ixgbe_flow.c b/drivers/net/intel/ixgbe/ixgbe_flow.c
-index 61a328363d..c17c6c4bf6 100644
+index c17c6c4bf6..cd8d46019f 100644
 --- a/drivers/net/intel/ixgbe/ixgbe_flow.c
 +++ b/drivers/net/intel/ixgbe/ixgbe_flow.c
-@@ -214,7 +214,6 @@ cons_parse_ntuple_filter(const struct rte_flow_attr *attr,
+@@ -214,41 +214,6 @@ cons_parse_ntuple_filter(const struct rte_flow_attr *attr,
  	memset(&eth_null, 0, sizeof(struct rte_flow_item_eth));
  	memset(&vlan_null, 0, sizeof(struct rte_flow_item_vlan));
  
--#ifdef RTE_LIB_SECURITY
- 	/**
- 	 *  Special case for flow action type RTE_FLOW_ACTION_TYPE_SECURITY
- 	 */
-@@ -249,7 +248,6 @@ cons_parse_ntuple_filter(const struct rte_flow_attr *attr,
- 		return ixgbe_crypto_add_ingress_sa_from_flow(conf, item->spec,
- 					item->type == RTE_FLOW_ITEM_TYPE_IPV6);
- 	}
--#endif
- 
+-	/**
+-	 *  Special case for flow action type RTE_FLOW_ACTION_TYPE_SECURITY
+-	 */
+-	act = next_no_void_action(actions, NULL);
+-	if (act->type == RTE_FLOW_ACTION_TYPE_SECURITY) {
+-		const void *conf = act->conf;
+-		/* check if the next not void item is END */
+-		act = next_no_void_action(actions, act);
+-		if (act->type != RTE_FLOW_ACTION_TYPE_END) {
+-			memset(filter, 0, sizeof(struct rte_eth_ntuple_filter));
+-			rte_flow_error_set(error, EINVAL,
+-				RTE_FLOW_ERROR_TYPE_ACTION,
+-				act, "Not supported action.");
+-			return -rte_errno;
+-		}
+-
+-		/* get the IP pattern*/
+-		item = next_no_void_pattern(pattern, NULL);
+-		while (item->type != RTE_FLOW_ITEM_TYPE_IPV4 &&
+-				item->type != RTE_FLOW_ITEM_TYPE_IPV6) {
+-			if (item->last ||
+-					item->type == RTE_FLOW_ITEM_TYPE_END) {
+-				rte_flow_error_set(error, EINVAL,
+-					RTE_FLOW_ERROR_TYPE_ITEM,
+-					item, "IP pattern missing.");
+-				return -rte_errno;
+-			}
+-			item = next_no_void_pattern(pattern, item);
+-		}
+-
+-		filter->proto = IPPROTO_ESP;
+-		return ixgbe_crypto_add_ingress_sa_from_flow(conf, item->spec,
+-					item->type == RTE_FLOW_ITEM_TYPE_IPV6);
+-	}
+-
  	/* the first not void item can be MAC or IPv4 */
  	item = next_no_void_pattern(pattern, NULL);
-@@ -630,11 +628,9 @@ ixgbe_parse_ntuple_filter(struct rte_eth_dev *dev,
+ 
+@@ -607,6 +572,81 @@ cons_parse_ntuple_filter(const struct rte_flow_attr *attr,
+ 	return 0;
+ }
+ 
++static int
++ixgbe_parse_security_filter(struct rte_eth_dev *dev, const struct rte_flow_attr *attr,
++		const struct rte_flow_item pattern[], const struct rte_flow_action actions[],
++		struct rte_flow_error *error)
++{
++	struct ixgbe_hw *hw = IXGBE_DEV_PRIVATE_TO_HW(dev->data->dev_private);
++	const struct rte_flow_action_security *security;
++	const struct rte_flow_item *item;
++	const struct rte_flow_action *act;
++
++	if (hw->mac.type != ixgbe_mac_82599EB &&
++			hw->mac.type != ixgbe_mac_X540 &&
++			hw->mac.type != ixgbe_mac_X550 &&
++			hw->mac.type != ixgbe_mac_X550EM_x &&
++			hw->mac.type != ixgbe_mac_X550EM_a &&
++			hw->mac.type != ixgbe_mac_E610)
++		return -ENOTSUP;
++
++	if (pattern == NULL) {
++		rte_flow_error_set(error,
++			EINVAL, RTE_FLOW_ERROR_TYPE_ITEM_NUM,
++			NULL, "NULL pattern.");
++		return -rte_errno;
++	}
++	if (actions == NULL) {
++		rte_flow_error_set(error, EINVAL,
++				   RTE_FLOW_ERROR_TYPE_ACTION_NUM,
++				   NULL, "NULL action.");
++		return -rte_errno;
++	}
++	if (attr == NULL) {
++		rte_flow_error_set(error, EINVAL,
++				   RTE_FLOW_ERROR_TYPE_ATTR,
++				   NULL, "NULL attribute.");
++		return -rte_errno;
++	}
++
++	/* check if next non-void action is security */
++	act = next_no_void_action(actions, NULL);
++	if (act->type != RTE_FLOW_ACTION_TYPE_SECURITY) {
++		return rte_flow_error_set(error, EINVAL,
++				RTE_FLOW_ERROR_TYPE_ACTION,
++				act, "Not supported action.");
++	}
++	security = act->conf;
++	if (security == NULL) {
++		return rte_flow_error_set(error, EINVAL,
++				RTE_FLOW_ERROR_TYPE_ACTION, act,
++				"NULL security action config.");
++	}
++	/* check if the next not void item is END */
++	act = next_no_void_action(actions, act);
++	if (act->type != RTE_FLOW_ACTION_TYPE_END) {
++		return rte_flow_error_set(error, EINVAL,
++				RTE_FLOW_ERROR_TYPE_ACTION,
++				act, "Not supported action.");
++	}
++
++	/* get the IP pattern*/
++	item = next_no_void_pattern(pattern, NULL);
++	while (item->type != RTE_FLOW_ITEM_TYPE_IPV4 &&
++			item->type != RTE_FLOW_ITEM_TYPE_IPV6) {
++		if (item->last || item->type == RTE_FLOW_ITEM_TYPE_END) {
++			rte_flow_error_set(error, EINVAL,
++				RTE_FLOW_ERROR_TYPE_ITEM,
++				item, "IP pattern missing.");
++			return -rte_errno;
++		}
++		item = next_no_void_pattern(pattern, item);
++	}
++
++	return ixgbe_crypto_add_ingress_sa_from_flow(security->security_session,
++			item->spec, item->type == RTE_FLOW_ITEM_TYPE_IPV6);
++}
++
+ /* a specific function for ixgbe because the flags is specific */
+ static int
+ ixgbe_parse_ntuple_filter(struct rte_eth_dev *dev,
+@@ -628,10 +668,6 @@ ixgbe_parse_ntuple_filter(struct rte_eth_dev *dev,
  	if (ret)
  		return ret;
  
--#ifdef RTE_LIB_SECURITY
- 	/* ESP flow not really a flow*/
- 	if (filter->proto == IPPROTO_ESP)
- 		return 0;
--#endif
- 
+-	/* ESP flow not really a flow*/
+-	if (filter->proto == IPPROTO_ESP)
+-		return 0;
+-
  	/* Ixgbe doesn't support tcp flags. */
  	if (filter->flags & RTE_NTUPLE_FLAGS_TCP_FLAG) {
-@@ -3074,13 +3070,11 @@ ixgbe_flow_create(struct rte_eth_dev *dev,
- 	ret = ixgbe_parse_ntuple_filter(dev, attr, pattern,
- 			actions, &ntuple_filter, error);
+ 		memset(filter, 0, sizeof(struct rte_eth_ntuple_filter));
+@@ -3066,16 +3102,19 @@ ixgbe_flow_create(struct rte_eth_dev *dev,
+ 	TAILQ_INSERT_TAIL(&ixgbe_flow_list,
+ 				ixgbe_flow_mem_ptr, entries);
  
--#ifdef RTE_LIB_SECURITY
- 	/* ESP flow not really a flow*/
- 	if (ntuple_filter.proto == IPPROTO_ESP) {
+-	memset(&ntuple_filter, 0, sizeof(struct rte_eth_ntuple_filter));
+-	ret = ixgbe_parse_ntuple_filter(dev, attr, pattern,
+-			actions, &ntuple_filter, error);
+-
+-	/* ESP flow not really a flow*/
+-	if (ntuple_filter.proto == IPPROTO_ESP) {
++	/**
++	 *  Special case for flow action type RTE_FLOW_ACTION_TYPE_SECURITY
++	 */
++	ret = ixgbe_parse_security_filter(dev, attr, pattern, actions, error);
++	if (!ret) {
  		flow->is_security = true;
  		return flow;
  	}
--#endif
  
++	memset(&ntuple_filter, 0, sizeof(struct rte_eth_ntuple_filter));
++	ret = ixgbe_parse_ntuple_filter(dev, attr, pattern,
++			actions, &ntuple_filter, error);
++
  	if (!ret) {
  		ret = ixgbe_add_del_ntuple_filter(dev, &ntuple_filter, TRUE);
-diff --git a/drivers/net/intel/ixgbe/ixgbe_rxtx.c b/drivers/net/intel/ixgbe/ixgbe_rxtx.c
-index 2857c19355..71deda9ed6 100644
---- a/drivers/net/intel/ixgbe/ixgbe_rxtx.c
-+++ b/drivers/net/intel/ixgbe/ixgbe_rxtx.c
-@@ -459,7 +459,6 @@ ixgbe_set_xmit_ctx(struct ci_tx_queue *txq,
- 		seqnum_seed |= tx_offload.l2_len
- 			       << IXGBE_ADVTXD_TUNNEL_LEN;
- 	}
--#ifdef RTE_LIB_SECURITY
- 	if (ol_flags & RTE_MBUF_F_TX_SEC_OFFLOAD) {
- 		union ixgbe_crypto_tx_desc_md *md =
- 				(union ixgbe_crypto_tx_desc_md *)mdata;
-@@ -473,7 +472,6 @@ ixgbe_set_xmit_ctx(struct ci_tx_queue *txq,
- 		tx_offload_mask.sa_idx |= ~0;
- 		tx_offload_mask.sec_pad_len |= ~0;
- 	}
--#endif
+ 		if (!ret) {
+@@ -3299,6 +3338,13 @@ ixgbe_flow_validate(struct rte_eth_dev *dev,
+ 	struct ixgbe_rte_flow_rss_conf rss_conf;
+ 	int ret;
  
- 	txq->ctx_cache[ctx_idx].flags = ol_flags;
- 	txq->ctx_cache[ctx_idx].tx_offload.data[0]  =
-@@ -652,9 +650,7 @@ ixgbe_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
- 	uint32_t ctx = 0;
- 	uint32_t new_ctx;
- 	union ixgbe_tx_offload tx_offload;
--#ifdef RTE_LIB_SECURITY
- 	uint8_t use_ipsec;
--#endif
- 
- 	tx_offload.data[0] = 0;
- 	tx_offload.data[1] = 0;
-@@ -682,9 +678,7 @@ ixgbe_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
- 		 * are needed for offload functionality.
- 		 */
- 		ol_flags = tx_pkt->ol_flags;
--#ifdef RTE_LIB_SECURITY
- 		use_ipsec = txq->using_ipsec && (ol_flags & RTE_MBUF_F_TX_SEC_OFFLOAD);
--#endif
- 
- 		/* If hardware offload required */
- 		tx_ol_req = ol_flags & IXGBE_TX_OFFLOAD_MASK;
-@@ -696,7 +690,6 @@ ixgbe_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
- 			tx_offload.tso_segsz = tx_pkt->tso_segsz;
- 			tx_offload.outer_l2_len = tx_pkt->outer_l2_len;
- 			tx_offload.outer_l3_len = tx_pkt->outer_l3_len;
--#ifdef RTE_LIB_SECURITY
- 			if (use_ipsec) {
- 				union ixgbe_crypto_tx_desc_md *ipsec_mdata =
- 					(union ixgbe_crypto_tx_desc_md *)
-@@ -704,7 +697,6 @@ ixgbe_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
- 				tx_offload.sa_idx = ipsec_mdata->sa_idx;
- 				tx_offload.sec_pad_len = ipsec_mdata->pad_len;
- 			}
--#endif
- 
- 			/* If new context need be built or reuse the exist ctx. */
- 			ctx = what_advctx_update(txq, tx_ol_req,
-@@ -896,10 +888,8 @@ ixgbe_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
- 			olinfo_status |= ctx << IXGBE_ADVTXD_IDX_SHIFT;
- 		}
- 		olinfo_status |= (pkt_len << IXGBE_ADVTXD_PAYLEN_SHIFT);
--#ifdef RTE_LIB_SECURITY
- 		if (use_ipsec)
- 			olinfo_status |= IXGBE_ADVTXD_POPTS_IPSEC;
--#endif
- 
- 		m_seg = tx_pkt;
- 		do {
-@@ -1523,13 +1513,11 @@ rx_desc_error_to_pkt_flags(uint32_t rx_status, uint16_t pkt_info,
- 		pkt_flags |= RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD;
- 	}
- 
--#ifdef RTE_LIB_SECURITY
- 	if (rx_status & IXGBE_RXD_STAT_SECP) {
- 		pkt_flags |= RTE_MBUF_F_RX_SEC_OFFLOAD;
- 		if (rx_status & IXGBE_RXDADV_LNKSEC_ERROR_BAD_SIG)
- 			pkt_flags |= RTE_MBUF_F_RX_SEC_OFFLOAD_FAILED;
- 	}
--#endif
- 
- 	return pkt_flags;
- }
-@@ -2490,9 +2478,7 @@ ixgbe_dev_tx_done_cleanup(void *tx_queue, uint32_t free_cnt)
- {
- 	struct ci_tx_queue *txq = (struct ci_tx_queue *)tx_queue;
- 	if (txq->offloads == 0 &&
--#ifdef RTE_LIB_SECURITY
- 			!(txq->using_ipsec) &&
--#endif
- 			txq->tx_rs_thresh >= IXGBE_TX_MAX_BURST) {
- 		if (txq->tx_rs_thresh <= IXGBE_TX_MAX_FREE_BUF_SZ &&
- 				rte_vect_get_max_simd_bitwidth() >= RTE_VECT_SIMD_128 &&
-@@ -2648,9 +2634,7 @@ ixgbe_set_tx_function(struct rte_eth_dev *dev, struct ci_tx_queue *txq)
- {
- 	/* Use a simple Tx queue (no offloads, no multi segs) if possible */
- 	if ((txq->offloads == 0) &&
--#ifdef RTE_LIB_SECURITY
- 			!(txq->using_ipsec) &&
--#endif
- 			(txq->tx_rs_thresh >= IXGBE_TX_MAX_BURST)) {
- 		PMD_INIT_LOG(DEBUG, "Using simple tx code path");
- 		dev->tx_pkt_prepare = rte_eth_tx_pkt_prepare_dummy;
-@@ -2711,10 +2695,8 @@ ixgbe_get_tx_port_offloads(struct rte_eth_dev *dev)
- 	    hw->mac.type == ixgbe_mac_E610)
- 		tx_offload_capa |= RTE_ETH_TX_OFFLOAD_OUTER_IPV4_CKSUM;
- 
--#ifdef RTE_LIB_SECURITY
- 	if (dev->security_ctx)
- 		tx_offload_capa |= RTE_ETH_TX_OFFLOAD_SECURITY;
--#endif
- 	return tx_offload_capa;
- }
- 
-@@ -2884,10 +2866,8 @@ ixgbe_dev_tx_queue_setup(struct rte_eth_dev *dev,
- 	txq->offloads = offloads;
- 	txq->ops = &def_txq_ops;
- 	txq->tx_deferred_start = tx_conf->tx_deferred_start;
--#ifdef RTE_LIB_SECURITY
- 	txq->using_ipsec = !!(dev->data->dev_conf.txmode.offloads &
- 			RTE_ETH_TX_OFFLOAD_SECURITY);
--#endif
- 
- 	/*
- 	 * Modification to set VFTDT for virtual function if vf is detected
-@@ -3171,10 +3151,8 @@ ixgbe_get_rx_port_offloads(struct rte_eth_dev *dev)
- 	    hw->mac.type == ixgbe_mac_E610)
- 		offloads |= RTE_ETH_RX_OFFLOAD_OUTER_IPV4_CKSUM;
- 
--#ifdef RTE_LIB_SECURITY
- 	if (dev->security_ctx)
- 		offloads |= RTE_ETH_RX_OFFLOAD_SECURITY;
--#endif
- 
- 	return offloads;
- }
-@@ -5102,10 +5080,8 @@ ixgbe_set_rx_function(struct rte_eth_dev *dev)
- 		struct ci_rx_queue *rxq = dev->data->rx_queues[i];
- 
- 		rxq->vector_rx = rx_using_sse;
--#ifdef RTE_LIB_SECURITY
- 		rxq->using_ipsec = !!(dev->data->dev_conf.rxmode.offloads &
- 				RTE_ETH_RX_OFFLOAD_SECURITY);
--#endif
- 	}
- }
- 
-@@ -5611,7 +5587,6 @@ ixgbe_dev_rxtx_start(struct rte_eth_dev *dev)
- 			ixgbe_setup_loopback_link_x540_x550(hw, true);
- 	}
- 
--#ifdef RTE_LIB_SECURITY
- 	if ((dev->data->dev_conf.rxmode.offloads &
- 			RTE_ETH_RX_OFFLOAD_SECURITY) ||
- 		(dev->data->dev_conf.txmode.offloads &
-@@ -5624,7 +5599,6 @@ ixgbe_dev_rxtx_start(struct rte_eth_dev *dev)
- 			return ret;
- 		}
- 	}
--#endif
- 
- 	return 0;
- }
-diff --git a/drivers/net/intel/ixgbe/ixgbe_rxtx.h b/drivers/net/intel/ixgbe/ixgbe_rxtx.h
-index 7950e56ee4..33023a3580 100644
---- a/drivers/net/intel/ixgbe/ixgbe_rxtx.h
-+++ b/drivers/net/intel/ixgbe/ixgbe_rxtx.h
-@@ -99,11 +99,9 @@ union ixgbe_tx_offload {
- 		/* fields for TX offloading of tunnels */
- 		uint64_t outer_l3_len:8; /**< Outer L3 (IP) Hdr Length. */
- 		uint64_t outer_l2_len:8; /**< Outer L2 (MAC) Hdr Length. */
--#ifdef RTE_LIB_SECURITY
- 		/* inline ipsec related*/
- 		uint64_t sa_idx:8;	/**< TX SA database entry index */
- 		uint64_t sec_pad_len:4;	/**< padding length */
--#endif
- 	};
- };
- 
-diff --git a/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_sse.c b/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_sse.c
-index dca3a20ca0..3f37038e5c 100644
---- a/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_sse.c
-+++ b/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_sse.c
-@@ -21,7 +21,6 @@ ixgbe_rxq_rearm(struct ci_rx_queue *rxq)
- 	ci_rxq_rearm(rxq, CI_RX_VEC_LEVEL_SSE);
- }
- 
--#ifdef RTE_LIB_SECURITY
- static inline void
- desc_to_olflags_v_ipsec(__m128i descs[4], struct rte_mbuf **rx_pkts)
- {
-@@ -56,7 +55,6 @@ desc_to_olflags_v_ipsec(__m128i descs[4], struct rte_mbuf **rx_pkts)
- 	*rearm2 = _mm_extract_epi32(rearm, 2);
- 	*rearm3 = _mm_extract_epi32(rearm, 3);
- }
--#endif
- 
- static inline void
- desc_to_olflags_v(__m128i descs[4], __m128i mbuf_init, uint8_t vlan_flags,
-@@ -265,9 +263,7 @@ _recv_raw_pkts_vec(struct ci_rx_queue *rxq, struct rte_mbuf **rx_pkts,
- 	volatile union ixgbe_adv_rx_desc *rxdp;
- 	struct ci_rx_entry *sw_ring;
- 	uint16_t nb_pkts_recd;
--#ifdef RTE_LIB_SECURITY
- 	uint8_t use_ipsec = rxq->using_ipsec;
--#endif
- 	int pos;
- 	uint64_t var;
- 	__m128i shuf_msk;
-@@ -444,10 +440,8 @@ _recv_raw_pkts_vec(struct ci_rx_queue *rxq, struct rte_mbuf **rx_pkts,
- 		desc_to_olflags_v(descs, mbuf_init, vlan_flags, udp_p_flag,
- 				  &rx_pkts[pos]);
- 
--#ifdef RTE_LIB_SECURITY
- 		if (unlikely(use_ipsec))
- 			desc_to_olflags_v_ipsec(descs, &rx_pkts[pos]);
--#endif
- 
- 		/* D.2 pkt 3,4 set in_port/nb_seg and remove crc */
- 		pkt_mb4 = _mm_add_epi16(pkt_mb4, crc_adjust);
++	/**
++	 *  Special case for flow action type RTE_FLOW_ACTION_TYPE_SECURITY
++	 */
++	ret = ixgbe_parse_security_filter(dev, attr, pattern, actions, error);
++	if (!ret)
++		return 0;
++
+ 	memset(&ntuple_filter, 0, sizeof(struct rte_eth_ntuple_filter));
+ 	ret = ixgbe_parse_ntuple_filter(dev, attr, pattern,
+ 				actions, &ntuple_filter, error);
 -- 
 2.47.3
 
