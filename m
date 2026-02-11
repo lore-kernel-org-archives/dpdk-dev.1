@@ -2,50 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9073BECD6D6
-	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Feb 2026 18:14:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 967DDECD6D6
+	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Feb 2026 18:14:20 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3EF3940A77;
-	Wed, 11 Feb 2026 19:13:40 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id C3D4B40B94;
+	Wed, 11 Feb 2026 19:13:41 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
- by mails.dpdk.org (Postfix) with ESMTP id 8E726406A2
- for <dev@dpdk.org>; Wed, 11 Feb 2026 19:13:37 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 8147E406A2
+ for <dev@dpdk.org>; Wed, 11 Feb 2026 19:13:38 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1770833618; x=1802369618;
+ t=1770833619; x=1802369619;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=kOsgqSL94J9lv6kOTAf4PpPdjuUjfKkEO43u0/W3FwY=;
- b=jcbZ7fRiQBRggezWfLQsU+3kWxNXxfApMXh6VfEgVm0Pdb87N7AzWnFa
- ZKUctYsIJp9pf6MUypb5yu9a3VfTGDOfGZCPs5I/m58VbtIt9A6C0mxWo
- RxOoYC50K0TsVoPdR+Zu7+WwxyXwY+vYNJObmBRPpQ2Y5xGkOtL8EUi3B
- 1jhYAwMRE3IFPGMsGyqlAyAWHMtj8GulNcTqSOS7QNdlSVxqEDu6NF7cJ
- +RwkzMtprdrC+yxWHjcm0pkFQd5KE2qKkGp7lsHqEgUhYuGn6bJ3Q2QqP
- Mcd4ivh0O3iLU+ZpZwKcAHREkgVsGdmQLLqT5ADKzSKyLoIG90A8wVB60 Q==;
-X-CSE-ConnectionGUID: /0dqc6lQTE+P5mwgB5lAng==
-X-CSE-MsgGUID: LgW2OCrPSveIPEeZLd1eAQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11698"; a="75834662"
-X-IronPort-AV: E=Sophos;i="6.21,285,1763452800"; d="scan'208";a="75834662"
+ bh=mU4/BxBFt7Hz3iC+3XGYPwkQh0H2JQpNV3qTjPXPwB0=;
+ b=fqGuv7XiEgxMYPRnelgstlanyrBgMA9WcF7u9IsM2NXXJJyJvS/GSaby
+ 4zB2Qa57AEgem7PlZpUSWDvXummSwMF+Z9B4/NVhZAwYa61pT6GhpCgEp
+ wtTNCqAxu7SNPAD6qZB9lPpmGvGDxQzUq4PZyvxspO0OOe7Do6aWCPJrB
+ 9irx1Kx+sWDXLbHTg25tOju0+qDWiw6JOh3ktlAehndpZRen+gUzKG9/t
+ EhYmZY4noo+lWX71K4sJrNY81eRa6soq4z5lsktF3jhnygdB0315Oqsp+
+ eTEs65k6nEZEP4k5l+L7SCi2oO6379SbgbLCNMLo+3DrYtLHrFqdGUahu g==;
+X-CSE-ConnectionGUID: vmAtY//6RPyZGfJy67XNcw==
+X-CSE-MsgGUID: X9SqiHk6R+eEEiCLWbk0Yg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11698"; a="75834665"
+X-IronPort-AV: E=Sophos;i="6.21,285,1763452800"; d="scan'208";a="75834665"
 Received: from orviesa001.jf.intel.com ([10.64.159.141])
  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 11 Feb 2026 10:13:37 -0800
-X-CSE-ConnectionGUID: CHR1EUQqQ6a+fL1LYPI72g==
-X-CSE-MsgGUID: ONMnhUS2QMiq6qCoK8yWpg==
+ 11 Feb 2026 10:13:38 -0800
+X-CSE-ConnectionGUID: pYcxKokNRSufh/men+p+KQ==
+X-CSE-MsgGUID: U5RuazqWSC2wrrC+24gH3g==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,285,1763452800"; d="scan'208";a="249986290"
+X-IronPort-AV: E=Sophos;i="6.21,285,1763452800"; d="scan'208";a="249986303"
 Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by orviesa001.jf.intel.com with ESMTP; 11 Feb 2026 10:13:36 -0800
+ by orviesa001.jf.intel.com with ESMTP; 11 Feb 2026 10:13:37 -0800
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: Bruce Richardson <bruce.richardson@intel.com>,
- Anatoly Burakov <anatoly.burakov@intel.com>,
- Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
- Jingjing Wu <jingjing.wu@intel.com>,
- Praveen Shetty <praveen.shetty@intel.com>
-Subject: [PATCH v5 06/35] net/intel: add common fn to calculate needed
- descriptors
-Date: Wed, 11 Feb 2026 18:12:35 +0000
-Message-ID: <20260211181309.2838042-7-bruce.richardson@intel.com>
+ Anatoly Burakov <anatoly.burakov@intel.com>
+Subject: [PATCH v5 07/35] net/ice: refactor context descriptor handling
+Date: Wed, 11 Feb 2026 18:12:36 +0000
+Message-ID: <20260211181309.2838042-8-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260211181309.2838042-1-bruce.richardson@intel.com>
 References: <20251219172548.2660777-1-bruce.richardson@intel.com>
@@ -65,198 +61,205 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Multiple drivers used the same logic to calculate how many Tx data
-descriptors were needed. Move that calculation to common code. In the
-process of updating drivers, fix idpf driver calculation for the TSO
-case.
+Create a single function to manage all context descriptor handling,
+which returns either 0 or 1 depending on whether a descriptor is needed
+or not, as well as returning directly the descriptor contents if
+relevant.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
-Acked-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- drivers/net/intel/common/tx_scalar.h      | 21 +++++++++++++++++++++
- drivers/net/intel/i40e/i40e_rxtx.c        | 18 +-----------------
- drivers/net/intel/iavf/iavf_rxtx.c        | 17 +----------------
- drivers/net/intel/ice/ice_rxtx.c          | 18 +-----------------
- drivers/net/intel/idpf/idpf_common_rxtx.c | 21 +++++++++++++++++----
- 5 files changed, 41 insertions(+), 54 deletions(-)
+ drivers/net/intel/ice/ice_rxtx.c | 104 +++++++++++++++++--------------
+ 1 file changed, 57 insertions(+), 47 deletions(-)
 
-diff --git a/drivers/net/intel/common/tx_scalar.h b/drivers/net/intel/common/tx_scalar.h
-index 6f2024273b..573f5136a9 100644
---- a/drivers/net/intel/common/tx_scalar.h
-+++ b/drivers/net/intel/common/tx_scalar.h
-@@ -59,4 +59,25 @@ ci_tx_xmit_cleanup(struct ci_tx_queue *txq)
- 	return 0;
- }
- 
-+static inline uint16_t
-+ci_div_roundup16(uint16_t x, uint16_t y)
-+{
-+	return (uint16_t)((x + y - 1) / y);
-+}
-+
-+/* Calculate the number of TX descriptors needed for each pkt */
-+static inline uint16_t
-+ci_calc_pkt_desc(const struct rte_mbuf *tx_pkt)
-+{
-+	uint16_t count = 0;
-+
-+	while (tx_pkt != NULL) {
-+		count += ci_div_roundup16(tx_pkt->data_len, CI_MAX_DATA_PER_TXD);
-+		tx_pkt = tx_pkt->next;
-+	}
-+
-+	return count;
-+}
-+
-+
- #endif /* _COMMON_INTEL_TX_SCALAR_H_ */
-diff --git a/drivers/net/intel/i40e/i40e_rxtx.c b/drivers/net/intel/i40e/i40e_rxtx.c
-index f96c5c7f1e..b75306931a 100644
---- a/drivers/net/intel/i40e/i40e_rxtx.c
-+++ b/drivers/net/intel/i40e/i40e_rxtx.c
-@@ -1029,21 +1029,6 @@ i40e_set_tso_ctx(struct rte_mbuf *mbuf, union ci_tx_offload tx_offload)
- 	return ctx_desc;
- }
- 
--/* Calculate the number of TX descriptors needed for each pkt */
--static inline uint16_t
--i40e_calc_pkt_desc(struct rte_mbuf *tx_pkt)
--{
--	struct rte_mbuf *txd = tx_pkt;
--	uint16_t count = 0;
--
--	while (txd != NULL) {
--		count += DIV_ROUND_UP(txd->data_len, CI_MAX_DATA_PER_TXD);
--		txd = txd->next;
--	}
--
--	return count;
--}
--
- uint16_t
- i40e_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
- {
-@@ -1106,8 +1091,7 @@ i40e_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
- 		 * per tx desc.
- 		 */
- 		if (ol_flags & RTE_MBUF_F_TX_TCP_SEG)
--			nb_used = (uint16_t)(i40e_calc_pkt_desc(tx_pkt) +
--					     nb_ctx);
-+			nb_used = (uint16_t)(ci_calc_pkt_desc(tx_pkt) + nb_ctx);
- 		else
- 			nb_used = (uint16_t)(tx_pkt->nb_segs + nb_ctx);
- 		tx_last = (uint16_t)(tx_id + nb_used - 1);
-diff --git a/drivers/net/intel/iavf/iavf_rxtx.c b/drivers/net/intel/iavf/iavf_rxtx.c
-index 947b6c24d2..885d9309cc 100644
---- a/drivers/net/intel/iavf/iavf_rxtx.c
-+++ b/drivers/net/intel/iavf/iavf_rxtx.c
-@@ -2666,21 +2666,6 @@ iavf_build_data_desc_cmd_offset_fields(volatile uint64_t *qw1,
- 		((uint64_t)l2tag1 << IAVF_TXD_DATA_QW1_L2TAG1_SHIFT));
- }
- 
--/* Calculate the number of TX descriptors needed for each pkt */
--static inline uint16_t
--iavf_calc_pkt_desc(struct rte_mbuf *tx_pkt)
--{
--	struct rte_mbuf *txd = tx_pkt;
--	uint16_t count = 0;
--
--	while (txd != NULL) {
--		count += (txd->data_len + CI_MAX_DATA_PER_TXD - 1) / CI_MAX_DATA_PER_TXD;
--		txd = txd->next;
--	}
--
--	return count;
--}
--
- static inline void
- iavf_fill_data_desc(volatile struct ci_tx_desc *desc,
- 	uint64_t desc_template,	uint16_t buffsz,
-@@ -2766,7 +2751,7 @@ iavf_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
- 		 * per tx desc.
- 		 */
- 		if (mb->ol_flags & RTE_MBUF_F_TX_TCP_SEG)
--			nb_desc_required = iavf_calc_pkt_desc(mb) + nb_desc_ctx + nb_desc_ipsec;
-+			nb_desc_required = ci_calc_pkt_desc(mb) + nb_desc_ctx + nb_desc_ipsec;
- 		else
- 			nb_desc_required = nb_desc_data + nb_desc_ctx + nb_desc_ipsec;
- 
 diff --git a/drivers/net/intel/ice/ice_rxtx.c b/drivers/net/intel/ice/ice_rxtx.c
-index 52bbf95967..2a53b614b2 100644
+index 2a53b614b2..1c789d45da 100644
 --- a/drivers/net/intel/ice/ice_rxtx.c
 +++ b/drivers/net/intel/ice/ice_rxtx.c
-@@ -3075,21 +3075,6 @@ ice_set_tso_ctx(struct rte_mbuf *mbuf, union ci_tx_offload tx_offload)
+@@ -2966,10 +2966,6 @@ ice_txd_enable_checksum(uint64_t ol_flags,
+ 			uint32_t *td_offset,
+ 			union ci_tx_offload tx_offload)
+ {
+-	/* Set MACLEN */
+-	if (!(ol_flags & RTE_MBUF_F_TX_TUNNEL_MASK))
+-		*td_offset |= (tx_offload.l2_len >> 1)
+-			<< CI_TX_DESC_LEN_MACLEN_S;
+ 
+ 	/* Enable L3 checksum offloads */
+ 	if (ol_flags & RTE_MBUF_F_TX_IP_CKSUM) {
+@@ -3052,7 +3048,7 @@ ice_calc_context_desc(uint64_t flags)
+ 
+ /* set ice TSO context descriptor */
+ static inline uint64_t
+-ice_set_tso_ctx(struct rte_mbuf *mbuf, union ci_tx_offload tx_offload)
++ice_set_tso_ctx(uint64_t ol_flags, const struct rte_mbuf *mbuf, union ci_tx_offload tx_offload)
+ {
+ 	uint64_t ctx_desc = 0;
+ 	uint32_t cd_cmd, hdr_len, cd_tso_len;
+@@ -3063,7 +3059,7 @@ ice_set_tso_ctx(struct rte_mbuf *mbuf, union ci_tx_offload tx_offload)
+ 	}
+ 
+ 	hdr_len = tx_offload.l2_len + tx_offload.l3_len + tx_offload.l4_len;
+-	hdr_len += (mbuf->ol_flags & RTE_MBUF_F_TX_TUNNEL_MASK) ?
++	hdr_len += (ol_flags & RTE_MBUF_F_TX_TUNNEL_MASK) ?
+ 		   tx_offload.outer_l2_len + tx_offload.outer_l3_len : 0;
+ 
+ 	cd_cmd = CI_TX_CTX_DESC_TSO;
+@@ -3075,6 +3071,49 @@ ice_set_tso_ctx(struct rte_mbuf *mbuf, union ci_tx_offload tx_offload)
  	return ctx_desc;
  }
  
--/* Calculate the number of TX descriptors needed for each pkt */
--static inline uint16_t
--ice_calc_pkt_desc(struct rte_mbuf *tx_pkt)
--{
--	struct rte_mbuf *txd = tx_pkt;
--	uint16_t count = 0;
--
--	while (txd != NULL) {
--		count += DIV_ROUND_UP(txd->data_len, CI_MAX_DATA_PER_TXD);
--		txd = txd->next;
--	}
--
--	return count;
--}
--
++/* compute a context descriptor if one is necessary based on the ol_flags
++ *
++ * Returns 0 if no descriptor is necessary.
++ * Returns 1 if one is necessary and the contents of the descriptor are returned
++ *   in the values pointed to by qw0 and qw1.
++ */
++static __rte_always_inline uint16_t
++get_context_desc(uint64_t ol_flags, const struct rte_mbuf *tx_pkt,
++	const union ci_tx_offload *tx_offload, const struct ci_tx_queue *txq,
++	uint64_t *qw0, uint64_t *qw1)
++{
++	uint16_t cd_l2tag2 = 0;
++	uint64_t cd_type_cmd_tso_mss = ICE_TX_DESC_DTYPE_CTX;
++	uint32_t cd_tunneling_params = 0;
++	uint64_t ptp_tx_index = txq->ice_vsi->adapter->ptp_tx_index;
++
++	if (ice_calc_context_desc(ol_flags) == 0)
++		return 0;
++
++	if (ol_flags & RTE_MBUF_F_TX_TUNNEL_MASK)
++		ice_parse_tunneling_params(ol_flags, *tx_offload, &cd_tunneling_params);
++
++	if (ol_flags & (RTE_MBUF_F_TX_TCP_SEG | RTE_MBUF_F_TX_UDP_SEG))
++		cd_type_cmd_tso_mss |= ice_set_tso_ctx(ol_flags, tx_pkt, *tx_offload);
++	else if (ol_flags & RTE_MBUF_F_TX_IEEE1588_TMST)
++		cd_type_cmd_tso_mss |=
++			((uint64_t)CI_TX_CTX_DESC_TSYN << CI_TXD_QW1_CMD_S) |
++			((ptp_tx_index << ICE_TXD_CTX_QW1_TSYN_S) & ICE_TXD_CTX_QW1_TSYN_M);
++
++
++	/* TX context descriptor based double VLAN insert */
++	if (ol_flags & RTE_MBUF_F_TX_QINQ) {
++		cd_l2tag2 = tx_pkt->vlan_tci_outer;
++		cd_type_cmd_tso_mss |= ((uint64_t)CI_TX_CTX_DESC_IL2TAG2 << CI_TXD_QW1_CMD_S);
++	}
++
++	*qw0 = rte_cpu_to_le_32(cd_tunneling_params) |
++		((uint64_t)rte_cpu_to_le_16(cd_l2tag2) << 32);
++	*qw1 = rte_cpu_to_le_64(cd_type_cmd_tso_mss);
++
++	return 1;
++}
++
  uint16_t
  ice_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
  {
-@@ -3152,8 +3137,7 @@ ice_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
- 		 * per tx desc.
- 		 */
- 		if (ol_flags & (RTE_MBUF_F_TX_TCP_SEG | RTE_MBUF_F_TX_UDP_SEG))
--			nb_used = (uint16_t)(ice_calc_pkt_desc(tx_pkt) +
--					     nb_ctx);
-+			nb_used = (uint16_t)(ci_calc_pkt_desc(tx_pkt) + nb_ctx);
- 		else
- 			nb_used = (uint16_t)(tx_pkt->nb_segs + nb_ctx);
- 		tx_last = (uint16_t)(tx_id + nb_used - 1);
-diff --git a/drivers/net/intel/idpf/idpf_common_rxtx.c b/drivers/net/intel/idpf/idpf_common_rxtx.c
-index 587871b54a..11d6848430 100644
---- a/drivers/net/intel/idpf/idpf_common_rxtx.c
-+++ b/drivers/net/intel/idpf/idpf_common_rxtx.c
-@@ -934,7 +934,16 @@ idpf_dp_splitq_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
- 		tx_offload.tso_segsz = tx_pkt->tso_segsz;
- 		/* Calculate the number of context descriptors needed. */
- 		nb_ctx = idpf_calc_context_desc(ol_flags);
--		nb_used = tx_pkt->nb_segs + nb_ctx;
-+
-+		/* Calculate the number of TX descriptors needed for
-+		 * each packet. For TSO packets, use ci_calc_pkt_desc as
-+		 * the mbuf data size might exceed max data size that hw allows
-+		 * per tx desc.
-+		 */
-+		if (ol_flags & RTE_MBUF_F_TX_TCP_SEG)
-+			nb_used = ci_calc_pkt_desc(tx_pkt) + nb_ctx;
-+		else
-+			nb_used = tx_pkt->nb_segs + nb_ctx;
+@@ -3085,7 +3124,6 @@ ice_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
+ 	struct ci_tx_entry *txe, *txn;
+ 	struct rte_mbuf *tx_pkt;
+ 	struct rte_mbuf *m_seg;
+-	uint32_t cd_tunneling_params;
+ 	uint16_t tx_id;
+ 	uint16_t ts_id = -1;
+ 	uint16_t nb_tx;
+@@ -3096,6 +3134,7 @@ ice_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
+ 	uint32_t td_tag = 0;
+ 	uint16_t tx_last;
+ 	uint16_t slen;
++	uint16_t l2_len;
+ 	uint64_t buf_dma_addr;
+ 	uint64_t ol_flags;
+ 	union ci_tx_offload tx_offload = {0};
+@@ -3114,20 +3153,25 @@ ice_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
+ 		(void)ci_tx_xmit_cleanup(txq);
  
- 		if (ol_flags & IDPF_TX_CKSUM_OFFLOAD_MASK)
- 			cmd_dtype = IDPF_TXD_FLEX_FLOW_CMD_CS_EN;
-@@ -1382,10 +1391,14 @@ idpf_dp_singleq_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
- 		nb_ctx = idpf_calc_context_desc(ol_flags);
+ 	for (nb_tx = 0; nb_tx < nb_pkts; nb_tx++) {
++		uint64_t cd_qw0, cd_qw1;
+ 		tx_pkt = *tx_pkts++;
+ 
++		ol_flags = tx_pkt->ol_flags;
+ 		td_cmd = 0;
+ 		td_tag = 0;
+-		td_offset = 0;
+-		ol_flags = tx_pkt->ol_flags;
++		l2_len = ol_flags & RTE_MBUF_F_TX_TUNNEL_MASK ?
++				tx_pkt->outer_l2_len : tx_pkt->l2_len;
++		td_offset = (l2_len >> 1) << CI_TX_DESC_LEN_MACLEN_S;
++
+ 		tx_offload.l2_len = tx_pkt->l2_len;
+ 		tx_offload.l3_len = tx_pkt->l3_len;
+ 		tx_offload.outer_l2_len = tx_pkt->outer_l2_len;
+ 		tx_offload.outer_l3_len = tx_pkt->outer_l3_len;
+ 		tx_offload.l4_len = tx_pkt->l4_len;
+ 		tx_offload.tso_segsz = tx_pkt->tso_segsz;
++
+ 		/* Calculate the number of context descriptors needed. */
+-		nb_ctx = ice_calc_context_desc(ol_flags);
++		nb_ctx = get_context_desc(ol_flags, tx_pkt, &tx_offload, txq, &cd_qw0, &cd_qw1);
  
  		/* The number of descriptors that must be allocated for
--		 * a packet equals to the number of the segments of that
--		 * packet plus 1 context descriptor if needed.
-+		 * a packet. For TSO packets, use ci_calc_pkt_desc as
-+		 * the mbuf data size might exceed max data size that hw allows
-+		 * per tx desc.
- 		 */
--		nb_used = (uint16_t)(tx_pkt->nb_segs + nb_ctx);
-+		if (ol_flags & RTE_MBUF_F_TX_TCP_SEG)
-+			nb_used = (uint16_t)(ci_calc_pkt_desc(tx_pkt) + nb_ctx);
-+		else
-+			nb_used = (uint16_t)(tx_pkt->nb_segs + nb_ctx);
- 		tx_last = (uint16_t)(tx_id + nb_used - 1);
+ 		 * a packet equals to the number of the segments of that
+@@ -3169,15 +3213,6 @@ ice_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
+ 			td_tag = tx_pkt->vlan_tci;
+ 		}
  
- 		/* Circular ring */
+-		/* Fill in tunneling parameters if necessary */
+-		cd_tunneling_params = 0;
+-		if (ol_flags & RTE_MBUF_F_TX_TUNNEL_MASK) {
+-			td_offset |= (tx_offload.outer_l2_len >> 1)
+-				<< CI_TX_DESC_LEN_MACLEN_S;
+-			ice_parse_tunneling_params(ol_flags, tx_offload,
+-						   &cd_tunneling_params);
+-		}
+-
+ 		/* Enable checksum offloading */
+ 		if (ol_flags & ICE_TX_CKSUM_OFFLOAD_MASK)
+ 			ice_txd_enable_checksum(ol_flags, &td_cmd,
+@@ -3185,11 +3220,7 @@ ice_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
+ 
+ 		if (nb_ctx) {
+ 			/* Setup TX context descriptor if required */
+-			volatile struct ice_tx_ctx_desc *ctx_txd =
+-				(volatile struct ice_tx_ctx_desc *)
+-					&ci_tx_ring[tx_id];
+-			uint16_t cd_l2tag2 = 0;
+-			uint64_t cd_type_cmd_tso_mss = ICE_TX_DESC_DTYPE_CTX;
++			uint64_t *ctx_txd = RTE_CAST_PTR(uint64_t *, &ci_tx_ring[tx_id]);
+ 
+ 			txn = &sw_ring[txe->next_id];
+ 			RTE_MBUF_PREFETCH_TO_FREE(txn->mbuf);
+@@ -3198,29 +3229,8 @@ ice_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
+ 				txe->mbuf = NULL;
+ 			}
+ 
+-			if (ol_flags & (RTE_MBUF_F_TX_TCP_SEG | RTE_MBUF_F_TX_UDP_SEG))
+-				cd_type_cmd_tso_mss |=
+-					ice_set_tso_ctx(tx_pkt, tx_offload);
+-			else if (ol_flags & RTE_MBUF_F_TX_IEEE1588_TMST)
+-				cd_type_cmd_tso_mss |=
+-					((uint64_t)CI_TX_CTX_DESC_TSYN <<
+-					CI_TXD_QW1_CMD_S) |
+-					 (((uint64_t)txq->ice_vsi->adapter->ptp_tx_index <<
+-					 ICE_TXD_CTX_QW1_TSYN_S) & ICE_TXD_CTX_QW1_TSYN_M);
+-
+-			ctx_txd->tunneling_params =
+-				rte_cpu_to_le_32(cd_tunneling_params);
+-
+-			/* TX context descriptor based double VLAN insert */
+-			if (ol_flags & RTE_MBUF_F_TX_QINQ) {
+-				cd_l2tag2 = tx_pkt->vlan_tci_outer;
+-				cd_type_cmd_tso_mss |=
+-					((uint64_t)CI_TX_CTX_DESC_IL2TAG2 <<
+-					 CI_TXD_QW1_CMD_S);
+-			}
+-			ctx_txd->l2tag2 = rte_cpu_to_le_16(cd_l2tag2);
+-			ctx_txd->qw1 =
+-				rte_cpu_to_le_64(cd_type_cmd_tso_mss);
++			ctx_txd[0] = cd_qw0;
++			ctx_txd[1] = cd_qw1;
+ 
+ 			txe->last_id = tx_last;
+ 			tx_id = txe->next_id;
 -- 
 2.51.0
 
