@@ -2,46 +2,44 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8A63E9E30A
-	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Feb 2026 13:50:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC478E9E30A
+	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Feb 2026 13:50:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B4FAD40663;
-	Wed, 11 Feb 2026 14:49:45 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id D5CA04066F;
+	Wed, 11 Feb 2026 14:49:46 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
- by mails.dpdk.org (Postfix) with ESMTP id 525CC40608
+ by mails.dpdk.org (Postfix) with ESMTP id 4BF8740431
  for <dev@dpdk.org>; Wed, 11 Feb 2026 14:49:40 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
  t=1770817780; x=1802353780;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=+vV1EwJiu4siBwWTjBbmHf3TOH7Xv8OGvJhDqh2Ewbo=;
- b=FlO0DQ1DNHba4xGfwjRykwqboyY7pRy/rmas0tD+SOo9U7+rMjVl9SVm
- rHmDBmwe18nAAkSe1qf6ll/Mr9m7wnjom9vc33XZRASbRgwjChby3z4PW
- x1msVo16iYMtp9cxQc3h/z9i8tHjo0eiA2i5YrO6lrlcGl2rrS664CV3Z
- SQLNMDKRa8+0+JzaFj/lq0UNy2OULtyvfW5BF28ipESzGVuTg7TTspFyN
- zB17PD5GgMDhcBVc7KHBzmJMvqX9XvjUT9JROQHIwoe85d2bN8SPzAfbb
- qHTMamwak0bypI3JbjsphQX+ZKK9WecirvM8RBzf3FgIGELf0GnWqgg07 w==;
-X-CSE-ConnectionGUID: 8gfqXTkUQ7mQRer9Y/JFYA==
-X-CSE-MsgGUID: NoJeplElQCqGvQWtb+qnHg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11698"; a="83332524"
-X-IronPort-AV: E=Sophos;i="6.21,283,1763452800"; d="scan'208";a="83332524"
+ bh=g8+Y92jbPKrVPW+9DiqNFrdDFFq/EA8SNrP5i/FGp60=;
+ b=FqmNBsJYqsSvm2KbBRcITLBEx6BUYxCyR47qVelhEYo+B4w88BZhm0rh
+ o94jJhcS2/+7lLFygDbamW5FDdvNsGTqhWhiouIvzq7zo0Izrd1AGXKN3
+ 02sq3QF5KvmtDRTZz4E9WyVN9RyIk5D7M00OvC6++Z5/IMDPiIuBNe5eZ
+ 7e7kmmBuOfcDQStkRaW/3Nx7qVsVriZPwOnlI4ekK/z+DS1w/hf1FLjnM
+ A1D92J4nZ8/TprCc2CLUiQT6H9Z9Yyr+ZwJvSNnwFV5aIW+I0zsvbg4GN
+ iDRMBC7QHBKL0Ps6J9N76EhEivuq6u02wWWxyrVzD38zMfKkjRC2S7z/v A==;
+X-CSE-ConnectionGUID: xz73LckGTHajVEu6rxQyaQ==
+X-CSE-MsgGUID: BSKh2uXXQwykKmXXWfDIvw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11698"; a="83332521"
+X-IronPort-AV: E=Sophos;i="6.21,283,1763452800"; d="scan'208";a="83332521"
 Received: from fmviesa003.fm.intel.com ([10.60.135.143])
  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 11 Feb 2026 05:49:38 -0800
-X-CSE-ConnectionGUID: 9/QmQcNGQkipg9w5X0QibA==
-X-CSE-MsgGUID: jp3QqTCjTSu0gTznAjb88w==
+ 11 Feb 2026 05:49:34 -0800
+X-CSE-ConnectionGUID: 3NdUE08eQQKP5eVHdD3+Eg==
+X-CSE-MsgGUID: FQtqbhNHQmSYRaB0AgJtwQ==
 X-ExtLoop1: 1
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by fmviesa003.fm.intel.com with ESMTP; 11 Feb 2026 05:49:37 -0800
+ by fmviesa003.fm.intel.com with ESMTP; 11 Feb 2026 05:49:33 -0800
 From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org, Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
- Declan Doherty <declan.doherty@intel.com>,
- Abhijit Sinha <abhijit.sinha@intel.com>,
- Jingjing Wu <jingjing.wu@intel.com>, Radu Nicolau <radu.nicolau@intel.com>
-Subject: [PATCH v4 6/9] net/iavf: fix memory leak on uninit
-Date: Wed, 11 Feb 2026 13:49:13 +0000
-Message-ID: <d977085ec59e6ab62d73603667aeac0474014079.1770817694.git.anatoly.burakov@intel.com>
+To: dev@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>,
+ Jingjing Wu <jingjing.wu@intel.com>, Beilei Xing <beilei.xing@intel.com>
+Subject: [PATCH v4 4/9] net/i40e: fix IPv6 GTPU handling
+Date: Wed, 11 Feb 2026 13:49:11 +0000
+Message-ID: <00449319c555c67c6571547d2a46edb1634d3151.1770817694.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <cover.1770817694.git.anatoly.burakov@intel.com>
  <cover.1770817694.git.anatoly.burakov@intel.com>
@@ -61,45 +59,42 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-When IPsec is initialized, parsers and engines are registered into the
-common infrastructure. However, during deinitialization, they are not
-cleaned up. Fix it by including IPsec engines in the cleanup.
+GTP tunnel code declares support for IPv6 GTPU flows but does not actually
+handle IPv6 flow pattern item, resulting in incorrect parsing for IPv6
+GTPU flows. Add IPv6 flow item handling.
 
-Fixes: 6bc987ecb860 ("net/iavf: support IPsec inline crypto")
-Cc: radu.nicolau@intel.com
+Fixes: 47ba0398da3f ("net/i40e: add cloud filter parsing function for GTP")
 Cc: stable@dpdk.org
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
-Acked-by: Radu Nicolau <radu.nicolau@intel.com>
 ---
- drivers/net/intel/iavf/iavf_generic_flow.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/net/intel/i40e/i40e_flow.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/drivers/net/intel/iavf/iavf_generic_flow.c b/drivers/net/intel/iavf/iavf_generic_flow.c
-index 02917f863d..42ecc90d1d 100644
---- a/drivers/net/intel/iavf/iavf_generic_flow.c
-+++ b/drivers/net/intel/iavf/iavf_generic_flow.c
-@@ -1859,6 +1859,11 @@ iavf_flow_uninit(struct iavf_adapter *ad)
- 		TAILQ_REMOVE(&vf->dist_parser_list, p_parser, node);
- 		rte_free(p_parser);
- 	}
-+
-+	while ((p_parser = TAILQ_FIRST(&vf->ipsec_crypto_parser_list))) {
-+		TAILQ_REMOVE(&vf->ipsec_crypto_parser_list, p_parser, node);
-+		rte_free(p_parser);
-+	}
- }
- 
- int
-@@ -1920,6 +1925,8 @@ iavf_unregister_parser(struct iavf_flow_parser *parser,
- 	else if ((parser->engine->type == IAVF_FLOW_ENGINE_FDIR) ||
- 		 (parser->engine->type == IAVF_FLOW_ENGINE_FSUB))
- 		list = &vf->dist_parser_list;
-+	else if (parser->engine->type == IAVF_FLOW_ENGINE_IPSEC_CRYPTO)
-+		list = &vf->ipsec_crypto_parser_list;
- 
- 	if (list == NULL)
- 		return;
+diff --git a/drivers/net/intel/i40e/i40e_flow.c b/drivers/net/intel/i40e/i40e_flow.c
+index 193b1b6725..2374b9bbca 100644
+--- a/drivers/net/intel/i40e/i40e_flow.c
++++ b/drivers/net/intel/i40e/i40e_flow.c
+@@ -3580,6 +3580,19 @@ i40e_flow_parse_gtp_pattern(struct rte_eth_dev *dev,
+ 				return -rte_errno;
+ 			}
+ 			break;
++		case RTE_FLOW_ITEM_TYPE_IPV6:
++			filter->ip_type = I40E_TUNNEL_IPTYPE_IPV6;
++			/* IPv6 is used to describe protocol,
++			 * spec and mask should be NULL.
++			 */
++			if (item->spec || item->mask) {
++				rte_flow_error_set(error, EINVAL,
++						   RTE_FLOW_ERROR_TYPE_ITEM,
++						   item,
++						   "Invalid IPv6 item");
++				return -rte_errno;
++			}
++			break;
+ 		case RTE_FLOW_ITEM_TYPE_UDP:
+ 			if (item->spec || item->mask) {
+ 				rte_flow_error_set(error, EINVAL,
 -- 
 2.47.3
 
