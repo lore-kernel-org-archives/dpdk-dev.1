@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9072AE9E30A
-	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Feb 2026 13:56:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF237E9E30C
+	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Feb 2026 13:56:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7DC0440E1C;
-	Wed, 11 Feb 2026 14:54:03 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 6AD3E40E1B;
+	Wed, 11 Feb 2026 14:54:04 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
- by mails.dpdk.org (Postfix) with ESMTP id 49E9A40DFB
- for <dev@dpdk.org>; Wed, 11 Feb 2026 14:53:59 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 5AAEE406BB
+ for <dev@dpdk.org>; Wed, 11 Feb 2026 14:54:00 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1770818039; x=1802354039;
+ t=1770818040; x=1802354040;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=9CTzHKCe7rViDpbsl7FE4iVs2eEyGk8Q+lqJlidA/2U=;
- b=Ja4TPxPxG7mQAwsJbdGjIBuwff0WKu7hZ9qdpjaGtEpYPkpvjJqCze2F
- YW5IVZxJGYbHY6iUpwff3X1kCmh634S5XD4634ZTwkoGiC4HdIEN7teiN
- yqN+8spo8SqhYCG2Cr4IzHXkoCXbBbdodWUPCATGp2s8ZfMpnEbC69dbn
- TzmkMgaJ4pXTS0FfL5SX0VuPd5vBETIA4j/5ERBoABKsViuhrrPscfrp4
- XuyiLsQGTqtR6AxyBWK9WErkYxes/WHcSuDqP6isLV9BXnW087oMUprnr
- CeQ6b4H4Gb+BZnd49vdEH5886gdSxg+RTV59rjT+0fycWxRTAiV8YOKLQ A==;
-X-CSE-ConnectionGUID: NF0SRp2bSCq2XbZkTTpJLw==
-X-CSE-MsgGUID: +IjSHKmeST+okueWXJdCCg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11698"; a="75808272"
-X-IronPort-AV: E=Sophos;i="6.21,283,1763452800"; d="scan'208";a="75808272"
+ bh=S2DwF2UEtpRAeoxf+hu6icOBotmi/T9xb0bSi1hpwrE=;
+ b=e+BJTnBd5hyLDDEK0LlMy8jiNOEmelhrp8RouF3TYKABjq2LpBdkYmuh
+ Q8Ni5RrOAohMqNnSjHxjJUq6gTZ0b7Vv/ZwOL2OEbo2Gd4ora/3Ok3xBt
+ Nc58VTZOQ3wy+I+lujColqad3RPPszoHw1xp6yeC23KbC9MFDhTxVLhIf
+ H50CqOjXUcDD4fMo+1GnQ+hI2FPC41C6B1VBQ/tRTmp+r6xxGfpBHFRRE
+ bBdBkqgUKsnEM1F6pB8TMvVHV2H7y8ovk+Xu8cDJ9Jc1L+zPJ78WCseIS
+ dhgBGQuEWwkTGOQ1uvy4u6q8ksqmdige8MP+/kH9Cffl2hwEoeSHf5OJz g==;
+X-CSE-ConnectionGUID: 4Eio6kXRQpqyLp2pepKONg==
+X-CSE-MsgGUID: fwe/MQreQz+oamvotitS5A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11698"; a="75808275"
+X-IronPort-AV: E=Sophos;i="6.21,283,1763452800"; d="scan'208";a="75808275"
 Received: from orviesa007.jf.intel.com ([10.64.159.147])
  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 11 Feb 2026 05:53:58 -0800
-X-CSE-ConnectionGUID: GdFqdvOeSB6Op2jY99BtTw==
-X-CSE-MsgGUID: +nwxiHzVQ5K6nYsHU7yCcQ==
+ 11 Feb 2026 05:54:00 -0800
+X-CSE-ConnectionGUID: WsX8/mvPRzSlRbO/U/oJoA==
+X-CSE-MsgGUID: iGYym7bgTQu/gvsARTxjMg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,283,1763452800"; d="scan'208";a="212359677"
+X-IronPort-AV: E=Sophos;i="6.21,283,1763452800"; d="scan'208";a="212359687"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by orviesa007.jf.intel.com with ESMTP; 11 Feb 2026 05:53:58 -0800
+ by orviesa007.jf.intel.com with ESMTP; 11 Feb 2026 05:53:59 -0800
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org,
 	Vladimir Medvedkin <vladimir.medvedkin@intel.com>
-Subject: [PATCH v3 22/27] net/iavf: avoid rte malloc in queue operations
-Date: Wed, 11 Feb 2026 13:53:04 +0000
-Message-ID: <d9b93f692da3107e492d95b3b5dbba711ab9de7d.1770817884.git.anatoly.burakov@intel.com>
+Subject: [PATCH v3 23/27] net/iavf: avoid rte malloc in irq map config
+Date: Wed, 11 Feb 2026 13:53:05 +0000
+Message-ID: <fad1d01010d95105398d850c4def20daf06c6d6c.1770817884.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <cover.1770817884.git.anatoly.burakov@intel.com>
  <cover.1770817884.git.anatoly.burakov@intel.com>
@@ -60,165 +60,52 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Currently, when enabling, disabling, or switching queues, we are using
-rte_malloc followed by an immediate rte_free. This is not needed as these
-structures are not being stored anywhere, so replace them with stack
-allocation or malloc/free where appropriate.
+Currently, when configuring IRQ maps, we are using rte_zmalloc followed
+by an immediate rte_free. This is not needed as this memory is not being
+stored anywhere, so replace it with regular malloc/free.
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- drivers/net/intel/iavf/iavf_vchnl.c | 65 ++++++++++++-----------------
- 1 file changed, 26 insertions(+), 39 deletions(-)
+ drivers/net/intel/iavf/iavf_vchnl.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/net/intel/iavf/iavf_vchnl.c b/drivers/net/intel/iavf/iavf_vchnl.c
-index 19dce17612..af1f5fbfc0 100644
+index af1f5fbfc0..d0cc8673e1 100644
 --- a/drivers/net/intel/iavf/iavf_vchnl.c
 +++ b/drivers/net/intel/iavf/iavf_vchnl.c
-@@ -1020,19 +1020,15 @@ int
- iavf_enable_queues_lv(struct iavf_adapter *adapter)
- {
- 	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(adapter);
--	struct virtchnl_del_ena_dis_queues *queue_select;
--	struct virtchnl_queue_chunk *queue_chunk;
-+	struct {
-+		struct virtchnl_del_ena_dis_queues msg;
-+		struct virtchnl_queue_chunk chunks[IAVF_RXTX_QUEUE_CHUNKS_NUM - 1];
-+	} queue_req = {0};
-+	struct virtchnl_del_ena_dis_queues *queue_select = &queue_req.msg;
-+	struct virtchnl_queue_chunk *queue_chunk = queue_select->chunks.chunks;
- 	struct iavf_cmd_info args;
--	int err, len;
-+	int err;
+@@ -1295,7 +1295,7 @@ iavf_config_irq_map(struct iavf_adapter *adapter)
+ 	len = sizeof(struct virtchnl_irq_map_info) +
+ 	      sizeof(struct virtchnl_vector_map) * vf->nb_msix;
  
--	len = sizeof(struct virtchnl_del_ena_dis_queues) +
--		  sizeof(struct virtchnl_queue_chunk) *
--		  (IAVF_RXTX_QUEUE_CHUNKS_NUM - 1);
--	queue_select = rte_zmalloc("queue_select", len, 0);
--	if (!queue_select)
--		return -ENOMEM;
--
--	queue_chunk = queue_select->chunks.chunks;
- 	queue_select->chunks.num_chunks = IAVF_RXTX_QUEUE_CHUNKS_NUM;
- 	queue_select->vport_id = vf->vsi_res->vsi_id;
- 
-@@ -1048,7 +1044,7 @@ iavf_enable_queues_lv(struct iavf_adapter *adapter)
- 
- 	args.ops = VIRTCHNL_OP_ENABLE_QUEUES_V2;
- 	args.in_args = (u8 *)queue_select;
--	args.in_args_size = len;
-+	args.in_args_size = sizeof(queue_req);
- 	args.out_buffer = vf->aq_resp;
- 	args.out_size = IAVF_AQ_BUF_SZ;
- 	err = iavf_execute_vf_cmd_safe(adapter, &args, 0);
-@@ -1056,7 +1052,6 @@ iavf_enable_queues_lv(struct iavf_adapter *adapter)
- 		PMD_DRV_LOG(ERR,
- 			    "Failed to execute command of OP_ENABLE_QUEUES_V2");
- 
--	rte_free(queue_select);
- 	return err;
- }
- 
-@@ -1064,19 +1059,15 @@ int
- iavf_disable_queues_lv(struct iavf_adapter *adapter)
- {
- 	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(adapter);
--	struct virtchnl_del_ena_dis_queues *queue_select;
--	struct virtchnl_queue_chunk *queue_chunk;
-+	struct {
-+		struct virtchnl_del_ena_dis_queues msg;
-+		struct virtchnl_queue_chunk chunks[IAVF_RXTX_QUEUE_CHUNKS_NUM - 1];
-+	} queue_req = {0};
-+	struct virtchnl_del_ena_dis_queues *queue_select = &queue_req.msg;
-+	struct virtchnl_queue_chunk *queue_chunk = queue_select->chunks.chunks;
- 	struct iavf_cmd_info args;
--	int err, len;
-+	int err;
- 
--	len = sizeof(struct virtchnl_del_ena_dis_queues) +
--		  sizeof(struct virtchnl_queue_chunk) *
--		  (IAVF_RXTX_QUEUE_CHUNKS_NUM - 1);
--	queue_select = rte_zmalloc("queue_select", len, 0);
--	if (!queue_select)
--		return -ENOMEM;
--
--	queue_chunk = queue_select->chunks.chunks;
- 	queue_select->chunks.num_chunks = IAVF_RXTX_QUEUE_CHUNKS_NUM;
- 	queue_select->vport_id = vf->vsi_res->vsi_id;
- 
-@@ -1092,7 +1083,7 @@ iavf_disable_queues_lv(struct iavf_adapter *adapter)
- 
- 	args.ops = VIRTCHNL_OP_DISABLE_QUEUES_V2;
- 	args.in_args = (u8 *)queue_select;
--	args.in_args_size = len;
-+	args.in_args_size = sizeof(queue_req);
- 	args.out_buffer = vf->aq_resp;
- 	args.out_size = IAVF_AQ_BUF_SZ;
- 	err = iavf_execute_vf_cmd_safe(adapter, &args, 0);
-@@ -1100,7 +1091,6 @@ iavf_disable_queues_lv(struct iavf_adapter *adapter)
- 		PMD_DRV_LOG(ERR,
- 			    "Failed to execute command of OP_DISABLE_QUEUES_V2");
- 
--	rte_free(queue_select);
- 	return err;
- }
- 
-@@ -1109,17 +1099,15 @@ iavf_switch_queue_lv(struct iavf_adapter *adapter, uint16_t qid,
- 		 bool rx, bool on)
- {
- 	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(adapter);
--	struct virtchnl_del_ena_dis_queues *queue_select;
--	struct virtchnl_queue_chunk *queue_chunk;
-+	struct {
-+		struct virtchnl_del_ena_dis_queues msg;
-+		struct virtchnl_queue_chunk chunks[IAVF_RXTX_QUEUE_CHUNKS_NUM - 1];
-+	} queue_req;
-+	struct virtchnl_del_ena_dis_queues *queue_select = &queue_req.msg;
-+	struct virtchnl_queue_chunk *queue_chunk = queue_select->chunks.chunks;
- 	struct iavf_cmd_info args;
--	int err, len;
-+	int err;
- 
--	len = sizeof(struct virtchnl_del_ena_dis_queues);
--	queue_select = rte_zmalloc("queue_select", len, 0);
--	if (!queue_select)
--		return -ENOMEM;
--
--	queue_chunk = queue_select->chunks.chunks;
- 	queue_select->chunks.num_chunks = 1;
- 	queue_select->vport_id = vf->vsi_res->vsi_id;
- 
-@@ -1138,7 +1126,7 @@ iavf_switch_queue_lv(struct iavf_adapter *adapter, uint16_t qid,
- 	else
- 		args.ops = VIRTCHNL_OP_DISABLE_QUEUES_V2;
- 	args.in_args = (u8 *)queue_select;
--	args.in_args_size = len;
-+	args.in_args_size = sizeof(queue_req);
- 	args.out_buffer = vf->aq_resp;
- 	args.out_size = IAVF_AQ_BUF_SZ;
- 	err = iavf_execute_vf_cmd_safe(adapter, &args, 0);
-@@ -1146,7 +1134,6 @@ iavf_switch_queue_lv(struct iavf_adapter *adapter, uint16_t qid,
- 		PMD_DRV_LOG(ERR, "Failed to execute command of %s",
- 			    on ? "OP_ENABLE_QUEUES_V2" : "OP_DISABLE_QUEUES_V2");
- 
--	rte_free(queue_select);
- 	return err;
- }
- 
-@@ -1229,7 +1216,7 @@ iavf_configure_queues(struct iavf_adapter *adapter,
- 
- 	size = sizeof(*vc_config) +
- 	       sizeof(vc_config->qpair[0]) * num_queue_pairs;
--	vc_config = rte_zmalloc("cfg_queue", size, 0);
-+	vc_config = calloc(1, size);
- 	if (!vc_config)
+-	map_info = rte_zmalloc("map_info", len, 0);
++	map_info = calloc(1, len);
+ 	if (!map_info)
  		return -ENOMEM;
  
-@@ -1292,7 +1279,7 @@ iavf_configure_queues(struct iavf_adapter *adapter,
- 		PMD_DRV_LOG(ERR, "Failed to execute command of"
- 			    " VIRTCHNL_OP_CONFIG_VSI_QUEUES");
+@@ -1319,7 +1319,7 @@ iavf_config_irq_map(struct iavf_adapter *adapter)
+ 	if (err)
+ 		PMD_DRV_LOG(ERR, "fail to execute command OP_CONFIG_IRQ_MAP");
  
--	rte_free(vc_config);
-+	free(vc_config);
+-	rte_free(map_info);
++	free(map_info);
+ 	return err;
+ }
+ 
+@@ -1337,7 +1337,7 @@ iavf_config_irq_map_lv(struct iavf_adapter *adapter, uint16_t num,
+ 	len = sizeof(struct virtchnl_queue_vector_maps) +
+ 	      sizeof(struct virtchnl_queue_vector) * (num - 1);
+ 
+-	map_info = rte_zmalloc("map_info", len, 0);
++	map_info = calloc(1, len);
+ 	if (!map_info)
+ 		return -ENOMEM;
+ 
+@@ -1360,7 +1360,7 @@ iavf_config_irq_map_lv(struct iavf_adapter *adapter, uint16_t num,
+ 	if (err)
+ 		PMD_DRV_LOG(ERR, "fail to execute command OP_MAP_QUEUE_VECTOR");
+ 
+-	rte_free(map_info);
++	free(map_info);
  	return err;
  }
  
