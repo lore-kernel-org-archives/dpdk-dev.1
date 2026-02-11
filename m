@@ -2,49 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8563ECD6D3
-	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Feb 2026 18:16:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95CB6ECD6D3
+	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Feb 2026 18:16:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A7F6340EDD;
-	Wed, 11 Feb 2026 19:14:05 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 93F3B40EE4;
+	Wed, 11 Feb 2026 19:14:06 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
- by mails.dpdk.org (Postfix) with ESMTP id 978DC40E5A
- for <dev@dpdk.org>; Wed, 11 Feb 2026 19:14:01 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id E37F240E4F
+ for <dev@dpdk.org>; Wed, 11 Feb 2026 19:14:02 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1770833642; x=1802369642;
+ t=1770833643; x=1802369643;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=NDeCvSRexQxsGlWTmkY5nvbI8U5SnLY0Umi0gNsSk7o=;
- b=nKEwv6M/lIEnTyG4wVzozXNop+Mwmvl2JZA6xnKD873imBQhTJ3YSDQJ
- 3vDVTqaPtTe4Xrydxuqj6HtS/A2sGK8WZmuRaRepmVX7Wj7deLjxiej3e
- m4wF6qHurhREvXahCOOTu1cUrYvqejJzzoGmfj07jf43xiW45GW3Veq5B
- orHIW7e8NT9V6eSkCZ/EvJ3fIZo12ZrxGqCR2QuIakCR/CkySfzXt9VYm
- Z9cJHYGs2LTgXWlTQp6ADjoN9pd5EzhJpiFd1EFmeBEas9Hwfo18afKEz
- u1XSop2CKi/FlXNBWIactcqTAo/nam5N/qwIRXUGeFoEi7ZYyhjDpuCiK g==;
-X-CSE-ConnectionGUID: 9ycg+XaSQuCO1EFkipjvcw==
-X-CSE-MsgGUID: e0Y8EPsYQc63KsiJpzNAYA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11698"; a="75834696"
-X-IronPort-AV: E=Sophos;i="6.21,285,1763452800"; d="scan'208";a="75834696"
+ bh=K+0RzJIo95jnL8Sd5FdbfkZJftYggE2VDau7htXMNo0=;
+ b=m3pJgoe8IgfEKScSojNwXen/GpPe0kpiwF+Qd18DpyEZL/ndqk62sSyH
+ SvEibDGZaLep4nTV/m/jj3LQxDq2B+c9ycda2Ycydl2dJl9kGDHBjfyY8
+ BNquJjL6tDbZu2NnmzXm85E+6O5eav68h0A2inbai/vVGAY2GciPqeZ3q
+ XD59lYfpY2x3LxzNdF7iEDSCxrTtXAM9tdolYgQzlDNJ0ViXU6PpRDTNy
+ FoO8WRPSX/xqIqMv544ZSgxrW/ablW6BdnbDFoqmvgCeWGHCjevSS4dkN
+ nWLRfJ9v/9HNNhxXBimkA2yOFvLb4IIeUAucv/AVZoo9+mXifIP5Fi60J A==;
+X-CSE-ConnectionGUID: 3oLQCTPbTdO0LZXUH4b8Ug==
+X-CSE-MsgGUID: sZ/8QYQYR+aT51YeWAQzXg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11698"; a="75834697"
+X-IronPort-AV: E=Sophos;i="6.21,285,1763452800"; d="scan'208";a="75834697"
 Received: from orviesa001.jf.intel.com ([10.64.159.141])
  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 11 Feb 2026 10:14:01 -0800
-X-CSE-ConnectionGUID: 3iCrE8apSx6GWSrPOCc3Cw==
-X-CSE-MsgGUID: Bncb6PUASHqiYLwFb0sjNg==
+ 11 Feb 2026 10:14:02 -0800
+X-CSE-ConnectionGUID: kwkqRpqESVa/ytnjOgNq7g==
+X-CSE-MsgGUID: C9F/scwQRRK+PtAUqtw2EQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,285,1763452800"; d="scan'208";a="249986384"
+X-IronPort-AV: E=Sophos;i="6.21,285,1763452800"; d="scan'208";a="249986387"
 Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by orviesa001.jf.intel.com with ESMTP; 11 Feb 2026 10:14:00 -0800
+ by orviesa001.jf.intel.com with ESMTP; 11 Feb 2026 10:14:02 -0800
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: Bruce Richardson <bruce.richardson@intel.com>,
- Anatoly Burakov <anatoly.burakov@intel.com>,
  Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
- Jingjing Wu <jingjing.wu@intel.com>,
- Praveen Shetty <praveen.shetty@intel.com>
-Subject: [PATCH v5 26/35] net/intel: remove index for tracking end of packet
-Date: Wed, 11 Feb 2026 18:12:55 +0000
-Message-ID: <20260211181309.2838042-27-bruce.richardson@intel.com>
+ Anatoly Burakov <anatoly.burakov@intel.com>
+Subject: [PATCH v5 27/35] net/intel: merge ring writes in simple Tx for ice
+ and i40e
+Date: Wed, 11 Feb 2026 18:12:56 +0000
+Message-ID: <20260211181309.2838042-28-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260211181309.2838042-1-bruce.richardson@intel.com>
 References: <20251219172548.2660777-1-bruce.richardson@intel.com>
@@ -64,190 +63,460 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The last_id value in each tx_sw_queue entry was no longer used in the
-datapath, remove it and its initialization. For the function releasing
-packets back, rather than relying on "last_id" to identify end of
-packet, instead check for the next pointer being NULL.
+The ice and i40e drivers have identical code for writing ring entries in
+the simple Tx path, so merge in the descriptor writing code.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
-Acked-by: Anatoly Burakov <anatoly.burakov@intel.com>
+Acked-by: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
 ---
- drivers/net/intel/common/tx.h             | 1 -
- drivers/net/intel/i40e/i40e_rxtx.c        | 8 +++-----
- drivers/net/intel/iavf/iavf_rxtx.c        | 9 ++++-----
- drivers/net/intel/ice/ice_dcf_ethdev.c    | 1 -
- drivers/net/intel/ice/ice_rxtx.c          | 9 ++++-----
- drivers/net/intel/idpf/idpf_common_rxtx.c | 2 --
- drivers/net/intel/ixgbe/ixgbe_rxtx.c      | 9 ++++-----
- 7 files changed, 15 insertions(+), 24 deletions(-)
+ drivers/net/intel/common/tx.h                 |  6 ++
+ drivers/net/intel/common/tx_scalar.h          | 60 ++++++++++++++
+ drivers/net/intel/i40e/i40e_rxtx.c            | 79 +------------------
+ drivers/net/intel/i40e/i40e_rxtx.h            |  3 -
+ .../net/intel/i40e/i40e_rxtx_vec_altivec.c    |  4 +-
+ drivers/net/intel/i40e/i40e_rxtx_vec_avx2.c   |  4 +-
+ drivers/net/intel/i40e/i40e_rxtx_vec_avx512.c |  4 +-
+ drivers/net/intel/i40e/i40e_rxtx_vec_neon.c   |  4 +-
+ drivers/net/intel/ice/ice_rxtx.c              | 69 +---------------
+ drivers/net/intel/ice/ice_rxtx.h              |  2 -
+ drivers/net/intel/ice/ice_rxtx_vec_avx2.c     |  4 +-
+ drivers/net/intel/ice/ice_rxtx_vec_avx512.c   |  4 +-
+ 12 files changed, 86 insertions(+), 157 deletions(-)
 
 diff --git a/drivers/net/intel/common/tx.h b/drivers/net/intel/common/tx.h
-index a4ef230523..ee7c83cf00 100644
+index ee7c83cf00..a5cbe070fc 100644
 --- a/drivers/net/intel/common/tx.h
 +++ b/drivers/net/intel/common/tx.h
-@@ -112,7 +112,6 @@ struct ci_tx_queue;
- struct ci_tx_entry {
- 	struct rte_mbuf *mbuf; /* mbuf associated with TX desc, if any. */
- 	uint16_t next_id; /* Index of next descriptor in ring. */
--	uint16_t last_id; /* Index of last scattered descriptor. */
- };
+@@ -70,6 +70,12 @@ enum ci_tx_l2tag1_field {
+ /* Common maximum data per TX descriptor */
+ #define CI_MAX_DATA_PER_TXD     (CI_TXD_QW1_TX_BUF_SZ_M >> CI_TXD_QW1_TX_BUF_SZ_S)
  
- /**
++/* Common TX maximum burst size for chunked transmission in simple paths */
++#define CI_TX_MAX_BURST 32
++
++/* Common TX descriptor command flags for simple transmit */
++#define CI_TX_DESC_CMD_DEFAULT (CI_TX_DESC_CMD_ICRC | CI_TX_DESC_CMD_EOP)
++
+ /* Checksum offload mask to identify packets requesting offload */
+ #define CI_TX_CKSUM_OFFLOAD_MASK (RTE_MBUF_F_TX_IP_CKSUM |		 \
+ 				   RTE_MBUF_F_TX_L4_MASK |		 \
+diff --git a/drivers/net/intel/common/tx_scalar.h b/drivers/net/intel/common/tx_scalar.h
+index c91a8156a2..3c9c1f611c 100644
+--- a/drivers/net/intel/common/tx_scalar.h
++++ b/drivers/net/intel/common/tx_scalar.h
+@@ -12,6 +12,66 @@
+ /* depends on common Tx definitions. */
+ #include "tx.h"
+ 
++/* Populate 4 descriptors with data from 4 mbufs */
++static inline void
++ci_tx_fill_hw_ring_tx4(volatile struct ci_tx_desc *txdp, struct rte_mbuf **pkts)
++{
++	uint64_t dma_addr;
++	uint32_t i;
++
++	for (i = 0; i < 4; i++, txdp++, pkts++) {
++		dma_addr = rte_mbuf_data_iova(*pkts);
++		txdp->buffer_addr = rte_cpu_to_le_64(dma_addr);
++		txdp->cmd_type_offset_bsz =
++			rte_cpu_to_le_64(CI_TX_DESC_DTYPE_DATA |
++				((uint64_t)CI_TX_DESC_CMD_DEFAULT << CI_TXD_QW1_CMD_S) |
++				((uint64_t)(*pkts)->data_len << CI_TXD_QW1_TX_BUF_SZ_S));
++	}
++}
++
++/* Populate 1 descriptor with data from 1 mbuf */
++static inline void
++ci_tx_fill_hw_ring_tx1(volatile struct ci_tx_desc *txdp, struct rte_mbuf **pkts)
++{
++	uint64_t dma_addr;
++
++	dma_addr = rte_mbuf_data_iova(*pkts);
++	txdp->buffer_addr = rte_cpu_to_le_64(dma_addr);
++	txdp->cmd_type_offset_bsz =
++		rte_cpu_to_le_64(CI_TX_DESC_DTYPE_DATA |
++			((uint64_t)CI_TX_DESC_CMD_DEFAULT << CI_TXD_QW1_CMD_S) |
++			((uint64_t)(*pkts)->data_len << CI_TXD_QW1_TX_BUF_SZ_S));
++}
++
++/* Fill hardware descriptor ring with mbuf data */
++static inline void
++ci_tx_fill_hw_ring(struct ci_tx_queue *txq, struct rte_mbuf **pkts,
++		   uint16_t nb_pkts)
++{
++	volatile struct ci_tx_desc *txdp = &txq->ci_tx_ring[txq->tx_tail];
++	struct ci_tx_entry *txep = &txq->sw_ring[txq->tx_tail];
++	const int N_PER_LOOP = 4;
++	const int N_PER_LOOP_MASK = N_PER_LOOP - 1;
++	int mainpart, leftover;
++	int i, j;
++
++	mainpart = nb_pkts & ((uint32_t)~N_PER_LOOP_MASK);
++	leftover = nb_pkts & ((uint32_t)N_PER_LOOP_MASK);
++	for (i = 0; i < mainpart; i += N_PER_LOOP) {
++		for (j = 0; j < N_PER_LOOP; ++j)
++			(txep + i + j)->mbuf = *(pkts + i + j);
++		ci_tx_fill_hw_ring_tx4(txdp + i, pkts + i);
++	}
++
++	if (unlikely(leftover > 0)) {
++		for (i = 0; i < leftover; ++i) {
++			(txep + mainpart + i)->mbuf = *(pkts + mainpart + i);
++			ci_tx_fill_hw_ring_tx1(txdp + mainpart + i,
++					       pkts + mainpart + i);
++		}
++	}
++}
++
+ /*
+  * Common transmit descriptor cleanup function for Intel drivers.
+  *
 diff --git a/drivers/net/intel/i40e/i40e_rxtx.c b/drivers/net/intel/i40e/i40e_rxtx.c
-index 1303010819..ba94c59c0a 100644
+index ba94c59c0a..174d517e9d 100644
 --- a/drivers/net/intel/i40e/i40e_rxtx.c
 +++ b/drivers/net/intel/i40e/i40e_rxtx.c
-@@ -2536,14 +2536,13 @@ i40e_tx_done_cleanup_full(struct ci_tx_queue *txq,
- 			pkt_cnt < free_cnt &&
- 			tx_id != tx_last; i++) {
- 			if (swr_ring[tx_id].mbuf != NULL) {
--				rte_pktmbuf_free_seg(swr_ring[tx_id].mbuf);
--				swr_ring[tx_id].mbuf = NULL;
--
- 				/*
- 				 * last segment in the packet,
- 				 * increment packet count
- 				 */
--				pkt_cnt += (swr_ring[tx_id].last_id == tx_id);
-+				pkt_cnt += (swr_ring[tx_id].mbuf->next == NULL) ? 1 : 0;
-+				rte_pktmbuf_free_seg(swr_ring[tx_id].mbuf);
-+				swr_ring[tx_id].mbuf = NULL;
- 			}
+@@ -311,19 +311,6 @@ i40e_parse_tunneling_params(uint64_t ol_flags,
+ 		*cd_tunneling |= I40E_TXD_CTX_QW0_L4T_CS_MASK;
+ }
  
- 			tx_id = swr_ring[tx_id].next_id;
-@@ -2636,7 +2635,6 @@ i40e_reset_tx_queue(struct ci_tx_queue *txq)
- 		txd->cmd_type_offset_bsz =
- 			rte_cpu_to_le_64(CI_TX_DESC_DTYPE_DESC_DONE);
- 		txe[i].mbuf =  NULL;
--		txe[i].last_id = i;
- 		txe[prev].next_id = i;
- 		prev = i;
- 	}
-diff --git a/drivers/net/intel/iavf/iavf_rxtx.c b/drivers/net/intel/iavf/iavf_rxtx.c
-index 05aca9b1dd..e621d4bf47 100644
---- a/drivers/net/intel/iavf/iavf_rxtx.c
-+++ b/drivers/net/intel/iavf/iavf_rxtx.c
-@@ -282,7 +282,6 @@ reset_tx_queue(struct ci_tx_queue *txq)
- 		txq->ci_tx_ring[i].cmd_type_offset_bsz =
- 			rte_cpu_to_le_64(CI_TX_DESC_DTYPE_DESC_DONE);
- 		txe[i].mbuf =  NULL;
--		txe[i].last_id = i;
- 		txe[prev].next_id = i;
- 		prev = i;
- 	}
-@@ -3957,14 +3956,14 @@ iavf_tx_done_cleanup_full(struct ci_tx_queue *txq,
- 	while (pkt_cnt < free_cnt) {
- 		do {
- 			if (swr_ring[tx_id].mbuf != NULL) {
--				rte_pktmbuf_free_seg(swr_ring[tx_id].mbuf);
--				swr_ring[tx_id].mbuf = NULL;
--
- 				/*
- 				 * last segment in the packet,
- 				 * increment packet count
- 				 */
--				pkt_cnt += (swr_ring[tx_id].last_id == tx_id);
-+				pkt_cnt += (swr_ring[tx_id].mbuf->next == NULL) ? 1 : 0;
-+				rte_pktmbuf_free_seg(swr_ring[tx_id].mbuf);
-+				swr_ring[tx_id].mbuf = NULL;
-+
- 			}
+-/* Construct the tx flags */
+-static inline uint64_t
+-i40e_build_ctob(uint32_t td_cmd,
+-		uint32_t td_offset,
+-		unsigned int size,
+-		uint32_t td_tag)
+-{
+-	return rte_cpu_to_le_64(CI_TX_DESC_DTYPE_DATA |
+-			((uint64_t)td_cmd  << CI_TXD_QW1_CMD_S) |
+-			((uint64_t)td_offset << CI_TXD_QW1_OFFSET_S) |
+-			((uint64_t)size  << CI_TXD_QW1_TX_BUF_SZ_S) |
+-			((uint64_t)td_tag  << CI_TXD_QW1_L2TAG1_S));
+-}
  
- 			tx_id = swr_ring[tx_id].next_id;
-diff --git a/drivers/net/intel/ice/ice_dcf_ethdev.c b/drivers/net/intel/ice/ice_dcf_ethdev.c
-index 02a23629d6..abd7875e7b 100644
---- a/drivers/net/intel/ice/ice_dcf_ethdev.c
-+++ b/drivers/net/intel/ice/ice_dcf_ethdev.c
-@@ -408,7 +408,6 @@ reset_tx_queue(struct ci_tx_queue *txq)
- 		txq->ci_tx_ring[i].cmd_type_offset_bsz =
- 			rte_cpu_to_le_64(CI_TX_DESC_DTYPE_DESC_DONE);
- 		txe[i].mbuf =  NULL;
--		txe[i].last_id = i;
- 		txe[prev].next_id = i;
- 		prev = i;
+ static inline int
+ #ifdef RTE_LIBRTE_I40E_RX_ALLOW_BULK_ALLOC
+@@ -1082,64 +1069,6 @@ i40e_tx_free_bufs(struct ci_tx_queue *txq)
+ 	return tx_rs_thresh;
+ }
+ 
+-/* Populate 4 descriptors with data from 4 mbufs */
+-static inline void
+-tx4(volatile struct ci_tx_desc *txdp, struct rte_mbuf **pkts)
+-{
+-	uint64_t dma_addr;
+-	uint32_t i;
+-
+-	for (i = 0; i < 4; i++, txdp++, pkts++) {
+-		dma_addr = rte_mbuf_data_iova(*pkts);
+-		txdp->buffer_addr = rte_cpu_to_le_64(dma_addr);
+-		txdp->cmd_type_offset_bsz =
+-			i40e_build_ctob((uint32_t)I40E_TD_CMD, 0,
+-					(*pkts)->data_len, 0);
+-	}
+-}
+-
+-/* Populate 1 descriptor with data from 1 mbuf */
+-static inline void
+-tx1(volatile struct ci_tx_desc *txdp, struct rte_mbuf **pkts)
+-{
+-	uint64_t dma_addr;
+-
+-	dma_addr = rte_mbuf_data_iova(*pkts);
+-	txdp->buffer_addr = rte_cpu_to_le_64(dma_addr);
+-	txdp->cmd_type_offset_bsz =
+-		i40e_build_ctob((uint32_t)I40E_TD_CMD, 0,
+-				(*pkts)->data_len, 0);
+-}
+-
+-/* Fill hardware descriptor ring with mbuf data */
+-static inline void
+-i40e_tx_fill_hw_ring(struct ci_tx_queue *txq,
+-		     struct rte_mbuf **pkts,
+-		     uint16_t nb_pkts)
+-{
+-	volatile struct ci_tx_desc *txdp = &txq->ci_tx_ring[txq->tx_tail];
+-	struct ci_tx_entry *txep = &txq->sw_ring[txq->tx_tail];
+-	const int N_PER_LOOP = 4;
+-	const int N_PER_LOOP_MASK = N_PER_LOOP - 1;
+-	int mainpart, leftover;
+-	int i, j;
+-
+-	mainpart = (nb_pkts & ((uint32_t) ~N_PER_LOOP_MASK));
+-	leftover = (nb_pkts & ((uint32_t)  N_PER_LOOP_MASK));
+-	for (i = 0; i < mainpart; i += N_PER_LOOP) {
+-		for (j = 0; j < N_PER_LOOP; ++j) {
+-			(txep + i + j)->mbuf = *(pkts + i + j);
+-		}
+-		tx4(txdp + i, pkts + i);
+-	}
+-	if (unlikely(leftover > 0)) {
+-		for (i = 0; i < leftover; ++i) {
+-			(txep + mainpart + i)->mbuf = *(pkts + mainpart + i);
+-			tx1(txdp + mainpart + i, pkts + mainpart + i);
+-		}
+-	}
+-}
+-
+ static inline uint16_t
+ tx_xmit_pkts(struct ci_tx_queue *txq,
+ 	     struct rte_mbuf **tx_pkts,
+@@ -1164,7 +1093,7 @@ tx_xmit_pkts(struct ci_tx_queue *txq,
+ 	txq->nb_tx_free = (uint16_t)(txq->nb_tx_free - nb_pkts);
+ 	if ((txq->tx_tail + nb_pkts) > txq->nb_tx_desc) {
+ 		n = (uint16_t)(txq->nb_tx_desc - txq->tx_tail);
+-		i40e_tx_fill_hw_ring(txq, tx_pkts, n);
++		ci_tx_fill_hw_ring(txq, tx_pkts, n);
+ 		txr[txq->tx_next_rs].cmd_type_offset_bsz |=
+ 			rte_cpu_to_le_64(((uint64_t)CI_TX_DESC_CMD_RS) << CI_TXD_QW1_CMD_S);
+ 		txq->tx_next_rs = (uint16_t)(txq->tx_rs_thresh - 1);
+@@ -1172,7 +1101,7 @@ tx_xmit_pkts(struct ci_tx_queue *txq,
  	}
+ 
+ 	/* Fill hardware descriptor ring with mbuf data */
+-	i40e_tx_fill_hw_ring(txq, tx_pkts + n, (uint16_t)(nb_pkts - n));
++	ci_tx_fill_hw_ring(txq, tx_pkts + n, (uint16_t)(nb_pkts - n));
+ 	txq->tx_tail = (uint16_t)(txq->tx_tail + (nb_pkts - n));
+ 
+ 	/* Determine if RS bit needs to be set */
+@@ -1201,13 +1130,13 @@ i40e_xmit_pkts_simple(void *tx_queue,
+ {
+ 	uint16_t nb_tx = 0;
+ 
+-	if (likely(nb_pkts <= I40E_TX_MAX_BURST))
++	if (likely(nb_pkts <= CI_TX_MAX_BURST))
+ 		return tx_xmit_pkts((struct ci_tx_queue *)tx_queue,
+ 						tx_pkts, nb_pkts);
+ 
+ 	while (nb_pkts) {
+ 		uint16_t ret, num = (uint16_t)RTE_MIN(nb_pkts,
+-						I40E_TX_MAX_BURST);
++						CI_TX_MAX_BURST);
+ 
+ 		ret = tx_xmit_pkts((struct ci_tx_queue *)tx_queue,
+ 						&tx_pkts[nb_tx], num);
+diff --git a/drivers/net/intel/i40e/i40e_rxtx.h b/drivers/net/intel/i40e/i40e_rxtx.h
+index db8525d52d..88d47f261e 100644
+--- a/drivers/net/intel/i40e/i40e_rxtx.h
++++ b/drivers/net/intel/i40e/i40e_rxtx.h
+@@ -47,9 +47,6 @@
+ #define I40E_RX_DESC_EXT_STATUS_FLEXBL_MASK   0x03
+ #define I40E_RX_DESC_EXT_STATUS_FLEXBL_FLEX   0x01
+ 
+-#define I40E_TD_CMD (CI_TX_DESC_CMD_ICRC |\
+-		     CI_TX_DESC_CMD_EOP)
+-
+ enum i40e_header_split_mode {
+ 	i40e_header_split_none = 0,
+ 	i40e_header_split_enabled = 1,
+diff --git a/drivers/net/intel/i40e/i40e_rxtx_vec_altivec.c b/drivers/net/intel/i40e/i40e_rxtx_vec_altivec.c
+index 4c36748d94..68667bdc9b 100644
+--- a/drivers/net/intel/i40e/i40e_rxtx_vec_altivec.c
++++ b/drivers/net/intel/i40e/i40e_rxtx_vec_altivec.c
+@@ -476,8 +476,8 @@ i40e_xmit_fixed_burst_vec(void *tx_queue, struct rte_mbuf **tx_pkts,
+ 	volatile struct ci_tx_desc *txdp;
+ 	struct ci_tx_entry_vec *txep;
+ 	uint16_t n, nb_commit, tx_id;
+-	uint64_t flags = I40E_TD_CMD;
+-	uint64_t rs = CI_TX_DESC_CMD_RS | I40E_TD_CMD;
++	uint64_t flags = CI_TX_DESC_CMD_DEFAULT;
++	uint64_t rs = CI_TX_DESC_CMD_RS | CI_TX_DESC_CMD_DEFAULT;
+ 	int i;
+ 
+ 	if (txq->nb_tx_free < txq->tx_free_thresh)
+diff --git a/drivers/net/intel/i40e/i40e_rxtx_vec_avx2.c b/drivers/net/intel/i40e/i40e_rxtx_vec_avx2.c
+index 502a1842c6..e1672c4371 100644
+--- a/drivers/net/intel/i40e/i40e_rxtx_vec_avx2.c
++++ b/drivers/net/intel/i40e/i40e_rxtx_vec_avx2.c
+@@ -741,8 +741,8 @@ i40e_xmit_fixed_burst_vec_avx2(void *tx_queue, struct rte_mbuf **tx_pkts,
+ 	volatile struct ci_tx_desc *txdp;
+ 	struct ci_tx_entry_vec *txep;
+ 	uint16_t n, nb_commit, tx_id;
+-	uint64_t flags = I40E_TD_CMD;
+-	uint64_t rs = CI_TX_DESC_CMD_RS | I40E_TD_CMD;
++	uint64_t flags = CI_TX_DESC_CMD_DEFAULT;
++	uint64_t rs = CI_TX_DESC_CMD_RS | CI_TX_DESC_CMD_DEFAULT;
+ 
+ 	if (txq->nb_tx_free < txq->tx_free_thresh)
+ 		ci_tx_free_bufs_vec(txq, i40e_tx_desc_done, false);
+diff --git a/drivers/net/intel/i40e/i40e_rxtx_vec_avx512.c b/drivers/net/intel/i40e/i40e_rxtx_vec_avx512.c
+index d48ff9f51e..bceb95ad2d 100644
+--- a/drivers/net/intel/i40e/i40e_rxtx_vec_avx512.c
++++ b/drivers/net/intel/i40e/i40e_rxtx_vec_avx512.c
+@@ -801,8 +801,8 @@ i40e_xmit_fixed_burst_vec_avx512(void *tx_queue, struct rte_mbuf **tx_pkts,
+ 	volatile struct ci_tx_desc *txdp;
+ 	struct ci_tx_entry_vec *txep;
+ 	uint16_t n, nb_commit, tx_id;
+-	uint64_t flags = I40E_TD_CMD;
+-	uint64_t rs = CI_TX_DESC_CMD_RS | I40E_TD_CMD;
++	uint64_t flags = CI_TX_DESC_CMD_DEFAULT;
++	uint64_t rs = CI_TX_DESC_CMD_RS | CI_TX_DESC_CMD_DEFAULT;
+ 
+ 	if (txq->nb_tx_free < txq->tx_free_thresh)
+ 		ci_tx_free_bufs_vec(txq, i40e_tx_desc_done, false);
+diff --git a/drivers/net/intel/i40e/i40e_rxtx_vec_neon.c b/drivers/net/intel/i40e/i40e_rxtx_vec_neon.c
+index be4c64942e..debc9bda28 100644
+--- a/drivers/net/intel/i40e/i40e_rxtx_vec_neon.c
++++ b/drivers/net/intel/i40e/i40e_rxtx_vec_neon.c
+@@ -626,8 +626,8 @@ i40e_xmit_fixed_burst_vec(void *__rte_restrict tx_queue,
+ 	volatile struct ci_tx_desc *txdp;
+ 	struct ci_tx_entry_vec *txep;
+ 	uint16_t n, nb_commit, tx_id;
+-	uint64_t flags = I40E_TD_CMD;
+-	uint64_t rs = CI_TX_DESC_CMD_RS | I40E_TD_CMD;
++	uint64_t flags = CI_TX_DESC_CMD_DEFAULT;
++	uint64_t rs = CI_TX_DESC_CMD_RS | CI_TX_DESC_CMD_DEFAULT;
+ 	int i;
+ 
+ 	if (txq->nb_tx_free < txq->tx_free_thresh)
 diff --git a/drivers/net/intel/ice/ice_rxtx.c b/drivers/net/intel/ice/ice_rxtx.c
-index 87ffcd3895..fe65df94da 100644
+index fe65df94da..e4fba453a9 100644
 --- a/drivers/net/intel/ice/ice_rxtx.c
 +++ b/drivers/net/intel/ice/ice_rxtx.c
-@@ -1121,7 +1121,6 @@ ice_reset_tx_queue(struct ci_tx_queue *txq)
- 		txd->cmd_type_offset_bsz =
- 			rte_cpu_to_le_64(CI_TX_DESC_DTYPE_DESC_DONE);
- 		txe[i].mbuf =  NULL;
--		txe[i].last_id = i;
- 		txe[prev].next_id = i;
- 		prev = i;
- 	}
-@@ -3201,14 +3200,14 @@ ice_tx_done_cleanup_full(struct ci_tx_queue *txq,
- 			pkt_cnt < free_cnt &&
- 			tx_id != tx_last; i++) {
- 			if (swr_ring[tx_id].mbuf != NULL) {
--				rte_pktmbuf_free_seg(swr_ring[tx_id].mbuf);
--				swr_ring[tx_id].mbuf = NULL;
+@@ -3286,67 +3286,6 @@ ice_tx_done_cleanup(void *txq, uint32_t free_cnt)
+ 		return ice_tx_done_cleanup_full(q, free_cnt);
+ }
+ 
+-/* Populate 4 descriptors with data from 4 mbufs */
+-static inline void
+-tx4(volatile struct ci_tx_desc *txdp, struct rte_mbuf **pkts)
+-{
+-	uint64_t dma_addr;
+-	uint32_t i;
 -
- 				/*
- 				 * last segment in the packet,
- 				 * increment packet count
- 				 */
--				pkt_cnt += (swr_ring[tx_id].last_id == tx_id);
-+				pkt_cnt += swr_ring[tx_id].mbuf->next == NULL ? 1 : 0;
-+				rte_pktmbuf_free_seg(swr_ring[tx_id].mbuf);
-+				swr_ring[tx_id].mbuf = NULL;
-+
- 			}
- 
- 			tx_id = swr_ring[tx_id].next_id;
-diff --git a/drivers/net/intel/idpf/idpf_common_rxtx.c b/drivers/net/intel/idpf/idpf_common_rxtx.c
-index c2dcf3cde3..f14a20d6ec 100644
---- a/drivers/net/intel/idpf/idpf_common_rxtx.c
-+++ b/drivers/net/intel/idpf/idpf_common_rxtx.c
-@@ -218,7 +218,6 @@ idpf_qc_split_tx_descq_reset(struct ci_tx_queue *txq)
- 	prev = (uint16_t)(txq->sw_nb_desc - 1);
- 	for (i = 0; i < txq->sw_nb_desc; i++) {
- 		txe[i].mbuf = NULL;
--		txe[i].last_id = i;
- 		txe[prev].next_id = i;
- 		prev = i;
- 	}
-@@ -277,7 +276,6 @@ idpf_qc_single_tx_queue_reset(struct ci_tx_queue *txq)
- 		txq->ci_tx_ring[i].cmd_type_offset_bsz =
- 			rte_cpu_to_le_64(CI_TX_DESC_DTYPE_DESC_DONE);
- 		txe[i].mbuf =  NULL;
--		txe[i].last_id = i;
- 		txe[prev].next_id = i;
- 		prev = i;
- 	}
-diff --git a/drivers/net/intel/ixgbe/ixgbe_rxtx.c b/drivers/net/intel/ixgbe/ixgbe_rxtx.c
-index ea609d926a..dc9fda8e21 100644
---- a/drivers/net/intel/ixgbe/ixgbe_rxtx.c
-+++ b/drivers/net/intel/ixgbe/ixgbe_rxtx.c
-@@ -2407,14 +2407,14 @@ ixgbe_tx_done_cleanup_full(struct ci_tx_queue *txq, uint32_t free_cnt)
- 			pkt_cnt < free_cnt &&
- 			tx_id != tx_last; i++) {
- 			if (swr_ring[tx_id].mbuf != NULL) {
--				rte_pktmbuf_free_seg(swr_ring[tx_id].mbuf);
--				swr_ring[tx_id].mbuf = NULL;
+-	for (i = 0; i < 4; i++, txdp++, pkts++) {
+-		dma_addr = rte_mbuf_data_iova(*pkts);
+-		txdp->buffer_addr = rte_cpu_to_le_64(dma_addr);
+-		txdp->cmd_type_offset_bsz =
+-			ice_build_ctob((uint32_t)ICE_TD_CMD, 0,
+-				       (*pkts)->data_len, 0);
+-	}
+-}
 -
- 				/*
- 				 * last segment in the packet,
- 				 * increment packet count
- 				 */
--				pkt_cnt += (swr_ring[tx_id].last_id == tx_id);
-+				pkt_cnt += swr_ring[tx_id].mbuf->next == NULL ? 1 : 0;
-+				rte_pktmbuf_free_seg(swr_ring[tx_id].mbuf);
-+				swr_ring[tx_id].mbuf = NULL;
-+
- 			}
- 
- 			tx_id = swr_ring[tx_id].next_id;
-@@ -2535,7 +2535,6 @@ ixgbe_reset_tx_queue(struct ci_tx_queue *txq)
- 
- 		txd->wb.status = rte_cpu_to_le_32(IXGBE_TXD_STAT_DD);
- 		txe[i].mbuf = NULL;
--		txe[i].last_id = i;
- 		txe[prev].next_id = i;
- 		prev = i;
+-/* Populate 1 descriptor with data from 1 mbuf */
+-static inline void
+-tx1(volatile struct ci_tx_desc *txdp, struct rte_mbuf **pkts)
+-{
+-	uint64_t dma_addr;
+-
+-	dma_addr = rte_mbuf_data_iova(*pkts);
+-	txdp->buffer_addr = rte_cpu_to_le_64(dma_addr);
+-	txdp->cmd_type_offset_bsz =
+-		ice_build_ctob((uint32_t)ICE_TD_CMD, 0,
+-			       (*pkts)->data_len, 0);
+-}
+-
+-static inline void
+-ice_tx_fill_hw_ring(struct ci_tx_queue *txq, struct rte_mbuf **pkts,
+-		    uint16_t nb_pkts)
+-{
+-	volatile struct ci_tx_desc *txdp = &txq->ci_tx_ring[txq->tx_tail];
+-	struct ci_tx_entry *txep = &txq->sw_ring[txq->tx_tail];
+-	const int N_PER_LOOP = 4;
+-	const int N_PER_LOOP_MASK = N_PER_LOOP - 1;
+-	int mainpart, leftover;
+-	int i, j;
+-
+-	/**
+-	 * Process most of the packets in chunks of N pkts.  Any
+-	 * leftover packets will get processed one at a time.
+-	 */
+-	mainpart = nb_pkts & ((uint32_t)~N_PER_LOOP_MASK);
+-	leftover = nb_pkts & ((uint32_t)N_PER_LOOP_MASK);
+-	for (i = 0; i < mainpart; i += N_PER_LOOP) {
+-		/* Copy N mbuf pointers to the S/W ring */
+-		for (j = 0; j < N_PER_LOOP; ++j)
+-			(txep + i + j)->mbuf = *(pkts + i + j);
+-		tx4(txdp + i, pkts + i);
+-	}
+-
+-	if (unlikely(leftover > 0)) {
+-		for (i = 0; i < leftover; ++i) {
+-			(txep + mainpart + i)->mbuf = *(pkts + mainpart + i);
+-			tx1(txdp + mainpart + i, pkts + mainpart + i);
+-		}
+-	}
+-}
+-
+ static inline uint16_t
+ tx_xmit_pkts(struct ci_tx_queue *txq,
+ 	     struct rte_mbuf **tx_pkts,
+@@ -3371,7 +3310,7 @@ tx_xmit_pkts(struct ci_tx_queue *txq,
+ 	txq->nb_tx_free = (uint16_t)(txq->nb_tx_free - nb_pkts);
+ 	if ((txq->tx_tail + nb_pkts) > txq->nb_tx_desc) {
+ 		n = (uint16_t)(txq->nb_tx_desc - txq->tx_tail);
+-		ice_tx_fill_hw_ring(txq, tx_pkts, n);
++		ci_tx_fill_hw_ring(txq, tx_pkts, n);
+ 		txr[txq->tx_next_rs].cmd_type_offset_bsz |=
+ 			rte_cpu_to_le_64(((uint64_t)CI_TX_DESC_CMD_RS) << CI_TXD_QW1_CMD_S);
+ 		txq->tx_next_rs = (uint16_t)(txq->tx_rs_thresh - 1);
+@@ -3379,7 +3318,7 @@ tx_xmit_pkts(struct ci_tx_queue *txq,
  	}
+ 
+ 	/* Fill hardware descriptor ring with mbuf data */
+-	ice_tx_fill_hw_ring(txq, tx_pkts + n, (uint16_t)(nb_pkts - n));
++	ci_tx_fill_hw_ring(txq, tx_pkts + n, (uint16_t)(nb_pkts - n));
+ 	txq->tx_tail = (uint16_t)(txq->tx_tail + (nb_pkts - n));
+ 
+ 	/* Determine if RS bit needs to be set */
+@@ -3408,13 +3347,13 @@ ice_xmit_pkts_simple(void *tx_queue,
+ {
+ 	uint16_t nb_tx = 0;
+ 
+-	if (likely(nb_pkts <= ICE_TX_MAX_BURST))
++	if (likely(nb_pkts <= CI_TX_MAX_BURST))
+ 		return tx_xmit_pkts((struct ci_tx_queue *)tx_queue,
+ 				    tx_pkts, nb_pkts);
+ 
+ 	while (nb_pkts) {
+ 		uint16_t ret, num = (uint16_t)RTE_MIN(nb_pkts,
+-						      ICE_TX_MAX_BURST);
++						      CI_TX_MAX_BURST);
+ 
+ 		ret = tx_xmit_pkts((struct ci_tx_queue *)tx_queue,
+ 				   &tx_pkts[nb_tx], num);
+diff --git a/drivers/net/intel/ice/ice_rxtx.h b/drivers/net/intel/ice/ice_rxtx.h
+index 7d6480b410..77ed41f9fd 100644
+--- a/drivers/net/intel/ice/ice_rxtx.h
++++ b/drivers/net/intel/ice/ice_rxtx.h
+@@ -46,8 +46,6 @@
+ 
+ #define ICE_SUPPORT_CHAIN_NUM 5
+ 
+-#define ICE_TD_CMD                      CI_TX_DESC_CMD_EOP
+-
+ #define ICE_VPMD_RX_BURST            CI_VPMD_RX_BURST
+ #define ICE_VPMD_TX_BURST            32
+ #define ICE_VPMD_RXQ_REARM_THRESH    CI_VPMD_RX_REARM_THRESH
+diff --git a/drivers/net/intel/ice/ice_rxtx_vec_avx2.c b/drivers/net/intel/ice/ice_rxtx_vec_avx2.c
+index 2922671158..d03f2e5b36 100644
+--- a/drivers/net/intel/ice/ice_rxtx_vec_avx2.c
++++ b/drivers/net/intel/ice/ice_rxtx_vec_avx2.c
+@@ -845,8 +845,8 @@ ice_xmit_fixed_burst_vec_avx2(void *tx_queue, struct rte_mbuf **tx_pkts,
+ 	volatile struct ci_tx_desc *txdp;
+ 	struct ci_tx_entry_vec *txep;
+ 	uint16_t n, nb_commit, tx_id;
+-	uint64_t flags = ICE_TD_CMD;
+-	uint64_t rs = CI_TX_DESC_CMD_RS | ICE_TD_CMD;
++	uint64_t flags = CI_TX_DESC_CMD_DEFAULT;
++	uint64_t rs = CI_TX_DESC_CMD_RS | CI_TX_DESC_CMD_DEFAULT;
+ 
+ 	/* cross rx_thresh boundary is not allowed */
+ 	nb_pkts = RTE_MIN(nb_pkts, txq->tx_rs_thresh);
+diff --git a/drivers/net/intel/ice/ice_rxtx_vec_avx512.c b/drivers/net/intel/ice/ice_rxtx_vec_avx512.c
+index e64b6e227b..004c01054a 100644
+--- a/drivers/net/intel/ice/ice_rxtx_vec_avx512.c
++++ b/drivers/net/intel/ice/ice_rxtx_vec_avx512.c
+@@ -909,8 +909,8 @@ ice_xmit_fixed_burst_vec_avx512(void *tx_queue, struct rte_mbuf **tx_pkts,
+ 	volatile struct ci_tx_desc *txdp;
+ 	struct ci_tx_entry_vec *txep;
+ 	uint16_t n, nb_commit, tx_id;
+-	uint64_t flags = ICE_TD_CMD;
+-	uint64_t rs = CI_TX_DESC_CMD_RS | ICE_TD_CMD;
++	uint64_t flags = CI_TX_DESC_CMD_DEFAULT;
++	uint64_t rs = CI_TX_DESC_CMD_RS | CI_TX_DESC_CMD_DEFAULT;
+ 
+ 	/* cross rx_thresh boundary is not allowed */
+ 	nb_pkts = RTE_MIN(nb_pkts, txq->tx_rs_thresh);
 -- 
 2.51.0
 
