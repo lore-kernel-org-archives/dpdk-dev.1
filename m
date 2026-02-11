@@ -2,92 +2,194 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA651EB597B
-	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Feb 2026 08:13:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43BAFEA3F27
+	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Feb 2026 09:14:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0124D4042F;
-	Wed, 11 Feb 2026 09:13:39 +0100 (CET)
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com
- [209.85.222.182])
- by mails.dpdk.org (Postfix) with ESMTP id 223E94026A
- for <dev@dpdk.org>; Wed, 11 Feb 2026 09:13:37 +0100 (CET)
-Received: by mail-qk1-f182.google.com with SMTP id
- af79cd13be357-8c70daf9c94so481478685a.0
- for <dev@dpdk.org>; Wed, 11 Feb 2026 00:13:37 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1770797616; cv=none;
- d=google.com; s=arc-20240605;
- b=XCvmMIgiCdxS4MKVtFe6KgtDP9c93DlEyu7n4cO3mQhbn7IulsS1LSut3jwD1iczKI
- mg8DGGoR9dVGr13dr2bPcWcWgFbegQzI4kL6M2hKoYDmPRY3buqxmz8uAzgh5uM2nZiX
- PglzKxcQJvQbzasKLrBqyjbrrcPYvssoY420rImo5jh/xSeVWT4f7Ygy1exbMZB6yNlV
- VQhxoy5j6LawJgCNT4pa7GFLXbjiI2gT9wZkWR1Cq+pbtXZH53rkVBhIr45LJh1SM38k
- UUS7mBo8SwV4/YDdarBPy1PijYFKH4jBedkaphwMoor6/Xf1Z1AeCf/SsBZQOBNARJmJ
- Pj/w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20240605; 
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:dkim-signature;
- bh=Su4vmLsYJ6lMALIn5rxnthEg/6JCrHPElaeWo7/VSYM=;
- fh=+njWWfKQP01zebiE6jUtkOVEYVB5zq//9vbXbytvplM=;
- b=M8A2l7m/zGyJCJwvrErSkCllO9f+WflniEf4ZyvDvS92lziaTH4WB6L5EkzMAtuWFg
- 5zb3hKcR0WewSqm3g5mQRazlo7BaAN08enpy6UUu9SkDc2xcBTOFPYgpHrHkK2nXyaJ/
- iU7qtb3QSr9eSujUjVaZ+aZXw7CWBEO/oqJjMw4AgDPD6PKEiJ+xHGIdzPgPcTUJ8Uyu
- GIRqHG0IquiuwLhm0dWIxOz3DglnaWnvcX5S2TsjfcqyRXKNWkNBobMkMuyUgKEJQdyw
- ogIoq3ca/BO8eev71nRSNKHB6H1M/5fSwfxISKFl+1594dlUfVzUfs6yxPGoJh70KlRc
- F6RQ==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1770797616; x=1771402416; darn=dpdk.org;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:from:to:cc:subject:date
- :message-id:reply-to;
- bh=Su4vmLsYJ6lMALIn5rxnthEg/6JCrHPElaeWo7/VSYM=;
- b=mBG+dqDVI7fOa163XfWaYbH8Ru9ZLL+SohT79h9SY/Mz+SR5OxaJClRIbAvXrriGgA
- girfFFhjXXUhS88ZgHvKe5m0cF5J5t2aya3G7iwDUw0eJqhdtBGI/iMYfZWewRJOv2Dg
- CIywT1HiiwkVVU+NQLtDeCLzoo3lR1Gjk6brmHazFJfj0vBM8d4zwNzG9RwBwjYFgoZj
- ldUOhETELGES8S7strQuMRVnHKfrEUdXgw34k8ylwlLinCK7vFO4hP73QXRA5bdujNPF
- C+xqpcaEWziEunt4CpgzpEr+XnRV0xHOyX2HSYGnu3Z8p3iX1crfQPKivnKSICg0lkY8
- rZyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1770797616; x=1771402416;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=Su4vmLsYJ6lMALIn5rxnthEg/6JCrHPElaeWo7/VSYM=;
- b=kVQr5YpOB702F9FmPn4veInxcmd8IFzCIUi+b4j/JAJkNdLs9pVT8Sfcp+I447hYnI
- Katp8T/8luV9awl/qE1pQF/dNl467K5fsBjTJhgkqv+q+b2U7SvoDh3I2IE0ftxR7PHL
- pUywljETlbOzeO8sSYFTIecwJ+nBsCynNZf+Q4cZ3sPCpUpXGBtsQ4pK0qixVXS0w8nM
- 6UaLT42Xrh3mGtnSIUISEldr66lKTY6iQfD3fqpwziIktc2ur7bZBECxIAVBRan/nbZg
- /hYb0Z3njnP5rCytMyUTH375eh4yobzld8QV6FBwEjmoSq9geb/utB+zcCoeKlO9jrc3
- HAbw==
-X-Gm-Message-State: AOJu0Ywz9lSnfrJSIuKfJ4ANn0QReIxN4Gxa6LZz/SnkS9nucTDBlnRN
- pl3O+/1Zt69Bdmj1Uj3146KmZVzFRj2t/yWAekOOTJWKfWdHtsc6ZEKl3c1dRzbjqU9c4WlRoDe
- ZXEVnq9Zv9zIfkiuekGV41vLTwqxM4Ts=
-X-Gm-Gg: AZuq6aLWIH3ntyDPRFQsbXIjNCStD6KJDbez/R8x+Pect8aqUdQJH3R0ZkHFvB36p6W
- UhO/TE9j/AgBVLWTILvQ5gUg2zzIvNvc0SB6RIw2KoABotK18cNUXmJ0w7B3E0rjAzIhaCEYCpU
- kBaj+DAoU4tYA+aGVqYUVI8F/JFlep+qFZ7ZTSy4tDUaz/5LohpSZGL4XFbvUwLCp1gC7xGRaM1
- xAvo77cH1hucSGk8YlQD2eDOsSxV+0HJ8D2wmkkCrJbTA3MTKo1J7kyWOb2LQxs2aMkk6dYFWdM
- xEM=
-X-Received: by 2002:a05:622a:10b:b0:502:8fb7:77ff with SMTP id
- d75a77b69052e-5068121cd13mr27342641cf.47.1770797615345; Wed, 11 Feb 2026
- 00:13:35 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 095F3402B5;
+	Wed, 11 Feb 2026 10:14:15 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+ by mails.dpdk.org (Postfix) with ESMTP id BF70D4026A
+ for <dev@dpdk.org>; Wed, 11 Feb 2026 10:14:13 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1770801254; x=1802337254;
+ h=message-id:date:subject:to:cc:references:from:
+ in-reply-to:content-transfer-encoding:mime-version;
+ bh=tpCHEs1kiR/hj1E3gAjgBtO4l8OwmCeby3Nh9GvGdP8=;
+ b=OSBEzBU5kuOowYx/GZqOxl6ZWBAVEjvS2XQu5gqNGo98VeeAVryHRohH
+ xyLT9q0H19rpO3/QVDIkdh6cwYqoisEs3xHkYnAWjnyQ79yuNyPWcQSEA
+ ljQX2traiJM+RV5V9GkmCWjYjAYauVEKIrEldF67Oc3fpzAFm+kUOrF5d
+ kG6/7/8HQKA7D6Q+SD9tHa3QKoDC1Lifu3AURkk50G7GXADNZDuIfDZPz
+ 0rx0OTlUAktzltpy4Cyty7sNvdSwf2uSv0HJrcmd5Le7XMU2DiFtMrhFt
+ h3aw3ECUYXcOH20xkrj5C95HRK8/VjlYgskFakYy+TQy82Yq9m6Ln07zp w==;
+X-CSE-ConnectionGUID: Ia2bTht0TXKprxM4OXfOqg==
+X-CSE-MsgGUID: yInITJ6CTcKcMwwA3KLuzQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11697"; a="72019881"
+X-IronPort-AV: E=Sophos;i="6.21,283,1763452800"; d="scan'208";a="72019881"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+ by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 11 Feb 2026 01:14:13 -0800
+X-CSE-ConnectionGUID: 0GG195NHS9e3GJYD800uyw==
+X-CSE-MsgGUID: OMs+Hr04TnykGUvfVMlm3w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,283,1763452800"; d="scan'208";a="212224027"
+Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
+ by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 11 Feb 2026 01:14:13 -0800
+Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.35; Wed, 11 Feb 2026 01:14:12 -0800
+Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
+ FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.35 via Frontend Transport; Wed, 11 Feb 2026 01:14:12 -0800
+Received: from BL2PR02CU003.outbound.protection.outlook.com (52.101.52.57) by
+ edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.35; Wed, 11 Feb 2026 01:14:12 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=lqDvbDJb2OtlDBFJsQscLHMZf9dG8jkCaWNINXqqqtG8Fucj2YNQoUFygoqJo9yX4pUTxpPDWWmMHH8N4b7y+5TH6SjUE82FmofWu5Ydj0eLlXPt7dRNx/d23TG3sVsmDgvEfvR6UwzJ4hUJCGAcXjjzNtgNPgP6M8BsxABsUBpAlO42WeAOGUgXqVitGRKvnGvDqa3XIKhlc/mlqRSfzGyecZ8IRFwUUXiaEjJ7yvaA9NFNGSXvuytWPEqNCqc+XUH2k0tYYsyFsSgWyshnwjqJESAvrI6b0qDhqVtOxzX5wwY7ZF77Ya5y0467dcx/45E7DmthLvg0Mhg82kNCng==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+AxQ9yqqb4XO0inpeQS9IQwWh90OZq1wCMmhdsXLYzY=;
+ b=lQp4vVlOmJNii9lQ4oTHj9VMXHzO829c2PevYy1NpgUOwwWdbHiWE56psD97IA9+nCTK7fJ1vNYUiUjwfv/tihB+X2jZ1WNo/mRlAeIqKB5I3O/6pwEizu2Llwxn3a9AQuwMqSPN5wg+oB0n7qpdbxq2jTz6tzrOFFBhuu6m0rTfAhYP1UE6JE1NgsQskAuSXY2nv9WoeUMJWw+EfHOSXogEKRiiCkp0GJ0WSwTBqXulMnsM3Ig0rjfSGg/D4dLzo8EOEaAC/F9qSQGjY2wngftJRqPRiD0em60RloJufvcx//RVACPYEerfp/9XQOF5Lm1QLsFs3RnRcWadCvnAWA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DM4PR11MB6502.namprd11.prod.outlook.com (2603:10b6:8:89::7) by
+ DM4PR11MB6552.namprd11.prod.outlook.com (2603:10b6:8:8f::7) with
+ Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9611.10; Wed, 11 Feb 2026 09:14:09 +0000
+Received: from DM4PR11MB6502.namprd11.prod.outlook.com
+ ([fe80::d2df:4650:72ad:47d4]) by DM4PR11MB6502.namprd11.prod.outlook.com
+ ([fe80::d2df:4650:72ad:47d4%4]) with mapi id 15.20.9611.008; Wed, 11 Feb 2026
+ 09:14:09 +0000
+Message-ID: <7f66b67d-6b68-41d9-82d8-33346ac52b97@intel.com>
+Date: Wed, 11 Feb 2026 10:14:04 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 05/35] net/intel: add common fn to calculate needed
+ descriptors
+To: Bruce Richardson <bruce.richardson@intel.com>
+CC: <dev@dpdk.org>, Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
+ Jingjing Wu <jingjing.wu@intel.com>, Praveen Shetty
+ <praveen.shetty@intel.com>
+References: <20251219172548.2660777-1-bruce.richardson@intel.com>
+ <20260209164538.1428499-1-bruce.richardson@intel.com>
+ <20260209164538.1428499-6-bruce.richardson@intel.com>
+ <cab7ff8b-b260-4339-b0d7-8a139b617ba7@intel.com>
+ <aYs73tmg3YBlSXLB@bricha3-mobl1.ger.corp.intel.com>
+ <1518516a-5c1a-4bd0-9c8d-f071ae33a8c6@intel.com>
+ <aYtqFdNmhwGWc3pW@bricha3-mobl1.ger.corp.intel.com>
+Content-Language: en-US
+From: "Burakov, Anatoly" <anatoly.burakov@intel.com>
+In-Reply-To: <aYtqFdNmhwGWc3pW@bricha3-mobl1.ger.corp.intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: DU7P190CA0011.EURP190.PROD.OUTLOOK.COM
+ (2603:10a6:10:550::28) To DM4PR11MB6502.namprd11.prod.outlook.com
+ (2603:10b6:8:89::7)
 MIME-Version: 1.0
-References: <20260128060316.3967610-1-rbhansali@marvell.com>
- <20260128060316.3967610-18-rbhansali@marvell.com>
-In-Reply-To: <20260128060316.3967610-18-rbhansali@marvell.com>
-From: Jerin Jacob <jerinjacobk@gmail.com>
-Date: Wed, 11 Feb 2026 13:43:25 +0530
-X-Gm-Features: AZwV_QjMyNC2xXl6OD3ldSKQhiq7S9-11-MMhQ5J0VCcLaKFkGa7fwSiGQxDNwk
-Message-ID: <CALBAE1PV05kW4mgaEZ21PPttd-nwKjPV0k1ypwFd==THF-g-vA@mail.gmail.com>
-Subject: Re: [PATCH 18/18] common/cnxk: fix duplicate branch compiler warning
-To: Rahul Bhansali <rbhansali@marvell.com>
-Cc: dev@dpdk.org, Nithin Dabilpuram <ndabilpuram@marvell.com>, 
- Kiran Kumar K <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, 
- Satha Rao <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>, 
- Archana Muniganti <marchana@marvell.com>, Akhil Goyal <gakhil@marvell.com>, 
- Anoob Joseph <anoobj@marvell.com>, Vidya Sagar Velumuri <vvelumuri@marvell.com>,
- jerinj@marvell.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR11MB6502:EE_|DM4PR11MB6552:EE_
+X-MS-Office365-Filtering-Correlation-Id: e5f26153-48e1-4a60-a67a-08de694dea15
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?RDRaL3F6ZC9qb0J5SUtUeTZOU2pVQTBhVFhaK1Z1dHZnc1g3bVRNUzIraE9a?=
+ =?utf-8?B?eXNBbGhJWXFQbkxpVHVERCtLMzhpS2dad1JuSWdZSE9ibDJmRUZUbGZRSEhQ?=
+ =?utf-8?B?dTZNQ0lpb0ErQjZLRHowYnZFeG9yY2xBeENzNWF1S3loUGJMTFhnVVV0UUZj?=
+ =?utf-8?B?QlA2L20yTFR1UW01cDBXSmhuU1FtZ29ZMUN3VWp6TFF4b3ZDckQ2clhZRUdh?=
+ =?utf-8?B?dVc2VXlVdUJYckszWnRyV1UyVGE0bGNJZEFobTJHdzhwdEJKUGp5anJwNU1o?=
+ =?utf-8?B?SlJGdS9jcGRRcUxaZFFLVHFFc2JtVmR0Y2c5U243WGpsQmNCdTNTVy9UNUM1?=
+ =?utf-8?B?Yk1RUTRNcVRkU1E2TEV4L1Z6QmhsVmhZTFJiMTVEMXhQZjNXT1Nzek1TTzB6?=
+ =?utf-8?B?KzVqS0owdDgwbTNFYkxPRXJGT1JhamxyUWxSSUZ0VFZtQWJkdm9HVFMvSmMy?=
+ =?utf-8?B?VUhUT1lPYTNwWEFPQ25XWjNKWVJrWHA1QlBYUXlka2xlUEowcVNRR0U4am5B?=
+ =?utf-8?B?UGRRRkRYcytFeUp0bWpXM3F4UmlIdXZlMldPR0w4dWNoWHhSZ3JjNUFjSi9R?=
+ =?utf-8?B?NTBUR3RXNXhMemRtOHZSbmtwNmN6MXFzbmdjbzhFVXdEdExLMVR2NXpQNEtR?=
+ =?utf-8?B?b2dveGtIRGpLSVFYSCsrdmtRRzF3TUxlOUZlM1VMbWV0ZDVCSFhtSThxcWE5?=
+ =?utf-8?B?d1VJR0ZsZnNiY1pJbHJKZ1E1M1JxeU9TamZrZW1mUWxIUjhaaElMd1BXRFRi?=
+ =?utf-8?B?aGZDNldleDZsdkZtYjExb2ZIT0Z1WkR5WGNyMUt2WHd2eTNCM1ZUS0hlWTdr?=
+ =?utf-8?B?bUUxY0pleUdQUjZOZFdKeHJRT3QyZDV4Smx0Ymd6NDhPa1orMENmUEJBZnpj?=
+ =?utf-8?B?RUUrVWNwUlgyc2FRY0luYTJZMGgyMkNhYlJxK1VPTGhvcGpvVTNtTE1ZakdG?=
+ =?utf-8?B?emNjTFRoQ0J1dHhJRUUzR0xHTjhpTjB4dTZiekcvWS80N2NLdlRweFZhbW5p?=
+ =?utf-8?B?Mmk3V3Bva0VVdng4SXpoV2VvMytnQXp2enRVMkw5eEFQbDNvNkFsUWFiWC9k?=
+ =?utf-8?B?NVFhd1VLbHpVQ3RieEVQSUFQZHh1Znh0MmR6RmhlZDErcThBUTlobzkzeVZn?=
+ =?utf-8?B?d1krUGRUSHFVTVpvelZSdGlvNi9vTGRqNmtlcWVGY21HTEhCT0NEdURaVGlh?=
+ =?utf-8?B?NzloMURDVnI5MHNiQm1CWDBySFZKTk96WlFaNEJJeXNRSmt6Nmp3TVdrdksz?=
+ =?utf-8?B?dTZYbmF4Q05zbFphQlhwTzdvK1pBRVhZditvUk5xb21ZczVmQmQ0QUNsbmd3?=
+ =?utf-8?B?Nm52OERYU2JHVm02NVdCS3VvVFlnSEREYkhaNWdac1R2RlpRZlRoTDZRWkVr?=
+ =?utf-8?B?R2w1RlF6aHRyMTZUdmpRNXV4K2F2Nm16TlBOajRHbnFxaXpxMXRvNXVKT2Jl?=
+ =?utf-8?B?N1U4SnVQZ0Y4Q3ltT3Vucm9pZlJoQXRVQXdJbTRSVEFuZXgxYnplRWNNMU1C?=
+ =?utf-8?B?dWhVczAwNmNpOXVKT0E2RHFhZ2REVXJRbmlrbGNpcXhNU21TL0RUOTkvWm9I?=
+ =?utf-8?B?WFI0MldMd0Q5eUM4OW9FTktqRUgvemFablV3S1dzWWcyN0hjVENuTFMrZW1L?=
+ =?utf-8?B?eXQ1VSt0VnVCb21TelBSOE9IaUNRZkFmL0JnL0sxMDRyQlRuSytEOUNhdysr?=
+ =?utf-8?B?VS8vVy84NWhkVy81QUYrL1VKazY4WndVWEY3YjN2WVlNWmJTNlRRMW5oQ0RN?=
+ =?utf-8?B?TDFDM0lUUmZRNVI2aGEwa3J5Z0pCQ2xSc1E5YjdSa0Yxc1JnVEErZDgydlhm?=
+ =?utf-8?B?alBwOGNNUDR3YTYyT0lTMzZZd0tCcHZmak0zQU11cUtQMXUyamorR3djdmgy?=
+ =?utf-8?B?dUhCL2hRSnU0Z0M4bHo5Z1I3Y0VaTjg3aTBEOHBuREhnVmxQdVB6NzNtalBZ?=
+ =?utf-8?B?KzdSRU9ESG55Q1cvbk1xRk9NajBDNm53NVY5MkhCWVVjbFdGZDdPUitEV2hO?=
+ =?utf-8?B?Ky9pRHJGcThGRi8zblJUc04rNFA1bmU5WHZkbHZjbFYzMGpoMkpUS3BZekY1?=
+ =?utf-8?B?TXFRNDdMcjBKa0tUbWRBeEprOGhTNkhHYmR5VTNYR0M1d0htNHczeVJ3Y3Bo?=
+ =?utf-8?Q?i0I0=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DM4PR11MB6502.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(366016)(1800799024)(376014); DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?elc0M0lZQmxiTFNDdWh6T1gza29VMVM0ZzAxei9iMUlzaS85TVhNeXQwRk1I?=
+ =?utf-8?B?TFMrRWRCVmlvN3c2cDZ1akFZN3YyVks0V0tvMTBBODlJdmY3R214R0grRFcw?=
+ =?utf-8?B?bWdhZUdXKzh3R0hJUXRtWERIdUlBQ0VCVFRWUHlibWdLcHN0bTZBa1FWaXBz?=
+ =?utf-8?B?TFBOUUpWZXh6VzVybmxEN3BaYmh0OUJXSjlqM3pMVnpIS3Y0aHgvdXpUM2wy?=
+ =?utf-8?B?UUZaMksvY3dlRU5qbXZuQzJJNnN3bkxwZng2SHhQLzdTVHM3cXovVmxvd2lq?=
+ =?utf-8?B?MkpmQlh2ZVMzc25TR2F3d2w2eHlCenpYMzhCVlg4cE4xWnBQeEdaYktMakZa?=
+ =?utf-8?B?Z1dlMjRrOTRneUZCQjFBWEpISVRDblZTaTg3enJuUDB4Nk1BckxqWW5mM0c3?=
+ =?utf-8?B?NDByTWhTU2ZnejZjQS9QbDFkcXphVU91QjNUMTFHNmR1Kyt4eVlRYk5KRlI0?=
+ =?utf-8?B?dGEwdEZtQ1VIdzRiZitnQm80MkUzbUNZWEFaVVRXY1hYVEhUOTNKRUMwYTVU?=
+ =?utf-8?B?Vk1FNDNVL09oRHJrNlhFYUJvWnZKYXNxaCt0c1dzVXduRlJlYTFUZFhYdXVN?=
+ =?utf-8?B?V1VpSVkxdmNid2ZwQWNWRndtT1pGTGtmQVQrOW16cEMvdDRHaVhrYURZV3Rt?=
+ =?utf-8?B?RzhPTkNDWlIyWlJudDBvVE9PNlhtOUU5MndMN1JoWnhXUFVVUEI5SC90Ty9n?=
+ =?utf-8?B?MzFDK1NKNDJadGk3alY1bTNNTzk3Y3puSkZlK3VrN1ROMFl2ZmkvZGtDbFlx?=
+ =?utf-8?B?Ymc3ZmNkdmJ1Q0NzMDZiS0N3cmxZY0g3ekFiYVM0WnRUUHYrWEJkd3JYRjBH?=
+ =?utf-8?B?M2ZyYy9DY3VtVnBRZTQyTzlqdkYyUjFXZW5oMnYwNE9zWGNWeHZRSUxoenlY?=
+ =?utf-8?B?WDhMYnp6QmtJU1UrVWFaeE1qdkFtdGQ1eWdjMC9IUGRZeFNyeGZnYVUrYUhT?=
+ =?utf-8?B?Y0lLYU5hL2NzaC9wVUlkT0E1UWhTVVRqZGZCUjRpNDNNSjRyWklrS2kyYm50?=
+ =?utf-8?B?OTF0SnoxdnlkY1ZhMXlOVVZwbmt0QVFSUUhjRmg2YW1URVlXWEpJN29QSHd3?=
+ =?utf-8?B?OGE1ZVJ0Z1pXbndYN1ZDYlhsc2ljc2RpZVdxakNQaTlJdE9TWDhPWkRrZEpq?=
+ =?utf-8?B?YVFxUUE3ZlV0YmFVUVBOMkw4eGJQS2g2YkU0WHNpQUFOeUJZVXEvRDJuTDky?=
+ =?utf-8?B?SkVtNTRGMktwT05QRjk5a3pxU3F3UVkwSlRHUFlmK1JoamMyNVVXQXg0U3Yx?=
+ =?utf-8?B?RUxGWE5Lam12MWQ0a1hHTUdLd0pxUDVFaWFUUzRCd1krSWVQclM3VGliNVY4?=
+ =?utf-8?B?YUNBTXVpQmI1MnlEZzBPaGRTcml5djR3djlFbzlKc0NTSkk1N1Jxd01hY0ts?=
+ =?utf-8?B?b2E2MHdzQUZBdmROYUNpVXVVSzlxY29EVUk1TjN3NWZmaDVHRHcvREVvS0Vk?=
+ =?utf-8?B?UjBpMDJ1K01lS0REZXJyeGtxVU8wNVlOTlZPYWZ0M0w4S2NqaVFTNzZVVlJY?=
+ =?utf-8?B?aHVpc29DTlZ2MnBjTE5oZE9DZXZlRmE4WnpqbDMzQy83VE1HeWgrWXUwMnM3?=
+ =?utf-8?B?a0tvWThMTlZ5WU9MSEw2MElvZDJCOVJvZDh6UjZ2eUxWalFNODJrb1crWk9w?=
+ =?utf-8?B?VDdWalVlbWRUQ1VxVzVBY1FQVHl6Ykg4S0FoY2dmWjRnTXRQZ0RlMVZMVHQx?=
+ =?utf-8?B?ZkpIaHRUTm9ydHJydlExZXJtYkVicVVGU1p1aFQ1SDN3T0tlK291dzIwWnQ1?=
+ =?utf-8?B?RzJzb2pNdkY2b0RJdnhTMDNSVksvUFdGclczdDJmZjlWNGxNdzM2eUlNcFFM?=
+ =?utf-8?B?Ri83K1dCOXNVNEpqRnFzcUFhRlJIMmJqUGVmRjRSRnc4VGR4ZkRHcUVodzZl?=
+ =?utf-8?B?NW5EOC94N1QxVXlYaFU0NTBDYWlBWUtKaGtoVGdyL2VORUlnZ3FKRDVGUEMv?=
+ =?utf-8?B?VWF6em5IaE1RcXIzOE5mSG5jZXJkQmt1NWF6V09MTUdmaEdQQXpmL0xDV2lr?=
+ =?utf-8?B?TS83R3lyZm5oL2xTeTkyUTg0QUVKU3c5TTFSa09YUGlGZERxdkRqSlc2aG1R?=
+ =?utf-8?B?VWxtc3IzbjlpT24wbGxacGdQdGdmWVkyTWJBdFM2ZUFlQTRsN2tKNDU4MnNm?=
+ =?utf-8?B?S2ZSWTVGSTQ4R0tOcU51U1JXUHdQMkJ5c2JHYlFFd2E0dW1zbTJibksxMTd4?=
+ =?utf-8?B?RUdDd0VqcjBMSUFMNkFEL2g1Z2N4eVpocC9tQ3Z2blNlcmVkNVdCa2ZlVXUw?=
+ =?utf-8?B?eUI4ZC8yQ1FBUG1lSkVFQUgvaE42UmY4ekl0NmxvNi8xWStKQUlDQkN1RzJF?=
+ =?utf-8?B?MGwwVWtHcjdNNHhialgzVklEVXNzS0JpSDlxK1cwUmF4N1VXVWxZbXZKck5a?=
+ =?utf-8?Q?uDUff9PXgpd1I9TA=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: e5f26153-48e1-4a60-a67a-08de694dea15
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6502.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Feb 2026 09:14:09.6367 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Xv29QBBZ1iw16Z1ULuA7mN1oFmDPbqlLBYWwZF/T3/cOwdQYI6DAR4IY+3q/iXo1Dnz20go33kK3q3tPCxOkq/gddUiSq23rn323h66+fes=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB6552
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -101,197 +203,45 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, Jan 28, 2026 at 11:44=E2=80=AFAM Rahul Bhansali <rbhansali@marvell.=
-com> wrote:
->
-> With compiler option '-Wduplicated-branches', getting few
-> warnings such as "this condition has identical branches".
->
-> Macros are updated to address these warnings.
->
-> Bugzilla ID: 1811
-> Fixes: 0d9e323bacf0 ("common/cnxk: support for CN20K inline IPsec")
-> Fixes: c045d2e5cbbc ("common/cnxk: add CPT configuration")
->
-> Signed-off-by: Rahul Bhansali <rbhansali@marvell.com>
+On 2/10/2026 6:25 PM, Bruce Richardson wrote:
+> On Tue, Feb 10, 2026 at 03:17:32PM +0100, Burakov, Anatoly wrote:
+>> On 2/10/2026 3:08 PM, Bruce Richardson wrote:
+>>> On Tue, Feb 10, 2026 at 01:29:48PM +0100, Burakov, Anatoly wrote:
+>>>> On 2/9/2026 5:45 PM, Bruce Richardson wrote:
+>>>>> Multiple drivers used the same logic to calculate how many Tx data
+>>>>> descriptors were needed. Move that calculation to common code. In the
+>>>>> process of updating drivers, fix idpf driver calculation for the TSO
+>>>>> case.
+>>>>>
+>>>>
+>>>> "Fix TSO for idpf" sounds like a bugfix? Can it be backported to stable?
+>>>>
+>>> Yes, it is a bug fix for a particular edge case. However, as done here, the
+>>> fix is implied by the code changes in the consolidation, and depends upon
+>>> them. Any fix for backport would need to be a different, standalone patch,
+>>> based on this.
+>>>
+>>> /Bruce
+>>
+>> So the original code didn't have TSO at all? I.e. this can't be fixed as a
+>> prerequisite patch to this patchset?
+>>
+> Original code did have TSO, it just didn't support the case where a single
+> mbuf segment had more data than the max allowed to be described by a single
+> descriptor, i.e. where we had multiple descriptors for one mbuf segment, so
+> that "nb_descs != mbuf->nb_segs + ctx_descs". The other drivers all solve
+> this by having a separate function that iterated through the descriptors,
+> and to fix this in older releases would be to add such a function to this
+> driver. There is little point adding that function in this series just to
+> delete it later here, so I think for 26.03 the fix here is best and for
+> earlier releases the best fix is to just put the necessary code directly
+> into idpf driver. I've noted this down to do a backported patch after this
+> series goes in.
+> 
+> /Bruce
 
-Please check AI the comments in
-https://patches.dpdk.org/project/dpdk/patch/20260128060316.3967610-18-rbhan=
-sali@marvell.com/
+Got it, thanks!
 
-1)Please fix
-Is it candidate for Cc: stable@dpdk.org backport?
-        common/cnxk: fix engine capabilities fetch logic
-        common/cnxk: fix CPT CQ roll over handling
-        common/cnxk: fix duplicate branch compiler warning
-
-2)Add new feature to release notes
-
-3)Some of the changes are fixes: and mark the as fixes
-
-
-> ---
->  drivers/common/cnxk/hw/rvu.h          |  2 ++
->  drivers/common/cnxk/roc_cpt.c         |  7 +++----
->  drivers/common/cnxk/roc_nix_inl.c     | 25 +++++++++----------------
->  drivers/common/cnxk/roc_nix_inl_dev.c |  6 +-----
->  drivers/common/cnxk/roc_nix_inl_dp.h  |  3 +++
->  drivers/common/cnxk/roc_nix_priv.h    |  4 ++--
->  6 files changed, 20 insertions(+), 27 deletions(-)
->
-> diff --git a/drivers/common/cnxk/hw/rvu.h b/drivers/common/cnxk/hw/rvu.h
-> index ed2ba996e0..6f02d1e3d2 100644
-> --- a/drivers/common/cnxk/hw/rvu.h
-> +++ b/drivers/common/cnxk/hw/rvu.h
-> @@ -105,6 +105,8 @@
->  #define RVU_VF_MBOX_REGION              (0xc0000ull) /* [CN10K, .) */
->  #define RVU_VF_MSIX_PBAX(a)             (0xf0000ull | (uint64_t)(a) << 3=
-)
->
-> +#define RVU_BLOCK_ADDRX_DISC(a) RVU_PF_BLOCK_ADDRX_DISC(a)
-> +
->  /* CN20k RVU mbox registers */
->  #define RVU_MBOX_AF_AFPFX_TRIGX(a)    (0x9000 | (a) << 3)
->  #define RVU_MBOX_PF_PFAF_TRIGX(a)     RVU_PF_PFAF_MBOXX(a)
-> diff --git a/drivers/common/cnxk/roc_cpt.c b/drivers/common/cnxk/roc_cpt.=
-c
-> index 63419884ac..13eb9d3767 100644
-> --- a/drivers/common/cnxk/roc_cpt.c
-> +++ b/drivers/common/cnxk/roc_cpt.c
-> @@ -677,10 +677,9 @@ cpt_get_blkaddr(struct dev *dev)
->          * attached to. Assume CPT LF's of only one block are attached
->          * to a pffunc.
->          */
-> -       if (dev_is_vf(dev))
-> -               off =3D RVU_VF_BLOCK_ADDRX_DISC(RVU_BLOCK_ADDR_CPT1);
-> -       else
-> -               off =3D RVU_PF_BLOCK_ADDRX_DISC(RVU_BLOCK_ADDR_CPT1);
-> +
-> +       /* PF and VF block address offset is same, hence using common off=
-set */
-> +       off =3D RVU_BLOCK_ADDRX_DISC(RVU_BLOCK_ADDR_CPT1);
->
->         reg =3D plt_read64(dev->bar2 + off);
->
-> diff --git a/drivers/common/cnxk/roc_nix_inl.c b/drivers/common/cnxk/roc_=
-nix_inl.c
-> index aad2631673..a21c40acf1 100644
-> --- a/drivers/common/cnxk/roc_nix_inl.c
-> +++ b/drivers/common/cnxk/roc_nix_inl.c
-> @@ -19,6 +19,10 @@ PLT_STATIC_ASSERT(ROC_NIX_INL_OT_IPSEC_INB_SA_SZ =3D=
-=3D
->  PLT_STATIC_ASSERT(ROC_NIX_INL_OT_IPSEC_INB_SA_SZ =3D=3D 1024);
->  PLT_STATIC_ASSERT(ROC_NIX_INL_OT_IPSEC_OUTB_SA_SZ =3D=3D
->                   1UL << ROC_NIX_INL_OT_IPSEC_OUTB_SA_SZ_LOG2);
-> +PLT_STATIC_ASSERT(ROC_NIX_INL_OT_IPSEC_INB_SA_SZ =3D=3D ROC_NIX_INL_OW_I=
-PSEC_INB_SA_SZ);
-> +PLT_STATIC_ASSERT(ROC_NIX_INL_OT_IPSEC_INB_SA_SZ =3D=3D ROC_NIX_INL_ON_I=
-PSEC_INB_SA_SZ);
-> +PLT_STATIC_ASSERT(ROC_NIX_INL_OT_IPSEC_OUTB_SA_SZ =3D=3D ROC_NIX_INL_OW_=
-IPSEC_OUTB_SA_SZ);
-> +PLT_STATIC_ASSERT(ROC_NIX_INL_OT_IPSEC_OUTB_SA_SZ =3D=3D ROC_NIX_INL_ON_=
-IPSEC_OUTB_SA_SZ);
->
->  static int
->  nix_inl_meta_aura_destroy(struct roc_nix *roc_nix)
-> @@ -427,12 +431,8 @@ nix_inl_inb_ipsec_sa_tbl_setup(struct roc_nix *roc_n=
-ix)
->         /* CN9K SA size is different */
->         if (roc_nix->custom_inb_sa)
->                 inb_sa_sz =3D ROC_NIX_INL_INB_CUSTOM_SA_SZ;
-> -       else if (roc_model_is_cn9k())
-> -               inb_sa_sz =3D ROC_NIX_INL_ON_IPSEC_INB_SA_SZ;
-> -       else if (roc_model_is_cn10k())
-> -               inb_sa_sz =3D ROC_NIX_INL_OT_IPSEC_INB_SA_SZ;
->         else
-> -               inb_sa_sz =3D ROC_NIX_INL_OW_IPSEC_INB_SA_SZ;
-> +               inb_sa_sz =3D ROC_NIX_INL_IPSEC_INB_SA_SZ;
->
->         /* Alloc contiguous memory for Inbound SA's */
->         nix->inb_sa_sz[profile_id] =3D inb_sa_sz;
-> @@ -1198,10 +1198,9 @@ nix_inl_eng_caps_get(struct nix *nix)
->         inst.rptr =3D (uint64_t)rptr;
->         inst.w4.s.opcode_major =3D ROC_LOADFVC_MAJOR_OP;
->         inst.w4.s.opcode_minor =3D ROC_LOADFVC_MINOR_OP;
-> -       if (roc_model_is_cn9k() || roc_model_is_cn10k())
-> -               inst.w7.s.egrp =3D ROC_LEGACY_CPT_DFLT_ENG_GRP_SE;
-> -       else
-> -               inst.w7.s.egrp =3D ROC_CPT_DFLT_ENG_GRP_SE;
-> +
-> +       /* SE engine group ID is same for all platform */
-> +       inst.w7.s.egrp =3D ROC_CPT_DFLT_ENG_GRP_SE;
->
->         /* Use 1 min timeout for the poll */
->         const uint64_t timeout =3D plt_tsc_cycles() + 60 * plt_tsc_hz();
-> @@ -1614,13 +1613,7 @@ roc_nix_inl_outb_init(struct roc_nix *roc_nix)
->         if (!roc_nix->ipsec_out_max_sa)
->                 goto skip_sa_alloc;
->
-> -       /* CN9K SA size is different */
-> -       if (roc_model_is_cn9k())
-> -               sa_sz =3D ROC_NIX_INL_ON_IPSEC_OUTB_SA_SZ;
-> -       else if (roc_model_is_cn10k())
-> -               sa_sz =3D ROC_NIX_INL_OT_IPSEC_OUTB_SA_SZ;
-> -       else
-> -               sa_sz =3D ROC_NIX_INL_OW_IPSEC_OUTB_SA_SZ;
-> +       sa_sz =3D ROC_NIX_INL_IPSEC_OUTB_SA_SZ;
->
->         /* Alloc contiguous memory of outbound SA */
->         sa_base =3D plt_zmalloc(sa_sz * roc_nix->ipsec_out_max_sa,
-> diff --git a/drivers/common/cnxk/roc_nix_inl_dev.c b/drivers/common/cnxk/=
-roc_nix_inl_dev.c
-> index fcbe9314a1..8414b9edc6 100644
-> --- a/drivers/common/cnxk/roc_nix_inl_dev.c
-> +++ b/drivers/common/cnxk/roc_nix_inl_dev.c
-> @@ -837,12 +837,8 @@ nix_inl_nix_setup(struct nix_inl_dev *inl_dev)
->         /* CN9K SA is different */
->         if (inl_dev->custom_inb_sa)
->                 inb_sa_sz =3D ROC_NIX_INL_INB_CUSTOM_SA_SZ;
-> -       else if (roc_model_is_cn9k())
-> -               inb_sa_sz =3D ROC_NIX_INL_ON_IPSEC_INB_SA_SZ;
-> -       else if (roc_model_is_cn10k())
-> -               inb_sa_sz =3D ROC_NIX_INL_OT_IPSEC_INB_SA_SZ;
->         else
-> -               inb_sa_sz =3D ROC_NIX_INL_OW_IPSEC_INB_SA_SZ;
-> +               inb_sa_sz =3D ROC_NIX_INL_OT_IPSEC_INB_SA_SZ;
->
->         /* Alloc contiguous memory for Inbound SA's */
->         inl_dev->inb_sa_sz[profile_id] =3D inb_sa_sz;
-> diff --git a/drivers/common/cnxk/roc_nix_inl_dp.h b/drivers/common/cnxk/r=
-oc_nix_inl_dp.h
-> index eb101db179..6443770871 100644
-> --- a/drivers/common/cnxk/roc_nix_inl_dp.h
-> +++ b/drivers/common/cnxk/roc_nix_inl_dp.h
-> @@ -41,6 +41,9 @@
->         (ROC_NIX_INL_OW_IPSEC_OUTB_HW_SZ + ROC_NIX_INL_OW_IPSEC_OUTB_SW_R=
-SVD)
->  #define ROC_NIX_INL_OW_IPSEC_OUTB_SA_SZ_LOG2 9
->
-> +#define ROC_NIX_INL_IPSEC_INB_SA_SZ  ROC_NIX_INL_OT_IPSEC_INB_SA_SZ
-> +#define ROC_NIX_INL_IPSEC_OUTB_SA_SZ ROC_NIX_INL_OT_IPSEC_OUTB_SA_SZ
-> +
->  /* Alignment of SA Base */
->  #define ROC_NIX_INL_SA_BASE_ALIGN BIT_ULL(16)
->
-> diff --git a/drivers/common/cnxk/roc_nix_priv.h b/drivers/common/cnxk/roc=
-_nix_priv.h
-> index 308a62a70e..d4b3c7c1af 100644
-> --- a/drivers/common/cnxk/roc_nix_priv.h
-> +++ b/drivers/common/cnxk/roc_nix_priv.h
-> @@ -23,10 +23,10 @@
->  #define NIX_CQ_SEC_THRESH_LEVEL_REF1   (20 * 256 / 100)
->  #define NIX_CQ_BP_THRESH_LEVEL_REF1    (60 * 256 / 100)
->  #define NIX_CQ_SEC_BP_THRESH_LEVEL_REF1 (50 * 256 / 100)
-> -#define NIX_CQ_LBP_THRESH_FRAC_REF1    (80 * 16 / 100)
-> +#define NIX_CQ_LBP_THRESH_FRAC_REF1    (80 * 16 / 100.0)
->
->  /* Apply LBP at 75% of actual BP */
-> -#define NIX_CQ_LBP_THRESH_FRAC (75 * 16 / 100)
-> +#define NIX_CQ_LBP_THRESH_FRAC (75 * 16 / 100.0)
->  #define NIX_CQ_FULL_ERRATA_SKID (1024ull * 256)
->  #define NIX_RQ_AURA_BP_THRESH(percent, limit, shift) ((((limit) * (perce=
-nt)) / 100) >> (shift))
->
-> --
-> 2.34.1
->
+-- 
+Thanks,
+Anatoly
