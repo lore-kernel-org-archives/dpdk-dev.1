@@ -2,47 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E2C2E9E2FA
-	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Feb 2026 12:19:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F518E9E302
+	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Feb 2026 13:04:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BEDEE402B5;
-	Wed, 11 Feb 2026 13:19:26 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
- by mails.dpdk.org (Postfix) with ESMTP id 6FCAE4026A
- for <dev@dpdk.org>; Wed, 11 Feb 2026 13:19:24 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 22763402B5;
+	Wed, 11 Feb 2026 14:04:07 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+ by mails.dpdk.org (Postfix) with ESMTP id 3195B4026A
+ for <dev@dpdk.org>; Wed, 11 Feb 2026 14:04:05 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1770812365; x=1802348365;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=TLENARFd7dDRd+G7aCF2qdnGY8QyozhOfJTT5W4q6Lw=;
- b=VjB7pu/AGl4dyX3MNZhOSMxH1HXhJ19re32nVPwii5xnlaa3TEav/eQf
- /sUe0mhdf7PTjlAKHxDwpeFH6WTg0hfjY8U2hUJzMdTT3UsrwGEu+688E
- ppDcOCLu74jDxJsoB6bSe4D0k875Yju+vxh4lZWnBo7XjRwdWK3GWyuGu
- gsiRLQ/z7L7T6ceYME0HcqAmOxBrpne/+X3LimSgUNHijoy8ifRRdzHun
- J7vss/iVvoEapQx/0+i4zXuNXon4ew2vLE+QEWDVybJj+PeDa8V+YtsYG
- IgAyC0o8jiC4qFz+4zZww423fPfz6hrrzY5NvC/3lgGjZcx+s823yikVv Q==;
-X-CSE-ConnectionGUID: tDej46VET5mI4R89bIE26A==
-X-CSE-MsgGUID: IhcgSLbbSEiubhSgLKO14A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11697"; a="83326093"
-X-IronPort-AV: E=Sophos;i="6.21,283,1763452800"; d="scan'208";a="83326093"
+ t=1770815045; x=1802351045;
+ h=from:to:subject:date:message-id:in-reply-to:references:
+ mime-version:content-transfer-encoding;
+ bh=hWnfq8OzY5vRAB7F+vArGO/gsqqDJMzIL8uZQBseUjk=;
+ b=h1+2/j2eBdqkIwM0KOmdsRj9uA5D324LgVWLzf7HXa5qwu9XPeXfkPxl
+ y9cFoVkTlAjAzT7SdnzYR9Lmm9P82Wm3riz4I80dBQmtOphCjkMoafhtK
+ jpRjBXNNg3ZbKn3mzj+xFFLsNcqHyqKnTjH2368DJdBFYraaAzHegvB0P
+ iSYb7GwcCL5Ohpfpts4zOI6ayc9Sk7me7xfo7dZyy4IZT6OiaOgpH60T3
+ oBL0M31wnsei5fDFrtDXPNIzOAKQ5mV2OJLG9uuhl2eGN+zkNseUXWLUq
+ 9ax78roCqi//AW5VQgziGhTl0pRf8h4LDZVloChWajNX/hkRIUVM4g0ZW Q==;
+X-CSE-ConnectionGUID: 7zrmvCL2T7GqiTGYdWppNQ==
+X-CSE-MsgGUID: PfQRm3wETtmHRLZWY21f2g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11697"; a="59529065"
+X-IronPort-AV: E=Sophos;i="6.21,283,1763452800"; d="scan'208";a="59529065"
 Received: from orviesa005.jf.intel.com ([10.64.159.145])
- by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 11 Feb 2026 04:19:23 -0800
-X-CSE-ConnectionGUID: YJFqaRCqS4+rJynoVy/zpw==
-X-CSE-MsgGUID: 6nVyWt/GSga/yxd+FmM/Ng==
+ by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 11 Feb 2026 05:04:04 -0800
+X-CSE-ConnectionGUID: nXqz1h/hQqGrm7IQ25LCvQ==
+X-CSE-MsgGUID: J8KxPmriQH2WVyBP3TKbeA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,283,1763452800"; d="scan'208";a="217194826"
-Received: from silpixa00401454.ir.intel.com ([10.20.224.230])
- by orviesa005.jf.intel.com with ESMTP; 11 Feb 2026 04:19:22 -0800
-From: Emma Finn <emma.finn@intel.com>
-To: 
-Cc: dev@dpdk.org, gakhil@marvell.com, kai.ji@intel.com,
- Emma Finn <emma.finn@intel.com>
-Subject: [PATCH] doc: deprecation of OpenSSL version 1.1.1
-Date: Wed, 11 Feb 2026 12:19:16 +0000
-Message-ID: <20260211121916.2598788-1-emma.finn@intel.com>
-X-Mailer: git-send-email 2.43.0
+X-IronPort-AV: E=Sophos;i="6.21,283,1763452800"; d="scan'208";a="217206327"
+Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
+ by orviesa005.jf.intel.com with ESMTP; 11 Feb 2026 05:04:04 -0800
+From: Anatoly Burakov <anatoly.burakov@intel.com>
+To: dev@dpdk.org
+Subject: [PATCH v3 0/8] Assortment of bug fixes for Intel PMD's
+Date: Wed, 11 Feb 2026 13:03:45 +0000
+Message-ID: <cover.1770814868.git.anatoly.burakov@intel.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <4084ed8c4f7c01852ca22c7975d0639fc4c8a066.1770641909.git.anatoly.burakov@intel.com>
+References: <4084ed8c4f7c01852ca22c7975d0639fc4c8a066.1770641909.git.anatoly.burakov@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -58,30 +58,42 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-OpenSSL 1.1.1 reached end-of-life in September 2023. Future
-releases of DPDK will require minimum of OpenSSL 3.0.
+Various bug fixes for Intel IXGBE, I40E, ICE, and IAVF drivers
 
-Signed-off-by: Emma Finn <emma.finn@intel.com>
----
- doc/guides/rel_notes/deprecation.rst | 5 +++++
- 1 file changed, 5 insertions(+)
+v1 -> v2:
+- Added patches [1] [2] that were previously sent separately
+- Added patch fixing leak in DCF config
 
-diff --git a/doc/guides/rel_notes/deprecation.rst b/doc/guides/rel_notes/deprecation.rst
-index ac667e91a6..fca556d07b 100644
---- a/doc/guides/rel_notes/deprecation.rst
-+++ b/doc/guides/rel_notes/deprecation.rst
-@@ -20,6 +20,11 @@ Deprecation Notices
- * kvargs: The function ``rte_kvargs_process`` will get a new parameter
-   for returning key match count. It will ease handling of no-match case.
- 
-+* cryptodev: Support for OpenSSL versions earlier than 3.0 is deprecated
-+  and will be removed. OpenSSL 1.1.1 reached end-of-life in September 2023.
-+  The minimum supported OpenSSL version will be 3.0,
-+  and version checks for earlier OpenSSL versions will be removed from the PMD.
-+
- * eal: The ``-c <coremask>`` commandline parameter is deprecated
-   and will be removed in a future release.
-   Use the ``-l <corelist>`` or ``--lcores=<corelist>`` parameters instead
+v2 -> v3:
+- Added patch fixing leak in FDIR parser
+
+[1] https://patches.dpdk.org/project/dpdk/patch/fbd32a8a688fd0ed90fcf497703edcc30f69d54d.1770643356.git.anatoly.burakov@intel.com/
+[2] https://patches.dpdk.org/project/dpdk/patch/ab4f8d8cf24dcd18f0dd6da3359266083f31d789.1770642901.git.anatoly.burakov@intel.com/
+
+Anatoly Burakov (8):
+  net/ixgbe: add missing E610 MAC type checks
+  net/i40e: move FDIR config to flow create
+  net/iavf: fix memory leak on egress IPsec flows
+  net/iavf: fix memory leak on uninit
+  net/i40e: fix IPv6 GTPU handling
+  net/iavf: fix IPv4 flow subscription
+  net/ice: fix memory leak in DCF QoS bandwidth config
+  net/ice: fix memory leak in FDIR flow parsing
+
+ drivers/net/intel/i40e/i40e_flow.c         | 64 ++++++++++++----------
+ drivers/net/intel/iavf/iavf_fsub.c         |  4 +-
+ drivers/net/intel/iavf/iavf_generic_flow.c | 37 +++++++++++--
+ drivers/net/intel/iavf/iavf_generic_flow.h |  1 +
+ drivers/net/intel/ice/ice_dcf_sched.c      | 13 +++--
+ drivers/net/intel/ice/ice_fdir_filter.c    |  6 +-
+ drivers/net/intel/ixgbe/ixgbe_bypass_api.h |  8 +--
+ drivers/net/intel/ixgbe/ixgbe_ethdev.c     | 29 ++++++----
+ drivers/net/intel/ixgbe/ixgbe_fdir.c       |  8 ++-
+ drivers/net/intel/ixgbe/ixgbe_flow.c       |  3 +-
+ drivers/net/intel/ixgbe/ixgbe_pf.c         |  5 +-
+ drivers/net/intel/ixgbe/ixgbe_rxtx.c       | 14 +++--
+ 12 files changed, 123 insertions(+), 69 deletions(-)
+
 -- 
-2.43.0
+2.47.3
 
