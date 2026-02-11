@@ -2,45 +2,44 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8884EE9E309
-	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Feb 2026 13:50:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18297E9E30B
+	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Feb 2026 13:50:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6BF6D40697;
-	Wed, 11 Feb 2026 14:49:49 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 59C30406B6;
+	Wed, 11 Feb 2026 14:49:50 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
- by mails.dpdk.org (Postfix) with ESMTP id CE58240613
- for <dev@dpdk.org>; Wed, 11 Feb 2026 14:49:42 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 6EB3240613
+ for <dev@dpdk.org>; Wed, 11 Feb 2026 14:49:43 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
  t=1770817783; x=1802353783;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=v7fBa3QaIJ7/erSleJCJsSkadnuzxS1GwTDKHkOfeeY=;
- b=LWrniGYszOYd9bD4yudk8tIDEwc6Y+3gvPq4fnWa8fhTuBqFB2odn9Av
- PnPtfH199iZsObLvfEsH19kfmy/MjmQ3VcXVkbb+0ARQb1tE5gYhMsndu
- iq6Nc+FwqGCYTxzjusRe3dkVRQl4aAUy1sLTy3MKIVBCZxCbJbNE4EuqJ
- HVw6ijDGaXjwhnIFGNDrjUWA2TJzk6luanAhi8rYRibEK6z3DK2XgELK9
- 76mXnNHTD16SZUaoZmzTFsb9UCaj+NUc7wOzNuXsRMtzcNsJYKq61YeAL
- SYbNwV80cmBfqZouBsLwytxYr07bPYHsHdMhqQGuQ0Rwk1ye//ib/oulS g==;
-X-CSE-ConnectionGUID: C5Dja4pkSZ6EL7VlzoSiag==
-X-CSE-MsgGUID: vQb/6ZNmRouWBWJ/c4DIrQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11698"; a="83332531"
-X-IronPort-AV: E=Sophos;i="6.21,283,1763452800"; d="scan'208";a="83332531"
+ bh=e3MYBB209ngSa+pjG5v+yTdxRrAkaGP1V+br9e5Qj3A=;
+ b=QVKRlmblbawiiJfMLizC7TvdzZX5QL0o78zxf+BaVbfMmNufS7d8h5ux
+ vqC+C/g4ZmUiepokRoSHt0zu05VehfZSaJ5VqfhiTgFADzll/jzNCeTQw
+ zazr2AWWf8Rk6NBxeCS+s+FmSNImsphfE9DNrxD6nidSM0SxiYjzFGeps
+ ubTVK3fS7cA3OBpwfFb56v4PZRfolJUz4OPrCwmTPjEOtabI39t84xSnu
+ UVZ9M69I4k8nhvYlERB3ZyCtEQfSFOK1JKdBWBpdCEtds8x0AZQWxJG87
+ Zlt1RlaTbxA5o5EmXLUXiFzXLrYzU3MpgHlDud4Yp+HPMksBDo7Gy0o8Z g==;
+X-CSE-ConnectionGUID: l/DuQ6dmSqS0aVFubFLySg==
+X-CSE-MsgGUID: fO7QqoeDR9efetVxlPhZ+w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11698"; a="83332532"
+X-IronPort-AV: E=Sophos;i="6.21,283,1763452800"; d="scan'208";a="83332532"
 Received: from fmviesa003.fm.intel.com ([10.60.135.143])
  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 11 Feb 2026 05:49:42 -0800
-X-CSE-ConnectionGUID: 2hQ+0Q7CTymoZExvJ6c6nw==
-X-CSE-MsgGUID: s14XZ4v/T7y+6Hbz+Hrf+w==
+ 11 Feb 2026 05:49:43 -0800
+X-CSE-ConnectionGUID: FHRiGMnsQfuyQnbVx5928g==
+X-CSE-MsgGUID: vSaC53dORoCbDXZcIE4xOQ==
 X-ExtLoop1: 1
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by fmviesa003.fm.intel.com with ESMTP; 11 Feb 2026 05:49:40 -0800
+ by fmviesa003.fm.intel.com with ESMTP; 11 Feb 2026 05:49:42 -0800
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>,
- Qi Zhang <qi.z.zhang@intel.com>, Ting Xu <ting.xu@intel.com>,
- Qiming Yang <qiming.yang@intel.com>
-Subject: [PATCH v4 8/9] net/ice: fix memory leak in DCF QoS bandwidth config
-Date: Wed, 11 Feb 2026 13:49:15 +0000
-Message-ID: <3e0063a306042e649f5c090013896595eabff878.1770817694.git.anatoly.burakov@intel.com>
+ Junfeng Guo <junfengg@nvidia.com>, Qi Zhang <qi.z.zhang@intel.com>
+Subject: [PATCH v4 9/9] net/ice: fix memory leak in FDIR flow parsing
+Date: Wed, 11 Feb 2026 13:49:16 +0000
+Message-ID: <cefd2925e79387e684ddf08eb154f2fd7ad39b5b.1770817694.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <cover.1770817694.git.anatoly.burakov@intel.com>
  <cover.1770817694.git.anatoly.burakov@intel.com>
@@ -60,64 +59,46 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Currently, when committing DCF QoS bandwidth configuration for VFs and TCs,
-we are using rte_zmalloc followed by copying the data to persistent storage
-and then discarding the temporary buffers. This is not needed as these
-temporary buffers are not being stored anywhere, so replace them with
-regular calloc. However, because the original code was missing a
-corresponding `rte_free()` call for these temporary allocations, this
-also fixes a memory leak.
+Currently, RAW pattern parsing will cause a `pkt_buf` buffer to be
+allocated to store parsed RAW pattern bytes. All error paths handle the
+deallocation correctly, and the buffer will then be passed to FDIR filter
+create function which also handles the presence of the buffer correctly,
+and it is also freed correctly in destroy function.
 
-Fixes: 3a6bfc37eaf4 ("net/ice: support QoS config VF bandwidth in DCF")
+However, rte_flow_validate will go through the same code path, but will not
+call FDIR create/destroy nor even store the pointer, because `meta`
+variable inside the flow parsing function will be set to NULL, which will
+cause this memory to be leaked (and memset(0)-ed next time we try to
+create/validate another flow).
+
+Fix it by freeing the `pkt_buf` when `meta` is NULL.
+
+Fixes: 25be39cc1760 ("net/ice: enable protocol agnostic flow offloading in FDIR")
 Cc: stable@dpdk.org
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- drivers/net/intel/ice/ice_dcf_sched.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+ drivers/net/intel/ice/ice_fdir_filter.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/intel/ice/ice_dcf_sched.c b/drivers/net/intel/ice/ice_dcf_sched.c
-index 2832d223d1..645f1373f4 100644
---- a/drivers/net/intel/ice/ice_dcf_sched.c
-+++ b/drivers/net/intel/ice/ice_dcf_sched.c
-@@ -746,8 +746,8 @@ static int ice_dcf_hierarchy_commit(struct rte_eth_dev *dev,
- {
- 	struct ice_dcf_adapter *adapter = dev->data->dev_private;
- 	struct ice_dcf_hw *hw = &adapter->real_hw;
--	struct virtchnl_dcf_bw_cfg_list *vf_bw;
--	struct virtchnl_dcf_bw_cfg_list *tc_bw;
-+	struct virtchnl_dcf_bw_cfg_list *vf_bw = NULL;
-+	struct virtchnl_dcf_bw_cfg_list *tc_bw = NULL;
- 	struct ice_dcf_tm_node_list *vsi_list = &hw->tm_conf.vsi_list;
- 	struct rte_tm_shaper_params *profile;
- 	struct ice_dcf_tm_node *tm_node;
-@@ -770,12 +770,12 @@ static int ice_dcf_hierarchy_commit(struct rte_eth_dev *dev,
- 	size = sizeof(struct virtchnl_dcf_bw_cfg_list) +
- 		sizeof(struct virtchnl_dcf_bw_cfg) *
- 		(hw->tm_conf.nb_tc_node - 1);
--	vf_bw = rte_zmalloc("vf_bw", size, 0);
-+	vf_bw = calloc(1, size);
- 	if (!vf_bw) {
- 		ret_val = ICE_ERR_NO_MEMORY;
- 		goto fail_clear;
- 	}
--	tc_bw = rte_zmalloc("tc_bw", size, 0);
-+	tc_bw = calloc(1, size);
- 	if (!tc_bw) {
- 		ret_val = ICE_ERR_NO_MEMORY;
- 		goto fail_clear;
-@@ -875,6 +875,11 @@ static int ice_dcf_hierarchy_commit(struct rte_eth_dev *dev,
- 	return ret_val;
+diff --git a/drivers/net/intel/ice/ice_fdir_filter.c b/drivers/net/intel/ice/ice_fdir_filter.c
+index f7730ec6ab..5abdcbac7f 100644
+--- a/drivers/net/intel/ice/ice_fdir_filter.c
++++ b/drivers/net/intel/ice/ice_fdir_filter.c
+@@ -2497,8 +2497,12 @@ ice_fdir_parse(struct ice_adapter *ad,
+ 	if (ret)
+ 		goto error;
  
- fail_clear:
-+	if (vf_bw != NULL)
-+		free(vf_bw);
-+	if (tc_bw != NULL)
-+		free(tc_bw);
-+
- 	/* clear all the traffic manager configuration */
- 	if (clear_on_fail) {
- 		ice_dcf_tm_conf_uninit(dev);
+-	if (meta)
++	/* if meta is NULL we're validating so the flow won't be stored */
++	if (meta) {
+ 		*meta = filter;
++	} else if (filter->pkt_buf != NULL) {
++		rte_free(filter->pkt_buf);
++	}
+ 
+ 	rte_free(item);
+ 	return ret;
 -- 
 2.47.3
 
