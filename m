@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E5CDE9E30B
-	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Feb 2026 13:53:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD754E9E30B
+	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Feb 2026 13:53:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 26AF140676;
-	Wed, 11 Feb 2026 14:53:40 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 0E8A340691;
+	Wed, 11 Feb 2026 14:53:41 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
- by mails.dpdk.org (Postfix) with ESMTP id 55EF84065C
- for <dev@dpdk.org>; Wed, 11 Feb 2026 14:53:36 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 827EB40647
+ for <dev@dpdk.org>; Wed, 11 Feb 2026 14:53:37 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1770818016; x=1802354016;
+ t=1770818017; x=1802354017;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=4ow2pUkdtoOfNhFRM26ITSEf8QgsjA9Q5OHEhwMfgsY=;
- b=EmBMxsh5uObVbeEb2OwQ48rdLS9AWgkivvGQKlLQyTkMO4iQRAgMG+sm
- 39XOgVRYGUQjbmTCAtmGpOl1OY2bZcKcgwTx0dtg1YGsEpxqjzgPuAY1I
- 1OaEFmngOuOydXwA2bultFpavMLEiQCRx+DRuurEyrHug46PCwUj/x6Uw
- xkTKBZPDle8cE/0/egYRyzhBrTzNgY3yyy2SzFmBLQMUEZu2vG+zmCW6+
- jbmtOG91i/TxPqdtApiQCtw2nHNgyZkqkb4mVXhmg4yZ+DYScml06/Ks5
- MWreGzfhCJMd45Ka+AvYOMq/e4EWHQtPCGJZN3HA3kzJjy/gxI1b9mJ24 w==;
-X-CSE-ConnectionGUID: 8zhZJ0IXQFm/CiVUn82NEQ==
-X-CSE-MsgGUID: MOIrIltUS7SU/V7l0vj90Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11698"; a="75808228"
-X-IronPort-AV: E=Sophos;i="6.21,283,1763452800"; d="scan'208";a="75808228"
+ bh=oanRrHLpDnVCJ1NEcJfhieiQoU6ARcZjRdY2QyJtQQY=;
+ b=H9ZbsnKb8DRrstP2vo8R1oJ/HkqGFW8gfB/wUuY90YiAAzAv1mILg8qn
+ le/49rpiCjcZVAQGotI48iSbVkg/hj/UVkl9NBm9i1nSapqZM9HQWw6ff
+ eOJct4RddK1SX7fBGq0HGl4lF7BFLdGPBJwrFcEEVEP7diGGPaPojLTo2
+ FCVDzag+7suk9VQikZA5xQK63UxpQEizFePi/E361WiCfr/8kXOp6qm1p
+ OYf0A73ZT3LjkuyMCC5789uwfZRUaamn2ZjMwFEuBACX5r0tD1RL25RMz
+ ipa+q+blxi0Lculz9xKnmz8xyJJfYQBrn9rPGCmOUOeo/UyGx+iOuR3ea g==;
+X-CSE-ConnectionGUID: x48NKLp3TZyXbTpfGWTiQw==
+X-CSE-MsgGUID: nURcKflqTCidLlx7NAr4Iw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11698"; a="75808230"
+X-IronPort-AV: E=Sophos;i="6.21,283,1763452800"; d="scan'208";a="75808230"
 Received: from orviesa007.jf.intel.com ([10.64.159.147])
  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 11 Feb 2026 05:53:36 -0800
-X-CSE-ConnectionGUID: +J+PuyaTQ+uN9TKLTdx7Tw==
-X-CSE-MsgGUID: /DfIRWmJRly7PixJSbvjvg==
+ 11 Feb 2026 05:53:37 -0800
+X-CSE-ConnectionGUID: ylNwwzN3SKCyxYA2XBd1CQ==
+X-CSE-MsgGUID: kO9tPRAPTF2lav87bZsBAg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,283,1763452800"; d="scan'208";a="212359562"
+X-IronPort-AV: E=Sophos;i="6.21,283,1763452800"; d="scan'208";a="212359565"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by orviesa007.jf.intel.com with ESMTP; 11 Feb 2026 05:53:35 -0800
+ by orviesa007.jf.intel.com with ESMTP; 11 Feb 2026 05:53:36 -0800
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org,
-	Vladimir Medvedkin <vladimir.medvedkin@intel.com>
-Subject: [PATCH v3 03/27] net/ixgbe: split security and ntuple filters
-Date: Wed, 11 Feb 2026 13:52:45 +0000
-Message-ID: <1d6d12f5387fb70df51a4a9bc38abced0e915548.1770817884.git.anatoly.burakov@intel.com>
+	Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH v3 04/27] net/i40e: get rid of global filter variables
+Date: Wed, 11 Feb 2026 13:52:46 +0000
+Message-ID: <48663f05d927602fae9113be517c9f8ed2f73c89.1770817884.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <cover.1770817884.git.anatoly.burakov@intel.com>
  <cover.1770817884.git.anatoly.burakov@intel.com>
@@ -60,197 +60,438 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-These filters are mashed together even though they almost do not share any
-code at all between each other. Separate security filter from ntuple filter
-and parse it separately.
+Currently, i40e driver relies on global state to work around the fact that
+`rte_flow_validate()` is being called directly from `rte_flow_create()`,
+and it not being possible to pass state between two functions. Fix that by
+making a small wrapper around validation that will create a dummy context.
 
-While we're at it, we're making checks more stringent (such as checking for
-NULL conf), and more type safe.
+Additionally, tunnel filter doesn't appear to be used by anything and so is
+omitted from the structure.
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- drivers/net/intel/ixgbe/ixgbe_flow.c | 136 ++++++++++++++++++---------
- 1 file changed, 91 insertions(+), 45 deletions(-)
+ drivers/net/intel/i40e/i40e_ethdev.h |  16 ++--
+ drivers/net/intel/i40e/i40e_flow.c   | 117 ++++++++++++++-------------
+ 2 files changed, 68 insertions(+), 65 deletions(-)
 
-diff --git a/drivers/net/intel/ixgbe/ixgbe_flow.c b/drivers/net/intel/ixgbe/ixgbe_flow.c
-index c17c6c4bf6..cd8d46019f 100644
---- a/drivers/net/intel/ixgbe/ixgbe_flow.c
-+++ b/drivers/net/intel/ixgbe/ixgbe_flow.c
-@@ -214,41 +214,6 @@ cons_parse_ntuple_filter(const struct rte_flow_attr *attr,
- 	memset(&eth_null, 0, sizeof(struct rte_flow_item_eth));
- 	memset(&vlan_null, 0, sizeof(struct rte_flow_item_vlan));
+diff --git a/drivers/net/intel/i40e/i40e_ethdev.h b/drivers/net/intel/i40e/i40e_ethdev.h
+index cab6d7e9dc..0de036f2d9 100644
+--- a/drivers/net/intel/i40e/i40e_ethdev.h
++++ b/drivers/net/intel/i40e/i40e_ethdev.h
+@@ -1304,12 +1304,14 @@ struct i40e_vf_representor {
  
--	/**
--	 *  Special case for flow action type RTE_FLOW_ACTION_TYPE_SECURITY
--	 */
--	act = next_no_void_action(actions, NULL);
--	if (act->type == RTE_FLOW_ACTION_TYPE_SECURITY) {
--		const void *conf = act->conf;
--		/* check if the next not void item is END */
--		act = next_no_void_action(actions, act);
--		if (act->type != RTE_FLOW_ACTION_TYPE_END) {
--			memset(filter, 0, sizeof(struct rte_eth_ntuple_filter));
--			rte_flow_error_set(error, EINVAL,
--				RTE_FLOW_ERROR_TYPE_ACTION,
--				act, "Not supported action.");
--			return -rte_errno;
--		}
--
--		/* get the IP pattern*/
--		item = next_no_void_pattern(pattern, NULL);
--		while (item->type != RTE_FLOW_ITEM_TYPE_IPV4 &&
--				item->type != RTE_FLOW_ITEM_TYPE_IPV6) {
--			if (item->last ||
--					item->type == RTE_FLOW_ITEM_TYPE_END) {
--				rte_flow_error_set(error, EINVAL,
--					RTE_FLOW_ERROR_TYPE_ITEM,
--					item, "IP pattern missing.");
--				return -rte_errno;
--			}
--			item = next_no_void_pattern(pattern, item);
--		}
--
--		filter->proto = IPPROTO_ESP;
--		return ixgbe_crypto_add_ingress_sa_from_flow(conf, item->spec,
--					item->type == RTE_FLOW_ITEM_TYPE_IPV6);
--	}
--
- 	/* the first not void item can be MAC or IPv4 */
- 	item = next_no_void_pattern(pattern, NULL);
+ extern const struct rte_flow_ops i40e_flow_ops;
  
-@@ -607,6 +572,81 @@ cons_parse_ntuple_filter(const struct rte_flow_attr *attr,
- 	return 0;
- }
+-union i40e_filter_t {
+-	struct rte_eth_ethertype_filter ethertype_filter;
+-	struct i40e_fdir_filter_conf fdir_filter;
+-	struct rte_eth_tunnel_filter_conf tunnel_filter;
+-	struct i40e_tunnel_filter_conf consistent_tunnel_filter;
+-	struct i40e_rte_flow_rss_conf rss_conf;
++struct i40e_filter_ctx {
++	union {
++		struct rte_eth_ethertype_filter ethertype_filter;
++		struct i40e_fdir_filter_conf fdir_filter;
++		struct i40e_tunnel_filter_conf consistent_tunnel_filter;
++		struct i40e_rte_flow_rss_conf rss_conf;
++	};
++	enum rte_filter_type type;
+ };
  
-+static int
-+ixgbe_parse_security_filter(struct rte_eth_dev *dev, const struct rte_flow_attr *attr,
-+		const struct rte_flow_item pattern[], const struct rte_flow_action actions[],
-+		struct rte_flow_error *error)
-+{
-+	struct ixgbe_hw *hw = IXGBE_DEV_PRIVATE_TO_HW(dev->data->dev_private);
-+	const struct rte_flow_action_security *security;
-+	const struct rte_flow_item *item;
-+	const struct rte_flow_action *act;
-+
-+	if (hw->mac.type != ixgbe_mac_82599EB &&
-+			hw->mac.type != ixgbe_mac_X540 &&
-+			hw->mac.type != ixgbe_mac_X550 &&
-+			hw->mac.type != ixgbe_mac_X550EM_x &&
-+			hw->mac.type != ixgbe_mac_X550EM_a &&
-+			hw->mac.type != ixgbe_mac_E610)
-+		return -ENOTSUP;
-+
-+	if (pattern == NULL) {
-+		rte_flow_error_set(error,
-+			EINVAL, RTE_FLOW_ERROR_TYPE_ITEM_NUM,
-+			NULL, "NULL pattern.");
-+		return -rte_errno;
-+	}
-+	if (actions == NULL) {
-+		rte_flow_error_set(error, EINVAL,
-+				   RTE_FLOW_ERROR_TYPE_ACTION_NUM,
-+				   NULL, "NULL action.");
-+		return -rte_errno;
-+	}
-+	if (attr == NULL) {
-+		rte_flow_error_set(error, EINVAL,
-+				   RTE_FLOW_ERROR_TYPE_ATTR,
-+				   NULL, "NULL attribute.");
-+		return -rte_errno;
-+	}
-+
-+	/* check if next non-void action is security */
-+	act = next_no_void_action(actions, NULL);
-+	if (act->type != RTE_FLOW_ACTION_TYPE_SECURITY) {
-+		return rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ACTION,
-+				act, "Not supported action.");
-+	}
-+	security = act->conf;
-+	if (security == NULL) {
-+		return rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ACTION, act,
-+				"NULL security action config.");
-+	}
-+	/* check if the next not void item is END */
-+	act = next_no_void_action(actions, act);
-+	if (act->type != RTE_FLOW_ACTION_TYPE_END) {
-+		return rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ACTION,
-+				act, "Not supported action.");
-+	}
-+
-+	/* get the IP pattern*/
-+	item = next_no_void_pattern(pattern, NULL);
-+	while (item->type != RTE_FLOW_ITEM_TYPE_IPV4 &&
-+			item->type != RTE_FLOW_ITEM_TYPE_IPV6) {
-+		if (item->last || item->type == RTE_FLOW_ITEM_TYPE_END) {
-+			rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ITEM,
-+				item, "IP pattern missing.");
-+			return -rte_errno;
-+		}
-+		item = next_no_void_pattern(pattern, item);
-+	}
-+
-+	return ixgbe_crypto_add_ingress_sa_from_flow(security->security_session,
-+			item->spec, item->type == RTE_FLOW_ITEM_TYPE_IPV6);
-+}
-+
- /* a specific function for ixgbe because the flags is specific */
+ typedef int (*parse_filter_t)(struct rte_eth_dev *dev,
+@@ -1317,7 +1319,7 @@ typedef int (*parse_filter_t)(struct rte_eth_dev *dev,
+ 			      const struct rte_flow_item pattern[],
+ 			      const struct rte_flow_action actions[],
+ 			      struct rte_flow_error *error,
+-			      union i40e_filter_t *filter);
++			      struct i40e_filter_ctx *filter);
+ struct i40e_valid_pattern {
+ 	enum rte_flow_item_type *items;
+ 	parse_filter_t parse_filter;
+diff --git a/drivers/net/intel/i40e/i40e_flow.c b/drivers/net/intel/i40e/i40e_flow.c
+index 2374b9bbca..e611de0c06 100644
+--- a/drivers/net/intel/i40e/i40e_flow.c
++++ b/drivers/net/intel/i40e/i40e_flow.c
+@@ -80,37 +80,37 @@ static int i40e_flow_parse_ethertype_filter(struct rte_eth_dev *dev,
+ 				    const struct rte_flow_item pattern[],
+ 				    const struct rte_flow_action actions[],
+ 				    struct rte_flow_error *error,
+-				    union i40e_filter_t *filter);
++				    struct i40e_filter_ctx *filter);
+ static int i40e_flow_parse_fdir_filter(struct rte_eth_dev *dev,
+ 				       const struct rte_flow_attr *attr,
+ 				       const struct rte_flow_item pattern[],
+ 				       const struct rte_flow_action actions[],
+ 				       struct rte_flow_error *error,
+-				       union i40e_filter_t *filter);
++				       struct i40e_filter_ctx *filter);
+ static int i40e_flow_parse_vxlan_filter(struct rte_eth_dev *dev,
+ 					const struct rte_flow_attr *attr,
+ 					const struct rte_flow_item pattern[],
+ 					const struct rte_flow_action actions[],
+ 					struct rte_flow_error *error,
+-					union i40e_filter_t *filter);
++					struct i40e_filter_ctx *filter);
+ static int i40e_flow_parse_nvgre_filter(struct rte_eth_dev *dev,
+ 					const struct rte_flow_attr *attr,
+ 					const struct rte_flow_item pattern[],
+ 					const struct rte_flow_action actions[],
+ 					struct rte_flow_error *error,
+-					union i40e_filter_t *filter);
++					struct i40e_filter_ctx *filter);
+ static int i40e_flow_parse_mpls_filter(struct rte_eth_dev *dev,
+ 				       const struct rte_flow_attr *attr,
+ 				       const struct rte_flow_item pattern[],
+ 				       const struct rte_flow_action actions[],
+ 				       struct rte_flow_error *error,
+-				       union i40e_filter_t *filter);
++				       struct i40e_filter_ctx *filter);
+ static int i40e_flow_parse_gtp_filter(struct rte_eth_dev *dev,
+ 				      const struct rte_flow_attr *attr,
+ 				      const struct rte_flow_item pattern[],
+ 				      const struct rte_flow_action actions[],
+ 				      struct rte_flow_error *error,
+-				      union i40e_filter_t *filter);
++				      struct i40e_filter_ctx *filter);
+ static int i40e_flow_destroy_ethertype_filter(struct i40e_pf *pf,
+ 				      struct i40e_ethertype_filter *filter);
+ static int i40e_flow_destroy_tunnel_filter(struct i40e_pf *pf,
+@@ -124,7 +124,7 @@ i40e_flow_parse_qinq_filter(struct rte_eth_dev *dev,
+ 			      const struct rte_flow_item pattern[],
+ 			      const struct rte_flow_action actions[],
+ 			      struct rte_flow_error *error,
+-			      union i40e_filter_t *filter);
++			      struct i40e_filter_ctx *filter);
  static int
- ixgbe_parse_ntuple_filter(struct rte_eth_dev *dev,
-@@ -628,10 +668,6 @@ ixgbe_parse_ntuple_filter(struct rte_eth_dev *dev,
+ i40e_flow_parse_qinq_pattern(struct rte_eth_dev *dev,
+ 			      const struct rte_flow_item *pattern,
+@@ -136,7 +136,7 @@ static int i40e_flow_parse_l4_cloud_filter(struct rte_eth_dev *dev,
+ 					   const struct rte_flow_item pattern[],
+ 					   const struct rte_flow_action actions[],
+ 					   struct rte_flow_error *error,
+-					   union i40e_filter_t *filter);
++					   struct i40e_filter_ctx *filter);
+ const struct rte_flow_ops i40e_flow_ops = {
+ 	.validate = i40e_flow_validate,
+ 	.create = i40e_flow_create,
+@@ -145,8 +145,6 @@ const struct rte_flow_ops i40e_flow_ops = {
+ 	.query = i40e_flow_query,
+ };
+ 
+-static union i40e_filter_t cons_filter;
+-static enum rte_filter_type cons_filter_type = RTE_ETH_FILTER_NONE;
+ /* internal pattern w/o VOID items */
+ struct rte_flow_item g_items[32];
+ 
+@@ -1454,10 +1452,9 @@ i40e_flow_parse_ethertype_filter(struct rte_eth_dev *dev,
+ 				 const struct rte_flow_item pattern[],
+ 				 const struct rte_flow_action actions[],
+ 				 struct rte_flow_error *error,
+-				 union i40e_filter_t *filter)
++				 struct i40e_filter_ctx *filter)
+ {
+-	struct rte_eth_ethertype_filter *ethertype_filter =
+-		&filter->ethertype_filter;
++	struct rte_eth_ethertype_filter *ethertype_filter = &filter->ethertype_filter;
+ 	int ret;
+ 
+ 	ret = i40e_flow_parse_ethertype_pattern(dev, pattern, error,
+@@ -1474,7 +1471,7 @@ i40e_flow_parse_ethertype_filter(struct rte_eth_dev *dev,
  	if (ret)
  		return ret;
  
--	/* ESP flow not really a flow*/
--	if (filter->proto == IPPROTO_ESP)
--		return 0;
--
- 	/* Ixgbe doesn't support tcp flags. */
- 	if (filter->flags & RTE_NTUPLE_FLAGS_TCP_FLAG) {
- 		memset(filter, 0, sizeof(struct rte_eth_ntuple_filter));
-@@ -3066,16 +3102,19 @@ ixgbe_flow_create(struct rte_eth_dev *dev,
- 	TAILQ_INSERT_TAIL(&ixgbe_flow_list,
- 				ixgbe_flow_mem_ptr, entries);
+-	cons_filter_type = RTE_ETH_FILTER_ETHERTYPE;
++	filter->type = RTE_ETH_FILTER_ETHERTYPE;
  
--	memset(&ntuple_filter, 0, sizeof(struct rte_eth_ntuple_filter));
--	ret = ixgbe_parse_ntuple_filter(dev, attr, pattern,
--			actions, &ntuple_filter, error);
--
--	/* ESP flow not really a flow*/
--	if (ntuple_filter.proto == IPPROTO_ESP) {
-+	/**
-+	 *  Special case for flow action type RTE_FLOW_ACTION_TYPE_SECURITY
-+	 */
-+	ret = ixgbe_parse_security_filter(dev, attr, pattern, actions, error);
-+	if (!ret) {
- 		flow->is_security = true;
- 		return flow;
- 	}
+ 	return ret;
+ }
+@@ -2549,7 +2546,7 @@ i40e_flow_parse_fdir_filter(struct rte_eth_dev *dev,
+ 			    const struct rte_flow_item pattern[],
+ 			    const struct rte_flow_action actions[],
+ 			    struct rte_flow_error *error,
+-			    union i40e_filter_t *filter)
++			    struct i40e_filter_ctx *filter)
+ {
+ 	struct i40e_fdir_filter_conf *fdir_filter = &filter->fdir_filter;
+ 	int ret;
+@@ -2566,7 +2563,7 @@ i40e_flow_parse_fdir_filter(struct rte_eth_dev *dev,
+ 	if (ret)
+ 		return ret;
  
-+	memset(&ntuple_filter, 0, sizeof(struct rte_eth_ntuple_filter));
-+	ret = ixgbe_parse_ntuple_filter(dev, attr, pattern,
-+			actions, &ntuple_filter, error);
-+
- 	if (!ret) {
- 		ret = ixgbe_add_del_ntuple_filter(dev, &ntuple_filter, TRUE);
- 		if (!ret) {
-@@ -3299,6 +3338,13 @@ ixgbe_flow_validate(struct rte_eth_dev *dev,
- 	struct ixgbe_rte_flow_rss_conf rss_conf;
+-	cons_filter_type = RTE_ETH_FILTER_FDIR;
++	filter->type = RTE_ETH_FILTER_FDIR;
+ 
+ 	return 0;
+ }
+@@ -2834,10 +2831,9 @@ i40e_flow_parse_l4_cloud_filter(struct rte_eth_dev *dev,
+ 				const struct rte_flow_item pattern[],
+ 				const struct rte_flow_action actions[],
+ 				struct rte_flow_error *error,
+-				union i40e_filter_t *filter)
++				struct i40e_filter_ctx *filter)
+ {
+-	struct i40e_tunnel_filter_conf *tunnel_filter =
+-		&filter->consistent_tunnel_filter;
++	struct i40e_tunnel_filter_conf *tunnel_filter = &filter->consistent_tunnel_filter;
  	int ret;
  
-+	/**
-+	 *  Special case for flow action type RTE_FLOW_ACTION_TYPE_SECURITY
-+	 */
-+	ret = ixgbe_parse_security_filter(dev, attr, pattern, actions, error);
-+	if (!ret)
-+		return 0;
+ 	ret = i40e_flow_parse_l4_pattern(pattern, error, tunnel_filter);
+@@ -2852,7 +2848,7 @@ i40e_flow_parse_l4_cloud_filter(struct rte_eth_dev *dev,
+ 	if (ret)
+ 		return ret;
+ 
+-	cons_filter_type = RTE_ETH_FILTER_TUNNEL;
++	filter->type = RTE_ETH_FILTER_TUNNEL;
+ 
+ 	return ret;
+ }
+@@ -3086,10 +3082,9 @@ i40e_flow_parse_vxlan_filter(struct rte_eth_dev *dev,
+ 			     const struct rte_flow_item pattern[],
+ 			     const struct rte_flow_action actions[],
+ 			     struct rte_flow_error *error,
+-			     union i40e_filter_t *filter)
++			     struct i40e_filter_ctx *filter)
+ {
+-	struct i40e_tunnel_filter_conf *tunnel_filter =
+-		&filter->consistent_tunnel_filter;
++	struct i40e_tunnel_filter_conf *tunnel_filter = &filter->consistent_tunnel_filter;
+ 	int ret;
+ 
+ 	ret = i40e_flow_parse_vxlan_pattern(dev, pattern,
+@@ -3105,7 +3100,7 @@ i40e_flow_parse_vxlan_filter(struct rte_eth_dev *dev,
+ 	if (ret)
+ 		return ret;
+ 
+-	cons_filter_type = RTE_ETH_FILTER_TUNNEL;
++	filter->type = RTE_ETH_FILTER_TUNNEL;
+ 
+ 	return ret;
+ }
+@@ -3338,10 +3333,9 @@ i40e_flow_parse_nvgre_filter(struct rte_eth_dev *dev,
+ 			     const struct rte_flow_item pattern[],
+ 			     const struct rte_flow_action actions[],
+ 			     struct rte_flow_error *error,
+-			     union i40e_filter_t *filter)
++			     struct i40e_filter_ctx *filter)
+ {
+-	struct i40e_tunnel_filter_conf *tunnel_filter =
+-		&filter->consistent_tunnel_filter;
++	struct i40e_tunnel_filter_conf *tunnel_filter = &filter->consistent_tunnel_filter;
+ 	int ret;
+ 
+ 	ret = i40e_flow_parse_nvgre_pattern(dev, pattern,
+@@ -3357,7 +3351,7 @@ i40e_flow_parse_nvgre_filter(struct rte_eth_dev *dev,
+ 	if (ret)
+ 		return ret;
+ 
+-	cons_filter_type = RTE_ETH_FILTER_TUNNEL;
++	filter->type = RTE_ETH_FILTER_TUNNEL;
+ 
+ 	return ret;
+ }
+@@ -3495,10 +3489,9 @@ i40e_flow_parse_mpls_filter(struct rte_eth_dev *dev,
+ 			    const struct rte_flow_item pattern[],
+ 			    const struct rte_flow_action actions[],
+ 			    struct rte_flow_error *error,
+-			    union i40e_filter_t *filter)
++			    struct i40e_filter_ctx *filter)
+ {
+-	struct i40e_tunnel_filter_conf *tunnel_filter =
+-		&filter->consistent_tunnel_filter;
++	struct i40e_tunnel_filter_conf *tunnel_filter = &filter->consistent_tunnel_filter;
+ 	int ret;
+ 
+ 	ret = i40e_flow_parse_mpls_pattern(dev, pattern,
+@@ -3514,7 +3507,7 @@ i40e_flow_parse_mpls_filter(struct rte_eth_dev *dev,
+ 	if (ret)
+ 		return ret;
+ 
+-	cons_filter_type = RTE_ETH_FILTER_TUNNEL;
++	filter->type = RTE_ETH_FILTER_TUNNEL;
+ 
+ 	return ret;
+ }
+@@ -3648,10 +3641,9 @@ i40e_flow_parse_gtp_filter(struct rte_eth_dev *dev,
+ 			   const struct rte_flow_item pattern[],
+ 			   const struct rte_flow_action actions[],
+ 			   struct rte_flow_error *error,
+-			   union i40e_filter_t *filter)
++			   struct i40e_filter_ctx *filter)
+ {
+-	struct i40e_tunnel_filter_conf *tunnel_filter =
+-		&filter->consistent_tunnel_filter;
++	struct i40e_tunnel_filter_conf *tunnel_filter = &filter->consistent_tunnel_filter;
+ 	int ret;
+ 
+ 	ret = i40e_flow_parse_gtp_pattern(dev, pattern,
+@@ -3667,7 +3659,7 @@ i40e_flow_parse_gtp_filter(struct rte_eth_dev *dev,
+ 	if (ret)
+ 		return ret;
+ 
+-	cons_filter_type = RTE_ETH_FILTER_TUNNEL;
++	filter->type = RTE_ETH_FILTER_TUNNEL;
+ 
+ 	return ret;
+ }
+@@ -3766,10 +3758,9 @@ i40e_flow_parse_qinq_filter(struct rte_eth_dev *dev,
+ 			      const struct rte_flow_item pattern[],
+ 			      const struct rte_flow_action actions[],
+ 			      struct rte_flow_error *error,
+-			      union i40e_filter_t *filter)
++			      struct i40e_filter_ctx *filter)
+ {
+-	struct i40e_tunnel_filter_conf *tunnel_filter =
+-		&filter->consistent_tunnel_filter;
++	struct i40e_tunnel_filter_conf *tunnel_filter = &filter->consistent_tunnel_filter;
+ 	int ret;
+ 
+ 	ret = i40e_flow_parse_qinq_pattern(dev, pattern,
+@@ -3785,16 +3776,17 @@ i40e_flow_parse_qinq_filter(struct rte_eth_dev *dev,
+ 	if (ret)
+ 		return ret;
+ 
+-	cons_filter_type = RTE_ETH_FILTER_TUNNEL;
++	filter->type = RTE_ETH_FILTER_TUNNEL;
+ 
+ 	return ret;
+ }
+ 
+ static int
+-i40e_flow_validate(struct rte_eth_dev *dev,
++i40e_flow_check(struct rte_eth_dev *dev,
+ 		   const struct rte_flow_attr *attr,
+ 		   const struct rte_flow_item pattern[],
+ 		   const struct rte_flow_action actions[],
++		   struct i40e_filter_ctx *filter_ctx,
+ 		   struct rte_flow_error *error)
+ {
+ 	struct rte_flow_item *items; /* internal pattern w/o VOID items */
+@@ -3823,7 +3815,6 @@ i40e_flow_validate(struct rte_eth_dev *dev,
+ 				   NULL, "NULL attribute.");
+ 		return -rte_errno;
+ 	}
+-	memset(&cons_filter, 0, sizeof(cons_filter));
+ 
+ 	/* Get the non-void item of action */
+ 	while ((actions + i)->type == RTE_FLOW_ACTION_TYPE_VOID)
+@@ -3834,9 +3825,8 @@ i40e_flow_validate(struct rte_eth_dev *dev,
+ 		if (ret)
+ 			return ret;
+ 
+-		cons_filter_type = RTE_ETH_FILTER_HASH;
+-		return i40e_hash_parse(dev, pattern, actions + i,
+-				       &cons_filter.rss_conf, error);
++		filter_ctx->type = RTE_ETH_FILTER_HASH;
++		return i40e_hash_parse(dev, pattern, actions + i, &filter_ctx->rss_conf, error);
+ 	}
+ 
+ 	i = 0;
+@@ -3878,8 +3868,7 @@ i40e_flow_validate(struct rte_eth_dev *dev,
+ 		}
+ 
+ 		if (parse_filter)
+-			ret = parse_filter(dev, attr, items, actions,
+-					   error, &cons_filter);
++			ret = parse_filter(dev, attr, items, actions, error, filter_ctx);
+ 
+ 		flag = true;
+ 	} while ((ret < 0) && (i < RTE_DIM(i40e_supported_patterns)));
+@@ -3890,6 +3879,19 @@ i40e_flow_validate(struct rte_eth_dev *dev,
+ 	return ret;
+ }
+ 
++static int
++i40e_flow_validate(struct rte_eth_dev *dev,
++		   const struct rte_flow_attr *attr,
++		   const struct rte_flow_item pattern[],
++		   const struct rte_flow_action actions[],
++		   struct rte_flow_error *error)
++{
++	/* creates dummy context */
++	struct i40e_filter_ctx filter_ctx = {0};
 +
- 	memset(&ntuple_filter, 0, sizeof(struct rte_eth_ntuple_filter));
- 	ret = ixgbe_parse_ntuple_filter(dev, attr, pattern,
- 				actions, &ntuple_filter, error);
++	return i40e_flow_check(dev, attr, pattern, actions, &filter_ctx, error);
++}
++
+ static struct rte_flow *
+ i40e_flow_create(struct rte_eth_dev *dev,
+ 		 const struct rte_flow_attr *attr,
+@@ -3898,15 +3900,16 @@ i40e_flow_create(struct rte_eth_dev *dev,
+ 		 struct rte_flow_error *error)
+ {
+ 	struct i40e_pf *pf = I40E_DEV_PRIVATE_TO_PF(dev->data->dev_private);
++	struct i40e_filter_ctx filter_ctx = {0};
+ 	struct rte_flow *flow = NULL;
+ 	struct i40e_fdir_info *fdir_info = &pf->fdir;
+ 	int ret;
+ 
+-	ret = i40e_flow_validate(dev, attr, pattern, actions, error);
++	ret = i40e_flow_check(dev, attr, pattern, actions, &filter_ctx, error);
+ 	if (ret < 0)
+ 		return NULL;
+ 
+-	if (cons_filter_type == RTE_ETH_FILTER_FDIR) {
++	if (filter_ctx.type == RTE_ETH_FILTER_FDIR) {
+ 		/* if this is the first time we're creating an fdir flow */
+ 		if (pf->fdir.fdir_vsi == NULL) {
+ 			ret = i40e_fdir_setup(pf);
+@@ -3947,18 +3950,16 @@ i40e_flow_create(struct rte_eth_dev *dev,
+ 		}
+ 	}
+ 
+-	switch (cons_filter_type) {
++	switch (filter_ctx.type) {
+ 	case RTE_ETH_FILTER_ETHERTYPE:
+-		ret = i40e_ethertype_filter_set(pf,
+-					&cons_filter.ethertype_filter, 1);
++		ret = i40e_ethertype_filter_set(pf, &filter_ctx.ethertype_filter, 1);
+ 		if (ret)
+ 			goto free_flow;
+ 		flow->rule = TAILQ_LAST(&pf->ethertype.ethertype_list,
+ 					i40e_ethertype_filter_list);
+ 		break;
+ 	case RTE_ETH_FILTER_FDIR:
+-		ret = i40e_flow_add_del_fdir_filter(dev,
+-			       &cons_filter.fdir_filter, 1);
++		ret = i40e_flow_add_del_fdir_filter(dev, &filter_ctx.fdir_filter, 1);
+ 		if (ret)
+ 			goto free_flow;
+ 		flow->rule = TAILQ_LAST(&pf->fdir.fdir_list,
+@@ -3966,14 +3967,14 @@ i40e_flow_create(struct rte_eth_dev *dev,
+ 		break;
+ 	case RTE_ETH_FILTER_TUNNEL:
+ 		ret = i40e_dev_consistent_tunnel_filter_set(pf,
+-			    &cons_filter.consistent_tunnel_filter, 1);
++				&filter_ctx.consistent_tunnel_filter, 1);
+ 		if (ret)
+ 			goto free_flow;
+ 		flow->rule = TAILQ_LAST(&pf->tunnel.tunnel_list,
+ 					i40e_tunnel_filter_list);
+ 		break;
+ 	case RTE_ETH_FILTER_HASH:
+-		ret = i40e_hash_filter_create(pf, &cons_filter.rss_conf);
++		ret = i40e_hash_filter_create(pf, &filter_ctx.rss_conf);
+ 		if (ret)
+ 			goto free_flow;
+ 		flow->rule = TAILQ_LAST(&pf->rss_config_list,
+@@ -3983,7 +3984,7 @@ i40e_flow_create(struct rte_eth_dev *dev,
+ 		goto free_flow;
+ 	}
+ 
+-	flow->filter_type = cons_filter_type;
++	flow->filter_type = filter_ctx.type;
+ 	TAILQ_INSERT_TAIL(&pf->flow_list, flow, node);
+ 	return flow;
+ 
+@@ -3992,7 +3993,7 @@ i40e_flow_create(struct rte_eth_dev *dev,
+ 			   RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
+ 			   "Failed to create flow.");
+ 
+-	if (cons_filter_type != RTE_ETH_FILTER_FDIR)
++	if (filter_ctx.type != RTE_ETH_FILTER_FDIR)
+ 		rte_free(flow);
+ 	else
+ 		i40e_fdir_entry_pool_put(fdir_info, flow);
 -- 
 2.47.3
 
