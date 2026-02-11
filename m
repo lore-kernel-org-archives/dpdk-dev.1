@@ -2,45 +2,44 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E21FE9E30A
-	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Feb 2026 13:49:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE364E9E30A
+	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Feb 2026 13:49:56 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E166C40648;
-	Wed, 11 Feb 2026 14:49:42 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id D863A40655;
+	Wed, 11 Feb 2026 14:49:43 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
- by mails.dpdk.org (Postfix) with ESMTP id 42C464026A
+ by mails.dpdk.org (Postfix) with ESMTP id B470A402B5
  for <dev@dpdk.org>; Wed, 11 Feb 2026 14:49:39 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1770817779; x=1802353779;
+ t=1770817780; x=1802353780;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=o6JqKM4AAQ5duugMct6DYXwEb0qxr341xsPCQOgNbxk=;
- b=Zye8opw3JgNvTtqjlvDmxQUdKE9TfGMgepUXZO9h1KTSC0eAq2qvojMF
- uMwZbirl6NVNbY7urOJDvXa/jO1DIoNr/m5Kb1YhCfRCp5Vl3UAzQX6/L
- X7GqnC5XSRS05VtfDrejleyx1RDlf+Fu7fcRYpXmND26ZJsFvLySRZrzf
- uH2M453KrfQM9Y1oEGkSinCkRAlJaZEgwAMuyTWqWtqgKvE26QODLJiGl
- 5s1dGT3umVhTdEqjYM95yabQ8ub9TBhp4H+ZSFaQNoZk/x5JTa7fNspNy
- BR6oogElajK8956IMVaz5BSbwLTdBHEoKmbScXm11o6O8CNjw5s/sD/zb Q==;
-X-CSE-ConnectionGUID: ZQw5Qd6fRraGqrs2bJlfHA==
-X-CSE-MsgGUID: oXiIGldhQh2OSLv1HA9Nww==
-X-IronPort-AV: E=McAfee;i="6800,10657,11698"; a="83332511"
-X-IronPort-AV: E=Sophos;i="6.21,283,1763452800"; d="scan'208";a="83332511"
+ bh=Cb8lHr0ppAnBoU9DBED7ibccsceWtlXTch1NLUNWhqQ=;
+ b=jQzkDrwaAqu6/e5kHwHe38p4EWWeIAQth0lFjd9nm3K/BTlsbFQ+pNhJ
+ HCLciFi0cagPWY2JqlbYTg+q1RRsEkKGZXQZbxVFXEM9TI+mGt94QBor7
+ 7Qkhda4H6/kpjmTQcXMCUU4mxjnR4s2tvIFiSVApeys1Lmh+KvlycBAhn
+ PTQt8QSkPR5F3Y0bXuQ6sJXV0DVxmBC59eOta5OOrWTo1z1lySwSYZ/Nn
+ rvawcysO1JMQIP2xbY+tpmXy30Lc11y7HKvZdiPyQzTWdUMEUp2kZlQoT
+ q9BcCsgxdZdgtp2qpE14zNFfACmORCCvM45kX1r2CmdcV2y6Gx5dmmIqp g==;
+X-CSE-ConnectionGUID: gLrzQ1N0QwydN4exlBqfdA==
+X-CSE-MsgGUID: sQqHF1qfTSCPZdCLoHXPFA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11698"; a="83332517"
+X-IronPort-AV: E=Sophos;i="6.21,283,1763452800"; d="scan'208";a="83332517"
 Received: from fmviesa003.fm.intel.com ([10.60.135.143])
  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 11 Feb 2026 05:49:31 -0800
-X-CSE-ConnectionGUID: TyHqWsH2TiuJA1wciFYJLQ==
-X-CSE-MsgGUID: g/CIhO0DQSympQx71r8mnA==
+ 11 Feb 2026 05:49:32 -0800
+X-CSE-ConnectionGUID: r+0BVg4jSEeHRrE0Xdq6qA==
+X-CSE-MsgGUID: M82121rlSQ6svX/uGAZwhQ==
 X-ExtLoop1: 1
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by fmviesa003.fm.intel.com with ESMTP; 11 Feb 2026 05:49:30 -0800
+ by fmviesa003.fm.intel.com with ESMTP; 11 Feb 2026 05:49:31 -0800
 From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org, Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
- Declan Doherty <declan.doherty@intel.com>,
- Radu Nicolau <radu.nicolau@intel.com>
-Subject: [PATCH v4 2/9] net/ixgbe: fix memory leak in security flows
-Date: Wed, 11 Feb 2026 13:49:09 +0000
-Message-ID: <27473234ede7bb1551ad61cd69e3ed34f120fed7.1770817694.git.anatoly.burakov@intel.com>
+To: dev@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>,
+ Xiaoyun Li <xiaoyun.li@intel.com>, Beilei Xing <beilei.xing@intel.com>
+Subject: [PATCH v4 3/9] net/i40e: move FDIR config to flow create
+Date: Wed, 11 Feb 2026 13:49:10 +0000
+Message-ID: <e7405e765d04a5e5e9b86778b088596fed4bb9c7.1770817694.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <cover.1770817694.git.anatoly.burakov@intel.com>
  <cover.1770817694.git.anatoly.burakov@intel.com>
@@ -60,72 +59,96 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Currently, security flows are implemented as a special case and do not go
-through the normal flow create/destroy infrastructure. However, because of
-that, it is impossible to destroy such flows once created. Fix it by adding
-a flag to rte_flow indicating that it is a security flow, so that it can be
-destroyed later.
+Currently, FDIR filter parsing function will modify FDIR state after a
+successful match. However, this function is called from both flow create
+and flow validate, which results in the driver modifying FDIR state after
+a flow validate call. Move the FDIR config to flow create.
 
-Fixes: 9a0752f498d2 ("net/ixgbe: enable inline IPsec")
-Cc: radu.nicolau@intel.com
+Fixes: 2e67a7fbf3ff ("net/i40e: config flow director automatically")
 Cc: stable@dpdk.org
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- drivers/net/intel/ixgbe/ixgbe_ethdev.h |  2 ++
- drivers/net/intel/ixgbe/ixgbe_flow.c   | 11 ++++++++++-
- 2 files changed, 12 insertions(+), 1 deletion(-)
+ drivers/net/intel/i40e/i40e_flow.c | 51 ++++++++++++++----------------
+ 1 file changed, 23 insertions(+), 28 deletions(-)
 
-diff --git a/drivers/net/intel/ixgbe/ixgbe_ethdev.h b/drivers/net/intel/ixgbe/ixgbe_ethdev.h
-index 5393c81363..5dbd659941 100644
---- a/drivers/net/intel/ixgbe/ixgbe_ethdev.h
-+++ b/drivers/net/intel/ixgbe/ixgbe_ethdev.h
-@@ -359,6 +359,8 @@ struct ixgbe_l2_tn_info {
+diff --git a/drivers/net/intel/i40e/i40e_flow.c b/drivers/net/intel/i40e/i40e_flow.c
+index f130f53ae0..193b1b6725 100644
+--- a/drivers/net/intel/i40e/i40e_flow.c
++++ b/drivers/net/intel/i40e/i40e_flow.c
+@@ -2551,9 +2551,7 @@ i40e_flow_parse_fdir_filter(struct rte_eth_dev *dev,
+ 			    struct rte_flow_error *error,
+ 			    union i40e_filter_t *filter)
+ {
+-	struct i40e_pf *pf = I40E_DEV_PRIVATE_TO_PF(dev->data->dev_private);
+-	struct i40e_fdir_filter_conf *fdir_filter =
+-		&filter->fdir_filter;
++	struct i40e_fdir_filter_conf *fdir_filter = &filter->fdir_filter;
+ 	int ret;
  
- struct rte_flow {
- 	enum rte_filter_type filter_type;
-+	/* security flows are not rte_filter_type */
-+	bool is_security;
- 	void *rule;
- };
+ 	ret = i40e_flow_parse_fdir_pattern(dev, pattern, error, fdir_filter);
+@@ -2570,32 +2568,7 @@ i40e_flow_parse_fdir_filter(struct rte_eth_dev *dev,
  
-diff --git a/drivers/net/intel/ixgbe/ixgbe_flow.c b/drivers/net/intel/ixgbe/ixgbe_flow.c
-index 27d2ba1132..066a69eb12 100644
---- a/drivers/net/intel/ixgbe/ixgbe_flow.c
-+++ b/drivers/net/intel/ixgbe/ixgbe_flow.c
-@@ -3062,8 +3062,10 @@ ixgbe_flow_create(struct rte_eth_dev *dev,
+ 	cons_filter_type = RTE_ETH_FILTER_FDIR;
  
- #ifdef RTE_LIB_SECURITY
- 	/* ESP flow not really a flow*/
--	if (ntuple_filter.proto == IPPROTO_ESP)
-+	if (ntuple_filter.proto == IPPROTO_ESP) {
-+		flow->is_security = true;
- 		return flow;
-+	}
- #endif
+-	if (pf->fdir.fdir_vsi == NULL) {
+-		/* Enable fdir when fdir flow is added at first time. */
+-		ret = i40e_fdir_setup(pf);
+-		if (ret != I40E_SUCCESS) {
+-			rte_flow_error_set(error, ENOTSUP,
+-					   RTE_FLOW_ERROR_TYPE_HANDLE,
+-					   NULL, "Failed to setup fdir.");
+-			return -rte_errno;
+-		}
+-		ret = i40e_fdir_configure(dev);
+-		if (ret < 0) {
+-			rte_flow_error_set(error, ENOTSUP,
+-					   RTE_FLOW_ERROR_TYPE_HANDLE,
+-					   NULL, "Failed to configure fdir.");
+-			goto err;
+-		}
+-	}
+-
+-	/* If create the first fdir rule, enable fdir check for rx queues */
+-	if (TAILQ_EMPTY(&pf->fdir.fdir_list))
+-		i40e_fdir_rx_proc_enable(dev, 1);
+-
+ 	return 0;
+-err:
+-	i40e_fdir_teardown(pf);
+-	return -rte_errno;
+ }
  
- 	if (!ret) {
-@@ -3350,6 +3352,12 @@ ixgbe_flow_destroy(struct rte_eth_dev *dev,
- 		IXGBE_DEV_PRIVATE_TO_FDIR_INFO(dev->data->dev_private);
- 	struct ixgbe_rss_conf_ele *rss_filter_ptr;
+ /* Parse to get the action info of a tunnel filter
+@@ -3921,6 +3894,28 @@ i40e_flow_create(struct rte_eth_dev *dev,
+ 		return NULL;
  
-+	/* Special case for SECURITY flows */
-+	if (flow->is_security) {
-+		ret = 0;
-+		goto free;
-+	}
+ 	if (cons_filter_type == RTE_ETH_FILTER_FDIR) {
++		/* if this is the first time we're creating an fdir flow */
++		if (pf->fdir.fdir_vsi == NULL) {
++			ret = i40e_fdir_setup(pf);
++			if (ret != I40E_SUCCESS) {
++				rte_flow_error_set(error, ENOTSUP,
++						RTE_FLOW_ERROR_TYPE_HANDLE,
++						NULL, "Failed to setup fdir.");
++				return NULL;
++			}
++			ret = i40e_fdir_configure(dev);
++			if (ret < 0) {
++				rte_flow_error_set(error, ENOTSUP,
++						RTE_FLOW_ERROR_TYPE_HANDLE,
++						NULL, "Failed to configure fdir.");
++				i40e_fdir_teardown(pf);
++				return NULL;
++			}
++		}
++		/* If create the first fdir rule, enable fdir check for rx queues */
++		if (TAILQ_EMPTY(&pf->fdir.fdir_list))
++			i40e_fdir_rx_proc_enable(dev, 1);
 +
- 	switch (filter_type) {
- 	case RTE_ETH_FILTER_NTUPLE:
- 		ntuple_filter_ptr = (struct ixgbe_ntuple_filter_ele *)
-@@ -3442,6 +3450,7 @@ ixgbe_flow_destroy(struct rte_eth_dev *dev,
- 		return ret;
- 	}
- 
-+free:
- 	TAILQ_FOREACH(ixgbe_flow_mem_ptr, &ixgbe_flow_list, entries) {
- 		if (ixgbe_flow_mem_ptr->flow == pmd_flow) {
- 			TAILQ_REMOVE(&ixgbe_flow_list,
+ 		flow = i40e_fdir_entry_pool_get(fdir_info);
+ 		if (flow == NULL) {
+ 			rte_flow_error_set(error, ENOBUFS,
 -- 
 2.47.3
 
