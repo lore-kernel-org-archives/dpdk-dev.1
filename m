@@ -2,46 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 169A2EB491F
-	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Feb 2026 12:54:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 359F5EB491F
+	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Feb 2026 12:54:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B27D940661;
-	Thu, 12 Feb 2026 13:53:48 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id D8C3340668;
+	Thu, 12 Feb 2026 13:53:51 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
- by mails.dpdk.org (Postfix) with ESMTP id 4536140652
- for <dev@dpdk.org>; Thu, 12 Feb 2026 13:53:46 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id B50E84065D
+ for <dev@dpdk.org>; Thu, 12 Feb 2026 13:53:47 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1770900827; x=1802436827;
+ t=1770900828; x=1802436828;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=rOyGDnw443EOyowVnefMau1SIfpADY8SyKU1wlUJfOk=;
- b=RZJzuF17l+myF2D50K264k92PXtulEh9+zWEJXA4HWRM4VLviHlmHzth
- /u2QW1gOyARpxVnLlPT2m2eu62lJ8MJlZF4UcaoRCitDIwMD6MGn29268
- XNhEhFla6FSOL6C8j4FF0G7zBTFrVc96Pf3IDRBCsPED/0kEKVegChs6a
- GTyTqcqK2nx8aDdKiBOV/2qxcbCw4+ommHfp4sXj7IdA2+tnv/lR2dZwA
- 4zxxZyIESq0NxrLNgxHtp+ZuAgrnDAdcrTr6OG9bsXRADC6AqlGmzYCwL
- azhIj/PzndhWAbtNu5HE2ZJJMuzTU79XD4EI7O13mMc3g3UYNNRynGXZL g==;
-X-CSE-ConnectionGUID: MfXa8L6oT5mz0QD8tme7CQ==
-X-CSE-MsgGUID: XO/zK9UTRK+46nsdkym+9w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11699"; a="71785485"
-X-IronPort-AV: E=Sophos;i="6.21,286,1763452800"; d="scan'208";a="71785485"
+ bh=Ovv18ukYA2Pwzo9CEA4mcbrWmQLVwiFeyk9TDK6Ga3E=;
+ b=BDuj0cB+D0A/vsvkYYH25+nGXdQ72d1fqNWHWP/G2pYrn2e5qhXZwdgP
+ KX/xTYTExYdgKmsoHLKrVnMqkNjVPeXIJCduIlC7O5XFCXsNmgje+No+W
+ c3MFVoY/Hse0yPQDs0mA6nBrfLga5B6CPsrDE1k/CxbfsMtrAC3BKlR8b
+ Qq49dsUq8/nzKa8hMxbkJkwY+yTy8X3LxKOUrOogCHFCjmk0yq55pJ1sI
+ s3dFTnY2cDswc9Ptl3cCLxpuKhxrd7X1QpQUytRxEx3chPWjD3NSJX3Lv
+ P7Lu4Hpthjl/0ODfCIWUPBznEDTXA5KdS3NxofmkCVgL+R1zw+8zH3Vrb w==;
+X-CSE-ConnectionGUID: 2G70PPyHSTu5+DEqClsHpA==
+X-CSE-MsgGUID: rI8Rq0hPRrC4NUJBGeiwPw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11699"; a="71785486"
+X-IronPort-AV: E=Sophos;i="6.21,286,1763452800"; d="scan'208";a="71785486"
 Received: from orviesa002.jf.intel.com ([10.64.159.142])
  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 12 Feb 2026 04:53:46 -0800
-X-CSE-ConnectionGUID: jiu66rTAQay1BPQr7yTtNw==
-X-CSE-MsgGUID: GCgwftz7TfKtommUn5Vjgw==
+ 12 Feb 2026 04:53:48 -0800
+X-CSE-ConnectionGUID: JwRycRJWQnWCHe5dKVLV+w==
+X-CSE-MsgGUID: VABpoACARHaomBY4VxL1gA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,286,1763452800"; d="scan'208";a="243179124"
+X-IronPort-AV: E=Sophos;i="6.21,286,1763452800"; d="scan'208";a="243179132"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by orviesa002.jf.intel.com with ESMTP; 12 Feb 2026 04:53:45 -0800
+ by orviesa002.jf.intel.com with ESMTP; 12 Feb 2026 04:53:46 -0800
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org, Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
  Radu Nicolau <radu.nicolau@intel.com>,
  Declan Doherty <declan.doherty@intel.com>
-Subject: [PATCH v5 03/12] net/ixgbe: fix potential null dereference in IPsec
-Date: Thu, 12 Feb 2026 12:53:26 +0000
-Message-ID: <af139585d9da1c0211d9e4d7926260f83b216b3e.1770900758.git.anatoly.burakov@intel.com>
+Subject: [PATCH v5 04/12] net/ixgbe: fix potential null dereference in IPsec
+Date: Thu, 12 Feb 2026 12:53:27 +0000
+Message-ID: <c90dd3517961437012e26f9f1abc5e7fa2d8d935.1770900758.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <cover.1770900757.git.anatoly.burakov@intel.com>
  <cover.1770900757.git.anatoly.burakov@intel.com>
@@ -61,8 +61,9 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-When parsing IPsec flows, we access the `conf` pointer unconditionally,
-even though it might be NULL. Fix by adding the check.
+Currently, IPsec flow parser will look for IPv4 flow item in the pattern,
+and then pass it to IPsec SA flow function. However, we do not check if the
+spec pointer is actually valid. Fix by adding the check.
 
 Fixes: 9a0752f498d2 ("net/ixgbe: enable inline IPsec")
 Cc: radu.nicolau@intel.com
@@ -70,27 +71,26 @@ Cc: stable@dpdk.org
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- drivers/net/intel/ixgbe/ixgbe_flow.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/net/intel/ixgbe/ixgbe_flow.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
 diff --git a/drivers/net/intel/ixgbe/ixgbe_flow.c b/drivers/net/intel/ixgbe/ixgbe_flow.c
-index 90072e757e..81b983ce69 100644
+index 81b983ce69..90a24806d2 100644
 --- a/drivers/net/intel/ixgbe/ixgbe_flow.c
 +++ b/drivers/net/intel/ixgbe/ixgbe_flow.c
-@@ -221,6 +221,13 @@ cons_parse_ntuple_filter(const struct rte_flow_attr *attr,
- 	act = next_no_void_action(actions, NULL);
- 	if (act->type == RTE_FLOW_ACTION_TYPE_SECURITY) {
- 		const void *conf = act->conf;
-+
-+		if (conf == NULL) {
+@@ -251,6 +251,12 @@ cons_parse_ntuple_filter(const struct rte_flow_attr *attr,
+ 			}
+ 			item = next_no_void_pattern(pattern, item);
+ 		}
++		if (item->spec == NULL) {
 +			rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ACTION_CONF,
-+				act, "NULL security conf.");
++					RTE_FLOW_ERROR_TYPE_ITEM_SPEC, item,
++					"NULL IP pattern.");
 +			return -rte_errno;
 +		}
- 		/* check if the next not void item is END */
- 		act = next_no_void_action(actions, act);
- 		if (act->type != RTE_FLOW_ACTION_TYPE_END) {
+ 
+ 		filter->proto = IPPROTO_ESP;
+ 		return ixgbe_crypto_add_ingress_sa_from_flow(conf, item->spec,
 -- 
 2.47.3
 
