@@ -2,59 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D00DEEA854
-	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Feb 2026 21:33:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40D8EEEA869
+	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Feb 2026 22:55:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EFC5A40647;
-	Thu, 12 Feb 2026 22:33:49 +0100 (CET)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 6117B4042E
- for <dev@dpdk.org>; Thu, 12 Feb 2026 22:33:48 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1770932027;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=ZVyAwFLXq04pfYzgzJTL3ffdBpkRk1RpQ7qrIPYK3Pw=;
- b=F+ihh5pbtrTtKq7lvX9uUjtvbhuyLhNuEvAGWN24Dx+fyfTQZbP9gPKSYlPK7Ahq109XlC
- d6LZuPxQzXEzLD6iIIpknn/+4nAvf6oCFMDpC6zSyDL+mbRRYb2XBy38R3MCf9yhmfDvVD
- lHS9AoGDS611CMpuG/ATcmXqT6UuWSw=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-613-xrA8D8KnPsq0d3cwQO5lsg-1; Thu,
- 12 Feb 2026 16:33:44 -0500
-X-MC-Unique: xrA8D8KnPsq0d3cwQO5lsg-1
-X-Mimecast-MFC-AGG-ID: xrA8D8KnPsq0d3cwQO5lsg_1770932023
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 7FA1E18002CE; Thu, 12 Feb 2026 21:33:43 +0000 (UTC)
-Received: from ringo.redhat.com (unknown [10.44.32.59])
- by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id 0EED630001B9; Thu, 12 Feb 2026 21:33:40 +0000 (UTC)
-From: Robin Jarry <rjarry@redhat.com>
-To: dev@dpdk.org, Yipeng Wang <yipeng1.wang@intel.com>,
- Sameh Gobriel <sameh.gobriel@intel.com>,
- Bruce Richardson <bruce.richardson@intel.com>,
- Vladimir Medvedkin <vladimir.medvedkin@intel.com>
-Subject: [PATCH dpdk 2/2] hash: add replace API returning old data on overwrite
-Date: Thu, 12 Feb 2026 22:33:17 +0100
-Message-ID: <20260212213313.1376294-7-rjarry@redhat.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 271B44025F;
+	Thu, 12 Feb 2026 23:55:53 +0100 (CET)
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com
+ [209.85.128.42]) by mails.dpdk.org (Postfix) with ESMTP id 21BEC40041
+ for <dev@dpdk.org>; Thu, 12 Feb 2026 23:55:52 +0100 (CET)
+Received: by mail-wm1-f42.google.com with SMTP id
+ 5b1f17b1804b1-483337aa225so1473385e9.2
+ for <dev@dpdk.org>; Thu, 12 Feb 2026 14:55:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1770936951;
+ x=1771541751; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=6QbotkPfVgVwb/3wyenJXJhz+hiIuBcqXoGj+dVrscM=;
+ b=AbBOr1ubvxtYAJMQxsXVWk+eybH7gnHZxPr7Dkllz/0eSEPIJAcS5q9rWKUcJG5Hx7
+ SNbh6bheSbAhgIUkD8cZhfMRdUMwymYprWz7v90V4nadZe5wQnu5YVFxNBLdgsSmQL+L
+ bYs3nAYkS3K+yCF5O2BmhQC1R0wJuIa9slpKfbj0OqXazDKM85NxUzvFx+r+XrEHR6yW
+ y8o3z+sagTDKvUuqwI+m7uKvwwPleGvN4yUkOITob+2dly5GHCM4Svb06erlDiA5WOWB
+ 7ZQyqHMrCuE2J9qCHT1KzMTjbBCcIeOXCkr6GNOVifIqvz3SOkh7tR5UuZehAsbak4/u
+ pnvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1770936951; x=1771541751;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=6QbotkPfVgVwb/3wyenJXJhz+hiIuBcqXoGj+dVrscM=;
+ b=vCslrmATZimJ8xlDj8epInLhJLKVAXpoCbJye/CXUP3UW8GSc4XVE76B8hvzbvFqKe
+ PWWy3xvndXQV61tCvCrCkv5IzqikW7aycyBCUJH3d1MaPKzuCB0Vjufc+A2B6lA0qUyj
+ rOE7NKiGkca1oVMNI+bPIJZdnGTKwZHxFnG5urX8u3ZAZTx7I9iHrMPT6F523QEAEFL/
+ YUMVNPgGEsJI3ertJgaStM7mBauDuKKkcUe7AZdHCkQI7mX98Fji6u5fhz7qktIh+Ltc
+ sXIEsA+rtTMHnPoaMqsuaifP/I/cFI++A2422CQHNAJ80UIIWxQ8LJOaBg2PfQP/vZyx
+ dUvw==
+X-Gm-Message-State: AOJu0Yw0SXHG5eMSLiHxY2M0N7aOYq9rTrmTMTJEpDHGlO2hkx9Zypju
+ QvGao+0lTtPN5mwY3ehzVZjtMSE6ksR2Q0/nUMEaPHw3cS5a7GUOGaO2y3xp4FSTFFE=
+X-Gm-Gg: AZuq6aL/X9HNx/4sdMfqQsACgELqGJCaH6J3agInTngjr0mZ/DQsH7cBHT4oi5xC/6m
+ /wQZSThF+QzH6P7TVI6roh0lCln3cruwGo265jKuXDdGcSyYtbvPhrtH77j6ne5TvQGmRGcU+TO
+ +5Lnv6A3llbzTamiBVwEh6UQ+Au4wi8/nnaWcR2x3mW+rllLIlfN8nwku9D3ljUO0e4ojz7Yxpt
+ cIbdtJYVxHtm7noZSd2SE76gCzWJkNxIyb8aPTArqXh1YdEGnVg52KIFDuy8LCpK3q6x9ELIWd8
+ sfIOoqsxImW9C6T4ND1BDGGY/Hzjo1KIZpKXZvcUoEUv+fJ6HRl2B/U1arOsWBQHMBGWVtgAp9W
+ 0SRHkL618gIaEhOV6HOCgxrs6b6PRa5tJslBRfy3a0rO5NCNSybtpiJgt1uJeQOP71gdq2BRjsO
+ PItHC60f/MNemAe5F+LGAFBocunqst0ZACggw8Y/WOWrlK/EWmZ3QX1M56J8NO70Y/
+X-Received: by 2002:a05:600c:4712:b0:483:885:f0b0 with SMTP id
+ 5b1f17b1804b1-4837104de29mr11353225e9.35.1770936951259; 
+ Thu, 12 Feb 2026 14:55:51 -0800 (PST)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 5b1f17b1804b1-4835d994670sm122231455e9.4.2026.02.12.14.55.50
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Thu, 12 Feb 2026 14:55:51 -0800 (PST)
+Date: Thu, 12 Feb 2026 14:55:45 -0800
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Robin Jarry <rjarry@redhat.com>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH dpdk 0/2] hash: safe data replacement on overwrite
+Message-ID: <20260212145545.79d661dd@phoenix.local>
 In-Reply-To: <20260212213313.1376294-5-rjarry@redhat.com>
 References: <20260212213313.1376294-5-rjarry@redhat.com>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: cvsdkKMA-I2A-qXFHDJ1JNOIrXTcg1Vr6n8kPpX0-rs_1770932023
-X-Mimecast-Originator: redhat.com
-Content-Transfer-Encoding: 8bit
-content-type: text/plain; charset="US-ASCII"; x-default=true
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -68,310 +79,332 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add rte_hash_replace_key_data() and rte_hash_replace_key_with_hash_data()
-which behave like their add_key_data counterparts but return the previous
-data pointer via an output parameter. On fresh insert, *old_data is set
-to NULL.
+On Thu, 12 Feb 2026 22:33:15 +0100
+Robin Jarry <rjarry@redhat.com> wrote:
 
-When the caller provides old_data, no automatic RCU deferred free is
-performed: the caller takes ownership of the old pointer and is
-responsible for freeing it.
+> When rte_hash_add_key_data() is called with an existing key, the old
+> data pointer is silently overwritten. With RCU-protected readers still
+> potentially accessing the old data, the application cannot safely free
+> it since the old pointer is never returned.
+>=20
+> This series provides two ways to address the problem:
+>=20
+> * Automatic: when RCU is configured with a free_key_data_func callback,
+>   rte_hash_add_key_data() now automatically defers freeing the old data
+>   on overwrite. No caller changes are needed.
+>=20
+> * Explicit: a new rte_hash_replace_key_data() API returns the previous
+>   data pointer via an output parameter, giving the caller full control
+>   over the old pointer's lifecycle. No automatic deferred free is
+>   performed in that case.
+>=20
+> Robin Jarry (2):
+>   hash: free replaced data on overwrite when RCU is configured
+>   hash: add replace API returning old data on overwrite
+>=20
+>  app/test/test_hash.c                   | 214 +++++++++++++++++++++++++
+>  doc/guides/rel_notes/release_26_03.rst |  12 ++
+>  lib/hash/rte_cuckoo_hash.c             | 146 +++++++++++++----
+>  lib/hash/rte_hash.h                    |  75 ++++++++-
+>  4 files changed, 417 insertions(+), 30 deletions(-)
 
-Signed-off-by: Robin Jarry <rjarry@redhat.com>
+
+Subtle change, so fed to AI and got.
+
+Here's the deep dive review. The two most substantive findings:
+
+1. Fragile overwrite/delete discriminator in
+__hash_rcu_qsbr_free_resource =E2=80=94 The dequeue callback uses old_data =
+!=3D
+NULL to distinguish overwrite entries from delete entries, but the
+enqueue side already sets key_idx =3D 0 as a sentinel for overwrites.
+Using key_idx =3D=3D 0 would be more robust, because if an application
+legitimately stores NULL data and overwrites the key, the current code
+will fall through to the delete path and try to recycle key index 0
+(the dummy slot).
+
+2. Leaked old data on rte_rcu_qsbr_dq_enqueue failure =E2=80=94 The enqueue
+failure in __hash_rcu_auto_free_old_data logs an error but the old data
+becomes permanently unreachable. This is consistent with the existing
+delete-path pattern, but it's a real resource leak on error. The
+overall design is solid =E2=80=94 the split between automatic RCU free (pat=
+ch
+1) for existing users and explicit replace API (patch 2) for
+fine-grained control is clean, and the interaction between the two is
+correctly ordered in the overwrite: label.
+
+Long review.
+
+# DPDK Hash Library Patch Series Review
+
+**Series**: hash: free replaced data on overwrite / add replace API
+**Author**: Robin Jarry <rjarry@redhat.com>
+**Patches**: 2
+**Date**: 2026-02-12
+
 ---
- app/test/test_hash.c                   | 80 ++++++++++++++++++++++++++
- doc/guides/rel_notes/release_26_03.rst |  6 ++
- lib/hash/rte_cuckoo_hash.c             | 42 ++++++++++++--
- lib/hash/rte_hash.h                    | 67 +++++++++++++++++++++
- 4 files changed, 189 insertions(+), 6 deletions(-)
 
-diff --git a/app/test/test_hash.c b/app/test/test_hash.c
-index 56a7779e09b9..fcc02ea31205 100644
---- a/app/test/test_hash.c
-+++ b/app/test/test_hash.c
-@@ -2473,6 +2473,83 @@ test_hash_rcu_qsbr_replace_auto_free(void)
- 	return ret;
- }
- 
-+/*
-+ * Test rte_hash_replace_key_data (explicit replace, no RCU).
-+ *  - Add key with data pointer (void *)1.
-+ *  - Replace same key with data (void *)2, verify old_data == (void *)1.
-+ *  - Lookup and verify data == (void *)2.
-+ *  - Replace with a new key (not yet inserted), verify old_data == NULL.
-+ */
-+static int
-+test_hash_replace_key_data(void)
-+{
-+	struct rte_hash_parameters params = {
-+		.name = "test_replace_key_data",
-+		.entries = 64,
-+		.key_len = sizeof(uint32_t),
-+		.hash_func = NULL,
-+		.hash_func_init_val = 0,
-+		.socket_id = SOCKET_ID_ANY,
-+	};
-+	struct rte_hash *hash;
-+	void *old_data = NULL;
-+	void *data = NULL;
-+	uint32_t key1 = 42;
-+	uint32_t key2 = 99;
-+	int ret = -1;
-+
-+	printf("\n# Running replace key data test\n");
-+
-+	hash = rte_hash_create(&params);
-+	if (hash == NULL) {
-+		printf("hash creation failed\n");
-+		goto end;
-+	}
-+
-+	/* Add key with data = (void *)1 */
-+	ret = rte_hash_add_key_data(hash, &key1, (void *)(uintptr_t)1);
-+	if (ret != 0) {
-+		printf("failed to add key (ret=%d)\n", ret);
-+		goto end;
-+	}
-+
-+	/* Replace same key with data = (void *)2 */
-+	ret = rte_hash_replace_key_data(hash, &key1, (void *)(uintptr_t)2, &old_data);
-+	if (ret != 0) {
-+		printf("failed to replace key (ret=%d)\n", ret);
-+		goto end;
-+	}
-+	if (old_data != (void *)(uintptr_t)1) {
-+		printf("old_data should be 0x1 but is %p\n", old_data);
-+		goto end;
-+	}
-+
-+	/* Lookup and verify data == (void *)2 */
-+	ret = rte_hash_lookup_data(hash, &key1, &data);
-+	if (ret < 0 || data != (void *)(uintptr_t)2) {
-+		printf("lookup returned wrong data %p (ret=%d)\n", data, ret);
-+		goto end;
-+	}
-+
-+	/* Replace with a new key (not yet inserted) */
-+	old_data = (void *)(uintptr_t)0xdeadbeef;
-+	ret = rte_hash_replace_key_data(hash, &key2, (void *)(uintptr_t)3, &old_data);
-+	if (ret != 0) {
-+		printf("failed to insert new key via replace (ret=%d)\n", ret);
-+		goto end;
-+	}
-+	if (old_data != NULL) {
-+		printf("old_data should be NULL on fresh insert but is %p\n",
-+		       old_data);
-+		goto end;
-+	}
-+
-+end:
-+	rte_hash_free(hash);
-+
-+	return ret;
-+}
-+
- /*
-  * Do all unit and performance tests.
-  */
-@@ -2557,6 +2634,9 @@ test_hash(void)
- 	if (test_hash_rcu_qsbr_replace_auto_free() < 0)
- 		return -1;
- 
-+	if (test_hash_replace_key_data() < 0)
-+		return -1;
-+
- 	return 0;
- }
- 
-diff --git a/doc/guides/rel_notes/release_26_03.rst b/doc/guides/rel_notes/release_26_03.rst
-index 693034bcb0d2..73418523809c 100644
---- a/doc/guides/rel_notes/release_26_03.rst
-+++ b/doc/guides/rel_notes/release_26_03.rst
-@@ -93,6 +93,12 @@ New Features
-   ``rte_hash_add_key_data`` now automatically defers freeing the old data
-   pointer on key overwrite via the RCU defer queue.
- 
-+* **Added hash replace API.**
-+
-+  Added ``rte_hash_replace_key_data`` and ``rte_hash_replace_key_with_hash_data``
-+  functions that return the previous data pointer on key overwrite, letting the
-+  caller manage its lifecycle.
-+
- 
- Removed Items
- -------------
-diff --git a/lib/hash/rte_cuckoo_hash.c b/lib/hash/rte_cuckoo_hash.c
-index 0b979dc3be0b..039572d6eab1 100644
---- a/lib/hash/rte_cuckoo_hash.c
-+++ b/lib/hash/rte_cuckoo_hash.c
-@@ -1110,7 +1110,7 @@ __hash_rcu_auto_free_old_data(const struct rte_hash *h, void *old_data_val)
- 
- static inline int32_t
- __rte_hash_add_key_with_hash(const struct rte_hash *h, const void *key,
--						hash_sig_t sig, void *data)
-+			     hash_sig_t sig, void *data, void **old_data)
- {
- 	uint16_t short_sig;
- 	uint32_t prim_bucket_idx, sec_bucket_idx;
-@@ -1309,7 +1309,9 @@ __rte_hash_add_key_with_hash(const struct rte_hash *h, const void *key,
- 	return slot_id - 1;
- 
- overwrite:
--	if (saved_old_data != NULL)
-+	if (old_data != NULL)
-+		*old_data = saved_old_data;
-+	else if (saved_old_data != NULL)
- 		__hash_rcu_auto_free_old_data(h, saved_old_data);
- 	return ret;
- 
-@@ -1325,7 +1327,7 @@ rte_hash_add_key_with_hash(const struct rte_hash *h,
- 			const void *key, hash_sig_t sig)
- {
- 	RETURN_IF_TRUE(((h == NULL) || (key == NULL)), -EINVAL);
--	return __rte_hash_add_key_with_hash(h, key, sig, 0);
-+	return __rte_hash_add_key_with_hash(h, key, sig, 0, NULL);
- }
- 
- RTE_EXPORT_SYMBOL(rte_hash_add_key)
-@@ -1333,7 +1335,7 @@ int32_t
- rte_hash_add_key(const struct rte_hash *h, const void *key)
- {
- 	RETURN_IF_TRUE(((h == NULL) || (key == NULL)), -EINVAL);
--	return __rte_hash_add_key_with_hash(h, key, rte_hash_hash(h, key), 0);
-+	return __rte_hash_add_key_with_hash(h, key, rte_hash_hash(h, key), 0, NULL);
- }
- 
- RTE_EXPORT_SYMBOL(rte_hash_add_key_with_hash_data)
-@@ -1344,7 +1346,7 @@ rte_hash_add_key_with_hash_data(const struct rte_hash *h,
- 	int ret;
- 
- 	RETURN_IF_TRUE(((h == NULL) || (key == NULL)), -EINVAL);
--	ret = __rte_hash_add_key_with_hash(h, key, sig, data);
-+	ret = __rte_hash_add_key_with_hash(h, key, sig, data, NULL);
- 	if (ret >= 0)
- 		return 0;
- 	else
-@@ -1359,13 +1361,41 @@ rte_hash_add_key_data(const struct rte_hash *h, const void *key, void *data)
- 
- 	RETURN_IF_TRUE(((h == NULL) || (key == NULL)), -EINVAL);
- 
--	ret = __rte_hash_add_key_with_hash(h, key, rte_hash_hash(h, key), data);
-+	ret = __rte_hash_add_key_with_hash(h, key, rte_hash_hash(h, key), data, NULL);
- 	if (ret >= 0)
- 		return 0;
- 	else
- 		return ret;
- }
- 
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_hash_replace_key_with_hash_data, 26.03)
-+int
-+rte_hash_replace_key_with_hash_data(const struct rte_hash *h,
-+				    const void *key, hash_sig_t sig,
-+				    void *data, void **old_data)
-+{
-+	int ret;
-+
-+	RETURN_IF_TRUE(((h == NULL) || (key == NULL) ||
-+			(old_data == NULL)), -EINVAL);
-+
-+	*old_data = NULL;
-+	ret = __rte_hash_add_key_with_hash(h, key, sig, data, old_data);
-+	if (ret >= 0)
-+		return 0;
-+	else
-+		return ret;
-+}
-+
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_hash_replace_key_data, 26.03)
-+int
-+rte_hash_replace_key_data(const struct rte_hash *h, const void *key,
-+			  void *data, void **old_data)
-+{
-+	return rte_hash_replace_key_with_hash_data(h, key,
-+			rte_hash_hash(h, key), data, old_data);
-+}
-+
- /* Search one bucket to find the match key - uses rw lock */
- static inline int32_t
- search_one_bucket_l(const struct rte_hash *h, const void *key,
-diff --git a/lib/hash/rte_hash.h b/lib/hash/rte_hash.h
-index e33f0aea0f5e..4a328c51501c 100644
---- a/lib/hash/rte_hash.h
-+++ b/lib/hash/rte_hash.h
-@@ -279,6 +279,73 @@ int32_t
- rte_hash_add_key_with_hash_data(const struct rte_hash *h, const void *key,
- 						hash_sig_t sig, void *data);
- 
-+/**
-+ * Replace a key-value pair in an existing hash table, returning the previous
-+ * data pointer associated with the key. If the key does not exist, it is
-+ * inserted and *old_data is set to NULL.
-+ *
-+ * This operation is not multi-thread safe and should only be called from one
-+ * thread by default. Thread safety can be enabled by setting flag during table
-+ * creation.
-+ *
-+ * When old_data is provided, no automatic RCU deferred free is performed on
-+ * overwrite; the caller takes ownership of the old pointer and is responsible
-+ * for freeing it (e.g. via RCU).
-+ *
-+ * @param h
-+ *   Hash table to add the key to.
-+ * @param key
-+ *   Key to add to the hash table.
-+ * @param data
-+ *   Data to add to the hash table.
-+ * @param old_data
-+ *   Output: on overwrite, set to the previous data pointer.
-+ *   On fresh insert, set to NULL.
-+ * @return
-+ *   - 0 if added/replaced successfully
-+ *   - -EINVAL if the parameters are invalid.
-+ *   - -ENOSPC if there is no space in the hash for this key.
-+ */
-+__rte_experimental
-+int
-+rte_hash_replace_key_data(const struct rte_hash *h, const void *key,
-+			  void *data, void **old_data);
-+
-+/**
-+ * Replace a key-value pair with a pre-computed hash value in an existing hash
-+ * table, returning the previous data pointer associated with the key. If the
-+ * key does not exist, it is inserted and *old_data is set to NULL.
-+ *
-+ * This operation is not multi-thread safe and should only be called from one
-+ * thread by default. Thread safety can be enabled by setting flag during table
-+ * creation.
-+ *
-+ * When old_data is provided, no automatic RCU deferred free is performed on
-+ * overwrite; the caller takes ownership of the old pointer and is responsible
-+ * for freeing it (e.g. via RCU).
-+ *
-+ * @param h
-+ *   Hash table to add the key to.
-+ * @param key
-+ *   Key to add to the hash table.
-+ * @param sig
-+ *   Precomputed hash value for 'key'
-+ * @param data
-+ *   Data to add to the hash table.
-+ * @param old_data
-+ *   Output: on overwrite, set to the previous data pointer.
-+ *   On fresh insert, set to NULL.
-+ * @return
-+ *   - 0 if added/replaced successfully
-+ *   - -EINVAL if the parameters are invalid.
-+ *   - -ENOSPC if there is no space in the hash for this key.
-+ */
-+__rte_experimental
-+int
-+rte_hash_replace_key_with_hash_data(const struct rte_hash *h,
-+				    const void *key, hash_sig_t sig,
-+				    void *data, void **old_data);
-+
- /**
-  * Add a key to an existing hash table. This operation is not multi-thread safe
-  * and should only be called from one thread by default.
--- 
-2.53.0
+## Patch 1/2: hash: free replaced data on overwrite when RCU is configured
+
+### Summary
+
+When `rte_hash_add_key_data()` overwrites an existing key, the old data poi=
+nter was silently lost. With RCU-protected readers still potentially access=
+ing the old data, applications had no safe way to free it. This patch adds =
+automatic deferred freeing of the old data pointer via the RCU defer queue =
+when a `free_key_data_func` callback is configured.
+
+### Correctness Analysis
+
+#### **Error =E2=80=94 Potential use of NULL data treated as "no overwrite"=
+ (Medium confidence ~60%)**
+
+In `__rte_hash_add_key_with_hash()`, the overwrite detection relies on:
+
+```c
+overwrite:
+    if (saved_old_data !=3D NULL)
+        __hash_rcu_auto_free_old_data(h, saved_old_data);
+    return ret;
+```
+
+If an application legitimately stores `NULL` as the data pointer for a key =
+(which `rte_hash_add_key_data()` permits =E2=80=94 `data` is `void *` with =
+no restriction against NULL), and then overwrites that key with new data, `=
+saved_old_data` will be `NULL` and the overwrite path will silently skip th=
+e auto-free. This is probably fine for the auto-free case (freeing NULL is =
+a no-op anyway), but it means the code cannot distinguish "no overwrite hap=
+pened" from "overwrite happened, old data was NULL." This becomes more sign=
+ificant in Patch 2/2 where `old_data` is exposed to the caller =E2=80=94 se=
+e below.
+
+#### **Error =E2=80=94 `__hash_rcu_qsbr_free_resource` overwrite detection =
+uses `old_data !=3D NULL` sentinel (Medium-high confidence ~70%)**
+
+In the dequeue callback:
+
+```c
+/* Overwrite case: free old data only, do not recycle slot */
+if (rcu_dq_entry.old_data !=3D NULL) {
+    h->hash_rcu_cfg->free_key_data_func(
+        h->hash_rcu_cfg->key_data_ptr,
+        rcu_dq_entry.old_data);
+    return;
+}
+```
+
+This uses `old_data !=3D NULL` to distinguish overwrite entries from delete=
+ entries. But overwrite entries are enqueued with `key_idx =3D 0` as the se=
+ntinel:
+
+```c
+struct __rte_hash_rcu_dq_entry rcu_dq_entry =3D {
+    .key_idx =3D 0,
+    .ext_bkt_idx =3D EMPTY_SLOT,
+    .old_data =3D old_data_val,
+};
+```
+
+The `key_idx =3D=3D 0` check would be a more robust sentinel since key inde=
+x 0 is the reserved dummy entry in the cuckoo hash. Using `old_data !=3D NU=
+LL` means that if someone stores NULL data and then overwrites, the entry f=
+lows through to the delete path which will try to access `keys[0]` =E2=80=
+=94 the dummy slot. The consequences depend on what's in the dummy slot, bu=
+t it's at minimum semantically wrong. **Recommendation**: check `key_idx =
+=3D=3D 0` instead of `old_data !=3D NULL` as the overwrite discriminator:
+
+```c
+if (rcu_dq_entry.key_idx =3D=3D 0) {
+    /* Overwrite case */
+    if (rcu_dq_entry.old_data !=3D NULL)
+        h->hash_rcu_cfg->free_key_data_func(...);
+    return;
+}
+```
+
+#### **Error =E2=80=94 Missing error check on `rte_rcu_qsbr_dq_enqueue` (Lo=
+w-medium confidence ~55%)**
+
+In `__hash_rcu_auto_free_old_data()`:
+
+```c
+if (rte_rcu_qsbr_dq_enqueue(h->dq, &rcu_dq_entry) !=3D 0)
+    HASH_LOG(ERR, "Failed to push QSBR FIFO");
+```
+
+The enqueue failure is logged but the old data pointer is leaked. The overw=
+rite has already happened (the data in the hash table has been updated), so=
+ by the time we reach this point, the old data is unreachable. If enqueue f=
+ails, the old data will never be freed. This is a resource leak on a (presu=
+mably rare) error path. The existing delete path in `__rte_hash_del_key_wit=
+h_hash` has the same pattern, so this is consistent with existing code, but=
+ it's worth noting that a failed enqueue here means a permanent memory leak=
+ of the old data.
+
+#### **Warning =E2=80=94 Behavioral change in the ext-table duplicate-check=
+ path**
+
+In the extended-table section of `__rte_hash_add_key_with_hash`, the origin=
+al code jumped to `failure:` when a duplicate was found (which unlocked and=
+ returned). The new code jumps to `overwrite:` after explicitly unlocking:
+
+```c
+ret =3D search_and_update(h, data, key, prim_bkt, short_sig,
+            &saved_old_data);
+if (ret !=3D -1) {
+    enqueue_slot_back(h, cached_free_slots, slot_id);
+    __hash_rw_writer_unlock(h);
+    goto overwrite;
+}
+```
+
+This is correct =E2=80=94 the unlock happens before the goto, and `overwrit=
+e:` doesn't attempt to unlock. Just confirming this is safe. The change fro=
+m `goto failure` to explicit unlock + `goto overwrite` is necessary and cor=
+rect.
+
+### Test Coverage
+
+The test `test_hash_rcu_qsbr_replace_auto_free` is well-structured:
+- Creates hash with RW_CONCURRENCY_LF and RCU QSBR in DQ mode
+- Registers a pseudo reader
+- Tests overwrite + reclaim, then delete + reclaim
+- Verifies the callback receives the correct old data pointers
+- Proper cleanup in the `end:` label
+
+The cleanup path correctly handles the case where `rcu.v` might be NULL (sk=
+ipping thread offline/unregister). `rte_hash_free(NULL)` and `rte_free(NULL=
+)` are both safe.
+
+### Documentation
+
+Release notes entry is appropriate and well-written. The API doc updates to=
+ `rte_hash.h` clearly document the new behavior.
+
+---
+
+## Patch 2/2: hash: add replace API returning old data on overwrite
+
+### Summary
+
+Adds `rte_hash_replace_key_data()` and `rte_hash_replace_key_with_hash_data=
+()` =E2=80=94 variants of the add APIs that return the previous data pointe=
+r via an output parameter. When the caller provides `old_data`, no automati=
+c RCU deferred free is performed; the caller takes ownership.
+
+### Correctness Analysis
+
+#### **Error =E2=80=94 `saved_old_data` initialized to NULL but not reset b=
+etween paths (Medium confidence ~65%)**
+
+In `__rte_hash_add_key_with_hash`, `saved_old_data` is initialized to `NULL=
+` at declaration. The function has multiple `search_and_update` calls, each=
+ of which may or may not set `saved_old_data`. If a first `search_and_updat=
+e` call doesn't find the key (returns -1), `saved_old_data` stays NULL. A l=
+ater call that does find the key will set it. This is correct. However, con=
+sider the path where `rte_hash_cuckoo_insert_mw` returns 1 (key found durin=
+g insert):
+
+```c
+ret =3D rte_hash_cuckoo_insert_mw(h, prim_bkt, sec_bkt, key, data,
+                short_sig, slot_id, &ret_val,
+                &saved_old_data);
+if (ret =3D=3D 0)
+    return slot_id - 1;
+else if (ret =3D=3D 1) {
+    enqueue_slot_back(h, cached_free_slots, slot_id);
+    ret =3D ret_val;
+    goto overwrite;
+}
+```
+
+On the `ret =3D=3D 0` path (fresh insert, no overwrite), the function retur=
+ns directly without going through `overwrite:`. So `old_data` is never set =
+for fresh inserts via this path. But `rte_hash_replace_key_with_hash_data` =
+initializes `*old_data =3D NULL` before the call, so this is safe =E2=80=94=
+ the caller sees NULL for fresh inserts. This is correct.
+
+#### **Warning =E2=80=94 New experimental APIs missing `__rte_experimental`=
+ annotation validation**
+
+The new functions `rte_hash_replace_key_data()` and `rte_hash_replace_key_w=
+ith_hash_data()` are correctly marked `__rte_experimental` in the header an=
+d use `RTE_EXPORT_EXPERIMENTAL_SYMBOL` in the `.c` file. This follows DPDK =
+conventions.
+
+#### **Info =E2=80=94 API design: `old_data` is required (non-NULL) for rep=
+lace functions**
+
+`rte_hash_replace_key_with_hash_data` validates `old_data !=3D NULL`:
+
+```c
+RETURN_IF_TRUE(((h =3D=3D NULL) || (key =3D=3D NULL) ||
+        (old_data =3D=3D NULL)), -EINVAL);
+```
+
+This is a reasonable design choice =E2=80=94 if you don't want old_data, us=
+e the existing `rte_hash_add_key_data()` instead. The semantics are clean: =
+replace always tells you what was there before.
+
+### Test Coverage
+
+`test_hash_replace_key_data` covers:
+- Overwrite path: verifies `old_data` returns the previous value
+- Lookup after replace: verifies the new data is stored correctly
+- Fresh insert via replace: verifies `old_data` is set to NULL
+
+The test intentionally sets `old_data =3D (void *)0xdeadbeef` before the fr=
+esh-insert replace to verify it gets zeroed. Good practice.
+
+**Note**: The test doesn't cover the `rte_hash_replace_key_with_hash_data()=
+` variant (with precomputed hash). Since it's a thin wrapper that delegates=
+ to the same internal function, the coverage is adequate, but a dedicated t=
+est for the hash variant would be thorough.
+
+### Documentation
+
+Release notes and API documentation are comprehensive and clear. The doxyge=
+n comments properly document the ownership semantics (caller owns old point=
+er, no auto-RCU-free).
+
+---
+
+## Cross-Patch Observations
+
+### Overall Architecture Assessment
+
+The design is clean and well-thought-out:
+
+1. **Patch 1** adds automatic RCU deferred free as a "zero-effort" improvem=
+ent for existing users who already have `free_key_data_func` configured.
+2. **Patch 2** adds an explicit replace API for users who need precise cont=
+rol over the old data's lifecycle.
+3. The two features interact correctly: when `old_data` is provided (replac=
+e API), automatic RCU free is suppressed; when `old_data` is NULL (existing=
+ add API), automatic RCU free kicks in.
+
+The priority of the `overwrite:` label logic in the final version is:
+
+```c
+overwrite:
+    if (old_data !=3D NULL)       // caller wants ownership (replace API)
+        *old_data =3D saved_old_data;
+    else if (saved_old_data !=3D NULL)  // auto-free via RCU (add API)
+        __hash_rcu_auto_free_old_data(h, saved_old_data);
+    return ret;
+```
+
+This is the correct priority ordering.
+
+### Key Finding Summary
+
+| # | Severity | Patch | Finding |
+|---|----------|-------|---------|
+| 1 | Error | 1/2 | `old_data !=3D NULL` sentinel in `__hash_rcu_qsbr_free_=
+resource` is fragile; use `key_idx =3D=3D 0` instead to discriminate overwr=
+ite vs delete entries |
+| 2 | Error | 1/2 | Failed `rte_rcu_qsbr_dq_enqueue` leaks old data (consis=
+tent with existing code pattern but worth noting) |
+| 3 | Info | 2/2 | No test for `rte_hash_replace_key_with_hash_data()` vari=
+ant specifically |
 
