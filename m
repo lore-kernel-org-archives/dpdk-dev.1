@@ -2,46 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F576EB491F
-	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Feb 2026 12:54:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D894EB491F
+	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Feb 2026 12:54:31 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DD63E40672;
-	Thu, 12 Feb 2026 13:53:52 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 5597F40689;
+	Thu, 12 Feb 2026 13:53:54 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
- by mails.dpdk.org (Postfix) with ESMTP id 3DFA840657
- for <dev@dpdk.org>; Thu, 12 Feb 2026 13:53:49 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id C371B40268
+ for <dev@dpdk.org>; Thu, 12 Feb 2026 13:53:50 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1770900830; x=1802436830;
+ t=1770900831; x=1802436831;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=fyUmKvJmyNb1JnhowyKzgGeNTX8QxXYKETd5JXLYIsw=;
- b=mHePxMWcA3bn9msy28yo9+7K5VLxdb/Nstd6mVzab6jVZuPA70NvWAuN
- K0fxSF2W6Z3rzQzdtumj4AT0+RzZhxScZ61BiKx81ytKFYk18IHL7BQO3
- Y98OgdcDpILUZ0DLDqufU+FKQ4Sh6HX2g/2IdN3iEkJFx3Ju73QvCtXSM
- nMLfQMEKFMb3rKWnfVxVYbGuDbDGFv4MReKuG00P9B/qFFEsOSCs4D+/p
- WgC6a4tk8rSw/zItxLvU/hPj/M53zXX9KRPxlcFXq4HOaJRXicK0mWK9W
- g/hldgfu/ZheVn8CzVygZoFUF2VYIhcbmDsRGmZN86FY8iQ905yTXiDBk g==;
-X-CSE-ConnectionGUID: LVKBs3OISDmeOPlSLnJYuw==
-X-CSE-MsgGUID: D4hKmFf6SVC903FaIjKe8w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11699"; a="71785487"
-X-IronPort-AV: E=Sophos;i="6.21,286,1763452800"; d="scan'208";a="71785487"
+ bh=P+Lwh9kGN14Ct9KB1Nk6T5ileoyCefNf5oYCMxCoSDA=;
+ b=mdZVrV2qw+I7y2vPL1bbpmERzzdSz467e32LD0KFx73aIxn7ywmCeE7l
+ 5dV4YsIG6dCvAYG+b0LajIruLwSii6ePhfPDY2mM4s2gZnrs4VoIccbtn
+ aEhmZNoeD05lNi5NdcbgFcDgBmhhlAgT/zV1zrTr2XfG4zzuEKbtwLU8F
+ r2XKhx2I9jkfGGU9KeLwOLRQD+HKrwnIl/oFYnUwF72d7iXTIq9wuXux4
+ ARhSb9NPROMKNu3a8Fp1xNfgsECwLPZf/xw11yukZwEfTJD2Rr05zBMym
+ A/P778TXshFNG5/6qidMAIO08cV8o//TNYbkAbsXAEZmgP6kUX7FLHy7c g==;
+X-CSE-ConnectionGUID: mYWPmwRuRMKd+QmNTF0emA==
+X-CSE-MsgGUID: aK8tZOkqR7avEBidwEI/GA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11699"; a="71785489"
+X-IronPort-AV: E=Sophos;i="6.21,286,1763452800"; d="scan'208";a="71785489"
 Received: from orviesa002.jf.intel.com ([10.64.159.142])
  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 12 Feb 2026 04:53:49 -0800
-X-CSE-ConnectionGUID: LsNAAkeGShi1AxL91DdBGQ==
-X-CSE-MsgGUID: +VRoyaVDTESdAqrI0WD77g==
+ 12 Feb 2026 04:53:51 -0800
+X-CSE-ConnectionGUID: OTMt2hWXTkK5wg/1maLfsg==
+X-CSE-MsgGUID: 8B8aN3LIRFaxOw8Y+szWwQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,286,1763452800"; d="scan'208";a="243179142"
+X-IronPort-AV: E=Sophos;i="6.21,286,1763452800"; d="scan'208";a="243179154"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by orviesa002.jf.intel.com with ESMTP; 12 Feb 2026 04:53:48 -0800
+ by orviesa002.jf.intel.com with ESMTP; 12 Feb 2026 04:53:49 -0800
 From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org, Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
- Radu Nicolau <radu.nicolau@intel.com>,
- Declan Doherty <declan.doherty@intel.com>
-Subject: [PATCH v5 05/12] net/ixgbe: fix wrong pointer handling in IPsec
-Date: Thu, 12 Feb 2026 12:53:28 +0000
-Message-ID: <134252a49d330111781e4cb1baba470474091853.1770900758.git.anatoly.burakov@intel.com>
+To: dev@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>,
+ Xiaoyun Li <xiaoyun.li@intel.com>, Beilei Xing <beilei.xing@intel.com>
+Subject: [PATCH v5 06/12] net/i40e: move FDIR config to flow create
+Date: Thu, 12 Feb 2026 12:53:29 +0000
+Message-ID: <64574a5889cb36c831f959e7cbe167e31547ef3f.1770900758.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <cover.1770900757.git.anatoly.burakov@intel.com>
  <cover.1770900757.git.anatoly.burakov@intel.com>
@@ -61,131 +60,97 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The original IPsec "add SA from flow" function expected a void* pointer to
-security session as its first argument. However, the actual code was not
-passing that, instead it passed `rte_flow_action_security` which was a
-*container* for security session pointer.
+Currently, FDIR filter parsing function will modify FDIR state after a
+successful match. However, this function is called from both flow create
+and flow validate, which results in the driver modifying FDIR state after
+a flow validate call. Move the FDIR config to flow create.
 
-Fix it by passing correct pointer type, as well as make typing more
-explicit to let compiler catch such bugs in the future.
-
-Fixes: 9a0752f498d2 ("net/ixgbe: enable inline IPsec")
-Cc: radu.nicolau@intel.com
+Fixes: 2e67a7fbf3ff ("net/i40e: config flow director automatically")
 Cc: stable@dpdk.org
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
+Acked-by: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
 ---
- drivers/net/intel/ixgbe/ixgbe_flow.c  | 14 ++++++++++++--
- drivers/net/intel/ixgbe/ixgbe_ipsec.c | 19 +++++++------------
- drivers/net/intel/ixgbe/ixgbe_ipsec.h | 16 +++++++++++++---
- 3 files changed, 32 insertions(+), 17 deletions(-)
+ drivers/net/intel/i40e/i40e_flow.c | 51 ++++++++++++++----------------
+ 1 file changed, 23 insertions(+), 28 deletions(-)
 
-diff --git a/drivers/net/intel/ixgbe/ixgbe_flow.c b/drivers/net/intel/ixgbe/ixgbe_flow.c
-index 90a24806d2..461fcf0857 100644
---- a/drivers/net/intel/ixgbe/ixgbe_flow.c
-+++ b/drivers/net/intel/ixgbe/ixgbe_flow.c
-@@ -221,6 +221,8 @@ cons_parse_ntuple_filter(const struct rte_flow_attr *attr,
- 	act = next_no_void_action(actions, NULL);
- 	if (act->type == RTE_FLOW_ACTION_TYPE_SECURITY) {
- 		const void *conf = act->conf;
-+		const struct rte_flow_action_security *sec_act;
-+		struct ip_spec spec;
+diff --git a/drivers/net/intel/i40e/i40e_flow.c b/drivers/net/intel/i40e/i40e_flow.c
+index f130f53ae0..193b1b6725 100644
+--- a/drivers/net/intel/i40e/i40e_flow.c
++++ b/drivers/net/intel/i40e/i40e_flow.c
+@@ -2551,9 +2551,7 @@ i40e_flow_parse_fdir_filter(struct rte_eth_dev *dev,
+ 			    struct rte_flow_error *error,
+ 			    union i40e_filter_t *filter)
+ {
+-	struct i40e_pf *pf = I40E_DEV_PRIVATE_TO_PF(dev->data->dev_private);
+-	struct i40e_fdir_filter_conf *fdir_filter =
+-		&filter->fdir_filter;
++	struct i40e_fdir_filter_conf *fdir_filter = &filter->fdir_filter;
+ 	int ret;
  
- 		if (conf == NULL) {
- 			rte_flow_error_set(error, EINVAL,
-@@ -259,8 +261,16 @@ cons_parse_ntuple_filter(const struct rte_flow_attr *attr,
- 		}
+ 	ret = i40e_flow_parse_fdir_pattern(dev, pattern, error, fdir_filter);
+@@ -2570,32 +2568,7 @@ i40e_flow_parse_fdir_filter(struct rte_eth_dev *dev,
  
- 		filter->proto = IPPROTO_ESP;
--		return ixgbe_crypto_add_ingress_sa_from_flow(conf, item->spec,
--					item->type == RTE_FLOW_ITEM_TYPE_IPV6);
-+		sec_act = (const struct rte_flow_action_security *)conf;
-+		spec.is_ipv6 = item->type == RTE_FLOW_ITEM_TYPE_IPV6;
-+		if (spec.is_ipv6) {
-+			const struct rte_flow_item_ipv6 *ipv6 = item->spec;
-+			spec.spec.ipv6 = *ipv6;
-+		} else {
-+			const struct rte_flow_item_ipv4 *ipv4 = item->spec;
-+			spec.spec.ipv4 = *ipv4;
-+		}
-+		return ixgbe_crypto_add_ingress_sa_from_flow(sec_act->security_session, &spec);
- 	}
- #endif
+ 	cons_filter_type = RTE_ETH_FILTER_FDIR;
  
-diff --git a/drivers/net/intel/ixgbe/ixgbe_ipsec.c b/drivers/net/intel/ixgbe/ixgbe_ipsec.c
-index df0964a51d..f76ce5b3ee 100644
---- a/drivers/net/intel/ixgbe/ixgbe_ipsec.c
-+++ b/drivers/net/intel/ixgbe/ixgbe_ipsec.c
-@@ -664,20 +664,15 @@ ixgbe_crypto_enable_ipsec(struct rte_eth_dev *dev)
+-	if (pf->fdir.fdir_vsi == NULL) {
+-		/* Enable fdir when fdir flow is added at first time. */
+-		ret = i40e_fdir_setup(pf);
+-		if (ret != I40E_SUCCESS) {
+-			rte_flow_error_set(error, ENOTSUP,
+-					   RTE_FLOW_ERROR_TYPE_HANDLE,
+-					   NULL, "Failed to setup fdir.");
+-			return -rte_errno;
+-		}
+-		ret = i40e_fdir_configure(dev);
+-		if (ret < 0) {
+-			rte_flow_error_set(error, ENOTSUP,
+-					   RTE_FLOW_ERROR_TYPE_HANDLE,
+-					   NULL, "Failed to configure fdir.");
+-			goto err;
+-		}
+-	}
+-
+-	/* If create the first fdir rule, enable fdir check for rx queues */
+-	if (TAILQ_EMPTY(&pf->fdir.fdir_list))
+-		i40e_fdir_rx_proc_enable(dev, 1);
+-
+ 	return 0;
+-err:
+-	i40e_fdir_teardown(pf);
+-	return -rte_errno;
  }
  
- int
--ixgbe_crypto_add_ingress_sa_from_flow(const void *sess,
--				      const void *ip_spec,
--				      uint8_t is_ipv6)
-+ixgbe_crypto_add_ingress_sa_from_flow(struct rte_security_session *sess,
-+		const struct ip_spec *spec)
- {
--	/**
--	 * FIXME Updating the session priv data when the session is const.
--	 * Typecasting done here is wrong and the implementation need to be corrected.
--	 */
--	struct ixgbe_crypto_session *ic_session = (void *)(uintptr_t)
--			((const struct rte_security_session *)sess)->driver_priv_data;
-+	struct ixgbe_crypto_session *ic_session =
-+			RTE_CAST_PTR(struct ixgbe_crypto_session *, sess->driver_priv_data);
+ /* Parse to get the action info of a tunnel filter
+@@ -3921,6 +3894,28 @@ i40e_flow_create(struct rte_eth_dev *dev,
+ 		return NULL;
  
- 	if (ic_session->op == IXGBE_OP_AUTHENTICATED_DECRYPTION) {
--		if (is_ipv6) {
--			const struct rte_flow_item_ipv6 *ipv6 = ip_spec;
-+		if (spec->is_ipv6) {
-+			const struct rte_flow_item_ipv6 *ipv6 = &spec->spec.ipv6;
- 			ic_session->src_ip.type = IPv6;
- 			ic_session->dst_ip.type = IPv6;
- 			rte_memcpy(ic_session->src_ip.ipv6,
-@@ -685,7 +680,7 @@ ixgbe_crypto_add_ingress_sa_from_flow(const void *sess,
- 			rte_memcpy(ic_session->dst_ip.ipv6,
- 				   &ipv6->hdr.dst_addr, 16);
- 		} else {
--			const struct rte_flow_item_ipv4 *ipv4 = ip_spec;
-+			const struct rte_flow_item_ipv4 *ipv4 = &spec->spec.ipv4;
- 			ic_session->src_ip.type = IPv4;
- 			ic_session->dst_ip.type = IPv4;
- 			ic_session->src_ip.ipv4 = ipv4->hdr.src_addr;
-diff --git a/drivers/net/intel/ixgbe/ixgbe_ipsec.h b/drivers/net/intel/ixgbe/ixgbe_ipsec.h
-index be39199be1..e7c7186264 100644
---- a/drivers/net/intel/ixgbe/ixgbe_ipsec.h
-+++ b/drivers/net/intel/ixgbe/ixgbe_ipsec.h
-@@ -6,6 +6,9 @@
- #define IXGBE_IPSEC_H_
- 
- #include <rte_security.h>
-+#include <rte_security_driver.h>
+ 	if (cons_filter_type == RTE_ETH_FILTER_FDIR) {
++		/* if this is the first time we're creating an fdir flow */
++		if (pf->fdir.fdir_vsi == NULL) {
++			ret = i40e_fdir_setup(pf);
++			if (ret != I40E_SUCCESS) {
++				rte_flow_error_set(error, ENOTSUP,
++						RTE_FLOW_ERROR_TYPE_HANDLE,
++						NULL, "Failed to setup fdir.");
++				return NULL;
++			}
++			ret = i40e_fdir_configure(dev);
++			if (ret < 0) {
++				rte_flow_error_set(error, ENOTSUP,
++						RTE_FLOW_ERROR_TYPE_HANDLE,
++						NULL, "Failed to configure fdir.");
++				i40e_fdir_teardown(pf);
++				return NULL;
++			}
++		}
++		/* If create the first fdir rule, enable fdir check for rx queues */
++		if (TAILQ_EMPTY(&pf->fdir.fdir_list))
++			i40e_fdir_rx_proc_enable(dev, 1);
 +
-+#include <rte_flow.h>
- 
- #define IPSRXIDX_RX_EN                                    0x00000001
- #define IPSRXIDX_TABLE_IP                                 0x00000002
-@@ -109,9 +112,16 @@ struct ixgbe_ipsec {
- 
- int ixgbe_ipsec_ctx_create(struct rte_eth_dev *dev);
- int ixgbe_crypto_enable_ipsec(struct rte_eth_dev *dev);
--int ixgbe_crypto_add_ingress_sa_from_flow(const void *sess,
--					  const void *ip_spec,
--					  uint8_t is_ipv6);
-+
-+struct ip_spec {
-+	bool is_ipv6;
-+	union {
-+		struct rte_flow_item_ipv4 ipv4;
-+		struct rte_flow_item_ipv6 ipv6;
-+	} spec;
-+};
-+int ixgbe_crypto_add_ingress_sa_from_flow(struct rte_security_session *sess,
-+		const struct ip_spec *ip_spec);
- 
- 
- 
+ 		flow = i40e_fdir_entry_pool_get(fdir_info);
+ 		if (flow == NULL) {
+ 			rte_flow_error_set(error, ENOBUFS,
 -- 
 2.47.3
 
