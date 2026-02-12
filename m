@@ -2,70 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A468FECD6F6
-	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Feb 2026 22:23:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AAFCECD6F5
+	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Feb 2026 00:08:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 458FF406B6;
-	Wed, 11 Feb 2026 23:22:17 +0100 (CET)
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com
- [209.85.221.53]) by mails.dpdk.org (Postfix) with ESMTP id 92DF340DDD
- for <dev@dpdk.org>; Wed, 11 Feb 2026 23:22:15 +0100 (CET)
-Received: by mail-wr1-f53.google.com with SMTP id
- ffacd0b85a97d-4359228b7c6so3821952f8f.2
- for <dev@dpdk.org>; Wed, 11 Feb 2026 14:22:15 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id CFA514027A;
+	Thu, 12 Feb 2026 01:08:42 +0100 (CET)
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com
+ [209.85.128.42]) by mails.dpdk.org (Postfix) with ESMTP id 518BF40268
+ for <dev@dpdk.org>; Thu, 12 Feb 2026 01:08:41 +0100 (CET)
+Received: by mail-wm1-f42.google.com with SMTP id
+ 5b1f17b1804b1-47ee937ecf2so15127005e9.0
+ for <dev@dpdk.org>; Wed, 11 Feb 2026 16:08:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1770848535;
- x=1771453335; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=aWfhpHuCNgMGGYOPw0HWhKaUaGz0g+r6y2JIec0xy8k=;
- b=J7cu89SzNKHlbQUV/qcNDjWvl/2cqq3SvQbVkRx7HKVqIduWlPYiVsumrmuu+DFwmV
- OFtJa0zvLrJOChmdw/QRJ87DCHIxUw6tg4CEqbmKXVoIPSir+q+FG0QNf1jY19X4kxBC
- 2foTtt5608cvfJ3rkhkMiq54B6ZcWLUeF2MzgLqg28rejqAOVtSE6kJK1PiP956R+Y+u
- /SoX+HkRDZsqSMOwdG8ZJYXSMsZXxlV+L2zqredGI7BnZFICf65noH6LOEFx/crqSt/U
- +1ZspBaL5TGyzR982lz8oFM60ow9eeSVV1BM0Ncsrnp+aihZdyXKAkX0lxIBWFJgCq30
- 1yWQ==
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1770854921;
+ x=1771459721; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=kphY8lZ/q8jTd5SXmfnD63j+ytFo6bc8Z7tFeq8gTSk=;
+ b=kyPn40q2Rfd9ZtaB2dLCq8YWQJIBvdXl6+KP8cZkB4X9F81pJkijjo3Tv/nI/YGJxp
+ QL/9nqToSnbKjwJ/vSETo9QGXFyksnoAXs51SERPykw1eEOZ1seBb8NL48knr1kpy5Nh
+ K7XmMq74AE3UKWlcAtvkYMAie8kPf9tDC3LShsXk1cnqynifzRq9gqxwPBz1WzljEmqc
+ Vmwn+Ypixhk7IfTx4EHED2U4qsakE1U1hFmPNk/kdTb1zaXnGtNXticpk6v2R4VrGuIy
+ cFOBvmY1EG0Y7OLuShciE0tPL6yWHwIyp2wcuxRCsb3OXMPi0FIJa8ZZxESdbVpN0smO
+ drKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1770848535; x=1771453335;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=aWfhpHuCNgMGGYOPw0HWhKaUaGz0g+r6y2JIec0xy8k=;
- b=wGIqFB9ijndOMglcBQJImDeOqZ7emCrylxZpGc0P6zi5Ee0VG4dSfaUXZcqG8/KfHF
- gu+PVZ8HiqFSdXMpYszEOsnOJyhFCZf1P14bVa/eioiJXi0C0w7/c3nrX6+46Z6PpH1j
- uJM3wk1AvUr/BOGfHVHnCIFiw9hg4RB6LJL3fwJHRaoz4yr6dP/oJ4K0yTDmVc+/dV2n
- gT11MohtqdVlbL4jBw2nHVtEkO2wq5TB9FoaT7rlXU7E+FMJo1mazvrCu1Jl61HtLIMM
- 1bqqLtKooAf7PNVAKgdh5kuSWxKqFqmXlPwFDnRBwJOtCKdAuXQ0aSYlaEo/JoBSWXli
- d01Q==
-X-Gm-Message-State: AOJu0YxIO5VN5nCQYc+6Mu9wG5YdijDT5/cBAioO+F0gxMzDxgZA0f/l
- oVaboBNjiOB09NIBCbm5D00zFD8lnF8YihL9ittzospRwvkrAK1jmwFIUwuqOnZazfGnWKqvdZP
- P423N
-X-Gm-Gg: AZuq6aIQuAOq8Y4TE7avPPX2QTbE3WRY09wwWFpagQkZkCLZ2fAQU/2mDyXoA5nx/qh
- nmHMt2lSXIfb8CehwTO57h9cr2eULa4u88sdukfZfPgEHVh+5wzSb5sww3muOJ2jCX/Pyc6QLa3
- HTnnOXDFA1p0V96aj+UxXGClCZI5D1C53ffRbmJCW7Q2nmA7o9oLoANTtWnkE8noYNVQeA+kAXM
- pvFqrrK6bpxsyU9XXf9+Sh/4zEDgYfNFmVDmQ/ok/AalzIH7x/fY80UtXVnHX9le15BoBVmy+RO
- 8yUSRSbFng2p+J7oTSnqyzpKiOh7jauM0eMy40vXuxr3Fv2J4YPAqBe2gDpvRthSA+tXRzevqz5
- NoaO5UFXlcCpC32lUuM2KABJd+weu7rCQo/xafi3hJfAoUwCN69wgYuFsaSi+WxHJW2xE8ATqxe
- olbGA0lUepLYVbXQvEO7tsqoQoCtTtQtIOLOqSbc6A53tCom0t71WciUSKMQmXjQ==
-X-Received: by 2002:a05:6000:230d:b0:435:a8e7:62de with SMTP id
- ffacd0b85a97d-4378ad85e09mr1490901f8f.58.1770848534322; 
- Wed, 11 Feb 2026 14:22:14 -0800 (PST)
+ d=1e100.net; s=20230601; t=1770854921; x=1771459721;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=kphY8lZ/q8jTd5SXmfnD63j+ytFo6bc8Z7tFeq8gTSk=;
+ b=W1QF3Najjda/JrXt4rBwNfLr9LNAWJPoPsvsyeKlA2lj/qSZ31de4hKIThmbTBGW8C
+ wnoKqfwKROud7sZsDstpWBnQOiAalKotTYJM6COimilsaOvMTchaNsxGngam6e88sV4L
+ tOVJtevMq15f2CoEgC8zzxtPNuxd/fUOL2w4GnJS4ysaDOAsyZyQRFDfSKggCGtedS8p
+ UgYV2Z8wo26XXmKqDSghCl0jzG192YGveMK83KLGKxI7T3p/tPbAMbcc3rn5stLYUogA
+ Bo/piWBikVCKd5Ulb/CgNf6ULLnSpjVjxJ4uZP9e/HKVEmV+3RPMm4FlHWCJMXIULmFN
+ N68g==
+X-Gm-Message-State: AOJu0Yy64uogBTPiT34GF8hY41KTrQaqIkPw4lK9pXONLbOv/LaiFGly
+ IvL5tO4V4B2Ln0eXqWiQ+Iv8dNq/ZzPqGW1KQMm6KqNa8vIUR1R6gLsvxRAxB6+Czy/8wEP+JU9
+ FnRlf
+X-Gm-Gg: AZuq6aLfV6PhWCZQU64X6JXVaD8j7g4w9t81ot3DnAmj2dkl36ah+RIMSoYk8x01RLI
+ YgFosmqLYLmwsuuC3nRXRp75o7eeXgnrYlLlGUhkLlh2oIGKF/TOexDPV+cW7VUTiHNMDAjcoNR
+ kISYC+YBKjAgvlFk4sQiH2i+gPxaAlZ8IpW+ZbSdsS20hgLJFJSP6fv06k6UP8xC/5LdXFVqmvz
+ amTruhS/tuikCYIRx6ieTMEG/VtDz7FY5hPC89m69k1S3V80oYyf3ZO4qLGLj5yhvsrMjTFwhKz
+ QWCSBBv12E95Ptvl4BDDlb7BpjkNu+EsC7fgxCE3k6/C+PLChaPGk/pQbPCPubJoQ1DUNGrS8ES
+ FJM/EZVOfH/IWLA0MFxGIbWTmW0S8WqrzeMD3pbrvTJoP/wXuTZx3qt/fG/R2oL1WmQ6FYzjRMH
+ QPk6P007/ZI7sDw6xkk26CLekyiQpt+y85kQdvXaigklB/aDeiisa3g595Ws3tvw==
+X-Received: by 2002:a05:600c:1d99:b0:46f:a2ba:581f with SMTP id
+ 5b1f17b1804b1-4836603adfdmr8485425e9.16.1770854920199; 
+ Wed, 11 Feb 2026 16:08:40 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-43783e0196bsm7877965f8f.23.2026.02.11.14.22.12
+ 5b1f17b1804b1-4835b958b6csm90427325e9.1.2026.02.11.16.08.37
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 11 Feb 2026 14:22:13 -0800 (PST)
+ Wed, 11 Feb 2026 16:08:38 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v14 18/18] test: add comprehensive test suite for pcap PMD
-Date: Wed, 11 Feb 2026 13:09:51 -0800
-Message-ID: <20260211222130.338797-19-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Bruce Richardson <bruce.richardson@intel.com>
+Subject: [RFC] net/ring: add veth-like peer link state tracking
+Date: Wed, 11 Feb 2026 16:08:33 -0800
+Message-ID: <20260212000834.585423-1-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20260211222130.338797-1-stephen@networkplumber.org>
-References: <20260106182823.192350-1-stephen@networkplumber.org>
- <20260211222130.338797-1-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -82,3497 +79,644 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add unit tests for the pcap PMD covering file and interface modes.
+The ring PMD currently reports link-up unconditionally when a port is
+started, making it impossible for applications to detect whether the
+other end of a ring-based virtual link is ready.
 
-Tests include:
-  - basic TX to file and RX from file
-  - varied packet sizes and jumbo frames
-  - infinite RX mode
-  - TX drop mode
-  - statistics
-  - interface (iface=) pass-through mode
-  - link status reporting for file and iface modes
-  - link status change (LSC) with interface toggle
-  - EOF notification via LSC
-  - RX timestamps and timestamp with infinite RX
-  - multiple TX/RX queues
-  - VLAN strip, insert, and runtime offload configuration
-  - snapshot length (snaplen) and truncation
+Add an optional peer-awareness mechanism modelled on the Linux veth
+driver's carrier semantics.
 
-Cross-platform helpers handle temp file creation, interface
-discovery, and VLAN packet generation.
-
-The LSC link toggle test requires a pre-created dummy interface
-(Linux: dummy0, FreeBSD: disc0) and is skipped if unavailable.
+Introduce the experimental API rte_eth_ring_attach_peer()
+which pairs two ring PMD ports so that each port's link state
+reflects whether its peer is started and administratively up.
+Unpaired ports retain the existing behaviour.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- app/test/meson.build                   |    2 +
- app/test/test_pmd_pcap.c               | 3422 ++++++++++++++++++++++++
- doc/guides/rel_notes/release_26_03.rst |    1 +
- 3 files changed, 3425 insertions(+)
- create mode 100644 app/test/test_pmd_pcap.c
+ app/test/test_pmd_ring.c               | 191 +++++++++++++++++++++++
+ doc/guides/nics/ring.rst               |  42 +++++
+ doc/guides/rel_notes/release_26_03.rst |   8 +
+ drivers/net/ring/rte_eth_ring.c        | 205 ++++++++++++++++++++++++-
+ drivers/net/ring/rte_eth_ring.h        |  26 ++++
+ 5 files changed, 468 insertions(+), 4 deletions(-)
 
-diff --git a/app/test/meson.build b/app/test/meson.build
-index 48874037eb..a83292cf49 100644
---- a/app/test/meson.build
-+++ b/app/test/meson.build
-@@ -141,6 +141,7 @@ source_file_deps = {
-     'test_per_lcore.c': [],
-     'test_pflock.c': [],
-     'test_pie.c': ['sched'],
-+    'test_pmd_pcap.c': ['net_pcap', 'ethdev', 'bus_vdev']  + packet_burst_generator_deps,
-     'test_pmd_perf.c': ['ethdev', 'net'] + packet_burst_generator_deps,
-     'test_pmd_ring.c': ['net_ring', 'ethdev', 'bus_vdev'],
-     'test_pmd_ring_perf.c': ['ethdev', 'net_ring', 'bus_vdev'],
-@@ -216,6 +217,7 @@ source_file_deps = {
- source_file_ext_deps = {
-     'test_compressdev.c': ['zlib'],
-     'test_pcapng.c': ['pcap'],
-+    'test_pmd_pcap.c': ['pcap'],
+diff --git a/app/test/test_pmd_ring.c b/app/test/test_pmd_ring.c
+index cb08dcf1d9..c0ebc4fe29 100644
+--- a/app/test/test_pmd_ring.c
++++ b/app/test/test_pmd_ring.c
+@@ -425,6 +425,196 @@ test_pmd_ring_pair_create_attach(void)
+ 	return TEST_SUCCESS;
  }
  
- def_lib = get_option('default_library')
-diff --git a/app/test/test_pmd_pcap.c b/app/test/test_pmd_pcap.c
-new file mode 100644
-index 0000000000..5f57184d5f
---- /dev/null
-+++ b/app/test/test_pmd_pcap.c
-@@ -0,0 +1,3422 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2026 Stephen Hemminger
-+ */
-+
-+#include "test.h"
-+
-+#include "packet_burst_generator.h"
-+
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <stdint.h>
-+
-+#ifdef RTE_EXEC_ENV_WINDOWS
-+#include <io.h>
-+#include <windows.h>
-+#define access _access
-+#define F_OK 0
-+#else
-+#include <unistd.h>
-+#include <sys/ioctl.h>
-+#include <sys/socket.h>
-+#include <net/if.h>
-+#endif
-+
-+#include <pcap/pcap.h>
-+
-+#include <rte_ethdev.h>
-+#include <rte_bus_vdev.h>
-+#include <rte_mbuf.h>
-+#include <rte_mbuf_dyn.h>
-+#include <rte_mempool.h>
-+#include <rte_ether.h>
-+#include <rte_string_fns.h>
-+#include <rte_ip.h>
-+#include <rte_udp.h>
-+
-+#define SOCKET0 0
-+#define RING_SIZE 256
-+#define NB_MBUF 1024
-+#define NUM_PACKETS 64
-+#define MAX_PKT_BURST 32
-+#define PCAP_SNAPLEN 65535
-+
-+/* Packet sizes to test */
-+#define PKT_SIZE_MIN 60
-+#define PKT_SIZE_SMALL 128
-+#define PKT_SIZE_MEDIUM 512
-+#define PKT_SIZE_LARGE 1024
-+#define PKT_SIZE_MTU 1500
-+#define PKT_SIZE_JUMBO 9000
-+
-+static struct rte_mempool *mp;
-+
-+/* Timestamp dynamic field access */
-+static int timestamp_dynfield_offset = -1;
-+static uint64_t timestamp_rx_dynflag;
-+
-+/* Temporary file paths */
-+static char tx_pcap_path[PATH_MAX];
-+static char rx_pcap_path[PATH_MAX];
-+static char infinite_pcap_path[PATH_MAX];
-+static char timestamp_pcap_path[PATH_MAX];
-+static char varied_pcap_path[PATH_MAX];
-+static char jumbo_pcap_path[PATH_MAX];
-+
-+/* Constants for multi-queue tests */
-+#define MULTI_QUEUE_NUM_QUEUES   4U
-+#define MULTI_QUEUE_NUM_PACKETS  100U
-+#define MULTI_QUEUE_BURST_SIZE   32U
-+
-+static char multi_tx_pcap_paths[MULTI_QUEUE_NUM_QUEUES][PATH_MAX];
-+static char multi_rx_pcap_path[PATH_MAX];
-+static char vlan_rx_pcap_path[PATH_MAX];
-+static char vlan_tx_pcap_path[PATH_MAX];
-+
-+/* Test VLAN parameters */
-+#define TEST_VLAN_ID  100
-+#define TEST_VLAN_PCP 3
-+
-+/* MAC addresses for packet generation */
-+static struct rte_ether_addr src_mac;
-+static struct rte_ether_addr dst_mac = {
-+	.addr_bytes = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff }
-+};
-+
-+/* Sample Ethernet/IPv4/UDP packet for testing */
-+static const uint8_t test_packet[] = {
-+	/* Ethernet header */
-+	0xff, 0xff, 0xff, 0xff, 0xff, 0xff,  /* dst MAC (broadcast) */
-+	0x00, 0x11, 0x22, 0x33, 0x44, 0x55,  /* src MAC */
-+	0x08, 0x00,                          /* EtherType: IPv4 */
-+	/* IPv4 header */
-+	0x45, 0x00, 0x00, 0x2e,              /* ver, ihl, tos, len */
-+	0x00, 0x01, 0x00, 0x00,              /* id, flags, frag */
-+	0x40, 0x11, 0x00, 0x00,              /* ttl, proto(UDP), csum */
-+	0x0a, 0x00, 0x00, 0x01,              /* src: 10.0.0.1 */
-+	0x0a, 0x00, 0x00, 0x02,              /* dst: 10.0.0.2 */
-+	/* UDP header */
-+	0x04, 0xd2, 0x04, 0xd2,              /* sport, dport (1234) */
-+	0x00, 0x1a, 0x00, 0x00,              /* len, csum */
-+	/* Payload: "Test packet!" */
-+	0x54, 0x65, 0x73, 0x74, 0x20, 0x70,
-+	0x61, 0x63, 0x6b, 0x65, 0x74, 0x21
-+};
-+
-+/* Helper: Get timestamp from mbuf using dynamic field */
-+static inline rte_mbuf_timestamp_t
-+mbuf_timestamp_get(const struct rte_mbuf *mbuf)
-+{
-+	return *RTE_MBUF_DYNFIELD(mbuf, timestamp_dynfield_offset, rte_mbuf_timestamp_t *);
-+}
-+
-+/* Helper: Check if mbuf has valid timestamp */
-+static inline int
-+mbuf_has_timestamp(const struct rte_mbuf *mbuf)
-+{
-+	return (mbuf->ol_flags & timestamp_rx_dynflag) != 0;
-+}
-+
-+/* Helper: Initialize timestamp dynamic field access */
 +static int
-+timestamp_init(void)
++test_pmd_ring_link_status(void)
 +{
-+	int offset;
-+
-+	offset = rte_mbuf_dynfield_lookup(RTE_MBUF_DYNFIELD_TIMESTAMP_NAME, NULL);
-+	if (offset < 0) {
-+		printf("Timestamp dynfield not registered\n");
-+		return -1;
-+	}
-+	timestamp_dynfield_offset = offset;
-+
-+	offset = rte_mbuf_dynflag_lookup(RTE_MBUF_DYNFLAG_RX_TIMESTAMP_NAME, NULL);
-+	if (offset < 0) {
-+		printf("Timestamp dynflag not registered\n");
-+		return -1;
-+	}
-+	timestamp_rx_dynflag = RTE_BIT64(offset);
-+	return 0;
-+}
-+
-+#ifdef RTE_EXEC_ENV_WINDOWS
-+
-+/*
-+ * Helper: Create a unique temporary file path (Windows version)
-+ */
-+static int
-+create_temp_path(char *buf, size_t buflen, const char *prefix)
-+{
-+	char temp_dir[MAX_PATH];
-+	char temp_file[MAX_PATH];
-+	DWORD ret;
-+
-+	ret = GetTempPathA(sizeof(temp_dir), temp_dir);
-+	if (ret == 0 || ret > sizeof(temp_dir))
-+		return -1;
-+
-+	if (GetTempFileNameA(temp_dir, prefix, 0, temp_file) == 0)
-+		return -1;
-+
-+	ret = snprintf(buf, buflen, "%s.pcap", temp_file);
-+	if (ret >= buflen) {
-+		DeleteFileA(temp_file);
-+		return -1;
-+	}
-+
-+	if (MoveFileA(temp_file, buf) == 0) {
-+		DeleteFileA(temp_file);
-+		return -1;
-+	}
-+
-+	return 0;
-+}
-+
-+/*
-+ * Helper: Remove temporary file (Windows version)
-+ */
-+static inline void
-+remove_temp_file(const char *path)
-+{
-+	if (path[0] != '\0')
-+		DeleteFileA(path);
-+}
-+
-+#else /* POSIX */
-+
-+/*
-+ * Helper: Create a unique temporary file path (POSIX version)
-+ */
-+static int
-+create_temp_path(char *buf, size_t buflen, const char *prefix)
-+{
-+	int fd;
-+
-+	snprintf(buf, buflen, "/tmp/%s_XXXXXX.pcap", prefix);
-+	fd = mkstemps(buf, 5);  /* 5 = strlen(".pcap") */
-+	if (fd < 0)
-+		return -1;
-+	close(fd);
-+	return 0;
-+}
-+
-+/*
-+ * Helper: Remove temporary file (POSIX version)
-+ */
-+static inline void
-+remove_temp_file(const char *path)
-+{
-+	if (path[0] != '\0')
-+		unlink(path);
-+}
-+
-+#endif /* RTE_EXEC_ENV_WINDOWS */
-+
-+/*
-+ * Helper: Create a pcap file with test packets using libpcap
-+ */
-+static int
-+create_test_pcap(const char *path, unsigned int num_pkts)
-+{
-+	pcap_t *pd;
-+	pcap_dumper_t *dumper;
-+	struct pcap_pkthdr hdr;
-+	unsigned int i;
-+
-+	pd = pcap_open_dead(DLT_EN10MB, PCAP_SNAPLEN);
-+	if (pd == NULL) {
-+		printf("pcap_open_dead failed\n");
-+		return -1;
-+	}
-+
-+	dumper = pcap_dump_open(pd, path);
-+	if (dumper == NULL) {
-+		printf("pcap_dump_open failed: %s\n", pcap_geterr(pd));
-+		pcap_close(pd);
-+		return -1;
-+	}
-+
-+	memset(&hdr, 0, sizeof(hdr));
-+	hdr.caplen = sizeof(test_packet);
-+	hdr.len = sizeof(test_packet);
-+
-+	for (i = 0; i < num_pkts; i++) {
-+		hdr.ts.tv_sec = i;
-+		hdr.ts.tv_usec = 0;
-+		pcap_dump((u_char *)dumper, &hdr, test_packet);
-+	}
-+
-+	pcap_dump_close(dumper);
-+	pcap_close(pd);
-+	return 0;
-+}
-+
-+/*
-+ * Helper: Create pcap file with packets of specified size
-+ */
-+static int
-+create_sized_pcap(const char *path, unsigned int num_pkts, uint16_t pkt_size)
-+{
-+	pcap_t *pd;
-+	pcap_dumper_t *dumper;
-+	struct pcap_pkthdr hdr;
-+	uint8_t *pkt_data;
-+	unsigned int i;
-+
-+	/* Minimum valid ethernet frame */
-+	if (pkt_size < 60)
-+		pkt_size = 60;
-+
-+	pkt_data = calloc(1, pkt_size);
-+	if (pkt_data == NULL)
-+		return -1;
-+
-+	/* Build ethernet header */
-+	struct rte_ether_hdr *eth_hdr = (struct rte_ether_hdr *)pkt_data;
-+	rte_ether_addr_copy(&src_mac, &eth_hdr->src_addr);
-+	rte_ether_addr_copy(&dst_mac, &eth_hdr->dst_addr);
-+	eth_hdr->ether_type = rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV4);
-+
-+	/* Build IP header */
-+	struct rte_ipv4_hdr *ip_hdr = (struct rte_ipv4_hdr *)(eth_hdr + 1);
-+	uint16_t ip_len = pkt_size - sizeof(struct rte_ether_hdr);
-+	ip_hdr->version_ihl = RTE_IPV4_VHL_DEF;
-+	ip_hdr->total_length = rte_cpu_to_be_16(ip_len);
-+	ip_hdr->time_to_live = 64;
-+	ip_hdr->next_proto_id = IPPROTO_UDP;
-+	ip_hdr->src_addr = rte_cpu_to_be_32(IPV4_ADDR(10, 0, 0, 1));
-+	ip_hdr->dst_addr = rte_cpu_to_be_32(IPV4_ADDR(10, 0, 0, 2));
-+	ip_hdr->hdr_checksum = 0;
-+	ip_hdr->hdr_checksum = rte_ipv4_cksum(ip_hdr);
-+
-+	/* Build UDP header */
-+	struct rte_udp_hdr *udp_hdr = (struct rte_udp_hdr *)(ip_hdr + 1);
-+	uint16_t udp_len = ip_len - sizeof(struct rte_ipv4_hdr);
-+	udp_hdr->src_port = rte_cpu_to_be_16(1234);
-+	udp_hdr->dst_port = rte_cpu_to_be_16(1234);
-+	udp_hdr->dgram_len = rte_cpu_to_be_16(udp_len);
-+	udp_hdr->dgram_cksum = 0;
-+
-+	/* Fill payload with pattern */
-+	uint8_t *payload = (uint8_t *)(udp_hdr + 1);
-+	uint16_t payload_len = udp_len - sizeof(struct rte_udp_hdr);
-+	for (uint16_t j = 0; j < payload_len; j++)
-+		payload[j] = (uint8_t)(j & 0xFF);
-+
-+	pd = pcap_open_dead(DLT_EN10MB, PCAP_SNAPLEN);
-+	if (pd == NULL) {
-+		free(pkt_data);
-+		return -1;
-+	}
-+
-+	dumper = pcap_dump_open(pd, path);
-+	if (dumper == NULL) {
-+		pcap_close(pd);
-+		free(pkt_data);
-+		return -1;
-+	}
-+
-+	memset(&hdr, 0, sizeof(hdr));
-+	hdr.caplen = pkt_size;
-+	hdr.len = pkt_size;
-+
-+	for (i = 0; i < num_pkts; i++) {
-+		hdr.ts.tv_sec = i;
-+		hdr.ts.tv_usec = 0;
-+		/* Vary sequence byte in payload */
-+		payload[0] = (uint8_t)(i & 0xFF);
-+		pcap_dump((u_char *)dumper, &hdr, pkt_data);
-+	}
-+
-+	pcap_dump_close(dumper);
-+	pcap_close(pd);
-+	free(pkt_data);
-+	return 0;
-+}
-+
-+/*
-+ * Helper: Create pcap file with varied packet sizes
-+ */
-+static int
-+create_varied_pcap(const char *path, unsigned int num_pkts)
-+{
-+	static const uint16_t sizes[] = {
-+		PKT_SIZE_MIN, PKT_SIZE_SMALL, PKT_SIZE_MEDIUM,
-+		PKT_SIZE_LARGE, PKT_SIZE_MTU
-+	};
-+	pcap_t *pd;
-+	pcap_dumper_t *dumper;
-+	struct pcap_pkthdr hdr;
-+	uint8_t *pkt_data;
-+	unsigned int i;
-+
-+	pkt_data = calloc(1, PKT_SIZE_MTU);
-+	if (pkt_data == NULL)
-+		return -1;
-+
-+	pd = pcap_open_dead(DLT_EN10MB, PCAP_SNAPLEN);
-+	if (pd == NULL) {
-+		free(pkt_data);
-+		return -1;
-+	}
-+
-+	dumper = pcap_dump_open(pd, path);
-+	if (dumper == NULL) {
-+		pcap_close(pd);
-+		free(pkt_data);
-+		return -1;
-+	}
-+
-+	for (i = 0; i < num_pkts; i++) {
-+		uint16_t pkt_size = sizes[i % RTE_DIM(sizes)];
-+
-+		memset(pkt_data, 0, pkt_size);
-+
-+		/* Build ethernet header */
-+		struct rte_ether_hdr *eth_hdr = (struct rte_ether_hdr *)pkt_data;
-+		rte_ether_addr_copy(&src_mac, &eth_hdr->src_addr);
-+		rte_ether_addr_copy(&dst_mac, &eth_hdr->dst_addr);
-+		eth_hdr->ether_type = rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV4);
-+
-+		/* Build IP header */
-+		struct rte_ipv4_hdr *ip_hdr = (struct rte_ipv4_hdr *)(eth_hdr + 1);
-+		uint16_t ip_len = pkt_size - sizeof(struct rte_ether_hdr);
-+		ip_hdr->version_ihl = RTE_IPV4_VHL_DEF;
-+		ip_hdr->total_length = rte_cpu_to_be_16(ip_len);
-+		ip_hdr->time_to_live = 64;
-+		ip_hdr->next_proto_id = IPPROTO_UDP;
-+		ip_hdr->src_addr = rte_cpu_to_be_32(IPV4_ADDR(10, 0, 0, 1));
-+		ip_hdr->dst_addr = rte_cpu_to_be_32(IPV4_ADDR(10, 0, 0, 2));
-+		ip_hdr->hdr_checksum = 0;
-+		ip_hdr->hdr_checksum = rte_ipv4_cksum(ip_hdr);
-+
-+		/* Build UDP header */
-+		struct rte_udp_hdr *udp_hdr = (struct rte_udp_hdr *)(ip_hdr + 1);
-+		uint16_t udp_len = ip_len - sizeof(struct rte_ipv4_hdr);
-+		udp_hdr->src_port = rte_cpu_to_be_16(1234);
-+		udp_hdr->dst_port = rte_cpu_to_be_16(1234);
-+		udp_hdr->dgram_len = rte_cpu_to_be_16(udp_len);
-+
-+		memset(&hdr, 0, sizeof(hdr));
-+		hdr.ts.tv_sec = i;
-+		hdr.caplen = pkt_size;
-+		hdr.len = pkt_size;
-+
-+		pcap_dump((u_char *)dumper, &hdr, pkt_data);
-+	}
-+
-+	pcap_dump_close(dumper);
-+	pcap_close(pd);
-+	free(pkt_data);
-+	return 0;
-+}
-+
-+/*
-+ * Helper: Create pcap file with specific timestamps for testing
-+ */
-+static int
-+create_timestamped_pcap(const char *path, unsigned int num_pkts,
-+			uint32_t base_sec, uint32_t usec_increment)
-+{
-+	pcap_t *pd;
-+	pcap_dumper_t *dumper;
-+	struct pcap_pkthdr hdr;
-+	unsigned int i;
-+
-+	pd = pcap_open_dead_with_tstamp_precision(DLT_EN10MB, PCAP_SNAPLEN,
-+						  PCAP_TSTAMP_PRECISION_MICRO);
-+	if (pd == NULL)
-+		return -1;
-+
-+	dumper = pcap_dump_open(pd, path);
-+	if (dumper == NULL) {
-+		pcap_close(pd);
-+		return -1;
-+	}
-+
-+	memset(&hdr, 0, sizeof(hdr));
-+	hdr.caplen = sizeof(test_packet);
-+	hdr.len = sizeof(test_packet);
-+
-+	for (i = 0; i < num_pkts; i++) {
-+		uint64_t total_usec = (uint64_t)i * usec_increment;
-+		hdr.ts.tv_sec = base_sec + total_usec / 1000000;
-+		hdr.ts.tv_usec = total_usec % 1000000;
-+		pcap_dump((u_char *)dumper, &hdr, test_packet);
-+	}
-+
-+	pcap_dump_close(dumper);
-+	pcap_close(pd);
-+	return 0;
-+}
-+
-+/*
-+ * Helper: Count packets in a pcap file using libpcap
-+ */
-+static int
-+count_pcap_packets(const char *path)
-+{
-+	pcap_t *pd;
-+	char errbuf[PCAP_ERRBUF_SIZE];
-+	struct pcap_pkthdr *hdr;
-+	const u_char *data;
-+	int count = 0;
-+
-+	pd = pcap_open_offline(path, errbuf);
-+	if (pd == NULL)
-+		return -1;
-+
-+	while (pcap_next_ex(pd, &hdr, &data) == 1)
-+		count++;
-+
-+	pcap_close(pd);
-+	return count;
-+}
-+
-+/*
-+ * Helper: Get packet sizes from pcap file
-+ */
-+static int
-+get_pcap_packet_sizes(const char *path, uint16_t *sizes, unsigned int max_pkts)
-+{
-+	pcap_t *pd;
-+	char errbuf[PCAP_ERRBUF_SIZE];
-+	struct pcap_pkthdr *hdr;
-+	const u_char *data;
-+	unsigned int count = 0;
-+
-+	pd = pcap_open_offline(path, errbuf);
-+	if (pd == NULL)
-+		return -1;
-+
-+	while (pcap_next_ex(pd, &hdr, &data) == 1 && count < max_pkts) {
-+		sizes[count] = hdr->caplen;
-+		count++;
-+	}
-+
-+	pcap_close(pd);
-+	return count;
-+}
-+
-+/*
-+ * Helper: Verify packets in pcap file are truncated correctly
-+ * Returns 0 if all packets have caplen == expected_caplen and len == expected_len
-+ */
-+static int
-+verify_pcap_truncation(const char *path, uint32_t expected_caplen,
-+		       uint32_t expected_len, unsigned int *pkt_count)
-+{
-+	pcap_t *pd;
-+	char errbuf[PCAP_ERRBUF_SIZE];
-+	struct pcap_pkthdr *hdr;
-+	const u_char *data;
-+	unsigned int count = 0;
-+
-+	pd = pcap_open_offline(path, errbuf);
-+	if (pd == NULL)
-+		return -1;
-+
-+	while (pcap_next_ex(pd, &hdr, &data) == 1) {
-+		if (hdr->caplen != expected_caplen || hdr->len != expected_len) {
-+			printf("Packet %u: caplen=%u (expected %u), len=%u (expected %u)\n",
-+			       count, hdr->caplen, expected_caplen,
-+			       hdr->len, expected_len);
-+			pcap_close(pd);
-+			return -1;
-+		}
-+		count++;
-+	}
-+
-+	pcap_close(pd);
-+	if (pkt_count)
-+		*pkt_count = count;
-+	return 0;
-+}
-+
-+/*
-+ * Helper: Configure and start a pcap ethdev port with custom config
-+ */
-+static int
-+setup_pcap_port_conf(uint16_t port, const struct rte_eth_conf *conf)
-+{
++	struct rte_eth_conf null_conf;
++	struct rte_eth_link link_d, link_e;
++	struct rte_ring *ring_de[1], *ring_ed[1];
++	int portd, porte;
 +	int ret;
 +
-+	ret = rte_eth_dev_configure(port, 1, 1, conf);
-+	TEST_ASSERT(ret == 0, "Failed to configure port %u: %s",
-+		    port, rte_strerror(-ret));
++	printf("Testing veth-like link state via rte_eth_ring_attach_peer\n");
 +
-+	ret = rte_eth_rx_queue_setup(port, 0, RING_SIZE, SOCKET0, NULL, mp);
-+	TEST_ASSERT(ret == 0, "Failed to setup RX queue on port %u: %s",
-+		    port, rte_strerror(-ret));
-+
-+	ret = rte_eth_tx_queue_setup(port, 0, RING_SIZE, SOCKET0, NULL);
-+	TEST_ASSERT(ret == 0, "Failed to setup TX queue on port %u: %s",
-+		    port, rte_strerror(-ret));
-+
-+	ret = rte_eth_dev_start(port);
-+	TEST_ASSERT(ret == 0, "Failed to start port %u: %s",
-+		    port, rte_strerror(-ret));
-+
-+	return 0;
-+}
-+
-+/*
-+ * Helper: Configure and start a pcap ethdev port (default: timestamp offload)
-+ */
-+static int
-+setup_pcap_port(uint16_t port)
-+{
-+	struct rte_eth_conf port_conf = {
-+		.rxmode.offloads = RTE_ETH_RX_OFFLOAD_TIMESTAMP,
-+	};
-+
-+	return setup_pcap_port_conf(port, &port_conf);
-+}
-+
-+/*
-+ * Helper: Create a pcap vdev and return its port ID
-+ */
-+static int
-+create_pcap_vdev(const char *name, const char *devargs, uint16_t *port_id)
-+{
-+	int ret;
-+
-+	ret = rte_vdev_init(name, devargs);
-+	TEST_ASSERT(ret == 0, "Failed to create vdev %s: %s",
-+		    name, rte_strerror(-ret));
-+
-+	ret = rte_eth_dev_get_port_by_name(name, port_id);
-+	TEST_ASSERT(ret == 0, "Failed to get port ID for %s", name);
-+
-+	return 0;
-+}
-+
-+/*
-+ * Helper: Cleanup a pcap vdev
-+ */
-+static void
-+cleanup_pcap_vdev(const char *name, uint16_t port_id)
-+{
-+	rte_eth_dev_stop(port_id);
-+	rte_vdev_uninit(name);
-+}
-+
-+/*
-+ * Helper: Create a pcap file with VLAN-tagged packets
-+ */
-+static int
-+create_vlan_tagged_pcap(const char *path, unsigned int num_pkts,
-+			uint16_t vlan_id, uint8_t pcp)
-+{
-+	pcap_t *pd;
-+	pcap_dumper_t *dumper;
-+	struct pcap_pkthdr hdr;
-+	uint8_t pkt_data[128];
-+	unsigned int i;
-+	size_t pkt_len;
-+
-+	/* Build VLAN-tagged packet */
-+	struct rte_ether_hdr *eth_hdr = (struct rte_ether_hdr *)pkt_data;
-+	struct rte_vlan_hdr *vlan_hdr;
-+	struct rte_ipv4_hdr *ip_hdr;
-+	struct rte_udp_hdr *udp_hdr;
-+
-+	rte_ether_addr_copy(&src_mac, &eth_hdr->src_addr);
-+	rte_ether_addr_copy(&dst_mac, &eth_hdr->dst_addr);
-+	eth_hdr->ether_type = rte_cpu_to_be_16(RTE_ETHER_TYPE_VLAN);
-+
-+	vlan_hdr = (struct rte_vlan_hdr *)(eth_hdr + 1);
-+	vlan_hdr->vlan_tci = rte_cpu_to_be_16((pcp << 13) | vlan_id);
-+	vlan_hdr->eth_proto = rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV4);
-+
-+	ip_hdr = (struct rte_ipv4_hdr *)(vlan_hdr + 1);
-+	ip_hdr->version_ihl = RTE_IPV4_VHL_DEF;
-+	ip_hdr->total_length = rte_cpu_to_be_16(46);  /* 20 IP + 8 UDP + 18 payload */
-+	ip_hdr->time_to_live = 64;
-+	ip_hdr->next_proto_id = IPPROTO_UDP;
-+	ip_hdr->src_addr = rte_cpu_to_be_32(IPV4_ADDR(10, 0, 0, 1));
-+	ip_hdr->dst_addr = rte_cpu_to_be_32(IPV4_ADDR(10, 0, 0, 2));
-+	ip_hdr->hdr_checksum = 0;
-+	ip_hdr->hdr_checksum = rte_ipv4_cksum(ip_hdr);
-+
-+	udp_hdr = (struct rte_udp_hdr *)(ip_hdr + 1);
-+	udp_hdr->src_port = rte_cpu_to_be_16(1234);
-+	udp_hdr->dst_port = rte_cpu_to_be_16(1234);
-+	udp_hdr->dgram_len = rte_cpu_to_be_16(26);  /* 8 UDP + 18 payload */
-+	udp_hdr->dgram_cksum = 0;
-+
-+	/* Add payload pattern */
-+	uint8_t *payload = (uint8_t *)(udp_hdr + 1);
-+	for (int j = 0; j < 18; j++)
-+		payload[j] = (uint8_t)(j & 0xFF);
-+
-+	pkt_len = sizeof(struct rte_ether_hdr) + sizeof(struct rte_vlan_hdr) +
-+		  sizeof(struct rte_ipv4_hdr) + sizeof(struct rte_udp_hdr) + 18;
-+
-+	pd = pcap_open_dead(DLT_EN10MB, PCAP_SNAPLEN);
-+	if (pd == NULL)
-+		return -1;
-+
-+	dumper = pcap_dump_open(pd, path);
-+	if (dumper == NULL) {
-+		pcap_close(pd);
-+		return -1;
-+	}
-+
-+	memset(&hdr, 0, sizeof(hdr));
-+	hdr.caplen = pkt_len;
-+	hdr.len = pkt_len;
-+
-+	for (i = 0; i < num_pkts; i++) {
-+		hdr.ts.tv_sec = i;
-+		hdr.ts.tv_usec = 0;
-+		/* Vary sequence byte in payload */
-+		payload[0] = (uint8_t)(i & 0xFF);
-+		pcap_dump((u_char *)dumper, &hdr, pkt_data);
-+	}
-+
-+	pcap_dump_close(dumper);
-+	pcap_close(pd);
-+	return 0;
-+}
-+
-+/*
-+ * Helper: Verify packet has VLAN tag with expected values
-+ */
-+static int
-+verify_vlan_tag(struct rte_mbuf *mbuf, uint16_t expected_vlan_id, uint8_t expected_pcp)
-+{
-+	struct rte_ether_hdr *eth_hdr;
-+	struct rte_vlan_hdr *vlan_hdr;
-+	uint16_t tci;
-+
-+	eth_hdr = rte_pktmbuf_mtod(mbuf, struct rte_ether_hdr *);
-+
-+	/* Check for VLAN ethertype */
-+	if (rte_be_to_cpu_16(eth_hdr->ether_type) != RTE_ETHER_TYPE_VLAN) {
-+		printf("  Error: Expected VLAN ethertype 0x%04x, got 0x%04x\n",
-+		       RTE_ETHER_TYPE_VLAN, rte_be_to_cpu_16(eth_hdr->ether_type));
-+		return -1;
-+	}
-+
-+	vlan_hdr = (struct rte_vlan_hdr *)(eth_hdr + 1);
-+	tci = rte_be_to_cpu_16(vlan_hdr->vlan_tci);
-+
-+	if ((tci & 0x0FFF) != expected_vlan_id) {
-+		printf("  Error: Expected VLAN ID %u, got %u\n",
-+		       expected_vlan_id, tci & 0x0FFF);
-+		return -1;
-+	}
-+
-+	if ((tci >> 13) != expected_pcp) {
-+		printf("  Error: Expected PCP %u, got %u\n",
-+		       expected_pcp, tci >> 13);
-+		return -1;
-+	}
-+
-+	return 0;
-+}
-+
-+/*
-+ * Helper: Verify packet has NO VLAN tag (plain ethernet)
-+ */
-+static int
-+verify_no_vlan_tag(struct rte_mbuf *mbuf)
-+{
-+	struct rte_ether_hdr *eth_hdr;
-+
-+	eth_hdr = rte_pktmbuf_mtod(mbuf, struct rte_ether_hdr *);
-+
-+	if (rte_be_to_cpu_16(eth_hdr->ether_type) == RTE_ETHER_TYPE_VLAN) {
-+		printf("  Error: Packet still has VLAN tag (ethertype 0x8100)\n");
-+		return -1;
-+	}
-+
-+	return 0;
-+}
-+
-+/*
-+ * Helper: Count packets in pcap and verify VLAN tags
-+ */
-+static int
-+count_vlan_packets_in_pcap(const char *path, uint16_t expected_vlan_id,
-+			   int expect_vlan_tag)
-+{
-+	pcap_t *pd;
-+	char errbuf[PCAP_ERRBUF_SIZE];
-+	struct pcap_pkthdr *hdr;
-+	const u_char *data;
-+	int count = 0;
-+	int errors = 0;
-+
-+	pd = pcap_open_offline(path, errbuf);
-+	if (pd == NULL)
-+		return -1;
-+
-+	while (pcap_next_ex(pd, &hdr, &data) == 1) {
-+		const struct rte_ether_hdr *eth = (const struct rte_ether_hdr *)data;
-+		uint16_t etype = rte_be_to_cpu_16(eth->ether_type);
-+
-+		if (expect_vlan_tag) {
-+			if (etype != RTE_ETHER_TYPE_VLAN) {
-+				printf("  Packet %d: expected VLAN tag, got ethertype 0x%04x\n",
-+				       count, etype);
-+				errors++;
-+			} else {
-+				const struct rte_vlan_hdr *vlan =
-+					(const struct rte_vlan_hdr *)(eth + 1);
-+				uint16_t tci = rte_be_to_cpu_16(vlan->vlan_tci);
-+				if ((tci & 0x0FFF) != expected_vlan_id) {
-+					printf("  Packet %d: VLAN ID %u != expected %u\n",
-+					       count, tci & 0x0FFF, expected_vlan_id);
-+					errors++;
-+				}
-+			}
-+		} else {
-+			if (etype == RTE_ETHER_TYPE_VLAN) {
-+				printf("  Packet %d: unexpected VLAN tag present\n", count);
-+				errors++;
-+			}
-+		}
-+		count++;
-+	}
-+
-+	pcap_close(pd);
-+
-+	if (errors > 0)
-+		return -errors;
-+
-+	return count;
-+}
-+
-+/*
-+ * Helper: Configure port with VLAN strip offload enabled
-+ */
-+static int
-+setup_pcap_port_vlan_strip(uint16_t port)
-+{
-+	struct rte_eth_conf port_conf = {
-+		.rxmode.offloads = RTE_ETH_RX_OFFLOAD_VLAN_STRIP,
-+	};
-+
-+	return setup_pcap_port_conf(port, &port_conf);
-+}
-+
-+/*
-+ * Helper: Allocate mbufs with VLAN TX offload info set
-+ */
-+static int
-+alloc_vlan_tx_mbufs(struct rte_mbuf **mbufs, unsigned int count,
-+		    uint16_t vlan_id, uint8_t pcp)
-+{
-+	unsigned int i;
-+	int ret;
-+
-+	ret = rte_pktmbuf_alloc_bulk(mp, mbufs, count);
-+	if (ret != 0)
-+		return -1;
-+
-+	for (i = 0; i < count; i++) {
-+		/* Copy untagged test packet */
-+		memcpy(rte_pktmbuf_mtod(mbufs[i], void *),
-+		       test_packet, sizeof(test_packet));
-+		mbufs[i]->data_len = sizeof(test_packet);
-+		mbufs[i]->pkt_len = sizeof(test_packet);
-+
-+		/* Set VLAN TX offload flags */
-+		mbufs[i]->ol_flags |= RTE_MBUF_F_TX_VLAN;
-+		mbufs[i]->vlan_tci = (pcp << 13) | vlan_id;
-+	}
-+
-+	return 0;
-+}
-+
-+/*
-+ * Helper: Generate test packets using packet_burst_generator
-+ */
-+static int
-+generate_test_packets(struct rte_mempool *pool, struct rte_mbuf **mbufs,
-+		      unsigned int count, uint8_t pkt_len)
-+{
-+	struct rte_ether_hdr eth_hdr;
-+	struct rte_ipv4_hdr ip_hdr;
-+	struct rte_udp_hdr udp_hdr;
-+	uint16_t ip_pkt_data_len;
-+	int nb_pkt;
-+
-+	/* Initialize ethernet header */
-+	initialize_eth_header(&eth_hdr, &src_mac, &dst_mac,
-+			      RTE_ETHER_TYPE_IPV4, 0, 0);
-+
-+	/* Calculate IP payload length (total - eth - ip headers) */
-+	ip_pkt_data_len = pkt_len - sizeof(struct rte_ether_hdr) -
-+			  sizeof(struct rte_ipv4_hdr);
-+
-+	/* Initialize UDP header */
-+	initialize_udp_header(&udp_hdr, 1234, 1234,
-+			      ip_pkt_data_len - sizeof(struct rte_udp_hdr));
-+
-+	/* Initialize IPv4 header */
-+	initialize_ipv4_header(&ip_hdr, IPV4_ADDR(10, 0, 0, 1),
-+			       IPV4_ADDR(10, 0, 0, 2), ip_pkt_data_len);
-+
-+	/* Generate packet burst */
-+	nb_pkt = generate_packet_burst(pool, mbufs, &eth_hdr, 0,
-+				       &ip_hdr, 1, &udp_hdr,
-+				       count, pkt_len, 1);
-+
-+	return nb_pkt;
-+}
-+
-+/*
-+ * Helper: Allocate mbufs and fill with test packet data (legacy method)
-+ */
-+static int
-+alloc_test_mbufs(struct rte_mbuf **mbufs, unsigned int count)
-+{
-+	unsigned int i;
-+	int ret;
-+
-+	ret = rte_pktmbuf_alloc_bulk(mp, mbufs, count);
-+	if (ret != 0)
-+		return -1;
-+
-+	for (i = 0; i < count; i++) {
-+		memcpy(rte_pktmbuf_mtod(mbufs[i], void *),
-+		       test_packet, sizeof(test_packet));
-+		mbufs[i]->data_len = sizeof(test_packet);
-+		mbufs[i]->pkt_len = sizeof(test_packet);
-+	}
-+	return 0;
-+}
-+
-+/*
-+ * Helper: Allocate a multi-segment mbuf for jumbo frames
-+ * Returns the head mbuf with chained segments, or NULL on failure
-+ */
-+static struct rte_mbuf *
-+alloc_jumbo_mbuf(uint32_t pkt_len, uint8_t fill_byte)
-+{
-+	struct rte_mbuf *head = NULL;
-+	struct rte_mbuf **prev = &head;
-+	uint32_t remaining = pkt_len;
-+	uint16_t nb_segs = 0;
-+
-+	while (remaining > 0) {
-+		struct rte_mbuf *seg = rte_pktmbuf_alloc(mp);
-+		uint16_t seg_size;
-+
-+		if (seg == NULL) {
-+			rte_pktmbuf_free(head);
-+			return NULL;
-+		}
-+
-+		seg_size = RTE_MIN(remaining, rte_pktmbuf_tailroom(seg));
-+		seg->data_len = seg_size;
-+
-+		/* Fill segment with pattern */
-+		memset(rte_pktmbuf_mtod(seg, void *), fill_byte, seg_size);
-+
-+		*prev = seg;
-+		prev = &seg->next;
-+		remaining -= seg_size;
-+		nb_segs++;
-+	}
-+
-+	if (head != NULL) {
-+		head->pkt_len = pkt_len;
-+		head->nb_segs = nb_segs;
-+	}
-+
-+	return head;
-+}
-+
-+/*
-+ * Helper: Receive packets from port (no retry needed for file-based RX)
-+ */
-+static int
-+receive_packets(uint16_t port, struct rte_mbuf **mbufs,
-+		unsigned int max_pkts, unsigned int *received)
-+{
-+	unsigned int total = 0;
-+
-+	while (total < max_pkts) {
-+		uint16_t nb_rx = rte_eth_rx_burst(port, 0, &mbufs[total], max_pkts - total);
-+		if (nb_rx == 0)
-+			break;
-+		total += nb_rx;
-+	}
-+	*received = total;
-+	return 0;
-+}
-+
-+/*
-+ * Helper: Verify mbuf contains expected test packet
-+ */
-+static int
-+verify_packet(struct rte_mbuf *mbuf)
-+{
-+	TEST_ASSERT_EQUAL(rte_pktmbuf_data_len(mbuf), sizeof(test_packet),
-+			  "Packet length mismatch");
-+	TEST_ASSERT_BUFFERS_ARE_EQUAL(rte_pktmbuf_mtod(mbuf, void *),
-+				      test_packet, sizeof(test_packet),
-+				      "Packet data mismatch");
-+	return 0;
-+}
-+
-+/*
-+ * Helper: Check if interface supports Ethernet (DLT_EN10MB)
-+ *
-+ * The pcap PMD only works with Ethernet interfaces. On FreeBSD/macOS,
-+ * the loopback interface uses DLT_NULL which is incompatible.
-+ */
-+static int
-+iface_is_ethernet(const char *name)
-+{
-+	char errbuf[PCAP_ERRBUF_SIZE];
-+	pcap_t *pcap;
-+	int datalink;
-+
-+	pcap = pcap_open_live(name, 256, 0, 0, errbuf);
-+	if (pcap == NULL)
-+		return 0;
-+
-+	datalink = pcap_datalink(pcap);
-+	pcap_close(pcap);
-+
-+	return datalink == DLT_EN10MB;
-+}
-+
-+/*
-+ * Helper: Find a usable test interface using pcap_findalldevs
-+ *
-+ * Uses libpcap's portable interface enumeration which works on
-+ * Linux, FreeBSD, macOS, and Windows.
-+ *
-+ * Only selects interfaces that support Ethernet link type (DLT_EN10MB).
-+ * This excludes loopback on FreeBSD/macOS which uses DLT_NULL.
-+ *
-+ * Preference order:
-+ * 1. Loopback interface (if Ethernet - Linux only)
-+ * 2. Any interface that is UP and RUNNING
-+ * 3. Any available Ethernet interface
-+ *
-+ * Returns static buffer with interface name, or NULL if none found.
-+ */
-+static const char *
-+find_test_iface(void)
-+{
-+	static char iface_name[256];
-+	pcap_if_t *alldevs, *dev;
-+	char errbuf[PCAP_ERRBUF_SIZE];
-+	const char *loopback = NULL;
-+	const char *any_up = NULL;
-+	const char *any_ether = NULL;
-+
-+	if (pcap_findalldevs(&alldevs, errbuf) != 0) {
-+		printf("pcap_findalldevs failed: %s\n", errbuf);
-+		return NULL;
-+	}
-+
-+	if (alldevs == NULL) {
-+		printf("No interfaces found\n");
-+		return NULL;
-+	}
-+
-+	for (dev = alldevs; dev != NULL; dev = dev->next) {
-+		if (dev->name == NULL)
-+			continue;
-+
-+		/* Only consider Ethernet interfaces */
-+		if (!iface_is_ethernet(dev->name))
-+			continue;
-+
-+		if (any_ether == NULL)
-+			any_ether = dev->name;
-+
-+		/* Prefer loopback for safety (Linux lo supports DLT_EN10MB) */
-+		if ((dev->flags & PCAP_IF_LOOPBACK) && loopback == NULL) {
-+			loopback = dev->name;
-+			continue;
-+		}
-+
-+#ifdef PCAP_IF_UP
-+		if ((dev->flags & PCAP_IF_UP) &&
-+		    (dev->flags & PCAP_IF_RUNNING) &&
-+		    any_up == NULL)
-+			any_up = dev->name;
-+#else
-+		if (any_up == NULL)
-+			any_up = dev->name;
-+#endif
-+	}
-+
-+	/* Select best available interface */
-+	const char *selected = NULL;
-+	if (loopback != NULL)
-+		selected = loopback;
-+	else if (any_up != NULL)
-+		selected = any_up;
-+	else if (any_ether != NULL)
-+		selected = any_ether;
-+
-+	if (selected != NULL)
-+		strlcpy(iface_name, selected, sizeof(iface_name));
-+
-+	pcap_freealldevs(alldevs);
-+	return selected ? iface_name : NULL;
-+}
-+
-+/*
-+ * Test: Transmit packets to pcap file
-+ */
-+static int
-+test_tx_to_file(void)
-+{
-+	struct rte_mbuf *mbufs[NUM_PACKETS];
-+	char devargs[256];
-+	uint16_t port_id;
-+	int nb_tx, pkt_count;
-+	int ret;
-+
-+	printf("Testing TX to pcap file\n");
-+
-+	TEST_ASSERT(create_temp_path(tx_pcap_path, sizeof(tx_pcap_path),
-+				     "pcap_tx") == 0,
-+		    "Failed to create temp file path");
-+
-+	ret = snprintf(devargs, sizeof(devargs), "tx_pcap=%s", tx_pcap_path);
-+	TEST_ASSERT(ret > 0 && ret < (int)sizeof(devargs),
-+		    "devargs string truncated");
-+	TEST_ASSERT(create_pcap_vdev("net_pcap_tx", devargs, &port_id) == 0,
-+		    "Failed to create TX vdev");
-+	TEST_ASSERT(setup_pcap_port(port_id) == 0,
-+		    "Failed to setup TX port");
-+	TEST_ASSERT(alloc_test_mbufs(mbufs, NUM_PACKETS) == 0,
-+		    "Failed to allocate mbufs");
-+
-+	nb_tx = rte_eth_tx_burst(port_id, 0, mbufs, NUM_PACKETS);
-+	TEST_ASSERT_EQUAL(nb_tx, NUM_PACKETS,
-+			  "TX burst failed: sent %d/%d", nb_tx, NUM_PACKETS);
-+
-+	cleanup_pcap_vdev("net_pcap_tx", port_id);
-+
-+	pkt_count = count_pcap_packets(tx_pcap_path);
-+	TEST_ASSERT_EQUAL(pkt_count, NUM_PACKETS,
-+			  "Pcap file has %d packets, expected %d",
-+			  pkt_count, NUM_PACKETS);
-+
-+	printf("TX to file PASSED: %d packets written\n", NUM_PACKETS);
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test: Receive packets from pcap file
-+ * Uses output from TX test as input
-+ */
-+static int
-+test_rx_from_file(void)
-+{
-+	struct rte_mbuf *mbufs[NUM_PACKETS];
-+	char devargs[256];
-+	uint16_t port_id;
-+	unsigned int received, i;
-+	int ret;
-+
-+	printf("Testing RX from pcap file\n");
-+
-+	/* Create input file if TX test didn't run */
-+	if (access(tx_pcap_path, F_OK) != 0) {
-+		TEST_ASSERT(create_temp_path(tx_pcap_path, sizeof(tx_pcap_path),
-+					     "pcap_rx_input") == 0,
-+			    "Failed to create temp path");
-+		TEST_ASSERT(create_test_pcap(tx_pcap_path, NUM_PACKETS) == 0,
-+			    "Failed to create input pcap");
-+	}
-+
-+	ret = snprintf(devargs, sizeof(devargs), "rx_pcap=%s", tx_pcap_path);
-+	TEST_ASSERT(ret > 0 && ret < (int)sizeof(devargs),
-+		    "devargs string truncated");
-+	TEST_ASSERT(create_pcap_vdev("net_pcap_rx", devargs, &port_id) == 0,
-+		    "Failed to create RX vdev");
-+	TEST_ASSERT(setup_pcap_port(port_id) == 0,
-+		    "Failed to setup RX port");
-+
-+	receive_packets(port_id, mbufs, NUM_PACKETS, &received);
-+	TEST_ASSERT_EQUAL(received, NUM_PACKETS,
-+			  "Received %u packets, expected %d", received, NUM_PACKETS);
-+
-+	for (i = 0; i < received; i++) {
-+		TEST_ASSERT(verify_packet(mbufs[i]) == 0,
-+			    "Packet %u verification failed", i);
-+	}
-+	rte_pktmbuf_free_bulk(mbufs, received);
-+
-+	cleanup_pcap_vdev("net_pcap_rx", port_id);
-+
-+	printf("RX from file PASSED: %u packets verified\n", received);
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test: TX with varied packet sizes using packet_burst_generator
-+ */
-+static int
-+test_tx_varied_sizes(void)
-+{
-+	static const uint8_t test_sizes[] = {
-+		PKT_SIZE_MIN, PKT_SIZE_SMALL, PACKET_BURST_GEN_PKT_LEN_128
-+	};
-+	char tx_path[PATH_MAX];
-+	char devargs[256];
-+	uint16_t port_id;
-+	unsigned int i;
-+	int ret;
-+
-+	printf("Testing TX with varied packet sizes\n");
-+
-+	TEST_ASSERT(create_temp_path(tx_path, sizeof(tx_path),
-+				     "pcap_tx_varied") == 0,
-+		    "Failed to create temp file path");
-+
-+	ret = snprintf(devargs, sizeof(devargs), "tx_pcap=%s", tx_path);
-+	TEST_ASSERT(ret > 0 && ret < (int)sizeof(devargs),
-+		    "devargs string truncated");
-+	TEST_ASSERT(create_pcap_vdev("net_pcap_tx_var", devargs, &port_id) == 0,
-+		    "Failed to create TX vdev");
-+	TEST_ASSERT(setup_pcap_port(port_id) == 0,
-+		    "Failed to setup TX port");
-+
-+	for (i = 0; i < RTE_DIM(test_sizes); i++) {
-+		struct rte_mbuf *mbufs[MAX_PKT_BURST];
-+		int nb_pkt, nb_tx;
-+
-+		nb_pkt = generate_test_packets(mp, mbufs, MAX_PKT_BURST,
-+					       test_sizes[i]);
-+		TEST_ASSERT(nb_pkt > 0,
-+			    "Failed to generate packets of size %u",
-+			    test_sizes[i]);
-+
-+		nb_tx = rte_eth_tx_burst(port_id, 0, mbufs, nb_pkt);
-+		if (nb_tx < nb_pkt)
-+			rte_pktmbuf_free_bulk(&mbufs[nb_tx], nb_pkt - nb_tx);
-+
-+		printf("  Size %u: generated %d, transmitted %d\n",
-+		       test_sizes[i], nb_pkt, nb_tx);
-+		TEST_ASSERT(nb_tx > 0, "Failed to TX packets of size %u",
-+			    test_sizes[i]);
-+	}
-+
-+	cleanup_pcap_vdev("net_pcap_tx_var", port_id);
-+	remove_temp_file(tx_path);
-+
-+	printf("TX varied sizes PASSED\n");
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test: RX with varied packet sizes
-+ */
-+static int
-+test_rx_varied_sizes(void)
-+{
-+	static const uint16_t expected_sizes[] = {
-+		PKT_SIZE_MIN, PKT_SIZE_SMALL, PKT_SIZE_MEDIUM,
-+		PKT_SIZE_LARGE, PKT_SIZE_MTU
-+	};
-+	struct rte_mbuf *mbufs[NUM_PACKETS];
-+	uint16_t rx_sizes[NUM_PACKETS];
-+	char devargs[256];
-+	uint16_t port_id;
-+	unsigned int received, i;
-+	int ret;
-+
-+	printf("Testing RX with varied packet sizes\n");
-+
-+	TEST_ASSERT(create_temp_path(varied_pcap_path, sizeof(varied_pcap_path),
-+				     "pcap_varied") == 0,
-+		    "Failed to create temp path");
-+	TEST_ASSERT(create_varied_pcap(varied_pcap_path, NUM_PACKETS) == 0,
-+		    "Failed to create varied pcap");
-+
-+	ret = snprintf(devargs, sizeof(devargs), "rx_pcap=%s", varied_pcap_path);
-+	TEST_ASSERT(ret > 0 && ret < (int)sizeof(devargs),
-+		    "devargs string truncated");
-+	TEST_ASSERT(create_pcap_vdev("net_pcap_var", devargs, &port_id) == 0,
-+		    "Failed to create varied RX vdev");
-+	TEST_ASSERT(setup_pcap_port(port_id) == 0,
-+		    "Failed to setup varied RX port");
-+
-+	receive_packets(port_id, mbufs, NUM_PACKETS, &received);
-+	TEST_ASSERT_EQUAL(received, NUM_PACKETS,
-+			  "Received %u packets, expected %d", received, NUM_PACKETS);
-+
-+	/* Verify packet sizes match expected pattern */
-+	for (i = 0; i < received; i++) {
-+		uint16_t expected = expected_sizes[i % RTE_DIM(expected_sizes)];
-+		rx_sizes[i] = rte_pktmbuf_pkt_len(mbufs[i]);
-+		TEST_ASSERT_EQUAL(rx_sizes[i], expected,
-+				  "Packet %u: size %u, expected %u",
-+				  i, rx_sizes[i], expected);
-+	}
-+
-+	rte_pktmbuf_free_bulk(mbufs, received);
-+	cleanup_pcap_vdev("net_pcap_var", port_id);
-+
-+	printf("RX varied sizes PASSED: %u packets with correct sizes\n", received);
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test: Infinite RX mode - loops through pcap file continuously
-+ */
-+static int
-+test_infinite_rx(void)
-+{
-+	struct rte_mbuf *mbufs[MAX_PKT_BURST];
-+	char devargs[256];
-+	uint16_t port_id;
-+	unsigned int total_rx = 0;
-+	int iter, attempts;
-+	int ret;
-+
-+	printf("Testing infinite RX mode\n");
-+
-+	TEST_ASSERT(create_temp_path(infinite_pcap_path, sizeof(infinite_pcap_path),
-+				     "pcap_inf") == 0,
-+		    "Failed to create temp path");
-+	TEST_ASSERT(create_test_pcap(infinite_pcap_path, NUM_PACKETS) == 0,
-+		    "Failed to create input pcap");
-+
-+	ret = snprintf(devargs, sizeof(devargs),
-+		       "rx_pcap=%s,infinite_rx=1", infinite_pcap_path);
-+	TEST_ASSERT(ret > 0 && ret < (int)sizeof(devargs),
-+		    "devargs string truncated");
-+	TEST_ASSERT(create_pcap_vdev("net_pcap_inf", devargs, &port_id) == 0,
-+		    "Failed to create infinite RX vdev");
-+	TEST_ASSERT(setup_pcap_port(port_id) == 0,
-+		    "Failed to setup infinite RX port");
-+
-+	/* Read more packets than file contains to verify looping */
-+	for (iter = 0; iter < 3 && total_rx < NUM_PACKETS * 2; iter++) {
-+		for (attempts = 0; attempts < 100 && total_rx < NUM_PACKETS * 2;
-+		     attempts++) {
-+			uint16_t nb_rx = rte_eth_rx_burst(port_id, 0, mbufs,
-+							  MAX_PKT_BURST);
-+			if (nb_rx > 0)
-+				rte_pktmbuf_free_bulk(mbufs, nb_rx);
-+			total_rx += nb_rx;
-+			if (nb_rx == 0)
-+				usleep(100);
-+		}
-+	}
-+
-+	cleanup_pcap_vdev("net_pcap_inf", port_id);
-+
-+	TEST_ASSERT(total_rx >= NUM_PACKETS * 2,
-+		    "Infinite RX: got %u packets, need >= %d",
-+		    total_rx, NUM_PACKETS * 2);
-+
-+	printf("Infinite RX PASSED: %u packets (file has %d)\n",
-+	       total_rx, NUM_PACKETS);
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test: TX drop mode - packets dropped when no tx_pcap specified
-+ */
-+static int
-+test_tx_drop(void)
-+{
-+	struct rte_mbuf *mbufs[NUM_PACKETS];
-+	struct rte_eth_stats stats;
-+	char devargs[256];
-+	uint16_t port_id;
-+	int nb_tx;
-+	int ret;
-+
-+	printf("Testing TX drop mode\n");
-+
-+	TEST_ASSERT(create_temp_path(rx_pcap_path, sizeof(rx_pcap_path),
-+				     "pcap_drop") == 0,
-+		    "Failed to create temp path");
-+	TEST_ASSERT(create_test_pcap(rx_pcap_path, NUM_PACKETS) == 0,
-+		    "Failed to create input pcap");
-+
-+	/* Only rx_pcap - TX should silently drop */
-+	ret = snprintf(devargs, sizeof(devargs), "rx_pcap=%s", rx_pcap_path);
-+	TEST_ASSERT(ret > 0 && ret < (int)sizeof(devargs),
-+		    "devargs string truncated");
-+	TEST_ASSERT(create_pcap_vdev("net_pcap_drop", devargs, &port_id) == 0,
-+		    "Failed to create drop vdev");
-+	TEST_ASSERT(setup_pcap_port(port_id) == 0,
-+		    "Failed to setup drop port");
-+	TEST_ASSERT(alloc_test_mbufs(mbufs, NUM_PACKETS) == 0,
-+		    "Failed to allocate mbufs");
-+
-+	TEST_ASSERT(rte_eth_stats_reset(port_id) == 0,
-+		    "Failed to reset stats");
-+	nb_tx = rte_eth_tx_burst(port_id, 0, mbufs, NUM_PACKETS);
-+
-+	/* Packets should be accepted even in drop mode */
-+	TEST_ASSERT_EQUAL(nb_tx, NUM_PACKETS,
-+			  "Drop mode TX: %d/%d accepted", nb_tx, NUM_PACKETS);
-+
-+	TEST_ASSERT(rte_eth_stats_get(port_id, &stats) == 0,
-+		    "Failed to get stats");
-+	cleanup_pcap_vdev("net_pcap_drop", port_id);
-+
-+	printf("TX drop PASSED: %d packets dropped, opackets=%" PRIu64"\n",
-+	       nb_tx, stats.opackets);
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test: Statistics accuracy and reset
-+ */
-+static int
-+test_stats(void)
-+{
-+	struct rte_mbuf *mbufs[NUM_PACKETS];
-+	struct rte_eth_stats stats;
-+	char devargs[256];
-+	char stats_tx_path[PATH_MAX];
-+	uint16_t port_id;
-+	unsigned int received;
-+	int nb_tx;
-+	int ret;
-+
-+	printf("Testing statistics accuracy\n");
-+
-+	TEST_ASSERT(create_temp_path(rx_pcap_path, sizeof(rx_pcap_path),
-+				     "pcap_stats_rx") == 0,
-+		    "Failed to create RX temp path");
-+	TEST_ASSERT(create_temp_path(stats_tx_path, sizeof(stats_tx_path),
-+				     "pcap_stats_tx") == 0,
-+		    "Failed to create TX temp path");
-+	TEST_ASSERT(create_test_pcap(rx_pcap_path, NUM_PACKETS) == 0,
-+		    "Failed to create input pcap");
-+
-+	ret = snprintf(devargs, sizeof(devargs),
-+		       "rx_pcap=%s,tx_pcap=%s", rx_pcap_path, stats_tx_path);
-+	TEST_ASSERT(ret > 0 && ret < (int)sizeof(devargs),
-+		    "devargs string truncated");
-+	TEST_ASSERT(create_pcap_vdev("net_pcap_stats", devargs, &port_id) == 0,
-+		    "Failed to create stats vdev");
-+	TEST_ASSERT(setup_pcap_port(port_id) == 0,
-+		    "Failed to setup stats port");
-+
-+	/* Verify stats start at zero */
-+	TEST_ASSERT(rte_eth_stats_reset(port_id) == 0,
-+		    "Failed to reset stats");
-+	TEST_ASSERT(rte_eth_stats_get(port_id, &stats) == 0,
-+		    "Failed to get stats");
-+	TEST_ASSERT(stats.ipackets == 0 && stats.opackets == 0 &&
-+		    stats.ibytes == 0 && stats.obytes == 0,
-+		    "Initial stats not zero");
-+
-+	/* RX and verify stats */
-+	receive_packets(port_id, mbufs, NUM_PACKETS, &received);
-+	TEST_ASSERT(rte_eth_stats_get(port_id, &stats) == 0,
-+		    "Failed to get stats after RX");
-+	TEST_ASSERT_EQUAL(stats.ipackets, received,
-+			  "RX stats: ipackets=%"PRIu64", received=%u",
-+			  stats.ipackets, received);
-+
-+	/* TX and verify stats */
-+	nb_tx = rte_eth_tx_burst(port_id, 0, mbufs, received);
-+	TEST_ASSERT(rte_eth_stats_get(port_id, &stats) == 0,
-+		    "Failed to get stats after TX");
-+	TEST_ASSERT_EQUAL(stats.opackets, (uint64_t)nb_tx,
-+			  "TX stats: opackets=%"PRIu64", sent=%u",
-+			  stats.opackets, nb_tx);
-+
-+	/* Verify stats reset */
-+	TEST_ASSERT(rte_eth_stats_reset(port_id) == 0,
-+		    "Failed to reset stats");
-+	TEST_ASSERT(rte_eth_stats_get(port_id, &stats) == 0,
-+		    "Failed to get stats after reset");
-+	TEST_ASSERT(stats.ipackets == 0 && stats.opackets == 0,
-+		    "Stats not reset to zero");
-+
-+	cleanup_pcap_vdev("net_pcap_stats", port_id);
-+	remove_temp_file(stats_tx_path);
-+
-+	printf("Statistics PASSED: RX=%u, TX=%d\n", received, nb_tx);
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test: Jumbo frame RX (multi-segment mbufs)
-+ */
-+static int
-+test_jumbo_rx(void)
-+{
-+	struct rte_mbuf *mbufs[NUM_PACKETS];
-+	char devargs[256];
-+	uint16_t port_id;
-+	unsigned int received, i;
-+	int ret;
-+	const unsigned int num_jumbo = 16;
-+
-+	printf("Testing jumbo frame RX (%u byte packets, multi-segment)\n",
-+	       PKT_SIZE_JUMBO);
-+
-+	TEST_ASSERT(create_temp_path(jumbo_pcap_path, sizeof(jumbo_pcap_path),
-+				     "pcap_jumbo") == 0,
-+		    "Failed to create temp path");
-+	TEST_ASSERT(create_sized_pcap(jumbo_pcap_path, num_jumbo,
-+				      PKT_SIZE_JUMBO) == 0,
-+		    "Failed to create jumbo pcap");
-+
-+	ret = snprintf(devargs, sizeof(devargs), "rx_pcap=%s", jumbo_pcap_path);
-+	TEST_ASSERT(ret > 0 && ret < (int)sizeof(devargs),
-+		    "devargs string truncated");
-+	TEST_ASSERT(create_pcap_vdev("net_pcap_jumbo", devargs, &port_id) == 0,
-+		    "Failed to create jumbo RX vdev");
-+	TEST_ASSERT(setup_pcap_port(port_id) == 0,
-+		    "Failed to setup jumbo RX port");
-+
-+	receive_packets(port_id, mbufs, num_jumbo, &received);
-+	TEST_ASSERT_EQUAL(received, num_jumbo,
-+			  "Received %u packets, expected %u", received, num_jumbo);
-+
-+	/* Verify all packets are jumbo size (may be multi-segment) */
-+	for (i = 0; i < received; i++) {
-+		uint32_t pkt_len = rte_pktmbuf_pkt_len(mbufs[i]);
-+		uint16_t nb_segs = mbufs[i]->nb_segs;
-+
-+		TEST_ASSERT_EQUAL(pkt_len, PKT_SIZE_JUMBO,
-+				  "Packet %u: size %u, expected %u",
-+				  i, pkt_len, PKT_SIZE_JUMBO);
-+
-+		/* Jumbo frames should use multiple segments */
-+		if (nb_segs > 1)
-+			printf("  Packet %u: %u segments\n", i, nb_segs);
-+	}
-+
-+	rte_pktmbuf_free_bulk(mbufs, received);
-+	cleanup_pcap_vdev("net_pcap_jumbo", port_id);
-+
-+	printf("Jumbo RX PASSED: %u jumbo packets received\n", received);
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test: Jumbo frame TX (multi-segment mbufs)
-+ */
-+static int
-+test_jumbo_tx(void)
-+{
-+	struct rte_mbuf *mbufs[MAX_PKT_BURST];
-+	char tx_path[PATH_MAX];
-+	char devargs[256];
-+	uint16_t port_id;
-+	uint16_t sizes[MAX_PKT_BURST];
-+	int nb_tx, pkt_count;
-+	unsigned int i;
-+	int ret;
-+	const unsigned int num_jumbo = 8;
-+
-+	printf("Testing jumbo frame TX (multi-segment mbufs)\n");
-+
-+	TEST_ASSERT(create_temp_path(tx_path, sizeof(tx_path),
-+				     "pcap_jumbo_tx") == 0,
-+		    "Failed to create temp file path");
-+
-+	ret = snprintf(devargs, sizeof(devargs), "tx_pcap=%s", tx_path);
-+	TEST_ASSERT(ret > 0 && ret < (int)sizeof(devargs),
-+		    "devargs string truncated");
-+	TEST_ASSERT(create_pcap_vdev("net_pcap_jumbo_tx", devargs, &port_id) == 0,
-+		    "Failed to create TX vdev");
-+	TEST_ASSERT(setup_pcap_port(port_id) == 0,
-+		    "Failed to setup TX port");
-+
-+	/* Allocate multi-segment mbufs for jumbo frames */
-+	for (i = 0; i < num_jumbo; i++) {
-+		mbufs[i] = alloc_jumbo_mbuf(PKT_SIZE_JUMBO, (uint8_t)(i & 0xFF));
-+		if (mbufs[i] == NULL) {
-+			/* Free already allocated mbufs */
-+			while (i > 0)
-+				rte_pktmbuf_free(mbufs[--i]);
-+			cleanup_pcap_vdev("net_pcap_jumbo_tx", port_id);
-+			remove_temp_file(tx_path);
-+			return TEST_FAILED;
-+		}
-+		printf("  Packet %u: %u segments for %u bytes\n",
-+		       i, mbufs[i]->nb_segs, PKT_SIZE_JUMBO);
-+	}
-+
-+	nb_tx = rte_eth_tx_burst(port_id, 0, mbufs, num_jumbo);
-+	/* Free any unsent mbufs */
-+	for (i = nb_tx; i < num_jumbo; i++)
-+		rte_pktmbuf_free(mbufs[i]);
-+
-+	TEST_ASSERT_EQUAL(nb_tx, (int)num_jumbo,
-+			  "TX burst failed: sent %d/%u", nb_tx, num_jumbo);
-+
-+	cleanup_pcap_vdev("net_pcap_jumbo_tx", port_id);
-+
-+	/* Verify pcap file has correct packet count and sizes */
-+	pkt_count = get_pcap_packet_sizes(tx_path, sizes, MAX_PKT_BURST);
-+	TEST_ASSERT_EQUAL(pkt_count, (int)num_jumbo,
-+			  "Pcap file has %d packets, expected %u",
-+			  pkt_count, num_jumbo);
-+
-+	for (i = 0; i < (unsigned int)pkt_count; i++) {
-+		TEST_ASSERT_EQUAL(sizes[i], PKT_SIZE_JUMBO,
-+				  "Packet %u: size %u, expected %u",
-+				  i, sizes[i], PKT_SIZE_JUMBO);
-+	}
-+
-+	remove_temp_file(tx_path);
-+
-+	printf("Jumbo TX PASSED: %d jumbo packets written\n", nb_tx);
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test: Layering on Linux network interface
-+ */
-+static int
-+test_iface(void)
-+{
-+	struct rte_mbuf *mbufs[MAX_PKT_BURST];
-+	struct rte_eth_dev_info dev_info;
-+	char devargs[256];
-+	uint16_t port_id;
-+	const char *iface;
-+	int ret, nb_tx, nb_pkt;
-+
-+	printf("Testing pcap on network interface\n");
-+
-+	iface = find_test_iface();
-+	if (iface == NULL) {
-+		printf("No suitable interface, skipping\n");
-+		return TEST_SKIPPED;
-+	}
-+	printf("Using interface: %s\n", iface);
-+
-+	ret = snprintf(devargs, sizeof(devargs), "iface=%s", iface);
-+	TEST_ASSERT(ret > 0 && ret < (int)sizeof(devargs),
-+		    "devargs string truncated");
-+	if (rte_vdev_init("net_pcap_iface", devargs) < 0) {
-+		printf("Cannot create iface vdev (needs root?), skipping\n");
-+		return TEST_SKIPPED;
-+	}
-+
-+	TEST_ASSERT(rte_eth_dev_get_port_by_name("net_pcap_iface",
-+						 &port_id) == 0,
-+		    "Failed to get iface port ID");
-+	TEST_ASSERT(setup_pcap_port(port_id) == 0,
-+		    "Failed to setup iface port");
-+
-+	ret = rte_eth_dev_info_get(port_id, &dev_info);
-+	TEST_ASSERT(ret == 0, "Failed to get dev info: %s", rte_strerror(-ret));
-+
-+	printf("Driver: %s, max_rx_queues=%u, max_tx_queues=%u\n",
-+	       dev_info.driver_name, dev_info.max_rx_queues,
-+	       dev_info.max_tx_queues);
-+
-+	/* Use packet_burst_generator for interface test */
-+	nb_pkt = generate_test_packets(mp, mbufs, MAX_PKT_BURST,
-+				       PACKET_BURST_GEN_PKT_LEN);
-+	TEST_ASSERT(nb_pkt > 0, "Failed to generate packets");
-+
-+	nb_tx = rte_eth_tx_burst(port_id, 0, mbufs, nb_pkt);
-+	if (nb_tx < nb_pkt)
-+		rte_pktmbuf_free_bulk(&mbufs[nb_tx], nb_pkt - nb_tx);
-+
-+	cleanup_pcap_vdev("net_pcap_iface", port_id);
-+
-+	printf("Interface test PASSED: sent %d packets\n", nb_tx);
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test: Link status and speed reporting
-+ *
-+ * This test verifies that:
-+ * 1. In interface (pass-through) mode, link state reflects the real interface
-+ * 2. In file mode, link status follows device started/stopped state
-+ * 3. Link speed values are properly reported
-+ */
-+static int
-+test_link_status(void)
-+{
-+	struct rte_eth_link link;
-+	char devargs[256];
-+	uint16_t port_id;
-+	const char *iface;
-+	int ret;
-+
-+	printf("Testing link status reporting\n");
++	memset(&null_conf, 0, sizeof(struct rte_eth_conf));
 +
 +	/*
-+	 * Test 1: Interface (pass-through) mode
-+	 * Link state should reflect the underlying interface
++	 * Create two cross-connected ring ports:
++	 *   portd TX -> ring_de -> porte RX
++	 *   porte TX -> ring_ed -> portd RX
++	 * Then pair them so link state reflects peer status.
 +	 */
-+	iface = find_test_iface();
-+	if (iface != NULL) {
-+		printf("  Testing interface mode with: %s\n", iface);
++	ring_de[0] = rte_ring_create("VETH_DE", RING_SIZE, SOCKET0,
++				     RING_F_SP_ENQ | RING_F_SC_DEQ);
++	ring_ed[0] = rte_ring_create("VETH_ED", RING_SIZE, SOCKET0,
++				     RING_F_SP_ENQ | RING_F_SC_DEQ);
++	if (ring_de[0] == NULL || ring_ed[0] == NULL) {
++		printf("Error creating veth rings\n");
++		return TEST_FAILED;
++	}
 +
-+		ret = snprintf(devargs, sizeof(devargs), "iface=%s", iface);
-+		TEST_ASSERT(ret > 0 && ret < (int)sizeof(devargs),
-+			    "devargs string truncated");
-+		if (rte_vdev_init("net_pcap_link_iface", devargs) == 0) {
-+			ret = rte_eth_dev_get_port_by_name("net_pcap_link_iface", &port_id);
-+			TEST_ASSERT(ret == 0, "Failed to get port ID");
++	/* portd: RX from ring_ed, TX into ring_de */
++	portd = rte_eth_from_rings("net_vethd", ring_ed, 1, ring_de, 1, SOCKET0);
++	/* porte: RX from ring_de, TX into ring_ed */
++	porte = rte_eth_from_rings("net_vethe", ring_de, 1, ring_ed, 1, SOCKET0);
++	if (portd < 0 || porte < 0) {
++		printf("Error creating veth ethdev ports\n");
++		return TEST_FAILED;
++	}
 +
-+			ret = setup_pcap_port(port_id);
-+			TEST_ASSERT(ret == 0, "Failed to setup port");
++	/* Pair the ports for veth-like carrier detection */
++	ret = rte_eth_ring_attach_peer(portd, porte);
++	if (ret != 0) {
++		printf("Error: rte_eth_ring_attach_peer failed\n");
++		return TEST_FAILED;
++	}
 +
-+			/* Get link status */
-+			ret = rte_eth_link_get_nowait(port_id, &link);
-+			TEST_ASSERT(ret == 0, "Failed to get link: %s", rte_strerror(-ret));
++	/* Configure and set up queues */
++	if ((rte_eth_dev_configure(portd, 1, 1, &null_conf) < 0) ||
++	    (rte_eth_dev_configure(porte, 1, 1, &null_conf) < 0)) {
++		printf("Configure failed for veth pair\n");
++		return TEST_FAILED;
++	}
 +
-+			printf("    Link status: %s\n",
-+			       link.link_status ? "UP" : "DOWN");
-+			printf("    Link speed: %u Mbps\n", link.link_speed);
-+			printf("    Link duplex: %s\n",
-+			       link.link_duplex ? "full" : "half");
-+			printf("    Link autoneg: %s\n",
-+			       link.link_autoneg ? "enabled" : "disabled");
++	if ((rte_eth_tx_queue_setup(portd, 0, RING_SIZE, SOCKET0, NULL) < 0) ||
++	    (rte_eth_tx_queue_setup(porte, 0, RING_SIZE, SOCKET0, NULL) < 0)) {
++		printf("TX queue setup failed for veth pair\n");
++		return TEST_FAILED;
++	}
 +
-+			/*
-+			 * For loopback interface, link should be up.
-+			 * Speed may be 0 or undefined for virtual interfaces.
-+			 */
-+			if (strcmp(iface, "lo") == 0) {
-+				TEST_ASSERT(link.link_status == RTE_ETH_LINK_UP,
-+					    "Loopback should report link UP");
-+			}
++	if ((rte_eth_rx_queue_setup(portd, 0, RING_SIZE, SOCKET0, NULL, mp) < 0) ||
++	    (rte_eth_rx_queue_setup(porte, 0, RING_SIZE, SOCKET0, NULL, mp) < 0)) {
++		printf("RX queue setup failed for veth pair\n");
++		return TEST_FAILED;
++	}
 +
-+			/*
-+			 * Verify link_get returns consistent results
-+			 */
-+			struct rte_eth_link link2;
-+			ret = rte_eth_link_get(port_id, &link2);
-+			TEST_ASSERT(ret == 0, "Second link_get failed");
-+			TEST_ASSERT(link.link_status == link2.link_status,
-+				    "Link status inconsistent between calls");
++	/*
++	 * Test 1: neither side started – both links should be down.
++	 */
++	printf("  Test 1: both stopped -> both links down\n");
++	ret = rte_eth_link_get_nowait(portd, &link_d);
++	TEST_ASSERT(ret >= 0, "Link get failed: %s", rte_strerror(-ret));
++	ret = rte_eth_link_get_nowait(porte, &link_e);
++	TEST_ASSERT(ret >= 0, "Link get failed: %s", rte_strerror(-ret));
++	if (link_d.link_status != RTE_ETH_LINK_DOWN ||
++	    link_e.link_status != RTE_ETH_LINK_DOWN) {
++		printf("Error: expected both links DOWN before start\n");
++		return TEST_FAILED;
++	}
 +
-+			cleanup_pcap_vdev("net_pcap_link_iface", port_id);
-+			printf("  Interface mode link test PASSED\n");
++	/*
++	 * Test 2: start only one side – that side should report link down
++	 *         because the peer is not started yet (veth semantics).
++	 */
++	printf("  Test 2: start portd only -> portd link down (no peer)\n");
++	if (rte_eth_dev_start(portd) < 0) {
++		printf("Error starting portd\n");
++		return TEST_FAILED;
++	}
++	ret = rte_eth_link_get_nowait(portd, &link_d);
++	TEST_ASSERT(ret >= 0, "Link get failed: %s", rte_strerror(-ret));
++	ret = rte_eth_link_get_nowait(porte, &link_e);
++	TEST_ASSERT(ret >= 0, "Link get failed: %s", rte_strerror(-ret));
++	if (link_d.link_status != RTE_ETH_LINK_DOWN) {
++		printf("Error: portd link should be DOWN (peer not started)\n");
++		return TEST_FAILED;
++	}
++	if (link_e.link_status != RTE_ETH_LINK_DOWN) {
++		printf("Error: porte link should be DOWN (not started)\n");
++		return TEST_FAILED;
++	}
++
++	/*
++	 * Test 3: start the second side – both should now have carrier.
++	 */
++	printf("  Test 3: start porte -> both links up\n");
++	if (rte_eth_dev_start(porte) < 0) {
++		printf("Error starting porte\n");
++		return TEST_FAILED;
++	}
++	ret = rte_eth_link_get_nowait(portd, &link_d);
++	TEST_ASSERT(ret >= 0, "Link get failed: %s", rte_strerror(-ret));
++	ret = rte_eth_link_get_nowait(porte, &link_e);
++	TEST_ASSERT(ret >= 0, "Link get failed: %s", rte_strerror(-ret));
++	if (link_d.link_status != RTE_ETH_LINK_UP) {
++		printf("Error: portd link should be UP\n");
++		return TEST_FAILED;
++	}
++	if (link_e.link_status != RTE_ETH_LINK_UP) {
++		printf("Error: porte link should be UP\n");
++		return TEST_FAILED;
++	}
++
++	/*
++	 * Test 4: stop one side – peer should lose carrier.
++	 */
++	printf("  Test 4: stop portd -> both links down\n");
++	ret = rte_eth_dev_stop(portd);
++	if (ret != 0) {
++		printf("Error stopping portd: %s\n", rte_strerror(-ret));
++		return TEST_FAILED;
++	}
++	ret = rte_eth_link_get_nowait(portd, &link_d);
++	TEST_ASSERT(ret >= 0, "Link get failed: %s", rte_strerror(-ret));
++	ret = rte_eth_link_get_nowait(porte, &link_e);
++	TEST_ASSERT(ret >= 0, "Link get failed: %s", rte_strerror(-ret));
++	if (link_d.link_status != RTE_ETH_LINK_DOWN) {
++		printf("Error: portd link should be DOWN after stop\n");
++		return TEST_FAILED;
++	}
++	if (link_e.link_status != RTE_ETH_LINK_DOWN) {
++		printf("Error: porte should lose carrier when peer stops\n");
++		return TEST_FAILED;
++	}
++
++	/*
++	 * Test 5: restart the stopped side – both should come back up
++	 *         (porte was still started).
++	 */
++	printf("  Test 5: restart portd -> both links up again\n");
++	if (rte_eth_dev_start(portd) < 0) {
++		printf("Error restarting portd\n");
++		return TEST_FAILED;
++	}
++	ret = rte_eth_link_get_nowait(portd, &link_d);
++	TEST_ASSERT(ret >= 0, "Link get failed: %s", rte_strerror(-ret));
++	ret = rte_eth_link_get_nowait(porte, &link_e);
++	TEST_ASSERT(ret >= 0, "Link get failed: %s", rte_strerror(-ret));
++	if (link_d.link_status != RTE_ETH_LINK_UP ||
++	    link_e.link_status != RTE_ETH_LINK_UP) {
++		printf("Error: both links should be UP after restart\n");
++		return TEST_FAILED;
++	}
++
++	/*
++	 * Test 6: admin set_link_down on one side – peer should lose carrier.
++	 */
++	printf("  Test 6: set_link_down portd -> both links down\n");
++	rte_eth_dev_set_link_down(portd);
++	ret = rte_eth_link_get_nowait(portd, &link_d);
++	TEST_ASSERT(ret >= 0, "Link get failed: %s", rte_strerror(-ret));
++	ret = rte_eth_link_get_nowait(porte, &link_e);
++	TEST_ASSERT(ret >= 0, "Link get failed: %s", rte_strerror(-ret));
++	if (link_d.link_status != RTE_ETH_LINK_DOWN) {
++		printf("Error: portd link should be DOWN after set_link_down\n");
++		return TEST_FAILED;
++	}
++	if (link_e.link_status != RTE_ETH_LINK_DOWN) {
++		printf("Error: porte should lose carrier on peer set_link_down\n");
++		return TEST_FAILED;
++	}
++
++	/* Clean up */
++	rte_eth_dev_stop(portd);
++	rte_eth_dev_stop(porte);
++	rte_vdev_uninit("net_ring_net_vethd");
++	rte_vdev_uninit("net_ring_net_vethe");
++	rte_ring_free(ring_de[0]);
++	rte_ring_free(ring_ed[0]);
++
++	return TEST_SUCCESS;
++}
++
+ static void
+ test_cleanup_resources(void)
+ {
+@@ -582,6 +772,7 @@ unit_test_suite test_pmd_ring_suite  = {
+ 		TEST_CASE(test_get_stats_for_port),
+ 		TEST_CASE(test_stats_reset_for_port),
+ 		TEST_CASE(test_pmd_ring_pair_create_attach),
++		TEST_CASE(test_pmd_ring_link_status),
+ 		TEST_CASE(test_command_line_ring_port),
+ 		TEST_CASES_END()
+ 	}
+diff --git a/doc/guides/nics/ring.rst b/doc/guides/nics/ring.rst
+index a6b2458a7f..caa461a2f2 100644
+--- a/doc/guides/nics/ring.rst
++++ b/doc/guides/nics/ring.rst
+@@ -104,6 +104,48 @@ the final two lines can be changed as follows:
+ This type of configuration is useful in a pipeline model where inter-core communication
+ using pseudo Ethernet devices is preferred over raw rings for API consistency.
+ 
++Peer Link State (veth-like Carrier Detection)
++^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
++
++By default, a ring-based port reports link-up as soon as it is started,
++regardless of the state of any other port.  For use cases that model a
++virtual Ethernet cable between two ports, this can be changed by pairing
++the ports with ``rte_eth_ring_attach_peer()``.
++
++Once two ports are paired, their link state follows the same rules as the
++Linux veth driver:
++
++* The link comes up only when **both** sides are started.
++* Stopping, closing, or administratively setting link-down on one side
++  causes the other side to report link-down as well.
++* When the stopped side is restarted, both sides regain carrier.
++
++Pairing is supported for any two ring-based ports, whether they were created
++with ``rte_eth_from_rings()`` or via the ``--vdev=net_ring`` EAL option.
++
++.. code-block:: c
++
++   struct rte_ring *ring_ab, *ring_ba;
++
++   ring_ab = rte_ring_create("AB", 1024, 0, RING_F_SP_ENQ | RING_F_SC_DEQ);
++   ring_ba = rte_ring_create("BA", 1024, 0, RING_F_SP_ENQ | RING_F_SC_DEQ);
++
++   /* Port A: TX into ring_ab, RX from ring_ba */
++   int port_a = rte_eth_from_rings("veth_a", &ring_ba, 1, &ring_ab, 1, 0);
++   /* Port B: TX into ring_ba, RX from ring_ab */
++   int port_b = rte_eth_from_rings("veth_b", &ring_ab, 1, &ring_ba, 1, 0);
++
++   /* Enable veth-like link state tracking */
++   rte_eth_ring_attach_peer(port_a, port_b);
++
++   /* At this point both links are down.
++    * Starting port_a alone still shows link-down (peer is not ready).
++    * Starting port_b as well brings both links up.
++    */
++
++Unpaired ports (the default) are unaffected and retain the original
++behaviour where link-up is reported immediately on start.
++
+ Enqueuing and dequeuing items from an ``rte_ring``
+ using the ring-based PMD may be slower than using the native ring API.
+ DPDK Ethernet drivers use function pointers
+diff --git a/doc/guides/rel_notes/release_26_03.rst b/doc/guides/rel_notes/release_26_03.rst
+index 5c2a4bb32e..33fd354be8 100644
+--- a/doc/guides/rel_notes/release_26_03.rst
++++ b/doc/guides/rel_notes/release_26_03.rst
+@@ -82,6 +82,14 @@ New Features
+   * NEA5, NIA5, NCA5: AES 256 confidentiality, integrity and AEAD modes.
+   * NEA6, NIA6, NCA6: ZUC 256 confidentiality, integrity and AEAD modes.
+ 
++* **Updated ring-based PMD with veth-like link state.**
++
++  Added peer link state tracking to the ring-based PMD (``net_ring``).
++  Two ring PMD ports can now be paired via the new experimental
++  ``rte_eth_ring_attach_peer()`` API so that each port's link status
++  reflects whether its peer is started, mirroring the carrier semantics
++  of the Linux veth driver.  Unpaired ports retain the existing behaviour.
++
+ 
+ Removed Items
+ -------------
+diff --git a/drivers/net/ring/rte_eth_ring.c b/drivers/net/ring/rte_eth_ring.c
+index b639544eab..d7a8ee8796 100644
+--- a/drivers/net/ring/rte_eth_ring.c
++++ b/drivers/net/ring/rte_eth_ring.c
+@@ -59,6 +59,9 @@ struct pmd_internals {
+ 
+ 	struct rte_ether_addr address;
+ 	enum dev_action action;
++
++	uint16_t peer_port_id;	/**< port id of the peer, or RTE_MAX_ETHPORTS */
++	uint8_t link_admin_down; /**< true when set_link_down has been called */
+ };
+ 
+ static struct rte_eth_link pmd_link = {
+@@ -111,13 +114,41 @@ eth_dev_configure(struct rte_eth_dev *dev __rte_unused) { return 0; }
+ static int
+ eth_dev_start(struct rte_eth_dev *dev)
+ {
+-	dev->data->dev_link.link_status = RTE_ETH_LINK_UP;
++	struct pmd_internals *internals = dev->data->dev_private;
++
++	internals->link_admin_down = 0;
++
++	if (internals->peer_port_id < RTE_MAX_ETHPORTS) {
++		struct rte_eth_dev *peer = &rte_eth_devices[internals->peer_port_id];
++		struct pmd_internals *peer_internals = peer->data->dev_private;
++
++		/*
++		 * Veth-like carrier: link comes up only when the peer
++		 * is also started and not administratively down.
++		 * When we start, we also give the peer carrier if it
++		 * was already started.
++		 */
++		if (peer_internals != NULL &&
++		    peer_internals->peer_port_id == dev->data->port_id &&
++		    peer->data->dev_started &&
++		    !peer_internals->link_admin_down) {
++			dev->data->dev_link.link_status = RTE_ETH_LINK_UP;
++			peer->data->dev_link.link_status = RTE_ETH_LINK_UP;
 +		} else {
-+			printf("  Cannot create iface vdev (needs root?), skipping iface test\n");
++			dev->data->dev_link.link_status = RTE_ETH_LINK_DOWN;
 +		}
 +	} else {
-+		printf("  No suitable interface found, skipping iface test\n");
++		/* Unpaired port: link follows admin state directly */
++		dev->data->dev_link.link_status = RTE_ETH_LINK_UP;
 +	}
++
+ 	return 0;
+ }
+ 
+ static int
+ eth_dev_stop(struct rte_eth_dev *dev)
+ {
++	struct pmd_internals *internals = dev->data->dev_private;
+ 	uint16_t i;
+ 
+ 	dev->data->dev_started = 0;
+@@ -127,14 +158,30 @@ eth_dev_stop(struct rte_eth_dev *dev)
+ 		dev->data->rx_queue_state[i] = RTE_ETH_QUEUE_STATE_STARTED;
+ 	for (i = 0; i < dev->data->nb_tx_queues; i++)
+ 		dev->data->tx_queue_state[i] = RTE_ETH_QUEUE_STATE_STARTED;
 +
 +	/*
-+	 * Test 2: File mode
-+	 * Link status should be DOWN before start, UP after start
++	 * When this side stops, the peer loses carrier,
++	 * mirroring Linux veth behavior.
 +	 */
-+	printf("  Testing file mode link status\n");
++	if (internals->peer_port_id < RTE_MAX_ETHPORTS) {
++		struct rte_eth_dev *peer = &rte_eth_devices[internals->peer_port_id];
++		struct pmd_internals *peer_internals = peer->data->dev_private;
 +
-+	/* Create a simple pcap file for testing */
-+	TEST_ASSERT(create_temp_path(rx_pcap_path, sizeof(rx_pcap_path),
-+				     "pcap_link") == 0,
-+		    "Failed to create temp path");
-+	TEST_ASSERT(create_test_pcap(rx_pcap_path, 1) == 0,
-+		    "Failed to create test pcap");
-+
-+	ret = snprintf(devargs, sizeof(devargs), "rx_pcap=%s", rx_pcap_path);
-+	TEST_ASSERT(ret > 0 && ret < (int)sizeof(devargs),
-+		    "devargs string truncated");
-+	TEST_ASSERT(create_pcap_vdev("net_pcap_link_file", devargs, &port_id) == 0,
-+		    "Failed to create file vdev");
-+
-+	/* Before starting: configure but don't start */
-+	struct rte_eth_conf port_conf = { 0 };
-+	ret = rte_eth_dev_configure(port_id, 1, 1, &port_conf);
-+	TEST_ASSERT(ret == 0, "Failed to configure port");
-+
-+	ret = rte_eth_rx_queue_setup(port_id, 0, RING_SIZE, SOCKET0, NULL, mp);
-+	TEST_ASSERT(ret == 0, "Failed to setup RX queue");
-+
-+	ret = rte_eth_tx_queue_setup(port_id, 0, RING_SIZE, SOCKET0, NULL);
-+	TEST_ASSERT(ret == 0, "Failed to setup TX queue");
-+
-+	/* Check link before start - should be DOWN */
-+	ret = rte_eth_link_get_nowait(port_id, &link);
-+	TEST_ASSERT(ret == 0, "Failed to get link before start");
-+	printf("    Before start: link %s, speed %u Mbps\n",
-+	       link.link_status ? "UP" : "DOWN", link.link_speed);
-+	TEST_ASSERT(link.link_status == RTE_ETH_LINK_DOWN,
-+		    "Link should be DOWN before start");
-+
-+	/* Start the port */
-+	ret = rte_eth_dev_start(port_id);
-+	TEST_ASSERT(ret == 0, "Failed to start port");
-+
-+	/* Check link after start - should be UP */
-+	ret = rte_eth_link_get_nowait(port_id, &link);
-+	TEST_ASSERT(ret == 0, "Failed to get link after start");
-+	printf("    After start: link %s, speed %u Mbps\n",
-+	       link.link_status ? "UP" : "DOWN", link.link_speed);
-+	TEST_ASSERT(link.link_status == RTE_ETH_LINK_UP,
-+		    "Link should be UP after start");
-+
-+	/* Stop the port */
-+	ret = rte_eth_dev_stop(port_id);
-+	TEST_ASSERT(ret == 0, "Failed to stop port");
-+
-+	/* Check link after stop - should be DOWN again */
-+	ret = rte_eth_link_get_nowait(port_id, &link);
-+	TEST_ASSERT(ret == 0, "Failed to get link after stop");
-+	printf("    After stop: link %s\n",
-+	       link.link_status ? "UP" : "DOWN");
-+	TEST_ASSERT(link.link_status == RTE_ETH_LINK_DOWN,
-+		    "Link should be DOWN after stop");
-+
-+	rte_vdev_uninit("net_pcap_link_file");
-+
-+	printf("Link status test PASSED\n");
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test: Link Status Change (LSC) interrupt support
-+ *
-+ * Verifies that:
-+ * 1. LSC capability is NOT advertised for file mode
-+ * 2. LSC capability IS advertised for iface mode
-+ * 3. LSC callback fires when the underlying interface goes down/up
-+ *
-+ * Requires a toggleable Ethernet interface created before running:
-+ *   Linux:   ip link add dummy0 type dummy && ip link set dummy0 up
-+ *   FreeBSD: ifconfig disc0 create && ifconfig disc0 up
-+ *
-+ * Skipped if no suitable interface is found or on Windows.
-+ */
-+
-+/* Callback counter for LSC test */
-+static volatile int lsc_callback_count;
-+
-+static int
-+test_lsc_callback(uint16_t port_id __rte_unused,
-+		  enum rte_eth_event_type event __rte_unused,
-+		  void *cb_arg __rte_unused, void *ret_param __rte_unused)
-+{
-+	lsc_callback_count++;
-+	return 0;
-+}
-+
-+#ifndef RTE_EXEC_ENV_WINDOWS
-+/*
-+ * Helper: Set interface link up or down via ioctl.
-+ * Returns 0 on success, -errno on failure.
-+ */
-+static int
-+set_iface_up_down(const char *ifname, int up)
-+{
-+	struct ifreq ifr;
-+	int fd, ret;
-+
-+	fd = socket(AF_INET, SOCK_DGRAM, 0);
-+	if (fd < 0)
-+		return -errno;
-+
-+	memset(&ifr, 0, sizeof(ifr));
-+	strlcpy(ifr.ifr_name, ifname, IFNAMSIZ);
-+
-+	ret = ioctl(fd, SIOCGIFFLAGS, &ifr);
-+	if (ret < 0) {
-+		ret = -errno;
-+		close(fd);
-+		return ret;
++		if (peer_internals != NULL &&
++		    peer_internals->peer_port_id == dev->data->port_id)
++			peer->data->dev_link.link_status = RTE_ETH_LINK_DOWN;
 +	}
 +
-+	if (up)
-+		ifr.ifr_flags |= IFF_UP;
-+	else
-+		ifr.ifr_flags &= ~IFF_UP;
+ 	return 0;
+ }
+ 
+ static int
+ eth_dev_set_link_down(struct rte_eth_dev *dev)
+ {
++	struct pmd_internals *internals = dev->data->dev_private;
+ 	uint16_t i;
+ 
++	internals->link_admin_down = 1;
+ 	dev->data->dev_link.link_status = RTE_ETH_LINK_DOWN;
+ 
+ 	for (i = 0; i < dev->data->nb_rx_queues; i++)
+@@ -142,13 +189,47 @@ eth_dev_set_link_down(struct rte_eth_dev *dev)
+ 	for (i = 0; i < dev->data->nb_tx_queues; i++)
+ 		dev->data->tx_queue_state[i] = RTE_ETH_QUEUE_STATE_STOPPED;
+ 
++	/* Peer also loses carrier when this side is forced down */
++	if (internals->peer_port_id < RTE_MAX_ETHPORTS) {
++		struct rte_eth_dev *peer = &rte_eth_devices[internals->peer_port_id];
++		struct pmd_internals *peer_internals = peer->data->dev_private;
 +
-+	ret = ioctl(fd, SIOCSIFFLAGS, &ifr);
-+	if (ret < 0)
-+		ret = -errno;
-+	else
-+		ret = 0;
-+
-+	close(fd);
-+	return ret;
-+}
-+
-+/*
-+ * Helper: Find a toggleable test interface for LSC testing.
-+ *
-+ * Looks for well-known interfaces that are safe to bring up/down:
-+ *   Linux:   dummy0 (ip link add dummy0 type dummy)
-+ *   FreeBSD: disc0 (ifconfig disc0 create)
-+ *
-+ * Returns interface name or NULL if none found.
-+ */
-+static const char *
-+find_lsc_test_iface(void)
-+{
-+	static const char *candidates[] = { "dummy0", "disc0" };
-+	unsigned int i;
-+
-+	for (i = 0; i < RTE_DIM(candidates); i++) {
-+		if (iface_is_ethernet(candidates[i]))
-+			return candidates[i];
++		if (peer_internals != NULL &&
++		    peer_internals->peer_port_id == dev->data->port_id)
++			peer->data->dev_link.link_status = RTE_ETH_LINK_DOWN;
 +	}
-+	return NULL;
-+}
-+#endif
 +
-+static int
-+test_lsc_iface(void)
+ 	return 0;
+ }
+ 
+ static int
+ eth_dev_set_link_up(struct rte_eth_dev *dev)
+ {
+-	dev->data->dev_link.link_status = RTE_ETH_LINK_UP;
++	struct pmd_internals *internals = dev->data->dev_private;
++
++	internals->link_admin_down = 0;
++
++	if (internals->peer_port_id < RTE_MAX_ETHPORTS) {
++		struct rte_eth_dev *peer = &rte_eth_devices[internals->peer_port_id];
++		struct pmd_internals *peer_internals = peer->data->dev_private;
++
++		/*
++		 * With a peer, link can only come up if the peer is also
++		 * started and not administratively down.
++		 */
++		if (peer_internals != NULL &&
++		    peer_internals->peer_port_id == dev->data->port_id &&
++		    peer->data->dev_started &&
++		    !peer_internals->link_admin_down) {
++			dev->data->dev_link.link_status = RTE_ETH_LINK_UP;
++			peer->data->dev_link.link_status = RTE_ETH_LINK_UP;
++		} else {
++			dev->data->dev_link.link_status = RTE_ETH_LINK_DOWN;
++		}
++	} else {
++		dev->data->dev_link.link_status = RTE_ETH_LINK_UP;
++	}
++
+ 	return 0;
+ }
+ 
+@@ -277,8 +358,38 @@ eth_allmulticast_disable(struct rte_eth_dev *dev __rte_unused)
+ }
+ 
+ static int
+-eth_link_update(struct rte_eth_dev *dev __rte_unused,
+-		int wait_to_complete __rte_unused) { return 0; }
++eth_link_update(struct rte_eth_dev *dev,
++		int wait_to_complete __rte_unused)
 +{
-+	struct rte_eth_dev_info dev_info;
++	struct pmd_internals *internals = dev->data->dev_private;
 +	struct rte_eth_link link;
-+	struct rte_eth_conf port_conf = {
-+		.intr_conf.lsc = 1,
-+	};
-+	char devargs[256];
-+	uint16_t port_id;
-+	int ret;
 +
-+	printf("Testing Link Status Change (LSC) support\n");
++	link = pmd_link;
 +
-+	/*
-+	 * Test 1: Verify LSC is NOT advertised for file mode
-+	 */
-+	printf("  Testing file mode does not advertise LSC\n");
-+	{
-+		char lsc_pcap_path[PATH_MAX];
-+		uint16_t file_port_id;
++	if (!dev->data->dev_started || internals->link_admin_down) {
++		link.link_status = RTE_ETH_LINK_DOWN;
++	} else if (internals->peer_port_id < RTE_MAX_ETHPORTS) {
++		/*
++		 * Paired port: carrier depends on peer being started
++		 * and not administratively down, similar to Linux veth.
++		 */
++		struct rte_eth_dev *peer = &rte_eth_devices[internals->peer_port_id];
++		struct pmd_internals *peer_internals = peer->data->dev_private;
 +
-+		TEST_ASSERT(create_temp_path(lsc_pcap_path, sizeof(lsc_pcap_path),
-+					     "pcap_lsc") == 0,
-+			    "Failed to create temp path");
-+		TEST_ASSERT(create_test_pcap(lsc_pcap_path, 1) == 0,
-+			    "Failed to create test pcap");
-+
-+		ret = snprintf(devargs, sizeof(devargs), "rx_pcap=%s", lsc_pcap_path);
-+		TEST_ASSERT(ret > 0 && ret < (int)sizeof(devargs),
-+			    "devargs string truncated");
-+		TEST_ASSERT(create_pcap_vdev("net_pcap_lsc_file", devargs,
-+					     &file_port_id) == 0,
-+			    "Failed to create file vdev");
-+
-+		ret = rte_eth_dev_info_get(file_port_id, &dev_info);
-+		TEST_ASSERT(ret == 0, "Failed to get dev info");
-+
-+		TEST_ASSERT((*dev_info.dev_flags & RTE_ETH_DEV_INTR_LSC) == 0,
-+			    "File mode should NOT advertise LSC capability");
-+
-+		rte_vdev_uninit("net_pcap_lsc_file");
-+		remove_temp_file(lsc_pcap_path);
-+		printf("  File mode LSC check PASSED\n");
++		if (peer_internals != NULL &&
++		    peer_internals->peer_port_id == dev->data->port_id &&
++		    peer->data->dev_started &&
++		    !peer_internals->link_admin_down)
++			link.link_status = RTE_ETH_LINK_UP;
++		else
++			link.link_status = RTE_ETH_LINK_DOWN;
++	} else {
++		/* Unpaired port: link follows admin state */
++		link.link_status = dev->data->dev_link.link_status;
 +	}
 +
-+#ifdef RTE_EXEC_ENV_WINDOWS
-+	printf("  Link toggle test not supported on Windows, skipping\n");
-+	return TEST_SUCCESS;
-+#else
-+	/*
-+	 * Test 2: Use a toggleable interface to test link change events.
-+	 * Skip if not present.
-+	 */
-+	const char *lsc_iface = find_lsc_test_iface();
-+	if (lsc_iface == NULL) {
-+		printf("  No toggleable interface found, skipping link change test\n");
-+		printf("  Linux:   ip link add dummy0 type dummy && ip link set dummy0 up\n");
-+		printf("  FreeBSD: ifconfig disc0 create && ifconfig disc0 up\n");
-+		return TEST_SUCCESS;
-+	}
-+
-+	printf("  Testing iface mode LSC with: %s\n", lsc_iface);
-+
-+	/* Ensure interface is up before we start */
-+	ret = set_iface_up_down(lsc_iface, 1);
-+	if (ret != 0) {
-+		printf("  Cannot set %s up (%s), skipping\n",
-+		       lsc_iface, strerror(-ret));
-+		return TEST_SUCCESS;
-+	}
-+
-+	ret = snprintf(devargs, sizeof(devargs), "iface=%s", lsc_iface);
-+	TEST_ASSERT(ret > 0 && ret < (int)sizeof(devargs),
-+		    "devargs string truncated");
-+	ret = rte_vdev_init("net_pcap_lsc", devargs);
-+	if (ret < 0) {
-+		printf("  Cannot create iface vdev for %s, skipping\n", lsc_iface);
-+		return TEST_SUCCESS;
-+	}
-+
-+	ret = rte_eth_dev_get_port_by_name("net_pcap_lsc", &port_id);
-+	TEST_ASSERT(ret == 0, "Failed to get port ID");
-+
-+	/* Verify LSC capability is advertised */
-+	ret = rte_eth_dev_info_get(port_id, &dev_info);
-+	TEST_ASSERT(ret == 0, "Failed to get dev info");
-+	TEST_ASSERT(*dev_info.dev_flags & RTE_ETH_DEV_INTR_LSC,
-+		    "Iface mode should advertise LSC capability");
-+	printf("    LSC capability advertised: yes\n");
-+
-+	/* Register LSC callback */
-+	lsc_callback_count = 0;
-+	ret = rte_eth_dev_callback_register(port_id, RTE_ETH_EVENT_INTR_LSC,
-+					    test_lsc_callback, NULL);
-+	TEST_ASSERT(ret == 0, "Failed to register LSC callback");
-+
-+	/* Configure with LSC enabled and start */
-+	TEST_ASSERT(setup_pcap_port_conf(port_id, &port_conf) == 0,
-+		    "Failed to setup port with LSC");
-+
-+	/* Verify link is up initially */
-+	ret = rte_eth_link_get_nowait(port_id, &link);
-+	TEST_ASSERT(ret == 0, "Failed to get link status");
-+	TEST_ASSERT(link.link_status == RTE_ETH_LINK_UP,
-+		    "Link should be UP after start");
-+	printf("    Link after start: UP\n");
-+
-+	/* Bring interface down - should trigger LSC */
-+	lsc_callback_count = 0;
-+	ret = set_iface_up_down(lsc_iface, 0);
-+	TEST_ASSERT(ret == 0, "Failed to set %s down: %s",
-+		    lsc_iface, strerror(-ret));
-+
-+	/* Wait for at least one poll cycle (1 second interval) */
-+	usleep(1500 * 1000);
-+
-+	ret = rte_eth_link_get_nowait(port_id, &link);
-+	TEST_ASSERT(ret == 0, "Failed to get link after down");
-+	TEST_ASSERT(link.link_status == RTE_ETH_LINK_DOWN,
-+		    "Link should be DOWN after interface down");
-+	TEST_ASSERT(lsc_callback_count >= 1,
-+		    "LSC callback should have fired, count=%d",
-+		    lsc_callback_count);
-+	printf("    Interface down: link DOWN, callbacks=%d\n",
-+	       lsc_callback_count);
-+
-+	/* Bring it back up - should trigger another LSC */
-+	lsc_callback_count = 0;
-+	ret = set_iface_up_down(lsc_iface, 1);
-+	TEST_ASSERT(ret == 0, "Failed to set %s up: %s",
-+		    lsc_iface, strerror(-ret));
-+
-+	usleep(1500 * 1000);
-+
-+	ret = rte_eth_link_get_nowait(port_id, &link);
-+	TEST_ASSERT(ret == 0, "Failed to get link after up");
-+	TEST_ASSERT(link.link_status == RTE_ETH_LINK_UP,
-+		    "Link should be UP after interface up");
-+	TEST_ASSERT(lsc_callback_count >= 1,
-+		    "LSC callback should have fired on link restore, count=%d",
-+		    lsc_callback_count);
-+	printf("    Interface up: link UP, callbacks=%d\n",
-+	       lsc_callback_count);
-+
-+	/* Cleanup */
-+	rte_eth_dev_stop(port_id);
-+	rte_eth_dev_callback_unregister(port_id, RTE_ETH_EVENT_INTR_LSC,
-+					test_lsc_callback, NULL);
-+	rte_vdev_uninit("net_pcap_lsc");
-+
-+	printf("LSC test PASSED\n");
-+	return TEST_SUCCESS;
-+#endif /* !RTE_EXEC_ENV_WINDOWS */
++	return rte_eth_linkstatus_set(dev, &link);
 +}
+ 
+ static int
+ eth_dev_close(struct rte_eth_dev *dev)
+@@ -294,6 +405,19 @@ eth_dev_close(struct rte_eth_dev *dev)
+ 	ret = eth_dev_stop(dev);
+ 
+ 	internals = dev->data->dev_private;
 +
-+/*
-+ * Test: EOF notification via link status change
-+ *
-+ * Verifies that:
-+ * 1. The eof devarg causes link down + LSC event at end of pcap file
-+ * 2. link_get reports DOWN after EOF
-+ * 3. Stop/start resets the EOF state and replays the file
-+ * 4. The eof and infinite_rx options are mutually exclusive
-+ */
++	/* Unlink peer so it no longer references this port */
++	if (internals->peer_port_id < RTE_MAX_ETHPORTS) {
++		struct rte_eth_dev *peer = &rte_eth_devices[internals->peer_port_id];
++		struct pmd_internals *peer_internals = peer->data->dev_private;
 +
-+static volatile int eof_callback_count;
++		if (peer_internals != NULL &&
++		    peer_internals->peer_port_id == dev->data->port_id)
++			peer_internals->peer_port_id = RTE_MAX_ETHPORTS;
 +
-+static int
-+test_eof_callback(uint16_t port_id __rte_unused,
-+		  enum rte_eth_event_type event __rte_unused,
-+		  void *cb_arg __rte_unused, void *ret_param __rte_unused)
-+{
-+	eof_callback_count++;
-+	return 0;
-+}
-+
-+static int
-+test_eof_rx(void)
-+{
-+	struct rte_mbuf *mbufs[MAX_PKT_BURST];
-+	struct rte_eth_conf port_conf = {
-+		.intr_conf.lsc = 1,
-+	};
-+	struct rte_eth_link link;
-+	char eof_pcap_path[PATH_MAX];
-+	char devargs[256];
-+	uint16_t port_id;
-+	unsigned int total_rx;
-+	int ret;
-+
-+	printf("Testing EOF notification via link status change\n");
-+
-+	/* Create pcap file with known number of packets */
-+	TEST_ASSERT(create_temp_path(eof_pcap_path, sizeof(eof_pcap_path),
-+				     "pcap_eof") == 0,
-+		    "Failed to create temp file path");
-+	TEST_ASSERT(create_test_pcap(eof_pcap_path, NUM_PACKETS) == 0,
-+		    "Failed to create test pcap file");
-+
-+	/*
-+	 * Test 1: EOF triggers link down and LSC callback
-+	 */
-+	printf("  Testing EOF triggers link down and LSC event\n");
-+
-+	ret = snprintf(devargs, sizeof(devargs), "rx_pcap=%s,eof=1",
-+		       eof_pcap_path);
-+	TEST_ASSERT(ret > 0 && ret < (int)sizeof(devargs),
-+		    "devargs string truncated");
-+	ret = rte_vdev_init("net_pcap_eof", devargs);
-+	TEST_ASSERT(ret == 0, "Failed to create eof vdev: %s",
-+		    rte_strerror(-ret));
-+
-+	ret = rte_eth_dev_get_port_by_name("net_pcap_eof", &port_id);
-+	TEST_ASSERT(ret == 0, "Failed to get port ID");
-+
-+	/* Verify LSC capability is advertised */
-+	struct rte_eth_dev_info dev_info;
-+	ret = rte_eth_dev_info_get(port_id, &dev_info);
-+	TEST_ASSERT(ret == 0, "Failed to get dev info");
-+	TEST_ASSERT(*dev_info.dev_flags & RTE_ETH_DEV_INTR_LSC,
-+		    "EOF mode should advertise LSC capability");
-+
-+	/* Register LSC callback */
-+	eof_callback_count = 0;
-+	ret = rte_eth_dev_callback_register(port_id, RTE_ETH_EVENT_INTR_LSC,
-+					    test_eof_callback, NULL);
-+	TEST_ASSERT(ret == 0, "Failed to register LSC callback");
-+
-+	/* Configure with LSC enabled and start */
-+	TEST_ASSERT(setup_pcap_port_conf(port_id, &port_conf) == 0,
-+		    "Failed to setup port with LSC");
-+
-+	/* Verify link is up initially */
-+	ret = rte_eth_link_get_nowait(port_id, &link);
-+	TEST_ASSERT(ret == 0, "Failed to get link");
-+	TEST_ASSERT(link.link_status == RTE_ETH_LINK_UP,
-+		    "Link should be UP after start");
-+
-+	/* Drain all packets from the pcap file */
-+	total_rx = 0;
-+	for (int attempts = 0; attempts < 200; attempts++) {
-+		uint16_t nb_rx = rte_eth_rx_burst(port_id, 0, mbufs,
-+						  MAX_PKT_BURST);
-+		if (nb_rx > 0) {
-+			rte_pktmbuf_free_bulk(mbufs, nb_rx);
-+			total_rx += nb_rx;
-+		} else if (total_rx >= NUM_PACKETS) {
-+			/* Got all packets and rx returned 0 — EOF hit */
-+			break;
-+		}
++		internals->peer_port_id = RTE_MAX_ETHPORTS;
 +	}
 +
-+	printf("    Received %u packets (expected %d)\n", total_rx, NUM_PACKETS);
-+	TEST_ASSERT_EQUAL(total_rx, NUM_PACKETS,
-+			  "Should receive exactly %d packets", NUM_PACKETS);
-+
-+	/* Verify link went down */
-+	ret = rte_eth_link_get_nowait(port_id, &link);
-+	TEST_ASSERT(ret == 0, "Failed to get link after EOF");
-+	TEST_ASSERT(link.link_status == RTE_ETH_LINK_DOWN,
-+		    "Link should be DOWN after EOF");
-+
-+	/* Allow deferred EOF alarm to fire on the interrupt thread */
-+	usleep(100 * 1000);
-+
-+	/* Verify callback fired exactly once */
-+	TEST_ASSERT_EQUAL(eof_callback_count, 1,
-+			  "LSC callback should fire once, fired %d times",
-+			  eof_callback_count);
-+	printf("    EOF signaled: link DOWN, callback fired\n");
-+
-+	/*
-+	 * Test 2: Stop/start resets EOF and replays the file
-+	 */
-+	printf("  Testing restart replays pcap file\n");
-+
-+	ret = rte_eth_dev_stop(port_id);
-+	TEST_ASSERT(ret == 0, "Failed to stop port");
-+
-+	eof_callback_count = 0;
-+
-+	ret = rte_eth_dev_start(port_id);
-+	TEST_ASSERT(ret == 0, "Failed to restart port");
-+
-+	/* Verify link is up again */
-+	ret = rte_eth_link_get_nowait(port_id, &link);
-+	TEST_ASSERT(ret == 0, "Failed to get link after restart");
-+	TEST_ASSERT(link.link_status == RTE_ETH_LINK_UP,
-+		    "Link should be UP after restart");
-+
-+	/* Read packets again */
-+	total_rx = 0;
-+	for (int attempts = 0; attempts < 200; attempts++) {
-+		uint16_t nb_rx = rte_eth_rx_burst(port_id, 0, mbufs,
-+						  MAX_PKT_BURST);
-+		if (nb_rx > 0) {
-+			rte_pktmbuf_free_bulk(mbufs, nb_rx);
-+			total_rx += nb_rx;
-+		} else if (total_rx >= NUM_PACKETS) {
-+			break;
-+		}
-+	}
-+
-+	TEST_ASSERT_EQUAL(total_rx, NUM_PACKETS,
-+			  "Restart: should receive %d packets, got %u",
-+			  NUM_PACKETS, total_rx);
-+
-+	/* Allow deferred EOF alarm to fire on the interrupt thread */
-+	usleep(100 * 1000);
-+
-+	TEST_ASSERT_EQUAL(eof_callback_count, 1,
-+			  "Restart: callback should fire once, fired %d times",
-+			  eof_callback_count);
-+	printf("    Restart replay: %u packets, EOF signaled again\n", total_rx);
-+
-+	/* Cleanup */
-+	rte_eth_dev_callback_unregister(port_id, RTE_ETH_EVENT_INTR_LSC,
-+					test_eof_callback, NULL);
-+	rte_eth_dev_stop(port_id);
-+	rte_vdev_uninit("net_pcap_eof");
-+
-+	/*
-+	 * Test 3: eof + infinite_rx is rejected
-+	 */
-+	printf("  Testing eof + infinite_rx mutual exclusion\n");
-+
-+	ret = snprintf(devargs, sizeof(devargs),
-+		       "rx_pcap=%s,eof=1,infinite_rx=1", eof_pcap_path);
-+	TEST_ASSERT(ret > 0 && ret < (int)sizeof(devargs),
-+		    "devargs string truncated");
-+	ret = rte_vdev_init("net_pcap_eof_bad", devargs);
-+	TEST_ASSERT(ret != 0, "eof + infinite_rx should be rejected");
-+	printf("    Mutual exclusion check PASSED\n");
-+
-+	remove_temp_file(eof_pcap_path);
-+
-+	printf("EOF test PASSED\n");
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test: Verify receive timestamps from pcap file
-+ */
-+static int
-+test_rx_timestamp(void)
+ 	if (internals->action == DEV_CREATE) {
+ 		/*
+ 		 * it is only necessary to delete the rings in rx_queues because
+@@ -420,6 +544,7 @@ do_eth_dev_ring_create(const char *name,
+ 	internals->action = action;
+ 	internals->max_rx_queues = nb_rx_queues;
+ 	internals->max_tx_queues = nb_tx_queues;
++	internals->peer_port_id = RTE_MAX_ETHPORTS;
+ 	for (i = 0; i < nb_rx_queues; i++) {
+ 		internals->rx_ring_queues[i].rng = rx_queues[i];
+ 		internals->rx_ring_queues[i].in_port = -1;
+@@ -527,6 +652,49 @@ rte_eth_from_ring(struct rte_ring *r)
+ 			r->memzone ? r->memzone->socket_id : SOCKET_ID_ANY);
+ }
+ 
++RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_eth_ring_attach_peer, 26.03)
++int
++rte_eth_ring_attach_peer(uint16_t port_id_a, uint16_t port_id_b)
 +{
-+	struct rte_mbuf *mbufs[NUM_PACKETS];
-+	char devargs[256];
-+	uint16_t port_id;
-+	unsigned int received, i;
-+	int ret;
-+	const uint32_t base_sec = 1000;
-+	const uint32_t usec_increment = 10000; /* 10ms between packets */
-+	rte_mbuf_timestamp_t prev_ts = 0;
++	struct rte_eth_dev *dev_a, *dev_b;
++	struct pmd_internals *internals_a, *internals_b;
 +
-+	printf("Testing RX timestamp accuracy\n");
-+
-+	TEST_ASSERT(create_temp_path(timestamp_pcap_path, sizeof(timestamp_pcap_path),
-+				     "pcap_ts") == 0,
-+		    "Failed to create temp path");
-+	TEST_ASSERT(create_timestamped_pcap(timestamp_pcap_path, NUM_PACKETS,
-+					    base_sec, usec_increment) == 0,
-+		    "Failed to create timestamped pcap");
-+
-+	ret = snprintf(devargs, sizeof(devargs), "rx_pcap=%s", timestamp_pcap_path);
-+	TEST_ASSERT(ret > 0 && ret < (int)sizeof(devargs),
-+		    "devargs string truncated");
-+	TEST_ASSERT(create_pcap_vdev("net_pcap_ts", devargs, &port_id) == 0,
-+		    "Failed to create timestamp vdev");
-+	TEST_ASSERT(setup_pcap_port(port_id) == 0,
-+		    "Failed to setup timestamp port");
-+
-+	/* Try to initialize timestamp dynamic field access */
-+	TEST_ASSERT(timestamp_init() == 0, "Timestamp dynfield not available");
-+
-+	receive_packets(port_id, mbufs, NUM_PACKETS, &received);
-+	TEST_ASSERT_EQUAL(received, NUM_PACKETS,
-+			  "Received %u packets, expected %d", received, NUM_PACKETS);
-+
-+	/* Check if first packet has timestamp flag set */
-+	if (!mbuf_has_timestamp(mbufs[0])) {
-+		printf("Timestamps not enabled in mbufs, skipping validation\n");
-+		rte_pktmbuf_free_bulk(mbufs, received);
-+		cleanup_pcap_vdev("net_pcap_ts", port_id);
-+		return TEST_SUCCESS;
-+	}
-+
-+	for (i = 0; i < received; i++) {
-+		struct rte_mbuf *m = mbufs[i];
-+
-+		TEST_ASSERT(mbuf_has_timestamp(m),
-+			    "Packet %u missing timestamp flag", i);
-+
-+		/* PCAP PMD stores timestamp in nanoseconds */
-+		rte_mbuf_timestamp_t ts = mbuf_timestamp_get(mbufs[i]);
-+		uint64_t expected = (uint64_t)base_sec * NS_PER_S
-+			+ (uint64_t)i * usec_increment * 1000;
-+
-+		if (ts != expected)
-+			printf("Packet %u: timestamp mismatch, expected=%"PRIu64" actual=%"PRIu64"\n",
-+			       i, expected, ts);
-+
-+		/* Verify monotonically increasing timestamps */
-+		if (i > 0) {
-+			TEST_ASSERT(ts >= prev_ts,
-+				    "Packet %u: timestamp not monotonic %"PRIu64" > %"PRIu64,
-+				    i, prev_ts, ts);
-+		}
-+		prev_ts = ts;
-+	}
-+
-+	rte_pktmbuf_free_bulk(mbufs, received);
-+	cleanup_pcap_vdev("net_pcap_ts", port_id);
-+
-+	printf("RX timestamp PASSED: %u packets with valid timestamps\n", received);
-+	return TEST_SUCCESS;
-+}
-+
-+/* Helper: Generate packets for multi-queue tests */
-+static int
-+generate_mq_test_packets(struct rte_mbuf **pkts, unsigned int nb_pkts, uint16_t queue_id)
-+{
-+	struct rte_ether_hdr eth_hdr;
-+	struct rte_ipv4_hdr ip_hdr;
-+	struct rte_udp_hdr udp_hdr;
-+	uint16_t pkt_data_len;
-+	unsigned int i;
-+
-+	initialize_eth_header(&eth_hdr, &src_mac, &dst_mac, RTE_ETHER_TYPE_IPV4, 0, 0);
-+	pkt_data_len = sizeof(struct rte_udp_hdr);
-+	initialize_udp_header(&udp_hdr, 1234, 1234, pkt_data_len);
-+	initialize_ipv4_header(&ip_hdr, IPV4_ADDR(192, 168, 1, 1), IPV4_ADDR(192, 168, 1, 2),
-+			       pkt_data_len + sizeof(struct rte_udp_hdr));
-+
-+	for (i = 0; i < nb_pkts; i++) {
-+		pkts[i] = rte_pktmbuf_alloc(mp);
-+		if (pkts[i] == NULL) {
-+			printf("Failed to allocate mbuf\n");
-+			while (i > 0)
-+				rte_pktmbuf_free(pkts[--i]);
-+			return -1;
-+		}
-+
-+		char *pkt_data = rte_pktmbuf_append(pkts[i], PACKET_BURST_GEN_PKT_LEN);
-+		if (pkt_data == NULL) {
-+			printf("Failed to append data to mbuf\n");
-+			rte_pktmbuf_free(pkts[i]);
-+			while (i > 0)
-+				rte_pktmbuf_free(pkts[--i]);
-+			return -1;
-+		}
-+
-+		size_t offset = 0;
-+		memcpy(pkt_data + offset, &eth_hdr, sizeof(eth_hdr));
-+		offset += sizeof(eth_hdr);
-+
-+		/* Mark packet with queue ID in IP packet_id field for tracing */
-+		ip_hdr.packet_id = rte_cpu_to_be_16((queue_id << 8) | (i & 0xFF));
-+		ip_hdr.hdr_checksum = 0;
-+		ip_hdr.hdr_checksum = rte_ipv4_cksum(&ip_hdr);
-+
-+		memcpy(pkt_data + offset, &ip_hdr, sizeof(ip_hdr));
-+		offset += sizeof(ip_hdr);
-+		memcpy(pkt_data + offset, &udp_hdr, sizeof(udp_hdr));
-+	}
-+	return (int)nb_pkts;
-+}
-+
-+/* Helper: Validate pcap file structure using libpcap */
-+static int
-+validate_pcap_file(const char *filename)
-+{
-+	pcap_t *pcap;
-+	char errbuf[PCAP_ERRBUF_SIZE];
-+
-+	pcap = pcap_open_offline(filename, errbuf);
-+	if (pcap == NULL) {
-+		printf("Failed to validate pcap file %s: %s\n", filename, errbuf);
++	if (port_id_a >= RTE_MAX_ETHPORTS || port_id_b >= RTE_MAX_ETHPORTS ||
++	    port_id_a == port_id_b) {
++		rte_errno = EINVAL;
 +		return -1;
 +	}
-+	if (pcap_datalink(pcap) != DLT_EN10MB) {
-+		printf("Unexpected datalink type: %d\n", pcap_datalink(pcap));
-+		pcap_close(pcap);
++
++	dev_a = &rte_eth_devices[port_id_a];
++	dev_b = &rte_eth_devices[port_id_b];
++
++	/* Verify both are ring PMD ports */
++	if (dev_a->dev_ops != &ops || dev_b->dev_ops != &ops) {
++		rte_errno = EINVAL;
 +		return -1;
 +	}
-+	pcap_close(pcap);
++
++	internals_a = dev_a->data->dev_private;
++	internals_b = dev_b->data->dev_private;
++
++	if (internals_a == NULL || internals_b == NULL) {
++		rte_errno = EINVAL;
++		return -1;
++	}
++
++	/* Neither port may already have a peer */
++	if (internals_a->peer_port_id < RTE_MAX_ETHPORTS ||
++	    internals_b->peer_port_id < RTE_MAX_ETHPORTS) {
++		rte_errno = EBUSY;
++		return -1;
++	}
++
++	internals_a->peer_port_id = port_id_b;
++	internals_b->peer_port_id = port_id_a;
++
 +	return 0;
 +}
 +
-+/*
-+ * Test: Multiple TX queues writing to separate pcap files
-+ *
-+ * This test creates a pcap PMD with multiple TX queues, each configured
-+ * to write to its own output file. We verify that:
-+ * 1. All packets from all queues are written
-+ * 2. Each resulting pcap file is valid
-+ * 3. Each file has the expected packet count
-+ */
-+static int
-+test_multi_tx_queue(void)
-+{
-+	char devargs[512];
-+	uint16_t port_id;
-+	struct rte_eth_conf port_conf;
-+	struct rte_eth_txconf tx_conf;
-+	struct rte_mbuf *pkts[MULTI_QUEUE_BURST_SIZE];
-+	uint16_t q;
-+	int ret;
-+	unsigned int total_tx = 0;
-+	unsigned int tx_per_queue[MULTI_QUEUE_NUM_QUEUES] = {0};
+ static int
+ eth_dev_ring_create(const char *name,
+ 		struct rte_vdev_device *vdev,
+@@ -564,6 +732,35 @@ eth_dev_ring_create(const char *name,
+ 		numa_node, action, eth_dev) < 0)
+ 		return -1;
+ 
++	/*
++	 * For ATTACH, find the CREATE peer that shares our rings and
++	 * establish a bidirectional peer link. This allows veth-like
++	 * carrier detection: each side's link state reflects whether
++	 * the other side is started.
++	 */
++	if (action == DEV_ATTACH) {
++		struct pmd_internals *internals = (*eth_dev)->data->dev_private;
++		uint16_t pid;
 +
-+	printf("Testing multiple TX queues to separate files\n");
++		RTE_ETH_FOREACH_DEV(pid) {
++			struct rte_eth_dev *candidate = &rte_eth_devices[pid];
++			struct pmd_internals *ci;
 +
-+	/* Create temp paths for each TX queue */
-+	for (q = 0; q < MULTI_QUEUE_NUM_QUEUES; q++) {
-+		char prefix[32];
-+		snprintf(prefix, sizeof(prefix), "pcap_multi_tx%u", q);
-+		TEST_ASSERT(create_temp_path(multi_tx_pcap_paths[q],
-+					     sizeof(multi_tx_pcap_paths[q]), prefix) == 0,
-+			    "Failed to create temp path for queue %u", q);
-+	}
++			if (candidate == *eth_dev)
++				continue;
++			ci = candidate->data->dev_private;
++			if (ci == NULL || ci->action != DEV_CREATE)
++				continue;
 +
-+	/* Create the pcap PMD with multiple TX queues to separate files */
-+	ret = snprintf(devargs, sizeof(devargs), "tx_pcap=%s,tx_pcap=%s,tx_pcap=%s,tx_pcap=%s",
-+		 multi_tx_pcap_paths[0], multi_tx_pcap_paths[1],
-+		 multi_tx_pcap_paths[2], multi_tx_pcap_paths[3]);
-+	TEST_ASSERT(ret > 0 && ret < (int)sizeof(devargs),
-+		    "devargs string truncated");
-+
-+	ret = rte_vdev_init("net_pcap_multi_tx", devargs);
-+	TEST_ASSERT_SUCCESS(ret, "Failed to create pcap PMD: %s", rte_strerror(-ret));
-+
-+	ret = rte_eth_dev_get_port_by_name("net_pcap_multi_tx", &port_id);
-+	TEST_ASSERT_SUCCESS(ret, "Cannot find added pcap device");
-+
-+	memset(&port_conf, 0, sizeof(port_conf));
-+	ret = rte_eth_dev_configure(port_id, 0, MULTI_QUEUE_NUM_QUEUES, &port_conf);
-+	TEST_ASSERT_SUCCESS(ret, "Failed to configure device: %s", rte_strerror(-ret));
-+
-+	memset(&tx_conf, 0, sizeof(tx_conf));
-+	for (q = 0; q < MULTI_QUEUE_NUM_QUEUES; q++) {
-+		ret = rte_eth_tx_queue_setup(port_id, q, RING_SIZE,
-+					     rte_eth_dev_socket_id(port_id), &tx_conf);
-+		TEST_ASSERT_SUCCESS(ret, "Failed to setup TX queue %u: %s", q, rte_strerror(-ret));
-+	}
-+
-+	ret = rte_eth_dev_start(port_id);
-+	TEST_ASSERT_SUCCESS(ret, "Failed to start device: %s", rte_strerror(-ret));
-+
-+	/* Transmit packets from each queue */
-+	for (q = 0; q < MULTI_QUEUE_NUM_QUEUES; q++) {
-+		unsigned int pkts_to_send = MULTI_QUEUE_NUM_PACKETS / MULTI_QUEUE_NUM_QUEUES;
-+
-+		while (tx_per_queue[q] < pkts_to_send) {
-+			unsigned int burst = RTE_MIN(MULTI_QUEUE_BURST_SIZE,
-+						     pkts_to_send - tx_per_queue[q]);
-+
-+			ret = generate_mq_test_packets(pkts, burst, q);
-+			TEST_ASSERT(ret >= 0, "Failed to generate packets for queue %u", q);
-+
-+			uint16_t nb_tx = rte_eth_tx_burst(port_id, q, pkts, burst);
-+			for (unsigned int i = nb_tx; i < burst; i++)
-+				rte_pktmbuf_free(pkts[i]);
-+
-+			tx_per_queue[q] += nb_tx;
-+			total_tx += nb_tx;
-+
-+			if (nb_tx == 0) {
-+				printf("TX stall on queue %u\n", q);
++			/* Check if the candidate shares our rings */
++			if (ci->rx_ring_queues[0].rng == internals->rx_ring_queues[0].rng) {
++				internals->peer_port_id = pid;
++				ci->peer_port_id = (*eth_dev)->data->port_id;
 +				break;
 +			}
 +		}
-+		printf("  Queue %u: transmitted %u packets\n", q, tx_per_queue[q]);
 +	}
 +
-+	rte_eth_dev_stop(port_id);
-+	rte_vdev_uninit("net_pcap_multi_tx");
-+	rte_delay_ms(100);
-+
-+	/* Validate each pcap file */
-+	unsigned int total_in_files = 0;
-+	for (q = 0; q < MULTI_QUEUE_NUM_QUEUES; q++) {
-+		ret = validate_pcap_file(multi_tx_pcap_paths[q]);
-+		TEST_ASSERT_SUCCESS(ret, "pcap file for queue %u is invalid", q);
-+
-+		int pkt_count = count_pcap_packets(multi_tx_pcap_paths[q]);
-+		TEST_ASSERT(pkt_count >= 0, "Could not count packets in pcap file for queue %u", q);
-+
-+		printf("  Queue %u file: %d packets\n", q, pkt_count);
-+		TEST_ASSERT_EQUAL((unsigned int)pkt_count, tx_per_queue[q],
-+				  "Queue %u: file has %d packets, expected %u",
-+				  q, pkt_count, tx_per_queue[q]);
-+		total_in_files += pkt_count;
-+	}
-+
-+	printf("  Total packets transmitted: %u\n", total_tx);
-+	printf("  Total packets in all files: %u\n", total_in_files);
-+
-+	TEST_ASSERT_EQUAL(total_in_files, total_tx,
-+			  "Total packet count mismatch: expected %u, got %u",
-+			  total_tx, total_in_files);
-+
-+	printf("Multi-TX queue PASSED\n");
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test: Multiple RX queues reading from the same pcap file
-+ *
-+ * This test creates a pcap PMD with multiple RX queues all configured
-+ * to read from the same input file. We verify that:
-+ * 1. Each queue can read packets
-+ * 2. The total packets read equals the file content (or expected behavior)
-+ */
-+static int
-+test_multi_rx_queue_same_file(void)
-+{
-+	char devargs[512];
-+	uint16_t port_id;
-+	struct rte_eth_conf port_conf;
-+	struct rte_eth_rxconf rx_conf;
-+	struct rte_mbuf *pkts[MULTI_QUEUE_BURST_SIZE];
-+	uint16_t q;
-+	int ret;
-+	unsigned int total_rx = 0;
-+	unsigned int rx_per_queue[MULTI_QUEUE_NUM_QUEUES] = {0};
-+	unsigned int seed_packets = MULTI_QUEUE_NUM_PACKETS;
-+	unsigned int expected_total;
-+
-+	printf("Testing multiple RX queues from same file\n");
-+
-+	TEST_ASSERT(create_temp_path(multi_rx_pcap_path, sizeof(multi_rx_pcap_path),
-+				     "pcap_multi_rx") == 0, "Failed to create temp path");
-+
-+	ret = create_test_pcap(multi_rx_pcap_path, seed_packets);
-+	TEST_ASSERT_SUCCESS(ret, "Failed to create seed pcap file");
-+	printf("  Created seed pcap file with %u packets\n", seed_packets);
-+
-+	ret = snprintf(devargs, sizeof(devargs), "rx_pcap=%s,rx_pcap=%s,rx_pcap=%s,rx_pcap=%s",
-+		 multi_rx_pcap_path, multi_rx_pcap_path, multi_rx_pcap_path, multi_rx_pcap_path);
-+	TEST_ASSERT(ret > 0 && ret < (int)sizeof(devargs),
-+		    "devargs string truncated");
-+
-+	ret = rte_vdev_init("net_pcap_multi_rx", devargs);
-+	TEST_ASSERT_SUCCESS(ret, "Failed to create pcap PMD: %s", rte_strerror(-ret));
-+
-+	ret = rte_eth_dev_get_port_by_name("net_pcap_multi_rx", &port_id);
-+	TEST_ASSERT_SUCCESS(ret, "Cannot find added pcap device");
-+
-+	memset(&port_conf, 0, sizeof(port_conf));
-+	ret = rte_eth_dev_configure(port_id, MULTI_QUEUE_NUM_QUEUES, 0, &port_conf);
-+	TEST_ASSERT_SUCCESS(ret, "Failed to configure device: %s", rte_strerror(-ret));
-+
-+	memset(&rx_conf, 0, sizeof(rx_conf));
-+	for (q = 0; q < MULTI_QUEUE_NUM_QUEUES; q++) {
-+		ret = rte_eth_rx_queue_setup(port_id, q, RING_SIZE,
-+					     rte_eth_dev_socket_id(port_id), &rx_conf, mp);
-+		TEST_ASSERT_SUCCESS(ret, "Failed to setup RX queue %u: %s", q, rte_strerror(-ret));
-+	}
-+
-+	ret = rte_eth_dev_start(port_id);
-+	TEST_ASSERT_SUCCESS(ret, "Failed to start device: %s", rte_strerror(-ret));
-+
-+	/* Receive packets from all queues. Each queue has its own file handle. */
-+	int empty_rounds = 0;
-+	while (empty_rounds < 10) {
-+		int received_this_round = 0;
-+		for (q = 0; q < MULTI_QUEUE_NUM_QUEUES; q++) {
-+			uint16_t nb_rx = rte_eth_rx_burst(port_id, q, pkts, MULTI_QUEUE_BURST_SIZE);
-+			if (nb_rx > 0) {
-+				rx_per_queue[q] += nb_rx;
-+				total_rx += nb_rx;
-+				received_this_round += nb_rx;
-+				rte_pktmbuf_free_bulk(pkts, nb_rx);
-+			}
-+		}
-+		if (received_this_round == 0)
-+			empty_rounds++;
-+		else
-+			empty_rounds = 0;
-+	}
-+
-+	printf("  RX Results:\n");
-+	for (q = 0; q < MULTI_QUEUE_NUM_QUEUES; q++)
-+		printf("    Queue %u: received %u packets\n", q, rx_per_queue[q]);
-+	printf("    Total received: %u packets\n", total_rx);
-+
-+	/* Each RX queue opens its own file handle, so each reads all packets */
-+	expected_total = seed_packets * MULTI_QUEUE_NUM_QUEUES;
-+	printf("    Expected total (each queue reads all): %u packets\n", expected_total);
-+
-+	rte_eth_dev_stop(port_id);
-+	rte_vdev_uninit("net_pcap_multi_rx");
-+
-+	TEST_ASSERT(total_rx > 0, "No packets received at all");
-+	for (q = 0; q < MULTI_QUEUE_NUM_QUEUES; q++) {
-+		TEST_ASSERT(rx_per_queue[q] > 0, "Queue %u received no packets", q);
-+		TEST_ASSERT_EQUAL(rx_per_queue[q], seed_packets,
-+				  "Queue %u received %u packets, expected %u",
-+				  q, rx_per_queue[q], seed_packets);
-+	}
-+	TEST_ASSERT_EQUAL(total_rx, expected_total,
-+			  "Total RX mismatch: expected %u, got %u", expected_total, total_rx);
-+
-+	printf("Multi-RX queue PASSED\n");
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test: Device info reports correct queue counts and MTU limits
-+ *
-+ * This test verifies that rte_eth_dev_info_get() returns correct values:
-+ * 1. max_rx_queues matches the number of rx_pcap files passed
-+ * 2. max_tx_queues matches the number of tx_pcap files passed
-+ * 3. max_rx_pktlen and max_mtu are based on default snapshot length
-+ */
-+static int
-+test_dev_info(void)
-+{
-+	struct rte_eth_dev_info dev_info;
-+	char devargs[512];
-+	char rx_paths[3][PATH_MAX];
-+	char tx_paths[2][PATH_MAX];
-+	uint16_t port_id;
-+	int ret;
-+	unsigned int i;
-+	/* Default snapshot length is 65535 */
-+	const uint32_t default_snaplen = 65535;
-+	const uint32_t expected_max_mtu = default_snaplen - RTE_ETHER_HDR_LEN;
-+
-+	printf("Testing device info reporting\n");
-+
-+	/* Create temp RX pcap files (3 queues) */
-+	for (i = 0; i < 3; i++) {
-+		char prefix[32];
-+		snprintf(prefix, sizeof(prefix), "pcap_devinfo_rx%u", i);
-+		TEST_ASSERT(create_temp_path(rx_paths[i], sizeof(rx_paths[i]), prefix) == 0,
-+			    "Failed to create RX temp path %u", i);
-+		TEST_ASSERT(create_test_pcap(rx_paths[i], 1) == 0,
-+			    "Failed to create RX pcap %u", i);
-+	}
-+
-+	/* Create temp TX pcap files (2 queues) */
-+	for (i = 0; i < 2; i++) {
-+		char prefix[32];
-+		snprintf(prefix, sizeof(prefix), "pcap_devinfo_tx%u", i);
-+		TEST_ASSERT(create_temp_path(tx_paths[i], sizeof(tx_paths[i]), prefix) == 0,
-+			    "Failed to create TX temp path %u", i);
-+	}
-+
-+	/* Create device with 3 RX queues and 2 TX queues */
-+	ret = snprintf(devargs, sizeof(devargs), "rx_pcap=%s,rx_pcap=%s,rx_pcap=%s,tx_pcap=%s,tx_pcap=%s",
-+		 rx_paths[0], rx_paths[1], rx_paths[2], tx_paths[0], tx_paths[1]);
-+	TEST_ASSERT(ret > 0 && ret < (int)sizeof(devargs),
-+		    "devargs string truncated");
-+
-+	ret = rte_vdev_init("net_pcap_devinfo", devargs);
-+	TEST_ASSERT_SUCCESS(ret, "Failed to create pcap PMD: %s", rte_strerror(-ret));
-+
-+	ret = rte_eth_dev_get_port_by_name("net_pcap_devinfo", &port_id);
-+	TEST_ASSERT_SUCCESS(ret, "Cannot find added pcap device");
-+
-+	ret = rte_eth_dev_info_get(port_id, &dev_info);
-+	TEST_ASSERT_SUCCESS(ret, "Failed to get device info: %s", rte_strerror(-ret));
-+
-+	printf("  Device info:\n");
-+	printf("    driver_name: %s\n", dev_info.driver_name);
-+	printf("    max_rx_queues: %u (expected: 3)\n", dev_info.max_rx_queues);
-+	printf("    max_tx_queues: %u (expected: 2)\n", dev_info.max_tx_queues);
-+	printf("    max_rx_pktlen: %u (expected: %u)\n", dev_info.max_rx_pktlen, default_snaplen);
-+	printf("    max_mtu: %u (expected: %u)\n", dev_info.max_mtu, expected_max_mtu);
-+
-+	/* Verify queue counts match number of pcap files */
-+	TEST_ASSERT_EQUAL(dev_info.max_rx_queues, 3U,
-+			  "max_rx_queues mismatch: expected 3, got %u", dev_info.max_rx_queues);
-+	TEST_ASSERT_EQUAL(dev_info.max_tx_queues, 2U,
-+			  "max_tx_queues mismatch: expected 2, got %u", dev_info.max_tx_queues);
-+
-+	/* Verify max_rx_pktlen equals default snapshot length */
-+	TEST_ASSERT_EQUAL(dev_info.max_rx_pktlen, default_snaplen,
-+			  "max_rx_pktlen mismatch: expected %u, got %u",
-+			  default_snaplen, dev_info.max_rx_pktlen);
-+
-+	/* Verify max_mtu is snapshot_len minus ethernet header */
-+	TEST_ASSERT_EQUAL(dev_info.max_mtu, expected_max_mtu,
-+			  "max_mtu mismatch: expected %u, got %u",
-+			  expected_max_mtu, dev_info.max_mtu);
-+
-+	rte_vdev_uninit("net_pcap_devinfo");
-+
-+	/* Cleanup temp files */
-+	for (i = 0; i < 3; i++)
-+		remove_temp_file(rx_paths[i]);
-+	for (i = 0; i < 2; i++)
-+		remove_temp_file(tx_paths[i]);
-+
-+	printf("Device info PASSED\n");
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test: Custom snapshot length (snaplen) parameter
-+ *
-+ * This test verifies that the snaplen devarg works correctly:
-+ * 1. max_rx_pktlen reflects the custom snapshot length
-+ * 2. max_mtu is calculated as snaplen - ethernet header
-+ */
-+static int
-+test_snaplen(void)
-+{
-+	struct rte_eth_dev_info dev_info;
-+	char devargs[512];
-+	char rx_path[PATH_MAX];
-+	char tx_path[PATH_MAX];
-+	uint16_t port_id;
-+	int ret;
-+	const uint32_t custom_snaplen = 9000;
-+	const uint32_t expected_max_mtu = custom_snaplen - RTE_ETHER_HDR_LEN;
-+
-+	printf("Testing custom snapshot length parameter\n");
-+
-+	/* Create temp files */
-+	TEST_ASSERT(create_temp_path(rx_path, sizeof(rx_path), "pcap_snaplen_rx") == 0,
-+		    "Failed to create RX temp path");
-+	TEST_ASSERT(create_test_pcap(rx_path, 1) == 0,
-+		    "Failed to create RX pcap");
-+	TEST_ASSERT(create_temp_path(tx_path, sizeof(tx_path), "pcap_snaplen_tx") == 0,
-+		    "Failed to create TX temp path");
-+
-+	/* Create device with custom snaplen */
-+	ret = snprintf(devargs, sizeof(devargs), "rx_pcap=%s,tx_pcap=%s,snaplen=%u",
-+		 rx_path, tx_path, custom_snaplen);
-+	TEST_ASSERT(ret > 0 && ret < (int)sizeof(devargs),
-+		    "devargs string truncated");
-+
-+	ret = rte_vdev_init("net_pcap_snaplen", devargs);
-+	TEST_ASSERT_SUCCESS(ret, "Failed to create pcap PMD: %s", rte_strerror(-ret));
-+
-+	ret = rte_eth_dev_get_port_by_name("net_pcap_snaplen", &port_id);
-+	TEST_ASSERT_SUCCESS(ret, "Cannot find added pcap device");
-+
-+	ret = rte_eth_dev_info_get(port_id, &dev_info);
-+	TEST_ASSERT_SUCCESS(ret, "Failed to get device info: %s", rte_strerror(-ret));
-+
-+	printf("  Custom snaplen: %u\n", custom_snaplen);
-+	printf("  max_rx_pktlen: %u (expected: %u)\n", dev_info.max_rx_pktlen, custom_snaplen);
-+	printf("  max_mtu: %u (expected: %u)\n", dev_info.max_mtu, expected_max_mtu);
-+
-+	/* Verify max_rx_pktlen equals custom snapshot length */
-+	TEST_ASSERT_EQUAL(dev_info.max_rx_pktlen, custom_snaplen,
-+			  "max_rx_pktlen mismatch: expected %u, got %u",
-+			  custom_snaplen, dev_info.max_rx_pktlen);
-+
-+	/* Verify max_mtu is snaplen minus ethernet header */
-+	TEST_ASSERT_EQUAL(dev_info.max_mtu, expected_max_mtu,
-+			  "max_mtu mismatch: expected %u, got %u",
-+			  expected_max_mtu, dev_info.max_mtu);
-+
-+	rte_vdev_uninit("net_pcap_snaplen");
-+
-+	/* Cleanup temp files */
-+	remove_temp_file(rx_path);
-+	remove_temp_file(tx_path);
-+
-+	printf("Snapshot length test PASSED\n");
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test: Snapshot length truncation behavior
-+ *
-+ * This test verifies that packets larger than snaplen are properly truncated
-+ * when written to pcap files:
-+ * 1. caplen in pcap header is limited to snaplen
-+ * 2. len in pcap header preserves original packet length
-+ * 3. Only snaplen bytes of data are written
-+ */
-+static int
-+test_snaplen_truncation(void)
-+{
-+	struct rte_mbuf *mbufs[NUM_PACKETS];
-+	char devargs[512];
-+	char tx_path[PATH_MAX];
-+	uint16_t port_id;
-+	int ret, nb_tx, nb_gen;
-+	unsigned int pkt_count;
-+	const uint32_t test_snaplen = 100;
-+	const uint8_t pkt_size = 200;
-+
-+	printf("Testing snaplen truncation behavior\n");
-+
-+	/* Create temp TX file */
-+	TEST_ASSERT(create_temp_path(tx_path, sizeof(tx_path), "pcap_trunc_tx") == 0,
-+		    "Failed to create TX temp path");
-+
-+	/* Create device with small snaplen */
-+	ret = snprintf(devargs, sizeof(devargs), "tx_pcap=%s,snaplen=%u",
-+		 tx_path, test_snaplen);
-+	TEST_ASSERT(ret > 0 && ret < (int)sizeof(devargs),
-+		    "devargs string truncated");
-+
-+	ret = rte_vdev_init("net_pcap_trunc", devargs);
-+	TEST_ASSERT_SUCCESS(ret, "Failed to create pcap PMD: %s", rte_strerror(-ret));
-+
-+	ret = rte_eth_dev_get_port_by_name("net_pcap_trunc", &port_id);
-+	TEST_ASSERT_SUCCESS(ret, "Cannot find added pcap device");
-+
-+	TEST_ASSERT(setup_pcap_port(port_id) == 0, "Failed to setup port");
-+
-+	/* Generate packets larger than snaplen */
-+	nb_gen = generate_test_packets(mp, mbufs, NUM_PACKETS, pkt_size);
-+	TEST_ASSERT_EQUAL(nb_gen, NUM_PACKETS,
-+			  "Failed to generate packets: got %d, expected %d",
-+			  nb_gen, NUM_PACKETS);
-+
-+	printf("  Sending %d packets of size %u with snaplen=%u\n",
-+	       NUM_PACKETS, pkt_size, test_snaplen);
-+
-+	/* Transmit packets */
-+	nb_tx = rte_eth_tx_burst(port_id, 0, mbufs, NUM_PACKETS);
-+	TEST_ASSERT_EQUAL(nb_tx, NUM_PACKETS,
-+			  "TX burst failed: sent %d/%d", nb_tx, NUM_PACKETS);
-+
-+	cleanup_pcap_vdev("net_pcap_trunc", port_id);
-+
-+	/* Verify truncation in output file */
-+	ret = verify_pcap_truncation(tx_path, test_snaplen, pkt_size, &pkt_count);
-+	TEST_ASSERT_SUCCESS(ret, "Truncation verification failed");
-+	TEST_ASSERT_EQUAL(pkt_count, (unsigned int)NUM_PACKETS,
-+			  "Packet count mismatch: got %u, expected %d",
-+			  pkt_count, NUM_PACKETS);
-+
-+	printf("  Verified %u packets: caplen=%u, len=%u\n",
-+	       pkt_count, test_snaplen, pkt_size);
-+
-+	/* Cleanup */
-+	remove_temp_file(tx_path);
-+
-+	printf("Snaplen truncation test PASSED\n");
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test: VLAN Strip on RX
-+ *
-+ * This test verifies that when VLAN strip offload is enabled:
-+ * 1. VLAN-tagged packets from pcap file have tags removed
-+ * 2. VLAN info is stored in mbuf metadata (vlan_tci, ol_flags)
-+ * 3. Packet data no longer contains the 4-byte VLAN tag
-+ */
-+static int
-+test_vlan_strip_rx(void)
-+{
-+	struct rte_mbuf *mbufs[NUM_PACKETS];
-+	char devargs[256];
-+	uint16_t port_id;
-+	unsigned int received, i;
-+	size_t expected_len;
-+	int ret;
-+
-+	printf("Testing VLAN strip on RX\n");
-+
-+	/* Create pcap file with VLAN-tagged packets */
-+	TEST_ASSERT(create_temp_path(vlan_rx_pcap_path, sizeof(vlan_rx_pcap_path),
-+				     "pcap_vlan_rx") == 0,
-+		    "Failed to create temp file path");
-+
-+	TEST_ASSERT(create_vlan_tagged_pcap(vlan_rx_pcap_path, NUM_PACKETS,
-+					    TEST_VLAN_ID, TEST_VLAN_PCP) == 0,
-+		    "Failed to create VLAN-tagged pcap file");
-+
-+	printf("  Created VLAN-tagged pcap with %d packets (VLAN ID=%u, PCP=%u)\n",
-+	       NUM_PACKETS, TEST_VLAN_ID, TEST_VLAN_PCP);
-+
-+	/* Create vdev and configure with VLAN strip enabled */
-+	ret = snprintf(devargs, sizeof(devargs), "rx_pcap=%s", vlan_rx_pcap_path);
-+	TEST_ASSERT(ret > 0 && ret < (int)sizeof(devargs),
-+		    "devargs string truncated");
-+	TEST_ASSERT(create_pcap_vdev("net_pcap_vlan_rx", devargs, &port_id) == 0,
-+		    "Failed to create RX vdev");
-+	TEST_ASSERT(setup_pcap_port_vlan_strip(port_id) == 0,
-+		    "Failed to setup port with VLAN strip");
-+
-+	/* Receive packets */
-+	receive_packets(port_id, mbufs, NUM_PACKETS, &received);
-+	TEST_ASSERT_EQUAL(received, (unsigned int)NUM_PACKETS,
-+			  "Received %u packets, expected %d", received, NUM_PACKETS);
-+
-+	/* Expected length after VLAN strip (original - 4 bytes VLAN header) */
-+	expected_len = sizeof(struct rte_ether_hdr) + sizeof(struct rte_ipv4_hdr) +
-+		       sizeof(struct rte_udp_hdr) + 18;  /* 18 bytes payload */
-+
-+	/* Verify VLAN was stripped from each packet */
-+	for (i = 0; i < received; i++) {
-+		/* Check packet no longer has VLAN tag in data */
-+		TEST_ASSERT(verify_no_vlan_tag(mbufs[i]) == 0,
-+			    "Packet %u still has VLAN tag after strip", i);
-+
-+		/* Check packet length decreased by 4 (VLAN header size) */
-+		TEST_ASSERT_EQUAL(rte_pktmbuf_pkt_len(mbufs[i]), expected_len,
-+				  "Packet %u length %u != expected %zu after strip",
-+				  i, rte_pktmbuf_pkt_len(mbufs[i]), expected_len);
-+
-+		/* Check VLAN info stored in mbuf metadata */
-+		TEST_ASSERT(mbufs[i]->ol_flags & RTE_MBUF_F_RX_VLAN,
-+			    "Packet %u: RX_VLAN flag not set", i);
-+		TEST_ASSERT(mbufs[i]->ol_flags & RTE_MBUF_F_RX_VLAN_STRIPPED,
-+			    "Packet %u: RX_VLAN_STRIPPED flag not set", i);
-+
-+		/* Verify the stored VLAN TCI contains expected values */
-+		uint16_t expected_tci = (TEST_VLAN_PCP << 13) | TEST_VLAN_ID;
-+		TEST_ASSERT_EQUAL(mbufs[i]->vlan_tci, expected_tci,
-+				  "Packet %u: vlan_tci %u != expected %u",
-+				  i, mbufs[i]->vlan_tci, expected_tci);
-+	}
-+
-+	rte_pktmbuf_free_bulk(mbufs, received);
-+	cleanup_pcap_vdev("net_pcap_vlan_rx", port_id);
-+
-+	printf("VLAN strip RX PASSED: %u packets verified\n", received);
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test: VLAN Insert on TX
-+ *
-+ * This test verifies that when TX VLAN insert offload is used:
-+ * 1. Untagged packets with RTE_MBUF_F_TX_VLAN flag get VLAN tag inserted
-+ * 2. The written pcap file contains properly VLAN-tagged packets
-+ * 3. VLAN ID and PCP from mbuf vlan_tci are correctly inserted
-+ */
-+static int
-+test_vlan_insert_tx(void)
-+{
-+	struct rte_mbuf *mbufs[NUM_PACKETS];
-+	char devargs[256];
-+	uint16_t port_id;
-+	int nb_tx, pkt_count;
-+	int ret;
-+
-+	printf("Testing VLAN insert on TX\n");
-+
-+	/* Create temp file for TX output */
-+	TEST_ASSERT(create_temp_path(vlan_tx_pcap_path, sizeof(vlan_tx_pcap_path),
-+				     "pcap_vlan_tx") == 0,
-+		    "Failed to create temp file path");
-+
-+	/* Create vdev */
-+	ret = snprintf(devargs, sizeof(devargs), "tx_pcap=%s", vlan_tx_pcap_path);
-+	TEST_ASSERT(ret > 0 && ret < (int)sizeof(devargs),
-+		    "devargs string truncated");
-+	TEST_ASSERT(create_pcap_vdev("net_pcap_vlan_tx", devargs, &port_id) == 0,
-+		    "Failed to create TX vdev");
-+	TEST_ASSERT(setup_pcap_port(port_id) == 0,
-+		    "Failed to setup TX port");
-+
-+	/* Allocate mbufs with VLAN TX offload configured */
-+	TEST_ASSERT(alloc_vlan_tx_mbufs(mbufs, NUM_PACKETS,
-+					TEST_VLAN_ID, TEST_VLAN_PCP) == 0,
-+		    "Failed to allocate VLAN TX mbufs");
-+
-+	printf("  Transmitting %d untagged packets with TX_VLAN offload "
-+	       "(VLAN ID=%u, PCP=%u)\n", NUM_PACKETS, TEST_VLAN_ID, TEST_VLAN_PCP);
-+
-+	/* Transmit packets - driver should insert VLAN tags */
-+	nb_tx = rte_eth_tx_burst(port_id, 0, mbufs, NUM_PACKETS);
-+	TEST_ASSERT_EQUAL(nb_tx, NUM_PACKETS,
-+			  "TX burst failed: sent %d/%d", nb_tx, NUM_PACKETS);
-+
-+	cleanup_pcap_vdev("net_pcap_vlan_tx", port_id);
-+
-+	/* Verify the output pcap file contains VLAN-tagged packets */
-+	pkt_count = count_vlan_packets_in_pcap(vlan_tx_pcap_path, TEST_VLAN_ID, 1);
-+	TEST_ASSERT(pkt_count >= 0, "Error verifying VLAN tags in output pcap");
-+	TEST_ASSERT_EQUAL(pkt_count, NUM_PACKETS,
-+			  "Pcap file has %d packets, expected %d",
-+			  pkt_count, NUM_PACKETS);
-+
-+	printf("VLAN insert TX PASSED: %d VLAN-tagged packets written\n", NUM_PACKETS);
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test: VLAN Strip disabled (packets should remain tagged)
-+ *
-+ * This test verifies that when VLAN strip is NOT enabled:
-+ * 1. VLAN-tagged packets from pcap file keep their tags
-+ * 2. Packet data still contains the 4-byte VLAN header
-+ */
-+static int
-+test_vlan_no_strip_rx(void)
-+{
-+	struct rte_mbuf *mbufs[NUM_PACKETS];
-+	char devargs[256];
-+	uint16_t port_id;
-+	unsigned int received, i;
-+	size_t expected_len;
-+	int ret;
-+
-+	printf("Testing VLAN packets without strip (offload disabled)\n");
-+
-+	/* Create pcap file with VLAN-tagged packets if not already created */
-+	if (access(vlan_rx_pcap_path, F_OK) != 0) {
-+		TEST_ASSERT(create_temp_path(vlan_rx_pcap_path, sizeof(vlan_rx_pcap_path),
-+					     "pcap_vlan_nostrip") == 0,
-+			    "Failed to create temp file path");
-+		TEST_ASSERT(create_vlan_tagged_pcap(vlan_rx_pcap_path, NUM_PACKETS,
-+						    TEST_VLAN_ID, TEST_VLAN_PCP) == 0,
-+			    "Failed to create VLAN-tagged pcap file");
-+	}
-+
-+	/* Create vdev and configure WITHOUT VLAN strip */
-+	ret = snprintf(devargs, sizeof(devargs), "rx_pcap=%s", vlan_rx_pcap_path);
-+	TEST_ASSERT(ret > 0 && ret < (int)sizeof(devargs),
-+		    "devargs string truncated");
-+	TEST_ASSERT(create_pcap_vdev("net_pcap_vlan_nostrip", devargs, &port_id) == 0,
-+		    "Failed to create RX vdev");
-+	/* Use standard setup which does NOT enable VLAN strip */
-+	TEST_ASSERT(setup_pcap_port(port_id) == 0,
-+		    "Failed to setup port");
-+
-+	/* Receive packets */
-+	receive_packets(port_id, mbufs, NUM_PACKETS, &received);
-+	TEST_ASSERT_EQUAL(received, (unsigned int)NUM_PACKETS,
-+			  "Received %u packets, expected %d", received, NUM_PACKETS);
-+
-+	/* Expected length with VLAN tag still present */
-+	expected_len = sizeof(struct rte_ether_hdr) + sizeof(struct rte_vlan_hdr) +
-+		       sizeof(struct rte_ipv4_hdr) + sizeof(struct rte_udp_hdr) + 18;
-+
-+	/* Verify VLAN tag is still present in each packet */
-+	for (i = 0; i < received; i++) {
-+		/* Check packet still has VLAN tag */
-+		TEST_ASSERT(verify_vlan_tag(mbufs[i], TEST_VLAN_ID, TEST_VLAN_PCP) == 0,
-+			    "Packet %u: VLAN tag verification failed", i);
-+
-+		/* Check packet length unchanged */
-+		TEST_ASSERT_EQUAL(rte_pktmbuf_pkt_len(mbufs[i]), expected_len,
-+				  "Packet %u length %u != expected %zu",
-+				  i, rte_pktmbuf_pkt_len(mbufs[i]), expected_len);
-+
-+		/* VLAN strip flags should NOT be set */
-+		TEST_ASSERT(!(mbufs[i]->ol_flags & RTE_MBUF_F_RX_VLAN_STRIPPED),
-+			    "Packet %u: RX_VLAN_STRIPPED flag set unexpectedly", i);
-+	}
-+
-+	rte_pktmbuf_free_bulk(mbufs, received);
-+	cleanup_pcap_vdev("net_pcap_vlan_nostrip", port_id);
-+
-+	printf("VLAN no-strip RX PASSED: %u packets verified with tags intact\n", received);
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test: Runtime VLAN offload configuration via rte_eth_dev_set_vlan_offload
-+ *
-+ * This test verifies that VLAN strip can be enabled/disabled at runtime
-+ * using the standard ethdev API rather than only at configure time.
-+ * Uses infinite_rx mode so the same packets can be read in each phase.
-+ */
-+static int
-+test_vlan_offload_set(void)
-+{
-+	struct rte_mbuf *mbufs[MAX_PKT_BURST];
-+	char vlan_set_pcap_path[PATH_MAX];
-+	char devargs[512];
-+	uint16_t port_id;
-+	struct rte_eth_conf port_conf = { 0 };
-+	unsigned int i;
-+	uint16_t nb_rx;
-+	int ret, current_offload;
-+	size_t tagged_len, untagged_len;
-+
-+	printf("Testing runtime VLAN offload configuration\n");
-+
-+	/* Create pcap file with VLAN-tagged packets */
-+	TEST_ASSERT(create_temp_path(vlan_set_pcap_path, sizeof(vlan_set_pcap_path),
-+				     "pcap_vlan_set") == 0,
-+		    "Failed to create temp file path");
-+
-+	TEST_ASSERT(create_vlan_tagged_pcap(vlan_set_pcap_path, NUM_PACKETS,
-+					    TEST_VLAN_ID, TEST_VLAN_PCP) == 0,
-+		    "Failed to create VLAN-tagged pcap file");
-+
-+	/* Use infinite_rx so packets are always available */
-+	ret = snprintf(devargs, sizeof(devargs),
-+		       "rx_pcap=%s,infinite_rx=1", vlan_set_pcap_path);
-+	TEST_ASSERT(ret > 0 && ret < (int)sizeof(devargs),
-+		    "devargs string truncated");
-+	TEST_ASSERT(create_pcap_vdev("net_pcap_vlan_set", devargs, &port_id) == 0,
-+		    "Failed to create RX vdev");
-+
-+	/* Configure WITHOUT VLAN strip initially and start */
-+	TEST_ASSERT(setup_pcap_port_conf(port_id, &port_conf) == 0,
-+		    "Failed to setup port");
-+
-+	/* Expected lengths */
-+	tagged_len = sizeof(struct rte_ether_hdr) + sizeof(struct rte_vlan_hdr) +
-+		     sizeof(struct rte_ipv4_hdr) + sizeof(struct rte_udp_hdr) + 18;
-+	untagged_len = sizeof(struct rte_ether_hdr) + sizeof(struct rte_ipv4_hdr) +
-+		       sizeof(struct rte_udp_hdr) + 18;
-+
-+	/* Verify VLAN strip is initially disabled */
-+	current_offload = rte_eth_dev_get_vlan_offload(port_id);
-+	TEST_ASSERT(!(current_offload & RTE_ETH_VLAN_STRIP_OFFLOAD),
-+		    "VLAN strip should be disabled initially");
-+
-+	/*
-+	 * Phase 1: VLAN strip disabled - packets should have tags
-+	 */
-+	printf("  Phase 1: VLAN strip disabled\n");
-+	nb_rx = rte_eth_rx_burst(port_id, 0, mbufs, MAX_PKT_BURST);
-+	TEST_ASSERT(nb_rx > 0, "No packets received in phase 1");
-+
-+	for (i = 0; i < nb_rx; i++) {
-+		TEST_ASSERT_EQUAL(rte_pktmbuf_pkt_len(mbufs[i]), tagged_len,
-+				  "Phase 1 packet %u: expected tagged length %zu, got %u",
-+				  i, tagged_len, rte_pktmbuf_pkt_len(mbufs[i]));
-+	}
-+	rte_pktmbuf_free_bulk(mbufs, nb_rx);
-+	printf("    Received %u packets with VLAN tags intact\n", nb_rx);
-+
-+	/*
-+	 * Phase 2: Enable VLAN strip at runtime - packets should be stripped
-+	 */
-+	printf("  Phase 2: Enabling VLAN strip via rte_eth_dev_set_vlan_offload\n");
-+	ret = rte_eth_dev_set_vlan_offload(port_id, RTE_ETH_VLAN_STRIP_OFFLOAD);
-+	TEST_ASSERT(ret == 0, "Failed to enable VLAN strip: %s", rte_strerror(-ret));
-+
-+	current_offload = rte_eth_dev_get_vlan_offload(port_id);
-+	TEST_ASSERT(current_offload & RTE_ETH_VLAN_STRIP_OFFLOAD,
-+		    "VLAN strip should be enabled after set_vlan_offload");
-+
-+	nb_rx = rte_eth_rx_burst(port_id, 0, mbufs, MAX_PKT_BURST);
-+	TEST_ASSERT(nb_rx > 0, "No packets received in phase 2");
-+
-+	for (i = 0; i < nb_rx; i++) {
-+		TEST_ASSERT_EQUAL(rte_pktmbuf_pkt_len(mbufs[i]), untagged_len,
-+				  "Phase 2 packet %u: expected untagged length %zu, got %u",
-+				  i, untagged_len, rte_pktmbuf_pkt_len(mbufs[i]));
-+		TEST_ASSERT(mbufs[i]->ol_flags & RTE_MBUF_F_RX_VLAN_STRIPPED,
-+			    "Phase 2 packet %u: VLAN_STRIPPED flag not set", i);
-+	}
-+	rte_pktmbuf_free_bulk(mbufs, nb_rx);
-+	printf("    Received %u packets with VLAN tags stripped\n", nb_rx);
-+
-+	/*
-+	 * Phase 3: Disable VLAN strip - packets should have tags again
-+	 */
-+	printf("  Phase 3: Disabling VLAN strip\n");
-+	ret = rte_eth_dev_set_vlan_offload(port_id, 0);
-+	TEST_ASSERT(ret == 0, "Failed to disable VLAN strip: %s", rte_strerror(-ret));
-+
-+	current_offload = rte_eth_dev_get_vlan_offload(port_id);
-+	TEST_ASSERT(!(current_offload & RTE_ETH_VLAN_STRIP_OFFLOAD),
-+		    "VLAN strip should be disabled after clearing");
-+
-+	nb_rx = rte_eth_rx_burst(port_id, 0, mbufs, MAX_PKT_BURST);
-+	TEST_ASSERT(nb_rx > 0, "No packets received in phase 3");
-+
-+	for (i = 0; i < nb_rx; i++) {
-+		TEST_ASSERT_EQUAL(rte_pktmbuf_pkt_len(mbufs[i]), tagged_len,
-+				  "Phase 3 packet %u: expected tagged length %zu, got %u",
-+				  i, tagged_len, rte_pktmbuf_pkt_len(mbufs[i]));
-+	}
-+	rte_pktmbuf_free_bulk(mbufs, nb_rx);
-+	printf("    Received %u packets with VLAN tags intact again\n", nb_rx);
-+
-+	cleanup_pcap_vdev("net_pcap_vlan_set", port_id);
-+	remove_temp_file(vlan_set_pcap_path);
-+
-+	printf("Runtime VLAN offload PASSED\n");
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test: VLAN Strip in infinite RX mode
-+ *
-+ * This test verifies that VLAN strip offload works correctly when combined
-+ * with infinite_rx mode, which uses a different RX path (eth_pcap_rx_infinite).
-+ */
-+static int
-+test_vlan_strip_infinite_rx(void)
-+{
-+	struct rte_mbuf *mbufs[MAX_PKT_BURST];
-+	struct rte_eth_conf port_conf = {
-+		.rxmode.offloads = RTE_ETH_RX_OFFLOAD_VLAN_STRIP,
-+	};
-+	char vlan_inf_pcap_path[PATH_MAX];
-+	char devargs[256];
-+	uint16_t port_id;
-+	unsigned int total_rx = 0;
-+	unsigned int stripped_count = 0;
-+	int iter, attempts, ret;
-+	size_t expected_len;
-+
-+	printf("Testing VLAN strip with infinite RX mode\n");
-+
-+	/* Create pcap file with VLAN-tagged packets */
-+	TEST_ASSERT(create_temp_path(vlan_inf_pcap_path, sizeof(vlan_inf_pcap_path),
-+				     "pcap_vlan_inf") == 0,
-+		    "Failed to create temp file path");
-+
-+	TEST_ASSERT(create_vlan_tagged_pcap(vlan_inf_pcap_path, NUM_PACKETS,
-+					    TEST_VLAN_ID, TEST_VLAN_PCP) == 0,
-+		    "Failed to create VLAN-tagged pcap file");
-+
-+	printf("  Created VLAN-tagged pcap with %d packets for infinite RX\n", NUM_PACKETS);
-+
-+	/* Create vdev with infinite_rx enabled */
-+	ret = snprintf(devargs, sizeof(devargs), "rx_pcap=%s,infinite_rx=1", vlan_inf_pcap_path);
-+	TEST_ASSERT(ret > 0 && ret < (int)sizeof(devargs),
-+		    "devargs string truncated");
-+	ret = rte_vdev_init("net_pcap_vlan_inf", devargs);
-+	TEST_ASSERT(ret == 0, "Failed to create infinite RX vdev: %s", rte_strerror(-ret));
-+
-+	ret = rte_eth_dev_get_port_by_name("net_pcap_vlan_inf", &port_id);
-+	TEST_ASSERT(ret == 0, "Failed to get port ID");
-+
-+	/* Configure with VLAN strip enabled and start */
-+	TEST_ASSERT(setup_pcap_port_conf(port_id, &port_conf) == 0,
-+		    "Failed to setup port with VLAN strip");
-+
-+	/* Expected length after VLAN strip */
-+	expected_len = sizeof(struct rte_ether_hdr) + sizeof(struct rte_ipv4_hdr) +
-+		       sizeof(struct rte_udp_hdr) + 18;
-+
-+	/* Read packets - need more than file contains to verify infinite looping */
-+	for (iter = 0; iter < 3 && total_rx < NUM_PACKETS * 2; iter++) {
-+		for (attempts = 0; attempts < 100 && total_rx < NUM_PACKETS * 2; attempts++) {
-+			uint16_t nb_rx = rte_eth_rx_burst(port_id, 0, mbufs, MAX_PKT_BURST);
-+
-+			for (uint16_t i = 0; i < nb_rx; i++) {
-+				/* Verify VLAN was stripped */
-+				if (verify_no_vlan_tag(mbufs[i]) == 0 &&
-+				    rte_pktmbuf_pkt_len(mbufs[i]) == expected_len &&
-+				    (mbufs[i]->ol_flags & RTE_MBUF_F_RX_VLAN_STRIPPED))
-+					stripped_count++;
-+			}
-+
-+			if (nb_rx > 0)
-+				rte_pktmbuf_free_bulk(mbufs, nb_rx);
-+			total_rx += nb_rx;
-+
-+			if (nb_rx == 0)
-+				usleep(100);
-+		}
-+	}
-+
-+	rte_eth_dev_stop(port_id);
-+	rte_vdev_uninit("net_pcap_vlan_inf");
-+	remove_temp_file(vlan_inf_pcap_path);
-+
-+	TEST_ASSERT(total_rx >= NUM_PACKETS * 2,
-+		    "Infinite RX: got %u packets, need >= %d", total_rx, NUM_PACKETS * 2);
-+
-+	TEST_ASSERT_EQUAL(stripped_count, total_rx,
-+			  "VLAN strip failed: only %u/%u packets stripped correctly",
-+			  stripped_count, total_rx);
-+
-+	printf("VLAN strip infinite RX PASSED: %u packets stripped (file has %d)\n",
-+	       total_rx, NUM_PACKETS);
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test: Timestamps in infinite RX mode
-+ *
-+ * This test verifies that timestamp offload works correctly when combined
-+ * with infinite_rx mode. Since infinite_rx generates packets on-the-fly,
-+ * timestamps should reflect the current time rather than pcap file timestamps.
-+ */
-+static int
-+test_timestamp_infinite_rx(void)
-+{
-+	struct rte_mbuf *mbufs[MAX_PKT_BURST];
-+	struct rte_eth_conf port_conf = {
-+		.rxmode.offloads = RTE_ETH_RX_OFFLOAD_TIMESTAMP,
-+	};
-+	char ts_inf_pcap_path[PATH_MAX];
-+	char devargs[256];
-+	uint16_t port_id;
-+	unsigned int total_rx = 0;
-+	unsigned int ts_count = 0;
-+	int iter, attempts, ret;
-+	rte_mbuf_timestamp_t first_ts = 0;
-+	rte_mbuf_timestamp_t last_ts = 0;
-+
-+	printf("Testing timestamps with infinite RX mode\n");
-+
-+	/* Initialize timestamp dynamic field access */
-+	if (timestamp_dynfield_offset < 0) {
-+		ret = timestamp_init();
-+		if (ret != 0) {
-+			printf("Timestamp dynfield not available, skipping\n");
-+			return TEST_SKIPPED;
-+		}
-+	}
-+
-+	/* Create simple pcap file */
-+	TEST_ASSERT(create_temp_path(ts_inf_pcap_path, sizeof(ts_inf_pcap_path),
-+				     "pcap_ts_inf") == 0,
-+		    "Failed to create temp file path");
-+
-+	TEST_ASSERT(create_test_pcap(ts_inf_pcap_path, NUM_PACKETS) == 0,
-+		    "Failed to create test pcap file");
-+
-+	/* Create vdev with infinite_rx enabled */
-+	ret = snprintf(devargs, sizeof(devargs), "rx_pcap=%s,infinite_rx=1", ts_inf_pcap_path);
-+	TEST_ASSERT(ret > 0 && ret < (int)sizeof(devargs),
-+		    "devargs string truncated");
-+	ret = rte_vdev_init("net_pcap_ts_inf", devargs);
-+	TEST_ASSERT(ret == 0, "Failed to create infinite RX vdev: %s", rte_strerror(-ret));
-+
-+	ret = rte_eth_dev_get_port_by_name("net_pcap_ts_inf", &port_id);
-+	TEST_ASSERT(ret == 0, "Failed to get port ID");
-+
-+	/* Configure with timestamp offload enabled and start */
-+	TEST_ASSERT(setup_pcap_port_conf(port_id, &port_conf) == 0,
-+		    "Failed to setup port with timestamps");
-+
-+	/* Read packets */
-+	for (iter = 0; iter < 3 && total_rx < NUM_PACKETS * 2; iter++) {
-+		for (attempts = 0; attempts < 100 && total_rx < NUM_PACKETS * 2; attempts++) {
-+			uint16_t nb_rx = rte_eth_rx_burst(port_id, 0, mbufs, MAX_PKT_BURST);
-+
-+			for (uint16_t i = 0; i < nb_rx; i++) {
-+				if (mbuf_has_timestamp(mbufs[i])) {
-+					rte_mbuf_timestamp_t ts = mbuf_timestamp_get(mbufs[i]);
-+
-+					if (ts_count == 0)
-+						first_ts = ts;
-+					last_ts = ts;
-+					ts_count++;
-+				}
-+			}
-+
-+			if (nb_rx > 0)
-+				rte_pktmbuf_free_bulk(mbufs, nb_rx);
-+			total_rx += nb_rx;
-+
-+			if (nb_rx == 0)
-+				usleep(100);
-+		}
-+	}
-+
-+	rte_eth_dev_stop(port_id);
-+	rte_vdev_uninit("net_pcap_ts_inf");
-+	remove_temp_file(ts_inf_pcap_path);
-+
-+	TEST_ASSERT(total_rx >= NUM_PACKETS * 2,
-+		    "Infinite RX: got %u packets, need >= %d", total_rx, NUM_PACKETS * 2);
-+
-+	TEST_ASSERT_EQUAL(ts_count, total_rx,
-+			  "Timestamp missing: only %u/%u packets have timestamps",
-+			  ts_count, total_rx);
-+
-+	/* Timestamps should be monotonically increasing (current time) */
-+	TEST_ASSERT(last_ts >= first_ts,
-+		    "Timestamps not monotonic: first=%" PRIu64 " last=%" PRIu64,
-+		    first_ts, last_ts);
-+
-+	printf("Timestamp infinite RX PASSED: %u packets with valid timestamps\n", total_rx);
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test suite setup
-+ */
-+static int
-+test_setup(void)
-+{
-+	/* Generate random source MAC address */
-+	rte_eth_random_addr(src_mac.addr_bytes);
-+
-+	mp = rte_pktmbuf_pool_create("pcap_test_pool", NB_MBUF, 32, 0,
-+				     RTE_MBUF_DEFAULT_BUF_SIZE,
-+				     rte_socket_id());
-+	TEST_ASSERT_NOT_NULL(mp, "Failed to create mempool");
-+
-+	return 0;
-+}
-+
-+/*
-+ * Test suite teardown
-+ */
-+static void
-+test_teardown(void)
-+{
-+	unsigned int i;
-+
-+	/* Cleanup temp files */
-+	remove_temp_file(tx_pcap_path);
-+	remove_temp_file(rx_pcap_path);
-+	remove_temp_file(infinite_pcap_path);
-+	remove_temp_file(timestamp_pcap_path);
-+	remove_temp_file(varied_pcap_path);
-+	remove_temp_file(jumbo_pcap_path);
-+
-+	for (i = 0; i < RTE_DIM(multi_tx_pcap_paths); i++)
-+		remove_temp_file(multi_tx_pcap_paths[i]);
-+
-+	remove_temp_file(multi_rx_pcap_path);
-+	remove_temp_file(vlan_rx_pcap_path);
-+	remove_temp_file(vlan_tx_pcap_path);
-+
-+	rte_mempool_free(mp);
-+	mp = NULL;
-+}
-+
-+static struct unit_test_suite test_pmd_pcap_suite = {
-+	.setup = test_setup,
-+	.teardown = test_teardown,
-+	.suite_name = "PCAP PMD Unit Test Suite",
-+	.unit_test_cases = {
-+		TEST_CASE(test_dev_info),
-+		TEST_CASE(test_tx_to_file),
-+		TEST_CASE(test_rx_from_file),
-+		TEST_CASE(test_tx_varied_sizes),
-+		TEST_CASE(test_rx_varied_sizes),
-+		TEST_CASE(test_jumbo_rx),
-+		TEST_CASE(test_jumbo_tx),
-+		TEST_CASE(test_infinite_rx),
-+		TEST_CASE(test_tx_drop),
-+		TEST_CASE(test_stats),
-+		TEST_CASE(test_iface),
-+		TEST_CASE(test_link_status),
-+		TEST_CASE(test_lsc_iface),
-+		TEST_CASE(test_eof_rx),
-+		TEST_CASE(test_rx_timestamp),
-+		TEST_CASE(test_multi_tx_queue),
-+		TEST_CASE(test_multi_rx_queue_same_file),
-+		TEST_CASE(test_vlan_strip_rx),
-+		TEST_CASE(test_vlan_insert_tx),
-+		TEST_CASE(test_vlan_no_strip_rx),
-+		TEST_CASE(test_vlan_offload_set),
-+		TEST_CASE(test_vlan_strip_infinite_rx),
-+		TEST_CASE(test_timestamp_infinite_rx),
-+		TEST_CASE(test_snaplen),
-+		TEST_CASE(test_snaplen_truncation),
-+		TEST_CASES_END()
-+	}
-+};
-+
-+static int
-+test_pmd_pcap(void)
-+{
-+	return unit_test_suite_runner(&test_pmd_pcap_suite);
-+}
-+
-+REGISTER_FAST_TEST(pcap_pmd_autotest, NOHUGE_OK, ASAN_OK, test_pmd_pcap);
-diff --git a/doc/guides/rel_notes/release_26_03.rst b/doc/guides/rel_notes/release_26_03.rst
-index acd6450a59..c48af82868 100644
---- a/doc/guides/rel_notes/release_26_03.rst
-+++ b/doc/guides/rel_notes/release_26_03.rst
-@@ -92,6 +92,7 @@ New Features
-   * Added support for Link State interrupt in ``iface`` mode.
-   * Added ``eof`` devarg to use link state to signal end of receive
-     file input.
-+  * Added unit test suite.
+ 	return 0;
+ }
  
+diff --git a/drivers/net/ring/rte_eth_ring.h b/drivers/net/ring/rte_eth_ring.h
+index 98292c7b33..5bb619198a 100644
+--- a/drivers/net/ring/rte_eth_ring.h
++++ b/drivers/net/ring/rte_eth_ring.h
+@@ -5,6 +5,7 @@
+ #ifndef _RTE_ETH_RING_H_
+ #define _RTE_ETH_RING_H_
  
- Removed Items
++#include <rte_compat.h>
+ #include <rte_ring.h>
+ 
+ #ifdef __cplusplus
+@@ -50,6 +51,31 @@ int rte_eth_from_rings(const char *name,
+  */
+ int rte_eth_from_ring(struct rte_ring *r);
+ 
++/**
++ * @warning
++ * @b EXPERIMENTAL: this API may change without prior notice.
++ *
++ * Attach two ring-backed ethdev ports as peers.
++ *
++ * After this call the link state of each port reflects whether its
++ * peer is started, similar to how carrier is handled on Linux veth
++ * devices.  Stopping, closing, or setting link-down on one side will
++ * cause the other side to report link-down as well.
++ *
++ * Only ring-backed ports (created by rte_eth_from_rings or the
++ * net_ring vdev driver) can be paired.  A port that already has a
++ * peer must be un-paired first (by closing or removing it).
++ *
++ * @param port_id_a
++ *    port id of the first ring-backed ethdev
++ * @param port_id_b
++ *    port id of the second ring-backed ethdev
++ * @return
++ *    0 on success, -1 on error (rte_errno is set).
++ */
++__rte_experimental
++int rte_eth_ring_attach_peer(uint16_t port_id_a, uint16_t port_id_b);
++
+ #ifdef __cplusplus
+ }
+ #endif
 -- 
 2.51.0
 
