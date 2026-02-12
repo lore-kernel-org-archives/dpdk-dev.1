@@ -2,52 +2,58 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44C63EDF040
-	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Feb 2026 05:32:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94169EDF03F
+	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Feb 2026 05:45:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 40C4F40695;
-	Thu, 12 Feb 2026 06:31:46 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
- by mails.dpdk.org (Postfix) with ESMTP id 104C240659
- for <dev@dpdk.org>; Thu, 12 Feb 2026 06:31:40 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1770874301; x=1802410301;
- h=from:to:subject:date:message-id:in-reply-to:references:
- mime-version:content-transfer-encoding;
- bh=gKuCuuJudrV0WZY8hv5khri0Ybp+IQ2h/GPqMzPj+cs=;
- b=bKBD/dyfkHcN1PTKWcvQUADRdSJshk7wal4zrcBisSczD5CN2Rb8/JBL
- v3vst3QhiyzIQCIDocmWtH0tvTimK3+NeUvurYcslIErdTqU5fLEmEBRA
- 5r6bGskC9WkZlXr1F0k/uK6BTSzySXWZazUc+dqUo1gltyM3935eWRMd9
- FdZPqJ4MWptVHkAZ+1hZyxiVkmN2cLzP8ZddF8qTFq8s8dzCFPppZEBxZ
- Z7DKZ7LTzHnYH6DQi24NeUOkGim38RFi1xVjTEE1bU9DgwrJCooEnndzx
- BrJUZeLNjgdTWCW7GgOAitvHZlvw6M1hX2UgQc5fE8744ztZkyAb7j9ar w==;
-X-CSE-ConnectionGUID: KtLM1LFWSiqf5aEY+2KTwA==
-X-CSE-MsgGUID: ThgVZI+5RR6c/XJAnZIrag==
-X-IronPort-AV: E=McAfee;i="6800,10657,11698"; a="83405360"
-X-IronPort-AV: E=Sophos;i="6.21,286,1763452800"; d="scan'208";a="83405360"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
- by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 11 Feb 2026 21:31:40 -0800
-X-CSE-ConnectionGUID: RT0hIsDLT0yHt/A7IAeclw==
-X-CSE-MsgGUID: Q25Pkd2NTKCf7ihWtzygXQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,286,1763452800"; d="scan'208";a="212581424"
-Received: from unknown (HELO srv24..) ([10.138.182.231])
- by orviesa007.jf.intel.com with ESMTP; 11 Feb 2026 21:31:40 -0800
-From: Shaiq Wani <shaiq.wani@intel.com>
-To: dev@dpdk.org,
-	bruce.richardson@intel.com,
-	aman.deep.singh@intel.com
-Subject: [PATCH v5 7/7] doc: update release notes
-Date: Tue, 26 Aug 2025 22:35:41 +0530
-Message-Id: <20250826170541.5010-8-shaiq.wani@intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250826170541.5010-1-shaiq.wani@intel.com>
-References: <20260202094244.447966-1-shaiq.wani@intel.com>
- <20250826170541.5010-1-shaiq.wani@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id BE5CD402EA;
+	Thu, 12 Feb 2026 06:45:32 +0100 (CET)
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+ by mails.dpdk.org (Postfix) with ESMTP id 9EA914025F
+ for <dev@dpdk.org>; Thu, 12 Feb 2026 06:45:30 +0100 (CET)
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 61C5jRhuD3342980,
+ This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realsil.com.cn;
+ s=dkim; t=1770875128;
+ bh=NR3crC9ImNxzo6EuHnX7jEbT4fcG4Mx8REru+5FiPFM=;
+ h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+ Content-Type:Content-Transfer-Encoding:MIME-Version;
+ b=fh20UszpEaM6F6JvntXiRWpqcay18hzUXboN34O4ZOvOzLbJL5bDai33A1dhXZfUU
+ KMGYgu6QzKL9LPnPtzY/vO5xFTNSWkNlBaLbNbfgbYig1JrHCo+NnQ4tnH69TiryyA
+ Cx89T+dEs71Ja8SK3a/qpo1dDe50+bNqScjr5CbqiboCEZXBmr5QdHAEZkZ0jUEuos
+ Pq3qXY8zUt0OsmD1cZ+RlDUuoJ+0T5ga5ykSFscLRjMCY4AqcYsl2RCOoNVRjLrRfa
+ rVX09PInOSwKqgdaaE/HfokNNtDhdpzYh0pSaWxCdG0bC9Hc8FiNv4/8cE4rHi6l1p
+ CqnvYRvh5sqBw==
+Received: from RS-EX-MBS1.realsil.com.cn ([172.29.17.101])
+ by rtits2.realtek.com.tw (8.15.2/3.21/5.94) with ESMTPS id 61C5jRhuD3342980
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+ Thu, 12 Feb 2026 13:45:28 +0800
+Received: from RS-EX-MBS4.realsil.com.cn (172.29.17.104) by
+ RS-EX-MBS1.realsil.com.cn (172.29.17.101) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.39; Thu, 12 Feb 2026 13:45:27 +0800
+Received: from RS-EX-MBS4.realsil.com.cn ([172.29.17.104]) by
+ RS-EX-MBS4.realsil.com.cn ([172.29.17.104]) with mapi id 15.02.1748.039; Thu,
+ 12 Feb 2026 13:45:27 +0800
+From: =?gb2312?B?zfXyqw==?= <howard_wang@realsil.com.cn>
+To: Stephen Hemminger <stephen@networkplumber.org>
+CC: "dev@dpdk.org" <dev@dpdk.org>, "pro_nic_dpdk@realtek.com"
+ <pro_nic_dpdk@realtek.com>
+Subject: =?utf-8?B?5Zue5aSNOiBbUEFUQ0ggdjIgMDIvMTJdIG5ldC9yODE2OTogdHVuZSBSWCBkZXNjIGZldGNoIG51bSBmb3IgODEyNiBhbmQgODEyNw==?=
+Thread-Topic: [PATCH v2 02/12] net/r8169: tune RX desc fetch num for 8126 and
+ 8127
+Thread-Index: AQHcmlHUwkXtbDc59020tQricz/2obV9hCcAgAEKVfA=
+Date: Thu, 12 Feb 2026 05:45:27 +0000
+Message-ID: <53eab1bb8691493e88b439f73823a8b9@realsil.com.cn>
+References: <20260210055511.62382-1-howard_wang@realsil.com.cn>
+ <20260210055511.62382-3-howard_wang@realsil.com.cn>
+ <20260211134326.61146e31@phoenix.local>
+In-Reply-To: <20260211134326.61146e31@phoenix.local>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+x-originating-ip: [172.29.17.210]
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -61,28 +67,29 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add L2TPv2 over UDP support for ice PMD in the release notes.
-
-Signed-off-by: Shaiq Wani <shaiq.wani@intel.com>
----
- doc/guides/rel_notes/release_26_03.rst | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/doc/guides/rel_notes/release_26_03.rst b/doc/guides/rel_notes/release_26_03.rst
-index 5c2a4bb32e..d312c47531 100644
---- a/doc/guides/rel_notes/release_26_03.rst
-+++ b/doc/guides/rel_notes/release_26_03.rst
-@@ -67,6 +67,10 @@ New Features
- 
-   * Added support for pre and post VF reset callbacks.
- 
-+* **Updated Intel ice driver.**
-+
-+  * Added Flow Director (FDIR) support for L2TPv2 over UDP.
-+
- * **Updated ZTE zxdh ethernet driver.**
- 
-   * Added support for modifying queue depth.
--- 
-2.34.1
-
+T0ssIEkgd2lsbCBhZGQgdGhlc2UgZXhwbGFuYXRpb25zIHRvIHRoZSBjb21taXQgbG9nIGluIHYz
+Lg0KDQpUaGUgZGVmYXVsdCB2YWx1ZXMgaW4gdGhlIExpbnV4IGRyaXZlciBhcmUgYWN0dWFsbHkg
+dGhlIG9uZXMgYmVmb3JlIHRoaXMgbW9kaWZpY2F0aW9uLg0KVGhpcyBwYXJhbWV0ZXIgY29udHJv
+bHMgdGhlIG51bWJlciBvZiBSWCBkZXNjcmlwdG9ycyBmZXRjaGVkIGluIGEgc2luZ2xlIGJhdGNo
+LiBUdW5pbmcgdGhpcyB2YWx1ZSBvcHRpbWl6ZXMgdGhlIFJYIHBlcmZvcm1hbmNlLg0KUmVnYXJk
+aW5nIHJ0ZV9ldGhfZGV2X2luZm8gYW5kIHJ0ZV9ldGhfcnhjb25mLCBJIGNoZWNrZWQgdGhlIHN0
+cnVjdHVyZXMgYW5kIHRoZXJlIGRvZXNuJ3Qgc2VlbSB0byBiZSBhIHJlbGV2YW50IGdlbmVyaWMg
+dmFyaWFibGUgdGhhdCBtYXBzIHRvIHRoaXMgc3BlY2lmaWMgaGFyZHdhcmUgcGFyYW1ldGVyLg0K
+DQotLS0tLdPKvP7Urbz+LS0tLS0NCreivP7IyzogU3RlcGhlbiBIZW1taW5nZXIgPHN0ZXBoZW5A
+bmV0d29ya3BsdW1iZXIub3JnPiANCreiy83KsbzkOiAyMDI2xOoy1MIxMsjVIDU6NDMNCsrVvP7I
+yzogzfXyqyA8aG93YXJkX3dhbmdAcmVhbHNpbC5jb20uY24+DQqzrcvNOiBkZXZAZHBkay5vcmc7
+IHByb19uaWNfZHBka0ByZWFsdGVrLmNvbQ0K1vfM4jogUmU6IFtQQVRDSCB2MiAwMi8xMl0gbmV0
+L3I4MTY5OiB0dW5lIFJYIGRlc2MgZmV0Y2ggbnVtIGZvciA4MTI2IGFuZCA4MTI3DQoNCg0KRXh0
+ZXJuYWwgbWFpbCA6IFRoaXMgZW1haWwgb3JpZ2luYXRlZCBmcm9tIG91dHNpZGUgdGhlIG9yZ2Fu
+aXphdGlvbi4gRG8gbm90IHJlcGx5LCBjbGljayBsaW5rcywgb3Igb3BlbiBhdHRhY2htZW50cyB1
+bmxlc3MgeW91IHJlY29nbml6ZSB0aGUgc2VuZGVyIGFuZCBrbm93IHRoZSBjb250ZW50IGlzIHNh
+ZmUuDQoNCg0KDQpPbiBUdWUsIDEwIEZlYiAyMDI2IDEzOjU1OjAxICswODAwDQpIb3dhcmQgV2Fu
+ZyA8aG93YXJkX3dhbmdAcmVhbHNpbC5jb20uY24+IHdyb3RlOg0KDQo+IEZvciBSVEw4MTI2OiBU
+dW5lIFJYIGRlc2NyaXB0b3IgZmV0Y2ggbnVtYmVyIHRvIDIwLg0KPiBGb3IgUlRMODEyNzogVHVu
+ZSBSWCBkZXNjcmlwdG9yIGZldGNoIG51bWJlciB0byAxMi4NCj4NCj4gU2lnbmVkLW9mZi1ieTog
+SG93YXJkIFdhbmcgPGhvd2FyZF93YW5nQHJlYWxzaWwuY29tLmNuPg0KPiAtLS0NCg0KSXQgd291
+bGQgYmUgZ29vZCB0byBoYXZlIHNvbWUgZXhwbGFuYXRpb25zIG9mIHRoZXNlLg0KQXJlIHRoZXNl
+IHRoZSBkZWZhdWx0cyBpbiBvdGhlciBPUydzPw0KDQpFdmVuIGJldHRlciB3b3VsZCBiZSB0byBp
+bnRlZ3JhdGUgdGhlbSBpbnRvIHRoZSBleGlzdGluZyBEUERLIHJ0ZV9ldGhfdGhyZXNoIHZhbHVl
+cyB0aGF0IGFyZSBwYXNzZWQgaW4gdmlhIHJ0ZV9ldGhfcnhjb25mIGFuZCByZXR1cm5lZCB3aXRo
+IHJ0ZV9ldGhfZGV2X2luZm8uDQo=
