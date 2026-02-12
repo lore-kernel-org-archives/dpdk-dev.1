@@ -2,48 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26C30EB491F
-	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Feb 2026 12:54:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBF76EB491F
+	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Feb 2026 12:54:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 656CC406B4;
-	Thu, 12 Feb 2026 13:53:59 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 64187409FA;
+	Thu, 12 Feb 2026 13:54:00 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
- by mails.dpdk.org (Postfix) with ESMTP id 4B157406BB
- for <dev@dpdk.org>; Thu, 12 Feb 2026 13:53:56 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id C4E04406A2
+ for <dev@dpdk.org>; Thu, 12 Feb 2026 13:53:57 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1770900837; x=1802436837;
+ t=1770900838; x=1802436838;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=pKgRXo70M6Z7cHc3yoNB3mQJPOsFxhJ3tFgNp1bPV2o=;
- b=XswCSA1Qppk5f+vPrQu4bO/4d/+3yChGuKb9z1th9QnGGuWgW+gVcIoY
- dKXqelJaw9+lbi2QpuzaYd9n+nu9tWH54fup2HW/v4UMMm4oAY0tiCdOK
- +yqnpaBFwsenfEAjSPSc8vFW1zoNIRd80p/jGZ3C2doxBg1R7o3MxEyG/
- LME11jX6s8iRbfUT8FmjZ4mdxIw3bcHnqZcJshjG4a8DFCnPi5N6kynkB
- dcsJghB6FPmfyUGrSTiWcBwXG9K63k9ejYVC7SSmIdhaJpnTBQldQazsT
- 540xRTIMv7h641gjDXbffuvgzLHo/LuNMiBxCBHb8ATPhC4yh6fkGBT/p A==;
-X-CSE-ConnectionGUID: cguB5FhhTAORzBAHrNffiw==
-X-CSE-MsgGUID: crvRGsIDSnew9w/zBlfh3A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11699"; a="71785495"
-X-IronPort-AV: E=Sophos;i="6.21,286,1763452800"; d="scan'208";a="71785495"
+ bh=uPE33KVplWCde1icdrjFxNtpLc/I37yxXvzHVuzaT3g=;
+ b=TtkVKorI0BiGEVf1EIR/2J8HvS9jM7Ru9PeWrJddAw/Kic/9FSI8RjOC
+ aOdGxnxAlfhjrOzkpFrj83H6AjaWHwcH66kgZ2PZpvHXD4WjdyMoeE3PX
+ HggM7Y6QxYVbByvWzZ2zV9uCbl8vfCSJn3D1h+/ukj17jAjWY01uY9onb
+ nlYWLSbtdRhWaMkYKDoJ5nHQdkUIgw0Bkj17QzSJS6OKFjxhx2wlUYInp
+ YIsjxAnhp7oYEjZQdo8pBjhSPqtewoGi9Sgy1HRRbzXVqJfc9/WhA862t
+ FrFMcv3Uir0HxGGoaQIKFWRNRx94kSpFBQ8OcRVRUMOxWQaVmJ78XPCCy g==;
+X-CSE-ConnectionGUID: jjONODY1QNKFAYvVfc7GBw==
+X-CSE-MsgGUID: yjGlVWx2S/SJKHwdJp1FrA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11699"; a="71785497"
+X-IronPort-AV: E=Sophos;i="6.21,286,1763452800"; d="scan'208";a="71785497"
 Received: from orviesa002.jf.intel.com ([10.64.159.142])
  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 12 Feb 2026 04:53:56 -0800
-X-CSE-ConnectionGUID: 9vRnNa80SLGrIbgWy9r38Q==
-X-CSE-MsgGUID: ISCOu8cURgSfyT4wFfXfOg==
+ 12 Feb 2026 04:53:58 -0800
+X-CSE-ConnectionGUID: yv1TFCHkQT24fJxYEArtKA==
+X-CSE-MsgGUID: 2J7LpVmFRCiHhBZ341vziw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,286,1763452800"; d="scan'208";a="243179185"
+X-IronPort-AV: E=Sophos;i="6.21,286,1763452800"; d="scan'208";a="243179194"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by orviesa002.jf.intel.com with ESMTP; 12 Feb 2026 04:53:54 -0800
+ by orviesa002.jf.intel.com with ESMTP; 12 Feb 2026 04:53:56 -0800
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org, Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
- Jingjing Wu <jingjing.wu@intel.com>,
- Abhijit Sinha <abhijit.sinha@intel.com>,
- Declan Doherty <declan.doherty@intel.com>,
- Radu Nicolau <radu.nicolau@intel.com>
-Subject: [PATCH v5 09/12] net/iavf: fix memory leak on uninit
-Date: Thu, 12 Feb 2026 12:53:32 +0000
-Message-ID: <cb6b01a3f3c25df5894f9a3caa0bb0860c74b1ca.1770900758.git.anatoly.burakov@intel.com>
+ Qi Zhang <qi.z.zhang@intel.com>, Jie Wang <jie1x.wang@intel.com>
+Subject: [PATCH v5 10/12] net/iavf: fix IPv4 flow subscription
+Date: Thu, 12 Feb 2026 12:53:33 +0000
+Message-ID: <03c03e386e2b3d8b313be999a214adf838a27b4b.1770900758.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <cover.1770900757.git.anatoly.burakov@intel.com>
  <cover.1770900757.git.anatoly.burakov@intel.com>
@@ -63,46 +60,38 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-When IPsec is initialized, parsers and engines are registered into the
-common infrastructure. However, during deinitialization, they are not
-cleaned up. Fix it by including IPsec engines in the cleanup.
+Currently, when IPv4 is parsed as part of flow subscription input set, we
+add two bytes to the total number of bytes in the input set for IPv4 source
+or destination addresses, whereas they should be 4 bytes. Fix to add the
+correct number of bytes.
 
-Fixes: 6bc987ecb860 ("net/iavf: support IPsec inline crypto")
-Cc: radu.nicolau@intel.com
+Fixes: 6d42380e5983 ("net/iavf: add flow subscrption supported pattern")
 Cc: stable@dpdk.org
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
-Acked-by: Radu Nicolau <radu.nicolau@intel.com>
 Acked-by: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
 ---
- drivers/net/intel/iavf/iavf_generic_flow.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/net/intel/iavf/iavf_fsub.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/intel/iavf/iavf_generic_flow.c b/drivers/net/intel/iavf/iavf_generic_flow.c
-index 02917f863d..42ecc90d1d 100644
---- a/drivers/net/intel/iavf/iavf_generic_flow.c
-+++ b/drivers/net/intel/iavf/iavf_generic_flow.c
-@@ -1859,6 +1859,11 @@ iavf_flow_uninit(struct iavf_adapter *ad)
- 		TAILQ_REMOVE(&vf->dist_parser_list, p_parser, node);
- 		rte_free(p_parser);
- 	}
-+
-+	while ((p_parser = TAILQ_FIRST(&vf->ipsec_crypto_parser_list))) {
-+		TAILQ_REMOVE(&vf->ipsec_crypto_parser_list, p_parser, node);
-+		rte_free(p_parser);
-+	}
- }
+diff --git a/drivers/net/intel/iavf/iavf_fsub.c b/drivers/net/intel/iavf/iavf_fsub.c
+index 18df9c6500..cf1030320f 100644
+--- a/drivers/net/intel/iavf/iavf_fsub.c
++++ b/drivers/net/intel/iavf/iavf_fsub.c
+@@ -314,11 +314,11 @@ iavf_fsub_parse_pattern(const struct rte_flow_item pattern[],
  
- int
-@@ -1920,6 +1925,8 @@ iavf_unregister_parser(struct iavf_flow_parser *parser,
- 	else if ((parser->engine->type == IAVF_FLOW_ENGINE_FDIR) ||
- 		 (parser->engine->type == IAVF_FLOW_ENGINE_FSUB))
- 		list = &vf->dist_parser_list;
-+	else if (parser->engine->type == IAVF_FLOW_ENGINE_IPSEC_CRYPTO)
-+		list = &vf->ipsec_crypto_parser_list;
- 
- 	if (list == NULL)
- 		return;
+ 				if (ipv4_mask->hdr.src_addr) {
+ 					*input |= IAVF_INSET_IPV4_SRC;
+-					input_set_byte += 2;
++					input_set_byte += 4;
+ 				}
+ 				if (ipv4_mask->hdr.dst_addr) {
+ 					*input |= IAVF_INSET_IPV4_DST;
+-					input_set_byte += 2;
++					input_set_byte += 4;
+ 				}
+ 				if (ipv4_mask->hdr.time_to_live) {
+ 					*input |= IAVF_INSET_IPV4_TTL;
 -- 
 2.47.3
 
