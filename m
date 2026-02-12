@@ -2,69 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5EACEEA847
-	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Feb 2026 18:18:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C2DAEEA848
+	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Feb 2026 18:36:03 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C28DF4025F;
-	Thu, 12 Feb 2026 19:18:11 +0100 (CET)
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com
- [209.85.221.41]) by mails.dpdk.org (Postfix) with ESMTP id 9C94040041
- for <dev@dpdk.org>; Thu, 12 Feb 2026 19:18:09 +0100 (CET)
-Received: by mail-wr1-f41.google.com with SMTP id
- ffacd0b85a97d-4359a302794so101083f8f.1
- for <dev@dpdk.org>; Thu, 12 Feb 2026 10:18:09 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 2A98D4025F;
+	Thu, 12 Feb 2026 19:36:02 +0100 (CET)
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com
+ [209.85.128.43]) by mails.dpdk.org (Postfix) with ESMTP id AD55840041
+ for <dev@dpdk.org>; Thu, 12 Feb 2026 19:36:00 +0100 (CET)
+Received: by mail-wm1-f43.google.com with SMTP id
+ 5b1f17b1804b1-48334ee0aeaso1242115e9.1
+ for <dev@dpdk.org>; Thu, 12 Feb 2026 10:36:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1770920289;
- x=1771525089; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1770921360;
+ x=1771526160; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=e9alKiTEh9FL5e+473m7qA3Qc0qWHn4CFPsiOoF0K3I=;
- b=Z1+drJI/QphTMwRbf2yoXY1lbVF2fLIpjbOmkBGqxlJPe0O+yDBQajsUlDgWP8m2iX
- 5y7l4jMZrlmScKVEIAVDKqIl/R1Lw2ZmT3HfXQxKPTM/Yz4gMoMRaB640lwADgDwmkUT
- 7VBw9HdwKa7I7HlHEFQMFmi+7YGUBH1oLHY8ANgv2PaQHbMTa6QustuBmpCPLVzwbwId
- qWfBorkRe09LPh4BNZ13XuJ4aRe1li5hboy3Br3q9KD4GbbVHt6iuP0UocPVsX5UP5+g
- ogxiREeNfT7yhZd8mhwtIaJhPSsJRkUU+VIs5vbgG/6bwYUewd8MYpAxIVEBxuc0q4iG
- lH6A==
+ bh=wuI4u+Un8Ot7I6tME8rCaO28r0vwzd96lCgt2PtEdYs=;
+ b=XZIqSrVp47UustsO3w9Epn18BCswnV2SkXx7uXreMGz1Ws/OEprBsF+Gxu2RHYX/Kd
+ 31iDK4za+1+2l30DwvucGbwOKPGFbLQC7T+jMxD6vqJwHoy8/PLQl5u0d4eQogtjHgsv
+ ls7Jfti57XbIWcDKyxaevEObIWYsCNV8/OdmLUGl7XSRvLdaWsX8u1fGaXV9HeCUrCr/
+ ihmI91OjTFY1v0owIIZVzh+Ef47zmI3Wcp+32XoGeP9U9joCTBaUlJ8p5d42OVIvKbc8
+ fTP4d2tztS0UUYXyRJ8uZMsuqtipW6NOzmZou6xX5SoAsJiydranilRdSdhU5ta6SRAV
+ Dy6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1770920289; x=1771525089;
+ d=1e100.net; s=20230601; t=1770921360; x=1771526160;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=e9alKiTEh9FL5e+473m7qA3Qc0qWHn4CFPsiOoF0K3I=;
- b=scu6e5vlFLxx1glVHh/QMMBwx/vgkbwmvDlObYXGB+Meq0Fl3LP2r3xLdGmhxFUVgf
- LeGwGbILtKkv/M0XtCbKBvqwhd0RqgIDPC9aVg7U4C/95fxNvio3Oviex9UOngslEpoA
- BrJhjiWsrz/lG3ZfYLYbJnnkSPd4J22NtOahOOxqkp92/BG+DUlM6LeEKKdkHxYLbqDw
- D5i6rHQ0wCVeOIVYPNWra2r4CQD9UUdzvCr9XD4S6M8h6gTFjYW0iKoQfisJ/CzeXDlL
- Jq7ml45q7aC9Wy98Pm+dg1JgHhcDflcQwb0HZyiEZDOHqu7oIf24pDUJvx+sfkXXDmOk
- n3YQ==
-X-Gm-Message-State: AOJu0YxFkA4UlAJFHMjXnvNKs0lpXXNxQwsvMMzF4uSzGHeoJ+4R2CB3
- SsP1Dr1Mwu3OOHrPmUsmBT9aZlcBbF0lw5XLAOiWJudftXvS3Bbv0KIkzVQajnC3gyNILjjkHLx
- Ge39S
-X-Gm-Gg: AZuq6aKVBIwo0c89wDLJa2lvV4luXFnDvlSDaCvj6rFF/o+GOe7RI2KeiPR+hkGKWje
- NVO2SevhRo3Jt5rJJcRHRFfm+aik0u3KWMWrPz1j7X6ckbSPFlkqXJic+9e6+i1vJ0dYdhfyzIf
- QXt0V1vlCJxPp0EPncIcb9sfhoFT9W64R3sBXdHFZLh/nASpZUVFwk9PRFvvYvQuPUFbKUI/mSa
- xdT9Uvk+kEJ6cG2ZkjpxsCsrUqVx9khLwm/ZLeK47gqRnUZWpKlXubguOjEFt623u14C85P+dmD
- FmEarzgvoGYJ4uaoZBcV++894s/g1/3Xte6RnDy9Xnsn4v9sZaYAHkdEBQmm98Gvt3K+v/7oVKa
- RgMwSCCaJkQ1f9oCZ/M2th2Gxw61MnoYIXFz00LHjRpJ60FzXNONHDUF6JcZO4ukkrO9+yxvlKJ
- 5A/T256UMnmd0+xdLWmsShKCrastmClMCs3HU4YU/TDCKvXKNZDr8kSbjS0IsXEVHN
-X-Received: by 2002:a05:6000:2887:b0:435:975a:131c with SMTP id
- ffacd0b85a97d-4378ad46189mr6458462f8f.36.1770920288723; 
- Thu, 12 Feb 2026 10:18:08 -0800 (PST)
+ bh=wuI4u+Un8Ot7I6tME8rCaO28r0vwzd96lCgt2PtEdYs=;
+ b=hK2WxgS9aBcqwX0+8ig3YaJVHbX1W/tw+w/fViLkJSCJeJSM8ltBMkb0OGpX7xDYTF
+ ZEAwLnEKpqZSgpID5fU/QUyMIbuv+pW4TJzYZ77BXeIJrruS2BFlxXmrwhdkrnHYBYfF
+ d33iB4LXMz/W4muCaDjMN4vWY/c/Mok9v5Ljj8T8ovXgCKb9i8Nn7eY0qH3oEyopduso
+ yaw5iI5CkTIrUdtkDDgODIe1QjCE12jDOrbf/ZfKYaiQbl4F55q+rz41MOpIJjSKrTdv
+ ki+tTRRE2a8m24hEP5iPH7SheSsUvhMMQuBURmx43z2PlUhmfoRHfQvOAfj50o/bFvqM
+ 74PQ==
+X-Gm-Message-State: AOJu0YwA9VA2LK4cfsRz7I4Jq9N/CLdXqGnzfm3QNCgBJHp8wA8Ijcvc
+ hK/6nLBtiuKoz06I0XY1KuJh0/q5P24vsvc1cl073/BgwKFZsT5rVJH9zIonkzr2XsU=
+X-Gm-Gg: AZuq6aJOwFxoelWPtxIjCktaa+lCGOgkJpVnj4tkWfj6bj8g2kT534+aOJK0doLQb1u
+ oDLVSNJABILNJRtIX0iSc3w1obRGCkS+8M3eGBt4GrRTlW9PQLe4uWHsJ2LtOhAjC8O+ZiSgpLp
+ cztlX3hfmfPpkrRLq2zVMuC3B+PaF5lN6xLwokHlgg6O7N/bf+lngw8wBX+1yztlVIxtLIDIebb
+ SALP3/2odNUkjXktGM1vJzRy99/QEzMRQ1O6jYiK1yiR8P1UKmV509jUuIa7mw7hxD30ZmVctl2
+ UAtZ9k2V4Ixjkdeo6lYs6TsniBX/Ku6nQQORaWXPd4uVIIRGNVjR6A6ducpgBtoVNyBnjpG1r7T
+ KM8WTMndzmFG+JiB5ejTPiseB4WisOu2bqgAlZvbzPWwortdQHQHZi/UUU5x674zwUgC+wZAHPm
+ DadFIBVeGNkFRCqc0SJ1HEcrIEWSF5Gj7HxVybkF9B0DdzU31ytCQPJgv5MGREl7yU
+X-Received: by 2002:a05:600c:1f84:b0:483:3380:ca11 with SMTP id
+ 5b1f17b1804b1-48371045681mr1037375e9.33.1770921359943; 
+ Thu, 12 Feb 2026 10:35:59 -0800 (PST)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-43783dfc54csm13052501f8f.25.2026.02.12.10.18.06
+ ffacd0b85a97d-43783e5c93asm12597076f8f.39.2026.02.12.10.35.58
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 12 Feb 2026 10:18:07 -0800 (PST)
-Date: Thu, 12 Feb 2026 10:18:00 -0800
+ Thu, 12 Feb 2026 10:35:59 -0800 (PST)
+Date: Thu, 12 Feb 2026 10:35:54 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Howard Wang <howard_wang@realsil.com.cn>
-Cc: <dev@dpdk.org>, <pro_nic_dpdk@realtek.com>
-Subject: Re: [PATCH v3 00/12] net/r8169: update driver with new HW support
- and fixes
-Message-ID: <20260212101800.241a2d34@phoenix.local>
-In-Reply-To: <20260212055902.139958-1-howard_wang@realsil.com.cn>
-References: <20260212055902.139958-1-howard_wang@realsil.com.cn>
+To: spinler@cesnet.cz
+Cc: dev@dpdk.org
+Subject: Re: [PATCH v7 0/8] net/nfb: rework to real multiport
+Message-ID: <20260212103554.25cdeb4e@phoenix.local>
+In-Reply-To: <20260204123137.123171-1-spinler@cesnet.cz>
+References: <20260115151656.393106-1-spinler@cesnet.cz>
+ <20260204123137.123171-1-spinler@cesnet.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -81,248 +80,456 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 12 Feb 2026 13:58:50 +0800
-Howard Wang <howard_wang@realsil.com.cn> wrote:
+On Wed,  4 Feb 2026 13:31:29 +0100
+spinler@cesnet.cz wrote:
 
-> This patch set updates the r8169 pmd driver to include support for new
-> Realtek hardware revisions and provides several bug fixes and improvement=
-s.
+> From: Martin Spinler <spinler@cesnet.cz>
 >=20
-> The main changes include:
+> This series implements real multiport for better user experience.
 >=20
-> 1. New Hardware Support:
->    - Add support for RTL8125K, RTL9151 and RTL8168KD.
+> The existing driver creates one ethdev/port for one PCI device.
+> As the CESNET-NDK based cards aren't capable to represent each
+> Ethernet port by own PCI device, new driver implementation
+> processes real port configuration from firmware/card and switches
+> from rte_eth_dev_pci_generic_probe to multiple rte_eth_dev_create calls.
 >=20
-> 2. Bug Fixes:
->    - Fix a bug related to RTL8168KB.
->    - Fix a potential NULL pointer dereference in rtl8168fp_ops.
->    - Fix the incorrect link status reported when binding the PMD after
->      the NIC has been initialized by the vendor driver.
+> ---
+> Depends-on: patch-37245 ("doc/nfb: update release notes for nfb driver")
 >=20
-> 3. Configuration & Optimization:
->    - Update hardware configurations for 8125, 8126, and 8127 series.
->    - Adjust jumbo frame size limits for non-1G cards.
->    - Tune RX descriptor fetch number for 8126 and 8127 to improve perform=
-ance.
->    - Remove support for legacy CFG_METHOD_69.
+> v7:
+> * Rebased to patch-37245
+> * Removed timestamp update info from release notes
+> * Added missing ctype include for isdigit()
+> * Updated style: removed extra brackets
 >=20
-> Howard Wang (12):
->   net/r8169: fix crash in RTL8168FP init
->   net/r8169: optimize Rx descriptor fetch number
->   net/r8169: add support for RTL8168KD
->   net/r8169: update hardware configurations for 8127
->   net/r8169: adjust jumbo frame size limit for non-1G cards
->   net/r8169: remove support for CFG_METHOD_69
->   net/r8169: update hardware configurations for 8126
->   net/r8169: update hardware configurations for 8125
->   net/r8169: add support for RTL9151
->   net/r8169: add support for RTL8125K
->   net/r8169: fix one bug about RTL8168KB
->   net/r8169: ensure the old mapping is used
+> Martin Spinler (8):
+>   net/nfb: prepare for indirect queue mapping scheme
+>   net/nfb: create one ethdev per ethernet port
+>   net/nfb: add vdev as alternative device probe method
+>   net/nfb: add device argument "port" to limit used ports
+>   net/nfb: init only MACs associated with device
+>   net/nfb: add compatible cards to driver PCI ID table
+>   net/nfb: report firmware version
+>   doc/nfb: cleanup and update guide
 >=20
->  drivers/net/r8169/base/rtl8125a_mcu.c  |  128 +--
->  drivers/net/r8169/base/rtl8125b_mcu.c  |   56 +-
->  drivers/net/r8169/base/rtl8125bp_mcu.c |   17 +-
->  drivers/net/r8169/base/rtl8125cp.c     |   36 +
->  drivers/net/r8169/base/rtl8125cp_mcu.c |   87 +-
->  drivers/net/r8169/base/rtl8125cp_mcu.h |    1 +
->  drivers/net/r8169/base/rtl8125d.c      |   31 +-
->  drivers/net/r8169/base/rtl8125d_mcu.c  |  605 +++++++----
->  drivers/net/r8169/base/rtl8125d_mcu.h  |    1 +
->  drivers/net/r8169/base/rtl8126a.c      |   32 +-
->  drivers/net/r8169/base/rtl8126a_mcu.c  |  689 +-----------
->  drivers/net/r8169/base/rtl8126a_mcu.h  |    2 -
->  drivers/net/r8169/base/rtl8127.c       |   15 +-
->  drivers/net/r8169/base/rtl8127_mcu.c   | 1332 +++++++++++++++++-------
->  drivers/net/r8169/base/rtl8168fp.c     |    1 +
->  drivers/net/r8169/base/rtl8168fp.h     |    1 +
->  drivers/net/r8169/base/rtl8168fp_mcu.c |    6 +
->  drivers/net/r8169/base/rtl9151a.c      |   87 ++
->  drivers/net/r8169/base/rtl9151a.h      |   10 +
->  drivers/net/r8169/base/rtl9151a_mcu.c  |   53 +
->  drivers/net/r8169/meson.build          |    2 +
->  drivers/net/r8169/r8169_compat.h       |   10 +-
->  drivers/net/r8169/r8169_ethdev.c       |   36 +-
->  drivers/net/r8169/r8169_ethdev.h       |    3 +
->  drivers/net/r8169/r8169_fiber.c        |   15 +-
->  drivers/net/r8169/r8169_hw.c           |  239 +++--
->  drivers/net/r8169/r8169_hw.h           |   11 +-
->  drivers/net/r8169/r8169_phy.c          |   54 +-
->  drivers/net/r8169/r8169_rxtx.c         |    1 -
->  29 files changed, 2058 insertions(+), 1503 deletions(-)
->  create mode 100644 drivers/net/r8169/base/rtl9151a.c
->  create mode 100644 drivers/net/r8169/base/rtl9151a.h
->  create mode 100644 drivers/net/r8169/base/rtl9151a_mcu.c
+>  doc/guides/nics/features/nfb.ini       |   4 +
+>  doc/guides/nics/nfb.rst                | 187 +++++------
+>  doc/guides/rel_notes/release_26_03.rst |   6 +
+>  drivers/net/nfb/meson.build            |   1 +
+>  drivers/net/nfb/nfb.h                  |  56 +++-
+>  drivers/net/nfb/nfb_ethdev.c           | 445 +++++++++++++++++++------
+>  drivers/net/nfb/nfb_rx.c               |  30 +-
+>  drivers/net/nfb/nfb_rx.h               |   9 +-
+>  drivers/net/nfb/nfb_tx.c               |  27 +-
+>  drivers/net/nfb/nfb_tx.h               |   7 +-
+>  drivers/net/nfb/nfb_vdev.c             | 107 ++++++
+>  11 files changed, 622 insertions(+), 257 deletions(-)
+>  create mode 100644 drivers/net/nfb/nfb_vdev.c
 >=20
 
+Improved the AI review process and it saw this.
+I think you should fix and retest before merge to next-net.
 
-Better but AI review flagged some issues:
+Here's the review. The most significant finding is in patch 2/8:
+Double TAILQ_REMOVE =E2=80=94 nfb_eth_common_remove() explicitly removes the
+entry from the list, then calls rte_eth_dev_destroy() which invokes
+nfb_eth_dev_uninit(), which also does TAILQ_REMOVE on the same entry.
+This will corrupt the linked list. The fix is to remove the
+TAILQ_REMOVE from nfb_eth_common_remove() and let uninit handle it,
+since uninit is also called from the dev_close path.=20
 
-Most significant: Patch 4 has what looks like a real mask inversion bug
-fix (&=3D (bits) =E2=86=92 &=3D ~(bits)) in two places in r8169_fiber.c for=
- RTL8127
-SerDes configuration. The original code was AND'ing to keep only those
-bits when it should have been clearing them before OR'ing in new
-values. This fix is buried in a large hardware update patch with no
-Fixes tag =E2=80=94 it should really be split out as a standalone bugfix.
+Other notable findings include unbounded loop counters when populating
+queue maps and MAC arrays (patches 2 and 5 =E2=80=94 trusting firmware
+consistency without defensive bounds checks), strtoul with base 0
+allowing accidental octal parsing of port numbers (patch 4), and a
+"DYNANIC" typo in the documentation (patch 8).
 
-Process: Patches 1, 11, and 12 all have Fixes: tags but are missing Cc: sta=
-ble@dpdk.org.
+The overall architecture of the series is solid =E2=80=94 the indirect queue
+mapping, per-interface ethdev creation, and TAILQ-based device tracking
+are well-designed patterns for multi-port NICs.
 
-Minor: Patches 11 and 12 have vague commit subjects, and patch 5's
-jumbo frame size switch may be missing some newer CFG_METHODs that the
-commit message implies should get 16K. The bulk of the series (MCU
-firmware blobs, PHY register programming, new chip enablement) is
-typical vendor driver code that looks structurally sound =E2=80=94 the patt=
-erns
-match existing chip support code consistently.
+Full report is:
 
-Full details:
+# Deep Dive Review: NFB Multi-Port Patch Series (v7, 8 patches)
 
-# DPDK net/r8169 v3 Patch Series Review
-
-**Series**: [PATCH v3 01/12] through [PATCH v3 12/12]
-**Author**: Howard Wang <howard_wang@realsil.com.cn>
-**Delegate**: stephen@networkplumber.org
+**Series**: `[PATCH v7 1/8]` through `[PATCH v7 8/8]`
+**Author**: Martin Spinler `<spinler@cesnet.cz>`
+**Delegate**: Stephen Hemminger
 
 ---
 
 ## Series Overview
 
-This 12-patch series for the Realtek r8169 PMD includes:
+This patch series transforms the NFB PMD from a "one ethdev per PCI device"=
+ model to "one ethdev per physical Ethernet port." This is a significant ar=
+chitectural change requiring:
 
-- **Bug fixes** (patches 1, 11, 12): NULL pointer crash fix for RTL8168FP, =
-incorrect 2.5G classification of RTL8168KB, and stale interrupt mapping aft=
-er vendor driver initialization.
-- **New chip support** (patches 3, 9, 10): RTL8168KD (1G), RTL9151 (2.5G), =
-RTL8125K (2.5G).
-- **Hardware configuration updates** (patches 4, 7, 8): Updated MCU firmwar=
-e, PHY config, and tuning for RTL8127, RTL8126, and RTL8125 family chips.
-- **Optimization** (patch 2): Rx descriptor fetch number tuning for RTL8126=
-/RTL8127.
-- **Cleanup** (patches 5, 6): Remove test chip CFG_METHOD_69 and adjust jum=
-bo frame size limits.
+1. An indirect queue mapping layer (DPDK queue index =E2=86=92 firmware que=
+ue ID)
+2. Multiple `rte_eth_dev_create()` calls per PCI probe instead of `rte_eth_=
+dev_pci_generic_probe()`
+3. A TAILQ-based device list to track all created ethdevs for proper removal
+4. A vdev probe path for non-PCI (simulated/virtual) devices
+5. Per-port MAC initialization instead of global
+6. New PCI IDs and documentation updates
 
-The series is largely vendor firmware/register programming updates =E2=80=
-=94 the kind of code that's difficult to review for logical correctness wit=
-hout hardware documentation, but can be reviewed for structural issues, err=
-or handling, and process compliance.
+The design is generally sound =E2=80=94 the libnfb framework's `nc_ifc_map_=
+info` provides the firmware-side port/queue topology, and this series maps =
+it cleanly into DPDK's model.
 
 ---
 
-## Findings
+## Patch-by-Patch Analysis
 
-### Patch 1: net/r8169: fix crash in RTL8168FP init
+### Patch 1/8: `net/nfb: prepare for indirect queue mapping scheme`
 
-**Error =E2=80=94 Missing `Cc: stable@dpdk.org`**: This patch has a `Fixes:=
-` tag indicating it corrects a regression (NULL pointer dereference during =
-init). It should include `Cc: stable@dpdk.org` for stable release backport =
-consideration.
+**What it does**: Adds `queue_map_rx` / `queue_map_tx` arrays to `struct pm=
+d_priv`, allocated as a single `rte_calloc` block. The RX/TX queue setup fu=
+nctions now look up the firmware queue ID via these maps instead of using t=
+he DPDK queue index directly.
 
-### Patch 4: net/r8169: update hardware configurations for 8127
+**Correctness findings**:
 
-**Warning =E2=80=94 Bug fix embedded in a feature patch without Fixes tag**=
-: This patch changes two mask operations from `val &=3D (BIT_13 | BIT_12 | =
-BIT_1 | BIT_0)` to `val &=3D ~(BIT_13 | BIT_12 | BIT_1 | BIT_0)`. The origi=
-nal code *keeps* only those bits (AND without NOT), while the new code *cle=
-ars* those bits (AND with NOT). This is a significant behavioral change =E2=
-=80=94 it looks like a bug fix (the original almost certainly should have b=
-een clearing those bits before OR'ing in new values). This fix is buried in=
-side a large hardware config update patch with no `Fixes:` tag. It should e=
-ither be split into a separate fix patch with a proper `Fixes:` tag and `Cc=
-: stable@dpdk.org`, or at least called out in the commit message.
+**Error: Potential out-of-bounds access on `queue_map_rx` / `queue_map_tx`**
 
-The same `&=3D (bits)` to `&=3D ~(bits)` change appears at two sites in `r8=
-169_fiber.c`:
-- `rtl8127_set_sds_phy_caps_5g_8127()` (line 2364)
-- `rtl8127_set_sds_phy_caps_10g_8127()` (line 2381)
+In `nfb_eth_rx_queue_setup()`:
+```c
+qid =3D priv->queue_map_rx[rx_queue_id];
+```
+There is no bounds check that `rx_queue_id < max_rx_queues` before indexing=
+ into the map array. The same applies to `nfb_eth_tx_queue_setup()` with `q=
+ueue_map_tx[tx_queue_id]`. While ethdev may enforce queue count limits conf=
+igured via `dev_info`, a defensive check would prevent corruption if the up=
+per layer has a bug.
 
-### Patch 5: net/r8169: adjust jumbo frame size limit for non-1G cards
+**Confidence**: ~60%. Ethdev's `rte_eth_rx_queue_setup` does validate `rx_q=
+ueue_id < dev->data->nb_rx_queues`, but `nb_rx_queues` is set by `rte_eth_d=
+ev_configure()` which should match `max_rx_queues`. If a mismatch ever occu=
+rs (e.g., bug in configure path), this would silently corrupt memory.
 
-**Warning =E2=80=94 Missing CFG_METHOD_59, CFG_METHOD_60, CFG_METHOD_61 in =
-jumbo frame switch**: The switch statement for `max_rx_pktlen` lists specif=
-ic CFG_METHODs for 16K frames but omits CFG_METHOD_52, CFG_METHOD_53, CFG_M=
-ETHOD_59 (RTL8168KD, added in patch 3), CFG_METHOD_60 (RTL9151, added in pa=
-tch 9), and CFG_METHOD_61 (RTL8125K, added in patch 10). These later chips =
-fall into the `default` case and get 9K. This may be intentional (perhaps t=
-hese chips only support 9K jumbo frames), but the commit message says "For =
-other non-1G cards, set the max size to 16K" which contradicts the code =E2=
-=80=94 several 2.5G+ chips would still get the 9K default. Worth verifying =
-intent.
+**Info: Clean refactoring of error paths**
 
-### Patch 6: net/r8169: remove support for CFG_METHOD_69
-
-**Warning =E2=80=94 Removal of CFG_METHOD_69 from `hw_init_rxcfg_8126a` lea=
-ves an empty switch case fall-through**: After removing the `CFG_METHOD_69`=
- case, `CFG_METHOD_70` and `CFG_METHOD_71` still exist but the switch now s=
-tarts with `CFG_METHOD_70`. Not a bug, just noting the cleanup is consisten=
-t.
-
-No issues with this patch.
-
-### Patch 9: net/r8169: add support for RTL9151
-
-**Warning =E2=80=94 Missing CFG_METHOD_60 in several locations in r8169_hw.=
-c**: When patch 10 (RTL8125K, CFG_METHOD_61) is reviewed, it adds CFG_METHO=
-D_61 alongside CFG_METHOD_60 in multiple switch/if blocks (`rtl_stop_all_re=
-quest`, `rtl_wait_txrx_fifo_empty`, `rtl8125_set_rx_desc_type`, etc.). Chec=
-king patch 9, CFG_METHOD_60 is *not* added to these same locations =E2=80=
-=94 it appears that patch 10 handles adding CFG_METHOD_60 to those location=
-s retroactively. Per review guidelines, I'm assuming the author ordered pat=
-ches correctly and these compile in sequence, but it's worth confirming tha=
-t CFG_METHOD_60 is handled in `rtl_stop_all_request`, `rtl_wait_txrx_fifo_e=
-mpty`, and `rtl8125_set_rx_desc_type` after the full series is applied.
-
-### Patch 10: net/r8169: add support for RTL8125K
-
-**Info =E2=80=94 HwSuppCheckPhyDisableModeVer simplification**: The switch =
-converting many explicit `CFG_METHOD_*` cases to a `default` for `HwSuppChe=
-ckPhyDisableModeVer =3D 3` is a welcome simplification. However, this means=
- any future unrecognized CFG_METHOD will get version 3. This seems intentio=
-nal and reasonable as a catch-all.
-
-### Patch 11: net/r8169: fix one bug about RTL8168KB
-
-**Error =E2=80=94 Missing `Cc: stable@dpdk.org`**: This patch has a `Fixes:=
-` tag. The RTL8168KB was being incorrectly treated as a 2.5G device which c=
-ould cause link negotiation issues. Should have `Cc: stable@dpdk.org`.
-
-**Warning =E2=80=94 Commit subject**: "fix one bug about RTL8168KB" is vagu=
-e. A more descriptive subject like `net/r8169: fix RTL8168KB speed classifi=
-cation` would be clearer.
-
-### Patch 12: net/r8169: ensure the old mapping is used
-
-**Error =E2=80=94 Missing `Cc: stable@dpdk.org`**: This patch has a `Fixes:=
-` tag correcting incorrect link status when taking over from the vendor ker=
-nel driver. Should have `Cc: stable@dpdk.org`.
-
-**Warning =E2=80=94 Commit message could be more descriptive**: "ensure the=
- old mapping is used" is somewhat opaque. The body explains it fixes incorr=
-ect link status when binding after the vendor driver, but the subject line =
-doesn't convey what "mapping" refers to (interrupt register mapping). Consi=
-der something like `net/r8169: fix link status after vendor driver unbind`.
+The conversion from:
+```c
+if (ret =3D=3D 0)
+    dev->data->rx_queues[rx_queue_id] =3D rxq;
+else
+    rte_free(rxq);
+```
+to the `goto err_queue_init` pattern is cleaner and more consistent with DP=
+DK conventions.
 
 ---
 
-## Patches With No Issues Found
+### Patch 2/8: `net/nfb: create one ethdev per ethernet port`
 
-Patches 2, 3, 6, 7, 8 =E2=80=94 no issues identified.
+This is the core architectural patch. Key changes:
+
+- `nfb_eth_dev_init()` signature changes to accept `void *init_data` (for `=
+rte_eth_dev_create()`)
+- `nfb_eth_common_probe()` opens the NFB device, gets interface map, iterat=
+es interfaces
+- TAILQ list tracks all created ethdevs for removal
+- `nfb_eth_common_remove()` iterates the TAILQ to destroy matching ethdevs
+
+**Correctness findings**:
+
+**Error: Double TAILQ_REMOVE in `nfb_eth_common_remove()`**
+
+```c
+RTE_TAILQ_FOREACH_SAFE(entry, &nfb_eth_dev_list, eth_dev_list, temp) {
+    if (dev =3D=3D entry->eth_dev->device) {
+        TAILQ_REMOVE(&nfb_eth_dev_list, entry, eth_dev_list);
+        rte_eth_dev_destroy(entry->eth_dev, nfb_eth_dev_uninit);
+    }
+}
+```
+
+`rte_eth_dev_destroy()` calls `nfb_eth_dev_uninit()`, which also does:
+```c
+TAILQ_REMOVE(&nfb_eth_dev_list, internals, eth_dev_list);
+```
+
+This is a **double TAILQ_REMOVE** on the same entry. The first `TAILQ_REMOV=
+E` in `nfb_eth_common_remove()` unlinks the entry, then `nfb_eth_dev_uninit=
+()` attempts to remove the already-unlinked entry again. Depending on the T=
+AILQ implementation, this could corrupt the list or cause undefined behavio=
+r.
+
+**Confidence**: ~85%. The `nfb_eth_dev_uninit()` always does the TAILQ_REMO=
+VE (it was added in this same patch), and `nfb_eth_common_remove()` also do=
+es it before calling destroy. One of these must be removed. The cleanest fi=
+x is to remove the TAILQ_REMOVE from `nfb_eth_common_remove()` and let `nfb=
+_eth_dev_uninit()` handle it exclusively =E2=80=94 that way `dev_close` =E2=
+=86=92 `uninit` also works correctly.
+
+**Error: `nfb_eth_common_probe()` opens NFB device twice**
+
+`nfb_eth_common_probe()` opens the NFB device with `nfb_open()` to get the =
+interface map, then closes it. But then `nfb_eth_dev_init()` (called via `r=
+te_eth_dev_create()`) opens the **same device again** per-interface:
+```c
+internals->nfb =3D nfb_open(params->probe_params->path);
+```
+Each ethdev gets its own `nfb_open()` handle, which is probably intentional=
+ (each port needs its own handle for independent NDP queue operations). But=
+ the probe-level open is done solely to read the interface map and is then =
+closed. This is not a bug per se, but worth confirming the design intent: *=
+*N+1 opens** for N ports seems intentional.
+
+**Confidence**: 50% =E2=80=94 this is likely intentional but should be conf=
+irmed.
+
+**Warning: `__rte_internal` in header file**
+
+```c
+__rte_internal
+int nfb_eth_common_probe(struct nfb_probe_params *params);
+__rte_internal
+int nfb_eth_common_remove(struct rte_device *dev);
+```
+
+These are declared in `nfb.h` (a private driver header), which is fine for =
+cross-file use within the driver. However, per AGENTS.md guidelines, `__rte=
+_internal` should be alone on its own line before the function =E2=80=94 an=
+d it is here, so this is correct. The `RTE_EXPORT_INTERNAL_SYMBOL` macros a=
+re present in the .c file. No issue.
+
+**Warning: `nfb_eth_dev_create_for_ifc()` queue map population may write be=
+yond allocated bounds**
+
+In patch 2, the queue map population loop:
+```c
+cnt =3D 0;
+for (i =3D 0; i < mi->rxq_cnt; i++) {
+    if (mi->rxq[i].ifc =3D=3D ifc->id)
+        priv->queue_map_rx[cnt++] =3D mi->rxq[i].id;
+}
+```
+The array `queue_map_rx` was allocated with size `max_rx_queues` (which is =
+`ifc->rxq_cnt`). If the firmware map reports more RX queues for this interf=
+ace than `ifc->rxq_cnt`, `cnt` could exceed the allocation. This depends on=
+ the libnfb library's consistency guarantees between `ifc->rxq_cnt` and the=
+ actual count of `mi->rxq[i].ifc =3D=3D ifc->id` matches.
+
+**Confidence**: ~55%. If `nc_ifc_map_info_create_ordinary()` guarantees con=
+sistency, this is safe. If not, a bounds check on `cnt < max_rx_queues` wou=
+ld be prudent.
+
+**Info: Static TAILQ without synchronization**
+
+The `nfb_eth_dev_list` TAILQ is a static global with no locking. This is sa=
+fe as long as probe/remove are only called from the EAL main thread (which =
+is the normal DPDK model), but worth noting.
 
 ---
 
-## Summary
+### Patch 3/8: `net/nfb: add vdev as alternative device probe method`
 
-| Severity | Count | Details |
+Adds a vdev driver (`net_vdev_nfb`) for non-PCI devices (simulated/virtual).
+
+**Correctness findings**:
+
+**Warning: `nfb_default_dev_path()` used without NULL check**
+
+```c
+params.path =3D nfb_default_dev_path();
+```
+
+If `nfb_default_dev_path()` returns NULL (e.g., no NFB device present), thi=
+s will be passed to `nfb_open()` which will likely segfault. The "dev" argu=
+ment parsing later may override it, but if no `dev=3D` argument is given, t=
+he default path is used.
+
+**Confidence**: ~65%. Depends on `nfb_default_dev_path()` semantics. If it =
+always returns a valid string (even for non-existent devices), this is fine=
+. If it can return NULL, a check is needed.
+
+**Info: Mixed `free()` and `rte_kvargs_free()` cleanup**
+
+The error paths correctly use `free()` for `strdup()`'d memory and `rte_kva=
+rgs_free()` for kvargs. This is correct.
+
+---
+
+### Patch 4/8: `net/nfb: add device argument "port" to limit used ports`
+
+Adds ability to select specific ports via `port=3DN` arguments.
+
+**Correctness findings**:
+
+**Error: `strtoul` with base 0 allows octal/hex input =E2=80=94 potential u=
+ser confusion**
+
+```c
+port =3D strtoul(value, &end, 0);
+```
+
+Base 0 means `port=3D010` is parsed as octal (8), not decimal 10. For a por=
+t number argument, base 10 would be more predictable:
+```c
+port =3D strtoul(value, &end, 10);
+```
+
+**Confidence**: 70%. Not a crash bug, but a usability issue that could caus=
+e silent misconfiguration.
+
+**Info: The `nfb_eth_dev_create_for_ifc_by_port()` validation is good** =E2=
+=80=94 it checks for empty string, non-digit start, and out-of-range values.
+
+---
+
+### Patch 5/8: `net/nfb: init only MACs associated with device`
+
+Replaces the global "open all MACs" approach with per-interface MAC initial=
+ization.
+
+**Correctness findings**:
+
+**Warning: Uses `calloc()` instead of `rte_calloc()` for rxmac/txmac arrays=
+**
+
+```c
+intl->rxmac =3D calloc(ifc->eth_cnt, sizeof(*intl->rxmac));
+```
+
+These are pointer arrays (not DMA-accessible), so `calloc()` is actually ap=
+propriate per DPDK guidelines (don't use `rte_malloc` for non-DMA control s=
+tructures). However, `nfb_eth_dev_uninit()` is freeing the `internals` stru=
+ct with `rte_free()` while these sub-allocations use plain `free()`. This m=
+ixing is fine =E2=80=94 they're separate allocations =E2=80=94 but worth no=
+ting for consistency.
+
+**Error: `nfb_nc_eth_init()` doesn't validate `cnt` against allocated array=
+ size**
+
+```c
+intl->rxmac =3D calloc(ifc->eth_cnt, sizeof(*intl->rxmac));
+// ...
+rxm =3D 0;
+for (i =3D 0; i < mi->eth_cnt; i++) {
+    if (mi->eth[i].ifc !=3D ifc->id)
+        continue;
+    intl->rxmac[rxm] =3D nc_rxmac_open(intl->nfb, mi->eth[i].node_rxmac);
+    if (intl->rxmac[rxm])
+        rxm++;
+    // ...
+}
+```
+
+The array is allocated with size `ifc->eth_cnt`, but the loop counts matche=
+s of `mi->eth[i].ifc =3D=3D ifc->id` without bounding `rxm` against `ifc->e=
+th_cnt`. If the firmware map has more eth entries for this interface than `=
+ifc->eth_cnt` indicates, this overflows the allocation.
+
+**Confidence**: ~55%. Same trust-the-firmware question as in patch 2's queu=
+e map population.
+
+**Info: Early return for `ifc->eth_cnt =3D=3D 0` is good defensive coding.**
+
+---
+
+### Patch 6/8: `net/nfb: add compatible cards to driver PCI ID table`
+
+Adds PCI IDs for NFB-200G2QL secondary endpoint, FB2CGHH, COMBO-400G1, and =
+generic CESNET-NDK.
+
+No correctness issues. Straightforward PCI ID table additions.
+
+---
+
+### Patch 7/8: `net/nfb: report firmware version`
+
+Implements `fw_version_get` ethdev op.
+
+**Correctness findings**:
+
+**Info: Good NULL handling for `proj_name` / `proj_vers`** =E2=80=94 both a=
+re defaulted to empty string if NULL.
+
+**Info: The return value semantics are correct** =E2=80=94 returns 0 on suc=
+cess, the required buffer size on truncation, and negative on error, matchi=
+ng the `fw_version_get` API contract.
+
+---
+
+### Patch 8/8: `doc/nfb: cleanup and update guide`
+
+Documentation rewrite and release notes update.
+
+**Warning: Typo in documentation**
+
+```rst
+Ready-to-use demo firmwares can be found on the `DYNANIC page <https://dyna=
+-nic.com/try-now/>`_.
+```
+
+"DYNANIC" should be "DYNANIC" or more likely "DyNANIC" or whatever the corr=
+ect product name is =E2=80=94 but the URL suggests it might be "dyna-nic", =
+so the display text appears misspelled. Worth verifying the correct brandin=
+g.
+
+**Warning: Feature matrix additions should match implemented features**
+
+The patch adds to `features/nfb.ini`:
+```ini
+Unicast MAC filter   =3D Y
+Timestamp offload    =3D P
+FW version           =3D Y
+Multiprocess aware   =3D Y
+```
+
+"Unicast MAC filter" and "Timestamp offload" were presumably already suppor=
+ted but undocumented. "FW version" is added in patch 7. "Multiprocess aware=
+" =E2=80=94 the series adds `rte_eal_process_type()` checks in some places =
+but the full multiprocess story should be verified.
+
+---
+
+## Cross-Cutting Concerns
+
+### Thread Safety of Static TAILQ
+
+The `nfb_eth_dev_list` TAILQ has no locking. DPDK's device management is ty=
+pically single-threaded (EAL main thread), but if hotplug events could race=
+ with probe/remove, this could be problematic. This is consistent with how =
+other DPDK drivers handle similar lists, so it's acceptable.
+
+### Memory Allocation Strategy
+
+The series uses an appropriate mix of `rte_calloc`/`rte_zmalloc` for data i=
+n the DPDK-managed dev_private area and plain `calloc`/`malloc` for driver-=
+internal control structures (MAC handle arrays). This follows DPDK best pra=
+ctices.
+
+### Error Path Completeness
+
+Error paths are generally well-handled across the series. The `goto` cleanu=
+p chains in `nfb_eth_dev_init()` are consistent and cover the allocation se=
+quence.
+
+---
+
+## Summary of Findings
+
+| Severity | Patch | Finding |
 |----------|-------|---------|
-| Error | 3 | Missing `Cc: stable@dpdk.org` on patches 1, 11, 12 (all have =
-Fixes tags) |
-| Warning | 4 | Bug fix buried in feature patch (patch 4); missing CFG_METH=
-ODs in jumbo size (patch 5); vague commit subjects (patches 11, 12) |
-| Info | 1 | Default case simplification in patch 10 |
+| **Error** | 2/8 | Double `TAILQ_REMOVE` =E2=80=94 `nfb_eth_common_remove(=
+)` removes from list, then `nfb_eth_dev_uninit()` (called via `rte_eth_dev_=
+destroy()`) removes again |
+| **Warning** | 2/8 | Queue map population loop lacks bounds check against =
+allocated size |
+| **Warning** | 5/8 | `nfb_nc_eth_init()` rxmac/txmac population loop lacks=
+ bounds check against `ifc->eth_cnt` |
+| **Warning** | 4/8 | `strtoul` with base 0 allows unintended octal/hex par=
+sing of port numbers |
+| **Warning** | 3/8 | `nfb_default_dev_path()` return value not checked for=
+ NULL before use |
+| **Warning** | 8/8 | "DYNANIC" appears to be a typo in documentation |
+| **Info** | 1/8 | No bounds check on `rx_queue_id` / `tx_queue_id` before =
+indexing queue maps |
 
-The most technically significant finding is the `&=3D (bits)` =E2=86=92 `&=
-=3D ~(bits)` fix in patch 4, which corrects what appears to be a real mask =
-inversion bug in the fiber/SerDes configuration for RTL8127. This should id=
-eally be a standalone fix with a Fixes tag rather than buried in a large ha=
-rdware update.
+The **double TAILQ_REMOVE** in patch 2 is the most significant finding and =
+will cause list corruption when removing devices. The fix is straightforwar=
+d: remove the `TAILQ_REMOVE` call from `nfb_eth_common_remove()` and let `n=
+fb_eth_dev_uninit()` handle list removal exclusively.
