@@ -2,52 +2,52 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94169EDF03F
-	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Feb 2026 05:45:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CF2FEDF040
+	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Feb 2026 05:51:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BE5CD402EA;
-	Thu, 12 Feb 2026 06:45:32 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 49D6D402E2;
+	Thu, 12 Feb 2026 06:51:57 +0100 (CET)
 Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
- by mails.dpdk.org (Postfix) with ESMTP id 9EA914025F
- for <dev@dpdk.org>; Thu, 12 Feb 2026 06:45:30 +0100 (CET)
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 61C5jRhuD3342980,
+ by mails.dpdk.org (Postfix) with ESMTP id 37F32402C0
+ for <dev@dpdk.org>; Thu, 12 Feb 2026 06:51:54 +0100 (CET)
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 61C5ppzpF3347931,
  This message is accepted by code: ctloc85258
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realsil.com.cn;
- s=dkim; t=1770875128;
- bh=NR3crC9ImNxzo6EuHnX7jEbT4fcG4Mx8REru+5FiPFM=;
+ s=dkim; t=1770875512;
+ bh=WZHgixlN4z4a1BnD/LRWQzqz5FKDR8aEB3nIUHv1JRY=;
  h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
  Content-Type:Content-Transfer-Encoding:MIME-Version;
- b=fh20UszpEaM6F6JvntXiRWpqcay18hzUXboN34O4ZOvOzLbJL5bDai33A1dhXZfUU
- KMGYgu6QzKL9LPnPtzY/vO5xFTNSWkNlBaLbNbfgbYig1JrHCo+NnQ4tnH69TiryyA
- Cx89T+dEs71Ja8SK3a/qpo1dDe50+bNqScjr5CbqiboCEZXBmr5QdHAEZkZ0jUEuos
- Pq3qXY8zUt0OsmD1cZ+RlDUuoJ+0T5ga5ykSFscLRjMCY4AqcYsl2RCOoNVRjLrRfa
- rVX09PInOSwKqgdaaE/HfokNNtDhdpzYh0pSaWxCdG0bC9Hc8FiNv4/8cE4rHi6l1p
- CqnvYRvh5sqBw==
-Received: from RS-EX-MBS1.realsil.com.cn ([172.29.17.101])
- by rtits2.realtek.com.tw (8.15.2/3.21/5.94) with ESMTPS id 61C5jRhuD3342980
+ b=gBZSFbp+axDlzCk0SQQK01JPVWUeE7BGbB2HiUZSzf8V+hRC7d1VX1NWj/9RXicg0
+ AytDWc1hLo8ReHKOtfRh8tWwGu8opoPXG3H/A9atA5QaByApQ/acAIj2FUXAyYnZ0h
+ D520Qjf5CIod83Z4FPkKvatyaU+dZgdz+BZCPcCRYDgnlbq0Sbn1SWWugVwZ6qpOSW
+ WdeZt6E4jGODhBFZ54QIao3Rwm4fjNP1w/DDDDGBKp91yBn6hM2ymkB9XFB57Jl9pr
+ xAOVIHUIBjxITuafn9WRE6Dxb+3IWQmliNU2hHuegqjNdbV0/aiGtXcLZDg5cCPQi7
+ hyom5sjRJdQDA==
+Received: from RS-EX-MBS3.realsil.com.cn ([172.29.17.103])
+ by rtits2.realtek.com.tw (8.15.2/3.21/5.94) with ESMTPS id 61C5ppzpF3347931
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
- Thu, 12 Feb 2026 13:45:28 +0800
+ Thu, 12 Feb 2026 13:51:52 +0800
 Received: from RS-EX-MBS4.realsil.com.cn (172.29.17.104) by
- RS-EX-MBS1.realsil.com.cn (172.29.17.101) with Microsoft SMTP Server
+ RS-EX-MBS3.realsil.com.cn (172.29.17.103) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.39; Thu, 12 Feb 2026 13:45:27 +0800
+ 15.2.1748.39; Thu, 12 Feb 2026 13:51:51 +0800
 Received: from RS-EX-MBS4.realsil.com.cn ([172.29.17.104]) by
  RS-EX-MBS4.realsil.com.cn ([172.29.17.104]) with mapi id 15.02.1748.039; Thu,
- 12 Feb 2026 13:45:27 +0800
+ 12 Feb 2026 13:51:51 +0800
 From: =?gb2312?B?zfXyqw==?= <howard_wang@realsil.com.cn>
 To: Stephen Hemminger <stephen@networkplumber.org>
 CC: "dev@dpdk.org" <dev@dpdk.org>, "pro_nic_dpdk@realtek.com"
  <pro_nic_dpdk@realtek.com>
-Subject: =?utf-8?B?5Zue5aSNOiBbUEFUQ0ggdjIgMDIvMTJdIG5ldC9yODE2OTogdHVuZSBSWCBkZXNjIGZldGNoIG51bSBmb3IgODEyNiBhbmQgODEyNw==?=
-Thread-Topic: [PATCH v2 02/12] net/r8169: tune RX desc fetch num for 8126 and
- 8127
-Thread-Index: AQHcmlHUwkXtbDc59020tQricz/2obV9hCcAgAEKVfA=
-Date: Thu, 12 Feb 2026 05:45:27 +0000
-Message-ID: <53eab1bb8691493e88b439f73823a8b9@realsil.com.cn>
+Subject: =?utf-8?B?5Zue5aSNOiBbUEFUQ0ggdjIgMDEvMTJdIG5ldC9yODE2OTogZml4IE5VTEwgcG9pbnRlciBkZXJlZmVyZW5jZSBpbiBydGw4MTY4ZnBfb3Bz?=
+Thread-Topic: [PATCH v2 01/12] net/r8169: fix NULL pointer dereference in
+ rtl8168fp_ops
+Thread-Index: AQHcmlHUo0FpgRpvUUG/PYFX1sJaMLV9g+qAgAEOQ4A=
+Date: Thu, 12 Feb 2026 05:51:51 +0000
+Message-ID: <a422d66b5d284415a399bbe8ca5f2b7c@realsil.com.cn>
 References: <20260210055511.62382-1-howard_wang@realsil.com.cn>
- <20260210055511.62382-3-howard_wang@realsil.com.cn>
- <20260211134326.61146e31@phoenix.local>
-In-Reply-To: <20260211134326.61146e31@phoenix.local>
+ <20260210055511.62382-2-howard_wang@realsil.com.cn>
+ <20260211134235.258f347c@phoenix.local>
+In-Reply-To: <20260211134235.258f347c@phoenix.local>
 Accept-Language: zh-CN, en-US
 Content-Language: zh-CN
 x-originating-ip: [172.29.17.210]
@@ -67,29 +67,30 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-T0ssIEkgd2lsbCBhZGQgdGhlc2UgZXhwbGFuYXRpb25zIHRvIHRoZSBjb21taXQgbG9nIGluIHYz
-Lg0KDQpUaGUgZGVmYXVsdCB2YWx1ZXMgaW4gdGhlIExpbnV4IGRyaXZlciBhcmUgYWN0dWFsbHkg
-dGhlIG9uZXMgYmVmb3JlIHRoaXMgbW9kaWZpY2F0aW9uLg0KVGhpcyBwYXJhbWV0ZXIgY29udHJv
-bHMgdGhlIG51bWJlciBvZiBSWCBkZXNjcmlwdG9ycyBmZXRjaGVkIGluIGEgc2luZ2xlIGJhdGNo
-LiBUdW5pbmcgdGhpcyB2YWx1ZSBvcHRpbWl6ZXMgdGhlIFJYIHBlcmZvcm1hbmNlLg0KUmVnYXJk
-aW5nIHJ0ZV9ldGhfZGV2X2luZm8gYW5kIHJ0ZV9ldGhfcnhjb25mLCBJIGNoZWNrZWQgdGhlIHN0
-cnVjdHVyZXMgYW5kIHRoZXJlIGRvZXNuJ3Qgc2VlbSB0byBiZSBhIHJlbGV2YW50IGdlbmVyaWMg
-dmFyaWFibGUgdGhhdCBtYXBzIHRvIHRoaXMgc3BlY2lmaWMgaGFyZHdhcmUgcGFyYW1ldGVyLg0K
-DQotLS0tLdPKvP7Urbz+LS0tLS0NCreivP7IyzogU3RlcGhlbiBIZW1taW5nZXIgPHN0ZXBoZW5A
-bmV0d29ya3BsdW1iZXIub3JnPiANCreiy83KsbzkOiAyMDI2xOoy1MIxMsjVIDU6NDMNCsrVvP7I
-yzogzfXyqyA8aG93YXJkX3dhbmdAcmVhbHNpbC5jb20uY24+DQqzrcvNOiBkZXZAZHBkay5vcmc7
-IHByb19uaWNfZHBka0ByZWFsdGVrLmNvbQ0K1vfM4jogUmU6IFtQQVRDSCB2MiAwMi8xMl0gbmV0
-L3I4MTY5OiB0dW5lIFJYIGRlc2MgZmV0Y2ggbnVtIGZvciA4MTI2IGFuZCA4MTI3DQoNCg0KRXh0
-ZXJuYWwgbWFpbCA6IFRoaXMgZW1haWwgb3JpZ2luYXRlZCBmcm9tIG91dHNpZGUgdGhlIG9yZ2Fu
-aXphdGlvbi4gRG8gbm90IHJlcGx5LCBjbGljayBsaW5rcywgb3Igb3BlbiBhdHRhY2htZW50cyB1
-bmxlc3MgeW91IHJlY29nbml6ZSB0aGUgc2VuZGVyIGFuZCBrbm93IHRoZSBjb250ZW50IGlzIHNh
-ZmUuDQoNCg0KDQpPbiBUdWUsIDEwIEZlYiAyMDI2IDEzOjU1OjAxICswODAwDQpIb3dhcmQgV2Fu
-ZyA8aG93YXJkX3dhbmdAcmVhbHNpbC5jb20uY24+IHdyb3RlOg0KDQo+IEZvciBSVEw4MTI2OiBU
-dW5lIFJYIGRlc2NyaXB0b3IgZmV0Y2ggbnVtYmVyIHRvIDIwLg0KPiBGb3IgUlRMODEyNzogVHVu
-ZSBSWCBkZXNjcmlwdG9yIGZldGNoIG51bWJlciB0byAxMi4NCj4NCj4gU2lnbmVkLW9mZi1ieTog
-SG93YXJkIFdhbmcgPGhvd2FyZF93YW5nQHJlYWxzaWwuY29tLmNuPg0KPiAtLS0NCg0KSXQgd291
-bGQgYmUgZ29vZCB0byBoYXZlIHNvbWUgZXhwbGFuYXRpb25zIG9mIHRoZXNlLg0KQXJlIHRoZXNl
-IHRoZSBkZWZhdWx0cyBpbiBvdGhlciBPUydzPw0KDQpFdmVuIGJldHRlciB3b3VsZCBiZSB0byBp
-bnRlZ3JhdGUgdGhlbSBpbnRvIHRoZSBleGlzdGluZyBEUERLIHJ0ZV9ldGhfdGhyZXNoIHZhbHVl
-cyB0aGF0IGFyZSBwYXNzZWQgaW4gdmlhIHJ0ZV9ldGhfcnhjb25mIGFuZCByZXR1cm5lZCB3aXRo
-IHJ0ZV9ldGhfZGV2X2luZm8uDQo=
+VGhhbmtzLiBTaW5jZSBJIG5lZWQgdG8gc2VuZCBhIHYzIHRvIGFkZHJlc3MgY29tbWVudHMgb24g
+YW5vdGhlciBwYXRjaCBpbiB0aGlzIHNlcmllcywgSSB3aWxsIGluY2x1ZGUgdGhpcyB1cGRhdGVk
+IGNvbW1pdCBtZXNzYWdlIGluIHYzLg0KDQoNCi0tLS0t08q8/tStvP4tLS0tLQ0Kt6K8/sjLOiBT
+dGVwaGVuIEhlbW1pbmdlciA8c3RlcGhlbkBuZXR3b3JrcGx1bWJlci5vcmc+IA0Kt6LLzcqxvOQ6
+IDIwMjbE6jLUwjEyyNUgNTo0Mw0KytW8/sjLOiDN9fKrIDxob3dhcmRfd2FuZ0ByZWFsc2lsLmNv
+bS5jbj4NCrOty806IGRldkBkcGRrLm9yZzsgcHJvX25pY19kcGRrQHJlYWx0ZWsuY29tDQrW98zi
+OiBSZTogW1BBVENIIHYyIDAxLzEyXSBuZXQvcjgxNjk6IGZpeCBOVUxMIHBvaW50ZXIgZGVyZWZl
+cmVuY2UgaW4gcnRsODE2OGZwX29wcw0KDQoNCkV4dGVybmFsIG1haWwgOiBUaGlzIGVtYWlsIG9y
+aWdpbmF0ZWQgZnJvbSBvdXRzaWRlIHRoZSBvcmdhbml6YXRpb24uIERvIG5vdCByZXBseSwgY2xp
+Y2sgbGlua3MsIG9yIG9wZW4gYXR0YWNobWVudHMgdW5sZXNzIHlvdSByZWNvZ25pemUgdGhlIHNl
+bmRlciBhbmQga25vdyB0aGUgY29udGVudCBpcyBzYWZlLg0KDQoNCg0KT24gVHVlLCAxMCBGZWIg
+MjAyNiAxMzo1NTowMCArMDgwMA0KSG93YXJkIFdhbmcgPGhvd2FyZF93YW5nQHJlYWxzaWwuY29t
+LmNuPiB3cm90ZToNCg0KPiBGaXhlczogZDllZTcxYjVmMWJjICgibmV0L3I4MTY5OiBzdXBwb3J0
+IFJUTDgxNjggc2VyaWVzIikNCj4NCj4gU2lnbmVkLW9mZi1ieTogSG93YXJkIFdhbmcgPGhvd2Fy
+ZF93YW5nQHJlYWxzaWwuY29tLmNuPg0KPiAtLS0NCg0KVGhhdCBpcyBtdWNoIHRvIHNob3J0IGEg
+bWVzc2FnZSBmb3IgYSBjcml0aWNhbCBmaXguDQpIb3cgYWJvdXQgdGhpcyAoQUkgZ2VuZXJhdGVk
+KSBtZXNzYWdlLiBDYW4gSSBhZGQgdGhhdCBkdXJpbmcgbWVyZ2U/DQoNClN1YmplY3Q6IFtQQVRD
+SCB2MiAwMS8xMl0gbmV0L3I4MTY5OiBmaXggY3Jhc2ggaW4gUlRMODE2OEZQIGluaXQNCg0KVGhl
+IHJ0bDgxNjhmcF9vcHMgc3RydWN0dXJlIHdhcyBtaXNzaW5nIHRoZSBod19waHlfbWN1X2NvbmZp
+ZyBmdW5jdGlvbiBwb2ludGVyLCBjYXVzaW5nIGEgTlVMTCBwb2ludGVyIGRlcmVmZXJlbmNlIGR1
+cmluZyBkZXZpY2UgaW5pdGlhbGl6YXRpb24gd2hlbiB0aGUgZHJpdmVyIGF0dGVtcHRzIHRvIGNv
+bmZpZ3VyZSB0aGUgUEhZIG1pY3JvY29udHJvbGxlci4NCg0KQWRkIGh3X3BoeV9tY3VfY29uZmln
+XzgxNjhmcCgpIGFzIGEgbm8tb3AgZnVuY3Rpb24gc2luY2UgdGhlIFJUTDgxNjhGUCBkb2VzIG5v
+dCByZXF1aXJlIFBIWSBNQ1UgY29uZmlndXJhdGlvbi4gVGhpcyBtYXRjaGVzIHRoZSBwYXR0ZXJu
+IHVzZWQgYnkgb3RoZXIgY2hpcCB2YXJpYW50cyB0aGF0IGRvbid0IG5lZWQgUEhZIE1DVSB1cGRh
+dGVzLg0KDQpGaXhlczogZDllZTcxYjVmMWJjICgibmV0L3I4MTY5OiBzdXBwb3J0IFJUTDgxNjgg
+c2VyaWVzIikNCg0K
