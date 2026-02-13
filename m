@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C99EEDF14F
-	for <dpdk-dev@archiver.kernel.org>; Fri, 13 Feb 2026 10:29:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D582EDF151
+	for <dpdk-dev@archiver.kernel.org>; Fri, 13 Feb 2026 10:29:13 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 140FE40B9D;
-	Fri, 13 Feb 2026 11:27:23 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 59CA340BA0;
+	Fri, 13 Feb 2026 11:27:24 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
- by mails.dpdk.org (Postfix) with ESMTP id 717F6402F1
- for <dev@dpdk.org>; Fri, 13 Feb 2026 11:27:15 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id A46D940A82
+ for <dev@dpdk.org>; Fri, 13 Feb 2026 11:27:16 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1770978435; x=1802514435;
+ t=1770978437; x=1802514437;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=PAJobiJsC0rE3fAHEwH8SIIiy7F+wVl2oTC3EwBUZ2M=;
- b=S8fEKlz5PL1sC7gvfqy0zlPFky5099n7z/2RKueMtkWc6o+vGM8XtoeG
- s3eCLI6gES6zU/FQ14d9kB5r8s4j1s9wNOkgzi0ZdIQcpr+j/HOzoSdzz
- yLqr4CJE/5ViSDyXbzHnzeDaKRia9vRUWKgdXBVNA664cF8RG+mCLrPf5
- M0qv3kikBoh7lR7QafQvT7P+JcBauRFSuUtfue0sncV0hPW3Uh3ZlV6gJ
- K8K64JhvzMpo161CUpUtT0a+kgxY8X6zNorkP6CVJGY0WdyIxHRemcukj
- eV99JN1iLlG7w0u6t0A9EiCXISiJL1C4R+eaAswdw8RfINkqxkv9bdBx3 Q==;
-X-CSE-ConnectionGUID: PflvVWPgQOaByXIYzov4qA==
-X-CSE-MsgGUID: gMx6Nq5VRnyOpJ8Efyvl7w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11699"; a="83603110"
-X-IronPort-AV: E=Sophos;i="6.21,288,1763452800"; d="scan'208";a="83603110"
+ bh=ISTDYjojApHl6KKlGcy2ymF/pPmvfbpJHfaAsP2+QVU=;
+ b=ImokqeKNMv5rHJtWseBs1YQ2arDYJYWFV1V7ulOzqHAb73abDlFtiHPJ
+ 2enG+8MEF/Rk6beFOJ7CpXC1Jfh5vBM1SIa7ydr5kI60mNTcGJHqo2VfM
+ nK3gPSQmZURJD8pSHwQ5484oFKngEwx9pHnviZKaQmramUOLIN4a2OxF1
+ CL6XBTJFno6UyXaQ1RpFwzIbKDiRuBVbpf1mYKmBFs7QItkCIy+T3q+xs
+ QfELKm4yrkPqXFuttUgQOceib9hT/IvJKwJsFKi3sjr1AoTUJknD9/KRv
+ 3qugBj5MYL9LQj+KaxeX4BjuTMnjPr/vLft9EQxckGgYQt5RWaQxhB0iY Q==;
+X-CSE-ConnectionGUID: zZu9ZOZlSnyCg3GAVeef0A==
+X-CSE-MsgGUID: fbew2QY9SE6KFT6HjghH+Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11699"; a="83603112"
+X-IronPort-AV: E=Sophos;i="6.21,288,1763452800"; d="scan'208";a="83603112"
 Received: from orviesa003.jf.intel.com ([10.64.159.143])
  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 13 Feb 2026 02:27:15 -0800
-X-CSE-ConnectionGUID: z6zf/vwwS+KVRYDO5GOmug==
-X-CSE-MsgGUID: gFWOQY0lR22/43IfzBvArQ==
+ 13 Feb 2026 02:27:16 -0800
+X-CSE-ConnectionGUID: ufHxvx30QL+uhD50EWPjvA==
+X-CSE-MsgGUID: SzEn5IQbQ8mqEuWWkBnyNQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,288,1763452800"; d="scan'208";a="217028126"
+X-IronPort-AV: E=Sophos;i="6.21,288,1763452800"; d="scan'208";a="217028131"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by orviesa003.jf.intel.com with ESMTP; 13 Feb 2026 02:27:15 -0800
+ by orviesa003.jf.intel.com with ESMTP; 13 Feb 2026 02:27:16 -0800
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org,
 	Vladimir Medvedkin <vladimir.medvedkin@intel.com>
-Subject: [PATCH v4 20/27] net/iavf: avoid rte malloc in MAC address operations
-Date: Fri, 13 Feb 2026 10:26:31 +0000
-Message-ID: <ad3c77be6c74565b7a9e4544b6565ea91f94fc70.1770978324.git.anatoly.burakov@intel.com>
+Subject: [PATCH v4 21/27] net/iavf: avoid rte malloc in IPsec operations
+Date: Fri, 13 Feb 2026 10:26:32 +0000
+Message-ID: <969fdcf1fe6b66562d79a08e77171b54961776fd.1770978324.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <cover.1770978324.git.anatoly.burakov@intel.com>
  <cover.1770978324.git.anatoly.burakov@intel.com>
@@ -60,37 +60,153 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Currently, when adding or deleting MAC addresses, we are using
-rte_zmalloc followed by an immediate rte_free. This is not needed as this
-memory is not being stored anywhere, so replace it with regular
-malloc/free.
+Currently, when performing IPsec security association operations and
+retrieving device capabilities, we are using rte_malloc followed by
+immediate rte_free. This is not needed as these structures are only
+used temporarily, so replace it with stack-allocated structures for
+small fixed-size messages and regular malloc/free for variable-sized
+buffers.
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- drivers/net/intel/iavf/iavf_vchnl.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/intel/iavf/iavf_ipsec_crypto.c | 58 ++++++++--------------
+ 1 file changed, 21 insertions(+), 37 deletions(-)
 
-diff --git a/drivers/net/intel/iavf/iavf_vchnl.c b/drivers/net/intel/iavf/iavf_vchnl.c
-index 55986ef909..19dce17612 100644
---- a/drivers/net/intel/iavf/iavf_vchnl.c
-+++ b/drivers/net/intel/iavf/iavf_vchnl.c
-@@ -1402,7 +1402,7 @@ iavf_add_del_all_mac_addr(struct iavf_adapter *adapter, bool add)
- 			}
- 		}
+diff --git a/drivers/net/intel/iavf/iavf_ipsec_crypto.c b/drivers/net/intel/iavf/iavf_ipsec_crypto.c
+index cb437d3212..1a3004b0fc 100644
+--- a/drivers/net/intel/iavf/iavf_ipsec_crypto.c
++++ b/drivers/net/intel/iavf/iavf_ipsec_crypto.c
+@@ -3,6 +3,7 @@
+  */
  
--		list = rte_zmalloc("iavf_del_mac_buffer", len, 0);
-+		list = calloc(1, len);
- 		if (!list) {
- 			PMD_DRV_LOG(ERR, "fail to allocate memory");
- 			return;
-@@ -1434,7 +1434,7 @@ iavf_add_del_all_mac_addr(struct iavf_adapter *adapter, bool add)
- 			PMD_DRV_LOG(ERR, "fail to execute command %s",
- 				    add ? "OP_ADD_ETHER_ADDRESS" :
- 				    "OP_DEL_ETHER_ADDRESS");
--		rte_free(list);
-+		free(list);
- 		begin = next_begin;
- 	} while (begin < IAVF_NUM_MACADDR_MAX);
+ #include <stdalign.h>
++#include <stdlib.h>
+ 
+ #include <rte_cryptodev.h>
+ #include <rte_ethdev.h>
+@@ -899,29 +900,18 @@ static uint32_t
+ iavf_ipsec_crypto_sa_del(struct iavf_adapter *adapter,
+ 	struct iavf_security_session *sess)
+ {
+-	struct inline_ipsec_msg *request = NULL, *response = NULL;
+-	size_t request_len, response_len;
++	struct {
++		struct inline_ipsec_msg msg;
++		struct virtchnl_ipsec_sa_destroy sa_destroy;
++	} req;
++	struct {
++		struct inline_ipsec_msg msg;
++		struct virtchnl_ipsec_resp resp;
++	} resp;
++	struct inline_ipsec_msg *request = &req.msg, *response = &resp.msg;
+ 
+ 	int rc = 0;
+ 
+-	request_len = sizeof(struct inline_ipsec_msg) +
+-			sizeof(struct virtchnl_ipsec_sa_destroy);
+-
+-	request = rte_malloc("iavf-sa-del-request", request_len, 0);
+-	if (request == NULL) {
+-		rc = -ENOMEM;
+-		goto update_cleanup;
+-	}
+-
+-	response_len = sizeof(struct inline_ipsec_msg) +
+-			sizeof(struct virtchnl_ipsec_resp);
+-
+-	response = rte_malloc("iavf-sa-del-response", response_len, 0);
+-	if (response == NULL) {
+-		rc = -ENOMEM;
+-		goto update_cleanup;
+-	}
+-
+ 	/* set msg header params */
+ 	request->ipsec_opcode = INLINE_IPSEC_OP_SA_DESTROY;
+ 	request->req_id = (uint16_t)0xDEADBEEF;
+@@ -939,10 +929,10 @@ iavf_ipsec_crypto_sa_del(struct iavf_adapter *adapter,
+ 
+ 	/* send virtual channel request to add SA to hardware database */
+ 	rc = iavf_ipsec_crypto_request(adapter,
+-			(uint8_t *)request, request_len,
+-			(uint8_t *)response, response_len);
++			(uint8_t *)request, sizeof(req),
++			(uint8_t *)response, sizeof(resp));
+ 	if (rc)
+-		goto update_cleanup;
++		return rc;
+ 
+ 	/* verify response */
+ 	if (response->ipsec_opcode != request->ipsec_opcode ||
+@@ -957,10 +947,6 @@ iavf_ipsec_crypto_sa_del(struct iavf_adapter *adapter,
+ 			response->ipsec_data.ipsec_status->status)
+ 		rc = -EFAULT;
+ 
+-update_cleanup:
+-	rte_free(response);
+-	rte_free(request);
+-
+ 	return rc;
+ }
+ 
+@@ -1113,7 +1099,7 @@ iavf_ipsec_crypto_device_capabilities_get(struct iavf_adapter *adapter,
+ 
+ 	request_len = sizeof(struct inline_ipsec_msg);
+ 
+-	request = rte_malloc("iavf-device-capability-request", request_len, 0);
++	request = calloc(1, request_len);
+ 	if (request == NULL) {
+ 		rc = -ENOMEM;
+ 		goto update_cleanup;
+@@ -1121,8 +1107,7 @@ iavf_ipsec_crypto_device_capabilities_get(struct iavf_adapter *adapter,
+ 
+ 	response_len = sizeof(struct inline_ipsec_msg) +
+ 			sizeof(struct virtchnl_ipsec_cap);
+-	response = rte_malloc("iavf-device-capability-response",
+-			response_len, 0);
++	response = calloc(1, response_len);
+ 	if (response == NULL) {
+ 		rc = -ENOMEM;
+ 		goto update_cleanup;
+@@ -1148,8 +1133,8 @@ iavf_ipsec_crypto_device_capabilities_get(struct iavf_adapter *adapter,
+ 	memcpy(capability, response->ipsec_data.ipsec_cap, sizeof(*capability));
+ 
+ update_cleanup:
+-	rte_free(response);
+-	rte_free(request);
++	free(response);
++	free(request);
+ 
+ 	return rc;
+ }
+@@ -1538,7 +1523,7 @@ iavf_ipsec_crypto_status_get(struct iavf_adapter *adapter,
+ 
+ 	request_len = sizeof(struct inline_ipsec_msg);
+ 
+-	request = rte_malloc("iavf-device-status-request", request_len, 0);
++	request = calloc(1, request_len);
+ 	if (request == NULL) {
+ 		rc = -ENOMEM;
+ 		goto update_cleanup;
+@@ -1546,8 +1531,7 @@ iavf_ipsec_crypto_status_get(struct iavf_adapter *adapter,
+ 
+ 	response_len = sizeof(struct inline_ipsec_msg) +
+ 			sizeof(struct virtchnl_ipsec_cap);
+-	response = rte_malloc("iavf-device-status-response",
+-			response_len, 0);
++	response = calloc(1, response_len);
+ 	if (response == NULL) {
+ 		rc = -ENOMEM;
+ 		goto update_cleanup;
+@@ -1573,8 +1557,8 @@ iavf_ipsec_crypto_status_get(struct iavf_adapter *adapter,
+ 	memcpy(status, response->ipsec_data.ipsec_status, sizeof(*status));
+ 
+ update_cleanup:
+-	rte_free(response);
+-	rte_free(request);
++	free(response);
++	free(request);
+ 
+ 	return rc;
  }
 -- 
 2.47.3
