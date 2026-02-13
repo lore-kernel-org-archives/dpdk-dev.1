@@ -2,41 +2,53 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A0ABEDF16D
-	for <dpdk-dev@archiver.kernel.org>; Fri, 13 Feb 2026 14:54:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B1CEEDF173
+	for <dpdk-dev@archiver.kernel.org>; Fri, 13 Feb 2026 15:16:13 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 488B5402C0;
-	Fri, 13 Feb 2026 15:54:50 +0100 (CET)
-Received: from out28-193.mail.aliyun.com (out28-193.mail.aliyun.com
- [115.124.28.193])
- by mails.dpdk.org (Postfix) with ESMTP id C91F6402B2
- for <dev@dpdk.org>; Fri, 13 Feb 2026 15:54:48 +0100 (CET)
-X-Alimail-AntiSpam: AC=CONTINUE; BC=0.08135459|-1; CH=green;
- DM=|CONTINUE|false|;
- DS=CONTINUE|ham_enroll_verification|0.00290553-0.00068409-0.99641;
- FP=17032984994832307904|0|0|0|0|-1|-1|-1;
- HT=maildocker-contentspam033037031241; MF=dimon.zhao@nebula-matrix.com; NM=1;
- PH=DW; RN=4; RT=4; SR=0; TI=W4_0.2.3_21443241_1770994377826_o7001c1426; 
-Received: from WS-web
- (dimon.zhao@nebula-matrix.com[W4_0.2.3_21443241_1770994377826_o7001c1426]
- cluster:ay29) at Fri, 13 Feb 2026 22:54:38 +0800
-Date: Fri, 13 Feb 2026 22:54:38 +0800
-From: "Dimon" <dimon.zhao@nebula-matrix.com>
-To: "Stephen Hemminger" <stephen@networkplumber.org>
-Cc: "dev" <dev@dpdk.org>, "Kyo Liu" <kyo.liu@nebula-matrix.com>,
- "Leon" <leon.yu@nebula-matrix.com>, "Sam" <sam.chen@nebula-matrix.com>
-Message-ID: <6d20fc92-5736-4c21-a44d-c9fd96770822.dimon.zhao@nebula-matrix.com>
-Subject: =?UTF-8?B?5Zue5aSN77yaW1BBVENIIHYxIDEvMV0gbmV0L25ibDogYWRkIGlnYl91aW8gc3VwcG9ydCBm?=
- =?UTF-8?B?b3IgTkJMIFZGIGRldmljZXM=?=
-X-Mailer: [Alimail-Mailagent revision 498588272][W4_0.2.3][null][Chrome]
+	by mails.dpdk.org (Postfix) with ESMTP id 0872A402C0;
+	Fri, 13 Feb 2026 16:16:12 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+ by mails.dpdk.org (Postfix) with ESMTP id 99004402B2
+ for <dev@dpdk.org>; Fri, 13 Feb 2026 16:16:09 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1770995770; x=1802531770;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=sWCiPy5dT2KjSwvI91hFMN4zNXmLF9Aqk9uwpWMgJSo=;
+ b=QR9Lc4SEr2LM7JVs3z4qx99NKQGSClSIoS8P87fiWqFQElHFOtF3cyCK
+ dQ30+NPIzj59mXcePG0X8e0KAD+zTPK1cIVXMGNZXvKW1V34rTlc8LzEb
+ 6uzrsbAkSjYlggFSK0KGWBH0+bbrSCPAP4rUXrrwz177MQMzKAOzxk6C5
+ KAATATiZFCU2H7N+E3UnKptnRSDUfkfD3eE6trOs2iXovfsQtVwZvW+uC
+ Opas9y1ekrQxsBIfGmoawvDzdAzAcDXgi9R0g4d29H56ApZwYPQeiSu2w
+ ApjfGu7mmu2yt2cVj15X+JTJFdfPPyjFAIp9sXSnRIFWLc4QmX1psEPLV w==;
+X-CSE-ConnectionGUID: YmP5pu2HR5uoDMV7uOGNEg==
+X-CSE-MsgGUID: ZgFj23OGQfWu9Ah3bv5hJA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11700"; a="76024447"
+X-IronPort-AV: E=Sophos;i="6.21,288,1763452800"; d="scan'208";a="76024447"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+ by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 13 Feb 2026 07:16:08 -0800
+X-CSE-ConnectionGUID: TFZuOQHkQSqzvxQCOBr6uA==
+X-CSE-MsgGUID: 9/7fE6SlS7G/FIaRUkMAWQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,288,1763452800"; d="scan'208";a="212969314"
+Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
+ by orviesa008.jf.intel.com with ESMTP; 13 Feb 2026 07:16:07 -0800
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: dev@dpdk.org
+Cc: Bruce Richardson <bruce.richardson@intel.com>,
+ Selwin Sebastian <selwin.sebastian@amd.com>,
+ Kishore Padmanabha <kishore.padmanabha@broadcom.com>,
+ Ajit Khaparde <ajit.khaparde@broadcom.com>,
+ Jeroen de Borst <jeroendb@google.com>,
+ Joshua Washington <joshwash@google.com>, Rosen Xu <rosen.xu@altera.com>
+Subject: [PATCH] drivers: disable comma warnings selectively
+Date: Fri, 13 Feb 2026 15:14:00 +0000
+Message-ID: <20260213151559.656837-1-bruce.richardson@intel.com>
+X-Mailer: git-send-email 2.51.0
 MIME-Version: 1.0
-x-aliyun-im-through: {"version":"v1.0"}
-References: <20260211024029.33810-1-dimon.zhao@nebula-matrix.com>	<20260211024029.33810-2-dimon.zhao@nebula-matrix.com>,
- <20260211091333.7392c3b9@phoenix.local>
-x-aliyun-mail-creator: W4_0.2.3_null_EuMTW96aWxsYS81LjAgKFdpbmRvd3MgTlQgMTAuMDsgV2luNjQ7IHg2NCkgQXBwbGVXZWJLaXQvNTM3LjM2IChLSFRNTCwgbGlrZSBHZWNrbykgQ2hyb21lLzEzMy4wLjY5NDMuMTQyIFNhZmFyaS81MzcuMzYgZGluZ3RhbGstd2luLzEuMC4wIG53KDAuMTQuNykgRGluZ1RhbGsoOC4yLjEwLVJlbGVhc2UuMjYwMjAzMDA3KSBNb2pvLzEuMC4wIE5hdGl2ZSBBcHBUeXBlKHJlbGVhc2UpIENoYW5uZWwvMjAxMjAwIEFyY2hpdGVjdHVyZS94ODZfNjQgd2ViRHQvUEM=uL
-In-Reply-To: <20260211091333.7392c3b9@phoenix.local>
-Content-Type: multipart/alternative;
- boundary="----=ALIBOUNDARY_2482_7f150f89e700_698f3b2e_4399d"
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -48,114 +60,103 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-Reply-To: Dimon <dimon.zhao@nebula-matrix.com>
 Errors-To: dev-bounces@dpdk.org
 
-------=ALIBOUNDARY_2482_7f150f89e700_698f3b2e_4399d
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
+Rather than disabling -Wcomma for all drivers, only disable it on a
+case-by-case basis for drivers that need it disabled. Use a variable to
+do so, to avoid issues with compilers like MSVC that don't support the
+-Wno-comma flag.
 
-SGkgU3RlcGhlbiwKVGhhbmsgeW91IGZvciB0aGUgcmV2aWV3LiBJIGhhdmUgdXBkYXRlZCB0aGUg
-cGF0Y2ggYXMgcmVxdWVzdGVkOgoxLiBFbmhhbmNlZCB0aGUgY29tbWl0IG1lc3NhZ2UKMi4gVXBk
-YXRlZCBkb2MvZ3VpZGVzL25pY3MvbmJsLnJzdAozLiBBZGRlZCBhbiBlbnRyeSBpbiB0aGUgcmVs
-ZWFzZSBub3RlcwpUaGlzIGlzIG5vdCBhIGJ1ZyBmaXgsIHNvIG5vIEZpeGVzIHRhZyBpcyBuZWVk
-ZWQuCnYyIGhhcyBiZWVuIHN1Ym1pdHRlZC4KLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCuWPkeS7tuS6uu+8mlN0ZXBoZW4g
-SGVtbWluZ2VyIDxzdGVwaGVuQG5ldHdvcmtwbHVtYmVyLm9yZz4K5Y+R6YCB5pe26Ze077yaMjAy
-NuW5tDLmnIgxMuaXpSjlkajlm5spIDAxOjEzCuaUtuS7tuS6uu+8mkRpbW9uPGRpbW9uLnpoYW9A
-bmVidWxhLW1hdHJpeC5jb20+CuaKhOOAgOmAge+8mmRldjxkZXZAZHBkay5vcmc+OyBLeW8gTGl1
-PGt5by5saXVAbmVidWxhLW1hdHJpeC5jb20+OyBMZW9uPGxlb24ueXVAbmVidWxhLW1hdHJpeC5j
-b20+OyBTYW08c2FtLmNoZW5AbmVidWxhLW1hdHJpeC5jb20+CuS4u+OAgOmimO+8mlJlOiBbUEFU
-Q0ggdjEgMS8xXSBuZXQvbmJsOiBhZGQgaWdiX3VpbyBzdXBwb3J0IGZvciBOQkwgVkYgZGV2aWNl
-cwpPbiBUdWUsIDEwIEZlYiAyMDI2IDE4OjQwOjI5IC0wODAwCkRpbW9uIFpoYW8gPGRpbW9uLnpo
-YW9AbmVidWxhLW1hdHJpeC5jb20+IHdyb3RlOgo+IER1ZSB0byBjaGlwIGRlc2lnbiBsaW1pdGF0
-aW9ucywgb25seSBWRiBzdXBwb3J0Cj4gdGhlIGlnYl91aW8gZHJpdmVyLiBQRiBhcmUgbm90IGNv
-bXBhdGlibGUuCj4gCj4gU2lnbmVkLW9mZi1ieTogRGltb24gWmhhbyA8ZGltb24uemhhb0BuZWJ1
-bGEtbWF0cml4LmNvbT4KVGhlIHBhdGNoIG1ha2VzIHNlbnNlLCBidXQgSSB3b3VsZCBsaWtlIHRv
-IHNlZSBtb3JlIGJlZm9yZSBtZXJnaW5nOgogLSBtb3JlIHZlcmJvc2UgY29tbWl0IG1lc3NhZ2Ug
-dG8gaGVscCB1c2VycyBhbmQgdGhlIG5leHQgZGV2ZWxvcGVyIAogd29ya3Mgb24gdGhpcy4gSXQg
-YWxzbyBzaG91bGQgaGF2ZSBwcm9wZXIgZ3JhbW1hciBhbmQgYmUgYSBjb21wbGV0ZSBzZW50ZW5j
-ZS4KIC0gdXBkYXRlIHRvIHRoZSBkb2N1bWVudGF0aW9uIGZpbGVzIGZvciB0aGlzIGRyaXZlci4K
-IC0gYWRkIGEgcmVsZWFzZSBub3RlIGlmIG5lZWRlZC4KIC0gZG9lcyB0aGlzIGZpeCBhIGJ1Zz8g
-ZG9lcyBpdCBuZWVkIGEgRml4ZXMgdGFnLgo=
-------=ALIBOUNDARY_2482_7f150f89e700_698f3b2e_4399d
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: base64
+Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+---
+NOTE: this builds cleanly for me on my system with most drivers enabled
+and builds clean in the github CI. Hoping the other CIs will catch issues
+with any other drivers that I haven't been able to test due to missing
+deps on my system. If any issues show up in CI, will fix in V2.
+---
+ config/meson.build                 | 6 ++++++
+ drivers/meson.build                | 2 +-
+ drivers/net/axgbe/meson.build      | 4 +++-
+ drivers/net/bnxt/meson.build       | 1 +
+ drivers/net/gve/meson.build        | 1 +
+ drivers/raw/ifpga/base/meson.build | 1 +
+ 6 files changed, 13 insertions(+), 2 deletions(-)
 
-PGRpdiBjbGFzcz0iX19hbGl5dW5fZW1haWxfYm9keV9ibG9jayI+PGRpdiAgc3R5bGU9ImZvbnQt
-ZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBTVEhlaXRpU0MtTGlnaHQsIFNpbVN1biI+PGRpdiAgY2xh
-c3M9IiI+SGkmbmJzcDtTdGVwaGVuLDwvZGl2PjxkaXYgIGNsYXNzPSIiPjxiciA+PC9kaXY+PGRp
-diAgY2xhc3M9IiI+VGhhbmsgeW91IGZvciB0aGUgcmV2aWV3LiBJIGhhdmUgdXBkYXRlZCB0aGUg
-cGF0Y2ggYXMgcmVxdWVzdGVkOjwvZGl2PjxkaXYgIGNsYXNzPSIiPjxkaXYgIGNsYXNzPSIiPjEu
-IEVuaGFuY2VkIHRoZSBjb21taXQgbWVzc2FnZTwvZGl2PjxkaXYgIGNsYXNzPSIiPjIuIFVwZGF0
-ZWQgZG9jL2d1aWRlcy9uaWNzL25ibC5yc3Q8YnIgPjwvZGl2PjxkaXYgIGNsYXNzPSIiPjMuIEFk
-ZGVkIGFuIGVudHJ5IGluIHRoZSByZWxlYXNlIG5vdGVzPGJyID48L2Rpdj48ZGl2ICBjbGFzcz0i
-Ij48YnIgPjwvZGl2PjxkaXYgIGNsYXNzPSIiPlRoaXMgaXMgbm90IGEgYnVnIGZpeCwgc28gbm8g
-Rml4ZXMgdGFnIGlzIG5lZWRlZC48YnIgPjwvZGl2PjxkaXYgIGNsYXNzPSIiPnYyIGhhcyBiZWVu
-IHN1Ym1pdHRlZC48L2Rpdj48cCAgY2xhc3M9ImRzLW1hcmtkb3duLXBhcmFncmFwaCIgc3R5bGU9
-Im1hcmdpbi1yaWdodDogMHB4OyBtYXJnaW4tYm90dG9tOiAxNnB4OyBtYXJnaW4tbGVmdDogMHB4
-OyBmb250LXZhcmlhbnQtbGlnYXR1cmVzOiBub3JtYWw7IGZvbnQtdmFyaWFudC1jYXBzOiBub3Jt
-YWw7IGxldHRlci1zcGFjaW5nOiBub3JtYWw7IHRleHQtYWxpZ246IHN0YXJ0OyB0ZXh0LWluZGVu
-dDogMHB4OyB3b3JkLXNwYWNpbmc6IDBweDsgd2hpdGUtc3BhY2U6IG5vcm1hbDsgYmFja2dyb3Vu
-ZC1jb2xvcjogcmdiKDI1NSwgMjU1LCAyNTUpOyB0ZXh0LWRlY29yYXRpb24tdGhpY2tuZXNzOiBp
-bml0aWFsOyB0ZXh0LWRlY29yYXRpb24tc3R5bGU6IGluaXRpYWw7IHRleHQtZGVjb3JhdGlvbi1j
-b2xvcjogaW5pdGlhbDsgbWFyZ2luLXRvcDogMHB4ICFpbXBvcnRhbnQ7Ij48c3BhbiAgc3R5bGU9
-ImNvbG9yOiByZ2IoMTUsIDE3LCAyMSk7IGZvbnQtZmFtaWx5OiBxdW90ZS1jamstcGF0Y2gsIElu
-dGVyLCBzeXN0ZW0tdWksIC1hcHBsZS1zeXN0ZW0sIEJsaW5rTWFjU3lzdGVtRm9udCwgJ1NlZ29l
-IFVJJywgUm9ib3RvLCBPeHlnZW4sIFVidW50dSwgQ2FudGFyZWxsLCAnT3BlbiBTYW5zJywgJ0hl
-bHZldGljYSBOZXVlJywgc2Fucy1zZXJpZjsgZm9udC1zaXplOiAxNnB4OyBmb250LXN0eWxlOiBu
-b3JtYWw7IGZvbnQtd2VpZ2h0OiA0MDA7IHRleHQtdHJhbnNmb3JtOiBub25lOyI+PGJyID48L3Nw
-YW4+PC9wPjxwICBjbGFzcz0iZHMtbWFya2Rvd24tcGFyYWdyYXBoIiBzdHlsZT0ibWFyZ2luLXRv
-cDogMTZweDsgbWFyZ2luLXJpZ2h0OiAwcHg7IG1hcmdpbi1sZWZ0OiAwcHg7IGZvbnQtdmFyaWFu
-dC1saWdhdHVyZXM6IG5vcm1hbDsgZm9udC12YXJpYW50LWNhcHM6IG5vcm1hbDsgbGV0dGVyLXNw
-YWNpbmc6IG5vcm1hbDsgdGV4dC1hbGlnbjogc3RhcnQ7IHRleHQtaW5kZW50OiAwcHg7IHdvcmQt
-c3BhY2luZzogMHB4OyB3aGl0ZS1zcGFjZTogbm9ybWFsOyBiYWNrZ3JvdW5kLWNvbG9yOiByZ2Io
-MjU1LCAyNTUsIDI1NSk7IHRleHQtZGVjb3JhdGlvbi10aGlja25lc3M6IGluaXRpYWw7IHRleHQt
-ZGVjb3JhdGlvbi1zdHlsZTogaW5pdGlhbDsgdGV4dC1kZWNvcmF0aW9uLWNvbG9yOiBpbml0aWFs
-OyBtYXJnaW4tYm90dG9tOiAwcHggIWltcG9ydGFudDsiPjxzcGFuICBzdHlsZT0iY29sb3I6IHJn
-YigxNSwgMTcsIDIxKTsgZm9udC1mYW1pbHk6IHF1b3RlLWNqay1wYXRjaCwgSW50ZXIsIHN5c3Rl
-bS11aSwgLWFwcGxlLXN5c3RlbSwgQmxpbmtNYWNTeXN0ZW1Gb250LCAnU2Vnb2UgVUknLCBSb2Jv
-dG8sIE94eWdlbiwgVWJ1bnR1LCBDYW50YXJlbGwsICdPcGVuIFNhbnMnLCAnSGVsdmV0aWNhIE5l
-dWUnLCBzYW5zLXNlcmlmOyBmb250LXNpemU6IDE2cHg7IGZvbnQtc3R5bGU6IG5vcm1hbDsgZm9u
-dC13ZWlnaHQ6IDQwMDsgdGV4dC10cmFuc2Zvcm06IG5vbmU7Ij48YnIgPjwvc3Bhbj48L3A+PHNw
-YW4gIHN0eWxlPSJmb250LWZhbWlseTogVGFob21hLCBBcmlhbCwgU1RIZWl0aVNDLUxpZ2h0LCBT
-aW1TdW47Ij48YnIgPjwvc3Bhbj48L2Rpdj48ZGl2ICBzdHlsZT0iY2xlYXI6IGJvdGg7Ij48c3Bh
-biAgc3R5bGU9ImZvbnQtZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBTVEhlaXRpU0MtTGlnaHQsIFNp
-bVN1bjsiPjxiciA+PC9zcGFuPjwvZGl2PjxkaXYgIHN0eWxlPSJjbGVhcjogYm90aDsiPjxzcGFu
-ICBzdHlsZT0iZm9udC1mYW1pbHk6IFRhaG9tYSwgQXJpYWwsIFNUSGVpdGlTQy1MaWdodCwgU2lt
-U3VuOyI+PGJyID48L3NwYW4+PC9kaXY+PGRpdiAgc3R5bGU9ImNsZWFyOiBib3RoOyI+PHNwYW4g
-IHN0eWxlPSJmb250LWZhbWlseTogVGFob21hLCBBcmlhbCwgU1RIZWl0aVNDLUxpZ2h0LCBTaW1T
-dW47Ij48YnIgPjwvc3Bhbj48L2Rpdj48ZGl2ICBzdHlsZT0iY2xlYXI6IGJvdGg7Ij48c3BhbiAg
-c3R5bGU9ImZvbnQtZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBTVEhlaXRpU0MtTGlnaHQsIFNpbVN1
-bjsiPjxiciA+PC9zcGFuPjwvZGl2PjxibG9ja3F1b3RlICBfcXVvdGU9IjEiIHN0eWxlPSJtYXJn
-aW4tcmlnaHQ6IDBweDsgbWFyZ2luLXRvcDogMHB4OyBtYXJnaW4tYm90dG9tOiAwcHg7IGZvbnQt
-ZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBTVEhlaXRpLCBTaW1TdW47IGZvbnQtc2l6ZTogMTRweDsg
-Y29sb3I6IHJnYigwLCAwLCAwKTsiPjxkaXYgIGNsYXNzPSJhbGltYWlsLXF1b3RlIj48ZGl2ICBz
-dHlsZT0iY2xlYXI6IGJvdGg7Ij4tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS08L2Rpdj48ZGl2ICBzdHlsZT0iY2xlYXI6IGJv
-dGg7Ij7lj5Hku7bkurrvvJpTdGVwaGVuIEhlbW1pbmdlciAmbHQ7c3RlcGhlbkBuZXR3b3JrcGx1
-bWJlci5vcmcmZ3Q7PC9kaXY+PGRpdiAgc3R5bGU9ImNsZWFyOiBib3RoOyI+5Y+R6YCB5pe26Ze0
-77yaMjAyNuW5tDLmnIgxMuaXpSjlkajlm5spIDAxOjEzPC9kaXY+PGRpdiAgc3R5bGU9ImNsZWFy
-OiBib3RoOyI+5pS25Lu25Lq677yaRGltb24mbHQ7ZGltb24uemhhb0BuZWJ1bGEtbWF0cml4LmNv
-bSZndDs8L2Rpdj48ZGl2ICBzdHlsZT0iY2xlYXI6IGJvdGg7Ij7mioTjgIDpgIHvvJpkZXYmbHQ7
-ZGV2QGRwZGsub3JnJmd0OzsgS3lvIExpdSZsdDtreW8ubGl1QG5lYnVsYS1tYXRyaXguY29tJmd0
-OzsgTGVvbiZsdDtsZW9uLnl1QG5lYnVsYS1tYXRyaXguY29tJmd0OzsgU2FtJmx0O3NhbS5jaGVu
-QG5lYnVsYS1tYXRyaXguY29tJmd0OzwvZGl2PjxkaXYgIHN0eWxlPSJjbGVhcjogYm90aDsiPuS4
-u+OAgOmimO+8mlJlOiBbUEFUQ0ggdjEgMS8xXSBuZXQvbmJsOiBhZGQgaWdiX3VpbyBzdXBwb3J0
-IGZvciBOQkwgVkYgZGV2aWNlczwvZGl2PjxkaXYgIHN0eWxlPSJjbGVhcjogYm90aDsiPjxiciA+
-PC9kaXY+T24gVHVlLCAxMCBGZWIgMjAyNiAxODo0MDoyOSAtMDgwMDxiciA+RGltb24gWmhhbyAm
-bHQ7ZGltb24uemhhb0BuZWJ1bGEtbWF0cml4LmNvbSZndDsgd3JvdGU6PGJyID48YnIgPiZndDsg
-RHVlIHRvIGNoaXAgZGVzaWduIGxpbWl0YXRpb25zLCBvbmx5IFZGIHN1cHBvcnQ8YnIgPiZndDsg
-dGhlIGlnYl91aW8gZHJpdmVyLiBQRiBhcmUgbm90IGNvbXBhdGlibGUuPGJyID4mZ3Q7IDxiciA+
-Jmd0OyBTaWduZWQtb2ZmLWJ5OiBEaW1vbiBaaGFvICZsdDtkaW1vbi56aGFvQG5lYnVsYS1tYXRy
-aXguY29tJmd0OzxiciA+PGJyID5UaGUgcGF0Y2ggbWFrZXMgc2Vuc2UsIGJ1dCBJIHdvdWxkIGxp
-a2UgdG8gc2VlIG1vcmUgYmVmb3JlIG1lcmdpbmc6PGJyID4gLSBtb3JlIHZlcmJvc2UgY29tbWl0
-IG1lc3NhZ2UgdG8gaGVscCB1c2VycyBhbmQgdGhlIG5leHQgZGV2ZWxvcGVyIDxiciA+ICZuYnNw
-OyB3b3JrcyBvbiB0aGlzLiBJdCBhbHNvIHNob3VsZCBoYXZlIHByb3BlciBncmFtbWFyIGFuZCBi
-ZSBhIGNvbXBsZXRlIHNlbnRlbmNlLjxiciA+PGJyID4gLSB1cGRhdGUgdG8gdGhlIGRvY3VtZW50
-YXRpb24gZmlsZXMgZm9yIHRoaXMgZHJpdmVyLjxiciA+PGJyID4gLSBhZGQgYSByZWxlYXNlIG5v
-dGUgaWYgbmVlZGVkLjxiciA+PGJyID4gLSBkb2VzIHRoaXMgZml4IGEgYnVnPyBkb2VzIGl0IG5l
-ZWQgYSBGaXhlcyB0YWcuPC9kaXY+PC9ibG9ja3F1b3RlPjxkaXYgIHN0eWxlPSJsaW5lLWhlaWdo
-dDogMjBweDsgY2xlYXI6IGJvdGg7Ij48YnIgPjwvZGl2PjwvZGl2PjwvZGl2Pg==
-------=ALIBOUNDARY_2482_7f150f89e700_698f3b2e_4399d--
+diff --git a/config/meson.build b/config/meson.build
+index 02e2798cca..9ba7b9a338 100644
+--- a/config/meson.build
++++ b/config/meson.build
+@@ -367,6 +367,12 @@ if cc.has_argument('-Wno-shadow')
+     no_shadow_cflag = '-Wno-shadow'
+ endif
+
++# per-driver option to disable -Wcomma if supported by the compiler
++no_comma_cflag = []
++if cc.has_argument('-Wno-comma')
++    no_comma_cflag = '-Wno-comma'
++endif
++
+ foreach arg: global_cflags
+     if cc.has_argument(arg)
+         add_project_arguments(arg, language: 'c')
+diff --git a/drivers/meson.build b/drivers/meson.build
+index 3fe3be48fb..6ae102e943 100644
+--- a/drivers/meson.build
++++ b/drivers/meson.build
+@@ -86,7 +86,7 @@ default_cflags = machine_args
+ default_cflags += ['-DALLOW_EXPERIMENTAL_API']
+ default_cflags += ['-DALLOW_INTERNAL_API']
+
+-warning_disable_cflags = ['-Wno-format-truncation', '-Wno-address-of-packed-member', '-Wno-comma']
++warning_disable_cflags = ['-Wno-format-truncation', '-Wno-address-of-packed-member']
+ foreach cflag:warning_disable_cflags
+     if cc.has_argument(cflag)
+         default_cflags += cflag
+diff --git a/drivers/net/axgbe/meson.build b/drivers/net/axgbe/meson.build
+index 5a14549317..1aa523a749 100644
+--- a/drivers/net/axgbe/meson.build
++++ b/drivers/net/axgbe/meson.build
+@@ -15,7 +15,9 @@ sources = files(
+         'axgbe_rxtx.c',
+ )
+
+-cflags += ['-Wno-cast-qual', no_shadow_cflag]
++cflags += ['-Wno-cast-qual']
++cflags += no_shadow_cflag
++cflags += no_comma_cflag
+
+ if arch_subdir == 'x86'
+     sources += files('axgbe_rxtx_vec_sse.c')
+diff --git a/drivers/net/bnxt/meson.build b/drivers/net/bnxt/meson.build
+index dc122fb3df..e13aa4e341 100644
+--- a/drivers/net/bnxt/meson.build
++++ b/drivers/net/bnxt/meson.build
+@@ -14,6 +14,7 @@ endif
+
+ cflags += no_wvla_cflag
+ cflags += no_shadow_cflag
++cflags += no_comma_cflag
+
+ headers = files('rte_pmd_bnxt.h')
+ cflags_options = [
+diff --git a/drivers/net/gve/meson.build b/drivers/net/gve/meson.build
+index add431c2bb..b5d67ee490 100644
+--- a/drivers/net/gve/meson.build
++++ b/drivers/net/gve/meson.build
+@@ -20,3 +20,4 @@ sources = files(
+ includes += include_directories('base')
+
+ cflags += no_wvla_cflag
++cflags += no_comma_cflag
+diff --git a/drivers/raw/ifpga/base/meson.build b/drivers/raw/ifpga/base/meson.build
+index efebff94e9..225bde052b 100644
+--- a/drivers/raw/ifpga/base/meson.build
++++ b/drivers/raw/ifpga/base/meson.build
+@@ -24,3 +24,4 @@ base_sources = files(
+         'opae_at24_eeprom.c',
+         'opae_eth_group.c',
+ )
++base_cflags += no_comma_cflag
+--
+2.51.0
 
