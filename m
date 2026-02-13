@@ -2,90 +2,190 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9429BEF48CC
-	for <dpdk-dev@archiver.kernel.org>; Fri, 13 Feb 2026 07:46:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69205EF48E6
+	for <dpdk-dev@archiver.kernel.org>; Fri, 13 Feb 2026 08:41:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 71160402B2;
-	Fri, 13 Feb 2026 08:46:17 +0100 (CET)
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com
- [209.85.208.52]) by mails.dpdk.org (Postfix) with ESMTP id A8787402A9
- for <dev@dpdk.org>; Fri, 13 Feb 2026 08:46:15 +0100 (CET)
-Received: by mail-ed1-f52.google.com with SMTP id
- 4fb4d7f45d1cf-65a196a735eso1078221a12.2
- for <dev@dpdk.org>; Thu, 12 Feb 2026 23:46:15 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1770968775; cv=none;
- d=google.com; s=arc-20240605;
- b=gjgYexTnLm+ZhtkV7MXMmo3oZuXsBXP6LOuy35Z3LIXtHYTWxRGrrOIkQtYePljfjM
- IBaezzqKrruxspJ+mn6wQQIh1W9ZEtTYcwtOp7B3BSwVcr5akx/SEWhapDbQvgGC5qUL
- MbDfKeYkk+4Rw0LavHSOoxsxBmVqC7O3UA16pBn1nh3D/nBxa7yYt3csuNGHh7DXgvia
- 9V8ks1sb4wd+iOBr2lzArYkY8Gu7aKQL3Weye2G6jizn5XBK+LDAnCcXuTGMPa5TWiuj
- qruXn3X7pIcve795Yv5Z+YfHrU+aAySG6l+HD+mXpJvRolnhoJAeOA+xRFPKpNvsnF+P
- tOAw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20240605; 
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:dkim-signature;
- bh=fBP29DYjE9aiBdDy2z31MDBDdimoHhv8CDVSro8zrBE=;
- fh=t6yFjtfEoCDwX6CqpesggVS+igo7WTpqyOV9dGSh1F4=;
- b=hNT1DKzPAFYPNcIJPeIoJw6whGktPfgeEPxe0ET7Kj7o1Ln05neqW+QVdEqXyLiEjj
- 4DCx2H778Ksg/xVhhadBMHpduB2WlPqmxkIFNLRgjsVe5t8JA6OkD3KMY21rYg8xaDJp
- AocB66Dgc9cgEUI/9sIlzCRiadbm103ySVc534CdfFmlI1oAtllUFQEXYCdIdMMtwaO2
- IzYqeJOajcysgFtZVmACtwP9hnzPLbrJM/AIMuPjOEfYqXTjhhCkSDyRjHfbTxmPq9uj
- 8hQKn1QYvbeyFQLGUqq2emfoBbFk36S4lGWdTj0sR9IxF2aPlDMBvjFdJhpS3iCRfzoX
- 6ZFw==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=dyna-nic.com; s=google; t=1770968775; x=1771573575; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=fBP29DYjE9aiBdDy2z31MDBDdimoHhv8CDVSro8zrBE=;
- b=CHVH23wSyrLjsSbljkscHayny05tFnHMcsL9RZP8MfyPW/qGK8ppmyy3UB/ghncwlE
- ExCACD1v7NREhmht1tm+mZ1izduWyvonDKqfMnwDTQYWcTif2Ji3RkLWGZAb0eKjjoeU
- UKRF6VFVtbcojtJaR1TkmFAwHEeHT+PjYEZGJLihpUHCuA3W6hbo6ALMAYZx6tJioy2j
- TwLwxaDo9H/WFHyngzuBsmRtDAegDe9mgiT4DdsvmsRI7vIYmtg9JnYmRlTK4c5Sblke
- UT3uhvG+PYQXuWf+ybo2lY1llRVlVkivsMn7zu7c9Xx2vZJMppUmmPvBWeftVo7CNBnN
- cpIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1770968775; x=1771573575;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=fBP29DYjE9aiBdDy2z31MDBDdimoHhv8CDVSro8zrBE=;
- b=B6SHV+vPwgMXppx0nnh3Oyq/Z9mI1dofRrdGVoycYMTlgzkRmaGrxvfaWBvXamstrH
- QpPgoFx7xBA4oNB/ECBhsa4fVgi249wL0mcAyr5gALoUio3xn7lp/KM7vS4ni93/Mvw2
- h5qT/3aV/FMdPkcj2f3q2Z8XJVJowBD1lfBQyRPU2GTD9uCytjYMwsBKJsXs63x09xZI
- wm4YA1YwXqECDZaMj3HeiRG/OTmKgPn/K5gj3fKCnhgZCyAR0NUG785WOY4S7XoXHl91
- wclIPV6SxfOgh/NK324a850RI1iGSgoUmxcJcXE8skveLXo9zEQ3aJPRHPJY2swShmAf
- Mi8Q==
-X-Forwarded-Encrypted: i=1;
- AJvYcCXIPs1n3uD+8nUmYs2i3xOr16Xo/VvgGLT8dP8HzC1WKQGLtxsZrJebmi88TnP8cUzRpSQ=@dpdk.org
-X-Gm-Message-State: AOJu0YyXUT70+0fAfzSKlfPJK+cqC6yblZnaNDmPhzVPCmG8buwuf6KF
- WF/jIf1t9K+K+clZONkZRv4I5CUMuPCBBX5nhm5Tfj3A9GL4SU03aSt/v/OWHst7XGu64cTVCky
- tQy3xwR9WkvM1P0jRGeK1h4AvDejyWPvcarF73woQ0Q==
-X-Gm-Gg: AZuq6aK2nOzTHxqT8PDoAFfs+IiQ6gje/kb8Kz6i97yqHlazKzmF7Lo9mYCqbrUf+1t
- Sy2cenRiBWyV5TuC2+4AXHLxIIceRR4dtq64gEs0NsOo0iPIekdrTQwi6MB2GIy65+h3SeGz8Kt
- M1P321itghPLCUN2XxxZRL/fYXyUPX6FiD4VYV629oxEqCLEXt79VNhGJgC8XVJAWqfG87AjRJi
- +vwXzrCV47GjabiJVDtf/8ijZhfiyHlBMeEMdRghDvwGyu3rrsqjasExNo0/mCxAG5foFbzHJL6
- rR+tbBs=
-X-Received: by 2002:a05:6402:278b:b0:65b:9832:4389 with SMTP id
- 4fb4d7f45d1cf-65bb13bba5amr353929a12.27.1770968774896; Thu, 12 Feb 2026
- 23:46:14 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 6E545402B2;
+	Fri, 13 Feb 2026 09:41:06 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+ by mails.dpdk.org (Postfix) with ESMTP id ADAD3402A9
+ for <dev@dpdk.org>; Fri, 13 Feb 2026 09:41:03 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1770972064; x=1802508064;
+ h=message-id:date:subject:to:cc:references:from:
+ in-reply-to:content-transfer-encoding:mime-version;
+ bh=KWRbZ5V3dNKuRg4dOuqfN0tJnc3d0MVKC5RGiDLRQL0=;
+ b=f625uKyJPe/SlJl3ZGf+CZo/lTQqdLOr9tVHNQH3ECE9Qqth4MsBTU5W
+ 4HFS6m9godCXqFOJ79Id0iui78/spT7x8xi/DG9msM3BPLsor41niQjhK
+ ZikiTSEY7OzVHl5qG9k8Wa1eUnXxqMNEm2LFvTM6wXZ5nFHMUqyA1vV7O
+ Oiyoi8O7PVLd6HdPFOUCD3QfFidkYM47E3lWgCyXcw3LmtHgXO+6F/G/3
+ iIty20On9ZNBL3TUDieaOcIFimkyDM+FqLfgAYfX1bIBFy/5iyyO4+zvF
+ sTtX3hA+9137gecP1GlbgUIvdi2qypZ5jXdgzCbkhknN1P4RHrvcqCdRe A==;
+X-CSE-ConnectionGUID: CL+GMf5US8CUOMLN8W4G1A==
+X-CSE-MsgGUID: w3MM9jjyQM6wgkJ5649OtA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11699"; a="83253988"
+X-IronPort-AV: E=Sophos;i="6.21,288,1763452800"; d="scan'208";a="83253988"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+ by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 13 Feb 2026 00:41:02 -0800
+X-CSE-ConnectionGUID: Mbz+g+H5TpaIsYYmv3nIsA==
+X-CSE-MsgGUID: OyUwEU7BTMewfY13mWda8g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,288,1763452800"; d="scan'208";a="212963214"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+ by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 13 Feb 2026 00:41:03 -0800
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.35; Fri, 13 Feb 2026 00:41:02 -0800
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.35 via Frontend Transport; Fri, 13 Feb 2026 00:41:02 -0800
+Received: from DM5PR21CU001.outbound.protection.outlook.com (52.101.62.60) by
+ edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.35; Fri, 13 Feb 2026 00:41:01 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=rYspYdnjxkH3ZUduVFfjnSK5HjvmPOo7h5ez6YJfNaMEYcB7vkLEuPSULifTLasbY2XFis+/yfw4Nkfb72mRPc49LRpC/NNNqtSiK36IFHsz5+VGHz9LRTXvxpTsjdolNOYvjWK4xWRpE0qE2NVftL5renyQNLBXQXpwsFaHfXP17mwZzQgQHq/FmI8tfS5ZM+5CuolvIJqAB2I7fMmfjRZxJ1fNeYaMlo3HL/Dr8ksGQrz4tK2AgwEXloaW3Ms2xuURjBymYQAQ5JAYcsmpa6l7vUj3Ho+TskSLrpuucz50r7oRTzGvsFeoqRWzKAn5jcVop+17uK41okjBuc1G3Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=smN2m8sznB6/9TRtMTRvW1wgmJ1PsZQ2F/3cg2EKrh0=;
+ b=SuvgmBDt+jq7aixSPl8VlSjVXO0NniN5+CBgAVK0RcpUUM1l/0HqqRMEYeET6ivjgEixRe+awa9IQnQl3BJd5tzgSFY3WoLDKg7XieCaVJvEKeZmRUn7lpmv7r2PYaAueweBE+bSub2gRBqrMdeAh+F5qtNNxFE30Y5z7Ibm2Z9AQVHrTQMuetfH6viE/NKbwPCeZJFB/OUjZoOqIHbFCF4TsZyC7dSTVGyAmRoQ8I5uqx/3hkNsik+jacLrfNVgi/lrIJW6Bd+tv0uoyk/XDVpWX/5lXTKTI7FvXLSIWGAb53jZorfRj6YRsIlhiMot5tIGZDbDy3uLDJxzMd80vw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DM4PR11MB6502.namprd11.prod.outlook.com (2603:10b6:8:89::7) by
+ BY1PR11MB8032.namprd11.prod.outlook.com (2603:10b6:a03:524::8) with
+ Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9587.18; Fri, 13 Feb 2026 08:40:59 +0000
+Received: from DM4PR11MB6502.namprd11.prod.outlook.com
+ ([fe80::d2df:4650:72ad:47d4]) by DM4PR11MB6502.namprd11.prod.outlook.com
+ ([fe80::d2df:4650:72ad:47d4%4]) with mapi id 15.20.9611.012; Fri, 13 Feb 2026
+ 08:40:59 +0000
+Message-ID: <7c89bf80-66ed-457d-96ed-0cbb73dba751@intel.com>
+Date: Fri, 13 Feb 2026 09:40:54 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 05/12] net/ixgbe: fix wrong pointer handling in IPsec
+To: Radu Nicolau <radu.nicolau@intel.com>, Bruce Richardson
+ <bruce.richardson@intel.com>
+CC: <dev@dpdk.org>, Vladimir Medvedkin <vladimir.medvedkin@intel.com>, "Declan
+ Doherty" <declan.doherty@intel.com>
+References: <134252a49d330111781e4cb1baba470474091853.1770900758.git.anatoly.burakov@intel.com>
+ <987bda2e-d92e-44f2-ae04-2a9dd6143b49@intel.com>
+ <aY4LGKrTeEkzACIT@bricha3-mobl1.ger.corp.intel.com>
+ <3f295bb8-017c-4b8b-b8b6-18787d3a31df@intel.com>
+Content-Language: en-US
+From: "Burakov, Anatoly" <anatoly.burakov@intel.com>
+In-Reply-To: <3f295bb8-017c-4b8b-b8b6-18787d3a31df@intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: DB3PR06CA0015.eurprd06.prod.outlook.com (2603:10a6:8:1::28)
+ To DM4PR11MB6502.namprd11.prod.outlook.com
+ (2603:10b6:8:89::7)
 MIME-Version: 1.0
-References: <20260202113659.24052-1-sismis@dyna-nic.com>
- <CAPQRu6Gb0tMH6f-5T7_vCVK23mAkEOmXn-T+X_DYaWsNZdYtjg@mail.gmail.com>
- <20260204065338.0fae67fe@phoenix.local> <2762564.TLkxdtWsSY@thomas>
- <CAPQRu6FR+RojmsKhcsegastxJHLBAbmtx5Qurg79Wn_w94yYpg@mail.gmail.com>
- <20260212164341.074639cd@phoenix.local>
-In-Reply-To: <20260212164341.074639cd@phoenix.local>
-From: =?UTF-8?B?THVrw6HFoSDFoGnFoW1pxaE=?= <sismis@dyna-nic.com>
-Date: Fri, 13 Feb 2026 08:46:04 +0100
-X-Gm-Features: AZwV_QjwoXxHKhZdyaR1EHSh3yAUoKQneN50GnEeO0h2YY2-RRytxSW_K5Vya5c
-Message-ID: <CAPQRu6EAKR59BGgRFAr=eWuQr+=3z14+xdCkbZMvfhM5K8bN0A@mail.gmail.com>
-Subject: Re: [PATCH v10 3/6] flow_parser: add shared parser library
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: Thomas Monjalon <thomas@monjalon.net>, dev@dpdk.org,
- Ori Kam <orika@nvidia.com>
-Content-Type: multipart/alternative; boundary="000000000000bc7cf6064aafccf2"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR11MB6502:EE_|BY1PR11MB8032:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4b71afb4-3630-454c-4cbc-08de6adb9cc1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?bHoyWTREajNMMlBCOGpiOUkxdjczTEtLeWMwTDFXdStDS256OHoyWWNERFpu?=
+ =?utf-8?B?SDd2SUVsakZWT1MxWmhUaFl2RFFoaVljRW52NlFhUnQ3eE84ZGxVV2MxSHZY?=
+ =?utf-8?B?R0g0OXRmUXlmRVg1bHdSTjJodXV1KzBxOXhQZEsyRDlLeDdoT3JjelFHTmFa?=
+ =?utf-8?B?dVpCbDhKdnZNYVZjU09kWWoxRFlmZVNRekFIRkZEdk5lRU1UVHlUQnN0bGZN?=
+ =?utf-8?B?cHpxc1RJTUNhSWxSMW9uRGxuc0U3ZWtTWHNubFkxZzA4WnhINXJWWGJXMlhT?=
+ =?utf-8?B?MFRSY0k1ZktPdTF0d04vbFRkVXBjZStiaTdnVjRlTm9RYTU0OEpiTGxxUUF2?=
+ =?utf-8?B?MjM1QkxzNE14bVViY3ZCbFRUREw2WGFYckUwaHRkeHVhWFg5V0MzeXJoajAz?=
+ =?utf-8?B?eUNDblpkSmhvWkRBYmsvVnpublg3S3Rlb2hVYlQ2VFlpalBmNFlLRVBtb0Va?=
+ =?utf-8?B?N0NPR1ErMUI3MjAxSlpRbGNQYVJ2bkdQNFZ2RFoxRlhMeFZxMnl5YkF0Mms5?=
+ =?utf-8?B?elNMM3FseXBtVUF3T0QzajFOQnZ4NUZLZFRFVlRTMzhKUDRzRUpvT0dXalhX?=
+ =?utf-8?B?MGlpaFNHdmNkUVRqN3c3eWI0Q0JteW9GSkJWcktWMFVldFJoY2FKSmRrK2I0?=
+ =?utf-8?B?dnZPckJqMjVucWZ1Q2I0TDNOeTdUWHVGNzFXUVlVd3hGeHh6aGE2dGVDUUs0?=
+ =?utf-8?B?VGkrYXVNdHRWUk1ud0ZzaE1lZzMzVWl1RGhmWXViOCtoYkxNV2hJMzNEdWtt?=
+ =?utf-8?B?UzVIdUs5ZkhrSW5RL3JIWmxTc2FVMDJyd2xPdFNpTnFWWU1iYTZzaVhlRkZl?=
+ =?utf-8?B?bHkrVDBIY2ZyVkQzbG0ybjZEQkMrL2pPT2hBazhGcml0Y3pCdFVYL0JlSEIz?=
+ =?utf-8?B?VGRZaE9takFoQTN5ckpoSVhVOGFxdEdxTXhjNGcxMnIwTFlETE9iQmFidXh4?=
+ =?utf-8?B?UmEzTENZM3ppcGZkS0J3QWFscEhwZ2diYTVXak1kY1l2WnF2bms1ZElmb1Bk?=
+ =?utf-8?B?akllUW0rNjJqZjJIMVlUWVpSZFBoUjNvTEZWZkplQWlUQWdMUWtCWGZhd2RC?=
+ =?utf-8?B?TXhtT1hDbDF2R3lWNlUrSGptRThXbkdlT1ViQVZpYTc2ZStYb3NvbVV2U1Z3?=
+ =?utf-8?B?d1pMdUdPMHNKR0Z2Um5uaWxLSE5aVWNuVklmbUV4VmJ5d0FGcEIxQ2gxWnJZ?=
+ =?utf-8?B?UXAzVStQbTF4V0Evc0pJWksvb0k1YjJUYkhCYldxTUg4c2QwZHZIbmJOdjRM?=
+ =?utf-8?B?THFCQzNwMlhYRVRzSjJSM1kyaWtnc0l3dUViWTFaTGEybnZCN0JlSGtibkpj?=
+ =?utf-8?B?NnVUeU54anZqMmZXbXpYK280K0d6U3pObmpqN0RrcHVPQ3hEQkd3cGFwWW9G?=
+ =?utf-8?B?YzBMbW9NdXc0V29oeXZKdXk5a1k2RTE5TGhIbndLYWNZUm1TVjR1MFl6Qnkw?=
+ =?utf-8?B?aWJhNC8wd0xMWHNJbERhSDEzRnJxTXV4TXo0OUY3bXVaNGlRODR5RG9aYks1?=
+ =?utf-8?B?S05YNUVzeHlIY1RLaXBUbjhTNkF3U1E0bFk2bGp1aE9RdVc1OVhwdG9LYWlu?=
+ =?utf-8?B?eUVNN0swNVlJRnp2bHZZVEdkdUc4Zi9BV2lHMlZmYnlrN1hNdmEwK05XTzNQ?=
+ =?utf-8?B?RDQwbUxKbStLNEI2ejdodGQzalFFYUpYZElHRmZOTFBwVkxNT1o1ZnU2Y3o5?=
+ =?utf-8?B?ZXpiTUFXditUQ2dJMUJLOE40UVhYa0tBVXpnSVhPR1NHcVJuVFVNZXpRekNz?=
+ =?utf-8?B?a1pFWXlOTUcxK3Bwa0hScFR0L2Roclc1ZFlCQzUxcElHNmx1MU9ycUtOSFI5?=
+ =?utf-8?B?eVRGRi9LT0ZyTUdOeXhLbGNiU0RiQUI5d2pSVDNDRHZYZjZjQkkzL0E2aVFS?=
+ =?utf-8?B?cUgwYjNzNzFnN3g0eDNDMzF0TzAvK3U4enhJUVV0aUJxZkVxME5OcVhYTVcy?=
+ =?utf-8?B?Qys3Y0M5OUFMdjdKZnNua1FQUUwzUi8wS2R0TnA5TGdKOFY4WlJpN1BaYUJL?=
+ =?utf-8?B?MkY0b3o1TlJ0aXk2a0kzRkFFeGxXM0hXT0tudTNQdmdKTDArVTc5V1JDd1d2?=
+ =?utf-8?B?WVlLUStiUHM3QWhsVWJENWxIYVdSM3pTWDJuWXMzQmdlMzVhcHZEelVEV3dD?=
+ =?utf-8?Q?ukrU=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DM4PR11MB6502.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(366016)(1800799024); DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?bDFhbkt5TDJmL0pIVitJcmc1SlVFSDh3VkdvUjhqUjgwanBlM001SzdQeC9J?=
+ =?utf-8?B?K0tSRU5sM3djSHVPNEw2SEUyWGNMODVlcEtZd1o0TDZBRHhVZGhLVVl4RG4y?=
+ =?utf-8?B?dWdRYkJxemFNQzZhcmpHcktTejc4VEJ0Zy9SOE5LcllOZlF5SlYvVDJ1dGcy?=
+ =?utf-8?B?QXdJaEJJcktuNTdyT1lPY0t6Y1g1eFZvUURFeWQ5c2ltU0RhYUJROUlQc2cr?=
+ =?utf-8?B?VW5XVitkLytzSmthWmNRNzQ4ZThBd0ZEZ1pteVE2YzU1S0MwdG9LUnlRdUk2?=
+ =?utf-8?B?K2F1c0NhL2U0VkZiR2dQbE9sbnhGZjhqSWRIcy9abGVPV3hWZ05PbGxLczJY?=
+ =?utf-8?B?ampnSUJqWFRIbnBOOGJ5YUpNYkFoTUhyWDVaOFdvQkJsK3Azd1pMRlRyeUM1?=
+ =?utf-8?B?UW9xaEIwUlZxZ1FDU24zWGJmd0ZyZ2orZkd2ZHJETXg0ZWx3QzFsRWIzV1dW?=
+ =?utf-8?B?bThHTjQ5YnFvY3N0L3dYM25YY2hzbysycU1lMzFDaDdyUVRDeGozcnFmUFBp?=
+ =?utf-8?B?Q1h2UTVFSTVXaHBtcU9UdUdlODIvanpDWVNST1A3Q3RZMnVCdDdjMkJNN2Na?=
+ =?utf-8?B?KzJiMUVZUS80ODAwUU1OT0VMc3IvbVJDSERXKzA4VHk3Kzk4M0JENkpOUWVn?=
+ =?utf-8?B?bWxaWjArT0xxd3hTT1hVbDhvdEIrUUx3UVE1SkVPeUh1T0g4aW00N2djYll0?=
+ =?utf-8?B?R0tvRnhGeTVYTHpsY2pXR0hNZFdPaytmR0k1czlVWGtLbWRvMFdrbXZMM0tU?=
+ =?utf-8?B?d0VWZUZTMlM3R3pxZUdQKzJBYktFL3RvUTh5cGdVamVXWGREaFAvaXdVS2cw?=
+ =?utf-8?B?R2hGTHJIK2VhUlBTbUtxTTFBSkt1a3NRQ3J4c2txcDJmT0pKNVg0NVJ1THpN?=
+ =?utf-8?B?Q2FJeU1aQkY0RlRqMy82cERBNDYzSGJDQlBFeWVuZ0ZjcXVobnJEL2hHV0xx?=
+ =?utf-8?B?UFNGd3ZaeWZoTW8vemlVQVdrVU9UdlZxU3U4S0ZiRE1GNzdCRzFrOGNHRmlw?=
+ =?utf-8?B?dkFwMG5sWUVheWFpVlFSbFBuc0FFL2dYYnM5YkhDdkdDeGhLWFNEeDIya21X?=
+ =?utf-8?B?bnpGK0l0WDNiR0o4NFZud3luTGFnbVJkejI1Y1dRbjhReXlXdHVsZnVWZXEz?=
+ =?utf-8?B?dUw4azFOMGlmOTlld1JaNWtFZ0srYVdCWkt6akhKTmwrV2RzUmtPZkY3RDdK?=
+ =?utf-8?B?ZnhCcEJ3Ni9LcHFOckIyaWxMVk5xd0pUUS92TVhPeElDSVNkaW92a2lKRzE5?=
+ =?utf-8?B?S3NxNCt0czI4anBDc05ueWNXMVp3SmFMNTgyZURZUU11dG8xUWJCUjJPbU5V?=
+ =?utf-8?B?eUpGTzBCTWFRdC91NkFPaW15QTZtYjhHdVBoTWtNbktuMnpsWlRWcWtaU2hW?=
+ =?utf-8?B?SHphdlJPd3BZditWMnlUeXNxaWtXWlppa3ZtVlFmRlN5UTlVT243bGpLMXBR?=
+ =?utf-8?B?S04wckJrNFBFdXZzRzBnSXArY1BNa3JkQ0h0VkRvcklTWnlYZEo4VDNTYXlt?=
+ =?utf-8?B?QUlzcGRRUEhReXAxVVNFK295andNL3JoWW1GWWZQRHJocmRCQmRqMUcycHA5?=
+ =?utf-8?B?REFKOGVzaDNYK0VnY2VMME80eHpvVlo3eFM4MU9UeGozbm1RSHp5dnVDc29w?=
+ =?utf-8?B?VUJLeFNMVExNREpPbkQ0YmhyeUhrMFdTZytzSTB1a2w4cGc5QkZLMllxV3Rl?=
+ =?utf-8?B?UU9QTVdEWlN2eFBVVkRnanE3UjlVMTFSWnhrQ0hUWWtqSm50T1IvaENRb3Ru?=
+ =?utf-8?B?eld2OVRMRmxwQm9QSGJDd2c2d2xuQW9jUlN0S0JRSmlRWUJiNHBQb0luTzF6?=
+ =?utf-8?B?T1gwTXJ6cmVJc09iczZiaGZOT2tEYm51RnowM1V5aTdYd0lZUlJ4RXluOUF5?=
+ =?utf-8?B?cEgwL3FWL1pqa1FLUHpRWmxBdXQrclEyTTVwUFpGS2ppRTRXeUpidFhrU0RH?=
+ =?utf-8?B?K1QvN1NxdVdRajI0dXUwL3J0a29TWHM1UWpnT1dVVGE5NkM3UGxoa1RzZlpZ?=
+ =?utf-8?B?QTdmWUNMdTBxcFNOeHB5QldlVWtWY2M0LzJZVDlNZVE4V0J2NUhaZ3FhSDhH?=
+ =?utf-8?B?bVl1dkk5RXI5S0d2cCtMR2lPOGpOYkpxSGFYdTdaT1pZaXJob3RQTUlrcWE4?=
+ =?utf-8?B?ZTRydU9kK0tjSUtHdlFoR0NCVTdkaVRHY1Q1VTBtZmlOQUhPaDhwZXl5NzM2?=
+ =?utf-8?B?dStDTm5lbmo2RlZWbkkwRTFHZmtnaFdQM3dEQ01JZFRiZ1FJNVJ2K2V2TXQz?=
+ =?utf-8?B?bmpzdUdhK1FYRzUzM0RlUnhsZ3JRZHAyRXZLRHFhMVhERWFTckwzenZuRTZw?=
+ =?utf-8?B?SjF3ekQvS2w5QXdVazZRTHJrdmxjZUdCbFEzTk90N0toWVBOMExvVVU0U205?=
+ =?utf-8?Q?+uHRej49NtmL+s5s=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4b71afb4-3630-454c-4cbc-08de6adb9cc1
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6502.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Feb 2026 08:40:59.6332 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: oH1p8HuY+eUQXpUTV3tBmUN+Az33gwe939DX+dBPldk9Xp6tNL5+wiDebs81j/BZxQOcL85j+SYkJw82UFjTzwcpudja/7e0eIBlO2F+ipE=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY1PR11MB8032
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -99,205 +199,54 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---000000000000bc7cf6064aafccf2
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+On 2/12/2026 6:21 PM, Radu Nicolau wrote:
+> 
+> On 12-Feb-26 5:17 PM, Bruce Richardson wrote:
+>> On Thu, Feb 12, 2026 at 03:50:26PM +0100, Burakov, Anatoly wrote:
+>>> On 2/12/2026 1:53 PM, Anatoly Burakov wrote:
+>>>> The original IPsec "add SA from flow" function expected a void* 
+>>>> pointer to
+>>>> security session as its first argument. However, the actual code was 
+>>>> not
+>>>> passing that, instead it passed `rte_flow_action_security` which was a
+>>>> *container* for security session pointer.
+>>>>
+>>>> Fix it by passing correct pointer type, as well as make typing more
+>>>> explicit to let compiler catch such bugs in the future.
+>>>>
+>>>> Fixes: 9a0752f498d2 ("net/ixgbe: enable inline IPsec")
+>>>> Cc: radu.nicolau@intel.com
+>>>> Cc: stable@dpdk.org
+>>>>
+>>>> Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
+>>>> ---
+>>> <snip>
+>>>
+>>>> +        const struct ip_spec *spec)
+>>>>    {
+>>>> -    /**
+>>>> -     * FIXME Updating the session priv data when the session is const.
+>>>> -     * Typecasting done here is wrong and the implementation need 
+>>>> to be corrected.
+>>>> -     */
+>>>> -    struct ixgbe_crypto_session *ic_session = (void *)(uintptr_t)
+>>>> -            ((const struct rte_security_session *)sess)- 
+>>>> >driver_priv_data;
+>>>> +    struct ixgbe_crypto_session *ic_session =
+>>>> +            RTE_CAST_PTR(struct ixgbe_crypto_session *, sess- 
+>>>> >driver_priv_data);
+>>> Despite being removed, the comment is still true. This is an artifact 
+>>> of how
+>>> we get the crypto session (it comes from security rte_flow action, 
+>>> which is
+>>> const).
+>>>
+>> Why not keep the comment then?
+> Probably it's best to explain why we cast away the const, but not 
+> include the FIXME or TODO tag anymore.
 
-p=C3=A1 13. 2. 2026 v 1:43 odes=C3=ADlatel Stephen Hemminger <
-stephen@networkplumber.org> napsal:
+The removal was accidental, I'll add it back in v6
 
-> On Fri, 6 Feb 2026 16:40:39 +0100
-> Luk=C3=A1=C5=A1 =C5=A0i=C5=A1mi=C5=A1 <sismis@dyna-nic.com> wrote:
->
-> > p=C3=A1 6. 2. 2026 v 15:02 odes=C3=ADlatel Thomas Monjalon <thomas@monj=
-alon.net>
-> > napsal:
-> >
-> > > 04/02/2026 15:53, Stephen Hemminger:
-> > > > On Tue, 3 Feb 2026 09:34:26 +0100
-> > > > Luk=C3=A1=C5=A1 =C5=A0i=C5=A1mi=C5=A1 <sismis@dyna-nic.com> wrote:
-> > > >
-> > > > > >
-> > > > > > The kernel version of checkpatch complains here. The DPDK shell
-> > > script
-> > > > > > seems to be set to ignore this but.
-> > > > > >
-> > > > > > WARNING: break is not useful after a return
-> > > > > > #15008: FILE: lib/flow_parser/rte_flow_parser.c:14763:
-> > > > > > +               return cmd_flow_parsed(out);
-> > > > > > +               break;
-> > > > > >
-> > > > > > Should I create a new patch set or just let it be at this
-> moment?
-> > > > > Lukas
-> > > >
-> > > >
-> > > > I am ok with it as is.
-> > >
-> > > Better to update.
-> > >
-> > > There are other warnings:
-> > >
-> > > WARNING:STRNCPY: Prefer strscpy, strscpy_pad, or __nonstring over
-> strncpy
-> > > - see: https://github.com/KSPP/linux/issues/90
-> > > #13052 <https://github.com/KSPP/linux/issues/90#13052>: FILE:
-> > > lib/flow_parser/rte_flow_parser.c:12825:
-> > > +       strncpy(buf, str, len);
-> > >
-> > > and a lot of WARNING:LONG_LINE
-> > >
-> > > I can have a look after the decision.
-> >
-> > >
-> > > And on a more general note, I would have expected to ask the opinion
-> > > of rte_flow maintainers, but they are not Cc'ed in these patches.
-> > >
-> > I communicated primarily with Stephen, and will CC Ori too. Anyone else=
-?
-> >
-> >
-> > > I'm a bit skeptical about adding this outside of ethdev library
-> > > which defines the flow API.
-> > >
-> >
-> > CCing Ori to make a decision. I don't mind putting it directly into
-> ethdev
-> > as well, I just thought the parser could be its own separate lib as it =
-is
-> > just consuming strings and producing rte_flow structures. I can see the
-> > heavy ties to the flow library, though. Thomas, Stephen, what are your
-> > opinions?
->
-> I am beginning to agree with Thomas, this belongs in the ethdev directory
-> next to rte_flow.
->
-> Also, not sure what the purpose of parser_ops is. It says to pass NULL, b=
-ut
-> test-pmd is doing something else. It would be better to have an initializ=
-er
-> (i.e RTE_INIT) instead? Maybe
->
-
-
-Ok, I can move it there then. Should I proceed with Patch v11 - that would
-include moving the ethdev directory and addressing the kernel's checkpatch
-issues?
-
-The initializer doesn't seem like a bad idea. I didn't know about that one.
-The parser_ops are not needed for purely parsing, but to remain compatible
-with the testpmd's code, which is using, e.g., the hints on the commandline
-I added parser_ops.
-The simple public library API is for converting strings to rte_flow
-structures,
-the parser_ops is for hooking up the testpmd.
-
---000000000000bc7cf6064aafccf2
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr"><div dir=3D"ltr">p=C3=A1 13. 2. 2026 v=C2=A01:43 odes=C3=
-=ADlatel Stephen Hemminger &lt;<a href=3D"mailto:stephen@networkplumber.org=
-">stephen@networkplumber.org</a>&gt; napsal:</div><div class=3D"gmail_quote=
- gmail_quote_container"><blockquote class=3D"gmail_quote" style=3D"margin:0=
-px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">O=
-n Fri, 6 Feb 2026 16:40:39 +0100<br>
-Luk=C3=A1=C5=A1 =C5=A0i=C5=A1mi=C5=A1 &lt;<a href=3D"mailto:sismis@dyna-nic=
-.com" target=3D"_blank">sismis@dyna-nic.com</a>&gt; wrote:<br>
-<br>
-&gt; p=C3=A1 6. 2. 2026 v 15:02 odes=C3=ADlatel Thomas Monjalon &lt;<a href=
-=3D"mailto:thomas@monjalon.net" target=3D"_blank">thomas@monjalon.net</a>&g=
-t;<br>
-&gt; napsal:<br>
-&gt; <br>
-&gt; &gt; 04/02/2026 15:53, Stephen Hemminger:=C2=A0 <br>
-&gt; &gt; &gt; On Tue, 3 Feb 2026 09:34:26 +0100<br>
-&gt; &gt; &gt; Luk=C3=A1=C5=A1 =C5=A0i=C5=A1mi=C5=A1 &lt;<a href=3D"mailto:=
-sismis@dyna-nic.com" target=3D"_blank">sismis@dyna-nic.com</a>&gt; wrote:<b=
-r>
-&gt; &gt; &gt;=C2=A0 <br>
-&gt; &gt; &gt; &gt; &gt;<br>
-&gt; &gt; &gt; &gt; &gt; The kernel version of checkpatch complains here. T=
-he DPDK shell=C2=A0 <br>
-&gt; &gt; script=C2=A0 <br>
-&gt; &gt; &gt; &gt; &gt; seems to be set to ignore this but.<br>
-&gt; &gt; &gt; &gt; &gt;<br>
-&gt; &gt; &gt; &gt; &gt; WARNING: break is not useful after a return<br>
-&gt; &gt; &gt; &gt; &gt; #15008: FILE: lib/flow_parser/rte_flow_parser.c:14=
-763:<br>
-&gt; &gt; &gt; &gt; &gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0return cmd_flow_parsed(out);<br>
-&gt; &gt; &gt; &gt; &gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0break;<br>
-&gt; &gt; &gt; &gt; &gt;<br>
-&gt; &gt; &gt; &gt; &gt; Should I create a new patch set or just let it be =
-at this moment?=C2=A0 <br>
-&gt; &gt; &gt; &gt; Lukas=C2=A0 <br>
-&gt; &gt; &gt;<br>
-&gt; &gt; &gt;<br>
-&gt; &gt; &gt; I am ok with it as is.=C2=A0 <br>
-&gt; &gt;<br>
-&gt; &gt; Better to update.<br>
-&gt; &gt;<br>
-&gt; &gt; There are other warnings:<br>
-&gt; &gt;<br>
-&gt; &gt; WARNING:STRNCPY: Prefer strscpy, strscpy_pad, or __nonstring over=
- strncpy<br>
-&gt; &gt; - see: <a href=3D"https://github.com/KSPP/linux/issues/90" rel=3D=
-"noreferrer" target=3D"_blank">https://github.com/KSPP/linux/issues/90</a><=
-br>
-&gt; &gt; #13052 &lt;<a href=3D"https://github.com/KSPP/linux/issues/90#130=
-52" rel=3D"noreferrer" target=3D"_blank">https://github.com/KSPP/linux/issu=
-es/90#13052</a>&gt;: FILE:<br>
-&gt; &gt; lib/flow_parser/rte_flow_parser.c:12825:<br>
-&gt; &gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0strncpy(buf, str, len);<br>
-&gt; &gt;<br>
-&gt; &gt; and a lot of WARNING:LONG_LINE<br>
-&gt; &gt;<br>
-&gt; &gt; I can have a look after the decision.=C2=A0 <br>
-&gt; <br>
-&gt; &gt;<br>
-&gt; &gt; And on a more general note, I would have expected to ask the opin=
-ion<br>
-&gt; &gt; of rte_flow maintainers, but they are not Cc&#39;ed in these patc=
-hes.<br>
-&gt; &gt;=C2=A0 <br>
-&gt; I communicated primarily with Stephen, and will CC Ori too. Anyone els=
-e?<br>
-&gt; <br>
-&gt; <br>
-&gt; &gt; I&#39;m a bit skeptical about adding this outside of ethdev libra=
-ry<br>
-&gt; &gt; which defines the flow API.<br>
-&gt; &gt;=C2=A0 <br>
-&gt; <br>
-&gt; CCing Ori to make a decision. I don&#39;t mind putting it directly int=
-o ethdev<br>
-&gt; as well, I just thought the parser could be its own separate lib as it=
- is<br>
-&gt; just consuming strings and producing rte_flow structures. I can see th=
-e<br>
-&gt; heavy ties to the flow library, though. Thomas, Stephen, what are your=
-<br>
-&gt; opinions?<br>
-<br>
-I am beginning to agree with Thomas, this belongs in the ethdev directory<b=
-r>
-next to rte_flow.<br>
-<br>
-Also, not sure what the purpose of parser_ops is. It says to pass NULL, but=
-<br>
-test-pmd is doing something else. It would be better to have an initializer=
-<br>
-(i.e RTE_INIT) instead? Maybe<br>=C2=A0</blockquote><div>=C2=A0</div><div>O=
-k, I can move it there then. Should I proceed with Patch v11 - that would</=
-div><div>include moving the ethdev directory and addressing the kernel&#39;=
-s checkpatch</div><div>issues?</div><div><br></div><div>The initializer=C2=
-=A0doesn&#39;t seem like a bad idea. I didn&#39;t know about that one.</div=
-><div>The parser_ops are not needed for purely parsing, but to remain compa=
-tible</div><div>with the testpmd&#39;s code, which is using, e.g., the hint=
-s on the commandline</div><div>I added parser_ops.</div><div>The simple pub=
-lic library API is for converting strings to rte_flow structures,</div><div=
->the parser_ops is for hooking up the testpmd.=C2=A0</div></div></div>
-
---000000000000bc7cf6064aafccf2--
+-- 
+Thanks,
+Anatoly
