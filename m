@@ -2,51 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5237EDF023
-	for <dpdk-dev@archiver.kernel.org>; Fri, 13 Feb 2026 09:11:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39243EDF146
+	for <dpdk-dev@archiver.kernel.org>; Fri, 13 Feb 2026 10:09:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id ABD8340666;
-	Fri, 13 Feb 2026 10:10:43 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
- by mails.dpdk.org (Postfix) with ESMTP id A412340689
- for <dev@dpdk.org>; Fri, 13 Feb 2026 10:10:40 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1770973841; x=1802509841;
- h=from:to:subject:date:message-id:in-reply-to:references:
- mime-version:content-transfer-encoding;
- bh=HOicDmIeZdCch+ekc2J9DqJX8gLJTfCaRmIK6YsdF2U=;
- b=EsaWE2VzNmodoxuHACxD0qFder3usryNHhhufjgqtOeGkrsNvrOutIRu
- 37eXvw6ZnP0SITn5P6D8XRI5a1+vJO2mKku6FdkQoIyeolgpNxOPgGwYk
- 1HXyBnEYc3a7I+VmgYhKQKz/mI/1uzx7e6KttB0g/mOdrk2AcsbmlBB+u
- JRXk2vhfAnMjBgVJEypt1Brvjfkicpu/Czbq9aLPxRIOmWaR7H5dbC0q6
- fC1z6TUkRKgD4PKKr18LKGv5udrgZ7ce1iJesHKeNAUVHg0ERUvAy10Qm
- HjHpYWIlefhxNT25ryomfxbU7FvMYlXLBYZ57MOCKdbDD83sj4ovx4TSH A==;
-X-CSE-ConnectionGUID: A/VCuiYeQHOrMMrZEZQE3Q==
-X-CSE-MsgGUID: Z7OP3s2dRtyHAYw+rVA2Dw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11699"; a="89567899"
-X-IronPort-AV: E=Sophos;i="6.21,288,1763452800"; d="scan'208";a="89567899"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
- by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 13 Feb 2026 01:10:40 -0800
-X-CSE-ConnectionGUID: 6/Mx1O/NTPeLab2M61D34g==
-X-CSE-MsgGUID: SsOMh1uhT4WU9srvrVYYHw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,288,1763452800"; d="scan'208";a="211966109"
-Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by orviesa006.jf.intel.com with ESMTP; 13 Feb 2026 01:10:39 -0800
-From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>,
- Junfeng Guo <junfengg@nvidia.com>, Qi Zhang <qi.z.zhang@intel.com>
-Subject: [PATCH v6 12/12] net/ice: fix memory leak in FDIR flow parsing
-Date: Fri, 13 Feb 2026 09:10:14 +0000
-Message-ID: <14bb803f9e3f9cc1a18fb3a52d32e4d52ebce61f.1770973745.git.anatoly.burakov@intel.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <cover.1770973745.git.anatoly.burakov@intel.com>
- <cover.1770973745.git.anatoly.burakov@intel.com>
-References: 
+	by mails.dpdk.org (Postfix) with ESMTP id F180F402BE;
+	Fri, 13 Feb 2026 11:09:10 +0100 (CET)
+Received: from authsmtp.register.it (authsmtp14.register.it [81.88.48.37])
+ by mails.dpdk.org (Postfix) with ESMTP id 9815A40287
+ for <dev@dpdk.org>; Fri, 13 Feb 2026 11:09:09 +0100 (CET)
+Received: from DESKTOPPE5KR91 ([95.231.224.119]) by cmsmtp with ESMTPSA
+ id qq6mvhDbbXx9aqq6mv1u2X; Fri, 13 Feb 2026 11:09:08 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outsys.org;
+ s=key_65m6du3g3t; t=1770977349;
+ bh=lZtH1Umr/5W4wqzya3R/i0lznhrz7IN/qNJi0cPK25o=;
+ h=From:To:Cc:References:In-Reply-To:Subject:Date;
+ b=P2sYjNrc56RE7LxX8/9jIkkcRYRiXzsFGUlcgm2WHY/FR48wwiEH2xxJaEMCEwhSB
+ egM6uIi4BJgwl3fDWXh8pj+fDxb2PzGMoc2S+dZ795OZBfz3TQ+rBqryHRnEZ/lgUz
+ npByL/uf34puM6CDMfhvj5CvN8qDGOjehYNFpR3epJ13QZNRIVnePJ7LdbbLYcGybJ
+ RYNn1SW+SYsnmmjKEcZ5FutRlgMvvXV703Nh2ZStAPbhGT3+RogvxTidutHqwAzqib
+ 94e6GD7JSyQjk3WUYNP4HRlshOegPBZED1RNaEUXaFObbcpQUmZIWrKaVBOP+Bz2DS
+ fKi+PRzFmDUIA==
+X-Rid: smtp@outsys.eu@95.231.224.119
+From: "Ernesto Ruffini" <eruffini@outsys.org>
+To: "'Ayshathul Thuhara'" <ayshathul.thuhara@iwave-global.com>
+Cc: "'dev'" <dev@dpdk.org>,
+	<yasu1976@gmail.com>,
+	<users@dpdk.org>
+References: <PN0P287MB25319528772B121E0E380747C561A@PN0P287MB2531.INDP287.PROD.OUTLOOK.COM>
+ <039201dc9cc5$acd5dee0$06819ca0$@outsys.org>
+ <PN0P287MB2531B462677B1BDBAE41AA15C561A@PN0P287MB2531.INDP287.PROD.OUTLOOK.COM>
+ <PN0P287MB2531BFD1D63007182EFA3E5CC561A@PN0P287MB2531.INDP287.PROD.OUTLOOK.COM>
+In-Reply-To: <PN0P287MB2531BFD1D63007182EFA3E5CC561A@PN0P287MB2531.INDP287.PROD.OUTLOOK.COM>
+Subject: RE: Guidance Required to Improve Throughput on ConnectX-7 (1x400G)
+ with DPDK v23.07
+Date: Fri, 13 Feb 2026 11:09:11 +0100
+Message-ID: <03ad01dc9cd0$cd2cfb00$6786f100$@outsys.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/alternative;
+ boundary="----=_NextPart_000_03AE_01DC9CD9.2EF24D60"
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQHmp12vaPmWbH42Sqkb0yX68nXeOAGes56SAuOHRIcC8/Jiu7UwoEkg
+Content-Language: en-us
+X-CMAE-Envelope: MS4xfPownyXNTi9FLAUVHxPfKqIock3In16iucw5xyZ5cgCCdblSLmcj49JIhICcVQ9av94OlwJTpMDtlRGiM2mNSoMec/2AEHfhRq4QskgxHE6I7/SGU4H+
+ GidRKTwjLi4AE0HPg2zQQt4ryWl6vvsQzJK1HAEAKE2R2T1tP8neGM0z5gWMOxHHGC1N8EVcQU+Xaa/FbEsd2OPPKzHesx/0JWP3xYAOptWR3ZdWsGYagwGX
+ GemkTeYGnHL34PDoQne0VhofqJcmdQxmSDasaEE3nvydf040MiWsAJFxydlnJQAG
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -60,60 +59,454 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Currently, RAW pattern parsing will cause a `pkt_buf` buffer to be
-allocated to store parsed RAW pattern bytes. All error paths handle the
-deallocation correctly, and the buffer will then be passed to FDIR filter
-create function which also handles the presence of the buffer correctly,
-and it is also freed correctly in destroy function.
+This is a multipart message in MIME format.
 
-However, rte_flow_validate will go through the same code path, but will not
-call FDIR create/destroy nor even store the pointer, because `meta`
-variable inside the flow parsing function will be set to NULL, which will
-cause this memory to be leaked (and memset(0)-ed next time we try to
-create/validate another flow).
+------=_NextPart_000_03AE_01DC9CD9.2EF24D60
+Content-Type: text/plain;
+	charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 
-Fix it by freeing the `pkt_buf` when `meta` is NULL.
+Hi Ayshathul Thuhara,
 
-Additionally, the initial allocation was done using `ice_malloc` macro. It
-does not affect anything as `ice_malloc` translates to `rte_zmalloc` anyway
-but for consistency, change the allocation to `rte_zmalloc` as well.
+l3fwd parameters in the doc are important: they say how many cores/queues to
+use.
 
-Fixes: 25be39cc1760 ("net/ice: enable protocol agnostic flow offloading in FDIR")
-Cc: stable@dpdk.org
+Try playing with them, adding testpmd specific parameters.
 
-Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
-Acked-by: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
----
- drivers/net/intel/ice/ice_fdir_filter.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/intel/ice/ice_fdir_filter.c b/drivers/net/intel/ice/ice_fdir_filter.c
-index f7730ec6ab..da22b65a77 100644
---- a/drivers/net/intel/ice/ice_fdir_filter.c
-+++ b/drivers/net/intel/ice/ice_fdir_filter.c
-@@ -1938,7 +1938,7 @@ ice_fdir_parse_pattern(__rte_unused struct ice_adapter *ad,
- 				goto raw_error;
- 			}
  
--			u8 *pkt_buf = (u8 *)ice_malloc(&ad->hw, pkt_len + 1);
-+			u8 *pkt_buf = (u8 *)rte_zmalloc("raw pkt buf", pkt_len + 1, 0);
- 			if (!pkt_buf) {
- 				ret_val = -ENOMEM;
- 				goto raw_error;
-@@ -2497,8 +2497,12 @@ ice_fdir_parse(struct ice_adapter *ad,
- 	if (ret)
- 		goto error;
+
+sudo ./build/app/dpdk-testpmd -a 01:00.0 -l
+0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16 -- -i --rxq=16 --txq=16
+--nb-cores=16
+
  
--	if (meta)
-+	/* if meta is NULL we're validating so the flow won't be stored */
-+	if (meta) {
- 		*meta = filter;
-+	} else if (filter->pkt_buf != NULL) {
-+		rte_free(filter->pkt_buf);
-+	}
+
+Regards,
+
+               Ernesto
+
  
- 	rte_free(item);
- 	return ret;
--- 
-2.47.3
+
+ 
+
+From: Ayshathul Thuhara <ayshathul.thuhara@iwave-global.com> 
+Sent: Friday, February 13, 2026 10:04
+To: Ernesto Ruffini <eruffini@outsys.org>
+Cc: 'dev' <dev@dpdk.org>; yasu1976@gmail.com; users@dpdk.org
+Subject: Re: Guidance Required to Improve Throughput on ConnectX-7 (1x400G)
+with DPDK v23.07
+
+ 
+
+Hi Ernesto,
+
+As an additional observation, I tested the setup using iperf3 and was able
+to achieve throughput of approximately 92~95 Gbps. However, when running the
+DPDK-Testpmd application, the throughput does not reach similar values.
+
+Thanks and regards,
+Ayshathul Thuhara
+
+ 
+
+  _____  
+
+From: Ayshathul Thuhara <ayshathul.thuhara@iwave-global.com
+<mailto:ayshathul.thuhara@iwave-global.com> >
+Sent: 13 February 2026 14:24
+To: Ernesto Ruffini <eruffini@outsys.org <mailto:eruffini@outsys.org> >
+Cc: 'dev' <dev@dpdk.org <mailto:dev@dpdk.org> >; yasu1976@gmail.com
+<mailto:yasu1976@gmail.com>  <yasu1976@gmail.com <mailto:yasu1976@gmail.com>
+>; users@dpdk.org <mailto:users@dpdk.org>  <users@dpdk.org
+<mailto:users@dpdk.org> >
+Subject: Re: Guidance Required to Improve Throughput on ConnectX-7 (1x400G)
+with DPDK v23.07 
+
+ 
+
+Hi Ernesto, 
+
+ 
+
+Thankyou for the suggestion.
+
+I will look into
+"https://fast.dpdk.org/doc/perf/DPDK_23_11_NVIDIA_NIC_performance_report.pdf
+" , but here the tests uses external device for traffic generator.
+
+ 
+
+Yes, with ethtool it shows 400Gbps.
+
+The module can support upto 100Gbps. But it should have increased more than
+10Gbps. I will disable AN and check once.
+
+ 
+
+Thanks and regards, 
+
+Ayshathul Thuhara
+
+ 
+
+  _____  
+
+From: Ernesto Ruffini <eruffini@outsys.org <mailto:eruffini@outsys.org> >
+Sent: 13 February 2026 14:19
+To: Ayshathul Thuhara <ayshathul.thuhara@iwave-global.com
+<mailto:ayshathul.thuhara@iwave-global.com> >; users@dpdk.org
+<mailto:users@dpdk.org>  <users@dpdk.org <mailto:users@dpdk.org> >
+Cc: 'dev' <dev@dpdk.org <mailto:dev@dpdk.org> >; yasu1976@gmail.com
+<mailto:yasu1976@gmail.com>  <yasu1976@gmail.com <mailto:yasu1976@gmail.com>
+>
+Subject: RE: Guidance Required to Improve Throughput on ConnectX-7 (1x400G)
+with DPDK v23.07 
+
+ 
+
+Hi Ayshathul,
+
+I think the best is to follow
+https://fast.dpdk.org/doc/perf/DPDK_23_11_NVIDIA_NIC_performance_report.pdf
+
+Did you check with ethtool or similar the actual connection speed? ethtool
+linux-nic-name | grep Speed
+
+Maybe your module limits it to 10Gbps. In case try to disable
+auto-negotiation
+
+ 
+
+Regards,
+
+               Ernesto
+
+ 
+
+From: Ayshathul Thuhara <ayshathul.thuhara@iwave-global.com
+<mailto:ayshathul.thuhara@iwave-global.com> > 
+Sent: Friday, February 13, 2026 07:36
+To: users@dpdk.org <mailto:users@dpdk.org> 
+Cc: dev <dev@dpdk.org <mailto:dev@dpdk.org> >; yasu1976@gmail.com
+<mailto:yasu1976@gmail.com> 
+Subject: Guidance Required to Improve Throughput on ConnectX-7 (1x400G) with
+DPDK v23.07
+
+ 
+
+Dear Team,
+
+I hope this message finds you well.
+
+I am currently performing testing on ConnectX-7 with 1x400G hardware using
+DPDK v23.07. However, I am unable to achieve data transfer rates beyond 10
+Gbps. While reviewing the DPDK mailing list, I came across your previous
+responses in the related discussion
+(https://mails.dpdk.org/archives/users/2024-July/007767.html), where you
+mentioned achieving throughput of around 250 Gbps and above.
+
+Could you kindly advise on the configuration changes or optimizations
+required to improve throughput in this setup?
+
+For reference, I am using an OSFP loopback module for testing, where the
+same port is used for both transmission and reception (single-port loopback
+setup).
+
+CX-7 Firmware: 28.45.1200
+
+CPU : Intel(R) Core(TM) i7-14700
+
+Command used : sudo ./build/app/dpdk-testpmd -a 01:00.0 -- -i
+
+I would greatly appreciate your guidance.
+
+Thank you in advance, and I look forward to your response.
+
+Thanks and regards,
+Ayshathul Thuhara
+
+ 
+
+
+------=_NextPart_000_03AE_01DC9CD9.2EF24D60
+Content-Type: text/html;
+	charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+
+<html xmlns:v=3D"urn:schemas-microsoft-com:vml" =
+xmlns:o=3D"urn:schemas-microsoft-com:office:office" =
+xmlns:w=3D"urn:schemas-microsoft-com:office:word" =
+xmlns:m=3D"http://schemas.microsoft.com/office/2004/12/omml" =
+xmlns=3D"http://www.w3.org/TR/REC-html40"><head><META =
+HTTP-EQUIV=3D"Content-Type" CONTENT=3D"text/html; =
+charset=3Dus-ascii"><meta name=3DGenerator content=3D"Microsoft Word 15 =
+(filtered medium)"><!--[if !mso]><style>v\:* =
+{behavior:url(#default#VML);}
+o\:* {behavior:url(#default#VML);}
+w\:* {behavior:url(#default#VML);}
+.shape {behavior:url(#default#VML);}
+</style><![endif]--><style><!--
+/* Font Definitions */
+@font-face
+	{font-family:"Cambria Math";
+	panose-1:2 4 5 3 5 4 6 3 2 4;}
+@font-face
+	{font-family:Calibri;
+	panose-1:2 15 5 2 2 2 4 3 2 4;}
+@font-face
+	{font-family:Aptos;
+	panose-1:0 0 0 0 0 0 0 0 0 0;}
+/* Style Definitions */
+p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{margin:0cm;
+	font-size:12.0pt;
+	font-family:"Aptos",serif;}
+a:link, span.MsoHyperlink
+	{mso-style-priority:99;
+	color:blue;
+	text-decoration:underline;}
+span.elementtoproof
+	{mso-style-name:elementtoproof;}
+span.xelementtoproof
+	{mso-style-name:x_elementtoproof;}
+p.xxmsonormal, li.xxmsonormal, div.xxmsonormal
+	{mso-style-name:x_x_msonormal;
+	margin:0cm;
+	font-size:12.0pt;
+	font-family:"Aptos",serif;}
+span.EmailStyle26
+	{mso-style-type:personal-reply;
+	font-family:"Calibri",sans-serif;
+	color:windowtext;}
+.MsoChpDefault
+	{mso-style-type:export-only;
+	font-size:10.0pt;
+	mso-ligatures:none;}
+@page WordSection1
+	{size:612.0pt 792.0pt;
+	margin:72.0pt 72.0pt 72.0pt 72.0pt;}
+div.WordSection1
+	{page:WordSection1;}
+--></style></head><body lang=3DEN-US link=3Dblue vlink=3Dpurple =
+style=3D'word-wrap:break-word'><div class=3DWordSection1><p =
+class=3DMsoNormal><span =
+style=3D'font-size:11.0pt;font-family:"Calibri",sans-serif'>Hi Ayshathul =
+Thuhara,<o:p></o:p></span></p><p class=3DMsoNormal><span =
+style=3D'font-size:11.0pt;font-family:"Calibri",sans-serif'>l3fwd =
+parameters in the doc are important: they say how many cores/queues to =
+use.<o:p></o:p></span></p><p class=3DMsoNormal><span =
+style=3D'font-size:11.0pt;font-family:"Calibri",sans-serif'>Try playing =
+with them, adding testpmd specific parameters.<o:p></o:p></span></p><p =
+class=3DMsoNormal><span =
+style=3D'font-size:11.0pt;font-family:"Calibri",sans-serif'><o:p>&nbsp;</=
+o:p></span></p><p class=3DMsoNormal><span =
+style=3D'font-size:11.0pt;font-family:"Calibri",sans-serif'>sudo =
+./build/app/dpdk-testpmd -a 01:00.0 -l =
+0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16 -- -i --rxq=3D16 --txq=3D16 =
+--nb-cores=3D16<o:p></o:p></span></p><p class=3DMsoNormal><span =
+style=3D'font-size:11.0pt;font-family:"Calibri",sans-serif'><o:p>&nbsp;</=
+o:p></span></p><p class=3DMsoNormal><span =
+style=3D'font-size:11.0pt;font-family:"Calibri",sans-serif'>Regards,<o:p>=
+</o:p></span></p><p class=3DMsoNormal><span =
+style=3D'font-size:11.0pt;font-family:"Calibri",sans-serif'>&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; =
+Ernesto<o:p></o:p></span></p><p class=3DMsoNormal><span =
+style=3D'font-size:11.0pt;font-family:"Calibri",sans-serif'><o:p>&nbsp;</=
+o:p></span></p><p class=3DMsoNormal><span =
+style=3D'font-size:11.0pt;font-family:"Calibri",sans-serif'><o:p>&nbsp;</=
+o:p></span></p><div><div style=3D'border:none;border-top:solid #E1E1E1 =
+1.0pt;padding:3.0pt 0cm 0cm 0cm'><p class=3DMsoNormal><b><span =
+style=3D'font-size:11.0pt;font-family:"Calibri",sans-serif'>From:</span><=
+/b><span style=3D'font-size:11.0pt;font-family:"Calibri",sans-serif'> =
+Ayshathul Thuhara &lt;ayshathul.thuhara@iwave-global.com&gt; =
+<br><b>Sent:</b> Friday, February 13, 2026 10:04<br><b>To:</b> Ernesto =
+Ruffini &lt;eruffini@outsys.org&gt;<br><b>Cc:</b> 'dev' =
+&lt;dev@dpdk.org&gt;; yasu1976@gmail.com; =
+users@dpdk.org<br><b>Subject:</b> Re: Guidance Required to Improve =
+Throughput on ConnectX-7 (1x400G) with DPDK =
+v23.07<o:p></o:p></span></p></div></div><p =
+class=3DMsoNormal><o:p>&nbsp;</o:p></p><div =
+style=3D'margin-top:12.0pt;margin-bottom:12.0pt'><p =
+class=3DMsoNormal><span class=3Delementtoproof><span =
+style=3D'color:black'>Hi Ernesto,</span></span><span =
+style=3D'color:black'><o:p></o:p></span></p></div><div =
+style=3D'margin-top:12.0pt;margin-bottom:12.0pt'><p =
+class=3DMsoNormal><span class=3Delementtoproof><span =
+style=3D'color:black'>As an additional observation, I tested the setup =
+using iperf3 and was able to achieve throughput of approximately 92~95 =
+Gbps. However, when running the DPDK-Testpmd application, the throughput =
+does not reach similar values.</span></span><span =
+style=3D'color:black'><o:p></o:p></span></p></div><div =
+style=3D'margin-top:12.0pt;margin-bottom:12.0pt'><p =
+class=3DMsoNormal><span class=3Delementtoproof><span =
+style=3D'color:black'>Thanks and regards,</span></span><span =
+style=3D'color:black'><br><span class=3Delementtoproof>Ayshathul =
+Thuhara</span><o:p></o:p></span></p></div><div><p =
+class=3DMsoNormal><span =
+style=3D'color:black'><o:p>&nbsp;</o:p></span></p></div><div =
+class=3DMsoNormal align=3Dcenter style=3D'text-align:center'><hr =
+size=3D2 width=3D"98%" align=3Dcenter></div><div id=3DdivRplyFwdMsg><p =
+class=3DMsoNormal><b><span =
+style=3D'font-size:11.0pt;font-family:"Calibri",sans-serif;color:black'>F=
+rom:</span></b><span =
+style=3D'font-size:11.0pt;font-family:"Calibri",sans-serif;color:black'> =
+Ayshathul Thuhara &lt;<a =
+href=3D"mailto:ayshathul.thuhara@iwave-global.com">ayshathul.thuhara@iwav=
+e-global.com</a>&gt;<br><b>Sent:</b> 13 February 2026 =
+14:24<br><b>To:</b> Ernesto Ruffini &lt;<a =
+href=3D"mailto:eruffini@outsys.org">eruffini@outsys.org</a>&gt;<br><b>Cc:=
+</b> 'dev' &lt;<a href=3D"mailto:dev@dpdk.org">dev@dpdk.org</a>&gt;; <a =
+href=3D"mailto:yasu1976@gmail.com">yasu1976@gmail.com</a> &lt;<a =
+href=3D"mailto:yasu1976@gmail.com">yasu1976@gmail.com</a>&gt;; <a =
+href=3D"mailto:users@dpdk.org">users@dpdk.org</a> &lt;<a =
+href=3D"mailto:users@dpdk.org">users@dpdk.org</a>&gt;<br><b>Subject:</b> =
+Re: Guidance Required to Improve Throughput on ConnectX-7 (1x400G) with =
+DPDK v23.07</span> <o:p></o:p></p><div><p =
+class=3DMsoNormal>&nbsp;<o:p></o:p></p></div></div><div><div><p =
+class=3DMsoNormal><span style=3D'color:black'>Hi =
+Ernesto,&nbsp;<o:p></o:p></span></p></div><div><p =
+class=3DMsoNormal><span =
+style=3D'color:black'><o:p>&nbsp;</o:p></span></p></div><div><p =
+class=3DMsoNormal><span style=3D'color:black'>Thankyou for the =
+suggestion.<o:p></o:p></span></p></div><div><p class=3DMsoNormal><span =
+style=3D'color:black'>I will look into &quot;</span><span =
+class=3Dxelementtoproof><span =
+style=3D'font-size:11.0pt;font-family:"Calibri",sans-serif;color:black'><=
+a =
+href=3D"https://fast.dpdk.org/doc/perf/DPDK_23_11_NVIDIA_NIC_performance_=
+report.pdf" target=3D"_blank" =
+title=3D"https://fast.dpdk.org/doc/perf/DPDK_23_11_NVIDIA_NIC_performance=
+_report.pdf" =
+id=3DOWAeff86e8d-ad77-3696-fe19-ea870b99fa63>https://fast.dpdk.org/doc/pe=
+rf/DPDK_23_11_NVIDIA_NIC_performance_report.pdf</a>&quot; , but here the =
+tests uses external device for traffic generator.</span></span><span =
+style=3D'color:black'><o:p></o:p></span></p></div><div><p =
+class=3DMsoNormal><span =
+style=3D'font-size:11.0pt;font-family:"Calibri",sans-serif;color:black'><=
+o:p>&nbsp;</o:p></span></p></div><div><p class=3DMsoNormal><span =
+class=3Dxelementtoproof><span =
+style=3D'font-size:11.0pt;font-family:"Calibri",sans-serif;color:black'>Y=
+es, with ethtool it shows 400Gbps.</span></span><span =
+style=3D'font-size:11.0pt;font-family:"Calibri",sans-serif;color:black'><=
+o:p></o:p></span></p></div><div><p class=3DMsoNormal><span =
+class=3Dxelementtoproof><span =
+style=3D'font-size:11.0pt;font-family:"Calibri",sans-serif;color:black'>T=
+he module can support upto 100Gbps. But it should have increased more =
+than 10Gbps. I will disable AN and check once.</span></span><span =
+style=3D'font-size:11.0pt;font-family:"Calibri",sans-serif;color:black'><=
+o:p></o:p></span></p></div><div><p class=3DMsoNormal><span =
+style=3D'font-size:11.0pt;font-family:"Calibri",sans-serif;color:black'><=
+o:p>&nbsp;</o:p></span></p></div><div><p class=3DMsoNormal><span =
+style=3D'font-size:11.0pt;font-family:"Calibri",sans-serif;color:black'>T=
+hanks and regards,&nbsp;<o:p></o:p></span></p></div><div><p =
+class=3DMsoNormal><span =
+style=3D'font-size:11.0pt;font-family:"Calibri",sans-serif;color:black'>A=
+yshathul Thuhara<o:p></o:p></span></p></div><div><p =
+class=3DMsoNormal><span =
+style=3D'font-size:11.0pt;font-family:"Calibri",sans-serif;color:black'><=
+o:p>&nbsp;</o:p></span></p></div><div class=3DMsoNormal align=3Dcenter =
+style=3D'text-align:center'><hr size=3D2 width=3D"98%" =
+align=3Dcenter></div><div id=3D"x_divRplyFwdMsg"><p =
+class=3DMsoNormal><b><span =
+style=3D'font-size:11.0pt;font-family:"Calibri",sans-serif;color:black'>F=
+rom:</span></b><span =
+style=3D'font-size:11.0pt;font-family:"Calibri",sans-serif;color:black'> =
+Ernesto Ruffini &lt;<a =
+href=3D"mailto:eruffini@outsys.org">eruffini@outsys.org</a>&gt;<br><b>Sen=
+t:</b> 13 February 2026 14:19<br><b>To:</b> Ayshathul Thuhara &lt;<a =
+href=3D"mailto:ayshathul.thuhara@iwave-global.com">ayshathul.thuhara@iwav=
+e-global.com</a>&gt;; <a =
+href=3D"mailto:users@dpdk.org">users@dpdk.org</a> &lt;<a =
+href=3D"mailto:users@dpdk.org">users@dpdk.org</a>&gt;<br><b>Cc:</b> =
+'dev' &lt;<a href=3D"mailto:dev@dpdk.org">dev@dpdk.org</a>&gt;; <a =
+href=3D"mailto:yasu1976@gmail.com">yasu1976@gmail.com</a> &lt;<a =
+href=3D"mailto:yasu1976@gmail.com">yasu1976@gmail.com</a>&gt;<br><b>Subje=
+ct:</b> RE: Guidance Required to Improve Throughput on ConnectX-7 =
+(1x400G) with DPDK v23.07</span> <o:p></o:p></p><div><p =
+class=3DMsoNormal>&nbsp;<o:p></o:p></p></div></div><div><div><p =
+class=3Dxxmsonormal><span =
+style=3D'font-size:11.0pt;font-family:"Calibri",sans-serif'>Hi =
+</span><span style=3D'color:black'>Ayshathul</span><span =
+style=3D'font-size:11.0pt;font-family:"Calibri",sans-serif'>,</span><o:p>=
+</o:p></p><p class=3Dxxmsonormal><span =
+style=3D'font-size:11.0pt;font-family:"Calibri",sans-serif'>I think the =
+best is to follow <a =
+href=3D"https://fast.dpdk.org/doc/perf/DPDK_23_11_NVIDIA_NIC_performance_=
+report.pdf">https://fast.dpdk.org/doc/perf/DPDK_23_11_NVIDIA_NIC_performa=
+nce_report.pdf</a></span><o:p></o:p></p><p class=3Dxxmsonormal><span =
+style=3D'font-size:11.0pt;font-family:"Calibri",sans-serif'>Did you =
+check with ethtool or similar the actual connection speed? ethtool =
+linux-nic-name | grep Speed</span><o:p></o:p></p><p =
+class=3Dxxmsonormal><span =
+style=3D'font-size:11.0pt;font-family:"Calibri",sans-serif'>Maybe your =
+module limits it to 10Gbps. In case try to disable =
+auto-negotiation</span><o:p></o:p></p><p class=3Dxxmsonormal><span =
+style=3D'font-size:11.0pt;font-family:"Calibri",sans-serif'>&nbsp;</span>=
+<o:p></o:p></p><p class=3Dxxmsonormal><span =
+style=3D'font-size:11.0pt;font-family:"Calibri",sans-serif'>Regards,</spa=
+n><o:p></o:p></p><p class=3Dxxmsonormal><span =
+style=3D'font-size:11.0pt;font-family:"Calibri",sans-serif'>&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; =
+Ernesto</span><o:p></o:p></p><p class=3Dxxmsonormal><span =
+style=3D'font-size:11.0pt;font-family:"Calibri",sans-serif'>&nbsp;</span>=
+<o:p></o:p></p><div><div style=3D'border:none;border-top:solid #E1E1E1 =
+1.0pt;padding:3.0pt 0cm 0cm 0cm'><p class=3Dxxmsonormal><b><span =
+style=3D'font-size:11.0pt;font-family:"Calibri",sans-serif'>From:</span><=
+/b><span style=3D'font-size:11.0pt;font-family:"Calibri",sans-serif'> =
+Ayshathul Thuhara &lt;<a =
+href=3D"mailto:ayshathul.thuhara@iwave-global.com">ayshathul.thuhara@iwav=
+e-global.com</a>&gt; <br><b>Sent:</b> Friday, February 13, 2026 =
+07:36<br><b>To:</b> <a =
+href=3D"mailto:users@dpdk.org">users@dpdk.org</a><br><b>Cc:</b> dev =
+&lt;<a href=3D"mailto:dev@dpdk.org">dev@dpdk.org</a>&gt;; <a =
+href=3D"mailto:yasu1976@gmail.com">yasu1976@gmail.com</a><br><b>Subject:<=
+/b> Guidance Required to Improve Throughput on ConnectX-7 (1x400G) with =
+DPDK v23.07</span><o:p></o:p></p></div></div><p =
+class=3Dxxmsonormal>&nbsp;<o:p></o:p></p><div =
+style=3D'margin-top:12.0pt;margin-bottom:12.0pt'><p =
+class=3Dxxmsonormal><span style=3D'color:black'>Dear =
+Team,</span><o:p></o:p></p></div><div =
+style=3D'margin-top:12.0pt;margin-bottom:12.0pt'><p =
+class=3Dxxmsonormal><span style=3D'color:black'>I hope this message =
+finds you well.</span><o:p></o:p></p></div><div =
+style=3D'margin-top:12.0pt;margin-bottom:12.0pt'><p =
+class=3Dxxmsonormal><span style=3D'color:black'>I am currently =
+performing testing on ConnectX-7 with 1x400G hardware using DPDK v23.07. =
+However, I am unable to achieve data transfer rates beyond 10 Gbps. =
+While reviewing the DPDK mailing list, I came across your previous =
+responses in the related discussion (<a =
+href=3D"https://mails.dpdk.org/archives/users/2024-July/007767.html" =
+target=3D"_new" =
+id=3DOWAe131b2f8-ca05-2ff3-d67e-40e6b9de2cd3>https://mails.dpdk.org/archi=
+ves/users/2024-July/007767.html</a>), where you mentioned achieving =
+throughput of around 250 Gbps and above.</span><o:p></o:p></p></div><div =
+style=3D'margin-top:12.0pt;margin-bottom:12.0pt'><p =
+class=3Dxxmsonormal><span style=3D'color:black'>Could you kindly advise =
+on the configuration changes or optimizations required to improve =
+throughput in this setup?</span><o:p></o:p></p></div><div =
+style=3D'margin-top:12.0pt;margin-bottom:12.0pt'><p =
+class=3Dxxmsonormal><span style=3D'color:black'>For reference, I am =
+using an OSFP loopback module for testing, where the same port is used =
+for both transmission and reception (single-port loopback =
+setup).</span><o:p></o:p></p></div><div><p class=3Dxxmsonormal><b><span =
+style=3D'color:black'>CX-7 Firmware: =
+28.45.1200</span></b><o:p></o:p></p></div><div><p =
+class=3Dxxmsonormal><b><span style=3D'color:black'>CPU : Intel(R) =
+Core(TM) i7-14700</span></b><o:p></o:p></p></div><div><p =
+class=3Dxxmsonormal><b><span style=3D'color:black'>Command used : sudo =
+./build/app/dpdk-testpmd -a 01:00.0 -- =
+-i</span></b><o:p></o:p></p></div><div =
+style=3D'margin-top:12.0pt;margin-bottom:12.0pt'><p =
+class=3Dxxmsonormal><span style=3D'color:black'>I would greatly =
+appreciate your guidance.</span><o:p></o:p></p></div><div =
+style=3D'margin-top:12.0pt;margin-bottom:12.0pt'><p =
+class=3Dxxmsonormal><span style=3D'color:black'>Thank you in advance, =
+and I look forward to your response.</span><o:p></o:p></p></div><div =
+style=3D'margin-top:12.0pt;margin-bottom:12.0pt'><p =
+class=3Dxxmsonormal><span style=3D'color:black'>Thanks and =
+regards,<br>Ayshathul Thuhara</span><o:p></o:p></p></div><div><p =
+class=3Dxxmsonormal><span =
+style=3D'color:black'>&nbsp;</span><o:p></o:p></p></div></div></div></div=
+></div></body></html>
+------=_NextPart_000_03AE_01DC9CD9.2EF24D60--
 
