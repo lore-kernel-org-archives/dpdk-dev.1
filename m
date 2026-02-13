@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8760BEDF150
-	for <dpdk-dev@archiver.kernel.org>; Fri, 13 Feb 2026 10:27:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 626EBEDF14F
+	for <dpdk-dev@archiver.kernel.org>; Fri, 13 Feb 2026 10:27:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D20104066F;
-	Fri, 13 Feb 2026 11:26:59 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 33CCF40679;
+	Fri, 13 Feb 2026 11:27:01 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
- by mails.dpdk.org (Postfix) with ESMTP id 609E840652
- for <dev@dpdk.org>; Fri, 13 Feb 2026 11:26:55 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id C43594066C
+ for <dev@dpdk.org>; Fri, 13 Feb 2026 11:26:59 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1770978415; x=1802514415;
+ t=1770978420; x=1802514420;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=e+xU4Tm/Aa32Ukwhlg+G5frL/AVx8UUAfwhgyghABV4=;
- b=Q1k86mMJW/4dREyxeMWl+JmqjPT1i1rlYN1FZRDYBesUREIMS43POrOX
- Q0nFX/BNnd8Cwv4L1AxUWcH0sM2DKF/0euAhLyCMc4u2FNDwvKKC7hbZK
- E6f1e3l7VuvL6H4bydpsuEZ/rjId/lpM9UH++NQa9azgaYojNGIMeS8qv
- KRgZvTApvghSZPr5gAjgXu5LlV/7oybZnU7EEWPNZ4U2sOfJpbIWVQZP9
- 3139KANAb3rHJClCnjb3t1Tbi1QLlV+gdYy1fop33gRzCmmH/kRN/QX2U
- pOvSbindHjvEA/sck6a9wLTfmO4uQpA2OwfYbJG1lnFrbMKH2f8c5GPiY Q==;
-X-CSE-ConnectionGUID: lTS0b7jDQ+CYlruCk9qpGQ==
-X-CSE-MsgGUID: 30m7DVeNRNCNbJMJVo4WMw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11699"; a="83603070"
-X-IronPort-AV: E=Sophos;i="6.21,288,1763452800"; d="scan'208";a="83603070"
+ bh=pRed54M/EIGiMR7HelzJHjh5nNPmH2PNcRV790rq/7Y=;
+ b=MlnvJ4Xbrsmroi4hkq0F2i/BEIK4QyXl2HBc8a2iC6bQqJVpbkx77c9H
+ cTe9Er5yHlRD65u+34DzHTLifBeX/BvGOvK96/QE0zPP8lvWcVgz1l66T
+ Wa8zikTrmNvybqrPMqjBtLqRh92gYGJgc+JPDB00p1qEkyPL5U+fKzaFH
+ /OnxhFXlzXkEndItH/pm3H+kRRXeaAXVRrFj+R6Cn8wPUSwhYGPJ5GEuD
+ +cLyXiHtkMXayQ2bTvYN+QMpS9PY6mvk5toJ9tX+pHvxjTBDek26G6H0V
+ GbrbJsg7xQ9rxuKZwEbmip5KZi2u81s5vbjwHDIvXdYCzngDtDgBRiug7 g==;
+X-CSE-ConnectionGUID: py7OpbcvTZGYMmC/cKQq3g==
+X-CSE-MsgGUID: LRqlfqJQQpm8Xh+Gm6QRbw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11699"; a="83603079"
+X-IronPort-AV: E=Sophos;i="6.21,288,1763452800"; d="scan'208";a="83603079"
 Received: from orviesa003.jf.intel.com ([10.64.159.143])
  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 13 Feb 2026 02:26:55 -0800
-X-CSE-ConnectionGUID: wIzLt0OeRniKiwmwBRjAUw==
-X-CSE-MsgGUID: vSQ2IEr4T9iB3X0jgp3tEQ==
+ 13 Feb 2026 02:26:59 -0800
+X-CSE-ConnectionGUID: ZkNveubXR9KbMujabFEaGw==
+X-CSE-MsgGUID: S3mUxOklTxuU8e5J3Y+3PA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,288,1763452800"; d="scan'208";a="217028044"
+X-IronPort-AV: E=Sophos;i="6.21,288,1763452800"; d="scan'208";a="217028053"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by orviesa003.jf.intel.com with ESMTP; 13 Feb 2026 02:26:55 -0800
+ by orviesa003.jf.intel.com with ESMTP; 13 Feb 2026 02:26:59 -0800
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org,
 	Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v4 05/27] net/i40e: make default RSS key global
-Date: Fri, 13 Feb 2026 10:26:16 +0000
-Message-ID: <81423f82ed0dfb70ad69bb9b019a047b128831ef.1770978324.git.anatoly.burakov@intel.com>
+Subject: [PATCH v4 06/27] net/i40e: use unsigned types for queue comparisons
+Date: Fri, 13 Feb 2026 10:26:17 +0000
+Message-ID: <386ad6f91a9e43cc5b0f6a6499d214cdae79195a.1770978324.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <cover.1770978324.git.anatoly.burakov@intel.com>
  <cover.1770978324.git.anatoly.burakov@intel.com>
@@ -60,118 +60,80 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Currently, there are multiple places where we need a default RSS key, but
-in each of those places we define it as a local variable. Make it global
-constant, and adjust all callers to use the global constant. When dealing
-with adminq, we cannot send down the constant because adminq commands do
-not guarantee const-ness, so copy RSS key into a local buffer before
-sending it down to hardware.
+Currently, when we compare queue numbers against maximum traffic class
+value of 64, we do not use unsigned values, which results in compiler
+warning when attempting to compare `I40E_MAX_Q_PER_TC` to an unsigned
+value. Make it unsigned, and adjust callers to use correct types. As a
+consequence, `i40e_align_floor` now returns unsigned value as well - this
+is correct, because nothing about that function implies signed usage being
+a valid use case.
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- drivers/net/intel/i40e/i40e_ethdev.c | 22 ++++++++++------------
- drivers/net/intel/i40e/i40e_hash.c   | 23 +++++++++++++++++------
- drivers/net/intel/i40e/i40e_hash.h   |  3 +++
- 3 files changed, 30 insertions(+), 18 deletions(-)
+ drivers/net/intel/i40e/i40e_ethdev.c | 2 +-
+ drivers/net/intel/i40e/i40e_ethdev.h | 6 +++---
+ drivers/net/intel/i40e/i40e_hash.c   | 4 ++--
+ 3 files changed, 6 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/net/intel/i40e/i40e_ethdev.c b/drivers/net/intel/i40e/i40e_ethdev.c
-index c8153f3351..2deb87b01b 100644
+index 2deb87b01b..d5c61cd577 100644
 --- a/drivers/net/intel/i40e/i40e_ethdev.c
 +++ b/drivers/net/intel/i40e/i40e_ethdev.c
-@@ -9082,23 +9082,21 @@ i40e_pf_reset_rss_reta(struct i40e_pf *pf)
- int
- i40e_pf_reset_rss_key(struct i40e_pf *pf)
- {
--	const uint8_t key_len = (I40E_PFQF_HKEY_MAX_INDEX + 1) *
--			sizeof(uint32_t);
--	uint8_t *rss_key;
-+	uint8_t key_buf[I40E_RSS_KEY_LEN];
-+	const uint8_t *rss_key;
+@@ -9058,7 +9058,7 @@ i40e_pf_reset_rss_reta(struct i40e_pf *pf)
+ 	struct i40e_hw *hw = &pf->adapter->hw;
+ 	uint8_t lut[RTE_ETH_RSS_RETA_SIZE_512];
+ 	uint32_t i;
+-	int num;
++	size_t num;
  
- 	/* Reset key */
- 	rss_key = pf->dev_data->dev_conf.rx_adv_conf.rss_conf.rss_key;
--	if (!rss_key ||
--	    pf->dev_data->dev_conf.rx_adv_conf.rss_conf.rss_key_len < key_len) {
--		static uint32_t rss_key_default[] = {0x6b793944,
--			0x23504cb5, 0x5bea75b6, 0x309f4f12, 0x3dc0a2b8,
--			0x024ddcdf, 0x339b8ca0, 0x4c4af64a, 0x34fac605,
--			0x55d85839, 0x3a58997d, 0x2ec938e1, 0x66031581};
-+	if (!rss_key || pf->dev_data->dev_conf.rx_adv_conf.rss_conf.rss_key_len < sizeof(key_buf))
-+		rss_key = i40e_rss_key_default;
- 
--		rss_key = (uint8_t *)rss_key_default;
--	}
-+	/*
-+	 * adminq does not guarantee const-ness of RSS key once a command is sent down, so make a
-+	 * local copy.
-+	 */
-+	memcpy(&key_buf, rss_key, sizeof(key_buf));
- 
--	return i40e_set_rss_key(pf->main_vsi, rss_key, key_len);
-+	return i40e_set_rss_key(pf->main_vsi, key_buf, sizeof(key_buf));
+ 	/* If both VMDQ and RSS enabled, not all of PF queues are
+ 	 * configured. It's necessary to calculate the actual PF
+diff --git a/drivers/net/intel/i40e/i40e_ethdev.h b/drivers/net/intel/i40e/i40e_ethdev.h
+index 0de036f2d9..d144297360 100644
+--- a/drivers/net/intel/i40e/i40e_ethdev.h
++++ b/drivers/net/intel/i40e/i40e_ethdev.h
+@@ -24,7 +24,7 @@
+ #define I40E_AQ_LEN               32
+ #define I40E_AQ_BUF_SZ            4096
+ /* Number of queues per TC should be one of 1, 2, 4, 8, 16, 32, 64 */
+-#define I40E_MAX_Q_PER_TC         64
++#define I40E_MAX_Q_PER_TC         64U
+ #define I40E_NUM_DESC_DEFAULT     512
+ #define I40E_NUM_DESC_ALIGN       32
+ #define I40E_BUF_SIZE_MIN         1024
+@@ -1517,8 +1517,8 @@ i40e_init_adminq_parameter(struct i40e_hw *hw)
+ 	hw->aq.asq_buf_size = I40E_AQ_BUF_SZ;
  }
  
- static int
+-static inline int
+-i40e_align_floor(int n)
++static inline uint32_t
++i40e_align_floor(uint32_t n)
+ {
+ 	if (n == 0)
+ 		return 0;
 diff --git a/drivers/net/intel/i40e/i40e_hash.c b/drivers/net/intel/i40e/i40e_hash.c
-index 3149682197..f20b40e7d0 100644
+index f20b40e7d0..cbb377295d 100644
 --- a/drivers/net/intel/i40e/i40e_hash.c
 +++ b/drivers/net/intel/i40e/i40e_hash.c
-@@ -233,6 +233,22 @@ struct i40e_hash_match_pattern {
- 					RTE_ETH_RSS_NONFRAG_IPV6_UDP | \
- 					RTE_ETH_RSS_NONFRAG_IPV6_SCTP)
+@@ -949,7 +949,7 @@ i40e_hash_parse_queues(const struct rte_eth_dev *dev,
+ 	struct i40e_pf *pf;
+ 	struct i40e_hw *hw;
+ 	uint16_t i;
+-	int max_queue;
++	size_t max_queue;
  
-+const uint8_t i40e_rss_key_default[] = {
-+	0x44, 0x39, 0x79, 0x6b,
-+	0xb5, 0x4c, 0x50, 0x23,
-+	0xb6, 0x75, 0xea, 0x5b,
-+	0x12, 0x4f, 0x9f, 0x30,
-+	0xb8, 0xa2, 0xc0, 0x3d,
-+	0xdf, 0xdc, 0x4d, 0x02,
-+	0xa0, 0x8c, 0x9b, 0x33,
-+	0x4a, 0xf6, 0x4a, 0x4c,
-+	0x05, 0xc6, 0xfa, 0x34,
-+	0x39, 0x58, 0xd8, 0x55,
-+	0x7d, 0x99, 0x58, 0x3a,
-+	0xe1, 0x38, 0xc9, 0x2e,
-+	0x81, 0x15, 0x03, 0x66
-+};
-+
- /* Current supported patterns and RSS types.
-  * All items that have the same pattern types are together.
-  */
-@@ -910,17 +926,12 @@ i40e_hash_parse_key(const struct rte_flow_action_rss *rss_act,
- 	const uint8_t *key = rss_act->key;
+ 	hw = I40E_DEV_PRIVATE_TO_HW(dev->data->dev_private);
+ 	if (!rss_act->queue_num ||
+@@ -971,7 +971,7 @@ i40e_hash_parse_queues(const struct rte_eth_dev *dev,
+ 	max_queue = RTE_MIN(max_queue, I40E_MAX_Q_PER_TC);
  
- 	if (!key || rss_act->key_len != sizeof(rss_conf->key)) {
--		const uint32_t rss_key_default[] = {0x6b793944,
--			0x23504cb5, 0x5bea75b6, 0x309f4f12, 0x3dc0a2b8,
--			0x024ddcdf, 0x339b8ca0, 0x4c4af64a, 0x34fac605,
--			0x55d85839, 0x3a58997d, 0x2ec938e1, 0x66031581};
--
- 		if (rss_act->key_len != sizeof(rss_conf->key))
- 			PMD_DRV_LOG(WARNING,
- 				    "RSS key length invalid, must be %u bytes, now set key to default",
- 				    (uint32_t)sizeof(rss_conf->key));
- 
--		memcpy(rss_conf->key, rss_key_default, sizeof(rss_conf->key));
-+		memcpy(rss_conf->key, i40e_rss_key_default, sizeof(rss_conf->key));
- 	} else {
- 		memcpy(rss_conf->key, key, sizeof(rss_conf->key));
+ 	for (i = 0; i < rss_act->queue_num; i++) {
+-		if ((int)rss_act->queue[i] >= max_queue)
++		if (rss_act->queue[i] >= max_queue)
+ 			break;
  	}
-diff --git a/drivers/net/intel/i40e/i40e_hash.h b/drivers/net/intel/i40e/i40e_hash.h
-index ff8c91c030..2513d84565 100644
---- a/drivers/net/intel/i40e/i40e_hash.h
-+++ b/drivers/net/intel/i40e/i40e_hash.h
-@@ -27,6 +27,9 @@ int i40e_hash_filter_destroy(struct i40e_pf *pf,
- 			     const struct i40e_rss_filter *rss_filter);
- int i40e_hash_filter_flush(struct i40e_pf *pf);
  
-+#define I40E_RSS_KEY_LEN ((I40E_PFQF_HKEY_MAX_INDEX + 1) * sizeof(uint32_t))
-+extern const uint8_t i40e_rss_key_default[I40E_RSS_KEY_LEN];
-+
- #ifdef __cplusplus
- }
- #endif
 -- 
 2.47.3
 
