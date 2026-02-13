@@ -2,62 +2,184 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F601EDF151
-	for <dpdk-dev@archiver.kernel.org>; Fri, 13 Feb 2026 10:35:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 277E4EDF151
+	for <dpdk-dev@archiver.kernel.org>; Fri, 13 Feb 2026 10:44:47 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 183D340674;
-	Fri, 13 Feb 2026 11:35:07 +0100 (CET)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id CFE4740655
- for <dev@dpdk.org>; Fri, 13 Feb 2026 11:35:03 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1770978903;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=Rv5XIrQV83vRdgDdYkHkL9RtzQK6OeugiM6877isjDY=;
- b=Qtc9+ZTAYrq6gaPqFIL2LnAV/5qw0nOKlAqvsAd9hasJ33cOfH7TJmSM/vKxdMC2cZoTJ/
- hs1FAH6vR2rQw/AAu5oKr+pTz8sN28X4yGTvk8dp0MQRZNmJtGPHEAdU9RFJwjy5MO1I44
- LjIjTHjMcLLmeGGjlZ23g78xOwOpg2o=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-314-1oF3xGW_OZqjMZGHcS-37A-1; Fri,
- 13 Feb 2026 05:35:02 -0500
-X-MC-Unique: 1oF3xGW_OZqjMZGHcS-37A-1
-X-Mimecast-MFC-AGG-ID: 1oF3xGW_OZqjMZGHcS-37A_1770978900
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id CAF121956052; Fri, 13 Feb 2026 10:35:00 +0000 (UTC)
-Received: from ringo.home (unknown [10.45.224.207])
- by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id A3C4319560B9; Fri, 13 Feb 2026 10:34:58 +0000 (UTC)
-From: Robin Jarry <rjarry@redhat.com>
-To: dev@dpdk.org, Yipeng Wang <yipeng1.wang@intel.com>,
- Sameh Gobriel <sameh.gobriel@intel.com>,
- Bruce Richardson <bruce.richardson@intel.com>,
- Vladimir Medvedkin <vladimir.medvedkin@intel.com>
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH dpdk v2 3/3] hash: add replace API returning old data on
- overwrite
-Date: Fri, 13 Feb 2026 11:34:41 +0100
-Message-ID: <20260213103441.1505659-4-rjarry@redhat.com>
-In-Reply-To: <20260213103441.1505659-1-rjarry@redhat.com>
-References: <20260212213313.1376294-5-rjarry@redhat.com>
- <20260213103441.1505659-1-rjarry@redhat.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 50E014042E;
+	Fri, 13 Feb 2026 11:44:46 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+ by mails.dpdk.org (Postfix) with ESMTP id 1F62140287
+ for <dev@dpdk.org>; Fri, 13 Feb 2026 11:44:44 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1770979485; x=1802515485;
+ h=message-id:date:subject:from:to:references:in-reply-to:
+ content-transfer-encoding:mime-version;
+ bh=L0Prl7nBAfPf3Z8EGyGzpm4L6jETL5xxhfM67GBqPmE=;
+ b=kBi88J+f6G2WuxTvCwlSm4d5rqpGvy+o+jpQaBcpRv+6chDoUsgv7Qo8
+ er/qEK7hfUH3NklF3tM9lNnciViGnQ8dmTzj2FRkC/K8ZlH85uMelQHMk
+ qDgDWTUug+UczGXuB10sjLrkSVLHSCQfYo68k6H57in6WmYonVZBEqcD0
+ /R9RV23V/Ijdc3R7y5UjWDLchZqiCUjaPaVSLcYgWJ2gS8KGkcIKD7grl
+ 9qMyIE56TSbhk1vDpnjCDn8CHGPXJbbtQuBMdZYjAliFMMasf2oW+5CiN
+ w8mfg7WjEKC/z+uw7TR2uue6d75kylQEaVRpN+EV0Am3729M9LlOs4r0Z Q==;
+X-CSE-ConnectionGUID: EK5o3MmySUGS+wdpdfEsKA==
+X-CSE-MsgGUID: oClq4TJSRKKVgaLB5iI38g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11699"; a="97620499"
+X-IronPort-AV: E=Sophos;i="6.21,288,1763452800"; d="scan'208";a="97620499"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+ by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 13 Feb 2026 02:44:44 -0800
+X-CSE-ConnectionGUID: pm2pKc1MSTqo+k4JZaUGZg==
+X-CSE-MsgGUID: 0OB0kVFzT3K/6IDCbpjuQQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,288,1763452800"; d="scan'208";a="212726679"
+Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
+ by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 13 Feb 2026 02:44:44 -0800
+Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.35; Fri, 13 Feb 2026 02:44:43 -0800
+Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
+ FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.35 via Frontend Transport; Fri, 13 Feb 2026 02:44:43 -0800
+Received: from CH1PR05CU001.outbound.protection.outlook.com (52.101.193.27) by
+ edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.35; Fri, 13 Feb 2026 02:44:42 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=kxiz7rdGGw9QqlOLvqPkwBVq7WjSurKOpJ7qctI4DMNradA+o6n3CiX6usSP2fH5e9GVdbtq+OTGPN7f38QccBSmzmMVsSmsyGiWG9tRkKrqvJUW4yyrLom9hfvJ8t4CDL3ywpCghREelXIv7lhzvKEAd2njUU5c9yfxsATVSUJSteqpmtW3Y24QELseBjuXDfp9Rxj/gxOZwX7LwqWR05bzSYveIyl6XBMWQXi/f+K1H9H+0f38t2HJGsXee3d4MU4d3hZCWi/yXx8WAYq9LQ37hOqyTIwrH6ZsUp797ze6Bw2THNXjjo0e2+69Qe0xTuJMphjiGLsggQr+Vb7ofw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=bnAuwO40otTqggOOkxvD00ogG5/7VxQ+rY39OwganPM=;
+ b=SnRhrV7+mB2jCm09FnNXs++yqAJ5vol2BmjvxykVE9+iEJ4L2xW9bTolAha+JeBTIAidjGz7dtvSxWlhqN7n7ExLFPvFokxb2pvSxtLP/X4W9UyDkAt2fgXqldTpq1QCdOCZWAp72mQZo+fhB/TgKTWJDIxxwN3OkZNQm8eaVT2K0AEc+te9tB5tEO8Tf6vUNO9z7XQA8pV5zICgnv+p7OPICnSx1GXu+VFs4pE0nrOkKpLixNXphYXw1dtY7Q3l8rVV5N45eIL3swL8iyQFjlk/XFN9/QAUW9flTReFCiYvQiuZXxlIHsyKNt64Lp1xk/gFs3feliJyU88+hDQKuQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DM4PR11MB6502.namprd11.prod.outlook.com (2603:10b6:8:89::7) by
+ PH7PR11MB6353.namprd11.prod.outlook.com (2603:10b6:510:1ff::8) with
+ Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9611.10; Fri, 13 Feb 2026 10:44:35 +0000
+Received: from DM4PR11MB6502.namprd11.prod.outlook.com
+ ([fe80::d2df:4650:72ad:47d4]) by DM4PR11MB6502.namprd11.prod.outlook.com
+ ([fe80::d2df:4650:72ad:47d4%4]) with mapi id 15.20.9611.012; Fri, 13 Feb 2026
+ 10:44:35 +0000
+Message-ID: <9f5bad1f-60bf-44ec-a1c4-972af065d496@intel.com>
+Date: Fri, 13 Feb 2026 11:44:30 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 01/27] net/ixgbe: remove MAC type check macros
+Content-Language: en-US
+From: "Burakov, Anatoly" <anatoly.burakov@intel.com>
+To: <dev@dpdk.org>, Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+References: <f0047b363fea648bf7b6815889c0b26b883f56c5.1770978324.git.anatoly.burakov@intel.com>
+In-Reply-To: <f0047b363fea648bf7b6815889c0b26b883f56c5.1770978324.git.anatoly.burakov@intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: DB3PR06CA0035.eurprd06.prod.outlook.com (2603:10a6:8:1::48)
+ To DM4PR11MB6502.namprd11.prod.outlook.com
+ (2603:10b6:8:89::7)
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: ZAr9Sxv7k4tJhGz5Tqk-2Efi8C-Ae3pkZYZ3aP28Y6s_1770978900
-X-Mimecast-Originator: redhat.com
-Content-Transfer-Encoding: 8bit
-content-type: text/plain; charset="US-ASCII"; x-default=true
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR11MB6502:EE_|PH7PR11MB6353:EE_
+X-MS-Office365-Filtering-Correlation-Id: bf5cecfa-16d6-4b76-840b-08de6aece0ce
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?WjUvRmovVkdvVkpXbmdCV2Fjck9CWTRIZ3ZFSWRYV2hXY1lER3hHZDgzMHB1?=
+ =?utf-8?B?VDZIMDZGSkdXZTFUeUlSbWlOaG43U3VWamRpSUF2eTh2VUJSUHM5L3dvWWZK?=
+ =?utf-8?B?dkpNSWpLTjVwUFNWbzcxS1A4STJuSjhMeERid09xRUhvL3pTMmxHM1FtdDM5?=
+ =?utf-8?B?VVhpTjkwdlJBUkJVQVJGRUlkaWFEejZ5TEJWblJHOTJrdEJRekcrV0FiY3Zh?=
+ =?utf-8?B?cVFScGNNR3h6R0JFMmtCYnE0OFlSUDUyVDVWZ2h0Z1JZU0VpMTVYZ1pzVHBR?=
+ =?utf-8?B?eGY4WXk4MkpRcGYvY2xoMmw5R2xIYmRPVjBqY2szemtwYUtzTnJpS3FScDgx?=
+ =?utf-8?B?amFKMFQ5aFJ1dmxZTVRzeksxaW15T2pwUEdVZzBBSFVXQ3NQcjY3Zy9YdjBP?=
+ =?utf-8?B?K29wSy9XWW1qUndOYXlGeHV0Nmw4OU1HaUhnSjBDMjBxOW12bG0yRElXcm84?=
+ =?utf-8?B?S3BmUXpZSXlMK0pQUFNhaXNGMVpWK3k3K1lCelcrUlFqRlVESURobTJFc0FO?=
+ =?utf-8?B?SWhVdTRkSDhvMVp3b0NkUHZUT0x5UWtNVzhUREE1bEticWZTWnY1VnZjM2RF?=
+ =?utf-8?B?Mk5Md0tHTDYwZ244UTFkSmYzYTFZb1VvTkRHRFpSR0ZqaWZKYXlwMlJ2WTlL?=
+ =?utf-8?B?cFRVUnJMU0pqZVNFRTRrOXJOQ05LWUJmbEpPNEpaSG9SQVd4dnAwWVVvZ3Q3?=
+ =?utf-8?B?NUl5N1pCdTRKZzVYUDkwZ29SdGVhOHJlQlM3aVF0d2owc2hZcDdPaTByd0FR?=
+ =?utf-8?B?dDBzT3VBcXVRekxCejY3eHhoakRWQ3kyaW52Y2ZaaXpGYzJxOWJjeFhab0pW?=
+ =?utf-8?B?bEtRWW5LbGEzYkhJRlFxc1U3NUZVeGlIV0Z0MTNFWk85TExoRnRsNFdyYVI1?=
+ =?utf-8?B?WEwzejIyNW5ld2FkVW1XcHFUd0c0Qm9OVC9pZDN1cEVDdUpDRnZDNVJqNmVQ?=
+ =?utf-8?B?YUVwWDFwVlZ2WnUvbGowSlhLeHhySjlnbkh4ZmdoWlF1WkdzZ1EzeThWaW5j?=
+ =?utf-8?B?dUhwKzc0b1E1WWRTZDFDd3lxSkZPRVJZTzdncjVjdFU2OGRCQUNRaDJtaUp0?=
+ =?utf-8?B?VTVYWE15QjNweEdNM0pKeWhwbGRmWU9YclZ5RnAveTRMK0RSeXZZeVAvejdh?=
+ =?utf-8?B?UkI2ZjFSckcvTmluUUNuajU5WndwR1ltOHdhSmRpRWV0cnh2Zkk3VWNhWEdR?=
+ =?utf-8?B?SVZPUVFWam4vajVLZklwRmJWQlA4VDM0c0dQa0IzcjNCcE5EYlcrR0kzQ2F1?=
+ =?utf-8?B?dmRxSGJMSlNBK2U1T2JCaGp1ZTJlZ3psdHpVUXQveDB4YTh1Y3M3eW5zaVV2?=
+ =?utf-8?B?czB5SDNBWGczWUVmZ1ZJbmo0UlBYcTBpVjYxZTF5TE9za21xdWZNWE5iOWF4?=
+ =?utf-8?B?TFErSzB3c3ArRjV2dGtQNUlNcTFaUXV0bGg3WWFZbnQ0VGtHVE14V0w1TXZi?=
+ =?utf-8?B?TlpxanNwYkJXTWJhSDBLcWQ3YkRrOGRPaFpPaVdxaDE0OExDSFZoUjNXaG5s?=
+ =?utf-8?B?VTRpWVBLSGxTdHRkVFI3aFRtYVJKWXptRjFnYjdONlFWU0srKzRBbVJWbllY?=
+ =?utf-8?B?bklrTGVHbVZTUW4ydXEvaExZUnpHTWg4V21idFZvVytpTUI2UkI2UHhwUGxB?=
+ =?utf-8?B?cXQ3TlVKWXJ5aXFKeFNRSXB5RXBjclE0T0RLaDRlNHJVQUlvRVhER1ludi80?=
+ =?utf-8?B?cHkxTUlqc0FKS0UvUnBWMEVFWW9aaS9BWEtickJKMXFuR1BidEZoSEg5UVQy?=
+ =?utf-8?B?UHhaTW9nMm51Uk9aOHRjclR2YW9zRS9rUTB4bG5QcTJYQjJPMDgvRXJLVUQw?=
+ =?utf-8?B?S2JrWEFxVDNjaU92bHFpVE1rcVBDOFVPdmF2QVRlNG1VVXI3cjE4SFUzSnpx?=
+ =?utf-8?B?N3NCYVpWS3JGN0IrdWFyVDVjVHo2bVZuR3Y1U2ZJNWtuQWt1TWtienphZ2d6?=
+ =?utf-8?B?NUdFRUFlSjBreWZQZnZnVmltRGRWT0VJVTJkS0NiU2NCR3NBeG9DRVBtNC9J?=
+ =?utf-8?B?ZThzY0tMcFhXUUhuTlVwakp5UEtPdnBlVE9xZzM2bTExVlBqZSs4SGtkcmF1?=
+ =?utf-8?B?RmhwUExFeXRIOW9NT3dtSXJOQndvTW4rNk40NkpEbWNqV05jNTRqVTgrTkQx?=
+ =?utf-8?Q?Q2PA=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DM4PR11MB6502.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(366016)(376014)(1800799024); DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?QWZFWnFSMjFkOXFCRjk1SGVrREtIUVAvdy9ndlZOZ2doT094Z3dGejhxUnFk?=
+ =?utf-8?B?SlllTmpGYnV5TVdDd1JCRkFKSVJtWjVYUWgzWWlreS9RUFRST1ZMTXpna0pq?=
+ =?utf-8?B?RFZBa1lFNkdpRzhja0x3OUlRaTdLTmsraXI2L1d1R05Zakl3TWFWVlBjSTFO?=
+ =?utf-8?B?OWU3ZzJ4SFpWTEw1VDc0YXE4NnZOUDRJdjlQdzkzeVVIaEZieWsvQXlxQzlV?=
+ =?utf-8?B?QngzSkJNS3lacE52WTVlQ20wYlJwWCtQeFExUkthL3RYbnM2Yk5BbDlNYlRK?=
+ =?utf-8?B?Tmx6T0xNbjZSTFUyYk5qRHpnTXhuS212MEhTZ3ZmWnNUTUxGU29nMVlxNzNS?=
+ =?utf-8?B?ekk5RnVpVE5MZ3Y3ZEluMFNmM1NOem1aOXAxOWNGREFxcmhHalRtRHI5TVI1?=
+ =?utf-8?B?T1IxSERia1BHRVpFckVDem5CS082aFlzYVdWNlFNUWk0Wi9GQTMwQkc1YU9o?=
+ =?utf-8?B?d1U4SkJGK1NoeS84Q3YwTDV0MmpmU1lqTXZWSGN6R1ZtTEZOSEZuNHdzOUlZ?=
+ =?utf-8?B?ZTI2MnlpV1VMczNRZGlpMVRkb1RKOVBFYVZOaGZ5ZGZ5Rklsem9UWlFabXFK?=
+ =?utf-8?B?c3JWQ1JFK2pqMU1NaUV6STY1SFhNb2o1Rk9CR1VuWTA4bThZYkN5b1d2SDNa?=
+ =?utf-8?B?bjJ2bFpSOHZiVERjaEVrVnVBR1NyYTA3UnM5ZEVGR29IR3NlMGl0UDJSZjBU?=
+ =?utf-8?B?V2hjckMrNGpUYy9MWGozMVR2VHkzWEM4bWVrYktoQXhiSFNrampMUHliVU9Z?=
+ =?utf-8?B?aldEakdaRzV4RTM5MGFyQ29YNTB0RnBxRjQvUjZrWEt2aG1yWGlRTTdVWkp3?=
+ =?utf-8?B?a2ltS2xKNlVtMVNkd2NzZGEvSFovN1BFT1IycC9odEpySUJGWjR2SjBKQ3Yv?=
+ =?utf-8?B?a3JJam95bnBUSjVNMWMxWFN2dnp3VjA5S3h0ZHZoZGxkMzVjYmxBaG1wdjdO?=
+ =?utf-8?B?QUJCZnlmUjBWTEVzaHBZSmhrd0RlMjVGVk55dWtQV2VlYkpKSXlzWjliNTZD?=
+ =?utf-8?B?NVBVV2gzZ08vMElqajh0RHdhUm8xNlVkV3ptVEV3YmduM2NudXhuMUF4RnJn?=
+ =?utf-8?B?TTgvTkRIU1U3TGJJR3FKWkJucytkcFhGZXhhbjFzOXd0VFRPZE1OWURVdjRz?=
+ =?utf-8?B?b2FLaDFURFMzckZ3cGdkODBxTW9KV2Nic0dtWGhFRlprVzNnb09XNEhJc2VP?=
+ =?utf-8?B?anBSVk9GbnNZRHlXUEtsSmpqbEtFNlBwY3FPbjNWcGM0YURpZy9BckpYT2tN?=
+ =?utf-8?B?dzRWMFhiM1JNYTNJcDM4dUxTR2hEMnQ3b09hZkZTN3BuMm5ldTdKT1MvdSt0?=
+ =?utf-8?B?Tk9oVm0yVlQxS2N3akw0WjhuUTBaOGM5NVBNTVlnUVV6MWhQWGEyUUVZUkdv?=
+ =?utf-8?B?YytzY0N2U01RUTRGWHJtVU1YZW5QVHBKSjBLSzg5V3pNdUk1OW1SbldsbWx2?=
+ =?utf-8?B?d29hT3lzMjFNRFVJWjhxak1SQ1NnU01QdzFQUEpVR1hTaUYrV256bG1OTWZF?=
+ =?utf-8?B?QzlxTUtSOHNobDZhT3lLaVVUQWUzRjJPYXRlSjFkZzA5eDdYdGMyV1RjRFFL?=
+ =?utf-8?B?ZTViTHpiVVFvNWNNT0pXZ3k0Ykk2RmlHWUE3WWxoQ255cjRYT0kwTnJ6Rm82?=
+ =?utf-8?B?c0x3bzlmdnE3Mkc5Q3lFczMrVGVMZmE1N2o0MTJicUlCQmtteG1QUGtFaXcw?=
+ =?utf-8?B?c0R6TDk1U2tDZys4K3RxSSt2SGRYZzY4S1hCZ2NreFBSQ0RDL05rU2pROGQv?=
+ =?utf-8?B?eHR5UG9oU1N0K0xRZkpXRTFtckFBcnNhR0llZklDald2akxMRjg1U3pCYVMv?=
+ =?utf-8?B?R2xoWmZSWVlEZkpzMVdzRUVBNmNoaGFDQmM2RUJETDV6WTdyM21VY2JKYTkw?=
+ =?utf-8?B?VXNZWWNpTlBoSlhMeFJDc2c1dzhGemJmSFNmTklCU0hMOHNodzIwSTRHa1NB?=
+ =?utf-8?B?NjVUVDZySGgvQzZhdlZGb3dlb0NqY0pVVytCVjhaK0RieG1rUHlGVnZMWG9S?=
+ =?utf-8?B?dWVSL0V1RjNBaDlJWXhuejY3bWM5dTlxTWN6K2lPakd1VjJuNjB3ek1Rbkcw?=
+ =?utf-8?B?MlNESW5kZFdIUCtQYTZXWkJzSnRkbEtKSUplbHNQOHhObXJrR0FaSnBHMkxo?=
+ =?utf-8?B?eDZjVS83bVhkWExDWlUxZmdUQnpVT0lkT0RtVldIT2o4dWVhOEVEcEFZSVVz?=
+ =?utf-8?B?UmJNUlJuNUxkb3lpek9UVVV3dUNaM2h6M1ZyUCtLMlFDbE84VFA0dG45SFY4?=
+ =?utf-8?B?b1d4UG9iWm10Q1VYaWVwak15a0hiQVQrZ3pveDYzdTJVeXVERlJxaWFRQUs3?=
+ =?utf-8?B?azdvSjN4dDV5U2M4OHlTa3AxRk9STXFQVHlqOVVxTHB5dUZBbGF2WmVQS1lO?=
+ =?utf-8?Q?HdA+3min2cXByXSo=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: bf5cecfa-16d6-4b76-840b-08de6aece0ce
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6502.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Feb 2026 10:44:35.0488 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: tcB6C5lOk7ky/QRk8A/yK7NDcAU3F6y/o1tBMteq4/ppcBp6FssQMyPdqGonHmv/cyz+Kf32U0Asir+DVT7HpdJTYpRwIclw+cQXtD8kCKw=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB6353
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -71,310 +193,17 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add rte_hash_replace_key_data() and rte_hash_replace_key_with_hash_data()
-which behave like their add_key_data counterparts but return the previous
-data pointer via an output parameter. On fresh insert, *old_data is set
-to NULL.
+On 2/13/2026 11:26 AM, Anatoly Burakov wrote:
+> The macros used were not informative and did not add any value beyond code
+> golf, so remove them and make MAC type checks explicit.
+> 
+> Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
+> ---
 
-When the caller provides old_data, no automatic RCU deferred free is
-performed: the caller takes ownership of the old pointer and is
-responsible for freeing it.
+Missed from v3
 
-Signed-off-by: Robin Jarry <rjarry@redhat.com>
----
- app/test/test_hash.c                   | 80 ++++++++++++++++++++++++++
- doc/guides/rel_notes/release_26_03.rst |  6 ++
- lib/hash/rte_cuckoo_hash.c             | 42 ++++++++++++--
- lib/hash/rte_hash.h                    | 67 +++++++++++++++++++++
- 4 files changed, 189 insertions(+), 6 deletions(-)
+Acked-by: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
 
-diff --git a/app/test/test_hash.c b/app/test/test_hash.c
-index 56a7779e09b9..fcc02ea31205 100644
---- a/app/test/test_hash.c
-+++ b/app/test/test_hash.c
-@@ -2473,6 +2473,83 @@ test_hash_rcu_qsbr_replace_auto_free(void)
- 	return ret;
- }
- 
-+/*
-+ * Test rte_hash_replace_key_data (explicit replace, no RCU).
-+ *  - Add key with data pointer (void *)1.
-+ *  - Replace same key with data (void *)2, verify old_data == (void *)1.
-+ *  - Lookup and verify data == (void *)2.
-+ *  - Replace with a new key (not yet inserted), verify old_data == NULL.
-+ */
-+static int
-+test_hash_replace_key_data(void)
-+{
-+	struct rte_hash_parameters params = {
-+		.name = "test_replace_key_data",
-+		.entries = 64,
-+		.key_len = sizeof(uint32_t),
-+		.hash_func = NULL,
-+		.hash_func_init_val = 0,
-+		.socket_id = SOCKET_ID_ANY,
-+	};
-+	struct rte_hash *hash;
-+	void *old_data = NULL;
-+	void *data = NULL;
-+	uint32_t key1 = 42;
-+	uint32_t key2 = 99;
-+	int ret = -1;
-+
-+	printf("\n# Running replace key data test\n");
-+
-+	hash = rte_hash_create(&params);
-+	if (hash == NULL) {
-+		printf("hash creation failed\n");
-+		goto end;
-+	}
-+
-+	/* Add key with data = (void *)1 */
-+	ret = rte_hash_add_key_data(hash, &key1, (void *)(uintptr_t)1);
-+	if (ret != 0) {
-+		printf("failed to add key (ret=%d)\n", ret);
-+		goto end;
-+	}
-+
-+	/* Replace same key with data = (void *)2 */
-+	ret = rte_hash_replace_key_data(hash, &key1, (void *)(uintptr_t)2, &old_data);
-+	if (ret != 0) {
-+		printf("failed to replace key (ret=%d)\n", ret);
-+		goto end;
-+	}
-+	if (old_data != (void *)(uintptr_t)1) {
-+		printf("old_data should be 0x1 but is %p\n", old_data);
-+		goto end;
-+	}
-+
-+	/* Lookup and verify data == (void *)2 */
-+	ret = rte_hash_lookup_data(hash, &key1, &data);
-+	if (ret < 0 || data != (void *)(uintptr_t)2) {
-+		printf("lookup returned wrong data %p (ret=%d)\n", data, ret);
-+		goto end;
-+	}
-+
-+	/* Replace with a new key (not yet inserted) */
-+	old_data = (void *)(uintptr_t)0xdeadbeef;
-+	ret = rte_hash_replace_key_data(hash, &key2, (void *)(uintptr_t)3, &old_data);
-+	if (ret != 0) {
-+		printf("failed to insert new key via replace (ret=%d)\n", ret);
-+		goto end;
-+	}
-+	if (old_data != NULL) {
-+		printf("old_data should be NULL on fresh insert but is %p\n",
-+		       old_data);
-+		goto end;
-+	}
-+
-+end:
-+	rte_hash_free(hash);
-+
-+	return ret;
-+}
-+
- /*
-  * Do all unit and performance tests.
-  */
-@@ -2557,6 +2634,9 @@ test_hash(void)
- 	if (test_hash_rcu_qsbr_replace_auto_free() < 0)
- 		return -1;
- 
-+	if (test_hash_replace_key_data() < 0)
-+		return -1;
-+
- 	return 0;
- }
- 
-diff --git a/doc/guides/rel_notes/release_26_03.rst b/doc/guides/rel_notes/release_26_03.rst
-index 693034bcb0d2..73418523809c 100644
---- a/doc/guides/rel_notes/release_26_03.rst
-+++ b/doc/guides/rel_notes/release_26_03.rst
-@@ -93,6 +93,12 @@ New Features
-   ``rte_hash_add_key_data`` now automatically defers freeing the old data
-   pointer on key overwrite via the RCU defer queue.
- 
-+* **Added hash replace API.**
-+
-+  Added ``rte_hash_replace_key_data`` and ``rte_hash_replace_key_with_hash_data``
-+  functions that return the previous data pointer on key overwrite, letting the
-+  caller manage its lifecycle.
-+
- 
- Removed Items
- -------------
-diff --git a/lib/hash/rte_cuckoo_hash.c b/lib/hash/rte_cuckoo_hash.c
-index f487b3b725dd..cf957de55288 100644
---- a/lib/hash/rte_cuckoo_hash.c
-+++ b/lib/hash/rte_cuckoo_hash.c
-@@ -1106,7 +1106,7 @@ __hash_rcu_auto_free_old_data(const struct rte_hash *h, void *old_data_val)
- 
- static inline int32_t
- __rte_hash_add_key_with_hash(const struct rte_hash *h, const void *key,
--						hash_sig_t sig, void *data)
-+			     hash_sig_t sig, void *data, void **old_data)
- {
- 	uint16_t short_sig;
- 	uint32_t prim_bucket_idx, sec_bucket_idx;
-@@ -1305,7 +1305,9 @@ __rte_hash_add_key_with_hash(const struct rte_hash *h, const void *key,
- 	return slot_id - 1;
- 
- overwrite:
--	if (saved_old_data != NULL)
-+	if (old_data != NULL)
-+		*old_data = saved_old_data;
-+	else if (saved_old_data != NULL)
- 		__hash_rcu_auto_free_old_data(h, saved_old_data);
- 	return ret;
- 
-@@ -1321,7 +1323,7 @@ rte_hash_add_key_with_hash(const struct rte_hash *h,
- 			const void *key, hash_sig_t sig)
- {
- 	RETURN_IF_TRUE(((h == NULL) || (key == NULL)), -EINVAL);
--	return __rte_hash_add_key_with_hash(h, key, sig, 0);
-+	return __rte_hash_add_key_with_hash(h, key, sig, 0, NULL);
- }
- 
- RTE_EXPORT_SYMBOL(rte_hash_add_key)
-@@ -1329,7 +1331,7 @@ int32_t
- rte_hash_add_key(const struct rte_hash *h, const void *key)
- {
- 	RETURN_IF_TRUE(((h == NULL) || (key == NULL)), -EINVAL);
--	return __rte_hash_add_key_with_hash(h, key, rte_hash_hash(h, key), 0);
-+	return __rte_hash_add_key_with_hash(h, key, rte_hash_hash(h, key), 0, NULL);
- }
- 
- RTE_EXPORT_SYMBOL(rte_hash_add_key_with_hash_data)
-@@ -1340,7 +1342,7 @@ rte_hash_add_key_with_hash_data(const struct rte_hash *h,
- 	int ret;
- 
- 	RETURN_IF_TRUE(((h == NULL) || (key == NULL)), -EINVAL);
--	ret = __rte_hash_add_key_with_hash(h, key, sig, data);
-+	ret = __rte_hash_add_key_with_hash(h, key, sig, data, NULL);
- 	if (ret >= 0)
- 		return 0;
- 	else
-@@ -1355,13 +1357,41 @@ rte_hash_add_key_data(const struct rte_hash *h, const void *key, void *data)
- 
- 	RETURN_IF_TRUE(((h == NULL) || (key == NULL)), -EINVAL);
- 
--	ret = __rte_hash_add_key_with_hash(h, key, rte_hash_hash(h, key), data);
-+	ret = __rte_hash_add_key_with_hash(h, key, rte_hash_hash(h, key), data, NULL);
- 	if (ret >= 0)
- 		return 0;
- 	else
- 		return ret;
- }
- 
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_hash_replace_key_with_hash_data, 26.03)
-+int
-+rte_hash_replace_key_with_hash_data(const struct rte_hash *h,
-+				    const void *key, hash_sig_t sig,
-+				    void *data, void **old_data)
-+{
-+	int ret;
-+
-+	RETURN_IF_TRUE(((h == NULL) || (key == NULL) ||
-+			(old_data == NULL)), -EINVAL);
-+
-+	*old_data = NULL;
-+	ret = __rte_hash_add_key_with_hash(h, key, sig, data, old_data);
-+	if (ret >= 0)
-+		return 0;
-+	else
-+		return ret;
-+}
-+
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_hash_replace_key_data, 26.03)
-+int
-+rte_hash_replace_key_data(const struct rte_hash *h, const void *key,
-+			  void *data, void **old_data)
-+{
-+	return rte_hash_replace_key_with_hash_data(h, key,
-+			rte_hash_hash(h, key), data, old_data);
-+}
-+
- /* Search one bucket to find the match key - uses rw lock */
- static inline int32_t
- search_one_bucket_l(const struct rte_hash *h, const void *key,
-diff --git a/lib/hash/rte_hash.h b/lib/hash/rte_hash.h
-index e33f0aea0f5e..4a328c51501c 100644
---- a/lib/hash/rte_hash.h
-+++ b/lib/hash/rte_hash.h
-@@ -279,6 +279,73 @@ int32_t
- rte_hash_add_key_with_hash_data(const struct rte_hash *h, const void *key,
- 						hash_sig_t sig, void *data);
- 
-+/**
-+ * Replace a key-value pair in an existing hash table, returning the previous
-+ * data pointer associated with the key. If the key does not exist, it is
-+ * inserted and *old_data is set to NULL.
-+ *
-+ * This operation is not multi-thread safe and should only be called from one
-+ * thread by default. Thread safety can be enabled by setting flag during table
-+ * creation.
-+ *
-+ * When old_data is provided, no automatic RCU deferred free is performed on
-+ * overwrite; the caller takes ownership of the old pointer and is responsible
-+ * for freeing it (e.g. via RCU).
-+ *
-+ * @param h
-+ *   Hash table to add the key to.
-+ * @param key
-+ *   Key to add to the hash table.
-+ * @param data
-+ *   Data to add to the hash table.
-+ * @param old_data
-+ *   Output: on overwrite, set to the previous data pointer.
-+ *   On fresh insert, set to NULL.
-+ * @return
-+ *   - 0 if added/replaced successfully
-+ *   - -EINVAL if the parameters are invalid.
-+ *   - -ENOSPC if there is no space in the hash for this key.
-+ */
-+__rte_experimental
-+int
-+rte_hash_replace_key_data(const struct rte_hash *h, const void *key,
-+			  void *data, void **old_data);
-+
-+/**
-+ * Replace a key-value pair with a pre-computed hash value in an existing hash
-+ * table, returning the previous data pointer associated with the key. If the
-+ * key does not exist, it is inserted and *old_data is set to NULL.
-+ *
-+ * This operation is not multi-thread safe and should only be called from one
-+ * thread by default. Thread safety can be enabled by setting flag during table
-+ * creation.
-+ *
-+ * When old_data is provided, no automatic RCU deferred free is performed on
-+ * overwrite; the caller takes ownership of the old pointer and is responsible
-+ * for freeing it (e.g. via RCU).
-+ *
-+ * @param h
-+ *   Hash table to add the key to.
-+ * @param key
-+ *   Key to add to the hash table.
-+ * @param sig
-+ *   Precomputed hash value for 'key'
-+ * @param data
-+ *   Data to add to the hash table.
-+ * @param old_data
-+ *   Output: on overwrite, set to the previous data pointer.
-+ *   On fresh insert, set to NULL.
-+ * @return
-+ *   - 0 if added/replaced successfully
-+ *   - -EINVAL if the parameters are invalid.
-+ *   - -ENOSPC if there is no space in the hash for this key.
-+ */
-+__rte_experimental
-+int
-+rte_hash_replace_key_with_hash_data(const struct rte_hash *h,
-+				    const void *key, hash_sig_t sig,
-+				    void *data, void **old_data);
-+
- /**
-  * Add a key to an existing hash table. This operation is not multi-thread safe
-  * and should only be called from one thread by default.
 -- 
-2.53.0
-
+Thanks,
+Anatoly
