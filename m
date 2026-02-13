@@ -2,67 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BEFAEDF17D
-	for <dpdk-dev@archiver.kernel.org>; Fri, 13 Feb 2026 17:03:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D177EEA84E
+	for <dpdk-dev@archiver.kernel.org>; Fri, 13 Feb 2026 17:03:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7755F40430;
-	Fri, 13 Feb 2026 18:03:42 +0100 (CET)
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com
- [209.85.128.45]) by mails.dpdk.org (Postfix) with ESMTP id 6208F402B2
- for <dev@dpdk.org>; Fri, 13 Feb 2026 18:03:40 +0100 (CET)
-Received: by mail-wm1-f45.google.com with SMTP id
- 5b1f17b1804b1-4806cc07ce7so10521735e9.1
- for <dev@dpdk.org>; Fri, 13 Feb 2026 09:03:40 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 87B8B4064F;
+	Fri, 13 Feb 2026 18:03:44 +0100 (CET)
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com
+ [209.85.128.46]) by mails.dpdk.org (Postfix) with ESMTP id 187B3402E7
+ for <dev@dpdk.org>; Fri, 13 Feb 2026 18:03:42 +0100 (CET)
+Received: by mail-wm1-f46.google.com with SMTP id
+ 5b1f17b1804b1-4833115090dso10381015e9.3
+ for <dev@dpdk.org>; Fri, 13 Feb 2026 09:03:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1771002220;
- x=1771607020; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1771002222;
+ x=1771607022; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=Yk+631P5Co64lrub6paWOcw3XksPlNHKKmYRESnsQsk=;
- b=foGxGDp5eND1ZLUm3nF3kXqkUvOEDVs0V1zV0tB08mGxwmOxukF5DoTIL723VqTEQp
- zosPFmphDUpAenRQiw6WSd4TZ2s9ABrtyt+yjSyUjjtMhb3oJ6zh/HN+gb20d4NYFz0w
- qLJmxXR3WFS655ZqMrfHd9lxPBbAlh9owAT2kBzGpPptdZ4KFZg7vHpqPhcRRazen0rU
- 2DXe35WNdyKoajRrx99HZCwH6/nnza7eU/9owr6wafLn1gwU84TRIw4xEb2EiNh+myCA
- mRF3mw3651Mxnhy8Uq7C9J+eDG9GThY4EjhwWkDpiigleFmCMEKwl3up8r8kuwotLf6h
- 62jw==
+ bh=Hc0SNxtM+QDH8mSJW5Fgu6sn+ZqCgG/hn6noA082iQ0=;
+ b=uQKLHcKqgFQTga3i/9essllFZ5Eq04YgaMOaUPqkYPzM/lHFzH54xOOQim4dQbjDi1
+ kV44gDXvv9cmyX4jll9MK/dKllyCDuYOKxFAJfo6j/W1U/8Dsbdo+3p3fsDHNIsj6zcx
+ U/xTQvWtV5bkChTScoJ/eh1ERtw+7eRIxZRitKLCl/5iLaPkh5aZHEc9awxY9qLrq9G+
+ KVZ3vbQuBYvysy9GYPIPAJ5Omj7N5oeBMxe89jrJ1WmWPOLlGSrTwbTzVypsRw5mPrdy
+ CwwqLLwM6DhbTYVxCc3WN3EsvQEusOq23rEPyErsv8Wi4cFwG6PCHVow8Ix/gJd+d6ok
+ ciXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1771002220; x=1771607020;
+ d=1e100.net; s=20230601; t=1771002222; x=1771607022;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=Yk+631P5Co64lrub6paWOcw3XksPlNHKKmYRESnsQsk=;
- b=WEgz9HCAb3FQzg/LrYm5t5Vop/u+Jx7hVU+DFGmC/RbDrKhDGIZZ4L1g9cMhrB61KG
- 2nnTxXEo7529bsjNCV55jXcvubh+BTAhZt9P9OI73GscuAtHoVnUkRyHK5CM7w96ntZu
- xu4kJJrN7gz4ALgbOUJthqi9Qa8+CdWHSuO77QNGOeycGM40tZoMKGf9ZZRxYGrluZ9k
- rBcZ9d1KE97xco3aIJJ+84ws5/JDQxMkxQA6eCzGs2G2ane/aZsjuDJnTdwt/XoKpoXw
- RlTfzDfSLLT4yHW7YlA+P/DD7Owrgl1uuGbflJIE2pY268lL6arU0ULICUbj3ex04446
- a/4w==
-X-Gm-Message-State: AOJu0YzpZ2QScL8TmTwuvqCMB1+Qj+toyDJFLOwaUdalj8Md2eANtC0e
- ts8OTP2RER6IsF74XZzy/qtXuHwfPt3RomgahGr2AJFvbKnzRnwm75zrcJU+sPxl74Go/oIANnG
- RQvBV
-X-Gm-Gg: AZuq6aL7u46720zPpfJ2Gjk8FzlKhBTt8CxN52wEiWyNpNK6qYDu2Hfcv3I89+/VXWE
- 9sJDIkTQauviuqDFBae1NqXLNktNFv/x9Pm5F3Zu5iuvqrR/rB6zy2uyoc0QE7Z0im1Oseuf08x
- vwVoPKktvAgjKG20JwINEPtjqNWQwYcSsKA/ZDHkRaFTZIIt14z2kDSiUx8JdoEKLxD07L8G8PR
- ZZFG/ABYhSHRKtqZhkISg5Ld0R8LpZeirKZPhS4bP95b7/WVo/z9o/D6ciU2oMLq0UMlQ9TZy4B
- UE1RkS7bxKrK/gldVepspAsBVzZl2qKT3+LxWPxMKf2gkJrlyz0z8LTeFYxRgQbL+Kg2+tv1YeA
- FuD4TcHNbzJb9EvnDyfZAAaQj5lMh4y8GsBSKhe7MQ7E+CjJSJtr/ApebSsDtLOTA4+uHb8SOfc
- 6Zdy1kqv9u1VUayAD4byhqWl2VMQGvkZLNbRw8J+/149KMerxoRLEQUWl9Pj6J3A==
-X-Received: by 2002:a05:600c:1e1d:b0:477:9814:6882 with SMTP id
- 5b1f17b1804b1-48373a15f3cmr39833635e9.5.1771002219862; 
- Fri, 13 Feb 2026 09:03:39 -0800 (PST)
+ bh=Hc0SNxtM+QDH8mSJW5Fgu6sn+ZqCgG/hn6noA082iQ0=;
+ b=gztD5bXkIOt9ay8gylhBOV5t9hk/+I+TTAmy6ZudK3gx5+qIj+FeSvBF0IKqPdaXoM
+ jUgp2O2YO5tY1gnJ06GN9PfJUFGomjpAcwFpzyDn0fi5B+N/rdSl55i29575KhhTx53S
+ W0srt2vmbu7Bq0eSJ357IsEMlL5VuO+kBxqSx/5bCpLEM/+ifU6MNoCg7Wzj8rxPoQzQ
+ Rbheqh8kuAIU3Iy+uRPnIPtdUpQQB0YmdjTwqN8EyANAtqVGgJsa2uMXJL/YDuPzr9F5
+ E8yv3IcOO+Hm27FU6o1NjZXRWtpCZ4Suf+X1wtF+AW6LmePH/eWT+/drh4AqU7SGbnrO
+ GDxQ==
+X-Gm-Message-State: AOJu0Yyatpan3aQRSK+IxTFkpVIsi+lO37n2n9jGfVREW+N33rJwasbL
+ bXtTNHKba3VMFBRdVkgOEmtvt7Vr98yS1v1k2sJXtt3yVYH2NNT0Vw+EIURrcv0uvaXupLQkgkQ
+ jbKSB
+X-Gm-Gg: AZuq6aJW3jYVn1EJPs2y30Nu+6J/d53vBRVN9Xr+7NC5CPKNHLRENPoU1yZAk91s/7D
+ bshJC1o9ZgLgSv7kjhGIi50wNokpbvTMs/UePRHqo+/ZR39et46rOo7QBBdyyliy/8bwWXukzsJ
+ LaSI5Aua9jxhqkgGT2k1Dh8jDf3PFb+PZuPNxO0OkA33RLliuHR4E4bMI6WeN54YVDQNUtHNFFt
+ EggDGrXfQLCuacuB1C97GVuI0g2xHe6Nbfbh5yyjToto9nMF162dtUbWBQ2RFQylIMOa/5UXslX
+ dR5DQsQD6W/N7PHnAOUXGwC+IjMvQc9AX6r+wc9gYb7OBOF6z//Tr8Plz6seHNCXaPTif2ozUwU
+ YPUe1gqSuBMmgpBCxGjbSl/EXDQPCwWWTcP6ufW6dEwmO+F2ktkkYtqTYmQliCgBeJSonrRCs+e
+ 5Il3HWV5VYqDM3872AhOyIPjnJBbYL+BnZXg9Jt/K5M8MsvJF9C0REtireidzZ5Q==
+X-Received: by 2002:a05:600c:198e:b0:480:20f1:7aa6 with SMTP id
+ 5b1f17b1804b1-48373a5d54fmr44854385e9.21.1771002221640; 
+ Fri, 13 Feb 2026 09:03:41 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-483740be167sm40963035e9.15.2026.02.13.09.03.38
+ 5b1f17b1804b1-483740be167sm40963035e9.15.2026.02.13.09.03.40
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 13 Feb 2026 09:03:39 -0800 (PST)
+ Fri, 13 Feb 2026 09:03:41 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Thomas Monjalon <thomas@monjalon.net>
-Subject: [PATCH v15 01/18] maintainers: update for pcap driver
-Date: Fri, 13 Feb 2026 09:01:24 -0800
-Message-ID: <20260213170333.40089-2-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v15 02/18] doc: update features for PCAP PMD
+Date: Fri, 13 Feb 2026 09:01:25 -0800
+Message-ID: <20260213170333.40089-3-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260213170333.40089-1-stephen@networkplumber.org>
 References: <20260106182823.192350-1-stephen@networkplumber.org>
@@ -82,26 +81,34 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Nominate myself to take care of this since already doing pcapng
-and pdump code.
+The PCAP PMD supports more features that were not flagged
+in the feature matrix.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+ doc/guides/nics/features/pcap.ini | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 25fb109ef4..9a9a7d85c7 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1118,6 +1118,7 @@ F: doc/guides/nics/zxdh.rst
- F: doc/guides/nics/features/zxdh.ini
- 
- PCAP PMD
-+M: Stephen Hemminger <stephen@networkplumber.org>
- F: drivers/net/pcap/
- F: doc/guides/nics/pcap.rst
- F: doc/guides/nics/features/pcap.ini
+diff --git a/doc/guides/nics/features/pcap.ini b/doc/guides/nics/features/pcap.ini
+index 7fd22b190e..b0dac3cca7 100644
+--- a/doc/guides/nics/features/pcap.ini
++++ b/doc/guides/nics/features/pcap.ini
+@@ -4,8 +4,15 @@
+ ; Refer to default.ini for the full list of available PMD features.
+ ;
+ [Features]
++Link status          = Y
++Queue start/stop     = Y
++Scattered Rx         = Y
++Timestamp offload    = Y
+ Basic stats          = Y
++Stats per queue      = Y
+ Multiprocess aware   = Y
++FreeBSD              = Y
++Linux                = Y
+ ARMv7                = Y
+ ARMv8                = Y
+ Power8               = Y
 -- 
 2.51.0
 
