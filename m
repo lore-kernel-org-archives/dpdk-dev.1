@@ -2,45 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7311FEDF023
-	for <dpdk-dev@archiver.kernel.org>; Fri, 13 Feb 2026 09:11:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63CC3EDF023
+	for <dpdk-dev@archiver.kernel.org>; Fri, 13 Feb 2026 09:11:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 281674065D;
-	Fri, 13 Feb 2026 10:10:34 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 271D140664;
+	Fri, 13 Feb 2026 10:10:37 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
- by mails.dpdk.org (Postfix) with ESMTP id 5B89340664
- for <dev@dpdk.org>; Fri, 13 Feb 2026 10:10:32 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 234504067B
+ for <dev@dpdk.org>; Fri, 13 Feb 2026 10:10:34 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1770973833; x=1802509833;
+ t=1770973834; x=1802509834;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=v4cdLClosJm4qDBW4Ip2xWQZxXTXyKxuky+fEEPi+IQ=;
- b=EMiMek5jmRiAcRB/vLc8nPUxvBlkJ86a2bOgjq7fPKDEPzAJy+suZCxI
- sfDlVCGqt6we3OnKcVwc9kc0km07Z1s64bxYAs/jr2LuD6RerhfH2SPP9
- EV48t/3tMmv3GPQ3YSdHyKSZ9cTKrSzt/r6PydznZQOndV2iwB34c21iW
- 7JlxVvxp1NrkvjMQtbXdN3fgAbmhNODg73+fhjBGQDvJj0F+fNx6ozI1+
- l4uMx5dw2elcijuCTM4Vn1+K2/FLDxMDqr85ttlo+EcjK3VRdwrHB++UU
- VEfCPEG86prKnxqX3iFyNISgwa5rbFJ0JrdfJ+0LUvfgoiRH5lugFbHAv Q==;
-X-CSE-ConnectionGUID: qvhs3ptrTnmlRSGoQQakyg==
-X-CSE-MsgGUID: 2NKEMUOiTLaszu5m/AqTIg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11699"; a="89567877"
-X-IronPort-AV: E=Sophos;i="6.21,288,1763452800"; d="scan'208";a="89567877"
+ bh=V60p5ALu0nUMHw/gJ6RvKI7fvG/sscAu92rOUEsa5Xw=;
+ b=CZ/1/qty9v84+QMsRV1PN3fGODrUXbeFdMyPaZW4FTXHh+JRQl4Xru4U
+ kPVeAy82BnjODHQ4kRoEkWYVNEAKlIDDj/kW5efnKb85jhQW3YixGwj7R
+ dwyYKZigv2JXCsFdCR2TEmpMuE8UqoKuoTRpsUkLuLuDMaVIOP76FOesm
+ NIHO08aZb3X9HTGEII7rOQTFuYcpW6H2DPVqAYZBYT0QWQJpKKV9yP5Gp
+ EVK8jWQCpfmNLCAmEvi6m1MGzrrrv4Uc0GyQGV/3rxygwuCJWXcw2AuLQ
+ risMYZUy62QpZRnr03BVoS+k1p7YeUf+MywqP4ylZLL5o/YMHx1UcD3B6 Q==;
+X-CSE-ConnectionGUID: Ro4TTYDbTM6rEg4t+awHxw==
+X-CSE-MsgGUID: ab2Nffa1TC6i7rSWXARraQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11699"; a="89567882"
+X-IronPort-AV: E=Sophos;i="6.21,288,1763452800"; d="scan'208";a="89567882"
 Received: from orviesa006.jf.intel.com ([10.64.159.146])
  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 13 Feb 2026 01:10:32 -0800
-X-CSE-ConnectionGUID: mBdUcO5FTy6N1oXMobCpWg==
-X-CSE-MsgGUID: cpzfO5hTRiOQohy336CBnA==
+ 13 Feb 2026 01:10:34 -0800
+X-CSE-ConnectionGUID: y1vECqAVQ9yhsyKkotq0Zg==
+X-CSE-MsgGUID: gH6S5FEXT3G3YZRTLUdeUg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,288,1763452800"; d="scan'208";a="211966081"
+X-IronPort-AV: E=Sophos;i="6.21,288,1763452800"; d="scan'208";a="211966089"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by orviesa006.jf.intel.com with ESMTP; 13 Feb 2026 01:10:31 -0800
+ by orviesa006.jf.intel.com with ESMTP; 13 Feb 2026 01:10:32 -0800
 From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>,
- Beilei Xing <beilei.xing@intel.com>, Jingjing Wu <jingjing.wu@intel.com>
-Subject: [PATCH v6 07/12] net/i40e: fix IPv6 GTPU handling
-Date: Fri, 13 Feb 2026 09:10:09 +0000
-Message-ID: <4685b908a463bb61c081ca73995ecb9bc82d0a9a.1770973745.git.anatoly.burakov@intel.com>
+To: dev@dpdk.org, Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
+ Declan Doherty <declan.doherty@intel.com>,
+ Radu Nicolau <radu.nicolau@intel.com>,
+ Abhijit Sinha <abhijit.sinha@intel.com>,
+ Jingjing Wu <jingjing.wu@intel.com>
+Subject: [PATCH v6 08/12] net/iavf: fix memory leak on egress IPsec flows
+Date: Fri, 13 Feb 2026 09:10:10 +0000
+Message-ID: <9f841988dcef225a2ef7c41dd68fd62e7f1a8467.1770973745.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <cover.1770973745.git.anatoly.burakov@intel.com>
  <cover.1770973745.git.anatoly.burakov@intel.com>
@@ -60,43 +63,115 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-GTP tunnel code declares support for IPv6 GTPU flows but does not actually
-handle IPv6 flow pattern item, resulting in incorrect parsing for IPv6
-GTPU flows. Add IPv6 flow item handling.
+When creating egress IPsec flows, no action need to be done in hardware, as
+this is just a software association. However, because we do not write
+anything to the rte_flow entry, subsequent destroy call will not destroy
+this kind of flow, because it expects a valid engine to be set for every
+flow. This results in memory unable to be freed back to the system.
 
-Fixes: 47ba0398da3f ("net/i40e: add cloud filter parsing function for GTP")
+In addition to that, when creating these flows, we do not actually store
+the rte_flow pointer anywhere, so even if the user has triggered `uninit`
+(which would have freed the flow), this flow isn't in the list so it would
+never get freed.
+
+Fix this by marking the flow as egress IPsec flows, adding it to the tailq,
+and changing the `destroy` code to take all of that into account.
+
+Fixes: 6bc987ecb860 ("net/iavf: support IPsec inline crypto")
+Cc: radu.nicolau@intel.com
 Cc: stable@dpdk.org
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
+Acked-by: Radu Nicolau <radu.nicolau@intel.com>
 Acked-by: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
 ---
- drivers/net/intel/i40e/i40e_flow.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ drivers/net/intel/iavf/iavf_generic_flow.c | 30 +++++++++++++++++-----
+ drivers/net/intel/iavf/iavf_generic_flow.h |  1 +
+ 2 files changed, 25 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/net/intel/i40e/i40e_flow.c b/drivers/net/intel/i40e/i40e_flow.c
-index 193b1b6725..2374b9bbca 100644
---- a/drivers/net/intel/i40e/i40e_flow.c
-+++ b/drivers/net/intel/i40e/i40e_flow.c
-@@ -3580,6 +3580,19 @@ i40e_flow_parse_gtp_pattern(struct rte_eth_dev *dev,
- 				return -rte_errno;
- 			}
- 			break;
-+		case RTE_FLOW_ITEM_TYPE_IPV6:
-+			filter->ip_type = I40E_TUNNEL_IPTYPE_IPV6;
-+			/* IPv6 is used to describe protocol,
-+			 * spec and mask should be NULL.
-+			 */
-+			if (item->spec || item->mask) {
-+				rte_flow_error_set(error, EINVAL,
-+						   RTE_FLOW_ERROR_TYPE_ITEM,
-+						   item,
-+						   "Invalid IPv6 item");
-+				return -rte_errno;
-+			}
-+			break;
- 		case RTE_FLOW_ITEM_TYPE_UDP:
- 			if (item->spec || item->mask) {
- 				rte_flow_error_set(error, EINVAL,
+diff --git a/drivers/net/intel/iavf/iavf_generic_flow.c b/drivers/net/intel/iavf/iavf_generic_flow.c
+index 6f6e95fc45..02917f863d 100644
+--- a/drivers/net/intel/iavf/iavf_generic_flow.c
++++ b/drivers/net/intel/iavf/iavf_generic_flow.c
+@@ -2265,8 +2265,10 @@ iavf_flow_create(struct rte_eth_dev *dev,
+ 	}
+ 
+ 	/* Special case for inline crypto egress flows */
+-	if (attr->egress && actions[0].type == RTE_FLOW_ACTION_TYPE_SECURITY)
+-		goto free_flow;
++	if (attr->egress && actions[0].type == RTE_FLOW_ACTION_TYPE_SECURITY) {
++		flow->is_ipsec_egress_flow = true;
++		goto tailq_insert;
++	}
+ 
+ 	ret = iavf_flow_process_filter(dev, flow, attr, pattern, actions,
+ 			&engine, iavf_parse_engine_create, error);
+@@ -2278,6 +2280,7 @@ iavf_flow_create(struct rte_eth_dev *dev,
+ 	}
+ 
+ 	flow->engine = engine;
++tailq_insert:
+ 	rte_spinlock_lock(&vf->flow_ops_lock);
+ 	TAILQ_INSERT_TAIL(&vf->flow_list, flow, node);
+ 	rte_spinlock_unlock(&vf->flow_ops_lock);
+@@ -2293,7 +2296,14 @@ iavf_flow_is_valid(struct rte_flow *flow)
+ 	struct iavf_flow_engine *engine;
+ 	void *temp;
+ 
+-	if (flow && flow->engine) {
++	if (flow == NULL)
++		return false;
++
++	/* these flows don't use engines */
++	if (flow->is_ipsec_egress_flow)
++		return true;
++
++	if (flow->engine) {
+ 		RTE_TAILQ_FOREACH_SAFE(engine, &engine_list, node, temp) {
+ 			if (engine == flow->engine)
+ 				return true;
+@@ -2311,18 +2321,26 @@ iavf_flow_destroy(struct rte_eth_dev *dev,
+ 	struct iavf_adapter *ad =
+ 		IAVF_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
+ 	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(ad);
++	bool need_destroy;
+ 	int ret = 0;
+ 
+-	if (!iavf_flow_is_valid(flow) || !flow->engine->destroy) {
++	if (!iavf_flow_is_valid(flow)) {
+ 		rte_flow_error_set(error, EINVAL,
+ 				   RTE_FLOW_ERROR_TYPE_HANDLE,
+ 				   NULL, "Invalid flow destroy");
+ 		return -rte_errno;
+ 	}
++	need_destroy = !flow->is_ipsec_egress_flow;
++
++	if (need_destroy && flow->engine->destroy == NULL) {
++		return rte_flow_error_set(error, EINVAL,
++				RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
++				"Invalid flow destroy");
++	}
+ 
+ 	rte_spinlock_lock(&vf->flow_ops_lock);
+-
+-	ret = flow->engine->destroy(ad, flow, error);
++	if (need_destroy)
++		ret = flow->engine->destroy(ad, flow, error);
+ 
+ 	if (!ret) {
+ 		TAILQ_REMOVE(&vf->flow_list, flow, node);
+diff --git a/drivers/net/intel/iavf/iavf_generic_flow.h b/drivers/net/intel/iavf/iavf_generic_flow.h
+index 60d8ab02b4..b11bb4cf2b 100644
+--- a/drivers/net/intel/iavf/iavf_generic_flow.h
++++ b/drivers/net/intel/iavf/iavf_generic_flow.h
+@@ -517,6 +517,7 @@ TAILQ_HEAD(iavf_engine_list, iavf_flow_engine);
+ /* Struct to store flow created. */
+ struct rte_flow {
+ 	TAILQ_ENTRY(rte_flow) node;
++	bool is_ipsec_egress_flow;
+ 	struct iavf_flow_engine *engine;
+ 	void *rule;
+ };
 -- 
 2.47.3
 
