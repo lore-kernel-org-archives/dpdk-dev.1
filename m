@@ -2,32 +2,167 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F802EDF154
-	for <dpdk-dev@archiver.kernel.org>; Fri, 13 Feb 2026 11:22:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3999EDF158
+	for <dpdk-dev@archiver.kernel.org>; Fri, 13 Feb 2026 12:38:03 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 879BD40648;
-	Fri, 13 Feb 2026 12:22:05 +0100 (CET)
-Received: from out28-145.mail.aliyun.com (out28-145.mail.aliyun.com
- [115.124.28.145])
- by mails.dpdk.org (Postfix) with ESMTP id 8F59940287
- for <dev@dpdk.org>; Fri, 13 Feb 2026 12:21:57 +0100 (CET)
-Received: from ubuntu.localdomain(mailfrom:dimon.zhao@nebula-matrix.com
- fp:SMTPD_---.gWYaBsO_1770981712 cluster:ay29) by smtp.aliyun-inc.com;
- Fri, 13 Feb 2026 19:21:53 +0800
-From: Dimon Zhao <dimon.zhao@nebula-matrix.com>
-To: dev@dpdk.org
-Cc: Dimon Zhao <dimon.zhao@nebula-matrix.com>,
- Kyo Liu <kyo.liu@nebula-matrix.com>, Leon Yu <leon.yu@nebula-matrix.com>,
- Sam Chen <sam.chen@nebula-matrix.com>
-Subject: [PATCH v2 1/1] net/nbl: add igb uio support for NBL VF devices
-Date: Fri, 13 Feb 2026 03:21:30 -0800
-Message-Id: <20260213112130.49185-2-dimon.zhao@nebula-matrix.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260213112130.49185-1-dimon.zhao@nebula-matrix.com>
-References: <20260211024029.33810-1-dimon.zhao@nebula-matrix.com>
- <20260213112130.49185-1-dimon.zhao@nebula-matrix.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 81D9E402C0;
+	Fri, 13 Feb 2026 13:38:02 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+ by mails.dpdk.org (Postfix) with ESMTP id D58C240287;
+ Fri, 13 Feb 2026 13:37:59 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1770986280; x=1802522280;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=E1ZSa58fDrSHA9Is44xTOZwt8KAQCSpOaHFi3BKP5hw=;
+ b=VzSyGw5eEGHaeaAchBFmamAHndlGfXXhWaeZbQKXctKU9wh0IfWPhEiA
+ K+dlvmjsdvPTnmwtz1Utasexp7MKtBIqXjrPUGnZKX43l89J9lm3lcqH1
+ GiSTHORFzeed3o9WjbOq4yj8qGoZN7FjXobjkhW42dKhppHpC7JX7+SmT
+ 60ZUYQ0+WpWv3T161gbZO0hPvJTAdq55rN3mkl8uT/WmcRxG1u7s58/jR
+ jK+RLtDNch1X7CJBJzxN+HfEjrJ+qPN1aV7+Y6Oo9dMcXbSmkTRpsS4vm
+ npKNZ6DbeeLJMvWDOenaQHNLP9vE4ExKeCBVm/0tp22DKygMMRn/8TeXx A==;
+X-CSE-ConnectionGUID: OWuNFgdWSJiEEe8EHfG4IA==
+X-CSE-MsgGUID: Yo6m7o3iS7C/W67ifd0bYg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11700"; a="71882057"
+X-IronPort-AV: E=Sophos;i="6.21,288,1763452800"; d="scan'208";a="71882057"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+ by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 13 Feb 2026 04:37:59 -0800
+X-CSE-ConnectionGUID: 64g3+H3xSbGmSSL9T896hA==
+X-CSE-MsgGUID: g3RsJk6gT++Uhxy6hw28aA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,288,1763452800"; d="scan'208";a="212940623"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+ by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 13 Feb 2026 04:37:59 -0800
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.35; Fri, 13 Feb 2026 04:37:58 -0800
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.35 via Frontend Transport; Fri, 13 Feb 2026 04:37:58 -0800
+Received: from CY7PR03CU001.outbound.protection.outlook.com (40.93.198.10) by
+ edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.35; Fri, 13 Feb 2026 04:37:58 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=toCTsO71lgBvpZS03CcwrjH/4EEkTv70IJZ3n2BcxFyOzErwNqC8/fL/+yJdiX3yyyFr2dErR5pnlaYvPEeHipDDSt8KxY7Tzt884jKLlvuWF/zKGwc5ACKfMlA/TA/BysJaS/RGKN4fv9CLu/YUHH0xmsgkaKxSQmSipAy6/u8RbAPKPNDb0N07dFmqEA/DHya21UMAZl7O+hltId03JzSSEgZvES5quuCVLbswQ5ZSjM7hdiJRs0k7VNIn+8vO++s+QSUYrzRpbvOuMf2cbpAzXzl4OzNuMGTeLtEMU8cY7YoeAJp7kVptiQ6uuUbFRbjv+vIfEc9HuRfwHK5PMw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=NOk2Xyc/ZU1ifyuaQ6oXdHu1lFDEt2vfx9QA8IoEp08=;
+ b=X62Hhq8S6iwWmleLhsPECmKkzWlzb6FYZTIQXGK0Z2jrs+alQdugzbmjkWvIC/XPnOfTTmhAnzWc1fgtKQ0yCYR/2REOFFYFVr756DiDLJIGUqb23IvfjXOQI8kwp4EYiCztDnJpvVEYZK0cSFvy3+VHe9H3c76sHWtj34/29xTZN34glkoKUFU4FYWYr+D081BrCj7jWNpGfYxPjSbVTQ3MJ5GdmiqIvgejapaV6dVSKB/vJezL8NqTjeYQ2XQZq8OMsc5vVQW6G4XdsdEZIWh3mjKVvu/LROH2wQTymUD99Icbb9BToE3U7Zr9yodIUA/BCnPFqrDJoELhiDWoOg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
+ by LV2PR11MB6021.namprd11.prod.outlook.com (2603:10b6:408:17e::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9611.14; Fri, 13 Feb
+ 2026 12:37:55 +0000
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::2a1:33a9:9f92:b52e]) by DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::2a1:33a9:9f92:b52e%3]) with mapi id 15.20.9611.012; Fri, 13 Feb 2026
+ 12:37:55 +0000
+Date: Fri, 13 Feb 2026 12:37:49 +0000
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: Venkatesh Vemula <venkatesh.vemula@intel.com>
+CC: <dev@dpdk.org>, <aman.deep.singh@intel.com>, <shaiq.wani@intel.com>,
+ <stable@dpdk.org>
+Subject: Re: [PATCH v2] net/intel: changes to avoid comma operator misuse
+ warnings
+Message-ID: <aY8bHYULOs-DTmLN@bricha3-mobl1.ger.corp.intel.com>
+References: <20251106082354.1534181-1-venkatesh.vemula@intel.com>
+ <20260120064156.420244-1-venkatesh.vemula@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20260120064156.420244-1-venkatesh.vemula@intel.com>
+X-ClientProxiedBy: DU2PR04CA0013.eurprd04.prod.outlook.com
+ (2603:10a6:10:3b::18) To DS0PR11MB7309.namprd11.prod.outlook.com
+ (2603:10b6:8:13e::17)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|LV2PR11MB6021:EE_
+X-MS-Office365-Filtering-Correlation-Id: 382f554b-270c-4554-020e-08de6afcb5d9
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?JCAPf0/+29HhOfRI8w5h1Xc8j1Dy+V9zVLsbgYZkC389hk5/YSRq2bSBPh1M?=
+ =?us-ascii?Q?kqBy9AF3t57lLIYKr0OT0E2YhrqukK7hoVGDxALn1DF94Mvu2kQXCJVDHjJw?=
+ =?us-ascii?Q?rEGTBU50DvBfWlflW16/awMqo5X6JRmPmVBx7LeCEx8W+SDbmZv+E9SxeQE6?=
+ =?us-ascii?Q?oB3IRr3ukNnctRyqKFPCjr95s3kd8gpytvBAdvl291uRuZnyEWFbqw9T8HPS?=
+ =?us-ascii?Q?8RM5haNTT0V22gommCV4rfkeuVd+mrLfT7EFLvkQ9I/xEfJg55aap4SoVHTf?=
+ =?us-ascii?Q?mwGpORkLxqiFgZ2OVvVZrs064Jtnh8/7tQFFRdbzjefXARzCgM0xZZaERIJP?=
+ =?us-ascii?Q?GEp4CCPHeqKS7VKKNxN/RUjUulIXKeancpl8b+ZeSf8epl6rvS4Oqo+S5Wra?=
+ =?us-ascii?Q?rUaod7Q7BtcO4gg7Evu95BhKF2SsaYQGUYsFuNj+4v/ZXrNRVxiCxJR2G0eb?=
+ =?us-ascii?Q?NpOXox3Lcjum6R+KBNgqjwaumXPhhjH72IL7A+Kt+DmfdEQ26idYaYD8pFjw?=
+ =?us-ascii?Q?t0HxBjnu8Mbu/YV5uOcAAbPjn0C5e2esSRibXMwZdVX6QDBsOpDMsLhJxSE8?=
+ =?us-ascii?Q?CIfetReC18aocaW6CkPG7uKIVLI6f9zagqUd2/1cVzRyQJiu2zIzgAYHMT/s?=
+ =?us-ascii?Q?RGIYei9wdoxyrwQZBQCZ9prQUq+1aMjQKJ/lvdNgwgLWQr3PbMdw3KpOvjBO?=
+ =?us-ascii?Q?UFPJKQyOgvh+TjU09wpUpLme2N2gY8PV6jB1s2JlLd1zLzkAR5pirQAELB00?=
+ =?us-ascii?Q?2HGVXpD7SL04nmyvlj8RgWWM/58+yiO5aEF5VBgxUE9sT0xGtbrJSLqQ2R6q?=
+ =?us-ascii?Q?B3rCrS1qPYmgDeLMZUyTm11QFyNdc19xHH/8yZUghtnNmwgE4Wr2Fz4clOh6?=
+ =?us-ascii?Q?J2vdu+x7xQp9Nk8ef+5NMf3i/fY1f3a6KxlYke5FMWzocleJGe6lJNMCpfrU?=
+ =?us-ascii?Q?k7kaHjWexGVfb4QYz3Z8PLOFbeu5xnoa6RBynOlvYMbbiDTREqPfxon7ZhsM?=
+ =?us-ascii?Q?VNx5yFwv9R1jTBScLhjhO+RqY4nAO3gFi576suGHmlvZCsvvrf7MERQ/aOm8?=
+ =?us-ascii?Q?HrGVCC+HT8r111fL2A36kjJ57SsAvW+SBfHh2po8tYq4v/MFsgEJW2oln42f?=
+ =?us-ascii?Q?R7EUO69YJtY+DiinW+HAmuvdzQ8VvEZew8rb1qSfBSZ2F/AgeNbzrux33Q/Z?=
+ =?us-ascii?Q?yT+QgvcjBjyEu7vh9BPJrPVeCASufppjMZO4wkOJNdB4tTOhh2vFMF3MRssC?=
+ =?us-ascii?Q?srmyZmBF49A6n3/WJse3QP4zAQO8H+tMFbOJSucZZ43wLYZ/z8QbOvGqPeWL?=
+ =?us-ascii?Q?QozsJyZ0Qb09fWZl3zVY/PZ+JF6JgIPzTCV5zk1V457YM6xLr2y4hf2QX4lW?=
+ =?us-ascii?Q?qxEy7f+vIUXyx8GZ33rHTH1QMKyz5EEeh4hNPYHd89RC+2+0gFnTKPNU+8LL?=
+ =?us-ascii?Q?7p6iumR3fKKNou6Z7aqH/+uOo9f44B0s4375GmQxrX+IzeAQrEHWXFJ0DXZC?=
+ =?us-ascii?Q?e/ovAA+w0255gutMJGAIm2z8cF8pix4QOqays7M0cdNNXIE17zrBKeQoxXYv?=
+ =?us-ascii?Q?iLuxGCgMsX9YMxp+zzo=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(366016)(1800799024)(376014); DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?KrbRz+i7XZE3EyhZBsi5HakaaCnTyFTalWRbARF3mUHShGtzwW7x5ZGPK36D?=
+ =?us-ascii?Q?Hd+WWW5+znWqiNq1eHix1kvb7Ue7tYRSVRJgq4ppMh2612MBXoystpmhxnvJ?=
+ =?us-ascii?Q?SGtxorz9TCrWA2GuXYIVBRfR4Rc21ew1No+CJFGKt4GjNLITpLaOSSQmZgRd?=
+ =?us-ascii?Q?iP7eBU8m7kxJjbdX/FPbW3YY4xy0xPR5cYEMJ680WKKac+1eDihmqkRyYJIO?=
+ =?us-ascii?Q?daDuFa8e73faDBTnk3ZQhlhQ+i7fWcK/bWiSQw/hRO5dQ/IhsVxNZMuPS1l1?=
+ =?us-ascii?Q?R8vhVj7G9+CRS/eQR2ZuECsEguWlAYEMSFJCoQZ/uR10ap9Mfqq2Q8wnFuSi?=
+ =?us-ascii?Q?oiV7e5IAChe71CG9ZKr+5l78X5FN+K97qWZl9i7ujwqvhrcihXZA1TPwYkJ7?=
+ =?us-ascii?Q?5OyjLoPORWAxIzxc09MsRH2tEan7p8CzgByhq541/3ymOgHlRdcNqbe8ZheW?=
+ =?us-ascii?Q?Tz9u4iGB6bvQni7CGL3Abwpm/wCly85YwdOWTOkLTUSvt4QJwlfm+u3G4O3k?=
+ =?us-ascii?Q?vtKGFK4zixnV5XHcryPFDcen/yQS8oydYRRMvBl+zsK6BHBG2WGCtA1nrmVh?=
+ =?us-ascii?Q?BAIJ7ywErnj7BBM73EsRcGUCUtOWYgCROHxNcqN9Vdtcj2+0n65ZJLb11/r0?=
+ =?us-ascii?Q?Ho8FNGjyr54I+4UnlY1/SMeK8DR4cIUirY8Abi0u9rkbhgFDmuLtu2mPL5Nm?=
+ =?us-ascii?Q?6WaMPBI8PSbx7B5VLSTmC8LruBpFRte4gKPHFcSIAwCUR8npkhC75zOhtSn0?=
+ =?us-ascii?Q?Ro1FgRk1dDqreB9MeEneE8zzpUUgOb+L/fw2GG+zY5HHAH6h0q/8EWSsViuv?=
+ =?us-ascii?Q?2YplZ8eiAbWyZue1NcWG/C8VDDHP1uZ1w3w/f9zYwuynmPdctDvN8r3BIaI/?=
+ =?us-ascii?Q?nrjn8h4rCBHIZQw6HUG3ev+PLLOefYiP7GvZ/5g0uJnCy/hWMOj6ncfKb4iP?=
+ =?us-ascii?Q?U+czcAWs0L78JkEOgYWOul4UHwok4XhoGmYcs4h/KoD8zwY4t9Dl1ECozyzt?=
+ =?us-ascii?Q?c2CJ52UehgkwzhEfoHZ3Sa5NDWlMrsJwuDWH5Nwl1dHmTTxPO7++4ZS9N8dg?=
+ =?us-ascii?Q?9jr7qseYzR4+czZbZcJNq/9NvZ+ahrEtWcABrOCDQsimyMjOm/FPwBr3tOSt?=
+ =?us-ascii?Q?t9WgoHdF3SLT+kUflBoMhofBu3GPSGjJXQnI9cGVo0EXx9UKa6oIBYSXh1jg?=
+ =?us-ascii?Q?082v/xm1i1TUFjHcaFeOB+OtuuV9RfWccvsOSZzN5fi7ww39n3qFInk5jx7l?=
+ =?us-ascii?Q?h2Vom2BwWJlJe/Wb+vUTvaO9pEU7iQSPM0POR8grVY+mJJiVyyhsUioi/SC8?=
+ =?us-ascii?Q?eeV6bB+2jwutVlT9Q6zC3guy/t6GPepD/C58QPcrjxIBGlo5/U8hyuWbeYeU?=
+ =?us-ascii?Q?9LadDhUUp7tClGLgt86DXGuzvlug9/BO1qYeIyp3qJOgp1IlNaPS0bSm9GlU?=
+ =?us-ascii?Q?YhGGE6IwZpBgpuSySQ9K41xKe2IRkNrWwN/W9mCKMiyo2l9bGjS9DNN/UAIl?=
+ =?us-ascii?Q?7FzW3px/RNjfTRN3AYyU70tGM0hbBkYgEktnSe1n/UUJGRaEEjjjRlv2G5v3?=
+ =?us-ascii?Q?QE97T4ti8GgY1sfvKD9KfWSL3uylmcTYvHEhsLyND3dDQ6/AhZmP3IqM9zSf?=
+ =?us-ascii?Q?gfpO7SEE3v8CxglHJem53tvomPZ3ssEH1VsGkbRqgAn+FF7JZdApRIUBoKHk?=
+ =?us-ascii?Q?92DSzSgvjtopQ/yNlwBY8ijygjQqDGtalY/20Ya+8d+YOfbtkcUSx8QCWGwJ?=
+ =?us-ascii?Q?w63HY4vNv0u52w3Fcd3pMYQizZk8VDc=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 382f554b-270c-4554-020e-08de6afcb5d9
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Feb 2026 12:37:55.1356 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Wp7nypeDdUOlNCZua7dwKDbm7Wryj4/6Dl1gOxobaJooEhypyO0VRLUZr972tLqHKgrdKvusI2ndcZWwMBmMN0jHLI3Fwtpmn4zXNV+8pgs=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR11MB6021
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -41,386 +176,44 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Due to a chip design limitation, only the VF
-supports the igb_uio driver. The PF does not.
+On Tue, Jan 20, 2026 at 06:41:56AM +0000, Venkatesh Vemula wrote:
+> fixed comma operator misuse warnings with clang compiler
+> for intel PMDs when -Wcomma enabled.
+> 
+> Bugzilla ID: 1809
+> Fixes: b3fa893d84d6 ("i40e: fix using memory after free")
+> Fixes: aed68d5b0e81 ("net/i40e: add AVX2 Tx function")
+> Fixes: e6a6a138919f ("net/i40e: add AVX512 vector path")
+> Fixes: af0c246a3800 ("net/iavf: enable AVX2 for iavf")
+> Fixes: 9ab9514c150e ("net/iavf: enable AVX512 for Tx")
+> Fixes: f9cf4f864150 ("net/ice: support device initialization")
+> Fixes: 2d5f6953d56d ("net/ice: support vector AVX2 in Tx")
+> Fixes: 7f85d5ebcfe1 ("net/ice: add AVX512 vector path")
+> Fixes: afac6261461f ("common/idpf: enable AVX2 for single queue Tx")
+> Fixes: 5bf87b45b2c8 ("net/idpf: add AVX512 data path for single queue model")
+> Fixes: e528d7c74819 ("common/idpf: add AVX512 data path for split queue model")
+> Cc: stable@dpdk.org
+> 
+> Signed-off-by: Venkatesh Vemula <venkatesh.vemula@intel.com>
+> ---
+>  drivers/net/intel/i40e/i40e_ethdev.c             | 10 ++++------
+>  drivers/net/intel/i40e/i40e_rxtx_vec_avx2.c      |  4 ++--
+>  drivers/net/intel/i40e/i40e_rxtx_vec_avx512.c    |  2 +-
+>  drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c      |  4 ++--
+>  drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c    |  6 +++---
+>  drivers/net/intel/ice/ice_ethdev.c               | 10 ++++------
+>  drivers/net/intel/ice/ice_rxtx_vec_avx2.c        |  4 ++--
+>  drivers/net/intel/ice/ice_rxtx_vec_avx512.c      |  2 +-
+>  drivers/net/intel/idpf/idpf_common_rxtx_avx2.c   |  4 ++--
+>  drivers/net/intel/idpf/idpf_common_rxtx_avx512.c |  8 ++++----
+>  10 files changed, 25 insertions(+), 29 deletions(-)
+> 
+For changes, so far as they go:
 
-The igb_uio driver requires allocating interrupts and configuring the
-PCIe MSI-X table before the driver's probe function is called.
-This pre-probe configuration is only possible on the VF due to the
-hardware limitation; the PF can only configure the MSI-X table during
-its probe process.
+Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 
-Therefore, using igb_uio on the PF will fail.
-This commit clarifies this restriction.
-
-Signed-off-by: Dimon Zhao <dimon.zhao@nebula-matrix.com>
----
- doc/guides/nics/nbl.rst                       | 12 +++++
- doc/guides/rel_notes/release_26_03.rst        |  4 ++
- drivers/net/nbl/nbl_core.c                    |  5 ++
- drivers/net/nbl/nbl_dev/nbl_dev.c             | 28 +++++++++--
- drivers/net/nbl/nbl_dev/nbl_dev.h             |  3 ++
- drivers/net/nbl/nbl_dispatch.c                | 49 +++++++++++++++++++
- drivers/net/nbl/nbl_ethdev.c                  | 13 +++++
- .../nbl_hw/nbl_hw_leonis/nbl_hw_leonis_snic.c | 14 ++++++
- .../nbl_hw/nbl_hw_leonis/nbl_hw_leonis_snic.h |  9 ++++
- .../nbl/nbl_hw/nbl_hw_leonis/nbl_res_leonis.c | 10 ++++
- drivers/net/nbl/nbl_include/nbl_def_channel.h |  5 ++
- .../net/nbl/nbl_include/nbl_def_dispatch.h    |  3 ++
- drivers/net/nbl/nbl_include/nbl_def_hw.h      |  3 ++
- .../net/nbl/nbl_include/nbl_def_resource.h    |  3 ++
- 14 files changed, 157 insertions(+), 4 deletions(-)
-
-diff --git a/doc/guides/nics/nbl.rst b/doc/guides/nics/nbl.rst
-index ba0a119dfd..646d0e3e16 100644
---- a/doc/guides/nics/nbl.rst
-+++ b/doc/guides/nics/nbl.rst
-@@ -101,3 +101,15 @@ Limitations or Known Issues
- 32-bit architectures are not supported.
- 
- Windows and BSD are not supported yet.
-+
-+**igb_uio Driver Support**
-+
-+Due to chip design limitations, only the VF supports the ``igb_uio`` driver,
-+PF does not support this driver.
-+
-+**uio_pci_generic Driver Support**
-+
-+The ``uio_pci_generic`` driver is not supported on both PF and VF devices.
-+This is because the NBL PMD requires MSI-X interrupts to receive mailbox
-+messages, but the ``uio_pci_generic`` driver does not support MSI-X interrupts.
-+
-diff --git a/doc/guides/rel_notes/release_26_03.rst b/doc/guides/rel_notes/release_26_03.rst
-index 5e8437a758..adee6bf947 100644
---- a/doc/guides/rel_notes/release_26_03.rst
-+++ b/doc/guides/rel_notes/release_26_03.rst
-@@ -98,6 +98,10 @@ New Features
-   * Added new APIs to convert between RSS type names and values.
-   * Added new API call to obtain the global RSS string table.
- 
-+* **Updated NBL driver.**
-+
-+  * Added support for igb_uio driver on VF devices.
-+
- 
- Removed Items
- -------------
-diff --git a/drivers/net/nbl/nbl_core.c b/drivers/net/nbl/nbl_core.c
-index 313f8c5bd6..8ca3d184cf 100644
---- a/drivers/net/nbl/nbl_core.c
-+++ b/drivers/net/nbl/nbl_core.c
-@@ -41,6 +41,11 @@ int nbl_core_init(struct nbl_adapter *adapter, struct rte_eth_dev *eth_dev)
- 	common->eth_dev = eth_dev;
- 	nbl_init_func_caps(pci_dev, &adapter->caps);
- 
-+	if (pci_dev->id.device_id ==  NBL_DEVICE_ID_M18100_VF)
-+		common->is_vf = true;
-+	else
-+		common->is_vf = false;
-+
- 	product_base_ops = nbl_core_get_product_ops(adapter->caps.product_type);
- 
- 	/* every product's hw/chan/res layer has a great difference, so call their own init ops */
-diff --git a/drivers/net/nbl/nbl_dev/nbl_dev.c b/drivers/net/nbl/nbl_dev/nbl_dev.c
-index 2b0413fb7c..ad06eee3d8 100644
---- a/drivers/net/nbl/nbl_dev/nbl_dev.c
-+++ b/drivers/net/nbl/nbl_dev/nbl_dev.c
-@@ -857,8 +857,12 @@ static void nbl_dev_mailbox_interrupt_handler(void *cn_arg)
- {
- 	struct nbl_dev_mgt *dev_mgt = (struct nbl_dev_mgt *)cn_arg;
- 	const struct nbl_channel_ops *chan_ops = NBL_DEV_MGT_TO_CHAN_OPS(dev_mgt);
-+	struct nbl_dev_net_mgt *net_dev = NBL_DEV_MGT_TO_NET_DEV(dev_mgt);
- 
- 	chan_ops->notify_interrupt(NBL_DEV_MGT_TO_CHAN_PRIV(dev_mgt));
-+
-+	if (net_dev->net_msix_mask_en)
-+		rte_write32(net_dev->irq_data, net_dev->irq_enable_base);
- }
- 
- static int nbl_dev_common_start(struct nbl_dev_mgt *dev_mgt)
-@@ -873,6 +877,7 @@ static int nbl_dev_common_start(struct nbl_dev_mgt *dev_mgt)
- 	u8 *mac;
- 	int ret;
- 	u16 priv_cnt = 0;
-+	u16 global_vector_id = 0;
- 
- 	board_info = &common->board_info;
- 	disp_ops->get_board_info(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt), board_info);
-@@ -881,9 +886,22 @@ static int nbl_dev_common_start(struct nbl_dev_mgt *dev_mgt)
- 	disp_ops->clear_flow(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt), net_dev->vsi_id);
- 
- 	if (NBL_IS_NOT_COEXISTENCE(common)) {
--		ret = disp_ops->configure_msix_map(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt), 0, 1, 0);
--		if (ret)
--			goto configure_msix_map_failed;
-+		if (pci_dev->kdrv == RTE_PCI_KDRV_VFIO) {
-+			ret = disp_ops->configure_msix_map(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt),
-+							   0, 1, 0);
-+			if (ret)
-+				goto configure_msix_map_failed;
-+		} else {
-+			ret = disp_ops->get_global_vector(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt),
-+							  net_dev->vsi_id, 0, &global_vector_id);
-+			if (ret)
-+				goto get_global_vector_failed;
-+			net_dev->irq_enable_base =
-+			disp_ops->get_msix_irq_enable_info(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt),
-+							   global_vector_id, &net_dev->irq_data);
-+			net_dev->net_msix_mask_en = true;
-+			rte_write32(net_dev->irq_data, net_dev->irq_enable_base);
-+		}
- 
- 		ret = disp_ops->enable_mailbox_irq(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt), 0, true);
- 		if (ret)
-@@ -960,7 +978,9 @@ static int nbl_dev_common_start(struct nbl_dev_mgt *dev_mgt)
- 	}
- enable_mailbox_irq_failed:
- 	if (NBL_IS_NOT_COEXISTENCE(common))
--		disp_ops->destroy_msix_map(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt));
-+		if (pci_dev->kdrv == RTE_PCI_KDRV_VFIO)
-+			disp_ops->destroy_msix_map(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt));
-+get_global_vector_failed:
- configure_msix_map_failed:
- 	return ret;
- }
-diff --git a/drivers/net/nbl/nbl_dev/nbl_dev.h b/drivers/net/nbl/nbl_dev/nbl_dev.h
-index bfe2b06deb..230a983cf4 100644
---- a/drivers/net/nbl/nbl_dev/nbl_dev.h
-+++ b/drivers/net/nbl/nbl_dev/nbl_dev.h
-@@ -62,6 +62,9 @@ struct nbl_dev_net_mgt {
- 	bool hw_stats_inited;
- 	rte_thread_t tid;
- 	int fd[2];
-+	bool net_msix_mask_en;
-+	u8 *irq_enable_base;
-+	u32 irq_data;
- };
- 
- struct nbl_dev_mgt {
-diff --git a/drivers/net/nbl/nbl_dispatch.c b/drivers/net/nbl/nbl_dispatch.c
-index 52d37ba7fe..d2b55c0c25 100644
---- a/drivers/net/nbl/nbl_dispatch.c
-+++ b/drivers/net/nbl/nbl_dispatch.c
-@@ -80,6 +80,49 @@ static int nbl_disp_chan_enable_mailbox_irq_req(void *priv, u16 vector_id, bool
- 	return chan_ops->send_msg(NBL_DISP_MGT_TO_CHAN_PRIV(disp_mgt), &chan_send);
- }
- 
-+static int nbl_disp_get_global_vector(void *priv, u16 vsi_id,
-+				      u16 local_vector_id, u16 *global_vector_id)
-+{
-+	struct nbl_dispatch_mgt *disp_mgt = (struct nbl_dispatch_mgt *)priv;
-+	struct nbl_resource_ops *res_ops = NBL_DISP_MGT_TO_RES_OPS(disp_mgt);
-+	u16 ret = 0;
-+
-+	ret = NBL_OPS_CALL(res_ops->get_global_vector,
-+			   (NBL_DISP_MGT_TO_RES_PRIV(disp_mgt),
-+			    vsi_id, local_vector_id, global_vector_id));
-+	return ret;
-+}
-+
-+static int nbl_disp_chan_get_global_vector_req(void *priv, u16 vsi_id,
-+					       u16 local_vector_id, u16 *global_vector_id)
-+{
-+	struct nbl_dispatch_mgt *disp_mgt = (struct nbl_dispatch_mgt *)priv;
-+	const struct nbl_channel_ops *chan_ops = NBL_DISP_MGT_TO_CHAN_OPS(disp_mgt);
-+	struct nbl_chan_param_get_global_vector param = {0};
-+	struct nbl_chan_param_get_global_vector result = {0};
-+	struct nbl_chan_send_info chan_send;
-+	int ret;
-+
-+	param.vsi_id = vsi_id;
-+	param.vector_id = local_vector_id;
-+
-+	NBL_CHAN_SEND(chan_send, 0, NBL_CHAN_MSG_GET_GLOBAL_VECTOR,
-+		      &param, sizeof(param), &result, sizeof(result), 1);
-+	ret = chan_ops->send_msg(NBL_DISP_MGT_TO_CHAN_PRIV(disp_mgt), &chan_send);
-+	*global_vector_id = result.vector_id;
-+
-+	return ret;
-+}
-+
-+static u8 *nbl_disp_get_msix_irq_enable_info(void *priv, u16 global_vector_id, u32 *irq_data)
-+{
-+	struct nbl_dispatch_mgt *disp_mgt = (struct nbl_dispatch_mgt *)priv;
-+	struct nbl_resource_ops *res_ops = NBL_DISP_MGT_TO_RES_OPS(disp_mgt);
-+
-+	return NBL_OPS_CALL(res_ops->get_msix_irq_enable_info,
-+			    (NBL_DISP_MGT_TO_RES_PRIV(disp_mgt), global_vector_id, irq_data));
-+}
-+
- static int nbl_disp_alloc_txrx_queues(void *priv, u16 vsi_id, u16 queue_num)
- {
- 	struct nbl_dispatch_mgt *disp_mgt = (struct nbl_dispatch_mgt *)priv;
-@@ -1035,6 +1078,12 @@ do {									\
- 			 NBL_DISP_CTRL_LVL_MGT, NBL_CHAN_MSG_MAILBOX_ENABLE_IRQ,		\
- 			 nbl_disp_chan_enable_mailbox_irq_req,					\
- 			 NULL);				\
-+	NBL_DISP_SET_OPS(get_global_vector, nbl_disp_get_global_vector,				\
-+			 NBL_DISP_CTRL_LVL_MGT, NBL_CHAN_MSG_GET_GLOBAL_VECTOR,			\
-+			 nbl_disp_chan_get_global_vector_req, NULL);				\
-+	NBL_DISP_SET_OPS(get_msix_irq_enable_info, nbl_disp_get_msix_irq_enable_info,		\
-+			 NBL_DISP_CTRL_LVL_NET, -1,						\
-+			 NULL, NULL);								\
- 	NBL_DISP_SET_OPS(alloc_txrx_queues, nbl_disp_alloc_txrx_queues,	\
- 			 NBL_DISP_CTRL_LVL_MGT,				\
- 			 NBL_CHAN_MSG_ALLOC_TXRX_QUEUES,		\
-diff --git a/drivers/net/nbl/nbl_ethdev.c b/drivers/net/nbl/nbl_ethdev.c
-index d269ea8058..f73808d877 100644
---- a/drivers/net/nbl/nbl_ethdev.c
-+++ b/drivers/net/nbl/nbl_ethdev.c
-@@ -88,6 +88,19 @@ static int nbl_pci_probe(struct rte_pci_driver *pci_drv __rte_unused,
- 		NBL_LOG(ERR, "Secondary process is not supported.");
- 		return -ENOTSUP;
- 	}
-+
-+	if (pci_dev->kdrv == RTE_PCI_KDRV_UIO_GENERIC) {
-+		NBL_LOG(ERR, "uio_pci_generic is not supported.");
-+		return -ENOTSUP;
-+	}
-+
-+	if (pci_dev->kdrv == RTE_PCI_KDRV_IGB_UIO) {
-+		if (pci_dev->id.device_id !=  NBL_DEVICE_ID_M18100_VF) {
-+			NBL_LOG(ERR, "Only VF support igb_uio.");
-+			return -ENOTSUP;
-+		}
-+	}
-+
- 	return rte_eth_dev_pci_generic_probe(pci_dev, sizeof(struct nbl_adapter),
- 					     nbl_eth_dev_init);
- }
-diff --git a/drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_hw_leonis_snic.c b/drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_hw_leonis_snic.c
-index 9e89a3be5f..a6fd60dfd7 100644
---- a/drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_hw_leonis_snic.c
-+++ b/drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_hw_leonis_snic.c
-@@ -138,6 +138,17 @@ static void nbl_hw_update_mailbox_queue_tail_ptr(void *priv, u16 tail_ptr, u8 tx
- 	rte_delay_us(NBL_NOTIFY_DELAY_MIN_TIME_FOR_REGS);
- }
- 
-+static u8 *nbl_phy_get_msix_irq_enable_info(void *priv, u16 global_vector_id, u32 *irq_data)
-+{
-+	struct nbl_hw_mgt *hw_mgt = (struct nbl_hw_mgt *)priv;
-+	struct nbl_msix_notify msix_notify = { 0 };
-+
-+	msix_notify.glb_msix_idx = global_vector_id;
-+	memcpy(irq_data, &msix_notify, sizeof(msix_notify));
-+
-+	return (hw_mgt->hw_addr + NBL_PCOMPLETER_MSIX_NOTIRY_OFFSET);
-+}
-+
- const struct nbl_hw_ops nbl_hw_ops = {
- 	.update_tail_ptr		= nbl_hw_update_tail_ptr,
- 	.get_tail_ptr			= nbl_hw_get_tail_ptr,
-@@ -149,6 +160,9 @@ const struct nbl_hw_ops nbl_hw_ops = {
- 	.stop_mailbox_txq		= nbl_hw_stop_mailbox_txq,
- 	.get_mailbox_rx_tail_ptr	= nbl_hw_get_mailbox_rx_tail_ptr,
- 	.update_mailbox_queue_tail_ptr	= nbl_hw_update_mailbox_queue_tail_ptr,
-+
-+	/* irq */
-+	.get_msix_irq_enable_info	= nbl_phy_get_msix_irq_enable_info,
- };
- 
- static int nbl_hw_setup_ops(struct nbl_hw_ops_tbl **hw_ops_tbl,
-diff --git a/drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_hw_leonis_snic.h b/drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_hw_leonis_snic.h
-index fc276e83d6..ae9800a285 100644
---- a/drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_hw_leonis_snic.h
-+++ b/drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_hw_leonis_snic.h
-@@ -50,4 +50,13 @@ struct nbl_mailbox_qinfo_cfg_dbg_tbl {
- 	u16 tx_tail_ptr;
- };
- 
-+#define NBL_PCOMPLETER_MSIX_NOTIRY_OFFSET	(0x1020)
-+
-+struct nbl_msix_notify {
-+	u32 glb_msix_idx:13;
-+	u32 rsv1:3;
-+	u32 mask:1;
-+	u32 rsv2:15;
-+};
-+
- #endif
-diff --git a/drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_res_leonis.c b/drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_res_leonis.c
-index 5d40d4f5f8..189f8feb56 100644
---- a/drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_res_leonis.c
-+++ b/drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_res_leonis.c
-@@ -115,9 +115,19 @@ static int nbl_get_xstats_names(__rte_unused void *priv,
- 	return 0;
- }
- 
-+static u8 *nbl_res_get_msix_irq_enable_info(void *priv, u16 global_vector_id, u32 *irq_data)
-+{
-+	struct nbl_resource_mgt *res_mgt = (struct nbl_resource_mgt *)priv;
-+	const struct nbl_hw_ops *hw_ops = NBL_RES_MGT_TO_HW_OPS(res_mgt);
-+
-+	return hw_ops->get_msix_irq_enable_info(NBL_RES_MGT_TO_HW_PRIV(res_mgt),
-+						global_vector_id, irq_data);
-+}
-+
- static struct nbl_resource_ops nbl_res_ops = {
- 	.get_hw_xstats_cnt = nbl_get_xstats_cnt,
- 	.get_hw_xstats_names = nbl_get_xstats_names,
-+	.get_msix_irq_enable_info = nbl_res_get_msix_irq_enable_info,
- };
- 
- static bool is_ops_inited;
-diff --git a/drivers/net/nbl/nbl_include/nbl_def_channel.h b/drivers/net/nbl/nbl_include/nbl_def_channel.h
-index 55880737f1..d31e3bc772 100644
---- a/drivers/net/nbl/nbl_include/nbl_def_channel.h
-+++ b/drivers/net/nbl/nbl_include/nbl_def_channel.h
-@@ -314,6 +314,11 @@ struct nbl_chan_param_enable_mailbox_irq {
- 	bool enable_msix;
- };
- 
-+struct nbl_chan_param_get_global_vector {
-+	u16 vsi_id;
-+	u16 vector_id;
-+};
-+
- struct nbl_chan_param_register_net_info {
- 	u16 pf_bdf;
- 	u64 vf_bar_start;
-diff --git a/drivers/net/nbl/nbl_include/nbl_def_dispatch.h b/drivers/net/nbl/nbl_include/nbl_def_dispatch.h
-index 45e7504a07..01d0967727 100644
---- a/drivers/net/nbl/nbl_include/nbl_def_dispatch.h
-+++ b/drivers/net/nbl/nbl_include/nbl_def_dispatch.h
-@@ -23,6 +23,9 @@ struct nbl_dispatch_ops {
- 				  bool net_msix_mask_en);
- 	int (*destroy_msix_map)(void *priv);
- 	int (*enable_mailbox_irq)(void *p, u16 vector_id, bool enable_msix);
-+	int (*get_global_vector)(void *priv, u16 vsi_id,
-+				 u16 local_vector_id, u16 *global_vector_id);
-+	u8* (*get_msix_irq_enable_info)(void *priv, u16 global_vector_id, u32 *irq_data);
- 	void (*get_resource_pt_ops)(void *priv, struct nbl_resource_pt_ops *pt_ops, bool offload);
- 	int (*register_net)(void *priv,
- 			    struct nbl_register_net_param *register_param,
-diff --git a/drivers/net/nbl/nbl_include/nbl_def_hw.h b/drivers/net/nbl/nbl_include/nbl_def_hw.h
-index 285ca98570..e9836e0120 100644
---- a/drivers/net/nbl/nbl_include/nbl_def_hw.h
-+++ b/drivers/net/nbl/nbl_include/nbl_def_hw.h
-@@ -22,6 +22,9 @@ struct nbl_hw_ops {
- 	void (*stop_mailbox_txq)(void *priv);
- 	uint16_t (*get_mailbox_rx_tail_ptr)(void *priv);
- 	void (*update_mailbox_queue_tail_ptr)(void *priv, uint16_t tail_ptr, uint8_t txrx);
-+
-+	/* irq */
-+	u8* (*get_msix_irq_enable_info)(void *priv, u16 global_vector_id, u32 *irq_data);
- };
- 
- struct nbl_hw_ops_tbl {
-diff --git a/drivers/net/nbl/nbl_include/nbl_def_resource.h b/drivers/net/nbl/nbl_include/nbl_def_resource.h
-index 6935598789..3e6bb58f26 100644
---- a/drivers/net/nbl/nbl_include/nbl_def_resource.h
-+++ b/drivers/net/nbl/nbl_include/nbl_def_resource.h
-@@ -21,6 +21,9 @@ struct nbl_resource_ops {
- 				  bool net_msix_mask_en);
- 	int (*destroy_msix_map)(void *priv, u16 func_id);
- 	int (*enable_mailbox_irq)(void *priv, u16 func_id, u16 vector_id, bool enable_msix);
-+	int (*get_global_vector)(void *priv, u16 vsi_id,
-+				 u16 local_vector_id, u16 *global_vector_id);
-+	u8* (*get_msix_irq_enable_info)(void *priv, u16 global_vector_id, u32 *irq_data);
- 	void (*get_resource_pt_ops)(void *priv, struct nbl_resource_pt_ops *pt_ops, bool offload);
- 	int (*register_net)(void *priv,
- 			    struct nbl_register_net_param *register_param,
--- 
-2.34.1
+However, there is little point in this fix right now because the warnings
+are disabled at a global driver level. I think if we do this, we need to
+re-enable the warnings for these drivers to prevent new issues from
+creeping in.
 
