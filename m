@@ -2,36 +2,36 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41A93EF99C5
-	for <dpdk-dev@archiver.kernel.org>; Fri, 13 Feb 2026 18:53:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8D3CEF99C9
+	for <dpdk-dev@archiver.kernel.org>; Fri, 13 Feb 2026 18:53:46 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CDC174060B;
-	Fri, 13 Feb 2026 19:53:33 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id E054D40650;
+	Fri, 13 Feb 2026 19:53:34 +0100 (CET)
 Received: from office2.cesnet.cz (office2.cesnet.cz [78.128.248.237])
- by mails.dpdk.org (Postfix) with ESMTP id 34AA8402C0
+ by mails.dpdk.org (Postfix) with ESMTP id 4700D402E7
  for <dev@dpdk.org>; Fri, 13 Feb 2026 19:53:31 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cesnet.cz;
- s=office2-2020; t=1771008810;
- bh=2YEPB81LVJ8CdcIpDitSM3NvXkhxeExcAxM400o9rd8=;
+ s=office2-2020; t=1771008811;
+ bh=0Hy3EWnp1SdH+Hsa9SW2Q/V3iH53Nl+IOSF5QFXAz4Q=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References;
- b=FhNL3efXoaf8FO5XLmt3FQu9ege8LpkO+K7roQqBmQlCxpZ93l0N3GsdlZOw165Rf
- 5jJo5RyNZaeCG9QSoRYuVhzNzvyVr8kvLiuWNFP9iFahG6dW3MTYXeB/SyfAwiywU5
- ZR5ERdkHjiB+YDWappPBW94aBL3e+dUW7dIzWh4uLkJ7+rlwiKaJS5BfyeICXsUn8R
- zKK4+CmDtnbMf1Wc4Gbi5hyuA7F64do9Qz++wxQOkKd7rSwNmG6U9N6Ydk0D17VAvC
- NYQ98tsKz7Aih7H6VMrYcUJ1CWFgOULePIl1jwS7oxyhFjIgILfmk16rQxeSZs2WiQ
- 9lnG0AYwXqOvg==
+ b=k4kNgw882De9vBRVbSXJW7I0L4gInhbOkRZ7ngEHdBsbDCXb3uESf/iZMivm1ahe5
+ mcDu1KMPWFhV12oA9g2R3ici8ngcxNMfXJObhyO/9SUX9R36iHXUZwpF3TXis/3WFn
+ iGJV3P/37TmGe9QrDJTeK7iUfgc3ecQfNm2H0VCTK/6cO71iaFzl1CfngRLza4Fqm2
+ 17dQVFedkDZqGTYclDU8BRaSqU5kBXMn+27QPo/98kVSwpBWtjW646c+YV1AdalAOo
+ zFYI1Eu+SoEpw1o+AnRDgwatW2z7O2tHlwSHoqNuCLMJDG0BHUoeExxe+Hv8qcQHjb
+ YbaTb9op2Si1Q==
 Received: from emil.cesnet.cz (gtx107.cesnet.cz [IPv6:2001:718:812:27::107])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by office2.cesnet.cz (Postfix) with ESMTPSA id EAB82118007E;
- Fri, 13 Feb 2026 19:53:30 +0100 (CET)
+ by office2.cesnet.cz (Postfix) with ESMTPSA id 119D91180080;
+ Fri, 13 Feb 2026 19:53:31 +0100 (CET)
 From: spinler@cesnet.cz
 To: dev@dpdk.org
 Cc: Martin Spinler <spinler@cesnet.cz>
-Subject: [PATCH v8 1/8] net/nfb: prepare for indirect queue mapping scheme
-Date: Fri, 13 Feb 2026 19:53:10 +0100
-Message-ID: <20260213185317.1893353-2-spinler@cesnet.cz>
+Subject: [PATCH v8 2/8] net/nfb: create one ethdev per ethernet port
+Date: Fri, 13 Feb 2026 19:53:11 +0100
+Message-ID: <20260213185317.1893353-3-spinler@cesnet.cz>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260213185317.1893353-1-spinler@cesnet.cz>
 References: <20260115151656.393106-1-spinler@cesnet.cz>
@@ -53,321 +53,407 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Martin Spinler <spinler@cesnet.cz>
 
-The NFB driver is being enhanced to create one ethdev per physical
-Ethernet port instead of one ethdev per PCI device. This requires
-an indirect mapping layer because DPDK queue indices no longer
-directly correspond to firmware queue indices.
+The existing driver creates one ethdev/port for one PCI device.
+As the CESNET-NDK-based cards are mostly unable to represent
+each physical port with one PCI device, this atypical behaviour
+often limits the user.
 
-This change adds queue_map_rx and queue_map_tx arrays to track the
-mapping between DPDK queue indices and firmware queue IDs, preparing
-for the multi-port implementation in subsequent patches.
+The nfb-framework comes with generic port representation API,
+which provides information about ports and their mapping to firmware
+resource (physical ports, DMA queues, processing pipelines).
+
+This driver design switches from one rte_eth_dev_pci_generic_probe call
+to multiple rte_eth_dev_create calls, while parses the firmware mapping
+information.
 
 Signed-off-by: Martin Spinler <spinler@cesnet.cz>
 ---
- drivers/net/nfb/nfb.h        |  6 ++++++
- drivers/net/nfb/nfb_ethdev.c | 28 ++++++++++++++++++++++++++++
- drivers/net/nfb/nfb_rx.c     | 33 ++++++++++++++++++---------------
- drivers/net/nfb/nfb_rx.h     |  9 ++++-----
- drivers/net/nfb/nfb_tx.c     | 30 ++++++++++++++++++------------
- drivers/net/nfb/nfb_tx.h     |  7 +++----
- 6 files changed, 77 insertions(+), 36 deletions(-)
+ drivers/net/nfb/nfb.h        |  27 ++++
+ drivers/net/nfb/nfb_ethdev.c | 234 +++++++++++++++++++++++++++++------
+ 2 files changed, 220 insertions(+), 41 deletions(-)
 
 diff --git a/drivers/net/nfb/nfb.h b/drivers/net/nfb/nfb.h
-index 90b04c6151..fa51afc7de 100644
+index fa51afc7de..3f758da7be 100644
 --- a/drivers/net/nfb/nfb.h
 +++ b/drivers/net/nfb/nfb.h
-@@ -60,6 +60,12 @@ struct pmd_internals {
- struct pmd_priv {
- 	uint16_t max_rx_queues;
- 	uint16_t max_tx_queues;
+@@ -11,6 +11,7 @@
+ #include <nfb/ndp.h>
+ #include <netcope/rxmac.h>
+ #include <netcope/txmac.h>
++#include <netcope/info.h>
+ 
+ extern int nfb_logtype;
+ #define RTE_LOGTYPE_NFB nfb_logtype
+@@ -51,6 +52,9 @@ struct pmd_internals {
+ 	struct nc_rxmac *rxmac[RTE_MAX_NC_RXMAC];
+ 	struct nc_txmac *txmac[RTE_MAX_NC_TXMAC];
+ 	struct nfb_device *nfb;
 +
-+	/** Mapping from DPDK RX queue index to firmware queue ID */
-+	int             *queue_map_rx;
-+	/** Mapping from DPDK TX queue index to firmware queue ID */
-+	int             *queue_map_tx;
-+	bool ready;     /**< This structure is initialized for usage in secondary process */
++	TAILQ_ENTRY(pmd_internals) eth_dev_list;  /**< Item in list of all devices */
++	struct rte_eth_dev *eth_dev;  /**< Handle for matching the device being removed */
  };
  
+ /*
+@@ -68,4 +72,27 @@ struct pmd_priv {
+ 	bool ready;     /**< This structure is initialized for usage in secondary process */
+ };
+ 
++/* Data for common device probing */
++struct nfb_probe_params {
++	/** Generic device information */
++	struct rte_device *device;
++	/** Port bus specific initialisation callback function */
++	ethdev_bus_specific_init specific_init;
++	/** Port bus specific initialisation parameters */
++	void *specific_device;
++
++	const char *path;       /**< libnfb device string */
++	const char *args;	/**< Device arguments */
++	int nfb_id;             /**< ID of NFB device in system */
++	int ep_index;           /**< (PCIe) endpoint index for matching assigned interfaces */
++
++	char name[RTE_DEV_NAME_MAX_LEN];  /**< Probed name (e.g. PCI device name) */
++};
++
++
++__rte_internal
++int nfb_eth_common_probe(struct nfb_probe_params *params);
++__rte_internal
++int nfb_eth_common_remove(struct rte_device *dev);
++
  #endif /* _NFB_H_ */
 diff --git a/drivers/net/nfb/nfb_ethdev.c b/drivers/net/nfb/nfb_ethdev.c
-index 967f127f40..c0a2905249 100644
+index c0a2905249..5758e22426 100644
 --- a/drivers/net/nfb/nfb_ethdev.c
 +++ b/drivers/net/nfb/nfb_ethdev.c
-@@ -509,6 +509,7 @@ static const struct eth_dev_ops ops = {
+@@ -4,6 +4,10 @@
+  * All rights reserved.
+  */
+ 
++#include <sys/queue.h>
++#include <eal_export.h>
++#include <rte_tailq.h>
++
+ #include <nfb/nfb.h>
+ #include <nfb/ndp.h>
+ #include <netcope/rxmac.h>
+@@ -18,6 +22,21 @@
+ #include "nfb_rxmode.h"
+ #include "nfb.h"
+ 
++struct nfb_ifc_create_params {
++	struct nfb_probe_params *probe_params;
++	struct nc_ifc_map_info map_info;
++	struct nc_ifc_info *ifc_info;
++
++	int basename_len;       /* Cached real length of original probe_params->name */
++};
++
++/* The TAILQ entries are used for cleanup of allocated resources
++ * in situations, where dev_close is not called.
++ */
++TAILQ_HEAD(nfb_pmd_internals_head, pmd_internals);
++static struct nfb_pmd_internals_head nfb_eth_dev_list =
++	TAILQ_HEAD_INITIALIZER(nfb_eth_dev_list);
++
+ static int nfb_eth_dev_uninit(struct rte_eth_dev *dev);
+ 
+ /**
+@@ -507,23 +526,20 @@ static const struct eth_dev_ops ops = {
+  *   0 on success, a negative errno value otherwise.
+  */
  static int
- nfb_eth_dev_init(struct rte_eth_dev *dev)
+-nfb_eth_dev_init(struct rte_eth_dev *dev)
++nfb_eth_dev_init(struct rte_eth_dev *dev, void *init_data)
  {
-+	int i;
+ 	int i;
++	int cnt;
  	int ret;
  	uint32_t mac_count;
  	struct rte_eth_dev_data *data = dev->data;
-@@ -577,6 +578,20 @@ nfb_eth_dev_init(struct rte_eth_dev *dev)
- 		priv->max_rx_queues = max_rx_queues;
- 		priv->max_tx_queues = max_tx_queues;
+ 	struct pmd_internals *internals;
++	struct nfb_ifc_create_params *params = init_data;
++	struct nc_ifc_info *ifc = params->ifc_info;
++	struct nc_ifc_map_info *mi = &params->map_info;
+ 	struct pmd_priv *priv = data->dev_private;
+-	struct rte_pci_device *pci_dev = RTE_ETH_DEV_TO_PCI(dev);
+-	struct rte_pci_addr *pci_addr = &pci_dev->addr;
+ 	struct rte_ether_addr eth_addr_init;
+ 	uint16_t max_rx_queues, max_tx_queues;
+-	char nfb_dev[PATH_MAX];
+-
+-	NFB_LOG(INFO, "Initializing NFB device (" PCI_PRI_FMT ")",
+-		pci_addr->domain, pci_addr->bus, pci_addr->devid,
+-		pci_addr->function);
  
-+		priv->queue_map_rx = rte_calloc("NFB queue map", max_rx_queues + max_tx_queues,
-+				sizeof(*priv->queue_map_rx), 0);
-+		if (priv->queue_map_rx == NULL) {
-+			ret = -ENOMEM;
-+			goto err_alloc_queue_map;
+ 	internals = rte_zmalloc_socket("nfb_internals",
+ 			sizeof(struct pmd_internals), RTE_CACHE_LINE_SIZE,
+@@ -535,27 +551,17 @@ nfb_eth_dev_init(struct rte_eth_dev *dev)
+ 
+ 	dev->process_private = internals;
+ 
+-	snprintf(nfb_dev, sizeof(nfb_dev),
+-		"/dev/nfb/by-pci-slot/" PCI_PRI_FMT,
+-		pci_addr->domain, pci_addr->bus, pci_addr->devid,
+-		pci_addr->function);
+-
+-	/*
+-	 * Get number of available DMA RX and TX queues, which is maximum
+-	 * number of queues that can be created and store it in private device
+-	 * data structure.
+-	 */
+-	internals->nfb = nfb_open(nfb_dev);
++	/* Open device handle */
++	internals->nfb = nfb_open(params->probe_params->path);
+ 	if (internals->nfb == NULL) {
+-		NFB_LOG(ERR, "nfb_open(): failed to open %s", nfb_dev);
++		NFB_LOG(ERR, "nfb_open(): failed to open %s", params->probe_params->path);
+ 		ret = -EINVAL;
+ 		goto err_nfb_open;
+ 	}
+-	max_rx_queues = ndp_get_rx_queue_available_count(internals->nfb);
+-	max_tx_queues = ndp_get_tx_queue_available_count(internals->nfb);
+ 
+-	NFB_LOG(INFO, "Available NDP queues RX: %u TX: %u",
+-		max_rx_queues, max_tx_queues);
++	/* Get number of available DMA RX and TX queues */
++	max_rx_queues = ifc->rxq_cnt;
++	max_tx_queues = ifc->txq_cnt;
+ 
+ 	nfb_nc_rxmac_init(internals->nfb,
+ 		internals->rxmac,
+@@ -586,11 +592,30 @@ nfb_eth_dev_init(struct rte_eth_dev *dev)
+ 		}
+ 		priv->queue_map_tx = priv->queue_map_rx + max_rx_queues;
+ 
+-		/* default queue mapping is 1:1 */
+-		for (i = 0; i < max_rx_queues; i++)
+-			priv->queue_map_rx[i] = i;
+-		for (i = 0; i < max_tx_queues; i++)
+-			priv->queue_map_tx[i] = i;
++		/* Use queue mapping provided by libnfb */
++		cnt = 0;
++		for (i = 0; i < mi->rxq_cnt; i++) {
++			if (mi->rxq[i].ifc == ifc->id) {
++				if (cnt >= max_rx_queues) {
++					NFB_LOG(ERR, "RX queue mapping inconsistent");
++					ret = -EINVAL;
++					goto err_queue_map;
++				}
++				priv->queue_map_rx[cnt++] = mi->rxq[i].id;
++			}
 +		}
-+		priv->queue_map_tx = priv->queue_map_rx + max_rx_queues;
 +
-+		/* default queue mapping is 1:1 */
-+		for (i = 0; i < max_rx_queues; i++)
-+			priv->queue_map_rx[i] = i;
-+		for (i = 0; i < max_tx_queues; i++)
-+			priv->queue_map_tx[i] = i;
-+
++		cnt = 0;
++		for (i = 0; i < mi->txq_cnt; i++) {
++			if (mi->txq[i].ifc == ifc->id) {
++				if (cnt >= max_rx_queues) {
++					NFB_LOG(ERR, "TX queue mapping inconsistent");
++					ret = -EINVAL;
++					goto err_queue_map;
++				}
++				priv->queue_map_tx[cnt++] = mi->txq[i].id;
++			}
++		}
+ 
  		/* Allocate space for MAC addresses */
  		mac_count = nfb_eth_get_max_mac_address_count(dev);
- 		data->mac_addrs = rte_zmalloc(data->name,
-@@ -599,6 +614,12 @@ nfb_eth_dev_init(struct rte_eth_dev *dev)
- 		data->all_multicast = nfb_eth_allmulticast_get(dev);
- 
- 		data->dev_flags |= RTE_ETH_DEV_AUTOFILL_QUEUE_XSTATS;
-+		priv->ready = true;
-+	} else {
-+		if (!priv->ready) {
-+			ret = -EBADFD;
-+			goto err_secondary_not_ready;
-+		}
+@@ -622,13 +647,10 @@ nfb_eth_dev_init(struct rte_eth_dev *dev)
+ 		}
  	}
  
- 	NFB_LOG(INFO, "NFB device (" PCI_PRI_FMT ") successfully initialized",
-@@ -608,6 +629,9 @@ nfb_eth_dev_init(struct rte_eth_dev *dev)
+-	NFB_LOG(INFO, "NFB device (" PCI_PRI_FMT ") successfully initialized",
+-		pci_addr->domain, pci_addr->bus, pci_addr->devid,
+-		pci_addr->function);
+-
  	return 0;
  
  err_malloc_mac_addrs:
-+	rte_free(priv->queue_map_rx);
-+err_alloc_queue_map:
-+err_secondary_not_ready:
++err_queue_map:
+ 	rte_free(priv->queue_map_rx);
+ err_alloc_queue_map:
+ err_secondary_not_ready:
+@@ -654,25 +676,112 @@ nfb_eth_dev_init(struct rte_eth_dev *dev)
+ static int
+ nfb_eth_dev_uninit(struct rte_eth_dev *dev)
+ {
+-	struct rte_pci_device *pci_dev = RTE_ETH_DEV_TO_PCI(dev);
+-	struct rte_pci_addr *pci_addr = &pci_dev->addr;
+ 	struct pmd_internals *internals = dev->process_private;
+ 	struct pmd_priv *priv = dev->data->dev_private;
+ 
+ 	if (rte_eal_process_type() == RTE_PROC_PRIMARY)
+ 		rte_free(priv->queue_map_rx);
+ 
++	TAILQ_REMOVE(&nfb_eth_dev_list, internals, eth_dev_list);
++
  	nfb_nc_rxmac_deinit(internals->rxmac, internals->max_rxmac);
  	nfb_nc_txmac_deinit(internals->txmac, internals->max_txmac);
  	nfb_close(internals->nfb);
-@@ -633,6 +657,10 @@ nfb_eth_dev_uninit(struct rte_eth_dev *dev)
- 	struct rte_pci_device *pci_dev = RTE_ETH_DEV_TO_PCI(dev);
- 	struct rte_pci_addr *pci_addr = &pci_dev->addr;
- 	struct pmd_internals *internals = dev->process_private;
-+	struct pmd_priv *priv = dev->data->dev_private;
-+
-+	if (rte_eal_process_type() == RTE_PROC_PRIMARY)
-+		rte_free(priv->queue_map_rx);
  
- 	nfb_nc_rxmac_deinit(internals->rxmac, internals->max_rxmac);
- 	nfb_nc_txmac_deinit(internals->txmac, internals->max_txmac);
-diff --git a/drivers/net/nfb/nfb_rx.c b/drivers/net/nfb/nfb_rx.c
-index 413d275853..5b8579e280 100644
---- a/drivers/net/nfb/nfb_rx.c
-+++ b/drivers/net/nfb/nfb_rx.c
-@@ -61,12 +61,16 @@ nfb_eth_rx_queue_setup(struct rte_eth_dev *dev,
- 		struct rte_mempool *mb_pool)
- {
- 	struct pmd_internals *internals = dev->process_private;
-+	struct pmd_priv *priv = dev->data->dev_private;
+ 	rte_free(internals);
  
--	struct ndp_rx_queue *rxq;
- 	int ret;
-+	int qid;
-+	struct ndp_rx_queue *rxq;
-+
-+	if (rx_queue_id >= priv->max_rx_queues)
-+		return -EINVAL;
- 
--	rxq = rte_zmalloc_socket("ndp rx queue",
--			sizeof(struct ndp_rx_queue),
-+	rxq = rte_zmalloc_socket("ndp rx queue", sizeof(struct ndp_rx_queue),
- 			RTE_CACHE_LINE_SIZE, socket_id);
- 
- 	if (rxq == NULL) {
-@@ -77,23 +81,23 @@ nfb_eth_rx_queue_setup(struct rte_eth_dev *dev,
- 
- 	rxq->flags = 0;
- 
--	ret = nfb_eth_rx_queue_init(internals->nfb,
--		rx_queue_id,
--		dev->data->port_id,
--		mb_pool,
--		rxq);
-+	qid = priv->queue_map_rx[rx_queue_id];
- 
--	if (ret == 0)
--		dev->data->rx_queues[rx_queue_id] = rxq;
--	else
--		rte_free(rxq);
-+	ret = nfb_eth_rx_queue_init(internals->nfb, qid, dev->data->port_id, mb_pool, rxq);
-+	if (ret)
-+		goto err_queue_init;
-+
-+	dev->data->rx_queues[rx_queue_id] = rxq;
+-	NFB_LOG(INFO, "NFB device (" PCI_PRI_FMT ") successfully uninitialized",
+-		pci_addr->domain, pci_addr->bus, pci_addr->devid,
+-		pci_addr->function);
 +	return 0;
- 
-+err_queue_init:
-+	rte_free(rxq);
- 	return ret;
- }
- 
- int
- nfb_eth_rx_queue_init(struct nfb_device *nfb,
--		uint16_t rx_queue_id,
-+		int qid,
- 		uint16_t port_id,
- 		struct rte_mempool *mb_pool,
- 		struct ndp_rx_queue *rxq)
-@@ -104,12 +108,11 @@ nfb_eth_rx_queue_init(struct nfb_device *nfb,
- 	if (nfb == NULL)
- 		return -EINVAL;
- 
--	rxq->queue = ndp_open_rx_queue(nfb, rx_queue_id);
-+	rxq->queue = ndp_open_rx_queue(nfb, qid);
- 	if (rxq->queue == NULL)
- 		return -EINVAL;
- 
- 	rxq->nfb = nfb;
--	rxq->rx_queue_id = rx_queue_id;
- 	rxq->in_port = port_id;
- 	rxq->mb_pool = mb_pool;
- 	rxq->buf_size = (uint16_t)(mbp_priv->mbuf_data_room_size -
-diff --git a/drivers/net/nfb/nfb_rx.h b/drivers/net/nfb/nfb_rx.h
-index 67b3b00e2a..831945c577 100644
---- a/drivers/net/nfb/nfb_rx.h
-+++ b/drivers/net/nfb/nfb_rx.h
-@@ -30,7 +30,6 @@ nfb_timestamp_dynfield(struct rte_mbuf *mbuf)
- struct ndp_rx_queue {
- 	struct nfb_device *nfb;	     /* nfb dev structure */
- 	struct ndp_queue *queue;     /* rx queue */
--	uint16_t rx_queue_id;	     /* index */
- 	uint8_t in_port;	     /* port */
- 	uint8_t flags;               /* setup flags */
- 
-@@ -47,8 +46,8 @@ struct ndp_rx_queue {
-  *
-  * @param nfb
-  *   Pointer to nfb device structure.
-- * @param rx_queue_id
-- *   RX queue index.
-+ * @param qid
-+ *   RX queue ID.
-  * @param port_id
-  *   Device [external] port identifier.
-  * @param mb_pool
-@@ -60,7 +59,7 @@ struct ndp_rx_queue {
-  */
- int
- nfb_eth_rx_queue_init(struct nfb_device *nfb,
--	uint16_t rx_queue_id,
-+	int qid,
- 	uint16_t port_id,
- 	struct rte_mempool *mb_pool,
- 	struct ndp_rx_queue *rxq);
-@@ -70,7 +69,7 @@ nfb_eth_rx_queue_init(struct nfb_device *nfb,
-  *
-  * @param dev
-  *   Pointer to Ethernet device structure.
-- * @param idx
-+ * @param rx_queue_id
-  *   RX queue index.
-  * @param desc
-  *   Number of descriptors to configure in queue.
-diff --git a/drivers/net/nfb/nfb_tx.c b/drivers/net/nfb/nfb_tx.c
-index 1f997ce22f..1a7dcc3d30 100644
---- a/drivers/net/nfb/nfb_tx.c
-+++ b/drivers/net/nfb/nfb_tx.c
-@@ -54,11 +54,16 @@ nfb_eth_tx_queue_setup(struct rte_eth_dev *dev,
- 	const struct rte_eth_txconf *tx_conf __rte_unused)
- {
- 	struct pmd_internals *internals = dev->process_private;
-+	struct pmd_priv *priv = dev->data->dev_private;
++}
 +
- 	int ret;
-+	int qid;
- 	struct ndp_tx_queue *txq;
- 
--	txq = rte_zmalloc_socket("ndp tx queue",
--		sizeof(struct ndp_tx_queue),
-+	if (tx_queue_id >= priv->max_tx_queues)
++static int
++nfb_eth_dev_create_for_ifc(struct nfb_ifc_create_params *cp)
++{
++	int ret;
++	struct nc_ifc_info *ifc;
++	struct nfb_probe_params *pp;
++	struct rte_eth_dev *eth_dev;
++	struct pmd_internals *p;
++
++	ifc = cp->ifc_info;
++	pp = cp->probe_params;
++
++	/* Skip interfaces which doesn't belong to the probed PCI device */
++	if ((pp->ep_index != -1 && ifc->ep != pp->ep_index) ||
++			(ifc->flags & NC_IFC_INFO_FLAG_ACTIVE) == 0)
++		return 0;
++
++	ret = snprintf(pp->name + cp->basename_len, sizeof(pp->name) - cp->basename_len,
++			"_eth%d", ifc->id);
++	if (ret < 0 || ret >= (signed int)sizeof(pp->name) - cp->basename_len)
 +		return -EINVAL;
 +
-+	txq = rte_zmalloc_socket("ndp tx queue", sizeof(struct ndp_tx_queue),
- 		RTE_CACHE_LINE_SIZE, socket_id);
- 
- 	if (txq == NULL) {
-@@ -67,32 +72,33 @@ nfb_eth_tx_queue_setup(struct rte_eth_dev *dev,
- 		return -ENOMEM;
- 	}
- 
--	ret = nfb_eth_tx_queue_init(internals->nfb,
--		tx_queue_id,
--		txq);
-+	qid = priv->queue_map_tx[tx_queue_id];
- 
--	if (ret == 0)
--		dev->data->tx_queues[tx_queue_id] = txq;
--	else
--		rte_free(txq);
-+	ret = nfb_eth_tx_queue_init(internals->nfb, qid, txq);
++	ret = rte_eth_dev_create(pp->device, pp->name,
++			sizeof(struct pmd_priv),
++			pp->specific_init, pp->specific_device,
++			nfb_eth_dev_init, cp);
 +	if (ret)
-+		goto err_queue_init;
- 
-+	dev->data->tx_queues[tx_queue_id] = txq;
-+	return 0;
++		goto out;
 +
-+err_queue_init:
-+	rte_free(txq);
- 	return ret;
++	eth_dev = rte_eth_dev_get_by_name(pp->name);
++	if (eth_dev == NULL) {
++		NFB_LOG(ERR, "Failed to get created device %s", pp->name);
++		ret = -ENODEV;
++		goto out;
++	}
++	p = eth_dev->process_private;
++	p->eth_dev = eth_dev;
++	TAILQ_INSERT_TAIL(&nfb_eth_dev_list, p, eth_dev_list);
++
++out:
++	/* return to original name (just for clarity) */
++	pp->name[cp->basename_len] = '\0';
++	return ret;
++}
++
++RTE_EXPORT_INTERNAL_SYMBOL(nfb_eth_common_probe)
++int
++nfb_eth_common_probe(struct nfb_probe_params *params)
++{
++	int i;
++	int ret;
++
++	struct nfb_device *nfb_dev;
++	struct nfb_ifc_create_params ifc_params;
++
++	/* Open the device handle just for parsing ifc_params.
++	 * A separate handle is used later for each netdev.
++	 */
++	nfb_dev = nfb_open(params->path);
++	if (nfb_dev == NULL) {
++		NFB_LOG(ERR, "nfb_open(): failed to open %s", params->path);
++		return -EINVAL;
++	}
++
++	ret = nc_ifc_map_info_create_ordinary(nfb_dev, &ifc_params.map_info);
++	if (ret)
++		goto err_map_info_create;
++
++	ifc_params.probe_params = params;
++	ifc_params.basename_len = strlen(params->name);
++
++	for (i = 0; i < ifc_params.map_info.ifc_cnt; i++) {
++		ifc_params.ifc_info = &ifc_params.map_info.ifc[i];
++		ret = nfb_eth_dev_create_for_ifc(&ifc_params);
++		if (ret)
++			goto err_dev_create;
++	}
++
++	nc_map_info_destroy(&ifc_params.map_info);
++	nfb_close(nfb_dev);
+ 
+ 	return 0;
++
++err_dev_create:
++	nfb_eth_common_remove(params->device);
++	nc_map_info_destroy(&ifc_params.map_info);
++err_map_info_create:
++	nfb_close(nfb_dev);
++	return ret;
  }
  
- int
- nfb_eth_tx_queue_init(struct nfb_device *nfb,
--	uint16_t tx_queue_id,
-+	int qid,
- 	struct ndp_tx_queue *txq)
+ static const struct rte_pci_id nfb_pci_id_table[] = {
+@@ -701,8 +810,51 @@ static int
+ nfb_eth_pci_probe(struct rte_pci_driver *pci_drv __rte_unused,
+ 		struct rte_pci_device *pci_dev)
  {
- 	if (nfb == NULL)
- 		return -EINVAL;
- 
--	txq->queue = ndp_open_tx_queue(nfb, tx_queue_id);
-+	txq->queue = ndp_open_tx_queue(nfb, qid);
- 	if (txq->queue == NULL)
- 		return -EINVAL;
- 
- 	txq->nfb = nfb;
--	txq->tx_queue_id = tx_queue_id;
- 
- 	txq->tx_pkts = 0;
- 	txq->tx_bytes = 0;
-diff --git a/drivers/net/nfb/nfb_tx.h b/drivers/net/nfb/nfb_tx.h
-index f107cf914b..c253af1a86 100644
---- a/drivers/net/nfb/nfb_tx.h
-+++ b/drivers/net/nfb/nfb_tx.h
-@@ -17,7 +17,6 @@
- struct ndp_tx_queue {
- 	struct nfb_device *nfb;     /* nfb dev structure */
- 	struct ndp_queue *queue;    /* tx queue */
--	uint16_t          tx_queue_id;       /* index */
- 	volatile uint64_t tx_pkts;  /* packets transmitted */
- 	volatile uint64_t tx_bytes; /* bytes transmitted */
- 	volatile uint64_t err_pkts; /* erroneous packets */
-@@ -54,8 +53,8 @@ nfb_eth_tx_queue_setup(struct rte_eth_dev *dev,
-  *
-  * @param nfb
-  *   Pointer to nfb device structure.
-- * @param tx_queue_id
-- *   TX queue index.
-+ * @param qid
-+ *   TX queue ID.
-  * @param[out] txq
-  *   Pointer to ndp_tx_queue output structure
-  *
-@@ -64,7 +63,7 @@ nfb_eth_tx_queue_setup(struct rte_eth_dev *dev,
-  */
- int
- nfb_eth_tx_queue_init(struct nfb_device *nfb,
--	uint16_t tx_queue_id,
-+	int qid,
- 	struct ndp_tx_queue *txq);
+-	return rte_eth_dev_pci_generic_probe(pci_dev,
+-		sizeof(struct pmd_priv), nfb_eth_dev_init);
++	int ret;
++	char path[PATH_MAX];
++
++	struct nc_composed_device_info comp_dev_info;
++	struct nfb_probe_params params = {0};
++
++	rte_pci_device_name(&pci_dev->addr, params.name, sizeof(params.name));
++
++	/*
++	 * NFB device can be composed from multiple PCI devices,
++	 * find the base char device ID for the current PCI device
++	 */
++	ret = nc_get_composed_device_info_by_pci(NULL, params.name, &comp_dev_info);
++	if (ret) {
++		NFB_LOG(ERR, "Could not find NFB device for %s", params.name);
++		return -ENODEV;
++	}
++
++	ret = snprintf(path, sizeof(path), NFB_BASE_DEV_PATH "%d", comp_dev_info.nfb_id);
++	if (ret < 0 || ret >= (signed int)sizeof(path))
++		return -EINVAL;
++
++	params.args = pci_dev->device.devargs ? pci_dev->device.devargs->args : NULL;
++	params.path = path;
++	params.nfb_id = comp_dev_info.nfb_id;
++	params.ep_index = comp_dev_info.ep_index;
++
++	params.device = &pci_dev->device;
++	params.specific_init = eth_dev_pci_specific_init;
++	params.specific_device = pci_dev;
++
++	return nfb_eth_common_probe(&params);
++}
++
++RTE_EXPORT_INTERNAL_SYMBOL(nfb_eth_common_remove)
++int
++nfb_eth_common_remove(struct rte_device *dev)
++{
++	struct pmd_internals *entry, *temp;
++
++	RTE_TAILQ_FOREACH_SAFE(entry, &nfb_eth_dev_list, eth_dev_list, temp) {
++		if (dev == entry->eth_dev->device)
++			rte_eth_dev_destroy(entry->eth_dev, nfb_eth_dev_uninit);
++	}
++	return 0;
+ }
  
  /**
+@@ -719,7 +871,7 @@ nfb_eth_pci_probe(struct rte_pci_driver *pci_drv __rte_unused,
+ static int
+ nfb_eth_pci_remove(struct rte_pci_device *pci_dev)
+ {
+-	return rte_eth_dev_pci_generic_remove(pci_dev, nfb_eth_dev_uninit);
++	return nfb_eth_common_remove(&pci_dev->device);
+ }
+ 
+ static struct rte_pci_driver nfb_eth_driver = {
 -- 
 2.53.0
 
