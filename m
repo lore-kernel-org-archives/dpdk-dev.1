@@ -2,73 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78199EF99D0
-	for <dpdk-dev@archiver.kernel.org>; Fri, 13 Feb 2026 19:36:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2C0EEF99D3
+	for <dpdk-dev@archiver.kernel.org>; Fri, 13 Feb 2026 19:39:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4C6E240685;
-	Fri, 13 Feb 2026 20:36:07 +0100 (CET)
-Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com
- [209.85.222.172])
- by mails.dpdk.org (Postfix) with ESMTP id 51CB040666
- for <dev@dpdk.org>; Fri, 13 Feb 2026 20:36:04 +0100 (CET)
-Received: by mail-qk1-f172.google.com with SMTP id
- af79cd13be357-8cb4097794dso109502085a.3
- for <dev@dpdk.org>; Fri, 13 Feb 2026 11:36:04 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id EA429402D8;
+	Fri, 13 Feb 2026 20:39:54 +0100 (CET)
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com
+ [209.85.128.44]) by mails.dpdk.org (Postfix) with ESMTP id EC0C7402C0
+ for <dev@dpdk.org>; Fri, 13 Feb 2026 20:39:52 +0100 (CET)
+Received: by mail-wm1-f44.google.com with SMTP id
+ 5b1f17b1804b1-48371bb515eso11771375e9.1
+ for <dev@dpdk.org>; Fri, 13 Feb 2026 11:39:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1771011364; x=1771616164; darn=dpdk.org;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1771011592;
+ x=1771616392; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=/+V6x9h/XnyBciCWOU9n0hOsc29tGHCQJ0kSL/G4R2Y=;
- b=izFbHkHl5inPNNP9oT0gcaMUq6rg+mKTc/MvqJ24A/bW7ZE9+Id1U7QvE7Lkfrht8n
- n/eFCQZaT0JNdzDdb7/X6O2Rcqzan+Yi7VwXhPsyGx+K1LisDOWk9ak27H+zWnKwT+u3
- masPITqxUKVoKxOAd9AwE7H2Uqn/GACLU56j4=
+ bh=Du/svMIy+54ElK4iKfxe2a5AVzC850z3eEE4f6WA5Nc=;
+ b=xv8OUP/D6BCwt2MVf8EpQUNHkgWIo5uFRfK4KDnJM1eHf44o+eropukNrfWuSW1Dge
+ c99P2Po/MVuywNAJjFB9+Xdenkx/bqx7E4DgujmD+kTth1AJ+eW5elET2UgStiNdCUpf
+ R2u4XH1f7FaaxHz70ftsjHcemDrVnJt7fMN34OQefEScDs5smmSdkVWfI8bog5yfDptZ
+ L6u0vB0OnJD3kQmshNlVRc58EB1SeDgkjKWQMxfjhRO5Y6fOtaahx5Z2Uk/bC4LTp/rr
+ UAvZ3HGhQXpVxlCxiS3c8bTSG+zcx9B1qu7ogxa8r3QaZO7mWQoMGN2JNIJckaoHd62r
+ Ovgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1771011364; x=1771616164;
+ d=1e100.net; s=20230601; t=1771011592; x=1771616392;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=/+V6x9h/XnyBciCWOU9n0hOsc29tGHCQJ0kSL/G4R2Y=;
- b=Sb+4dbtwjS+/VXBC5WN40288mDR+rHzTGQUym5MpRvgJBszMvOSCj6lAG0AeJKgMXd
- sXK8LEjU1kL7To0bu7d3a+8t9poTnQJdNx5RIs16JUexhgx0zy41RJuDV5nsgJW8FIq8
- u25jYMQPg/lJndfJBT3STHjV1HpRlUPc9Fdv5kuYbVj+rqlcMicpP5I/knLUF2T3W90H
- l/Kmcxchvxmk9JfiOsFWn4pr2f2zBCpI+WtitC2y9yNgZBT80erH7hf/8FN32r7b1R9P
- WC6OY1VypY1vlaNs93vjbeMgSBARBeGb3nm0ECIk9VbmCxPjOT5zoAXQjJ6zn8cVaTLN
- eJaw==
-X-Forwarded-Encrypted: i=1;
- AJvYcCXMlxE5+ebnLGLIMsbQtBMxag6xgpDC9cejxFcJ6hpbdGSrOOwYkSX54NWdkshIsEsmr90=@dpdk.org
-X-Gm-Message-State: AOJu0YwGeB0ldwfjkeZ9a9Ab45udZFGeI8cqNq2wKL2R6ouG8qJ3OnP3
- WBP+l+8f98zE4n7/00cSHaOwL9oPLuH8xhX7fMXtuqKtMd4kfc4m7G+r2Zqd6mGBL6g=
-X-Gm-Gg: AZuq6aLBDJESM4minlm0VldLYGWPMtN8pDE5aIoh8ltnZE93DRHQOzoBGv1P8IrUvlE
- Sl2DHbfGi1paBv+desGyPQcYoJmb/tKYB3cVUT6u+M92cUER3SZU8XN+Un2ISWMfy7+B+1sCsv8
- IXT9s99Ojm+iX41XGf8h6EHy1da9eiUd9bDFJx7lFIzZiG5mN7SeLFi8k3SzCvK+wvPMFUWPC5/
- zf+ETLWAszNEhI2OyDWvRvxhAQWHlTH4bRPSpJ5JJLpE5gIkHKBkUOehDwJUol4GeSZ8E5+ncMv
- HwV+4ibymHwnO8J98Qj33KqyrJJVqlxjyEDFjsTEj3oo9ZpRKNYyKmxV4evq8FwTTd50fGdr8nW
- wZfMKca1ADScTVPQLsNuBw9b9Xaxe5cODsleSNRcYM595ZsBL8oZQg6OyVIGVx3ArnpfHthv/3g
- EW5cMy5hi4BLTR102O5zjP8OqI2CERIBzS6H8cq+ANm0N4QCLPFgiRCd2SHimFZQWO
-X-Received: by 2002:a05:620a:19a5:b0:8cb:69c:1c7d with SMTP id
- af79cd13be357-8cb4229aa74mr343833185a.20.1771011363423; 
- Fri, 13 Feb 2026 11:36:03 -0800 (PST)
-Received: from d122205.iol.unh.edu ([2606:4100:3880:1220:4f6d:e2af:7f5f:4df])
+ bh=Du/svMIy+54ElK4iKfxe2a5AVzC850z3eEE4f6WA5Nc=;
+ b=X/8/jDkeAVf8lFEsr0JhEdBHXMWMARNij9xdA3T69XNTDvulUBMdDaWeRvWTIiDDQV
+ V5VMXo2APwKgV0vgKVWOO7IMzsk4o3sNYlQZB4NVKWz4S2DbuFlAwUCbCyxW3+3YZ8A1
+ e17i5gjsIafriWdWLvrWCsFqA4hZ1mcLjOmwgihXnwDn8mBqIkp1a5GDLcJC5EdQZuaP
+ ciqT9gInCNKICbjk882woSNV334k4/X3bgdUdWr6KbMhse4zHQA+bf0HArAe7DEj6jwf
+ eSC4tUKiGMjabwCj0u1UdlFpe+RrJQPzfgFH8o14dDh80dezbgeJiEDEgyWkuYc/XGMy
+ AAwQ==
+X-Gm-Message-State: AOJu0YwClU0YG93ALqz9a/63ZHVMroTpUoexIXXkBzbqP8o5XIaBr+ZA
+ ZLi3vlgOf0OEuvdaUqsx47q7WragKcC593oCiqJ+Cu5aWZaiDpPF/EOkX/uN9ZLF13k=
+X-Gm-Gg: AZuq6aIJ9bvI1WLFgqjJzfa5fJ8jquMzOcgBGJjdn1WxtfJBff2OCxMWH0oFiWm85Sk
+ VINdws4CYmNgWAW28O9ZIpie8u4YZ6d5j6EAC5sZ+Wfc46Zdo+YSm089yXAvSqviP1+3kvOxSgz
+ DPC8I3R8sJLjSrPXeZ0s/YWoAjAMtFcNDXqRDW5UW62FwElgWN8rx0DjPktvstmNbw8/xgZsyQ1
+ 7lWo9ZBZODItlwqx6Iqz+uSicby1GZ46f8NPTKDCEN0boN3l0Ys/iemhw/pxeTYBgJC0P2ytLvE
+ 0xNZltV+zs6gyckX5JfHP537ldswiNcu4A8GRROTUVnE55vm9j4nAU7pXQKlMHK3ZkTCmeezmYK
+ jAEdvh88jN3ugYFC8adE0HyFFSuWABZIZnQk68vIgqPgqY3lphCRsDNF1Xer5Froui1hEid6P2g
+ WCcHERU8K3yKhDk49gv7li4a7UC1AHp3stBM/NVCVit+omzxVv8qndvdAPMV9MwJOc
+X-Received: by 2002:a05:600c:348c:b0:47e:e91d:73c0 with SMTP id
+ 5b1f17b1804b1-48373a5ba0dmr42278285e9.19.1771011592072; 
+ Fri, 13 Feb 2026 11:39:52 -0800 (PST)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- af79cd13be357-8cb45f13a61sm146726085a.7.2026.02.13.11.36.02
+ 5b1f17b1804b1-48371998777sm97355215e9.1.2026.02.13.11.39.50
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 13 Feb 2026 11:36:02 -0800 (PST)
-From: Andrew Bailey <abailey@iol.unh.edu>
-To: luca.vizzarro@arm.com,
-	probb@iol.unh.edu
-Cc: dmarx@iol.unh.edu,
-	dev@dpdk.org,
-	Andrew Bailey <abailey@iol.unh.edu>
-Subject: [PATCH v3 5/5] dts: automate VFIO-PCI modprobe in node setup
-Date: Fri, 13 Feb 2026 14:35:39 -0500
-Message-ID: <20260213193539.103858-6-abailey@iol.unh.edu>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20260213193539.103858-1-abailey@iol.unh.edu>
-References: <20260210193448.69423-1-abailey@iol.unh.edu>
- <20260213193539.103858-1-abailey@iol.unh.edu>
+ Fri, 13 Feb 2026 11:39:51 -0800 (PST)
+Date: Fri, 13 Feb 2026 11:39:47 -0800
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: spinler@cesnet.cz
+Cc: dev@dpdk.org
+Subject: Re: [PATCH v8 0/8] net/nfb: rework to real multiport
+Message-ID: <20260213113947.4cb4aa30@phoenix.local>
+In-Reply-To: <20260213185317.1893353-1-spinler@cesnet.cz>
+References: <20260115151656.393106-1-spinler@cesnet.cz>
+ <20260213185317.1893353-1-spinler@cesnet.cz>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,68 +80,156 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Currently, users must modprobe VFIO-PCI before running DTS when using a
-non-mellanox NIC. This patch automates the process on test run start up.
-In addition, if the SUT is expected to use a subset of a few QAT devices,
-VFIO-PCI must be loaded in a separate manner. This patch adds this
-distinction.
+On Fri, 13 Feb 2026 19:53:09 +0100
+spinler@cesnet.cz wrote:
 
-Signed-off-by: Andrew Bailey <abailey@iol.unh.edu>
+> From: Martin Spinler <spinler@cesnet.cz>
+>=20
+> This series implements real multiport for better user experience.
+>=20
+> The existing driver creates one ethdev/port for one PCI device.
+> As the CESNET-NDK based cards aren't capable to represent each
+> Ethernet port by own PCI device, new driver implementation
+> processes real port configuration from firmware/card and switches
+> from rte_eth_dev_pci_generic_probe to multiple rte_eth_dev_create calls.
+>=20
+> ---
+
+There is one copy-paste bug (found by AI review).
+I can fix that during merge.
+
+Summary of Findings
+Patch	Severity	Issue
+2/8	Error	TX queue map bounds check uses max_rx_queues instead of max_tx_qu=
+eues =E2=80=94 copy-paste bug
+2/8	Warning	__rte_internal / RTE_EXPORT_INTERNAL_SYMBOL misuse for driver-i=
+nternal functions
+5/8	Warning	err_map_inconsistent error path leaks already-opened MAC handles
+
+
+Full report
+
+# Deep Dive Review: net/nfb multiport patch series (v8, 8 patches)
+
+**Author:** Martin Spinler <spinler@cesnet.cz>
+**Series:** [PATCH v8 1/8] through [PATCH v8 8/8]
+**Reviewer:** AI review per AGENTS.md guidelines
+
 ---
- dts/framework/testbed_model/linux_session.py | 24 ++++++++++++++++++++
- dts/framework/testbed_model/os_session.py    |  4 ++++
- 2 files changed, 28 insertions(+)
 
-diff --git a/dts/framework/testbed_model/linux_session.py b/dts/framework/testbed_model/linux_session.py
-index 27a5f48ecf..a761ca11fe 100644
---- a/dts/framework/testbed_model/linux_session.py
-+++ b/dts/framework/testbed_model/linux_session.py
-@@ -224,6 +224,30 @@ def devbind_script_path(self) -> PurePath:
-         """
-         raise InternalError("Accessed devbind script path before setup.")
- 
-+    def load_vfio(self, pf_port: Port) -> None:
-+        """Overrides :meth:`~os_session.OSSession,load_vfio`."""
-+        cmd_result = self.send_command(f"lspci -nn -s {pf_port.pci}")
-+        device = re.search(r":([0-9a-fA-F]{4})\]", cmd_result.stdout)
-+        if device and device.group(1) in ["37c8", "0435", "19e2"]:
-+            self.send_command(
-+                "modprobe -r vfio_iommu_type1; modprobe -r vfio_pci",
-+                privileged=True,
-+            )
-+            self.send_command(
-+                "modprobe -r vfio_virqfd; modprobe -r vfio",
-+                privileged=True,
-+            )
-+            self.send_command(
-+                "modprobe vfio-pci disable_denylist=1 enable_sriov=1", privileged=True
-+            )
-+            self.send_command(
-+                "echo 1 | tee /sys/module/vfio/parameters/enable_unsafe_noiommu_mode",
-+                privileged=True,
-+            )
-+        else:
-+            self.send_command("modprobe vfio-pci")
-+        self.refresh_lshw()
-+
-     def create_crypto_vfs(self, pf_port: list[Port]) -> None:
-         """Overrides :meth:`~os_session.OSSession.create_crypto_vfs`.
- 
-diff --git a/dts/framework/testbed_model/os_session.py b/dts/framework/testbed_model/os_session.py
-index 2eeeea6967..4a4fc1f34a 100644
---- a/dts/framework/testbed_model/os_session.py
-+++ b/dts/framework/testbed_model/os_session.py
-@@ -615,6 +615,10 @@ def configure_port_mtu(self, mtu: int, port: Port) -> None:
-             port: Port to set `mtu` on.
-         """
- 
-+    @abstractmethod
-+    def load_vfio(self, pf_port: Port) -> None:
-+        """Load the vfio module according to the device type of the given port."""
-+
-     @abstractmethod
-     def create_crypto_vfs(self, pf_ports: list[Port]) -> None:
-         """Creatues virtual functions for each port in 'pf_ports'.
--- 
-2.50.1
+## Changes from v7
 
+Several issues from the v7 review have been addressed:
+
+- **Fixed:** The double `TAILQ_REMOVE` bug =E2=80=94 `nfb_eth_common_remove=
+()` no longer removes from the list; only `nfb_eth_dev_uninit()` does.
+- **Fixed:** Buffer overflow in queue map filling =E2=80=94 bounds checks a=
+dded with `cnt >=3D max_rx_queues` guard and `goto err_queue_map`.
+- **Fixed:** `strtoul` base changed from 0 to 10, preventing octal/hex port=
+ numbers.
+- **Fixed:** Bounds check added in `nfb_nc_eth_init()` for MAC mapping cons=
+istency.
+- **New:** Added `priv->ready` flag for secondary process safety in patch 1.
+- **New:** Added bounds checks in `nfb_eth_rx_queue_setup` and `nfb_eth_tx_=
+queue_setup` (`rx_queue_id >=3D priv->max_rx_queues`).
+- **New:** Added NULL check on `rte_eth_dev_get_by_name()` return in `nfb_e=
+th_dev_create_for_ifc`.
+- **New:** Added `ifc_params.ret` field to pass back error codes from `rte_=
+kvargs_process` callback.
+- **New:** Added `errno =3D 0` before `strtoul` and `errno` check after.
+
+---
+
+## Patch 2/8: net/nfb: create one ethdev per ethernet port
+
+### Error: TX queue map bounds check uses `max_rx_queues` instead of `max_t=
+x_queues`
+
+In the TX queue mapping loop:
+
+```c
+cnt =3D 0;
+for (i =3D 0; i < mi->txq_cnt; i++) {
+    if (mi->txq[i].ifc =3D=3D ifc->id) {
+        if (cnt >=3D max_rx_queues) {          /* <--- BUG: should be max_t=
+x_queues */
+            NFB_LOG(ERR, "TX queue mapping inconsistent");
+            ret =3D -EINVAL;
+            goto err_queue_map;
+        }
+        priv->queue_map_tx[cnt++] =3D mi->txq[i].id;
+    }
+}
+```
+
+The bounds check compares `cnt` against `max_rx_queues` but this is filling=
+ `queue_map_tx` which was allocated with `max_tx_queues` slots. If `max_tx_=
+queues < max_rx_queues`, this allows writing past the end of the TX portion=
+ of the buffer. If `max_tx_queues > max_rx_queues`, it rejects valid mappin=
+gs prematurely.
+
+**Suggested fix:** Change `max_rx_queues` to `max_tx_queues`:
+```c
+if (cnt >=3D max_tx_queues) {
+```
+
+### Warning: `__rte_internal` + `RTE_EXPORT_INTERNAL_SYMBOL` for driver-int=
+ernal functions
+
+`nfb.h` declares `nfb_eth_common_probe` and `nfb_eth_common_remove` with `_=
+_rte_internal`, and the `.c` file uses `RTE_EXPORT_INTERNAL_SYMBOL`. These =
+functions are shared between `nfb_ethdev.c` and `nfb_vdev.c` within the sam=
+e driver =E2=80=94 they are not cross-library internal symbols. `__rte_inte=
+rnal` is meant for functions exported between DPDK libraries/drivers via th=
+e linker map, not for functions shared within a single PMD. Plain `extern` =
+declarations would be more appropriate.
+
+---
+
+## Patch 5/8: net/nfb: init only MACs associated with device
+
+### Warning: `err_map_inconsistent` path doesn't close already-opened MACs
+
+In `nfb_nc_eth_init()`, if the bounds check triggers:
+
+```c
+if (rxm >=3D ifc->eth_cnt || txm >=3D ifc->eth_cnt) {
+    NFB_LOG(ERR, "MAC mapping inconsistent");
+    ret =3D -EINVAL;
+    goto err_map_inconsistent;
+}
+```
+
+The error path frees `intl->txmac` and `intl->rxmac` arrays but does not cl=
+ose any MAC handles already opened via `nc_rxmac_open` / `nc_txmac_open` in=
+ previous loop iterations. These handles would be leaked.
+
+**Suggested fix:** Close all opened MACs before freeing the arrays:
+```c
+err_map_inconsistent:
+    for (int j =3D 0; j < txm; j++)
+        nc_txmac_close(intl->txmac[j]);
+    for (int j =3D 0; j < rxm; j++)
+        nc_rxmac_close(intl->rxmac[j]);
+    free(intl->txmac);
+err_alloc_txmac:
+    free(intl->rxmac);
+err_alloc_rxmac:
+    return ret;
+```
+
+Alternatively, set `intl->max_rxmac =3D rxm; intl->max_txmac =3D txm;` befo=
+re the goto and call `nfb_nc_eth_deinit(intl)` instead.
+
+---
+
+## Summary of Findings
+
+| Patch | Severity | Issue |
+|-------|----------|-------|
+| 2/8 | **Error** | TX queue map bounds check uses `max_rx_queues` instead =
+of `max_tx_queues` =E2=80=94 copy-paste bug |
+| 2/8 | Warning | `__rte_internal` / `RTE_EXPORT_INTERNAL_SYMBOL` misuse fo=
+r driver-internal functions |
+| 5/8 | Warning | `err_map_inconsistent` error path leaks already-opened MA=
+C handles |
