@@ -2,52 +2,78 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D1D9EDF170
-	for <dpdk-dev@archiver.kernel.org>; Fri, 13 Feb 2026 15:23:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FC06EDF17C
+	for <dpdk-dev@archiver.kernel.org>; Fri, 13 Feb 2026 16:01:32 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B3BDB40655;
-	Fri, 13 Feb 2026 16:22:50 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
- by mails.dpdk.org (Postfix) with ESMTP id B997540647
- for <dev@dpdk.org>; Fri, 13 Feb 2026 16:22:47 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1770996168; x=1802532168;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=Trrg/DTfE3ouqyk5ft3QvX0WiUZLWFBcdxDIy9TbGvI=;
- b=Cmt9AsFLew+B2JC4U27dZdHBu1Ac8gOkReQqfhiscgPposPq9/Jmu8pk
- Y2S2TzilkPIRsIhSnbLBOJDTBXu9V+bMjNzq9AG8TqkRniJI6t2y+JDwF
- QxyBXC2gPGaywy53AkUL0KQFRh39Nsq9lPvm9MU7keSU0L3jT6rV3oPbZ
- ICj32rDZcskMp+M+U0T6Cyx7oInC6IQQa1NKsgYKxMOiEI2MWNbIOxJ3P
- rOB+Cy8p9hCeVfUOUFUPBk7tJQiyYdgv45xj5fCYKO2mq+MCFviPmuo8U
- Sn8e0w1Tsqrgv6c8ZwvrMEgOSc/HAoLfT5EjTPue8faMTf/apU0luzDsW w==;
-X-CSE-ConnectionGUID: DmIma9BGT1W2l0pylhA/Dg==
-X-CSE-MsgGUID: Iq7JNhmiQm61kBSsaIWasQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11700"; a="75803798"
-X-IronPort-AV: E=Sophos;i="6.21,288,1763452800"; d="scan'208";a="75803798"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
- by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 13 Feb 2026 07:22:47 -0800
-X-CSE-ConnectionGUID: jhzZ9mceTzeNu1L7/2GBCA==
-X-CSE-MsgGUID: tIxQW5UcR+uWm/Wz8D3J7g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,288,1763452800"; d="scan'208";a="217094211"
-Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by orviesa003.jf.intel.com with ESMTP; 13 Feb 2026 07:22:47 -0800
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: dev@dpdk.org
-Cc: david.marchand@redhat.com,
-	Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v2 3/3] test/eal_flags: remove PCI probing for recursive calls
-Date: Fri, 13 Feb 2026 15:22:26 +0000
-Message-ID: <20260213152227.879170-4-bruce.richardson@intel.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20260213152227.879170-1-bruce.richardson@intel.com>
-References: <20260126164519.3029952-1-bruce.richardson@intel.com>
- <20260213152227.879170-1-bruce.richardson@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 78616402C0;
+	Fri, 13 Feb 2026 17:01:31 +0100 (CET)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 03601402B2
+ for <dev@dpdk.org>; Fri, 13 Feb 2026 17:01:29 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1770998489;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=So8Mc8NXF0PbFK7qt35tXR/mWw4URfMl4tcqSdwyO8Y=;
+ b=baMo04R4lCBURVsA6K0xJKWmN1PIkOTbWjiZnxqPs3afxhKy8W8mNt1dDCGCHFwQTNvSIu
+ PQaEV2YogzpM+rpner65RPPXR2PnvVXgD4RXk4IRBZyxHkTG1HCXRacC5P8epIqH/Ef2H4
+ OJEYXJoPRhxCf4OX6Gu2E0WVBDOoX/o=
+Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
+ [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-596-SfBOJ3EvMJKAn6RKWWx3mQ-1; Fri, 13 Feb 2026 11:01:27 -0500
+X-MC-Unique: SfBOJ3EvMJKAn6RKWWx3mQ-1
+X-Mimecast-MFC-AGG-ID: SfBOJ3EvMJKAn6RKWWx3mQ_1770998486
+Received: by mail-lf1-f71.google.com with SMTP id
+ 2adb3069b0e04-59e64d4157cso917032e87.0
+ for <dev@dpdk.org>; Fri, 13 Feb 2026 08:01:27 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1770998486; x=1771603286;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=So8Mc8NXF0PbFK7qt35tXR/mWw4URfMl4tcqSdwyO8Y=;
+ b=QBxsfaPrMVelbaweaOuNDiQImlZdmOl7ObYFOGO/aF5E1m60YirLjP2KLo5pOzwUsL
+ CGAWYRbX8VPm08pZ9+U7upmPitV+ssbOpaT2mHdUbaM/2BbhyKTdESnozy+iWMycYJfi
+ mcD4Z6xFT44lV0XsHSdgAI4WEfXwIyaefqc38IvLCrq3spNI81lMh4FAkQeCvIICibxO
+ kdXlPGGUacu+otXZRpC1LY7FODrxC1kc3PvS2cV0HbYKMWKQCTp1YdZJ5FhUOKkamIgP
+ LdE8ZvkBOMldpI/dsdYimHoy1Q6JFPSUXwuAwGEMeaZWYlnXR4IA4pKNPewBAx2UDGqq
+ jHqg==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCUdzbL1LNfbnV5iS+4FAdaMIexFIaY8YP6YryimeRW5nAfsiMKvyO5AdMS9iahxJz4HW7M=@dpdk.org
+X-Gm-Message-State: AOJu0YynnOIffUqXX4kmtt0ZzK4G+R1VDIjje8yzXT+m8ZwaUYgCYoCy
+ xnbnsND7xQxyQE5km9AUeEqtTACUpFgvsq9rhLioy5QMbNKMHwqqUWSwL3PaAGlTDCx29hlQ/6L
+ D2VcRBnmvNumCVV30f4Ev2NjBuq+lul3y4c4sm+KB71A75Xh9mwIaOVZ3nnAyW1ZAt4mG8uvFbY
+ k6Ra5QJEozLPtw7qusINA=
+X-Gm-Gg: AZuq6aJz2wYcrV83Afki4VCEHaY+xinwmPjC5ibmINB305VsSsj4vadMLO36ZKcYXf7
+ wBl7OhDtoONJpl0zVcX2u7j4N656qiriux0EEnR75J7DVM1VGq4r4tw2EY/y6EDZQoiypR/SzAU
+ WHs4vzZQsRxlsugLr7/Nj6HhPeGk/GLh2q0Xk8kZ7z40BMxGcV1M6gZMotiutM/+zWpt7pqqHlw
+ /YrPdBKfTzuKQnD72bVzadd0u4AB7spujMZNcWnkBqzaaVXSjO1YAD5WzS4Xu2zF51xwg==
+X-Received: by 2002:a05:6512:b10:b0:59e:4a2f:9911 with SMTP id
+ 2adb3069b0e04-59f6cfe394amr176523e87.23.1770998486078; 
+ Fri, 13 Feb 2026 08:01:26 -0800 (PST)
+X-Received: by 2002:a05:6512:b10:b0:59e:4a2f:9911 with SMTP id
+ 2adb3069b0e04-59f6cfe394amr176513e87.23.1770998485445; Fri, 13 Feb 2026
+ 08:01:25 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250814213246.4141803-1-jfree@FreeBSD.org>
+ <20260114093140.3256584-1-jfree@FreeBSD.org>
+ <20260114093140.3256584-4-jfree@FreeBSD.org>
+In-Reply-To: <20260114093140.3256584-4-jfree@FreeBSD.org>
+From: David Marchand <david.marchand@redhat.com>
+Date: Fri, 13 Feb 2026 17:01:13 +0100
+X-Gm-Features: AZwV_QjiEersiXASg3U5K6DSJLLMMz71iGmdCBqoOu_KMNV-_v9JOduJbmlA6ak
+Message-ID: <CAJFAV8ypPkO_p5zQj8X8KF4Kda4nVhkL8B0nqLyr2B=WPfq=WQ@mail.gmail.com>
+Subject: Re: [PATCH v3 3/3] eal/linux: check hugepage access permissions
+To: Jake Freeland <jfree@freebsd.org>
+Cc: Anatoly Burakov <anatoly.burakov@intel.com>, 
+ Bruce Richardson <bruce.richardson@intel.com>, dev@dpdk.org
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: rkzlyAWeQkOfWLSiYReui9B0W4z1Ked2VWaahIMtSFY_1770998486
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -61,230 +87,20 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-When creating another primary process as part of EAL flag testing, avoid
-unexpected side-effects due to the HW being used by disabling PCI
-probing at process startup.
+Hello,
 
-Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
----
- app/test/test_eal_flags.c | 67 ++++++++++++++++++++-------------------
- 1 file changed, 34 insertions(+), 33 deletions(-)
+On Wed, 14 Jan 2026 at 10:33, Jake Freeland <jfree@freebsd.org> wrote:
+>
+> Currently, hugepage mountpoints will be used irrespective of permissions,
+> leading to potential EACCES errors during memory allocation. Fix this by
+> not using a mountpoint if we do not have read/write permissions on it.
+>
+> Signed-off-by: Jake Freeland <jfree@FreeBSD.org>
 
-diff --git a/app/test/test_eal_flags.c b/app/test/test_eal_flags.c
-index 83e906a069..bebddf1c98 100644
---- a/app/test/test_eal_flags.c
-+++ b/app/test/test_eal_flags.c
-@@ -121,6 +121,7 @@ test_misc_flags(void)
- #define no_shconf "--no-shconf"
- #define allow "--allow"
- #define vdev "--vdev"
-+#define no_pci "--no-pci"
- #define eal_debug_logs "--log-level=lib.eal:debug"
- #define bus_debug_logs "--log-level=bus.*:debug"
- 
-@@ -930,28 +931,28 @@ test_misc_flags(void)
- 	const char *argv5[] = {prgname, prefix, mp_flag, eal_debug_logs, "--syslog=invalid"};
- 
- 	/* With no-sh-conf, also use no-huge to ensure this test runs on BSD */
--	const char *argv6[] = {prgname, eal_debug_logs, "-m", DEFAULT_MEM_SIZE,
-+	const char *argv6[] = {prgname, eal_debug_logs, no_pci, "-m", DEFAULT_MEM_SIZE,
- 			no_shconf, nosh_prefix, no_huge};
- 
- 	/* With --huge-dir */
- 	const char *argv7[] = {prgname, "-m", DEFAULT_MEM_SIZE,
--			eal_debug_logs,
-+			eal_debug_logs, no_pci,
- 			"--file-prefix=hugedir", "--huge-dir", hugepath};
- 	/* With empty --huge-dir (should fail) */
- 	const char *argv8[] = {prgname, "-m", DEFAULT_MEM_SIZE,
--			eal_debug_logs,
-+			eal_debug_logs, no_pci,
- 			"--file-prefix=hugedir", "--huge-dir"};
- 	/* With invalid --huge-dir */
- 	const char *argv9[] = {prgname, "-m", DEFAULT_MEM_SIZE,
--			eal_debug_logs,
-+			eal_debug_logs, no_pci,
- 			"--file-prefix=hugedir", "--huge-dir", "invalid"};
- 	/* With invalid --huge-dir sub-directory */
- 	const char *argv10[] = {prgname, "-m", DEFAULT_MEM_SIZE,
--			eal_debug_logs,
-+			eal_debug_logs, no_pci,
- 			"--file-prefix=hugedir", "--huge-dir", hugepath_dir};
- 	/* With valid --huge-dir sub-directory */
- 	const char *argv11[] = {prgname, "-m", DEFAULT_MEM_SIZE,
--			eal_debug_logs,
-+			eal_debug_logs, no_pci,
- 			"--file-prefix=hugedir", "--huge-dir", hugepath_dir2};
- 	/* Secondary process with invalid --huge-dir (should run as flag has no
- 	 * effect on secondary processes) */
-@@ -960,41 +961,41 @@ test_misc_flags(void)
- 
- 	/* try running with base-virtaddr param */
- 	const char *argv13[] = {prgname, "--file-prefix=virtaddr",
--			eal_debug_logs,
-+			eal_debug_logs, no_pci,
- 			"--base-virtaddr=0x23456789"};
- 
- 	/* try running with --vfio-intr INTx flag */
- 	const char *argv14[] = {prgname, "--file-prefix=intr",
--			eal_debug_logs,
-+			eal_debug_logs, no_pci,
- 			"--vfio-intr=legacy"};
- 
- 	/* try running with --vfio-intr MSI flag */
- 	const char *argv15[] = {prgname, "--file-prefix=intr",
--			eal_debug_logs,
-+			eal_debug_logs, no_pci,
- 			"--vfio-intr=msi"};
- 
- 	/* try running with --vfio-intr MSI-X flag */
- 	const char *argv16[] = {prgname, "--file-prefix=intr",
--			eal_debug_logs,
-+			eal_debug_logs, no_pci,
- 			"--vfio-intr=msix"};
- 
- 	/* try running with --vfio-intr invalid flag */
- 	const char *argv17[] = {prgname, "--file-prefix=intr",
--			eal_debug_logs,
-+			eal_debug_logs, no_pci,
- 			"--vfio-intr=invalid"};
- 
- 	/* With process type as auto-detect */
- 	const char * const argv18[] = {prgname, "--file-prefix=auto",
--			eal_debug_logs,
-+			eal_debug_logs, no_pci,
- 			"--proc-type=auto"};
- 
- 	/* With process type as auto-detect with no-shconf */
--	const char * const argv19[] = {prgname, "--proc-type=auto", eal_debug_logs,
-+	const char * const argv19[] = {prgname, "--proc-type=auto", eal_debug_logs, no_pci,
- 			no_shconf, nosh_prefix, no_huge};
- 
- 	/* With process type as --create-uio-dev flag */
- 	const char * const argv20[] = {prgname, "--file-prefix=uiodev",
--			eal_debug_logs,
-+			eal_debug_logs, no_pci,
- 			"--create-uio-dev"};
- 
- 	/* Try running with --huge-worker-stack flag */
-@@ -1227,43 +1228,43 @@ test_file_prefix(void)
- 			DEFAULT_MEM_SIZE, "--file-prefix=" memtest };
- 
- 	/* primary process with memtest1 and default mem mode */
--	const char *argv1[] = {prgname, eal_debug_logs, "-m",
-+	const char *argv1[] = {prgname, eal_debug_logs, no_pci, "-m",
- 			DEFAULT_MEM_SIZE, "--file-prefix=" memtest1 };
- 
- 	/* primary process with memtest1 and legacy mem mode */
--	const char *argv2[] = {prgname, eal_debug_logs, "-m",
-+	const char *argv2[] = {prgname, eal_debug_logs, no_pci, "-m",
- 			DEFAULT_MEM_SIZE, "--file-prefix=" memtest1,
- 			"--legacy-mem" };
- 
- 	/* primary process with memtest2 and legacy mem mode */
--	const char *argv3[] = {prgname, eal_debug_logs, "-m",
-+	const char *argv3[] = {prgname, eal_debug_logs, no_pci, "-m",
- 			DEFAULT_MEM_SIZE, "--file-prefix=" memtest2,
- 			"--legacy-mem" };
- 
- 	/* primary process with memtest2 and default mem mode */
--	const char *argv4[] = {prgname, eal_debug_logs, "-m",
-+	const char *argv4[] = {prgname, eal_debug_logs, no_pci, "-m",
- 			DEFAULT_MEM_SIZE, "--file-prefix=" memtest2 };
- 
- 	/* primary process with --in-memory mode */
--	const char * const argv5[] = {prgname, eal_debug_logs, "-m",
-+	const char * const argv5[] = {prgname, eal_debug_logs, no_pci, "-m",
- 		DEFAULT_MEM_SIZE, "--in-memory" };
- 
- 	/* primary process with memtest1 and --in-memory mode */
--	const char * const argv6[] = {prgname, eal_debug_logs, "-m",
-+	const char * const argv6[] = {prgname, eal_debug_logs, no_pci, "-m",
- 		DEFAULT_MEM_SIZE, "--in-memory",
- 		"--file-prefix=" memtest1 };
- 
- 	/* primary process with parent file-prefix and --in-memory mode */
--	const char * const argv7[] = {prgname, eal_debug_logs, "-m",
-+	const char * const argv7[] = {prgname, eal_debug_logs, no_pci, "-m",
- 		DEFAULT_MEM_SIZE, "--in-memory", "--file-prefix", prefix };
- 
- 	/* primary process with memtest1 and --single-file-segments mode */
--	const char * const argv8[] = {prgname, eal_debug_logs, "-m",
-+	const char * const argv8[] = {prgname, eal_debug_logs, no_pci, "-m",
- 		DEFAULT_MEM_SIZE, "--single-file-segments",
- 		"--file-prefix=" memtest1 };
- 
- 	/* primary process with memtest1 and --huge-unlink=never mode */
--	const char * const argv9[] = {prgname, eal_debug_logs, "-m",
-+	const char * const argv9[] = {prgname, eal_debug_logs, no_pci, "-m",
- 		DEFAULT_MEM_SIZE, "--huge-unlink=never",
- 		"--file-prefix=" memtest1 };
- 
-@@ -1518,41 +1519,41 @@ test_memory_flags(void)
- 			"-m", DEFAULT_MEM_SIZE};
- 
- 	/* valid -m flag */
--	const char *argv1[] = {prgname, eal_debug_logs,
-+	const char *argv1[] = {prgname, eal_debug_logs, no_pci,
- 			"--file-prefix=" memtest, "-m", DEFAULT_MEM_SIZE};
- 
- 	/* valid (zero) --socket-mem flag */
- 	char arg2_socket_mem[SOCKET_MEM_STRLEN];
--	const char *argv2[] = {prgname, eal_debug_logs,
-+	const char *argv2[] = {prgname, eal_debug_logs, no_pci,
- 			"--file-prefix=" memtest, arg2_socket_mem};
- 
- 	/* invalid (incomplete) --socket-mem flag */
- 	char arg3_socket_mem[SOCKET_MEM_STRLEN];
--	const char *argv3[] = {prgname, eal_debug_logs,
-+	const char *argv3[] = {prgname, eal_debug_logs, no_pci,
- 			"--file-prefix=" memtest, arg3_socket_mem};
- 
- 	/* invalid (mixed with invalid data) --socket-mem flag */
- 	char arg4_socket_mem[SOCKET_MEM_STRLEN];
--	const char *argv4[] = {prgname, eal_debug_logs,
-+	const char *argv4[] = {prgname, eal_debug_logs, no_pci,
- 			"--file-prefix=" memtest, arg4_socket_mem};
- 
- 	/* invalid (with numeric value as last character) --socket-mem flag */
- 	char arg5_socket_mem[SOCKET_MEM_STRLEN];
--	const char *argv5[] = {prgname, eal_debug_logs,
-+	const char *argv5[] = {prgname, eal_debug_logs, no_pci,
- 			"--file-prefix=" memtest, arg5_socket_mem};
- 
- 	/* invalid (with empty socket) --socket-mem flag */
- 	char arg6_socket_mem[SOCKET_MEM_STRLEN];
--	const char *argv6[] = {prgname, eal_debug_logs,
-+	const char *argv6[] = {prgname, eal_debug_logs, no_pci,
- 			"--file-prefix=" memtest, arg6_socket_mem};
- 
- 	/* invalid (null) --socket-mem flag */
--	const char *argv7[] = {prgname, eal_debug_logs,
-+	const char *argv7[] = {prgname, eal_debug_logs, no_pci,
- 			"--file-prefix=" memtest, "--socket-mem="};
- 
- 	/* valid --socket-mem specified together with -m flag */
- 	char arg8_socket_mem[SOCKET_MEM_STRLEN];
--	const char *argv8[] = {prgname, eal_debug_logs,
-+	const char *argv8[] = {prgname, eal_debug_logs, no_pci,
- 			"--file-prefix=" memtest, "-m", DEFAULT_MEM_SIZE,
- 			arg8_socket_mem};
- 
-@@ -1570,12 +1571,12 @@ test_memory_flags(void)
- 
- 	/* invalid --socket-mem flag (with extra socket) */
- 	char invalid_socket_mem[SOCKET_MEM_STRLEN];
--	const char *argv9[] = {prgname, eal_debug_logs,
-+	const char *argv9[] = {prgname, eal_debug_logs, no_pci,
- 			"--file-prefix=" memtest, invalid_socket_mem};
- 
- 	/* valid --socket-mem flag */
- 	char valid_socket_mem[SOCKET_MEM_STRLEN];
--	const char *argv10[] = {prgname, eal_debug_logs,
-+	const char *argv10[] = {prgname, eal_debug_logs, no_pci,
- 			"--file-prefix=" memtest, valid_socket_mem};
- 
- 	if (launch_proc(argv0) != 0) {
+There was some cleanup in this area recently.
+Please check whether the change is still necessary and rebase.
+
+
 -- 
-2.51.0
+David Marchand
 
