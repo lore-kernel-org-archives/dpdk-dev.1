@@ -2,74 +2,41 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73E78EF99C5
-	for <dpdk-dev@archiver.kernel.org>; Fri, 13 Feb 2026 18:47:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC464EF99C5
+	for <dpdk-dev@archiver.kernel.org>; Fri, 13 Feb 2026 18:53:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 70616402C0;
-	Fri, 13 Feb 2026 19:47:56 +0100 (CET)
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com
- [209.85.128.41]) by mails.dpdk.org (Postfix) with ESMTP id 314E2402B2
- for <dev@dpdk.org>; Fri, 13 Feb 2026 19:47:55 +0100 (CET)
-Received: by mail-wm1-f41.google.com with SMTP id
- 5b1f17b1804b1-481188b7760so11089765e9.0
- for <dev@dpdk.org>; Fri, 13 Feb 2026 10:47:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1771008475;
- x=1771613275; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=efBfyxx800HpVK9PtBscu7hbKPhGN0wWHMduwT0cMhY=;
- b=W/a0dgZvmGVC50x4qxi9tbGdXewj0NMHcOt0et4gWyf7DKEGBoExnElRrdQyH1ZJG7
- k3KexxCegwsD/+BG30VfVsmnt/zsOZ9DlXspPhIytW24MOzFTY6l3mBAQOM+vd2mlnrZ
- psBEXdsLca0pB65nt2B2eE9Mlb0uFWrJ7zqI5ZJrbMP8Mhr192RQKlCtRB/AeWHUrHGJ
- aNpTaWw5GDzz9NtCVZ8P5TOn4aBaG8JnRqnqQUdIb0fV7bPzT0Vwe1vKeHgPq812UGjI
- ghZHGDk9N5YkixDx4kQiAmUbxIkC3nDTJ0f/xHD7a5i6yuy0dgBpzyTXubRoblN1ECvJ
- GdCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1771008475; x=1771613275;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=efBfyxx800HpVK9PtBscu7hbKPhGN0wWHMduwT0cMhY=;
- b=AdNoiW+ufiED/DmpE5qFo+qxd708sLiYxwj7dlR1AcpTBDWZgeYtLdJJMEeN7W7Ili
- BgyHCsTthphDAtoAZHQsokpRC7QAo1Ii4cqjGdLXGgzOFsKxAiVS/SP17byjXqpJXFfG
- lfV394woRYC99y7PHxBn/t83uDR7cHhvj4rUdMCwPTgy2Hgd6udF2TKe9Nd+QmiIg65k
- mhhRyM7Ve8ALHzdLOU9AyRuNBjougHhB2SHn+eXqzH1YnWeO4fUMKb5gMPk/tzTomabW
- AvrXCPjcyGm32CLklRGHi+5wOzL9NDmypgYBt9WKTbBrqMRvvdZBSu+dCezge4n7QdSX
- XjEg==
-X-Gm-Message-State: AOJu0YzJ6Acudb+yaLQoApdHBN9F2cM2O8pocx4NwKnKVej3yKuHqWZK
- Y16gyzM/HlxVdI6Al1Q1xNZHizMYG3JUpZBEEQjrSO2N+Eyd4qyrFlTlaoEOlH6zMdw=
-X-Gm-Gg: AZuq6aKjYL3p4UaaV7PmtznEeB9B3cZ3oMhWtSJDj30DPPLs6bv4GAZqGlw4e2tfXJk
- MKbxPlp9rI29ptewkweS2QXMzrdE/veFAEMGbWzkOOtpYhguwzN/Oe2QZBm26Hd662yys4bAV8v
- 86W+srwA2Rh7jtbruXoEeQFIz7rEej7I9mz7CiU73MRTJjaXF/9V6uPUguQS5pLoK9Z/k0POqrK
- Ld5MVNQzUQDV1H0afBL6zBhRy+59Kqs9/s2Ux42pDiraTY1LUYoiEVgY2B5C7ChS7paraQ0Kp7f
- r25B+Ir7gK822I/A5AJNKRmyBU8lRpAz7K5v0Jg1zMQvHxfBGMtkFWOfO5p8xG29pdcWVp9WvfZ
- 8AN/5Cd7W+vy6XVYOVg6qNVsFfLCMvtBSLdcq4xyRXHRVs2+qtMtxQguFveoaw5svWVz75ZOVcU
- NJts7GnTTlathWKmhxzGW6sZHgPVrKQqDdRN1P1Dvs+1pCpkl1v6HEhRlEaFQyxWVwTYEn5fZc4
- ts=
-X-Received: by 2002:a05:600c:4688:b0:483:703e:4ad5 with SMTP id
- 5b1f17b1804b1-48373a37af9mr42303435e9.22.1771008474727; 
- Fri, 13 Feb 2026 10:47:54 -0800 (PST)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-48371a409a5sm20850275e9.26.2026.02.13.10.47.51
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 13 Feb 2026 10:47:53 -0800 (PST)
-Date: Fri, 13 Feb 2026 10:47:47 -0800
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: dev@dpdk.org, Selwin Sebastian <selwin.sebastian@amd.com>, Kishore
- Padmanabha <kishore.padmanabha@broadcom.com>, Ajit Khaparde
- <ajit.khaparde@broadcom.com>, Jeroen de Borst <jeroendb@google.com>, Joshua
- Washington <joshwash@google.com>, Rosen Xu <rosen.xu@altera.com>
-Subject: Re: [PATCH] drivers: disable comma warnings selectively
-Message-ID: <20260213104747.1044bbeb@phoenix.local>
-In-Reply-To: <20260213151559.656837-1-bruce.richardson@intel.com>
-References: <20260213151559.656837-1-bruce.richardson@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id D4E0E402C0;
+	Fri, 13 Feb 2026 19:53:32 +0100 (CET)
+Received: from office2.cesnet.cz (office2.cesnet.cz [78.128.248.237])
+ by mails.dpdk.org (Postfix) with ESMTP id 23112402B2
+ for <dev@dpdk.org>; Fri, 13 Feb 2026 19:53:31 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cesnet.cz;
+ s=office2-2020; t=1771008810;
+ bh=CGJ6QlClW6a+jL3lONMxPU8lMh8gopZbp0FdOIH2Mpk=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References;
+ b=MlA4b+kFu/zBwCl1PFgZkwk5UNT1yXtXya9t0JMltISBvOLt49nTV2qJzBDRcygya
+ BJH13tzfVlApbqR/ACHvuglJVYrLelI1BESglAORs+77LjEFemLMPoQnRRA9kwsEmA
+ +R4hHSfvsVwRiEh1yZlL19vk6em8SdY6UUWD7A5THOLVJoDNw1VY4UBB9/D7gq8Le/
+ nSYZ0f8wv75zH3pwhdcSkjmrnrZqxC1eXkvKSCboOi4z91XwQKPvuWewTei9taCnl5
+ F2wDOQNs3nItQr7pUuhdfMH1CCn0VbZuvyhEbyaMZMml9acUjOmoC8g+jj9/Pf5ZtO
+ KZmz0bapOH13Q==
+Received: from emil.cesnet.cz (gtx107.cesnet.cz [IPv6:2001:718:812:27::107])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by office2.cesnet.cz (Postfix) with ESMTPSA id D09131180078;
+ Fri, 13 Feb 2026 19:53:30 +0100 (CET)
+From: spinler@cesnet.cz
+To: dev@dpdk.org
+Cc: Martin Spinler <spinler@cesnet.cz>
+Subject: [PATCH v8 0/8] net/nfb: rework to real multiport
+Date: Fri, 13 Feb 2026 19:53:09 +0100
+Message-ID: <20260213185317.1893353-1-spinler@cesnet.cz>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260115151656.393106-1-spinler@cesnet.cz>
+References: <20260115151656.393106-1-spinler@cesnet.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,15 +50,58 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, 13 Feb 2026 15:14:00 +0000
-Bruce Richardson <bruce.richardson@intel.com> wrote:
+From: Martin Spinler <spinler@cesnet.cz>
 
-> Rather than disabling -Wcomma for all drivers, only disable it on a
-> case-by-case basis for drivers that need it disabled. Use a variable to
-> do so, to avoid issues with compilers like MSVC that don't support the
-> -Wno-comma flag.
-> 
-> Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
-> ---
+This series implements real multiport for better user experience.
 
-Marking as deferred until Intel driver fixes hit
+The existing driver creates one ethdev/port for one PCI device.
+As the CESNET-NDK based cards aren't capable to represent each
+Ethernet port by own PCI device, new driver implementation
+processes real port configuration from firmware/card and switches
+from rte_eth_dev_pci_generic_probe to multiple rte_eth_dev_create calls.
+
+---
+Depends-on: patch-37245 ("doc/nfb: update release notes for nfb driver")
+
+v8:
+* removed double usage of TAILQ_REMOVE
+* added "ready" bit to private struct for syncing of the data
+  shared with secondary processes on init
+* added "ret" to nfb_ifc_create_params for use in failed
+  nfb_eth_dev_create_for_ifc() called from rte_kvargs_process();
+  now returns the right error value
+* added bounds check on queue and MAC indexes in mapping
+* added bounds check on queue index in queue setup
+* added NULL check after rte_eth_dev_get_by_name()
+* added errno check after strtoul()
+* added integer overflow check in port validation
+* added comment with usage of separate nfb handles 
+* used base 10 for port number as strtoul() param
+
+Martin Spinler (8):
+  net/nfb: prepare for indirect queue mapping scheme
+  net/nfb: create one ethdev per ethernet port
+  net/nfb: add vdev as alternative device probe method
+  net/nfb: add device argument "port" to limit used ports
+  net/nfb: init only MACs associated with device
+  net/nfb: add compatible cards to driver PCI ID table
+  net/nfb: report firmware version
+  doc/nfb: cleanup and update guide
+
+ doc/guides/nics/features/nfb.ini       |   4 +
+ doc/guides/nics/nfb.rst                | 187 +++++-----
+ doc/guides/rel_notes/release_26_03.rst |   6 +
+ drivers/net/nfb/meson.build            |   1 +
+ drivers/net/nfb/nfb.h                  |  57 ++-
+ drivers/net/nfb/nfb_ethdev.c           | 487 +++++++++++++++++++------
+ drivers/net/nfb/nfb_rx.c               |  33 +-
+ drivers/net/nfb/nfb_rx.h               |   9 +-
+ drivers/net/nfb/nfb_tx.c               |  30 +-
+ drivers/net/nfb/nfb_tx.h               |   7 +-
+ drivers/net/nfb/nfb_vdev.c             | 107 ++++++
+ 11 files changed, 672 insertions(+), 256 deletions(-)
+ create mode 100644 drivers/net/nfb/nfb_vdev.c
+
+-- 
+2.53.0
+
