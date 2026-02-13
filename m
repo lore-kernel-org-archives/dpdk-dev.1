@@ -2,78 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FE5DEF99CB
-	for <dpdk-dev@archiver.kernel.org>; Fri, 13 Feb 2026 19:16:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36821EF99CD
+	for <dpdk-dev@archiver.kernel.org>; Fri, 13 Feb 2026 19:20:46 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 446C0402C0;
-	Fri, 13 Feb 2026 20:16:44 +0100 (CET)
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com
- [209.85.221.48]) by mails.dpdk.org (Postfix) with ESMTP id 8CD9E402B2
- for <dev@dpdk.org>; Fri, 13 Feb 2026 20:16:42 +0100 (CET)
-Received: by mail-wr1-f48.google.com with SMTP id
- ffacd0b85a97d-4362507f0bcso1017761f8f.0
- for <dev@dpdk.org>; Fri, 13 Feb 2026 11:16:42 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 8D180402C0;
+	Fri, 13 Feb 2026 20:20:45 +0100 (CET)
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com
+ [209.85.128.54]) by mails.dpdk.org (Postfix) with ESMTP id 7F52E402B2
+ for <dev@dpdk.org>; Fri, 13 Feb 2026 20:20:44 +0100 (CET)
+Received: by mail-wm1-f54.google.com with SMTP id
+ 5b1f17b1804b1-4837907f535so2624915e9.3
+ for <dev@dpdk.org>; Fri, 13 Feb 2026 11:20:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1771010202;
- x=1771615002; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1771010444;
+ x=1771615244; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=AfOz/bV6jJw2u3j6IsdFg+FYf3i5PIR03Brgdoxk3C8=;
- b=G53z0Z1wC6gFxndeAmH6GUOZCVf7ykb7uut2IB6YPYYfsSsKJeDr9T76GrYXrgutk7
- UHMxabwUAWdM/9nXWK1iRnl4GvpGazZjv9a+tw7pES2HHj4D0QQ7oNjM1/uJb3aNdIS0
- H61vvyX0kbMylTr0ARWzj6mXqbBh1NWQ161MKpo1OrGNDVcFCAk0nJhd6MpbsIVBUI7B
- syriX8j0T8lz2fkqXPfVT+kaVGT+Os3rtaSA/wwJx8DHkbu+6Zq3y3dfQ75b9iGsI0vO
- hLVti0U8mfjGdggWRX4QgUi7H3WapbuVDjYFeVLebrcX9+F32fEsEKBVkBNA+iNVhkq4
- 8ZLA==
+ bh=vWzMgnC7XXlU0TrtHQHYUh0LPyIo6gIa4nFhsY4pKlU=;
+ b=idPBV9Z5LafoeCCbYf1z2oFbqKVrv71VWK9uBezGsfFyCzSL+FVTtyDfxv3o22mom0
+ 1uTHvEePo+Ppif45HpD0KGVRzAbptfgTIgO0d8C9GHrOai1S5aVTMV6PkC1cjBzc45jw
+ 9vRMGBxGWyKvE9LzMOYrzylI4wHzXTOPvffIdfpC0D5oALAcMVvQARdGTl4hforVi7Ha
+ R3wvi8HxkB3i60YLajZjA8dT8tljtFvfYSUc+8v1M7/JSHJk/tY+9/lfbvOh13vjmLk9
+ 3LzBzUVcqbjrE8t4Wz1rrf413wglFw8lb9Jqus4Z0XZXwqWlhAofFbVrr1XmQoCiq07A
+ CiJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1771010202; x=1771615002;
+ d=1e100.net; s=20230601; t=1771010444; x=1771615244;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=AfOz/bV6jJw2u3j6IsdFg+FYf3i5PIR03Brgdoxk3C8=;
- b=bLSmi0v1NC7G4hovAEzkrStkDdG1uh+ta8bajngrWl05eos9luokFTpa8Ew5Bb2oN9
- rEfOKdEj8zqeZGsV2RuFcuRL9gAzVX03CHm/AWy1kSDAYzL64Qkv2fBms3/wn0KGUd+d
- FjV8iEJWQMYs59/DdTCstWh7mci/mmAc5PKgApsoucr8j7RLjgSVVCYTbKOSfr2sK9gC
- ZR/SmdZvMWtTeO3XknHdaxlXZYqQVYDMYPfRAViLyS21ud0ffE1aWeSRS8kMbsed+gyK
- fOryM8tjzIl0wmr01WRu7mly4ZSVeL1n4IgtOcFt4VGWGNLFmzjn5i/HxKRZ7MiJzwG4
- u0vg==
-X-Forwarded-Encrypted: i=1;
- AJvYcCVU/q2GfTM++YnI8tdjMGdDju0ClO4xmvYXSIJiMrPM3Wtfk2csH1JLPqOIuzArzDquZ+Y=@dpdk.org
-X-Gm-Message-State: AOJu0Yxzs6Tm94GVIuNeLYWGs42+PTfbMoJnf02h1ptwpIU4ImCYl7Oh
- 6YZ/cd6Cj8bzO4aQn3JSq5dmx5oS28Hcy/CWhDACVhOnm7jmJ+vNA82/6o597SWhtRY=
-X-Gm-Gg: AZuq6aLm0YQRKmbgyeI4Lj/wbqjC2lWZerJV1zVVsn4MEcriQGpYltpBQjcZ/CL7/XV
- k78RyhYDSnupX3STRyQJDPlHVBIwGRQXR19xqnIU5szaH+BxTc3Em0fl4gtwHKVH02mlKPNbH5n
- SfbozRqXrKoXSWJArljFY8i6HhKDg+Oqf8fjVHFtwXdq6gKBvy8gG5RRNpp8+0H4nsyaSG2AXJ1
- LrizOEnUfpnZfbIj3gbwvsr2OF29Llcv/uXMYAsHPS+owkQF4U7YQ5Tkar+T8ukorsAPUCvFU3+
- WSbJADzGIvwPEHc7pfJVfLR6DAtredoHYt1q2BrKC4rp76qbEwt9s3XB75P7wPqe4j4c9pQSDAF
- yXD+n+wN/0pJBLa1IwCK89GFVIARGjHfkwky3ydZoMiIKyDiNqpgz/dU1tlNC3LFyrY+C4sjPkE
- iIbHPZp+WfY1vF3KJNSlTGJaCLuWifVNKln13iwRKBXaKzY6gvzQsKADscWu3k8jvg
-X-Received: by 2002:a05:6000:288f:b0:437:7010:1cfd with SMTP id
- ffacd0b85a97d-4379d5db5a9mr2580006f8f.4.1771010201983; 
- Fri, 13 Feb 2026 11:16:41 -0800 (PST)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ bh=vWzMgnC7XXlU0TrtHQHYUh0LPyIo6gIa4nFhsY4pKlU=;
+ b=E5aV16jwDrGOh2hiuFaMoLrK0A4xE/i4Kc/gZuagyRWBnbrmh67SULE5p8GRJynn/Q
+ Q8hs0lZdyFdrvaucO0oRsf9ZBTiKub0DeAZrSqSpaystkXoNYDbMFRLEnSXhBeaM4r4Y
+ hJaMQAQMCiaufbGutKPf3G+LHWRUAqmP0YOngPd0aWqWhVm1PJ9VhGQk5AGx6dfxC27/
+ 9B7umllLCv9HffWd4jeEU0lw6PHtnaxJSQGUhHalt6zkFK+8ANBijyh3N4yc8h9Pa8Ix
+ 3mcjQc1r9iOmVIwnJiDfpPYI9FLWqpVPMpiJSvBpQ7ypCCU2T/qdJgKuiqLUdFRuNK0I
+ Bmlg==
+X-Gm-Message-State: AOJu0YxGrTWErfD5sSeq1tX2lTmMwCBMZLDxknvJIs/GJQMRyAXxI7/q
+ WN7kRnDH9BIu93moPRamR+coXYcUj7xA+j2a01ImaBsj+xpjB6fqCBffyBS22l0dK0e7u148xwS
+ 0e4qt
+X-Gm-Gg: AZuq6aI17etHhPl4HVVjDOF84C66fy3mlOoK5++UT7G68UjN1QmEDPh9nXFAwAAh8s8
+ mMJVpauOSVn9dxnNLPUh5J3YcuZSEv3841Sy1LiNEykoKDXz6Z7n7ujOmmtkhzdvCaBs5JEFXwE
+ w4Pi6W4E8+XRO7tqiL8oFFfNVvDdquVPEU8ZOUA90yEcDdY9aDqs9GzlSCcN5aMEGMuPnNK+lAj
+ jWFrBrjPmL+clrJUn3pgZgW+uJZ6XZ5xhu8qwr2ZiSjXUe4279K481r99tyP+F+aoSxmgdkKYeh
+ TdyFF6K8kWD5v51eor1ZXzexCjFok2Od+XXzKR2Gy5AKXHnkeyUBWf2GUILDF2LWUDM8svik+fv
+ Ua96siEryi5YetUGIwuZSMV6LpE4siavSOoMNRY5FqHFP4He172nQTBk8NfEb1V7Y5j45NUB7XH
+ lpFbge21UFy+DjqE7vF7hUqD7SSmZccj/jbHBScJM1dTUC+uUIkA+Po+oXRRDYjQ==
+X-Received: by 2002:a05:600c:8b6f:b0:45c:4470:271c with SMTP id
+ 5b1f17b1804b1-48379bd7409mr5158755e9.18.1771010443953; 
+ Fri, 13 Feb 2026 11:20:43 -0800 (PST)
+Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-437969fd36dsm7768611f8f.0.2026.02.13.11.16.40
+ ffacd0b85a97d-43796ac8d82sm7758723f8f.31.2026.02.13.11.20.42
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 13 Feb 2026 11:16:41 -0800 (PST)
-Date: Fri, 13 Feb 2026 11:16:36 -0800
+ Fri, 13 Feb 2026 11:20:43 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: =?UTF-8?B?THVrw6HFoSDFoGnFoW1pxaE=?= <sismis@dyna-nic.com>
-Cc: Thomas Monjalon <thomas@monjalon.net>, dev@dpdk.org, Ori Kam
- <orika@nvidia.com>
-Subject: Re: [PATCH v10 3/6] flow_parser: add shared parser library
-Message-ID: <20260213111636.45d01a2d@phoenix.local>
-In-Reply-To: <CAPQRu6EAKR59BGgRFAr=eWuQr+=3z14+xdCkbZMvfhM5K8bN0A@mail.gmail.com>
-References: <20260202113659.24052-1-sismis@dyna-nic.com>
- <CAPQRu6Gb0tMH6f-5T7_vCVK23mAkEOmXn-T+X_DYaWsNZdYtjg@mail.gmail.com>
- <20260204065338.0fae67fe@phoenix.local> <2762564.TLkxdtWsSY@thomas>
- <CAPQRu6FR+RojmsKhcsegastxJHLBAbmtx5Qurg79Wn_w94yYpg@mail.gmail.com>
- <20260212164341.074639cd@phoenix.local>
- <CAPQRu6EAKR59BGgRFAr=eWuQr+=3z14+xdCkbZMvfhM5K8bN0A@mail.gmail.com>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v7 0/7] pcapng: fixes and improvements
+Date: Fri, 13 Feb 2026 11:18:17 -0800
+Message-ID: <20260213192039.221213-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20260126210615.175816-1-stephen@networkplumber.org>
+References: <20260126210615.175816-1-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -87,23 +81,48 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, 13 Feb 2026 08:46:04 +0100
-Luk=C3=A1=C5=A1 =C5=A0i=C5=A1mi=C5=A1 <sismis@dyna-nic.com> wrote:
+This series addresses several issues in the pcapng library, improves
+test coverage, and updates dumpcap error handling.
 
-> Ok, I can move it there then. Should I proceed with Patch v11 - that would
-> include moving the ethdev directory and addressing the kernel's checkpatch
-> issues?
->=20
-> The initializer doesn't seem like a bad idea. I didn't know about that on=
-e.
-> The parser_ops are not needed for purely parsing, but to remain compatible
-> with the testpmd's code, which is using, e.g., the hints on the commandli=
-ne
-> I added parser_ops.
-> The simple public library API is for converting strings to rte_flow
-> structures,
-> the parser_ops is for hooking up the testpmd.
+Patches 1-3 fix string handling in the pcapng administrative APIs.
+The pcapng format uses 16-bit length fields for option data, but the
+library did not validate input lengths and used fixed-size stack
+buffers that could overflow with large strings.
 
-Testpmd can change as needed.
-In general testpmd shouldn't be using "special" API's; that would indicate
-a architecture issue.
+Patch 4 optimizes timestamp conversion by replacing per-packet
+divisions with precomputed reciprocal multiply-shift operations.
+
+Patch 5 improves pcapng unit test coverage with varied comment
+strings, randomized packet sizes, and 32-bit TSC wraparound
+verification.
+
+Patch 6 fixes the test build dependency so the pcapng test is
+skipped when the null PMD is disabled.
+
+Patch 7 improves error reporting in dumpcap for pcapng API failures.
+
+v7:
+  - Add meson build fix for disabled null PMD
+  - Add dumpcap error reporting improvements
+  - Update timestamp commit message to describe current implementation
+
+Stephen Hemminger (7):
+  pcapng: add length checks to string arguments
+  pcapng: use malloc instead of fixed buffer size
+  pcapng: chain additional mbuf when comment exceeds tailroom
+  pcapng: improve performance of timestamping
+  test/pcapng: add tests for comments
+  test/pcapng: skip test if null driver missing
+  dumpcap: improve pcapng error reporting
+
+ app/dumpcap/main.c                     |  36 +++--
+ app/test/meson.build                   |   2 +-
+ app/test/test_pcapng.c                 | 151 ++++++++++++++-----
+ doc/guides/rel_notes/release_26_03.rst |   9 ++
+ lib/pcapng/rte_pcapng.c                | 199 +++++++++++++++++++------
+ lib/pcapng/rte_pcapng.h                |  12 +-
+ 6 files changed, 307 insertions(+), 102 deletions(-)
+
+-- 
+2.51.0
+
