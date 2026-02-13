@@ -2,141 +2,90 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4743DEF48CC
-	for <dpdk-dev@archiver.kernel.org>; Fri, 13 Feb 2026 06:35:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9429BEF48CC
+	for <dpdk-dev@archiver.kernel.org>; Fri, 13 Feb 2026 07:46:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DBAA1402C0;
-	Fri, 13 Feb 2026 07:35:45 +0100 (CET)
-Received: from MA0PR01CU012.outbound.protection.outlook.com
- (mail-southindiaazon11021084.outbound.protection.outlook.com [40.107.57.84])
- by mails.dpdk.org (Postfix) with ESMTP id 0C0A4402B2;
- Fri, 13 Feb 2026 07:35:44 +0100 (CET)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=j0RC6aWqHzeJvuvJcnvlCbU/pu1G4HRCrBIvN+lyiYJ1tU2/SSv10Vro4yraacusMwEXwOHZt+GM5tJ6Z4naYKUc42b8TdOa1h1R7GtuifPDd58ZR2wcKbQcV/0aF021kVstg0KdBq/OfwjD0DGN6yBw2IvqwF7teXFBRaSwLNGCeqHA/WRbw/eU+t+kUo+pCcaEJ5cqjZYNsO4aYe77o/IBvnbLa6BreoZTtTlu6ddvYYGY+pBPhYdrRswH9aHF/bfcZHoQZfVbo+V/P8YPBTiCilrTeY5btchERBsiG/Sw93DNzMq1yLHgUu07uiQ/07y1FDsOu3+Q3/b5e+op7g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cy0K6mqrb38W5GvAxNpMFohV29DZvWlzzGEWImkNqS8=;
- b=T9K2NFTeFF3FjjJ6M+imsrlLaQQmuwZ/jEmlWinoL0R9Ywzg1BgPQG29Olp9dRTyoi8/Ti9Yhg5DqQX24FJEDNMXGoit/t8XYogOkOzRhlcLMTqeM73gch4YWxPvjhfkdyQNyFS/Ii0eMe4opvnbispUj0BmL9LLfvyFWihjzJ65+bKHCYSqtAvlUPYP3EB57sZwuaenet1GzzG0MhIkLEbCUcrXaS6VAJ5o0BRPb0FY2x2Z0eQs9DwRIbmgbkTl9rviop/VSICNdHKMndWfBklyBebS5d5/x2qIbRzN8o6ZYPfnuGfRL3IZwhWNuNA/MeKQUl+UJr92xp2Q2T/r/g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=iwave-global.com; dmarc=pass action=none
- header.from=iwave-global.com; dkim=pass header.d=iwave-global.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iwave-global.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cy0K6mqrb38W5GvAxNpMFohV29DZvWlzzGEWImkNqS8=;
- b=XwvQc1jSUSMhczJXoiV1BFDSvntDbnaruXZbIQRNPYOwbhiWfCwzgaafRojCEowWH+qLYs5lIZDj0YaXqwEuaWLjDbalR1cbfGalW/X39cvAtFbfVdgqKoXHh/ZEhyeUGx/5nvmEmOuBVT1c3TzQZED6IdD83xmFhbViE/xjBZ6ir0VuIQqSHo2+UPTQvlA0DSXr6pluWJ0tqndmONs0BCaM/tDbYCUMlpeZXqHxaAbU7l7FUW54iIE2HCnj0oB6TI76g+TZKbBYYZ71LqWyGujmG8Tiv51uA0/M0c7gyzOlG+O1mW5bCfF6y01/3jjxDAWleeEnWLDirdIopF4KGQ==
-Received: from PN0P287MB2531.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:1ff::6)
- by PN4P287MB4722.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:2c6::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9611.13; Fri, 13 Feb
- 2026 06:35:32 +0000
-Received: from PN0P287MB2531.INDP287.PROD.OUTLOOK.COM
- ([fe80::8024:3f32:d2cc:1309]) by PN0P287MB2531.INDP287.PROD.OUTLOOK.COM
- ([fe80::8024:3f32:d2cc:1309%3]) with mapi id 15.20.9611.012; Fri, 13 Feb 2026
- 06:35:32 +0000
-From: Ayshathul Thuhara <ayshathul.thuhara@iwave-global.com>
-To: "users@dpdk.org" <users@dpdk.org>
-CC: dev <dev@dpdk.org>, "yasu1976@gmail.com" <yasu1976@gmail.com>
-Subject: Guidance Required to Improve Throughput on ConnectX-7 (1x400G) with
- DPDK v23.07
-Thread-Topic: Guidance Required to Improve Throughput on ConnectX-7 (1x400G)
- with DPDK v23.07
-Thread-Index: AQHcnLCS62jGM71/gkmd9SnnzdDRGw==
-Date: Fri, 13 Feb 2026 06:35:32 +0000
-Message-ID: <PN0P287MB25319528772B121E0E380747C561A@PN0P287MB2531.INDP287.PROD.OUTLOOK.COM>
-Accept-Language: en-GB, en-US
-Content-Language: en-GB
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=iwave-global.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PN0P287MB2531:EE_|PN4P287MB4722:EE_
-x-ms-office365-filtering-correlation-id: 3fdd242c-e36c-4913-1952-08de6aca166d
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
- ARA:13230040|1800799024|376014|366016|13003099007|8096899003|38070700021; 
-x-microsoft-antispam-message-info: =?iso-8859-1?Q?1bJCvo3Jd33+Do+1Tzasg+Cr/A2mwksWkFEp6+Rrua+Tgg1azwSOOwlu9F?=
- =?iso-8859-1?Q?wHkSaJCgoVPFD2iGG005vgZv+AI5u1TOgKLJW7r+Bm+7jz/+U3U6v0plCI?=
- =?iso-8859-1?Q?i++MLDKJs+xkXw1aiXLImJZy1MznkH/UXBqA1KHVIaAVFYc3YU/XJk6cz/?=
- =?iso-8859-1?Q?MBxzNpPmFp0UPpH+94c5TT8jApVBGjBK/tvM5pb4ebMzBieCL2hFLNjvbP?=
- =?iso-8859-1?Q?lr8uA6CyxGLVi7DIl4FrTcPUe0UfrJDF8UVd/hYAYOmWfWEqfs0z6todUZ?=
- =?iso-8859-1?Q?bKYHyDn80GiWd4ivnH6Chv5Iu9rcFQISb8BtXp4TzfeHjB6E7R7BQcFRXJ?=
- =?iso-8859-1?Q?FYL5RVBkAJEaQpRkp1bMjm45Ndi9rSmMY0m2mf8miLgdBCNuKkkhG7DzfI?=
- =?iso-8859-1?Q?Q1v23uSBD60ghpuVrI77R6sRx0zW2UMBUa8lNZNgBn1zp/kxuQnklHtahd?=
- =?iso-8859-1?Q?tj+26mSJcnEQiPUeQ8fb600b7MmeaFkk5iCFzFV33nrHimbmYydLCeSgn8?=
- =?iso-8859-1?Q?6PSkesqe4JFN+jPV6Atf2wpHqJeHrIHVXeBbGbaTTusb+X1+zSGcqcw/Vd?=
- =?iso-8859-1?Q?TwyHRlFyQhWXEF+tKgaHj3mXctPXLhQIeKgMzYVQm/gAlbRjvYoTDYGqw3?=
- =?iso-8859-1?Q?MLmzN81EAlPt8Ls16UUwve/5ZtMBH91KT2vDhLBJ5CKPYu5JkjZOsXxM9a?=
- =?iso-8859-1?Q?KQRq7DT9Cb0TWLz8BB3CPQ96aQVpB3CVyVykRm3BOs4zsnmwn6BREvKwoP?=
- =?iso-8859-1?Q?FIwy0XJYUpjYZHEr06xGBeUixHLb1NmcyDBANSw87bAOlvaUsxDe0SQPDs?=
- =?iso-8859-1?Q?W9CvHpNLhlxwtczITEAEhMMyaeeWcRwDgky6angM2xrSHeOYoFwDPQwMzO?=
- =?iso-8859-1?Q?2+wwhKS9+DgSdJyq2h/604mm1CFtIhrRI+xyPfQQsQSc+sbIhVpBCktB1l?=
- =?iso-8859-1?Q?fi6cO28Mref8aJ6LVQuxqalyjpMvZnRId35YC8fJQtmc+keX64lQxQItYt?=
- =?iso-8859-1?Q?clH4yeBDVcaliCSgkE5GNgSbdRsiAXnu1hz2IapEAsDtJMvdSGHZm28tui?=
- =?iso-8859-1?Q?8QgqP9HFjVxocbV7uOVOVLBUwjcTbMWdqfMM9s+2xqGDdC5sYqqoLhxMXk?=
- =?iso-8859-1?Q?nnd0Dxzf7hMEbeNcP3S4WWEv482HhICDruSowky8khoSb7HKUx5k5rbYvQ?=
- =?iso-8859-1?Q?eb8TfeyhiPo+vPFOD6Wmj5ECv1kYNSQWZtVVEJ5EiTP6iqjcPVjBx+2fVs?=
- =?iso-8859-1?Q?Gay54xkVORD3cFZhb6p4yKLuxondh/08x9xZygHkwwsQDJ+RfQGEvYOzfk?=
- =?iso-8859-1?Q?I7S3rrxYiiVAy+b5+llSWUAV7gxBYIzVo5J7BfI1Yo+PruWIF9LmjITsWA?=
- =?iso-8859-1?Q?x1qGiDEqGKvtsj7O0VJ7t7sVTVzIMebc7ZHuCqLoI4s1P1fKn+LQ8xuFf7?=
- =?iso-8859-1?Q?LXBhjlXrI2PAV3yBZ2/6oMecgpI0VDRsrUC0PUWcUBf93YI/10dnN+GnBr?=
- =?iso-8859-1?Q?dUkQ27Ttc/k6mqYU9WU+2OjmlOzZT+lE1CBrO2CszPBOnsw/4YpRYzUEtl?=
- =?iso-8859-1?Q?S8jCkVkJPbj6TorkPLjYuw+KB81wFQwlmh+KlcrThY4MFHzn+Bqazxom85?=
- =?iso-8859-1?Q?9Wq1TCrlv8cp4sxk/WgbMy0J2Aj2Xqwn0e8uIirF8htkPQvmaAB9NgqVqh?=
- =?iso-8859-1?Q?AZCd/r+5MiAiv1RH204=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:PN0P287MB2531.INDP287.PROD.OUTLOOK.COM; PTR:; CAT:NONE;
- SFS:(13230040)(1800799024)(376014)(366016)(13003099007)(8096899003)(38070700021);
- DIR:OUT; SFP:1102; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?0WIEchrC1UHO2VMP1pF+wFkC3qHk9ix9ieKQtCOWpHjDTI5/uj89uRn1yr?=
- =?iso-8859-1?Q?GWa4tWbfd5pWp4Pp+qm6/qVbOtZtOgQS8lqdWQnhKolnrk1WDVmOAEn5Wj?=
- =?iso-8859-1?Q?meHXsucW1oK9IHlwuxNroyHpISBSJsOWpN1/vE79LNNOYkOIQBlD4JIKsx?=
- =?iso-8859-1?Q?+n7OifatqLvcJoZwC3WUxfqNe/fRbw6HU4mvP8IgK1P+YaFOM/sJHdU3yR?=
- =?iso-8859-1?Q?T7KOq3Qv/EXYmB7WHfMnlSAPlgMbKgehJSrSCToQN6K1nY460GOZsmvGgh?=
- =?iso-8859-1?Q?Pcm9arPzCBFKNtDyrubt4bpAnO93NskfwQ+/UbbrZG4NvJm8kHSw8Xnp1Y?=
- =?iso-8859-1?Q?qTAdaZPGW0gKKGXMeLNhwJBlpME9yOyggJFVdFE97MheGCmLvGVMb/ym6K?=
- =?iso-8859-1?Q?Conxfiop3zo1isst2jx3+mA71dB8dJkIzSyiUkGOtXQvYtURVP6ptdE4Bp?=
- =?iso-8859-1?Q?GntZjWljGr+SxUczHuJTpfnu10f0R0mbwYrioFRbmXRaqYaHlaHCjszfci?=
- =?iso-8859-1?Q?7BlMgcTOGha+/12/es/KhZyOBAzyYydocFgRPIDztXGuLTMRVhUht6SWVM?=
- =?iso-8859-1?Q?jzryDu3/U/Cw5bH0cN5IJJeh6qTegRy4Mi/y3eFsw/KyT4HgOwecxEwJah?=
- =?iso-8859-1?Q?BqCbXj9qWTp8SxW4oa08di+3CbTTBr2wyc6lYYuI5EE+T9xox1kx3JbCnc?=
- =?iso-8859-1?Q?r24iLvCvfNd5BJ+oIErG8/bp/vaX1j2uiS9rllcEuwXFyv6iF8B6dTW88i?=
- =?iso-8859-1?Q?qt55h3OiYynTHjVrPiwdD2szOYnZP/q66sHMFgDEthxC5N18TzLvI2IjAg?=
- =?iso-8859-1?Q?lTUoFhMZKumGpD8gfNdSaVOWUddDLPdPitx7Vz9jvNqY3oItVqLQ7T+iZe?=
- =?iso-8859-1?Q?UDC/+hzGycFE/HFD8TCAwfNfAD5sh0/E2TSgMmWC0N1/HXpdmmTadz415l?=
- =?iso-8859-1?Q?JMWOk4qDT7BipZmgM2KGO1ofm9Xxp18ayg+rglxb6DBNFwJYU6rhtMfB4A?=
- =?iso-8859-1?Q?SaDjabZX4xQYgG6zFdkiXh5Xcqmp/FnfvrqUOy9ZgZ1bYG95QmHlGz8bjd?=
- =?iso-8859-1?Q?bXH/lf2rENS32sUjCxB+0Kq+GA6jyeRTI0zxBPvLMmcPpZz2+IBT56N2QI?=
- =?iso-8859-1?Q?aUWGoRvNtuXocXnrUrH1qwNfjjhaY2erGoep25OvRdUWTAjhZN9K/5S9uE?=
- =?iso-8859-1?Q?4frLfXdfL4HWt9D7g2PJj7laTLV+I5cNuK07slXhAwqCNfFE6GGH6CnL0Y?=
- =?iso-8859-1?Q?ZVx1fo+2OUQRzXou3CTmEd7NYaGorxdtdt9KDirPD0vHbtsIxuMcPWaY8r?=
- =?iso-8859-1?Q?R5BnWkAYNZ7XTd6rA7QFFwCbr1nyFhjFUg/8e8ES+7EtQVS7pkmyu6650V?=
- =?iso-8859-1?Q?CoQzF9dW4I0UmliOdT24tQkaKPRl15mfN1k78ZFIjzkBu51Za/QpThpVj1?=
- =?iso-8859-1?Q?yP19SUMWeBTTZQ8bvoNUcW2gKYS2sta/e45fUMUG1HzkuozVmd5ineE2oE?=
- =?iso-8859-1?Q?fx7+TPLULbCqJh79QZtDsT+nvp4NRz8rAv4uR1VCsBEN21ohuddGGtQLhv?=
- =?iso-8859-1?Q?43xvhvrcJb19K7dZ/y9TVDmVYkzKdHXTsNeXWswls7GlwDiCq1i37oxVnf?=
- =?iso-8859-1?Q?lATZxEXZvYWP+QUta7DYlD7PY2uayVmo6mHB3n2vrtXlrpCWgfaqTA6DKU?=
- =?iso-8859-1?Q?3/Rs1FQT+zpXxTdqX1X8UvAgii5EHOBBjN8moS2r04ennV+M2q0jzj9Le7?=
- =?iso-8859-1?Q?cJrOLOOgmFYKn4we/4GcG2mWM/qjrargTBPi1p+wi4LodKQ/8JXQc9wB3o?=
- =?iso-8859-1?Q?b0hnkmBabMon9l0bFVoJzJpDXmO3lRQ=3D?=
-Content-Type: multipart/alternative;
- boundary="_000_PN0P287MB25319528772B121E0E380747C561APN0P287MB2531INDP_"
+	by mails.dpdk.org (Postfix) with ESMTP id 71160402B2;
+	Fri, 13 Feb 2026 08:46:17 +0100 (CET)
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com
+ [209.85.208.52]) by mails.dpdk.org (Postfix) with ESMTP id A8787402A9
+ for <dev@dpdk.org>; Fri, 13 Feb 2026 08:46:15 +0100 (CET)
+Received: by mail-ed1-f52.google.com with SMTP id
+ 4fb4d7f45d1cf-65a196a735eso1078221a12.2
+ for <dev@dpdk.org>; Thu, 12 Feb 2026 23:46:15 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1770968775; cv=none;
+ d=google.com; s=arc-20240605;
+ b=gjgYexTnLm+ZhtkV7MXMmo3oZuXsBXP6LOuy35Z3LIXtHYTWxRGrrOIkQtYePljfjM
+ IBaezzqKrruxspJ+mn6wQQIh1W9ZEtTYcwtOp7B3BSwVcr5akx/SEWhapDbQvgGC5qUL
+ MbDfKeYkk+4Rw0LavHSOoxsxBmVqC7O3UA16pBn1nh3D/nBxa7yYt3csuNGHh7DXgvia
+ 9V8ks1sb4wd+iOBr2lzArYkY8Gu7aKQL3Weye2G6jizn5XBK+LDAnCcXuTGMPa5TWiuj
+ qruXn3X7pIcve795Yv5Z+YfHrU+aAySG6l+HD+mXpJvRolnhoJAeOA+xRFPKpNvsnF+P
+ tOAw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20240605; 
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:dkim-signature;
+ bh=fBP29DYjE9aiBdDy2z31MDBDdimoHhv8CDVSro8zrBE=;
+ fh=t6yFjtfEoCDwX6CqpesggVS+igo7WTpqyOV9dGSh1F4=;
+ b=hNT1DKzPAFYPNcIJPeIoJw6whGktPfgeEPxe0ET7Kj7o1Ln05neqW+QVdEqXyLiEjj
+ 4DCx2H778Ksg/xVhhadBMHpduB2WlPqmxkIFNLRgjsVe5t8JA6OkD3KMY21rYg8xaDJp
+ AocB66Dgc9cgEUI/9sIlzCRiadbm103ySVc534CdfFmlI1oAtllUFQEXYCdIdMMtwaO2
+ IzYqeJOajcysgFtZVmACtwP9hnzPLbrJM/AIMuPjOEfYqXTjhhCkSDyRjHfbTxmPq9uj
+ 8hQKn1QYvbeyFQLGUqq2emfoBbFk36S4lGWdTj0sR9IxF2aPlDMBvjFdJhpS3iCRfzoX
+ 6ZFw==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=dyna-nic.com; s=google; t=1770968775; x=1771573575; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=fBP29DYjE9aiBdDy2z31MDBDdimoHhv8CDVSro8zrBE=;
+ b=CHVH23wSyrLjsSbljkscHayny05tFnHMcsL9RZP8MfyPW/qGK8ppmyy3UB/ghncwlE
+ ExCACD1v7NREhmht1tm+mZ1izduWyvonDKqfMnwDTQYWcTif2Ji3RkLWGZAb0eKjjoeU
+ UKRF6VFVtbcojtJaR1TkmFAwHEeHT+PjYEZGJLihpUHCuA3W6hbo6ALMAYZx6tJioy2j
+ TwLwxaDo9H/WFHyngzuBsmRtDAegDe9mgiT4DdsvmsRI7vIYmtg9JnYmRlTK4c5Sblke
+ UT3uhvG+PYQXuWf+ybo2lY1llRVlVkivsMn7zu7c9Xx2vZJMppUmmPvBWeftVo7CNBnN
+ cpIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1770968775; x=1771573575;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=fBP29DYjE9aiBdDy2z31MDBDdimoHhv8CDVSro8zrBE=;
+ b=B6SHV+vPwgMXppx0nnh3Oyq/Z9mI1dofRrdGVoycYMTlgzkRmaGrxvfaWBvXamstrH
+ QpPgoFx7xBA4oNB/ECBhsa4fVgi249wL0mcAyr5gALoUio3xn7lp/KM7vS4ni93/Mvw2
+ h5qT/3aV/FMdPkcj2f3q2Z8XJVJowBD1lfBQyRPU2GTD9uCytjYMwsBKJsXs63x09xZI
+ wm4YA1YwXqECDZaMj3HeiRG/OTmKgPn/K5gj3fKCnhgZCyAR0NUG785WOY4S7XoXHl91
+ wclIPV6SxfOgh/NK324a850RI1iGSgoUmxcJcXE8skveLXo9zEQ3aJPRHPJY2swShmAf
+ Mi8Q==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCXIPs1n3uD+8nUmYs2i3xOr16Xo/VvgGLT8dP8HzC1WKQGLtxsZrJebmi88TnP8cUzRpSQ=@dpdk.org
+X-Gm-Message-State: AOJu0YyXUT70+0fAfzSKlfPJK+cqC6yblZnaNDmPhzVPCmG8buwuf6KF
+ WF/jIf1t9K+K+clZONkZRv4I5CUMuPCBBX5nhm5Tfj3A9GL4SU03aSt/v/OWHst7XGu64cTVCky
+ tQy3xwR9WkvM1P0jRGeK1h4AvDejyWPvcarF73woQ0Q==
+X-Gm-Gg: AZuq6aK2nOzTHxqT8PDoAFfs+IiQ6gje/kb8Kz6i97yqHlazKzmF7Lo9mYCqbrUf+1t
+ Sy2cenRiBWyV5TuC2+4AXHLxIIceRR4dtq64gEs0NsOo0iPIekdrTQwi6MB2GIy65+h3SeGz8Kt
+ M1P321itghPLCUN2XxxZRL/fYXyUPX6FiD4VYV629oxEqCLEXt79VNhGJgC8XVJAWqfG87AjRJi
+ +vwXzrCV47GjabiJVDtf/8ijZhfiyHlBMeEMdRghDvwGyu3rrsqjasExNo0/mCxAG5foFbzHJL6
+ rR+tbBs=
+X-Received: by 2002:a05:6402:278b:b0:65b:9832:4389 with SMTP id
+ 4fb4d7f45d1cf-65bb13bba5amr353929a12.27.1770968774896; Thu, 12 Feb 2026
+ 23:46:14 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: iwave-global.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PN0P287MB2531.INDP287.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3fdd242c-e36c-4913-1952-08de6aca166d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Feb 2026 06:35:32.5124 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 507ae903-cc48-4d6e-bdb6-35278120a345
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: V+6KVZxWJCAm3dDm0N4iZnTFDwgyvM8uYVXUzHqWhZLBEft03fX9wfWX1HBd5nYdgNBsSJuFxYBY+ov+cL0SqqWQNuYae/lyMsucXUtChvAGVhc17qT8BYeTuoFCjZTP
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN4P287MB4722
+References: <20260202113659.24052-1-sismis@dyna-nic.com>
+ <CAPQRu6Gb0tMH6f-5T7_vCVK23mAkEOmXn-T+X_DYaWsNZdYtjg@mail.gmail.com>
+ <20260204065338.0fae67fe@phoenix.local> <2762564.TLkxdtWsSY@thomas>
+ <CAPQRu6FR+RojmsKhcsegastxJHLBAbmtx5Qurg79Wn_w94yYpg@mail.gmail.com>
+ <20260212164341.074639cd@phoenix.local>
+In-Reply-To: <20260212164341.074639cd@phoenix.local>
+From: =?UTF-8?B?THVrw6HFoSDFoGnFoW1pxaE=?= <sismis@dyna-nic.com>
+Date: Fri, 13 Feb 2026 08:46:04 +0100
+X-Gm-Features: AZwV_QjwoXxHKhZdyaR1EHSh3yAUoKQneN50GnEeO0h2YY2-RRytxSW_K5Vya5c
+Message-ID: <CAPQRu6EAKR59BGgRFAr=eWuQr+=3z14+xdCkbZMvfhM5K8bN0A@mail.gmail.com>
+Subject: Re: [PATCH v10 3/6] flow_parser: add shared parser library
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: Thomas Monjalon <thomas@monjalon.net>, dev@dpdk.org,
+ Ori Kam <orika@nvidia.com>
+Content-Type: multipart/alternative; boundary="000000000000bc7cf6064aafccf2"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -150,115 +99,205 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---_000_PN0P287MB25319528772B121E0E380747C561APN0P287MB2531INDP_
-Content-Type: text/plain; charset="iso-8859-1"
+--000000000000bc7cf6064aafccf2
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Dear Team,
-I hope this message finds you well.
-I am currently performing testing on ConnectX-7 with 1x400G hardware using =
-DPDK v23.07. However, I am unable to achieve data transfer rates beyond 10 =
-Gbps. While reviewing the DPDK mailing list, I came across your previous re=
-sponses in the related discussion (https://mails.dpdk.org/archives/users/20=
-24-July/007767.html), where you mentioned achieving throughput of around 25=
-0 Gbps and above.
-Could you kindly advise on the configuration changes or optimizations requi=
-red to improve throughput in this setup?
-For reference, I am using an OSFP loopback module for testing, where the sa=
-me port is used for both transmission and reception (single-port loopback s=
-etup).
-CX-7 Firmware: 28.45.1200
-CPU : Intel(R) Core(TM) i7-14700
-Command used : sudo ./build/app/dpdk-testpmd -a 01:00.0 -- -i
-I would greatly appreciate your guidance.
-Thank you in advance, and I look forward to your response.
-Thanks and regards,
-Ayshathul Thuhara
+p=C3=A1 13. 2. 2026 v 1:43 odes=C3=ADlatel Stephen Hemminger <
+stephen@networkplumber.org> napsal:
+
+> On Fri, 6 Feb 2026 16:40:39 +0100
+> Luk=C3=A1=C5=A1 =C5=A0i=C5=A1mi=C5=A1 <sismis@dyna-nic.com> wrote:
+>
+> > p=C3=A1 6. 2. 2026 v 15:02 odes=C3=ADlatel Thomas Monjalon <thomas@monj=
+alon.net>
+> > napsal:
+> >
+> > > 04/02/2026 15:53, Stephen Hemminger:
+> > > > On Tue, 3 Feb 2026 09:34:26 +0100
+> > > > Luk=C3=A1=C5=A1 =C5=A0i=C5=A1mi=C5=A1 <sismis@dyna-nic.com> wrote:
+> > > >
+> > > > > >
+> > > > > > The kernel version of checkpatch complains here. The DPDK shell
+> > > script
+> > > > > > seems to be set to ignore this but.
+> > > > > >
+> > > > > > WARNING: break is not useful after a return
+> > > > > > #15008: FILE: lib/flow_parser/rte_flow_parser.c:14763:
+> > > > > > +               return cmd_flow_parsed(out);
+> > > > > > +               break;
+> > > > > >
+> > > > > > Should I create a new patch set or just let it be at this
+> moment?
+> > > > > Lukas
+> > > >
+> > > >
+> > > > I am ok with it as is.
+> > >
+> > > Better to update.
+> > >
+> > > There are other warnings:
+> > >
+> > > WARNING:STRNCPY: Prefer strscpy, strscpy_pad, or __nonstring over
+> strncpy
+> > > - see: https://github.com/KSPP/linux/issues/90
+> > > #13052 <https://github.com/KSPP/linux/issues/90#13052>: FILE:
+> > > lib/flow_parser/rte_flow_parser.c:12825:
+> > > +       strncpy(buf, str, len);
+> > >
+> > > and a lot of WARNING:LONG_LINE
+> > >
+> > > I can have a look after the decision.
+> >
+> > >
+> > > And on a more general note, I would have expected to ask the opinion
+> > > of rte_flow maintainers, but they are not Cc'ed in these patches.
+> > >
+> > I communicated primarily with Stephen, and will CC Ori too. Anyone else=
+?
+> >
+> >
+> > > I'm a bit skeptical about adding this outside of ethdev library
+> > > which defines the flow API.
+> > >
+> >
+> > CCing Ori to make a decision. I don't mind putting it directly into
+> ethdev
+> > as well, I just thought the parser could be its own separate lib as it =
+is
+> > just consuming strings and producing rte_flow structures. I can see the
+> > heavy ties to the flow library, though. Thomas, Stephen, what are your
+> > opinions?
+>
+> I am beginning to agree with Thomas, this belongs in the ethdev directory
+> next to rte_flow.
+>
+> Also, not sure what the purpose of parser_ops is. It says to pass NULL, b=
+ut
+> test-pmd is doing something else. It would be better to have an initializ=
+er
+> (i.e RTE_INIT) instead? Maybe
+>
 
 
---_000_PN0P287MB25319528772B121E0E380747C561APN0P287MB2531INDP_
-Content-Type: text/html; charset="iso-8859-1"
+Ok, I can move it there then. Should I proceed with Patch v11 - that would
+include moving the ethdev directory and addressing the kernel's checkpatch
+issues?
+
+The initializer doesn't seem like a bad idea. I didn't know about that one.
+The parser_ops are not needed for purely parsing, but to remain compatible
+with the testpmd's code, which is using, e.g., the hints on the commandline
+I added parser_ops.
+The simple public library API is for converting strings to rte_flow
+structures,
+the parser_ops is for hooking up the testpmd.
+
+--000000000000bc7cf6064aafccf2
+Content-Type: text/html; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-<html>
-<head>
-<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-8859-=
-1">
-<style type=3D"text/css" style=3D"display:none;"> P {margin-top:0;margin-bo=
-ttom:0;} </style>
-</head>
-<body dir=3D"ltr">
-<div class=3D"elementToProof" style=3D"margin-top: 1em; margin-bottom: 1em;=
- font-family: Aptos, &quot;Aptos_EmbeddedFont&quot;, &quot;Aptos_MSFontServ=
-ice&quot;, Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0=
-, 0);">
-Dear Team,</div>
-<div class=3D"elementToProof" style=3D"margin-top: 1em; margin-bottom: 1em;=
- font-family: Aptos, &quot;Aptos_EmbeddedFont&quot;, &quot;Aptos_MSFontServ=
-ice&quot;, Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0=
-, 0);">
-I hope this message finds you well.</div>
-<div class=3D"elementToProof" style=3D"margin-top: 1em; margin-bottom: 1em;=
- font-family: Aptos, &quot;Aptos_EmbeddedFont&quot;, &quot;Aptos_MSFontServ=
-ice&quot;, Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0=
-, 0);">
-I am currently performing testing on ConnectX-7 with 1x400G hardware using =
-DPDK v23.07. However, I am unable to achieve data transfer rates beyond 10 =
-Gbps. While reviewing the DPDK mailing list, I came across your previous re=
-sponses in the related discussion
- (<a data-end=3D"374" data-start=3D"315" rel=3D"noopener" class=3D"decorate=
-d-link OWAAutoLink" id=3D"OWAe131b2f8-ca05-2ff3-d67e-40e6b9de2cd3" target=
-=3D"_new" href=3D"https://mails.dpdk.org/archives/users/2024-July/007767.ht=
-ml">https://mails.dpdk.org/archives/users/2024-July/007767.html</a>),
- where you mentioned achieving throughput of around 250 Gbps and above.</di=
-v>
-<div class=3D"elementToProof" style=3D"margin-top: 1em; margin-bottom: 1em;=
- font-family: Aptos, &quot;Aptos_EmbeddedFont&quot;, &quot;Aptos_MSFontServ=
-ice&quot;, Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0=
-, 0);">
-Could you kindly advise on the configuration changes or optimizations requi=
-red to improve throughput in this setup?</div>
-<div class=3D"elementToProof" style=3D"margin-top: 1em; margin-bottom: 1em;=
- font-family: Aptos, &quot;Aptos_EmbeddedFont&quot;, &quot;Aptos_MSFontServ=
-ice&quot;, Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0=
-, 0);">
-For reference, I am using an OSFP loopback module for testing, where the sa=
-me port is used for both transmission and reception (single-port loopback s=
-etup).</div>
-<div style=3D"font-family: Aptos, &quot;Aptos_EmbeddedFont&quot;, &quot;Apt=
-os_MSFontService&quot;, Calibri, Helvetica, sans-serif; font-size: 12pt; co=
-lor: rgb(0, 0, 0);" class=3D"elementToProof">
-<b>CX-7 Firmware: 28.45.1200</b></div>
-<div style=3D"font-family: Aptos, &quot;Aptos_EmbeddedFont&quot;, &quot;Apt=
-os_MSFontService&quot;, Calibri, Helvetica, sans-serif; font-size: 12pt; co=
-lor: rgb(0, 0, 0);">
-<b>CPU : Intel(R) Core(TM) i7-14700</b></div>
-<div style=3D"font-family: Aptos, &quot;Aptos_EmbeddedFont&quot;, &quot;Apt=
-os_MSFontService&quot;, Calibri, Helvetica, sans-serif; font-size: 12pt; co=
-lor: rgb(0, 0, 0);" class=3D"elementToProof">
-<b>Command used : sudo ./build/app/dpdk-testpmd -a 01:00.0 -- -i</b></div>
-<div class=3D"elementToProof" style=3D"margin-top: 1em; margin-bottom: 1em;=
- font-family: Aptos, &quot;Aptos_EmbeddedFont&quot;, &quot;Aptos_MSFontServ=
-ice&quot;, Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0=
-, 0);">
-I would greatly appreciate your guidance.</div>
-<div class=3D"elementToProof" style=3D"margin-top: 1em; margin-bottom: 1em;=
- font-family: Aptos, &quot;Aptos_EmbeddedFont&quot;, &quot;Aptos_MSFontServ=
-ice&quot;, Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0=
-, 0);">
-Thank you in advance, and I look forward to your response.</div>
-<div class=3D"elementToProof" style=3D"margin-top: 1em; margin-bottom: 1em;=
- font-family: Aptos, &quot;Aptos_EmbeddedFont&quot;, &quot;Aptos_MSFontServ=
-ice&quot;, Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0=
-, 0);">
-Thanks and regards,<br>
-Ayshathul Thuhara</div>
-<div style=3D"font-family: Aptos, &quot;Aptos_EmbeddedFont&quot;, &quot;Apt=
-os_MSFontService&quot;, Calibri, Helvetica, sans-serif; font-size: 12pt; co=
-lor: rgb(0, 0, 0);">
+<div dir=3D"ltr"><div dir=3D"ltr">p=C3=A1 13. 2. 2026 v=C2=A01:43 odes=C3=
+=ADlatel Stephen Hemminger &lt;<a href=3D"mailto:stephen@networkplumber.org=
+">stephen@networkplumber.org</a>&gt; napsal:</div><div class=3D"gmail_quote=
+ gmail_quote_container"><blockquote class=3D"gmail_quote" style=3D"margin:0=
+px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">O=
+n Fri, 6 Feb 2026 16:40:39 +0100<br>
+Luk=C3=A1=C5=A1 =C5=A0i=C5=A1mi=C5=A1 &lt;<a href=3D"mailto:sismis@dyna-nic=
+.com" target=3D"_blank">sismis@dyna-nic.com</a>&gt; wrote:<br>
 <br>
-</div>
-</body>
-</html>
+&gt; p=C3=A1 6. 2. 2026 v 15:02 odes=C3=ADlatel Thomas Monjalon &lt;<a href=
+=3D"mailto:thomas@monjalon.net" target=3D"_blank">thomas@monjalon.net</a>&g=
+t;<br>
+&gt; napsal:<br>
+&gt; <br>
+&gt; &gt; 04/02/2026 15:53, Stephen Hemminger:=C2=A0 <br>
+&gt; &gt; &gt; On Tue, 3 Feb 2026 09:34:26 +0100<br>
+&gt; &gt; &gt; Luk=C3=A1=C5=A1 =C5=A0i=C5=A1mi=C5=A1 &lt;<a href=3D"mailto:=
+sismis@dyna-nic.com" target=3D"_blank">sismis@dyna-nic.com</a>&gt; wrote:<b=
+r>
+&gt; &gt; &gt;=C2=A0 <br>
+&gt; &gt; &gt; &gt; &gt;<br>
+&gt; &gt; &gt; &gt; &gt; The kernel version of checkpatch complains here. T=
+he DPDK shell=C2=A0 <br>
+&gt; &gt; script=C2=A0 <br>
+&gt; &gt; &gt; &gt; &gt; seems to be set to ignore this but.<br>
+&gt; &gt; &gt; &gt; &gt;<br>
+&gt; &gt; &gt; &gt; &gt; WARNING: break is not useful after a return<br>
+&gt; &gt; &gt; &gt; &gt; #15008: FILE: lib/flow_parser/rte_flow_parser.c:14=
+763:<br>
+&gt; &gt; &gt; &gt; &gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0return cmd_flow_parsed(out);<br>
+&gt; &gt; &gt; &gt; &gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0break;<br>
+&gt; &gt; &gt; &gt; &gt;<br>
+&gt; &gt; &gt; &gt; &gt; Should I create a new patch set or just let it be =
+at this moment?=C2=A0 <br>
+&gt; &gt; &gt; &gt; Lukas=C2=A0 <br>
+&gt; &gt; &gt;<br>
+&gt; &gt; &gt;<br>
+&gt; &gt; &gt; I am ok with it as is.=C2=A0 <br>
+&gt; &gt;<br>
+&gt; &gt; Better to update.<br>
+&gt; &gt;<br>
+&gt; &gt; There are other warnings:<br>
+&gt; &gt;<br>
+&gt; &gt; WARNING:STRNCPY: Prefer strscpy, strscpy_pad, or __nonstring over=
+ strncpy<br>
+&gt; &gt; - see: <a href=3D"https://github.com/KSPP/linux/issues/90" rel=3D=
+"noreferrer" target=3D"_blank">https://github.com/KSPP/linux/issues/90</a><=
+br>
+&gt; &gt; #13052 &lt;<a href=3D"https://github.com/KSPP/linux/issues/90#130=
+52" rel=3D"noreferrer" target=3D"_blank">https://github.com/KSPP/linux/issu=
+es/90#13052</a>&gt;: FILE:<br>
+&gt; &gt; lib/flow_parser/rte_flow_parser.c:12825:<br>
+&gt; &gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0strncpy(buf, str, len);<br>
+&gt; &gt;<br>
+&gt; &gt; and a lot of WARNING:LONG_LINE<br>
+&gt; &gt;<br>
+&gt; &gt; I can have a look after the decision.=C2=A0 <br>
+&gt; <br>
+&gt; &gt;<br>
+&gt; &gt; And on a more general note, I would have expected to ask the opin=
+ion<br>
+&gt; &gt; of rte_flow maintainers, but they are not Cc&#39;ed in these patc=
+hes.<br>
+&gt; &gt;=C2=A0 <br>
+&gt; I communicated primarily with Stephen, and will CC Ori too. Anyone els=
+e?<br>
+&gt; <br>
+&gt; <br>
+&gt; &gt; I&#39;m a bit skeptical about adding this outside of ethdev libra=
+ry<br>
+&gt; &gt; which defines the flow API.<br>
+&gt; &gt;=C2=A0 <br>
+&gt; <br>
+&gt; CCing Ori to make a decision. I don&#39;t mind putting it directly int=
+o ethdev<br>
+&gt; as well, I just thought the parser could be its own separate lib as it=
+ is<br>
+&gt; just consuming strings and producing rte_flow structures. I can see th=
+e<br>
+&gt; heavy ties to the flow library, though. Thomas, Stephen, what are your=
+<br>
+&gt; opinions?<br>
+<br>
+I am beginning to agree with Thomas, this belongs in the ethdev directory<b=
+r>
+next to rte_flow.<br>
+<br>
+Also, not sure what the purpose of parser_ops is. It says to pass NULL, but=
+<br>
+test-pmd is doing something else. It would be better to have an initializer=
+<br>
+(i.e RTE_INIT) instead? Maybe<br>=C2=A0</blockquote><div>=C2=A0</div><div>O=
+k, I can move it there then. Should I proceed with Patch v11 - that would</=
+div><div>include moving the ethdev directory and addressing the kernel&#39;=
+s checkpatch</div><div>issues?</div><div><br></div><div>The initializer=C2=
+=A0doesn&#39;t seem like a bad idea. I didn&#39;t know about that one.</div=
+><div>The parser_ops are not needed for purely parsing, but to remain compa=
+tible</div><div>with the testpmd&#39;s code, which is using, e.g., the hint=
+s on the commandline</div><div>I added parser_ops.</div><div>The simple pub=
+lic library API is for converting strings to rte_flow structures,</div><div=
+>the parser_ops is for hooking up the testpmd.=C2=A0</div></div></div>
 
---_000_PN0P287MB25319528772B121E0E380747C561APN0P287MB2531INDP_--
+--000000000000bc7cf6064aafccf2--
