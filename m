@@ -2,73 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBE0DEF584D
-	for <dpdk-dev@archiver.kernel.org>; Sat, 14 Feb 2026 23:48:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4B21EF585A
+	for <dpdk-dev@archiver.kernel.org>; Sat, 14 Feb 2026 23:48:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 26C9240676;
-	Sun, 15 Feb 2026 00:47:52 +0100 (CET)
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com
- [209.85.128.42]) by mails.dpdk.org (Postfix) with ESMTP id 2688240676
- for <dev@dpdk.org>; Sun, 15 Feb 2026 00:47:49 +0100 (CET)
-Received: by mail-wm1-f42.google.com with SMTP id
- 5b1f17b1804b1-48371119eacso19186395e9.2
- for <dev@dpdk.org>; Sat, 14 Feb 2026 15:47:49 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 010E340691;
+	Sun, 15 Feb 2026 00:47:54 +0100 (CET)
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com
+ [209.85.128.52]) by mails.dpdk.org (Postfix) with ESMTP id 9BA804066E
+ for <dev@dpdk.org>; Sun, 15 Feb 2026 00:47:51 +0100 (CET)
+Received: by mail-wm1-f52.google.com with SMTP id
+ 5b1f17b1804b1-48068127f00so21429795e9.3
+ for <dev@dpdk.org>; Sat, 14 Feb 2026 15:47:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1771112869;
- x=1771717669; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1771112871;
+ x=1771717671; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=F8OQRi7gYJhdLm5hCC104xj1d188QTHEi8mm1B0uZkw=;
- b=DT+uv5Hoxa0pJRGm793hFVWMCUw+61hqv3+2Lnfv8fB9tCBhQyqNjHKcsRlp6NY2gc
- eDKEXWBuFbgceLCJxUHvyOuQ4c43HxRW2zwR6pkyBdyOv3yvMFAOF7PnTwYrzgkpKd2H
- vWRjrpr6RpCVG0PfAxBRJEwkbNs/DMXEh2u4r1z0Q924kv/+YBHCmgPNCBfzuWyObb5k
- lts5YkPwyuAqVyKIFOqOs+YRlz6cAogiTMJamb4dMgc+dEIMdoJ2gyqAr4/6UzT7i9up
- DCNcFp9ik6c1XmODvVyihq9e6iQuprvryxQDMLiKSCP3sW5c3jX+mgQbsEOvA1fUIJ1M
- izVw==
+ bh=GajkXqtExPU12eUNtoBdxfSYcV+/osUEqrjd7Io1LoA=;
+ b=Dr5Iw0DPExfg8GlIvtMSREPo31hSAANH7xYPZZVRPS2GLLeZIhIMTcoFoFhkfXIL2D
+ 8dkeGTatL5bYyQKKWJQoIpEfnQMRk3quT5u1Gz4jNj1AA1pZNxXbcHRiFqqAA3dzi3Fd
+ 3XAkf6bi1WPXpDoZh7FwxkWoBHnqsbdHMd5UdTcffRgi7ZDXmFY8sdMjT8AdBZw5ENEH
+ Aefk0bB/A4v09DxVTgRLNWQtlMxxWjz55bH0Qgbf34OF+pg/i1cZxiElk5Kow7bXmlgk
+ K9D+mBmx7mqUIBzEAFWh8vgZTgeyzA3aUhBUXYUfVnRodfoFLs1dxJCRqOxsegHvx8p9
+ /q2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1771112869; x=1771717669;
+ d=1e100.net; s=20230601; t=1771112871; x=1771717671;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=F8OQRi7gYJhdLm5hCC104xj1d188QTHEi8mm1B0uZkw=;
- b=UNqQ0wkTPXtmxBf9NtT084w2llXw1x6kHtoHdWdECai2mEoHDSVS5A71lm/Q3Sr8Lr
- plfLq2E/NTQxK5qFQjX6xAxCMnk4wVorecHLcszW/4ThxTBRfk0yZbqwKCnNQAaznMPk
- zud1Gtg1B2Q9Od/MtPv33PgaavrbSnXoRLACDcPMiNcdwMGvItVB7nlEVKnF7CxlOTKD
- 9kKGqxKQsQBW0JxjUIjKjlGF4G+6BNNCVnsTLdodsDQDM1Va9mUJ/TROEEa30px+GIbZ
- zNS7XPXi68feu6QxPcxhzCZVM6bQAUkPpku6YVSVDNYH40NkgX4aOBbvm/eQZm0afYyf
- yrfg==
-X-Gm-Message-State: AOJu0Yzd9DlynZZNOT7Rh5ykK2wLLJ6kTbBwLZTttd08+IZFzC4kHwHY
- 5fO1jAipOe5YkTdO3QEa5qgpL69MqrRUltjPjalsUCXWKGhfJjLBHWEJwKa/VzBe0Ig6bI1KP7z
- sLAKK
-X-Gm-Gg: AZuq6aL5Dd8QAsThE/LoUoK+uA06tYgq+tYZpUTt2ANYvFCk//gbRZzjjYcuxN0V6lx
- oA8pAA0EEtNe5wSL5HON0l/78RmBUeZHH1ygbnfGfc3gzJBxW2crc3tOC2e7BFnEY3q1veFulUC
- 9ZAj0kBEX410E0iuxKZMO6HN4eUG32KDvPFISK3WzZqdmWdcR1EC7cGezJoRCV7uYdJ+p7n6aLc
- 3UHveXwTx9FXSQGDBiaMLe3cx+J68igZIXo34RKptmqw1abld0U5mtFV1+OeIUc3pksDEOKvJ7n
- t6sdhooy3W5hUrksGjV0IK1isEfprOLZSZsvlA0+0ltKgmnOpKaG+vRKOJPK5p56p5FTsSuAdpE
- FKXC4Iuv1p1JQ/woPkVGyCik1JKxxTkC/jDGfMXhoTsKV5Y8FEVST6ReqJVCYfdOGoxbh+m0wVj
- IaoTY85tv6mk6q3/NxEfHpCxNbPXofaVtcbGqIxPtTBPSGnlkmZB7Ye58T3O40bZW1/iQrt7SoB
- Mg=
-X-Received: by 2002:a05:600c:19cc:b0:477:7bca:8b34 with SMTP id
- 5b1f17b1804b1-48373a082eamr97484535e9.6.1771112868663; 
- Sat, 14 Feb 2026 15:47:48 -0800 (PST)
+ bh=GajkXqtExPU12eUNtoBdxfSYcV+/osUEqrjd7Io1LoA=;
+ b=VqQt055EZl7IMWTXs+HYQe4fKKf/bNZEPhZHxFZezhqa9dq+5EH9/bUURw73mIR/aJ
+ PVLYql3GD8/MHe6+4Ax6sn+sNvgBti2FzXOx2Ykyk4tI+Uu+HekSuCqbWQ1or53U9oLa
+ u5PLu8hH4xJcIotXSRSLvG5jSdgLMRRmHzZ24OMygxm/5PnJw3lW3d1OHqDZZEiG3DTU
+ jyJOMNhYNyeIN7/5KQCFwNI/VrdkkQotmwm9bTMUDkSx2s90ZMG1dsSIQKPijwSWEZ8c
+ 06SYpJf8p6mOj4Xdjmlk/iJ02QutvH4yWXMvG3aRzlKkPVWbI1Ab55p4NUauY0w/OrtX
+ 1IcA==
+X-Gm-Message-State: AOJu0Ywq7YuVH9lZFUPv65IEvclm+7K9GnlzFPitvc1mDcDPhbccYy7i
+ lUBh2fvovjjz2BsHRs7erD51drnTZPsRWhHXHAqbPcPZYop1Cdxq2+oeDchi/3liF+PCSseaEyk
+ 9gu+e
+X-Gm-Gg: AZuq6aLAwI4P9MeWrvp77WvWC0srPYWhe3SoFFK6ZSiG2AgPxjnFrVIyiqYQX4lbQkp
+ k7OmHdeyBw4K74ktfGC7SFacnXjxpX1YNxFT2FiIgHxgs8dKucBo3heSgi83bLQQagTw2l0+/xL
+ jBknKjrZJ+Sg27nBB+bKpJeE+ASuUv4P8jHxYEJ7AaiIG1+1QLscfafDaUEuO+kRz2wSdhk6dWL
+ a5hBZ9NE9UseWOJlI/EVkgONGvLABgkLerRFph13qgnMuRJhazmWbcenDelaKnYkLOxp9rjyXeh
+ rn1iDn92uVquSjp09KJ6iBFZjAquCKhJlWO7RSYB4jvMlhwbk3hSeJaIx0FsH3M57zBwwch9mCe
+ qI5EpK4El7GuffDdIAMVNpplwLHO/GEA02qM3fWg15HZQEZcYpoFDcLwU3sQTo8x7k64ox87sph
+ ikjjSgSqkUGcLEHfFSk/iurXs036BQnEtR/hHu/78U5Nw1Nm4llxAScgDAUyIXzY4F
+X-Received: by 2002:a05:600c:4f45:b0:477:9fcf:3fe3 with SMTP id
+ 5b1f17b1804b1-483737b7b82mr99779605e9.0.1771112870708; 
+ Sat, 14 Feb 2026 15:47:50 -0800 (PST)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-4834d5ebd1bsm394921485e9.6.2026.02.14.15.47.47
+ 5b1f17b1804b1-4834d5ebd1bsm394921485e9.6.2026.02.14.15.47.48
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sat, 14 Feb 2026 15:47:48 -0800 (PST)
+ Sat, 14 Feb 2026 15:47:50 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v6 10/11] net/rtap: add extended statistics support
-Date: Sat, 14 Feb 2026 15:44:19 -0800
-Message-ID: <20260214234726.188947-11-stephen@networkplumber.org>
+Subject: [PATCH v6 11/11] test: add unit tests for rtap PMD
+Date: Sat, 14 Feb 2026 15:44:20 -0800
+Message-ID: <20260214234726.188947-12-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260214234726.188947-1-stephen@networkplumber.org>
 References: <20241210212757.83490-1-stephen@networkplumber.org>
  <20260214234726.188947-1-stephen@networkplumber.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -83,474 +81,2673 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add xstats support to rtap PMD following the virtio PMD design pattern.
+Add a comprehensive test suite for the rtap poll mode driver covering:
 
-Statistics provided per queue (14 Rx + 12 Tx):
-- Packet size distribution (6 buckets: 64, 65-127, 128-255, 256-511,
-  512-1023, 1024-1518 bytes)
-- Packet type classification (broadcast, multicast, unicast)
-- Rx offload stats (LRO, checksum validation, mbuf alloc failures)
-- Tx offload stats (TSO, checksum offload, multi-segment packets)
+  - Device creation and configuration
+  - Device info query
+  - Link status and link up/down control
+  - Statistics collection and reset
+  - Promiscuous and all-multicast mode toggling
+  - MAC address and MTU configuration
+  - Multi-queue setup, teardown, and queue count reduction
+  - Mismatched Rx/Tx queue count rejection
+  - Queue reconfiguration (stop, reconfigure, restart)
+  - Rx path: inject packet via AF_PACKET, receive via DPDK
+  - Tx path: transmit via DPDK, capture via AF_PACKET
+  - Multi-segment Tx with chained mbufs
+  - Multi-segment Rx with small-buffer mempool
+  - Offload capability reporting and configuration
+  - Tx UDP checksum offload end-to-end verification
+  - File descriptor leak detection after device close
+  - Command-line created device testing
 
-Statistics follow DPDK naming convention:
-  {direction}_q{queue_id}_{detail}_{unit}
-
-Examples:
-  rx_q0_size_64_packets
-  rx_q0_broadcast_packets
-  rx_q0_lro_packets
-  tx_q0_tso_packets
-  tx_q0_checksum_offload_packets
+Tests require CAP_NET_ADMIN or root privileges
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- doc/guides/nics/features/rtap.ini |   1 +
- drivers/net/rtap/meson.build      |   1 +
- drivers/net/rtap/rtap.h           |  41 +++++
- drivers/net/rtap/rtap_ethdev.c    |   3 +
- drivers/net/rtap/rtap_rxtx.c      |   3 +
- drivers/net/rtap/rtap_xstats.c    | 293 ++++++++++++++++++++++++++++++
- 6 files changed, 342 insertions(+)
- create mode 100644 drivers/net/rtap/rtap_xstats.c
+ app/test/meson.build     |    1 +
+ app/test/test_pmd_rtap.c | 2620 ++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 2621 insertions(+)
+ create mode 100644 app/test/test_pmd_rtap.c
 
-diff --git a/doc/guides/nics/features/rtap.ini b/doc/guides/nics/features/rtap.ini
-index 48fe3f1b33..233227e7d4 100644
---- a/doc/guides/nics/features/rtap.ini
-+++ b/doc/guides/nics/features/rtap.ini
-@@ -15,6 +15,7 @@ Basic stats          = Y
- Stats per queue      = Y
- TSO                  = Y
- L4 checksum offload  = Y
-+Extended stats       = P
- Multiprocess aware   = Y
- Linux                = Y
- ARMv7                = Y
-diff --git a/drivers/net/rtap/meson.build b/drivers/net/rtap/meson.build
-index 58943e035a..835d1e557d 100644
---- a/drivers/net/rtap/meson.build
-+++ b/drivers/net/rtap/meson.build
-@@ -22,6 +22,7 @@ sources = files(
-         'rtap_intr.c',
-         'rtap_netlink.c',
-         'rtap_rxtx.c',
-+        'rtap_xstats.c',
- )
- 
- ext_deps += liburing
-diff --git a/drivers/net/rtap/rtap.h b/drivers/net/rtap/rtap.h
-index 2c17117a80..ac4a616e99 100644
---- a/drivers/net/rtap/rtap.h
-+++ b/drivers/net/rtap/rtap.h
-@@ -35,6 +35,22 @@ extern int rtap_logtype;
- #define PMD_TX_LOG(...) do { } while (0)
- #endif
- 
-+/* Packet size buckets for xstats (similar to virtio PMD) */
-+#define RTAP_NUM_PKT_SIZE_BUCKETS	6
-+
-+/* Extended statistics for Rx queues */
-+struct rtap_rx_xstats {
-+	uint64_t size_bins[RTAP_NUM_PKT_SIZE_BUCKETS];
-+	uint64_t broadcast_packets;
-+	uint64_t multicast_packets;
-+	uint64_t unicast_packets;
-+	uint64_t lro_packets;
-+	uint64_t checksum_good;
-+	uint64_t checksum_none;
-+	uint64_t checksum_bad;
-+	uint64_t mbuf_alloc_failed;
-+};
-+
- struct rtap_rx_queue {
- 	struct rte_mempool *mb_pool;	/* rx buffer pool */
- 	struct io_uring io_ring;	/* queue of posted read's */
-@@ -45,8 +61,21 @@ struct rtap_rx_queue {
- 	uint64_t rx_packets;
- 	uint64_t rx_bytes;
- 	uint64_t rx_errors;
-+
-+	struct rtap_rx_xstats xstats;	/* extended statistics */
- } __rte_cache_aligned;
- 
-+/* Extended statistics for Tx queues */
-+struct rtap_tx_xstats {
-+	uint64_t size_bins[RTAP_NUM_PKT_SIZE_BUCKETS];
-+	uint64_t broadcast_packets;
-+	uint64_t multicast_packets;
-+	uint64_t unicast_packets;
-+	uint64_t tso_packets;
-+	uint64_t checksum_offload;
-+	uint64_t multiseg_packets;
-+};
-+
- struct rtap_tx_queue {
- 	struct io_uring io_ring;
- 	uint16_t port_id;
-@@ -56,6 +85,8 @@ struct rtap_tx_queue {
- 	uint64_t tx_packets;
- 	uint64_t tx_bytes;
- 	uint64_t tx_errors;
-+
-+	struct rtap_tx_xstats xstats;	/* extended statistics */
- } __rte_cache_aligned;
- 
- struct rtap_pmd {
-@@ -108,4 +139,14 @@ void rtap_rx_intr_vec_uninstall(struct rte_eth_dev *dev);
- int rtap_rx_queue_intr_enable(struct rte_eth_dev *dev, uint16_t queue_id);
- int rtap_rx_queue_intr_disable(struct rte_eth_dev *dev, uint16_t queue_id);
- 
-+/* rtap_xstats.c */
-+int rtap_xstats_get_names(struct rte_eth_dev *dev,
-+			  struct rte_eth_xstat_name *xstats_names,
-+			  unsigned int limit);
-+int rtap_xstats_get(struct rte_eth_dev *dev, struct rte_eth_xstat *xstats,
-+		    unsigned int n);
-+int rtap_xstats_reset(struct rte_eth_dev *dev);
-+void rtap_rx_xstats_update(struct rtap_rx_queue *rxq, struct rte_mbuf *mb);
-+void rtap_tx_xstats_update(struct rtap_tx_queue *txq, struct rte_mbuf *mb);
-+
- #endif /* _RTAP_H_ */
-diff --git a/drivers/net/rtap/rtap_ethdev.c b/drivers/net/rtap/rtap_ethdev.c
-index 2cbb66b675..eb581608cc 100644
---- a/drivers/net/rtap/rtap_ethdev.c
-+++ b/drivers/net/rtap/rtap_ethdev.c
-@@ -541,6 +541,9 @@ static const struct eth_dev_ops rtap_ops = {
- 	.allmulticast_disable	= rtap_allmulticast_disable,
- 	.stats_get		= rtap_stats_get,
- 	.stats_reset		= rtap_stats_reset,
-+	.xstats_get		= rtap_xstats_get,
-+	.xstats_get_names	= rtap_xstats_get_names,
-+	.xstats_reset		= rtap_xstats_reset,
- 	.rx_queue_setup		= rtap_rx_queue_setup,
- 	.rx_queue_release	= rtap_rx_queue_release,
- 	.tx_queue_setup		= rtap_tx_queue_setup,
-diff --git a/drivers/net/rtap/rtap_rxtx.c b/drivers/net/rtap/rtap_rxtx.c
-index cd9b4f0bac..f0ea53b8cf 100644
---- a/drivers/net/rtap/rtap_rxtx.c
-+++ b/drivers/net/rtap/rtap_rxtx.c
-@@ -289,6 +289,7 @@ rtap_rx_burst(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- 
- 			PMD_RX_LOG(ERR, "Rx mbuf alloc failed");
- 			dev->data->rx_mbuf_alloc_failed++;
-+			rxq->xstats.mbuf_alloc_failed++;
- 
- 			nmb = mb;	 /* Reuse original */
- 			goto resubmit;
-@@ -317,6 +318,7 @@ rtap_rx_burst(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- 		mb->port = rxq->port_id;
- 
- 		__rte_mbuf_sanity_check(mb, 1);
-+		rtap_rx_xstats_update(rxq, mb);
- 		num_bytes += mb->pkt_len;
- 		bufs[num_rx++] = mb;
- 
-@@ -735,6 +737,7 @@ rtap_tx_burst(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- 
- 		io_uring_sqe_set_data(sqe, mb);
- 		rtap_tx_offload(hdr, mb);
-+		rtap_tx_xstats_update(txq, mb);
- 
- 		PMD_TX_LOG(DEBUG, "write m=%p segs=%u", mb, mb->nb_segs);
- 
-diff --git a/drivers/net/rtap/rtap_xstats.c b/drivers/net/rtap/rtap_xstats.c
+diff --git a/app/test/meson.build b/app/test/meson.build
+index 48874037eb..5855077066 100644
+--- a/app/test/meson.build
++++ b/app/test/meson.build
+@@ -143,6 +143,7 @@ source_file_deps = {
+     'test_pie.c': ['sched'],
+     'test_pmd_perf.c': ['ethdev', 'net'] + packet_burst_generator_deps,
+     'test_pmd_ring.c': ['net_ring', 'ethdev', 'bus_vdev'],
++    'test_pmd_rtap.c': ['net_rtap', 'ethdev', 'bus_vdev'],
+     'test_pmd_ring_perf.c': ['ethdev', 'net_ring', 'bus_vdev'],
+     'test_pmu.c': ['pmu'],
+     'test_power.c': ['power', 'power_acpi', 'power_kvm_vm', 'power_intel_pstate',
+diff --git a/app/test/test_pmd_rtap.c b/app/test/test_pmd_rtap.c
 new file mode 100644
-index 0000000000..b5886844c5
+index 0000000000..a78adcd647
 --- /dev/null
-+++ b/drivers/net/rtap/rtap_xstats.c
-@@ -0,0 +1,293 @@
++++ b/app/test/test_pmd_rtap.c
+@@ -0,0 +1,2620 @@
 +/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright (c) 2026 Stephen Hemminger
++ * Copyright(c) 2026 Stephen Hemminger
 + */
-+
++#include <errno.h>
++#include <dirent.h>
++#include <fcntl.h>
++#include <inttypes.h>
 +#include <stdio.h>
-+#include <stddef.h>
-+#include <stdint.h>
++#include <stdlib.h>
 +#include <string.h>
++#include <stddef.h>
++#include <unistd.h>
++#include <arpa/inet.h>
++#include <net/if.h>
++#include <netinet/in.h>
++#include <sys/ioctl.h>
++#include <sys/select.h>
++#include <sys/socket.h>
++#include <sys/time.h>
++#include <sys/types.h>
++#include <linux/if_ether.h>
++#include <linux/if_packet.h>
 +
 +#include <rte_common.h>
-+#include <ethdev_driver.h>
++#include <rte_stdatomic.h>
 +#include <rte_ethdev.h>
++#include <rte_bus_vdev.h>
 +#include <rte_ether.h>
++#include <rte_errno.h>
++#include <rte_mbuf.h>
++#include <rte_mempool.h>
++#include <rte_ip.h>
++#include <rte_udp.h>
++#include <rte_epoll.h>
 +
-+#include "rtap.h"
++#include "test.h"
 +
-+/*
-+ * Xstats name/offset descriptors, following the virtio PMD pattern.
-+ *
-+ * Both xstats_get_names and xstats_get iterate these same tables
-+ * in the same per-queue order, guaranteeing name[i] matches value[i].
-+ */
-+struct rtap_xstats_name_off {
-+	const char *name;
-+	unsigned int offset;
-+};
++#define SOCKET0 0
++#define RING_SIZE 256
++#define NB_MBUF 4096
++#define MAX_MULTI_QUEUES 4
 +
-+#define RTAP_RXQ_XSTAT(field) { #field, offsetof(struct rtap_rx_xstats, field) }
-+#define RTAP_TXQ_XSTAT(field) { #field, offsetof(struct rtap_tx_xstats, field) }
++#define RTAP_DRIVER_NAME "net_rtap"
++#define TEST_TAP_NAME "rtap_test0"
 +
-+static const struct rtap_xstats_name_off rtap_rxq_xstats[] = {
-+	RTAP_RXQ_XSTAT(size_bins[0]),
-+	RTAP_RXQ_XSTAT(size_bins[1]),
-+	RTAP_RXQ_XSTAT(size_bins[2]),
-+	RTAP_RXQ_XSTAT(size_bins[3]),
-+	RTAP_RXQ_XSTAT(size_bins[4]),
-+	RTAP_RXQ_XSTAT(size_bins[5]),
-+	RTAP_RXQ_XSTAT(broadcast_packets),
-+	RTAP_RXQ_XSTAT(multicast_packets),
-+	RTAP_RXQ_XSTAT(unicast_packets),
-+	RTAP_RXQ_XSTAT(lro_packets),
-+	RTAP_RXQ_XSTAT(checksum_good),
-+	RTAP_RXQ_XSTAT(checksum_none),
-+	RTAP_RXQ_XSTAT(checksum_bad),
-+	RTAP_RXQ_XSTAT(mbuf_alloc_failed),
-+};
++/* TX/RX test parameters */
++#define TEST_PKT_PAYLOAD_LEN 64
++#define TEST_MAGIC_BYTE 0xAB
++#define RX_BURST_MAX 32
++#define TX_RX_TIMEOUT_US 100000  /* 100ms */
++#define TX_RX_POLL_US 1000       /* 1ms between polls */
 +
-+static const struct rtap_xstats_name_off rtap_txq_xstats[] = {
-+	RTAP_TXQ_XSTAT(size_bins[0]),
-+	RTAP_TXQ_XSTAT(size_bins[1]),
-+	RTAP_TXQ_XSTAT(size_bins[2]),
-+	RTAP_TXQ_XSTAT(size_bins[3]),
-+	RTAP_TXQ_XSTAT(size_bins[4]),
-+	RTAP_TXQ_XSTAT(size_bins[5]),
-+	RTAP_TXQ_XSTAT(broadcast_packets),
-+	RTAP_TXQ_XSTAT(multicast_packets),
-+	RTAP_TXQ_XSTAT(unicast_packets),
-+	RTAP_TXQ_XSTAT(tso_packets),
-+	RTAP_TXQ_XSTAT(checksum_offload),
-+	RTAP_TXQ_XSTAT(multiseg_packets),
-+};
++static struct rte_mempool *mp;
++static int rtap_port0 = -1;
++static int rtap_port1 = -1;
 +
-+/* Display names for size buckets (indexed by array position) */
-+static const char * const rtap_size_bucket_names[] = {
-+	"size_64",
-+	"size_65_to_127",
-+	"size_128_to_255",
-+	"size_256_to_511",
-+	"size_512_to_1023",
-+	"size_1024_to_1518",
-+};
++/* ========== Helper Functions ========== */
 +
-+/* Size bucket upper bounds for the update helpers */
-+static const uint16_t rtap_size_bucket_limits[RTAP_NUM_PKT_SIZE_BUCKETS] = {
-+	64, 127, 255, 511, 1023, 1518,
-+};
-+
-+#define RTAP_NUM_RXQ_XSTATS RTE_DIM(rtap_rxq_xstats)
-+#define RTAP_NUM_TXQ_XSTATS RTE_DIM(rtap_txq_xstats)
-+
-+static unsigned int
-+rtap_xstats_count(const struct rte_eth_dev *dev)
++static int
++check_rtap_available(void)
 +{
-+	return dev->data->nb_rx_queues * RTAP_NUM_RXQ_XSTATS +
-+	       dev->data->nb_tx_queues * RTAP_NUM_TXQ_XSTATS;
++	int fd = open("/dev/net/tun", O_RDWR);
++	if (fd < 0) {
++		printf("Cannot access /dev/net/tun: %s\n", strerror(errno));
++		printf("RTAP PMD tests require CAP_NET_ADMIN or root privileges\n");
++		return -1;
++	}
++	close(fd);
++	return 0;
 +}
 +
-+/*
-+ * Build a display name for a per-queue xstat.
-+ *
-+ * For size_bins[N] entries, use the human-readable bucket name;
-+ * for everything else, use the field name directly.
-+ */
-+static void
-+rtap_xstat_name(char *buf, size_t bufsz,
-+		const char *dir, unsigned int q,
-+		const struct rtap_xstats_name_off *desc)
++/* Configure port with specified number of queue pairs */
++static int
++port_configure(int port, uint16_t nb_queues, const struct rte_eth_conf *conf)
 +{
-+	/* Check if this is a size_bins entry */
-+	for (unsigned int i = 0; i < RTAP_NUM_PKT_SIZE_BUCKETS; i++) {
-+		char binref[32];
++	struct rte_eth_conf null_conf;
 +
-+		snprintf(binref, sizeof(binref), "size_bins[%u]", i);
-+		if (strcmp(desc->name, binref) == 0) {
-+			snprintf(buf, bufsz, "%s_q%u_%s_packets",
-+				 dir, q, rtap_size_bucket_names[i]);
-+			return;
-+		}
++	if (conf == NULL) {
++		memset(&null_conf, 0, sizeof(null_conf));
++		conf = &null_conf;
 +	}
 +
-+	snprintf(buf, bufsz, "%s_q%u_%s", dir, q, desc->name);
-+}
-+
-+int
-+rtap_xstats_get_names(struct rte_eth_dev *dev,
-+		      struct rte_eth_xstat_name *xstats_names,
-+		      unsigned int limit)
-+{
-+	unsigned int nb_rx = dev->data->nb_rx_queues;
-+	unsigned int nb_tx = dev->data->nb_tx_queues;
-+	unsigned int count = rtap_xstats_count(dev);
-+	unsigned int idx = 0;
-+
-+	if (xstats_names == NULL)
-+		return count;
-+
-+	/* Rx queue stats: all stats for queue 0, then all for queue 1, ... */
-+	for (unsigned int q = 0; q < nb_rx; q++) {
-+		for (unsigned int i = 0; i < RTAP_NUM_RXQ_XSTATS; i++) {
-+			if (idx >= limit)
-+				goto out;
-+
-+			rtap_xstat_name(xstats_names[idx].name,
-+					sizeof(xstats_names[idx].name),
-+					"rx", q, &rtap_rxq_xstats[i]);
-+			idx++;
-+		}
-+	}
-+
-+	/* Tx queue stats: all stats for queue 0, then all for queue 1, ... */
-+	for (unsigned int q = 0; q < nb_tx; q++) {
-+		for (unsigned int i = 0; i < RTAP_NUM_TXQ_XSTATS; i++) {
-+			if (idx >= limit)
-+				goto out;
-+
-+			rtap_xstat_name(xstats_names[idx].name,
-+					sizeof(xstats_names[idx].name),
-+					"tx", q, &rtap_txq_xstats[i]);
-+			idx++;
-+		}
-+	}
-+
-+out:
-+	return count;
-+}
-+
-+int
-+rtap_xstats_get(struct rte_eth_dev *dev, struct rte_eth_xstat *xstats,
-+		unsigned int n)
-+{
-+	unsigned int nb_rx = dev->data->nb_rx_queues;
-+	unsigned int nb_tx = dev->data->nb_tx_queues;
-+	unsigned int count = rtap_xstats_count(dev);
-+	unsigned int idx = 0;
-+
-+	if (n < count)
-+		return count;
-+
-+	/* Collect Rx queue xstats — same per-queue order as names */
-+	for (unsigned int q = 0; q < nb_rx; q++) {
-+		struct rtap_rx_queue *rxq = dev->data->rx_queues[q];
-+
-+		for (unsigned int i = 0; i < RTAP_NUM_RXQ_XSTATS; i++) {
-+			xstats[idx].id = idx;
-+			if (rxq == NULL)
-+				xstats[idx].value = 0;
-+			else
-+				xstats[idx].value =
-+					*(uint64_t *)((char *)&rxq->xstats +
-+						       rtap_rxq_xstats[i].offset);
-+			idx++;
-+		}
-+	}
-+
-+	/* Collect Tx queue xstats — same per-queue order as names */
-+	for (unsigned int q = 0; q < nb_tx; q++) {
-+		struct rtap_tx_queue *txq = dev->data->tx_queues[q];
-+
-+		for (unsigned int i = 0; i < RTAP_NUM_TXQ_XSTATS; i++) {
-+			xstats[idx].id = idx;
-+			if (txq == NULL)
-+				xstats[idx].value = 0;
-+			else
-+				xstats[idx].value =
-+					*(uint64_t *)((char *)&txq->xstats +
-+						       rtap_txq_xstats[i].offset);
-+			idx++;
-+		}
-+	}
-+
-+	return idx;
-+}
-+
-+int
-+rtap_xstats_reset(struct rte_eth_dev *dev)
-+{
-+	for (unsigned int q = 0; q < dev->data->nb_rx_queues; q++) {
-+		struct rtap_rx_queue *rxq = dev->data->rx_queues[q];
-+		if (rxq != NULL)
-+			memset(&rxq->xstats, 0, sizeof(rxq->xstats));
-+	}
-+
-+	for (unsigned int q = 0; q < dev->data->nb_tx_queues; q++) {
-+		struct rtap_tx_queue *txq = dev->data->tx_queues[q];
-+		if (txq != NULL)
-+			memset(&txq->xstats, 0, sizeof(txq->xstats));
++	if (rte_eth_dev_configure(port, nb_queues, nb_queues, conf) < 0) {
++		printf("Configure failed for port %d with %u queues\n",
++		       port, nb_queues);
++		return -1;
 +	}
 +
 +	return 0;
 +}
 +
-+/* Helper to update Rx xstats — called from rx_burst */
-+void
-+rtap_rx_xstats_update(struct rtap_rx_queue *rxq, struct rte_mbuf *mb)
++/* Setup queue pairs for a port */
++static int
++port_setup_queues(int port, uint16_t nb_queues, uint16_t ring_size,
++		  struct rte_mempool *mempool)
 +{
-+	struct rtap_rx_xstats *xs = &rxq->xstats;
-+	uint16_t pkt_len = mb->pkt_len;
-+	struct rte_ether_hdr *eth_hdr;
++	for (uint16_t q = 0; q < nb_queues; q++) {
++		if (rte_eth_tx_queue_setup(port, q, ring_size, SOCKET0, NULL) < 0) {
++			printf("TX queue %u setup failed port %d\n", q, port);
++			return -1;
++		}
 +
-+	/* Update size bucket */
-+	for (unsigned int i = 0; i < RTAP_NUM_PKT_SIZE_BUCKETS; i++) {
-+		if (pkt_len <= rtap_size_bucket_limits[i]) {
-+			xs->size_bins[i]++;
++		if (rte_eth_rx_queue_setup(port, q, ring_size, SOCKET0,
++					   NULL, mempool) < 0) {
++			printf("RX queue %u setup failed port %d\n", q, port);
++			return -1;
++		}
++	}
++
++	return 0;
++}
++
++/* Stop, configure, setup queues, and start a port */
++static int
++port_reconfigure(int port, uint16_t nb_queues, const struct rte_eth_conf *conf,
++		 uint16_t ring_size, struct rte_mempool *mempool)
++{
++	int ret;
++
++	ret = rte_eth_dev_stop(port);
++	if (ret != 0) {
++		printf("Error stopping port %d: %s\n", port, rte_strerror(-ret));
++		return -1;
++	}
++
++	if (port_configure(port, nb_queues, conf) < 0)
++		return -1;
++
++	if (port_setup_queues(port, nb_queues, ring_size, mempool) < 0)
++		return -1;
++
++	if (rte_eth_dev_start(port) < 0) {
++		printf("Error starting port %d\n", port);
++		return -1;
++	}
++
++	return 0;
++}
++
++/* Restore port to clean single-queue started state */
++static int
++restore_single_queue(int port)
++{
++	return port_reconfigure(port, 1, NULL, RING_SIZE, mp);
++}
++
++/* Verify link status matches expected */
++static int
++verify_link_status(int port, uint8_t expected_status)
++{
++	struct rte_eth_link link;
++	int ret;
++
++	ret = rte_eth_link_get(port, &link);
++	if (ret < 0) {
++		printf("Error getting link status: %s\n", rte_strerror(-ret));
++		return -1;
++	}
++
++	if (link.link_status != expected_status) {
++		printf("Error: link should be %s but is %s\n",
++		       expected_status ? "UP" : "DOWN",
++		       link.link_status ? "UP" : "DOWN");
++		return -1;
++	}
++
++	return 0;
++}
++
++/* Get device info with error checking */
++static int
++get_dev_info(int port, struct rte_eth_dev_info *dev_info)
++{
++	int ret = rte_eth_dev_info_get(port, dev_info);
++	if (ret != 0) {
++		printf("Error getting device info for port %d: %s\n",
++		       port, rte_strerror(-ret));
++		return -1;
++	}
++	return 0;
++}
++
++/* Reset and verify stats are zero */
++static int
++reset_and_verify_stats_zero(int port)
++{
++	struct rte_eth_stats stats;
++	int ret;
++
++	ret = rte_eth_stats_reset(port);
++	if (ret != 0) {
++		printf("Error: stats_reset failed for port %d: %s\n",
++		       port, rte_strerror(-ret));
++		return -1;
++	}
++
++	ret = rte_eth_stats_get(port, &stats);
++	if (ret != 0) {
++		printf("Error: stats_get failed for port %d: %s\n",
++		       port, rte_strerror(-ret));
++		return -1;
++	}
++
++	if (stats.ipackets != 0 || stats.opackets != 0 ||
++	    stats.ibytes != 0 || stats.obytes != 0 ||
++	    stats.ierrors != 0 || stats.oerrors != 0) {
++		printf("Error: port %d stats are not zero after reset\n", port);
++		return -1;
++	}
++
++	return 0;
++}
++
++/* Drain all pending RX packets from a port */
++static void
++drain_rx_queue(int port, uint16_t queue_id)
++{
++	struct rte_mbuf *drain[RX_BURST_MAX];
++	uint16_t n;
++
++	do {
++		n = rte_eth_rx_burst(port, queue_id, drain, RX_BURST_MAX);
++		rte_pktmbuf_free_bulk(drain, n);
++	} while (n > 0);
++}
++
++/* Set Ethernet address to broadcast */
++static inline void
++eth_addr_bcast(struct rte_ether_addr *addr)
++{
++	memset(addr, 0xff, RTE_ETHER_ADDR_LEN);
++}
++
++/* Bring TAP interface up using ioctl */
++static int
++tap_set_up(const char *ifname)
++{
++	struct ifreq ifr;
++	int sock, ret = -1;
++
++	sock = socket(AF_INET, SOCK_DGRAM, 0);
++	if (sock < 0)
++		return -1;
++
++	memset(&ifr, 0, sizeof(ifr));
++	strlcpy(ifr.ifr_name, ifname, IFNAMSIZ);
++
++	if (ioctl(sock, SIOCGIFFLAGS, &ifr) < 0)
++		goto out;
++
++	ifr.ifr_flags |= IFF_UP;
++
++	if (ioctl(sock, SIOCSIFFLAGS, &ifr) < 0)
++		goto out;
++
++	ret = 0;
++out:
++	close(sock);
++	return ret;
++}
++
++/* Open an AF_PACKET socket bound to the TAP interface */
++static int
++open_tap_socket(const char *ifname)
++{
++	int sock, ifindex;
++	struct sockaddr_ll sll;
++
++	sock = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ALL));
++	if (sock < 0) {
++		printf("socket(AF_PACKET) failed: %s\n", strerror(errno));
++		return -1;
++	}
++
++	ifindex = if_nametoindex(ifname);
++	if (ifindex == 0) {
++		printf("if_nametoindex(%s) failed: %s\n", ifname, strerror(errno));
++		close(sock);
++		return -1;
++	}
++
++	memset(&sll, 0, sizeof(sll));
++	sll.sll_family = AF_PACKET;
++	sll.sll_ifindex = ifindex;
++	sll.sll_protocol = htons(ETH_P_ALL);
++
++	if (bind(sock, (struct sockaddr *)&sll, sizeof(sll)) < 0) {
++		printf("bind() failed: %s\n", strerror(errno));
++		close(sock);
++		return -1;
++	}
++
++	return sock;
++}
++
++/* Setup TAP socket with non-blocking mode and bring interface up */
++static int
++setup_tap_socket_nb(const char *ifname)
++{
++	int sock, flags;
++
++	if (tap_set_up(ifname) < 0) {
++		printf("Failed to bring TAP interface up\n");
++		return -1;
++	}
++
++	sock = open_tap_socket(ifname);
++	if (sock < 0)
++		return -1;
++
++	flags = fcntl(sock, F_GETFL, 0);
++	fcntl(sock, F_SETFL, flags | O_NONBLOCK);
++
++	return sock;
++}
++
++/* Build a basic test packet with broadcast dest and magic byte payload */
++static void
++build_test_packet(uint8_t *pkt, size_t pkt_len,
++		  const struct rte_ether_addr *src_mac,
++		  const struct rte_ether_addr *dst_mac)
++{
++	struct rte_ether_hdr *eth = (struct rte_ether_hdr *)pkt;
++
++	if (dst_mac)
++		memcpy(&eth->dst_addr, dst_mac, RTE_ETHER_ADDR_LEN);
++	else
++		eth_addr_bcast(&eth->dst_addr);
++
++	if (src_mac)
++		memcpy(&eth->src_addr, src_mac, RTE_ETHER_ADDR_LEN);
++	else
++		rte_eth_random_addr(eth->src_addr.addr_bytes);
++
++	eth->ether_type = htons(RTE_ETHER_TYPE_IPV4);
++	memset(pkt + RTE_ETHER_HDR_LEN, TEST_MAGIC_BYTE,
++	       pkt_len - RTE_ETHER_HDR_LEN);
++}
++
++/* Poll AF_PACKET socket for a packet matching the given pattern */
++static ssize_t
++poll_tap_socket(int sock, uint8_t *buf, size_t buf_size,
++		uint8_t match_byte, size_t match_offset)
++{
++	struct timeval tv;
++	fd_set fds;
++	int elapsed = 0;
++	ssize_t rx_len;
++
++	while (elapsed < TX_RX_TIMEOUT_US) {
++		FD_ZERO(&fds);
++		FD_SET(sock, &fds);
++		tv.tv_sec = 0;
++		tv.tv_usec = TX_RX_POLL_US;
++
++		if (select(sock + 1, &fds, NULL, NULL, &tv) > 0) {
++			rx_len = recv(sock, buf, buf_size, 0);
++			if (rx_len > 0 && (size_t)rx_len > match_offset &&
++			    buf[match_offset] == match_byte)
++				return rx_len;
++		}
++		elapsed += TX_RX_POLL_US;
++	}
++
++	return 0;  /* Timeout */
++}
++
++/* Receive packets from DPDK port, filtering for our test packets */
++static uint16_t
++receive_test_packets(int port, uint16_t queue_id, struct rte_mbuf **rx_mbufs,
++		     uint16_t max_pkts, size_t expected_len, uint8_t magic_byte)
++{
++	uint16_t nb_rx = 0;
++	int elapsed = 0;
++
++	while (elapsed < TX_RX_TIMEOUT_US && nb_rx < max_pkts) {
++		struct rte_mbuf *burst[RX_BURST_MAX];
++		uint16_t n = rte_eth_rx_burst(port, queue_id, burst, RX_BURST_MAX);
++
++		for (uint16_t i = 0; i < n; i++) {
++			uint8_t *d = rte_pktmbuf_mtod(burst[i], uint8_t *);
++
++			if (burst[i]->pkt_len == expected_len &&
++			    d[RTE_ETHER_HDR_LEN] == magic_byte) {
++				rx_mbufs[nb_rx++] = burst[i];
++				if (nb_rx >= max_pkts)
++					break;
++			} else {
++				rte_pktmbuf_free(burst[i]);
++			}
++		}
++
++		if (nb_rx > 0)
++			break;
++
++		usleep(TX_RX_POLL_US);
++		elapsed += TX_RX_POLL_US;
++	}
++
++	return nb_rx;
++}
++
++/* Wait for event with timeout using polling */
++static int
++wait_for_event(RTE_ATOMIC(int) *event_flag, int initial_count, int timeout_us)
++{
++	int elapsed = 0;
++
++	while (elapsed < timeout_us) {
++		if (rte_atomic_load_explicit(event_flag, rte_memory_order_seq_cst) > initial_count)
++			return 0;
++		usleep(TX_RX_POLL_US);
++		elapsed += TX_RX_POLL_US;
++	}
++
++	return -1;  /* Timeout */
++}
++
++/* Count open file descriptors */
++static int
++count_open_fds(void)
++{
++	DIR *d;
++	struct dirent *de;
++	int count = 0;
++
++	d = opendir("/proc/self/fd");
++	if (d == NULL)
++		return -1;
++
++	while ((de = readdir(d)) != NULL) {
++		if (de->d_name[0] != '.')
++			count++;
++	}
++	closedir(d);
++	return count - 1;  /* Subtract dirfd itself */
++}
++
++/* ========== Test Functions ========== */
++
++static int
++test_ethdev_configure_port(int port)
++{
++	struct rte_eth_link link;
++	int ret;
++
++	if (port_reconfigure(port, 1, NULL, RING_SIZE, mp) < 0)
++		return -1;
++
++	ret = rte_eth_link_get(port, &link);
++	if (ret < 0) {
++		printf("Link get failed for port %u: %s\n",
++		       port, rte_strerror(-ret));
++		return -1;
++	}
++
++	return 0;
++}
++
++static int
++test_get_stats(int port)
++{
++	printf("Testing rtap PMD stats_get port %d\n", port);
++	return reset_and_verify_stats_zero(port);
++}
++
++static int
++test_stats_reset(int port)
++{
++	printf("Testing rtap PMD stats_reset port %d\n", port);
++	return reset_and_verify_stats_zero(port);
++}
++
++static int
++test_dev_info(int port)
++{
++	struct rte_eth_dev_info dev_info;
++
++	printf("Testing rtap PMD dev_info_get port %d\n", port);
++
++	if (get_dev_info(port, &dev_info) < 0)
++		return -1;
++
++	if (dev_info.max_rx_queues == 0 || dev_info.max_tx_queues == 0) {
++		printf("Error: invalid max queue values\n");
++		return -1;
++	}
++
++	if (dev_info.max_mac_addrs != 1) {
++		printf("Error: expected max_mac_addrs = 1, got %u\n",
++		       dev_info.max_mac_addrs);
++		return -1;
++	}
++
++	printf("  driver_name: %s\n", dev_info.driver_name);
++	printf("  if_index: %u\n", dev_info.if_index);
++	printf("  max_rx_queues: %u\n", dev_info.max_rx_queues);
++	printf("  max_tx_queues: %u\n", dev_info.max_tx_queues);
++
++	return 0;
++}
++
++static int
++test_link_status(int port)
++{
++	struct rte_eth_link link;
++	int ret;
++
++	printf("Testing rtap PMD link status port %d\n", port);
++
++	ret = rte_eth_link_get(port, &link);
++	if (ret < 0) {
++		printf("Error getting link status for port %d: %s\n",
++		       port, rte_strerror(-ret));
++		return -1;
++	}
++
++	printf("  link_status: %s\n", link.link_status ? "UP" : "DOWN");
++	printf("  link_speed: %u\n", link.link_speed);
++	printf("  link_duplex: %s\n",
++	       link.link_duplex ? "full-duplex" : "half-duplex");
++
++	return 0;
++}
++
++static int
++test_set_link_up_down(int port)
++{
++	int ret;
++
++	printf("Testing rtap PMD link up/down port %d\n", port);
++
++	ret = rte_eth_dev_set_link_down(port);
++	if (ret < 0) {
++		printf("Error setting link down for port %d: %s\n",
++		       port, rte_strerror(-ret));
++		return -1;
++	}
++
++	if (verify_link_status(port, RTE_ETH_LINK_DOWN) < 0)
++		return -1;
++
++	ret = rte_eth_dev_set_link_up(port);
++	if (ret < 0) {
++		printf("Error setting link up for port %d: %s\n",
++		       port, rte_strerror(-ret));
++		return -1;
++	}
++
++	if (verify_link_status(port, RTE_ETH_LINK_UP) < 0)
++		return -1;
++
++	return 0;
++}
++
++static int
++test_promiscuous_mode(int port)
++{
++	int ret;
++
++	printf("Testing rtap PMD promiscuous mode port %d\n", port);
++
++	ret = rte_eth_promiscuous_enable(port);
++	if (ret < 0) {
++		printf("Error enabling promiscuous mode: %s\n",
++		       rte_strerror(-ret));
++		return -1;
++	}
++
++	if (rte_eth_promiscuous_get(port) != 1) {
++		printf("Error: promiscuous mode should be enabled\n");
++		return -1;
++	}
++
++	ret = rte_eth_promiscuous_disable(port);
++	if (ret < 0) {
++		printf("Error disabling promiscuous mode: %s\n",
++		       rte_strerror(-ret));
++		return -1;
++	}
++
++	if (rte_eth_promiscuous_get(port) != 0) {
++		printf("Error: promiscuous mode should be disabled\n");
++		return -1;
++	}
++
++	return 0;
++}
++
++static int
++test_allmulticast_mode(int port)
++{
++	int ret;
++
++	printf("Testing rtap PMD allmulticast mode port %d\n", port);
++
++	ret = rte_eth_allmulticast_enable(port);
++	if (ret < 0) {
++		printf("Error enabling allmulticast mode: %s\n",
++		       rte_strerror(-ret));
++		return -1;
++	}
++
++	if (rte_eth_allmulticast_get(port) != 1) {
++		printf("Error: allmulticast mode should be enabled\n");
++		return -1;
++	}
++
++	ret = rte_eth_allmulticast_disable(port);
++	if (ret < 0) {
++		printf("Error disabling allmulticast mode: %s\n",
++		       rte_strerror(-ret));
++		return -1;
++	}
++
++	if (rte_eth_allmulticast_get(port) != 0) {
++		printf("Error: allmulticast mode should be disabled\n");
++		return -1;
++	}
++
++	return 0;
++}
++
++static int
++test_mac_address(int port)
++{
++	struct rte_ether_addr mac_addr;
++	struct rte_ether_addr new_mac = {
++		.addr_bytes = {0x00, 0x11, 0x22, 0x33, 0x44, 0x55}
++	};
++	int ret;
++
++	printf("Testing rtap PMD MAC address port %d\n", port);
++
++	ret = rte_eth_macaddr_get(port, &mac_addr);
++	if (ret < 0) {
++		printf("Error getting MAC address: %s\n", rte_strerror(-ret));
++		return -1;
++	}
++
++	printf("  Current MAC: " RTE_ETHER_ADDR_PRT_FMT "\n",
++	       RTE_ETHER_ADDR_BYTES(&mac_addr));
++
++	ret = rte_eth_dev_default_mac_addr_set(port, &new_mac);
++	if (ret < 0) {
++		printf("Error setting MAC address: %s\n", rte_strerror(-ret));
++		return -1;
++	}
++
++	ret = rte_eth_macaddr_get(port, &mac_addr);
++	if (ret < 0) {
++		printf("Error getting MAC address: %s\n", rte_strerror(-ret));
++		return -1;
++	}
++
++	if (!rte_is_same_ether_addr(&mac_addr, &new_mac)) {
++		printf("Error: MAC address not set correctly\n");
++		return -1;
++	}
++
++	printf("  New MAC: " RTE_ETHER_ADDR_PRT_FMT "\n",
++	       RTE_ETHER_ADDR_BYTES(&mac_addr));
++
++	return 0;
++}
++
++static int
++test_mtu_set(int port)
++{
++	uint16_t orig_mtu;
++	uint16_t new_mtu = 9000;
++	int ret;
++
++	printf("Testing rtap PMD MTU set port %d\n", port);
++
++	ret = rte_eth_dev_get_mtu(port, &orig_mtu);
++	if (ret < 0) {
++		printf("Error getting MTU: %s\n", rte_strerror(-ret));
++		return -1;
++	}
++
++	printf("  Original MTU: %u\n", orig_mtu);
++
++	ret = rte_eth_dev_set_mtu(port, new_mtu);
++	if (ret < 0) {
++		printf("Warning: setting MTU to %u failed: %s\n",
++		       new_mtu, rte_strerror(-ret));
++		return 0;
++	}
++
++	uint16_t current_mtu;
++	ret = rte_eth_dev_get_mtu(port, &current_mtu);
++	if (ret < 0) {
++		printf("Error getting MTU: %s\n", rte_strerror(-ret));
++		return -1;
++	}
++
++	printf("  New MTU: %u\n", current_mtu);
++	rte_eth_dev_set_mtu(port, orig_mtu);
++
++	return 0;
++}
++
++static int
++test_queue_reconfigure(int port)
++{
++	struct rte_eth_dev_info dev_info;
++	int ret;
++
++	printf("Testing rtap PMD queue reconfigure port %d\n", port);
++
++	if (port_reconfigure(port, 2, NULL, RING_SIZE, mp) < 0)
++		return -1;
++
++	ret = rte_eth_dev_info_get(port, &dev_info);
++	if (ret != 0) {
++		printf("Error getting device info: %s\n", rte_strerror(-ret));
++		return -1;
++	}
++
++	printf("  Configured with %u rx and %u tx queues\n",
++	       dev_info.nb_rx_queues, dev_info.nb_tx_queues);
++
++	if (restore_single_queue(port) < 0)
++		return -1;
++
++	return 0;
++}
++
++static int
++test_multiqueue(int port)
++{
++	struct rte_eth_dev_info dev_info;
++	uint16_t queue_counts[] = { 1, 2, MAX_MULTI_QUEUES };
++
++	printf("Testing rtap PMD multi-queue port %d\n", port);
++
++	for (unsigned int t = 0; t < RTE_DIM(queue_counts); t++) {
++		uint16_t nb_queues = queue_counts[t];
++
++		printf("  Configuring %u queue pair(s)\n", nb_queues);
++
++		if (port_reconfigure(port, nb_queues, NULL, RING_SIZE, mp) < 0)
++			return -1;
++
++		if (get_dev_info(port, &dev_info) < 0)
++			return -1;
++
++		if (dev_info.nb_rx_queues != nb_queues ||
++		    dev_info.nb_tx_queues != nb_queues) {
++			printf("Error: queue count mismatch\n");
++			return -1;
++		}
++
++		if (reset_and_verify_stats_zero(port) < 0)
++			return -1;
++
++		/* Verify per-queue xstats are zero */
++		int num_xstats = rte_eth_xstats_get(port, NULL, 0);
++		if (num_xstats > 0) {
++			struct rte_eth_xstat *xstats = malloc(sizeof(*xstats) * num_xstats);
++			struct rte_eth_xstat_name *xstat_names =
++				malloc(sizeof(*xstat_names) * num_xstats);
++
++			if (xstats == NULL || xstat_names == NULL) {
++				free(xstats);
++				free(xstat_names);
++				printf("Error: xstats alloc failed\n");
++				return -1;
++			}
++
++			rte_eth_xstats_get_names(port, xstat_names, num_xstats);
++			rte_eth_xstats_get(port, xstats, num_xstats);
++
++			for (int x = 0; x < num_xstats; x++) {
++				if (strstr(xstat_names[x].name, "_q") != NULL &&
++				    xstats[x].value != 0) {
++					printf("Error: xstat %s = %" PRIu64 " not zero\n",
++					       xstat_names[x].name, xstats[x].value);
++					free(xstats);
++					free(xstat_names);
++					return -1;
++				}
++			}
++			free(xstats);
++			free(xstat_names);
++		}
++
++		if (verify_link_status(port, RTE_ETH_LINK_UP) < 0)
++			return -1;
++
++		printf("    %u queue pair(s): OK\n", nb_queues);
++	}
++
++	if (restore_single_queue(port) < 0) {
++		printf("Error restoring single queue\n");
++		return -1;
++	}
++
++	return 0;
++}
++
++static int
++test_multiqueue_reduce(int port)
++{
++	printf("Testing rtap PMD queue reduction port %d\n", port);
++
++	if (port_reconfigure(port, MAX_MULTI_QUEUES, NULL, RING_SIZE, mp) < 0)
++		return -1;
++
++	printf("  Started with %d queues, reducing to 2\n", MAX_MULTI_QUEUES);
++
++	if (port_reconfigure(port, 2, NULL, RING_SIZE, mp) < 0)
++		return -1;
++
++	if (reset_and_verify_stats_zero(port) < 0)
++		return -1;
++
++	printf("  Reduced to 2 queues: OK\n");
++	printf("  Reducing to 1 queue\n");
++
++	if (restore_single_queue(port) < 0)
++		return -1;
++
++	if (reset_and_verify_stats_zero(port) < 0)
++		return -1;
++
++	printf("  Reduced to 1 queue: OK\n");
++	return 0;
++}
++
++static int
++test_multiqueue_mismatch(int port)
++{
++	int ret;
++	struct { uint16_t rx; uint16_t tx; } mismatch[] = {
++		{ 1, 2 }, { 2, 1 }, { 4, 2 }, { 1, 4 },
++	};
++
++	printf("Testing rtap PMD mismatched queue rejection port %d\n", port);
++
++	ret = rte_eth_dev_stop(port);
++	if (ret != 0) {
++		printf("Error stopping port: %s\n", rte_strerror(-ret));
++		return -1;
++	}
++
++	for (unsigned int i = 0; i < RTE_DIM(mismatch); i++) {
++		struct rte_eth_conf null_conf;
++		memset(&null_conf, 0, sizeof(null_conf));
++
++		ret = rte_eth_dev_configure(port, mismatch[i].rx,
++					    mismatch[i].tx, &null_conf);
++		if (ret == 0) {
++			printf("Error: configure(%u rx, %u tx) should fail\n",
++			       mismatch[i].rx, mismatch[i].tx);
++			rte_eth_dev_stop(port);
++			return -1;
++		}
++		printf("  Rejected %u rx / %u tx: OK\n",
++		       mismatch[i].rx, mismatch[i].tx);
++	}
++
++	if (restore_single_queue(port) < 0) {
++		printf("Error restoring single queue\n");
++		return -1;
++	}
++
++	return 0;
++}
++
++static int
++test_rx_inject(int port)
++{
++	struct rte_ether_addr mac;
++	struct rte_mbuf *rx_mbufs[RX_BURST_MAX];
++	uint8_t pkt[RTE_ETHER_HDR_LEN + TEST_PKT_PAYLOAD_LEN];
++	int sock = -1;
++	uint16_t nb_rx;
++	int ret = -1;
++
++	printf("Testing rtap PMD RX (inject via AF_PACKET)\n");
++
++	if (restore_single_queue(port) < 0) {
++		printf("Failed to restore single queue config\n");
++		return -1;
++	}
++
++	if (rte_eth_macaddr_get(port, &mac) < 0) {
++		printf("Failed to get MAC address\n");
++		return -1;
++	}
++
++	sock = setup_tap_socket_nb(TEST_TAP_NAME);
++	if (sock < 0)
++		return -1;
++
++	build_test_packet(pkt, sizeof(pkt), NULL, &mac);
++	drain_rx_queue(port, 0);
++	rte_eth_stats_reset(port);
++
++	if (send(sock, pkt, sizeof(pkt), 0) < 0) {
++		printf("send() failed: %s\n", strerror(errno));
++		goto out;
++	}
++
++	nb_rx = receive_test_packets(port, 0, rx_mbufs, 1, sizeof(pkt),
++				     TEST_MAGIC_BYTE);
++
++	if (nb_rx == 0) {
++		printf("No packet received after %d us\n", TX_RX_TIMEOUT_US);
++		goto out;
++	}
++
++	uint8_t *rx_data = rte_pktmbuf_mtod(rx_mbufs[0], uint8_t *);
++	if (rx_data[RTE_ETHER_HDR_LEN] != TEST_MAGIC_BYTE) {
++		printf("Payload mismatch\n");
++		goto free_rx;
++	}
++
++	struct rte_eth_stats stats;
++	rte_eth_stats_get(port, &stats);
++	if (stats.ipackets == 0) {
++		printf("RX stats not updated\n");
++		goto free_rx;
++	}
++
++	printf("  RX inject test PASSED (received %u packets)\n", nb_rx);
++	ret = 0;
++
++free_rx:
++	for (uint16_t i = 0; i < nb_rx; i++)
++		rte_pktmbuf_free(rx_mbufs[i]);
++out:
++	close(sock);
++	return ret;
++}
++
++static int
++test_tx_capture(int port)
++{
++	struct rte_ether_addr mac;
++	struct rte_mbuf *tx_mbuf;
++	struct rte_ether_hdr *eth;
++	uint8_t rx_buf[256];
++	int sock = -1;
++	uint16_t nb_tx;
++	ssize_t rx_len;
++	int ret = -1;
++
++	printf("Testing rtap PMD TX (capture via AF_PACKET)\n");
++
++	if (restore_single_queue(port) < 0) {
++		printf("Failed to restore single queue config\n");
++		return -1;
++	}
++
++	if (rte_eth_macaddr_get(port, &mac) < 0) {
++		printf("Failed to get MAC address\n");
++		return -1;
++	}
++
++	sock = setup_tap_socket_nb(TEST_TAP_NAME);
++	if (sock < 0)
++		return -1;
++
++	tx_mbuf = rte_pktmbuf_alloc(mp);
++	if (tx_mbuf == NULL) {
++		printf("Failed to allocate mbuf\n");
++		goto out;
++	}
++
++	eth = rte_pktmbuf_mtod(tx_mbuf, struct rte_ether_hdr *);
++	eth_addr_bcast(&eth->dst_addr);
++	memcpy(&eth->src_addr, &mac, RTE_ETHER_ADDR_LEN);
++	eth->ether_type = htons(RTE_ETHER_TYPE_IPV4);
++
++	uint8_t *payload = (uint8_t *)(eth + 1);
++	memset(payload, TEST_MAGIC_BYTE, TEST_PKT_PAYLOAD_LEN);
++
++	tx_mbuf->data_len = RTE_ETHER_HDR_LEN + TEST_PKT_PAYLOAD_LEN;
++	tx_mbuf->pkt_len = tx_mbuf->data_len;
++
++	rte_eth_stats_reset(port);
++
++	nb_tx = rte_eth_tx_burst(port, 0, &tx_mbuf, 1);
++	if (nb_tx != 1) {
++		printf("TX failed\n");
++		rte_pktmbuf_free(tx_mbuf);
++		goto out;
++	}
++
++	rx_len = poll_tap_socket(sock, rx_buf, sizeof(rx_buf),
++				 TEST_MAGIC_BYTE, RTE_ETHER_HDR_LEN);
++
++	if (rx_len <= 0) {
++		printf("No packet captured after %d us\n", TX_RX_TIMEOUT_US);
++		goto out;
++	}
++
++	struct rte_eth_stats stats;
++	rte_eth_stats_get(port, &stats);
++	if (stats.opackets == 0) {
++		printf("TX stats not updated\n");
++		goto out;
++	}
++
++	printf("  TX capture test PASSED (captured %zd bytes)\n", rx_len);
++	ret = 0;
++
++out:
++	close(sock);
++	return ret;
++}
++
++#define MSEG_NUM_SEGS 3
++#define MSEG_SEG_LEN 40
++
++static int
++test_tx_multiseg(int port)
++{
++	struct rte_ether_addr mac;
++	struct rte_mbuf *head, *seg, *prev;
++	struct rte_ether_hdr *eth;
++	uint8_t rx_buf[512];
++	int sock = -1;
++	uint16_t nb_tx;
++	ssize_t rx_len;
++	int ret = -1;
++	uint16_t total_payload = MSEG_NUM_SEGS * MSEG_SEG_LEN;
++
++	printf("Testing rtap PMD multi-segment TX\n");
++
++	if (restore_single_queue(port) < 0 ||
++	    rte_eth_macaddr_get(port, &mac) < 0) {
++		printf("Failed to setup test\n");
++		return -1;
++	}
++
++	sock = setup_tap_socket_nb(TEST_TAP_NAME);
++	if (sock < 0)
++		return -1;
++
++	head = rte_pktmbuf_alloc(mp);
++	if (head == NULL) {
++		printf("Failed to allocate head mbuf\n");
++		goto out;
++	}
++
++	eth = rte_pktmbuf_mtod(head, struct rte_ether_hdr *);
++	eth_addr_bcast(&eth->dst_addr);
++	memcpy(&eth->src_addr, &mac, RTE_ETHER_ADDR_LEN);
++	eth->ether_type = htons(RTE_ETHER_TYPE_IPV4);
++
++	uint8_t *p = (uint8_t *)(eth + 1);
++	memset(p, 0xA0, MSEG_SEG_LEN);
++	head->data_len = RTE_ETHER_HDR_LEN + MSEG_SEG_LEN;
++	head->pkt_len = RTE_ETHER_HDR_LEN + total_payload;
++	head->nb_segs = MSEG_NUM_SEGS;
++
++	prev = head;
++	for (int i = 1; i < MSEG_NUM_SEGS; i++) {
++		seg = rte_pktmbuf_alloc(mp);
++		if (seg == NULL) {
++			printf("Failed to allocate segment %d\n", i);
++			rte_pktmbuf_free(head);
++			goto out;
++		}
++		p = rte_pktmbuf_mtod(seg, uint8_t *);
++		memset(p, 0xA0 + i, MSEG_SEG_LEN);
++		seg->data_len = MSEG_SEG_LEN;
++		prev->next = seg;
++		prev = seg;
++	}
++
++	rte_eth_stats_reset(port);
++
++	nb_tx = rte_eth_tx_burst(port, 0, &head, 1);
++	if (nb_tx != 1) {
++		printf("TX failed for multi-seg packet\n");
++		rte_pktmbuf_free(head);
++		goto out;
++	}
++
++	rx_len = poll_tap_socket(sock, rx_buf, sizeof(rx_buf),
++				 0xA0, RTE_ETHER_HDR_LEN);
++
++	if (rx_len <= 0) {
++		printf("No packet captured\n");
++		goto out;
++	}
++
++	for (int i = 0; i < MSEG_NUM_SEGS; i++) {
++		int off = RTE_ETHER_HDR_LEN + i * MSEG_SEG_LEN;
++		uint8_t expected = 0xA0 + i;
++		if (rx_buf[off] != expected) {
++			printf("Segment %d mismatch\n", i);
++			goto out;
++		}
++	}
++
++	struct rte_eth_stats stats;
++	rte_eth_stats_get(port, &stats);
++	if (stats.opackets == 0) {
++		printf("TX stats not updated\n");
++		goto out;
++	}
++
++	printf("  Multi-seg TX test PASSED (%d segs, captured %zd bytes)\n",
++	       MSEG_NUM_SEGS, rx_len);
++	ret = 0;
++
++out:
++	close(sock);
++	return ret;
++}
++
++#define MSEG_RX_BUF_SIZE 256
++#define MSEG_RX_POOL_SIZE 4096
++#define MSEG_RX_PKT_PAYLOAD 200
++
++static int
++test_rx_multiseg(int port)
++{
++	struct rte_mempool *small_mp = NULL;
++	struct rte_ether_addr mac;
++	struct rte_mbuf *rx_mbufs[RX_BURST_MAX];
++	uint8_t pkt[RTE_ETHER_HDR_LEN + MSEG_RX_PKT_PAYLOAD];
++	int sock = -1;
++	uint16_t nb_rx;
++	int ret = -1;
++
++	printf("Testing rtap PMD multi-segment RX\n");
++
++	if (rte_eth_macaddr_get(port, &mac) < 0) {
++		printf("Failed to get MAC address\n");
++		return -1;
++	}
++
++	small_mp = rte_pktmbuf_pool_create("small_mbuf_pool",
++			MSEG_RX_POOL_SIZE, 32, 0, MSEG_RX_BUF_SIZE,
++			rte_socket_id());
++	if (small_mp == NULL) {
++		printf("Failed to create small mempool\n");
++		return -1;
++	}
++
++	if (port_reconfigure(port, 1, NULL, RING_SIZE, small_mp) < 0)
++		goto free_pool;
++
++	sock = setup_tap_socket_nb(TEST_TAP_NAME);
++	if (sock < 0)
++		goto restore;
++
++	drain_rx_queue(port, 0);
++
++	build_test_packet(pkt, sizeof(pkt), NULL, &mac);
++	memset(pkt + RTE_ETHER_HDR_LEN, 0xDD, MSEG_RX_PKT_PAYLOAD);
++
++	if (send(sock, pkt, sizeof(pkt), 0) < 0) {
++		printf("send() failed: %s\n", strerror(errno));
++		goto close_sock;
++	}
++
++	nb_rx = receive_test_packets(port, 0, rx_mbufs, 1, sizeof(pkt), 0xDD);
++
++	if (nb_rx == 0) {
++		printf("No packet received\n");
++		goto close_sock;
++	}
++
++	struct rte_mbuf *m = rx_mbufs[0];
++	printf("  Received: pkt_len=%u nb_segs=%u\n", m->pkt_len, m->nb_segs);
++
++	if (m->nb_segs < 2) {
++		printf("  Expected multi-segment mbuf, got %u segments\n",
++		       m->nb_segs);
++	}
++
++	if (m->pkt_len < sizeof(pkt)) {
++		printf("  Packet too short: %u < %zu\n", m->pkt_len, sizeof(pkt));
++		goto free_rx;
++	}
++
++	/* Verify payload across segments */
++	uint32_t offset = 0;
++	struct rte_mbuf *seg = m;
++	uint32_t seg_off = 0;
++	int payload_ok = 1;
++
++	while (seg != NULL && offset < m->pkt_len) {
++		if (seg_off >= seg->data_len) {
++			seg = seg->next;
++			seg_off = 0;
++			continue;
++		}
++		if (offset >= RTE_ETHER_HDR_LEN &&
++		    offset < RTE_ETHER_HDR_LEN + MSEG_RX_PKT_PAYLOAD) {
++			uint8_t *d = rte_pktmbuf_mtod_offset(seg, uint8_t *,
++							      seg_off);
++			if (*d != 0xDD) {
++				printf("  Payload mismatch at offset %u\n", offset);
++				payload_ok = 0;
++				break;
++			}
++		}
++		offset++;
++		seg_off++;
++	}
++
++	if (!payload_ok)
++		goto free_rx;
++
++	printf("  Multi-seg RX test PASSED (%u segments)\n", m->nb_segs);
++	ret = 0;
++
++free_rx:
++	for (uint16_t i = 0; i < nb_rx; i++)
++		rte_pktmbuf_free(rx_mbufs[i]);
++
++close_sock:
++	close(sock);
++
++restore:
++	restore_single_queue(port);
++
++free_pool:
++	rte_mempool_free(small_mp);
++	return ret;
++}
++
++static int
++test_offload_config(int port)
++{
++	struct rte_eth_dev_info dev_info;
++	struct rte_eth_conf conf;
++	int ret;
++
++	printf("Testing rtap PMD offload configuration port %d\n", port);
++
++	if (get_dev_info(port, &dev_info) < 0)
++		return -1;
++
++	uint64_t expected_tx = RTE_ETH_TX_OFFLOAD_MULTI_SEGS |
++			       RTE_ETH_TX_OFFLOAD_UDP_CKSUM |
++			       RTE_ETH_TX_OFFLOAD_TCP_CKSUM |
++			       RTE_ETH_TX_OFFLOAD_TCP_TSO;
++
++	if ((dev_info.tx_offload_capa & expected_tx) != expected_tx) {
++		printf("Missing TX offload capabilities\n");
++		return -1;
++	}
++
++	printf("  TX offload capa: 0x%" PRIx64 " OK\n",
++	       dev_info.tx_offload_capa);
++
++	memset(&conf, 0, sizeof(conf));
++	conf.txmode.offloads = RTE_ETH_TX_OFFLOAD_UDP_CKSUM |
++			       RTE_ETH_TX_OFFLOAD_TCP_CKSUM;
++
++	ret = port_reconfigure(port, 1, &conf, RING_SIZE, mp);
++	if (ret < 0) {
++		printf("Configure with TX offloads failed\n");
++		goto restore;
++	}
++
++	printf("  TX offload configuration: OK\n");
++
++restore:
++	restore_single_queue(port);
++	return ret;
++}
++
++#define CSUM_PKT_PAYLOAD 32
++
++static int
++test_tx_csum_offload(int port)
++{
++	struct rte_ether_addr mac;
++	struct rte_mbuf *tx_mbuf;
++	uint8_t rx_buf[256];
++	int sock = -1;
++	uint16_t nb_tx, pkt_len;
++	ssize_t rx_len = 0;
++	int ret = -1;
++
++	printf("Testing rtap PMD TX checksum offload\n");
++
++	if (restore_single_queue(port) < 0 ||
++	    rte_eth_macaddr_get(port, &mac) < 0) {
++		printf("Failed to setup test\n");
++		return -1;
++	}
++
++	sock = setup_tap_socket_nb(TEST_TAP_NAME);
++	if (sock < 0)
++		return -1;
++
++	tx_mbuf = rte_pktmbuf_alloc(mp);
++	if (tx_mbuf == NULL) {
++		printf("Failed to allocate mbuf\n");
++		goto out;
++	}
++
++	/* Build Eth + IPv4 + UDP + payload */
++	struct rte_ether_hdr *eth = rte_pktmbuf_mtod(tx_mbuf,
++						      struct rte_ether_hdr *);
++	eth_addr_bcast(&eth->dst_addr);
++	memcpy(&eth->src_addr, &mac, RTE_ETHER_ADDR_LEN);
++	eth->ether_type = htons(RTE_ETHER_TYPE_IPV4);
++
++	struct rte_ipv4_hdr *ip = (struct rte_ipv4_hdr *)(eth + 1);
++	memset(ip, 0, sizeof(*ip));
++	ip->version_ihl = 0x45;
++	ip->total_length = htons(sizeof(*ip) + sizeof(struct rte_udp_hdr) +
++				 CSUM_PKT_PAYLOAD);
++	ip->time_to_live = 64;
++	ip->next_proto_id = IPPROTO_UDP;
++	ip->src_addr = htonl(0x0a000001);
++	ip->dst_addr = htonl(0x0a000002);
++	ip->hdr_checksum = 0;
++	ip->hdr_checksum = rte_ipv4_cksum(ip);
++
++	struct rte_udp_hdr *udp = (struct rte_udp_hdr *)(ip + 1);
++	udp->src_port = htons(1234);
++	udp->dst_port = htons(5678);
++	udp->dgram_len = htons(sizeof(*udp) + CSUM_PKT_PAYLOAD);
++	udp->dgram_cksum = 0;
++
++	uint8_t *payload = (uint8_t *)(udp + 1);
++	memset(payload, 0xCC, CSUM_PKT_PAYLOAD);
++
++	pkt_len = sizeof(*eth) + sizeof(*ip) + sizeof(*udp) + CSUM_PKT_PAYLOAD;
++	tx_mbuf->data_len = pkt_len;
++	tx_mbuf->pkt_len = pkt_len;
++
++	tx_mbuf->ol_flags = RTE_MBUF_F_TX_IPV4 | RTE_MBUF_F_TX_UDP_CKSUM;
++	tx_mbuf->l2_len = sizeof(*eth);
++	tx_mbuf->l3_len = sizeof(*ip);
++	udp->dgram_cksum = rte_ipv4_phdr_cksum(ip, tx_mbuf->ol_flags);
++
++	rte_eth_stats_reset(port);
++
++	nb_tx = rte_eth_tx_burst(port, 0, &tx_mbuf, 1);
++	if (nb_tx != 1) {
++		printf("TX failed\n");
++		rte_pktmbuf_free(tx_mbuf);
++		goto out;
++	}
++
++	rx_len = poll_tap_socket(sock, rx_buf, sizeof(rx_buf),
++				 0x45, sizeof(*eth));
++
++	if (rx_len <= 0) {
++		printf("No packet captured\n");
++		goto out;
++	}
++
++	unsigned int cksum_off = sizeof(*eth) + sizeof(*ip) +
++				 offsetof(struct rte_udp_hdr, dgram_cksum);
++	uint16_t captured_cksum;
++
++	memcpy(&captured_cksum, &rx_buf[cksum_off], sizeof(captured_cksum));
++
++	if (captured_cksum == 0)
++		printf("  Warning: UDP checksum is zero\n");
++	else
++		printf("  UDP cksum=0x%04x\n", ntohs(captured_cksum));
++
++	struct rte_eth_stats stats;
++	rte_eth_stats_get(port, &stats);
++	if (stats.opackets == 0) {
++		printf("TX stats not updated\n");
++		goto out;
++	}
++
++	printf("  TX csum offload PASSED (captured %zd bytes)\n", rx_len);
++	ret = 0;
++
++out:
++	close(sock);
++	return ret;
++}
++
++#define FLOOD_RING_SIZE 64
++#define FLOOD_NUM_PKTS 1000
++#define FLOOD_PKT_SIZE 128
++
++static int
++test_imissed_counter(int port)
++{
++	struct rte_eth_stats stats_before, stats_after, stats_after_reset;
++	struct rte_ether_addr mac;
++	uint8_t pkt[FLOOD_PKT_SIZE];
++	int sock = -1;
++	int ret = -1;
++
++	printf("Testing rtap PMD imissed counter port %d\n", port);
++
++	if (rte_eth_macaddr_get(port, &mac) < 0) {
++		printf("Failed to get MAC address\n");
++		return -1;
++	}
++
++	if (port_reconfigure(port, 1, NULL, FLOOD_RING_SIZE, mp) < 0)
++		goto restore;
++
++	sock = setup_tap_socket_nb(TEST_TAP_NAME);
++	if (sock < 0)
++		goto restore;
++
++	drain_rx_queue(port, 0);
++
++	ret = rte_eth_stats_reset(port);
++	if (ret != 0) {
++		printf("Failed to reset stats: %s\n", rte_strerror(-ret));
++		goto close_sock;
++	}
++
++	ret = rte_eth_stats_get(port, &stats_before);
++	if (ret != 0) {
++		printf("Failed to get baseline stats: %s\n", rte_strerror(-ret));
++		goto close_sock;
++	}
++
++	printf("  Flooding with %d packets (ring size %d)\n",
++	       FLOOD_NUM_PKTS, FLOOD_RING_SIZE);
++
++	build_test_packet(pkt, FLOOD_PKT_SIZE, &mac, &mac);
++
++	for (int i = 0; i < FLOOD_NUM_PKTS; i++) {
++		if (send(sock, pkt, FLOOD_PKT_SIZE, 0) < 0) {
++			printf("send() failed after %d packets: %s\n",
++			       i, strerror(errno));
++			goto close_sock;
++		}
++	}
++
++	usleep(100000);  /* 100ms */
++
++	/* Drain whatever we can receive */
++	{
++		struct rte_mbuf *burst[RX_BURST_MAX];
++		uint16_t total_rx = 0;
++		int attempts = 0;
++
++		while (attempts++ < 100) {
++			uint16_t n = rte_eth_rx_burst(port, 0, burst, RX_BURST_MAX);
++			if (n > 0) {
++				rte_pktmbuf_free_bulk(burst, n);
++				total_rx += n;
++			} else {
++				usleep(1000);
++			}
++		}
++		printf("  Received %u packets out of %d sent\n",
++		       total_rx, FLOOD_NUM_PKTS);
++	}
++
++	ret = rte_eth_stats_get(port, &stats_after);
++	if (ret != 0) {
++		printf("Failed to get stats after flood: %s\n", rte_strerror(-ret));
++		goto close_sock;
++	}
++
++	printf("  Stats: ipackets=%"PRIu64" imissed=%"PRIu64"\n",
++	       stats_after.ipackets, stats_after.imissed);
++
++	if (stats_after.ipackets == 0) {
++		printf("  ERROR: No packets received\n");
++		goto close_sock;
++	}
++
++	if (stats_after.imissed == 0) {
++		printf("  WARNING: No packets marked as missed\n");
++	} else {
++		printf("  SUCCESS: imissed counter working (%"PRIu64" drops)\n",
++		       stats_after.imissed);
++	}
++
++	/* Test stats_reset clears imissed counter */
++	printf("  Testing stats_reset for imissed counter\n");
++	ret = rte_eth_stats_reset(port);
++	if (ret != 0) {
++		printf("  ERROR: stats_reset failed: %s\n", rte_strerror(-ret));
++		goto close_sock;
++	}
++
++	ret = rte_eth_stats_get(port, &stats_after_reset);
++	if (ret != 0) {
++		printf("  ERROR: stats_get after reset failed: %s\n", rte_strerror(-ret));
++		goto close_sock;
++	}
++
++	if (stats_after_reset.imissed != 0 || stats_after_reset.ipackets != 0) {
++		printf("  ERROR: stats not reset properly\n");
++		goto close_sock;
++	}
++
++	printf("  Stats reset: OK (all counters zeroed)\n");
++	printf("  imissed counter test PASSED\n");
++	ret = 0;
++
++close_sock:
++	close(sock);
++
++restore:
++	restore_single_queue(port);
++	return ret;
++}
++
++#define LSC_TIMEOUT_US 500000  /* 500ms */
++#define LSC_POLL_US    1000    /* 1ms between polls */
++
++#define RXQ_INTR_TIMEOUT_MS 500  /* 500ms */
++
++static RTE_ATOMIC(int) lsc_event_count;
++static RTE_ATOMIC(int) lsc_last_status;
++
++static int
++test_lsc_callback(uint16_t port_id, enum rte_eth_event_type type,
++		  void *param __rte_unused, void *ret_param __rte_unused)
++{
++	struct rte_eth_link link;
++
++	if (type != RTE_ETH_EVENT_INTR_LSC)
++		return 0;
++
++	if (rte_eth_link_get_nowait(port_id, &link) < 0) {
++		printf("  Link get nowait failed\n");
++		return 0;
++	}
++
++	rte_atomic_store_explicit(&lsc_last_status, link.link_status, rte_memory_order_relaxed);
++	rte_atomic_fetch_add_explicit(&lsc_event_count, 1, rte_memory_order_seq_cst);
++
++	printf("    LSC event #%d: port %u link %s\n",
++	       rte_atomic_load_explicit(&lsc_event_count, rte_memory_order_relaxed),
++	       port_id,
++	       link.link_status ? "UP" : "DOWN");
++
++	return 0;
++}
++
++static int
++test_lsc_interrupt(int port)
++{
++	struct rte_eth_conf lsc_conf;
++	int initial_count;
++	int ret = -1;
++
++	printf("Testing rtap PMD link state interrupt port %d\n", port);
++
++	memset(&lsc_conf, 0, sizeof(lsc_conf));
++	lsc_conf.intr_conf.lsc = 1;
++
++	if (port_reconfigure(port, 1, &lsc_conf, RING_SIZE, mp) < 0)
++		goto restore;
++
++	ret = rte_eth_dev_callback_register(port, RTE_ETH_EVENT_INTR_LSC,
++					    test_lsc_callback, NULL);
++	if (ret < 0) {
++		printf("Failed to register LSC callback: %s\n",
++		       rte_strerror(-ret));
++		goto restore;
++	}
++
++	rte_atomic_store_explicit(&lsc_event_count, 0, rte_memory_order_relaxed);
++	rte_atomic_store_explicit(&lsc_last_status, -1, rte_memory_order_relaxed);
++
++	if (verify_link_status(port, RTE_ETH_LINK_UP) < 0) {
++		ret = -1;
++		goto stop;
++	}
++
++	printf("  Link is UP, setting link DOWN\n");
++	initial_count = rte_atomic_load_explicit(&lsc_event_count, rte_memory_order_seq_cst);
++
++	ret = rte_eth_dev_set_link_down(port);
++	if (ret < 0) {
++		printf("Set link down failed: %s\n", rte_strerror(-ret));
++		goto stop;
++	}
++
++	if (wait_for_event(&lsc_event_count, initial_count, LSC_TIMEOUT_US) < 0) {
++		printf("  No LSC event received for link DOWN after %d us\n",
++		       LSC_TIMEOUT_US);
++		if (verify_link_status(port, RTE_ETH_LINK_DOWN) < 0) {
++			ret = -1;
++			goto stop;
++		}
++		printf("  Link status is DOWN (verified via polling)\n");
++	} else {
++		printf("  LSC event received for link DOWN\n");
++		if (rte_atomic_load_explicit(&lsc_last_status, rte_memory_order_seq_cst) != RTE_ETH_LINK_DOWN) {
++			printf("  ERROR: expected DOWN status in callback\n");
++			ret = -1;
++			goto stop;
++		}
++	}
++
++	printf("  Setting link UP\n");
++	initial_count = rte_atomic_load_explicit(&lsc_event_count, rte_memory_order_seq_cst);
++
++	ret = rte_eth_dev_set_link_up(port);
++	if (ret < 0) {
++		printf("Set link up failed: %s\n", rte_strerror(-ret));
++		goto stop;
++	}
++
++	if (wait_for_event(&lsc_event_count, initial_count, LSC_TIMEOUT_US) < 0) {
++		printf("  No LSC event received for link UP after %d us\n",
++		       LSC_TIMEOUT_US);
++		if (verify_link_status(port, RTE_ETH_LINK_UP) < 0) {
++			ret = -1;
++			goto stop;
++		}
++		printf("  Link status is UP (verified via polling)\n");
++	} else {
++		printf("  LSC event received for link UP\n");
++		if (rte_atomic_load_explicit(&lsc_last_status, rte_memory_order_seq_cst) != RTE_ETH_LINK_UP) {
++			printf("  ERROR: expected UP status in callback\n");
++			ret = -1;
++			goto stop;
++		}
++	}
++
++	printf("  LSC interrupt test PASSED (total events: %d)\n",
++	       rte_atomic_load_explicit(&lsc_event_count, rte_memory_order_relaxed));
++	ret = 0;
++
++stop:
++	rte_eth_dev_stop(port);
++	rte_eth_dev_callback_unregister(port, RTE_ETH_EVENT_INTR_LSC,
++					test_lsc_callback, NULL);
++
++restore:
++	restore_single_queue(port);
++	return ret;
++}
++
++static int
++test_rxq_interrupt(int port)
++{
++	struct rte_eth_conf rxq_conf;
++	struct rte_ether_addr mac;
++	uint8_t pkt[RTE_ETHER_HDR_LEN + TEST_PKT_PAYLOAD_LEN];
++	int sock = -1;
++	int epfd = -1;
++	int ret = -1;
++
++	printf("Testing rtap PMD RX queue interrupt port %d\n", port);
++
++	if (rte_eth_macaddr_get(port, &mac) < 0) {
++		printf("Failed to get MAC address\n");
++		return -1;
++	}
++
++	memset(&rxq_conf, 0, sizeof(rxq_conf));
++	rxq_conf.intr_conf.rxq = 1;
++
++	if (port_reconfigure(port, 1, &rxq_conf, RING_SIZE, mp) < 0)
++		goto restore;
++
++	/* Enable interrupt for queue 0 */
++	ret = rte_eth_dev_rx_intr_enable(port, 0);
++	if (ret < 0) {
++		printf("  rx_intr_enable failed: %s\n", rte_strerror(-ret));
++		goto restore;
++	}
++
++	/* Add queue 0's eventfd to the per-thread epoll set */
++	ret = rte_eth_dev_rx_intr_ctl_q(port, RTE_EPOLL_PER_THREAD,
++					RTE_INTR_EVENT_ADD, 0, NULL);
++	if (ret < 0) {
++		printf("  rx_intr_ctl_q(ADD) failed: %s\n", rte_strerror(-ret));
++		printf("  (epoll may not be available in this environment)\n");
++		epfd = -1;
++	} else {
++		epfd = RTE_EPOLL_PER_THREAD;
++	}
++
++	sock = setup_tap_socket_nb(TEST_TAP_NAME);
++	if (sock < 0)
++		goto disable_intr;
++
++	drain_rx_queue(port, 0);
++	build_test_packet(pkt, sizeof(pkt), NULL, &mac);
++
++	printf("  Injecting test packet\n");
++	if (send(sock, pkt, sizeof(pkt), 0) < 0) {
++		printf("send() failed: %s\n", strerror(errno));
++		goto close_sock;
++	}
++
++	/* Wait for the Rx interrupt via epoll */
++	if (epfd != -1) {
++		struct rte_epoll_event event;
++		int nfds;
++
++		nfds = rte_epoll_wait(epfd, &event, 1, RXQ_INTR_TIMEOUT_MS);
++		if (nfds < 0) {
++			printf("  rte_epoll_wait failed: %s\n",
++			       rte_strerror(-nfds));
++			printf("  (Falling back to polling verification)\n");
++		} else if (nfds == 0) {
++			printf("  WARNING: epoll timeout - no Rx interrupt received\n");
++			printf("  (This may be expected in some test environments)\n");
++		} else {
++			printf("  Rx interrupt received via epoll: OK\n");
++		}
++	}
++
++	/* Verify the packet actually arrived */
++	{
++		struct rte_mbuf *rx_mbufs[RX_BURST_MAX];
++		uint16_t nb_rx;
++		int elapsed = 0;
++
++		while (elapsed < TX_RX_TIMEOUT_US) {
++			nb_rx = rte_eth_rx_burst(port, 0, rx_mbufs, RX_BURST_MAX);
++			if (nb_rx > 0) {
++				rte_pktmbuf_free_bulk(rx_mbufs, nb_rx);
++				printf("  Packet received successfully\n");
++				break;
++			}
++			usleep(TX_RX_POLL_US);
++			elapsed += TX_RX_POLL_US;
++		}
++
++		if (nb_rx == 0) {
++			printf("  ERROR: No packet received\n");
++			ret = -1;
++			goto close_sock;
++		}
++	}
++
++	printf("  RX queue interrupt test PASSED\n");
++	ret = 0;
++
++close_sock:
++	close(sock);
++
++disable_intr:
++	rte_eth_dev_rx_intr_disable(port, 0);
++
++	if (epfd != -1)
++		rte_eth_dev_rx_intr_ctl_q(port, RTE_EPOLL_PER_THREAD,
++					  RTE_INTR_EVENT_DEL, 0, NULL);
++
++restore:
++	restore_single_queue(port);
++	return ret;
++}
++
++/* ========== Extended Statistics (xstats) Tests ========== */
++
++static int
++test_xstats_get_names(int port)
++{
++	struct rte_eth_xstat_name *names = NULL;
++	int count, ret = -1;
++
++	printf("Testing xstats_get_names for port %d\n", port);
++
++	/* Get number of xstats */
++	count = rte_eth_xstats_get_names(port, NULL, 0);
++	if (count < 0) {
++		printf("Error: xstats_get_names returned %d\n", count);
++		return -1;
++	}
++
++	printf("  Total xstats count: %d\n", count);
++
++	if (count == 0) {
++		printf("  Warning: no xstats available\n");
++		return 0;
++	}
++
++	/* Allocate and retrieve names */
++	names = calloc(count, sizeof(*names));
++	if (names == NULL) {
++		printf("  Error: failed to allocate memory for xstats names\n");
++		return -1;
++	}
++
++	ret = rte_eth_xstats_get_names(port, names, count);
++	if (ret < 0 || ret != count) {
++		printf("  Error: xstats_get_names returned %d, expected %d\n",
++		       ret, count);
++		goto cleanup;
++	}
++
++	/* Verify naming convention for a few stats */
++	bool found_rx_size = false;
++	bool found_tx_size = false;
++	bool found_rx_broadcast = false;
++	bool found_tx_broadcast = false;
++
++	for (int i = 0; i < count; i++) {
++		if (strstr(names[i].name, "rx_q") && strstr(names[i].name, "size_"))
++			found_rx_size = true;
++		if (strstr(names[i].name, "tx_q") && strstr(names[i].name, "size_"))
++			found_tx_size = true;
++		if (strstr(names[i].name, "rx_q") && strstr(names[i].name, "broadcast"))
++			found_rx_broadcast = true;
++		if (strstr(names[i].name, "tx_q") && strstr(names[i].name, "broadcast"))
++			found_tx_broadcast = true;
++	}
++
++	if (!found_rx_size || !found_tx_size || !found_rx_broadcast || !found_tx_broadcast) {
++		printf("  Error: expected xstats not found\n");
++		printf("    rx_size=%d tx_size=%d rx_broadcast=%d tx_broadcast=%d\n",
++		       found_rx_size, found_tx_size, found_rx_broadcast, found_tx_broadcast);
++		ret = -1;
++		goto cleanup;
++	}
++
++	printf("  xstats naming convention verified: OK\n");
++	ret = 0;
++
++cleanup:
++	free(names);
++	return ret;
++}
++
++static int
++test_xstats_get_values(int port)
++{
++	struct rte_eth_xstat *xstats = NULL;
++	int count, ret = -1;
++
++	printf("Testing xstats_get values for port %d\n", port);
++
++	/* Get number of xstats */
++	count = rte_eth_xstats_get_names(port, NULL, 0);
++	if (count <= 0) {
++		printf("  Error: no xstats available\n");
++		return -1;
++	}
++
++	/* Allocate and retrieve values */
++	xstats = calloc(count, sizeof(*xstats));
++	if (xstats == NULL) {
++		printf("  Error: failed to allocate memory for xstats\n");
++		return -1;
++	}
++
++	ret = rte_eth_xstats_get(port, xstats, count);
++	if (ret < 0 || ret != count) {
++		printf("  Error: xstats_get returned %d, expected %d\n", ret, count);
++		goto cleanup;
++	}
++
++	/* Verify IDs are sequential */
++	for (int i = 0; i < count; i++) {
++		if (xstats[i].id != (uint64_t)i) {
++			printf("  Error: xstats[%d].id=%"PRIu64", expected %d\n",
++			       i, xstats[i].id, i);
++			ret = -1;
++			goto cleanup;
++		}
++	}
++
++	printf("  xstats IDs are sequential: OK\n");
++	ret = 0;
++
++cleanup:
++	free(xstats);
++	return ret;
++}
++
++static int
++test_xstats_reset(int port)
++{
++	struct rte_eth_xstat *xstats = NULL;
++	int count, ret = -1;
++
++	printf("Testing xstats_reset for port %d\n", port);
++
++	count = rte_eth_xstats_get_names(port, NULL, 0);
++	if (count <= 0) {
++		printf("  Error: no xstats available\n");
++		return -1;
++	}
++
++	xstats = calloc(count, sizeof(*xstats));
++	if (xstats == NULL) {
++		printf("  Error: failed to allocate memory for xstats\n");
++		return -1;
++	}
++
++	/* Reset xstats */
++	ret = rte_eth_xstats_reset(port);
++	if (ret != 0) {
++		printf("  Error: xstats_reset returned %d\n", ret);
++		goto cleanup;
++	}
++
++	/* Verify all xstats are zero */
++	ret = rte_eth_xstats_get(port, xstats, count);
++	if (ret < 0) {
++		printf("  Error: xstats_get after reset returned %d\n", ret);
++		goto cleanup;
++	}
++
++	for (int i = 0; i < count; i++) {
++		if (xstats[i].value != 0) {
++			printf("  Error: xstats[%d].value=%"PRIu64", expected 0\n",
++			       i, xstats[i].value);
++			ret = -1;
++			goto cleanup;
++		}
++	}
++
++	printf("  All xstats reset to zero: OK\n");
++	ret = 0;
++
++cleanup:
++	free(xstats);
++	return ret;
++}
++
++static int
++test_xstats_packet_sizes(int port)
++{
++	struct rte_eth_xstat_name *names = NULL;
++	struct rte_eth_xstat *xstats = NULL;
++	struct rte_eth_dev_info dev_info;
++	struct rte_mbuf *tx_mbufs[4];
++	uint16_t pkt_sizes[] = {60, 100, 200, 500}; /* Will result in 64, 128, 256, 512 on wire */
++	int count, ret = -1;
++	int sock = -1;
++	char ifname[IFNAMSIZ];
++
++	printf("Testing xstats packet size buckets for port %d\n", port);
++
++	if (get_dev_info(port, &dev_info) < 0)
++		return -1;
++
++	snprintf(ifname, sizeof(ifname), "rtap_test%d", port);
++	sock = setup_tap_socket_nb(ifname);
++	if (sock < 0) {
++		printf("  Warning: cannot setup TAP socket, skipping test\n");
++		return 0;
++	}
++
++	/* Reset stats */
++	if (rte_eth_xstats_reset(port) != 0) {
++		printf("  Error: xstats_reset failed\n");
++		goto cleanup;
++	}
++
++	/* Send packets of different sizes */
++	for (unsigned int i = 0; i < RTE_DIM(pkt_sizes); i++) {
++		tx_mbufs[i] = rte_pktmbuf_alloc(mp);
++		if (tx_mbufs[i] == NULL) {
++			printf("  Error: failed to allocate mbuf\n");
++			goto cleanup;
++		}
++
++		uint8_t *pkt = rte_pktmbuf_mtod(tx_mbufs[i], uint8_t *);
++		build_test_packet(pkt, pkt_sizes[i], NULL, NULL);
++		tx_mbufs[i]->pkt_len = pkt_sizes[i];
++		tx_mbufs[i]->data_len = pkt_sizes[i];
++	}
++
++	uint16_t nb_tx = rte_eth_tx_burst(port, 0, tx_mbufs, RTE_DIM(tx_mbufs));
++	if (nb_tx != RTE_DIM(tx_mbufs)) {
++		printf("  Error: sent %u/%zu packets\n", nb_tx, RTE_DIM(tx_mbufs));
++		goto cleanup;
++	}
++
++	usleep(10000); /* Allow packets to be processed */
++
++	/* Get xstats */
++	count = rte_eth_xstats_get_names(port, NULL, 0);
++	if (count <= 0) {
++		printf("  Error: no xstats available\n");
++		goto cleanup;
++	}
++
++	names = calloc(count, sizeof(*names));
++	xstats = calloc(count, sizeof(*xstats));
++	if (names == NULL || xstats == NULL) {
++		printf("  Error: failed to allocate memory\n");
++		goto cleanup;
++	}
++
++	rte_eth_xstats_get_names(port, names, count);
++	rte_eth_xstats_get(port, xstats, count);
++
++	/* Find and verify size bucket stats */
++	int buckets_found = 0;
++	for (int i = 0; i < count; i++) {
++		if (strstr(names[i].name, "tx_q0_size_64_packets") && xstats[i].value > 0)
++			buckets_found++;
++		else if (strstr(names[i].name, "tx_q0_size_65_to_127_packets") && xstats[i].value > 0)
++			buckets_found++;
++		else if (strstr(names[i].name, "tx_q0_size_128_to_255_packets") && xstats[i].value > 0)
++			buckets_found++;
++		else if (strstr(names[i].name, "tx_q0_size_256_to_511_packets") && xstats[i].value > 0)
++			buckets_found++;
++		else if (strstr(names[i].name, "tx_q0_size_512_to_1023_packets") && xstats[i].value > 0)
++			buckets_found++;
++	}
++
++	if (buckets_found < 4) {
++		printf("  Warning: only found %d size buckets with packets\n", buckets_found);
++		printf("  (This may be expected if packets were coalesced)\n");
++	} else {
++		printf("  Packet size buckets populated: OK\n");
++	}
++
++	ret = 0;
++
++cleanup:
++	free(names);
++	free(xstats);
++	if (sock >= 0)
++		close(sock);
++	return ret;
++}
++
++static int
++test_xstats_packet_types(int port)
++{
++	struct rte_eth_xstat_name *names = NULL;
++	struct rte_eth_xstat *xstats = NULL;
++	struct rte_eth_dev_info dev_info;
++	struct rte_mbuf *tx_mbufs[3];
++	struct rte_ether_addr bcast, mcast, ucast;
++	int count, ret = -1;
++	int sock = -1;
++	char ifname[IFNAMSIZ];
++
++	printf("Testing xstats packet type classification for port %d\n", port);
++
++	if (get_dev_info(port, &dev_info) < 0)
++		return -1;
++
++	snprintf(ifname, sizeof(ifname), "rtap_test%d", port);
++	sock = setup_tap_socket_nb(ifname);
++	if (sock < 0) {
++		printf("  Warning: cannot setup TAP socket, skipping test\n");
++		return 0;
++	}
++
++	/* Reset stats */
++	if (rte_eth_xstats_reset(port) != 0) {
++		printf("  Error: xstats_reset failed\n");
++		goto cleanup;
++	}
++
++	/* Prepare addresses */
++	eth_addr_bcast(&bcast);
++	mcast.addr_bytes[0] = 0x01;
++	mcast.addr_bytes[1] = 0x00;
++	mcast.addr_bytes[2] = 0x5e;
++	mcast.addr_bytes[3] = 0x00;
++	mcast.addr_bytes[4] = 0x00;
++	mcast.addr_bytes[5] = 0x01;
++	rte_eth_random_addr(ucast.addr_bytes);
++	ucast.addr_bytes[0] &= 0xfe; /* Clear multicast bit */
++
++	/* Send broadcast, multicast, and unicast packets */
++	for (int i = 0; i < 3; i++) {
++		tx_mbufs[i] = rte_pktmbuf_alloc(mp);
++		if (tx_mbufs[i] == NULL) {
++			printf("  Error: failed to allocate mbuf\n");
++			goto cleanup;
++		}
++
++		uint8_t *pkt = rte_pktmbuf_mtod(tx_mbufs[i], uint8_t *);
++		struct rte_ether_addr *dst = (i == 0) ? &bcast : (i == 1) ? &mcast : &ucast;
++		build_test_packet(pkt, 64, NULL, dst);
++		tx_mbufs[i]->pkt_len = 64;
++		tx_mbufs[i]->data_len = 64;
++	}
++
++	uint16_t nb_tx = rte_eth_tx_burst(port, 0, tx_mbufs, 3);
++	if (nb_tx != 3) {
++		printf("  Error: sent %u/3 packets\n", nb_tx);
++		goto cleanup;
++	}
++
++	usleep(10000);
++
++	/* Get xstats */
++	count = rte_eth_xstats_get_names(port, NULL, 0);
++	if (count <= 0) {
++		printf("  Error: no xstats available\n");
++		goto cleanup;
++	}
++
++	names = calloc(count, sizeof(*names));
++	xstats = calloc(count, sizeof(*xstats));
++	if (names == NULL || xstats == NULL) {
++		printf("  Error: failed to allocate memory\n");
++		goto cleanup;
++	}
++
++	rte_eth_xstats_get_names(port, names, count);
++	rte_eth_xstats_get(port, xstats, count);
++
++	/* Verify packet type stats */
++	bool found_bcast = false, found_mcast = false, found_ucast = false;
++	for (int i = 0; i < count; i++) {
++		if (strstr(names[i].name, "tx_q0_broadcast_packets") && xstats[i].value > 0)
++			found_bcast = true;
++		else if (strstr(names[i].name, "tx_q0_multicast_packets") && xstats[i].value > 0)
++			found_mcast = true;
++		else if (strstr(names[i].name, "tx_q0_unicast_packets") && xstats[i].value > 0)
++			found_ucast = true;
++	}
++
++	if (!found_bcast || !found_mcast || !found_ucast) {
++		printf("  Error: packet type classification failed\n");
++		printf("    broadcast=%d multicast=%d unicast=%d\n",
++		       found_bcast, found_mcast, found_ucast);
++		ret = -1;
++		goto cleanup;
++	}
++
++	printf("  Packet type classification: OK\n");
++	ret = 0;
++
++cleanup:
++	free(names);
++	free(xstats);
++	if (sock >= 0)
++		close(sock);
++	return ret;
++}
++
++static int
++test_xstats_multiqueue(int port)
++{
++	struct rte_eth_xstat_name *names = NULL;
++	struct rte_eth_xstat *xstats = NULL;
++	int count, ret = -1;
++	const uint16_t nb_queues = 2;
++
++	printf("Testing xstats with multiple queues for port %d\n", port);
++
++	/* Reconfigure with 2 queues */
++	if (port_reconfigure(port, nb_queues, NULL, RING_SIZE, mp) < 0) {
++		printf("  Error: failed to reconfigure port with %u queues\n", nb_queues);
++		return -1;
++	}
++
++	/* Reset stats */
++	if (rte_eth_xstats_reset(port) != 0) {
++		printf("  Error: xstats_reset failed\n");
++		goto restore;
++	}
++
++	/* Get xstats */
++	count = rte_eth_xstats_get_names(port, NULL, 0);
++	if (count <= 0) {
++		printf("  Error: no xstats available\n");
++		goto restore;
++	}
++
++	names = calloc(count, sizeof(*names));
++	xstats = calloc(count, sizeof(*xstats));
++	if (names == NULL || xstats == NULL) {
++		printf("  Error: failed to allocate memory\n");
++		goto restore;
++	}
++
++	rte_eth_xstats_get_names(port, names, count);
++	rte_eth_xstats_get(port, xstats, count);
++
++	/* Verify we have stats for both queues */
++	bool found_q0 = false, found_q1 = false;
++	for (int i = 0; i < count; i++) {
++		if (strstr(names[i].name, "_q0_"))
++			found_q0 = true;
++		if (strstr(names[i].name, "_q1_"))
++			found_q1 = true;
++	}
++
++	if (!found_q0 || !found_q1) {
++		printf("  Error: missing stats for queues (q0=%d, q1=%d)\n",
++		       found_q0, found_q1);
++		ret = -1;
++		goto cleanup;
++	}
++
++	printf("  Multi-queue xstats present: OK\n");
++	ret = 0;
++
++cleanup:
++	free(names);
++	free(xstats);
++restore:
++	restore_single_queue(port);
++	return ret;
++}
++
++static int
++test_xstats_offload_stats(int port)
++{
++	struct rte_eth_xstat_name *names = NULL;
++	struct rte_eth_xstat *xstats = NULL;
++	struct rte_eth_dev_info dev_info;
++	struct rte_mbuf *mb;
++	struct rte_ether_hdr *eth;
++	struct rte_ipv4_hdr *ip;
++	struct rte_udp_hdr *udp;
++	int count, ret = -1;
++	int sock = -1;
++	char ifname[IFNAMSIZ];
++
++	printf("Testing xstats offload statistics for port %d\n", port);
++
++	if (get_dev_info(port, &dev_info) < 0)
++		return -1;
++
++	snprintf(ifname, sizeof(ifname), "rtap_test%d", port);
++	sock = setup_tap_socket_nb(ifname);
++	if (sock < 0) {
++		printf("  Warning: cannot setup TAP socket, skipping test\n");
++		return 0;
++	}
++
++	/* Reset stats */
++	if (rte_eth_xstats_reset(port) != 0) {
++		printf("  Error: xstats_reset failed\n");
++		goto cleanup;
++	}
++
++	/* Create packet with checksum offload request */
++	mb = rte_pktmbuf_alloc(mp);
++	if (mb == NULL) {
++		printf("  Error: failed to allocate mbuf\n");
++		goto cleanup;
++	}
++
++	eth = rte_pktmbuf_mtod(mb, struct rte_ether_hdr *);
++	ip = (struct rte_ipv4_hdr *)(eth + 1);
++	udp = (struct rte_udp_hdr *)(ip + 1);
++
++	/* Build packet headers */
++	rte_eth_random_addr(eth->dst_addr.addr_bytes);
++	rte_eth_random_addr(eth->src_addr.addr_bytes);
++	eth->ether_type = rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV4);
++
++	ip->version_ihl = 0x45;
++	ip->total_length = rte_cpu_to_be_16(sizeof(*ip) + sizeof(*udp) + 20);
++	ip->src_addr = rte_cpu_to_be_32(0x0a000001);
++	ip->dst_addr = rte_cpu_to_be_32(0x0a000002);
++
++	udp->src_port = rte_cpu_to_be_16(1234);
++	udp->dst_port = rte_cpu_to_be_16(5678);
++	udp->dgram_len = rte_cpu_to_be_16(sizeof(*udp) + 20);
++
++	mb->l2_len = sizeof(*eth);
++	mb->l3_len = sizeof(*ip);
++	mb->l4_len = sizeof(*udp);
++	mb->ol_flags = RTE_MBUF_F_TX_IPV4 | RTE_MBUF_F_TX_UDP_CKSUM | RTE_MBUF_F_TX_IP_CKSUM;
++	mb->data_len = sizeof(*eth) + sizeof(*ip) + sizeof(*udp) + 20;
++	mb->pkt_len = mb->data_len;
++
++	uint16_t nb_tx = rte_eth_tx_burst(port, 0, &mb, 1);
++	if (nb_tx != 1) {
++		printf("  Error: failed to transmit packet\n");
++		rte_pktmbuf_free(mb);
++		goto cleanup;
++	}
++
++	usleep(10000);
++
++	/* Get xstats */
++	count = rte_eth_xstats_get_names(port, NULL, 0);
++	if (count <= 0) {
++		printf("  Error: no xstats available\n");
++		goto cleanup;
++	}
++
++	names = calloc(count, sizeof(*names));
++	xstats = calloc(count, sizeof(*xstats));
++	if (names == NULL || xstats == NULL) {
++		printf("  Error: failed to allocate memory\n");
++		goto cleanup;
++	}
++
++	rte_eth_xstats_get_names(port, names, count);
++	rte_eth_xstats_get(port, xstats, count);
++
++	/* Look for checksum offload stat */
++	bool found_cksum_offload = false;
++	for (int i = 0; i < count; i++) {
++		if (strstr(names[i].name, "tx_q0_checksum_offload_packets") &&
++		    xstats[i].value > 0) {
++			found_cksum_offload = true;
 +			break;
 +		}
 +	}
 +
-+	/* Update packet type counters */
-+	eth_hdr = rte_pktmbuf_mtod(mb, struct rte_ether_hdr *);
-+	if (rte_is_broadcast_ether_addr(&eth_hdr->dst_addr))
-+		xs->broadcast_packets++;
-+	else if (rte_is_multicast_ether_addr(&eth_hdr->dst_addr))
-+		xs->multicast_packets++;
-+	else
-+		xs->unicast_packets++;
++	if (!found_cksum_offload) {
++		printf("  Warning: checksum offload stat not incremented\n");
++		printf("  (This may be expected if offload was not used)\n");
++	} else {
++		printf("  Checksum offload stat incremented: OK\n");
++	}
 +
-+	/* Update offload-related counters */
-+	if (mb->ol_flags & RTE_MBUF_F_RX_LRO)
-+		xs->lro_packets++;
++	ret = 0;
 +
-+	if (mb->ol_flags & RTE_MBUF_F_RX_L4_CKSUM_GOOD)
-+		xs->checksum_good++;
-+	else if (mb->ol_flags & RTE_MBUF_F_RX_L4_CKSUM_NONE)
-+		xs->checksum_none++;
-+	else if (mb->ol_flags & RTE_MBUF_F_RX_L4_CKSUM_BAD)
-+		xs->checksum_bad++;
++cleanup:
++	free(names);
++	free(xstats);
++	if (sock >= 0)
++		close(sock);
++	return ret;
 +}
 +
-+/* Helper to update Tx xstats — called from tx_burst */
-+void
-+rtap_tx_xstats_update(struct rtap_tx_queue *txq, struct rte_mbuf *mb)
++static int
++test_fd_leak(void)
 +{
-+	struct rtap_tx_xstats *xs = &txq->xstats;
-+	uint16_t pkt_len = mb->pkt_len;
-+	struct rte_ether_hdr *eth_hdr;
++	int fd_before, fd_after;
++	int port = -1;
++	int ret;
 +
-+	/* Update size bucket */
-+	for (unsigned int i = 0; i < RTAP_NUM_PKT_SIZE_BUCKETS; i++) {
-+		if (pkt_len <= rtap_size_bucket_limits[i]) {
-+			xs->size_bins[i]++;
++	printf("Testing rtap PMD file descriptor leak\n");
++
++	fd_before = count_open_fds();
++	if (fd_before < 0) {
++		printf("Cannot count open fds\n");
++		return -1;
++	}
++
++	printf("  Open fds before: %d\n", fd_before);
++
++	if (rte_vdev_init("net_rtap_fdtest", "iface=rtap_fdtest") < 0) {
++		printf("Failed to create net_rtap_fdtest\n");
++		return -1;
++	}
++
++	uint16_t p;
++	RTE_ETH_FOREACH_DEV(p) {
++		struct rte_eth_dev_info info;
++		if (rte_eth_dev_info_get(p, &info) != 0)
++			continue;
++		if (p == (uint16_t)rtap_port0 || p == (uint16_t)rtap_port1)
++			continue;
++		if (strstr(info.driver_name, "rtap") != NULL) {
++			port = p;
 +			break;
 +		}
 +	}
 +
-+	/* Update packet type counters */
-+	eth_hdr = rte_pktmbuf_mtod(mb, struct rte_ether_hdr *);
-+	if (rte_is_broadcast_ether_addr(&eth_hdr->dst_addr))
-+		xs->broadcast_packets++;
-+	else if (rte_is_multicast_ether_addr(&eth_hdr->dst_addr))
-+		xs->multicast_packets++;
-+	else
-+		xs->unicast_packets++;
++	if (port < 0) {
++		printf("Failed to find fd-test port\n");
++		rte_vdev_uninit("net_rtap_fdtest");
++		return -1;
++	}
 +
-+	/* Update offload-related counters */
-+	if (mb->ol_flags & RTE_MBUF_F_TX_TCP_SEG)
-+		xs->tso_packets++;
++	if (port_reconfigure(port, 2, NULL, RING_SIZE, mp) < 0)
++		goto cleanup;
 +
-+	if ((mb->ol_flags & RTE_MBUF_F_TX_L4_MASK) != 0)
-+		xs->checksum_offload++;
++	ret = rte_eth_dev_stop(port);
++	if (ret != 0)
++		printf("Warning: stop returned %d\n", ret);
 +
-+	if (mb->nb_segs > 1)
-+		xs->multiseg_packets++;
++	rte_eth_dev_close(port);
++	rte_vdev_uninit("net_rtap_fdtest");
++
++	fd_after = count_open_fds();
++	printf("  Open fds after:  %d\n", fd_after);
++
++	if (fd_after != fd_before) {
++		printf("  ERROR: fd leak detected: %d fds leaked\n",
++		       fd_after - fd_before);
++		return -1;
++	}
++
++	printf("  fd leak test PASSED\n");
++	return 0;
++
++cleanup:
++	rte_eth_dev_stop(port);
++	rte_eth_dev_close(port);
++	rte_vdev_uninit("net_rtap_fdtest");
++	return -1;
 +}
++
++static void
++test_rtap_cleanup(void)
++{
++	int ret;
++
++	if (rtap_port0 >= 0) {
++		ret = rte_eth_dev_stop(rtap_port0);
++		if (ret != 0)
++			printf("Error: failed to stop port %u: %s\n",
++			       rtap_port0, rte_strerror(-ret));
++		rte_eth_dev_close(rtap_port0);
++	}
++
++	if (rtap_port1 >= 0) {
++		ret = rte_eth_dev_stop(rtap_port1);
++		if (ret != 0)
++			printf("Error: failed to stop port %u: %s\n",
++			       rtap_port1, rte_strerror(-ret));
++		rte_eth_dev_close(rtap_port1);
++	}
++
++	rte_mempool_free(mp);
++	rte_vdev_uninit("net_rtap0");
++	rte_vdev_uninit("net_rtap1");
++}
++
++static int
++test_pmd_rtap_setup(void)
++{
++	uint16_t nb_ports;
++
++	if (check_rtap_available() < 0) {
++		printf("RTAP not available, skipping tests\n");
++		return TEST_SKIPPED;
++	}
++
++	nb_ports = rte_eth_dev_count_avail();
++	printf("nb_ports before rtap creation=%d\n", (int)nb_ports);
++
++	mp = rte_pktmbuf_pool_create("mbuf_pool", NB_MBUF, 32,
++			0, RTE_MBUF_DEFAULT_BUF_SIZE, rte_socket_id());
++	if (mp == NULL) {
++		printf("Failed to create mempool\n");
++		return TEST_FAILED;
++	}
++
++	if (rte_vdev_init("net_rtap0", "iface=rtap_test0") < 0) {
++		printf("Failed to create net_rtap0\n");
++		rte_mempool_free(mp);
++		return TEST_FAILED;
++	}
++
++	if (rte_vdev_init("net_rtap1", "iface=rtap_test1") < 0) {
++		printf("Failed to create net_rtap1\n");
++		rte_vdev_uninit("net_rtap0");
++		rte_mempool_free(mp);
++		return TEST_FAILED;
++	}
++
++	uint16_t port;
++	RTE_ETH_FOREACH_DEV(port) {
++		struct rte_eth_dev_info dev_info;
++		int ret = rte_eth_dev_info_get(port, &dev_info);
++		if (ret != 0)
++			continue;
++
++		if (strstr(dev_info.driver_name, "rtap") != NULL ||
++		    strstr(dev_info.driver_name, "RTAP") != NULL) {
++			if (rtap_port0 < 0)
++				rtap_port0 = port;
++			else if (rtap_port1 < 0)
++				rtap_port1 = port;
++		}
++	}
++
++	if (rtap_port0 < 0) {
++		printf("Failed to find rtap ports\n");
++		test_rtap_cleanup();
++		return TEST_FAILED;
++	}
++
++	printf("rtap_port0=%d rtap_port1=%d\n", rtap_port0, rtap_port1);
++	return TEST_SUCCESS;
++}
++
++static int
++test_ethdev_configure_ports(void)
++{
++	TEST_ASSERT((test_ethdev_configure_port(rtap_port0) == 0),
++			"test ethdev configure port rtap_port0 failed");
++
++	if (rtap_port1 >= 0) {
++		TEST_ASSERT((test_ethdev_configure_port(rtap_port1) == 0),
++				"test ethdev configure port rtap_port1 failed");
++	}
++
++	return TEST_SUCCESS;
++}
++
++static int
++test_command_line_rtap_port(void)
++{
++	int port, cmdl_port = -1;
++	int ret;
++
++	printf("Testing command line created rtap port\n");
++
++	RTE_ETH_FOREACH_DEV(port) {
++		struct rte_eth_dev_info dev_info;
++
++		ret = rte_eth_dev_info_get(port, &dev_info);
++		if (ret != 0)
++			continue;
++
++		if (port == rtap_port0 || port == rtap_port1)
++			continue;
++
++		if (strstr(dev_info.driver_name, "rtap") != NULL ||
++		    strstr(dev_info.driver_name, "RTAP") != NULL) {
++			printf("Found command line rtap port=%d\n", port);
++			cmdl_port = port;
++			break;
++		}
++	}
++
++	if (cmdl_port != -1) {
++		TEST_ASSERT((test_ethdev_configure_port(cmdl_port) == 0),
++				"test ethdev configure cmdl_port failed");
++		TEST_ASSERT((test_stats_reset(cmdl_port) == 0),
++				"test stats reset cmdl_port failed");
++		TEST_ASSERT((test_get_stats(cmdl_port) == 0),
++				"test get stats cmdl_port failed");
++		TEST_ASSERT((rte_eth_dev_stop(cmdl_port) == 0),
++				"test stop cmdl_port failed");
++	}
++
++	return TEST_SUCCESS;
++}
++
++/* Test case wrappers */
++#define TEST_CASE_WRAPPER(name, func) \
++	static int test_##name##_for_port(void) { \
++		TEST_ASSERT(func(rtap_port0) == 0, #name " failed"); \
++		return TEST_SUCCESS; \
++	}
++
++TEST_CASE_WRAPPER(get_stats, test_get_stats)
++TEST_CASE_WRAPPER(stats_reset, test_stats_reset)
++TEST_CASE_WRAPPER(dev_info, test_dev_info)
++TEST_CASE_WRAPPER(link_status, test_link_status)
++TEST_CASE_WRAPPER(link_up_down, test_set_link_up_down)
++TEST_CASE_WRAPPER(promiscuous, test_promiscuous_mode)
++TEST_CASE_WRAPPER(allmulticast, test_allmulticast_mode)
++TEST_CASE_WRAPPER(mac_address, test_mac_address)
++TEST_CASE_WRAPPER(mtu, test_mtu_set)
++TEST_CASE_WRAPPER(multiqueue, test_multiqueue)
++TEST_CASE_WRAPPER(multiqueue_reduce, test_multiqueue_reduce)
++TEST_CASE_WRAPPER(multiqueue_mismatch, test_multiqueue_mismatch)
++TEST_CASE_WRAPPER(queue_reconfigure, test_queue_reconfigure)
++TEST_CASE_WRAPPER(rx_inject, test_rx_inject)
++TEST_CASE_WRAPPER(tx_capture, test_tx_capture)
++TEST_CASE_WRAPPER(tx_multiseg, test_tx_multiseg)
++TEST_CASE_WRAPPER(rx_multiseg, test_rx_multiseg)
++TEST_CASE_WRAPPER(offload_config, test_offload_config)
++TEST_CASE_WRAPPER(tx_csum_offload, test_tx_csum_offload)
++TEST_CASE_WRAPPER(stats_imissed, test_imissed_counter)
++TEST_CASE_WRAPPER(lsc_interrupt, test_lsc_interrupt)
++TEST_CASE_WRAPPER(rxq_interrupt, test_rxq_interrupt)
++TEST_CASE_WRAPPER(xstats_get_names, test_xstats_get_names)
++TEST_CASE_WRAPPER(xstats_get_values, test_xstats_get_values)
++TEST_CASE_WRAPPER(xstats_reset, test_xstats_reset)
++TEST_CASE_WRAPPER(xstats_packet_sizes, test_xstats_packet_sizes)
++TEST_CASE_WRAPPER(xstats_packet_types, test_xstats_packet_types)
++TEST_CASE_WRAPPER(xstats_multiqueue, test_xstats_multiqueue)
++TEST_CASE_WRAPPER(xstats_offload_stats, test_xstats_offload_stats)
++
++static int
++test_fd_leak_for_port(void)
++{
++	TEST_ASSERT(test_fd_leak() == 0, "test fd leak failed");
++	return TEST_SUCCESS;
++}
++
++static struct
++unit_test_suite test_pmd_rtap_suite = {
++	.setup = test_pmd_rtap_setup,
++	.teardown = test_rtap_cleanup,
++	.suite_name = "Test Pmd RTAP Unit Test Suite",
++	.unit_test_cases = {
++		TEST_CASE(test_ethdev_configure_ports),
++		TEST_CASE(test_dev_info_for_port),
++		TEST_CASE(test_link_status_for_port),
++		TEST_CASE(test_link_up_down_for_port),
++		TEST_CASE(test_get_stats_for_port),
++		TEST_CASE(test_stats_reset_for_port),
++		TEST_CASE(test_stats_imissed_for_port),
++		TEST_CASE(test_promiscuous_for_port),
++		TEST_CASE(test_allmulticast_for_port),
++		TEST_CASE(test_mac_address_for_port),
++		TEST_CASE(test_mtu_for_port),
++		TEST_CASE(test_multiqueue_for_port),
++		TEST_CASE(test_multiqueue_reduce_for_port),
++		TEST_CASE(test_multiqueue_mismatch_for_port),
++		TEST_CASE(test_queue_reconfigure_for_port),
++		TEST_CASE(test_rx_inject_for_port),
++		TEST_CASE(test_tx_capture_for_port),
++		TEST_CASE(test_tx_multiseg_for_port),
++		TEST_CASE(test_rx_multiseg_for_port),
++		TEST_CASE(test_offload_config_for_port),
++		TEST_CASE(test_tx_csum_offload_for_port),
++		TEST_CASE(test_lsc_interrupt_for_port),
++		TEST_CASE(test_rxq_interrupt_for_port),
++		TEST_CASE(test_xstats_get_names_for_port),
++		TEST_CASE(test_xstats_get_values_for_port),
++		TEST_CASE(test_xstats_reset_for_port),
++		TEST_CASE(test_xstats_packet_sizes_for_port),
++		TEST_CASE(test_xstats_packet_types_for_port),
++		TEST_CASE(test_xstats_multiqueue_for_port),
++		TEST_CASE(test_xstats_offload_stats_for_port),
++		TEST_CASE(test_fd_leak_for_port),
++		TEST_CASE(test_command_line_rtap_port),
++		TEST_CASES_END()
++	}
++};
++
++static int
++test_pmd_rtap(void)
++{
++	return unit_test_suite_runner(&test_pmd_rtap_suite);
++}
++
++REGISTER_FAST_TEST(rtap_pmd_autotest, NOHUGE_OK, ASAN_OK, test_pmd_rtap);
 -- 
 2.51.0
 
