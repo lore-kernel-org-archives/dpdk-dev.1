@@ -2,68 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEC56EF584D
-	for <dpdk-dev@archiver.kernel.org>; Sat, 14 Feb 2026 23:47:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFB53EF5858
+	for <dpdk-dev@archiver.kernel.org>; Sat, 14 Feb 2026 23:47:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E6A83402EA;
-	Sun, 15 Feb 2026 00:47:35 +0100 (CET)
-Received: from mail-wm1-f66.google.com (mail-wm1-f66.google.com
- [209.85.128.66]) by mails.dpdk.org (Postfix) with ESMTP id 4889B402E7
- for <dev@dpdk.org>; Sun, 15 Feb 2026 00:47:34 +0100 (CET)
-Received: by mail-wm1-f66.google.com with SMTP id
- 5b1f17b1804b1-4807068eacbso15608745e9.2
- for <dev@dpdk.org>; Sat, 14 Feb 2026 15:47:34 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 717F140612;
+	Sun, 15 Feb 2026 00:47:38 +0100 (CET)
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com
+ [209.85.128.41]) by mails.dpdk.org (Postfix) with ESMTP id 23673402ED
+ for <dev@dpdk.org>; Sun, 15 Feb 2026 00:47:36 +0100 (CET)
+Received: by mail-wm1-f41.google.com with SMTP id
+ 5b1f17b1804b1-4837f27cf2dso4170655e9.2
+ for <dev@dpdk.org>; Sat, 14 Feb 2026 15:47:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1771112854;
- x=1771717654; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1771112855;
+ x=1771717655; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=nOdRVJ51XoAPI23WoWcXlhElandy4W/U59MCXkIEUEw=;
- b=GlUhn1Muj6w2Mz+Wen1Gknvr6pkcmCddZJzKiJ/eAozeFUbrCjrvQYF7Db29LbKE0z
- XgZNA5cGS/zfUCceuEoLyYQVyGa2fsauKzNdnA4J0CY+ApdJXSpIJFYhPu2Nxh9Y/ROk
- O9OUCHKQBUOWrSBEGrP8b8E38MPbpy9A8cGqk+0nJBRO/z2OS1exbyaTTfmG6n/wPRd8
- 9wqfvlsS0KnG7wh5gaAokoKESEVBI+QGyhDw5koeRyw0F7SS69vxykmwwGtgVM6PCERV
- lX4l8PvjsuC6d/ctVxS8TDwgp8KOSHgtPaqcfZnJcNKWqsSl8pt4UyAxuS6xPC2MOHcB
- L/xw==
+ bh=DPRm3hpNQSwVafH7wrzyM8IK9XgL7XBbuGruXzOyVG8=;
+ b=XRJrpKY0l+q2TsUnRUzSnAgHjYzw9PxzFzYQmT95hXdoPPpQAudFthsOx63R02ghYB
+ 9RV2JQZgFlOe/GIHaE2QFOKqqlPkzKqjUUGcd3qJStP1sBBXz4LSY/tir4yduz8Pi0hX
+ OdS+ur/q9Bb7s2U1ipkE5B11sDfQiHdjQiIzyQIfHQ/WQ6M24baBldylvk4xVhhMF7vx
+ 2D2BSn9DVafHypzNytrk1ql/dASLKvFB5iuHcCluqRE61mBisuiSFvW62iwpQppqc2dv
+ ELmAL+mDgR8wfZtzWN5Yv+hofAp2Q4AMc3b/P4aXh223c8OcNAY4ZR4nwrJpDUgCrorC
+ fN4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1771112854; x=1771717654;
+ d=1e100.net; s=20230601; t=1771112855; x=1771717655;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=nOdRVJ51XoAPI23WoWcXlhElandy4W/U59MCXkIEUEw=;
- b=Fc0gE3/A/yDIMv6H4Qa3okw017E5LCw8zaTmyU10uRPdtgP3BDyY+YApTzSJ8ptgIc
- k4bKAxNAtDosp+Gyt9sQuNc6QURcrQXTDtaFzJoU0p7F6U/+cKHzMBywC10VZS7rxY9X
- zbxPqvfV6SQMkgTU3PauRLj77M6SY1kPkEF2vnQBjuxOPLTNOPhjEsEWyC8/y5fGEjAI
- mMA8OwdD7cFlJ0CvWtOldVbExEAW7RqmTqNvPKg/+u1vOjs6ABvcio1LjJYQR7WI5VWD
- WK313UgRG8eGwDbPz7q8q5Dr2NCGcxqokUY8XI39fVugvOeprMwW9QxujH580VHWN3R4
- 0k1w==
-X-Gm-Message-State: AOJu0YzTga0qrLvlCpfoHtgKSB31J92A1DM4GgHWRwq/5ITgfTBPZyg6
- xziRl9eQc+FNgapSY9EdB3YTgB+ENQZKTbPgREcetRrzWWrQVgn456davPcbHPCdmXdUveUqJk2
- wPqpEu6g=
-X-Gm-Gg: AZuq6aIFJfxL7qLiTdY8m1A2riDJKSKlgeUEvcKCFMM3lYSmbx+4qyApgYn2ILq8Nt+
- Xs3UJmGHsPsI9+hfpd6RSWPm90qdqkUc6xxv6TUjBKF9W5GJemNobCIPCavae3gGV5CZRJ9ZWUY
- FVZU3gUwOuKR0qNN1rNo5Y4ujeQ67r/e9K6lnWW1BgZ6uIWE4xOt38GGqXnnmL9gp/DkPy7rdC3
- lycFYwhVPXOaeTxBqQfHEWjqr/SnO2J+Bwari39bSf7qmKD3hJdjjfemtDH2eMTbyRT/agB3qgq
- sDeq3XH9PKfb5Jjvscf43vQeOO1OxbegeQd860QAN50pZpdMjTXMkHMkon9sharbNmjjIqnrVT2
- aV1QB4zTlkr8RxhiZghNyzHR6Jtkb7zFzJc7hI64WgobD5Xi178RW6ygLaSyyNUL1hbaR0XA6Ea
- lC44B72IWQeojOv5WAt/Zc8hxfSHa1os/V9vq4m/tBmVpgEqBcs048lyavVSsa8ab1
-X-Received: by 2002:a05:600c:548c:b0:483:2c98:435e with SMTP id
- 5b1f17b1804b1-48373a782c2mr100003975e9.34.1771112853637; 
- Sat, 14 Feb 2026 15:47:33 -0800 (PST)
+ bh=DPRm3hpNQSwVafH7wrzyM8IK9XgL7XBbuGruXzOyVG8=;
+ b=Z0xRpGT+14Ia+38cRXtOD/zmX21EUl2nUvR06zUl3+tfOO2TcPH6u/bBKAS42nm1to
+ +bo51vwT3gwJddWT5ci3kfaA7Soj8ksKwrl9yUaKL49O8H6bMKeHpL34iwJeSv0mMxiY
+ XNg8CFunWIujKLBOJ5ELLxCYPACXCsBnnrpaT1EjQeHG4Kzw6vanQ19JhGFbfJt1aCns
+ H9DmuJ4sJ0Bv/zLmDADOj2024t6cubAnXWwnFddY9r9lc7rLPqPhJOGHz0UyQoyfmPVN
+ e3QZTlXsOj8bTN8V4gtgJOepXU6zTxIV3x9DuDHZjPX5ELeJyORIWqUqhZuawhLNzMh1
+ Rn9A==
+X-Gm-Message-State: AOJu0YyseDL44TBi3cWhGosz6Dq2X29UXdfA98uvpt15f6uik1zU/PMe
+ lC11ZL7HGLqTWZZBKin2Ajqpi12skJO0V8Yc+KIBljOmnghesuhBmzf8b0YK3WCKGtyN4t7pM6F
+ w2Bzd
+X-Gm-Gg: AZuq6aLHakdijU4+sxRn4WGBHRpvB1mI7WlXK+13gY7jhnVv56nD3zSR/QK2/Mmstw/
+ 1CmuY1iPV+L4h/i+C1kS1n0yCVnGVKH99yP7RyTny1KZyqN5Rp9XHc2C4F29SOa1c9sQ4eILnIp
+ 1wCca/Q90eqZoqOPWz4RPX4VCDNJl5e6q95WMm1IqCEn6In34vnrOW5rEgafgsUzA2ytSkSovmj
+ ENHCxRS/+q8u6EYXP/Nr/HOwKvyDYrs27JwoYn1yoAkpyRgB+kTxqrdQKMHoA+TM05CsOwRFHd5
+ oYx6FG/JYhMMAaq10K4qc0se7zlk8lNKyjZZOOFOzWHQx6JRq9WBAbZYGo2dMETD4TI0jdMAWMe
+ G+eAJqtK/pX9nj/7mb/7R/9Gd39Lxda4/fIjuy4lbht1exkcFhMoXTiwud0F+8OkZmMlsve4yFx
+ 5FEkb6lG12TtDNlc2TJ4o+OYOlYYsR5Brotw3i0+PvFelrfKLH1nBHRpFTAnlyKJdr
+X-Received: by 2002:a05:600c:1547:b0:477:afc5:fb02 with SMTP id
+ 5b1f17b1804b1-483710858c8mr130125895e9.21.1771112855461; 
+ Sat, 14 Feb 2026 15:47:35 -0800 (PST)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-4834d5ebd1bsm394921485e9.6.2026.02.14.15.47.31
+ 5b1f17b1804b1-4834d5ebd1bsm394921485e9.6.2026.02.14.15.47.33
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sat, 14 Feb 2026 15:47:33 -0800 (PST)
+ Sat, 14 Feb 2026 15:47:35 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Thomas Monjalon <thomas@monjalon.net>,
  Anatoly Burakov <anatoly.burakov@intel.com>
-Subject: [PATCH v6 01/11] net/rtap: add driver skeleton and documentation
-Date: Sat, 14 Feb 2026 15:44:10 -0800
-Message-ID: <20260214234726.188947-2-stephen@networkplumber.org>
+Subject: [PATCH v6 02/11] net/rtap: add TAP device creation and queue
+ management
+Date: Sat, 14 Feb 2026 15:44:11 -0800
+Message-ID: <20260214234726.188947-3-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260214234726.188947-1-stephen@networkplumber.org>
 References: <20241210212757.83490-1-stephen@networkplumber.org>
@@ -83,531 +83,795 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add the initial skeleton for the rtap poll mode driver, a virtual
-ethernet device that uses Linux io_uring for packet I/O with kernel
-TAP devices.
+Add TAP device creation using /dev/net/tun with IFF_MULTI_QUEUE,
+IFF_NO_PI, IFF_VNET_HDR, and optional IFF_NAPI flags.
 
-This patch includes:
-  - MAINTAINERS entry
-  - Driver documentation (doc/guides/nics/rtap.rst)
-  - Feature matrix (doc/guides/nics/features/rtap.ini)
-  - Release notes update
-  - Meson build integration with liburing dependency
-  - Header file with shared data structures and declarations
-  - Stub probe/remove handlers that register the vdev driver
-  - Empty dev_ops with only dev_close implemented
+The driver maintains a keep-alive fd and opens additional per-queue
+fds for I/O. Each queue pair (rx+tx) shares a single TAP fd.
 
-The driver registers as net_rtap and is Linux-only.
+Key operations:
+- rtap_create(): Opens TAP, gets stable ifindex, opens netlink
+  socket, retrieves MAC via netlink, detaches keep-alive queue
+- rtap_queue_open/close(): Per-queue fd management (converts
+  ifindex to name for TUNSETIFF ioctl)
+- rtap_dev_configure(): Validates paired queues, clears offloads
+- rtap_dev_start/stop(): Manages link status and queue states
 
-Requires the liburing library version 2.0 or later.
-Earlier versions have known security and build issues.
+The driver uses netlink (RTM_GETLINK/RTM_NEWLINK) and ifindex
+for interface control rather than ioctl() and interface names.
+This avoids issues with interface renames and namespace moves.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- MAINTAINERS                            |   7 +
- doc/guides/nics/features/rtap.ini      |  13 ++
- doc/guides/nics/index.rst              |   1 +
- doc/guides/nics/rtap.rst               | 101 ++++++++++++++
- doc/guides/rel_notes/release_26_03.rst |   7 +
- drivers/net/meson.build                |   1 +
- drivers/net/rtap/meson.build           |  26 ++++
- drivers/net/rtap/rtap.h                |  81 +++++++++++
- drivers/net/rtap/rtap_ethdev.c         | 177 +++++++++++++++++++++++++
- 9 files changed, 414 insertions(+)
- create mode 100644 doc/guides/nics/features/rtap.ini
- create mode 100644 doc/guides/nics/rtap.rst
- create mode 100644 drivers/net/rtap/meson.build
- create mode 100644 drivers/net/rtap/rtap.h
- create mode 100644 drivers/net/rtap/rtap_ethdev.c
+ drivers/net/rtap/meson.build    |   1 +
+ drivers/net/rtap/rtap.h         |   4 +
+ drivers/net/rtap/rtap_ethdev.c  | 241 ++++++++++++++++-
+ drivers/net/rtap/rtap_netlink.c | 445 ++++++++++++++++++++++++++++++++
+ 4 files changed, 689 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/net/rtap/rtap_netlink.c
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 25fb109ef4..45721c9d03 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1135,6 +1135,13 @@ F: doc/guides/nics/ring.rst
- F: app/test/test_pmd_ring.c
- F: app/test/test_pmd_ring_perf.c
- 
-+Rtap PMD - EXPERIMENTAL
-+M: Stephen Hemminger <stephen@networkplumber.org>
-+F: drivers/net/rtap/
-+F: app/test/test_pmd_rtap.c
-+F: doc/guides/nics/rtap.rst
-+F: doc/guides/nics/features/rtap.ini
-+
- Null Networking PMD
- M: Tetsuya Mukawa <mtetsuyah@gmail.com>
- F: drivers/net/null/
-diff --git a/doc/guides/nics/features/rtap.ini b/doc/guides/nics/features/rtap.ini
-new file mode 100644
-index 0000000000..ed7c638029
---- /dev/null
-+++ b/doc/guides/nics/features/rtap.ini
-@@ -0,0 +1,13 @@
-+;
-+; Supported features of the 'rtap' driver.
-+;
-+; Refer to default.ini for the full list of available PMD features.
-+;
-+[Features]
-+Linux                = Y
-+ARMv7                = Y
-+ARMv8                = Y
-+Power8               = Y
-+x86-32               = Y
-+x86-64               = Y
-+Usage doc            = Y
-diff --git a/doc/guides/nics/index.rst b/doc/guides/nics/index.rst
-index cb818284fe..24746596b7 100644
---- a/doc/guides/nics/index.rst
-+++ b/doc/guides/nics/index.rst
-@@ -66,6 +66,7 @@ Network Interface Controller Drivers
-     r8169
-     ring
-     rnp
-+    rtap
-     sfc_efx
-     softnic
-     tap
-diff --git a/doc/guides/nics/rtap.rst b/doc/guides/nics/rtap.rst
-new file mode 100644
-index 0000000000..4bb964128b
---- /dev/null
-+++ b/doc/guides/nics/rtap.rst
-@@ -0,0 +1,101 @@
-+..  SPDX-License-Identifier: BSD-3-Clause
-+
-+RTAP Poll Mode Driver
-+=======================
-+
-+The RTAP Poll Mode Driver (PMD) is similar to the TAP PMD. It is a
-+virtual device that uses Linux io_uring for efficient packet I/O with
-+the Linux kernel.
-+It is useful when writing DPDK applications that need to support interaction
-+with the Linux TCP/IP stack for control plane or tunneling.
-+
-+The RTAP PMD creates a kernel network device that can be
-+managed by standard tools such as ``ip`` and ``ethtool`` commands.
-+
-+From a DPDK application, the RTAP device looks like a DPDK ethdev.
-+It supports the standard DPDK APIs to query for information, statistics,
-+and send/receive packets.
-+
-+Features
-+--------
-+
-+- Uses io_uring for asynchronous packet I/O via read/write and readv/writev
-+- TX offloads: multi-segment, UDP checksum, TCP checksum, TCP segmentation (TSO)
-+- RX offloads: UDP checksum, TCP checksum, TCP LRO, scatter
-+- Virtio net header support for offload negotiation with the kernel
-+- Multi-queue support (up to 128 queues)
-+- Multi-process support (secondary processes receive queue fds from primary)
-+- Link state change notification via netlink
-+- Rx interrupt support for power-aware applications (eventfd per queue)
-+- Promiscuous and allmulticast mode
-+- MAC address configuration
-+- MTU update
-+- Link up/down control
-+- Basic and per-queue statistics
-+
-+Requirements
-+------------
-+
-+- **liburing >= 2.0**.  Earlier versions have known security and build issues.
-+
-+- The kernel must support ``IORING_ASYNC_CANCEL_ALL`` (upstream since 5.19).
-+  The meson build checks for this symbol and will not build the driver
-+  if the installed kernel headers do not provide it.  Because enterprise
-+  distributions backport features independently of version numbers,
-+  the driver avoids hard-coding a kernel version check.
-+
-+Known working distributions:
-+
-+- Debian 12 (Bookworm) or later
-+- Ubuntu 24.04 (Noble) or later
-+- Fedora 37 or later
-+- SUSE Linux Enterprise 15 SP6 or later / openSUSE Tumbleweed
-+
-+RHEL 9 ships io_uring only as a Technology Preview (disabled by default)
-+and is not supported.
-+
-+For more info on io_uring, please see:
-+
-+- `io_uring on Wikipedia <https://en.wikipedia.org/wiki/Io_uring>`_
-+- `liburing on GitHub <https://github.com/axboe/liburing>`_
-+
-+
-+Arguments
-+---------
-+
-+RTAP devices are created with the ``--vdev=net_rtap0`` command line option.
-+Multiple devices can be created by repeating the option with different device names
-+(``net_rtap1``, ``net_rtap2``, etc.).
-+
-+By default, the Linux interfaces are named ``rtap0``, ``rtap1``, etc.
-+The interface name can be specified by adding the ``iface=foo0``, for example::
-+
-+   --vdev=net_rtap0,iface=io0 --vdev=net_rtap1,iface=io1 ...
-+
-+The PMD inherits the MAC address assigned by the kernel which will be
-+a locally assigned random Ethernet address.
-+
-+Normally, when the DPDK application exits, the RTAP device is removed.
-+But this behavior can be overridden by the use of the persist flag, which
-+causes the kernel network interface to survive application exit. Example::
-+
-+  --vdev=net_rtap0,iface=io0,persist ...
-+
-+
-+Limitations
-+-----------
-+
-+- The kernel must have io_uring support with ``IORING_ASYNC_CANCEL_ALL``
-+  (upstream since 5.19, but may be backported by distributions).
-+  io_uring support may also be disabled in some environments or by security policies
-+  (for example, Docker disables io_uring in its default seccomp profile,
-+  and RHEL 9 disables it via ``kernel.io_uring_disabled`` sysctl).
-+
-+- Since RTAP device uses a file descriptor to talk to the kernel,
-+  the same number of queues must be specified for receive and transmit.
-+
-+- The maximum number of queues is 128.
-+
-+- No flow support. Receive queue selection for incoming packets is determined
-+  by the Linux kernel. See kernel documentation for more info:
-+  https://www.kernel.org/doc/html/latest/networking/scaling.html
-diff --git a/doc/guides/rel_notes/release_26_03.rst b/doc/guides/rel_notes/release_26_03.rst
-index afdf1af06c..40320b0101 100644
---- a/doc/guides/rel_notes/release_26_03.rst
-+++ b/doc/guides/rel_notes/release_26_03.rst
-@@ -87,6 +87,13 @@ New Features
-   * Added support for AES-XTS cipher algorithm.
-   * Added support for SHAKE-128 and SHAKE-256 authentication algorithms.
- 
-+* **Added rtap virtual ethernet driver.**
-+
-+  Added a new experimental virtual device driver that uses Linux io_uring
-+  for packet injection into the kernel network stack.
-+  It requires Linux kernel 5.19 or later for IORING_ASYNC_CANCEL
-+  and liburing 2.0 or later.
-+
- 
- Removed Items
- -------------
-diff --git a/drivers/net/meson.build b/drivers/net/meson.build
-index c7dae4ad27..ef1ee68385 100644
---- a/drivers/net/meson.build
-+++ b/drivers/net/meson.build
-@@ -56,6 +56,7 @@ drivers = [
-         'r8169',
-         'ring',
-         'rnp',
-+        'rtap',
-         'sfc',
-         'softnic',
-         'tap',
 diff --git a/drivers/net/rtap/meson.build b/drivers/net/rtap/meson.build
-new file mode 100644
-index 0000000000..7bd7806ef3
---- /dev/null
+index 7bd7806ef3..1a24ea0555 100644
+--- a/drivers/net/rtap/meson.build
 +++ b/drivers/net/rtap/meson.build
-@@ -0,0 +1,26 @@
-+# SPDX-License-Identifier: BSD-3-Clause
-+# Copyright(c) 2026 Stephen Hemminger
-+
-+if not is_linux
-+    build = false
-+    reason = 'only supported on Linux'
-+endif
-+
-+liburing = dependency('liburing', version: '>= 2.0', required: false)
-+if not liburing.found()
-+    build = false
-+    reason = 'missing dependency, "liburing"'
-+endif
-+
-+if build and not cc.has_header_symbol('linux/io_uring.h', 'IORING_ASYNC_CANCEL_ALL')
-+    build = false
-+    reason = 'kernel headers missing IORING_ASYNC_CANCEL_ALL (need kernel >= 5.19 headers)'
-+endif
-+
-+sources = files(
-+        'rtap_ethdev.c',
-+)
-+
-+ext_deps += liburing
-+
-+require_iova_in_mbuf = false
+@@ -19,6 +19,7 @@ endif
+ 
+ sources = files(
+         'rtap_ethdev.c',
++        'rtap_netlink.c',
+ )
+ 
+ ext_deps += liburing
 diff --git a/drivers/net/rtap/rtap.h b/drivers/net/rtap/rtap.h
-new file mode 100644
-index 0000000000..9004953e04
---- /dev/null
+index 9004953e04..a2d1149cac 100644
+--- a/drivers/net/rtap/rtap.h
 +++ b/drivers/net/rtap/rtap.h
-@@ -0,0 +1,81 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright (c) 2026 Stephen Hemminger
-+ */
+@@ -64,6 +64,10 @@ struct rtap_pmd {
+ 	struct rte_ether_addr eth_addr; /* address assigned by kernel */
+ };
+ 
++/* rtap_ethdev.c */
++int rtap_queue_open(struct rte_eth_dev *dev, uint16_t queue_id);
++void rtap_queue_close(struct rte_eth_dev *dev, uint16_t queue_id);
 +
-+#ifndef _RTAP_H_
-+#define _RTAP_H_
-+
-+#include <errno.h>
-+#include <stdint.h>
-+#include <liburing.h>
-+
-+#include <rte_common.h>
-+#include <rte_log.h>
-+#include <rte_ether.h>
-+
-+extern int rtap_logtype;
-+#define RTE_LOGTYPE_RTAP rtap_logtype
-+#define PMD_LOG(level, ...) \
-+	RTE_LOG_LINE_PREFIX(level, RTAP, "%s(): ", __func__, __VA_ARGS__)
-+
-+#define PMD_LOG_ERRNO(level, fmt, ...) \
-+	RTE_LOG_LINE(level, RTAP, "%s(): " fmt ": %s", __func__, ## __VA_ARGS__, strerror(errno))
-+
-+#ifdef RTE_ETHDEV_DEBUG_RX
-+#define PMD_RX_LOG(level, ...) \
-+	RTE_LOG_LINE_PREFIX(level, RTAP, "%s() rx: ", __func__, __VA_ARGS__)
-+#else
-+#define PMD_RX_LOG(...) do { } while (0)
-+#endif
-+
-+#ifdef RTE_ETHDEV_DEBUG_TX
-+#define PMD_TX_LOG(level, ...) \
-+	RTE_LOG_LINE_PREFIX(level, RTAP, "%s() tx: ", __func__, __VA_ARGS__)
-+#else
-+#define PMD_TX_LOG(...) do { } while (0)
-+#endif
-+
-+struct rtap_rx_queue {
-+	struct rte_mempool *mb_pool;	/* rx buffer pool */
-+	struct io_uring io_ring;	/* queue of posted read's */
-+	uint16_t port_id;
-+	uint16_t queue_id;
-+
-+	uint64_t rx_packets;
-+	uint64_t rx_bytes;
-+	uint64_t rx_errors;
-+} __rte_cache_aligned;
-+
-+struct rtap_tx_queue {
-+	struct io_uring io_ring;
-+	uint16_t port_id;
-+	uint16_t queue_id;
-+	uint16_t free_thresh;
-+
-+	uint64_t tx_packets;
-+	uint64_t tx_bytes;
-+	uint64_t tx_errors;
-+} __rte_cache_aligned;
-+
-+struct rtap_pmd {
-+	int keep_fd;			/* keep alive file descriptor */
-+	int if_index;			/* interface index */
-+	int nlsk_fd;			/* netlink control socket */
-+	struct rte_ether_addr eth_addr; /* address assigned by kernel */
-+};
-+
-+/* rtap_netlink.c */
-+int rtap_nl_open(unsigned int groups);
-+struct rte_eth_dev;
-+void rtap_nl_recv(int fd, struct rte_eth_dev *dev);
-+int rtap_nl_get_flags(int nlsk_fd, int if_index, unsigned int *flags);
-+int rtap_nl_change_flags(int nlsk_fd, int if_index,
-+			 unsigned int flags, unsigned int mask);
-+int rtap_nl_set_mtu(int nlsk_fd, int if_index, uint16_t mtu);
-+int rtap_nl_set_mac(int nlsk_fd, int if_index,
-+		    const struct rte_ether_addr *addr);
-+int rtap_nl_get_mac(int nlsk_fd, int if_index, struct rte_ether_addr *addr);
-+struct rtnl_link_stats64;
-+int rtap_nl_get_stats(int if_index, struct rtnl_link_stats64 *stats);
-+
-+#endif /* _RTAP_H_ */
+ /* rtap_netlink.c */
+ int rtap_nl_open(unsigned int groups);
+ struct rte_eth_dev;
 diff --git a/drivers/net/rtap/rtap_ethdev.c b/drivers/net/rtap/rtap_ethdev.c
-new file mode 100644
-index 0000000000..95e0b47988
---- /dev/null
+index 95e0b47988..0eab0a48fa 100644
+--- a/drivers/net/rtap/rtap_ethdev.c
 +++ b/drivers/net/rtap/rtap_ethdev.c
-@@ -0,0 +1,177 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright (c) 2026 Stephen Hemminger
-+ */
-+
-+#include <errno.h>
-+#include <fcntl.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <stdint.h>
-+#include <unistd.h>
-+#include <sys/ioctl.h>
-+#include <sys/socket.h>
-+#include <net/if.h>
-+#include <linux/if_tun.h>
-+#include <linux/virtio_net.h>
-+
-+#include <rte_config.h>
-+#include <rte_common.h>
-+#include <rte_dev.h>
-+#include <rte_eal.h>
-+#include <rte_ethdev.h>
-+#include <rte_ether.h>
-+#include <rte_kvargs.h>
-+#include <rte_log.h>
-+#include <bus_vdev_driver.h>
-+#include <ethdev_driver.h>
-+#include <ethdev_vdev.h>
-+
-+#include "rtap.h"
-+
-+#define RTAP_DEFAULT_IFNAME	"rtap%d"
-+
-+#define RTAP_IFACE_ARG		"iface"
-+#define RTAP_PERSIST_ARG	"persist"
-+
-+static const char * const valid_arguments[] = {
-+	RTAP_IFACE_ARG,
-+	RTAP_PERSIST_ARG,
-+	NULL
-+};
-+
+@@ -9,7 +9,6 @@
+ #include <stdint.h>
+ #include <unistd.h>
+ #include <sys/ioctl.h>
+-#include <sys/socket.h>
+ #include <net/if.h>
+ #include <linux/if_tun.h>
+ #include <linux/virtio_net.h>
+@@ -39,13 +38,145 @@ static const char * const valid_arguments[] = {
+ 	NULL
+ };
+ 
++/* Creates a new tap device, name returned in ifr */
 +static int
-+rtap_dev_close(struct rte_eth_dev *dev)
++rtap_tap_open(const char *name, struct ifreq *ifr, uint8_t persist)
 +{
-+	struct rtap_pmd *pmd = dev->data->dev_private;
++	static const char tun_dev[] = "/dev/net/tun";
++	int tap_fd;
 +
-+	PMD_LOG(INFO, "Closing ifindex %d", pmd->if_index);
-+
-+	if (rte_eal_process_type() == RTE_PROC_PRIMARY) {
-+		/* mac_addrs must not be freed alone because part of dev_private */
-+		dev->data->mac_addrs = NULL;
-+
-+		if (pmd->keep_fd != -1) {
-+			PMD_LOG(DEBUG, "Closing keep_fd %d", pmd->keep_fd);
-+			close(pmd->keep_fd);
-+			pmd->keep_fd = -1;
-+		}
-+
-+		if (pmd->nlsk_fd != -1) {
-+			close(pmd->nlsk_fd);
-+			pmd->nlsk_fd = -1;
-+		}
++	tap_fd = open(tun_dev, O_RDWR | O_CLOEXEC | O_NONBLOCK);
++	if (tap_fd < 0) {
++		PMD_LOG_ERRNO(ERR, "Open %s failed", tun_dev);
++		return -1;
 +	}
 +
-+	free(dev->process_private);
-+	dev->process_private = NULL;
-+
-+	return 0;
-+}
-+
-+static const struct eth_dev_ops rtap_ops = {
-+	.dev_close		= rtap_dev_close,
-+};
-+
-+static int
-+rtap_parse_iface(const char *key __rte_unused, const char *value, void *extra_args)
-+{
-+	char *name = extra_args;
-+
-+	/* must not be null string */
-+	if (value == NULL || value[0] == '\0' || strnlen(value, IFNAMSIZ) == IFNAMSIZ)
-+		return -EINVAL;
-+
-+	strlcpy(name, value, IFNAMSIZ);
-+	return 0;
-+}
-+
-+static int
-+rtap_probe(struct rte_vdev_device *vdev)
-+{
-+	const char *name = rte_vdev_device_name(vdev);
-+	const char *params = rte_vdev_device_args(vdev);
-+	struct rte_kvargs *kvlist = NULL;
-+	struct rte_eth_dev *eth_dev = NULL;
-+	int *fds = NULL;
-+	char tap_name[IFNAMSIZ] = RTAP_DEFAULT_IFNAME;
-+	uint8_t persist = 0;
-+	int ret;
-+
-+	PMD_LOG(INFO, "Initializing %s", name);
-+
-+	if (params != NULL) {
-+		kvlist = rte_kvargs_parse(params, valid_arguments);
-+		if (kvlist == NULL)
-+			return -1;
-+
-+		if (rte_kvargs_count(kvlist, RTAP_IFACE_ARG) == 1) {
-+			ret = rte_kvargs_process_opt(kvlist, RTAP_IFACE_ARG,
-+						     &rtap_parse_iface, tap_name);
-+			if (ret < 0)
-+				goto error;
-+		}
-+
-+		if (rte_kvargs_count(kvlist, RTAP_PERSIST_ARG) == 1)
-+			persist = 1;
-+	}
-+
-+	/* Per-queue tap fd's (for primary process) */
-+	fds = calloc(RTE_MAX_QUEUES_PER_PORT, sizeof(int));
-+	if (fds == NULL) {
-+		PMD_LOG(ERR, "Unable to allocate fd array");
-+		goto error;
-+	}
-+	for (unsigned int i = 0; i < RTE_MAX_QUEUES_PER_PORT; i++)
-+		fds[i] = -1;
-+
-+	eth_dev = rte_eth_vdev_allocate(vdev, sizeof(struct rtap_pmd));
-+	if (eth_dev == NULL) {
-+		PMD_LOG(ERR, "%s Unable to allocate device struct", tap_name);
++	int features = 0;
++	if (ioctl(tap_fd, TUNGETFEATURES, &features) < 0) {
++		PMD_LOG_ERRNO(ERR, "ioctl(TUNGETFEATURES): %s", tun_dev);
 +		goto error;
 +	}
 +
-+	eth_dev->dev_ops = &rtap_ops;
-+	eth_dev->process_private = fds;
-+	eth_dev->data->dev_flags |= RTE_ETH_DEV_AUTOFILL_QUEUE_XSTATS;
++	int flags = IFF_TAP | IFF_MULTI_QUEUE | IFF_NO_PI | IFF_VNET_HDR;
++	if ((features & flags) != flags) {
++		PMD_LOG(ERR, "TUN features %#x missing support for %#x",
++			features, flags & ~features);
++		goto error;
++	}
 +
-+	RTE_SET_USED(persist); /* used in later patches */
++#ifdef IFF_NAPI
++	/* If kernel supports using NAPI enable it */
++	if (features & IFF_NAPI)
++		flags |= IFF_NAPI;
++#endif
++	/*
++	 * Sets the device name and packet format.
++	 * Do not want the protocol information (PI)
++	 */
++	strlcpy(ifr->ifr_name, name, IFNAMSIZ);
++	ifr->ifr_flags = flags;
++	if (ioctl(tap_fd, TUNSETIFF, ifr) < 0) {
++		PMD_LOG_ERRNO(ERR, "ioctl(TUNSETIFF) %s", ifr->ifr_name);
++		goto error;
++	}
 +
-+	rte_eth_dev_probing_finish(eth_dev);
-+	rte_kvargs_free(kvlist);
-+	return 0;
++	/* (Optional) keep the device after application exit */
++	if (persist && ioctl(tap_fd, TUNSETPERSIST, 1) < 0) {
++		PMD_LOG_ERRNO(ERR, "ioctl(TUNSETPERSIST) %s", ifr->ifr_name);
++		goto error;
++	}
 +
++	int hdr_size = sizeof(struct virtio_net_hdr);
++	if (ioctl(tap_fd, TUNSETVNETHDRSZ, &hdr_size) < 0) {
++		PMD_LOG(ERR, "ioctl(TUNSETVNETHDRSZ) %s", strerror(errno));
++		goto error;
++	}
++
++	return tap_fd;
 +error:
-+	if (eth_dev != NULL) {
-+		eth_dev->process_private = NULL;
-+		rte_eth_dev_release_port(eth_dev);
-+	}
-+	free(fds);
-+	rte_kvargs_free(kvlist);
++	close(tap_fd);
 +	return -1;
 +}
 +
 +static int
-+rtap_remove(struct rte_vdev_device *dev)
++rtap_dev_start(struct rte_eth_dev *dev)
 +{
-+	struct rte_eth_dev *eth_dev;
++	dev->data->dev_link.link_status = RTE_ETH_LINK_UP;
++	for (uint16_t i = 0; i < dev->data->nb_rx_queues; i++) {
++		dev->data->rx_queue_state[i] = RTE_ETH_QUEUE_STATE_STARTED;
++		dev->data->tx_queue_state[i] = RTE_ETH_QUEUE_STATE_STARTED;
++	}
 +
-+	eth_dev = rte_eth_dev_allocated(rte_vdev_device_name(dev));
-+	if (eth_dev == NULL)
-+		return 0;
-+
-+	rtap_dev_close(eth_dev);
-+	rte_eth_dev_release_port(eth_dev);
 +	return 0;
 +}
 +
-+static struct rte_vdev_driver pmd_rtap_drv = {
-+	.probe = rtap_probe,
-+	.remove = rtap_remove,
-+};
++static int
++rtap_dev_stop(struct rte_eth_dev *dev)
++{
++	int *fds = dev->process_private;
 +
-+RTE_PMD_REGISTER_VDEV(net_rtap, pmd_rtap_drv);
-+RTE_PMD_REGISTER_ALIAS(net_rtap, eth_rtap);
-+RTE_PMD_REGISTER_PARAM_STRING(net_rtap,
-+	RTAP_IFACE_ARG "=<string> "
-+	RTAP_PERSIST_ARG);
-+RTE_LOG_REGISTER_DEFAULT(rtap_logtype, NOTICE);
++	dev->data->dev_link.link_status = RTE_ETH_LINK_DOWN;
++
++	for (uint16_t i = 0; i < dev->data->nb_rx_queues; i++) {
++		dev->data->rx_queue_state[i] = RTE_ETH_QUEUE_STATE_STOPPED;
++		dev->data->tx_queue_state[i] = RTE_ETH_QUEUE_STATE_STOPPED;
++	}
++
++	if (rte_eal_process_type() == RTE_PROC_PRIMARY) {
++		for (uint16_t i = 0; i < RTE_MAX_QUEUES_PER_PORT; i++) {
++			if (fds[i] == -1)
++				continue;
++
++			close(fds[i]);
++			fds[i] = -1;
++		}
++	}
++
++	return 0;
++}
++
++static int
++rtap_dev_configure(struct rte_eth_dev *dev)
++{
++	struct rtap_pmd *pmd = dev->data->dev_private;
++
++	/* rx/tx must be paired */
++	if (dev->data->nb_rx_queues != dev->data->nb_tx_queues) {
++		PMD_LOG(ERR, "number of rx %u and tx %u queues must match",
++			dev->data->nb_rx_queues, dev->data->nb_tx_queues);
++		return -EINVAL;
++	}
++
++	if (ioctl(pmd->keep_fd, TUNSETOFFLOAD, 0) != 0) {
++		int ret = -errno;
++
++		PMD_LOG(ERR, "ioctl(TUNSETOFFLOAD) failed: %s", strerror(errno));
++		return ret;
++	}
++
++	return 0;
++}
++
+ static int
+ rtap_dev_close(struct rte_eth_dev *dev)
+ {
+ 	struct rtap_pmd *pmd = dev->data->dev_private;
++	int *fds = dev->process_private;
+ 
+ 	PMD_LOG(INFO, "Closing ifindex %d", pmd->if_index);
+ 
++	/* Release all io_uring queues (calls rx/tx_queue_release for each) */
++	rte_eth_dev_internal_reset(dev);
++
++	/* Close any remaining queue fds (each process owns its own set) */
++	for (uint16_t i = 0; i < RTE_MAX_QUEUES_PER_PORT; i++) {
++		if (fds[i] == -1)
++			continue;
++		PMD_LOG(DEBUG, "Closed queue %u fd %d", i, fds[i]);
++		close(fds[i]);
++		fds[i] = -1;
++	}
++
+ 	if (rte_eal_process_type() == RTE_PROC_PRIMARY) {
+ 		/* mac_addrs must not be freed alone because part of dev_private */
+ 		dev->data->mac_addrs = NULL;
+@@ -68,10 +199,115 @@ rtap_dev_close(struct rte_eth_dev *dev)
+ 	return 0;
+ }
+ 
++/* Setup another fd to TAP device for the queue */
++int
++rtap_queue_open(struct rte_eth_dev *dev, uint16_t queue_id)
++{
++	struct rtap_pmd *pmd = dev->data->dev_private;
++	int *fds = dev->process_private;
++	char ifname[IFNAMSIZ];
++
++	if (fds[queue_id] != -1) {
++		PMD_LOG(DEBUG, "queue %u already has fd %d", queue_id, fds[queue_id]);
++		return 0;	/* already setup */
++	}
++
++	/* Convert ifindex to name for TUNSETIFF */
++	if (if_indextoname(pmd->if_index, ifname) == NULL) {
++		PMD_LOG(ERR, "Could not find interface for ifindex %d", pmd->if_index);
++		return -1;
++	}
++
++	struct ifreq ifr = { 0 };
++	int tap_fd = rtap_tap_open(ifname, &ifr, 0);
++	if (tap_fd < 0) {
++		PMD_LOG(ERR, "tap_open failed");
++		return -1;
++	}
++
++	PMD_LOG(DEBUG, "Opened %d for queue %u", tap_fd, queue_id);
++	fds[queue_id] = tap_fd;
++	return 0;
++}
++
++void
++rtap_queue_close(struct rte_eth_dev *dev, uint16_t queue_id)
++{
++	int *fds = dev->process_private;
++	int tap_fd = fds[queue_id];
++
++	if (tap_fd == -1)
++		return; /* already closed */
++	PMD_LOG(DEBUG, "Closed queue %u fd %d", queue_id, tap_fd);
++	close(tap_fd);
++	fds[queue_id] = -1;
++}
++
+ static const struct eth_dev_ops rtap_ops = {
++	.dev_start		= rtap_dev_start,
++	.dev_stop		= rtap_dev_stop,
++	.dev_configure		= rtap_dev_configure,
+ 	.dev_close		= rtap_dev_close,
+ };
+ 
++static int
++rtap_create(struct rte_eth_dev *dev, const char *tap_name, uint8_t persist)
++{
++	struct rte_eth_dev_data *data = dev->data;
++	struct rtap_pmd *pmd = data->dev_private;
++
++	pmd->keep_fd = -1;
++	pmd->nlsk_fd = -1;
++
++	dev->dev_ops = &rtap_ops;
++
++	/* Get the initial fd used to keep the tap device around */
++	struct ifreq ifr = { 0 };
++	pmd->keep_fd = rtap_tap_open(tap_name, &ifr, persist);
++	if (pmd->keep_fd < 0)
++		goto error;
++
++	PMD_LOG(DEBUG, "Created %s keep_fd %d", ifr.ifr_name, pmd->keep_fd);
++
++	/* Use if_index which is stable even if interface is renamed */
++	pmd->if_index = if_nametoindex(ifr.ifr_name);
++	if (pmd->if_index == 0) {
++		PMD_LOG(ERR, "Could not find ifindex for '%s'", ifr.ifr_name);
++		goto error;
++	}
++
++	/* Open persistent netlink socket for control operations */
++	pmd->nlsk_fd = rtap_nl_open(0);
++	if (pmd->nlsk_fd < 0)
++		goto error;
++
++	/* Read the MAC address assigned by the kernel via netlink */
++	if (rtap_nl_get_mac(pmd->nlsk_fd, pmd->if_index, &pmd->eth_addr) < 0) {
++		PMD_LOG(ERR, "Unable to get MAC address for ifindex %d", pmd->if_index);
++		goto error;
++	}
++	data->mac_addrs = &pmd->eth_addr;
++
++	/* Detach this instance, not used for traffic */
++	ifr.ifr_flags = IFF_DETACH_QUEUE;
++	if (ioctl(pmd->keep_fd, TUNSETQUEUE, &ifr) < 0) {
++		PMD_LOG_ERRNO(ERR, "Unable to detach keep-alive queue for ifindex %d",
++			      pmd->if_index);
++		goto error;
++	}
++
++	PMD_LOG(DEBUG, "ifindex %d setup", pmd->if_index);
++
++	return 0;
++
++error:
++	if (pmd->nlsk_fd != -1)
++		close(pmd->nlsk_fd);
++	if (pmd->keep_fd != -1)
++		close(pmd->keep_fd);
++	return -1;
++}
++
+ static int
+ rtap_parse_iface(const char *key __rte_unused, const char *value, void *extra_args)
+ {
+@@ -134,7 +370,8 @@ rtap_probe(struct rte_vdev_device *vdev)
+ 	eth_dev->process_private = fds;
+ 	eth_dev->data->dev_flags |= RTE_ETH_DEV_AUTOFILL_QUEUE_XSTATS;
+ 
+-	RTE_SET_USED(persist); /* used in later patches */
++	if (rtap_create(eth_dev, tap_name, persist) < 0)
++		goto error;
+ 
+ 	rte_eth_dev_probing_finish(eth_dev);
+ 	rte_kvargs_free(kvlist);
+diff --git a/drivers/net/rtap/rtap_netlink.c b/drivers/net/rtap/rtap_netlink.c
+new file mode 100644
+index 0000000000..060b89c625
+--- /dev/null
++++ b/drivers/net/rtap/rtap_netlink.c
+@@ -0,0 +1,445 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright (c) 2026 Stephen Hemminger
++ */
++
++/*
++ * Netlink-based control operations for the rtap PMD.
++ *
++ * Uses RTM_GETLINK / RTM_NEWLINK to replace ioctl() for interface
++ * flag changes, MTU, MAC address, and statistics retrieval.
++ *
++ * Socket model:
++ *   - Control socket (pmd->nlsk_fd): persistent per-device, opened
++ *     at create time.  Used for flag changes, MTU, MAC operations.
++ *   - LSC socket: persistent while enabled, subscribed to RTMGRP_LINK.
++ *     Managed by rtap_intr.c via rtap_nl_open().
++ *   - Stats queries (rtap_nl_get_stats): use an ephemeral socket
++ *     opened on demand so they cannot block behind control operations.
++ */
++
++#include <errno.h>
++#include <string.h>
++#include <unistd.h>
++#include <stdint.h>
++#include <stdbool.h>
++#include <sys/types.h>
++#include <sys/socket.h>
++#include <net/if.h>
++#include <linux/if_link.h>
++#include <linux/netlink.h>
++#include <linux/rtnetlink.h>
++
++#include <rte_ethdev.h>
++#include <rte_ether.h>
++#include <ethdev_driver.h>
++#include <rte_stdatomic.h>
++
++#include "rtap.h"
++
++/* Sequence number for netlink requests */
++static RTE_ATOMIC(uint32_t) rtap_nl_seq;
++
++/*
++ * Open a netlink route socket.
++ *
++ * If groups is non-zero, the socket subscribes to those multicast
++ * groups and is set non-blocking (for LSC notification).
++ * If groups is zero, the socket is blocking (for control/query).
++ *
++ * Returns socket fd or -1 on failure.
++ */
++int
++rtap_nl_open(unsigned int groups)
++{
++	int flags = SOCK_RAW | SOCK_CLOEXEC;
++	int fd;
++	struct sockaddr_nl sa = {
++		.nl_family = AF_NETLINK,
++		.nl_groups = groups,
++	};
++
++	if (groups != 0)
++		flags |= SOCK_NONBLOCK;
++
++	fd = socket(AF_NETLINK, flags, NETLINK_ROUTE);
++	if (fd < 0) {
++		PMD_LOG_ERRNO(ERR, "netlink socket");
++		return -1;
++	}
++
++	if (bind(fd, (struct sockaddr *)&sa, sizeof(sa)) < 0) {
++		PMD_LOG_ERRNO(ERR, "netlink bind");
++		close(fd);
++		return -1;
++	}
++
++	return fd;
++}
++
++/*
++ * Send a netlink request and wait for acknowledgment.
++ * Returns 0 on success, negative errno on failure.
++ */
++static int
++rtap_nl_request(int fd, struct nlmsghdr *nlh)
++{
++	char buf[4096];
++	ssize_t len;
++
++	nlh->nlmsg_seq = rte_atomic_fetch_add_explicit(&rtap_nl_seq, 1,
++						       rte_memory_order_relaxed);
++	nlh->nlmsg_flags |= NLM_F_ACK;
++
++	if (send(fd, nlh, nlh->nlmsg_len, 0) < 0)
++		return -errno;
++
++	len = recv(fd, buf, sizeof(buf), 0);
++	if (len < 0)
++		return -errno;
++
++	struct nlmsghdr *nh = (struct nlmsghdr *)buf;
++	if (!NLMSG_OK(nh, (unsigned int)len))
++		return -EBADMSG;
++
++	if (nh->nlmsg_type == NLMSG_ERROR) {
++		struct nlmsgerr *err = NLMSG_DATA(nh);
++
++		return err->error;  /* 0 = success, negative = errno */
++	}
++
++	return -EBADMSG;
++}
++
++/*
++ * Send a netlink request and receive a data response.
++ * Returns length of response on success, negative errno on failure.
++ */
++static int
++rtap_nl_query(int fd, struct nlmsghdr *nlh, char *buf, size_t buflen)
++{
++	ssize_t len;
++
++	nlh->nlmsg_seq = rte_atomic_fetch_add_explicit(&rtap_nl_seq, 1,
++						       rte_memory_order_relaxed);
++
++	if (send(fd, nlh, nlh->nlmsg_len, 0) < 0)
++		return -errno;
++
++	len = recv(fd, buf, buflen, 0);
++	if (len < 0)
++		return -errno;
++
++	struct nlmsghdr *nh = (struct nlmsghdr *)buf;
++	if (!NLMSG_OK(nh, (unsigned int)len))
++		return -EBADMSG;
++
++	if (nh->nlmsg_type == NLMSG_ERROR) {
++		struct nlmsgerr *err = NLMSG_DATA(nh);
++
++		return err->error;
++	}
++
++	/* Detect truncated response */
++	if (nh->nlmsg_len > (unsigned int)len)
++		return -EBADMSG;
++
++	return len;
++}
++
++/* Append a netlink attribute to a message. */
++static void
++rtap_nl_addattr(struct nlmsghdr *nlh, unsigned int maxlen,
++		int type, const void *data, unsigned int datalen)
++{
++	unsigned int len = RTA_LENGTH(datalen);
++	struct rtattr *rta;
++
++	RTE_VERIFY(NLMSG_ALIGN(nlh->nlmsg_len) + RTA_ALIGN(len) <= maxlen);
++
++	rta = (struct rtattr *)((char *)nlh + NLMSG_ALIGN(nlh->nlmsg_len));
++	rta->rta_type = type;
++	rta->rta_len = len;
++	if (datalen > 0)
++		memcpy(RTA_DATA(rta), data, datalen);
++	nlh->nlmsg_len = NLMSG_ALIGN(nlh->nlmsg_len) + RTA_ALIGN(len);
++}
++
++/*
++ * Get interface flags via RTM_GETLINK.
++ * Returns 0 on success and sets *flags.
++ */
++int
++rtap_nl_get_flags(int nlsk_fd, int if_index, unsigned int *flags)
++{
++	struct {
++		struct nlmsghdr nlh;
++		struct ifinfomsg ifi;
++	} req = {
++		.nlh = {
++			.nlmsg_len = NLMSG_LENGTH(sizeof(struct ifinfomsg)),
++			.nlmsg_type = RTM_GETLINK,
++			.nlmsg_flags = NLM_F_REQUEST,
++		},
++		.ifi = {
++			.ifi_family = AF_UNSPEC,
++			.ifi_index = if_index,
++		},
++	};
++	char resp[4096];
++	int ret;
++
++	ret = rtap_nl_query(nlsk_fd, &req.nlh, resp, sizeof(resp));
++	if (ret < 0)
++		return ret;
++
++	struct nlmsghdr *nh = (struct nlmsghdr *)resp;
++	if (nh->nlmsg_type != RTM_NEWLINK)
++		return -EBADMSG;
++
++	struct ifinfomsg *ifi = NLMSG_DATA(nh);
++	*flags = ifi->ifi_flags;
++	return 0;
++}
++
++/*
++ * Change interface flags via RTM_NEWLINK.
++ * 'flags' are set, 'mask' are cleared.
++ */
++int
++rtap_nl_change_flags(int nlsk_fd, int if_index,
++		     unsigned int flags, unsigned int mask)
++{
++	struct {
++		struct nlmsghdr nlh;
++		struct ifinfomsg ifi;
++	} req = {
++		.nlh = {
++			.nlmsg_len = NLMSG_LENGTH(sizeof(struct ifinfomsg)),
++			.nlmsg_type = RTM_NEWLINK,
++			.nlmsg_flags = NLM_F_REQUEST,
++		},
++		.ifi = {
++			.ifi_family = AF_UNSPEC,
++			.ifi_index = if_index,
++			.ifi_flags = flags,
++			.ifi_change = mask,
++		},
++	};
++
++	return rtap_nl_request(nlsk_fd, &req.nlh);
++}
++
++/*
++ * Set MTU via RTM_NEWLINK.
++ */
++int
++rtap_nl_set_mtu(int nlsk_fd, int if_index, uint16_t mtu)
++{
++	struct {
++		struct nlmsghdr nlh;
++		struct ifinfomsg ifi;
++		char attrs[64];
++	} req = {
++		.nlh = {
++			.nlmsg_len = NLMSG_LENGTH(sizeof(struct ifinfomsg)),
++			.nlmsg_type = RTM_NEWLINK,
++			.nlmsg_flags = NLM_F_REQUEST,
++		},
++		.ifi = {
++			.ifi_family = AF_UNSPEC,
++			.ifi_index = if_index,
++		},
++	};
++	unsigned int mtu32 = mtu;
++
++	rtap_nl_addattr(&req.nlh, sizeof(req), IFLA_MTU, &mtu32, sizeof(mtu32));
++	return rtap_nl_request(nlsk_fd, &req.nlh);
++}
++
++/*
++ * Set MAC address via RTM_NEWLINK.
++ */
++int
++rtap_nl_set_mac(int nlsk_fd, int if_index, const struct rte_ether_addr *addr)
++{
++	struct {
++		struct nlmsghdr nlh;
++		struct ifinfomsg ifi;
++		char attrs[64];
++	} req = {
++		.nlh = {
++			.nlmsg_len = NLMSG_LENGTH(sizeof(struct ifinfomsg)),
++			.nlmsg_type = RTM_NEWLINK,
++			.nlmsg_flags = NLM_F_REQUEST,
++		},
++		.ifi = {
++			.ifi_family = AF_UNSPEC,
++			.ifi_index = if_index,
++		},
++	};
++
++	rtap_nl_addattr(&req.nlh, sizeof(req), IFLA_ADDRESS,
++			addr->addr_bytes, RTE_ETHER_ADDR_LEN);
++	return rtap_nl_request(nlsk_fd, &req.nlh);
++}
++
++/*
++ * Get MAC address via RTM_GETLINK.
++ */
++int
++rtap_nl_get_mac(int nlsk_fd, int if_index, struct rte_ether_addr *addr)
++{
++	struct {
++		struct nlmsghdr nlh;
++		struct ifinfomsg ifi;
++	} req = {
++		.nlh = {
++			.nlmsg_len = NLMSG_LENGTH(sizeof(struct ifinfomsg)),
++			.nlmsg_type = RTM_GETLINK,
++			.nlmsg_flags = NLM_F_REQUEST,
++		},
++		.ifi = {
++			.ifi_family = AF_UNSPEC,
++			.ifi_index = if_index,
++		},
++	};
++	char resp[4096];
++	int ret;
++
++	ret = rtap_nl_query(nlsk_fd, &req.nlh, resp, sizeof(resp));
++	if (ret < 0)
++		return ret;
++
++	struct nlmsghdr *nh = (struct nlmsghdr *)resp;
++	if (nh->nlmsg_type != RTM_NEWLINK)
++		return -EBADMSG;
++
++	struct ifinfomsg *ifi = NLMSG_DATA(nh);
++	struct rtattr *rta = (struct rtattr *)((char *)ifi + NLMSG_ALIGN(sizeof(*ifi)));
++	int rtalen = nh->nlmsg_len - NLMSG_LENGTH(sizeof(*ifi));
++
++	while (RTA_OK(rta, rtalen)) {
++		if (rta->rta_type == IFLA_ADDRESS) {
++			if (RTA_PAYLOAD(rta) == RTE_ETHER_ADDR_LEN) {
++				memcpy(addr->addr_bytes, RTA_DATA(rta), RTE_ETHER_ADDR_LEN);
++				return 0;
++			}
++		}
++		rta = RTA_NEXT(rta, rtalen);
++	}
++
++	return -ENOENT;
++}
++
++/*
++ * Get link statistics via RTM_GETLINK with IFLA_STATS64 attribute.
++ * Opens an ephemeral socket to avoid blocking behind control operations.
++ */
++int
++rtap_nl_get_stats(int if_index, struct rtnl_link_stats64 *stats)
++{
++	struct {
++		struct nlmsghdr nlh;
++		struct ifinfomsg ifi;
++	} req = {
++		.nlh = {
++			.nlmsg_len = NLMSG_LENGTH(sizeof(struct ifinfomsg)),
++			.nlmsg_type = RTM_GETLINK,
++			.nlmsg_flags = NLM_F_REQUEST,
++		},
++		.ifi = {
++			.ifi_family = AF_UNSPEC,
++			.ifi_index = if_index,
++		},
++	};
++	char resp[4096];
++	int fd, ret;
++
++	memset(stats, 0, sizeof(*stats));
++
++	/* Use ephemeral socket so stats queries don't block */
++	fd = rtap_nl_open(0);
++	if (fd < 0)
++		return fd;
++
++	ret = rtap_nl_query(fd, &req.nlh, resp, sizeof(resp));
++	close(fd);
++
++	if (ret < 0)
++		return ret;
++
++	struct nlmsghdr *nh = (struct nlmsghdr *)resp;
++	if (nh->nlmsg_type != RTM_NEWLINK)
++		return -EBADMSG;
++
++	struct ifinfomsg *ifi = NLMSG_DATA(nh);
++	struct rtattr *rta = (struct rtattr *)((char *)ifi + NLMSG_ALIGN(sizeof(*ifi)));
++	int rtalen = nh->nlmsg_len - NLMSG_LENGTH(sizeof(*ifi));
++
++	/* Parse attributes looking for IFLA_STATS64 */
++	while (RTA_OK(rta, rtalen)) {
++		if (rta->rta_type == IFLA_STATS64) {
++			if (RTA_PAYLOAD(rta) >= sizeof(*stats)) {
++				memcpy(stats, RTA_DATA(rta), sizeof(*stats));
++				return 0;
++			}
++		}
++		rta = RTA_NEXT(rta, rtalen);
++	}
++
++	return -ENOENT;
++}
++
++/*
++ * Process incoming netlink messages for link state changes.
++ * Called by rtap_intr.c when the LSC socket has data.
++ */
++void
++rtap_nl_recv(int fd, struct rte_eth_dev *dev)
++{
++	struct rtap_pmd *pmd = dev->data->dev_private;
++	char buf[4096];
++	ssize_t len;
++
++	while ((len = recv(fd, buf, sizeof(buf), MSG_DONTWAIT)) > 0) {
++		struct nlmsghdr *nh;
++
++		for (nh = (struct nlmsghdr *)buf;
++		     NLMSG_OK(nh, (unsigned int)len);
++		     nh = NLMSG_NEXT(nh, len)) {
++			if (nh->nlmsg_type == NLMSG_DONE)
++				break;
++			if (nh->nlmsg_type == NLMSG_ERROR)
++				continue;
++			if (nh->nlmsg_type != RTM_NEWLINK &&
++			    nh->nlmsg_type != RTM_DELLINK)
++				continue;
++
++			struct ifinfomsg *ifi = NLMSG_DATA(nh);
++
++			/* Only process messages for our interface */
++			if (ifi->ifi_index != pmd->if_index)
++				continue;
++
++			if (nh->nlmsg_type == RTM_DELLINK) {
++				PMD_LOG(INFO, "ifindex %d deleted", pmd->if_index);
++				dev->data->dev_link.link_status = RTE_ETH_LINK_DOWN;
++				rte_eth_dev_callback_process(dev,
++					RTE_ETH_EVENT_INTR_LSC, NULL);
++			} else {
++				bool was_up = dev->data->dev_link.link_status == RTE_ETH_LINK_UP;
++				bool is_up = (ifi->ifi_flags & IFF_UP) &&
++					     (ifi->ifi_flags & IFF_RUNNING);
++
++				if (was_up != is_up) {
++					PMD_LOG(DEBUG, "ifindex %d link %s",
++						pmd->if_index, is_up ? "up" : "down");
++					dev->data->dev_link.link_status =
++						is_up ? RTE_ETH_LINK_UP : RTE_ETH_LINK_DOWN;
++					rte_eth_dev_callback_process(dev,
++						RTE_ETH_EVENT_INTR_LSC, NULL);
++				}
++			}
++		}
++	}
++}
 -- 
 2.51.0
 
