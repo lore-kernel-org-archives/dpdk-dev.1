@@ -2,68 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFB53EF5858
-	for <dpdk-dev@archiver.kernel.org>; Sat, 14 Feb 2026 23:47:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF255EF5858
+	for <dpdk-dev@archiver.kernel.org>; Sat, 14 Feb 2026 23:47:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 717F140612;
-	Sun, 15 Feb 2026 00:47:38 +0100 (CET)
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com
- [209.85.128.41]) by mails.dpdk.org (Postfix) with ESMTP id 23673402ED
- for <dev@dpdk.org>; Sun, 15 Feb 2026 00:47:36 +0100 (CET)
-Received: by mail-wm1-f41.google.com with SMTP id
- 5b1f17b1804b1-4837f27cf2dso4170655e9.2
- for <dev@dpdk.org>; Sat, 14 Feb 2026 15:47:36 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 792A540430;
+	Sun, 15 Feb 2026 00:47:40 +0100 (CET)
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com
+ [209.85.128.44]) by mails.dpdk.org (Postfix) with ESMTP id EC9BC4060C
+ for <dev@dpdk.org>; Sun, 15 Feb 2026 00:47:37 +0100 (CET)
+Received: by mail-wm1-f44.google.com with SMTP id
+ 5b1f17b1804b1-48373a4bca3so9290785e9.0
+ for <dev@dpdk.org>; Sat, 14 Feb 2026 15:47:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1771112855;
- x=1771717655; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1771112857;
+ x=1771717657; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=DPRm3hpNQSwVafH7wrzyM8IK9XgL7XBbuGruXzOyVG8=;
- b=XRJrpKY0l+q2TsUnRUzSnAgHjYzw9PxzFzYQmT95hXdoPPpQAudFthsOx63R02ghYB
- 9RV2JQZgFlOe/GIHaE2QFOKqqlPkzKqjUUGcd3qJStP1sBBXz4LSY/tir4yduz8Pi0hX
- OdS+ur/q9Bb7s2U1ipkE5B11sDfQiHdjQiIzyQIfHQ/WQ6M24baBldylvk4xVhhMF7vx
- 2D2BSn9DVafHypzNytrk1ql/dASLKvFB5iuHcCluqRE61mBisuiSFvW62iwpQppqc2dv
- ELmAL+mDgR8wfZtzWN5Yv+hofAp2Q4AMc3b/P4aXh223c8OcNAY4ZR4nwrJpDUgCrorC
- fN4Q==
+ bh=/nwUTf9Pu+Ohqlq8YXAo1QimnjNiZgzywc6wZRzgNaA=;
+ b=p6XCxgV54zqalKR34AlBpgr+oV9zuvr2Oah9D+ZbFQzjIWhZBc/InshRvyeLJ/J3vl
+ zjt8zkjnsLjY3+SKBpQjX56MrraWK6jXYriaC2wstRdd3c5Z01b6D7nxA6OnIp0hveZf
+ oVNXJFLcRFNEAje782f7+ZChqgAQo6EuBWivdcfcBFX8FL+d22LyFabcfyDdsNduQkdJ
+ mC7fp3XQ9v9YNwX959akk4Ucy+u6a0ITqIib3SRhc8blFybfOpQlksmd6XzuytXF7k3y
+ i3wUi3BPdHBnrcEBWTGl/Bz2m74Zp5ZrtLPD5eJmHtPiJs5qf22wDOpETWwe3cXXk9P0
+ WhMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1771112855; x=1771717655;
+ d=1e100.net; s=20230601; t=1771112857; x=1771717657;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=DPRm3hpNQSwVafH7wrzyM8IK9XgL7XBbuGruXzOyVG8=;
- b=Z0xRpGT+14Ia+38cRXtOD/zmX21EUl2nUvR06zUl3+tfOO2TcPH6u/bBKAS42nm1to
- +bo51vwT3gwJddWT5ci3kfaA7Soj8ksKwrl9yUaKL49O8H6bMKeHpL34iwJeSv0mMxiY
- XNg8CFunWIujKLBOJ5ELLxCYPACXCsBnnrpaT1EjQeHG4Kzw6vanQ19JhGFbfJt1aCns
- H9DmuJ4sJ0Bv/zLmDADOj2024t6cubAnXWwnFddY9r9lc7rLPqPhJOGHz0UyQoyfmPVN
- e3QZTlXsOj8bTN8V4gtgJOepXU6zTxIV3x9DuDHZjPX5ELeJyORIWqUqhZuawhLNzMh1
- Rn9A==
-X-Gm-Message-State: AOJu0YyseDL44TBi3cWhGosz6Dq2X29UXdfA98uvpt15f6uik1zU/PMe
- lC11ZL7HGLqTWZZBKin2Ajqpi12skJO0V8Yc+KIBljOmnghesuhBmzf8b0YK3WCKGtyN4t7pM6F
- w2Bzd
-X-Gm-Gg: AZuq6aLHakdijU4+sxRn4WGBHRpvB1mI7WlXK+13gY7jhnVv56nD3zSR/QK2/Mmstw/
- 1CmuY1iPV+L4h/i+C1kS1n0yCVnGVKH99yP7RyTny1KZyqN5Rp9XHc2C4F29SOa1c9sQ4eILnIp
- 1wCca/Q90eqZoqOPWz4RPX4VCDNJl5e6q95WMm1IqCEn6In34vnrOW5rEgafgsUzA2ytSkSovmj
- ENHCxRS/+q8u6EYXP/Nr/HOwKvyDYrs27JwoYn1yoAkpyRgB+kTxqrdQKMHoA+TM05CsOwRFHd5
- oYx6FG/JYhMMAaq10K4qc0se7zlk8lNKyjZZOOFOzWHQx6JRq9WBAbZYGo2dMETD4TI0jdMAWMe
- G+eAJqtK/pX9nj/7mb/7R/9Gd39Lxda4/fIjuy4lbht1exkcFhMoXTiwud0F+8OkZmMlsve4yFx
- 5FEkb6lG12TtDNlc2TJ4o+OYOlYYsR5Brotw3i0+PvFelrfKLH1nBHRpFTAnlyKJdr
-X-Received: by 2002:a05:600c:1547:b0:477:afc5:fb02 with SMTP id
- 5b1f17b1804b1-483710858c8mr130125895e9.21.1771112855461; 
- Sat, 14 Feb 2026 15:47:35 -0800 (PST)
+ bh=/nwUTf9Pu+Ohqlq8YXAo1QimnjNiZgzywc6wZRzgNaA=;
+ b=ulBtzOfA+rXDCivismZGqcPXq0FddIG3oS/vAHvPHLUcINu6+M6QTByQD8jMnhzufE
+ msB5Lx34cSlCMbRwamPPTnUPP4UBvLYItmn2ASu5i6/a76Huw67u5ctr0IjjHvqcJh5w
+ GgpZW/B545gFpOXsaRBRcDa8EIyXAPzbyTsoj3Ew5FtR0tWqPdP9PG+tHVt+l8XQEShx
+ EW7o1iaBujXrkznJI0P9h0YWmrs6yvzimiY4mgKyZw7d6MBH6v4XrOkfqXOJ0GaNU0EK
+ lnzZpoVRTEKWwXdfAFUuhCz/SqIzHNfoX35Pf3lijEJXINpc9wTWMZZB9NVGXorsIlOn
+ jOzw==
+X-Gm-Message-State: AOJu0YxBqctpmNyuywIi2pZXMpXIgrXGf3NTx6x2k0qxJAPc212u/qVH
+ 0DFdSPhZ3zWBC4GHRAN7AEBNVnzUztzIPqG9Gvr0CqCtKHczTNug8erLRrdGjaFcs648H983Nno
+ pgqa5
+X-Gm-Gg: AZuq6aJYGssaoyQJ8tyWq3+6B6o0vVtg6h+KO5kuwmJcjFviL9IFAE7n5gxhQ3ETuFe
+ ffax5Bu3c1WoUvrTgDOWgfHVmnkT+fUj9jYlPMbmIYkfyO0jbGmy+BKntvN7P4M9dQ2Q/8CcJUK
+ eGe6DW9ZMuOZI+OQuAMnLzsJ3zLxrwrMXbhOaeZ03p/UMMcWlvdFZteNAwoetK4C4u3HIf1VVss
+ M7duersveOKXuzW4a08Cwx3E5GINGL50J5lsW7oDykr2VO4RkZpwHzCzciEm/HlOROqJGuP8qIe
+ Ll1u9SDFHY8u87beRYY+/U+I/pGfdfAn6G5MkynUM55pJXx5C/z7XYObBhAeDPHkXAPutiyrk7G
+ Z2pRScRRJGW7HqVH2m8OqsMHDXU0cI6RU73iA3g79DmvCCwCemFtdk4A9jqwSeqsAGNKznplkvq
+ MC3pvJwtabuZ7kySYsA08AODyVUMJTB38jDdYmnAL/AT71PN8MWQeP7xYtvWWfz849
+X-Received: by 2002:a05:600c:154a:b0:47a:814c:eea1 with SMTP id
+ 5b1f17b1804b1-48379bfc005mr60548105e9.35.1771112857287; 
+ Sat, 14 Feb 2026 15:47:37 -0800 (PST)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-4834d5ebd1bsm394921485e9.6.2026.02.14.15.47.33
+ 5b1f17b1804b1-4834d5ebd1bsm394921485e9.6.2026.02.14.15.47.35
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sat, 14 Feb 2026 15:47:35 -0800 (PST)
+ Sat, 14 Feb 2026 15:47:36 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Anatoly Burakov <anatoly.burakov@intel.com>
-Subject: [PATCH v6 02/11] net/rtap: add TAP device creation and queue
- management
-Date: Sat, 14 Feb 2026 15:44:11 -0800
-Message-ID: <20260214234726.188947-3-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v6 03/11] net/rtap: add Rx/Tx with scatter/gather support
+Date: Sat, 14 Feb 2026 15:44:12 -0800
+Message-ID: <20260214234726.188947-4-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260214234726.188947-1-stephen@networkplumber.org>
 References: <20241210212757.83490-1-stephen@networkplumber.org>
@@ -83,794 +81,891 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add TAP device creation using /dev/net/tun with IFF_MULTI_QUEUE,
-IFF_NO_PI, IFF_VNET_HDR, and optional IFF_NAPI flags.
+Implement packet receive and transmit using io_uring asynchronous I/O,
+with full support for both single-segment and multi-segment mbufs.
 
-The driver maintains a keep-alive fd and opens additional per-queue
-fds for I/O. Each queue pair (rx+tx) shares a single TAP fd.
+Rx path:
+  - rtap_rx_alloc() chains multiple mbufs when the MTU exceeds a
+    single mbuf's tailroom capacity
+  - Pre-post read/readv requests to the io_uring submission queue,
+    each backed by a pre-allocated (possibly chained) mbuf
+  - On rx_burst, harvest completed CQEs and replace each consumed
+    mbuf with a freshly allocated one
+  - rtap_rx_adjust() distributes received data across segments and
+    frees unused trailing segments
+  - Parse the prepended virtio-net header
 
-Key operations:
-- rtap_create(): Opens TAP, gets stable ifindex, opens netlink
-  socket, retrieves MAC via netlink, detaches keep-alive queue
-- rtap_queue_open/close(): Per-queue fd management (converts
-  ifindex to name for TUNSETIFF ioctl)
-- rtap_dev_configure(): Validates paired queues, clears offloads
-- rtap_dev_start/stop(): Manages link status and queue states
+Tx path:
+  - For single-segment mbufs, use io_uring write and batch submits
+  - For multi-segment mbufs, use writev via io_uring with immediate
+    submit (iovec is stack-allocated)
+  - When the mbuf headroom is not writable (shared or indirect),
+    chain a new header mbuf for the virtio-net header
+  - Prepend a zeroed virtio-net header
+  - Clean completed Tx CQEs to free transmitted mbufs
 
-The driver uses netlink (RTM_GETLINK/RTM_NEWLINK) and ifindex
-for interface control rather than ioctl() and interface names.
-This avoids issues with interface renames and namespace moves.
+Add io_uring cancel-all logic using IORING_ASYNC_CANCEL_ALL for
+clean queue teardown, draining all pending CQEs and freeing mbufs.
+
+Full offload configuration is not enabled until later.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/rtap/meson.build    |   1 +
- drivers/net/rtap/rtap.h         |   4 +
- drivers/net/rtap/rtap_ethdev.c  | 241 ++++++++++++++++-
- drivers/net/rtap/rtap_netlink.c | 445 ++++++++++++++++++++++++++++++++
- 4 files changed, 689 insertions(+), 2 deletions(-)
- create mode 100644 drivers/net/rtap/rtap_netlink.c
+ doc/guides/nics/features/rtap.ini |   1 +
+ drivers/net/rtap/meson.build      |   1 +
+ drivers/net/rtap/rtap.h           |  13 +
+ drivers/net/rtap/rtap_ethdev.c    |   7 +
+ drivers/net/rtap/rtap_rxtx.c      | 771 ++++++++++++++++++++++++++++++
+ 5 files changed, 793 insertions(+)
+ create mode 100644 drivers/net/rtap/rtap_rxtx.c
 
+diff --git a/doc/guides/nics/features/rtap.ini b/doc/guides/nics/features/rtap.ini
+index ed7c638029..c064e1e0b9 100644
+--- a/doc/guides/nics/features/rtap.ini
++++ b/doc/guides/nics/features/rtap.ini
+@@ -4,6 +4,7 @@
+ ; Refer to default.ini for the full list of available PMD features.
+ ;
+ [Features]
++Scattered Rx         = P
+ Linux                = Y
+ ARMv7                = Y
+ ARMv8                = Y
 diff --git a/drivers/net/rtap/meson.build b/drivers/net/rtap/meson.build
-index 7bd7806ef3..1a24ea0555 100644
+index 1a24ea0555..ed0bcc1313 100644
 --- a/drivers/net/rtap/meson.build
 +++ b/drivers/net/rtap/meson.build
-@@ -19,6 +19,7 @@ endif
- 
+@@ -20,6 +20,7 @@ endif
  sources = files(
          'rtap_ethdev.c',
-+        'rtap_netlink.c',
+         'rtap_netlink.c',
++        'rtap_rxtx.c',
  )
  
  ext_deps += liburing
 diff --git a/drivers/net/rtap/rtap.h b/drivers/net/rtap/rtap.h
-index 9004953e04..a2d1149cac 100644
+index a2d1149cac..823b8c59f7 100644
 --- a/drivers/net/rtap/rtap.h
 +++ b/drivers/net/rtap/rtap.h
-@@ -64,6 +64,10 @@ struct rtap_pmd {
- 	struct rte_ether_addr eth_addr; /* address assigned by kernel */
- };
+@@ -82,4 +82,17 @@ int rtap_nl_get_mac(int nlsk_fd, int if_index, struct rte_ether_addr *addr);
+ struct rtnl_link_stats64;
+ int rtap_nl_get_stats(int if_index, struct rtnl_link_stats64 *stats);
  
-+/* rtap_ethdev.c */
-+int rtap_queue_open(struct rte_eth_dev *dev, uint16_t queue_id);
-+void rtap_queue_close(struct rte_eth_dev *dev, uint16_t queue_id);
++/* rtap_rxtx.c */
++uint16_t rtap_rx_burst(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts);
++uint16_t rtap_tx_burst(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts);
++int rtap_rx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_id,
++			uint16_t nb_rx_desc, unsigned int socket_id,
++			const struct rte_eth_rxconf *rx_conf,
++			struct rte_mempool *mb_pool);
++void rtap_rx_queue_release(struct rte_eth_dev *dev, uint16_t queue_id);
++int rtap_tx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_id,
++			uint16_t nb_tx_desc, unsigned int socket_id,
++			const struct rte_eth_txconf *tx_conf);
++void rtap_tx_queue_release(struct rte_eth_dev *dev, uint16_t queue_id);
 +
- /* rtap_netlink.c */
- int rtap_nl_open(unsigned int groups);
- struct rte_eth_dev;
+ #endif /* _RTAP_H_ */
 diff --git a/drivers/net/rtap/rtap_ethdev.c b/drivers/net/rtap/rtap_ethdev.c
-index 95e0b47988..0eab0a48fa 100644
+index 0eab0a48fa..463e24a6e1 100644
 --- a/drivers/net/rtap/rtap_ethdev.c
 +++ b/drivers/net/rtap/rtap_ethdev.c
-@@ -9,7 +9,6 @@
- #include <stdint.h>
- #include <unistd.h>
- #include <sys/ioctl.h>
--#include <sys/socket.h>
- #include <net/if.h>
- #include <linux/if_tun.h>
- #include <linux/virtio_net.h>
-@@ -39,13 +38,145 @@ static const char * const valid_arguments[] = {
- 	NULL
- };
- 
-+/* Creates a new tap device, name returned in ifr */
-+static int
-+rtap_tap_open(const char *name, struct ifreq *ifr, uint8_t persist)
-+{
-+	static const char tun_dev[] = "/dev/net/tun";
-+	int tap_fd;
-+
-+	tap_fd = open(tun_dev, O_RDWR | O_CLOEXEC | O_NONBLOCK);
-+	if (tap_fd < 0) {
-+		PMD_LOG_ERRNO(ERR, "Open %s failed", tun_dev);
-+		return -1;
-+	}
-+
-+	int features = 0;
-+	if (ioctl(tap_fd, TUNGETFEATURES, &features) < 0) {
-+		PMD_LOG_ERRNO(ERR, "ioctl(TUNGETFEATURES): %s", tun_dev);
-+		goto error;
-+	}
-+
-+	int flags = IFF_TAP | IFF_MULTI_QUEUE | IFF_NO_PI | IFF_VNET_HDR;
-+	if ((features & flags) != flags) {
-+		PMD_LOG(ERR, "TUN features %#x missing support for %#x",
-+			features, flags & ~features);
-+		goto error;
-+	}
-+
-+#ifdef IFF_NAPI
-+	/* If kernel supports using NAPI enable it */
-+	if (features & IFF_NAPI)
-+		flags |= IFF_NAPI;
-+#endif
-+	/*
-+	 * Sets the device name and packet format.
-+	 * Do not want the protocol information (PI)
-+	 */
-+	strlcpy(ifr->ifr_name, name, IFNAMSIZ);
-+	ifr->ifr_flags = flags;
-+	if (ioctl(tap_fd, TUNSETIFF, ifr) < 0) {
-+		PMD_LOG_ERRNO(ERR, "ioctl(TUNSETIFF) %s", ifr->ifr_name);
-+		goto error;
-+	}
-+
-+	/* (Optional) keep the device after application exit */
-+	if (persist && ioctl(tap_fd, TUNSETPERSIST, 1) < 0) {
-+		PMD_LOG_ERRNO(ERR, "ioctl(TUNSETPERSIST) %s", ifr->ifr_name);
-+		goto error;
-+	}
-+
-+	int hdr_size = sizeof(struct virtio_net_hdr);
-+	if (ioctl(tap_fd, TUNSETVNETHDRSZ, &hdr_size) < 0) {
-+		PMD_LOG(ERR, "ioctl(TUNSETVNETHDRSZ) %s", strerror(errno));
-+		goto error;
-+	}
-+
-+	return tap_fd;
-+error:
-+	close(tap_fd);
-+	return -1;
-+}
-+
-+static int
-+rtap_dev_start(struct rte_eth_dev *dev)
-+{
-+	dev->data->dev_link.link_status = RTE_ETH_LINK_UP;
-+	for (uint16_t i = 0; i < dev->data->nb_rx_queues; i++) {
-+		dev->data->rx_queue_state[i] = RTE_ETH_QUEUE_STATE_STARTED;
-+		dev->data->tx_queue_state[i] = RTE_ETH_QUEUE_STATE_STARTED;
-+	}
-+
-+	return 0;
-+}
-+
-+static int
-+rtap_dev_stop(struct rte_eth_dev *dev)
-+{
-+	int *fds = dev->process_private;
-+
-+	dev->data->dev_link.link_status = RTE_ETH_LINK_DOWN;
-+
-+	for (uint16_t i = 0; i < dev->data->nb_rx_queues; i++) {
-+		dev->data->rx_queue_state[i] = RTE_ETH_QUEUE_STATE_STOPPED;
-+		dev->data->tx_queue_state[i] = RTE_ETH_QUEUE_STATE_STOPPED;
-+	}
-+
-+	if (rte_eal_process_type() == RTE_PROC_PRIMARY) {
-+		for (uint16_t i = 0; i < RTE_MAX_QUEUES_PER_PORT; i++) {
-+			if (fds[i] == -1)
-+				continue;
-+
-+			close(fds[i]);
-+			fds[i] = -1;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static int
-+rtap_dev_configure(struct rte_eth_dev *dev)
-+{
-+	struct rtap_pmd *pmd = dev->data->dev_private;
-+
-+	/* rx/tx must be paired */
-+	if (dev->data->nb_rx_queues != dev->data->nb_tx_queues) {
-+		PMD_LOG(ERR, "number of rx %u and tx %u queues must match",
-+			dev->data->nb_rx_queues, dev->data->nb_tx_queues);
-+		return -EINVAL;
-+	}
-+
-+	if (ioctl(pmd->keep_fd, TUNSETOFFLOAD, 0) != 0) {
-+		int ret = -errno;
-+
-+		PMD_LOG(ERR, "ioctl(TUNSETOFFLOAD) failed: %s", strerror(errno));
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
- static int
- rtap_dev_close(struct rte_eth_dev *dev)
- {
- 	struct rtap_pmd *pmd = dev->data->dev_private;
-+	int *fds = dev->process_private;
- 
- 	PMD_LOG(INFO, "Closing ifindex %d", pmd->if_index);
- 
-+	/* Release all io_uring queues (calls rx/tx_queue_release for each) */
-+	rte_eth_dev_internal_reset(dev);
-+
-+	/* Close any remaining queue fds (each process owns its own set) */
-+	for (uint16_t i = 0; i < RTE_MAX_QUEUES_PER_PORT; i++) {
-+		if (fds[i] == -1)
-+			continue;
-+		PMD_LOG(DEBUG, "Closed queue %u fd %d", i, fds[i]);
-+		close(fds[i]);
-+		fds[i] = -1;
-+	}
-+
- 	if (rte_eal_process_type() == RTE_PROC_PRIMARY) {
- 		/* mac_addrs must not be freed alone because part of dev_private */
- 		dev->data->mac_addrs = NULL;
-@@ -68,10 +199,115 @@ rtap_dev_close(struct rte_eth_dev *dev)
- 	return 0;
- }
- 
-+/* Setup another fd to TAP device for the queue */
-+int
-+rtap_queue_open(struct rte_eth_dev *dev, uint16_t queue_id)
-+{
-+	struct rtap_pmd *pmd = dev->data->dev_private;
-+	int *fds = dev->process_private;
-+	char ifname[IFNAMSIZ];
-+
-+	if (fds[queue_id] != -1) {
-+		PMD_LOG(DEBUG, "queue %u already has fd %d", queue_id, fds[queue_id]);
-+		return 0;	/* already setup */
-+	}
-+
-+	/* Convert ifindex to name for TUNSETIFF */
-+	if (if_indextoname(pmd->if_index, ifname) == NULL) {
-+		PMD_LOG(ERR, "Could not find interface for ifindex %d", pmd->if_index);
-+		return -1;
-+	}
-+
-+	struct ifreq ifr = { 0 };
-+	int tap_fd = rtap_tap_open(ifname, &ifr, 0);
-+	if (tap_fd < 0) {
-+		PMD_LOG(ERR, "tap_open failed");
-+		return -1;
-+	}
-+
-+	PMD_LOG(DEBUG, "Opened %d for queue %u", tap_fd, queue_id);
-+	fds[queue_id] = tap_fd;
-+	return 0;
-+}
-+
-+void
-+rtap_queue_close(struct rte_eth_dev *dev, uint16_t queue_id)
-+{
-+	int *fds = dev->process_private;
-+	int tap_fd = fds[queue_id];
-+
-+	if (tap_fd == -1)
-+		return; /* already closed */
-+	PMD_LOG(DEBUG, "Closed queue %u fd %d", queue_id, tap_fd);
-+	close(tap_fd);
-+	fds[queue_id] = -1;
-+}
-+
- static const struct eth_dev_ops rtap_ops = {
-+	.dev_start		= rtap_dev_start,
-+	.dev_stop		= rtap_dev_stop,
-+	.dev_configure		= rtap_dev_configure,
+@@ -248,6 +248,10 @@ static const struct eth_dev_ops rtap_ops = {
+ 	.dev_stop		= rtap_dev_stop,
+ 	.dev_configure		= rtap_dev_configure,
  	.dev_close		= rtap_dev_close,
++	.rx_queue_setup		= rtap_rx_queue_setup,
++	.rx_queue_release	= rtap_rx_queue_release,
++	.tx_queue_setup		= rtap_tx_queue_setup,
++	.tx_queue_release	= rtap_tx_queue_release,
  };
  
-+static int
-+rtap_create(struct rte_eth_dev *dev, const char *tap_name, uint8_t persist)
-+{
-+	struct rte_eth_dev_data *data = dev->data;
-+	struct rtap_pmd *pmd = data->dev_private;
-+
-+	pmd->keep_fd = -1;
-+	pmd->nlsk_fd = -1;
-+
-+	dev->dev_ops = &rtap_ops;
-+
-+	/* Get the initial fd used to keep the tap device around */
-+	struct ifreq ifr = { 0 };
-+	pmd->keep_fd = rtap_tap_open(tap_name, &ifr, persist);
-+	if (pmd->keep_fd < 0)
-+		goto error;
-+
-+	PMD_LOG(DEBUG, "Created %s keep_fd %d", ifr.ifr_name, pmd->keep_fd);
-+
-+	/* Use if_index which is stable even if interface is renamed */
-+	pmd->if_index = if_nametoindex(ifr.ifr_name);
-+	if (pmd->if_index == 0) {
-+		PMD_LOG(ERR, "Could not find ifindex for '%s'", ifr.ifr_name);
-+		goto error;
-+	}
-+
-+	/* Open persistent netlink socket for control operations */
-+	pmd->nlsk_fd = rtap_nl_open(0);
-+	if (pmd->nlsk_fd < 0)
-+		goto error;
-+
-+	/* Read the MAC address assigned by the kernel via netlink */
-+	if (rtap_nl_get_mac(pmd->nlsk_fd, pmd->if_index, &pmd->eth_addr) < 0) {
-+		PMD_LOG(ERR, "Unable to get MAC address for ifindex %d", pmd->if_index);
-+		goto error;
-+	}
-+	data->mac_addrs = &pmd->eth_addr;
-+
-+	/* Detach this instance, not used for traffic */
-+	ifr.ifr_flags = IFF_DETACH_QUEUE;
-+	if (ioctl(pmd->keep_fd, TUNSETQUEUE, &ifr) < 0) {
-+		PMD_LOG_ERRNO(ERR, "Unable to detach keep-alive queue for ifindex %d",
-+			      pmd->if_index);
-+		goto error;
-+	}
-+
-+	PMD_LOG(DEBUG, "ifindex %d setup", pmd->if_index);
-+
-+	return 0;
-+
-+error:
-+	if (pmd->nlsk_fd != -1)
-+		close(pmd->nlsk_fd);
-+	if (pmd->keep_fd != -1)
-+		close(pmd->keep_fd);
-+	return -1;
-+}
-+
  static int
- rtap_parse_iface(const char *key __rte_unused, const char *value, void *extra_args)
- {
-@@ -134,7 +370,8 @@ rtap_probe(struct rte_vdev_device *vdev)
- 	eth_dev->process_private = fds;
- 	eth_dev->data->dev_flags |= RTE_ETH_DEV_AUTOFILL_QUEUE_XSTATS;
+@@ -298,6 +302,9 @@ rtap_create(struct rte_eth_dev *dev, const char *tap_name, uint8_t persist)
  
--	RTE_SET_USED(persist); /* used in later patches */
-+	if (rtap_create(eth_dev, tap_name, persist) < 0)
-+		goto error;
+ 	PMD_LOG(DEBUG, "ifindex %d setup", pmd->if_index);
  
- 	rte_eth_dev_probing_finish(eth_dev);
- 	rte_kvargs_free(kvlist);
-diff --git a/drivers/net/rtap/rtap_netlink.c b/drivers/net/rtap/rtap_netlink.c
++	dev->rx_pkt_burst = rtap_rx_burst;
++	dev->tx_pkt_burst = rtap_tx_burst;
++
+ 	return 0;
+ 
+ error:
+diff --git a/drivers/net/rtap/rtap_rxtx.c b/drivers/net/rtap/rtap_rxtx.c
 new file mode 100644
-index 0000000000..060b89c625
+index 0000000000..7826169751
 --- /dev/null
-+++ b/drivers/net/rtap/rtap_netlink.c
-@@ -0,0 +1,445 @@
++++ b/drivers/net/rtap/rtap_rxtx.c
+@@ -0,0 +1,771 @@
 +/* SPDX-License-Identifier: BSD-3-Clause
 + * Copyright (c) 2026 Stephen Hemminger
 + */
 +
-+/*
-+ * Netlink-based control operations for the rtap PMD.
-+ *
-+ * Uses RTM_GETLINK / RTM_NEWLINK to replace ioctl() for interface
-+ * flag changes, MTU, MAC address, and statistics retrieval.
-+ *
-+ * Socket model:
-+ *   - Control socket (pmd->nlsk_fd): persistent per-device, opened
-+ *     at create time.  Used for flag changes, MTU, MAC operations.
-+ *   - LSC socket: persistent while enabled, subscribed to RTMGRP_LINK.
-+ *     Managed by rtap_intr.c via rtap_nl_open().
-+ *   - Stats queries (rtap_nl_get_stats): use an ephemeral socket
-+ *     opened on demand so they cannot block behind control operations.
-+ */
-+
++#include <assert.h>
 +#include <errno.h>
-+#include <string.h>
-+#include <unistd.h>
-+#include <stdint.h>
 +#include <stdbool.h>
++#include <stdlib.h>
++#include <stdint.h>
++#include <stddef.h>
++#include <string.h>
++#include <liburing.h>
 +#include <sys/types.h>
-+#include <sys/socket.h>
-+#include <net/if.h>
-+#include <linux/if_link.h>
-+#include <linux/netlink.h>
-+#include <linux/rtnetlink.h>
++#include <sys/uio.h>
++#include <linux/virtio_net.h>
 +
++#include <rte_branch_prediction.h>
++#include <rte_config.h>
++#include <rte_common.h>
++#include <rte_malloc.h>
++#include <rte_cksum.h>
++#include <rte_debug.h>
 +#include <rte_ethdev.h>
 +#include <rte_ether.h>
++#include <rte_mbuf.h>
++#include <rte_net.h>
++#include <rte_tcp.h>
++#include <rte_udp.h>
++#include <rte_log.h>
 +#include <ethdev_driver.h>
-+#include <rte_stdatomic.h>
 +
 +#include "rtap.h"
 +
-+/* Sequence number for netlink requests */
-+static RTE_ATOMIC(uint32_t) rtap_nl_seq;
-+
 +/*
-+ * Open a netlink route socket.
-+ *
-+ * If groups is non-zero, the socket subscribes to those multicast
-+ * groups and is set non-blocking (for LSC notification).
-+ * If groups is zero, the socket is blocking (for control/query).
-+ *
-+ * Returns socket fd or -1 on failure.
++ * Since virtio net header is prepended to the mbuf,
++ * the DPDK configuration should make sure that mbuf pools
++ * are created to work.
 + */
-+int
-+rtap_nl_open(unsigned int groups)
++static_assert(RTE_PKTMBUF_HEADROOM >= sizeof(struct virtio_net_hdr),
++	      "Pktmbuf headroom not big enough for virtio header");
++
++/* Get the per-process file descriptor used transmit and receive */
++static inline int
++rtap_queue_fd(uint16_t port_id, uint16_t queue_id)
 +{
-+	int flags = SOCK_RAW | SOCK_CLOEXEC;
-+	int fd;
-+	struct sockaddr_nl sa = {
-+		.nl_family = AF_NETLINK,
-+		.nl_groups = groups,
-+	};
++	struct rte_eth_dev *dev = &rte_eth_devices[port_id];
++	int *fds = dev->process_private;
++	int fd = fds[queue_id];
 +
-+	if (groups != 0)
-+		flags |= SOCK_NONBLOCK;
-+
-+	fd = socket(AF_NETLINK, flags, NETLINK_ROUTE);
-+	if (fd < 0) {
-+		PMD_LOG_ERRNO(ERR, "netlink socket");
-+		return -1;
-+	}
-+
-+	if (bind(fd, (struct sockaddr *)&sa, sizeof(sa)) < 0) {
-+		PMD_LOG_ERRNO(ERR, "netlink bind");
-+		close(fd);
-+		return -1;
-+	}
-+
++	RTE_ASSERT(fd != -1);
 +	return fd;
 +}
 +
 +/*
-+ * Send a netlink request and wait for acknowledgment.
-+ * Returns 0 on success, negative errno on failure.
++ * Add to submit queue a read of mbuf data.
++ * For multi-segment mbuf's requires readv().
++ * Return:
++ *   -ENOSPC : no submit queue element available.
++ *   1 : readv was used and no io_uring_submit was done.
++ *   0 : regular read submitted, caller should call io_uring_submit
++ *       later to batch.
 + */
-+static int
-+rtap_nl_request(int fd, struct nlmsghdr *nlh)
++static inline int
++rtap_rx_submit(struct rtap_rx_queue *rxq, int fd, struct rte_mbuf *mb)
 +{
-+	char buf[4096];
-+	ssize_t len;
++	struct io_uring_sqe *sqe = io_uring_get_sqe(&rxq->io_ring);
++	struct iovec iovs[IOV_MAX];
++	uint16_t nsegs = mb->nb_segs;
 +
-+	nlh->nlmsg_seq = rte_atomic_fetch_add_explicit(&rtap_nl_seq, 1,
-+						       rte_memory_order_relaxed);
-+	nlh->nlmsg_flags |= NLM_F_ACK;
++	if (unlikely(sqe == NULL))
++		return -ENOSPC;
 +
-+	if (send(fd, nlh, nlh->nlmsg_len, 0) < 0)
-+		return -errno;
++	io_uring_sqe_set_data(sqe, mb);
 +
-+	len = recv(fd, buf, sizeof(buf), 0);
-+	if (len < 0)
-+		return -errno;
++	RTE_ASSERT(rte_pktmbuf_headroom(mb) >= sizeof(struct virtio_net_hdr));
++	void *buf = rte_pktmbuf_mtod_offset(mb, void *, -sizeof(struct virtio_net_hdr));
++	unsigned int nbytes = sizeof(struct virtio_net_hdr) + rte_pktmbuf_tailroom(mb);
 +
-+	struct nlmsghdr *nh = (struct nlmsghdr *)buf;
-+	if (!NLMSG_OK(nh, (unsigned int)len))
-+		return -EBADMSG;
-+
-+	if (nh->nlmsg_type == NLMSG_ERROR) {
-+		struct nlmsgerr *err = NLMSG_DATA(nh);
-+
-+		return err->error;  /* 0 = success, negative = errno */
++	/* optimize for the case where packet fits in one mbuf */
++	if (nsegs == 1) {
++		io_uring_prep_read(sqe, fd, buf, nbytes, 0);
++		/* caller will submit as batch */
++		return 0;
 +	}
 +
-+	return -EBADMSG;
++	RTE_ASSERT(nsegs > 0 && nsegs < IOV_MAX);
++
++	iovs[0].iov_base = buf;
++	iovs[0].iov_len = nbytes;
++
++	for (uint16_t i = 1; i < nsegs; i++) {
++		mb = mb->next;
++		iovs[i].iov_base = rte_pktmbuf_mtod(mb, void *);
++		iovs[i].iov_len = rte_pktmbuf_tailroom(mb);
++	}
++	io_uring_prep_readv(sqe, fd, iovs, nsegs, 0);
++
++	/*
++	 * For readv, need to submit now since iovs[] must be
++	 * valid until submitted.
++	 * io_uring_submit(3) returns the number of submitted submission
++	 *  queue entries (on failure returns -errno).
++	 */
++	return io_uring_submit(&rxq->io_ring);
++}
++
++/* Allocates one or more mbuf's to be used for reading packets */
++static struct rte_mbuf *
++rtap_rx_alloc(struct rtap_rx_queue *rxq)
++{
++	const struct rte_eth_dev *dev = &rte_eth_devices[rxq->port_id];
++	int buf_size = dev->data->mtu + RTE_ETHER_HDR_LEN;
++	struct rte_mbuf *m = NULL;
++	struct rte_mbuf **tail = &m;
++
++	do {
++		struct rte_mbuf *seg = rte_pktmbuf_alloc(rxq->mb_pool);
++		if (unlikely(seg == NULL)) {
++			rte_pktmbuf_free(m);
++			return NULL;
++		}
++		*tail = seg;
++		tail = &seg->next;
++		if (seg != m)
++			++m->nb_segs;
++
++		buf_size -= rte_pktmbuf_tailroom(seg);
++	} while (buf_size > 0);
++
++	__rte_mbuf_sanity_check(m, 1);
++	return m;
 +}
 +
 +/*
-+ * Send a netlink request and receive a data response.
-+ * Returns length of response on success, negative errno on failure.
++ * When receiving multi-segment mbuf's need to adjust
++ * the length of mbufs.
 + */
-+static int
-+rtap_nl_query(int fd, struct nlmsghdr *nlh, char *buf, size_t buflen)
++static inline int
++rtap_rx_adjust(struct rte_mbuf *mb, uint32_t len)
 +{
-+	ssize_t len;
++	struct rte_mbuf *seg;
++	uint16_t count = 0;
 +
-+	nlh->nlmsg_seq = rte_atomic_fetch_add_explicit(&rtap_nl_seq, 1,
-+						       rte_memory_order_relaxed);
++	mb->pkt_len = len;
 +
-+	if (send(fd, nlh, nlh->nlmsg_len, 0) < 0)
-+		return -errno;
++	/* Walk through mbuf chain and update the length of each segment */
++	for (seg = mb; seg != NULL && len > 0; seg = seg->next) {
++		uint16_t seg_len = RTE_MIN(len, rte_pktmbuf_tailroom(seg));
 +
-+	len = recv(fd, buf, buflen, 0);
-+	if (len < 0)
-+		return -errno;
++		seg->data_len = seg_len;
++		count++;
++		len -= seg_len;
 +
-+	struct nlmsghdr *nh = (struct nlmsghdr *)buf;
-+	if (!NLMSG_OK(nh, (unsigned int)len))
-+		return -EBADMSG;
++		/* If length is zero, this is end of packet */
++		if (len == 0) {
++			/* Drop unused tail segments */
++			if (seg->next != NULL) {
++				struct rte_mbuf *tail = seg->next;
++				seg->next = NULL;
 +
-+	if (nh->nlmsg_type == NLMSG_ERROR) {
-+		struct nlmsgerr *err = NLMSG_DATA(nh);
++				/* Free segments one by one to avoid nb_segs issues */
++				while (tail != NULL) {
++					struct rte_mbuf *next = tail->next;
++					rte_pktmbuf_free_seg(tail);
++					tail = next;
++				}
++			}
 +
-+		return err->error;
++			mb->nb_segs = count;
++			return 0;
++		}
 +	}
 +
-+	/* Detect truncated response */
-+	if (nh->nlmsg_len > (unsigned int)len)
-+		return -EBADMSG;
-+
-+	return len;
-+}
-+
-+/* Append a netlink attribute to a message. */
-+static void
-+rtap_nl_addattr(struct nlmsghdr *nlh, unsigned int maxlen,
-+		int type, const void *data, unsigned int datalen)
-+{
-+	unsigned int len = RTA_LENGTH(datalen);
-+	struct rtattr *rta;
-+
-+	RTE_VERIFY(NLMSG_ALIGN(nlh->nlmsg_len) + RTA_ALIGN(len) <= maxlen);
-+
-+	rta = (struct rtattr *)((char *)nlh + NLMSG_ALIGN(nlh->nlmsg_len));
-+	rta->rta_type = type;
-+	rta->rta_len = len;
-+	if (datalen > 0)
-+		memcpy(RTA_DATA(rta), data, datalen);
-+	nlh->nlmsg_len = NLMSG_ALIGN(nlh->nlmsg_len) + RTA_ALIGN(len);
++	/* Packet was truncated - not enough mbuf space */
++	return -1;
 +}
 +
 +/*
-+ * Get interface flags via RTM_GETLINK.
-+ * Returns 0 on success and sets *flags.
++ * Set the receive offload flags of received mbuf
++ * based on the bits in the virtio network header
 + */
-+int
-+rtap_nl_get_flags(int nlsk_fd, int if_index, unsigned int *flags)
++static int
++rtap_rx_offload(struct rte_mbuf *m, const struct virtio_net_hdr *hdr)
 +{
-+	struct {
-+		struct nlmsghdr nlh;
-+		struct ifinfomsg ifi;
-+	} req = {
-+		.nlh = {
-+			.nlmsg_len = NLMSG_LENGTH(sizeof(struct ifinfomsg)),
-+			.nlmsg_type = RTM_GETLINK,
-+			.nlmsg_flags = NLM_F_REQUEST,
-+		},
-+		.ifi = {
-+			.ifi_family = AF_UNSPEC,
-+			.ifi_index = if_index,
-+		},
-+	};
-+	char resp[4096];
-+	int ret;
++	uint32_t ptype;
++	bool l4_supported = false;
++	struct rte_net_hdr_lens hdr_lens;
 +
-+	ret = rtap_nl_query(nlsk_fd, &req.nlh, resp, sizeof(resp));
-+	if (ret < 0)
-+		return ret;
++	/* nothing to do */
++	if (hdr->flags == 0 && hdr->gso_type == VIRTIO_NET_HDR_GSO_NONE)
++		return 0;
 +
-+	struct nlmsghdr *nh = (struct nlmsghdr *)resp;
-+	if (nh->nlmsg_type != RTM_NEWLINK)
-+		return -EBADMSG;
++	m->ol_flags |= RTE_MBUF_F_RX_IP_CKSUM_UNKNOWN;
 +
-+	struct ifinfomsg *ifi = NLMSG_DATA(nh);
-+	*flags = ifi->ifi_flags;
++	ptype = rte_net_get_ptype(m, &hdr_lens, RTE_PTYPE_ALL_MASK);
++	m->packet_type = ptype;
++	if ((ptype & RTE_PTYPE_L4_MASK) == RTE_PTYPE_L4_TCP ||
++	    (ptype & RTE_PTYPE_L4_MASK) == RTE_PTYPE_L4_UDP ||
++	    (ptype & RTE_PTYPE_L4_MASK) == RTE_PTYPE_L4_SCTP)
++		l4_supported = true;
++
++	if (hdr->flags & VIRTIO_NET_HDR_F_NEEDS_CSUM) {
++		uint32_t hdrlen = hdr_lens.l2_len + hdr_lens.l3_len + hdr_lens.l4_len;
++		if (hdr->csum_start <= hdrlen && l4_supported) {
++			m->ol_flags |= RTE_MBUF_F_RX_L4_CKSUM_NONE;
++		} else {
++			/* Unknown proto or tunnel, do sw cksum. */
++			uint16_t csum = 0;
++
++			if (rte_raw_cksum_mbuf(m, hdr->csum_start,
++					       rte_pktmbuf_pkt_len(m) - hdr->csum_start,
++					       &csum) < 0)
++				return -EINVAL;
++			if (likely(csum != 0xffff))
++				csum = ~csum;
++
++			uint32_t off = (uint32_t)hdr->csum_offset + hdr->csum_start;
++			if (rte_pktmbuf_data_len(m) >= off + sizeof(uint16_t))
++				*rte_pktmbuf_mtod_offset(m, uint16_t *, off) = csum;
++		}
++	} else if ((hdr->flags & VIRTIO_NET_HDR_F_DATA_VALID) && l4_supported) {
++		m->ol_flags |= RTE_MBUF_F_RX_L4_CKSUM_GOOD;
++	}
++
++	/* GSO request, save required information in mbuf */
++	if (hdr->gso_type != VIRTIO_NET_HDR_GSO_NONE) {
++		/* Check unsupported modes */
++		if ((hdr->gso_type & VIRTIO_NET_HDR_GSO_ECN) || hdr->gso_size == 0)
++			return -EINVAL;
++
++		/* Update mss lengths in mbuf */
++		m->tso_segsz = hdr->gso_size;
++		switch (hdr->gso_type & ~VIRTIO_NET_HDR_GSO_ECN) {
++		case VIRTIO_NET_HDR_GSO_TCPV4:
++		case VIRTIO_NET_HDR_GSO_TCPV6:
++			m->ol_flags |= RTE_MBUF_F_RX_LRO | RTE_MBUF_F_RX_L4_CKSUM_NONE;
++			break;
++		default:
++			return -EINVAL;
++		}
++	}
++
 +	return 0;
 +}
 +
-+/*
-+ * Change interface flags via RTM_NEWLINK.
-+ * 'flags' are set, 'mask' are cleared.
-+ */
-+int
-+rtap_nl_change_flags(int nlsk_fd, int if_index,
-+		     unsigned int flags, unsigned int mask)
++uint16_t
++rtap_rx_burst(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
 +{
-+	struct {
-+		struct nlmsghdr nlh;
-+		struct ifinfomsg ifi;
-+	} req = {
-+		.nlh = {
-+			.nlmsg_len = NLMSG_LENGTH(sizeof(struct ifinfomsg)),
-+			.nlmsg_type = RTM_NEWLINK,
-+			.nlmsg_flags = NLM_F_REQUEST,
-+		},
-+		.ifi = {
-+			.ifi_family = AF_UNSPEC,
-+			.ifi_index = if_index,
-+			.ifi_flags = flags,
-+			.ifi_change = mask,
-+		},
-+	};
++	struct rtap_rx_queue *rxq = queue;
++	struct io_uring_cqe *cqe;
++	unsigned int head, num_cqe = 0, num_sqe = 0;
++	uint16_t num_rx = 0;
++	uint32_t num_bytes = 0;
++	int fd = rtap_queue_fd(rxq->port_id, rxq->queue_id);
 +
-+	return rtap_nl_request(nlsk_fd, &req.nlh);
++	if (unlikely(nb_pkts == 0))
++		return 0;
++
++	io_uring_for_each_cqe(&rxq->io_ring, head, cqe) {
++		struct rte_mbuf *mb = (void *)(uintptr_t)cqe->user_data;
++		struct rte_mbuf *nmb = NULL;
++		struct virtio_net_hdr *hdr = NULL;
++		ssize_t len = cqe->res;
++		int nsub;
++
++		PMD_RX_LOG(DEBUG, "complete m=%p len=%zd", mb, len);
++
++		num_cqe++;
++
++		if (unlikely(len < (ssize_t)(sizeof(*hdr) + RTE_ETHER_HDR_LEN))) {
++			if (len < 0)
++				PMD_RX_LOG(ERR, "io_uring_read: %s", strerror(-len));
++			else
++				PMD_RX_LOG(ERR, "io_uring_read len %zd", len);
++			rxq->rx_errors++;
++			nmb = mb;
++			goto resubmit;
++		}
++
++		/* virtio header is before packet data */
++		hdr = rte_pktmbuf_mtod_offset(mb, struct virtio_net_hdr *, -sizeof(*hdr));
++		len -= sizeof(*hdr);
++
++		/* Replacement mbuf for resubmitting */
++		nmb = rtap_rx_alloc(rxq);
++		if (unlikely(nmb == NULL)) {
++			struct rte_eth_dev *dev = &rte_eth_devices[rxq->port_id];
++
++			PMD_RX_LOG(ERR, "Rx mbuf alloc failed");
++			dev->data->rx_mbuf_alloc_failed++;
++
++			nmb = mb;	 /* Reuse original */
++			goto resubmit;
++		}
++
++		if (mb->nb_segs == 1) {
++			mb->data_len = len;
++			mb->pkt_len = len;
++		} else {
++			if (unlikely(rtap_rx_adjust(mb, len) < 0)) {
++				PMD_RX_LOG(ERR, "packet truncated: pkt_len=%u exceeds mbuf capacity",
++					   mb->pkt_len);
++				++rxq->rx_errors;
++				rte_pktmbuf_free(mb);
++				goto resubmit;
++			}
++		}
++
++		if (unlikely(rtap_rx_offload(mb, hdr) < 0)) {
++			PMD_RX_LOG(ERR, "invalid rx offload");
++			++rxq->rx_errors;
++			rte_pktmbuf_free(mb);
++			goto resubmit;
++		}
++
++		mb->port = rxq->port_id;
++
++		__rte_mbuf_sanity_check(mb, 1);
++		num_bytes += mb->pkt_len;
++		bufs[num_rx++] = mb;
++
++resubmit:
++		/* Submit the replacement mbuf */
++		nsub = rtap_rx_submit(rxq, fd, nmb);
++		if (unlikely(nsub < 0)) {
++			/* Hope that later Rx can recover */
++			PMD_RX_LOG(ERR, "io_uring no Rx sqe: %s", strerror(-nsub));
++			rxq->rx_errors++;
++			rte_pktmbuf_free(nmb);
++			break;
++		}
++
++		if (nsub > 0)
++			num_sqe = 0;
++		else
++			++num_sqe;
++
++		if (num_rx == nb_pkts)
++			break;
++	}
++	if (num_cqe > 0)
++		io_uring_cq_advance(&rxq->io_ring, num_cqe);
++
++	if (num_sqe > 0) {
++		int n = io_uring_submit(&rxq->io_ring);
++		if (unlikely(n < 0))
++			PMD_LOG(ERR, "Rx io_uring submit failed: %s", strerror(-n));
++		else if (unlikely(n != (int)num_sqe))
++			PMD_RX_LOG(NOTICE, "Rx io_uring %d of %u resubmitted", n, num_sqe);
++	}
++
++	rxq->rx_packets += num_rx;
++	rxq->rx_bytes += num_bytes;
++
++	return num_rx;
 +}
 +
 +/*
-+ * Set MTU via RTM_NEWLINK.
++ * Cancel all pending io_uring operations and drain completions.
++ * Uses IORING_ASYNC_CANCEL_ALL to cancel all operations at once.
++ * Returns the number of mbufs freed.
 + */
-+int
-+rtap_nl_set_mtu(int nlsk_fd, int if_index, uint16_t mtu)
++static unsigned int
++rtap_cancel_all(struct io_uring *ring)
 +{
-+	struct {
-+		struct nlmsghdr nlh;
-+		struct ifinfomsg ifi;
-+		char attrs[64];
-+	} req = {
-+		.nlh = {
-+			.nlmsg_len = NLMSG_LENGTH(sizeof(struct ifinfomsg)),
-+			.nlmsg_type = RTM_NEWLINK,
-+			.nlmsg_flags = NLM_F_REQUEST,
-+		},
-+		.ifi = {
-+			.ifi_family = AF_UNSPEC,
-+			.ifi_index = if_index,
-+		},
-+	};
-+	unsigned int mtu32 = mtu;
-+
-+	rtap_nl_addattr(&req.nlh, sizeof(req), IFLA_MTU, &mtu32, sizeof(mtu32));
-+	return rtap_nl_request(nlsk_fd, &req.nlh);
-+}
-+
-+/*
-+ * Set MAC address via RTM_NEWLINK.
-+ */
-+int
-+rtap_nl_set_mac(int nlsk_fd, int if_index, const struct rte_ether_addr *addr)
-+{
-+	struct {
-+		struct nlmsghdr nlh;
-+		struct ifinfomsg ifi;
-+		char attrs[64];
-+	} req = {
-+		.nlh = {
-+			.nlmsg_len = NLMSG_LENGTH(sizeof(struct ifinfomsg)),
-+			.nlmsg_type = RTM_NEWLINK,
-+			.nlmsg_flags = NLM_F_REQUEST,
-+		},
-+		.ifi = {
-+			.ifi_family = AF_UNSPEC,
-+			.ifi_index = if_index,
-+		},
-+	};
-+
-+	rtap_nl_addattr(&req.nlh, sizeof(req), IFLA_ADDRESS,
-+			addr->addr_bytes, RTE_ETHER_ADDR_LEN);
-+	return rtap_nl_request(nlsk_fd, &req.nlh);
-+}
-+
-+/*
-+ * Get MAC address via RTM_GETLINK.
-+ */
-+int
-+rtap_nl_get_mac(int nlsk_fd, int if_index, struct rte_ether_addr *addr)
-+{
-+	struct {
-+		struct nlmsghdr nlh;
-+		struct ifinfomsg ifi;
-+	} req = {
-+		.nlh = {
-+			.nlmsg_len = NLMSG_LENGTH(sizeof(struct ifinfomsg)),
-+			.nlmsg_type = RTM_GETLINK,
-+			.nlmsg_flags = NLM_F_REQUEST,
-+		},
-+		.ifi = {
-+			.ifi_family = AF_UNSPEC,
-+			.ifi_index = if_index,
-+		},
-+	};
-+	char resp[4096];
++	struct io_uring_cqe *cqe;
++	struct io_uring_sqe *sqe;
++	unsigned int head, num_freed = 0;
++	unsigned int ready;
 +	int ret;
 +
-+	ret = rtap_nl_query(nlsk_fd, &req.nlh, resp, sizeof(resp));
-+	if (ret < 0)
-+		return ret;
-+
-+	struct nlmsghdr *nh = (struct nlmsghdr *)resp;
-+	if (nh->nlmsg_type != RTM_NEWLINK)
-+		return -EBADMSG;
-+
-+	struct ifinfomsg *ifi = NLMSG_DATA(nh);
-+	struct rtattr *rta = (struct rtattr *)((char *)ifi + NLMSG_ALIGN(sizeof(*ifi)));
-+	int rtalen = nh->nlmsg_len - NLMSG_LENGTH(sizeof(*ifi));
-+
-+	while (RTA_OK(rta, rtalen)) {
-+		if (rta->rta_type == IFLA_ADDRESS) {
-+			if (RTA_PAYLOAD(rta) == RTE_ETHER_ADDR_LEN) {
-+				memcpy(addr->addr_bytes, RTA_DATA(rta), RTE_ETHER_ADDR_LEN);
-+				return 0;
-+			}
-+		}
-+		rta = RTA_NEXT(rta, rtalen);
++	/* Cancel all pending operations using CANCEL_ALL flag */
++	sqe = io_uring_get_sqe(ring);
++	if (sqe != NULL) {
++		/* IORING_ASYNC_CANCEL_ALL | IORING_ASYNC_CANCEL_ANY cancels all ops */
++		io_uring_prep_cancel(sqe, NULL,
++				     IORING_ASYNC_CANCEL_ALL | IORING_ASYNC_CANCEL_ANY);
++		io_uring_sqe_set_data(sqe, NULL);
++		ret = io_uring_submit(ring);
++		if (ret < 0)
++			PMD_LOG(ERR, "cancel submit failed: %s", strerror(-ret));
 +	}
 +
-+	return -ENOENT;
++	/*
++	 * One blocking wait to let the kernel deliver the cancel CQE
++	 * and the CQEs for all cancelled operations.
++	 */
++	io_uring_submit_and_wait(ring, 1);
++
++	/*
++	 * Drain all CQEs non-blocking.  Cancellation of many pending
++	 * operations may produce CQEs in waves; keep polling until the
++	 * CQ is empty.
++	 */
++	for (unsigned int retries = 0; retries < 10; retries++) {
++		ready = io_uring_cq_ready(ring);
++		if (ready == 0)
++			break;
++
++		io_uring_for_each_cqe(ring, head, cqe) {
++			struct rte_mbuf *mb = (void *)(uintptr_t)cqe->user_data;
++
++			/* Skip the cancel operation's own CQE (user_data = NULL) */
++			if (mb != NULL) {
++				rte_pktmbuf_free(mb);
++				++num_freed;
++			}
++		}
++
++		/* Advance past all processed CQEs */
++		io_uring_cq_advance(ring, ready);
++	}
++
++	return num_freed;
 +}
 +
-+/*
-+ * Get link statistics via RTM_GETLINK with IFLA_STATS64 attribute.
-+ * Opens an ephemeral socket to avoid blocking behind control operations.
-+ */
 +int
-+rtap_nl_get_stats(int if_index, struct rtnl_link_stats64 *stats)
++rtap_rx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_id, uint16_t nb_rx_desc,
++		    unsigned int socket_id,
++		    const struct rte_eth_rxconf *rx_conf __rte_unused,
++		    struct rte_mempool *mb_pool)
 +{
-+	struct {
-+		struct nlmsghdr nlh;
-+		struct ifinfomsg ifi;
-+	} req = {
-+		.nlh = {
-+			.nlmsg_len = NLMSG_LENGTH(sizeof(struct ifinfomsg)),
-+			.nlmsg_type = RTM_GETLINK,
-+			.nlmsg_flags = NLM_F_REQUEST,
-+		},
-+		.ifi = {
-+			.ifi_family = AF_UNSPEC,
-+			.ifi_index = if_index,
-+		},
-+	};
-+	char resp[4096];
-+	int fd, ret;
++	struct rte_mbuf **mbufs = NULL;
++	unsigned int nsqe = 0;
++	int fd = -1;
 +
-+	memset(stats, 0, sizeof(*stats));
++	PMD_LOG(DEBUG, "setup port %u queue %u rx_descriptors %u",
++		dev->data->port_id, queue_id, nb_rx_desc);
 +
-+	/* Use ephemeral socket so stats queries don't block */
-+	fd = rtap_nl_open(0);
-+	if (fd < 0)
-+		return fd;
-+
-+	ret = rtap_nl_query(fd, &req.nlh, resp, sizeof(resp));
-+	close(fd);
-+
-+	if (ret < 0)
-+		return ret;
-+
-+	struct nlmsghdr *nh = (struct nlmsghdr *)resp;
-+	if (nh->nlmsg_type != RTM_NEWLINK)
-+		return -EBADMSG;
-+
-+	struct ifinfomsg *ifi = NLMSG_DATA(nh);
-+	struct rtattr *rta = (struct rtattr *)((char *)ifi + NLMSG_ALIGN(sizeof(*ifi)));
-+	int rtalen = nh->nlmsg_len - NLMSG_LENGTH(sizeof(*ifi));
-+
-+	/* Parse attributes looking for IFLA_STATS64 */
-+	while (RTA_OK(rta, rtalen)) {
-+		if (rta->rta_type == IFLA_STATS64) {
-+			if (RTA_PAYLOAD(rta) >= sizeof(*stats)) {
-+				memcpy(stats, RTA_DATA(rta), sizeof(*stats));
-+				return 0;
-+			}
-+		}
-+		rta = RTA_NEXT(rta, rtalen);
++	struct rtap_rx_queue *rxq = rte_zmalloc_socket(NULL, sizeof(*rxq),
++						       RTE_CACHE_LINE_SIZE, socket_id);
++	if (rxq == NULL) {
++		PMD_LOG(ERR, "rxq alloc failed");
++		return -1;
 +	}
 +
-+	return -ENOENT;
++	rxq->mb_pool = mb_pool;
++	rxq->port_id = dev->data->port_id;
++	rxq->queue_id = queue_id;
++	dev->data->rx_queues[queue_id] = rxq;
++
++	if (io_uring_queue_init(nb_rx_desc, &rxq->io_ring, 0) != 0) {
++		PMD_LOG(ERR, "io_uring_queue_init failed: %s", strerror(errno));
++		goto error_rxq_free;
++	}
++
++	mbufs = calloc(nb_rx_desc, sizeof(struct rte_mbuf *));
++	if (mbufs == NULL) {
++		PMD_LOG(ERR, "Rx mbuf pointer alloc failed");
++		goto error_iouring_exit;
++	}
++
++	/* open shared tap fd maybe already setup */
++	if (rtap_queue_open(dev, queue_id) < 0)
++		goto error_bulk_free;
++
++	fd = rtap_queue_fd(rxq->port_id, rxq->queue_id);
++
++	for (uint16_t i = 0; i < nb_rx_desc; i++) {
++		mbufs[i] = rtap_rx_alloc(rxq);
++		if (mbufs[i] == NULL) {
++			PMD_LOG(ERR, "Rx mbuf alloc buf failed");
++			goto error_bulk_free;
++		}
++
++		int n = rtap_rx_submit(rxq, fd, mbufs[i]);
++		if (n < 0) {
++			PMD_LOG(ERR, "rtap_rx_submit failed: %s", strerror(-n));
++			goto error_bulk_free;
++		}
++
++		/* If using readv() then n > 0 and all sqe's have been queued. */
++		if (n > 0)
++			nsqe = 0;
++		else
++			++nsqe;
++	}
++
++	if (nsqe > 0) {
++		int n = io_uring_submit(&rxq->io_ring);
++		if (n < 0) {
++			PMD_LOG(ERR, "Rx io_uring submit failed: %s", strerror(-n));
++			goto error_bulk_free;
++		}
++		if (n < (int)nsqe)
++			PMD_LOG(NOTICE, "Rx io_uring partial submit %d of %u", n, nb_rx_desc);
++	}
++
++	free(mbufs);
++	return 0;
++
++error_bulk_free:
++	/* some of the mbufs might be queued already */
++	rtap_cancel_all(&rxq->io_ring);
++	rtap_queue_close(dev, queue_id);
++	free(mbufs);
++error_iouring_exit:
++	io_uring_queue_exit(&rxq->io_ring);
++error_rxq_free:
++	rte_free(rxq);
++	return -1;
++}
++
++void
++rtap_rx_queue_release(struct rte_eth_dev *dev, uint16_t queue_id)
++{
++	struct rtap_rx_queue *rxq = dev->data->rx_queues[queue_id];
++
++	if (rxq == NULL)
++		return;
++
++	rtap_cancel_all(&rxq->io_ring);
++	io_uring_queue_exit(&rxq->io_ring);
++
++	rte_free(rxq);
++
++	/* Close the shared TAP fd if the tx queue is already gone */
++	if (queue_id >= dev->data->nb_tx_queues ||
++	    dev->data->tx_queues[queue_id] == NULL)
++		rtap_queue_close(dev, queue_id);
++}
++
++int
++rtap_tx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_id,
++		    uint16_t nb_tx_desc, unsigned int socket_id,
++		    const struct rte_eth_txconf *tx_conf)
++{
++	/* open shared tap fd maybe already setup */
++	if (rtap_queue_open(dev, queue_id) < 0)
++		return -1;
++
++	struct rtap_tx_queue *txq = rte_zmalloc_socket(NULL, sizeof(*txq),
++						       RTE_CACHE_LINE_SIZE, socket_id);
++	if (txq == NULL) {
++		PMD_LOG(ERR, "txq alloc failed");
++		return -1;
++	}
++
++	txq->port_id = dev->data->port_id;
++	txq->queue_id = queue_id;
++	txq->free_thresh = tx_conf->tx_free_thresh;
++	dev->data->tx_queues[queue_id] = txq;
++
++	if (io_uring_queue_init(nb_tx_desc, &txq->io_ring, 0) != 0) {
++		PMD_LOG(ERR, "io_uring_queue_init failed: %s", strerror(errno));
++		rte_free(txq);
++		return -1;
++	}
++
++	return 0;
++}
++
++static void
++rtap_tx_cleanup(struct rtap_tx_queue *txq)
++{
++	struct io_uring_cqe *cqe;
++	unsigned int head;
++	unsigned int num_cqe = 0;
++
++	io_uring_for_each_cqe(&txq->io_ring, head, cqe) {
++		struct rte_mbuf *mb = (void *)(uintptr_t)cqe->user_data;
++
++		++num_cqe;
++
++		/* Skip CQEs with NULL user_data (e.g., cancel operations) */
++		if (mb == NULL)
++			continue;
++
++		PMD_TX_LOG(DEBUG, " mbuf len %u result: %d", mb->pkt_len, cqe->res);
++		txq->tx_errors += (cqe->res < 0);
++		rte_pktmbuf_free(mb);
++	}
++	io_uring_cq_advance(&txq->io_ring, num_cqe);
++}
++
++void
++rtap_tx_queue_release(struct rte_eth_dev *dev, uint16_t queue_id)
++{
++	struct rtap_tx_queue *txq = dev->data->tx_queues[queue_id];
++
++	if (txq == NULL)
++		return;
++
++	/* First drain any completed TX operations */
++	rtap_tx_cleanup(txq);
++
++	/* Cancel all remaining pending operations and free mbufs */
++	rtap_cancel_all(&txq->io_ring);
++	io_uring_queue_exit(&txq->io_ring);
++
++	rte_free(txq);
++
++	/* Close the shared TAP fd if the rx queue is already gone */
++	if (queue_id >= dev->data->nb_rx_queues ||
++	    dev->data->rx_queues[queue_id] == NULL)
++		rtap_queue_close(dev, queue_id);
++}
++
++/* Convert mbuf offload flags to virtio net header */
++static void
++rtap_tx_offload(struct virtio_net_hdr *hdr, const struct rte_mbuf *m)
++{
++	uint64_t csum_l4 = m->ol_flags & RTE_MBUF_F_TX_L4_MASK;
++	uint16_t o_l23_len = (m->ol_flags & RTE_MBUF_F_TX_TUNNEL_MASK) ?
++			     m->outer_l2_len + m->outer_l3_len : 0;
++
++	memset(hdr, 0, sizeof(*hdr));
++
++	if (m->ol_flags & RTE_MBUF_F_TX_TCP_SEG)
++		csum_l4 |= RTE_MBUF_F_TX_TCP_CKSUM;
++
++	switch (csum_l4) {
++	case RTE_MBUF_F_TX_UDP_CKSUM:
++		hdr->csum_start = o_l23_len + m->l2_len + m->l3_len;
++		hdr->csum_offset = offsetof(struct rte_udp_hdr, dgram_cksum);
++		hdr->flags = VIRTIO_NET_HDR_F_NEEDS_CSUM;
++		break;
++
++	case RTE_MBUF_F_TX_TCP_CKSUM:
++		hdr->csum_start = o_l23_len + m->l2_len + m->l3_len;
++		hdr->csum_offset = offsetof(struct rte_tcp_hdr, cksum);
++		hdr->flags = VIRTIO_NET_HDR_F_NEEDS_CSUM;
++		break;
++	}
++
++	/* TCP Segmentation Offload */
++	if (m->ol_flags & RTE_MBUF_F_TX_TCP_SEG) {
++		hdr->gso_type = (m->ol_flags & RTE_MBUF_F_TX_IPV6) ?
++			VIRTIO_NET_HDR_GSO_TCPV6 :
++			VIRTIO_NET_HDR_GSO_TCPV4;
++		hdr->gso_size = m->tso_segsz;
++		hdr->hdr_len = o_l23_len + m->l2_len + m->l3_len + m->l4_len;
++	}
 +}
 +
 +/*
-+ * Process incoming netlink messages for link state changes.
-+ * Called by rtap_intr.c when the LSC socket has data.
++ * Transmit burst posts mbufs into the io_uring TAP file descriptor
++ * by creating queue elements with write operation.
++ *
++ * The driver mimics the behavior of a real hardware NIC.
++ *
++ * If there is no space left in the io_uring then the driver will return the number of
++ * mbuf's that were processed to that point. The application can then decide to retry
++ * later or drop the unsent packets in case of backpressue.
++ *
++ * The transmit process puts the virtio header before the data. In some cases, a new mbuf
++ * is required from same pool as original; but if that fails, the packet is not sent and
++ * is silently dropped. This is to avoid situation where pool is so small that transmit
++ * gets stuck when pool resources are very low.
 + */
-+void
-+rtap_nl_recv(int fd, struct rte_eth_dev *dev)
++uint16_t
++rtap_tx_burst(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
 +{
-+	struct rtap_pmd *pmd = dev->data->dev_private;
-+	char buf[4096];
-+	ssize_t len;
++	struct rtap_tx_queue *txq = queue;
++	uint16_t i, num_tx = 0, num_pend = 0;
++	uint32_t num_tx_bytes = 0;
 +
-+	while ((len = recv(fd, buf, sizeof(buf), MSG_DONTWAIT)) > 0) {
-+		struct nlmsghdr *nh;
++	PMD_TX_LOG(DEBUG, "%d packets to xmit", nb_pkts);
 +
-+		for (nh = (struct nlmsghdr *)buf;
-+		     NLMSG_OK(nh, (unsigned int)len);
-+		     nh = NLMSG_NEXT(nh, len)) {
-+			if (nh->nlmsg_type == NLMSG_DONE)
-+				break;
-+			if (nh->nlmsg_type == NLMSG_ERROR)
++	unsigned int space_desired = RTE_MAX(txq->free_thresh, nb_pkts);
++	if (io_uring_sq_space_left(&txq->io_ring) < space_desired)
++		rtap_tx_cleanup(txq);
++
++	int fd = rtap_queue_fd(txq->port_id, txq->queue_id);
++
++	for (i = 0; i < nb_pkts; i++) {
++		struct rte_mbuf *mb = bufs[i];
++		struct virtio_net_hdr *hdr;
++
++		/* Use packet head room space for virtio header (if possible) */
++		if (rte_mbuf_refcnt_read(mb) == 1 && RTE_MBUF_DIRECT(mb) &&
++		    rte_pktmbuf_headroom(mb) >= sizeof(*hdr)) {
++			hdr = rte_pktmbuf_mtod_offset(mb, struct virtio_net_hdr *, -sizeof(*hdr));
++		} else {
++			/* Need to chain a new mbuf to make room for virtio header */
++			struct rte_mbuf *mh = rte_pktmbuf_alloc(mb->pool);
++			if (unlikely(mh == NULL)) {
++				PMD_TX_LOG(DEBUG, "mbuf pool exhausted on transmit");
++				rte_pktmbuf_free(mb);
++				++txq->tx_errors;
 +				continue;
-+			if (nh->nlmsg_type != RTM_NEWLINK &&
-+			    nh->nlmsg_type != RTM_DELLINK)
-+				continue;
-+
-+			struct ifinfomsg *ifi = NLMSG_DATA(nh);
-+
-+			/* Only process messages for our interface */
-+			if (ifi->ifi_index != pmd->if_index)
-+				continue;
-+
-+			if (nh->nlmsg_type == RTM_DELLINK) {
-+				PMD_LOG(INFO, "ifindex %d deleted", pmd->if_index);
-+				dev->data->dev_link.link_status = RTE_ETH_LINK_DOWN;
-+				rte_eth_dev_callback_process(dev,
-+					RTE_ETH_EVENT_INTR_LSC, NULL);
-+			} else {
-+				bool was_up = dev->data->dev_link.link_status == RTE_ETH_LINK_UP;
-+				bool is_up = (ifi->ifi_flags & IFF_UP) &&
-+					     (ifi->ifi_flags & IFF_RUNNING);
-+
-+				if (was_up != is_up) {
-+					PMD_LOG(DEBUG, "ifindex %d link %s",
-+						pmd->if_index, is_up ? "up" : "down");
-+					dev->data->dev_link.link_status =
-+						is_up ? RTE_ETH_LINK_UP : RTE_ETH_LINK_DOWN;
-+					rte_eth_dev_callback_process(dev,
-+						RTE_ETH_EVENT_INTR_LSC, NULL);
-+				}
 +			}
++
++			/* The packet headroom should be available in newly allocated mbuf */
++			RTE_ASSERT(rte_pktmbuf_headroom(mh) >= sizeof(*hdr));
++
++			hdr = rte_pktmbuf_mtod_offset(mh, struct virtio_net_hdr *, -sizeof(*hdr));
++			mh->next = mb;
++			mh->nb_segs = mb->nb_segs + 1;
++			mh->pkt_len = mb->pkt_len;
++			mh->ol_flags = mb->ol_flags & RTE_MBUF_F_TX_OFFLOAD_MASK;
++			mb = mh;
++		}
++
++		struct io_uring_sqe *sqe = io_uring_get_sqe(&txq->io_ring);
++		if (sqe == NULL) {
++			/* Drop header mbuf if it was used */
++			if (mb != bufs[i])
++				rte_pktmbuf_free_seg(mb);
++			break;	/* submit ring is full */
++		}
++
++		/* Note: transmit bytes does not include virtio header */
++		++num_tx;
++		num_tx_bytes += mb->pkt_len;
++
++		io_uring_sqe_set_data(sqe, mb);
++		rtap_tx_offload(hdr, mb);
++
++		PMD_TX_LOG(DEBUG, "write m=%p segs=%u", mb, mb->nb_segs);
++
++		/* Start of data written to kernel includes virtio net header */
++		void *buf = rte_pktmbuf_mtod_offset(mb, void *, -sizeof(*hdr));
++		unsigned int nbytes = sizeof(struct virtio_net_hdr) + mb->data_len;
++
++		if (mb->nb_segs == 1) {
++			/* Single segment mbuf can go as write and batched */
++			io_uring_prep_write(sqe, fd, buf, nbytes, 0);
++			++num_pend;
++		} else {
++			/* Mult-segment mbuf needs scatter/gather */
++			struct iovec iovs[IOV_MAX];
++			unsigned int niov = mb->nb_segs;
++
++			if (unlikely(niov > IOV_MAX)) {
++				PMD_TX_LOG(ERR, "Tx nsegs %u > max %u",
++					   niov, IOV_MAX);
++				++txq->tx_errors;
++				rte_pktmbuf_free(mb);
++				continue;
++			}
++
++			iovs[0].iov_base = buf;
++			iovs[0].iov_len = nbytes;
++
++			for (unsigned int v = 1; v < niov; v++) {
++				mb = mb->next;
++				iovs[v].iov_base = rte_pktmbuf_mtod(mb, void *);
++				iovs[v].iov_len = mb->data_len;
++			}
++
++			io_uring_prep_writev(sqe, fd, iovs, niov, 0);
++
++			/*
++			 * For writev, submit now since iovs[] is on the stack
++			 * and must remain valid until submitted.
++			 * This also submits any previously batched single-seg writes.
++			 */
++			int err = io_uring_submit(&txq->io_ring);
++			if (unlikely(err < 0)) {
++				PMD_TX_LOG(ERR, "Tx io_uring submit failed: %s", strerror(-err));
++				++txq->tx_errors;
++			}
++
++			num_pend = 0;
 +		}
 +	}
++
++	if (likely(num_pend > 0)) {
++		int err = io_uring_submit(&txq->io_ring);
++		if (unlikely(err < 0)) {
++			PMD_LOG(ERR, "Tx io_uring submit failed: %s", strerror(-err));
++			++txq->tx_errors;
++		}
++	}
++
++	txq->tx_packets += num_tx;
++	txq->tx_bytes += num_tx_bytes;
++
++	return num_tx;
 +}
 -- 
 2.51.0
