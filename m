@@ -2,72 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90344EF584C
-	for <dpdk-dev@archiver.kernel.org>; Sat, 14 Feb 2026 19:09:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C09FEF5858
+	for <dpdk-dev@archiver.kernel.org>; Sat, 14 Feb 2026 23:47:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 54C41402BE;
-	Sat, 14 Feb 2026 20:09:06 +0100 (CET)
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com
- [209.85.221.41]) by mails.dpdk.org (Postfix) with ESMTP id 4601D40151
- for <dev@dpdk.org>; Sat, 14 Feb 2026 20:09:04 +0100 (CET)
-Received: by mail-wr1-f41.google.com with SMTP id
- ffacd0b85a97d-4327790c4e9so1429069f8f.2
- for <dev@dpdk.org>; Sat, 14 Feb 2026 11:09:04 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id D621140289;
+	Sun, 15 Feb 2026 00:47:33 +0100 (CET)
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com
+ [209.85.128.45]) by mails.dpdk.org (Postfix) with ESMTP id C135040274
+ for <dev@dpdk.org>; Sun, 15 Feb 2026 00:47:32 +0100 (CET)
+Received: by mail-wm1-f45.google.com with SMTP id
+ 5b1f17b1804b1-48378136adcso8753545e9.1
+ for <dev@dpdk.org>; Sat, 14 Feb 2026 15:47:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1771096144;
- x=1771700944; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1771112852;
+ x=1771717652; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=xtpV2Tb53pMOEL8/KAnNXXrqPdmxRuOs0pj6Yg46pVE=;
- b=Gg8Hya5/mVBKkSQGRONOsf4Ba+TLuIEVcGrdHl7HBcPTZksA7C7JOEVxjKNUt2oRE1
- 5ypfHoeYWAyYdO1YCxSjqOXkUG4Pim4DXtN9aQ1kN2eU95qX/WZd3q8g6CFf7eZjIwIY
- NXUWdKthwFffguE4VS9+W8u8vv0GwtgA/29M26zWeOO/GHrtzYc8ngv/W7kJc0siUW0w
- UOijopReQWFJQTlPXYCO5mWQIGhy263jumssw8TMVMilgDr+BrNqZLxPaQNOzha8dF/V
- MQPGgxgjahrmxHjhLuQRp1iTZmr2ucEyN/iKIEQfWIAtdS4D7j7btQELZWj/u3b2mB51
- 57Bg==
+ bh=kziOZBWeGTBHFJWoQGBVxVswWohQssfqimOcTrMKqP0=;
+ b=SmINavwDZIWqaGlinhH1Jjy9WCLChQBsFHK+IfXjHL4odImhu9jxsysdEJ0c1P4Tub
+ qUBDzlyxnNqDGeZ0pTygixHIam59ZwiOMeKf+f7ChKFiH3xX1F9WOX0a0wm5cMRt9HH6
+ MMApO9rZHPxnmKNrdXdF1b/gniOrGtl9wKuHW2kI/g+JWySTJSTFZlfpw03dRY2O/Wpn
+ ICGUKWK5LRfs7NZ8CFDyoX8AM200qhzmBY1jp/kY/cCkE/i1fu5K+PFH9D5luMHZAJ/y
+ mEB1uRjAz4yadqNzvTwthcsqim+R1lPRnEjGWvJcKzDRBX/s8Q1QT7VS0FuCJH8hQ731
+ +7ww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1771096144; x=1771700944;
+ d=1e100.net; s=20230601; t=1771112852; x=1771717652;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=xtpV2Tb53pMOEL8/KAnNXXrqPdmxRuOs0pj6Yg46pVE=;
- b=vdFTmQMdQ7N3cppmlsRwEfDiy4BSLLTkQ5EGaO5UfzwmLWOXafwCc7ZQ4sIkvRYXnD
- ZZRqJdiyAzI/msjE6WgoogHr1TAuRYTv0aFESKobKEThFM+TEAmIw33/LAyCBrk9AzWk
- Ps+mi8945nol1ObVckcLj5FdDxeRCVnKxHrXv3oxgPwxFu70C1ZUr/ygJIjc3cgZUrjA
- srqwDJQ7iZvMGj2tkACm+Y2OmKyUMjiSAnuRHFQjTZ2KW3VPq9sg78F+XVhVj7dDRrZ0
- 3dc7ieXff4LFv/QpPI2W0HJut4dvUR6L1uGrx5P7e9K9vWOspV4m+Rk5oxkjuyCxgVcu
- XI9Q==
-X-Gm-Message-State: AOJu0YwWvwTSYUfHpbCMCDOV21EmXX9HdVBF1qP3jbXtJWPCABToarn+
- rOCqizIDIB2iQmwy5KQ6Ld8L0O2dyicEWPOKukgSx60Nt43D1lKQyUSBu0TGu9d/x4ts9Ckgu3O
- s8Ylm
-X-Gm-Gg: AZuq6aLtre561TSvKAU/qqQUXGrbL0w0i06QUoxlR0RUCa0hjLnz53LnpMc5IBmVohU
- i0E63yhf56SWKCOd8XhwOjAuG/HwyLs6Ad+Y/JsWimhM1Y+TFAEwtWZmTDYAoKEpTdrovwOjLGq
- m/fr50E09foRVrVgOBMnK0d8ZRAITqCCPXOOezsxZgd0J+CjY/stDko8eCi7CmKpxKW+48wfbT1
- 8Q67bLWi+h6Pgq6LrnwfYsH6bfvC8zinpAtq3FxRdkzUpG2SfQjWV2h1kn78ukUgXdmXWkK1tGz
- Y7Z0s2yo4nBOvBGDyFezKfjrykAfXAPBqgBxARch4EMAtXhdsOaaXlT0/YN8Wz65x1PUCSZTdPL
- 7lrNeTDOGlYtxEehQ01cy7BfL2+1GhILq9dpEuRbdWbANHQvDGDFuDVgBxwuQma9S9AV3etf24K
- h1r+hF07O2R6RIuEKQUfXoDWRVQ87bNArnk8Oe9z6/nIFv32QWRsBQyHJU9PLbOBJp
-X-Received: by 2002:a05:600c:474e:b0:480:4be7:4f53 with SMTP id
- 5b1f17b1804b1-48371095fa6mr128193335e9.31.1771096143516; 
- Sat, 14 Feb 2026 11:09:03 -0800 (PST)
+ bh=kziOZBWeGTBHFJWoQGBVxVswWohQssfqimOcTrMKqP0=;
+ b=qVcp+ilFEXgSAsbcpfti9JwjSiRp2/BlmDPRcjJ/LLj5ttG1y/Deets6Zfu1B/goCL
+ tB9ufjuR1xULoo3VrDRDdAmX9GndXK8JFLIzFNksI9cl+Grhu9Ycp7QjatqOgYQbYhkl
+ hUgQK8yZCYu+OltaAtz0tULE2/zPk9S5ho/wqjlNh3LMJDCCud92WILG0rX5Lji0xtg5
+ fdtPGnOaogUZgCSl9+xpQBVBPJeAyoTbZ1Slea1W/E8GaAlVnfK+idveSuGPqWMw9cPT
+ H3lyflSdCWArBUnkHAkMZ68D9YGp4Wqde5OHDtM9Y2hKAp9i3S8NPC6NoO+GO+M207br
+ OwLA==
+X-Gm-Message-State: AOJu0YwJ7CwYq2PvJYHBzVOcT0MloQwWlSRhMDi/y7OHoXBnhpBBoAIY
+ V/+ieF8bP7NPgRAuNGxa8bvrend3RU5MKs7sBZ5Uy7mA6lPTs/qgBs9gm//iDQTwJ719DX2Q3sg
+ ti14Y
+X-Gm-Gg: AZuq6aKwf8ztXMndvI4sS9Dm/94ZxrNTmqfAND8HMhm9POEp5pR2jUV+dcka5ED8B4t
+ EEfioNu9x8JMt2nqVnbZl8HrCNY++1I+GKlr2jUAyABWiVuQRd6a3MuvWjVYPfVQTLuhAQwxv/o
+ bwWKo9rqik5m37/pYmmK0Kt7QWQVO93kYPYEgytp221u+/F+P5AFOJ1dr90jHijewnOBZ1ndKVt
+ W/9FVu7dNog8M1xXhfSjsSY2x0xP5k9VwSN5UzW3GOT3iGhj5TgfQhkc+MHuKD9bnOrvqlCwDyh
+ M14+NyqbAXv6I9vJf8Q2Rd0OEedEr9ttoL6jJBwLM0w1BXlIncPsN/nGLRyV+eTHTGzGu9O5HYP
+ a+jlWr0yUUtCV0ck/fj5VkESWXkf6CiRMT2RZ9zSdoZ8cuSbPwEXgmEUAeoAeG9re0XW6/tuO/+
+ LAJvKglHVzldv408T368dUhmOipCyr0jK3hPiSQb0Tq/rahtD/aMzSInibWPZ8Xuhh
+X-Received: by 2002:a05:600c:8209:b0:480:1c85:88bf with SMTP id
+ 5b1f17b1804b1-48379c1f524mr59678305e9.27.1771112851567; 
+ Sat, 14 Feb 2026 15:47:31 -0800 (PST)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-483719b8e71sm137171715e9.2.2026.02.14.11.09.02
+ 5b1f17b1804b1-4834d5ebd1bsm394921485e9.6.2026.02.14.15.47.30
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sat, 14 Feb 2026 11:09:03 -0800 (PST)
-Date: Sat, 14 Feb 2026 11:08:58 -0800
+ Sat, 14 Feb 2026 15:47:31 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Kerem Aksu <kerem.aksu@i2i-systems.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH v3] cmdline: update clear screen behavior
-Message-ID: <20260214110858.414afde1@phoenix.local>
-In-Reply-To: <20260116154256.206571-1-kerem.aksu@i2i-systems.com>
-References: <20260105113529.65969-1-kerem.aksu@i2i-systems.com>
- <20260116154256.206571-1-kerem.aksu@i2i-systems.com>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v6 00/11] net/rtap: add io_uring based TAP driver
+Date: Sat, 14 Feb 2026 15:44:09 -0800
+Message-ID: <20260214234726.188947-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20241210212757.83490-1-stephen@networkplumber.org>
+References: <20241210212757.83490-1-stephen@networkplumber.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,20 +80,109 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, 16 Jan 2026 18:42:56 +0300
-Kerem Aksu <kerem.aksu@i2i-systems.com> wrote:
+This series adds net_rtap, an experimental poll mode driver that uses
+Linux io_uring for asynchronous packet I/O with kernel TAP interfaces.
 
-> Control+L should clear screen and redisplay prompt at the top
-> line. DPDK rdline library will not change anything on the screen when
-> fed with Control+L.  When prompt is lost after too many text written
-> to the terminal, users will press Control+L to clear screen and put
-> the prompt to the top line. This is expected behavior in bash(1) or
-> applications that are using readline(3). Updated to behave as users
-> expected.
-> 
-> Signed-off-by: Kerem Aksu <kerem.aksu@i2i-systems.com>
-> ---
+Like net_tap, net_rtap creates a kernel network interface visible to
+standard tools (ip, ethtool) and the Linux TCP/IP stack.  From DPDK
+it is an ordinary ethdev.
 
-Ended getting rid of the clear_screen flag.
-If there are only to callers, it is better to have each caller
-do the steps they want, then call reprint
+Motivation
+----------
+
+This driver started as an experiment to determine whether Linux
+io_uring could deliver better packet I/O performance than the
+traditional read()/write() system calls used by net_tap.  By posting
+batches of I/O requests asynchronously, io_uring amortizes system
+call overhead across multiple packets.
+
+The project also served as a testbed for using AI tooling to help
+build a comprehensive test suite, refactor code, and improve
+documentation.  The result is intended as an example for other PMD
+authors: the driver has thorough unit tests covering data path,
+offloads, multi-queue, fd lifecycle, and more, along with detailed
+code comments explaining design choices.
+
+Why not extend net_tap?
+-----------------------
+
+The existing net_tap driver was designed to provide feature parity
+with mlx5 when used behind the failsafe PMD.  That goal led to
+significant complexity: rte_flow support emulated via eBPF programs,
+software GSO implementation, and other features that duplicate in
+user space what the kernel already does.
+
+net_rtap takes the opposite approach -- use the kernel efficiently
+and let it do what it does well.  There is no rte_flow support;
+receive queue selection is left to the kernel's native RSS/steering.
+There is no software GSO; the driver passes segmentation requests
+to the kernel via the virtio-net header and lets the kernel handle
+it.  The result is a much simpler driver that is easier to maintain
+and reason about.
+
+Given these fundamentally different design goals, a clean
+implementation was more practical than refactoring net_tap.
+
+Acknowledgement
+---------------
+
+Parts of the test suite, code review, and refactoring were done
+with the assistance of Anthropic Claude (AI).  All generated code
+was reviewed and tested by the author.
+
+Requirements:
+  - Kernel headers with IORING_ASYNC_CANCEL_ALL (upstream since 5.19)
+  - liburing >= 2.0
+
+Should work on distributions: Debian 12+, Ubuntu 24.04+,
+Fedora 37+, SLES 15 SP6+ / openSUSE Tumbleweed.
+RHEL 9 is not supported (io_uring is disabled by default).
+
+v6:
+  - fix lots of bugs found doing automated review
+  - convert to use ifindex and netlink to avoid rename issues
+  - implement xstats
+
+Stephen Hemminger (11):
+  net/rtap: add driver skeleton and documentation
+  net/rtap: add TAP device creation and queue management
+  net/rtap: add Rx/Tx with scatter/gather support
+  net/rtap: add statistics and device info
+  net/rtap: add link and device management operations
+  net/rtap: add checksum and TSO offload support
+  net/rtap: add multi-process support
+  net/rtap: add link state change interrupt
+  net/rtap: add Rx interrupt support
+  net/rtap: add extended statistics support
+  test: add unit tests for rtap PMD
+
+ MAINTAINERS                            |    7 +
+ app/test/meson.build                   |    1 +
+ app/test/test_pmd_rtap.c               | 2620 ++++++++++++++++++++++++
+ doc/guides/nics/features/rtap.ini      |   26 +
+ doc/guides/nics/index.rst              |    1 +
+ doc/guides/nics/rtap.rst               |  101 +
+ doc/guides/rel_notes/release_26_03.rst |    7 +
+ drivers/net/meson.build                |    1 +
+ drivers/net/rtap/meson.build           |   30 +
+ drivers/net/rtap/rtap.h                |  152 ++
+ drivers/net/rtap/rtap_ethdev.c         |  864 ++++++++
+ drivers/net/rtap/rtap_intr.c           |  207 ++
+ drivers/net/rtap/rtap_netlink.c        |  445 ++++
+ drivers/net/rtap/rtap_rxtx.c           |  803 ++++++++
+ drivers/net/rtap/rtap_xstats.c         |  293 +++
+ 15 files changed, 5558 insertions(+)
+ create mode 100644 app/test/test_pmd_rtap.c
+ create mode 100644 doc/guides/nics/features/rtap.ini
+ create mode 100644 doc/guides/nics/rtap.rst
+ create mode 100644 drivers/net/rtap/meson.build
+ create mode 100644 drivers/net/rtap/rtap.h
+ create mode 100644 drivers/net/rtap/rtap_ethdev.c
+ create mode 100644 drivers/net/rtap/rtap_intr.c
+ create mode 100644 drivers/net/rtap/rtap_netlink.c
+ create mode 100644 drivers/net/rtap/rtap_rxtx.c
+ create mode 100644 drivers/net/rtap/rtap_xstats.c
+
+-- 
+2.51.0
+
