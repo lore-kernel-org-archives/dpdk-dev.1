@@ -2,69 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AC7CE63F08
-	for <dpdk-dev@archiver.kernel.org>; Sun, 15 Feb 2026 19:54:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FB80E63F08
+	for <dpdk-dev@archiver.kernel.org>; Sun, 15 Feb 2026 19:55:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E688D40673;
-	Sun, 15 Feb 2026 20:54:10 +0100 (CET)
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com
- [209.85.128.49]) by mails.dpdk.org (Postfix) with ESMTP id 97AC84066B
- for <dev@dpdk.org>; Sun, 15 Feb 2026 20:54:08 +0100 (CET)
-Received: by mail-wm1-f49.google.com with SMTP id
- 5b1f17b1804b1-482f454be5bso42312105e9.0
- for <dev@dpdk.org>; Sun, 15 Feb 2026 11:54:08 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id DACEE4067B;
+	Sun, 15 Feb 2026 20:54:13 +0100 (CET)
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com
+ [209.85.128.51]) by mails.dpdk.org (Postfix) with ESMTP id C29A940678
+ for <dev@dpdk.org>; Sun, 15 Feb 2026 20:54:11 +0100 (CET)
+Received: by mail-wm1-f51.google.com with SMTP id
+ 5b1f17b1804b1-4837f27cf2dso8465605e9.2
+ for <dev@dpdk.org>; Sun, 15 Feb 2026 11:54:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1771185248;
- x=1771790048; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1771185251;
+ x=1771790051; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=FQhpnNuxAvt+nBkxDxh9lICqOMSxbTmCNWLKD4I9tV0=;
- b=VC7f5JMYZeuqJyGE7DP5rbO+CCtlR3nQzn8BoCZYun49CLNhGh6Z4nFFPgAVH3rwTV
- F8fPRkrvcOsjXtUSv0rdaFb8skUAS3oLYKvGNccfbQGPB+T1i8mMbHR4oX2GZ7TEEXuS
- rSWqcOjFsHzSPFjY8GfJ749r3hLRzQJ++jf/VZU/1je5N/9j7zOfz8lf3VELXBsH4Y+e
- ytCMVcsu/2UMBroSPH1XIBMibrae8Vc1TSLMFurMhkqNJZTqRt2f0GrVfi8dciZvISfD
- ACjWVzXYcN0SJUR3oiOMtu/++qvw+95L3d9bq2mK5fu+vfu5fpndBKXEXqrPQlsOdPPy
- pXdA==
+ bh=eVLyJfxM17TdVjysGpfX0wko6tfcszG+c7F8KIvjWMg=;
+ b=fO4/Vom09HvUdluBecjFWrWP8fL9elmX7s5RrV7bbYH/mU8qbsCWKbH+Pi9NNxeRb6
+ VcX4s47mcMewnZ1vnGLC6y2W16Y4CZ8VZZabXgTQWWZ+YIxH0Z2F4UrDDEGLz2dDNQkn
+ JsnP7/M3ClCUYhVEM9gW7j1fkty6qXry5qnzix6GTmejHbFFG0P6xadEIK2g065CnYpz
+ AUp246MMUl5hSehBeREvrcj4adTx9b2qlz3xgn+e8EYnxHw1PVuIwKlLbITxfHAJtDHE
+ syOKMj6c625V+59tipnBN7z+krCgkiij9NqCJ2w90aisF7Sym3qqAWQmJrdH6YPVPqUa
+ 9LiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1771185248; x=1771790048;
+ d=1e100.net; s=20230601; t=1771185251; x=1771790051;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=FQhpnNuxAvt+nBkxDxh9lICqOMSxbTmCNWLKD4I9tV0=;
- b=FXO/uHpfGs9rqhBEPaLmm5mMdWyajKXNwivtfqTX4ZEOKsvJ82mjunU37VfNOmuvwD
- pnoWtBnoQsM2YShxgB1SZAzUJn8yEEL915UGfyR+mXFzk3nQcZpIzJ1OBkGKGUn624Zc
- 5kJKBE4vMAvslEfaLqIfUL5N19s5rzBQazMjZCoqA4a+MhSGLm6ciwcSDSjqlXqTSrcu
- ZWhaAhXBvC4fbU3xW1R7dyr0RZLVTsX1iEsCx0SaFbZBO8l9vsDaztgRpeXE8jToHo9o
- YqAs/FbyLrgwja3dxPRY2Scg93ySHujuAT3sv/j5bZLsxuigoN6MmH6KfoV94KP1WvnP
- sucQ==
-X-Gm-Message-State: AOJu0Yxs/pg0zh7uVn4QuLGpY8OjAI1U86xfy16q9zjLIRhuefgrcDyC
- 1lisV4A5o6uarqbk9pLNk7zpE5FPgqEwZi4gT1Hu7ZVcuX/NurBefcypQd0LVX+xAQGQPHgR/1Z
- Q2wwQlaA=
-X-Gm-Gg: AZuq6aKMAPM1rQ2ltl4dX0fiAygSHHloWysympVgrBcvKMj8RIrxF2Vz06DoxoX2IKd
- n2rjBDf9JVqZSBmOPuLesVJAbkw1+9OAgGHi+0YcT6XzWmPn6zUip3Lp8CX2M6123uDC8DoXdMH
- wI81e/StgxwthWrjIAnKlCDXPqkBUxOsT+asPTlBnn8xBZ9k+D1aPFpfQ/QULb8Y+wqGnJu4Wpi
- bTb9NIuG4Yn2HAoXCpxJW/k4vB6c3RXVIxktcmE/597Upah56pYKd10ajhuF7vu8b8T1qzljMXh
- RlTAdOBbZ0bg1GBO176Nbo094W/yA+0tqIv8U5dEypxWBlKjOfyzqe3qOe+XGfZC2V73Cnb6eyp
- IG79HLbblOCamjEed2ujo7irR9fL7+T49WPN3VVMK0VgLwxaGhNxobOV9R5HyUGI08pyr8o9lch
- mZMGvlDn6advAHyS23C66KQdi335/1m0XtkuhNk8AAcSNfumGfLUQoFcvAo6nFtQ==
-X-Received: by 2002:a05:600c:4e8e:b0:477:991c:a17c with SMTP id
- 5b1f17b1804b1-48378d62cbdmr117532435e9.6.1771185248153; 
- Sun, 15 Feb 2026 11:54:08 -0800 (PST)
+ bh=eVLyJfxM17TdVjysGpfX0wko6tfcszG+c7F8KIvjWMg=;
+ b=oBBPMM+xI7k6JyrG6Ou3b3OJaeIxmgAdRmgL5OjmnMZynJU9H6oMl+6qzfJrEGqYBf
+ QkCtCE8DTcni4ZjK/7WOgUX9X6kyZdwMvN2SfewW0YHCqkGCjSTM2YDjFxS/NOTf3O7L
+ YgpAHR6XAoM5kxvGkhPVQoegM7zwt7av5/v+ge9P8VLYAYfTz0T8eXBwzGvOsE3CJWvF
+ YAWVH00chVRMK4I7NSEDKfGqF1RhedTZCG7dvxS10fobiAxUY5dUbkWAvTv+T4KI8xgQ
+ SpDsGESZpfuw1PilUtSHet00s0MNfdd5IVtbmb0epqqeLfY6TmdswzdKtj+/vZ/w4pgj
+ q3Iw==
+X-Gm-Message-State: AOJu0YyIxaibuFxtbNGSxTvU/q2dEbO2YG6KDVT/Kf3lxrfeFvhnmFv+
+ ayJtSg3adSN+/D+9y0v1Ay/zRaBhqwlpFOqDjlexOJp6pR/mEqdTlKwUhdsPd6Z4eOhLpmG4HaN
+ Te65XU6w=
+X-Gm-Gg: AZuq6aLBY1yK0oO+Uku+kAwJbwQDCRW+J69N3EGUj35prb0FcQjUr7o5lPLqKkK/SYU
+ ZzKLeQQ0zclNyFl7oq9aEFg7Bl0QatQlr3AikBTlZg0jrbYycAj7G/gKMc2u2oWE/l5yn41yuBC
+ qg0FQvTv0m21xFSUJrhuON4sfOMGA40SlKYEG2bmmEhT50SZcrM/50cjgsiIgLvOmZ26U7ehKlg
+ KCcVuwEQtNNZIR/Fe//LXa+D9cP1WTS//LMljuIui/6CDy1cToJdJcE5cpLECkDyYSNr4vqPUB/
+ FIzlchqQ1Ggmj0kmh25jP10uhS1wWHY5+3wlpAl7vtNnygaDNgqeQ/Lx5WrzkM1f6z2KjmO9Z75
+ Cbe79Daqiaq7EMzfB9TK0VoJCJ2Qsb+4kovFFrMqQiyU6b6fSZZHeIC/lFk4ONcXmM9lroz6diV
+ 3EKxv43ACvhh2KtXbp91CDH/h1DYRAa0Fs8j3FFtXzHE1h/Yvfjx9ISFnfVXb6/K7NOsZKmbv8
+X-Received: by 2002:a05:600c:468d:b0:47e:e20e:bbb4 with SMTP id
+ 5b1f17b1804b1-4837108fcf1mr163002275e9.26.1771185251159; 
+ Sun, 15 Feb 2026 11:54:11 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-4835d99497asm526490415e9.6.2026.02.15.11.54.06
+ 5b1f17b1804b1-4835d99497asm526490415e9.6.2026.02.15.11.54.08
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 15 Feb 2026 11:54:07 -0800 (PST)
+ Sun, 15 Feb 2026 11:54:10 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
- Anatoly Burakov <anatoly.burakov@intel.com>,
- Herakliusz Lipiec <herakliusz.lipiec@intel.com>,
- Ferruh Yigit <ferruh.yigit@amd.com>
-Subject: [PATCH 08/10] net/tap: free IPC reply buffer on queue count mismatch
-Date: Sun, 15 Feb 2026 11:52:26 -0800
-Message-ID: <20260215195348.557945-9-stephen@networkplumber.org>
+ Pascal Mazon <pascal.mazon@6wind.com>, Olga Shern <olgas@nvidia.com>,
+ Keith Wiles <keith.wiles@intel.com>
+Subject: [PATCH 09/10] net/tap: fix use-after-free on remote flow creation
+ failure
+Date: Sun, 15 Feb 2026 11:52:27 -0800
+Message-ID: <20260215195348.557945-10-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260215195348.557945-1-stephen@networkplumber.org>
 References: <20260215195348.557945-1-stephen@networkplumber.org>
@@ -83,31 +83,78 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-In tap_mp_attach_queues(), if the reply queue count does not match
-the number of received file descriptors, the function returns -1
-without freeing the reply buffer allocated by rte_mp_request_sync().
-Add the missing free().
+After a local TC filter rule is installed and the flow is inserted
+into pmd->flows, failure during remote flow creation jumps to the
+fail label which frees the flow without removing it from the list
+and without deleting the kernel-side TC rule.
+
+Send RTM_DELTFILTER to clean up the local rule and call
+LIST_REMOVE before freeing.
 
 Bugzilla ID: 1881
-Fixes: 9ad43ad8fbee ("net/tap: fix potential IPC buffer overrun")
+Fixes: 2bc06869cd94 ("net/tap: add remote netdevice traffic capture")
 Cc: stable@dpdk.org
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/tap/rte_eth_tap.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/tap/tap_flow.c | 19 +++++++++++++------
+ 1 file changed, 13 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/net/tap/rte_eth_tap.c b/drivers/net/tap/rte_eth_tap.c
-index 251b05b27b..6676a40d69 100644
---- a/drivers/net/tap/rte_eth_tap.c
-+++ b/drivers/net/tap/rte_eth_tap.c
-@@ -2407,6 +2407,7 @@ tap_mp_attach_queues(const char *port_name, struct rte_eth_dev *dev)
- 	/* Attach the queues from received file descriptors */
- 	if (reply_param->q_count != reply->num_fds) {
- 		TAP_LOG(ERR, "Unexpected number of fds received");
-+		free(reply);
- 		return -1;
+diff --git a/drivers/net/tap/tap_flow.c b/drivers/net/tap/tap_flow.c
+index 9d4ef27a8a..427faf75d5 100644
+--- a/drivers/net/tap/tap_flow.c
++++ b/drivers/net/tap/tap_flow.c
+@@ -1293,7 +1293,7 @@ tap_flow_create(struct rte_eth_dev *dev,
+ 			rte_flow_error_set(
+ 				error, ENOMEM, RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
+ 				"cannot allocate memory for rte_flow");
+-			goto fail;
++			goto fail_remove;
+ 		}
+ 		msg = &remote_flow->msg;
+ 		/* set the rule if_index for the remote netdevice */
+@@ -1307,14 +1307,14 @@ tap_flow_create(struct rte_eth_dev *dev,
+ 			rte_flow_error_set(
+ 				error, ENOMEM, RTE_FLOW_ERROR_TYPE_HANDLE,
+ 				NULL, "rte flow rule validation failed");
+-			goto fail;
++			goto fail_remove;
+ 		}
+ 		err = tap_nl_send(pmd->nlsk_fd, &msg->nh);
+ 		if (err < 0) {
+ 			rte_flow_error_set(
+ 				error, ENOMEM, RTE_FLOW_ERROR_TYPE_HANDLE,
+ 				NULL, "Failure sending nl request");
+-			goto fail;
++			goto fail_remove;
+ 		}
+ 		err = tap_nl_recv_ack(pmd->nlsk_fd);
+ 		if (err < 0) {
+@@ -1325,15 +1325,22 @@ tap_flow_create(struct rte_eth_dev *dev,
+ 				error, ENOMEM, RTE_FLOW_ERROR_TYPE_HANDLE,
+ 				NULL,
+ 				"overlapping rules or Kernel too old for flower support");
+-			goto fail;
++			goto fail_remove;
+ 		}
+ 		flow->remote_flow = remote_flow;
  	}
+ 	return flow;
++
++fail_remove:
++	/* Delete the local TC rule that was already installed */
++	flow->msg.nh.nlmsg_flags = NLM_F_REQUEST | NLM_F_ACK;
++	flow->msg.nh.nlmsg_type = RTM_DELTFILTER;
++	if (tap_nl_send(pmd->nlsk_fd, &flow->msg.nh) >= 0)
++		tap_nl_recv_ack(pmd->nlsk_fd);
++	LIST_REMOVE(flow, next);
+ fail:
+ 	rte_free(remote_flow);
+-	if (flow)
+-		tap_flow_free(pmd, flow);
++	tap_flow_free(pmd, flow);
+ 	return NULL;
+ }
  
 -- 
 2.51.0
