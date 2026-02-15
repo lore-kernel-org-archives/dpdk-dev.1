@@ -2,74 +2,38 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 303D4E63F08
-	for <dpdk-dev@archiver.kernel.org>; Sun, 15 Feb 2026 19:55:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0BF4E63F12
+	for <dpdk-dev@archiver.kernel.org>; Sun, 15 Feb 2026 21:45:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id F0E0740687;
-	Sun, 15 Feb 2026 20:54:15 +0100 (CET)
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com
- [209.85.128.50]) by mails.dpdk.org (Postfix) with ESMTP id D554D40679
- for <dev@dpdk.org>; Sun, 15 Feb 2026 20:54:13 +0100 (CET)
-Received: by mail-wm1-f50.google.com with SMTP id
- 5b1f17b1804b1-4806f3fc50bso30617985e9.0
- for <dev@dpdk.org>; Sun, 15 Feb 2026 11:54:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1771185253;
- x=1771790053; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=/omJoVtSBuPtIyWBO+npMl3uPvGP9xe48jZLhu4cU/8=;
- b=1BczqE7Emaoqdc35nIn+xEABLuif3DkbsGkGKnVr4b8YL1MrHZgvJhZUO1gjAKWWmC
- 8QISsLQWMpxr2QPvJNQOkV48SkEfmImb0E/enZgmFXW2Hj4xnkQEcOzXrkDcae0ZLCfT
- YQLT5k6HwjQ+adWEQOIXUj+f17wmld5mFoZq6vqUVSWjiCG4ZIFqkhDFoNxVMdBSjoyT
- 9flD9F3qECbjJInDVhmAg9v9Yu8h0IeNI7nLbM/ar08ltqxVjobMLdi8qrgeZhiBH8cG
- qH2+H1+Uj8LrcmuTaJWPSoxP0YtcSX+BPcdOpivUmSUFxwvKY8uzhhmlG4e/a4dNn3Bq
- mrQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1771185253; x=1771790053;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=/omJoVtSBuPtIyWBO+npMl3uPvGP9xe48jZLhu4cU/8=;
- b=j2BBxqZRd9CvAMFVglQ6hEEs+1IExCSC/JS6aXbSxeAz9ajWPj+SOADcnYfTauQ+PR
- 8uvUCDDFleOb62cd2qr8+DXlorZqDcz4tnToySKdlTNGCCqEVzZBx0+EQk/M8QlyASpO
- mBwcm/qmVKIcI/T/4ngu9OsMKiQPSR7fggFgmjh0cWsUODTV83g+gMsdedjc1rY/y4Vc
- BtHITP33vnmvscBtiupSjxmPpOeFqtj9p29/Vws1A/NiJgkcrTpfxcWGCt9Cr+fJnK2p
- 8T/dKpgo4sUMFoAsUu4RZrPkkHj5KWLtDfRTe1ZNy3vj6+IA5H/7Itu3av0QHtvJq6lM
- ZxbA==
-X-Gm-Message-State: AOJu0Ywngo0/ypN0Heuqoa2oySPEh0TaJqVjBK7OAFGN/wQD1dTPzSv/
- JgDxEUr4vhGJ02zwvmMZ3vglx3PdfEQrEjj1csz+d/0xoXabKlpXxcxzF0OoZX81GUM2fRTKdnM
- sbfDtLDk=
-X-Gm-Gg: AZuq6aK/+Hs9+UlttjhaDWlVKNDH37UKbQkIUlP6dcK5BQTA7uy9L424DynDVIxcJ0y
- 8T6I1lnNywM/RTdEdNfRdb32Ssj8mvzGzmnyTF9byJh7atTLAYo9FYvIVRyX16rjDiWUTAWTH7q
- yt1oISVofTMVMLzXzvrXIuxVZ6+TaiM9WCFA0ndXIY3MzSY+HuwFHsy9Di7bFfBOi73BEHnl7x2
- 3p4tPqLe6ajZyK+vaF0xPMvIUSV9ujfYg5Vek60sz+AMJ2nQ21131dZnIirECxbwR4tdIaCcEVY
- M3JAVwQI9KZJqPpK6Ygo7pLYW9xgotJ6G2EKRsXnBUtgyKApHvsXdT6SpvNrU7GH1PwuHYyTdbY
- ZLWoObtqRhKwX/cfgNMuSlZUIszjk5ikJRpS3iiufrANT3LeX53FakX/nsO7Iu0urhid1yVDUf/
- gxVutgpk6L5sk7va//XXr3U3Rcy+12rBmQj609vWmBGJmcDgh0vsRjenAv6oqWDuAS7NucAURN
-X-Received: by 2002:a05:600c:310e:b0:483:a21:7744 with SMTP id
- 5b1f17b1804b1-48379bf6c82mr109195695e9.26.1771185253408; 
- Sun, 15 Feb 2026 11:54:13 -0800 (PST)
-Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-4835d99497asm526490415e9.6.2026.02.15.11.54.11
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 15 Feb 2026 11:54:13 -0800 (PST)
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
- Ophir Munk <ophirmu@nvidia.com>, Raslan Darawsheh <rasland@nvidia.com>,
- Keith Wiles <keith.wiles@intel.com>
-Subject: [PATCH 10/10] net/tap: free remote flow when implicit rule already
- exists
-Date: Sun, 15 Feb 2026 11:52:28 -0800
-Message-ID: <20260215195348.557945-11-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20260215195348.557945-1-stephen@networkplumber.org>
-References: <20260215195348.557945-1-stephen@networkplumber.org>
+	by mails.dpdk.org (Postfix) with ESMTP id C5FA44028B;
+	Sun, 15 Feb 2026 22:45:58 +0100 (CET)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 63E6140274
+ for <dev@dpdk.org>; Sun, 15 Feb 2026 22:45:57 +0100 (CET)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 2EC2C20F80;
+ Sun, 15 Feb 2026 22:45:57 +0100 (CET)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Subject: RE: [PATCH 03/10] net/tap: clarify TUN/TAP flag assignment
+Date: Sun, 15 Feb 2026 22:45:53 +0100
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F6571C@smartserver.smartshare.dk>
+In-Reply-To: <20260215195348.557945-4-stephen@networkplumber.org>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH 03/10] net/tap: clarify TUN/TAP flag assignment
+Thread-Index: AdyetOJv9oynk4q/Qh2dRtKdlosadgADo9Eg
+References: <20260215195348.557945-1-stephen@networkplumber.org>
+ <20260215195348.557945-4-stephen@networkplumber.org>
+From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
+To: "Stephen Hemminger" <stephen@networkplumber.org>,
+	<dev@dpdk.org>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,34 +47,43 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-When tap_flow_implicit_create() gets EEXIST from the kernel, the
-allocated remote_flow is never freed. Add rte_free() on that path.
+> Replace a ternary expression that relied on operator precedence
+> between '?:' and '|' with an explicit if/else. No functional change.
+>=20
+> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+> ---
+>  drivers/net/tap/rte_eth_tap.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/net/tap/rte_eth_tap.c
+> b/drivers/net/tap/rte_eth_tap.c
+> index aa236cf967..31c8c185e9 100644
+> --- a/drivers/net/tap/rte_eth_tap.c
+> +++ b/drivers/net/tap/rte_eth_tap.c
+> @@ -154,8 +154,11 @@ tun_alloc(struct pmd_internals *pmd, int
+> is_keepalive, int persistent)
+>  	 * Do not set IFF_NO_PI as packet information header will be
+> needed
+>  	 * to check if a received packet has been truncated.
+>  	 */
+> -	ifr.ifr_flags =3D (pmd->type =3D=3D ETH_TUNTAP_TYPE_TAP) ?
+> -		IFF_TAP : IFF_TUN | IFF_POINTOPOINT;
 
-Bugzilla ID: 1880
-Fixes: 2ef1c0da894a ("net/tap: fix isolation mode toggling")
-Cc: stable@dpdk.org
+For unconditional assignment, I prefer ternary expression over if/else.
+If you want to improve readability instead of relying on operator =
+precedence, suggest:
 
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
----
- drivers/net/tap/tap_flow.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+	ifr.ifr_flags =3D (pmd->type =3D=3D ETH_TUNTAP_TYPE_TAP) ?
+			IFF_TAP : (IFF_TUN | IFF_POINTOPOINT);
 
-diff --git a/drivers/net/tap/tap_flow.c b/drivers/net/tap/tap_flow.c
-index 427faf75d5..da1e70019a 100644
---- a/drivers/net/tap/tap_flow.c
-+++ b/drivers/net/tap/tap_flow.c
-@@ -1625,8 +1625,10 @@ int tap_flow_implicit_create(struct pmd_internals *pmd,
- 	err = tap_nl_recv_ack(pmd->nlsk_fd);
- 	if (err < 0) {
- 		/* Silently ignore re-entering existing rule */
--		if (errno == EEXIST)
-+		if (errno == EEXIST) {
-+			rte_free(remote_flow);
- 			goto success;
-+		}
- 		TAP_LOG(ERR,
- 			"Kernel refused TC filter rule creation (%d): %s",
- 			errno, strerror(errno));
--- 
-2.51.0
+> +	if (pmd->type =3D=3D ETH_TUNTAP_TYPE_TAP)
+> +		ifr.ifr_flags =3D IFF_TAP;
+> +	else
+> +		ifr.ifr_flags =3D IFF_TUN | IFF_POINTOPOINT;
+> +
+>  	strlcpy(ifr.ifr_name, pmd->name, IFNAMSIZ);
+>=20
+>  	fd =3D open(TUN_TAP_DEV_PATH, O_RDWR);
+> --
+> 2.51.0
 
